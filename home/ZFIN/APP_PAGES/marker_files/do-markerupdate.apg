@@ -38,8 +38,6 @@ info -- optional value used to pass in additional info
 
   <?MIVAR COND="$(EC,$attr_type,special-listitem)" NAME=$comments>Deleted the record $old_value from the list of $attr associated with this marker.<?/MIVAR>
 
-  <?MIVAR COND="$(EC,$attr_type,special-ortholink)" NAME=$comments>Deleted the record with accession $old_value from orthologue foreign db links  associated with this marker.<?/MIVAR>
-
   <?MIVAR COND="$(EC,$attr_type,special-newortho)" NAME=$comments>Created a new orthologue record for species=$old_value for this record.<?/MIVAR>
 
   <?MIVAR COND="$(EC,$attr_type,special-newseqnum)" NAME=$comments>Created new link to sequence DB: $old_value for this record.<?/MIVAR>
@@ -91,18 +89,7 @@ info -- optional value used to pass in additional info
           and acc_num='$old_value';">
     <?/MISQL>
 
-    <?MISQL COND="$(EC,$attr,orthologue)" SQL="
-      delete from orthologue 
-        where zdb_id='$old_value';">
-    <?/MISQL>
-
   <?/MIBLOCK>  <!-- ends special listitem case -->
-
-
-  <!-- Special case for deleting db_links within orthos -->
-  <?MIBLOCK COND="$(EC,$attr_type,special-ortholink)">
-
-  <?/MIBLOCK>  <!-- ends special ortholink case -->
 
   <!-- Special case for adding new orthos -->
   <?MIBLOCK COND="$(EC,$attr_type,special-newortho)">
@@ -110,6 +97,10 @@ info -- optional value used to pass in additional info
       execute function get_id('ORTHO');">
     <?/MISQL>
     <?MIVAR NAME=$ortho_id>$1<?/MIVAR>
+    <?MISQL SQL="
+      insert into zdb_active_data
+	values ('$ortho_id');">
+    <?/MISQL>
     <?MISQL SQL="
       insert into orthologue 
           (zdb_id, c_gene_id, ortho_name, ortho_abbrev, organism, entry_time)
