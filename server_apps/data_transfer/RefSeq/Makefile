@@ -22,7 +22,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/RefSeq
 
-GENERICS = load_refSeq.sql
+GENERICS = refseq.pl 
 
 
 # ---------------  Production Rules  ------------------------------------
