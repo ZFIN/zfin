@@ -29,53 +29,42 @@ var theDescr=escape(selector.value);
 <?MIBLOCK COND="$(XST,$update)"> 
 <!-- Approve it and insert rudimentary fish record -->
 <?MIBLOCK COND="$(EC,$action,approve)">
-<?MISQL SQL="select zdb_id,locus_name,abbrev,allele,owner,pheno_descr,fish_record from locus_registration where zdb_id='$update' and allele='$allele';"><?/MISQL>
+  <?MISQL SQL="select zdb_id,locus_name,abbrev,allele,owner,pheno_descr,fish_record from locus_registration where zdb_id='$update' and allele='$allele';"><?/MISQL>
 
-<!-- only do it if not yet done! -->
-<?MIBLOCK COND=$(ISNULL,$7)>
-<?MIVAR NAME=$locus_id>$1<?/MIVAR>
-<?MIVAR NAME=$locus_name>$2<?/MIVAR>
-<?MIVAR NAME=$abbrev>$3<?/MIVAR>
-<?MIVAR NAME=$allele>$4<?/MIVAR>
-<?MIVAR NAME=$owner>$5<?/MIVAR>
-<?MIVAR NAME=$descr>$6<?/MIVAR>
-<?MISQL SQL="select target_id,info from int_person_lab where source_id='$owner' order by info;"><?/MISQL>
-<?MIVAR NAME=$lab>$1<?/MIVAR>
-<?MIVAR NAME=$full_abbrev>$abbrev<sup>$allele</sup><?/MIVAR>
+  <!-- only do it if not yet done! -->
+  <?MIBLOCK COND=$(ISNULL,$7)>
+    <?MIVAR NAME=$locus_id>$1<?/MIVAR>
+    <?MIVAR NAME=$locus_name>$2<?/MIVAR>
+    <?MIVAR NAME=$abbrev>$3<?/MIVAR>
+    <?MIVAR NAME=$allele>$4<?/MIVAR>
+    <?MIVAR NAME=$owner>$5<?/MIVAR>
+    <?MIVAR NAME=$descr>$6<?/MIVAR>
+    <?MISQL SQL="select target_id,info from int_person_lab where source_id='$owner' order by info;"><?/MISQL>
+    <?MIVAR NAME=$lab>$1<?/MIVAR>
+    <!-- if owner is a member of ZFIN database team do not set ZFIN as lab, set lab to null -->
+    <?MIVAR COND="$(EC,$lab,ZDB-LAB-000914-1)" NAME=$lab><?/MIVAR>
+    <?MIVAR NAME=$full_abbrev>$abbrev<sup>$allele</sup><?/MIVAR>
 
-<?MISQL SQL="execute function get_id('FISH');"><?/MISQL>
-<?MIVAR NAME=$fish_id>$1<?/MIVAR>
-<?MISQL SQL="execute function get_id('CHROMO');"><?/MISQL>
-<?MIVAR NAME=$chromo_id>$1<?/MIVAR>
-<?MISQL SQL="execute function get_id('ALT');"><?/MISQL>
-<?MIVAR NAME=$alt_id>$1<?/MIVAR>
-<?MISQL SQL="insert into temp_fish (comments,submitter_id,entry_time,zdb_id,locus,allele,chrom_num,phenotype,lab,discoverer,source,line_type,abbrev,name,chrom_change,mutagen,protocol) values ('Provisional record for newly registered locus/allele','$owner',current,'$fish_id','$locus_id','$allele','0','$descr','$lab','$owner','$owner','mutant','$abbrev','$locus_name','UNKNOWN','UNKNOWN','UNKNOWN');"><?/MISQL>
-
-<?MIVAR NAME=$s_done>true<?/MIVAR>
-<?MIVAR NAME=$temp_oid>$fish_id<?/MIVAR>
-<?MIVAR NAME=$submitter_id>$owner<?/MIVAR>
-<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-process-fish.apg';"><?/MISQL>
-
-<!-- make a locus record if it's new! -->
-<?MISQL SQL="select count(*)::integer from locus where zdb_id='$locus_id';"><?/MISQL>
-<?MIVAR NAME=$locus_cnt>$1<?/MIVAR>
-<?MISQL COND="$(<,$locus_cnt,1)" SQL="insert into locus (zdb_id,locus_name,abbrev,comments,owner) values ('$locus_id','$locus_name','$abbrev','Provisional record for newly registered locus/allele','$owner');"><?/MISQL>
-
-<?MISQL SQL="update locus_registration set status='conditional', approval_time=current,fish_record='$fish_id' where zdb_id='$update' and allele='$allele';"><?/MISQL>
-
-<?/MIBLOCK>
+    <?MISQL SQL="execute function get_id('FISH');"><?/MISQL>
+    <?MIVAR NAME=$fish_id>$1<?/MIVAR>
+    <?MISQL SQL="execute function get_id('CHROMO');"><?/MISQL>
+    <?MIVAR NAME=$chromo_id>$1<?/MIVAR>
+    <?MISQL SQL="execute function get_id('ALT');"><?/MISQL>
+    <?MIVAR NAME=$alt_id>$1<?/MIVAR>
+    <?MISQL SQL="insert into temp_fish (comments,submitter_id,entry_time,zdb_id,locus,allele,chrom_num,phenotype,lab,discoverer,source,line_type,abbrev,name,chrom_change,mutagen,protocol) values ('Provisional record for newly registered locus/allele','$owner',current,'$fish_id','$locus_id','$allele','0','$descr','$lab','$owner','$owner','mutant','$abbrev','$locus_name','UNKNOWN','UNKNOWN','UNKNOWN');"><?/MISQL>
+  <?/MIBLOCK>
 <?/MIBLOCK> <!-- ends approve actions -->
 
 <?MISQL COND="$(EC,$action,expire)" SQL="update locus_registration set status='expired', expired_time=current  where zdb_id='$update' and allele='$allele';"><?/MISQL>
 
-<?MIBLOCK COND="$(EC,$action,descr)">
-<?MIVAR NAME=$description DELIMIT="'" REPLACE="''">$description<?/MIVAR>
-<?MISQL SQL="update locus_registration set pheno_descr='$description'  where zdb_id='$update' and allele='$allele';"><?/MISQL>
-<?MISQL SQL="select fish_record from locus_registration where zdb_id='$update' and allele='$allele';"><?/MISQL>
-<?MIVAR NAME=$fish_rec>$1<?/MIVAR>
-<?MISQL SQL="update fish set phenotype='$description'  where zdb_id='$fish_rec';"><?/MISQL>
-<?MISQL SQL="update fish_search set phenotype='$description'  where fish_id='$fish_rec';"><?/MISQL>
-<?/MIBLOCK>
+  <?MIBLOCK COND="$(EC,$action,descr)">
+    <?MIVAR NAME=$description DELIMIT="'" REPLACE="''">$description<?/MIVAR>
+    <?MISQL SQL="update locus_registration set pheno_descr='$description'  where zdb_id='$update' and allele='$allele';"><?/MISQL>
+    <?MISQL SQL="select fish_record from locus_registration where zdb_id='$update' and allele='$allele';"><?/MISQL>
+    <?MIVAR NAME=$fish_rec>$1<?/MIVAR>
+    <?MISQL SQL="update fish set phenotype='$description'  where zdb_id='$fish_rec';"><?/MISQL>
+    <?MISQL SQL="update fish_search set phenotype='$description'  where fish_id='$fish_rec';"><?/MISQL>
+  <?/MIBLOCK>
 
 <?/MIBLOCK>
 
