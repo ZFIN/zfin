@@ -2,25 +2,30 @@
 
 # Parse the blast output into table format  
 #
-# Usage :
-#       blast2unl.pl [options] inputfile 
-#
-# Options:
-#  -d   database used in the blast. 
-#         gb (default) = GenBank 
-#         sp = SwissProt/TrEMBL
-#  -p   percentage threshold
-#  -b   bits threshold
-#  -e   expect value threshold
-#  -m   start position 
-#  -n   end position
-#
-
 
 use LWP::Simple;
 use Getopt::Std;
-use vars qw($opt_p $opt_b $opt_e $opt_m $opt_n $opt_d);
-getopts('p:b:e:m:n:d:');
+use vars qw($opt_p $opt_b $opt_e $opt_m $opt_n $opt_d $opt_h $opt_l);
+getopts('p:b:e:m:n:d:l:h');
+
+my $usage =<<END;
+Usage :
+       blast2unl.pl [options]  < inputfile 
+
+ Options:
+  -d   database used in the blast. 
+         gb (default) = GenBank 
+         sp = SwissProt/TrEMBL
+  -p   percentage threshold
+  -b   bits threshold
+  -e   expect value threshold
+  -m   start position 
+  -n   end position
+  -l   alignment length threshold 
+  -h   print usage 
+END
+
+die "$usage \n" if ($opt_h);
 
 my $PERCENT = $opt_p ? $opt_p : 0;
 my $BITS    = $opt_b ? $opt_b : 0;
@@ -28,6 +33,7 @@ my $EXPECT  = $opt_e ? $opt_e : 1e30;
 my $START   = $opt_m ? $opt_m : 0;
 my $END     = $opt_n ? $opt_n : 1e30;
 my $BLASTDB = $opt_d ? $opt_d : "gb";
+my $LENGTH  = $opt_l ? $opt_l : 0;
 
 my ($Query, $Sbjct, $queryLength, $sbjctLength, $subjectdef);
 my $HSP = "";
@@ -113,6 +119,8 @@ sub outputHSP {
     return if $HSP->{expect}   > $EXPECT;
     return if ($HSP->{q_begin} < $START or $HSP->{q_end} < $START);
     return if ($HSP->{q_begin} > $END   or $HSP->{q_end} > $END);
+	return if (length($HSP->{q_align}) < $LENGTH);
+
     print join("|", $Query, $Sbjct, $HSP->{percent},
         length($HSP->{q_align}), $queryLength, $sbjctLength, 
 		$HSP->{mismatch},
