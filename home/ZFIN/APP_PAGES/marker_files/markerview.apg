@@ -401,7 +401,7 @@ Name:<input type=text size=15 name=oname> Abbrev:<input type=text size=5 name=oa
 <?MISQL SQL="select ortho_name, ortho_abbrev, organism, zdb_id, b.DB_name,conc(c.DB_query,b.acc_num),acc_num,a.zdb_id from orthologue a,db_link b, foreign_DB c where a.zdb_id=b.linked_recid and b.DB_name=c.DB_name and c_gene_id='$OID' order by organism;">
 $(IF,$(AND,$(NC,$lastitem,$3),$(>,$MI_CURRENTROW,1)),</TD></TR><TR>)
 $(IF,$(AND,$(NC,$lastitem,$3),$(XST,$UPDATE)),"<TD align=center><font size=1><input type=button value=EDIT onClick=edit_ortho('"$8"')></font></TD>")
-$(IF,$(NC,$3,$lastitem),"<TD><b>"$3"</b>: <font size=2>"$1"("$2") --> ")
+$(IF,$(NC,$3,$lastitem),"<TD><b>"$3"</b>: <font size=2>"$1" ("$2") --> ")
 [
 $(IF,$(NC,$7,DUMMY),"<A HREF="$6">"$5":"$7"</a>")
 ] 
