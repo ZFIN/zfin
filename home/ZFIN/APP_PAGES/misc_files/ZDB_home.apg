@@ -455,9 +455,9 @@
 
 			<input type=hidden
 			       name="run"
-			       value="regen_genomics">
+			       value="regen_names">
 
-			<input type=submit value="Regen Genomics data">
+			<input type=submit value="Regen Marker Name data">
 		      </form>
 		      
 		      <form action='/<!--|CGI_BIN_DIR_NAME|-->/runSPL.cgi' method="GET" >
