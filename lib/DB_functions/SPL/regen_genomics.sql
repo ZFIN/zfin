@@ -1,9 +1,51 @@
 create dba function "informix".regen_genomics() returning integer
 
-  -- regen_genomics creates the bulk of the fast search tables in ZFIN.
-  -- Fast search tables are used to speed query access from web pages.
-
+  -- ---------------------------------------------------------------------
+  -- regen_genomics creates fast search tables related to the quick search
+  -- of name fields.  (In a former life, it generated most of the fast search
+  -- tables at ZFIN.)
+  --
+  -- This routine runs for a long time.  It plows over a lot of data.
+  --
+  -- It uses the general ZFIN approach for SPL routines that generate 
+  -- fast search tables:
+  --
+  -- o Very good exception handling and debugging support.  SPL can be a 
+  --   bear to debug unless you have the infrastructure in place.  See below.
+  --
+  -- o It does as much work as possible before doing anything that is
+  --   visible outside of the script.  This means:
+  --   - Script creates the output tables with names used only in this script.
+  --   - At end of script, it enters a transaction, drops the existing tables,
+  --     renames everything to their real names, and commits.
+  --
+  -- INPUT VARS:
+  --   none.
+  --
+  -- OUTPUT VARS:
+  --   none
+  --
+  -- RETURNS:
+  --   0 - Success
+  --   1 - Failed because another copy of the routine is already running.
+  --  -1 - Failed for some other reason.  See 
+  --       /tmp/regen_genomics_exception_<!--|DB_NAME|--> for details.
+  --
+  -- EFFECTS:
+  --   Success:
+  --     all_map_names and all_name_parts tables have been replaced with new
+  --       versions of the tables.  
+  --     If any staging tables existed from a previous run of this routine, 
+  --       then they will have been dropped.
+  --   Error:
+  --     If -1 is returned then /tmp/regen_genomics_exception_<!--|DB_NAME|--> 
+  --       will have been written and any staging tables used by this routine 
+  --       will exist in whatever state they were in whenthe error occurred.
+  --     Any changes made to permanent tables will have been rolled back.  That
+  --       is, an error returns means thatthe permanent tables were not changed.
+  --
   -- DEBUGGING:
+  --
   -- There are several ways to debug this function.
   --
   -- 1. If this function encounters  an exception it writes the exception
@@ -27,22 +69,30 @@ create dba function "informix".regen_genomics() returning integer
   --    tends to run mind-numbingly slow.
   --
   --    To turn tracing on uncomment the next statement
-
+  --
   -- set debug file to 'debug-regen';
-
+  --
   --    This enables tracing, but doesn't turn it on.  To turn on tracing,
   --    add a "trace on;" before the first piece of code that you suspect
   --    is causing problems.  Add a "trace off;" after the last piece of
   --    code you suspect.
-  --
+
   --    At this point it becomes a narrowing process to figure out exactly
   --    where the problem is.  Let the function run for a while, kill it,
   --    and then look at the trace file.  If things appear OK in the 
   --    trace, move the "trace on;" to be later in the file and then rerun.
+  -- ---------------------------------------------------------------------
 
-  -- Create all the new tables and views.
 
-  begin	-- master exception handler
+  -- crank up the parallelism.
+
+  set pdqpriority high;
+
+
+  -- -------------------------------------------------------------------
+  --   MASTER EXCEPTION HANDLER
+  -- -------------------------------------------------------------------
+  begin
 
     define exceptionMessage lvarchar;
     define sqlError integer;
@@ -55,7 +105,6 @@ create dba function "informix".regen_genomics() returning integer
     -- for the purpose of time testing	
     define timeMsg varchar(50);
 
-	
     on exception
       set sqlError, isamError, errorText
       begin
@@ -63,9 +112,7 @@ create dba function "informix".regen_genomics() returning integer
 	-- Something terrible happened while creating the new tables
 	-- Get rid of them, and leave the original tables around
 
-	on exception in (-206, -255, -668)
-	  --  206: OK to get "Table not found" here, since we might
-	  --       not have created all tables at the time of the exception
+	on exception in (-255, -668)
 	  --  255: OK to get a "Not in transaction" here, since
 	  --       we might not be in a transaction when the rollback work 
 	  --       below is performed.
@@ -78,7 +125,7 @@ create dba function "informix".regen_genomics() returning integer
 			       ' SQL Error: '  || sqlError::varchar(200) || 
 			       ' ISAM Error: ' || isamError::varchar(200) ||
 			       ' ErrorText: '  || errorText || 
-                   ' ErrorHint: '  || errorHint ||
+		               ' ErrorHint: '  || errorHint ||
 			       '" >> /tmp/regen_genomics_exception_<!--|DB_NAME|-->';
 	system exceptionMessage;
 
@@ -104,7 +151,10 @@ create dba function "informix".regen_genomics() returning integer
     end exception;
 
 
-    -- zdb_flag
+    -- -------------------------------------------------------------------
+    --   GRAB ZDB_FLAG
+    -- -------------------------------------------------------------------
+
     let errorHint = "zdb_flag";
 	
     update zdb_flag set zflag_is_on = 't'
@@ -120,17 +170,21 @@ create dba function "informix".regen_genomics() returning integer
     update zdb_flag set zflag_last_modified = CURRENT
 	where zflag_name = "regen_genomics";
 
-    -- crank up the parallelism.
 
-    set pdqpriority high;
+    -- -------------------------------------------------------------------
+    --   CREATE ALL_M_NAMES_NEW (ALL_MAP_NAME) TABLE
+    -- -------------------------------------------------------------------
 
-    ----------------  all_map_names;
-
-    let errorHint = "all_map_names";
-   
-
-    -- Contains all the possible names and abbreviations of markers and fish,
-    -- which coincidentally are all the names that can occur in maps.
+    -- Contains all the possible names and abbreviations of markers, fish, and
+    -- locii, which coincidentally are all the names that can occur in maps.
+    --
+    -- We should perhaps split names for markers, fish, and locii into 3 
+    -- separate tables for perfromance reasons, but not today.
+    --
+    -- Most of the time, we recklessly insert duplicate records into 
+    -- all_m_names_new as we populate it.  We remove them at the very end.
+    -- The code is much easier and faster this way.
+    --
     -- Marker names come from marker and locus (and from 
     -- accession numbers in db_link and orthlogue names/abbrevs in orthologue).
     -- Force the names to lower case.  We don't display out of this table,
@@ -156,6 +210,8 @@ create dba function "informix".regen_genomics() returning integer
     --  12 accession numbers from other databases
     --  13 sequence similarity
 
+    let errorHint = "all_map_names";
+
     if (exists (select * from systables where tabname = "all_m_names_new")) then
       drop table all_m_names_new;
     end if
@@ -165,198 +221,252 @@ create dba function "informix".regen_genomics() returning integer
 	-- ortho_name and mrkr_name are 255 characters long
 	-- locus_name, db_link.acc_num, and all the abbrev 
 	-- columns are all 80 characters or less
-	allmapnm_name		varchar (255),
-	allmapnm_zdb_id		varchar(50),
+	allmapnm_name		varchar (255) not null,
+	allmapnm_zdb_id		varchar(50) not null,
 	allmapnm_significance	integer not null,
-	allmapnm_precedence	varchar(80),
-	allmapnm_name_lower	varchar(255) 
+	allmapnm_precedence	varchar(80) not null,
+	allmapnm_name_lower	varchar(255) not null
 		check (allmapnm_name_lower = lower(allmapnm_name))
       )
       fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3  
       extent size 8192 next size 8192 lock mode page;
     revoke all on all_m_names_new from "public";
 
-    
-    -- Get name, abbrev, and aliases from marker, fish, and locus
-    -- Finally get accession numbers from db_link
 
- 
-    select abbrev allmapnm_name, zdb_id allmapnm_zdb_id, 3 allmapnm_significance,
-	   "Locus abbreviation"::varchar(80) allmapnm_precedence, 
-	   lower(abbrev) allmapnm_name_lower
-    from locus
-    where length(abbrev) > 0  -- eliminates nulls and blanks
-    union  
-    select locus_name allmapnm_name, zdb_id allmapnm_zdb_id, 4 allmapnm_significance,
-	   "Locus name"::varchar(80) allmanpnm_precedence, 
-	   lower(locus_name) allmapnm_name_lower
-    from locus
-    union  
-    select dalias_alias allmapnm_name,  dalias_data_zdb_id allmapnm_zdb_id,
-	    6 allmapnm_significance, 
-	    "Locus Previous name"::varchar(80) allmanpnm_precedence, 
-	    lower(dalias_alias) allmapnm_name_lower
-    from data_alias, locus
-    where dalias_data_zdb_id = zdb_id
-    into temp all_locus_names_new with no log;	
-    
-    -- Get all fish names.  Start with allele name
-    select allele allmapnm_name, zdb_id allmapnm_zdb_id, 7 allmapnm_significance, 
-	   "Fish name/allele"::varchar(80) allmanpnm_precedence, 
-	   lower(allele) allmapnm_name_lower
-    from fish
-    where allele is not NULL
-    union  -- get locus name or wildtype name
-    select name allmapnm_name, zdb_id allmapnm_zdb_id, 7 allmapnm_significance,
-	   case
-	     when line_type = "mutant" then
-	       "Locus name"::varchar(80)
-	     else
-	       "Wildtype name"::varchar(80)
-	   end allmanpnm_precedence, 
-	   lower(name) allmapnm_name_lower	
-    from fish
-    union  -- get locus abbrev
-    select l.abbrev allmapnm_name, f.zdb_id allmapnm_zdb_id, 
-	   7 allmapnm_significance,
-	   "Locus abbreviation"::varchar(80) allmapnm_precedence,
-   	   lower(l.abbrev) allmapnm_name_lower
-      from fish f, locus l
-      where f.zdb_id = l.zdb_id
-	and f.name <> l.abbrev
-    union  -- get wildtype abbrev
-    select abbrev allmapnm_name, zdb_id allmapnm_zdb_id, 
-	   7 allmapnm_significance,
-	   "Wildtype abbreviation"::varchar(80) allmapnm_precedence,
-   	   lower(abbrev) allmapnm_name_lower
+
+    -- -------------------------------------------------------------------
+    -- -------------------------------------------------------------------
+    --   Get LOCUS Names into all_m_names_new
+    -- -------------------------------------------------------------------
+    -- -------------------------------------------------------------------
+
+    -- all of these locus queries are more or less repeated in the fish
+    -- names section.
+
+    let errorHint = "Locus Abbrev";
+    insert into all_m_names_new 
+        ( allmapnm_name, allmapnm_zdb_id, allmapnm_significance,
+	  allmapnm_precedence, allmapnm_name_lower )
+      select abbrev, zdb_id, 3, "Locus abbreviation", lower(abbrev)
+        from locus
+        where length(abbrev) > 0;  -- eliminates nulls and blanks
+
+    let errorHint = "Locus Name";
+    insert into all_m_names_new 
+        ( allmapnm_name, allmapnm_zdb_id, allmapnm_significance,
+	  allmapnm_precedence, allmapnm_name_lower )
+      select locus_name, zdb_id, 4, "Locus name", lower(locus_name)
+        from locus;
+
+    let errorHint = "Locus Aliases";
+    insert into all_m_names_new 
+        ( allmapnm_name, allmapnm_zdb_id, allmapnm_significance,
+	  allmapnm_precedence, allmapnm_name_lower )
+      select dalias_alias,  dalias_data_zdb_id, 6, "Locus Previous name",
+	     lower(dalias_alias)
+        from data_alias, locus
+        where dalias_data_zdb_id = zdb_id;
+
+
+
+    -- -------------------------------------------------------------------
+    -- -------------------------------------------------------------------
+    --   Get FISH Names into all_m_names_new
+    -- -------------------------------------------------------------------
+    -- -------------------------------------------------------------------
+
+    -- Get LOCUS names for fish.  Would like to just use the locus names
+    -- already gathered into all_m_names_new (which is what we do for genes
+    -- below), but we have problems with significance numbers.
+    --
+    -- These locus queries are more or less repeated above in the locus section.
+
+    let errorHint = "Fish locus abbrev";
+    insert into all_m_names_new 
+        ( allmapnm_name, allmapnm_zdb_id, allmapnm_significance,
+	  allmapnm_precedence, allmapnm_name_lower )
+      select l.abbrev, f.zdb_id, 7, "Locus abbreviation", lower(l.abbrev)
+        from fish f, locus l
+        where f.zdb_id = l.zdb_id
+	  and f.name <> l.abbrev;
+
+    let errorHint = "Fish locus aliases";
+    insert into all_m_names_new 
+        ( allmapnm_name, allmapnm_zdb_id, allmapnm_significance,
+	  allmapnm_precedence, allmapnm_name_lower )
+      select dalias_alias, zdb_id, 8, "Locus Previous name", dalias_alias_lower
+        from data_alias, fish
+        where dalias_data_zdb_id = locus;
+
+    let errorHint = "Fish Locus/wildtype name";
+    -- cast below is needed, otherwise get blanks on end of "Locus name   "
+    insert into all_m_names_new 
+        ( allmapnm_name, allmapnm_zdb_id, allmapnm_significance,
+	  allmapnm_precedence, allmapnm_name_lower )
+      select name, zdb_id, 7,
+             case
+	       when line_type = "mutant" then
+	         "Locus name"::varchar(80)
+	       else
+                 "Wildtype name"::varchar(80)
+	     end,
+	     lower(name)
+      from fish;
+
+    let errorHint = "Fish allele";
+    insert into all_m_names_new 
+        ( allmapnm_name, allmapnm_zdb_id, allmapnm_significance,
+	  allmapnm_precedence, allmapnm_name_lower )
+      select allele, zdb_id, 7, "Fish name/allele", lower(allele)
       from fish
-      where line_type = "wild type"
-	and abbrev <> name
-    union  -- get fish aliases
-    select dalias_alias allmapnm_name, zdb_id allmapnm_zdb_id, 8 allmapnm_significance,
-	   "Fish Previous name"::varchar(80) allmanpnm_precedence, 
-	   dalias_alias_lower allmapnm_name_lower
-    from data_alias, fish
-    where dalias_data_zdb_id = zdb_id
-    union  -- get locus aliases
-    select dalias_alias allmapnm_name, zdb_id allmapnm_zdb_id, 
-	   8 allmapnm_significance,
-	   "Locus Previous name"::varchar(80) allmanpnm_precedence, 
-	   dalias_alias_lower allmapnm_name_lower
-      from data_alias, fish
-      where dalias_data_zdb_id = locus
-    union  -- get allele aliases
-    select dalias_alias allmapnm_name, f.zdb_id allmapnm_zdb_id, 
-	   8 allmapnm_significance,
-	   "Allele Previous name"::varchar(80) allmanpnm_precedence, 
-	   dalias_alias_lower allmapnm_name_lower
-      from data_alias aalias, fish f, alteration a
-      where aalias.dalias_data_zdb_id = a.zdb_id
-	and a.allele = f.allele
-	and not exists
-	    ( select 1 
-		from data_alias falias
-		where falias.dalias_data_zdb_id = f.zdb_id
-		  and falias.dalias_alias = aalias.dalias_alias )
-    into temp all_fish_names_new with no log;
+      where allele is not NULL;
 
-    -- a smaller set of all_marker_names_new which is used for getting
-    -- accession numbers and 	
-    select mrkr_abbrev allmapnm_name, mrkr_zdb_id allmapnm_zdb_id, 1 allmapnm_significance,
-	   "Current symbol"::varchar(80) allmanpnm_precedence, 
-	   lower(mrkr_abbrev) allmapnm_name_lower 
-    from marker
-    union
-    select mrkr_name allmapnm_name, mrkr_zdb_id allmapnm_zdb_id, 2 allmapnm_significance,
-	   case 
-	   when mrkr_type in (select mtgrpmem_mrkr_type from marker_type_group_member
-				where mtgrpmem_mrkr_type_group = "SEARCH_SEG")
-	        then "Clone name"::varchar(80) 
-	   else
-		"Current name"::varchar(80) 
-	   end allmanpnm_precedence,  lower(mrkr_name) allmapnm_name_lower
-    from marker
-    where lower(mrkr_abbrev) <> lower(mrkr_name)	
-    into temp all_marker_names_new with no log;
+    let errorHint = "Fish wildtype abbrev";
+    insert into all_m_names_new 
+        ( allmapnm_name, allmapnm_zdb_id, allmapnm_significance,
+	  allmapnm_precedence, allmapnm_name_lower )
+      select abbrev, zdb_id, 7, "Wildtype abbreviation", lower(abbrev)
+        from fish
+        where line_type = "wild type"
+	  and abbrev <> name;
 
- 
+    let errorHint = "Fish aliases";
+    insert into all_m_names_new 
+        ( allmapnm_name, allmapnm_zdb_id, allmapnm_significance,
+	  allmapnm_precedence, allmapnm_name_lower )
+      select dalias_alias, zdb_id, 8, "Fish Previous name", dalias_alias_lower
+        from data_alias, fish
+        where dalias_data_zdb_id = zdb_id;
+
+    let errorHint = "Fish allele aliases";
+    insert into all_m_names_new 
+        ( allmapnm_name, allmapnm_zdb_id, allmapnm_significance,
+	  allmapnm_precedence, allmapnm_name_lower )
+      select dalias_alias, f.zdb_id, 8, "Allele Previous name", 
+	     dalias_alias_lower
+        from data_alias aalias, fish f, alteration a
+        where aalias.dalias_data_zdb_id = a.zdb_id
+	  and a.allele = f.allele
+	  and not exists
+	      ( select 'x' 
+		  from data_alias falias
+		  where falias.dalias_data_zdb_id = f.zdb_id
+		    and falias.dalias_alias = aalias.dalias_alias );
+
+
+
+    -- -------------------------------------------------------------------
+    -- -------------------------------------------------------------------
+    --   Get Marker ACCESSION NUMBERS into all_m_names_new.
+    -- -------------------------------------------------------------------
+    -- -------------------------------------------------------------------
 
     -- Extract out accession numbers for other databases from db_links
-    -- for any ZDB object that has at least one record in the all_map_names 
-    -- table. Assume none of the accession numbers are already in
+    -- for markers.  
 
     -- The "distinct" below is needed because many acc_num/linked_recid
     --   combinations have an entry for GenBank and an entry for BLAST.
-    -- The last <> condition is needed because somewhere in the database an
-    --   accession number is already being defined as an alias.
 
+    let errorHint = "marker accession numbers";
+    insert into all_m_names_new 
+        ( allmapnm_name, allmapnm_zdb_id, allmapnm_significance,
+	  allmapnm_precedence, allmapnm_name_lower )
+      select distinct dblink_acc_num, dblink_linked_recid, 
+                      12, "Accession number", lower(dblink_acc_num)
+        from db_link, marker
+        where dblink_linked_recid = mrkr_zdb_id;
 
-    let errorHint = "all_map_names-accession_numbers";
-   
-
-    select dblink_acc_num as allmapnm_name, dblink_linked_recid as allmapnm_zdb_id, 12 as allmapnm_significance,
-	   "Accession number"::varchar(80) as allmapnm_precedence, 
-	   lower(dblink_acc_num) as allmapnm_name_lower
-    from db_link, all_marker_names_new
-    where dblink_linked_recid = allmapnm_zdb_id
-    and lower(dblink_acc_num) <> allmapnm_name_lower
-    union
-    select dalias_alias as allmapnm_name, dblink_linked_recid as allmapnm_zdb_id, 12 as allmapnm_significance,
-	   "Accession number"::varchar(80) as allmapnm_precedence, 
-	   dalias_alias_lower as allmapnm_name_lower
-     from db_link, data_alias, all_marker_names_new
+    let errorHint = "marker accession number aliases";
+    insert into all_m_names_new 
+        ( allmapnm_name, allmapnm_zdb_id, allmapnm_significance,
+	  allmapnm_precedence, allmapnm_name_lower )
+      select dalias_alias, dblink_linked_recid, 12, "Accession number",
+	     dalias_alias_lower
+     from db_link, data_alias, marker
     where dalias_data_zdb_id = dblink_zdb_id 
-      and dblink_linked_recid = allmapnm_zdb_id
-      and dalias_alias_lower <> allmapnm_name_lower
-    union
-    select dblink_acc_num as allmapnm_name, c_gene_id as allmapnm_zdb_id, 12 as allmapnm_significance,
-	   "Accession number"::varchar(80) as allmapnm_precedence, 
-	   lower(dblink_acc_num) as allmapnm_name_lower
-    from db_link,  orthologue
-    where dblink_linked_recid = orthologue.zdb_id		
-    into temp all_acc_names_new with no log;
+      and dblink_linked_recid = mrkr_zdb_id;
+
+    let errorHint = "marker orthologue accession numbers";
+    insert into all_m_names_new 
+        ( allmapnm_name, allmapnm_zdb_id, allmapnm_significance,
+	  allmapnm_precedence, allmapnm_name_lower )
+      select distinct dblink_acc_num, c_gene_id, 12, "Accession number",
+                      lower(dblink_acc_num)
+        from db_link,  orthologue
+        where dblink_linked_recid = orthologue.zdb_id;
 
 
-    let errorHint = "all_map_names-orthologue-names";
 
- 
-    select ortho_abbrev allmapnm_name, c_gene_id allmapnm_zdb_id, 
-	   11 allmapnm_significance, 
-	   "Orthologue"::varchar(80) allmapnm_precedence, 
-	   lower(ortho_abbrev) allmapnm_name_lower
-      from orthologue	
-      where ortho_abbrev is not null
-    UNION
-    select ortho_name allmapnm_name, c_gene_id allmapnm_zdb_id, 
-	   11 allmapnm_significance, 
-	   "Orthologue"::varchar(80) allmapnm_precedence, 
-	   lower(ortho_name) allmapnm_name_lower
-      from orthologue
-      where ortho_name is not null
-    into temp all_ortho_names_new with no log;
-    
+    -- -------------------------------------------------------------------
+    -- -------------------------------------------------------------------
+    --   Get MARKER NAMES into all_m_names_new.
+    -- -------------------------------------------------------------------
+    -- -------------------------------------------------------------------
 
-    let errorHint = "all_map_names-insert-to-table";
 
+    -- -------------------------------------------------------------------
+    --   Get Marker locus names into all_m_names_new.
+    -- -------------------------------------------------------------------
+
+    -- For markers that have known loci, associate all locus names with 
+    -- the markers.  This query takes advantage of the fact that all
+    -- locus names have already been gathered in the table.
+
+    let errorHint = "Locus names for markers";
+    insert into all_m_names_new 
+        ( allmapnm_name, allmapnm_zdb_id, allmapnm_significance,
+	  allmapnm_precedence, allmapnm_name_lower )
+      select distinct allmapnm_name, cloned_gene , 9, "Locus", 
+	              allmapnm_name_lower
+    	from all_m_names_new, locus
+    	where allmapnm_zdb_id = locus.zdb_id
+    	  and cloned_gene is not null;
+
+
+
+    -- -------------------------------------------------------------------
+    --   Get orthologue names for markers into all_m_names_new.
+    -- -------------------------------------------------------------------
+
+    let errorHint = "marker orthologue abbrevs";
+    insert into all_m_names_new 
+        ( allmapnm_name, allmapnm_zdb_id, allmapnm_significance,
+	  allmapnm_precedence, allmapnm_name_lower )
+      select distinct ortho_abbrev, c_gene_id, 11, "Orthologue", 
+	     lower(ortho_abbrev)
+        from orthologue	
+        where ortho_abbrev is not null;
+
+    let errorHint = "marker orthologue names";
+    insert into all_m_names_new 
+        ( allmapnm_name, allmapnm_zdb_id, allmapnm_significance,
+	  allmapnm_precedence, allmapnm_name_lower )
+      select distinct ortho_name, c_gene_id allmapnm_zdb_id, 11, "Orthologue",
+	              lower(ortho_name)
+        from orthologue
+        where ortho_name is not null
+	  and ortho_abbrev <> ortho_name;
+
+
+    -- -------------------------------------------------------------------
+    --   Get aliases for markers into all_m_names_new.
+    -- -------------------------------------------------------------------
+
+    let errorHint = "marker aliases" ;
     insert into all_m_names_new
-    	select * from all_acc_names_new;
-	
-    let errorHint = "first" ;
-
-    insert into all_m_names_new
-    	select * from all_ortho_names_new;	
-
-
-    insert into all_m_names_new
+        ( allmapnm_name, allmapnm_zdb_id, allmapnm_significance,
+	  allmapnm_precedence, allmapnm_name_lower )
    	 select distinct dalias_alias, dalias_data_zdb_id , 
 	    5 , "Previous name", dalias_alias_lower
     	from data_alias, alias_group, marker
     	where mrkr_zdb_id = dalias_data_zdb_id
     	and dalias_group = aliasgrp_name
     	and aliasgrp_significance = 1;
-    
-    -- sequence simalarities
+
+    let errorHint = "marker aliases, sequence similarities" ;
     insert into all_m_names_new
+        ( allmapnm_name, allmapnm_zdb_id, allmapnm_significance,
+	  allmapnm_precedence, allmapnm_name_lower )
     	select distinct dalias_alias, dalias_data_zdb_id, 
 		13 allmapnm_significance, "Sequence similarity", 
 		dalias_alias_lower
@@ -365,116 +475,113 @@ create dba function "informix".regen_genomics() returning integer
    	 and dalias_group = aliasgrp_name
     	and aliasgrp_significance = 2;
 
+
+    -- -------------------------------------------------------------------
+    --   Get putative names for markers into all_m_names_new.
+    -- -------------------------------------------------------------------
+
+    let errorHint = "marker putative names" ;
     insert into all_m_names_new
-    	select distinct putgene_putative_gene_name, putgene_mrkr_zdb_id, 
-	       10, "Putative name assignment",  lower(putgene_putative_gene_name)
+        ( allmapnm_name, allmapnm_zdb_id, allmapnm_significance,
+	  allmapnm_precedence, allmapnm_name_lower )
+      select putgene_putative_gene_name, putgene_mrkr_zdb_id, 
+	     10, "Putative name assignment",  lower(putgene_putative_gene_name)
     	from putative_non_zfin_gene; 
 
-    insert into all_m_names_new 
-    	select distinct allmapnm_name, cloned_gene , 9 ,
-	    "Locus", allmapnm_name_lower
-    	from all_locus_names_new, locus
-    	where allmapnm_zdb_id = locus.zdb_id
-    	and cloned_gene is not null;
-
  	
-     insert into all_m_names_new 
-		select distinct *  
-        	from all_fish_names_new
-        	where allmapnm_name <> ''
-        	and  allmapnm_name is not NULL;
-		
-      insert into all_m_names_new
-		select distinct *
-        	from all_marker_names_new
-        	where allmapnm_name <> ''
-        	and  allmapnm_name is not NULL;
+    -- -------------------------------------------------------------------
+    --   Get MARKER NAMES and SYMBOLS into all_m_names_new.
+    -- -------------------------------------------------------------------
 
-      insert into all_m_names_new
-		select distinct *
-		from all_locus_names_new
-        	where allmapnm_name <> ''
-        	and  allmapnm_name is not NULL;
+    let errorHint = "marker symbols" ;
+    insert into all_m_names_new
+        ( allmapnm_name, allmapnm_zdb_id, allmapnm_significance,
+	  allmapnm_precedence, allmapnm_name_lower )
+      select mrkr_abbrev, mrkr_zdb_id, 1, "Current symbol", lower(mrkr_abbrev)
+        from marker;
+
+    let errorHint = "marker names" ;
+    insert into all_m_names_new
+        ( allmapnm_name, allmapnm_zdb_id, allmapnm_significance,
+	  allmapnm_precedence, allmapnm_name_lower )
+      select mrkr_name, mrkr_zdb_id, 2, 
+             case 
+	       when mrkr_type in 
+		 ( select mtgrpmem_mrkr_type 
+		     from marker_type_group_member
+		     where mtgrpmem_mrkr_type_group = "SEARCH_SEG" )
+	       then "Clone name"::varchar(80) 
+	       else "Current name"::varchar(80) 
+	     end,
+	     lower(mrkr_name)
+        from marker
+        where lower(mrkr_abbrev) <> lower(mrkr_name);
 
 
-   -- I do not think there is any gaurentee we havent duplicated a name-zdbid with same or different signigicance ...
-   -- if there are dupes with different signigicances, delete all but the one(s) with the lowest.
 
-        let errorHint = "all_map_names-delete_dupes";
+    -- -------------------------------------------------------------------
+    -- -------------------------------------------------------------------
+    --   Remove less significant duplicates from  all_m_names_new.
+    -- -------------------------------------------------------------------
+    -- -------------------------------------------------------------------
 
-	select  allmapnm_name_lower, allmapnm_zdb_id, min(allmapnm_significance) allmapnm_significance 
-	from all_m_names_new group by 2,1 having count(*) > 1
-	into temp tmp_amn_dup with no log;
-        
-	create index t_tmp_amn_dup on tmp_amn_dup (allmapnm_zdb_id);	
+    -- if there are dupes with different significances, delete all but 
+    -- the one(s) with the lowest.
 
-   -- staylor created an index on the temp table above 071703.  
-   -- It seems that there is a difference in the optimizer in 9.3 that makes this index necessary.  
-   -- Run-time before for regen_genomics.sql = >> 15 minutes. 
-   -- Run-time after for regen_genomics.sql = < 4 minutes.
-   -- However, this time difference does not happen for all users.  
-   -- TomC and staylor experience the time delay, DaveC does not.  
-   -- We have no idea why this happens, but the creation of this index seems to help for users experiencing
-   -- the delay.
+    let errorHint = "all_map_names-delete_dupes";
 
-	delete from all_m_names_new where exists (
-		select 1 from  tmp_amn_dup  tad 
+    select allmapnm_name_lower, allmapnm_zdb_id, 
+	   min(allmapnm_significance) allmapnm_significance 
+      from all_m_names_new
+      group by allmapnm_zdb_id, allmapnm_name_lower
+      having count(*) > 1
+      into temp tmp_amn_dup with no log;
+
+    -- Index was added to tmp_amn_dup by Sierra on 2003/07/17.
+    -- The optimizer in 9.3 made this necessary.  The index cut run time by 75%.
+    -- Index is still needed in 9.4.
+    create index t_tmp_amn_dup on tmp_amn_dup (allmapnm_zdb_id);	
+
+    delete from all_m_names_new 
+      where exists (
+              select 'x'
+                from tmp_amn_dup tad 
 		where tad.allmapnm_name_lower   =  all_m_names_new.allmapnm_name_lower
 		and   tad.allmapnm_zdb_id       =  all_m_names_new.allmapnm_zdb_id
-		and   tad.allmapnm_significance <  all_m_names_new.allmapnm_significance
-	);  
-	drop table tmp_amn_dup;
+		and   tad.allmapnm_significance <  all_m_names_new.allmapnm_significance);  
+    drop table tmp_amn_dup;
 	
 
+
+    -- -------------------------------------------------------------------
+    --   create indexes; constraints that use them are added at the end.
+    -- -------------------------------------------------------------------
+
     let errorHint = "all_map_names-create_indexes";
-
-    -- create indexes; constraints that use them are added at the end.
-
-    if (exists (select *
-	          from sysindexes
-		  where idxname = "all_map_names_primary_key_index_b")) then
-      -- use the "a" set of names
-      -- primary key
-      create unique index all_map_names_primary_key_index_a
-	on all_m_names_new (allmapnm_name, allmapnm_zdb_id)
-	fillfactor 100
-	in idxdbs1;
-      -- other indexes
-      create index allmapnm_zdb_id_index_a
-        on all_m_names_new (allmapnm_zdb_id)
-	fillfactor 100
-	in idxdbs3;
-      create index allmapnm_name_lower_index_a
-        on all_m_names_new (allmapnm_name_lower)
-        fillfactor 100
-        in idxdbs3;
-
-    else
-      -- primary key
-      create unique index all_map_names_primary_key_index_b
-	on all_m_names_new (allmapnm_name, allmapnm_zdb_id)
-	fillfactor 100
-	in idxdbs1;
-      -- other indexes
-      create index allmapnm_zdb_id_index_b
-        on all_m_names_new (allmapnm_zdb_id)
-	fillfactor 100
-	in idxdbs3;
-      create index allmapnm_name_lower_index_b
-        on all_m_names_new (allmapnm_name_lower)
-        fillfactor 100
-        in idxdbs3;
-
-    end if
+    -- alternate key
+    create unique index allmapnm_alternate_key_index_transient
+      on all_m_names_new (allmapnm_name, allmapnm_zdb_id)
+      fillfactor 100
+      in idxdbs1;
+    -- other indexes
+    create index allmapnm_zdb_id_index_transient
+      on all_m_names_new (allmapnm_zdb_id)
+      fillfactor 100
+      in idxdbs3;
+    create index allmapnm_name_lower_index_transient
+      on all_m_names_new (allmapnm_name_lower)
+      fillfactor 100
+      in idxdbs3;
 
     update statistics high for table all_m_names_new;
 
 
 
     -- --------------------------------------------------------------------
-
-
-
+    -- -------------------------------------------------------------------
+    --   Make changes visible to the world
+    -- -------------------------------------------------------------------
+    -- --------------------------------------------------------------------
 
     -- To this point, we haven't done anything visible to actual users.
     -- Now we start to make visible changes, so we enclose it all in a
@@ -502,20 +609,26 @@ create dba function "informix".regen_genomics() returning integer
       end exception with resume;
 
 
-      -- Now rename our new tables to have the permanent names.
-      -- Also define primary keys and alternate keys.  The indexes to support 
-      -- these constraints are defined at the end of the sections that populate 
-      -- the tables.
+      -- Now rename our new tables and indexes to have the permanent names.
+      -- Also define primary keys and alternate keys.
 
       -- Note that the exception-handler at the top of this file is still active
 
 
-
-      -- ===== ALL_MAP_NAMES =====
       let errorHint = "rename ALL_MAP_NAMES ";
 
       drop table all_map_names;
       rename table all_m_names_new to all_map_names;
+{
+      rename index all_map_names_primary_key_index_transient
+        to all_map_names_primary_key_index;
+}
+      rename index allmapnm_alternate_key_index_transient
+        to allmapnm_alternate_key_index;
+      rename index allmapnm_zdb_id_index_transient 
+        to allmapnm_zdb_id_index;
+      rename index allmapnm_name_lower_index_transient
+        to allmapnm_name_lower_index;
 
       -- define constraints, indexes are defined earlier.
       -- primary key
