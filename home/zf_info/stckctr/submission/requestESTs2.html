@@ -19,9 +19,8 @@
                     document.forms[0].PIFax.value +
                     document.forms[0].PILab.value +
                     document.forms[0].PIAddr.value;
-      if ( document.forms[0].PIInfo.checked ||
-           ( allPIValues == '' &&
-             document.forms[0].reqPos.value == "PI / Director" ) ) {
+      if ( ( document.forms[0].PIInfo.checked ) ||
+           ( allPIValues == '' ) ) {
          fullName = document.forms[0].nameInd.value + " " + document.forms[0].nameFam.value;
          document.forms[0].PIName.value         = fullName;
          document.forms[0].PIEmail.value        = document.forms[0].eMailAddr.value;
