@@ -1700,7 +1700,11 @@ sub pubTitlesAreUnique($) {
       group by title 
       having count(*) > 1 
      into temp dup_titles with no log;';
-  execSql ($sql1);
+
+  # I tried running this through execSql, but if this query returned 0 rows
+  # then the 2nd query would get a DBI error.
+  my $sth = $dbh->prepare($sql1) or die "Prepare fails";
+  $sth -> execute();
 
   my $sql2 = '
       select p.title, p.accession_no, p.zdb_id, p.authors, p.pub_date, p.source 
@@ -1714,11 +1718,11 @@ sub pubTitlesAreUnique($) {
 		  "Authors          ",
 		  "Pub Date         ",
 		  "Source           " );
- 
+
   my $nRecords = execSql ($sql2, undef, @colDesc);
-  
+
   if ( $nRecords > 0 ) {
-      
+
     my $sendToAddress = $_[0];
     my $subject = "duplicate pub titles detected";
     my $errMsg = "$nRecords publications have duplicate titles\n";
