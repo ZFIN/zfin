@@ -2895,9 +2895,17 @@ sub zdbReplacedDataIsReplaced ($) {
 sub subZdbActiveDataSourceStillInUse {
  
   my @row = @_;
-  my $sql = "select *
+  my $sql = "select $row[2]
                from $row[1]                
-              where $row[2] = '$row[0]'";
+              where $row[2] = '$row[0]'
+              union 
+                select xpatex_zdb_id
+                  from fx_expression_experiment
+                  where xpatex_zdb_id = '$row[0]'
+              union
+                select fimgp_zdb_id
+                  from fx_fish_image_private
+                  where fimgp_zdb_id = '$row[0]'";
   
   my @result = $dbh->selectrow_array($sql);
   return @result? 0:1 ;
