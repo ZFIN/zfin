@@ -412,7 +412,7 @@ where dblink_fdbcont_zdb_id = fdbcont_zdb_id
 --and   fdbcont_fdb_db_name in ('Genbank','SwissProt', 'RefSeq', 'LocusLink')
 and   fdbcont_fdbdt_data_type in  ('cDNA','Genomic') -- Polypeptide'
 and   dblink_acc_num = pla_acc
-and   pla_gene = lower(dalias_alias) --- the ones with an exact previous name match 
+and   pla_gene = dalias_alias_lower --- the ones with an exact previous name match 
 and   dalias_data_zdb_id = mrkr_zdb_id
 and   mrkr_type in ('GENE','EST','CDNA')
 and   mrkr_zdb_id = dblink_linked_recid
@@ -430,7 +430,7 @@ where dblink_fdbcont_zdb_id = fdbcont_zdb_id
 and   fdbcont_fdb_db_name in ('Genbank','SwissProt', 'RefSeq', 'LocusLink')
 and   fdbcont_fdbdt_data_type = 'Polypeptide'
 and   dblink_acc_num = pla_acc
-and   pla_gene = lower(dalias_alias) --- the ones with an exact name match 
+and   pla_gene = dalias_alias_lower --- the ones with an exact name match 
 and   dalias_data_zdb_id = mrkr_zdb_id
 and   mrkr_type in ('GENE','EST','CDNA')
 and   mrkr_zdb_id = dblink_linked_recid
