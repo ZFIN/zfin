@@ -155,6 +155,12 @@ function call_reset() {
   <?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>phenotype<?/MIVAR>
   <?MIVAR COND="$(NXST,$selected_separator)" NAME=$selected_separator>and<?/MIVAR>
   <?MIVAR COND="$(NXST,$num_recs)" NAME=$num_recs>0<?/MIVAR>
+	
+  <?MIVAR COND="$(XST,$fname)" NAME=$fname>$(TRIM,$fname)<?/MIVAR>
+  <?MIVAR COND="$(XST,$allele)" NAME=$allele>$(TRIM,$allele)<?/MIVAR>
+  <?MIVAR COND="$(XST,$abbrev)" NAME=$abbrev>$(TRIM,$abbrev)<?/MIVAR>
+  <?MIVAR COND="$(XST,$anon1text)" NAME=$anon1text>$(TRIM,$anon1text)<?/MIVAR>
+
 
   <?MIVAR NAME=$target_table>fish_search a <?/MIVAR>
 
@@ -397,7 +403,7 @@ function call_reset() {
 	    </TD>
 	    <TD valign=top> 
 	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$fish_id" >$q_allele</A>
-	      <?MIBLOCK COND="$(AND,$(NC,$q_abbrev,NULL),$(NC,$q_abbrev,xxx))">
+	      <?MIBLOCK COND="$(AND,$(NC,$q_abbrev,),$(NC,$q_abbrev,xxx),$(NC,$q_abbrev,NULL))">
 		<?MIVAR>
 		  <i>($q_abbrev)</i></b>
 		<?/MIVAR>
@@ -420,7 +426,7 @@ function call_reset() {
 
 	    <TD>
 	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$locus" >$name</A> 
-	      <?MIBLOCK COND="$(AND,$(NC,$q_abbrev,NULL),$(NC,$q_abbrev,xxx),$(NC,$q_abbrev,none))">
+	      <?MIBLOCK COND="$(AND,$(NC,$q_abbrev,),$(NC,$q_abbrev,xxx),$(NC,$q_abbrev,NULL))">
 		<?MIVAR>
 		  <i>($q_abbrev)</i></b>
 		<?/MIVAR>
