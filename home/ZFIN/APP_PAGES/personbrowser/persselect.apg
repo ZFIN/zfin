@@ -382,7 +382,9 @@ to the left of each item.
     </TD>
    </TR>
    <tr>
-      <TD>Help with <A HREF="javascript:start_help('name')"><b>non-English Characters</b> </A>
+      <TD>
+        <font size=-1>Help with <A HREF="javascript:start_help('name')"><b>non-English Characters</b> </A>
+        </font>
       </TD>
    </tr> 
    <TR>

@@ -63,7 +63,7 @@ document.captureEvents(Event.KEYDOWN|Event.KEYUP|Event.KEYPRESS);
      </font>
     </TD>
     <tr>
-      <TD>Help with <A HREF="javascript:start_help('name')"><b>non-English Characters</b> </A>
+      <TD><font size=-1>Help with <A HREF="javascript:start_help('name')"><b>non-English Characters</b> </A></font>
       </TD>
     </tr>  
 
