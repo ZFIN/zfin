@@ -78,7 +78,7 @@ Don't record this event as a 'login' in the login count!
     <?MIBLOCK COND="$(!=,$hits,1)">
         <SCRIPT>
             <?MIVAR>
-                window.alert("SORRY! Your login as USER=$login is not acceptable.\n Please click OK and try again.");
+                window.alert("SORRY! Your login as USER=$login is not acceptable.\n Please click OK and try again.\n\nOr contact zfinadmn@zfin.org for help");
             <?/MIVAR>
             window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg")
         </SCRIPT>
