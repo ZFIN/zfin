@@ -17,7 +17,7 @@ import java.util.*;
  */
 public class SQLQuery
 {
-    private int PORT = 7365;
+    private int PORT = -1;
 	private String host;
 	private static final String SEPARATOR = "|";	// The character which will separate fields in the result
 
