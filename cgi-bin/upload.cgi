@@ -480,7 +480,7 @@ sub makeFiles () {# uploads the files, builds a thumbnail, gets the height
 
         # give web users read/execute permission
 		
-        system("/bin/chmod 755 $upload_dir/$OID*") and die "can't chmod $upload_dir/$OID*" ;
+        system("/bin/chmod 644 $upload_dir/$OID*") and die "can't chmod $upload_dir/$OID*" ;
 		
         # redirect to the correct apg page based on the passed-in redirect_url.
 
