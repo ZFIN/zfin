@@ -39,8 +39,9 @@
 <?MIVAR NAME=$lg COND="$(NXST,$lg)">0<?/MIVAR>
 <?MIVAR NAME=$refcross COND="$(NXST,$refcross)">NULL<?/MIVAR>
 <?MIVAR NAME=$order_pref COND="$(NXST,$order_pref)">name<?/MIVAR>
+<?MIVAR NAME=$knownloci COND="$(NXST,$knownloci)">NULL<?/MIVAR>
 
-<?MIBLOCK COND="$(OR,$(XST,$name),$(NC,$lg,0),$(NC,$refcross,NULL),$(AND,$(XST,$within_cm),$(XST,$wm_name)))">
+<?MIBLOCK COND="$(OR,$(XST,$name),$(NC,$lg,0),$(NC,$refcross,NULL),$(NC,$knownloci,NULL),$(AND,$(XST,$within_cm),$(XST,$wm_name)))">
 
 <!-- First filter name for apostrophes! -->
 <?MIVAR COND="$(XST,$name)" NAME=$name DELIMIT="'" REPLACE="''">$name<?/MIVAR>
@@ -67,6 +68,10 @@
 <?MIVAR NAME=$constraint COND="$(NC,$refcross,NULL)">$constraint $previous (panel_id='$refcross')<?/MIVAR>
 
 <?MIVAR NAME=$previous COND="$(NC,$refcross,NULL)"> and <?/MIVAR>
+
+<?MIVAR NAME=$constraint COND="$(NC,$knownloci,NULL)">$constraint $previous (locus_name is not null)<?/MIVAR>
+
+<?MIVAR NAME=$previous COND="$(NC,$knownloci,NULL)"> and <?/MIVAR>
 
 <?MIVAR NAME=$constraint>$constraint ) <?/MIVAR>
 
@@ -140,7 +145,7 @@ Options:
 <?MIBLOCK COND="$(AND,$(XST,$limit),$(NC,$limit,0))">
 
 <TABLE width=100% border=0 cellspacing=0 cellpadding=3>
-<TH> </TH><TD align=left><font size=2><B>Gene symbol </b>- name  &nbsp;[other names]</TD> <TD align=left><B>Location</b></TD> <TD align=left><font size=2><B>Panel</b></TD> <TD align=left><font size=2><B>Map<b></TD><TD align=left><font size=2><B>Updated<b></TD>
+<TH> </TH><TD align=left><font size=2><B>Gene symbol </b>- name  &nbsp;[other names]</TD><TD><B> Mutant Locus</b> </TD> <TD align=left><B>Location</b></TD> <TD align=left><font size=2><B>Panel</b></TD> <TD align=left><font size=2><B>Map<b></TD><TD align=left><font size=2><B>Updated<b></TD>
 
 <!-- DEBUGGING <?MIVAR>  constraint=$constraint <?/MIVAR> -->
 
@@ -148,7 +153,7 @@ Options:
 <?MIVAR NAME=$prev_gp>0<?/MIVAR>
 <?MIVAR NAME=$clr_cnt>0<?/MIVAR>
 <?MIVAR NAME=$ok_view_map>0<?/MIVAR>
-<?MISQL SQL="select gene_name, lg_location, zdb_id,OR_lg, panel_id, panel_abbrev,abbrev,private,owner,metric,alt_names,day(entry_date::date), month(entry_date::date), year(entry_date::date) from $target_table $constraint $order_clause;" MAXROWS=$limit>
+<?MISQL SQL="select gene_name, lg_location, zdb_id,OR_lg, panel_id, panel_abbrev,abbrev,private,owner,metric,alt_names,day(entry_date::date), month(entry_date::date), year(entry_date::date), locus_name, locus_zdb_id from $target_table $constraint $order_clause;" MAXROWS=$limit>
 
 <?MIBLOCK COND="$(AND,$(NC,$prev_name,$1),$(NC,$prev_gp,0),$(EC,$ok_view_map,1))">
 <?MIVAR>
@@ -186,7 +191,8 @@ $(IF,$(XST,$return_rec),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-s
 
 $(IF,$(NC,$prev_name,$1),$(IF,$(ISNULL,$11),<TD valign=top> <font size=2><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$3 TARGET=content>$7</A>&nbsp;&nbsp; - $1 </TD>,<TD valign=top> <font size=2><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$3 TARGET=content>$7</A>&nbsp;&nbsp; - $1 &nbsp; [ $11 ]</TD>),<TD>&nbsp;</TD>)
 
-
+<TD><font size=-1> $(IF,$(ISNULL,$16),Unknown,<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$16 TARGET=content>$15</A>)
+</font></TD>
 <TD> <font size=2> 
 
 $(IF,$(AND,$(EC,$panel_abbrev,na),$(=,$4,0)),"Unmapped")
