@@ -1,4 +1,4 @@
--- an sql to make sure all the manualy curated GenPepts are in.
+! echo "First make sure all the manualy curated GenPepts are in."
 
 begin work;
 create temp table manual_genpept (gene varchar(50), genpept varchar(20)) with no log;
