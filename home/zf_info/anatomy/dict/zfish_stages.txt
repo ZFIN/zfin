@@ -850,7 +850,7 @@ Nervous system
 				lateral crista
 			Rostral (anterior) Vertical
 				rostral (anterior) crista
-			Caudal (posterior) Vertical
+				Caudal (posterior) Vertical
 				caudal (posterior) crista
 	Statoacoustic (VIIIth) ganglion
 	Lateral line
@@ -868,257 +868,257 @@ Nervous system
 		Retinal Pigmented epithelium
 	Nares
 		Olfactory epithelium
-Telencephalon
-	Olfactory bulb
-		external cellular layer
-		glomerular layer
-		primary olfactory fiber layer
-		internal cellular layer (with mitral cells)
-	ventral telencephalon
-		dorsal nucleus of V
-		ventral nucleus of V
-		supracommissural nucleus of V
-		postcommissural nucleus of V central entopeduncular nucleus
-		lateral entopeduncular nucleus
-		dorsal entopeduncular nucleus
-		ventral entopeduncular nucleus V
-		pars subcommissuralis of V
-	telencephalic ventricle
-		tela chorioidea
-	dorsal telencephalon
-		medial zone of D
-		sulcus ypsiloniformis
-		dorsal zone of D
-		lateral zone of D
-		caudal (posterior) zone of D
-		central zone of D
-		nucleus taeniae
-	telencephalic tracts
-		commissura rostral (anterior), pars dorsalis
-		commissura rostral (anterior), pars ventralis
-		lateral forebrain bundle
-		medial forebrain bundle
-		lateral olfactory tract
-		medial olfactory tract
-  
-Diencephalon
-	Diencephalic ventricle
-	Area praeoptica
-		rostral (anterior) parvocellular preoptic nucleus
-		caudal (posterior) parvocellular preoptic nucleus
-		magnocellular preoptic nucleus
-		gigantocellular part of magnocellular preoptic nucleus
-	Epithalamus
-		Habenula
-			Dorsal nucleus
-			Ventral nucleus
-		Epiphysis
-		Saccus dorsalis
-	Dorsal Thalamus
-		rostral (anterior) thalamic nucleus
-		dorsal caudal (posterior) thalamic nucleus
-		central caudal (posterior) thalamic nucleus
-	Ventral Thalamus
-		intermediate thalamic nucleus
-		ventrolateral thalamic nucleus
-		ventromedial thalamic nucleus
-		rostrolateral thalamic nucleus of Butler & Saidel
-	Caudal (posterior) Tuberculum
-		perventricular nucleus of caudal (posterior) tuberculum
-		caudal (posterior) tuberal nucleus
-		paraventricular organ
-		rostral (anterior) preglomerular nucleus
-		lateral preglomerular nucleus
-		medial preglomerular nucleus
-		caudal preglomerular nucleus
-		tertiary gustatory nucleus
-		corpus mamillare
-		caudal (posterior) thalamic nucleus
-		nucleus subglomerulosis
-		torus lateralis
-	Hypothalamus
-		Median tuberal portion
-			Ventral zone
-				periventricular nucleus
-				rostral (anterior) tuberal nucleus
-				lateral hypothalamic nucleus
-			Caudal zone
-				caudal periventricular hypothalamus
-		ventralsulcus
-		Dorsal zone
-			Inferior lobes
-				Central nucleus
-				diffuse nuclei
-			Dorsal periventricular hypothalamus
-	Pituitary
-	Synencephalon
-		Nucleus of the medial longitudinal fasciculus
-		pretectal periventricular nucleus
-		paracommissural nucleus
-		subcommissural organ
-		caudal (posterior) commissure
-	Pretectum
-		Superficial pretectum
-			parvocellular superficial pretectal nucleus
-			magnocellular superficial pretectal nucleus
-			caudal (posterior) pretectal nucleus
-		Central pretectum
-			central pretectal nucleus
-			accessory pretectal nucleus
-			dorsal accessory optic nucleus
-			ventral accessory optic nucleus
-			suprachiasmatic nucleus
-	Diencephalic tracts and commissures
-		lateral forebrain bundle
-		medial forebrain bundle
-		optic nerve
-		optic chiasm
-		optic tract
-			dorsomedial optic tract
-			ventrolateral optic tract
-		pretecto-mamillary tract
-		fasciculus retroflexus
-		habenular commmissure
-		supraoptic (postoptic) commissure
-		horizontal commissure
-		commissure of the caudal tuberculum
-Mesencephalon
-	optic tectum
-		periventricular grey zone
-		deep white zone
-		central zone
-		superficial grey and white zones
-		torus longitudinalis
-		medial tectal ventricle
-			lateral recess
-		intertectal commissure
-	torus semicircularis
-		central nucleus
-		ventrolateral nucleus
-	tegmentum
-		oculomotor nucleus
-		occulomotor nerve
-		trochlear motor nucleus
-		trochlear nerve
-		nucleus Edinger-Westphal
-		nucleus ruber
-		superior reticular formation
-		rostral tegmental nucleus
-		dorsal tegmental nucleus
-		lateral lemniscus nucleus
-		interpeduncular nucleus
-Rhombencephalon
-	cerebellum
-		granular eminence
-		vestibulolateralis lobe
-			medial caudal lobe
-			lateral granular eminence (paired)
-		corpus cerebelli
-			granular layer
-			molecular layer
-		valvula cerebelli
-			lateral division
-			medial division
-			granular layer
-			molecular layer
-		commissura cerebelli
-	Medulla oblongata
-		medial funicular nucleus
-		decussation of medial funicular nucleus
-		dorsal motor root of V
-		dorsal motor nucleus trigeminal nerve
-		ventral motor nucleus trigeminal nerve
-		sensory trigeminal nuclei
-			isthmic primary nucleus
-			secondary gustatory nucleus
-			nucleus of the descending root
-			medial funicular nucleus
-			mesencephalic nucleus of trigeminal nerve
-		descending trigeminal root
-		rostral root of abducens nerve
-		caudal root of abducens nerve
-		abducens motor nuclei
-			rostral motor nucleus
-			caudal motor nucleus
-		sensory root of facial nerve
-		facial lobe
-		facial nerve motor nucleus
-		glossopharyngeal lobe
-		nucleus motorius of nervi vagi
-		lateral longitundinal fasciculus
-		ventral rhombencephalic commissure
-		interpeduncular nucleus
-		octaval nerve sensory nuclei
-			rostral (anterior) octaval nucleus
-			magnocellular octavl nucleus
-			descending octaval nucleus
-			caudal octaval nucleus
-			tangential nucleus
-		Lateral line sensory nuclei
-			caudal octavolateralis nucleus
-			medial octavolateralis nucleus
-				Cerebellar crest
-			decussation of the medial octavolateralis nucleus
-		secondary gustatory tract
-		visceromotor column
-		vagal lobe
-		viscerosensory commissural nucleus of Cajal
-		nucleus of the medial longitudinal fasciculus
-		reticular formation
-			midline column
-				superior raphe nucleus
-				inferior raphe nucleus
-			medial column
-				superior reticular formation
-				intermediate reticular formation
-				inferior reticular formation
-			lateral column
-				lateral reticular nucleus
-		griseum centrale
-		locus Coeruleus
-		nucleus lateralis valvulae
-		nucleus isthmi
-		secondary gustatory nucleus
-		Mauthner cell
-		Mauthner axon
-		inferior olive
-Brain stem/spinal tracts and commissures
-	tecto-bulbar tract
-	crossed tecto-bulbar tract
-	uncrossed tecto-bulbar tract
-	ansulate commissure
-	medial longitudinal fasciculus
-	ventral rhombencephalic commissure
-	lateral longitudinal fasciculus
-	rostral mesencephalo-cerebellar tract
-	caudal mesencephalo-cerebellar tract
-	rostral (anterior) cerebellar tract
-	caudal (posterior) cerebellar tract
-	brachium conjunctivium (?)
-	bulbo-spinal tract
-	vestibulo-spinal tract
-	commissure of the secondary gustatory nuclei
-	commissure infima of Haller
-Spinal cord
-	Dorsal root
-		Dorsal root ganglion
-	Ventral root
-	Dorsal horn
-	Ventral horn
-	Dorsal funiculus
-	Ventral funiculus
-	Lateral funiculus
+	Telencephalon
+		Olfactory bulb
+			external cellular layer
+			glomerular layer
+			primary olfactory fiber layer
+			internal cellular layer (with mitral cells)
+		ventral telencephalon
+			dorsal nucleus of V
+			ventral nucleus of V
+			supracommissural nucleus of V
+			postcommissural nucleus of V central entopeduncular nucleus
+			lateral entopeduncular nucleus
+			dorsal entopeduncular nucleus
+			ventral entopeduncular nucleus V
+			pars subcommissuralis of V
+		telencephalic ventricle
+			tela chorioidea
+		dorsal telencephalon
+			medial zone of D
+			sulcus ypsiloniformis
+			dorsal zone of D
+			lateral zone of D
+			caudal (posterior) zone of D
+			central zone of D
+			nucleus taeniae
+		telencephalic tracts
+			commissura rostral (anterior), pars dorsalis
+			commissura rostral (anterior), pars ventralis
+			lateral forebrain bundle
+			medial forebrain bundle
+			lateral olfactory tract
+			medial olfactory tract
 
-Cranial Nerves
-	Olfactory
-	Optic
-	Occulomotor
-	Trochlear
-	Trigeminal
-	Abducens nerve
-	Facial Nerve
-	Octaval nerve
-	Glossopharyngeal nerve
-	Vagus Nerve
-	Rostral lateral line nerve
-	Caudal lateral line nerve
+	Diencephalon
+		Diencephalic ventricle
+		Area praeoptica
+			rostral (anterior) parvocellular preoptic nucleus
+			caudal (posterior) parvocellular preoptic nucleus
+			magnocellular preoptic nucleus
+			gigantocellular part of magnocellular preoptic nucleus
+		Epithalamus
+			Habenula
+				Dorsal nucleus
+				Ventral nucleus
+			Epiphysis
+			Saccus dorsalis
+		Dorsal Thalamus
+			rostral (anterior) thalamic nucleus
+			dorsal caudal (posterior) thalamic nucleus
+			central caudal (posterior) thalamic nucleus
+		Ventral Thalamus
+			intermediate thalamic nucleus
+			ventrolateral thalamic nucleus
+			ventromedial thalamic nucleus
+			rostrolateral thalamic nucleus of Butler & Saidel
+		Caudal (posterior) Tuberculum
+			perventricular nucleus of caudal (posterior) tuberculum
+			caudal (posterior) tuberal nucleus
+			paraventricular organ
+			rostral (anterior) preglomerular nucleus
+			lateral preglomerular nucleus
+			medial preglomerular nucleus
+			caudal preglomerular nucleus
+			tertiary gustatory nucleus
+			corpus mamillare
+			caudal (posterior) thalamic nucleus
+			nucleus subglomerulosis
+			torus lateralis
+		Hypothalamus
+			Median tuberal portion
+				Ventral zone
+					periventricular nucleus
+					rostral (anterior) tuberal nucleus
+					lateral hypothalamic nucleus
+				Caudal zone
+					caudal periventricular hypothalamus
+			ventralsulcus
+			Dorsal zone
+				Inferior lobes
+					Central nucleus
+					diffuse nuclei
+				Dorsal periventricular hypothalamus
+		Pituitary
+		Synencephalon
+			Nucleus of the medial longitudinal fasciculus
+			pretectal periventricular nucleus
+			paracommissural nucleus
+			subcommissural organ
+			caudal (posterior) commissure
+		Pretectum
+			Superficial pretectum
+				parvocellular superficial pretectal nucleus
+				magnocellular superficial pretectal nucleus
+				caudal (posterior) pretectal nucleus
+			Central pretectum
+				central pretectal nucleus
+				accessory pretectal nucleus
+				dorsal accessory optic nucleus
+				ventral accessory optic nucleus
+				suprachiasmatic nucleus
+		Diencephalic tracts and commissures
+			lateral forebrain bundle
+			medial forebrain bundle
+			optic nerve
+			optic chiasm
+			optic tract
+				dorsomedial optic tract
+				ventrolateral optic tract
+			pretecto-mamillary tract
+			fasciculus retroflexus
+			habenular commmissure
+			supraoptic (postoptic) commissure
+			horizontal commissure
+			commissure of the caudal tuberculum
+	Mesencephalon
+		optic tectum
+			periventricular grey zone
+			deep white zone
+			central zone
+			superficial grey and white zones
+			torus longitudinalis
+			medial tectal ventricle
+				lateral recess
+			intertectal commissure
+		torus semicircularis
+			central nucleus
+			ventrolateral nucleus
+		tegmentum
+			oculomotor nucleus
+			occulomotor nerve
+			trochlear motor nucleus
+			trochlear nerve
+			nucleus Edinger-Westphal
+			nucleus ruber
+			superior reticular formation
+			rostral tegmental nucleus
+			dorsal tegmental nucleus
+			lateral lemniscus nucleus
+			interpeduncular nucleus
+	Rhombencephalon
+		cerebellum
+			granular eminence
+			vestibulolateralis lobe
+				medial caudal lobe
+				lateral granular eminence (paired)
+			corpus cerebelli
+				granular layer
+				molecular layer
+			valvula cerebelli
+				lateral division
+				medial division
+				granular layer
+				molecular layer
+			commissura cerebelli
+		Medulla oblongata
+			medial funicular nucleus
+			decussation of medial funicular nucleus
+			dorsal motor root of V
+			dorsal motor nucleus trigeminal nerve
+			ventral motor nucleus trigeminal nerve
+			sensory trigeminal nuclei
+				isthmic primary nucleus
+				secondary gustatory nucleus
+				nucleus of the descending root
+				medial funicular nucleus
+				mesencephalic nucleus of trigeminal nerve
+			descending trigeminal root
+			rostral root of abducens nerve
+			caudal root of abducens nerve
+			abducens motor nuclei
+				rostral motor nucleus
+				caudal motor nucleus
+			sensory root of facial nerve
+			facial lobe
+			facial nerve motor nucleus
+			glossopharyngeal lobe
+			nucleus motorius of nervi vagi
+			lateral longitundinal fasciculus
+			ventral rhombencephalic commissure
+			interpeduncular nucleus
+			octaval nerve sensory nuclei
+				rostral (anterior) octaval nucleus
+				magnocellular octavl nucleus
+				descending octaval nucleus
+				caudal octaval nucleus
+				tangential nucleus
+			Lateral line sensory nuclei
+				caudal octavolateralis nucleus
+				medial octavolateralis nucleus
+					Cerebellar crest
+				decussation of the medial octavolateralis nucleus
+			secondary gustatory tract
+			visceromotor column
+			vagal lobe
+			viscerosensory commissural nucleus of Cajal
+			nucleus of the medial longitudinal fasciculus
+			reticular formation
+				midline column
+					superior raphe nucleus
+					inferior raphe nucleus
+				medial column
+					superior reticular formation
+					intermediate reticular formation
+					inferior reticular formation
+				lateral column
+					lateral reticular nucleus
+			griseum centrale
+			locus Coeruleus
+			nucleus lateralis valvulae
+			nucleus isthmi
+			secondary gustatory nucleus
+			Mauthner cell
+			Mauthner axon
+			inferior olive
+	Brain stem/spinal tracts and commissures
+		tecto-bulbar tract
+		crossed tecto-bulbar tract
+		uncrossed tecto-bulbar tract
+		ansulate commissure
+		medial longitudinal fasciculus
+		ventral rhombencephalic commissure
+		lateral longitudinal fasciculus
+		rostral mesencephalo-cerebellar tract
+		caudal mesencephalo-cerebellar tract
+		rostral (anterior) cerebellar tract
+		caudal (posterior) cerebellar tract
+		brachium conjunctivium (?)
+		bulbo-spinal tract
+		vestibulo-spinal tract
+		commissure of the secondary gustatory nuclei
+		commissure infima of Haller
+	Spinal cord
+		Dorsal root
+			Dorsal root ganglion
+		Ventral root
+		Dorsal horn
+		Ventral horn
+		Dorsal funiculus
+		Ventral funiculus
+		Lateral funiculus
+
+	Cranial Nerves
+		Olfactory
+		Optic
+		Occulomotor
+		Trochlear
+		Trigeminal
+		Abducens nerve
+		Facial Nerve
+		Octaval nerve
+		Glossopharyngeal nerve
+		Vagus Nerve
+		Rostral lateral line nerve
+		Caudal lateral line nerve
