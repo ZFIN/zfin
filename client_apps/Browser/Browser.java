@@ -425,6 +425,8 @@ public class Browser extends Applet {
 		while(sTok.hasMoreTokens()) {
 			tmp = sTok.nextToken();
 			System.out.println("vars: " + tmp);
+			if (tmp.startsWith("query_results"))
+				tmp = "foo=bar";
 			if (tmp.startsWith("MIval"))
 				tmp = getParameter("submit");
 			if (!tmp.startsWith("structure_list"))
