@@ -61,7 +61,7 @@ public class mapimage {
 		if (data.indexOf("ZMAP") > -1)
 			table = "zmap_pub_pan_mark";
 		else
-			table = "public_paneled_markers";
+			table = "paneled_markers";
 
 		System.err.println("data: " + data);
 		Hashtable SM = new Hashtable();
@@ -86,7 +86,7 @@ public class mapimage {
 		String type_string = "";
 
 		String query_string = "";
-		if (table.equals("public_paneled_markers")) {
+		if (table.equals("paneled_markers")) {
 		    query_string = "select distinct zdb_id, abbrev, mtype, target_abbrev, lg_location::numeric(6,2), OR_lg, mghframework, metric from " + table + " where ("; 
 		} else if (table.equals("zmap_pub_pan_mark")) {
 		   query_string = "select distinct zdb_id, abbrevp, mtype, target_abbrev, lg_location::numeric(6,2), OR_lg, mghframework, metric from " + table + " where ("; 
