@@ -401,11 +401,14 @@
 
 <?/MIBLOCK>
 
+ <?MICOMMENT>
+   Delete can be expensive, only do it if you actually inserted records
+ <?/MICOMMENT>
  <?MISQL COND="$(NC,$lg,0)" SQL="
    delete from msegselect_temp_on_lg
      where msegtlg_session_id = $msegsel_session_id;">
  <?/MISQL>
- <?MISQL COND="$(XST,$input_name)" SQL="
+ <?MISQL COND="$(OR,$(XST,$input_name),$(XST,$input_acc))" SQL="
     delete from msegselect_temp_match
      where msegmatch_session_id = $msegsel_session_id;">
  <?/MISQL>
