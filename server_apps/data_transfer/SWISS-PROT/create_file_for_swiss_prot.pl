@@ -1,6 +1,6 @@
 #!/private/bin/perl -w
 #-----------------------------------------------------------------------
-# Runs script to create data file for S-P data exchange.
+# Runs script to create outgoing data file for S-P data exchange.
 
 
 # define GLOBALS
@@ -18,6 +18,10 @@ $ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
 $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT";
+
+if (! -e "<!--|FTP_ROOT|-->/pub/transfer/Swiss-Prot") {
+    system("/bin/mkdir -m 755 -p <!--|FTP_ROOT|-->/pub/transfer/Swiss-Prot");
+}
 
 system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> create_file_for_swiss_prot.sql");
 
