@@ -8,7 +8,9 @@ MACHINE_DIR=/private/apps
 # Note: The version of Java we run the Java Server under
 #	must match the version we compiled the libMISQL.so library
 #       under.  See the Makefile for the Java Server for details.
-JDK_DIR=/local/apps/jdk-1.1
+# Use the /usr filesystem so that we are assured it is mounted when 
+# this script is run in rc3.d
+JAVA_DIR=/usr/java1.1
 
 SERVER_HOME=$MACHINE_DIR/javaserver
 cd $SERVER_HOME
@@ -21,21 +23,24 @@ export INFORMIXDIR INFORMIXSERVER INFORMIXSQLHOSTS
 
 case "$1" in 
   'start')
-
 	#  The server will load a *.so file, so we need to tell loader where to find it
 	LD_LIBRARY_PATH=$SERVER_HOME:$INFORMIXDIR/lib:$INFORMIXDIR/lib/esql:$INFORMIXDIR/lib/dmi
 	#  Now that we're using SU, we don't gain anything from exporting this (see below),
 	#  but I retained this statement to observe the form of the thing.
 	export LD_LIBRARY_PATH
 
-	#  Informix apprently won't allow root to connect as a client (strange, but apparently so).
+	#  To detect if we're running during startup, we look at the _INIT_RUN_LEVEL environment variable.
+	#  This is set to 3 when this routine is called during startup (and not set at all when
+	#  called outside of startup.
+
+	#  Informix apparently won't allow root to connect as a client (strange, but apparently so).
 	#  So we have to SU as zfinner to run the server.  And since SU won't allow the environment
 	#  variable LD_LIBRARY_PATH to be exported into its subprocess (a security restriction),
 	#  we must explicitly set the variable INSIDE the new subprocess.
-	if [ ${USER} = root ] ; then 
-	    su zfinner -c "runServer $LD_LIBRARY_PATH $JDK_DIR/bin/java Server" >> Server.out 2>&1 &
+	if [ "${_INIT_RUN_LEVEL}" = "3" ] ; then 
+	    /bin/su zfinner -c "$SERVER_HOME/runServer $LD_LIBRARY_PATH $JAVA_DIR/bin/java Server" >> Server.out 2>&1 &
 	else 
-	    runServer $LD_LIBRARY_PATH $JDK_DIR/bin/java Server >> Server.out 2>&1 &
+	    $SERVER_HOME/runServer $LD_LIBRARY_PATH $JAVA_DIR/bin/java Server >> Server.out 2>&1 &
 	fi
 	;;
 
@@ -44,6 +49,6 @@ case "$1" in
 	;;
 
     *)
-	echo "usage: $0 {start|stop}"
+	echo "usage: $0 {start|stop}" >> /private/apps/javaserver/Server.out
  	;;
 esac
