@@ -58,7 +58,9 @@ TRIGGERS = \
 	mrkr_name_update_trigger.sql \
 	marker_go_term_insert_trigger.sql \
 	marker_go_term_update_trigger.sql \
-	marker_go_term_evidence_insert_trigger.sql \
+	inference_group_member_insert_trigger.sql \
+	inference_group_member_notes_update_trigger.sql \
+	inference_group_member_inferred_from_update_trigger.sql \
 	mrkrgoev_infered_from_update_trigger.sql \
 	mrkrgoev_notes_update_trigger.sql \
 	marker_relationship_insert_trigger.sql \
