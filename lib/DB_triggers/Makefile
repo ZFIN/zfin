@@ -71,6 +71,7 @@ TRIGGERS = \
 	person_update_trigger.sql \
 	publication_insert_trigger.sql \
 	publication_update_trigger.sql \
+	record_attribution_insert_trigger.sql \
 	stage_insert_trigger.sql \
 	stage_update_trigger.sql \
 	zdb_object_type_insert_trigger.sql \
