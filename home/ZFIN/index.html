@@ -5,16 +5,16 @@
 
 function display_foo(mywindow,index) {
   if (index==1) {
-  mywindow.document.writeln('<center><A HREF="mailto:zfinadmn@zfish.uoregon.edu"><img border=1 src="/ZDBB/icons/comments-small.gif"></A><p><hr><p><Font size=-1><b>ZFIN NAVIGATOR:</b></font></center><TABLE width=100% cellpadding=0 cellspacing=0>');
+  mywindow.document.writeln('<center><A HREF="mailto:zfinadmn@zfish.uoregon.edu"><img border=1 src="http://zfin.org/ZDBB/icons/comments-small.gif"></A><p><hr><p><Font size=-1><b>ZFIN NAVIGATOR:</b></font></center><TABLE width=100% cellpadding=0 cellspacing=0>');
   }
   if (index>1) {
-    mywindow.document.writeln("<TR><TD align=center><img border=0 src='/ZDBB/icons/ARROWS/downarrow.gif'></TD></TR>")
+    mywindow.document.writeln("<TR><TD align=center><img border=0 src='http://zfin.org/ZDBB/icons/ARROWS/downarrow.gif'></TD></TR>")
   }
 mywindow.document.writeln("<TR><TD><Font size=-2><INPUT TYPE=button NAME="+ this.id +" VALUE=\""+ this.title +"\" onClick=top.content.history.go(\""+ this.id +"\") ></font></TD></TR>");
   if (this.end==false) {
     this.next.display(mywindow,index+1)
   } else {
-    mywindow.document.writeln("</TABLE><p><font size=-1>Click on above tiles to move to corresponding screen.</font><p><HR><p><br><font size=-1><center><b>SEARCH <br> FOR:</b></font><br><font size=2><A HREF='/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-accessionselect.apg&select_from=ACCESSION' target='content'>ACCESSION_#</A><br><A HREF='/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-quickfindpers.apg&select_from=PERSON&frame_size=75' target='content'>PERSON</A><br><A HREF='/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-labselect.apg&select_from=LAB' target='content'>LABS</A><br><A HREF='/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-companyselect.apg&select_from=COMPANY&frame_size=230' target='content'>COMPANIES</A><br><A HREF='/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-pubselect2.apg&select_from=PUBLICATION' target='content'>PUBLICATIONS</A><br><A HREF='/cgi-bin_B/webdriver?MIval=aa-startframes.apg&frame_size=250&selector=aa-fishselect.apg&select_from=Mutants&line_type=mutant&intro=/ZDBA/help_files/mut_intro.html' target='content'>MUTANTS</A><br><A HREF='/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-geneselect.apg&select_from=GENE&frame_size=130' target='content'>GENES</A><br><A HREF='/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-markerselect.apg&select_from=MARKER' target='content'>MAP_MARKERS</A><br>")
+    mywindow.document.writeln("</TABLE><p><font size=-1>Click on above tiles to move to corresponding screen.</font><p><HR><p><br><font size=-1><center><b>SEARCH <br> FOR:</b></font><br><font size=2><A HREF='/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-accessionselect.apg&select_from=ACCESSION' target='content'>ACCESSION_#</A><br><A HREF='/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-quickfindpers.apg&select_from=PERSON&frame_size=75' target='content'>PERSON</A><br><A HREF='/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-labselect.apg&select_from=LAB' target='content'>LABS</A><br><A HREF='/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-companyselect.apg&select_from=COMPANY&frame_size=230' target='content'>COMPANIES</A><br><A HREF='/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-pubselect2.apg&select_from=PUBLICATION' target='content'>PUBLICATIONS</A><br><A HREF='/cgi-bin_B/webdriver?MIval=aa-startframes.apg&frame_size=250&selector=aa-fishselect.apg&select_from=Mutants&line_type=mutant&intro=/ZDBB/help_files/mut_intro.html' target='content'>MUTANTS</A><br><A HREF='/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-geneselect.apg&select_from=GENE&frame_size=130' target='content'>GENES</A><br><A HREF='/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-markerselect.apg&select_from=MARKER' target='content'>MAP_MARKERS</A><br>")
  }
 }
 
