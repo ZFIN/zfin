@@ -72,14 +72,13 @@ FINALLY, if this selection was made while updating an existing record, we will w
 <!-- FIRST delete duplicates. Don't want redundant links -->
 <?MISQL SQL="delete from $fill_table where target_id='$return_recid' and source_id='$new_oid';"><?/MISQL>
 
+
 <!-- Then just jam in new intersection entry -->
-<?MISQL SQL="insert into $fill_table (source_id, target_id, info) values ('$new_oid', '$return_recid','$info');"><?/MISQL>
+<?MISQL SQL="insert into $fill_table (source_id, target_id, position) values ('$new_oid', '$return_recid','$info');"><?/MISQL>
 
 <!-- Record update is the rec_update flag is set -->
 <?MISQL COND="$(EC,$rec_update,t)" SQL="insert into updates (submitter_name, submitter_id, when,rec_id,field_name,old_value,new_value, comments) values ('$ZDB_name','$ZDB_ident',current,'$return_recid','$fill_table','Not available','$new_oid','Added $return_recid to list of records associated with data record $new_oid');"><?/MISQL>
 <?/MIBLOCK>
-
-
 
 
 <!-- If ACTION=return_id, then we want to stick the oid of the new object directly into the field specified by fill_field of fill_table (which presumbly represents calling class). So OID of created/selected record stored in calling class.
