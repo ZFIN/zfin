@@ -743,22 +743,21 @@ ERROR -- something bad happened -- no OID passed in!
 	into temp temp_lnkgmem with no log;"> 
 
    <?/MISQL>
- 
+
+
     <?MISQL SQL="
-	select mrkr_zdb_id, mrkr_abbrev, mrkr_type, mrkrtype_type_display, lnkg_comments, recattrib_source_zdb_id, lnkg_zdb_id,lnkg_or_lg
-         from temp_lnkgmem , linkage, marker, record_attribution, marker_types 
+	select mrkr_zdb_id, mrkr_abbrev, mrkr_type, mrkrtype_type_display, lnkg_comments, lnkg_zdb_id,lnkg_or_lg
+         from temp_lnkgmem , linkage, marker, marker_types 
         where t_lnkgmem_zdb_id = mrkr_zdb_id	
           and t_lnkg_zdb_id = lnkg_zdb_id
-	  and recattrib_data_zdb_id = lnkg_zdb_id
 	  and mrkr_type = marker_type
 	UNION
-	    select f.zdb_id, l.abbrev, 'MUTANT', 'Mutant', lnkg_comments, recattrib_source_zdb_id, lnkg_zdb_id,lnkg_or_lg
-	    from temp_lnkgmem , linkage, fish f, locus l, record_attribution, marker_types  
+	    select f.zdb_id, l.abbrev, 'MUTANT', 'Mutant', lnkg_comments, lnkg_zdb_id, lnkg_or_lg
+	    from temp_lnkgmem , linkage, fish f, locus l, marker_types  
     	   where t_lnkgmem_zdb_id = f.zdb_id	
             and t_lnkg_zdb_id = lnkg_zdb_id
 	    and f.locus = l.zdb_id
-	    and recattrib_data_zdb_id = lnkg_zdb_id
-	    
+       order by 6	    
 	;">
    	
    
@@ -771,22 +770,20 @@ ERROR -- something bad happened -- no OID passed in!
     <?MIVAR NAME=$member_type>$3<?/MIVAR>
     <?MIVAR NAME=$member_type_display>$4<?/MIVAR>
     <?MIVAR NAME=$map_comments>$5<?/MIVAR>
-    <?MIVAR NAME=$source_id>$6<?/MIVAR>
-    <?MIVAR NAME=$link_id>$7<?/MIVAR>
-    <?MIVAR NAME=$lg>$8<?/MIVAR>
+    <?MIVAR NAME=$link_id>$6<?/MIVAR>
+    <?MIVAR NAME=$lg>$7<?/MIVAR>
     <?MIVAR COND="$(EC,$lg,0)">$(SETVAR,$lg,<font size=-1>Unknown</font>)<?/MIVAR>
-   <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
-    <TR><TD colspan=3><p><b>Markers Linked To <?MIVAR>$abbrev<?/MIVAR>:</b>
-    </TD></TR>
-     <TR>    
-      <TD colspan=3>
-      <TABLE width=100%>
-      <?MIVAR NAME=subtable>y<?/MIVAR>
-   <?/MIBLOCK> 
-  
-    $(IF,$(EC,$3,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID="), $(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID="))
 
-    $(IF,$(>,$(POSITION,$source_id,PER),0),$(SETVAR,$sourceviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID="),$(SETVAR,$sourceviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID="))
+    <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
+      <TR><TD colspan=3><p><b>Markers Linked To <?MIVAR>$abbrev<?/MIVAR>:</b>
+      </TD></TR>
+      <TR>    
+        <TD colspan=3>
+        <TABLE width=100%>
+        <?MIVAR NAME=subtable>y<?/MIVAR>
+    <?/MIBLOCK> 
+
+    $(IF,$(EC,$member_type,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID="), $(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID="))
 
     <?MISQL SQL="select lpmem_linkage_pair_zdb_id from linkage_pair_member a
       where lpmem_member_zdb_id = '$member_zdb_id' 
@@ -802,41 +799,47 @@ ERROR -- something bad happened -- no OID passed in!
       <?MISQL SQL="select lnkgpair_distance, lnkgpair_lod, lnkgpair_metric from linkage_pair
 	where lnkgpair_zdb_id = '$pair_id';">
 	<?MIVAR NAME=$distance>$1<?/MIVAR>	
-	<?MIVAR NAME=$lod>$member_abbrev<?/MIVAR>	
+	<?MIVAR NAME=$lod>$2<?/MIVAR>	
 	<?MIVAR NAME=$metric>$3<?/MIVAR>	
        <?/MISQL>
     <?/MIBLOCK>
-   
-    <?MIBLOCK COND="$(>,$(POSITION,$source_id,PER),0)">
-      <?MISQL SQL="select full_name
-		    from person
-		   where zdb_id = '$source_id';">
-	<?MIVAR NAME=$source_name>$1<?/MIVAR>
-       <?/MISQL>
-    <?MIELSE>				 	
- 	<?MISQL SQL="select pub_mini_ref
-		    from publication
-		   where zdb_id = '$source_id';">
-	  <?MIVAR NAME=$source_name>$1<?/MIVAR>
-        <?/MISQL>
-    <?/MIBLOCK>
-    	
 
     <TR>
     $(IF,$(XST,$UPDATE),"<TD><INPUT TYPE=button value=Update onClick=edit_linkage('"$link_id"','"$member_zdb_id"')></TD>","<TD> &nbsp;</TD>")
 
+
+    <?MIVAR NAME=$source_display><?/MIVAR>
+    <?MISQL SQL=" select recattrib_source_zdb_id, full_name, recattrib_source_significance 
+                    from record_attribution, person
+	           where recattrib_data_zdb_id ='$link_id'
+		     and recattrib_source_zdb_id = zdb_id
+		UNION 
+		  select recattrib_source_zdb_id, pub_mini_ref, recattrib_source_significance 
+                    from record_attribution, publication
+	           where recattrib_data_zdb_id ='$link_id'
+		     and recattrib_source_zdb_id = zdb_id
+		  order by 3
+		; ">
+             <?MIVAR NAME=$source_id>$1<?/MIVAR>
+    	     <?MIVAR NAME=$source_name>$2<?/MIVAR>
+	     $(IF,$(>,$(POSITION,$source_id,PER),0),$(SETVAR,$sourceviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID="),$(SETVAR,$sourceviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID="))
+	     <?MIVAR>$(SETVAR,$source_display,$source_display<A href='$sourceviewer$source_id'>$source_name</a>&nbsp;&nbsp;)<?/MIVAR>
+   
+    <?/MISQL>
+   
     <?MIBLOCK COND="$(AND,$(NC,$map_comments,NULL),$(NC,$map_comments,""))">
       <?MIVAR>
        $(IF,$(XST,$locus_abbrev),$(SETVAR,$abbrev,$locus_abbrev))
         <TD><A HREF="$curviewer$member_zdb_id">$member_abbrev</A> ($member_type_display)</TD>
         <TD> LG $lg $(IF,$(NC,$distance,),;) $distance $metric $(IF,$(NC,$lod,),;) $lod</TD>
-	<TD><A href="$sourceviewer$source_id">$source_name</a></TD><TD>&nbsp; &nbsp;</TD><TD><A HREF=javascript:show_detail("$link_id","$member_zdb_id","$member_abbrev","$(IF,$(XST,$abbrev),$abbrev)");>Details</A></TD>
+	<TD>$source_display</TD><TD>&nbsp; &nbsp;</TD>
+        <TD><A HREF=javascript:show_detail("$link_id","$member_zdb_id","$member_abbrev","$(IF,$(XST,$abbrev),$abbrev)");>Details</A></TD>
       <?/MIVAR>
     <?MIELSE>
       <?MIVAR>
         <TD><A HREF="$curviewer$member_zdb_id">$member_abbrev</A> ($member_type_display)</TD>
         <TD> LG $lg $(IF,$(NC,$distance,),;) $distance $metric $(IF,$(NC,$lod,),;) $lod</TD>
-	<TD><A href="$sourceviewer$source_id">$source_name</a></TD><TD></TD>
+	<TD>$source_display</TD><TD></TD>
 	<?/MIVAR>
     <?/MIBLOCK>    
 
