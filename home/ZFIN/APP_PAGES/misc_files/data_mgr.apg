@@ -16,7 +16,7 @@ var the_title
 </HEAD>
 
 <?MIVAR NAME=$MI_NOVALUE>NOVALUE<?/MIVAR>
-<?MIVAR NAME=$owner_name>Unknown<?/MIVAR>
+
 
 <!-- First find out the last modification date of the record in question. -->
 <?MISQL SQL="select when, day(when), comments, month(when), year(when) from updates where rec_id='$OID' order by when;">
@@ -25,9 +25,6 @@ var the_title
 <?MIVAR  NAME=$mod_date COND="$(AND,$(NC,$1,NOVALUE),$(NC,$3,*RECORD_CREATED*))">
 $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5 
 <?/MIVAR>
-
-<?MISQL COND="$(XST,$owner)" SQL="select name from ZDB_submitters where zdb_id='$owner';">
-$(SETVAR,$owner_name,$1)<?/MISQL>
 
 
 <!-- OKAY NOW THROW UP THE DATA MANAGER -->
@@ -38,7 +35,8 @@ $(SETVAR,$owner_name,$1)<?/MISQL>
 <?MIVAR>
 <TR align=center>
 <TD><font size=-1> <b>ZFIN ID:</b> $OID </font>
-$(IF,$(XST,$owner),<BR><B>Owner:</b> <A HREF="/cgi-bin_B/webdriver?MIval=aa-persview.apg&OID="$owner TARGET=content>$owner_name</A>)</TD>
+
+</TD>
 <TD> <font size=-1>
 <A HREF="/cgi-bin_B/webdriver?MIval=aa-update-vframeset.apg&OID=$OID&rtype=$rtype">
 <b>Updated:</b> $mod_date </A> </font>
