@@ -31,23 +31,23 @@ include $(TOP)/make.default.rules
 
 # ---------------  Misc Targets  ----------------------------------------
 
-runregen : regen.sh
+runregen : $(TARGETDIR)/regen.sh
 	$(TARGETDIR)/regen.sh
 
-runscrub : scrubscan.pl
+runscrub : $(TARGETDIR)/scrubscan.pl
 	$(TARGETDIR)/scrubscan.pl
 
-runorphans : validatedata.pl
+runorphans : $(TARGETDIR)/validatedata.pl
 	$(TARGETDIR)/validatedata.pl $(DBNAME) -o
 
-rundaily : validatedata.pl
+rundaily : $(TARGETDIR)/validatedata.pl
 	$(TARGETDIR)/validatedata.pl $(DBNAME) -d
 
-runweekly : validatedata.pl
+runweekly : $(TARGETDIR)/validatedata.pl
 	$(TARGETDIR)/validatedata.pl $(DBNAME) -w
 
-runmonthly : validatedata.pl
+runmonthly : $(TARGETDIR)/validatedata.pl
 	$(TARGETDIR)/validatedata.pl $(DBNAME) -m
 
-runyearly : validatedata.pl
+runyearly : $(TARGETDIR)/validatedata.pl
 	$(TARGETDIR)/validatedata.pl $(DBNAME) -y
