@@ -23,6 +23,17 @@ Possible vars: update
 	}
 
 
+     function call_submit(num_members) {
+	if (num_members == 0 ){
+	   window.alert("A linkage member must be specified.");
+	   return false;
+          } else {
+	   window.location.href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg";
+           return true;
+          }
+	}
+
+
    </SCRIPT>
 </HEAD>
 
@@ -30,11 +41,11 @@ Possible vars: update
 
 <TITLE> Add ZFIN Linkage Members </TITLE>
 
-<basefont COLOR="#000000" size=2>
 
 <!-- new linkage has been inserted - begin getting linkage members -->
 
 <form name=linkage method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" >
+
 <input type=hidden name=MIval value=aa-add_linkage_members.apg>
 <input type=hidden name=calling_form value="members">
 <?MIVAR>
@@ -44,12 +55,11 @@ Possible vars: update
 
 <center>
   <B>
-    <font size=5> Add Markers to Linkage: <?MIVAR> $link_id <?/MIVAR>  
+    <font size="+2"> Add Markers to Linkage: <?MIVAR> $link_id <?/MIVAR> </font> 
   </B>
 </center>
 <p>
 
-<basefont size=2>
 
 <?MISQL SQL="select WebExplode(object,'permission=root') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
@@ -84,7 +94,7 @@ Possible vars: update
 
   <!-- output the current members of the linkage - if any exist -->
 <p>
-Linkage Members:<br>
+Linkage Members:   (At least one member must be specified) <br>
    <?MISQL SQL="select distinct abbrev, mtype from all_markers a , linkage_member b 
         where b.lnkgmem_linkage_zdb_id = '$link_id'
           and b.lnkgmem_member_zdb_id = a.zdb_id;">
@@ -104,7 +114,7 @@ Linkage Members:<br>
       $(SETVAR,$num_members,$(+,$num_members,$MI_ROWCOUNT))
     <?/MIVAR>
 
-    <big>Specify members of linkage:</big><?MIVAR>
+    Specify members of linkage: <?MIVAR>
 
     <?MIVAR>
       <select name=mtype>
@@ -181,8 +191,8 @@ Linkage Members:<br>
   <?MIBLOCK COND="$(NXST,$update)">
     <?MIVAR>
       <input type=button value="Add Distances" onClick="return call_distance('$link_id','$num_members');">   
+      <input type=button value="Submit" onClick=" return call_submit('$num_members');">
     <?/MIVAR>
-      <input type=button value="Submit" onClick="window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg'">
   <?/MIBLOCK>
 
     <?MIBLOCK COND="$(XST,$update)">

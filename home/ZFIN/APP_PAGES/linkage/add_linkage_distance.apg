@@ -23,9 +23,9 @@ Possible vars:  update-->
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
-<basefont COLOR="#000000" size=2>
 
 <form name=linkage method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" onSubmit="return check_marker(document.linkage.marker1.selectedIndex, document.linkage.marker2.selectedIndex );">
+
 <input type=hidden name=MIval value=aa-insert_linkage.apg> 
 <input type=hidden name=calling_form value="distance">
 <?MIVAR>
@@ -37,7 +37,7 @@ Possible vars:  update-->
    <?MIVAR NAME=MI_NOVALUE><?/MIVAR>
 <center>
   <B>
-    <font size=5> Add Distance for Linkage: <?MIVAR> $link_id <?/MIVAR>  
+    <font size="+2"> Add Distance for Linkage: <?MIVAR> $link_id <?/MIVAR>  </font>
   </B>
 </center>
 <p>
@@ -76,7 +76,7 @@ Possible vars:  update-->
 
   <!-- output the current members of the linkage - if any exist -->
 <p>
-Linkage Members:<br>
+Linkage Members: <br>
    <?MISQL SQL="select distinct abbrev, mtype from all_markers a , linkage_member b 
         where b.lnkgmem_linkage_zdb_id = '$link_id'
           and b.lnkgmem_member_zdb_id = a.zdb_id
@@ -92,7 +92,7 @@ Linkage Members:<br>
 
  <!-- output the current linkage distance info - if any exists -->
 
-Linkage Distance:<br>
+Linkage Distance:&nbsp;&nbsp;  Select two markers for distance <br>
 
 <?MISQL SQL="select lnkgpair_zdb_id from linkage_pair where lnkgpair_linkage_zdb_id = '$link_id';">
   <?MIVAR NAME=$pair_id>$1<?/MIVAR> 
@@ -117,11 +117,9 @@ Linkage Distance:<br>
     Distance: $1 &nbsp; LOD: $2 &nbsp; Metric: $3
   <?/MISQL>
 
-    <br>
 <?/MISQL>
-<p>
-    <big>Select two markers for distance:</big><?MIVAR>
-
+<br>
+  <TABLE cols=2>
     <TR>
       <TD align=center>
 	<?MIVAR>
@@ -154,12 +152,18 @@ Linkage Distance:<br>
             <?/MISQL>
 	  </SELECT>  
 	<?/MIVAR>
-    <TR>  
+      </TD>  
+    </TR>
+  </TABLE>
 
+  <p>
+  <TABLE>
+    <TR>
+      Specify Distance, LOD, and metric:
+    </TR>
+  </TABLE>
 
-    <p>
-    <big>Specify Distance, LOD, and metric:</big>
-    <p>
+  <TABLE cols=3>
     <TR>
       <TD align=center>
         Distance:</b> <input type=text size=10 name=distance >  
@@ -172,17 +176,20 @@ Linkage Distance:<br>
             <?/MISQL>
 	  </SELECT>  
 	<?/MIVAR>
+      </TD>
       <TD align=center>
         LOD:</b> <input type=text size=10 name=lod >  
       </TD>
-    <TR>  
+    </TR>  
+  </TABLE>
 
     <p>
 
-    <input type=submit value="Add Distance" >
+
   
   <?MIBLOCK COND="$(NXST,$update)">
-    <input type=button value="Linkage Complete" onClick="window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg'">  
+
+    <input type=submit value="Add Distance" >
     <input type=button value="Return" onClick="window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg'">
   <?/MIBLOCK>
 
