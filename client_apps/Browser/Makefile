@@ -29,7 +29,6 @@ include $(TOP)/make.include
 
 STAGINGDIR = Staging
 
-
 # ---- Java source variables
 
 GENERICS = SQLQuery.java
