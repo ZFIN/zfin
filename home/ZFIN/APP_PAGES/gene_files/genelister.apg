@@ -131,7 +131,7 @@ Options:
 <?MIBLOCK COND="$(XST,$limit)">
 
 <TABLE width=100% border=0 cellspacing=0 cellpadding=3>
-<TH> </TH><TD align=left><B>Gene symbol</b> - name &nbsp; [other names]</TD> <TD align=left><B>Location</b></TD>
+<TH> </TH><TD align=left><font size=2><B>Gene symbol </b>- name  &nbsp;[other names]</TD> <TD align=left><B>Location</b></TD> <TD align=left><font size=2><B>Panel</b></TD> <TD align=left><font size=2><B>Updated<b></TD>
 
 <!-- DEBUGGING <?MIVAR>  constraint=$constraint <?/MIVAR> -->
 
@@ -139,7 +139,7 @@ Options:
 <?MIVAR NAME=$prev_name>0<?/MIVAR>
 <?MIVAR NAME=$prev_gp>0<?/MIVAR>
 <?MIVAR NAME=$clr_cnt>0<?/MIVAR>
-<?MISQL SQL="select gene_name, lg_location, zdb_id,OR_lg, panel_id, panel_abbrev,abbrev,private,owner,metric,alt_names from $target_table $constraint $order_clause;" MAXROWS=$limit>
+<?MISQL SQL="select gene_name, lg_location, zdb_id,OR_lg, panel_id, panel_abbrev,abbrev,private,owner,metric,alt_names,day(entry_date::date), month(entry_date::date), year(entry_date::date) from $target_table $constraint $order_clause;" MAXROWS=$limit>
 
 $(IF,$(NC,$prev_name,$1),$(SETVAR,$clr_cnt,$(+,$clr_cnt,1)))
 
@@ -148,7 +148,7 @@ $(IF,$(AND,$(EC,$order_pref,location),$(NC,$prev_gp,$4)),"<TR><TD colspan=3 alig
 $(SETVAR,$color,$(/,$clr_cnt,2))
 <TR valign=top $(IF,$(!=,$color,$(FIX,$color)),"bgcolor=#FCCE64")>
 
-<TD><font size=2> 
+<TD><font size=1> 
 $(IF,$(XST,$return_rec),<A HREF=/cgi-bin_B/webdriver?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3 TARGET=content>SELECT</A>) 
 </TD>
 
@@ -159,9 +159,13 @@ $(IF,$(NC,$prev_name,$1),$(IF,$(ISNULL,$11),<TD valign=top> <font size=2><A HREF
 
 $(IF,$(=,$4,0),"Unmapped")
 
-$(IF,$(AND,$(>,$4,0),$(EC,$8,f)),"LG <b>"$4"</b>;<b> "$2"</b> "$10" (<A target=content HREF=/cgi-bin_B/webdriver?MIval=aa-crossview.apg&OID="$5">"$6" Panel</A>)")
+<?MIVAR NAME=$upd_date COND="$(>,$4,0)">$(INDEX,$(-,$13,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $12,$14 
+<?/MIVAR>
 
-$(IF,$(AND,$(>,$4,0),$(NC,$8,f)),"Mapped on <A target=content HREF=/cgi-bin_B/webdriver?MIval=aa-crossview.apg&OID="$5">"$6" panel</A>, but still confidential.")
+
+$(IF,$(AND,$(>,$4,0),$(EC,$8,f)),"LG <b>"$4"</b>;<b> "$2"</b> "$10""<TD><font size=2> "<A target=content HREF=/cgi-bin_B/webdriver?MIval=aa-crossview.apg&OID="$5">"$6"</A>"</TD><TD><font size=2>" "$upd_date""</TD>)
+
+$(IF,$(AND,$(>,$4,0),$(NC,$8,f)),"Mapped on <A target=content HREF=/cgi-bin_B/webdriver?MIval=aa-crossview.apg&OID="$5">"$6" panel; updated "$upd_date"</A>, but still confidential.")
 </TD>
 
 <TD><font size=2><A HREF="javascript:view_map('$3','$7','$5')">
