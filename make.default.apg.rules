@@ -74,6 +74,7 @@ clobber :			# Remove targets, but not target dir.
     ifdef TARGETS
 	rm -f $(TARGETS)
     endif
+	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
 
 sanitycheck :
     ifdef GENERICS
