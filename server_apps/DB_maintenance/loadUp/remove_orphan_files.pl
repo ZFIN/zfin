@@ -254,7 +254,7 @@ close MOVED_PDF_FILES;
 
 open(ORPHAN_IMAGE_FILES, "< /tmp/orphan_image_files.unl") or die "can't open $file";
 
-$count_images while <ORPHAN_IMAGE_FILES>;
+$count_images++ while <ORPHAN_IMAGE_FILES>;
 
 #count_images now holds the number of lines read
 
