@@ -2,9 +2,6 @@
 #
 # Makefile for ZFIN_WWW CVS Project, Java Server subdirectory
 #
-# $Source$
-# $Id$
-#
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
 # !! of the makefile hierarchy this makefile is a part of, and of the  !!
@@ -120,8 +117,10 @@ $(MICSTAGINGS) : $(STAGINGDIR)/%.c : %.c
 start : 
 	$(TARGETDIR)/informix-javaserver start
 
+# Ignore error on stop command.  Gets an error if already stopped.
+
 stop : 
-	$(TARGETDIR)/informix-javaserver stop
+	-$(TARGETDIR)/informix-javaserver stop
 
 
 
