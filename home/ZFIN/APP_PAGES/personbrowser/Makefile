@@ -23,7 +23,7 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/personbrowser
 
 GENERICS = new_person.apg persprintable.apg persselect.apg \
 	persupdate.apg persview.apg process-person.apg quickfindpers.apg \
-	sourceview.apg update-person.apg
+	sourceview.apg update-person.apg quickPersForm.apg
 
 
 # Use default rules for app page directories
