@@ -29,7 +29,7 @@ GENERICS = ZFIN_jump map-options.pl print_map.cgi runSPL.cgi cgiemail.cgi\
 	   view_mapplet.cgi view_zmapplet.cgi select_structures.cgi \
 	   xpat_select_parts.cgi \
 	   input_welcome.cgi input_welcome_generic.cgi expired_locus.cgi \
-           publications_today.cgi 
+           publications_today.cgi send_notification.cgi
 
 
 # ---------------  Production Rules  ------------------------------------
