@@ -545,7 +545,8 @@ $(IF,$(>,$(POSITION,$rtype,go),0),
     <?MISQL SQL="
       select distinct p.zdb_id from 
     	record_attribution, publication p
-      where ($related_data_attrib_to_OID)
+      where (recattrib_data_zdb_id = '$OID'
+         or $related_data_attrib_to_OID)
      	and recattrib_source_zdb_id = p.zdb_id 
      	and jtype in ('Curation', 'Unpublished')
 	into temp all_curation_pubs_temp with no log;
@@ -595,7 +596,6 @@ $(IF,$(>,$(POSITION,$rtype,go),0),
    <?MIVAR COND="$(>,$count_of_real_pub,0)">
      <TR><TD><b>Additional Citations ($add_cit_count):</b></TD></TR>
    <?/MIVAR>
-
 
   <?MIVAR COND="$(AND,$(=,$(POSITION,$OID,LOCUS),0),$(=,$(POSITION,$OID,FISH),0))">
    <?MISQL SQL="
