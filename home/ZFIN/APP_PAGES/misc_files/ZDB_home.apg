@@ -145,6 +145,9 @@ For security reasons, please <b>click "Goodbye" to LOG OUT</b> if you have finis
 <?MIVAR COND="$(EC,$AUTHORIZED,root)">
 <p><A HREF="/cgi-bin_B/webdriver?MIval=aa-mkdist_list.apg" TARGET=NEW_WIN>Generate Dist. list</A>
 <?/MIVAR>
+<?MIVAR COND="$(EC,$AUTHORIZED,root)">
+<p><A HREF="/cgi-bin_B/webdriver?MIval=aa-mkdist_list_usa.apg" TARGET=NEW_WIN>Generate USA Dist. list</A>
+<?/MIVAR>
 </TD> 
 <TD>
 <?MIVAR COND="$(NC,$AUTHORIZED,GUEST)">
