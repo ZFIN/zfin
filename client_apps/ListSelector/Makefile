@@ -26,7 +26,7 @@ FINALTARGETDIR = $(TARGETROOT)/client_apps/ListSelector
 
 # ---- Misc Java variables
 
-# Use the standard JAVAC_11, and JAVACFLAGS.  Still need to define classpath.
+# Use the standard JAVAC_14, and JAVACFLAGS.  Still need to define classpath.
 
 SRCIFMXPATH   = $(JDBCHOME)/lib
 IFMXJARS      = ifxjdbc.jar ifxlsupp.jar
@@ -36,7 +36,7 @@ EMPTY         =
 SPACE         = $(EMPTY) $(EMPTY)
 IFMXCLASSPATH = $(subst $(SPACE),:,$(DESTIFMXJARS))
 
-CLASSPATH = $(STAGINGDIR):$(JAVAHOME_11)/lib/classes.zip:$(TOP)/lib/Java:$(IFMXCLASSPATH)
+CLASSPATH = $(STAGINGDIR):$(JAVAHOME_14)/lib/classes.zip:$(TOP)/lib/Java:$(IFMXCLASSPATH)
 
 
 # ---- Java source and destination variables
@@ -75,7 +75,7 @@ $(FINALTARGETDIR) :
 # When any class file needs to be remade, remake all of them.
 
 $(STAGINGCLASSES) : $(STAGINGJAVAS)
-	$(JAVAC_11) $(JAVACFLAGS) -classpath $(CLASSPATH) $(STAGINGJAVAS)
+	$(JAVAC_14) $(JAVACFLAGS) -classpath $(CLASSPATH) $(STAGINGJAVAS)
 
 
 # ----- Rules for creating the JAR files.
