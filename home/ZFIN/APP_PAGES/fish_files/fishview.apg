@@ -1,4 +1,6 @@
 
+
+
 <!-- FILE: FISHVIEW.HTML. This file implements a viewer for FISH records. The goal is to display all of the information associated with, not only the FISH record, but also all mutant alleles (ie. CHROMOSOME and ALTERATION recs) associated with the FISH.
 
 
@@ -13,6 +15,7 @@ Variables Expected:
 <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
 
 <?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
+<?MIVAR COND="$(NXST,$lg)" NAME=$lg>0<?/MIVAR>
 
 <SCRIPT>
 function info() {
@@ -51,6 +54,11 @@ function doit(attr,attr_type,print_name) {
 window.location.search='?MIval=aa-fishupdate.apg&OID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name
 }
 
+function doit_marker(attr,attr_type,print_name,lg) {
+window.location.search='?MIval=aa-fishupdate.apg&OID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name+'&lg='+lg
+}
+
+
 function add_source(selector) {
 var selectedValue=selector[selector.selectedIndex].value;
 selector.selectedIndex=0;
@@ -86,6 +94,12 @@ window.location.search='?MIval=aa-do-fishupdate.apg&OID=$OID&attr=reference&attr
 function Delete_listitem(item_name,item_id) {
 window.location.search='?MIval=aa-do-fishupdate.apg&OID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted'
 }
+
+function Delete_marker(allele,marker_id) {
+window.location.search='?MIval=aa-do-fishupdate.apg&OID=$OID&attr='+allele+'&attr_type=marker-delete&old_value='+marker_id+'&new_value=deleted'
+}
+
+
 </SCRIPT>
 <?/MIVAR>
 
@@ -439,6 +453,7 @@ $(IF,$(AND,$(XST,$UPDATE),$(EC,$10,original)),"<SELECT name=chrom_change onChang
 <table border=0 cellpadding=0 cellspacing=0 width=100%>
 <TR>
 <TD> <font size=-1><b>Linkage Group:</b> 
+<?MIVAR NAME=$lg>$2<?/MIVAR>
 $(IF,$(OR,$(NXST,$UPDATE),$(NC,$10,original)),$(IF,$(EC,$2,0),UNKNOWN,$2))
 
 $(IF,$(AND,$(XST,$UPDATE),$(EC,$10,original)),"<SELECT name=chrom_number onChange=doChromnum(this.options[this.selectedIndex].value,'"$2"','"$9"')>
@@ -485,7 +500,7 @@ $(IF,$(AND,$(XST,$UPDATE),$(EC,$10,original)),"<SELECT name=chrom_number onChang
 <!-- If its just a single mutant, go ahead and show mapping info -->
 <?MIBLOCK COND="$(=,$MI_ROWCOUNT,1)">
 
-<?MIVAR><b>Mapped linkages</b> to $abbrev:<?/MIVAR>
+<font size=-1><?MIVAR><b>Mapped linkages</b> to $abbrev:<?/MIVAR>
 <?MIVAR COND="$(XST,$UPDATE)">
 <INPUT TYPE=button value="ADD new linkage" onClick="add_linkage();">
 <?/MIVAR>
@@ -514,17 +529,60 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$7,f),$(EC,$ZDB_ident,$6)),"<TD><font size=-
 <?MISQL SQL="select chrom_change from fish_search where fish_id='$OID';"><?/MISQL>
 <?MIVAR NAME=$chrom_change>$1<?/MIVAR>
 
-<?MIBLOCK COND="$(EC,$chrom_change,deficiency)">
+<?MIBLOCK COND="$(OR,$(EC,$chrom_change,deficiency),$(EC,$chrom_change,translocation),$(EC,$chrom_change,UNKNOWN))">
+<A NAME="markers-missing">
+
+
+
 <hr width=80%>
-<TABLE width=100%>
-<TR><TD><font size=2><b>Markers missing:</b> 
+<TABLE width=100%><TR><TD><font size=2>
+
 <?MIVAR NAME=$last><?/MIVAR>
+<?MIVAR name=marker_present>0<?/MIVAR>
 <?MISQL SQL="select b.abbrev,b.zdb_id,a.present_t,b.mtype from mapped_deletion a,all_markers b where a.marker_id=b.zdb_id and allele='$allele' order by a.present_t,b.mtype;">
-$(IF,$(AND,$(NC,$last,$3),$(EC,$3,t)),"</TD><TD><font size=2><b>Markers present:</b> ")
-<A href="/cgi-bin_B/webdriver?MIval=aa-markerview.apg&OID=$2">$1</A>;
+
+<?MIVAR COND="$(AND,$(NC,$last,$3),$(EC,$3,F))">
+<?MIVAR COND="$(XST,$UPDATE)">
+<INPUT TYPE=button value="Add" onClick="doit_marker('marker','selection','missing',$lg)"> 
+<?/MIVAR>
+
+<b>Markers missing:</b>
+ 
+
+<?MIVAR COND="$(XST,$UPDATE)">
+<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<?/MIVAR>
+<?/MIVAR>
+
+$(IF,$(AND,$(NC,$last,$3),$(EC,$3,t),$(NXST,$UPDATE)),"</TD></TR></TABLE><TABLE><TR><TD><font size=2><b>Markers present:</b> ")
+
+<?MIVAR COND="$(AND,$(NC,$last,$3),$(EC,$3,t),$(XST,$UPDATE))">
+<?MIVAR name=marker_present>1<?/MIVAR>
+</TD></TABLE><TABLE><TD align=left><font size=2>
+<INPUT TYPE=button value="Add" onClick="doit_marker('marker','selection','present',$lg)"> 
+<b>Markers present:</b>
+<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<?/MIVAR>
+
+$(IF,$(XST,$UPDATE),"<font size=-1><input type=button value=delete onClick=Delete_marker('"$allele"','"$2"')></font>")
+
+<A href="/cgi-bin_B/webdriver?MIval=aa-markerview.apg&OID=$2">$1</A>
+$(IF,$(NXST,$UPDATE),";")
+$(IF,$(XST,$UPDATE),"<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
 $(SETVAR,$last,$3)
 <?/MISQL>
+
+<!-- debugging <?MIVAR>  marker_present = $marker_present <?/MIVAR>   -->
+
+<?MIVAR COND="$(AND,$(XST,$UPDATE),$(EC,$marker_present,0))">
+</TD></TABLE><TABLE><TD align=left><font size=2>
+<INPUT TYPE=button value="Add" onClick="doit_marker('marker','selection','present',$lg)"> 
+<b>Markers present:</b>
+<br>
+<?/MIVAR>
+
 </TD></TR></TABLE>
+
 
 <?/MIBLOCK> <!-- ends deficiency -->
 
