@@ -66,6 +66,8 @@ Variables expected:  OID  -- the OID of a publication to link
   <?MIVAR COND="$(NXST,$search_order_pref)" NAME=$search_order_pref>date<?/MIVAR>
   <?MIVAR COND="$(NXST,$search_cur_status)" NAME=$search_cur_status>any<?/MIVAR>
   <?MIVAR COND="$(NXST,$search_pub_status)" NAME=$search_pub_status>any<?/MIVAR>
+  <?MIVAR COND="$(NXST,$BEGIN)" NAME=$BEGIN>1<?/MIVAR>
+  <?MIVAR COND="$(NXST,$WINSIZE)" NAME=$WINSIZE>10<?/MIVAR>
   <?MIVAR COND="$(XST,$search_cur_status)" NAME=$search_cur_status DELIMIT=" " REPLACE="|">$search_cur_status<?/MIVAR>
   <?MIVAR COND="$(XST,$search_title)" NAME=$search_title DELIMIT=" " REPLACE="|">$search_title<?/MIVAR>
   <?MIVAR COND="$(XST,$search_authors)" NAME=$search_authors DELIMIT=" " REPLACE="|">$search_authors<?/MIVAR>
@@ -117,7 +119,10 @@ Variables expected:  OID  -- the OID of a publication to link
     <input type=hidden name=search_order_pref value=$search_order_pref>
     <input type=hidden name=search_cur_status value=$search_cur_status>
     <input type=hidden name=search_pub_status value=$search_pub_status>
+    <input type=hidden name=BEGIN value=$BEGIN>
+    <input type=hidden name=WINSIZE value=$WINSIZE>
   <?/MIVAR>
+
 <hr width=80%>
 <input type=button value="CANCEL" onClick="window.history.go(-1)">
 <?MIVAR>
@@ -143,7 +148,7 @@ Variables expected:  OID  -- the OID of a publication to link
 
 <?MIVAR>
 <SCRIPT>
-window.location.href=('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-pubselect2.apg&select_from=PUBLICATION&navtile=true&authors=$search_authors&anon1text=$search_anon1text&authtype=$search_authtype&anon1=$search_anon1&title=$search_title&jtype=$search_jtype&yr_cmpr=$search_yr_cmpr&century=$search_century&year=$search_year&order_pref=$search_order_pref&cur_status=$search_cur_status&pub_status=$search_pub_status');
+window.location.href=('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-pubselect2.apg&select_from=PUBLICATION&navtile=true&authors=$search_authors&anon1text=$search_anon1text&authtype=$search_authtype&anon1=$search_anon1&title=$search_title&jtype=$search_jtype&yr_cmpr=$search_yr_cmpr&century=$search_century&year=$search_year&order_pref=$search_order_pref&cur_status=$search_cur_status&pub_status=$search_pub_status&WINSIZE=$WINSIZE&BEGIN=$BEGIN');
 </SCRIPT>
 <?/MIVAR>
 
