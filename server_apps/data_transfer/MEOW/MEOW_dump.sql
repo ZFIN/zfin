@@ -19,7 +19,7 @@
 
 create table meow_exp1 (
   zdb_id varchar(50),
-  mname varchar(80),
+  mname varchar(120),
   abbrev varchar(20),
   OR_lg varchar(2)
 );
@@ -100,7 +100,7 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_genes.txt'
 
 create table meow_expll (
   zdb_id varchar(50),
-  gene_name varchar(80),
+  gene_name varchar(120),
   abbrev varchar(20),
   OR_lg varchar(2),
   location numeric(6,2),
@@ -229,7 +229,7 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_pubs.txt'
 create table meow_exp3 (
   gene_id varchar(50),
   organism varchar(30),
-  ortho_name varchar(50),
+  ortho_name varchar(120),
   ortho_abbrev varchar(15), 
   ortho_id varchar(50)
 );
