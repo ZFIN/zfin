@@ -1,0 +1,23 @@
+<!-- displays the comments for the specified linkage and marker
+VARS:
+link_id -- the id of the linkage
+marker_id  -- the marker
+marker_abbrev -- abbrev of marker
+-->
+
+
+<?MISQL SQL="select alnkgmem_comments from all_linked_members where alnkgmem_linkage_zdb_id='$link_id' and alnkgmem_member_zdb_id = '$marker_id';">
+
+
+<table width=100% cellpadding=0><font size=4 face="Courier">
+<p>
+$1
+
+<?/MISQL>
+
+<?MIVAR COND="$(=,$MI_ROWCOUNT,0)"><b>Sorry, no curated comments available.</B>
+<?/MIVAR>
+
+</table>
+</font>
+
