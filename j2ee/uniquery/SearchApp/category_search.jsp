@@ -246,45 +246,67 @@
                 }
             %>
             <center>
-            <%
-            int totalPageCount = results.getPageCount();
-            int currentPage = results.getCurrentPageIndex();
-            int startOfPageRange = Math.max(0, currentPage - 5);
-            int endOfPageRange = Math.min(startOfPageRange + 10, totalPageCount);
-            
-            if (totalPageCount > 1)
-                {
-                if (startOfPageRange > 0)
+                <%
+                int totalPageCount = results.getPageCount();
+                int currentPage = results.getCurrentPageIndex();
+                int startOfPageRange = Math.max(0, currentPage - 3);
+                int endOfPageRange = Math.min(currentPage + 4, totalPageCount);
+                
+                if (totalPageCount > 1)
                     {
                     %>
-                   <a href="category_search.jsp?query=<%=URLEncoder.encode(queryTerm, "UTF-8")%>&category=<%=categoryTerm%>&pageSize=<%=pageSize%>&startIndex=0">First Page</a> &nbsp;&nbsp;
-                    <%
-                    }
-        
-                for (int i=startOfPageRange; i<endOfPageRange; i++)
-                    {
-                     if (i == currentPage)
-                        {
-                        %>
-                        <b><%=(i + 1)%>&nbsp;</b>
-                        <%
-                        }
-                    else
-                        {
-                        %>
-                        <a href="category_search.jsp?query=<%=URLEncoder.encode(queryTerm, "UTF-8")%>&category=<%=categoryTerm%>&pageSize=<%=pageSize%>&startIndex=<%=(i * pageSize)%>"><%=(i + 1)%>&nbsp;</a>
-                        <%
-                        }
-                    }
-                if (endOfPageRange < totalPageCount)
-                    {
-                    %>
-                    &nbsp;&nbsp;<a href="category_search.jsp?query=<%=URLEncoder.encode(queryTerm, "UTF-8")%>&category=<%=categoryTerm%>&pageSize=<%=pageSize%>&startIndex=<%=((totalPageCount-1) * pageSize)%>">Last page</a>
+                    <table width="70%" border="0">
+                        <tr>
+                            <td width="45%" align="right" valign="top">&nbsp;
+                            <%
+                            if (currentPage > 0)
+                                {
+                                %>
+                                <a href="category_search.jsp?query=<%=URLEncoder.encode(queryTerm, "UTF-8")%>&category=<%=categoryTerm%>&pageSize=<%=pageSize%>&startIndex=<%=((currentPage-1) * pageSize)%>">Previous</a><br>
+                                <a href="category_search.jsp?query=<%=URLEncoder.encode(queryTerm, "UTF-8")%>&category=<%=categoryTerm%>&pageSize=<%=pageSize%>&startIndex=0">First Page</a>
+                                <%
+                                }
+                            %>
+                            </td>
+                            <%
+                    
+                            for (int i=startOfPageRange; i<endOfPageRange; i++)
+                                {
+                                 if (i == currentPage)
+                                    {
+                                    %>
+                                    <td valign="top">
+                                        <b><%=(i + 1)%>&nbsp;</b>
+                                    </td>
+                                    <%
+                                    }
+                                else
+                                    {
+                                    %>
+                                    <td valign="top">
+                                        <a href="category_search.jsp?query=<%=URLEncoder.encode(queryTerm, "UTF-8")%>&category=<%=categoryTerm%>&pageSize=<%=pageSize%>&startIndex=<%=(i * pageSize)%>"><%=(i + 1)%>&nbsp;</a>
+                                    </td>
+                                    <%
+                                    }
+                                }
+                            %>
+                            <td width="45%" align="left" valign="top">&nbsp;                            
+                            <%
+                            if (currentPage < (totalPageCount - 1))
+                                {
+                                %>
+                                <a href="category_search.jsp?query=<%=URLEncoder.encode(queryTerm, "UTF-8")%>&category=<%=categoryTerm%>&pageSize=<%=pageSize%>&startIndex=<%=((currentPage+1) * pageSize)%>">Next</a><br>
+                                <a href="category_search.jsp?query=<%=URLEncoder.encode(queryTerm, "UTF-8")%>&category=<%=categoryTerm%>&pageSize=<%=pageSize%>&startIndex=<%=((totalPageCount-1) * pageSize)%>">Last page</a>
+                                <%
+                                }
+                            %>
+                            </td>
+                        </tr>
+                    </table>
                     <%
                     }
                 }
-            }
-            %>
+                %>
         </center>
         <p>&nbsp;</p>
         <%
@@ -306,7 +328,7 @@
         %>&nbsp;
         </TD>
         <TD align="right" class="titlebar">
-            &nbsp;
+            <a href="syntax_help.jsp">Search Tips</a>
         </TD>
     </TR>
     <TR>
@@ -338,7 +360,7 @@
     </TR>
     <TR>
         <TD colspan="2" class="titlebar">
-        &nbsp;
+            <a href="syntax_help.jsp">Search Tips</a>
         </TD>
     </TR>
 </TABLE>
