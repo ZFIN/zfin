@@ -410,7 +410,18 @@ create dba function "informix".regen_genomics() returning integer
 	select  allmapnm_name, allmapnm_zdb_id, min(allmapnm_significance) allmapnm_significance 
 	from all_m_names_new group by 2,1 having count(*) > 1
 	into temp tmp_amn_dup with no log;
-	
+        
+	create index t_tmp_amn_dup on tmp_amn_dup (allmapnm_zdb_id);	
+
+   -- staylor created an index on the temp table above 071703.  
+   -- It seems that there is a difference in the optimizer in 9.3 that makes this index necessary.  
+   -- Run-time before for regen_genomics.sql = >> 15 minutes. 
+   -- Run-time after for regen_genomics.sql = < 4 minutes.
+   -- However, this time difference does not happen for all users.  
+   -- TomC and staylor experience the time delay, DaveC does not.  
+   -- We have no idea why this happens, but the creation of this index seems to help for users experiencing
+   -- the delay.
+
 	delete from all_m_names_new where exists (
 		select 1 from  tmp_amn_dup  tad 
 		where tad.allmapnm_name         =  all_m_names_new.allmapnm_name
