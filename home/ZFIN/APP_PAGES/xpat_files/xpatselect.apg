@@ -753,7 +753,8 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
   <?/MIBLOCK>
 	<?MIVAR name=$UserInput COND=$(XST,$structure_bool)>$UserInput&structure_bool=$structure_bool<?/MIVAR>
 	<?MIVAR name=$UserInput COND=$(XST,$query_results)>$UserInput&query_results=$query_results<?/MIVAR>
-	<?MIVAR name=UserInput COND=$(XST,$user_entered)>$UserInput&user_entered=$(URLENCODE,$user_entered)<?/MIVAR>
+	<?MIVAR name=$UserInput COND=$(XST,$user_entered)>$UserInput&user_entered=$(URLENCODE,$user_entered)<?/MIVAR>
+	<?MIVAR name=$UserInput COND=$(XST,$order)>$UserInput&order=$order<?/MIVAR>
        <?/MIBLOCK>
 
 <?MIBLOCK COND="$(XST,$structure_list)">
