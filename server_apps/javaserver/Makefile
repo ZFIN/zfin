@@ -1,104 +1,158 @@
+#------------------------------------------------------------------------
 #
-#  The macros defining the paths and compiler options
+# Makefile for ZFIN_WWW CVS Project, Java Server subdirectory
 #
-# NOTE:  The version of Java used in this Makefile must be the same
-#	as the version invoked in the shell script that starts the
-#	Java server.  This is because we are building C functions that
-#	link directly into the JVM, and so the version of the Java
-#	support libraries we compile with must match the version
-#	of the JVM this code will be linked into at runtime.
-JAVAHOME= /local/apps/jdk-1.1
-BIN= $(JAVAHOME)/bin
-CLASSLIB= $(JAVAHOME)/lib/classes.zip
-
-JAVAC = $(BIN)/javac
-JAVAH = $(BIN)/javah
-JAR= $(BIN)/jar
-TOSOURCE=/home/grads/ted/bin/toSource
-
-JAVAFLAGS = -g -classpath .:$(CLASSLIB)
-
-.SUFFIXES: .java .class
-
-.java.class:
-	$(JAVAC) $(JAVAFLAGS) $<
-
-#  Get INFORMIXDIR from environment 
-CC= cc
-
-INCDIR = $(INFORMIXDIR)/incl/dmi
-MILIBDIR = $(INFORMIXDIR)/lib/dmi
-
-MICFLAGS = -DPLATFORM=solaris -g -DELF -v -DPOSIX_SIGNALS -DSOLARIS -I $(INCDIR)
-
-#  esql doesn't add this library to the list, so specify it explicitly
-MILIBS = -L$(MILIBDIR) -lifdmi
-
+# $Source$
+# $Id$
 #
-#  The lists of files
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
+# !! of the makefile hierarchy this makefile is a part of, and of the  !!
+# !! format and conventions used in this makefile.                     !!
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
+# This makefile uses a staging directory to produce most of its targets.
+# This makefile populates the staging directory with source files and
+# then calls the makefile in the staging directory to produce the 
+# targets.  The staging makefile makes use of makefile variables 
+# inherited from this file.
+# 
 
-CONTROLFILES = Makefile enddef S90javaserver
-CLASSFILES = Server.class MIConnection.class Statement.class ResultSet.class SQLException.class
-OBJECTFILES = MIConnection.o Statement.o ResultSet.o MIConnectionImp.o
 
-#
-#  The targets, which define the various things we can do with this Makefile
-#
+# ---------------  Variable Definitions  --------------------------------
 
-# Build the server
-Server:	$(CLASSFILES) libMISQL.so
+TOP = ../..
+include $(TOP)/make.include
 
-# Clean out all object files, forcing a rebuild
-clean:
-	\rm $(CLASSFILES)
-	\rm $(OBJECTFILES)
+TARGETDIR = $(TARGETROOT)/server_apps/javaserver
 
-#  Checkin a new version to RCS
-#   -tfile:  file contains initial text (if new file) -mstring:  message string, -nname:  name of version
-#   -zLT:  use the local time when substituting time for keywords
-#VERSION_MESSAGE=
-VERSION_MESSAGE= -m"Improved synchronization"
-#VERSION_NAME=
-VERSION_NAME= -NSynchronized
-checkin:
-	ci -zLT -l -tinitial.text $(VERSION_MESSAGE) $(VERSION_NAME) $(CONTROLFILES) `$(TOSOURCE) $(CLASSFILES)` `$(TOSOURCE) $(OBJECTFILES)`
+STAGINGDIR = Staging
 
-#
-#  The actual commands for creating the targets
-#
 
-libMISQL.so:	$(OBJECTFILES)
-#	$(CC) -G $(OBJECTFILES) $(MILIBS) -o libMISQL.so
-#	precc is a shell script that passes a -G option to cc (see precc for reason)
-	INFORMIXC=./precc esql -o libMISQL.so $(OBJECTFILES) $(MILIBS)
+# ---- Scripts
 
-MIConnection.h:	MIConnection.class
-	$(JAVAH) MIConnection
+SCRIPTGENERICS  = informix-javaserver runServer
+SCRIPTSPECIFICS = $(foreach SGEN, $(SCRIPTGENERICS), $(TARGETDIR)/$(SGEN))
 
-MIConnection.c:	MIConnection.class
-	$(JAVAH) -stubs MIConnection
+# The precc script is used to compile the javaserver.  It is not part of
+# the production environment, so don't copy it to the target directory.
+# precc does not have any generic tags in it.
 
-MIConnection.o:	MIConnection.c MIConnection.h
-	$(CC) -G -I $(JAVAHOME)/include -I $(JAVAHOME)/include/solaris -c MIConnection.c 
 
-Statement.h:	Statement.class
-	$(JAVAH) Statement
+# ---- Java source variables
 
-Statement.c:	Statement.class
-	$(JAVAH) -stubs Statement
+JAVAGENERICS  = Server.java
+JAVASPECIFICS = $(foreach GNRC, $(JAVAGENERICS), $(STAGINGDIR)/$(GNRC))
 
-Statement.o:	Statement.c Statement.h
-	$(CC) -G -I $(JAVAHOME)/include -I $(JAVAHOME)/include/solaris -c Statement.c 
+JAVASTATICS  = MIConnection.java Statement.java ResultSet.java \
+               SQLException.java
+JAVASTATICSTAGINGS = $(foreach STAT, $(JAVASTATICS), $(STAGINGDIR)/$(STAT))
 
-ResultSet.h:	ResultSet.class
-	$(JAVAH) ResultSet
+JAVASRCS     = $(JAVAGENERICS) $(JAVASTATICS)
+JAVASTAGINGS = $(JAVASPECIFICS) $(JAVASTATICSTAGINGS)
 
-ResultSet.c: ResultSet.class
-	$(JAVAH) -stubs ResultSet
 
-ResultSet.o:	ResultSet.c ResultSet.h
-	$(CC) -G -I $(JAVAHOME)/include -I $(JAVAHOME)/include/solaris -c ResultSet.c 
 
-MIConnectionImp.o:	MIConnectionImp.c MIConnection.h Statement.h ResultSet.h
-	$(CC) -G $(MICFLAGS) -I $(JAVAHOME)/include -I $(JAVAHOME)/include/solaris -c MIConnectionImp.c 
+# ---- C source variables
+
+# This makefile is concerned only with c source files that already exist.
+# The staging directory is also concerned with C source files that are
+# generated from the java class files.  All of the prexisting C source
+# files need to be compiled with special MI options.
+
+MICSRCS     = MIConnectionImp.c
+MICSTAGINGS = $(foreach MIC, $(MICSRCS), $(STAGINGDIR)/$(MIC))
+
+
+
+# ---- Which variables are used by Makefile in Staging directory:
+
+export JAVASRCS
+export MICSRCS
+export TARGETDIR
+
+
+# define target list
+
+TARGETS = $(SCRIPTSPECIFICS) $(JAVASTAGINGS) $(MICSTAGINGS) 
+
+
+# ---------------  Production Rules  ------------------------------------
+
+.PHONY : all start stop sanitycheck clean clobber depend $(STAGINGDIR)
+
+
+all : $(TARGETDIR) $(TARGETS) $(STAGINGDIR) 
+
+$(TARGETDIR) :
+	$(TARGET_MKDIR) $@
+
+$(STAGINGDIR) :
+	(cd $(STAGINGDIR); $(MAKE))
+
+
+
+# ----  Rules for moving scripts to target directory
+
+$(SCRIPTSPECIFICS) : $(TARGETDIR)/% : %
+	$(MAKESPECIFIC) $< $(TRANSLATETABLE) $@
+
+
+
+# ----  Rules for moving Java sources to staging directory.
+
+$(JAVASPECIFICS) : $(STAGINGDIR)/% : %
+	$(MAKESPECIFIC) $< $(TRANSLATETABLE) $@
+
+$(JAVASTATICSTAGINGS) : $(STAGINGDIR)/% : %
+	$(STAGING_CP) $< $@
+
+
+# ----  Rules for copying C files
+
+$(MICSTAGINGS) : $(STAGINGDIR)/%.c : %.c
+	$(STAGING_CP) $< $@
+
+
+
+# ---------------  Start/Stop Rules  ------------------------------------
+
+start : 
+	$(TARGETDIR)/informix-javaserver start
+
+stop : 
+	$(TARGETDIR)/informix-javaserver stop
+
+
+
+# ---------------  Maintenance Rules  -----------------------------------
+
+clean :		# remove copied files from staging directory
+	rm -rf $(JAVASTAGINGS) $(MICSTAGINGS)
+	$(MAKE) -C $(STAGINGDIR) $@
+
+
+clobber :			# Remove targets, but not target dir.
+	rm -f $(TARGETS)
+
+
+# check generics & possibly statics as well for values that should
+# be represented with tags instead of hard coded values
+
+sanitycheck : 
+	$(SPECIFICCHECK) $(JAVASRCS) $(MICSRCS)
+	$(MAKE) -C $(STAGINGDIR) $@
+
+
+# Update header file dependencies in staging directory.
+
+depend : 
+	(cd $(STAGINGDIR); $(MAKE) depend)
+
+
+
+# define one time only target to make the specific files that were intially
+# checked in to CVS, make them generic, and then check them back in to CVS.
+
+cvsgeneric :
+	$(foreach GNRC,$(SCRIPTGENERICS) $(JAVAGENERICS), $(CVSGENERIC))

@@ -1,70 +1,110 @@
-# Makefile to produce the production zextend.so function library.
+#------------------------------------------------------------------------
 #
-# This makefile does NOT place the zextend.so file in the location
-# where the server picks it up (in /research/zfin/chromix/private/lib/,
-# as of 2000/06).  The only safe way we have found to replace that file
-# is to:
-#  1. Bring the server down.
-#  2. Copy the new shared object file to /research/zfin/chromix/private/lib/
-#  3. Bring the server back up to on-line mode.
-#  4. Immediately run "dbaccess - ../../dataport/reload_zex_functions.sql"
+# Makefile for ZFIN_WWW CVS Project, zextend.so external database 
+# function library
 #
-# $Id$
 # $Source$
+# $Id$
+#
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
+# !! of the makefile hierarchy this makefile is a part of, and of the  !!
+# !! format and conventions used in this makefile.                     !!
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#
+# 
+# This makefile is a little complicated.  It needs to be in order to 
+# avoid hanging the database.  Here's what it does:
+#  1. Creates a local copy of the target library.
+#  2. Drops all functions in that library from the database.
+#  3. Copies the target library to where it will be read by the server.
+#  4. Defines all functions in that library to the database.
+#
+# Combining any of those steps may cause the database to hang.  In particular
+# if you copy the new library over the old while informix is using a function
+# that is in that library, very bad things will happen.
+#
+# Thought about using a staging directory here to handle the 
+# create_functions.sql file, but opted not to go through the work for just
+# one file.  This makefile creates a specific version of that file right
+# before it needs it, and then deletes it right after it's done with it.
+#
 
-#
-#  The macros defining the paths and compiler options
-#
-INFORMIXDIR=/export/chromix/private/apps/Informix_A
+# ---------------  Variable Definitions  --------------------------------
+
+TOP = ../../..
+include $(TOP)/make.include
+
+# Note that sibling directories to this one will have the same target 
+# directory.
+
+TARGETDIR = $(TARGETROOT)/lib/DB_functions
+
+# zextend.c is the only thing we need to compile in this directory.
+# It includes md5.c, which also includes md5.h, so we care about those, but
+# they are picked up automatically when we compile zextend.c
+
+# STATICS  = md5.c md5.h zextend.c drop_functions.sql
+# GENERICS = create_functions.sql
+
+SRCS = zextend.c
+OBJS = zextend.o
+
+TARGET = $(TARGETDIR)/zextend.so
+
+
+# ---- C compilation defines
+
 CC= cc
 
 INCDIR = $(INFORMIXDIR)/incl/dmi
 LIBDIR = $(INFORMIXDIR)/lib 
-
 MICFLAGS = -DPLATFORM=solaris -g -DELF -v -DPOSIX_SIGNALS -DSOLARIS -I $(INCDIR)
-#MILIBS = -ldl -lsocket -lnsl -L$(LIBDIR) -lmi
 MILIBS = -lsocket -lnsl -L$(LIBDIR)
 
-#
-#  The lists of files
-#
 
-SOURCEFILES = Makefile lower.c
-OBJECTFILES = zextend.o
+# ---------------  Production Rules  ------------------------------------
 
-#
-#  The targets, which define the various things we can do with this Makefile
-#
+.PHONY : all sanitycheck clean clobber
 
-.c.o:
+
+all : $(TARGETDIR) $(TARGET)
+
+
+$(TARGETDIR) :
+	$(TARGET_MKDIR) $(TARGETDIR);
+
+$(TARGET) : $(OBJS)
+	$(CC) -G $(OBJS) -o zextend.so            # create local copy
+	$(DBACCESS) $(DBNAME) drop_functions.sql  # drop functions in DB
+	$(TARGET_CP) zextend.so $(TARGET)	  # where DB will find it
+	$(MAKESPECIFIC) create_functions.sql $(TRANSLATETABLE) cftemp.sql
+	$(DBACCESS) $(DBNAME) cftemp.sql  	  # create functions in DB
+	rm -f cftemp.sql			  # prevent hanky panky
+
+$(OBJS) : %.o : %.c
 	$(CC) -I $(INCDIR) $(MICFLAGS) -c $<
 
-#.o.so:
-#	$(CC) -G  $(OBJECTFILES) -o $<
 
-all :	zextend.o md5.o zextend.so
 
-zextend.o:	zextend.c
-md5.o:		md5.c
+# ---------------  Maintenance Rules  -----------------------------------
 
-# Clean out all object files, forcing a rebuild
-clean:
-	\rm -f $(OBJECTFILES) zextend.so
+clean :
+	rm -f $(OBJS) zextend.so
 
-#  Checkin a new version to RCS
-#   -tfile:  file contains initial text (if new file) -mstring:  message string, -nname:  name of version
-#   -zLT:  use the local time when substituting time for keywords
-#VERSION_MESSAGE=
-VERSION_MESSAGE= -m"Improved synchronization"
-#VERSION_NAME=
-VERSION_NAME= -NSynchronized
-checkin:
-	ci -zLT -l -tinitial.text $(VERSION_MESSAGE) $(VERSION_NAME) $(CONTROLFILES) `$(TOSOURCE) $(CLASSFILES)` `$(TOSOURCE) $(OBJECTFILES)`
 
-#
-#  The actual commands for creating the targets
-#
+clobber :                       # Remove targets, but not target dir.
+	rm -f $(TARGET)
 
-zextend.so:	$(OBJECTFILES)
-	$(CC) -G $(OBJECTFILES) -o zextend.so
 
+sanitycheck :
+    ifdef GENERICS
+	$(SPECIFICCHECK) $(GENERICS)
+    endif
+
+
+# define one time only target to make the specific files that were intially
+# checked in to CVS, make them generic, and then check them back in to CVS.
+
+cvsgeneric :
+	$(foreach GNRC,$(GENERICS), $(CVSGENERIC))

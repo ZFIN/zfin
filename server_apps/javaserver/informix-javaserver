@@ -1,9 +1,12 @@
 #!/bin/sh
+#
+# $Source$
+# $Id$
+#
 # A script to start up the Java server for Illustra
 # ted Feb. 28, 1998.
 # Hacked on by clif 12/23/99
-
-MACHINE_DIR=/private/apps
+# 2000/10/05 DPC: Modified file in preparation to genericizing it.
 
 # Note: The version of Java we run the Java Server under
 #	must match the version we compiled the libMISQL.so library
@@ -12,12 +15,12 @@ MACHINE_DIR=/private/apps
 # this script is run in rc3.d
 JAVA_DIR=/usr/java1.1
 
-SERVER_HOME=$MACHINE_DIR/javaserver
+SERVER_HOME=/research/zfin/chromix/private/apps/javaserver
 cd $SERVER_HOME
 
-INFORMIXDIR=$MACHINE_DIR/Informix_B
+INFORMIXDIR=/research/zfin/chromix/private/apps/Informix_B
 INFORMIXSERVER=chrom_b
-INFORMIXSQLHOSTS=$INFORMIXDIR/etc/sqlhosts.chrom
+INFORMIXSQLHOSTS=$INFORMIXDIR/etc/sqlhosts.chrom_b
 
 export INFORMIXDIR INFORMIXSERVER INFORMIXSQLHOSTS
 
@@ -49,6 +52,6 @@ case "$1" in
 	;;
 
     *)
-	echo "usage: $0 {start|stop}" >> /private/apps/javaserver/Server.out
+	echo "usage: $0 {start|stop}" >> /research/zfin/chromix/private/apps/javaserver/Server.out
  	;;
 esac
