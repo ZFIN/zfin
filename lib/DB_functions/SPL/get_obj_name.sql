@@ -67,6 +67,11 @@ get_obj_name(zdbId varchar(50))
       into objName
       from anatomy_item
       where anatitem_zdb_id = zdbId;
+  elif (objType = "ANATHLOG") then
+    select anathlog_anat_item_zdb_id || ":" || anathlog_organism
+      into objName
+      from anatomy_item_homolog
+      where anathlog_zdb_id = zdbId;
   elif (objType = "CHROMO") then
     select print_name
       into objName
