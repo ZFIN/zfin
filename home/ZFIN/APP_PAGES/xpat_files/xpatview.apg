@@ -1,6 +1,8 @@
 <?MICOMMENT>
+  This file implements a viewer for EXPRESSION PATTERN records.
+
 FILE: xpatview.apg
-	This file implements a viewer for EXPRESSION PATTERN records.
+PREFIX: xpatview_
 
 INPUT_VARS:
 	$OID	 of the xpat_zdb_id
@@ -398,94 +400,47 @@ DESCRIPTION:
 <?/MIVAR>
 
 
-<?MIVAR NAME=CODECOMMENTS> 
-     LIST EACH HIERARCHY PART IN THE FIRST TABLE CELL AND LIST ASSOCIATED
-     KEYWORDS AS LINKS IN THE SECOND TABLE CELL.
-<?/MIVAR>
+  <?MICOMMENT> 
+     ===========================================================
+     =====             Keywords                           ======
+     ===========================================================
+  <?/MICOMMENT>
 
-  <?MIVAR NAME=$KEYWORDS>&nbsp;<?/MIVAR>
-  <?MIVAR NAME=$TEMP_PART> <?/MIVAR>
-  <?MIVAR NAME=$COUNT>0<?/MIVAR>
-
-  <?MIVAR NAME=$anatitem_list><?/MIVAR>
   <?MISQL SQL="
-    SELECT anatitem_type_code, anatitem_zdb_id, anatitem_name, anathier_name, anatitem_name_order
-    FROM expression_pattern_anatomy, anatomy_item, anatomy_hierarchy 
-    WHERE '$XPATSTG_ID' = xpatanat_xpat_zdb_id
-      AND '$XPATSTG_START_ID' = xpatanat_xpat_start_stg_zdb_id
-      AND '$XPATSTG_END_ID' = xpatanat_xpat_end_stg_zdb_id 
-      AND xpatanat_anat_item_zdb_id = anatitem_zdb_id
-      AND anatitem_type_code = anathier_code
-    ORDER BY 1, 5
-  ;">
-
-    <?MIVAR NAME="$anatitem_display"><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$2">$3</A><?/MIVAR>
+       SELECT anatitem_zdb_id, anatitem_name, anatitem_name_order
+         FROM expression_pattern_anatomy, anatomy_item
+        WHERE '$XPATSTG_ID' = xpatanat_xpat_zdb_id
+          AND '$XPATSTG_START_ID' = xpatanat_xpat_start_stg_zdb_id
+          AND '$XPATSTG_END_ID' = xpatanat_xpat_end_stg_zdb_id 
+          AND xpatanat_anat_item_zdb_id = anatitem_zdb_id
+     ORDER BY anatitem_name_order ;">
+ 
+     <?MIVAR NAME=xpatview_anatitem_display>
+	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$1">$2</A>
+     <?/MIVAR>
     
-    <?MIBLOCK COND="$(=,$COUNT,0)">
-      <?MIVAR>
+     <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
 	<b>Keywords:</b>
-    	<center>
+        <center>
     	   <table border="2" width="90%">
-
-           <tr width="100%">
-             <td width="15%">
-               <b>$4:&nbsp;&nbsp;</b>
-             </td>
-             <td width="85%">
-          <?MIVAR NAME=$anatitem_list>$anatitem_display<?/MIVAR>
-      <?/MIVAR>
-      <?MIVAR NAME=$TEMP_PART>$1<?/MIVAR>
+             <tr>
+               <td>
+		<?MIVAR>$xpatview_anatitem_display<?/MIVAR>
+     <?MIELSE> 
+                , <?MIVAR>$xpatview_anatitem_display<?/MIVAR>
+     <?/MIBLOCK>
+   <?/MISQL>
+   <?MIBLOCK COND="$(!=,$MI_ROWCOUNT,0)">
+          </td>
+         </tr>
+       </table>
+     </center>
+     <p align=left>
     <?/MIBLOCK>
-    <?MIBLOCK COND="$(=,$COUNT,1)">
-      <?MIBLOCK COND="$(NC,$TEMP_HIER,$4)">
-        <?MIVAR>
-          <?MIVAR>$anatitem_list<?/MIVAR>
-          </td>
-        </tr>
-        <tr width="100%">
-          <td width="15%">
-            <?MIVAR NAME=$anatitem_list><?/MIVAR>
-            <b>$4:&nbsp;&nbsp;</b>
-          </td>
-          <td width="85%">
-        <?/MIVAR>
-        <?MIVAR NAME=$COUNT>0<?/MIVAR>
-      <?/MIBLOCK>
-      <?MIBLOCK COND="$(NC,$TEMP_PART,$1)">
-        <?MIVAR>
-            <?MIBLOCK COND="$(>,$COUNT,0)">
-              <?MIVAR NAME=$anatitem_list>$anatitem_list, $anatitem_display<?/MIVAR>
-            <?MIELSE>
-              <?MIVAR NAME=$anatitem_list>$anatitem_display<?/MIVAR>
-            <?/MIBLOCK>
 
-<!-- files not ready for linking           <a href="javascript:popup_anatitem_comments('$4')">$3</a>    -->
 
-        <?/MIVAR>
-        <?MIVAR NAME=$TEMP_PART>$anatitem_display<?/MIVAR>
-      <?/MIBLOCK>
-      <?MIBLOCK COND="$(EC,$TEMP_PART,$1)">
-        <?MIVAR>
-            <?MIBLOCK COND="$(>,$COUNT,0)">
-              <?MIVAR NAME=$anatitem_list>$anatitem_list, $anatitem_display<?/MIVAR>
-            <?MIELSE>
-              <?MIVAR NAME=$anatitem_list>$anatitem_display<?/MIVAR>
-            <?/MIBLOCK>
-            <!-- files not ready for linking <a href="javascript:popup_anatitem_comments('$4')">$3</a>-->
-        <?/MIVAR>
-      <?/MIBLOCK>
-    <?/MIBLOCK>
-    <?MIVAR NAME=$COUNT>1<?/MIVAR>
-    <?MIVAR NAME=$TEMP_HIER>$4<?/MIVAR>
-  <?/MISQL>
-  <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">	
-  	<?MIVAR>$anatitem_list<?/MIVAR>
-          </td>
-        </tr>
-      </table>
-      </center>
-      <p align=left>
-  <?/MIBLOCK>
+
+
   <?MIVAR COND="$(NC,$XPATSTG_COMMENTS,)">
   <b>Description:&nbsp;</b><br>$XPATSTG_COMMENTS
   <?/MIVAR>
