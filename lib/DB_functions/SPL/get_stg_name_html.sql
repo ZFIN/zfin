@@ -6,11 +6,11 @@ get_stg_name_html(
   returning varchar(200);
 
   -- Generates a string containing the stage name with embedded hot links to 
-  -- the description of the stage, and possibly also its parent stage.
+  -- the stage index page except the Unknown stage. 
   -- 
   -- If the OPTIONAL javascriptFunc parameter is provided then the generated
-  -- HTML will invoke that javascript routine, passing the URL in 
-  -- stg_comments_relative_url as a parameter to the javascript function.
+  -- HTML will invoke that javascript routine, passing the URL of the stage  
+  -- index page with proper anchor as a parameter to the javascript function.
   --
   -- If a non-existent stage ZDB ID is passed in then
   --
@@ -20,61 +20,37 @@ get_stg_name_html(
 
   define stgNameHtml    varchar(200);
   define stgName        like stage.stg_name;
-  define stgUrl         like stage.stg_comments_relative_url;
-  define stgNameLength  int;
   define col            int;
-  define superStgName	like stage.stg_name;
-  define subStgName	like stage.stg_name;
-  define superStgUrl    like stage.stg_comments_relative_url;
+  define stgUrl		varchar(60);
+  define stgNameAnchor	varchar(60);
 
-  select stg_name, stg_comments_relative_url
-    into stgName, stgUrl
+  let stgUrl = "/zf_info/zfbook/stages/index.html";
+
+  select stg_name
+    into stgName
     from stage
     where stg_zdb_id = stgZdbId;
 
   if (stgName is NULL) then
     let stgNameHtml = "UNKNOWN";
+  elif (stgName = "Unknown") then
+    let stgNameHtml = stgName;
   else
-    let superStgUrl = NULL;
-
-    if (stgName like "%:%") then
-      -- stage name contains a colon.
-      let stgNameLength = length(stgName);
       let col  = 1;
-      while (substring(stgName from col for 1) <> ":")
+      while (substring(stgName from col for 1) <> ":"
+	 AND substring(stgName from col for 1) <> " " )
         let col = col + 1;
       end while
 
-      let superStgName = substring(stgName from 1 for col - 1);
-      let subStgName   = substring(stgName from col + 1);
+      let stgNameAnchor = substring(stgName from 1 for col - 1);
 
-      select stg_comments_relative_url 
-        into superStgUrl
-        from stage
-	where stg_name = superStgName;
-    end if
-
-    if (superStgUrl is NULL) then  -- no super stage
       if (javascriptFunc is NULL) then
-        let stgNameHtml = '<a href="' || stgUrl || '">' || stgName || "</a>";
+        let stgNameHtml = '<a href="' || stgUrl || "#" || stgNameAnchor || '">' || stgName || "</a>";
       else
 	let stgNameHtml = '<a href="javascript:' || javascriptFunc || "('" ||
-			  stgUrl || "')" || '">' || stgName || "</a>";
+			  stgUrl || "#" || stgNameAnchor || "')" || '">' || stgName || "</a>";
       end if      
-    else
-      if (javascriptFunc is NULL) then
-        let stgNameHtml = '<a href="' || superStgUrl || '">' || 
-			  superStgName ||
-			  '</a> : <a href="' || stgUrl || '">' || subStgName ||
-			  '</a>';
-      else
-        let stgNameHtml = '<a href="javascript:' || javascriptFunc || "('" ||
-			  superStgUrl || "')" || '">' || superStgName ||
-			  '</a> : <a href="javascript:' || javascriptFunc || 
-			  "('" || stgUrl || "')" || '">' || subStgName || 
-			  "</a>";
-      end if
-    end if
+
   end if
 
   return stgNameHtml;
