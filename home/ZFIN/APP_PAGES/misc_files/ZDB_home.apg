@@ -38,12 +38,26 @@
     <TD rowspan=2 bgcolor=<!--|LINKBAR_COLOR|-->  width=80 align=left valign=bottom  >
       <IMG src="/images/zfinlogo.gif" width=80 border=0> 
     </TD>
-    <TD width=100% bgcolor=#FFFFFF>
+    <TD bgcolor=#FFFFFF align="left" width="30%">
       <IMG src="/images/zfintxt.gif" border=0>
+    </TD>
+    <TD bgcolor="#FFFFFF" width="70%" align="center">
+       <img src="/images/new1.gif">
+       <font size="-1" color="black">
+        <b>Help us build a better database for you!<b>
+       </font><br>
+       <font size="-1" color="black">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Please complete the 
+       </font> 
+       <a href="/zf_info/news/usersurvey2005.html">
+       <b>
+       <font color="blue" size="-1"> 
+        ZFIN User Survey
+       </font></b></a>
     </TD>
   </TR>
   <TR bgcolor=<!--|LINKBAR_COLOR|-->>
-    <TD class="login" bgcolor=<!--|LINKBAR_COLOR|--> colspan=2>
+    <TD class="login" bgcolor=<!--|LINKBAR_COLOR|--> colspan=3>
       <TABLE border=0 height=20 cellspacing=0 cellpadding=0 width=100%>
 	<TR>
 	  <TD>
@@ -69,10 +83,10 @@
 	  <TD class="sidebar">
 	    <DIV class="sidebar">
 	      <B>General Information</B><BR>
+
 	      <table border=0 cellpadding=3>
 		<tr>
 		  <td>
-
 <!-- "New" image:   <img src="/images/new1.gif">-->
 
 	            <A HREF="/zf_info/dbase/db.html">About ZFIN</A><BR>
@@ -107,7 +121,7 @@
 		  <td>
             	    <A HREF="/zf_info/anatomy/dict/sum.html">Anatomical Atlases</A><BR>
 		    <A HREF="/zf_info/news/mtgs.html">Meetings</A> / <A HREF="/zf_info/news/jobs.html"> Jobs</A> <br>
-                    <A HREF="/zf_info/news/funding_opps.html">Grants</A><img src="/images/new1.gif"><BR>
+                    <A HREF="/zf_info/news/funding_opps.html">Grants</A><BR>
 		    <A HREF="/zf_info/zfbook/zfbk.html">The Zebrafish Book</A><BR>
 		    <A HREF="/zf_info/monitor/mon.html">The Zebrafish <br>&nbsp; Science Monitor</A><BR>
 		    <A HREF="/zf_info/news/newsgroup.html">Zebrafish Newsgroup</A><BR>
