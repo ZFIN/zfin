@@ -1066,7 +1066,7 @@ Datablade documentation.
   <?MIVAR NAME=vSequence_count>$1<?/MIVAR>
 <?/MISQL>
 
-<?MIBLOCK COND="$(!=,$vSequence_count,0)">
+<?MIBLOCK COND="$(OR,$(!=,$vSequence_count,0),$(XST,$UPDATE))">
 
 <?MICOMMENT> Select URL for blast buttons <?/MICOMMENT>    
   <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'BLAST';">
@@ -1084,6 +1084,8 @@ Datablade documentation.
 <form name=updateseq>
 <HR width="80%">
 <a name=sequence><b>SEQUENCE INFORMATION:</b></a>
+<?/MIBLOCK>
+
 <?MIBLOCK COND="$(XST,$UPDATE)">
   <?MIVAR NAME=seq_tab>&nbsp;&nbsp;&nbsp;<?/MIVAR>
 <br><br>
@@ -1163,6 +1165,9 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 <?/MIBLOCK>
 <br><br>
 <?/MIBLOCK>
+
+<?MIBLOCK COND="$(!=,$vSequence_count,0)">
+
 <?MIVAR NAME=$lastitem><?/MIVAR>
 
     <?MISQL SQL="
