@@ -42,7 +42,7 @@ OPTIONAL VARS:
   <?/MIBLOCK>
 
   <?MIBLOCK COND=$(XST,$release)>
-    <?MISQL SQL="select WebExplode(object,'PUB=$OID&CUR=$ZDB_ident&TOP=$release') from webPages where ID='aa-pubtopic_unclaim.apg';">$1<?/MISQL>
+    <?MISQL SQL="select WebExplode(object,'pubtopunclm_PUB=$OID&pubtopunclm_CUR=$ZDB_ident&pubtopunclm_TOP=$release') from webPages where ID='aa-pubtopic_unclaim.apg';">$1<?/MISQL>
   <?/MIBLOCK>
 
   <?MIBLOCK COND=$(XST,$claim)>
@@ -50,7 +50,7 @@ OPTIONAL VARS:
   <?/MIBLOCK>
 
   <?MIBLOCK COND=$(XST,$open)>
-      <?MISQL SQL="select WebExplode(object,'PUB=$OID&CUR=$ZDB_ident&TOP=$open') from webPages where ID='aa-pubtopic_open.apg';">$1<?/MISQL>
+      <?MISQL SQL="select WebExplode(object,'pubtopopen_PUB=$OID&pubtopopen_CUR=$ZDB_ident&pubtopopen_TOP=$open') from webPages where ID='aa-pubtopic_open.apg';">$1<?/MISQL>
   <?/MIBLOCK>
 
   <?MIBLOCK COND=$(XST,$close)>
@@ -58,7 +58,7 @@ OPTIONAL VARS:
   <?/MIBLOCK>
 
   <?MIBLOCK COND=$(AND,$(XST,$reassignTopic),$(XST,$reassignCurator))>
-    <?MISQL SQL="select WebExplode(object,'PUB=$OID&CUR=$reassignCurator&TOP=$reassignTopic') from webPages where ID='aa-pubtopic_reassign.apg';">$1<?/MISQL>
+    <?MISQL SQL="select WebExplode(object,'pubtoprsgn_PUB=$OID&pubtoprsgn_CUR=$reassignCurator&pubtoprsgn_TOP=$reassignTopic') from webPages where ID='aa-pubtopic_reassign.apg';">$1<?/MISQL>
   <?/MIBLOCK>
 
   <?MIBLOCK COND=$(AND,$(XST,$paper_status),$(EC,$paper_status,close))>
@@ -75,7 +75,7 @@ OPTIONAL VARS:
 
   <?MIBLOCK COND=$(XST,$pnote)>
     <?MIVAR NAME=encoded_note>$(URLENCODE,$pnote)<?/MIVAR>
-    <?MISQL SQL="select WebExplode(object,'PUB=$OID&CUR=$ZDB_ident&NOTE=$encoded_note') from webPages where ID='aa-pnote_new.apg';">$1<?/MISQL>
+    <?MISQL SQL="select WebExplode(object,'pnotenew_PUB=$OID&pnotenew_CUR=$ZDB_ident&pnotenew_NOTE=$encoded_note') from webPages where ID='aa-pnote_new.apg';">$1<?/MISQL>
   <?/MIBLOCK>
 
   <?MIBLOCK COND=$(XST,$delete_pnote)>

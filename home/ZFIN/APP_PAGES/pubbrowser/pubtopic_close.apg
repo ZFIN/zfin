@@ -49,12 +49,12 @@ VARIABLES:
                    VALUES('$pubtopclose_CUR_ZDB','$pubtopclose_PUB','$pubtopclose_CUR','$pubtopclose_TOP',TODAY,TODAY);"><?/MISQL>
                    
       <?MICOMMENT>Release related claims<?/MICOMMENT>
-      <?MISQL SQL="select WebExplode(object,'PUB=$pubtopclose_PUB&CUR=$pubtopclose_CUR&TOP=$pubtopclose_TOP') from webPages where ID='aa-pubtopic_unclaim.apg';">$1<?/MISQL>
+      <?MISQL SQL="select WebExplode(object,'pubtopunclm_PUB=$pubtopclose_PUB&pubtopunclm_CUR=$pubtopclose_CUR&pubtopunclm_TOP=$pubtopclose_TOP') from webPages where ID='aa-pubtopic_unclaim.apg';">$1<?/MISQL>
       
     <?/MIBLOCK>
           
     <?MICOMMENT>Release related claims<?/MICOMMENT>
-    <?MISQL SQL="select WebExplode(object,'PUB=$pubtopclose_PUB&CUR=$pubtopclose_CUR&TOP=$pubtopclose_TOP') from webPages where ID='aa-pubtopic_unclaim.apg';">$1<?/MISQL>
+    <?MISQL SQL="select WebExplode(object,'pubtopunclm_PUB=$pubtopclose_PUB&pubtopunclm_CUR=$pubtopclose_CUR&pubtopunclm_TOP=$pubtopclose_TOP') from webPages where ID='aa-pubtopic_unclaim.apg';">$1<?/MISQL>
 
   <?/MIBLOCK>
 <?MIELSE>

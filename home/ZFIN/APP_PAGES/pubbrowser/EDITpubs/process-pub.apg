@@ -76,7 +76,7 @@ pub in question with any new values passed in.
     <?MIBLOCK COND="$(XST,$new_comments)">
     <?MICOMMENT> ==| Create Note |== <?/MICOMMENT>
      <?MIVAR NAME=encoded_note>$(URLENCODE,$new_comments)<?/MIVAR>
-     <?MISQL SQL="select WebExplode(object,'PUB=$OID&CUR=$ZDB_ident&NOTE=$encoded_note') from webPages where ID='aa-pnote_new.apg';">$1<?/MISQL>
+     <?MISQL SQL="select WebExplode(object,'pnotenew_PUB=$OID&pnotenew_CUR=$ZDB_ident&pnotenew_NOTE=$encoded_note') from webPages where ID='aa-pnote_new.apg';">$1<?/MISQL>
    <?/MIBLOCK>
 
   <?/MIBLOCK>

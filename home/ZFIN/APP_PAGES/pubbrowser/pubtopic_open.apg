@@ -52,7 +52,7 @@ EFFECTS:
     <?/MISQL>
     
     <?MICOMMENT>Declare Curation Data Found<?/MICOMMENT>
-    <?MISQL SQL="select WebExplode(object,'pubtopfnd_PUB=$PUB&pubtopfnd_CUR=$CUR&pubtopfnd_TOP=$TOP&pubtopfnd_DATA=t') from webPages where ID='aa-pubtopic_found.apg';">$1<?/MISQL>
+    <?MISQL SQL="select WebExplode(object,'pubtopfnd_PUB=$pubtopopen_PUB&pubtopfnd_CUR=$pubtopopen_CUR&pubtopfnd_TOP=$pubtopopen_TOP&pubtopfnd_DATA=t') from webPages where ID='aa-pubtopic_found.apg';">$1<?/MISQL>
     
   <?/MIBLOCK>
 <?MIELSE>
