@@ -149,9 +149,9 @@
 	}
 
 	function new_seqnum() {
-		var dbind=document.updater.seqdb.selectedIndex;
-		var dbname=document.updater.seqdb[dbind].value;
-		var seq_acc=document.updater.seq_acc.value;
+		var dbind=document.updateseq.seqdb.selectedIndex;
+		var dbname=document.updateseq.seqdb[dbind].value;
+		var seq_acc=document.updateseq.seq_acc.value;
 		if (seq_acc != '') {
   		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value='+dbname+'&new_value='+seq_acc+'&target_table=$target_table');
   		}
@@ -724,6 +724,7 @@
 </b>
 <?/MIBLOCK>
 <?/MISQL>
+</form>
 
 <?MIBLOCK COND="$(XST,$UPDATE)">
  <br><form name=updaterrel>
@@ -748,8 +749,6 @@
  </SELECT>
  partner Symbol:<input type=text size=15 name=mrkr_abbrev> 
  <input type=button value="Add it!" onClick=new_mrkrrel();>
- </form>
- <form>
 <?/MIBLOCK>
 
 
@@ -819,13 +818,15 @@
 
  <?/MISQL>
 </TABLE>
-
+</form>
 <?/MIBLOCK>
+
 <!------------------ end of MARKER RELATIONSHIP --------------->
 
 
 
 <!------------- SEQUENCE INFOMATION ------------------------------->
+<form name=updateseq>
 <HR width="80%">
 <b>SEQUENCE INFORMATION:</b>
 <?MIBLOCK COND="$(XST,$UPDATE)">
@@ -988,7 +989,6 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 </TD>
 </TR>
 </TABLE>
-
 
 <!------------- ends MAPPING INFORMATION --------------->
 
