@@ -237,7 +237,7 @@ developmental stage, anatomical structure, developmental or physiological proces
 <TR><TD class="content_left"><DIV class="content">
 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-companyselect.apg&select_from=COMPANY&frame_size=230"><B>Companies</B></A> 
 </DIV></TD><TD class="content_right"><DIV class="content">
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-companyselect.apg&select_from=COMPANY&frame_size=230">Search for laboratories supplying zebrafish reagents.</A><br>
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-companyselect.apg&select_from=COMPANY&frame_size=230">Search for companies supplying zebrafish reagents.</A><br>
 <?MIVAR COND="$(EC,$AUTHORIZED,root)">
    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?rtype=company&MIval=aa-new_company.apg"><EM>Add new COMPANY</EM></A><?/MIVAR>
 </DIV></TD></TR>
