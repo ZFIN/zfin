@@ -368,11 +368,7 @@ function call_reset() {
 		select distinct dalias_alias 
 		  from data_alias, fish_search 
 		  where fish_id = '$fish_id' 
-		    and dalias_data_zdb_id = alt_zdb_id
-		UNION 
-		 select dalias_alias
-		  from data_alias 
-		  where dalias_data_zdb_id = '$fish_id';">
+		    and dalias_data_zdb_id = alt_zdb_id;">
 		<?MIVAR COND="$(=,$MI_CURRENTROW,1)">&nbsp;[<?/MIVAR>
 		<?MIVAR COND="$(>,$MI_CURRENTROW,1)">;<?/MIVAR>$1
 	      <?/MISQL>
