@@ -1,4 +1,5 @@
-<!-- FILE: edit_user.html
+<?MICOMMENT>
+<!-- FILE: edit_user.apg
 
 This page is used by root to either add a new ZFIN user, or to edit an existing
 one. If the variable OID is passed in, open the user specified by OID for
@@ -11,14 +12,84 @@ It is called via a link, visible to 'root' only, on the persview.html page when 
 
 Variables expected:  OID (REQUIRED) -- the zdb_id of the user to edit.
 
+requires chromoscripts.apg for vet_pw()
 -->
+<?/MICOMMENT>
 
-<HTML>
+<HTML><HEAD>
+
+<?MISQL SQL="select object from webPages where ID='aa-vet_input.apg';">$1<?/MISQL>
+<SCRIPT>
+function check_login(src){
+  document.login_form.login.value = vet_pw(document.login_form.login.value);
+  if (document.login_form.password.value ==  ''){
+        document.login_form.password.focus(); return;
+  }else
+  if (document.login_form.password2.value ==  ''){
+        document.login_form.password2.focus(); return;
+  }else {submit_complete(src + 1)}     
+}
+function check_passw(src){
+  document.login_form.password.value = vet_pw(document.login_form.password.value);
+  if (document.login_form.password.value != ''){ 
+    if (document.login_form.password2.value ==  ''){
+        document.login_form.password2.focus(); return;
+    }else if (document.login_form.password.value != document.login_form.password2.value){
+      document.login_form.password.value = '';
+      document.login_form.password.focus();return;  
+    }
+    else {//document.login_form.commit.focus();return;
+        submit_complete(src + 2)
+    }
+  }
+  else {document.login_form.password.focus();return;}
+}
+
+function check_passw2(src) {
+  document.login_form.password2.value = vet_pw(document.login_form.password2.value);
+  if (document.login_form.password2.value != ''){ 
+    if (document.login_form.password.value ==  ''){
+        document.login_form.password.focus(); return;
+    }else 
+    if (document.login_form.password2.value != document.login_form.password.value){
+      document.login_form.password2.value = '';
+      document.login_form.password2.focus(); return; 
+    }
+    else {//document.login_form.commit.focus();return;
+        submit_complete(src + 4)
+    }
+  }
+  else {document.login_form.password2.focus();return;}   
+}
+
+function submit_complete (src) {
+  if (! src & 1 ){check_login(src + 8);}
+  if (! src & 2 ){check_passw(src + 8);}
+  if (! src & 4 ){check_passw2(src + 8);}   
+  if (  (document.login_form.login.value !='')&&
+        (document.login_form.password.value !='')&&
+        (document.login_form.password.value == document.login_form.password2.value)
+  ){
+     document.login_form.submit();
+  }
+  else {
+    window.alert("SORRY! Your login and or password is not acceptable.\n Please try again.");
+    <?MIVAR>
+        window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_user.apg&OID=$OID");
+    <?/MIVAR>
+  }
+}
+//--------------------
+
+function submit_delete () {
+     document.login_form.submit();
+}
+</SCRIPT>
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
 <TITLE>Edit ZFIN User</TITLE>
-
+</HEAD>
 
 <?MISQL SQL="
   select WebExplode(object, 
@@ -33,7 +104,7 @@ Variables expected:  OID (REQUIRED) -- the zdb_id of the user to edit.
 
   <!-- FIRST fill variables with user's data. IF new user, fill with nothing.-->
 
-  <FORM METHOD=POST ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+  <FORM name=login_form METHOD=POST ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 
   <?MISQL SQL="
     select login, issue_time, access, name
@@ -99,7 +170,6 @@ Variables expected:  OID (REQUIRED) -- the zdb_id of the user to edit.
     <TABLE border=1  cellpadding=8>
       <TR align=center>
         <TD>
-
           <TABLE>
 	    <TR align=center>
 	      <TD>
@@ -124,13 +194,13 @@ Variables expected:  OID (REQUIRED) -- the zdb_id of the user to edit.
       <TR align=center>
 	<TD>
 	  <b>LOGIN:</b>
-	  $(IF,$(EC,$AUTHORIZED,root),"<INPUT TYPE=text name='login' value='"$login"' size=8 maxlength=12>",$login)
+	  $(IF,$(EC,$AUTHORIZED,root),"<INPUT TYPE=text name='login' value='"$login"' size=12 maxlength=12 onChange='check_login(1);'>",$login)
 	</TD>
 	<TD>
 	  <b>ACCESS:</B> 
 	  $(IF,$(EC,$AUTHORIZED,root),
 	    "<SELECT name=access>
- 	      <option "$(IF,$(EC,$access,submit),SELECTED)">submit
+	      <option "$(IF,$(EC,$access,submit),SELECTED)">submit
 	      <option "$(IF,$(EC,$access,betatest),SELECTED)">betatest
 	      <option "$(IF,$(EC,$access,preview),SELECTED)">preview
 	      <option "$(IF,$(EC,$access,fishauth),SELECTED)">fishauth
@@ -143,11 +213,11 @@ Variables expected:  OID (REQUIRED) -- the zdb_id of the user to edit.
     <TABLE width=100% cellpadding=5>
       <TR align=center>
         <TD><b>PASSWORD:</b>
-          <INPUT TYPE=password name=password size=8 maxlength=8>
+          <INPUT TYPE=password name=password size=8 maxlength=8 onChange="check_passw(2);">
 	</TD>
         <TD>
 	  <b>Re-Type PASSWORD</b> <font size=-1> (to verify)</font>: 
-	  <INPUT TYPE=password name=password2 size=8 maxlength=8
+	     <INPUT TYPE=password name=password2 size=8 maxlength=8 onChange="check_passw2(4);">
 	</TD>
       </TR>
     </TABLE>
@@ -159,15 +229,17 @@ Variables expected:  OID (REQUIRED) -- the zdb_id of the user to edit.
 	existing ZFIN user, leaving these fields blank leaves current 
 	password unchanged.","To change your password, simply type (and 
 	re-type) your new password.") 
+	Acceptable password characters are: <b>A-Za-z0-9!#-._ and space</b>
+	
     Note that characters in passwords are displayed as asterisks for security 
     reasons.</font>
     <p>
 
-
     <hr width=80%>
 
-    <input type=button value="CANCEL" onClick="window.history.go(-1)">
-    <input type=submit value="COMMIT">
+    <input type=button value="CANCEL" onClick="window.history.go(-1);">
+    <input type=button value="COMMIT" name="commit" onClick="submit_complete(8);">
+    <!--<input type=submit value="COMMIT" onSubmit="submit_complete();"> -->
 
     <input type=hidden name=OID value=$OID>
     <input type=hidden name=MIval value="aa-process-user.apg">
@@ -182,7 +254,7 @@ Variables expected:  OID (REQUIRED) -- the zdb_id of the user to edit.
       <TR align=center>
 	<TD>
 	  <B><font color="#ff0000">
-	  <input type=submit name="Deleteme" value="Permanently Delete"></font>
+	  <input type=button name="Deleteme" value="Permanently Delete" onClick="submit_delete()"></font>
 	  this user's ZFIN registration </B>
 	  <font size=-1>(but not their PERSON record)</font>
 	</TD>

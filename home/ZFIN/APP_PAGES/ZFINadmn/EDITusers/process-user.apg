@@ -1,11 +1,11 @@
 <!-- FILE: process-user.html
-
+<?MICOMMENT>
 This file processes a ZFIN registered user that has been submitted from
  edit_user.html.
 If it is a new ZFIN submitter, the variable 'new_user' should  exist.
 This will cause a blank record to be inserted for that user.
 Then we just update the user in question with any new values passed in.
-
+<?/MICOMMENT>
 -->
 
 
@@ -37,9 +37,10 @@ Then we just update the user in question with any new values passed in.
     Note that this doesn't mean you've deleted the person's ZFIN record, 
     just their ability to log in as a registered user.
     <p>
-    <form>
-      <?MIVAR>
-        <input type=button 
+    <form name="drop_submit_form">
+ 
+cvs pro      <?MIVAR>
+        <input type=button name="drop_submit_back"
 	       value="Back to viewing PERSON record"
                onClick="window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$OID'">
       <?/MIVAR>
@@ -71,8 +72,8 @@ Then we just update the user in question with any new values passed in.
       <center>
       <H1 align=center> ERROR: Insufficient information </h1>
       <big>You have left one or more fields required fields in the preceeding form blank</big>. Please go back and try again.<p>
-      <form>
-        <input type=button value="Go Back" onClick="window.history.go(-1)">
+      <form name="insf_info_form" >
+        <input type=button value="Go Back" name="insf_info_back" onClick="window.history.go(-1)">
       </form>
       </center>
     <?/MIBLOCK>
@@ -81,9 +82,9 @@ Then we just update the user in question with any new values passed in.
     <?MIBLOCK COND="$(AND,$(XST,$password),$(XST,$password2),$(NOT,$(EQ,$password,$password2)))">
       <center>
       <h1 align=center> ERROR Typing password</h1>
-      <big>The  typed and re-typed copies of the password you entered are different. You may have made a typo. </big> Please go back and try again.<p>
-      <form>
-        <input type=button value="Go Back" onClick="window.history.go(-1)">
+      <big>The typed and re-typed copies of the password you entered are different. You may have made a typo. </big> Please go back and try again.<p>
+      <form name="pw_err_form">
+        <input type=button value="Go Back" name="pw_err_back" onClick="window.history.go(-1)">
       </form>
       </center>
     <?/MIBLOCK>
@@ -148,13 +149,14 @@ Then we just update the user in question with any new values passed in.
       <big>Your update was successfully completed. The changes you have 
       specified are effective immediately.</big>
       <p>
-      <form>
+      <form name="success_form">
         <?MIVAR>
-          <input type=button 
+          <input type=button name="done"
 		 value="Back to viewing PERSON record" 
 		 onClick="window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$OID'">
 	<?/MIVAR>
       </form>
+      <script>document.success_form.done.focus() </script>
 
     <?/MIBLOCK> <!-- ends cond name,address,etc exists -->
 
