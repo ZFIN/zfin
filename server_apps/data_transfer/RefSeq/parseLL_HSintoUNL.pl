@@ -6,7 +6,7 @@ open (UNL, ">ll_hs_id.unl") or die "cannot open ll_hs_id.unl";
 
 while ($line = <CUT>) {
   chop $line;
-  ($ll_id,$omim,$gdb_id) = split ' ',$line,3;
+  ($ll_id,$omim,$gdb_id) = split /\t/,$line,3;
   if ($gdb_id =~ /GDB:([0-9]*)/ ) {
     $gdb_num = $1;
     print UNL "$ll_id|$omim|$gdb_num|\n";
