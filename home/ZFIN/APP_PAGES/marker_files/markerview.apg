@@ -202,7 +202,16 @@ Datablade documentation.
   		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&anchor=sequence&OID=$OID&attr=seqnum&attr_type=special-updateseqnum&old_value=dblink_length&new_value='+seq_len+'&target_table=marker&dataOID='+seq_zdb+'&xtra_param='+seq_type);
   		}
 	}
-
+	function new_othernum() {
+		var dbind=document.updateother.seqdb.selectedIndex;
+		var dbname=document.updateother.seqdb[dbind].value;
+		var seq_acc=document.updateother.seq_acc.value;
+		var dbind=document.updateother.seq_super.selectedIndex;
+		var seq_type=document.updateother.seq_super[dbind].value;
+		if (seq_acc != '') {
+		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&ancor=other&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value='+dbname+'&new_value='+seq_acc+'&target_table=marker&fdbcont_super='+seq_type);
+		}
+	}
 	function setChimericism(old_value) {
 	<?MICOMMENT> index 0 = true; index 1 = false <?/MICOMMENT>
 				
@@ -289,6 +298,14 @@ Datablade documentation.
 			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+seq_acc+'&new_value='+pub_id+'&target_table=marker&info=seqacc');
 		}
 	}
+	function new_attrib_other() {
+		var seq_acc = document.updateother.attrib_seq_acc.value;
+		var pub_id = document.updateother.attrib_seq_pubid.value.toUpperCase();
+		if((seq_acc != '')&&(pub_id != '')) {
+			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+seq_acc+'&new_value='+pub_id+'&target_table=marker&info=seqacc');
+		}
+	}
+
 	function new_attrib_mutant(dataid) {
 		var pub_id = document.updater.attrib_mutant_pubid.value.toUpperCase();
 		if((dataid != '')&&(pub_id != '')) {
@@ -1518,7 +1535,43 @@ Datablade documentation.
   <?MIBLOCK COND=$(XST,$dblink_other)>
     <HR width="80%">
     <?MIVAR><b>OTHER &nbsp;<i>$abbrev</i>&nbsp; GENE / MARKER PAGES:</b><?/MIVAR>
-  
+
+<?MIBLOCK COND="$(XST,$UPDATE)">
+  <form name=updateother>
+  <?MIVAR NAME=seq_tab>&nbsp;&nbsp;&nbsp;<?/MIVAR>
+  <br><br>
+  <?MIVAR>$seq_tab<?/MIVAR>
+  <b>Link Other page:</b> &nbsp;
+  DBname:<SELECT name=seqdb>
+  <?MISQL SQL="
+    select distinct fdbcont_fdb_db_name 
+      from foreign_db_contains
+     where fdbcont_fdbdt_super_type = 'summary page' 
+     order by fdbcont_fdb_db_name;">
+    <option value="$1" $(IF,$(EC,$1,VEGA),SELECTED)>$1</option>
+  <?/MISQL>
+  </SELECT>
+  Accession:<input type=text size=25 name=seq_acc> 
+  Type:<SELECT name=seq_super>
+  <?MISQL SQL="
+    select distinct fdbdt_data_type, fdbdt_super_type 
+      from foreign_db_data_type
+     where fdbdt_super_type = 'summary page' 
+     order by fdbdt_data_type;">
+    <option value="$2&fdbcont_data=$1" $(IF,$(EC,$1,other),SELECTED)>$1</option>
+  <?/MISQL>
+  </SELECT>
+  <input type=button value="Add it!" onClick=new_othernum();>
+
+  <br>
+  <?MIVAR>$seq_tab<?/MIVAR>
+  <b>Add reference:</b> &nbsp;
+  Accession: <input type=text size=15 name=attrib_seq_acc>
+  Reference: <input type=text size=15 name=attrib_seq_pubid> 
+  <input type=button value="Add it!" onClick=new_attrib_other();>
+  <br><br>
+<?/MIBLOCK>  <?MICOMMENT> end update OTHER GENE / MARKER PAGES:<?/MICOMMENT>
+
     <?MIVAR NAME=dblink_other_table_row><TR><TD>$(SEPARATE,$dblink_other,</TD><TD>)</TD></TR><?/MIVAR>
 
     <?MIVAR>
@@ -1528,6 +1581,9 @@ Datablade documentation.
     <?/MIVAR>
     
   <?/MIBLOCK> 
+<?MIBLOCK COND="$(XST,$UPDATE)">
+  </form>  <?MICOMMENT> end form updateother <?/MICOMMENT>
+<?/MIBLOCK>
 
 <!------------   ends   OTHER MARKER PAGES   ------------------------>
 
