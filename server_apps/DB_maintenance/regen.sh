@@ -11,8 +11,8 @@ setenv PATH <!--|INFORMIX_DIR|-->/bin:$PATH
 
 echo "Starting regen_maps at `date`"
 echo 'execute function regen_maps()' | dbaccess <!--|DB_NAME|-->
-echo "Starting regen_genomics at `date`"
-echo 'execute function regen_genomics()' | dbaccess <!--|DB_NAME|-->
+echo "Starting regen_names at `date`"
+echo 'execute function regen_names()' | dbaccess <!--|DB_NAME|-->
 echo "Starting regen_oevdisp at `date`"
 echo 'execute function regen_oevdisp()' | dbaccess <!--|DB_NAME|-->
 echo "Starting regen_fishsearch at `date`"
