@@ -426,6 +426,10 @@ public class Spider implements Runnable
             {
             return SearchCategory.GENES_SEQUENCE;
             }
+		 else if (url.indexOf("geneprddescription.apg") != -1)
+            {
+            return SearchCategory.GENES_GENEPRDDESCRIPTION;
+            }
         else if (url.indexOf("mappingdetail.apg") != -1)
             {
             return SearchCategory.GENES_MAPPINGDETAIL;
