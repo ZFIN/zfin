@@ -71,7 +71,7 @@ sub sendNotification (@_) {
  
   # Create a new multipart message:
   $msg1 = MIME::Lite->new(
-    From    => "Pat Edwards <edwards@uoneuro.uoregon.edu>",
+    From    => "Sherry Giglia <giglias@uoneuro.uoregon.edu>",
     To      => "$MAILTO",
     Subject => "$SUBJECT",
     Type    => 'TEXT',
@@ -151,7 +151,7 @@ openReport();
 
 expiredLocusReg();
 
-sendReport("edwards\@uoneuro.uoregon.edu");
+sendReport("giglias\@uoneuro.uoregon.edu");
 
 exit;
 
