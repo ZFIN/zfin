@@ -50,6 +50,10 @@
       set url = '$url' 
       where zdb_id = '$temp_oid';">
   <?/MISQL>
-
+  <?MISQL COND="$(XST,$allele_prefix)" SQL="
+    update lab 
+      set allele_prefix = '$allele_prefix' 
+      where zdb_id = '$temp_oid';">
+  <?/MISQL>
 <?/MIBLOCK>
 
