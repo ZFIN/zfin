@@ -1,4 +1,3 @@
-$Header$
 #!/usr/bin/tcsh
 # set Informix environment for PRODUCTION to be used by cron
 
