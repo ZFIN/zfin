@@ -1,0 +1,106 @@
+<!-- FILE: link_authors.apg
+
+This page is used by root to link authors to a publications
+one. 
+Variables expected:  OID  -- the OID of a publication to link 
+		     authors  -- the list of authors input for this publication
+
+-->
+
+<HTML>
+
+<!-- DEBUGGING <?MIVAR>  oid=$OID <?/MIVAR> -->
+
+
+<TITLE>Link Authors to a Publication</TITLE>
+
+
+<?MISQL COND="$(XST,$OID)" SQL="select WebExplode(object,'page_title=LINK Publication Authors&permission=root') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+
+<?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
+
+
+<form  method=post action="/cgi-bin_B/webdriver">
+
+<table border=2 width=100% cols=2>
+
+
+<APPLET CODEBASE="/ZFIN_software/ListSelector/" CODE="ListSelector.class" WIDTH=400 HEIGHT=170 NAME=phenoselect>
+<param name="selectableLabel" value="Potential Authors">
+<param name="selectedLabel" value="Linked Authors">
+<?MIVAR>
+<param name="authorlist" value="$authors">
+<?/MIVAR>
+<param name="use_item_labels" value = "true">
+<param name=format_pre value=" zdb_id like '%" >
+<param name=format_post value="%'" >
+<param name="separator" value = " or ">
+<?MIVAR>
+<param name="liveupdate" value="int_person_pub:source_id:target_id:$OID">
+<param name="pub_id" value="$OID">
+<?/MIVAR>
+</applet>
+
+<!-- Suppose you want to add one -->
+<?MIBLOCK COND="$(AND,$(NXST,$curation),$(NXST,$new_action),$(EC,$AUTHORIZED,root))">
+
+
+<!--  to add curation action -->
+<p>
+<?MIVAR>
+<b>Add curation record to ZDB pub: $OID</b>
+<?/MIVAR>
+
+<input type=hidden name=MIval value=aa-link_authors.apg>
+<table border=2 width=100% cols=2>
+<TR>
+<?MIVAR>
+<input type=hidden name=OID value="$OID">
+<input type=hidden name=authors value="$authors">
+<TD><font size=2><b>Curator:</b> $ZDB_name </td>
+<?/MIVAR>
+<td><font size=2><b>Action:</b>
+<SELECT name=new_action>
+<option value="Linked Authors">Linked Authors
+<option value="Curated Genes">Curated Gene Info
+<option value="Curated Expression data">Curated Expression Data
+<option value="Curated Mutant data">Curated Mutant Data
+<option value="Curated Markers/Mapping">Curated Mapping/Markers
+</SELECT>
+</TD>
+</TR><TR>
+<TD colspan=2><font size=2><b>Comments:</b><br>
+<TEXTAREA rows=5 cols=75 NAME="new_comments"></TEXTAREA>
+</td>
+</TR></TABLE>
+
+<hr width=80%>
+<input type=button value="CANCEL" onClick="window.history.go(-1)">
+<input type=submit value="SUBMIT">
+<hr width=80%>
+</form>
+
+
+<?/MIBLOCK> <!-- ends adding new one -->
+
+
+
+<!-- End of curation status addition -->
+
+
+<!-- Now to process a submission -->
+<?MIBLOCK COND="$(AND,$(EC,$AUTHORIZED,root),$(XST,$new_action))">
+
+<?MIVAR COND="$(NXST,$new_comments)" NAME=$new_comments>NULL<?/MIVAR>
+
+<?MISQL SQL="insert into curation_status (pub_id,curation_action,entry_time,curator,comments) values ('$OID','$new_action',current,'$ZDB_name','$new_comments');"><?/MISQL>
+
+<SCRIPT>
+window.history.go(-2);
+</SCRIPT>
+<?/MIBLOCK>
+
+
+<?/MIBLOCK>  <!-- ends cond authorization -->
+</HTML>

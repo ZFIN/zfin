@@ -1,0 +1,138 @@
+<HTML>
+
+<basefont size=2>
+
+<!-- First note that they have searched persons-->
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-identify.apg';">$1<?/MISQL>
+<?MISQL SQL="delete from int_person_places where pers_id='$ZDB_ident' and place_id='PUBLICATION';"><?/MISQL>
+<?MISQL COND="$(NOT,$(EQ,$(SUBSTR,$ZDB_name,1,5),GUEST))" SQL="insert into int_person_places (pers_id,place_id,last_visit) values ('$ZDB_ident','PUBLICATION',current);"><?/MISQL>
+
+
+<!-- THIS NEXT PART IS EXECUTED AFTER THE PERSON ENTERS SOME CRITERIA -->
+<?MIVAR NAME=$constraint COND="$(NXST,$constraint)"> <?/MIVAR>
+
+
+<?MIBLOCK COND="$(OR,$(XST,$authors),$(XST,$title),$(XST,$year),$(XST,$anon1text),$(NC,$jtype,any),$(AND,$(XST,$pub_status),$(NC,$pub_status,any)),$(AND,$(XST,$cur_status),$(NC,$cur_status,any)))">
+
+<?MIVAR NAME=$previous> <?/MIVAR>
+<?MIVAR NAME=$constraint> where <?/MIVAR>
+<?MIVAR NAME=$constraint COND="$(XST,$authors)">
+$constraint (lower(authors) like '%$(LOWER,$authors)%')<?/MIVAR>
+
+<?MIVAR NAME=$previous COND="$(XST,$authors)"> and <?/MIVAR>
+
+<?MIVAR NAME=$constraint COND="$(XST,$title)">
+$constraint $previous (lower(title) like '%$(LOWER,$title)%')<?/MIVAR>
+
+<?MIVAR NAME=$previous COND="$(XST,$title)"> and <?/MIVAR>
+
+<!-- glue together the year clause if specified -->
+<?MIVAR COND="$(XST,$year)" NAME=$constraint>
+$constraint $previous year(pub_date) $yr_cmpr conc('$century','$year')<?/MIVAR>
+
+<!-- NOW  DEAL WITH THE ADDITIONAL CRITERIA -->
+<?MIVAR NAME=$previous COND="$(XST,$year)"> and <?/MIVAR>
+
+<?MIVAR NAME=$constraint COND="$(XST,$anon1text)">
+$constraint $previous (lower($anon1) like '%$(LOWER,$anon1text)%')<?/MIVAR>
+
+<?MIVAR NAME=$previous COND="$(XST,$anon1text)"> and <?/MIVAR>
+
+<?MIVAR NAME=$constraint COND="$(NC,$jtype,any)">
+$constraint $previous (jtype='$jtype')<?/MIVAR>
+
+<?MIVAR NAME=$previous COND="$(NC,$jtype,any)"> and <?/MIVAR>
+
+<?MIVAR NAME=$constraint COND="$(AND,$(XST,$pub_status),$(NC,$pub_status,any))">
+$constraint $previous (status ='$pub_status')<?/MIVAR>
+
+<?MIVAR NAME=$previous COND="$(AND,$(XST,$pub_status),$(NC,$pub_status,any))"> and <?/MIVAR>
+
+
+<?MIVAR NAME=$constraint COND="$(AND,$(XST,$cur_status),$(NC,$cur_status,any))">
+$constraint $previous (a.zdb_id=b.pub_id and b.curation_action='$cur_status')<?/MIVAR>
+
+<?/MIBLOCK>
+
+
+<?MIVAR NAME=$order_clause COND="$(EC,$order_pref,name)">order by authors,pyear desc<?/MIVAR>
+<?MIVAR NAME=$order_clause COND="$(EC,$order_pref,date)">order by pyear desc,authors<?/MIVAR>
+
+<?MIVAR NAME=$target_tables>publication<?/MIVAR>
+<?MIVAR COND="$(AND,$(XST,$cur_status),$(NC,$cur_status,any))" NAME=$target_tables>publication a,curation_status b<?/MIVAR>
+
+<!-- NOW JUST RETRIEVE AND DISPLAY ALL MATCHING ENTRIES -->
+
+<!-- Blast all constraints if they hit "LIST ALL" -->
+<?MIBLOCK COND="$(XST,$clear_all)">
+<?MIVAR NAME=$constraint> where status='active' <?/MIVAR>
+<?/MIBLOCK>
+
+<form method=post target=content action="/cgi-bin_B/webdriver">
+<TABLE width=100%>
+<TR>
+<TD align=center>
+<font size=-1>
+<input type=submit name=printable value="Format into a printable listing">  
+<input type=submit name=refer value="Output as REFER format file">  
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-REFERinfo.apg" TARGET=content><font size=-1>REFER&nbsp;Instructions</font></A>
+<?MIVAR COND="$(EC,$AUTHORIZED,root)">
+<input type=button name=printable value="Add new Pub" onClick="top.content.location='/cgi-bin_B/webdriver?rtype=publication&MIval=aa-edit_pub.apg';">  
+<?/MIVAR>
+</font>
+</TD> </TR>
+</TABLE>
+
+<hr width=90%>
+
+<TABLE width=100%>
+<TR>
+<td align=center>
+<FONT SIZE=4>Search Results </font>  
+
+<!-- DEBUGGING <?MIVAR> CONSTRAINT=$constraint <?/MIVAR> -->
+
+<?MISQL SQL="select count(*)::integer from $target_tables $constraint;"><?/MISQL> 
+<?MIVAR NAME=$num_recs>$1<?/MIVAR>
+<?MIVAR><b> (Total of $num_recs records found) </b> <?/MIVAR>
+</TD>
+</TR>
+</TABLE>
+
+
+<input type=hidden name=MIval value=aa-pubprintable.apg>
+<?MIVAR COND="$(XST,$title)"> <input type=hidden name=title value="$title"><?/MIVAR>
+<?MIVAR COND="$(XST,$authors)"> <input type=hidden name=authors value="$authors"><?/MIVAR>
+<?MIVAR COND="$(XST,$anon1text)"> <input type=hidden name=anon1text value="$anon1text"><?/MIVAR>
+<?MIVAR COND="$(XST,$anon1text)"> <input type=hidden name=anon1 value="$anon1"><?/MIVAR>
+<?MIVAR COND="$(XST,$year)"> <input type=hidden name=year value="$year"><?/MIVAR>
+<?MIVAR> <input type=hidden name=constraint value="$constraint"><?/MIVAR>
+<?MIVAR> <input type=hidden name=order_clause value="$order_clause"><?/MIVAR>
+
+</form>
+
+
+
+
+<!-- NOW do slightly different displays, depending on whether you are selecting a value, or merely browsing. 
+-->
+
+<TABLE WIDTH=100%>
+<TH> </TH> <TH>YEAR</TH> <TH>TITLE</TH> <TH>AUTHORS</TH>
+
+<?MISQL SQL="select title,authors,zdb_id,year(pub_date) as pyear from $target_tables $constraint $order_clause;">
+<TR> 
+<TD valign=top> 
+$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-edit_pub.apg&OID=$3" TARGET=content>EDIT</A> </FONT>")
+$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-link_authors.apg&OID=$3&authors=$2" TARGET=content>LINK</A> </FONT>")
+$(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3" TARGET=content>SELECT</A> </FONT>")
+</TD>
+<TD valign=top> <FONT SIZE=-1> $4 </FONT> </TD>
+<TD valign=top> <FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-pubview2.apg&OID=$3" TARGET="content">$1</A> </FONT> </TD>  
+<TD valign=top> <FONT SIZE=-1> $2 </FONT> </TD>
+</TR>
+<?/MISQL>
+</TABLE>
+
+
+</HTML>
