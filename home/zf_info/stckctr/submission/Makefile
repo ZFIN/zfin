@@ -48,6 +48,8 @@ submit.txt\
 submitSuccess.html\
 submitTerms.html\
 submitTryAgain.html\
+zdb-est-id.jpg\
+zdb-fish-id.jpg\
 zdbGeneId.html\
 zdbId.html\
 zfinGene.jpg\
