@@ -36,20 +36,6 @@ FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN record
     open(relative_url,"popup","toolbar=yes,scrollbars=yes,resizable=yes");
   }
 
-  <?MIVAR COND="$(XST,$UPDATE)">
-    function doit(attr,attr_type,print_name) {
-    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatupdatePubs.apg&OID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name+'&target_table=expression_pattern');
-    }
-
-    function Delete_listitem(item_name,item_id) {
-    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-xpatupdatePubs.apg&OID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted');
-    }
-
-    function updateAssay(xpat_zdb_id,assay,g_name,g_abbrev) {
-    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatupdateAssay.apg&OID='+xpat_zdb_id+'&old_value='+assay+'&gene_name='+g_name+'&gene_abbrev='+g_abbrev);
-    }
-
-  <?/MIVAR>
 </SCRIPT>
 </HEAD>
 
@@ -85,15 +71,11 @@ FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN record
 
 <?MIELSE>
 
-  <?MIBLOCK COND="$(XST,$UPDATE)">
-    <?MIVAR>
-      <TITLE>ZFIN Update Expression Pattern: $xpatview_gene_abbrev</TITLE>
-    <?/MIVAR>
-  <?MIELSE>
-    <?MIVAR>
-      <TITLE>ZFIN View Expression Pattern: $xpatview_gene_abbrev</TITLE>
-    <?/MIVAR>
-  <?/MIBLOCK>
+
+  <?MIVAR>
+    <TITLE>ZFIN View Expression Pattern: $xpatview_gene_abbrev</TITLE>
+  <?/MIVAR>
+
 
 <?MIBLOCK COND="$(NXST,$accession)">
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
@@ -101,29 +83,12 @@ FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN record
 
 
 <?MICOMMENT> 
-    If VIEWING, THROW UP THE ZDB DATA MANAGER(ZDB and UPDATE) FOR THE RECORD.
+    If VIEWING, THROW UP THE ZDB DATA MANAGER FOR THE RECORD.
 <?/MICOMMENT> 
 
-<?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'page_title=View Expression') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+<?MISQL SQL="select WebExplode(object,'page_title=View Expression') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
-<?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=marker') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
-
-
-<!-- If updating, only let owner update anything -->
-<?MISQL COND="$(XST,$UPDATE)" SQL="select WebExplode(object,'permission=root') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
-
-
-<?MIVAR COND="$(XST,$UPDATE)">
-<center>
-  <form NAME=updater method=post action="/<!--|CGI_BIN_DIR_NAME|-->/">
-    <font size=+2><!-- color="#33ffCC"-->
-    <input type=button 
-           value=" DONE UPDATING. Back to Viewing! " 
-           onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatview.apg&OID=$OID')"> 
-  </font>
-  </form>
-</center>
-<?/MIVAR>
+<?MISQL SQL="select WebExplode(object,'rtype=marker') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
 
 
 <?MIVAR NAME=$title>Expression of<?/MIVAR> 
@@ -134,7 +99,7 @@ FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN record
 
 <table width=100%> 
   <tr>    
-    <td <?MIVAR COND="$(XST,$UPDATE)">colspan=2<?/MIVAR> >
+    <td>
     
       <font size=+1>
 	<b> Expression of: &nbsp;
@@ -213,21 +178,6 @@ FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN record
   <!---------- Assay Type ------------------------------>
 <table>
   <tr> 
-   <?MIBLOCK COND="$(XST,$UPDATE)">
-    <?MIVAR>
-    <td with=10>
-          <FORM NAME=updateAssay method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatupdateAssay.apg">
-             <INPUT TYPE="hidden" name="MIval" value="aa-xpatupdateAssay.apg">
-             <INPUT TYPE="hidden" name="OID" value="$OID">
-             <INPUT TYPE="hidden" name="old_value" value="$xpatview_xpat_assay_name">
-             <INPUT TYPE="hidden" name="gene_name" value="$xpatview_gene_name">
-             <INPUT TYPE="hidden" name="gene_abbrev" value="$xpatview_gene_abbrev">
-             <INPUT TYPE="submit" value=Update>
-           </FORM>
-    <?/MIVAR>
-    </td>
-   <?/MIBLOCK>  <!-- end xst update -->
-    
     <td>
      <?MIVAR>
        <b>Assay Type: &nbsp;</b>$xpatview_xpat_assay_name
@@ -241,21 +191,6 @@ FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN record
   <!---------- Xpat Authors ---------->
   <?MIVAR NAME=AUTH_HTML><?/MIVAR>
     <tr>
-    
-   <?MIBLOCK COND="$(XST,$UPDATE)">
-     <?MIVAR NAME=AUTH_HTML>
-       <td width=10>
-          <FORM NAME=updateAuthor method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-update-ids.apg">
-             <INPUT TYPE="hidden" name="MIval" value="aa-update-ids.apg">
-             <INPUT TYPE="hidden" name="DATA_ID" value="$OID">
-             <INPUT TYPE="hidden" name="returnTo" value="aa-xpatview.apg&UPDATE=1&OID=$OID">
-             <INPUT TYPE="hidden" name="action" value="add">
-             <INPUT TYPE="hidden" name="sourceType" value="person">
-             <INPUT TYPE="submit" value="Add">
-           </FORM>
-      </td>
-    <?/MIVAR>
-  <?/MIBLOCK> <!-- end xst update for Add -->
 
   <?MIVAR NAME=AUTH_HTML>$AUTH_HTML
       <td valign=top>
@@ -269,31 +204,11 @@ FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN record
      ORDER by 1;">
 
      <?MIVAR NAME=AUTH_LINK><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$2">$1</a><?/MIVAR>
-     <?MIBLOCK COND=$(XST,$UPDATE)>
-      </td>
-    </tr>
-
-       <?MIVAR>
-    <tr>
-      <td>  
-          <FORM NAME=updateAuthor method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-remove-ids.apg">
-             <INPUT TYPE="hidden" name="MIval" value="aa-remove-ids.apg">
-             <INPUT TYPE="hidden" name="DATA_ID" value="$OID">
-             <INPUT TYPE="hidden" name="SOURCE_ID" value="$2">
-             <INPUT TYPE="hidden" name="returnTo" value="aa-xpatview.apg&UPDATE=1&OID=$OID">
-             <INPUT TYPE="hidden" name="action" value="remove">
-             <INPUT TYPE="hidden" name="sourceType" value="person">
-             <INPUT TYPE="submit" value="Remove">
-           </FORM>
-      </td>
-      <td valign=top>
-        $AUTH_LINK
-       <?/MIVAR>
-     <?MIELSE>
+ 
        <?MIVAR>
        $(IF,$(=,$MI_CURRENTROW,1),$AUTH_LINK,", "$AUTH_LINK)
        <?/MIVAR>
-     <?/MIBLOCK>
+
      $(SETVAR,$XPAT_AUTH[$MI_CURRENTROW],$1)
 
   <?/MISQL>
@@ -301,7 +216,7 @@ FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN record
       </td>
   <?/MIVAR>
 
-  <?MIVAR COND="$(OR,$(XST,$UPDATE),$(!=,0,$MI_ROWCOUNT))">$AUTH_HTML<?/MIVAR>
+  <?MIVAR COND="$(!=,0,$MI_ROWCOUNT)">$AUTH_HTML<?/MIVAR>
     </tr>
  </table>
   
@@ -555,36 +470,9 @@ FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN record
       </center>
       <p align=left>
   <?/MIBLOCK>
-
-  <?MIBLOCK COND="$(XST,$UPDATE)">
-    <?MIVAR>
-    <table>
-      <tr>
-        <td>
-          <FORM NAME=updateDescription method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatupdateDescription.apg">
-          <INPUT TYPE="hidden" name="MIval" value="aa-xpatupdateDescription.apg">
-          <INPUT TYPE="hidden" name="OID" value="$OID">
-          <INPUT TYPE="hidden" name="old_value" value="$XPATSTG_COMMENTS">
-          <INPUT TYPE="hidden" name="gene_name" value="$xpatview_gene_name">
-          <INPUT TYPE="hidden" name="gene_abbrev" value="$xpatview_gene_abbrev">
-          <INPUT TYPE="hidden" name="start_stage_id" value="$XPATSTG_START_ID">
-          <INPUT TYPE="hidden" name="start_stage_name" value="$start_stage_name">
-          <INPUT TYPE="hidden" name="end_stage_id" value="$XPATSTG_END_ID">
-          <INPUT TYPE="hidden" name="end_stage_name" value="$end_stage_name">
-          <INPUT TYPE="submit" value=Update>
-          </FORM>
-        </td>
-        <td>
-          <b>Description:&nbsp;</b><br> $XPATSTG_COMMENTS
-        </td>
-      </tr>
-    </table>
-    <?/MIVAR>
-  <?MIELSE>
-    <?MIVAR COND="$(NC,$XPATSTG_COMMENTS,)">
-          <b>Description:&nbsp;</b><br>$XPATSTG_COMMENTS
-    <?/MIVAR>
-  <?/MIBLOCK>  <!-- end xst update -->
+  <?MIVAR COND="$(NC,$XPATSTG_COMMENTS,)">
+  <b>Description:&nbsp;</b><br>$XPATSTG_COMMENTS
+  <?/MIVAR>
       </p>
     </td>
   </tr>
@@ -602,25 +490,14 @@ FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN record
 <!--------------------------- Pubs ---------------------------->
 <p>
 
-<!-- Throw up the publication info, using the standard display format -->
+<?MICOMMENT> ==== Throw up the publication info - since we have a direct relationship, with a not null constraint,
+		  to a single pub via xpat_source_zdb_id, the count can be hardcoded as 1.. for consistency, it's still
+		  gonna point to showpubs, but this is definitely all gonna change when we move to FX == <?/MICOMMENT> 
 
-
-<?MISQL SQL="
-  select count(*)::integer 
-  from record_attribution
-  where recattrib_data_zdb_id = '$OID'
-    and get_obj_type(recattrib_source_zdb_id) = 'PUB';
-  ">
-<?/MISQL>
-
-<?MIBLOCK COND="$(OR,$(>,$1,0),$(XST,$UPDATE))"> 
  <?MIVAR>
- <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=marker&title=$(URLENCODE,$title)&name=$(URLENCODE,$xpatview_geneNameString)$(IF,$(XST,$UPDATE),&UPDATE=1)&total_count=$1"><b>CITATIONS</b></A> 	
+ <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=marker&title=$(URLENCODE,$title)&name=$(URLENCODE,$xpatview_geneNameString)&total_count=1"><b>CITATIONS</b></A> 	
  <?/MIVAR>
-<?MIELSE>
- <b>CITATIONS</b>
-<?/MIBLOCK>
-<?MIVAR>&nbsp; ($1)<?/MIVAR> 
+<?MIVAR>&nbsp; (1)<?/MIVAR> 
 
 <?/MIBLOCK> <!-- mielse of zdb_history -->
 
