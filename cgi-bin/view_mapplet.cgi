@@ -158,7 +158,7 @@
 #     my @keyval = split /\?/, $Q->self_url; 
 #     $qstring = $qstring . $keyval[1];   
 #     $note = $note . $qstring."\n\n";
-#    print $Q->header ."\n".
+#      print $Q->header ."\n".
 #	      $Q->frameset({-rows=> '220,*'},
 #			   $Q->frame({-name=> 'criteria',-src=> 'view_mapplet.cgi?'}),
 #			   $Q->frame({-name=> 'pbrowser',-src=> $qstring })
@@ -181,7 +181,11 @@
   #$note = $note . "All Panels \n<p>";
   for $panel (@allpanels) {
      $note .= "$panel  \n <p>";
-
+  ### if loc_panel handles the crossview request for an entire LG for one panel, prior to frameless  
+  ### this was hanlded by setting the panel to 1 in qstring when building a new frameset
+     if($panel eq $Q->param("loc_panel"))  {
+        $Q->param($panel,1);
+    }
     if( (defined $Q->param($panel))
 	&& ($Q->param($panel) == 1)
 	&& ($panel ne $edit_panel )) {
