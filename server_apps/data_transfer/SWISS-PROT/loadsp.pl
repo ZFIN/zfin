@@ -9,12 +9,14 @@
 use MIME::Lite;
 
 # ----------------- Send Error Report -------------
+# Parameter
+#   $    Error message 
 
-sub sendErrorReport () {
+sub sendErrorReport ($) {
   
-  $SUBJECT="Auto SWISS-PROT:".$_[0];
-  $MAILTO="peirans\@cs.uoregon.edu";
-  $TXTFILE="./report.txt";
+  my $SUBJECT="Auto SWISS-PROT:".$_[0];
+  my $MAILTO="<!--|SWISSPROT_EMAIL_ERR|-->";
+  my $TXTFILE="./report.txt";
  
   # Create a new multipart message:
   $msg1 = new MIME::Lite 
@@ -36,14 +38,15 @@ sub sendErrorReport () {
 }
 
 #------------------ Send Running Result ----------------
-
-sub sendRunningResult () {
+# No parameter
+#
+sub sendRunningResult {
 		
  #----- One mail send out the checking report----
 
-  $SUBJECT="Auto: SWISS-PROT check report";
-  $MAILTO="peirans\@cs.uoregon.edu";
-  $TXTFILE="./checkreport.txt";
+  my $SUBJECT="Auto: SWISS-PROT check report";
+  my $MAILTO="<!--|SWISSPROT_EMAIL_REPORT|-->";
+  my $TXTFILE="./checkreport.txt";
  
   # Create a new multipart message:
   $msg2 = new MIME::Lite 
@@ -64,9 +67,9 @@ sub sendRunningResult () {
   
  #----- Another mail send out problem files ----
 
-  $SUBJECT="Auto: SWISS-PROT problem file";
-  $MAILTO="peirans\@cs.uoregon.edu";     
-  $ATTFILE = "allproblems.txt";
+  my $SUBJECT="Auto: SWISS-PROT problem file";
+  my $MAILTO="<!--|SWISSPROT_EMAIL_CURATOR|-->";     
+  my $ATTFILE = "allproblems.txt";
 
   # Create another new multipart message:
   $msg3 = new MIME::Lite 
