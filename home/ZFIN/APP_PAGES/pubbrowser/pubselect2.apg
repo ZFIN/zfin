@@ -45,7 +45,7 @@ document.critform.START.value = "";
 
 <?MIVAR COND="$(NXST,$authtype)" NAME=$authtype>anyauth<?/MIVAR>
 <?MIVAR COND="$(NXST,$jtype)" NAME=$jtype>any<?/MIVAR>
-<?MIVAR COND="$(NXST,$century)" NAME=$century>19<?/MIVAR>
+<?MIVAR COND="$(NXST,$century)" NAME=$century>20<?/MIVAR>
 <?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>abstract<?/MIVAR>
 <?MIVAR COND="$(NXST,$order_pref)" NAME=$order_pref>date<?/MIVAR>
 <?MIVAR COND="$(NXST,$cur_status)" NAME=$cur_status>any<?/MIVAR>
