@@ -28,7 +28,7 @@
 TOP = ../..
 include $(TOP)/make.include
 
-TARGETDIR = $(TARGETROOT)/lib/java
+TARGETDIR = $(TARGETROOT)/lib/Java
 
 
 # ---- Generate list of directories to create.
@@ -36,7 +36,7 @@ TARGETDIR = $(TARGETROOT)/lib/java
 # Directories to exclude.  These dirs don't have class files in them
 # and/or below them so don't create them in the target directory.
 
-EXCLUDEDIRS = . CVS %/CVS ifc111/documentation% ifc111/examples%
+EXCLUDEDIRS = . CVS CVS/% %/CVS %/CVS/% ifc111/documentation% ifc111/examples%
 
 # get all subdirectories
 FINDSRCDIRS := $(shell find . -type d)
