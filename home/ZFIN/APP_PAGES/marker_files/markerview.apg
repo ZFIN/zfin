@@ -22,6 +22,9 @@
 	window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_linkage.apg&link_id='+link_id+'&OID='+oid)
   }
 
+  function edit_go(oid) {
+	window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoentry.apg&OID='+oid)
+  }
   </SCRIPT>
 
   <?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
@@ -90,7 +93,6 @@
   <?MIVAR NAME=$marker_type>$2<?/MIVAR>
   <?MIVAR NAME=$abbrev>$3<?/MIVAR>
   <?MIVAR NAME=$comments>$4<?/MIVAR>
-
    
   <!-- if no match for the entered ID, display not found msg ------>
   <?MIBLOCK COND="$(OR,$(EC,$name,$MI_NOVALUE),$(=,$MI_ROWCOUNT,0))">
@@ -569,71 +571,102 @@
 
 <?MIBLOCK COND="$(EC,$marker_type,GENE)">
   <?MIVAR NAME=$titledisplay>0<?/MIVAR>
-  
-  <?MISQL SQL="
-	select db_query from foreign_db
-	where db_name = 'QuickGO'
-	;"> 
-   <?MIVAR NAME=$dbquery>$1<?/MIVAR>
-  <?/MISQL>	
-  <?MIVAR NAME=$src1>ZDB-PUB-020723-1<?/MIVAR>
-  <?MIVAR NAME=$src2>ZDB-PUB-020724-1<?/MIVAR>
+  <?MISQL SQL="select db_query from foreign_db where db_name='QuickGO'">
+     <?MIVAR NAME=$dbquery>$1<?/MIVAR>
+  <?/MISQL>
+<?MISQL SQL="
+        select  distinct goterm_ontology, goterm_go_id, goterm_name,
+               mrkrgoev_evidence_code, gont_order
+        from marker_go_term m, go_term g, marker_go_term_evidence e, go_ontology
+ o
+        where m.mrkrgo_mrkr_zdb_id = '$OID' and
+              m.mrkrgo_go_term_zdb_id = g.goterm_zdb_id and
+              m.mrkrgo_zdb_id = e.mrkrgoev_mrkrgo_zdb_id and
+              g.goterm_ontology=o.gont_ontology_name
+        order by gont_order, goterm_name
+        ;"> <?/MISQL>
 
-  <?MIVAR NAME=$first>1<?/MIVAR>
-  <?MIVAR NAME=$titledisplay>0<?/MIVAR>	
-  <?MIVAR NAME=$lastonto><?/MIVAR>
-  <?MIVAR NAME=$lastgoterm><?/MIVAR>
-  <?MISQL SQL="
-	select goterm_ontology, goterm_go_id, goterm_name, 
-               mrkrgoev_evidence_code, mrkrgoev_source_zdb_id,gont_order 
-	from marker_go_term m, go_term g, marker_go_term_evidence e, go_ontology o
-	where m.mrkrgo_mrkr_zdb_id = '$OID' and
-	      m.mrkrgo_go_term_zdb_id = g.goterm_zdb_id and
-	      m.mrkrgo_zdb_id = e.mrkrgoev_mrkrgo_zdb_id and
-	      g.goterm_ontology=o.gont_ontology_name	
-	order by gont_order, goterm_name
-	;">
-   
- 
-    <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
+<?MIVAR NAME=SQL1>
+        select goterm_ontology, goterm_go_id, goterm_name,
+               mrkrgoev_evidence_code, gont_order
+        from marker_go_term m, go_term g, marker_go_term_evidence e, go_ontology
+ o
+        where m.mrkrgo_mrkr_zdb_id = '$OID' and
+              m.mrkrgo_go_term_zdb_id = g.goterm_zdb_id and
+              m.mrkrgo_zdb_id = e.mrkrgoev_mrkrgo_zdb_id and
+              g.goterm_ontology=o.gont_ontology_name<?/MIVAR>
+<?/MIVAR>
+ <?MIVAR NAME=$rowcount>$MI_ROWCOUNT<?/MIVAR> 
+    <?MIBLOCK COND="$(>,$rowcount,0)">  
 	<hr width = "80%"> 
   	<b>GENE PRODUCTS: </b><br> 
         <?MIVAR>$(SETVAR,$titledisplay,1)<?/MIVAR>
-	<b><A HREF="/zf_info/GO.html">Gene Ontology:</A></b>
-        <?MIVAR>
-	<TABLE width = "100%" border = 0 bgcolor = "$highlight">
-        <?/MIVAR>
-  	<TR bgcolor=#ccccccc>
-  	 <TD><b><A HREF="/zf_info/GO.html">Ontology</A></b></TD>
-  	 <TD><b>GO Term</b></TD>
-  	 <TD><b><A HREF="http://www.geneontology.org/doc/GO.evidence.html">Evidence</A></b></TD>
-  	 <TD><b>Reference</b></TD>
+<?MIVAR>
+	<p><b>Gene Ontology</b><?/MIVAR>
+      <?MIVAR COND="$(XST,$UPDATE)">
+      <INPUT TYPE=button value="Update" onClick="edit_go('$OID')"> 
+  <?/MIVAR> 
+   <?MIELSE>
+
+      <?MIBLOCK COND="$(XST,$UPDATE)">
+
+	<hr width = "80%"> 
+  	<b>GENE PRODUCTS: </b><br> 
+        <?MIVAR>$(SETVAR,$titledisplay,1)<?/MIVAR>
+	<b>Gene Ontology</b>
+      <?MIVAR>
+      <INPUT TYPE=button value="Update" onClick="edit_go('$OID')"><?/MIVAR> 
      <?/MIBLOCK>
+  <?/MIBLOCK>
+    <?MIBLOCK COND="$(>,$rowcount,0)">  
+    <?MIVAR><TABLE width =100% border=0 bgcolor=$highlight><?/MIVAR>
+    <TR bgcolor=#ccccccc>
+         <TD><b><A HREF="/zf_info/GO.html">Ontology</A></b></TD>
+         <TD><b>GO Term</b></TD> 
+<?MISQL SQL="select gont_ontology_name,gont_order from go_ontology order by gont_order">
+   <?MIVAR NAME=$ontology>$1<?/MIVAR>
+   <?MIVAR NAME=$goorder>$2<?/MIVAR>
+    <?MISQL MAXROWS=1 SQL="select goterm_go_id,goev_display_order,goterm_name,mrkrgo_is_false_ref from go_term,go_evidence_code,marker_go_term,marker_go_term_evidence where mrkrgo_mrkr_zdb_id='$OID' and mrkrgo_go_term_zdb_id=goterm_zdb_id and mrkrgo_zdb_id=mrkrgoev_mrkrgo_zdb_id and mrkrgoev_evidence_code=goev_code and goterm_ontology='$ontology' order by goev_display_order">
 
+    <?MISQL SQL="select distinct goterm_go_id,goev_display_order,goterm_name,mrkrgo_is_false_ref from go_term,go_evidence_code,marker_go_term,marker_go_term_evidence where mrkrgo_mrkr_zdb_id='$OID' and mrkrgo_go_term_zdb_id=goterm_zdb_id and mrkrgo_zdb_id=mrkrgoev_mrkrgo_zdb_id and mrkrgoev_evidence_code=goev_code and goterm_ontology='$ontology' order by goev_display_order"><?/MISQL>
+<?MIVAR NAME=$anncount>$MI_ROWCOUNT<?/MIVAR>
 
-    <?MIBLOCK COND="$(AND,$(EC,$1,$lastonto),$(EC,$lastgoterm,$3))"> 
-      <?MIVAR>  
-      $(IF,$(EC,$5,$src1),", <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$5&abbrev=$abbrev&geneid=$OID&fdbname=SWISS-PROT&goid=$2">ZFIN S-P</A>")   
-      $(IF,$(EC,$5,$src2),", "<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$5&abbrev=$abbrev&geneid=$OID&fdbname=InterPro&goid=$2">ZFIN InterPro</A>")
-      <?/MIVAR>
-    <?MIELSE> 
-      <?MIVAR> 
-       $(IF,$first,$(SETVAR,$first,0),")</TD></TR>")
-       <TR>		
-       <TD> $(IF,$(NC,$1,$lastonto),$1) </TD>    	
-       <TD><A HREF=$dbquery$2>$3</A></TD>	
-       <TD><A HREF="http://www.geneontology.org/doc/GO.evidence.html">$4</A></TD>
-       $(IF,$(EC,$5,$src1),"<TD>(<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$5&abbrev=$abbrev&geneid=$OID&fdbname=SWISS-PROT&goid=$2">ZFIN S-P</A>")   
-       $(IF,$(EC,$5,$src2),"<TD>(<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$5&abbrev=$abbrev&geneid=$OID&fdbname=InterPro&goid=$2">ZFIN InterPro</A>")
-      <?/MIVAR>
-    <?/MIBLOCK>
-   $(SETVAR,$lastonto,$1)
-   $(SETVAR,$lastgoterm,$3)	
+    <?MIVAR NAME=SQL2>"select goterm_go_id,goev_display_order,goterm_name,mrkrgo_is_false_ref from go_term,go_evidence_code,marker_go_term,marker_go_term_evidence where mrkrgo_mrkr_zdb_id='$OID' and mrkrgo_go_term_zdb_id=goterm_zdb_id and mrkrgo_zdb_id=mrkrgoev_mrkrgo_zdb_id and mrkrgoev_evidence_code=goev_code and goterm_ontology='$ontology' order by goev_display_order"<?/MIVAR>
+    <?MIVAR NAME=$term>$3<?/MIVAR>
+    <?MIVAR NAME=$isnot>$4<?/MIVAR>
+    <TR><TD>$ontology</TD>
+<?MIVAR>
+<?MIBLOCK COND="$(>,$anncount,1)">
+   <?MIBLOCK COND="$(EC,$isnot,t)">
+    <?MIVAR><TD align=left><b>NOT</b> <A HREF=$dbquery$1>$(TRIM,$term)</a>
+     <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoview.apg&OID=$OID"><i>(more)</i></a></TD><?/MIVAR>
+   <?MIELSE>
+    <?MIVAR><TD align=left><A HREF=$dbquery$1>$(TRIM,$term)</a>
+     <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoview.apg&OID=$OID"><i>(more)</i></a></TD><?/MIVAR>
+   <?/MIBLOCK>
+<?/MIBLOCK>
+<?MIBLOCK COND="$(=,$anncount,1)">
+   <?MIBLOCK COND="$(EC,$isnot,t)">
+    <?MIVAR><TD align=left><b>NOT</b> <A HREF=$dbquery$1>$term</a>
+     <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoview.apg&OID=$OID"></a></TD><?/MIVAR>
+   <?MIELSE>
+    <?MIVAR><TD align=left><A HREF=$dbquery$1>$term </a>
+     <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoview.apg&OID=$OID"></a></TD><?/MIVAR>
+   <?/MIBLOCK>
+<?/MIBLOCK>
+<?/MIVAR>
+<?/MISQL>
+   </TR>
   <?/MISQL>
-  <?MIVAR>$(IF,$(>,$MI_ROWCOUNT,0),")</TD></TR></TABLE>")<?/MIVAR>
+</TABLE>
+<?MIBLOCK COND="$(>,$rowcount,0)">
+    <?MIVAR><TABLE width =100% border=0 bgcolor=$highlight><?/MIVAR>
+	<?MIVAR><TR><TD><b>All GO annotations <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoview.apg&OID=$OID"><?MIVAR>($rowcount)</A></b><?/MIVAR><?/MIVAR></TD>
+</TR></TABLE>
+<?/MIBLOCK>
+<?/MIBLOCK>
   <!------------------------------>
   <!------  protein sequence  ------>
- 
   <?MIVAR NAME=$lastitem><?/MIVAR>
   <?MISQL SQL="
     select a.db_name, 
@@ -656,7 +689,7 @@
   		<b>GENE PRODUCTS: </b> 
 		<?MIVAR>$(SETVAR,$titledisplay,1)<?/MIVAR>
 	<?/MIBLOCK>
-	<br><b>Protein Families, Domains and Sites: </b>
+	<p><b>Protein Families, Domains and Sites: </b>
   	<?MIVAR>
 	 <?MIBLOCK COND="$(XST,$UPDATE)">
           <br>
@@ -694,8 +727,9 @@
     $(SETVAR,$lastitem,$1)
  <?/MISQL>
  <?MIVAR>$(IF,$(>,$MI_ROWCOUNT,0),</TD></TR></TABLE>)<?/MIVAR>
+<?MIBLOCK COND="$(EC,hh,yy)">
  <?MIVAR COND="$(AND,$(EC,$MI_ROWCOUNT,0),$(=,$titledisplay,1))">None submitted.<?/MIVAR>
-
+<?/MIBLOCK>
 <?/MIBLOCK>
 	      	
 <!------------------ end of GENE PRODUCT ---------------------->
@@ -1258,6 +1292,8 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
       recattrib_data_zdb_id in (select oevdisp_zdb_id from orthologue_evidence_display where oevdisp_gene_zdb_id = '$OID')
     or 
       recattrib_data_zdb_id = '$OID' 
+    or
+      recattrib_data_zdb_id in (select mrkrgoev_zdb_id from marker_go_term_evidence,marker_go_term where mrkrgo_mrkr_zdb_id = '$OID' and mrkrgo_zdb_id=mrkrgoev_mrkrgo_zdb_id)
  
  <?/MIVAR>
 
