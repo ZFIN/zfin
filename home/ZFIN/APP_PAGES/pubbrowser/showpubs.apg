@@ -275,10 +275,17 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
     <?MIVAR COND="$(NXST,$count_of_real_pub)" NAME=$count_of_real_pub>-9<?/MIVAR>
     <?MIVAR COND="$(NXST,$evidence)" NAME=$evidence><?/MIVAR>
 <?MIBLOCK COND="$(NC,$rtype,xpat)">
+<?MICOMMENT>  ==================== value= will not change value with Safari need special case ============== <?/MICOMMENT>
 <?MIVAR>
     <input type=button name=resultOrder onClick="result_order($(IF,$(EC,$pubOrder,6),'7 desc','6'),'$total_count','$count_of_real_pub','$evidence')"
            value="$(IF,$(EC,$pubOrder,6),Order By Date,Order By Author)"> 
+    <script>
+      if (navigator.userAgent.indexOf('Safari') != -1) {
+        resultOrder.value="$(IF,$(EC,$pubOrder,6),Order By Date,Order By Author)";
+      }
+    </script>
 <?/MIVAR>
+
 
 <?MICOMMENT>  ==================== hide "order by" button for rtype=xpat ============== <?/MICOMMENT>
 <?MICOMMENT>
