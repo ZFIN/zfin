@@ -22,14 +22,8 @@ requestAnimals2.html\
 requestAntibodies2.html\
 requestBooks.html\
 requestESTs2.html\
-requestThankyou.html\
 submit.html\
-submitSuccess.html\
-success.html\
-thankyou.html\
 zirc.js
-
-
 
 
 STATICS = bgblank.gif\
@@ -49,7 +43,9 @@ requestAntibodies.txt\
 requestBooks.txt\
 requestESTs.html\
 requestESTs.txt\
+requestThankyou.html\
 submit.txt\
+submitSuccess.html\
 submitTerms.html\
 submitTryAgain.html\
 zdbGeneId.html\
