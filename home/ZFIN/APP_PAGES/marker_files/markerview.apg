@@ -569,7 +569,7 @@ Datablade documentation.
 <?MISQL SQL="select * from marker_history where mhist_mrkr_zdb_id = '$OID'">
 <?/MISQL>
 <?MIVAR COND="$(AND,$(XST,$type_of_genedom),$(>,$MI_ROWCOUNT,0))"><font size=-1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-nomenview.apg&OID=$OID&abbrev=$abbrev$(IF,$(XST,$UPDATE),&UPDATE=1)">Nomenclature History</A></font><?/MIVAR>
-<br>
+<br><br>
 <!---------------- end NOMENCLATURE HISTORY ------------------------> 
 
 <!---------------------Curator Note-------------->
@@ -595,10 +595,18 @@ Datablade documentation.
 <?MIVAR COND="$(OR,$(>,$(POSITION,$OID,BAC),0),$(>,$(POSITION,$OID,PAC),0))">
 <b>EMBL </b>
 <?/MIVAR>
-<b>Description:</b>
+<?MISQL SQL="
+   select mrkr_comments 
+	from marker 
+	where mrkr_Zdb_id='$OID'
+	and mrkr_comments is not null;">
+<?/MISQL>
+<?MIVAR NAME=$mrkr_comments>$1<?/MIVAR>
 
-<?MIVAR>$(IF,$(NC,$comments,NULL),$comments,None submitted.)<?/MIVAR>
+<?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
+   <b>Note:</b>$mrkr_comments
 <br>
+<?/MIVAR>
 
 <!-----------end Display description ------------------------------->
 
