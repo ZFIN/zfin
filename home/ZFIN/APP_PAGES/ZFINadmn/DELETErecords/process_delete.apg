@@ -45,7 +45,7 @@ VARIABLES EXPECTED:
 
 <!-- Jump back to home -->
 <SCRIPT>
-top.content.history.go('aa-ZDB_home.apg');
+top.content.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg';
 </SCRIPT>
 
 <?/MIBLOCK> <!-- ends cond oid and rtype exist -->
