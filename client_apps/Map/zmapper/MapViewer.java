@@ -366,12 +366,12 @@ public class MapViewer extends Canvas {
 	
 
 	public Enumeration elements() 	{
-		Vector Results = new Vector(6);
+		Vector Results = new Vector(BBTable.size());
 		BackBone BB;
 		BackBone EmptyBB = new BackBone();
 		if (panel_order != null) {
 			if (Panels == null) {
-				for (int i = 5 ; i >= 0 ; i--)
+				for (int i = (BBTable.size()-1) ; i >= 0 ; i--)
 					Results.addElement(EmptyBB);
 
 				Enumeration POE = BBTable.elements();
