@@ -21,7 +21,6 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Downloads
 
 GENERICS = DownloadFiles.pl DownloadFiles.sql
-	   
 
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.
@@ -53,4 +52,4 @@ $(HTTP_DATA_TRANSFER_DIR) :
 run : $(TARGETDIR)/DownloadFiles.pl $(AD) 
 	$(TARGETDIR)/DownloadFiles.pl
 	cp  $(AD) $(HTTP_DATA_TRANSFER_DIR)/ad.txt
-	chmod a+r $(HTTP_DATA_TRANSFER_DIR)/ad.txt  
+	chmod a+r $(HTTP_DATA_TRANSFER_DIR)/*
