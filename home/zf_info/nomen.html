@@ -167,6 +167,25 @@ href="/">ZFIN</a> </p>
     <p><b>Examples:</b><br>
       &nbsp;&nbsp;&nbsp;&nbsp;Symbols - <i>hoxa13a, hoxa13b</i> </p>
   </blockquote>
+
+  <p>Special cases sometimes arise when naming gene duplicates that resulted 
+  from the ray-fin fish whole-genome duplication.  When there is a unique 
+  mammalian orthologue, but addition of the a, b suffix would conflict 
+  with a different mammalian gene symbol, then a numerical suffix, .1, .2 
+  should be appended to the orthologous mammalian gene symbol instead of 
+  a, b.</p>
+
+  <p>When mammalian gene duplications prevent identification of a unique 
+  mammalian orthologue, then an alternate gene symbol should be chosen.  
+  A possible choice would be an approved gene symbol from a unique 
+  non-mammalian orthologue.  If necessary to avoid conflicts with 
+  existing mammalian gene symbols, the two zebrafish genes should then be 
+  distinguished from each other by addition of the terminal suffix .1, .2 
+  instead of a, b.</p>
+  <blockquote>
+    <p><b>Examples:</b> stat5.1, stat5.2</p>
+  </blockquote>
+
   <hr>
   <p><b><a name="1.3.">1.3. GENES identified only by genomic sequencing projects</a></b><br>
     Large-scale genome sequencing projects use a variety of prediction methods 
@@ -417,40 +436,49 @@ remain the
    
   <p><i>Tg(xxx)<sup>allele</sup></i></p>
    
-  <p><i>Tg</i> indicates transgene. The term xxx should describe the salient features 
-    of the transgene, as determined by the investigator. It is always contained 
-    within parentheses. In cases where the insertion utilizes sequences from a 
-    named gene, it should contain the standard symbol for that . The <a href="#2.">allele 
-    name</a> should follow standard nomenclature conventions (laboratory designation 
-    followed by allele name). If the insertion is a compound construct consisting 
-    of the promoter of one gene linked to the coding region of another, the insertion 
-    may be designated using the symbol of the first, separated by a colon from 
-    the symbol of the second: </p>
-   
-  <p><i>Tg(promoter:gene)<sup>allele</sup></i></p>
-   <p>In cases where the map location is known and where this 
-information is useful
-     (i.e., when the location of the transgene affects its expression 
-or when the
-     transgene is used as a map marker) the linkage group number (##) 
-should also
-     be included: </p>
-   
-  <p><i>Tg(Lg##,promoter:gene)<sup>allele</sup></i></p>
-   <blockquote>
-     
-    <p><b>Example:</b> <i>Tg(Lg03,ERE:nic1)<sup>b512</sup></i></p>
-   </blockquote>
-</blockquote>
-<HR WIDTH=90%>
-<P> <STRONG><a name="7."></a>7. STRAINS</STRONG><br>
-  <BR>
-  Strain names are non-italic, first letter upper case. Abbreviations are non-italic, 
-  all uppercase.
-<P>
-<blockquote> 
-  <p> <B>Examples:</B> Darjeeling DAR Indonesia INDO</p>
-</blockquote>
+  <p><i>Tg</i> indicates transgene. The term xxx should describe the most salient 
+  features of the transgene, as determined by the investigator. Brevity 
+  and clarity in the transgene name are favored, in general, over 
+  exhaustive detail.  In cases where the insertion utilizes sequences 
+  from a named gene, it should contain the standard symbol for that 
+  gene.  The allele name should follow standard nomenclature conventions 
+  (laboratory designation followed by allele name).</p>
+
+  <p>If the insertion is a compound construct consisting of regulatory 
+  sequence linked to coding region, the insertion may be designated using 
+  the symbol of the regulatory region, separated by a colon from the 
+  symbol for the coding region.  Regulatory sequence could be derived 
+  from either an enhancer or promoter, and may be denoted by the symbol 
+  of the regulated gene.</p>
+
+  <blockquote>
+  <p><b>Example:</b> Tg(promoter:gene)<sup>allele</sup></p>
+  </blockquote>
+
+  <p>In cases where the map location is known and where this information is 
+  useful (i.e., when the location of the transgene affects its expression 
+  or when the transgene is used as a map marker) the linkage group number 
+  (##) should also be included: Tg(Lg##,promoter:gene)<sup>allele</sup></p>
+
+  <blockquote>
+  <p><b>Example:</b> Tg(Lg03,ERE:nic1)<sup>b512</sup></p>
+  </blockquote>
+
+  <p>Each transgenic name should have no more than one colon.  Regardless of 
+  how they are ordered in the construct, all regulatory sequences should 
+  be listed to the left of the colon, and all coding sequences should be 
+  listed to the right of the colon.  Multiple regulatory or coding 
+  sequences should be separated by hyphens.</p>
+
+  <blockquote>
+  <p><b>Example::</b> Tg(-3.5hhex-ERE:sptb-GFP)<sup>bz1</sup><br></p>
+  </blockquote>
+
+  <p> Here, a fusion protein of spectrin beta (sptb) and GFP is driven by a 
+  combination of an estrogen response element and an upstream enhancer 
+  from the hhex gene. </p>
+  
+
 <HR WIDTH=90%>
   <p><a name="8."></a><STRONG>8. PRIORITY IN NAMES</Strong><br><BR>
  
