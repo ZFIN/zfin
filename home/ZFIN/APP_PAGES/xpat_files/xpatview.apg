@@ -20,7 +20,7 @@ FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN record
 
 <?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
 
-<?MIVAR NAME=$MI_NOVALUE> <?/MIVAR>
+<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
 <?MIVAR NAME=$MI_NULL><?/MIVAR>
 
 <?MIVAR NAME=$userid>GUEST<?/MIVAR>
@@ -149,9 +149,14 @@ FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN record
        AND idsup_supplier_zdb_id = srcurl_source_zdb_id
        AND srcurl_purpose = 'order';
      ">
+<?/MISQL>
+     <?MIVAR> 
        <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$1</a>
-       <?MIVAR NAME=order_url>$(IF,$(>,$(POSITION,$4,rzpd),0),$4$1,$4)<?/MIVAR>
-    
+     <?/MIVAR>       
+
+     <!-- if supplier is RZPD, we want to populate the order page with clone name -->
+     <?MIVAR NAME=order_url>$(IF,$(>,$(POSITION,$4,rzpd),0),$4$1,$4)<?/MIVAR>
+
      <?MIBLOCK COND="$(NC,$3,)">
        <font size=-1>
 
@@ -166,9 +171,7 @@ FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN record
        <?/MIBLOCK>
        </font>
      <?/MIBLOCK>
-     
-
-<?/MISQL>
+ 
        </b></font>
      </td>
   </tr>
@@ -220,6 +223,25 @@ FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN record
 
   <?MIVAR COND="$(!=,0,$MI_ROWCOUNT)">$AUTH_HTML<?/MIVAR>
     </tr>
+  <!-------- ends Xpat Authors ------------>
+
+  <!-------- Xpat comments ---------------->
+  <?MISQL SQL="
+	SELECT xpat_comments
+	  FROM expression_pattern
+	 WHERE xpat_zdb_id = '$OID'; ">
+  <?/MISQL>
+
+  <?MIBLOCK COND="$(NC,$1,)">
+    <tr>
+      <td>
+	<b>Description: </b>
+        <?MIVAR>$1<?/MIVAR>
+      </td>
+    </tr>
+  <?/MIBLOCK>	
+  <!-------- end xpat comments ---------->
+
  </table>
   
   <!---------- ends Xpat Header Table ---------->
