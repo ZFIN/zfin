@@ -4,68 +4,76 @@ This page starts ZFIN, examines the id, and jumps to that record.
 Note that when they hit the ZFIN HOME button, they will jump to the standard page!
 -->
 
+<!-- Modified to support I.E.  Naviagtor tile buttons must know all user input from the query screen.  These values are posted to the lister form.  The lister form creates the tile bar button with appropriate variables. Startframes.apg will pass this variables on to the select form.  Exclude I.E. versions below 5.0.  Tile buttons are now maintained in an array.   ZDB= new page_rec is replaced with top.page_rec  Object name ZDB not supported in I.E.  content.history.go(address) not supported by I.E. Replaced with content.location.href -->
+
 <HTML>
 
 <head>
 <SCRIPT>
 
-function display_foo(mywindow,index) {
-  if (index==1) {
-  mywindow.document.writeln('<center><A HREF="mailto:zfinadmn@zfin.org"><img border=1 src="/images/comments-small.gif"></A><p><hr><p><Font size=-1><b>ZFIN NAVIGATOR:</b></font></center><TABLE width=100% cellpadding=0 cellspacing=0>');
-  }
-  if (index>1) {
-    mywindow.document.writeln("<TR><TD align=center><img border=0 src='/images/ARROWS/downarrow.gif'></TD></TR>")
-  }
 
-if (this.title=="ZFIN HOME"){
- mywindow.document.writeln("<TR><TD><Font size=-2><INPUT TYPE=button NAME="+ this.id +" VALUE=\""+ this.title +"\" onClick=top.content.location.replace(\""+ this.id +"\") ></font></TD></TR>");}
-else {
- mywindow.document.writeln("<TR><TD><Font size=-2><INPUT TYPE=button NAME="+ this.id +" VALUE=\""+ this.title +"\" onClick=top.content.history.go(\""+ this.id +"\") ></font></TD></TR>");}
-  if (this.end==false) {
-    this.next.display(mywindow,index+1)
-  } else {
-    mywindow.document.writeln("</TABLE><p><font size=-1>Click on above tiles to move to corresponding screen.</font><p><HR><p><br><font size=-1><center><b>SEARCH <br> FOR:</b></font><br><font size=2><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&frame_size=250&selector=aa-fishselect.apg&select_from=Mutants&line_type=mutant&intro=/ZFIN/help_files/mut_intro.html' target='content'>MUTANTS</A><br><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-geneselect.apg&select_from=GENE&frame_size=130' target='content'>GENES</A><br><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-markerselect.apg&select_from=MARKER' target='content'>MAP_MARKERS</A><br><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-mapperselect.apg&select_from=MAPPER&frame_size=220' target='content'>VIEW MAP</A><br><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-pubselect2.apg&select_from=PUBLICATION' target='content'>PUBLICATIONS</A><br><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-quickfindpers.apg&select_from=PERSON&frame_size=75' target='content'>PEOPLE</A><br><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-labselect.apg&select_from=LAB' target='content'>LABS</A><br><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-companyselect.apg&select_from=COMPANY&frame_size=230' target='content'>COMPANIES</A><br><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-accessionselect.apg&select_from=ACCESSION' target='content'>ACCESSION_#</A>")
- }
+var tile_id = new Array();
+var tile_title = new Array();
+
+function display_foo(mywindow) {
+ 
+mywindow.document.writeln('<center><A HREF="mailto:zfinadmn@<!--|DOMAIN_NAME|-->"><img border=1 src="/images/comments-small.gif"></A><p><hr><p><Font size=-1><b>ZFIN NAVIGATOR:</b></font></center><TABLE width="100%" cellpadding=0 cellspacing=0>');
+
+mywindow.document.writeln("<TR><TD><Font size=-2><INPUT TYPE=button NAME="+ tile_id[1] +" VALUE=\""+ tile_title[1] +"\" onClick= top.content.location.href=\""+ tile_id[1] +"\" ></font></TD></TR>");
+
+for (i=2; i< tile_title.length; i++){
+    mywindow.document.writeln("<TR><TD align=center><img border=0 src='/images/ARROWS/downarrow.gif'></TD></TR>");
+    mywindow.document.writeln("<TR><TD><Font size=-2><INPUT TYPE=button NAME="+ tile_id[i] +" VALUE=\""+ tile_title[i] +"\" onClick= top.content.location.href=\""+ tile_id[i] +"\" ></font></TD></TR>");
 }
 
+mywindow.document.writeln("</TABLE><p><font size=-1>Click on above tiles to move to corresponding screen.</font><p><HR><p><br><font size=-1><center><b>SEARCH <br> FOR:</b></font><br><font size=2><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&frame_size=250&selector=aa-fishselect.apg&select_from=Mutants&line_type=mutant&intro=/ZFIN/help_files/mut_intro.html' target='content'>MUTANTS</A><br><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-geneselect.apg&select_from=GENE&frame_size=130' target='content'>GENES</A><br><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-markerselect.apg&select_from=MARKER' target='content'>MAP_MARKERS</A><br><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-mapperselect.apg&select_from=MAPPER&frame_size=220' target='content'>VIEW MAP</A><br><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-pubselect2.apg&select_from=PUBLICATION' target='content'>PUBLICATIONS</A><br><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-quickfindpers.apg&select_from=PERSON&frame_size=75' target='content'>PEOPLE</A><br><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-labselect.apg&select_from=LAB' target='content'>LABS</A><br><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-companyselect.apg&select_from=COMPANY&frame_size=230' target='content'>COMPANIES</A><br><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-accessionselect.apg&select_from=ACCESSION' target='content'>ACCESSION_#</A>");
+
+}
 
 
 function update_hist(id,title) {
-  if (this.title==title) {
-    this.end=true;
-  } else {
-    if (this.end==true) {
-       this.end=false;
-       this.next= new top.page_rec(id,title)
-    } else {
-      this.next.update(id,title)
-    }
-  }
+
+  save_length = tile_title.length;
+for (i=1; i<= save_length; i++) if (tile_title[i] == title) save_length = i;
+  tile_title.length= save_length;
+  tile_id[tile_title.length] = id;
+  tile_title[tile_title.length] = title;
+
 }
 
 function page_rec(id,title) {
-  this.id=id;
-  this.title=title;
-  this.end=true;
-  this.display=display_foo;
-  this.update=update_hist;
+  tile_id[1] = id;
+  tile_title[1] = title;
+
+
 }
 
 browserName = navigator.appName;
 browserVer = parseInt(navigator.appVersion);
-
-if (browserName == "Netscape" && browserVer >= 3) version = "n3";
-else version = "n2";
-        
-if (version == "n3")         {
-   ZDB= new page_rec("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg","ZFIN HOME");
-} else {
-   window.location="/ZFIN/misc_html/wrong_browser.html"
+if (browserName == "Microsoft Internet Explorer"){
+   bindex = navigator.appVersion.indexOf("MSIE");
+   browserVer = parseInt(navigator.appVersion.substring(bindex+5,bindex+6));
 }
+
+if ((browserName == "Netscape" && browserVer >= 3) || (browserName =="iCab") || (browserName == "Microsoft Internet Explorer" && browserVer >= 5)) version = "n3";
+else version = "n2";
+
+
+if (version != "n3") {   
+  window.location="/ZFIN/misc_html/wrong_browser.html";
+}
+
+
+                
+
+top.page_rec("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg","ZFIN HOME");
 
 top.name="ZFIN";
 
 </SCRIPT>
+  
+
+
   
 <TITLE>ZFIN</TITLE>
 </HEAD>
