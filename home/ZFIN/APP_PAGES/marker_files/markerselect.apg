@@ -1,3 +1,4 @@
+
 <!-- added onChange to each variable to reset START for walking windows - this is needed if users alter query after using the navtile button and without using the reset button. if the new query result has fewer than the first query and they had been on a page that would not exist with this new query the ww code breaks  -->
 
 <HTML>
@@ -45,8 +46,8 @@ document.critform.START.value = "";
 <?/MIBLOCK>
 <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 
-
-<?MIBLOCK COND="$(XST,$query_results)">
+<!--*** -->
+<?MIBLOCK COND="$(OR,$(XST,$query_results),$(XST,$pubId))">
 
 <?MIVAR NAME=$OID COND="$(NXST,$OID)">NULL<?/MIVAR>
 <?MIVAR NAME=$MI_NULL><?/MIVAR>
@@ -74,7 +75,7 @@ document.critform.START.value = "";
 <!-- This next part builds up a query piece by piece, based on which criteria 
   were passed in -->
 
-<?MIVAR NAME=$constraint COND="$(NXST,$constraint)"> <?/MIVAR>
+
 <?MIVAR NAME=$lg COND="$(NXST,$lg)">0<?/MIVAR>
 <?MIVAR NAME=$marker_type COND="$(NXST,$marker_type)">any<?/MIVAR>
 <?MIVAR NAME=$refcross COND="$(NXST,$refcross)">NULL<?/MIVAR>
@@ -83,78 +84,165 @@ document.critform.START.value = "";
 
 <?MIVAR NAME=$mlist SEPARATE="','">$marker_type<?/MIVAR>
 <?MIVAR COND="$(>,$(POSITION,$mlist,any),0)" NAME=$marker_type>any<?/MIVAR>
+
+<?MIVAR COND="$(XST,$name)" NAME=$name DELIMIT="'" REPLACE="''">$name<?/MIVAR>
+<?MIVAR COND="$(NXST,$name)" NAME=$name><?/MIVAR>
+<?MIVAR NAME=$wild_card><?/MIVAR>
+<?MIVAR COND="$(NC,$compare,starts)" NAME=$wild_card>%<?/MIVAR>
+
+<!-- NOW BUILD UP THE CONSTRAINT CLAUSE -->
 <?MIBLOCK COND="$(OR,$(XST,$name),$(NC,$marker_type,any),$(NC,$lg,0),$(NC,$refcross,NULL),$(AND,$(XST,$within_cm),$(XST,$wm_name)))">
 
-  <!-- First filter name for apostrophes! -->
-  <?MIVAR COND="$(XST,$name)" NAME=$name DELIMIT="'" REPLACE="''">$name<?/MIVAR>
-  <?MIVAR NAME=$wild_card><?/MIVAR>
-  <?MIVAR COND="$(NC,$compare,starts)" NAME=$wild_card>%<?/MIVAR>
-
-  <?MIVAR NAME=$previous> <?/MIVAR>
-  <?MIVAR NAME=$constraint> where <?/MIVAR>
-
-  <!-- NOW BUILD UP THE CONSTRAINT CLAUSE -->
-
-  <?MIBLOCK COND="$(XST,$name)">
-    <?MIVAR NAME=$constraint>$constraint 
-      exists 
-        ( select 'x' 
-          from all_map_names 
-          where a.zdb_id = allmapnm_zdb_id 
-            and allmapnm_name like '$wild_card$(LOWER,$name)%' )
-    <?/MIVAR>
-  <?/MIBLOCK> 
-
-  <?MIVAR NAME=$previous COND="$(XST,$name)"> and <?/MIVAR>
-
-  <?MIVAR NAME=$constraint COND="$(AND,$(XST,$marker_type),$(NC,$marker_type,any))">
-    $constraint $previous (mtype in ('$mlist'))
+  <?MIVAR  COND="$(XST,$name)" NAME=$mrkrnameConstraint>
+	where exists (select 'x' from all_map_names where a.mrkr_zdb_id = allmapnm_zdb_id and allmapnm_name like '$wild_card$(LOWER,$name)%' )
   <?/MIVAR>
 
-  <?MIVAR NAME=$previous COND="$(AND,$(XST,$marker_type),$(NC,$marker_type,any))"> and <?/MIVAR>
-
-  <?MIVAR NAME=$constraint COND="$(NC,$lg,0)">
-    $constraint $previous ((OR_lg='$lg' or OR_lg='0') and private='f')
+  <?MIVAR  COND="$(XST,$name)" NAME=$mutantnameConstraint>
+	where exists (select 'x' from all_map_names where a.zdb_id = allmapnm_zdb_id and allmapnm_name like '$wild_card$(LOWER,$name)%' )
   <?/MIVAR>
 
-  <?MIVAR NAME=$previous COND="$(NC,$lg,0)"> and <?/MIVAR>
 
-  <?MIVAR NAME=$constraint COND="$(NC,$refcross,NULL)">
-    $constraint $previous (target_id='$refcross' OR dist is not null)
+
+  <?MIVAR NAME=$mlistConstraint><?/MIVAR>
+  <?MIVAR COND="$(AND,$(XST,$marker_type),$(NC,$marker_type,any))">
+	<?MIVAR NAME=$mlistConstraint> and mrkr_type in ('$mlist')<?/MIVAR>
   <?/MIVAR>
+
+
+  <?MIVAR NAME=$constraintm COND="$(NXST,$constraintm)"><?/MIVAR>	
+  <?MIVAR NAME=$constraintl COND="$(NXST,$constraintl)"><?/MIVAR>
+
+  <?MIVAR COND="$(NC,$lg,0)">
+     <?MIVAR NAME=$lgConstraintm>or_lg='$lg' and private='f'
+     <?/MIVAR>
+     <?MIVAR NAME=$lgConstraintl>lnkg_or_lg='$lg' and lnkg_private='f'
+     <?/MIVAR>
+	
+     $(VECAPPEND, $constraintm, $lgConstraintm )
+     $(VECAPPEND, $constraintl, $lgConstraintl )
+  <?/MIVAR>
+
+  <?MIVAR COND="$(NC,$refcross,NULL)">
+       $(VECAPPEND, $constraintm, panels.zdb_id='$refcross' )
+       $(VECAPPEND, $constraintl, lnkg_zdb_id = '$refcross' ) 		
+  <?/MIVAR>
+
+  <?MIVAR>
+	$(SETVAR,$constraintm,$(SEPARATE,$constraintm,AND))
+	$(SETVAR,$constraintl,$(SEPARATE,$constraintl,AND))
+  <?/MIVAR>	
 
 <?/MIBLOCK> <!-- ends cond any constraints specified -->
 
+
 <?MIVAR NAME=$order_clause>order by abbrev_order ,mtype<?/MIVAR>
-
-
                    
 <?MIVAR NAME=$insert_ending>, allmapmrkr_abbrev_order as abbrev_order, dist<?/MIVAR>
 <?MIVAR NAME=$select_ending>, allmapmrkr_abbrev_order as abbrev_order, dist <?/MIVAR>
-<?MIVAR NAME=$target_table> all_mapped_markers a <?/MIVAR>
+
 <?MIVAR NAME=$tmptable_select_ending>, abbrev_order, dist  <?/MIVAR>
 
-
+	
 <!--  Populate temp table based on user constraints.  -->
+<?MIBLOCK COND="$(NXST,$pubId)">
 
-<?MISQL SQL="
-  select distinct abbrev, mtype, lg_location, zdb_id, OR_lg,
-         target_id, target_abbrev, private, metric 
-	 $insert_ending
-    from $target_table 
-    $constraint 
-    $order_clause
-    into temp markerlister_temp with no log;">
-<?/MISQL>
+  <?MIBLOCK COND="$(OR,$(>,$(POSITION,$mlist,MUTANT),0),$(>,$(POSITION,$mlist,any),0))">
+   
+    <?MISQL SQL="
 
-<?MISQL SQL="
-  create index markerlister_temp_index on markerlister_temp (abbrev, mtype);">
-<?/MISQL>
+	select distinct a.zdb_id as zdb_id, a.allele as abbrev, fish_allele_order as abbrev_order, 'MUTANT' as mtype
+	from fish a
+	$mutantnameConstraint 
+	and a.zdb_id in (select marker_id from mapped_marker)
+	union
+	select distinct a.zdb_id as zdb_id, b.abbrev as abbrev, locus_abbrev_order as abbrev_order, 'MUTANT' as mtype
+	from fish a, locus b
+	$mutantnameConstraint 
+	and a.zdb_id not in (select marker_id from mapped_marker)
+	and a.locus = b.zdb_id
+	union
+	select distinct zdb_id, abbrev, locus_abbrev_order as abbrev_order, 'MUTANT' as mtype
+	from locus a
+	$mutantnameConstraint
+	into temp all_temp_markers with no log;">
+
+     <?/MISQL>
+     <?MIBLOCK COND="$(NC,$mlist,MUTANT)"> 
+     <?MISQL SQL="
+      insert into all_temp_markers
+	select distinct mrkr_zdb_id as zdb_id, mrkr_abbrev as abbrev, mrkr_abbrev_order as abbrev_order, mrkr_type as mtype
+	from marker a
+	$mrkrnameConstraint
+	$mlistConstraint; ">
+     <?/MISQL>
+     <?/MIBLOCK>
+
+  <?MIELSE>
+  
+    <?MISQL SQL="    
+	select distinct mrkr_zdb_id as zdb_id, mrkr_abbrev as abbrev, mrkr_abbrev_order as abbrev_order, mrkr_type as mtype
+	from marker a
+	$mrkrnameConstraint
+	$mlistConstraint
+	into temp all_temp_markers with no log; ">
+    <?/MISQL>
+
+  <?/MIBLOCK>
+
+
+  <?MISQL SQL="
+	select m1.abbrev as abbrev, m1.mtype as mtype, lg_location, m1.zdb_id as zdb_id, or_lg as OR_lg, panels.zdb_id as target_id, panels.abbrev as target_abbrev, private, mm.metric as metric, m1.abbrev_order as abbrev_order
+	from all_temp_markers m1, mapped_marker mm, panels
+	where m1.zdb_id = marker_id
+ 	 and refcross_id = panels.zdb_id
+	 and or_lg <> '0'
+	 $constraintm
+
+	UNION
+
+	select  m1.abbrev as abbrev, m1.mtype as mtype, NULL::numeric(8,2) as lg_location, m1.zdb_id as zdb_id, lnkg_or_lg as OR_lg, lnkg_zdb_id as target_id, NULL::varchar(20) as target_abbrev, lnkg_private as private, NULL::varchar(5) as metric, m1.abbrev_order as abbrev_order
+	from all_temp_markers m1, linkage_member, linkage
+	where m1.zdb_id = lnkgmem_member_zdb_id 
+	and lnkgmem_linkage_zdb_id = lnkg_zdb_id
+	and lnkg_or_lg <> '0'
+	$constraintl
+
+    	order by 10, 2
+    	into temp markerlister_temp with no log;">
+  <?/MISQL>
+
+<?MIELSE>  <!-- if invoked by the mapping data link from a publication page -->
+  <!-- get the mapping information of the linkage members only on the specific independent linkage that is sourced to that pubId. -->
+  <?MISQL SQL="
+	select mrkr_abbrev as abbrev, mrkr_type as mtype, NULL::numeric(8,2) as lg_location, mrkr_zdb_id as zdb_id, lnkg_or_lg as OR_lg, lnkg_zdb_id as target_id, NULL::varchar(20) as target_abbrev, lnkg_private as private, NULL::varchar(5) as metric, mrkr_abbrev_order as abbrev_order
+
+  	from record_attribution, linkage_member,linkage, marker
+  	where recattrib_source_zdb_id = '$pubId'
+    	and recattrib_data_zdb_id = lnkgmem_linkage_zdb_id
+    	and lnkgmem_linkage_zdb_id = lnkg_zdb_id	
+    	and lnkgmem_member_zdb_id = mrkr_zdb_id
+	and lnkg_or_lg <> '0'
+		
+ 	UNION
+
+  	select l.abbrev as abbrev, 'MUTANT', NULL::numeric(8,2) as lg_location, f.zdb_id as zdb_id, lnkg_or_lg as OR_lg, lnkg_zdb_id as target_id, NULL::varchar(20) as target_abbrev, lnkg_private as private, NULL::varchar(5) as metric, l.locus_abbrev_order as abbrev_order
+
+  	from record_attribution, linkage_member, linkage, fish f, locus l
+  	where recattrib_source_zdb_id = '$pubId'
+    	and recattrib_data_zdb_id = lnkgmem_linkage_zdb_id
+    	and lnkgmem_linkage_zdb_id = lnkg_zdb_id
+    	and lnkgmem_member_zdb_id = f.zdb_id 
+    	and f.locus = l.zdb_id 
+	and lnkg_or_lg <> '0'
+  	into temp markerlister_temp with no log;  ">
+  <?/MISQL>
+<?/MIBLOCK>
+
 
 <!--  Count the number of marker names that will be returned. -->
 <!--  query count(*) -->
 <?MISQL SQL="
-  select distinct abbrev, mtype
+  select distinct abbrev, mtype, zdb_id
     from markerlister_temp;">
 <?/MISQL>
 <?MIVAR NAME=$num_recs>$MI_ROWCOUNT<?/MIVAR>
@@ -169,7 +257,21 @@ document.critform.START.value = "";
 
 <?/MIBLOCK>
 
-<?MIBLOCK COND="$(NXST,$new_oid)">
+<!--*** -->
+<?MIBLOCK COND="$(AND,$(NXST,$new_oid),$(XST,$pubId))">
+  <table width=100%>
+   <tr>
+     <td align=center> 
+       <?MIVAR>
+         <font size="+1">
+           Marker Mapping Data List (<b>$num_recs</b> records.)
+         </font>
+       <?/MIVAR>
+     </td>
+    </tr>
+  </table>
+
+<?MIELSE COND="$(NXST,$new_oid)">
 <table width=100% border=0>
   <tr>
     <td width=20%>&nbsp;</td>
@@ -202,7 +304,6 @@ document.critform.START.value = "";
 
 <br>
 
-<!-- <?MIVAR>CONSTRAINT: $constraint<?/MIVAR> -->
 
 <!-- Stuff to control retrieval volume -->
 <form method=post 
@@ -210,7 +311,7 @@ document.critform.START.value = "";
       action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
   <?MIVAR>
     <input type=hidden name=MIval value=aa-markerselect.apg>
-    <input type=hidden name=constraint value="$constraint">
+   
     <input type=hidden name=userid value="$userid">
     <input type=hidden name=compare value="$compare">
 
@@ -337,6 +438,8 @@ document.critform.START.value = "";
         <?MIVAR name=comment>  Build array of user data  <?/MIVAR>
 	<?MIVAR name=selector>MIval=aa-markerselect.apg&WINSIZE=$WINSIZE<?/MIVAR>
         <?MIVAR name=UserInput><?/MIVAR>
+       <!--***-->
+       <?MIBLOCK COND="$(NXST,$pubId)">
 	<?MIVAR name=UserInput COND=$(XST,$lg)>$UserInput&lg=$lg<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$refcross)>$UserInput&refcross=$refcross<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$marker_type)>$UserInput&marker_type=$marker_type<?/MIVAR>
@@ -344,6 +447,10 @@ document.critform.START.value = "";
         <?MIVAR name=$UserInput COND=$(XST,$return_rec)>$UserInput&return_rec=$return_rec<?/MIVAR>
         <?MIVAR name=UserInput COND=$(XST,$name)>$UserInput&name=$(URLENCODE,$name)<?/MIVAR>  
         <?MIVAR name=UserInput COND=$(XST,$query_results)>$UserInput&query_results=$(URLENCODE,$query_results)<?/MIVAR>  
+
+	<?MIELSE>
+	 <?MIVAR name=$UserInput>$UserInput&pubId=$pubId&type=mrkrmap<?/MIVAR>
+	<?/MIBLOCK>
 
 	<!--- Return to the previous set of Rows --->
 	<?MIBLOCK COND="$(>,$BEGIN,1)">
@@ -435,6 +542,13 @@ document.critform.START.value = "";
   </Center>
 <?/MIBLOCK>  <!-- end # rows > 0 -->
 
+<?MISQL COND="$(NXST,$pubId)" SQL="
+  -- insert (actually any statement will do) is necessary to avoid an error
+  insert into all_temp_markers (abbrev) values (NULL);
+  drop table all_temp_markers;">
+<?/MISQL>
+
+
 <?MISQL SQL="
   -- insert (actually any statement will do) is necessary to avoid an error
   insert into markerlister_temp (abbrev) values (NULL);
@@ -445,7 +559,7 @@ document.critform.START.value = "";
 
 <?/MIBLOCK> <!-- query results -->
 
-<?MIBLOCK COND="$(NXST,$accession)">  <!-- don't want modify search result if come from accessionalister -->
+<?MIBLOCK COND="$(AND,$(NXST,$accession),$(NXST,$pubId))">  <!-- don't want modify search result if come from accessionalister -->
 
   <table class="search" width=100% border=0 cellpadding=1 cellspacing=0>
     <tr>
