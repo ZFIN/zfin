@@ -25,7 +25,7 @@
 
 <!--   THIS BLOCK HANDLES ACCESSION NUMBER SEARCHES ONLY NON ZDB_ID -->
 <?MIVAR name=aname>$(UPPER,$aname)<?/MIVAR>
-
+<?MIVAR name=OID>$aname<?/MIVAR>
 <?MIBLOCK COND="$(=,$(POSITION,$aname,ZDB),0)">
 
 <?MIVAR name=$inputaname>$aname <?/MIVAR>
@@ -257,7 +257,7 @@ $(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-d
 
 <?MIBLOCK COND="$(AND,$(=,$mcount,0),$(=,$gcount,0),$(=,$pcount,0))">
 <form><center><font size=4>
-<?MIVAR> <font size=3><b>Unknown Accession Number</b> <?/MIVAR>
+<?MIVAR> <font size=3><b>Accession Number is Not Found in ZFIN</b> <?/MIVAR>
 </form>
 <?/MIBLOCK>
 
@@ -274,24 +274,26 @@ $(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-d
 
 <?MIBLOCK COND="$(XST,$aname)")>
 <?MIVAR name=aname>$(UPPER,$aname)<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,LAB),0)">aa-labview.apg<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PERS),0)">aa-persview.apg<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,COMPANY),0)">aa-companyview.apg<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PUB),0)">aa-pubview2.apg<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,FISH),0)">aa-fishview.apge<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,GENE),0)">aa-markerview.apg<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,EST),0)">aa-markerview.apg<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,SSLP),0)">aa-markerview.apg<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,SSR),0)">aa-markerview.apg<?/MIVAR>
+<?MIVAR name=$OID>$aname<?/MIVAR>
+<?MIVAR NAME=$constraint> where zdb_id = '$OID' <?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,LAB),0)">aa-lablister.apg<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PERS),0)">aa-perslister.apg<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,COMPANY),0)">aa-companylister.apg<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PUB),0)">aa-publister2.apg<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,FISH),0)">aa-fishlister.apg<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,GENE),0)">aa-genelister.apg<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,EST),0)">aa-markerlister.apg<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,SSLP),0)">aa-markerlister.apg<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,SSR),0)">aa-markerlister.apg<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,LOCUS),0)">aa-locusview.apg<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,REFCROSS),0)">aa-crossview.apg<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,RAPD),0)">aa-markerview.apg<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,STS),0)">aa-markerview.apg<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,RFLP),0)">aa-markerview.apg<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,RAPD),0)">aa-markerlister.apg<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,STS),0)">aa-markerlister.apg<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,RFLP),0)">aa-markerlister.apg<?/MIVAR>
 <?/MIBLOCK>
 
 <?MIBLOCK COND="$(EC,$start_page,NULL)">
-<form><center><font size=4><?MIVAR><b>Invalid ZFIN ID.</b> <?/MIVAR>
+<form><center><font size=4><?MIVAR><b>Requested ID is not found in ZFIN.</b> <?/MIVAR>
 </form>
 <?/MIBLOCK>  <!-- ends if start page is null -->
 
@@ -300,8 +302,19 @@ $(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-d
 <?MIVAR>
 <form name=zdb_search method=post action="/cgi-bin_B/webdriver?MIval=$start_page&OID=$aname">
  
+
 <input type=hidden name=MIval value=$start_page>
-<input type=hidden name=OID value=$aname>
+<input type=hidden name=OID value=$OID>
+<input type=hidden name=constraint value="$constraint">
+<input type=hidden name=jtype value="any">
+<input type=hidden name=pub_status value="any">
+<input type=hidden name=cur_status value="any">
+<input type=hidden name=order_pref value="name">
+<input type=hidden name=line_type value="accession">
+<input type=hidden name=mutagen value="any">
+<input type=hidden name=chrom_change value="any">
+<input type=hidden name=chrom_num value="0">
+<input type=hidden name=searchtype value="begins">
 
 <?/MIVAR>
 
