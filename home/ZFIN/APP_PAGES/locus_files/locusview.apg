@@ -174,23 +174,15 @@
 	<p>
 	</CENTER>
 
-	<!-- move mivar cond from input type=button to miblock which includes entire locus description until curation on this item improves -->
-	<?MIBLOCK COND="$(XST,$UPDATE)">
-	  <p>
-	  <table width=100%>
-	    <TR>
-	    <TD bgcolor="#ffffff">
-
+	  <p><font size=+1>
+          <?MIBLOCK COND="$(XST,$UPDATE)">
 	    <INPUT TYPE=button 
               value="Update" 
               onClick="doit('comments','textarea','Locus+Description')"> 
-
+	  <?/MIBLOCK>
 
 	    <b>Locus Description:</b><?MIVAR>$(IF,$(NC,$comments,NULL),$comments,"No description available") <?/MIVAR>
-	    </TD>
-	    </TR>
-	  </TABLE>
-	<?/MIBLOCK>
+
 
 	<p><font size=+1>
 	<?MIVAR COND="$(XST,$UPDATE)">
