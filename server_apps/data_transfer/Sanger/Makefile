@@ -55,5 +55,5 @@ $(README_TARGET) : $(TARGETDIR)/readme
 # Run the download script.  This extracts data from ZFIN and places it in 
 # the public http directory
 
-run : $(TARGETDIR)/SangerFiles.pl 
+run : $(TARGETS)
 	$(TARGETDIR)/SangerFiles.pl
