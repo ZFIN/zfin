@@ -42,7 +42,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/lib/DB_functions
 
-SRCS = get_id.c get_obj_type.c
+SRCS = get_id.c get_obj_type.c zero_pad.c
 OBJS = $(foreach SRC, $(SRCS), $(patsubst %.c,%.so,$(SRC)))
 TARGETS = $(foreach OBJ, $(OBJS), $(patsubst %,$(TARGETDIR)/%,$(OBJ)))
 
