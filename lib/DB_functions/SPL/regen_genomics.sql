@@ -3,6 +3,9 @@ drop function regen_genomics;
 
 create dba function "informix".regen_genomics() returning integer
 
+  -- returns 0 on ERROR
+  -- returns 1 on SUCESS
+	
   -- regen_genomics creates the bulk of the fast search tables in ZFIN.
   -- Fast search tables are used to speed query access from web pages.
 
@@ -110,7 +113,7 @@ create dba function "informix".regen_genomics() returning integer
 	zdb_id		varchar(50), 
 	entry_time	datetime year to fraction,
 	name		varchar(50), 
-	abbrev		varchar(10), 
+	abbrev		varchar(20), 
 	panel_date	date,
 	producer	varchar(50), 
 	owner		varchar(50), 
@@ -168,7 +171,7 @@ create dba function "informix".regen_genomics() returning integer
 	OR_lg		varchar(2),
 	lg_location	numeric(8,2), 
 	metric		varchar(5), 
-	target_abbrev	varchar(10),
+	target_abbrev	varchar(20),
 	target_id	varchar(50), 
 	private		boolean, 
 	owner		varchar(50),
@@ -246,7 +249,7 @@ create dba function "informix".regen_genomics() returning integer
 	OR_lg		varchar(2),
 	lg_location		numeric(8,2), 
 	metric		varchar(5), 
-	target_abbrev	varchar(10),
+	target_abbrev	varchar(20),
 	mghframework	boolean,
 	target_id		varchar(50)
 
@@ -522,12 +525,12 @@ create dba function "informix".regen_genomics() returning integer
 		    and cloned_gene = an3.allmapnm_zdb_id );
 
 
-    -- Include putative gene assignments 
+    -- Include putative gene assignments to genes not in zfin
 
     insert into all_m_names_new 
 	(allmapnm_name, allmapnm_zdb_id, allmapnm_significance)
       select lower(putgene_putative_gene_name), putgene_mrkr_zdb_id, 10
-	from putative_gene
+	from putative_non_zfin_gene
 	where not exists		-- avoid duplicates
 	      ( select * 
 		  from all_m_names_new an
@@ -727,7 +730,7 @@ create dba function "informix".regen_genomics() returning integer
 	alnkgmem_linkage_zdb_id varchar(50),
 	alnkgmem_member_zdb_id  varchar(50),
 	alnkgmem_member_name    varchar(80),
-	alnkgmem_member_abbrev  varchar(10),
+	alnkgmem_member_abbrev  varchar(20),
 	alnkgmem_member_abbrev_order  varchar(60),
 	alnkgmem_marker_type    varchar(10),
 	alnkgmem_source_zdb_id  varchar(50),
@@ -822,7 +825,7 @@ create dba function "informix".regen_genomics() returning integer
 	mtype		varchar(10), 
 	OR_lg		varchar(2),
 	lg_location	numeric(8,2) ,
-	target_abbrev	varchar(10),
+	target_abbrev	varchar(20),
 	target_id	varchar(50), 
 	private		boolean ,
 	owner		varchar(50),
@@ -874,7 +877,7 @@ create dba function "informix".regen_genomics() returning integer
 	zdb_id		varchar(50), 
 	OR_lg		varchar(2), 
 	panel_id	varchar(50),
-	panel_abbrev	varchar(10),
+	panel_abbrev	varchar(20),
 	abbrev		varchar(20),
 	allgene_abbrev_order varchar(60)
 	  not null,
@@ -968,7 +971,7 @@ create dba function "informix".regen_genomics() returning integer
 	  not null,
 	or_lg		varchar(2),
 	lg_location	decimal(8,2),
-	panel_abbrev	varchar(10),
+	panel_abbrev	varchar(20),
 	panel_id	varchar(50),
 	private		boolean,
 	owner		varchar(50),
