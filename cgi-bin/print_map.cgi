@@ -1,5 +1,5 @@
 #!/bin/sh
-cd <!--|ROOT_PATH|-->/home/client_apps/mapplet/release
+cd <!--|ROOT_PATH|-->/home/client_apps/Map/
 
 #setenv DISPLAY="<!--|DOMAIN_NAME|-->:1"
 #unset DISPLAY
