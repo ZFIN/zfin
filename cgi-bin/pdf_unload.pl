@@ -18,7 +18,7 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 #system("rm ZDB-IMAGE-03*");
 #system("rm ZDB-IMAGE-04*");
 
-chdir("/research/zcentral/loadUp/PDFLoadUp/");
+chdir("/research/zprod/loadUp/PDFLoadUp/");
 
 system("echo 'select lotofile(pub_file, " . '"/research/zprod/loadUp/PDFLoadUp/" || zdb_id, "server")' . " from publication where pub_file is not null;' | dbaccess $ENV{DBNAME}");
 
