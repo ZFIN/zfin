@@ -43,6 +43,7 @@ Possible vars: update
 
 <TITLE> Add ZFIN Linkage Members </TITLE>
 
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
 
 <!-- new linkage has been inserted - begin getting linkage members -->
 
@@ -51,11 +52,11 @@ Possible vars: update
 <input type=hidden name=MIval value=aa-add_linkage_members.apg>
 <input type=hidden name=calling_form value="members">
 <?MIVAR>
+<?MIVAR COND="$(NXST,$usercomments)" NAME=$usercomments><?/MIVAR>
   $(IF,$(XST,$update),"<input type=hidden name=update value="$update">")
   $(IF,$(XST,$lg),"<input type=hidden name=lg value="$lg">")
   $(IF,$(XST,$source),"<input type=hidden name=source value="$source">")
-  $(IF,$(XST,$usercomments),"<input type=hidden name=usercomments value="$(URLENCODE,$usercomments)">")
-
+  <input type=hidden name=usercomments value="$(URLENCODE,$usercomments)">
   <input type=hidden name=link_id value="$link_id">
 <?/MIVAR>
 
@@ -91,6 +92,7 @@ Possible vars: update
     <?MIVAR NAME=$lg>$2<?/MIVAR>
     <?MIVAR NAME=$usercomments>$3<?/MIVAR>
   <?/MISQL>
+
 <?/MIBLOCK>
 
 <?MIVAR NAME=$usercomments>$(URLDECODE,$usercomments)<?/MIVAR>
@@ -158,6 +160,7 @@ Linkage Members:   (At least one member must be specified) <br>
       <input type=submit name=do_search value="Search">
     <?/MIVAR>
 
+   
        <!-- search for a marker member -->
        <?MIBLOCK COND="$(AND,$(NC,$mtype,mutant),$(XST,$member))">
 	 <hr>

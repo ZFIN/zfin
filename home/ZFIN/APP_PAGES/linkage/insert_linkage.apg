@@ -1,13 +1,15 @@
-<!-- this app page is used to insert new linkage group info. The table where the record insertion occurs is dependent upon the calling form.  The page the user is returned to is also dependent upon the calling form
+!-- this app page is used to insert new linkage group info. The table where the record insertion occurs is dependent upon the calling form.  The page the user is returned to is also dependent upon the calling form
 
 Expected vars:  calling_form
 Possible vars: link_id, usercomments, lg, source , ZDB_ident
 
 -->
 
+<?MIVAR COND="$(NXST,$usercomments)" NAME=$usercomments><?/MIVAR>
+
 <?MIBLOCK COND="$(AND,$(EC,$calling_form,linkage),$(NXST,$update))">
 
-  <?MIVAR COND="$(NXST,$usercomments)" NAME=$usercomments><?/MIVAR>  
+   
   <?MISQL SQL="execute function get_id('LINK');"><?/MISQL>
   <?MIVAR NAME=$link_id>$1<?/MIVAR>
   <?MIVAR NAME=$usercomments DELIMIT="'" REPLACE="''">$usercomments<?/MIVAR>
