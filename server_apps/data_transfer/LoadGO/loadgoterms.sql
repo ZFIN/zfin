@@ -46,7 +46,7 @@ create temp table sec_unload
 
 update go_term
   set goterm_is_secondary = 't'
-  where goterm_go_id in (select sec_id from sec_unload) ;
+  where goterm_go_id in (select sec_id from sec_oks) ;
 
 insert into sec_unload
   select sec_id, prim_id, term_name, onto
