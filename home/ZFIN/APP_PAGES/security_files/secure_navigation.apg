@@ -1,0 +1,133 @@
+<!-- FILE: secure_navigation
+
+This file should be webexploded at the top of every page in ZFIN. It serves two purposes: First, it calls the navigation mechanism to have a tile for the
+ current page to appear at the top of the page. Second, it figures out the 
+ real name of the requesting user (will be GUEST if not logged in) and 
+ checks any security constraints posted for the page. If security check fails,
+ the AUTHORIZE variable is set to false, which should be checked for in the 
+ calling page to control access.
+
+ECK 1/24/96. It is also used to log user access to ZFIN. After we check security, we also extract the "log_access" column from the registered user list. If it's value is "true" we log that page to the ZFIN_log table, tagged with user and date.
+
+FUNCTION:
+This page first checks to see whether the variable ZDB_AUTHORIZE exists; this variable corresponds to a cookie that will have been passed from the client if the user has, indeed, signed on during that NETSCAPE session.
+
+If the ZDB_AUTHORIZE exists, then we go on to check if that cookie is still active in our table of authorized submitters. 
+
+If so, then the final check is to see if the user meets the specified authorization level, passed in the optional variable PERMISSION. Possible values are:
+root -- require that user have 'root' permission.
+owns -- require that the user owns the requested record (ie they submitted it).
+submit -- require that user is authorized submitter.
+<missing> -- merely require that user has logged in.
+
+If everything is kosher, set AUTHORIZE to the users permission level (root,submit, or GUEST), update the page title, log the page access (if logging turned on for that user) and return to calling page. Else set AUTHORIZE to false, and return.
+
+VARIABLES EXPECTED:
+page_title  (optional) -- the title of the new page. If you leave this
+  variable out, security is checked, but no navigation tile will be 
+  posted for the page.
+permission (optional) -- if present, should be either root,owns,submit,fishauth,preview,betatest
+OID (optional) -- should be set to OID of the record being displayed, 
+  if applicable. Only necessary if permission=owns.
+rtype (optional) -- Only necessary if permission=owns.
+ -->
+
+<?MIVAR NAME=$AUTHORIZED>false<?/MIVAR>
+<?MIVAR NAME=$ZDB_ident>UNKNOWN<?/MIVAR>
+<?MIVAR NAME=$ZDB_name>UNKNOWN<?/MIVAR>
+<?MIVAR NAME=$ZDB_log_access>false<?/MIVAR>
+
+
+<!-- If they pass in a GUEST cookie, set authorize to GUEST, and their name to the guest cookie. This way logging will be to their unique cookie name  -->
+<?MIBLOCK COND="$(AND,$(XST,$ZDB_authorize),$(EC,$(SUBSTR,$ZDB_authorize,1,5),GUEST))">
+<?MIVAR NAME=$ZDB_name>$ZDB_authorize<?/MIVAR>
+<?MIVAR NAME=$ZDB_authorize>GUEST<?/MIVAR>
+<?/MIBLOCK>
+
+
+<!-- If they didn't pass a cookie, just start by giving them a GUEST cookie and record their login as a GUEST-->
+<?MIBLOCK COND="$(NXST,$ZDB_authorize)">
+<?MISQL SQL="execute function conc('GUEST',get_random_cookie());"><?/MISQL>
+<?MIVAR NAME=$ZDB_authorize>GUEST<?/MIVAR>
+<?MIVAR NAME=$ZDB_name>$1<?/MIVAR>
+<?MIVAR>$(HTTPHEADER,set-cookie,ZDB_authorize=$1;path=/cgi-bin_B)<?/MIVAR>
+<?MISQL SQL="insert into login_log values ('$ZDB_name','GUEST',current);"><?/MISQL>
+<?/MIBLOCK>
+
+
+<!-- If authorize cookie passed in, pull out the info for it -->
+<?MISQL SQL="select zdb_id,access,name,log_access from ZDB_submitters where cookie='$ZDB_authorize';">
+<?/MISQL>
+
+<!-- If you got a single entry, provisionally set AUTHORIZED to the whatever users ZDB_access level is. Might well be GUEST if they just entered site.  -->
+<?MIBLOCK COND="$(=,$MI_ROWCOUNT,1)">
+<?MIVAR NAME=$AUTHORIZED>$2<?/MIVAR>
+<?MIVAR NAME=$ZDB_access>$2<?/MIVAR>
+<?MIVAR COND="$(EC,$ZDB_name,UNKNOWN)" NAME=$ZDB_name>$3<?/MIVAR>
+<?MIVAR NAME=$ZDB_ident>$1<?/MIVAR>
+<?MIVAR NAME=$ZDB_log_access>$4<?/MIVAR>
+<?/MIBLOCK>
+
+<!-- But now check permission level for the page, if specified  -->
+<?MIBLOCK COND="$(AND,$(XST,$ZDB_access),$(XST,$permission))">
+
+<?MIVAR NAME=$AUTHORIZED>false<?/MIVAR>
+<?MIVAR COND="$(EC,$ZDB_access,$permission)" NAME=$AUTHORIZED>$ZDB_access<?/MIVAR>
+
+<?MIVAR COND="$(AND,$(OR,$(EC,$permission,submit),$(EC,$permission,preview)),$(EC,$ZDB_access,fishauth))" NAME=$AUTHORIZED>$ZDB_access<?/MIVAR>
+
+<?MIVAR COND="$(AND,$(EC,$permission,submit),$(EC,$ZDB_access,preview))" NAME=$AUTHORIZED>$ZDB_access<?/MIVAR>
+
+<?/MIBLOCK>  <!--ends checks permissions -->
+
+<!-- Last possibility to get permission is if you own the record. Get record owner and compare to ZDB_ident. If you own the record, you get 'owner' authorization -->
+<?MIBLOCK COND="$(AND,$(XST,$OID),$(XST,$rtype))">
+<?MISQL SQL="select owner from $rtype where zdb_id='$OID';"><?/MISQL>
+<?MIVAR COND="$(EC,$1,$ZDB_ident)" NAME=$AUTHORIZED>owner<?/MIVAR>
+<?/MIBLOCK>
+
+<!-- Last chance to AUTHORIZE is if you're root -->
+<?MIVAR COND="$(AND,$(XST,$ZDB_access),$(EC,$ZDB_access,root))" NAME=$AUTHORIZED>root<?/MIVAR>
+
+
+
+
+<!-- OKAY, now cause a tile for the new page to appear in the navigator frame -->
+<?MIVAR COND="$(XST,$page_title)">
+<SCRIPT>
+var page_id=window.location.href;
+top.ZDB.update(page_id,"$page_title");
+top.controls.location.reload(true)
+</SCRIPT>
+<?/MIVAR>
+
+
+<!-- Finally, if we're supposed to be tracking (logging) access for this user, go ahead and save the ID of the requested page to ZFIN_log -->
+<?MIBLOCK COND="$(EC,$ZDB_log_access,t)">
+<?MIVAR NAME=$ZDB_QUERY> <?/MIVAR>
+<?MIVAR COND="$(XST,$OID)" NAME=$ZDB_QUERY>OID=$OID<?/MIVAR>
+<?MIVAR COND="$(XST,$dtype)" NAME=$ZDB_QUERY>$ZDB_QUERY QUERYing datatype=$dtype<?/MIVAR>
+<?MIVAR COND="$(XST,$UPDATE)" NAME=$ZDB_QUERY>$ZDB_QUERY UPDATE<?/MIVAR>
+<?MIVAR COND="$(XST,$attr)" NAME=$ZDB_QUERY>$ZDB_QUERY Attribute=$attr<?/MIVAR>
+<?MIVAR COND="$(NXST,$REMOTE_HOST)" NAME=$REMOTE_HOST>UNKNOWN<?/MIVAR>
+<?MIVAR COND="$(NXST,$HTTP_USER_AGENT)" NAME=$HTTP_USER_AGENT>UNKNOWN<?/MIVAR>
+
+<!-- record name, page, arguments, and minutes since last access -->
+<?MISQL SQL="insert into ZFIN_log (ZFIN_user,page,access_time,query_string, min_last_access,remote_host,client_software) values ('$ZDB_name','$MIval',current,'$ZDB_QUERY',(current-(select unique max(access_time) from ZFIN_log where ZFIN_user='$ZDB_name')) ,'$REMOTE_HOST','$HTTP_USER_AGENT');"><?/MISQL>
+<?/MIBLOCK> <!-- ends if tracking access -->
+
+
+
+
+
+
+
+
+<!-- If authorization fails, let them know. -->
+<?MIBLOCK COND="$(EC,$AUTHORIZED,false)">
+
+
+<?MISQL SQL="select WebExplode(object,'') from webPages  where ID='aa-unauth.apg';">$1<?/MISQL>
+
+<?/MIBLOCK>  <!-- ends if no authorize cookie -->
+
