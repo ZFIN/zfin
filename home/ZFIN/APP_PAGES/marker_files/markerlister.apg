@@ -269,7 +269,8 @@ $(IF,$(XST,$plinks),<input type=hidden name=plinks value=1>)
 <?MIBLOCK COND="$(EC,$ok_view_map,1)">
 <?MIVAR>
 <input type=hidden name=userid value=$userid>
-<input type=hidden name=marker value=$marker_name>
+
+<input type=hidden name=OID value=$OID>
 $(SETVAR,$color,$(/,$clr_cnt,2))
 <TR valign=top $(IF,$(!=,$color,$(FIX,$color)),"bgcolor=#FCCE64")> 
 <TR valign=top $(IF,$(!=,$color,$(FIX,$color)),"bgcolor=#FCCE64")>
