@@ -17,7 +17,7 @@ create table probes_tmp (
    prb_digest 		varchar(20),
    prb_polymerase 	varchar(80),
    prb_comments 	lvarchar,               --> mrkr_comments
-   prb_modified 	DATETIME YEAR TO DAY
+   prb_modified 	varchar(20)           -- not used  
 );
 
 load from './probes.unl' insert into probes_tmp;
@@ -115,7 +115,7 @@ create table expression_tmp(
   exp_description 	lvarchar,
   exp_found		boolean  default 't',
   exp_keywords          lvarchar,
-  exp_modified 		DATETIME YEAR TO DAY
+  exp_modified 		varchar (20)
 );
 ALTER TABLE expression_tmp add constraint (foreign key (exp_clone_name) references probes_tmp constraint exp_clone_name_foreign_key);
 
@@ -164,7 +164,7 @@ create table keywords_tmp (
   kwd_sstart 		varchar (50) not null,
   kwd_sstop 		varchar (50) not null,
   kwd_keyword 		varchar(50),        -- updated to anotitem_zdb_id
-  kwd_modified 		DATETIME YEAR TO DAY  
+  kwd_modified 		varchar(20)  
 );
 
 ALTER TABLE keywords_tmp add constraint (foreign key (kwd_clone_name) references probes_tmp constraint kwd_clone_name_foreign_key);
@@ -354,7 +354,7 @@ create table images_tmp (
   img_orient 		varchar(60),
   img_preparation 	varchar(15),
   img_comments 		lvarchar,
-  img_modified 		DATETIME YEAR TO DAY
+  img_modified 		varchar (20)
 );
 
 ALTER TABLE images_tmp add constraint (foreign key (img_clone_name) references probes_tmp constraint img_clone_name_foreign_key);
@@ -456,7 +456,7 @@ load from './images.dim' insert into  image_dim;
 create table authors_tmp (
 	 aut_clone_name		varchar(50) not null,
 	 aut_author_name	varchar(80) not null,
-	 aut_modified		datetime year to day 
+	 aut_modified		varchar(20) 
 );
 
 ALTER TABLE authors_tmp add constraint (foreign key (aut_clone_name) references probes_tmp constraint aut_clone_name_foreign_key);
