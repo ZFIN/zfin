@@ -1,5 +1,16 @@
 <?MICOMMENT>
-FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN records.
+FILE: xpatview.apg
+	This file implements a viewer for EXPRESSION PATTERN records.
+
+INPUT_VARS:
+	$OID	 of the xpat_zdb_id
+
+OUTPUT_VARS:
+	none
+
+DESCRIPTION:
+	views an xpat record
+
 <?/MICOMMENT>
 <?MIERROR>
   <?MIVAR COND=$(XST,$MI_SQL)>
@@ -323,7 +334,7 @@ FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN record
               <tr>
                 <td>
                   <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$2">
-                  <img src="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$3&MItypeObj=image/jpg"></a>
+                  <img src="<!--|IMAGE_LOAD|-->/$3"></a>
                 </td>
                 <td valign=top>
                   <b>Preparation:<br>Orientation:</b>
@@ -355,7 +366,7 @@ FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN record
               <tr>
                 <td>
                   <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$2">
-                  <img src="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$3&MItypeObj=image/jpg"></a>
+                  <img src="<!--|IMAGE_LOAD|-->/$3"></a>
                 </td>
                 <td valign=top>
                   <b>Preparation:<br>Orientation:</b>
