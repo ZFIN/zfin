@@ -66,9 +66,11 @@ SUBDIRS = LOCAL ANIMATED ARROWS BACKGROUNDS BIG_ANIMATED FACES
 
 
 # Tried to use wildcard function working, but it didn't work, so used
-# shell() instead.
+# shell() instead.  [Added jpg for fx mockups, this will have to go
+#                    if we take those images out and no longer have
+#                    any jpg files in the directory
 
-STATICS := $(shell echo *.gif)
+STATICS := $(shell echo *.gif) $(shell echo *.jpg)
 
 
 # --------------------------  Rules  ------------------------------------
