@@ -1,32 +1,42 @@
-#!/bin/sh  -x
+#!/bin/sh
 # A script to start up the Java server for Illustra
 # ted Feb. 28, 1998.
+# Hacked on by clif 12/23/99
 
-SERVER_HOME=/export/fish/www/java/javaserver
+MACHINE_DIR=/research/zfin/chromix
+
+# Note: The version of Java we run the Java Server under
+#	must match the version we compiled the libMISQL.so library
+#       under.  See the Makefile for the Java Server for details.
+JDK_DIR=/local/apps/jdk-1.1
+
+SERVER_HOME=$MACHINE_DIR/www/java/javaserver
 cd $SERVER_HOME
 
-#  For Illustra
-MI_HOME=/export/fish/Illustra
-MI_SYSPARAMS=$MI_HOME/MiParams
-MI_DATABASE=template1
+INFORMIXDIR=$MACHINE_DIR/private/apps/Informix_B
+INFORMIXSERVER=chrom_b
+INFORMIXSQLHOSTS=$INFORMIXDIR/etc/sqlhosts.chrom
 
-export MI_HOME MI_SYSPARAMS MI_DATABASE
+export INFORMIXDIR INFORMIXSERVER INFORMIXSQLHOSTS
 
 case "$1" in 
   'start')
 
 	#  The server will load a *.so file, so we need to tell loader where to find it
-	LD_LIBRARY_PATH=$SERVER_HOME
+	LD_LIBRARY_PATH=$SERVER_HOME:$INFORMIXDIR/lib:$INFORMIXDIR/lib/esql:$INFORMIXDIR/lib/dmi
+	#  Now that we're using SU, we don't gain anything from exporting this (see below),
+	#  but I retained this statement to observe the form of the thing.
+	export LD_LIBRARY_PATH
 
-	#  For access reasons, we connect to Illustra the same way as Webdriver
-	MI_USER=webuser
-	MI_PASSWORD=zfish
-
-	export LD_LIBRARY_PATH MI_USER MI_PASSWORD
-	/local/apps/jdk/bin/java Server >> Server.out 2>&1 &
-	
-	echo $! > javaServerPid
-	
+	#  Informix apprently won't allow root to connect as a client (strange, but apparently so).
+	#  So we have to SU as zfinner to run the server.  And since SU won't allow the environment
+	#  variable LD_LIBRARY_PATH to be exported into its subprocess (a security restriction),
+	#  we must explicitly set the variable INSIDE the new subprocess.
+	if [ ${USER} = root ] ; then 
+	    su zfinner -c "runServer $LD_LIBRARY_PATH $JDK_DIR/bin/java Server" >> Server.out 2>&1 &
+	else 
+	    runServer $LD_LIBRARY_PATH $JDK_DIR/bin/java Server >> Server.out 2>&1 &
+	fi
 	;;
 
     'stop')
