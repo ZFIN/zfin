@@ -5,8 +5,9 @@ Possible vars: link_id, comments, lg, private, source , ZDB_ident, distance, LOd
 
 -->
 
-<?MIVAR COND="$(NXST,$comments)" NAME=$comments><?/MIVAR>>
+<?MIVAR COND="$(NXST,$comments)" NAME=$comments><?/MIVAR>
 
+<!-- delete an entire linkage -->
 <?MIBLOCK COND="$(EC,$calling_form,delete_linkage)">
 
   <?MISQL SQL="delete from linkage where lnkg_zdb_id = '$link_id';"> <?/MISQL>
@@ -19,6 +20,7 @@ Possible vars: link_id, comments, lg, private, source , ZDB_ident, distance, LOd
 
 <?/MIBLOCK>
 
+<!-- delete linkage distance info -->
 
 <?MIBLOCK COND="$(EC,$calling_form,delete_distance)">
 
@@ -32,6 +34,8 @@ Possible vars: link_id, comments, lg, private, source , ZDB_ident, distance, LOd
  
 <?/MIBLOCK>
 
+
+<!-- delete a linkage member -->
 <?MIBLOCK COND="$(EC,$calling_form,delete_member)">
 
 
@@ -62,15 +66,14 @@ Possible vars: link_id, comments, lg, private, source , ZDB_ident, distance, LOd
 <?/MIBLOCK>
 
 
-<?MIBLOCK COND="$(EC,$calling_form,update_linkage_with_distance)">
-   
-   <?MIVAR COND="$(NXST,$lod)" NAME=$lod><?/MIVAR>
-  <?MISQL SQL="update linkage set lnkg_or_lg='$lg', lnkg_private='$private', lnkg_comments='$comments'
-     where lnkg_zdb_id = '$link_id';"> 
-  <?/MISQL>
-
+<! modify linkage distance info -->
+<?MIBLOCK COND="$(EC,$calling_form,update_distance)">
+  
+  <?MIVAR COND="$(NXST,$lod)" NAME=$lod><?/MIVAR>
+ <?MIVAR COND="$(NXST,$distance)" NAME=$distance><?/MIVAR>
+ 
   <?MISQL SQL="update linkage_pair set lnkgpair_distance='$distance', lnkgpair_lod='$lod', lnkgpair_metric='$metric'
-     where lnkgpair_linkage_zdb_id = '$link_id';"> 
+     where lnkgpair_linkage_zdb_id = '$link_id' and lnkgpair_zdb_id = '$pair_id';"> 
   <?/MISQL>
 
   <?MIVAR>
@@ -82,7 +85,8 @@ Possible vars: link_id, comments, lg, private, source , ZDB_ident, distance, LOd
 <?/MIBLOCK>
 
 
-<?MIBLOCK COND="$(EC,$calling_form,update_linkage_without_distance)">
+<!-- update linkage info -->
+<?MIBLOCK COND="$(EC,$calling_form,update_linkage)">
 
   <?MISQL SQL="update linkage set lnkg_or_lg='$lg', lnkg_private='$private', lnkg_comments='$comments'
      where lnkg_zdb_id = '$link_id';"> 
