@@ -1,14 +1,25 @@
-<!-- FILE: locusview.apg. This file implements a viewer for LOCUS records. 
-  -- Mostly this means displaying the (minimal) description of locus history; 
-  -- the meat of it is the linkages, alleles, etc., all drawn from DB.
-  --
-  -- Variables Expected: 
-  --  OID      -- the OID of the locus
-  --  UPDATE   -- a flag variable to indicate we're in update mode
-  --  temp_oid -- could be passed instead of OID --
-  --  lname    -- locus_name; could be passed instead of OID;we look up OID 
-  --              first thing.
-  -->
+<?MICOMMENT>
+FILE: locusview.apg. This file implements a viewer for LOCUS records. 
+Mostly this means displaying the (minimal) description of locus history; 
+the meat of it is the linkages, alleles, etc., all drawn from DB.
+
+Variables Expected: 
+ OID      -- the OID of the locus
+ UPDATE   -- a flag variable to indicate we're in update mode
+ temp_oid -- could be passed instead of OID --
+ lname    -- locus_name; could be passed instead of OID;we look up OID 
+             first thing.
+
+NOTE:
+Because this page drops temporary tables it cannot be webexploded from
+inside a select statement.  This page must first be retrieved with a 
+select statement and then passed to webexplode from an execute function 
+statement.  See discussion of the MIqry2pass variable in the Web
+Datablade documentation.
+
+<?/MICOMMENT>
+
+
 
 <HTML>
 <head>
@@ -544,8 +555,6 @@
 	<?/MISQL>
 
 	<?MISQL SQL="
- 	   -- insert (actually any statement will do) is necessary to avoid an error
-  	    insert into all_real_pubs_temp (zdb_id) values (NULL);
 	    drop table all_real_pubs_temp;">
 	<?/MISQL>	  	
 
@@ -597,8 +606,6 @@
 	<?/MISQL>
 
 	<?MISQL SQL="
- 	   -- insert (actually any statement will do) is necessary to avoid an error
-  	    insert into all_curation_pubs_temp (zdb_id) values (NULL);
 	    drop table all_curation_pubs_temp;">
 	<?/MISQL>	  	
 

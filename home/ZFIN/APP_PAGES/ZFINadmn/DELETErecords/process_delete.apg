@@ -1,4 +1,5 @@
-<!-- FILE: process-delete.html
+<?MICOMMENT>
+FILE: process-delete.html
 
 This file processes a record deletion. Since the (root) user has confirmed that the record needs to be deleted, all we do is go ahead and blast it out of there. Control then is returned to the ZFIN home page.
 
@@ -6,7 +7,14 @@ VARIABLES EXPECTED:
   OID (REQUIRED) -- the ZFIN id of the record to delete.
   rtype (REQUIRED) -- the data type of the record.
 
--->
+NOTE:
+Because this page drops temporary tables it cannot be webexploded from
+inside a select statement.  This page must first be retrieved with a 
+select statement and then passed to webexplode from an execute function 
+statement.  See discussion of the MIqry2pass variable in the Web
+Datablade documentation.
+
+<?/MICOMMENT>
 
 
 <?MISQL SQL="
@@ -96,7 +104,6 @@ VARIABLES EXPECTED:
 					);">
           <?/MISQL>
           <?MISQL SQL="
-            insert into tmp_marker_go_term (mrkrgo_go_term_zdb_id) values(NULL);
 	    drop table tmp_marker_go_term;">
           <?/MISQL>
 

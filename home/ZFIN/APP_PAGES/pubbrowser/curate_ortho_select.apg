@@ -9,6 +9,13 @@ RESULTS: The result section displays gene and publication links. Grouping is by
         gene group.
          
         TEMP TABLES: tmp_gene_with_orthology and int_marker_pub 
+
+NOTE:
+Because this page drops temporary tables it cannot be webexploded from
+inside a select statement.  This page must first be retrieved with a 
+select statement and then passed to webexplode from an execute function 
+statement.  See discussion of the MIqry2pass variable in the Web
+Datablade documentation.
 <?/MICOMMENT>
 
 
@@ -410,11 +417,11 @@ O_ATTRIB_COUNT ::: number of orthology attribution records
 
 <?/MIBLOCK> <?MICOMMENT> --| XST Organism |-- <?/MICOMMENT>
 
-<?MISQL SQL="INSERT INTO tmp_gene_with_orthology(gwo_gene_zdb_id) VALUES(NULL);
+<?MISQL SQL="
              DROP TABLE tmp_gene_with_orthology;">
 <?/MISQL>
 
-<?MISQL SQL="INSERT INTO int_marker_pub(imp_mrkr_zdb_id) VALUES(NULL);
+<?MISQL SQL="
              DROP TABLE int_marker_pub;">
 <?/MISQL>
 

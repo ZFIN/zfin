@@ -1,6 +1,15 @@
-<!-- MARKERVIEW.HTML. -->
+<?MICOMMENT>
+MARKERVIEW.HTML
 
-<!-- This file implements a viewer for MARKER records.  -->
+This file implements a viewer for MARKER records.
+
+NOTE:
+Because this page drops temporary tables it cannot be webexploded from
+inside a select statement.  This page must first be retrieved with a 
+select statement and then passed to webexplode from an execute function 
+statement.  See discussion of the MIqry2pass variable in the Web
+Datablade documentation.
+<?/MICOMMENT>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 
@@ -1265,8 +1274,6 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 <?/MISQL>
 
 <?MISQL SQL="
-  -- insert (actually any statement will do) is necessary to avoid an error
-  insert into all_real_pubs_temp (zdb_id) values (NULL);
   drop table all_real_pubs_temp;">
 <?/MISQL>
 

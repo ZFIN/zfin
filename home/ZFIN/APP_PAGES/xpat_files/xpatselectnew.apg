@@ -1,3 +1,15 @@
+<?MICOMMENT>
+
+NOTE:
+Because this page drops temporary tables it cannot be webexploded from
+inside a select statement.  This page must first be retrieved with a 
+select statement and then passed to webexplode from an execute function 
+statement.  See discussion of the MIqry2pass variable in the Web
+Datablade documentation.
+
+<?/MICOMMENT>
+
+
 <HTML>
 
 <?MIVAR Name=page_name>$(IF,$(NXST,$query_results),ZFIN Search Expressions,ZFIN Expression Search Results)<?/MIVAR>
@@ -1345,11 +1357,9 @@ order by 2,6 asc
       </td>
    </tr>
 <?MISQL COND="$(XST,$gene_name)" SQL="
-        set explain off;
         drop table mrkrselect_name_match; ">
   <?/MISQL>
 <?MISQL COND="$(XST,$gene_name)" SQL="
-        set explain off;
         drop table mrkrselect_tmp_markers;
  ">
 <?/MISQL>
@@ -1561,15 +1571,13 @@ if (navigator.appName == "Netscape") document.captureEvents(Event.KEYDOWN|Event.
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 
 <?MIBLOCK COND="$(XST,$anatitem_temp_table_created)">
-  <!--- delete temp table, with dummy insert because otherwise it's an illegal statement  --->
-  <?MISQL SQL="insert into anatomy_item_search_list (aisl_anatitem_zdb_id) values (NULL); 
+  <?MISQL SQL="
                drop table anatomy_item_search_list;">
   <?/MISQL>
 <?/MIBLOCK>
 
 <?MIBLOCK COND="$(XST,$xpatanat_temp_table_created)">
-  <!--- delete temp table, with dummy insert because otherwise it's an illegal statement  --->
-  <?MISQL SQL="insert into xpat_anatomy_search_list (xasl_xpat_zdb_id) values (NULL); 
+  <?MISQL SQL="
                drop table xpat_anatomy_search_list;">
   <?/MISQL>
 <?/MIBLOCK>

@@ -1,4 +1,17 @@
-<!-- added onChange to each variable to reset START for walking windows - this is needed if users alter query after using the navtile button and without using the reset button. if the new query result has fewer than the first query and they had been on a page that would not exist with this new query the ww code breaks  -->
+<?MICOMMENT>
+ added onChange to each variable to reset START for walking windows - this 
+is needed if users alter query after using the navtile button and without 
+using the reset button. if the new query result has fewer than the first 
+query and they had been on a page that would not exist with this new query 
+the ww code breaks
+
+NOTE:
+Because this page drops temporary tables it cannot be webexploded from
+inside a select statement.  This page must first be retrieved with a 
+select statement and then passed to webexplode from an execute function 
+statement.  See discussion of the MIqry2pass variable in the Web
+Datablade documentation.
+<?/MICOMMENT>
 
 <HTML>
 <HEAD> <?MIVAR Name=page_name>$(IF,$(XST,$query_results),ZFIN Marker Search Results,ZFIN Search Markers)<?/MIVAR>
@@ -298,15 +311,12 @@
      <?/MISQL>
    
      <?MISQL COND="$(NC,$lg,0)" SQL="
-	set explain off;
 	drop table bigselect_on_lg; ">
     <?/MISQL>
     <?MISQL COND="$(XST,$input_name)" SQL="
-	set explain off;
 	drop table bigselect_name_match; ">
     <?/MISQL>
     <?MISQL COND="$(XST,$input_acc)" SQL="
-	set explain off;
 	drop table bigselect_acc_match; ">
     <?/MISQL>
 
@@ -442,7 +452,6 @@
     <?/MIBLOCK> <!--------- end get top one -------->
      
     <?MISQL SQL="
-	 set explain off;
 	 drop table bigselect_temp_markers; ">
     <?/MISQL>
   
