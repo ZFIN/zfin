@@ -1151,20 +1151,6 @@ sub zdbReplacedDataIsReplaced ($) {
 }
 
 #========================== Active data & Source ========================
-#-------------------
-#
-sub subZdbActiveDataSourceStillInUse {
- 
-  my @row = @_;
-  my $sql = "select *
-               from $row[1]                
-              where $row[2] = '$row[0]'";
-  
-  my @result = $dbh->selectrow_array($sql);
-  return @result? 0:1 ;
- 
-}
-
 #-------------------------------------------------------------
 #Parameter
 # $      Email Address for recipients
@@ -1238,7 +1224,19 @@ sub zdbActiveSourceStillActive($) {
     print "Passed!\n";
   } 
 }   
-
+#-------------------
+#
+sub subZdbActiveDataSourceStillInUse {
+ 
+  my @row = @_;
+  my $sql = "select *
+               from $row[1]                
+              where $row[2] = '$row[0]'";
+  
+  my @result = $dbh->selectrow_array($sql);
+  return @result? 0:1 ;
+ 
+}
 
 #=======================================================================
 
@@ -1286,7 +1284,7 @@ $globalUsername = "";
 $globalPassword = "";
 
 $globalErrorCount = 0;
-$globalResultFile = "checkresult.txt";
+$globalResultFile = "/tmp/checkresult.txt";
 
 #set environment variables
 $ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
