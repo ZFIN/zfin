@@ -5,7 +5,8 @@ import java.awt.*;
 
 public class BackBone {
 
-	private  String panel_name;
+	private String panel_name;
+	private int disp_order; //display order
 	private Integer OR_lg;
 	private String metric;
 	
@@ -22,7 +23,7 @@ public class BackBone {
 	public int X; //this is the offset in the X axis, updated within the draw method
 	public int MAX_WIDTH; //this is the width of the backbone object, also updated by draw
 	
-	public static final int TOP_SPACE = 65;
+	public static int TOP_SPACE = 10;
 	public final int BOTTOM_SPACE = 20;
 	
 	public final int LOC_WIDTH = 40; //space to draw distance labels
@@ -60,9 +61,17 @@ public class BackBone {
 		FWTable = new Hashtable();
 		Markers = new Vector();
 		//System.err.println("FONT HEIGHT: " + FM.getHeight());
+
+		if (watermark_t == false)	
+			TOP_SPACE = 60;
 		
 	}
 
+	public BackBone() {
+		//to create an empty backbone
+	}
+	
+	
 	public void addMarker(Marker M)	{
 		//places markers in Bins based on lg_location
 		//System.out.println("adding (" + M.getLg_location() + ", " + M.getAbbrev() + ") to " + panel_name);
@@ -103,7 +112,9 @@ public class BackBone {
 	public Marker getSelected() 	{return selected_marker;}
 	public void setSelected(Marker M) { selected_marker = M;}
 	public int getMarker_count() { return marker_count; }
-	
+	public void setDisp_order(int disp_order) { this.disp_order = disp_order;	}
+	public int getDisp_order() { return disp_order; }
+
 			
 	   
 			
@@ -156,9 +167,10 @@ public class BackBone {
 		//draw the backbone label
 		g.setColor(Color.black);
 		g.setFont(BoldF);
-		g.drawString(panel_name + " panel, LG: " + OR_lg + ", units: " + getMetric(), X + 5, TOP_SPACE - 15);
-		if (watermark_t == true)
-			g.fillRect(X + 5, TOP_SPACE - 13, BoldFM.stringWidth(panel_name), 2);
+		if (watermark_t == false)
+			g.drawString(panel_name + " panel, LG: " + OR_lg + ", units: " + getMetric(), X + 5, TOP_SPACE - 15);
+//		if (watermark_t == true)
+//			g.fillRect(X + 5, TOP_SPACE - 13, BoldFM.stringWidth(panel_name), 2);
 
 		//draw watermarks
 
