@@ -29,7 +29,7 @@ VARIABLE_GENERICS = jobs.html mtgs.html curator.html
 GENERICS = siteNews.html  $(VARIABLE_GENERICS)
 
 
-STATICS = bluline.gif workshop.pdf zebrafish2.jpg NZabstract.pdf NZregistration.pdf Newsletter_Summer04.pdf
+STATICS = bluline.gif workshop.pdf zebrafish2.jpg NZabstract.pdf NZregistration.pdf Newsletter_Summer04.pdf Madison_2004_poster.jpg
  
 
 
