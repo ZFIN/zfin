@@ -61,6 +61,57 @@ pipe terminated file containing:
 	3' primer
 	panel name
 
+###################################################################
+
+additional data required for Vega links/search for expression
+is stage and anatomy CVs and links from the CV's to the expression. 
+
+
+I have added five files, 
+	three to define the CVs 
+	and two the link the expression to the CVs.
+
+
+an alternitive view of these CVs is at
+
+http://zfin.org/data_transfer/Downloads/ad.txt
+
+
+CV tables for anatomy and stages
+---------------------------------
+vega_xpat_anatomy_contains.unl
+        defines a parent-child relationship between anatomy items and
+        the stage window over which the relation holds
+Format: parent-item-id|child-item-id|start-stage-id|end-stage-id|
+
+
+vega_xpat_anatomy_item.unl
+        mostly derivable from 'vega_xpat_anatomy_contains.unl' but
+        also associates item-name and primary-tree.
+        stage window is the earliest and latest stages which the item exists
+        the primary tree is the "native" hirearchy
+        i.e. [structures,processes,behaviors,functional systems]
+        the item is most relevant to.
+Format: item-id|item-name|primary-tree|start-stage-id|end-stage-id|
+
+
+vega_xpat_stage.unl
+        a series of 44 stages id,name and the start & end times in hours
+Format: stage-id|stage-name|hours-start|hours-end|
+
+
+-------------------------------------------------------------------------
+
+vega_xpat_probe_gene.unl
+        table to associate xpat with probe & gene. also gives expression type.
+Format: xpat-id|probe-id|gene-id|xpat-type|
+
+
+vega_xpat_stage_anatomy.unl
+        table to associate expression to the anatomy and stage CV
+        note: not all expression is associated with an anatomy item.
+Format: xpat-id|start-stage-id|end-stage-id|item-id|
+
   
 
 </pre></body></html>

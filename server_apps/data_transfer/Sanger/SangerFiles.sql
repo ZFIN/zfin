@@ -128,3 +128,58 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/FPC_alias.unl'
 select * from tmp_fpc_alias;
 
 drop table tmp_fpc_alias;
+
+
+-- CV and XPAT associations for VEGA
+
+unload to 'vega_xpat_stage.unl'
+select distinct stg_zdb_id,
+           stg_name,
+           stg_hours_start,
+           stg_hours_end
+from stage
+where stg_zdb_id not in (
+          select stgcon_containeR_zdb_id from stage_contains
+)  
+order by 3
+;
+
+unload to 'vega_xpat_anatomy_item.unl'
+select 
+    anatitem_zdb_id,
+    anatitem_name,
+    anathier_name,
+    anatitem_start_stg_zdb_id,
+    anatitem_end_stg_zdb_id
+from anatomy_item, anatomy_hierarchy
+where anatitem_type_code = anathier_code
+;
+
+unload to 'vega_xpat_anatomy_contains.unl'
+select * from anatomy_contains;
+
+--
+unload to 'vega_xpat_probe_gene.unl'
+select 
+    xpat_zdb_id, 
+    xpat_probe_zdb_id,
+    mrel_mrkr_1_zdb_id,
+    xpat_assay_name
+from expression_pattern,marker_relationship
+where mrel_mrkr_2_zdb_id = xpat_probe_zdb_id
+and mrel_type = 'gene encodes small segment'
+;
+
+--
+unload to 'vega_xpat_stage_anatomy.unl'
+select 
+    xpatstg_xpat_zdb_id,
+    xpatstg_start_stg_zdb_id,
+    xpatstg_end_stg_zdb_id,
+    xpatanat_anat_item_zdb_id  -- or null 
+from expression_pattern_stage, outer expression_pattern_anatomy
+where xpatstg_xpat_zdb_id      = xpatanat_xpat_zdb_id
+and   xpatstg_start_stg_zdb_id = xpatanat_xpat_start_stg_zdb_id
+and   xpatstg_end_stg_zdb_id   = xpatanat_xpat_end_stg_zdb_id
+;
+
