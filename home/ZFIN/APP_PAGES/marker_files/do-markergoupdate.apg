@@ -63,13 +63,13 @@ is_not
      <?MIVAR NAME=$mrkrgozdbid>$1<?/MIVAR>
      <?MIVAR>$mrkrgozdbid<?/MIVAR>
      <?MIBLOCK COND="$(EC,$mrkrgozdbid,NOVALUE)">
-         <?MISQL SQL="insert into zdb_active_data values('$new_id');"><?/MISQL>
+         <?MISQL SQL="insert into zdb_active_data (zactvd_zdb_id) values('$new_id');"><?/MISQL>
          <?MIBLOCK COND="$(EC,$is_not,false)">
-            <?MISQL SQL="insert into marker_go_term
+            <?MISQL SQL="insert into marker_go_term (mrkrgo_zdb_id,mrkrgo_mrkr_zdb_id,mrkrgo_go_term_zdb_id,mrkrgo_is_false_ref,mrkrgo_date_entered,mrkrgo_date_modified,mrkrgo_modified_by)
          values ('$new_id','$OID','$goterm_id','f',CURRENT,CURRENT,'$ZDB_name');">
            <?/MISQL>
         <?MIELSE>
-           <?MISQL SQL="insert into marker_go_term
+            <?MISQL SQL="insert into marker_go_term (mrkrgo_zdb_id,mrkrgo_mrkr_zdb_id,mrkrgo_go_term_zdb_id,mrkrgo_is_false_ref,mrkrgo_date_entered,mrkrgo_date_modified,mrkrgo_modified_by)
            values ('$new_id','$OID','$goterm_id','t', CURRENT, CURRENT, '$ZDB_name');">
            <?/MISQL>
         <?/MIBLOCK>
@@ -87,9 +87,9 @@ is_not
       <?MIBLOCK INDEX=$i FROM=0 TO=10 STEP=1>
            <?MIVAR NAME=$inferred>$(INDEX,$i,$inf_from)<?/MIVAR>
            <?MIBLOCK COND="$(NC,$inferred,)">
-             <?MISQL SQL="insert into zdb_active_data values('$evnew_id');">
+             <?MISQL SQL="insert into zdb_active_data (zactvd_zdb_id) values('$evnew_id');">
              <?/MISQL>
-             <?MISQL SQL="insert into record_attribution
+             <?MISQL SQL="insert into record_attribution (recattrib_data_zdb_id,recattrib_source_zdb_id)
              values ('$evnew_id','$pub_id');">
              <?/MISQL>
               <?MIVAR NAME=$inflink>$inf_db:$inferred<?/MIVAR>
@@ -110,7 +110,7 @@ is_not
                      <?MIVAR NAME=$currinflink>$inflink<?/MIVAR>
                  <?/MIBLOCK>
               <?/MIBLOCK>    
-              <?MISQL SQL="insert into marker_go_term_evidence
+              <?MISQL SQL="insert into marker_go_term_evidence (mrkrgoev_zdb_id,mrkrgoev_mrkrgo_zdb_id,mrkrgoev_source_zdb_id,mrkrgoev_evidence_code,mrkrgoev_infered_from,mrkrgoev_notes)
               values ('$evnew_id','$new_id','$pub_id', '$evidence_code','$currinflink','$notes');">
              <?/MISQL>
              
@@ -133,12 +133,12 @@ is_not
         <?MIBLOCK INDEX=$i FROM=0 TO=10 STEP=1>
           <?MIVAR NAME=$pubs>$(INDEX,$i,$pub_id)<?/MIVAR>
            <?MIBLOCK COND="$(NC,$pubs,)">
-              <?MISQL SQL="insert into zdb_active_data values('$evnew_id');">
+              <?MISQL SQL="insert into zdb_active_data (zactvd_zdb_id) values('$evnew_id');">
               <?/MISQL>
-              <?MISQL SQL="insert into record_attribution
+              <?MISQL SQL="insert into record_attribution (recattrib_data_zdb_id,recattrib_source_zdb_id)
                values ('$evnew_id','$pubs');">
               <?/MISQL>
-              <?MISQL SQL="insert into marker_go_term_evidence
+              <?MISQL SQL="insert into marker_go_term_evidence (mrkrgoev_zdb_id,mrkrgoev_mrkrgo_zdb_id,mrkrgoev_source_zdb_id,mrkrgoev_evidence_code,mrkrgoev_infered_from,mrkrgoev_notes)
               values ('$evnew_id','$new_id','$pubs', '$evidence_code',NULL, '$notes');">
               <?/MISQL>
               <?MISQL SQL="execute function get_id('MRKRGOEV');"><?/MISQL>
@@ -166,20 +166,20 @@ is_not
        <?MIBLOCK COND="$(EC,$mrkrgoexist,true)">
             <?MIVAR NAME=$new_id>$mrkrgozdbid<?/MIVAR>
        <?/MIBLOCK>
-        <?MISQL SQL="insert into zdb_active_data
+        <?MISQL SQL="insert into zdb_active_data (zactvd_zdb_id)
          values ('$evnew_id');">
         <?/MISQL>
-        <?MISQL SQL="insert into record_attribution
+        <?MISQL SQL="insert into record_attribution(recattrib_data_zdb_id,recattrib_source_zdb_id)
          values ('$evnew_id','$pub_id');">
         <?/MISQL>
         <?MISQL SQL="select mrkrgoev_infered_from from marker_go_term_evidence where mrkrgoev_mrkrgo_zdb_id='$mrkrgozdbid' and mrkrgoev_evidence_code='$evidence_code'"><?/MISQL>
         <?MIVAR NAME=$infexist>$1<?/MIVAR>
          <?MIBLOCK COND="$(EC,$infexist,NOVALUE)">
-              <?MISQL SQL="insert into marker_go_term_evidence
+              <?MISQL SQL="insert into marker_go_term_evidence (mrkrgoev_zdb_id,mrkrgoev_mrkrgo_zdb_id,mrkrgoev_source_zdb_id,mrkrgoev_evidence_code,mrkrgoev_infered_from,mrkrgoev_notes)
                values ('$evnew_id','$new_id','$pub_id', '$evidence_code',NULL, '$notes');">
               <?/MISQL>
          <?MIELSE>
-              <?MISQL SQL="insert into marker_go_term_evidence
+              <?MISQL SQL="insert into marker_go_term_evidence (mrkrgoev_zdb_id,mrkrgoev_mrkrgo_zdb_id,mrkrgoev_source_zdb_id,mrkrgoev_evidence_code,mrkrgoev_infered_from,mrkrgoev_notes)
                values ('$evnew_id','$new_id','$pub_id', '$evidence_code','$infexist', '$notes');"><?/MISQL>
          <?/MIBLOCK>
       <?MIVAR>$mrkrgoexist<?/MIVAR>
@@ -245,3 +245,4 @@ is_not
   </SCRIPT>
 <?/MIVAR>
 <?/MIBLOCK>
+
