@@ -99,6 +99,7 @@ function do_submit() {
    
           <FONT size=2><B>Developmental Stage:</B></FONT><BR>
           <SELECT name="OID" onChange="document.dictform.mode.value='stages'; document.dictform.submit();">
+            <OPTION VALUE="">Select a stage</OPTION>
             <?MISQL SQL="
 		select stg_name_long, 
 			stg_hours_start, 
