@@ -156,40 +156,41 @@ Expected vars: link_id
  <TABLE>
    <?MIVAR>
      <TR>
-       <TD align=center><input type=button value=Add onClick=add_distance('$link_id')></TD><b>Linkage Distances:
+       <TD><input type=button value=Add onClick=add_distance('$link_id')><b>Linkage Distances:</TD>
      </TR>
      <br>
  
 <?MISQL SQL="select lnkgpair_zdb_id from linkage_pair where lnkgpair_linkage_zdb_id = '$link_id';">
   <?MIVAR NAME=$pair_id>$1<?/MIVAR> 
   <TR>
-    <TD> <input type=button value=Delete onClick=modify_delete('delete_distance','$link_id','$pair_id','')></TD>&nbsp;
-    <TD> <input type=button value=Update onClick=modify_distance('modify_distance','$link_id','$pair_id')></TD>&nbsp;
- <?MISQL SQL="
-	select mrkr_abbrev 
-	from marker a , linkage_pair b , linkage_pair_member c
-        where b.lnkgpair_linkage_zdb_id = '$link_id'
-          and b.lnkgpair_zdb_id = '$pair_id'
-          and c.lpmem_linkage_pair_zdb_id = b.lnkgpair_zdb_id
-          and c.lpmem_member_zdb_id = a.mrkr_zdb_id
-        union 
-        select allele from fish a , linkage_pair b, locus c , linkage_pair_member d
-          where b.lnkgpair_zdb_id = '$pair_id'
-            and b.lnkgpair_linkage_zdb_id = '$link_id'
-            and d.lpmem_linkage_pair_zdb_id = b.lnkgpair_zdb_id 
-            and d.lpmem_member_zdb_id = a.zdb_id
-            and a.locus = c.zdb_id;">
-    $1 &nbsp;
-  <?/MISQL>
-  <?MISQL SQL="select lnkgpair_distance, lnkgpair_lod, lnkgpair_metric from linkage_pair 
+    <TD> 
+      <input type=button value=Delete onClick=modify_delete('delete_distance','$link_id','$pair_id','')>&nbsp;
+      <input type=button value=Update onClick=modify_distance('modify_distance','$link_id','$pair_id')>
+	<?MISQL SQL="
+	  select mrkr_abbrev 
+	  from marker a , linkage_pair b , linkage_pair_member c
+	  where b.lnkgpair_linkage_zdb_id = '$link_id'
+	    and b.lnkgpair_zdb_id = '$pair_id'
+	    and c.lpmem_linkage_pair_zdb_id = b.lnkgpair_zdb_id
+	    and c.lpmem_member_zdb_id = a.mrkr_zdb_id
+	  union 
+	  select allele from fish a , linkage_pair b, locus c , linkage_pair_member d
+	    where b.lnkgpair_zdb_id = '$pair_id'
+	      and b.lnkgpair_linkage_zdb_id = '$link_id'
+	      and d.lpmem_linkage_pair_zdb_id = b.lnkgpair_zdb_id 
+	      and d.lpmem_member_zdb_id = a.zdb_id
+	      and a.locus = c.zdb_id;">
+          $1 &nbsp;
+        <?/MISQL>
+    <?MISQL SQL="select lnkgpair_distance, lnkgpair_lod, lnkgpair_metric from linkage_pair 
     where lnkgpair_zdb_id = '$pair_id';">
     <?MIVAR NAME=$distance>$1<?/MIVAR>
     <?MIVAR NAME=$lod>$2<?/MIVAR>
     <?MIVAR NAME=$old_metric>$3<?/MIVAR>
-
-      <TD>  Distance: $distance </TD>&nbsp;
-      <TD> LOD: $lod </TD>&nbsp;
-      <TD>  Metric: $old_metric </TD>
+        Distance: $distance &nbsp;&nbsp;
+        LOD: $lod &nbsp;&nbsp;
+        Metric: $old_metric 
+      </TD>
     </TR>
     <br>
     <?/MISQL>
