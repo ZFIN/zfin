@@ -54,7 +54,7 @@
     ArrayList resultCounts = new ArrayList(SearchCategory.CATEGORIES.size());
     SearchResults results = null;
     int totalResultsCount = 0;
-    String resultsLabel = "results";
+    String resultsLabel = "records";
     List ignoredWords = null;
     if (queryTerm.length() > 0)
         {
@@ -69,7 +69,7 @@
                 }
             if (totalResultsCount == 1) 
                 {
-                resultsLabel = "result";
+                resultsLabel = "record";
                 }
             }
         else
@@ -77,7 +77,7 @@
             results = searchBean.doCategorySearch(indexPath, queryTerm, categoryTerm, pageSize, startIndex);
             if (results.getTotalHits() == 1) 
                 {
-                resultsLabel = "result";
+                resultsLabel = "record";
                 }
             }
         ignoredWords = searchBean.getIgnoredWords(queryTerm);
@@ -88,10 +88,10 @@
 <head>
     <title>ZFIN Search</title>
     <style type="text/css">
-        .category_header       { font-size: 14pt; font-weight: bold; color: #0F4351; }
-        .category_label        { font-size: 10pt; font-weight: bold; }
-        .category_results      { font-size: 9pt; }
-        .category_results_list { margin-bottom: 6pt; }
+        .category_header       { font-size: 14pt; font-weight: bold; font-family:arial, sans-serif; }
+        .category_label        { font-size: 10pt; font-weight: bold; font-family:arial, sans-serif; }
+        .category_results      { font-size: 9pt; font-family:arial, sans-serif; }
+        .category_results_list { margin-bottom: 9pt; bold; font-family:arial, sans-serif; font-weight: bold; }
     </style>
 </head>
 <script language="JavaScript" src="/header.js"></script>
@@ -103,12 +103,12 @@
             {
             %>
             <center>
-            <div class="category_header">Quick Search Results (<%=totalResultsCount%> <%=resultsLabel%> found)</div>
+            <div class="category_header">Quick Search Results for '<%=queryTerm%>' (<%=totalResultsCount%> <%=resultsLabel%>)</div>
                 <% 
                 if (ignoredWords != null && ignoredWords.size() > 0)
                     {
                     %>
-                     <font size="-1" color="#777777">
+                     <font size="-1" color="#000000">
                      The following words are very common and were not included in your search: &nbsp;&nbsp; 
                      <%
                      for (int i=0; i<ignoredWords.size(); i++)
@@ -135,13 +135,13 @@
                             if (((Integer)resultCounts.get(i)).intValue() > 0)
                                 {
                                 %>
-                                <li class="category_results_list"><a href="category_search.jsp?query=<%=URLEncoder.encode(queryTerm, "UTF-8")%>&category=<%=category.getId()%>"><%=resultCounts.get(i).toString()%> <%=category.getDescription()%> <% if (((Integer)resultCounts.get(i)).intValue() == 1) { %> result <% } else { %> results <% } %></a></li>
+                                <li class="category_results_list"><a href="category_search.jsp?query=<%=URLEncoder.encode(queryTerm, "UTF-8")%>&category=<%=category.getId()%>"><%=resultCounts.get(i).toString()%> in <%=category.getDescription()%> </a></li>
                                 <%
                                 }
                             else
                                 {
                                 %>
-                                <li class="category_results_list">No <%=category.getDescription()%> results</li>
+                                <li class="category_results_list">0 in <%=category.getDescription()%> </li>
                                 <%
                                 }
                             }
@@ -158,13 +158,13 @@
                             if (((Integer)resultCounts.get(i)).intValue() > 0)
                                 {
                                 %>
-                                <li class="category_results_list"><a href="category_search.jsp?query=<%=URLEncoder.encode(queryTerm, "UTF-8")%>&category=<%=category.getId()%>"><%=resultCounts.get(i).toString()%> <%=category.getDescription()%> <% if (((Integer)resultCounts.get(i)).intValue() == 1) { %> result <% } else { %> results <% } %></a></li>
+                                <li class="category_results_list"><a href="category_search.jsp?query=<%=URLEncoder.encode(queryTerm, "UTF-8")%>&category=<%=category.getId()%>"><%=resultCounts.get(i).toString()%> in <%=category.getDescription()%> </a></li>
                                 <%
                                 }
                             else
                                 {
                                 %>
-                                <li class="category_results_list">No <%=category.getDescription()%> results</li>
+                                <li class="category_results_list">0 in <%=category.getDescription()%> </li>
                                 <%
                                 }
                             }
@@ -192,10 +192,11 @@
             
             <table width="100%" border="0">
                 <tr>
-                    <td align="center">
-                        <b><%= results.getTotalHits() %></b> <%= resultsLabel %> found in: <b><%=categoryDescription%></b> for search: <b><%=queryTerm%></b>
+                    <td width="20%">&nbsp;</td>
+                    <td width="60%" align="center">
+                        <b><%=categoryDescription%> Search Results for '<%=queryTerm%>' (<%= results.getTotalHits() %> <%= resultsLabel %>)</b> 
                     </td>
-                    <td align="right">
+                    <td width="20%" align="center">
                         <a href="#modify">Modify Search</a><br>
                     </td>
                 </tr>
@@ -205,7 +206,7 @@
                     %>
                     <tr>
                         <td colspan="2" align="center">
-                             <font size="-1" color="#777777">
+                             <font size="-1" color="#000000">
                              The following words are very common and were not included in your search: &nbsp;&nbsp; 
                              <%
                              for (int i=0; i<ignoredWords.size(); i++)
@@ -256,29 +257,29 @@
                 if (startOfPageRange > 0)
                     {
                     %>
-                    <a href="category_search.jsp?query=<%=URLEncoder.encode(queryTerm, "UTF-8")%>&category=<%=categoryTerm%>&pageSize=<%=pageSize%>&startIndex=0">First Page</a> ... 
+                   <a href="category_search.jsp?query=<%=URLEncoder.encode(queryTerm, "UTF-8")%>&category=<%=categoryTerm%>&pageSize=<%=pageSize%>&startIndex=0">First Page</a> &nbsp;&nbsp;
                     <%
                     }
         
                 for (int i=startOfPageRange; i<endOfPageRange; i++)
                     {
-                    if (i == currentPage)
+                     if (i == currentPage)
                         {
                         %>
-                        <b><%=(i + 1)%></b>
+                        <b><%=(i + 1)%>&nbsp;</b>
                         <%
                         }
                     else
                         {
                         %>
-                        <a href="category_search.jsp?query=<%=URLEncoder.encode(queryTerm, "UTF-8")%>&category=<%=categoryTerm%>&pageSize=<%=pageSize%>&startIndex=<%=(i * pageSize)%>"><%=(i + 1)%></a>
+                        <a href="category_search.jsp?query=<%=URLEncoder.encode(queryTerm, "UTF-8")%>&category=<%=categoryTerm%>&pageSize=<%=pageSize%>&startIndex=<%=(i * pageSize)%>"><%=(i + 1)%>&nbsp;</a>
                         <%
                         }
                     }
                 if (endOfPageRange < totalPageCount)
                     {
                     %>
-                    ... <a href="category_search.jsp?query=<%=URLEncoder.encode(queryTerm, "UTF-8")%>&category=<%=categoryTerm%>&pageSize=<%=pageSize%>&startIndex=<%=((totalPageCount-1) * pageSize)%>">Last page (<%=totalPageCount%>)</a>
+                    &nbsp;&nbsp;<a href="category_search.jsp?query=<%=URLEncoder.encode(queryTerm, "UTF-8")%>&category=<%=categoryTerm%>&pageSize=<%=pageSize%>&startIndex=<%=((totalPageCount-1) * pageSize)%>">Last page</a>
                     <%
                     }
                 }
