@@ -51,7 +51,7 @@ TARGETDIR = $(TARGETROOT)/client_apps/Map
 
 # Use the standard JAVAC, and JAVACFLAGS.  Still need to define classpath.
 
-CLASSPATH = .:/usr/java/lib/classes.zip:$(TOP)/lib/Java
+CLASSPATH = .:/private/apps/java/lib/classes.zip:$(TOP)/lib/Java
 
 # ---- Java source and class file variables
 
