@@ -3034,7 +3034,6 @@ if($weekly) {
   estsWithoutClonesHaveXxGenes($estEmail);
   xxGenesHaveNoClones($estEmail);
   fishAbbrevStartsWithLocusAbbrev($mutantEmail);
-  checkOtherEnvironmentCondition($dbaEmail);
 
   # these are curatorial errors (case219)
   # however, errors returned are difficult to
