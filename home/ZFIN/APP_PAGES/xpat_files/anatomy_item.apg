@@ -40,11 +40,11 @@
 	  <!-- title for webpage history ----------->	
           <?MIBLOCK COND="$(XST,$UPDATE)">
 		<?MIVAR>
- 			<TITLE>Update ZFIN Anatomy Item: $item_name</title>
+ 			<TITLE>ZFIN Update Anatomy Item: $item_name</title>
 		<?/MIVAR>
 	  <?MIELSE>
 		<?MIVAR>
- 			<TITLE>View ZFIN Anatomy Item: $item_name</title>
+ 			<TITLE>ZFIN View Anatomy Item: $item_name</title>
 		<?/MIVAR>
           <?/MIBLOCK>
 
