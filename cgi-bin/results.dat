@@ -1,15 +1,11 @@
-epha4b	hdac1<sup>hi1618</sup> 	forebrain	Pharyngula:Prim-15	in situ RNA wm	+	4D	Std
-epha4b		rhombomere 1	Pharyngula:Prim-15	in situ RNA wm	+	4D	Std
-epha4b		rhombomere 3	Pharyngula:Prim-15	in situ RNA wm	+	4D	Std
-epha4b		rhombomere 5	Pharyngula:Prim-15	in situ RNA wm	+	4D	Std
-epha4b	 	forebrain	Pharyngula:Prim-15	in situ RNA wm	+	4C	Std
-epha4b		rhombomere 1	Pharyngula:Prim-15	in situ RNA wm	+	4C	Std	
-epha4b		rhombomere 3	Pharyngula:Prim-15	in situ RNA wm	+	4C	Std
-epha4b		rhombomere 5	Pharyngula:Prim-15	in situ RNA wm	+	4C	Std
 ashb	hdac1<sup>hi1618</sup> 	brain	Pharyngula:Prim-15	in situ RNA wm	+	4F	Std
 ashb		spinal cord	Pharyngula:Prim-15	in situ RNA wm	+	4F	Std
 ashb	WT	brain 	Pharyngula:Prim-15	in situ RNA wm	+	4E	Std
 ashb		spinal cord	Pharyngula:Prim-15	in situ RNA wm	+	4E	Std
+epha4b	hdac1<sup>hi1618</sup> 	forebrain	Pharyngula:Prim-15	in situ RNA wm	+	4D, 4C	Std
+epha4b		rhombomere 1	Pharyngula:Prim-15	in situ RNA wm	+	4D, 4C	Std
+epha4b		rhombomere 3	Pharyngula:Prim-15	in situ RNA wm	+	4D, 4C	Std
+epha4b		rhombomere 5	Pharyngula:Prim-15	in situ RNA wm	+	4D, 4C	Std
 neurog1	hdac1<sup>hi1618</sup>	brain	Pharyngula:Prim-5	in situ RNA wm	+	4G	Std
 neurog1		spinal cord	Pharyngula:Prim-5	in situ RNA wm	+	4G	Std
 neurog1	WT	brain	Pharyngula:Prim-5	in situ RNA wm	+	4H	Std
