@@ -156,7 +156,10 @@ JAVAC_14      = $(JAVAHOME_14)/bin/javac
 JAVAHOME_50  = /private/apps/java5.0
 JAVAC_50      = $(JAVAHOME_50)/bin/javac
 
-JDBCHOME     = /private/apps/jdbc2.21
+# --- Make JDBC 3.0 the default JDBC
+
+JDBCHOME_221 = /private/apps/jdbc2.21
+JDBCHOME     = /private/apps/jdbc3
 
 JAVACFLAGS = 
 
