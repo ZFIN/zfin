@@ -73,7 +73,8 @@ insert into sec_unload_report
     from sec_unload, go_term, marker_go_term, marker_go_term_Evidence
     where sec_id = goterm_go_id
     and mrkrgo_go_term_zdb_id = goterm_zdb_id 
-    and mrkrgoev_mrkrgo_zdb_id = mrkrgo_zdb_id ;
+    and mrkrgoev_mrkrgo_zdb_id = mrkrgo_zdb_id 
+    and mrkrgoev_evidence_code != 'IEA' ;
 
 unload to 'newannotsecterms.unl' select * from sec_unload_report ;
 unload to 'newsecterms.unl' select * from sec_unload ;
