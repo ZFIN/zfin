@@ -324,7 +324,7 @@ comments,
                 var msg="The Genbank accession is already associated with\n"+
                          "[$markerlist]. Are you sure to process?";
 	        if (confirm(msg))
-		   location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value=$old_value&new_value=$new_value&target_table=$target_table');
+		   location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value=$old_value&new_value=$new_value&target_table=$target_table&fdbcont_super=$fdbcont_super&fdbcont_data=$fdbcont_data');
 		
 	      </SCRIPT>
               <?/MIVAR> 
