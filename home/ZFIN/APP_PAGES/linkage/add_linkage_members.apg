@@ -172,7 +172,7 @@ Linkage Members:   (At least one member must be specified) <br>
 	       order by b.abbrev;">
 	   <TR>
 	     <TD>
-	       <input type=button name=member_selected value="Select" onClick="pick_me('$link_id','$1');">
+	       <input type=button name=member_selected value="Select" onClick="pick_me('$link_id','$1','$source');">
 	     </TD>
 	     <TD>
 	       $2 
