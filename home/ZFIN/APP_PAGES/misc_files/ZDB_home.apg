@@ -352,18 +352,17 @@ Jump to your personal ZFIN record</A>
 
 <!-- Linkages -->
 
+<?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
 <TR align=center>
 <TD><B>LINKAGES </B></TD> 
 <TD>
 
 <TABLE width=100%> <TR align=center> 
 <TD>
-<?MIVAR COND="$(EC,$AUTHORIZED,root)">
 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-add_linkage.apg">ADD NEW LINKAGES</A> 
-<?/MIVAR>
 </TD> 
  </TR> </TABLE>
-
+<?/MIBLOCK>
 
 <!-- Accession -->
 
