@@ -2257,8 +2257,9 @@ sub oldOrphanDataCheck($) {
   if($fileNotEmpt) {
     my $sendToAddress = $_[0];
     my $subject = "about previous orphans.";
+    my $routineName = "oldOrphanDataCheck";
     my $msg = "Actions on the orphans detected last time.";
-    &sendMail($sendToAddress, $subject,$msg, );     
+    &sendMail($sendToAddress, $subject,$routineName, $msg, );     
 
   }
 }
@@ -2298,8 +2299,9 @@ sub oldOrphanSourceCheck($) {
   if($fileNotEmpt) {
     my $sendToAddress = $_[0];
     my $subject = "about previous orphans.";
+    my $routineName = "oldOrphanSourceCheck";
     my $msg = "Actions on the orphans detected last time.";
-    &sendMail($sendToAddress, $subject, $msg, );
+    &sendMail($sendToAddress, $subject, $routineName, $msg, );
   }
 }
 
