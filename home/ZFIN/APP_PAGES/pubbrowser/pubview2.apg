@@ -1,18 +1,5 @@
 <HTML>
 
-<SCRIPT>
-<?MIVAR>
-function do_curation(act) {
-   if (top.curator && !top.curator.closed) {top.curator.focus()};
-   if(act=='new') {
-     top.curator=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatepub.apg&OID=$OID","helpwindow","scrollbars=no,width=550,height=300");
-   } else {
-     top.curator=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatepub.apg&OID=$OID&curation="+act,"helpwindow","scrollbars=no,width=550,height=300");
-   }
-}
-<?/MIVAR>
-</SCRIPT>
-
 <?MIBLOCK COND="$(NXST,$abbrev)">
 <?MIVAR NAME=$abbrev><?/MIVAR>
 <?/MIBLOCK>
