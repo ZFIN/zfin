@@ -94,13 +94,28 @@ begin work;
 ---------------------------------------------------
 ---------------------------------------------------
 
+!echo "one time clean up after splitting BAC/PAC_ENDs"
+delete from zdb_active_data where zactvd_zdb_id in (
+    select dalias_zdb_id 
+     from data_alias,record_attribution
+     where recattrib_data_zdb_id = dalias_zdb_id
+     and  dalias_data_zdb_id[1,12] in ('ZDB-BAC_END-','ZDB-PAC_END-')
+     and  recattrib_source_zdb_id =  'ZDB-PUB-030703-3'  -- clone
+);
+
+delete from zdb_active_data where zactvd_zdb_id in (
+    select dblink_zdb_id from db_link
+     where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-10'
+     and dblink_linked_recid[1,12] in ('ZDB-BAC_END-','ZDB-PAC_END-')
+);
+    
 !echo "clean out existing data alias if they have not been renewed"
 
 select dalias_data_zdb_id zad, recattrib_data_zdb_id[1,11]
 from record_attribution, data_alias
 where --recattrib_data_zdb_id[1,11] = 'ZDB-DALIAS-' and   
-       recattrib_source_zdb_id == 'ZDB-PUB-030703-2'
-and   recattrib_data_zdb_id   == dalias_data_zdb_id
+       recattrib_source_zdb_id == 'ZDB-PUB-030703-2' -- fpc
+and    recattrib_data_zdb_id   == dalias_data_zdb_id
 and not exists (
 	select 1 from fpc_marker
 	where dalias_data_zdb_id = fpm_mrkr
@@ -137,7 +152,7 @@ insert into data_alias      select *   from tmp_dalias;
 
 ! echo "create record attribution for alias"
 insert into record_attribution(recattrib_data_zdb_id,recattrib_source_zdb_id) 
-	select zad,'ZDB-PUB-030703-2'  from tmp_dalias;
+	select zad,'ZDB-PUB-030703-2'  from tmp_dalias; -- fpc
 	
 -----------------------------------------------------------------------
 !echo "---------------------------------------------------------------"
@@ -183,8 +198,8 @@ where exists (
 )
 ;
 
-select          count(*) all_rows from tmp_dblk;
-select distinct fpm_mrkr,acc from tmp_dblk;
+select     count(*) all_rows from tmp_dblk;
+--select distinct fpm_mrkr,acc from tmp_dblk;
 
 
 ! echo "create db link to Sanger contig viewer"
@@ -200,7 +215,7 @@ insert into db_link(dblink_linked_recid, dblink_fdbcont_zdb_id, dblink_acc_num,d
 
 ! echo "create record attribution for link"
 insert into record_attribution(recattrib_data_zdb_id,recattrib_source_zdb_id)  
-	select zad,'ZDB-PUB-030703-2' from tmp_dblk;
+	select zad,'ZDB-PUB-030703-2' from tmp_dblk; -- fpc
 -------------------------------------------------------------------------------
 
 -- should we also associate a marker with a Sanger BAC (clone) if the FPC indicates it? 
