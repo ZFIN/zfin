@@ -1,5 +1,5 @@
 
-<!-- this app page is used to modify linkage pair distnace info. 
+<!-- this app page is used to modify linkage pair distance info. 
 
 Expected vars: link_id, pair_id
 
@@ -36,7 +36,7 @@ Expected vars: link_id, pair_id
 <!-- retrieve and display the abbrevs of linkage pair members -->
 <TR>
 <B>
-<?MISQL SQL="select mrkr_abbrev from markers a , linkage_pair b , linkage_pair_member c
+<?MISQL SQL="select mrkr_abbrev from marker a , linkage_pair b , linkage_pair_member c
         where b.lnkgpair_linkage_zdb_id = '$link_id'
           and b.lnkgpair_zdb_id = '$pair_id'
           and c.lpmem_linkage_pair_zdb_id = b.lnkgpair_zdb_id
