@@ -1,4 +1,14 @@
-<!-- FILE: DO-SELECT.  
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+<?MICOMMENT>
+FILE: DO-SELECT.  
 This file processes a record that was either SELECTED or CREATED 
 by the user. That is, user was processing some other record, and 
 bailed out of that to select or created some other new record.  
@@ -43,7 +53,7 @@ in $new_oid). Specifically:
 
 FINALLY, if this selection was made while updating an existing record, 
 we will want to write it to the update log 
--->
+<?/MICOMMENT>
 
 <!-- Extract the goodies from the return rec -->
 <?MISQL SQL="
@@ -295,54 +305,96 @@ $1
       where zdb_id = '$old_parent'
         and line_type='mutant';">
   <?/MISQL>
+  <?MIVAR NAME=$dosel_old_parent_count>$1<?/MIVAR>
 
-  <!-- okay, if you got any hits, the  parent is non-null and mutant. 
+  <?MICOMMENT>Prepare for temp table creation or use<?/MICOMMENT>
+  <?MISQL SQL="
+    select dbinfo('sessionid') 
+      from single;">
+    <?MIVAR NAME=$dosel_session_id>$1<?/MIVAR>
+    <?MIVAR NAME=$do_select_temp_delete>$(CONCAT,do_select_temp_delete_,$dosel_session_id)<?/MIVAR>
+    <?MIVAR NAME=$do_select_temp_insert>$(CONCAT,do_select_temp_insert_,$dosel_session_id)<?/MIVAR>
+  <?/MISQL>
+
+  <?MICOMMENT>
+       okay, if you got any hits, the  parent is non-null and mutant. 
        So do special stuff to wipe out previous  inherited info: delete 
-       chromo intersection -->
-  <?MIBLOCK COND="$(>,$1,0)">
+       chromo intersection
+  <?/MICOMMENT>
+  <?MISQL SQL="
+    execute function table_exists('$do_select_temp_delete')">
+    <?MISQL COND=$(EC,$1,f) SQL="
+      create temp table $do_select_temp_delete (
+	  doseldel_zdb_id   varchar(50)
+      ) with NO LOG;">
+    <?/MISQL>
+  <?/MISQL>
+  <?MIBLOCK COND="$(>,$dosel_old_parent_count,0)">
     <?MISQL SQL="
-      select target_id 
-	from int_fish_chromo 
-	where source_id = '$old_parent' 
-        into temp delete_temp_1;">
+      insert into $do_select_temp_delete
+        select target_id 
+	  from int_fish_chromo 
+	  where source_id = '$old_parent';">
     <?/MISQL>
     <?MISQL SQL="
       delete from int_fish_chromo 
         where source_id = '$return_recid'
 	  and target_id in 
-	        ( select target_id 
-		    from delete_temp_1);">
+	        ( select doseldel_zdb_id
+		    from $do_select_temp_delete);">
+    <?/MISQL>
+    <?MISQL SQL="
+      delete from $do_select_temp_delete;">
     <?/MISQL>
   <?/MIBLOCK> <!-- ends if old parent was mutant -->
 
-
-  <!-- Guard against duplications,ie, if other parent is same line -->
+  <?MICOMMENT>
+    Guard against duplications,ie, if other parent is same line.
+    Create or empty temp table.
+  <?/MICOMMENT>
   <?MISQL SQL="
-    select target_id 
-      from int_fish_chromo 
-      where source_id = '$new_oid'
-      into temp delete_temp_3;">
+    insert into $do_select_temp_delete
+      select target_id 
+        from int_fish_chromo 
+        where source_id = '$new_oid';">
   <?/MISQL>
   <?MISQL SQL="
     delete from int_fish_chromo 
       where source_id = '$return_recid'
 	and target_id in 
-	      ( select target_id 
-		  from delete_temp_3);">
+	      ( select doseldel_zdb_id
+		  from $do_select_temp_delete);">
+  <?/MISQL>
+  <?MISQL SQL="
+    delete from $do_select_temp_delete;">
   <?/MISQL>
 
-  <!-- Now install new parent. This is stolen from process-fish-->
+  <?MICOMMENT>Now install new parent. This is stolen from process-fish<?/MICOMMENT>
   <?MISQL SQL="
-    select  '$return_recid' as a0, target_id, info, 'inherited' as a3 
-      from int_fish_chromo
-      where source_id = '$new_oid' 
-      into temp select_temp_5;">
+    execute function table_exists('$do_select_temp_insert')">
+    <?MISQL COND=$(EC,$1,f) SQL="
+      create temp table $do_select_temp_insert (
+	  doselins_source_zdb_id   varchar(50),
+	  doselins_target_zdb_id   varchar(50),
+	  doselins_info            varchar(50),
+	  doselins_status          varchar(20)
+      ) with NO LOG;">
+    <?/MISQL>
+  <?/MISQL>
+  <?MISQL SQL="
+    insert into $do_select_temp_insert
+      select  '$return_recid', target_id, info, 'inherited'
+        from int_fish_chromo
+        where source_id = '$new_oid';">
   <?/MISQL>
   <?MISQL SQL="
     insert into int_fish_chromo 
 	(source_id, target_id, info, status) 
       select * 
-	from select_temp_5;">
+	from $do_select_temp_insert;">
+  <?/MISQL>
+  <?MISQL SQL="
+    delete from $do_select_temp_insert;">
   <?/MISQL>
 
   <!-- Now just change the fish record and write update record -->
