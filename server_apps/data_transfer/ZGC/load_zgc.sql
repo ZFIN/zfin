@@ -232,8 +232,10 @@ UPDATE STATISTICS HIGH FOR table tmp_Lib_Bank;
 UPDATE STATISTICS HIGH FOR table tmp_Zgc;
 
 
-	--   Find related markers where (ncbi abbrev != zfin abbrev)
-	--   Update the abbrev
+	--   if the ncbi abbrev is a small segment in ZFIN
+	--   and ncbi_abbrev != zfin abbrev 
+	--   and the sement has a marker_relationship,
+	--   change the abbrev 
 
 INSERT into tmp_zUpdate
 SELECT zgc_acc_num, zgc.mrkr_zdb_id, zfin.mrkr_zdb_id
@@ -316,47 +318,57 @@ WHERE libbank_name NOT IN
     FROM tmp_Zgc_Lib
   );
 
-DELETE FROM tmp_Lib_Bank
-WHERE libbank_name IN 
-  (
-    SELECT probelib_name  
-    FROM probe_library
-  );
-
---record combinations of vector & type before setting type to null
+-- Add New Vectors to the Database
+-- tmp_vector is the set of vectors
 SELECT distinct libbank_vec_name as vec_name, libbank_vec_type as vec_type
 FROM tmp_lib_bank
 INTO TEMP tmp_vector;
 
+-- delete existing vectors
+Delete from tmp_vector
+WHERE vec_name in (SELECT vector_name FROM vector);
 
-UPDATE tmp_Lib_Bank
-SET libbank_vec_type = NULL
-WHERE libbank_vec_type in (SELECT vectype_name FROM vector_type);
+-- prevent duplicate vector_types
+update tmp_vector
+set vec_type = NULL
+where vec_type in (select vectype_name from vector_type);
 
+-- insert new vector_types
 INSERT INTO vector_type (vectype_name,vectype_comments)
-SELECT distinct libbank_vec_type, 'Automated Process: ZGC load '|| TODAY
-FROM tmp_Lib_bank
-WHERE libbank_vec_type is not null;
+SELECT distinct vec_type, 'Automated Process: ZGC load '|| TODAY
+FROM tmp_vector
+WHERE vec_type is not null;
 
+-- Cross original set of vector values with remaining set of modified vectors
+-- otherwise vec_type might be null.
 INSERT INTO vector (vector_name,vector_type_name)
-SELECT distinct vec_name, vec_type
-FROM tmp_Lib_bank, tmp_vector
-WHERE libbank_vec_type is not null
-  AND libbank_vec_name = vec_name;
-
+SELECT distinct libbank_vec_name, libbank_vec_type
+FROM tmp_vector, tmp_lib_bank
+WHERE libbank_vec_name = vec_name;
 
 Update tmp_Lib_Bank
-SET libbank_zdb_id = get_id('PROBELIB');
+SET libbank_zdb_id = (select probelib_zdb_id from probe_library where probelib_name = libbank_name);
+
+update tmp_lib_bank
+set libbank_zdb_id = 'x'||get_id('PROBELIB')
+where libbank_zdb_id is null;
+
 
 INSERT INTO zdb_active_data(zactvd_zdb_id)
-SELECT libbank_zdb_id 
-FROM tmp_Lib_Bank;
+SELECT libbank_zdb_id[2,50] 
+FROM tmp_Lib_Bank
+WHERE libbank_zdb_id[1] = 'x';
 
 
 INSERT INTO probe_library
  (probelib_zdb_id, probelib_name, probelib_species)
-SELECT distinct libbank_zdb_id,libbank_name,'Danio rerio'
-FROM tmp_Lib_Bank;
+SELECT distinct libbank_zdb_id[2,50],libbank_name,'Danio rerio'
+FROM tmp_Lib_Bank
+WHERE libbank_zdb_id[1] = 'x';
+
+Update tmp_Zgc_lib
+set zLib_vector = (select libbank_vec_name from tmp_lib_bank where libbank_name = zLib_name)
+where zLib_name in (select libbank_name from tmp_lib_bank);
 
 SELECT zLib_name 
 FROM tmp_Zgc_Lib
@@ -364,6 +376,7 @@ WHERE zLib_name NOT IN
   (
     SELECT probelib_name FROM probe_library
   )
+  OR zLib_vector is NULL
 into temp tmp_zLib_not_found;
 
 UNLOAD to 'zLib_not_found.unl'
@@ -373,7 +386,9 @@ DELETE from tmp_Zgc
 WHERE zgc_lib IN
   (
     SELECT * from tmp_zLib_not_found
-  );
+  )
+  or zgc_lib is NULL;
+  
 
 
 --clones require a library and a vector. however,
@@ -382,9 +397,9 @@ WHERE zgc_lib IN
 
 --catch occurences of a library existing in zfin but 
 --the vector does not exist.  
-SELECT zLib_vector 
-FROM tmp_Zgc_Lib
-WHERE zLib_vector NOT IN 
+SELECT libbank_vec_name as vector_name
+FROM tmp_lib_bank
+WHERE libbank_vec_name NOT IN 
   (
     SELECT vector_name FROM vector
   )
@@ -396,9 +411,9 @@ SELECT * from tmp_zLib_vector_not_found;
 DELETE from tmp_Zgc
 WHERE zgc_lib IN
   (
-    SELECT lib.zLib_name 
-    from tmp_zLib_vector_not_found vec, tmp_Zgc_Lib lib
-    where vec.zLib_vector = lib.zLib_vector
+    SELECT libbank_name 
+    from tmp_zLib_vector_not_found, tmp_lib_bank
+    where vector_name = libbank_vec_name
   );
 
 
@@ -440,6 +455,26 @@ FROM
 WHERE
     dblink_acc_num = zgc_acc_num
     AND zgc_name = zEST_name;
+    
+unload to 'refseq_relation.unl'
+select mrkr_abbrev, zgc_abbrev, zgc_acc_num
+from tmp_zgc, tmp_zgc_dblink_moved, marker, db_link
+where zDblink_acc_num = dblink_acc_num
+      and dblink_linked_recid = mrkr_zdb_id
+      and zgc_acc_num = zDblink_acc_num
+      and zgc_mrkr_abbrev is null
+order by mrkr_name;
+
+update tmp_Zgc
+set zgc_mrkr_abbrev = 
+  (
+    select mrkr_abbrev 
+    from marker, db_link, tmp_zgc_dblink_moved 
+    where zDblink_acc_num = dblink_acc_num
+      and dblink_linked_recid = mrkr_zdb_id
+      and zgc_acc_num = zDblink_acc_num
+  )
+where zgc_acc_num in (select zDblink_acc_num from tmp_Zgc_Dblink_moved);
 
 
 --        Create BC Genbank links for empty zgc ESTs
@@ -457,7 +492,7 @@ SELECT
     zEST_zdb_id,
     fdbcont_zdb_id,
     zgc_acc_num,
-    'Uncurrated: ZGC load ' || TODAY,
+    'uncurated: ZGC load ' || TODAY,
     zgc_length
 FROM
     tmp_Zgc, foreign_db_contains, tmp_Zgc_EST
@@ -480,12 +515,13 @@ SELECT
     zLib_vector,
     probelib_zdb_id
 FROM 
-    tmp_Zgc, tmp_Zgc_EST, tmp_Zgc_Dblink_moved, tmp_Zgc_Lib, probe_library
+    tmp_Zgc, tmp_Zgc_EST, tmp_Zgc_Dblink_moved, tmp_Zgc_lib, probe_library
 WHERE 
     zgc_acc_num = zDblink_acc_num
     AND zDblink_linked_recid = zEST_zdb_id
     AND zgc_lib = zLib_name
     AND zLib_name = probelib_name;
+
 
 INSERT into tmp_Zgc_Clone
   (
@@ -495,15 +531,15 @@ INSERT into tmp_Zgc_Clone
   )
 SELECT 
     zEST_zdb_id,
-    zLib_vector,
+    libbank_vec_name,
     probelib_zdb_id
 FROM 
-    tmp_Zgc, tmp_Zgc_EST, tmp_Zgc_Dblink_new, tmp_Zgc_Lib, probe_library
+    tmp_Zgc, tmp_Zgc_EST, tmp_Zgc_Dblink_new, tmp_lib_bank, probe_library
 WHERE 
     zgc_acc_num = zDblink_acc_num
     AND zDblink_linked_recid = zEST_zdb_id
-    AND zgc_lib = zLib_name
-    AND zLib_name = probelib_name;
+    AND zgc_lib = libbank_name
+    AND libbank_name = probelib_name;
 
 
 --     B. Add zgc GENEs
@@ -522,10 +558,11 @@ SELECT
     "This gene is characterized by full length cDNAs isolated as part of the Zebrafish Gene Collection (ZGC). When more is known about the gene, the current nomenclature will be replaced with more traditional zebrafish gene nomenclature. The prefix `zgc:' indicates that this gene is represented by cDNAs generated by the ZGC project.",
     'ZDB-PERS-010716-1'
 FROM
-    tmp_Zgc
+    tmp_Zgc, tmp_Zgc_Dblink_new
 WHERE
     zgc_mrkr_abbrev NOT IN (select mrkr_abbrev from marker where mrkr_type = "GENE")
-    OR zgc_mrkr_abbrev is NULL;
+    OR zgc_mrkr_abbrev is NULL
+    and zgc_acc_num = zDblink_acc_num;
 
 
 !echo '--        Upgrade bonus genes'
@@ -905,6 +942,14 @@ SELECT
 FROM tmp_Zgc_Clone;
 
 
+-- supply the clone from ZGC
+insert into int_data_supplier (idsup_data_zdb_id, idsup_supplier_zdb_id)
+select mrkr_zdb_id, "ZDB-LAB-040601-1" 
+from marker, tmp_Zgc_Clone
+where mrkr_zdb_id = zClone_mrkr_zdb_id
+;
+
+{
 --tell me the ZGC records missing a db_link
 unload to 'unNoDbLink.unl'
 select zEST_zdb_id
@@ -921,5 +966,12 @@ where zest_zdb_id = dblink_linked_recid
   and recattrib_source_zdb_id = 'ZDB-PUB-020723-3';
 
 
---rollback work;  
-commit work;
+select count(*) 
+from marker
+where mrkr_type = 'CDNA'
+  and mrkr_abbrev[1,3] = 'MGC'
+  and mrkr_zdb_id not in (select clone_mrkr_zdb_id from clone);
+}
+
+rollback work;  
+--commit work;
