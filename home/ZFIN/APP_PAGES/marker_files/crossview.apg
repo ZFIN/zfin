@@ -25,7 +25,16 @@ ERROR -- something bad happened -- no OID passed in!
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
 
-<?MISQL SQL="select name, panel_date,producer,source,comments,ptype,abbrev from panels where zdb_id='$OID';"><?/MISQL>
+<?MISQL SQL="select name, panel_date,producer,source,comments,ptype,abbrev, day(panel_date),month(panel_date), year(panel_date) from panels where zdb_id='$OID';"><?/MISQL>
+
+<?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
+<form><center><font size=4>
+<?MIVAR> <b>Invalid ZFIN ID.<?/MIVAR>
+</form>
+<?/MIBLOCK>
+
+
+<?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
 
 <?MIVAR NAME=$panel_name>$1<?/MIVAR>
 <?MIVAR NAME=$panel_date>$2<?/MIVAR>
@@ -35,7 +44,10 @@ ERROR -- something bad happened -- no OID passed in!
 <?MIVAR NAME=$comments>$5<?/MIVAR>
 <?MIVAR NAME=$abbrev>$7<?/MIVAR>
 
-
+<?MIBLOCK COND="$(NC,$panel_date,NULL)">
+<?MIVAR NAME=$upd_date>$(INDEX,$(-,$9,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $8, $10 
+<?/MIVAR>
+<?/MIBLOCK>
 
 <?MIBLOCK COND="$(EC,$panel_type,meiotic)">
 <?MISQL SQL="select num_meioses, cross_type from meiotic_panel where zdb_id='$OID';"><?/MISQL>
@@ -86,15 +98,13 @@ $(IF,$(EC,$panel_type,Rad_Hybrid),Radiation Hybrid,Meiotic) Panel:  $panel_name 
 <?/MIBLOCK>
 <?MIVAR COND="$(EC,$panel_producer,NULL)"> UNKNOWN. <?/MIVAR>
 </TD>
-<!--
+
 <TD><font size=2> 
-<b>Date of Panel:</b> 
-<?MIVAR>$(IF,$(NC,$panel_date,NULL),$panel_date,UNKNOWN)<?/MIVAR>
+<b>Most Recent Update:</b> 
+<?MIVAR>$(IF,$(NC,$panel_date,NULL),$upd_date,UNKNOWN)<?/MIVAR>
 </td>
--->
 </TR>
 </TABLE>
-
 
 <TABLE width=100%>
 <TR>
@@ -211,7 +221,7 @@ $(SETVAR,$last,$1)
 
 <?/MIBLOCK> <!-- ends cond oid exists -->
 
-
+<?/MIBLOCK> <!-- ends mirowcount gt 0 -->
 
 </HTML>
 
