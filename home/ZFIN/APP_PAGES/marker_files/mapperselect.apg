@@ -8,13 +8,12 @@
 <?MIVAR NAME=$loc_panel COND="$(NXST,$loc_panel)"><?/MIVAR>
 <?MIVAR NAME=$loc COND="$(NXST,$loc)"><?/MIVAR>
 <?MIVAR NAME=$marker COND="$(NXST,$marker)"><?/MIVAR>
-<?MIVAR NAME=$MGH COND="$(NXST,$MGH)">1<?/MIVAR>
-<?MIVAR NAME=$GAT COND="$(NXST,$GAT)">1<?/MIVAR>
-<?MIVAR NAME=$HS COND="$(NXST,$HS)">1<?/MIVAR>
-<?MIVAR NAME=$MOP COND="$(NXST,$MOP)">1<?/MIVAR>
-<?MIVAR NAME=$T51 COND="$(NXST,$T51)">1<?/MIVAR>
 <?MIVAR NAME=$LN54 COND="$(NXST,$LN54)">1<?/MIVAR>
-
+<?MIVAR NAME=$T51 COND="$(NXST,$T51)">1<?/MIVAR>
+<?MIVAR NAME=$HS COND="$(NXST,$HS)">1<?/MIVAR>
+<?MIVAR NAME=$MGH COND="$(NXST,$MGH)">1<?/MIVAR>
+<?MIVAR NAME=$MOP COND="$(NXST,$MOP)">1<?/MIVAR>
+<?MIVAR NAME=$GAT COND="$(NXST,$GAT)">1<?/MIVAR>
 
 <SCRIPT>
 
@@ -29,12 +28,12 @@ if ((document.mapplet.MGH.checked == 0)&&(document.mapplet.GAT.checked == 0)&&(d
 
 <!-- if loc_panel is selected make sure panel variable is checked -->
 if (document.mapplet.loc_panel.selectedIndex !=0) {
-	if (document.mapplet.loc_panel.selectedIndex == 1) document.mapplet.MGH.checked=true;
-	else if (document.mapplet.loc_panel.selectedIndex ==2) document.mapplet.HS.checked = true;
-	else if (document.mapplet.loc_panel.selectedIndex ==3) document.mapplet.MOP.checked = true;
-	else if (document.mapplet.loc_panel.selectedIndex ==4) document.mapplet.GAT.checked = true;
-	else if (document.mapplet.loc_panel.selectedIndex ==5) document.mapplet.T51.checked = true;
-	else if (document.mapplet.loc_panel.selectedIndex ==6) document.mapplet.LN54.checked = true;
+	if (document.mapplet.loc_panel.selectedIndex == 1) document.mapplet.LN54.checked=true;
+	else if (document.mapplet.loc_panel.selectedIndex ==2) document.mapplet.T51.checked = true;
+	else if (document.mapplet.loc_panel.selectedIndex ==3) document.mapplet.HS.checked = true;
+	else if (document.mapplet.loc_panel.selectedIndex ==4) document.mapplet.MGH.checked = true;
+	else if (document.mapplet.loc_panel.selectedIndex ==5) document.mapplet.MOP.checked = true;
+	else if (document.mapplet.loc_panel.selectedIndex ==6) document.mapplet.GAT.checked = true;
 }
 
 <!-- if marker and only marker is specified submit -->
@@ -48,15 +47,22 @@ if (document.mapplet.marker.value !== ''){
 	return;
 	}
 }
+
+
+if ((document.mapplet.loc != null) && (document.mapplet.loc.value.search(/[^0-9\.]/) != -1 )) {
+	alert('Locations must be specified as numeric values without units.');
+	return;
+}
  
+
 <!-- if marker is not specified and at least LG is - submit -->
 
 if (document.mapplet.marker.value == '') {
 	if (document.mapplet.loc_lg.selectedIndex !==0) { 
 		if ((document.mapplet.loc_panel.selectedIndex != 0) && (document.mapplet.loc.value != '')) {
-			document.mapplet.submit();
+			document.mapplet.submit(); 
 		} else if ((document.mapplet.loc_panel.selectedIndex == 0) && (document.mapplet.loc.value == '')) {
-			document.mapplet.submit();
+			alert(' Please specify a location and panel for the selected linkage group '); 
 		} else if ((document.mapplet.loc_panel.selectedIndex != 0) && (document.mapplet.loc.value == '')){
 			alert(' A panel but no location was specified.\n' + ' Please include a location for this panel.');
 		} else if ((document.mapplet.loc_panel.selectedIndex == 0) && (document.mapplet.loc.value != '')){
@@ -121,7 +127,7 @@ userid = "$userid";
 <?MIVAR><input type=hidden name=userid value="$userid"><?/MIVAR>
 <input type=hidden name=view_map value=1>
 
-<center><FONT SIZE=+2><A HREF="javascript:start_help('title')"><b>Define a map region by either marker or location</font></center></b></A> 
+<center><FONT SIZE=+2><A HREF="javascript:start_help('title')"><b>Define a map region either by marker or location</font></center></b></A> 
 
 <?MIVAR>
 <TABLE width=100% border=0 cellspacing=0 cellpadding=4>
@@ -178,12 +184,12 @@ var LN54=0;
 <font size=2><A HREF="javascript:start_help('panel')"><B>Panel:</B></A></font>
 <SELECT NAME=loc_panel onChange='document.mapplet.marker.value="";'>
 <option select value=0>???
-<option $(IF,$(EC,$loc_panel,MGH),SELECTED) value=MGH>MGH(Meiotic panel)
+<option $(IF,$(EC,$loc_panel,LN54),SELECTED) value=LN54>LN54(Rad_Hybrid panel)
+<option $(IF,$(EC,$loc_panel,T51),SELECTED) value=T51>T51(Rad_Hybrid panel)
 <option $(IF,$(EC,$loc_panel,HS),SELECTED) value=HS>HS(Meiotic panel)
+<option $(IF,$(EC,$loc_panel,MGH),SELECTED) value=MGH>MGH(Meiotic panel)
 <option $(IF,$(EC,$loc_panel,MOP),SELECTED) value=MOP>MOP(Meiotic panel)
 <option $(IF,$(EC,$loc_panel,GAT),SELECTED) value=GAT>GAT(Meiotic panel)
-<option $(IF,$(EC,$loc_panel,T51),SELECTED) value=T51>T51(Rad_Hybrid panel)
-<option $(IF,$(EC,$loc_panel,LN54),SELECTED) value=LN54>LN54(Rad_Hybrid panel)
 
 </SELECT></font></TD> 
 </TR>
@@ -201,17 +207,17 @@ var LN54=0;
 <A HREF="javascript:start_help('search')"><B>Search Panels:</B></A>
 
 <?MIVAR>
-<input type=checkbox name=MGH value=1 $(IF,$(EC,$MGH,1),CHECKED)>  MGH 
-&nbsp;&nbsp;&nbsp;
+<input type=checkbox name=LN54 value=1  $(IF,$(EC,$LN54,1),CHECKED)>  LN54 
+&nbsp;&nbsp;&nbsp; 
+<input type=checkbox name=T51 value=1  $(IF,$(EC,$T51,1),CHECKED)>  T51 
+&nbsp;&nbsp;&nbsp; 
 <input type=checkbox name=HS  value=1 $(IF,$(EC,$HS,1),CHECKED)>  HS 
+&nbsp;&nbsp;&nbsp;
+<input type=checkbox name=MGH value=1 $(IF,$(EC,$MGH,1),CHECKED)>  MGH 
 &nbsp;&nbsp;&nbsp;
 <input type=checkbox name=MOP value=1  $(IF,$(EC,$MOP,1),CHECKED)>  MOP  
 &nbsp;&nbsp;&nbsp;
 <input type=checkbox name=GAT value=1 $(IF,$(EC,$GAT,1),CHECKED)>  GAT 
-&nbsp;&nbsp;&nbsp; 
-<input type=checkbox name=T51 value=1  $(IF,$(EC,$T51,1),CHECKED)>  T51 
-&nbsp;&nbsp;&nbsp; 
-<input type=checkbox name=LN54 value=1  $(IF,$(EC,$LN54,1),CHECKED)>  LN54 
 <?/MIVAR>
 </font>
 </TD> 
@@ -228,7 +234,7 @@ var LN54=0;
 </TD>
 </TR>
 </TABLE>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <IMG SRC="/ZFIN/icons/ANIMATED/perlorangeblink.gif"> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <!-- <IMG SRC="/ZFIN/icons/ANIMATED/perlorangeblink.gif"> -->
 NOTE: Large maps may take a few moments to load.
 
 </form>
