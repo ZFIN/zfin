@@ -293,11 +293,13 @@ marker = '';
      <?MIVAR NAME=marker_type_display>$4<?/MIVAR>
    <?/MISQL>
 
-
+ 
   <!---------------Mapping detail title--------------------------------------->
 
   <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
   <TABLE width="100%" cellspacing=0 border=0>
+
+  <?MIVAR NAME=$reserved_mrkr_abbrev>$mrkr_abbrev<?/MIVAR>
   <?MISQL COND="$(>,$(POSITION,$MID,FISH),0)" SQL="
 		select abbrev, line_type, allele
 		  from fish
@@ -319,7 +321,7 @@ marker = '';
  		<TITLE>Mapping Detail: $mrkr_abbrev </TITLE>
     	<?/MIVAR>
    <?/MIBLOCK>
-
+   <?MIVAR>$(SETVAR,$mrkr_abbrev,$reserved_mrkr_abbrev)<?/MIVAR>	
 
   <?MIVAR>
        <form method=post 
@@ -341,6 +343,7 @@ marker = '';
   <!-- wrap Mapping table in mapper form -->
   <!-- form tag brings in extra space line. For display sake, 
      it is put a bit in advance. -->
+
 
   <!-------------- Name titles --------------------------------------->
  <TR><TD colspan=2>
