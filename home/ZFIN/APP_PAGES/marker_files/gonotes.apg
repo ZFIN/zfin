@@ -2,7 +2,7 @@
 gonotes.apg: tosses up a form displaying notes
 Expected vars:
 OID:  the markrgoev id
-goid: marker go zdb id.
+
 -->
 
 <HTML>
@@ -29,13 +29,12 @@ goid: marker go zdb id.
     <?MISQL SQL="
       select mrkrgoev_notes
 	from marker_go_term_evidence 
-	where mrkrgoev_zdb_id='$OID' and mrkrgoev_mrkrgo_zdb_id='$goid' and mrkrgoev_evidence_code='$evidence';"><?/MISQL>
+	where mrkrgoev_zdb_id='$OID';"><?/MISQL>
 
     <?MIVAR NAME=$notes>$1<?/MIVAR>  
     <form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
     <input type=hidden name=MIval value=aa-gonotes.apg>
     <input type=hidden name=OID value=$OID>
-    <input type=hidden name=goid value=$goid>
 
     <?MIVAR>$notes<?/MIVAR> 
 <p>
