@@ -55,7 +55,7 @@ ERROR -- something bad happened -- no OID passed in!
 
 <?MISQL SQL="select name, panel_date,producer,source,comments,ptype,abbrev, day(panel_date),month(panel_date), year(panel_date) from panels where zdb_id='$OID';"><?/MISQL>
 
-<?MIVAR NAME=$panel_name>$1<?/MIVAR>
+<?MIVAR NAME=$name>$1<?/MIVAR>
 <?MIVAR NAME=$panel_date>$2<?/MIVAR>
 <?MIVAR NAME=$panel_producer>$3<?/MIVAR>
 <?MIVAR NAME=$source>$4<?/MIVAR>
@@ -99,7 +99,7 @@ ERROR -- something bad happened -- no OID passed in!
       <?MIVAR NAME=$mapping_URL>$3<?/MIVAR>
       <?/MIBLOCK>
 
-      <?MIVAR><TITLE> ZFIN View Panel: $panel_name </TITLE><?/MIVAR>
+      <?MIVAR><TITLE> ZFIN View Panel: $name </TITLE><?/MIVAR>
 
 
       <basefont COLOR="#000000" size=3>
@@ -124,13 +124,16 @@ ERROR -- something bad happened -- no OID passed in!
 
       <P>
 
-      <CENTER>
-      <?MIVAR>
+      <?MIBLOCK COND="$(EC,$panel_type,Rad_Hybrid)">
+	<?MIVAR NAME=$title>Radiation Hybrid Panel<?/MIVAR>
+      <?MIELSE>
+	<?MIVAR NAME=$title>Meiotic Panel<?/MIVAR>
+      <?/MIBLOCK>		
+      
       <FONT SIZE=+1> <B> 
-      $(IF,$(EC,$panel_type,Rad_Hybrid),Radiation Hybrid,Meiotic) Panel:  $panel_name ($abbrev)
+         <?MIVAR>$title: $name ($abbrev)<?/MIVAR>
       </B></FONT>
-      <?/MIVAR>
-      </CENTER>
+    
       <p>
 
       <b>Description:</b> 
@@ -189,7 +192,7 @@ ERROR -- something bad happened -- no OID passed in!
       <TABLE width=100% cellpadding=5 border=0 bgcolor="$highlight" cols=1 rows=1>
       <TR>
       <TD align=center>
-      <b>Interactive Mapping:</b> <A HREF="$mapping_URL">Place markers on $panel_name panel</a>.<br><font size=-1>(Courtesy of the Dawid Lab, NIH)</font>
+      <b>Interactive Mapping:</b> <A HREF="$mapping_URL">Place markers on $name panel</a>.<br><font size=-1>(Courtesy of the Dawid Lab, NIH)</font>
       </TD>
       </TR></TABLE>
       <?/MIVAR>
@@ -317,20 +320,21 @@ ERROR -- something bad happened -- no OID passed in!
 
       <!-- Throw up the publication info, using the standard display format -->
      
-	<?MIVAR>
-	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=panels"><b>Publications</b></A>
   	<?MISQL SQL="
   		select count(*) 
   		from record_attribution
   		where recattrib_data_zdb_id = '$OID'
     		and get_obj_type(recattrib_source_zdb_id) = 'PUB';
-  		">
-	&nbsp; ($(FIX,$1))
+  		">	
 	<?/MISQL>
-
-
-
-	<?/MIVAR>
+	<?MIBLOCK COND="$(>,$1,0)">
+	  <?MIVAR>
+	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=panels&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev"><b>Publications</b></A>
+	  <?/MIVAR>	
+	<?MIELSE>
+	  <b>Publications</b>
+	<?/MIBLOCK>
+ 	<?MIVAR> &nbsp;($(FIX,$1))<?/MIVAR>
 
 
       <?/MIBLOCK> <!-- ends mirowcount = 0 mielse -->

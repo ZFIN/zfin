@@ -91,7 +91,7 @@
   <?MIVAR NAME=$abbrev>$3<?/MIVAR>
   <?MIVAR NAME=$comments>$4<?/MIVAR>
 
-  
+   
   <!-- if no match for the entered ID, display not found msg ------>
   <?MIBLOCK COND="$(OR,$(EC,$name,$MI_NOVALUE),$(=,$MI_ROWCOUNT,0))">
      <!-- page header display ----------------->
@@ -117,16 +117,21 @@
 	function Delete_listitem(item_name,item_id) {
 		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted&target_table=$target_table');
 	}
+	
+	function Delete_attrib(subattr,data_zdbId,source_zdbId,info) {
+		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&dataOID='+data_zdbId+'&attr='+subattr+'&attr_type=special-listitem&old_value='+source_zdbId+'&new_value=deleted&target_table=$target_table&info='+info);
+	}
 
 	function Delete_alias(alias,marker_id) {
  		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=dalias_alias&attr_type=delete-alias&old_value='+alias+'&new_value=deleted&target_table=$target_table');
 	}
-
+	
+	
 	function new_ortho() {
-		var speciesind=document.updater2.species.selectedIndex;
-		var species=document.updater2.species[speciesind].value;
-		var oname=document.updater2.oname.value;
-		var oabbrev=document.updater2.oabbrev.value;
+		var speciesind=document.updater.species.selectedIndex;
+		var species=document.updater.species[speciesind].value;
+		var oname=document.updater.oname.value;
+		var oabbrev=document.updater.oabbrev.value;
 		if ((oname != '') && (oabbrev != '')) {
   		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=orthologue&attr_type=special-newortho&old_value='+species+'&new_value='+escape(oname)+'&target_table=$target_table&info='+oabbrev);
   		}
@@ -137,22 +142,50 @@
 	}
 
 	function new_seqnum() {
-		var dbind=document.updater1.seqdb.selectedIndex;
-		var dbname=document.updater1.seqdb[dbind].value;
-		var seq_acc=document.updater1.seq_acc.value;
+		var dbind=document.updater.seqdb.selectedIndex;
+		var dbname=document.updater.seqdb[dbind].value;
+		var seq_acc=document.updater.seq_acc.value;
 		if (seq_acc != '') {
   		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value='+dbname+'&new_value='+seq_acc+'&target_table=$target_table');
   		}
 	}
 	function new_proseqnum() {
-		var dbind=document.updater3.seqdb.selectedIndex;
-		var dbname=document.updater3.seqdb[dbind].value;
-		var seq_acc=document.updater3.seq_acc.value;
+		var dbind=document.updater.prt_seqdb.selectedIndex;
+		var dbname=document.updater.prt_seqdb[dbind].value;
+		var seq_acc=document.updater.prt_seq_acc.value;
 		if (seq_acc != '') {
   		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value='+dbname+'&new_value='+seq_acc+'&target_table=$target_table');
   		}
 	}
 
+	function new_attrib_prevname() {
+		var prev_name=document.updater.attrib_prevname.value;
+		var pub_id=document.updater.attrib_prevname_pubid.value.toUpperCase();
+		if ((prev_name != '') && (pub_id != '')) {
+		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+prev_name+'&new_value='+pub_id+'&target_table=$target_table&info=namealias');
+  		}
+	}
+
+	function new_attrib_prtnseq() {
+		var seq_acc = document.updater.attrib_prtn_seqacc.value;
+		var pub_id = document.updater.attrib_prtn_pubid.value.toUpperCase();
+		if((seq_acc != '')&&(pub_id != '')) {
+			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+seq_acc+'&new_value='+pub_id+'&target_table=$target_table&info=seqacc');
+		}
+	}	
+	function new_attrib_seq() {
+		var seq_acc = document.updater.attrib_seq_acc.value;
+		var pub_id = document.updater.attrib_seq_pubid.value.toUpperCase();
+		if((seq_acc != '')&&(pub_id != '')) {
+			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+seq_acc+'&new_value='+pub_id+'&target_table=$target_table&info=seqacc');
+		}
+	}
+	function new_attrib_mutant(dataid) {
+		var pub_id = document.updater.attrib_mutant_pubid.value.toUpperCase();
+		if((dataid != '')&&(pub_id != '')) {
+			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=colattrib&attr_type=special-newattrib&old_value='+dataid+'&new_value='+pub_id+'&target_table=$target_table&info=cloned_gene');
+		}
+	}
 
         <?/MIVAR> 
       </SCRIPT>
@@ -161,7 +194,7 @@
  
       <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'page_title=View $marker_type') from webPages where ID='aa-secure_navigation.apg';">$1
       <?/MISQL>
-
+     
       <!-- If updating, only let owner update anything -->
       <?MISQL COND="$(XST,$UPDATE)" SQL="select WebExplode(object,'page_title=Update Gene&permission=owns&rtype=$target_table') from webPages where ID='aa-secure_navigation.apg';">$1
       <?/MISQL>
@@ -186,10 +219,8 @@
 	  <!-- NOW JUST TOSS OUT THE RETRIEVED DATA IN A TABLE -->
 	  <!-- FIRST THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
 
-
   	   <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=$target_table') from webPages where ID='aa-data_mgr.apg';">$1
 	   <?/MISQL>
-
 
 	  <!----- OKAY, NOW  THROW UP THE  MARKER INFO ------------------>
 
@@ -198,11 +229,12 @@
 
 <?MIVAR COND="$(XST,$UPDATE)"> <!---- define button to go back------>
  
-   <form><!-- for buttons for update purpose----------->
+   <form name=updater><!-- for buttons for update purpose----------->
    <center><font size=+2>
    <input type=button 
           value=" DONE UPDATING. Back to Viewing! " onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID')"> 
    </font></center>
+   
 <?/MIVAR>
 
 
@@ -233,16 +265,13 @@
 <?MIVAR COND="$(AND,$(XST,$UPDATE),$(NC,$marker_type,GENE))">
     	<INPUT TYPE=button value=Update onClick="doit('marker_name','text','Marker+Name')"> 
 <?/MIVAR>
-
 <FONT size=+1>
 <?MIBLOCK COND="$(EC,$marker_type,GENE)">
-    	<?MIVAR>
-      		<b>Gene Name: <i>&nbsp;$name</i> </b>
-    	<?/MIVAR>
+    	<?MIVAR NAME=$title>Gene Name<?/MIVAR>
+	<?MIVAR><b>$title: &nbsp;<i>$name</i></b><?/MIVAR>
 <?MIELSE>
-    	<?MIVAR>
-      		<b>$(UPPER,$marker_type): &nbsp; $name </b>
-    	<?/MIVAR>
+    	<?MIVAR NAME=$title>$(UPPER,$marker_type)<?/MIVAR>
+	<?MIVAR><b>$title: &nbsp;$name </b><?/MIVAR>
 <?/MIBLOCK>
 </FONT>
 <br>
@@ -268,12 +297,21 @@
 <?/MIVAR> 
 
 <b>Previous Names:</b>
- 
+
 <?MISQL SQL="
-  select dalias_alias
+  select dalias_alias, dalias_zdb_id
     from data_alias
     where dalias_data_zdb_id = '$OID';">
+
+  <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(XST,$UPDATE))">
+    <br><b>Add Reference:</b> 
+    Previous name:<input type=text name=attrib_prevname>	
+    Reference:<input type=text name=attrib_prevname_pubid>
+    <input type=button value="Add" onClick=new_attrib_prevname();> 
+  <?/MIVAR>
+
   <?MIVAR NAME=$alias>$1<?/MIVAR>
+  <?MIVAR NAME=$aliasId>$2<?/MIVAR>
   <?MIVAR COND="$(XST,$alias)" NAME=$alias_plus DELIMIT=" " REPLACE="+">$alias<?/MIVAR>
   <?MIVAR COND="$(XST,$UPDATE)">
     <br> 
@@ -282,9 +320,15 @@
       onClick="Delete_alias('$alias_plus','$OID')">
   <?/MIVAR>
   $(IF,$(AND,$(NXST,$UPDATE),$(>,$MI_CURRENTROW,1)),;) $alias
+  <?MIBLOCK COND="$(XST,$aliasId,)">	
+      <?MISQL SQL="select WebExplode(object,'dataId=$aliasId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+  <?/MIBLOCK>
+	
 <?/MISQL>
+
 <br>
 <!----------------------------------------------------------------> 
+
 
 
 <!--------- Display description  ---------------------------------> 
@@ -321,9 +365,10 @@
   <b>Comments: </b><?MIVAR>$putgene_comments<?/MIVAR>
   <br>
 <?/MIBLOCK>    
-</form>
+
 
 <!--------------------------------------------------------------->
+
 
 <!-------- MUTANT LOCUS ------------------------------------------>
 
@@ -339,7 +384,15 @@
   <?/MIVAR>
   <TR><TD><font color="red">
   <?MIVAR>
-  <b>Mutant Locus:</b></font>The mutant locus <b><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$1">$2 ($3) </A> </b> has been shown to correspond to GENE <b>$abbrev</b>. Please consult the locus record for further mapping information.
+  <b>Mutant Locus:</b></font>
+  <?MIVAR COND="$(XST,$UPDATE)">
+  <br><b>Add reference:</b>
+  Reference:<input type=text name=attrib_mutant_pubid>
+  <input type=button value="Add" onClick=new_attrib_mutant("$1");><br> 
+  <?/MIVAR>	 
+  The mutant locus <b><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$1">$2 ($3) </A> </b> has been shown to correspond to GENE <b>$abbrev</b>. 
+  <?MISQL SQL="select WebExplode(object,'dataId=$1&type=colattrib&info=cloned_gene') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+  Please consult the locus record for further mapping information.
   <?/MIVAR>
   </TD>
   </TR></TABLE>
@@ -421,14 +474,17 @@
   <?MIVAR NAME=$lastitem><?/MIVAR>
   <?MISQL SQL="
     select a.DB_name, conc(conc(b.DB_query,a.acc_num),b.url_suffix), 
-         acc_num, b.db_significance
+         acc_num, b.db_significance, a.dblink_zdb_id
     from db_link a, foreign_DB b 
     where a.DB_name = b.DB_name
       and a.linked_recid = '$OID' 
       and b.db_type='protein sequence'
     order by b.db_significance,a.DB_name,acc_num;">
 
+    <?MIVAR NAME=$dblinkZdbId>$5<?/MIVAR>
+    
     <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
+	
         <?MIBLOCK COND="$(=,$titledisplay,0)">
 		<hr width = "80%">
   		<b>GENE PRODUCTS: </b> 
@@ -437,17 +493,22 @@
 	<br><b>Protein Families, Domains and Sites: </b>
   	<?MIVAR>
 	 <?MIBLOCK COND="$(XST,$UPDATE)">
-          <br><form name=updater3>
+          <br>
   	  <b>Add link to Protein Seq DB:</b> &nbsp;
-  	  DBname:<SELECT name=seqdb>
+  	  DBname:<SELECT name=prt_seqdb>
   	  <?MISQL SQL="select distinct DB_name from foreign_DB where db_type='protein sequence';">
   	  <option value="$1">$1
   	  <?/MISQL>
   	  </SELECT>
- 	   Accession:<input type=text size=15 name=seq_acc> 
+ 	   Accession:<input type=text size=15 name=prt_seq_acc> 
   	   <input type=button value="Add it!" onClick=new_proseqnum();>
-           </form>
-           <form>
+     
+ 	   <?MIVAR>
+  	  <b>Add reference to Protein Seq:</b> &nbsp;
+  	   Accession: <input type=text size=15 name=attrib_prtn_seqacc>
+ 	   Reference: <input type=text size=15 name=attrib_prtn_pubid> 
+  	   <input type=button value="Add it!" onClick=new_attrib_prtnseq();>
+           <?/MIVAR>
  	 <?/MIBLOCK>
 	<TABLE width = "100%" border = 0 bgcolor = "$highlight">
  	 <?/MIVAR>
@@ -456,18 +517,21 @@
     $(IF,$(AND,$(NC,$lastitem,$1),$(>,$MI_CURRENTROW,1)),</TD>)
     $(IF,$(NC,$lastitem,$1),<TD align=left>)
     <li>
-    $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$1:$3)"')>")
-    <A HREF="$2">$1:$3</A>
+
+    $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$1:$3"')>")
+    <A HREF="$2">$1:$3</A> <?MISQL SQL="select WebExplode(object,'dataId=$5&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+
     $(SETVAR,$lastitem,$1)
  <?/MISQL>
  <?MIVAR>$(IF,$(>,$MI_ROWCOUNT,0),</TD></TR></TABLE>)<?/MIVAR>
  <?MIVAR COND="$(AND,$(EC,$MI_ROWCOUNT,0),$(=,$titledisplay,1))">None submitted.<?/MIVAR>
 
-<?MIBLOCK COND="$(XST,$UPDATE)"></form><?/MIBLOCK>
+
 
 <?/MIBLOCK>
 	      	
 <!------------------ end of GENE PRODUCT ---------------------->
+
 
 
 <!--------------- GENE EXPRESSION  ---------------------------->
@@ -518,7 +582,7 @@
 		<b>GENE EXPRESSION: </b>
 		<!--<ul>-->
 		$(SETVAR,$titledisplay,1))
-    	<li><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatview.apg&OID=$XPAT_ZDB_ID>$XPAT_ASSAY_NAME</A>  -  $XPAT_STAGE1 to $XPAT_STAGE2  ($XPAT_start_time hr to $XPAT_end_time hr) 
+    	<li><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatview.apg&OID=$XPAT_ZDB_ID>$XPAT_ASSAY_NAME</A>  -  $XPAT_STAGE1 to $XPAT_STAGE2  ($XPAT_start_time hr to $XPAT_end_time hr) <?MISQL SQL="select WebExplode(object,'dataId=$XPAT_ZDB_ID&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
 	<?/MIVAR>
 	
     <?/MIBLOCK>
@@ -564,7 +628,7 @@
 		<b>GENE EXPRESSION: </b>
 		<!--<ul>-->
 		$(SETVAR,$titledisplay,1))
-    	<li><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatview.apg&OID=$XPAT_ZDB_ID>$XPAT_ASSAY_NAME</A>  -  $XPAT_STAGE1 to $XPAT_STAGE2  ($XPAT_start_time hr to $XPAT_end_time hr) 
+    	<li><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatview.apg&OID=$XPAT_ZDB_ID>$XPAT_ASSAY_NAME</A>  -  $XPAT_STAGE1 to $XPAT_STAGE2  ($XPAT_start_time hr to $XPAT_end_time hr)  <?MISQL SQL="select WebExplode(object,'dataId=$XPAT_ZDB_ID&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
 	<?/MIVAR>
 	
     <?/MIBLOCK>
@@ -576,12 +640,13 @@
 <!--------------- ends GENE EXPRESSION -------------------------->
 
 
+
 <!------------- SEQUENCE INFOMATION ------------------------------->
 
 <HR width="80%">
 <b>SEQUENCE INFORMATION:</b>
 <?MIBLOCK COND="$(XST,$UPDATE)">
-<br><form name=updater1>
+<br>
 <b>Add link to Seq DB:</b> &nbsp;
 DBname:<SELECT name=seqdb>
 <?MISQL SQL="select distinct DB_name from foreign_DB where db_type='sequence' and db_name <> 'BLAST';">
@@ -590,8 +655,11 @@ DBname:<SELECT name=seqdb>
 </SELECT>
 Accession:<input type=text size=15 name=seq_acc> 
 <input type=button value="Add it!" onClick=new_seqnum();>
-</form>
-<form>
+<br>
+<b>Add reference to Sequence:</b> &nbsp;
+Accession: <input type=text size=15 name=attrib_seq_acc>
+Reference: <input type=text size=15 name=attrib_seq_pubid> 
+<input type=button value="Add it!" onClick=new_attrib_seq();>
 <?/MIBLOCK>
 
 
@@ -609,7 +677,7 @@ Accession:<input type=text size=15 name=seq_acc>
 <?MIVAR NAME=$empty>1<?/MIVAR>
 <?MIVAR NAME=$more>0<?/MIVAR>
 <?MISQL SQL="
-  select a.DB_name, conc(conc(b.DB_query,a.acc_num),b.url_suffix), acc_num 
+  select a.DB_name, conc(conc(b.DB_query,a.acc_num),b.url_suffix), acc_num, dblink_zdb_id 
     from db_link a, foreign_DB b 
     where a.DB_name = b.DB_name
       and a.linked_recid = '$OID' 
@@ -623,9 +691,15 @@ Accession:<input type=text size=15 name=seq_acc>
   <?MIBLOCK COND="$(NC,$1,Genbank)">
 
     <li><?MIVAR>
+<<<<<<< markerview.apg
+    $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$3"')>")
+    <A HREF="$2">$1:$3</A><?/MIVAR><?MISQL SQL="select WebExplode(object,'dataId=$4&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+    
+=======
     $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$1:$3)"')>")
     <A HREF="$2">$1:$3</A><?/MIVAR>
 
+>>>>>>> 1.47
   <?MIELSE>
 
      <?MIBLOCK COND="$(=,$empty,1)">
@@ -663,6 +737,7 @@ Accession:<input type=text size=15 name=seq_acc>
 	$(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,Genbank:$gbaccs[$n])"')>")
 	<A HREF="$link">Genbank:$gbaccs[$n]</A>
         $(SETVAR,$n,$(+,$n,1))
+	<?MISQL SQL="select WebExplode(object,'dataId=$4&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
         <?/MIVAR>
    <?/MIBLOCK>
 
@@ -674,7 +749,7 @@ Accession:<input type=text size=15 name=seq_acc>
 
 <?MISQL SQL="
   select a.DB_name, conc(conc(b.DB_query,a.acc_num),b.url_suffix), 
-         acc_num, b.db_significance
+         acc_num, b.db_significance, a.dblink_zdb_id
     from db_link a, foreign_DB b 
     where a.DB_name = b.DB_name
       and a.linked_recid = '$OID' 
@@ -688,16 +763,17 @@ Accession:<input type=text size=15 name=seq_acc>
   <A HREF="$2">$1:$3</A>
   <!--------- ---------------->
   <?MIBLOCK COND="$(EC,$1,SWISS-PROT)">		
-  <?MISQL SQL=" select conc(conc(c.DB_query,a.dalias_alias),c.url_suffix),a.dalias_alias
+   <?MISQL SQL=" select conc(conc(c.DB_query,a.dalias_alias),c.url_suffix),a.dalias_alias
 		from data_alias a, db_link b, foreign_db c
                 where  b.linked_recid = '$OID' and
                        b.dblink_zdb_id = a.dalias_data_zdb_id and
 		       b.db_name = c.db_name;">
-  $(IF,$(=,$MI_CURRENTROW,1),"(")
-  <A HREF="$1">$2 </A>
-  <?/MISQL>
-  <?MIVAR>$(IF,$(>=,$MI_ROWCOUNT,1),")")<?/MIVAR>	
+   $(IF,$(=,$MI_CURRENTROW,1),"(")
+   <A HREF="$1">$2</A>
+   <?/MISQL>
+   <?MIVAR>$(IF,$(>=,$MI_ROWCOUNT,1),")")<?/MIVAR>	
   <?/MIBLOCK>
+  <?MISQL SQL="select WebExplode(object,'dataId=$5&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
   <!--------- ---------------->
   $(SETVAR,$lastitem,$1)
 <?/MISQL>
@@ -716,9 +792,6 @@ Accession:<input type=text size=15 name=seq_acc>
 $(IF, $(!=,$MI_ROWCOUNT,0),<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-blastdata.apg&OID="$OID""><b>BLAST data</b></A>)
 <?/MIVAR>
 
-<?MIBLOCK COND="$(XST,$UPDATE)">
-</form>
-<?/MIBLOCK>
 <!---------------- ends of SEQUENCE INFORMATION --------------->
 
 
@@ -843,54 +916,196 @@ None submitted.
 
 
 
-
-<!------------ ORTHOLOGUES ------------------------------------->
+<!------------ ORTHOLOGUES ------------------------------------>
 <!------ only for cloned genes.------------------- -->
 <?MIBLOCK COND="$(EC,$marker_type,GENE)">
-<HR width="80%">
-<b>ORTHOLOGUES:</b>
+ <HR width="80%">
+ <b>ORTHOLOGUES:</b>
 
-<?MIVAR COND="$(XST,$UPDATE)">
-<form name=updater2>
-<br><b>Add Orthologue:</b>
-<SELECT name=species>
-   <option value=Mouse>Mouse
-   <option value=Human>Human
-   <option value=Yeast>Yeast
-   <option value=Fly>Fly
-</select>
-Name:<input type=text size=15 name=oname> 
-Abbrev:<input type=text size=5 name=oabbrev> 
-<input type=button value="Add it!" onClick=new_ortho();>
-<br>
-<?/MIVAR>
+ <?MIVAR COND="$(XST,$UPDATE)">
+  
+  <br><b>Add Orthologue:</b>
+  <SELECT name=species>
+    <option value=Mouse>Mouse 
+    <option value=Human>Human
+    <option value=Yeast>Yeast
+    <option value=Fly>Fly
+  </select>
+  Name:<input type=text size=15 name=oname> 
+  Abbrev:<input type=text size=5 name=oabbrev> 
+  <input type=button value="Add it!" onClick=new_ortho();>
+  <br>
+ <?/MIVAR>
+
+ <?MIVAR>
+ <TABLE width="100%" border=0 bgcolor="$highlight">
+ <?/MIVAR>
 
 <?MIVAR NAME=$lastitem><?/MIVAR>
-<?MIVAR>
-<TABLE width="100%" border=0 bgcolor="$highlight">
-<?/MIVAR>
-<TR>
-<?MISQL SQL="
-  select ortho_name, ortho_abbrev, organism, zdb_id, b.DB_name,
-         c.DB_query || b.acc_num, acc_num, a.zdb_id, c.db_significance
-    from orthologue a, OUTER (db_link b, foreign_DB c) 
+<?MIVAR NAME=$idx>1<?/MIVAR>
+<?MIVAR NAME=$CURROW>0<?/MIVAR>
+<?MIVAR NAME=$EXIST>0<?/MIVAR>
+<?MIVAR NAME=$hasEv>0<?/MIVAR>
+
+ <!-- Get number of orthologue organisms, so that know the number of rows-->
+ <?MISQL SQL="
+   select count(distinct organism)
+     from orthologue
+    where c_gene_id = '$OID'
+    ;">  
+ <?/MISQL>
+ <?MIVAR NAME=$orthoNum>$1<?/MIVAR>
+
+ <?MIBLOCK COND="$(>,$orthoNum,0)">
+
+  <!-- Get number of different evidence code-->
+  <?MISQL SQL="select count(distinct oevdisp_evidence_code)
+		from orthologue_evidence_display
+		where oevdisp_gene_zdb_id = '$OID'
+	     ;">
+  <?/MISQL>
+  <?MIVAR NAME=$envNum>$1<?/MIVAR>
+
+  <!-- Main Query to get orthologue -->
+  <?MISQL SQL="
+   select ortho_name, ortho_abbrev, organism, b.DB_name,
+         c.DB_query || b.acc_num, acc_num, a.zdb_id, 
+         d.organism_order, c.db_significance
+    from orthologue a, OUTER (db_link b, foreign_DB c), organism d 
     where a.zdb_id = b.linked_recid 
       and b.DB_name = c.DB_name 
       and c_gene_id = '$OID' 
       and c.db_significance < 10
-    order by organism, c.db_significance;">
-  $(IF,$(AND,$(NC,$lastitem,$3),$(>,$MI_CURRENTROW,1)),</TD></TR><TR>)
-  $(IF,$(AND,$(NC,$lastitem,$3),$(XST,$UPDATE)),"<TD align=center><input type=button value=edit onClick=edit_ortho('"$8"')></TD>")
-  $(IF,$(NC,$3,$lastitem),"<TD><b>"$3"</b>: "$1" ("$2") --> ")
-  [
-  $(IF,$(NOT,$(ISNULL,$7)),"<A HREF="$6">"$5":"$7"</a>")
-  ] 
-  $(SETVAR,$lastitem,$3)
-<?/MISQL>
-</TD></TR></TABLE>
+      and a.organism = d.organism_name	
+    order by d.organism_order, c.db_significance;">
+	
+   <?MIVAR NAME=$ortho_name>$1<?/MIVAR>
+   <?MIVAR NAME=$ortho_abbrev>$2<?/MIVAR>
+   <?MIVAR NAME=$organism>$3<?/MIVAR>
+   <?MIVAR NAME=$DB_name>$4<?/MIVAR>
+   <?MIVAR NAME=$hyperlink>$5<?/MIVAR>
+   <?MIVAR NAME=$acc_num>$6<?/MIVAR>	
+   <?MIVAR NAME=$zdb_id>$7<?/MIVAR>
+   <?MIVAR NAME=$db_significance>$8<?/MIVAR>
 
-<?MIVAR COND="$(=,$MI_ROWCOUNT,0)">None submitted.<?/MIVAR>
-<?MIVAR COND="$(XST,$UPDATE)"></form><?/MIVAR>
+   <?MIVAR>$(SETVAR,$CURROW,$MI_CURRENTROW)<?/MIVAR> 
+   <?MIBLOCK COND="$(=,$CURROW,1)">
+	<?MIVAR>
+        $(SETVAR,$EXIST,1)
+        <TR><TD colspan=3></TD>
+        <TD bgcolor=#ccccccc colspan=$envNum><b>Evidence</b></TD></TR>
+	<?/MIVAR>
+	<TR bgcolor=#ccccccc><TD><b>Species</b></TD><TD><b>Symbol</b></TD><TD><b>AccID</b></TD>
+	<?MISQL SQL="
+		select count(*), oevdisp_evidence_code, oevcode_order  
+		from orthologue_evidence_display, orthologue_evidence_code
+		where oevdisp_gene_zdb_id = '$OID'
+	 	 and oevdisp_evidence_code = oevcode_code
+		group by oevdisp_evidence_code, oevcode_order
+		order by oevcode_order
+		;">
+
+            $(VECAPPEND, $oevcount, $1)
+	    $(VECAPPEND, $oevcode, $2)
+	<?/MISQL>
+	<?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
+           <?MIVAR>
+	   <TD bgcolor="$highlight" align=center rowspan=$(+,$orthoNum,2)>
+            None submitted</TD><?/MIVAR>
+	<?MIELSE>
+          <?MIVAR>$(SETVAR,$hasEv,1)<?/MIVAR>
+	  <?MIBLOCK INDEX=$item FOREACH=$oevcode>
+    	   <?MIVAR>
+	    <TD colspan=$oevcount[$idx]><b>$item</b></TD>
+	    $(SETVAR,$idx,$(+,$idx,1))
+           <?/MIVAR>         
+ 	   <?/MIBLOCK>
+        <?/MIBLOCK>
+	</TR>
+	<TR><TD><b>Zebrafish</b></TD>
+        <?MIVAR><TD>$abbrev</TD><TD bgcolor=$highlight></TD><?/MIVAR>
+  	<?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+	  <?MIBLOCK INDEX=$item FOREACH=$oevcount>
+	    <TD align=center><b>*</b></TD>
+	  <?/MIBLOCK>
+	<?/MIBLOCK>
+	</TR>
+  <?/MIBLOCK>
+ 		
+  <?MIBLOCK COND="$(AND,$(NC,$lastitem,$organism),$(>,$CURROW,1))">
+    </TD>
+    <?MISQL SQL="
+            select oevdisp_organism_list, oevcode_order
+              from orthologue_evidence_display, orthologue_evidence_code
+             where oevdisp_gene_zdb_id = '$OID'
+	       and oevdisp_evidence_code = oevcode_code
+	     order by oevcode_order
+	     ;">
+       <?MIVAR>
+       $(IF,$(>,$(POSITION,$1,$lastitem),0),"<TD align=center><b>*</b></TD>", "<TD></TD>")
+       <?/MIVAR>
+     <?/MISQL>
+    </TR><TR>
+  <?/MIBLOCK>
+
+  <?MIBLOCK COND="$(NC,$organism,$lastitem)">
+	<TD>
+        <?MIVAR>  
+        $(IF,$(AND,$(NC,$lastitem,$organism),$(XST,$UPDATE)),"<input type=button value=edit onClick=edit_ortho('"$zdb_id"')>",)
+        <b>$organism</b></TD><TD>$ortho_abbrev</TD><TD>
+        <?/MIVAR>
+  <?/MIBLOCK>
+
+  <?MIVAR>
+  $(IF,$(NOT,$(ISNULL,$acc_num)),"<li><A HREF="$hyperlink">"$DB_name":"$acc_num"</a>") 
+  $(SETVAR,$lastitem,$organism)
+  <?/MIVAR>
+ <?/MISQL>
+ </TD>
+ <!-- Display the orthologue code for the last organism -->
+ <?MISQL SQL="
+            select oevdisp_organism_list, oevcode_order
+              from orthologue_evidence_display, orthologue_evidence_code
+             where oevdisp_gene_zdb_id = '$OID'
+	       and oevdisp_evidence_code = oevcode_code
+	     order by oevcode_order
+	     ;">
+       <?MIVAR>
+       $(IF,$(>,$(POSITION,$1,$lastitem),0),"<TD align=center><b>*</b></TD>", "<TD></TD>")
+       <?/MIVAR>
+  <?/MISQL>
+  </TR>
+  
+  <!-- Query for references -->
+  <?MIBLOCK COND="$(=,$hasEv,1)">
+   <TR><TD bgcolor=#ccccccc colspan=3 align=right>Number of Reference</TD>
+   <?MISQL SQL="
+	select count(*), recattrib_data_zdb_id,
+               oevdisp_organism_list, oevcode_order  
+	  from orthologue_evidence_display, orthologue_evidence_code, 
+               record_attribution
+ 	 where oevdisp_gene_zdb_id = '$OID'
+ 	   and oevdisp_evidence_code = oevcode_code
+           and oevdisp_zdb_id = recattrib_data_zdb_id
+	group by recattrib_data_zdb_id,
+		oevdisp_organism_list, oevcode_order 
+	order by oevcode_order,oevdisp_organism_list
+	;">
+    <?MIVAR><TD align=center><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$2&rtype=gene&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev">$1</A></TD><?/MIVAR>
+   <?/MISQL>
+   </TR>
+  <?/MIBLOCK>
+
+<?MIELSE> <!-- if any orthologue-->
+  None submitted.
+<?/MIBLOCK>
+
+</TABLE>
+
+<!--<?MIVAR COND="$(=,$EXIST,0)">None submitted.<?/MIVAR>-->
+
+
+
 <?/MIBLOCK> 
 
 <!-------------- ends ORTHOLOGUES ------------------------------------>
@@ -899,20 +1114,28 @@ Abbrev:<input type=text size=5 name=oabbrev>
 <!------------------ PUBLICATION ------------------------------------>
 <HR width="80%" align=center>
 
-<?MIVAR>
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=$target_table"><b>PUBLICATIONS</b></A>
-
 <?MISQL SQL="
   select count(*) 
   from record_attribution
   where recattrib_data_zdb_id = '$OID'
     and get_obj_type(recattrib_source_zdb_id) = 'PUB';
   ">
-&nbsp; ($(FIX,$1))
+
 <?/MISQL>
 
+<?MIBLOCK COND="$(>,$1,0)">
+  <?MIVAR>
+  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=$target_table&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev"><b>PUBLICATIONS</b></A>
+  <?/MIVAR>
+<?MIELSE>
+  <b>PUBLICATIONS</b>
+<?/MIBLOCK>
+<?MIVAR>	
+  &nbsp; ($(FIX,$1))
 <?/MIVAR>
+</form>
 <!----------------- ends PUBLICATION ----------------->
+
 
 
 <?/MIBLOCK> <!-- ends cond authorize exists -->

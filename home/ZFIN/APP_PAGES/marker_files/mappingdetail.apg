@@ -371,7 +371,7 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),
        $(IF,$(OR,$(EC,$override,true),$(EC,$4,f),$(EC,$ZDB_ident,$6)),"<TD></TD><TD><A HREF="$curviewer$1">"$2"</A> ("$3")</TD>
         <TD align=center>"$lg"</TD>
 	<TD align=center>"$distance" "$metric"</TD>
-	<TD align=center>"$lod"</TD><TD><A href="$sourceviewer$6">"$7"</a></TD><TD><A HREF=javascript:show_detail('"$link_id"','"$1"','"$2"','"$abbrev"');>Details</A></TD>","<TD colspan=4><A href=javascript:info();>"$4$MI_CURRENTROW"</A>: Unpublished! <A href="sourceviewer$6">Contact "$7"</a>.</TD>")
+	<TD align=center>"$lod"</TD><TD><A href="$sourceviewer$6">"$7"</a></TD><TD>&nbsp; &nbsp;</TD><TD><A HREF=javascript:show_detail('"$link_id"','"$1"','"$2"','"$abbrev"');>Details</A></TD>","<TD colspan=4><A href=javascript:info();>"$4$MI_CURRENTROW"</A>: Unpublished! <A href="sourceviewer$6">Contact "$7"</a>.</TD>")
       <?/MIVAR>
     <?MIELSE>
       <?MIVAR>

@@ -12,17 +12,18 @@ old_value -- the previous value
 comments -- reasons for doing update 
 target_table -- either anon_marker or gene, depending on what you're updating
 info -- optional value used to pass in additional info
-
+dataOID -- the zdbid of the attributed item
 
 -->
 
 <META HTTP-EQUIV="EXPIRES" CONTENT="-2d">
-
 <!-- If one of the values was an empty string, it won't get successfully
   -- passed to this page. 
   -->
 <?MIVAR COND="$(NXST,$old_value)" NAME=$old_value><?/MIVAR>
 <?MIVAR COND="$(NXST,$new_value)" NAME=$new_value><?/MIVAR>
+<?MIVAR COND="$(NXST,$dataOID)" NAME=$dataOID><?/MIVAR>
+<?MIVAR COND="$(NXST,$info)" NAME=$info><?/MIVAR>
 
 
 <!-- First check security. Main purpose is just to get submitter id and name -->
@@ -54,6 +55,9 @@ info -- optional value used to pass in additional info
 
   <?MIVAR COND="$(EC,$attr_type,special-newseqnum)" NAME=$comments>Created new link to sequence DB: $old_value for this record.<?/MIVAR>
 
+  <?MIVAR COND="$(EC,$attr_type,special-newmrkrrel)" NAME=$comments>Created new marker relationship of relationship: $old_value for this record.<?/MIVAR>
+
+  <?MIVAR COND="$(EC,$attr_type,special-newattrib)" NAME=$comments>Add new data attribution: $old_value to $new_value for this record.<?/MIVAR>
 
   <?MIVAR NAME=$new_value DELIMIT="'" REPLACE="''">$new_value<?/MIVAR>
   <?MIVAR NAME=$old_value DELIMIT="'" REPLACE="''">$old_value<?/MIVAR>
@@ -110,7 +114,7 @@ info -- optional value used to pass in additional info
 
     <?MISQL COND="$(EC,$attr,publication)" SQL="
       delete from record_attribution
-	where recattrib_data_zdb_id = '$OID'
+	where recattrib_data_zdb_id = '$dataOID'
 	  and recattrib_source_zdb_id = '$old_value';">
     <?/MISQL>
 
@@ -139,6 +143,20 @@ info -- optional value used to pass in additional info
 		      and acc_num = '$acc_num' );">
       <?/MISQL>
     <?/MIBLOCK>
+
+    <?MISQL COND="$(EC,$attr,recattrib)" SQL="
+      delete from record_attribution
+	where recattrib_data_zdb_id = '$dataOID'
+	  and recattrib_source_zdb_id = '$old_value';">
+    <?/MISQL>
+
+    <?MISQL COND="$(EC,$attr,colattrib)" SQL="
+      delete from column_attribution
+	where colattrib_data_zdb_id = '$dataOID'
+	  and colattrib_source_zdb_id = '$old_value'
+	  and colattrib_column_name = '$info';">
+    <?/MISQL>
+
   <?/MIBLOCK>  <!-- ends special listitem case -->
 
   <!-- Special case for adding new orthos -->
@@ -179,6 +197,95 @@ info -- optional value used to pass in additional info
     <?/MISQL>
   <?/MIBLOCK>  <!-- ends special seqdb case -->
 
+  <!-- Special case for adding new attribution-->
+  <?MIBLOCK COND="$(EC,$attr_type,special-newattrib)">
+    <!-- check whether the pub zdb id is validate. -->
+    <?MISQL SQL="
+	   select * from publication
+             where zdb_id = '$new_value'	
+                ;">
+    <?/MISQL>	
+    <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+      <?MISQL COND="$(EC,$info,namealias)" SQL="
+	   select dalias_zdb_id 
+	     from data_alias
+	    where dalias_data_zdb_id = '$OID'
+	      and dalias_alias = '$old_value'
+	    ;">
+	<?MIVAR>$(SETVAR,$old_value,$1)<?/MIVAR>
+      <?/MISQL>
+
+      <?MISQL COND="$(EC,$info,seqacc)" SQL="
+	   select dblink_zdb_id 
+	     from db_link
+	    where linked_recid = '$OID'
+	      and acc_num = '$old_value'
+	    ;">
+	<?MIVAR>$(SETVAR,$old_value,$1)<?/MIVAR>
+      <?/MISQL>			 		
+      <?MIBLOCK COND="$(EC,$attr,recattrib)">
+         <?MISQL SQL="
+	    insert into record_attribution
+              values('$old_value', '$new_value')	
+                ;">
+         <?/MISQL>
+
+      <?MIELSE COND="$(EC,$attr,colattrib)">
+         <?MISQL SQL="
+	    insert into column_attribution
+              values('$old_value','$info', '$new_value')	
+                ;">
+         <?/MISQL>
+      <?/MIBLOCK>
+    <?MIELSE> 
+ 	<script>
+	window.alert('ERROR: Pub ZdbId is not in ZFIN, please check.');
+	</script>
+   <?/MIBLOCK> 
+  <?/MIBLOCK>
+
+
+  <!-- Special case for adding new segemnt relationship -->
+  <?MIBLOCK COND="$(EC,$attr_type,special-newmrkrrel)">
+    <?MISQL SQL="
+      execute function get_id('MREL');">
+    <?/MISQL>
+    <?MIVAR NAME=$mrkrrel_zdb_id>$1<?/MIVAR>
+    <?MISQL SQL="
+      insert into zdb_active_data
+          ( zactvd_zdb_id )
+        values
+          ( '$mrkrrel_zdb_id' );">
+    <?/MISQL>
+    <?MISQL SQL="
+	select mrkr_zdb_id
+	from marker
+	where mrkr_abbrev = '$new_value';">
+    <?/MISQL>
+    <?MIVAR NAME=$ptnerId>$1<?/MIVAR>
+    <?MIVAR NAME=$reltype>$(SUBSTR,$old_value,6)<?/MIVAR>
+    <?MIBLOCK COND="$(AND,$(NC,$ptnerId,NULL),$(NC,$ptnerId,NOVALUE))">
+      <?MISQL COND="$(>,$(POSITION,$old_value,1to2),0)" SQL="
+       insert into marker_relationship 
+          ( mrel_zdb_id, mrel_type, mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id ) 
+        values 
+	  ( '$mrkrrel_zdb_id', '$reltype', '$OID','$ptnerId');">
+      <?/MISQL>
+      <?MISQL COND="$(>,$(POSITION,$old_value,2to1),0)" SQL="
+        insert into marker_relationship 
+          ( mrel_zdb_id, mrel_type, mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id ) 
+        values 
+	  ( '$mrkrrel_zdb_id', '$reltype', '$ptnerId', '$OID');">
+      <?/MISQL>
+    <?MIELSE>
+	<script>
+	window.alert('ERROR: Symbol is not in ZFIN.');
+	</script>
+
+    <?/MIBLOCK>	
+  <?/MIBLOCK> 
+
+
   <!-- Special case for deleting an alias -->
   <?MIBLOCK COND="$(EC,$attr_type,delete-alias)">
     <?MISQL COND="$(EC,$attr,dalias_alias)" SQL="
@@ -190,6 +297,22 @@ info -- optional value used to pass in additional info
 		      and dalias_alias = '$old_value' ) ;">
     <?/MISQL>
   <?/MIBLOCK>
+  
+  <!-- Special case for deleting a marker relationship -->
+  <?MIBLOCK COND="$(EC,$attr_type,delete-mrkrrelation)">
+     <?MISQL COND="$(EC,$attr,marker_relationship)" SQL="
+	delete from zdb_active_data
+        where zactvd_zdb_id = 
+	     (select mrel_zdb_id
+                from marker_relationship
+	       where (mrel_mrkr_1_zdb_id = '$OID'
+                   and mrel_mrkr_2_zdb_id ='$old_value') 
+		 or  (mrel_mrkr_1_zdb_id ='$old_value'
+                   and  mrel_mrkr_2_zdb_id= '$OID')
+		 and mrel_type = '$info') ;">
+     <?/MISQL>
+  <?/MIBLOCK>
+   	
 
 <?/MIBLOCK> <!-- ends cond authorized -->
 
