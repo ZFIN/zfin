@@ -22,21 +22,22 @@
   $(SETVAR,$OID,$1)
 <?/MISQL>
 
-
 <SCRIPT>
+
   <?MIVAR>
     function doit(attr,attr_type,print_name) {
-      window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusupdate.apg&OID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name)
+      window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusupdate.apg&OID=$OID&UPDATE=1&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name+'');
     }
   <?/MIVAR>
 
   function info() {
-    window.alert('ANONYMOUS LINKAGE:\n This marker is a dummy placeholder for a
- marker that has been linked to this locus, \nbut has not been published yet. ZFIN supports anonymous linkages to promote scientific \ncollaboration; you should contact the submitter of this mapping data (just click the link) \nto negotiate access to this information.');
+    window.alert('ANONYMOUS LINKAGE:\n This marker is a dummy placeholder for a marker that has been linked to this locus, \nbut has not been published yet. ZFIN supports anonymous linkages to promote scientific \collaboration; you should contact the submitter of this mapping data (just click the link) \nto negotiate access to this information.');
   }
 
+
+
   function Delete_listitem(item_name,item_id,oid) {
-    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-locusupdate.apg&OID='+oid+'&attr='+item_name+'&attr_type=Delete_listitem&old_value='+item_id+'&new_value=deleted')
+    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-locusupdate.apg&UPDATE=1&OID='+oid+'&attr='+item_name+'&attr_type=Delete_listitem&old_value='+item_id+'&new_value=deleted');
   }
 
 
@@ -169,7 +170,7 @@
 
         </FONT>
 
-	<!-- I PURPOSEFULLY DO NOT ALLOW UPDATING OF NAME/ABBREV because 
+<!-- I PURPOSEFULLY DO NOT ALLOW UPDATING OF NAME/ABBREV because 
 	  -- this information is central to identity of the record
 	  -->
 
@@ -214,7 +215,7 @@
           <?MIBLOCK COND="$(XST,$UPDATE)">
 	    <INPUT TYPE=button 
               value="Update" 
-              onClick="doit('comments','textarea','Locus+Description')"> 
+              onClick="doit('comments','textarea','Locus+Description');"> 
 	  <?/MIBLOCK>
 
 	    <b>Locus Description:</b><?MIVAR>$(IF,$(NC,$comments,NULL),$comments,"No description available") <?/MIVAR>
