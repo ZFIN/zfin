@@ -8,7 +8,6 @@ export DISPLAY
 set QUERY_STRING = `echo $QUERY_STRING | tr '%0D' '%0A'`
 /private/apps/java1.4/bin/java \
     -mx200m \
-    -Djava.awt.headless=true \
     -Dcgi.content_type=$CONTENT_TYPE \
     -Dcgi.content_length=$CONTENT_LENGTH \
     -Dcgi.request_method=$REQUEST_METHOD \
@@ -19,3 +18,4 @@ set QUERY_STRING = `echo $QUERY_STRING | tr '%0D' '%0A'`
     -Dcgi.path_info=$PATH_INFO \
     -classpath .:<!--|ROOT_PATH|-->/server_apps/mapimage/mapplet-1.0.jar:<!--|ROOT_PATH|-->/lib/Java  \
     mapimage 
+
