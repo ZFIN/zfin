@@ -19,6 +19,8 @@
 TOP = ..
 include $(TOP)/make.include
 
+SUBDIRS = cgiemail-1.6
+
 TARGETDIR = $(TARGETROOT)/$(TARGETCGIBIN)
 
 
