@@ -97,6 +97,9 @@ sub downloadFiles(@) {
 # Now, get the subroutines for handling each type of data.
 
 require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ZIRC/pullEstsFromZirc.pl");
+require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ZIRC/pullFishLinesFromZirc.pl");
+require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ZIRC/pullBackgroundsFromZirc.pl");
+require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ZIRC/pullAlterationsFromZirc.pl");
 
 
 
@@ -122,8 +125,6 @@ my $zircZdbId = "ZDB-LAB-991005-53";
 #  remove old downloaded files.
 #  Open Database.
 
-&writeReport("Pulling EST information from ZIRC.\n");
-
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/ZIRC/";
 my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
 		       '', 
@@ -140,7 +141,11 @@ my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
 #  o parse and prepare the downloaded data into a format that can be used.
 #  o Update the database, reporting as it goes
 
-&est_main($dbh, $zircZdbId);	# Process EST information
+&est_main($dbh, $zircZdbId);	        # EST availability
+&fishline_main($dbh);		        # ZIRC Fish Line IDs
+&background_main($dbh);		        # What wildtypes went into what lines
+&alteration_main($dbh);		        # What ZFIN alterations are available
+				        #  in what ZIRC lines
 
 $dbh->commit();
 $dbh->disconnect();
