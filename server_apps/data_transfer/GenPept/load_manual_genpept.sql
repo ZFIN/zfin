@@ -7,51 +7,58 @@ load from 'manual_curation.genpept' insert into manual_genpept;
 
 update manual_genpept set gene = (
 	select mrkr_zdb_id from marker where mrkr_abbrev = gene
-)
+) 
 where gene in (select mrkr_abbrev from marker where mrkr_type = 'GENE')
 ;
 !echo "drop db_links without manual curation that will conflict with these"
-delete from zdb_active_data
+delete from zdb_active_data 
 where zactvd_zdb_id in (
-    select dblink_zdb_id
-    from db_link, manual_genpept,record_attribution
-    where db_name = 'GenPept'
-    and   gene = linked_recid
+    select dblink_zdb_id 
+    from db_link, manual_genpept,record_attribution, foreign_db_contains
+    where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+    and   fdbcont_fdb_db_name = 'GenPept'
+    and   gene = dblink_linked_recid
     and recattrib_source_zdb_id <> 'ZDB-PUB-020723-5'
     and recattrib_data_zdb_id = dblink_zdb_id
-    and   genpept = acc_num
+    and   genpept = dblink_acc_num
 ) and zactvd_zdb_id in (
-    select dblink_zdb_id
-    from db_link,record_attribution
-    where db_name = 'GenPept'
+    select dblink_zdb_id 
+    from db_link,record_attribution, foreign_db_contains
+    where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+    and fdbcont_fdb_db_name = 'GenPept'
     and recattrib_source_zdb_id <> 'ZDB-PUB-020723-5'
     and recattrib_data_zdb_id = dblink_zdb_id
 );
 
 ! echo "drop from incomming the ones that are already in with manual attribution"
-delete from manual_genpept
+delete from manual_genpept 
 where exists (
-	select 1
-	from db_link ,record_attribution
-	where db_name = 'GenPept'
-	and   gene = linked_recid
+	select 1 
+	from db_link ,record_attribution, foreign_db_contains
+	where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+	and fdbcont_fdb_db_name = 'GenPept' 
+	and   gene = dblink_linked_recid
 	and recattrib_source_zdb_id = 'ZDB-PUB-020723-5' --Scientific Curation
 	and recattrib_data_zdb_id = dblink_zdb_id
-	and   genpept = acc_num
+	and   genpept = dblink_acc_num
 ) and gene in (
-	select linked_recid
-	from db_link
-	where db_name = 'GenPept'
+
+	select dblink_linked_recid 
+	from db_link, foreign_db_contains
+	where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+	and fdbcont_fdb_db_name = 'GenPept' 
+
 );
 
 ! echo "did any symbols fail to translate to ZDB IDs? indicating merge or nomenclature activity"
 select * from manual_genpept where gene[1,9] <> 'ZDB-GENE-';
 
 ! echo "insert new manualy curated GenPept links"
-select distinct gene, genpept, '123456789012345678901234567890' zad
-from manual_genpept
-where gene[1,9] == 'ZDB-GENE-'
+select distinct gene, genpept, '1234567890123456789012345678901234567890' zad 
+from manual_genpept 
+where gene[1,9] == 'ZDB-GENE-' 
 into temp tmp_db_link with no log;
+
 
 update tmp_db_link set zad = get_id('DBLINK');
 
@@ -62,25 +69,23 @@ select zad,count(*) from tmp_db_link group by 1 having count(*) > 1;
 insert into zdb_active_data select zad from tmp_db_link;
 
 insert into db_link(
-	linked_recid,
-	db_name,
-	acc_num,
-	info,
+	dblink_linked_recid,
+	dblink_fdbcont_zdb_id,
+	dblink_acc_num,
+	dblink_info,
 	dblink_zdb_id,
 	dblink_acc_num_display,
-	dblink_organism,
-	dblink_data_type,
-	dblink_length
+	dblink_length	
 ) select  distinct
-	gene,
-	'GenPept',
-	genpept,'curated ' ||TODAY info,
-	zad,
+	gene, 
+	fdbcont_zdb_id,
+	genpept,'curated ' ||TODAY info, 
+	zad, 
 	genpept,
-	'Zebrafish',
-	'protein sequence',
 	0
-	from tmp_db_link
+  from tmp_db_link, foreign_db_contains
+  where fdbcont_fdbdt_data_type = 'Polypeptide'
+  and fdbcont_fdb_db_name = 'GenPept'
 ;
 
 insert into record_attribution
@@ -93,5 +98,6 @@ drop table manual_genpept;
 
 -- rollback work;
 
---
+-- 
 commit work;
+

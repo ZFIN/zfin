@@ -73,36 +73,46 @@ insert into ortho_exp
 	where c_gene_id = mrkr_zdb_id;
 
 update ortho_exp
-	set flybase = (select distinct acc_num from db_link, orthologue o
-	   where db_name = 'FLYBASE'
-		and o.zdb_id = linked_recid
+	set flybase = (select distinct dblink_acc_num from db_link, orthologue o, foreign_db_contains
+	   where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+	        and fdbcont_fdb_db_name = 'FLYBASE'
+	        and fdbcont_organism_common_name = o.organism
+		and o.zdb_id = dblink_linked_recid
 		and ortho_id = o.zdb_id);
 
 update ortho_exp
-	set locuslink = (select acc_num from db_link, orthologue o
-	   where db_name = 'LocusLink'
-		and o.zdb_id = linked_recid
+	set locuslink = (select dblink_acc_num from db_link, orthologue o, foreign_db_contains
+	   where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+	        and fdbcont_fdb_db_name = 'LocusLink'
+	        and fdbcont_organism_common_name = o.organism
+		and o.zdb_id = dblink_linked_recid
 		and ortho_id = o.zdb_id);
 		
 
 update ortho_exp
-	set mgi = (select acc_num from db_link , orthologue o
-	   where db_name = 'MGI'
-		and o.zdb_id = linked_recid
+	set mgi = (select dblink_acc_num from db_link , orthologue o, foreign_db_contains
+	   where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+	        and fdbcont_fdb_db_name = 'MGI'
+	        and fdbcont_organism_common_name = o.organism
+		and o.zdb_id = dblink_linked_recid
 		and ortho_id = o.zdb_id);	
 		
 	
 update ortho_exp
-	set omim = (select distinct acc_num from db_link, orthologue o
-	   where db_name = 'OMIM'
-		and o.zdb_id = linked_recid
+	set omim = (select distinct dblink_acc_num from db_link, orthologue o, foreign_db_contains
+	   where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+	        and fdbcont_fdb_db_name = 'OMIM'
+	        and fdbcont_organism_common_name = o.organism
+		and o.zdb_id = dblink_linked_recid
 		and ortho_id = o.zdb_id);
 
  
 update ortho_exp
-	set sgd = (select acc_num from db_link, orthologue o 
-	   where db_name = 'SGD'
-		and o.zdb_id = linked_recid
+	set sgd = (select dblink_acc_num from db_link, orthologue o, foreign_db_contains
+	   where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+	        and fdbcont_fdb_db_name = 'SGD'
+	        and fdbcont_organism_common_name = o.organism
+		and o.zdb_id = dblink_linked_recid
 		and ortho_id = o.zdb_id);	
 
 
@@ -141,40 +151,47 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/mappings.txt'
 -- Generate sequence data files for Genbank, RefSeq, LocusLink, UniGene, SWISS-PROT, Interpro and GenPept
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genbank.txt'
- DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev, acc_num from marker, db_link
-	where mrkr_zdb_id = linked_recid
-	  and db_name = 'Genbank' order by 1;
+ DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev, dblink_acc_num from marker, db_link, foreign_db_contains
+	where mrkr_zdb_id = dblink_linked_recid
+	  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+	  and fdbcont_fdb_db_name = 'Genbank' order by 1;
 
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/refseq.txt'
- DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,acc_num from marker, db_link
-	where mrkr_zdb_id = linked_recid
-	  and db_name = 'RefSeq' order by 1;
+ DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains
+	where mrkr_zdb_id = dblink_linked_recid
+	  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+	  and fdbcont_fdb_db_name = 'RefSeq' order by 1;
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/locuslink.txt'
- DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,acc_num from marker, db_link
-	where mrkr_zdb_id = linked_recid
-	  and db_name = 'LocusLink' order by 1;
+ DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains
+	where mrkr_zdb_id = dblink_linked_recid
+	  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+	  and fdbcont_fdb_db_name = 'LocusLink' order by 1;
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/unigene.txt'
- DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,acc_num from marker, db_link
-	where mrkr_zdb_id = linked_recid
-	  and db_name = 'UniGene' order by 1;
+ DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains
+	where mrkr_zdb_id = dblink_linked_recid
+	  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+	  and fdbcont_fdb_db_name = 'UniGene' order by 1;
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/swissprot.txt'
- DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,acc_num from marker, db_link
-	where mrkr_zdb_id = linked_recid
-	  and db_name = 'SWISS-PROT' order by 1;
+ DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains
+	where mrkr_zdb_id = dblink_linked_recid
+	  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+	  and fdbcont_fdb_db_name = 'SWISS-PROT' order by 1;
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/interpro.txt'
- DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,acc_num from marker, db_link
-	where mrkr_zdb_id = linked_recid
-	  and db_name = 'InterPro' order by 1;
+ DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains
+	where mrkr_zdb_id = dblink_linked_recid
+	  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+	  and fdbcont_fdb_db_name = 'InterPro' order by 1;
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/pfam.txt'
- DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,acc_num from marker, db_link
-	where mrkr_zdb_id = linked_recid
-	  and db_name = 'Pfam' order by 1;
+ DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains
+	where mrkr_zdb_id = dblink_linked_recid
+	  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+	  and fdbcont_fdb_db_name = 'Pfam' order by 1;
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genpept.txt'
  DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,acc_num from marker, db_link

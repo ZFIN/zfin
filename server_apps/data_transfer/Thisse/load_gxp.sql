@@ -452,15 +452,15 @@ select * from  tmp_mrkr_update;
 create temp table tmp_db_link
   (
     linked_recid	varchar(50),
-    db_name		varchar(50),
     acc_num		varchar(50),
     info 		varchar(80),
     dblink_zdb_id	varchar(50)
   )with no log;
 
-select linked_recid
-from db_link 
-where db_name = 'Genbank' 
+select dblink_linked_recid
+from db_link, foreign_db_contains
+where fdbcont_fdb_db_name = 'Genbank' 
+and fdbcont_zdb_id = dblink_fdbcont_zdb_id
 into temp linked_markers;
 
 !echo "making active data records for new genbank links"
@@ -472,15 +472,15 @@ into temp link_db;
 
 
 insert into tmp_db_link
-select mrkr_zdb_id,'Genbank',gb5p, 'uncurated ' || TODAY, 'x'
-from link_db,probes_tmp
+select mrkr_zdb_id, gb5p, 'uncurated ' || TODAY, 'x'
+from link_db, probes_tmp
 where clone = mrkr_abbrev
 and gb5p is not NULL
 --and gb3p is NULL
 ;
 
 insert into tmp_db_link
-select mrkr_zdb_id,'Genbank',gb3p, 'uncurated ' || TODAY, 'x'
+select mrkr_zdb_id,gb3p, 'uncurated ' || TODAY, 'x'
 from link_db,probes_tmp
 where clone = mrkr_abbrev
 --and gb5p is NULL
@@ -490,8 +490,22 @@ and gb3p is not NULL
 update tmp_db_link set dblink_zdb_id = get_id('DBLINK');
 
 insert into zdb_active_data select dblink_zdb_id from tmp_db_link;
-insert into db_link(linked_recid,db_name, acc_num,info,dblink_zdb_id)
-       select * from tmp_db_link;
+insert into db_link
+  (
+    dblink_linked_recid,
+    dblink_fdbcont_zdb_id, 
+    dblink_acc_num, 
+    dblink_info, 
+    dblink_zdb_id
+  )
+  select linked_recid,
+         fdbcont_zdb_id,
+         acc_num,
+         info,
+         dblink_zdb_id 
+  from tmp_db_link, foreign_db_contains
+  where fdbcont_fdb_db_name = 'Genbank'
+    and fdbcont_fdbdt_data_type = 'cDNA';
 
 
 delete from tmp_db_link;
@@ -532,7 +546,8 @@ create temp table tmp_clone (
     cln_digest varchar(20),
     cln_probelib_zdb_id varchar(50),
     cln_sequence_type varchar(20),
-    cln_pcr_amplification varchar(200)
+    cln_pcr_amplification varchar(200),
+    cln_is_chimeric boolean
 ) with no log;
 
 
@@ -548,7 +563,8 @@ insert into tmp_clone
         digest,
         probelib_zdb_id,
         'cDNA',
-        pcr_amp
+        pcr_amp,
+        'f'
 	from probes_tmp, probe_library, tmp_mrkr
 	where library = probelib_name
           and clone = mrkr_abbrev
@@ -560,7 +576,33 @@ insert into vector
 select distinct vector, 'Plasmid' from probes_tmp where vector not in (select vector_name from vector);
 
 ! echo "load clones"
-insert into clone select * from tmp_clone;
+insert into clone 
+  (
+    clone_mrkr_zdb_id,
+    clone_comments,
+    clone_vector_name,
+    clone_polymerase_name,
+    clone_insert_size,
+    clone_cloning_site,
+    clone_digest,
+    clone_probelib_zdb_id,
+    clone_sequence_type,
+    clone_pcr_amplification,
+    clone_is_chimeric
+  )
+  select 
+    cln_zdb_id,
+    cln_comments,
+    cln_name,
+    cln_polymerase_name,
+    cln_insert_size,
+    cln_cloning_site,
+    cln_digest,
+    cln_probelib_zdb_id,
+    cln_sequence_type,
+    cln_pcr_amplification,
+    cln_is_chimeric
+  from tmp_clone;
 
 
 ! echo "-- EXPRESSION PATTERN --"
@@ -1231,5 +1273,5 @@ insert into record_attribution
 select zdb_id, 'ZDB-PUB-010810-1' from mrel_tmp;
 
 
-rollback work;
---commit work;
+--rollback work;
+commit work;

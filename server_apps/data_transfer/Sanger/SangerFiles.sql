@@ -13,7 +13,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/VegaXpat.txt'
 	   gene.mrkr_abbrev[1,20]	gene_sym,
 	   probe.mrkr_zdb_id[1,26]	probe_zdb,
 	   probe.mrkr_abbrev[1,20]	probe_sym,
-	   acc_num[1,10]			genbank_acc,
+	   dblink_acc_num[1,10]		genbank_acc,
 	   xpat_assay_name[1,20]	assay_type, 
 	   xpat_zdb_id[1,26]		xpad_zdb_id, 
 	   recattrib_source_zdb_id[1,26] pub_zdb
@@ -22,14 +22,16 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/VegaXpat.txt'
 	  expression_pattern, 
 	  marker_relationship,
 	  db_link,
-	  record_attribution
+	  record_attribution,
+	  foreign_db_contains
 
  where gene.mrkr_zdb_id = mrel_mrkr_1_zdb_id 
  and mrel_mrkr_2_zdb_id = xpat_probe_zdb_id 
  and xpat_assay_name = xpatassay_name
  and probe.mrkr_zdb_id = xpat_probe_zdb_id
- and probe.mrkr_zdb_id = linked_recid
- and db_name = 'Genbank'
+ and probe.mrkr_zdb_id = dblink_linked_recid
+ and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+ and fdbcont_fdb_db_name = 'Genbank'
  and xpat_zdb_id = recattrib_data_zdb_id
  { have decided against including gene accessions till asked
  union
@@ -37,7 +39,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/VegaXpat.txt'
 	   gene.mrkr_abbrev[1,20]	gene_sym,
 	   probe.mrkr_zdb_id[1,26]	probe_zdb,
 	   probe.mrkr_abbrev[1,20]	probe_sym,
-	   acc_num[1,10]			genbank_acc,
+	   dblink_acc_num[1,10]		genbank_acc,
 	   xpat_assay_name[1,20]	assay_type, 
 	   xpat_zdb_id[1,26]		xpad_zdb_id, 
 	   recattrib_source_zdb_id[1,26] pub_zdb
@@ -46,14 +48,16 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/VegaXpat.txt'
  	  expression_pattern, 
 	  marker_relationship,
 	  db_link,
-	  record_attribution
+	  record_attribution,
+	  foreign_db_contains
 	   
  where gene.mrkr_zdb_id = mrel_mrkr_1_zdb_id 
  and mrel_mrkr_2_zdb_id = xpat_probe_zdb_id 
  and xpat_assay_name = xpatassay_name
  and probe.mrkr_zdb_id = xpat_probe_zdb_id
- and gene.mrkr_zdb_id = linked_recid
- and db_name in ('Genbank','RefSeq')
+ and gene.mrkr_zdb_id = dblink_linked_recid
+ and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+ and fdbcont_fdb_db_name in ('Genbank','RefSeq')
  and xpat_zdb_id = recattrib_data_zdb_id
  }
  order by 7,1,3;
@@ -62,10 +66,11 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/VegaXpat.txt'
 -- chose RefSeqs if they exist
 select gene.mrkr_zdb_id[1,26]	gene_zdb,
 	   gene.mrkr_abbrev[1,20]	gene_sym,
-	   acc_num[1,10]			genbank_acc
-from marker gene, db_link
-where db_name = 'RefSeq'
-and gene.mrkr_zdb_id = linked_recid
+	   dblink_acc_num[1,10]			genbank_acc
+from marker gene, db_link, foreign_db_contains
+where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+and fdbcont_fdb_db_name = 'RefSeq'
+and gene.mrkr_zdb_id = dblink_linked_recid
 into temp tmp_veg with no log
 ;
 
@@ -74,15 +79,16 @@ into temp tmp_veg with no log
 
 select gene.mrkr_zdb_id[1,26]	gene_zdb,
 	   gene.mrkr_abbrev[1,20]	gene_sym,
-	   acc_num[1,10]			genbank_acc
-from marker gene, marker est, db_link, marker_relationship
+	   dblink_acc_num[1,10]			genbank_acc
+from marker gene, marker est, db_link, marker_relationship, foreign_db_contains
 where gene.mrkr_zdb_id = mrel_mrkr_1_zdb_id 
 and   est.mrkr_zdb_id  = mrel_mrkr_2_zdb_id 
 and  mrel_type = 'gene encodes small segment'
-and est.mrkr_zdb_id = linked_recid
+and est.mrkr_zdb_id = dblink_linked_recid
 and est.mrkr_type  = 'EST'
 and gene.mrkr_type = 'GENE'
-and db_name ='Genbank'
+and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+and fdbcont_fdb_db_name ='Genbank'
 and gene.mrkr_abbrev[3] <> ':'
 and gene.mrkr_zdb_id not in(
 	select gene_zdb from tmp_veg

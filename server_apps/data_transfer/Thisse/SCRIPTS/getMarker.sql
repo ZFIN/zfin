@@ -23,10 +23,11 @@ load from thisse2gb.unl insert into thisse_blast;
 unload to thisse2gb.fin
 	select Query, Subject, mrkr_abbrev, Identity, Length, Mismatches, 
 		Gaps, QStart, QEnd, SStart, SEnd, Expect, Score
- 	  from thisse_blast, outer(db_link, marker)
-  	 where Subject = acc_num
-   	   and linked_recid = mrkr_zdb_id
-	   and db_name = "Genbank";
+ 	  from thisse_blast, outer(db_link, foreign_db_contains, marker)
+  	 where Subject = dblink_acc_num
+   	   and dblink_linked_recid = mrkr_zdb_id
+   	   and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+	   and fdbcont_fdb_db_name = "Genbank";
 
 delete from thisse_blast;
 
@@ -39,10 +40,11 @@ load from thisse2est.unl insert into thisse_blast;
 unload to thisse2est.fin
 	select Query, Subject, mrkr_abbrev, Identity, Length, Mismatches, 
 		Gaps, QStart, QEnd, SStart, SEnd, Expect, Score
- 	  from thisse_blast, outer(db_link, marker)
-  	 where Subject = acc_num
-   	   and linked_recid = mrkr_zdb_id
-	   and db_name = "Genbank";
+ 	  from thisse_blast, outer(db_link, foreign_db_contains, marker)
+  	 where Subject = dblink_acc_num
+   	   and dblink_linked_recid = mrkr_zdb_id
+   	   and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+	   and fdbcont_fdb_db_name = "Genbank";
 
 delete from thisse_blast;
 
@@ -55,8 +57,8 @@ unload to thisse2sp.fin
 	select Query, Subject, mrkr_abbrev, Identity, Length, Mismatches, 
 		Gaps, QStart, QEnd, SStart, SEnd, Expect, Score
  	  from thisse_blast, outer(db_link, marker)
-  	 where Subject = acc_num
-   	   and linked_recid = mrkr_zdb_id;
+  	 where Subject = dblink_acc_num
+   	   and dblink_linked_recid = mrkr_zdb_id;
 
 delete from thisse_blast;
 

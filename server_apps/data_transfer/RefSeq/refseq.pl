@@ -1,5 +1,8 @@
 #!/local/bin/perl 
 #  Script to create RefSeq/LocusLink links in the database
+#  This script assumes directory GenPept exists in the 
+#  same folder, and file fetch-genpept.r exist in ../GenPept/.
+
 
 use DBI;
 $mailprog = '/usr/lib/sendmail -t -oi -oem';
@@ -24,45 +27,18 @@ chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/RefSeq/";
 &openReport();
 
 #remove old RefSeq files
-system("rm -f LL.out*");
+system("rm -f LL*");
 system("rm -f *.unl");
 system("rm -f loc2*");
+system("rm -f zebrafish*");
 system("rm -f gene_with_multiple_linked_recid.unl");
 
 #get new RefSeq files
 &downloadLocusLinkFiles();
 
-$count = 0;
-$retry = 1;
-#verify the files are downloaded
-while( !(
-          (-e "LL.out_dr.gz") &&
-          (-e "LL.out_hs.gz") && 
-          (-e "LL.out_mm.gz") && 
-          (-e "loc2ref") &&
-          (-e "loc2acc") &&
-          (-e "loc2UG")
-        ) 
-     )
-{
-  $count++;
-  if ($count > 10)
-  {
-    if ($retry) 
-    {
-      $count = 0;
-      $retry = 0;
-      &downloadLocusLinkFiles();
-    }
-    else
-    {
-      &emailError("Failed to download LocusLink files.") 
-    }
-  }
-}
 
-#decompress files
-system("/local/bin/gunzip *.gz");
+system("/local/bin/gunzip -f *.gz");
+system("/private/bin/rebol -sq ../GenPept/fetch-genpept.r");
 
 $count = 0;
 $retry = 1;
@@ -70,7 +46,9 @@ $retry = 1;
 while( !(
           (-e "LL.out_dr") &&
           (-e "LL.out_hs") && 
-          (-e "LL.out_mm") 
+          (-e "LL.out_mm") &&
+          (-e "zebrafish.gnp") &&
+          (-e "zebrafish.gbff") 
         ) 
      ) 
 {
@@ -103,7 +81,9 @@ while( !(
 	  -e "ll_mm_id.unl" &&
 	  -e "loc2acc.unl" &&
 	  -e "loc2ref.unl" &&
-	  -e "loc2UG.unl" 
+	  -e "loc2acclen.unl" &&
+	  -e "loc2UG.unl" &&
+	  -e "../GenPept/prot_len_acc.unl"
 	 )
      )
 {
@@ -129,9 +109,9 @@ system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> load_refSeq.sql");
 
 &dblinksReport();
 &reportOmimDups();
-&reportRefSeqDups();
-&reportOrthologueDups();
-&reportDbLinkGeneMarkerPairs() if (-e dblink_gene_marker_non_encodes_pairs.unl); 
+&reportRefSeqDups(); 
+&reportOrthologueDups(); 
+&reportDbLinkGeneMarkerPairs(); 
 &sendReport();
 
 exit;
@@ -150,6 +130,8 @@ sub downloadLocusLinkFiles()
     system("/local/bin/wget ftp://ftp.ncbi.nih.gov/refseq/LocusLink/loc2ref -O loc2ref");
     system("/local/bin/wget ftp://ftp.ncbi.nih.gov/refseq/LocusLink/loc2acc -O loc2acc");
     system("/local/bin/wget ftp://ftp.ncbi.nih.gov/refseq/LocusLink/loc2UG -O loc2UG");
+    system("/local/bin/wget ftp://ftp.ncbi.nih.gov/refseq/D_rerio/mRNA_Prot/zebrafish.rna.gbff.gz -O zebrafish.gbff.gz");
+    system("/local/bin/wget ftp://ftp.ncbi.nih.gov/refseq/D_rerio/mRNA_Prot/zebrafish.protein.gpff.gz -O zebrafish.gnp.gz");
     system("/local/bin/wget ftp://ftp.ncbi.nih.gov/refseq/LocusLink/LL.out_dr.gz");
     system("/local/bin/wget ftp://ftp.ncbi.nih.gov/refseq/LocusLink/LL.out_hs.gz");
     system("/local/bin/wget ftp://ftp.ncbi.nih.gov/refseq/LocusLink/LL.out_mm.gz");
@@ -176,13 +158,11 @@ sub dblinksReport()
 
     print REPORT "DBLINKS\n";
 
-    my $cur = $dbh->prepare('select count(*), db_name
-                             from db_link
-                             where db_name = "RefSeq"
-                                or db_name = "LocusLink"
-                                or db_name = "UniGene"
-                                or db_name = "OMIM"
-                             group by db_name;'
+    my $cur = $dbh->prepare('select count(*), fdbcont_fdb_db_name
+                             from db_link, foreign_db_contains
+                             where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                               and fdbcont_fdb_db_name in ("RefSeq","LocusLink","UniGene","OMIM","Genbank","GenPept")
+                             group by fdbcont_fdb_db_name;'
 			   );
     $cur->execute;
     my($db_count, $db_name);
@@ -203,9 +183,10 @@ sub reportOmimDups()
     print REPORT "OMIM dups\n";
 
     my $cur = $dbh->prepare('select mrkr_abbrev
-                               from db_link, orthologue, marker
-                              where db_name = "OMIM"
-                                and linked_recid = zdb_id
+                               from db_link, orthologue, marker, foreign_db_contains
+                              where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                                and fdbcont_fdb_db_name = "OMIM"
+                                and dblink_linked_recid = zdb_id
                                 and c_gene_id = mrkr_zdb_id
                               group by mrkr_abbrev
                              having count(*) > 1;'

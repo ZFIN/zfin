@@ -13,6 +13,9 @@
 
 begin work;    
 
+lock table db_link in share mode;
+
+
   --=======================--
   -- LOAD INTO TEMP TABLES --
   --=======================--
@@ -42,7 +45,7 @@ CREATE TEMP TABLE LL_GDB
   )
 with no log;
 
-!echo 'LOADll_hs_id.unl'
+!echo 'LOAD ll_hs_id.unl'
 LOAD FROM 'll_hs_id.unl' INSERT INTO ll_gdb;
 
 CREATE INDEX llgdb_ll_id_index ON ll_gdb
@@ -58,7 +61,7 @@ CREATE TEMP TABLE LL_MGI
   )
 with no log;
 
-!echo 'LOADll_mm_id.unl'
+!echo 'LOAD ll_mm_id.unl'
 LOAD FROM 'll_mm_id.unl' INSERT INTO ll_mgi;
 
 CREATE INDEX llmgi_ll_id_index ON ll_mgi
@@ -70,35 +73,117 @@ CREATE INDEX llmgi_gdb_id_index ON ll_mgi
 --REFSEQ ACCESSION NUM--
 CREATE TEMP TABLE REF_SEQ_ACC
   (
-    refseq_ll	varchar (50) not null,
-    refseq_acc	varchar (50) not null
+    refseq_ll		varchar (50) not null,
+    refseq_nM_acc	varchar (50),
+    refseq_nM_length	integer,
+    refseq_nP_acc	varchar (50),
+    refseq_nP_length	integer
   )
 with no log;
 
-!echo 'LOADloc2ref.unl'
+!echo 'LOAD loc2ref.unl'
 LOAD FROM 'loc2ref.unl' INSERT INTO ref_seq_acc;
 
 CREATE INDEX refseq_ll_index ON ref_seq_acc
     (refseq_ll) using btree;
-CREATE INDEX refseq_acc_index ON ref_seq_acc
-    (refseq_acc) using btree;
+CREATE INDEX refseq_nM_acc_index ON ref_seq_acc
+    (refseq_nM_acc) using btree;
+CREATE INDEX refseq_nP_acc_index ON ref_seq_acc
+    (refseq_nP_acc) using btree;
    
 
 --GENBANK ACCESSION NUM--
 CREATE TEMP TABLE GENBANK_ACC
   (
     gbacc_ll	varchar (50) not null,
-    gbacc_acc	varchar (50) not null
+    gbacc_acc	varchar (50) not null,
+    gbacc_pept	varchar (50) not null
   )
 with no log;
 
-!echo 'LOADloc2acc.unl'
+!echo 'LOAD loc2acc.unl'
 LOAD FROM 'loc2acc.unl' INSERT INTO genbank_acc;
 
 CREATE INDEX genbank_ll_index ON genbank_acc
     (gbacc_ll) using btree;
 CREATE INDEX genbank_acc_index ON genbank_acc
     (gbacc_acc) using btree;
+CREATE INDEX genbank_pept_index ON genbank_acc
+    (gbacc_pept) using btree;
+   
+
+--ACCESSION LENGTH--
+CREATE TEMP TABLE ACC_LENGTH
+  (
+    acclen_acc		varchar (20) not null,
+    acclen_length	integer,
+    acclen_max_len	boolean
+  )
+with no log;
+
+CREATE INDEX acclen_acc_index ON acc_length
+    (acclen_acc) using btree;
+    
+!echo 'LOAD loc2acclen.unl'
+LOAD FROM 'loc2acclen.unl' INSERT INTO acc_length (acclen_acc, acclen_length);
+
+CREATE INDEX acclen_length_index ON acc_length
+    (acclen_length) using btree;
+
+UPDATE STATISTICS HIGH FOR TABLE acc_length;
+
+
+-- Delete duplicate records. Keep longer length    
+SELECT acclen_acc AS mAcclen_acc, acclen_length AS mAcclen_length 
+FROM acc_length 
+GROUP BY 1,2 
+HAVING COUNT(*) > 1
+INTO TEMP tmp_multiple_acclength; 
+
+DELETE FROM acc_length
+WHERE acclen_acc IN (SELECT mAcclen_acc from tmp_multiple_acclength);
+
+INSERT INTO acc_length ( acclen_acc, acclen_length )
+SELECT mAcclen_acc, mAcclen_length
+FROM tmp_multiple_acclength;
+
+SELECT acclen_acc AS aAcclen_acc, max(acclen_length) AS aAcclen_length 
+FROM acc_length 
+GROUP BY 1
+INTO TEMP tmp_acclength_longest;
+
+UPDATE acc_length
+SET acclen_max_len = 't'
+WHERE 1 = 
+  (
+    SELECT count(*)
+    FROM tmp_acclength_longest
+    WHERE acclen_acc = aAcclen_acc
+      AND acclen_length = aAcclen_length
+  );
+
+
+DELETE FROM acc_length
+WHERE acclen_max_len != 't';
+
+
+-- (copied from ../GenPept/load_prot_len_acc.sql)
+CREATE TEMP TABLE prot_len_acc 
+  (
+    pla_prot varchar (10), 
+    pla_len integer,
+    pla_gene varchar(100), 
+    pla_acc varchar(10)
+  )
+with no log;
+  
+LOAD FROM '../GenPept/prot_len_acc.unl' INSERT INTO prot_len_acc;
+
+CREATE INDEX pla_prot_idx ON prot_len_acc(pla_prot);
+CREATE INDEX pla_acc_idx ON prot_len_acc(pla_acc);
+CREATE INDEX pla_gene_idx ON prot_len_acc(pla_gene);
+UPDATE STATISTICS FOR TABLE prot_len_acc;
+
 
 --UNI_GENE
 CREATE TEMP TABLE uni_gene
@@ -108,7 +193,7 @@ CREATE TEMP TABLE uni_gene
   )
 with no log;
 
-!echo 'LOADloc2UG.unl'
+!echo 'LOAD loc2UG.unl'
 LOAD FROM 'loc2UG.unl' INSERT INTO uni_gene;
 
 CREATE INDEX uni_ll_id_index ON uni_gene
@@ -124,36 +209,92 @@ CREATE TEMP TABLE tmp_db_link
     tmp_db_name 	varchar(50),
     tmp_acc_num 	varchar(50),
     tmp_info 		varchar(80),
-    tmp_dblink_zdb_id	varchar(50)
+    tmp_dblink_zdb_id	varchar(50),
+    tmp_fdbcont_zdb_id	varchar(50),
+    tmp_length 		integer
   )
 with no log;
 
+CREATE INDEX tmp_linked_recid_index ON tmp_db_link
+    (tmp_linked_recid) using btree;
+CREATE INDEX tmp_acc_num_index ON tmp_db_link
+    (tmp_acc_num) using btree;
+CREATE INDEX tmp_db_name_index ON tmp_db_link
+    (tmp_db_name) using btree;
+    
 !echo 'insert RefSeq INTO temp_db_link'
 INSERT INTO tmp_db_link
   SELECT
     mrkr_zdb_id,
     'RefSeq',
-    refseq_acc,
+    refseq_nM_acc,
     'Uncurrated: RefSeq load ' || TODAY,
-    'x'
-  FROM ref_seq_acc, ll_zdb, marker
+    'x',
+    fdbcont_zdb_id,
+    acclen_length
+  FROM ref_seq_acc, ll_zdb, marker, foreign_db_contains, OUTER(acc_length)
   WHERE refseq_ll = llzdb_ll_id
     AND llzdb_zdb_id = mrkr_zdb_id
+    AND fdbcont_fdb_db_name = 'RefSeq'
+    AND fdbcont_fdbdt_data_type = 'cDNA'
+    AND refseq_nM_acc != ''
+    AND acclen_acc = refseq_nM_acc
+;
+INSERT INTO tmp_db_link
+  SELECT
+    mrkr_zdb_id,
+    'RefSeq',
+    refseq_nP_acc,
+    'Uncurrated: RefSeq load ' || TODAY,
+    'x',
+    fdbcont_zdb_id,
+    acclen_length
+  FROM ref_seq_acc, ll_zdb, marker, foreign_db_contains, OUTER(acc_length)
+  WHERE refseq_ll = llzdb_ll_id
+    AND llzdb_zdb_id = mrkr_zdb_id
+    AND fdbcont_fdb_db_name = 'RefSeq'
+    AND fdbcont_fdbdt_data_type = 'Polypeptide'
+    AND refseq_nP_acc != ''
+    AND acclen_acc = refseq_nP_acc
 ;
 
 !echo 'insert GenBank INTO temp_db_link'
 INSERT INTO tmp_db_link
-  SELECT
+  SELECT distinct
     mrkr_zdb_id,
     'Genbank',
     gbacc_acc,
     'Uncurrated: RefSeq load ' || TODAY,
-    'x'
-  FROM genbank_acc, ll_zdb, marker
+    'x',
+    fdbcont_zdb_id,
+    accbk_length
+  FROM genbank_acc, ll_zdb, marker, foreign_db_contains, accession_bank
   WHERE gbacc_ll = llzdb_ll_id
     AND llzdb_zdb_id = mrkr_zdb_id
+    AND fdbcont_fdb_db_name = 'Genbank'
+    AND fdbcont_fdbdt_data_type = accbk_data_type
+    AND gbacc_acc = accbk_acc_num
+    AND accbk_db_name = 'Genbank'
 ;
 
+!echo 'insert GenPept INTO temp_db_link'
+INSERT INTO tmp_db_link
+  SELECT distinct
+    mrkr_zdb_id,
+    'GenPept',
+    gbacc_pept,
+    'Uncurrated: RefSeq load ' || TODAY,
+    'x',
+    fdbcont_zdb_id,
+    pla_len
+  FROM genbank_acc, ll_zdb, marker, foreign_db_contains, prot_len_acc
+  WHERE gbacc_ll = llzdb_ll_id
+    AND llzdb_zdb_id = mrkr_zdb_id
+    AND fdbcont_fdb_db_name = 'GenPept'
+    AND fdbcont_fdbdt_data_type = 'Polypeptide'
+    AND gbacc_pept != '-'
+    AND gbacc_pept = pla_prot
+;
 
 !echo 'insert ZF_LL INTO temp_db_link'
 INSERT INTO tmp_db_link
@@ -162,27 +303,19 @@ INSERT INTO tmp_db_link
     'LocusLink',
     llzdb_ll_id,
     'uncurrated ' || TODAY || ' LocusLink load',
-    'x'
+    'x',
+    'x',
+    ''
   FROM ll_zdb, marker
   WHERE llzdb_zdb_id = mrkr_zdb_id
 ;
-
-CREATE INDEX tmp_linked_recid_index ON tmp_db_link
-    (tmp_linked_recid) using btree;
-CREATE INDEX tmp_acc_num_index ON tmp_db_link
-    (tmp_acc_num) using btree;
-CREATE INDEX tmp_db_name_index ON tmp_db_link
-    (tmp_db_name) using btree;
-
-
-
 
 
 !echo 'CREATE TEMP TABLE ortho_link'
 CREATE TEMP TABLE ortho_link
   (
     lnkortho_linked_recid varchar(50),
-    lnkortho_db_name varchar(50),
+    lnkortho_fdbcont_zdb_id varchar(50),
     lnkortho_acc_num varchar(50),
     lnkortho_dblink_zdb_id varchar(50)
   )
@@ -197,47 +330,71 @@ UPDATE STATISTICS HIGH FOR table ll_mgi;
 INSERT INTO ortho_link
     SELECT 
       distinct zdb_id,
-      'LocusLink',
+      ll.fdbcont_zdb_id,
       llgdb_ll_id,
       'x'
-    FROM db_link, orthologue, ll_gdb
-    WHERE db_name = "GDB"
-      AND zdb_id = linked_recid
-      AND acc_num = llgdb_gdb_id;
+    FROM db_link, orthologue, ll_gdb, foreign_db_contains AS gdb, foreign_db_contains AS LL
+    WHERE dblink_fdbcont_zdb_id = gdb.fdbcont_zdb_id
+      AND gdb.fdbcont_fdb_db_name = "GDB"
+      AND zdb_id = dblink_linked_recid
+      AND dblink_acc_num = llgdb_gdb_id
+      AND ll.fdbcont_fdb_db_name = "LocusLink"
+      AND ll.fdbcont_fdbdt_data_type = "orthologue"
+      AND ll.fdbcont_organism_common_name = "Human";
 
 
 --INSERT OMIM links into ortho_link
 INSERT INTO ortho_link
     SELECT 
       distinct zdb_id,
-      'OMIM',
+      ll.fdbcont_zdb_id,
       llgdb_omim_id,
       'x'
-    FROM db_link, orthologue, ll_gdb
-    WHERE db_name = "GDB"
-      AND zdb_id = linked_recid
-      AND acc_num = llgdb_gdb_id
+    FROM db_link, orthologue, ll_gdb, foreign_db_contains AS gdb, foreign_db_contains AS LL
+    WHERE dblink_fdbcont_zdb_id = gdb.fdbcont_zdb_id
+      AND gdb.fdbcont_fdb_db_name = "GDB"
+      AND zdb_id = dblink_linked_recid
+      AND dblink_acc_num = llgdb_gdb_id
+      AND ll.fdbcont_fdb_db_name = "OMIM"
+      AND ll.fdbcont_fdbdt_data_type = "orthologue"
+      AND ll.fdbcont_organism_common_name = "Human"
       AND llgdb_omim_id is not null
       AND llgdb_omim_id NOT IN ('193500','106210','168461','300401','601868');
           -- Ban OMIM disease links (Hard code for now 06-02-03) --
+
+
 
 
 !echo 'INSERT MGI links into ortho_link'
 INSERT INTO ortho_link
     SELECT 
       distinct zdb_id,
-      'LocusLink',
+      ll.fdbcont_zdb_id,
       llmgi_ll_id,
       'x'
-    FROM db_link, orthologue, ll_mgi
-    WHERE db_name = "MGI"
-      AND linked_recid = zdb_id
-      AND acc_num = llmgi_mgi_id;
+    FROM db_link, orthologue, ll_mgi, foreign_db_contains AS MGI, foreign_db_contains AS LL
+    WHERE dblink_fdbcont_zdb_id = mgi.fdbcont_zdb_id
+      AND mgi.fdbcont_fdb_db_name = "MGI"
+      AND dblink_linked_recid = zdb_id
+      AND dblink_acc_num = llmgi_mgi_id
+      AND ll.fdbcont_fdb_db_name = "LocusLink"
+      AND ll.fdbcont_fdbdt_data_type = "orthologue"
+      AND ll.fdbcont_organism_common_name = "Mouse";
 
 
 CREATE INDEX lnkortho_dblink_zdb_id_index ON ortho_link
     (lnkortho_dblink_zdb_id) using btree;
     
+
+----------------------------------
+--| DROP TEMPORARY LOAD TABLES |--
+----------------------------------
+
+DROP TABLE LL_GDB;
+DROP TABLE LL_MGI;
+DROP TABLE REF_SEQ_ACC;
+DROP TABLE GENBANK_ACC;
+
 
 ------------------------------------------------------
 --| RECORD THE AUTOMATED and NON-AUTOMATED DBLINKS |--
@@ -276,8 +433,13 @@ DELETE FROM zdb_active_data WHERE zactvd_zdb_id in (SELECT link_id FROM automate
 !echo 'get all LocusLink AND OMIM db_links that remain'
   SELECT * 
   FROM db_link 
-  WHERE db_name = "OMIM" 
-     or db_name = "LocusLink"
+  WHERE dblink_fdbcont_zdb_id in 
+    (
+      SELECT fdbcont_zdb_id
+      FROM foreign_db_contains
+      WHERE fdbcont_zdb_id = dblink_fdbcont_zdb_id
+        AND fdbcont_fdb_db_name in ("OMIM","LocusLink")
+    )
   INTO temp old_omim_and_ll
   with no log;
 
@@ -287,8 +449,8 @@ DELETE FROM zdb_active_data WHERE zactvd_zdb_id in (SELECT link_id FROM automate
     (
       SELECT *
       FROM old_omim_and_ll
-      WHERE lnkortho_db_name = db_name
-        AND lnkortho_acc_num = acc_num
+      WHERE lnkortho_fdbcont_zdb_id = dblink_fdbcont_zdb_id
+        AND lnkortho_acc_num = dblink_acc_num
     );
 
 
@@ -307,29 +469,32 @@ UPDATE STATISTICS HIGH FOR table ortho_link;
   INSERT INTO zdb_active_data 
   SELECT lnkortho_dblink_zdb_id 
   FROM ortho_link
-  WHERE lnkortho_db_name = 'LocusLink'
-    AND lnkortho_acc_num NOT IN 
-        (SELECT acc_num FROM old_omim_and_ll WHERE db_name = 'LocusLink');
+;
+--  WHERE lnkortho_db_name = 'LocusLink'
+--    AND lnkortho_acc_num NOT IN 
+--        (SELECT acc_num FROM old_omim_and_ll WHERE db_name = 'LocusLink');
 
-!echo 'add OMIM active data'
-  INSERT INTO zdb_active_data 
-  SELECT lnkortho_dblink_zdb_id 
-  FROM ortho_link
-  WHERE lnkortho_db_name = 'OMIM'
-    AND lnkortho_acc_num NOT IN 
-        (SELECT acc_num FROM old_omim_and_ll WHERE db_name = 'OMIM');
+--!echo 'add OMIM active data'
+--  INSERT INTO zdb_active_data 
+--  SELECT lnkortho_dblink_zdb_id 
+--  FROM ortho_link
+--  WHERE lnkortho_db_name = 'OMIM'
+--    AND lnkortho_acc_num NOT IN 
+--        (SELECT acc_num FROM old_omim_and_ll WHERE db_name = 'OMIM');
   
 !echo 'insert LocusLink Orthologue db_links.'
 INSERT INTO db_link
-        (linked_recid,
-        db_name,
-        acc_num,
-        info,
+      (
+        dblink_linked_recid,
+        dblink_fdbcont_zdb_id,
+        dblink_acc_num,
+        dblink_info,
         dblink_zdb_id,
-        dblink_acc_num_display)
+        dblink_acc_num_display
+      )
     SELECT distinct
         lnkortho_linked_recid,
-        lnkortho_db_name,
+        lnkortho_fdbcont_zdb_id,
         lnkortho_acc_num,
         'Uncurrated: RefSeq load ' || TODAY,
         lnkortho_dblink_zdb_id,
@@ -351,50 +516,58 @@ CREATE TEMP TABLE tmp_multiple_ortho_gene
   with no log;
 
 INSERT INTO tmp_multiple_ortho_gene
-SELECT mrkr_zdb_id, zdb_id
-FROM marker, orthologue 
-WHERE mrkr_zdb_id = c_gene_id 
+SELECT mrkr_zdb_id, dbl1.dblink_zdb_id
+FROM marker, orthologue, db_link AS dbl1, foreign_db_contains
+WHERE mrkr_zdb_id = c_gene_id
+  AND zdb_id = dbl1.dblink_linked_recid
+  AND dbl1.dblink_fdbcont_zdb_id = fdbcont_zdb_id
+  AND fdbcont_fdb_db_name = "LocusLink"
+  AND fdbcont_fdbdt_data_type = 'orthologue'
   AND 1 < 
     (
       SELECT COUNT(*) 
-      FROM db_link 
-      WHERE linked_recid = zdb_id 
-        AND db_name = "LocusLink"
+      FROM db_link as dbl2
+      WHERE dbl2.dblink_linked_recid = zdb_id 
+        AND dbl2.dblink_fdbcont_zdb_id = dbl1.dblink_fdbcont_zdb_id
     );
 
 INSERT INTO tmp_multiple_ortho_gene
-SELECT mrkr_zdb_id, zdb_id
-FROM marker, orthologue 
+SELECT mrkr_zdb_id, dblink_zdb_id
+FROM marker, orthologue, db_link AS dbl1, foreign_db_contains
 WHERE mrkr_zdb_id = c_gene_id 
+  AND zdb_id = dbl1.dblink_linked_recid
+  AND dbl1.dblink_fdbcont_zdb_id = fdbcont_zdb_id
+  and fdbcont_fdb_db_name = "OMIM"
+  AND fdbcont_fdbdt_data_type = 'orthologue'
   AND 1 < 
     (
       SELECT COUNT(*) 
-      FROM db_link 
-      WHERE linked_recid = zdb_id 
-        AND db_name = "OMIM"
+      FROM db_link as dbl2
+      WHERE dbl2.dblink_linked_recid = zdb_id 
+        AND dbl2.dblink_fdbcont_zdb_id = dbl1.dblink_fdbcont_zdb_id
     );
 
-SELECT multortho_mrkr_zdb_id as tmp_mrkr_zdb_id,  
-       dblink_zdb_id as tmp_dblink_zdb_id
-FROM tmp_multiple_ortho_gene, db_link
-WHERE multortho_ortho_zdb_id = linked_recid
-INTO temp tmp_multiple_ortho;
+--SELECT multortho_mrkr_zdb_id as tmp_mrkr_zdb_id,  
+--       dblink_zdb_id as tmp_dblink_zdb_id
+--FROM tmp_multiple_ortho_gene, db_link
+--WHERE multortho_ortho_zdb_id = linked_recid
+--INTO temp tmp_multiple_ortho;
 
     
 UNLOAD to ortho_with_multiple_acc_num.unl
-SELECT mrkr_abbrev, acc_num
-FROM tmp_multiple_ortho, db_link, marker
-WHERE mrkr_zdb_id = tmp_mrkr_zdb_id
-  AND tmp_dblink_zdb_id = dblink_zdb_id
+SELECT mrkr_abbrev, dblink_acc_num
+FROM tmp_multiple_ortho_gene, db_link, marker
+WHERE mrkr_zdb_id = multortho_mrkr_zdb_id
+  AND multortho_ortho_zdb_id = dblink_zdb_id
 ORDER by mrkr_abbrev;
 
 
 DELETE FROM zdb_active_data
 WHERE zactvd_zdb_id IN 
   (
-    SELECT tmp_dblink_zdb_id
-    FROM tmp_multiple_ortho
-    WHERE tmp_dblink_zdb_id NOT IN
+    SELECT multortho_ortho_zdb_id
+    FROM tmp_multiple_ortho_gene
+    WHERE multortho_ortho_zdb_id NOT IN
       ( 
         SELECT dblink_zdb_id from old_omim_and_ll
       )
@@ -402,20 +575,19 @@ WHERE zactvd_zdb_id IN
 
 
 !echo 'Attribute human LL links to source LocusLink curation pub.'
-INSERT INTO record_attribution
-           (recattrib_data_zdb_id, recattrib_source_zdb_id)
+INSERT INTO record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
     SELECT dblink_zdb_id, 'ZDB-PUB-020723-3'
     FROM db_link, ortho_link
     WHERE dblink_zdb_id = lnkortho_dblink_zdb_id;
-{
-!echo 'Attribute OMIM links to source LocusLink curation pub.'
-INSERT INTO record_attribution
-        (recattrib_data_zdb_id, recattrib_source_zdb_id)
-    SELECT dblink_zdb_id, 'ZDB-PUB-020723-3'
-    FROM db_link
-    WHERE db_name = "OMIM"
-      AND dblink_zdb_id NOT IN (SELECT dblink_zdb_id FROM old_omim_and_ll);
-}
+
+
+-----------------------------------
+--| DROP ORTHOLOGUE TEMP TABLES |--
+-----------------------------------
+
+DROP TABLE AUTOMATED_DBLINK;
+DROP TABLE ORTHO_LINK;
+DROP TABLE TMP_MULTIPLE_ORTHO_GENE;
 
 
 -- ======================= --
@@ -427,11 +599,12 @@ UPDATE STATISTICS HIGH FOR TABLE tmp_db_link;
 UPDATE STATISTICS HIGH FOR TABLE db_link;
 
 
-    SELECT linked_recid, db_name, acc_num
-    FROM db_link, tmp_db_link
-    WHERE linked_recid = tmp_linked_recid
-      AND db_name = tmp_db_name
-      AND acc_num = tmp_acc_num
+    SELECT dblink_linked_recid, fdbcont_fdb_db_name, dblink_acc_num
+    FROM db_link, tmp_db_link, foreign_db_contains
+    WHERE dblink_linked_recid = tmp_linked_recid
+      AND dblink_fdbcont_zdb_id = fdbcont_zdb_id
+      AND fdbcont_fdb_db_name = tmp_db_name
+      AND dblink_acc_num = tmp_acc_num
     into temp tmp_redundant_db_link;
     
 
@@ -440,18 +613,19 @@ UPDATE STATISTICS HIGH FOR TABLE db_link;
       (
         SELECT *
         FROM tmp_redundant_db_link
-        WHERE db_name = tmp_db_name
-          AND acc_num = tmp_acc_num
-          AND linked_recid = tmp_linked_recid
+        WHERE fdbcont_fdb_db_name = tmp_db_name
+          AND dblink_acc_num = tmp_acc_num
+          AND dblink_linked_recid = tmp_linked_recid
       );
 
 
---Remove links that would be assigned to a gene and currently have an encodes relationship
+--Remove links that would be assigned to a gene and currently have a 'Contained In' relationship
 --with a segment.
+--Contained In MREL types 2004-02: [gene encodes small segment, gene contains small segment, gene hybridized by small segment]
 
     SELECT *
     FROM db_link
-    WHERE linked_recid not like "ZDB-GENE-%"
+    WHERE dblink_linked_recid not like "ZDB-GENE-%"
     into temp tmp_est_db_link;
     
     DELETE FROM tmp_db_link
@@ -459,27 +633,48 @@ UPDATE STATISTICS HIGH FOR TABLE db_link;
       and exists
       (
         SELECT *
-        FROM tmp_est_db_link, marker_relationship
-        WHERE db_name = tmp_db_name
-          and acc_num = tmp_acc_num
-          and linked_recid = mrel_mrkr_2_zdb_id
+        FROM tmp_est_db_link, marker_relationship, foreign_db_contains
+        WHERE dblink_fdbcont_zdb_id = fdbcont_zdb_id
+          and fdbcont_fdb_db_name = tmp_db_name
+          and dblink_acc_num = tmp_acc_num
+          and dblink_linked_recid = mrel_mrkr_2_zdb_id
           and tmp_linked_recid = mrel_mrkr_1_zdb_id
-          and mrel_type = 'gene encodes small segment'
+          and mrel_type IN ('gene encodes small segment',
+                            'gene contains small segment',
+                            'gene hybridized by small segment')
       );
-    
+
+--Remove links that would be assigned to a gene and currently have a 'Containes' relationship
+--with a marker. [BAC,PAC]
+
+    DELETE FROM tmp_db_link
+    WHERE tmp_linked_recid like "ZDB-GENE-%"
+      and exists
+      (
+        SELECT *
+        FROM tmp_est_db_link, marker_relationship, foreign_db_contains
+        WHERE dblink_fdbcont_zdb_id = fdbcont_zdb_id
+          and fdbcont_fdb_db_name = tmp_db_name
+          and dblink_acc_num = tmp_acc_num
+          and dblink_linked_recid = mrel_mrkr_1_zdb_id
+          and tmp_linked_recid = mrel_mrkr_2_zdb_id
+      );
 
 --These records are not linked through marker relationship. However, they have the same
 --accession record. They will be unloaded for curatorial investigation.
 
-    UNLOAD to dblink_gene_marker_non_encodes_pairs.txt
-    SELECT tmp_linked_recid, linked_recid, tmp_acc_num, tmp_db_name
-    FROM tmp_est_db_link, tmp_db_link, marker_relationship
+    UNLOAD to dblink_gene_marker_non_encodes_pairs.unl
+    SELECT tmp_linked_recid, dblink_linked_recid, tmp_acc_num, tmp_db_name
+    FROM tmp_est_db_link, tmp_db_link, marker_relationship, foreign_db_contains
     WHERE tmp_linked_recid like "ZDB-GENE-%"
-      and db_name = tmp_db_name
-      and acc_num = tmp_acc_num
-      and linked_recid = mrel_mrkr_2_zdb_id
+      and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+      and fdbcont_fdb_db_name = tmp_db_name
+      and dblink_acc_num = tmp_acc_num
+      and dblink_linked_recid = mrel_mrkr_2_zdb_id
       and tmp_linked_recid = mrel_mrkr_1_zdb_id
-      and mrel_type != 'gene encodes small segment';
+      and mrel_type NOT IN ('gene encodes small segment',
+                            'gene contains small segment',
+                            'gene hybridized by small segment');
      
     
 
@@ -491,27 +686,30 @@ UPDATE STATISTICS HIGH FOR TABLE db_link;
 create temp table tmp_multiple_refseq
   (
     multref_linked_recid varchar(50),
+    multref_acc_num varchar(20),  
     multref_count integer  
   )with no log;
 
 INSERT INTO tmp_multiple_refseq  
-SELECT tmp_linked_recid, count(tmp_linked_recid)
+SELECT tmp_linked_recid, tmp_acc_num, count(tmp_linked_recid)
 FROM tmp_db_link
 WHERE tmp_db_name = "RefSeq"
-GROUP BY tmp_linked_recid
+  AND tmp_acc_num[1,2] = "NM"
+GROUP BY tmp_linked_recid, tmp_acc_num
 HAVING count(tmp_linked_recid) > 1;
 
 
 UNLOAD to gene_with_multiple_linked_recid.unl
-SELECT mrkr_abbrev, tmp_acc_num
-FROM tmp_multiple_refseq, tmp_db_link, marker
-WHERE multref_linked_recid = tmp_linked_recid
-  AND tmp_db_name = 'RefSeq'
-  AND tmp_linked_recid = mrkr_zdb_id;
+SELECT mrkr_abbrev, multref_acc_num
+FROM tmp_multiple_refseq, marker
+WHERE multref_linked_recid = mrkr_zdb_id;
 
 DELETE FROM tmp_db_link
-WHERE tmp_linked_recid in 
-    (SELECT multref_linked_recid FROM tmp_multiple_refseq)
+WHERE exists 
+    (SELECT * 
+     FROM tmp_multiple_refseq 
+     WHERE multref_linked_recid = tmp_linked_recid 
+       AND multref_acc_num = tmp_acc_num)
   AND tmp_db_name = 'RefSeq';
 
 
@@ -522,44 +720,142 @@ WHERE tmp_linked_recid in
 
   UPDATE tmp_db_link
   SET tmp_dblink_zdb_id = get_id('DBLINK');
+
+-- RefSeq Lengths
+UPDATE db_link
+SET dblink_length = (SELECT acclen_length FROM acc_length WHERE dblink_acc_num = acclen_acc)
+WHERE dblink_acc_num IN (SELECT acclen_acc FROM acc_length);
+
+
+-- Genbank Lengths
+UPDATE db_link
+SET dblink_length = 
+  (
+    SELECT accbk_length 
+    FROM accession_bank 
+    WHERE dblink_acc_num = accbk_acc_num 
+      AND accbk_db_name = 'Genbank'
+  )
+WHERE dblink_acc_num IN 
+  (
+    SELECT tmp_acc_num 
+    FROM tmp_db_link
+    WHERE tmp_db_name = 'Genbank'
+  );
   
 -- ------------------  add new links  ---------------------- --
 !echo 'add active data'
 INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link WHERE tmp_db_name = "RefSeq";
 INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link WHERE tmp_db_name = "LocusLink";
 INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link WHERE tmp_db_name = "Genbank";
+INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link WHERE tmp_db_name = "GenPept";
  
+
 !echo 'insert new db_links'
 INSERT INTO db_link
-        (linked_recid,
-        db_name,
-        acc_num,
-        info,
+        (dblink_linked_recid,
+        dblink_fdbcont_zdb_id,
+        dblink_acc_num,
+        dblink_info,
         dblink_zdb_id,
-        dblink_acc_num_display) SELECT *, tmp_acc_num FROM tmp_db_link WHERE tmp_db_name = "RefSeq";
+        dblink_acc_num_display,
+        dblink_length) 
+  SELECT tmp_linked_recid,
+        tmp_fdbcont_zdb_id,
+        tmp_acc_num,
+        tmp_info,
+        tmp_dblink_zdb_id,
+        tmp_acc_num,
+        tmp_length
+  FROM tmp_db_link
+  WHERE tmp_db_name = "RefSeq";
+
+
 INSERT INTO db_link
-        (linked_recid,
-        db_name,
-        acc_num,
-        info,
+        (dblink_linked_recid,
+        dblink_fdbcont_zdb_id,
+        dblink_acc_num,
+        dblink_info,
         dblink_zdb_id,
-        dblink_acc_num_display) SELECT *, tmp_acc_num FROM tmp_db_link WHERE tmp_db_name = "LocusLink";
+        dblink_acc_num_display,
+        dblink_length) 
+  SELECT tmp_linked_recid,
+        fdbcont_zdb_id,
+        tmp_acc_num,
+        tmp_info,
+        tmp_dblink_zdb_id,
+        tmp_acc_num,
+        tmp_length
+  FROM tmp_db_link, foreign_db_contains 
+  WHERE tmp_db_name = "LocusLink"
+    AND tmp_db_name = fdbcont_fdb_db_name
+    AND fdbcont_fdbdt_super_type = 'summary page'
+    AND fdbcont_organism_common_name = "Zebrafish";
+
 INSERT INTO db_link
-        (linked_recid,
-        db_name,
-        acc_num,
-        info,
+        (dblink_linked_recid,
+        dblink_fdbcont_zdb_id,
+        dblink_acc_num,
+        dblink_info,
         dblink_zdb_id,
-        dblink_acc_num_display) SELECT *, tmp_acc_num FROM tmp_db_link WHERE tmp_db_name = "Genbank";
+        dblink_acc_num_display,
+        dblink_length) 
+  SELECT tmp_linked_recid,
+        tmp_fdbcont_zdb_id,
+        UPPER(tmp_acc_num),
+        tmp_info,
+        tmp_dblink_zdb_id,
+        UPPER(tmp_acc_num),
+        tmp_length
+  FROM tmp_db_link
+  WHERE tmp_db_name = "Genbank";
+    
+INSERT INTO db_link
+        (dblink_linked_recid,
+        dblink_fdbcont_zdb_id,
+        dblink_acc_num,
+        dblink_info,
+        dblink_zdb_id,
+        dblink_acc_num_display,
+        dblink_length) 
+  SELECT tmp_linked_recid,
+        tmp_fdbcont_zdb_id,
+        UPPER(tmp_acc_num),
+        tmp_info,
+        tmp_dblink_zdb_id,
+        UPPER(tmp_acc_num),
+        tmp_length
+  FROM tmp_db_link
+  WHERE tmp_db_name = "GenPept";
 
 
 !echo 'Attribute ZFIN_LL links to an artificial pub record.'
-INSERT INTO record_attribution
-        (recattrib_data_zdb_id, recattrib_source_zdb_id)
+INSERT INTO record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
     SELECT dblink_zdb_id, 'ZDB-PUB-020723-3'
     FROM db_link, tmp_db_link
     WHERE dblink_zdb_id = tmp_dblink_zdb_id
 ;
+
+
+      
+----------------------------------------------
+--| DELETE OVERLAPPING GENPEP/REFSEQ LINKS |--
+----------------------------------------------
+
+SELECT dblink_zdb_id 
+FROM db_link AS genpept, foreign_db_contains AS fdbcont1
+WHERE genpept.dblink_fdbcont_zdb_id = fdbcont1.fdbcont_zdb_id
+  AND fdbcont1.fdbcont_fdb_db_name = "GenPept"
+  AND exists (
+      SELECT *
+      FROM db_link AS refseq, foreign_db_contains AS fdbcont2
+      WHERE refseq.dblink_fdbcont_zdb_id = fdbcont2.fdbcont_zdb_id
+        AND fdbcont2.fdbcont_fdb_db_name = "RefSeq"
+        AND refseq.dblink_acc_num = genpept.dblink_acc_num
+      )
+INTO TEMP overlapping_acc_num;
+        
+DELETE FROM zdb_active_data WHERE zactvd_zdb_id IN (SELECT * FROM overlapping_acc_num);
 
 
 -- ------------------  UNI_GENE  ------------------- --
@@ -573,48 +869,65 @@ INSERT INTO tmp_db_link
     'UniGene',
     uni_cluster_id,
     'Uncurrated: RefSeq load ' || TODAY,
-    get_id('DBLINK')
-  FROM uni_gene, ll_zdb, zdb_active_data
+    'x',
+    fdbcont_zdb_id,
+    ''
+  FROM uni_gene, ll_zdb, marker, foreign_db_contains
   WHERE uni_ll_id = llzdb_ll_id
-    AND llzdb_zdb_id = zactvd_zdb_id
+    AND llzdb_zdb_id = mrkr_zdb_id
+    AND fdbcont_fdb_db_name = 'UniGene'
+    AND fdbcont_fdbdt_data_type = 'Sequence Clusters'
 ;
 
 -- ------------------ add new records ------------------ --
 !echo 'get all UniGene db_links that remain'
   SELECT * 
-  FROM db_link 
-  WHERE db_name = "UniGene"
+  FROM db_link
+  WHERE dblink_fdbcont_zdb_id in 
+    (
+      SELECT fdbcont_zdb_id
+      FROM foreign_db_contains
+      WHERE fdbcont_fdb_db_name = "UniGene"
+    )
   INTO temp unigene_link
   with no log;
 
+--only keep new links
+DELETE FROM tmp_db_link
+WHERE tmp_acc_num IN (SELECT dblink_acc_num FROM unigene_link);
 
 !echo 'add active source AND active data'
-INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link
-       WHERE tmp_acc_num NOT IN (SELECT acc_num FROM unigene_link);
+UPDATE tmp_db_link
+SET tmp_dblink_zdb_id = get_id('DBLINK');
+
+INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link;
 
 
 !echo 'insert new db_links'
 INSERT INTO db_link
-        (linked_recid,
-        db_name,
-        acc_num,
-        info,
+        (dblink_linked_recid,
+        dblink_fdbcont_zdb_id,
+        dblink_acc_num,
+        dblink_info,
         dblink_zdb_id,
         dblink_acc_num_display)
-    SELECT *, tmp_acc_num
-    FROM tmp_db_link
-    WHERE tmp_acc_num NOT IN (SELECT acc_num FROM unigene_link);
+    SELECT tmp_linked_recid,
+        tmp_fdbcont_zdb_id,
+        tmp_acc_num,
+        tmp_info,
+        tmp_dblink_zdb_id,
+        tmp_acc_num
+    FROM tmp_db_link;
 
 
 !echo 'Attribute RefSeq links to an artificial pub record.'
-INSERT INTO record_attribution
-	(recattrib_data_zdb_id, recattrib_source_zdb_id)
-    SELECT a.dblink_zdb_id, 'ZDB-PUB-020723-3'
-    FROM db_link a
-    WHERE a.db_name = "UniGene"
-      AND a.acc_num NOT IN (SELECT acc_num FROM unigene_link)
+INSERT INTO record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
+    SELECT tmp_dblink_zdb_id, 'ZDB-PUB-020723-3'
+    FROM tmp_db_link
 ;
 
 
+
+--rollback work;
 commit work;
 
