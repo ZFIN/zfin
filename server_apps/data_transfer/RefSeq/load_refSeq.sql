@@ -171,6 +171,8 @@ CREATE INDEX tmp_linked_recid_index ON tmp_db_link
     (tmp_linked_recid) using btree;
 CREATE INDEX tmp_acc_num_index ON tmp_db_link
     (tmp_acc_num) using btree;
+CREATE INDEX tmp_db_name_index ON tmp_db_link
+    (tmp_db_name) using btree;
 
 
 
@@ -290,19 +292,145 @@ DELETE FROM zdb_active_data WHERE zactvd_zdb_id in (SELECT link_id FROM automate
     );
 
 
+      
+-----------------------------------------------
+--| INSERT LOCUSLINK ORTHOLOGUE ACTIVE DATA |--
+-----------------------------------------------
+
+UPDATE STATISTICS HIGH FOR table ortho_link;
+
+--add ZDB ids
+  UPDATE ortho_link
+  SET lnkortho_dblink_zdb_id = get_id('DBLINK');
+  
+!echo 'add LocusLink Orthologue active data'
+  INSERT INTO zdb_active_data 
+  SELECT lnkortho_dblink_zdb_id 
+  FROM ortho_link
+  WHERE lnkortho_db_name = 'LocusLink'
+    AND lnkortho_acc_num NOT IN 
+        (SELECT acc_num FROM old_omim_and_ll WHERE db_name = 'LocusLink');
+
+!echo 'add OMIM active data'
+  INSERT INTO zdb_active_data 
+  SELECT lnkortho_dblink_zdb_id 
+  FROM ortho_link
+  WHERE lnkortho_db_name = 'OMIM'
+    AND lnkortho_acc_num NOT IN 
+        (SELECT acc_num FROM old_omim_and_ll WHERE db_name = 'OMIM');
+  
+!echo 'insert LocusLink Orthologue db_links.'
+INSERT INTO db_link
+        (linked_recid,
+        db_name,
+        acc_num,
+        info,
+        dblink_zdb_id,
+        dblink_acc_num_display)
+    SELECT distinct
+        lnkortho_linked_recid,
+        lnkortho_db_name,
+        lnkortho_acc_num,
+        'Uncurrated: RefSeq load ' || TODAY,
+        lnkortho_dblink_zdb_id,
+        lnkortho_acc_num
+    FROM ortho_link;
+
+
+-- --------------  DELETE duplicate ORTHO  ----------------- --
+-- select the mrkr for LocusLink
+-- select the mrkr for OMIM
+-- select the conflict acc_num for each mrkr
+-- delete conflict acc_num that are from this load
+
+CREATE TEMP TABLE tmp_multiple_ortho_gene
+  (
+    multortho_mrkr_zdb_id varchar(50),
+    multortho_ortho_zdb_id varchar(50)
+  )
+  with no log;
+
+INSERT INTO tmp_multiple_ortho_gene
+SELECT mrkr_zdb_id, zdb_id
+FROM marker, orthologue 
+WHERE mrkr_zdb_id = c_gene_id 
+  AND 1 < 
+    (
+      SELECT COUNT(*) 
+      FROM db_link 
+      WHERE linked_recid = zdb_id 
+        AND db_name = "LocusLink"
+    );
+
+INSERT INTO tmp_multiple_ortho_gene
+SELECT mrkr_zdb_id, zdb_id
+FROM marker, orthologue 
+WHERE mrkr_zdb_id = c_gene_id 
+  AND 1 < 
+    (
+      SELECT COUNT(*) 
+      FROM db_link 
+      WHERE linked_recid = zdb_id 
+        AND db_name = "OMIM"
+    );
+
+SELECT multortho_mrkr_zdb_id as tmp_mrkr_zdb_id,  
+       dblink_zdb_id as tmp_dblink_zdb_id
+FROM tmp_multiple_ortho_gene, db_link
+WHERE multortho_ortho_zdb_id = linked_recid
+INTO temp tmp_multiple_ortho;
+
+    
+UNLOAD to ortho_with_multiple_acc_num.unl
+SELECT mrkr_abbrev, acc_num
+FROM tmp_multiple_ortho, db_link, marker
+WHERE mrkr_zdb_id = tmp_mrkr_zdb_id
+  AND tmp_dblink_zdb_id = dblink_zdb_id
+ORDER by mrkr_abbrev;
+
+
+DELETE FROM zdb_active_data
+WHERE zactvd_zdb_id IN 
+  (
+    SELECT tmp_dblink_zdb_id
+    FROM tmp_multiple_ortho
+    WHERE tmp_dblink_zdb_id NOT IN
+      ( 
+        SELECT dblink_zdb_id from old_omim_and_ll
+      )
+  );
+
+
+!echo 'Attribute human LL links to source LocusLink curation pub.'
+INSERT INTO record_attribution
+    SELECT dblink_zdb_id, 'ZDB-PUB-020723-3'
+    FROM db_link, ortho_link
+    WHERE dblink_zdb_id = lnkortho_dblink_zdb_id;
+{
+!echo 'Attribute OMIM links to source LocusLink curation pub.'
+INSERT INTO record_attribution
+    SELECT dblink_zdb_id, 'ZDB-PUB-020723-3'
+    FROM db_link
+    WHERE db_name = "OMIM"
+      AND dblink_zdb_id NOT IN (SELECT dblink_zdb_id FROM old_omim_and_ll);
+}
+
+
 -- ======================= --
 --  MULTIPLE REFSEQ LINKS  --
 -- ======================= --
 
 -- --------------  DELETE REDUNDANT DB_LINKS  ----------------- --
+UPDATE STATISTICS HIGH FOR TABLE tmp_db_link;
+
 DELETE FROM tmp_db_link
-WHERE EXISTS 
+WHERE 0 <  
   (
-    SELECT *
-    FROM db_link link
-    WHERE link.linked_recid = tmp_linked_recid
-      AND link.db_name = tmp_db_name
-      AND link.acc_num = tmp_acc_num
+    SELECT count(*)
+    FROM db_link
+    WHERE linked_recid = tmp_linked_recid
+      AND db_name = tmp_db_name
+      AND acc_num = tmp_acc_num
   );
 
 -- --------------  DELETE MULTIPLES REFSEQ  ----------------- --
@@ -429,132 +557,6 @@ INSERT INTO record_attribution
     WHERE a.db_name = "UniGene"
       AND a.acc_num NOT IN (SELECT acc_num FROM unigene_link)
 ;
-
-      
------------------------------------------------
---| INSERT LOCUSLINK ORTHOLOGUE ACTIVE DATA |--
------------------------------------------------
-
-UPDATE STATISTICS HIGH FOR table ortho_link;
-
---add ZDB ids
-  UPDATE ortho_link
-  SET lnkortho_dblink_zdb_id = get_id('DBLINK');
-  
-!echo 'add LocusLink Orthologue active data'
-  INSERT INTO zdb_active_data 
-  SELECT lnkortho_dblink_zdb_id 
-  FROM ortho_link
-  WHERE lnkortho_db_name = 'LocusLink'
-    AND lnkortho_acc_num NOT IN 
-        (SELECT acc_num FROM old_omim_and_ll WHERE db_name = 'LocusLink');
-
-!echo 'add OMIM active data'
-  INSERT INTO zdb_active_data 
-  SELECT lnkortho_dblink_zdb_id 
-  FROM ortho_link
-  WHERE lnkortho_db_name = 'OMIM'
-    AND lnkortho_acc_num NOT IN 
-        (SELECT acc_num FROM old_omim_and_ll WHERE db_name = 'OMIM');
-  
-!echo 'insert LocusLink Orthologue db_links.'
-INSERT INTO db_link
-        (linked_recid,
-        db_name,
-        acc_num,
-        info,
-        dblink_zdb_id,
-        dblink_acc_num_display)
-    SELECT distinct
-        lnkortho_linked_recid,
-        lnkortho_db_name,
-        lnkortho_acc_num,
-        'Uncurrated: RefSeq load ' || TODAY,
-        lnkortho_dblink_zdb_id,
-        lnkortho_acc_num
-    FROM ortho_link;
-
-
--- --------------  DELETE duplicate ORTHO  ----------------- --
--- select the mrkr for LocusLink
--- select the mrkr for OMIM
--- select the conflict acc_num for each mrkr
--- delete conflict acc_num that are from this load
-
-CREATE TEMP TABLE tmp_multiple_ortho_gene
-  (
-    multortho_mrkr_zdb_id varchar(50),
-    multortho_ortho_zdb_id varchar(50)
-  )
-  with no log;
-
-INSERT INTO tmp_multiple_ortho_gene
-SELECT mrkr_zdb_id, zdb_id
-FROM marker, orthologue 
-WHERE mrkr_zdb_id = c_gene_id 
-  AND 1 < 
-    (
-      SELECT COUNT(*) 
-      FROM db_link 
-      WHERE linked_recid = zdb_id 
-        AND db_name = "LocusLink"
-    );
-
-INSERT INTO tmp_multiple_ortho_gene
-SELECT mrkr_zdb_id, zdb_id
-FROM marker, orthologue 
-WHERE mrkr_zdb_id = c_gene_id 
-  AND 1 < 
-    (
-      SELECT COUNT(*) 
-      FROM db_link 
-      WHERE linked_recid = zdb_id 
-        AND db_name = "OMIM"
-    );
-
-SELECT multortho_mrkr_zdb_id as tmp_mrkr_zdb_id,  
-       dblink_zdb_id as tmp_dblink_zdb_id
-FROM tmp_multiple_ortho_gene, db_link
-WHERE multortho_ortho_zdb_id = linked_recid
-INTO temp tmp_multiple_ortho;
-
-    
-UNLOAD to ortho_with_multiple_acc_num.unl
-SELECT mrkr_abbrev, acc_num
-FROM tmp_multiple_ortho, db_link, marker
-WHERE mrkr_zdb_id = tmp_mrkr_zdb_id
-  AND tmp_dblink_zdb_id = dblink_zdb_id
-ORDER by mrkr_abbrev;
-
-
-DELETE FROM zdb_active_data
-WHERE zactvd_zdb_id IN 
-  (
-    SELECT tmp_dblink_zdb_id
-    FROM tmp_multiple_ortho
-    WHERE tmp_dblink_zdb_id NOT IN
-      ( 
-        SELECT dblink_zdb_id from old_omim_and_ll
-      )
-  );
-
-
-!echo 'Attribute human LL links to source LocusLink curation pub.'
-INSERT INTO record_attribution
-    SELECT dblink_zdb_id, 'ZDB-PUB-020723-3'
-    FROM db_link
-    WHERE db_name = "LocusLink"
-      AND dblink_zdb_id IN (SELECT lnkortho_dblink_zdb_id FROM ortho_link)
-      AND dblink_zdb_id NOT IN (SELECT dblink_zdb_id FROM old_omim_and_ll);
-
-!echo 'Attribute OMIM links to source LocusLink curation pub.'
-INSERT INTO record_attribution
-    SELECT dblink_zdb_id, 'ZDB-PUB-020723-3'
-    FROM db_link
-    WHERE db_name = "OMIM"
-      AND dblink_zdb_id NOT IN (SELECT dblink_zdb_id FROM old_omim_and_ll);
-
-
 
 
 commit work;
