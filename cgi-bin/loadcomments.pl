@@ -230,7 +230,6 @@ for($i=0; $i<=scalar(@addedKeywords); $i++)
   }
 }
 
-$dbh->disconnect;
 
 if($ARGV[2] == 2 || $ARGV[2] == 3){
 #compare xpatstg_comments. remove NewComments that match OldComments
@@ -281,6 +280,7 @@ for($i=0; $i <= scalar(@commentsOld); $i++)
   }
 }
 
+$dbh->disconnect;
 exit;
 
 
