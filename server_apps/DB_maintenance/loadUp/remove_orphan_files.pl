@@ -248,9 +248,22 @@ foreach $remorph_orphan_image_line (@remorph_orphanImageLines) {
 
     # now $remorph_orphan_image_line is like a zdb_id, so we can move all
     # files beginning with that orphan_zdb_id to the bkup directory
+    $remorph_thumb_ext = "_thumb.";
+    $remorph_annot_ext = "_annot.";
+    
 
-    system ("/bin/mv <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/$remorph_orphan_image_line* <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/bkup/" )
+    system ("/bin/mv <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/$remorph_orphan_image_line.* <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/bkup/" )
 and die "can not move image file";
+
+    $remorph_move_thumb = $remorph_orphan_image_line.$remorph_thumb_ext;
+
+    system ("/bin/mv <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/$remorph_move_thumb* <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/bkup/" )
+and die "can not move thumb image file";
+
+    $remorph_move_annot = $remorph_orphan_image_line.$remorph_annot_ext;
+
+    system ("/bin/mv <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/$remorph_move_annot* <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/bkup/" )
+and die "can not move annot image file";
 
     # print out the moved files to a report 
 
@@ -272,7 +285,7 @@ foreach $remorph_orphan_pdf_line (@remorph_pdfLines) {
     $remorph_orphan_pdf_line =~ s/$remorph_new_line//g ;
     $remorph_orphan_pdf_line =~ s/$remorph_pdf_extension//i;
 
-    system ("/bin/mv <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->/$remorph_orphan_pdf_line* <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->/bkup/") and die "can not mv pdfs";    
+    system ("/bin/mv <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->/$remorph_orphan_pdf_line.* <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->/bkup/") and die "can not mv pdfs";    
 
      print MOVED_PDF_FILES "orphan_pdf_line\n";
 }
