@@ -1,8 +1,9 @@
 #!/private/bin/perl -w
 #-----------------------------------------------------------------------
 # 
-# This script is meant to be run from cron.  As it is such a resource hog,
-# it is not meant to be run during the day from the shell prompt.
+# This script is meant to be run from cron.  As it is such a resource hog
+# when it is doing indexing, it is not meant to be run with indexing 
+# during the day from the shell prompt.
 #
 # Every time this script is run it does these 2 steps:
 #
@@ -13,7 +14,7 @@
 #    web site in sync with the database backing it.
 #    Approx run time: < 3 minutes
 #
-# If the -i option is specified then it will also
+# If the -i option is specified then it also
 #
 # 3. Runs the uniquery indexer.  It runs the indexer with how ever many
 #    threads are specified in the index script.  It will consume that many
@@ -188,12 +189,12 @@ print(LOG "Log file created by $PROGRAM_NAME\n");
 
 $dbName = "almdb";
 $zfinWwwDir = "/research/zusers/almost/ZFIN_WWW";
-$makeEnvFile = "/research/zcentral/Commons/env/almost.env";
+$makeEnvFile = "/private/ZfinLinks/Commons/env/almost.env";
 
 # Use your own values while testing/modifying this script.
 #$dbName      = "clemdb";
 #$zfinWwwDir  = "/research/zusers/clements/Zfin/ZFIN_WWW";
-#$makeEnvFile = "/research/zcentral/Commons/env/albino.env";
+#$makeEnvFile = "/private/ZfinLinks/Commons/env/albino.env";
 
 
 #set environment variables
@@ -220,7 +221,7 @@ print(LOG "Using dump $dumpDir/$latestDump\n");
 
 # load it
 close(LOG) or abort("Cannot close log file $logFile.\n");
-$status = system("/research/zcentral/Commons/bin/loaddb.pl $dbName $dumpDir/$latestDump >> $logFile 2>&1");
+$status = system("/private/ZfinLinks/Commons/bin/loaddb.pl $dbName $dumpDir/$latestDump >> $logFile 2>&1");
 if ($status) {
     abort("loadddb.pl $dbName $dumpDir/$latestDump failed.\n");
 }
