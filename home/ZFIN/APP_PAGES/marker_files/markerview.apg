@@ -168,14 +168,12 @@ $(IF,$(EC,$marker_type,GENE),"("$abbrev")")</B> </FONT>
 </CENTER>
 <p>
 <p>
-
-
  
 <TD colspan=2>
 <?MIVAR COND="$(XST,$UPDATE)">
 <INPUT TYPE=button value=Update onClick="doit('alt_names','text','Aliases')"> 
 <?/MIVAR> 
-<b>Aliases and previous names:</b> 
+<b>Previous names:</b> 
 <?MIVAR>$(IF,$(NC,$alt_names,NULL),$alt_names,None)<?/MIVAR>
 <p>
 <?MIVAR COND="$(XST,$UPDATE)">
