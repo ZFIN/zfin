@@ -140,8 +140,9 @@ from anatomy_item, anatomy_hierarchy
 where anatitem_type_code = anathier_code
 ;
 
-unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/vega_xpat_anatomy_contains.unl'
-select * from anatomy_contains;
+unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/vega_xpat_anatomy_relationship.unl'
+select anatrel_anatitem_1_zdb_id, anatrel_anatitem_2_zdb_id 
+  from anatomy_relationship;
 
 --
 unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/vega_xpat_probe_gene.unl'
