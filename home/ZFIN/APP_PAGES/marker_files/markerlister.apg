@@ -372,7 +372,6 @@ Startframes.apg will pass this variables on to the select form.  -->
 		  <?/MIVAR>
 		  <?MIBLOCK COND="$(NC,$map_comments,"")">
 		    <?MIVAR>
-		      $(IF,$(NC,$map_lg,0),LG <b>$map_lg</b>)
 		      <A HREF=javascript:show_detail('$target_id','$OID','$marker_abbrev','""');>Map Details</A>
 		    <?/MIVAR>
 		  <?MIELSE>
@@ -449,7 +448,7 @@ Startframes.apg will pass this variables on to the select form.  -->
 	<?MIVAR name=UserInput COND=$(XST,$refcross)>$UserInput&refcross=$refcross<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$marker_type)>$UserInput&marker_type=$marker_type<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$plinks)>$UserInput&plinks=$plinks<?/MIVAR>
-	<?MIVAR name=UserInput COND=$(XST,$name)>$UserInput&name=$name<?/MIVAR>
+	<?MIVAR name=UserInput COND=$(XST,$name)>$UserInput&name=$(URLENCODE,$name)<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$compare)>$UserInput&compare=$compare<?/MIVAR>
 
 	<!--- Return to the previous set of Rows --->
