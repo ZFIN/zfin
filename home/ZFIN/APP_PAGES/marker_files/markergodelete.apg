@@ -1,0 +1,41 @@
+<!-- FILE: markergodelete.apg
+
+Deletes a GO annotation
+
+EXPECTED VARS:
+OID -- the zdb_id of the rec to update
+gene_name -- the new value to stick in the column
+go_term -- the new value of locus.
+pub_id -- the new value of mutant
+go_notes -- the previous value of pub
+evidence_code -- the new value of probe
+inf_from -- the new value for stage
+is_not
+-->
+
+<!-- First check security. Main purpose is just to get submitter id and name -->
+
+  <?MISQL SQL="
+    select WebExplode(object,'permission=root') 
+      from webPages 
+      where ID='aa-secure_navigation.apg';">
+    $1
+  <?/MISQL>
+<?MIVAR>$geneid<?/MIVAR>
+<?MIVAR COND="$(NXST,$goev)" NAME=$goev><?/MIVAR>
+<?MIVAR COND="$(NXST,$markergoid)" NAME=$markergoid><?/MIVAR>
+<?MIBLOCK COND="$(AND,$(XST,$AUTHORIZED),$(NC,$AUTHORIZED,false))">
+
+<?MISQL SQL="select mrkrgoev_zdb_id,mrkrgoev_mrkrgo_zdb_id from marker_go_term_evidence where mrkrgoev_mrkrgo_zdb_id='$markergoid' and mrkrgoev_evidence_code='$goev'">
+   <?MIVAR NAME=$goevid>$1<?/MIVAR>
+   <?MIVAR NAME=$mrkrgoid>$2<?/MIVAR>
+   <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id='$goevid'"><?/MISQL>
+   <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id='$mrkrgoid'"><?/MISQL>
+<?/MISQL>   
+
+<?/MIBLOCK> 
+<?MIVAR>
+<SCRIPT>
+  location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoentry.apg&OID=$geneid")
+  </SCRIPT>
+<?/MIVAR>
