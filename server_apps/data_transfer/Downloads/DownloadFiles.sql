@@ -324,15 +324,12 @@ drop table tmp_veg;
 
 unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/stage_ontology.txt'
  DELIMITER "	" 
-select distinct stg_zdb_id,
+  select stg_zdb_id,
            stg_name,
            stg_hours_start,
            stg_hours_end
-from stage
-where stg_zdb_id not in (
-          select stgcon_containeR_zdb_id from stage_contains
-)  
-order by 3 ASC
+  from stage
+  order by stg_hours_start ASC
 ;
 
 unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/anatomy_item.txt'
