@@ -129,7 +129,7 @@ $update_image_redirect = "aa-do-imageupdate.apg";
 $xpcur_image_OID_param = "&xpcur_image_OID=";
 $xpcur_fig_param = "&xpcur_image_fig=";
 $xpcur_fig = "";
-$xpcur_image_label_param="&xpcur_image_label";
+$xpcur_image_label_param="&xpcur_image_label=";
 $xpcur_image_label="";
 
 # optional redirct parameters, have to 'strip' newline characters
@@ -487,7 +487,7 @@ sub makeFiles () {# uploads the files, builds a thumbnail, gets the height
 		
         # redirect to the correct apg page based on the passed-in redirect_url.
 
-	if ( (substr($redirect_url,0,-19)) eq $xpat_redirect) { # if the redirect_OID parameter is not null
+	if ( (substr($redirect_url,-19)) eq $xpat_redirect) { # if the redirect_OID parameter is not null
 
 	    $redirect_OID = $query->param("redirect_OID");
 	    $xpcur_fig = $query->param("xpcur_image_fig");
