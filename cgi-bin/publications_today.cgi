@@ -38,10 +38,12 @@ chdir "<!--|ROOT_PATH|-->/cgi-bin/";
 
 openReport();
 
-    $date = d8();
+    $eight_digit_date = d8(8);
+    $variable_digit_date = d8(7);
+
     $query = "select title, zdb_id, year(pub_date) as pyear, authors, source
               from publication
-              where get_date_from_id(zdb_id,'YYYYMMDD') = '$date'
+              where get_date_from_id(zdb_id,'YYYYMMDD') = '$eight_digit_date'
                 and status = 'active'
               UNION
               select title, zdb_id, year(pub_date) as pyear, authors, source
@@ -49,6 +51,7 @@ openReport();
               where zdb_id = rec_id
                 and field_name = 'status'
                 and new_value = 'active'
+                and ''||year(when)||month(when)||day(when) = '$variable_digit_date'
               order by 2";
 
     open (REPORT, ">>report") or die "can not open report";
@@ -92,8 +95,13 @@ sub cleanTail () {
 
 
 sub d8 {
-  # Get the Date for Entry
-  $date = `date '+%Y%m%d'`;
+  # input variable 
+  # return an 8 digit date if $_[0] == 8
+  if ($_[0] == 8)
+    {$date = `date '+%Y%m%d'`;}
+  else
+    {$date = `date '+%Y%m%e'`;}
+  
   chop($date);
   return $date;
 }
