@@ -1,9 +1,9 @@
 #!/bin/sh
 cd <!--|ROOT_PATH|-->/home/client_apps/Map/
 
-#setenv DISPLAY="<!--|DOMAIN_NAME|-->:1"
+#setenv DISPLAY="localhost:1"
 #unset DISPLAY
-DISPLAY=<!--|DOMAIN_NAME|-->:1.0
+DISPLAY=localhost:1.0
 export DISPLAY
 java \
     -mx200m \
