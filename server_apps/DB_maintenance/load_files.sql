@@ -29,8 +29,8 @@ create unique index tmp_filename_pdf_primary_key_index
   using btree in idxdbs1 ;
 
 --load the files
-load from fl_image_modified insert into tmp_image_file_list ;
-load from fl_pdf_modified insert into tmp_pdf_file_list ;
+load from /tmp/fl_image_modified insert into tmp_image_file_list ;
+load from /tmp/fl_pdf_modified insert into tmp_pdf_file_list ;
 
 
 --create temp tables to store the mismatches (one for pdfs, one for
