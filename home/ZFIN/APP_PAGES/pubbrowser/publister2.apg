@@ -99,6 +99,7 @@ $constraint $previous (a.zdb_id=b.pub_id and b.curation_action='$cur_status')<?/
 <?MIVAR COND="$(EC,$yr_cmpr,<)" NAME=$yr_cmpr>less<?/MIVAR>
 <?MIVAR COND="$(XST,$cur_status)" NAME=$cur_status DELIMIT=" " REPLACE="|">$cur_status<?/MIVAR>
 <?MIVAR COND="$(XST,$title)" NAME=$title DELIMIT=" " REPLACE="|">$title<?/MIVAR>
+<?MIVAR COND="$(XST,$title)" NAME=$title DELIMIT=":" REPLACE="38a">$title<?/MIVAR>
 <?MIVAR COND="$(XST,$authors)" NAME=$authors DELIMIT=" " REPLACE="|">$authors<?/MIVAR>
 
 <form method=post target=content action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">

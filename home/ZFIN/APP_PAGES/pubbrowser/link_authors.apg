@@ -69,6 +69,7 @@ Variables expected:  OID  -- the OID of a publication to link
   <?MIVAR COND="$(XST,$search_cur_status)" NAME=$search_cur_status DELIMIT=" " REPLACE="|">$search_cur_status<?/MIVAR>
   <?MIVAR COND="$(XST,$search_title)" NAME=$search_title DELIMIT=" " REPLACE="|">$search_title<?/MIVAR>
   <?MIVAR COND="$(XST,$search_authors)" NAME=$search_authors DELIMIT=" " REPLACE="|">$search_authors<?/MIVAR>
+  <?MIVAR COND="$(XST,$search_authors)" NAME=$search_authors DELIMIT=":" REPLACE="38a">$search_authors<?/MIVAR>
 
 <!-- Suppose you want to add one -->
 <?MIBLOCK COND="$(AND,$(NXST,$curation),$(NXST,$new_action),$(EC,$AUTHORIZED,root))">

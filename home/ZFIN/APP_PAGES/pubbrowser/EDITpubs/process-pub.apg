@@ -66,6 +66,7 @@ pub in question with any new values passed in.
   <?MIBLOCK COND="$(XST,$new)">
     <?MIVAR COND="$(XST,$authors)" NAME=$authors DELIMIT=" " REPLACE="|">$authors<?/MIVAR>
     <?MIVAR COND="$(XST,$title)" NAME=$title DELIMIT=" " REPLACE="|">$title<?/MIVAR>
+    <?MIVAR COND="$(XST,$title)" NAME=$title DELIMIT=":" REPLACE="38a">$title<?/MIVAR>
     <?MIVAR NAME=$returnVariables COND="$(XST,$authors)">$returnVariables&authors=$authors<?/MIVAR>
     <?MIVAR NAME=$returnVariables COND="$(XST,$title)">$returnVariables&title=$title<?/MIVAR>
     <?MIVAR NAME=$returnVariables COND="$(XST,$anon1text)">$returnVariables&anon1text=$anon1text<?/MIVAR>
@@ -81,6 +82,7 @@ pub in question with any new values passed in.
   <?MIELSE>
     <?MIVAR COND="$(XST,$search_authors)" NAME=$search_authors DELIMIT=" " REPLACE="|">$search_authors<?/MIVAR>
     <?MIVAR COND="$(XST,$search_title)" NAME=$search_title DELIMIT=" " REPLACE="|">$search_title<?/MIVAR>
+    <?MIVAR COND="$(XST,$search_title)" NAME=$search_title DELIMIT=":" REPLACE="38a">$search_title<?/MIVAR>
     <?MIVAR NAME=$returnVariables COND="$(XST,$search_anon1text)">$returnVariables&anon1text=$search_anon1text<?/MIVAR>
     <?MIVAR NAME=$returnVariables COND="$(XST,$search_authtype)">$returnVariables&authtype=$search_authtype<?/MIVAR>
     <?MIVAR NAME=$returnVariables COND="$(XST,$search_anon1)">$returnVariables&anon1=$search_anon1<?/MIVAR>
