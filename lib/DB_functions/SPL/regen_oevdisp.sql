@@ -115,7 +115,8 @@ create dba function "informix".regen_oevdisp()
     	organism_list	varchar(100)
       	  not null		
       )
-      in tbldbs3;
+      in tbldbs3
+      lock mode page;
 
     let errorHint = "Populating _temp";	
 
@@ -174,7 +175,8 @@ create dba function "informix".regen_oevdisp()
 	 oevdisp_evidence_code	char(2),  
 	 oevdisp_organism_list	varchar(100)
       )
-      in tbldbs2;
+      in tbldbs2
+      lock mode page;
 
     -- To this point we haven't done anything that is visible to the
     -- world.  Wrap everything that is visible in a transaction.
