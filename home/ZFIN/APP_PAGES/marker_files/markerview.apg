@@ -438,14 +438,17 @@ Datablade documentation.
   <INPUT TYPE=button 
     value=Add
     onClick="doit('dalias_alias','text','Alias','alias')">
+  <b>Previous Names:</b>
 <?/MIVAR> 
-
-<b>Previous Names:</b>
 
 <?MISQL SQL="
   select dalias_alias, dalias_zdb_id
     from data_alias
     where dalias_data_zdb_id = '$OID' and dalias_group = 'alias';">
+
+  <?MIVAR COND="$(=,$MI_CURRENTROW,1)">
+    <b>Previous Names:</b>
+  <?/MIVAR>
 
   <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(XST,$UPDATE))">
     <br><b>Add Reference:</b> 
@@ -453,7 +456,6 @@ Datablade documentation.
     Reference:<input type=text name=attrib_prevname_pubid>
     <input type=button value="Add" onClick=new_attrib_prevname();> 
   <?/MIVAR>
-
 
   <?MIVAR NAME=$alias>$1<?/MIVAR>
   <?MIVAR NAME=$aliasId>$2<?/MIVAR>
@@ -470,10 +472,10 @@ Datablade documentation.
       <?MISQL SQL="select WebExplode(object,'dataId=$aliasId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
   <?/MIBLOCK>
 	
-
 <?/MISQL>
-
-<br>
+<?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
+    <br>
+<?/MIVAR>
 <!----------------------------------------------------------------> 
 
 
@@ -526,7 +528,6 @@ Datablade documentation.
       <?MISQL SQL="select WebExplode(object,'dataId=$aliasId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
   <?/MIBLOCK>
 	
-
 <?/MISQL>
 
 <br>
@@ -551,7 +552,6 @@ Datablade documentation.
    select mrkrseq_sequence, mrkrseq_left_end, mrkrseq_zdb_id
      from marker_sequence
     where mrkrseq_mrkr_zdb_id = '$OID';">
-
     <?MIVAR NAME=$sequence>$1<?/MIVAR>
     <?MIVAR NAME=$left_end>$2<?/MIVAR>
     <?MIVAR NAME=$mrkrseq_zdb_id>$3<?/MIVAR>
@@ -564,14 +564,10 @@ Datablade documentation.
         onClick="update_mrkrsequence('$mrkrseq_zdb_id','$sequence',document.markerSequence.sequence.value)";>
     <?/MIVAR>
     $left_end - <?MIVAR COND="$(XST,$UPDATE)"><INPUT TYPE=text size=30 name=sequence value="<?/MIVAR>$sequence<?MIVAR COND="$(XST,$UPDATE)">"><?/MIVAR> - $(IF,$(EC,$left_end,5'),3,5)'
- 	
-    <?MISQL SQL="select WebExplode(object,'dataId=$mrkrseq_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>	
-   
-<br>
+    <?MISQL SQL="select WebExplode(object,'dataId=$mrkrseq_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+    <br>
     <?MIVAR COND="$(XST,$UPDATE)"></form><?/MIVAR>
-  
  <?/MISQL>
-
 <?/MIBLOCK> <?MICOMMENT> end display_sequence <?/MICOMMENT>
 
 <!--------------- Dispalay NOMENCLATURE HISTORY -------------------->
@@ -579,11 +575,12 @@ Datablade documentation.
 <?MISQL SQL="select * from marker_history where mhist_mrkr_zdb_id = '$OID'">
 <?/MISQL>
 <?MIVAR COND="$(AND,$(XST,$type_of_genedom),$(>,$MI_ROWCOUNT,0))"><font size=-1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-nomenview.apg&OID=$OID&abbrev=$abbrev$(IF,$(XST,$UPDATE),&UPDATE=1)">Nomenclature History</A></font><?/MIVAR>
-<br><br>
+
 <!---------------- end NOMENCLATURE HISTORY ------------------------> 
 
 <!---------------------Curator Note-------------->
 <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
+  <br>
   <B>Curator Notes:</B>
   <?MISQL SQL="select count(*) 
 		from data_note
@@ -600,37 +597,38 @@ Datablade documentation.
 <?/MIBLOCK>
 <!--------- Display description  ---------------------------------> 
 
-
-<?MIVAR COND="$(OR,$(>,$(POSITION,$OID,BAC),0),$(>,$(POSITION,$OID,PAC),0))">
-<b>EMBL </b>
-<?/MIVAR>
-
 <?MIBLOCK>
 
-<?MISQL SQL="
-   select mrkr_comments 
-	from marker 
-	where mrkr_Zdb_id='$OID'
-	and mrkr_comments is not null
-        and mrkr_comments != '';">
-<?/MISQL>
+  <?MISQL SQL="
+     select mrkr_comments 
+	  from marker 
+	  where mrkr_Zdb_id='$OID'
+	  and mrkr_comments is not null
+	  and mrkr_comments != '';">
 
-<?MIVAR NAME=$mrkrview_mrkr_comments>$1<?/MIVAR>
+  <?MIVAR NAME=$mrkrview_mrkr_comments>$1<?/MIVAR>
 
-<?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
-   <b>Note:</b>$mrkrview_mrkr_comments
-	<?MIVAR COND="$(XST,$UPDATE)">
-	<INPUT TYPE=button value="Update Note" onClick="doit('mrkr_comments','textarea','Note')"> 
-	<?/MIVAR> 
-<br>
-<?/MIVAR>
+  <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(OR,$(>,$(POSITION,$OID,BAC),0),$(>,$(POSITION,$OID,PAC),0)))">
+    <br>
+    <b>EMBL:</b>
+  <?/MIVAR>
 
-<?MIVAR COND="$(<=,$MI_ROWCOUNT,0)">
-	<?MIVAR COND="$(XST,$UPDATE)">
-	<INPUT TYPE=button value="Add New Marker Note" onClick="doit('mrkr_comments','textarea','Note')"> 
-	<?/MIVAR> 
-<br>
-<?/MIVAR>
+  <?MIVAR COND="$(>,$MI_CURRENTROW,0)">
+     <br><br>
+     <b>Note:</b>$mrkrview_mrkr_comments
+	  <?MIVAR COND="$(XST,$UPDATE)">
+	  <INPUT TYPE=button value="Update Note" onClick="doit('mrkr_comments','textarea','Note')"> 
+	  <?/MIVAR> 
+  <br>
+  <?/MIVAR>
+
+  <?MIVAR COND="$(<=,$MI_ROWCOUNT,0)">
+	  <?MIVAR COND="$(XST,$UPDATE)">
+	  <INPUT TYPE=button value="Add New Marker Note" onClick="doit('mrkr_comments','textarea','Note')"> 
+	  <?/MIVAR> 
+  <br>
+  <?/MIVAR>
+  <?/MISQL>
 
 <?/MIBLOCK>
 
