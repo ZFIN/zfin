@@ -2,9 +2,6 @@
 #
 # Makefile for ZFIN_WWW CVS Project, ZFIN Data Model Description.
 #
-# $Source$
-# $Id$
-#
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
 # !! of the makefile hierarchy this makefile is a part of, and of the  !!
@@ -37,7 +34,7 @@ GENERICS = data_model.html overview_1.html  overview_2.html overview_3.html \
 	sectioniv.html sectioniv_1.html sectioniv_2.html sectioniv_3.html \
 	sectioniv_4.html sectionv.html
 
-STATICS = Fish_Net.GIF fig1.gif fig2.gif fig3.gif fig4.gif fig5.gif fig6.gif \
+STATICS = fig1.gif fig2.gif fig3.gif fig4.gif fig5.gif fig6.gif \
 	fig7.gif fig8.gif fig9.gif
 
 
