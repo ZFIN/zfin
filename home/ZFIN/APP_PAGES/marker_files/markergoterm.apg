@@ -64,7 +64,7 @@ go_term -- the new value of locus.
           <?MIVAR NAME=pub>ZDB-PUB-031118-1<?/MIVAR>
           <?MIVAR>
           <SCRIPT>
-              location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoentry.apg&gotermname=$gotermname&goterm=$gotermid&evidence=$evidence&pub=$pub&OID=$gene")
+              location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markeroentry.apg&gotermname=$gotermname&goterm=$gotermid&evidence=$evidence&pub=$pub&OID=$gene")
           </SCRIPT>
           <?/MIVAR>
         <?/MIBLOCK> 
@@ -90,7 +90,7 @@ go_term -- the new value of locus.
          <?MIVAR NAME=pub>ZDB-PUB-031118-1<?/MIVAR>
          <?MIVAR>
          <SCRIPT>
-            location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoentry.apg&gotermname=$gotermname&goterm=$gotermid&evidence=$evidence&pub=$pub&OID=$gene")
+            location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerkergoentry.apg&gotermname=$gotermname&goterm=$gotermid&evidence=$evidence&pub=$pub&OID=$gene")
          </SCRIPT>
          <?/MIVAR>
        <?/MIBLOCK>
@@ -105,7 +105,7 @@ go_term -- the new value of locus.
          <?MIVAR NAME=$gotermname><?/MIVAR>
          <?MIVAR>
          <SCRIPT>
-            location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoentry.apg&gotermname=$gotermname&goterm=$gotermid&OID=$gene")
+            location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerkrgoentry.apg&gotermname=$gotermname&goterm=$gotermid&OID=$gene")
          </SCRIPT>
          <?/MIVAR>
        <?MIELSE>
@@ -145,7 +145,7 @@ go_term -- the new value of locus.
   <?/MIBLOCK>
    <?MIVAR>
     <SCRIPT>
-     location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoentry.apg&gotermname=$termname&goterm=$gotermid&&pub=$OID&OID=$gene")
+     location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoentryapg&gotermname=$termname&goterm=$gotermid&&pub=$OID&OID=$gene")
     </SCRIPT>
    <?/MIVAR>
 <?/MIBLOCK>
