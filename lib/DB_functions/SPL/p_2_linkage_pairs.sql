@@ -12,8 +12,6 @@
 --REPLACES:
 --sub linkagePairHas2Members
 
-  drop procedure p_2_linkage_pairs;
-
   create procedure p_2_linkage_pairs (vLMem varchar(25))
 
   define vOk 	integer;
