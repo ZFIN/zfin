@@ -1808,58 +1808,6 @@ sub pubTitlesAreUnique($) {
 } 
 
 
-#-------------------------------------------------------------
-#Parameter
-# $      Email Address for recipients
-# 
-sub externNoteAssociationWithData($) {
-	
-  my $routineName = "externNoteAssociationWithData";
-	
-  my $sql = '
-             select extnote_zdb_id 
-	       from external_note
-	      where extnote_zdb_id not in (
-		     	      select dextnote_extnote_zdb_id 
-		        	from data_external_note ) 
-                  ';
-  my $nRecords = execSql ($sql);
-	
-  if ($nRecords > 0) {
-  
-    my $sqlDtl = '
-                  select extnote_zdb_id,  
-                         recattrib_source_zdb_id
-                    from external_note,
-                         record_attribution
-                   where extnote_zdb_id not in (
-		     	          select dextnote_extnote_zdb_id 
-		        	    from data_external_note )
-                     and extnote_zdb_id = recattrib_data_zdb_id
-                ';
-  
-    my @colDesc =  ("Extnote ZDB ID         ",
-                    "Recattrib source ZDB ID" );
- 
-    my $nRecordsDtl = execSql ($sqlDtl, undef, @colDesc);
-  
-    if ( $nRecords == $nRecordsDtl ) {
-      
-      my $sendToAddress = $_[0];
-      my $subject = "external note inconsistenct";
-      my $errMsg = "In external_note, $nRecords records do not have "
-	."matching in data_external_note. ";
-    
-      logError ($errMsg);
-      &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql, $sqlDtl);
-    }else {
-      print "Two queries are not consistent.\n";
-    }
-  }
-  &recordResult($routineName, $nRecords);
-} 
-
-
 #-------------------------------------------------------
 #Parameter
 # $      Email Address for recipients
@@ -2535,7 +2483,6 @@ if($daily) {
 
 
   pubTitlesAreUnique($otherEmail);
-  externNoteAssociationWithData($otherEmail);
   extinctFishHaveNoSuppliers($otherEmail);
   putativeNonZfinGeneNotInZfin($geneEmail);
   zdbReplacedDataIsReplaced($dbaEmail);
