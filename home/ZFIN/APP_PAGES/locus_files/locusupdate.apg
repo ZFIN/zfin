@@ -161,7 +161,7 @@ When filled, the ZDB_ID of the new return_rec is passed along into whatever brow
 <?MIVAR NAME=$fill_table>locus<?/MIVAR>
 <?MIVAR NAME=$jump_to>top<?/MIVAR>
 <?MIVAR NAME=$info>NULL<?/MIVAR>
-<?MIVAR NAME=$selector>aa-geneselect.apg<?/MIVAR>
+<?MIVAR NAME=$selector>aa-newmrkrselect.apg<?/MIVAR>
 <?/MIBLOCK>
 
 <?MIBLOCK COND="$(EC,$attr,prim_pub)">
