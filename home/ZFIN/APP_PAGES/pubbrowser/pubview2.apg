@@ -1,0 +1,134 @@
+<HTML>
+
+<TITLE> PUBLICATION VIEWER </TITLE>
+
+
+<SCRIPT>
+<?MIVAR>
+function do_curation(act) {
+   if (top.curator && !top.curator.closed) {top.curator.focus()};
+   if(act=='new') {
+     top.curator=open("/cgi-bin_B/webdriver?MIval=aa-curatepub.apg&OID=$OID","helpwindow","scrollbars=no,width=550,height=300");
+   } else {
+     top.curator=open("/cgi-bin_B/webdriver?MIval=aa-curatepub.apg&OID=$OID&curation="+act,"helpwindow","scrollbars=no,width=550,height=300");
+   }
+}
+<?/MIVAR>
+</SCRIPT>
+
+<?MIBLOCK COND="$(NXST,$OID)">
+<p>
+ERROR -- something bad happened -- no OID passed in!
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(XST,$OID)">
+
+<?MISQL SQL="select WebExplode(object,'page_title=View Pub') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+
+<?MISQL SQL="select title, authors, year(pub_date), source, keywords, abstract, accession_no, errata_and_notes,jtype from publication where zdb_id='$OID';"><?/MISQL>
+<?MIVAR NAME=$title>$1<?/MIVAR>
+<?MIVAR NAME=$authors>$2<?/MIVAR>
+<?MIVAR NAME=$year>$3<?/MIVAR>
+<?MIVAR NAME=$source>$4<?/MIVAR>
+<?MIVAR NAME=$keywords>$5<?/MIVAR>
+<?MIVAR NAME=$abstract>$6<?/MIVAR>
+<?MIVAR NAME=$accession_no>$7<?/MIVAR>
+<?MIVAR NAME=$errata_and_notes>$8<?/MIVAR>
+<?MIVAR NAME=$jtype>$9<?/MIVAR>
+
+<?MIVAR NAME=$rec_title>PUB:$(SUBSTR,$title,1,10)...<?/MIVAR>
+
+
+<!-- If VIEWING, THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
+<?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=publication') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
+
+<BODY BASEFONT=2>
+
+<!-- NOW JUST TOSS OUT THE RETRIEVED DATA IN A TABLE -->
+<?MIVAR NAME=$MI_NOVALUE> <?/MIVAR>
+<?MIVAR NAME=$MI_NULL> <?/MIVAR>
+
+<?MIVAR>
+
+<center> <p>  <FONT SIZE=6> $title </FONT> <P>
+<B>$authors</B> <P>
+</center>
+<P>
+
+<TABLE width=100%>
+<TR>
+<TD><B>DATE:</B> $year  </TD>
+<TD><B>SOURCE:</B> $source ($jtype)</TD>
+</TR>
+</TABLE>
+<?/MIVAR>
+
+<TABLE width=100%>
+<TR>
+<TD>
+<B>CONTACTS:</B>
+<?MISQL SQL="select a.full_name,a.zdb_id from person a, int_person_pub b where source_id=a.zdb_id and target_id='$OID' order by a.full_name;">
+ <A HREF="/cgi-bin_B/webdriver?MIval=aa-persview.apg&OID=$2">$1</A>,  
+<?/MISQL>
+</TD>
+
+<?MIVAR>
+<TD align=right>
+<form method=post target=content action="/cgi-bin_B/webdriver">
+<input type=hidden name=MIval value=aa-pubprintable.apg>
+<input type=hidden name=constraint value="where zdb_id='$OID'">
+<input type=submit name=printable value="Generate reference">
+</form>
+</TD>
+<?/MIVAR>
+
+</TR></TABLE>
+
+<?MIVAR COND="$(NC,$keywords,NULL)"><B>KEYWORDS:</B> $keywords <p><?/MIVAR>
+
+
+<?MIVAR COND="$(NC,$accession_no,NULL)">
+<b>MEDLINE:</B> <A HREF=http://www.ncbi.nlm.nih.gov/htbin-post/Entrez/query?form=6&db=m&Dopt=r&uid=$accession_no>$accession_no</A>
+<?/MIVAR>
+<p>
+<B>ABSTRACT:</B> 
+<?MIVAR COND="$(NC,$abstract,NULL)"><br> <FONT SIZE=-1> $abstract </font> <?/MIVAR>
+
+<p>
+<B>ERRATA and NOTES:</B> 
+<?MIVAR COND="$(NC,$errata_and_notes,NULL)"><br> <FONT SIZE=-1> $errata_and_notes </font> <?/MIVAR>
+<p>
+</table>
+
+<form>
+<p>
+<?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
+<b>Curation Status:</b>
+
+<input type=button value="Add to Curation Record" onClick="do_curation('new');">
+
+<ul>
+<table cellpadding=5 cols=4 border>
+<TH align=center>Action</TH><TH align=center>Date</TH><TH align=center>Curator</TH><TH align=center></TH>
+
+<?MISQL SQL="select curation_action, entry_time::date as done_date,curator from curation_status where pub_id='$OID' order by done_date;">
+<TR align=center>
+<TD><font size=2>$1</TD><TD><font size=2>$2</TD><TD><font size=2>$3</TD>
+<TD><font size=2><A HREF="javascript:do_curation('$(URLENCODE,$1)');">Details</A></TD>
+</TR>
+<?/MISQL>
+</TABLE>
+</ul>
+
+<?/MIBLOCK>  <!-- ends cond authorized -->
+<!-- For Yolanda -->
+<?MIVAR><img src="/cgi-bin_B/write.cgi?OID=$OID"></img><?/MIVAR>
+
+
+<?/MIBLOCK>  <!-- ends cond oid xst -->
+
+</HTML>
+
+
+
