@@ -109,6 +109,11 @@ get_obj_name(zdbId varchar(50))
       into objName
       from go_term
       where goterm_zdb_id = zdbId;
+  elif (objType = "INFGRP") then
+    select infgrp_zdb_id
+      into objName
+      from inference_group
+      where infgrp_zdb_id = zdbId;  --don't have names, return ZDB ID.
   elif (objType = "LABEL") then
     select lbl_name 
       into objName
