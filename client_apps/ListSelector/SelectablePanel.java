@@ -40,7 +40,7 @@ public class SelectablePanel extends Panel {
     if (pappy.getParameter("query") != null) {
       retrieveList(pappy.getParameter("query"));		
     } else if (pappy.getParameter("authorlist") != null) { //this is a very specific 'mode' for the applet
-      String select = "Select full_name, zdb_id from  person where ";
+      String select = "select full_name, zdb_id from  person where ";
       String clause = "";
       Vector A = pappy.authorTrim(pappy.getParameter("authorlist"));
       Enumeration E = A.elements();
@@ -51,8 +51,8 @@ public class SelectablePanel extends Panel {
       }
       
       
-      System.out.println("Q: " + select + clause + ";");
-      retrieveList(select + clause + ";");
+      System.out.println("Q: " + select + clause + " order by full_name;");
+      retrieveList(select + clause + " order by full_name;");
     } else {
        selectables.addItem("no query param");
     }
