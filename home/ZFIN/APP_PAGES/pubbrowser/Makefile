@@ -2,9 +2,6 @@
 #
 # Makefile for ZFIN_WWW CVS Project, Publication related APP pages.
 #
-# $Source$
-# $Id$
-#
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
 # !! of the makefile hierarchy this makefile is a part of, and of the  !!
@@ -21,7 +18,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/pubbrowser
 
-SUBDIRS = EDITpubs inc_MEDLINE
+SUBDIRS = EDITpubs
 
 GENERICS = REFERinfo.apg curatepub.apg enterpubs.apg link_authors.apg \
 	pubprintable.apg pubselect2.apg pubview2.apg \
