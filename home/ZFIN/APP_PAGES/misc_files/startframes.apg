@@ -179,7 +179,12 @@ You may also optionally pass many other constraints on the upcoming selection th
 <?MIBLOCK COND="$(AND,$(XST,$navtile),$(EC,$selector,aa-update-select.apg))">
 <?MIVAR COND="$(XST,$navtile)" NAME=$constraint>&navtile=$navtile$constraint<?/MIVAR>
 <?MIVAR COND="$(XST,$OID)" NAME=$constraint>&OID=$OID$constraint<?/MIVAR>
-
+<?MIVAR COND="$(XST,$emonth)" NAME=$constraint>&emonth=$emonth$constraint<?/MIVAR>
+<?MIVAR COND="$(XST,$smonth)" NAME=$constraint>&smonth=$smonth$constraint<?/MIVAR>
+<?MIVAR COND="$(XST,$eyear)" NAME=$constraint>&eyear=$eyear$constraint<?/MIVAR>
+<?MIVAR COND="$(XST,$syear)" NAME=$constraint>&syear=$syear$constraint<?/MIVAR>
+<?MIVAR COND="$(XST,$field)" NAME=$constraint>&field=$field$constraint<?/MIVAR>
+<?MIVAR COND="$(XST,$period)" NAME=$constraint>&period=$period$constraint<?/MIVAR>
 <?/MIBLOCK>
 
 
