@@ -35,7 +35,9 @@ if(top.zfinstudy) {
    if (!top.zfinstudy.closed) {top.zfinstudy.close();}
 };
 
-if(top.zfinhelp) {top.zfinhelp.close();};
+if(top.zfinhelp){
+if(!top.zfinhelp.closed) {top.zfinhelp.close();};
+};
 
 </SCRIPT>
 
