@@ -58,7 +58,7 @@ LIBDIR = $(INFORMIXDIR)/lib
 
 # Use xcode because we are creating an so.  See cc man page for details.
 
-CFLAGS = -xcode=pic32
+CFLAGS = -xcode=pic32 -xtarget=ultra2 -xarch=v9a
 MICFLAGS = -DPLATFORM=solaris -g -DELF -v -DPOSIX_SIGNALS -DSOLARIS -I $(INCDIR)
 MILIBS = -lsocket -lnsl -L$(LIBDIR)
 
