@@ -499,7 +499,7 @@ $(IF,$(AND,$(XST,$UPDATE),$(EC,$10,original)),"<SELECT name=chrom_number onChang
 <!-- If its just a single mutant, go ahead and show mapping info -->
 <?MIBLOCK COND="$(=,$MI_ROWCOUNT,1)">
 
-<font size=-1><?MIVAR><b>Mapped linkages</b> to $abbrev:<?/MIVAR>
+<font size=-1><?MIVAR><b>Mapped linkages</b> to  </font> $abbrev:<?/MIVAR>
 <?MIVAR COND="$(XST,$UPDATE)">
 <INPUT TYPE=button value="ADD new linkage" onClick="add_linkage();">
 <?/MIVAR>
@@ -538,12 +538,15 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$7,f),$(EC,$ZDB_ident,$6)),"<TD><font size=-
 
 <?MIVAR NAME=$last><?/MIVAR>
 <?MIVAR name=marker_present>0<?/MIVAR>
-<?MISQL SQL="select b.abbrev,b.zdb_id,a.present_t,b.mtype from mapped_deletion a,all_markers b where a.marker_id=b.zdb_id and allele='$allele' order by a.present_t,b.mtype;">
-
-<?MIVAR COND="$(AND,$(NC,$last,$3),$(EC,$3,F))">
 <?MIVAR COND="$(XST,$UPDATE)">
 <INPUT TYPE=button value="Add" onClick="doit_marker('marker','selection','missing',$lg)"> 
+<b>Markers missing:</b>
+<br>
 <?/MIVAR>
+
+<?MISQL SQL="select b.abbrev,b.zdb_id,a.present_t,b.mtype from mapped_deletion a,all_markers b where a.marker_id=b.zdb_id and allele='$allele' order by a.present_t,b.mtype;">
+
+<?MIVAR COND="$(AND,$(NC,$last,$3),$(EC,$3,F),$(NXST,$UPDATE))">
 
 <b>Markers missing:</b>
  
