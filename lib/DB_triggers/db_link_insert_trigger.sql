@@ -1,5 +1,3 @@
-drop trigger db_link_insert_trigger;
-
 create trigger db_link_insert_trigger
   insert on db_link
   referencing new as new_db_link
