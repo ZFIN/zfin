@@ -1,0 +1,263 @@
+<!-- FILE: do-goedit.apg
+
+Commits the updates requested in the forms tossed up by
+gomodify.apg. Also files update record.
+
+
+EXPECTED VARS:
+OID -- the zdb_id of the rec to update
+attr -- the column to be updated
+attr_type -- textarea,text,or pic
+new_value -- the new value to stick in the column
+old_value -- the previous value
+xtra_param -- to pass an extra parameter
+comments -- reasons for doing update 
+target_table -- either anon_marker or gene, depending on what you're 
+updating
+info -- optional value used to pass in additional info
+dataOID -- the zdbid of the attributed item
+
+-->
+
+<META HTTP-EQUIV="EXPIRES" CONTENT="-2d">
+<!-- If one of the values was an empty string, it won't get successfully
+  -- passed to this page. 
+  -->
+<?MIVAR COND="$(NXST,$attr)" NAME=$attr><?/MIVAR>
+<?MIVAR COND="$(NXST,$OID)" NAME=$OID><?/MIVAR>
+<?MIVAR COND="$(NXST,$value)" NAME=$value><?/MIVAR>
+<?MIVAR COND="$(NXST,$valuedb)" NAME=$valuedb><?/MIVAR>
+<?MIVAR COND="$(NXST,$mrkrgoevid)" NAME=$mrkrgoevid><?/MIVAR>
+<?MIVAR COND="$(NXST,$action)" NAME=$action><?/MIVAR>
+<?MIVAR COND="$(NXST,$geneid)" NAME=$geneid><?/MIVAR>
+<?MIVAR COND="$(NXST,$added)" NAME=$added><?/MIVAR>
+<?MIVAR>$value<?/MIVAR>
+<?MIVAR>$geneid<?/MIVAR>
+<?MIVAR>$goid<?/MIVAR>
+
+<?MIVAR COND="$(NXST,$evidence)" NAME=$evidence><?/MIVAR>
+<?MIVAR COND="$(NXST,$isnot)" NAME=$isnot><?/MIVAR>
+<?MIVAR COND="$(NXST,$note)" NAME=$note><?/MIVAR>
+<?MIVAR COND="$(NXST,$pub)" NAME=$pub><?/MIVAR>
+<?MIVAR>$pub<?/MIVAR>
+<!-- First check security. Main purpose is just to get submitter id and name--> 
+
+<?MIBLOCK 
+COND="$(OR,$(EC,$attr,putgene_putative_gene_name),$(EC,$attr,putgene_comments),$(EC,$attr,comments))">
+  <?MISQL SQL="
+    select WebExplode(object,'permission=root') 
+      from webPages 
+      where ID='aa-secure_navigation.apg';">
+    $1
+  <?/MISQL>
+<?/MIBLOCK>
+
+
+  <!-- OK, NOW UPDATE THE  ACTUAL DATA RECORD. -->
+<!--This case will never arise, ie GO term itself shouldn't be updated-->
+<?MIBLOCK COND="$(EC,$attr,goterm)">
+  <?MISQL SQL="select goterm_zdb_id from go_term where goterm_go_id='$attr'"<?/MISQL>
+  <?MISQL SQL="
+    update marker_go_term
+      set mrkrgo_go_term_zdb_id='$1' 
+      where mrkrgo_zdb_id='$OID';">
+   <?/MISQL>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(EC,$attr,evidence)">
+   <?MIVAR NAME=$added>false<?/MIVAR>
+   <?MIVAR>$evidence<?/MIVAR>
+   <?MISQL MAXROWS=1 SQL="select mrkrgoev_infered_from from marker_go_term_evidence where mrkrgoev_evidence_code='$value' and mrkrgoev_mrkrgo_zdb_id='$OID' order by mrkrgoev_infered_from desc"><?/MISQL>
+
+   <?MIVAR NAME=check>"select mrkrgoev_infered_from from marker_go_term_evidence where mrkrgoev_evidence_code='$value' and mrkrgoev_mrkrgo_zdb_id='$OID' order by mrkrgoev_infered_from desc<?/MIVAR>
+
+   <?MIVAR NAME=$inference>$1<?/MIVAR>
+   <?MIVAR>$inference<?/MIVAR>
+   <?MIBLOCK COND="$(AND,$(NC,$inference,NULL),$(NC,$inference,NOVALUE))">
+     <SCRIPT>
+       window.alert("Updating this evidence will lead to multiple references and a single inference for this annotion");
+     </SCRIPT> 
+     <?MIVAR NAME=cannotupd>true<?/MIVAR>
+     <?MIVAR NAME=valuematch>true<?/MIVAR>
+  <?MIELSE>
+     <?MIVAR NAME=valuematch>false<?/MIVAR>
+     <?MIVAR NAME=cannotupd>false<?/MIVAR>
+  <?/MIBLOCK>
+
+<?MIBLOCK COND="$(NC,$valuematch,true)">
+    <?MISQL MAXROWS=1 SQL="select mrkrgoev_infered_from from marker_go_term_evidence where mrkrgoev_evidence_code='$evidence' and mrkrgoev_mrkrgo_zdb_id='$OID' order by mrkrgoev_infered_from desc"><?/MISQL>
+    <?MIVAR NAME=$inference>$1<?/MIVAR>
+    <?MIVAR>$inference<?/MIVAR>
+    <?MIBLOCK COND="$(AND,$(NC,$inference,NULL),$(NC,$inference,NOVALUE))">
+         <?MISQL SQL="select mrkrgoev_source_zdb_id from marker_go_term_evidence where mrkrgoev_evidence_code='$value' and mrkrgoev_mrkrgo_zdb_id='$OID' order by mrkrgoev_source_zdb_id desc"><?/MISQL>
+         <?MIVAR>$1<?/MIVAR>
+         <?MIVAR NAME=sqltest>select mrkrgoev_source_zdb_id from marker_go_term_evidence where mrkrgoev_evidence_code='$value' and mrkrgoev_mrkrgo_zdb_id='$OID' order by mrkrgoev_source_zdb_id desc<?/MIVAR>
+         <?MIVAR>$sqltest<?/MIVAR>
+         <?MIBLOCK COND="$(NC,$1,NOVALUE)">
+           <SCRIPT>
+              window.alert("Updating this evidence will lead to multiple references and a single inference for this annotion");
+           </SCRIPT> 
+           <?MIVAR NAME=cannotupd>true<?/MIVAR>
+        <?/MIBLOCK>
+    <?/MIBLOCK>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(NC,$cannotupd,true)">
+  <?MISQL SQL="
+    update marker_go_term_evidence
+      set mrkrgoev_evidence_code='$value' 
+      where mrkrgoev_mrkrgo_zdb_id='$OID' and mrkrgoev_evidence_code='$evidence';">
+    <?/MISQL>
+<?MIVAR NAME=$evidence>$value<?/MIVAR>
+<?/MIBLOCK>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(EC,$attr,infupdate)">
+ <?MIVAR NAME=$added>false<?/MIVAR>
+  <?MIVAR NAME=SQL1>
+    update marker_go_term_evidence
+      set mrkrgoev_infered_from=NULL 
+where mrkrgoev_mrkrgo_zdb_id='$OID' and mrkrgoev_evidence_code='$evidence' and mrkrgoev_zdb_id='$mrkrgoevid' and mrkrgoev_source_zdb_id='$value';"
+    <?/MIVAR>
+  <?MIVAR>$SQL1<?/MIVAR>
+  <?MISQL SQL="select mrkrgoev_zdb_id from marker_go_term_evidence where mrkrgoev_evidence_code='$evidence' and mrkrgoev_mrkrgo_zdb_id='$OID' and mrkrgoev_source_zdb_id='$value'"><?/MISQL>
+  <?MIVAR NAME=$count>$MI_ROWCOUNT<?/MIVAR>
+  <?MIVAR>$count<?/MIVAR>
+  <?MIBLOCK COND="$(>,$count,1)">
+ here?
+  <?MISQL SQL="select mrkrgoev_zdb_id from marker_go_term_evidence where mrkrgoev_evidence_code='$evidence' and mrkrgoev_mrkrgo_zdb_id='$OID' and mrkrgoev_source_zdb_id='$value' and mrkrgoev_infered_from='$inf'"><?/MISQL>
+  <?MIVAR NAME=$markerevid>$1<?/MIVAR>
+<?MIVAR>$markerevid<?/MIVAR>
+  <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id='$markerevid'"><?/MISQL>
+<?MIELSE>
+    <?MISQL SQL="update marker_go_term_evidence
+      set mrkrgoev_infered_from=NULL 
+where mrkrgoev_mrkrgo_zdb_id='$OID' and mrkrgoev_evidence_code='$evidence' and mrkrgoev_zdb_id='$mrkrgoevid' and mrkrgoev_source_zdb_id='$value';">
+  <?/MISQL>
+ <?/MIBLOCK>
+<?/MIBLOCK>
+<?MIBLOCK COND="$(EC,$attr,note)">
+ <?MIVAR NAME=$added>false<?/MIVAR>
+  <?MIVAR NAME=SQL1>
+    update marker_go_term_evidence
+      set mrkrgoev_notes='$note' 
+where mrkrgoev_mrkrgo_zdb_id='$OID' and mrkrgoev_evidence_code='$evidence';"
+  <?/MIVAR>
+<?MIVAR>$SQL1<?/MIVAR>
+
+  <?MISQL SQL="
+    update marker_go_term_evidence
+      set mrkrgoev_notes='$note' 
+      where mrkrgoev_mrkrgo_zdb_id='$OID' and mrkrgoev_evidence_code='$evidence'; ">
+    <?/MISQL>
+
+<?MIVAR>$isnot<?/MIVAR>
+
+  <?MISQL SQL="
+    update marker_go_term
+      set mrkrgo_is_false_ref='$isnot'
+      where mrkrgo_zdb_id='$OID';">
+    <?/MISQL>
+<?/MIBLOCK>
+  
+
+<?MIBLOCK COND="$(EC,$attr,inference)">
+     <?MIVAR NAME=$currinflink>$valuedb:$value<?/MIVAR>
+ <?MIVAR NAME=$added>false<?/MIVAR>
+  <?MIVAR NAME=SQL2>
+    update marker_go_term_evidence
+      set mrkrgoev_infered_from='$currinflink' 
+      where mrkrgoev_mrkrgo_zdb_id='$OID'
+      and mrkrgoev_zdb_id='$mrkrgoevid'"
+    <?/MIVAR>
+<?MISQL SQL="select mrkrgoev_infered_from,mrkrgoev_source_zdb_id,mrkrgoev_evidence_code from marker_go_term_evidence where mrkrgoev_mrkrgo_zdb_id='$OID' and mrkrgoev_zdb_id='$mrkrgoevid'"><?/MISQL>
+  <?MIVAR NAME=$inferred>$1<?/MIVAR>
+  <?MIVAR NAME=$pub>$2<?/MIVAR>
+  <?MIVAR NAME=$evidence>$3<?/MIVAR>
+  <?MIVAR>$inferred<?/MIVAR>
+  <?MIBLOCK COND="$(OR,$(EC,$inferred,NULL),$(EC,$inferred,NOVALUE))">
+    <?MIVAR NAME=$valueinf>$valuedb:$value<?/MIVAR>
+    <?MIVAR>$SQL2<?/MIVAR>
+    <?MISQL SQL="
+    update marker_go_term_evidence
+    set mrkrgoev_infered_from='$currinflink'
+    where mrkrgoev_mrkrgo_zdb_id='$OID'
+    and mrkrgoev_zdb_id='$mrkrgoevid' and mrkrgoev_source_zdb_id='$pub' and mrkrgoev_evidence_code='$3'">
+    <?/MISQL>
+  <?MIELSE>
+   <?MISQL SQL="execute function get_id('MRKRGOEV')"><?/MISQL>
+   <?MIVAR NAME=newgoevid>$1<?/MIVAR>
+   <?MISQL SQL="insert into zdb_active_data values('$newgoevid')"><?/MISQL>
+   <?MISQL SQL="insert into record_attribution values ('$newgoevid','$pub')"><?/MISQL>
+   <?MIVAR NAME=$valueinf>$valuedb:$value<?/MIVAR>
+<?MIVAR>$valueinf<?/MIVAR>
+<?MIVAR>$currinflink<?/MIVAR>
+   <?MISQL SQL="insert into marker_go_term_evidence values ('$newgoevid','$OID','$pub','$evidence','$currinflink','')"><?/MISQL>
+   <?MIVAR NAME=$added>false<?/MIVAR>
+   <?MIVAR NAME=SQL5>"insert into zdb_active_data values('$newgoevid')"<?/MIVAR>
+   <?MIVAR NAME=SQL6>"insert into marker_go_term_evidence values ('$newgoevid','$OID','$pub','$evidence','$valuedb:$value','')<?/MIVAR>
+   <?MIVAR>$SQL5<?/MIVAR>
+   <?MIVAR>$SQL6<?/MIVAR>
+  <?/MIBLOCK>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(EC,$attr,pub)">
+  <?MIBLOCK COND="$(EC,$action,add)">
+    <?MIVAR NAME=$value>$(TRIM,$value)<?/MIVAR>
+    <?MISQL SQL="select mrkrgoev_source_zdb_id from marker_go_term_evidence where mrkrgoev_mrkrgo_zdb_id='$OID' and mrkrgoev_evidence_code='$evidence'">
+    <?MIVAR NAME=$goevpub>$1<?/MIVAR>
+    <?/MISQL>
+    <?MIBLOCK COND="$(EC,$goevpub,$value)">
+       <SCRIPT>
+        window.alert("This publication already exists for this annotation, you cannot add it again");
+       </SCRIPT>
+    <?MIELSE>
+    <?MISQL SQL="select count(*) from publication where zdb_id='$value'"><?/MISQL>
+    <?MIBLOCK COND="$(=,$1,0)">
+       <SCRIPT>
+        window.alert("Invalid pub.Please enter again");
+       </SCRIPT>
+    <?MIELSE>
+    <?MISQL SQL="execute function get_id('MRKRGOEV')"><?/MISQL>
+    <?MIVAR NAME=$newgoevid>$1<?/MIVAR> 
+      <?MISQL SQL="insert into zdb_active_data values ('$newgoevid')"><?/MISQL>
+  
+      <?MISQL SQL="insert into record_attribution values ('$newgoevid','$value')"><?/MISQL>
+      <?MISQL SQL="select mrkrgoev_infered_from from marker_go_term_evidence where mrkrgoev_mrkrgo_zdb_id='$OID' and mrkrgoev_evidence_code='$evidence'"><?/MISQL>
+      <?MIVAR NAME=$infexist>$1<?/MIVAR>
+      <?MIBLOCK COND="$(EC,$infexist,NULL)">
+          <?MISQL SQL="insert into marker_go_term_evidence(mrkrgoev_zdb_id,mrkrgoev_mrkrgo_zdb_id,mrkrgoev_source_zdb_id,mrkrgoev_evidence_code,mrkrgoev_infered_from) values ('$newgoevid','$OID','$value','$evidence',NULL)"><?/MISQL>
+      <?MIELSE>
+          <?MISQL SQL="insert into marker_go_term_evidence(mrkrgoev_zdb_id,mrkrgoev_mrkrgo_zdb_id,mrkrgoev_source_zdb_id,mrkrgoev_evidence_code,mrkrgoev_infered_from) values ('$newgoevid','$OID','$value','$evidence','$infexist')"><?/MISQL>
+       <?/MIBLOCK>
+  <?MIVAR NAME=SQL8>
+    insert into zdb_active_data  values ('$newgoevid')
+  <?/MIVAR>
+   <?MIVAR NAME=$added>true<?/MIVAR> 
+  <?MIVAR NAME=SQL9>
+    insert into record_attribution values ('$newgoevid','$value')
+  <?/MIVAR>
+
+  <?MIVAR NAME=SQL10>
+    insert into marker_go_term_evidence values('$newgoevid', '$OID','$value',$evidence',NULL,'')
+  <?/MIVAR>
+<?MIVAR>$SQL8<?/MIVAR>
+<?MIVAR>$SQL9<?/MIVAR>
+<?MIVAR>$SQL10<?/MIVAR>
+<?/MIBLOCK>
+<?/MIBLOCK>
+ <?MIELSE>
+deletion
+  <?MISQL SQL="
+    delete from zdb_active_data where zactvd_zdb_id='$mrkrgoevid'">
+  <?/MISQL>
+   <?MIVAR NAME=$added>false<?/MIVAR> 
+  <?MISQL SQL="select mrkrgoev_zdb_id from marker_go_term_evidence where mrkrgoev_evidence_code='$evidence' and mrkrgoev_mrkrgo_zdb_id='$OID'"><?/MISQL>
+   <?MIVAR NAME=$mrkrgoevid>$1<?/MIVAR>
+
+<?/MIBLOCK>
+<?/MIBLOCK>
+  <SCRIPT><?MIVAR>
+     window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-gomodify.apg&OID=$goid&goevid=$mrkrgoevid&evidence=$evidence&geneid=$geneid&is_not=$isnot&added=$added");
+          <?/MIVAR>
+  </SCRIPT> 
