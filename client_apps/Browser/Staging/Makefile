@@ -64,7 +64,7 @@ TARGETDIR = $(TARGETROOT)/client_apps/Browser
 # How many of these are actually needed?  If we use any of those directories
 # we will need to move them.
 
-
+CLASSPATH = .:/usr/java/lib/classes.zip:$(TARGETROOT)/lib/Java
 
 # ---- Java source and class file variables
 
@@ -94,7 +94,7 @@ $(TARGETS) : $(TARGETDIR)/%.class : %.class
 # When any class file needs to be remade, remake all of them.
 
 $(CLASSES) : $(JAVAS)
-	$(JAVAC) $(JAVACFLAGS) $(JAVAS)
+	$(JAVAC) $(JAVACFLAGS) -classpath $(CLASSPATH) $(JAVAS)
 
 
 
