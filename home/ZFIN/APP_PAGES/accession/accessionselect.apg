@@ -59,12 +59,23 @@
         <?MISQL SQL="select WebExplode(object,'') from webPages where ID='$start_page';">$1<?/MISQL>
     <?/MIBLOCK>
 
-   <!-- look if accession number links to any marker, significance 11 and 12 signify orthologue or accession numbers -->
+   <!-- look if accession number links to gene , significance 11 and 12 signify orthologue or accession numbers -->
 
-    <?MISQL SQL="select count(*)::integer from all_map_names a  where allmapnm_name = lower('$aname') and allmapnm_significance in (11,12);">
+    <?MISQL SQL="select count(*)::integer from all_map_names a  where allmapnm_name = lower('$aname') and allmapnm_zdb_id like '%GENE%' and allmapnm_significance in (11,12);">
       $(SETVAR,$gcount,$1)
     <?/MISQL>
     <?MIBLOCK COND="$(NC,$gcount,0)">
+	<?MIVAR NAME=$start_page>aa-geneselect.apg<?/MIVAR>	
+        <?MIVAR NAME=$name>$aname<?/MIVAR>
+        <?MISQL SQL="select WebExplode(object,'') from webPages where ID='$start_page';">$1<?/MISQL>
+    <?/MIBLOCK>
+
+   <!-- look if accession number links to marker-->
+
+    <?MISQL SQL="select count(*)::integer from all_map_names a  where allmapnm_name = lower('$aname') and allmapnm_zdb_id not like '%GENE%' and allmapnm_significance in (11,12);">
+      $(SETVAR,$mcount,$1)
+    <?/MISQL>
+    <?MIBLOCK COND="$(NC,$mcount,0)">
 	<?MIVAR NAME=$start_page>aa-markerselect.apg<?/MIVAR>	
         <?MIVAR NAME=$name>$aname<?/MIVAR>
         <?MISQL SQL="select WebExplode(object,'') from webPages where ID='$start_page';">$1<?/MISQL>
@@ -94,9 +105,9 @@
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,COMPANY),0)">aa-companyselect.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PUB),0)">aa-pubselect2.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,FISH),0)">aa-fishselect.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,GENE),0)">aa-markerselect.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,GENE),0)">aa-geneselect.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,EST),0)">aa-markerselect.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,SSLP),0)">aa-markerselect.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,EST),0)">aa-msegselect.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,BAC),0)">aa-markerselect.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PAC),0)">aa-markerselect.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,BAC_END),0)">aa-markerselect.apg<?/MIVAR>
@@ -118,10 +129,9 @@
 
 
     <?MIBLOCK COND="$(NC,$start_page,NULL)">  
-	<?MIVAR COND="$(OR,$(>,$(POSITION,$start_page,mseg),0),$(>,$(POSITION,$start_page,marker),0))" NAME=$constraint> mrkr_zdb_id = '$OID' <?/MIVAR>    
+	<?MIVAR COND="$(>,$(POSITION,$start_page,marker),0)" NAME=$constraint> where mrkr_zdb_id = '$OID' <?/MIVAR>    
         <?MISQL SQL="select WebExplode(object,'') from webPages where ID='$start_page';">$1<?/MISQL>
     <?/MIBLOCK>  <!-- ends if valid start page, not null  -->
-
 
   <?/MIBLOCK>  <!-- ENDS IF SEARCHTYPE ZDB ID -->
 
