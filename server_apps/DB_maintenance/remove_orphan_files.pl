@@ -234,11 +234,48 @@ close MOVED_IMAGE_FILES;
 
 close MOVED_PDF_FILES;
 
-&sendLoadReport("Image Files Moved","staylor\@cs.uoregon.edu", 
+$count_images = 0;
+
+#count the number of lines read from the file.
+
+open(ORPHAN_IMAGE_FILES, "< /tmp/orphan_image_files.unl") or die "can't open $file";
+
+$count++ while <ORPHAN_IMAGE_FILES>;
+
+#count now holds the number of lines read
+
+  if ($count < 1) {
+      print "No new orphan images\n" ;
+  }
+  else {
+    &sendLoadReport("Orphan Images","staylor\@cs.uoregon.edu", 
 		"/tmp/orphan_image_files.unl") ;
-#<!--|DB_OWNER|-->
-&sendLoadReport("PDF Files Moved","staylor\@cs.uoregon.edu", 
+  }
+
+
+$count_pdfs = 0;
+
+#count the number of lines read from the file.
+
+open(ORPHAN_PDF_FILES, "< /tmp/orphan_image_files.unl") or die "can't open $file";
+
+$count++ while <ORPHAN_PDF_FILES>;
+
+#count now holds the number of lines read
+
+  if ($count < 1) {
+      print "No new orphan pdfs\n" ;
+  }
+  else {
+    &sendLoadReport("Orphan PDF","staylor\@cs.uoregon.edu", 
 		"/tmp/orphan_pdf_files.unl") ;
+  }
+
+
+#<!--|DB_OWNER|-->
+
+close ORPHAN_PDF_FILES;
+close ORPHAN_IMAGE_FILES;
 
 print "starting rsync...\n" ;
 
