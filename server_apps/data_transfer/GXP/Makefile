@@ -22,7 +22,7 @@ SUBDIRS = Thisse Talbot
 
 STATICS = README load_gxp.sh pre_gxp_load.sql gxp_load_func.sql \
 	gxp_load_quantity_check.sql post_gxp_load.sql processImage.sh \
-	thumbnail.sh filterBlast.pl blast2tab.pl
+	thumbnail.sh filterBlast.pl blast2tab.pl ispell_common
 
 
 
