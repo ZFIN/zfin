@@ -574,13 +574,10 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 		  <?MIVAR NAME=$alias>$(IF,$(=,$(POSITION,$2,GENE),0),$1,<i>$1</i>)<?/MIVAR>
 		  <?MIVAR NAME=$aliases>$(IF,$(=,$MI_CURRENTROW,1),$aliases $alias,$aliases; $alias)<?/MIVAR>
 		<?/MISQL>
-
-		<?MISQL SQL="
+                	<?MISQL SQL="
 		  select distinct ortho_name, ortho_abbrev 
 		    from orthologue 
-		    where c_gene_id = '$GENE_OID' 
-		      and (   lower(ortho_name) <> '$(LOWER,$GENE_NAME')
-			   or lower(ortho_abbrev) <> '$(LOWER,$GENE_ABREV'));">
+		    where c_gene_id = '$GENE_OID';">
 
 		  <?MIVAR NAME=$ortho_name>$1<?/MIVAR>
 		  <?MIVAR NAME=$ortho_abbrev>$2<?/MIVAR>
