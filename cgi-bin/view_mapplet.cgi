@@ -389,7 +389,7 @@
 	  #$curbetween->finish;
 	  $g_height = ($g_height < $zoom)? $zoom : $g_height;    
 	  ### add room in applet for another backbone
-	  $g_width += 280;	#bbw
+	  $g_width += 320;	#bbw
 	  $g_opt =  $g_opt .
 	    ### -- do display this panel
 	    "<INPUT TYPE=\"hidden\" NAME=\"$panel\" VALUE=\"1\">\n".
@@ -502,7 +502,7 @@
 	if ($zoom >= 0){	  
 	  $g_height = ($g_height < $zoom)? $zoom : $g_height;    
 	  ### add room in applet for another backbone
-	  $g_width +=280;	#bbw
+	  $g_width +=320;	#bbw
 	  $g_opt =  $g_opt .
 	    ### -- do display this panel
 	    "<INPUT TYPE=\"hidden\" NAME=\"$panel\" VALUE=\"1\">\n".
@@ -562,7 +562,7 @@
 	    if ($zoom > 0){
 	      $g_height = ($g_height < $zoom)? $zoom : $g_height;    
 	      ### add room in applet for another backbone
-	      $g_width +=280;	#bbw
+	      $g_width +=320;	#bbw
 	      $Q->param($panel, 1);
 	      $g_opt =  $g_opt .
 		### -- do display this panel
@@ -662,7 +662,7 @@
 	      if ($zoom > 0){
 		$g_height = ($g_height < $zoom)? $zoom : $g_height;    
 		### add room in applet for another backbone
-		$g_width +=280;	#bbw	
+		$g_width +=320;	#bbw	
 		### make sure we have the correct total markers
 		$ztotal = get_total($panel, $lg, $types);
         $Q->param($panel.'_ztotal', $ztotal);
@@ -1027,7 +1027,7 @@
 	  
 	  $g_height = ($g_height < $zoom)? $zoom : $g_height;       
 	  # emit hidden vars for $panel
-	  $g_width += 280;	#bbw
+	  $g_width += 320;	#bbw
 	  $g_printdata = $g_printdata . $panel .'|'.$lg .'|'.$Q->param('OID') .'|'.$lo .'|'.$hi .'|'.$print_type.'|'."\n"; #uniquery1
 	  $Q->param($panel,  1);
 	  $g_opt =  $g_opt .
@@ -1092,7 +1092,7 @@
 	  
 	  ### -- do display this secondary panel                  
 	  $g_printdata = $g_printdata . $panel .'|'.$lg .'|'."NULL".'|'.$lo .'|'.$hi .'|'.$print_type.'|'."\n";	#uniquery2
-	  $g_width += 280;	#bbw     
+	  $g_width += 320;	#bbw     
 	  $g_opt =  $g_opt .
 	    # $Q->hidden($panel,  1) . "\n".
 	    "<INPUT TYPE=\"hidden\" NAME=\"$panel\" VALUE=\"1\">\n".
@@ -1246,7 +1246,7 @@
       $hi = $row[4];
     }
     $g_printdata = $g_printdata . $panel .'|'.$lg .'|NULL|'.$lo .'|'.$hi .'|'.$print_type.'|'."\n"; # lg_query
-    $g_width += 280;		#bbw
+    $g_width += 320;		#bbw
     $Q->param($panel,1);
     $Q->param($panel.'_ztotal',$ztotal);
     $g_opt = $g_opt .
