@@ -10,15 +10,12 @@
 }
       
 body {
-	background: #FFFFFF;
 	font-size:9pt;
       }
 
 body { 
 	font-family:arial, sans-serif;
 }
-
-
 
 .header  {
 	font-family: arial, sans-serif;
@@ -90,6 +87,9 @@ body {
       text-decoration:none;
       }
 
+.content {
+      background-color:<!--|BACKGROUND_COLOR|-->
+}
 
 .content b {
       font-weight:bold;
