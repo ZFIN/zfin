@@ -43,6 +43,9 @@
 
 </SCRIPT>
 
+<basefont size=2>
+
+
 </HEAD>
 
 
@@ -86,21 +89,21 @@
 	where zdb_id='$OID';">
     <?/MISQL>
 
-   <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
+    <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
     
-    <!-- look to see if replaced zdb_id -->
+     <!-- look to see if replaced zdb_id -->
 
-    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-zdb_history.apg';">$1<?/MISQL>
+     <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-zdb_history.apg';">$1<?/MISQL>
     
-    <?MIBLOCK COND="$(NXST,$new_oid)">
-      <form><center><font size=+2>
-        <b>Requested ID not found on ZFIN.</b>
-      </form>
-    <?/MIBLOCK>
+     <?MIBLOCK COND="$(NXST,$new_oid)">
+       <form><center><font size=4>
+         <b>Requested ID not found on ZFIN.</b></font>
+       </form>
+     <?/MIBLOCK>
 
-  <?MIELSE>
+   <?MIELSE>
  
-     <?MIVAR NAME=$name>$1<?/MIVAR>
+      <?MIVAR NAME=$name>$1<?/MIVAR>
       <?MIVAR NAME=$abbrev>$2<?/MIVAR>
       <?MIVAR NAME=$comments>$3<?/MIVAR>
       <?MIVAR NAME=$owner>$4<?/MIVAR>
@@ -121,8 +124,7 @@
   <?/MIBLOCK>
 
   <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
-  <basefont COLOR="#000000" size=2>
-
+  
 
       <!-- If viewing, THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
       <?MISQL COND="$(NXST,$UPDATE)" SQL="
@@ -134,55 +136,70 @@
 
       <A NAME="top"></A>
 
-      <!-- OKAY, NOW  THROW UP THE  LOCUS INFO -->
+    <!------------ OKAY, NOW  THROW UP THE  LOCUS INFO ------------->
       <?MIVAR COND="$(XST,$UPDATE)">
         <form NAME=updater>
- 	  <center><font size=+2 color="#00ff00">
+ 	  <center><font size=+2 ><!--color="#00ff00"-->
 	  <input type=button 
 	    value=" DONE UPDATING. Back to Viewing! " 
 	    onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$OID')"> 
 	  </font></center>
 	<?/MIVAR>
 
+       <!---- input welcome button -------------------->
+ 
+	<?MIBLOCK COND="$(NXST,$UPDATE)">
+ 	  <table width=15% border=0 align=right>
+          <tr>
+          <?MIVAR>
+           <form method=post 
+                action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
+                target=comments>
+             <input type=hidden name=subject value="$name">
+             <input type=hidden name=marker_id value="$OID">
+             <input type=hidden name=MIval value="aa-your_input_welcome.apg">
+             <input type=hidden name=page_id value="$OID">
+          <td>
+            <input type=submit value="Your Input Welcome">
+          </td>
+           </form>
+          <?/MIVAR>
 
-  <table width=100% border=0>
-    <tr>
-      <td width=15%>
-        &nbsp;
-      </td>
-      <td width=70% align=center>
+          </tr>
+         </table>
+       <?/MIBLOCK>
+      
+       <!------- Locus Name & Abbrav--------------------------------->
 	<?MIVAR COND="$(XST,$UPDATE)">
+
 	  <INPUT TYPE=button 
 	    value=Update 
             onClick="doit('locus_name','text','Locus+Name')">
 	<?/MIVAR> 
+
 	<?MIVAR>
-	  <B> <FONT SIZE=+2>Locus: <i>$name</i></B>
+	  <font SIZE=+1><b>Locus: <i>$name</i></b></font><br>
 	<?/MIVAR>
 
 	<?MIVAR COND="$(XST,$UPDATE)">
-	  <br>
           <INPUT TYPE=button 
             value=Update 
             onClick="doit('abbrev','text','Abbreviation')">
 	<?/MIVAR> 
 
-
-
         <?MIBLOCK COND="$(AND,$(NC,$abbrev,NULL),$(NC,$abbrev,xxx),$(NC,$abbrev,none))">
 	  <?MIVAR>
-	    <b><i>($abbrev)</i></b>
+	    <font SIZE=+1><b>Abbreviation: <i>$abbrev</i></b></font><br>
 	  <?/MIVAR>
         <?/MIBLOCK>
-
-        </FONT>
+        <!------- ends Locus Name & Abbrav------------------>
 
 <!-- I PURPOSEFULLY DO NOT ALLOW UPDATING OF NAME/ABBREV because 
 	  -- this information is central to identity of the record
 	  -->
 
+        <!---------- Record Owner --------------------------->
 	<?MIBLOCK COND="$(OR,$(EC,$AUTHORIZED,root),$(EC,$AUTHORIZED,fishauth))">
-	  <br>
 	  <?MIVAR COND="$(XST,$UPDATE)">
 	    <INPUT TYPE=button 
               value=Update 
@@ -196,39 +213,10 @@
 	    </font>
  	  <?/MISQL>
 	<?/MIBLOCK> <!-- if root -->
-      </td>
-      <?MIBLOCK COND="$(NXST,$UPDATE)">
-        <?MIVAR>
-          <form method=post 
-                action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
-                target=comments>
-            <input type=hidden name=subject value="$name">
-            <input type=hidden name=marker_id value="$OID">
-            <input type=hidden name=MIval value="aa-your_input_welcome.apg">
-            <input type=hidden name=page_id value="$OID">
-      <td width=15% align=center>
-            <input type=submit value="Your Input Welcome">
-      </td>
-          </form>
-        <?/MIVAR>
-      <?MIELSE>
-        <td width=15%>&nbsp;</td>
-      <?/MIBLOCK>
-    </tr>
-  </table>
+        <!---------- ends Record Owner --------------------------->
 
-
-	  <p><font size=+1>
-          <?MIBLOCK COND="$(XST,$UPDATE)">
-	    <INPUT TYPE=button 
-              value="Update" 
-              onClick="doit('comments','textarea','Locus+Description');"> 
-	  <?/MIBLOCK>
-
-	    <b>Locus Description:</b><?MIVAR>$(IF,$(NC,$comments,NULL),$comments,"No description available") <?/MIVAR>
-
-
-	<p><font size=+1>
+	<!-------------  Previous Name  ------------------------>
+	<p>
 	<?MIVAR COND="$(XST,$UPDATE)">
  	  <INPUT TYPE=button 
             value=Add 
@@ -257,20 +245,70 @@
 	  $(IF,$(AND,$(NXST,$UPDATE),$(OR,$(XST,$alias),$(>,$MI_CURRENTROW,1))),;) $1 
 	<?/MISQL>
 	</i>
+	<!------------- ends Previous Name  ------------------------>
+
+
+	<!-------------- Affected Gene ----------------------->
+	<!--<HR WIDTH=80%>-->
 	<p>
+	<?MIVAR NAME=$override>
+	  $(IF,$(OR,$(EC,$ZDB_access,root),$(EC,$ZDB_access,fishauth)),true,false)
+	<?/MIVAR>
+
+	<?MIVAR COND="$(XST,$UPDATE)">
+ 	  <INPUT TYPE=button 
+	    value="Update" 
+	    onClick="doit('cloned_gene','selection','Affected+Gene')">
+	<?/MIVAR>
+	<B>Affected Gene:</B> 
+	<?MIVAR COND="$(EC,$cloned_gene,NULL)">Not yet established.<?/MIVAR>
+
+	<?MISQL COND="$(NC,$cloned_gene,NULL)" SQL="
+	  select gene_name, abbrev 
+	    from gene 
+	    where zdb_id='$cloned_gene';">
+	  <TABLE width=100% cellpadding=5 border=0 bgcolor="$highlight" cols=2 rows=1>
+	    <TR><TD>
+	    <font color="red"><B>Cloned Gene:</b>  </font>
+	    <font size=2>The GENE <b><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$cloned_gene">$1 ($2) </A> </b> 
+	    has been shown to correspond to the <b><i>$name</i></b> locus. 
+	    Please consult the GENE record for further mapping information.
+	   </TD>
+	   </TR>
+	  </TABLE>
+	<?/MISQL>
+	<!-------------- ends Affected Gene ----------------------->
+
+
+       <!------------- Locus Description ------------------------>
+	  <p>
+          <?MIBLOCK COND="$(XST,$UPDATE)">
+	    <INPUT TYPE=button 
+              value="Update" 
+              onClick="doit('comments','textarea','Locus+Description');"> 
+	  <?/MIBLOCK>
+
+	    <b>Locus Description:</b><?MIVAR>$(IF,$(NC,$comments,NULL),$comments,"No description available") <?/MIVAR>
+	<!------------- Locus Description ------------------------>
+
+     
+	<!------------- Linkage Group	  ------------------------>
+	<p><HR WIDTH=80%>
 	<?MISQL SQL="
 	  select distinct chrom_num 
 	    from fish_search 
 	    where locus ='$OID' 
 	      and chrom_num <> 0 ;">
-	  $(IF,$(NC,$1,0),<font size=+1><b>"Linkage Group:" $1</b>)
+	  $(IF,$(NC,$1,0),<b>"LINKAGE GROUP:" $1</b>)
 	<?/MISQL>
+	<!------------- ends Linkage Group	  ------------------------>
 
+
+        <!------------- Summary of alleles  ------------------------>
 	<HR WIDTH=80%>
-	<p>
-	<font size=+1>
+	
 	<?MIVAR>
-	  <b>Summary of <i>$name</i> alleles:</b>
+	  <b>SUMMARY of <i>$name</i> ALLELES:</b>
         <?/MIVAR>
         </font> 
         <font size=-1>(Click allele to see details)</font>
@@ -362,36 +400,9 @@
 	      </TR>
 	    <?/MISQL>
 	</TABLE>
+	<!------------- ends Summary of alleles  ------------------------>
 
-	<HR WIDTH=80%>
-	<p>
-	<?MIVAR NAME=$override>
-	  $(IF,$(OR,$(EC,$ZDB_access,root),$(EC,$ZDB_access,fishauth)),true,false)
-	<?/MIVAR>
-
-	<?MIVAR COND="$(XST,$UPDATE)">
- 	  <INPUT TYPE=button 
-	    value="Update" 
-	    onClick="doit('cloned_gene','selection','Affected+Gene')">
-	<?/MIVAR>
-	<B>Affected Gene:</B> 
-	<?MIVAR COND="$(EC,$cloned_gene,NULL)">Not yet established.<?/MIVAR>
-
-	<?MISQL COND="$(NC,$cloned_gene,NULL)" SQL="
-	  select gene_name, abbrev 
-	    from gene 
-	    where zdb_id='$cloned_gene';">
-	  <TABLE width=100% cellpadding=5 border=0 bgcolor="$highlight" cols=2 rows=1>
-	    <TR><TD>
-	    <font color="red"><B>Cloned Gene:</b>  </font>
-	    <font size=2>The GENE <b><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$cloned_gene">$1 ($2) </A> </b> 
-	    has been shown to correspond to the <b><i>$name</i></b> locus. 
-	    Please consult the GENE record for further mapping information.
-	   </TD>
-	   </TR>
-	  </TABLE>
-	<?/MISQL>
-
+	
       </form>
 
     <?/MIBLOCK> <!-- Cond AUTHORIZED -->
