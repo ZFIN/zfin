@@ -1,7 +1,7 @@
-#!/local/bin/perl
+#!/private/bin/perl
 
 #
-#  fmparser.pl
+#  goparser.pl
 #
 
 
@@ -9,38 +9,62 @@ open (INDEXFILE, "go.zfin") or die "open failed";
 open (UNL, ">gene_association.zfin") or die "Cannot open exppat.unl";
 
 # set count to 0 before processing, increment it with each row processed.
-$gene='';
-$spid='';
+$lastmrkrgoev = '';
+@inf_array = ();
+$db='ZFIN';
+
 while ($line = <INDEXFILE>) {
       chomp $line;
       @fields = split /\t/, $line;
-      $db='ZFIN';
-      $mrkrid=$fields[0];
-      $mrkrabb=$fields[1];
-      $mrkrname=$fields[2];
-      $qualifier=goqual($fields[8]);
-      $goid=$fields[3];
-      $pubid=goPub($fields[4],$fields[5]);
-      $evidence=$fields[6];
-      $inf=goInf($fields[7]);
-      $go_o=goAspect($fields[9]);
-      $ev_date=$fields[10];
-      $mod_by=goMod($fields[11]);
-      print UNL "$db\t$mrkrid\t$mrkrabb\t$qualifier\tGO:$goid\tZFIN:$pubid\t$evidence\t$inf\t$go_o\t$mrkrname\t\tgene\ttaxon:7955\t$ev_date\t$mod_by\n";
+      $mrkrgoev=$fields[0];
+      if ($lastmrkrgoev ne '' && $mrkrgoev ne $lastmrkrgoev) {
+
+	  print UNL "$db\t$mrkrid\t$mrkrabb\t$qualifier\tGO:$goid\tZFIN:$pubid\t$evidence\t".join('|',@inf_array)."\t$go_o\t$mrkrname\t\tgene\ttaxon:7955\t$ev_date\t$mod_by\n";
+	  
+	  @inf_array = (); 
+      }
+      $lastmrkrgoev = $mrkrgoev;
+      $mrkrid=$fields[1];
+      $mrkrabb=$fields[2];
+      $mrkrname=$fields[3];
+      $qualifier=goQlf($fields[9]);
+      $goid=$fields[4];
+      $pubid=goPub($fields[5],$fields[6]);
+      $evidence=$fields[7];
+      $inf=goInf($fields[8]);
+      push(@inf_array, $inf);
+      $go_o=goAspect($fields[10]);
+      $ev_date=goDate($fields[11]);
+      $mod_by=goMod($fields[12]);
+
 }
 
 close (UNL);
 close (INDEXFILE);
+
+sub goQlf() 
+ {
+     $qualf = $_[0];
+     $qualf = 'NOT' if $qualf eq 'not';
+     $qualf = 'contributes_to' if $qualf eq 'contributes to';
+     return $qualf;
+ }              
+
+sub goDate() 
+  {
+    ($date, $time) = split(/ /, $_[0]);
+    $date =~ s/-//g;
+    return $date;
+  }
+    
 sub goAspect()
   {
     $aspect = $_[0];
-
     $aspect = 'P' if ($aspect eq 'B');
     $aspect = 'F' if ($aspect eq 'M');
 
     return $aspect;
   }
-
 
 sub goPub()
   {
@@ -56,11 +80,8 @@ sub goMod()
     $mod_by =$_[0];
     $source = 'ZFIN' if ($mod_by ne 'S-P Curators');
     $source = 'UniProt' if ($mod_by eq 'S-P Curators');
-
     return $source;
   }
-
-
 sub goInf()
   {
     $inf =$_[0];
@@ -83,12 +104,3 @@ sub goInf()
     return $inf;
   }
 
-sub goqual()
- {
-   $qual=$_[0];
-   if (index($qual,'\ ')==0) {
-       $qual=~s/\\ //;
-     }
-    return $qual;
-  }
-exit;
