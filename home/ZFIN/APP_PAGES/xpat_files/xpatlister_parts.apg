@@ -379,10 +379,10 @@
 
 
 <?MISQL SQL="
-        select distinct xpatassay_name, xpatassay_display_order, xp.xpat_zdb_id, mrkr_name, mrkr_abbrev, mrkr_zdb_id, mrkr_type
+        select distinct xpatassay_name, xpatassay_display_order, xp.xpat_zdb_id, mrkr_name, mrkr_abbrev, mrkr_zdb_id, mrkr_type, mrkr_abbrev_order
         $query_from
         $query_where
-      order by 4
+      order by mrkr_abbrev_order
                ;">
   <?MIVAR NAME=$GENE_OID>$6<?/MIVAR>
   <?MIVAR NAME=$GENE_NAME>$4<?/MIVAR>
@@ -467,7 +467,7 @@
                and xpatstg_start_stg_zdb_id = s1.stg_zdb_id
                and xpatstg_end_stg_zdb_id = s2.stg_zdb_id
                and s3.stg_zdb_id = '$stage_start'
-      order by 4
+      order by xpat_assay_name
               ;">
       <?MIBLOCK COND="$(=,$ROWCOUNT,1)">
         <?MIVAR NAME=$first_stage><a href="javascript:popup_stage_comments('$3')">$2</a><?/MIVAR>
