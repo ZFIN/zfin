@@ -52,7 +52,7 @@
 00 01 * * 1,2,3,4,5 <!--|ROOT_PATH|-->/server_apps/data_transfer/LoadGO/loadgo.pl
 #
 # Scan of char/varchar fields for bad stuff. This can be scheduled anytime.
-00 02 * * 1,2,3,4,5 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/scrubscan.sh
+00 02 * * 1,2,3,4,5 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/scrubscan.pl
 #
 #
 # WEEKLY SCRIPTS
