@@ -191,8 +191,10 @@ FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN record
        <?MIBLOCK COND="$(NC,$4,)">
           <?MIVAR><A HREF="$4">($5)</A><?/MIVAR>
        <?MIELSE>
+	  <?MIVAR COND="$(>,$(POSITION,$3,LAB),0)" NAME=viewpage>labview.apg<?/MIVAR>
+          <?MIVAR COND="$(>,$(POSITION,$3,COMPANY),0)" NAME=viewpage>companyview.apg<?/MIVAR>
           <?MIVAR>
-            <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$3">(Order This)</a>
+            <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$viewpage&OID=$3">(Order This)</a>
           <?/MIVAR>
        <?/MIBLOCK>
        </font>
@@ -353,9 +355,6 @@ FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN record
   <?/MISQL>
 
     </center><br>
-    <div align=left>
- 
-      <b>Images:</b></div>
 
 
 <?MIVAR NAME=CODECOMMENTS> 
@@ -384,6 +383,9 @@ FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN record
 
     <?MIBLOCK COND="$(=,$COUNT,0)">
       <?MIVAR>
+	<div align=left>
+	      <b>Images:</b>
+	</div>
 
         <table cellspacing=2 cellpadding=5 border=1 align=center width=90% bgcolor="#FFFFFF">
 
@@ -457,39 +459,22 @@ FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN record
         <tr>
       <?/MIVAR>
       <?MIVAR NAME=$COUNT>1<?/MIVAR>
-    <?/MIBLOCK>
-  <?/MISQL>
-
-<?MIVAR COND="$(NC,$MI_ROWCOUNT,0)">
+   <?/MIBLOCK>
+<?/MISQL>
+<?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
+   </table>
+   <br>
 <?/MIVAR>
 
-<?MIVAR COND="$(EC,$MI_ROWCOUNT,0)">
-      <table cellspacing=2 cellpadding=5 border=1 align=center width=90% bgcolor="#FFFFFF">
-        <tr>
-          <td>
-            No Images Submitted
-          </td>
-        </tr>
-<?/MIVAR>
-
-      </table>
-
-      <br>
-      <!-- <hr width="95%"> -->
 
 <?MIVAR NAME=CODECOMMENTS> 
      LIST EACH HIERARCHY PART IN THE FIRST TABLE CELL AND LIST ASSOCIATED
      KEYWORDS AS LINKS IN THE SECOND TABLE CELL.
 <?/MIVAR>
 
-<?MIVAR NAME=$KEYWORDS>&nbsp;<?/MIVAR>
-<?MIVAR NAME=$TEMP_PART> <?/MIVAR>
-<?MIVAR NAME=$COUNT>0<?/MIVAR>
-
-  <b>Keywords:</b>
-
-    <center>
-    <table border="2" width="90%">
+  <?MIVAR NAME=$KEYWORDS>&nbsp;<?/MIVAR>
+  <?MIVAR NAME=$TEMP_PART> <?/MIVAR>
+  <?MIVAR NAME=$COUNT>0<?/MIVAR>
 
   <?MIVAR NAME=$anatitem_list><?/MIVAR>
   <?MISQL SQL="
@@ -507,11 +492,15 @@ FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN record
     
     <?MIBLOCK COND="$(=,$COUNT,0)">
       <?MIVAR>
-        <tr width="100%">
-          <td width="15%">
-            <b>$4:&nbsp;&nbsp;</b>
-          </td>
-          <td width="85%">
+	<b>Keywords:</b>
+    	<center>
+    	   <table border="2" width="90%">
+
+           <tr width="100%">
+             <td width="15%">
+               <b>$4:&nbsp;&nbsp;</b>
+             </td>
+             <td width="85%">
           <?MIVAR NAME=$anatitem_list>$anatitem_display<?/MIVAR>
       <?/MIVAR>
       <?MIVAR NAME=$TEMP_PART>$1<?/MIVAR>
@@ -558,16 +547,16 @@ FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN record
     <?MIVAR NAME=$COUNT>1<?/MIVAR>
     <?MIVAR NAME=$TEMP_HIER>$4<?/MIVAR>
   <?/MISQL>
-  <?MIVAR>$anatitem_list<?/MIVAR>
-
+  <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">	
+  	<?MIVAR>$anatitem_list<?/MIVAR>
           </td>
         </tr>
       </table>
       </center>
-
       <p align=left>
+  <?/MIBLOCK>
 
-    <?MIBLOCK COND="$(XST,$UPDATE)">
+  <?MIBLOCK COND="$(XST,$UPDATE)">
     <?MIVAR>
     <table>
       <tr>
@@ -592,7 +581,7 @@ FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN record
     </table>
     <?/MIVAR>
   <?MIELSE>
-    <?MIVAR>
+    <?MIVAR COND="$(NC,$XPATSTG_COMMENTS,)">
           <b>Description:&nbsp;</b><br>$XPATSTG_COMMENTS
     <?/MIVAR>
   <?/MIBLOCK>  <!-- end xst update -->
