@@ -290,7 +290,7 @@ O_ATTRIB_COUNT ::: number of orthology attribution records
 
 
 <?MISQL SQL="
-	select COUNT(*)::INTEGER
+	select COUNT(distinct mrkr_abbrev)::INTEGER
 	from marker, tmp_gene_with_orthology
 	where gwo_gene_zdb_id = mrkr_zdb_id
 	  and gwo_gene_attrib_count - gwo_dblink_attrib_count $(IF,$(<,$G_ATTRIB_COUNT,3),=,>=) $G_ATTRIB_COUNT
@@ -307,15 +307,18 @@ O_ATTRIB_COUNT ::: number of orthology attribution records
 	  and gwo_dblink_attrib_count $(IF,$(=,$O_ATTRIB_COUNT,0),=,>) 0
 	  and gwo_gene_zdb_id = imp_mrkr_zdb_id
 	  and imp_pub_zdb_id = zdb_id
-	  and zdb_id not in 
+	  and not exists 
 	    (
-	      select recattrib_source_zdb_id 
+	      select * 
 	      from record_attribution, orthologue_evidence_display
-	      where recattrib_data_zdb_id = oevdisp_zdb_id
+	      where zdb_id = recattrib_source_zdb_id
+	        and recattrib_data_zdb_id = oevdisp_zdb_id
                 and oevdisp_gene_zdb_id = gwo_gene_zdb_id
             )
 	group by 1, 2
 	order by 3 desc;">
+	
+	<?MIVAR NAME=curorthosel_mrkr_zdb_id>$2<?/MIVAR>
 	
 	<b><i>$1</i></b> 
 	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$2</A>
@@ -326,6 +329,14 @@ O_ATTRIB_COUNT ::: number of orthology attribution records
 		from int_marker_pub, publication
 		where '$2' = imp_mrkr_zdb_id
 		  and imp_pub_zdb_id = zdb_id
+	          and not exists 
+	            (
+	              select * 
+	              from record_attribution, orthologue_evidence_display
+	              where zdb_id = recattrib_source_zdb_id
+	                and recattrib_data_zdb_id = oevdisp_zdb_id
+                        and oevdisp_gene_zdb_id = '$curorthosel_mrkr_zdb_id'
+                    )
 		order by 2 desc;">
 		
 		<li><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$6">$1 ($5) $3. $4.</A> $6
