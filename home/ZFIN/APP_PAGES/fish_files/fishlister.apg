@@ -43,8 +43,12 @@ $constraint $previous (lower(abbrev)='$(LOWER,$abbrev)')<?/MIVAR>
 
 <?MIVAR NAME=$previous COND="$(XST,$abbrev)"> and <?/MIVAR>
 
-<?MIVAR NAME=$constraint COND="$(XST,$anon1text)">
+<?MIVAR NAME=$constraint COND="$(AND,$(XST,$anon1text),$(EC,$anon1,phenotype))">
+$constraint $previous (webhtml_like($anon1,'$anon1text'))<?/MIVAR>
+
+<?MIVAR NAME=$constraint COND="$(AND,$(XST,$anon1text),$(NC,$anon1,phenotype))">
 $constraint $previous (lower($anon1) like '%$(LOWER,$anon1text)%')<?/MIVAR>
+
 
 <?/MIBLOCK> <!-- ends shared mutant/wild-type block -->
 
@@ -141,10 +145,20 @@ Options:
 
 <?MIBLOCK COND="$(XST,$limit)">
 <TABLE width=100%>
-<TH> </TH><TH>Allele</TH> <TH>Locus</TH> <TH>Mut. Type</TH> <TH>Mutagen</TH> <TH>LG</TH> <TH>Images</TH>
+<TH> </TH><TH>Allele</TH> <TH>Locus (abbrev)</TH> <TH>Mut. Type</TH> <TH>Mutagen</TH> <TH>LG</TH> <TH>Images</TH>
 <?MISQL SQL="select distinct name, fish_id, abbrev, mutagen, allele, chrom_change, chrom_num,num_images,locus from fish_search a  where line_type='mutant' $mut_constraint $order_by;" MAXROWS=$limit>
 $(IF,$(>,$MI_CURRENTROW,1),"<TR><TD colspan=7> <HR width=80%> </TD> </TR>")
 $(IF,$(=,$MI_CURRENTROW,1),"<TR><TD colspan=7> <HR size=5> </TD> </TR>")
+
+<?MIVAR NAME=$abbrev>$3<?/MIVAR>
+<?MIBLOCK COND="$(EC,$abbrev,NULL)">
+<?MIVAR NAME=$abbrev>None<?/MIVAR>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(EC,$abbrev,xxx)">
+<?MIVAR NAME=$abbrev>None<?/MIVAR>
+<?/MIBLOCK>
+
 
 <TR align=center valign=top> 
 <TD>$MI_CURRENTROW. 
@@ -153,7 +167,7 @@ $(IF,$(XST,$return_rec),"<A HREF="/cgi-bin_B/webdriver?MIval=aa-do-select.apg&re
 <TD valign=top> 
 <A HREF="/cgi-bin_B/webdriver?MIval=aa-fishview.apg&OID=$2" TARGET=content>$5</A>
 </TD> 
-<TD><font size=-1><A HREF="/cgi-bin_B/webdriver?MIval=aa-locusview.apg&OID=$9" TARGET=content>$1</A> ($3)</font></TD>
+<TD><font size=-1><A HREF="/cgi-bin_B/webdriver?MIval=aa-locusview.apg&OID=$9" TARGET=content>$1</A> ($abbrev)</font></TD>
 <TD><font size=-1> $(IF,$(EC,$6,NULL),UNKNOWN,$6)</font> </TD> 
 <TD><font size=-1> $(IF,$(EC,$4,NULL),UNKNOWN,$4)</font> </TD> 
 <TD><font size=-1> $(IF,$(EC,$7,0),UNKNOWN,$7)</font> </TD> 
