@@ -32,7 +32,8 @@
 # First check if we are being called recursively.
 
 ifeq (0, $(MAKELEVEL))
-$(error ERROR: THIS MAKEFILE CANNOT BE INVOKED DIRECTLY.  INVOKE IT FROM ITS PARENT MAKEFILE.)
+error:
+	ERROR: THIS MAKEFILE CANNOT BE INVOKED DIRECTLY.  INVOKE IT FROM ITS PARENT MAKEFILE.
 endif
 
 # If you got the above error. cd up a directory and remake from that 
@@ -78,6 +79,7 @@ $(TARGETDIR)/$(IMAGES) : ../$(IMAGES)
 
 $(TARGETJAR) : $(JAR)
 	$(TARGET_CP) $(JAR) $@
+	chmod o+r $@
 
 $(JAR) : $(CLASSES)
 	/local/apps/jdk-1.1/bin/jar -cf $(JAR) $(CLASSES)
