@@ -77,6 +77,72 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_genes.txt'
     from meow_exp1;
 
 
+-- Create the main zfin_genes file for Locus Link - they would like mapping info also
+
+create table meow_expll (
+  zdb_id varchar(50),
+  mname varchar(80),
+  abbrev varchar(20),
+  OR_lg integer,
+  location numeric(6,2),
+  panel_id varchar(50),
+  panel_abbrev varchar(10),
+  metric varchar(5)
+);
+
+insert into meow_expll 
+  select distinct zdb_id,mname,abbrev,OR_lg,lg_location,target_id,target_abbrev,metric 
+    from paneled_markers 
+   where mtype='GENE'
+     and private = 'f';
+
+insert into meow_expll 
+  select distinct zdb_id,mname,abbrev,0,0,null::varchar(50),null::varchar(10),null::varchar(5) 
+    from paneled_markers a 
+   where mtype='GENE'
+     and private = 't' 
+     and not exists 
+       ( select 'x' 
+	   from paneled_markers b 
+	  where a.zdb_id = b.zdb_id 
+	    and private = 'f') ;
+
+--  Add in  unmapped genes
+insert into meow_expll (zdb_id,mname,abbrev,OR_lg) 
+  select zdb_id,gene_name,abbrev,0 
+    from gene 
+   where not exists 
+                 (select * 
+                    from mapped_marker mm
+                    where gene.zdb_id = mm.marker_id);
+
+
+-- Sanity check to see that there are no anomalies. These two queries 
+-- should return same result. If not, there are redundant GENE records, 
+-- or the same  gene mapped to different LGs (rare) by two experiments.
+-- The solution in former case is to blast redundant records and rerun. In
+-- latter case, be sure to find the redundant record (eg looking for redundant
+-- abbrevs for instance) and delete one of them from output file.
+-- At this time, eg, wnt4 is mapped MOP(LG15),GAT(LG11). I asked John P. and 
+-- he says the GAT result is the one to use. So I delete the wnt4,LG15 
+-- record from output file. In fact, since I know of this problem, I'll just
+-- build the delete into the script here!
+-- removed 11/13/00  this mapping inconsistency has been resolved.  delete from meow_exp1 where abbrev='wnt4' and OR_lg='15';
+
+select count(*) 
+  from meow_expll;
+
+select count(distinct abbrev) 
+  from meow_expll;
+
+--  Okay, now write it to a file
+UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_genes_locuslink.txt' 
+  DELIMITER "	" 
+  select * 
+    from meow_expll;
+
+
+
 -- NOW let's create the table of pubs associated with these genes. Easy!
 create table meow_exp2 (
   gene_id varchar(50),
@@ -168,7 +234,7 @@ drop table meow_exp2;
 drop table meow_exp3;
 drop table meow_exp4;
 drop table meow_exp5;
-
+drop table meow_expll;
 
 -- NOW just notify Don Gilbert that the updated files are there and he
 -- can download them!
