@@ -10,9 +10,6 @@
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
 # The zgcClone script is run by cron daily.  It invokes the sql script.
-# The MEOW DB dump uses the FTP directory structure.  See the 
-# ZFIN Documentation for how FTP is handled differently in test versus 
-# production.
 
 
 # ---------------  Variable Definitions  --------------------------------
@@ -35,9 +32,8 @@ include $(TOP)/make.default.rules
 
 # ---------------  Misc Targets  ----------------------------------------
 
-# Run the download script.  This extracts data from ZFIN and places it in 
-# the public ftp directory
+# Run script to create ZGC links in the database
 
-#run : $(TARGETDIR)/zgc.pl 
-#	$(TARGETDIR)/zgc.pl
+run : $(TARGETS)
+	$(TARGETDIR)/zgc.pl
 
