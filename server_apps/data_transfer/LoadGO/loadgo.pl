@@ -83,7 +83,7 @@ while( !( -e "ontology.unl")) {
     }
     else
     {
-         &sendErrorReport("Failed to run ontology.pl"); 
+      print("Failed to run ontology.pl"); 
       exit;
     }
   }  
