@@ -42,9 +42,15 @@ function cookiesOK(cookieName) {
    		//if (resultCookieExists == "yes") {
  	  return "yes";}  // cookies appear to be OK with this user
   else {
-      use_cookies = (confirm("Will you allow the contact information and grant number you enter into this form "
-                            +"to be stored on your computer so that those values will be pre-filled the next "
-                            +"time you return to the Resource Center online forms?") ? "yes":"no");
+//
+// 23-Oct-03 rholland
+// No need to prompt if user will allow cookies - just do it
+//
+//      use_cookies = (confirm("Will you allow the contact information and grant number you enter into this form "
+//                            +"to be stored on your computer so that those values will be pre-filled the next "
+//                            +"time you return to the Resource Center online forms?") ? "yes":"no");
+//
+           use_cookies == "yes";
  	   if (use_cookies == "yes") {
  	     return "yes";}  //cookies are OK for this user
  	   else {  //end of if (use_cookies == "yes")
