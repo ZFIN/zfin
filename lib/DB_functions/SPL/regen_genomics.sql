@@ -307,18 +307,12 @@ create dba function "informix".regen_genomics() returning integer
 
     -- Finally, extract out accession numbers for other databases from db_links
     -- for any ZDB object that has at least one record in the all_map_names 
-    -- table.  Some db_link records have multiple comma-separated accession 
-    -- numbers per record.  Assume none of the accession numbers are already in
+    -- table. Assume none of the accession numbers are already in
 
-    -- Take the easy route with records that are not comma separated
     -- The "distinct" below is needed because many acc_num/linked_recid
     --   combinations have an entry for Genbank and an entry for BLAST.
     -- The last <> condition is needed because somewhere in the database an
     --   accession number is already being defined as an alias.
-
-    -- ahh but all Genbank records with acc_num[9] = ','  also have two 
-    -- rows in the blast one contaning each of the acc on either side of the comma
-    -- so just skip the commas and be done.
 
 
     let errorHint = "all_map_names-accession_numbers";
@@ -331,18 +325,15 @@ create dba function "informix".regen_genomics() returning integer
      group by 1,2
      into temp all_marker_names_new with no log;		
  	
-    select lower(acc_num) allmapnm_name, linked_recid allmapnm_zdb_id, 12 allmapnm_significance
+    select distinct lower(acc_num) allmapnm_name, linked_recid allmapnm_zdb_id, 12 allmapnm_significance
     from db_link, all_marker_names_new
-    where acc_num[9] <> ',' 
-    and db_link.linked_recid = allmapnm_zdb_id
+    where db_link.linked_recid = allmapnm_zdb_id
     and lower(acc_num) <> allmapnm_name	    
     union
-    select  lower(acc_num) allmapnm_name, c_gene_id allmapnm_zdb_id, 12 allmapnm_significance
+    select  distinct lower(acc_num) allmapnm_name, c_gene_id allmapnm_zdb_id, 12 allmapnm_significance
     from db_link,  orthologue
-    where acc_num[9] <> ','
-    and db_link.linked_recid = orthologue.zdb_id
+    where db_link.linked_recid = orthologue.zdb_id
     into temp all_acc_names_new with no log;
-
 
 
     let errorHint = "all_map_names-get-marker-names";
@@ -387,29 +378,48 @@ create dba function "informix".regen_genomics() returning integer
     let errorHint = "all_map_names-mini-significance";
 
 	insert into all_m_names_new 
-		select allmapnm_name, allmapnm_zdb_id, min(allmapnm_significance)  
+		select distinct allmapnm_name, allmapnm_zdb_id, min(allmapnm_significance)  
         	from all_fish_names_new
         	where allmapnm_name <> ''
         	and  allmapnm_name is not NULL
         	group by 2,1;
 		
 	insert into all_m_names_new
-		select allmapnm_name allmapnm_name, allmapnm_zdb_id allmapnm_zdb_id, min(allmapnm_significance)  allmapnm_significance 
+		select distinct allmapnm_name allmapnm_name, allmapnm_zdb_id allmapnm_zdb_id, min(allmapnm_significance)  allmapnm_significance 
         	from all_marker_names_new
         	where allmapnm_name <> ''
         	and  allmapnm_name is not NULL
         	group by 1,2;
 
 	insert into all_m_names_new
-		select *
+		select distinct *
 		from  all_acc_names_new;
 
 	insert into all_m_names_new
-		select allmapnm_name, allmapnm_zdb_id, min(allmapnm_significance)  
+		select distinct allmapnm_name, allmapnm_zdb_id, min(allmapnm_significance)  
 		from all_locus_names_new
         	where allmapnm_name <> ''
         	and  allmapnm_name is not NULL
         	group by 2,1;
+
+   -- I do not think there is any gaurentee we havent duplicated a name-zdbid with same or different signigicance ...
+   -- if there are dupes with different signigicances, delete all but the one(s) with the lowest.
+
+        let errorHint = "all_map_names-delete_dupes";
+
+	select  allmapnm_name, allmapnm_zdb_id, min(allmapnm_significance) allmapnm_significance 
+	from all_m_names_new group by 2,1 having count(*) > 1
+	into temp tmp_amn_dup with no log;
+	
+	delete from all_m_names_new where exists (
+		select 1 from  tmp_amn_dup  tad 
+		where tad.allmapnm_name         =  all_m_names_new.allmapnm_name
+		and   tad.allmapnm_zdb_id       =  all_m_names_new.allmapnm_zdb_id
+		and   tad.allmapnm_significance <  all_m_names_new.allmapnm_significance
+	);  
+	drop table tmp_amn_dup;
+
+	
 
     let errorHint = "all_map_names-create_indexes";
 
