@@ -31,7 +31,7 @@ INTERNALFILETARGET = $(TARGETDIR)/$(INTERNALFILE)
 MISSINGLINKTARGETS = $(foreach LINK, $(MISSINGLINKS), $(TARGETDIR)/$(LINK))
 
 ACCESSIBLEFILES = db.html Database doc.css \
-                  h2Leader.jpg h3Leader.jpg h4Leader.jpg
+                  h2Leader.jpg h3Leader.jpg h4Leader.jpg h5Leader.jpg
 ACCESSIBLELINKS = $(foreach FILE, $(ACCESSIBLEFILES), $(TARGETDIR)/$(FILE))
 
 ENDEMICTARGETS_POSTTARGETDIR = $(INTERNALFILETARGET) $(MISSINGLINKTARGETS) $(ACCESSIBLELINKS)
