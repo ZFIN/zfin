@@ -633,7 +633,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 	from publication, expression_pattern
 	     left outer join fish on xpat_stock_zdb_id = fish.zdb_id
 	     left outer join locus on xpat_stock_zdb_id = locus.zdb_id 
-	where recattrib_data_zdb_id in ('$showpubs_inXpatList')
+	where xpat_zdb_id in ('$showpubs_inXpatList')
 	  and xpat_source_zdb_id = publication.zdb_id          
           and xpat_gene_zdb_id = '$OID'
         group by publication.zdb_id, 2, authors, source, 5, 6, 7, 8, 9, 10
