@@ -62,27 +62,14 @@ create function populate_anat_display_stage_children(parent_id varchar(50),
   -- call function recursively for each anatitem that is contained by 
   -- the parent anatitem and 
   foreach
-    select anatcon_contained_zdb_id, anatitem_type_code, anatitem_name, LOWER(anatitem_name_order)
-      into child_id, hier_code, anatomy_name, anatomy_order
-      from anatomy_item, anatomy_contains, stage_items_contained, stage s1, stage xstrt, stage xend
-      where parent_id = anatcon_container_zdb_id
-        and anatitem_zdb_id = anatcon_contained_zdb_id
+     select anatrel_anatitem_2_zdb_id, anatitem_type_code, anatitem_name, anatitem_name_order
+       into child_id, hier_code, anatomy_name, anatomy_order
+       from anatomy_item, anatomy_relationship, stage_items_contained
+      where parent_id = anatrel_anatitem_1_zdb_id
+        and anatitem_zdb_id = anatrel_anatitem_2_zdb_id
         and anatitem_zdb_id = sic_anatitem_zdb_id
         and sic_stg_zdb_id = stage_id
-        and stage_id = s1.stg_zdb_id
-	and anatcon_start_stg_zdb_id = xstrt.stg_zdb_id
-        and anatcon_end_stg_zdb_id = xend.stg_zdb_id
-	and (
-	       (    s1.stg_hours_start >= xstrt.stg_hours_start
-		and s1.stg_hours_start < xend.stg_hours_end)
-	   or
-	       (    s1.stg_hours_end > xstrt.stg_hours_start
-		and s1.stg_hours_end <= xend.stg_hours_end)
-	   or      
-	       (    s1.stg_hours_start <= xstrt.stg_hours_start
-		and s1.stg_hours_end >= xend.stg_hours_end)
-	   )
-      order by 4
+   order by anatitem_name_order
 
     insert into stage_item_child_list 
       values(stage_id,parent_id,child_id,anatomy_name,hier_code,anatomy_order);
@@ -95,9 +82,9 @@ create function populate_anat_display_stage_children(parent_id varchar(50),
     select stimchilis_child_zdb_id, stimchilis_anat_name, stimchilis_anat_order, stimchilis_hier_code
       into child_id, anatomy_name, anatomy_order, hier_code
       from stage_item_child_list
-      where stimchilis_stg_zdb_id = stage_id
-        and stimchilis_item_zdb_id = parent_id
-      order by 3 --new
+     where stimchilis_stg_zdb_id = stage_id
+       and stimchilis_item_zdb_id = parent_id
+  order by stimchilis_anat_order --new
 
     execute function populate_anat_display_stage_children( 
         child_id,child_indent,seq_num,hier_code,stage_id,anatomy_name ) 
@@ -153,7 +140,7 @@ create procedure populate_anat_display_stage(stage_id varchar(50))
 
 
   foreach
-    select a1.anatitem_zdb_id, anathier_code, a1.anatitem_name, LOWER(a1.anatitem_name), s.stg_hours_start --new
+    select a1.anatitem_zdb_id, anathier_code, a1.anatitem_name, a1.anatitem_name_lower, s.stg_hours_start --new
       into anatomyId, hierCode, anatomy_name, lowercase_anatitem_name, temp
       from stage s, stage_items_contained, anatomy_hierarchy, anatomy_item a1
       where sic_anatitem_zdb_id = a1.anatitem_zdb_id
@@ -162,13 +149,13 @@ create procedure populate_anat_display_stage(stage_id varchar(50))
 	and not exists
 	(
 	  select * 
-	  from stage_items_contained, anatomy_contains, anatomy_item a2
-	  where a1.anatitem_zdb_id = anatcon_contained_zdb_id
-	    and a2.anatitem_zdb_id = anatcon_container_zdb_id 
-	    and sic_anatitem_zdb_id = anatcon_container_zdb_id
+	  from stage_items_contained, anatomy_relationship, anatomy_item a2
+	  where a1.anatitem_zdb_id = anatrel_anatitem_2_zdb_id
+	    and a2.anatitem_zdb_id = anatrel_anatitem_1_zdb_id 
+	    and sic_anatitem_zdb_id = anatrel_anatitem_1_zdb_id
 	)
 	--and anathier_code = 'ST' --new
-      order by 4 --new anathier_code, anatitem_name
+      order by s.stg_hours_start --new anathier_code, anatitem_name
 
     if hierCode = prevCode then
       execute function populate_anat_display_stage_children(
@@ -210,14 +197,14 @@ create function populate_all_anatomy_contains()
   let dist = 1;
   let delta = -1;
 
-  -- the first level is a gimmie from anatomy_contains
+  -- the first level is a gimmie from anatomy_relationship
   -- also _all_ child nodes are explicitly listed
   -- so we only need to find ancestors of these child nodes
   insert into all_anatomy_contains_new
-    select anatcon_containeR_zdb_id ,
-	   anatcon_containeD_zdb_id, 
+    select anatrel_anatitem_1_zdb_id ,
+	   anatrel_anatitem_2_zdb_id, 
 	   dist
-      from anatomy_contains;
+      from anatomy_relationship;
 
   -- continue as long as progress is made 
   -- there may be more elegant ways to do this so please do tell. 
@@ -230,15 +217,15 @@ create function populate_all_anatomy_contains()
 		
     -- try adding new ancestors 
     insert into all_anatomy_contains_new
-      select distinct a.anatcon_containeR_zdb_id,     -- A.ancestor
+      select distinct a.anatrel_anatitem_1_zdb_id,     -- A.ancestor
 		      b.allanatcon_containeD_zdb_id,  -- B.child
 		      dist                            -- min depth
-	from anatomy_contains a,            -- source of all ancestors
+	from anatomy_relationship a,            -- source of all ancestors
              all_anatomy_contains_new b     -- source of all childs 
 
 	where b.allanatcon_min_contain_distance = (dist - 1) 
 	      -- limit the search to the previous level          
-          and b.allanatcon_containeR_zdb_id = a.anatcon_containeD_zdb_id
+          and b.allanatcon_containeR_zdb_id = a.anatrel_anatitem_2_zdb_id
 	      -- B.ancestor == A.child
 	      -- checking for duplicates here is where the time gets absurd  
 	      -- (2:30 vs 0:06), so 
@@ -356,7 +343,7 @@ create dba function "informix".regen_anatomy()
 
       update zdb_flag set zflag_is_on = 't'
 	  where zflag_name = "regen_anatomy" 
-	   and zflag_is_on = 'f';
+	    and zflag_is_on = 'f';
 
       let nrows = DBINFO('sqlca.sqlerrd2');
 
