@@ -1,6 +1,6 @@
 #!/local/bin/perl 
 #  Script to create files for MEOW database
-#  output files are written to /research/zfin/chromix/www/home/transfer/MEOW
+#  output files are written to <!--|ROOT_PATH|-->/home/transfer/MEOW
 $ENV{"DBDATE"}="Y4MD-";
 $ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
 $ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
