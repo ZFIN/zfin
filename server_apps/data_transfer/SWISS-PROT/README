@@ -5,7 +5,7 @@ report into ZFIN.   by Peiran Song,  Sep 2002.
 
 =================================================================
 To create file for export to SWISS-PROT
-               % gmake 
+               % gmake create
    
 ---------------------------------------------------------------
 
