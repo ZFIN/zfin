@@ -919,7 +919,7 @@
       push (@panel_set, $pan); 
     }else{@panel_set = @panels;}
     
-    #table public_paneled_markers  (
+    #table paneled_markers  (
     # 0         1) zdb_id varchar(50),
     #### 1      2) mname varchar(120),
     # 2         3) abbrev varchar(10),
@@ -945,7 +945,7 @@
       '            else NULL ' .
       '          end, ' .
       '          metric '.
-      '    FROM public_paneled_markers '. 
+      '    FROM paneled_markers '. 
       "    WHERE target_abbrev = ?" . #panel
       '      AND or_lg = ? '.
       "      AND mtype IN (\'$types\');";
@@ -1211,7 +1211,7 @@
 	"         else NULL " .
 	"       end, " .
 	"       metric " .
-	"FROM public_paneled_markers  ".
+	"FROM paneled_markers  ".
 	"WHERE target_abbrev = \'$panel\' ".  # $panel
 	  "AND or_lg = \'$lg\' " .	              # $lg
 	    "AND mtype in (\'$types\' ) ".    # $types 
@@ -1243,7 +1243,7 @@
     my ($zdbid, $lg, $panel, $zoom, $loc) =@_;    
     if( ! defined $loc || !$loc){
       #      $note = $note . "finding the location of $zdbid on lg $lg of $panel<p>\n";      
-      $cur = $dbh->prepare("SELECT lg_location FROM public_paneled_markers WHERE target_abbrev = ? ".
+      $cur = $dbh->prepare("SELECT lg_location FROM paneled_markers WHERE target_abbrev = ? ".
 			   " AND or_lg = ? AND zdb_id = ? " );
       $rc = $cur->execute($panel, $lg, $zdbid);
       @row = $cur->fetchrow();
@@ -1265,7 +1265,7 @@
       "             when lg_location - $loc <  0 then $loc - lg_location " .
       "             else NULL " .
       "        end distance " .
-      "   FROM public_paneled_markers ".
+      "   FROM paneled_markers ".
       "   WHERE target_abbrev = ? AND or_lg = ? ".
       "     AND mtype in ( \'$types\') ".
       "   ORDER BY distance;";
@@ -1301,7 +1301,7 @@
 	"         else NULL " .
 	"       end, " .
 	"       metric " .
-	"  FROM public_paneled_markers " .
+	"  FROM paneled_markers " .
 	"  WHERE target_abbrev = ? ".
 	"    AND or_lg = ? ".
 	"    AND mtype in  ( \'$types\') ".
@@ -1351,7 +1351,7 @@
     my  ($zdbid) = @_;
     $sql = 
     "SELECT first 1 or_lg " .
-	"FROM public_paneled_markers WHERE zdb_id = \'$zdbid\'; " ;
+	"FROM paneled_markers WHERE zdb_id = \'$zdbid\'; " ;
 	 #"group by or_lg ".
      #  "order by count(or_lg) DESC;";
     $cur = $dbh->prepare($sql) ;
@@ -1368,7 +1368,7 @@
     my ($zdbid)= @_;
     $sql = 
     "SELECT first 1 abbrev " .
-	"FROM public_paneled_markers WHERE zdb_id = \'$zdbid\'; ";
+	"FROM paneled_markers WHERE zdb_id = \'$zdbid\'; ";
     $cur = $dbh->prepare($sql) ;
     $rc = $cur->execute();
     @row = $cur->fetchrow;
@@ -1385,7 +1385,7 @@
     undef @row; 
     $cur = $dbh->prepare(
 			 "select first 1 zdb_id, abbrev, lg_location, abs(lg_location - $loc) ". 
-			 " from public_paneled_markers ". 
+			 " from paneled_markers ". 
 			 " where target_abbrev = \'$panel\' ". 
 			 " and or_lg = \'$lg\' ". 
 			 " AND mtype in ( \'$types\' ) ".
@@ -1403,7 +1403,7 @@
     my($panel,$lg,$types) = @_;
    
     $sql =  
-      "SELECT COUNT(*) FROM public_paneled_markers ". 
+      "SELECT COUNT(*) FROM paneled_markers ". 
 	"WHERE target_abbrev == \'$panel\' ". 
 	  "AND or_lg = $lg ".
 	    " AND mtype in ( \'$types\' );";
@@ -1431,20 +1431,20 @@
     my $count = 0;  my $array_ref = '';
     if( (defined $lg) && $lg && ($lg ne "??") && ($lg > 0) && ($lg <= 25) ) {
       $note = $note .  "Is |$marker| exactly unique on |$panel| |$lg| officially?<p>\n ";
-      $sql = "SELECT UNIQUE zdb_id, or_lg FROM  public_paneled_markers  ".      
+      $sql = "SELECT UNIQUE zdb_id, or_lg FROM  paneled_markers  ".      
 	"WHERE abbrev  = \'$marker\' AND target_abbrev in (\'$panel\') ".
 	  "AND mtype IN (\'$types\')  " .
 	    "AND or_lg =  \'$lg\'; ";
 	      
     } elsif( defined  $panel) {
       $note = $note .  "Is |$marker| exactly unique on |$panel| offically?<p>\n ";
-      $sql = "SELECT UNIQUE zdb_id, or_lg FROM public_paneled_markers ".
+      $sql = "SELECT UNIQUE zdb_id, or_lg FROM paneled_markers ".
 	"WHERE abbrev  = \'$marker\' AND target_abbrev in (\'$panel\') " .
 	  "AND mtype IN ( \'$types\' ); ";
 	   
     } else  {
       $note = $note . "Is |$marker| exactly unique in ZFIN officially?<p>\n ";
-      $sql = "SELECT UNIQUE zdb_id, or_lg FROM public_paneled_markers ".
+      $sql = "SELECT UNIQUE zdb_id, or_lg FROM paneled_markers ".
 	  "WHERE abbrev  = \'$marker\' AND mtype IN ( \'$types\' ) ;";  
 	  
     }
@@ -1461,20 +1461,20 @@
       $note = $note .  "\nLOOKING for CONTAINS \n";
       if( (defined $lg) && $lg && ($lg ne "??") && ($lg > 0) && ($lg <= 25)) {
 	    $note = $note . "Is |$marker| similar & unique on |$panel|& |$lg| offically?<p>\n";
-	    $sql = "SELECT UNIQUE zdb_id, or_lg FROM public_paneled_markers ".
+	    $sql = "SELECT UNIQUE zdb_id, or_lg FROM paneled_markers ".
 	    "WHERE abbrev  like \'\%$marker\%\' AND target_abbrev = (\'$panel\') ".
 		"AND mtype IN ( \'$types\' ) AND or_lg = \'$lg\';  ";
 		
 
       } elsif( defined  $panel ) {
         $note = $note . "Is |$marker| similar & unique on |$panel| offically?<p>\n";
-	    $sql = "SELECT UNIQUE zdb_id, or_lg FROM public_paneled_markers ".
+	    $sql = "SELECT UNIQUE zdb_id, or_lg FROM paneled_markers ".
 	    "WHERE abbrev like \'\%$marker\%\' AND target_abbrev = (\'$panel\') ".
 		"AND mtype IN ( \'$types\' ) ; " ;
 		
       } else  {
 	    $note = $note . "Is |$marker| similar & unique in ZFIN offically?<p>\n";
-	    $sql = "SELECT UNIQUE zdb_id, or_lg FROM public_paneled_markers ".
+	    $sql = "SELECT UNIQUE zdb_id, or_lg FROM paneled_markers ".
 	    "WHERE abbrev  like \'\%$marker\%\' AND mtype IN ( \'$types\' )  ;";
 	   
 	  }
@@ -1489,7 +1489,7 @@
         if( (defined $lg) && $lg && ($lg ne "??") && ($lg > 0) && ($lg <= 25) ) {
 	  $note = $note . "Is |$marker| exactly unique on |$panel| |$lg| unoffically?<p>\n ";
 	  $sql = "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ".
-	    "FROM all_map_names pmn, public_paneled_markers pm ".
+	    "FROM all_map_names pmn, paneled_markers pm ".
 	      "WHERE allmapnm_zdb_id = pm.zdb_id ".
 	        "AND allmapnm_name  = \'$marker\' AND pm.target_abbrev in (\'$panel\') ".
 		  "AND mtype IN (\'$types\') AND pm.or_lg =  \'$lg\' ; " ;
@@ -1498,7 +1498,7 @@
 	  $note = $note .  "|$marker| exactly unique on |$panel| unoffically?<p>\n ";
 	  $sql =
 	    "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ". 
-	      "FROM all_map_names pmn, public_paneled_markers pm ".
+	      "FROM all_map_names pmn, paneled_markers pm ".
 		"WHERE allmapnm_zdb_id = pm.zdb_id AND allmapnm_name  = \'$marker\' ".    
 		  "AND pm.target_abbrev in (\'$panel\') AND mtype IN (\'$types\') ; " ;
 		    
@@ -1506,7 +1506,7 @@
 	  $note = $note . "|$marker| exactly unique in ZFIN  unoffically?<p>\n ";
 	  $sql =
 	    "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ".
-	      "FROM all_map_names pmn, public_paneled_markers pm ".
+	      "FROM all_map_names pmn, paneled_markers pm ".
 		"WHERE allmapnm_zdb_id = pm.zdb_id ".
 		  "AND allmapnm_name = \'$marker\' AND mtype IN (\'$types\') ; " ;
 		  
@@ -1525,7 +1525,7 @@
 	  $note = $note . "|$marker| similar & unique on |$panel|& |$lg|?<p>\n";
 	  $sql =
 	    "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ". 
-	      "FROM all_map_names pmn, public_paneled_markers pm ".
+	      "FROM all_map_names pmn, paneled_markers pm ".
 	        "WHERE allmapnm_zdb_id = pm.zdb_id ".
 		  "AND allmapnm_name  like \'\%$marker\%\' ".    
 		    "AND pm.target_abbrev = (\'$panel\') ;";
@@ -1535,7 +1535,7 @@
 	  $note = $note . "|$marker| similar & unique on |$panel|?<p>\n";
 	  $sql =
 	    "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ".
-	      "FROM all_map_names pmn, public_paneled_markers pm ".
+	      "FROM all_map_names pmn, paneled_markers pm ".
 	        "WHERE allmapnm_zdb_id = pm.zdb_id ".
 		  "AND allmapnm_name like \'\%$marker\%\' ".    
 		    "AND pm.target_abbrev = (\'$panel\') AND mtype IN (\'$types\') ; " ;
@@ -1544,7 +1544,7 @@
 	  $note = $note . "|$marker| similar & unique in ZFIN??<p>\n";
 	  $sql =
 	    "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ".
-	      "FROM all_map_names pmn, public_paneled_markers pm ".
+	      "FROM all_map_names pmn, paneled_markers pm ".
 	        "WHERE allmapnm_zdb_id = pm.zdb_id ".
 		  "AND allmapnm_name like \'\%$marker\%\' AND mtype IN (\'$types\')  ;" ;
 		  

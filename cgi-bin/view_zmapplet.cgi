@@ -1422,7 +1422,7 @@ sub  get_OIDs_abbrev{
     undef @row; 
     $cur = $dbh->prepare(
 			 "select first 1 zdb_id, abbrev, lg_location, abs(lg_location - $loc) ". 
-			 " from public_paneled_markers ". 
+			 " from zmap_pub_pan_mark ". 
 			 " where target_abbrev == \'$panel\' ". 
 			 " and or_lg = \'$lg\' ". 
 			 " AND mtype in ( \'$types\' ) ".
