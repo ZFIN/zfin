@@ -741,13 +741,16 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),"<TD colspan=3><font size=2>LG <b>"$4
 <TABLE cellpadding=1 cellspacing=0>
 <?MIVAR NAME=$curviewer>/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=<?/MIVAR>
 
+<!-- get independent linkage info for other members of linkage or for marker itself if it is the only linkage member -->
 
-  <?MISQL SQL="select alnkgmem_member_zdb_id, alnkgmem_member_abbrev, alnkgmem_marker_type, alnkgmem_private, alnkgmem_comments, alnkgmem_source_zdb_id, alnkgmem_source_name,alnkgmem_linkage_zdb_id,alnkgmem_or_lg from all_linked_members a
-    where alnkgmem_linkage_zdb_id in 
+  <?MISQL SQL="select alnkgmem_member_zdb_id, alnkgmem_member_abbrev, alnkgmem_marker_type, alnkgmem_private, alnkgmem_comments, alnkgmem_source_zdb_id, alnkgmem_source_name,alnkgmem_linkage_zdb_id,alnkgmem_or_lg, alnkgmem_num_members from all_linked_members a
+    where (alnkgmem_linkage_zdb_id in 
       (select alnkgmem_linkage_zdb_id from all_linked_members b 
           where b.alnkgmem_linkage_zdb_id = a.alnkgmem_linkage_zdb_id
           and b.alnkgmem_member_zdb_id = '$OID')
-       and a.alnkgmem_member_zdb_id <> '$OID';">
+          and a.alnkgmem_member_zdb_id <> '$OID')
+      or (a.alnkgmem_member_zdb_id = '$OID'   
+          and a.alnkgmem_num_members = 1) ;">
 
     <?MIVAR NAME=$member_zdb_id>$1<?/MIVAR>
     <?MIVAR NAME=$lg>$9<?/MIVAR>
@@ -773,12 +776,14 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),"<TD colspan=3><font size=2>LG <b>"$4
       <?MIVAR NAME=$pair_id>$1<?/MIVAR>
     <?/MISQL>
 
-    <?MISQL SQL="select lnkgpair_distance, lnkgpair_lod, lnkgpair_metric from linkage_pair
-      where lnkgpair_zdb_id = '$pair_id';">
-      <?MIVAR NAME=$distance>$1<?/MIVAR>	
-      <?MIVAR NAME=$lod>$2<?/MIVAR>	
-      <?MIVAR NAME=$metric>$3<?/MIVAR>	
-     <?/MISQL>
+    <?MIBLOCK COND="$(XST,$pair_id)">
+      <?MISQL SQL="select lnkgpair_distance, lnkgpair_lod, lnkgpair_metric from linkage_pair
+	where lnkgpair_zdb_id = '$pair_id';">
+	<?MIVAR NAME=$distance>$1<?/MIVAR>	
+	<?MIVAR NAME=$lod>$2<?/MIVAR>	
+	<?MIVAR NAME=$metric>$3<?/MIVAR>	
+       <?/MISQL>
+    <?/MIBLOCK>
 
     <TR>
     $(IF,$(XST,$UPDATE),"<TD><INPUT TYPE=button value=Update onClick=edit_linkage('"$link_id"','"$1"')></TD>","<TD> &nbsp;</TD>")
