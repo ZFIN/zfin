@@ -49,7 +49,7 @@
      FROM marker, expression_pattern
      WHERE xpat_zdb_id = '$OID' 
        AND mrkr_zdb_id = xpat_probe_zdb_id
-     order by 4 desc";>
+     order by 4 desc;">
 <?/MISQL>
 
 <?MIVAR NAME=$abbrev>$1<?/MIVAR>
@@ -83,7 +83,7 @@ ERROR -- something bad happened -- no OID passed in!
 
 <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'page_title=View Expression') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
-<?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=gene') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
+<?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=marker') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
 
 
 <!-- If updating, only let owner update anything -->
@@ -683,7 +683,7 @@ ERROR -- something bad happened -- no OID passed in!
 
 <?MIBLOCK COND="$(OR,$(>,$1,0),$(XST,$UPDATE))"> 
  <?MIVAR>
- <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=gene&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)$(IF,$(XST,$UPDATE),&UPDATE=1)&total_count=$1"><b>CITATIONS</b></A> 	
+ <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=marker&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)$(IF,$(XST,$UPDATE),&UPDATE=1)&total_count=$1"><b>CITATIONS</b></A> 	
  <?/MIVAR>
 <?MIELSE>
  <b>CITATIONS</b>

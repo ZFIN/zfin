@@ -1,9 +1,35 @@
-!-- FILE: locuslister.html -->
+<?MICOMMENT>
 
-<!-- This app-page is a weak cousin of fishlister which merely handles searches for locus names and abbrevs.
-It will also handle registration of the locus name and abbrev, checking first to see that it does not already exist in the FISH and registered_locus tables.
--->
+FILE:   locuslister.apg
+PREFIX: locuslstr_
 
+From Eck:
+This app-page is a weak cousin of fishlister which merely handles searches 
+for locus names and abbrevs.
+It will also handle registration of the locus name and abbrev, checking 
+first to see that it does not already exist in the FISH and registered_locus 
+tables.
+
+INPUT VARS:
+  fname   - name of locus.  Required*
+  allele  - name of allele.  Required*
+  abbrev  - abbreviation of locus.   Required* sort of.  If locus name
+            is one of the special cases that don't require abbrevs then
+            this is not required.
+
+  *If any of these are not defined the app page detects this and issues
+   an error to the user.
+
+OUTPUT VARS:
+  undocumented
+
+OUTPUT:
+  undocumented
+
+EFFECTS:
+  undocumented
+
+<?/MICOMMENT>
 
 <HTML>
 <HEAD>
@@ -31,8 +57,6 @@ function show_doc(title,docpath) {
 <!-- This next part builds up a query piece by piece, based on which criteria 
   were passed in 
 -->
-
-<?MIVAR NAME=$constraint COND="$(NXST,$constraint)"> <?/MIVAR>
 
 <?MIVAR NAME=$prefix COND="$(NXST,$prefix)"> <?/MIVAR>
 
@@ -66,29 +90,27 @@ function show_doc(title,docpath) {
 <?MIVAR NAME=$fname DELIMIT="'" REPLACE="">$fname<?/MIVAR>
 <?MIVAR NAME=$allele DELIMIT="'" REPLACE="">$allele<?/MIVAR>
 
-<!-- We need two versions of this constraint, because Informix does not support
-	use of AS names in the WHERE clause.  (Illustra does.)  The first
-	constraint is used in SELECTs from tables that have "printable" abbrev columns
-	(i.e., FISH), while the second is used in SELECTs from
-	tables that only have 3-character abbrevs.  -->
-
 <?MIBLOCK COND="$(XST,$abbrev)">
   <?MIVAR NAME=$abbrev DELIMIT="'" REPLACE="">$abbrev<?/MIVAR>
   <?MIVAR NAME=$constraintSub>$(IF,$(EC,$doAction,new_locus),or,and) lower(abbrev[1,3])='$(LOWER,$abbrev)')<?/MIVAR>
-  <?MIVAR NAME=$constraint>$(IF,$(EC,$doAction,new_locus),or,and) lower(abbrev)='$(LOWER,$abbrev)')<?/MIVAR>
-<?/MIBLOCK>
-
-<?MIBLOCK COND="$(NXST,$abbrev)"> 
-  <?MIVAR NAME=$constraint>)<?/MIVAR>
+  <?MIVAR NAME=$locuslstr_locus_constraint>$(IF,$(EC,$doAction,new_locus),or,and) lower(abbrev)='$(LOWER,$abbrev)')<?/MIVAR>
+  <?MIVAR NAME=$locuslstr_gene_constraint>$(IF,$(EC,$doAction,new_locus),or,and) mrkr_abbrev = '$(LOWER,$abbrev)')<?/MIVAR>
+<?/MIELSE>
+  <?MIVAR NAME=$locuslstr_locus_constraint>)<?/MIVAR>
+  <?MIVAR NAME=$locuslstr_gene_constraint>)<?/MIVAR>
   <?MIVAR NAME=$constraintSub>)<?/MIVAR>
   <?MIVAR NAME=$abbrev> <?/MIVAR>
 <?/MIBLOCK>
 
 <!-- NOW JUST RETRIEVE AND DISPLAY ALL MATCHING ENTRIES. -->
 
-<!-- Debugging:
-<?MIVAR>Constraint is: $constraint<?/MIVAR>
--->
+<?MICOMMENT>
+  <?MIVAR>
+    <br>
+    Locus Constraint is: $locuslstr_locus_constraint<br>
+    Gene  Constraint is: $locuslstr_gene_constraint<br>
+  <?/MIVAR>
+<?/MICOMMENT>
 
 <center>
   <FONT SIZE=4>Checking proposed name:</font>  
@@ -122,9 +144,14 @@ function show_doc(title,docpath) {
 <ul>
 <!-- deficiency mutants may have same locus name -->
 <?MIBLOCK COND="$(NC,$(SUBSTR,$fname,1,2),Df)">
-  <?MISQL SQL="select distinct locus_name as name, abbrev as trey from locus_registration where (lower(locus_name) = '$(LOWER,$fname)' $constraint  order by name,trey;">
-  $(IF,$(EC,$doAction,new_locus),Found locus <b>$1</b> with abbreviation <b>$2</b><br>)
-  $(SETVAR,$duplicate_locus,t)
+  <?MISQL SQL="
+    select distinct locus_name as name, abbrev as trey 
+      from locus_registration 
+      where (lower(locus_name) = '$(LOWER,$fname)'
+        $locuslstr_locus_constraint
+        order by name,trey;">
+    $(IF,$(EC,$doAction,new_locus),Found locus <b>$1</b> with abbreviation <b>$2</b><br>)
+    $(SETVAR,$duplicate_locus,t)
   <?/MISQL>
 <?/MIBLOCK>
 
@@ -139,7 +166,13 @@ function show_doc(title,docpath) {
 <!-- Check for genes with same name or abbrev.  Not a fatal problem, but we'll want to warn 'em. -->
 <b> Checking cloned genes </b>
 <ul>
-<?MISQL SQL="select distinct gene_name as name, abbrev as trey from gene where (lower(gene_name) = '$(LOWER,$fname)' $constraint  order by name,trey;">
+<?MISQL SQL="
+  select distinct mrkr_name as name, mrkr_abbrev as trey 
+    from marker
+    where (lower(mrkr_name) = '$(LOWER,$fname)' 
+      and mrkr_type = 'GENE'
+      $locuslstr_gene_constraint
+    order by name,trey;">
   $(IF,$(EC,$doAction,new_locus),Found cloned gene <b>$1</b> with abbreviation <b>$2</b><br>)
   $(SETVAR,$duplicate_gene,t)
 <?/MISQL>
@@ -303,7 +336,7 @@ Legal allele prefixes are officially registered to individual labs. A listing of
 <?/MIBLOCK>
 
 <!-- Issue warning if proposed abbreviation is longer than 3 chars -->
-<?MIBLOCK COND="$(>,$(STRLEN,$abbrev),3),$(NC,$AUTHORIZED,ROOT)">
+<?MIBLOCK COND="$(AND,$(>,$(STRLEN,$abbrev),3),$(NC,$AUTHORIZED,ROOT))">
   <?MIVAR NAME=$warnings>-- Proposed abbreviation ($abbrev) is longer than 3 characters. This can be allowed only in extraordinarily rare cases where mutation is in known gene that has an established abbreviation longer than three chars. Submitter was warned of this conflict.
   $warnings
   <?/MIVAR>
