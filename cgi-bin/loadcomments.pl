@@ -192,6 +192,7 @@ for($i=0; $i<=scalar(@addedKeywords); $i++)
 		#close(QUERY);
 		#$queryResults = `dbaccess $db insertKeyword.sql`;
 
+		print "execute function expression_pattern_anatomy_insert_anatitem(\"$anat_zdb\",\"$xpatN\",\"$start_stg_zdb_N\",\"$end_stg_zdb_N\")";
 
 		$queryDB = $dbh->prepare( "execute function expression_pattern_anatomy_insert_anatitem(\"$anat_zdb\",\"$xpatN\",\"$start_stg_zdb_N\",\"$end_stg_zdb_N\")")
 		  or die "Cannot prepare statement: $DBI::errstr\n";
