@@ -165,7 +165,8 @@ public class mapimage {
 				or = "";
 			else
 				or = " or ";
-				
+			panel = panel.trim();
+			System.err.println("target_abbrev: " + panel);	
 			query_string = query_string + or + " (target_abbrev = '" + panel + "' and OR_lg = '" + lg + "' and lg_location >= '" + low + "' and lg_location <= '" + high + "' and (" + type_string + ") )";
 			first = false;
 		}
@@ -188,7 +189,8 @@ public class mapimage {
 
 		String panel_order = (String)form.get("panel_order");
 
-
+		System.err.println("SQL: " + query_string);
+		
 		MV = new MapViewer(query_string, (String)form.get("host"), (String)form.get("port"), SM, panel_order);
 		//MV = new MapViewer(data,selected_marker);
 
