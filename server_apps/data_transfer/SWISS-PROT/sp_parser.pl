@@ -11,14 +11,9 @@ use Cwd;
 
 my $cwd = getcwd();
 my $first = 1;       #indicate the beginning of DR(the end of CC)
-my @zdb_gname = ();
-my @ext_dr = ();
-my @cc = (); $cc = '';
-my @de = (); $de = '';
-my @sp_ac=(); $sp_ac='';
-my @zdbid_spac = ();
-$desc="";
 
+my (@zdb_gname,@ext_dr, @cc, $cc, @de, $de, @sp_ac, $sp_ac, @zdbid_spac, $desc, $gb_acc, $gp_acc, @embl_gb, @embl_gp, $embl_gb, $embl_gp, $version);
+   
 
 # Files to be loaded into zfin.
 open DBLINK, ">dr_dblink.unl" or die "Cannot open dr_dblink.unl:$!";
@@ -54,20 +49,27 @@ while (<>) {
   }
   
   #AC   O12990; O73880;
+  #AC   O42345;
   if (/^AC\s+(.*)/) {
-    @sp_ac = split(' ',$1); 
-    $prm_ac = shift @sp_ac;
-    chop $prm_ac;
-    while ($sp_ac = shift @sp_ac){
-      chop $sp_ac;
-      print ACC "$prm_ac|$sp_ac|\n";
-    }  
-    next;
+      $sp_ac = $sp_ac.$1.' ';
+      next;
   }
-  #GN   rag1 OR RAG1 OR RAG-1.
+
+  #GN   rag1 or RAG1 or RAG-1.
+  #   or
+  #GN   Name=otx1l; Synonyms=otx3;
+  #   or
+  #GN   Name=pax2a; Synonyms=pax2.1, noi, paxzf-b;
   if (/^GN\s+(.*)/) {
     $gn = $1;  chop($gn);              #chop period sign
-    @sp_gname = split(/\s+OR\s+/i, "$gn"); 
+    if ($gn =~ /Name=/i) {
+	if ($gn =~ /Synonyms=(.*)/i) {
+	    $gn = $1;
+	    @sp_gname = split(/,\s+/i, $gn);
+	}
+    }else {
+	@sp_gname = split(/\s+or\s+/i, $gn); 
+    }
     next;
   }
   
@@ -95,35 +97,45 @@ while (<>) {
     next;
   }
  
-  #DR   EMBL; U71094; AAC60366.1; -.	ZDB-GENE-990415-235                
-  #DR   ZFIN; ZDB-GENE-990415-235; rag2.
+  #DR   EMBL; U71094; AAC60366.1; -.	ZDB-GENE-990415-235  
+  #DR   ZFIN; ZDB-GENE-020711-2; lmyc1.              
   #DR   InterPro; IPR004321; RAG2.
   #DR   Pfam; PF03089; RAG2; 1.
   if (/^DR/ ) {
-    @dr = split;
-    $dbname = $dr[1]; chop($dbname);
-    $acc_no = $dr[2]; chop($acc_no);
-    
-    if ($first){             #first DR is always EMBL record with ZDB id
-       if ($cc) { push (@cc, $cc);}
-      # print COMMT "$prm_ac|@cc|\n";         
-       $first = 0;
-     }
-    if ($dbname eq "EMBL") {
-       $_ = pop(@dr);     #get zfin accession number for the SP record  
-       if (/NO_MATCH/) {
-	push(@embl_unl, $acc_no);
-       }elsif(/ZDB/ ){
-	 $gene= $_;
-       }
-       next;
-     }else{
-       #$attribute = Get_attribute();
-       print DBLINK "$gene|$dbname|$acc_no| |\n";
-       #print ACTV "$attribute|\n";
-       next;
-     }
+      @dr = split;
+      $dbname = $dr[1]; chop($dbname);
+      $acc_num = $dr[2]; chop($acc_num);
+      
+      if ($first){             #first DR is always EMBL record with ZDB id
+	  if ($cc) { push (@cc, $cc);}
+	  $first = 0;
+      }
+      if ($dbname eq "EMBL") {
+	  $gb_acc = $acc_num;
+	  $gp_acc_ver = $dr[3];
+	  ($gp_acc, $version) = split (/\./, $gp_acc_ver);
+	  
+	  $_ = pop(@dr);     #get zfin accession number for the SP record  
+	  if(/ZDB/ ){
+	      $gene= $_;
+	  }
+	  push (@embl_gb, $gb_acc) if ($gb_acc && $gbacc ne '-');
+	  push (@embl_gp, $gp_acc) if ($gp_acc && $gpacc ne '-');
+	  next;
+      }
+      if (!$gene && ($dbname eq "ZFIN")) {
+	  $gene = $acc_num;
+      }
+      if ($dbname ne "ZFIN") {
+	  print DBLINK "$gene|$dbname|$acc_num| |\n";
+	  next;
+      }
   }  
+
+ #\t\tGB match: ZDB-GENE-*-*     #sp_check.pl write out this line
+ if (/GB match: (.*)/) {
+    $gene = $1;   
+ }
 
   #KW   DNA-binding; Nuclear protein; Transcription regulation; Activator;
   #KW   Neurogenesis; Developmental protein; Differentiation.
@@ -136,6 +148,15 @@ while (<>) {
     next;
   } 
   if(/\/\//) {
+      
+    @sp_ac = split(' ',$sp_ac); 
+    $prm_ac = shift @sp_ac;
+    chop $prm_ac;
+    while ($sp_ac = shift @sp_ac){
+      chop $sp_ac;
+      print ACC "$prm_ac|$sp_ac|\n" if ($sp_ac ne '' );
+    }  
+ 
     if (@cc) {
      
       open CC, ">$cwd/ccnote/$prm_ac" or die "Cannot open the $prm_ac file:$!";
@@ -147,8 +168,12 @@ while (<>) {
     print DBLINK "$gene|SWISS-PROT|$prm_ac|$len|\n";
     print SPGO "$gene|$prm_ac|\n";
 
-    while ($embl_unl = shift @embl_unl) {
-      print DBLINK "$gene|Genbank|$embl_unl| |\n";
+    while ($embl_gb = shift @embl_gb) {
+      print DBLINK "$gene|Genbank|$embl_gb| |\n";
+    }
+
+    while ($embl_gp = shift @embl_gp) {
+      print DBLINK "$gene|GenPept|$embl_gp| |\n";
     }
        
     my $get_abbrv = $dbh->selectrow_array("
@@ -188,10 +213,10 @@ while (<>) {
        print DBLINK "$gene|EC-ENZYME|$ecnumber| |\n"; 
     }
     # reinitiate the variables for loop
-    @sp_ac=();
-    $gn=''; $cc=''; $dbname=''; $acc_no=''; $kw=''; $gene=''; $prm_ac = '';
+    $gn=''; $cc=''; $dbname=''; $gb_acc=''; $gp_acc=''; $kw=''; $gene=''; $prm_ac = '';
     @cc = ();  @dr = (); @zfin = ();@zdb_gname = (); @info = (); @de=();$de='';
-    @sp_ac=(); $sp_ac='';
+    @sp_ac=(); $sp_ac=''; $ecnumber = ''; $acc_num = '';
+    @embl_gb = (); @embl_gp = (); $embl_gb =''; $embl_gp = '';
     $first = 1;$one = 1;
   }
 }
