@@ -229,7 +229,7 @@
                 input_name=> "$marker",
                 ZDB_authorize=> $Q->cookie('ZDB_authorize')
                 ];
-                print 'Content-Type: text/html; charset=ISO-8859-1\r\n\r\n';   
+                print "Content-Type: text/html; charset=ISO-8859-1\r\n\r\n";   
                 my $res = $bot->request($req);
                 # check the outcome
                 if ($res->is_success) {print $res->content . "\n";} 
