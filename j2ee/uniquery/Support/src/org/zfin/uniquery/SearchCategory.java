@@ -20,7 +20,6 @@ public class SearchCategory
 	public static final String GENES_GENEPRDDESCRIPTION = "GENES_GENEPRDDESCRIPTION";
     public static final String GENES_MARKERGOVIEW       = "GENES_MARKERGOVIEW"; 
     public static final String GENES_MAPPINGDETAIL      = "GENES_MAPPINGDETAIL";
-    public static final String IMAGES                   = "IMAGES";
     public static final String EXPRESSION_XPATVIEW      = "EXPRESSION_XPATVIEW";
     public static final String EXPRESSION_XPATINDEXVIEW = "EXPRESSION_XPATINDEXVIEW";
     public static final String ANATOMY_ITEM             = "ANATOMY_ITEM";
@@ -51,15 +50,12 @@ public class SearchCategory
         
         String[] expressionTypes = {EXPRESSION_XPATVIEW, EXPRESSION_XPATINDEXVIEW};
         categoryList.add(new SearchCategory("EXPRESSION", "Expression", expressionTypes));
-        
-        String[] imageTypes = {IMAGES};
-        categoryList.add(new SearchCategory("IMAGES", "Images", imageTypes));
 
-        String[] publicationTypes = {PUBLICATIONS};
-        categoryList.add(new SearchCategory("PUBLICATIONS", "Publications", publicationTypes));
-
-        String[] anatomyTypes = {ANATOMY_ITEM, ANATOMY_ZFINFO};
+		String[] anatomyTypes = {ANATOMY_ITEM, ANATOMY_ZFINFO};
         categoryList.add(new SearchCategory("ANATOMY", "Anatomy", anatomyTypes));
+
+		String[] publicationTypes = {PUBLICATIONS};
+        categoryList.add(new SearchCategory("PUBLICATIONS", "Publications", publicationTypes));
 		
         String[] peopleTypes = {PEOPLE_PERSVIEW, PEOPLE_LABVIEW};
         categoryList.add(new SearchCategory("PEOPLE", "People", peopleTypes));
