@@ -1038,7 +1038,7 @@ else { # filename isn't null or redirect isn't do-imageupdate.apg
 
 			&getDate ;
 
-			system("/bin/mv <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->/$filename <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->/bkup/$filename.$date.$person_id'");
+			system("/bin/mv <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->/$filename* <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->/bkup/");
 		    
 			&makeFiles;
 
