@@ -10,16 +10,13 @@ newdb,newacc -- to create a new accession entry
 delacc -- to delete a dblink, delacc holds the accession of the link to del
 -->
 
-<HTML>
-<HEAD>
   <?MIVAR>
     <SCRIPT>
-      function delete_link(acc_num) {
-        document.location='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-orthoedit.apg&UPDATE=1&OID=$OID&geneId=$geneId&delacc='+acc_num;
+      function update_species(organism) {
+	 document.location='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&UPDATE=1&OID=$OID&species_selected='+organism+'#orthologue';
       }
     </SCRIPT>
   <?/MIVAR>
-</HEAD>
 
 <basefont size=2>
 
@@ -30,258 +27,201 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
   $1
 <?/MISQL>
 
-<?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
-
 <?MIBLOCK COND="$(NC,AUTHORIZED,false)">
 
-  <?MIBLOCK COND="$(XST,$UPDATE)">
-   
-    <?MIBLOCK COND="$(AND,$(XST,$oname),$(XST,$abbrev))">
-      <?MIVAR NAME=$oname>$(TRIM,$oname)<?/MIVAR>
-      <?MIVAR NAME=$abbrev>$(TRIM,$abbrev)<?/MIVAR>
-      <?MISQL COND="$(AND,$(NC,$oname,),$(NC,$abbrev,))" SQL="
-	update orthologue 
-	  set ortho_name='$oname', ortho_abbrev='$abbrev'
-	  where zdb_id='$OID';">
-      <?/MISQL>
-      <?MIVAR COND="$(NOT,$(AND,$(NC,$oname,),$(NC,$abbrev,)))">
-	<SCRIPT>
-	  window.alert('Could not update. Both name and abbrev must be non-empty');
-	</SCRIPT>
-      <?/MIVAR>
-    <?/MIBLOCK>
+  <!--------------- on the scene ----------------------------->
 
-    <?MIBLOCK COND="$(AND,$(XST,$newseq),$(XST,$newacc))">
-     
-      <?MIVAR NAME=$newacc>$(TRIM,$newacc)<?/MIVAR>
-      <?MIBLOCK COND="$(NC,$newacc,)">
-	<?MISQL SQL="
-	  execute function get_id('DBLINK');">
-	<?/MISQL>
-	<?MIVAR NAME=$dblink_zdb_id>$1<?/MIVAR>
-	<?MISQL SQL="
-	  insert into zdb_active_data
-	      ( zactvd_zdb_id )
-	    values
-	      ( '$dblink_zdb_id' );">
-	<?/MISQL>
-	<?MISQL SQL="
-	  insert into db_link 
-	      ( linked_recid, DB_name, acc_num, dblink_zdb_id )
-	    values
-	      ( '$OID', '$newdb', '$newacc', '$dblink_zdb_id' );">
-        <?/MISQL>
-	
-      <?/MIBLOCK>
-      <?MIVAR COND="$(EC,$newacc,)">
-	<SCRIPT>
-	  window.alert('Couldn't add link. DB accession must be non-empty');
-	</SCRIPT>
-      <?/MIVAR>
-    <?/MIBLOCK>
-
-    <?MIBLOCK COND="$(AND,$(XST,$newevi),$(XST,$newpub))">
-	
-	<?MIBLOCK COND="$(NC,$newpub,)">
-	  <?MIVAR NAME=$newpub>$(UPPER,$(TRIM,$newpub))<?/MIVAR>
-	  <?MISQL SQL="
-	    insert into orthologue_evidence
-	          values('$OID', '$newevicode','$newpub');">
-	  <?/MISQL>
-	  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-do-oevdispupdate.apg';">$1<?/MISQL>
-	<?MIELSE>
-	  <SCRIPT>
-	    window.alert('Couldn't add. Publication should be provided');
-	  </SCRIPT>
-        <?/MIBLOCK>
-
-    <?/MIBLOCK>	
-
-    <?MIBLOCK COND="$(XST,$delacc)">
-      <!-- deleting a link -->
-      <?MISQL SQL="
-	delete from zdb_active_data
-	  where zactvd_zdb_id = 
-		( select dblink_zdb_id 
-		    from db_link
-		    where linked_recid = '$OID'
-		      and acc_num = '$delacc' ) ;">
-      <?/MISQL>     
-    <?/MIBLOCK>
-
-    <?MIBLOCK COND="$(AND,$(XST,$delevi),$(XST,$delpub))">
-	
-	<?MIBLOCK COND="$(NC,$delpub,)">
-	  <?MIVAR NAME=$delpub>$(TRIM,$delpub)<?/MIVAR>
-	  <?MISQL SQL="
-	    delete from orthologue_evidence
-	          where oev_ortho_zdb_id = '$OID'
-		    and	oev_evidence_code = '$delevicode'
-		    and oev_pub_zdb_id = '$delpub';">
-	  <?/MISQL>  
-          <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-do-oevdispupdate.apg';">$1<?/MISQL>
-           
-	<?MIELSE>
-	  <SCRIPT>
-	    window.alert('Publication should be provided');
-	  </SCRIPT>
-        <?/MIBLOCK>
-
-    <?/MIBLOCK>	
-
-
-    <?MIBLOCK COND="$(XST,$bigdelete)">
-      <!-- Delete orthologue. First delete orthologue's db_link records
-	-- from zdb_active_source and zdb_active_data to prevent them
-	-- from being orphaned.  
-	-->
-      <?MISQL SQL="
-	delete from zdb_active_data
-	  where zactvd_zdb_id = 
-		( select dblink_zdb_id 
-		    from db_link 
-		    where linked_recid = '$OID' );">
-      <?/MISQL>
-      <?MISQL SQL="
-	delete from zdb_active_data
-	  where zactvd_zdb_id='$OID';">
-      <?/MISQL>
-      <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-do-oevdispupdate.apg';">$1<?/MISQL>
-           
-    <?/MIBLOCK>
-
-
-  <?/MIBLOCK> <!-- end updating -->
-
-
-  <?MIBLOCK COND="$(NXST,$exiter)">
-
-    <h1 align=center>Orthologue editor</h1>
-
-    <?MISQL SQL="
-      select ortho_name, ortho_abbrev, c_gene_id, organism
-	from orthologue 
-	where zdb_id='$OID';">
-    <?/MISQL>
-    <?MIVAR NAME=$oname>$1<?/MIVAR>
-    <?MIVAR NAME=$abbrev>$2<?/MIVAR>
-    <?MIVAR NAME=$gene_id>$3<?/MIVAR>
-    <?MIVAR NAME=$organism>$4<?/MIVAR>
-
-    <?MISQL SQL="
-      select abbrev 
-	from gene 
-	where zdb_id='$gene_id';">
-    <?/MISQL>
-    <?MIVAR NAME=$gabbrev>$1<?/MIVAR>
-
-    <form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+    <form method="post" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
       <?MIVAR>
-	<input type=hidden name=MIval value=aa-orthoedit.apg>
-	<input type=hidden name=OID value=$OID>
-        <input type=hidden name=geneId value=$geneId>
-	<input type=hidden name=UPDATE value=1>
-
-	<center><big>EDITING: <b>$organism</b> orthologue to zebrafish gene 
-	<b>$gabbrev</b></big><br> <font size=2> (ZFIN ID: $OID)</font>
-	</center>
-	<p>
-	<b>Name</b> (in $organism community):
-	<input type=text name=oname value="$oname" size=40>
-	<p>
-	<b>Abbreviation</b> (in $organism community):
-	<input type=text name=abbrev value="$abbrev" size=10>
-	<p>
-      <?/MIVAR>
-
-      <b>Foreign Database accessions for this orthologue:</b>
-
+	<input type=hidden name=MIval value=aa-do-markerupdate.apg>
+	<input type=hidden name=OID value=$OID> 
+        <input type=hidden name=target_table value=$target_table>
+	<input type=hidden name=UPDATEORTHO value=1>
+	<input type=hidden name=anchor value=orthologue>
+      <?/MIVAR>  
       <p>
 
-      <TABLE <?MIVAR>bgcolor="$highlight"<?/MIVAR> cols=1 rows=1 border cellpadding=5>
-	<TR><TD>
-	<font size=2>
-	<?MISQL SQL="
-	  select l.DB_name, acc_num, db_significance
-	    from db_link l, foreign_DB f
-	    where linked_recid = '$OID'
-	      and l.db_name = f.db_name
-	      and f.db_significance < 10
-	 order by f.db_significance;">
-	  <input type=button  value="Delete" onClick="delete_link('$2');"> 
-	  $1 [$2 ] <br>
-	<?/MISQL>
-	<?MIVAR COND="$(<,$MI_ROWCOUNT,1)">None.<?/MIVAR>
-	</font>
-	</TD></TR>
-      </TABLE>
+      <!------ add new orthologue -----> 
+      <?MISQL SQL="
+		select organism_common_name, organism_display_order
+  		  from organism
+		 where organism_common_name <> 'Zebrafish'
+                   and organism_common_name not in (
+				select organism
+				  from orthologue
+				 where c_gene_id = '$OID')
+        	order by organism_display_order ;">
 
-      <p>
-      <b>Add DB accession:</b> DB_name:
-      <SELECT name=newdb>
-	<?MISQL SQL="
-	  select fdbcont_db_name 
-	    from foreign_db_contains
-	    where fdbcont_data_type = 'orthologue'
-	    order by fdbcont_db_name;">
-	  <option value="$1">$1
-	<?/MISQL>
-      </SELECT> 
-      Accession: <input type=text size=10 name=newacc> 
-      <input type=submit name=newseq value="Add it!">
-	
-      <p>
-      <b>Add orthologue evidence: </b> Evidence Code:
-	<SELECT name=newevicode>
-	<?MISQL SQL="
-	  select * 
+                <?MIVAR COND="$(=,$MI_CURRENTROW,1)">
+		    <b>Add Orthologue:&nbsp;</b>
+                    <SELECT name=species_newadd>
+		<?/MIVAR>
+		<option value=$1>$1
+       <?/MISQL>
+       <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+         </SELECT>
+         Name:<input type=text size=30 name=oname> 
+         Symbol:<input type=text size=10 name=oabbrev> 
+         <input type=submit value="Add" name=new_add> 
+         <p>  
+       <?/MIBLOCK>
+       <!------ end add new orthologue -------------->
+
+
+       <!--------- execute update -------------------->
+       <?MICOMMENT>default species is the first organism, on selection, refresh the page with the selected species, get info about the selected one<?/MICOMMENT>  
+       <?MISQL SQL="
+		select distinct organism, organism_display_order
+		  from organism, orthologue
+	 	where c_gene_id = '$OID'
+                  and organism_common_name=organism 
+        	order by organism_display_order ;">
+       
+                 <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
+		    <b>Update Orthologue: &nbsp; </b> 
+		    <SELECT name=species_update onchange=update_species(this.options[this.selectedIndex].value)>
+                    <?MIVAR NAME=$species_update>$1<?/MIVAR>
+                 <?/MIBLOCK>
+
+		 <option value=$1 $(IF,$(AND,$(XST,$species_selected),$(EC,$species_selected,$1)),selected $(SETVAR,$species_update,$species_selected))>$1</option>
+
+     	<?/MISQL>
+
+	<?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+         </SELECT>
+         <br>
+
+         <?MISQL COND="$(XST,$species_update)" SQL="
+		select zdb_id, ortho_name, ortho_abbrev
+                  from orthologue
+		 where c_gene_id = '$OID'
+                   and organism = '$species_update';">
+            <?MIVAR NAME=$ortho_id>$1<?/MIVAR>
+            <?MIVAR NAME=$oname>$2<?/MIVAR>
+            <?MIVAR NAME=$oabbrev>$3<?/MIVAR>
+         <?/MISQL>
+    
+         <TABLE><TR><TD>&nbsp;</TD>	
+         <!----- update orthologue symbol -------------->
+         <TD><?MIVAR>
+         <b>Name: &nbsp; </b>
+         <input type=text name=newname value="$oname" size=30>
+         <b>Symbol:&nbsp; </b>
+         <input type=text name=newabbrev value="$oabbrev" size=10>
+           <?/MIVAR>
+         </TD>
+         <!----- end update orthologue symbol -------------->
+
+         </TR><TR><TD>&nbsp;</TD>
+         <!-------- add new db accession --------->
+         <TD align=left>
+         <b>Add Foreign DB accessions:&nbsp;</b>
+   
+         DB: 
+         <SELECT name=newdb> 
+	  <?MISQL COND="$(XST,$species_update)" SQL="
+	    select fdbcont_db_name, db_significance 
+	     from foreign_db_contains, foreign_db
+	     where fdbcont_data_type = 'orthologue'
+               and fdbcont_organism = '$species_update'
+	       and fdbcont_db_name = db_name
+	     order by db_significance;">
+	    <option value="$1">$1
+  	   <?/MISQL>
+         </SELECT> 
+         Accession: <input type=text size=10 name=newacc> 
+         </TD>
+         <!-------- end add new db accession --------->
+
+         </TR><TR><TD>&nbsp;</TD>
+         <!-------- add new ortho evidence ----------->
+         <TD align=left>
+         <b>Add Orthologue Evidence:&nbsp; </b> 
+         Evidence Code:
+         <SELECT name=newevi>
+  	 <?MISQL SQL="
+	   select * 
 	    from orthologue_evidence_code;">
-	  <option value="$1">$1
-	<?/MISQL>
-      </SELECT> 
-      Publication: <input type=text size=25 name=newpub> 
-      <input type=submit name=newevi value="Add it!">	 
+	   <option value="$1">$1
+	 <?/MISQL>
+         </SELECT> 
+         Publication: <input type=text size=25 name=newpub> 
+         </TD>	 
+         <!-------- end add new ortho evidence --------->
+ 
+         </TR></TR><TD>&nbsp;</TD>
+      
+         <!----- delete db accession -------------->
+         <TD>
+         <b>Delete DB accession:&nbsp; </b>
+         <SELECT name=delacc>
+         <option selected></option>
+          <?MISQL SQL="
+	    select DB_name, acc_num
+	      from db_link
+	      where linked_recid = '$ortho_id';">
+	    <option value=$2>$1:$2
+	  <?/MISQL>
+         </SELECT>
+         </TD> 
+         <!----- emd delete db accession -------------->
+      
+         </TR></TR><TD>&nbsp;</TD>
+	 <!------- delete orthologue evidence ----------->
+         <TD>
+         <b>Delete orthologue evidence:&nbsp; </b>
+         Evidence Code:
+	 <SELECT name=delevi>
+	  <?MISQL SQL="
+	    select * 
+	      from orthologue_evidence_code;">
+	    <option value="$1">$1
+	  <?/MISQL>
+         </SELECT> 
+         Publication:
+	 <SELECT name=delpub>
+          <option selected></option>
+	  <?MISQL SQL="
+	    select distinct oev_pub_zdb_id
+	      from orthologue_evidence
+	     where oev_ortho_zdb_id = '$ortho_id';">
+	    <option value="$1">$1
+	  <?/MISQL>
+         </SELECT> 
+         </TD>
+         <!--------- end delete orthologue evidence ----->
 
-      <p>
-      <b>Delete orthologue evidence: </b> Evidence Code:
-	<SELECT name=delevicode>
-	<?MISQL SQL="
-	  select * 
-	    from orthologue_evidence_code;">
-	  <option value="$1">$1
-	<?/MISQL>
-      </SELECT> 
-      Publication:
-	<SELECT name=delpub>
-	<?MISQL SQL="
-	  select distinct oev_pub_zdb_id
-	    from orthologue_evidence
-	   where oev_ortho_zdb_id = '$OID';">
-	  <option value="$1">$1
-	<?/MISQL>
-      </SELECT> 
-      <input type=submit name=delevi value="Delete it!">	 
+         </TR><TR><TD>&nbsp;</TD>
 
-	   
-      <hr width=90%>
-      <font color="red">
-      <input type=submit 
-	value="Delete entire orthologue record" 
-	name=bigdelete>
-      </font> 
-      including all Database Accessions associated with the orthologue 
-      (very scary, think carefullly!).
+         <!---------- commit update(s) ------------------> 
+         <TD>
+          <input type=submit name=commit_update value="Commit Update">
+         </TD>
+         </TR></TABLE>
+         <br> 
+       <?/MIBLOCK> <!-- end of if exist ortholgoue--->
 
-      <hr width=90%>
-     
-      <input type=submit name=exiter value="Done-exit">
+        <!----------- big delete ---------------------->
+        <?MISQL SQL="
+		select distinct organism, organism_display_order
+		  from orthologue, organism
+	 	where c_gene_id = '$OID'
+		  and organism_common_name = organism
+        	order by organism_display_order ;">
 
+                <?MIVAR COND="$(=,$MI_CURRENTROW,1)">
+		  <b>Delete <font color="red">Entire</font> Orthologue: &nbsp; </b>
+                  <SELECT name=species_bigdelete>
+                <?/MIVAR>
+		<option value=$1>$1
+     	 <?/MISQL>
+         <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
+           </SELECT>
+           <input type=submit value="Delete" name=big_delete>
+           <br>
+         <?/MIVAR>
+        <!--------- end big deletion ----------->
     </form>
-  <?/MIBLOCK> <!-- end NXST exiter -->
+  
 <?/MIBLOCK>  <!-- ends authorized -->
-
-<?MIVAR COND="$(XST,$exiter)">
-<SCRIPT>
-window.close();</SCRIPT>
-<?/MIVAR>
 
