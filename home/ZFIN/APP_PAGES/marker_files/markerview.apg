@@ -892,9 +892,15 @@
 
         <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrview_segment_mrkr_zdb_id">$1</A>
         
-        <?MIVAR COND="$(NC,$mrkrview_segment_supplier,)">
-          <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$mrkrview_segment_supplier">(available from)</A>
-        <?/MIVAR>
+        <?MIBLOCK COND="$(NC,$mrkrview_segment_supplier,)">
+          <?MIBLOCK COND="$(EC,$mrkrview_segment_supplier,ZDB-LAB-991005-53)">
+            <A HREF="http://zfin.org/zirc/home/guide.php">(available from)</A>
+          <?MIELSE>
+	    <?MIVAR>
+              <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$mrkrview_segment_supplier">(available from)</A>
+            <?/MIVAR>
+          <?/MIBLOCK>
+        <?/MIBLOCK>
         
 	<?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_segment_mrel_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
         <?/MISQL>
@@ -951,7 +957,17 @@
         <?/MIVAR>	
 	 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrview_segment_mrkr_zdb_id">$1</A>
          <font size=-1>
-           <?MIVAR COND="$(NC,$mrkrview_segment_supplier,)"><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$mrkrview_segment_supplier">(available from)</A><?/MIVAR>
+
+        <?MIBLOCK COND="$(NC,$mrkrview_segment_supplier,)">
+          <?MIBLOCK COND="$(EC,$mrkrview_segment_supplier,ZDB-LAB-991005-53)">
+            <A HREF="http://zfin.org/zirc/home/guide.php">(available from)</A>
+          <?MIELSE>
+            <?MIVAR>
+              <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$mrkrview_segment_supplier">(available from)</A>
+            <?/MIVAR>
+          <?/MIBLOCK>
+        <?/MIBLOCK>
+
          </font>
 	<?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_segment_mrel_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
        <?/MISQL> 

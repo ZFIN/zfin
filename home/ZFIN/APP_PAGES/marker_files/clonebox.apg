@@ -12,19 +12,35 @@ Requires:  $CLONE_MARKER_ID, $highlight
     WHERE '$OID' = idsup_data_zdb_id
       AND idsup_supplier_zdb_id = l.zdb_id;
   ">
-      <?MIVAR NAME=$SOURCE>
+      <?MIBLOCK COND=$(EC,$1,ZDB-LAB-991005-53)>
+	  <?MIVAR NAME=$SOURCE>
 
-        <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$1">$2</a>
-   
-      <?/MIVAR>
+	    <a href="http://zfin.org/zirc/home/guide.php">$2</a>
+
+	  <?/MIVAR>
+        <?MIELSE>
+	  <?MIVAR NAME=$SOURCE>
+
+	    <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$1">$2</a>
+
+	  <?/MIVAR>
     <?/MIBLOCK>
     <?MIBLOCK COND="$(=,$COUNT,1)">
-      <?MIVAR NAME=$SOURCE>
 
-        $SOURCE, 
-        <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$1">$2</a>
+      <?MIBLOCK COND=$(EC,$1,ZDB-LAB-991005-53)>
+	  <?MIVAR NAME=$SOURCE>
+	    $SOURCE,
+	    <a href="http://zfin.org/zirc/home/guide.php">$2</a>
 
-      <?/MIVAR>
+	  <?/MIVAR>
+        <?MIELSE>
+	  <?MIVAR NAME=$SOURCE>
+	    $SOURCE,
+	    <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$1">$2</a>
+
+	  <?/MIVAR>
+    <?/MIBLOCK>
+
     <?/MIBLOCK>
     <?MIVAR NAME=$COUNT>1<?/MIVAR>
   <?/MISQL>

@@ -633,6 +633,15 @@ Variables Expected:
 	    <?MISQL SQL="select WebExplode(object,'dataId=$OID&type=colattrib&info=phenotype') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>		 
 	  <?/MIBLOCK>
 	<?/MIBLOCK>
+	
+	<!-- allow zirc to read comments that are not available to the public -->
+
+	<?MIBLOCK COND="$(EC,$AUTHORIZED,zirc)">
+	  <?MIBLOCK COND="$(AND,$(NC,$phenotype,),$(NC,$phenotype,NULL))"> 
+	    <?MIVAR><br>$phenotype<?/MIVAR>
+	    <?MISQL SQL="select WebExplode(object,'dataId=$OID&type=colattrib&info=phenotype') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>		 
+	  <?/MIBLOCK>
+	<?/MIBLOCK>
 
 	<!------------ ends Phenotype & Description ---------------->
 
@@ -754,9 +763,15 @@ Variables Expected:
                   <?MIVAR COND="$(XST,$UPDATE)">
 		    <input type=button name=delt_source value="Delete" onClick="delete_source('$supplier_zdb_id')">
                   <?/MIVAR>
-		  <?MIVAR>
-		    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sourceview.apg&OID=$supplier_zdb_id">$supplier_name</A>
-		  <?/MIVAR>
+		  <?MIBLOCK COND=$(EC,$supplier_zdb_id,ZDB-LAB-991005-53)>
+                    <?MIVAR>
+		      <A HREF="http://zfin.org/zirc/home/guide.php">$supplier_name</A>
+		    <?/MIVAR>
+		  <?MIELSE>
+                    <?MIVAR>
+		      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sourceview.apg&OID=$supplier_zdb_id">$supplier_name</A>
+                    <?/MIVAR>
+		  <?/MIBLOCK>
 		  <?MIVAR>$(UNSETVAR,$status_list)<?/MIVAR>
 		  <?MISQL SQL="
 		    select fsupstat_fish_status

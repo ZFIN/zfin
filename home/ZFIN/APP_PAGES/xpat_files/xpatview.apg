@@ -253,11 +253,18 @@ ERROR -- something bad happened -- no OID passed in!
      ">
        <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$1</a>
        
-     <?MIVAR COND="$(NC,$3,)">
+     <?MIBLOCK COND="$(NC,$3,)">
        <font size=-1>
-         <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$3">(available from)</a>
+          <?MIBLOCK COND="$(EC,$3,ZDB-LAB-991005-53)">
+            <A HREF="http://zfin.org/zirc/home/guide.php">(available from)</A>
+          <?MIELSE>
+            <?MIVAR>
+              <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$3">(available from)</a>
+            <?/MIVAR>
+          <?/MIBLOCK>
        </font>
-     <?/MIVAR>
+     <?/MIBLOCK>
+     
 
 <?/MISQL>
        </b></font>
