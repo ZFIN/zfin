@@ -39,9 +39,15 @@ STATICS  = fish_bgd.gif fish_net.gif
 
 FTPTARGET = $(TARGETDIR)/transfer
 
+# It also creates a sym link to the client_apps directory.  This is to
+# overcome a bug in apache.
+
+CLIENTAPPSTARGET = $(TARGETDIR)/client_apps
+
 SPECIFICTARGETS = $(foreach SPEC, $(GENERICS), $(TARGETDIR)/$(SPEC))
 STATICTARGETS   = $(foreach STAT, $(STATICS), $(TARGETDIR)/$(STAT))
-TARGETS         = $(SPECIFICTARGETS) $(STATICTARGETS) $(FTPTARGET)
+TARGETS         = $(SPECIFICTARGETS) $(STATICTARGETS) $(FTPTARGET) \
+                  $(CLIENTAPPSTARGET)
 
 
 # ---------------  Production Rules  ------------------------------------
@@ -63,6 +69,9 @@ $(STATICTARGETS) : $(TARGETDIR)/% : %
 
 $(FTPTARGET) : 
 	ln -s /research/zfin/chromix/ftp/pub/transfer $(FTPTARGET)
+
+$(CLIENTAPPSTARGET) : 
+	ln -s ../client_apps $(CLIENTAPPSTARGET)
 
 $(SUBDIRS) :
 	$(MAKE) -C $@
