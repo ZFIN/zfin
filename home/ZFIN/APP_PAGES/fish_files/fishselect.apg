@@ -90,8 +90,11 @@ function call_reset() {
 <?/MIBLOCK>
 
 
+<!--***-->
+<!-- This page will also be used for the reverse link from publication page.--> 
+<?MIVAR COND="$(NXST,$line_type)" NAME=line_type>mutant<?/MIVAR>
 
-<?MIBLOCK COND="$(XST,$query_results)">
+<?MIBLOCK COND="$(OR,$(XST,$query_results),$(XST,$pubId))">
 
   <!-- This app-page handles the criteria collected by fishselect.html, and actually does the search, displaying the results. What makes this page very tricky is the need to potentially query on both wild type and mutant lines, the data for which is quite different. In particular, wild types will have no CHROMOSOME or ALTERATION records associated with them, so any join to these tables will knock out wild types. The solution is to do two separate queries and UNION the results. Of course, this also mean building up two different constraints clauses.
 -->
@@ -275,15 +278,42 @@ function call_reset() {
 
     </form>
 
+    <!--***-->	
+   <?MIBLOCK COND="$(XST,$pubId)">
+    <?MIVAR NAME=mut_constraint>
+           and recattrib_source_zdb_id = '$pubId'
+	   and (a.fish_id = recattrib_data_zdb_id 
+	      or a.locus = recattrib_data_zdb_id)
 
-    <?MISQL SQL="
-      select count(*)::integer 
-	from $target_table
-	where line_type = 'mutant' 
-	      $mut_constraint;"> 
-      <?MIVAR name=$num_recs>$1<?/MIVAR>
+    <?/MIVAR> 
+    <?MIVAR NAME=target_table>
+	$target_table, record_attribution
+    <?/MIVAR>
+   <?/MIBLOCK>
+	
+   <?MISQL SQL="
+         select count(*)::integer 
+	 from $target_table
+	 where line_type = 'mutant'
+	       $mut_constraint;"> 
+       <?MIVAR name=$num_recs>$1<?/MIVAR>
     <?/MISQL>
 
+    <?MIBLOCK COND="$(XST,$pubId)">
+	<?MISQL SQL="
+		select count(*)::integer
+		  from $target_table
+		 where line_type = 'mutant'
+		   and recattrib_source_zdb_id = '$pubId' 
+		   and a.fish_id = recattrib_data_zdb_id
+	           and a.locus in (
+			select recattrib_data_zdb_id
+			  from record_attribution
+		 	 where recattrib_source_zdb_id = '$pubId'
+				);">
+	  <?MIVAR>$(SETVAR,$num_recs,$(-,$num_recs,$1))<?/MIVAR>	
+	<?/MISQL>
+    <?/MIBLOCK> 	
 
     <?MIBLOCK COND="$(=,$num_recs,0)">
 
@@ -293,7 +323,20 @@ function call_reset() {
 
     <?/MIBLOCK>
 
-    <?MIBLOCK COND="$(NXST,$new_oid)"> 
+
+    <!--***-->	
+    <?MIBLOCK COND="$(AND,$(NXST,$new_oid),$(XST,$pubId))">
+      <table width=100% >
+ 	<tr> <td align=center> 
+	 <?MIVAR>
+	  <font size="+1">Phenotype Alleles Lists (<b>$num_recs</b> records)
+	  </font>
+	 <?/MIVAR>
+	</td></tr>
+      </table>
+
+    <?MIELSE COND="$(NXST,$new_oid)">	 	
+ 
       <table width=100% cellpadding=0 cellspacing=0 border=0>
 	<tr>
 	  <td width=20%>&nbsp;</td>
@@ -424,18 +467,12 @@ function call_reset() {
 
 	    <?MIVAR NAME=$independ_lg>null<?/MIVAR>
 	    <?MISQL SQL="
-	      select distinct alnkgmem_or_lg 
-		from all_linked_members a
-		where (    alnkgmem_linkage_zdb_id in 
-			     ( select alnkgmem_linkage_zdb_id 
-				 from all_linked_members b 
-				 where b.alnkgmem_linkage_zdb_id = a.alnkgmem_linkage_zdb_id
-			      and b.alnkgmem_member_zdb_id = '$fish_id' )
-		       and a.alnkgmem_member_zdb_id <> '$fish_id'
-		       and a.alnkgmem_private = 'f' )
-		   or (    a.alnkgmem_member_zdb_id = '$fish_id'   
-		       and a.alnkgmem_num_members = 1
-		       and a.alnkgmem_private='f' ) ;">
+	      select distinct lnkg_or_lg 
+		from linkage, linkage_member
+	       where lnkgmem_member_zdb_id = '$fish_id'
+		and  lnkgmem_linkage_zdb_id = lnkg_zdb_id
+		and  lnkg_private = 'f'
+		;">
 	      <?MIVAR NAME=$independ_lg>$1<?/MIVAR>
 	      <?MIBLOCK COND="$(>,$MI_CURRENTROW,1)">
 		<?MIVAR>
@@ -463,8 +500,8 @@ function call_reset() {
 	  <?MIVAR NAME=$lg>null<?/MIVAR>
 	    <?MISQL SQL="
 	      select or_lg, lg_location, metric 
-		from public_paneled_markers 
-		where zdb_id in ( '$locus', '$fish_id');">
+		from mapped_marker 
+		where marker_id in ( '$locus', '$fish_id');">
 	      <?MIVAR NAME=$lg>$1<?/MIVAR>
 	      <?MIVAR NAME=$lg_location>$2<?/MIVAR>      
 	      <?MIVAR NAME=$metric>$3<?/MIVAR>
@@ -697,23 +734,28 @@ function call_reset() {
         <?MIVAR name=comment>  Build array of user data  <?/MIVAR>
 	<?MIVAR name=selector>MIval=aa-fishselect.apg&WINSIZE=$WINSIZE<?/MIVAR>
         <?MIVAR name=UserInput><?/MIVAR>
-	<?MIVAR name=UserInput COND=$(XST,$allele)>$UserInput&allele=$allele<?/MIVAR>
-	<?MIVAR name=UserInput COND=$(XST,$abbrev)>$UserInput&abbrev=$abbrev<?/MIVAR>
-	<?MIVAR name=UserInput COND=$(NC,$chrom_change,unknown)>$UserInput&chrom_change=$chrom_change<?/MIVAR>
-	<?MIVAR name=UserInput COND=$(EC,$chrom_change,unknown)>$UserInput&chrom_change=any<?/MIVAR>
-	<?MIVAR name=UserInput COND=$(NC,$mutagen,unknown)>$UserInput&mutagen=$mutagen<?/MIVAR>
-	<?MIVAR name=UserInput COND=$(EC,$mutagen,unknown)>$UserInput&mutagen=any<?/MIVAR>
-	<?MIVAR name=UserInput COND=$(XST,$line_type)>$UserInput&line_type=$line_type<?/MIVAR>
-	<?MIVAR name=UserInput COND=$(XST,$chrom_num)>$UserInput&chrom_num=$chrom_num<?/MIVAR>
-	<?MIVAR name=UserInput COND=$(XST,$knowngene)>$UserInput&knowngene=$knowngene<?/MIVAR>
-	<?MIVAR name=UserInput COND=$(XST,$anon1)>$UserInput&anon1=$anon1<?/MIVAR>
-	<?MIVAR name=UserInput COND=$(XST,$structures)>$UserInput&structures=$structures<?/MIVAR>
-	<?MIVAR name=UserInput COND=$(XST,$selected_separator)>$UserInput&selected_separator=$selected_separator<?/MIVAR>
-        <?MIVAR name=UserInput COND=$(XST,$return_rec)>$UserInput&return_rec=$return_rec<?/MIVAR>
-	<?MIVAR name=UserInput COND=$(XST,$selected)>$UserInput&selected=$(URLENCODE,$selected)<?/MIVAR>
-	<?MIVAR name=UserInput COND=$(XST,$fname)>$UserInput&fname=$(URLENCODE,$fname)<?/MIVAR>
-        <?MIVAR name=UserInput COND=$(XST,$anon1text)>$UserInput&anon1text=$(URLENCODE,$anon1text)<?/MIVAR>
-        <?MIVAR name=UserInput COND=$(XST,$query_results)>$UserInput&query_results=$(URLENCODE,$query_results)<?/MIVAR>
+	<!--***-->
+	<?MIBLOCK COND="$(XST,$pubId)">
+	  <?MIVAR name=UserInput>$UserInput&pubId=$pubId<?/MIVAR>
+	<?MIELSE>
+	  <?MIVAR name=UserInput COND=$(XST,$allele)>$UserInput&allele=$allele<?/MIVAR>
+	  <?MIVAR name=UserInput COND=$(XST,$abbrev)>$UserInput&abbrev=$abbrev<?/MIVAR>
+	  <?MIVAR name=UserInput COND=$(NC,$chrom_change,unknown)>$UserInput&chrom_change=$chrom_change<?/MIVAR>
+	  <?MIVAR name=UserInput COND=$(EC,$chrom_change,unknown)>$UserInput&chrom_change=any<?/MIVAR>
+	  <?MIVAR name=UserInput COND=$(NC,$mutagen,unknown)>$UserInput&mutagen=$mutagen<?/MIVAR>
+	  <?MIVAR name=UserInput COND=$(EC,$mutagen,unknown)>$UserInput&mutagen=any<?/MIVAR>
+	  <?MIVAR name=UserInput COND=$(XST,$line_type)>$UserInput&line_type=$line_type<?/MIVAR>
+	  <?MIVAR name=UserInput COND=$(XST,$chrom_num)>$UserInput&chrom_num=$chrom_num<?/MIVAR>
+  	  <?MIVAR name=UserInput COND=$(XST,$knowngene)>$UserInput&knowngene=$knowngene<?/MIVAR>
+	  <?MIVAR name=UserInput COND=$(XST,$anon1)>$UserInput&anon1=$anon1<?/MIVAR>
+	  <?MIVAR name=UserInput COND=$(XST,$structures)>$UserInput&structures=$structures<?/MIVAR>
+	  <?MIVAR name=UserInput COND=$(XST,$selected_separator)>$UserInput&selected_separator=$selected_separator<?/MIVAR>
+          <?MIVAR name=UserInput COND=$(XST,$return_rec)>$UserInput&return_rec=$return_rec<?/MIVAR>
+	  <?MIVAR name=UserInput COND=$(XST,$selected)>$UserInput&selected=$(URLENCODE,$selected)<?/MIVAR>
+	  <?MIVAR name=UserInput COND=$(XST,$fname)>$UserInput&fname=$(URLENCODE,$fname)<?/MIVAR>
+          <?MIVAR name=UserInput COND=$(XST,$anon1text)>$UserInput&anon1text=$(URLENCODE,$anon1text)<?/MIVAR>
+          <?MIVAR name=UserInput COND=$(XST,$query_results)>$UserInput&query_results=$(URLENCODE,$query_results)<?/MIVAR>
+	<?/MIBLOCK>
 
   <!--- Return to the previous set of Rows --->
   <?MIBLOCK COND="$(>,$BEGIN,1)">
@@ -811,7 +853,11 @@ function call_reset() {
 
 
 <?MIVAR COND="$(NXST,$line_type)" NAME=$line_type>NULL<?/MIVAR>
-<?MIBLOCK COND="$(AND,$(NXST,$accession),$(NC,$line_type,wild_type))">  <!-- don't want modify search result if come from accessionlister or if wild type being displayed for lineage update -->
+
+<!--***-->
+<?MIBLOCK COND="$(AND,$(NXST,$accession),$(NC,$line_type,wild_type),$(NXST,$pubId))">  
+
+<!-- don't want modify search result if come from accessionlister or if wild type being displayed for lineage update -->
 <!-- update_linage indicates this page is being called from fishview (for update or new record) and parentla linage is being specified.  A pulldown menu of line_types is needed in the title bar.  The 'your input welcome' button and it's form do not allow this to happen easily so an miblock has been added so that this mode does not have the input welcome button.  Do not want the modify search option for wild_type -->
 
 
