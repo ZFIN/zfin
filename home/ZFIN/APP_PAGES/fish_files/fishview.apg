@@ -515,8 +515,8 @@ Datablade documentation.
 	  <?MISQL SQL="
 	    select fimg_zdb_id, fimg_thumbnail, fimg_preparation, fimg_view, 
 		   fimg_direction, 
-		   get_stg_name_html(lo.stg_zdb_id, 'popup_url'),
-		   get_stg_name_html(hi.stg_zdb_id, 'popup_url'),
+		   get_stg_name_long_html(lo.stg_zdb_id),
+		   get_stg_name_long_html(hi.stg_zdb_id),
 		   lo.stg_hours_start, hi.stg_hours_end
 	      from fish_image, OUTER (fish_image_stage, stage lo, stage hi)
 	      where fimg_fish_zdb_id = '$OID'
