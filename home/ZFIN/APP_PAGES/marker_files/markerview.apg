@@ -346,6 +346,7 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),"<TD colspan=3><font size=2>LG <b>"$4
 <TD valign=top colspan=4>
 <?MIVAR> <B>Other markers linked to $abbrev:</b><?/MIVAR>
 
+
 <?MIVAR NAME=$MI_NULL><?/MIVAR>
 <TABLE cellpadding=1 cellspacing=0>
 <?MIVAR NAME=$curviewer>/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=<?/MIVAR>
@@ -397,16 +398,14 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),"<TD colspan=3><font size=2>LG <b>"$4
 
     <?MIVAR NAME=$lg COND="$(AND,$(NC,$lg,""),$(=,$lg,0))"><?/MIVAR>
 
-    <?MIBLOCK COND="$(NC,$map_comments,"")">
+    <?MIBLOCK COND="$(AND,$(NC,$map_comments,NULL),$(NC,$map_comments,""))">
       <?MIVAR>
        $(IF,$(OR,$(EC,$override,true),$(EC,$4,f),$(EC,$ZDB_ident,$6)),"<TD></TD><TD><font size=-1><A HREF="$curviewer$1">"$2"</A> ("$3")</TD>
         <TD align=center><font size=-1>"$lg"</TD>
 	<TD align=center><font size=-1>"$distance" "$metric"</TD>
 	<TD align=center><font size=-1>"$lod"</TD><TD><font size=-1><A href="$sourceviewer$6">"$7"</a></TD><TD><font size=-1><A HREF=javascript:show_detail('"$link_id"','"$1"','"$2"','"$abbrev"');>Details</A></TD>","<TD colspan=4><font size=-1><A href=javascript:info();>"$4$MI_CURRENTROW"</A>: Unpublished! <A href="sourceviewer$6">Contact "$7"</a>.</TD>")
       <?/MIVAR>
-    <?/MIBLOCK>
-
-    <?MIBLOCK COND="$(NOT,$(NC,$map_comments,""))">
+    <?MIELSE>
       <?MIVAR>
 	$(IF,$(OR,$(EC,$override,true),$(EC,$4,f),$(EC,$ZDB_ident,$6)),"<TD></TD><TD><font size=-1><A HREF="$curviewer$1">"$2"</A> ("$3")</TD>
         <TD align=center><font size=-1>"$lg"</TD>
@@ -416,7 +415,6 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),"<TD colspan=3><font size=2>LG <b>"$4
     <?/MIBLOCK>    
 
 </TR>
-<br>
 <?/MISQL>
 </TABLE>
 <?MIVAR COND="$(=,$MI_ROWCOUNT,0)"><p>None submitted (yet).<?/MIVAR>
