@@ -3,11 +3,10 @@
 --documentation ON 05/31/02. Script will LOADnothing if RefSeq files are 
 --not well formatted.
 --
---Download
---ftp.ncbi.nih.gov/refseq/LocusLink/
 --
---Static Variables
---db_name     - RefSeq
+--2005/03 LocusLink is discontinued.
+--Load files from Entrez Gene.
+--ftp://ftp.ncbi.nih.gov/gene/DATA
 
 
 
@@ -36,39 +35,7 @@ CREATE INDEX llzdb_ll_id_index ON ll_zdb
 CREATE INDEX llzdb_zdb_id_index ON ll_zdb
     (llzdb_zdb_id) using btree;
 
---HUMAN locus_link
-CREATE TEMP TABLE LL_GDB
-  (
-    llgdb_ll_id		varchar (50) not null,
-    llgdb_omim_id	varchar (50),
-    llgdb_gdb_id	varchar (50) not null
-  )
-with no log;
-
-!echo 'LOAD ll_hs_id.unl'
-LOAD FROM 'll_hs_id.unl' INSERT INTO ll_gdb;
-
-CREATE INDEX llgdb_ll_id_index ON ll_gdb
-    (llgdb_ll_id) using btree;
-CREATE INDEX llgdb_gdb_id_index ON ll_gdb
-    (llgdb_gdb_id) using btree;
-
---MOUSE locus_link
-CREATE TEMP TABLE LL_MGI
-  (
-    llmgi_ll_id		varchar (50) not null,
-    llmgi_mgi_id	varchar (50) not null
-  )
-with no log;
-
-!echo 'LOAD ll_mm_id.unl'
-LOAD FROM 'll_mm_id.unl' INSERT INTO ll_mgi;
-
-CREATE INDEX llmgi_ll_id_index ON ll_mgi
-    (llmgi_ll_id) using btree;
-CREATE INDEX llmgi_gdb_id_index ON ll_mgi
-    (llmgi_mgi_id) using btree;
-   
+  
 
 --REFSEQ ACCESSION NUM--
 CREATE TEMP TABLE REF_SEQ_ACC
@@ -172,7 +139,7 @@ DELETE FROM acc_length
 WHERE acclen_max_len != 't';
 
 
--- (copied from ../GenPept/load_prot_len_acc.sql)
+-- (copied from ../GenPept/load_prot_len_acc.unl)
 CREATE TEMP TABLE prot_len_acc 
   (
     pla_prot varchar (10), 
@@ -353,9 +320,9 @@ select seg_zdb from tmp_put_genpept_on_segment,tmp_db_link where pept_acc = tmp_
 INSERT INTO tmp_db_link
   SELECT
     mrkr_zdb_id,
-    'LocusLink',
+    'Entrez Gene',
     llzdb_ll_id,
-    'uncurated ' || TODAY || ' LocusLink load',
+    'uncurated ' || TODAY || ' Entrez load',
     'x',
     'x',
     ''
@@ -364,87 +331,12 @@ INSERT INTO tmp_db_link
 ;
 
 
-!echo 'CREATE TEMP TABLE ortho_link'
-CREATE TEMP TABLE ortho_link
-  (
-    lnkortho_linked_recid varchar(50),
-    lnkortho_fdbcont_zdb_id varchar(50),
-    lnkortho_acc_num varchar(50),
-    lnkortho_dblink_zdb_id varchar(50)
-  )
-with no log;
-
-
-UPDATE STATISTICS HIGH FOR table ll_gdb;
-UPDATE STATISTICS HIGH FOR table ll_mgi;
-
---SELECT a distinct set of gdb/zfin ids
-!echo 'INSERT INTO ortho_link'
-INSERT INTO ortho_link
-    SELECT 
-      distinct zdb_id,
-      ll.fdbcont_zdb_id,
-      llgdb_ll_id,
-      'x'
-    FROM db_link, orthologue, ll_gdb, foreign_db_contains AS gdb, foreign_db_contains AS LL
-    WHERE dblink_fdbcont_zdb_id = gdb.fdbcont_zdb_id
-      AND gdb.fdbcont_fdb_db_name = "GDB"
-      AND zdb_id = dblink_linked_recid
-      AND dblink_acc_num = llgdb_gdb_id
-      AND ll.fdbcont_fdb_db_name = "LocusLink"
-      AND ll.fdbcont_fdbdt_data_type = "orthologue"
-      AND ll.fdbcont_organism_common_name = "Human";
-
-
---INSERT OMIM links into ortho_link
-INSERT INTO ortho_link
-    SELECT 
-      distinct zdb_id,
-      ll.fdbcont_zdb_id,
-      llgdb_omim_id,
-      'x'
-    FROM db_link, orthologue, ll_gdb, foreign_db_contains AS gdb, foreign_db_contains AS LL
-    WHERE dblink_fdbcont_zdb_id = gdb.fdbcont_zdb_id
-      AND gdb.fdbcont_fdb_db_name = "GDB"
-      AND zdb_id = dblink_linked_recid
-      AND dblink_acc_num = llgdb_gdb_id
-      AND ll.fdbcont_fdb_db_name = "OMIM"
-      AND ll.fdbcont_fdbdt_data_type = "orthologue"
-      AND ll.fdbcont_organism_common_name = "Human"
-      AND llgdb_omim_id is not null
-      AND llgdb_omim_id NOT IN ('193500','106210','168461','300401','601868');
-          -- Ban OMIM disease links (Hard code for now 06-02-03) --
-
-
-
-
-!echo 'INSERT MGI links into ortho_link'
-INSERT INTO ortho_link
-    SELECT 
-      distinct zdb_id,
-      ll.fdbcont_zdb_id,
-      llmgi_ll_id,
-      'x'
-    FROM db_link, orthologue, ll_mgi, foreign_db_contains AS MGI, foreign_db_contains AS LL
-    WHERE dblink_fdbcont_zdb_id = mgi.fdbcont_zdb_id
-      AND mgi.fdbcont_fdb_db_name = "MGI"
-      AND dblink_linked_recid = zdb_id
-      AND dblink_acc_num = llmgi_mgi_id
-      AND ll.fdbcont_fdb_db_name = "LocusLink"
-      AND ll.fdbcont_fdbdt_data_type = "orthologue"
-      AND ll.fdbcont_organism_common_name = "Mouse";
-
-
-CREATE INDEX lnkortho_dblink_zdb_id_index ON ortho_link
-    (lnkortho_dblink_zdb_id) using btree;
-    
+   
 
 ----------------------------------
 --| DROP TEMPORARY LOAD TABLES |--
 ----------------------------------
 
-DROP TABLE LL_GDB;
-DROP TABLE LL_MGI;
 DROP TABLE REF_SEQ_ACC;
 DROP TABLE GENBANK_ACC;
 
@@ -483,194 +375,7 @@ CREATE INDEX link_id_index ON automated_dblink
 
 DELETE FROM zdb_active_data WHERE zactvd_zdb_id in (SELECT link_id FROM automated_dblink);
 
-
-!echo 'get all LocusLink AND OMIM db_links that remain'
-  SELECT * 
-  FROM db_link 
-  WHERE dblink_fdbcont_zdb_id in 
-    (
-      SELECT fdbcont_zdb_id
-      FROM foreign_db_contains
-      WHERE fdbcont_zdb_id = dblink_fdbcont_zdb_id
-        AND fdbcont_fdb_db_name in ("OMIM","LocusLink")
-    )
-  INTO temp old_omim_and_ll
-  with no log;
-
--- Delete orthologue load links that are redundant with existing production links.
-  DELETE FROM ortho_link
-  WHERE EXISTS
-    (
-      SELECT *
-      FROM old_omim_and_ll
-      WHERE lnkortho_fdbcont_zdb_id = dblink_fdbcont_zdb_id
-        AND lnkortho_acc_num = dblink_acc_num
-    );
-
-
       
------------------------------------------------
---| INSERT LOCUSLINK ORTHOLOGUE ACTIVE DATA |--
------------------------------------------------
-
-UPDATE STATISTICS HIGH FOR table ortho_link;
-
---add ZDB ids
-  UPDATE ortho_link
-  SET lnkortho_dblink_zdb_id = get_id('DBLINK');
-  
--- Occassionally, curatorial data conflicts with LocusLink. Unload the LocusLink record for review and delete it.
---Same DB and data type
-select lnkortho_dblink_zdb_id as conf_zdb_id, lnkortho_acc_num as conf_acc_num, lnkortho_linked_recid as conf_recid 
-from ortho_link
-where exists
-  (
-    select dblink_linked_recid
-    from db_link
-    where dblink_linked_recid = lnkortho_linked_recid
-      and dblink_fdbcont_zdb_Id = lnkortho_fdbcont_zdb_Id
-  )
-into temp tmp_ortho_conflict;
-
-
-unload to ortho_conflict.unl select * from tmp_ortho_conflict;
-
-delete from ortho_link where lnkortho_dblink_zdb_id in (select conf_zdb_id from tmp_ortho_conflict);
-  
-  
-!echo 'add LocusLink Orthologue active data'
-  INSERT INTO zdb_active_data 
-  SELECT lnkortho_dblink_zdb_id 
-  FROM ortho_link
-;
---  WHERE lnkortho_db_name = 'LocusLink'
---    AND lnkortho_acc_num NOT IN 
---        (SELECT acc_num FROM old_omim_and_ll WHERE db_name = 'LocusLink');
-
---!echo 'add OMIM active data'
---  INSERT INTO zdb_active_data 
---  SELECT lnkortho_dblink_zdb_id 
---  FROM ortho_link
---  WHERE lnkortho_db_name = 'OMIM'
---    AND lnkortho_acc_num NOT IN 
---        (SELECT acc_num FROM old_omim_and_ll WHERE db_name = 'OMIM');
-
-
-!echo 'insert LocusLink Orthologue db_links.'
-INSERT INTO db_link
-      (
-        dblink_linked_recid,
-        dblink_fdbcont_zdb_id,
-        dblink_acc_num,
-        dblink_info,
-        dblink_zdb_id,
-        dblink_acc_num_display
-      )
-    SELECT distinct
-        lnkortho_linked_recid,
-        lnkortho_fdbcont_zdb_id,
-        lnkortho_acc_num,
-        'Uncurated: RefSeq load ' || TODAY,
-        lnkortho_dblink_zdb_id,
-        lnkortho_acc_num
-    FROM ortho_link;
-
-       select mrkr_abbrev, fdbcont_fdb_db_name, zdb_id
-       from marker, db_link, foreign_db_contains, orthologue
-       where mrkr_zdb_id = c_gene_id
-         and zdb_id = dblink_linked_recid
-         and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-       group by 1,2,3
-       having count(*) >1;
-       
-
--- --------------  DELETE duplicate ORTHO  ----------------- --
--- select the mrkr for LocusLink
--- select the mrkr for OMIM
--- select the conflict acc_num for each mrkr
--- delete conflict acc_num that are from this load
-
-CREATE TEMP TABLE tmp_multiple_ortho_gene
-  (
-    multortho_mrkr_zdb_id varchar(50),
-    multortho_ortho_zdb_id varchar(50)
-  )
-  with no log;
-
-INSERT INTO tmp_multiple_ortho_gene
-SELECT mrkr_zdb_id, dbl1.dblink_zdb_id
-FROM marker, orthologue, db_link AS dbl1, foreign_db_contains
-WHERE mrkr_zdb_id = c_gene_id
-  AND zdb_id = dbl1.dblink_linked_recid
-  AND dbl1.dblink_fdbcont_zdb_id = fdbcont_zdb_id
-  AND fdbcont_fdb_db_name = "LocusLink"
-  AND fdbcont_fdbdt_data_type = 'orthologue'
-  AND 1 < 
-    (
-      SELECT COUNT(*) 
-      FROM db_link as dbl2
-      WHERE dbl2.dblink_linked_recid = zdb_id 
-        AND dbl2.dblink_fdbcont_zdb_id = dbl1.dblink_fdbcont_zdb_id
-    );
-
-INSERT INTO tmp_multiple_ortho_gene
-SELECT mrkr_zdb_id, dblink_zdb_id
-FROM marker, orthologue, db_link AS dbl1, foreign_db_contains
-WHERE mrkr_zdb_id = c_gene_id 
-  AND zdb_id = dbl1.dblink_linked_recid
-  AND dbl1.dblink_fdbcont_zdb_id = fdbcont_zdb_id
-  and fdbcont_fdb_db_name = "OMIM"
-  AND fdbcont_fdbdt_data_type = 'orthologue'
-  AND 1 < 
-    (
-      SELECT COUNT(*) 
-      FROM db_link as dbl2
-      WHERE dbl2.dblink_linked_recid = zdb_id 
-        AND dbl2.dblink_fdbcont_zdb_id = dbl1.dblink_fdbcont_zdb_id
-    );
-
---SELECT multortho_mrkr_zdb_id as tmp_mrkr_zdb_id,  
---       dblink_zdb_id as tmp_dblink_zdb_id
---FROM tmp_multiple_ortho_gene, db_link
---WHERE multortho_ortho_zdb_id = linked_recid
---INTO temp tmp_multiple_ortho;
-
-    
-UNLOAD to ortho_with_multiple_acc_num.unl
-SELECT mrkr_abbrev, dblink_acc_num
-FROM tmp_multiple_ortho_gene, db_link, marker
-WHERE mrkr_zdb_id = multortho_mrkr_zdb_id
-  AND multortho_ortho_zdb_id = dblink_zdb_id
-ORDER by mrkr_abbrev;
-
-
-DELETE FROM zdb_active_data
-WHERE zactvd_zdb_id IN 
-  (
-    SELECT multortho_ortho_zdb_id
-    FROM tmp_multiple_ortho_gene
-    WHERE multortho_ortho_zdb_id NOT IN
-      ( 
-        SELECT dblink_zdb_id from old_omim_and_ll
-      )
-  );
-
-
-!echo 'Attribute human LL links to source LocusLink curation pub.'
-INSERT INTO record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
-    SELECT dblink_zdb_id, 'ZDB-PUB-020723-3'
-    FROM db_link, ortho_link
-    WHERE dblink_zdb_id = lnkortho_dblink_zdb_id;
-
-
------------------------------------
---| DROP ORTHOLOGUE TEMP TABLES |--
------------------------------------
-
-DROP TABLE AUTOMATED_DBLINK;
-DROP TABLE ORTHO_LINK;
-DROP TABLE TMP_MULTIPLE_ORTHO_GENE;
-
 
 -- ======================= --
 --  MULTIPLE REFSEQ LINKS  --
@@ -681,7 +386,7 @@ UPDATE STATISTICS HIGH FOR TABLE tmp_db_link;
 UPDATE STATISTICS HIGH FOR TABLE db_link;
 
 -- 06/15/2004
--- GenPept links from the LocusLink load have precedence.
+-- GenPept links from the Entrez load have precedence.
 -- Conflicting GenPepts should be deleted.
 
     delete from zdb_active_data
@@ -789,22 +494,6 @@ UPDATE STATISTICS HIGH FOR TABLE db_link;
           --AND fdbcont_fdb_db_name = tmp_db_name
       );
 
---should be a closing brachet
-{
-    UNLOAD to dblink_gene_marker_non_encodes_pairs.unl
-    SELECT tmp_linked_recid, dblink_linked_recid, tmp_acc_num, tmp_db_name
-    FROM tmp_est_db_link, tmp_db_link, marker_relationship, foreign_db_contains
-    WHERE tmp_linked_recid like "ZDB-GENE%"
-      and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-      and fdbcont_fdb_db_name = tmp_db_name
-      and dblink_acc_num = tmp_acc_num
-      and dblink_linked_recid = mrel_mrkr_2_zdb_id
-      and tmp_linked_recid = mrel_mrkr_1_zdb_id
-      and mrel_type NOT IN ('gene encodes small segment',
-                            'gene contains small segment',
-                            'gene hybridized by small segment');
-
-}
 
 
     
@@ -825,7 +514,6 @@ INSERT INTO tmp_multiple_refseq
 SELECT tmp_linked_recid, tmp_acc_num, count(tmp_linked_recid)
 FROM tmp_db_link
 WHERE tmp_db_name = "RefSeq"
-  AND tmp_acc_num[1,2] = "NM"
 GROUP BY tmp_linked_recid, tmp_acc_num
 HAVING count(tmp_linked_recid) > 1;
 
@@ -878,7 +566,7 @@ WHERE dblink_acc_num IN
 -- ------------------  add new links  ---------------------- --
 !echo 'add active data'
 INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link WHERE tmp_db_name = "RefSeq";
-INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link WHERE tmp_db_name = "LocusLink";
+INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link WHERE tmp_db_name = "Entrez Gene";
 INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link WHERE tmp_db_name = "GenBank";
 INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link WHERE tmp_db_name = "GenPept";
  
@@ -919,7 +607,7 @@ INSERT INTO db_link
         tmp_acc_num,
         tmp_length
   FROM tmp_db_link, foreign_db_contains 
-  WHERE tmp_db_name = "LocusLink"
+  WHERE tmp_db_name = "Entrez Gene"
     AND tmp_db_name = fdbcont_fdb_db_name
     AND fdbcont_fdbdt_super_type = 'summary page'
     AND fdbcont_organism_common_name = "Zebrafish";
