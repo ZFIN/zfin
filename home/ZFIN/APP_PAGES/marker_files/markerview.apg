@@ -834,16 +834,19 @@ Datablade documentation.
     <TABLE width="100%" border="0" <?MIVAR>bgcolor="$highlight"<?/MIVAR>>
        
     <?MISQL SQL="
-      select distinct xpat_zdb_id
+      select xpat_zdb_id
 	from expression_pattern
 	where '$OID' in (xpat_gene_zdb_id, xpat_probe_zdb_id)
-	  and (xpat_zdb_id in (select xpatfimg_xpat_zdb_id
-				from expression_pattern_image)
-	    or xpat_zdb_id in (select xpatstg_xpat_zdb_id
-				 from expression_pattern_stage
-			        where xpatstg_comments is not null)
-	    or xpat_zdb_id in (select xpatanat_xpat_zdb_id
-				 from expression_pattern_anatomy)
+	  and (   exists ( select 'x'
+			     from expression_pattern_image
+			     where xpat_zdb_id = xpatfimg_xpat_zdb_id )
+	       or exists ( select 'x'
+		  	     from expression_pattern_stage
+			     where xpatstg_comments is not null
+			       and xpat_zdb_id = xpatstg_xpat_zdb_id )
+	       or exists ( select 'x'
+			     from expression_pattern_anatomy
+			     where xpatanat_xpat_zdb_id = xpat_zdb_id )
 	      )
 	order by xpat_zdb_id;">
         <?MIVAR NAME=$XPAT_ZDB_ID>$1<?/MIVAR>
@@ -900,13 +903,16 @@ Datablade documentation.
 	    select count(distinct xpat_source_zdb_id)::integer 
 	      from expression_pattern 
 	     where '$OID' in (xpat_gene_zdb_id, xpat_probe_zdb_id)
-	       and xpat_zdb_id not in (select xpatfimg_xpat_zdb_id
-					from expression_pattern_image)
-	       and xpat_zdb_id not in (select xpatstg_xpat_zdb_id
-				 	from expression_pattern_stage
-			        	where xpatstg_comments is not null)
-	       and xpat_zdb_id not in (select xpatanat_xpat_zdb_id
-				 	from expression_pattern_anatomy);">
+	       and not exists ( select 'x'
+				  from expression_pattern_image
+				  where xpat_zdb_id = xpatfimg_xpat_zdb_id )
+	       and not exists ( select 'x' 
+			 	  from expression_pattern_stage
+			          where xpatstg_comments is not null
+				    and xpat_zdb_id = xpatstg_xpat_zdb_id )
+	       and not exists ( select 'x'
+				  from expression_pattern_anatomy
+				  where xpat_zdb_id = xpatanat_xpat_zdb_id );">
         <?/MISQL>
         <?MIVAR NAME=$count>$1<?/MIVAR>
 
