@@ -404,7 +404,7 @@ document.critform.START.value = "";
 	<?MIBLOCK COND="$(EC,$ok_view_map,1)">
 	  <?MIVAR>
 	    <input type=hidden name=userid value=$userid>
-	    <input type=hidden name=marker value=$marker_abbrev>
+            <input type=hidden name=OID value=$OID> 
     	    <input type=hidden name=view_map value="view_map">
 
 	    <TR valign=top bgcolor=$row_color> 
