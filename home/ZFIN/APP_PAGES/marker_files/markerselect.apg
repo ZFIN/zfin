@@ -24,10 +24,7 @@
 	document.critform.lg.selectedIndex = 0;
 	document.critform.compare.selectedIndex = 0;
 	document.critform.marker_type.selectedIndex = 0;
-	document.critform.sequence_type.selectedIndex = 0;
-	document.critform.vector_type.selectedIndex = 0;
 	document.critform.WINSIZE.value = 20;
-
      }
    </SCRIPT>
 
