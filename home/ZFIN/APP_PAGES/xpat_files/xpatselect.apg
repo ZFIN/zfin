@@ -395,6 +395,7 @@ where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
     create temp table $xpatselect_temp_match (
       xpat_zdb_id 		varchar(50),
       xpat_image_count          integer,
+      xpat_ann_exist		boolean,
       xpat_matching_text 	varchar(255),
       xpat_matching_precedence	varchar(80),
       xpat_matching_significance integer,
@@ -415,7 +416,9 @@ where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
     code in that app page, so I folded it back in here.
   <?/MICOMMENT>
   <?MISQL SQL="
-    insert into $xpatselect_temp_match
+    insert into $xpatselect_temp_match      
+	( xpat_zdb_id, xpat_image_count, xpat_matching_text, 
+	xpat_matching_precedence, xpat_matching_significance )
       select xpat_zdb_id, 
 	     ( select count(*) 
 		 from expression_pattern_image
@@ -428,6 +431,20 @@ where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
 		  where recattrib_source_zdb_id = '$pubId'
 		    and recattrib_data_zdb_id = xpat_zdb_id )">
   <?/MISQL>
+  <?MISQL SQL="
+	update $xpatselect_temp_match set xpat_ann_exist = 't'
+			where xpat_zdb_id in (select xpatstg_xpat_zdb_id
+				 	from expression_pattern_stage
+			        	where xpatstg_comments is not null);">
+  <?/MISQL>
+  <?MISQL SQL="
+	update $xpatselect_temp_match set xpat_ann_exist = 't'
+			where xpat_zdb_id in (select xpatanat_xpat_zdb_id
+				 	from expression_pattern_anatomy);">
+  <?/MISQL>
+
+
+
 <?MIELSE COND="$(AND,$(XST,$query_results),$(EC,$anatomy_error,false))">
   <?MICOMMENT>
     Page Called from itself.  Pass any query form variables, if they exist,
@@ -633,7 +650,8 @@ where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
 		 xp.xpat_direct_submission_date,
 		 xpatassay_name, xpatassay_display_order, 
 		 match.xpat_image_count,
-		 match.xpat_matching_text, match.xpat_matching_precedence
+		 match.xpat_matching_text, match.xpat_matching_precedence,
+		 match.xpat_ann_exist
 	    from expression_pattern xp, $xpatselect_temp_match match,
 		 expression_pattern_assay
 	    where xp.xpat_gene_zdb_id = '$xpatsel_gene_zdb_id'
@@ -648,6 +666,7 @@ where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
 	  <?MIVAR NAME=$xpatsel_image_count>$6<?/MIVAR>
 	  <?MIVAR NAME=$xpatsel_matching_text>$7<?/MIVAR>
 	  <?MIVAR NAME=$xpatsel_matching_precedence>$8<?/MIVAR>
+	  <?MIVAR NAME=$xpatsel_ann_exist>$9<?/MIVAR>
 
 	  <?MIVAR NAME=$xpatsel_probe_name><?/MIVAR>
 	  <?MISQL COND="$(NE,$xpatsel_xpat_probe_zdb_id,NULL)" SQL="
@@ -657,7 +676,7 @@ where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
 	    <?MIVAR NAME=$xpatsel_probe_name>$1<?/MIVAR>
 	  <?/MISQL>
 
-	  <?MIBLOCK COND=$(!=,$xpatsel_image_count,0)>
+	  <?MIBLOCK COND=$(OR,$(!=,$xpatsel_image_count,0),$(EC,$xpatsel_ann_exist,t))>
 	    <?MICOMMENT>
 	      ============================================================================
 	      ==========  We have images, Call row display page
@@ -727,7 +746,7 @@ where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
 	    $(VECAPPEND,$xpatsel_rowVec,xpatselrow_geneName=$(URLENCODE,$xpatsel_gene_name))
 
 	    $(VECAPPEND,$xpatsel_rowVec,xpatselrow_showXpat=exists)
-	    $(VECAPPEND,$xpatsel_rowVec,xpatselrow_xpatLinkText=$xpatsel_noImagesCount assays without images)
+	    $(VECAPPEND,$xpatsel_rowVec,xpatselrow_xpatLinkText=$xpatsel_noImagesCount "assay(s) without images/annotation")
 	    $(VECAPPEND,$xpatsel_rowVec,xpatselrow_imageCount=0)
 	    $(VECAPPEND,$xpatsel_rowVec,xpatselrow_noImagesXpats=$(SEPARATE,$xpatsel_noImagesXpats,.))
             
