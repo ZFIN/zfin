@@ -17,13 +17,14 @@ target_table -- either anon_marker or gene, depending on what you're
 updating
 info -- optional value used to pass in additional info
 dataOID -- the zdbid of the attributed item
-
+caller -- the page the initiate the update function 
 -->
 
 <META HTTP-EQUIV="EXPIRES" CONTENT="-2d">
 <!-- If one of the values was an empty string, it won't get successfully
   -- passed to this page. 
   -->
+
 <?MIVAR COND="$(NXST,$attr)" NAME=$attr><?/MIVAR>
 <?MIVAR COND="$(NXST,$attr_type)" NAME=$attr_type><?/MIVAR>
 <?MIVAR COND="$(NXST,$old_value)" NAME=$old_value><?/MIVAR>
@@ -33,6 +34,7 @@ dataOID -- the zdbid of the attributed item
 <?MIVAR COND="$(NXST,$dataOID)" NAME=$dataOID><?/MIVAR>
 <?MIVAR COND="$(NXST,$info)" NAME=$info><?/MIVAR>
 <?MIVAR COND="$(NXST,$anchor)" NAME=$anchor><?/MIVAR>
+<?MIVAR COND="$(NXST,$caller)" NAME=$caller>markerview.apg<?/MIVAR>
 
 <!-- First check security. Main purpose is just to get submitter id and 
 name -->
@@ -159,7 +161,7 @@ comments,
       <?MIVAR COND="$(NE,$OID,$dataOID)"> 
 	  <?MISQL SQL="select WebExplode(object,'pubId=$old_value') from webPages where ID='aa-attrib_check.apg';">$1<?/MISQL>
       <?/MIVAR> 
-    <?/MIBLOCK>
+     <?/MIBLOCK>
 
 
     <?MIBLOCK COND="$(EC,$attr,db_link)">
@@ -214,6 +216,7 @@ NAME=acc_num>$(SUBSTR,$old_value,$(+,$delimit,1),$acc_len)<?/MIVAR>
            ***09/09 check first, only when it is deleting the last attribution,give alert. 
       <?/MICOMMENT>
       <?MISQL SQL="select WebExplode(object,'pubId=$old_value') from webPages where ID='aa-attrib_check.apg';">$1<?/MISQL>
+
     <?/MIBLOCK> <!-- end attribution delete -- >  
 
   <?/MIBLOCK>  <!-- ends special listitem case -->
@@ -260,7 +263,7 @@ NAME=acc_num>$(SUBSTR,$old_value,$(+,$delimit,1),$acc_len)<?/MIVAR>
    
               <SCRIPT>          
                 var msg="The Genbank accession is already associated with\n"+
-                         "[$markerlist]. Are you sure you want to proceed?";
+                         "[$markerlist]. Are you sure to process?";
 	        if (confirm(msg))
 		   location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value=$old_value&new_value=$new_value&target_table=$target_table');
 		
@@ -291,13 +294,15 @@ NAME=acc_num>$(SUBSTR,$old_value,$(+,$delimit,1),$acc_len)<?/MIVAR>
           ( linked_recid, DB_name, acc_num, dblink_zdb_id ,info) 
          values 
 	  ( '$OID', '$old_value', '$new_value', '$dblink_zdb_id', '$ZDB_name'||' '||TODAY );">
+
      <?/MISQL>
 
-   <?/MIBLOCK>  <!-- ends special seqdb case -->
+   <?/MIBLOCK>  <!-- ends special seqdb case ---->
 
 
 
   <!------ Special case for adding new attribution------->
+
   <?MIBLOCK COND="$(EC,$attr_type,special-newattrib)">
     <!-- check whether the pub zdb id is valid. -->
     <?MISQL SQL="
@@ -324,6 +329,38 @@ NAME=acc_num>$(SUBSTR,$old_value,$(+,$delimit,1),$acc_len)<?/MIVAR>
 	<?MIVAR>$(SETVAR,$old_value,$1)<?/MIVAR>
       <?/MISQL>	
    
+      <?MISQL COND="$(EC,$info,deletionmarker)" SQL="
+	    select mapdel_zdb_id, mrkr_zdb_id
+ 	      from marker, mapped_deletion
+	     where mrkr_abbrev = '$old_value'
+	       and mrkr_zdb_id = marker_id	
+	     ;">
+	<?MIVAR>$(SETVAR,$old_value,$1)<?/MIVAR>
+	<!--save the real OID, and tempararily set OID to be
+	    the mapdel zdb id for attribution -->
+        <?MIVAR NAME=saveOID>$OID<?/MIVAR>
+	<?MIVAR>$(SETVAR,$OID,$2)<?/MIVAR>
+      <?/MISQL>	
+  
+      <!-- add attribution-->
+      <?MIBLOCK COND="$(AND,$(EC,$attr,recattrib),$(NE,$info,mrel))">
+         <?MISQL SQL="
+	    insert into record_attribution
+		(recattrib_data_zdb_id, recattrib_source_zdb_id) 
+              values('$old_value', '$new_value')	
+                ;">
+         <?/MISQL>
+
+      <?MIELSE COND="$(AND,$(EC,$attr,colattrib),$(NE,$info,mrel))">
+         <?MISQL SQL="
+	    insert into column_attribution
+		(colattrib_data_zdb_id, colattrib_column_name, 
+colattrib_source_zdb_id)
+              values('$old_value','$info', '$new_value')	
+                ;">
+         <?/MISQL>
+      <?/MIBLOCK>
+
 
       <?MIBLOCK COND="$(EC,$info,mrel)">
         <!-- check whether the mrkr abbrev is valid. -->
@@ -415,24 +452,6 @@ NAME=acc_num>$(SUBSTR,$old_value,$(+,$delimit,1),$acc_len)<?/MIVAR>
       <?/MIBLOCK> <!-- end: valid abbrev -->
       <?/MIBLOCK> <!-- end: info=mrel -->
  
-      <?MIBLOCK COND="$(AND,$(EC,$attr,recattrib),$(NE,$info,mrel))">
-         <?MISQL SQL="
-	    insert into record_attribution
-		(recattrib_data_zdb_id, recattrib_source_zdb_id) 
-              values('$old_value', '$new_value')	
-                ;">
-         <?/MISQL>
-
-      <?MIELSE COND="$(AND,$(EC,$attr,colattrib),$(NE,$info,mrel))">
-         <?MISQL SQL="
-	    insert into column_attribution
-		(colattrib_data_zdb_id, colattrib_column_name, 
-colattrib_source_zdb_id)
-              values('$old_value','$info', '$new_value')	
-                ;">
-         <?/MISQL>
-      <?/MIBLOCK>
-
       <?MICOMMENT>*** 08/22 attributions to data items are automatically attributed to the marker also. <?/MICOMMENT> 
       <!-- make sure attribe to marker not already exist -->
       <?MISQL SQL="
@@ -447,6 +466,8 @@ colattrib_source_zdb_id)
               values('$OID', '$new_value')	
                 ;">
       <?/MISQL>
+      <!-- restore OID-->
+      <?MIVAR COND="$(XST,$saveOID)">$(SETVAR,$OID,$saveOID)<?/MIVAR>
 
     <?MIELSE> 
       <?MIVAR>
@@ -523,8 +544,9 @@ colattrib_source_zdb_id)
 		      and dalias_alias = '$old_value' ) ;">
     <?/MISQL>
   <?/MIBLOCK>
-  
-  
+
+
+
   <!-- Special case for deleting a marker relationship -->
   <?MIBLOCK COND="$(EC,$attr_type,delete-mrkrrelation)">
      <?MISQL SQL="
@@ -637,7 +659,7 @@ colattrib_source_zdb_id)
 	  </SCRIPT>
         <?/MIVAR>
       <?/MIBLOCK>
-
+   
 
       <?MIBLOCK COND="$(AND,$(XST,$newdb),$(XST,$newacc))">
         
@@ -821,14 +843,14 @@ colattrib_source_zdb_id)
 <?MIBLOCK COND="$(NXST,$species_update)">
 
   <SCRIPT><?MIVAR>
-     location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID&UPDATE=1#$anchor")
+     location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$caller&OID=$OID&UPDATE=1#$anchor")
           <?/MIVAR>
   </SCRIPT> 
 
 <?MIELSE>
 
   <SCRIPT><?MIVAR>
-     location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID&UPDATE=1&species_selected=$species_update#$anchor")
+     location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$caller&OID=$OID&UPDATE=1&species_selected=$species_update#$anchor")
           <?/MIVAR>
   </SCRIPT> 
 
