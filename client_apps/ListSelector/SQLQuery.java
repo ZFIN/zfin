@@ -55,9 +55,9 @@ public class SQLQuery
 	*/
 	public Vector selectAll (int numFields, String request)
 	{
-        int port = PORT;
+		int port = PORT;
         Socket s = null;
-	StringTokenizer sTok; 
+		StringTokenizer sTok; 
 
 	Vector result = new Vector ();
         try {
