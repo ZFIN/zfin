@@ -10,6 +10,8 @@
 
 -- Here are the files:
 --   zfin_genes.txt -- the main file with all ZFIN genes.(mapped and unmapped)
+--   zfin_genes_locuslink.txt  -- same as above file except includes mapping info for LocusLink 
+--   zfin_genes_mutants.txt - this file list known correspondences between genes and mutants
 --   zfin_orthos.txt -- all known orthologues, indexed by gene_id
 --   zfin_refs.txt -- all publications linked to genes, indexed by gene id
 --   zfin_dblinks -- all links from genes to sequence DBs.
@@ -141,6 +143,24 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_genes_locuslink.txt'
   select * 
     from meow_expll;
 
+
+-- Create the file of known correspondences
+create table meow_mutant (
+  gene_id varchar(50),
+  gene_abbrev varchar(20),
+  locus_id varchar(50),
+  locus_abbrev varchar(10)
+);  
+
+insert into meow_mutant (gene_id,gene_abbrev,locus_id,locus_abbrev)
+   select a.zdb_id, a.abbrev, a.cloned_gene, b.mrkr_abbrev from locus a, marker b
+   where a.cloned_gene is not null 
+   and a.cloned_gene = b.mrkr_zdb_id;
+
+UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_genes_mutants.txt' 
+  DELIMITER "	" 
+  select * 
+    from meow_mutant;
 
 
 -- NOW let's create the table of pubs associated with these genes. Easy!
