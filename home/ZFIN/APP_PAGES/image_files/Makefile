@@ -20,8 +20,9 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/image_files
 
 SUBDIRS = UPDATING
 
-GENERICS = image-upload.apg imagelister.apg imageselect.apg imageview.apg \
-	new-image.apg
+# imageselect.apg and imagelister.apg are no longer used.  not sure why
+
+GENERICS = image-upload.apg imageview.apg new-image.apg
 
 
 # Use default rules for app page directories
