@@ -20,7 +20,8 @@ echo "loading fpc files from $date"
 
 # to adjust the format of the other files
 cat ctgnames.${date}.txt | sed '/^$/d' | sed 's/*/&\|/g' | cut -c 4- >! fpc_contig.unl
-tailpipe clonemarkers.${date}.txt | grep -v '^$'>! fpc_clone.unl
+#tailpipe
+sed 's/$/\|/g' < clonemarkers.${date}.txt | grep -v '^$'>! fpc_clone.unl
 
 # to move into the database
 if ($1 == 'commit') then
