@@ -368,6 +368,21 @@
 	<TR>
 	  <TD class="content_left">
 	    <DIV class="content">
+	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-companyselect.apg&select_from=COMPANY&frame_size=230"><B>Image</B></A> 
+	    </DIV>
+	  </TD>
+	  <TD class="content_right">
+	    <DIV class="content">
+              <?MIVAR COND="$(OR,$(EC,$AUTHORIZED,root),$(EC,$AUTHORIZED,fishauth),$(EC,$AUTHORIZED,preview))">
+	        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-image-upload.apg"><EM>Add new IMAGE</EM></A><br>
+	      <?/MIVAR>
+	    </DIV>
+	  </TD>
+	</TR>
+
+	<TR>
+	  <TD class="content_left">
+	    <DIV class="content">
 	      <B>&nbsp;</B>
 	    </DIV>
 	  </TD>
