@@ -210,7 +210,7 @@ sub stageContainsStageWindowInContainerStageWindow ($) {
     my $sendToAddress = $_[0];
     my $subject = "Stage window inconsistence in stage_contains";
     my $errMsg = "In stage_contains, $nRecords records' container's stage window" 
-                   ."doesn't fully contain contained 's.\n ";
+                   ." doesn't fully contain contained 's.\n ";
 
     logError ($errMsg);
     &sendMail($sendToAddress, $subject, $errMsg, $sql); 
@@ -257,7 +257,7 @@ sub anatomyItemStageWindowConsistent ($) {
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
     my $subject = "Stage window inconsistence in anatomy_item";
-    my $errMsg = "In anatomy_item, $nRecords records have inconsistent" 
+    my $errMsg = "In anatomy_item, $nRecords records have inconsistent " 
                    ."stage window.\n ";
 
     logError ($errMsg);
@@ -327,7 +327,7 @@ sub anatomyContainsStageWindowConsistent ($) {
      
       my $sendToAddress = $_[0];
       my $subject = "Stage window inconsistence in anatomy_contains";
-      my $errMsg = "In anatomy_contain, $nRecords records have inconsistent" 
+      my $errMsg = "In anatomy_contain, $nRecords records have inconsistent " 
                  ."stage window.\n";
                 
       logError ($errMsg);
@@ -391,7 +391,7 @@ sub anatomyContainsStageWindowInContainerStageWindow($){
 
     my $sendToAddress = $_[0];
     my $subject = "Stage window out of range";
-    my $errMsg = "In anatomy_contains, $nRecords records have stage window" 
+    my $errMsg = "In anatomy_contains, $nRecords records have stage window " 
                  ."out of the range of container's stage window.\n ";
 
     logError ($errMsg);
@@ -690,6 +690,158 @@ sub expressionPatternImageStageWindowOverlapsFishImage ($) {
   }
 }	
 
+#======================== Fish Names, Abbrevs, Alleles =====================
+#
+# These checks are an attmept to slightly constrain the chaos that is the
+# mutant tables.  These checks exist only because the tables are poorly
+# designed and have redundant data in them.  They are an attempt to keep
+# the redundancy consistent.  Grumble, grumble.
+
+#---------------------------------------------------------------
+# fishNameEqualLocusName
+#
+# The fish.name column should equal a locus.name column.
+# We can't enforce this with a foreign key because (as of 2003/01)
+# locus.name is not unique (more grumbling).
+# We can't enforce this with a check constraint beacuse the constraint
+# crosses 2 tables.
+# 
+#Parameter
+# $      Email Address for recipients
+# 
+sub fishNameEqualLocusName ($) {
+
+  logHeader ("Checking fish.name = locus.name");
+	
+  my $sql = 'select fish.name, locus_name, fish.zdb_id, locus.zdb_id, 
+                    get_fish_full_name(fish.zdb_id), 
+                    fish.abbrev, fish.allele, locus.abbrev
+               from fish, locus
+              where fish.locus = locus.zdb_id
+                and line_type = "mutant"
+                and fish.name <> locus_name';
+
+  my @colDesc = ("Fish name         ",
+		 "Locus name        ",
+		 "Fish ZDB ID       ",
+		 "Locus ZDB ID      ",
+		 "Full fish name    ",
+		 "Fish abbrev       ",
+		 "Fish allele       ",
+		 "Locus abbrev      " );
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "linkage has no member(s)";
+    my $errMsg = "The name field in $nRecords fish record(s) does not equal locus name.\n ";
+    
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+  }else {
+    print "Passed!\n";
+  }
+} 
+
+
+#---------------------------------------------------------------
+# fishAbbrevContainsFishAllele
+#
+# The fish.abbrev column in mutants should contain the allele specified
+# in the fish's allele column.  
+#
+# This constraint could be enforced with a check constraint, but I don't 
+# feel like verifying that the web pages populate the fields in an order
+# that would satisfy the constraint.
+# 
+# Of course, the allele field doesn't belong in the fish record in the first
+# place.
+# 
+#Parameter
+# $      Email Address for recipients
+# 
+sub fishAbbrevContainsFishAllele ($) {
+
+  logHeader ("Checking fish.abbrev starts with locus.abbrev");
+	
+  my $sql = 'select fish.abbrev, locus.abbrev, fish.zdb_id, locus.zdb_id, 
+                    get_fish_full_name(fish.zdb_id), locus_name
+		 from fish, locus
+		 where fish.locus = locus.zdb_id
+		   and line_type = "mutant"
+		   and fish.abbrev not like (locus.abbrev || "%")
+		   and locus.abbrev <> ""';
+
+  my @colDesc = ("Fish abbrev       ",
+		 "Locus abbrev      ",
+		 "Fish ZDB ID       ",
+		 "Locus ZDB ID      ",
+		 "Full fish name    ",
+		 "Locus name        ");
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "linkage has no member(s)";
+    my $errMsg = "The abbrev field in $nRecords fish record(s) does not start with the locus's abbrev.\n ";
+    
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+  }else {
+    print "Passed!\n";
+  }
+} 
+
+
+#---------------------------------------------------------------
+# fishAbbrevStartsWithLocusAbbrev
+#
+# The fish.abbrev column should start with the locus abbrev.
+#
+# We can't enforce this with a check constraint beacuse the constraint
+# crosses 2 tables.
+# 
+#Parameter
+# $      Email Address for recipients
+# 
+sub fishAbbrevStartsWithLocusAbbrev ($) {
+
+  logHeader ("Checking fish.abbrev starts with = any locus.name");
+	
+  my $sql = 'select fish.name, locus_name, fish.zdb_id, locus.zdb_id, 
+                    get_fish_full_name(fish.zdb_id), 
+                    fish.abbrev, fish.allele, locus.abbrev
+               from fish, locus
+              where fish.locus = locus.zdb_id
+                and line_type = "mutant"
+                and fish.name <> locus_name';
+
+  my @colDesc = ("Fish name         ",
+		 "Locus name        ",
+		 "Fish ZDB ID       ",
+		 "Locus ZDB ID      ",
+		 "Full fish name    ",
+		 "Fish abbrev       ",
+		 "Fish allele       ",
+		 "Locus abbrev      " );
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "linkage has no member(s)";
+    my $errMsg = "The name field in $nRecords fish record(s) does not equal any locus names.\n ";
+    
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+  }else {
+    print "Passed!\n";
+  }
+} 
+
+
 #============================ Linkage ===================================
 #---------------------------------------------------------------
 #Parameter
@@ -771,7 +923,7 @@ sub linkagePairHas2Members ($) {
 # 
 sub dblinkRecidIsOrthoOrMarker ($) {
 	
-  logHeader("Checking each linked_recid in db_link exists in the orthologue," 
+  logHeader("Checking each linked_recid in db_link exists in the orthologue, " 
              . "or the marker table.");
 
   my $sql = ' 
@@ -832,7 +984,7 @@ sub orthologueHasDblink ($) {
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
     my $subject = "Orthologues not match any db link";
-    my $errMsg = "In orthologue table, $nRecords records have no corresponding"
+    my $errMsg = "In orthologue table, $nRecords records have no corresponding "
     	                    ."gene record in db_link. \n";
     logError ($errMsg); 
     &sendMail($sendToAddress, $subject, $errMsg, $sql); 
@@ -877,7 +1029,7 @@ sub zdbObjectHomeTableColumnExist ($) {
 
     my $sendToAddress = $_[0];
     my $subject = "Home table or home column not available";
-    my $errMsg = "In zdb_object_type, $nRecords records either has no home  "
+    my $errMsg = "In zdb_object_type, $nRecords records either has no home "
     	              ."table or has no home column\n";
       
     logError ($errMsg); 
@@ -894,7 +1046,7 @@ sub zdbObjectHomeTableColumnExist ($) {
 
 sub zdbObjectIsSourceDataCorrect($) {
 
-  logHeader("Checking zdb_object_type is consistent with zdb_active_data"
+  logHeader("Checking zdb_object_type is consistent with zdb_active_data "
             ."and zdb_active_source");
 
   my $sql = '
@@ -927,7 +1079,7 @@ sub zdbObjectIsSourceDataCorrect($) {
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
     my $subject = " ZDB Source and Data misdefined";
-    my $errMsg = "In zdb_object_type, $nRecords records are not consistent  "
+    my $errMsg = "In zdb_object_type, $nRecords records are not consistent "
     	          ."with records in zdb_active_data and zdb_active_source\n";
       	
     logError ($errMsg); 
@@ -963,8 +1115,8 @@ sub zdbObjectHandledByGetObjName ($) {
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];   	  
     my $subject = "Object name not available";
-    my $errMsg = "In zdb_object_type, $nRecords records do not have properly"
-                  ."defined get_obj_name function for it.\n";
+    my $errMsg = "In zdb_object_type, $nRecords records are not properly "
+                  ."handled by the get_obj_name function.\n";
     logError ($errMsg); 
     &sendMail($sendToAddress, $subject, $errMsg, $sql); 
   }else {
@@ -1027,7 +1179,7 @@ sub externNoteAssociationWithData($) {
       
       my $sendToAddress = $_[0];
       my $subject = "external note inconsistenct";
-      my $errMsg = "In external_note, $nRecords records do not have"
+      my $errMsg = "In external_note, $nRecords records do not have "
 	."matching in data_external_note. \n";
     
       logError ($errMsg);
@@ -1452,6 +1604,10 @@ if($daily) {
   expressionPatternStageWindowConsistent($xpatEmail);
   expressionPatternAnatomyStageWindowOverlapsAnatomyItem($xpatEmail);
   expressionPatternImageStageWindowOverlapsFishImage($xpatEmail);
+
+  fishNameEqualLocusName($curatorEmail);
+  fishAbbrevContainsFishAllele($curatorEmail);
+  fishAbbrevStartsWithLocusAbbrev($curatorEmail);
 
   linkageHasMembers($linkageEmail);
   linkagePairHas2Members($linkageEmail);
