@@ -1,0 +1,232 @@
+<!-- a simple app page used to edit (in a newly created window) the details
+associated with an index record.  A simpler alternative to trying to 
+do it all in the xpat file 
+
+Expected vars:
+OID:  the xpatid of the index record to edit
+gene_name,locus_name,stage_name, assay_name --- fileds associated with an xpat record to update.
+-->
+
+<HTML>
+<HEAD>
+</HEAD>
+
+<basefont size=2>
+
+<?MISQL SQL="
+  select WebExplode(object,'permission=root') 
+    from webPages 
+    where ID='aa-secure_navigation.apg';">
+  $1
+<?/MISQL>
+
+<?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
+
+<?MIBLOCK COND="$(NC,AUTHORIZED,false)">
+
+  <?MIBLOCK COND="$(XST,$UPDATE)">
+
+      <?MIVAR NAME=$gene>$gene<?/MIVAR>
+      <?MIVAR NAME=$mut>$mut<?/MIVAR>
+      <?MIVAR COND="$(NXST,$locus)" NAME=$locus><?/MIVAR>
+      <?MIVAR NAME=$assay>$assay<?/MIVAR>
+      <?MIVAR COND="$(NXST,$onlystage)" NAME=$onlystage><?/MIVAR>
+      <?MIVAR COND="$(NXST,$detected_bool)" NAME=$detected_bool><?/MIVAR> 
+      <?MISQL SQL="select mrkr_zdb_id from marker where mrkr_abbrev = '$gene'">
+      <?/MISQL>
+      <?MIVAR NAME=$geneid>$1<?/MIVAR>   
+      <?MIVAR NAME=$mcount>$MI_ROWCOUNT<?/MIVAR>
+      <?MIBLOCK COND="$(EQ,$geneid,)">
+         <SCRIPT>
+           window.alert('Please enter a valid marker abbreviation')
+         </SCRIPT>
+      <?/MIBLOCK>
+
+     <?MIBLOCK COND="$(EQ,$locus,)">  
+      <?MISQL SQL="select zdb_id from fish where name like '%$mut'"><?/MISQL>
+      <?MIVAR NAME=$fishid>$1<?/MIVAR>
+     <?MIELSE>
+      <?MISQL SQL="select zdb_id from fish where allele = '$locus';"><?/MISQL>
+      <?MIVAR NAME=$fishid>$1<?/MIVAR>
+      <?MIVAR NAME=$mutcount>$MI_ROWCOUNT<?/MIVAR>
+      <?MIBLOCK COND="$(=,$mutcount,0)">
+       <?MISQL SQL="select zdb_id from locus where abbrev = '$locus';"><?/MISQL>
+       <?MIVAR NAME=$fishid>$1<?/MIVAR>
+      <?/MIBLOCK>
+    <?/MIBLOCK>
+ 
+     <?MISQL SQL="select stg_zdb_id from stage where stg_name like '%$onlystage'"><?/MISQL>
+      <?MIVAR NAME=$stageid>$1<?/MIVAR>
+     <?MIBLOCK COND="$(!=,0,$mcount)">  
+      <?MISQL SQL="update expression_pattern set xpat_probe_zdb_id='$geneid', xpat_assay_name='$assay', xpat_stock_zdb_id='$fishid',  xpat_direct_submission_date=TODAY  where xpat_zdb_id ='$OID';"><?/MISQL> 
+    
+      <?MIBLOCK COND=$(EC,$detected_bool,yes)>  
+         <?MISQL COND="$(AND,$(NC,$geneid,),$(NC,$fishid,),$(NC,$stageid,))" SQL="update expression_pattern_stage set xpatstg_start_stg_zdb_id='$stageid', xpatstg_end_stg_zdb_id='$stageid', xpatstg_expression_found='t' where xpatstg_xpat_zdb_id ='$OID';"> 
+         <?/MISQL> 
+      <?MIELSE>
+         <?MISQL COND="$(AND,$(NC,$geneid,),$(NC,$fishid,),$(NC,$stageid,))" SQL="update expression_pattern_stage set xpatstg_start_stg_zdb_id='$stageid', xpatstg_end_stg_zdb_id='$stageid', xpatstg_expression_found = 'f' where xpatstg_xpat_zdb_id ='$OID';"> 
+         <?/MISQL> 
+      <?/MIBLOCK>  
+     <?/MIBLOCK>
+
+      <?MIBLOCK COND="$(XST,$bigdelete)">
+          <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id='$OID';">
+          <?/MISQL>     
+          <?MIVAR NAME=exiter>true<?/MIVAR>
+     <?/MIBLOCK>
+
+
+  <?/MIBLOCK> <!-- end updating -->
+
+
+  <?MIBLOCK COND="$(NXST,$exiter)">
+
+    <h1 align=center>Gene Expression Index Editor</h1>
+    <?MISQL SQL="
+      select xpat_stock_zdb_id,xpat_assay_name,xpat_probe_zdb_id
+	from expression_pattern 
+	where xpat_zdb_id='$OID';">
+    <?/MISQL>
+    <?MIVAR NAME=$stock_id>$1<?/MIVAR>
+    <?MIVAR NAME=$assay>$2<?/MIVAR>
+    <?MIVAR NAME=$probe_id>$3<?/MIVAR>
+    <?MISQL SQL="
+      select xpatstg_start_stg_zdb_id,xpatstg_expression_found 
+	from expression_pattern_stage 
+	where xpatstg_xpat_zdb_id='$OID';">
+    <?/MISQL>
+    <?MIVAR NAME=$stage_id>$1<?/MIVAR>
+    <?MIVAR NAME=$detected>$2<?/MIVAR>
+
+    <?MIBLOCK COND="$(EQ,t,$detected)">
+       <?MIVAR NAME=$detradio>yes<?/MIVAR>
+     <?MIELSE>
+       <?MIVAR NAME=$detradio>no<?/MIVAR>
+    <?/MIBLOCK>
+ 
+    <?MISQL SQL="
+      select mrkr_abbrev from marker
+	where mrkr_zdb_id='$probe_id';">
+    <?/MISQL>
+    <?MIVAR NAME=$gene>$1<?/MIVAR>
+
+    <?MISQL SQL="
+      select name  from fish
+	where zdb_id='$stock_id' and line_type = 'wild type';">
+    <?/MISQL>
+    <?MIVAR NAME=$mut>$1<?/MIVAR>
+    <?MIVAR NAME=$mutcount>$MI_ROWCOUNT<?/MIVAR>
+    <?MIBLOCK COND="$(=,0,$mutcount)">
+        <?MISQL SQL="select allele from fish where zdb_id='$stock_id';"><?/MISQL>
+        <?MIVAR NAME=$locus>$1<?/MIVAR>
+        <?MIVAR NAME=$mut>nomut<?/MIVAR> 
+        <?MIBLOCK COND="$(EQ,$locus,NOVALUE)">
+          <?MISQL SQL="select abbrev from locus where zdb_id='$stock_id';"><?/MISQL>
+          <?MIVAR NAME=$locus>$1<?/MIVAR>
+          <?MIVAR NAME=$mut>nomut<?/MIVAR> 
+        <?/MIBLOCK>    
+    <?/MIBLOCK> 
+    <?MISQL SQL="
+      select stg_name,stg_hours_start,stg_hours_end  from stage
+	where stg_zdb_id='$stage_id';">
+    <?/MISQL>
+    <?MIVAR NAME=$onlystage>$1<?/MIVAR>
+
+    <form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+      <?MIVAR>
+	<input type=hidden name=MIval value=aa-xpatedit.apg>
+	<input type=hidden name=OID value=$OID>
+	<input type=hidden name=UPDATE value=1>
+	<center><big>EDITING:  
+	<big><b><font size=2> (ZFIN ID: $OID)</font></b></big>
+	</center>
+	<p>
+	<b>Probe/Gene Symbol</b> 
+	<input type=text name=gene value="$gene" size=40>
+	<p>
+     <?/MIVAR>
+	<b>Wild Type</b> : 
+        <?MIBLOCK COND="$(EC,$(TRIM,$mut),nomut)">
+	  <SELECT name = mut><option select value = NULL>WT
+            <?MISQL SQL="
+              select name 
+                 from fish 
+                  where line_type='wild type' and name <> 'WT' 
+                  order by name;">
+            <option value = "$1">$1
+            <?/MISQL>
+          </SELECT>
+        <?MIELSE>  
+	  <SELECT name = mut><option select value = <?MIVAR>'$mut'<?/MIVAR>>
+          <?MIVAR>$mut<?/MIVAR>
+           <?MISQL SQL="
+              select name 
+                 from fish 
+                  where line_type='wild type' and name <> '$mut' 
+                  order by name;">
+           <option value = "$1">$1
+           <?/MISQL>
+          </SELECT>
+       <?/MIBLOCK>
+	<p>
+       <b>OR</b>
+       <b>Mutant</b> :<input type = text NAME = "locus" size = "23" value=<?MIVAR COND="$(XST,$locus)">"$locus"<?/MIVAR>>
+	<p>
+       <b>Expression</b>  
+       <input type="radio" name="detected_bool" value= "yes" <?MIVAR COND="$(EQ,yes,$detradio)">CHECKED<?/MIVAR>>
+       <b>Detected</b>
+       <input type="radio" name="detected_bool" value= "no" <?MIVAR COND="$(EQ,no,$detradio)">CHECKED<?/MIVAR>>
+       <b>Not Detected</b> 
+<p> 
+      <b>Stage:</b> 
+      <SELECT name=onlystage><?MIVAR><option value = '$onlystage'>$onlystage<?/MIVAR>
+      <?MISQL SQL="
+	  select stg_name,stg_hours_start,stg_hours_end 
+	    from stage,stage_contains
+	    where stg_name <> 'Any stage'
+            and stg_name <> '$onlystage'
+            and stg_zdb_id = stgcon_contained_zdb_id
+            and stgcon_container_zdb_id <> 'ZDB-STAGE-010723-46'   
+	    order by stg_hours_start,stg_hours_end desc;">
+	  <option value="$1">$1
+       <?/MISQL>
+      </SELECT> 
+      <b>Assay:</b> 
+      <SELECT name=assay>
+        <?MIVAR><option value='$assay'>$assay<?/MIVAR>
+	<?MISQL SQL="
+	  select xpatassay_name,xpatassay_display_order 
+	    from expression_pattern_assay
+            where xpatassay_name <> '$assay'
+	    order by xpatassay_display_order;">
+	  <option value="$1">$1
+	<?/MISQL>
+      </SELECT> 
+      <hr width=90%>
+      <font color="red">
+      <input type=submit 
+	value="Delete entire Expression Index record" 
+	name=bigdelete>
+      </font><br> 
+      including all Images and Anatomy associated with the expression pattern
+      (very scary, think carefullly!).
+
+      <hr width=90%>
+      <input type=submit value="Commit Changes">
+      <input type=submit name=exiter value="Done-exit">
+
+    </form>
+  <?/MIBLOCK> <!-- end NXST exiter -->
+<?/MIBLOCK>  <!-- ends authorized -->
+
+<?MIVAR COND="$(XST,$exiter)">
+
+<SCRIPT>
+  parent.opener.location.reload();
+
+  window.alert('Exiting. Please return to the main window.\n The page will be automaticaly reloaded to reflect your updates.');
+  window.close();
+</SCRIPT>
+
+<?/MIVAR>
+
