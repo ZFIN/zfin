@@ -318,6 +318,7 @@ $(IF,$(EC,$lab,$1),$(SETVAR,$foundlab,$1))
 <?MIVAR COND="$(NXST,$UPDATE)">$(IF,$(NC,$status,NULL),$status,UNKNOWN)<?/MIVAR>
 <?MIVAR COND="$(XST,$UPDATE)">
 <SELECT name=stock_status onChange=dopopup(this.options[this.selectedIndex].value,'$status','status')>
+<option $(IF,$(EC,$status,unknown),SELECTED) value=unknown>unknown
 <option $(IF,$(EC,$status,alive),SELECTED) value=alive>alive
 <option $(IF,$(EC,$status,frozen),SELECTED) value=frozen>frozen
 <option $(IF,$(EC,$status,extinct),SELECTED) value=extinct>extinct
