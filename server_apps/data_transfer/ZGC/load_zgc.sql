@@ -973,5 +973,5 @@ where mrkr_type = 'CDNA'
   and mrkr_zdb_id not in (select clone_mrkr_zdb_id from clone);
 }
 
-rollback work;  
---commit work;
+--rollback work;  
+commit work;
