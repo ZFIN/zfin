@@ -5,7 +5,7 @@
 --Terms are declared 'obsolete' by the gene_ontology consortium.
 -------------------------------------------------------------------------
 
-create procedure p_goterm_not_obsolete (vGoTerm VARCHAR(55))
+create procedure p_goterm_not_obsolete (vGoTerm varchar(50))
 
 define ok boolean;
 
@@ -16,6 +16,17 @@ let ok = (select goterm_is_obsolete
 if ok then
 
   raise exception -746,0,'FAIL!: GO Term is OBSOLETE!';
+
+elif not ok then 
+
+  let ok = (select goterm_is_secondary
+             from go_term 
+             where vGoTerm = goterm_zdb_id);
+  if ok then 
+
+    raise exception -746,0,'FAIL!: GO Term is SECONDARY!';
+
+  end if ;
 
 end if;
 
