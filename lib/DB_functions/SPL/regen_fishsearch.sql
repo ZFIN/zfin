@@ -64,7 +64,7 @@ create dba function "informix".regen_fishsearch()
       select a.zdb_id, a.name, a.line_type, e.abbrev,
 	     a.phenotype, b.chrom_num, d.chrom_change, a.comments,
 	     d.allele, d.mutagen, a.pheno_keywords, d.locus,
-	     'UNKNOWN'::varchar(50),'UNKNOWN'::varchar(15), d.zdb_id
+	     'unknown'::varchar(50),'unknown'::varchar(15), d.zdb_id
 
 	from fish a, chromosome b, int_fish_chromo c, alteration d, locus e
 	where a.zdb_id = c.source_id 
