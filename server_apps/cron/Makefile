@@ -64,7 +64,7 @@ start : $(TARGETS)
   ifeq ($(HOST),chromix)
 	/bin/crontab $(TARGETDIR)/crontab
   else
-	/bin/crontab < `/bin/cat $(TARGETDIR)/crontab $(TARGETDIR)/crontab.development`
+	/bin/cat $(TARGETDIR)/crontab $(TARGETDIR)/crontab.development | /bin/crontab
   endif
 
 startdevl : $(TARGETS)
