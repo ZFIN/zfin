@@ -45,8 +45,11 @@ requestESTs.html\
 requestESTs.txt\
 requestThankyou.html\
 submit.txt\
+submitMTA.html\
 submitSuccess.html\
 submitTerms.html\
+submitTerms2.html\
+submitTermsMTA.html\
 submitTryAgain.html\
 zdb-est-id.jpg\
 zdb-fish-id.jpg\
@@ -56,7 +59,8 @@ zfinGene.jpg\
 zfinId.jpg\
 zirc.css\
 zircCC.html\
-zircCC.pdf
+zircCC.pdf\
+zla.pdf
 
 # ---------------  Production Rules  ------------------------------------
 

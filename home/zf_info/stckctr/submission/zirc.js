@@ -251,7 +251,7 @@ function formValues(formCookieName) {
 /************************************************************/
 
 function checkRef() {
-	if (document.referrer.indexOf('<!--|DOMAIN_NAME|-->/zf_info/stckctr/submission/submitTerms.html') != -1) {
+	if (document.referrer.indexOf('<!--|DOMAIN_NAME|-->/zf_info/stckctr/submission/submitTerms2.html') != -1) {
 	}
 	else {window.location.href = 'submitTryAgain.html';}
 }
