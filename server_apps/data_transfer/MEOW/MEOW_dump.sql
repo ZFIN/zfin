@@ -30,7 +30,7 @@ create temp table meow_exp1_dup (
 insert into meow_exp1_dup 
   select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, or_lg
     from marker, mapped_marker, panels p
-   where mrkr_type = 'GENE'
+   where mrkr_type like 'GENE%'
      and mrkr_zdb_id = marker_id
      and marker_type <> 'SNP'
      and refcross_id = p.zdb_id;
@@ -38,7 +38,7 @@ insert into meow_exp1_dup
 insert into meow_exp1_dup 
   select distinct a.mrkr_zdb_id, a.mrkr_name, a.mrkr_abbrev, or_lg
     from marker a, marker b, mapped_marker, marker_relationship, panels p
-   where a.mrkr_type = 'GENE'
+   where a.mrkr_type like 'GENE%'
      and b.mrkr_zdb_id = marker_id
      and a.mrkr_zdb_id = mrel_mrkr_1_zdb_id
      and b.mrkr_zdb_id = mrel_mrkr_2_zdb_id
@@ -62,7 +62,7 @@ insert into meow_exp1 (zdb_id,mname,abbrev,OR_lg)
     from marker, linkage_member, linkage
    where mrkr_zdb_id = lnkgmem_member_zdb_id 
      and lnkgmem_linkage_zdb_id = lnkg_zdb_id 
-     and mrkr_type = 'GENE'
+     and mrkr_type like 'GENE%'
      and mrkr_zdb_id not in (
 	 	select zdb_id 
 		  from meow_exp1_dup
@@ -72,7 +72,7 @@ insert into meow_exp1 (zdb_id,mname,abbrev,OR_lg)
 insert into meow_exp1 (zdb_id,mname,abbrev,OR_lg) 
   select mrkr_zdb_id,mrkr_name,mrkr_abbrev,'0' 
     from marker
-   where mrkr_type = 'GENE'
+   where mrkr_type like 'GENE%'
      and mrkr_zdb_id not in (
 		select lnkgmem_member_zdb_id
 		  from linkage_member
@@ -132,7 +132,7 @@ create temp table meow_expll_dup (
 insert into meow_expll_dup 
   select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, or_lg,lg_location,p.zdb_id,p.abbrev,mm.metric 
     from marker, mapped_marker mm, panels p
-   where mrkr_type = 'GENE'
+   where mrkr_type like 'GENE%'
      and mrkr_zdb_id = marker_id
      and marker_type <> 'SNP'
      and refcross_id = p.zdb_id;
@@ -140,7 +140,7 @@ insert into meow_expll_dup
 insert into meow_expll_dup
   select distinct a.mrkr_zdb_id, a.mrkr_name, a.mrkr_abbrev, or_lg,lg_location,p.zdb_id,p.abbrev,mm.metric
     from marker a, marker b, mapped_marker mm, marker_relationship, panels p
-   where a.mrkr_type = 'GENE'
+   where a.mrkr_type like 'GENE%'
      and b.mrkr_zdb_id = marker_id
      and a.mrkr_zdb_id = mrel_mrkr_1_zdb_id
      and b.mrkr_zdb_id = mrel_mrkr_2_zdb_id
@@ -168,7 +168,7 @@ insert into meow_expll (zdb_id,gene_name,abbrev,OR_lg)
     from marker, linkage_member, linkage
    where mrkr_zdb_id = lnkgmem_member_zdb_id 
      and lnkgmem_linkage_zdb_id = lnkg_zdb_id 
-     and mrkr_type = 'GENE'
+     and mrkr_type like 'GENE%'
      and mrkr_zdb_id not in (
 		select zdb_id
 		  from meow_expll_dup
@@ -179,7 +179,7 @@ insert into meow_expll (zdb_id,gene_name,abbrev,OR_lg)
 insert into meow_expll (zdb_id,gene_name,abbrev,OR_lg) 
   select mrkr_zdb_id,mrkr_name,mrkr_abbrev,'0' 
     from marker
-   where mrkr_type = 'GENE'
+   where mrkr_type like 'GENE%'
      and mrkr_zdb_id not in (
 		select lnkgmem_member_zdb_id
 		  from linkage_member
@@ -229,6 +229,7 @@ create temp table meow_mutant (
   locus_name   varchar(50),
   locus_abbrev varchar(10)
 ) with no log;  
+
 
 insert into meow_mutant (gene_id,gene_abbrev,locus_id,locus_name,locus_abbrev)
    select a.cloned_gene, b.mrkr_abbrev, a.zdb_id, a.locus_name, a.abbrev 

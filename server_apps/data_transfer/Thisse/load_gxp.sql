@@ -368,7 +368,7 @@ insert into tmp_mrkr
     where pt.clone not in (
         select mrkr_abbrev from marker
         where mrkr_abbrev[1,2] = 'cb'
-        and mrkr_type in ('EST','GENE')
+        and mrkr_type in ('EST','GENE','GENEP')
     )
 ;
 
@@ -1162,7 +1162,7 @@ insert into record_attribution select tal_zdb_id, 'ZDB-PUB-010810-1' from tmp_da
 ---------- create fake genes --------------------------------------
 
 delete from zdb_active_data where zactvd_zdb_id in (select mrkr_zdb_id from marker, probes_tmp pt where 'sb:'||pt.clone = mrkr_abbrev
-and mrkr_type = 'GENE');
+and mrkr_type like 'GENE%');
 
 !echo 'fake genes'
 --create fake genes
@@ -1180,7 +1180,7 @@ insert into tmp_mrkr
     where 'sb:'||pt.clone not in (
         select mrkr_abbrev from marker
         where mrkr_abbrev[1,3] = 'sb:'
-        and mrkr_type = 'GENE'
+        and mrkr_type like 'GENE%'
     )
       and pt.clone not in (
         select tmprel_cb_name
@@ -1194,8 +1194,8 @@ where mrkr_name in(select "sb:"||tal_alias from tmp_dalias);
 
 ---------- add the new active data zdbids -------------
 
-insert into zdb_active_data select mrkr_zdb_id from tmp_mrkr where mrkr_type = 'GENE';
-insert into marker select * from tmp_mrkr where mrkr_type = 'GENE';
+insert into zdb_active_data select mrkr_zdb_id from tmp_mrkr where mrkr_type like 'GENE%';
+insert into marker select * from tmp_mrkr where mrkr_type like 'GENE%';
 
 
 ---------- load marker relationships -------------
