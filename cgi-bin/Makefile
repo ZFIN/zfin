@@ -64,19 +64,17 @@ TARGETDIR = $(TARGETROOT)/$(TARGETCGIBIN)
 #
 
 
-STATICS = dummy.gif webdriver write.cgi parse-form.perl urlencode.perl\
-	ncbi_blast_interface.cgi
+STATICS = ncbi_blast_interface.cgi
 # send_request.perl can probably be converted to static.
 
-GENERICS = SuperWebdriver ZFIN_jump map-options.pl print_map.cgi \
-           runSPL.cgi DebugWebdriver\
-           searchwww.cgi web.cnf send_request.perl view_mapplet.cgi
+GENERICS = ZFIN_jump map-options.pl print_map.cgi runSPL.cgi \
+	DebugWebdriver\
+           searchwww.cgi send_request.perl view_mapplet.cgi
 
 SPECIFICTARGETS = $(foreach SPEC, $(GENERICS), $(TARGETDIR)/$(SPEC))
 STATICTARGETS   = $(foreach STAT, $(STATICS), $(TARGETDIR)/$(STAT))
 
-TARGETS = $(SPECIFICTARGETS) $(STATICTARGETS) $(TARGETDIR)/Webdriver
-
+TARGETS = $(SPECIFICTARGETS) $(STATICTARGETS)
 
 
 # ---------------  Production Rules  ------------------------------------
@@ -87,13 +85,11 @@ TARGETS = $(SPECIFICTARGETS) $(STATICTARGETS) $(TARGETDIR)/Webdriver
 all : $(TARGETDIR) $(TARGETS) 
 
 # Create target dir and then file-uploads directory.  It is used by
-# SuperWebdriver to store image files before they are loaded into the DB. 
+# webdriver to store image files before they are loaded into the DB. 
 # file-uploads must be world writeable.
 
 $(TARGETDIR) :
 	$(TARGET_MKDIR) $(TARGETDIR)
-	$(TARGET_MKDIR) $(TARGETDIR)/file-uploads
-	chmod 777 $(TARGETDIR)/file-uploads
 
 $(SPECIFICTARGETS) : $(TARGETDIR)/% : %
 	$(MAKESPECIFIC) $< $(TRANSLATETABLE) $@
@@ -101,11 +97,6 @@ $(SPECIFICTARGETS) : $(TARGETDIR)/% : %
 
 $(STATICTARGETS) : $(TARGETDIR)/% : %
 	$(TARGET_CP) $^ $@
-
-$(TARGETDIR)/Webdriver : $(TARGETDIR)/webdriver
-	(cd $(TARGETDIR); ln -s webdriver Webdriver)
-
-
 
 # ---------------  Maintenance Rules  -----------------------------------
 
