@@ -1,4 +1,3 @@
-
 begin work;
 create table prot_len_acc (pla_prot varchar (10), pla_len integer, pla_acc varchar(10));
 load from 'prot_len_acc.unl' insert into prot_len_acc;
@@ -32,7 +31,7 @@ insert into record_attribution (recattrib_data_zdb_id,recattrib_source_zdb_id)
 select dblink_zdb_id ,(
             select zdb_id from publication 
             where authors = 'ZFIN Staff'
-            and title = 'Curation of NCBI Protien Sequence Database Links'   
+            and title = 'Curation of NCBI Protein Sequence Database Links'   
             )
 from db_link where db_name = 'GenPept' and dblink_zdb_id not in (
     select recattrib_data_zdb_id 
@@ -40,7 +39,7 @@ from db_link where db_name = 'GenPept' and dblink_zdb_id not in (
     where recattrib_source_zdb_id = (
         select zdb_id from publication 
         where authors = 'ZFIN Staff'
-        and title = 'Curation of NCBI Protien Sequence Database Links'   
+        and title = 'Curation of NCBI Protein Sequence Database Links'   
     )
 )
 ;           
@@ -58,12 +57,12 @@ delete from prot_len_acc where exists (
     and  recattrib_source_zdb_id in ( 
         select zdb_id from publication 
         where authors = 'ZFIN Staff'
-        and title = 'Curation of NCBI Protien Sequence Database Links'   
+        and title = 'Curation of NCBI Protein Sequence Database Links'   
     )
 );
 }
 
-! echo "drop GenPepts existing ZFIN attributed to NCBI Protien"
+! echo "drop GenPepts existing ZFIN attributed to NCBI Protein"
 delete from zdb_active_data where zactvd_zdb_id in (
     select dblink_zdb_id 
     from db_link,record_attribution
@@ -72,7 +71,7 @@ delete from zdb_active_data where zactvd_zdb_id in (
     and  recattrib_source_zdb_id in ( 
         select zdb_id from publication 
         where authors = 'ZFIN Staff'
-        and title in ('Curation of EMBL records' ,'Curation of NCBI Protien Sequence Database Links')  
+        and title in ('Curation of EMBL records' ,'Curation of NCBI Protein Sequence Database Links')  
     )
 );
 
@@ -109,16 +108,17 @@ insert into db_link(
 ) select * from tmp_dblk
 ;
 
+
 ! echo "Attribute Genpept links to ZFIN citation"
 insert into record_attribution (recattrib_data_zdb_id,recattrib_source_zdb_id)
 select zad ,(select zdb_id from publication 
             where authors = 'ZFIN Staff'
-            and title = 'Curation of NCBI Protien Sequence Database Links'   
+            and title = 'Curation of NCBI Protein Sequence Database Links'   
             )
 from tmp_dblk
 ;           
 
-unload to 'unused_protiens.unl' 
+unload to 'unused_proteins.unl' 
 select * from prot_len_acc
 where pla_prot not in (
     select acc from tmp_dblk
