@@ -285,7 +285,7 @@ create temp table tmp_reinstate (
 
 
 insert into tmp_obs_GO (name, id, def, is_obsolete, comment)
-  select name, substr(id, -7), def, is_obsolete, comment
+  select name, substr(id, -7), def, 't', comment
     from tmp_obs 
     where def like '%OBSOLETE%' or 
           def like '%obsolete%' or
@@ -293,7 +293,7 @@ insert into tmp_obs_GO (name, id, def, is_obsolete, comment)
 
 
 insert into tmp_reinstate (name, id, def, is_obsolete, comment)
-  select name, substr(id, -7), def, is_obsolete, comment
+  select name, substr(id, -7), def, 'f', comment
     from tmp_obs
     where def not like '%OBSOLETE%' and 
           def not like '%obsolete%' and
@@ -384,7 +384,7 @@ unload to new_reinstated_terms.unl
 update go_term
   set goterm_is_obsolete = 'f'
   where goterm_go_id in (select id 
-			  from tmp_reinstates_no_dups) 
+			  from tmp_reinstate_no_dups) 
   and goterm_is_obsolete = 't' ;
 
 
