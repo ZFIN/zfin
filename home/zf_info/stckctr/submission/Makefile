@@ -61,7 +61,8 @@ zfinId.jpg\
 zirc.css\
 zirc.js\
 zircCC.html\
-zircCC.pdf
+zircCC.pdf\
+zla.pdf
 
 # ---------------  Production Rules  ------------------------------------
 
