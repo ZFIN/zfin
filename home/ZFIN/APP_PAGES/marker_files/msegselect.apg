@@ -447,8 +447,9 @@
     <!--- Query Database --->
     <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
 	  select mrkr_abbrev, mrkr_type, mrkr_zdb_id,mrkr_abbrev_order,
-		 clone_sequence_type, vector_type_name $name_sig_col
-	    from $msegtable
+		 clone_sequence_type, vector_type_name $name_sig_col, mrkrtype_type_display
+	    from $msegtable, marker_types
+           where mrkr_type = marker_type
 	  order by $sig_order mrkr_abbrev_order ;">
 	  <?MIVAR NAME=$abbrev>$1<?/MIVAR>
 	  <?MIVAR NAME=$mtype>$2<?/MIVAR>
@@ -458,6 +459,7 @@
           <?MIVAR NAME=$match_name>$(URLDECODE,$7)<?/MIVAR>
 	  <?MIVAR NAME=$match_sig>$8<?/MIVAR>
 	  <?MIVAR NAME=$match_text>$9<?/MIVAR>
+	  <?MIVAR NAME=$mtype_display>$10<?/MIVAR>
 
 	  <?MIVAR NAME=$viewer>aa-markerview.apg<?/MIVAR>
      <!-- create form for each marker  -->
@@ -491,7 +493,7 @@
                   $(IF,$(XST,$return_rec),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$OID>SELECT</A>)
                 </font>
 
-		$(IF,$(OR,$(XST,$accession),$(XST,$pubId)),$mtype:)
+		$(IF,$(OR,$(XST,$accession),$(XST,$pubId)),$mtype_display:)
 		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$viewer&OID=$OID">$abbrev</A>
               <?/MIVAR>
 	      </TD>

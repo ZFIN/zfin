@@ -378,14 +378,15 @@
         <table align=center>
         <ul>
         <?MISQL SQL="
-	  select marker_type, count(mrkr_zdb_id)::integer, mrkrtype_significance
+	  select marker_type, count(mrkr_zdb_id)::integer, mrkrtype_type_display, mrkrtype_significance
     	    from bigselect_temp_markers, marker_types
 	   where mrkr_type = marker_type
-	   group by marker_type, mrkrtype_significance
+	   group by marker_type, mrkrtype_significance, mrkrtype_type_display
            order by mrkrtype_significance ;
            ">
 	 <?MIVAR NAME=$mtype_in_db>$1<?/MIVAR>  
 	 <?MIVAR NAME=$search_count>$2<?/MIVAR>
+	 <?MIVAR NAME=$mtype_display>$3<?/MIVAR>
 
 	 <?MIBLOCK COND="$(>,$search_count,1)">  
 	   <?MISQL SQL="
@@ -408,16 +409,16 @@
  		<SCRIPT>location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$linkto&marker_type=$mtype_in_db$linkparam")</SCRIPT>
 	   <?/MIVAR>
 
-	   <?MISQL COND="$(EC,$mtype_in_db,GENE)" SQL="
+	   <?MISQL COND="$(>,$(POSITION,$mtype_in_db,GENE),0)" SQL="
 		select count(mrkr_zdb_id)::integer
 		  from bigselect_temp_markers
-		 where mrkr_type = 'GENE'
+		 where mrkr_type = '$mtype_in_db'
  		   and mrkr_zdb_id in (select cloned_gene from locus) ;">
 		<?MIVAR NAME=knownloci_count>$1<?/MIVAR>
-		<?MIVAR COND="$(>,$knownloci_count,0)" NAME=gene_extra>(<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$linkto&marker_type=GENE$linkparam&knownloci=t">$1 with known mutant loci</A>)<?/MIVAR>
+		<?MIVAR COND="$(>,$knownloci_count,0)" NAME=gene_extra>(<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$linkto&marker_type=$mtype_in_db$linkparam&knownloci=t">$1 with known mutant loci</A>)<?/MIVAR>
 	   <?/MISQL> 	
            <?MIVAR>
-	     <TR><TD><b><li><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$linkto&marker_type=$mtype_in_db$linkparam">$search_count $mtype_in_db$(IF,$(>,$search_count,1),s) </A> $(IF,$(AND,$(EC,$mtype_in_db,GENE),$(>,$knownloci_count,0)),$gene_extra)</li></b></TD></TR><?/MIVAR>
+	     <TR><TD><b><li><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$linkto&marker_type=$mtype_in_db$linkparam">$search_count $mtype_display$(IF,$(>,$search_count,1),s) </A> $(IF,$(AND,$(>,$(POSITION,$mtype_in_db,GENE),0),$(>,$knownloci_count,0)),$gene_extra)</li></b></TD></TR><?/MIVAR>
 
 	 <?MIELSE> <!-- when only one match for one type, link directly-->
 	   <?MISQL SQL="
@@ -426,7 +427,7 @@
 	       where mrkr_type = '$mtype_in_db' ;
 	     ">
               <?MIVAR>
-	      <TR><TD><b><li><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$1"> 1 $mtype_in_db </A></li></b></TD></TR><?/MIVAR>
+	      <TR><TD><b><li><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$1"> 1 $mtype_display </A></li></b></TD></TR><?/MIVAR>
            <?/MISQL>
 	 <?/MIBLOCK>
 

@@ -120,6 +120,22 @@ requested from publication page for related data list.
     <?MIVAR COND="$(NC,$compare,starts)" NAME=$wild_card>%<?/MIVAR>
     <?MIBLOCK COND="$(XST,$marker_type)">
 	<?MIVAR NAME=$constraint> mrkr_type = '$marker_type'<?/MIVAR>
+	<?MISQL SQL="
+		select mrkrtype_type_display
+		  from marker_types
+		 where marker_type = '$marker_type'
+		;">
+	   <?MIVAR NAME=$marker_type_display>$1<?/MIVAR>
+	<?/MISQL>
+	
+	<?MISQL SQL="
+		select *
+		  from marker_type_group_member
+		where mtgrpmem_mrkr_type_group = 'GENEDOM'
+		  and mtgrpmem_mrkr_type = '$marker_type'
+		;">
+	<?/MISQL>
+	<?MIVAR COND="$(>,$MI_ROWCOUNT,0)" NAME=type_of_genedom>t<?/MIVAR>
     <?MIELSE>
 	<?MIVAR NAME=$constraint> mrkr_type not in (select mtgrpmem_mrkr_type from marker_type_group_member where mtgrpmem_mrkr_type_group ='SEARCH_SEG')<?/MIVAR>
     <?/MIBLOCK>
@@ -257,7 +273,7 @@ requested from publication page for related data list.
     <?MIVAR COND="$(XST,$knownloci)"> 
 	$(VECAPPEND, $constraint, "mrkr_zdb_id in (select cloned_gene from locus)")
     <?/MIVAR>
-    <?MIVAR COND="$(AND,$(XST,$marker_type),$(NC,$marker_type,GENE))">
+    <?MIVAR COND="$(AND,$(XST,$marker_type),$(NXST,$type_of_genedom))">
         $(SETVAR,$xpat_loci_cols,n)
     <?/MIVAR>
 
@@ -367,7 +383,7 @@ requested from publication page for related data list.
 	  <?MIELSE COND="$(XST,$accession)">
 	    <?MIVAR>Marker List (<b>$num_recs</b> records.)<?/MIVAR>
 	  <?MIELSE>
-	    <?MIVAR>$marker_type Search Results (<b>$num_recs</b> records.)<?/MIVAR>
+	    <?MIVAR>$marker_type_display Search Results (<b>$num_recs</b> records.)<?/MIVAR>
 	  <?/MIBLOCK></center>
           </font>
       </TD>
@@ -380,7 +396,7 @@ requested from publication page for related data list.
         </TD>
      <?/MIBLOCK>
     </TR>
-    <?MIBLOCK COND="$(AND,$(XST,$marker_type),$(EC,$marker_type,GENE))">
+    <?MIBLOCK COND="$(AND,$(XST,$marker_type),$(XST,$type_of_genedom))">
       <TR><TD>
 	<?MIVAR NAME=$mrkr_param_list>&query_results=t$(IF,$(XST,$input_name),&input_name=$input_name)$(IF,$(XST,$input_acc),&input_acc=$input_acc)$(IF,$(XST,$compare),&compare=$compare)$(IF,$(NC,$lg,0),&lg=$lg)<?/MIVAR>
         
@@ -447,22 +463,24 @@ requested from publication page for related data list.
     <?MIVAR NAME=$ok_view_map>0<?/MIVAR>
     
     <?MIVAR NAME=$rowNUM>$BEGIN<?/MIVAR>
-    
+  
     <!--- Query Database --->
     <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
-      select distinct mrkr_name, mrkr_abbrev, mrkr_type,mrkr_zdb_id,
+      select distinct mrkr_name, mrkr_abbrev, mrkr_type, mrkrtype_type_display, mrkr_zdb_id,
 	     mrkr_abbrev_order $name_sig_col
-	from $target_table
+	from $target_table, marker_types mt
+       where mrkr_type = mt.marker_type
 	order by $sig_order mrkr_type, mrkr_abbrev_order
 	;">
 	
       <?MIVAR name=$marker_name>$1<?/MIVAR>
       <?MIVAR name=$marker_abbrev>$2<?/MIVAR>
       <?MIVAR name=$mtype>$3<?/MIVAR>
-      <?MIVAR name=$OID>$4<?/MIVAR>
-      <?MIVAR name=$match_name>$(URLDECODE,$6)<?/MIVAR>
-      <?MIVAR name=$match_sig>$7<?/MIVAR>
-      <?MIVAR name=$match_text>$8<?/MIVAR>
+      <?MIVAR name=$mtype_display>$4<?/MIVAR>
+      <?MIVAR name=$OID>$5<?/MIVAR>
+      <?MIVAR name=$match_name>$(URLDECODE,$7)<?/MIVAR>
+      <?MIVAR name=$match_sig>$8<?/MIVAR>
+      <?MIVAR name=$match_text>$9<?/MIVAR>
 
       <!-- start new row and column -->
       <TR bgcolor="<?MIVAR>$row_color<?/MIVAR>">
@@ -471,15 +489,15 @@ requested from publication page for related data list.
 	<TD valign=top>
 	  <?MIVAR>	
             $(IF,$(XST,$return_rec),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$OID>SELECT</A>)
-	    $(IF,$(OR,$(XST,$accession),$(XST,$pubId)),$mtype:)
-	    $(IF,$(EC,$mtype,GENE),<i>)<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID">$marker_abbrev</A>$(IF,$(EC,$mtype,GENE),</i>)
+	    $(IF,$(OR,$(XST,$accession),$(XST,$pubId)),$mtype_display:)
+	    $(IF,$(>,$(POSITION,$OID,GENE),0),<i>)<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID">$marker_abbrev</A>$(IF,$(>,$(POSITION,$OID,GENE),0),</i>)
 	    $(IF,$(=,$(POSITION,$OID,GENE),0),</TD>)
 	    $(IF,$(AND,$(=,$(POSITION,$OID,GENE),0),$(EC,$xpat_loci_cols,y)),<TD>&nbsp;</TD><TD>&nbsp;</TD>)
 	  <?/MIVAR> 
         
 	  <?MIBLOCK COND="$(>,$(POSITION,$OID,GENE),0)">
 
-	    <?MICOMMENT>08/26 take out previous name and orthologues for genes<?/MICOMMENT>
+	    <?MICOMMENT>08/26/03 take out previous name and orthologues for genes<?/MICOMMENT>
 	    <?MIVAR>-$marker_name<?/MIVAR>
 	    </TD>
 	   

@@ -51,44 +51,52 @@ function make_correction(mrkr_id,old_v,attr) {
 
   <?MIBLOCK COND="$(NC,$attr_type,selection)"> 
     <?MIBLOCK COND="$(AND,$(NC,$attr,putgene_putative_gene_name),$(NC,$attr,putgene_comments))">
-      <?MIBLOCK COND="$(NC,$attr,dalias_alias)">
+       <?MIBLOCK COND="$(NC,$attr,dalias_alias)">
 	<?MISQL SQL="
-	  select $attr, mrkr_name, mrkr_type
-	    from marker
-	    where mrkr_zdb_id = '$OID';">
+	  select $attr, mrkr_name, mrkr_type, mrkrtype_type_display
+	    from marker, marker_types
+	    where mrkr_zdb_id = '$OID'
+	      and mrkr_type = marker_type;">
 	<?/MISQL>
 	<?MIVAR NAME=$current_value>$1<?/MIVAR>
 	<?MIVAR NAME=$update_target>$2<?/MIVAR>
 	<?MIVAR NAME=$mrkr_type>$3<?/MIVAR>
+	<?MIVAR NAME=$mrkr_type_display>$4<?/MIVAR>
+
       <?MIELSE>
 	<?MISQL SQL="
-	  select mrkr_name, mrkr_type
-	    from marker 
-	    where mrkr_zdb_id = '$OID';">
+	  select mrkr_name, mrkr_type, mrkrtype_type_display
+	    from marker, marker_types
+	    where mrkr_zdb_id = '$OID'
+	      and mrkr_type = marker_type;">
 	<?/MISQL>
 	<?MIVAR NAME=$update_target>$1<?/MIVAR>
 	<?MIVAR NAME=$mrkr_type>$2<?/MIVAR>
+	<?MIVAR NAME=$mrkr_type_display>$3<?/MIVAR>
 	<?MIVAR NAME=$current_value><?/MIVAR>
       <?/MIBLOCK>
     <?/MIBLOCK>
 
     <?MIBLOCK COND="$(OR,$(EC,$attr,putgene_putative_gene_name),$(EC,$attr,putgene_comments))">
         <?MISQL SQL="
-	  select $attr, mrkr_name, mrkr_type
-	    from putative_non_zfin_gene, marker 
+	  select $attr, mrkr_name, mrkr_type, mrkrtype_type_display
+	    from putative_non_zfin_gene, marker, marker_types 
 	    where mrkr_zdb_id='$OID'
-            and putgene_mrkr_zdb_id = mrkr_zdb_id;">
+            and putgene_mrkr_zdb_id = mrkr_zdb_id
+	      and mrkr_type = marker_type;">
 	<?/MISQL>
         <?MIVAR NAME=$current_value>$1<?/MIVAR>
         <?MIVAR NAME=$update_target>$2<?/MIVAR>
 	<?MIVAR NAME=$mrkr_type>$3<?/MIVAR>
+	<?MIVAR NAME=$mrkr_type_display>$4<?/MIVAR>
         <?MIVAR NAME=$target_table>putative_non_zfin_gene<?/MIVAR>
     <?/MIBLOCK>
+
 
     <?MIVAR>
 
       <center><font size=6>
-      Update <u>$print_name</u> for $mrkr_type:$update_target
+      Update <u>$print_name</u> for $mrkr_type_display:$update_target
       </font></center>
     <?/MIVAR>
     <p>
@@ -108,7 +116,7 @@ function make_correction(mrkr_id,old_v,attr) {
 	<!-- If you are replacing a TEXTAREA field -->
 	<?MIBLOCK COND="$(EC,$attr_type,textarea)">
 	  <?MIVAR>
-	    <TD valign=middle><b>$(UPPER,$print_name)</b>: </TD>
+	    <TD valign=middle><b>$print_name</b>: </TD>
 	    <TD>
               <TEXTAREA name=new_value rows=10 cols=70 wrap=virtual>$(IF,$(NC,$current_value,NULL),$current_value)</TEXTAREA>
 	    </TD>
@@ -118,13 +126,13 @@ function make_correction(mrkr_id,old_v,attr) {
 	<!-- Else you are doing a simple one-line text attribute -->
 	<?MIBLOCK COND="$(EC,$attr_type,text)">
 	  <?MIVAR>
-	    <TD><b>$(UPPER,$print_name)</b>:</TD>
+	    <TD><b>$print_name</b>:</TD>
 	    <TD width=80%>
 	    <INPUT TYPE=text name=new_value SIZE=50
 	           $(IF,$(NC,$current_value,NULL),VALUE='$current_value')>
 	  <?/MIVAR>
 	  </TD>
-          <?MIVAR COND="$(OR,$(EC,$(UPPER,$print_name),GENE NAME),$(EC,$(UPPER,$print_name),GENE ABBREV))">
+          <?MIVAR COND="$(>,$(POSITION,$mrkr_type,GENE),0)">
             </tr>
             <tr>
               <td>

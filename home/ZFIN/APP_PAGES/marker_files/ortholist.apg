@@ -69,17 +69,21 @@
 	<?MIVAR NAME=OID>$1<?/MIVAR>
 
 	<?MISQL SQL="
-          select mrkr_name, mrkr_type, mrkr_abbrev, mrkr_comments
-            from marker
-            where mrkr_zdb_id = '$OID';">
+          select mrkr_name, mrkr_type, mrkr_abbrev, mrkr_comments, mrkrtype_type_display
+            from marker, marker_types
+            where mrkr_zdb_id = '$OID'
+	      and mrkr_type = marker_type;">
   		<?MIVAR NAME=$name>$1<?/MIVAR>
   		<?MIVAR NAME=$marker_type>$2<?/MIVAR>
   		<?MIVAR NAME=$abbrev>$3<?/MIVAR>
   		<?MIVAR NAME=$comments>$4<?/MIVAR>
-	<?/MISQl>
+	        <?MIVAR NAME=$marker_type_display>$5<?/MIVAR>
+	<?/MISQL>
 
-	<?MIVAR COND="$(EC,$marker_type,GENE)" NAME=title>Gene Name<?/MIVAR>
-	<?MIVAR COND="$(NC,$marker_type,GENE)" NAME=title>$(UPPER,$marker_type)<?/MIVAR>
+	<?MIVAR NAME=title>
+	  $(IF, $(>,$(POSITION,$marker_type,GENE),0),
+	       $marker_type_display Name, $marker_type)
+	<?/MIVAR>
 	
 
 	<?MISQL SQL="select WebExplode(object,'OID=$OID') from webPages where ID='aa-orthoview.apg';">$1<?/MISQL> 

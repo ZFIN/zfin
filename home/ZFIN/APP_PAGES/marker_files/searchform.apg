@@ -65,17 +65,17 @@ Input:
 	  <option $(IF,$(OR,$(EC,$marker_type,),$(EC,$marker_type,all)),SELECTED) value="all">All 
 	  <?/MIVAR>
  	<?MISQL SQL="
-	     select marker_type, mrkrtype_significance
+	     select marker_type, mrkrtype_type_display, mrkrtype_significance
 	       from marker_types
 	      where marker_type in (select mtgrpmem_mrkr_type from marker_type_group_member 
 				     where mtgrpmem_mrkr_type_group = 'SEARCH_MKSEG')
 	      order by mrkrtype_significance;
 	   ">
 	  <?MIVAR COND="$(EC,$page,initial)">
-	    <option $(IF,$(>,$(POSITION,'$mlist','$1'),0),SELECTED) value="$1"> $1
+	    <option $(IF,$(>,$(POSITION,'$mlist','$1'),0),SELECTED) value="$1"> $2
           <?/MIVAR>
 	  <?MIVAR COND="$(NC,$page,initial)">
-	    <option $(IF,$(>,$(POSITION,'$marker_type','$1'),0),SELECTED) value="$1"> $1
+	    <option $(IF,$(>,$(POSITION,'$marker_type','$1'),0),SELECTED) value="$1"> $2
 	  <?/MIVAR>
 	<?/MISQL>
         </select>

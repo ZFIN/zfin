@@ -76,18 +76,28 @@
 
   <?MIVAR NAME=$target_table COND="$(>,$(POSITION,$OID,GENE),0)">marker<?/MIVAR>
   <?MISQL SQL="
-    select mrkr_name, mrkr_type, mrkr_abbrev, mrkr_comments 
-      from marker 
-      where mrkr_zdb_id = '$OID';">
+    select mrkr_name, mrkr_type, mrkrtype_type_display, mrkr_abbrev, mrkr_comments 
+      from marker, marker_types 
+      where mrkr_zdb_id = '$OID'
+	and mrkr_type = marker_type;">
   <?/MISQL>
-
   <?MIVAR NAME=$name>$1<?/MIVAR>
   <?MIVAR NAME=$marker_type>$2<?/MIVAR>
-  <?MIVAR NAME=$abbrev>$3<?/MIVAR>
-  <?MIVAR NAME=$comments>$4<?/MIVAR>
+  <?MIVAR NAME=$marker_type_display>$3<?/MIVAR>
+  <?MIVAR NAME=$abbrev>$4<?/MIVAR>
+  <?MIVAR NAME=$comments>$5<?/MIVAR>
+  <?MIVAR NAME=$id_exist COND="$(>,$MI_ROWCOUNT,0)">t<?/MIVAR>
+
+  <?MISQL SQL="
+	select * from marker_type_group_member
+	 where mtgrpmem_mrkr_type_group='GENEDOM'
+	   and mtgrpmem_mrkr_type = '$marker_type';
+	">
+  <?/MISQL>
+  <?MIVAR COND="$(>,$MI_ROWCOUNT,0)" NAME=type_of_genedom>t<?/MIVAR>
    
   <!-- if no match for the entered ID, display not found msg ------>
-  <?MIBLOCK COND="$(OR,$(EC,$name,$MI_NOVALUE),$(=,$MI_ROWCOUNT,0))">
+  <?MIBLOCK COND="$(OR,$(EC,$name,$MI_NOVALUE),$(NXST,$id_exist))">
      <!-- page header display ----------------->
      <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
      <!-- look to see if replaced zdb_id -->
@@ -299,31 +309,29 @@
 
 <!-------- Display marker name. When update, add button in front--------->   
 
-<?MIVAR COND="$(AND,$(XST,$UPDATE),$(EC,$marker_type,GENE))">
-    	<INPUT TYPE=button value=Update onClick="doit('mrkr_name','text','Gene+Name')">
+<?MIVAR COND="$(XST,$UPDATE)">
+    	<INPUT TYPE=button value=Update onClick="doit('mrkr_name','text','$marker_type_display+Name')">
 <?/MIVAR>
-<?MIVAR COND="$(AND,$(XST,$UPDATE),$(NC,$marker_type,GENE))">
-    	<INPUT TYPE=button value=Update onClick="doit('mrkr_name','text','Marker+Name')"> 
-<?/MIVAR>
+
 <FONT size=+1>
-<?MIBLOCK COND="$(EC,$marker_type,GENE)">
-    	<?MIVAR NAME=$title>Gene Name<?/MIVAR>
+<?MIBLOCK COND="$(XST,$type_of_genedom)">
+    	<?MIVAR NAME=$title>$marker_type_display Name<?/MIVAR>
 	<?MIVAR><b>$title: &nbsp;<i>$name</i></b><?/MIVAR>
 <?MIELSE>
-    	<?MIVAR NAME=$title>$(UPPER,$marker_type)<?/MIVAR>
+    	<?MIVAR NAME=$title>$marker_type_display<?/MIVAR>
 	<?MIVAR><b>$title: &nbsp;$name </b><?/MIVAR>
 <?/MIBLOCK>
 </FONT>
 <br>
 
 <!-- If gene, Display gene symbol. When update, add button in front.----->     
-<?MIVAR COND="$(AND,$(EC,$marker_type,GENE),$(XST,$UPDATE))">
-     	<INPUT TYPE=button value=Update onClick="doit('mrkr_abbrev','text','Gene+Abbrev')"> 
+<?MIVAR COND="$(AND,$(XST,$type_of_genedom),$(XST,$UPDATE))">
+     	<INPUT TYPE=button value=Update onClick="doit('mrkr_abbrev','text','$marker_type_display+Abbrev')"> 
 <?/MIVAR>
 
 
-<?MIVAR COND="$(EC,$marker_type,GENE)">
-  <FONT size=+1><b>Gene Symbol:&nbsp;<i>$abbrev</i></b></FONT>
+<?MIVAR COND="$(XST,$type_of_genedom)">
+  <FONT size=+1><b>$marker_type_display Symbol:&nbsp;<i>$abbrev</i></b></FONT>
 <?/MIVAR>
 <br>
 
@@ -441,7 +449,7 @@
 
 <?MISQL SQL="select * from marker_history where mhist_mrkr_zdb_id = '$OID'">
 <?/MISQL>
-<?MIVAR COND="$(AND,$(EC,$marker_type,GENE),$(>,$MI_ROWCOUNT,0))"><font size=-1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-nomenview.apg&OID=$OID&abbrev=$abbrev$(IF,$(XST,$UPDATE),&UPDATE=1)">Nomenclature History</A></font><?/MIVAR>
+<?MIVAR COND="$(AND,$(XST,$type_of_genedom),$(>,$MI_ROWCOUNT,0))"><font size=-1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-nomenview.apg&OID=$OID&abbrev=$abbrev$(IF,$(XST,$UPDATE),&UPDATE=1)">Nomenclature History</A></font><?/MIVAR>
 <br>
 <!---------------- end NOMENCLATURE HISTORY ------------------------> 
 
@@ -493,7 +501,7 @@
   Reference:<input type=text name=attrib_mutant_pubid>
   <input type=button value="Add" onClick=new_attrib_mutant("$1");><br> 
   <?/MIVAR>	 
-  The mutant locus <b><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$1">$2 ($3) </A> </b> has been shown to correspond to GENE <b>$abbrev</b>. 
+  The mutant locus <b><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$1">$2 ($3) </A> </b> has been shown to correspond to Gene <b>$abbrev</b>. 
   <?MISQL SQL="select WebExplode(object,'dataId=$1&type=colattrib&info=cloned_gene') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
   <?/MIVAR>
   </TD>
@@ -505,12 +513,12 @@
 <!-------------- GENE PRODUCT ---------------------------------->
 <!-- only for genes, and only display when there is information---->
 
-<?MIBLOCK COND="$(EC,$marker_type,GENE)">
+<?MIBLOCK COND="$(XST,$type_of_genedom)">
   <?MIVAR NAME=$titledisplay>0<?/MIVAR>
   <?MISQL SQL="select db_query from foreign_db where db_name='QuickGO'">
      <?MIVAR NAME=$dbquery>$1<?/MIVAR>
   <?/MISQL>
-<?MISQL SQL="
+  <?MISQL SQL="
         select  distinct goterm_ontology, goterm_go_id, goterm_name,
                mrkrgoev_evidence_code, gont_order
         from marker_go_term m, go_term g, marker_go_term_evidence e, go_ontology
@@ -672,13 +680,13 @@
 
 <!--------------- GENE EXPRESSION  ---------------------------->
 <!-------  only for cloned genes or ests. ---------->
-<?MIBLOCK COND="$(OR,$(EC,$marker_type,GENE),$(EC,$marker_type,EST))">
+<?MIBLOCK COND="$(OR,$(XST,$type_of_genedom),$(EC,$marker_type,EST))">
 
   <?MICOMMENT>******* GENE **********<?/MICOMMENT>
   <?MIVAR NAME=$XPAT_ZDB_ID><?/MIVAR>
   <?MIVAR NAME=$titledisplay>0<?/MIVAR>
 
-  <?MISQL COND="$(EC,$marker_type,GENE)" SQL="
+  <?MISQL COND="$(XST,$type_of_genedom)" SQL="
      SELECT distinct xpat_zdb_id, xpat_assay_name, stg_hours_start, stg_name, stg_zdb_id
      FROM marker_relationship, expression_pattern, expression_pattern_stage, stage
      WHERE mrel_mrkr_1_zdb_id = '$OID' 
@@ -788,7 +796,7 @@
   <?MIVAR NAME=$mrel_count>$1<?/MIVAR>
 <?MIBLOCK COND="$(OR,$(NC,$mrel_count,0),$(XST,$UPDATE))"><br>
 <HR width="80%"><b>
-  <?MIBLOCK COND="$(EC,$marker_type,GENE)">
+  <?MIBLOCK COND="$(XST,$type_of_genedom)">
     SEGMENT (CLONE AND PROBE) RELATIONSHIPS
   <?MIELSE>
     MARKER RELATIONSHIPS
@@ -1195,7 +1203,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 
 <!------------ ORTHOLOGUES ------------------------------------>
 <!------ only for cloned genes.------------------- -->
-<?MIBLOCK COND="$(EC,$marker_type,GENE)">
+<?MIBLOCK COND="$(XST,$type_of_genedom)">
  <HR width="80%">
  <a name=orthologue><b>ORTHOLOGUES:</b></a>
  <?MICOMMENT>at update mode, user will choose species, and invoke refresh<?/MICOMMENT>

@@ -29,7 +29,7 @@
  
    <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">
       <script>
-        window.alert("Note: This is the last attribution of $pubId to the gene. You should consider deleting this reference from the CITATIONS section if appropriate.");
+        window.alert("Note: This is the last attribution of $pubId to the marker. You should consider deleting this reference from the CITATIONS section if appropriate.");
       </script>
    <?/MIVAR>
 

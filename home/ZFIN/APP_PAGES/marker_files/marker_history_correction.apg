@@ -53,9 +53,9 @@ old_value -- the value being replaced
     window.history.go(-1);
   </SCRIPT> 
 
-<?MIELSE COND="$(NC,GENE,$(SUBSTR,$OID,5,4))">
+<?MIELSE COND="$(=,$(POSITION,$OID,GENE),0)">
   <SCRIPT>
-    window.alert('Error: Marker $OID is not a GENE. Please refresh the page and try again.');
+    window.alert('Error: Marker is not gene related. Please refresh the page and try again.');
     window.history.go(-1);
   </SCRIPT> 
 
