@@ -44,19 +44,12 @@ unload to '<!--|ROOT_PATH|-->/home/data_transfer/ZIRC/zfinLoci'
 
 -- generate aliases for locii
 
--- Currently, this gets aliases from locus_alias, but soon it will
--- get aliases from data_alias.  locus_alias is unnecessarily complicated.
--- Therefore so is this code.
-
 unload to '<!--|ROOT_PATH|-->/home/data_transfer/ZIRC/zfinLocusAliases'
   delimiter '	'
-  select lcsali_locus_zdb_id, lcsali_locus_name_alias
-    from locus_alias
-  union
-  select lcsali_locus_zdb_id, lcsali_locus_abbrev_alias
-    from locus_alias
-    where lcsali_locus_abbrev_alias <> ""
-  order by 1;
+  select dalias_data_zdb_id, dalias_alias
+    from data_alias, locus
+    where dalias_data_zdb_id = zdb_id
+    order by 1;
 
 
 -- Generate EST list
