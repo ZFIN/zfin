@@ -52,7 +52,7 @@ document.getcrits.submit();
 
 <basefont size=2>
 
-<form name=getcrits method=post TARGET="updates" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+<form name=getcrits method=post TARGET="pbrowser" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 
 <TABLE width=100%>
 <TR><TD colspan=2 align=center>
@@ -64,25 +64,71 @@ document.getcrits.submit();
 </TD>
 <TD> Updates to 
 <select name=field>
-<option selected>ANY
-<?MISQL SQL="execute function inf_tcols('$rtype');">
-$(IF,$(NC,$1,zdb_id),<option>$1)
-<?/MISQL>
+<option $(IF,$(EC,$field,any),SELECTED) value=any>ANY
+<option $(IF,$(EC,$field,zdb_id),SELECTED) value=zdb_id>zdb_id
+<option $(IF,$(EC,$field,gene_name),SELECTED) value=gene_name>gene_name
+<option $(IF,$(EC,$field,comments),SELECTED) value=comments>comments
+<option $(IF,$(EC,$field,abbrev),SELECTED) value=abbrev>abbrev
+<option $(IF,$(EC,$field,owner),SELECTED) value=owner>owner
 </SELECT>
  field of this record that:</TD>
 </TR>
 <TR>
 <TD align=center>
-<input type=submit name=action value="Do it!">
+<input type=submit name=doit value="Do it!">
 </TD><TD> 
 <input type=radio name=period value=open CHECKED onClick="radioupdate(0)"> have <b>ever</b> been submitted. <br>
 <input type=radio name=period value=dated onClick="radioupdate(1)"> 
 were submitted between (month) 
+<?MIBLOCK COND="$(AND,$(XST,$period),$(EC,$period,open))"> 
+  <SCRIPT>
+    <?MIVAR> 
+    document.getcrits.period[0].checked=true;  
+    <?/MIVAR> 
+  </SCRIPT> 
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(AND,$(XST,$period),$(EC,$period,dated))"> 
+  <SCRIPT>
+    <?MIVAR> 
+    document.getcrits.period[1].checked=true;  
+    <?/MIVAR> 
+  </SCRIPT> 
+<?/MIBLOCK>
 <input type=text size=2 name=smonth onChange="validate(this,'month')"> of (year) <input type=text size=4 name=syear onChange="validate(this,'year')"> AND 
 <input type=text size=2 name=emonth onChange="validate(this,'month')"> of <input type=text size=4 name=eyear onChange="validate(this,'year')">.
+<?MIBLOCK COND="$(XST,$emonth)"> 
+  <SCRIPT>
+    <?MIVAR> 
+      document.getcrits.emonth.value = "$emonth"
+    <?/MIVAR> 
+  </SCRIPT> 
+<?/MIBLOCK>
+<?MIBLOCK COND="$(XST,$smonth)"> 
+  <SCRIPT>
+    <?MIVAR> 
+      document.getcrits.smonth.value = "$smonth"
+    <?/MIVAR> 
+  </SCRIPT> 
+<?/MIBLOCK>
+<?MIBLOCK COND="$(XST,$eyear)"> 
+  <SCRIPT>
+    <?MIVAR> 
+      document.getcrits.eyear.value = "$eyear"
+    <?/MIVAR> 
+  </SCRIPT> 
+<?/MIBLOCK>
+<?MIBLOCK COND="$(XST,$syear)"> 
+  <SCRIPT>
+    <?MIVAR> 
+      document.getcrits.syear.value = "$syear"
+    <?/MIVAR> 
+  </SCRIPT> 
+<?/MIBLOCK>
 </TD>
 </TR>
 </TABLE>
+
 <input type=hidden name=MIval value=aa-update-lister.apg>
 <?MIVAR>
 <input type=hidden name=OID value=$OID>
