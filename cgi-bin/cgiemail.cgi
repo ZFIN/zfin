@@ -120,25 +120,13 @@ while [(pick template 1) = "^/" ][remove template]
 
 
 foreach ad parse addy "," [ 
-    if not empty? ad: trim ad [
         ;;; build a mail header
         header: make system/standard/email [
-           To:     ad
+           To:     trim ad
            From:   frm
            Subject: sbj
        ]
-       send/header to-email ad template header     
-       comment{     
-        if error? err: try[send/header to-email ad template header][                    
-            send/header tomc@cs.uoregon.edu probe disarm err 
-            make system/standard/email [
-               To:    tomc@cs.uoregon.edu
-               Subject: "cgiemail error" 
-               comment: ad
-            ]          
-        ];; not error
-    ];; ad not empty 
-        }       
+       send/header to-email ad template header    
 ]          
 
 ;;; append a copy of the email to a flatfile
