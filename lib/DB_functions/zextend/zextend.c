@@ -1,17 +1,11 @@
 /*
 	ZFIN database external user defined functions.
 
-	$Id$
-	$Source$
-
-	
-	
 	Functions that are callable from SQL
 	------------------------------------
 	conc		Concatenates to strings; in use, but could be 
 	                replaced by Informix concat() or ||
 	expr		returns its single argument to get the parser to eval it
-	get_id		Generates a new ID by appending a number to a string
 	get_random_cookie Generate a random string of printable characters
 	html_breaks	Replaces newlines with "<BR>" which formats it for html
 	html_breaks_html Replaces newlines with "<BR>" which formats it for 
@@ -19,6 +13,10 @@
 			and produces one as a result.
 	position	Find the position of a character in a string
 	sysexec		runs a system program and returns results from STDOUT
+        webhtml_like    converts an html datatype to lvarchar and looks for 
+                        the occurence of a specified string within the 
+			retrieved value. Returns true or false.  Mimics the 
+			sql "like".
 
 
 	Functions that are internal to this file
@@ -30,6 +28,8 @@
 
 	Functions that have been dropped in previous revisions
 	------------------------------------------------------
+	get_id		Generates a new ID by appending a number to a string.
+	                Moved to its own file in r.18.
 	get_id_test	Test function for get_id.  Dropped in r1.16
 	now		returned current timestamp.  Dropped in r1.16
 	todays_date	returned todays date as an mi_date.  Dropped in r1.16
@@ -37,10 +37,7 @@
 
 	Notes: Could be a little more efficent. Add in meaningfull error returns
 		Change text errors to standard error codes
-    webhtml_like   converts an html datatype to lvarchar and looks for the occ		urence of a specified string within the retrieved value. Returns true or 	  false.  Mimics the sql "like".
 		
-	$Author$	$Date$	$Revision$
-	$Source$
 */
 
 #define		_REENTRANT
@@ -58,7 +55,6 @@
 
 #define		MAXREAD		2000
 #define		MAXLEN		200
-#define		SEQ_START	"1"
 #define		NO_MEMORY(fun)	mi_db_error_raise(NULL, MI_SQL,\
 				"UGEN2", "FUNCTION%s", #fun, NULL)
 #define		EXCEPTION(msg)	mi_db_error_raise (NULL, MI_EXCEPTION, msg)
@@ -350,85 +346,6 @@ mi_integer position(mi_lvarchar *lchr, mi_lvarchar *lstr) {
 	if (p = strchr(str, chr))	return p - str + 1;
 	else				return 0;
 }
-
-
-/*	get_id	Generates a new unique ID of the format:
-	ZDB-name-YYMMDD-seq, where name is the argument, date is the 
-	current date and seq is unique for that name and date. Seq starts
-	over when the date changes. Since you can't nest transactions and
-	get_id will always be called from within one, Right? We don't try
-	to start one here. Returns an lvarchar.
-*/
-mi_lvarchar *get_id(mi_lvarchar *name) {
-	char		cmdbuf[MAXLEN], daybuf[11], buf[50], *name_s;
-	time_t		seconds;
-	MI_CONNECTION	*conn;
-	MI_SAVE_SET	*ss;
-	MI_ROW		*row;
-	MI_DATUM	day, num;
-	mi_integer	collen, error, daylen;
-
-	if (!(name_s = mi_lvarchar_to_string(name))) NO_MEMORY(get_id);
-		
-	conn = mi_open(NULL, NULL, NULL);	/* Open connection */
-	if (conn == NULL) EXCEPTION("ERROR: conn is NULL\n");
-if (0) {
-	if (send_sql(conn, &ss, BEGIN) == -1)		/* Begin transaction */
-		EXCEPTION("Cant start transaction in get_id");
-}
-	sprintf (cmdbuf, 				/* Update sequence */
-		"update objid set seq = seq+1 where id = \'%s\';",
-		name_s);
-	if (send_sql(conn, &ss, cmdbuf) != 1) {
-
-		/* The row does not exist yet so we need to insert it */
-
-		sprintf (cmdbuf,
-			"insert into objid values (\'%s\',today, %s);",
-			name_s, SEQ_START);
-		if (send_sql(conn, &ss, cmdbuf) != 1)		/* Send it */
-			EXCEPTION("Cant insert row in get_id");
-	}
-		sprintf (cmdbuf, 			/* Get values */
-		"select day, seq from objid where id = \'%s\';",
-		name_s);
-	if (send_sql(conn, &ss, cmdbuf) != 1)
-		EXCEPTION("Cant select row in get_id");
-
-	row = mi_save_set_get_first(ss, &error);
-	if (!row) EXCEPTION("Can't get row from save set!");
-	mi_value(row, 0, &day, &daylen); mi_value(row, 1, &num, &collen);
-
-	time(&seconds);			/* What is today's date? */
-	cftime(daybuf, "%m/%d/%Y", &seconds);
-
-	if (strcmp(daybuf, day)) {
-
-		/* last time this name was used was another day so start over */
-
-		sprintf (cmdbuf, 			/* Clear seq number */
-		"update objid set (day, seq) = (today, %s) where id = \'%s\';",
-		SEQ_START, name_s);
-		if (send_sql(conn, &ss, cmdbuf) != 1)			/* Send it */
-			EXCEPTION("Cant clear sequence count in get_id");
-		strcpy(day, daybuf); num = SEQ_START;
-	}
-
-if (0) {
-	if (send_sql(conn, &ss, COMMIT) == -1)		/* Commit transaction */
-		EXCEPTION("Cant commit transaction in get_id");
-}
-
-	/* Put date in YYMMDD format */
-
-	if(daylen != 10) EXCEPTION("Date returned is not correct length in get_id");
-	strncpy(daybuf, (char *)day+8, 2); strncpy(daybuf+2, day, 2);
-	strncpy(daybuf+4, (char *)day+3, 2); daybuf[6] = 0;
-
-	sprintf(buf, "ZDB-%s-%s-%s", name_s, daybuf, num);
-	return mi_string_to_lvarchar(buf);
-}
-
 
 
 
