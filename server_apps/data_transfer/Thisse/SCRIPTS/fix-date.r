@@ -16,9 +16,10 @@ fix-date: func [name [file!] /local rows r  out d t][
 ;	print to-string name
 	count: 0
 	foreach r rows[
-	   ;print [count: count + 1 find/last r {,} ]
+;	   print [count: count + 1 find/last r {,} ]
 		t: skip find/last r {","} 3	
 		d: copy t
+		if (find d {/}) [replace/all d {/} {.}]
 		try[clear find d {"}]
 		if error? try[load d] [
 			d: parse d "." 
