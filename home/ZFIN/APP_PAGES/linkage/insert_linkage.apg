@@ -25,6 +25,8 @@ Possible vars: link_id, comments, lg, private, source , ZDB_ident
 
 <?MIBLOCK COND="$(AND,$(EC,$calling_form,linkage),$(XST,$update))">
 
+  <?MIVAR COND="$(XST,$pub_source)"> $(SETVAR,$source,$pub_source)<?/MIVAR>
+  <?MIVAR COND="$(XST,$person_pick)"> $(SETVAR,$source,$person_pick)<?/MIVAR>
 
   <?MISQL SQL="update linkage set lnkg_source_zdb_id = '$source' where lnkg_zdb_id = '$link_id';">
   <?/MISQL>
