@@ -1,5 +1,3 @@
-drop function zdb_date;
-
 -- to return a date string formated the way zdbid dates are formatted 
 
 create function zdb_date(t date) 
@@ -29,5 +27,3 @@ let result = '-' || y[3,4] || m || d || '-';
 
 return result;
 end function;
-
-update statistics for function zdb_date; 

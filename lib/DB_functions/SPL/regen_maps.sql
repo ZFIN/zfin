@@ -1,6 +1,3 @@
-drop function regen_maps;
- 
-
 create dba function "informix".regen_maps()
   returning integer
 
@@ -405,10 +402,3 @@ end function;
 grant execute on function "informix".regen_maps () 
   to "public" as "informix";
   
-update statistics for function regen_maps;
-
-
-
-
-
-

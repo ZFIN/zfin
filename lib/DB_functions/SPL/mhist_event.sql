@@ -1,5 +1,3 @@
-drop procedure mhist_event;
-
 create procedure 
 mhist_event( active_marker varchar(50), 
 	     event varchar(40), 
@@ -143,6 +141,3 @@ IF (new_value != old_value or event = "assigned") THEN
 END IF  -------(new != old or assigned)--------
 
 end procedure;
-
-update statistics for procedure mhist_event;
-

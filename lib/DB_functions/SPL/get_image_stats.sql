@@ -1,5 +1,3 @@
-drop function get_image_stats;
-
 create function
 get_image_stats(
   filepath lvarchar)
@@ -34,5 +32,3 @@ get_image_stats(
   return width, height;
 
 end function;
-
-update statistics for function get_image_stats;

@@ -1,6 +1,3 @@
-drop function regen_fishsearch;
- 
-
 create dba function "informix".regen_fishsearch()
   returning integer
 
@@ -209,5 +206,3 @@ end function;
 
 grant execute on function "informix".regen_fishsearch () 
   to "public" as "informix";
-
-update statistics for function regen_fishsearch;

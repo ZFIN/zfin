@@ -1,5 +1,3 @@
-drop function anatitem_overlaps_stg_window;
-
 create function 
 anatitem_overlaps_stg_window (
   anatItemZdbId   like anatomy_item.anatitem_zdb_id,
@@ -94,5 +92,3 @@ anatitem_overlaps_stg_window (
   return overlaps;
 
 end function;
-
-update statistics for function anatitem_overlaps_stg_window;

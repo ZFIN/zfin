@@ -1,5 +1,3 @@
-drop function create_stg_name_ext;
-
 create function
 create_stg_name_ext(
   stgHrsStart      like stage.stg_hours_start,
@@ -52,5 +50,3 @@ create_stg_name_ext(
   return stgNameExt;
 
 end function;
-
-update statistics for function create_stg_name_ext;

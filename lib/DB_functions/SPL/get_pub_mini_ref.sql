@@ -1,5 +1,3 @@
-drop function get_pub_mini_ref;
-
 create function get_pub_mini_ref(pubZdbId varchar(50))
 
   returning varchar(60);
@@ -53,6 +51,3 @@ create function get_pub_mini_ref(pubZdbId varchar(50))
   return miniRef;          
 
 end function;
-
-update statistics for function get_pub_mini_ref;
-

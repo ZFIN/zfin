@@ -1,5 +1,3 @@
-drop procedure p_one_ortho_per_db;
-
 create procedure p_one_ortho_per_db (vFdbcontZdbId varchar(50),
 				     vLinkedRecid  varchar(50)) 
 
@@ -30,5 +28,3 @@ define vOrtho varchar(50) ;
   end if
 
 end procedure ;
-
-update statistics for procedure p_one_ortho_per_db ;

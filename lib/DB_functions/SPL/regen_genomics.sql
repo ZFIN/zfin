@@ -1,5 +1,3 @@
-drop function regen_genomics; 
-
 create dba function "informix".regen_genomics() returning integer
 
   -- regen_genomics creates the bulk of the fast search tables in ZFIN.
@@ -477,5 +475,3 @@ end function;
 
 grant execute on function "informix".regen_genomics () 
   to "public" as "informix";
-  
-update statistics for function regen_genomics;

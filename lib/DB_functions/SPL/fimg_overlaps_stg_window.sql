@@ -1,5 +1,3 @@
-drop function fimg_overlaps_stg_window;
-
 create function 
 fimg_overlaps_stg_window (
   fimgZdbId       like fish_image.fimg_zdb_id,
@@ -94,5 +92,3 @@ fimg_overlaps_stg_window (
   return overlaps;
 
 end function;
-
-update statistics for function fimg_overlaps_stg_window;

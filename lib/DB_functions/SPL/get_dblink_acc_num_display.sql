@@ -1,5 +1,3 @@
-drop function get_dblink_acc_num_display;
-
 create function get_dblink_acc_num_display (dblinkFdbId varchar(50),
                                             dblinkAccNum varchar(50))
 returning varchar(50);
@@ -70,5 +68,3 @@ returning varchar(50);
   return dblinkAccNumDisplay;
 
 end function;
-
-update statistics for function get_dblink_acc_num_display;

@@ -1,5 +1,3 @@
-drop function stg_window_consistent;
-
 create function
 stg_window_consistent (
   startStgZdbId like stage.stg_zdb_id,
@@ -64,5 +62,3 @@ stg_window_consistent (
   return consistent;
 
 end function;
-
-update statistics for function stg_window_consistent;

@@ -1,5 +1,3 @@
-drop function get_stg_name_long_html;
-
 create function
 get_stg_name_long_html(
   stgZdbId        like stage.stg_zdb_id,
@@ -50,5 +48,3 @@ get_stg_name_long_html(
   return stgNameLongHtml;
 
 end function;
-
-update statistics for function get_stg_name_long_html;

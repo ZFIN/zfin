@@ -1,5 +1,3 @@
-drop function get_obj_name;
-
 create function
 get_obj_name(zdbId varchar(50))
 
@@ -218,5 +216,3 @@ get_obj_name(zdbId varchar(50))
   return objName;
 
 end function;
-
-update statistics for function get_obj_name;

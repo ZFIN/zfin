@@ -17,8 +17,6 @@ So, we will hang on to it.
 }
 
 
-drop function gene_contains_seg;
-
 create function 
     gene_contains_seg( 
         gene varchar(30), 
@@ -61,6 +59,4 @@ create function
 
     return 0;
 end function;
-
-update statistics for function gene_contains_seg;
 

@@ -1,5 +1,3 @@
-drop function get_date_from_id;
-
 create function
 get_date_from_id(zdbId varchar(50),format varchar(10))
 
@@ -39,5 +37,3 @@ get_date_from_id(zdbId varchar(50),format varchar(10))
   return dateFromId;
 
 end function;
-
-update statistics for function get_date_from_id;

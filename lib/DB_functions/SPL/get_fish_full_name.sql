@@ -1,5 +1,3 @@
-drop function get_fish_full_name;
-
 create function
 get_fish_full_name(
   fishZdbId varchar(50) )
@@ -47,5 +45,3 @@ get_fish_full_name(
   return fishFullName;
 
 end function;
-
-update statistics for function get_fish_full_name;

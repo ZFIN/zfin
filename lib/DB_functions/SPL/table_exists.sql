@@ -1,5 +1,3 @@
-drop function table_exists;
-
 create function
 table_exists(table_name varchar(128))
 
@@ -21,5 +19,3 @@ table_exists(table_name varchar(128))
   return tableExists;
 
 end function;
-
-update statistics for function table_exists;
