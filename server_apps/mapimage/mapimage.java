@@ -6,7 +6,14 @@ import cgi.*;
 import java.sql.*;
 
 import java.awt.image.*;
-import javax.imageio.*;
+//import javax.imageio.*;  //1.4 leftovers
+
+//pdf imports
+//import com.lowagie.text.*;
+//import com.lowagie.text.pdf.PdfWriter;
+//import com.lowagie.text.pdf.PdfContentByte;
+
+//import com.sun.jimi.core.*;
 
 import zmapper.*;
 
@@ -74,7 +81,7 @@ public class mapimage {
 		int M = 8;
 		String est = " mtype = 'EST' ";
 		int E = 2;
-		String anon = " mtype = 'SSLP' or mtype = 'STS' or mtype = 'RAPD' or mtype = 'RFLP' or mtype = 'SSR' ";
+		String anon = " mtype = 'SSLP' or mtype = 'STS' or mtype = 'RAPD' or mtype = 'RFLP' or mtype = 'SSR' or mtype = 'SNP' ";
 		int A = 4;
 		String type_string = "";
 
@@ -211,14 +218,38 @@ public class mapimage {
 		
 
 		System.err.println("getImage");
-		Image img =  MV.getImage(w,h);
+		java.awt.Image img =  MV.getImage(w,h);
 
+
+/*		System.err.println("pdf start");
+		Document document = new Document();
+		document.open();
+
+		try {
+			PdfWriter writer = PdfWriter.getInstance(document, System.out);
+            document.open();
+			document.add(new Paragraph("Hello World"));
+			PdfContentByte cb = writer.getDirectContent();
+            com.lowagie.text.Image pdfimg = com.lowagie.text.Image.getInstance(img, null);
+
+			document.add(pdfimg);
+		}
+		catch(com.lowagie.text.DocumentException de) { System.err.println(de.getMessage()); }
+		catch(IOException ioe) {System.err.println(ioe.getMessage()); }
+        document.close();
+					 
+		System.err.println("pdf end"); */
+
+/*		try {
+			System.err.println("start jimi");
+			Jimi.putImage(img, "/dev/null");
+			System.err.println("end jimi");
+			} catch (JimiException JE) { System.err.println(JE); }*/
 		
-		
-		try
-		{
+				
+		try	{
 			System.err.println("make encoder");
-			Acme.JPM.Encoders.GifEncoder ie = new Acme.JPM.Encoders.GifEncoder( img , System.out);
+			Acme.JPM.Encoders.GifEncoder ie = new Acme.JPM.Encoders.GifEncoder(img , System.out);
 			System.err.println("start encoding");
 			ie.encode();	
 			System.err.println("done encoding");
@@ -229,7 +260,6 @@ public class mapimage {
 			System.err.println("e: " + e);   
 			} 
 
-
 /*		ImageOutputStream ios = ImageIO.createImageOutputStream(System.out);
 		Iterator writers = ImageIO.getImageWritersByFormatName("png");
 		ImageWriter writer = (ImageWriter) writers.next();
@@ -238,15 +268,16 @@ public class mapimage {
 
 //		System.err.println("Headless: " + System.setProperty("java.awt.headless","true"));
 
-/*		try {
+/*		
+		try {
 			System.err.println("IO.write..start");
-			javax.imageio.ImageIO.write((BufferedImage)img,"jpg",System.out);
+			javax.imageio.ImageIO.write((BufferedImage)img,"jpg",new BufferedOutputStream(System.out));
 			System.err.println("IO.write..end");
 			} catch (Exception e) {
 			System.err.println(e);
-			}*/
-		
-		 
+			}
+*/		
+	 
 		System.err.println("cgi applet finished");
 		System.exit(0);
 	}	
