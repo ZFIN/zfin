@@ -24,7 +24,7 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/marker_files
 GENERICS = chromoscripts.apg crossview.apg do-markerupdate.apg \
 	lgframe.apg make_map.apg mapframe.apg mapperselect.apg \
 	mapview.apg markerlister.apg markerselect.apg markerupdate.apg \
-	markerview.apg new-marker.apg orthoedit.apg refcrosslist.apg \
+	markerview.apg orthoedit.apg refcrosslist.apg \
 	scoresframe.apg scoresview.apg showscores.apg 
 
 
