@@ -3,7 +3,7 @@
 # Parse the blast output into table format  
 #
 # Usage :
-#       blast2unl.pl [options] file
+#       blast2unl.pl [options] inputfile 
 #
 # Options:
 #  -d   database used in the blast. 
@@ -29,35 +29,52 @@ my $START   = $opt_m ? $opt_m : 0;
 my $END     = $opt_n ? $opt_n : 1e30;
 my $BLASTDB = $opt_d ? $opt_d : "gb";
 
-my ($Query, $Sbjct, $queryLength, $sbjctType);
+my ($Query, $Sbjct, $queryLength, $sbjctLength, $subjectdef);
 my $HSP = "";
 
 while (<>) {
    
     if (/^Query=\s+(\S+)/) {
-	my $querydef = $1;  
-	outputHSP(  ); 
-	($Query) = $querydef =~ /gb\|(\w+)/;   #gb accession
+		my $querydef = $1;  # save var right away
+		outputHSP(  ); 
+  
+		($Query) = $querydef =~ /gb\|(\w+)/;   #gb accession
     }
     elsif (/^\s+\((\d+)\s+letters/) {
-	$queryLength = $1;
+		$queryLength = $1;
     }
-    elsif (/^>(\S+)/) {
-	my $subjectdef = $1; 
-	outputHSP(  ); 
+    elsif (/^>(.+)$/) {
+		$subjectdef = $1; chomp $subjectdef; 
+		outputHSP(  ); 
 
-	if ($BLASTDB eq "gb") {
-	    ($Sbjct) = $subjectdef =~ /gb\|(\w+)/;
-	}
-	if ($BLASTDB eq "sp") {
-	    ($Sbjct) = $subjectdef =~ /sp\|(\w+)/;
-	}
+		while (<>) {
+			if (/Length = (\d+)/) {
+				$sbjctLength = $1;
+				last;
+			}else {
+				s/^\s*//; s/\s*$//;
+				$subjectdef .= " ".$_;
+			}
+		}
+
+		if ($subjectdef =~ /complete cds/ ||
+			$subjectdef =~ /partial cds/ ||
+			$subjectdef =~ /mRNA sequence/ ) {
+			
+				$sbjctType = "cdna";
+			}else {
+				$sbjctType = "genomic";
+			}
 	
+		if ($BLASTDB eq "gb") {
+			($Sbjct) = $subjectdef =~ /gb\|(\w+)/;
+		}
+		if ($BLASTDB eq "sp") {
+			($Sbjct) = $subjectdef =~ /sp\|(\w+)/;
+		}
+		
     }
-    elsif (/complete cds/ || /partial cds/ || /mRNA sequence/) {
-	$sbjctType = "cdna";
-    }
-    elsif (/^ Score = /) {
+	elsif (/^ Score = /) {
         outputHSP(  );
         my @stat = ($_);
         while (<>) {
@@ -97,7 +114,8 @@ sub outputHSP {
     return if ($HSP->{q_begin} < $START or $HSP->{q_end} < $START);
     return if ($HSP->{q_begin} > $END   or $HSP->{q_end} > $END);
     print join("|", $Query, $Sbjct, $HSP->{percent},
-        length($HSP->{q_align}), $queryLength, $HSP->{mismatch},
+        length($HSP->{q_align}), $queryLength, $sbjctLength, 
+		$HSP->{mismatch},
         countGaps($HSP->{q_align}) + countGaps($HSP->{s_align}),
         $HSP->{q_begin}, $HSP->{q_end}, $HSP->{s_begin}, $HSP->{s_end},
         $HSP->{expect}, $HSP->{bits}, $sbjctType)."|\n";
