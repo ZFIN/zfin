@@ -266,11 +266,10 @@
       set idsup_data_zdb_id = '$fish_id'
       where idsup_data_zdb_id ='$temp_oid';">
   <?/MISQL>
-  <?MICOMMENT>Add new fish to names fast search tables.<?/MICOMMENT>
-  <?MISQL SQL="
-    execute procedure regen_names_fish('$fish_id');">
-  <?/MISQL>    
-
+  <?MICOMMENT>
+    Would like to call regen_names_fish() here, but can't because that results
+    in a -675 error.
+  <?/MICOMMENT>
 
   <!-- OKAY! Now we're done processing submission, and just need to continue 
     -- on.  Grab the return record (might be NULL) so we can know where to 
