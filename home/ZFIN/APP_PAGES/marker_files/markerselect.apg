@@ -138,7 +138,7 @@ document.critform.START.value = "";
 <!--  Populate temp table based on user constraints.  -->
 
 <?MISQL SQL="
-  select abbrev, mtype, lg_location, zdb_id, OR_lg,
+  select distinct abbrev, mtype, lg_location, zdb_id, OR_lg,
          target_id, target_abbrev, private, metric 
 	 $insert_ending
     from $target_table 
@@ -277,7 +277,7 @@ document.critform.START.value = "";
 
 	<!--  Run inner query for fields associated with current gene_name -->
 	<?MISQL SQL="
-	  select abbrev, mtype, lg_location, zdb_id, OR_lg,
+	  select distinct abbrev, mtype, lg_location, zdb_id, OR_lg,
 	         target_id, target_abbrev, private, metric 
 		 $tmptable_select_ending
 	    from markerlister_temp

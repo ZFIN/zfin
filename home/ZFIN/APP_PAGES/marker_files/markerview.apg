@@ -729,7 +729,8 @@ $(IF, $(!=,$MI_ROWCOUNT,0),<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-
 
 <?MIVAR NAME=$override>$(IF,$(OR,$(EC,$ZDB_access,root),$(EC,$ZDB_access,fishauth)),true,false)<?/MIVAR>
 
-<?MISQL SQL="select a.owner, lg_location, target_id as panel_id, OR_lg, target_abbrev as panel_abbrev,private,b.full_name,a.metric, map_name, disp_order from paneled_markers a,person b, panels c  where a.zdb_id='$OID' and OR_lg is not null and a.owner=b.zdb_id and a.target_id = c.zdb_id order by c.disp_order;" DATASET=2>
+<?MISQL SQL="select distinct a.owner, lg_location, target_id as panel_id, OR_lg, target_abbrev as panel_abbrev,private,b.full_name,a.metric, map_name, disp_order from paneled_markers 
+a,person b, panels c  where a.zdb_id='$OID' and OR_lg is not null and a.owner=b.zdb_id and a.target_id = c.zdb_id order by c.disp_order;" DATASET=2>
 
 <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
  <?MIVAR>

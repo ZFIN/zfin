@@ -157,7 +157,10 @@ ERROR -- something bad happened -- no OID passed in!
 
 <?MIVAR NAME=$override>$(IF,$(OR,$(EC,$ZDB_access,root),$(EC,$ZDB_access,fishauth)),true,false)<?/MIVAR>
 
-<?MISQL SQL="select a.owner, lg_location, target_id as panel_id, OR_lg, target_abbrev as panel_abbrev,private,b.full_name,a.metric,day(a.entry_date::date),month(a.entry_date::date), year(a.entry_date::date), map_name, disp_order from paneled_markers a,person b, panels c  where a.zdb_id='$OID' and OR_lg is not null and a.owner=b.zdb_id and a.target_id = c.zdb_id order by c.disp_order;">
+<?MISQL SQL="select distinct a.owner, lg_location, target_id as panel_id, OR_lg, target_abbrev as 
+panel_abbrev,private,b.full_name,a.metric,day(a.entry_date::date),month(a.entry_date::date), year(a.entry_date::date), map_name, disp_order 
+from paneled_markers a,person b, panels c  where a.zdb_id='$OID' and OR_lg is not null and a.owner=b.zdb_id and a.target_id = 
+c.zdb_id order by c.disp_order;">
 
   $(IF,$(>,$MI_CURRENTROW,1),
           <TR>
