@@ -50,7 +50,7 @@ delete from ensdarg where exists (
 );
 
 ! echo "Add current ENSEMBL links and automated attribution"
-select distinct *, '012345678901234567890123456789' zad 
+select distinct *, null::varchar(50) zad 
 from ensdarg into temp tmp_dblink with no log;
 
 update tmp_dblink set zad = get_id('DBLINK');

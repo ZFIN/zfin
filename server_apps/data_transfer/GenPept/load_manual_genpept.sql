@@ -54,7 +54,7 @@ where exists (
 select * from manual_genpept where gene[1,9] <> 'ZDB-GENE-';
 
 ! echo "insert new manualy curated GenPept links"
-select distinct gene, genpept, '1234567890123456789012345678901234567890' zad 
+select distinct gene, genpept, null::varchar(50) zad 
 from manual_genpept 
 where gene[1,9] == 'ZDB-GENE-' 
 into temp tmp_db_link with no log;
