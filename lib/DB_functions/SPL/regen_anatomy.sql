@@ -605,28 +605,38 @@ create dba function "informix".regen_anatomy()
       define item_id like anatomy_item.anatitem_zdb_id;
       define item_start_stg like stage.stg_zdb_id;
       define item_end_stg like stage.stg_zdb_id;
+	
+      -- if the start stage of an anatomy item is Unknown, only 
+      -- insert then end stage, and vice verse.
+      insert into all_anatomy_stage_new
+    	select anatitem_zdb_id, anatitem_end_stg_zdb_id 
+	  from anatomy_item, stage
+	 where anatitem_start_stg_zdb_id = stg_zdb_id
+           and stg_name = "Unknown";
+  
+      insert into all_anatomy_stage_new
+    	select anatitem_zdb_id, anatitem_start_stg_zdb_id
+	  from anatomy_item, stage
+	 where anatitem_end_stg_zdb_id = stg_zdb_id
+           and stg_name = "Unknown";
+  
 
-      --for each anatitem find all stages it is contained in
+      -- for all other anatitems find stages it is contained in
       insert into all_anatomy_stage_new
     	select anatitem_zdb_id, s1.stg_zdb_id
 	  from stage s1, anatomy_item a1
 	  where anatitem_name_lower <> 'not specified'
+	    and s1.stg_name <> 'Unknown'
 	    and exists 
 		(
 		  select *
 		    from stage s2, stage s3
 		    where a1.anatitem_start_stg_zdb_id = s2.stg_zdb_id
-		      and a1.anatitem_end_stg_zdb_id = s3.stg_zdb_id             
-		      and (
-			      (    s1.stg_hours_start >= s2.stg_hours_start
-			       and s1.stg_hours_start < s3.stg_hours_end)
-			   or
-			      (    s1.stg_hours_end > s2.stg_hours_start
-			       and s1.stg_hours_end <= s3.stg_hours_end)
-			   or      
-			      (    s1.stg_hours_start <= s2.stg_hours_start
-			       and s1.stg_hours_end >= s3.stg_hours_end)
-			 )           
+		      and s2.stg_name <> "Unknown"
+		      and a1.anatitem_end_stg_zdb_id = s3.stg_zdb_id      
+		      and s3.stg_name <> "Unknown"       
+		      and s1.stg_hours_start >= s2.stg_hours_start
+		      and s1.stg_hours_end <= s3.stg_hours_end        
 		);
 		
       update statistics high for table all_anatomy_stage_new;	
