@@ -203,6 +203,7 @@ function updateParent(AOname, AOid) {
 	        <?/MIBLOCK>
 	
 	        <?MIVAR>
+		  <?MIVAR COND=$(EC,$AUTHORIZED,root)><a href="javascript:updateParent('$item_name','$item_zdb_id');">select</a><?/MIVAR>
 	          <font style="font-family:arial; font-size:small; font-weight:bold;  $(IF,$(EQ,$highlight,true),background-color:#ffff99)">
 	          <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">
 	          $item_name<?MIBLOCK COND="$(NE,$item_abbrev,NULL)"><?/MIBLOCK></A></font> &nbsp;
@@ -434,6 +435,7 @@ function updateParent(AOname, AOid) {
 	      <?/MIBLOCK>
 
 	      <?MIVAR>
+		<?MIVAR COND=$(EC,$AUTHORIZED,root)><a href="javascript:updateParent('$item_name','$item_zdb_id');">select</a><?/MIVAR>
 		<font style="font-family:arial; font-size:small; font-weight:bold;  $(IF,$(EQ,$highlight,true),background-color:#ffff99)">
 		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">
 		  $item_name<?MIBLOCK COND="$(NE,$item_abbrev,NULL)"><?/MIBLOCK></A></font> &nbsp;
