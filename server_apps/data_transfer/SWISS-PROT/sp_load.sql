@@ -14,13 +14,12 @@
 -- they are in reload list, one more SWISS-PROT source will be recorded.
 
 begin work;
---!echo 'begin transaction'
 
 --the unloaded record if already in, only add zdb_id into record_attribution with SWISS_PROT source
-	create temp table exist_record (
-		extrecd_zdb_id	varchar(50),
-		new_zdb_id	varchar(50)
-		) with no log;
+--	create temp table exist_record (
+--		extrecd_zdb_id	varchar(50),
+--		new_zdb_id	varchar(50)
+--		) with no log;
 
 ------------------ loading db_link --------------------------
 
@@ -33,12 +32,6 @@ begin work;
 
 !echo 'Load dr_dblink.unl'
 	load from dr_dblink.unl insert into db_link_with_dups;
---        load from ecgene.unl insert into db_link_with_dups;
-         delete from db_link_with_dups where acc_num like '%-%';
-
-         delete from db_link_with_dups where acc_num like '%,%';
-
-         delete from db_link_with_dups where db_name like 'ZFIN';
 
 	create temp table pre_db_link (
                linked_recid varchar(50),
@@ -50,64 +43,63 @@ begin work;
                dblink_fdbcont_zdb_id varchar(50),
                length integer
               ) with no log;
-	create index pre_db_link_acc_index
-			on pre_db_link (acc_num);
-	insert into pre_db_link 
-               (linked_recid,db_name,acc_num,length,info,acc_num_disp)     
+	create index pre_db_link_acc_index on pre_db_link (acc_num);
+
+	insert into pre_db_link (linked_recid,db_name,acc_num,length,info,acc_num_disp)     
 	       		select distinct *, today ||" Swiss-Prot",acc_num 
-			from db_link_with_dups;
-        select linked_recid from pre_db_link where linked_recid not in (select mrkr_zdb_id from marker);
-	update pre_db_link 
-			set dblink_zdb_id = get_id("DBLINK"); 
-	update pre_db_link 
-			set dblink_fdbcont_zdb_id = (select fdbcont_zdb_id from foreign_db_contains where lower(trim(db_name))=lower(trim(fdbcont_fdb_db_name)) and fdbcont_fdbdt_data_type like '%cDNA%'); 
+			  from db_link_with_dups;
+        
+	update pre_db_link set dblink_fdbcont_zdb_id = 
+				(select fdbcont_zdb_id 
+			  	   from foreign_db_contains 
+				  where lower(trim(db_name))=lower(fdbcont_fdb_db_name) 
+				    and fdbcont_fdbdt_data_type like '%cDNA%')
+			where db_name = "Genbank"; 
 
-select count(*) from pre_db_link where dblink_fdbcont_zdb_id is null;
+	update pre_db_link set dblink_fdbcont_zdb_id = 
+				(select fdbcont_zdb_id 
+				   from foreign_db_contains 
+				  where lower(trim(db_name))=lower(fdbcont_fdb_db_name)) 
+			where db_name <> "Genbank"; 
 
-	update pre_db_link 
-			set dblink_fdbcont_zdb_id = (select fdbcont_zdb_id from foreign_db_contains where lower(trim(db_name))=lower(trim(fdbcont_fdb_db_name)) and fdbcont_fdbdt_data_type like '%domain%' and dblink_fdbcont_zdb_id is null); 
-select count(*) from pre_db_link where dblink_fdbcont_zdb_id is null;
+!echo 'Genbank has to be treated differently here since the type is unknown'	
+	delete from pre_db_link where exists (
+		select d.dblink_zdb_id
+		from db_link d
+		where pre_db_link.linked_recid=d.dblink_linked_recid
+                  and pre_db_link.acc_num=d.dblink_acc_num
+		  and pre_db_link.db_name <> "Genbank"
+		  and pre_db_link.dblink_fdbcont_zdb_id = d.dblink_fdbcont_zdb_id
+		);
 
+	delete from pre_db_link where exists (
+		select d.dblink_zdb_id
+		from db_link d
+		where pre_db_link.linked_recid=d.dblink_linked_recid
+                  and pre_db_link.acc_num = d.dblink_acc_num
+		  and pre_db_link.db_name = "Genbank"
+		  and d.dblink_fdbcont_zdb_id in ("ZDB-FDBCONT-040412-36","ZDB-FDBCONT-040412-37")
+		) ;
 
-	update pre_db_link 
-			set dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-47' where db_name like 'SWISS-PROT' ;
-
-	update pre_db_link 
-			set dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-36' where db_name like 'Genbank' ;
-select count(*) from pre_db_link where dblink_fdbcont_zdb_id is null;
-select db_name,acc_num from pre_db_link where dblink_fdbcont_zdb_id is null;
-!echo 'Detect exist unloads in db_link'	
-	insert into exist_record 
-		select d.dblink_zdb_id, p.dblink_zdb_id
-		from db_link d, pre_db_link p
-		where p.linked_recid=d.dblink_linked_recid
-                  and p.acc_num=d.dblink_acc_num;
+	update pre_db_link set dblink_zdb_id = get_id("DBLINK"); 
+select * from pre_db_link
+	where linked_recid not in (select mrkr_zdb_id from marker);
 
 !echo 'Insert into zdb_active_data'
 	insert into zdb_active_data 
-                  select dblink_zdb_id from pre_db_link p
-		   where dblink_zdb_id not in
-			(select new_zdb_id from exist_record);
+                  select dblink_zdb_id from pre_db_link p;
 
 !echo 'Insert DBLINK into db_link'
-	insert into db_link (dblink_linked_recid,dblink_acc_num,dblink_info,dblink_zdb_id,dblink_acc_num_display,dblink_fdbcont_zdb_id,dblink_length)  
-		select linked_recid,acc_num,info,dblink_zdb_id,acc_num_disp,dblink_fdbcont_zdb_id,length from pre_db_link p
-		where dblink_zdb_id not in
-			(select new_zdb_id from exist_record);
-
-	update pre_db_link set dblink_zdb_id=
-		(select extrecd_zdb_id 
-		  from exist_record
-		  where new_zdb_id = dblink_zdb_id)
-	         where dblink_zdb_id in
-			(select new_zdb_id from exist_record);
+	insert into db_link (dblink_linked_recid,dblink_acc_num,dblink_info,dblink_zdb_id,
+			     dblink_acc_num_display,dblink_fdbcont_zdb_id,dblink_length)  
+		select linked_recid,acc_num,info,dblink_zdb_id,
+			acc_num_disp,dblink_fdbcont_zdb_id,length 
+		  from pre_db_link p;
 
 !echo 'Attribute db links to the internal pub record'
 	insert into record_attribution
 		select dblink_zdb_id, "ZDB-PUB-020723-2",''
 		from pre_db_link;
-
-	delete from exist_record;
 
 ------------------- loading ac alias ------------------------
 
@@ -124,22 +116,20 @@ select db_name,acc_num from pre_db_link where dblink_fdbcont_zdb_id is null;
     		dalias_alias		varchar(120),
    	 	dalias_group		varchar(30)
               ) with no log;
-	insert into pre_ac_alias
-	    select get_id("DALIAS"), dblink_zdb_id, 
-                   alias_acc_num, "alias"
+	insert into pre_ac_alias (dalias_data_zdb_id, dalias_alias, dalias_group)
+	    select distinct dblink_zdb_id, alias_acc_num, "alias"
 	    from pre_db_link db, temp_ac_alias al
  	    where db.acc_num = al.prm_acc_num;
 
-!echo 'Detect exist records'
-	insert into exist_record
-		select d.dalias_zdb_id, p.dalias_zdb_id
-		  from data_alias d, pre_ac_alias p
-		 where d.dalias_data_zdb_id = p.dalias_data_zdb_id
-		   and d.dalias_alias = p.dalias_alias;	
-
 	delete from pre_ac_alias
-		where dalias_zdb_id in
-			(select new_zdb_id from exist_record);
+	       where exists 	
+			( select d.dalias_zdb_id
+		 	    from data_alias d
+			   where d.dalias_data_zdb_id = pre_ac_alias.dalias_data_zdb_id
+		  	     and d.dalias_alias = pre_ac_alias.dalias_alias );	
+    
+        update pre_ac_alias
+                set dalias_zdb_id = get_id("DALIAS");
 
 !echo 'Insert DALIAS into zdb_active_data'
 	insert into zdb_active_data 
@@ -153,14 +143,66 @@ select db_name,acc_num from pre_db_link where dblink_fdbcont_zdb_id is null;
                select dalias_zdb_id, "ZDB-PUB-020723-2",''
 	       from pre_ac_alias;
 
-	
-------------------------- loading GO term  --------------------
 
--- load in go term ontology
+------------------------ loading gn alias --------------------
+       create temp table gn_dalias_with_dups (
+                  prm_acc             varchar(50),      
+                  gnalias_data_zdb_id varchar(50),
+                  gnalias_gname       varchar(120)
+                )with no log;
 
--- load in information from two GO term translation tables
+!echo 'Load gn_dalias.unl'
+        load from gn_dalias.unl insert into gn_dalias_with_dups;
+        create temp table pre_gn_dalias (
+                  dalias_zdb_id varchar(50),
+                  dalias_data_zdb_id varchar(50),
+                  dalias_alias       varchar(120),
+                  dalias_group       varchar(30)
+                )with no log;                            
+        insert into pre_gn_dalias 
+                (dalias_data_zdb_id, dalias_alias, dalias_group)
+                 select distinct gnalias_data_zdb_id,
+                                 gnalias_gname, "alias"
+                 from gn_dalias_with_dups;    
+
+	delete from pre_gn_dalias
+	       where exists 
+               	       ( select d.dalias_zdb_id
+                  	   from data_alias d
+                	  where d.dalias_data_zdb_id = pre_gn_dalias.dalias_data_zdb_id
+                  	    and d.dalias_alias = pre_gn_dalias.dalias_alias ); 
+
+        update pre_gn_dalias
+                set dalias_zdb_id = get_id("DALIAS");
+
+!echo 'Insert DALIAS into zdb_active_data'
+        insert into zdb_active_data
+                 select dalias_zdb_id from pre_gn_dalias;
+select * from pre_gn_dalias where dalias_data_zdb_id not in (
+	select zactvd_zdb_id from zdb_active_data);
+
+!echo 'Insert GN into data_alias'
+        insert into data_alias 
+                        select * from pre_gn_dalias;
+
+!echo 'Attribute GN to the internal pub record'
+        insert into record_attribution 
+                (recattrib_data_zdb_id, recattrib_source_zdb_id)
+                select gn.dalias_zdb_id,"ZDB-PUB-020723-2"
+                from pre_gn_dalias gn;
+
+
+
+
+
+------------------------- loading marker go evidence  --------------------
+
+
+-- load in information from three GO term translation tables
 -- 1. Swiss-Prot keyword to GO	
 -- 2. InterPro to GO
+-- 3. ec to GO
+
 	create temp table spkw_goterm_with_dups (
 		sp_kwd  varchar(80),
 		goterm_name  varchar(100),
@@ -200,120 +242,82 @@ select db_name,acc_num from pre_db_link where dblink_fdbcont_zdb_id is null;
 !echo 'Load kd_spkeywd.unl'
 	load from kd_spkeywd.unl insert into sp_kwd;
 
-	create temp table marker_goid_with_dups (
-		mrkr_zdb_id	varchar(50),
-		goterm_id	varchar(10)	
-	)with no log;
-	insert into marker_goid_with_dups
-		select sk.mrkr_zdb_id, sg.goterm_id
-		from sp_kwd sk,  spkw_goterm_with_dups sg
-		where sk.sp_kwd = sg.sp_kwd;
-	create temp table marker_goid (
-		mrkr_zdb_id	varchar(50),
-		goterm_id	varchar(10),
-		goterm_source	varchar(50)
-	)with no log;
-	create index marker_goid_id_index 
-		 	on marker_goid (goterm_id);
-	insert into marker_goid 
-			select distinct *,"ZDB-PUB-020723-1" 
-			from marker_goid_with_dups;
-	delete from marker_goid_with_dups;
 
+	create temp table pre_marker_go_evidence (
+                mrkrgoev_zdb_id 	varchar(50), 
+		mrkr_zdb_id		varchar(50),
+		go_zdb_id		varchar(50),
+		mrkrgoev_source		varchar(50),
+                mrkrgoev_evidence_code	char(3),
+                mrkrgoev_notes 		varchar(255),
+		mrkrgoev_ref		varchar(80)	 
+	)with no log;
+
+!echo 'Load spkw'
+	insert into pre_marker_go_evidence (mrkr_zdb_id, go_zdb_id, mrkrgoev_source, mrkrgoev_ref)
+		select distinct sk.mrkr_zdb_id, goterm_zdb_id, "ZDB-PUB-020723-1", "ZFIN SP keyword 2 GO"
+		  from sp_kwd sk,  spkw_goterm_with_dups sg, go_term
+		 where sk.sp_kwd = sg.sp_kwd
+		   and goterm_go_id = sg.goterm_id;
 
 !echo 'Load intepro'
-	insert into marker_goid_with_dups
-		select db.linked_recid, ip.goterm_id
-		from pre_db_link db, ip_goterm_with_dups ip
-		where db.acc_num = ip.ip_acc;
-	insert into marker_goid
-			select distinct *, "ZDB-PUB-020724-1"
-			from marker_goid_with_dups;	
-        delete from marker_goid_with_dups;
+	insert into pre_marker_go_evidence (mrkr_zdb_id, go_zdb_id, mrkrgoev_source, mrkrgoev_ref)
+		select distinct db.linked_recid, goterm_zdb_id, "ZDB-PUB-020724-1", "ZFIN InterPro 2 GO"
+		  from pre_db_link db, ip_goterm_with_dups ip, go_term
+	 	 where db.acc_num = ip.ip_acc
+		   and goterm_go_id = ip.goterm_id;
 	
 !echo 'Load ec'
-        insert into marker_goid_with_dups
-		select db.linked_recid, ec.goterm_id
-		from pre_db_link db, ec_goterm_with_dups ec
-		where db.acc_num = ec.ec_acc;
+        insert into pre_marker_go_evidence (mrkr_zdb_id, go_zdb_id, mrkrgoev_source, mrkrgoev_ref)
+		select distinct db.linked_recid, goterm_zdb_id, "ZDB-PUB-031118-3", "ZFIN EC acc 2 GO"
+		from pre_db_link db, ec_goterm_with_dups ec, go_term
+		where db.acc_num = ec.ec_acc
+		  and goterm_go_id = ec.goterm_id;
 
- 
-	insert into marker_goid
-			select distinct *, "ZDB-PUB-031118-3"
-			from marker_goid_with_dups;	
-	
--- Load marker_go_term 
-	create temp table marker_goterm_with_dups (	
-		mrkr_zdb_id 	varchar(50),
-		mrkr_goterm_zdb_id	varchar(50),
-		mrkr_goterm_source	varchar(50)	
-	)with no log;
-	insert into marker_goterm_with_dups
-		select m.mrkr_zdb_id, g.goterm_zdb_id, m.goterm_source
-		from marker_goid m, go_term g
-		where m.goterm_id = g.goterm_go_id;
-	
-	create temp table pre_marker_goterm (
-		mrkrgo_zdb_id	varchar(50),
-		mrkr_zdb_id 	varchar(50),
-		mrkr_goterm_zdb_id	varchar(50)	
-	)with no log;
-	insert into pre_marker_goterm (mrkr_zdb_id, mrkr_goterm_zdb_id)
-		select distinct mrkr_zdb_id, mrkr_goterm_zdb_id 
-		from marker_goterm_with_dups;
-  
-	update pre_marker_goterm set mrkrgo_zdb_id = get_id ("MRKRGO");
 
-!echo 'Detect exist GO records'
-	insert into exist_record
-		select m.mrkrgo_zdb_id, p.mrkrgo_zdb_id
-		  from marker_go_term m, pre_marker_goterm p
-		 where m.mrkrgo_mrkr_zdb_id = p.mrkr_zdb_id 
-		   and m.mrkrgo_go_term_zdb_id = p.mrkr_goterm_zdb_id ;
+	update pre_marker_go_evidence set mrkrgoev_zdb_id = get_id ("MRKRGOEV");
+	update pre_marker_go_evidence set mrkrgoev_evidence_code = "IEA";
+
+!echo 'these 3 have term name "* unknown", we donot want to include'
+        delete from pre_marker_go_evidence where go_zdb_id in 
+		(select goterm_zdb_id from go_term where goterm_name like "% unknown");
+
+!echo 'if a known go term is assigned to the same marker that has an unknown go term, delete the unknown one'
+	delete from zdb_active_data where zactvd_zdb_id in 
+				      (	select m.mrkrgoev_zdb_id 
+					  from marker_go_term_evidence m, go_term u,
+						pre_marker_go_evidence p, go_term g
+					 where m.mrkrgoev_mrkr_zdb_id = p.mrkr_zdb_id
+					   and m.mrkrgoev_go_term_zdb_id = u.goterm_zdb_id	
+					   and p.go_zdb_id  = g.goterm_zdb_id
+					   and u.goterm_ontology = g.goterm_ontology
+					   and u.goterm_go_id in ("0005554", "0000004", "0008372")
+					   and u.goterm_go_id <> g.goterm_go_id  );
 
 
 
-	delete from pre_marker_goterm
-		where mrkrgo_zdb_id in
-			(select new_zdb_id from exist_record); 
-        delete from pre_marker_goterm where mrkr_goterm_zdb_id in ('ZDB-GOTERM-031121-4568','ZDB-GOTERM-031121-4','ZDB-GOTERM-030325-144');
- 
-!echo 'Insert MRKRGO into zdb_active_data'
+
+!echo 'Insert MRKRGOEV into zdb_active_data'
 	insert into zdb_active_data
-		select mrkrgo_zdb_id from pre_marker_goterm;
-
-!echo 'Insert into marker_go_term'
-	insert into marker_go_term 
-		select mrkrgo_zdb_id, mrkr_zdb_id, mrkr_goterm_zdb_id, CURRENT,CURRENT,'ZFIN Electronic Annotation','ZFIN Electronic Annotation'
-		from pre_marker_goterm;
-
-	create temp table mrkrgo_source (
-                mrkrgoev_zdb_id varchar(50), 
-		mrkrgo_zdb_id	varchar(50),
-		mrkrgo_source	varchar(50),
-                mrkrgo_evidence char(3),
-                mrkrgo_infered varchar(255),
-                mrkrgo_note varchar(255) 
-	)with no log;
-	insert into mrkrgo_source (mrkrgo_zdb_id,mrkrgo_source)
-		select m1.mrkrgo_zdb_id, m2.mrkr_goterm_source
-		from marker_go_term m1, marker_goterm_with_dups m2
-		where m1.mrkrgo_mrkr_zdb_id = m2.mrkr_zdb_id and
-		      m1.mrkrgo_go_term_zdb_id = m2.mrkr_goterm_zdb_id;	
-	  
-	update mrkrgo_source set mrkrgoev_zdb_id = get_id ("MRKRGOEV");
-	update mrkrgo_source set mrkrgo_evidence = 'IEA';
-	update mrkrgo_source set mrkrgo_infered = NULL;
-	update mrkrgo_source set mrkrgo_note = '';
-	insert into zdb_active_data
-		select mrkrgoev_zdb_id from mrkrgo_source;
-!echo 'Attribute MRKRGO to the internal pub record'
-	insert into record_attribution
-	  	select mrkrgoev_zdb_id,mrkrgo_source,'' from mrkrgo_source;
+		select mrkrgoev_zdb_id from pre_marker_go_evidence;
 
 !echo 'Insert into marker_go_term_evidence'
-	insert into marker_go_term_evidence
-		select mrkrgoev_zdb_id,mrkrgo_zdb_id,mrkrgo_source, mrkrgo_evidence,mrkrgo_note,CURRENT,CURRENT,'ZFIN Electronic Annotation', 'ZFIN Electronic Annotation' from mrkrgo_source;
+	insert into marker_go_term_evidence(mrkrgoev_zdb_id,mrkrgoev_mrkr_zdb_id, mrkrgoev_go_term_zdb_id,
+				mrkrgoev_source_zdb_id, mrkrgoev_evidence_code,mrkrgoev_notes,
+				mrkrgoev_date_entered,mrkrgoev_date_modified,mrkrgoev_contributed_by,
+				mrkrgoev_modified_by)
+		select mrkrgoev_zdb_id,mrkr_zdb_id, go_zdb_id,
+		       mrkrgoev_source, mrkrgoev_evidence_code,mrkrgoev_notes,
+		       CURRENT,CURRENT,mrkrgoev_ref, mrkrgoev_ref 
+		  from pre_marker_go_evidence;
+
+	
+--	db trigger attributes MRKRGOEV to the internal pub record
+--	insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
+--	  	               select mrkrgoev_zdb_id,mrkrgoev_source from pre_marker_go_evidence;
+
+
+	
 
 ---------------- loading cc field -----------------------------
 
@@ -364,13 +368,9 @@ select db_name,acc_num from pre_db_link where dblink_fdbcont_zdb_id is null;
                 where t.cc_note = e.extnote_note_file;
 
 !echo 'Insert into data_external_note'
-        insert into data_external_note
+        insert into data_external_note (dextnote_data_zdb_id, dextnote_extnote_zdb_id)
                         select distinct * from data_external_note_with_dups;
 
-
-        insert into record_attribution
-                select extrecd_zdb_id, "ZDB-PUB-020723-2",''
-                  from exist_record;
 
 --rollback work;
 commit work;
