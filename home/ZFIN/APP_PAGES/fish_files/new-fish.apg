@@ -221,10 +221,21 @@ $1<?/MISQL>
       <TR>
 	<TD>
 	  <?MISQL SQL="
-	    select name, address
-	      from int_data_supplier, sources
+	    select full_name, address
+	      from int_data_supplier, person
 	      where idsup_data_zdb_id = '$temp_oid'
-		and idsup_supplier_zdb_id = zdb_id;">
+		and idsup_supplier_zdb_id = zdb_id
+	     union
+	    select name, address
+	      from int_data_supplier, lab
+	      where idsup_data_zdb_id = '$temp_oid'
+		and idsup_supplier_zdb_id = zdb_id
+	     union
+	    select name, address
+	      from int_data_supplier, company
+	      where idsup_data_zdb_id = '$temp_oid'
+		and idsup_supplier_zdb_id = zdb_id			
+		;">
 	    <b>$1</b><br>
 	    <font size="-1">$2</font>
 	  <?/MISQL>
