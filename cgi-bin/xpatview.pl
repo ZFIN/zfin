@@ -38,7 +38,7 @@ sub xpatview {
       print "<tr bgcolor=$mycolor><td><u>$pub</u></td>";
       print "<td><u>$fish</u></td>";
       print "<td>$assay</td>";
-      print "<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<u>$details</u></td>";
+      print "<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$details</td>";
 
     }
 
