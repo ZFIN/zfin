@@ -32,6 +32,7 @@ ENDEMICTARGETS_PRE = $(HTTP_DATA_TRANSFER_DIR)
 
 AD = /research/zusers/tomc/ANATOMY/anatomy_dictionary_previous/ad.txt
 
+
 # ---------------  Production Rules  ------------------------------------
 
 # use default rules for directories without app pages in them
@@ -43,7 +44,6 @@ include $(TOP)/make.default.rules
 
 $(HTTP_DATA_TRANSFER_DIR) :
 	$(TARGET_MKDIR) $@
-
 
 # ---------------  Misc Targets  ----------------------------------------
 

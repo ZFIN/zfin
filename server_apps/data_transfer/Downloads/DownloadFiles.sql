@@ -72,7 +72,7 @@ insert into ortho_exp
          '123456789012345678901234567890'::varchar(50), 
          '123456789012345678901234567890'::varchar(50),
          '123456789012345678901234567890'::varchar(50),
-	 '123456789012345678901234567890'::varchar(50)
+         '123456789012345678901234567890'::varchar(50)
     from orthologue,marker
 	where c_gene_id = mrkr_zdb_id;
 
@@ -143,14 +143,67 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/yeast_orthos.txt'
 
 -- generate a file with genes and associated expression patterns
 
-
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpat.txt'
- DELIMITER "	"  select mrkr_zdb_id, mrkr_abbrev, xpat_assay_name, xpat_zdb_id from marker, expression_pattern_assay, expression_pattern, marker_relationship where mrkr_zdb_id = mrel_mrkr_1_zdb_id and mrel_mrkr_2_zdb_id = xpat_probe_zdb_id and xpat_assay_name = xpatassay_name order by 1;
+ DELIMITER "	"  
+ select gene.mrkr_zdb_id[1,26] ene_zdb,
+    gene.mrkr_abbrev[1,20] gene_sym,
+    probe.mrkr_zdb_id[1,26] probe_zdb,
+    probe.mrkr_abbrev[1,20] probe_sym,
+    --dblink_acc_num[1,10] genbank_acc,
+    xpat_assay_name[1,20] assay_type, 
+    xpat_zdb_id[1,26] xpad_zdb_id, 
+    recattrib_source_zdb_id[1,26] pub_zdb
+ from marker gene, marker probe, 
+    expression_pattern_assay, 
+    expression_pattern, 
+    marker_relationship,
+    db_link,
+    record_attribution,
+    foreign_db_contains
+ where gene.mrkr_zdb_id = mrel_mrkr_1_zdb_id 
+ and mrel_mrkr_2_zdb_id = xpat_probe_zdb_id 
+ and xpat_assay_name = xpatassay_name
+ and probe.mrkr_zdb_id = xpat_probe_zdb_id
+ and probe.mrkr_zdb_id = dblink_linked_recid
+ and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+ and fdbcont_fdb_db_name in ('Genbank','RefSeq')
+ and fdbcont_fdbdt_data_type = 'cDNA'
+ and xpat_zdb_id = recattrib_data_zdb_id
+ union
+ select gene.mrkr_zdb_id[1,26] gene_zdb,
+    gene.mrkr_abbrev[1,20] gene_sym,
+    probe.mrkr_zdb_id[1,26] probe_zdb,
+    probe.mrkr_abbrev[1,20] probe_sym,
+    --dblink_acc_num[1,10] genbank_acc,
+    xpat_assay_name[1,20] assay_type, 
+    xpat_zdb_id[1,26] xpad_zdb_id, 
+    recattrib_source_zdb_id[1,26] pub_zdb
+from marker gene, marker probe, 
+    expression_pattern_assay, 
+    expression_pattern, 
+    marker_relationship,
+    db_link,
+    record_attribution,
+    foreign_db_contains
+ where gene.mrkr_zdb_id = mrel_mrkr_1_zdb_id 
+ and mrel_mrkr_2_zdb_id = xpat_probe_zdb_id 
+ and xpat_assay_name = xpatassay_name
+ and probe.mrkr_zdb_id = xpat_probe_zdb_id
+ and gene.mrkr_zdb_id = dblink_linked_recid
+ and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+ and fdbcont_fdb_db_name in ('Genbank','RefSeq')
+ and fdbcont_fdbdt_data_type = 'cDNA'
+ and xpat_zdb_id = recattrib_data_zdb_id
+ order by 1,3,7;
+
 
 
 -- Create mapping data file
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/mappings.txt'
- DELIMITER "	" select marker_id, mrkr_abbrev, p.abbrev,or_lg, lg_location, p.metric from mapped_marker, panels p, marker m where refcross_id = p.zdb_id and marker_id = mrkr_zdb_id order by 1;
+ DELIMITER "	" select marker_id, mrkr_abbrev, p.abbrev,or_lg, lg_location, p.metric 
+ from mapped_marker, panels p, marker m 
+ where refcross_id = p.zdb_id and marker_id = mrkr_zdb_id 
+ order by 1;
 
 -- Generate sequence data files for Genbank, RefSeq, LocusLink, UniGene, SWISS-PROT, Interpro and GenPept
 
@@ -249,11 +302,81 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/alleles.txt'
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/zdb_history.txt'
  DELIMITER "	" select zrepld_old_zdb_id, zrepld_new_zdb_id from zdb_replaced_data;
-
+ 
 -- clean up
 drop table ortho_exp;
 drop table alleles_exp;
 
 
+-- sql pulled over from the Sanger downloads ---------------------------------------------
 
+-- indirect sequence links for genes
+
+select distinct gene.mrkr_zdb_id gene_zdb,
+       gene.mrkr_abbrev gene_sym,
+       dblink_acc_num genbank_acc
+from marker gene, marker est, db_link, marker_relationship, foreign_db_contains
+where gene.mrkr_zdb_id = mrel_mrkr_1_zdb_id 
+and   est.mrkr_zdb_id  = mrel_mrkr_2_zdb_id 
+and  mrel_type = 'gene encodes small segment'
+and est.mrkr_zdb_id = dblink_linked_recid
+and est.mrkr_type  in ('EST','CDNA')
+and gene.mrkr_type = 'GENE'
+and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+and fdbcont_fdb_db_name = 'Genbank'
+and gene.mrkr_abbrev[3,20] <> ':' || est.mrkr_abbrev --omit bonus genes
+into temp tmp_veg with no log;
+
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/gene_seq.txt'
+ DELIMITER "	"  
+select * from tmp_veg
+order by 1,3;
+
+drop table tmp_veg; 
+
+
+-- CV and XPAT associations for VEGA
+
+unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/stage_ontology.txt'
+ DELIMITER "	" 
+select distinct stg_zdb_id,
+           stg_name,
+           stg_hours_start,
+           stg_hours_end
+from stage
+where stg_zdb_id not in (
+          select stgcon_containeR_zdb_id from stage_contains
+)  
+order by 3 ASC
+;
+
+unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/anatomy_item.txt'
+ DELIMITER "	" 
+select 
+    anatitem_zdb_id,
+    anatitem_name,
+    anathier_name,
+    anatitem_start_stg_zdb_id,
+    anatitem_end_stg_zdb_id
+from anatomy_item, anatomy_hierarchy
+where anatitem_type_code = anathier_code
+;
+
+unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/anatomy_ontology.txt'
+DELIMITER "	" 
+select * from anatomy_contains;
+
+--
+unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpat_stage_anatomy.txt'
+ DELIMITER "	" 
+select 
+    xpatstg_xpat_zdb_id,
+    xpatstg_start_stg_zdb_id,
+    xpatstg_end_stg_zdb_id,
+    xpatanat_anat_item_zdb_id  -- or null 
+from expression_pattern_stage, outer expression_pattern_anatomy
+where xpatstg_xpat_zdb_id      = xpatanat_xpat_zdb_id
+and   xpatstg_start_stg_zdb_id = xpatanat_xpat_start_stg_zdb_id
+and   xpatstg_end_stg_zdb_id   = xpatanat_xpat_end_stg_zdb_id
+;
 
