@@ -545,13 +545,14 @@
  
   <?MIVAR NAME=$lastitem><?/MIVAR>
   <?MISQL SQL="
-    select a.DB_name, conc(conc(b.DB_query,a.acc_num),b.url_suffix), 
+    select a.db_name, b.db_query || a.acc_num || b.url_suffix, 
          acc_num, b.db_significance, a.dblink_zdb_id
-    from db_link a, foreign_DB b 
-    where a.DB_name = b.DB_name
-      and a.linked_recid = '$OID' 
-      and b.db_type='protein sequence'
-    order by b.db_significance,a.DB_name,acc_num;">
+      from db_link a, foreign_db b, foreign_db_contains 
+      where a.db_name = b.db_name
+        and a.linked_recid = '$OID' 
+        and b.db_name = fdbcont_db_name
+        and fdbcont_data_type = 'protein sequence'
+      order by b.db_significance, a.db_name, acc_num;">
 
     <?MIVAR NAME=$dblinkZdbId>$5<?/MIVAR>
     
@@ -568,8 +569,12 @@
           <br>
   	  <b>Add link to Protein Seq DB:</b> &nbsp;
   	  DBname:<SELECT name=prt_seqdb>
-  	  <?MISQL SQL="select distinct DB_name from foreign_DB where db_type='protein sequence';">
-  	  <option value="$1">$1
+  	  <?MISQL SQL="
+	    select fdbcont_db_name 
+	      from foreign_db_contains
+	      where fdbcont_data_type = 'protein sequence'
+	      order by fdbcont_db_name;">
+	    <option value="$1">$1
   	  <?/MISQL>
   	  </SELECT>
  	   Accession:<input type=text size=15 name=prt_seq_acc> 
@@ -833,9 +838,13 @@
 <br>
 <b>Add link to Seq DB:</b> &nbsp;
 DBname:<SELECT name=seqdb>
-<?MISQL SQL="select distinct DB_name from foreign_DB where db_type='sequence' and db_name <> 'BLAST';">
-<option value="$1">$1
-<?/MISQL>
+  <?MISQL SQL="
+    select fdbcont_db_name 
+      from foreign_db_contains
+      where fdbcont_data_type = 'sequence' 
+      order by fdbcont_db_name;">
+    <option value="$1">$1
+  <?/MISQL>
 </SELECT>
 Accession:<input type=text size=15 name=seq_acc> 
 <input type=button value="Add it!" onClick=new_seqnum();>
@@ -860,22 +869,25 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 <?MIVAR NAME=$empty>1<?/MIVAR>
 <?MIVAR NAME=$more>0<?/MIVAR>
 <?MISQL SQL="
-  select a.DB_name, conc(conc(b.DB_query,a.acc_num),b.url_suffix), acc_num, dblink_zdb_id 
-    from db_link a, foreign_DB b 
-    where a.DB_name = b.DB_name
+  select a.db_name, b.db_query || a.acc_num || b.url_suffix, acc_num, 
+	 dblink_zdb_id 
+    from db_link a, foreign_db b, foreign_db_contains
+    where a.db_name = b.db_name
+      and b.db_name = fdbcont_db_name
       and a.linked_recid = '$OID' 
-      and b.db_type = 'sequence'
+      and fdbcont_data_type = 'sequence'
       and b.db_significance = 1
- UNION
-  select a.DB_name, conc(conc(b.DB_query,a.acc_num),b.url_suffix), acc_num, dblink_zdb_id
-    from db_link a, foreign_DB b, marker_relationship c
-    where a.DB_name = b.DB_name
+  UNION
+  select a.db_name, b.db_query || a.acc_num || b.url_suffix, acc_num, 
+         dblink_zdb_id
+    from db_link a, foreign_db b, foreign_db_contains, marker_relationship c
+    where a.db_name = b.db_name
+      and b.db_name = fdbcont_db_name
       and c.mrel_mrkr_1_zdb_id = '$OID' 
       and c.mrel_mrkr_2_zdb_id = a.linked_recid 
-      and b.db_type = 'sequence'
+      and fdbcont_data_type = 'sequence'
       and b.db_significance = 1 
-  order by 1 desc, 3
-;">
+  order by 1 desc, 3;">
   $(IF,$(=,$MI_CURRENTROW,1),<TD align=left>)
   
   <!-- if more than five Genbank, Genbank info go to another page -->
@@ -938,14 +950,15 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 <?MIVAR> $(IF,$(!=,$MI_CURRENTROW,0),</TD>) <?/MIVAR>
 
 <?MISQL SQL="
-  select a.DB_name, conc(conc(b.DB_query,a.acc_num),b.url_suffix), 
+  select a.db_name, b.db_query || a.acc_num || b.url_suffix,
          acc_num, b.db_significance, a.dblink_zdb_id
-    from db_link a, foreign_DB b 
-    where a.DB_name = b.DB_name
+    from db_link a, foreign_DB b, foreign_db_contains 
+    where a.db_name = b.db_name
+      and b.db_name = fdbcont_db_name
       and a.linked_recid = '$OID' 
       and b.db_significance > 1
-      and b.db_type = 'sequence'
-     order by b.db_significance,a.DB_name,acc_num;">
+      and fdbcont_data_type = 'sequence'
+     order by b.db_significance, a.DB_name,acc_num;">
   $(IF,$(AND,$(NC,$lastitem,$1),$(>,$MI_CURRENTROW,1)),</TD>)
   $(IF,$(NC,$lastitem,$1),<TD align=left>)
   <li>
