@@ -13,6 +13,17 @@ OUTPUT VARS:
 
 <?/MICOMMENT>
 
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+
+<?/MIERROR>
+
 
 <SCRIPT>
 
@@ -99,73 +110,104 @@ I am pleased to report that information about <?MIVAR>$(IF,$(EC,$status,preview)
 <?/MIVAR>
 <p>
 
-<?MICOMMENT>==An order of Gene, Gene Expression, Fish, Locus is expected. Currently there is significance order for marker types, but Mutant is not ranked yet, and XPAT is not included. In zdb_object_type, GENE and XPAT are labeled as first tier, while FISH and LOCUS second. So borrow that for ordering.
-==<?/MICOMMENT>
-<?MISQL SQL="select recattrib_data_zdb_id, zobjtype_attribution_display_tier
-               from record_attribution, zdb_object_type
+<?MICOMMENT>An order of Gene, Gene Expression, Fish, Locus is expected. Curators requested that genes be ordered by abbrev, fish be ordered by locus abbrev. <?/MICOMMENT>
+
+<?MIVAR NAME=mysql>
+             select 'Gene',mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_abbrev_order
+               from record_attribution, marker
               where recattrib_source_zdb_id = '$OID'
-	        and get_obj_type(recattrib_data_zdb_id) = zobjtype_name
-           order by zobjtype_attribution_display_tier,recattrib_data_zdb_id ;">
- 
-	<?MIVAR NAME=attrib_data_id>$1<?/MIVAR>
-  
-  <?MIVAR NAME=attrib_data_title><?/MIVAR>
-  <?MIBLOCK COND="$(>,$(POSITION,$attrib_data_id,FISH),0)">
-    <?MIVAR NAME=attrib_data_title>Mutant<?/MIVAR>
-    <?MIVAR NAME=query_attrib_data>
-		select name, abbrev
-                 from fish
-                where zdb_id ='$attrib_data_id'
-    <?/MIVAR> 
-  <?/MIBLOCK>
-  <?MIBLOCK COND="$(>,$(POSITION,$attrib_data_id,LOCUS),0)">
-    <?MIVAR NAME=attrib_data_title>Mutant<?/MIVAR>
-    <?MIVAR NAME=query_attrib_data>
-		select locus_name, abbrev
-                 from locus
-                where zdb_id ='$attrib_data_id'
-    <?/MIVAR> 
-  <?/MIBLOCK>
-  <?MIBLOCK COND="$(>,$(POSITION,$attrib_data_id,GENE),0)">
-    <?MIVAR NAME=attrib_data_title>Gene<?/MIVAR>
-    <?MIVAR NAME=query_attrib_data>
-		select mrkr_name, mrkr_abbrev
-                 from marker
-                where mrkr_zdb_id ='$attrib_data_id'
-    <?/MIVAR> 
-  <?/MIBLOCK>
-  <?MIBLOCK COND="$(>,$(POSITION,$attrib_data_id,XPAT),0)">
-    <?MIVAR NAME=attrib_data_title>Gene Expression<?/MIVAR>
-    <?MIVAR NAME=query_attrib_data>
-		select mrkr_name, mrkr_abbrev
-                 from marker, expression_pattern
-                where xpat_zdb_id ='$attrib_data_id'    
-		  AND xpat_gene_zdb_id = mrkr_zdb_id
-    <?/MIVAR> 
-  <?/MIBLOCK>
+	        and recattrib_data_zdb_id   = mrkr_zdb_id
+		and mrkr_type = 'GENE'
+           order by mrkr_abbrev_order;
+<?/MIVAR>
+<?MIVAR NAME=sqlArray>$mysql<?/MIVAR>
+
+<?MIVAR NAME=mysql>
+             select distinct 'Gene Expression', mrkr_zdb_id, mrkr_name, mrkr_abbrev, 
+		    mrkr_abbrev_order
+               from record_attribution, marker, expression_pattern
+              where recattrib_source_zdb_id = '$OID'
+	        and recattrib_data_zdb_id   = xpat_zdb_id
+		and xpat_gene_zdb_id = mrkr_zdb_id
+           order by mrkr_abbrev_order;
+<?/MIVAR>
+<?MIVAR>$(VECAPPEND,$sqlArray,$mysql)<?/MIVAR>
+
+<?MIVAR NAME=mysql>
+             select 'Mutant', fish.zdb_id, fish.name, fish.abbrev, 
+		    locus_abbrev_order
+               from record_attribution, fish, locus
+              where recattrib_source_zdb_id = '$OID'
+	        and recattrib_data_zdb_id   = fish.zdb_id
+		and fish.locus = locus.zdb_id
+           order by locus_abbrev_order;
+<?/MIVAR>
+<?MIVAR>$(VECAPPEND,$sqlArray,$mysql)<?/MIVAR>
+
+<?MIVAR NAME=mysql>
+             select 'Mutant', zdb_id, locus_name, abbrev, locus_abbrev_order
+               from record_attribution, locus
+              where recattrib_source_zdb_id = '$OID'
+	        and recattrib_data_zdb_id   = zdb_id
+           order by locus_abbrev_order;
+<?/MIVAR>
+<?MIVAR>$(VECAPPEND,$sqlArray,$mysql)<?/MIVAR>
+
+<?MIBLOCK INDEX=$sql FOREACH=$sqlArray>
+    <?MIVAR NAME=addLineBreak>f<?/MIVAR>
+
+    <?MISQL SQL="$sql"> 	
+
+        <?MIVAR NAME=attrib_data_title>$1<?/MIVAR>
+	<?MIVAR NAME=attrib_data_id>$2<?/MIVAR>
+	<?MIVAR NAME=attrib_data_name>$3<?/MIVAR>
+        <?MIVAR NAME=attrib_data_abbrev>$4<?/MIVAR> 
 	
-  <?MIBLOCK COND="$(NC,$attrib_data_title,)">
-    <?MISQL SQL="$query_attrib_data;">
-	<?MIVAR NAME=attrib_data_name>$1<?/MIVAR>
-        <?MIVAR NAME=attrib_data_abbrev>$2<?/MIVAR> 
-	
-    <?/MISQL>
- 
-    <?MIVAR COND="$(EC,$status,edit)">
-       <INPUT TYPE=checkbox NAME=notif_item VALUE="$attrib_data_id" $(IF,$(AND,$(XST,$notif_items),$(>,$(POSITION,$notif_items,$attrib_data_id),0)), CHECKED)>
-        $attrib_data_title: <i>$attrib_data_name</i> (<i>$attrib_data_abbrev</i>)
-        <br><?MICOMMENT>we always only want to link to production page<?/MICOMMENT>
-        <a href="http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id">http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id</a> 
-        <br>
-    <?/MIVAR>
-    <?MIVAR COND="$(AND,$(EC,$status,preview),$(XST,$notif_items),$(>,$(POSITION,$notif_items,$attrib_data_id),0))">       
-	$attrib_data_title: <i>$attrib_data_name</i> (<i>$attrib_data_abbrev</i>)
-        <br><?MICOMMENT>we always only want to link to production page<?/MICOMMENT>
-  	<a href="http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id">http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id</a> 
-        <br>
-     <?/MIVAR>
-  <?/MIBLOCK>	
-<?/MISQL>
+        <?MICOMMENT> to distinguish from gene <?/MICOMMENT>
+        <?MIVAR COND="$(EC,$attrib_data_title,Gene Expression)">
+	   $(SETVAR,$attrib_data_id,$attrib_data_id"XPAT")
+	<?/MIVAR>
+      
+        <?MIVAR COND="$(EC,$status,edit)">
+           <INPUT TYPE=checkbox NAME=notif_item VALUE="$attrib_data_id" $(IF,$(AND,$(XST,$notif_items),$(>,$(POSITION,$notif_items,$attrib_data_id),0)), CHECKED)>
+           $attrib_data_title: <i>$attrib_data_name</i> (<i>$attrib_data_abbrev</i>)
+           <br>
+	   <?MIBLOCK COND="$(NC,$attrib_data_title,Gene Expression)">
+	     <?MIVAR>
+	        <?MICOMMENT>we always only want to link to production page<?/MICOMMENT>
+                <a href="http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id">http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id</a> 
+	     <?/MIVAR>
+	   <?MIELSE>
+	     <?MIVAR>
+		<a href="http://zfin.org/cgi-bin/webdriver?MIval=aa-xpatindexview.apg&OID=$OID">curated gene expression</a>
+	     <?/MIVAR>
+	   <?/MIBLOCK>
+           <br>
+	   $(SETVAR,$addLineBreak,t)
+        <?/MIVAR>
+
+        <?MIVAR COND="$(AND,$(EC,$status,preview),$(XST,$notif_items),$(>,$(POSITION,$notif_items,$attrib_data_id),0))">       
+	   $attrib_data_title: <i>$attrib_data_name</i> (<i>$attrib_data_abbrev</i>)
+           <br>	  
+	   <?MIBLOCK COND="$(NC,$attrib_data_title,Gene Expression)">
+	     <?MIVAR>
+	        <?MICOMMENT>we always only want to link to production page<?/MICOMMENT>
+                <a href="http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id">http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id</a> 
+	     <?/MIVAR>
+	   <?MIELSE>
+	     <?MIVAR>
+		<a href="http://zfin.org/cgi-bin/webdriver?MIval=aa-xpatindexview.apg&OID=$OID">curated gene expression</a>
+	     <?/MIVAR>
+	   <?/MIBLOCK>
+           <br>
+	   $(SETVAR,$addLineBreak,t)
+        <?/MIVAR>
+
+  <?/MISQL>
+  <?MIVAR COND="$(EC,$addLineBreak,t)">
+     <br> <?MICOMMENT> extra line to separate each category <?/MICOMMENT>
+  <?/MIVAR>
+<?/MIBLOCK>	
 
 
 <?MIVAR COND="$(OR,$(EC,$status,edit),$(XST,$notif_item))">
