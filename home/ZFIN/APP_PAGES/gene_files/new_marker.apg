@@ -67,7 +67,7 @@ if(theform.mname.value=='' || theform.abbrev.value=='') {
 <?/MIVAR>
 <?MIVAR COND="$(EC,$marker_type,GENE)">
 <b>Allele<b> (if known): 
-<input type=text name=allele size=15>
+<input type=text name=allele size=10>
 <?/MIVAR>
 </TD>
 </TR>
