@@ -10,6 +10,6 @@ foreach file (CB*.jpg)
 	Annotator "$file";
 	thumbnail.sh 64 $file:r--C.jpg > $file:r--t.jpg ;
 end
-mv CB*--?.* ..
-cp -p CB*.jpg ..
-cp -p CB*.txt ..
+mv *--?.* ..
+cp -p [c,C]*.jpg ..
+cp -p [c,C]*.txt ..
