@@ -59,7 +59,7 @@ create dba function "informix".regen_fishsearch()
     create table fishsearch_new 
       (
 	fish_id		varchar (50), 
-	name		varchar (80)
+	name		varchar (120)
 	  not null,
 	fishsearch_name_order	varchar(100)
 	  not null,
@@ -80,8 +80,8 @@ create dba function "informix".regen_fishsearch()
 	alt_zdb_id	varchar (50)
       )
       fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3  
-      PUT phenotype in (smartbs1)
-      extent size 1024 next size 1024 lock mode page;
+      PUT phenotype in (smartbs1,smartbs2,smartbs3,smartbs4)
+      extent size 1024 next size 1024 lock mode row;
     revoke all on fish_search from "public";
 
     -- This can take a few minutes, so be patient.
