@@ -4,13 +4,9 @@
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
    <meta name="GENERATOR" content="Mozilla/4.74 [en] (Win98; U) [Netscape]">
    <title>ZIRC Request Form</title>
-   
 <link rel="stylesheet" type="text/css" href="zirc.css" />
-
 <script type="text/javascript" language="JavaScript1.1" src="zirc.js"></script>
-
 </head>
-
 <BODY text="#000000" bgcolor="#FFFFFF" onLoad="storedValues('zircAnimalsRequestProfile');">
 <center>
 	<p id=header>
@@ -21,7 +17,7 @@
   save your contact information between sessions. <br>
 Please set your preferences to allow Javascript and then Reload.</font>
 </noscript>
-<form NAME="theRequestForm" onSubmit="saveValues('zircAnimalsRequestProfile','10',''); formValues('zircAnimalRequest');" METHOD="post" ACTION="http://<!--|DOMAIN_NAME|-->/<!--|CGI_BIN_DIR_NAME|-->/cgiemail.cgi">
+<form name="theRequestForm" onSubmit="saveValues('zircAnimalsRequestProfile','10'); formValues('zircAnimalRequest');" METHOD="post" ACTION="http://<!--|DOMAIN_NAME|-->/<!--|CGI_BIN_DIR_NAME|-->/cgiemail.cgi">
   <table border=0 width=585 cellpadding=0 cellspacing=0 background="bgimage.jpg" name="liveAnimalsProfile">
       <tr> 
         <td colspan=2 valign=top><img src="bgtop.jpg"></td>
@@ -40,17 +36,11 @@ Please set your preferences to allow Javascript and then Reload.</font>
 	<input type="hidden" name="lineZFIN_ID">
 	<input type="hidden" name="lineName">
 	<input type="hidden" name="mutantAlleles">
-	<input type="hidden" name="requestingEmbryos">
-	<input type="hidden" name="requestingAdults">
+	<input type="hidden" name="type">
 	<input type="hidden" name="requestingOther">
 	<input type="hidden" name="quantity">
-	<input type="hidden" name="yesFishInLab">
-	<input type="hidden" name="noFishInLab">
-	<input type="hidden" name="yesRaisingEggs">
-	<input type="hidden" name="noRaisingEggs">
-	<input type="hidden" name="otherZFIN_ID">
-	<input type="hidden" name="otherName">
-	<input type="hidden" name="otherDescription">
+	<input type="hidden" name="fishExperience">
+	<input type="hidden" name="raisingEggs">
 	<input type="hidden" name="considerationsOther">
 		</td>
 	</tr>
@@ -102,7 +92,7 @@ Please set your preferences to allow Javascript and then Reload.</font>
         </td>
       </tr>
       <tr> 
-        <td align=right>Your Address <font color="#FF0000">*</font>&nbsp;<br>(No PO Boxes-this is the "Ship To" address.)&nbsp;</td>
+        <td align=right valign=top>Your Address <font color="#FF0000">*</font>&nbsp;<br>(No PO Boxes-this is the "Ship To" address.)&nbsp;</td>
         <td> 
           <textarea name="required_requesterAddress" cols="30" wrap="VIRTUAL" rows="4"></textarea>
         </td>
@@ -137,7 +127,7 @@ Please set your preferences to allow Javascript and then Reload.</font>
 			<td><input type="text" name="PILab" size="30"></td>
 		</tr>
 		<tr>
-			<td align=right>PI Address&nbsp;</td>
+			<td align=right valign=top>PI Address&nbsp;</td>
 			<td><textarea name="PIAddress" cols="30" wrap="VIRTUAL" rows="4"></textarea></td>
 		</tr>
 	  <tr>	
@@ -198,7 +188,7 @@ Please set your preferences to allow Javascript and then Reload.</font>
         </td>
       </tr>
       <tr> 
-        <td align=right>Address <font color="#FF0000">*</font>&nbsp;</td>
+        <td align=right valign=top>Address <font color="#FF0000">*</font>&nbsp;</td>
         <td>
           <textarea name="required_BillToAddress" cols="30" wrap="VIRTUAL" rows="4"></textarea>
         </td>
