@@ -9,98 +9,116 @@ Others -- if s_new exists, then name,abbrev,comments,alt_names should also exist
 
 <basefont size=2>
 
-<?MISQL SQL="select WebExplode(object,'page_title=New Marker&permission=root') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+<?MISQL SQL="
+  select WebExplode(object,'page_title=New Marker&permission=root') 
+    from webPages 
+    where ID='aa-secure_navigation.apg';">$1
+<?/MISQL>
 
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
-<?MIBLOCK COND="$(NXST,$marker_type)">
-<h1>Create new marker</h1>
+  <?MIBLOCK COND="$(NXST,$marker_type)">
+    <h1>Create new marker</h1>
 
-<form name=newdata method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
-<input type=hidden name=MIval value=aa-new_marker.apg>
+    <form name=newdata method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+      <input type=hidden name=MIval value=aa-new_marker.apg>
 
-<b>Type of new marker to create:</b>
-<SELECT name=marker_type>
-<option>GENE
-<option>EST
-<option>RAPD
-<option>SSLP
-<option>SSR
-<option>STS
-<option>AFLP
-</SELECT>  
+      <b>Type of new marker to create:</b>
+      <SELECT name=marker_type>
+	<option>GENE
+	<option>EST
+	<option>RAPD
+	<option>SSLP
+	<option>SSR
+	<option>STS
+	<option>AFLP
+      </SELECT>  
 
-<input type=submit value="create it">
-</form>
-<?/MIBLOCK>
+      <input type=submit value="create it">
+    </form>
+  <?/MIBLOCK>
 
-<?MIBLOCK COND="$(AND,$(XST,$marker_type),$(NXST,$s_new))">
+  <?MIBLOCK COND="$(AND,$(XST,$marker_type),$(NXST,$s_new))">
 
-<?MIVAR>
-<h1>Describe new $(UPPER,$marker_type)</h1>
-<SCRIPT>
-function validate(theform) {
-if(theform.mname.value=='' || theform.abbrev.value=='') {
-  alert('You must supply both name and abbreviation');
-  return false;
-} else {return true;}
-}
-</SCRIPT>
+    <?MIVAR>
+      <h1>Describe new $(UPPER,$marker_type)</h1>
+    <?/MIVAR>
+    <SCRIPT>
+      function validate(theform) {
+        if(theform.mname.value=='' || theform.abbrev.value=='') {
+	  alert('You must supply both name and abbreviation');
+	  return false;
+        } else {return true;}
+      }
+    </SCRIPT>
 
-<form name=newdata onSubmit="return validate(this);" method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
-<input type=hidden name=MIval value=aa-new_marker.apg>
-<input type=hidden name=marker_type value="$marker_type">
+    <?MIVAR>
+      <form name=newdata onSubmit="return validate(this);" method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+        <input type=hidden name=MIval value=aa-new_marker.apg>
+        <input type=hidden name=marker_type value="$marker_type">
 
-<p><B>$(UPPER,$marker_type) name</b> (required):
-<input type=text name=mname size=80>
+        <p><B>$(UPPER,$marker_type) name</b> (required):
+        <input type=text name=mname size=80>
 
-<p><b>Abbreviation</b> (required):
-<input type=text name=abbrev size=15>
-<?/MIVAR>
+        <p><b>Abbreviation</b> (required):
+        <input type=text name=abbrev size=15>
 
-<p><b>Alternate Names/Synonyms</b> (separate with semicolons):
-<input type=text size=25 name=alt_names>
-<p>
-<b>Description:</b><br>
-<TEXTAREA rows=5 cols=50 name=comments></TEXTAREA>
-<p>
+        <p><b>Alternate Names/Synonyms</b> (separate with semicolons):
+        <input type=text size=25 name=alt_names>
+        <p>
+        <b>Description:</b><br>
+        <TEXTAREA rows=5 cols=50 name=comments></TEXTAREA>
+        <p>
 
-<?MIVAR>
-<input type=submit name=s_new value="Submit new $(UPPER,$marker_type)">
-<?/MIVAR>
+        <input type=submit name=s_new value="Submit new $(UPPER,$marker_type)">
+      </form>
+    <?/MIVAR>
 
-</form>
+  <?/MIBLOCK> <!-- ends specifying params -->
 
-<?/MIBLOCK> <!-- ends specifying params -->
+  <!-- if marker values submitted -->
+  <?MIBLOCK COND="$(XST,$s_new)">
+    <?MIVAR COND="$(NXST,$alt_names)" NAME=$alt_names><?/MIVAR>
+    <?MIVAR COND="$(NXST,$comments)" NAME=$comments><?/MIVAR>
 
-<!-- if marker values submitted -->
-<?MIBLOCK COND="$(XST,$s_new)">
-<?MIVAR COND="$(NXST,$alt_names)" NAME=$alt_names><?/MIVAR>
-<?MIVAR COND="$(NXST,$comments)" NAME=$comments><?/MIVAR>
+    <?MIVAR NAME=$mname DELIMIT="'" REPLACE="''">$mname<?/MIVAR>
+    <?MIVAR NAME=$abbrev DELIMIT="'" REPLACE="''">$abbrev<?/MIVAR>
+    <?MIVAR NAME=$alt_names DELIMIT="'" REPLACE="''">$alt_names<?/MIVAR>
+    <?MIVAR NAME=$comments DELIMIT="'" REPLACE="''">$comments<?/MIVAR>
 
-<?MIVAR NAME=$mname DELIMIT="'" REPLACE="''">$mname<?/MIVAR>
-<?MIVAR NAME=$abbrev DELIMIT="'" REPLACE="''">$abbrev<?/MIVAR>
-<?MIVAR NAME=$alt_names DELIMIT="'" REPLACE="''">$alt_names<?/MIVAR>
-<?MIVAR NAME=$comments DELIMIT="'" REPLACE="''">$comments<?/MIVAR>
+    <?MISQL SQL="execute function get_id('$(UPPER,$marker_type)');"><?/MISQL>
+    <?MIVAR NAME=$new_id>$1<?/MIVAR>
 
-<?MISQL SQL="execute function get_id('$(UPPER,$marker_type)');"><?/MISQL>
-<?MIVAR NAME=$new_id>$1<?/MIVAR>
+    <?MISQL COND="$(EC,$marker_type,gene)" SQL="
+      insert into zdb_active_data 
+        (zactvd_zdb_id) 
+        values ('$new_id');">
+    <?/MISQL>
 
-<?MISQL COND="$(EC,$marker_type,gene)" SQL="insert into gene (zdb_id,gene_name,abbrev,comments,alt_names,mapped,owner) values ('$new_id','$mname','$abbrev','$comments','$alt_names','f','$ZDB_ident');"><?/MISQL>
+    <?MISQL COND="$(EC,$marker_type,gene)" SQL="
+      insert into gene 
+        (zdb_id,gene_name,abbrev,comments,alt_names,mapped,owner) 
+        values ('$new_id','$mname','$abbrev','$comments','$alt_names','f',
+        '$ZDB_ident');"><?/MISQL>
 
-<?MISQL COND="$(NC,$marker_type,gene)" SQL="insert into anon_marker (zdb_id,marker_name,abbrev,marker_type,comments,alt_names,owner) values ('$new_id','$mname','$abbrev','$(UPPER,$marker_type)','$comments','$alt_names','$ZDB_ident');"><?/MISQL>
+    <?MISQL COND="$(NC,$marker_type,gene)" SQL="
+      insert into anon_marker 
+        (zdb_id,marker_name,abbrev,marker_type,comments,alt_names,owner) 
+        values ('$new_id','$mname','$abbrev','$(UPPER,$marker_type)',
+                '$comments','$alt_names','$ZDB_ident');">
+    <?/MISQL>
 
-<?MIVAR>
-<h1>Confirmation: $(UPPER,$marker_type) record added</h1>
+    <?MIVAR>
+      <h1>Confirmation: $(UPPER,$marker_type) record added</h1>
 
-Click <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$new_id">here</A> to view the new $marker_type record.
-<p>
-Click <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg">here</A> to return to the ZFIN home page.
-<?/MIVAR>
+      Click <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$new_id">here</A>
+      to view the new $marker_type record.
+      <p>
+      Click <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg">here</A> 
+      to return to the ZFIN home page.
+    <?/MIVAR>
 
-
-<?/MIBLOCK>
-
+  <?/MIBLOCK>
 
 <?/MIBLOCK> <!-- ends Authorized -->
 
