@@ -36,6 +36,17 @@ pubOrder -- the column # to order results by (must be a number because of 'union
 <HTML>
 <HEAD>
 
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+
+<?/MIERROR>
+
 <?MIBLOCK COND="$(NXST,$OID)">
 <p>
 ERROR -- something bad happened -- no OID passed in!
@@ -89,7 +100,7 @@ $(IF,$(>,$(POSITION,$rtype,locus),0),
        $(SETVAR,$target_table,"")
        )
 
-$(IF,$(>,$(POSITION,$rtype,go),0),
+$(IF,$(>,$(POSITION,$rtype,goview),0),
        $(SETVAR,$return_page1,aa-markergoview.apg)
        $(SETVAR,$return_page2,aa-do-markergoedit.apg)
        $(SETVAR,$target_table,"")
@@ -138,9 +149,7 @@ $(IF,$(>,$(POSITION,$rtype,go),0),
 
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
   
-  <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=$rtype') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
-  <!--?MISQL COND="$(AND,$(NXST,$UPDATE),$(XST,$attribtype))" SQL="select WebExplode(object,'rtype=$rtype','attribtype=$attribtype','info=$info') from webPages where ID='aa-data_mgr.apg';"$1?/MISQL-->
-	
+  <?MISQL COND="$(AND,$(NXST,$UPDATE),$(NC,$rtype,goview))" SQL="select WebExplode(object,'rtype=$rtype') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
 
 <?MIVAR COND="$(XST,$UPDATE)">
         <form>
@@ -180,7 +189,7 @@ $(IF,$(>,$(POSITION,$rtype,go),0),
       recattrib_data_zdb_id in (select dblink_zdb_id from db_link where dblink_linked_recid = '$OID')
     or
       recattrib_data_zdb_id in (select oevdisp_zdb_id from orthologue_evidence_display where oevdisp_gene_zdb_id = '$OID')    or
-     recattrib_data_zdb_id in (select mrkrgoev_zdb_id from marker_go_term_evidence,marker_go_term  where mrkrgo_mrkr_zdb_id = '$OID' and mrkrgo_zdb_id = mrkrgoev_mrkrgo_zdb_id)
+     recattrib_data_zdb_id in (select mrkrgoev_zdb_id from marker_go_term_evidence where mrkrgoev_mrkr_zdb_id = '$OID')
    <?/MIVAR>
 
 <TABLE width=100%><TR><TD bgcolor=#ccccccc>
@@ -190,14 +199,10 @@ $(IF,$(>,$(POSITION,$rtype,go),0),
 
 <?MIBLOCK COND="$(XST,$total_count)">
    <?MIVAR>($total_count total)<?/MIVAR>
-<?MIELSE>
 
+<?MIELSE>
   <?MIBLOCK COND="$(NXST,$attribtype)">
-    <?MIBLOCK COND="$(>,$(POSITION,$OID,MRKRGO),0)">
-      <?MISQL SQL="select count(distinct recattrib_source_zdb_id) from record_attribution, marker_go_term,marker_go_term_evidence where mrkrgoev_mrkrgo_zdb_id='$OID' and mrkrgoev_zdb_id=recattrib_data_zdb_id and mrkrgoev_evidence_code='$evidence';">
-     ($(FIX,$1) total) 
-    <?/MISQL>
-   <?MIELSE>	
+	
     <?MISQL SQL="
       select count(distinct recattrib_source_zdb_id) 
         from record_attribution
@@ -207,8 +212,6 @@ $(IF,$(>,$(POSITION,$rtype,go),0),
       ">
      ($(FIX,$1) total) 
     <?/MISQL>	
-  <?/MIBLOCK>
-
 
   <?MIELSE COND="$(EC,$attribtype,colattrib)">
     <?MISQL SQL="
@@ -266,8 +269,9 @@ $(IF,$(>,$(POSITION,$rtype,go),0),
 
 
 <TABLE>
+<?MIBLOCK COND="$(NC,$rtype,goview)"> <!-- for GO annotation reference, deal separate --> 
 
-<?MIBLOCK COND="$(=,$count_of_real_pub,-9)">
+ <?MIBLOCK COND="$(=,$count_of_real_pub,-9)">
   <?MIVAR NAME=$count_of_real_pub>0<?/MIVAR>
   <?MISQL COND="$(>,$(POSITION,$OID,LOCUS),0)" SQL="
 		select count(distinct recattrib_source_zdb_id) 
@@ -538,26 +542,6 @@ $(IF,$(>,$(POSITION,$rtype,go),0),
     <?/MISQL>
    <?/MIBLOCK>
 
-    <?MIBLOCK COND="$(>,$(POSITION,$OID,MRKRGO),0)">
-      <?MISQL SQL="
-  	select distinct title, p.zdb_id, year(pub_date) as pyear, authors, source, 
-	 	lower(authors), pub_date
-   	  from record_attribution, publication p, marker_go_term_evidence
-     	 where mrkrgoev_mrkrgo_zdb_id='$OID'
-	   and mrkrgoev_zdb_id=recattrib_data_zdb_id
-      	   and recattrib_source_zdb_id = p.zdb_id and mrkrgoev_evidence_code='$evidence';">
-
-  	<TR>
-    	<TD align=left>
-      	<DIV class="show_pubs">
-		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$4 ($3) $1. $5.</A>
-        </DIV>
-    	</TD>
-  	</TR>
-  	<TR></TR><TR></TR>
-      <?/MISQL> 
-    <?/MIBLOCK> 
-
   <TR><TD>&nbsp;</TD><TR>
 
   <?MIVAR COND="$(AND,$(=,$(POSITION,$OID,LOCUS),0),$(=,$(POSITION,$OID,FISH),0))">
@@ -718,9 +702,52 @@ $(IF,$(>,$(POSITION,$rtype,go),0),
   </TR>
   <TR></TR><TR></TR>
 
- <?/MISQL>
+  <?/MISQL>
+   
+ <?/MIBLOCK> <!-- end of attribtype -->
 
-<?/MIBLOCK> <!-- end of attribtype -->
+<?MIELSE COND="$(EC,$rtype,goview)"> 
+      <?MISQL SQL="
+  	select distinct title, p.zdb_id, year(pub_date) as pyear, authors, source, 
+	 	lower(authors), pub_date
+   	  from publication p, marker_go_term_evidence
+     	 where mrkrgoev_source_zdb_id = p.zdb_id
+	   and mrkrgoev_mrkr_zdb_id = '$OID'
+	   and mrkrgoev_go_term_zdb_id ='$goterm'
+	   and mrkrgoev_evidence_code  ='$evidence'
+	   and p.jtype not in ('Curation','Unpublished');">
+
+  	<TR>
+    	<TD align=left>
+      	<DIV class="show_pubs">
+		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$4 ($3) $1. $5.</A>
+        </DIV>
+    	</TD>
+  	</TR>
+  	<TR></TR><TR></TR>
+      <?/MISQL>
+  <TR><TD>&nbsp;</TD><TR>
+      <?MISQL SQL="
+  	select distinct title, p.zdb_id, year(pub_date) as pyear, authors, source, 
+	 	lower(authors), pub_date
+   	  from publication p, marker_go_term_evidence
+     	 where mrkrgoev_source_zdb_id = p.zdb_id
+	   and mrkrgoev_mrkr_zdb_id = '$OID'
+	   and mrkrgoev_go_term_zdb_id ='$goterm'
+	   and mrkrgoev_evidence_code  ='$evidence'
+	   and p.jtype in ('Curation','Unpublished');">
+
+  	<TR>
+    	<TD align=left>
+      	<DIV class="show_pubs">
+		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$4 ($3) $1. $5.</A>
+        </DIV>
+    	</TD>
+  	</TR>
+  	<TR></TR><TR></TR>
+      <?/MISQL>
+   
+<?/MIBLOCK> <!-- end of go -->
 
 </TABLE>
 
