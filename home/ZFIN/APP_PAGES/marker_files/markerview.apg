@@ -191,11 +191,9 @@ $(IF,$(EC,$marker_type,GENE),"("$abbrev")")</B> </FONT>
 
 <TABLE width=100% cellpadding=5 border=4 bgcolor="#f8fabb" cols=2 rows=1>
 <TR>
-<TD valign=top colspan=2
+<TD valign=top colspan=2>
 
-<?MIVAR NAME=$override>$(IF,$(OR,$(EC,$ZDB_access,root),$(EC,$ZDB_access,fishauth)),true,false)<?/MIVAR>
-
-<?MIVAR><b>Reference Panel Location(s): $abbrev</b>  <?/MIVAR>
+<?MIVAR> <B>Reference Panel Location(s): $abbrev  </B><?/MIVAR> 
 <TABLE cols=3 width=100% colspan=2>
 
 <?MISQL SQL="select a.owner, lg_location, target_id as panel_id, OR_lg, target_abbrev as panel_abbrev,private,b.full_name,a.metric,day(a.entry_date::date),month(a.entry_date::date), year(a.entry_date::date) from paneled_markers a,person b where a.zdb_id='$OID' and OR_lg is not null and a.owner=b.zdb_id;">
@@ -214,13 +212,16 @@ $(IF,$(>,$MI_CURRENTROW,1),<TR><td colspan=2><hr width=80%></TD></TR>)
 <?MIVAR NAME=$upd_date> <?/MIVAR>
 <?/MIBLOCK>
 
+<?MIVAR NAME=$override>$(IF,$(OR,$(EC,$ZDB_access,root),$(EC,$ZDB_access,fishauth)),true,false)<?/MIVAR>
+
 $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),"<TD colspan=3><font size=2>LG <b>"$4"</b>;<b> "$2"</b> "$8" (<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$3">"$5" Panel; updated "$upd_date"</A>)</TD>","<TD colspan=2><font size=2>Mapped on <A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$3">"$5" Panel; updated "$upd_date"</A>, but still confidential.")
 </TD>
 
 
 </TR><TR>
-<TD colspan=2><font size=2>&nbsp;&nbsp;&nbsp; mapped by <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$1">$7</A></TD>
+<TD colspan=2><font size=2>&nbsp;&nbsp;&nbsp; mapped by <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$1">$7</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="javascript:view_scores('$3','$4','$OID','$abbrev');">Scoring Data</A></TD> 
 </TR>
+
 <?/MISQL>
 
 
@@ -282,7 +283,7 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),"<TD colspan=3><font size=2>LG <b>"$4
 <TABLE width=100% cellpadding=5 border=4 bgcolor="#f8fabb" cols=3 rows=1>
 <TR>
 <TD valign=top colspan=4>
-<?MIVAR> <B>Independent linkages to $abbrev:</b><?/MIVAR>
+<?MIVAR> <B>Other markers linked to $abbrev:</b><?/MIVAR>
 
 <TABLE cellpadding=1 cellspacing=0>
 <?MIVAR NAME=$curviewer>/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=<?/MIVAR>
