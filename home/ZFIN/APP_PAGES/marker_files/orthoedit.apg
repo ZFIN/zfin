@@ -15,7 +15,7 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
   <?MIVAR>
     <SCRIPT>
       function delete_link(acc_num) {
-        document.location='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-orthoedit.apg&UPDATE=1&OID=$OID&delacc='+acc_num;
+        document.location='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-orthoedit.apg&UPDATE=1&OID=$OID&geneId=$geneId&delacc='+acc_num;
       }
     </SCRIPT>
   <?/MIVAR>
@@ -35,7 +35,7 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
 <?MIBLOCK COND="$(NC,AUTHORIZED,false)">
 
   <?MIBLOCK COND="$(XST,$UPDATE)">
-
+   
     <?MIBLOCK COND="$(AND,$(XST,$oname),$(XST,$abbrev))">
       <?MIVAR NAME=$oname>$(TRIM,$oname)<?/MIVAR>
       <?MIVAR NAME=$abbrev>$(TRIM,$abbrev)<?/MIVAR>
@@ -88,14 +88,12 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
 	    insert into orthologue_evidence
 	          values('$OID', '$newevicode','$newpub');">
 	  <?/MISQL>
-	  
-	<?/MIBLOCK>
-
-	<?MIVAR COND="$(EC,$newpub,)">
-	 <SCRIPT>
-	  window.alert('Couldn't add. Publication should be provided');
-	 </SCRIPT>
-        <?/MIVAR>
+	  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-do-oevdispupdate.apg';">$1<?/MISQL>
+	<?MIELSE>
+	  <SCRIPT>
+	    window.alert('Couldn't add. Publication should be provided');
+	  </SCRIPT>
+        <?/MIBLOCK>
 
     <?/MIBLOCK>	
 
@@ -120,15 +118,15 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
 	          where oev_ortho_zdb_id = '$OID'
 		    and	oev_evidence_code = '$delevicode'
 		    and oev_pub_zdb_id = '$delpub';">
-	  <?/MISQL>
+	  <?/MISQL>  
+          <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-do-oevdispupdate.apg';">$1<?/MISQL>
+           
+	<?MIELSE>
+	  <SCRIPT>
+	    window.alert('Publication should be provided');
+	  </SCRIPT>
+        <?/MIBLOCK>
 
-	<?/MIBLOCK>
-
-	<?MIVAR COND="$(EC,$delpub,)">
-	 <SCRIPT>
-	  window.alert('Publication should be provided');
-	 </SCRIPT>
-        <?/MIVAR>
     <?/MIBLOCK>	
 
 
@@ -148,12 +146,8 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
 	delete from zdb_active_data
 	  where zactvd_zdb_id='$OID';">
       <?/MISQL>
-      <?MISQL SQL="
-	       delete from zdb_active_data
-		  where zactvd_zdb_id like '%OEVDISP%';">
-      <?/MISQL>
-  
-      <?MIVAR NAME=exiter>true<?/MIVAR>
+      <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-do-oevdispupdate.apg';">$1<?/MISQL>
+           
     <?/MIBLOCK>
 
 
@@ -185,6 +179,7 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
       <?MIVAR>
 	<input type=hidden name=MIval value=aa-orthoedit.apg>
 	<input type=hidden name=OID value=$OID>
+        <input type=hidden name=geneId value=$geneId>
 	<input type=hidden name=UPDATE value=1>
 
 	<center><big>EDITING: <b>$organism</b> orthologue to zebrafish gene 
@@ -278,7 +273,7 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
       (very scary, think carefullly!).
 
       <hr width=90%>
-      <input type=submit value="Commit Changes">
+     
       <input type=submit name=exiter value="Done-exit">
 
     </form>
@@ -287,7 +282,6 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
 
 <?MIVAR COND="$(XST,$exiter)">
 <SCRIPT>
-window.confirm('Exiting. Please return to the main window.\n Note that your updates will not be reflected there until that\n window is reloaded (so do not panic!)\Just continue working and all will be well!');
 window.close();</SCRIPT>
 <?/MIVAR>
 
