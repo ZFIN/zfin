@@ -48,9 +48,10 @@
   
   ### the known marker types
   my $types = 'SSLP';
-  my $anon_type = "RAPD\',\'RFLP\',\'SSR\',\'STS";
+  my $anon_type = "RAPD\',\'RFLP\',\'BAC\',\'SSR\',\'STS";
   my $gene_type = "GENE";
   my $est_type  = "EST";
+  my $bac_type  = "BAC";
   my $fish_type  = "FISH\',\'MUTANT\',\'LOCUS";
   
   ###
@@ -200,7 +201,7 @@
   if( (defined $Q->param("view_map")) && ($g_error == 0) ) {
     
     ### types is never defined by an external page so use them all.
-    $types = "SSLP\',\'RAPD\',\'RFLP\',\'SSR\',\'STS\',\'GENE\',\'EST\',\'FISH\',\'MUTANT\',\'LOCUS";
+    $types = "SSLP\',\'RAPD\',\'RFLP\',\'SSR\',\'STS\',\'GENE\',\'BAC\',\'EST\',\'FISH\',\'MUTANT\',\'LOCUS";
     
     if( ( !(defined $Q->param("OID")) ) || ($Q->param("OID") eq '') ) { # parse it as  ZDB-type-date-nunber  ?
       ### coming from some single source search 
@@ -353,7 +354,7 @@
       if($Q->param($panel.'_est')  && $Q->param($panel.'_est')==1) {$types = "$types\',\'$est_type"; $print_type += 2;}
       if($Q->param($panel.'_anon') && $Q->param($panel.'_anon')==1){$types = "$types\',\'$anon_type"; $print_type += 4;}
       if($Q->param($panel.'_fish') && $Q->param($panel.'_fish')==1){$types = "$types\',\'$fish_type"; $print_type += 8;}
-      if($print_type == 0){ $types = "SSLP\',\'RAPD\',\'RFLP\',\'SSR\',\'STS\',\'GENE\',\'EST\',\'FISH\',\'MUTANT\',\'LOCUS"; $print_type += 15;}
+      if($print_type == 0){ $types = "SSLP\',\'RAPD\',\'RFLP\',\'SSR\',\'STS\',\'GENE\',\'BAC\',\'EST\',\'FISH\',\'MUTANT\',\'LOCUS"; $print_type += 15;}
       
       #$note = $note . " will be finding  $types  markers on this refresh panel<p>\n";
       ### hidden panel, lg, lo,hi & zoom re-emited as hidden vars
@@ -421,7 +422,7 @@
       if($Q->param($panel.'_est') && $Q->param($panel.'_est')==1)  {$types = "$types\',\'$est_type"; $print_type += 2;}
       if($Q->param($panel.'_anon') && $Q->param($panel.'_anon')==1){$types = "$types\',\'$anon_type"; $print_type += 4; }
       if($Q->param($panel.'_fish') && $Q->param($panel.'_fish')==1){$types = "$types\',\'$fish_type"; $print_type += 8; }
-      if($print_type == 0){ $types = "SSLP\',\'RAPD\',\'RFLP\',\'SSR\',\'STS\',\'GENE\',\'EST\',\'FISH\',\'MUTANT\',\'LOCUS"; $print_type += 15;}
+      if($print_type == 0){ $types = "SSLP\',\'RAPD\',\'RFLP\',\'SSR\',\'STS\',\'GENE\',\'EST\',\'BAC\',\'FISH\',\'MUTANT\',\'LOCUS"; $print_type += 15;}
       
       #      $note = $note . " will be finding  $types  markers on the edit panel\n";
       $Q->param($panel, 1);
