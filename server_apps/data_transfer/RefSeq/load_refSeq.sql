@@ -32,7 +32,7 @@ create index llzdb_zdb_id_index on ll_zdb
 create temp table LL_GDB
   (
     llgdb_ll_id		varchar (50) not null,
-    llgdb_omim_id	varchar (50) not null,
+    llgdb_omim_id	varchar (50),
     llgdb_gdb_id	varchar (50) not null
   )
 with no log;
@@ -218,7 +218,8 @@ insert into gdb_omim_tmp
     from db_link, orthologue, ll_gdb
     where db_name = "GDB"
       and zdb_id = linked_recid
-      and acc_num = llgdb_gdb_id;
+      and acc_num = llgdb_gdb_id
+      and llgdb_omim_id is not null;
 
 
 create index gdb_lnkortho_zdb_id_index on gdb_ortho_link
