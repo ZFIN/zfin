@@ -31,5 +31,5 @@ include $(TOP)/make.default.rules
 
 # ---------------  Special Rules  ---------------------------------------
 
-postloaddb : clobber all
+postloaddb : clean clobber all
 
