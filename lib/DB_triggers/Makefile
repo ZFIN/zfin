@@ -32,6 +32,8 @@ TRIGGERS = \
 	dalias_alias_update_trigger.sql \
 	db_link_insert_trigger.sql \
 	db_link_update_trigger.sql \
+	environment_insert_trigger.sql \
+	environment_update_trigger.sql \
 	expression_pattern_insert_trigger.sql \
 	expression_pattern_update_trigger.sql \
 	expression_pattern_anatomy_insert_trigger.sql \
@@ -47,6 +49,14 @@ TRIGGERS = \
 	fish_image_stage_update_trigger.sql \
 	fish_insert_trigger.sql \
 	fish_name_update_trigger.sql \
+	FX_expression_experiment_insert_trigger.sql \
+	FX_expression_experiment_update_trigger.sql \
+	FX_expression_result_insert_trigger.sql \
+	FX_expression_result_update_trigger.sql \
+	FX_expression_pattern_image_insert_trigger.sql \
+	FX_expression_pattern_image_update_trigger.sql \
+	FX_figure_insert_trigger.sql \
+	FX_figure_update_trigger.sql \
 	lab_insert_trigger.sql \
 	lab_update_trigger.sql \
 	linkage_pair_member_insert_trigger.sql \

@@ -1,0 +1,8 @@
+create trigger environment_insert_trigger insert on environment 
+    referencing new as new_env
+    for each row
+        (
+	execute procedure p_insert_into_record_attribution_tablezdbids (
+			new_env.env_zdb_id,
+			new_env.env_source_zdb_id)
+) ;
