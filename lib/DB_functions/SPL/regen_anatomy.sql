@@ -5,11 +5,29 @@ drop function regen_anatomy;
 drop function populate_all_anatomy_contains;
 drop procedure populate_anat_display_stage;
 drop function populate_anat_display_stage_children;
-drop procedure distinct_item_expression_count;
 
 
+{  Comment this out.  Use when you are trying to speed this up.
+-- Create function for logging timings.
+drop procedure regen_anatomy_log;
+
+create procedure regen_anatomy_log(log_message lvarchar)
+
+  define echoCommand lvarchar;
+
+  let echoCommand = 'echo "' || get_time() || ' ' || log_message ||
+		       '" >> /tmp/regen_anatomy_log.<!--|DB_NAME|-->';
+  system echoCommand;
+
+end procedure;
+}
 
 -- Create recursive functions in reverse order of execution.
+
+
+-- ---------------------------------------------------------------------
+-- POPULATE_ANAT_DISPLAY_STAGE_CHILDREN
+-- ---------------------------------------------------------------------
 
 create function populate_anat_display_stage_children(parent_id varchar(50), 
 						     indent int, 
@@ -92,6 +110,11 @@ end function;
 
 update statistics for function populate_anat_display_stage_children;
 
+
+-- ---------------------------------------------------------------------
+-- POPULATE_ANAT_DISPLAY_STAGE
+-- ---------------------------------------------------------------------
+
 create procedure populate_anat_display_stage(stage_id varchar(50))
 
   -- For each stage, find the root anatitem(s) ie. the anatitems that don't
@@ -168,107 +191,9 @@ end procedure;
 update statistics for procedure populate_anat_display_stage;
 
 
-create procedure distinct_item_expression_count(aid varchar(50),
-						sid varchar(50),
-						ind integer,seq integer)
-						
-  -- called from regen_anatomy.
-  
-  define no_children integer;
-  define count integer;
-  define child_count integer;
-  define total_count integer;
-  define next_seq integer;
-  define child varchar(50);
-  define next_ind integer;
-  define oid varchar(50);
-  define fulfil_orderby_requirement integer;
-
-  let oid = "XPAT";
-  let child = "null";
-  let next_seq = seq +1;
-
-  foreach
-    --order the children of the current item by seq_num
-    --call the function again for each child
-    select anatdisp_item_zdb_id,anatdisp_indent, anatdisp_seq_num
-      into child, next_ind, fulfil_orderby_requirement
-      from anatomy_display_new, anatomy_contains, stage A, stage B, stage C
-      where anatdisp_seq_num > seq
-        and anatdisp_indent = ind +1
-        and sid = C.stg_zdb_id
-        and anatdisp_stg_zdb_id = sid
-        and aid = anatcon_container_zdb_id
-        and anatdisp_item_zdb_id = anatcon_contained_zdb_id
-        and anatcon_start_stg_zdb_id = A.stg_zdb_id
-        and anatcon_end_stg_zdb_id = B.stg_zdb_id
-        and A.stg_hours_start <= C.stg_hours_start
-        and B.stg_hours_end >= C.stg_hours_end
-        
-      order by anatdisp_seq_num
-
-    execute procedure distinct_item_expression_count(child,sid,next_ind,next_seq);
-  
-  end foreach
-    
-
-  let child_count = 0;
-  let total_count = 0;
-  let count = 0;
-  
-  select count(distinct sxa_xpat_zdb_id)
-    into count
-  from stg_xpat_anat
-  where sxa_stg_zdb_id = sid
-    and sxa_anat_item_zdb_id = aid;
-      
-
-  insert into anatomy_stage_stats_new 
-    (
-      anatstgstat_anat_item_zdb_id,
-      anatstgstat_stg_zdb_id,
-      anatstgstat_object_type,
-      anatstgstat_anat_item_stg_count,
-      anatstgstat_contains_count,
-      anatstgstat_total_count
-    )
-    values(aid,sid,oid,count,child_count,total_count);
-    
-    select distinct anatdisp_seq_num 
-      into seq 
-    from anatomy_display_new 
-    where anatdisp_item_zdb_id = aid
-      and anatdisp_stg_zdb_id = sid;
-
-    select count(distinct sxa_xpat_zdb_id)
-        into total_count
-    from stg_xpat_anat, anatomy_stage_stats_new
-    where sxa_seq_num >= seq
-      and anatstgstat_anat_item_zdb_id = sxa_anat_item_zdb_id
-      and anatstgstat_stg_zdb_id = sid;
-
-
---      and exists 
---          (
---            select * 
---            from anatomy_stage_stats_new
---            where anatstgstat_stg_zdb_id = sid
---              and anatstgstat_anat_item_zdb_id = sxa_anat_item_zdb_id
---              and anatstgstat_anat_item_stg_count > 0
---          );        
-
-  let child_count = total_count - count;
-  
-  update anatomy_stage_stats_new 
-    set anatstgstat_contains_count = child_count,
-        anatstgstat_total_count = total_count
-    where anatstgstat_anat_item_zdb_id = aid
-      and anatstgstat_stg_zdb_id = sid;
-
-end procedure;
-
-update statistics for procedure distinct_item_expression_count;
-
+-- ---------------------------------------------------------------------
+-- POPULATE_ALL_ANATOMY_CONTAINS
+-- ---------------------------------------------------------------------
 
 create function populate_all_anatomy_contains()
   returning integer
@@ -350,8 +275,10 @@ end function;
 
 update statistics for function populate_all_anatomy_contains;
 
---------------------------------------------------------------------
 
+-- ---------------------------------------------------------------------
+-- REGEN_ANATOMY
+-- ---------------------------------------------------------------------
 
 create dba function "informix".regen_anatomy()
   returning integer
@@ -369,6 +296,7 @@ create dba function "informix".regen_anatomy()
     define sqlError integer;
     define isamError integer;
     define errorText varchar(255);
+    define errorHint varchar(255);
 
     on exception
       set sqlError, isamError, errorText
@@ -392,6 +320,7 @@ create dba function "informix".regen_anatomy()
                                ' SQL Error: ' || sqlError::varchar(200) || 
                                ' ISAM Error: ' || isamError::varchar(200) ||
                                ' ErrorText: ' || errorText ||
+                               ' ErrorHint: ' || errorHint ||
                                '" >> /tmp/regen_anatomy_exception.<!--|DB_NAME|-->';
         system exceptionMessage;
 
@@ -420,23 +349,29 @@ create dba function "informix".regen_anatomy()
 
     begin
 
-    define nrows integer;
+      define nrows integer;
 
-    -- zdb_flag
-	
-    update zdb_flag set zflag_is_on = 't'
-	where zflag_name = "regen_anatomy" 
-	 and zflag_is_on = 'f';
+      let errorHint = "zdb_flag";
 
-    let nrows = DBINFO('sqlca.sqlerrd2');
+      -- zdb_flag
 
-    if (nrows == 0)	then
-	return 1;
-    end if
- 			
-    update zdb_flag set zflag_last_modified = CURRENT
-	where zflag_name = "regen_anatomy";
-			
+      update zdb_flag set zflag_is_on = 't'
+	  where zflag_name = "regen_anatomy" 
+	   and zflag_is_on = 'f';
+
+      let nrows = DBINFO('sqlca.sqlerrd2');
+
+      if (nrows == 0)	then
+	  return 1;
+      end if
+
+      update zdb_flag set zflag_last_modified = CURRENT
+	  where zflag_name = "regen_anatomy";
+
+
+      -- crank up the parallelism.
+
+      set pdqpriority high;
 
       -- ======  CREATE TABLES THAT ONLY EXIST IN THIS FUNCTION  ======
 
@@ -587,124 +522,6 @@ create dba function "informix".regen_anatomy()
 
 
 
-      -- ---- XPAT_STG_ANAT ----
-
-      --create the xpat_stg_anat table (XP x XPA x S)
-      --this table will be used more effectively when stage counts are 
-      --incorporated.
-
-      if (exists (select *
-	           from systables
-		   where tabname = "xpat_stg_anat")) then
-	drop table xpat_stg_anat;
-      end if
-
-      create table xpat_stg_anat
-	(
-	  xpatstganat_xpat_zdb_id		varchar(50),
-	  xpatstganat_stg_zdb_id		varchar(50),
-	  xpatstganat_anat_item_zdb_id		varchar(50),
-	  xpatstganat_seq_num 			integer
-	)
-	fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
-	extent size 1024 next size 1024
-	lock mode page;
-
-      -- other indexes
-
-      create index xpatstganat_xpat_zdb_id_index
-        on xpat_stg_anat(xpatstganat_xpat_zdb_id)
-	in idxdbs3;
-
-      create index xpatstganat_stg_zdb_id_index 
-        on xpat_stg_anat(xpatstganat_stg_zdb_id)
-	in idxdbs3;
-
-      create index xpatstganat_anat_item_zdb_id_index 
-        on xpat_stg_anat(xpatstganat_anat_item_zdb_id)
-	in idxdbs3;
-
-
-      -- ---- STG_XPAT_ANAT ----
-
-      --this table contains a subset of xpat_stg_anat pertaining to one stage
-
-      if (exists (select *
-	           from systables
-		   where tabname = "stg_xpat_anat")) then
-	drop table stg_xpat_anat;
-      end if
-
-      create table stg_xpat_anat 
-	(
-	  sxa_xpat_zdb_id		varchar(50),
-	  sxa_stg_zdb_id		varchar(50),
-	  sxa_anat_item_zdb_id		varchar(50),
-	  sxa_seq_num			integer
-	)
-	fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
-	extent size 1024 next size 1024
-	lock mode page;
-
-      -- other indexes
-
-      create index sxa_xpat_zdb_id_index 
-        on stg_xpat_anat(sxa_xpat_zdb_id)
-	in idxdbs2;
-
-      create index sxa_stg_zdb_id_index 
-        on stg_xpat_anat(sxa_stg_zdb_id)
-	in idxdbs2;
-
-      create index sxa_anat_item_zdb_id_index 
-        on stg_xpat_anat(sxa_anat_item_zdb_id)
-	in idxdbs2;
-
-
-      -- ---- ALL_ITEM_EXPRESSION_PATTERN ----
-
-      if (exists (select *
-	           from systables
-		   where tabname = "all_item_expression_pattern")) then
-	drop table all_item_expression_pattern;
-      end if
-
-      create table all_item_expression_pattern
-	(
-	  aixp_anatitem_zdb_id varchar(50),
-	  aixp_stg_zdb_id varchar(50),
-	  aixp_xpatanat_xpat_zdb_id varchar(50),
-	  aixp_seq_num integer,
-	  aixp_indent integer
-	)
-	fragment by round robin in tbldbs1, tbldbs2, tbldbs3
-	extent size 128 next size 128
-	lock mode page;
-
-
-
-      -- ---- ANATOMY_DISPLAY_STAGE ----
-
-      if (exists (select *
-	           from systables
-		   where tabname = "anatomy_display_stage")) then
-	drop table anatomy_display_stage;
-      end if
-
-      create table anatomy_display_stage
-	(
-	  anatdispstg_hier_code char(2),
-	  anatdispstg_stg_zdb_id varchar(50),
-	  anatdispstg_seq_num integer,
-	  anatdispstg_item_zdb_id varchar(50),
-	  anatdispstg_indent integer
-	)
-	in tbldbs1
-	extent size 64 next size 64
-	lock mode page;
-
-
-
       -- ======  CREATE OUTPUT TABLES  ======
 
       -- ---- ALL_ANATOMY_STAGE ----
@@ -763,17 +580,30 @@ create dba function "informix".regen_anatomy()
 	extent size 256 next size 256 
 	lock mode page;
 
-      -- create temporary indexes, these are dropped when table is renamed.
 
-      create unique index anatomy_display_new_primary_key_index
-        on anatomy_display_new (anatdisp_hier_code,
-			        anatdisp_stg_zdb_id,
-				anatdisp_seq_num)
-	in idxdbs1;
 
-      create index anatdisp_new_stg_zdb_id_index
-        on anatomy_display_new (anatdisp_stg_zdb_id)
-	in idxdbs1;
+      -- ---- ANATOMY_STATS ----
+
+      if (exists (select *
+	           from systables
+		   where tabname = "anatomy_stats_new")) then
+	drop table anatomy_stats_new;
+      end if
+
+      create table anatomy_stats_new 
+	(
+	  anatstat_anatitem_zdb_id          varchar(50),
+	  anatstat_object_type              char(32),
+	  anatstat_anatitem_count           integer
+	     not null,
+	  anatstat_contains_count           integer
+	     not null,
+	  anatstat_total_distinct_count     integer
+	     not null
+        )
+	in tbldbs2
+	extent size 128 next size 128 
+	lock mode page;
 
 
       -- ---- ANATOMY_STAGE_STATS ----
@@ -786,14 +616,14 @@ create dba function "informix".regen_anatomy()
 
       create table anatomy_stage_stats_new 
 	(
-	  anatstgstat_anat_item_zdb_id          varchar(50),
+	  anatstgstat_anatitem_zdb_id          varchar(50),
 	  anatstgstat_stg_zdb_id                varchar(50),
 	  anatstgstat_object_type               char(32),
-	  anatstgstat_anat_item_stg_count       integer
+	  anatstgstat_anatitem_stg_count       integer
 	     not null,
 	  anatstgstat_contains_count            integer
 	     not null,
-	  anatstgstat_total_count               integer
+	  anatstgstat_total_distinct_count               integer
 	     not null
         )
 	fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
@@ -819,38 +649,48 @@ create dba function "informix".regen_anatomy()
 	extent size 256 next size 256 
 	lock mode page;
 
+      -- create temp index.  dropped when table renamed
+      create index all_anatomy_contains_new_primary_key_index
+        on all_anatomy_contains_new (allanatcon_container_zdb_id,     
+				     allanatcon_contained_zdb_id)
+	in idxdbs2;
     end
 
-    -- For each anatomy_item_zdb_id, find all stages the item occurs in,
-    -- then insert the item and stage zdb_id's into all_anatomy stage.
+
+    --reduce query comparisons by using a table with only non-parent stages.
+    insert into non_parent_stage
+      select s.stg_zdb_id, s.stg_hours_start, s.stg_hours_end
+	from stage s
+	where not exists 
+	      (
+		select *
+		  from stage_contains
+		  where s.stg_zdb_id = stgcon_container_zdb_id
+	      );
+
+    create index non_parent_stage_start_hour_index 
+      on non_parent_stage(start_hour)
+	in idxdbs3;
+    create index non_parent_stage_end_hour_index
+      on non_parent_stage(end_hour)
+	in idxdbs3;
+	
+    update statistics high for table non_parent_stage; 	
+
     begin
+      -- ----------------------------------------------------------------------------
+      -- begin populating ALL_ANATOMY_STAGE_NEW
+      -- ----------------------------------------------------------------------------
+
+      -- For each anatomy_item_zdb_id, find all stages the item occurs in,
+      -- then insert the item and stage zdb_id's into all_anatomy stage.
+
       define stage_id varchar(50);
       define item_id varchar(50);
       define item_start_stg varchar(50);
       define item_end_stg varchar(50);
       define start_hour decimal(7,2);
       define end_hour decimal(7,2);
-
-      --reduce query comparisons by using a table with only non-parent stages.
-      insert into non_parent_stage
-	select s.stg_zdb_id, s.stg_hours_start, s.stg_hours_end
-	  from stage s
-	  where not exists 
-		(
-		  select *
-		    from stage_contains
-		    where s.stg_zdb_id = stgcon_container_zdb_id
-		);
-
-      create index non_parent_stage_start_hour_index 
-        on non_parent_stage(start_hour)
-	in idxdbs3;
-      create index non_parent_stage_end_hour_index
-        on non_parent_stage(end_hour)
-	in idxdbs3;
-	
-      update statistics high for table non_parent_stage; 	
-
 
       --for each anatitem find all stages it is contained in
       insert into all_anatomy_stage_new
@@ -877,10 +717,16 @@ create dba function "informix".regen_anatomy()
 		
       update statistics high for table all_anatomy_stage_new;	
       
+      -- done populating ALL_ANATOMY_STAGE_NEW
+
     end
     
-    
     begin
+
+      -- ----------------------------------------------------------------------------
+      -- begin populating ANATOMY_DISPLAY_NEW
+      -- ----------------------------------------------------------------------------
+
       -- Anatomy_display has variables that are stage based, so use each
       -- stage_id to insert associated anatomy_items. 
 
@@ -895,104 +741,159 @@ create dba function "informix".regen_anatomy()
 
       end foreach
       
-      update statistics high for table anatomy_display_new;
-
+      -- done populating ANATOMY_DISPLAY_NEW
     end
 
     begin
-      -- populate temp table
-      define xpatid varchar(50);
-      define stgid varchar(50);
-      define anatid varchar(50);
-      define startstgid varchar(50);
-      define endstgid varchar(50);
-      define hier_code char(2);
-      define seq integer;
-      define indent integer;
-      define count integer;
-      define child_count integer;
-      define total_count integer;
-      define objectid varchar(50);
+      -- ----------------------------------------------------------------------------
+      -- begin populating ALL_ANATOMY_CONTAINS_NEW
+      -- ----------------------------------------------------------------------------
 
-      let objectid = "XPAT";
-
-      --for each expression pattern
-      foreach
-	select zdb_id
-	  into stgid
-	  from non_parent_stage
-
-	--retrieve stages contained in xpat stage range
-	insert into xpat_stg_anat
-	  select xpatanat_xpat_zdb_id, stgid, xpatanat_anat_item_zdb_id, anatdisp_seq_num
-	    from non_parent_stage s1, non_parent_stage xstrt, non_parent_stage xend, 
-	         expression_pattern_anatomy, anatomy_display_new
-	    where s1.zdb_id = stgid
-	      and anatdisp_stg_zdb_id = stgid
-	      and anatdisp_item_zdb_id = xpatanat_anat_item_zdb_id
-	      and xpatanat_xpat_start_stg_zdb_id = xstrt.zdb_id
-	      and xpatanat_xpat_end_stg_zdb_id = xend.zdb_id
-	      and s1.start_hour >= xstrt.start_hour
-	      and s1.end_hour <= xend.end_hour;
-	
-      end foreach;
-
-      update statistics high for table xpat_stg_anat;
-
-      --trace on;
-
-
-      --traverse the display table depth first approach with recursive function
-      --for each stage in the xpat_stg table
-      foreach
-	select distinct anatdisp_stg_zdb_id
-	  into stgid
-	  from anatomy_display_new
-
-        delete from stg_xpat_anat;
-        
-	--store the xpat_stg_anat records for this stage in a temp table
-        insert into stg_xpat_anat
-	  select xpatstganat_xpat_zdb_id, 
-	         stgid, 
-	         xpatstganat_anat_item_zdb_id,
-	         xpatstganat_seq_num
-	    from xpat_stg_anat
-	    where xpatstganat_stg_zdb_id = stgid;
-	    
-	update statistics high for table stg_xpat_anat;
-	update statistics high for table anatomy_stage_stats_new;
-
-	--retrieve all items with indent = 1 and order by seq_num
-	foreach
-	  select anatdisp_item_zdb_id,anatdisp_seq_num,anatdisp_indent
-	    into anatid,seq,indent
-	    from anatomy_display_new
-	    where anatdisp_indent = 1
-	      and anatdisp_stg_zdb_id = stgid
-	    order by anatdisp_seq_num
-
-	  delete from all_item_expression_pattern;
-
-	  --call function distinct_item_expression_count
-	  execute procedure distinct_item_expression_count(anatid, stgid,
-							   indent, seq);
-	end foreach --item indent = 1
-
-      end foreach --stage
-
-    end
-
-    -- populate all_anatomy_contains
-
-    begin
       define nRows int;
       execute function populate_all_anatomy_contains()
         into nRows;
+
+      update statistics high for table all_anatomy_contains_new;
+
+      -- done populating ALL_ANATOMY_CONTAINS_NEW
     end;
 
+    begin
 
-    --RENAME the new tables to REPLACE the old
+      define anatid varchar(50);
+      define stgid varchar(50);
+      define nGenesForThisItem int;
+      define nGenesForChildItems int;
+      define nDistinctGenes int;
+
+      create temp table genes_with_xpats
+	(
+	  gene_zdb_id	varchar(50)
+	);
+
+      -- ----------------------------------------------------------------------------
+      -- begin populating ANATOMY_STATS_NEW
+      -- ----------------------------------------------------------------------------
+
+      foreach
+	select anatitem_zdb_id
+	  into anatid
+	  from anatomy_item
+
+	-- get list of genes that have expression patterns for this
+	-- anatomy item
+
+	insert into genes_with_xpats
+	  select distinct xpat_gene_zdb_id
+	    from expression_pattern, expression_pattern_anatomy
+	    where xpatanat_anat_item_zdb_id = anatid 
+	      and xpatanat_xpat_zdb_id = xpat_zdb_id;
+
+	let nGenesForThisItem = DBINFO('sqlca.sqlerrd2');
+
+	-- get list of genes that have expression patterns for this
+	-- anatomy item's children
+
+	insert into genes_with_xpats
+	  select distinct xpat_gene_zdb_id
+	    from all_anatomy_contains_new,
+		 expression_pattern, expression_pattern_anatomy
+	    where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
+	      and allanatcon_container_zdb_id = anatid
+	      and xpatanat_xpat_zdb_id = xpat_zdb_id;
+
+	let nGenesForChildItems = DBINFO('sqlca.sqlerrd2');
+
+	select count (distinct gene_zdb_id)
+	  into nDistinctGenes
+	  from genes_with_xpats;
+
+	insert into anatomy_stats_new
+	    ( anatstat_anatitem_zdb_id, anatstat_object_type, 
+	      anatstat_anatitem_count, anatstat_contains_count, 
+	      anatstat_total_distinct_count )
+	  values 
+	    ( anatid, 'GENE', nGenesForThisItem,
+	      nGenesForChildItems, nDistinctGenes ) ;
+
+	delete from genes_with_xpats;
+	
+      end foreach;
+
+      -- done populating ANATOMY_STATS_NEW
+
+      -- ----------------------------------------------------------------------------
+      -- begin populating ANATOMY_STAGE_STATS_NEW
+      -- ----------------------------------------------------------------------------
+
+      foreach
+	select allanatstg_anat_item_zdb_id, allanatstg_stg_zdb_id
+	  into anatid, stgid
+	  from all_anatomy_stage_new
+
+	-- get list of genes that have expression patterns for this
+	-- anatomy item in this stage 
+
+	insert into genes_with_xpats
+	  select distinct xpat_gene_zdb_id
+	    from expression_pattern, 
+		 expression_pattern_anatomy, stage as start, stage as end, 
+		 stage as mystage
+	    where xpatanat_anat_item_zdb_id = anatid 
+	      and xpatanat_xpat_zdb_id = xpat_zdb_id
+	      and start.stg_zdb_id = xpatanat_xpat_start_stg_zdb_id
+	      and end.stg_zdb_id = xpatanat_xpat_end_stg_zdb_id
+	      and mystage.stg_zdb_id = stgid
+	      and mystage.stg_hours_start >= start.stg_hours_start
+	      and mystage.stg_hours_end <= end.stg_hours_end;
+
+	let nGenesForThisItem = DBINFO('sqlca.sqlerrd2');
+
+	-- get list of genes that have expression patterns for this
+	-- anatomy item's children in this stage 
+
+	insert into genes_with_xpats
+	  select distinct xpat_gene_zdb_id
+	    from all_anatomy_contains_new,
+		 expression_pattern, expression_pattern_anatomy,
+		 stage as start, stage as end, stage as mystage
+	    where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
+	      and allanatcon_container_zdb_id = anatid
+	      and xpatanat_xpat_zdb_id = xpat_zdb_id
+	      and start.stg_zdb_id = xpatanat_xpat_start_stg_zdb_id
+	      and end.stg_zdb_id = xpatanat_xpat_end_stg_zdb_id
+	      and mystage.stg_zdb_id = stgid
+	      and mystage.stg_hours_start >= start.stg_hours_start
+	      and mystage.stg_hours_end <= end.stg_hours_end;
+
+	let nGenesForChildItems = DBINFO('sqlca.sqlerrd2');
+
+	select count (distinct gene_zdb_id)
+	  into nDistinctGenes
+	  from genes_with_xpats;
+
+	insert into anatomy_stage_stats_new
+	    ( anatstgstat_anatitem_zdb_id, anatstgstat_stg_zdb_id, 
+	      anatstgstat_object_type, anatstgstat_anatitem_stg_count, 
+	      anatstgstat_contains_count, anatstgstat_total_distinct_count )
+	  values 
+	    ( anatid, stgid,
+	      'GENE', nGenesForThisItem,
+	      nGenesForChildItems, nDistinctGenes ) ;
+
+	delete from genes_with_xpats;
+	
+      end foreach;
+
+      -- done populating ANATOMY_STAGE_STATS_NEW
+
+    end
+
+
+    -- ----------------------------------------------------------------------------
+    -- RENAME the new tables to REPLACE the old
+    -- ----------------------------------------------------------------------------
+
     begin work;
 
 
@@ -1008,11 +909,8 @@ create dba function "informix".regen_anatomy()
       drop table non_parent_stage;
       drop table stage_items_contained;
       drop table stage_item_child_list;
-      drop table anatomy_display_stage;
-      drop table all_item_expression_pattern;
-      drop table xpat_stg_anat;
-      drop table stg_xpat_anat;
 
+      drop table anatomy_stats;
       drop table anatomy_stage_stats;
       drop table anatomy_display;
       drop table all_anatomy_stage;
@@ -1048,6 +946,7 @@ create dba function "informix".regen_anatomy()
 
       -- primary key
 
+      let errorHint = "all_anatomy_stage_primary_key_index";
       drop index all_anatomy_stage_new_primary_key_index;
       create unique index all_anatomy_stage_primary_key_index
         on all_anatomy_stage (allanatstg_anat_item_zdb_id,
@@ -1061,21 +960,32 @@ create dba function "informix".regen_anatomy()
 
       -- foreign keys
 
+      -- Use ON DELETE CASCADE in every foreign key clause.  This means we
+      -- can do maintenance on the base tables and know that related
+      -- records in the fast search tables have also been dropped.
+
+      let errorHint = "allanatstg_anat_item_zdb_id_index";
       create index allanatstg_anat_item_zdb_id_index
         on all_anatomy_stage (allanatstg_anat_item_zdb_id)
 	fillfactor 100
 	in idxdbs1;
+      alter table all_anatomy_stage add constraint
+        foreign key (allanatstg_anat_item_zdb_id)
+	references anatomy_item 
+	  on delete cascade
+	constraint allanatstg_anat_item_zdb_id_foreign_key;
 
-      -- DO NOT include the foreign key clauses.  Allows us to
-      -- do maintenance on the base tables without worrying about ripple
-      -- effects in the fast search tables.
-
-
+      let errorHint = "allanatstg_stg_zdb_id_index";
       drop index allanatstg_new_stg_zdb_id_index;
       create index allanatstg_stg_zdb_id_index
         on all_anatomy_stage (allanatstg_stg_zdb_id)
 	fillfactor 100
 	in idxdbs1;
+      alter table all_anatomy_stage add constraint
+        foreign key (allanatstg_stg_zdb_id)
+	references stage
+	  on delete cascade
+	constraint allanatstg_stg_zdb_id_foreign_key;
 
 
        	
@@ -1085,7 +995,6 @@ create dba function "informix".regen_anatomy()
 
       -- primary key
 
-      drop index anatomy_display_new_primary_key_index;
       create unique index anatomy_display_primary_key_index
         on anatomy_display (anatdisp_hier_code,
 			    anatdisp_stg_zdb_id,
@@ -1098,17 +1007,29 @@ create dba function "informix".regen_anatomy()
 
       -- foreign keys
 
+      let errorHint = "anatdisp_hier_code_index";
       create index anatdisp_hier_code_index
         on anatomy_display (anatdisp_hier_code)
 	fillfactor 100
 	in idxdbs1;
+      alter table anatomy_display add constraint
+        foreign key (anatdisp_hier_code)
+	references anatomy_hierarchy
+	  on delete cascade
+	constraint anatdisp_hier_code_foreign_key;
 
-      drop index anatdisp_new_stg_zdb_id_index;
+      let errorHint = "anatdisp_stg_zdb_id_index";
       create index anatdisp_stg_zdb_id_index
         on anatomy_display (anatdisp_stg_zdb_id)
 	fillfactor 100
 	in idxdbs1;
+      alter table anatomy_display add constraint
+        foreign key (anatdisp_stg_zdb_id)
+	references stage
+	  on delete cascade
+	constraint anatdisp_stg_zdb_id_foreign_key;
 
+      let errorHint = "anatdisp_item_zdb_id_index";
       create index anatdisp_item_zdb_id_index
         on anatomy_display (anatdisp_item_zdb_id)
 	fillfactor 100
@@ -1119,6 +1040,7 @@ create dba function "informix".regen_anatomy()
 	  on delete cascade
 	constraint anatdisp_item_zdb_id_foreign_key;
 
+      let errorHint = "anatdisp_item_name_index";
       create index anatdisp_item_name_index
         on anatomy_display (anatdisp_item_name)
 	fillfactor 100
@@ -1127,35 +1049,80 @@ create dba function "informix".regen_anatomy()
 
       
       	
+      -- ---- ANATOMY_STATS ----
+
+      rename table anatomy_stats_new to anatomy_stats;
+
+      -- primary key
+
+      let errorHint = "anatomy_stats_primary_key_index";
+      create unique index anatomy_stats_primary_key_index
+        on anatomy_stats (anatstat_anatitem_zdb_id,
+			  anatstat_object_type)
+	fillfactor 100
+	in idxdbs1;
+      alter table anatomy_stats add constraint
+        primary key (anatstat_anatitem_zdb_id,
+		     anatstat_object_type)
+	constraint anatomy_stats_primary_key;
+
+      -- foreign keys
+
+      let errorHint = "anatstat_anatitem_zdb_id_index";
+      create index anatstat_anatitem_zdb_id_index
+        on anatomy_stats (anatstat_anatitem_zdb_id)
+	fillfactor 100
+	in idxdbs1;
+      alter table anatomy_stats add constraint
+        foreign key (anatstat_anatitem_zdb_id)
+	references anatomy_item
+	  on delete cascade
+	constraint anatstat_anatitem_zdb_id_foreign_key;
+
+      
+      
       -- ---- ANATOMY_STAGE_STATS ----
 
       rename table anatomy_stage_stats_new to anatomy_stage_stats;
 
       -- primary key
 
+      let errorHint = "anatomy_stage_stats_primary_key_index";
       create unique index anatomy_stage_stats_primary_key_index
-        on anatomy_stage_stats (anatstgstat_anat_item_zdb_id,
+        on anatomy_stage_stats (anatstgstat_anatitem_zdb_id,
 			        anatstgstat_stg_zdb_id,
 				anatstgstat_object_type)
 	fillfactor 100
 	in idxdbs1;
       alter table anatomy_stage_stats add constraint
-        primary key (anatstgstat_anat_item_zdb_id,
+        primary key (anatstgstat_anatitem_zdb_id,
 		     anatstgstat_stg_zdb_id,
 		     anatstgstat_object_type)
 	constraint anatomy_stage_stats_primary_key;
 
       -- foreign keys
 
-      create index anatstgstat_anat_item_zdb_id_index
-        on anatomy_stage_stats (anatstgstat_anat_item_zdb_id)
+      let errorHint = "anatstgstat_anatitem_zdb_id_index";
+      create index anatstgstat_anatitem_zdb_id_index
+        on anatomy_stage_stats (anatstgstat_anatitem_zdb_id)
 	fillfactor 100
 	in idxdbs1;
+      alter table anatomy_stage_stats add constraint
+        foreign key (anatstgstat_anatitem_zdb_id)
+	references anatomy_item
+	  on delete cascade
+	constraint anatstgstat_anatitem_zdb_id_foreign_key;
 
+      let errorHint = "anatstgstat_stg_zdb_id_index";
       create index anatstgstat_stg_zdb_id_index
         on anatomy_stage_stats (anatstgstat_stg_zdb_id)
 	fillfactor 100
 	in idxdbs1;
+      alter table anatomy_stage_stats add constraint
+        foreign key (anatstgstat_stg_zdb_id)
+	references stage
+	  on delete cascade
+	constraint anatstgstat_stg_zdb_id_foreign_key;
 
       
       
@@ -1165,6 +1132,8 @@ create dba function "informix".regen_anatomy()
 
       -- primary key
 
+      let errorHint = "all_anatomy_contains_primary_key_index";
+      drop index all_anatomy_contains_new_primary_key_index;
       create unique index all_anatomy_contains_primary_key_index
         on all_anatomy_contains (allanatcon_container_zdb_id,     
 				 allanatcon_contained_zdb_id)
@@ -1177,15 +1146,27 @@ create dba function "informix".regen_anatomy()
 
       -- foreign keys
 
+      let errorHint = "allanatcon_container_zdb_id_index";
       create index allanatcon_container_zdb_id_index
         on all_anatomy_contains (allanatcon_container_zdb_id)
 	fillfactor 100
 	in idxdbs2;
+      alter table all_anatomy_contains add constraint
+        foreign key (allanatcon_container_zdb_id)
+	references anatomy_item
+	  on delete cascade
+	constraint allantcon_container_zdb_id_foreign_key;
 
+      let errorHint = "allanatcon_contained_zdb_id_index";
       create index allanatcon_contained_zdb_id_index
         on all_anatomy_contains (allanatcon_contained_zdb_id)
 	fillfactor 100
 	in idxdbs2;
+      alter table all_anatomy_contains add constraint
+        foreign key (allanatcon_contained_zdb_id)
+	references anatomy_item
+	  on delete cascade
+	constraint allantcon_contained_zdb_id_foreign_key;
 
             
     end -- Local exception handler
@@ -1198,6 +1179,7 @@ create dba function "informix".regen_anatomy()
   begin work;
   update statistics high for table all_anatomy_stage;
   update statistics high for table anatomy_display;
+  update statistics high for table anatomy_stats;
   update statistics high for table anatomy_stage_stats;
   update statistics high for table all_anatomy_contains;
   commit work;
