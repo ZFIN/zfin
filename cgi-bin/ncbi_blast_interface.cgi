@@ -22,5 +22,7 @@ insert ncbi rejoin[ header (length? query) newline newline query ]
 while  [none? reply: copy ncbi ][ wait 10]
 buffer: copy/deep find reply "Content-Type:"
 buffer: replace/all buffer {"new.gif} {"http://www.ncbi.nlm.nih.gov/BLAST/new.gif}
+buffer: replace/all buffer {<SCRIPT LANGUAGE="JavaScript">}{<!-- <SCRIPT LANGUAGE="JavaScript">}
+buffer: replace/all buffer {</SCRIPT>}{</SCRIPT> -->} 
 print replace/all buffer {"/blast/} {"http://www.ncbi.nlm.nih.gov/BLAST/}
 close ncbi

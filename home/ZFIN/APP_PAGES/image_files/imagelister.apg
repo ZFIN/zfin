@@ -48,6 +48,11 @@ Startframes.apg will pass this variables on to the select form.  -->
     <?MIVAR NAME=$previous> and <?/MIVAR>
   <?/MIBLOCK>
 
+<?MIBLOCK COND="$(XST,$anon1text)">
+<?MIVAR NAME=$constraint>$constraint $previous (lower($anon1) like '%$(LOWER,$anon1text)%')<?/MIVAR>
+<?MIVAR NAME=$previous> and <?/MIVAR>
+<?/MIBLOCK>
+
 <?/MIBLOCK> <!-- end_stages constraints exist -->
 
 
@@ -289,8 +294,4 @@ Startframes.apg will pass this variables on to the select form.  -->
     top.controls.location.reload(true);
   </SCRIPT>
 <?/MIVAR>
-
-
-
-
 </HTML>

@@ -29,18 +29,17 @@ function edit(panel) {
 function call_mapplet() {
 	 <!-- make sure the checkbox to turn the panel on is selected -->
 	 i = 0;
-	 while ((i < document.options.elements.length) && (document.options.elements[i].type!="checkbox")) {
-	       i++;
-	 }
+	 while ((i < document.options.elements.length) && (document.options.elements[i].type!="checkbox")) { i++; }
 	 allclear = true;
-	 if (document.options.elements[i].checked == true) {  <!-- the panel is turned on -->
+	 if (document.options.elements[i].checked == true)  {  <!-- the panel is turned on -->
 
 		 if (document.options.elements[i+1].value=="Marker") { <!-- by marker -->
 		    if (document.options.elements[i+2].value == "")  { <!-- this could happen if they fill in a between without specifying the marker -->
 		       alert("To search by marker, please specify a marker name.");
 		       allclear = false;
 		    }
-		    if (  ((document.options.elements[i+3].value != "") && (document.options.elements[i+4].value == "")) ||   ((document.options.elements[i+4].value != "") && (document.options.elements[i+3].value == "")) ) {
+		    if (  ((document.options.elements[i+3].value != "") && (document.options.elements[i+4].value == "")) ||  
+			  ((document.options.elements[i+4].value != "") && (document.options.elements[i+3].value == "")) ) {
 		       alert("Please specify both high and low values.");
 		       allclear = false;
 		    }
@@ -54,23 +53,23 @@ function call_mapplet() {
 		      alert("Please specify a linkage group.");
 		      allclear = false;
 		   }
-		   if (  ((document.options.elements[i+8].value != "") && (document.options.elements[i+9].value == "")) ||   ((document.options.elements[i+9].value != "") && (document.options.elements[i+8].value == "")) ) {
+		   if (  ((document.options.elements[i+8].value != "") && (document.options.elements[i+9].value == "")) ||  
+			 ((document.options.elements[i+9].value != "") && (document.options.elements[i+8].value == "")) ) {
 		       alert("Please specify both high and low values.");
 		       allclear = false;
-		    } else if ((document.options.elements[i+7].value == "") && (document.options.elements[i+8].value == "") && (document.options.elements[i+9].value == "")) {
+		    } else if ((document.options.elements[i+7].value == "") && (document.options.elements[i+8].value == "") &&
+			       (document.options.elements[i+9].value == "")) {
 		       alert("Please specify a location on the selected linkage group.");
 		       allclear = false;
-		    }
-
-		    
+		    }		    
 			
-		   if ( ( document.options.elements[i+7].value.search(/[^0-9\.]/) != -1 ) || (document.options.elements[i+8].value.search(/[^0-9\.]/) != -1 ) || ( document.options.elements[i+9].value.search(/[^0-9\.]/) != -1 )) {
+		   if ( ( document.options.elements[i+7].value.search(/[^0-9\.]/) != -1 ) || (document.options.elements[i+8].value.search(/[^0-9\.]/) != -1 ) ||
+			( document.options.elements[i+9].value.search(/[^0-9\.]/) != -1 )) {
 		      alert('Locations must be specified as numeric values without units.');
 		      allclear = false;
 		   }
 		   
 		 }
-
 	 }
 
 	 if (allclear == true) {
@@ -88,25 +87,28 @@ ENDCSS
 
  print $query->start_html(-title=>'Map Options',-BGCOLOR=>'#FFFFFF',-script=>$JSCRIPT,-style=>$CSS);
  
- 
- 
- print $query->startform(-method=>'get',-action=>'/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi',-name=>'options',-target=>'pbrowser', -onSubmit=>'call_mapplet();');
+ if  (  $query->param ('ZMAP')   ) {
+   print $query->startform(-method=>'get',-action=>'/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi',-name=>'options',-target=>'pbrowser');
+ } else {
+   print $query->startform(-method=>'get',-action=>'/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi',-name=>'options',-target=>'pbrowser'); 
+ }
+
 my $edit = '';
 my $buf =''; 
 # $query->hidden(-name=>'edit_panel');
+
  if ($query->param('edit_panel') ne "") {
     $edit = $query->param('edit_panel');
  }
  
  for ($query->param) {
-
      if (($edit ne "") && !($_ =~ /$edit/)) { #if we're editing a panel, we don't want to print hiddens for it
        $buf = $buf . $query->hidden($_ ) ."\n";
      } elsif ($edit eq "") {
        $buf = $buf . $query->hidden($_ ) ."\n";
      }
-
  }
+
  print $buf;
 
  my $panel = '';
@@ -233,7 +235,24 @@ my $buf ='';
   } else {
 #   print $query->hidden(-name=>"edit_panel", -value=>"");
     print "<table border = 0><tr>";
-    for ($i = 1 ; $query->param('panel'.$i) ne "" ; $i++) {
+
+    if ( $query->param( 'ZMAP' ) )  {
+      for ($i = 1 ; $query->param('panel'.$i) ne "" ; $i++) {
+	$panel = $query->param('panel'.$i); 
+	print "<td>";
+	#print $query->checkbox(-name=>$panel,-value=>'1',-label=>'',-onClick=>'') . $panel . ' '; 
+	if ($query->param($panel) eq '1') {
+	  print $query->button(-name=>$panel . '_vis',-value=>'Hide ' . $panel, -onClick=>"document.options." . $panel . ".value = 0; document.options.submit();") . "\n";
+	} else {
+	  print $query->button(-name=>$panel . '_vis',-value=>'Show ' . $panel, -onClick=>"document.options.edit_panel.value='" . $panel . "'; document.options." . $panel . ".value = 1; document.options.submit();") . "\n"; 
+	}
+	print "</td>";
+      }
+      print "</tr></table><br>"; 
+	  print $query->button(-name=>'ZMAP_opts', -value=>'Adjust ZMAP', -onClick=>"document.options.edit_panel.value='" . 'ZMAP' . "'; document.options.target=''; document.options.action='/<!--|CGI_BIN_DIR_NAME|-->/map-options.pl'; document.options.submit();   ");   
+    }
+    else { # NOT ZMAP
+      for ($i = 1 ; $query->param('panel'.$i) ne "" ; $i++) {
 	 $panel = $query->param('panel'.$i); 
 	 print "<td>";
          #print $query->checkbox(-name=>$panel,-value=>'1',-label=>'',-onClick=>'') . $panel . ' '; 
@@ -241,14 +260,16 @@ my $buf ='';
 	   print $query->button(-name=>$panel . '_vis',-value=>'Hide ' . $panel, -onClick=>"document.options." . $panel . ".value = 0; document.options.submit();") . "\n";
 	 } else {
    	   print $query->button(-name=>$panel . '_vis',-value=>'Show ' . $panel, -onClick=>"document.options.edit_panel.value='" . $panel . "'; document.options." . $panel . ".value = 1; document.options.submit();") . "\n";
+	   
 	 }
-	 print "<br>";
-	 print $query->button(-name=>$panel . '_opts', -value=>'Adjust ' . $panel, -onClick=>"document.options.edit_panel.value='" . $panel . "'; document.options.target=''; document.options.action='/<!--|CGI_BIN_DIR_NAME|-->/map-options.pl'; document.options.submit();   ");
-	 print "</td>";
+	 print "<br>".  
+	   $query->button(-name=>'ZMAP' . '_opts', -value=>'Adjust ' . $panel, -onClick=>"document.options.edit_panel.value='" . $panel . "'; document.options.target=''; document.options.action='/<!--|CGI_BIN_DIR_NAME|-->/map-options.pl'; document.options.submit();   ") . "</td>";
        }
-    print "</tr></table>";
-    print "<br><br></center>" . $query->button(-name=>'back',-value=>'Return to search form.',-onClick=>'parent.pbrowser.document.selectform.submit();');
   }
+    print "</tr></table>";
+    print "<br><br></center>" . $query->button(-name=>'back',-value=>'Return to search form.',-onClick=>'parent.pbrowser.document.selectform.submit();');  
+}
+
 
  print '<P align=right>' . '</P>';
  

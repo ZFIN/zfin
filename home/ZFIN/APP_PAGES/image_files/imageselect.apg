@@ -57,7 +57,6 @@ Startframes.apg will pass this variables on to the select form.  -->
 
 
 <form name=getcrits method=post TARGET="pbrowser" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
-
   <center>
   <U><B><FONT SIZE=5>Search for </font>
   <FONT SIZE=5 color="#ff0000" > IMAGES</font></b></u>

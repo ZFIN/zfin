@@ -12,13 +12,14 @@
 
 
 
-function call_mapplet(lg) {
+function call_mapplet(lg,panel_abbrev) {
 for (var count = 0; count <= 25; count++){
 	if ( lg == count) document.mapview.loc_lg.value = count ;
 
 }
 
 
+document.mapview.submit();
 }
 </SCRIPT>
 </HEAD>
@@ -97,8 +98,8 @@ ID='aa-data_mgr.apg';">$1<?/MISQL>
 
 <!-- OKAY, NOW  THROW UP THE  PANEL INFO -->
 <form method=post name=mapview  action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi" target="content">
-
-<INPUT TYPE=hidden name=loc_lg value=0 >  
+<input type=hidden name=view_map  value='viewmap'>
+<INPUT TYPE=hidden name=loc_lg value=0 > 
 <?MIVAR><input type=hidden name=userid value="$userid"><?/MIVAR>
 
 
@@ -188,12 +189,25 @@ $(IF,$(NC,$num_meioses,NULL),$num_meioses,UNKNOWN)
 <b>Markers:</B>
 <ul>
 <?MIVAR NAME=$mcount>0<?/MIVAR>
-<?MISQL SQL="select mtype,count(*)::integer from public_paneled_markers a , panels b  where  a.target_abbrev = b.abbrev and b.zdb_id='$OID'  group by mtype;">
-$(IF,$(NC,$MI_CURRENTROW,1),"<br>")
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-markerselect.apg&select_from=MARKER&panelid=$OID&marker_type=$1">$1</A> (total of $2)
-$(SETVAR,$mcount,$(+,$mcount,$2))
-<?/MISQL>
-</ul>
+
+<?MIBLOCK COND="$(NC,$abbrev,ZMAP)">
+  <?MISQL SQL="select mtype,count(*)::integer from public_paneled_markers a , panels b  where  a.target_abbrev = b.abbrev and b.zdb_id='$OID'  group by mtype;">
+  $(IF,$(NC,$MI_CURRENTROW,1),"<br>")
+  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-markerselect.apg&select_from=MARKER&panelid=$OID&marker_type=$1">$1</A> (total of $2)
+  $(SETVAR,$mcount,$(+,$mcount,$2))
+  <?/MISQL>
+  </ul>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(EC,$abbrev,ZMAP)">
+  <?MISQL SQL="select mtype,count(*)::integer from zmap_pub_pan_mark a , panels b  where  a.target_abbrev = b.abbrev and b.zdb_id='$OID' and or_lg <> 0 group by mtype;">
+  $(IF,$(NC,$MI_CURRENTROW,1),"<br>")
+  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-markerselect.apg&select_from=MARKER&panelid=$OID&marker_type=$1">$1</A> (total of $2)
+  $(SETVAR,$mcount,$(+,$mcount,$2))
+  <?/MISQL>
+  </ul>
+<?/MIBLOCK>
+
 
 <?MIBLOCK COND="$(>,$mcount,0)">
 <?MIVAR>Total of <b>$mcount</b> markers on panel<?/MIVAR>
@@ -222,20 +236,46 @@ Click to <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-refcrosslist.apg">
 <?MIVAR NAME=$marker>None<?/MIVAR>
 <?MIVAR NAME=$marker_abbrev>None<?/MIVAR>
 
-<?MISQL SQL="select OR_lg,mtype,count(*)::integer from public_paneled_markers a , panels b  where a.target_abbrev = b.abbrev and  b.zdb_id='$OID'  group by OR_lg,mtype order by OR_lg;">
 
-<?MIVAR>
-$(IF,$(AND,$(>,$1,$last),$(>,$MI_CURRENTROW,1)),"</TD><TD><font size=1><input type=submit name=view_map value='View Map' onClick='call_mapplet("$(-,$1,1)")'></TD><TD><font size=1><A HREF=javascript:view_scores('"$OID"','"$(-,$1,1)"','"$marker"','"$marker_abbrev"');>Scoring Data</A></TD></TR>")
-<?/MIVAR>
-$(IF,$(>,$1,$last),"<TR align=center><TD><font size=1>"$1"</TD><TD><font size=1>")
-$(IF,$(=,$1,$last),"; ")
-$2($3)
-$(SETVAR,$last,$1)
-<?/MISQL>
+<?MIBLOCK COND="$(NC,$abbrev,ZMAP)">
+  <?MISQL SQL="select OR_lg,mtype,count(*)::integer from public_paneled_markers a , panels b  where a.target_abbrev = b.abbrev and  b.zdb_id='$OID'  group by OR_lg,mtype order by OR_lg;">
 
-<?MIVAR>
-</TD><TD><font size=1><input type=submit name=view_map value='View Map' onClick='call_mapplet("$1")'></TD><TD><font size=1><A HREF="javascript:view_scores('$OID','$1','$marker','$marker_abbrev');">Scoring Data</A></TD></TR>
-<?/MIVAR>
+    <?MIBLOCK COND="$(AND,$(>,$1,$last),$(>,$MI_CURRENTROW,1))">
+      <?MIVAR>
+	</TD><TD><font size=1><input type=button name=view_map value="View Map" onClick=call_mapplet("$(-,$1,1)","$abbrev")></TD><TD><font size=1><A HREF=javascript:view_scores('$OID','$(-,$1,1)','$marker','$marker_abbrev');>Scoring Data</A></TD></TR>
+      <?/MIVAR>
+    <?/MIBLOCK>
+    $(IF,$(>,$1,$last),"<TR align=center><TD><font size=1>"$1"</TD><TD><font size=1>")
+    $(IF,$(=,$1,$last),"; ")
+    $2($3)
+    $(SETVAR,$last,$1)
+  <?/MISQL>
+  <?MIVAR>
+    </TD><TD><font size=1><input type=button name=view_map value='View Map' onClick='call_mapplet("$1","$abbrev")'></TD><TD><font size=1><A HREF="javascript:view_scores('$OID','$1','$marker','$marker_abbrev');">Scoring Data</A></TD></TR>
+  <?/MIVAR>
+
+
+<?/MIBLOCK>
+
+
+<?MIBLOCK COND="$(EC,$abbrev,ZMAP)">
+  <?MISQL SQL="select OR_lg,mtype,count(*)::integer from zmap_pub_pan_mark a , panels b  where a.target_abbrev = b.abbrev and  b.zdb_id='$OID' and or_lg <> 0 group by OR_lg,mtype order by OR_lg;">
+
+    <?MIBLOCK COND="$(AND,$(>,$1,$last),$(>,$MI_CURRENTROW,1))">
+      <?MIVAR>
+	</TD><TD><font size=1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-mapperselect.apg&select_from=MAPPER&frame_size=220">View Map</A></TD><TD></TD></TR>
+      <?/MIVAR>
+    <?/MIBLOCK>
+
+    $(IF,$(>,$1,$last),"<TR align=center><TD><font size=1>"$1"</TD><TD><font size=1>")
+    $(IF,$(=,$1,$last),"; ")
+    $2($3)
+    $(SETVAR,$last,$1)
+  <?/MISQL>
+      <?MIVAR>
+	</TD><TD><font size=1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-mapperselect.apg&select_from=MAPPER&frame_size=220">View Map</A></TD><TD></TD></TR>
+      <?/MIVAR>
+<?/MIBLOCK>
 
 
 </TABLE>

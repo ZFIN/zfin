@@ -31,14 +31,15 @@
   my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->', '', '', {AutoCommit => 1, RaiseError => 1})
   || die "Failed while connecting to <!--|DB_NAME|--> "; #$DBI::errstr";
  
-  my @allpanels;                      ### the panels the db knows about
-  my @panels;                         ### panel this map actualy attempts to use
-  my @allpanels_order;                ### an enumeration of all panels 
-  my @allpanels_metric;               ### cM or cR  for each panel 
-  my @allpanels_id;                   ### zdb_id for each panel
-  my $panel;                          ### current panel
-  my ($sql,$junk,$tmp);		          ### throw away vars
-  my $cur = $dbh->prepare('select abbrev, disp_order, metric, zdb_id from panels order by disp_order asc');
+
+  my @allpanels=();                      ### the panels the db knows about
+  my @panels=();                         ### panel this map actualy attempts to use
+  my @allpanels_order=();                ### an enumeration of all panels 
+  my @allpanels_metric=();               ### cM or cR  for each panel 
+  my @allpanels_id=();                   ### zdb_id for each panel
+  my $panel="";                          ### current panel
+  my ($sql,$junk,$tmp,$tmp_id);		             ### throw away vars
+  my $cur = $dbh->prepare('select abbrev, disp_order, metric, zdb_id from panels where disp_order > 0 order by disp_order asc');
   $cur->execute;
   $cur->bind_col(1, \$panel);
   $cur->bind_col(2, \$junk);
@@ -56,7 +57,7 @@
   my $anon_type = "RAPD\',\'RFLP\',\'BAC\',\'SSR\',\'STS";
   my $gene_type = "GENE";
   my $est_type  = "EST";
-  my $bac_type  = "BAC";
+  my $bac_type  = "BAC\',\'PAC";
   my $fish_type  = "FISH\',\'MUTANT\',\'LOCUS";
   
   ###
@@ -120,7 +121,8 @@
   my $g_opt= ''; # options form (global)
   
   ### used to pass scafolding notes to the web page
-  my $note = ''; 
+
+  my $note = "Begin Notes(I)<p>\n"; 
  
   ###
   ### Emit a Blank Page if called with no paramerers
@@ -165,23 +167,27 @@
   ### isolate panels of interest, (undefined is not false)
   ### and a panel to be edited (if one is available)
   ###
-  if( defined $Q->param('edit_panel') ) {
-    $edit_panel = $Q->param('edit_panel');
-  }else{ $edit_panel = '';}  
+  if( defined $Q->param('edit_panel') and  $Q->param('edit_panel')) {
+    $edit_panel = $Q->param('edit_panel'); 
+  }else{ $edit_panel = '';}
+
+  #$note = $note . "All Panels \n<p>";
   for $panel (@allpanels) {
+    # $note = $note . $panel ."\n <p>";
     if( (defined $Q->param($panel))
 	&& ($Q->param($panel) == 1)
-	&& ($panel ne $edit_panel )){push(@panels, $panel);}
+	&& ($panel ne $edit_panel )){push(@panels, $panel);$Q->param($panel,1);}
     elsif($panel ne $edit_panel ){$Q->param($panel,0);}
   } 
   #if no panels are implicated -- select them all
   if(length(@panels) < 1 && (!$edit_panel) ) {
+    $note = $note ." short sheeted! \n <P>";
     for $panel (@allpanels) {
       push(@panels, $panel);
       $Q->param($panel,1);
     }
   }
-  
+  #$note = $note . "panel-string -is $panels_string \n <P>";
   #$note = $note . "Using |@panels| and |$edit_panel| <P>\n"; 
   
   ###  Coming from a "external"  unisource  page,
@@ -199,12 +205,12 @@
   ###                            panel, lg, location  
   
   
-  if( (defined $Q->param("view_map")) && ($g_error == 0) ) {
+  if( (defined $Q->param("view_map")) && ($g_error == 0) ) { # view_map is defined and no error reported
     
     ### types is never defined by an external page so use them all.
-    $types = "SSLP\',\'RAPD\',\'RFLP\',\'SSR\',\'STS\',\'GENE\',\'BAC\',\'EST\',\'FISH\',\'MUTANT\',\'LOCUS";
+    $types = "SSLP\',\'RAPD\',\'RFLP\',\'SSR\',\'STS\',\'GENE\',\'BAC\',\'PAC'\,\'EST\',\'FISH\',\'MUTANT\',\'LOCUS";
     
-    if( ( !(defined $Q->param("OID")) ) || ($Q->param("OID") eq '') ) { # parse it as  ZDB-type-date-nunber  ?
+    if( ( !(defined $Q->param("OID")) ) || ($Q->param("OID") =~ '') ) { # parse it as  ZDB-type-date-nunber  ?
       ### coming from some single source search 
       ### (mapperselect name or near or lg ...) 
       ### check sutibility of given marker name if given
@@ -214,15 +220,15 @@
       
       if( (defined $Q->param("marker")) && ($Q->param("marker")) ) { 
 	$marker = lc($Q->param("marker"));
+    undef $rowref;
 	$rowref = check_uniq($marker);
-	$unique = (defined $$rowref[0][0])? length(@$rowref): 0; 
-      
-	
+	#$unique = (defined $$rowref[0][0])? @$rowref: 0; 
+     	
     #	$note = $note . "\trow ref length " . $unique . "\n";
 	###
 	### yow!  too many answers
 	###
-	if( $unique > 1) {	# not unique shunt off to search result page
+	if( ! defined $rowref ){ #$unique > 1) {	# not unique shunt off to search result page
 	 ### $note = $note . $unique . " ->Too Many Choices  <p>\n";  
 	  my $bot = LWP::UserAgent->new(); 
 	  my $req = POST 'http://<!--|DOMAIN_NAME|-->/<!--|WEBDRIVER_PATH_FROM_ROOT|-->',
@@ -246,7 +252,7 @@
 	###
 	### huh? got nothing, advance to re-try do not pass map
 	###
-	elsif( $unique < 1) {
+	elsif( defined @$rowref[1] ){ #$unique < 1) {
 	  print $Q->header(). "\n".
 	    $Q->start_html(-TITLE => "View Marker", -bgcolor=> 'white', -link=> 'black', -vlink=>'black')."\n".
 	      "<p>The name: \"<font color=red><b>$marker</b></font>\" ". 
@@ -258,7 +264,8 @@
 	###
 	### ding! add the lg and zdbid for the unique marker found (or approximated with "contains") 
 	### 
-	else {			#unique == 1
+	else {
+      $unique = 1;
 	  $zdbid  = $$rowref[0][0];
 	  $lg     = $$rowref[0][1];
 	  #	  $note = $note . $marker. " -> " .$zdbid . " on LG ". $lg . " Found as unique enough"."\n";
@@ -278,15 +285,18 @@
 	$sm_loc =  $Q->param("loc");
 	if (defined $Q->param("loc_panel")) {
 	  $sm_panel = $Q->param("loc_panel");
+         
 	}     
 	$sm_lg = $g_lg =  $Q->param("loc_lg");	
 	($zdbid, $marker, $loc) = get_closest( $sm_panel, $sm_lg, $sm_loc );
 	
 	if(defined $zdbid) { $Q->param("OID",$zdbid);}
+    #$sm_m = get_OIDs_abbrev($zdbid); # ???
+    if ($sm_refresh != 2) { $sm_refresh = 1;}
 	if(defined $marker) { $Q->param('marker=',$marker);}
 	$Q->param("lg", $Q->param("loc_lg"));
-	#selectmap gets re-populated with a  map location
-	$sm_refresh = 2;
+    #selectmap gets re-populated with a  map location
+    $sm_refresh = 2;                                  
       }
       $g_zdbid =  $Q->param("OID");
       #$sm_refresh = 1;
@@ -301,13 +311,12 @@
     if( (defined $Q->param("OID")) && ($Q->param("OID")) )  {
       $g_OID = $zdbid  =  $Q->param("OID"); 
       $sm_m = get_OIDs_abbrev($zdbid);
-      if ($sm_refresh != 2) { $sm_refresh = 1;}
-        
+      if ($sm_refresh != 2) { $sm_refresh = 1;}      
       if( defined $Q->param("lg") && $Q->param("lg") ) {$lg =  $Q->param("lg");} 
       else {			### need a linkage group
 	#get OID lg
 	$lg = get_OIDs_lg($zdbid) ;
-	#	$note = $note . "found $marker to be unique on LG $lg   \n";
+	#$note = $note . "found $marker to be unique on LG $lg   \n";
       } 
       $sm_lg = $lg;
       #      $note = $note . "Arrived from somewhere that resolves to marker $zdbid on $lg <p>\n"; 
@@ -331,30 +340,27 @@
       #$note = $note . "LG QUERY <p>\n";
       foreach $panel (@panels) {
 	$Q->param($panel.'_ztotal',1);
-       	#$note = $note . "being asked for all of $lg on $panel <p>\n";
+    #$note = $note . "being asked for all of $lg on $panel <p>\n";
 	$g_data =  $g_data . lg_query ( $panel ,$lg );
-
 	$zooms{$panel} = $zoom; #zoom hash
-
 	$lgs{$panel} = $lg; #lg hash
-
 	#$note = $note ." ztotal for lg $lg on $panel  is ". $Q->param($panel.'_ztotal') . "<p>\n";
       }
     } 
     if(!$g_data) {		### all empty backbones
-      #      $note = $note . "\tNo markers found on @panels  <p>\n";
+      #$note = $note . "\tNo markers found on @panels  <p>\n";
       if ($g_error < 1){$g_error = 0;}
     } 
     if ($sm_refresh != 2) { $sm_refresh = 1;}
   }
-  ### end coming from a "view_map" source 
+  ### end coming from a "view_map" source with no errors
   ###############################################################################
   ###
   ###
   ### comming from OPTIONS page zoom/edit/show  or a 'multi source' page
   ### 
   ###
-  elsif($g_error == 0)  {
+  elsif($g_error == 0)  {# comming from options page 
     #$note =  $note. " Multi Source Query with |$edit_panel| selected <p>\n";
     
     ## all the panels that are along for the ride are being re-calculated 
@@ -365,7 +371,8 @@
       if($Q->param($panel.'_est')  && $Q->param($panel.'_est')==1) {$types = "$types\',\'$est_type"; $print_type += 2;}
       if($Q->param($panel.'_anon') && $Q->param($panel.'_anon')==1){$types = "$types\',\'$anon_type"; $print_type += 4;}
       if($Q->param($panel.'_fish') && $Q->param($panel.'_fish')==1){$types = "$types\',\'$fish_type"; $print_type += 8;}
-      if($print_type == 0){ $types = "SSLP\',\'RAPD\',\'RFLP\',\'SSR\',\'STS\',\'GENE\',\'BAC\',\'EST\',\'FISH\',\'MUTANT\',\'LOCUS"; $print_type += 15;}
+      if($Q->param($panel.'_bac')  && $Q->param($panel.'_bac')==1)    {$types = "$types\',\'$bac_type"; $print_type += 16; }
+      if($print_type == 0){ $types = "SSLP\',\'RAPD\',\'RFLP\',\'SSR\',\'STS\',\'GENE\',\'BAC\',\'PAC\',\'EST\',\'FISH\',\'MUTANT\',\'LOCUS"; $print_type += 31;}
       
       #$note = $note . " will be finding  $types  markers on this refresh panel<p>\n";
       ### hidden panel, lg, lo,hi & zoom re-emited as hidden vars
@@ -381,9 +388,7 @@
 	$lg =    $Q->param($panel.'_lg');
 	
 	$zoom = get_between( $panel, $lg, $types, $lg_lo, $lg_hi );
-
 	$zooms{$panel} = $zoom; #zoom hash
-
 	$lgs{$panel} = $lg; #lg hash
 
 	if ($zoom > 0) {	  
@@ -395,13 +400,7 @@
 	    ### -- do display this panel
 	    "<INPUT TYPE=\"hidden\" NAME=\"$panel\" VALUE=\"1\">\n".
 	      "<INPUT TYPE=\"hidden\" NAME=\"".$panel."_ztotal\" VALUE=".$Q->param($panel.'_ztotal') .">\n".
-		$Q->hidden($panel . '_lg',  $lg) . "\n".  
-		  
-		 # $Q->hidden($panel . '_gene',   $Q->param($panel.'_gene')) . "\n".  
-		   # $Q->hidden($panel . '_est',   $Q->param($panel.'_est')) . "\n".  
-		     # $Q->hidden($panel . '_anon',   $Q->param($panel.'_anon')) . "\n".  
-			#$Q->hidden($panel . '_fish',   $Q->param($panel.'_fish')) . "\n".  
-			  
+		$Q->hidden($panel . '_lg',  $lg) . "\n".  		  		  
 			  $Q->hidden($panel . '_lg_lo', $lg_lo) . "\n".
 			    $Q->hidden($panel . '_lg_hi', $lg_hi) . "\n".  
 			      $Q->hidden($panel.'_zoom',$zoom ) . "\n".
@@ -438,14 +437,15 @@
       if($Q->param($panel.'_est') && $Q->param($panel.'_est')==1)  {$types = "$types\',\'$est_type"; $print_type += 2;}
       if($Q->param($panel.'_anon') && $Q->param($panel.'_anon')==1){$types = "$types\',\'$anon_type"; $print_type += 4; }
       if($Q->param($panel.'_fish') && $Q->param($panel.'_fish')==1){$types = "$types\',\'$fish_type"; $print_type += 8; }
-      if($print_type == 0){ $types = "SSLP\',\'RAPD\',\'RFLP\',\'SSR\',\'STS\',\'GENE\',\'EST\',\'BAC\',\'FISH\',\'MUTANT\',\'LOCUS"; $print_type += 15;}
+      if($Q->param($panel.'_bac')  && $Q->param($panel.'_bac')==1)    {$types = "$types\',\'$bac_type"; $print_type += 16; }
+      if($print_type == 0){ $types = "SSLP\',\'RAPD\',\'RFLP\',\'SSR\',\'STS\',\'GENE\',\'EST\',\'BAC\',\'PAC\',\'FISH\',\'MUTANT\',\'LOCUS"; $print_type += 31;}
       
-      #      $note = $note . " will be finding  $types  markers on the edit panel\n";
+      #$note = $note . " will be finding  $types  markers on the edit panel\n";
       $Q->param($panel, 1);
       
       if( ! defined $Q->param($panel.'_zoom') && ! defined $Q->param($panel.'_or') ) {
-	### SEEK
-	#$note = $note . " <br>SEEK! on |".$panel ."|<p>\n";
+	### SEEK(un-hide)
+	$note = $note . " <br>SEEK! on |".$panel ."|<p>\n";
 	
 	$lines = '';
 	if( $Q->param('OID')){
@@ -457,10 +457,8 @@
 	  $Q->param($panel.'_ztotal',1);
 	  #$note = $note . "Get all of LG |". $Q->param('lg') . "|\n";
 	  $g_data =  $g_data . lg_query( $panel, $Q->param('lg') );        
-
 	  $zooms{$panel} = $zoom; #zoom hash
 	  $lgs{$panel} = $lg; #lg hash
-
 	}else {
 	  $g_data = $g_data . $lines;	
 	  #$note = $note ."got some near ".$Q->param('OID')."<p>\n";
@@ -476,15 +474,12 @@
 		    $Q->param($panel.'_lg_hi').'|'.
 		      $print_type .'|'.
 		      "\n";        
-      }
-      elsif( defined $Q->param($panel.'_zoom') && $Q->param($panel.'_zoom') < 0) {
-	### ZOOM
-	#	$note = $note . " ZOOM! \n";
-	$zoom =  $Q->param($panel.'_zoom');
-	$zoom *= -1;
+      }#~seek
+      elsif( defined $Q->param($panel.'_zoom') && $Q->param($panel.'_zoom') < 0) {### ZOOM
+		$note = $note . " ZOOM! \n";
+	$zoom =  abs($Q->param($panel.'_zoom'));
 	$zoom = ($zoom > $Q->param($panel.'_ztotal')) ? $Q->param($panel.'_ztotal'): $zoom;
 	$Q->param($panel.'_zoom', $zoom );
-	
 	#	$note = $note . " ZOOMING towards  |$zoom| markers on |$panel|<p>\n";	
 	$lg_lo = $Q->param($panel.'_lg_lo');
 	$lg_hi = $Q->param($panel.'_lg_hi');
@@ -501,25 +496,16 @@
 	}else { $loc = defined $Q->param($panel.'_loc')? $Q->param($panel.'_loc'): undef; }
 	$zdbid = $Q->param($panel.'_OID');
 	#	$note = $note . " Zoom is  centered on ". $zdbid. " at |$loc|<p>\n"; 
-	#	$note = $note ." ZOOMPARAMS:: |$zdbid|, |$lg|, |$panel|, |$zoom|, |$loc| pre-lo $lg_lo 7 pre-hi $lg_hi <p>\n";
-	
+	#	$note = $note ." ZOOMPARAMS:: |$zdbid|, |$lg|, |$panel|, |$zoom|, |$loc| pre-lo $lg_lo 7 pre-hi $lg_hi <p>\n";	
 	($lg_lo, $lg_hi) = get_zooms ($zdbid, $lg, $panel, $zoom, $loc );
-	
-	#	$note = $note ."ZOOMRETURNS:: |$lg_lo|, |$lg_hi| <p>\n";
-	
+	#$note = $note . " Zoom is  centered on ". $zdbid. " at |$loc|<br>\n"; 
+	#$note = $note ."ZOOMRETURNS:: |$lg_lo|, |$lg_hi| <p>\n";	
  	$Q->delete($panel.'_lg_lo','');
 	$Q->delete($panel.'_lg_hi','');
-	
-	
 	$zoom = get_between($panel, $lg, $types, $lg_lo, $lg_hi);
-
 	$zooms{$panel} = $zoom; #zoom hash
-
 	$lgs{$panel} = $lg; #lg hash
-
-	if ($zoom >= 0){
-	  
-	  #$curbetween->finish;
+	if ($zoom >= 0){	  
 	  $g_height = ($g_height < $zoom)? $zoom : $g_height;    
 	  ### add room in applet for another backbone
 	  $g_width +=280;	#bbw
@@ -533,19 +519,16 @@
 		       $Q->hidden($panel . '_gene',   $Q->param($panel.'_gene')) . "\n".  
 		    $Q->hidden($panel . '_est',   $Q->param($panel.'_est')) . "\n".  
 		      $Q->hidden($panel . '_anon',   $Q->param($panel.'_anon')) . "\n".  
-			$Q->hidden($panel . '_fish',   $Q->param($panel.'_fish')) . "\n".  
-		      $Q->hidden($panel.'_zoom', $zoom ) . "\n";
-		
+			$Q->hidden($panel . '_fish',   $Q->param($panel.'_fish')) . "\n". 
+            $Q->hidden($panel . '_bac',   $Q->param($panel.'_bac')) . "\n".  
+		      $Q->hidden($panel.'_zoom', $zoom ) . "\n";	
 	} else{			### empty backbone
 	  ### close the option block for this panel?
 	  $error &= $no_data;
 	  $Q->param($panel, 0);	# turn off check box for this panel in mapperselect form
 	}
-		
-	#####################
-      }
-      else {
-	### EDIT 
+      }# ~ zoom #####################
+      else {### EDIT 
 	# there is a potential change in the number of markers on the backbone, heck they can change lgs
 	# so reset ztotal
         $lg      = $Q->param($panel."_lg");
@@ -570,22 +553,18 @@
 	      (($lg_or_flag =~ /units/) && ((! defined $lg_lo) || (! defined  $lg_hi)) )
 	      ||
 	      (($lg_or_flag =~ /near/ ) && (! defined  $loc))
-	     ){
-	    #must be asking for the whole LG
+	     ){#must be asking for the whole LG
 	    $Q->param($panel.'_ztotal',1);
 	    #$note = $note . "Get all of LG |". $Q->param('lg') . "|\n";
 	    $g_data =  $g_data . lg_query( $panel, $lg ); #(types)    
 	    $zooms{$panel} = $zoom; #zoom hash
 	    $lgs{$panel} = $lg; #lg hash	    
 	  }	  
-	  elsif($lg_or_flag =~ /units/) {       
-	    #	    $note = $note . "\t\t\tOPTION FORM BETWEEN <p>\n";
-	    
+	  elsif($lg_or_flag =~ /units/) {# lg flag is units      
+	    #	    $note = $note . "\t\t\tOPTION FORM BETWEEN <p>\n";    
 	    $zoom = get_between($panel, $lg, $types, $lg_lo, $lg_hi);
-
 	    $zooms{$panel} = $zoom; #zoom hash
 	    $lgs{$panel} = $lg; #lg hash
-
 	    if ($zoom > 0){
 	      $g_height = ($g_height < $zoom)? $zoom : $g_height;    
 	      ### add room in applet for another backbone
@@ -601,17 +580,19 @@
 			   $Q->hidden($panel . '_gene',   $Q->param($panel.'_gene')) . "\n".  
 		    $Q->hidden($panel . '_est',   $Q->param($panel.'_est')) . "\n".  
 		      $Q->hidden($panel . '_anon',   $Q->param($panel.'_anon')) . "\n".  
-			$Q->hidden($panel . '_fish',   $Q->param($panel.'_fish')) . "\n".  
+			$Q->hidden($panel . '_fish',   $Q->param($panel.'_fish')) . "\n".
+            $Q->hidden($panel . '_bac',   $Q->param($panel.'_bac')) . "\n".   
 			  $Q->hidden($panel.'_zoom', $zoom ) . "\n".
 			    $Q->hidden($panel.'_from_BETWEEN', 1) . "\n";
-	    }else{		### empty backbone
+             $sm_refresh = 1;   
+	    }else {		### empty backbone
 	      ### close the option block for this panel?
 	      $error &= $no_data;
 	      $g_opt =  $g_opt . "<INPUT TYPE=\"hidden\" NAME=\"$panel\" VALUE=\"0\">\n"; #$Q->hidden($panel, 0). "\n";          
 	      $Q->param($panel, 0); # turn off check box for this panel in mapperselect form
 	      
 	    }
-	  }
+	  }# ~ lg_flag is units
 	  ### the call to get_between should: 
 	  ###   be adding rows to g_data
 	  ###   adjusting lo & hi to what it finds
@@ -620,7 +601,7 @@
 	  
 	  ##########################################
 	  elsif($lg_or_flag =~ /near/ ) { #  just turn the 'near query' into a 'marker query'
-	    #	    $note = $note . "\t\tNEAR $loc on <p>\n";	            
+	    #$note = $note . "\t\tNEAR $loc on <p>\n";	            
 	    ($zdbid,$marker,$loc) = get_closest($panel,$lg,$loc);
 	    $Q->param($panel."_OID", $zdbid);
 	    $Q->param($panel."_m", $marker );
@@ -629,36 +610,32 @@
 	    $Q->param($panel.'_m_hi','');
 	    $or_flag = 'Marker';
 	  }
-	}
+	}# end location set
 	###################################################################################
 	if( $or_flag  && ($or_flag =~ /Marker/ )) {
 	  #	  $note = $note . " MARKER on $panel  <p>\n";
 	  ### need to have (unique)marker _m_lo & _m_hi (distances)                 
 	  ### find if marker exists uniquely on this panel               
-	  #$zdbid  = $Q->param($panel."_OID");
 	  $marker = $Q->param($panel."_m");              
 	  $m_lo =   $Q->param($panel."_m_lo");
 	  $m_hi =   $Q->param($panel."_m_hi");
-	  #$lg =     $Q->param($panel."_lg");
-	  #if ($lg =~ /\?\?/ ) { undef $lg; }
 
 	  if(! $zdbid ) {
 	  $note = $note . "checking $marker, $panel , $lg for uniqueness \n";
+        undef $rowref;
 	    $rowref  = check_uniq($marker, $panel ); 
-	    $unique  = (defined $$rowref[0][0])? length(@$rowref): 0;
-	    if($unique == 1){
+	    #$unique  = (defined $$rowref[0][0])? @$rowref: 0;
+	    if(defined $rowref && (! defined @$rowref[1]) ){ #
+          $unique = 1;
 	      $zdbid = $$rowref[0][0];
 	      $lg =    $$rowref[0][1]; 
-	      $loc =   $$rowref[0][2];
+	      #$loc =   $$rowref[0][2];
 	      $ztotal =  get_total($panel, $lg, $types);
-	      $Q->param( $panel.'_lg_near', $loc);
+	      #$Q->param( $panel.'_lg_near', $loc);
 	      $Q->param($panel."_lg", $lg);
 	    }     
-	  }
-	  else{
-	    $unique = 1;
-	  }
-	  if($unique == 1) {	### proceed
+	  }else{$unique = 1;}
+	  if($unique == 1) {
 	    if( (! $m_lo ) || (! $m_hi )) { #reverts to a standard fetch
 	      #***********************************************************
 	      $lo = $hi = $m_hi = $m_lo = ''; 
@@ -666,8 +643,7 @@
 	      
 	      ### expects $types & $zoom as globals  
 	      $lines = uni_query($lg, $zdbid,$panel);
-	      
-	      #	      $note = $note . "\tLooking on $panel \n";      
+	      #	$note = $note . "\tLooking on $panel \n";      
 	      if( $lines ){	### if we have some map to display; =~ tr/\0// /
 		### add room in applet for another backbone
 		$g_data = $g_data . $lines;                         
@@ -687,18 +663,15 @@
 	      $lg_lo = $loc - $m_lo;
 	      $lg_hi = $loc + $m_hi; 
 	      $zoom = get_between($panel, $lg, $types, $lg_lo, $lg_hi);
-
 	      $zooms{$panel} = $zoom; #zoom hash
-
 	      $lgs{$panel} = $lg; #lg hash
-
 	      if ($zoom > 0){
 		$g_height = ($g_height < $zoom)? $zoom : $g_height;    
 		### add room in applet for another backbone
-		$g_width +=280;	#bbw
-		
+		$g_width +=280;	#bbw	
 		### make sure we have the correct total markers
-		$ztotal = get_total($panel, $lg, $types);$Q->param($panel.'_ztotal', $ztotal);
+		$ztotal = get_total($panel, $lg, $types);
+        $Q->param($panel.'_ztotal', $ztotal);
     
 		$g_opt =  $g_opt .
 		  ### -- do display this panel
@@ -709,9 +682,10 @@
 			   $Q->hidden($panel . '_gene',   $Q->param($panel.'_gene')) . "\n".  
 		    $Q->hidden($panel . '_est',   $Q->param($panel.'_est')) . "\n".  
 		      $Q->hidden($panel . '_anon',   $Q->param($panel.'_anon')) . "\n".  
-			$Q->hidden($panel . '_fish',   $Q->param($panel.'_fish')) . "\n".  
+			$Q->hidden($panel . '_fish',   $Q->param($panel.'_fish')) . "\n". 
+            $Q->hidden($panel . '_bac',   $Q->param($panel.'_bac')) . "\n". 
 			  $Q->hidden($panel.'_zoom', $zoom ) . ";\n"
-	      }else{		### empty backbone
+	      }else{# zoom == 0			### empty backbone
 		### close the option block for this panel?
 		$error &= $no_data;
 		$Q->param($panel, 0); # turn off check box for this panel in mapperselect form
@@ -721,18 +695,6 @@
 	}
 	##################################
 	$sm_refresh = 2; 
-	### print?
-
-#	$g_printdata = 
-#	  $g_printdata . 
-#	    $panel .'|'.
-#	      $Q->param($panel.'_lg').'|'.
-#		$Q->param('OID').'|'.
-#		  $Q->param($panel.'_lg_lo').'|'.
-#		    $Q->param($panel.'_lg_hi').'|'.
-#		     $print_type.'|'. 
-#		       "\n";
-	
       }				### end else edit
     }
     else {			### just hid a panel
@@ -746,16 +708,15 @@
   ################################################################################
   ################################################################################
   ### build up the "Mapplet" page
+  $note = $note . " <p> END NOTE <P>\n";
   print $Q->header . "\n";   
   print $Q->start_html(-TITLE => "View Marker", -bgcolor=> 'white',-link=>'black',-vlink=>'black')."\n";
   ### based on error codes emit the dynamic part of the page
   if ($g_error == 0 && $g_data) {
-    #if( ($g_error == 0) && $data ){# call_applet if the uniq flag gets through as 1
     $g_height *= 13; 
     $g_height += 95; 
     if( $g_height < 210){$g_height = 210;} 
-    
-    
+      
     ###    
     ### -- wrap the pair of buttons in a table to keep them on one line.
     ###
@@ -776,10 +737,10 @@
 				       $Q->submit(-name=>"Hide / Show / Adjust a Panel",-align=>'right')."\n".
 					$Q->end_form."\n</td>";
     print '<td><img src=/client_apps/Map/mapkey.gif><p>'."\n";
-    
-    my $POprint;
-    for $panel (@allpanels) { $POprint = $POprint . $panel . "|"; }
-    
+
+    my $POprint ='';
+    for $panel (@allpanels) { $POprint = $POprint . $panel . "|"; }### kevin's code
+
     print "<td>". $Q->start_form (
 				  -method=>'GET',
 				  -action=>'/<!--|CGI_BIN_DIR_NAME|-->/print_map.cgi',
@@ -799,7 +760,7 @@
     
     print "</tr></table>";
     
-    ###
+    ### ~KS
     ### print zoom buttons and percentages
     ###
 
@@ -824,7 +785,13 @@
 	#zoom out
 	$newz = $z + 20;
 	if ($newz > $ztot) { $newz = $ztot; }
-	print "\n<td><input type=button value=\"Zoom Out\" onClick=\"document.optform.edit_panel.value='" . $panel . "'; document.optform." . $panel . "_zoom.value = '-" . $newz . "'; document.optform.refresh_map.value = 1; document.optform.target='pbrowser'; document.optform.action='view_mapplet.cgi'; document.optform.submit();\">";
+	print "\n<td><input type=button value=\"Zoom Out\"".
+    " onClick=\"document.optform.edit_panel.value='" . $panel ."';". 
+    " document.optform." . $panel . "_zoom.value = '-".$newz ."';".
+    " document.optform.refresh_map.value = 1;".
+    " document.optform.target='pbrowser';".
+    " document.optform.action='view_mapplet.cgi';". 
+    " document.optform.submit();\">\n\n";
 
 	#draw percentage
 
@@ -838,14 +805,25 @@
 	#zoom in
 	if ($z > 25) { $newz = $z - 20; } else { $newz = $z - 10; }
 	if ($newz < 5) {$newz = 5;}
-	print "<input type=button value=\"Zoom In\" onClick=\"document.optform.edit_panel.value='" . $panel . "'; document.optform." . $panel . "_zoom.value = '-" . $newz . "'; document.optform.refresh_map.value = 1; document.optform.target='pbrowser'; document.optform.action='view_mapplet.cgi'; document.optform.submit();\">";
-	print "<br><font size=-1><b>&nbsp;&nbsp;<a href=\"http://<!--|DOMAIN_NAME|-->/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=" . $allpanels_id[$order_increment] . "\" target=\"content\">". $panel . "</a> panel, LG: " . $lg . ", units: " . $allpanels_metric[$order_increment] . "</b></font></td>"; 
+	print "<input type=button value=\"Zoom In\" ".
+    " onClick=\"document.optform.edit_panel.value='" . $panel . "';".
+    " document.optform." . $panel . "_zoom.value = '-" . $newz . "';".
+    " document.optform.refresh_map.value = 1;".
+    " document.optform.target='pbrowser';".
+    " document.optform.action='view_mapplet.cgi';".
+    " document.optform.submit();\">";
+    
+	print "<br><font size=-1><b>&nbsp;&nbsp;".
+    "<a href=\"http://<!--|DOMAIN_NAME|-->/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&".
+    "OID=" . $allpanels_id[$order_increment]."\"".
+    " target=\"content\">". $panel . "</a>".
+    " panel, LG: " . $lg . ", units: " . $allpanels_metric[$order_increment] . 
+    "</b></font></td>"; 
 	$order_increment++;
       } else { $order_increment++; }
-
     }
     print "</tr>\n";
-    print "</table></form>"; # . $Q->end_form . "\n\n";
+    print "</table></form>\n\n";
 
     ###    
     ### call the applet
@@ -859,13 +837,12 @@
 		" width\t  = \"$g_width\"\n".
 		  " mayscript>\n";
 
-
     #passing panel order
     print "<param name = \"panel_order\" value = \"";
     for $panel (@allpanels) { print $panel . "|"; }
     print "\">\n";
-
       for $panel (@panels){
+
       if(defined $Q->param($panel.'_ztotal') ){ #&& $Q->param($panel.'_ztotal')>0){
 	print "<param name = \"" . $panel . "_ztotal\"\t value = ". $Q->param($panel.'_ztotal').">\n"; 
       }
@@ -884,22 +861,21 @@
 	      "<param name = \"selected_marker\"\t value = \"". $Q->param('OID')."\">\n". 
 		"<param name = \"fish_url\" value = \"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=\">\n".
 		  "<param name = \"locus_url\" value = \"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=\">\n".
-		     "<param name = \"zoom_url\" value = \"/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi\">\n".
-		    
-		    "<param name = \"data\"\t\t value = \"$g_data\">\n".
-		      
+		     "<param name = \"zoom_url\" value = \"/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi\">\n".          
+		    "<param name = \"data\"\t\t value = \"$g_data\">\n".	               
 		      "</APPLET><p>\n";
   }
   else{				# mistakes were made...
     ### 
     print "<P><H3><font color = red>No Map Data Returned </font></H3><p>\n";
+    #print $g_error  . "<p>\n";
+    #print $g_data   . "<p>\n";
   }
  
-  #print $note ."\n";
+  #print $note ."<P><P>\n";
   
   ### if a first query or  option/edit put select map back
   if( defined $sm_refresh && $sm_refresh > 0 ) {
- 
     print $Q->start_form (
 			  -method=>'POST',
 			  -action=>'/<!--|WEBDRIVER_PATH_FROM_ROOT|-->',
@@ -907,29 +883,26 @@
 			  -name=>'selectform',
 			  -target=>'criteria'
 			 )
-      . $Q->hidden("MIval","aa-mapperselect.apg");
+      . $Q->hidden("MIval","aa-mapperselect.apg"). "\n";
     for $tmp (@allpanels){
-        print $Q->hidden($tmp, defined $Q->param($tmp)? $Q->param($tmp) :0) . "\n";
-    }        
-          
+        print $Q->hidden($tmp, (defined $Q->param($tmp))? $Q->param($tmp) :0) . "\n";
+    }               
     if ( ($sm_m ||  $Q->param('name')) && ($sm_refresh == 1) ) {
+
       print  $Q->hidden('marker', ($sm_refresh == 1)? $sm_m:  $Q->param('name')). "\n";
     }else {   
       print  $Q->hidden('loc_lg', ($sm_refresh >= 1)? $sm_lg: $Q->param('lg')) . "\n".
 	$Q->hidden('loc_panel',($sm_refresh >= 1)? $sm_panel:$Q->param('edit_panel')) . "\n".
-	  $Q->hidden('loc ', ($sm_refresh >= 1)? $sm_loc:$Q->param('loc')) . "\n".
-	    $Q->end_form . "\n";
+	  $Q->hidden('loc ', ($sm_refresh >= 1)? $sm_loc:$Q->param('loc')) . "\n";
     }
+    print $Q->hidden('map_type','individual')."\n".
+	$Q->end_form . "\n";
     print "\n<SCRIPT> document.selectform.submit()</SCRIPT>\n";
-
-    
-    #print "<SCRIPT>eval(parent.criteria.document.location='/ZDBA/misc_html/saycomposing.html');</SCRIPT>\n";
   }
   print  $Q->end_html."\n";
   $dbh->disconnect;
  
-  exit;
-  
+  exit; 
   ################################################################################
   
   ### functions to get data for maps
@@ -947,7 +920,6 @@
     my ($lg, $zdbid, $pan) = @_; # , $types
     my @panel_set;
     my @dud;
-    #my @duddud;
     my $data = '';
     if((defined $pan) && $pan){
       push (@panel_set, $pan); 
@@ -973,7 +945,7 @@
     my $stmt1 = 
       'INSERT INTO PANLG SELECT zdb_id,abbrev,mtype,target_abbrev,lg_location,or_lg,mghframework,metric '.
 	'FROM public_paneled_markers '. 
-	  'WHERE target_abbrev = ?' . #panel
+	  "WHERE target_abbrev = ?" . #panel
 	    'AND or_lg = ? '.
 	      "AND mtype IN (\'$types\');";
     
@@ -999,7 +971,7 @@
     my @row;
     my $local_zoom = 0;
     my $ztotal = 1; 
-    
+    #$note = $note . "\n IN UNIQUERY \n<br>";
     $dbh->{AutoCommit} = 0;	# enable transactions, if possible
     $dbh->{RaiseError} = 1;
     eval {			#                                zdb_id 1,          abbrev 2,          mtype 3,          target_abbrev 4,          lg_location 5,           or_lg 6,      mghframework 7,      metric 8
@@ -1179,10 +1151,8 @@
   ### note this is the default refresh machenism, and called by 'get near marker'
   ### speed ups here would be have an effect on all secondary maps and some primary
   
-  sub get_between {
-    
-    my ($panel, $lg, $types, $lg_lo, $lg_hi) = @_;
-    
+  sub get_between {   
+    my ($panel, $lg, $types, $lg_lo, $lg_hi) = @_;    
     $sql =  "SELECT zdb_id,abbrev,mtype,target_abbrev,lg_location,or_lg,mghframework,metric ".
       "FROM public_paneled_markers  ".
 	"WHERE target_abbrev = \'$panel\' ".  # $panel
@@ -1192,7 +1162,7 @@
 		"AND lg_location <= \'$lg_hi\' ". # $hi
 		    "ORDER BY lg_location, abbrev;";
     
-    #   $note = $note . $sql . "<p>\n"; 
+    #$note = $note . $sql . "<p>\n"; 
     my $curbetween = $dbh->prepare($sql) || return undef; 
     $zoom  = $curbetween->execute  (); #  $panel, $lg, $types , $mlo, $mhi);
     if (! defined  $Q->param('OID')){$Q->param('OID', ''); }
@@ -1204,8 +1174,7 @@
 	$zoom++;
       }
     }
-    #    $note = $note . "\n BETWEEN found |$zoom| markers between |$lg_lo|  and |$lg_hi| <p>\n ";
-
+    #$note = $note . "\n BETWEEN found |$zoom| markers between |$lg_lo|  and |$lg_hi| <p>\n ";
     $zoom;
   }
   
@@ -1213,13 +1182,10 @@
   ### input: marker_zdbid, lg,  panel_abbrev, (desired number of of markers) location, (and marker types global)
   ### output: the hi and lo locations that best contain the desired number of markers nearest to location.
   ###
-  sub get_zooms {
-    
-    my ($zdbid, $lg, $panel, $zoom, $loc) =@_;
-    
+  sub get_zooms {    
+    my ($zdbid, $lg, $panel, $zoom, $loc) =@_;    
     if( ! defined $loc || !$loc){
-      #      $note = $note . "finding the location of $zdbid on lg $lg of $panel<p>\n";
-      
+      #      $note = $note . "finding the location of $zdbid on lg $lg of $panel<p>\n";      
       $cur = $dbh->prepare("SELECT lg_location FROM public_paneled_markers WHERE target_abbrev = ? ".
 			   " AND or_lg = ? AND zdb_id = ? " );
       $rc = $cur->execute($panel, $lg, $zdbid);
@@ -1227,13 +1193,12 @@
       $loc = $row[0];
     }
     $lg_lo = $loc;
-    $lg_hi = $loc;
-    
-    #    $note = $note . "get_ZOOM looking around $loc<p>\n";
-    
+    $lg_hi = $loc;   
+    #    $note = $note . "get_ZOOM looking around $loc<p>\n";   
     $sql =  
       " SELECT lg_location, ABS(lg_location - $loc ) distance " . 
-	" FROM public_paneled_markers WHERE target_abbrev = ? AND or_lg = ? ".
+	" FROM public_paneled_markers ".
+     "WHERE target_abbrev = ? AND or_lg = ? ".
 	  " AND mtype in ( \'$types\') ".
 	    " ORDER BY distance;";
     
@@ -1244,10 +1209,9 @@
       if($row[0] > $lg_hi){ $lg_hi = $row[0];}
       if($row[0] < $lg_lo){ $lg_lo = $row[0];}
     }
-    #    $note = $note . "get_ZOOM  found |$lg_lo| and |$lg_hi|<p>\n";
-    
+    #$note = $note . "get_ZOOM  found |$lg_lo| and |$lg_hi|<p>\n";   
     $lg_lo = $lg_lo <= 0? 0: $lg_lo;  ## get rid of 0.0E0
-
+    #$note = $note . "get_ZOOM  found |$lg_lo| and |$lg_hi|<p>\n";
     $g_opt = $g_opt . $Q->hidden($panel.'_from_ZOOM',$zoom ) . "\n";
     return ($lg_lo, $lg_hi);
   }
@@ -1263,7 +1227,8 @@
     #$note = $note . "IN LG QUERY<p>\n";
     $sql =  
       " SELECT zdb_id,abbrev,mtype,target_abbrev,lg_location,or_lg,mghframework,metric ". 
-	" FROM public_paneled_markers WHERE target_abbrev = ? AND or_lg = ? ".
+	" FROM public_paneled_markers WHERE target_abbrev = ? ".
+     " AND or_lg = ? ".
 	  "AND mtype in  ( \'$types\') ".
 	    "ORDER BY lg_location, abbrev;";
     
@@ -1292,7 +1257,8 @@
 		 $Q->hidden($panel . '_gene',   $Q->param($panel.'_gene')) . "\n".  
 		    $Q->hidden($panel . '_est',   $Q->param($panel.'_est')) . "\n".  
 		      $Q->hidden($panel . '_anon',   $Q->param($panel.'_anon')) . "\n".  
-			$Q->hidden($panel . '_fish',   $Q->param($panel.'_fish')) . "\n".  
+			$Q->hidden($panel . '_fish',   $Q->param($panel.'_fish')) . "\n".
+            $Q->hidden($panel . '_bac',   $Q->param($panel.'_bac')) . "\n".   
 		$Q->hidden($panel.'_lg_hi' , $hi)."\n".
 		  $Q->hidden($panel.'_near_loc', ($lo + ($hi - $lo) / 2) ) . "\n" ;
     $Q->hidden($panel.'_from_LINKAGEGROUP', 1);
@@ -1311,14 +1277,16 @@
     $sql = 
     "SELECT first 1 or_lg " .
 	"FROM public_paneled_markers WHERE zdb_id = \'$zdbid\'; " ;
-	 #"group by or_lg order by count(or_lg) DESC;"; # first random is lese biased 
+	 #"group by or_lg ".
+     #  "order by count(or_lg) DESC;";
     $cur = $dbh->prepare($sql) ;
     $rc = $cur->execute();
     @row = $cur->fetchrow;
     $lg = shift(@row);
     $lg;
   }
-  ###############################################################################
+
+  ##############################################################################
   ### input:  a marker zdbid  
   ### output: a lingage group number that the marker is in  
   sub  get_OIDs_abbrev{
@@ -1332,7 +1300,7 @@
     $marker = shift(@row);
     $marker;
   }
-  
+
   ################################################################################
   ### input:   panel lg location
   ### output:  zdbid $ marker_abbrev --not further than any other marker to location.
@@ -1361,11 +1329,10 @@
    
     $sql =  
       "SELECT COUNT(*) FROM public_paneled_markers ". 
-	"WHERE target_abbrev = \'$panel\' ". 
+	"WHERE target_abbrev == \'$panel\' ". 
 	  "AND or_lg = $lg ".
 	    " AND mtype in ( \'$types\' );";
-    
-    
+        
     $cur = $dbh->prepare ($sql );  
     $rc= $cur->execute( );
     @row=$cur->fetchrow;  
@@ -1380,92 +1347,124 @@
   ### a row set with multiple rows can be shown to the user and they can pick.
   ###
   ### this function will have to accomodate full names and previous names
-  
-  sub check_uniq {              #assumes $marker is defined , and maybe panel & lg
+    
+    sub check_uniq {              #assumes $marker is defined , and maybe panel & lg
     my ($marker, $panel, $lg) = @_; ### type?
     ### try and make an exact match first if it works run with it
     ### if not we will try "contains matching" on the panel & lg first
     ### then on the whole db.
-    
+    my $count = 0;  my $array_ref = '';
     if( (defined $lg) && $lg && ($lg ne "??") && ($lg > 0) && ($lg <= 25) ) {
-      #$note = $note .  "|$marker| exactly unique on |$panel| |$lg|?\n ";
-      $sql =
-	"SELECT UNIQUE allmapnm_zdb_id, pm.or_lg,pm.lg_location ".
-	  "FROM all_map_names, public_paneled_markers pm ".
-	    "WHERE allmapnm_zdb_id = pm.zdb_id ".
-	      "AND allmapnm_name  = \'$marker\' ".    
-		"AND pm.target_abbrev = \'$panel\' ".
-		  "AND mtype IN ( \'$types\' ) ".			
-		    "AND pm.or_lg =  \'$lg\'; ";
+      $note = $note .  "Is |$marker| exactly unique on |$panel| |$lg| officially?<p>\n ";
+      $sql = "SELECT UNIQUE zdb_id, or_lg FROM  public_paneled_markers  ".      
+	  "WHERE abbrev  = \'$marker\' AND target_abbrev in (\'$panel\') ".
+      "AND mtype IN (\'$types\') AND or_lg =  \'$lg\'; ";
+    } elsif( defined  $panel) {
+      $note = $note .  "Is |$marker| exactly unique on |$panel| offically?<p>\n ";
+      $sql = "SELECT UNIQUE zdb_id, or_lg FROM public_paneled_markers ".
+	  "WHERE abbrev  = \'$marker\' AND target_abbrev in (\'$panel\') ".
+      "AND mtype IN ( \'$types\' ); ";
+    } else  {
+      $note = $note . "Is |$marker| exactly unique in ZFIN officially?<p>\n ";
+      $sql = "SELECT UNIQUE zdb_id, or_lg FROM public_paneled_markers ".
+	  "WHERE abbrev  = \'$marker\' AND mtype IN ( \'$types\' ) ;";	        		
     }
-    elsif( defined  $panel) {
-      #$note = $note .  "|$marker| exactly unique on |$panel|?\n ";
-      $sql =
-	"SELECT UNIQUE allmapnm_zdb_id, pm.or_lg,pm.lg_location ".
-	  "FROM all_map_names, public_paneled_markers pm ".
-	    "WHERE allmapnm_zdb_id = pm.zdb_id ".
-	      "AND allmapnm_name  = \'$marker\' ".    
-		"AND pm.target_abbrev = \'$panel\' ".
-		  "AND mtype IN ( \'$types\' ); ";
-    }
-    else {
-      #$note = $note . "|$marker| exactly unique in ZFIN??\n ";
-      $sql =
-	"SELECT UNIQUE allmapnm_zdb_id, pm.or_lg,pm.lg_location ".
-	  "FROM all_map_names, public_paneled_markers pm ".
-	    "WHERE allmapnm_zdb_id = pm.zdb_id ".
-	      "AND allmapnm_name  = \'$marker\' ".    
-		"AND mtype IN ( \'$types\' ) ;";			
-    }
-
     $cur = $dbh->prepare($sql);
-    $rc = $cur->execute();
-    my $array_ref = $cur->fetchall_arrayref();
-    $cur->finish;
-    my $count = (defined @$array_ref[0])? length(@$array_ref) : 0;
-
+    $rc = $cur->execute();   
+    $array_ref = $cur->fetchall_arrayref();
+    #$note = $note . @$array_ref . " " .$array_ref->[0][0]." ".$array_ref->[1][0]. "\n\n";
+    $count = (defined @$array_ref)? @$array_ref : 0;
+    $note = $note . "found $count offically approved symbols that match<p>\n";
+    #--------------------------------------------------------------------------
     if(($count < 1) ) {
       ### did NOT find any exact match--
       ### first look for "contains" with the current constraints
-      #$note = $note .  "\nLOOKING for CONTAINS \n";
+      $note = $note .  "\nLOOKING for CONTAINS \n";
       if( (defined $lg) && $lg && ($lg ne "??") && ($lg > 0) && ($lg <= 25)) {
-	#$note = $note . "|$marker| similar & unique on |$panel|& |$lg|?\n";
-	$sql =
-	  "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg,pm.lg_location ".
-	    "FROM all_map_names, public_paneled_markers pm ".
-	      "WHERE allmapnm_zdb_id = pm.zdb_id ".
-		"AND allmapnm_name  like \'\%$marker\%\' ".    
-		  "AND pm.target_abbrev = \'$panel\' ".
-		    "AND mtype IN ( \'$types\' ) ".			
-		      "AND pm.or_lg = \'$lg\'; ";
-	
-      }
-      elsif( defined  $panel ){
-	#$note = $note . "|$marker| similar & unique on |$panel|?\n";
-	$sql =
-	  "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg,pm.lg_location ".
-	    "FROM all_map_names, public_paneled_markers pm ".
-	      "WHERE allmapnm_zdb_id = pm.zdb_id ".
-		"AND allmapnm_name like \'\%$marker\%\' ".    
-		  "AND pm.target_abbrev = \'$panel\' ".
-		    "AND mtype IN ( \'$types\' ); ";
-	
-      }else{
-	#$note = $note . "|$marker| similar & unique in ZFIN??\n";
-	$sql =
-	  "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg,pm.lg_location ".
-	    "FROM all_map_names, public_paneled_markers pm ".
-	      "WHERE allmapnm_zdb_id = pm.zdb_id ".
-		"AND allmapnm_name  like \'\%$marker\%\' ".    
-		  "AND mtype IN ( \'$types\' ) ;"			
-		}
-      
-      $cur = $dbh->prepare($sql);
-      $cur->execute();
+	    $note = $note . "Is |$marker| similar & unique on |$panel|& |$lg| offically?<p>\n";
+	    $sql = "SELECT UNIQUE zdb_id, or_lg FROM public_paneled_markers ".
+	    "WHERE abbrev  like \'\%$marker\%\' AND target_abbrev = (\'$panel\') ".
+		"AND mtype IN ( \'$types\' ) AND or_lg = \'$lg\'; ";
+      } elsif( defined  $panel ) {
+        $note = $note . "Is |$marker| similar & unique on |$panel| offically?<p>\n";
+	    $sql = "SELECT UNIQUE zdb_id, or_lg FROM public_paneled_markers ".
+	    "WHERE abbrev like \'\%$marker\%\' AND target_abbrev = (\'$panel\') ".
+		"AND mtype IN ( \'$types\' ); ";
+      } else  {
+	    $note = $note . "Is |$marker| similar & unique in ZFIN offically?<p>\n";
+	    $sql = "SELECT UNIQUE zdb_id, or_lg FROM public_paneled_markers ".
+	    "WHERE abbrev  like \'\%$marker\%\' AND mtype IN ( \'$types\' ) ;"			
+	  }
+      $cur = $dbh->prepare($sql);$cur->execute();
       $array_ref = $cur->fetchall_arrayref();
-      $cur->finish;
-    }
-    undef $cur;
+      #$note = $note . @$array_ref . " " .$array_ref->[0][0]." ".$array_ref->[1][0]. "\n\n"; 
+      $count = (defined @$array_ref)? @$array_ref : 0;
+      $note = $note . "found $count similar official symbols<p>\n";
+    } 
+    #-------------------------------------------------------------------------- 
+    if(($count < 1) ) { ############ if still no hits try all_map_names
+        if( (defined $lg) && $lg && ($lg ne "??") && ($lg > 0) && ($lg <= 25) ) {
+            $note = $note . "Is |$marker| exactly unique on |$panel| |$lg| unoffically?<p>\n ";
+            $sql = "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ".
+	        "FROM all_map_names pmn, public_paneled_markers pm ".
+	        "WHERE allmapnm_zdb_id = pm.zdb_id ".
+	        "AND allmapnm_name  = \'$marker\' AND pm.target_abbrev in (\'$panel\') ".
+		    "AND mtype IN (\'$types\') AND pm.or_lg =  \'$lg\'; ";
+        } elsif( defined  $panel) {
+            $note = $note .  "|$marker| exactly unique on |$panel| unoffically?<p>\n ";
+            $sql =
+	            "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ". 
+	            "FROM all_map_names pmn, public_paneled_markers pm ".
+	            "WHERE allmapnm_zdb_id = pm.zdb_id AND allmapnm_name  = \'$marker\' ".    
+		        "AND pm.target_abbrev in (\'$panel\') AND mtype IN (\'$types\'); ";
+        } else  {
+            $note = $note . "|$marker| exactly unique in ZFIN  unoffically?<p>\n ";
+            $sql =
+	            "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ".
+	            "FROM all_map_names pmn, public_paneled_markers pm ".
+	            "WHERE allmapnm_zdb_id = pm.zdb_id ".
+	            "AND allmapnm_name = \'$marker\' AND mtype IN (\'$types\') ;";	
+        }
+        $cur = $dbh->prepare($sql);$rc = $cur->execute();   
+        $array_ref = $cur->fetchall_arrayref();
+        #$note = $note . @$array_ref . " " .$array_ref->[0][0]." ".$array_ref->[1][0]. "\n\n";
+        $count = (defined @$array_ref)? @$array_ref : 0;
+        $note = $note . "found $count <p>\n";
+    }    
+    if(($count < 1) ) {
+        ### did NOT find any exact match--
+        ### first look for "contains" with the current constraints
+        #$note = $note .  "\nLOOKING for CONTAINS \n";
+        if( (defined $lg) && $lg && ($lg ne "??") && ($lg > 0) && ($lg <= 25)) {
+	        $note = $note . "|$marker| similar & unique on |$panel|& |$lg|?<p>\n";
+	        $sql =
+	        "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ". 
+	        "FROM all_map_names pmn, public_paneled_markers pm ".
+	        "WHERE allmapnm_zdb_id = pm.zdb_id ".
+		    "AND allmapnm_name  like \'\%$marker\%\' ".    
+		    "AND pm.target_abbrev = (\'$panel\') ".
+		    "AND mtype IN ( \'$types\' ) AND pm.or_lg = \'$lg\'; ";
+        } elsif( defined  $panel ) {
+	        $note = $note . "|$marker| similar & unique on |$panel|?<p>\n";
+	        $sql =
+	        "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ".
+	        "FROM all_map_names pmn, public_paneled_markers pm ".
+	        "WHERE allmapnm_zdb_id = pm.zdb_id ".
+		    "AND allmapnm_name like \'\%$marker\%\' ".    
+		    "AND pm.target_abbrev = (\'$panel\') AND mtype IN (\'$types\'); ";
+        } else  {
+	        $note = $note . "|$marker| similar & unique in ZFIN??<p>\n";
+	        $sql =
+	        "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ".
+	        "FROM all_map_names pmn, public_paneled_markers pm ".
+	        "WHERE allmapnm_zdb_id = pm.zdb_id ".
+		    "AND allmapnm_name like \'\%$marker\%\' AND mtype IN (\'$types\') ;"			
+	    }
+        $cur = $dbh->prepare($sql);
+        $cur->execute();
+        $array_ref = $cur->fetchall_arrayref();
+        #$note = $note . @$array_ref . " " .$array_ref->[0][0]." ".$array_ref->[1][0]. "\n\n";
+    }  
     $array_ref;
   }				# end check unique
   
@@ -1488,7 +1487,8 @@
     $buf = $buf .
 	    $Q->hidden('OID',$Q->param('OID') )."\n".
 		$Q->hidden('lg',$Q->param('lg'))."\n".
-	    $Q->hidden('userid',$Q->param('userid'))."\n".
+	    #$Q->hidden('userid',$Q->param('userid'))."\n".
+        $Q->hidden('userid',$Q->param('ZDB_authorize'))."\n".
 		$Q->hidden('refresh_map','1')."\n".
 		$Q->hidden('edit_panel','')."\n"
 	;      

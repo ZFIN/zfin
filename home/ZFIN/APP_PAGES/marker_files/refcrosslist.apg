@@ -22,9 +22,7 @@
 <?MIVAR NAME=$line_clr>#e5e5e5<?/MIVAR>
 <?MIVAR NAME=$lasttype><?/MIVAR>
 
-<?MISQL SQL="select a.zdb_id,name,panel_date,ptype,mtype,a.abbrev,count(*)::integer,day(panel_date), month(panel_date), year(panel_date) from panels a, public_paneled_markers b where a.abbrev = b.target_abbrev group by name,panel_date,ptype,a.zdb_id,mtype,a.abbrev order by ptype,name;">
-
-
+<?MISQL SQL="select a.zdb_id, name, panel_date, ptype, b.mtype, a.abbrev, count(*)::integer, day(panel_date), month(panel_date), year(panel_date) from panels a, public_paneled_markers b where a.abbrev = b.target_abbrev group by  name,  panel_date, ptype, a.zdb_id, mtype,a.abbrev union select a.zdb_id, name, panel_date, ptype, b.mtype, a.abbrev, count(*)::integer, day(panel_date), month(panel_date), year(panel_date) from panels a, zmap_pub_pan_mark b where a.abbrev = 'ZMAP' group by  name,  panel_date, ptype, a.zdb_id, mtype,a.abbrev order by  4, 2;">
 
 $(IF,$(AND,$(NC,$last,$1),$(NC,$last,NULL)),"</TD><TD>&nbsp;</TD><TD><font size=2><b>Total markers on panel:</b> "$count"</TD></TR>")
 

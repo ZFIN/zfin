@@ -173,6 +173,7 @@ You may also optionally pass many other constraints on the upcoming selection th
 <?MIVAR COND="$(XST,$MOP)" NAME=$constraint>&MOP=$MOP$constraint<?/MIVAR>
 <?MIVAR COND="$(XST,$GAT)" NAME=$constraint>&GAT=$GAT$constraint<?/MIVAR>
 <?MIVAR COND="$(XST,$userid)" NAME=$constraint>&userid=$userid$constraint<?/MIVAR>
+<?MIVAR COND="$(XST,$map_type)" NAME=$constraint>&map_type=$map_type$constraint<?/MIVAR>
 <?/MIBLOCK>
 
 <!-- arrange for any variables that need to be passed for nav tile bar call -->

@@ -199,9 +199,7 @@
            <input type=submit name=getall value="Do this">
     </ul>
   <?/MIVAR>
-</form>
 
-<form method=post action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi" target="content">	
   <?MIVAR COND="$(OR,$(<=,$tcount,$maxreturn),$(XST,$getall))" 
     NAME=$limit>$true_count
   <?/MIVAR>
@@ -225,12 +223,17 @@
       <?MIVAR NAME=$prev_gp>0<?/MIVAR>
       <?MIVAR NAME=$clr_cnt>0<?/MIVAR>
       <?MIVAR NAME=$ok_view_map>0<?/MIVAR>
+</form>
+
       <?MISQL SQL="
 	select gene_name, lg_location, zdb_id, OR_lg, panel_id, panel_abbrev,
 	       abbrev, private, owner, metric, day(entry_date::date), 
                month(entry_date::date), year(entry_date::date), locus_name, 
 	       locus_zdb_id from $target_table $constraint $order_clause;" 
 	MAXROWS=$limit>
+        <form> 
+
+        <!-- the record retrieved is a different marker than the previous one - create view map buttons if mapping data was available.  Close marker specific form and open generic one.-->
 
         <?MIBLOCK COND="$(AND,$(NC,$prev_name,$1),
 			      $(NC,$prev_gp,0),
@@ -238,19 +241,17 @@
           <?MIVAR>
             <input type=hidden name=userid value=$userid>
             <input type=hidden name=marker value=$marker_name>
-            $(SETVAR,$color,$(/,$clr_cnt,2))
-            <TR valign=top $(IF,$(!=,$color,$(FIX,$color)),"bgcolor=#FCCE64")> 
-            <TD></TD>
-            <TD>&nbsp;</TD>
-            <TD>&nbsp;</TD>
-            <TD>&nbsp;</TD>
-            <TD align=left><font size=1><input type=submit value='VIEW MAP' name=view_map >
-            <TD>&nbsp;</TD>
-          <?/MIVAR>
-</form>
-<form method=post  action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi" target="content">
-          <?MIVAR NAME=$ok_view_map>0<?/MIVAR>
-          </TR>
+	    $(SETVAR,$color,$(/,$clr_cnt,2))
+	    <TR valign=top $(IF,$(!=,$color,$(FIX,$color)),"bgcolor=#FCCE64")>
+	    <TD></TD>
+	    <TD>&nbsp;</TD>
+	    <TD>&nbsp;</TD>
+	    <TD align=left><font size=1><input type=button value='VIEW MERGED MAP' name=view_merge_map onClick="document.$map_abbrev.action='/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi';document.$map_abbrev.submit();"><TD>&nbsp;</TD><TD align=left><font size=1><input type=submit value='VIEW INDIVIDUAL MAPS' name=view_map ></TD>
+            </form>
+            </TR>
+          <?/MIVAR> 
+            <form>
+            <?MIVAR NAME=$ok_view_map>0<?/MIVAR>
         <?/MIBLOCK>
 
 
@@ -324,11 +325,10 @@
        	    Unknown,<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$locus_zdb_id TARGET=content>$locus_name</A>),
           &nbsp;)
         </font></TD>
-        <TD> <font size=2> 
 
         $(IF,$(AND,$(EC,$panel_abbrev,na),
                    $(=,$OR_lg,0)),
-          "Unmapped")
+          "<TD> <font size=2> Unmapped</TD>")
 
         <?MIVAR NAME=$upd_day>$month<?/MIVAR>
         <?MIBLOCK COND="$(NC,$upd_day,NULL)">
@@ -341,31 +341,41 @@
         <?/MIBLOCK>
 
         $(IF,$(AND,$(>,$OR_lg,0),
-             $(EC,$private,f)),
-          "LG <b>"$OR_lg"</b>;<b> "$lg_loc"</b> "
-	  $metric""&nbsp;&nbsp;
-          <A HREF="javascript:view_scores('"$panel_id"','"$OR_lg"','"$OID"','"$marker_name"')";>Scoring Data</A>
-          <TD><font size=2> "<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$panel_id">"$panel_abbrev"</A>"</TD>
-          <TD><font size=2 COLOR=#A9A9A9> <input type=checkbox name=$panel_abbrev value=1  CHECKED ></TD>
-          <TD><font size=2>" "$upd_date""</TD>)
-        <?MIBLOCK COND="$(AND,$(>,$OR_lg,0),$(EC,$private,f))">
-          <?MIVAR name=$ok_view_map>1<?/MIVAR>
-        <?/MIBLOCK>
-
-
-        $(IF,$(AND,$(>,$OR_lg,0),
                    $(NC,$private,f)),
-          "Mapped on <A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$panel_id">"$panel_abbrev" panel; updated "$upd_date"</A>, 
-           but still confidential.")
-        </TD>
+          "<TD> <font size=2>Mapped on <A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$panel_id">"$panel_abbrev" panel; updated "$upd_date"</A>, 
+           but still confidential.</TD>")
+
+        <?MIBLOCK COND="$(AND,$(>,$OR_lg,0),$(EC,$private,f))">
+
+        <!-- if this is the first mapping record for the marker - close the open form and create a form of marker_name.  Each marker with mapping data will have it's own form.  -->
+
+
+	   <?MIBLOCK COND="$(NC,$prev_name,$1)">
+	   </form>
+	     <?MIVAR><form method=post  name="$7" target="content" action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi"><?/MIVAR>
+	     <input type=hidden name=view_map value="view_map">
+	     <?MIVAR><input type=hidden name=marker value="$7"><?/MIVAR>
+	     <?MIVAR><input type=hidden name=userid value=$userid><?/MIVAR>
+	   <?/MIBLOCK>
+
+	   <?MIVAR>
+	     <TD><font size=2>LG <b>$OR_lg</b>;<b> $lg_loc</b> $10&nbsp;&nbsp;<A HREF="javascript:view_scores('$panel_id','$OR_lg','$OID','$marker_name')";>Scoring Data</TD> 
+	     <TD><font size=2><A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=$panel_id>$panel_abbrev</A></TD>
+	     <TD><font size=2 COLOR=#A9A9A9> <input type=checkbox name=$panel_abbrev value=1  CHECKED ></TD><TD><font size=2>$upd_date</TD>
+	   <?/MIVAR>
+
+           <!-- a mapping record has been written - we will need a view map button -->
+           <?MIVAR name=$ok_view_map>1<?/MIVAR>
+         <?/MIBLOCK>
 
 
         </TR>
         $(SETVAR,$prev_gp,$OR_lg)
         $(SETVAR,$prev_name,$gene_name)
+        $(SETVAR,$map_abbrev,$7)
       <?/MISQL>
 
-
+      <!-- add view map buttons if the last record written had mapping data -->
       <?MIBLOCK COND="$(EC,$ok_view_map,1)">
 	<?MIVAR>
 	  <input type=hidden name=userid value=$userid>
@@ -375,9 +385,8 @@
 	  <TD></TD>
 	  <TD>&nbsp;</TD>
 	  <TD>&nbsp;</TD>
-	  <TD>&nbsp;</TD>
-	  <TD align=left><font size=1 COLOR=#A9A9A9><input type=submit value='VIEW MAP' name=view_map > 
-	  <TD>&nbsp;</TD>
+	  <TD align=left><font size=1><input type=button value='VIEW MERGED MAP' name=view_merge_map onClick="document.$map_abbrev.action='/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi';document.$map_abbrev.submit();"><TD>&nbsp;</TD><TD align=left><font size=1><input type=submit value='VIEW INDIVIDUAL MAPS' name=view_map ></TD>
+	  </form>
 	  </TR>
 	<?/MIVAR>
       <?/MIBLOCK>

@@ -22,11 +22,11 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/$(TARGETCGIBIN)
 
 
-STATICS = ncbi_blast_interface.cgi
+STATICS = 
 
 GENERICS = ZFIN_jump map-options.pl print_map.cgi runSPL.cgi \
-	   DebugWebdriver \
-           searchwww.cgi send_request.perl view_mapplet.cgi
+	   DebugWebdriver searchwww.cgi send_request.perl \
+	   view_mapplet.cgi view_zmapplet.cgi
 
 
 

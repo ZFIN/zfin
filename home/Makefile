@@ -29,9 +29,9 @@ SUBDIRS  = ZFIN zf_info images unavailable
 MIRROR_SUBDIRS = zf_info images
 POSTLOADDB_SUBDIRS = ZFIN
 
-GENERICS = index.html robots.txt
+GENERICS = index.html robots.txt 
 
-STATICS  = fish_bgd.gif fish_net.gif
+STATICS  = fish_bgd.gif fish_net.gif favicon.ico
 
 # This also creates a symbolic link to to an FTP directory to provide an 
 # http interface to the FTP directory.

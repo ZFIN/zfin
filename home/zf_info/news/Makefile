@@ -34,6 +34,7 @@ STATICS = $(PERMANENT_STATICS) \
           Texas_meeting.htm Texas.doc Texas.pdf
 
 
+
 # ---------------  Production Rules  ------------------------------------
 
 # Use default rules for directories without app pages in them.

@@ -182,11 +182,12 @@ contains <input type=text name=anon1text size=10>
 <TD> <font size=2>
 <b>Publication Status:</b>
 <SELECT name=pub_status>
-<option $(IF,$(EC,$pub_status,any),SELECTED) value="any">Any
+<option $(IF,$(EC,$pub_status,any),SELECTED)SELECTED value="any">Any
 <option $(IF,$(EC,$pub_status,active),SELECTED) value="active">Active
 <option $(IF,$(EC,$pub_status,inactive),SELECTED )value="inactive">Inactive
 <option $(IF,$(EC,$pub_status,temporary),SELECTED) value="temporary">Temporary
 <option $(IF,$(EC,$pub_status,uncurated),SELECTED) value="uncurated">Uncurated
+
 </SELECT>  
 </TD>
 <?/MIVAR>

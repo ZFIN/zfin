@@ -5,6 +5,20 @@
 <HTML>
 <head>
 <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
+
+<SCRIPT>
+
+function call_mapplet() {
+
+document.updater.submit();
+}
+
+function call_zmapplet() {
+document.updater.action='/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi';
+document.updater.submit();
+}
+</SCRIPT>
+
 <?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
 <?MIVAR NAME=$MI_NOVALUE> <?/MIVAR>
 <?MIVAR NAME=$MI_NULL><?/MIVAR>
@@ -217,7 +231,7 @@ $(IF,$(EC,$marker_type,GENE),"("$abbrev")")</B> </FONT>
 <?MIVAR> <B>Reference Panel Location(s): $abbrev  </B><?/MIVAR> 
 <TABLE cols=3 width=100% colspan=2>
 
-<?MISQL SQL="select a.owner, lg_location, target_id as panel_id, OR_lg, target_abbrev as panel_abbrev,private,b.full_name,a.metric,day(a.entry_date::date),month(a.entry_date::date), year(a.entry_date::date), map_name from paneled_markers a,person b where a.zdb_id='$OID' and OR_lg is not null and a.owner=b.zdb_id;">
+<?MISQL SQL="select a.owner, lg_location, target_id as panel_id, OR_lg, target_abbrev as panel_abbrev,private,b.full_name,a.metric,day(a.entry_date::date),month(a.entry_date::date), year(a.entry_date::date), map_name, disp_order from paneled_markers a,person b, panels c  where a.zdb_id='$OID' and OR_lg is not null and a.owner=b.zdb_id and a.target_id = c.zdb_id order by c.disp_order;">
 
 
 $(IF,$(>,$MI_CURRENTROW,1),<TR><td colspan=2><hr width=80%></TD></TR>)
@@ -250,15 +264,34 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),"<TD colspan=3><font size=2>LG <b>"$4
 </TABLE>
 
 </TD>
-
+<!-- ************************************** -->
+<TD valign=top>
+<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=ZDB-REFCROSS-010114-1>ZMAP</A> Location(s): <?MIVAR>$abbrev<?/MIVAR>
+<TABLE>
+<!-- look for a match of the last two characters in the public_paneled_markers abbrev to match the last two characters in the panels abbrev for table join to find disp_order -->
+<!--  naming convention is xxx_ln54  -->
+<!-- this might be a bit risky but we don't anticipate any new panels since sequencing is underway. -->
+<?MISQL SQL="select or_lg,lg_location,a.abbrev,disp_order from public_paneled_markers a, panels b where a.zdb_id='$OID' and target_abbrev = 'ZMAP'and SUBSTRING(a.abbrev from LENGTH(a.abbrev)-1 for 2) = SUBSTRING(b.abbrev from LENGTH(b.abbrev)-1 for 2) order by disp_order;">
+  <TR>
+    <TD>
+     <font size=2> LG <b>$1</b>; <b>$2</b> cM  $(SUBSTR,$3,$(+,1,$(POSITION,$3,"_") ))
+    </TD>
+  </TR>
+<?/MISQL>
+<TD align=right><font size=2>
+<input type=button value='VIEW MERGED MAP' name=view_map onClick="call_zmapplet()">
+</TD>
+</TABLE>
+</TD>
+<!-- ************************************ -->
 
 <TD valign=top>
 
-<?MIVAR><b>Draw Map for: $abbrev</b>  <?/MIVAR> 
+<?MIVAR><b>View Map for: $abbrev</b>  <?/MIVAR> 
 
 <TABLE cellpadding=0 cellspacing=0 >
 
-<?MISQL SQL="select distinct target_abbrev, private as panel_abbrev  from paneled_markers a,person b where a.zdb_id='$OID' and OR_lg is not null and a.owner=b.zdb_id;">
+<?MISQL SQL="select distinct target_abbrev, private as panel_abbrev, disp_order from paneled_markers a,person b ,panels c where a.zdb_id='$OID' and OR_lg is not null and a.owner=b.zdb_id and a.target_id = c.zdb_id order by disp_order;">
 
 <?MIVAR NAME=$private>$2<?/MIVAR>
 
@@ -287,11 +320,11 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),"<TD colspan=3><font size=2>LG <b>"$4
 <INPUT TYPE=hidden name=marker value=$abbrev>
 <?/MIVAR>
 
+<INPUT TYPE=hidden name=view_map value="viewmap">
 
 <TD align=right><font size=2>
-<input type=submit value='VIEW MAP' name=view_map >
+<input type=button value='VIEW INDIVIDUAL MAPS' name=view_map onClick="call_mapplet()";>
 </TD>
-
 
 <?/MIBLOCK>
 
