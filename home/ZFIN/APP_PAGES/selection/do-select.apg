@@ -1,27 +1,48 @@
 <!-- FILE: DO-SELECT.  
-This file processes a record that was either SELECTED or CREATED by the user. That is, user was processing some other record, and bailed out of that to select or created some other new record.  At this point,it doesn't matter which is the case. 
+This file processes a record that was either SELECTED or CREATED 
+by the user. That is, user was processing some other record, and 
+bailed out of that to select or created some other new record.  
+At this point,it doesn't matter which is the case. 
 
-What we do care about is what to do with the selected/created record. There are four possibilities:
+What we do care about is what to do with the selected/created record. 
+There are four possibilities:
 1) Do nothing. Just go back to previous page specified in return_rec.
 2) Stick the created/selected record into a field in the calling record.
-3) Stick the id of the calling parent record into a field in the newly created record.
+3) Stick the id of the calling parent record into a field in the newly 
+   created record.
 4) Associate calling record and newly created record in an intersection table.
 
-To decide what to do, DO-SELECT looks at the ACTION field of the return_rec passed in with the newly selected/created record (stored in $new_oid). Specifically:
+To decide what to do, DO-SELECT looks at the ACTION field of the 
+return_rec passed in with the newly selected/created record (stored 
+in $new_oid). Specifically:
+
 -- IF ACTION="nothing". Do nothing, Just jump back to calling form.
 
--- If ACTION="return_id". It should store the id of the new record ($new_oid) in the FILL_FIELD of FILL_TABLE (where FILL_TABLE presumbly corresponds to the calling class).
+-- If ACTION="return_id". It should store the id of the new record 
+   ($new_oid) in the FILL_FIELD of FILL_TABLE (where FILL_TABLE 
+   presumbly corresponds to the calling class).
 
--- IF ACTION="index_me". It should store the calling records id (from $return_rec) in the FILL_FIELD of FILL_TABLE (where fill table will presumably corresponds to the class of the created/selected record). So new record gets indexed by calling record's id.
+-- IF ACTION="index_me". It should store the calling records id 
+   (from $return_rec) in the FILL_FIELD of FILL_TABLE (where fill table 
+   will presumably corresponds to the class of the created/selected record). 
+   So new record gets indexed by calling record's id.
 
--- ACTION="intersect". Means we want to associated new_oid with the previous record (RETURN_RECID) in an intersection table which is named in FILL_TABLE. We also stick the INFO variable into the info column of the intersection table. There is also a 'r_intersect' option, where we just reverse the source/target id values as we stick in the intersection record. 
+-- ACTION="intersect". Means we want to associated new_oid with the 
+   previous record (RETURN_RECID) in an intersection table which is 
+   named in FILL_TABLE. We also stick the INFO variable into the info 
+   column of the intersection table. There is also a 'r_intersect' 
+   option, where we just reverse the source/target id values as we 
+   stick in the intersection record. 
 
--- ACTION="r_intersect". Just like intersect, except reverse source_id, target_id 
+-- ACTION="r_intersect". Just like intersect, except reverse source_id, 
+   target_id 
 
--- ACTION="special-<something>" -- Do something unique with the selected record. Used for special cases. See comments on each for details.
+-- ACTION="special-<something>" -- Do something unique with the selected 
+   record. Used for special cases. See comments on each for details.
 
 
-FINALLY, if this selection was made while updating an existing record, we will want to write it to the update log 
+FINALLY, if this selection was made while updating an existing record, 
+we will want to write it to the update log 
 -->
 
 <!-- Extract the goodies from the return rec -->
@@ -43,45 +64,96 @@ FINALLY, if this selection was made while updating an existing record, we will w
 <?MIVAR NAME=$rtnrec_zdb_id_column_name>$9<?/MIVAR>
 <?MIVAR NAME=$rtnrec_owner_column_name>$10<?/MIVAR>
 
-<!-- First call secure_navigate. Only reason is to set ZDB_ident and ZDB_name to use in recording updates, so only call it if updating! -->
-<?MISQL COND="$(EC,$rec_update,t)" SQL="select WebExplode(object,'') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+<!-- First call secure_navigate. Only reason is to set ZDB_ident and 
+     ZDB_name to use in recording updates, so only call it if updating! -->
+<?MISQL COND="$(EC,$rec_update,t)" SQL="
+  select WebExplode(object,'')
+    from webPages
+    where ID='aa-secure_navigation.apg';">
+$1
+<?/MISQL>
 
-
-
-<!-- If ACTION=intersect, then fill_table is intersection table. So put new record into table with the recid passed in through return_recid. -->
+<!-- If ACTION=intersect, then fill_table is intersection table. So put 
+     new record into table with the recid passed in through return_recid. -->
 
 <?MIBLOCK COND="$(EQ,$action,intersect)">
-<!-- FIRST delete duplicates. -->
-<?MISQL SQL="delete from $fill_table where source_id='$return_recid' and target_id='$new_oid';"><?/MISQL>
+  <!-- FIRST delete duplicates. -->
+  <?MISQL SQL="
+    delete from $fill_table
+      where source_id = '$return_recid'
+	and target_id = '$new_oid';">
+  <?/MISQL>
 
-<!-- Now guard against conflicting "primary" publications for single data record. -->
-<?MISQL COND="$(AND,$(EC,$fill_table,int_data_pub),$(EC,$info,primary))" SQL="delete from $fill_table where source_id='$return_recid' and info='primary';"><?/MISQL>
+  <!-- Now guard against conflicting "primary" publications for 
+       single data record. -->
+  <?MISQL COND="$(AND,$(EC,$fill_table,int_data_pub),$(EC,$info,primary))" SQL="
+    delete from 
+      $fill_table 
+      where source_id = '$return_recid'
+        and info = 'primary';">
+  <?/MISQL>
 
-<!-- Then just jam in new intersection entry -->
-<?MISQL SQL="insert into $fill_table (source_id, target_id, info) values ('$return_recid', '$new_oid','$info');"><?/MISQL>
+  <!-- Then just jam in new intersection entry -->
+  <?MISQL SQL="
+    insert into $fill_table 
+        ( source_id, target_id, info ) 
+      values 
+        ( '$return_recid', '$new_oid', '$info');">
+  <?/MISQL>
 
-<!-- Record update is the rec_update flag is set -->
-<?MISQL COND="$(EC,$rec_update,t)" SQL="insert into updates (submitter_name, submitter_id, when,rec_id,field_name,old_value,new_value,comments) values ('$ZDB_name','$ZDB_ident',current,'$return_recid','$fill_table','Not available','$new_oid','Added $new_oid to list of records associated with data record $return_recid');"><?/MISQL>
+  <!-- Record update is the rec_update flag is set -->
+  <?MISQL COND="$(EC,$rec_update,t)" SQL="
+    insert into updates 
+        ( submitter_name, submitter_id, when, rec_id, field_name, old_value,
+	  new_value, comments )
+      values 
+	( '$ZDB_name', '$ZDB_ident', current, '$return_recid', '$fill_table',
+	  'Not available', '$new_oid', 
+	  'Added $new_oid to list of records associated with data record $return_recid');">
+  <?/MISQL>
 <?/MIBLOCK>
 
 
 
-<!-- If ACTION=r_intersect, then fill_table is intersection table. However, the entries should be reversed, with the selected record (new_oid) going into the 'source' field rather than the 'target' field of the new intersection record. At this time, this only happens when adding people to int_person_lab from the new_lab form. -->
+<!-- If ACTION=r_intersect, then fill_table is intersection table. 
+     However, the entries should be reversed, with the selected record 
+     (new_oid) going into the 'source' field rather than the 'target' 
+     field of the new intersection record. At this time, this only 
+     happens when adding people to int_person_lab from the new_lab form. -->
 
 <?MIBLOCK COND="$(EC,$action,r_intersect)">
-<!-- FIRST delete duplicates. Don't want redundant links -->
-<?MISQL SQL="delete from $fill_table where target_id='$return_recid' and source_id='$new_oid';"><?/MISQL>
+  <!-- FIRST delete duplicates. Don't want redundant links -->
+  <?MISQL SQL="
+    delete from $fill_table 
+      where target_id = '$return_recid'
+        and source_id = '$new_oid';">
+  <?/MISQL>
 
+  <!-- Then just jam in new intersection entry -->
+  <?MISQL SQL="
+    insert into $fill_table
+	( source_id, target_id, position) 
+      values 
+	( '$new_oid', '$return_recid', '$info');">
+  <?/MISQL>
 
-<!-- Then just jam in new intersection entry -->
-<?MISQL SQL="insert into $fill_table (source_id, target_id, position) values ('$new_oid', '$return_recid','$info');"><?/MISQL>
-
-<!-- Record update is the rec_update flag is set -->
-<?MISQL COND="$(EC,$rec_update,t)" SQL="insert into updates (submitter_name, submitter_id, when,rec_id,field_name,old_value,new_value, comments) values ('$ZDB_name','$ZDB_ident',current,'$return_recid','$fill_table','Not available','$new_oid','Added $return_recid to list of records associated with data record $new_oid');"><?/MISQL>
+  <!-- Record update is the rec_update flag is set -->
+  <?MISQL COND="$(EC,$rec_update,t)" SQL="
+    insert into updates 
+	( submitter_name, submitter_id, when, rec_id, field_name, old_value,
+	  new_value, comments) 
+      values 
+	( '$ZDB_name', '$ZDB_ident', current, '$return_recid', '$fill_table',
+	  'Not available', '$new_oid', 
+	  'Added $return_recid to list of records associated with data record $new_oid');">
+  <?/MISQL>
 <?/MIBLOCK>
 
 
-<!-- If ACTION=return_id, then we want to stick the oid of the new object directly into the field specified by fill_field of fill_table (which presumbly represents calling class). So OID of created/selected record stored in calling class.
+<!-- If ACTION=return_id, then we want to stick the oid of the new 
+     object directly into the field specified by fill_field of 
+     fill_table (which presumbly represents calling class). So OID 
+     of created/selected record stored in calling class.
 -->
 <?MIBLOCK COND="$(EQ,$action,return_id)">
   <?MISQL SQL="
@@ -114,7 +186,10 @@ FINALLY, if this selection was made while updating an existing record, we will w
 
 
 
-<!-- If ACTION=index_me, then we want to stick the oid of the calling object into the newly created record. That way the new object is indexed by the calling bject. So we stick $return_recid into the fill_field of the fill_table under the entry for new_oid. -->
+<!-- If ACTION=index_me, then we want to stick the oid of the calling 
+     object into the newly created record. That way the new object is 
+     indexed by the calling bject. So we stick $return_recid into the 
+     fill_field of the fill_table under the entry for new_oid. -->
 <?MIBLOCK COND="$(EQ,$action,index_me)">
   <?MISQL SQL="
     update $fill_table 
@@ -137,73 +212,181 @@ FINALLY, if this selection was made while updating an existing record, we will w
 <!-- OKAY, NOW DEAL WITH SPECIAL PURPOSE ACTIONS ASSOCIATED ONLY WITH FISH UPDATES -->
 
 
-<!-- If ACTION=special_parent, then user has asked to update/change one of the parents of a mutant strain. This is trivial if previous value was "UNKNOWN" (NULL) or was a wild-type line since there are no inherited mutations to deal with. On other hand, if it was a mutant, we have to (1) delete old inherited chromos from int_fish_chromo, (2) delete newly inherited pubs from int_data_pub and (3) re-install newly inherited chromos and pubs and (4) run Ted's chromo overlap checking routine. The installation steps can mirror what happened in process-chromo during new fish creation. FINALLY, need to write an update record.
-Note that the opening conditional also ensures that you don't specify a fish as its own parental line! 
+<!-- If ACTION=special_parent, then user has asked to update/change 
+     one of the parents of a mutant strain. This is trivial if 
+     previous value was "UNKNOWN" (NULL) or was a wild-type line since 
+     there are no inherited mutations to deal with. On other hand, if 
+     it was a mutant, we have to 
+     (1) delete old inherited chromos from int_fish_chromo, 
+     (2) delete newly inherited pubs from int_data_pub and 
+     (3) re-install newly inherited chromos and pubs and 
+     (4) run Ted's chromo overlap checking routine. 
+     The installation steps can mirror what happened in process-chromo 
+     during new fish creation. FINALLY, need to write an update record.
+     Note that the opening conditional also ensures that you don't 
+     specify a fish as its own parental line! 
 -->
 <?MIBLOCK COND="$(AND,$(EC,$action,special_parent),$(NC,$return_recid,$new_oid))">
-<!-- first get previous parent, and check if was mutant -->
-<?MISQL SQL="select $fill_field from fish where zdb_id='$return_recid';"><?/MISQL>
-<?MIVAR NAME=$old_parent>$1<?/MIVAR>
-<?MISQL SQL="select count(*)::integer from fish where zdb_id='$old_parent' and line_type='mutant';"><?/MISQL>
+  <!-- first get previous parent, and check if was mutant -->
+  <?MISQL SQL="
+    select $fill_field 
+      from fish 
+      where zdb_id = '$return_recid';">
+  <?/MISQL>
+  <?MIVAR NAME=$old_parent>$1<?/MIVAR>
+  <?MISQL SQL="
+    select count(*)::integer
+      from fish 
+      where zdb_id = '$old_parent'
+        and line_type='mutant';">
+  <?/MISQL>
 
-<!-- okay, if you got any hits, the  parent is non-null and mutant. So do special stuff to wipe out previous  inherited info: delete chromo and pub intersections. -->
-<?MIBLOCK COND="$(>,$1,0)">
-<?MISQL SQL="select target_id from int_fish_chromo where source_id='$old_parent' into temp delete_temp_1;"><?/MISQL>
-<?MISQL SQL="delete from int_fish_chromo where source_id='$return_recid' and target_id in (select target_id from delete_temp_1);"><?/MISQL>
-<?MISQL SQL="select target_id from int_data_pub where source_id='$old_parent' into temp delete_temp_2;"><?/MISQL>
-<?MISQL SQL="delete from int_data_pub where source_id='$return_recid' and target_id in (select target_id from delete_temp_2);"><?/MISQL>
-<?/MIBLOCK> <!-- ends if old parent was mutant -->
+  <!-- okay, if you got any hits, the  parent is non-null and mutant. 
+       So do special stuff to wipe out previous  inherited info: delete 
+       chromo and pub intersections. -->
+  <?MIBLOCK COND="$(>,$1,0)">
+    <?MISQL SQL="
+      select target_id 
+	from int_fish_chromo 
+	where source_id = '$old_parent' 
+        into temp delete_temp_1;">
+    <?/MISQL>
+    <?MISQL SQL="
+      delete from int_fish_chromo 
+        where source_id = '$return_recid'
+	  and target_id in 
+	        ( select target_id 
+		    from delete_temp_1);">
+    <?/MISQL>
+    <?MISQL SQL="
+      select target_id
+        from int_data_pub
+	where source_id = '$old_parent' 
+	into temp delete_temp_2;">
+    <?/MISQL>
+    <?MISQL SQL="
+      delete from int_data_pub
+	where source_id = '$return_recid'
+	  and target_id in 
+		( select target_id 
+		    from delete_temp_2);">
+    <?/MISQL>
+  <?/MIBLOCK> <!-- ends if old parent was mutant -->
 
 
-<!-- Guard against duplications,ie, if other parent is same line and/or has ssame pubs --> 
-<?MISQL SQL="select target_id from int_fish_chromo where source_id='$new_oid' into temp delete_temp_3;"><?/MISQL>
-<?MISQL SQL="delete from int_fish_chromo where source_id='$return_recid' and target_id in (select target_id from delete_temp_3);"><?/MISQL>
-<?MISQL SQL="select target_id from int_data_pub where source_id='$new_oid' into temp delete_temp_4;"><?/MISQL>
-<?MISQL SQL="delete from int_data_pub where source_id='$return_recid' and target_id in (select target_id from delete_temp_4);"><?/MISQL>
-<!-- Now install new parent. This is stolen from process-fish-->
-<?MISQL SQL="select  '$return_recid' as a0, target_id, info, 'inherited'  as a3 from int_fish_chromo  where source_id='$new_oid' into temp select_temp_5;"><?/MISQL>
-<?MISQL SQL="insert into int_fish_chromo (source_id, target_id, info,status) select * from select_temp_5;"><?/MISQL>
+  <!-- Guard against duplications,ie, if other parent is same line and/or 
+       has ssame pubs --> 
+  <?MISQL SQL="
+    select target_id 
+      from int_fish_chromo 
+      where source_id = '$new_oid'
+      into temp delete_temp_3;">
+  <?/MISQL>
+  <?MISQL SQL="
+    delete from int_fish_chromo 
+      where source_id = '$return_recid'
+	and target_id in 
+	      ( select target_id 
+		  from delete_temp_3);">
+  <?/MISQL>
+  <?MISQL SQL="
+    select target_id 
+      from int_data_pub 
+      where source_id = '$new_oid'
+      into temp delete_temp_4;">
+  <?/MISQL>
+  <?MISQL SQL="
+    delete from int_data_pub
+      where source_id = '$return_recid'
+	and target_id in 
+	      ( select target_id 
+		  from delete_temp_4);">
+  <?/MISQL>
+  <!-- Now install new parent. This is stolen from process-fish-->
+  <?MISQL SQL="
+    select  '$return_recid' as a0, target_id, info, 'inherited' as a3 
+      from int_fish_chromo
+      where source_id = '$new_oid' 
+      into temp select_temp_5;">
+  <?/MISQL>
+  <?MISQL SQL="
+    insert into int_fish_chromo 
+	(source_id, target_id, info, status) 
+      select * 
+	from select_temp_5;">
+  <?/MISQL>
 
-<!-- don't want to inherit parents pubs ,remove code  -->
-<!-- SQL="select  '$return_recid' as a0, target_id, 'related'  as a2 from int_data_pub  where source_id='$new_oid' into temp select_temp_6;" -->
-<!--SQL="insert into int_data_pub (source_id, target_id, info) select * from select_temp_6;"   -->
+  <!-- don't want to inherit parents pubs ,remove code  -->
+  <!-- SQL="select  '$return_recid' as a0, target_id, 'related'  as a2 from int_data_pub  where source_id='$new_oid' into temp select_temp_6;" -->
+  <!--SQL="insert into int_data_pub (source_id, target_id, info) select * from select_temp_6;"   -->
 
-<!-- Now just change the fish record and write update record -->
-<?MISQL SQL="update fish set $fill_field='$new_oid' where zdb_id='$return_recid';"><?/MISQL>
-<?MISQL COND="$(EC,$rec_update,t)" SQL="insert into updates (submitter_name, submitter_id, when,rec_id,field_name,old_value,new_value, comments) values ('$ZDB_name','$ZDB_ident',current,'$return_recid','$fill_field','$old_parent','$new_oid','Changed parental lineage');"><?/MISQL>
+  <!-- Now just change the fish record and write update record -->
+  <?MISQL SQL="
+    update fish 
+      set $fill_field = '$new_oid' 
+      where zdb_id = '$return_recid';">
+  <?/MISQL>
+  <?MISQL COND="$(EC,$rec_update,t)" SQL="
+    insert into updates 
+	(submitter_name, submitter_id, when, rec_id, field_name, old_value,
+	 new_value, comments) 
+      values 
+	('$ZDB_name', '$ZDB_ident', current, '$return_recid', '$fill_field',
+	 '$old_parent', '$new_oid', 'Changed parental lineage');">
+  <?/MISQL>
 <?/MIBLOCK>  <!-- ends action=special parent-->
 
-<!-- If ACTION=insert_marker, then user has asked to add a missing/present marker for a deletion mutant.  A 't' in the info field indicates that a marker is present, an 'f' that a marker is missing.  Records are inserted into the mapped_deletion table. -->
+<!-- If ACTION=insert_marker, then user has asked to add a missing/present 
+     marker for a deletion mutant.  A 't' in the info field indicates that 
+     a marker is present, an 'f' that a marker is missing.  Records are 
+     inserted into the mapped_deletion table. -->
 <?MIBLOCK COND="$(EC,$action,insert_marker)">
 
-<!-- first get the allele and linkage group  -->
-<?MISQL SQL="select distinct c.allele, b.chrom_num from int_fish_chromo a, chromosome b, fish c where (source_id='$return_recid' and target_id=b.zdb_id) and (c.zdb_id=a.source_id);"> 
-<?MIVAR name=$allele>$1<?/MIVAR>
-<?MIVAR name=$lg>$2<?/MIVAR>
-<?/MISQL>
-<!-- get the owner of the fish record -->
-<?MISQL SQL="select owner from fish  where zdb_id='$return_recid';">
-<?MIVAR name=$owner>$1<?/MIVAR>
-<?/MISQL>
+  <!-- first get the allele and linkage group  -->
+  <?MISQL SQL="
+    select distinct c.allele, b.chrom_num 
+      from int_fish_chromo a, chromosome b, fish c 
+      where (source_id = '$return_recid' and target_id = b.zdb_id) 
+	and (c.zdb_id=a.source_id);"> 
+    <?MIVAR name=$allele>$1<?/MIVAR>
+    <?MIVAR name=$lg>$2<?/MIVAR>
+  <?/MISQL>
+  <!-- get the owner of the fish record -->
+  <?MISQL SQL="
+    select owner 
+      from fish
+      where zdb_id = '$return_recid';">
+    <?MIVAR name=$owner>$1<?/MIVAR>
+  <?/MISQL>
 
-<?MISQL SQL="insert into mapped_deletion (marker_id, present_t, submitter, owner, OR_lg, allele) values ( '$new_oid','$info', '$ZDB_ident','$owner', '$lg', '$allele');"><?/MISQL>
-
+  <?MISQL SQL="
+    insert into mapped_deletion 
+	(marker_id, present_t, submitter, owner, OR_lg, allele)
+      values 
+	('$new_oid', '$info', '$ZDB_ident', '$owner', '$lg', '$allele');">
+  <?/MISQL>
 
 <?/MIBLOCK>  
 
 
 <!-- Check for errors and report -->
 <?MIBLOCK COND="$(OR,$(EQ,$action,NULL),$(EQ,$action,NoValue))">
-<h1>Bad return rec! Error reported at do-select</h1>
+  <h1>Bad return rec! Error reported at do-select</h1>
 <?/MIBLOCK>
 
-<!-- Now just blast the used up return_rec and send control back to the previous form in progress. Note the use of Javascript to replace current page with a new one; should avoid weird holes in the history list. Cool!!-->
-<?MISQL SQL="delete from return_recs where zdb_id='$return_rec';"><?/MISQL>
+<!-- Now just blast the used up return_rec and send control back to 
+     the previous form in progress. Note the use of Javascript to 
+     replace current page with a new one; should avoid weird holes 
+     in the history list. Cool!!-->
+<?MISQL SQL="
+  delete from return_recs 
+    where zdb_id = '$return_rec';">
+<?/MISQL>
 
 <?MIVAR>
-<SCRIPT>
-location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$return_form&temp_oid=$return_recid#$jump_to')
-</SCRIPT>
+  <SCRIPT>
+    location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$return_form&temp_oid=$return_recid#$jump_to')
+  </SCRIPT>
 <?/MIVAR>
 
 
