@@ -437,6 +437,8 @@ $(IF,$(AND,$(NC,$7,spontaneous),$(XST,$UPDATE),$(EC,$10,original)),"<SELECT name
 <b>Mutation Type:</b> 
 $(IF,$(OR,$(NXST,$UPDATE),$(NC,$10,original)),$3)
 
+<!-- add option for complex rearrangement , required db change to inncrease size of field chrom_change 12/06/00  -->
+
 $(IF,$(AND,$(XST,$UPDATE),$(EC,$10,original)),"<SELECT name=chrom_change onChange=doChromChange(this.options[this.selectedIndex].value,'"$3"','"$11"')>
 <option "$(IF,$(EC,$3,point_mutation),SELECTED)" value=point_mutation>point mutation
 <option "$(IF,$(EC,$3,duplication),SELECTED)" value=duplication>duplication
@@ -445,6 +447,7 @@ $(IF,$(AND,$(XST,$UPDATE),$(EC,$10,original)),"<SELECT name=chrom_change onChang
 <option "$(IF,$(EC,$3,transposition),SELECTED)" value=transposition>transposition
 <option "$(IF,$(EC,$3,insertion),SELECTED)" value=insertion>insertion
 <option "$(IF,$(EC,$3,inversion),SELECTED)" value=inversion>inversion
+<option "$(IF,$(EC,$3,complex_rearrangement),SELECTED)" value=complex_rearrangement>complex rearrangement
 <option "$(IF,$(EC,$3,UNKNOWN),SELECTED)" value=Unknown>Unknown
 </SELECT>")
 </font>
