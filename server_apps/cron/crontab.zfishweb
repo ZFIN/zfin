@@ -1,0 +1,32 @@
+# ===========================================================================
+# ZFISHWEB CRONTAB FILE
+# ===========================================================================
+# This is the crontab file for Zfishweb (only performs one function, 
+# file syncing).
+#
+# See the "crontab" file (or cron man page) for an explanation of this file's
+# format.
+# Crontab format, from left to right
+# * minute (0-59),
+# * hour (0-23),
+# * day of the month (1-31),
+# * month of the year (1-12),
+# * day of the week (0-6 with 0=Sunday)
+#
+# Each of these patterns may be either an  asterisk
+# (meaning all legal values)    OR
+#       a list of elements separated by commas.
+# An element is either a number OR
+#       two numbers separated by  a minus  sign
+#       (meaning  an  inclusive  range).
+# Note that the specification of days may be made by two fields
+# (day of  the month and day of the week).
+# Both are adhered to if specified as a list of elements.
+#
+# NO BLANK LINES
+#
+# DAILY SCRIPTS
+# =============
+# clean up file system (images and pdfs), rsync the development and 
+# production file systems.
+05 06 * * 1,2,3,4,5 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/remove_orphan_files.pl
