@@ -62,8 +62,9 @@ function call_reset() {
 	document.BrowserForm.mutagen.selectedIndex = 0;
 	document.BrowserForm.anon1.selectedIndex = 0;
 	document.BrowserForm.knowngene.checked = false;
-	document.BrowserForm.structures.value = "";
-        document.BrowserForm.selected_separator.value = "and";
+  document.BrowserForm.WINSIZE.value = 20;
+	document.BrowserForm.preselected.value = "";
+  document.BrowserForm.selected_separator.value = "and";
 	document.Browser.clear();
 }
 
@@ -131,6 +132,9 @@ function call_reset() {
 <?MIBLOCK COND="$(NC,$line_type,wild_type)">
 
 <TD><font size=-1><A HREF="javascript:start_help('abbrev')"><b>3-letter abbrev.:</b></A> <input type=text maxlength=3 name=abbrev size=3 ></font></TD>
+<TD>
+	&nbsp;
+</TD>
 
 <!--  assign navtile value to abbrev - can not do with a value="abbrev" in input statement - reset will not work -->
 	<?MIBLOCK COND="$(XST,$abbrev)">
@@ -142,10 +146,7 @@ function call_reset() {
 <?/MIBLOCK>
 
 </TR>
-</TABLE>
 
-
-<TABLE width=100% border=0>
 <TR>
 <?MIVAR>
 	<TD><font size=-1> <A HREF="javascript:start_help('lg')"><b>LG:</b></A>
@@ -213,10 +214,19 @@ function call_reset() {
 		<?/MIVAR>
 	</SELECT>
 </font></TD>
+<TD align="right">
+	Display results in groups of 
+	<input type="text" name="WINSIZE" size="3" value="20">.
+    <?MIBLOCK COND="$(AND,$(NOT,$(ISNULL,$WINSIZE)),$(XST,$WINSIZE))">
+      <?MIVAR> 
+        <SCRIPT> 
+          document.BrowserForm.WINSIZE.value = "$WINSIZE"         
+        </SCRIPT>
+      <?/MIVAR> 
+    <?/MIBLOCK>
+</TD>
 </TR>
-</TABLE>
 
-<TABLE width=100% border=0>
 <TR>
 <?MIVAR>
 <TD><font size=-1> <b> 
@@ -268,7 +278,9 @@ value="Clear Settings">
 </TABLE>
 
 
-
+<?MIVAR COND="$(AND,$(NOT,$(ISNULL,$START)),$(XST,$START))">
+  <input type=hidden NAME="START" value=$START>
+<?/MIVAR>
 
 
 <!-- This next little block executes only if we are using the browser as a
@@ -302,6 +314,7 @@ we have to do at this point is pass the return record along to the fishlister.
 	<br>
 
 <!-- applet replacement -->
+
 
 <table width=360 height=100 border=0 cellpadding=3 cellspacing=0 bgcolor="#88a6a6">
 <tr>
@@ -367,4 +380,7 @@ while (i < document.BrowserForm.structure_list.options.length) {
 </form>
 
 </HTML>
+
+
+
 
