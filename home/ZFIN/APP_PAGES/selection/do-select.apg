@@ -80,6 +80,11 @@ FINALLY, if this selection was made while updating an existing record, we will w
 <?MIBLOCK COND="$(EQ,$action,return_id)">
 <?MISQL SQL="update $fill_table set $fill_field='$new_oid' where zdb_id='$return_recid';"><?/MISQL>
 
+<!-- if a contact_person for a lab or company is specified - owner must be set to the same value -->
+<?MIBLOCK COND="$(AND,$(EQ,$action,return_id),$(EQ,$fill_field,contact_person))">
+<?MISQL SQL="update $fill_table set owner='$new_oid' where zdb_id='$return_recid';"><?/MISQL>
+<?/MIBLOCK>
+
 <!-- Record update if the rec_update flag is set. -->
 <?MISQL COND="$(EC,$rec_update,t)" SQL="insert into updates (submitter_name, submitter_id, when,rec_id,field_name,old_value,new_value, comments) values ('$ZDB_name','$ZDB_ident',current,'$return_recid','$fill_field','Not available','$new_oid','Selected replacement value');"><?/MISQL>
 
