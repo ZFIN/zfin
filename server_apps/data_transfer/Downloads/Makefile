@@ -30,7 +30,7 @@ HTTP_DATA_TRANSFER_DIR = $(TARGETROOT)/home/data_transfer/Downloads
 
 ENDEMICTARGETS_PRE = $(HTTP_DATA_TRANSFER_DIR)
 
-AD = /research/zfin/users/tomc/ANATOMY/anatomy_dictionary_current/ad.txt
+AD = /research/zfin/users/tomc/ANATOMY/anatomy_dictionary_previous/ad.txt
 
 # ---------------  Production Rules  ------------------------------------
 
