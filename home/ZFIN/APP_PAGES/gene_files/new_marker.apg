@@ -36,6 +36,7 @@
   -- s_new       -- if it exists, create new record and print a confirmation.
   -- Others      -- if s_new exists, then name, abbrev, comments should
   --                also exist.
+  -- nMrkrSource -- if exists, must be a pub_zdb_id
 <?/MICOMMENT>
 
 <basefont size=2>
@@ -53,6 +54,7 @@
 
     <form name=newdata method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
       <input type=hidden name=MIval value=aa-new_marker.apg>
+      <?MIVAR COND=$(XST,$nMrkrSource)><input type=hidden name=nMrkrSource value=$nMrkrSource><?/MIVAR>
 
       <b>Type of new marker to create:</b>
       <SELECT name=marker_type>
@@ -138,25 +140,46 @@
       
       function validate(theform) 
       {
-        var reserve = GetChecked(theform.reserve);
-        var rsrvComment = theform.rsrvComment.value;
-        
         <?MIBLOCK COND=$(OR,$(EC,$marker_type,GENE),$(EC,$marker_type,GENEP))>
+          var reserve = GetChecked(theform.reserve);
+          var rsrvComment = theform.rsrvComment.value;
+        
           if (theform.mname.value=='' || theform.abbrev.value=='') 
           {
   	    alert('You must supply both name and abbreviation');
 	    return false;
           }  
+        
+          if (reserve=='yes' && isWhitespace(rsrvComment)) 
+          {
+            alert('Missing Input: Reservations require a comment.');
+            theform.rsrvComment.focus();
+            return false;
+          }
         <?/MIBLOCK>
         
-        if (reserve=='yes' && isWhitespace(rsrvComment)) 
-        {
-          alert('Missing Input: Reservations require a comment.');
-          theform.rsrvComment.focus();
-          return false;
-        }
-        
         return true;
+      }
+
+      <?MICOMMENT> 
+        Sequnce end options indicate the direction of the sequnce.
+        When one end is changed, set the other to be the opposite. 
+        
+        The option menus are arange in oposing order. Thus the  
+        values are oposite when the selected indexes of the menus 
+        are the same. 
+      <?/MICOMMENT>
+      function sequencesEndAgree(changedEnd)
+      {
+        if (changedEnd == "left")
+        {
+          document.newdata.nMrkrRightEnd.selectedIndex = document.newdata.nMrkrLeftEnd.selectedIndex;
+        }
+        else
+        {
+          document.newdata.nMrkrLeftEnd.selectedIndex = document.newdata.nMrkrRightEnd.selectedIndex;
+        }        
+      
       }
     </SCRIPT>
 
@@ -189,6 +212,14 @@
         <p>
 
         <input type=submit name=s_new value="Submit new $marker_type_display">
+        
+        <p>
+        <b>sequence:</b> <select name=nMrkrLeftEnd onChange="sequencesEndAgree('left');"><option value=5>5'</option><option value=3>3'</option></select>
+        <input type=text name=nMrkrSequence size=40>
+        <select name=nMrkrRightEnd onChange="sequencesEndAgree('right');"><option value=3>3'</option><option value="5">5'</option></select>
+        <br>
+        <b>publication:</b> <input type=text name=nMrkrSource $(IF,$(XST,$nMrkrSource),value=$nMrkrSource)>
+        
       </form>
     <?/MIVAR>
 
@@ -218,6 +249,11 @@
         values ('$new_id', '$mname', '$abbrev', '$(UPPER,$marker_type)',
                 '$comments', '$ZDB_ident');">
     <?/MISQL>
+      
+    <?MISQL COND=$(XST,$nMrkrSource) SQL="
+        insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
+        values ('$new_id','$nMrkrSource');">
+    <?/MISQL>
 
     <?MIBLOCK COND=$(EC,$reserve,yes)>
       <?MISQL SQL="execute function get_id('NOMEN');"><?/MISQL>
@@ -246,6 +282,26 @@
                from marker
                where mrkr_zdb_id = '$new_id';">
       <?/MISQL>
+    <?/MIBLOCK>
+    
+    <?MIBLOCK COND="$(XST,$nMrkrSequence)">
+      <?MISQL SQL="execute function get_id('MRKRSEQ')">
+        <?MIVAR NAME=$nMrkrMrkrSeqId>$1<?/MIVAR>
+      <?/MISQL>
+      <?MISQL SQL="insert into zdb_active_data (zactvd_zdb_id) values ('$nMrkrMrkrSeqId');"><?/MISQL>
+      <?MISQL SQL="
+        insert into marker_sequence (
+          mrkrseq_zdb_id,
+          mrkrseq_mrkr_zdb_id,
+          mrkrseq_sequence,
+          mrkrseq_left_end)
+        values (
+          '$nMrkrMrkrSeqId',
+          '$new_id',
+          '$nMrkrSequence',
+          '$nMrkrLeftEnd');">
+      <?/MISQL>
+    
     <?/MIBLOCK>
 
     <?MIVAR>
