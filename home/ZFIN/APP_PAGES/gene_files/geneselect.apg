@@ -45,7 +45,6 @@ document.critform.START.value = "";
 
 <?MIBLOCK COND="$(OR,$(XST,$query_results),$(XST,$pubId))"> 
 
-  <?MIVAR NAME=$private>NULL<?/MIVAR>
   <?MIVAR NAME=$MI_NULL><?/MIVAR>
   <?MIVAR COND="$(NXST,$searchtype)" NAME=$searchtype><?/MIVAR>
 
@@ -109,7 +108,7 @@ document.critform.START.value = "";
 
    <?MIVAR NAME=$previous COND="$(XST,$name)"> and <?/MIVAR>
 
-   <?MIVAR NAME=$constraint COND="$(NC,$lg,0)">$constraint $previous (OR_lg='$lg' and private='f')<?/MIVAR>
+   <?MIVAR NAME=$constraint COND="$(NC,$lg,0)">$constraint $previous OR_lg='$lg'<?/MIVAR>
 
    <?MIVAR NAME=$previous COND="$(NC,$lg,0)"> and <?/MIVAR>
 
@@ -447,7 +446,7 @@ document.critform.START.value = "";
 	    </TD>
 
 	    <TD width=250>
-              <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini&split=break&hide_empty=t') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+              <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini&split=break&hide_empty=t&oID=$OID') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
 	    </TD>
 
 

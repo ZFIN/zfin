@@ -67,7 +67,7 @@ Possible vars: update
 <?MIVAR COND="$(NXST,$nsearch)" NAME=$nsearch><?/MIVAR>
 
 <p>
-<?MISQL SQL="select distinct recattrib_source_zdb_id, lnkg_or_lg,lnkg_private, lnkg_comments 
+<?MISQL SQL="select distinct recattrib_source_zdb_id, lnkg_or_lg, lnkg_comments 
 	from linkage , record_attribution 
         where lnkg_zdb_id = '$link_id'
 	  and recattrib_data_zdb_id = lnkg_zdb_id;">
@@ -88,8 +88,6 @@ Possible vars: update
   $display_source
   <br>
   LG: $(IF,$(EC,$2,0),,$2)
-  <br>
-  Private: $3
   <br>
   Comments: $4
 <?/MISQL>
