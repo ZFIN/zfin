@@ -8,6 +8,7 @@
 #
 # Note that not every makefile can include one of the defualt rule files.
 # If there is anything non-standard about any of the rules in a makefile
+# that cannot be dealt with using the ENDEMICTARGETS mechanism, 
 # then that makefile should not include either of the rules.
 #
 # This include file expects to have the calling makefile define these 
@@ -19,8 +20,13 @@
 #  SUBDIRS    This can be defined, undefined, or defined and empty.
 #  GENERICS   This can be defined, undefined, or defined and empty.
 #  STATICS    This can be defined, undefined, or defined and empty.
+#  ENDEMICTARGETS_PRE
+#  ENDEMICTARGETS_POSTTARGETDIR
+#  ENDEMICTARGETS_POSTTARGETS
+#  ENDEMICTARGETS_POST
+#             These 4 can be defined, undefined, or defined and empty.
 #
-# For the last 3, undefined, and defined and empty produce the same results.
+# For the last 7, undefined, and defined and empty produce the same results.
 #
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
@@ -44,7 +50,9 @@ TARGETS = $(SPECIFICTARGETS) $(STATICTARGETS)
 .PHONY : all sanitycheck clean clobber $(SUBDIRS)
 
 
-all : $(TARGETDIR) $(TARGETS) $(SUBDIRS)
+all : $(ENDEMICTARGETS_PRE) $(TARGETDIR) $(ENDEMICTARGETS_POSTTARGETDIR) \
+      $(TARGETS) $(ENDEMICTARGETS_POSTTARGETS) \
+      $(SUBDIRS) $(ENDEMICTARGETS_POSTSUBDIRS)
 
 
 $(TARGETDIR) :
@@ -68,10 +76,13 @@ clean :				# No local intermediate files
 	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
 
 clobber :			# Remove targets, but not target dir.
-  ifdef TARGETS
-	rm -f $(TARGETS)
+  ifneq ($(strip $(ENDEMICTARGETS_POSTSUBDIRS)),)
+	rm -rf $(ENDEMICTARGETS_POSTSUBDIRS)
   endif
 	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
+  ifneq ($(strip $(ENDEMICTARGETS_POSTTARGETS) $(TARGETS) $(ENDEMICTARGETS_POSTTARGETDIR) $(ENDEMICTARGETS_PRE)),)
+	rm -rf $(ENDEMICTARGETS_POSTTARGETS) $(TARGETS) $(ENDEMICTARGETS_POSTTARGETDIR) $(ENDEMICTARGETS_PRE)
+  endif
 
 sanitycheck :
     ifdef GENERICS
