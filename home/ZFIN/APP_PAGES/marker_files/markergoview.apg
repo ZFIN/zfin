@@ -130,7 +130,7 @@ ERROR -- something bad happened -- no OID passed in!
                  <?MIVAR>
                  <td align=center><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=<?MIVAR>$5<?/MIVAR>&rtype=go&title=$(URLENCODE,$titleexp)&name=$(URLENCODE,$name)&evidence=$mrkrgoevidence"><?MIVAR>$refcount<?/MIVAR></a></td></tr>               <?/MIVAR>
              <?MIELSE>
-                 <?MISQL SQL="select mrkrgoev_source_zdb_id from marker_go_term_evidence,marker_go_term where  mrkrgoev_mrkrgo_zdb_id='$5'">
+                 <?MISQL SQL="select mrkrgoev_source_zdb_id from marker_go_term_evidence,marker_go_term where  mrkrgoev_mrkrgo_zdb_id='$5' and mrkrgoev_evidence_code='$mrkrgoevidence'">
                  <?MIVAR NAME=$refid>$1<?/MIVAR>
                  <?/MISQL>
                  <td align=center><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=<?MIVAR>$refid<?/MIVAR>"><?MIVAR>$refcount<?/MIVAR></a></td></tr>
