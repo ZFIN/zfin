@@ -287,7 +287,7 @@ insert into tmp_db_link
 		t_mrkr_zdb_id, 
 		prb_gb5p, 
 		fdbcontZdbId,
-	       'gxp load'||TODAY
+	       'gxp load '||TODAY
 	  from tmp_marker, probes_tmp
   	 where t_mrkr_name = prb_clone_name
            and prb_gb5p is not null;
@@ -297,7 +297,7 @@ insert into tmp_db_link
 		t_mrkr_zdb_id, 
 		prb_gb3p, 
 		fdbcontZdbId,
-	        'gxp load'||TODAY 
+	        'gxp load '||TODAY 
 	  from tmp_marker, probes_tmp
   	 where t_mrkr_name = prb_clone_name
            and prb_gb3p is not null;
@@ -308,7 +308,7 @@ insert into tmp_db_link
 		tu_mrkr_zdb_id, 
 		prb_gb5p, 
 		fdbcontZdbId,
-	        'gxp load'||TODAY 
+	        'gxp load '||TODAY 
 	  from tmp_updated_marker, probes_tmp
   	 where tu_mrkr_name = prb_clone_name
            and prb_gb5p is not null
@@ -324,7 +324,7 @@ insert into tmp_db_link
 		tu_mrkr_zdb_id, 
 		prb_gb3p, 
 		fdbcontZdbId,
-	        'gxp load'||TODAY
+	        'gxp load '||TODAY
 	  from tmp_updated_marker, probes_tmp
   	 where tu_mrkr_name = prb_clone_name
            and prb_gb3p is not null
