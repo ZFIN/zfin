@@ -137,19 +137,20 @@ function do_submit() {
 	      <HR width=500 size=1 noshade align=left>
     
 	      <?MISQL SQL="
-		SELECT anatitem_name, anatitem_zdb_id, anatitem_abbrev,
-  		       ( select count(*) 
-	 		   from data_alias 
-	 		   where dalias_data_zdb_id = anatitem_zdb_id) synonymcount, 
+		SELECT anatitem_name, anatitem_zdb_id, anatitem_abbrev, 
+		       anatstat_synonym_count, anatstat_total_distinct_count,
 		       anatitem_name_order
-		  FROM anatomy_item 
-		  WHERE anatitem_name_lower like lower('%$searchterm%')
-		     OR anatitem_abbrev_lower like lower('%$searchterm%')
-		     OR exists 
-			( select 1
-			    from data_alias 
-		            where dalias_data_zdb_id = anatitem_zdb_id 
-			      and dalias_alias_lower like lower ('%$searchterm%') )
+		  FROM anatomy_item, anatomy_stats 
+		  WHERE anatitem_zdb_id = anatstat_anatitem_zdb_id
+		    AND anatstat_object_type = 'GENE'
+		    AND (   anatitem_name_lower like lower('%$searchterm%')
+		         OR anatitem_abbrev_lower like lower('%$searchterm%')
+		         OR (    anatstat_synonym_count > 0 
+			     AND exists 
+			           ( select 1
+			               from data_alias 
+		                       where dalias_data_zdb_id = anatitem_zdb_id 
+			                 and dalias_alias_lower like lower ('%$searchterm%') ) ) )
 	          ORDER BY anatitem_name_order
      		;">
 
@@ -157,17 +158,8 @@ function do_submit() {
 		<?MIVAR NAME="$item_zdb_id">$2<?/MIVAR>
 	        <?MIVAR NAME="$item_abbrev">$3<?/MIVAR>
 	        <?MIVAR NAME="$synonymcount">$4<?/MIVAR>
+	        <?MIVAR NAME="$totalcount">$5<?/MIVAR>
 	        <?MIVAR NAME="$highlight">false<?/MIVAR>
-
-	        <?MIVAR name=$totalcount>0<?/MIVAR>
-	        <?MISQL SQL="
-		  select anatstat_total_distinct_count
-		    from anatomy_stats
-		    where anatstat_anatitem_zdb_id = '$item_zdb_id' 
-		      and anatstat_object_type = 'GENE'
-		  ;">
-	          <?MIVAR name=$totalcount>$1<?/MIVAR>
-		<?/MISQL>
 
 	        <?MIVAR NAME=$item_name_safe DELIMIT="'" REPLACE="''">$item_name<?/MIVAR>
                 <?MIVAR NAME="$processed_item_name">$(REPLACE,$item_name,',','|')<?/MIVAR>
@@ -286,12 +278,11 @@ function do_submit() {
 
 		    <?MISQL SQL="
 		      select anatdisp_item_name, anatdisp_item_zdb_id, anatdisp_seq_num,
-			     anatdisp_indent, anatitem_abbrev,
-			     ( select count(*) 
-			       from data_alias 
-			       where dalias_data_zdb_id = anatitem_zdb_id) synonymcount
-		      from   anatomy_display, anatomy_item 
+			     anatdisp_indent, anatitem_abbrev, anatstat_synonym_count
+		      from   anatomy_display, anatomy_item, anatomy_stats
 		      where  anatitem_zdb_id = anatdisp_item_zdb_id
+			     and anatitem_zdb_id = anatstat_anatitem_zdb_id
+			     and anatstat_object_type = 'GENE'
 			     and anatdisp_indent <= '$resolution'
 			     and anatdisp_stg_zdb_id = '$OID' 
 			     $type_code
@@ -377,28 +368,20 @@ function do_submit() {
 	    <?/MICOMMENT>
 
 	    <?MISQL SQL="
-	      SELECT anatitem_name, anatitem_zdb_id, anatitem_abbrev,
-			( select count(*) 
-			  from data_alias 
-			  where dalias_data_zdb_id = anatitem_zdb_id) synonymcount, anatitem_name_order
-		FROM anatomy_item
+	      SELECT anatitem_name, anatitem_zdb_id, anatitem_abbrev, 
+		     anatstat_synonym_count, anatstat_total_distinct_count,
+		     anatitem_name_order
+		FROM anatomy_item, anatomy_stats
+		WHERE anatitem_zdb_id = anatstat_anatitem_zdb_id
+		  AND anatstat_object_type = 'GENE'
 		ORDER BY anatitem_name_order
 	      ;">
 	      <?MIVAR NAME="$item_name">$1<?/MIVAR>
 	      <?MIVAR NAME="$item_zdb_id">$2<?/MIVAR>
 	      <?MIVAR NAME="$item_abbrev">$3<?/MIVAR>
 	      <?MIVAR NAME="$synonymcount">$4<?/MIVAR>
+	      <?MIVAR NAME="$totalcount">$5<?/MIVAR>
 	      <?MIVAR NAME="$highlight">false<?/MIVAR>
-
-	      <?MIVAR name=$totalcount>0<?/MIVAR>
-	      <?MISQL SQL="
-		select anatstat_total_distinct_count
-		  from anatomy_stats
-		  where anatstat_anatitem_zdb_id = '$item_zdb_id' 
-		    and anatstat_object_type = 'GENE'
-		;">
-	        <?MIVAR name=$totalcount>$1<?/MIVAR>
-	      <?/MISQL>
 
 	      <?MIVAR NAME=$item_name_safe DELIMIT="'" REPLACE="''">$item_name<?/MIVAR>
               <?MIVAR NAME="$processed_item_name">$(REPLACE,$item_name,',','|')<?/MIVAR>
