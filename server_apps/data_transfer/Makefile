@@ -27,9 +27,9 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer
 
 SUBDIRS = MEOW JohnP RefSeq SWISS-PROT GXP GO ZIRC Downloads GenPept ZGC \
-	  Sanger Genbank LoadGO BLAST
+	  Sanger Genbank LoadGO BLAST 
 
-GENERICS =  pull.sh
+GENERICS = pull.sh
 
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.
@@ -63,4 +63,4 @@ push : $(SUBDIRS)
 	$(MAKE) -C GO run
 	$(MAKE) -C Sanger run
 	$(MAKE) -C ZIRC push
-    $(MAKE) -C BLAST run
+	$(MAKE) -C BLAST run
