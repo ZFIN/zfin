@@ -1831,17 +1831,17 @@ sub pubTitlesAreUnique($) {
 	"ZDB-PUB-021016-112", "ZDB-PUB-961014-758", { "ZDB-PUB-961014-759", }
 	"ZDB-PUB-000125-3",   { "ZDB-PUB-010131-19", }
 	"ZDB-PUB-021015-13",  { "ZDB-PUB-030211-13", }
-	"ZDB-PUB-961014-1233",{ "ZDB-PUB-961014-1234", }
-	"ZDB-PUB-961014-106", { "ZDB-PUB-961014-107", }
-	"ZDB-PUB-010417-9",   { "ZDB-PUB-990414-35", }
+	"ZDB-PUB-961014-1233",{ "ZDB-PUB-961014-1234",}
+	"ZDB-PUB-961014-106", { "ZDB-PUB-961014-107",}
+	"ZDB-PUB-010417-9",   { "ZDB-PUB-990414-35",}
 	"ZDB-PUB-010711-2",   { "ZDB-PUB-010814-8", }
-	"ZDB-PUB-000824-10",  { "ZDB-PUB-990824-40", }
-	"ZDB-PUB-010912-1",   { "ZDB-PUB-021017-13", }
-        "ZDB-PUB-980420-9",   { "ZDB-PUB-030425-13", }
-        "ZDB-PUB-010718-13",  { "ZDB-PUB-020913-1",  }
+	"ZDB-PUB-000824-10",  { "ZDB-PUB-990824-40",}
+	"ZDB-PUB-010912-1",   { "ZDB-PUB-021017-13",}
+        "ZDB-PUB-980420-9",   { "ZDB-PUB-030425-13",}
+        "ZDB-PUB-010718-13",  { "ZDB-PUB-020913-1", }
         "ZDB-PUB-990414-54",  { "ZDB-PUB-021017-3", }
-        "ZDB-PUB-010718-27"  { "ZDB-PUB-010821-1",  }
-        )
+        "ZDB-PUB-010718-27",  { "ZDB-PUB-010821-1", }
+        "ZDB-PUB-010918-3"    { "ZDB-PUB-040216-6"  } )
         and source <> "ZFIN Direct Data Submission"
       group by title 
       having count(*) > 1 
