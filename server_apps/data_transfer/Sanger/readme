@@ -85,11 +85,8 @@ Format: parent-item-id|child-item-id|
 
 
 vega_xpat_anatomy_item.unl
-        defines anatomy item name, primary tree, and stage range.
-        the primary tree is the "native" hirearchy
-        i.e. [structures,functional systems]
-        the item is most relevant to.
-Format: item-id|item-name|primary-tree|start-stage-id|end-stage-id|
+        defines anatomy item name, and stage range.
+Format: item-id|item-name|start-stage-id|end-stage-id|
 
 
 vega_xpat_stage.unl

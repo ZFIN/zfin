@@ -133,11 +133,9 @@ unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/vega_xpat_anatomy_item.
 select 
     anatitem_zdb_id,
     anatitem_name,
-    anathier_name,
     anatitem_start_stg_zdb_id,
     anatitem_end_stg_zdb_id
-from anatomy_item, anatomy_hierarchy
-where anatitem_type_code = anathier_code
+from anatomy_item
 ;
 
 unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/vega_xpat_anatomy_relationship.unl'
