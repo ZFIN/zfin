@@ -388,7 +388,7 @@ public class mapplet extends Applet  {
 					target_frame = "content";
 					
 				if ((JS != null) && (ZDB_ID != null)) {
-					JS.eval("open(\"" + panel_url + "&OID=" + ZDB_ID + "\",\"" + target_frame + "\");");	
+					JS.eval("open(\"" + panel_url + ZDB_ID + "\",\"" + target_frame + "\");");	
 				}	
 			}
 		}
