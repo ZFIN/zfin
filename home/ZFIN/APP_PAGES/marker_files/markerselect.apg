@@ -53,6 +53,7 @@ function check_syns(item) {
 <option $(IF,$(EC,$marker_type,MUTANT),SELECTED) >MUTANT
 <option $(IF,$(EC,$marker_type,EST),SELECTED)>EST
 <option $(IF,$(EC,$marker_type,SSLP),SELECTED) >SSLP
+<option $(IF,$(EC,$marker_type,BAC),SELECTED)>BAC
 <option $(IF,$(EC,$marker_type,RAPD),SELECTED)>RAPD
 <option $(IF,$(EC,$marker_type,STS),SELECTED)>STS
 <option $(IF,$(EC,$marker_type,RFLP),SELECTED)>RFLP
