@@ -23,6 +23,14 @@ if (($#argv < 1) || ($#argv == 1 && $1 == "Thisse")) then
 endif
 
 echo "== process images for '$1' lab with option '$2' =="
+echo "...rename *.JPG to *.jpg ...";
+foreach file (`ls -R -1 .`)             # recursively list all file names
+	if ("$file:e" == "JPG") then        # quote around the file extension is critical
+	   mv $file $file:r.jpg
+    endif
+end
+
+
 echo "...create Imagesdir/, move .jpg (corresponding .txt) into it...";
 rm -rf Imagesdir
 mkdir Imagesdir
@@ -33,21 +41,20 @@ if ($1 == "Thisse")  then
     if (-d "$item" && "$item" != "Imagesdir") then 
 
         cp "$item"/*.jpg Imagesdir/
-	if ($2 == "cb") then
-	    cp "$item"/*.txt Imagesdir/
-	endif 
+		if ($2 == "cb") then
+			cp "$item"/*.txt Imagesdir/
+		endif 
 
     else if (-f $item && $item:e == "jpg") then
-	cp $item  Imagesdir/
-    else
+			cp $item  Imagesdir/
+	else
     endif
   end
 
 else if ($1 == "Talbot")  then
 
   foreach jpg (images/*/large/*)
-     set new_name = `echo "$jpg" | cut -d\/ -f4 | sed 's/ /__/g' | sed 's/JPG/jpg/' `;
-     #set old_name = `echo "$jpg" | sed 's/ /\\ /g'`;
+     set new_name = `echo "$jpg" | cut -d\/ -f4 | sed 's/ /__/g' `;
      cp "$jpg" Imagesdir/$new_name;         #quote helps to preserve the name which has space in it
   end
 
@@ -56,7 +63,7 @@ endif
 
 # generate image name list from the images.csv(txt).(space replaced by "__")
 if ($1 == "Thisse")  then
-    cat images.csv | cut -d, -f2 | cut -f1 -d\. | tr -d \" | sort >! imgname.list
+    cat images.csv | cut -d, -f2 | cut -f1 -d\. | tr -d \" | sed 's/JPG/jpg/' | sort >! imgname.list
 else if ($1 == "Talbot") then
     sed -n '/^[0-9]/ p' images.txt | cut -f2 | cut -f1 -d\. | sed 's/ /__/g' | sed 's/JPG/jpg/' | sort >! imgname.list
 endif
@@ -67,10 +74,6 @@ cd Imagesdir
 ls -1 | grep ' '
 echo "---"
 
-#try to rename ...
-# foreach file (*)
-#    mv $file `echo $file | sed 's/ /__/g'`
-# end
 
 # check image consistency
 ls -1 *.jpg | cut -d. -f1| sort >! imgjpg.list
@@ -112,10 +115,10 @@ foreach file (*.jpg)
         /research/zusers/bsprunge/Annotator/annotator/annotator.jar \
         Annotator "$file";
 
-        ../thumbnail.sh 64 $file:r--C.jpg > $file:r--t.jpg ;
+        ../thumbnail.sh 64 $file:r--C.jpg $file:r--t.jpg ;
 
     else	
-	../thumbnail.sh 64 $file > $file:r--t.jpg ;
+	../thumbnail.sh 64 $file $file:r--t.jpg ;
  
     endif
 
@@ -152,9 +155,9 @@ rm -rf Imagesdir
 if ($1 == "Thisse") then 
     set argv2_upper = `echo $2 | tr '[a-z]' '[A-Z]'`
     foreach dir ($2* $argv2_upper*) 
-	if (-d $dir) then
-	    rm -rf $dir
-	endif
+	  if (-d "$dir") then               #dir name might include parenthesis
+	    rm -rf "$dir"
+	  endif
     end
 else if ($1 == "Talbot") then 
     rm -rf images/
