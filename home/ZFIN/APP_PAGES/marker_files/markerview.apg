@@ -428,7 +428,7 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$7,f),$(EC,$ZDB_ident,$6)),"<TD><font size=-
 <br>
 <b>Add link to Seq DB:</b> &nbsp;
 DBname:<SELECT name=seqdb>
-<?MISQL SQL="select distinct DB_name from foreign_DB where db_type='sequence';">
+<?MISQL SQL="select distinct DB_name from foreign_DB where db_type='sequence' and db_name <> 'BLAST';">
 <option value="$1">$1
 <?/MISQL>
 </SELECT>
