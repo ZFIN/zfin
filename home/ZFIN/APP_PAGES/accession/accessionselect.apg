@@ -55,7 +55,7 @@
     <?/MISQL>
     <?MIBLOCK COND="$(NC,$pcount,0)">
 	<?MIVAR NAME=$start_page>aa-pubselect2.apg<?/MIVAR>	
-	<?MIVAR NAME=$pub_acc_constraint> accession_no = '$aname' <?/MIVAR> 
+	<?MIVAR NAME=$pub_acc_constraint> where accession_no = '$aname' <?/MIVAR> 
         <?MISQL SQL="select WebExplode(object,'') from webPages where ID='$start_page';">$1<?/MISQL>
     <?/MIBLOCK>
 
@@ -122,7 +122,7 @@
      <!-- ends if start page is null -->
       
     <?MIELSE>
-      <?MIVAR COND="$(EC,$start_page,aa-pubselect2.apg)" NAME=pub_acc_constraint> zdb_id = '$OID' <?/MIVAR>
+      <?MIVAR COND="$(EC,$start_page,aa-pubselect2.apg)" NAME=pub_acc_constraint> where zdb_id = '$OID' <?/MIVAR>
       <?MIVAR COND="$(>,$(POSITION,$start_page,marker),0)" NAME=$constraint> where mrkr_zdb_id = '$OID' <?/MIVAR>    
 	
       <?MISQL SQL="select WebExplode(object,'') from webPages where ID='$start_page';">$1<?/MISQL>
