@@ -38,9 +38,7 @@ Datablade documentation.
 	document.critform.START.value = "";
 	document.critform.lg.selectedIndex = 0;
 	document.critform.compare.selectedIndex = 0;
-	document.critform.sequence_type.selectedIndex = 0;
 	document.critform.marker_type.selectedIndex = 0;
-	document.critform.vector_type.selectedIndex = 0;  
 	document.critform.WINSIZE.value = 20;
 
      }
@@ -92,13 +90,11 @@ Datablade documentation.
    <?MIVAR COND="$(XST,$input_name)">$(SETVAR,$input_name,$(TRIM,$input_name))<?/MIVAR>
    <?MIVAR COND="$(XST,$input_acc)">$(SETVAR,$input_acc,$(TRIM,$input_acc))<?/MIVAR>		
    <?MIVAR NAME=$lg COND="$(NXST,$lg)">0<?/MIVAR>
-   <?MIVAR COND="$(NXST,$sequence_type)" NAME=$sequence_type>any<?/MIVAR>
-   <?MIVAR COND="$(NXST,$vector_type)" NAME=$vector_type>any<?/MIVAR>
    <?MIVAR COND="$(NXST,$compare)" NAME=$compare>contains<?/MIVAR>
 
    <!-- build up the parameter. the $return_rec is passed in from start_select.apg for update selecting -->    
    <?MIVAR NAME=$mrkr_param_list>&query_results=t$(IF,$(XST,$input_name),&input_name=$input_name)$(IF,$(XST,$input_acc),&input_acc=$input_acc)$(IF,$(XST,$compare),&compare=$compare)$(IF,$(NC,$lg,0),&lg=$lg)$(IF,$(XST,$WINSIZE),&WINSIZE=$WINSIZE)$(IF,$(XST,$return_rec),&return_rec=$return_rec)<?/MIVAR>
-    <?MIVAR NAME=$mseg_param_list>$mrkr_param_list$(IF,$(XST,$sequence_type),&sequence_type=$sequence_type)$(IF,$(XST,$vector_type),&vector_type=$vector_type)$(IF,$(XST,$return_rec),&return_rec=$return_rec)<?/MIVAR>
+    <?MIVAR NAME=$mseg_param_list>$mrkr_param_list$(IF,$(XST,$return_rec),&return_rec=$return_rec)<?/MIVAR>
    
 
   <?MIVAR COND="$(NC,$marker_type,all)" NAME=$mlist SEPARATE="','">$marker_type<?/MIVAR>
@@ -274,44 +270,6 @@ Datablade documentation.
       <?/MIVAR>
     <?/MIBLOCK>	
 
-    <!--------------------sequence type & vector type ------->
-    <?MIVAR NAME=$clone_vec_cols><?/MIVAR>
-    <?MIBLOCK COND="$(OR,$(NC,$vector_type,any),$(NC,$sequence_type,any))">
-     
-      <?MIVAR NAME=$clone_vec_cols>,clone_sequence_type, vector_type_name<?/MIVAR>
-      <?MIVAR>
-	$(VECAPPEND, $constraint," mrkr_zdb_id = clone_mrkr_zdb_id ")
-	$(VECAPPEND, $constraint," clone_vector_name = vector_name ")
-	$(SETVAR,$has_constraint,t)
-      <?/MIVAR>
-
-
-      <!-- sequence and not vector -->
-      <?MIVAR NAME=$opt_tables COND="$(AND,$(EC,$vector_type,any),$(NC,$sequence_type,any))">
-	$opt_tables, clone, outer vector
-      <?/MIVAR>
-
-      <!-- vector and sequence --><!-- vector and not sequence -->
-      <?MIVAR NAME=$opt_tables COND="$(NC,$vector_type,any)">$opt_tables, clone, vector<?/MIVAR> 
-
-     <!---- sequence type --->
-     <?MIVAR COND="$(NC,$sequence_type,any)">
-       <?MIVAR NAME=$clnConstraint>clone_sequence_type = '$sequence_type'<?/MIVAR>
-       $(VECAPPEND, $constraint, $clnConstraint )
-	$(SETVAR,$has_constraint,t)
-     <?/MIVAR>
-     <!--- end sequence type --->
-
-     <!--- vector type -->
-     <?MIVAR COND="$(NC,$vector_type,any)">
-       <?MIVAR NAME=$vecConstraint>vector_type_name = '$vector_type'<?/MIVAR>
-        $(VECAPPEND, $constraint, $vecConstraint ) 
- 	$(SETVAR,$has_constraint,t)
-     <?/MIVAR>
-     <!--- end vector type -->
-   <?/MIBLOCK> 
-   <!--------------- end sequence type & vector type ------->
-
     <!-- split the constraints -->
     <?MIVAR COND="$(EC,$has_constraint,t)" NAME=$constraint>
          where $(SUBSTR,$(SEPARATE,$constraint,AND),4)
@@ -320,7 +278,7 @@ Datablade documentation.
     <!----------  Populate temp table based on user constraints. ---------->
 
      <?MISQL SQL="	
-	select mrkr_abbrev, mrkr_type, mrkr_zdb_id, mrkr_abbrev_order $clone_vec_cols $name_sig_cols
+	select mrkr_abbrev, mrkr_type, mrkr_zdb_id, mrkr_abbrev_order $name_sig_cols
 	  from marker $opt_tables
 	 $constraint
 	into temp bigselect_temp_markers with no log; ">
@@ -363,8 +321,6 @@ Datablade documentation.
 	  $(IF,$(XST,$input_acc),$(VECAPPEND,$critList,accession number '$input_acc'))
 	  $(IF,$(NC,$marker_type,all),$(VECAPPEND,$critList,search type '$mlist'))
 	  $(IF,$(NC,$lg,0),$(VECAPPEND,$critList,linkage group '$lg'))
-	  $(IF,$(NC,$sequence_type,any),$(VECAPPEND,$critList,sequence type '$sequence_type'))
-	  $(IF,$(NC,$vector_type,any),$(VECAPPEND,$critList,vector type '$vector_type'))
 	  $(IF,$(=,$(VECSIZE,$critList),0),$(VECAPPEND,$critList,All))
 	<?/MIVAR>
 

@@ -55,7 +55,8 @@ Input:
      <TR>
      <TD valign=top>
        	<table><tr><td valign=top>
-	<b>Type: &nbsp; &nbsp;&nbsp;&nbsp; &nbsp; &nbsp;&nbsp; &nbsp;</b>
+	<b>Types: <br></b>
+          (Choose one or more)&nbsp;&nbsp;
 	</td>
 	<td>
 	<?MIVAR COND="$(NXST,$marker_type)" NAME=marker_type><?/MIVAR>
@@ -92,29 +93,8 @@ Input:
 	  <option value="$1" $(IF,$(EC,$lg,$1),SELECTED) >$(IF,$(EC,$1,0),any,$1)
 	<?/MISQL>
        </SELECT>    
-       <p>
-       <B>Sequence Type</B> (EST, BAC, PAC only)<B>:</B><br>
-	<SELECT name="sequence_type">
-	  <OPTION SELECTED value="any">Any
-	 <?MISQL SQL="select seqtype_name from sequence_type;">
-            <OPTION $(IF,$(AND,$(XST,$sequence_type),$(EC,$sequence_type,$1)),SELECTED) value="$1">$1
-         <?/MISQL>
-        </SELECT>
-        <P>
 
-<?MICOMMENT> Temporarily take out vector type
-     
-	<b>Vector Type:</b>&nbsp;
-	<SELECT name="vector_type">
-	  <OPTION SELECTED value="any">Any
-	 <?MISQL SQL="select vectype_name from vector_type
-		       where vectype_name not in ('Not specified','Not applicable');">
-            <OPTION $(IF,$(AND,$(XST,$vector_type),$(EC,$vector_type,$1)),SELECTED) value="$1">$1
-         <?/MISQL>
-        </SELECT>
-      </TD>
-<?/MICOMMENT>
-        &nbsp; <p>
+       <p>
 	Display results in groups of 
 	<input type="text" name="WINSIZE" size="3" value="20" 
 	       onChange='document.critform.START.value = "";' 
