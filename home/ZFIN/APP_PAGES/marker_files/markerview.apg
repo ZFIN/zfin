@@ -553,7 +553,7 @@ Datablade documentation.
         value=Update 
         onClick="update_mrkrsequence('$mrkrseq_zdb_id','$sequence',document.markerSequence.sequence.value)";>
     <?/MIVAR>
-    $left_end' - <?MIVAR COND="$(XST,$UPDATE)"><INPUT TYPE=text size=30 name=sequence value="<?/MIVAR>$sequence<?MIVAR COND="$(XST,$UPDATE)">"><?/MIVAR> - $(IF,$(EC,$left_end,5),3,5)'
+    $left_end - <?MIVAR COND="$(XST,$UPDATE)"><INPUT TYPE=text size=30 name=sequence value="<?/MIVAR>$sequence<?MIVAR COND="$(XST,$UPDATE)">"><?/MIVAR> - $(IF,$(EC,$left_end,5'),3,5)'
  	
     <?MISQL SQL="select WebExplode(object,'dataId=$mrkrseq_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>	
    
