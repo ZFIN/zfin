@@ -1,5 +1,3 @@
-begin work;
-
 --P_2_LINKAGE_PAIRS.SQL
 ------------------------------------------------------
 --procedure to check inserts and/or updates on the linkage_pair_member table.
@@ -35,4 +33,3 @@ begin work;
 
   end procedure;
 
-commit work;
