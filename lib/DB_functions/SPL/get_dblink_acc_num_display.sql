@@ -1,8 +1,8 @@
 drop function get_dblink_acc_num_display;
 
-create function get_dblink_acc_num_display(dblinkDbName varchar(50),
-					   dblinkAccNum varchar(50))
-  returning varchar(50);
+create function get_dblink_acc_num_display (dblinkFdbId varchar(50),
+                                            dblinkAccNum varchar(50))
+returning varchar(50);
 
   -- For most db links we display the link as db_name:acc_num
   -- However, for a few databases, the acc_num is not a good choice
@@ -17,13 +17,19 @@ create function get_dblink_acc_num_display(dblinkDbName varchar(50),
   -- Therefore they can't be NULL.
   -- However, it is possible that the acc_num is not well formed,
   -- in which case this routine may return a NULL.
-
+  
   define len integer;
   define index integer;
   define ch char(1);
   define contigId like db_link.dblink_acc_num_display;
   define dblinkAccNumDisplay like db_link.dblink_acc_num_display;
-
+  define dblinkDbName varchar(50);
+  
+  select distinct fdbcont_fdb_db_name 
+    into dblinkDbName 
+      from foreign_db_contains
+      where fdbcont_zdb_id = dblinkFdbId ;
+  
   if (dblinkDbName = "WEB_FPC") then
     -- The acc_num will look something like
     --   12595&marker=stID23165.16
