@@ -313,6 +313,7 @@ marker table.
       <?MISQL SQL="execute function get_id('MRKRSEQ')">
         <?MIVAR NAME=$nMrkrMrkrSeqId>$1<?/MIVAR>
       <?/MISQL>
+      <?MIVAR NAME="nMrkrEndWithPrime">$nMrkrLeftEnd''<?/MIVAR>
       <?MISQL SQL="insert into zdb_active_data (zactvd_zdb_id) values ('$nMrkrMrkrSeqId');"><?/MISQL>
       <?MISQL SQL="
         insert into marker_sequence (
@@ -324,7 +325,7 @@ marker table.
           '$nMrkrMrkrSeqId',
           '$new_id',
           '$nMrkrSequence',
-          '$nMrkrLeftEnd');">
+          '$nMrkrEndWithPrime');">
       <?/MISQL>
     
     <?/MIBLOCK>
