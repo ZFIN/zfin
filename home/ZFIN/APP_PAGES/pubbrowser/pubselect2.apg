@@ -54,6 +54,7 @@ document.critform.authtype.selectedInidex = 0;
 <?MIVAR COND="$(EC,$yr_cmpr,less)">$(SETVAR,$yr_cmpr,<)<?/MIVAR>
 <?MIVAR COND="$(XST,$cur_status)" NAME=$cur_status DELIMIT="9" REPLACE=" ">$cur_status<?/MIVAR>
 
+
 <TABLE width=100%>
 <TR>
 <TD><font size=-1>
@@ -181,7 +182,7 @@ contains <input type=text name=anon1text size=10>
 <TD> <font size=2>
 <b>Publication Status:</b>
 <SELECT name=pub_status>
-<option $(IF,$(EC,$pub_status,any),SELECTED)SELECTED value="any">Any
+<option $(IF,$(EC,$pub_status,any),SELECTED) value="any">Any
 <option $(IF,$(EC,$pub_status,active),SELECTED) value="active">Active
 <option $(IF,$(EC,$pub_status,inactive),SELECTED )value="inactive">Inactive
 <option $(IF,$(EC,$pub_status,temporary),SELECTED) value="temporary">Temporary
