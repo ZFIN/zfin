@@ -244,7 +244,7 @@
       <?/MISQL>
 
       <?MIVAR NAME=$xpat COND="$(>,$XPAT_COUNT,0)">
-        <font size=2><A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatlister_parts.apg&gene_name=$gene_name>assays</A></font>
+        <font size=2><A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatlister_parts.apg&gene_name=$marker_name>assays</A></font>
       <?/MIVAR>
 
 
