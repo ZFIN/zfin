@@ -39,8 +39,11 @@
 <?MIBLOCK COND="$(AND,  $(EC,$hide_empty,f) , $(EC,$MI_ROWCOUNT,0))">None submitted.<?/MIBLOCK>
 
 <?MIBLOCK COND="$(AND,$(XST,$MI_ROWCOUNT),$(>,$MI_ROWCOUNT,0) )  ">
- <?MIBLOCK COND="$(AND,$(<,$mapdetLG,10),$(=,1,$MI_ROWCOUNT))  ">&nbsp;<?/MIBLOCK> 
 
+<!-- only do this check when LG isd a number, MT does not need a space  -->
+ <?MIBLOCK COND="$(NE,$mapdetLG,MT)">
+   <?MIBLOCK COND="$(AND,$(<,$mapdetLG,10),$(=,1,$MI_ROWCOUNT))  ">&nbsp;<?/MIBLOCK> 
+ <?/MIBLOCK>
 
 <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mappingdetail.apg&OID=$OID"> Details</A><?/MIVAR>
 <?MIVAR NAME=$mapped><?/MIVAR>
