@@ -241,7 +241,7 @@ $(IF,$(XST,$UPDATE),"<font size=-1> <SELECT name=mem_status onChange=doStatus('"
 <?MIVAR COND="$(NC,$bio,NULL)">$bio<?/MIVAR>
 
 <P> <hr>
-<B>Publications of Company representatives (chronologically):</B>  
+<B>Publications of Company representatives:</B>  
 <?MIVAR COND="$(XST,$UPDATE)">
 <br><FONT COLOR="#ff0000"> UPDATING Pubs:</FONT> You cannot directly update publications associated with a COMPANY. <A HREF="mailto:zfinadmn@zfin.org">Contact Administrator</A> if a publication you think should appear below is missing.<p>
 <?/MIVAR>
@@ -249,13 +249,10 @@ $(IF,$(XST,$UPDATE),"<font size=-1> <SELECT name=mem_status onChange=doStatus('"
 
 
 
-<?MISQL SQL="select distinct a.title, year(pub_date) as pyear, a.zdb_id, a.authors, a.source from publication a, int_person_pub b, int_person_company c where b.target_id=a.zdb_id and b.source_id=c.source_id and c.target_id='$OID' order by pyear desc;">
+<?MISQL SQL="select distinct a.title, year(pub_date) as pyear, a.zdb_id, a.authors, a.source from publication a, int_person_pub b, int_person_company c where b.target_id=a.zdb_id and b.source_id=c.source_id and c.target_id='$OID' order by a.authors asc;">
 
-<dl><dt><table>
-<TR><TD colspan=1 align=left><font size=3> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3">$4 </A>($2)</TD></TR></table></dt>
-<DD>$1</DD>
-<DD> $5 </D>
-</dl>
+<TR><TD colspan=1 align=left><font size=3> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3">$4 ($2) $1 $5</A></TD></TR>
+<p>
 <?/MISQL>
 </form>
 
