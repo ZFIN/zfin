@@ -190,24 +190,24 @@ parse file: read ftp://ftp.geneontology.org/go/ontology/gene_ontology.obo
 		;;column seperation in IDS 9.* load keywords.
 		;;add all the newly parsed text to an output buffer
 	
-			(append buffer join trim goobj/id "|"
-			append buffer join trim goobj/name "|"
-			append buffer join trim goobj/namespace "|"
-			append buffer join trim goobj/def "|"	
-			append buffer join trim goobj/is_a "|"
-			append buffer join trim goobj/exact_synonym "|"
-			append buffer join trim goobj/alt_id "|"
-			append buffer join trim goobj/xref_analog "|"
-			append buffer join trim goobj/relationship "|"
-			append buffer join trim goobj/comment "|"	
-			append buffer join trim goobj/is_obsolete "|"	
-			append buffer join trim goobj/xref_unknown "|"
-			append buffer join trim goobj/subset "|"
-			append buffer join trim goobj/synonym "|"
-			append buffer join trim goobj/related_synonym "|"
-			append buffer join trim goobj/narrow_synonym "|"
-			append buffer join trim goobj/broad_synonym "|"
-			append buffer join trim goobj/use_term "|") 
+		(append buffer rejoin [goobj/id "|"
+		trim goobj/name "|"
+		trim goobj/namespace "|"
+		trim goobj/def "|"	
+		trim goobj/is_a "|"
+		trim goobj/exact_synonym "|"
+		trim goobj/alt_id "|"
+		trim goobj/xref_analog "|"
+		trim goobj/relationship "|"
+		trim goobj/comment "|"	
+		trim goobj/is_obsolete "|"	
+		trim goobj/xref_unknown "|"
+		trim goobj/subset "|"
+		trim goobj/synonym "|"
+		trim goobj/related_synonym "|"
+		trim goobj/narrow_synonym "|"
+		trim goobj/broad_synonym "|"
+		trim goobj/use_term "|"] ) 
 
 	;;add a newline to buffer to move append to next line
 
@@ -219,7 +219,6 @@ parse file: read ftp://ftp.geneontology.org/go/ontology/gene_ontology.obo
 	newline
      ];;; end record rule	
 	
-	end
 ]
 
 ;;write the accmulated rows out to a file
