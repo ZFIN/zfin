@@ -113,8 +113,8 @@ Variables expected:
 	<!-- search for a marker -->
 	<?MIBLOCK COND="$(AND,$(NC,$mtype,mutant),$(NC,$mtype,locus),$(XST,$do_search))">
 	  <hr>
-	  <TABLE cols=2>
-	  <TR><TH></TH><TH>Marker Name</TH><TH>Marker Type</TH></TR>
+	  <TABLE cols=3>
+	  <TR><TD></TD><TD><b>Marker Name</b></TD><TD><b>Marker Type</b></TD></TR>
 	    <?MISQL SQL="select distinct mrkr_zdb_id,mrkr_name,mrkr_type,mrkr_abbrev 
 	       from marker a, all_map_names b
 		 where a.mrkr_type='$mtype' 
@@ -122,7 +122,7 @@ Variables expected:
 		   and b.allmapnm_name_lower like '%$(LOWER,$merge)%' 
 		   order by a.mrkr_abbrev;">
 	  <TR>
-	    <TD>
+	    <TD width=15%>
               <?MIVAR>
 	        <input type=button value="Select" onClick= set_values('$1','$(URLENCODE,$2)') ;>
               <?/MIVAR>
