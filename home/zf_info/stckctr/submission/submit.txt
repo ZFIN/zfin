@@ -1,49 +1,49 @@
 To: april@zfin.org, trevarro@uoneuro.uoregon.edu, monte@uoneuro.uoregon.edu, edwards@uoneuro.uoregon.edu, seger@uoneuro.uoregon.edu, ksf@cs.uoregon.edu, mason@uoneuro.uoregon.edu
 From: zirc@darkwing.uoregon.edu
-Subject: [required_submitterName]'s ZIRC Submission Form 
+Subject: [required_submitterName]'s ZIRC Submission for [mutantAlleles]
 
 ***for PAT ************************************* 
 
 SUBMITTER CONTACT INFORMATION
-Submitter Name: 
+Submitter Name:
 [required_submitterName]
 ---
-Submitter Email: 
+Submitter Email:
 [required_submitterEMail]
 ---
-Submitter Telephone: 
+Submitter Telephone:
 [required_submitterTelephone]
 ---
-Submitter Fax: 
+Submitter Fax:
 [submitterFax]
 ---
-Submitter Institution/Lab: 
+Submitter Institution/Lab:
 [required_submitterLab]
 ---
 Submitter Position:
 [required_submitterPosition]
 ---
-Submitter Address: 
+Submitter Address:
 [required_submitterAddress]
 ---
 
 PI CONTACT INFORMATION
-PI Name: 
+PI Name:
 [PIName]
 ---
-PI Email: 
+PI Email:
 [PIEMail]
 ---
-PI Telephone: 
+PI Telephone:
 [PITelephone]
 ---
-PI Fax: 
+PI Fax:
 [PIFax]
 ---
-PI Institution/Lab: 
+PI Institution/Lab:
 [PILab]
 ---
-PI Address: 
+PI Address:
 [PIAddress]
 ---
 NIH grant number or other grant number:
@@ -54,55 +54,61 @@ NIH grant number or other grant number:
 ***for KEN ************************************* 
 
 LINE/MUTANT INFORMATION
-Allele(s): 
+Allele(s):
 [mutantAlleles]
 ---
-Line/Mutant Name: 
+Line/Mutant Name:
 [lineName]
 ---
-Previous/Other Names: 
+Previous/Other Names:
 [lineNamePrevious]
+---
+Mutated Gene:
+[mutatedGene]
 ---
 
 
 ***for ERIK ************************************* 
 
 LINE/MUTANT INFORMATION
-Line/Mutant Name: 
+Line/Mutant Name:
 [lineName]
 ---
-Previous/Other Names: 
+Previous/Other Names:
 [lineNamePrevious]
 ---
-Phenotype: 
+Phenotype:
 [linePhenotype]
 ---
-Mutagenesis Protocol: 
+Mutagenesis Protocol:
 [mutagenProtocol]
 ---
-Mutation Type: 
+Mutation Type:
 [mutantTypePoint] [mutantTypeDf] [mutantTypeDp] [mutantTypeIn] [mutantTypeIs] [mutantTypeT] [mutantTypeTg] [mutantTypeUn] [mutantTypeOther] [mutantTypeCr]
 ---
-Linkage Group: 
+Mutated Gene:
+[mutatedGene]
+---
+Linkage Group:
 [linkageGroup]
 ---
-Linked Markers--Marker Name and Distance: 
+Linked Markers--Marker Name and Distance:
 [markerNameDistance]
 ---
-Transgene--Transgene Name: 
+Transgene--Transgene Name:
 [transgeneName]
 ---
-Transgene--Transgene Description: 
+Transgene--Transgene Description:
 [transgeneDescription]
 ---
 Line Discoverer:
 [lineDiscoverer]
 ---
 PUBLICATIONS
-Primary Publication: 
+Primary Publication:
 [publications1]
 ---
-Secondary Publications: 
+Secondary Publications:
 [publications2]
 ---
 
@@ -113,77 +119,77 @@ CONTACT INFO
 NIH grant number or other grant number:
 [required_grantNumber]
 ---
-Type of Line: 
+Type of Line:
 [lineWildType] [lineMutant] [lineTransgenic]
 ---
-Proposing to send: 
+Proposing to send:
 [statusAdults] [statusEmbryos] [statusFrozenSperm]
 ---
-Phenotype: 
+Phenotype:
 [linePhenotype]
 ---
 
 GENETICS AND BACKGROUND
-Segregation: 
+Segregation:
 [required_segregation]
 ---
 Segregation Mutant Percentage:
 [geneticsSegregationPercentage]
 ---
-Maternal Lineage: 
+Maternal Lineage:
 [required_lineageMaternal]
 ---
-Paternal Lineage: 
+Paternal Lineage:
 [required_lineagePaternal]
 ---
-Submitter's Comments: 
+Submitter's Comments:
 [geneticsComments]
 ---
 
 HUSBANDRY
-Special Husbandry Requirements: 
+Special Husbandry Requirements:
 [husbandrySpecial]
 ---
 Mutant/Transgene Identification Techniques
 Describe in detail the technique you use to identify carriers. 
-What kind of technique?: 
+What kind of technique?:
 [mutantIDvisual] [mutantIDPCR] [mutantIDinSitu] [mutantIDother]
 ---
-Protocol: 
-for visual technique: 
+Protocol:
+for visual technique:
 [mutantIDvisDesc]
 ---
-for PCR technique: 
+for PCR technique:
 [mutantIDpcrDesc] 
 ---
-for in situ technique: 
+for in situ technique:
 [mutantIDinsituDesc] 
 ---
-for other technique: 
+for other technique:
 [mutantIDotherDesc]
 ---
 ID at what stage? 
-for visual technique: 
+for visual technique:
 [mutantIDvisualStage]
 ---
-for PCR technique: 
+for PCR technique:
 [mutantIDPCRStage]
 ---
-for in situ technique: 
+for in situ technique:
 [mutantIDinsituStage] 
 ---
-for other technique: 
+for other technique:
 [mutantIDotherStage] 
 ---
 
 CONSIDERATIONS AND INFORMATION
-Why ZIRC should take the line: 
+Why ZIRC should take the line:
 [required_considerationsWhy]
 ---
-Is there an MTA?: 
+Is there an MTA?:
 [considerationsMTAyes] [considerationsMTAno]
 ---
-Other considerations or information: 
+Other considerations or information:
 [considerationsOther]
 ---
 End of Mutant Submission Form

@@ -4,25 +4,159 @@
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
    <meta name="GENERATOR" content="Mozilla/4.74 [en] (Win98; U) [Netscape]">
    <title>ZIRC Fish Line Submission Form</title>
-<script language="JavaScript">
-   <!--
-     function popup(URL){
-      popupWindow = window.open(URL,"name","width=280,height=200,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,directories=no,status=no");
+
+<SCRIPT language="JavaScript1.1">
+/*	*** I've changed this script to suit our needs at zfin.org ***
+	Cut-N-Paste JavaScript from ISN Toolbox 
+     Copyright 1996, Infohiway, Inc.  Restricted use is hereby
+     granted (commercial and personal OK) so long as this code
+     is not *directly* sold and the copyright notice is buried
+     somewhere deep in your HTML document.  A link to our site
+     http://www.infohiway.com is always appreciated of course,
+     but is absolutely and positively not necessary. ;-)
+*/
+<!-- hide from older browsers
+var expires = new Date()
+expires.setTime(expires.getTime() + 183*24*60*60*1000); //years*days*min*sec*millisec
+formItems = 15; //we're interested in the first 14 items of the form
+use_cookies = "unsure";
+
+function Set_Cookie(name,value,expires,path,domain,secure) {
+      document.cookie = name + "=" +escape(value) +
+          ( (expires) ? ";expires=" + expires.toGMTString() : "") +
+          ( (path) ? ";path=" + path : "") + 
+          ( (domain) ? ";domain=" + domain : "") +
+          ( (secure) ? ";secure" : "");
+  }
+
+function getCookie(name) {
+	var allcookies = document.cookie;
+	if (allcookies == "") return false;
+	var start = allcookies.indexOf(name + '=');
+		if (start == -1) return false;
+	start += name.length + 1;
+	var end = allcookies.indexOf(';', start);
+		if (end == -1) end = allcookies.length;
+	return allcookies.substring(start, end); 
+} //end of getCookie()
+
+function deleteCookie(name, path, domain) {
+  if (getCookie(name)) {
+    document.cookie = name + "=" + 
+    ((path) ? "; path=" + path : "") +
+    ((domain) ? "; domain=" + domain : "") +
+    "; expires=Thu, 01-Jan-70 00:00:01 GMT";
+	window.scrollTo(0,0);
+  }
+}
+
+function cookiesOK() {
+ if (document.images && use_cookies == "unsure")
+  use_cookies = (confirm("Will you allow the contact information and grant number you enter into this form "
+   +"to be stored as cookies so that those values will be pre-filled the next "
+   +"time you return to submit a fish line?") ? "yes":"no");
+ 	if (document.images && use_cookies == "yes") {
+ 	return "yes"; //cookies are OK for this user
+ 	} else {
+ 	return null;
+ } //end of if (document.images && use_cookies == "unsure")
+} // end of function cookies OK () 
+
+function saveValues() {
+ var bakeOK = cookiesOK();
+ if (bakeOK == "yes") {
+ if (document.images) { // only do it in JavaScript 1.1 browsers
+  var zircCookie = "";
+  for (i=0;i<document.forms.length;i++) { 
+   for (j=0;j<formItems; j++) {  //find the first 14 items of the form//old data=document.forms[i].elements.length
+    var cookieElement = document.forms[i].elements[j].name; //find the form element
+	if ((document.forms[i].elements[j].type == "text")
+		|| (document.forms[i].elements[j].type == "password")
+		|| (document.forms[i].elements[j].type == "textarea")
+		|| (document.forms[i].elements[j].type == "radio")) {
+	var elementValue = document.forms[i].elements[j].value;
+  } else if (document.forms[i].elements[j].type.indexOf("select") != -1) {
+   var elementValue = "";
+   for(k=0;k<document.forms[i].elements[j].length;k++)
+    if (document.forms[i].elements[j].options[k].selected)
+     elementValue += k+"|";
+  } else if (document.forms[i].elements[j].type == "checkbox") {
+   var elementValue = document.forms[i].elements[j].checked;
+  } 
+	var elementPair = (cookieElement + "=" + elementValue);
+	if (zircCookie == "") {
+		zircCookie = elementPair
+		} else {
+		zircCookie = zircCookie + "&" + elementPair
+		} //end of if (zircCookie == "")
+	} //end of for (j=0;j<14; j++)	
+   } //end of for (i=0;i<document.forms.length;i++)
+  } //end of if (document.images)
+  Set_Cookie("zircProfile",zircCookie); //set the cookie
+ } //end of if (bakeOK == "yes")
+}   //end of function saveValues() 
+
+function storedValues() {
+ if (document.images) { // only do it in JavaScript 1.1 browsers
+  for (i=0;i<document.forms.length;i++) {
+    val = getCookie("zircProfile");
+	if (val) {
+	var a = val.split(escape('&')); //parsing name/value pairs
+	for(var x=0; x<a.length; x++){
+		a[x] = a[x].split(escape('=')); //breaking pairs into an array
+		}
+    for (j=0;j<formItems; j++) { //loop to fill in the form (variable 'formItems' = 14 items)
+	if (a[j]) {var elementValue = a[j].slice(1,2);} //find value in this value pair
+	var elementValue = unescape(elementValue); //this makes it readable
+     if ((document.forms[i].elements[j].type == "text")
+     || (document.forms[i].elements[j].type == "password")
+     || (document.forms[i].elements[j].type == "textarea")) {
+      document.forms[i].elements[j].value = elementValue;
+	 } else if (document.forms[i].elements[j].type.indexOf("select") != -1) {
+      document.forms[i].elements[j].selectedIndex = -1;
+      while (((pos = elementValue.indexOf("|")) != -1) && (elementValue.length > 1)) {
+       sel = parseInt(elementValue.substring(0,pos));
+       elementValue = elementValue.substring(pos+1,elementValue.length);
+       if (sel < document.forms[i].elements[j].length)
+        document.forms[i].elements[j].options[sel].selected = true;
+      }
+     } else if (document.forms[i].elements[j].type == "checkbox") {
+      document.forms[i].elements[j].checked = elementValue;
+     } else if (document.forms[i].elements[j].type == "radio") {
+      if (document.forms[i].elements[j].value == elementValue)
+       document.forms[i].elements[j].checked = true;
+	 }
+    }	//end of for (j=0;j<document.forms[i].elements.length; j++)
+   }   //end of if (val) 
+  }   //end of for for (i=0;i<document.forms.length;i++) 
+ }   //end of if (document.images) 
+}   //end of function storedValues() 
+
+window.onload = storedValues;
+
+function sendMail() {
+	window.location.href = ('mailto:form_comments@zfin.org?subject=ZIRC fish line submission form');
+}
+
+function popup(URL) {
+	popupWindow = window.open(URL,"name","width=280,height=200,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,directories=no,status=no");
      }
-	 //-->
-</script>
+	 
+//-->
+</SCRIPT>
 </head>
-<body text="#000000" bgcolor="#FFFFFF">
-<center>
-<h2>Zebrafish International Resource Center<br>
-Fish Line Submission Form</h2></center>
-<center>Please fill out this form if you want to submit a line to the Resource
-Center.
+<BODY text="#000000" bgcolor="#FFFFFF">
+<center><H2>Zebrafish International Resource Center<BR>Fish Line Submission Form</H2>
+<noscript>
+<font color="#FF0000">Javascript is required to use links on this page and to 
+  save your contact information between sessions. <br>
+Please set your preferences to allow Javascript and then Reload.</font>
+</noscript>
+<p>Please fill out this form if you want to submit a line to the Resource Center.
 <br>A * indicates a required field.
-<br><a href="javascript:popup('links.html')">Links</a> provide useful information
-in a new window without changing the form.&nbsp;<noscript>
-<br><font color="#FF0000">Javascript is required for links on this page.</font></noscript></center>
-<center><form NAME="theSubmissionForm" METHOD="POST" ACTION="http://<!--|DOMAIN_NAME|-->/<!--|CGI_BIN_DIR_NAME|-->/cgiemail/zf_info/stckctr/submission/submit.txt">
+<br><a href="javascript:popup('links.html')">Links</a> provide useful information in a new window without changing the form.&nbsp;
+</p>
+<form NAME="theSubmissionForm" onSubmit="saveValues()" onReset="deleteCookie('zircProfile')" METHOD="POST" ACTION="http://<!--|DOMAIN_NAME|-->/<!--|CGI_BIN_DIR_NAME|-->/cgiemail/zf_info/stckctr/submission/submit.txt">
 <input TYPE="hidden" NAME="success" VALUE="http://<!--|DOMAIN_NAME|-->/zf_info/stckctr/submission/success.html">
     <table BORDER BGCOLOR="#E5E5E5">
       <tr> 
@@ -31,13 +165,13 @@ in a new window without changing the form.&nbsp;<noscript>
         <td>&nbsp;</td>
       </tr>
       <tr> 
-        <td><font size=-1>Your Name *&nbsp;</font></td>
+        <td><font size=-1>Your Name *</font></td>
         <td> 
           <input type="text" name="required_submitterName" size="50">
         </td>
       </tr>
       <tr> 
-        <td><font size=-1>Your Email *&nbsp;</font></td>
+        <td><font size=-1>Your Email *</font></td>
         <td> 
           <input type="text" name="required_submitterEMail" size="50">
         </td>
@@ -49,7 +183,7 @@ in a new window without changing the form.&nbsp;<noscript>
         </td>
       </tr>
       <tr> 
-        <td><font size=-1>Your Fax&nbsp;</font></td>
+        <td><font size=-1>Your Fax</font></td>
         <td> 
           <input type="text" name="submitterFax" size="50">
         </td>
@@ -61,11 +195,11 @@ in a new window without changing the form.&nbsp;<noscript>
         </td>
       </tr>
       <tr> 
-        <td><font size=-1>Your Position * </font></td>
+        <td><font size=-1>Your Position *</font></td>
         <td> 
           <select name="required_submitterPosition" size="1">
             <option value=""></option>
-			<option value="PI / Director">PI / Director</option>
+            <option value="PI / Director">PI / Director</option>
             <option value="Post-Doc">Post-Doc</option>
             <option value="Graduate Student">Graduate Student</option>
             <option value="Research Staff">Research Staff</option>
@@ -74,7 +208,7 @@ in a new window without changing the form.&nbsp;<noscript>
         </td>
       </tr>
       <tr> 
-        <td><font size=-1>Your Address *&nbsp;</font></td>
+        <td><font size=-1>Your Address *</font></td>
         <td> 
           <textarea name="required_submitterAddress" cols="50" wrap="VIRTUAL" rows="4"></textarea>
         </td>
@@ -117,7 +251,7 @@ in a new window without changing the form.&nbsp;<noscript>
     <table BORDER BGCOLOR="#E5E5E5" >
 <tr>
 <td WIDTH="150">
-<div align=right><font size=-1>Your NIH grant number or&nbsp;</font>
+<div align=right><font size=-1>Your NIH grant number or</font>
 <br><font size=-1>other grant number *</font></div>
 </td>
 <td><input type="text" name="required_grantNumber" size="30"></td>
@@ -141,7 +275,7 @@ in a new window without changing the form.&nbsp;<noscript>
           <input type="checkbox" name="lineMutant" value="mutant">
           mutant 
           <input type="checkbox" name="lineTransgenic" value="transgenic">
-          transgenic
+          transgenic 
           <input type="checkbox" name="lineWildType" value="wild type">
           <font size=-1>wild-type</font></font></td>
       </tr>
@@ -150,9 +284,9 @@ in a new window without changing the form.&nbsp;<noscript>
           <font size=-1>(What are you proposing to send?)</font></td>
         <td> 
           <input type="checkbox" name="statusAdults" value="adults">
-          <font size=-1>adults&nbsp; 
+          <font size=-1>adults 
           <input type="checkbox" name="statusEmbryos" value="embryos">
-          embryos&nbsp; 
+          embryos 
           <input type="checkbox" name="statusFrozenSperm" value="frozen sperm">
           frozen sperm</font></td>
       </tr>
@@ -166,6 +300,12 @@ in a new window without changing the form.&nbsp;<noscript>
         <td><font size=-1>Previous / Other Name(s)</font></td>
         <td> 
           <input type="text" name="lineNamePrevious" size="50">
+        </td>
+      </tr>
+      <tr> 
+        <td><font size=-1>Allele(s)</font></td>
+        <td>
+          <input type="text" name="mutantAlleles" size="30">
         </td>
       </tr>
       <tr> 
@@ -228,9 +368,9 @@ in a new window without changing the form.&nbsp;<noscript>
         </td>
       </tr>
       <tr> 
-        <td><font size=-1>Allele(s)</font></td>
-        <td> 
-          <input type="text" name="mutantAlleles" size="30">
+        <td><font size=-1>Mutated Gene (if known)</font></td>
+        <td>
+          <input type="text" name="mutatedGene" size="50">
         </td>
       </tr>
       <tr> 
@@ -307,7 +447,7 @@ in a new window without changing the form.&nbsp;<noscript>
         <td height="17">&nbsp;</td>
       </tr>
       <tr> 
-        <td><font size=-1>Segregation * </font></td>
+        <td><font size=-1>Segregation *</font></td>
         <td> 
           <select name="required_segregation" size="1">
             <option value=""></option>
@@ -447,12 +587,34 @@ in a new window without changing the form.&nbsp;<noscript>
 </table>
     <br>
     <table BORDER=0 WIDTH="90%" >
-<tr>
-<td>
-<center><input type=submit value="Submit to ZIRC" name="submit"></center>
-</td>
-</tr>
-</table>
+      <tr> 
+        <td> 
+          <div align="center"> 
+            <input type="submit" value="Submit to ZIRC" name="submit">
+          </div>
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <div align="center">
+            <table width="100%" border="0">
+              <tr> 
+                <td> 
+                  <div align="center"> 
+                    <input type="button" value="send us comments about this form" name="email" onClick="sendMail()">
+                  </div>
+                </td>
+                <td> 
+                  <div align="center"> 
+                    <input type="reset" value="delete saved contact information" name="delete">
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </td>
+      </tr>
+    </table>
 </form></center>
 </body>
 </html>
