@@ -81,7 +81,7 @@ public class mapimage {
 		int M = 8;
 		String est = " mtype = 'EST' ";
 		int E = 2;
-		String anon = " mtype = 'SSLP' or mtype = 'STS' or mtype = 'RAPD' or mtype = 'RFLP' or mtype = 'SSR' or mtype = 'SNP' ";
+		String anon = " mtype = 'SSLP' or mtype = 'STS' or mtype = 'RAPD' or mtype = 'RFLP' or mtype = 'SNP' ";
 		int A = 4;
 		String type_string = "";
 

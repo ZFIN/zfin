@@ -284,9 +284,9 @@ public class MapViewer extends Canvas {
 		g.drawString("SSLP ", X+i, Y+12);	
 		i = i + FM.stringWidth("SSLP ");
 
-		g.setColor(Marker.SSR_c);
-		g.drawString("SSR ", X+i, Y+12);	
-		i = i + FM.stringWidth("SSR ");	
+//		g.setColor(Marker.SSR_c);
+//		g.drawString("SSR ", X+i, Y+12);	
+//		i = i + FM.stringWidth("SSR ");	
 
 		g.setColor(Marker.STS_c);
 		g.drawString("STS ", X+i, Y+12);	

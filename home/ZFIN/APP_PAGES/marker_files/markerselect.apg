@@ -599,7 +599,6 @@ document.critform.START.value = "";
 	<option $(IF,$(>,$(POSITION,$marker_type,RAPD),0),SELECTED)>RAPD
 	<option $(IF,$(>,$(POSITION,$marker_type,STS),0),SELECTED)>STS
 	<option $(IF,$(>,$(POSITION,$marker_type,RFLP),0),SELECTED)>RFLP
-	<option $(IF,$(>,$(POSITION,$marker_type,SSR),0),SELECTED)>SSR
 	<option value="SSLP">MicroSatellite
 	<option value="SSLP">CA-repeat
 	</select>

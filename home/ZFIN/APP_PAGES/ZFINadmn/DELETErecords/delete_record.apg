@@ -103,7 +103,6 @@ Variables expected:
 		<option $(IF,$(EC,$mtype,EST),SELECTED)>EST
 		<option $(IF,$(EC,$mtype,RAPD),SELECTED)>RAPD
 		<option $(IF,$(EC,$mtype,SSLP),SELECTED)>SSLP
-		<option $(IF,$(EC,$mtype,SSR),SELECTED)>SSR
 		<option $(IF,$(EC,$mtype,STS),SELECTED)>STS
 		<option $(IF,$(EC,$mtype,BAC),SELECTED)>BAC
 		<option $(IF,$(EC,$mtype,PAC),SELECTED)>PAC

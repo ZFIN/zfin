@@ -179,15 +179,8 @@ ERROR -- something bad happened -- no OID passed in!
 	select count(recattrib_data_zdb_id)
 	 from  record_attribution
 	 where recattrib_source_zdb_id = '$OID'
-	  and  (recattrib_data_zdb_id like 'ZDB-EST-%'
-    	     or recattrib_data_zdb_id like 'ZDB-SSLP-%'
-     	     or recattrib_data_zdb_id like 'ZDB-RAPD-%'
-    	     or recattrib_data_zdb_id like 'ZDB-SSR-%'
-    	     or recattrib_data_zdb_id like 'ZDB-STS-%'
-    	     or recattrib_data_zdb_id like 'ZDB-BAC-%'
-    	     or recattrib_data_zdb_id like 'ZDB-PAC-%'
-    	     or recattrib_data_zdb_id like 'ZDB-SNP-%'
-               );
+	  and  recattrib_data_zdb_id[1,8] in ('ZDB-EST-','ZDB-SSLP','ZDB-RAPD','ZDB-STS-','ZDB-BAC-','ZDB-PAC-','ZDB-SNP-')
+          ;
 	">
 <?/MISQL> 
 <?MIVAR COND="$(>,$1,0)">

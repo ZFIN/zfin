@@ -30,7 +30,7 @@
 
        <?MIBLOCK COND="$(>=,$MI_CURRENTROW,1)">
 	 <?MIBLOCK
-COND="$(OR,$(>,$(POSITION,$new_oid,GENE),0),$(>,$(POSITION,$new_oid,EST),0),$(>,$(POSITION,$new_oid,SSLP),0),$(>,$(POSITION,$new_oid,SSR),0),$(>,$(POSITION,$new_oid,BAC),0),$(>,$(POSITION,$new_oid,BAC_END),0),$(>,$(POSITION,$new_oid,PAC),0),$(>,$(POSITION,$new_oid,PAC_END),0),$(>,$(POSITION,$new_oid,RAPD),0),$(>,$(POSITION,$new_oid,STS),0),$(>,$(POSITION,$new_oid,RFLP),0))">
+COND="$(OR,$(>,$(POSITION,$new_oid,GENE),0),$(>,$(POSITION,$new_oid,EST),0),$(>,$(POSITION,$new_oid,SSLP),0),$(>,$(POSITION,$new_oid,BAC),0),$(>,$(POSITION,$new_oid,BAC_END),0),$(>,$(POSITION,$new_oid,PAC),0),$(>,$(POSITION,$new_oid,PAC_END),0),$(>,$(POSITION,$new_oid,RAPD),0),$(>,$(POSITION,$new_oid,STS),0),$(>,$(POSITION,$new_oid,RFLP),0))">
 	   <?MISQL SQL="
 	     select allmapnm_name 
 	       from all_map_names

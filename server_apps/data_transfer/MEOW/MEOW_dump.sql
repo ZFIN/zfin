@@ -277,7 +277,7 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/SC.txt'
 
 -- generate a file of anonymous markers  and assoc GENBANK accession numbers
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/SC_sts.txt'
-  DELIMITER "	" select distinct mrkr_zdb_id, mrkr_abbrev, acc_num  from marker, db_link  where mrkr_type in ('STS', 'SSLP','RAPD', 'SSR') and linked_recid = mrkr_zdb_id and db_name = 'Genbank' order by 1; 
+  DELIMITER "	" select distinct mrkr_zdb_id, mrkr_abbrev, acc_num  from marker, db_link  where mrkr_type in ('STS', 'SSLP','RAPD') and linked_recid = mrkr_zdb_id and db_name = 'Genbank' order by 1; 
 
 -- generate a file with zdb history data
 

@@ -25,7 +25,7 @@ public class Marker {
 	public static Color SSLP_c = new Color(102,51,0); //brown
 	public static Color RAPD_c = new Color(153,102,204);  //purple
 	public static Color STS_c = new Color(153,102,51); //
-	public static Color SSR_c = SSLP_c;
+//	public static Color SSR_c = SSLP_c;
 	public static Color SNP_c = new Color(240,100,240);  //magenta light
 //	public static Color FISH_c = new Color(102,51,0);
 	public static Color FISH_c = Color.red;
@@ -68,7 +68,7 @@ public class Marker {
 		else if (mtype.equals("SSLP")) { return SSLP_c; }
 		else if (mtype.equals("RAPD")) { return RAPD_c; }
 		else if (mtype.equals("STS")) { return STS_c; }
-		else if (mtype.equals("SSR")) { return SSR_c; }
+//		else if (mtype.equals("SSR")) { return SSR_c; }
 		else if (mtype.equals("MUTANT")) { return FISH_c;}
 		else if (mtype.equals("BAC")) { return BAC_c; }
 		else if (mtype.equals("PAC")) { return BAC_c; }
