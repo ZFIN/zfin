@@ -1,5 +1,3 @@
-drop procedure p_mrel_grpmem_correct;
-
   create procedure p_mrel_grpmem_correct
     (vMarker1 VARCHAR(30),
      vMarker2 VARCHAR(30), 
@@ -50,5 +48,3 @@ drop procedure p_mrel_grpmem_correct;
        end if;
 
   end procedure;
-
-

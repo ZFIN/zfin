@@ -1,6 +1,3 @@
-drop function regen_panelcount;
- 
-
 create dba function "informix".regen_panelcount()
   returning integer
 
@@ -220,5 +217,3 @@ end function;
 
 grant execute on function "informix".regen_panelcount() 
   to "public" as "informix";
-
-update statistics for function regen_panelcount;

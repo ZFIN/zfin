@@ -7,8 +7,6 @@
 --is from Genbank.
 -------------------------------------------------------------------------
 
-  drop function get_genbank_dblink_length_type ;
-
   create function get_genbank_dblink_length_type (vDblinkAccNum varchar(30),
 						vDblinkLength integer,
 						vDblinkFdbcontZdbId varchar(50))

@@ -5,7 +5,6 @@
 --to a marker that already has goterms (not 'unknown' goterms) in this 
 --table.
 ----------------------------------------------------------------------
-drop procedure p_marker_has_goterm ;
 
 create procedure p_marker_has_goterm (vMrkrZdbId varchar(50),
 					vMrkrGotermId varchar(50))

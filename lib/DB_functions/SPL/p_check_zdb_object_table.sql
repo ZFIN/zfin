@@ -5,7 +5,6 @@
   --REPLACES:
   --sub zdbObjectHomeTableColumnExist 
 
-  drop procedure p_check_zdb_object_table;
   create procedure p_check_zdb_object_table (vTableName varchar(128), 
 	  				     vColumnName varchar(35))
  

@@ -5,8 +5,6 @@
 --same values in the locus table occur.
 -------------------------------------------------------------------
 
-  drop procedure p_locus_name_abbrev_equal ;
-
   create procedure p_locus_name_abbrev_equal (vLocus_name  varchar(120), 
 	  				      vAbbrev	   varchar(20),
 		  			      vZdbId	   varchar(50))

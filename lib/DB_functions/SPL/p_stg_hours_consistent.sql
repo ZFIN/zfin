@@ -6,8 +6,6 @@
 --not allow the insert or update to procede.
 -------------------------------------------------
 
-  drop procedure p_stg_hours_consistent;
-
   create procedure  p_stg_hours_consistent (vStartZDB varchar(25), 
 					    vEndZDB varchar(25))
 

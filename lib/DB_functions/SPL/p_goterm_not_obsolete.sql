@@ -5,8 +5,6 @@
 --Terms are declared 'obsolete' by the gene_ontology consortium.
 -------------------------------------------------------------------------
 
-drop procedure p_goterm_not_obsolete;
-
 create procedure p_goterm_not_obsolete (vGoTerm VARCHAR(55))
 
 define ok boolean;

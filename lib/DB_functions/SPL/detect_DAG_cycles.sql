@@ -17,8 +17,6 @@ find which rows are part of some cycle. (or trapped between cycles)
 
 }
 
-drop function detect_DAG_cycle;
-
 create function detect_DAG_cycle()
   returning integer 
   define i int; 
@@ -37,5 +35,3 @@ create function detect_DAG_cycle()
   end while
   return i;-- _AT_LEAST_ the number of rows involved in cycle(s) 
 end function;
-
-update statistics for function detect_DAG_cycle;

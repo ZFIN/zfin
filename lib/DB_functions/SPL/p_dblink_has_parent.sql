@@ -8,8 +8,6 @@
   --REPLACES:
   --sub dblinkRecidIsOrthoOrMarker
 
-  drop procedure p_dblink_has_parent;
-
   create procedure p_dblink_has_parent (vLinkedRecid varchar(55))
 
   define vMyCount1	 	integer;

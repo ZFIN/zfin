@@ -3,7 +3,6 @@
   --procedure that checks to see that the object type of a zdb_id 
   --exists in the marker_type_group 'GENEDOM' 
 
-  drop procedure p_check_zdb_id_in_genedom ;
   create procedure p_check_zdb_id_in_genedom (vZdbId varchar(50))
   
       define vType	varchar(10) ;
