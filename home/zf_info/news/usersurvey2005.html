@@ -17,8 +17,8 @@
 <script type="text/javascript">
   function checkEmail(theForm) {
     if ((document.survey.question5.value == "yes" || document.survey.question9.value == "yes")) {
-       if (document.survey.email.value.length < 1) {
-         alert("Because you answered YES to question 5 or 9, please enter your email address.");
+       if ((document.survey.email.value.length < 1) || (document.survey.name.value.length < 1)) {
+         alert("Please enter name & e-mail so we may contact you regarding phenotype data and/or beta testing.  Thanks!");
          document.survey.email.focus();
          return false;
        }
