@@ -31,7 +31,7 @@ system("/bin/mv -f StaticCloneList StaticCloneList.previous");
 
 
 #download the new version
-system("wget 'http://zgc.nci.nih.gov/Reagents/StaticCloneList?PAGE=0&ORG=Dr&STATUS=Confirmed' -O StaticCloneList");
+system("/local/bin/wget 'http://zgc.nci.nih.gov/Reagents/StaticCloneList?PAGE=0&ORG=Dr&STATUS=Confirmed' -O StaticCloneList");
 
 
 #Compare new vs. old... load changes

@@ -12,7 +12,7 @@ system("/bin/mv -f zfishlib_info.shtml zfishlib_info.shtml.previous");
 
 
 #download the new version
-system("wget 'http://image.llnl.gov/image/html/zfishlib_info.shtml");
+system("/local/bin/wget 'http://image.llnl.gov/image/html/zfishlib_info.shtml");
 
 
 #Compare new vs. old... load changes
