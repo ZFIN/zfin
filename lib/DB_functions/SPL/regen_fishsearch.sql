@@ -1,0 +1,153 @@
+drop function regen_fishsearch;
+ 
+
+create dba function "informix".regen_fishsearch()
+  returning integer
+
+-- Creates the fish_search table, a fast search table used to quickly
+-- search mutant/fish data from the web pages.
+
+-- DEBUGGING:  Uncomment the next two statements to turn on a debugging trace.
+--             (and change the first one to point to your OWN dang directory!)
+-- set debug file to '/tmp/debug-regen-fish';
+-- trace on;
+
+-- Create all the new tables and views.
+-- If an exception occurs here, drop all the newly-created tables
+
+  begin	-- master exception handler
+
+    on exception
+      begin
+	-- Something terrible happened while creating the new table
+	-- Get rid of it, and leave the original table around.
+
+	on exception in (-206)
+	  -- OK to get "Table not found" here, since we might
+	  -- not have created all tables at the time of the exception
+	end exception with resume;
+
+	drop table fishsearch_new;
+
+	return 0;
+      end
+    end exception;
+
+    -- Create a new fishsearch table under a temp name, loaded with results 
+    -- of a huge join across the underlying tables.
+
+    create table fishsearch_new (
+      fish_id		varchar (50), 
+      name		varchar (80), 
+      line_type		varchar (30),
+      abbrev		varchar (20), 
+      phenotype		html, 
+      chrom_num		varchar(3),
+      chrom_change	varchar (30), 
+      comments		lvarchar, 
+      allele		varchar (20),
+      mutagen		varchar (20),
+      pheno_keywords	lvarchar, 
+      locus		varchar (50),
+      gene_id		varchar (50), 
+      gene_abbrev		varchar (15),
+      alt_zdb_id		varchar (50),
+
+      primary key (fish_id)
+    )
+    fragment by round robin in zfindbs_a, zfindbs_b, zfindbs_c;
+
+    -- This can take a few minutes, so be patient.
+
+
+    insert into fishsearch_new 
+      select a.zdb_id, a.name, a.line_type, e.abbrev,
+	     a.phenotype, b.chrom_num, d.chrom_change, a.comments,
+	     d.allele, d.mutagen, a.pheno_keywords, d.locus,
+	     'UNKNOWN'::varchar(50),'UNKNOWN'::varchar(15), d.zdb_id
+
+	from fish a, chromosome b, int_fish_chromo c, alteration d, locus e
+	where a.zdb_id = c.source_id 
+	  and c.target_id = b.zdb_id 
+	  and d.chrom_id = b.zdb_id 
+	  and a.line_type = 'mutant' 
+	  and a.locus = e.zdb_id;
+
+    -- NULLs were put in place of the corresponding gene id and abbrev,
+    -- add them in from the locus & gene tables for mutants with corresponding 
+    -- genes
+    -- trace on;
+
+    update fishsearch_new
+      set (gene_id, gene_abbrev) = 
+	    (( select g.zdb_id, g.abbrev 
+		 from gene g, locus l
+		 where fishsearch_new.locus=l.zdb_id 
+		   and l.cloned_gene=g.zdb_id ))
+      where exists 
+	      ( select 'x' 
+		  from gene, locus 
+		  where fishsearch_new.locus = locus.zdb_id 
+		    and locus.cloned_gene = gene.zdb_id );
+
+
+    -- To this point, we haven't done anything visible to actual users.
+    -- Now we start to make visible changes, so we enclose it all in a
+    -- transaction and have an exception handler ready to roll back
+    -- if an error occurs.
+
+    begin work;
+
+    -- Delete the old table.  It may not exist (if the DB has just
+    -- been created), so ignore errors from the drop.
+
+    begin -- local exception handler for dropping of original table
+
+      on exception in (-206)
+	-- ignore any table that doesn't already exist
+      end exception with resume;
+
+      drop table fish_search;
+
+    end -- local exception handler for dropping of original table
+
+    -- Now rename our new tables to have the permanent names.
+    -- Note that the exception-handler at the top of this file is still active
+
+    begin -- local exception handler
+      define esql, eisam int;
+
+      on exception set esql, eisam
+	-- Any error at this point, just rollback.  The rollback will
+	-- restore the old table and its indices.
+	rollback work;
+	-- Now pass the error to the master handler to drop the new table
+	raise exception esql, eisam;
+      end exception;
+
+      rename table fishsearch_new to fish_search;
+      create index fish_search_locus_index on fish_search (locus);
+      create index fish_search_alt_zdb_id_index on fish_search (alt_zdb_id);
+      create index fish_search_abr on fish_search (abbrev);
+
+    end -- Local exception handler
+
+    commit work;
+
+  end -- Global exception handler
+
+  -- Update statistics on table that was just created.
+
+  begin work;
+
+  update statistics high for table fish_search;
+
+  commit work;
+
+  return 1;
+
+end function;
+
+grant execute on function "informix".regen_fishsearch () 
+  to "public" as "informix";
+
