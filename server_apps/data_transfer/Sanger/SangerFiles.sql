@@ -9,64 +9,52 @@
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/VegaXpat.txt'
  DELIMITER "	"  
- select gene.mrkr_zdb_id[1,26]	gene_zdb,
-	   gene.mrkr_abbrev[1,20]	gene_sym,
-	   probe.mrkr_zdb_id[1,26]	probe_zdb,
-	   probe.mrkr_abbrev[1,20]	probe_sym,
-	   dblink_acc_num[1,10]		genbank_acc,
-	   xpat_assay_name[1,20]	assay_type, 
-	   xpat_zdb_id[1,26]		xpad_zdb_id, 
-	   recattrib_source_zdb_id[1,26] pub_zdb
- from marker gene, marker probe, 
-	  expression_pattern_assay, 
+ select gene.mrkr_zdb_id	gene_zdb,
+	   gene.mrkr_abbrev	gene_sym,
+	   probe.mrkr_zdb_id	probe_zdb,
+	   probe.mrkr_abbrev	probe_sym,
+	   dblink_acc_num	genbank_acc,
+	   xpat_assay_name  	assay_type, 
+	   xpat_zdb_id		xpad_zdb_id, 
+	   xpat_source_zdb_id     pub_zdb
+  from marker gene, marker probe, 
 	  expression_pattern, 
-	  marker_relationship,
 	  db_link,
-	  record_attribution,
 	  foreign_db_contains
 
- where gene.mrkr_zdb_id = mrel_mrkr_1_zdb_id 
- and mrel_mrkr_2_zdb_id = xpat_probe_zdb_id 
- and xpat_assay_name = xpatassay_name
+ where gene.mrkr_zdb_id = xpat_gene_zdb_id
  and probe.mrkr_zdb_id = xpat_probe_zdb_id
  and probe.mrkr_zdb_id = dblink_linked_recid
  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
  and fdbcont_fdb_db_name in ('Genbank','RefSeq')
  and fdbcont_fdbdt_data_type = 'cDNA'
- and xpat_zdb_id = recattrib_data_zdb_id
  union
-  select gene.mrkr_zdb_id[1,26]	gene_zdb,
-	   gene.mrkr_abbrev[1,20]	gene_sym,
-	   probe.mrkr_zdb_id[1,26]	probe_zdb,
-	   probe.mrkr_abbrev[1,20]	probe_sym,
-	   dblink_acc_num[1,10]		genbank_acc,
-	   xpat_assay_name[1,20]	assay_type, 
-	   xpat_zdb_id[1,26]		xpad_zdb_id, 
-	   recattrib_source_zdb_id[1,26] pub_zdb
+  select gene.mrkr_zdb_id	gene_zdb,
+	   gene.mrkr_abbrev	gene_sym,
+	   probe.mrkr_zdb_id	probe_zdb,
+	   probe.mrkr_abbrev	probe_sym,
+	   dblink_acc_num	genbank_acc,
+	   xpat_assay_name      assay_type, 
+	   xpat_zdb_id		xpad_zdb_id, 
+	   xpat_source_zdb_id 	pub_zdb
  from marker gene, marker probe, 
- 	  expression_pattern_assay, 
  	  expression_pattern, 
-	  marker_relationship,
 	  db_link,
-	  record_attribution,
 	  foreign_db_contains
 	   
- where gene.mrkr_zdb_id = mrel_mrkr_1_zdb_id 
- and mrel_mrkr_2_zdb_id = xpat_probe_zdb_id 
- and xpat_assay_name = xpatassay_name
- and probe.mrkr_zdb_id = xpat_probe_zdb_id
+ where probe.mrkr_zdb_id = xpat_probe_zdb_id
+ and gene.mrkr_zdb_id = xpat_gene_zdb_id
  and gene.mrkr_zdb_id = dblink_linked_recid
  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
  and fdbcont_fdb_db_name in ('Genbank','RefSeq')
  and fdbcont_fdbdt_data_type = 'cDNA'
- and xpat_zdb_id = recattrib_data_zdb_id
  order by 1,3,7;
 ----------------------------------------------------
 -- sequence links for genes 
 -- chose RefSeqs if they exist
-select gene.mrkr_zdb_id[1,26]	gene_zdb,
-	   gene.mrkr_abbrev[1,20]	gene_sym,
-	   dblink_acc_num[1,10]			genbank_acc
+select gene.mrkr_zdb_id		gene_zdb,
+	   gene.mrkr_abbrev	gene_sym,
+	   dblink_acc_num	genbank_acc
 from marker gene, db_link, foreign_db_contains
 where dblink_fdbcont_zdb_id = fdbcont_zdb_id
 and fdbcont_fdb_db_name = 'RefSeq'
@@ -77,9 +65,9 @@ into temp tmp_veg with no log
 -- try and find associated est accessions for
 -- genes with out refseq links
 
-select gene.mrkr_zdb_id[1,26]	gene_zdb,
-	   gene.mrkr_abbrev[1,20]	gene_sym,
-	   dblink_acc_num[1,10]			genbank_acc
+select gene.mrkr_zdb_id		gene_zdb,
+	   gene.mrkr_abbrev	gene_sym,
+	   dblink_acc_num	genbank_acc
 from marker gene, marker est, db_link, marker_relationship, foreign_db_contains
 where gene.mrkr_zdb_id = mrel_mrkr_1_zdb_id 
 and   est.mrkr_zdb_id  = mrel_mrkr_2_zdb_id 
@@ -163,12 +151,9 @@ unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/vega_xpat_probe_gene.un
 select 
     xpat_zdb_id, 
     xpat_probe_zdb_id,
-    mrel_mrkr_1_zdb_id,
+    xpat_gene_zdb_id,
     xpat_assay_name
-from expression_pattern,marker_relationship
-where mrel_mrkr_2_zdb_id = xpat_probe_zdb_id
-and mrel_type = 'gene encodes small segment'
-;
+from expression_pattern;
 
 --
 unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/vega_xpat_stage_anatomy.unl'
