@@ -39,22 +39,6 @@
     window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatupdateAssay.apg&OID='+xpat_zdb_id+'&old_value='+assay+'&gene_name='+g_name+'&gene_abbrev='+g_abbrev);
     }
 
-    function updateKeywords(xpatstg_xpat,xpatstg_start,xpatstg_end) {
-    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatupdate.apg');
-    }
-
-    function updateDescription(xpatstg_xpat,xpatstg_start,xpatstg_end) {
-    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatupdate.apg');
-    }
-
-    function updateStageWindow(xpatstg_xpat,xpatstg_start,xpatstg_end) {
-    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatupdate.apg');
-    }
-
-    function updateImage(xpatstg_xpat,xpatstg_start,xpatstg_end) {
-    window.location.replace('?MIval=aa-xpatupdate.apg');
-    }
-
   <?/MIVAR>
 </SCRIPT>
 </HEAD>
@@ -402,10 +386,6 @@ ERROR -- something bad happened -- no OID passed in!
 		<td>
 			<center>
 
-  <?MIVAR COND="$(XST,$UPDATE)">
-    <INPUT TYPE=button value=Update onClick="updateStageWindow('$XPATSTG_ID','$XPATSTG_START_ID','$XPATSTG_END_ID')"> 
-  <?/MIVAR> 
-
         <?MIVAR><a name=$XPATSTG_START_ID>
                           <b>Stage(s):</b> </a><?/MIVAR>
 
@@ -428,10 +408,6 @@ ERROR -- something bad happened -- no OID passed in!
 
     </center><br>
     <div align=left>
-
-  <?MIVAR COND="$(XST,$UPDATE)">
-    <INPUT TYPE=button value=Update onClick="updateKeywords('$XPATSTG_ID','$XPATSTG_START_ID','$XPATSTG_END_ID')">
-  <?/MIVAR>
  
       <b>Images:</b></div>
 
@@ -563,10 +539,6 @@ ERROR -- something bad happened -- no OID passed in!
 <?MIVAR NAME=$KEYWORDS>&nbsp;<?/MIVAR>
 <?MIVAR NAME=$TEMP_PART> <?/MIVAR>
 <?MIVAR NAME=$COUNT>0<?/MIVAR>
-      
-  <?MIVAR COND="$(XST,$UPDATE)">
-    <INPUT TYPE=button value=Update onClick="updateKeywords('$XPATSTG_ID','$XPATSTG_START_ID','$XPATSTG_END_ID')">
-  <?/MIVAR> 
 
   <b>Keywords:</b>
 

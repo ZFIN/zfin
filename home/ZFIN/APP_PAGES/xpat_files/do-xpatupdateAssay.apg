@@ -1,4 +1,4 @@
-<!-- FILE: do-xpatupdate.apg
+<!-- FILE: do-xpatupdateAssay.apg
 
 Very simple. Just commits the updates requested in the forms tossed up by
 xpatupdateAssay. Also files update record.
