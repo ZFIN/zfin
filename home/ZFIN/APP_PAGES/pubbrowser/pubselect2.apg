@@ -24,7 +24,8 @@ document.critform.anon1.selectedIndex = 0;
 document.critform.order_pref.selectedIndex = 0;
 document.critform.cur_status.selectedIndex = 0;
 document.critform.pub_status.selectedIndex = 0;
-document.critform.authtype.selectedInidex = 0;
+document.critform.authtype.selectedIndex = 0;
+document.critform.WINSIZE.value = 10;
 
 }
 
@@ -141,15 +142,22 @@ contains <input type=text name=anon1text size=10>
 
 <TABLE width=100%>
 <TR align=center>
-<?MIVAR>
-<TD><font size=-1>Order results by 
-<SELECT NAME=order_pref> 
-<option $(IF,$(EC,$order_pref,date),SELECTED) value=date>Pub Date 
-<option $(IF,$(EC,$order_pref,name),SELECTED) value=name>Author 
-</SELECT></font><?/MIVAR></TD>
-<TD><font size=-1><input type=submit name=action value="SEARCH" onSubmit="parent.pbrowser.document.location.href='/ZFIN/misc_html/saysearching.html';document.critform.submit();"></font></TD>
+
+<TD><font size=-1>Order results by <SELECT NAME=order_pref> <option value=name>Author <option selected value=date>Pub Date </SELECT></font></TD>
+<TD><font size=-1>
+		Display results in groups of 
+		<input type="text" name="WINSIZE" size="3" value="10">. 
+      <?MIBLOCK COND="$(AND,$(NOT,$(ISNULL,$WINSIZE)),$(XST,$WINSIZE))">
+        <?MIVAR> 
+          <SCRIPT> 
+            document.critform.WINSIZE.value = "$WINSIZE" 
+          </SCRIPT>
+        <?/MIVAR> 
+      <?/MIBLOCK>
+		<input type=submit name=action value="SEARCH" onSubmit="parent.pbrowser.document.location.href='/ZFIN/misc_html/saysearching.html';document.critform.submit();"></font></TD>
 <TD align=right><font size=-1><input type=button name=action value="Clear Settings" onClick="call_reset()"></font></TD>
-<TD align=center><font size=-1><input type=button name=clear_all value="List all publications" onClick="document.critform.reset();document.critform.submit()"></font></TD> </TR>
+<TD align=center><font size=-1><input type=button name=clear_all value="List all publications" onClick="document.crit_form.reset();document.crit_form.submit()"></font></TD> </TR>
+
 </TABLE>
 
 <!-- Let root curators search based on curation status -->
@@ -197,6 +205,11 @@ contains <input type=text name=anon1text size=10>
 </TR></TABLE>
 
 <?/MIBLOCK>
+
+<?MIVAR COND="$(AND,$(NOT,$(ISNULL,$START)),$(XST,$START))">
+  <input type=hidden NAME="START" value=$START>
+<?/MIVAR>
+
 
 <!-- This next little block executes only if we are using the browser as a
 selector. That is we want user to ultimately CHOOSE a browsed value. All

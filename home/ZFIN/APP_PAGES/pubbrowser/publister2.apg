@@ -15,69 +15,89 @@
 <?MIVAR NAME=$constraint COND="$(NXST,$constraint)"> <?/MIVAR>
 
 
-<?MIBLOCK COND="$(OR,$(XST,$authors),$(XST,$title),$(XST,$year),$(XST,$anon1text),$(NC,$jtype,any),$(AND,$(XST,$pub_status),$(NC,$pub_status,any)),$(AND,$(XST,$cur_status),$(NC,$cur_status,any)))">
+<?MIBLOCK COND="$(OR,
+		$(XST,$authors),
+		$(XST,$title),
+		$(XST,$year),
+		$(XST,$anon1text),
+		$(AND,$(XST,$jtype),$(NC,$jtype,any)),
+		$(AND,$(XST,$pub_status),$(NC,$pub_status,any)),
+		$(AND,$(XST,$cur_status),$(NC,$cur_status,any)))">
 
-<!-- First filter authors for apostrophes! -->
-<?MIVAR COND="$(XST,$authors)" NAME=$authors DELIMIT="'" REPLACE="''">$authors<?/MIVAR>
+	<!-- First filter authors for apostrophes! -->
+	<?MIVAR COND="$(XST,$authors)" NAME=$authors DELIMIT="'" REPLACE="''">$authors<?/MIVAR>
+
+	<?MIVAR NAME=$previous> <?/MIVAR>
+	<?MIVAR NAME=$constraint> where <?/MIVAR>
+	<?MIVAR NAME=$constraint COND="$(AND,$(XST,$authors),$(EC,$authtype,anyauth))">
+		$constraint (lower(authors) like '%$(LOWER,$authors)%')
+	<?/MIVAR>
+	<?MIVAR NAME=$constraint COND="$(AND,$(XST,$authors),$(EC,$authtype,firstauth))">
+		$constraint (lower(authors) like '$(LOWER,$authors)%')
+	<?/MIVAR>
+
+	<?MIVAR NAME=$previous COND="$(XST,$authors)"> and <?/MIVAR>
+
+	<?MIVAR NAME=$constraint COND="$(XST,$title)">
+		$constraint $previous (lower(title) like '%$(LOWER,$title)%')
+	<?/MIVAR>
+
+	<?MIVAR NAME=$previous COND="$(XST,$title)"> and <?/MIVAR>
+
+	<!-- glue together the year clause if specified -->
+	<?MIVAR COND="$(XST,$year)" NAME=$constraint>
+		$constraint $previous year(pub_date) $yr_cmpr conc('$century','$year')
+	<?/MIVAR>
+
+	<!-- NOW  DEAL WITH THE ADDITIONAL CRITERIA -->
+	<?MIVAR NAME=$previous COND="$(XST,$year)"> and <?/MIVAR>
+
+	<?MIVAR NAME=$constraint COND="$(AND,$(XST,$anon1text),$(EC,$anon1,abstract))">
+		$constraint $previous (webhtml_like($anon1,'$anon1text'))
+	<?/MIVAR>
+
+	<?MIVAR NAME=$constraint COND="$(AND,$(XST,$anon1text),$(NC,$anon1,abstract))">
+		$constraint $previous (lower($anon1) like '%$(LOWER,$anon1text)%')	
+	<?/MIVAR>
+
+	<?MIVAR NAME=$previous COND="$(XST,$anon1text)"> and <?/MIVAR>
+
+	<?MIVAR NAME=$constraint COND="$(NC,$jtype,any)">
+		$constraint $previous (jtype='$jtype')
+	<?/MIVAR>
+
+	<?MIVAR NAME=$previous COND="$(NC,$jtype,any)"> and <?/MIVAR>
+
+	<?MIVAR NAME=$constraint COND="$(AND,$(XST,$pub_status),$(NC,$pub_status,any))">
+		$constraint $previous (status ='$pub_status')
+	<?/MIVAR>
+
+	<?MIVAR NAME=$previous COND="$(AND,$(XST,$pub_status),$(NC,$pub_status,any))"> and <?/MIVAR>
 
 
-<?MIVAR NAME=$previous> <?/MIVAR>
-<?MIVAR NAME=$constraint> where <?/MIVAR>
-<?MIVAR NAME=$constraint COND="$(AND,$(XST,$authors),$(EC,$authtype,anyauth))">
-$constraint (lower(authors) like '%$(LOWER,$authors)%')<?/MIVAR>
-<?MIVAR NAME=$constraint COND="$(AND,$(XST,$authors),$(EC,$authtype,firstauth))">
-$constraint (lower(authors) like '$(LOWER,$authors)%')<?/MIVAR>
-
-<?MIVAR NAME=$previous COND="$(XST,$authors)"> and <?/MIVAR>
-
-<?MIVAR NAME=$constraint COND="$(XST,$title)">
-$constraint $previous (lower(title) like '%$(LOWER,$title)%')<?/MIVAR>
-
-<?MIVAR NAME=$previous COND="$(XST,$title)"> and <?/MIVAR>
-
-<!-- glue together the year clause if specified -->
-<?MIVAR COND="$(XST,$year)" NAME=$constraint>
-$constraint $previous year(pub_date) $yr_cmpr conc('$century','$year')<?/MIVAR>
-
-<!-- NOW  DEAL WITH THE ADDITIONAL CRITERIA -->
-<?MIVAR NAME=$previous COND="$(XST,$year)"> and <?/MIVAR>
-
-<?MIVAR NAME=$constraint COND="$(AND,$(XST,$anon1text),$(EC,$anon1,abstract))">
-$constraint $previous (webhtml_like($anon1,'$anon1text'))<?/MIVAR>
-
-<?MIVAR NAME=$constraint COND="$(AND,$(XST,$anon1text),$(NC,$anon1,abstract))">
-$constraint $previous (lower($anon1) like '%$(LOWER,$anon1text)%')<?/MIVAR>
-
-<?MIVAR NAME=$previous COND="$(XST,$anon1text)"> and <?/MIVAR>
-
-<?MIVAR NAME=$constraint COND="$(NC,$jtype,any)">
-$constraint $previous (jtype='$jtype')<?/MIVAR>
-
-<?MIVAR NAME=$previous COND="$(NC,$jtype,any)"> and <?/MIVAR>
-
-<?MIVAR NAME=$constraint COND="$(AND,$(XST,$pub_status),$(NC,$pub_status,any))">
-$constraint $previous (status ='$pub_status')<?/MIVAR>
-
-<?MIVAR NAME=$previous COND="$(AND,$(XST,$pub_status),$(NC,$pub_status,any))"> and <?/MIVAR>
-
-
-<?MIVAR NAME=$constraint COND="$(AND,$(XST,$cur_status),$(NC,$cur_status,any))">
-$constraint $previous (a.zdb_id=b.pub_id and b.curation_action='$cur_status')<?/MIVAR>
+	<?MIVAR NAME=$constraint COND="$(AND,$(XST,$cur_status),$(NC,$cur_status,any))">
+		$constraint $previous (a.zdb_id=b.pub_id and b.curation_action='$cur_status')
+	<?/MIVAR>
 
 <?/MIBLOCK>
 
 
-<?MIVAR NAME=$order_clause COND="$(EC,$order_pref,name)">order by authors,pyear desc<?/MIVAR>
-<?MIVAR NAME=$order_clause COND="$(EC,$order_pref,date)">order by pyear desc,authors<?/MIVAR>
+<?MIVAR NAME=$order_clause COND="$(AND,$(XST,$order_pref),$(EC,$order_pref,name))">
+	order by authors,pyear desc
+<?/MIVAR>
+<?MIVAR NAME=$order_clause COND="$(AND,$(XST,$order_pref),$(EC,$order_pref,date))">
+	order by pyear desc,authors
+<?/MIVAR>
 
 <?MIVAR NAME=$target_tables>publication<?/MIVAR>
 <?MIVAR COND="$(AND,$(XST,$cur_status),$(NC,$cur_status,any))" NAME=$target_tables>publication a,curation_status b<?/MIVAR>
 
 <!-- NOW JUST RETRIEVE AND DISPLAY ALL MATCHING ENTRIES -->
-
 <!-- Blast all constraints if they hit "LIST ALL" -->
 <?MIBLOCK COND="$(XST,$clear_all)">
-<?MIVAR NAME=$constraint> where status='active' <?/MIVAR>
+	<?MIVAR NAME=$constraint> 
+		where status='active' 
+	<?/MIVAR>
 <?/MIBLOCK>
 
 
@@ -102,35 +122,46 @@ $constraint $previous (a.zdb_id=b.pub_id and b.curation_action='$cur_status')<?/
 <?MIVAR COND="$(XST,$title)" NAME=$title DELIMIT=":" REPLACE="38a">$title<?/MIVAR>
 <?MIVAR COND="$(XST,$authors)" NAME=$authors DELIMIT=" " REPLACE="|">$authors<?/MIVAR>
 
+
 <form method=post target=content action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 <TABLE width=100%>
-<TR>
-<TD align=center>
-<font size=-1>
-<input type=submit name=printable value="Format into a printable listing">  
-<input type=submit name=refer value="Output as REFER format file">  
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-REFERinfo.apg" TARGET=content><font size=-1>REFER&nbsp;Instructions</font></A>
+	<TR>
+		<TD align=center>
+			<font size=-1>
+			<input type=submit name=printable value="Format into a printable listing">  
+			<input type=submit name=refer value="Output as REFER format file">  
+			<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-REFERinfo.apg" 
+				TARGET=content><font size=-1>REFER&nbsp;Instructions</font></A>
+
 <?MIVAR COND="$(EC,$AUTHORIZED,root)">
-<input type=button name=printable value="Add new Pub" onClick="top.content.location='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?rtype=publication&MIval=aa-edit_pub.apg';">  
+
+  <input type=button name=printable value="Add new Pub" onClick="top.content.location='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?rtype=publication&MIval=aa-edit_pub.apg&search_title=$title&cur_status=$cur_status&search_authors=$authors&anon1text=$anon1text&authtype=$authtype&anon1=$anon1&search_jtype=$jtype&yr_cmpr=$yr_cmpr&century=$century&year=$year&order_pref=$order_pref&pub_status=$pub_status';">  
 <?/MIVAR>
-</font>
-</TD> </TR>
+
+			</font>
+		</TD> 
+	</TR>
 </TABLE>
 
 <hr width=90%>
 
 <TABLE width=100%>
-<TR>
-<td align=center>
-<FONT SIZE=4>Search Results </font>  
+	<TR>
+		<TD align=center>
+			<FONT SIZE=4>Search Results </font>  
 
-<!-- DEBUGGING <?MIVAR> CONSTRAINT=$constraint <?/MIVAR> -->
+			<!-- DEBUGGING <?MIVAR> CONSTRAINT=$constraint <?/MIVAR> -->
 
 <?MISQL SQL="select count(*)::integer from $target_tables $constraint;"><?/MISQL> 
 <?MIVAR NAME=$num_recs>$1<?/MIVAR>
-<?MIVAR><b> (Total of $num_recs records found) </b> <?/MIVAR>
-</TD>
-</TR>
+<?MIVAR>
+
+			<b> (Total of $num_recs records found) </b> 
+
+<?/MIVAR>
+
+		</TD>
+	</TR>
 </TABLE>
 
 <input type=hidden name=MIval value=aa-pubprintable.apg>
@@ -140,7 +171,9 @@ $constraint $previous (a.zdb_id=b.pub_id and b.curation_action='$cur_status')<?/
 <?MIVAR COND="$(XST,$anon1text)"> <input type=hidden name=anon1 value="$anon1"><?/MIVAR>
 <?MIVAR COND="$(XST,$year)"> <input type=hidden name=year value="$year"><?/MIVAR>
 <?MIVAR> <input type=hidden name=constraint value="$constraint"><?/MIVAR>
-<?MIVAR> <input type=hidden name=order_clause value="$order_clause"><?/MIVAR>
+<?MIVAR COND="$(XST,$order_clause)"> <input type=hidden name=order_clause value="$order_clause"><?/MIVAR>
+
+</form>
 
 
 </form>
@@ -149,15 +182,166 @@ $constraint $previous (a.zdb_id=b.pub_id and b.curation_action='$cur_status')<?/
 <!-- NOW do slightly different displays, depending on whether you are selecting a value, or merely browsing. 
 -->
 
-<?MISQL SQL="select title,authors,zdb_id,year(pub_date) as pyear, source from $target_tables $constraint $order_clause;">
-<TR><TD valign=top>
-$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_pub.apg&OID=$3&search_title=$title&search_cur_status=$cur_status&search_authors=$authors&search_anon1text=$anon1text&search_authtype=$authtype&search_anon1=$anon1&search_jtype=$jtype&search_yr_cmpr=$yr_cmpr&search_century=$century&search_year=$year&search_order_pref=$order_pref&search_pub_status=$pub_status" TARGET=content>EDIT</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT>")
-$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-link_authors.apg&OID=$3&search_title=$title&search_cur_status=$cur_status&search_authors=$authors&search_anon1text=$anon1text&search_authtype=$authtype&search_anon1=$anon1&search_jtype=$jtype&search_yr_cmpr=$yr_cmpr&search_century=$century&search_year=$year&search_order_pref=$order_pref&search_pub_status=$pub_status" TARGET=content>LINK</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT>")
+
+<!--- WALKING WINDOW --->
+<!--- Initialization --->
+
+<?MIVAR NAME=WINSIZE DEFAULT=25>$WINSIZE<?/MIVAR>
+<?MIVAR NAME=BEGIN DEFAULT=1>$START<?/MIVAR>
+
+
+<!--- DEFINITION OF RANGES --->
+<?MIVAR NAME=BEGIN>$(IF,$(<,$BEGIN,1),1,$BEGIN)<?/MIVAR> 
+<?MIVAR NAME=END>$(+,$BEGIN,$WINSIZE)<?/MIVAR>
+<?MIVAR NAME=$rowNUM>$BEGIN<?/MIVAR>
+
+
+<!--- EXECUTION --->
+<!--- Query Database --->
+<?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE
+	SQL="select title,authors,zdb_id,year(pub_date) as pyear, source from $target_tables $constraint $order_clause;">
+<TR>
+<?MIVAR><TD valign=top>&nbsp;</TD><?/MIVAR>
+<TD valign=top> 
+
+$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_pub.apg&OID=$3&search_title=$title&search_cur_status=$cur_status&search_authors=$authors&search_anon1text=$anon1text&search_authtype=$authtype&search_anon1=$anon1&search_jtype=$jtype&search_yr_cmpr=$yr_cmpr&search_century=$century&search_year=$year&search_order_pref=$order_pref&search_pub_status=$pub_status&WINSIZE=$WINSIZE&BEGIN=$BEGIN" TARGET=content>EDIT</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT>")
+$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-link_authors.apg&OID=$3&search_title=$title&search_cur_status=$cur_status&search_authors=$authors&search_anon1text=$anon1text&search_authtype=$authtype&search_anon1=$anon1&search_jtype=$jtype&search_yr_cmpr=$yr_cmpr&search_century=$century&search_year=$year&search_order_pref=$order_pref&search_pub_status=$pub_status&WINSIZE=$WINSIZE&BEGIN=$BEGIN" TARGET=content>LINK</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT>")
+
 $(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3" TARGET=content>SELECT</A>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;</FONT>")
 </TD>
 <TD colspan=1 align=left><font size=3> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3" TARGET=content>$2 ($4) $1. $5.</A></TD></TR>
 <p>
+		<?MIVAR name=$rowNUM>$(+,$rowNUM,1)<?/MIVAR>
 <?/MISQL>
+
+</Table>
+
+<P>
+<Center>
+<Table width="70%" border="0" cellpadding=2>
+	<tr>
+		<td width="45%" align=right valign=top>&nbsp;
+
+<?MIVAR name=comment>  Build array of user data  <?/MIVAR>
+	<?MIVAR name=UserInput>MIval=aa-publister2.apg&WINSIZE=$WINSIZE<?/MIVAR>
+		<?MIVAR name=UserInput COND=$(XST,$authtype)>
+			$UserInput&authtype=$authtype
+		<?/MIVAR>
+		<?MIVAR name=UserInput COND=$(XST,$authors)>
+			$UserInput&authors=$authors
+		<?/MIVAR>
+		<?MIVAR name=UserInput COND=$(XST,$jtype)>
+			$UserInput&jtype=$jtype
+		<?/MIVAR>
+		<?MIVAR name=UserInput COND=$(XST,$title)>
+			$UserInput&title=$title
+		<?/MIVAR>
+		<?MIVAR name=UserInput COND=$(XST,$yr_cmpr)>
+			$UserInput&yr_cmpr=$yr_cmpr
+		<?/MIVAR>
+		<?MIVAR name=UserInput COND=$(XST,$century)>
+			$UserInput&century=$century
+		<?/MIVAR>
+		<?MIVAR name=UserInput COND=$(XST,$year)>
+			$UserInput&year=$year
+		<?/MIVAR>
+		<?MIVAR name=UserInput COND=$(XST,$anon1)>
+			$UserInput&anon1=$anon1
+		<?/MIVAR>
+		<?MIVAR name=UserInput COND=$(XST,$anon1text)>
+			$UserInput&anon1text=$anon1text
+		<?/MIVAR>
+		<?MIVAR name=UserInput COND=$(XST,$order_pref)>
+			$UserInput&order_pref=$order_pref
+		<?/MIVAR>
+
+<!--- Return to the previous set of Rows --->
+<?MIBLOCK COND="$(>,$BEGIN,1)">
+	
+<?MIVAR>
+	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$(-,$BEGIN,$WINSIZE)&BEGIN=$BEGIN&$UserInput">Prev</A>&nbsp;&nbsp;&nbsp;&nbsp;<br>
+
+<!-- If current not First Page, create link to first page. -->
+	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=1&BEGIN=1&$UserInput">First Page</A>
+<?/MIVAR>
+
+<?/MIBLOCK>
+
+		</td>
+
+
+<!-- Calculate 3 pages before and 3 pages after current page. -->
+<?MIVAR name=$CURRENT>$(FIX,$(+,$(/,$BEGIN,$WINSIZE),1))<?/MIVAR>
+
+<?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,3)),0)">
+<td valign=top>
+  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,3))"> $(-,$CURRENT,3)</A> <?/MIVAR>
+		</td>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,2)),0)">
+<td valign=top>
+  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,2))"> $(-,$CURRENT,2)</A><?/MIVAR>
+		</td>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,1)),0)">
+<td valign=top>
+  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,1))"> $(-,$CURRENT,1)</A><?/MIVAR>
+		</td>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(>,$num_recs,$WINSIZE)">
+<td align=center valign=top>
+	<?MIVAR>  $CURRENT <?/MIVAR>
+</td>
+<?/MIBLOCK>
+
+<?MIVAR COND=$(<=,$(+,$BEGIN,$(*,$WINSIZE,1)),$num_recs)>
+<td valign=top>
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$END"> $(+,$CURRENT,1)</A>
+		</td>
+<?/MIVAR>
+
+<?MIVAR COND=$(<=,$(+,$BEGIN,$(*,$WINSIZE,2)),$num_recs)>
+<td valign=top>
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,2))"> $(+,$CURRENT,2)</A>
+		</td>
+<?/MIVAR>
+
+<?MIVAR COND=$(<=,$(+,$BEGIN,$(*,$WINSIZE,3)),$num_recs)>
+<td valign=top>
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,3))"> $(+,$CURRENT,3)</A>
+		</td>
+<?/MIVAR>
+
+		<td width="45%" align=left valign=top>&nbsp;
+
+<!--- Get the next set of Rows --->
+<?MIBLOCK COND="$(<=,$(+,$BEGIN,$WINSIZE),$num_recs)">
+<?MIVAR>
+	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$END&BEGIN=$BEGIN&$UserInput">Next</A><br>
+<?/MIVAR>
+
+
+<!-- Calculate last page -->
+<?MIVAR name=$START COND="$(=,$(MOD,$num_recs,$WINSIZE),0)">
+	$(+,$(*,$(-,$(/,$num_recs,$WINSIZE),1),$WINSIZE),1)
+<?/MIVAR>
+
+<?MIVAR name=$START COND="$(!=,$(MOD,$num_recs,$WINSIZE),0)">
+	$(+,$(*,$(FIX,$(/,$num_recs,$WINSIZE)),$WINSIZE),1)
+<?/MIVAR>
+
+<?MIVAR>
+	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$START&$UserInput">Last Page</A>
+<?/MIVAR>
+<?/MIBLOCK>
+		</td>
+	</tr>
+</Table>
+</Center>
+
 
 <!-- Cause a tile for the new page to appear in the navigator frame -->
 <!-- startframes.apg will pass variables on to appropriate page -->
@@ -165,11 +349,14 @@ $(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|
 <?MIBLOCK COND="$(NXST,$accession)">
 <!-- this is for the nav tile bar but also needs to pass on to edit_pub so Netscape can return to the proper page --> 
 
+<?MIVAR COND="$(NXST,$BEGIN)" NAME=$BEGIN><?/MIVAR>
+<?MIVAR COND="$(NXST,$WINSIZE)" NAME=$WINSIZE><?/MIVAR>
+
 <?MIVAR NAME=page_title>Find PUBLICATION<?/MIVAR>
 <?MIVAR NAME=navtile>true<?/MIVAR>
 <?MIVAR>
 <SCRIPT>
-page_id=top.content.location.href+'&navtile=$navtile&authors=$authors&anon1text=$anon1text&authtype=$authtype&anon1=$anon1&title=$title&jtype=$jtype&yr_cmpr=$yr_cmpr&century=$century&year=$year&order_pref=$order_pref&cur_status=$cur_status&pub_status=$pub_status';
+page_id=top.content.location.href+'&navtile=$navtile&authors=$authors&anon1text=$anon1text&authtype=$authtype&anon1=$anon1&title=$title&jtype=$jtype&yr_cmpr=$yr_cmpr&century=$century&year=$year&order_pref=$order_pref&cur_status=$cur_status&pub_status=$pub_status&WINSIZE=$WINSIZE&BEGIN=$BEGIN';
 top.update_hist(page_id,"$page_title");
 top.controls.location.reload(true);
 </SCRIPT>

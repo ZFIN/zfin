@@ -16,6 +16,7 @@ document.critform.pname.value = "";
 document.critform.address.value = "";
 document.critform.anon1text.value = "";
 document.critform.anon1.selectedIndex = 5;
+document.critform.WINSIZE.value = 5;
 
 }
 
@@ -72,15 +73,42 @@ information to the research community. Their listing is not in any way an endors
 materials used in protocols described in "Fish Net" articles or ZFIN
 database entries.</font>
 
+
 <TABLE WIDTH=100%>
-<TR> 
-<TD align=center><font size=-1><input type=submit name=action value="SEARCH" onSubmit="parent.pbrowser.document.location.href='/ZFIN/misc_html/saysearching.html';document.critform.submit();"></font></TD> 
-<TD align=right><font size=-1><input type=button name=action value="Clear Settings" onClick="call_reset()"></font></TD> 
-<TD align=center><font size=-1><input type=button name=clear_all value="List all companies" onClick="document.critform.reset();document.critform.submit()"></font></TD> 
-</TR>
+	<TR> 
+		<TD width="10%"> &nbsp;
+		</TD>
+
+		<TD align=left><font size=-1>
+			Display results in groups of 
+			<input type="text" name="WINSIZE" size="3" value="5">. 
+      <?MIBLOCK COND="$(AND,$(NOT,$(ISNULL,$WINSIZE)),$(XST,$WINSIZE))">
+        <?MIVAR> 
+          <SCRIPT> 
+            document.critform.WINSIZE.value = "$WINSIZE" 
+          </SCRIPT>
+        <?/MIVAR> 
+      <?/MIBLOCK>
+			<input type=submit name=action value="SEARCH" onSubmit="parent.pbrowser.document.location.href='/ZFIN/misc_html/saysearching.html';document.critform.submit();"></font>
+		</TD> 
+
+		<TD align=right><font size=-1>
+			<input type=button name=action value="Clear Settings" onClick="call_reset()"></font>
+		</TD> 
+
+		<TD align=center><font size=-1>
+			<input type=button name=clear_all value="List all companies" 
+			onClick="document.crit_form.reset();document.crit_form.submit()">
+			</font>
+		</TD> 
+
+	</TR>
 </TABLE>
 <p>
 
+<?MIVAR COND="$(AND,$(NOT,$(ISNULL,$START)),$(XST,$START))">
+  <input type=hidden NAME="START" value=$START>
+<?/MIVAR>
 
 <!-- This next little block executes only if we are using the browser as a
 selector. That is we want user to ultimately CHOOSE a browsed value. All

@@ -20,6 +20,8 @@ document.critform.anon1text.value = "";
 document.critform.email.value = "";
 document.critform.searchtype.selectedIndex = 1;
 document.critform.anon1.selectedIndex = 2;
+document.critform.WINSIZE.value = 10;
+
 }
 
 </SCRIPT>
@@ -81,9 +83,20 @@ contains <input type=text name=anon1text size=4>
 
 <TABLE WIDTH=100%>
 <TR> 
-<TD align=center><input type=submit name=action value="SEARCH" onSubmit="parent.pbrowser.document.location='/ZFIN/misc_html/saysearching.html';document.critform.submit()"></TD> 
+<TD align=center>
+			Display results in groups of 
+			<input type="text" name="WINSIZE" size="3" value="10">.
+      <?MIBLOCK COND="$(AND,$(NOT,$(ISNULL,$WINSIZE)),$(XST,$WINSIZE))">
+        <?MIVAR> 
+          <SCRIPT> 
+            document.critform.WINSIZE.value = "$WINSIZE" 
+          </SCRIPT>
+        <?/MIVAR> 
+      <?/MIBLOCK>
+			<input type=submit name=action value="SEARCH" onSubmit="parent.pbrowser.document.location='/ZFIN/misc_html/saysearching.html';document.critform.submit()"></TD> 
 <TD align=center><input type=button name=action value="Clear Settings" onClick="call_reset()"></TD> 
-<TD align=center><input type=button name=clear_all value="List all people" onClick="document.critform.reset();document.critform.submit()"></TD> 
+<TD align=center><input type=button name=clear_all value="List all people" onClick="document.crit_form.reset();document.crit_form.submit()"></TD> 
+
 <TD>
 <font size=2>
 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-quickfindpers.apg&select_from=PERSON&frame_size=75" TARGET=content>Simple Search</A>
@@ -92,6 +105,11 @@ contains <input type=text name=anon1text size=4>
 
 </TR>
 </TABLE>
+
+<?MIVAR COND="$(AND,$(NOT,$(ISNULL,$START)),$(XST,$START))">
+  <input type=hidden NAME="START" value=$START>
+<?/MIVAR>
+
 
 
 <!-- This next little block executes only if we are using the browser as a

@@ -8,14 +8,32 @@
 function form_submit() {
 document.critform.submit();
 }
+</SCRIPT>
 
+
+<?MIVAR COND="$(NXST,$searchtype)" NAME=$searchtype>contains<?/MIVAR>
+<SCRIPT LANGUAGE="JavaScript">
+function keyDown(DnEvents) {
+k = (navigator.appName == "Netscape") ? DnEvents.which :
+window.event.keyCode;
+if (k == 13) { eval('document.critform.submit()'); }
+}
 
 </SCRIPT>
+
 
 <basefont size=2>
 
 
+<?MIVAR COND="$(NXST,$searchtype)" NAME=$searchtype>contains<?/MIVAR>
+
 <form name=critform method=post TARGET="pbrowser" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+
+<SCRIPT>
+document.onkeydown = keyDown;
+if (navigator.appName == "Netscape")
+document.captureEvents(Event.KEYDOWN|Event.KEYUP|Event.KEYPRESS);
+</SCRIPT>
 
 <center>
 <U><B><FONT SIZE=5><I>QUICK</I></font><FONT SIZE=5>Search:</font>
@@ -31,12 +49,32 @@ document.critform.submit();
 <SELECT name=searchtype>
 <option $(IF,$(EC,$searchtype,begins),SELECTED) value=begins>Name begins with
 <option $(IF,$(EC,$searchtype,contains),SELECTED) value=contains>Name contains
-</select>:<?/MIVAR></b> <input type=text name=pname size=10 >
+</select>:<?/MIVAR></b> <input type=text name=pname size=10>
 </font></TD>
-<!--  assign navtile value to name - can not do with a value="name" in input statement - reset will not work -->
-<?MIBLOCK COND="$(XST,$nav_name)"><?MIVAR> <SCRIPT> document.critform.pname.value = "$nav_name" </SCRIPT><?/MIVAR> <?/MIBLOCK>
 
-<TD align=center><input type=submit name=action value="SEARCH" onSubmit="parent.pbrowser.document.location='/ZFIN/misc_html/saysearching.html';document.critform.submit();"></TD> 
+
+<!--  assign navtile value to name - can not do with a value="pname" in input statement - reset will not work -->
+<?MIBLOCK COND="$(XST,$nav_name)">
+  <?MIVAR> 
+    <SCRIPT> 
+      document.critform.pname.value = "$nav_name" 
+    </SCRIPT>
+  <?/MIVAR> 
+<?/MIBLOCK>
+
+
+<TD align=center>
+		Display results in groups of 
+		<input type="text" name="WINSIZE" size="3" value="10">
+      <?MIBLOCK COND="$(AND,$(NOT,$(ISNULL,$WINSIZE)),$(XST,$WINSIZE))">
+        <?MIVAR> 
+          <SCRIPT> 
+            document.critform.WINSIZE.value = "$WINSIZE" 
+          </SCRIPT>
+        <?/MIVAR> 
+      <?/MIBLOCK>
+		<input type=submit name=action value="SEARCH" onSubmit="parent.pbrowser.document.location='/ZFIN/misc_html/saysearching.html';document.critform.submit();">
+</TD> 
 
 <TD><font size=2>
 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-persselect.apg&select_from=PERSON" TARGET=content>Advanced Search</A>
@@ -48,6 +86,11 @@ document.critform.submit();
 
 <input type=hidden name=MIval value=aa-perslister.apg>
 <input type=hidden name=searchtype value=begins>
+
+<?MIVAR COND="$(AND,$(NOT,$(ISNULL,$START)),$(XST,$START))">
+  <input type=hidden NAME="START" value=$START>
+<?/MIVAR>
+
 
 <!-- This next little block executes only if we are using the browser as a
 selector. That is we want user to ultimately CHOOSE a browsed value. All
