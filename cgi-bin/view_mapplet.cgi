@@ -60,7 +60,7 @@
   ### the known marker types
   my $types = 'SSLP';
   my $anon_type = "RAPD\',\'RFLP\',\'BAC_END\',\'PAC_END\',\'STS\',\'SNP";
-  my $gene_type = "GENE";
+  my $gene_type = "GENE\',\'GENEP";
   my $est_type  = "EST";
   my $bac_type  = "BAC\',\'PAC";
   my $fish_type  = "FISH\',\'MUTANT\',\'LOCUS";
@@ -193,7 +193,7 @@
   if( (defined $Q->param("view_map")) && ($g_error == 0) ) { # view_map is defined and no error reported
 
     ### types is never defined by an external page so use them all.
-    $types = "SSLP\',\'RAPD\',\'RFLP\',\'STS\',\'SNP\',\'GENE\',\'BAC\',\'PAC'\,\'BAC_END\',\'PAC_END'\,\'EST\',\'FISH\',\'MUTANT\',\'LOCUS";
+    $types = "SSLP\',\'RAPD\',\'RFLP\',\'STS\',\'SNP\',\'GENE\',\'GENEP\',\'BAC\',\'PAC'\,\'BAC_END\',\'PAC_END'\,\'EST\',\'FISH\',\'MUTANT\',\'LOCUS";
     #$types =  $types . ",\'" . $anon_type  . ",\'" . $gene_type  . ",\'" . $est_type . ",\'" . $bac_type . ",\'" . $fish_type . "\'" ;
     #$note = $note . "\n" . $types .  "\n"; print note;
 
@@ -364,7 +364,7 @@
       if($Q->param($panel.'_anon') && $Q->param($panel.'_anon')==1){$types = "$types\',\'$anon_type"; $print_type += 4;}
       if($Q->param($panel.'_fish') && $Q->param($panel.'_fish')==1){$types = "$types\',\'$fish_type"; $print_type += 8;}
       if($Q->param($panel.'_bac')  && $Q->param($panel.'_bac')==1)    {$types = "$types\',\'$bac_type"; $print_type += 16; }
-      if($print_type == 0){ $types = "SSLP\',\'RAPD\',\'RFLP\',\'STS\',\'GENE\',\'BAC\',\'PAC\',\'BAC_END\',\'PAC_END\',\'EST\',\'FISH\',\'MUTANT\',\'LOCUS"; $print_type += 31;}
+      if($print_type == 0){ $types = "SSLP\',\'RAPD\',\'RFLP\',\'STS\',\'GENE\',\'GENEP\',\'BAC\',\'PAC\',\'BAC_END\',\'PAC_END\',\'EST\',\'FISH\',\'MUTANT\',\'LOCUS"; $print_type += 31;}
 
       $note = $note . " will be finding  $types  markers on this refresh panel<p>\n";
       ### hidden panel, lg, lo,hi & zoom re-emited as hidden vars
@@ -430,7 +430,7 @@
       if($Q->param($panel.'_anon') && $Q->param($panel.'_anon')==1){$types = "$types\',\'$anon_type"; $print_type += 4; }
       if($Q->param($panel.'_fish') && $Q->param($panel.'_fish')==1){$types = "$types\',\'$fish_type"; $print_type += 8; }
       if($Q->param($panel.'_bac')  && $Q->param($panel.'_bac')==1)    {$types = "$types\',\'$bac_type"; $print_type += 16; }
-      if($print_type == 0){ $types = "SSLP\',\'RAPD\',\'RFLP\',\'STS\',\'GENE\',\'EST\',\'BAC\',\'PAC\',\'BAC_END\',\'PAC_END\',\'FISH\',\'MUTANT\',\'LOCUS"; $print_type += 31;}
+      if($print_type == 0){ $types = "SSLP\',\'RAPD\',\'RFLP\',\'STS\',\'GENE\',\'GENEP\',\'EST\',\'BAC\',\'PAC\',\'BAC_END\',\'PAC_END\',\'FISH\',\'MUTANT\',\'LOCUS"; $print_type += 31;}
 
       $note = $note . " will be finding  $types  markers on the edit panel\n";
       $Q->param($panel, 1);
