@@ -63,7 +63,7 @@ STAGE_STATS  = create_stg_name_ext.sql create_stg_name_long.sql \
 # these into a single file per function, but the functions are tightly
 # coupled with the function the file is name after.  There was more to gain by
 # leaving them all in one file, then by splitting them up.
-MULTIPLE_PROCS = insert_clone.sql regen_anatomy.sql
+MULTIPLE_PROCS = insert_clone.sql regen_anatomy.sql clone_2_sanger.sql
 
 GENERIC_PROCS = $(ZDB_GNRCS) $(REGEN_GNRCS)
 STATIC_PROCS  = $(DBLINK_STATS) $(FISH_STATS) $(MRKR_STATS) $(PUB_STATS) \
