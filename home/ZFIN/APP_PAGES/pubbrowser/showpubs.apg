@@ -86,7 +86,7 @@ $(IF,$(>,$(POSITION,$rtype,locus),0),
   
       function result_order(pubOrder)
       {
-        var url = '/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=$rtype&name=$name&abbrev=$abbrev&title=$title&pubOrder='+pubOrder;
+        var url = '/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=$rtype&name=$(URLENCODE,$name)&abbrev=$abbrev&title=$(URLENCODE,$title)&pubOrder='+pubOrder;
         $(IF,$(XST,$UPDATE),url += '&UPDATE=1';)
     
         location.replace(url);
