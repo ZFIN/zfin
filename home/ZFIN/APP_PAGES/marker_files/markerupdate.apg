@@ -124,7 +124,6 @@ function make_correction(mrkr_id,old_v,attr) {
 	    <TD><b>$(UPPER,$print_name)</b>:</TD>
 	    <TD width=80%>
 	    <INPUT TYPE=text name=new_value SIZE=50
-                   onChange='document.updater.START.value = "";'
 	           $(IF,$(NC,$current_value,NULL),VALUE='$current_value')>
 	  <?/MIVAR>
 	  </TD>
