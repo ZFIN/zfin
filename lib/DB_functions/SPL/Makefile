@@ -26,7 +26,7 @@ TARGETDIR = $(TARGETROOT)/lib/DB_functions/SPL
 FISH_FUNCS  = get_fish_full_name.sql
 IMAGE_FUNCS = get_image_stats.sql
 REGEN_FUNCS = regen_anatomy.sql regen_fishsearch.sql regen_genomics.sql
-ZDB_FUNCS   = get_obj_name.sql
+ZDB_FUNCS   = get_obj_name.sql get_date_from_id.sql
 
 # Some of the stage functions call other stage functions.  Therefore
 # the order they are listed matters.
