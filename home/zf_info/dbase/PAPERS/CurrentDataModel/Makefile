@@ -30,10 +30,10 @@ MISSINGLINKS = admin.html curation.html impl.html index.html intro.html \
 INTERNALFILETARGET = $(TARGETDIR)/$(INTERNALFILE)
 MISSINGLINKTARGETS = $(foreach LINK, $(MISSINGLINKS), $(TARGETDIR)/$(LINK))
 
-REMOTEFILES = db.html Database
-REMOTELINKS = $(foreach FILE, $(REMOTEFILES), $(TARGETDIR)/$(FILE))
+ACCESSIBLEFILES = db.html Database doc.css
+ACCESSIBLELINKS = $(foreach FILE, $(ACCESSIBLEFILES), $(TARGETDIR)/$(FILE))
 
-ENDEMICTARGETS_POSTTARGETDIR = $(INTERNALFILETARGET) $(MISSINGLINKTARGETS) $(REMOTELINKS)
+ENDEMICTARGETS_POSTTARGETDIR = $(INTERNALFILETARGET) $(MISSINGLINKTARGETS) $(ACCESSIBLELINKS)
 
 
 # ---------------  Production Rules  ------------------------------------
@@ -42,7 +42,7 @@ ENDEMICTARGETS_POSTTARGETDIR = $(INTERNALFILETARGET) $(MISSINGLINKTARGETS) $(REM
 # 1. The target directory
 # 2. internal.html
 # 3. sym links from the missing files to internal.html
-# 4. sym links to the real db.html and database directories.
+# 4. sym links to the accessible files and directories.
 
 # use the default set of rules
 
@@ -57,7 +57,7 @@ $(MISSINGLINKTARGETS) : $(INTERNALFILETARGET)
 	/bin/rm -f $@
 	ln -s $^ $@
 
-$(REMOTELINKS) : $(TARGETDIR)/% : $(DOCDIR)/%
+$(ACCESSIBLELINKS) : $(TARGETDIR)/% : $(DOCDIR)/%
 	/bin/rm -f $@
 	ln -s $< $@
 
