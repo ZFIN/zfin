@@ -47,11 +47,19 @@ zdbIdColumn (optional)  -- name of column containing the record's ZDB ID.
   Only necessary if the column is not named "zdb_id".
  -->
 
-<?MIVAR NAME=$AUTHORIZED>GUEST<?/MIVAR>
+<?MIVAR NAME=$AUTHORIZED>false<?/MIVAR>
 <?MIVAR NAME=$ZDB_ident>UNKNOWN<?/MIVAR>
-<?MIVAR NAME=$ZDB_name>GUEST<?/MIVAR>
-<?MIVAR NAME=$ZDB_access>GUEST<?/MIVAR>
+<?MIVAR NAME=$ZDB_name>UNKNOWN<?/MIVAR>
 <?MIVAR NAME=$DB_LOCK>f<?/MIVAR>
+
+
+<!-- If they pass in a GUEST cookie, set authorize to GUEST, and their name 
+to the guest cookie. This way logging will be to their unique cookie name  -->
+<?MIBLOCK COND="$(AND,$(XST,$ZDB_authorize),$(EC,$(SUBSTR,$ZDB_authorize,1,5),GUEST))">
+  <?MIVAR NAME=$ZDB_name>$ZDB_authorize<?/MIVAR>
+  <?MIVAR NAME=$ZDB_authorize>GUEST<?/MIVAR>
+  <?MIVAR NAME=$AUTHORIZED>GUEST<?/MIVAR>
+<?/MIBLOCK>
 
 
 <!-- If they didn't pass a cookie, just start by giving them a GUEST cookie 
@@ -62,19 +70,14 @@ zdbIdColumn (optional)  -- name of column containing the record's ZDB ID.
   <?/MISQL>
   <?MIVAR NAME=$ZDB_authorize>GUEST<?/MIVAR>
   <?MIVAR NAME=$ZDB_name>$1<?/MIVAR>
+  <?MIVAR NAME=$AUTHORIZED>GUEST<?/MIVAR>
   <?MIVAR>
     $(HTTPHEADER,set-cookie,ZDB_authorize=$1;path=/<!--|CGI_BIN_DIR_NAME|-->)
   <?/MIVAR>
+<?/MIBLOCK>
 
-<?MIELSE> <!-- a cookie was passed in -->
 
-<!-- If they pass in a GUEST cookie, set authorize to GUEST, and their name 
-to the guest cookie. This way logging will be to their unique cookie name  -->
-<?MIBLOCK COND="$(EC,$(SUBSTR,$ZDB_authorize,1,5),GUEST)">
-  <?MIVAR NAME=$ZDB_name>$ZDB_authorize<?/MIVAR>
-  <?MIVAR NAME=$ZDB_authorize>GUEST<?/MIVAR>
 
-<?MIELSE>
 <!-- check if updates are disabled -->
 <?MISQL SQL="
     select zflag_is_on
@@ -84,94 +87,95 @@ to the guest cookie. This way logging will be to their unique cookie name  -->
     <?MIVAR NAME=$DB_LOCK>$1<?/MIVAR>
 
 <?/MISQL>
-<?/MIBLOCK> <!-- END guest cookie passed in -->
-
-<?MIBLOCK COND=$(EC,$DB_LOCK,t)>
-<!--  Updates are disabled. 
-  --  Display alert and set user level to Guest.
-  --  User may be on a page which allows updates so set page to homepage.
- -->
-
-  <SCRIPT>
-      alert('The Database is currently locked for administrative operations and will not allow logins. Please try again later or contact <judys@cs.uoregon.edu> for further information.');
-  </SCRIPT>
-
-  <?MISQL SQL="
-    execute function conc('GUEST',get_random_cookie());">
-  <?/MISQL>
-  <?MIVAR NAME=$ZDB_authorize>GUEST<?/MIVAR>
-  <?MIVAR NAME=$ZDB_name>$1<?/MIVAR>
-  <?MIVAR>
-    $(HTTPHEADER,set-cookie,ZDB_authorize=$1;path=/<!--|CGI_BIN_DIR_NAME|-->)
-  <?/MIVAR>
-    
-  <SCRIPT>
-      window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg")
-  </SCRIPT>
-<?MIELSE> <!-- allow updates -->
-
-<!-- If authorize cookie passed in, pull out the info for it -->
-<?MISQL SQL="
-  select zdb_id, access, name
-    from ZDB_submitters 
-    where cookie='$ZDB_authorize';">
-<?/MISQL>
-
-<!-- If you got a single entry, provisionally set AUTHORIZED to whatever 
-  -- users ZDB_access level is.
-  -->
-<?MIBLOCK COND="$(=,$MI_ROWCOUNT,1)">
-  <?MIVAR NAME=$AUTHORIZED>$2<?/MIVAR>
-  <?MIVAR NAME=$ZDB_access>$2<?/MIVAR>
-  <?MIVAR COND="$(EC,$ZDB_name,UNKNOWN)" NAME=$ZDB_name>$3<?/MIVAR>
-  <?MIVAR NAME=$ZDB_ident>$1<?/MIVAR>
-<?/MIBLOCK>
-
-<!-- But now check permission level for the page, if specified  -->
-<?MIBLOCK COND="$(AND,$(XST,$ZDB_access),$(XST,$permission))">
-
-  <?MIVAR NAME=$AUTHORIZED>false<?/MIVAR>
-  <?MIVAR COND="$(EC,$ZDB_access,$permission)" NAME=$AUTHORIZED>$ZDB_access<?/MIVAR>
-
-  <?MIVAR COND="$(AND,$(OR,$(EC,$permission,submit),$(EC,$permission,preview)),$(EC,$ZDB_access,fishauth))" NAME=$AUTHORIZED>$ZDB_access<?/MIVAR>
-
-  <?MIVAR COND="$(AND,$(EC,$permission,submit),$(EC,$ZDB_access,preview))" NAME=$AUTHORIZED>$ZDB_access<?/MIVAR>
-
-<?/MIBLOCK>  <!--ends checks permissions -->
-
-<!-- Last possibility to get permission is if you own the record. Get 
-  -- record owner and compare to ZDB_ident. If you own the record, you 
-  -- get 'owner' authorization -->
-<?MIBLOCK COND="$(AND,$(XST,$OID),$(XST,$rtype))">
-  <?MISQL SQL="
-    select $(IF,$(XST,$ownerColumn),$ownerColumn,owner) 
-      from $rtype 
-      where $(IF,$(XST,$zdbIdColumn),$zdbIdColumn,zdb_id) = '$OID';">
-  <?/MISQL>
-  <?MIVAR COND="$(EC,$1,$ZDB_ident)" NAME=$AUTHORIZED>owner<?/MIVAR>
-<?/MIBLOCK>
-
-<?MIBLOCK COND="$(AND,$(EC,$ZDB_access,adminasst),$(XST,$rtype))">
-  <?MIVAR COND="$(OR,$(EC,$rtype,person),$(EC,$rtype,lab))" NAME=$AUTHORIZED>owner<?/MIVAR>
-<?/MIBLOCK>
-
-<!-- Last chance to AUTHORIZE is if you're root -->
-<?MIVAR COND="$(AND,$(XST,$ZDB_access),$(EC,$ZDB_access,root))" NAME=$AUTHORIZED>root<?/MIVAR>
 
 
-<!-- If authorization fails, let them know. -->
-<?MIBLOCK COND="$(EC,$AUTHORIZED,false)">
+<?MIBLOCK COND=$(NC,$(SUBSTR,$ZDB_authorize,1,5),GUEST)>
+  <?MIBLOCK COND=$(EC,$DB_LOCK,t)>
+  <!--  Updates are disabled. 
+    --  Display alert and set user level to Guest.
+    --  User may be on a page which allows updates so set page to homepage.
+   -->
 
-  <?MISQL SQL="
-    select WebExplode(object,'') 
-      from webPages
-      where ID='aa-unauth.apg';">
-    $1
-  <?/MISQL>
+    <SCRIPT>
+	alert('The Database is currently locked for administrative operations and will not allow logins. Please try again later or contact <judys@cs.uoregon.edu> for further information.');
+    </SCRIPT>
 
-<?/MIBLOCK>  <!-- ends if no authorize cookie -->
+    <?MISQL SQL="
+      execute function conc('GUEST',get_random_cookie());">
+    <?/MISQL>
+    <?MIVAR NAME=$ZDB_authorize>GUEST<?/MIVAR>
+    <?MIVAR NAME=$ZDB_name>$1<?/MIVAR>
+    <?MIVAR>
+      $(HTTPHEADER,set-cookie,ZDB_authorize=$1;path=/<!--|CGI_BIN_DIR_NAME|-->)
+    <?/MIVAR>
 
-<?/MIBLOCK> <!-- END check if updates are disabled -->
+    <SCRIPT>
+	window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg")
+    </SCRIPT>
 
-<?/MIBLOCK> <!-- END ZDB_authorize passed in -->
+  <?MIELSE> <!-- allow updates -->
 
+    <!-- If authorize cookie passed in, pull out the info for it -->
+    <?MISQL SQL="
+      select zdb_id, access, name
+	from ZDB_submitters 
+	where cookie='$ZDB_authorize';">
+    <?/MISQL>
+
+    <!-- If you got a single entry, provisionally set AUTHORIZED to whatever 
+      -- users ZDB_access level is.
+      -->
+    <?MIBLOCK COND="$(=,$MI_ROWCOUNT,1)">
+      <?MIVAR NAME=$AUTHORIZED>$2<?/MIVAR>
+      <?MIVAR NAME=$ZDB_access>$2<?/MIVAR>
+      <?MIVAR COND="$(EC,$ZDB_name,UNKNOWN)" NAME=$ZDB_name>$3<?/MIVAR>
+      <?MIVAR NAME=$ZDB_ident>$1<?/MIVAR>
+    <?/MIBLOCK>
+
+    <!-- But now check permission level for the page, if specified  -->
+    <?MIBLOCK COND="$(AND,$(XST,$ZDB_access),$(XST,$permission))">
+
+      <?MIVAR NAME=$AUTHORIZED>false<?/MIVAR>
+      <?MIVAR COND="$(EC,$ZDB_access,$permission)" NAME=$AUTHORIZED>$ZDB_access<?/MIVAR>
+
+      <?MIVAR COND="$(AND,$(OR,$(EC,$permission,submit),$(EC,$permission,preview)),$(EC,$ZDB_access,fishauth))" NAME=$AUTHORIZED>$ZDB_access<?/MIVAR>
+
+      <?MIVAR COND="$(AND,$(EC,$permission,submit),$(EC,$ZDB_access,preview))" NAME=$AUTHORIZED>$ZDB_access<?/MIVAR>
+
+    <?/MIBLOCK>  <!--ends checks permissions -->
+
+    <!-- Last possibility to get permission is if you own the record. Get 
+      -- record owner and compare to ZDB_ident. If you own the record, you 
+      -- get 'owner' authorization -->
+    <?MIBLOCK COND="$(AND,$(XST,$OID),$(XST,$rtype))">
+      <?MISQL SQL="
+	select $(IF,$(XST,$ownerColumn),$ownerColumn,owner) 
+	  from $rtype 
+	  where $(IF,$(XST,$zdbIdColumn),$zdbIdColumn,zdb_id) = '$OID';">
+      <?/MISQL>
+      <?MIVAR COND="$(EC,$1,$ZDB_ident)" NAME=$AUTHORIZED>owner<?/MIVAR>
+    <?/MIBLOCK>
+
+    <?MIBLOCK COND="$(AND,$(EC,$ZDB_access,adminasst),$(XST,$rtype))">
+      <?MIVAR COND="$(OR,$(EC,$rtype,person),$(EC,$rtype,lab))" NAME=$AUTHORIZED>owner<?/MIVAR>
+    <?/MIBLOCK>
+
+    <!-- Last chance to AUTHORIZE is if you're root -->
+    <?MIVAR COND="$(AND,$(XST,$ZDB_access),$(EC,$ZDB_access,root))" NAME=$AUTHORIZED>root<?/MIVAR>
+
+
+    <!-- If authorization fails, let them know. -->
+    <?MIBLOCK COND="$(EC,$AUTHORIZED,false)">
+
+      <?MISQL SQL="
+	select WebExplode(object,'') 
+	  from webPages
+	  where ID='aa-unauth.apg';">
+	$1
+      <?/MISQL>
+
+    <?/MIBLOCK>  <!-- ends if no authorize cookie -->
+
+  <?/MIBLOCK> <!-- END check if updates are disabled -->
+
+<?/MIBLOCK> <!-- END NC GUEST  -->
