@@ -32,58 +32,177 @@ Requires:  $CLONE_MARKER_ID, $highlight
 
 <?MISQL SQL="
 	SELECT  probelib_species,  probelib_name, probelib_non_zfin_strain_name, 
-		probelib_strain_zdb_id, fish.abbrev, probelib_non_zfin_stg_name, stg_name_long, 
+		probelib_strain_zdb_id, fish.abbrev,
 		probelib_sex, probelib_non_zfin_tissue_name, anatitem_name, 
 		clone_vector_name, vector_type_name, clone_cloning_site, clone_digest,
 		probelib_host, probelib_restriction_sites, clone_polymerase_name,
-		clone_insert_size, mrkr_name, clone_comments
-	FROM clone, marker, probe_library, vector, outer fish, outer anatomy_item, outer stage
+		clone_insert_size, mrkr_name, clone_comments, clone_pcr_amplification, mrkr_type
+	FROM clone, marker, probe_library, vector, outer fish, outer anatomy_item
 	WHERE '$CLONE_MARKER_ID' = clone_mrkr_zdb_id
           and clone_mrkr_zdb_id = mrkr_zdb_id
           and clone_probelib_zdb_id = probelib_zdb_id
 	  and clone_vector_name = vector_name
 	  and fish.zdb_id = probelib_strain_zdb_id
 	  and anatitem_zdb_id = probelib_tissue_zdb_id
-	  and stg_zdb_id = probelib_stg_zdb_id
 ;">
-	<?MIVAR NAME=loop_index>-1<?/MIVAR>
-	<?MIVAR NAME=fields><?/MIVAR>
 
-	<?MIVAR COND="$(NC,$1,)">$(VECAPPEND,$fields,<b>Species:</b> $1)<?/MIVAR>
-	<?MIVAR COND="$(NC,$2,)">$(VECAPPEND,$fields,<b>Library:</b> $2)<?/MIVAR>
-	<?MIVAR COND="$(NC,$3,)">$(VECAPPEND,$fields,<b>Strain:</b> $3)<?/MIVAR>
-	<?MIVAR COND="$(NC,$4,)">$(VECAPPEND,$fields,<b>Strain:</b>
-		<A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?&MIval=aa-fishview.apg&OID=$4'>$5</A>)<?/MIVAR>
-	<?MIVAR COND="$(NC,$6,)">$(VECAPPEND,$fields,<b>Stage:</b> $6)<?/MIVAR>
-	<?MIVAR COND="$(NC,$7,)">$(VECAPPEND,$fields,<b>Stage:</b> $7)<?/MIVAR>
-	<?MIVAR COND="$(NC,$8,)">$(VECAPPEND,$fields,<b>Sex:</b> $8)<?/MIVAR>
-	<?MIVAR COND="$(NC,$9,)">$(VECAPPEND,$fields,<b>Tissue:</b> $9)<?/MIVAR>
-	<?MIVAR COND="$(NC,$10,)">$(VECAPPEND,$fields,<b>Tissue:</b> $10)<?/MIVAR>
-	<?MIVAR COND="$(NC,$11,)">$(VECAPPEND,$fields,<b>Vector:</b> $11)<?/MIVAR>
-	<?MIVAR COND="$(NC,$12,)">$(VECAPPEND,$fields,<b>Vector Type:</b> $12)<?/MIVAR>
-	<?MIVAR COND="$(NC,$13,)">$(VECAPPEND,$fields,<b>Cloning Site:</b> $13)<?/MIVAR>
-	<?MIVAR COND="$(NC,$14,)">$(VECAPPEND,$fields,<b>Digest:</b> $14)<?/MIVAR>
-	<?MIVAR COND="$(NC,$15,)">$(VECAPPEND,$fields,<b>Host:</b> $15)<?/MIVAR>
-	<?MIVAR COND="$(NC,$16,)">$(VECAPPEND,$fields,<b>Restriction Sites:</b> $16)<?/MIVAR>
-	<?MIVAR COND="$(NC,$17,)">$(VECAPPEND,$fields,<b>Polymerase:</b> $17)<?/MIVAR>
-	<?MIVAR COND="$(AND,$(NC,$18,),$(!=,$18,0))">$(VECAPPEND,$fields,<b>Insert Size:</b> $18 $(IF,$(NE,$18,),bp,NA))<?/MIVAR>
+<?MICOMMENT> As per discussion with Erik on 2003/11/21, probe_library stage is not displayed. <?/MICOMMENT>
+    
 
-	
-	<TABLE width="100%" border=0 cellpadding=5 bgcolor="$highlight">
-         <TR>
- 	 <?MIBLOCK INDEX=$field FOREACH=$fields> 
-	  <?MIVAR COND = "$(NE,$field,)" NAME=loop_index>$(+,$loop_index,1)<?/MIVAR>
-	  <?MIVAR>
-	   <TD>$field</TD>
-	  <?/MIVAR>
-       	    <?MIBLOCK COND="$(=,$(MOD,$loop_index,3),0)"></TR><TR><?/MIBLOCK>
-	 <?/MIBLOCK>
-	 </TR>
-	 <TR>
-	  <TD colspan=3><b>Source:</b>&nbsp; $SOURCE </TD>
-         </TR>
-	</TABLE>
+<?MICOMMENT> 
+    Construct three different clone tables. Keep the table header and source the same. 
+    Make the internals apply to EST, PAC, or BAC. Display nothing if the type does not
+    match.
+    
+    EST:				
+    
+    Species				
+    				
+    Library				
+    				
+    Cloning Site	Digest		Insert Size
+    				
+    Vector		Vector Type	Polymerase
+    				
+    PCR Amplification				
+    				
+    Source							
+    
+    
+    
+    BAC:				
+    
+    Species		Strain		Sex
+    				
+    Tissue				
+    				
+    Library		Host		
+    				
+    Vector		Vector Type		
+    				
+    Source				
 
+        
+    
+    PAC:				
+    				
+    Species		Strain		
+    				
+    Tissue				
+    				
+    Library		Host		
+    				
+    Vector		Vector Type		
+    				
+    Source	
+    
+<?/MICOMMENT>
+
+ 
+    
+    
+    <?MIVAR NAME=probelib_species>$1<?/MIVAR>
+    <?MIVAR NAME=probelib_name>$2<?/MIVAR>
+    <?MIVAR NAME=probelib_strain>$3<?/MIVAR>
+    <?MIVAR NAME=probelib_strain_zdb>$4<?/MIVAR>
+    <?MIVAR NAME=fish_abbrev>$5<?/MIVAR>
+    <?MIVAR NAME=probelib_sex>$6<?/MIVAR>
+    <?MIVAR NAME=probelib_non_zfin_tissue_name>$7<?/MIVAR>
+    <?MIVAR NAME=anatitem_name>$8<?/MIVAR>
+    <?MIVAR NAME=clone_vector_name>$9<?/MIVAR>
+    <?MIVAR NAME=vector_type_name>$10<?/MIVAR>
+    <?MIVAR NAME=clone_cloning_site>$11<?/MIVAR>
+    <?MIVAR NAME=clone_digest>$12<?/MIVAR>
+    <?MIVAR NAME=probelib_host>$13<?/MIVAR>
+    <?MIVAR NAME=probelib_restriction_sites>$14<?/MIVAR>
+    <?MIVAR NAME=clone_polymerase_name>$15<?/MIVAR>
+    <?MIVAR NAME=clone_insert_size>$16<?/MIVAR>
+    <?MIVAR NAME=mrkr_name>$17<?/MIVAR>
+    <?MIVAR NAME=clone_comments>$18<?/MIVAR>
+    <?MIVAR NAME=clone_pcr_amplification><BR>$19<?/MIVAR>
+    <?MIVAR NAME=mrkr_type>$20<?/MIVAR>
+    
+    <TABLE width="100%" border=0 cellpadding=5 bgcolor="$highlight">    
+    
+    <?MIBLOCK COND="$(EC,$mrkr_type,EST)">
+      <?MIVAR>
+       <TR>
+         <TD colspan=3><b>Species:</b> $probelib_species</TD>
+       </TR>
+       <TR>
+         <TD colspan=3><b>Library:</b> $probelib_name</TD>
+       </TR>
+       <TR>
+         <TD><b>Cloning Site:</b> $clone_cloning_site</TD>
+         <TD><b>Digest:</b> $clone_digest</TD>
+         <TD><b>Insert Size: </b>$clone_insert_size</b><TD>
+       </TR>
+       <TR>
+         <TD><b>Vector:</b> $clone_vector_name</TD>
+         <TD><b>Vector Type:</b> $vector_type_name</TD>
+         <TD><b>Polymerase: </b> $clone_polymerase_name<TD>
+       </TR>
+       <TR>
+         <TD colspan=3><b>PCR Amplification:</b>$clone_pcr_amplification</TD>
+       </TR>
+     <?/MIVAR>
+     <?MIVAR COND="$(NC,$SOURCE,)">
+      <TR>
+        <TD colspan=3><b>Source:</b>&nbsp; $SOURCE </TD>
+      </TR>
+     <?/MIVAR>
+    <?MIELSE COND="$(EC,$mrkr_type,BAC)">
+     <?MIVAR>
+       <TR>
+         <TD width=33%><b>Species:</b> $probelib_species</TD>
+         <TD width=33%><b>Strain:</b> $probelib_strain</TD>
+         <TD width=33%><b>Sex:</b> $probelib_sex</TD>
+       </TR>
+       <TR>
+         <TD colspan=3><b>Tissue:</b> </TD>
+       <TR>
+         <TD><b>Library:</b> $probelib_name</TD>
+         <TD colspan=2><b>Host:</b> $probelib_host</TD>
+       </TR>
+       <TR>
+         <TD><b>Vector:</b> $clone_vector_name</TD>
+         <TD colspan=2><b>Vector Type:</b> $vector_type_name</TD>
+       </TR>
+     <?/MIVAR>
+     <?MIVAR COND="$(NC,$SOURCE,)">
+      <TR>
+        <TD colspan=3><b>Source:</b>&nbsp; $SOURCE </TD>
+      </TR>
+     <?/MIVAR>
+    <?MIELSE COND="$(EC,$mrkr_type,PAC)">
+     <?MIVAR>
+       <TR>
+         <TD><b>Species:</b> $probelib_species</TD>
+         <TD><b>Strain:</b> $probelib_strain</TD>
+       </TR>
+       <TR>
+         <TD colspan=2><b>Tissue:</b> </TD>
+       <TR>
+         <TD><b>Library:</b> $probelib_name</TD>
+         <TD><b>Host:</b> $probelib_host</TD>
+       </TR>
+       <TR>
+         <TD><b>Vector:</b> $clone_vector_name</TD>
+         <TD><b>Vector Type:</b> $vector_type_name</TD>
+       </TR>
+     <?/MIVAR>      
+     <?MIVAR COND="$(NC,$SOURCE,)">
+      <TR>
+        <TD colspan=2><b>Source:</b>&nbsp; $SOURCE </TD>
+      </TR>
+     <?/MIVAR>
+    <?/MIBLOCK>
+    
+    </TABLE>
+    <?/MIVAR>
+    
+    
+  
 <?MIVAR NAME=comment>hard coded as "none given" for thisse load<?/MIVAR>
 <!-- <p align=left><b>Comments:</b><br>&nbsp;$3</p> -->
 <?/MISQL>
