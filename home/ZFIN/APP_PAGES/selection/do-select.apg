@@ -90,16 +90,16 @@ $1
     <?MISQL COND="$(EC,$info,primary)" SQL="
       delete from record_attribution
         where recattrib_data_zdb_id = '$return_recid'
-          and recattrib_source_rank = 'primary';">
+         ;">
     <?/MISQL>
 
     <!-- Insert new attribution record. -->
     <?MISQL SQL="
       insert into record_attribution
-	  ( recattrib_data_zdb_id, recattrib_source_zdb_id, 
-	    recattrib_source_rank )
+	  ( recattrib_data_zdb_id, recattrib_source_zdb_id 
+	   )
 	values
-	  ( '$return_recid', '$new_oid', '$info');">
+	  ( '$return_recid', '$new_oid');">
     <?/MISQL>
   <?MIELSE COND="$(EC,$fill_table,int_data_supplier)">
     <?MISQL SQL="
