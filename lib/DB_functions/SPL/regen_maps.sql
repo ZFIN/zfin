@@ -102,7 +102,7 @@ create dba function "informix".regen_maps()
 	-- paneled_markers does not have a primary key.
       )
       fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3  
-      extent size 1024 next size 1024 lock mode page;
+      extent size 1024 next size 1024 lock mode row;
     revoke all on paneled_m_new from "public";
 
    -- faked mapping information for gene is

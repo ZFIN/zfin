@@ -88,7 +88,7 @@ create dba function "informix".regen_panelcount()
       	not null
  	 )
  	 in tbldbs3
-  	extent size 16 next size 16
+  	extent size 32 next size 32
   	lock mode row;
 	revoke all on panel_count_new from "public";
 
