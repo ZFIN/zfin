@@ -1071,6 +1071,316 @@ sub locusAbbrevIsSet ($) {
 
 
 
+#======================== PUB Attribution ========================
+#
+#---------------------------------------------------------------
+# associatedDataforPUB030905_1
+#
+# Only orthology evidence code data should be associated with
+# ZDB-PUB-030905-1.
+#
+# In record attribution, each record should have both a GENE and
+# OEVDISP data associated (they should appear in pairs) for
+# this PUB.  These pairs should correspond to a record in 
+# orthologue_evidence_display.
+#
+# This test identifies any PUB data that does not fit this
+# criteria.
+# 
+# 
+#Parameter
+# $      Email Address for recipients
+# 
+
+sub associatedDataforPUB030905_1 ($) {
+
+  my $routineName = "associatedDataforPUB030905_1";
+
+  my $sql = "select recattrib_data_Zdb_id
+             from   record_attribution
+             where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
+             and    recattrib_data_Zdb_id not in (
+             select oevdisp_gene_zdb_id
+             from   orthologue_evidence_display
+             where  exists (
+                       select recattrib_data_Zdb_id
+                       from   record_attribution
+                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
+                       and    oevdisp_gene_zdb_id = recattrib_data_Zdb_id
+                    )
+             and    exists (
+                       select recattrib_data_Zdb_id
+                       from   record_attribution
+                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
+                       and    oevdisp_zdb_id = recattrib_data_Zdb_id
+                    )
+             union
+             select oevdisp_zdb_id
+             from   orthologue_evidence_display
+             where  exists (
+                       select recattrib_data_Zdb_id
+                       from   record_attribution
+                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
+                       and    oevdisp_gene_zdb_id = recattrib_data_Zdb_id
+                    )
+             and    exists (
+                       select recattrib_data_Zdb_id
+                       from   record_attribution
+                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
+                       and    oevdisp_zdb_id = recattrib_data_Zdb_id
+                    )
+             )";
+
+  my @colDesc = ("Data ZDB ID       ");
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Invalid data is associated with ZDB-PUB-030905-1.";
+    my $errMsg = "$nRecords data are associated with ZDB-PUB-030905-1"
+               . " that either do not have an attributed GENE or"
+               . " do not have attributed orthologue evidence.";
+
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
+  }
+  &recordResult($routineName, $nRecords); 
+}
+
+
+
+#---------------------------------------------------------------
+# associatedDataforPUB030508_1
+#
+# Only data for gene name, gene symbol, locus name, locus
+# abbreviation or previous name should be associated with
+# ZDB-PUB-030508-1.
+# 
+# 
+#Parameter
+# $      Email Address for recipients
+# 
+
+sub associatedDataforPUB030508_1 ($) {
+
+  my $routineName = "associatedDataforPUB030508_1";
+
+  my $sql = "select recattrib_data_zdb_id, recattrib_source_zdb_id
+             from   record_attribution
+             where  recattrib_source_zdb_id = 'ZDB-PUB-030508-1'
+             and    not exists (
+                       select mrkr_zdb_id
+                       from   marker
+                       where  recattrib_data_zdb_id = mrkr_zdb_id
+                    )
+             and    not exists (
+                       select dalias_zdb_id
+                       from   data_alias
+                       where  recattrib_data_zdb_id = dalias_zdb_id
+                    )
+             and    not exists (
+                       select zdb_id
+                       from   locus
+                       where  recattrib_data_zdb_id = zdb_id
+                    )";
+
+  my @colDesc = ("Data ZDB ID       ",
+		 "PUB  ZDB ID       ");
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Invalid data is associated with ZDB-PUB-030508-1.";
+    my $errMsg = "$nRecords data are associated with ZDB-PUB-030508-1 "
+               . " that are not either: gene name, gene symbol, locus "
+               . " name, locus abbreviation, or previous name.";
+
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
+  }
+  &recordResult($routineName, $nRecords); 
+}
+
+
+
+#---------------------------------------------------------------
+# associatedDataforPUB030905_2
+#
+# Only data for gene name, gene symbol, locus name, locus
+# abbreviation or previous name should be associated with
+# ZDB-PUB-030508-1.
+# 
+# 
+#Parameter
+# $      Email Address for recipients
+# 
+
+sub associatedDataforPUB030905_2 ($) {
+
+  my $routineName = "associatedDataforPUB030905_2";
+
+  my $sql = "select recattrib_data_zdb_id
+             from   record_attribution r1
+             where  recattrib_source_zdb_id = 'ZDB-PUB-030905-2'
+             and    not exists (
+                    -- all nucleotide accession numbers assoc. w/pub via dblink_zdb_id (DBLINK)
+                       select recattrib_data_zdb_id
+                       from   db_link, record_attribution r2, foreign_db_contains
+                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-2'
+                       and    dblink_zdb_id = recattrib_data_zdb_id
+                       and    dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                       and    fdbcont_fdbdt_data_type in ('Genomic','cDNA','Sequence Clusters')
+                       and    r1.recattrib_data_zdb_id = r2.recattrib_data_zdb_id
+                     union
+                    -- all nucleotide accession numbers assoc. w/pub via dblink_linked_recid (GENE)
+                       select recattrib_data_zdb_id
+                       from   db_link, record_attribution r3, foreign_db_contains
+                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-2'
+                       and    dblink_linked_recid = recattrib_data_zdb_id
+                       and    dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                       and    fdbcont_fdbdt_data_type in ('Genomic','cDNA','Sequence Clusters')
+                       and    r1.recattrib_data_zdb_id = r3.recattrib_data_zdb_id
+                    )  
+             order by recattrib_data_zdb_id";
+
+
+  my @colDesc = ("Data ZDB ID       ");
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Invalid data is associated with ZDB-PUB-030905-2.";
+    my $errMsg = "$nRecords data are associated with ZDB-PUB-030905-2 "
+               . " that are not nucleotide sequence accession numbers "
+               . " (i.e. not Genomic, cDNA or Sequence Clusters.)";
+
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
+  }
+  &recordResult($routineName, $nRecords); 
+}
+
+
+
+#======================== Marker Relationships ========================
+#
+#---------------------------------------------------------------
+# containedInRelationshipsInEST
+#
+# This test identifies segments where "contained in" 
+# relationships are associated with ESTs.
+# 
+# 
+#Parameter
+# $      Email Address for recipients
+# 
+
+sub containedInRelationshipsInEST ($) {
+
+  my $routineName = "containedInRelationshipsInEST";
+
+  my $sql = "select mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id, mrkr_type, mrel_type
+             from   marker, marker_relationship, marker_relationship_type
+             where  mrkr_type = 'EST'
+             and    (mrkr_zdb_id = mrel_mrkr_2_zdb_id
+                     and    mrel_type = mreltype_name
+                     and    mreltype_2_to_1_comments = 'Contained in')
+             union
+             select mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id, mrkr_type, mrel_type
+             from   marker, marker_relationship, marker_relationship_type
+             where  mrkr_type = 'EST'
+             and    (mrkr_zdb_id = mrel_mrkr_1_zdb_id
+                     and    mrel_type = mreltype_name
+                     and    mreltype_1_to_2_comments = 'Contains')";
+
+  my @colDesc = ("Marker ID 1       ",
+		 "Marker ID 2       ",
+		 "Marker Type       ",
+		 "Relationship type ");
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "ESTs have 'contained in' relationships.";
+    my $errMsg = "$nRecords segments with 'contained in' relationships "
+                 . "are associated with ESTs.";
+
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
+  }
+  &recordResult($routineName, $nRecords); 
+}
+
+
+
+#---------------------------------------------------------------
+# encodesRelationshipsInBACorPAC
+#
+# This test identifies segments where "encodes" 
+# relationships are associated with BACs or PACs.
+# 
+# 
+#Parameter
+# $      Email Address for recipients
+# 
+
+sub encodesRelationshipsInBACorPAC ($) {
+
+  my $routineName = "encodesRelationshipsInBACorPAC";
+
+  my $sql = "select mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id, mrkr_type, mrel_type
+             from   marker, marker_relationship, marker_relationship_type
+             where  mrkr_type = 'BAC'
+             and    (mrkr_zdb_id = mrel_mrkr_2_zdb_id
+                     and    mrel_type = mreltype_name
+                     and    mreltype_2_to_1_comments = 'Is encoded by')
+             union
+             select mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id, mrkr_type, mrel_type
+             from   marker, marker_relationship, marker_relationship_type
+             where  mrkr_type = 'BAC'
+             and    (mrkr_zdb_id = mrel_mrkr_1_zdb_id
+                     and    mrel_type = mreltype_name
+                     and    mreltype_1_to_2_comments = 'Encodes')
+             union
+             select mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id, mrkr_type, mrel_type
+             from   marker, marker_relationship, marker_relationship_type
+             where  mrkr_type = 'PAC'
+             and    (mrkr_zdb_id = mrel_mrkr_2_zdb_id
+                     and    mrel_type = mreltype_name
+                     and    mreltype_2_to_1_comments = 'Is encoded by')
+             union
+             select mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id, mrkr_type, mrel_type
+             from   marker, marker_relationship, marker_relationship_type
+             where  mrkr_type = 'PAC'
+             and    (mrkr_zdb_id = mrel_mrkr_1_zdb_id
+                     and    mrel_type = mreltype_name
+                     and    mreltype_1_to_2_comments = 'Encodes')";
+
+  my @colDesc = ("Marker ID 1       ",
+		 "Marker ID 2       ",
+		 "Marker Type       ",
+		 "Relationship type ");
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "BACs or PACs have 'encodes' relationships.";
+    my $errMsg = "$nRecords segments with 'encodes' relationships "
+                 . "are associated with either a BAC or PAC.";
+
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
+  }
+  &recordResult($routineName, $nRecords); 
+}
+
+
+
 #======================== Gene - EST relationships =====================
 #
 # All ESTs in ZFIN are supposed to be associated with Genes.
@@ -1168,14 +1478,10 @@ sub prefixedGenesHave1Est ($) {
 
 
 #---------------------------------------------------------------
-# expressionPatternHasMismatchedMarkerRelationship
+# xpatHasConsistentMarkerRelationship
 #
-# Each probe is associated with at most 1 gene.  Sometimes for
-# a given probe, the associated gene is not yet known so one is guessed
-# and entered into expression_pattern.
-#
-# Later, the gene might be identified and the (probe,gene) pair is
-# updated in marker_relationship, but not in expression_pattern.
+# Temporary expression patterns are sometimes not updated 
+# when an actual marker relationship is found.
 #
 # This test identifies any expresssion_pattern (probe,gene) pairs
 # that need to be updated based on marker_relationship.
@@ -1185,9 +1491,9 @@ sub prefixedGenesHave1Est ($) {
 # $      Email Address for recipients
 # 
 
-sub expressionPatternHasMismatchedMarkerRelationship ($) {
+sub xpatHasConsistentMarkerRelationship ($) {
 
-  my $routineName = "expressionPatternHasMismatchedMarkerRelationship";
+  my $routineName = "xpatHasConsistentMarkerRelationship";
 
   my $sql = "select xpat_zdb_id, xpat_probe_zdb_id, xpat_gene_zdb_id, 
                     mrel_mrkr_1_zdb_id, mrel_zdb_id
@@ -1679,7 +1985,244 @@ sub orthologueNomenclatureValid ($) {
     &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
   }
   &recordResult($routineName, $nRecords);
-} 
+}
+
+
+
+#---------------------------------------------------------------
+# orthologyHasEvidence
+#
+# This test identifies any orthology records without any
+# evidence code.
+# 
+# 
+#Parameter
+# $      Email Address for recipients
+# 
+
+sub orthologyHasEvidence ($) {
+
+  my $routineName = "orthologyHasEvidence";
+
+  my $sql = "select zdb_id, c_gene_id, organism
+             from   orthologue
+             where  not exists (
+                       select oev_ortho_zdb_id
+                       from   orthologue_evidence
+                       where  zdb_id = oev_ortho_zdb_id
+                    )";
+
+  my @colDesc = ("Orthology ZDB ID  ",
+		 "Gene ZDB ID       ",
+		 "Organism          ");
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Orthology is missing evidence code.";
+    my $errMsg = "$nRecords orthology records require an evidence code";
+
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
+  }
+  &recordResult($routineName, $nRecords); 
+}
+
+
+
+#---------------------------------------------------------------
+# mouseOrthologyHasMGIAccession
+#
+# This test identifies any mouse orthology records without any
+# MGI accession ID.
+# 
+# 
+#Parameter
+# $      Email Address for recipients
+# 
+
+sub mouseOrthologyHasMGIAccession ($) {
+
+  my $routineName = "mouseOrthologyHasMGIAccession";
+
+  my $sql = "select zdb_id, c_gene_id, organism
+             from   orthologue
+             where  organism = 'Mouse'
+             and    not exists (
+                       select dblink_linked_recid
+                       from   db_link, foreign_db_contains
+                       where  dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                       and    fdbcont_organism_common_name = 'Mouse'
+                       and    fdbcont_fdb_db_name = 'MGI'
+                       and    zdb_id = dblink_linked_recid
+                    )";
+
+  my @colDesc = ("Orthology ZDB ID  ",
+		 "Gene ZDB ID       ",
+		 "Organism          ");
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Mouse Orthology is missing MGI accession ID.";
+    my $errMsg = "$nRecords mouse orthology records require an MGI accession ID";
+
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
+  }
+  &recordResult($routineName, $nRecords); 
+}
+
+
+
+#---------------------------------------------------------------
+# mouseOrthologyHasLocusLinkAccession
+#
+# This test identifies any mouse orthology records without any
+# LocusLink accession ID.
+# 
+# 
+#Parameter
+# $      Email Address for recipients
+# 
+
+sub mouseOrthologyHasLocusLinkAccession ($) {
+
+  my $routineName = "mouseOrthologyHasLocusLinkAccession";
+
+  my $sql = "select zdb_id, c_gene_id, organism
+             from   orthologue
+             where  organism = 'Mouse'
+             and    not exists (
+                       select dblink_linked_recid
+                       from   db_link, foreign_db_contains
+                       where  dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                       and    fdbcont_organism_common_name = 'Mouse'
+                       and    fdbcont_fdb_db_name = 'LocusLink'
+                       and    zdb_id = dblink_linked_recid
+                    )";
+
+  my @colDesc = ("Orthology ZDB ID  ",
+		 "Gene ZDB ID       ",
+		 "Organism          ");
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Mouse Orthology is missing LocusLink accession ID.";
+    my $errMsg = "$nRecords mouse orthology records require a LocusLink accession ID";
+
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
+  }
+  &recordResult($routineName, $nRecords); 
+}
+
+
+
+#---------------------------------------------------------------
+# humanOrthologyHasLocusLinkAccession
+#
+# This test identifies any human orthology records without any
+# LocusLink accession ID.
+# 
+# 
+#Parameter
+# $      Email Address for recipients
+# 
+
+sub humanOrthologyHasLocusLinkAccession ($) {
+
+  my $routineName = "humanOrthologyHasLocusLinkAccession";
+
+  my $sql = "select zdb_id, c_gene_id, organism
+             from   orthologue o1
+             where  organism = 'Human'
+             and    not exists (
+                       select dblink_linked_recid
+                       from   db_link, foreign_db_contains
+                       where  dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                       and    fdbcont_organism_common_name = 'Human'
+                       and    fdbcont_fdb_db_name = 'LocusLink'
+                       and    o1.zdb_id = dblink_linked_recid
+                    )
+             -- exclude organism type mismatch errors
+             -- these errors reported in separate DBA validation below
+             and    not exists (
+                       select dblink_linked_recid 
+                       from   db_link, foreign_db_contains, orthologue o2
+                       where  organism <> fdbcont_organism_common_name
+                       and    dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                       and    o2.zdb_id = dblink_linked_recid
+                       and    o1.zdb_id = o2.zdb_id
+                    )";
+
+  my @colDesc = ("Orthology ZDB ID  ",
+		 "Gene ZDB ID       ",
+		 "Organism          ");
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Human Orthology is missing LocusLink accession ID.";
+    my $errMsg = "$nRecords human orthology records require a LocusLink accession ID.";
+
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
+  }
+  &recordResult($routineName, $nRecords); 
+}
+
+
+
+#---------------------------------------------------------------
+# orthologyOrganismMatchesForeignDBContains
+#
+# This test identifies any human orthology records without any
+# LocusLink accession ID.
+# 
+# 
+#Parameter
+# $      Email Address for recipients
+# 
+
+sub orthologyOrganismMatchesForeignDBContains ($) {
+
+  my $routineName = "orthologyOrganismMatchesForeignDBContains";
+
+  my $sql = "select c_gene_id, zdb_id, organism, 
+                    dblink_zdb_id, dblink_linked_recid, 
+                    fdbcont_zdb_id, fdbcont_organism_common_name
+             from   orthologue, db_link, foreign_db_contains
+             where  dblink_linked_recid = zdb_id
+             and    dblink_fdbcont_zdb_id = fdbcont_zdb_id
+             and    organism <> fdbcont_organism_common_name";
+             
+  my @colDesc = ("ORTHO ID          ",
+     		 "ORTHO Gene        ",
+     		 "ORTHO Organism    ",
+     		 "DBLINK ID         ",
+     		 "DBLINK-ORTHO ID   ",
+     		 "FDB ID            ",
+       		 "FDB Organism      ");
+               
+  my $nRecords = execSql ($sql, undef, @colDesc);
+             	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Orthologue organism is incorrectly matched with Foreign DB Organism.";
+    my $errMsg = "$nRecords orthologue records need to be reconciled with"
+               . " foreign_db_contains.  The organism types do not match.";
+
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
+  }
+  &recordResult($routineName, $nRecords); 
+}
 
 
 
@@ -2647,7 +3190,7 @@ if($daily) {
 
   expressionPatternStageWindowConsistent($xpatEmail);
   expressionPatternAnatomyStageWindowOverlapsAnatomyItem($xpatEmail);
-  expressionPatternHasMismatchedMarkerRelationship($xpatEmail);
+  xpatHasConsistentMarkerRelationship($xpatEmail);
   checkFigXpatexSourceConsistant($dbaEmail);
 
   fishNameEqualLocusName($mutantEmail);
@@ -2662,12 +3205,18 @@ if($daily) {
   linkageHasMembers($linkageEmail);
   linkagePairHas2Members($linkageEmail);
 
+  orthologyHasEvidence($geneEmail);
+  mouseOrthologyHasMGIAccession($geneEmail);
+  mouseOrthologyHasLocusLinkAccession($geneEmail);
+  humanOrthologyHasLocusLinkAccession($geneEmail);
+  containedInRelationshipsInEST($geneEmail);
+  encodesRelationshipsInBACorPAC($geneEmail);
+
   foreigndbNotInFdbcontains($otherEmail);
 
   zdbObjectHomeTableColumnExist($dbaEmail);
   zdbObjectIsSourceDataCorrect($dbaEmail);
   zdbObjectHandledByGetObjName($dbaEmail);
-
 
   pubTitlesAreUnique($otherEmail);
   extinctFishHaveNoSuppliers($otherEmail);
@@ -2694,7 +3243,17 @@ if($weekly) {
   xxGenesHaveNoClones($estEmail);
   fishAbbrevStartsWithLocusAbbrev($mutantEmail);
   checkOtherEnvironmentCondition($dbaEmail);
-  
+
+  # these are curatorial errors (case219)
+  # however, errors returned are difficult to
+  # return to curators without dba
+  associatedDataforPUB030905_1($dbaEmail);
+  associatedDataforPUB030508_1($dbaEmail);
+  associatedDataforPUB030905_2($dbaEmail);
+
+  # put these here until we get them down to 0 records.  Then move them to 
+  # daily.
+  orthologyOrganismMatchesForeignDBContains($dbaEmail);
 }
 if($monthly) {
   orthologueHasDblink($geneEmail);
