@@ -20,7 +20,7 @@
 <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 
 <HTML>
-<body bgcolor="#e5e5e5" text="#000000" link="#0000ff" vlink="#800080" alink="#ff0000">
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
   <!-- If the attribute is something we can just specify locally, go ahead and throw up the right form to do it. -->
 
@@ -29,12 +29,16 @@
   <TITLE>ZFIN Update Expression Pattern Assay</TITLE>
 
     <?MIVAR>
-    <br><br>
-    <center><font size=6><b>
-    Update <u>Assay Name</u> for <u>$gene_name(<i>$gene_abbrev</i>)</u>
-      </b></font></center>
+    <TABLE>
+      <TR>
+        <TD>
+    <br><font size=+1>
+      Update <u>Assay Type</u> for <u>$gene_name(<i>$gene_abbrev</i>)</u>
+    </font>
     <?/MIVAR>
     <p>
+        </TD>
+      </TR>
 
     <FORM NAME=new_assay
         METHOD=post
@@ -46,17 +50,17 @@
 	<INPUT TYPE=hidden name="OID" Value="$OID">
 	<INPUT TYPE=hidden name="old_value" Value="$old_value">
 
-      <TABLE border="4" cellspacing="4" cellpadding="4" bgcolor="$highlight" align=center width="80%">
 	<TR>
-          <TD align=center>
+          <TD>
 
-          <table width=100%>
+          <table cellspacing="4" cellpadding="4" bgcolor="$highlight">
           <tr>
-          <td align=center>
-          <b>Current Assay Value: </b>$old_value
+          <td>
+          <b>Current Assay Type: </b>$old_value
           </td>
-          <td align=center>
-          <b>New Assay Value:</b>
+          <tr>
+          <td>
+          <b>New Assay Type:</b>
           <SELECT name="new_value">
             <?MISQL SQL="
               select xpatassay_name
@@ -69,17 +73,18 @@
           </td>
           </tr>
           <tr>
-          <td colspan=2>
+          <td>
           <b>Comments:</b>
           <br>
-          <TEXTAREA name="comments" rows=10 cols=70 wrap=virtual></TEXTAREA>
+          <TEXTAREA name="comments" rows=4 cols=50 wrap=virtual></TEXTAREA>
           </td>
           </tr>
           </table>
 
           </TD>
         </TR>
-      </TABLE> 
+        <TR>
+          <TD>
 
           <table width=100%>
           <tr align=right>
@@ -103,7 +108,13 @@
           </td>
           </tr>
           </table>
+
+          </TD>
+        </TR>
+      </TABLE>
     <?/MIVAR>
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 
   <?MIELSE>
     <SCRIPT>
@@ -115,7 +126,7 @@
 
   <?/MIBLOCK> <!-- ends if $OID does not exist -->
 
-<?MIELSE>
+<?MIELSE> <!-- else authorized false -->
 
 <?MIVAR>
   <SCRIPT>
@@ -128,6 +139,4 @@
 
 <?/MIBLOCK> <!-- ends if authorized not false -->
 
-</BODY>
-</HTML>
 
