@@ -156,7 +156,7 @@ FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN record
        <font size=-1>
 
        <?MIBLOCK COND="$(NC,$order_url,)">
-          <?MIVAR>(<A HREF="$order_url">$5</A>)<?/MIVAR>
+          <?MIVAR>&nbsp;&nbsp;&nbsp;(<A HREF="$order_url">$5</A>)<?/MIVAR>
        <?MIELSE>
 	  <?MIVAR COND="$(>,$(POSITION,$3,LAB),0)" NAME=viewpage>labview.apg<?/MIVAR>
           <?MIVAR COND="$(>,$(POSITION,$3,COMPANY),0)" NAME=viewpage>companyview.apg<?/MIVAR>
