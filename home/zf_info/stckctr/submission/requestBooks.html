@@ -18,31 +18,34 @@
                     document.forms[0].PIAddr.value;
       if ( ( document.forms[0].PIInfo.checked ) ||
            ( allPIValues == '' ) ) {
-         document.forms[0].PIName.value         = document.forms[0].reqName.value;
-         document.forms[0].PIEmail.value        = document.forms[0].reqEmail.value;
-         document.forms[0].PIPhone.value        = document.forms[0].reqPhone.value;
-         document.forms[0].PIFax.value          = document.forms[0].reqFax.value;
-         document.forms[0].PILab.value          = document.forms[0].reqLab.value;
-         document.forms[0].PIAddr.value         = document.forms[0].reqAddr.value;
+         document.forms[0].PIName.value         = document.forms[0].rqfName.value;
+         document.forms[0].PIEmail.value        = document.forms[0].rqfEmail.value;
+         document.forms[0].PIPhone.value        = document.forms[0].rqfPhone.value;
+         document.forms[0].PIFax.value          = document.forms[0].rqfFax.value;
+         document.forms[0].PILab.value          = document.forms[0].rqfLab.value;
+         document.forms[0].PIAddr.value         = document.forms[0].rqfAddr.value;
       }
    }
    function resetPIInfo() {
       document.forms[0].PIInfo.checked = false;
    }
+   function setBillInfoChecked () {
+      document.forms[0].billInfo.checked = true;
+   }
    function setBillInfo() {
-      allBillValues = document.forms[0].billName.value +
-                      document.forms[0].billEmail.value +
-                      document.forms[0].billPhone.value +
-                      document.forms[0].billFax.value +
-                      document.forms[0].billLab.value +
-                      document.forms[0].billAddr.value;
+      allBillValues = document.forms[0].rqfBillName.value +
+                      document.forms[0].rqfBillEmail.value +
+                      document.forms[0].rqfBillPhone.value +
+                      document.forms[0].rqfBillFax.value +
+                      document.forms[0].rqfBillLab.value +
+                      document.forms[0].required__BillAddr.value;
       if ( document.forms[0].billInfo.checked ) {
-         document.forms[0].billName.value         = document.forms[0].reqName.value;
-         document.forms[0].billEmail.value        = document.forms[0].reqEmail.value;
-         document.forms[0].billPhone.value        = document.forms[0].reqPhone.value;
-         document.forms[0].billFax.value          = document.forms[0].reqFax.value;
-         document.forms[0].billLab.value          = document.forms[0].reqLab.value;
-         document.forms[0].billAddr.value         = document.forms[0].reqAddr.value;
+         document.forms[0].rqfBillName.value         = document.forms[0].rqfName.value;
+         document.forms[0].rqfBillEmail.value        = document.forms[0].rqfEmail.value;
+         document.forms[0].rqfBillPhone.value        = document.forms[0].rqfPhone.value;
+         document.forms[0].rqfBillFax.value          = document.forms[0].rqfFax.value;
+         document.forms[0].rqfBillLab.value          = document.forms[0].rqfLab.value;
+         document.forms[0].required_BillAddr.value         = document.forms[0].rqfAddr.value;
       }
    }
 </script>
@@ -95,7 +98,7 @@ Please set your preferences to allow Javascript and then Reload.</font>
       <tr> 
         <td class="medium" align=right>Quantity <font color="#FF0000">*</font>&nbsp;</td>
         <td class="medium" width=300> 
-          <input type="text" name="reqBookQty" size="30">
+          <input type="text" name="rqfBookQty" size="30">
         </td>
       </tr>
 <!-----customer contact information----->
@@ -105,37 +108,37 @@ Please set your preferences to allow Javascript and then Reload.</font>
       <tr> 
         <td class="medium" align=right>Your Name <font color="#FF0000">*</font>&nbsp;</td>
         <td class="medium" width=300> 
-          <input type="text" name="reqName" size="30">
+          <input type="text" name="rqfName" size="30">
         </td>
       </tr>
       <tr> 
         <td class="medium" align=right>Your Email <font color="#FF0000">*</font>&nbsp;</td>
         <td class="medium" > 
-          <input type="text" name="reqEmail" size="30">
+          <input type="text" name="rqfEmail" size="30">
         </td>
       </tr>
       <tr> 
         <td class="medium" align=right>Your Telephone <font color="#FF0000">*</font>&nbsp;</td>
         <td class="medium"> 
-          <input type="text" name="reqPhone" size="30">
+          <input type="text" name="rqfPhone" size="30">
         </td>
       </tr>
       <tr> 
         <td class="medium" align=right>Your Fax <font color="#FF0000">*</font>&nbsp;</td>
         <td class="medium"> 
-          <input type="text" name="reqFax" size="30">
+          <input type="text" name="rqfFax" size="30">
         </td>
       </tr>
       <tr> 
         <td class="medium" align=right>Your Institution / Lab <font color="#FF0000">*</font>&nbsp;</td>
         <td class="medium">
-          <input type="text" name="reqLab" size="30">
+          <input type="text" name="rqfLab" size="30">
         </td>
       </tr>
       <tr> 
         <td class="medium" align=right>Your Position <font color="#FF0000">*</font>&nbsp;</td>
         <td class="medium"> 
-          <select name="reqPos" size="1">
+          <select name="rqfPos" size="1">
             <option value=""></option>
             <option value="PI / Director">PI / Director</option>
             <option value="Post-Doc">Post-Doc</option>
@@ -148,7 +151,7 @@ Please set your preferences to allow Javascript and then Reload.</font>
       <tr> 
         <td class="medium" align=right>Your Address <font color="#FF0000">*</font>&nbsp;<br>(No PO Boxes-this is the "Ship To" address.)&nbsp;</td>
         <td class="medium"> 
-          <textarea name="reqAddr" cols="30" wrap="VIRTUAL" rows="4"></textarea>
+          <textarea name="rqfAddr" cols="30" wrap="VIRTUAL" rows="4"></textarea>
         </td>
       </tr>
 	  <tr>	
@@ -227,37 +230,37 @@ Please set your preferences to allow Javascript and then Reload.</font>
 	  <tr> 
         <td class="medium" align=right>Name <font color="#FF0000">*</font>&nbsp;</td>
         <td class="medium">
-          <input type="text" name="billName" size="30">
+          <input type="text" name="rqfBillName" size="30">
         </td>
       </tr>
       <tr> 
         <td class="medium" align=right>Email <font color="#FF0000">*</font>&nbsp;</td>
         <td class="medium">
-          <input type="text" name="billEmail" size="30">
+          <input type="text" name="rqfBillEmail" size="30">
         </td>
       </tr>
       <tr> 
         <td class="medium" align=right>Telephone <font color="#FF0000">*</font>&nbsp;</td>
         <td class="medium">
-          <input type="text" name="billPhone" size="30">
+          <input type="text" name="rqfBillPhone" size="30">
         </td>
       </tr>
       <tr> 
         <td class="medium" align=right>Fax <font color="#FF0000">*</font>&nbsp;</td>
         <td class="medium">
-          <input type="text" name="billFax" size="30">
+          <input type="text" name="rqfBillFax" size="30">
         </td>
       </tr>
       <tr> 
         <td class="medium" align=right nowrap>Institution / Lab <font color="#FF0000">*</font>&nbsp;</td>
         <td class="medium">
-          <input type="text" name="billLab" size="30">
+          <input type="text" name="rqfBillLab" size="30">
         </td>
       </tr>
       <tr> 
         <td class="medium" align=right>Address <font color="#FF0000">*</font>&nbsp;</td>
         <td class="medium">
-          <textarea name="billAddr" cols="30" wrap="VIRTUAL" rows="4"></textarea>
+          <textarea name="required_BillAddr" cols="30" wrap="VIRTUAL" rows="4"></textarea>
         </td>
       </tr>
 	  <tr>	
@@ -287,7 +290,8 @@ Please set your preferences to allow Javascript and then Reload.</font>
       <tr> 
         <td colspan=2 align=center class=button>
             <input type="submit" value="SEND to ZIRC" name="submitButton" 
-                   class=buttons onClick="resetPIInfo(); setPIInfo();">
+                   class=buttons onClick="resetPIInfo(); setPIInfo(); 
+                                          setBillChecked(); setBillInfo();">
         </td>
       </tr>
 	  <tr>	
