@@ -23,6 +23,9 @@ anatitem_overlaps_stg_window (
   define windowEndEnd     decimal(7,2);
   define overlaps         boolean;
 
+  -- set debug file to '/tmp/debug-anatitem_overlaps_stg_window';
+  -- trace on;
+
   select startStg.stg_hours_start, endStg.stg_hours_end
     into anatStart, anatEnd
     from anatomy_item, stage startStg, stage endStg
@@ -38,7 +41,7 @@ anatitem_overlaps_stg_window (
   select stg_hours_start, stg_hours_end
     into windowEndStart, windowEndEnd
     from stage
-    where stg_zdb_id = startStageZdbId;
+    where stg_zdb_id = endStageZdbId;
 
 
   -- Got all the data, now check that it is usable:

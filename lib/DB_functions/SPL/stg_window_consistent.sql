@@ -22,6 +22,9 @@ stg_window_consistent (
   define endEnd       decimal(7,2);
   define consistent   boolean;
 
+  -- set debug file to '/tmp/debug-stg_window_consistent';
+  -- trace on;
+
   -- Get start and stop times for the stages that are passed in
 
   select stg_hours_start, stg_hours_end
@@ -32,7 +35,7 @@ stg_window_consistent (
   select stg_hours_start, stg_hours_end
     into endStart, endEnd
     from stage
-    where stg_zdb_id = startStgZdbId;
+    where stg_zdb_id = endStgZdbId;
 
   -- verify that we actually got start and stop times.
 

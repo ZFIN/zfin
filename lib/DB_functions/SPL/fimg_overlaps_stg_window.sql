@@ -27,6 +27,9 @@ fimg_overlaps_stg_window (
   define windowEndEnd     decimal(7,2);
   define overlaps         boolean;
 
+  -- set debug file to '/tmp/debug-fimg_overlaps_stg_window';
+  -- trace on;
+
   -- Get start and stop times for the stages that are passed in
 
   select stg_hours_start, stg_hours_end
@@ -37,7 +40,7 @@ fimg_overlaps_stg_window (
   select stg_hours_start, stg_hours_end
     into windowEndStart, windowEndEnd
     from stage
-    where stg_zdb_id = startStageZdbId;
+    where stg_zdb_id = endStageZdbId;
 
   -- verify that we actually got start and stop times.
 
