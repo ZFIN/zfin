@@ -63,9 +63,6 @@ COND="$(OR,$(EC,$attr,putgene_putative_gene_name),$(EC,$attr,putgene_comments),$
 the record $old_value from the list of $attr associated with this 
 marker.<?/MIVAR>
 
-  <?MIVAR COND="$(EC,$attr_type,special-newortho)" NAME=$comments>Created 
-a new orthologue record for species=$old_value for this record.<?/MIVAR>
-
   <?MIVAR COND="$(EC,$attr_type,special-newseqnum)" NAME=$comments>Created 
 new link to sequence DB: $old_value for this record.<?/MIVAR>
 
@@ -91,31 +88,31 @@ comments,
   <?/MISQL>
 
   <!-- OK, NOW UPDATE THE  ACTUAL DATA RECORD. -->
-  <?MIBLOCK 
-COND="$(AND,$(NC,$attr,dalias_alias),$(NC,$attr,putgene_comments),
+  <?MIBLOCK COND="$(AND,$(NC,$attr,dalias_alias),
+                      $(NC,$attr,putgene_comments),
 		      $(NC,$attr,putgene_putative_gene_name),
                       $(NC,$attr,comments),
 		      $(OR,$(EC,$attr_type,text),
 		           $(EC,$attr_type,textarea)))">
 
-  <?MISQL SQL="
-    update $target_table 
-      set $attr='$new_value' 
-      where zdb_id='$OID';">
-    <?MIBLOCK COND="$(EC,$info,nomenclature)">
-    <?MIVAR NAME=comments COND="$(EC,$comments,NULL)">none<?/MIVAR>
-    <?MISQL SQL="select max(mhist_date) from marker_history where mhist_mrkr_zdb_id = '$OID'">
-      <?MIVAR NAME=MHIST_DATE>$1<?/MIVAR>
-    <?/MISQL>
     <?MISQL SQL="
-      update marker_history
-        set mhist_reason = '$mhistrsn_name',
-            mhist_comments = '$comments'
-        where mhist_mrkr_zdb_id = '$OID'
-          and mhist_date = '$MHIST_DATE'">
-    <?/MISQL>
-    <?/MIBLOCK>
-  <?/MISQL>
+      update $target_table 
+        set $attr='$new_value' 
+        where zdb_id='$OID';">
+      <?MIBLOCK COND="$(EC,$info,nomenclature)">
+        <?MIVAR NAME=comments COND="$(EC,$comments,NULL)">none<?/MIVAR>
+        <?MISQL SQL="select max(mhist_date) from marker_history where mhist_mrkr_zdb_id = '$OID'">
+          <?MIVAR NAME=MHIST_DATE>$1<?/MIVAR>
+        <?/MISQL>
+        <?MISQL SQL="
+          update marker_history
+            set mhist_reason = '$mhistrsn_name',
+                mhist_comments = '$comments'
+            where mhist_mrkr_zdb_id = '$OID'
+              and mhist_date = '$MHIST_DATE'">
+         <?/MISQL>
+       <?/MIBLOCK>
+     <?/MISQL>
 
   <?/MIBLOCK>
 
@@ -146,15 +143,24 @@ COND="$(AND,$(NC,$attr,dalias_alias),$(NC,$attr,putgene_comments),
   <?/MISQL>
 
 
-  <!-- Special case for deleting one of the associated 
-orthos/seqs/sources/pubs -->
+  <!-- Special case for deleting one of the associated seqs/sources/pubs -->
   <?MIBLOCK COND="$(EC,$attr_type,special-listitem)">
 
-    <?MISQL COND="$(EC,$attr,publication)" SQL="
-      delete from record_attribution
-	where recattrib_data_zdb_id = '$dataOID'
-	  and recattrib_source_zdb_id = '$old_value';">
-    <?/MISQL>
+    <?MIBLOCK COND="$(EC,$attr,publication)">
+     
+      <?MISQL SQL="
+        delete from record_attribution
+	  where recattrib_data_zdb_id = '$dataOID'
+	    and recattrib_source_zdb_id = '$old_value';">
+      <?/MISQL>
+      <?MICOMMENT>***08/25 adding alert to deletion of attribution from publication list
+                  ***09/09 check first, only when it is deleting the last attribution,give alert. 
+      <?/MICOMMENT>
+      <?MIVAR COND="$(NE,$OID,$dataOID)"> 
+	  <?MISQL SQL="select WebExplode(object,'pubId=$old_value') from webPages where ID='aa-attrib_check.apg';">$1<?/MISQL>
+      <?/MIVAR> 
+    <?/MIBLOCK>
+
 
     <?MIBLOCK COND="$(EC,$attr,db_link)">
       <!-- $old_value syntax like db_name:acc_num -->
@@ -166,12 +172,16 @@ NAME=acc_len>$(-,$(STRLEN,$old_value),$(-,$delimit,1))<?/MIVAR>
       <?MIVAR 
 NAME=acc_num>$(SUBSTR,$old_value,$(+,$delimit,1),$acc_len)<?/MIVAR>
 
-      <?MIVAR COND=$(=,0,1)>
-	<b>
-		db_name = $db_name<br>
-		acc_num = $acc_num
-	</b>
-      <?/MIVAR>
+      <?MISQL SQL="
+	select recattrib_source_zdb_id, dblink_zdb_id
+	  from record_attribution, db_link
+	 where recattrib_data_zdb_id = dblink_zdb_id
+	   and linked_recid = '$OID'
+	   and db_name = '$db_name'
+	   and acc_num = '$acc_num' ; ">
+ 
+       <?MISQL SQL="select WebExplode(object,'pubId=$1&dataId=$2') from webPages where ID='aa-attrib_check.apg';">$1<?/MISQL>
+     <?/MISQL>
 
       <?MISQL SQL="
 	delete from zdb_active_data
@@ -184,49 +194,110 @@ NAME=acc_num>$(SUBSTR,$old_value,$(+,$delimit,1),$acc_len)<?/MIVAR>
       <?/MISQL>
     <?/MIBLOCK>
 
-    <?MISQL COND="$(EC,$attr,recattrib)" SQL="
-      delete from record_attribution
-	where recattrib_data_zdb_id = '$dataOID'
-	  and recattrib_source_zdb_id = '$old_value';">
-    <?/MISQL>
 
-    <?MISQL COND="$(EC,$attr,colattrib)" SQL="
-      delete from column_attribution
-	where colattrib_data_zdb_id = '$dataOID'
-	  and colattrib_source_zdb_id = '$old_value'
-	  and colattrib_column_name = '$info';">
-    <?/MISQL>
+    <?MIBLOCK COND="$(OR,$(EC,$attr,recattrib),$(EC,$attr,colattrib))">
+     
+      <?MISQL COND="$(EC,$attr,recattrib)" SQL="
+        delete from record_attribution
+	  where recattrib_data_zdb_id = '$dataOID'
+	    and recattrib_source_zdb_id = '$old_value';">
+      <?/MISQL>
+
+      <?MISQL COND="$(EC,$attr,colattrib)" SQL="
+        delete from column_attribution
+	  where colattrib_data_zdb_id = '$dataOID'
+	    and colattrib_source_zdb_id = '$old_value'
+	    and colattrib_column_name = '$info';">
+      <?/MISQL> 
+
+      <?MICOMMENT>***08/25 adding alert to deletion of attribution from deleteRef button
+           ***09/09 check first, only when it is deleting the last attribution,give alert. 
+      <?/MICOMMENT>
+      <?MISQL SQL="select WebExplode(object,'pubId=$old_value') from webPages where ID='aa-attrib_check.apg';">$1<?/MISQL>
+    <?/MIBLOCK> <!-- end attribution delete -- >  
 
   <?/MIBLOCK>  <!-- ends special listitem case -->
 
+
+
+  <!-- Special case for checking new sequence db link -->
+  <?MIBLOCK COND="$(EC,$attr_type,special-check-newseqnum)">
+        <?MIVAR NAME=$MI_NOVALUE><?/MIVAR>  
+	<?MISQL SQL="
+	   select dblink_zdb_id
+             from marker_relationship, db_link
+	    where mrel_mrkr_1_zdb_id ='$OID'
+              and mrel_mrkr_2_zdb_id = linked_recid
+              and acc_num = '$new_value' 
+	  UNION
+           select dblink_zdb_id
+             from db_link
+	    where linked_recid = '$OID'
+              and acc_num = '$new_value'; ">
+       <?/MISQL>
+       <?MIBLOCK COND="$(NC,$1,)">
+           <SCRIPT>
+ 		window.alert('The Genbank accession is already associated with the marker.');
+	   </SCRIPT>
+       <?MIELSE>  
+	
+          <?MIVAR NAME=markerlist><?/MIVAR>
+	  <?MISQL SQL="
+	     select mrkr_abbrev
+	       from db_link,marker
+	      where acc_num = '$new_value'
+	        and linked_recid=mrkr_zdb_id; ">
+             <?MIBLOCK COND="$(EC,$MI_CURRENTROW,1)">
+	 	<?MIVAR>$(SETVAR,$markerlist[1],$1)<?/MIVAR>
+	     <?MIELSE>
+                <?MIVAR>$(VECAPPEND,$markerlist,$1)<?/MIVAR>
+	     <?/MIBLOCK>
+           <?/MISQL>
+  
+          <?MIBLOCK COND="$(NC,$markerlist,)">
+             <?MIVAR>
+              $(SETVAR,$markerlist,$(SEPARATE,$markerlist,","))
+   
+              <SCRIPT>          
+                var msg="The Genbank accession is already associated with\n"+
+                         "[$markerlist]. Are you sure you want to proceed?";
+	        if (confirm(msg))
+		   location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value=$old_value&new_value=$new_value&target_table=$target_table');
+		
+	      </SCRIPT>
+              <?/MIVAR> 
+	   <?MIELSE>
+             <?MIVAR NAME=$donecheck><?/MIVAR>
+	   <?/MIBLOCK>
+         <?/MIBLOCK>
+   <?/MIBLOCK>  
+                          
+
   <!-- Special case for adding new sequence db link -->
-  <?MIBLOCK COND="$(EC,$attr_type,special-newseqnum)">
-    <?MISQL SQL="
-      execute function get_id('DBLINK');">
-    <?/MISQL>
-    <?MIVAR NAME=$dblink_zdb_id>$1<?/MIVAR>
-    <?MISQL SQL="
-      insert into zdb_active_data
-          ( zactvd_zdb_id )
-        values
+  <?MIBLOCK COND="$(OR,$(EC,$attr_type,special-newseqnum),$(XST,$donecheck))">
+
+     <?MISQL SQL="
+       execute function get_id('DBLINK');">
+     <?/MISQL>
+     <?MIVAR NAME=$dblink_zdb_id>$1<?/MIVAR>
+     <?MISQL SQL="
+       insert into zdb_active_data
+           ( zactvd_zdb_id )
+         values
           ( '$dblink_zdb_id' );">
-    <?/MISQL>
-    <?MISQL SQL="
-      insert into db_link 
+     <?/MISQL>
+     <?MISQL SQL="
+       insert into db_link 
           ( linked_recid, DB_name, acc_num, dblink_zdb_id ,info) 
-        values 
+         values 
 	  ( '$OID', '$old_value', '$new_value', '$dblink_zdb_id', '$ZDB_name'||' '||TODAY );">
-    <?/MISQL>
-  <?/MIBLOCK>  <!-- ends special seqdb case -->
+     <?/MISQL>
+
+   <?/MIBLOCK>  <!-- ends special seqdb case -->
 
 
 
-  <!-- ends data alias -->
-
-
- 
-
-  <!-- Special case for adding new attribution-->
+  <!------ Special case for adding new attribution------->
   <?MIBLOCK COND="$(EC,$attr_type,special-newattrib)">
     <!-- check whether the pub zdb id is valid. -->
     <?MISQL SQL="
@@ -252,87 +323,89 @@ NAME=acc_num>$(SUBSTR,$old_value,$(+,$delimit,1),$acc_len)<?/MIVAR>
 	    ;">
 	<?MIVAR>$(SETVAR,$old_value,$1)<?/MIVAR>
       <?/MISQL>	
+   
 
       <?MIBLOCK COND="$(EC,$info,mrel)">
-      <!-- check whether the mrkr abbrev is valid. -->
-      <?MISQL SQL="
+        <!-- check whether the mrkr abbrev is valid. -->
+        <?MISQL SQL="
 	   select * from marker
              where mrkr_abbrev = '$old_value'	
                 ;">
-      <?/MISQL>	
+        <?/MISQL>	
       
-      <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
-      <!-- Attribution contains & contained in relationship --> 
-      <!--  :check for valid contain(ed) relationship: -->
-      <!--  :verify relationship is unattributted: -->
-      <!--  :insert attribution: -->
-      <?MISQL SQL="
+        <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+        <!-- Attribution contains & contained in relationship --> 
+        <!--  :check for valid contain(ed) relationship: -->
+        <!--  :verify relationship is unattributted: -->
+        <!--  :insert attribution: -->
+        <?MISQL SQL="
   	   select * from marker, marker_relationship
            where mrkr_abbrev = '$old_value'	
              and mrel_mrkr_1_zdb_id = mrkr_zdb_id
                  ;">
-      <?/MISQL>	  
+        <?/MISQL>	  
         <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
 
       
-        <?MISQL SQL="
-	   select mrel_zdb_id 
-	     from marker_relationship, marker
-	    where mrel_mrkr_2_zdb_id = '$OID'
-	      and mrel_mrkr_1_zdb_id = mrkr_zdb_id
-	      and mrkr_abbrev = '$old_value'
-	    ;">
-	  <?MIVAR>$(SETVAR,$data_value,$1)<?/MIVAR>
-        <?/MISQL>
-	<?MIBLOCK COND="$(XST,$data_value)">
           <?MISQL SQL="
+	    select mrel_zdb_id 
+	      from marker_relationship, marker
+	     where mrel_mrkr_2_zdb_id = '$OID'
+	       and mrel_mrkr_1_zdb_id = mrkr_zdb_id
+	       and mrkr_abbrev = '$old_value'
+	    ;">
+	    <?MIVAR>$(SETVAR,$data_value,$1)<?/MIVAR>
+          <?/MISQL>
+	  <?MIBLOCK COND="$(XST,$data_value)">
+            <?MISQL SQL="
             select * from record_attribution
             where recattrib_data_zdb_id = '$data_value'
               and recattrib_source_zdb_id = '$new_value'">
-          <?/MISQL>
-          <?MISQL COND="$(=,$MI_ROWCOUNT,0)" SQL="
+            <?/MISQL>
+            <?MISQL COND="$(=,$MI_ROWCOUNT,0)" SQL="
 	      insert into record_attribution
 		  (recattrib_data_zdb_id, recattrib_source_zdb_id) 
                 values('$data_value', '$new_value')
                   ;">
-          <?/MISQL>
-          <?MIVAR>$(UNSETVAR,$data_value)<?/MIVAR>
-        <?/MIBLOCK> <!-- end xst $data_value -->
+            <?/MISQL>
+            <?MIVAR>$(UNSETVAR,$data_value)<?/MIVAR>
+          <?/MIBLOCK> <!-- end xst $data_value -->
         
-        <?/MIBLOCK> <!-- mrkr_abbrev is valid for mrel_mrkr_1 -->
+          <?/MIBLOCK> <!-- mrkr_abbrev is valid for mrel_mrkr_1 -->
 
-      <?MISQL SQL=" 
+        <?MISQL SQL=" 
   	   select * from marker, marker_relationship
            where mrkr_abbrev = '$old_value'	
              and mrel_mrkr_2_zdb_id = mrkr_zdb_id
                  ;">
-      <?/MISQL>	   
+        <?/MISQL>	   
         <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">    
 
-        <?MISQL SQL=" 
+          <?MISQL SQL=" 
 	   select mrel_zdb_id 
 	     from marker_relationship, marker
 	    where mrel_mrkr_1_zdb_id = '$OID'
 	      and mrel_mrkr_2_zdb_id = mrkr_zdb_id
 	      and mrkr_abbrev = '$old_value'
 	    ;">
-	  <?MIVAR>$(SETVAR,$data_value,$1)<?/MIVAR> 
-        <?/MISQL>	
-        <?MIBLOCK COND="$(XST,$data_value)">
-          <?MISQL SQL="
+	    <?MIVAR>$(SETVAR,$data_value,$1)<?/MIVAR> 
+          <?/MISQL>	
+          <?MIBLOCK COND="$(XST,$data_value)">
+            <?MISQL SQL="
                   select * from record_attribution
                   where recattrib_data_zdb_id = '$data_value'
                     and recattrib_source_zdb_id = '$new_value'">
-          <?/MISQL>
+            <?/MISQL>
 
-          <?MISQL COND="$(=,$MI_ROWCOUNT,0)" SQL="
+            <?MISQL COND="$(=,$MI_ROWCOUNT,0)" SQL="
               insert into record_attribution
                   (recattrib_data_zdb_id, recattrib_source_zdb_id) 
                    values('$data_value', '$new_value')
               ;">
-          <?/MISQL>
-        <?/MIBLOCK> <!-- end: xst data_value -->
+            <?/MISQL>
+          <?/MIBLOCK> <!-- end: xst data_value -->
         <?/MIBLOCK> <!-- end: valid mrkr_abbrev for mrel_mrkr_2 -->
+       
       <?MIELSE>
         <?MIVAR>
  	<script>
@@ -341,7 +414,7 @@ NAME=acc_num>$(SUBSTR,$old_value,$(+,$delimit,1),$acc_len)<?/MIVAR>
 	<?/MIVAR>
       <?/MIBLOCK> <!-- end: valid abbrev -->
       <?/MIBLOCK> <!-- end: info=mrel -->
-      
+ 
       <?MIBLOCK COND="$(AND,$(EC,$attr,recattrib),$(NE,$info,mrel))">
          <?MISQL SQL="
 	    insert into record_attribution
@@ -350,7 +423,7 @@ NAME=acc_num>$(SUBSTR,$old_value,$(+,$delimit,1),$acc_len)<?/MIVAR>
                 ;">
          <?/MISQL>
 
-      <?MIELSE COND="$(EC,$attr,colattrib)">
+      <?MIELSE COND="$(AND,$(EC,$attr,colattrib),$(NE,$info,mrel))">
          <?MISQL SQL="
 	    insert into column_attribution
 		(colattrib_data_zdb_id, colattrib_column_name, 
@@ -359,14 +432,30 @@ colattrib_source_zdb_id)
                 ;">
          <?/MISQL>
       <?/MIBLOCK>
+
+      <?MICOMMENT>*** 08/22 attributions to data items are automatically attributed to the marker also. <?/MICOMMENT> 
+      <!-- make sure attribe to marker not already exist -->
+      <?MISQL SQL="
+	  select * 
+	    from record_attribution
+	   where recattrib_data_zdb_id = '$OID'
+	     and recattrib_source_zdb_id = '$new_value' ;">
+      <?/MISQL>
+      <?MISQL COND="$(=,$MI_ROWCOUNT,0)" SQL="
+	    insert into record_attribution
+		(recattrib_data_zdb_id, recattrib_source_zdb_id) 
+              values('$OID', '$new_value')	
+                ;">
+      <?/MISQL>
+
     <?MIELSE> 
       <?MIVAR>
  	<script>
 	window.alert('ERROR: Pub ZdbId $new_value is not in ZFIN, please check.');
 	</script>
       <?/MIVAR>
-   <?/MIBLOCK> 
-  <?/MIBLOCK>
+    <?/MIBLOCK><!-- end of pub id exist or not--> 
+ <?/MIBLOCK><!-- end of new attrib ---> 
 
 
   <!-- Special case for adding new segemnt relationship -->
@@ -407,14 +496,24 @@ colattrib_source_zdb_id)
 	<script>
 	window.alert('ERROR: Symbol is not in ZFIN.');
 	</script>
-
     <?/MIBLOCK>	
+
   <?/MIBLOCK> 
 
 
 
   <!-- Special case for deleting an alias -->
   <?MIBLOCK COND="$(EC,$attr_type,delete-alias)">
+    <?MISQL SQL="
+	select recattrib_source_zdb_id, dalias_zdb_id
+	  from record_attribution, data_alias
+	 where recattrib_data_zdb_id = dalias_zdb_id
+	   and dalias_data_zdb_id = '$OID'
+	   and dalias_alias = '$old_value' ; ">
+ 
+      <?MISQL SQL="select WebExplode(object,'pubId=$1&dataId=$2') from webPages where ID='aa-attrib_check.apg';">$1<?/MISQL>
+    <?/MISQL>			
+
     <?MISQL COND="$(EC,$attr,dalias_alias)" SQL="
       delete from zdb_active_data
         where zactvd_zdb_id = 
@@ -425,25 +524,22 @@ colattrib_source_zdb_id)
     <?/MISQL>
   <?/MIBLOCK>
   
-  <!-- Special case for deleting a marker relationship -->
-  <?MIBLOCK COND="$(EC,$attr_type,delete-mrkrrelation)">
-     <?MISQL COND="$(EC,$attr,marker_relationship)" SQL="
-	delete from zdb_active_data
-        where zactvd_zdb_id = 
-	     (select mrel_zdb_id
-                from marker_relationship
-	       where (mrel_mrkr_1_zdb_id = '$OID'
-                   and mrel_mrkr_2_zdb_id ='$old_value') 
-		 or  (mrel_mrkr_1_zdb_id ='$old_value'
-                   and  mrel_mrkr_2_zdb_id= '$OID')
-		 and mrel_type = '$info') ;">
-     <?/MISQL>
-  <?/MIBLOCK>
-   	
-
   
   <!-- Special case for deleting a marker relationship -->
   <?MIBLOCK COND="$(EC,$attr_type,delete-mrkrrelation)">
+     <?MISQL SQL="
+	select recattrib_source_zdb_id, mrel_zdb_id
+	  from record_attribution, marker_relationship
+	 where recattrib_data_zdb_id = mrel_zdb_id
+	   and ((mrel_mrkr_1_zdb_id = '$OID'
+		and mrel_mrkr_2_zdb_id ='$old_value') 
+              or (mrel_mrkr_2_zdb_id = '$OID'
+		and mrel_mrkr_1_zdb_id ='$old_value')); ">
+
+	<?MISQL SQL="select WebExplode(object,'pubId=$1&dataId=$2') from webPages where ID='aa-attrib_check.apg';">$1<?/MISQL>
+      <?/MISQL>
+ 
+
      <?MISQL COND="$(EC,$attr,marker_relationship)" SQL="
 	delete from zdb_active_data
         where zactvd_zdb_id = 
@@ -464,8 +560,6 @@ colattrib_source_zdb_id)
     <?MISQL SQL="$SQL1$SQL2"><?/MISQL>
   <?/MIBLOCK>
    	
-
-    	
 
   <!-- Special case for updating orthologues. This is invoked by form submission from orthoedit -->
   <?MIBLOCK COND="$(XST,$UPDATEORTHO)">
@@ -488,12 +582,14 @@ colattrib_source_zdb_id)
           insert into zdb_active_data (zactvd_zdb_id)
 	    values ('$ortho_id');">
         <?/MISQL>
+        <?MIVAR NAME=$oname>$(URLENCODE,$(TRIM,$oname))<?/MIVAR>
+        <?MIVAR NAME=$oabbrev>$(TRIM,$oabbrev)<?/MIVAR>
         <?MISQL SQL="
           insert into orthologue 
            (zdb_id, c_gene_id,ortho_name, ortho_abbrev, organism, entry_time)
           values 
            ('$ortho_id','$OID','$oname','$oabbrev','$species_newadd',current);">
-        <?/MISQL>
+        <?/MISQL>	
         <?MIVAR>$(UNSETVAR,$new_add)<?/MIVAR>
       <?MIELSE>
         <?MIVAR>
@@ -519,7 +615,7 @@ colattrib_source_zdb_id)
       <?/MISQL>
 
       <?MIBLOCK COND="$(AND,$(XST,$newabbrev),$(XST,$newname))">
-        <?MIVAR NAME=$newname>$(TRIM,$newname)<?/MIVAR>
+        <?MIVAR NAME=$newname>$(URLENCODE,$(TRIM,$newname))<?/MIVAR>
         <?MIVAR NAME=$newabbrev>$(TRIM,$newabbrev)<?/MIVAR>
         <?MISQL COND="$(AND,$(NC,$newabbrev,),$(NC,$newname,))" SQL="
 	  update orthologue 
@@ -641,13 +737,20 @@ colattrib_source_zdb_id)
 	        window.alert('The evidence with the pub reference donot exist. Please check, and resubmit.\n Any other changes are committing.');
 	      </SCRIPT>
           <?MIELSE>
+	    
 	    <?MISQL SQL="
 	      delete from orthologue_evidence
 	          where oev_ortho_zdb_id = '$ortho_id'
 		    and	oev_evidence_code = '$delevi'
 		    and oev_pub_zdb_id = '$delpub';">
 	    <?/MISQL>  
-            <?MISQL SQL="select WebExplode(object,'geneId=$OID') from webPages where ID='aa-do-oevdispupdate.apg';">$1<?/MISQL>
+            <?MISQL SQL="select WebExplode(object,'geneId=$OID') from webPages where ID='aa-do-oevdispupdate.apg';">$1<?/MISQL> 
+    
+            <?MICOMMENT>***08/25 adding alert to deletion of attribution from deleteRef button
+                ***09/09 check first, only when it is deleting the last attribution,give alert. 
+            <?/MICOMMENT>
+            <?MISQL SQL="select WebExplode(object,'pubId=$delpub') from webPages where ID='aa-attrib_check.apg';">$1<?/MISQL>
+
            <?/MIBLOCK><!-- end evi&pub exist check -->
 	<?MIELSE>
 	  <SCRIPT>
@@ -661,7 +764,7 @@ colattrib_source_zdb_id)
     <!----------- end of update ---------------------------------->
 	
 
-
+ 
     <!----------- delete entire orthologue -------------------------->
     <?MIBLOCK COND="$(XST,$big_delete)">
       <!-- Delete orthologue. First delete orthologue's db_link records
@@ -676,13 +779,23 @@ colattrib_source_zdb_id)
            and organism = '$species_bigdelete' ;">
         <?MIVAR NAME=ortho_id>$1<?/MIVAR>      
       <?/MISQL>
-
       <?MISQL SQL="
-	delete from zdb_active_data
-	  where zactvd_zdb_id='$ortho_id';">
+	select oev_pub_zdb_id
+          from orthologue_evidence
+	 where oev_ortho_zdb_id = '$ortho_id' ;">
+	
       <?/MISQL>
-      <?MISQL SQL="select WebExplode(object,'geneId=$OID') from webPages where ID='aa-do-oevdispupdate.apg';">$1<?/MISQL>
-      
+      <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+ 	<script>
+	     window.alert("Please delete the evidence references before the entire deletion.")
+         </script>
+      <?MIELSE>
+        <?MISQL SQL="
+	  delete from zdb_active_data
+	    where zactvd_zdb_id='$ortho_id';">
+        <?/MISQL>
+        <?MISQL SQL="select WebExplode(object,'geneId=$OID') from webPages where ID='aa-do-oevdispupdate.apg';">$1<?/MISQL>
+      <?/MIBLOCK> 
       <?MIVAR>$(UNSETVAR,$big_delete)<?/MIVAR>     
     <?/MIBLOCK>
     <!------------- end delte entire orthologue ---------------------->
@@ -708,4 +821,6 @@ colattrib_source_zdb_id)
           <?/MIVAR>
   </SCRIPT> 
 
+
 <?/MIBLOCK>
+
