@@ -188,7 +188,7 @@
   if( (defined $Q->param("view_map")) && ($g_error == 0) )  { 
     ### view_map is defined and no error reported
     ### types is never defined by an external page so use them all.
-    $types = "SSLP\',\'RAPD\',\'RFLP\',\'SSR\',\'STS\',\'SNP\',\'GENE\',\'BAC\',\'PAC'\,'EST\',\'FISH\',\'MUTANT\',\'LOCUS";
+    $types = "SSLP\',\'RAPD\',\'RFLP\',\'SSR\',\'STS\',\'SNP\',\'GENE\',\'BAC\',\'PAC\',\'EST\',\'FISH\',\'MUTANT\',\'LOCUS";
     # $types =  $types.",\'".$anon_type.",\'".$gene_type .",\'".$est_type.",\'".$bac_type.",\'".$fish_type."\'";
     if( ( !(defined $Q->param("OID")) ) || ($Q->param("OID") eq '') ) { 
         ### should I parse it as  ZDB-type-date-number  ???
@@ -317,7 +317,7 @@
       } 
       $sm_lg = $lg;
       #$note = $note . "Arrived from somewhere that resolves to marker $zdbid on $lg <p>\n"; 
-      #$note = $note . "Will look for $types on $panels_string<p>\n";
+      $note = $note . "Will look for $types on $panels_string<p>\n";
       
       ### find closest markers to zdbid on given panels
       ### expects globals  $types and  @panels to exist
@@ -1396,17 +1396,17 @@ sub  get_OIDs_abbrev{
     ### then on the whole db.
     my $count = 0;  my $array_ref = '';
     if( (defined $lg) && $lg && ($lg ne "??") && ($lg > 0) && ($lg <= 25) ) {
-      #$note = $note .  "Is |$marker| exactly unique on |$panel| |$lg| officially?<p>\n ";
+      $note = $note .  "Is |$marker| exactly unique on |$panel| |$lg| officially?<p>\n ";
       $sql = "SELECT UNIQUE zdb_id, or_lg FROM  zmap_pub_pan_mark  ".      
 	  "WHERE mname  = \'$marker\' AND panel_abbrev in (\'$panel\') ".
       "AND mtype IN (\'$types\') AND or_lg =  \'$lg\'; ";
     } elsif( defined  $panel) {
-      #$note = $note .  "Is |$marker| exactly unique on |$panel| offically?<p>\n ";
+      $note = $note .  "Is |$marker| exactly unique on |$panel| offically?<p>\n ";
       $sql = "SELECT UNIQUE zdb_id, or_lg FROM zmap_pub_pan_mark ".
 	  "WHERE mname  = \'$marker\' AND panel_abbrev in (\'$panel\') ".
       "AND mtype IN ( \'$types\' ); ";
     } else  {
-      #$note = $note . "Is |$marker| exactly unique in ZFIN officially?<p>\n ";
+      $note = $note . "Is |$marker| exactly unique in ZFIN officially?<p>\n ";
       $sql = "SELECT UNIQUE zdb_id, or_lg FROM zmap_pub_pan_mark ".
 	  "WHERE mname  = \'$marker\' AND mtype IN ( \'$types\' ) ;";	        		
     }
