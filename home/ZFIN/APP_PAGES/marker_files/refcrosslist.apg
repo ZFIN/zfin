@@ -1,0 +1,82 @@
+<!-- FILE: refcrosslist.html.  Just provides a listing of all panels in ZFIN -->
+
+
+<!-- Toss navigator tile -->
+<?MISQL SQL="select WebExplode(object,'page_title=List Panels') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+<body bgcolor="#e5e5e5"  TEXT="black">
+<basefont COLOR="#000000" size=2>
+
+<center>
+<font size=5><b>Zebrafish Mapping Panels: Summary listing</b></font>
+<br>
+(Click on individual panels for details)
+</center>
+<p>
+<b><U>ACTIVE PANELS</u></b>
+<TABLE width=100% cellpadding=4 cellspacing=0 border=0>
+
+<?MIVAR NAME=$last>NULL<?/MIVAR>
+<?MIVAR NAME=$count>0<?/MIVAR>
+<?MIVAR NAME=$clr_cnt>0<?/MIVAR>
+<?MIVAR NAME=$line_clr>#e5e5e5<?/MIVAR>
+<?MIVAR NAME=$lasttype><?/MIVAR>
+
+<?MISQL SQL="select a.zdb_id,name,panel_date,ptype,mtype,a.abbrev,count(*)::integer from panels a,paneled_markers b where a.zdb_id=b.target_id group by name,panel_date,ptype,a.zdb_id,mtype,a.abbrev order by ptype,name;">
+
+
+
+$(IF,$(AND,$(NC,$last,$1),$(NC,$last,NULL)),"</TD><TD><font size=2><b>Total markers on panel:</b> "$count"</TD></TR>")
+
+$(IF,$(NC,$last,$1),$(SETVAR,$count,0))
+$(IF,$(NC,$last,$1),$(SETVAR,$clr_cnt,$(+,$clr_cnt,1)))
+
+$(SETVAR,$color,$(/,$clr_cnt,2))
+$(SETVAR,$line_clr,$(IF,$(!=,$color,$(FIX,$color)),#FCCE64,#e5e5e5))
+
+$(IF,$(NC,$4,$lasttype),"<TR><TD><font size=2>&nbsp;</TD></TR><TR bgcolor="#c4c4c4"><td colspan=2><b>"$4" Panels</b></TD></TR>")
+$(IF,$(NC,$last,$1),"<TR bgcolor="$line_clr"><TD><font size=3><A HREF=/cgi-bin_B/webdriver?MIval=aa-crossview.apg&OID="$1">"$2" ("$6")</A></TD><TD><font size=2><b>Type:</B> "$4"</TD></TR><TR bgcolor="$line_clr"><TD><font size=2><b>Marker types on panel:</b> "$5)
+
+$(SETVAR,$count,$(+,$count,$7))
+$(IF,$(EC,$last,$1),","$5)
+$(SETVAR,$last,$1)
+$(SETVAR,$lasttype,$4)
+<?/MISQL>
+
+<?MIVAR>
+</TD><TD><font size=2><b>Total markers on panel:</b> $count</TD></TR>
+<?/MIVAR>
+
+</TABLE>
+<p>
+
+<?MISQL SQL="select count(*)::integer from panels where status='incomplete';"><?/MISQL>
+
+<?MIBLOCK COND="$(>,$1,0)">
+<hr width=80%>
+<p>
+<b><U>PANELS UNDER DEVELOPMENT</U></b>
+<p>
+<TABLE width=100% cellpadding=4 cellspacing=0 border=0>
+
+<?MIVAR NAME=$last>NULL<?/MIVAR>
+<?MIVAR NAME=$count>0<?/MIVAR>
+<?MIVAR NAME=$clr_cnt>0<?/MIVAR>
+<?MIVAR NAME=$line_clr>#e5e5e5<?/MIVAR>
+
+<?MISQL SQL="select zdb_id,name,panel_date,ptype,abbrev from panels where status='incomplete';">
+
+$(SETVAR,$clr_cnt,$(+,$clr_cnt,1))
+
+$(SETVAR,$color,$(/,$clr_cnt,2))
+$(SETVAR,$line_clr,$(IF,$(!=,$color,$(FIX,$color)),#FCCE64,#e5e5e5))
+
+<TR bgcolor=$line_clr><TD><font size=3><A HREF=/cgi-bin_B/webdriver?MIval=aa-crossview.apg&OID=$1>$2 ($5)</A></TD><TD><font size=2><b>Type:</B> $4</TD></TR>
+
+<?/MISQL>
+
+</TABLE>
+
+<?/MIBLOCK>  <!-- if there are undisplayed panels -->
+
+</HTML>
