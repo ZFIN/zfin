@@ -1,65 +1,38 @@
-#!/private/bin/perl -wT # changed tec 01-18-01
-#! /local/bin/perl
-#  Call the regen_genomics () function and return its output to our caller.
-#  This program is required because the regen_genomics () function contains
-#  SQL calls that are not permitted in a SQL function called from within
-#  the WebBlade.  This program adds the necessary extra level of indirection.
-#
-# 2000/10/05 DPC: This file was reworked in preparation for genericizing it.
-#
-
+#!/private/bin/perl -wT 
+{
+use CGI  qw / :standard/;
+use CGI::Carp 'fatalsToBrowser';
+use DBI;
+$CGI::POST_MAX=1024;    # max 1K posts
+$CGI::DISABLE_UPLOADS = 1;    # no uploads 
+my $q = new CGI();
 $ENV{"INFORMIXDIR"}      = "<!--|INFORMIX_DIR|-->";
 $ENV{"INFORMIXSQLHOSTS"} = "$ENV{INFORMIXDIR}/etc/<!--|SQLHOSTS_FILE|-->";
 $ENV{"ONCONFIG"}         = "<!--|ONCONFIG_FILE|-->";
 $ENV{"INFORMIXSERVER"}   = "<!--|INFORMIX_SERVER|-->";
 
-$dbaccess = "$ENV{INFORMIXDIR}/bin/dbaccess";
-
-@dbout = `$dbaccess - <!--|ROOT_PATH|-->/home/ZFIN/APP_PAGES/SQL_docs/regen-genomics-call.sql 2>&1`;
-
-# Use the following statement (and comment out the one above) for a quick 
-# test of code that executes when the SQL script succeeds.
-#	@dbout = (' 1 ', '1 row(s) retrieved.');
-# Use the following statement (and comment out the dbaccess call above) for a 
-# quick test of code that executes when the SQL script fails.
-#	@dbout = (' 1 ', '0 row(s) retrieved.');
-
-local ($result,$rows)= (0, 0);
-foreach $_ (@dbout)
-{
-    $result = $1 if /^\s*([01])\s*$/;
-    $rows = 1 if /^\s*1 row\(s\) retrieved.\s*$/i;
+my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->', '', '', {AutoCommit => 1, RaiseError => 1})
+  || die "Failed while connecting to <!--|DB_NAME|-->  \n $DBI::errstr \n";
+my $sth = $dbh->prepare('execute function regen_genomics()'); 
+my $rc = $sth->execute();
+my @row = $sth->fetchrow;
+print $q->header . "\n";   
+print $q->start_html(-TITLE => 'Regenerating genomics tables', -bgcolor=> 'white')."\n";
+print $q->h1("Regenerating genomics tables");
+if( ($rc =~ /0E0/ ) && ($row[0] == 1) ){
+	print "<fint color=green>The tables were successfully regenerated.</font>\n";
 }
-
-print <<"End";
-Content-type: text/html
-
-<html>
-<head>
-<META HTTP-EQUIV="EXPIRES" CONTENT="Fri Feb 04 09:35:25 PDT 2000">
-
-<title>Regenerating genomics tables</title>
-</head>
-<body>
-<h1>Regenerating genomics tables</h1>
-End
-    
-if ($result && $rows)
-{
-    print "The tables were successfully regenerated.\n";
-}
-else
-{
-    print "An error occurred regenerating the tables.  See following output:<p>\n";
-    print join ("<BR>\n",@dbout);
-}
-print <<"End2";
-<form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
-<input type=submit name=action value="Return to ZFIN home page">
-<input type=hidden name=MIval value=aa-ZDB_home.apg>
-</form>
-</body>
-</html>
-End2
-
+else{
+    print "<font color=red>An error occurred regenerating the tables.</font>\n";
+}   
+print $q->startform(
+    -method=> POST,
+    -enctype=> "application/x-www-form-urlencoded",
+    -name=>   "Return to ZFIN home page",
+    -action=> "/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"
+); 
+print $q->hidden("MIval","aa-ZDB_home.apg");
+print $q->end_form(); 
+print $q->end_html;
 exit;
+}
