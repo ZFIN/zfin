@@ -442,6 +442,14 @@
 			       name="stored_procedure" 
 			       value="regen_genomics">
 		      </form>
+		      <form action='/<!--|CGI_BIN_DIR_NAME|-->/runSPL.cgi' 
+			    method="POST" >
+			<input type=submit value="Regen Orthologue Display data">
+			<input type=hidden 
+			       name="stored_procedure" 
+			       value="regen_oevdisp">
+		      </form>
+
 		      </center>
 		    </DIV>
 
