@@ -639,22 +639,25 @@ Accession:<input type=text size=15 name=seq_acc> <input type=button value="Add i
       and a.linked_recid = '$OID' 
       and b.db_significance = 1
     order by a.DB_name desc, acc_num;">
-  $(IF,$(=,$MI_CURRENTROW,1),<TD align=center>)
+  $(IF,$(=,$MI_CURRENTROW,1),<TD align=left>)
   <li>
   $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$3"')>")
   <A HREF="$2">$1:$3</A>
   $(SETVAR,$lastitem,$1)
 <?/MISQL>
+
 <?MIVAR> $(IF,$(!=,$MI_CURRENTROW,0),</TD>) <?/MIVAR>
+
 <?MISQL SQL="
-  select a.DB_name, conc(conc(b.DB_query,a.acc_num),b.url_suffix), acc_num 
+  select a.DB_name, conc(conc(b.DB_query,a.acc_num),b.url_suffix), 
+         acc_num, b.db_significance
     from db_link a, foreign_DB b 
     where a.DB_name = b.DB_name
       and a.linked_recid = '$OID' 
-      and b.db_significance = 2
-    order by a.DB_name,acc_num;">
+      and b.db_significance > 1
+    order by b.db_significance,a.DB_name,acc_num;">
   $(IF,$(AND,$(NC,$lastitem,$1),$(>,$MI_CURRENTROW,1)),</TD>)
-  $(IF,$(NC,$lastitem,$1),<TD align=center>)
+  $(IF,$(NC,$lastitem,$1),<TD align=left>)
   <li>
   $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$3"')>")
   <A HREF="$2">$1:$3</A>
@@ -712,6 +715,7 @@ Name:<input type=text size=15 name=oname> Abbrev:<input type=text size=5 name=oa
     where a.zdb_id = b.linked_recid 
       and b.DB_name = c.DB_name 
       and c_gene_id = '$OID' 
+      and c.db_significance < 10
     order by organism, c.db_significance, b.db_name;">
   $(IF,$(AND,$(NC,$lastitem,$3),$(>,$MI_CURRENTROW,1)),</TD></TR><TR>)
   $(IF,$(AND,$(NC,$lastitem,$3),$(XST,$UPDATE)),"<TD align=center><input type=button value=edit onClick=edit_ortho('"$8"')></TD>")
