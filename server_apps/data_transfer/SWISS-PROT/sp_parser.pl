@@ -12,46 +12,36 @@ use Cwd;
 my $cwd = getcwd();
 my $first = 1;       #indicate the beginning of DR(the end of CC)
 
-my (@zdb_gname,@ext_dr, @cc, $cc, @de, $de, @sp_ac, $sp_ac, @zdbid_spac, $desc, $gb_acc, $gp_acc, @embl_gb, @embl_gp, $embl_gb, $embl_gp, $version);
+my (@ext_dr, @cc, $cc, @de, $de, @sp_ac, $sp_ac, $sp_ac_list, $embl, $gene, $single_gene, @gene_array, $kw);
    
 
 # Files to be loaded into zfin.
 open DBLINK, ">dr_dblink.unl" or die "Cannot open dr_dblink.unl:$!";
 open ACC, ">ac_dalias.unl" or die "Cannot open ac_dalias.unl:$!";
-open GNAME, ">gn_dalias.unl" or die "Cannot open gn_dalias.unl:$!";
+#one sp record might be associated with >1 genes, don't process GN lines
+#open GNAME, ">gn_dalias.unl" or die "Cannot open gn_dalias.unl:$!";
 open COMMT, ">cc_external.unl" or die "Cannot open cc_external.unl:$!";
 open KEYWD, ">kd_spkeywd.unl" or die "Cannot open kd_spkeywd.unl:$!";
-#open DESC, ">sp_desc.unl";
-#open LEN, ">sp_len.unl";
-#open DESCNEW, ">spdesc.unl";
-#open GENELEN, ">splen.unl";
-#open ECNUM, ">ecgene.unl";
-#open SPGO, ">spgo.unl";
 
 my $dbname = "<!--|DB_NAME|-->";
 my $username = "";
 my $password = "";
 
 
-
 my $dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password) 
           or die "Cannot connect to Informix database: $DBI::errstr\n";
 
 while (<>) {
- if (/^ID\s+(.*)/) {
-     $id=$1;
-     @sp_length = split(/PRT; /,$id);
-     $length = $sp_length[1] ;             #chop period sign
-     @len=split(' ',$length);
-     $len=$len[0];
-     #print LEN "$len|\n";
+ #ID   O12938      PRELIMINARY;      PRT;   412 AA.
+ if (/^ID.*\s+(\d+)\sAA\./) {
+     $len=$1;
      next;
   }
   
   #AC   O12990; O73880;
   #AC   O42345;
   if (/^AC\s+(.*)/) {
-      $sp_ac = $sp_ac.$1.' ';
+      $sp_ac_list = $sp_ac_list.$1.' ';
       next;
   }
 
@@ -60,17 +50,21 @@ while (<>) {
   #GN   Name=otx1l; Synonyms=otx3;
   #   or
   #GN   Name=pax2a; Synonyms=pax2.1, noi, paxzf-b;
-  if (/^GN\s+(.*)/) {
-    $gn = $1;  chop($gn);              #chop period sign
-    if ($gn =~ /Name=/i) {
-	if ($gn =~ /Synonyms=(.*)/i) {
-	    $gn = $1;
-	    @sp_gname = split(/,\s+/i, $gn);
-	}
-    }else {
-	@sp_gname = split(/\s+or\s+/i, $gn); 
-    }
-    next;
+  #if (/^GN\s+(.*)/) {
+  #  $gn = $1;  chop($gn);              #chop period sign
+  #  if ($gn =~ /Name=/i) {
+  #	if ($gn =~ /Synonyms=(.*)/i) {
+  #	    $gn = $1;
+  #	    @sp_gname = split(/,\s+/i, $gn);
+  #	}
+  #  }else {
+  #	@sp_gname = split(/\s+or\s+/i, $gn); 
+  #  }
+  #  next;
+  #}
+  # skip unused lines (RX, RL would present in rare cases)
+  if (/^GN/ || /^RX/ || /^RL/) {
+     next;
   }
   
   #DE   Tyrosine-protein kinase Jak1 (EC 2.7.1.112) (Janus kinase 1) (Jak-1).q
@@ -88,68 +82,75 @@ while (<>) {
   #CC   -!- SIMILARITY: CONTAINS 2 LIM DOMAINS. THE LIM DOMAIN BINDS 2 ZINC
   #CC       IONS.
   if (/^CC\s+-!-\s(.*)/) {
-    push (@cc, $cc);    #put each item of the comments into array     
-    $cc = $1.' ';       #concatenate and form one item
-    next;
+      # put each item of the comments into array   
+      push (@cc, $cc) if ($cc && $cc!~/CAUTION/ && $cc!~/ALTERNATIVE PRODUCTS/); 
+      $cc = $1;      
+      next;
   }
   if (/^CC\s+(.*)/) {   
-    $cc = $cc.$1.' ';
-    next;
+      $cc = $cc.' '.$1;       #concatenate and form one item  
+      next;
   }
  
   #DR   EMBL; U71094; AAC60366.1; -.	ZDB-GENE-990415-235  
-  #DR   ZFIN; ZDB-GENE-020711-2; lmyc1.              
+  #DR   ZFIN; ZDB-GENE-020711-2; lmyc1.        
   #DR   InterPro; IPR004321; RAG2.
   #DR   Pfam; PF03089; RAG2; 1.
+  # ok records from the sp_check always get one gene id, either in the 
+  # DR EMBL line as a result of GP match or in a single line as a result 
+  # of GB match.
+  # ok records from curators have at lease one DR ZFIN lines 
+
+  if (/^DR\s+EMBL/) {
+      @dr = split;
+      $_ = pop(@dr);         #get zfin accession number for the SP record 
+      $single_gene = $_ if /ZDB/ ;
+      next;
+  }
+ 
+  #\t\tGB match: ZDB-GENE-*-*     #sp_check.pl write out this line
+  if (/GB match: (.*)/) {
+      $single_gene = $1; 
+      next;
+  }
+
+  if (/^DR\s+ZFIN;\s+(.+);\s/ ) {
+      push @gene_array, $1;
+      next;
+  }
+ 
+  # if there is a EMBL match, and only one ZFIN line, use the EMBL match. 
+  if (@gene_array < 2 && $single_gene) {
+     $gene_array[0] = $single_gene;
+  }
+
   if (/^DR/ ) {
       @dr = split;
       $dbname = $dr[1]; chop($dbname);
       $acc_num = $dr[2]; chop($acc_num);
-      
-      if ($first){             #first DR is always EMBL record with ZDB id
-	  if ($cc) { push (@cc, $cc);}
-	  $first = 0;
-      }
-      if ($dbname eq "EMBL") {
-	  $gb_acc = $acc_num;
-	  $gp_acc_ver = $dr[3]; chop($gp_acc_ver);
-	  ($gp_acc, $version) = split (/\./, $gp_acc_ver);
-	  
-	  $_ = pop(@dr);     #get zfin accession number for the SP record  
-	  if(/ZDB/ ){
-	      $gene= $_;
-	  }
-	  push (@embl_gb, $gb_acc) if ($gb_acc && $gb_acc ne '-');
-	  push (@embl_gp, $gp_acc) if ($gp_acc && $gp_acc ne '-');
-	  next;
-      }
-      if (!$gene && ($dbname eq "ZFIN")) {
-	  $gene = $acc_num;
-      }
-      if ($dbname ne "ZFIN") {
-	  print DBLINK "$gene|$dbname|$acc_num| |\n";
-	  next;
-      }
-  }  
 
- #\t\tGB match: ZDB-GENE-*-*     #sp_check.pl write out this line
- if (/GB match: (.*)/) {
-    $gene = $1;   
- }
+      foreach $gene (@gene_array) {
+	  print DBLINK "$gene|$dbname|$acc_num||\n";
+      }
+      next;
+  }  
 
   #KW   DNA-binding; Nuclear protein; Transcription regulation; Activator;
   #KW   Neurogenesis; Developmental protein; Differentiation.
-  if (/^KW\s+(.*)/) {
-    $kw = $1;  chop($kw);
+  if (/^KW\s+(.*)\./) {
+    $kw = $1;
     @sp_kw = split(/; /, $kw);
     while ($sp_kw = shift @sp_kw) {
-      print KEYWD "$gene|$sp_kw|\n";
+	foreach $gene (@gene_array) {
+	    print KEYWD "$gene|$sp_kw|\n";
+	}
     }
     next;
   } 
   if(/\/\//) {
-      
-    @sp_ac = split(' ',$sp_ac); 
+
+    if ($cc) { push (@cc, $cc);}        # add in the last cc line
+    @sp_ac = split(' ',$sp_ac_list); 
     $prm_ac = shift @sp_ac;
     chop $prm_ac;
     while ($sp_ac = shift @sp_ac){
@@ -158,66 +159,31 @@ while (<>) {
     }  
  
     if (@cc) {
-     
-      open CC, ">$cwd/ccnote/$prm_ac" or die "Cannot open the $prm_ac file:$!";
-      print CC "@cc";
-      close CC;
-      print COMMT "$gene|$cwd/ccnote/$prm_ac|\n";  
-    }
-    
-    print DBLINK "$gene|SWISS-PROT|$prm_ac|$len|\n";
-    #print SPGO "$gene|$prm_ac|\n";
 
-    while ($embl_gb = shift @embl_gb) {
-      print DBLINK "$gene|Genbank|$embl_gb| |\n";
+      foreach $gene (@gene_array) {
+	  # join with \\n to enable the load.
+	  print COMMT "$gene|$prm_ac|".join("<br>",@cc)."|\n";  
+      }
     }
 
-    while ($embl_gp = shift @embl_gp) {
-      print DBLINK "$gene|GenPept|$embl_gp| |\n";
+   foreach $gene (@gene_array) {
+
+	print DBLINK "$gene|SWISS-PROT|$prm_ac|$len|\n";
     }
-       
-    my $get_abbrv = $dbh->selectrow_array("
-                 select mrkr_abbrev from marker 
-                 where mrkr_zdb_id = \"$gene\"
-                " );    
-    push (@zdb_gname, $get_abbrv);
-    
-    my $sth = $dbh->prepare("
-                  select dalias_alias from data_alias
-                  where dalias_data_zdb_id = ?
-                " ); 
-    $sth->execute( $gene);
-    while ( my $get_alias = $sth->fetchrow_array) {
-      	push (@zdb_gname, $get_alias);
-      }
- 
-    #print "@zdb_gname\n\n";
-    @temp_gname = @zdb_gname;
-    while ($sp_gname = shift @sp_gname) {
-      $new = 1;
-      while ($zdb_gname = shift @zdb_gname) {
-	#print "sp: $sp_gname#, zdb: $zdb_gname#\n";
-	if (lc($sp_gname) eq lc($zdb_gname) ) {
-	  $new = 0;
-	  last;
-	}
-      }
-      @zdb_gname = @temp_gname;
-      if ($new) {
-	print GNAME "$prm_ac|$gene|$sp_gname|\n";
-      }
-    }
-    #print DESC "$de|$gene|\n"; 
-    #print GENELEN "$gene|$len|\n";
+
     if (length($ecnumber)>0){
-       print DBLINK "$gene|EC-ENZYME|$ecnumber| |\n"; 
+	foreach $gene (@gene_array) {
+	    print DBLINK "$gene|EC-ENZYME|$ecnumber||\n"; 
+	}
     }
+
     # reinitiate the variables for loop
-    $gn=''; $cc=''; $dbname=''; $gb_acc=''; $gp_acc=''; $kw=''; $gene=''; $prm_ac = '';
-    @cc = ();  @dr = (); @zfin = ();@zdb_gname = (); @info = (); @de=();$de='';
-    @sp_ac=(); $sp_ac=''; $ecnumber = ''; $acc_num = '';
-    @embl_gb = (); @embl_gp = (); $embl_gb =''; $embl_gp = '';
+    $cc=''; $kw='';  $prm_ac = '';
+    $gene=''; $single_gene = ''; @gene_array = (); $embl = '';
+    @cc = ();  @dr = (); @de=();$de='';
+    @sp_ac=(); $sp_ac=''; $sp_ac_list=''; $ecnumber = ''; $acc_num = '';
     $first = 1;$one = 1;
   }
 }
 
+exit;
