@@ -118,7 +118,7 @@ Variables expected:
 	       from marker a, all_map_names b
 		 where a.mrkr_type='$mtype' 
 		   and a.mrkr_zdb_id = b.allmapnm_zdb_id 
-		   and b.allmapnm_name like '%$(LOWER,$merge)%' 
+		   and b.allmapnm_name_lower like '%$(LOWER,$merge)%' 
 		   order by a.mrkr_abbrev;">
 	  <TR>
 	    <TD>
