@@ -41,7 +41,7 @@ create temp table probes_tmp (
 )
 
 	}
-	buffer: fix-date %probes.csv  if buffer [write %probes.csv buffer] 
+;	buffer: fix-date %probes.csv  if buffer [write %probes.csv buffer] 
   
 	comment{
 		Arrrg! have to pull the blast result out into a file and load it as a clob
@@ -73,7 +73,7 @@ create temp table probes_tmp (
 		;print ["row 5" row/5 ]
 		;foreach field row [append line (join field ["|"])] ;what the h_ll! puts the blast back in?
  	   ;hack 
-		line: rejoin [row/1 "|" row/2 "|" row/3 "|" row/4 "|" row/5 "|" row/6 "|" row/7 "|" row/8 "|" row/9 "|" row/10 "|" row/11 "|" row/12 "|" row/13 "|" row/14 "|" row/15 "|" row/16 "|" row/17 "|" row/18 "|" row/19 "|" row/20 "|" row/21 "|" ]  	   replace/all line "<PIPE73>" "\|"
+		line: rejoin [row/1 "|" row/2 "|" row/3 "|" row/4 "|" row/5 "|" row/6 "|" row/7 "|" row/8 "|" row/9 "|" row/10 "|" row/11 "|" row/12 "|" row/13 "|" row/14 "|" row/15 "|" row/16 "|" row/17 "|" row/18 "|" row/19 "|" row/20 "|"]  	   replace/all line "<PIPE73>" "\|"
 		write/append %probes.unl rejoin [line newline]
   
 		replace/all buf "<PIPE73>" "|"	
@@ -109,7 +109,7 @@ create temp table probes_tmp (
 		Description
 		modified
 	}
-	buffer: fix-date %expression.csv
+;	buffer: fix-date %expression.csv
 	if buffer [write %expression.csv buffer]
 	buffer: csv2pipe %expression.csv
 	;;; trim extranous spaces
@@ -122,7 +122,7 @@ create temp table probes_tmp (
 
 	write %expression.unl buffer
 
-   ;;;;;;;;;;;;;;;;
+        ;;;;;;;;;;;;;;;;
 	;;; KEYWORDS ;;;
 	;;;;;;;;;;;;;;;;
 	comment {
@@ -133,7 +133,7 @@ create temp table probes_tmp (
 		Keyword
 		modified
 	}
-	buffer: fix-date %keywords.csv
+;	buffer: fix-date %keywords.csv
 	if buffer [write %keywords.csv buffer]
 	buffer: csv2pipe %keywords.csv
 	;;; trim extranous spaces
@@ -147,12 +147,36 @@ create temp table probes_tmp (
 	]
 	foreach [cut paste] changes [replace/all buffer cut paste]
 
-	 
-
-
-
+	
 	buffer: map-stages buffer   
 	write %keywords.unl buffer
+
+
+        ;;;;;;;;;;;;;;;
+	;;; AUTHORS ;;;
+	;;;;;;;;;;;;;;;
+	comment {
+		authors_csv
+		------------
+		EST
+		Author
+		Modified		
+	}
+	buffer: fix-date %authors.csv
+	if buffer [write %authors.csv buffer]
+	buffer: csv2pipe %authors.csv
+	;;; trim extranous spaces
+	changes: [
+		"| "   "|" 
+		" |"   "|" 
+		"Obrecht-Pflumio"	"Pflumio"  
+		"Fuerthauer"		"Fürthauer"
+	]
+
+	foreach [cut paste] changes [replace/all buffer cut paste]
+	
+	write %authors.unl buffer
+
 	
 	;;;;;;;;;;;;;
 	;;; IMAGE ;;;
@@ -170,7 +194,7 @@ create temp table probes_tmp (
 		Primary publication - text citation (optional)
 		modified
 	}
-	buffer: fix-date %images.csv
+;	buffer: fix-date %images.csv
 	if buffer [write %images.csv buffer]
 	buffer: csv2pipe %images.csv
 	;;; trim extranous spaces
