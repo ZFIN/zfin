@@ -106,6 +106,10 @@ Variables Expected:
 <?MIVAR NAME=$fimg_preparation>$10<?/MIVAR>
 <?MIVAR NAME=$full_fish_name>$11<?/MIVAR>
 
+<!--for the purpose of having consistant parameter names when pass to showpub.apg-->
+<?MIVAR NAME=$name>$full_fish_name<?/MIVAR>
+<?MIVAR NAME=$title>Stock<?/MIVAR>
+<?MIVAR NAME=$abbrev><?/MIVAR>
 
 <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
     
@@ -621,18 +625,23 @@ Variables Expected:
 
 	<!-- Throw up the publication info, using the standard display format -->
 
-	<?MIVAR>
-	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=fish_image"><b>Publications</b></A>
 	<?MISQL SQL="
   		select count(*) 
   		from record_attribution
  		 where recattrib_data_zdb_id = '$OID'
    		 and get_obj_type(recattrib_source_zdb_id) = 'PUB';
   	">
-	&nbsp; ($(FIX,$1)) 
+	
 	<?/MISQL>
-	<?/MIVAR>
-
+	<?MIBLOCK COND="$(>,$1,0)">
+	  <?MIVAR>
+	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=fish_image&title=$title&name=$(URLENCODE,$name)"><b>Publications</b></A>
+	  <?/MIVAR>
+	<?MIELSE>
+	  <b>Publications</b>
+	<?/MIBLOCK>
+	<?MIVAR>&nbsp; ($(FIX,$1))<?/MIVAR>
+ 
       </form>
     <?/MIBLOCK>  <!-- ends cond AUTHORIZED -->
 <?/MIBLOCK>
