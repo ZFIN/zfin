@@ -16,8 +16,8 @@
 # but in actuallity, if you are not running GNU make then the make will
 # choke on the ifneq statement.
 
-ifneq ($(MAKE),gmake)
- ifneq ($(MAKE),gnumake)
+ifneq (,$(findstring gmake,$(MAKE)))
+ ifneq (,$(findstring gnumake,$(MAKE)))
 MakeVersionCheck:
 	ERROR: Makefiles only compatible with GNU make.  Use gmake or gnumake.
  endif
@@ -121,19 +121,19 @@ APGPREFIX = aa-
 
 # Preserve permissions on copies to target or staging directories.
 
-TARGET_CP  = cp -fp
-STAGING_CP = cp -fp
+TARGET_CP  = /bin/cp -fp
+STAGING_CP = /bin/cp -fp
 
 # Touch call needed after the _CP calls because _CP creates 
 # files with exactly the same timestamp as the source file, and that
 # confuses gmake into thinking it needs to remake the file the next
 # time around.
 
-TOUCH = touch
+TOUCH = /bin/touch
 
 # Any created dirs should be created with 775 perms.
 
-TARGET_MKDIR = mkdir -pm 775
+TARGET_MKDIR = /bin/mkdir -pm 775
 
 LOADAPPPAGE = /research/zcentral/Commons/bin/loadapppage.pl
 UNLOADAPPPAGE = /research/zcentral/Commons/bin/unloadapppage.pl
