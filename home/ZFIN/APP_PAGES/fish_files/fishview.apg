@@ -126,7 +126,7 @@ Variables Expected:
 	select name, a.abbrev, initcap(line_type), mother, father, 
 	       discoverer, lab, HTML_breaks(phenotype), segregation, 
 	       orig_crossnum, HTML_breaks(a.comments), fish_extinct, a.owner, 
-	       pheno_keywords, allele, locus, b.abbrev, b.cloned_gene 
+	       lower(pheno_keywords), allele, locus, b.abbrev, b.cloned_gene 
 	  from fish a, OUTER locus b
 	  where a.zdb_id = '$OID'
 	    and b.zdb_id = a.locus;">
@@ -134,7 +134,7 @@ Variables Expected:
 
       <?MIVAR NAME=$name>$1<?/MIVAR>
       <?MIVAR NAME=$abbrev>$2<?/MIVAR>
-      <?MIVAR NAME=$line_type>$3<?/MIVAR>
+      <?MIVAR NAME=$title>$3<?/MIVAR>
       <?MIVAR NAME=$mother>$4<?/MIVAR>
       <?MIVAR NAME=$father>$5<?/MIVAR>
       <?MIVAR NAME=$discoverer>$6<?/MIVAR>
@@ -151,7 +151,7 @@ Variables Expected:
       <?MIVAR NAME=$locus_abbrev>$17<?/MIVAR>
       <?MIVAR NAME=$cloned_gene>$18<?/MIVAR>
 
-     <?MIVAR NAME=$rec_title>Record for $line_type $abbrev<?/MIVAR>
+     <?MIVAR NAME=$rec_title>Record for $title $abbrev<?/MIVAR>
 
 
       <?MIBLOCK COND="$(XST,$UPDATE)">
@@ -230,7 +230,7 @@ Variables Expected:
 	<?/MIVAR>
 
 	<i><font size = +1>
-	<?MIBLOCK COND="$(EC,$line_type,mutant)">
+	<?MIBLOCK COND="$(EC,$title,mutant)">
 	  <?MIVAR>
 	   <b> <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$locus"> $name </A></b>
 	  <?/MIVAR>
@@ -349,7 +349,7 @@ Variables Expected:
 
 	<!-- Suppress images if fish is wildtype and NOT doing an update -->
 
-	<?MIBLOCK COND=$(OR,$(EC,$line_type,mutant),$(XST,$UPDATE))>
+	<?MIBLOCK COND=$(OR,$(EC,$title,mutant),$(XST,$UPDATE))>
 	  <?MIVAR NAME=$MI_NOVALUE>empty<?/MIVAR>
 	  <?MIVAR NAME=$old_lo_stg_hours_start><?/MIVAR>
 	  <?MIVAR NAME=$old_hi_stg_hours_start><?/MIVAR>
@@ -473,7 +473,7 @@ Variables Expected:
 	        <INPUT TYPE=button value="Update" onClick="doit('phenotype','textarea','Phenotype+description')"> 
 	<?/MIVAR> 
 
-	<b><?MIVAR>$(IF,$(EC,$line_type,mutant),Phenotype,Description)<?/MIVAR>
+	<b><?MIVAR>$(IF,$(EC,$title,mutant),Phenotype,Description)<?/MIVAR>
 	      :</b> <br>
 	<?MIVAR COND=$(NE,$phenotype,NULL)> $phenotype <?/MIVAR>
 	<?MIVAR COND=$(EC,$phenotype,NULL)>NONE GIVEN. <?/MIVAR>
@@ -588,7 +588,7 @@ Variables Expected:
 	</TABLE>
 
 	<!-- This next part only for mutants! -->
-	<?MIBLOCK COND="$(EC,$line_type,mutant)">
+	<?MIBLOCK COND="$(EC,$title,mutant)">
 
 
 	  <HR width=85%>
