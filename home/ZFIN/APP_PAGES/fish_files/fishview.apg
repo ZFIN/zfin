@@ -961,6 +961,22 @@ Variables Expected:
     		 	  and recattrib_source_zdb_id = p.zdb_id
      		  	  and p.jtype not in ('Curation', 'Unpublished')
 		 UNION
+		 select distinct  p.zdb_id
+			  from fish_search f, mapped_deletion m, record_attribution,publication p 
+			where f.fish_id = '$OID'
+			  and f.allele = m.allele
+			  and recattrib_data_zdb_id  = m.mapdel_zdb_id
+    		 	  and recattrib_source_zdb_id = p.zdb_id
+     		  	  and p.jtype not in ('Curation', 'Unpublished')
+		 UNION
+		 select distinct  p.zdb_id
+			  from fish_search f, mapped_deletion m, record_attribution,publication p 
+			where f.fish_id = '$OID'
+			  and f.locus = m.allele
+			  and recattrib_data_zdb_id  = m.mapdel_zdb_id
+    		 	  and recattrib_source_zdb_id = p.zdb_id
+     		  	  and p.jtype not in ('Curation', 'Unpublished')
+		 UNION
  		 select distinct p.zdb_id
 			  from fish_search f,data_alias,record_attribution,publication p 
 			where f.fish_id = '$OID'
@@ -1021,14 +1037,32 @@ Variables Expected:
 
 
 	<?MISQL SQL="
-  	  select count(distinct zdb_id)::integer
-    		from record_attribution, publication
+	  select distinct p.zdb_id from 
+    		record_attribution, publication p
    	  where ($related_data_attrib_to_OID)
      	  and recattrib_source_zdb_id = zdb_id 
-     	  and jtype in ('Curation', 'Unpublished');
+     	  and jtype in ('Curation', 'Unpublished')
+	 UNION
+	  select distinct p.zdb_id from 
+	   fish_search f, column_attribution, publication p
+	   where f.fish_id = '$OID'
+	     and colattrib_data_zdb_id in (f.alt_zdb_id, f.locus, f.fish_id)
+	     and colattrib_source_zdb_id = zdb_id
+	     and jtype in ('Curation','Unpublished')
+	   into temp all_curation_pubs_temp with no log;
   	">
-  	  <?MIVAR NAME=$count_of_curation_pub>$1<?/MIVAR>
 	<?/MISQL>
+
+	<?MISQL SQL="select distinct count(zdb_id)::integer from all_curation_pubs_temp;">
+	  <?MIVAR NAME=$count_of_curation_pub>$1<?/MIVAR>
+	<?/MISQL>
+ 
+	<?MISQL SQL="
+ 	   -- insert (actually any statement will do) is necessary to avoid an error
+  	    insert into all_curation_pubs_temp (zdb_id) values (NULL);
+	    drop table all_curation_pubs_temp;">
+	<?/MISQL>
+ 	  
 	<?MIVAR NAME=$total_count>$(+,$count_of_real_pub,$count_of_curation_pub)<?/MIVAR>
 
 	<?MIBLOCK COND="$(OR,$(>,$total_count,0),$(XST,$UPDATE))">
