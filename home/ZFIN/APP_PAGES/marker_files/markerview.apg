@@ -409,13 +409,13 @@ Datablade documentation.
 <FONT size=+1>
 <?MIBLOCK COND="$(XST,$type_of_genedom)">
     	<?MIVAR NAME=$title>$marker_type_display Name<?/MIVAR>
-	<?MIVAR><b>$title: &nbsp;<i>$name</i></b><?/MIVAR>
+	<?MIVAR><b>$title: &nbsp;<i>$name</i></b><?/MIVAR><br>
 <?MIELSE>
     	<?MIVAR NAME=$title>$marker_type_display<?/MIVAR>
-	<?MIVAR><b>$title: &nbsp;$name </b><?/MIVAR>
+	<?MIVAR><b>$title: &nbsp;$name </b><?/MIVAR><br>
 <?/MIBLOCK>
 </FONT>
-<br>
+
 
 <!-- If gene, Display gene symbol. When update, add button in front.----->     
 <?MIVAR COND="$(AND,$(XST,$type_of_genedom),$(XST,$UPDATE))">
@@ -446,7 +446,7 @@ Datablade documentation.
     from data_alias
     where dalias_data_zdb_id = '$OID' and dalias_group = 'alias';">
 
-  <?MIVAR COND="$(=,$MI_CURRENTROW,1)">
+  <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(NXST,$UPDATE))">
     <b>Previous Names:</b>
   <?/MIVAR>
 
@@ -529,8 +529,9 @@ Datablade documentation.
   <?/MIBLOCK>
 	
 <?/MISQL>
-
-<br>
+<?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
+    <br>
+<?/MIVAR>
 <?/MIBLOCK> <?MICOMMENT> end display_sequence_similarity <?/MICOMMENT>
 
 
@@ -574,7 +575,7 @@ Datablade documentation.
 
 <?MISQL SQL="select * from marker_history where mhist_mrkr_zdb_id = '$OID'">
 <?/MISQL>
-<?MIVAR COND="$(AND,$(XST,$type_of_genedom),$(>,$MI_ROWCOUNT,0))"><font size=-1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-nomenview.apg&OID=$OID&abbrev=$abbrev$(IF,$(XST,$UPDATE),&UPDATE=1)">Nomenclature History</A></font><?/MIVAR>
+<?MIVAR COND="$(AND,$(XST,$type_of_genedom),$(>,$MI_ROWCOUNT,0))"><font size=-1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-nomenview.apg&OID=$OID&abbrev=$abbrev$(IF,$(XST,$UPDATE),&UPDATE=1)">Nomenclature History</A></font><br><?/MIVAR>
 
 <!---------------- end NOMENCLATURE HISTORY ------------------------> 
 
@@ -614,21 +615,19 @@ Datablade documentation.
   <?/MIVAR>
 
   <?MIVAR COND="$(>,$MI_CURRENTROW,0)">
-     <br><br>
      <b>Note:</b>$mrkrview_mrkr_comments
 	  <?MIVAR COND="$(XST,$UPDATE)">
 	  <INPUT TYPE=button value="Update Note" onClick="doit('mrkr_comments','textarea','Note')"> 
 	  <?/MIVAR> 
-  <br>
   <?/MIVAR>
 
-  <?MIVAR COND="$(<=,$MI_ROWCOUNT,0)">
+  <?/MISQL>
+
+ <?MIVAR COND="$(<=,$MI_ROWCOUNT,0)">
 	  <?MIVAR COND="$(XST,$UPDATE)">
 	  <INPUT TYPE=button value="Add New Marker Note" onClick="doit('mrkr_comments','textarea','Note')"> 
 	  <?/MIVAR> 
-  <br>
   <?/MIVAR>
-  <?/MISQL>
 
 <?/MIBLOCK>
 
@@ -923,7 +922,7 @@ Datablade documentation.
   <!-----------end of Gene Product Description ------->
 
 <?/MIBLOCK> <?MICOMMENT> marker is a gene ($type_of_genedom exists) <?/MICOMMENT>
-<p>
+
 <!------------------ end of GENE PRODUCT ---------------------->
 
 
