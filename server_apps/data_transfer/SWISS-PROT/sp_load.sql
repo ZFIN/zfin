@@ -38,7 +38,7 @@ begin work;
                db_name varchar(50),
                acc_num varchar(50),
                info varchar(80),
-	       dblink_zdb_id varchar(50),
+	       	   dblink_zdb_id varchar(50),
                acc_num_disp varchar(50),
                dblink_fdbcont_zdb_id varchar(50),
                length integer
@@ -47,21 +47,27 @@ begin work;
 
 	insert into pre_db_link (linked_recid,db_name,acc_num,length,info,acc_num_disp)     
 	       		select distinct *, today ||" Swiss-Prot",acc_num 
-			  from db_link_with_dups;
+			      from db_link_with_dups;
         
---!echo 'per curator's request, GenBank and GenPept accession are no longer loaded from SP file'
+-- per curator's request, GenBank and GenPept accession are no longer loaded from SP file
+-- due to additional entries for certain database, we need to specify the db types
 	update pre_db_link set dblink_fdbcont_zdb_id = 
 				(select fdbcont_zdb_id 
 				   from foreign_db_contains 
-				  where lower(db_name)=lower(fdbcont_fdb_db_name)); 
+				  where lower(db_name)=lower(fdbcont_fdb_db_name)
+                    and (  (fdbcont_fdbdt_super_type = "protein" 
+                            and fdbcont_fdbdt_data_type = "domain")
+                        or (fdbcont_fdbdt_super_type = "sequence" 
+                            and fdbcont_fdbdt_data_type = "Polypeptide")
+                        )
+				); 
 
---!echo 'GenBank has to be treated differently here since the type is unknown'	
 	delete from pre_db_link where exists (
 		select d.dblink_zdb_id
-		from db_link d
-		where pre_db_link.linked_recid=d.dblink_linked_recid
-                  and pre_db_link.acc_num=d.dblink_acc_num
-		  and pre_db_link.dblink_fdbcont_zdb_id = d.dblink_fdbcont_zdb_id
+		  from db_link d
+		 where pre_db_link.linked_recid=d.dblink_linked_recid
+           and pre_db_link.acc_num=d.dblink_acc_num
+		   and pre_db_link.dblink_fdbcont_zdb_id = d.dblink_fdbcont_zdb_id
 		);
 
 	update pre_db_link set dblink_zdb_id = get_id("DBLINK"); 
@@ -75,13 +81,13 @@ begin work;
 	insert into db_link (dblink_linked_recid,dblink_acc_num,dblink_info,dblink_zdb_id,
 			     dblink_acc_num_display,dblink_fdbcont_zdb_id,dblink_length)  
 		select linked_recid,acc_num,info,dblink_zdb_id,
-			acc_num_disp,dblink_fdbcont_zdb_id,length 
+			   acc_num_disp,dblink_fdbcont_zdb_id,length 
 		  from pre_db_link p;
 
 --!echo 'Attribute db links to the internal pub record'
 	insert into record_attribution
 		select dblink_zdb_id, "ZDB-PUB-020723-2",''
-		from pre_db_link;
+		  from pre_db_link;
 
 
 ------------------- loading ac alias ------------------------
