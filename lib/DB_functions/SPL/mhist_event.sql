@@ -3,8 +3,8 @@ drop procedure mhist_event;
 create procedure 
 mhist_event( active_marker varchar(50), 
 	     event varchar(40), 
-	     new_value varchar(120), 
-             old_value varchar(120) )
+	     new_value varchar(255), 
+             old_value varchar(255) )
 
 -- This procedure is triggered by updates to Marker.mrkr_name and 
 -- Marker.mrkr_abbrev. The procedure is only concerned about GENEs
