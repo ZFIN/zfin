@@ -1284,7 +1284,7 @@ $globalUsername = "";
 $globalPassword = "";
 
 $globalErrorCount = 0;
-$globalResultFile = "/tmp/checkresult.txt";
+$globalResultFile = "/tmp/<!--|DB_NAME|-->"."checkresult.txt";
 
 #set environment variables
 $ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
