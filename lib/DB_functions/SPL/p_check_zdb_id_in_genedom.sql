@@ -1,10 +1,10 @@
---P_check_zdbid_in_gendome.sql
+--P_check_zdbid_in_genedom.sql
 --------------------------------
   --procedure that checks to see that the object type of a zdb_id 
   --exists in the marker_type_group 'GENEDOM' 
 
-  drop procedure p_check_zdb_id_in_gendome ;
-  create procedure p_check_zdb_id_in_gendome (vZdbId varchar(50))
+  drop procedure p_check_zdb_id_in_genedom ;
+  create procedure p_check_zdb_id_in_genedom (vZdbId varchar(50))
   
       define vType	varchar(10) ;
       define vOk	integer ;
