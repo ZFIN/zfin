@@ -67,7 +67,7 @@
 
 <?MIVAR NAME=$constraint COND="$(AND,$(NC,$compare,starts),$(XST,$name))">$constraint (lower(conc(mname,abbrev)) like '$wild_card$(LOWER,$name)%')<?/MIVAR>
 
-<?MIVAR NAME=$constraint COND="$(AND,$(EC,$compare,starts),$(XST,$name))">$constraint (lower(mname) like '$wild_card$(LOWER,$name)%') or (lower(abbrev) like '$wild_card$(LOWER,$name)%' )<?/MIVAR>
+<?MIVAR NAME=$constraint COND="$(AND,$(EC,$compare,starts),$(XST,$name))">$constraint ((lower(mname) like '$wild_card$(LOWER,$name)%') or (lower(abbrev) like '$wild_card$(LOWER,$name)%' ))<?/MIVAR>
 
 
 <?MIVAR NAME=$previous COND="$(XST,$name)"> and <?/MIVAR>
