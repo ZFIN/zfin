@@ -101,10 +101,6 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
   }
 <?/MIVAR>
 
-  function popup_url(url) {
-    open(url,"popup","toolbar=yes,scrollbars=yes,resizable=yes");
-  }
-
 </SCRIPT>
 
 </HEAD>
@@ -344,8 +340,8 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 	  select lo.stg_zdb_id,       	     hi.stg_zdb_id, 
 		 lo.stg_name,        	     hi.stg_name, 
 		 lo.stg_hours_start, 	     hi.stg_hours_end,
-		 get_stg_name_long_html(lo.stg_zdb_id,'popup_url'),
-		 get_stg_name_long_html(hi.stg_zdb_id,'popup_url')
+		 get_stg_name_long_html(lo.stg_zdb_id),
+		 get_stg_name_long_html(hi.stg_zdb_id)
 	    from fish_image_stage, stage lo, stage hi
 	    where fimgstg_fimg_zdb_id = '$OID'
 	      and lo.stg_zdb_id = fimgstg_start_stg_zdb_id
