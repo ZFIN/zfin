@@ -1,4 +1,3 @@
-
 <html>
   <head>
 
@@ -10,6 +9,7 @@
 <?MIVAR NAME=$userid>GUEST<?/MIVAR>
 
 <?MIVAR COND="$(NXST,$authtype)" NAME=$authtype>anyauth<?/MIVAR>
+<?MIVAR COND="$(NXST,$titltype)" NAME=$titltype>tcontain<?/MIVAR>
 <?MIVAR COND="$(NXST,$jtype)" NAME=$jtype>any<?/MIVAR>
 <?MIVAR COND="$(NXST,$century)" NAME=$century>20<?/MIVAR>
 <?MIVAR COND="$(NXST,$order_pref)" NAME=$order_pref>date<?/MIVAR>
@@ -68,6 +68,7 @@ document.critform.yr_cmpr.selectedIndex = 0;
 document.critform.century.selectedIndex = 1;
 document.critform.order_pref.selectedIndex = 0;
 document.critform.authtype.selectedIndex = 0;
+document.critform.titltype.selectedIndex = 0;
 document.critform.WINSIZE.value = 10;
 document.critform.START.value = "";
 if (user_access != 'root') {document.critform.anon1.selectedIndex = 0;}
@@ -113,6 +114,12 @@ function list_all(user_access) {
 <?MIVAR NAME=$curation_constraint COND="$(NXST,$in_curation)"><?/MIVAR>
 <?MIVAR>$(UNSETVAR,$curation_constraint)<?/MIVAR>
 
+<?MICOMMENT>The replacement of "''" to "'" is for the case that this page is called as the second window display and a "'" is converted to "''" in the first window display. We trim the space for input text. <?/MICOMMENT>
+<?MIVAR COND="$(XST,$authors)" NAME=$authors DELIMIT="''" REPLACE="'">$(TRIM,$authors)<?/MIVAR>
+<?MIVAR COND="$(XST,$title)" NAME=$title DELIMIT="''" REPLACE="'">$(TRIM,$title)<?/MIVAR>
+<?MIVAR COND="$(XST,$anon1text)" NAME=$anon1text DELIMIT="''" REPLACE="'">$(TRIM,$anon1text)<?/MIVAR>
+<?MIVAR COND="$(XST,$year)" NAME=$year>$(TRIM,$year)<?/MIVAR>
+
 <?MIBLOCK COND="$(XST,$clear_all)">
   <?MIVAR  NAME=constraint COND="$(NXST,$constraint)"><?/MIVAR>
   <?MIVAR NAME=constraint>status = 'active'<?/MIVAR> 
@@ -127,18 +134,44 @@ function list_all(user_access) {
 
   <?MIBLOCK COND="$(XST,$authors)">
     <!-- First filter authors for apostrophes! -->
+   
     <?MIVAR NAME=$authors DELIMIT="'" REPLACE="''">$authors<?/MIVAR>
+
+    <?MIVAR NAME=$substrauthors>$(REPLACE,$authors," ",",")<?/MIVAR>
     <?MIVAR>
-      $(VECAPPEND,$constraint,"lower(authors) like '"$(IF,$(EC,$authtype,anyauth),%)$(LOWER,$authors)"%'")
+        $(VECAPPEND,$constraint,"lower(authors) like '"$(IF,$(EC,$authtype,anyauth),%)$(LOWER,$(INDEX,0,$substrauthors))"%'")
     <?/MIVAR>
+    <?MIVAR NAME=$commapos>$(POSITION,$substrauthors,",")<?/MIVAR>
+    <?MIBLOCK WHILE=$commapos>
+        <?MIVAR>$(SETVAR,$substrauthors,$(SUBSTR,$substrauthors,$(+,$commapos,1)))<?/MIVAR> 
+	<?MIVAR COND="$(NC,$(INDEX,0,$substrauthors),)">
+	  $(VECAPPEND,$constraint,"lower(authors) like '"$(IF,$(EC,$authtype,anyauth),%)$(LOWER,$(INDEX,0,$substrauthors))"%'")
+	<?/MIVAR> 
+
+	<?MIVAR>$(SETVAR,$commapos,$(POSITION,$substrauthors,","))<?/MIVAR> 
+
+    <?/MIBLOCK>		
   <?/MIBLOCK>
 
   <?MIBLOCK COND="$(XST,$title)">
     <!-- First filter title for apostrophes! -->
     <?MIVAR NAME=$title DELIMIT="'" REPLACE="''">$title<?/MIVAR>
-    <?MIVAR>
-      $(VECAPPEND,$constraint,"lower(title) like '%"$(LOWER,$title)"%'")
-    <?/MIVAR>
+    <?MIBLOCK COND="$(EC,$titltype,tequal)">
+      <?MIVAR>$(VECAPPEND,$constraint,"lower(title) like '%"$(LOWER,$title)"%'")<?/MIVAR>
+    <?MIELSE>
+	<?MIVAR NAME=$substrtitle>$(REPLACE,$title," ",",")<?/MIVAR>
+        <?MIVAR>
+          $(VECAPPEND,$constraint,"lower(title) like '%"$(LOWER,$(INDEX,0,$substrtitle))"%'")
+        <?/MIVAR>
+        <?MIVAR NAME=$commapos>$(POSITION,$substrtitle,",")<?/MIVAR>
+        <?MIBLOCK WHILE=$commapos>
+          <?MIVAR>$(SETVAR,$substrtitle,$(SUBSTR,$substrtitle,$(+,$commapos,1)))<?/MIVAR> 
+	  <?MIVAR COND="$(NC,$(INDEX,0,$substrtitle),)">
+	    $(VECAPPEND,$constraint,"lower(title) like '%"$(LOWER,$(INDEX,0,$substrtitle))"%'")
+	  <?/MIVAR> 
+	  <?MIVAR>$(SETVAR,$commapos,$(POSITION,$substrtitle,","))<?/MIVAR> 
+        <?/MIBLOCK>
+    <?/MIBLOCK> 		
   <?/MIBLOCK>
   
   <!-- glue together the year clause if specified -->
@@ -149,13 +182,26 @@ function list_all(user_access) {
   <!-- NOW  DEAL WITH THE ADDITIONAL CRITERIA -->
   
   <?MIBLOCK COND="$(XST,$anon1text)">
-    <?MIVAR COND="$(EC,$anon1,abstract)">
-      $(VECAPPEND,$constraint,"webhtml_like("$anon1",'"$anon1text"')")
-    <?/MIVAR>
-    
-    <?MIVAR COND="$(NC,$anon1,abstract)">
-      $(VECAPPEND,$constraint,"lower("$anon1") like '%"$(LOWER,$anon1text)"%'")
-    <?/MIVAR>
+     <?MIBLOCK COND="$(OR,$(EC,$anon1,abstract), $(EC,$anon1,keywords))">	
+       <?MIVAR NAME=anon1text DELIMIT="'" REPLACE="''">$anon1text<?/MIVAR>
+       <?MIVAR NAME=substranon1text>$(REPLACE,$anon1text," ",",")<?/MIVAR>
+       <?MIVAR NAME=anon1textcontraint>$(IF,$(EC,$anon1,abstract),"webhtml_like("$anon1",'"$(INDEX,0,$substranon1text)"')","lower("$anon1") like '%"$(LOWER,$(INDEX,0,$substranon1text))"%'")<?/MIVAR>
+
+       <?MIVAR>
+          $(VECAPPEND,$constraint,$anon1textcontraint)
+       <?/MIVAR>
+       <?MIVAR NAME=$commapos>$(POSITION,$substranon1text,",")<?/MIVAR>
+       <?MIBLOCK WHILE=$commapos>
+          <?MIVAR>$(SETVAR,$substranon1text,$(SUBSTR,$substranon1text,$(+,$commapos,1)))<?/MIVAR> 
+	  <?MIVAR COND="$(NC,$(INDEX,0,$substranon1text),)">
+	    $(SETVAR,$anon1textcontraint,$(IF,$(EC,$anon1,abstract),"webhtml_like("$anon1",'"$(INDEX,0,$substranon1text)"')","lower("$anon1") like '%"$(LOWER,$(INDEX,0,$substranon1text))"%'"))
+	    $(VECAPPEND,$constraint,$anon1textcontraint)
+	  <?/MIVAR> 
+	  <?MIVAR>$(SETVAR,$commapos,$(POSITION,$substranon1text,","))<?/MIVAR> 
+        <?/MIBLOCK>
+     <?MIELSE>
+	<?MIVAR>$(VECAPPEND,$constraint,"lower("$anon1") like '%"$(LOWER,$anon1text)"%'")<?/MIVAR>
+     <?/MIBLOCK>
   <?/MIBLOCK>
 
   <?MIVAR COND="$(NC,$jtype,any)">
@@ -258,7 +304,8 @@ function list_all(user_access) {
 <?MIVAR name=comment>  Build array of user data  <?/MIVAR>
 <?MIVAR name=$selector>MIval=aa-pubselect2.apg&query_results=exists&WINSIZE=$WINSIZE<?/MIVAR>
 <?MIVAR name=$UserInput><?/MIVAR>
-<?MIVAR name=$UserInput COND=$(XST,$authtype)>$UserInput&authtype=$authtype<?/MIVAR>	
+<?MIVAR name=$UserInput COND=$(XST,$authtype)>$UserInput&authtype=$authtype<?/MIVAR>
+<?MIVAR name=$UserInput COND=$(XST,$titltype)>$UserInput&titltype=$titltype<?/MIVAR>
 <?MIVAR name=$UserInput COND=$(XST,$jtype)>$UserInput&jtype=$jtype<?/MIVAR>
 <?MIVAR name=$UserInput COND=$(XST,$century)>$UserInput&century=$century<?/MIVAR>
 <?MIVAR name=$UserInput COND=$(XST,$year)>$UserInput&year=$year<?/MIVAR>
@@ -270,7 +317,7 @@ function list_all(user_access) {
 <?MIVAR name=$UserInput COND=$(XST,$title)>$UserInput&title=$(URLENCODE,$title)<?/MIVAR>
 <?MIVAR name=$UserInput COND=$(XST,$yr_cmpr)>$UserInput&yr_cmpr=$(URLENCODE,$yr_cmpr)<?/MIVAR>
 <?MIVAR name=$UserInput COND=$(XST,$anon1text)>$UserInput&anon1text=$(URLENCODE,$anon1text)<?/MIVAR>
-<?MIVAR name=$UserInput COND=$(XST,$query_results)>$UserInput&query_results=$(URLENCODE,$query_results)<?/MIVAR>
+<?MIVAR name=$UserInput COND=$(XST,$query_results)>$UserInput&query_results=$query_results<?/MIVAR>
 <?MIBLOCK COND=$(EC,$ZDB_access,root)>
   <?MIVAR name=$UserInput COND=$(XST,$curator)>$UserInput&curator=$curator<?/MIVAR>
   <?MIVAR name=$UserInput COND=$(XST,$cur_topic)>$UserInput&cur_topic=$cur_topic<?/MIVAR>
@@ -321,10 +368,8 @@ function list_all(user_access) {
     <TD align=center width=60%>
       <font size="+1">Publication Search Results   
       <!--DEBUGGING <?MIVAR> CONSTRAINT=$constraint <?/MIVAR>-->
+      <br>
 
-      <?MIVAR NAME=SQL1>"select count(distinct zdb_id)::integer 
-                   from $target_tables 
-                   $constraint;<?/MIVAR>
       <?MISQL SQL="select count(distinct zdb_id)::integer 
                    from $target_tables 
                    $constraint;">
@@ -367,6 +412,7 @@ function list_all(user_access) {
 
 <!--- EXECUTION --->
 <!--- Query Database --->
+
 <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE
 	SQL="select distinct title,authors,zdb_id,year(pub_date) as pyear, source, lower(authors), pub_completion_date from $target_tables $constraint $order_clause;">
 <?MIVAR NAME=PUB_COMPLETION>$7<?/MIVAR>
@@ -482,12 +528,11 @@ $(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/
 	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$START&$selector$UserInput">Last Page</A>
 <?/MIVAR>
 <?/MIBLOCK>
+
 		</td>
 	</tr>
 </Table>
 </Center>
-
-
 
 <?/MIBLOCK> <!-- xst query_results -->
 
@@ -496,10 +541,14 @@ $(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/
 <?MIBLOCK COND="$(NXST,$accession)">  <!-- don't want modify search result if come from accession search-->
 
 
+  <?MIVAR COND="$(XST,$authors)" NAME=$authors DELIMIT="''" REPLACE="'">$authors<?/MIVAR>
+  <?MIVAR COND="$(XST,$title)" NAME=$title DELIMIT="''" REPLACE="'">$title<?/MIVAR>
+  <?MIVAR COND="$(XST,$anon1text)" NAME=$anon1text DELIMIT="''" REPLACE="'">$anon1text<?/MIVAR>
 
-    <?MIVAR COND="$(NXST,$START)" NAME=$START>1<?/MIVAR>
 
-    <Table class=search width="100%" border=0 cellpadding=1 cellspacing=0>
+  <?MIVAR COND="$(NXST,$START)" NAME=$START>1<?/MIVAR>
+
+  <Table class=search width="100%" border=0 cellpadding=1 cellspacing=0>
       <TR>
 	<td class=titlebar>
           &nbsp;&nbsp;
@@ -527,9 +576,9 @@ $(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/
 	<SELECT name=authtype onChange='document.critform.START.value = "";'>
 	<option $(IF,$(EC,$authtype, anyauth),SELECTED) value=anyauth>Author contains
 	<option $(IF,$(EC,$authtype,firstauth),SELECTED) value=firstauth>First Author begins with
-	</select>:</b> <input type=text name=authors size=10 onChange='document.critform.START.value = "";' $(IF,$(XST,$authors),value='$authors')>
+	</select>:</b> <input type=text name=authors size=30 onChange='document.critform.START.value = "";' value="$(IF,$(XST,$authors),$authors)">
       </TD> 
-
+  <?/MIVAR>
   <?MIVAR>
       <TD class=halfwidth>
 	<b>Year: </b> 
@@ -559,8 +608,12 @@ $(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/
     </tr>
     <tr>
       <TD class=halfwidth>
-	<b>Title contains:</b> 
-	<input type=text name=title size=10 onChange='document.critform.START.value = "";' $(IF,$(XST,$title),value='$title')> 
+	<b>Title 
+	<SELECT NAME=titltype onChangecontains='document.critform.START.value = "";'>
+	 <option $(IF,$(EC,$titltype,tcontain),SELECTED) value=tcontain>contains
+	 <option $(IF,$(EC,$titltype,tequal),SELECTED) value=tequal>equals
+	</select>:</b>
+	<input type=text name=title size=30 onChange='document.critform.START.value = "";' value="$(IF,$(XST,$title),$title)"> 
       </TD>
       <td class=halfwidth>
  
@@ -593,7 +646,7 @@ $(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/
 	<option $(IF,$(EC,$anon1,accession_no),SELECTED) value=accession_no>PubMed acc#
 	<option $(IF,$(EC,$anon1,zdb_id),SELECTED) value=zdb_id>ZFIN ID
 	</SELECT>
-	<b>contains:</b> <input type=text name=anon1text size=10 onChange='document.critform.START.value = "";' $(IF,$(XST,$anon1text),value='$anon1text')>
+	<b>contains:</b> <input type=text name=anon1text size=25 onChange='document.critform.START.value = "";' value="$(IF,$(XST,$anon1text),$anon1text)">
       </TD>
       <TD class=halfwidth>
 	<b>Order results by:</b> 
