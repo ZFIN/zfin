@@ -101,6 +101,19 @@
 #			Example: 
 #			  STATICTARGETS = \
 #			    $(foreach STAT, $(STATICS), $(TARGETDIR)/$(STAT))
+#  ENDEMICTARGETS_PRE
+#  ENDEMICTARGETS_POSTTARGETDIR
+#  ENDEMICTARGETS_POSTTARGETS
+#  ENDEMICTARGETS_POST
+#                     These 4 variables are used with targets that require
+#			special handling in the local makefile.  These variables
+#			allow those makefiles to have special processing for
+#			these targets and still use the default rules for 
+#			other files.  Which of these varaibles a target goes
+#			into determines when that target will be made in 
+#			relation to the default targets.  See the default
+#			rules makefiles for more.
+#
 #  TARGETS	      List of all targets produced by the makefile.  In other
 #			words, this is the list of final output files produced
 #			by the makefile.
