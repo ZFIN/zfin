@@ -204,9 +204,56 @@ dataOID --zdb id of data item that attributed
    <?/MIBLOCK> 
  <?/MIBLOCK> <!-- special-newattrib -->
 
+ <!-- special case for setting fish extinct -->
+ <?MIBLOCK COND="$(AND,$(EC,$attr,fish_extinct),$(EC,$info,delete_curLab))">
 
+    <?MISQL SQL="delete from fish_supplier_status where fsupstat_fish_zdb_id = '$OID';">
+    <?/MISQL>
+    <?MISQL SQL="delete from int_data_supplier where idsup_data_zdb_id = '$OID';">
+    <?/MISQL>
+ <?/MIBLOCK>
+ <!-- special case for deleting a fish source -->
+ <?MIBLOCK COND="$(AND,$(EC,$attr,fish_source),$(EC,$attr_type,special-deletesource))">
+	<?MISQL SQL="delete from fish_supplier_status 
+		          where fsupstat_fish_zdb_id = '$OID'
+			    and fsupstat_supplier_zdb_id ='$old_value';">
+        <?/MISQL>
+   	<?MISQL SQL="delete from int_data_supplier 
+			  where idsup_data_zdb_id = '$OID'
+			    and idsup_supplier_zdb_id ='$old_value';">
+    	<?/MISQL>
+  <?/MIBLOCK>
+  <!-- special case for change source status -->
+  <?MIBLOCK COND="$(AND,$(EC,$attr,fish_source),$(EC,$attr_type,special-chgsrcstatus))">
+	<?MISQL SQL="update fish_supplier_status
+			set fsupstat_fish_status = '$new_value'
+			where fsupstat_fish_zdb_id = '$OID'
+			  and fsupstat_supplier_zdb_id = '$old_value';">
+	<?/MISQL>
+  <?/MIBLOCK>
+  <!-- special case for add a new source -->
+  <?MIBLOCK COND="$(AND,$(EC,$attr,fish_source),$(EC,$attr_type,special-addsource))">
+        
+	<?MISQL SQL="select * from int_data_supplier 
+		      where idsup_data_zdb_id = '$OID'
+			and idsup_supplier_zdb_id = '$new_value';">
+        <?/MISQL>
+	<?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+	   <script>
+		alert("The lab is already designated as a current source.");
+	  </script>
+	<?MIELSE>
 
+           <?MISQL SQL="insert into int_data_supplier (idsup_data_zdb_id,idsup_supplier_zdb_id)
+			values('$OID','$new_value');">
+           <?/MISQL>
 
+ 	   <?MISQL COND="$(AND,$(XST,$info),$(NC,$info,))" SQL="
+		insert into fish_supplier_status (fsupstat_fish_zdb_id,fsupstat_supplier_zdb_id,fsupstat_fish_status)
+			values('$OID', '$new_value', '$info');">
+           <?/MISQL>
+	<?/MIBLOCK>
+   <?/MIBLOCK>
 
 
 <?/MIBLOCK> <!-- ends cond authorized -->
@@ -217,4 +264,3 @@ dataOID --zdb id of data item that attributed
 location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$OID&UPDATE=1")
 </SCRIPT>
 <?/MIVAR>
-

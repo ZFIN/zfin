@@ -166,6 +166,61 @@ Variables Expected:
 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr=colattrib&attr_type=special-newattrib&old_value='+altOID+'&new_value='+pub_id+'&info=mutation');
   		}
 	}
+	function set_fish_extinct() {
+ 	  var fish_extinct = document.updater0.fish_status[1].value;
+	  <?MISQL SQL="select * from int_data_supplier where idsup_data_zdb_id='$OID';"><?/MISQL>
+ 	  <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+            <?MIVAR>
+	    if(confirm('Warning: Current Source(s) would be dropped.')) {
+		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr=fish_extinct&attr_type=text&new_value='+fish_extinct+'&info=delete_curLab');
+            <?/MIVAR>
+	    }else {
+		return false;
+	    }
+	  <?MIELSE>
+	    <?MIVAR>
+		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr=fish_extinct&attr_type=text&new_value='+fish_extinct);
+	    <?/MIVAR>
+	  <?/MIBLOCK>
+	}
+	function unset_fish_extinct() {
+		var fish_extinct = document.updater0.fish_status[0].value;
+	 	<?MIVAR>
+		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr=fish_extinct&attr_type=text&new_value='+fish_extinct);
+		<?/MIVAR>
+	}
+	function delete_source(source_id) {
+		<?MIVAR>
+		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr=fish_source&attr_type=special-deletesource&old_value='+source_id);
+		<?/MIVAR>
+	}
+	function change_source_status(source_id, new_status) {
+	
+		<?MIVAR>
+		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr=fish_source&attr_type=special-chgsrcstatus&old_value='+source_id+'&new_value='+new_status);
+		<?/MIVAR>
+	}
+	function add_source() {
+		var source_id_index = document.updater0.add_src.selectedIndex;
+		var source_id = document.updater0.add_src[source_id_index].value;
+		var btnGroup = document.updater0.add_src_status;
+		var new_status = new String();
+
+		for(var i=0; i<btnGroup.length; i++) {
+		   if (btnGroup[i].checked) {
+			new_status = btnGroup[i].value;
+		    }
+		}
+		if (new_status.length == 0) {
+		   if (! confirm("No status with it?")) { 
+			return false;
+		   }
+		}
+		<?MIVAR>
+		   window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr=fish_source&attr_type=special-addsource&new_value='+source_id+'&info='+new_status);
+		<?/MIVAR>
+
+	}
       </SCRIPT>
     <?/MIVAR>
 
@@ -651,16 +706,54 @@ Variables Expected:
 	  <TR>
 	    <TD valign="top"> 
 	      <b>Current Source(s): </b>
+              <?MIBLOCK COND="$(XST,$UPDATE)">
+		 <br>
+                 Extinct&nbsp;: 
+		<?MISQL SQL="select fish_extinct from fish
+			      where zdb_id = '$OID'";>
+		<?/MISQL>	
+                <?MIVAR>
+                  <input type=radio name=fish_status value="f" $(IF,$(EC,$1,f),checked) onClick="unset_fish_extinct();">N
+                  <input type=radio name=fish_status value="t" $(IF,$(EC,$1,t),checked) onClick="set_fish_extinct();">Y
+		<?/MIVAR>
+	       <?/MIBLOCK>	
 	    </TD>
 	    <TD> 
 	      <?MIBLOCK COND="$(EC,$fish_extinct,f)">
+                <?MIBLOCK COND="$(XST,$UPDATE)">
+		  Add a source: 
+		  <?MIVAR>
+	            <SELECT NAME=add_src>
+	          <?/MIVAR>
+		  <option SELECTED>Lab List	
+		  <?MISQL SQL="
+		    select zdb_id, name 
+		      from lab 
+		      where allele_prefix is not null 
+		      order by name;">
+		    <option value="$1">$2		    
+		  <?/MISQL>
+                    </SELECT>
+		  <?MISQL SQL="select fishstat_status from fish_status;">		   
+		     <input type=radio name=add_src_status value="$1">$1
+		  <?/MISQL>
+                  <input type=button name=submit_add value="Add it" onClick="add_source();">  
+                  <br> 
+		<?/MIBLOCK>
+		<?MIVAR NAME=$supplier_index>0<?/MIVAR>
 		<?MISQL SQL="
 		  select idsup_supplier_zdb_id, 
 			 get_obj_name(idsup_supplier_zdb_id)
 		    from int_data_supplier
 		    where idsup_data_zdb_id = '$OID';">
+
+		  <?MIVAR NAME=$supplier_index>$(+,$supplier_index,1)<?/MIVAR>
 		  <?MIVAR NAME=$supplier_zdb_id>$1<?/MIVAR>
 		  <?MIVAR NAME=$supplier_name>$2<?/MIVAR>
+		  
+                  <?MIVAR COND="$(XST,$UPDATE)">
+		    <input type=button name=delt_source value="Delete" onClick="delete_source('$supplier_zdb_id')">
+                  <?/MIVAR>
 		  <?MIVAR>
 		    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sourceview.apg&OID=$supplier_zdb_id">$supplier_name</A>
 		  <?/MIVAR>
@@ -672,10 +765,21 @@ Variables Expected:
 			and fsupstat_supplier_zdb_id = '$supplier_zdb_id'
 		      order by fsupstat_fish_status;">
 		    <?MIVAR>$(VECAPPEND,$status_list,$1)<?/MIVAR>
+
 		  <?/MISQL>
+                  
 		  <?MIVAR COND="$(XST,$status_list)">
 		    ($(SEPARATE,$status_list,", "))
 		  <?/MIVAR>
+ 		  <?MISQL COND="$(XST,$UPDATE)" SQL="select count(fishstat_status)::integer from fish_status;">
+			<?MIVAR NAME=status_count>$1<?/MIVAR>
+
+		  <?/MISQL>
+
+                  <?MISQL COND="$(AND,$(XST,$UPDATE),$(XST,$status_list))" SQL="select fishstat_status from fish_status;">
+		     
+		     <input type=radio name=chg_src_status$supplier_index value="$1" $(IF,$(AND,$(XST,$status_list),$(>,$(POSITION,$1,$status_list),0)),checked) onClick="change_source_status('$supplier_zdb_id','$1')">$1
+		  <?/MISQL>
 		  <br>
 		<?/MISQL>
 		<?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
