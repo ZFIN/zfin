@@ -25,11 +25,18 @@ VARIABLES EXPECTED:
   -- delete the record from the record type's base table.
   -->
 
-<?MIBLOCK COND="$(OR,$(EC,$rtype,gene),$(EC,$rtype,anon_marker))">
-  <?MISQL SQL="
-    delete from zdb_active_data
-      where zactvd_zdb_id = '$OID';">
-  <?/MISQL>
+<?MIBLOCK COND="$(OR,$(OR,$(EC,$rtype,gene),$(EC,$rtype,anon_marker)),$(OR,$(EC,$rtype,company),$(OR,$(EC,$rtype,person),$(EC,$rtype,lab))))">
+	<?MIBLOCK COND="$(OR,$(EC,$rtype,gene),$(EC,$rtype,anon_marker))">
+	  <?MISQL SQL="
+  	  delete from zdb_active_data
+    	  where zactvd_zdb_id = '$OID';">
+  	<?/MISQL>
+	<?MIELSE>
+	  <?MISQL SQL="
+  	  delete from zdb_active_source
+    	  where zactvs_zdb_id = '$OID';">
+  	<?/MISQL>		
+	<?/MIBLOCK>
 <?MIELSE>
   <?MISQL $SQL="
     delete from $rtype 
