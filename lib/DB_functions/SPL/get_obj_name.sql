@@ -99,6 +99,11 @@ get_obj_name(zdbId varchar(50))
       into objName
       from external_note
       where extnote_zdb_id = zdbId;
+  elif (objType = "FDBCONT") then
+    select fdbcont_zdb_id 
+      into objName
+      from foreign_db_contains
+      where fdbcont_zdb_id = zdbId;
   elif (objType = "GOTERM") then
     select goterm_name
       into objName
