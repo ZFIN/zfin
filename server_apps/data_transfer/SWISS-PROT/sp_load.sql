@@ -81,12 +81,37 @@ begin work;
 		  and d.dblink_fdbcont_zdb_id in ("ZDB-FDBCONT-040412-36","ZDB-FDBCONT-040412-37")
 		) ;
 
+--!echo 'Delete if an encoded cDNA/EST has the cDNA type genbank accession'
+	delete from pre_db_link where exists (
+		select d.dblink_zdb_id
+		from db_link d, marker_relationship
+		where pre_db_link.linked_recid = mrel_mrkr_1_zdb_id
+		  and mrel_mrkr_2_zdb_id = d.dblink_linked_recid
+		  and mrel_type = "gene encodes small segment"
+                  and pre_db_link.acc_num = d.dblink_acc_num
+		  and pre_db_link.db_name = "Genbank"
+		  and d.dblink_fdbcont_zdb_id  = "ZDB-FDBCONT-040412-37"
+		) ;
+
+--!echo 'Delete if a BAC/PAC the contains the gene has the genomic type genbank accession'
+	delete from pre_db_link where exists (
+		select d.dblink_zdb_id
+		from db_link d, marker_relationship
+		where pre_db_link.linked_recid = mrel_mrkr_2_zdb_id
+		  and mrel_mrkr_1_zdb_id = d.dblink_linked_recid
+		  and mrel_type = "clone contains gene"
+                  and pre_db_link.acc_num = d.dblink_acc_num
+		  and pre_db_link.db_name = "Genbank"
+		  and d.dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-36"
+		) ;
+
 	update pre_db_link set dblink_zdb_id = get_id("DBLINK"); 
+
 
 --!echo 'Insert into zdb_active_data'
 	insert into zdb_active_data 
                   select dblink_zdb_id from pre_db_link p;
-
+			 
 --!echo 'Insert DBLINK into db_link'
 	insert into db_link (dblink_linked_recid,dblink_acc_num,dblink_info,dblink_zdb_id,
 			     dblink_acc_num_display,dblink_fdbcont_zdb_id,dblink_length)  
@@ -98,6 +123,7 @@ begin work;
 	insert into record_attribution
 		select dblink_zdb_id, "ZDB-PUB-020723-2",''
 		from pre_db_link;
+
 
 ------------------- loading ac alias ------------------------
 
@@ -189,8 +215,6 @@ begin work;
 
 
 
-
-
 ------------------------- loading marker go evidence  --------------------
 
 
@@ -210,6 +234,22 @@ begin work;
 	create index spkw_goterm_with_dups_keyword_index
 		on spkw_goterm_with_dups (sp_kwd);
 
+--!echo 'unload obsolete or secondary goterm, send to curators, delete from loading'
+	unload to "spkw2go_obsl_secd.unl" 
+		select distinct "SP_KW:"||sp_kwd, goterm_name, goterm_id
+		  from spkw_goterm_with_dups
+	         where goterm_id in (select goterm_go_id
+				       from go_term
+			              where goterm_is_obsolete = "t"
+		                        or  goterm_is_secondary = "t"
+				     );	
+	delete from spkw_goterm_with_dups
+		where goterm_id in (select goterm_go_id
+				       from go_term
+			              where goterm_is_obsolete = "t"
+		                        or  goterm_is_secondary = "t"
+				     );		
+
 	create temp table ip_goterm_with_dups (
 		ip_acc  varchar(20),
 		goterm_name  varchar(100),
@@ -218,6 +258,21 @@ begin work;
 
 --!echo 'Load ip_mrkrgoterm.unl: iptogo translation table'
 	load from ip_mrkrgoterm.unl insert into ip_goterm_with_dups;
+--!echo 'unload obsolete or secondary goterm, send to curators, delete from loading'
+	unload to "ip2go_obsl_secd.unl" 
+		select distinct "InterPro:"||ip_acc, goterm_name, goterm_id
+		  from ip_goterm_with_dups
+	         where goterm_id in (select goterm_go_id
+				       from go_term
+			              where goterm_is_obsolete = "t"
+		                        or  goterm_is_secondary = "t"
+				     );	
+	delete from ip_goterm_with_dups
+		where goterm_id in (select goterm_go_id
+				       from go_term
+			              where goterm_is_obsolete = "t"
+		                        or  goterm_is_secondary = "t"
+				     );		
 
 --!echo 'Load ec_mrkrgoterm.unl: ectogo translation table'
 
@@ -228,6 +283,21 @@ begin work;
 		)with no log;
 
 	load from ec_mrkrgoterm.unl insert into ec_goterm_with_dups;
+--!echo 'unload obsolete or secondary goterm, send to curators, delete from loading'
+	unload to "ec2go_obsl_secd.unl" 
+		select distinct "EC:"||ec_acc, goterm_name, goterm_id
+		  from ec_goterm_with_dups
+	         where goterm_id in (select goterm_go_id
+				       from go_term
+			              where goterm_is_obsolete = "t"
+		                        or  goterm_is_secondary = "t"
+				     );	
+	delete from ec_goterm_with_dups
+		where goterm_id in (select goterm_go_id
+				       from go_term
+			              where goterm_is_obsolete = "t"
+		                        or  goterm_is_secondary = "t"
+				     );		
 
 --!echo ' load in information of keywords with specific S-P record'
 	create temp table sp_kwd (
