@@ -352,7 +352,7 @@ Variables Expected:
 			 onClick="Delete_listitem_alias('dalias_alias','$alias','$OID','$ALTOID')">
 		<?/MIVAR>
 		$(IF,$(AND,$(NXST,$UPDATE),$(>,$MI_CURRENTROW,1)),;) <i>$1</i>
-		<?MIBLOCK COND="$(XST,$daliasId,)">	
+		<?MIBLOCK COND="$(XST,$daliasId)">	
               	    <?MISQL SQL="select WebExplode(object,'dataId=$daliasId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
 	          <?/MIBLOCK>
 	      <?/MISQL>
@@ -363,7 +363,11 @@ Variables Expected:
 
         <!--  need to get cloned gene name for use with mapping data and for gene correspondence -->
         <?MIBLOCK COND="$(NC,$cloned_gene,)">
- 	   <?MISQL SQL="select gene_name, abbrev from gene where zdb_id='$cloned_gene';"><?/MISQL>
+ 	   <?MISQL SQL="
+             select mrkr_name, mrkr_abbrev 
+               from marker 
+               where mrkr_zdb_id = '$cloned_gene';">
+           <?/MISQL>
               <?MIVAR NAME=$gene_name>$1<?/MIVAR>
               <?MIVAR NAME=$gene_abbrev>$2<?/MIVAR>
         <?/MIBLOCK>
@@ -794,7 +798,7 @@ Variables Expected:
 		  <SELECT name=protocol onChange=doProtocol(this.options[this.selectedIndex].value,'$(URLENCODE,$alt_protocol)','$alt_zdb_id')>
 		  <?/MIVAR>
 		  <?MISQL SQL="
-		         select * from mutagee"; >
+		         select * from mutagee;">
 		    
 		    <option $(IF,$(EC,$alt_protocol,$1),SELECTED) value=$(URLENCODE,$1)>$1
 		   <?/MISQL>
@@ -803,7 +807,7 @@ Variables Expected:
 		  <SELECT NAME=mutagen onChange=doMutagen(this.options[this.selectedIndex].value,'$(URLENCODE,$alt_mutagen)','$alt_zdb_id')>
 		  <?/MIVAR>
 		    <?MISQL SQL="
-		         select * from mutagen" ;>
+		         select * from mutagen;">
 
 		  	<option $(IF,$(EC,$alt_mutagen,$1),SELECTED) value=$(URLENCODE,$1)>$1
 		    <?/MISQL>
@@ -831,7 +835,7 @@ Variables Expected:
 		     <SELECT name=chrom_change onChange=doChromChange(this.options[this.selectedIndex].value,'$alt_chrom_change','$alt_zdb_id')>
 		     <?/MIVAR>	
 			<?MISQL SQL="
-		             select * from alteration_type" ;>
+		             select * from alteration_type;">
 
 		  	  <option $(IF,$(EC,$alt_chrom_change,$1),SELECTED) value=$1>$1
 			<?/MISQL>
