@@ -282,8 +282,7 @@ ERROR -- something bad happened -- no OID passed in!
 </table>
 
 
- 
-</table>
+
   <!---------- Assay Type ------------------------------>
 <table>
  <?MIBLOCK COND="$(XST,$ASSAY_NAME)">
@@ -693,7 +692,6 @@ ERROR -- something bad happened -- no OID passed in!
 </table>
 
 
-
 <?MIVAR NAME=CODECOMMENTS> 
      GET THE CONTACT(S) ASSOCIATED WITH THIS EXPRESSSION PATTERN AND THEIR ID,
      THEN DISPLAY THE LIST OF CONTACTS AS HOTLINKS TO THEIR PERSON PAGE.
@@ -730,8 +728,6 @@ ERROR -- something bad happened -- no OID passed in!
 
 <!-------------- Comments ------------------->
 
-<!-------------- Comments ------------------->
-
 <?MIVAR COND="$(XST,$XPAT_COMMENTS)"><br><br>
     <?MIBLOCK COND="$(XST,$UPDATE)">
     <?MIVAR>
@@ -751,6 +747,7 @@ ERROR -- something bad happened -- no OID passed in!
 <?/MIVAR>
 
 <?MIVAR COND="$(XST,$XPAT_RECEIVE_DATE)"><b>Submission Date:</b> &nbsp;$XPAT_RECEIVE_DATE<?/MIVAR>
+
 
 <!--------------------------- Pubs ---------------------------->
 <p>
