@@ -12,7 +12,7 @@ document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
 
 <TITLE>Anatomical Ontology Browser</TITLE>
 
-<BODY vlink="blue" bgcolor="#FFFFFF" border=0>
+<BODY vlink="blue" bgcolor="<!--|BACKGROUND_COLOR|-->" border=0>
 <basefont size=2>
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
@@ -121,7 +121,7 @@ function do_submit() {
 
 
   <CENTER>
-    <TABLE width=98% bgcolor=#FFFFFF>
+    <TABLE width="98%" bgcolor="<!--|BACKGROUND_COLOR|-->">
       <TR>
         <TD border=1>
 	  <?MIBLOCK COND="$(AND,$(XST,$mode),$(EC,$mode,search))">
@@ -159,22 +159,15 @@ function do_submit() {
 	        <?MIVAR NAME="$synonymcount">$4<?/MIVAR>
 	        <?MIVAR NAME="$highlight">false<?/MIVAR>
 
+	        <?MIVAR name=$totalcount>0<?/MIVAR>
 	        <?MISQL SQL="
-		  select xpat_gene_zdb_id
-		    from expression_pattern_anatomy, expression_pattern
-		    where xpatanat_anat_item_zdb_id = '$item_zdb_id' 
-		      and xpatanat_xpat_zdb_id = xpat_zdb_id
-		  UNION
-		  select xpat_gene_zdb_id
-		    from expression_pattern_anatomy, all_anatomy_contains, 
-			 expression_pattern
-		    where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
-		      and allanatcon_container_zdb_id = '$item_zdb_id'
-		      and xpatanat_xpat_zdb_id = xpat_zdb_id
+		  select anatstat_total_distinct_count
+		    from anatomy_stats
+		    where anatstat_anatitem_zdb_id = '$item_zdb_id' 
+		      and anatstat_object_type = 'GENE'
 		  ;">
+	          <?MIVAR name=$totalcount>$1<?/MIVAR>
 		<?/MISQL>
-
-	        <?MIVAR name=$totalcount>$MI_ROWCOUNT<?/MIVAR>
 
 	        <?MIVAR NAME=$item_name_safe DELIMIT="'" REPLACE="''">$item_name<?/MIVAR>
                 <?MIVAR NAME="$processed_item_name">$(REPLACE,$item_name,',','|')<?/MIVAR>
@@ -316,37 +309,16 @@ function do_submit() {
 
 		      <?MIVAR NAME="$indent">$(*,$(-,$item_indent,1),20)<?/MIVAR>
 
-
+		      <?MIVAR name=$totalcount>0<?/MIVAR>
 		      <?MISQL SQL="
-			select xpat_gene_zdb_id
-			  from expression_pattern, 
-			       expression_pattern_anatomy, stage as start, stage as end, 
-			       stage as mystage
-			  where xpatanat_anat_item_zdb_id = '$item_zdb_id' 
-			    and xpatanat_xpat_zdb_id = xpat_zdb_id
-			    and start.stg_zdb_id = xpatanat_xpat_start_stg_zdb_id
-			    and end.stg_zdb_id = xpatanat_xpat_end_stg_zdb_id
-			    and mystage.stg_zdb_id = '$OID'
-			    and mystage.stg_hours_start >= start.stg_hours_start
-			    and mystage.stg_hours_end <= end.stg_hours_end
-			UNION
-			select xpat_gene_zdb_id
-			  from all_anatomy_contains,
-			       expression_pattern, expression_pattern_anatomy,
-			       stage as start, stage as end, stage as mystage
-			  where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
-			    and allanatcon_container_zdb_id = '$item_zdb_id'
-			    and xpatanat_xpat_zdb_id = xpat_zdb_id
-			    and start.stg_zdb_id = xpatanat_xpat_start_stg_zdb_id
-			    and end.stg_zdb_id = xpatanat_xpat_end_stg_zdb_id
-			    and mystage.stg_zdb_id = '$OID'
-			    and mystage.stg_hours_start >= start.stg_hours_start
-			    and mystage.stg_hours_end <= end.stg_hours_end
+			select anatstgstat_total_distinct_count
+			  from anatomy_stage_stats
+			  where anatstgstat_anatitem_zdb_id = '$item_zdb_id' 
+			    and anatstgstat_stg_zdb_id = '$OID'
+			    and anatstgstat_object_type = 'GENE'
 			;">
+		        <?MIVAR name=$totalcount>$1<?/MIVAR>
 		      <?/MISQL>
-
-		      <?MIVAR name=$totalcount>$MI_ROWCOUNT<?/MIVAR>
-
 
 		      <?MIBLOCK COND="$(NE,$highlight_text,)">
 			<?MIVAR COND="$(>,$(POSITION,$item_name,$highlight_text),0)" NAME="$highlight">true<?/MIVAR>
@@ -418,21 +390,15 @@ function do_submit() {
 	      <?MIVAR NAME="$synonymcount">$4<?/MIVAR>
 	      <?MIVAR NAME="$highlight">false<?/MIVAR>
 
+	      <?MIVAR name=$totalcount>0<?/MIVAR>
 	      <?MISQL SQL="
-		select xpat_gene_zdb_id
-		  from expression_pattern_anatomy, expression_pattern
-		  where xpatanat_anat_item_zdb_id = '$item_zdb_id' 
-		    and xpatanat_xpat_zdb_id = xpat_zdb_id
-		UNION
-		select xpat_gene_zdb_id
-		  from expression_pattern_anatomy, all_anatomy_contains, expression_pattern
-		  where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
-		    and allanatcon_container_zdb_id = '$item_zdb_id'
-		    and xpatanat_xpat_zdb_id = xpat_zdb_id
+		select anatstat_total_distinct_count
+		  from anatomy_stats
+		  where anatstat_anatitem_zdb_id = '$item_zdb_id' 
+		    and anatstat_object_type = 'GENE'
 		;">
+	        <?MIVAR name=$totalcount>$1<?/MIVAR>
 	      <?/MISQL>
-
-	      <?MIVAR name=$totalcount>$MI_ROWCOUNT<?/MIVAR>
 
 	      <?MIVAR NAME=$item_name_safe DELIMIT="'" REPLACE="''">$item_name<?/MIVAR>
               <?MIVAR NAME="$processed_item_name">$(REPLACE,$item_name,',','|')<?/MIVAR>
