@@ -175,6 +175,15 @@ You may also optionally pass many other constraints on the upcoming selection th
 <?MIVAR COND="$(XST,$userid)" NAME=$constraint>&userid=$userid$constraint<?/MIVAR>
 <?/MIBLOCK>
 
+<!-- arrange for any variables that need to be passed for nav tile bar call -->
+<?MIBLOCK COND="$(AND,$(XST,$navtile),$(EC,$selector,aa-update-select.apg))">
+<?MIVAR COND="$(XST,$navtile)" NAME=$constraint>&navtile=$navtile$constraint<?/MIVAR>
+<?MIVAR COND="$(XST,$OID)" NAME=$constraint>&OID=$OID$constraint<?/MIVAR>
+
+<?/MIBLOCK>
+
+
+
 <html>
 
 <META HTTP-EQUIV="EXPIRES" CONTENT="-2d">
