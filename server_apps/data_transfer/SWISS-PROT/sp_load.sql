@@ -33,6 +33,10 @@ begin work;
 --!echo 'Load dr_dblink.unl'
 	load from dr_dblink.unl insert into db_link_with_dups;
 
+	-- not sure which where is more appropiate here
+        delete from db_link_with_dups where db_name = 'EC-ENZYME';                                                                                  
+        -- not in ('EMBL,',InterPro','PROSITE','Pfam','ZFIN');
+
 	create temp table pre_db_link (
                linked_recid varchar(50),
                db_name varchar(50),

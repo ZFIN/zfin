@@ -34,6 +34,13 @@ begin work;
 !echo 'Load dr_dblink.unl'
 	load from dr_dblink.unl insert into db_link_with_dups;
 --        load from ecgene.unl insert into db_link_with_dups;
+	        
+        -- not sure which where is more appropiate here
+        delete from db_link_with_dups where db_name = 'EC-ENZYME';
+        -- not in ('EMBL,',InterPro','PROSITE','Pfam','ZFIN');
+        
+
+
          delete from db_link_with_dups where acc_num like '%-%';
 
          delete from db_link_with_dups where acc_num like '%,%';
