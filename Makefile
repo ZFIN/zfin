@@ -224,6 +224,7 @@ include $(TOP)/make.default.rules
 # directory Makefile.
 
 mirror : 
+	$(MAKE) -C momspider
 	$(MAKE) -C home $@
 
 postloaddb :
