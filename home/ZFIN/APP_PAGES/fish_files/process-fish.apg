@@ -126,17 +126,15 @@
 	-->
       <?MISQL SQL="
 	insert into record_attribution
-            (recattrib_data_zdb_id, recattrib_source_zdb_id, 
-	     recattrib_source_rank)
-          select '$chromo_id', recattrib_source_zdb_id, recattrib_source_rank
+            (recattrib_data_zdb_id, recattrib_source_zdb_id)
+          select '$chromo_id', recattrib_source_zdb_id
 	    from record_attribution
 	    where recattrib_data_zdb_id = '$temp_oid';">
       <?/MISQL>
       <?MISQL SQL="
 	insert into record_attribution
-	    (recattrib_data_zdb_id, recattrib_source_zdb_id, 
-	     recattrib_source_rank)
-	  select '$alt_id', recattrib_source_zdb_id, recattrib_source_rank
+	    (recattrib_data_zdb_id, recattrib_source_zdb_id)
+	  select '$alt_id', recattrib_source_zdb_id
 	    from record_attribution
 	    where recattrib_data_zdb_id = '$temp_oid';">
       <?/MISQL>

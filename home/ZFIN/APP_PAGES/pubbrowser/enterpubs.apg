@@ -9,37 +9,20 @@
 
 <TABLE width=100%>
 <TR>
-<TD width=10%><input type=submit name="s_prim_pub" value="Specify"></TD> 
-<TD><b>Primary Publication:</b> 
+<TD width=10%><input type=submit name="s_related_pub" value="Add one"></TD> 
+</TR>
+<TR><td>
+<ul>
 <?MISQL SQL="
   select title, zdb_id 
     from record_attribution, publication
     where recattrib_data_zdb_id = '$temp_oid'
       and recattrib_source_zdb_id = zdb_id 
-      and recattrib_source_rank = 'primary';">
-<?/MISQL>
-<?MIVAR COND=$(EQ,$MI_ROWCOUNT,0)> <font color="#ff0000">UNPUBLISHED</font><?/MIVAR>
-</TD>
-</TR>
-<TR> <TD colspan=2>
-<?MIVAR COND="$(>,$MI_ROWCOUNT,0)"> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$1</A>  <?/MIVAR>
-</TD></TR>
-
-<TR><TD colspan=2> <HR width=50%></TD></TR>
-
-<TR>
-<TD width=10%><input type=submit name="s_related_pub" value="Add one"> </TD>
-<TD><b>Related Publications:</b> </TD>
-</TR><TR>
-<TD colspan=2>
-<ul>
-  <?MISQL SQL="
-    select title, zdb_id 
-      from record_attribution, publication
-      where recattrib_data_zdb_id = '$temp_oid'
-        and recattrib_source_zdb_id = zdb_id 
-        and recattrib_source_rank = 'related';">
-    <li> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$1</A><br>
+      ;">
+  <li> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$1</A><br>
   <?/MISQL>
 </ul>
-</TD></TR></TABLE>
+
+<?MIVAR COND=$(EQ,$MI_ROWCOUNT,0)> <font color="#ff0000">UNPUBLISHED</font><?/MIVAR>
+</TD></TR>
+</TABLE>
