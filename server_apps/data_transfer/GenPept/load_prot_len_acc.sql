@@ -22,7 +22,7 @@ update db_link set dblink_length = (
     from prot_len_acc
     where dblink_acc_num = pla_acc
 ) 
-where dblink_length in (0,'',null)
+where dblink_length in ('0',0,'',NULL)
 and dblink_acc_num in (select pla_acc from prot_len_acc)
 and dblink_fdbcont_zdb_id in (
     select fdbcont_zdb_id
