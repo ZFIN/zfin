@@ -229,8 +229,9 @@ resulting from the materials and/or services we are providing to you.
     </tr>
   </table>
 
-<form NAME="theRequestForm" onSubmit="saveValues()" METHOD="POST" ACTION="http://bionix.cs.uoregon.edu/cgi-bin/cgiemail.cgi/zf_info/stckctr/submission/request.txt">
-<input TYPE="hidden" NAME="success" VALUE="http://bionix.cs.uoregon.edu/zf_info/stckctr/submission/thankyou.html">
+<form NAME="theRequestForm" onSubmit="saveValues()" METHOD="POST" 
+ACTION="http://<!--|DOMAIN_NAME|-->/<!--|CGI_BIN_DIR_NAME|-->/cgiemail.cgi/zf_info/stckctr/submission/request.txt">
+<input TYPE="hidden" NAME="success" VALUE="http://<!--|DOMAIN_NAME|-->/zf_info/stckctr/submission/thankyou.html">
     <table BORDER BGCOLOR="#E5E5E5">
       <tr> 
         <td WIDTH="150"><b>Your&nbsp;</b> <br>
