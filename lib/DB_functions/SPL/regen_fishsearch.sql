@@ -336,7 +336,8 @@ create dba function "informix".regen_fishsearch()
    where gene_id in 
    (select marker_id from mapped_marker) 
    and (chrom_num like '0' or chrom_num is null) 
-   and fish_id not like 'ZDB-FISH-990427-3';
+   and fish_id not like 'ZDB-FISH-990427-3' and
+    fish_id not like 'ZDB-FISH-040824-6';
 
 --Then update fish search doing a join with mapped marker on locus
    
@@ -421,7 +422,7 @@ create dba function "informix".regen_fishsearch()
     where locus =mem_locus 
       and  link=lnkg_zdb_id)
    where locus in 
-   (select mem_locus from tmp_locus) 
+   (select distinct mem_locus from tmp_locus) 
    and (chrom_num like '0' or chrom_num is null);
 
 --Then update fish search doing a join with linkage member on fish_id
