@@ -9,7 +9,7 @@
 --   per zfin id
 --	zfin id, synonym 
 --
--- Orthology - separate files for: 
+-- Orthology - separate files for: D	
 --   zebrafish - human
 --	zfin id , zebrafish symbol, human symbol, OMIM id, LocusLink id
 --   zebrafish - mouse
@@ -66,14 +66,14 @@ create table ortho_exp (
 );
 
 insert into ortho_exp 
-  select c_gene_id, zdb_id, mrkr_name, mrkr_abbrev, organism, ortho_name, 
+  select distinct c_gene_id, zdb_id, mrkr_name, mrkr_abbrev, organism, ortho_name, 
          ortho_abbrev, NULL::varchar(50), NULL::varchar(50), NULL::varchar(50),
          NULL::varchar(50),NULL::varchar(50)
     from orthologue,marker
 	where c_gene_id = mrkr_zdb_id;
 
 update ortho_exp
-	set flybase = (select acc_num from db_link, orthologue o
+	set flybase = (select distinct acc_num from db_link, orthologue o
 	   where db_name = 'FLYBASE'
 		and o.zdb_id = linked_recid
 		and ortho_id = o.zdb_id);
@@ -93,7 +93,7 @@ update ortho_exp
 		
 	
 update ortho_exp
-	set omim = (select acc_num from db_link, orthologue o
+	set omim = (select distinct acc_num from db_link, orthologue o
 	   where db_name = 'OMIM'
 		and o.zdb_id = linked_recid
 		and ortho_id = o.zdb_id);
