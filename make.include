@@ -57,6 +57,26 @@ TARGETROOT := $(patsubst %/,%,$(TARGETROOT))
 endif
 
 
+# TARGETFTPROOT must be defined and be an absolute path.
+
+ifndef TARGETROOT
+TargetFtpRootCheck:
+	ERROR: TARGETFTPROOT environment variable not set.
+endif
+ifneq ($(filter /%,$(TARGETFTPROOT)),$(TARGETFTPROOT))
+TargetFtpRootNotAbsolute:
+	ERROR: TARGETFTPROOT must be an absolute path.
+endif
+
+# if TARGETFTPROOT ends in a slash, strip it, double slashes in filenames
+# cause trouble for REBOL.
+ifeq ($(filter %/,$(TARGETFTPROOT)),$(TARGETFTPROOT))
+TARGETFTPROOT := $(patsubst %/,%,$(TARGETFTPROOT))
+endif
+
+
+
+
 # TARGETCGIBIN must be defined and be a relative path.
 
 ifndef TARGETCGIBIN

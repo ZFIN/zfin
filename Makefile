@@ -42,6 +42,12 @@
 #			specific version of the tree.  The makefiles 
 #			reside in the generic version.  THIS MUST BE AN
 #                       ABSOLUTE PATH.
+#  $TARGETFTPROOT     Full path to the FTP directory for this site.  Note
+#			that in production this points to a real FTP
+#			directory that can be reached via anonymous FTP,
+#			but that on test it only points to a directory
+#			where files can be put.  THIS MUST BE AN ABSOLUTE
+#			PATH.
 #  $TAGETCGIBIN       Name of the cgi-bin directory to use.  This name
 #			is RELATIVE to $TARGETROOT.  It typically has the
 #			form cgi-bin_VirtualServerName.
