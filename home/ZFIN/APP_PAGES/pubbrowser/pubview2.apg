@@ -195,18 +195,47 @@ ERROR -- something bad happened -- no OID passed in!
 <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-msegselect.apg&pubId=$OID">Clones and Probes</a> &nbsp; ($1)
 <?/MIVAR>
 
+<!---Expression section--->
+
+<!--we first check to see if these are GELI pubs or pubs that contain full FX-->
 
 <?MISQL SQL="
+        select count(xpat_zdb_id)
+        from expression_pattern,record_attribution
+        where xpat_zdb_id=recattrib_data_zdb_id
+        and recattrib_source_zdb_id='$OID'
+        and xpat_zdb_id in (select xpatanat_xpat_zdb_id from expression_pattern_anatomy)">
+<?/MISQL>
+
+<?MIBLOCK COND="$(>,$1,0)">
+
+   <?MISQL SQL="
+
 	select count(recattrib_data_zdb_id)
 	 from  record_attribution
 	 where recattrib_source_zdb_id = '$OID'
 	  and  recattrib_data_zdb_id like 'ZDB-XPAT-%';
 	">
-<?/MISQL> 
+   <?/MISQL> 
+   <?MIVAR COND="$(>,$1,0)">
+     <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&pubId=$OID">Gene Expression Data</a> &nbsp; ($(FIX,$1))
+   <?/MIVAR>
+
+<?/MIBLOCK>
+
+<?MISQL SQL="
+        select count(recattrib_data_zdb_id)
+         from  record_attribution,publication
+         where recattrib_source_zdb_id = '$OID'
+         and  recattrib_data_zdb_id like 'ZDB-XPAT-%' 
+         and recattrib_source_zdb_id=zdb_id 
+         and jtype <>'Unpublished'">
+<?/MISQL>
 <?MIVAR COND="$(>,$1,0)">
-<li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&pubId=$OID">Gene Expression Data</a> &nbsp; ($(FIX,$1))
+   <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatindexview.apg&OID=$OID">Gene Expression Summary</a>&nbsp;
 <?/MIVAR>
 
+<!--end expression pubs-->
 
 <?MISQL SQL="
 	select count(distinct lnkgmem_member_zdb_id)
