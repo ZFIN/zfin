@@ -12,7 +12,7 @@ ECK 8/30/97. Added sensitivity to UPDATE flag: If UPDATE exists, it tosses up a 
 <?/MIVAR>
 <b>Primary Publication:</b><br>
 <?MISQL SQL="select b.title, b.zdb_id, year(b.pub_date) as pyear,b.authors, b.source  from int_data_pub a, publication b where source_id='$OID' and target_id=b.zdb_id and info='primary' order by b.authors asc;">
-<TR><TD align=left> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$4 ($3) $1 $5</A>
+<TR><TD align=left> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$4 ($3) $1. $5.</A>
 </TD></TR>
 <p>
 <?/MISQL>
@@ -27,7 +27,7 @@ ECK 8/30/97. Added sensitivity to UPDATE flag: If UPDATE exists, it tosses up a 
 <?MISQL SQL="select b.title, b.zdb_id, year(b.pub_date) as pyear,b.authors, b.source from int_data_pub a, publication b where source_id='$OID' and target_id=b.zdb_id and info='related' order by b.authors asc;">
 
 $(IF,$(XST,$UPDATE),"<TD><font size=-1><input type=button value=delete onClick=Delete_listitem('publication','"$2"')></font></TD>")
-<TR><TD align=left> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$4 ($3) $1 $5</A>
+<TR><TD align=left> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$4 ($3) $1. $5.</A>
 </TD></TR>
 <p>
 <?/MISQL>

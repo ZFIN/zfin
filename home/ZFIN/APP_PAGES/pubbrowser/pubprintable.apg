@@ -63,7 +63,7 @@ This page simply generates a REFER format file for the selected pubs. Since we d
 
 
 <?MISQL SQL="select title,authors,source,year(pub_date) as pyear from publication $constraint $order_clause;">
-$2 ($4) $1 $3
+$2 ($4) $1. $3.
 <hr width=80%>
 
 <?/MISQL>

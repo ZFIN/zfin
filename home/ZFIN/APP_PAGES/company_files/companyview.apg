@@ -251,7 +251,7 @@ $(IF,$(XST,$UPDATE),"<font size=-1> <SELECT name=mem_status onChange=doStatus('"
 
 <?MISQL SQL="select distinct a.title, year(pub_date) as pyear, a.zdb_id, a.authors, a.source from publication a, int_person_pub b, int_person_company c where b.target_id=a.zdb_id and b.source_id=c.source_id and c.target_id='$OID' order by pyear desc, a.authors asc;">
 
-<TR><TD colspan=1 align=left><font size=3> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3">$4 ($2) $1 $5</A></TD></TR>
+<TR><TD colspan=1 align=left><font size=3> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3">$4 ($2) $1. $5.</A></TD></TR>
 <p>
 <?/MISQL>
 </form>
