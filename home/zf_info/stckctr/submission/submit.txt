@@ -1,0 +1,156 @@
+To: april@zfin.org, trevarro@uoneuro.uoregon.edu, monte@uoneuro.uoregon.edu, edwards@uoneuro.uoregon.edu, seger@uoneuro.uoregon.edu, ksf@cs.uoregon.edu, mason@uoneuro.uoregon.edu
+From: zirc@darkwing.uoregon.edu
+Subject: [required_submitterName]'s ZIRC Submission Form 
+
+
+SUBMITTER CONTACT INFORMATION
+Submitter Name: 
+[required_submitterName]
+---
+Submitter Email: 
+[required_submitterEMail]
+---
+Submitter Telephone: 
+[required_submitterTelephone]
+---
+Submitter Fax: 
+[submitterFax]
+---
+Submitter Institution/Lab: 
+[required_submitterLab]
+---
+Submitter Address: 
+[required_submitterAddress]
+---
+
+PI CONTACT INFORMATION
+PI Name: 
+[PIName]
+---
+PI Email: 
+[PIEMail]
+---
+PI Telephone: 
+[PITelephone]
+---
+PI Fax: 
+[PIFax]
+---
+PI Institution/Lab: 
+[PILab]
+---
+PI Address: 
+[PIAddress]
+---
+NIH grant number or other grant number:
+[required_grantNumber]
+
+LINE/MUTANT INFORMATION
+Line Discoverer:
+[lineDiscoverer]
+---
+Type of Line: 
+[lineWildType] [lineMutant] [lineTransgenic]
+---
+Proposing to send: 
+[statusAdults] [statusEmbryos] [statusFrozenSperm]
+---
+Line/Mutant Name: 
+[lineName]
+---
+Previous/Other Names: 
+[lineNamePrevious]
+---
+Phenotype: 
+[linePhenotype]
+---
+Mutagenesis Protocol: 
+[mutagenProtocol]
+---
+Mutation Type: 
+[mutantTypePoint] [mutantTypeDf] [mutantTypeDp] [mutantTypeIn] [mutantTypeIs] [mutantTypeT] [mutantTypeTg] [mutantTypeUn] [mutantTypeOther] [mutantTypeCr]
+---
+Allele(s): 
+[mutantAlleles]
+---
+Linkage Group: 
+[linkageGroup]
+---
+Linked Markers--Marker Name and Distance: 
+[markerNameDistance]
+---
+Transgene--Transgene Name: 
+[transgeneName]
+---
+Transgene--Transgene Description: 
+[transgeneDescription]
+---
+
+LINEAGE AND BREEDING
+Maternal Lineage: 
+[lineageMaternal]
+---
+Paternal Lineage: 
+[lineagePaternal]
+---
+Segregation: 
+breedingSegregation]
+---
+Submitter's Comments: 
+[breedingComments]
+---
+
+PUBLICATIONS
+Primary Publication: 
+[publications1]
+---
+Secondary Publications: 
+[publications2]
+---
+
+HUSBANDRY
+Special Husbandry Requirements: 
+[husbandrySpecial]
+---
+Mutant/Transgene Identification Techniques
+Describe in detail the technique you use to identify carriers. 
+What kind of technique?: 
+[mutantIDvisual] [mutantIDPCR] [mutantIDinSitu] [mutantIDother]
+---
+ID at what stage? 
+--for visual technique: 
+[mutantIDvisualStage]
+--for PCR technique: 
+[mutantIDPCRStage]
+--for in situ technique: 
+[mutantIDinsituStage] 
+--for other technique: 
+[mutantIDotherStage] 
+---
+Protocol: 
+for visual technique: 
+--[mutantIDvisDesc]
+for PCR technique: 
+--[mutantIDpcrDesc] 
+for in situ technique: 
+--[mutantIDinsituDesc] 
+for other technique: 
+--[mutantIDotherDesc]
+---
+
+CONSIDERATIONS AND INFORMATION
+Why ZIRC should take the line: 
+[considerationsReasons]
+---
+Is there an MTA?: 
+[considerationsMTAyes] [considerationsMTAno]
+---
+Other considerations or information: 
+[considerationsOther]
+---
+End of Mutant Submission Form
+
+
+
+
+

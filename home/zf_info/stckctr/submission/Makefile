@@ -1,6 +1,7 @@
+
 #------------------------------------------------------------------------
 #
-# Makefile for ZFIN_WWW CVS Project, Stock Center directory
+# Makefile for ZFIN_WWW CVS Project, Stock Center Mutant submission directory
 #
 # $Source$
 # $Id$
@@ -15,18 +16,14 @@
 
 # ---------------  Variable Definitions  --------------------------------
 
-TOP = ../../..
+TOP = ../../../..
 include $(TOP)/make.include
 
-SUBDIRS = submission
+TARGETDIR = $(TARGETROOT)/home/zf_info/stckctr/submission
 
-TARGETDIR = $(TARGETROOT)/home/zf_info/stckctr
+GENERICS = submit.html success.html
 
-GENERICS = fees.html fix.html guide.html health.html others.html plans.html \
-	scplan.html stckctr.html summary.html
-
-STATICS = aqua.jpg bldg.jpg crs1.gif crs2.gif elv.jpeg fig1.gif flrpln.jpeg
-
+STATICS = index.html reasons.html submit.txt husbandry.html marker.html \
 
 # ---------------  Production Rules  ------------------------------------
 
