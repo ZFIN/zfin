@@ -67,7 +67,7 @@ while (<>) {
 			}
 	
 		if ($BLASTDB eq "gb") {
-			($Sbjct) = $subjectdef =~ /gb\|(\w+)/;
+			($Sbjct) = $subjectdef =~ /[gb|emb]\|(\w+)/;
 		}
 		if ($BLASTDB eq "sp") {
 			($Sbjct) = $subjectdef =~ /sp\|(\w+)/;
