@@ -255,6 +255,8 @@ drop table meow_exp3;
 drop table meow_exp4;
 drop table meow_exp5;
 drop table meow_expll;
+drop table meow_mutant;
+
 
 -- NOW just notify Don Gilbert that the updated files are there and he
 -- can download them!
