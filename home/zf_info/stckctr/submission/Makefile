@@ -17,11 +17,14 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/stckctr/submission
 
-GENERICS = submit.html  request.html
+GENERICS = index.html,requestAnimals2.html,requestAntibodies2.html,\
+requestESTs2.html,requestThankyou.html,submit.html,submitSuccess.html
 
-STATICS = index.html reasons.html submit.txt husbandry.html marker.html links.html \
-zfinId.jpg zfinGene.jpg zdbId.html zdbGeneId.html thankyou.html grant.html\
-request.txt  success.html
+STATICS = bgblank.gif,bgbtm.jpg,bgimage.jpg,bgtop.jpg,grant.html,husbandry.html,\
+links.html,marker.html,reasons.html,request.html,requestAnimals.html,\
+requestAnimals.txt,requestAntibodies.html,requestAntibodies.txt,\
+requestESTs.html,requestESTs.txt,submit.txtzdbGeneId.html,zdbId.html,\
+zfinGene.jpg,zfinId.jpg,zirc.css,zirc.js,zircCC.html,zircCC.pdf
 
 # ---------------  Production Rules  ------------------------------------
 
