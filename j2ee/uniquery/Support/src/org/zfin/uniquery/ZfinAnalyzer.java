@@ -59,7 +59,14 @@ public class ZfinAnalyzer extends Analyzer
         
     public final TokenStream tokenStream(String fieldName, Reader reader)
         {
-        return new StopFilter(new LowerCaseFilter(new WhitespaceTokenizer(reader)), stopWords);
+        return new StopFilter(new LowerCaseFilter(new ZfinTokenizer(reader)), stopWords);
+        }
+        
+        
+        
+    public final TokenStream nonStoppedTokenStream(String fieldName, Reader reader)
+        {
+        return new LowerCaseFilter(new ZfinTokenizer(reader));
         }
         
     }
