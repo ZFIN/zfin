@@ -1,0 +1,96 @@
+<!-- this app page is used to update/delete linkage group info. The table that is modified is dependent upon the calling form.  The page called by the update_linkage form is also dependent upon the calling form
+
+Expected vars:  calling_form
+Possible vars: link_id, comments, lg, private, source , ZDB_ident, distance, LOd, metric, pair_id, marker_id
+
+-->
+
+<?MIVAR COND="$(NXST,$comments)" NAME=$comments><?/MIVAR>>
+
+<?MIBLOCK COND="$(EC,$calling_form,delete_linkage)">
+
+  <?MISQL SQL="delete from linkage where lnkg_zdb_id = '$link_id';"> <?/MISQL>
+
+  <?MIVAR>
+    <SCRIPT>
+      window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg';
+    </SCRIPT>
+  <?/MIVAR> 
+
+<?/MIBLOCK>
+
+
+<?MIBLOCK COND="$(EC,$calling_form,delete_distance)">
+
+  <?MISQL SQL="delete from linkage_pair where lnkgpair_zdb_id = '$pair_id';"> <?/MISQL>
+  <?/MISQL>
+  <?MIVAR>
+    <SCRIPT>
+      window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_linkage.apg&link_id=$link_id';
+    </SCRIPT>
+  <?/MIVAR>
+ 
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(EC,$calling_form,delete_member)">
+
+
+  <?MISQL SQL="select lpmem_linkage_pair_zdb_id from linkage_pair_member 
+                where lpmem_linkage_zdb_id = '$link_id'
+                  and lpmem_member_zdb_id = '$marker_id'";>
+    <?MIVAR NAME=$pair_id>$1<?/MIVAR>
+
+    <?MIBLOCK COND="$(NC,$pair_id,NULL)">
+      <?MISQL SQL="delete from linkage_pair
+	 where lnkgpair_linkage_zdb_id = '$link_id'
+	   and lnkgpair_zdb_id = '$pair_id'";>
+      <?/MISQL>
+    <?/MIBLOCK>
+  <?/MISQL>
+
+  <?MISQL SQL="delete from linkage_member
+     where lnkgmem_linkage_zdb_id = '$link_id'
+     and lnkgmem_member_zdb_id = '$marker_id'";>
+  <?/MISQL>
+
+  <?MIVAR>
+    <SCRIPT>
+      window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_linkage.apg&link_id=$link_id';
+    </SCRIPT>
+  <?/MIVAR> 
+
+<?/MIBLOCK>
+
+
+<?MIBLOCK COND="$(EC,$calling_form,update_linkage_with_distance)">
+
+  <?MISQL SQL="update linkage set lnkg_or_lg='$lg', lnkg_private='$private', lnkg_comments='$comments'
+     where lnkg_zdb_id = '$link_id';"> 
+  <?/MISQL>
+
+  <?MISQL SQL="update linkage_pair set lnkgpair_distance='$distance', lnkgpair_lod='$lod', lnkgpair_metric='$metric'
+     where lnkgpair_linkage_zdb_id = '$link_id';"> 
+  <?/MISQL>
+
+  <?MIVAR>
+    <SCRIPT>
+      window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_linkage.apg&link_id=$link_id';
+    </SCRIPT>
+  <?/MIVAR> 
+
+<?/MIBLOCK>
+
+
+<?MIBLOCK COND="$(EC,$calling_form,update_linkage_without_distance)">
+
+  <?MISQL SQL="update linkage set lnkg_or_lg='$lg', lnkg_private='$private', lnkg_comments='$comments'
+     where lnkg_zdb_id = '$link_id';"> 
+  <?/MISQL>
+
+  <?MIVAR>
+    <SCRIPT>
+      window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_linkage.apg&link_id=$link_id';
+    </SCRIPT>
+  <?/MIVAR> 
+
+<?/MIBLOCK>
