@@ -34,11 +34,39 @@ public class mapimage {
 
 	}
 
-	public String getMarkerData(String SQL) {
+	public String getMarkers(String query_string, String host, String port) {
         String data = new String();
+
+        SQLQuery SQL = new SQLQuery(host, port);
+		Vector V = SQL.selectAll(8, query_string);
+		Vector results = new Vector();
+
 		
-		return data;
-	}
+		Enumeration E = V.elements();
+		while(E.hasMoreElements()) {
+			data = data + (String)E.nextElement() + "|"
+				        + (String)E.nextElement() + "|"
+						+ (String)E.nextElement() + "|"
+						+ (String)E.nextElement() + "|"
+						+ (String)E.nextElement() + "|"
+						+ (String)E.nextElement() + "|"
+						+ (String)E.nextElement() + "|"
+				        + (String)E.nextElement() + "|\n";
+		}
+
+/**		if (query_string.indexOf("desc;") >= 0) { //they're ordered descending and have to be reversed..
+			Vector VV = new Vector();
+			int i = results.size() - 1; //fencepost...
+			while(i >= 0) 	{
+				VV.addElement(results.elementAt(i));
+				i--;
+
+			}
+			results = VV;
+  		}
+**/		
+	  return data;
+    }
 	
 
 	
@@ -52,7 +80,7 @@ public class mapimage {
 
 		Hashtable form = cgi.ReadParse(System.in);
 
-		String data;
+        String data;		
 		String zmap_panels;
 		String selected_marker;
 		int w = 100;
@@ -87,7 +115,7 @@ public class mapimage {
 		int G = 1;
 		String fish = " mtype = 'MUTANT' ";
 		int M = 8;
-		String est = " mtype = 'EST' ";
+		String est = " mtype = 'EST' or mtype = 'BAC_END' or mtype = 'PAC_END' ";
 		int E = 2;
 		String anon = " mtype = 'SSLP' or mtype = 'STS' or mtype = 'RAPD' or mtype = 'RFLP' or mtype = 'SNP' ";
 		int A = 4;
@@ -206,11 +234,13 @@ public class mapimage {
 
 		System.err.println("SQL: " + query_string);
 
-
+        System.err.println("HOST: " + (String)form.get("host"));
+		
+		String marker_data = getMarkers(query_string, (String)form.get("host"), (String)form.get("port"));
 
 		
-		MV = new MapViewer(query_string, (String)form.get("host"), (String)form.get("port"), SM, panel_order);
-		//MV = new MapViewer(data,selected_marker);
+		//MV = new MapViewer(query_string, (String)form.get("host"), (String)form.get("port"), SM, panel_order);
+		MV = new MapViewer(marker_data, SM, panel_order);
 
 		
 		
@@ -292,6 +322,7 @@ public class mapimage {
 		System.err.println("cgi applet finished");
 		System.exit(0);
 	}	
+
 
 	public void printImageHeader()	{
 		
