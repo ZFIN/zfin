@@ -403,7 +403,7 @@
         onClick="doit('dalias_alias','text','Alias','sequence+similarity')">
   <?/MIVAR> 
  
-  <b>Sequence Similarities:</b>
+  <b>Keywords and Sequence Similarities:</b>
 
  <?MISQL SQL="
   select dalias_alias, dalias_zdb_id
@@ -459,10 +459,16 @@
 <?MIVAR COND="$(XST,$UPDATE)">
 <INPUT TYPE=button value="Update" onClick="doit('comments','textarea','Description')"> 
 <?/MIVAR> 
-
+<?MIVAR COND="$(OR,$(>,$(POSITION,$OID,BAC),0),$(>,$(POSITION,$OID,PAC),0))">
+<b>EMBL </b>
+<?/MIVAR>
 <b>Description:</b>
 
 <?MIVAR>$(IF,$(NC,$comments,NULL),$comments,None submitted.)<?/MIVAR>
+
+
+<!-----------end Display description ------------------------------->
+
 
 
 <!-------- CLONE info ------------------------------------------->
@@ -847,7 +853,7 @@
 
      <TR>
       <TD bgcolor=#EEEEEE>
-       <?MIVAR>$mrel2to1comments<?/MIVAR>
+       <?MIVAR>$(IF,$(>,$(POSITION,$OID,GENE),0),$abbrev,$name) $mrel2to1comments<?/MIVAR>
       </TD>
       <TD align=left width=80% bgcolor=#EEEEEE>
 	<?MISQL SQL="
@@ -901,8 +907,10 @@
      
      <TR>
       <TD bgcolor=#EEEEEE>
-       <?MIVAR>$mrel1to2comments<?/MIVAR> 
+
+       <?MIVAR>$(IF,$(>,$(POSITION,$OID,GENE),0),<i>$abbrev</i>,$name) $mrel1to2comments<?/MIVAR> 
        <?MIVAR NAME=$mrel_mtype><?/MIVAR>
+
       </TD>
       <TD align=left width=80% bgcolor=#EEEEEE>
 	<?MISQL SQL="
@@ -925,6 +933,7 @@
 	<?MIBLOCK COND="$(NC,$mrkrview_segment_mrkr_type,$mrkrview_last_mrkr_type)">
 	  <?MIBLOCK COND="$(NE,$MI_CURRENTROW,1)"><br><?/MIBLOCK>
  	  <?MIVAR><font size=-1>[$mrkrview_segment_mrkr_type]</font><?/MIVAR>
+
         <?MIELSE>,
 	<?/MIBLOCK>
 	<?MIVAR NAME=$mrkrview_last_mrkr_type>$mrkrview_segment_mrkr_type<?/MIVAR>
@@ -1046,7 +1055,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
   <?MIBLOCK COND="$(NC,$dbname,Genbank)">
 
     <li><?MIVAR>
-   
+
     $(IF,$(AND,$(XST,$UPDATE),$(EC,$attachto,s)),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$dbname:$accnum)"')>")
     <A HREF="$dbquery">$dbname:$dblink_acc_num_display</A>
     <?MIBLOCK COND="$(AND,$(XST,$UPDATE),$(EC,$attachto,r))">
@@ -1057,13 +1066,14 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
             
            ( <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$1</A> )
         <?/MISQL>
-
-    <?/MIBLOCK>	
+    <?/MIBLOCK>
+	
     <?MISQL SQL="select WebExplode(object,'dataId=$dataId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
 	
     <?/MIVAR>
   <?MIELSE>
   <!-- if more than five Genbank, Genbank info go to another page -->
+
 
 
      <?MIBLOCK COND="$(=,$empty,1)">
@@ -1105,6 +1115,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 	<li><?MIVAR>
 	$(IF,$(AND,$(XST,$UPDATE),$(EC,$gbsource[$n],s)),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,Genbank:$gbaccs[$n])"')>")
 	<A HREF="$link">Genbank:$gbaccs[$n]</A>
+
 	<?MIBLOCK COND="$(AND,$(XST,$UPDATE),$(EC,$gbsource[$n],r))">
           <?MISQL SQL="
 	    select mrkr_abbrev, mrkr_zdb_id
@@ -1120,8 +1131,8 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
          <?MISQL SQL="select WebExplode(object,'dataId=$gblinkId[$n]&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL> 
        <?/MIBLOCK>
 
-        $(SETVAR,$n,$(+,$n,1))
-        <?/MIVAR>
+       $(SETVAR,$n,$(+,$n,1))
+       <?/MIVAR>
    <?/MIBLOCK>
 
 <?/MIBLOCK> 
@@ -1209,6 +1220,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 <?MICOMMENT> *** 08/25 curator's decision that we will not pull over publications from related markers, or the known locus. However, any attribution to data items automatically populated to the marker itself. <?/MICOMMENT>
 
 <?MISQL SQL="
+
   select recattrib_source_zdb_id as zdb_id
     from record_attribution, publication p
    where recattrib_data_zdb_id = '$OID' 
