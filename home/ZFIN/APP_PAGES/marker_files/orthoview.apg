@@ -1,5 +1,4 @@
 
-
 <!-- This file is for orthologue and ortho evidence table display 
    Parameter:
    OID     the zdb id of a marker			
@@ -145,6 +144,7 @@
   <?/MISQL>
   </TR> 
   
+
   <!-- Query for references -->
   <?MIBLOCK COND="$(=,$hasEv,1)">
    <TR><TD bgcolor=#ccccccc colspan=3 align=right>Number of References</TD>
@@ -160,7 +160,18 @@
 		oevdisp_organism_list, oevcode_order 
 	order by oevcode_order,oevdisp_organism_list
 	;">
-    <?MIVAR><TD align=center><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$2&rtype=gene&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev">$1</A></TD><?/MIVAR>
+     <?MIVAR NAME=$count>$1<?/MIVAR>
+     <?MIVAR NAME=$oevdispId>$2<?/MIVAR>
+     <TD align=center>
+     <?MISQL COND="$(=,$count,1)" SQL="
+	select recattrib_source_zdb_id 
+	  from record_attribution
+	 where recattrib_data_zdb_id = '$oevdispId' ; ">
+	(<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$1">$count</A>)
+     <?/MISQL>
+     <?MIVAR COND="$(>,$count,1)"> 
+        (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$oevdispId&rtype=gene&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev">$count</A>)<?/MIVAR>
+     </TD>
    <?/MISQL>
    </TR>
   <?/MIBLOCK>
