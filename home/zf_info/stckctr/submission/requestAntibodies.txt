@@ -1,16 +1,16 @@
-To: aprilm@uoneuro.uoregon.edu, dlains@uoneuro.uoregon.edu, kelly@uoneuro.uoregon.edu, cjones@uoneuro.uoregon.edu, ngoebel@uoneuro.uoregon.edu, mason@uoneuro.uoregon.edu
+To: aprilm@uoneuro.uoregon.edu, dlains@uoneuro.uoregon.edu, kelly@uoneuro.uoregon.edu, cjones@uoneuro.uoregon.edu, ngoebel@uoneuro.uoregon.edu, mason@uoneuro.uoregon.edu, rholland@uoneuro.uoregon.edu
 From: zirc@darkwing.uoregon.edu
 Subject: [required_requesterName]'s request for antibodies
 
 **************************************** 
-person:[required_requesterName] (PI=[PIName]) antibodies:[antibodyName1] [antibodyName2] [antibodyName3] [antibodyName4] SamplePack:[antibodySPname1][antibodySPname2][antibodySPname3][antibodySPname4][antibodySPname5][antibodySPname6]
+person:[nameInd] [nameFam] (PI=[PIName]) antibodies:[antibodyName1] [antibodyName2] [antibodyName3] [antibodyName4] SamplePack:[antibodySPname1][antibodySPname2][antibodySPname3][antibodySPname4][antibodySPname5][antibodySPname6]
 ---
 ---
 Name:
-[required_requesterName]
+[nameInd] [nameFam]
 ---
 Email:
-[required_requesterEmail]
+[eMailAddr]
 ---
 Telephone:
 [required_requesterTelephone]
@@ -55,7 +55,7 @@ Funding Organization:
 ---
 ---
 Bill To Name:
-[required_BillToName]
+[required_BillToNameInd] [required_BillToNameFam]
 ---
 Bill To Email:
 [required_BillToEmail]
