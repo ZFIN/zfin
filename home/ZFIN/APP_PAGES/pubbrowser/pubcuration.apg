@@ -173,9 +173,10 @@ OPTIONAL VARS:
       }
 
      function validateCheckbox() {
-	var contact_grp  = document.contact_author.contact;
+  	var contact_grp  = document.contact_author.contact;
 	var valid     = false;
 	var contacts = new String();
+ 	var additional_eaddr = document.contact_author.additional_eaddr.value; 
 	if( contact_grp.length > 0) {
           for (i=0; i<contact_grp.length; i++) {
 	
@@ -189,12 +190,20 @@ OPTIONAL VARS:
 		valid = true;
 		contacts = contact_grp.value;
 	}
+
+        if (isEmpty(additional_eaddr)) {
+		additional_eaddr = new String();
+	}else {
+		valid = true;
+	}
+
 	if(!valid){
 		alert("Please select contacts first.");
 		return false;
 	}
+  
         <?MIVAR>
-	window.open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-notif_frame.apg&status=edit&OID=$OID&contacts_id="+contacts+"&sender_id=$ZDB_ident","editwindow","resizable=yes,toolbar=yes,scrollbars=yes,width=700,height=900");
+	window.open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-notif_frame.apg&status=edit&OID=$OID&contacts_id="+contacts+"&additional_eaddr="+additional_eaddr+"&sender_id=$ZDB_ident","editwindow","resizable=yes,toolbar=yes,scrollbars=yes,width=700,height=900");
 	<?/MIVAR>
  	return true;		       
      }  	
@@ -568,20 +577,13 @@ OPTIONAL VARS:
      <INPUT type=checkbox $(IF,$(AND,$(XST,$contact),$(>,$(POSITION,$contacts,$author_id),0)),CHECKED) name=contact value=$author_id> $author_name
      
   <?/MISQL>
-
-  <br>	
+  <br>	<?MIVAR>
+  &nbsp;&nbsp;&nbsp; Additional Contact(s) E-mail Address(es): <INPUT type=textarea size=55 name=additional_eaddr $(IF,$(XST,$additional_eaddr),value=$additional_eaddr)>
+        <?/MIVAR>
+  <br>
   <INPUT type=submit value="Edit Notification">
 
 </form> 
-<?MICOMMENT>
-<?MIBLOCK COND="$(XST,$contact)">
- <script> 
-  <?MIVAR>
-   window.open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-notif_frame.apg&status=edit&OID=$OID&contacts_id=$(URLENCODE,$contacts)&sender_id=$ZDB_ident","editwindow","resizable=yes,scrollbars=yes,width=700,height=900");
-  <?/MIVAR>
- </script> 
-<?/MIBLOCK>
-<?/MICOMMENT>
 
 
 <?MICOMMENT> 
