@@ -21,12 +21,12 @@ open ACC, ">ac_dalias.unl" or die "Cannot open ac_dalias.unl:$!";
 open GNAME, ">gn_dalias.unl" or die "Cannot open gn_dalias.unl:$!";
 open COMMT, ">cc_external.unl" or die "Cannot open cc_external.unl:$!";
 open KEYWD, ">kd_spkeywd.unl" or die "Cannot open kd_spkeywd.unl:$!";
-open DESC, ">sp_desc.unl";
-open LEN, ">sp_len.unl";
-open DESCNEW, ">spdesc.unl";
-open GENELEN, ">splen.unl";
-open ECNUM, ">ecgene.unl";
-open SPGO, ">spgo.unl";
+#open DESC, ">sp_desc.unl";
+#open LEN, ">sp_len.unl";
+#open DESCNEW, ">spdesc.unl";
+#open GENELEN, ">splen.unl";
+#open ECNUM, ">ecgene.unl";
+#open SPGO, ">spgo.unl";
 
 my $dbname = "<!--|DB_NAME|-->";
 my $username = "";
@@ -44,7 +44,7 @@ while (<>) {
      $length = $sp_length[1] ;             #chop period sign
      @len=split(' ',$length);
      $len=$len[0];
-     print LEN "$len|\n";
+     #print LEN "$len|\n";
      next;
   }
   
@@ -112,7 +112,7 @@ while (<>) {
       }
       if ($dbname eq "EMBL") {
 	  $gb_acc = $acc_num;
-	  $gp_acc_ver = $dr[3];
+	  $gp_acc_ver = $dr[3]; chop($gp_acc_ver);
 	  ($gp_acc, $version) = split (/\./, $gp_acc_ver);
 	  
 	  $_ = pop(@dr);     #get zfin accession number for the SP record  
@@ -166,7 +166,7 @@ while (<>) {
     }
     
     print DBLINK "$gene|SWISS-PROT|$prm_ac|$len|\n";
-    print SPGO "$gene|$prm_ac|\n";
+    #print SPGO "$gene|$prm_ac|\n";
 
     while ($embl_gb = shift @embl_gb) {
       print DBLINK "$gene|Genbank|$embl_gb| |\n";
@@ -207,8 +207,8 @@ while (<>) {
 	print GNAME "$prm_ac|$gene|$sp_gname|\n";
       }
     }
-    print DESC "$de|$gene|\n"; 
-    print GENELEN "$gene|$len|\n";
+    #print DESC "$de|$gene|\n"; 
+    #print GENELEN "$gene|$len|\n";
     if (length($ecnumber)>0){
        print DBLINK "$gene|EC-ENZYME|$ecnumber| |\n"; 
     }
