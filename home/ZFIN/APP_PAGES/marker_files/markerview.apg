@@ -609,7 +609,7 @@ Accession:<input type=text size=15 name=seq_acc>
   <?MIVAR NAME=n>1<?/MIVAR>
   <?MIBLOCK INDEX=$link FOREACH=$gblinks>
 	<li><?MIVAR>
-	$(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$acc"')>")
+	$(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$gbaccs"')>")
 	<A HREF="$link">Genbank:$gbaccs[$n]</A>
         $(SETVAR,$n,$(+,$n,1))
         <?/MIVAR>
