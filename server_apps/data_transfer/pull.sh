@@ -12,11 +12,9 @@ echo "#########################################################################"
 echo "MEOW Push:"   #(whether the ZGC failed or not)
 <!--|ROOT_PATH|-->/server_apps/data_transfer/MEOW/meow.pl
 echo "#########################################################################"
-echo "RefSeq (LocusLink) Pull:" 
+echo "RefSeq (Entrez) Pull:" 
+echo "Log File: <!--|ROOT_PATH|-->/server_apps/data_transfer/RefSeq/refseq.log"
 <!--|ROOT_PATH|-->/server_apps/data_transfer/RefSeq/refseq.pl> <!--|ROOT_PATH|-->/server_apps/data_transfer/RefSeq/refseq.log 2>&1
-echo "#########################################################################"
-echo "GenPept Pull:" 
-#<!--|ROOT_PATH|-->/server_apps/data_transfer/GenPept/fetch_load_GenPept.sh
 echo "#########################################################################"
 #echo "Swiss-Prot Pull:"# -- expected ~ 2004-Jun
 #<!--|ROOT_PATH|-->/server_apps/data_transfer/ ... SP
