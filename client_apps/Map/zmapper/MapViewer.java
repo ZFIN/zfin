@@ -26,10 +26,13 @@ public class MapViewer extends Canvas {
 	String data;
 	int PADDING = 20;
 	boolean watermark_t;
+	String panel_order;
+	Hashtable PO; //panel_abbrev -> disp_order
+	Vector Panels; //panels in order
 	
 	public static final Font F = new Font("SansSerif", Font.PLAIN, 9);
 	
-	public MapViewer(String data, Hashtable selected_markers) {
+	public MapViewer(String data, Hashtable selected_markers, String panel_order) {
 		
 		watermark_t = true;
 
@@ -37,11 +40,12 @@ public class MapViewer extends Canvas {
 		BBTable = new Hashtable();
 		this.data = data;
 		this.SM = selected_markers;
-
+		this.panel_order = panel_order;
+		
 	}
 	
 
-	public MapViewer(String data, String selected_marker_id) 	{
+	public MapViewer(String data, String selected_marker_id, String panel_order) 	{
 
 		watermark_t = true;
 		
@@ -49,11 +53,13 @@ public class MapViewer extends Canvas {
 		BBTable = new Hashtable();
 		this.data = data;
 		this.selected_marker_id = selected_marker_id;
+		this.panel_order = panel_order;
 
-
+		System.err.println("selected marker id: " + selected_marker_id);
+		
 	}
 	
-	public MapViewer(String query_string, String host_id, String host_port, Hashtable selected_markers) {
+	public MapViewer(String query_string, String host_id, String host_port, Hashtable selected_markers, String panel_order) {
 
 		watermark_t = false;
 
@@ -70,9 +76,12 @@ public class MapViewer extends Canvas {
 		this.SM = selected_markers;
 		
 		watermark_t = false;
+
+		this.panel_order = panel_order;
+
 	}
 	
-	public MapViewer(String query_string, String host_id, String host_port, String selected_marker_id) {
+	public MapViewer(String query_string, String host_id, String host_port, String selected_marker_id, String panel_order) {
 
 		watermark_t = false;
 
@@ -86,11 +95,12 @@ public class MapViewer extends Canvas {
 		this.QueryStrings = V;
 			
 		this.selected_marker_id = selected_marker_id;
-	   
+		this.panel_order = panel_order;
+
 
 	}
 
-	public MapViewer(Vector QueryStrings, String host_id, String host_port, String selected_marker_id) {
+	public MapViewer(Vector QueryStrings, String host_id, String host_port, String selected_marker_id, String panel_order) {
 
 		watermark_t = false;
 
@@ -101,6 +111,7 @@ public class MapViewer extends Canvas {
 		this.QueryStrings = QueryStrings;
 		this.selected_marker_id = selected_marker_id;
 		
+		this.panel_order = panel_order;
 
 	}
 	
@@ -122,8 +133,21 @@ public class MapViewer extends Canvas {
 //			watermark_t = false;
 		}
 		
+		if (panel_order != null) {
+			PO = new Hashtable();
+			panel_order = panel_order.substring(0,panel_order.length()-1); //remove trailing |
+			StringTokenizer poStok = new StringTokenizer(panel_order,"|");
+			String poS;
+			int order = 1;
+			while (poStok.hasMoreElements()) {
+				poS = (String)poStok.nextElement();
+				PO.put(poS,new Integer(order));
+				order++;
+			}
+			
+		}
+		
 		buildBackBones(results.elements());
-
 			  
 		return null;
 	}
@@ -142,10 +166,14 @@ public class MapViewer extends Canvas {
 			
 			if (selected_marker_id != null) //single selected, being phased out as of 8/29/00
 			{
-				if (M.getZdb_id().equals(selected_marker_id))
+//				System.err.println("p: '" + selected_marker_id + "'");
+//				System.err.println("m: '" + M.getZdb_id() + "'");
+				if (M.getZdb_id().equals(selected_marker_id)) {
+//					System.err.println("---------- marker selected ----------");
 					M.setSelected(true);
+				}
 			}
-
+			
 			if (SM != null) //panel->abbrev hashtable, new as of 8/29/00
 			{
 				if ((SM.get(M.getTarget_abbrev()) != null) &&( ((String)SM.get(M.getTarget_abbrev())).equals(M.getZdb_id())))
@@ -160,6 +188,8 @@ public class MapViewer extends Canvas {
 			
 			if (BBTable.get(M.getTarget_abbrev()+M.getOR_lg()) == null) { //new BackBone
 				BB = new BackBone(M.getTarget_abbrev(), M.getOR_lg(), M.getMetric(), watermark_t);
+				if (PO.get(M.getTarget_abbrev()) != null)
+					BB.setDisp_order(((Integer)PO.get(M.getTarget_abbrev())).intValue());
 				BBTable.put(M.getTarget_abbrev() + M.getOR_lg(), BB);
 				BB.addMarker(M);
 			} else {
@@ -204,19 +234,23 @@ public class MapViewer extends Canvas {
 
 		int i = 0;
 
-		Enumeration E = this.elements(); //no attempt at ordering
+		Vector V = this.getPanels(); //no attempt at ordering
 
 		BackBone lastBB = null;
-		while (E.hasMoreElements()) {
-			BB = (BackBone)E.nextElement();
-			BB.draw(g,i*bbw + (i+1)*p, bbw,h);
+		for (int j = 0 ; j < V.size() ; j++) {
+			BB = (BackBone)V.elementAt(j);
+			if (BB.getPanel_name() != null)	{
 
-			if (lastBB != null) 
-				BB.drawFramework(g, i*bbw + (i+1)*p, bbw, h, lastBB,i);
+				BB.draw(g,i*bbw + (i+1)*p, bbw,h);
+
+				if (lastBB != null) 
+					BB.drawFramework(g, i*bbw + (i+1)*p, bbw, h, lastBB,i);
 			
-			lastBB = BB;
-			i++;
-			System.err.println(BB);
+				lastBB = BB;
+				i++;
+				System.err.println("adding: " + BB); 
+			}
+			
 		}
 
 		
@@ -327,110 +361,135 @@ public class MapViewer extends Canvas {
 	
 
 	public Enumeration elements() 	{
-		Vector Results = new Vector();
-		Vector M = new Vector();
-		Vector M_s = new Vector();
-		Vector Rh = new Vector();
-		Vector Rh_s = new Vector();
+		Vector Results = new Vector(6);
 		BackBone BB;
+		BackBone EmptyBB = new BackBone();
+		if (panel_order != null) {
+			if (Panels == null) {
+				for (int i = 5 ; i >= 0 ; i--)
+					Results.addElement(EmptyBB);
 
-		BackBone ZMAP = null;
+				Enumeration POE = BBTable.elements();
+				while (POE.hasMoreElements()) {
+					BB = (BackBone)POE.nextElement();
+					Results.setElementAt(BB,BB.getDisp_order()-1);
+				}
+				this.Panels = Results;
+			} else { Results = this.Panels; }
 		
-		Enumeration E = BBTable.elements();
+		} else {
+			Vector M = new Vector();
+			Vector M_s = new Vector();
+			Vector Rh = new Vector();
+			Vector Rh_s = new Vector();
 
+
+			BackBone ZMAP = null;
 		
+			Enumeration E = BBTable.elements();
 
-		while( E.hasMoreElements()) {  //find the panels without markers selected
-			BB = ((BackBone)E.nextElement());
+			while( E.hasMoreElements()) {  //find the panels without markers selected
+				BB = ((BackBone)E.nextElement());
 
-			if (BB.getSelected() == null) 
-			{
-				if (BB.getPanel_name().equals(BackBone.MERGEDPANEL))
-					ZMAP = BB;
-				else if (BB.getMetric().equals("cM"))
-					M.addElement(BB);
-				else
-					Rh.addElement(BB);
-			}
+				if (BB.getSelected() == null) 
+				{
+					if (BB.getPanel_name().equals(BackBone.MERGEDPANEL))
+						ZMAP = BB;
+					else if (BB.getMetric().equals("cM"))
+						M.addElement(BB);
+					else
+						Rh.addElement(BB);
+				}
 			
-		}
-
-		E = BBTable.elements();
-		while( E.hasMoreElements()) {  //now find the panels with markers selected
-			BB = ((BackBone)E.nextElement());
-
-			if (BB.getSelected() != null) 
-			{
-				if (BB.getPanel_name().equals(BackBone.MERGEDPANEL))
-					ZMAP = BB;
-				else if (BB.getMetric().equals("cM"))
-					M_s.addElement(BB);
-				else
-					Rh_s.addElement(BB);
 			}
+
+			E = BBTable.elements();
+			while( E.hasMoreElements()) {  //now find the panels with markers selected
+				BB = ((BackBone)E.nextElement());
+
+				if (BB.getSelected() != null) 
+				{
+					if (BB.getPanel_name().equals(BackBone.MERGEDPANEL))
+						ZMAP = BB;
+					else if (BB.getMetric().equals("cM"))
+						M_s.addElement(BB);
+					else
+						Rh_s.addElement(BB);
+				}
 			
-		}
+			}
 
-		if (ZMAP != null)
-			Results.addElement(ZMAP);
-		int i;
+			if (ZMAP != null)
+				Results.addElement(ZMAP);
+			int i;
 
-		if ((Rh.size() > 1) && (BBTable.size() > 2))
-			Rh = BBSort(Rh);
+			if ((Rh.size() > 1) && (BBTable.size() > 2))
+				Rh = BBSort(Rh);
 //		E = Rh.elements();
 //		while(E.hasMoreElements())
 //			Results.addElement(E.nextElement());
 		
-		for (i = 0 ; i < Rh.size() ; i++) {
-			Results.addElement(Rh.elementAt(i));
-		}
+			for (i = 0 ; i < Rh.size() ; i++) {
+				Results.addElement(Rh.elementAt(i));
+			}
 
-		if ((Rh_s.size() > 1) && (BBTable.size() > 2))
-			Rh_s = BBSort(Rh_s);	
+			if ((Rh_s.size() > 1) && (BBTable.size() > 2))
+				Rh_s = BBSort(Rh_s);	
 //		E = Rh_s.elements();
 //		while(E.hasMoreElements())
 //			Results.addElement(E.nextElement());
 
-		for (i = 0 ; i < Rh_s.size() ; i++) {
-			Results.addElement(Rh_s.elementAt(i));
-		}
+			for (i = 0 ; i < Rh_s.size() ; i++) {
+				Results.addElement(Rh_s.elementAt(i));
+			}
 
-		if ((M_s.size() > 1) && (BBTable.size() > 2))
-			M_s = BBSort(M_s);
+			if ((M_s.size() > 1) && (BBTable.size() > 2))
+				M_s = BBSort(M_s);
 //		E = M_s.elements();
 //		while (E.hasMoreElements())
 //			Results.addElement(E.nextElement());
 
-		for (i = M_s.size()-1  ; i >= 0 ; i--) {
-			Results.addElement(M_s.elementAt(i));
-		}
+			for (i = M_s.size()-1  ; i >= 0 ; i--) {
+				Results.addElement(M_s.elementAt(i));
+			}
 		
 		
-		if ((M.size() > 1) && (BBTable.size() > 2))
-			M = BBSort(M);
+			if ((M.size() > 1) && (BBTable.size() > 2))
+				M = BBSort(M);
 //		E = M.elements();
 //		while (E.hasMoreElements())
 //			Results.addElement(E.nextElement());
 
-		for (i = M.size()-1  ; i >= 0 ; i--) {
-			Results.addElement(M.elementAt(i));
-		}
+			for (i = M.size()-1  ; i >= 0 ; i--) {
+				Results.addElement(M.elementAt(i));
+			}
 			
 /*		E = Results.elements();
 		while(E.hasMoreElements())
 		System.err.println("Ordering: " + E.nextElement());*/
-
+		
+		}
 		
 		
 		return Results.elements();
 
 	}
+
+	public Vector getPanels() {
+		if (Panels == null)
+			this.elements();
+		return Panels;
+	}
+	
 	
 	public Vector BBSort(Vector V) {
 		//sorts BackBones by marker count, smallest to largest
 		return bubblesort(V);
 
 	}
+
+
+	
 
 /*	public Vector RBBSort(Vector V) {
 		//sorts BackBones by marker count, largest to smallest
