@@ -246,7 +246,7 @@ public class mapimage {
 
 	public void printImageHeader()	{
 		
-		System.out.println("Content-type: image/jpg");
+		System.out.println("Content-type: image/jpeg");
 		System.out.println("");
 
 	}	
