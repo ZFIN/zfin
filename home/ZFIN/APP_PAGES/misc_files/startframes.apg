@@ -47,7 +47,7 @@ You may also optionally pass many other constraints on the upcoming selection th
 <!-- arrange for any variables that need to be passed for nav tile bar call -->
 <?MIBLOCK COND="$(AND,$(XST,$navtile),$(EC,$selector,aa-geneselect.apg))">
 <?MIVAR COND="$(XST,$navtile)" NAME=$constraint>&navtile=$navtile$constraint<?/MIVAR>
-<?MIVAR COND="$(XST,$name)" NAME=$constraint>&nav_name=$name$constraint<?/MIVAR>
+<?MIVAR COND="$(XST,$name)" NAME=$constraint>&nav_name=$(URLENCODE,$name)$constraint<?/MIVAR>
 <?MIVAR COND="$(XST,$searchtype)" NAME=$constraint>&searchtype=$searchtype$constraint<?/MIVAR>
 <?MIVAR COND="$(XST,$lg)" NAME=$constraint>&lg=$lg$constraint<?/MIVAR>
 <?MIVAR COND="$(XST,$refcross)" NAME=$constraint>&refcross=$refcross$constraint<?/MIVAR>
@@ -58,7 +58,7 @@ You may also optionally pass many other constraints on the upcoming selection th
 <!-- arrange for any variables that need to be passed for nav tile bar call -->
 <?MIBLOCK COND="$(AND,$(XST,$navtile),$(EC,$selector,aa-markerselect.apg))">
 <?MIVAR COND="$(XST,$navtile)" NAME=$constraint>&navtile=$navtile$constraint<?/MIVAR>
-<?MIVAR COND="$(XST,$name)" NAME=$constraint>&nav_name=$name$constraint<?/MIVAR>
+<?MIVAR COND="$(XST,$name)" NAME=$constraint>&nav_name=$(URLENCODE,$name)$constraint<?/MIVAR>
 <?MIVAR COND="$(XST,$lg)" NAME=$constraint>&lg=$lg$constraint<?/MIVAR>
 <?MIVAR COND="$(XST,$compare)" NAME=$constraint>&compare=$compare$constraint<?/MIVAR>
 <?MIVAR COND="$(XST,$refcross)" NAME=$constraint>&refcross=$refcross$constraint<?/MIVAR>
