@@ -10,10 +10,12 @@
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
 # Every trigger that is defined on ZFIN tables is defined in its own 
-# file in this directory.  Each file first drops the trigger, and then
-# defines it.  Files have the same name as the trigger they define.
+# file in this directory.  
 
-
+# ST: modified trigger files and this Makefile to have the Makefile itself 
+# drop all the triggers at make-time.   
+# Each file creates the trigger.  
+# Files *must* have the same name as the trigger they define.
 # ---------------  Variable Definitions  --------------------------------
 
 TOP = ../..
@@ -45,13 +47,16 @@ STATICS = $(DBLINK_TRIGGERS) $(PUB_TRIGGERS) \
           $(STAGE_TRIGGERS) $(ZERO_PAD_TRIGGERS)
 STATICTARGETS = $(foreach STAT, $(STATICS), $(TARGETDIR)/$(STAT))
 
+SUBDIRS = ValidateTriggers
+
 TARGETS =  $(STATICTARGETS)
+
 
 # ---------------  Production Rules  ------------------------------------
 
-.PHONY : all sanitycheck clean clobber onetimeonly
+.PHONY : all sanitycheck clean clobber onetimeonly $(SUBDIRS)
 
-all : $(TARGETDIR) $(TARGETS)
+all : $(TARGETDIR) $(TARGETS) $(SUBDIRS)
 
 $(TARGETDIR) :
 	$(TARGET_MKDIR) $(TARGETDIR);
@@ -61,26 +66,28 @@ $(STATICTARGETS) : $(TARGETDIR)/% : %
 	$(TOUCH) $@
 	-$(DBACCESS) $(DBNAME) $@
 
+$(SUBDIRS) :
+	$(MAKE) -C $@
 
 # ---------------  Maintenance Rules  -----------------------------------
 
 clean :				# No local intermediate files
-
+	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
 
 clobber :			# Remove targets, but not target dir.
 	rm -f $(TARGETS)
-
+	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
 
 
 sanitycheck :
 	$(SPECIFICCHECK) $(TARGETS)
-
+	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
 
 # define one time only target
 
 onetimeonly :
 	$(ONETIMEONLY)
-
+	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
 
 
 # ---------------  Special Rules  ---------------------------------------
