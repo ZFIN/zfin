@@ -69,9 +69,13 @@ public class mapimage {
 		int A = 4;
 		String type_string = "";
 
+		String query_string = "";
+		if (table.equals("public_paneled_markers")) {
+		    query_string = "select zdb_id, abbrev, mtype, target_abbrev, lg_location::numeric(6,2), OR_lg, mghframework, metric from " + table + " where ("; 
+		} else if (table.equals("zmap_pub_pan_mark")) {
+		   query_string = "select zdb_id, abbrevp, mtype, target_abbrev, lg_location::numeric(6,2), OR_lg, mghframework, metric from " + table + " where ("; 
+		}
 
-		
-		String query_string = "select zdb_id, abbrev, mtype, target_abbrev, lg_location::numeric(6,2), OR_lg, mghframework, metric from " + table + " where (";
 		boolean first = true;
 		String or = "";
 		while(sTok.hasMoreTokens()) {
