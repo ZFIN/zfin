@@ -4,6 +4,8 @@ create trigger locus_registration_insert_trigger
     for each row (
 	execute function scrub_char(new_locusreg.locus_name)
           into locus_name,
+	execute function scrub_char(new_locusreg.allele)
+          into allele,
 	execute function scrub_char(new_locusreg.abbrev)
           into abbrev
     );
