@@ -165,7 +165,6 @@ $(SETVAR,$lastevidence,$3)
 $(SETVAR,$lastpub,$9)
 $(SETVAR,$lastinf,$8)
 <?/MISQL>
-<?MISQL SQL="execute function get_time()"><?/MISQL>
 </table>
 <hr>
 <p>
