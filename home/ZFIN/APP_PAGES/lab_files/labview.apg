@@ -236,7 +236,9 @@ $1</A>
       <?/MIVAR>
       </font>
     <?MIELSE>
-      , <?MIVAR>$labpos<?/MIVAR>
+       <?MIBLOCK COND="$(NC,$labpos,Other)">
+	, <?MIVAR>$labpos<?/MIVAR>
+       <?/MIBLOCK>
     <?/MIBLOCK>
   <br>
   <?/MISQL>
@@ -272,7 +274,9 @@ $1</A>
       <?/MIVAR>
       </font>
     <?MIELSE>
-      , <?MIVAR>$labpos<?/MIVAR>
+       <?MIBLOCK COND="$(NC,$labpos,Other)">
+	, <?MIVAR>$labpos<?/MIVAR>
+       <?/MIBLOCK>
     <?/MIBLOCK>
   <br>
   <?/MISQL>
