@@ -17,11 +17,22 @@
 	function Delete_listitem(item_name,item_id) {
 		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted&target_table=$target_table');
 	}
+	
+	function Delete_attrib(subattr,data_zdbId,source_zdbId,info) {
+		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&dataOID='+data_zdbId+'&attr='+subattr+'&attr_type=special-listitem&old_value='+source_zdbId+'&new_value=deleted&target_table=$target_table&info='+info);
+	}
+	function new_attrib_seq() {
+		var seq_acc = document.updater.attrib_seq_acc.value;
+		var pub_id = document.updater.attrib_seq_pubid.value.toUpperCase();
+		if((seq_acc != '')&&(pub_id != '')) {
+			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+seq_acc+'&new_value='+pub_id+'&target_table=$target_table&info=seqacc');
+		}
+	}
 	function new_seqnum() {
 		var dbname='Genbank';
 		var seq_acc=document.updater.seq_acc.value;
 		if (seq_acc != '') {
-  		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value='+dbname+'&new_value='+seq_acc+'&target_table=$target_table');
+  		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=seqnum&attr_type=special-check-newseqnum&old_value='+dbname+'&new_value='+seq_acc+'&target_table=$target_table');
   		}
 	}
   <?/MIVAR>
@@ -76,19 +87,41 @@
 	   <?/MISQL>
 
            <!------- Main page information ---------------->
-<!------------------------------------------>
+
+
+<!----------------------------------------------------------->       	   
+<p>
 
 <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
-<TABLE width=100%><TR><TD bgcolor=#ccccccc>
-<FONT SIZE=+2><b>More Sequence Information</b></FONT>
-</TD></TR></TABLE>
+<TABLE width=100%><TR bgcolor=#ccccccc><TD>
+<FONT SIZE=+1><b>More Sequence Information</b></FONT>
+</TD>
+</TR></TABLE>
+
+<?MIVAR COND="$(XST,$UPDATE)"> <!---- define button to go back------>
+ 
+   <form name=updater><!-- for buttons for update purpose----------->
+   <center><font size=+2>
+   <input type=button 
+          value=" DONE UPDATING. Back to Viewing! " onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID')"> 
+   </font></center>
+   
+<?/MIVAR>
+
+
+<!------------------------------------------>
 
 <?MIBLOCK COND="$(XST,$UPDATE)">
-<br><form name=updater>
+<br>
 <b>Add link to Seq DB:</b> &nbsp;
 DBname: Genbank &nbsp;
 Accession:<input type=text size=15 name=seq_acc> 
 <input type=button value="Add it!" onClick=new_seqnum();>
+<br>
+<b>Add reference to Sequence:</b> &nbsp;
+Accession: <input type=text size=15 name=attrib_seq_acc>
+Reference: <input type=text size=15 name=attrib_seq_pubid> 
+<input type=button value="Add it!" onClick=new_attrib_seq();>
 </form>
 <form>
 <?/MIBLOCK>
@@ -97,26 +130,70 @@ Accession:<input type=text size=15 name=seq_acc>
 <TABLE width="50%" border=0 bgcolor="$highlight">
 <?/MIVAR>
 <TR>
+<?MICOMMENT>** query is simplified for the specific case<?/MICOMMENT>
+
 <?MISQL SQL="
-  select a.DB_name, conc(conc(b.DB_query,a.acc_num),b.url_suffix), acc_num, dblink_zdb_id 
+  select a.DB_name, conc(conc(b.DB_query,a.acc_num),b.url_suffix), 
+         acc_num, dblink_zdb_id, 's', 'placeholder'
     from db_link a, foreign_DB b 
     where a.DB_name = b.DB_name
       and a.linked_recid = '$OID' 
       and b.db_name = 'Genbank'
-    order by a.DB_name desc, acc_num;"> 
+ UNION
+  select a.DB_name, conc(conc(b.DB_query,a.acc_num),b.url_suffix), 
+        acc_num, dblink_zdb_id, 'r', mrel_mrkr_2_zdb_id
+    from db_link a, foreign_DB b, marker_relationship c
+    where a.DB_name = b.DB_name
+      and b.db_name = 'Genbank'
+      and c.mrel_mrkr_1_zdb_id = '$OID' 
+      and c.mrel_mrkr_2_zdb_id = a.linked_recid
+      and c.mrel_type in ('gene contains small segment', 
+		          'clone contains small segment',
+			  'gene encodes small segment')
+  UNION
+   select a.DB_name, conc(conc(b.DB_query,a.acc_num),b.url_suffix), 
+        acc_num, dblink_zdb_id, 'r', mrel_mrkr_1_zdb_id
+    from db_link a, foreign_DB b, marker_relationship c
+    where a.DB_name = b.DB_name
+      and b.db_name = 'Genbank'
+      and c.mrel_mrkr_2_zdb_id = '$OID' 
+      and c.mrel_mrkr_1_zdb_id = a.linked_recid
+      and c.mrel_type in ('clone contains gene') 
 
-  <li><?MIVAR>
+    order by 3
 
-   $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$1:$3)"')>") <A HREF="$2">$1:$3</A><?/MIVAR>
-   <?MISQL SQL="select WebExplode(object,'dataId=$4&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+  ;"> 
+  <?MIVAR NAME=dataId>$4<?/MIVAR>
+  <?MIVAR NAME=attachto>$5<?/MIVAR>
+  <?MIVAR NAME=related_zdb_id>$6<?/MIVAR>
 
+   <li><?MIVAR>
+   <?MICOMMENT>** 07/24/03 for some weird reasons, the column made up to distinguish the source of Genbank accession
+         has to be a one-character string to behave right in EC operation. <?/MICOMMENT>
+   $(IF,$(AND,$(XST,$UPDATE),$(EC,$attachto,s)),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$1:$3)"')>") 
+   <A HREF="$2">$1:$3</A><?/MIVAR>
+
+   <?MIBLOCK COND="$(AND,$(XST,$UPDATE),$(EC,$attachto,r))">
+        <?MISQL SQL="
+	    select mrkr_abbrev, mrkr_zdb_id
+              from marker
+             where mrkr_zdb_id = '$related_zdb_id'; ">
+            
+           ( <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$1</A> )
+        <?/MISQL>
+        <?MIVAR>$(UNSETVAR,$UPDATE)<?/MIVAR>
+ 	<?MISQL SQL="select WebExplode(object,'dataId=$dataId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+ 	<?MIVAR>$(SETVAR,$UPDATE,1)<?/MIVAR>
+   <?MIELSE>
+     <?MISQL SQL="select WebExplode(object,'dataId=$dataId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+   <?/MIBLOCK>	
 <?/MISQL>
 
 <?MIBLOCK COND="$(XST,$UPDATE)">
 </form>
 <?/MIBLOCK>
 
-</TR></TABLE><p>
+</TR></TABLE>
 
 <?/MIBLOCK>
 
