@@ -1,4 +1,7 @@
-<!-- Modified to support I.E.  Naviagtor tile buttons must know all user input from the query screen.  These values are posted to the lister form.  The lister form creates the tile bar button with appropriate variables. Startframes.apg will pass this variables on to the select form.  -->
+<!-- Modified to support I.E.  Naviagtor tile buttons must know all user 
+input from the query screen.  These values are posted to the lister form.  
+The lister form creates the tile bar button with appropriate variables. 
+Startframes.apg will pass this variables on to the select form.  -->
 
 
 <HTML>
@@ -19,58 +22,74 @@
 <!-- First look at standard constraints -->
 <?MIBLOCK COND="$(OR,$(XST,$stock),$(NC,$specimen,any),$(XST,$anon1text))">
 
-<!-- First filter name for apostrophes! -->
-<?MIVAR COND="$(XST,$stock)" NAME=$stock DELIMIT="'" REPLACE="''">$stock<?/MIVAR>
+  <!-- First filter name for apostrophes! -->
+  <?MIVAR COND="$(XST,$stock)" NAME=$stock DELIMIT="'" REPLACE="''">$stock<?/MIVAR>
 
 
-<!-- match against Concat of stock and abbrev for more matching power -->
-<?MIBLOCK COND="$(XST,$stock)">
-<?MIVAR NAME=$constraint>$constraint $previous (lower(stock_name) like '%$(LOWER,$stock)%')<?/MIVAR>
-<?MIVAR NAME=$previous> and <?/MIVAR>
-<?/MIBLOCK>
+  <!-- match against Concat of stock and abbrev for more matching power -->
+  <?MIBLOCK COND="$(XST,$stock)">
+    <?MIVAR NAME=$constraint>
+      $constraint $previous (lower(stock_name) like '%$(LOWER,$stock)%')
+    <?/MIVAR>
+    <?MIVAR NAME=$previous> and <?/MIVAR>
+  <?/MIBLOCK>
 
 
-<?MIBLOCK COND="$(NC,$specimen,any)">
-<?MIVAR NAME=$constraint>$constraint $previous (specimen='$specimen')<?/MIVAR>
-<?MIVAR NAME=$previous> and <?/MIVAR>
-<?/MIBLOCK>
+  <?MIBLOCK COND="$(NC,$specimen,any)">
+    <?MIVAR NAME=$constraint>$constraint $previous (specimen='$specimen')<?/MIVAR>
+    <?MIVAR NAME=$previous> and <?/MIVAR>
+  <?/MIBLOCK>
 
 
-<?MIBLOCK COND="$(XST,$anon1text)">
-<?MIVAR NAME=$constraint>$constraint $previous (lower($anon1) like '%$(LOWER,$anon1text)%')<?/MIVAR>
-<?MIVAR NAME=$previous> and <?/MIVAR>
-<?/MIBLOCK>
+  <?MIBLOCK COND="$(XST,$anon1text)">
+    <?MIVAR NAME=$constraint>
+      $constraint $previous (lower($anon1) like '%$(LOWER,$anon1text)%')
+    <?/MIVAR>
+    <?MIVAR NAME=$previous> and <?/MIVAR>
+  <?/MIBLOCK>
 
 <?/MIBLOCK> <!-- end_stages constraints exist -->
 
 
 
-<!-- If dev. stage constrained, do some calculating to figure out the target time frame -->
+<!-- If dev. stage constrained, do some calculating to figure out the 
+  -- target time frame -->
 <?MIBLOCK COND="$(NC,$resolution,any)">
 
-<?MIBLOCK COND="$(EC,$resolution,stage)">
-<?MISQL SQL="select a.stage_hours_start::numeric(6,2),b.stage_hours_end::numeric(6,2) from dev_stage a,dev_stage b where a.stage_name='$start_stage' and b.stage_name='$end_stage';"><?/MISQL>
-<?MIVAR NAME=$start_hours>$1<?/MIVAR>
-<?MIVAR NAME=$end_hours>$2<?/MIVAR>
-<?/MIBLOCK>
+  <?MIBLOCK COND="$(EC,$resolution,stage)">
+    <?MISQL SQL="
+      select a.stage_hours_start::numeric(6,2), b.stage_hours_end::numeric(6,2)
+        from dev_stage a, dev_stage b 
+        where a.stage_name='$start_stage' 
+          and b.stage_name='$end_stage';">
+    <?/MISQL>
+    <?MIVAR NAME=$start_hours>$1<?/MIVAR>
+    <?MIVAR NAME=$end_hours>$2<?/MIVAR>
+  <?/MIBLOCK>
 
-<?MIBLOCK COND="$(EC,$resolution,time)">
-<?MIVAR NAME=$start_hours>$(*,$dev_time_start,$multiplier)<?/MIVAR>
-<?MIVAR NAME=$end_hours>$(*,$dev_time_end,$multiplier)<?/MIVAR>
-<?/MIBLOCK>
+  <?MIBLOCK COND="$(EC,$resolution,time)">
+    <?MIVAR NAME=$start_hours>$(*,$dev_time_start,$multiplier)<?/MIVAR>
+    <?MIVAR NAME=$end_hours>$(*,$dev_time_end,$multiplier)<?/MIVAR>
+  <?/MIBLOCK>
 
-<?MIVAR NAME=$constraint_possibles>((stage_hours_start between '$start_hours'::real and '$end_hours'::real) or (stage_hours_end between '$start_hours'::real and '$end_hours'::real))<?/MIVAR>
+  <?MIVAR NAME=$constraint_possibles>
+    (   (stage_hours_start between '$start_hours'::real and '$end_hours'::real)
+     or (stage_hours_end between '$start_hours'::real and '$end_hours'::real))
+  <?/MIVAR>
 
-<?MIVAR NAME=$constraint_hits>((stage_hours_end-'$end_hours'::real)<=0 and (stage_hours_start-'$start_hours'::real)>=0)<?/MIVAR>
+  <?MIVAR NAME=$constraint_hits>
+    (    stage_hours_end   - '$end_hours'::real   <= 0 
+     and stage_hours_start - '$start_hours'::real >= 0)
+   <?/MIVAR>
 
 <?/MIBLOCK> <!-- ends cond dev. stage constrained -->
 
 
 
 
-
-
-<!-- NOW JUST RETRIEVE AND DISPLAY ALL MATCHING ENTRIES. Do a different display, where you stratify display by "goodness" of time frame overlap, if a time  frame is specified. -->
+<!-- NOW JUST RETRIEVE AND DISPLAY ALL MATCHING ENTRIES. Do a different 
+  -- display, where you stratify display by "goodness" of time frame 
+  -- overlap, if a time  frame is specified. -->
 
 <!-- Constraints: <?MIVAR>$constraint<?/MIVAR> -->
 
@@ -80,22 +99,42 @@
 
 <?MIBLOCK COND="$(EC,$resolution,any)">
 
-<TABLE WIDTH=100%>
-<TH> </TH><TH></TH> <TH align=left>Strain</TH> <TH align=left>Type</TH>  <TH align=left width=30%>Age</TH>
-<?MISQL SQL="select stock_name,specimen, thumbnail, zdb_id,stage,stage_hours_start::numeric(6,2) as start_hours,stage_hours_end::numeric(6,2) as end_hours,resolution,stage_pct from image $constraint order by start_hours,end_hours;">
-<TR> <TD valign=top>
-$(IF,$(XST,$return_rec), <FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec="$return_rec"&new_oid="$4 TARGET=content>SELECT</A> </FONT>, )
-</TD>
-<TD align=center><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$4" TARGET="content"><IMG border=0 SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$3&MItypeObj=image/gif"></A> </TD>
-<TD valign=top> <FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$4" TARGET="content"> $1</A></FONT> </TD>  
-<TD> <FONT SIZE=-1> $2 </FONT> </TD>
-<TD> <FONT SIZE=-1> 
-<b>$5</b>
-$(IF,$(EC,$8,dev_hours)," hours")
-$(IF,$(EC,$8,dev_days)," days")
- </FONT> </TD>  </TR>
-<?/MISQL>
-</TABLE>
+  <TABLE WIDTH=100%>
+    <TH> </TH>
+    <TH> </TH>
+    <TH align=left>Strain</TH>
+    <TH align=left>Type</TH>
+    <TH align=left width=30%>Age</TH>
+    <?MISQL SQL="
+      select stock_name, specimen, thumbnail, zdb_id, stage, 
+	     stage_hours_start::numeric(6,2) as start_hours,
+	     stage_hours_end::numeric(6,2) as end_hours, resolution, stage_pct 
+	from image 
+	$constraint 
+	order by start_hours,end_hours;">
+      <TR>
+	<TD valign=top>
+	  $(IF,$(XST,$return_rec), <FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec="$return_rec"&new_oid="$4 TARGET=content>SELECT</A> </FONT>, )
+	</TD>
+	<TD align=center>
+	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$4" TARGET="content"><IMG border=0 SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$3&MItypeObj=image/gif"></A> 
+	</TD>
+	<TD valign=top> 
+	  <FONT SIZE=-1> 
+	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$4" TARGET="content"> $1</A>
+	  </FONT> 
+	</TD>  
+	<TD> <FONT SIZE=-1> $2 </FONT> </TD>
+	<TD> 
+	  <FONT SIZE=-1> 
+	  <b>$5</b>
+	  $(IF,$(EC,$8,dev_hours)," hours")
+	  $(IF,$(EC,$8,dev_days)," days")
+	  </FONT> 
+	</TD>
+      </TR>
+    <?/MISQL>
+  </TABLE>
 
 <?/MIBLOCK> <!-- ends if dev. time not specified -->
 
@@ -109,67 +148,121 @@ $(IF,$(EC,$8,dev_days)," days")
 <?MIVAR COND=$(XST,$constraint_hits)>constrainthits is $constraint_hits<?/MIVAR><br>
 -->
 
-<!-- Convertdd all queries to avoid doing a big join with fish. Speed was impossible the old way -->
+<!-- Converted all queries to avoid doing a big join with fish. Speed was 
+     impossible the old way -->
 
 <?MIBLOCK COND="$(NC,$resolution,any)">
 
-<center>
-<?MIVAR><b>Time Frame= $start_hours-$end_hours h.</b><?/MIVAR>
-</center> 
-<p>
+  <center>
+  <?MIVAR><b>Time Frame= $start_hours-$end_hours h.</b><?/MIVAR>
+  </center> 
+  <p>
 
-<TABLE WIDTH=100% border>
-<TH width=5%> </TH><TH>Strain</TH> <TH>Specimen Type</TH> <TH>Orientation</TH> <TH width=30%>Developmental Age</TH>
+  <TABLE WIDTH=100% border>
+    <TH width=5%> </TH>
+    <TH>Strain</TH> 
+    <TH>Specimen Type</TH> 
+    <TH>Orientation</TH> 
+    <TH width=30%>Developmental Age</TH>
 
-<TR><TD colspan=5 align=center bgcolor="#b9ffa0">The following animals' ages <B>fall completely within</b> the specified time frame</TD></TR>
+    <TR>
+      <TD colspan=5 align=center bgcolor="#b9ffa0">
+        The following animals' ages <B>fall completely within</b> the 
+        specified time frame
+      </TD>
+    </TR>
 
-<?MISQL SQL="select stock_name,specimen, orientation, zdb_id,stage,stage_hours_start::numeric(6,2) as start_time,stage_hours_end::numeric(6,2) as end_time,resolution,stage_pct from image $constraint and $constraint_hits order by start_time,end_time;">
-<TR bgcolor="#b9ffa0" align=center> <TD valign=top>
-$(IF,$(XST,$return_rec), <FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec="$return_rec"&new_oid="$4 TARGET=content>SELECT</A> </FONT>, )
-</TD>
+    <?MISQL SQL="
+      select stock_name, specimen, orientation, zdb_id, stage, 
+             stage_hours_start::numeric(6,2) as start_time,
+             stage_hours_end::numeric(6,2) as end_time, resolution, stage_pct
+        from image 
+        $constraint 
+          and $constraint_hits 
+        order by start_time, end_time;">
+      <TR bgcolor="#b9ffa0" align=center> 
+        <TD valign=top>
+          $(IF,$(XST,$return_rec), <FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec="$return_rec"&new_oid="$4 TARGET=content>SELECT</A> </FONT>, )
+        </TD>
 
-<TD valign=top> <FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$4" TARGET="content">$1</A> </FONT> </TD>  
-<TD> <FONT SIZE=-1> $2 </FONT> </TD>
-<TD> <FONT SIZE=-1> $3 </FONT> </TD>  
-<TD> <FONT SIZE=-1> 
-<b>$5</b>
-$(IF,$(EC,$8,dev_stage)," ("$6"-"$7" h)")
-$(IF,$(EC,$8,dev_hours)," hours")
-$(IF,$(EC,$8,dev_days)," days ("$6"-"$7" h)")
- </FONT> </TD>  </TR>
-<?/MISQL>
+        <TD valign=top> 
+          <FONT SIZE=-1> 
+          <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$4" TARGET="content">$1</A> 
+          </FONT> 
+        </TD>  
+        <TD> <FONT SIZE=-1> $2 </FONT> </TD>
+        <TD> <FONT SIZE=-1> $3 </FONT> </TD>  
+        <TD> 
+          <FONT SIZE=-1> 
+          <b>$5</b>
+          $(IF,$(EC,$8,dev_stage)," ("$6"-"$7" h)")
+          $(IF,$(EC,$8,dev_hours)," hours")
+          $(IF,$(EC,$8,dev_days)," days ("$6"-"$7" h)")
+          </FONT> 
+        </TD>
+      </TR>
+    <?/MISQL>
 
-<?MIVAR NAME=$solid_hits>$MI_ROWCOUNT<?/MIVAR>
-<?MIVAR COND="$(EC,$MI_ROWCOUNT,0)">
-<TR><TD colspan=5 align=center> <b>No records in this category</b> </td></TR>
-<?/MIVAR>
+    <?MIVAR NAME=$solid_hits>$MI_ROWCOUNT<?/MIVAR>
+    <?MIVAR COND="$(EC,$MI_ROWCOUNT,0)">
+      <TR>
+        <TD colspan=5 align=center>
+          <b>No records in this category</b> 
+        </td>
+      </TR>
+    <?/MIVAR>
 
-<TR><TD align=center bgcolor="#f4f8ac" colspan=5>The following animals' ages <b>partially overlap</b> the specified time frame</TD></TR>
+    <TR>
+      <TD align=center bgcolor="#f4f8ac" colspan=5>
+        The following animals' ages <b>partially overlap</b> the 
+        specified time frame
+      </TD>
+    </TR>
 
-<?MISQL SQL="select stock_name,specimen, orientation, zdb_id,stage,stage_hours_start::numeric(6,2) as start_time,stage_hours_end::numeric(6,2) as end_time,resolution,stage_pct from image $constraint and $constraint_possibles and not($constraint_hits) order by start_time, end_time;">
-<TR align=center bgcolor="#f4f8ac"> <TD valign=top>
-$(IF,$(XST,$return_rec), <FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$4" TARGET=content>SELECT</A> </FONT>, )
-</TD>
+    <?MISQL SQL="
+      select stock_name, specimen, orientation, zdb_id, stage, 
+             stage_hours_start::numeric(6,2) as start_time,
+             stage_hours_end::numeric(6,2) as end_time, resolution, stage_pct 
+        from image 
+        $constraint 
+          and $constraint_possibles 
+          and not ($constraint_hits) 
+        order by start_time, end_time;">
+      <TR align=center bgcolor="#f4f8ac"> 
+        <TD valign=top>
+          $(IF,$(XST,$return_rec), <FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$4" TARGET=content>SELECT</A> </FONT>, )
+        </TD>
 
-<TD valign=top> <FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$4" TARGET="content">$1</A> </FONT> </TD>  
-<TD> <FONT SIZE=-1> $2 </FONT> </TD>
-<TD> <FONT SIZE=-1> $3 </FONT> </TD>  
-<TD> <FONT SIZE=-1> 
-<b>$5</b>
-$(IF,$(EC,$8,dev_stage)," ($6-$7 h)")
-$(IF,$(EC,$8,dev_hours)," hours")
-$(IF,$(EC,$8,dev_days)," days ($6-$7 h)")
-</FONT> </TD>  </TR>
-<?/MISQL>
+        <TD valign=top>
+          <FONT SIZE=-1> 
+          <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$4" TARGET="content">$1</A> 
+          </FONT>
+        </TD>  
+        <TD> <FONT SIZE=-1> $2 </FONT> </TD>
+        <TD> <FONT SIZE=-1> $3 </FONT> </TD>  
+        <TD> 
+          <FONT SIZE=-1> 
+          <b>$5</b>
+          $(IF,$(EC,$8,dev_stage)," ($6-$7 h)")
+          $(IF,$(EC,$8,dev_hours)," hours")
+          $(IF,$(EC,$8,dev_days)," days ($6-$7 h)")
+          </FONT> 
+        </TD>
+      </TR>
+    <?/MISQL>
 
-<?MIVAR NAME=$part_hits>$MI_ROWCOUNT<?/MIVAR>
-<?MIVAR NAME=$total_hits>$(+,$MI_ROWCOUNT,$solid_hits)<?/MIVAR>
+    <?MIVAR NAME=$part_hits>$MI_ROWCOUNT<?/MIVAR>
+    <?MIVAR NAME=$total_hits>$(+,$MI_ROWCOUNT,$solid_hits)<?/MIVAR>
 
-<?MIVAR COND="$(EC,$MI_ROWCOUNT,0)">
-<TR><TD colspan=5 align=center> <b>No records in this category</b> </td></TR>
-<?/MIVAR>
+    <?MIVAR COND="$(EC,$MI_ROWCOUNT,0)">
+      <TR>
+        <TD colspan=5 align=center>
+          <b>No records in this category</b>
+        </td>
+      </TR>
+    <?/MIVAR>
 
-</TABLE>
+  </TABLE>
 
 
 <?/MIBLOCK> <!-- ends cond time frame is specified -->
@@ -190,11 +283,11 @@ $(IF,$(EC,$8,dev_days)," days ($6-$7 h)")
 <?MIVAR COND="$(NXST,$start_stage)" NAME=$start_stage><?/MIVAR>
 <?MIVAR COND="$(NXST,$end_stage)" NAME=$end_stage><?/MIVAR>
 <?MIVAR>
-<SCRIPT>
-var page_id=top.content.location.href+'&navtile=$navtile&stock=$stock&anon1text=$anon1text&specimen=$specimen&anon1=$anon1&resolution=$resolution&dev_time_start=$dev_time_start&dev_time_end=$dev_time_end&multiplier=$multiplier&start_stage=$start_stage&end_stage=$end_stage';
-top.update_hist(page_id,"$page_title");
-top.controls.location.reload(true);
-</SCRIPT>
+  <SCRIPT>
+    var page_id=top.content.location.href+'&navtile=$navtile&stock=$stock&anon1text=$anon1text&specimen=$specimen&anon1=$anon1&resolution=$resolution&dev_time_start=$dev_time_start&dev_time_end=$dev_time_end&multiplier=$multiplier&start_stage=$start_stage&end_stage=$end_stage';
+    top.update_hist(page_id,"$page_title");
+    top.controls.location.reload(true);
+  </SCRIPT>
 <?/MIVAR>
 
 

@@ -1,7 +1,16 @@
-<!-- THIS FILE IS THE FIRST PAGE OF THE IMAGE entry process. In general, the process is that a user is first asked to upload an image. This action (a) create a temp_image record for the evolving submission and (b) pops up the new image 
-as part of a form for specifying things about the image. Of course, if a rotten image file were uploaded, it would report the problem and bail out.
+<!-- THIS FILE IS THE FIRST PAGE OF THE IMAGE entry process. In general, 
+the process is that a user is first asked to upload an image. This action 
+(a) create a temp_image record for the evolving submission and 
+(b) pops up the new image as part of a form for specifying things about 
+    the image. 
+Of course, if a rotten image file were uploaded, it would report the 
+problem and bail out.
 
-Among other things, the user specifies orientation, image type, etc. But perhaps the most important part is the part where the user ANNOTATES the image. This is done by first listing (via a parts browser) some of the anatomical parts visible in the image and then, via selection and clickmaps, connecting those parts to places in the image.
+Among other things, the user specifies orientation, image type, etc. 
+But perhaps the most important part is the part where the user ANNOTATES 
+the image. This is done by first listing (via a parts browser) some of the 
+anatomical parts visible in the image and then, via selection and clickmaps,
+connecting those parts to places in the image.
 
 So again, in this file, we simply ask the user to upload the image.
 
@@ -12,40 +21,40 @@ So again, in this file, we simply ask the user to upload the image.
 
 <h1 align=center>Image Upload</h1>
 
-You have requested to upload image data to ZDB. As a first step, fill out the form below to select the image file, and specify its type.
+You have requested to upload image data to ZDB. As a first step, fill out 
+the form below to select the image file, and specify its type.
 <p>
 <font color="#ff0000"><b>Important:</b></font> 
 <UL>
-<LI>Only <b>GIF</b> or <b>JPEG</b> image formats are acceptable. Submission of PICT,TIFF,Photoshop, or other formats will fail!
-<LI>Image filename <b>MUST</b> end with ".jpeg",".jpg" or ".gif" to designate file type. This is how ZFIN figures out how to process it!
+ <LI>Only <b>GIF</b> or <b>JPEG</b> image formats are acceptable. 
+     Submission of PICT,TIFF,Photoshop, or other formats will fail!
+ <LI>Image filename <b>MUST</b> end with ".jpeg",".jpg" or ".gif" to 
+     designate file type. This is how ZFIN figures out how to process it!
 </UL>
 <p>
 
-<!-- This is a test of the new web2.2beta2 blade. It is supposed to support
-client file upload. If not, we can always go back to using Superwebdriver, which I wrote to unpack uploaded files. 
--->
-
 <form METHOD=post ENCTYPE="multipart/form-data" ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 
-<TABLE border=4 width=100%>
-<TR align=center>
-<TD>Image file: <br> <input type=file name="upload_image" size=50></TD>
-</TR>
-<TR>
-<TD colspan=2 align=center><b>THEN</B> click <INPUT type=submit value=CONTINUE> to go to the next step of the image submission process.
+ <TABLE border=4 width=100%>
+  <TR align=center>
+   <TD>Image file: <br> <input type=file name="upload_image" size=50></TD>
+  </TR>
+  <TR>
+   <TD colspan=2 align=center><b>THEN</B> 
+       click <INPUT type=submit value=CONTINUE> to go to the next step of 
+       the image submission process.
+   </TD>
+  </TR>
+ </TABLE>
 
-</TD>
-</TR>
-</TABLE>
+ <input type=hidden name=MIval value="aa-new-image.apg">
 
-<input type=hidden name=MIval value="aa-new-image.apg">
-
-<!-- If called from elsewhere, pass along the return_rec. and the stock -->
-<?MIVAR COND="$(XST,$return_rec)">
-<input type=hidden name=return_rec value=$return_rec>
-<input type=hidden name=stock value=$stock>
-<input type=hidden name=flag value=$flag>
-<?/MIVAR>
+ <!-- If called from elsewhere, pass along the return_rec. and the stock -->
+ <?MIVAR COND="$(XST,$return_rec)">
+  <input type=hidden name=return_rec value=$return_rec>
+  <input type=hidden name=stock value=$stock>
+  <input type=hidden name=flag value=$flag>
+ <?/MIVAR>
 
 </FORM>
 

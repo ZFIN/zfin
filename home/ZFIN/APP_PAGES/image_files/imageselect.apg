@@ -1,4 +1,7 @@
-<!-- Modified to support I.E.  Naviagtor tile buttons must know all user input from the query screen.  These values are posted to the lister form.  The lister form creates the tile bar button with appropriate variables. Startframes.apg will pass this variables on to the select form.  -->
+<!-- Modified to support I.E.  Naviagtor tile buttons must know all user 
+input from the query screen.  These values are posted to the lister form.
+The lister form creates the tile bar button with appropriate variables. 
+Startframes.apg will pass this variables on to the select form.  -->
 
 
 <HTML>
@@ -8,39 +11,39 @@
 
 <SCRIPT>
 
-function form_submit() {
-document.getcrits.submit();
-}
-
-function redraw(resetter) {
-  var resind=document.getcrits.resolution.selectedIndex;
-  var resolution=document.getcrits.resolution.options[resind].value;
-  var specind=document.getcrits.specimen.selectedIndex;
-  var stock_name=document.getcrits.stock.value;
-  var specimen=document.getcrits.specimen.options[specind].value;
-  var specind2=document.getcrits.anon1.selectedIndex;
-  var anon1=document.getcrits.anon1.options[specind2].value;
-  var anon1text=document.getcrits.anon1text.value;
-<?MIVAR>
-  var mival="$MIval";
-<?/MIVAR>
-  if (resetter==1) {
-     window.location.search="?MIval="+mival;
-   } else {
-     window.location.search="?stock="+ stock_name + "&specimen="+specimen+"&resolution="+resolution+"&anon1="+anon1+"&anon1text="+anon1text+"&MIval="+mival;
-   }
-}
-
-
-
-function validate(field) {
-  var num_input=parseInt(field.value);
-  if (isNaN(num_input)) {
-    window.alert('You must enter a real number in this field');
-    field.value="";
-    field.focus();
+  function form_submit() {
+    document.getcrits.submit();
   }
-}
+
+  function redraw(resetter) {
+    var resind=document.getcrits.resolution.selectedIndex;
+    var resolution=document.getcrits.resolution.options[resind].value;
+    var specind=document.getcrits.specimen.selectedIndex;
+    var stock_name=document.getcrits.stock.value;
+    var specimen=document.getcrits.specimen.options[specind].value;
+    var specind2=document.getcrits.anon1.selectedIndex;
+    var anon1=document.getcrits.anon1.options[specind2].value;
+    var anon1text=document.getcrits.anon1text.value;
+    <?MIVAR>
+      var mival="$MIval";
+    <?/MIVAR>
+    if (resetter==1) {
+       window.location.search="?MIval="+mival;
+     } else {
+       window.location.search="?stock="+ stock_name + "&specimen="+specimen+"&resolution="+resolution+"&anon1="+anon1+"&anon1text="+anon1text+"&MIval="+mival;
+     }
+  }
+
+
+
+  function validate(field) {
+    var num_input=parseInt(field.value);
+    if (isNaN(num_input)) {
+      window.alert('You must enter a real number in this field');
+      field.value="";
+      field.focus();
+    }
+  }
 
 </SCRIPT>
 
@@ -55,120 +58,158 @@ function validate(field) {
 
 <form name=getcrits method=post TARGET="pbrowser" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 
-<center>
-<U><B><FONT SIZE=5>Search for </font>
-<FONT SIZE=5 color="#ff0000" > IMAGES</font></b></u>
-</center>
+  <center>
+  <U><B><FONT SIZE=5>Search for </font>
+  <FONT SIZE=5 color="#ff0000" > IMAGES</font></b></u>
+  </center>
 
-<TABLE width=100%>
-<TR>
-<TD><font size=-1>
-
-<?MIVAR>
-<b>Name contains:</b> 
-<input type=text name=stock size=15 value="$stock">
-</font>
-</TD> <TD><font size=-1>
-<b>SPECIMEN type:</b> 
-<SELECT NAME="specimen">
-<OPTION $(IF,$(EC,$specimen,any),SELECTED) value="any">Unspecified
-<OPTION $(IF,$(EC,$specimen,UNKNOWN),SELECTED) value="UNKNOWN">UNKNOWN
-<OPTION $(IF,$(EC,$specimen,LM-section),SELECTED) value="LM-section">LM-section
-<OPTION $(IF,$(EC,$specimen,EM-section),SELECTED) value="EM-section">EM-section
-<OPTION $(IF,$(EC,$specimen,whole-mount),SELECTED) value="whole-mount">whole-mount
-</SELECT>
-</font></TD> </TR> 
-</TABLE>
-
-
-<TABLE width=100%>
-<TR>
-<TD valign=top><font size=-1>
-<b>AGE of animal:</b> 
-<SELECT NAME="resolution" onChange="redraw(0)">
-<OPTION $(IF,$(EC,$resolution,any),SELECTED) VALUE="any">Don't Care - Any
-<OPTION $(IF,$(EC,$resolution,time),SELECTED) VALUE="time">In hours/days is...
-<OPTION $(IF,$(EC,$resolution,stage),SELECTED) VALUE="stage">By dev. stage is...
-</SELECT>
-<?/MIVAR>
-
-<?MIVAR COND="$(NC,$resolution,any)"> between <br> <?/MIVAR>
-
-<?MIBLOCK COND="$(EC,$resolution,time)">
-<input type=text name=dev_time_start value=0 size=6 maxlength=6  onChange="validate(this)"> and 
-<input type=text name=dev_time_end size=6 maxlength=6 value=144  onChange="validate(this)">  
-<?MIBLOCK COND="$(XST,$nav_dev_time_start)"><?MIVAR> <SCRIPT> document.getcrits.dev_time_start.value = "$nav_dev_time_start" </SCRIPT><?/MIVAR> <?/MIBLOCK>
-<?MIBLOCK COND="$(XST,$nav_dev_time_end)"><?MIVAR> <SCRIPT> document.getcrits.dev_time_end.value = "$nav_dev_time_end" </SCRIPT><?/MIVAR> <?/MIBLOCK>
-
-<?MIVAR COND="$(NXST,$multiplier)" NAME=$multiplier>1<?/MIVAR>
-
-<select name=multiplier>
-<option $(IF,$(EC,$multiplier,1),SELECTED)  value=1>hours
-<option $(IF,$(EC,$multiplier,24),SELECTED)  value=24>days
-</SELECT>
-<?/MIBLOCK>
+  <TABLE width=100%>
+    <TR>
+      <?MIVAR>
+	<TD>
+	  <font size=-1>
+	  <b>Name contains:</b> 
+	  <input type=text name=stock size=15 value="$stock">
+	  </font>
+	</TD> 
+	<TD>
+	  <font size=-1>
+	  <b>SPECIMEN type:</b> 
+	  <SELECT NAME="specimen">
+	    <OPTION $(IF,$(EC,$specimen,any),SELECTED) value="any">Unspecified
+	    <OPTION $(IF,$(EC,$specimen,UNKNOWN),SELECTED) value="UNKNOWN">UNKNOWN
+	    <OPTION $(IF,$(EC,$specimen,LM-section),SELECTED) value="LM-section">LM-section
+	    <OPTION $(IF,$(EC,$specimen,EM-section),SELECTED) value="EM-section">EM-section
+	    <OPTION $(IF,$(EC,$specimen,whole-mount),SELECTED) value="whole-mount">whole-mount
+	  </SELECT>
+	  </font>
+	</TD> 
+      <?/MIVAR>
+    </TR> 
+  </TABLE>
 
 
-<?MIBLOCK COND="$(EC,$resolution,stage)">
-<?MIVAR COND="$(NXST,$start_stage)" NAME=$start_stage>Zygote:1-cell<?/MIVAR>
-<?MIVAR COND="$(NXST,$end_stage)" NAME=$end_stage>Hatching:Protruding-mouth<?/MIVAR>
-<SELECT NAME=start_stage >
-<?MISQL SQL="select stage_name::lvarchar, stage_hours_start from dev_stage where index_key='submit' order by stage_hours_start;">
-<option $(IF,$(EC,$start_stage,$1),SELECTED)>$1
-<?/MISQL>
-</SELECT> 
-and 
-<SELECT NAME=end_stage >
-<?MISQL SQL="select stage_name::lvarchar, stage_hours_start from dev_stage where index_key='submit' order by stage_hours_start;">
-<option $(IF,$(EC,$end_stage,$1),SELECTED)>$1
-<?/MISQL> 
-</SELECT> 
-stage.
-<?/MIBLOCK>
-</font></TD>
+  <TABLE width=100%>
+    <TR>
+      <TD valign=top>
+        <font size=-1>
+        <b>AGE of animal:</b> 
+        <?MIVAR>
+          <SELECT NAME="resolution" onChange="redraw(0)">
+            <OPTION $(IF,$(EC,$resolution,any),SELECTED) VALUE="any">Don't Care - Any
+            <OPTION $(IF,$(EC,$resolution,time),SELECTED) VALUE="time">In hours/days is...
+            <OPTION $(IF,$(EC,$resolution,stage),SELECTED) VALUE="stage">By dev. stage is...
+          </SELECT>
+        <?/MIVAR>
 
-<TD align=right> 
-<?MIVAR>
-<SELECT NAME=anon1>
-<option $(IF,$(EC,$anon1,comments),SELECTED) value="comments">Comments
-<option $(IF,$(EC,$anon1,zdb_id),SELECTED) value="zdb_id">ZFIN ID
-</SELECT> 
-contains <input type=text name=anon1text value="$anon1text" size=8>
-<?/MIVAR>
-</TD>
-<!--  assign navtile value to anon1text - can not do with a value="anon1text" in input statement - reset will not work -->
-<?MIBLOCK COND="$(XST,$nav_anon1text)"><?MIVAR> <SCRIPT> document.getcrits.anon1text.value = "$nav_anon1text" </SCRIPT><?/MIVAR> <?/MIBLOCK>
-</TR>
+        <?MIVAR COND="$(NC,$resolution,any)"> between <br> <?/MIVAR>
 
+        <?MIBLOCK COND="$(EC,$resolution,time)">
+          <input type=text name=dev_time_start value=0 size=6 maxlength=6  onChange="validate(this)"> and 
+          <input type=text name=dev_time_end size=6 maxlength=6 value=144  onChange="validate(this)">  
+          <?MIBLOCK COND="$(XST,$nav_dev_time_start)">
+            <?MIVAR> 
+              <SCRIPT> 
+                document.getcrits.dev_time_start.value = "$nav_dev_time_start"
+              </SCRIPT>
+            <?/MIVAR>
+          <?/MIBLOCK>
+          <?MIBLOCK COND="$(XST,$nav_dev_time_end)">
+            <?MIVAR>
+              <SCRIPT> 
+                document.getcrits.dev_time_end.value = "$nav_dev_time_end"
+              </SCRIPT>
+            <?/MIVAR> 
+          <?/MIBLOCK>
 
-<TR>
-<TD colspan=2 align=right valign=top>
-<input type=submit name=action value="SEARCH" >
- <input type=button name=nothing value="Clear All" onClick="redraw(1);">
-</TD></TR>
+          <?MIVAR COND="$(NXST,$multiplier)" NAME=$multiplier>1<?/MIVAR>
 
-</TABLE>
-
-
-
-<!-- This next little block executes only if we are using the browser as a
-selector. That is we want user to ultimately CHOOSE a browsed value. All
-we have to do at this point is pass the return_rec variable along to the fishlister.
--->
-<?MIVAR COND="$(XST,$return_rec)"> <input type=hidden NAME="return_rec" value=$return_rec>
-<?/MIVAR>
-
-<input type=hidden name=MIval value=aa-imagelister.apg>
-
-<!-- If we have gotten to this page from a nav bar tile - we need to autosubmit to get
- pbrowser frame populated -->
+          <select name=multiplier>
+            <option $(IF,$(EC,$multiplier,1),SELECTED)  value=1>hours
+            <option $(IF,$(EC,$multiplier,24),SELECTED)  value=24>days
+          </SELECT>
+        <?/MIBLOCK>
 
 
-<?MIVAR COND="$(XST,$navtile)">
-<SCRIPT>
-form_submit();
-</SCRIPT>
-<?/MIVAR>
+        <?MIBLOCK COND="$(EC,$resolution,stage)">
+	  <?MIVAR COND="$(NXST,$start_stage)" NAME=$start_stage>Zygote:1-cell<?/MIVAR>
+	  <?MIVAR COND="$(NXST,$end_stage)" NAME=$end_stage>Hatching:Protruding-mouth<?/MIVAR>
+	  <SELECT NAME=start_stage >
+	    <?MISQL SQL="
+              select stage_name::lvarchar, stage_hours_start 
+	        from dev_stage 
+	        where index_key = 'submit' 
+                order by stage_hours_start;">
+	      <option $(IF,$(EC,$start_stage,$1),SELECTED)>$1
+	    <?/MISQL>
+	  </SELECT> 
+	  and 
+	  <SELECT NAME=end_stage >
+	    <?MISQL SQL="
+	      select stage_name::lvarchar, stage_hours_start
+                from dev_stage 
+                where index_key='submit' 
+                order by stage_hours_start;">
+	      <option $(IF,$(EC,$end_stage,$1),SELECTED)>$1
+	    <?/MISQL> 
+	  </SELECT> 
+	  stage.
+	<?/MIBLOCK>
+        </font>
+      </TD>
+
+      <TD align=right> 
+        <?MIVAR>
+          <SELECT NAME=anon1>
+            <option $(IF,$(EC,$anon1,comments),SELECTED) value="comments">Comments
+            <option $(IF,$(EC,$anon1,zdb_id),SELECTED) value="zdb_id">ZFIN ID
+          </SELECT> 
+          contains <input type=text name=anon1text value="$anon1text" size=8>
+        <?/MIVAR>
+      </TD>
+      <!-- assign navtile value to anon1text - can not do with a 
+        -- value="anon1text" in input statement - reset will not work -->
+      <?MIBLOCK COND="$(XST,$nav_anon1text)">
+        <?MIVAR> 
+          <SCRIPT> 
+            document.getcrits.anon1text.value = "$nav_anon1text" 
+          </SCRIPT>
+        <?/MIVAR>
+      <?/MIBLOCK>
+    </TR>
+
+
+    <TR>
+      <TD colspan=2 align=right valign=top>
+        <input type=submit name=action value="SEARCH" >
+        <input type=button name=nothing value="Clear All" onClick="redraw(1);">
+      </TD>
+    </TR>
+
+  </TABLE>
+
+
+
+  <!-- This next little block executes only if we are using the browser as a
+  selector. That is we want user to ultimately CHOOSE a browsed value. All
+  we have to do at this point is pass the return_rec variable along to the 
+  fishlister.
+  -->
+  <?MIVAR COND="$(XST,$return_rec)">
+    <input type=hidden NAME="return_rec" value=$return_rec>
+  <?/MIVAR>
+
+  <input type=hidden name=MIval value=aa-imagelister.apg>
+
+  <!-- If we have gotten to this page from a nav bar tile - we need to 
+    -- autosubmit to get pbrowser frame populated -->
+
+
+  <?MIVAR COND="$(XST,$navtile)">
+    <SCRIPT>
+      form_submit();
+    </SCRIPT>
+  <?/MIVAR>
 
 </form>
 

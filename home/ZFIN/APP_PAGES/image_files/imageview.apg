@@ -1,5 +1,7 @@
-<!-- FILE: IMAGEVIEW.HTML. This file implements a viewer for IMAGE records. The goal is to display all of the information associated with the IMAGE record, and to provide an interface for updating certain values
- as well.
+<!-- FILE: IMAGEVIEW.HTML. This file implements a viewer for IMAGE records. 
+The goal is to display all of the information associated with the IMAGE 
+record, and to provide an interface for updating certain values
+as well.
 
 
 Variables Expected: 
@@ -10,7 +12,13 @@ Variables Expected:
 
 <?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
 
-<?MISQL SQL="select stage, stage_pct, stock, specimen, image_type, orientation,HTML_breaks(comments), image, resolution,stage_hours_start,stage_hours_end,owner,annotations,stock_name from image where zdb_id='$OID';"><?/MISQL>
+<?MISQL SQL="
+  select stage, stage_pct, stock, specimen, image_type, orientation,
+         HTML_breaks(comments), image, resolution, stage_hours_start,
+         stage_hours_end, owner, annotations, stock_name 
+    from image 
+    where zdb_id='$OID';">
+<?/MISQL>
 
 <?MIVAR NAME=$stage>$1<?/MIVAR>
 <?MIVAR NAME=$stage_pct>$2<?/MIVAR>
@@ -33,267 +41,322 @@ Variables Expected:
 <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
 
 <?MIVAR>
-<SCRIPT>
+  <SCRIPT>
 
-function doit(attr,attr_type,print_name) {
-document.doUpdate.MIval.value='aa-imageupdate.apg';
- document.doUpdate.attr.value=attr;
- document.doUpdate.attr_type.value=attr_type;
- document.doUpdate.print_name.value=print_name;
- check_annotations();
- document.doUpdate.submit();
-}
-
-
-
-// COmment out call to annotator applet until it's installed!
-// Basically disables this function.
-function check_annotations() {
- var old_annotations="$annotations";
-/* 
-var new_annotations=document.annotator.getAnnotations();
- if (old_annotations!=new_annotations) {
-   document.doUpdate.annotations.value=new_annotations;
- }
-*/
-}
- 
-function dopopup(new_value,old_value,field) {
- document.doUpdate.MIval.value='aa-do-imageupdate.apg';
- document.doUpdate.attr.value=field;
- document.doUpdate.attr_type.value='text';
- document.doUpdate.old_value.value=old_value;
- document.doUpdate.new_value.value=new_value;
- check_annotations();
- document.doUpdate.submit();
-}
-
-function all_done() {
-document.doUpdate.MIval.value='aa-do-imageupdate.apg';
- document.doUpdate.attr.value='dummy';
- document.doUpdate.attr_type.value='special-done';
- check_annotations();
- document.doUpdate.submit();
-}
-
-function Delete_listitem(item_name,item_id) {
-window.location.search='?MIval=aa-do-imageupdate.apg&OID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted';
-}
+    function doit(attr,attr_type,print_name) {
+      document.doUpdate.MIval.value='aa-imageupdate.apg';
+      document.doUpdate.attr.value=attr;
+      document.doUpdate.attr_type.value=attr_type;
+      document.doUpdate.print_name.value=print_name;
+      check_annotations();
+      document.doUpdate.submit();
+    }
 
 
-</SCRIPT>
+
+    // COmment out call to annotator applet until it's installed!
+    // Basically disables this function.
+    function check_annotations() {
+      var old_annotations="$annotations";
+      /* 
+      var new_annotations=document.annotator.getAnnotations();
+      if (old_annotations!=new_annotations) {
+        document.doUpdate.annotations.value=new_annotations;
+      }
+      */
+    }
+
+    function dopopup(new_value,old_value,field) {
+      document.doUpdate.MIval.value='aa-do-imageupdate.apg';
+      document.doUpdate.attr.value=field;
+      document.doUpdate.attr_type.value='text';
+      document.doUpdate.old_value.value=old_value;
+      document.doUpdate.new_value.value=new_value;
+      check_annotations();
+      document.doUpdate.submit();
+    }
+
+    function all_done() {
+      document.doUpdate.MIval.value='aa-do-imageupdate.apg';
+      document.doUpdate.attr.value='dummy';
+      document.doUpdate.attr_type.value='special-done';
+      check_annotations();
+      document.doUpdate.submit();
+    }
+
+    function Delete_listitem(item_name,item_id) {
+      window.location.search='?MIval=aa-do-imageupdate.apg&OID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted';
+    }
+
+
+  </SCRIPT>
 <?/MIVAR>
 </HEAD>
 
 
 <?MIBLOCK COND="$(NXST,$OID)">
-<p>
-ERROR -- something bad happened -- no OID passed in!
+  <p>
+  ERROR -- something bad happened -- no OID passed in!
 <?/MIBLOCK>
 
 <?MIBLOCK COND="$(XST,$OID)">
 
 
 
-<!-- if not updating -->
-<?MIBLOCK COND="$(NXST,$UPDATE)">
-<?MISQL SQL="select WebExplode(object,'page_title=View Image') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
-<?/MIBLOCK>
+  <!-- if not updating -->
+  <?MIBLOCK COND="$(NXST,$UPDATE)">
+    <?MISQL SQL="
+      select WebExplode(object, 'page_title=View Image') 
+        from webPages 
+        where ID='aa-secure_navigation.apg';">
+      $1
+    <?/MISQL>
+  <?/MIBLOCK>
 
-<!-- If updating, only let owner update anything -->
-<?MIBLOCK COND="$(XST,$UPDATE)">
-<?MISQL SQL="select WebExplode(object,'page_title=Update Image&permission=owns&rtype=image') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
-<?/MIBLOCK>
+  <!-- If updating, only let owner update anything -->
+  <?MIBLOCK COND="$(XST,$UPDATE)">
+    <?MISQL SQL="
+      select WebExplode(object, 
+	                'page_title=Update Image&permission=owns&rtype=image')
+        from webPages 
+        where ID='aa-secure_navigation.apg';">
+      $1
+    <?/MISQL>
+  <?/MIBLOCK>
 
-<?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
-
-
-<!-- if you're updating, set up some hidden submission forms to handle updating. They are submitted from javascript functions.  Need this because we need to use POST to send arbitrarily large annotations.
--->
-<?MIVAR COND="$(XST,$UPDATE)">
-<form name=doUpdate method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
-<input type=hidden name=MIval value="">
-<input type=hidden name=OID value="$OID">
-<input type=hidden name=attr value="">
-<input type=hidden name=attr_type value="">
-<input type=hidden name=old_value value="">
-<input type=hidden name=new_value value="">
-<input type=hidden name=print_name value="">
-<input type=hidden name=annotations value="NULL">
-</form>
-<?/MIVAR>
+  <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
 
-<!-- NOW JUST TOSS OUT THE RETRIEVED DATA IN A TABLE -->
-
-<?MIVAR NAME=$rec_title>IMAGE:$stock_name<?/MIVAR>
-
-<!-- If not updating, THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
-<?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=image') from webPages where 
-ID='aa-data_mgr.apg';">$1<?/MISQL>
-
-
-<!-- OKAY, NOW  THROW UP THE  IMAGE INFO -->
-<P>
-
-<form name=updater>
-<?MIVAR COND="$(XST,$UPDATE)">
-<center><font size=5 color="#00ff00"><input type=button 
-value=" DONE UPDATING. Back to Viewing! " onClick="all_done();"> </font></center>
-<?/MIVAR>
-
-<?MIBLOCK COND="$(NC,$image_type,movie)">
-
-<?MIVAR>
-<center>
-<TABLE border>
-<TR><TD align=center>
-<?/MIVAR>
-
-<?MIVAR> <IMG SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$image&MItypeObj=image/gif"><?/MIVAR>
-
-<?MIVAR COND="$(XST,$UPDATE)">
-<br><INPUT TYPE=button value="Change Image file" onClick="doit('image','pic','Image+file')">
-<?/MIVAR>
-</TD></TR></TABLE>
-</center>
-<?/MIBLOCK>
-
-<A NAME="image_info">
-<p>
-<TABLE border width=100% cellpadding=3>
-<TR align=center><TD bgcolor="#f8fab">
-<?MIVAR COND="$(XST,$UPDATE)">
-<INPUT TYPE=button value=Update onClick="doit('stock','selection','Depicted+Stock')">
-<?/MIVAR>
-<?MISQL SQL="select name,abbrev from fish where zdb_id='$stock';">
-<big>Depicted Animal:</big> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$stock">$1</A> ( $2 ) <?/MISQL>
-</TD></TR>
-<TR><TD bgcolor="white">
-
-<TABLE><TR><TD><font size=-1>
-<B>Caption/Comments:</b></font></TD></TR>
-<?MIVAR COND="$(XST,$UPDATE)">
-<INPUT TYPE=button value=Update onClick="doit('comments','textarea','Image+Caption')">
-<?/MIVAR>
-<?MIVAR>
-<TR><TD><font size=-1>$comments</font></TD></TR>
-<?/MIVAR>
-</TABLE>
-
-</TD></TR>
-</TABLE>
-
-<p>
-<b>Developmental Age:</B> 
-
-<?MIBLOCK COND="$(EC,$resolution,dev_stage)"> 
-
-<?MIVAR COND="$(NXST,$UPDATE)"> <b>$stage</b> stage<?/MIVAR>
-<?MIBLOCK COND="$(XST,$UPDATE)">
-<b>
-<?MIVAR><SELECT NAME=stage  onChange="dopopup(this.options[this.selectedIndex].value,'$stage','stage')"><?/MIVAR>
-<?MISQL SQL="select stage_name::lvarchar,stage_hours_start from dev_stage where index_key='submit' order by stage_hours_start;">
-<option $(IF,$(EC,$stage,$1),SELECTED) value="$1">$1
-<?/MISQL>
-</SELECT>
-, approximately 
-<?MIVAR>
-<SELECT NAME=stage_pct onChange="dopopup(this.options[this.selectedIndex].value,'$stage_pct','stage_pct')">
-<OPTION $(IF,$(OR,$(EC,$stage_pct,NULL),$(EC,$stage_pct,UNKNOWN)),selected) value="UNKNOWN">UNKNOWN
-<OPTION $(IF,$(EC,$stage_pct,0),selected) value="0">0%
-<OPTION $(IF,$(EC,$stage_pct,20),selected) value="20">20%
-<OPTION $(IF,$(EC,$stage_pct,40),selected) value="40">40%
-<OPTION $(IF,$(EC,$stage_pct,60),selected) value="60">60%
-<OPTION $(IF,$(EC,$stage_pct,80),selected) value="80">80%
-</SELECT> 
- through that stage.
-<?/MIVAR>
-<?/MIBLOCK>
-
-<?MIVAR COND="$(AND,$(NC,$stage_pct,null),$(NXST,$UPDATE))">
-, approximately <b>$stage_pct</b> through that stage.
-<?/MIVAR>
-<?/MIBLOCK>
-
-<!-- Now if stage specified in hours or days -->
-<?MIBLOCK COND="$(OR,$(EC,$resolution,dev_hours),$(EC,$resolution,dev_days))"> 
-<?MIVAR COND="$(NXST,$UPDATE)"> <b>$stage </b> <?/MIVAR>
-<?MIVAR COND="$(XST,$UPDATE)">
-<b><INPUT TYPE=text size=3 value="$stage" onChange="dopopup(this.value,'$stage','stage')">
- (+/- <INPUT TYPE=text size=3 value="$stage_pct" onChange="dopopup(this.value,'$stage','stage_pct')"> ) </b>  <input type=button value="commit change">
-<?/MIVAR>
-
-<?MIVAR COND="$(AND,$(NC,$stage_pct,UNKNOWN),$(NC,$stage_pct,0),$(NXST,$UPDATE))"> 
-<B>(+/- $stage_pct)</b> 
-<?/MIVAR>
-
-<?MIVAR>
-$(IF,$(EC,$resolution,dev_hours),"hours (h)","days(s)").
-<?/MIVAR>
-<?/MIBLOCK>
-
-<hr width=80%>
-
-<b>Image Preparation:</B> <p>
-<TABLE border=2 WIDTH=100% cellpadding=4>
-<TH> Specimen</TH><TH>Image Type</TH><TH>Orientation</TH>
-<TR align=center>
-<TD> <?MIVAR COND="$(NXST,$UPDATE)">$specimen<?/MIVAR>
-<?MIBLOCK COND="$(XST,$UPDATE)">
-<?MIVAR>
-<SELECT name=specimen_type onChange=dopopup(this.options[this.selectedIndex].value,'$specimen','specimen')>
-<OPTION $(IF,$(OR,$(EC,$specimen,NULL),$(EC,$specimen,UNKNOWN)),selected) VALUE=UNKNOWN >UNKNOWN
-<OPTION $(IF,$(EC,$specimen,"LM-section"),selected) VALUE=LM-sectio>LM-section
-<OPTION $(IF,$(EC,$specimen,"EM-section"),selected) VALUE=EM-section>EM-section
-<OPTION $(IF,$(EC,$specimen,"whole-mount"),selected) VALUE=whole-mount>whole-mount
-<OPTION $(IF,$(EC,$specimen,"live"),selected) VALUE=live>live
-</SELECT>
-<?/MIVAR>
-<?/MIBLOCK>
-</TD>
-<TD> <?MIVAR COND="$(NXST,$UPDATE)">$image_type<?/MIVAR>
-<?MIBLOCK COND="$(XST,$UPDATE)">
-<?MIVAR><SELECT name=image_type onChange=dopopup(this.options[this.selectedIndex].value,'$image_type','image_type')><?/MIVAR>
-<OPTION <?MIVAR COND="$(OR,$(EC,$image_type,NULL),$(EC,$image_type,UNKNOWN))">selected<?/MIVAR> VALUE=UNKNOWN>UNKNOWN
-<OPTION <?MIVAR COND="$(EC,$image_type,still)">selected<?/MIVAR> VALUE=still  >still
-<OPTION <?MIVAR COND="$(EC,$image_type,movie)">selected<?/MIVAR> VALUE=movie>movie
-<OPTION <?MIVAR COND="$(EC,$image_type,optical_series)">selected<?/MIVAR> VALUE=optical_series>optical_series
-<OPTION <?MIVAR COND="$(EC,$image_type,3-D)">selected<?/MIVAR> VALUE=3-D>3-D
-</SELECT>
-<?/MIBLOCK>
-</TD>
-
-<TD> <?MIVAR COND="$(NXST,$UPDATE)">$orientation<?/MIVAR>
-<?MIBLOCK COND="$(XST,$UPDATE)">
-<?MIVAR><SELECT name=image_orientation onChange=dopopup(this.options[this.selectedIndex].value,'$orientation','orientation')><?/MIVAR>
-<OPTION <?MIVAR COND="$(OR,$(EC,$orientation,NULL),$(EC,$orientation,UNKNOWN))">selected<?/MIVAR> VALUE=UNKNOWN >UNKNOWN
-<OPTION <?MIVAR COND="$(EC,$orientation,dorsal-anterior_to_top)">selected<?/MIVAR> VALUE=dorsal-anterior_to_top>dorsal-anterior_to_top
-<OPTION <?MIVAR COND="$(EC,$orientation,ventral-anterior_to_top)">selected<?/MIVAR> VALUE=ventral-anterior_to_top >ventral-anterior_to_top
-<OPTION <?MIVAR COND="$(EC,$orientation,sagittal-anterior_to_left)">selected<?/MIVAR> VALUE=sagittal-anterior_to_left >sagittal-anterior_to_left
-<OPTION <?MIVAR COND="$(EC,$orientation,sagittal-anterior_to_right)">selected<?/MIVAR> VALUE=sagittal-anterior_to_right >sagittal-anterior_to_right
-<OPTION <?MIVAR COND="$(EC,$orientation,parasagittal-anterior_to_left)">selected<?/MIVAR> VALUE=parasagittal-anterior_to_left>parasagittal-anterior_to_left
-<OPTION <?MIVAR COND="$(EC,$orientation,parasagittal-anterior_to_right)">selected<?/MIVAR> VALUE=parasagittal-anterior_to_right>parasagittal-anterior_to_right
-<OPTION <?MIVAR COND="$(EC,$orientation,transverse-dorsal_to_top)">selected<?/MIVAR> VALUE=transverse-dorsal_to_top>transverse-dorsal_to_top
-<OPTION <?MIVAR COND="$(EC,$orientation,dorsal_oblique)">selected<?/MIVAR> VALUE=dorsal_oblique>dorsal_oblique
-<OPTION <?MIVAR COND="$(EC,$orientation,ventral_oblique)">selected<?/MIVAR> VALUE=ventral_oblique>ventral_oblique
-<OPTION <?MIVAR COND="$(EC,$orientation,transverse oblique-dorsal_to_top)">selected<?/MIVAR> VALUE=transverse oblique-dorsal_to_top>transverse oblique-dorsal_to_top
-</SELECT>
-<?/MIBLOCK>
-</TD>
-
-</TR>
-</TABLE>
-<p>
-
-<hr width=80%>
+    <!-- if you're updating, set up some hidden submission forms to handle 
+      -- updating. They are submitted from javascript functions.  Need 
+      -- this because we need to use POST to send arbitrarily large 
+      -- annotations.
+      -->
+    <?MIVAR COND="$(XST,$UPDATE)">
+      <form name=doUpdate method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+	<input type=hidden name=MIval value="">
+	<input type=hidden name=OID value="$OID">
+	<input type=hidden name=attr value="">
+	<input type=hidden name=attr_type value="">
+	<input type=hidden name=old_value value="">
+	<input type=hidden name=new_value value="">
+	<input type=hidden name=print_name value="">
+	<input type=hidden name=annotations value="NULL">
+      </form>
+    <?/MIVAR>
 
 
-<!-- Throw up the publication info, using the standard display format -->
-<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-showpubs.apg';">$1<?/MISQL>
+    <!-- NOW JUST TOSS OUT THE RETRIEVED DATA IN A TABLE -->
+
+    <?MIVAR NAME=$rec_title>IMAGE:$stock_name<?/MIVAR>
+
+    <!-- If not updating, THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
+    <?MISQL COND="$(NXST,$UPDATE)" SQL="
+      select WebExplode(object, 'rtype=image') 
+        from webPages 
+        where ID='aa-data_mgr.apg';">
+      $1
+    <?/MISQL>
 
 
-<?/MIBLOCK>  <!-- ends cond AUTHORIZED -->
+    <!-- OKAY, NOW  THROW UP THE  IMAGE INFO -->
+    <P>
+
+    <form name=updater>
+      <?MIVAR COND="$(XST,$UPDATE)">
+        <center><font size=5 color="#00ff00"><input type=button 
+        value=" DONE UPDATING. Back to Viewing! " onClick="all_done();">
+        </font></center>
+      <?/MIVAR>
+
+      <?MIBLOCK COND="$(NC,$image_type,movie)">
+
+	<center>
+	<TABLE border>
+	  <TR>
+	    <TD align=center>
+
+	      <?MIVAR> <IMG SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$image&MItypeObj=image/gif"><?/MIVAR>
+
+	      <?MIVAR COND="$(XST,$UPDATE)">
+	        <br><INPUT TYPE=button value="Change Image file" onClick="doit('image','pic','Image+file')">
+              <?/MIVAR>
+	    </TD>
+          </TR>
+        </TABLE>
+	</center>
+      <?/MIBLOCK>
+
+      <A NAME="image_info">
+      <p>
+      <TABLE border width=100% cellpadding=3>
+        <TR align=center>
+          <TD bgcolor="#f8fab">
+            <?MIVAR COND="$(XST,$UPDATE)">
+              <INPUT TYPE=button value=Update onClick="doit('stock','selection','Depicted+Stock')">
+            <?/MIVAR>
+            <?MISQL SQL="
+              select name, abbrev 
+                from fish 
+                where zdb_id='$stock';">
+              <big>Depicted Animal:</big> 
+              <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$stock">$1</A> ( $2 )
+            <?/MISQL>
+          </TD>
+        </TR>
+        <TR>
+          <TD bgcolor="white">
+
+            <TABLE>
+	      <TR>
+                <TD>
+	          <font size=-1>
+                  <B>Caption/Comments:</b>
+		  </font>
+                </TD>
+              </TR>
+              <?MIVAR COND="$(XST,$UPDATE)">
+                <INPUT TYPE=button value=Update onClick="doit('comments','textarea','Image+Caption')">
+              <?/MIVAR>
+              <?MIVAR>
+	        <TR>
+		  <TD>
+		    <font size=-1>$comments</font>
+		  </TD>
+		</TR>
+      	      <?/MIVAR>
+            </TABLE>
+
+          </TD>
+        </TR>
+      </TABLE>
+
+      <p>
+      <b>Developmental Age:</B> 
+
+      <?MIBLOCK COND="$(EC,$resolution,dev_stage)"> 
+
+	<?MIVAR COND="$(NXST,$UPDATE)"> <b>$stage</b> stage<?/MIVAR>
+	<?MIBLOCK COND="$(XST,$UPDATE)">
+	  <b>
+	  <?MIVAR><SELECT NAME=stage  onChange="dopopup(this.options[this.selectedIndex].value,'$stage','stage')"><?/MIVAR>
+	    <?MISQL SQL="
+	      select stage_name::lvarchar, stage_hours_start 
+                from dev_stage 
+                where index_key='submit' 
+                order by stage_hours_start;">
+	      <option $(IF,$(EC,$stage,$1),SELECTED) value="$1">$1
+	    <?/MISQL>
+	  </SELECT>
+	  , approximately 
+	  <?MIVAR>
+	    <SELECT NAME=stage_pct onChange="dopopup(this.options[this.selectedIndex].value,'$stage_pct','stage_pct')">
+  	      <OPTION $(IF,$(OR,$(EC,$stage_pct,NULL),$(EC,$stage_pct,UNKNOWN)),selected) value="UNKNOWN">UNKNOWN
+	      <OPTION $(IF,$(EC,$stage_pct,0),selected) value="0">0%
+	      <OPTION $(IF,$(EC,$stage_pct,20),selected) value="20">20%
+	      <OPTION $(IF,$(EC,$stage_pct,40),selected) value="40">40%
+	      <OPTION $(IF,$(EC,$stage_pct,60),selected) value="60">60%
+	      <OPTION $(IF,$(EC,$stage_pct,80),selected) value="80">80%
+	    </SELECT> 
+	    through that stage.
+	  <?/MIVAR>
+        <?/MIBLOCK>
+
+	<?MIVAR COND="$(AND,$(NC,$stage_pct,null),$(NXST,$UPDATE))">
+	  , approximately <b>$stage_pct</b> through that stage.
+	<?/MIVAR>
+      <?/MIBLOCK>
+
+      <!-- Now if stage specified in hours or days -->
+      <?MIBLOCK COND="$(OR,$(EC,$resolution,dev_hours),$(EC,$resolution,dev_days))"> 
+	<?MIVAR COND="$(NXST,$UPDATE)"> <b>$stage </b> <?/MIVAR>
+	<?MIVAR COND="$(XST,$UPDATE)">
+ 	  <b><INPUT TYPE=text size=3 value="$stage" onChange="dopopup(this.value,'$stage','stage')">
+	  (+/- <INPUT TYPE=text size=3 value="$stage_pct" onChange="dopopup(this.value,'$stage','stage_pct')"> ) </b>
+          <input type=button value="commit change">
+	<?/MIVAR>
+
+	<?MIVAR COND="$(AND,$(NC,$stage_pct,UNKNOWN),$(NC,$stage_pct,0),$(NXST,$UPDATE))"> 
+	  <B>(+/- $stage_pct)</b> 
+	<?/MIVAR>
+
+	<?MIVAR>
+  	  $(IF,$(EC,$resolution,dev_hours),"hours (h)","days(s)").
+	<?/MIVAR>
+      <?/MIBLOCK>
+
+      <hr width=80%>
+
+      <b>Image Preparation:</B> <p>
+      <TABLE border=2 WIDTH=100% cellpadding=4>
+	<TH> Specimen</TH>
+        <TH>Image Type</TH>
+        <TH>Orientation</TH>
+	<TR align=center>
+	  <TD>
+	    <?MIVAR COND="$(NXST,$UPDATE)">$specimen<?/MIVAR>
+	    <?MIBLOCK COND="$(XST,$UPDATE)">
+	      <?MIVAR>
+		<SELECT name=specimen_type onChange=dopopup(this.options[this.selectedIndex].value,'$specimen','specimen')>
+		  <OPTION $(IF,$(OR,$(EC,$specimen,NULL),$(EC,$specimen,UNKNOWN)),selected) VALUE=UNKNOWN >UNKNOWN
+		  <OPTION $(IF,$(EC,$specimen,"LM-section"),selected) VALUE=LM-sectio>LM-section
+		  <OPTION $(IF,$(EC,$specimen,"EM-section"),selected) VALUE=EM-section>EM-section
+		  <OPTION $(IF,$(EC,$specimen,"whole-mount"),selected) VALUE=whole-mount>whole-mount
+		  <OPTION $(IF,$(EC,$specimen,"live"),selected) VALUE=live>live
+		</SELECT>
+	      <?/MIVAR>
+	    <?/MIBLOCK>
+	  </TD>
+	  <TD> 
+	    <?MIVAR COND="$(NXST,$UPDATE)">$image_type<?/MIVAR>
+	    <?MIBLOCK COND="$(XST,$UPDATE)">
+	      <?MIVAR><SELECT name=image_type onChange=dopopup(this.options[this.selectedIndex].value,'$image_type','image_type')><?/MIVAR>
+		<OPTION <?MIVAR COND="$(OR,$(EC,$image_type,NULL),$(EC,$image_type,UNKNOWN))">selected<?/MIVAR> VALUE=UNKNOWN>UNKNOWN
+		<OPTION <?MIVAR COND="$(EC,$image_type,still)">selected<?/MIVAR> VALUE=still  >still
+		<OPTION <?MIVAR COND="$(EC,$image_type,movie)">selected<?/MIVAR> VALUE=movie>movie
+		<OPTION <?MIVAR COND="$(EC,$image_type,optical_series)">selected<?/MIVAR> VALUE=optical_series>optical_series
+		<OPTION <?MIVAR COND="$(EC,$image_type,3-D)">selected<?/MIVAR> VALUE=3-D>3-D
+	      </SELECT>
+	    <?/MIBLOCK>
+	  </TD>
+
+	  <TD>
+	    <?MIVAR COND="$(NXST,$UPDATE)">$orientation<?/MIVAR>
+	    <?MIBLOCK COND="$(XST,$UPDATE)">
+	      <?MIVAR><SELECT name=image_orientation onChange=dopopup(this.options[this.selectedIndex].value,'$orientation','orientation')><?/MIVAR>
+		<OPTION <?MIVAR COND="$(OR,$(EC,$orientation,NULL),$(EC,$orientation,UNKNOWN))">selected<?/MIVAR> VALUE=UNKNOWN >UNKNOWN
+		<OPTION <?MIVAR COND="$(EC,$orientation,dorsal-anterior_to_top)">selected<?/MIVAR> VALUE=dorsal-anterior_to_top>dorsal-anterior_to_top
+		<OPTION <?MIVAR COND="$(EC,$orientation,ventral-anterior_to_top)">selected<?/MIVAR> VALUE=ventral-anterior_to_top >ventral-anterior_to_top
+		<OPTION <?MIVAR COND="$(EC,$orientation,sagittal-anterior_to_left)">selected<?/MIVAR> VALUE=sagittal-anterior_to_left >sagittal-anterior_to_left
+		<OPTION <?MIVAR COND="$(EC,$orientation,sagittal-anterior_to_right)">selected<?/MIVAR> VALUE=sagittal-anterior_to_right >sagittal-anterior_to_right
+		<OPTION <?MIVAR COND="$(EC,$orientation,parasagittal-anterior_to_left)">selected<?/MIVAR> VALUE=parasagittal-anterior_to_left>parasagittal-anterior_to_left
+		<OPTION <?MIVAR COND="$(EC,$orientation,parasagittal-anterior_to_right)">selected<?/MIVAR> VALUE=parasagittal-anterior_to_right>parasagittal-anterior_to_right
+		<OPTION <?MIVAR COND="$(EC,$orientation,transverse-dorsal_to_top)">selected<?/MIVAR> VALUE=transverse-dorsal_to_top>transverse-dorsal_to_top
+		<OPTION <?MIVAR COND="$(EC,$orientation,dorsal_oblique)">selected<?/MIVAR> VALUE=dorsal_oblique>dorsal_oblique
+		<OPTION <?MIVAR COND="$(EC,$orientation,ventral_oblique)">selected<?/MIVAR> VALUE=ventral_oblique>ventral_oblique
+		<OPTION <?MIVAR COND="$(EC,$orientation,transverse oblique-dorsal_to_top)">selected<?/MIVAR> VALUE=transverse oblique-dorsal_to_top>transverse oblique-dorsal_to_top
+	      </SELECT>
+	    <?/MIBLOCK>
+	  </TD>
+
+	</TR>
+      </TABLE>
+      <p>
+
+      <hr width=80%>
+
+
+      <!-- Throw up the publication info, using the standard display format -->
+      <?MISQL SQL="
+        select WebExplode(object,'') 
+          from webPages 
+          where ID='aa-showpubs.apg';">
+        $1
+      <?/MISQL>
+
+    <!-- Missing form terminator? -->
+
+  <?/MIBLOCK>  <!-- ends cond AUTHORIZED -->
 <?/MIBLOCK>  <!-- ends cond OID exist -->
 
 
