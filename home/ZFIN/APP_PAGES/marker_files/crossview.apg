@@ -1,4 +1,17 @@
-<!-- FILE: CROSSVIEW.APG. This file implements a viewer for mapping and reference crosses.  Should display all info on cross as whole, plus list markers mapped in the cross.-->
+<?MICOMMENT>
+FILE: CROSSVIEW.APG. This file implements a viewer for mapping and reference 
+crosses.  Should display all info on cross as whole, plus list markers mapped 
+in the cross.
+<?/MICOMMENT>
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
 
 <HTML>
 <HEAD>
@@ -33,11 +46,11 @@ ERROR -- something bad happened -- no OID passed in!
 <?/MIBLOCK>
 
 <?MIBLOCK COND="$(XST,$OID)">
-<!-- Get user identity -->
+<?MICOMMENT> Get user identity <?/MICOMMENT>
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-identify.apg';">$1<?/MISQL>
 
 
-<!-- set userid to ZDB_ID of user or GUEST to be used by the map viewer -->
+<?MICOMMENT> set userid to ZDB_ID of user or GUEST to be used by the map viewer <?/MICOMMENT>
 
 <?MIBLOCK COND="$(NOT,$(EQ,$(SUBSTR,$ZDB_name,1,5),GUEST))">
 <?MIVAR NAME=$userid>$ZDB_ident<?/MIVAR>
@@ -53,17 +66,29 @@ ERROR -- something bad happened -- no OID passed in!
       <?/MIBLOCK>
 
 
-<?MISQL SQL="select name, panel_date,producer,source,comments,ptype,abbrev, day(panel_date),month(panel_date), year(panel_date) from panels where zdb_id='$OID';"><?/MISQL>
+<?MISQL SQL="
+  select name, panel_date, producer, source, mappanel_comments, ptype, abbrev, 
+	 day(panel_date), month(panel_date), year(panel_date),
+	 mappanel_interactive_url, mappanel_interactive_url_extra_text,
+	 mappanel_rh_rad_dose, mappanel_meiotic_num_meioses
+    from panels
+    where zdb_id='$OID';">
+<?/MISQL>
 
 <?MIVAR NAME=$name>$1<?/MIVAR>
 <?MIVAR NAME=$panel_date>$2<?/MIVAR>
 <?MIVAR NAME=$panel_producer>$3<?/MIVAR>
 <?MIVAR NAME=$source>$4<?/MIVAR>
+<?MIVAR NAME=$mappanel_comments>$5<?/MIVAR>
 <?MIVAR NAME=$panel_type>$6<?/MIVAR>
-<?MIVAR NAME=$comments>$5<?/MIVAR>
 <?MIVAR NAME=$abbrev>$7<?/MIVAR>
-
-
+<?MIVAR NAME=$mappanel_day>$8<?/MIVAR>
+<?MIVAR NAME=$mappanel_month>$9<?/MIVAR>
+<?MIVAR NAME=$mappanel_year>$10<?/MIVAR>
+<?MIVAR NAME=$mappanel_interactive_url>$11<?/MIVAR>
+<?MIVAR NAME=$mappanel_interactive_url_extra_text>$12<?/MIVAR>
+<?MIVAR NAME=$mappanel_rh_rad_dose>$13<?/MIVAR>
+<?MIVAR NAME=$mappanel_meiotic_num_meioses>$14<?/MIVAR>
 
 <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
 
@@ -81,23 +106,10 @@ ERROR -- something bad happened -- no OID passed in!
     <?MIELSE>
 
       <?MIBLOCK COND="$(NC,$panel_date,NULL)">
-      <?MIVAR NAME=$upd_date>$(INDEX,$(-,$9,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $8, $10 
+      <?MIVAR NAME=$upd_date>$(INDEX,$(-,$mappanel_month,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $mappanel_day, $mappanel_year 
       <?/MIVAR>
       <?/MIBLOCK>
 
-      <?MIBLOCK COND="$(EC,$panel_type,meiotic)">
-      <?MISQL SQL="select num_meioses, cross_type from meiotic_panel where zdb_id='$OID';"><?/MISQL>
-      <?MIVAR NAME=$num_meioses>$1<?/MIVAR>
-      <?MIVAR NAME=$cross_type>$2<?/MIVAR>
-      <?/MIBLOCK>
-
-
-      <?MIBLOCK COND="$(EC,$panel_type,Rad_Hybrid)">
-      <?MISQL SQL="select rad_dose, gen_per_frag,mapping_URL from rh_panel where zdb_id='$OID';"><?/MISQL>
-      <?MIVAR NAME=$rad_dose>$1<?/MIVAR>
-      <?MIVAR NAME=$gen_per_frag>$2<?/MIVAR>
-      <?MIVAR NAME=$mapping_URL>$3<?/MIVAR>
-      <?/MIBLOCK>
 
       <?MIVAR><TITLE> ZFIN View Panel: $name </TITLE><?/MIVAR>
 
@@ -123,12 +135,7 @@ ERROR -- something bad happened -- no OID passed in!
 
 
       <P>
-
-      <?MIBLOCK COND="$(EC,$panel_type,Rad_Hybrid)">
-	<?MIVAR NAME=$title>Radiation Hybrid Panel<?/MIVAR>
-      <?MIELSE>
-	<?MIVAR NAME=$title>Meiotic Panel<?/MIVAR>
-      <?/MIBLOCK>		
+      <?MIVAR NAME=$title>$panel_type Panel<?/MIVAR>
       
       <FONT SIZE=+1> <B> 
          <?MIVAR>$title: $name ($abbrev)<?/MIVAR>
@@ -137,10 +144,10 @@ ERROR -- something bad happened -- no OID passed in!
       <p>
 
       <b>Description:</b> 
-      <?MIVAR COND="$(NC,$comments,NULL)">$comments<?/MIVAR>
+      <?MIVAR COND="$(NC,$mappanel_comments,NULL)">$mappanel_comments<?/MIVAR>
       <p>
 
-      <TABLE WIDTH=100% cellpadding=4>
+      <TABLE WIDTH=100%>
       <TR>
       <TD><b>Panel Producer:</b>
       <?MIBLOCK COND="$(NC,$panel_producer,NULL)">
@@ -156,22 +163,19 @@ ERROR -- something bad happened -- no OID passed in!
       <?MIVAR>$(IF,$(NC,$panel_date,NULL),$upd_date,UNKNOWN)<?/MIVAR>
       </td>
       </TR>
-      </TABLE>
 
-      <TABLE width=100%>
       <TR>
-      <?MIVAR COND="$(EC,$panel_type,meiotic)">
-      <TD> <b>Panel type:</b> Meiotic</td>
-      <TD> <b>Number of meioses:</b> 
-      $(IF,$(NC,$num_meioses,NULL),$num_meioses,UNKNOWN)
-      </td>
-      <?/MIVAR>
-
-      <?MIVAR COND="$(EC,$panel_type,Rad_Hybrid)">
-      <TD> <b>Panel type:</b> Rad_Hybrid</td>
-      <TD><b>Radiation Dose:</b> $rad_dose</TD>
-      <?/MIVAR>
-
+	<?MICOMMENT>
+	  Check constraint on panels keeps the RH and Meiotic fields consistent
+	  with the panel type.  Therefore do not need to check it here.
+	<?/MICOMMENT>
+        <TD> <b>Panel type:</b> <?MIVAR>$panel_type<?/MIVAR></td>
+	<?MIVAR COND="$(NC,$mappanel_meiotic_num_meioses,NULL)">
+	  <TD> <b>Number of meioses:</b> $mappanel_meiotic_num_meioses </TD>
+	<?/MIVAR>
+        <?MIVAR COND="$(NC,$mappanel_rh_rad_dose,NULL)">
+	  <TD><b>Radiation Dose:</b> $mappanel_rh_rad_dose</TD>
+	<?/MIVAR>
       </TR>
       </TABLE>
 
@@ -194,11 +198,15 @@ ERROR -- something bad happened -- no OID passed in!
       </TR>
       </TABLE>
 
-      <?MIVAR COND="$(AND,$(EC,$panel_type,Rad_Hybrid),$(NC,$mapping_URL,null))">
+      <?MIVAR COND="$(NC,$mappanel_interactive_url,null)">
       <TABLE width=100% cellpadding=5 border=0 bgcolor="$highlight" cols=1 rows=1>
       <TR>
       <TD align=center>
-      <b>Interactive Mapping:</b> <A HREF="$mapping_URL">Place markers on $name panel</a>.<br><font size=-1>(Courtesy of the Dawid Lab, NIH)</font>
+        <b>Interactive Mapping:</b> 
+        <A HREF="$mappanel_interactive_url">Place markers on $abbrev panel</a>
+        <?MIVAR COND="$(NC,$mappanel_interactive_url_extra_text,null)">
+	  <font size=-1>$mappanel_interactive_url_extra_text</font>
+        <?/MIVAR>
       </TD>
       </TR></TABLE>
       <?/MIVAR>
