@@ -79,6 +79,8 @@ create dba function "informix".regen_oevdisp()
       end
     end exception;
 
+    let errorHint = "set zdb flag";
+
     update zdb_flag set zflag_is_on = 't'
 	where zflag_name = "regen_oevdisp" 
 	 and zflag_is_on = 'f';
@@ -220,15 +222,7 @@ create dba function "informix".regen_oevdisp()
       select oevdisp_zdb_id
    	from pre_orthologue_evidence_display;
 
-    --return error message if zdb_active_data is empty.
-
-    let tempTableEmpty = (select count(*) 
-			    from zdb_active_data);
-    if tempTableEmpty == 0 then
-    	let errorHint = "zdb_active_data table empty";
-	raise exception -746,0, "zdb_active_data table empty";
-    end if;
-
+ 
     let errorHint = "Populating oevd";	
 
     insert into orthologue_evidence_display 
@@ -237,7 +231,7 @@ create dba function "informix".regen_oevdisp()
       select * 
         from pre_orthologue_evidence_display;
 
-    --return error message if zdb_active_data is empty
+    --return error message if orthologue_evidence_display is empty
 
     let tempTableEmpty = (select count(*) 
 			    from orthologue_evidence_display);
