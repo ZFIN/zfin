@@ -700,9 +700,9 @@ ERROR -- something bad happened -- no OID passed in!
 	  AND lbl_zdb_id = lblrna_label_zdb_id;
 ">
 
-	<br><center><font size =+2><b>Probe:</b>&nbsp; $1</font></center>
+	<center><font size =+2><b>Probe:</b>&nbsp; $1</font></center>
 
-	<table width="95%" border=0>
+	<table width="95%" border=0 cellpadding=5>
 		<tr>
 			<td>
 				<b>Vector:</b>&nbsp; $2
@@ -732,10 +732,14 @@ ERROR -- something bad happened -- no OID passed in!
 		</tr>
 	</table>
 
-<p align=left><b>Comments:</b><br>&nbsp;$3</p>
+	<hr width="95%">
+
+<?MIVAR NAME=comment>hard coded as "none given" for thisse load<?/MIVAR>
+<!-- <p align=left><b>Comments:</b><br>&nbsp;$3</p> -->
 <?/MISQL>
 
 <form>
+
 
 <!-- Throw up the publication info, using the standard display format -->
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-showpubs.apg';">$1<?/MISQL>
