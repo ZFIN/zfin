@@ -79,7 +79,8 @@
 		    <A HREF="/ZFIN/misc_html/tips.html">Helpful Hints</A><BR>
 		    <A HREF="/zf_info/contact_us.html">User Support</A><BR>
 		    <A HREF="/zf_info/news/siteNews.html">Site News</A><BR>
-		    <A HREF="/zf_info/glossary.html">Glossary</A>
+		    <A HREF="/zf_info/glossary.html">Glossary</A><BR>
+	            <A HREF="/zf_info/downloads.html">Download Data</A><img src="/images/new1.gif"><BR>
 		  </td>
 		</tr>
 	      </table>
@@ -256,10 +257,6 @@
 	  <TD class="content_right">
 	    <DIV class="content">
 	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg">Search for mapped markers by marker type, marker name, map location or type of map.</A><br>
-	      <?MIVAR COND="$(EC,$AUTHORIZED,root)">
-		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg"><EM>New MARKER</EM></A>
-		,  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-haffter_linkages.apg"><EM>Haffter linkages</EM></A>
-	      <?/MIVAR>
 	    </DIV>
 	  </TD>
 	</TR>
@@ -510,7 +507,7 @@
 	      <br>the W.M. Keck Foundation. Funds also provided by the 
 	      NIH (RR/HD12546). 
 	      <br>
-	      Copyright <font color="#FFFFFF">&copy</font> <A HREF="http://www.uoregon.edu">University of Oregon</a>, 1994-2002,<A HREF="http://www.ci.eugene.or.us"> Eugene</a>, Oregon.  
+	      <A HREF="http://<!--|DOMAIN_NAME|-->/warranty.html\">Copyright <font color="#FFFFFF">&copy</font> <A HREF="http://www.uoregon.edu">University of Oregon</a>, 1994-2002,<A HREF="http://www.ci.eugene.or.us"> Eugene</a>, Oregon.  
 	      </P>
 	    </DIV>
 	  </TD>
