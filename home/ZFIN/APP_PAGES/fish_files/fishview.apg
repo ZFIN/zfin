@@ -773,7 +773,7 @@ Variables Expected:
 		  </TD>
 
 		  <TD>
-		  <?MIVAR COND="$(AND,$(XST,$UPDATE),$(NC,$alt_mutagen,not specified),$(NC,$alt_mutagen,spontaneous))">
+		  <?MIVAR COND="$(AND,$(XST,$UPDATE),$(NC,$alt_mutagen,not specified))">
 		   <BR>
   	           Add Ref.:&nbsp;
                    <input type=text size=16 name=attrib_alle_muta_pubid>
@@ -793,16 +793,17 @@ Variables Expected:
 		  <?/MIBLOCK>
 
  	
-		 <?MIBLOCK COND="$(AND,$(NC,$alt_mutagen,spontaneous),$(XST,$UPDATE))">		  
-		  <?MIVAR>
-		  <SELECT name=protocol onChange=doProtocol(this.options[this.selectedIndex].value,'$(URLENCODE,$alt_protocol)','$alt_zdb_id')>
-		  <?/MIVAR>
-		  <?MISQL SQL="
+		 <?MIBLOCK COND="$(XST,$UPDATE)">
+                   <?MIBLOCK COND="$(NC,$alt_mutagen,spontaneous)">		  
+		     <?MIVAR>
+		     <SELECT name=protocol onChange=doProtocol(this.options[this.selectedIndex].value,'$(URLENCODE,$alt_protocol)','$alt_zdb_id')>
+		     <?/MIVAR>
+		     <?MISQL SQL="
 		         select * from mutagee;">
 		    
-		    <option $(IF,$(EC,$alt_protocol,$1),SELECTED) value=$(URLENCODE,$1)>$1
-		   <?/MISQL>
-		  </SELECT> treated with 
+		         <option $(IF,$(EC,$alt_protocol,$1),SELECTED) value=$(URLENCODE,$1)>$1
+		      <?/MISQL>
+		    </SELECT> treated with 
 		  <?MIVAR>	
 		  <SELECT NAME=mutagen onChange=doMutagen(this.options[this.selectedIndex].value,'$(URLENCODE,$alt_mutagen)','$alt_zdb_id')>
 		  <?/MIVAR>
@@ -812,9 +813,24 @@ Variables Expected:
 		  	<option $(IF,$(EC,$alt_mutagen,$1),SELECTED) value=$(URLENCODE,$1)>$1
 		    <?/MISQL>
 		  </SELECT>
-		  <?/MIBLOCK>
+		  <?MIELSE>
+
+
+		  <?MIVAR>	
+		  <SELECT NAME=mutagen onChange=doMutagen(this.options[this.selectedIndex].value,'$(URLENCODE,$alt_mutagen)','$alt_zdb_id')>
+		  <?/MIVAR>
+		    <?MISQL SQL="
+		         select * from mutagen;">
+
+		  	<option $(IF,$(EC,$alt_mutagen,$1),SELECTED) value=$(URLENCODE,$1)>$1
+		    <?/MISQL>
+		  </SELECT>
+		<?/MIBLOCK>
 	          		 
 		  <?MISQL SQL="select WebExplode(object,'dataId=$ALTOID&type=colattrib&info=mutagen') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+
+		
+
 		 
 		  </TD>
 		  <TD>
