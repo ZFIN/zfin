@@ -228,7 +228,7 @@
 	###
 	### yow!  too many answers
 	###
-	if( ! defined $rowref ){ #$unique > 1) {	# not unique shunt off to search result page
+	if( defined @$rowref[1] ){ #$unique > 1) {	# not unique shunt off to search result page
 	 ### $note = $note . $unique . " ->Too Many Choices  <p>\n";  
 	  my $bot = LWP::UserAgent->new(); 
 	  my $req = POST 'http://<!--|DOMAIN_NAME|-->/<!--|WEBDRIVER_PATH_FROM_ROOT|-->',
@@ -252,7 +252,7 @@
 	###
 	### huh? got nothing, advance to re-try do not pass map
 	###
-	elsif( defined @$rowref[1] ){ #$unique < 1) {
+	elsif(! defined $rowref ){ #$unique < 1) {
 	  print $Q->header(). "\n".
 	    $Q->start_html(-TITLE => "View Marker", -bgcolor=> 'white', -link=> 'black', -vlink=>'black')."\n".
 	      "<p>The name: \"<font color=red><b>$marker</b></font>\" ". 
