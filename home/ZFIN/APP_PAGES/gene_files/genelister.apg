@@ -197,7 +197,7 @@
 	<b>Gene symbol - name</b>
 	<br>[previous names / orthologues]
       </TD>
-      <TD><B>Mutant Locus</b></TD>
+      <TD align=left><B>Mutant Locus</b></TD>
       <TD align=left><B>Location</b></TD> 
       <TD align=left><B>Panel</b></TD> 
       <TD align=left><B>Map<b></TD>
@@ -272,10 +272,9 @@
 	  <?MIVAR NAME=$locus_zdb_id>$11<?/MIVAR>
 
 	  <!-- start new row and column -->
-	  <?MIVAR><TR bgcolor="$row_color"><?/MIVAR>
+	  <TR <?MIVAR>bgcolor="$row_color"<?/MIVAR> >
+	    <TD>&nbsp;</TD>
 	    <?MIBLOCK COND="$(EC,$first_row,1)">
-
-	      <TD>&nbsp;</TD>
 	      <TD valign=top> <font size=2>
 	        <?MIVAR>
 	          $(IF,$(XST,$return_rec),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$OID TARGET=content>SELECT</A>)
@@ -321,7 +320,6 @@
 	    <?/MIBLOCK>
 
 	    <?MIBLOCK COND="$(EC,$first_row,0)">
-	      <TD>&nbsp;</TD>
               <TD>&nbsp;</TD>
 	    <?/MIBLOCK>
 
@@ -452,7 +450,7 @@
 	    <input type=hidden name=marker value=$marker_name>
 	    <input type=hidden name=view_map value="view_map">
 
-	    <?MIVAR><TR bgcolor="$row_color")><?/MIVAR>
+	    <TR <?MIVAR>bgcolor="$row_color"<?/MIVAR> >
 	      <TD>&nbsp;</TD>
 	      <TD>&nbsp;</TD>
 	      <TD align=left>
