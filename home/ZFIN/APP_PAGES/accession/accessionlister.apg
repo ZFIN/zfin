@@ -2,6 +2,10 @@
 
 <!-- This app-page handles the criteria collected by accessionselect.html, and actually does the search, displaying the results. 
 -->
+
+<!-- Modified to support I.E.  Naviagtor tile buttons must know all user input from the query screen.  These values are posted to the lister form.  The lister form creates the tile bar button with appropriate variables. Startframes.apg will pass this variables on to the select form.  -->
+
+
 <HTML>
 
 <!-- First note that they have searched persons-->
@@ -22,6 +26,19 @@
 <?MISQL SQL="delete from int_person_places where pers_id='$ZDB_ident' and place_id='MARKER';"><?/MISQL>
 <?MISQL COND="$(NOT,$(EQ,$(SUBSTR,$ZDB_name,1,5),GUEST))" SQL="insert into int_person_places (pers_id,place_id,last_visit) values ('$ZDB_ident','MARKER',current);"><?/MISQL>
 
+<!-- Cause a tile for the new page to appear in the navigator frame -->
+<!-- startframes.apg will pass variables on to appropriate page -->
+
+<?MIVAR NAME=page_title>Find ACCESSION<?/MIVAR>
+<?MIVAR NAME=navtile>true<?/MIVAR>
+<?MIVAR COND="$(NXST,$aname)" NAME=$aname><?/MIVAR>
+<?MIVAR>
+<SCRIPT>
+var page_id=top.content.location.href+'&navtile=$navtile&aname=$aname';
+top.update_hist(page_id,"$page_title");
+top.controls.location.reload(true);
+</SCRIPT>
+<?/MIVAR>
 
 <!--   THIS BLOCK HANDLES ACCESSION NUMBER SEARCHES ONLY NON ZDB_ID -->
 <?MIVAR name=aname>$(UPPER,$aname)<?/MIVAR>
@@ -148,18 +165,21 @@ Options:
 </form>
 
 
-<form>
+<form method=post  action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi" target="content" >
 <?MIVAR COND="$(OR,$(<=,$tcount,$maxreturn),$(XST,$getall))" NAME=$limit>$true_count<?/MIVAR>
 
 <?MIBLOCK COND="$(XST,$limit)">
 (Note: cM distances are measured from most telomeric marker)
 <TABLE width=100% border=0 cellspacing=0 cellpadding=3 >
-<TH> </TH><TH align=left>Name</TH> <TH align=left>Map Location</TH> <TH align=left>Panel</TH> <TH align=left>Updated</TH>
+<TH> </TH><TH align=left>Name</TH> <TH align=left>Map Location</TH> <TH align=left>Panel</TH><TH align=left>Map</TH> <TH align=left>Updated</TH>
 
 <?MIVAR NAME=$prev_name>NULL<?/MIVAR>
 <?MIVAR NAME=$prev_gp>0<?/MIVAR>
 <?MIVAR NAME=$clr_cnt>0<?/MIVAR>
-
+<?MIVAR NAME=$ok_view_map>0<?/MIVAR>
+<?MIVAR NAME=$target_abbrev>$7<?/MIVAR>
+<?MIVAR NAME=$OID>$4<?/MIVAR>
+<?MIVAR NAME=$marker_name>$1<?/MIVAR>
 
 <! -- a mapped marker was found display it -->
 
@@ -175,6 +195,23 @@ Options:
 <?MIBLOCK COND="$(EC,$15,NULL)">
 <?MIVAR NAME=$upd_date> <?/MIVAR>
 <?/MIBLOCK>
+
+<?MIBLOCK COND="$(AND,$(NC,$prev_name,$1),$(NC,$prev_name,0),$(EC,$ok_view_map,1))">
+<?MIVAR>
+
+<input type=hidden name=userid value=$userid>
+<input type=hidden name=marker value=$prev_name>
+$(SETVAR,$color,$(/,$clr_cnt,2))
+<TR valign=top $(IF,$(!=,$color,$(FIX,$color)),"bgcolor=#FCCE64")> 
+<TD></TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD align=left><font size=1>
+<input type=submit value='VIEW MAP' name=view_map ><TD>&nbsp;</TD>
+<?/MIVAR>
+</TR>
+</form>
+<form method=post  action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi" target="content">
+<?MIVAR NAME=$ok_view_map>0<?/MIVAR>
+<?/MIBLOCK>
+
 
 $(IF,$(NC,$prev_name,$1),$(SETVAR,$clr_cnt,$(+,$clr_cnt,1)))
 
@@ -192,7 +229,9 @@ $(IF,$(NC,$prev_name,$1),"<TD valign=top> <font size=2>"$2":<A HREF="/<!--|WEBDR
 <TD> <font size=2> 
 $(IF,$(=,$5,0),"Unmapped")
 
-$(IF,$(AND,$(EC,$11,NULL),$(EC,$9,f),$(>,$5,0)),"LG <b>"$5"</b>;<b> "$3"</b> "$13""<TD><font size=2> "<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$6">"$7"</A>"</TD><TD><font size=2>" "$upd_date""</TD>)
+$(IF,$(AND,$(EC,$11,NULL),$(EC,$9,f),$(>,$5,0)),"LG <b>"$5"</b>;<b> "$3"</b> "$13""<TD><font size=2> "<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$6">"$7"</A>"</TD>
+<TD><font size=2 COLOR=#A9A9A9><input type=checkbox name=$target_abbrev  value=1  CHECKED ></TD>
+<TD><font size=2>" "$upd_date""</TD>)
 
 $(IF,$(AND,$(EC,$11,NULL),$(NC,$9,f),$(>,$5,0)),"Mapped on <A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$6">"$7"  "$upd_date"</A>, but confidential.")
 
@@ -201,14 +240,24 @@ $(IF,$(AND,$(NC,$11,NULL),$(EC,$9,f),$(>,$5,0)),"Linked at "$11" "$13" to <A tar
 $(IF,$(AND,$(NC,$11,NULL),$(NC,$9,f),$(>,$5,0)),"Linked to "$12", but confidential.")
 </TD>
 
-<TD><font size=2><A HREF="javascript:view_map('$4','$8','$6')">
-$(IF,$(AND,$(EC,$11,NULL),$(EC,$9,f),$(>,$5,0)),"Show Map")</A>&nbsp;
-$(IF,$(AND,$(EC,$AUTHORIZED,root),$(EC,$11,NULL),$(EC,$9,f)),<font size=-1><input type=button value='Show w/ zMapper' onClick="view_map_java('"$4"','"$7"','"$5"')"></font> )        </TD>
 
 </TR>
 $(SETVAR,$prev_gp,$5)
 $(SETVAR,$prev_name,$1)
 <?/MISQL>
+
+<?MIBLOCK COND="$(EC,$ok_view_map,1)">
+<?MIVAR>
+<input type=hidden name=userid value=$userid>
+<input type=hidden name=marker value=$marker_name>
+$(SETVAR,$color,$(/,$clr_cnt,2))
+<TR valign=top $(IF,$(!=,$color,$(FIX,$color)),"bgcolor=#FCCE64")> 
+<TR valign=top $(IF,$(!=,$color,$(FIX,$color)),"bgcolor=#FCCE64")>
+<TD></TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD align=left><font size=1 COLOR=#A9A9A9><input type=submit value='VIEW MAP' name=view_map > <TD>&nbsp;</TD>
+</TR>
+<?/MIVAR>
+<?/MIBLOCK>
+
 
 </TABLE>
 </form>
@@ -290,7 +339,7 @@ $(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,RAPD),0)">aa-markerlister.apg<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,STS),0)">aa-markerlister.apg<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,RFLP),0)">aa-markerlister.apg<?/MIVAR>
-<?/MIBLOCK>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,IMAGE),0)">aa-imageview.apg<?/MIVAR><?/MIBLOCK>
 
 <?MIBLOCK COND="$(EC,$start_page,NULL)">
 <form><center><font size=4><?MIVAR><b>Requested ID is not found in ZFIN.</b> <?/MIVAR>
@@ -300,9 +349,9 @@ $(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|
 
 <?MIBLOCK COND="$(NC,$start_page,NULL)">
 <?MIVAR>
-<form name=zdb_search method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$start_page&OID=$aname">
- 
 
+<form name=zdb_search method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$start_page&OID=$OID" >
+ 
 <input type=hidden name=MIval value=$start_page>
 <input type=hidden name=OID value=$OID>
 <input type=hidden name=constraint value="$constraint">
@@ -311,13 +360,13 @@ $(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|
 <input type=hidden name=cur_status value="any">
 <input type=hidden name=order_pref value="name">
 <input type=hidden name=line_type value="accession">
+<input type=hidden name=accession value="accession">
 <input type=hidden name=mutagen value="any">
 <input type=hidden name=chrom_change value="any">
 <input type=hidden name=chrom_num value="0">
 <input type=hidden name=searchtype value="begins">
 
 <?/MIVAR>
-
 
 <script>
 document.zdb_search.submit ();
