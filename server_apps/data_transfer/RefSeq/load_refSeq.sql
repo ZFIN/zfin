@@ -152,13 +152,16 @@ FROM acc_length
 GROUP BY 1
 INTO TEMP tmp_acclength_longest;
 
+CREATE INDEX tmp_acclen_longest_index ON tmp_acclength_longest
+    (aAcclen_acc) using btree;
+
 UPDATE STATISTICS HIGH FOR TABLE tmp_acclength_longest;
 
 UPDATE acc_length
 SET acclen_max_len = 't'
-WHERE 1 = 
+WHERE exists
   (
-    SELECT count(*)
+    SELECT *
     FROM tmp_acclength_longest
     WHERE acclen_acc = aAcclen_acc
       AND acclen_length = aAcclen_length
