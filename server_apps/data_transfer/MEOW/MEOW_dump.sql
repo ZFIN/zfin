@@ -46,7 +46,11 @@ insert into meow_exp1
 insert into meow_exp1 (zdb_id,mname,abbrev,OR_lg) 
   select zdb_id,gene_name,abbrev,0 
     from gene 
-   where mapped='f';
+   where not exists 
+                 (select * 
+                    from mapped_marker mm
+                    where gene.zdb_id = mm.marker_id);
+
 
 -- Sanity check to see that there are no anomalies. These two queries 
 -- should return same result. If not, there are redundant GENE records, 
