@@ -69,6 +69,9 @@ my @tests =
 my %avoids = (
     "acc_ref_gid_eid:ref" => "avoid",	# causes syntax errors
     "db_link:dblink_info" => "avoid",   # not displayed anywhere
+    "defline:dfln_abbrev" => "avoid",   # not really our data
+    "defline:dfln_name"   => "avoid",     # not really our data
+    "defline:dfln_defline" => "avoid",  # not really our data
     "fest_lib_inst:fli_lib" => "avoid",	# Tom C says leave it be.
     "probe_lib:pl_lib_name" => "avoid",	# Tom C says leave it be.
     "probe_lib:pl_develop_stage" => "avoid",	# Tom C says leave it be.
@@ -162,7 +165,8 @@ while (my $line = <TABLESFILE>) {
 				# write tablename and rest of results to output.
 				if ($firstLineOut) {
 				    $firstLineOut = 0;
-				    print("Table Name                  Column Name                    Test       # Rows Failed\n");
+				    print("                                                                      # Rows\n");
+				    print("Table Name                  Column Name                    Test       Failed\n");
 				    print("--------------------------- ------------------------------ ---------- ------\n");
 				}
 				printf("%27s %-30s %-10s %6d\n", $tableName, $colName, $testName, $nRowsFound);
