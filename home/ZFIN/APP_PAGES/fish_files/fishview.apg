@@ -1240,9 +1240,9 @@ Variables Expected:
   	">
 
 	<?/MISQL>
-	<?MIBLOCK COND="$(>,$1,0)">
+	<?MIBLOCK COND="$(OR,$(>,$1,0),$(XST,$UPDATE))">
 	  <?MIVAR>
- 	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=fish&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev"><b>PUBLICATIONS</b></A>
+ 	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=fish&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev$(IF,$(XST,$UPDATE),&UPDATE=1)"><b>PUBLICATIONS</b></A>
 	  <?/MIVAR>
 	<?MIELSE>
 	  <b>PUBLICATIONS</b>
