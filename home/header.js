@@ -241,7 +241,7 @@ document.write("<table width=100% cellspacing=0 border=0 cellpadding=0 class=\"h
           document.write("</td>");
 	  document.write("<td align=center>");
 	   document.write("<DIV class=\"header\">");
-            document.write("<A HREF=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&line_type=mutant\">Mutant</a>");
+            document.write("<A HREF=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&line_type=mutant\">Mutants</a>");
 	   document.write("</DIV>");
           document.write("</td>");
           document.write("<td align=center>");

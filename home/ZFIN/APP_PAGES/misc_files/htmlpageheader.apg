@@ -50,7 +50,7 @@ document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
           </td>
 	  <td align=center>
 	   <DIV class="header">
-            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&line_type=mutant">Mutant</a>
+            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&line_type=mutant">Mutants</a>
 	   </DIV>
           </td>
           <td align=center>
