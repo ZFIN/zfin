@@ -266,6 +266,10 @@
       set idsup_data_zdb_id = '$fish_id'
       where idsup_data_zdb_id ='$temp_oid';">
   <?/MISQL>
+  <?MICOMMENT>Add new fish to names fast search tables.<?/MICOMMENT>
+  <?MISQL SQL="
+    execute procedure regen_names_fish('$fish_id');">
+  <?/MISQL>    
 
 
   <!-- OKAY! Now we're done processing submission, and just need to continue 
