@@ -1,5 +1,16 @@
 <HTML>
 
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+
+<?/MIERROR>
+
 <?MIBLOCK COND="$(NXST,$abbrev)">
 <?MIVAR NAME=$abbrev><?/MIVAR>
 <?/MIBLOCK>
