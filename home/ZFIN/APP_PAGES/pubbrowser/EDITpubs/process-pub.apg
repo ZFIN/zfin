@@ -7,6 +7,10 @@ insert a new pub record into PUBLICATION. Then (both cases) we just update the
 pub in question with any new values passed in.
 
 -->
+
+<!-- modified to support I.E.  could no longer user history.go(-2) in process-pub so need to pass variables around to recreate pub select list whn finished processing. in conjucntion with edit_pub -->
+
+
 <!-- First make sure the critical fields are there -->
 <?MIBLOCK COND="$(OR,$(NXST,$title),$(NXST,$authors),$(NXST,$pub_date),$(NXST,$source),$(NXST,$num_auths))"
 <center>
@@ -50,8 +54,16 @@ pub in question with any new values passed in.
 
 <!-- And jump back to the previous window -->
 
+<?MIVAR COND="$(NXST,$search_authors)" NAME=$search_authors><?/MIVAR>
+<?MIVAR COND="$(NXST,$search_title)" NAME=$search_title><?/MIVAR>
+<?MIVAR COND="$(NXST,$anon1text)" NAME=$anon1text><?/MIVAR>
+<?MIVAR COND="$(NXST,$year)" NAME=$year><?/MIVAR>
+<?MIVAR COND="$(NXST,$search_jtype)" NAME=$search_jtypejtype>any<?/MIVAR>
+
 <SCRIPT>
-window.history.go(-2);
+<?MIVAR>
+window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-pubselect2.apg&select_from=PUBLICATION&navtile=true&authors=$search_authors&anon1text=$anon1text&authtype=$authtype&anon1=$anon1&title=$search_title&jtype=$search_jtype&yr_cmpr=$yr_cmpr&century=$century&year=$year&order_pref=$order_pref&cur_status=$cur_status&pub_status=$pub_status');
+<?/MIVAR>
 </SCRIPT>
 
 <?/MIBLOCK> <!-- ends cond name,address,etc exists -->
