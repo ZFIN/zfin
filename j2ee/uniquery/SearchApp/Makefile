@@ -17,9 +17,9 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/j2ee/uniquery/SearchApp
 
-GENERICS = syntax_help.jsp
+GENERICS = syntax_help.jsp  category_search.jsp
 
-STATICS = category_search.jsp internal_error.jsp search_parse_error.jsp
+STATICS = internal_error.jsp search_parse_error.jsp
 
 SUBDIRS = WEB-INF
 
