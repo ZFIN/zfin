@@ -94,7 +94,7 @@ Paternal Lineage:
 [lineagePaternal]
 ---
 Segregation: 
-breedingSegregation]
+[breedingSegregation]
 ---
 Submitter's Comments: 
 [breedingComments]
