@@ -1,5 +1,6 @@
 <?MICOMMENT>
 FILE: process-pub.html
+PREFIX: procpub_
 
 This file processes a publication that has been submitted from edit_pub.html.
 If it is a new pub, then OID should be set to "new", else it is set to the 
@@ -13,9 +14,22 @@ processing. in conjucntion with edit_pub
 
 <?/MICOMMENT>
 
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
 
-<!-- if calling page is edit_pub -->
-<!-- First make sure the critical fields are there -->
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+
+<?/MIERROR>
+
+
+<?MICOMMENT> 
+  if calling page is edit_pub
+  First make sure the critical fields are there
+<?/MICOMMENT>
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
 <?MIBLOCK COND="$(NXST,$link_authors)">
@@ -26,23 +40,25 @@ processing. in conjucntion with edit_pub
     </center>
     <?/MIBLOCK>
 
-    <!-- Looking good. Now just fix up the entries and create the record -->
+    <?MICOMMENT> Looking good. Now just fix up the entries and create the record <?/MICOMMENT>
     <?MIBLOCK COND="$(AND,$(XST,$q_title),$(XST,$q_authors),$(XST,$q_pub_date),$(XST,$q_source),$(XST,$q_num_auths))">
 
-    <!-- do a search when returning to publication page -->
+    <?MICOMMENT> 
+      do a search when returning to publication page
 
-    <!-- Double check input for apostrophes; fix em where found -->
-    <?MIVAR NAME=$q_title DELIMIT="'" REPLACE="''">$q_title<?/MIVAR>
-    <?MIVAR NAME=$q_authors DELIMIT="'" REPLACE="''">$q_authors<?/MIVAR>
-    <?MIVAR NAME=$q_source DELIMIT="'" REPLACE="''">$q_source<?/MIVAR>
+      Double check input for apostrophes; fix em where found 
+    <?/MICOMMENT>
+    <?MIVAR NAME=$q_title>$(REPLACE,$q_title,','')<?/MIVAR>
+    <?MIVAR NAME=$q_authors>$(REPLACE,$q_authors,','')<?/MIVAR>
+    <?MIVAR NAME=$q_source>$(REPLACE,$q_source,','')<?/MIVAR>
 
-    <?MIVAR COND="$(XST,$q_keywords)" NAME=$q_keywords DELIMIT="'" REPLACE="''">$q_keywords<?/MIVAR>
-    <?MIVAR COND="$(XST,$q_pub_abstract)" NAME=$q_pub_abstract DELIMIT="'" REPLACE="''">$q_pub_abstract<?/MIVAR>
-    <?MIVAR COND="$(XST,$q_pub_errata_and_notes)" NAME=$q_pub_errata_and_notes DELIMIT="'" REPLACE="''">$q_pub_errata_and_notes<?/MIVAR>
+    <?MIVAR COND="$(XST,$q_keywords)" NAME=$q_keywords>$(REPLACE,$q_keywords,','')<?/MIVAR>
+    <?MIVAR COND="$(XST,$q_pub_abstract)" NAME=$q_pub_abstract>$(REPLACE,$q_pub_abstract,','')<?/MIVAR>
+    <?MIVAR COND="$(XST,$q_pub_errata_and_notes)" NAME=$q_pub_errata_and_notes>$(REPLACE,$q_pub_errata_and_notes,','')<?/MIVAR>
 
 
     <!- If you're creating new PUB record,create and insert a blank record for it.
-	Stop search on return becuase values are empty. -->
+	Stop search on return becuase values are empty. <?/MICOMMENT>
     <?MIBLOCK COND="$(EC,$OID,new)">
       <?MISQL SQL="execute function get_id('PUB');"><?/MISQL>
       <?MIVAR NAME=$new>true<?/MIVAR>
@@ -73,15 +89,17 @@ processing. in conjucntion with edit_pub
           select $column_name[$i]
           from publication
           where zdb_id = '$OID';">
-          
-          <?MIVAR>$(SETVAR,$column_value[$i],$1)<?/MIVAR>
+
+	  <?MICOMMENT> deal with apostrophes <?/MICOMMENT>
+          <?MIVAR NAME=$procpub_columnValue>$(REPLACE,$1,','')<?/MIVAR>
+          <?MIVAR>$(SETVAR,$column_value[$i],$procpub_columnValue)<?/MIVAR>
         <?/MISQL>
       <?/MIBLOCK>
-      
->>>>>>> 1.22
     <?/MIBLOCK>
 
-    <!-- Now update the record with new info. Try to do it all in one insert! -->
+    <?MICOMMENT> 
+      Now update the record with new info. Try to do it all in one insert!
+    <?/MICOMMENT>
 
 
     <?MIVAR NAME=$setvalues>set title='$q_title',jtype='$q_jtype',authors='$q_authors',source='$q_source',pub_date='$q_pub_date'::date,status='$q_status',num_auths='$q_num_auths'<?/MIVAR>
@@ -90,7 +108,7 @@ processing. in conjucntion with edit_pub
     <?MIVAR COND=$(XST,$q_accession_no) NAME=$setvalues>$setvalues,accession_no='$q_accession_no'<?/MIVAR>
     <?MIVAR COND=$(XST,$q_pub_errata_and_notes) NAME=$setvalues>$setvalues,pub_errata_and_notes='$q_pub_errata_and_notes'<?/MIVAR>
 
-    <!-- OKAY, now just do the update! -->
+    <?MICOMMENT> OKAY, now just do the update! <?/MICOMMENT>
 
     <?MISQL SQL="update publication $setvalues where zdb_id='$OID';"><?/MISQL>
 
@@ -101,13 +119,16 @@ processing. in conjucntion with edit_pub
         from publication
         where zdb_id = '$OID';">
               
-        <?MIVAR COND="$(NC,$column_value[$i],$1)">
+	<?MICOMMENT> deal with apostrophes <?/MICOMMENT>
+	<?MIVAR NAME=$procpub_columnValue>$(REPLACE,$1,','')<?/MIVAR>
+        <?MIVAR COND="$(NC,$column_value[$i],$procpub_columnValue)">
           <?MISQL SQL="
             insert into updates
                 (submitter_id,submitter_name, rec_id, field_name, old_value, new_value, comments, when) 
               values 
                 ('$ZDB_ident', '$ZDB_name', '$OID', '$column_name[$i]', 
-                '$column_value[$i]', '$1', 'process-pub.apg', current);">
+                '$column_value[$i]', '$procpub_columnValue', 'process-pub.apg', 
+		current);">
           <?/MISQL>
         <?/MIVAR>
       <?/MISQL>
@@ -117,7 +138,7 @@ processing. in conjucntion with edit_pub
   <?/MIBLOCK>
 <?/MIBLOCK>
 
-  <!-- Now to process curation comment from link_authors>
+  <?MICOMMENT> Now to process curation comment from link_authors <?/MICOMMENT>
   <?MIBLOCK COND="$(XST,$link_authors)">
   
     <?MICOMMENT> ==| Close Linked Authors |== <?/MICOMMENT>
@@ -142,10 +163,10 @@ processing. in conjucntion with edit_pub
 
 <?MIVAR NAME=$returnVariables COND="$(XST,$START)">$returnVariables&START=$START<?/MIVAR>
 <?MIVAR NAME=$returnVariables COND="$(XST,$WINSIZE)">$returnVariables&WINSIZE=$WINSIZE<?/MIVAR>
-<!-- 
+<?MICOMMENT> 
      if editing an existing or creating a new record and passing values,
      determine which variables exist, concatonate
--->
+<?/MICOMMENT>
   <?MIBLOCK COND="$(NXST,$new)">
     <?MIVAR NAME=$returnVariables COND="$(XST,$authors)">$returnVariables&authors=$(URLENCODE,$authors)<?/MIVAR>
     <?MIVAR NAME=$returnVariables COND="$(XST,$title)">$returnVariables&title=$(URLENCODE,$title)<?/MIVAR>
@@ -168,7 +189,7 @@ processing. in conjucntion with edit_pub
     <?MIVAR NAME=$returnVariables COND="$(XST,$Fday)">$returnVariables&Fday=$Fday<?/MIVAR>
     <?MIVAR NAME=$returnVariables COND="$(XST,$Fmonth)">$returnVariables&Fmonth=$Fmonth<?/MIVAR>
     <?MIVAR NAME=$returnVariables COND="$(XST,$Fyear)">$returnVariables&Fyear=$Fyear<?/MIVAR>
-  <?MIELSE>  <!-- use new pub variables -->
+  <?MIELSE>  <?MICOMMENT> use new pub variables <?/MICOMMENT>
     <?MIVAR NAME=$returnVariables COND="$(XST,$q_authors)">$returnVariables&authors=$(URLENCODE,$q_authors)<?/MIVAR>
     <?MIVAR NAME=$returnVariables COND="$(XST,$q_title)">$returnVariables&title=$(URLENCODE,$q_title)<?/MIVAR>
     <?MIVAR NAME=$returnVariables COND="$(XST,$q_anon1text)">$returnVariables&anon1text=$(URLENCODE,$q_anon1text)<?/MIVAR>
@@ -183,7 +204,7 @@ processing. in conjucntion with edit_pub
     <?MIVAR NAME=$returnVariables COND="$(XST,$q_pub_status)">$returnVariables&pub_status=$q_pub_status<?/MIVAR>
   <?/MIBLOCK>
 
-<!-- jump back to the previous window -->
+<?MICOMMENT> jump back to the previous window <?/MICOMMENT>
 
 <SCRIPT>
   <?MIVAR>
