@@ -423,7 +423,7 @@ function call_reset() {
 
 	    <?MIVAR NAME=$independ_lg>null<?/MIVAR>
 	    <?MISQL SQL="
-	      select alnkgmem_or_lg, alnkgmem_num_members 
+	      select distinct alnkgmem_or_lg 
 		from all_linked_members a
 		where (    alnkgmem_linkage_zdb_id in 
 			     ( select alnkgmem_linkage_zdb_id 
@@ -456,7 +456,6 @@ function call_reset() {
 		</TD>
 	      </TR>
 	      <?/MIBLOCK>
-
 	    <?/MISQL>
 
 	  <!-- ref panel data -->
@@ -464,7 +463,7 @@ function call_reset() {
 	    <?MISQL SQL="
 	      select or_lg, lg_location, metric 
 		from public_paneled_markers 
-		where zdb_id = '$locus';">
+		where zdb_id in ( '$locus', '$fish_id');">
 	      <?MIVAR NAME=$lg>$1<?/MIVAR>
 	      <?MIVAR NAME=$lg_location>$2<?/MIVAR>      
 	      <?MIVAR NAME=$metric>$3<?/MIVAR>
