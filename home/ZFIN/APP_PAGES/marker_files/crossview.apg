@@ -1,0 +1,219 @@
+<!-- FILE: REFCROSSVIEW.HTML. This file implements a viewer for mapping and reference crosses.  Should display all info on cross as whole, plus list markers mapped in the cross.
+-->
+
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-chromoscripts.apg';">$1<?/MISQL>
+
+</HEAD>
+
+<body bgcolor="#e5e5e5"  TEXT="black">
+<basefont COLOR="#000000" size=2>
+
+
+<?MIBLOCK COND="$(NXST,$OID)">
+<p>
+ERROR -- something bad happened -- no OID passed in!
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(XST,$OID)">
+
+<?MISQL SQL="select WebExplode(object,'page_title=View Panel') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+<?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
+
+
+<?MISQL SQL="select name, panel_date,producer,source,comments,ptype,abbrev from panels where zdb_id='$OID';"><?/MISQL>
+
+<?MIVAR NAME=$panel_name>$1<?/MIVAR>
+<?MIVAR NAME=$panel_date>$2<?/MIVAR>
+<?MIVAR NAME=$panel_producer>$3<?/MIVAR>
+<?MIVAR NAME=$source>$4<?/MIVAR>
+<?MIVAR NAME=$panel_type>$6<?/MIVAR>
+<?MIVAR NAME=$comments>$5<?/MIVAR>
+<?MIVAR NAME=$abbrev>$7<?/MIVAR>
+
+
+
+<?MIBLOCK COND="$(EC,$panel_type,meiotic)">
+<?MISQL SQL="select num_meioses, cross_type from meiotic_panel where zdb_id='$OID';"><?/MISQL>
+<?MIVAR NAME=$num_meioses>$1<?/MIVAR>
+<?MIVAR NAME=$cross_type>$2<?/MIVAR>
+<?/MIBLOCK>
+
+
+<?MIBLOCK COND="$(EC,$panel_type,Rad_Hybrid)">
+<?MISQL SQL="select rad_dose, gen_per_frag,mapping_URL from rh_panel where zdb_id='$OID';"><?/MISQL>
+<?MIVAR NAME=$rad_dose>$1<?/MIVAR>
+<?MIVAR NAME=$gen_per_frag>$2<?/MIVAR>
+<?MIVAR NAME=$mapping_URL>$3<?/MIVAR>
+<?/MIBLOCK>
+
+<!-- NOW JUST TOSS OUT THE RETRIEVED DATA IN A TABLE -->
+
+<!-- FIRST THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
+<?MISQL SQL="select WebExplode(object,'rtype=mapping_panel') from webPages where 
+ID='aa-data_mgr.apg';">$1<?/MISQL>
+
+
+
+<!-- OKAY, NOW  THROW UP THE  PANEL INFO -->
+<P>
+
+<CENTER>
+<?MIVAR>
+<FONT SIZE=4> <B> 
+$(IF,$(EC,$panel_type,Rad_Hybrid),Radiation Hybrid,Meiotic) Panel:  $panel_name ($abbrev)
+</B></FONT>
+<?/MIVAR>
+</CENTER>
+<p>
+
+<font size=2>
+<b>Description:</b> 
+<?MIVAR COND="$(NC,$comments,NULL)">$comments<?/MIVAR>
+<p>
+
+<TABLE WIDTH=100% cellpadding=4>
+<TR>
+<TD><font size=2><b>Panel Producer:</b>
+<?MIBLOCK COND="$(NC,$panel_producer,NULL)">
+<?MISQL SQL="select full_name from person where zdb_id='$panel_producer';">
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-persview.apg&OID=$panel_producer">$1</A>
+<?/MISQL>
+<?/MIBLOCK>
+<?MIVAR COND="$(EC,$panel_producer,NULL)"> UNKNOWN. <?/MIVAR>
+</TD>
+<!--
+<TD><font size=2> 
+<b>Date of Panel:</b> 
+<?MIVAR>$(IF,$(NC,$panel_date,NULL),$panel_date,UNKNOWN)<?/MIVAR>
+</td>
+-->
+</TR>
+</TABLE>
+
+
+<TABLE width=100%>
+<TR>
+<?MIVAR COND="$(EC,$panel_type,meiotic)">
+<TD><font size=2> <b>Panel type:</b> Meiotic</td>
+<TD> <font size=2><b>Number of meioses:</b> 
+$(IF,$(NC,$num_meioses,NULL),$num_meioses,UNKNOWN)
+</td>
+<?/MIVAR>
+
+<?MIVAR COND="$(EC,$panel_type,Rad_Hybrid)">
+<TD> <font size=2><b>Panel type:</b> Rad_Hybrid</td>
+<TD><font size=2><b>Radiation Dose:</b> $rad_dose</TD>
+<?/MIVAR>
+
+</TR>
+</TABLE>
+
+<TABLE>
+<TR>
+<TD><font size=2><b>Current source of genetic material for mapping:</b> 
+<?MIBLOCK COND="$(NC,$source,NULL)">
+<?MISQL SQL="select name from sources where zdb_id='$source';">
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-sourceview.apg&OID=$source">$1</A>
+<?/MISQL>
+<?/MIBLOCK>
+<?MIVAR COND="$(EC,$source,NULL)"> UNKNOWN. <?/MIVAR>
+</TD>
+</TR>
+</TABLE>
+
+<?MIVAR COND="$(AND,$(EC,$panel_type,Rad_Hybrid),$(NC,$mapping_URL,null))">
+<TABLE width=100% cellpadding=5 border=4 bgcolor="#f8fabb" cols=1 rows=1>
+<TR>
+<TD align=center>
+<b>Interactive Mapping:</b> <A HREF="$mapping_URL">Place markers on $panel_name panel</a>.<br><font size=-1>(Courtesy of the Dawid Lab, NIH)</font>
+</TD>
+</TR></TABLE>
+<?/MIVAR>
+
+<hr width=80%>
+
+<TABLE width=100%>
+<TR>
+
+<TD valign=top>
+<center><?MIVAR>
+<font size=3><b>$abbrev panel: Statistics</b> </font>
+<?/MIVAR></center>
+<p><font size=2>
+<b>Markers:</B>
+<ul>
+<?MIVAR NAME=$mcount>0<?/MIVAR>
+<?MISQL SQL="select mtype,count(*)::integer from paneled_markers where target_id='$OID'  group by mtype;">
+$(IF,$(NC,$MI_CURRENTROW,1),"<br>")
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-markerselect.apg&select_from=MARKER&panelid=$OID&marker_type=$1">$1</A> (total of $2)
+$(SETVAR,$mcount,$(+,$mcount,$2))
+<?/MISQL>
+</ul>
+
+<?MIBLOCK COND="$(>,$mcount,0)">
+<?MIVAR>Total of <b>$mcount</b> markers on panel<?/MIVAR>
+<p>
+<font size=2>Click on a linkage group in table at right to see a graphical map of individual linkage group.
+<p align=center>
+OR
+</p>
+<?MIVAR>
+Click to <A HREF="/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-markerselect.apg&select_from=MARKER&panelid=$OID">search the $abbrev Panel by marker attributes</A>.
+<?/MIVAR>
+</TD>
+
+
+<TD><font size=2>
+<TABLE BORDER cellpadding=2 bgcolor="#f8fabb" cols=4>
+<TH>LG</TH><TH>Markers on LG</TH><TH></TH><TH></TH>
+<?MIVAR NAME=$last>0<?/MIVAR>
+
+<?MISQL SQL="select OR_lg,mtype,count(*)::integer from paneled_markers where target_id='$OID'  group by OR_lg,mtype order by OR_lg;">
+$(IF,$(AND,$(>,$1,$last),$(>,$MI_CURRENTROW,1)),"</TD><TD><font size=1><A HREF=javascript:view_chromo('"$OID"','"$(-,$1,1)"');>Show Map</A></TD><TD><font size=1><A HREF=javascript:view_scores('"$OID"','"$(-,$1,1)"');>Scoring Data</A></TD></TR>")
+$(IF,$(>,$1,$last),"<TR align=center><TD><font size=1>"$1"</TD><TD><font size=1>")
+$(IF,$(=,$1,$last),"; ")
+$2($3)
+$(SETVAR,$last,$1)
+<?/MISQL>
+
+<?MIVAR>
+</TD><TD><font size=1><A HREF="javascript:view_chromo('$OID','$1');">Show Map</A></TD><TD><font size=1><A HREF="javascript:view_scores('$OID','$1');">Scoring Data</A></TD></TR>
+<?/MIVAR>
+
+</TABLE>
+
+<?/MIBLOCK> <!-- ends mcount greater than 0 -->
+
+<?MIVAR COND="$(=,$mcount,0)"> No marker data available yet. <?/MIVAR>
+
+</TD>
+
+
+</TR>
+</TABLE>
+
+
+<HR width=80%>
+
+
+<!-- Throw up the publication info, using the standard display format -->
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-showpubs.apg';">$1<?/MISQL>
+
+
+
+<?/MIBLOCK> <!-- ends cond AUTHORIZED -->
+
+
+<?/MIBLOCK> <!-- ends cond oid exists -->
+
+
+
+</HTML>
+
+
+
