@@ -27,7 +27,7 @@ TARGETDIR = $(TARGETROOT)/home/zf_info/anatomy/dict
 
 SUBDIRS = ear hair_cell lat_line oto semi_canal sens stato caud_fin
 
-GENERICS = mem.html sum.html mtg2.html current.html meeting_sum.html Trevarrow.html\
+GENERICS = mem.html sum.html mtg2.html meeting_sum.html Trevarrow.html\
 	atlas_info.html
 STATICS  = zfish_stages.txt
 
