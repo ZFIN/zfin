@@ -101,6 +101,13 @@ $1
 	values
 	  ( '$return_recid', '$new_oid', '$info');">
     <?/MISQL>
+  <?MIELSE COND="$(EC,$fill_table,int_data_supplier)">
+    <?MISQL SQL="
+      insert into int_data_supplier
+	  ( idsup_data_zdb_id, idsup_supplier_zdb_id )
+	values
+	  ( '$return_recid', '$new_oid' );">
+    <?/MISQL>
   <?MIELSE>
     <!-- creating an intersection record. -->
     <!-- FIRST delete duplicates. -->
