@@ -2,8 +2,6 @@
 #
 # Makefile for ZFIN_WWW CVS Project, Data Transfer server apps directory
 #
-# $Source$
-# $Id$
 #
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
@@ -22,7 +20,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer
 
-SUBDIRS = MEOW JohnP
+SUBDIRS = MEOW JohnP RefSeq
 
 
 # ---------------  Production Rules  ------------------------------------
