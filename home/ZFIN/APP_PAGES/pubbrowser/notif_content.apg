@@ -157,14 +157,14 @@ I am pleased to report that information about <?MIVAR>$(IF,$(EC,$status,preview)
     <?MIVAR COND="$(EC,$status,edit)">
        <INPUT TYPE=checkbox NAME=notif_item VALUE="$attrib_data_id" $(IF,$(AND,$(XST,$notif_items),$(>,$(POSITION,$notif_items,$attrib_data_id),0)), CHECKED)>
         $attrib_data_title: <i>$attrib_data_name</i> (<i>$attrib_data_abbrev</i>)
-        <br>
-        <a href="/<!--|CGI_BIN_DIR_NAME|-->/ZFIN_jump?record=$attrib_data_id">http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id</a> 
+        <br><?MICOMMENT>we always only want to link to production page<?/MICOMMENT>
+        <a href="http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id">http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id</a> 
         <br>
     <?/MIVAR>
     <?MIVAR COND="$(AND,$(EC,$status,preview),$(XST,$notif_items),$(>,$(POSITION,$notif_items,$attrib_data_id),0))">       
 	$attrib_data_title: <i>$attrib_data_name</i> (<i>$attrib_data_abbrev</i>)
-        <br>
-  	<a href="/<!--|CGI_BIN_DIR_NAME|-->/ZFIN_jump?record=$attrib_data_id">http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id</a> 
+        <br><?MICOMMENT>we always only want to link to production page<?/MICOMMENT>
+  	<a href="http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id">http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id</a> 
         <br>
      <?/MIVAR>
   <?/MIBLOCK>	
