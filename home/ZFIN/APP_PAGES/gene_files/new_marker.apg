@@ -1,11 +1,15 @@
-<!-- new_marker.apg.   A very simple data entry page (because it does not need to support digressions) to allow entry of new GENE and ANON_MARKER records.
+<!-- 
+  -- new_marker.apg.   A very simple data entry page (because it does not 
+  -- need to support digressions) to allow entry of new GENE and ANON_MARKER 
+  -- records.
 
-VARS:
-marker_type  -- if it doesn't exist, it starts by asking you this. If it exists, prompt for appropriate info.
-s_new -- if it exists, create the new record and print a confirmation.
-Others -- if s_new exists, then name,abbrev,comments,alt_names should also exist.
-
--->
+  -- VARS:
+  -- marker_type -- if it doesn't exist, it starts by asking you this. 
+  --                If it exists, prompt for appropriate info.
+  -- s_new       -- if it exists, create new record and print a confirmation.
+  -- Others      -- if s_new exists, then name, abbrev, comments should
+  --                also exist.
+  -->
 
 <basefont size=2>
 
@@ -63,8 +67,6 @@ Others -- if s_new exists, then name,abbrev,comments,alt_names should also exist
         <p><b>Abbreviation</b> (required):
         <input type=text name=abbrev size=15>
 
-        <p><b>Alternate Names/Synonyms</b> (separate with semicolons):
-        <input type=text size=25 name=alt_names>
         <p>
         <b>Description:</b><br>
         <TEXTAREA rows=5 cols=50 name=comments></TEXTAREA>
@@ -78,12 +80,10 @@ Others -- if s_new exists, then name,abbrev,comments,alt_names should also exist
 
   <!-- if marker values submitted -->
   <?MIBLOCK COND="$(XST,$s_new)">
-    <?MIVAR COND="$(NXST,$alt_names)" NAME=$alt_names><?/MIVAR>
     <?MIVAR COND="$(NXST,$comments)" NAME=$comments><?/MIVAR>
 
     <?MIVAR NAME=$mname DELIMIT="'" REPLACE="''">$mname<?/MIVAR>
     <?MIVAR NAME=$abbrev DELIMIT="'" REPLACE="''">$abbrev<?/MIVAR>
-    <?MIVAR NAME=$alt_names DELIMIT="'" REPLACE="''">$alt_names<?/MIVAR>
     <?MIVAR NAME=$comments DELIMIT="'" REPLACE="''">$comments<?/MIVAR>
 
     <?MISQL SQL="execute function get_id('$(UPPER,$marker_type)');"><?/MISQL>
@@ -97,15 +97,15 @@ Others -- if s_new exists, then name,abbrev,comments,alt_names should also exist
 
     <?MISQL COND="$(EC,$marker_type,gene)" SQL="
       insert into gene 
-        (zdb_id, gene_name, abbrev, comments, alt_names, owner) 
-        values ('$new_id', '$mname', '$abbrev', '$comments', '$alt_names',
-        '$ZDB_ident');"><?/MISQL>
+        (zdb_id, gene_name, abbrev, comments, owner) 
+        values ('$new_id', '$mname', '$abbrev', '$comments', '$ZDB_ident');">
+    <?/MISQL>
 
     <?MISQL COND="$(NC,$marker_type,gene)" SQL="
       insert into anon_marker 
-        (zdb_id,marker_name,abbrev,marker_type,comments,alt_names,owner) 
-        values ('$new_id','$mname','$abbrev','$(UPPER,$marker_type)',
-                '$comments','$alt_names','$ZDB_ident');">
+        (zdb_id, marker_name, abbrev, marker_type, comments, owner) 
+        values ('$new_id', '$mname', '$abbrev', '$(UPPER,$marker_type)',
+                '$comments', '$ZDB_ident');">
     <?/MISQL>
 
     <?MIVAR>
