@@ -35,7 +35,7 @@
 #	zfin id, symbol, accession number
 #	
 # Alleles
-#	zfin id, allele, locus, corresponding zfin gene id, gene symbol
+#	zfin id, allele, locus, pheno_keywords, corresponding zfin gene id, gene symbol
 
 
 
@@ -56,5 +56,4 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads";
 
 system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> DownloadFiles.sql");
-
 
