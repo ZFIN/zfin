@@ -52,7 +52,8 @@ public class SQLQuery
 		C = cook(C);
 		String newUrl = "jdbc:informix-sqli://<!--|DOMAIN_NAME|-->:<!--|INFORMIX_PORT|-->/<!--|DB_NAME|-->:INFORMIXSERVER=<!--|INFORMIX_SERVER|-->;user=zfinner;pa"+CC + "r" + "d="+ C;
 
-				
+		System.err.println(newUrl);
+		
 		Connection conn = null;
 		
 		try { Class.forName("com.informix.jdbc.IfxDriver"); } 
