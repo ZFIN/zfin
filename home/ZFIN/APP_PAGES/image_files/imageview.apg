@@ -420,7 +420,7 @@ Variables Expected:
 	<!-- Show expression patterns if they exist -->
 
 	<?MISQL SQL="
-	  select xpat_zdb_id, xpat_probe_zdb_id, xpat_comments, xpat_assay_name
+	  select xpat_zdb_id, xpat_probe_zdb_id, xpat_assay_name
 	    from expression_pattern
 	    where exists 
 		  ( select * 
@@ -430,8 +430,7 @@ Variables Expected:
 
 	  <?MIVAR NAME=$xpat_zdb_id>$1<?/MIVAR>
 	  <?MIVAR NAME=$xpat_probe_zdb_id>$2<?/MIVAR>
-	  <?MIVAR NAME=$xpat_comments>$3<?/MIVAR>
-	  <?MIVAR NAME=$xpat_assay_name>$4<?/MIVAR>
+	  <?MIVAR NAME=$xpat_assay_name>$3<?/MIVAR>
 
 	  <?MIVAR NAME=$labeledMarkerList><?/MIVAR>
 	  <?MISQL SQL="
