@@ -116,6 +116,8 @@
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,STS),0)">aa-markerselect.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,RFLP),0)">aa-markerselect.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,IMAGE),0)">aa-imageview.apg<?/MIVAR>
+
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,XPAT),0)">aa-xpatview.apg<?/MIVAR>
     <?/MIBLOCK>
 
     <?MIBLOCK COND="$(EC,$start_page,NULL)">
