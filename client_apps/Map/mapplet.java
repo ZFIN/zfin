@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.applet.*;
 import java.util.*;
+import java.net.*;
 import zmapper.*;
 import netscape.javascript.*;
 
@@ -21,19 +22,20 @@ public class mapplet extends Applet  {
 	}
 
 	public void init() {
-
-
+		System.err.println("updated......");
 		if (getParameter("data") != null) {
-			if (getParameter("selected_marker") != null)
-				MV = new MapViewer(getParameter("data"), getParameter("selected_marker"));
-			else {
+			if (getParameter("selected_marker") != null) {
+				System.err.println("Starting with single selected marker...");
+				MV = new MapViewer(getParameter("data"), getParameter("selected_marker"), getParameter("panel_order"));
+			} else {
+				System.err.println("Starting with multiple selected markers...");
 				Hashtable SM = new Hashtable();
 				//Lookout!  hardcoded panel names.. now I'm gonna go to hell for sure..
 				//this mess makes a zdb_id -> target_abbrev hashtable to send along.
 				if (getParameter("MGH_m") != null)
-					SM.put("MGH",getParameter("MGH"));
+					SM.put("MGH",getParameter("MGH_m"));
 				if (getParameter("GAT_m") != null)
-					SM.put("GAT",getParameter("GAT"));
+					SM.put("GAT",getParameter("GAT_m"));
 				if (getParameter("HS_m") != null)
 					SM.put("HS", getParameter("HS_m"));
 				if (getParameter("MOP_m") != null)
@@ -42,16 +44,16 @@ public class mapplet extends Applet  {
 					SM.put("T51",getParameter("T51_m"));
 				if (getParameter("LN54_m") != null)
 					SM.put("LN54",getParameter("LN54_m"));
-				if (getParameter("JPAD_m") != null)
-					SM.put("JPAD",getParameter("JPAD_m"));	
-				MV = new MapViewer(getParameter("data"), SM);
+				if (getParameter("ZMAP_m") != null)
+					SM.put("ZMAP",getParameter("ZMAP_m"));	
+				MV = new MapViewer(getParameter("data"), SM, getParameter("panel_order"));
 			}
 			
 		} else if (getParameter("where") != null) 	{
 			String Q = "select zdb_id, abbrev, mtype, target_abbrev, lg_location::numeric(6,2), OR_lg, mghframework, metric from paneled_markers where " + getParameter("where") + " and private='f' order by 4,5 asc;";
-			MV = new MapViewer(Q,getParameter("host"), getParameter("port"), getParameter("selected_marker"));
+			MV = new MapViewer(Q,getParameter("host"), getParameter("port"), getParameter("selected_marker"), getParameter("panel_order"));
 		} else if (getParameter("query") != null) 	{
-			 MV = new MapViewer(getParameter("query"),getParameter("host"), getParameter("port"), getParameter("selected_marker"));
+			 MV = new MapViewer(getParameter("query"),getParameter("host"), getParameter("port"), getParameter("selected_marker"), getParameter("panel_order"));
 		} else {
 			System.err.println("mapplet.java couldn't start with any meaningful params");
 		}
@@ -93,8 +95,8 @@ public class mapplet extends Applet  {
 
 			this.setLayout(null);
 			
-			this.add(zO);
-			this.add(zI);
+//			this.add(zO);
+//			this.add(zI);
 
 			zO.reshape(i,0,70,22);
 
@@ -113,7 +115,7 @@ public class mapplet extends Applet  {
 					percent = 100;
 				//System.err.println("BB.getMc: " + BB.getMarker_count() + ", ztotal: " + ztotal);
 				PS = percent + "%";
-				g.drawString(PS, i+zO.bounds().width+5, 16);
+//				g.drawString(PS, i+zO.bounds().width+5, 16);
 				percent_width = PFM.stringWidth(PS);
 			}
 			
@@ -423,9 +425,13 @@ public class mapplet extends Applet  {
 		
 		getJS();
 
-		if ((JS != null) && (ZDB_ID != null)) {
-		    JS.eval("open(\"" + marker_url + ZDB_ID + "\",\"" + target_frame + "\");");	
-		}
+
+		URL U = null;
+		try { U = new URL("http", getDocumentBase().getHost(),marker_url + ZDB_ID); } catch (MalformedURLException e) { System.err.println(e); }
+		System.err.println("opening: " + U + ", in: " + target_frame);
+		this.getAppletContext().showDocument(U, target_frame);
+		
+		
 	}
 	
 
