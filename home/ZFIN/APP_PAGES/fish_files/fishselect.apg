@@ -1,0 +1,135 @@
+<?MIVAR COND="$(NXST,$line_type)" NAME=$line_type>NULL<?/MIVAR>
+
+<HTML>
+<HEAD>
+<SCRIPT>
+
+function updateList() {
+      document.BrowserForm.selected.value=document.Browser.getList();
+}
+
+<?MIVAR>
+function start_help(anchor) {
+   top.zfinhelp=open("/cgi-bin_B/webdriver?MIval=aa-helpframes.html&calling_page=$MIval&anchor="+anchor,"helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
+}
+<?/MIVAR>
+
+</SCRIPT>
+</head>
+
+<basefont size=2>
+
+<form name="BrowserForm" method=post TARGET="pbrowser" 
+onSubmit="parent.pbrowser.document.location='/ZDBB/misc_html/saysearching.html'; 
+<?MIVAR COND="$(NC,$line_type,wild_type)">
+updateList();<?/MIVAR>
+" action="/cgi-bin_B/webdriver">
+
+<center>
+<FONT SIZE=3 color="#ff0000" > <B>SEARCH for 
+<?MIVAR>
+$(IF,$(NC,$line_type,null),$(UPPER,$line_type),"<select name=line_type> <option>wild type<option selected>mutant</select>")
+Lines </B></font>
+<?/MIVAR>
+</center>
+
+<TABLE width=100% border=0>
+<TR>
+<?MIVAR COND="$(NC,$line_type,wild_type)">
+<TD><font size=-1>
+<A HREF="javascript:start_help('allele')"><b>Allele:</b> </A>
+<input type=text name=allele size=5 ></font></TD>
+<?/MIVAR>
+<TD><font size=-1><A HREF="javascript:start_help('locus')"><b>
+<?MIVAR>$(IF,$(EC,$line_type,mutant),"Locus name","Name")<?/MIVAR>
+ contains:</b></A>
+ <input type=text name=fname size=6 ></font></TD> 
+
+<?MIBLOCK COND="$(NC,$line_type,wild_type)">
+
+<TD><font size=-1><A HREF="javascript:start_help('abbrev')"><b>3-letter abbrev.:</b></A> <input type=text maxlength=3 name=abbrev size=3 ></font></TD>
+</TR>
+</TABLE>
+
+
+<TABLE width=100% border=0>
+<TR>
+<TD><font size=-1> <A HREF="javascript:start_help('lg')"><b>LG:</b></A>
+<select NAME=chrom_num>
+<option selected value=0>All<option value=1>1<option value=2>2<option value=3>3<option value=4>4<option value=5>5<option value=6>6<option value=7>7<option value=8>8<option value=9>9<option value=10>10<option value=11>11<option value=12>12<option value=13>13<option value=14>14<option value=15>15<option value=16>16<option value=17>17<option value=18>18<option value=19>19<option value=20>20<option value=21>21<option value=22>22<option value=23>23<option value=24>24<option value=25>25
+</SELECT></font></TD> 
+
+<TD><font size=-1><A HREF="javascript:start_help('mtype')"><b>Mut. Type:</b> </A>
+<select NAME=chrom_change><option SELECTED value=any>Any<option>point_mutation<option>deficiency<option>insertion<option>translocation<option>transposition<option>duplication</select>
+</font></TD>
+
+<TD><font size=-1><A HREF="javascript:start_help('mutagen')"><b>Mutagen:</b></A>
+<select NAME=mutagen><option SELECTED value=any>Any<option value=ENU>ENU<option value=EMS>EMS<option value=g-rays>gamma rays<option value=DNA>DNA<option value=spontaneous>spontaneous</SELECT>
+</font></TD>
+</TR>
+</TABLE>
+
+<TABLE width=100% border=0>
+<TR>
+<TD><font size=-1> <b> 
+<SELECT name=anon1>
+<option selected value="phenotype">Phenotype
+<option value="fish_id">ZFIN ID#
+<option value="comments">Comments
+</SELECT>
+</b><A HREF="javascript:start_help('phenotype')"> contains </A>
+<input type=text name=anon1text size=12>
+</font></TD> 
+
+<?/MIBLOCK> <!-- ends if line type not wildtype -->
+
+<TD  align=right><font size=-1>
+<input type=submit name=action value="SEARCH"></font>
+<input type=reset 
+<?MIVAR COND="$(NC,$line_type,wild_type)"> onClick="document.Browser.clear();"
+<?/MIVAR>
+value="Clear Settings">  
+</TD>
+</TR>
+</TABLE>
+
+
+
+
+
+<!-- This next little block executes only if we are using the browser as a
+selecto. That is we want user to ultimately CHOOSE a browsed value. All
+we have to do at this point is pass the return record along to the fishlister.
+-->
+<?MIVAR COND="$(XST,$return_rec)">
+<input type=hidden NAME="return_rec" value=$return_rec>
+<?/MIVAR>
+
+<input type=hidden name=MIval value=aa-fishlister.apg>
+
+<?MIVAR COND="$(NC,$line_type,NULL)">
+<input type=hidden name=line_type value=$line_type>
+<?/MIVAR>
+
+
+<?MIBLOCK COND="$(NC,$line_type,wild_type)">
+<INPUT type="hidden" name="selected"  value="'t'::boolean">
+
+<A HREF="javascript:start_help('phenokeywords')"><b>Affected Structures or defects</A> include:</b> (select with list tool below)
+<br>
+<APPLET 
+codebase = "/ZFIN_software/Browser"
+CODE="Browser.class" NAME ="Browser" WIDTH=470 HEIGHT=120>
+
+<param name=format_pre value=" a.pheno_keywords like '%;" >
+<param name=format_post value=";%'" >
+<param name=list_label value="Keyword Dictionary">
+<param name=selected_label value="Selected Keywords">
+</APPLET>
+<?/MIBLOCK>
+
+
+</form>
+
+</HTML>
+
