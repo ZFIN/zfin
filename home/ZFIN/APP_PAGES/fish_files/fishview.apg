@@ -816,7 +816,7 @@ Variables Expected:
 		      Add Ref.:&nbsp;
 		      <input type=text size=16 name=attrib_alle_mutation_pubid>
 		      <input type=button value="Add" onClick=new_attrib_alle_mutation("$ALTOID");> <br>	
-			<SELECT name=chrom_change onChange=doChromChange(this.options[this.selectedIndex].value,'"$alt_chrom_change"','"$alt_zdb_id"')>
+			<SELECT name=chrom_change onChange=doChromChange(this.options[this.selectedIndex].value,'$alt_chrom_change','$alt_zdb_id')>
 		          <option "$(IF,$(EC,$alt_chrom_change,point),SELECTED)" value=point>point
 		          <option "$(IF,$(EC,$alt_chrom_change,duplication),SELECTED)" value=duplication>duplication
 		          <option "$(IF,$(EC,$alt_chrom_change,deficiency),SELECTED)" value=deficiency>deficiency
