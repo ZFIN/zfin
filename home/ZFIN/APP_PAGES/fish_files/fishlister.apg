@@ -182,7 +182,7 @@ $(IF,$(XST,$return_rec),"<A HREF="/cgi-bin_B/webdriver?MIval=aa-do-select.apg&re
 
 
 
-<?MIBLOCK COND="$(NC,$line_type,mutant)">
+<?MIBLOCK COND="$(AND,$(NC,$line_type,mutant),$(NC,$line_type,accession))">
 <center>
 <FONT SIZE=4>Search Wild Type Lines: Result Summary</font><br>
 (Click on individual stocks for more detail)
@@ -202,6 +202,29 @@ $(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-d
 <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No matching records found<?/MIVAR>
 
 <?/MIBLOCK>  <!-- ends the wild type case -->
+
+<!--  search for zdb id for accession lister  -->
+<?MIBLOCK COND="$(EC,$line_type,accession)">
+<center>
+<FONT SIZE=4>Search Fish Lines: Result Summary</font><br>
+(Click on individual stocks for more detail)
+</center> 
+<p>
+<TABLE width=100%>
+<TH> </TH><TH align=left>Strain</TH> <TH align=left>Lab</TH>
+<?MISQL SQL="select a.name, a.zdb_id, a.abbrev, b.name,b.zdb_id from fish a, lab b where  a.lab=b.zdb_id and a.zdb_id = '$OID' order by a.name;">
+<TR valign=top> <TD> 
+$(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$2" TARGET=content>SELECT</A> </FONT>") 
+</TD>
+<TD valign=top> <FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-fishview.apg&OID=$2" TARGET="content">$1</A> ($3) </FONT> </TD>  
+<TD><A HREF="/cgi-bin_B/webdriver?MIval=aa-labview.apg&OID=$5" TARGET="content">$4</TD>
+</TR>
+<?/MISQL>
+</TABLE>
+<?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No matching records found<?/MIVAR>
+
+<?/MIBLOCK>  <!-- ends the accession case -->
+
 
 
 </HTML>
