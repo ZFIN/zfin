@@ -27,7 +27,7 @@
 	let vOkInSyscolumns = (select count(*) 
 	 			 from syscolumns, systables 
   				 where syscolumns.tabid = systables.tabid
-			         and systables.tabid = vTable_id
+			         and systables.tabid = vTableid
 				 and syscolumns.colname = vColumnName);
 
 	if vOkInSyscolumns < 1 then
