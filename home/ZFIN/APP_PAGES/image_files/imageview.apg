@@ -44,9 +44,6 @@ document.doUpdate.MIval.value='aa-imageupdate.apg';
  document.doUpdate.submit();
 }
 
-function Delete_listitem(item_name,item_id) {
-window.location.search='?MIval=aa-do-imageupdate.apg&OID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted';
-}
 
 
 // COmment out call to annotator applet until it's installed!
@@ -78,6 +75,12 @@ document.doUpdate.MIval.value='aa-do-imageupdate.apg';
  check_annotations();
  document.doUpdate.submit();
 }
+
+function Delete_listitem(item_name,item_id) {
+window.location.search='?MIval=aa-do-imageupdate.apg&OID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted';
+}
+
+
 </SCRIPT>
 <?/MIVAR>
 </HEAD>
