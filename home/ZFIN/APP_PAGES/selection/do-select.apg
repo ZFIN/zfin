@@ -150,6 +150,23 @@ Note that the opening conditional also ensures that you don't specify a fish as 
 <?MISQL COND="$(EC,$rec_update,t)" SQL="insert into updates (submitter_name, submitter_id, when,rec_id,field_name,old_value,new_value, comments) values ('$ZDB_name','$ZDB_ident',current,'$return_recid','$fill_field','$old_parent','$new_oid','Changed parental lineage');"><?/MISQL>
 <?/MIBLOCK>  <!-- ends action=special parent-->
 
+<!-- If ACTION=insert_marker, then user has asked to add a missing/present marker for a deletion mutant.  A 't' in the info field indicates that a marker is present, an 'f' that a marker is missing.  Records are inserted into the mapped_deletion table. -->
+<?MIBLOCK COND="$(EC,$action,insert_marker)">
+
+<!-- first get the allele and linkage group  -->
+<?MISQL SQL="select distinct c.allele, b.chrom_num from int_fish_chromo a, chromosome b, fish c where (source_id='$return_recid' and target_id=b.zdb_id) and (c.zdb_id=a.source_id);"> 
+<?MIVAR name=$allele>$1<?/MIVAR>
+<?MIVAR name=$lg>$2<?/MIVAR>
+<?/MISQL>
+<!-- get the owner of the fish record -->
+<?MISQL SQL="select owner from fish  where zdb_id='$return_recid';">
+<?MIVAR name=$owner>$1<?/MIVAR>
+<?/MISQL>
+
+<?MISQL SQL="insert into mapped_deletion (marker_id, present_t, submitter, owner, OR_lg, allele) values ( '$new_oid','$info', '$ZDB_ident','$owner', '$lg', '$allele');"><?/MISQL>
+
+
+<?/MIBLOCK>  
 
 
 <!-- Check for errors and report -->
