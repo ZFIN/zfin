@@ -209,7 +209,7 @@ function list_all(user_access) {
 	  <?MIVAR>$(SETVAR,$commapos,$(POSITION,$substranon1text,","))<?/MIVAR> 
         <?/MIBLOCK>
      <?MIELSE>
-	<?MIVAR>$(VECAPPEND,$constraint,"lower($anon1) like '%"$(LOWER,$anon1text)"%'")<?/MIVAR>
+	<?MIVAR>$(VECAPPEND,$constraint,"lower("$anon1") like '%"$(LOWER,$anon1text)"%'")<?/MIVAR>
      <?/MIBLOCK>
   <?/MIBLOCK>
 
