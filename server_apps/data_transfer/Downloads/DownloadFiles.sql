@@ -67,8 +67,12 @@ create table ortho_exp (
 
 insert into ortho_exp 
   select distinct c_gene_id, zdb_id, mrkr_name, mrkr_abbrev, organism, ortho_name, 
-         ortho_abbrev, NULL::varchar(50), NULL::varchar(50), NULL::varchar(50),
-         NULL::varchar(50),NULL::varchar(50)
+         ortho_abbrev, 
+         '123456789012345678901234567890'::varchar(50), 
+         '123456789012345678901234567890'::varchar(50), 
+         '123456789012345678901234567890'::varchar(50),
+         '123456789012345678901234567890'::varchar(50),
+	 '123456789012345678901234567890'::varchar(50)
     from orthologue,marker
 	where c_gene_id = mrkr_zdb_id;
 
@@ -214,7 +218,9 @@ create table alleles_exp (
 );
 
 insert into alleles_exp 
-  select f.zdb_id, allele, l.abbrev, l.locus_name, l.zdb_id, NULL::varchar(50),NULL::varchar(20)
+  select f.zdb_id, allele, l.abbrev, l.locus_name, l.zdb_id, 
+'123456789012345678901234567890'::varchar(50),
+'123456789012345678901234567890'::varchar(20)
     from fish f, locus l where line_type = 'mutant'
 	and f.locus = l.zdb_id;
 

@@ -54,19 +54,23 @@ where exists (
 select * from manual_genpept where gene[1,9] <> 'ZDB-GENE-';
 
 ! echo "insert new manualy curated GenPept links"
-select distinct gene, genpept, null::varchar(50) zad 
-from manual_genpept 
+select distinct gene, genpept, '123456789012345678901234567890'::varchar(50) zad
+from manual_genpept
 where gene[1,9] == 'ZDB-GENE-' 
 into temp tmp_db_link with no log;
 
-
 update tmp_db_link set zad = get_id('DBLINK');
 
-!echo "sanity check"
-select * from tmp_db_link where zad[1,11] <> 'ZDB-DBLINK-';
-select zad,count(*) from tmp_db_link group by 1 having count(*) > 1;
+select count(*)trailing_space  from tmp_db_link where length(zad) != octet_length(zad);
 
-insert into zdb_active_data select zad from tmp_db_link;
+
+--!echo "sanity check"
+--select * from tmp_db_link where zad is NULL;
+--select zad ,count(*) from tmp_db_link group by 1 having count(*) > 0;
+
+select * from tmp_db_link ;
+
+insert into zdb_active_data select zad from tmp_db_link ;
 
 insert into db_link(
 	dblink_linked_recid,
@@ -96,8 +100,8 @@ from tmp_db_link;
 drop table tmp_db_link;
 drop table manual_genpept;
 
--- rollback work;
-
 -- 
-commit work;
+rollback work;
+
+-- commit work;
 

@@ -32,6 +32,19 @@ and dblink_fdbcont_zdb_id in (
 )
 ;
 
+! echo "delete GenPept attributed links to more than one ZFIN object"
+delete from zdb_active_data 
+where zactvd_zdb_id in(
+    select distinct a.dblink_zdb_id
+    from db_link a, db_link b, record_attribution
+    where a.dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-42'
+    and   b.dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-42'
+    and   a.dblink_acc_num = b.dblink_acc_num
+    and   a.dblink_zdb_id <> b.dblink_zdb_id
+    and recattrib_data_zdb_id = a.dblink_zdb_id
+    and recattrib_source_zdb_id = 'ZDB-PUB-030924-6'
+);
+
 
 ! echo "Drop from consideration GenPept with manual curation"
 delete from prot_len_acc
@@ -163,7 +176,7 @@ insert into db_link(
     dblink_linked_recid,
     fdbcont_zdb_id,
     acc,
-    'uncurrated ' || TODAY, 
+    'uncurrated ' || TODAY || ' GenPept', 
     zad, 
     acc,
     len 
@@ -175,7 +188,7 @@ from tmp_dblk
 insert into record_attribution (recattrib_data_zdb_id,recattrib_source_zdb_id)
 select zad ,(select zdb_id from publication 
             where authors = 'ZFIN Staff'
-            and title = 'Curation of NCBI Protein Sequence Database Links'   
+            and title = 'Curation of NCBI Protein Sequence Database Links'
             )
 from tmp_dblk
 ;   
@@ -218,7 +231,7 @@ should be closed comment here
 select 
      est.dblink_linked_recid, 
      pla_prot acc,
-     NULL::varchar(50) zad, 
+     '123456789012345678901234567890'::varchar(50) zad, 
      max(pla_len) len,
      fdbcont_zdb_id
 from  db_link est, prot_len_acc, marker, foreign_db_contains
@@ -302,7 +315,7 @@ delete from tmp_Genomic_pla where pla_prot in ( -- just in case
 select
     dblink_linked_recid, 
      pla_prot acc,
-     NULL::varchar(50) zad, 
+     '123456789012345678901234567890'::varchar(50) zad, 
      max(pla_len) len,
      fdbcont_zdb_id
 from  db_link, tmp_Genomic_pla, marker, foreign_db_contains
@@ -410,9 +423,9 @@ group by  1,2,3
 select 
     dblink_linked_recid, 
      pla_prot acc,
-     NULL::varchar(50) zad, 
+     '123456789012345678901234567890'::varchar(50) zad, 
      max(pla_len) len, --,pla_gene,
-    fdbcont_zdb_id
+     fdbcont_zdb_id
 from  db_link, tmp_Genomic_pla, marker, data_alias, foreign_db_contains
 where dblink_fdbcont_zdb_id = fdbcont_zdb_id
 and   fdbcont_fdb_db_name in ('Genbank','SwissProt', 'RefSeq', 'LocusLink')
@@ -423,6 +436,7 @@ and   dalias_data_zdb_id = mrkr_zdb_id
 and   mrkr_type in ('GENE','EST')
 and   mrkr_zdb_id = dblink_linked_recid
 group by 1,2,5 
+having count(*) = 1
 into temp tmp_dblk with no log;
 
 ! echo "drop NP_ GenPepts that are already in as RefSeq"
@@ -531,6 +545,6 @@ where pla_prot not in (
 );   
 
 drop table prot_len_acc;
--- rollback work;
---
-commit work;
+-- 
+rollback work;
+--commit work;
