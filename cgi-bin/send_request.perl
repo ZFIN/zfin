@@ -26,7 +26,8 @@ sub print_confirmation {
 print <<EOA;
 Content-type: text/HTML\n\n
 <HTML>
-<BODY>
+<BODY bgcolor="#FFFFFF">
+<TITLE>ZFIN Locus Registration Confirmation</TITLE>
 <h1 align=center> Confirmation</h1>
 <b> Your request has been emailed to ZFIN nomenclature committee.</b> If you have given a contact email, you should receive a copy of this email.  <p>
 The nomenclature committee will review the proposed name.  Assuming there are no problems, you should receive confirmation of registration within the next week or two. If you do not receive a confirmation, please <A HREF="mailto:<!--|LOCUS_REGISTRATION_EMAIL|-->">Contact the ZFIN staff</A>.
