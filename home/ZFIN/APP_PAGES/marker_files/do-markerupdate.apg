@@ -9,6 +9,7 @@ attr -- the column to be updated
 attr_type -- textarea,text,or pic
 new_value -- the new value to stick in the column
 old_value -- the previous value
+xtra_param -- to pass an extra parameter
 comments -- reasons for doing update 
 target_table -- either anon_marker or gene, depending on what you're updating
 info -- optional value used to pass in additional info
@@ -22,6 +23,8 @@ dataOID -- the zdbid of the attributed item
   -->
 <?MIVAR COND="$(NXST,$old_value)" NAME=$old_value><?/MIVAR>
 <?MIVAR COND="$(NXST,$new_value)" NAME=$new_value><?/MIVAR>
+
+<?MIVAR COND="$(NXST,$xtra_param)" NAME=$xtra_param><?/MIVAR>
 <?MIVAR COND="$(NXST,$dataOID)" NAME=$dataOID><?/MIVAR>
 <?MIVAR COND="$(NXST,$info)" NAME=$info><?/MIVAR>
 
@@ -54,6 +57,7 @@ dataOID -- the zdbid of the attributed item
   <?MIVAR COND="$(EC,$attr_type,special-newortho)" NAME=$comments>Created a new orthologue record for species=$old_value for this record.<?/MIVAR>
 
   <?MIVAR COND="$(EC,$attr_type,special-newseqnum)" NAME=$comments>Created new link to sequence DB: $old_value for this record.<?/MIVAR>
+
 
   <?MIVAR COND="$(EC,$attr_type,special-newmrkrrel)" NAME=$comments>Created new marker relationship of relationship: $old_value for this record.<?/MIVAR>
 
@@ -96,9 +100,9 @@ dataOID -- the zdbid of the attributed item
     <?/MISQL>
     <?MISQL SQL="
       insert into data_alias  
-	  (dalias_zdb_id, dalias_data_zdb_id, dalias_alias)
+	  (dalias_zdb_id, dalias_data_zdb_id, dalias_alias, dalias_group)
         values 
-	  ('$dalias_zdb_id', '$OID', '$new_value');">
+	  ('$dalias_zdb_id', '$OID', '$new_value', '$xtra_param');">
     <?/MISQL>
   <?/MIBLOCK>
   <?MISQL COND="$(OR,$(EC,$attr,putgene_comments),
@@ -197,6 +201,13 @@ dataOID -- the zdbid of the attributed item
     <?/MISQL>
   <?/MIBLOCK>  <!-- ends special seqdb case -->
 
+
+
+  <!-- ends data alias -->
+
+
+ 
+
   <!-- Special case for adding new attribution-->
   <?MIBLOCK COND="$(EC,$attr_type,special-newattrib)">
     <!-- check whether the pub zdb id is validate. -->
@@ -288,6 +299,7 @@ dataOID -- the zdbid of the attributed item
   <?/MIBLOCK> 
 
 
+
   <!-- Special case for deleting an alias -->
   <?MIBLOCK COND="$(EC,$attr_type,delete-alias)">
     <?MISQL COND="$(EC,$attr,dalias_alias)" SQL="
@@ -299,6 +311,23 @@ dataOID -- the zdbid of the attributed item
 		      and dalias_alias = '$old_value' ) ;">
     <?/MISQL>
   <?/MIBLOCK>
+  
+  <!-- Special case for deleting a marker relationship -->
+  <?MIBLOCK COND="$(EC,$attr_type,delete-mrkrrelation)">
+     <?MISQL COND="$(EC,$attr,marker_relationship)" SQL="
+	delete from zdb_active_data
+        where zactvd_zdb_id = 
+	     (select mrel_zdb_id
+                from marker_relationship
+	       where (mrel_mrkr_1_zdb_id = '$OID'
+                   and mrel_mrkr_2_zdb_id ='$old_value') 
+		 or  (mrel_mrkr_1_zdb_id ='$old_value'
+                   and  mrel_mrkr_2_zdb_id= '$OID')
+		 and mrel_type = '$info') ;">
+     <?/MISQL>
+  <?/MIBLOCK>
+   	
+
   
   <!-- Special case for deleting a marker relationship -->
   <?MIBLOCK COND="$(EC,$attr_type,delete-mrkrrelation)">

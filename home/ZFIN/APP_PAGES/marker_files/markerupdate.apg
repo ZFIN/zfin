@@ -13,6 +13,7 @@ attr_type -- the type of attr being updated. Either 'text','textarea',
 print_name -- The human-understandable name (vs. the database column name) of
   the attribute to be updated. So for ex, the print name for 'phone' 
   would be 'phone number'
+xtra_param -- an extra parameter that gets passed to do-markerupdate
 target_table -- either anon_marker or gene, depending on what you're updating
 
 -->
@@ -29,6 +30,8 @@ target_table -- either anon_marker or gene, depending on what you're updating
       where ID='aa-secure_navigation.apg';">
     $1
   <?/MISQL>
+
+<?MIVAR COND="$(NXST,$xtra_param)" NAME=$xtra_param><?/MIVAR>
 
 
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
@@ -91,6 +94,7 @@ target_table -- either anon_marker or gene, depending on what you're updating
 	<INPUT TYPE=hidden name=attr Value=$attr>
 	<INPUT TYPE=hidden name=attr_type Value=$attr_type>
 	<INPUT TYPE=hidden name=target_table Value=$target_table>
+	<INPUT TYPE=hidden name=xtra_param Value=$xtra_param>
       <?/MIVAR>
 
       <TABLE width=100%>

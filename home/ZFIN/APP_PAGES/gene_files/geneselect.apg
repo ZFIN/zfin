@@ -98,7 +98,7 @@ document.critform.START.value = "";
   <?MIBLOCK COND="$(XST,$name)">
     <?MIVAR NAME=$all_map_names>, all_map_names<?/MIVAR>
     <?MIVAR NAME=$allmapnm_significance>, min(allmapnm_significance)<?/MIVAR>
-    <?MIVAR NAME=$allmapnm_significance_colno>4, <?/MIVAR>
+    <?MIVAR NAME=$allmapnm_significance_colno>6, <?/MIVAR>
 
     <?MIVAR NAME=$constraint>$constraint 
           a.zdb_id = allmapnm_zdb_id 
@@ -220,8 +220,6 @@ document.critform.START.value = "";
       </TD>
       <TD align=left><B>Expression</B></TD>
       <TD align=left><B>Mutant Locus</b></TD>
-      <TD align=left><B>Location</b></TD> 
-      <TD align=left><B>Panel</b></TD> 
       <TD align=left><B>Map<b></TD>
     </TR>
 
@@ -249,16 +247,26 @@ document.critform.START.value = "";
     <!-- NOTE: if you change the select list, you may also need to update
       --       the allmapnm_significance_colno variable, which is part of
       --       the order_clause.  -->
-    <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
-      select gene_name, zdb_id, abbrev $allmapnm_significance , $order_col
+    <?MIBLOCK COND="$(EC,foo,bar)"> <?MIVAR><pre>
+      select gene_name, zdb_id, abbrev $allmapnm_significance , $order_col , locus_name, locus_zdb_id
     	FROM $target_table $all_map_names
     	$constraint 
 	group by gene_name, zdb_id, abbrev, $group_col
+    	$order_clause;
+    </pre><?/MIVAR><?/MIBLOCK>
+
+    <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
+      select gene_name, zdb_id, locus_name, locus_zdb_id, abbrev $allmapnm_significance , $order_col 
+    	FROM $target_table $all_map_names
+    	$constraint 
+	group by gene_name, zdb_id, abbrev, locus_name, locus_zdb_id, $group_col
     	$order_clause;">
 
       <?MIVAR NAME=$gene_name>$1<?/MIVAR>
       <?MIVAR NAME=$OID>$2<?/MIVAR>
-      <?MIVAR name=$marker_name>$3<?/MIVAR>
+      <?MIVAR name=$marker_name>$5<?/MIVAR>
+      <?MIVAR name=$locus_name>$3<?/MIVAR>
+      <?MIVAR name=$locus_zdb_id>$4<?/MIVAR>
       <?MIVAR name=$xpat> <?/MIVAR>
       <?MIVAR NAME=$XPAT_COUNT>0<?/MIVAR>
 
@@ -284,39 +292,9 @@ document.critform.START.value = "";
       <?/MIVAR>
 
 
-      <!-- create form for each gene -->
-	
-      <!-- get rid of dashes to avoid javascript error -->
-      <?MIVAR NAME=$form_name DELIMIT="-" REPLACE="">$OID<?/MIVAR>
 
-      <form method=post action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi" 
-	     name="$form_name">
 
 	<?MIVAR name=$first_row>1<?/MIVAR>
-
-	<!--  Run inner query for fields associated with current gene_name -->
-	<?MISQL SQL="
-	  select distinct lg_location, OR_lg, panel_id, panel_abbrev,
-	         private, a.metric, day(entry_date::date), 
-         	 month(entry_date::date), year(entry_date::date), locus_name, 
-         	 locus_zdb_id, disp_order
-	    from $target_table, OUTER panels
-	    where a.zdb_id = '$OID'
-	      and panels.zdb_id = panel_id
-	    order by panels.disp_order;">
-
-	  <!--      list all fields       -->
-	  <?MIVAR NAME=$lg_loc>$1<?/MIVAR>
-	  <?MIVAR NAME=$OR_lg>$2<?/MIVAR>
-	  <?MIVAR NAME=$panel_id>$3<?/MIVAR>
-	  <?MIVAR NAME=$panel_abbrev>$4<?/MIVAR>
-	  <?MIVAR NAME=$private>$5<?/MIVAR>
-	  <?MIVAR NAME=$metric>$6<?/MIVAR>
-	  <?MIVAR NAME=$day>$7<?/MIVAR>
-	  <?MIVAR NAME=$month>$8<?/MIVAR>
-	  <?MIVAR NAME=$year>$9<?/MIVAR>
-	  <?MIVAR NAME=$locus_name>$10<?/MIVAR>
-	  <?MIVAR NAME=$locus_zdb_id>$11<?/MIVAR>
 
 	  <!-- start new row and column -->
 	  <TR <?MIVAR>bgcolor="$row_color"<?/MIVAR> >
@@ -405,132 +383,12 @@ document.critform.START.value = "";
 	        "<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID="$locus_zdb_id">"<i>$locus_name</i>"</A>")
 	    </TD>
 
-	    <!-- Location --> 
-            <TD> <font size=2> 
-
-	    <?MIBLOCK COND="$(AND,$(EC,$panel_abbrev,na),$(=,$(POSITION,$panel_id,LINK),0))">
-	      Unmapped</TD>
-	      <TD>&nbsp; </TD><TD>&nbsp; </TD>
-            <?/MIBLOCK>
-
-	    <?MIBLOCK COND="$(>,$(POSITION,$panel_id,REF),0)">
-	      <?MIVAR>  
-	        $(IF,$(AND,$(NC,$OR_lg,0),$(EC,$private,f)),
-		  "LG <b>"$OR_lg"</b>;
-		  <b> "$lg_loc"</b> "$metric""&nbsp;&nbsp;
-		  <A HREF="javascript:view_scores('"$panel_id"','"$OR_lg"','"$OID"','"$marker_name"')";>Scoring Data</A>
-
-	     </TD>
+	    <TD width=250>
+              <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini&split=break&hide_empty=t') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+	    </TD>
 
 
-		  <!-- Panel --> 
-		  <TD><font size=2> 
-		    "<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$panel_id">"$panel_abbrev"</A>"
-		    </font>
-		  </TD>
-
-
-		  <!-- MAP Checkbox --> 
-		  <TD><font size=2 COLOR=#A9A9A9> 
-		    <input type=checkbox name=$panel_abbrev value=1 CHECKED > 
-		    </font> 
-		  </TD>  )
-
-	        <!--   end if   -->
-
-	        <?MIBLOCK COND="$(AND,$(NC,$OR_lg,0),$(EC,$private,f))">
-		  <?MIVAR name=$ok_view_map>1<?/MIVAR>
-	        <?/MIBLOCK>
-
-	        $(IF,$(AND,$(NC,$OR_lg,0),$(NC,$private,f)),
-		  "Mapped on <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$panel_id">"$panel_abbrev" panel</A>, but still confidential.
-		  </TD>
-		  <TD>&nbsp;</TD>
-		  <TD>&nbsp; </TD> ")
-	      <?/MIVAR>
-	    <?/MIBLOCK>  <!-- panel like ref -->
-
-
-	    <?MIBLOCK COND="$(>,$(POSITION,$panel_id,LINK),0)">
-	      <!-- independent linkage -->
-
-
-	      <?MISQL SQL="
-	        select alnkgmem_member_name, alnkgmem_comments, 
-		       alnkgmem_or_lg, alnkgmem_private 
-		  from all_linked_members 
-		  where alnkgmem_member_zdb_id = '$OID' 
-		    and alnkgmem_linkage_zdb_id = '$panel_id'
-		  order by alnkgmem_comments desc;">
-
-	        <?MIVAR NAME=$map_name>$1<?/MIVAR>
-	        <?MIVAR NAME=$map_comments>$2<?/MIVAR>
-	        <?MIVAR NAME=$map_lg>$3<?/MIVAR>
-	        <?MIVAR NAME=$map_private>$4<?/MIVAR>
-
-	        <?MIBLOCK COND="$(NC,$map_private,t)">
-	          <font size=2>
-		  <?MIVAR>
-		    $(IF,$(NC,$map_lg,0),LG <b>$map_lg</b>)
-		  <?/MIVAR>
-
-		  <?MIBLOCK COND="$(NC,$map_comments,"")">
-		    <?MIVAR>
-		      <A HREF=javascript:show_detail('$panel_id','$OID','$marker_name','""');>Map Details</A>
-		    <?/MIVAR>
-                    </TD><TD>&nbsp; </TD><TD>&nbsp; </TD> 
-	          <?/MIBLOCK>
-		  </font>
-
-		  <?MIBLOCK COND="$(AND,$(NC,$map_lg,0),$(EC,$map_comments,""))">
-		    &nbsp;</TD>
-		    <TD>&nbsp; </TD><TD>&nbsp; </TD>
-	          <?/MIBLOCK>
-	        <?/MIBLOCK>
-
-	        <?MIBLOCK COND="$(EC,$map_private,t)">
-		  Linked but still confidential. </TD> </TD><TD>&nbsp; </TD><TD>&nbsp; </TD>
-	        <?/MIBLOCK>
-	      <?/MISQL>
-	    <?/MIBLOCK>  <!-- end of panel id like link -->  
-	  </TR>
-
-	  <?MIVAR name=$first_row>0<?/MIVAR>
-
-	  <!--   end inner SQL query    --> 
-	<?/MISQL>
-
-	<!--      if(view_map == true)     -->
-	<!--      insert Submit view_map button    -->
-	<?MIBLOCK COND="$(EC,$ok_view_map,1)">
-
-	  <?MIVAR>
-	    <input type=hidden name=userid value=$userid>
-	    <input type=hidden name=marker value=$marker_name>
-	    <input type=hidden name=view_map value="view_map">
-
-	    <TR <?MIVAR>bgcolor="$row_color"<?/MIVAR> >
-	      <TD>&nbsp;</TD>
-	      <TD>&nbsp;</TD>
-	      <TD>&nbsp;</TD>
-	      <TD align=left>
-		<font size=1>
-		<input type=button value='VIEW MERGED MAP' name=view_merge_map
-		       onClick="document.$form_name.action='/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi';document.$form_name.submit();">
-	      </TD>
-	      <TD align=left>
-		<font size=1>
-		<input type=submit value='VIEW INDIVIDUAL MAPS' name=view_map >
-	      </TD>
-             <TD>&nbsp;</TD>
-	     <TD>&nbsp;</TD>
-	    </TR>
-	  <?/MIVAR>
-
-	  <?MIVAR name=$ok_view_map>0<?/MIVAR>
-	<?/MIBLOCK>
-
-
+</TR>
 	<!--    change row_color    -->
 	
 <?MIBLOCK>
@@ -544,8 +402,7 @@ document.critform.START.value = "";
   <?/MIVAR>
 <?/MIBLOCK>    
 
-	<!-- end form for map_marker -->         
-      </FORM>
+
 
       <!-- end gene_name SQL -->
     <?/MISQL>

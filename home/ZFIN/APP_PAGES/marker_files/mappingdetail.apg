@@ -1,6 +1,82 @@
 <!-- FILE: MAPPINGDETAIL.HTML. This file implements mapping details for MARKER records.
 -->
+<?MIVAR COND="$(NXST,$mapdetails_mode)" NAME=$mapdetails_mode>standalone<?/MIVAR>
 
+
+<!--------- start mini mode ------------------------>
+
+
+<?MIBLOCK COND="$(EC,$mapdetails_mode,mini)">
+
+<?MIVAR COND="$(NXST,$split)" NAME=$split>&nbsp;<?/MIVAR>
+<?MIVAR COND="$(NXST,$hide_empty)" NAME=$hide_empty>f<?/MIVAR>
+
+<?MIVAR COND="$(EC,$split,space)" NAME=$split>&nbsp;<?/MIVAR>
+<?MIVAR COND="$(EC,$split,break)" NAME=$split><br><?/MIVAR>
+
+<?MIBLOCK COND="$(NXST,$OID)">No ZDB-ID Passed In!<?/MIBLOCK>
+  <font size=-1>
+  <?MISQL SQL="
+	SELECT unique OR_lg
+	FROM paneled_markers
+	WHERE zdb_id = '$OID'
+      UNION
+	SELECT unique OR_lg
+	FROM paneled_markers, marker_relationship
+	WHERE zdb_id = mrel_mrkr_2_zdb_id
+	  and mrel_mrkr_1_zdb_id = '$OID'
+      UNION
+	SELECT unique alnkgmem_or_lg
+	FROM all_linked_members
+	WHERE alnkgmem_member_zdb_id = '$OID'
+      UNION
+	SELECT unique alnkgmem_or_lg
+	FROM all_linked_members, marker_relationship
+	WHERE alnkgmem_member_zdb_id = mrel_mrkr_2_zdb_id
+	  and mrel_mrkr_1_zdb_id = '$OID'
+;"> <?MIBLOCK COND="$(EC,$MI_CURRENTROW,1)">LG:&nbsp;<?/MIBLOCK><?MIBLOCK COND="$(>,$MI_CURRENTROW,1)">,&nbsp;<?/MIBLOCK>$1<?MIVAR NAME=$mapdetLG>$1<?/MIVAR><?/MISQL> 
+
+<?MIBLOCK COND="$(AND,  $(EC,$hide_empty,f) , $(EC,$MI_ROWCOUNT,0))">None submitted.<?/MIBLOCK>
+
+<?MIBLOCK COND="$(AND,$(XST,$MI_ROWCOUNT),$(>,$MI_ROWCOUNT,0) )  ">
+ <?MIBLOCK COND="$(AND,$(<,$mapdetLG,10),$(=,1,$MI_ROWCOUNT))  ">&nbsp;<?/MIBLOCK> 
+
+
+<?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mappingdetail.apg&OID=$OID"> Details</A><?/MIVAR>
+<?MIVAR NAME=$mapped><?/MIVAR>
+<?MISQL SQL="
+	SELECT unique OR_lg
+	FROM paneled_markers
+	WHERE zdb_id = '$OID'
+">
+<?MIVAR NAME=$mapped>t<?/MIVAR>
+<?/MISQL>
+<?MIBLOCK COND="$(EC,$mapped,t)">
+<?MIVAR>
+
+	    $split View Map:
+  	      &nbsp;
+	   	<?MIVAR NAME=$vmpanels><?/MIVAR>
+		<?MISQL SQL="select abbrev, disp_order from panels order by disp_order;">
+		 <?MIVAR NAME=$vmpanels>$vmpanels&$1=1<?/MIVAR>
+		<?/MISQL>
+	      <A HREF="/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi?&userid=$userid&OID=$OID&view_map=view_map$vmpanels">Merged</A>
+	      <A HREF="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi?&userid=$userid&OID=$OID&view_map=view_map$vmpanels">Individual Panels</A>
+	    </font>
+
+<?/MIVAR>
+<?/MIBLOCK>
+<?/MIBLOCK>
+
+
+<!-------------- end mini mode --------------->
+
+
+
+
+<!-------------- start standalone mode ----------->
+
+<?MIELSE COND="$(EC,$mapdetails_mode,standalone)">
 <HTML>
 <head>
 
@@ -36,7 +112,6 @@ marker = '';
 
 
 <basefont size=2>
-
 <?MIBLOCK COND="$(NXST,$OID)">
 <p>
 ERROR -- something bad happened -- no OID passed in!
@@ -112,17 +187,49 @@ ERROR -- something bad happened -- no OID passed in!
 
 
 <!------------------------------------------------->
-<?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
-<TABLE width=100%><TR><TD bgcolor=#ccccccc>
-<FONT SIZE=+2><b>Mapping Details</b></FONT>
-</TD></TR></TABLE>
 
+<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&detOID=$OID') from webPages where ID='aa-mappingdetail.apg';">
+$1<?/MISQL>
+<?MIVAR NAME=$mapdetails_mode>standalone<?/MIVAR>
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+
+</HTML>
+
+
+<?/MIBLOCK>
+<?/MIBLOCK>
+<!------------- end standalone mode --------->
+
+<!-------------- start details mode ----->
+<?MIBLOCK COND="$(EC,$mapdetails_mode,details)">
+
+<?MIBLOCK COND="$(NXST,$detOID)">
+Eek! No detOID passed into details mode
+<?/MIBLOCK>
+
+<?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
+
+<TABLE width="100%" cellpadding=5 border=0>
+
+<TR><TD bgcolor=#ccccccc colspan=2>
+<FONT SIZE=+2><b>Mapping Details</b></FONT>
+</TD></TR>
+<TR><TD colspan=2>
 <!-- wrap Mapping table in mapper form -->
 <!-- form tag brings in extra space line. For display sake, 
      it is put a bit in advance. -->
 <form NAME=mapper 
-      method=post 
+      method=get 
       action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi">
+
+<?MISQL SQL="SELECT mrkr_abbrev, mrkr_name, mrkr_type
+	     FROM marker
+	     WHERE mrkr_zdb_id = '$detOID'
+;">
+	<?MIVAR name=$abbrev>$1<?/MIVAR>
+	<?MIVAR name=$name>$2<?/MIVAR>
+	<?MIVAR name=$marker_type>$3<?/MIVAR>
+<?/MISQL>
 
 <!--------------- Gene name ---------------------->
 <FONT size=+1>
@@ -132,21 +239,23 @@ ERROR -- something bad happened -- no OID passed in!
     	<?/MIVAR>
 <?MIELSE>
     	<?MIVAR>
-      		<b>$(UPPER,$marker_type): &nbsp; $name </b>
+      		<b>$(UPPER,$marker_type): &nbsp; <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID">$name</A> </b>
     	<?/MIVAR>
 <?/MIBLOCK>
 <br>
 <?MIVAR>
-    	$(IF,$(EC,$marker_type,GENE),"<b>Gene Symbol:&nbsp;<i>"$abbrev"</i></b>")
+    	$(IF,$(EC,$marker_type,GENE),"<b>Gene Symbol:&nbsp;<i><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID="$OID"'>"$abbrev"</A></i></b>")
 <?/MIVAR>
 </FONT>
-<br>
 
-<b>MAPPING INFORMATION:</b>
-
-  <TABLE width="100%" bgcolor=<?MIVAR>"$highlight"<?/MIVAR> cellpadding=5 border=0>
+     </TD>
+    </TR>
     <TR>
-      <TD valign=top>
+     <TD colspan=3><b>MAPPING INFORMATION:</b>
+     </TD>
+    </TR>
+    <TR>
+      <TD bgcolor=<?MIVAR>$highlight<?/MIVAR> valign=top colspan=3>
 
 
 
@@ -157,19 +266,9 @@ ERROR -- something bad happened -- no OID passed in!
 
 <?MIVAR NAME=$override>$(IF,$(OR,$(EC,$ZDB_access,root),$(EC,$ZDB_access,fishauth)),true,false)<?/MIVAR>
 
-<?MISQL SQL="select distinct a.owner, lg_location, target_id as panel_id, OR_lg, target_abbrev as 
-panel_abbrev,private,b.full_name,a.metric,day(a.entry_date::date),month(a.entry_date::date), year(a.entry_date::date), map_name, disp_order 
-from paneled_markers a,person b, panels c  where a.zdb_id='$OID' and OR_lg is not null and a.owner=b.zdb_id and a.target_id = 
-c.zdb_id order by c.disp_order;">
+<?MISQL SQL="select a.owner, lg_location, target_id as panel_id, OR_lg, target_abbrev as panel_abbrev,private,b.full_name,a.metric,day(a.entry_date::date),month(a.entry_date::date), year(a.entry_date::date), map_name, disp_order from paneled_markers a,person b, panels c  where a.zdb_id='$detOID' and OR_lg is not null and a.owner=b.zdb_id and a.target_id = c.zdb_id order by c.disp_order;">
 
-  $(IF,$(>,$MI_CURRENTROW,1),
-          <TR>
-            <TD>
-              <hr width="80%">
-            </TD>
-          </TR>)
-
-          <TR>
+<TR>
 
 <?MIVAR NAME=$upd_day>$9<?/MIVAR>
 <?MIBLOCK COND="$(NC,$upd_day,NULL)">
@@ -182,23 +281,20 @@ c.zdb_id order by c.disp_order;">
 <?/MIBLOCK>
 
 $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),
-           "<TD>
+           "<TD> <font size=-1>
               LG <b>"$4"</b>;<b> "$2"</b> "$8" (<A  HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$3">"$5" Panel; updated "$upd_date"</A>) "
-  $(IF,$(ISNULL,$12),,Mapped as $12)
+  $(IF,$(ISNULL,$12),,<br>&nbsp;&nbsp;<b>Mapped as $12</b>)
            "</TD>",
 
            <!-- else -->
            "<TD>
               Mapped on <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$3">"$5" Panel; updated "$upd_date"</A>, but still confidential.
-            </TD><!--added-->
+            </font></TD><!--added-->
 ")
 
-          </TR>
-          <TR>
-
-            <TD>
-              &nbsp;&nbsp;&nbsp; mapped by <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$1">$7</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="javascript:view_scores('$3','$4','$OID','$abbrev');">Scoring Data</A>
-            </TD> 
+            
+             <TD> <font size=-1>mapped by <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$1">$7</A> </font> </TD> <TD><font size=-1><A HREF="javascript:view_scores('$3','$4','$detOID','$abbrev');">Scoring Data</A>
+          </font>  </TD> 
           </TR>
 
 <?/MISQL>
@@ -210,11 +306,12 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),
         </TABLE>
 
       </TD>
-   
+      </TR>
+      <TR>	   
 <!-- ************************************** -->
 
 <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
-      <TD valign=top>
+      <TD valign=top colspan=1>
         <A  HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=ZDB-REFCROSS-010114-1>ZMAP</A> 
         <b>Location(s): <?MIVAR>$abbrev<?/MIVAR></b>
 
@@ -229,7 +326,7 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),
         panels abbrev for table join to find disp_order -->
    <!-- naming convention is xxx_ln54  -->
    <!-- this might be a bit risky but we don't anticipate any new panels since sequencing is underway. -->
-   <?MISQL SQL="select or_lg,lg_location,a.abbrev,disp_order from public_paneled_markers a, panels b where a.zdb_id='$OID' and target_abbrev = 'ZMAP'and SUBSTRING(a.abbrev from LENGTH(a.abbrev)-1 for 2) = SUBSTRING(b.abbrev from LENGTH(b.abbrev)-1 for 2) order by disp_order;">
+   <?MISQL SQL="select or_lg,lg_location,a.abbrev,disp_order from public_paneled_markers a, panels b where a.zdb_id='$detOID' and target_abbrev = 'ZMAP'and SUBSTRING(a.abbrev from LENGTH(a.abbrev)-1 for 2) = SUBSTRING(b.abbrev from LENGTH(b.abbrev)-1 for 2) order by disp_order;">
           <TR>
             <TD> 
               LG <b>$1</b>; <b>$2</b> cM  $(SUBSTR,$3,$(+,1,$(POSITION,$3,"_") ))
@@ -237,6 +334,7 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),
           </TR>
    <?/MISQL>
             <TD align=right>
+	     
               <input type=button value='VIEW MERGED MAP' 
                      name=view_map onClick="call_zmapplet()">
             </TD>
@@ -246,33 +344,38 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),
 <?/MIBLOCK>
 
       </TD>
- 
+
 <!-- ************************************ -->
-      <TD valign=top>
+      <TD valign=top colspan=2>
 
 <?MIVAR>
-        <b>View Map for: $abbrev</b>  
+        <b>View Map for: $abbrev</b>
 <?/MIVAR> 
+<TABLE cellspacing=0 cellpadding=0><TR>
 
-        <TABLE cellpadding=0 cellspacing=0 >
+<?MISQL SQL="SELECT distinct p.abbrev, p.disp_order, a.private, a.OR_lg
+	     FROM panels p, outer (paneled_markers a, person b)  
+	     WHERE a.zdb_id='$detOID' 
+               and OR_lg is not null 
+               and a.owner=b.zdb_id 
+               and a.target_id = p.zdb_id 
+	       and p.disp_order > 0
+	     ORDER BY disp_order
+;">
+  <?MIVAR NAME=$private>$3<?/MIVAR>
 
-<?MISQL SQL="select distinct target_abbrev, private as panel_abbrev, disp_order from paneled_markers a,person b ,panels c where a.zdb_id='$OID' and OR_lg is not null and a.owner=b.zdb_id and a.target_id = c.zdb_id order by disp_order;">
-  <?MIVAR NAME=$private>$2<?/MIVAR>
-
-  <?MIBLOCK COND="$(EC,$private,f)">
+  <?MIBLOCK COND="$(OR,$(EC,$private,f),$(EC,$private,))">
     <?MIVAR>
-          <TR>
-            <TD colspan=1>
-              <input type=checkbox name="$1" value=1 CHECKED>
-              $1 
-            </TD>
-          </TR>
+	<?MIBLOCK COND="$(=,$MI_CURRENTROW,4)"></TR><TR><?/MIBLOCK>
+        <TD><input type=checkbox name="$1" value=1 <?MIBLOCK COND="$(NE,$4,)"> CHECKED <?/MIBLOCK> >
+        $1 </TD>
     <?/MIVAR>
 
     <?MIVAR NAME=$ref_map>true<?/MIVAR>
 
   <?/MIBLOCK>
 <?/MISQL>
+</TR></TABLE>
 
 
 <?MIBLOCK COND="$(EC,$ref_map,true)">
@@ -284,34 +387,23 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),
   <!-- set blade variables to javascript variables for passing to view_mapplet -->
 
   <?MIVAR>
-    <INPUT TYPE=hidden name=OID value=$OID>
+    <INPUT TYPE=hidden name=OID value=$detOID>
     <INPUT TYPE=hidden name=userid value=$userid>
     <INPUT TYPE=hidden name=marker value=$abbrev>
   <?/MIVAR>
 
   <INPUT TYPE=hidden name=view_map value="viewmap">
-           <TR>
-             <TD align=right>
                <input type=button value='VIEW INDIVIDUAL MAPS' 
                       name=view_map onClick="call_mapplet()";>
-             </TD>
-           </TR>
 <?/MIBLOCK>
-
-
-         </TABLE>
-
        </TD>
      </TR>
 <?/MIBLOCK>
-   </TABLE> <!-- end reference panel location table -->
-
 
 <?MIVAR>
-   <TABLE width="100%" cellpadding=5 border=0 bgcolor="$highlight" cols=3 rows=1>
      <TR>
-       <TD valign=top colspan=4>
-         <B>Other markers linked to $abbrev:</b>
+       <TD valign=top colspan=4 bgcolor=<?MIVAR>$highlight<?/MIVAR>>
+         <B>Markers linked to $abbrev:</b>
 <?/MIVAR>
 
 
@@ -324,9 +416,9 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),
     where (alnkgmem_linkage_zdb_id in 
       (select alnkgmem_linkage_zdb_id from all_linked_members b 
           where b.alnkgmem_linkage_zdb_id = a.alnkgmem_linkage_zdb_id
-          and b.alnkgmem_member_zdb_id = '$OID')
-       and a.alnkgmem_member_zdb_id <> '$OID')
-     or (a.alnkgmem_member_zdb_id = '$OID'   
+          and b.alnkgmem_member_zdb_id = '$detOID')
+       and a.alnkgmem_member_zdb_id <> '$detOID')
+     or (a.alnkgmem_member_zdb_id = '$detOID'   
           and a.alnkgmem_num_members = 1) ;">
 
     <?MIVAR NAME=$member_zdb_id>$1<?/MIVAR>
@@ -348,7 +440,7 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),
        and exists (select 'x' from linkage_pair_member b 
           where a.lpmem_linkage_zdb_id = '$link_id'
             and a.lpmem_linkage_pair_zdb_id = b.lpmem_linkage_pair_zdb_id
-            and b.lpmem_member_zdb_id = '$OID');">
+            and b.lpmem_member_zdb_id = '$detOID');">
       <?MIVAR NAME=$pair_id>$1<?/MIVAR>
     <?/MISQL>
 
@@ -386,41 +478,59 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),
 <?/MISQL>
 </TABLE>
 <?MIVAR COND="$(=,$MI_ROWCOUNT,0)"><p>None submitted.<?/MIVAR>
-</TD></TR></TABLE>
+<br><br>
+<?MIVAR>
+<b>Markers contained in $abbrev:</b><br>
+<br>
+
+<?MISQL SQL="SELECT mrel_mrkr_2_zdb_id, mrkr_abbrev
+             FROM marker_relationship, marker
+	     WHERE mrel_mrkr_1_zdb_id = '$OID'
+               and mrel_type = 'gene contains small segment'
+	       and mrel_mrkr_2_zdb_id = mrkr_zdb_id
+;">
+<?MIVAR NAME=$insideq_abbrev>$2<?/MIVAR>
+<?MIVAR NAME=$insideq_OID>$1<?/MIVAR>
+ <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini&split=space&OID=$1') from webPages where ID='aa-mappingdetail.apg';">
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$insideq_OID"><b>$insideq_abbrev</b></A> &nbsp; $1<br>
+ <?/MISQL>
+<?/MISQL>
+<?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
+Does not contain any markers.
+<?/MIBLOCK>
+<?/MIVAR>
 
 </form> <!-- end form for view maps. -->
 
 <form name=updater>
-<hr width="80%">
 
-<b>PRIMER SETS:</b><p>
-
-<TABLE width="100%" cellpadding=5>
+<TR>
+ <TD>
+  <b>PRIMER SETS:</b><p>
+ </TD>
+</TR>
 
 <!-- REALLY need an OUTER JOIN here so that I can join to table FISH to get the
   strain name for the id.  I do this now, but it knocks out any primer for which the strain_id=NULL (Unknown).  Just have to avoid those NULLS!
 -->
-<?MISQL SQL="select a.zdb_id, band_size,restr_enzyme, fwd_primer, rev_primer, anneal_temp::numeric(6,2), a.comments,strain_id,b.name from primer_set a,fish b where marker_id='$OID' and b.zdb_id=a.strain_id;">
+<?MISQL SQL="select a.zdb_id, band_size,restr_enzyme, fwd_primer, rev_primer, anneal_temp::numeric(6,2), a.comments,strain_id,b.name from primer_set a,fish b where marker_id='$detOID' and b.zdb_id=a.strain_id;">
 
 
   <TR>
-    <TD><b>Strain:</b> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$8">$9</A> 
-    </TD>
-    <TD>
-
+   <TD>
     <?MIVAR>
-      <TABLE border=0 cellpadding=3 bgcolor="$highlight">
+      <TABLE border=0 cellpadding=3 bgcolor="$highlight" width=100%>
     <?/MIVAR>
        <TR>
+         <TD><b>Strain:</b> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$8">$9</A>  </TD>
          <TD align=left><b>Band Size</b>: $(IF,$(EQ,$2,NULL),Unknown,$2)</TD>
          <TD><b>Restr. Enz.:</B> $(IF,$(EQ,$3,NULL),None,$3)</TD>
          <TD><b>Anneal. Temp(C):</b> $(IF,$(EQ,$6,NULL),Unknown,$6)</TD>
        </TR>
        <TR>
+	 <TD>&nbsp;&nbsp;</TD>
          <TD align=left colspan=3><font size=2><b>F-PRIMER:</b> $(IF,$(EQ,$4,NULL),Unknown,$4)</font></TD>
-       </TR>
-       <TR>
-         <TD align=left colspan=3><font size=2><B>R-PRIMER: </b>$(IF,$(EC,$marker_type,RAPD),N/A,$(IF,$(EQ,$5,NULL),Unknown,$5))</font></TD>
+          <TD align=left colspan=3><font size=2><B>R-PRIMER: </b>$(IF,$(EC,$marker_type,RAPD),N/A,$(IF,$(EQ,$5,NULL),Unknown,$5))</font></TD>
        </TR>
      </TABLE>
 
@@ -435,6 +545,6 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),
 
 <?/MIBLOCK>
 
-<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 
-</HTML>
+
+<!-------------- end details mode ------->

@@ -377,11 +377,6 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
   from marker, expression_pattern xp$query_from
 <?/MIVAR>
 
-<?MIVAR NAME=$query_where_without_mrel>
-  where mrkr_zdb_id = xp.xpat_probe_zdb_id
-    $query_where
-<?/MIVAR>
-
 <?MIVAR NAME=$_query_where_with_mrel>
   where mrkr_zdb_id = mrel_mrkr_1_zdb_id 
     and mrel_mrkr_2_zdb_id = xp.xpat_probe_zdb_id
@@ -393,10 +388,19 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 
 <!-- Count distinct mrkr_zdb_ids. UNION operation returns two seperate counts and isn't any easier to code than two seperate SQL statements.-->
 
-<?MISQL COND="$(=,1,1,)" SQL="
+<?MISQL COND="$(=,1,0)" SQL="
       select count($(IF,$(NC,$structure_bool,and),distinct )mrkr_zdb_id)::integer
       $query_from
       $query_where_without_mrel
+      $(IF,$(XST,$query_grp_by),$query_grp_by $query_hvng)
+       ;">
+<?/MISQL>
+
+
+<?MISQL COND="$(=,1,1)" SQL="
+      select count($(IF,$(NC,$structure_bool,and),distinct )mrkr_zdb_id)::integer
+      $query_from, marker_relationship
+      $query_where_with_mrel
       $(IF,$(XST,$query_grp_by),$query_grp_by $query_hvng)
        ;">
 <?/MISQL>
@@ -406,16 +410,7 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
                               )
                          ,$MI_CURRENTROW,$1)
   <?/MIVAR>
-
-<?MISQL COND="$(=,1,1,)" SQL="
-      select count($(IF,$(NC,$structure_bool,and),distinct )mrkr_zdb_id)::integer
-      $query_from, marker_relationship
-      $query_where_with_mrel
-      $(IF,$(XST,$query_grp_by),$query_grp_by $query_hvng)
-       ;">
-<?/MISQL>
-
-  <?MIVAR NAME=num_recs>$(+,$num_recs,$(IF,$(AND,$(XST,$str_dlmt_list),
+  <?MIVAR COND="$(=,1,0)" NAME=num_recs>$(+,$num_recs,$(IF,$(AND,$(XST,$str_dlmt_list),
                                $(EC,$structure_bool,and)
                               )
                          ,$MI_CURRENTROW,$1))
@@ -504,40 +499,17 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 <?/MIBLOCK>
 
 <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
-  select $(IF,$(EC,$structure_bool,or),distinct )mrkr_zdb_id, mrkr_type, mrkr_abbrev_order
+  select $(IF,$(EC,$structure_bool,or),distinct )mrkr_zdb_id, mrkr_type, mrkr_abbrev_order, mrkr_name, mrkr_abbrev
   $query_from, marker_relationship
   $query_where_with_mrel
-  $(IF,$(XST,$query_grp_by),$query_grp_by $query_hvng)
-UNION
-  select $(IF,$(EC,$structure_bool,or),distinct )mrkr_zdb_id, mrkr_type, mrkr_abbrev_order
-  $query_from
-  $query_where_without_mrel
   $(IF,$(XST,$query_grp_by),$query_grp_by $query_hvng)
   order by 2 desc, 3
 ";>
 
   <?MIVAR NAME=$GENE_OID>$1<?/MIVAR>
-
-<?MISQL SQL="
-        select xpatassay_name, xpatassay_display_order, xp.xpat_zdb_id, mrkr_name, mrkr_abbrev, mrkr_zdb_id, mrkr_type, mrkr_abbrev_order
-        from marker, expression_pattern xp, expression_pattern_assay
-        where mrkr_zdb_id = xp.xpat_probe_zdb_id
-          and xp.xpat_assay_name = xpatassay_name
-          and mrkr_zdb_id = '$GENE_OID'
-    UNION
-        select xpatassay_name, xpatassay_display_order, xp.xpat_zdb_id, mrkr_name, mrkr_abbrev, mrkr_zdb_id, mrkr_type, mrkr_abbrev_order
-        from marker, marker_relationship, expression_pattern xp, expression_pattern_assay
-        where mrkr_zdb_id = mrel_mrkr_1_zdb_id 
-          and mrel_mrkr_2_zdb_id = xp.xpat_probe_zdb_id
-          and xp.xpat_assay_name = xpatassay_name
-          and mrkr_zdb_id = '$GENE_OID'
-    ;">
-
   <?MIVAR NAME=$GENE_NAME>$4<?/MIVAR>
   <?MIVAR NAME=$GENE_ABREV>$5<?/MIVAR>
-  <?MIVAR NAME=$GENE_TYPE>$7<?/MIVAR>
-  <?MIVAR NAME=$XPAT_X>$3<?/MIVAR>
-
+  <?MIVAR NAME=$GENE_TYPE>$2<?/MIVAR>
 
 	        <?MIVAR>
 		  <?MIBLOCK COND="$(>,$(POSITION,$GENE_OID,GENE),0)">
@@ -598,14 +570,20 @@ UNION
 		<?/MIBLOCK>
 
 
-<?MIBLOCK INDEX=$maven FOREACH=$xpat_zdb>
-  <?MIVAR COND="$(EC,$maven,$XPAT_X|$GENE_OID)" NAME=$inagural>0<?/MIVAR>
-<?/MIBLOCK>
+<?MISQL SQL="
+        select xpatassay_name, xpatassay_display_order, xp.xpat_zdb_id, mrkr_zdb_id, mrkr_name, mrkr_abbrev_order
+        from marker_relationship, expression_pattern xp, expression_pattern_assay, marker
+        where '$GENE_OID' = mrel_mrkr_1_zdb_id 
+          and mrel_mrkr_2_zdb_id = xp.xpat_probe_zdb_id
+          and xp.xpat_assay_name = xpatassay_name
+          and mrkr_zdb_id = mrel_mrkr_2_zdb_id
+        order by xpatassay_display_order, mrkr_abbrev_order
+    ;">
 
+  <?MIVAR NAME=$XPAT_X>$3<?/MIVAR>
+  <?MIVAR NAME=$EST_ID>$4<?/MIVAR>
+  <?MIVAR NAME=$EST_NAME>$5<?/MIVAR>
 
-<?MIBLOCK COND="$(=,$inagural,1)">
-
-  <?MIVAR>$(SETVAR,$xpat_zdb[$(+,$(VECSIZE,$xpat_zdb),1)],$XPAT_X|$GENE_OID)
 
   <?MISQL SQL="
 	select xpat_assay_name, s1.stg_name, s1.stg_comments_relative_url, s1.stg_hours_start, s2.stg_name, s2.stg_comments_relative_url, s2.stg_hours_end, s1.stg_zdb_id, s3.stg_hours_start, s2.stg_zdb_id
@@ -660,7 +638,9 @@ UNION
           &nbsp;
         </TD>
         <TD>
-          $GENE_TYPE:$GENE_LINK $aliases
+          $(IF,$(AND,$(XST,$previous_gene),$(EC,$previous_gene,$GENE_OID)),
+               &nbsp;,
+               $GENE_TYPE:$GENE_LINK $aliases)
         </TD>
     <?/MIVAR>
 
@@ -678,7 +658,7 @@ UNION
 
      <?MIVAR>
         <TD>
-          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatview.apg&OID=$XPAT_X$(IF,$(XST,$ancor_stage_id),#$ancor_stage_id)">$assay_name</a>
+          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatview.apg&OID=$XPAT_X$(IF,$(XST,$ancor_stage_id),#$ancor_stage_id)">$EST_NAME : $assay_name</a>
         </TD>
      <?/MIVAR>
 
@@ -693,15 +673,14 @@ UNION
 
   <?/MIVAR>
 
-<!--    change row_color    -->
-<?MIVAR NAME=$row_color>$(IF,$(EC,$row_color,$highlight),#FFFFFF,$highlight)<?/MIVAR>
-
-<?/MIBLOCK>  <!-- end inagural occurance of xpat -->
-<?MIVAR NAME=$inagural>1<?/MIVAR>
+<?MIVAR NAME=previous_gene>$GENE_OID<?/MIVAR>
 <?MIVAR>$(UNSETVAR,$ancor_stage_id)<?/MIVAR>
 
 <!-- end gene_X SQL -->
 <?/MISQL>
+
+<!--    change row_color    -->
+<?MIVAR NAME=$row_color>$(IF,$(EC,$row_color,$highlight),#FFFFFF,$highlight)<?/MIVAR>
 <?/MISQL>
 </TABLE>
 

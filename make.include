@@ -155,7 +155,7 @@ JAVAC_14      = $(JAVAHOME_14)/bin/javac
 
 JDBCHOME     = /private/apps/jdbc2.21
 
-JAVACFLAGS = -g
+JAVACFLAGS = 
 
 
 

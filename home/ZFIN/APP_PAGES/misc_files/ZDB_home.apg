@@ -73,12 +73,12 @@
 	      <table border=0 cellpadding=3>
 		<tr>
 		  <td>
-	            <A HREF="/zf_info/news/curator.html">Positions with<br>&nbsp;ZFIN</A><BR>
+	            <A HREF="/zf_info/news/curator.html">Positions with<br>&nbsp;ZFIN</A><img src="/images/new1.gif"><BR>
 		    <A HREF="/zf_info/dbase/db.html">About ZFIN</A><BR>
 		    <A HREF="/zf_info/citation.html">Citing ZFIN</A><BR>
 		    <A HREF="/ZFIN/misc_html/tips.html">Helpful Hints</A><BR>
 		    <A HREF="/zf_info/contact_us.html">User Support</A><BR>
-		    <A HREF="/zf_info/news/siteNews.html">Site News</A><BR>
+		    <A HREF="/zf_info/news/siteNews.html">Site News</A><img src="/images/new1.gif"><BR>
 		    <A HREF="/zf_info/glossary.html">Glossary</A>
 		  </td>
 		</tr>
@@ -231,6 +231,20 @@
 	    </DIV>
 	  </TD>
 	</TR>
+
+<!--	<TR>
+	  <TD class="content_left">
+	    <DIV class="content">
+	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-msegselect.apg"><B>Molecular Segments</B></A> 
+	    </DIV>
+	  </TD>
+	  <TD class="content_right">
+	    <DIV class="content">
+	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-msegselect.apg">Search for molecular segments.</A>
+	    </DIV>
+	  </TD>
+	</TR>
+-->
 
 	<TR>
 	  <TD class="content_left">
@@ -495,9 +509,7 @@
 	      <br>the W.M. Keck Foundation. Funds also provided by the 
 	      NIH (RR/HD12546). 
 	      <br>
-	      <A HREF="http://<!--|DOMAIN_NAME|-->/warranty.html"><font color="#FFFFFF">Copyright</a> &copy</font> <A HREF="http://www.uoregon.edu"> University of Oregon</font></a>, 1994-2002,<A HREF="http://www.ci.eugene.or.us"> Eugene</font></a>, Oregon. 
-              <br>
- 	      <font size=-2>ZFIN logo design by Kari Pape, </font> <A HREF="http://www.uoregon.edu"><font size=-2> University of Oregon</font></a>
+	      Copyright <font color="#FFFFFF">&copy</font> <A HREF="http://www.uoregon.edu">University of Oregon</a>, 1994-2002,<A HREF="http://www.ci.eugene.or.us"> Eugene</a>, Oregon.  
 	      </P>
 	    </DIV>
 	  </TD>

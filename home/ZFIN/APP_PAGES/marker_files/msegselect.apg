@@ -6,6 +6,31 @@
   <?MIVAR Name=page_name>$(IF,$(XST,$query_results),ZFIN Molecular Segmet Search Results,ZFIN Search Molecular Segments)<?/MIVAR>
   <?MIVAR><TITLE>$page_name</TITLE><?/MIVAR>
 
+<SCRIPT>
+
+function call_reset() {
+document.msegform.name.value = "";
+document.msegform.START.value = "";
+document.msegform.refcross.selectedIndex = 0;
+document.msegform.lg.selectedIndex = 0;
+document.msegform.compare.selectedIndex = 0;
+document.msegform.segment_contains_type.selectedIndex = 0;
+document.msegform.segment_contains_text.value = "";
+document.msegform.sequence_type.selectedIndex = 0;
+document.msegform.vector_type.selectedIndex = 0;
+document.msegform.WINSIZE.value = 20;
+
+}
+function check_syns(item) {
+  if (item.options.selectedIndex>0 && (item.options[item.selectedIndex].text=="MicroSatellite" || item.options[item.selectedIndex].text=="CA-repeat")) {
+     alert("In zebrafish, "+ item.options[item.selectedIndex].text + "s are generically classified as SSLPs");
+     item.selectedIndex=3;
+  }
+document.msegform.START.value = "";
+}
+</SCRIPT>
+
+
  <?MIVAR NAME=$OID COND="$(NXST,$OID)">NULL<?/MIVAR>
 
  <?MISQL SQL="
@@ -49,83 +74,143 @@
   <?MIVAR NAME=$constraint COND="$(NXST,$constraint)"> <?/MIVAR>
   <?MIVAR NAME=$lg COND="$(NXST,$lg)">0<?/MIVAR>
   <?MIVAR NAME=$segment_contains_type COND="$(NXST,$segment_contains_type)">any<?/MIVAR>
-  <?MIVAR COND="$(NXST,$sequence_type)" NAME=$sequence_type>NULL<?/MIVAR>
+  <?MIVAR COND="$(NXST,$sequence_type)" NAME=$sequence_type>Any<?/MIVAR>
+  <?MIVAR COND="$(NXST,$vector_type)" NAME=$vector_type>Any<?/MIVAR>
   <?MIVAR COND="$(NXST,$compare)" NAME=$compare>contains<?/MIVAR>
 
   <?MIVAR NAME=$mlist SEPARATE="','">$segment_contains_type<?/MIVAR>
   <?MIVAR COND="$(>,$(POSITION,$mlist,any),0)" NAME=$segment_conains_type>any<?/MIVAR>
 
+  <?MIVAR NAME=$vlist SEPARATE="','">$vector_type<?/MIVAR>
+  <?MIVAR COND="$(>,$(POSITION,$vlist,any),0)" NAME=$vector_type>any<?/MIVAR>
+
   <?MIVAR NAME=$slist SEPARATE="','">$sequence_type<?/MIVAR>
   <?MIVAR COND="$(>,$(POSITION,$slist,any),0)" NAME=$segment_conains_type>any<?/MIVAR>
 
-
   <!-- First filter name for apostrophes! -->
   <?MIVAR COND="$(XST,$name)" NAME=$name DELIMIT="'" REPLACE="''">$name<?/MIVAR>
+
+  <?MIVAR COND="$(XST,$segment_contains_text)" NAME=$segment_contains_text DELIMIT="'" REPLACE="''">$segment_contains_text<?/MIVAR> 
+
+
   <?MIVAR NAME=$wild_card><?/MIVAR>
   <?MIVAR COND="$(NC,$compare,starts)" NAME=$wild_card>%<?/MIVAR>
 
-  <!-- NOW BUILD UP THE CONSTRAINT CLAUSE -->
-
-  <?MIVAR NAME=$previous> <?/MIVAR>
-  <?MIVAR NAME=$constraint> where <?/MIVAR>
+ <!-- NOW BUILD UP THE CONSTRAINT CLAUSE -->
+  <?MIVAR NAME=$previous> and <?/MIVAR>
+  <?MIVAR NAME=$constraint> where mrkr_zdb_id = clone_mrkr_zdb_id and clone_vector_name = vector_name and mrkr_zdb_id = all_mapped_markers.zdb_id and mrkr_type <> 'GENE' 
+<?/MIVAR>
 
   <?MIBLOCK COND="$(XST,$name)">
-    <?MIVAR NAME=$constraint>$constraint 
-      exists 
-        ( select 'x' 
-          from all_map_names 
-          where a.zdb_id = allmapnm_zdb_id 
-            and allmapnm_name like '$wild_card$(LOWER,$name)%' ) 
+    <?MIVAR NAME=$constraint>$constraint $previous 
+            exists 
+	      (select 'x' 
+               from all_map_names 
+               where allmapnm_name like '$wild_card$(LOWER,$name)%' and mrkr_zdb_id = allmapnm_zdb_id)
     <?/MIVAR>
   <?/MIBLOCK> 
 
   <?MIVAR NAME=$previous COND="$(XST,$name)"> and <?/MIVAR>
 
+  <?MIVAR NAME=$amm_join> outer <?/MIVAR>
+
   <?MIVAR NAME=$constraint COND="$(NC,$lg,0)">
     $constraint $previous ((OR_lg='$lg' or OR_lg='0') and private='f')
   <?/MIVAR>
 
+  <?MIVAR NAME=$amm_join COND="$(NC,$lg,0)"> <?/MIVAR>
   <?MIVAR NAME=$previous COND="$(NC,$lg,0)"> and <?/MIVAR>
 
   <?MIVAR NAME=$constraint COND="$(NC,$refcross,NULL)">
     $constraint $previous (target_id='$refcross' OR dist is not null)
   <?/MIVAR>
 
-  <?MIVAR NAME=$constraint COND="$(AND,$(XST,$segment_contains_type),$(NC,$segment_contains_type,any))">
-    $constraint $previous exists ( select from marker_relationship, marker where mrel_mrkr_1_zdb_id = '$OID' and (mtype in ('$mlist')) )
-  <?/MIVAR>
+  <?MIVAR NAME=$amm_join COND="$(NC,$refcross,NULL)"> <?/MIVAR>
+  <?MIVAR NAME=$previous COND="$(NC,$refcross,NULL)"> and <?/MIVAR>
 
-  <?MIVAR NAME=$previous COND="$(AND,$(XST,$segment_contains_type),$(NC,$segment_contains_type,any))"> and <?/MIVAR>
+  <?MIVAR NAME=$mrel_constraint> <?/MIVAR>
+  <?MIVAR NAME=$mrel_previous> <?/MIVAR>
+
+  <?MIVAR NAME=$mrel_constraint COND="$(AND,$(XST,$segment_contains_type),$(NC,$segment_contains_type,any))"> m2.mrkr_type in ('$mlist') <?/MIVAR>
+  <?MIVAR NAME=$mrel_previous COND="$(AND,$(XST,$segment_contains_type),$(NC,$segment_contains_type,any))"> and <?/MIVAR> 
+
+  <?MIVAR NAME=$mrel_constraint COND="$(XST,$segment_contains_text)"> $mrel_constraint $mrel_previous m2.mrkr_abbrev like '%$segment_contains_text%' <?/MIVAR> 
 
 
+   <?MIVAR NAME=$constraint COND="$(OR,     $(AND,   $(XST,$segment_contains_type), $(NC,$segment_contains_type,any)  ), $(XST,$segment_contains_text))">
+   $constraint $previous exists ( select 'x' from marker_relationship mr2, marker m2 where mr2.mrel_mrkr_1_zdb_id = m1.mrkr_zdb_id and mr2.mrel_mrkr_2_zdb_id = m2.mrkr_zdb_id and $mrel_constraint )
+   <?/MIVAR>
+
+  <?MIVAR NAME=$previous COND="$(OR,$(AND,$(XST,$segment_contains_type),$(NC,$segment_contains_type,any)), $(XST,$segment_contains_text)) "> and <?/MIVAR>
+
+<!---- sequence type --->
   <?MIVAR NAME=$constraint COND="$(AND,$(XST,$sequence_type),$(NC,$sequence_type,any))">
-    $constraint $previous (mtype in ('$slist'))
+    $constraint $previous (clone_sequence_type in ('$slist'))
   <?/MIVAR>
+
+  <?MIVAR NAME=$clone_join> outer <?/MIVAR>
+  <?MIVAR NAME=$clone_join COND="$(AND,$(XST,$sequence_type),$(NC,$sequence_type,any))"> <?/MIVAR>
+
 
   <?MIVAR NAME=$previous COND="$(AND,$(XST,$sequence_type),$(NC,$sequence_type,any))"> and <?/MIVAR>
 
-  <?MIVAR NAME=$constraint>
-    $constraint $previous clone_mrkr_zdb_id = zdb_id
+<!--- end sequence type --->
+
+<!--- vector type -->
+
+  <?MIVAR NAME=$constraint COND="$(AND,$(XST,$vector_type),$(NC,$vector_type,any))">
+    $constraint $previous (vector_type_name in ('$vlist'))
   <?/MIVAR>
 
-  <?MIVAR NAME=$previous> and <?/MIVAR>
+  <?MIVAR NAME=$vector_join> outer <?/MIVAR>
+  <?MIVAR NAME=$vector_join COND="$(AND,$(XST,$vector_type),$(NC,$vector_type,any))"> <?/MIVAR>
+  <?MIVAR NAME=$clone_join COND="$(AND,$(XST,$vector_type),$(NC,$vector_type,any))"> <?/MIVAR> <!-- req's clone to get to vector -->
+  <?MIVAR NAME=$previous COND="$(AND,$(XST,$vector_type),$(NC,$vector_type,any))"> and <?/MIVAR>
 
+<!--- end vector type -->
 
+  <!-- vector and clone -->
+  <?MIVAR NAME=$clone_and_vector COND="$(AND,$(AND,$(XST,$vector_type),$(NC,$vector_type,any)),$(AND,$(XST,$sequence_type),$(NC,$sequence_type,any)))">, clone, vector  <?/MIVAR>
+  
+  <!-- not vector and clone --> 
+  <?MIVAR NAME=$clone_and_vector COND="$(AND,$(OR,$(NXST,$vector_type),$(EC,$vector_type,any)),$(AND,$(XST,$sequence_type),$(NC,$sequence_type,any)))">, clone, outer vector<?/MIVAR>
+
+  <!-- vector and not clone -->
+  <?MIVAR NAME=$clone_and_vector COND="$(AND,$(AND,$(XST,$vector_type),$(NC,$vector_type,any)),$(OR,$(NXST,$sequence_type),$(EC,$sequence_type,any)))">, vector, outer clone<?/MIVAR>
+
+  <!-- not vector and not clone -->
+  <?MIVAR NAME=$clone_and_vector COND="$(AND,$(OR,$(NXST,$vector_type),$(EC,$vector_type,any)),$(OR,$(NXST,$sequence_type),$(EC,$sequence_type,any)))">, outer (clone, vector)<?/MIVAR>
 
  <!-- ends cond any constraints specified -->
 
 
-<?MIVAR NAME=$order_clause>order by abbrev_order ,mtype<?/MIVAR>
-<?MIVAR NAME=$insert_ending>, allmapmrkr_abbrev_order as abbrev_order, dist<?/MIVAR>
-<?MIVAR NAME=$select_ending>, allmapmrkr_abbrev_order as abbrev_order, dist <?/MIVAR>
-<?MIVAR NAME=$target_table> all_mapped_markers a, outer clone <?/MIVAR>
-<?MIVAR NAME=$tmptable_select_ending>, abbrev_order, dist  <?/MIVAR>
+
+
+<?MIVAR NAME=$order_clause>order by mrkr_abbrev_order, mrkr_type<?/MIVAR>
+<?MIVAR NAME=$insert_ending>, mrkr_abbrev_order, dist<?/MIVAR>
+<?MIVAR NAME=$select_ending>, mrkr_abbrev_order, dist <?/MIVAR>
+<?MIVAR NAME=$target_table> marker m1, $amm_join all_mapped_markers $clone_and_vector <?/MIVAR>
+<?MIVAR NAME=$tmptable_select_ending>, mrkr_abbrev_order <?/MIVAR>
 
 <!--  Populate temp table based on user constraints.  -->
 
+<?MIBLOCK COND="$(EC,'foo','bar')">
+<?MIVAR>
+<pre>
+  select mrkr_abbrev, mrkr_type, lg_location, mrkr_zdb_id, OR_lg,
+         target_id, target_abbrev, private, metric, clone_sequence_type, vector_type_name
+	 $insert_ending
+    from $target_table 
+    $constraint 
+    $order_clause
+    into temp mseglister_temp with no log;">
+</pre>
+<?/MIVAR>
+<?/MIBLOCK>
+
 <?MISQL SQL="
-  select abbrev, mtype, lg_location, zdb_id, OR_lg,
-         target_id, target_abbrev, private, metric, clone_sequence_type
+  select mrkr_abbrev, mrkr_type, lg_location, mrkr_zdb_id, OR_lg,
+         target_id, target_abbrev, private, metric, clone_sequence_type, vector_type_name
 	 $insert_ending
     from $target_table 
     $constraint 
@@ -134,13 +219,13 @@
 <?/MISQL>
 
 <?MISQL SQL="
-  create index mseglister_temp_index on mseglister_temp (abbrev, mtype);">
+  create index mseglister_temp_index on mseglister_temp (mrkr_abbrev, mrkr_type);">
 <?/MISQL>
 
 <!--  Count the number of marker names that will be returned. -->
 <!--  query count(*) -->
 <?MISQL SQL="
-  select distinct abbrev, mtype
+  select distinct mrkr_abbrev, mrkr_type
     from mseglister_temp;">
 <?/MISQL>
 <?MIVAR NAME=$num_recs>$MI_ROWCOUNT<?/MIVAR>
@@ -211,8 +296,8 @@
       <TH>&nbsp;</TH>
       <TH align=left>Segment Name</TH> 
       <TH align=left>Sequence Type</TH> 
-      <TH align=left>Map Location</TH> 
-      <TH align=left>Panel</TH> 
+      <TH align=left>Vector Type</TH>
+      <TH align=left>Map</TH> 
     </TR>
 
     <?MIVAR NAME=$ok_view_map>0<?/MIVAR>
@@ -238,12 +323,18 @@
 
     <!--- Query Database --->
     <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
-      select distinct abbrev, mtype, abbrev_order
-	from mseglister_temp
-	$order_clause;">
-
-      <?MIVAR name=$marker_abbrev>$1<?/MIVAR>
-      <?MIVAR name=$mtype>$2<?/MIVAR>
+	  select mrkr_abbrev, mrkr_type, mrkr_zdb_id, private
+		 $tmptable_select_ending , clone_sequence_type, vector_type_name
+	    from mseglister_temp
+	    $order_clause;">
+	  <?MIVAR NAME=$abbrev>$1<?/MIVAR>
+	  <?MIVAR NAME=$marker_type>$2<?/MIVAR>
+	  <?MIVAR NAME=$OID>$3<?/MIVAR>
+	  <?MIVAR NAME=$private>$4<?/MIVAR>
+	  <?MIVAR NAME=$clone_sequence_type>$6<?/MIVAR>
+	  <?MIVAR NAME=$vector_type_name>$7<?/MIVAR>
+	
+	  <?MIVAR NAME=$viewer>aa-markerview.apg<?/MIVAR>
 
       <!-- create form for each marker  -->
       <!-- get rid of dashes to avoid javascript error -->
@@ -255,30 +346,6 @@
 	    name="$form_name">
 
 	<?MIVAR name=$first_row>1<?/MIVAR>
-	<?MIVAR NAME=$order_clause>$order_clause , target_id desc<?/MIVAR>
-
-
-	<!--  Run inner query for fields associated with current gene_name -->
-	<?MISQL SQL="
-	  select abbrev, mtype, lg_location, zdb_id, OR_lg,
-	         target_id, target_abbrev, private, metric, clone_sequence_type
-		 $tmptable_select_ending
-	    from mseglister_temp
-	    where abbrev = '$marker_abbrev'
-	      and mtype = '$mtype'
-	    $order_clause;">
-
-	  <?MIVAR NAME=$lg_location>$3<?/MIVAR>
-	  <?MIVAR NAME=$OID>$4<?/MIVAR>
-	  <?MIVAR NAME=$OR_lg>$5<?/MIVAR>
-	  <?MIVAR NAME=$target_id>$6<?/MIVAR>
-	  <?MIVAR NAME=$target_abbrev>$7<?/MIVAR>
-	  <?MIVAR NAME=$private>$8<?/MIVAR>
-	  <?MIVAR NAME=$metric>$9<?/MIVAR>
-	  <?MIVAR NAME=$dist>$11<?/MIVAR>
-	  <?MIVAR NAME=$sequence_type>$12<?/MIVAR>
-	
-	  <?MIVAR NAME=$viewer>aa-markerview.apg<?/MIVAR>
 
 	  $(IF,$(>,$(POSITION,$OID,LOCUS),0),
 	    $(SETVAR,$viewer,aa-locusview.apg))              
@@ -297,7 +364,7 @@
 		<?MIVAR>
 		  <TD valign=top> <font size=2>
             $(IF,$(XST,$return_rec),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$OID>SELECT</A>)
-		    $mtype:<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$viewer&OID=$OID">$marker_abbrev</A>
+		    $marker_type:<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$viewer&OID=$OID">$abbrev</A>
 		  </TD>
 		<?/MIVAR>
 	  <?/MIBLOCK>
@@ -313,51 +380,23 @@
 
 <!-- Column 2, Sequence Type -->
 	<TD> 
-	 <?MIVAR>$sequence_type<?/MIVAR>
+	 <?MIVAR>$clone_sequence_type<?/MIVAR>
         </TD> 
 <!-- /Column 2, Sequence Type -->
 
-	  <!-- Map Location    Panel    Map     Updated-->
+<!-- Column 3, Vector Type -->
+	<TD> 
+	 <?MIVAR>$vector_type_name<?/MIVAR>
+        </TD> 
+<!-- /Column 3, Vector Type -->
 
-	  <?MIBLOCK COND="$(AND,$(>,$(POSITION,$target_id,REF),0),$(EC,$dist,""))">
-	    <?MIVAR COND=$(EC,$private,f)>
-	      <TD>	
-		LG <b>$OR_lg</b>;<b>$lg_location</b> $metric
-		<?MIBLOCK COND=$(NC,$mtype,mutant)>
-		  <?MIVAR>
-		    &nbsp;
-		    <A HREF="javascript:view_scores('$target_id','$OR_lg','$OID','$marker_abbrev')";>Scoring Data
-		  <?/MIVAR>
-		<?/MIBLOCK>
-	      </TD>
-	      <TD>
-		<A  HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=$target_id><b>$target_abbrev</b></A>
-	      </TD>
+	<TD>
+<!-- also sends abbrev & marker_type -->
+<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+	</TD>
 
-	      <?MIVAR name=$ok_view_map>1<?/MIVAR>
-	    <?/MIVAR>
-
-	    <?MIBLOCK COND="$(AND,$(NC,$OR_lg,0),$(NC,$private,f))">
-	      <TD>
-                <?MIVAR>
-		  Mapped on <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=$target_id>$target_abbrev  </A>, but confidential.
-                <?/MIVAR>
-	      </TD>
-	      <TD>&nbsp;</TD>
-	    <?/MIBLOCK>
-
-
-	    <!-- end target id like refcross-->  
-	  <?MIELSE>
-	   <TD> &nbsp; 
-	   </TD>
-	   <TD> &nbsp;
-	   </TD>
-	  <?/MIBLOCK>  <!-- target id like link -->
 
 	  <?MIVAR name=$first_row>0<?/MIVAR>
-
-	<?/MISQL>
 
 	<!--    change row_color    -->
 	<?MIBLOCK>
@@ -386,14 +425,18 @@
 	<!-- to be used by walking windows -->
         <!-- want GET string as short as possible - append only when variable exists, buffer overflow may cause segmentation fault -->
         <?MIVAR name=comment>  Build array of user data  <?/MIVAR>
-	<?MIVAR name=selector>MIval=aa-markerselect.apg&WINSIZE=$WINSIZE<?/MIVAR>
+	<?MIVAR name=selector>MIval=aa-msegselect.apg&WINSIZE=$WINSIZE<?/MIVAR>
         <?MIVAR name=UserInput><?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$lg)>$UserInput&lg=$lg<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$refcross)>$UserInput&refcross=$refcross<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$segment_contains_type)>$UserInput&segment_contains_type=$segment_contains_type<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$compare)>$UserInput&compare=$compare<?/MIVAR>
-        <?MIVAR name=$UserInput COND=$(XST,$return_rec)>$UserInput&return_rec=$return_rec<?/MIVAR>
+        <?MIVAR name=UserInput COND=$(XST,$return_rec)>$UserInput&return_rec=$return_rec<?/MIVAR>
         <?MIVAR name=UserInput COND=$(XST,$name)>$UserInput&name=$(URLENCODE,$name)<?/MIVAR>  
+	<?MIVAR name=UserInput COND=$(XST,$sequence_type)>$UserInput&sequence_type=$sequence_type<?/MIVAR>
+	<?MIVAR name=UserInput COND=$(XST,$vector_type)>$UserInput&vector_type=$vector_type<?/MIVAR>
+
+        <?MIVAR name=UserInput COND=$(XST,$segment_contains_text)>$UserInput&segment_contains_text=$(URLENCODE,$segment_contains_text)<?/MIVAR>  
         <?MIVAR name=UserInput COND=$(XST,$query_results)>$UserInput&query_results=$(URLENCODE,$query_results)<?/MIVAR>  
 
 	<!--- Return to the previous set of Rows --->
@@ -488,7 +531,7 @@
 
 <?MISQL SQL="
   -- insert (actually any statement will do) is necessary to avoid an error
-  insert into mseglister_temp (abbrev) values (NULL);
+  insert into mseglister_temp (mrkr_abbrev) values (NULL);
   drop table mseglister_temp;">
 <?/MISQL>
 
@@ -522,6 +565,9 @@
       <?MIVAR COND="$(NXST,$segment_contains_type)" NAME=$segment_contains_type>NULL<?/MIVAR>
       <?MIVAR NAME=$refcross COND="$(NXST,$refcross)">NULL<?/MIVAR>
       <?MIVAR COND="$(NXST,$sequence_type)" NAME=$sequence_type>NULL<?/MIVAR>
+      <?MIVAR COND="$(NXST,$vector_type)" NAME=$vector_type>NULL<?/MIVAR>
+      <?MIVAR NAME=$START>1<?/MIVAR>
+
       <?MIVAR>
      <TR>
       <TD class=halfwidth>
@@ -533,13 +579,13 @@
       </TD>
       <TD class=halfwidth>
        <B>LG:</B>
-       <SELECT NAME=lg onChange='document.msegform.START.value = "";'>
+       <SELECT name=lg onChange='document.msegform.START.value = "";'>
 	<?MISQL SQL="select distinct lg_name,lg_order from linkage_group order by lg_order"> 
 	 <option value="$1" $(IF,$(EC,$lg,$1),SELECTED) >$(IF,$(EC,$1,0),any,$1)
 	<?/MISQL>
        </SELECT>
        	&nbsp;<b>Panel:</b> 
-	<SELECT NAME=refcross onChange='document.critform.START.value = "";'>
+	<SELECT name=refcross onChange='document.msegform.START.value = "";'>
 	  <option select value=NULL>ANY
 	  <?MISQL SQL="select zdb_id,abbrev,ptype from panels;">
 	    <option $(IF,$(EC,$refcross,$1),SELECTED) value=$1>$2($3 panel)
@@ -553,7 +599,7 @@
 	 <b>Segment Contains:</b>
 	</td>
 	<td>
-	 <SELECT multiple size=3 name=segment_contains_type onChange="check_syns(this)"> 
+	 <SELECT name="segment_contains_type" onChange="check_syns(this)"> 
 	  <option $(IF,$(EC,$segment_contains_type,NULL),SELECTED) value="any">All types
 	  <option $(IF,$(>,$(POSITION,$segment_contains_type,GENE),0),SELECTED) >GENE
 	  <option $(IF,$(>,$(POSITION,$segment_contains_type,MUTANT),0),SELECTED) >MUTANT
@@ -565,23 +611,23 @@
 	  <option value="SSLP">MicroSatellite
 	  <option value="SSLP">CA-repeat
 	 </SELECT>
-	<INPUT type=text name=segment_contains_text size=10>
+	<INPUT type=text name=segment_contains_text size=10  $(IF,$(XST,$segment_contains_text),value='$segment_contains_text')  >
 	</td>
        </tr></table>
       </TD>
       <TD class=halfwidth>
 	<B>Sequence Type:</B>
-	<SELECT name=sequence_type>
+	<SELECT name="sequence_type">
 	  <OPTION SELECTED value="any">Any
 	 <?MISQL SQL="select seqtype_name from sequence_type;">
-          <OPTION value="$1">$1
+          <OPTION $(IF,$(>,$(POSITION,$sequence_type,$1),0),SELECTED) value="$1">$1
          <?/MISQL>
         </SELECT>
       </TD>
      </TR>
      <TR>
     <?/MIVAR>
-     <TD class=resultcount colspan=2>
+     <TD class=resultcount>
 	Display results in groups of 
 	<input type="text" name="WINSIZE" size="3" value="20" 
 	       onChange='document.msegform.START.value = "";' 
@@ -594,6 +640,15 @@
 	    </SCRIPT>
 	  <?/MIVAR> 
 	<?/MIBLOCK>
+      </TD>
+      <TD class=halfwidth>
+	<b>Vector Type:</b>&nbsp;
+	<SELECT name="vector_type">
+	  <OPTION SELECTED value="any">Any
+	 <?MISQL SQL="select vectype_name from vector_type;">
+          <OPTION $(IF,$(>,$(POSITION,$vector_type,$1),0),SELECTED) value="$1">$1
+         <?/MISQL>
+        </SELECT>
       </TD>
     </tr>
     <tr>
@@ -609,6 +664,11 @@
       </TD>
     </TR>
     </TABLE>
+
+    <?MIVAR>
+      <input type=hidden NAME="START" value=1>
+    <?/MIVAR>
+      </form>
     <?MIBLOCK COND="$(NXST,$accession)">
     <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
     <?/MIBLOCK>

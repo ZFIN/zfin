@@ -227,8 +227,6 @@ document.critform.START.value = "";
     <TR>
       <TH>&nbsp;</TH>
       <TH align=left>Marker</TH> 
-      <TH align=left>Map Location</TH> 
-      <TH align=left>Panel</TH> 
       <TH align=left>Map</TH> 
     </TR>
 
@@ -255,12 +253,14 @@ document.critform.START.value = "";
 
     <!--- Query Database --->
     <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
-      select distinct abbrev, mtype, abbrev_order
+      select distinct abbrev, mtype, abbrev_order, zdb_id, private
 	from markerlister_temp
 	$order_clause;">
 
       <?MIVAR name=$marker_abbrev>$1<?/MIVAR>
       <?MIVAR name=$mtype>$2<?/MIVAR>
+      <?MIVAR name=$OID>$4<?/MIVAR>
+      <?MIVAR name=$private>$5<?/MIVAR>
 
       <!-- create form for each marker  -->
       <!-- get rid of dashes to avoid javascript error -->
@@ -275,25 +275,6 @@ document.critform.START.value = "";
 	<?MIVAR NAME=$order_clause>$order_clause , target_id desc<?/MIVAR>
 
 
-	<!--  Run inner query for fields associated with current gene_name -->
-	<?MISQL SQL="
-	  select distinct abbrev, mtype, lg_location, zdb_id, OR_lg,
-	         target_id, target_abbrev, private, metric 
-		 $tmptable_select_ending
-	    from markerlister_temp
-	    where abbrev = '$marker_abbrev'
-	      and mtype = '$mtype'
-	    $order_clause;">
-
-	  <?MIVAR NAME=$lg_location>$3<?/MIVAR>
-	  <?MIVAR NAME=$OID>$4<?/MIVAR>
-	  <?MIVAR NAME=$OR_lg>$5<?/MIVAR>
-	  <?MIVAR NAME=$target_id>$6<?/MIVAR>
-	  <?MIVAR NAME=$target_abbrev>$7<?/MIVAR>
-	  <?MIVAR NAME=$private>$8<?/MIVAR>
-	  <?MIVAR NAME=$metric>$9<?/MIVAR>
-	  <?MIVAR NAME=$dist>$11<?/MIVAR>
-	
 	  <?MIVAR NAME=$viewer>aa-markerview.apg<?/MIVAR>
 
 	  $(IF,$(>,$(POSITION,$OID,LOCUS),0),
@@ -301,7 +282,6 @@ document.critform.START.value = "";
 
 	  $(IF,$(>,$(POSITION,$OID,FISH),0),
 	    $(SETVAR,$viewer,aa-fishview.apg))
-
 	  <?MIBLOCK COND="$(EC,$first_row,1)">
 	    <!-- start new row and column -->
 	    <TR bgcolor="<?MIVAR>$row_color<?/MIVAR>">
@@ -324,108 +304,9 @@ document.critform.START.value = "";
 	      <TD>&nbsp;</TD>
 	  <?/MIBLOCK>
 
-
-	  <!-- Map Location    Panel    Map     Updated-->
-
-	  <?MIBLOCK COND="$(AND,$(>,$(POSITION,$target_id,REF),0),$(EC,$dist,""))">
-	    <?MIVAR COND=$(EC,$private,f)>
-	      <TD>	
-		LG <b>$OR_lg</b>;<b>$lg_location</b> $metric
-		<?MIBLOCK COND=$(NC,$mtype,mutant)>
-		  <?MIVAR>
-		    &nbsp;
-		    <A HREF="javascript:view_scores('$target_id','$OR_lg','$OID','$marker_abbrev')";>Scoring Data
-		  <?/MIVAR>
-		<?/MIBLOCK>
-	      </TD>
-	      <TD><font size=2> 
-		<A  HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=$target_id>$target_abbrev</A>
-	      </TD>
-	      <TD><font size=2 COLOR=#A9A9A9>
-		<input type=checkbox name=$target_abbrev  value=1  CHECKED >
-	      </TD>
-
-	      <?MIVAR name=$ok_view_map>1<?/MIVAR>
-	    <?/MIVAR>
-
-	    <?MIBLOCK COND="$(AND,$(NC,$OR_lg,0),$(NC,$private,f))">
-	      <TD>
-                <?MIVAR>
-		  Mapped on <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=$target_id>$target_abbrev  </A>, but confidential.
-                <?/MIVAR>
-	      </TD>
-	      <TD>&nbsp;</TD>
-	      <TD>&nbsp;</TD>
-	    <?/MIBLOCK>
-
-	    <!-- end target id like refcross-->  
-
-	  <?MIELSE COND="$(>,$(POSITION,$target_id,LINK),0)">
-	    <!-- independent linkage -->
-
-	    <?MISQL SQL="
-	      select distinct alnkgmem_member_name, alnkgmem_comments, 
-		     alnkgmem_or_lg,alnkgmem_private 
-		from all_linked_members 
-		where alnkgmem_member_zdb_id = '$OID' 
-		  and alnkgmem_linkage_zdb_id = '$target_id';">
-
-	      <?MIVAR NAME=$map_name>$1<?/MIVAR>
-	      <?MIVAR NAME=$map_comments>$2<?/MIVAR>
-	      <?MIVAR NAME=$map_lg>$3<?/MIVAR>
-	      <?MIVAR NAME=$map_private>$4<?/MIVAR>
-
-	      <TD>
-		<?MIBLOCK COND=$(EC,$map_private,t)>
-		  Linked but still confidential.
-		<?MIELSE>
-		  <?MIVAR COND=$(NC,$map_lg,0)>
-		    LG <b>$map_lg</b>
-		  <?/MIVAR>
-		  <?MIBLOCK COND="$(NC,$map_comments,"")">
-		    <?MIVAR>
-		      <A HREF=javascript:show_detail('$target_id','$OID','$marker_abbrev','""');>Map Details</A>
-		    <?/MIVAR>
-		  <?MIELSE>
-		    &nbsp;
-		  <?/MIBLOCK>
-		<?/MIBLOCK>
-              </TD>
-	      <TD>&nbsp; </TD>
-	      <TD>&nbsp; </TD>
-
-	    <?/MISQL>
-	  <?/MIBLOCK>  <!-- target id like link -->
-
-	  <?MIVAR name=$first_row>0<?/MIVAR>
-
-	<?/MISQL>
-
-	<?MIBLOCK COND="$(EC,$ok_view_map,1)">
-	  <?MIVAR>
-	    <input type=hidden name=userid value=$userid>
-            <input type=hidden name=OID value=$OID> 
-    	    <input type=hidden name=view_map value="view_map">
-
-	    <TR valign=top bgcolor=$row_color> 
-	      <TD>&nbsp;</TD>
-	      <TD>&nbsp;</TD>
-	      <TD>&nbsp;</TD>
-	      <TD align=left><font size=1>
-	        <input type=button 
-		       value='VIEW MERGED MAP' 
-		       name=view_merge_map onClick="document.$form_name.action='/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi';document.$form_name.submit();">
-	      </TD> 
-	      <TD align=left>
-		<font size=1>
-		<input type=submit value='VIEW INDIVIDUAL MAPS' name=view_map>
-	      </TD>
-	    </TR>
-
-	    <?MIVAR name=$ok_view_map>0<?/MIVAR>
-	  <?/MIVAR>
-	<?/MIBLOCK>
-
+	  <TD>
+	   <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+	  </TD>
 
 	<!--    change row_color    -->
 	<?MIBLOCK>
