@@ -3,7 +3,7 @@
 #
 # loadsp.pl
 #
-
+use MIME::Lite;
 #------------------- Download -----------
 
 sub downloadGOtermFiles () {
