@@ -16,12 +16,17 @@ function display_foo(mywindow,index) {
   if (index>1) {
     mywindow.document.writeln("<TR><TD align=center><img border=0 src='/ZDBB/icons/ARROWS/downarrow.gif'></TD></TR>")
   }
-mywindow.document.writeln("<TR><TD><Font size=-2><INPUT TYPE=button NAME="+ this.id +" VALUE=\""+ this.title +"\" onClick=top.content.history.go(\""+ this.id +"\") ></font></TD></TR>");
+
+if (this.title=="ZFIN HOME"){
+ mywindow.document.writeln("<TR><TD><Font size=-2><INPUT TYPE=button NAME="+ this.id +" VALUE=\""+ this.title +"\" onClick=top.content.location.replace(\""+ this.id +"\") ></font></TD></TR>");}
+else {
+ mywindow.document.writeln("<TR><TD><Font size=-2><INPUT TYPE=button NAME="+ this.id +" VALUE=\""+ this.title +"\" onClick=top.content.history.go(\""+ this.id +"\") ></font></TD></TR>");}
   if (this.end==false) {
     this.next.display(mywindow,index+1)
   } else {
     mywindow.document.writeln("</TABLE><p><HR><p><font size=-1>Click on above tiles to move to corresponding screen.</font>") }
 }
+
 
 function update_hist(id,title) {
   if (this.title==title) {
@@ -51,7 +56,7 @@ if (browserName == "Netscape" && browserVer >= 3) version = "n3";
 else version = "n2";
         
 if (version == "n3")         {
-   ZDB= new page_rec("aa-ZDB_home.apg","ZFIN HOME");
+   ZDB= new page_rec("http://zfin.org/cgi-bin_B/webdriver?MIval=aa-ZDB_home.apg","ZFIN HOME");
 } else {
    window.location="/ZDBB/misc_html/wrong_browser.html"
 }
