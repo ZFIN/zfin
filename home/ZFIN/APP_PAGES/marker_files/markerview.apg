@@ -144,7 +144,7 @@
 	}
 
 	function edit_ortho(ortho_id) {
-  		 helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-orthoedit.apg&OID="+ortho_id,"helpwindow","scrollbars=yes,width=600,height=600");
+  		 helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-orthoedit.apg&OID="+ortho_id+"&geneId=$OID","helpwindow","scrollbars=yes,width=600,height=600");
 	}
 
 	function new_seqnum() {
