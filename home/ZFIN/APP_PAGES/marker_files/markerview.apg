@@ -198,15 +198,13 @@
   		}
 	}
 	
-
-	function new_attrib_prevname() {
-		var prev_name=document.updater.attrib_prevname.value;
-		var pub_id=document.updater.attrib_prevname_pubid.value.toUpperCase();
+	function new_attrib_ssprevname() {
+		var prev_name=document.updater.attrib_ssprevname.value;
+		var pub_id=document.updater.attrib_ssprevname_pubid.value.toUpperCase();
 		if ((prev_name != '') && (pub_id != '')) {
 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+prev_name+'&new_value='+pub_id+'&target_table=$target_table&info=namealias');
   		}
 	}
-
 
 	function new_attrib_prevname() {
 		var prev_name=document.updater.attrib_prevname.value;
@@ -419,9 +417,9 @@
 
   <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(XST,$UPDATE))">
     <br><b>Add Reference:</b> 
-    Previous name:<input type=text name=attrib_prevname>	
-    Reference:<input type=text name=attrib_prevname_pubid>
-    <input type=button value="Add" onClick=new_attrib_prevname();> 
+    Previous name:<input type=text name=attrib_ssprevname>	
+    Reference:<input type=text name=attrib_ssprevname_pubid>
+    <input type=button value="Add" onClick=new_attrib_ssprevname();> 
   <?/MIVAR>
 
 
