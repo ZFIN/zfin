@@ -390,7 +390,7 @@ Datablade documentation.
 	 <?MIVAR NAME=$search_count>$2<?/MIVAR>
 	 <?MIVAR NAME=$mtype_display>$3<?/MIVAR>
 
-	 <?MIBLOCK COND="$(>,$search_count,1)">  
+	 <?MIBLOCK COND="$(>,$search_count,0)">  
 	   <?MISQL SQL="
 		select mtgrpmem_mrkr_type
 		 from  marker_type_group_member
