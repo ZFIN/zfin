@@ -1,5 +1,3 @@
-drop procedure p_check_caps_acc_num ;
-
 create procedure p_check_caps_acc_num (vFDBcontZdbID varchar(50),
    				       vDblinkAccNum varchar(50))
 
@@ -18,5 +16,3 @@ if vDbName in ('BLAST', 'Genbank') then
 end if ;
 
 end procedure ;
-
-update statistics for procedure p_check_caps_acc_num ;

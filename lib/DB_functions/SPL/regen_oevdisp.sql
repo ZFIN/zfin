@@ -1,5 +1,3 @@
-drop procedure regen_oevdisp();
-
 create dba function "informix".regen_oevdisp()	
   returning integer
 
@@ -279,5 +277,3 @@ end function;
 
 grant execute on function "informix".regen_oevdisp () 
   to "public" as "informix";
-
-update statistics for function regen_oevdisp;
