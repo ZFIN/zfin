@@ -16,10 +16,7 @@
 
 <!-- THIS NEXT PART IS EXECUTED AFTER THE PERSON ENTERS SOME CRITERIA -->
 
-<!-- First note that they have searched persons-->
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-identify.apg';">$1<?/MISQL>
-<?MISQL SQL="delete from int_person_places where pers_id='$ZDB_ident' and place_id='FISH';"><?/MISQL>
-<?MISQL COND="$(NOT,$(EQ,$(SUBSTR,$ZDB_name,1,5),GUEST))" SQL="insert into int_person_places (pers_id,place_id,last_visit) values ('$ZDB_ident','FISH',current);"><?/MISQL>
 
 <!-- set userid to ZDB_ID of user or GUEST to be used by the map viewer -->
 <?MIVAR NAME=$userid>GUEST<?/MIVAR>
