@@ -1,9 +1,7 @@
-<!-- FILE: do-imageupdate.html
+<!-- 
+FILE: do-imageupdate.html
 
-Very simple. Just commits the updates requested in the forms tossed up by
-imageupdate.html. Also files update record.
-
-EXPECTED VARS:
+INPUT VARS: 
 OID -- the zdb_id of the rec to update
 attr -- the column to be updated
 attr_type -- textarea,text,or pic
@@ -12,6 +10,14 @@ old_value -- the previous value
 comments -- reasons for doing update 
 annotations -- huge string of urlencoded changed annotations for the image. 
   Will be NULL if no changes to annotations were made;
+
+OUTPUT VARS:
+redirect to imageview.apg
+updates records in fish_image or fx_fish_image_private
+
+DESCRIPTION: commits the updates requested in the forms tossed up by
+imageupdate.html. Also files update record.
+
 -->
 
 <?MIVAR COND=$(NXST,$annotations) NAME=$annotations>NULL<?/MIVAR>
@@ -30,7 +36,6 @@ annotations -- huge string of urlencoded changed annotations for the image.
   <?MIVAR COND="$(NXST,$old_value)" NAME=$old_value>NULL<?/MIVAR>
   <?MIVAR COND="$(NXST,$comments)" NAME=$comments>NULL<?/MIVAR>
   <?MIVAR COND="$(NXST,$annotations)" NAME=$annotations>NULL<?/MIVAR>
-
   <?MIVAR COND="$(EC,$attr_type,special-listitem)" NAME=$comments>Deleted the record $old_value from the list of $attr associated with this line.<?/MIVAR>
 
 
@@ -54,35 +59,29 @@ annotations -- huge string of urlencoded changed annotations for the image.
   <?MIBLOCK COND="$(EC,$attr_type,pic)">
     <?MISQL SQL="
       update fish_image 
-        set $attr = FILETOBLOB('$new_value', 'client') 
+        set $attr = '$OID'||'$fimgnew_suffix'
         where fimg_zdb_id = '$OID';">
-    <?/MISQL>
-
-    <!-- Create a thumbnail for the new image -->
-    <?MIVAR NAME=$mythumb>/tmp/$OID.gif<?/MIVAR>
-    <?MISQL SQL="
-      execute function sysexec('make_thumbnail','$new_value $mythumb');">
-    <?/MISQL>
-    
-
-    <!-- Get width and height of new image -->
-    <?MISQL SQL="
-      execute function get_image_stats('$new_value');">
-      <?MIVAR NAME=$fimg_width>$1<?/MIVAR>
-      <?MIVAR NAME=$fimg_height>$2<?/MIVAR>
     <?/MISQL>
 
     <?MISQL SQL="
       update fish_image 
-        set fimg_thumbnail = FILETOBLOB('$mythumb', 'client'),
-	    fimg_width = $fimg_width,
-	    fimg_height = $fimg_height
-        where fimg_zdb_id='$OID';">
+        set fimg_thumbnail = '$OID'||'_thumb'||'$fimgnew_suffix'
+	where fimg_zdb_id = '$OID';">
     <?/MISQL>
 
     <?MISQL SQL="
-      execute function sysexec('rm', '$mythumb');">
-    <?/MISQL>
+       update fish_image 
+         set fimg_width = '$fimgnew_width'
+	 where fimg_zdb_id = '$OID';">
+     <?/MISQL>	
+
+    <?MISQL SQL="
+       update fish_image 
+         set fimg_height = '$fimgnew_height'
+	 where fimg_zdb_id = '$OID';">
+     <?/MISQL>
+	
+
 
   <?/MIBLOCK> <!-- ends if its an image -->
 
