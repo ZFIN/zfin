@@ -72,7 +72,14 @@ ERROR -- something bad happened -- no OID passed in!
 
 <?MISQL SQL="select locus_name, abbrev, comments,owner,cloned_gene from locus where zdb_id='$OID';"><?/MISQL>
 
+<?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
+<form><center><font size=4>
+<?MIVAR> <b>Invalid ZFIN ID.<?/MIVAR>
+</form>
+<?/MIBLOCK>
 
+
+<?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
 <?MIVAR NAME=$name>$1<?/MIVAR>
 <?MIVAR NAME=$abbrev>$2<?/MIVAR>
 <?MIVAR NAME=$comments>$3<?/MIVAR>
@@ -237,7 +244,7 @@ end comment out -->
 
 <?/MIBLOCK> <!-- ends cond oid exists -->
 
-
+<?/MIBLOCK> <!-- ends mirowcount gt 0 -->
 
 </HTML>
 
