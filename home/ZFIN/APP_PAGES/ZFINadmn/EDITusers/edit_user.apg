@@ -219,6 +219,7 @@ function submit_delete () {
 	      <option "$(IF,$(EC,$access,preview),SELECTED)">preview
 	      <option "$(IF,$(EC,$access,fishauth),SELECTED)">fishauth
 	      <option "$(IF,$(EC,$access,adminasst),SELECTED)">adminasst
+ 	      <option "$(IF,$(EC,$access,zirc),SELECTED)">zirc
 	      "$(IF,$(EC,$access,root),<option SELECTED>root)"
 	    </SELECT>",$access)
 	</TD>
@@ -254,7 +255,8 @@ function submit_delete () {
     <input type=button value="CANCEL" onClick="window.history.go(-1);">
     <input type=button value="COMMIT" name="commit" onClick="submit_complete(8);">
     <!--<input type=submit value="COMMIT" onSubmit="submit_complete();"> -->
-
+    
+    <input type=hidden name=access value=$access>
     <input type=hidden name=OID value=$OID>
     <input type=hidden name=MIval value="aa-process-user.apg">
 

@@ -97,7 +97,7 @@
 		</tr>
 	      </table>
 	    </DIV>
-	    <BR>
+            <BR>
 	    <DIV class="sidebar">
 	      <B>Information and News</B><BR>
 	      <table border=0 cellpadding=3>
@@ -127,20 +127,7 @@
 	      </table>
 	    </DIV>
 	    <BR>
-	    <DIV class="sidebar">
-	      <B>Zebrafish Resource Center</B><BR>
-	      <table border=0 cellpadding=3>
-		<tr>
-		  <td>
-		    <A HREF="/zf_info/stckctr/stckctr.html">Info</A>,
-		    <A HREF="/zf_info/stckctr/guide.html">Strains</A>, 
-		    <A HREF="/zf_info/zfprbs.html">Probes</A><br>
-		    <A HREF="/zf_info/stckctr/health.html">Pathology Services</A><BR>
-		    <A HREF="/zf_info/stckctr/dis_man/Fish_Diseases.html">Disease Manual</A><br>
-		  </td>
-		</tr>
-	      </table>
-	    </DIV>
+
 	    <BR>
 	    <DIV class="sidebar">
 	      <table border=0 cellpadding=3>
@@ -167,6 +154,19 @@
 	    </td>
 	  </tr>
 	</NOSCRIPT>
+	<TR>
+	  <TD class="content_left">
+	    <DIV class="content">
+	      <A HREF="http://nagel.zfin.org/zirc/home/guide.php"><B>Resource Center</B></A> 
+	    </DIV>
+	  </TD>
+	  <TD class="content_right">
+	    <DIV class="content">
+	      <A HREF="http://nagel.zfin.org/zirc/home/guide.php">Strains, Information, Services, Materials and Ordering.</A><br>
+	    </DIV>
+	  </TD>
+	</TR>
+
 	<TR>
 	  <TD class="content_left">
 	    <DIV class="content">
@@ -383,7 +383,7 @@
 	      <?/MISQL>
 	      <?MIBLOCK COND="$(NC,$AUTHORIZED,GUEST)">
 		<b>Logged in to ZFIN as: 
-		<?MIVAR COND="$(EC,$AUTHORIZED,submit)">
+		<?MIVAR COND="$(OR,$(EC,$AUTHORIZED,submit),$(EC,$AUTHORIZED,zirc))">
 		  <font color="#007300">$ZDB_name</font> 
 		<?/MIVAR>
 		<?MIVAR COND="$(OR,$(EC,$AUTHORIZED,fishauth),$(EC,$AUTHORIZED,preview),$(EC,$AUTHORIZED,betatest))">
