@@ -9,6 +9,7 @@ Variables Expected:
  -- OID -- the OID of the fish record to view
  -- PDATE -- a flag variable to indicate we're in update mode
  -- temp_oid -- could be passed instead of OID --
+ -- image_table -- optional value, sets fish_image table
 <?/MICOMMENT>
 
 <HTML>
@@ -17,6 +18,7 @@ Variables Expected:
 <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
 
 <?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
+<?MIVAR COND="$(NXST,$image_table)" NAME=image_table>fish_image<?/MIVAR>
 
 <SCRIPT>
 
@@ -86,15 +88,23 @@ Variables Expected:
 <?/MIBLOCK>
 
 
-<?MISQL SQL="
+<?MISQL COND=$(EC,$image_table,fish_image) SQL="
   select fimg_image, fimg_annotation, fimg_image_with_annotation, 
 	 fimg_width, fimg_fish_zdb_id, 
 	 HTML_breaks(fimg_comments), fimg_view, fimg_direction, 
 	 fimg_form, fimg_preparation, get_fish_full_name(fimg_fish_zdb_id)
-    from fish_image 
+    from $image_table 
     where fimg_zdb_id='$OID';">
 <?/MISQL>
 
+<?MISQL COND=$(EC,$image_table,fx_fish_image_private) SQL="
+  select fimgp_image, fimgp_annotation, fimgp_image_with_annotation, 
+	 fimgp_width, fimgp_fish_zdb_id, 
+	 HTML_breaks(fimgp_comments), fimgp_view, fimgp_direction, 
+	 fimgp_form, fimgp_preparation, get_fish_full_name(fimgp_fish_zdb_id)
+    from $image_table 
+    where fimgp_zdb_id='$OID';">
+<?/MISQL>
 <?MIVAR NAME=$fimg_image>$1<?/MIVAR>
 <?MIVAR NAME=$fimg_annotation>$2<?/MIVAR>
 <?MIVAR NAME=$fimg_image_with_annotation>$3<?/MIVAR>
