@@ -47,7 +47,6 @@
 <?MIVAR NAME=$knowngene COND="$(NXST,$knowngene)">NULL<?/MIVAR>
 <?MIVAR NAME=$previous> <?/MIVAR>
 
-<?MIVAR COND="$(NXST,$abbrev)" NAME=$nav_abbrev><?/MIVAR>
 <?MIVAR COND="$(NXST,$chrom_change)" NAME=$chrom_change>any<?/MIVAR>
 <?MIVAR COND="$(NXST,$chrom_num)" NAME=$chrom_num>0<?/MIVAR>
 <?MIVAR COND="$(NXST,$mutagen)" NAME=$mutagen>any<?/MIVAR>
@@ -61,10 +60,6 @@
 <!-- First build CONSTRAINT CLAUSE common to both wild type and mutant line, ie., those constraints related only to fish. -->
 
 <?MIBLOCK COND="$(OR,$(XST,$fname),$(XST,$anon1text),$(XST,$abbrev),$(NC,$knowngene,NULL))">
-
-<!--  save abbrev input to pass to startframes for anv tile button -->
-<?MIVAR COND="$(XST,$abbrev)" NAME=$nav_abbrev>$abbrev<?/MIVAR>
-
 
 <!-- First filter name for apostrophes! -->
 <?MIVAR COND="$(XST,$fname)" NAME=$fname DELIMIT="'" REPLACE="''">$fname<?/MIVAR>
@@ -80,7 +75,7 @@ $constraint ((lower(a.name) like '%$fname%') or exists (select 'x' from locus_al
 
 <!-- change to look for abbrev within () in name  Sept. 00  -->
 <?MIVAR NAME=$constraint COND="$(XST,$abbrev)">
-$constraint $previous (lower(abbrev)='$(LOWER,$abbrev)') or (name like '(%$(LOWER,$abbrev)%)') or (exists (select 'x' from locus_alias where lcsali_locus_abbrev_alias like '%$(LOWER,$abbrev)%' and  (a.locus = lcsali_locus_zdb_id)))<?/MIVAR>
+$constraint $previous ((lower(abbrev)='$(LOWER,$abbrev)') or (name like '(%$(LOWER,$abbrev)%)') or (exists (select 'x' from locus_alias where lcsali_locus_abbrev_alias like '%$(LOWER,$abbrev)%' and  (a.locus = lcsali_locus_zdb_id))))<?/MIVAR>
 
 <?MIVAR NAME=$previous COND="$(XST,$abbrev)"> and <?/MIVAR>
 
@@ -155,21 +150,21 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
 <?MIVAR NAME=$order_by COND="$(AND,$(OR,$(XST,$fname),$(XST,$abbrev)),$(NXST,$allele))">order by locus,name,allele,chrom_num<?/MIVAR>
 
 <?MIVAR>
-<form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
-<input type=hidden name=MIval value=aa-fishlister.apg>
-<input type=hidden name=mut_constraint value="$mut_constraint">
-<input type=hidden name=line_type value="$line_type">
-
+  <form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+  <input type=hidden name=MIval value=aa-fishlister.apg>
+  <input type=hidden name=mut_constraint value="$mut_constraint">
+  <input type=hidden name=line_type value="$line_type">
 <?/MIVAR>
+
 <?MIVAR COND="$(XST,$fname)"><input type=hidden name=fname value="$fname"><?/MIVAR>
 <?MIVAR COND="$(XST,$allele)"><input type=hidden name=allele value="$allele"><?/MIVAR>
-<?MIVAR COND="$(NC,$knowngene,NULL)"> <input type=hidden name=knowngene value="$knowngene"><?/MIVAR>
+<?MIVAR COND="$(XST,$knowngene)"> <input type=hidden name=knowngene value="$knowngene"><?/MIVAR>
 <?MIVAR COND="$(XST,$chrom_change)"><input type=hidden name=chrom_change value="$chrom_change"><?/MIVAR>
 <?MIVAR COND="$(XST,$chrom_num)"><input type=hidden name=chrom_num value="$chrom_num"><?/MIVAR>
 <?MIVAR COND="$(XST,$mutagen)"><input type=hidden name=mutagen value="$mutagen"><?/MIVAR>
 <?MIVAR COND="$(XST,$anon1)"><input type=hidden name=anon1 value="$anon1"><?/MIVAR>
 <?MIVAR COND="$(XST,$anon1text)"><input type=hidden name=anon1text value="$anon1text"><?/MIVAR>
-<?MIVAR COND="$(XST,$nav_abbrev)"><input type=hidden name=nav_abbrev value="$nav_abbrev"><?/MIVAR>
+<?MIVAR COND="$(XST,$abbrev)"><input type=hidden name=abbrev value="$abbrev"><?/MIVAR>
 <?MIVAR COND="$(XST,$structures)"><input type=hidden name=structures value="$structures"><?/MIVAR>
 <?MIVAR COND="$(XST,$selected)"><input type=hidden name=selected value="$selected"><?/MIVAR>
 <?MIVAR COND="$(XST,$selected_separator)"><input type=hidden name=selected_separator value="$selected_separator"><?/MIVAR>
@@ -370,64 +365,43 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
 
   <Center>
   <Table width="70%" border="0">
-	  <tr>
-		  <td width="45%" align=right valign=top>&nbsp;
+    <tr>
+      <td width="45%" align=right valign=top>&nbsp;
 
-<?MIVAR name=comment>  Build array of user data  <?/MIVAR>
-	<?MIVAR name=UserInput>MIval=aa-fishlister.apg&WINSIZE=$WINSIZE<?/MIVAR>
-		<?MIVAR name=UserInput COND=$(XST,$allele)>
-			$UserInput&allele=$allele
-		<?/MIVAR>
-		<?MIVAR name=UserInput COND=$(XST,$fname)>
-			$UserInput&fname=$fname
-		<?/MIVAR>
-		<?MIVAR name=UserInput COND=$(XST,$abbrev)>
-			$UserInput&abbrev=$abbrev
-		<?/MIVAR>
-		<?MIVAR name=UserInput COND=$(NC,$chrom_change,UNKNOWN)>
-			$UserInput&chrom_change=$chrom_change
-		<?/MIVAR>
-		<?MIVAR name=UserInput COND=$(EC,$chrom_change,UNKNOWN)>
-			$UserInput&chrom_change=any
-		<?/MIVAR>
-		<?MIVAR name=UserInput COND=$(NC,$mutagen,UNKNOWN)>
-			$UserInput&mutagen=$mutagen
-		<?/MIVAR>
-		<?MIVAR name=UserInput COND=$(EC,$mutagen,UNKNOWN)>
-			$UserInput&mutagen=any
-		<?/MIVAR>
-		<?MIVAR name=UserInput COND=$(XST,$line_type)>
-			$UserInput&line_type=$line_type
-		<?/MIVAR>
-		<?MIVAR name=UserInput COND=$(XST,$chrom_num)>
-			$UserInput&chrom_num=$chrom_num
-		<?/MIVAR>
-		<?MIVAR name=UserInput COND=$(XST,$knowgene)>
-			$UserInput&knowngene=$knowngene
-		<?/MIVAR>
-		<?MIVAR name=UserInput COND=$(XST,$anon1)>
-			$UserInput&anon1=$anon1
-		<?/MIVAR>
-		<?MIVAR name=UserInput COND=$(XST,$anon1text)>
-			$UserInput&anon1text=$anon1text
-		<?/MIVAR>
-	        <?MIVAR name=UserInput COND=$(XST,$structures)>
-			$UserInput&structures=$structures
-		<?/MIVAR>
-	        <?MIVAR name=UserInput COND=$(XST,$selected_separator)>
-			$UserInput&selected_separator=$selected_separator
-		<?/MIVAR>
-	        <?MIVAR name=UserInput COND=$(XST,$selected)>
-			$UserInput&selected=$(URLENCODE,$selected)
-		<?/MIVAR>
+       <!-- to be used by walking windows and nav tile page_id -->
+       <!-- javascript of nav tile logic can not deal with preformed string using urlencode so save non-urlencoded string for use by nav tile others will be appended -->
+       <!-- want GET string as short as possible - append only when variable exists, buffer overflow may cause segmentation fault -->
+
+
+        <?MIVAR name=comment>  Build array of user data  <?/MIVAR>
+	<?MIVAR name=selector>MIval=aa-fishlister.apg&WINSIZE=$WINSIZE<?/MIVAR>
+        <?MIVAR name=$UserInput><?/MIVAR>
+        <?MIVAR name=$TileInput><?/MIVAR>
+	<?MIVAR name=UserInput COND=$(XST,$allele)>$UserInput&allele=$allele<?/MIVAR>
+	<?MIVAR name=UserInput COND=$(XST,$abbrev)>$UserInput&abbrev=$abbrev<?/MIVAR>
+	<?MIVAR name=UserInput COND=$(NC,$chrom_change,UNKNOWN)>$UserInput&chrom_change=$chrom_change<?/MIVAR>
+	<?MIVAR name=UserInput COND=$(EC,$chrom_change,UNKNOWN)>$UserInput&chrom_change=any<?/MIVAR>
+	<?MIVAR name=UserInput COND=$(NC,$mutagen,UNKNOWN)>$UserInput&mutagen=$mutagen<?/MIVAR>
+	<?MIVAR name=UserInput COND=$(EC,$mutagen,UNKNOWN)>$UserInput&mutagen=any<?/MIVAR>
+	<?MIVAR name=UserInput COND=$(XST,$line_type)>$UserInput&line_type=$line_type<?/MIVAR>
+	<?MIVAR name=UserInput COND=$(XST,$chrom_num)>$UserInput&chrom_num=$chrom_num<?/MIVAR>
+	<?MIVAR name=UserInput COND=$(XST,$knowngene)>$UserInput&knowngene=$knowngene<?/MIVAR>
+	<?MIVAR name=UserInput COND=$(XST,$anon1)>$UserInput&anon1=$anon1<?/MIVAR>
+	<?MIVAR name=UserInput COND=$(XST,$structures)>$UserInput&structures=$structures<?/MIVAR>
+	<?MIVAR name=UserInput COND=$(XST,$selected_separator)>$UserInput&selected_separator=$selected_separator<?/MIVAR>
+        <?MIVAR name=$TileInput>$UserInput<?/MIVAR>
+	<?MIVAR name=UserInput COND=$(XST,$selected)>$UserInput&selected=$(URLENCODE,$selected)<?/MIVAR>
+	<?MIVAR name=UserInput COND=$(XST,$fname)>$UserInput&fname=$(URLENCODE,$fname)<?/MIVAR>
+        <?MIVAR name=UserInput COND=$(XST,$anon1text)>$UserInput&anon1text=$(URLENCODE,$anon1text)<?/MIVAR>
+
   <!--- Return to the previous set of Rows --->
   <?MIBLOCK COND="$(>,$BEGIN,1)">
 
   <?MIVAR>
-	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$(-,$BEGIN,$WINSIZE)&BEGIN=$BEGIN&$UserInput">Prev</A>&nbsp;&nbsp;&nbsp;&nbsp;<br>
+	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$(-,$BEGIN,$WINSIZE)&BEGIN=$BEGIN&$selector$UserInput">Prev</A>&nbsp;&nbsp;&nbsp;&nbsp;<br>
 
   <!-- If current not First Page, create link to first page. -->
-	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=1&BEGIN=1&$UserInput">First Page</A>
+	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=1&BEGIN=1&$selector$UserInput">First Page</A>
   <?/MIVAR>
 
   <?/MIBLOCK>
@@ -440,19 +414,19 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
 
   <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,3)),0)">
   <td valign=top>
-    <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,3))"> $(-,$CURRENT,3)</A> <?/MIVAR>
+    <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,3))"> $(-,$CURRENT,3)</A> <?/MIVAR>
 		  </td>
   <?/MIBLOCK>
 
   <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,2)),0)">
   <td valign=top>
-    <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,2))"> $(-,$CURRENT,2)</A><?/MIVAR>
+    <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,2))"> $(-,$CURRENT,2)</A><?/MIVAR>
 		  </td>
   <?/MIBLOCK>
 
   <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,1)),0)">
   <td valign=top>
-    <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,1))"> $(-,$CURRENT,1)</A><?/MIVAR>
+    <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,1))"> $(-,$CURRENT,1)</A><?/MIVAR>
 		  </td>
   <?/MIBLOCK>
 
@@ -465,19 +439,19 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
 
   <?MIVAR COND=$(<=,$(+,$BEGIN,$(*,$WINSIZE,1)),$num_recs)>
   <td valign=top>
-  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$END"> $(+,$CURRENT,1)</A>
+  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$END"> $(+,$CURRENT,1)</A>
 		  </td>
   <?/MIVAR>
 
   <?MIVAR COND=$(<=,$(+,$BEGIN,$(*,$WINSIZE,2)),$num_recs)>
   <td valign=top>
-  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,2))"> $(+,$CURRENT,2)</A>
+  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,2))"> $(+,$CURRENT,2)</A>
 		  </td>
   <?/MIVAR>
 
   <?MIVAR COND=$(<=,$(+,$BEGIN,$(*,$WINSIZE,3)),$num_recs)>
   <td valign=top>
-  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,3))"> $(+,$CURRENT,3)</A>
+  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,3))"> $(+,$CURRENT,3)</A>
 		  </td>
   <?/MIVAR>
 
@@ -486,7 +460,7 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
   <!--- Get the next set of Rows --->
   <?MIBLOCK COND="$(<=,$(+,$BEGIN,$WINSIZE),$num_recs)">
     <?MIVAR>
-	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$END&BEGIN=$BEGIN&$UserInput">Next</A><br>
+	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$END&BEGIN=$BEGIN&$selector$UserInput">Next</A><br>
     <?/MIVAR>
 
     <!-- Calculate last page -->
@@ -495,7 +469,7 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
     <?MIVAR name=$START COND="$(!=,$(MOD,$num_recs,$WINSIZE),0)">$(+,$(*,$(FIX,$(/,$num_recs,$WINSIZE)),$WINSIZE),1)<?/MIVAR>
 
     <?MIVAR>
-      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$START">Last Page</A>
+      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$START">Last Page</A>
     <?/MIVAR>
   <?/MIBLOCK>
 
@@ -514,25 +488,29 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
 <!-- Cause a tile for the new page to appear in the navigator frame -->
 <!-- startframes.apg will pass variables on to appropriate page -->
 <!-- don't want a tile if got here via the accessionlister  -->
+
+
 <?MIBLOCK COND="$(AND,$(NXST,$accession),$(NC,$line_type,wild_type))">
-	<?MIVAR NAME=page_title>Find MUTANT<?/MIVAR>
-	<?MIVAR NAME=navtile>true<?/MIVAR>
-	<?MIVAR COND="$(NXST,$fname)" NAME=$fname><?/MIVAR>
-	<?MIVAR COND="$(NXST,$allele)" NAME=$allele><?/MIVAR>
-	<?MIVAR COND="$(NXST,$nav_abbrev)" NAME=$nav_abbrev><?/MIVAR>
-	<?MIVAR COND="$(NXST,$anon1text)" NAME=$anon1text><?/MIVAR>
-	<?MIVAR COND="$(NXST,$knowngene)" NAME=$knowngene><?/MIVAR>
-	<?MIVAR COND="$(NXST,$BEGIN)" NAME=$BEGIN><?/MIVAR>
-	<?MIVAR COND="$(NXST,$WINSIZE)" NAME=$WINSIZE><?/MIVAR>
+  <?MIVAR NAME=page_title>Find MUTANT<?/MIVAR>
+  <?MIVAR name=$TileInput>$TileInput&navtile=true<?/MIVAR>
+  <?MIVAR name=$TileInput COND="$(XST,$BEGIN)">$TileInput&BEGIN=$BEGIN<?/MIVAR>
+  <?MIVAR name=$TileInput COND="$(XST,$WINSIZE)">$TileInput&WINSIZE=$WINSIZE<?/MIVAR>
+ 
+  <?MIVAR COND="$(XST,$(URLENCODE,$fname))" NAME=$(URLENCODE,$fname)><?/MIVAR>
+  <?MIVAR COND="$(XST,$(URLENCODE,$anon1text))" NAME=$(URLENCODE,$anon1text)><?/MIVAR> 
+  <?MIVAR COND="$(NXST,$fname)" NAME=$fname><?/MIVAR>
+  <?MIVAR COND="$(NXST,$anon1text)" NAME=$anon1text><?/MIVAR>
+
+  <!-- replaced top.content.location.href with hardcoding of location.  href contained variables after the navtile button was used, This could cause some variables to be used that were not in the current selection.  -->
 
   <SCRIPT>
     <?MIBLOCK COND="$(XST,$structures)">
       <?MIVAR>
-        var page_id=top.content.location.href+'&structures=$structures&navtile=$navtile&fname=$fname&chrom_change=$chrom_change&chrom_num=$chrom_num&mutagen=$mutagen&anon1=$anon1&anon1text=$anon1text&allele=$allele&abbrev=$nav_abbrev&line_type=$line_type&knowngene=$knowngene&selected_separator=$selected_separator&WINSIZE=$WINSIZE&BEGIN=$BEGIN';
+        var page_id='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&frame_size=250&selector=aa-fishselect.apg&select_from=Mutants&line_type=mutant&intro=/ZFIN/help_files/mut_intro.html$TileInput&structures=$structures&fname=$(URLENCODE,$fname)&anon1text=$(URLENCODE,$anon1text)';
       <?/MIVAR>
     <?MIELSE>
-      <?MIVAR>
-        var page_id=top.content.location.href+'&navtile=$navtile&fname=$fname&chrom_change=$chrom_change&chrom_num=$chrom_num&mutagen=$mutagen&anon1=$anon1&anon1text=$anon1text&allele=$allele&abbrev=$nav_abbrev&line_type=$line_type&knowngene=$knowngene&WINSIZE=$WINSIZE&BEGIN=$BEGIN';
+       <?MIVAR>
+         var page_id='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&frame_size=250&selector=aa-fishselect.apg&select_from=Mutants&line_type=mutant&intro=/ZFIN/help_files/mut_intro.html$TileInput&fname=$(URLENCODE,$fname)&anon1text=$(URLENCODE,$anon1text)';
       <?/MIVAR>
     <?/MIBLOCK>
 

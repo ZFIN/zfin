@@ -144,35 +144,31 @@ $(IF,$(AND,$(EC,$6,NULL),$(EC,$5,NULL),$(EC,$6,NULL)),Unavailable.)
 	<tr>
 		<td width="45%" align=right valign=top>&nbsp;
 
+<!-- to be used by walking windows and nav tile page_id -->
+<!-- javascript of nav tile logic can not deal with preformed string using urlencode so save non-urlencoded string for use by nav tile others will be appended -->
+<!-- want GET string as short as possible - append only when variable exists, buffer overflow may cause segmentation fault -->
+
+
 <?MIVAR name=comment>  Build array of user data  <?/MIVAR>
-	<?MIVAR name=UserInput>MIval=aa-perslister.apg&WINSIZE=$WINSIZE<?/MIVAR>
-			<?MIVAR name=UserInput COND=$(XST,$searchtype)>
-				$UserInput&searchtype=$searchtype
-			<?/MIVAR>
-			<?MIVAR name=UserInput COND=$(XST,$pname)>
-				$UserInput&pname=$pname
-			<?/MIVAR>
-			<?MIVAR name=UserInput COND=$(XST,$address)>
-				$UserInput&address=$address
-			<?/MIVAR>
-			<?MIVAR name=UserInput COND=$(XST,$email)>
-				$UserInput&email=$email
-			<?/MIVAR>
-		<?MIVAR name=UserInput COND=$(XST,$anon1)>
-			$UserInput&anon1=$anon1
-		<?/MIVAR>
-		<?MIVAR name=UserInput COND=$(XST,$anon1text)>
-			$UserInput&anon1text=$anon1text
-		<?/MIVAR>
+<?MIVAR name=selector>MIval=aa-perslister.apg&WINSIZE=$WINSIZE<?/MIVAR>
+<?MIVAR name=$UserInput><?/MIVAR>
+<?MIVAR name=$TileInput><?/MIVAR>
+<?MIVAR name=UserInput COND=$(XST,$searchtype)>$UserInput&searchtype=$searchtype<?/MIVAR>
+<?MIVAR name=UserInput COND=$(XST,$anon1)>$UserInput&anon1=$anon1<?/MIVAR>
+<?MIVAR name=$TileInput>$UserInput<?/MIVAR>
+<?MIVAR name=UserInput COND=$(XST,$pname)>$UserInput&pname=$(URLENCODE,$pname)<?/MIVAR>
+<?MIVAR name=UserInput COND=$(XST,$address)>$UserInput&address=$(URLENCODE,$address)<?/MIVAR>
+<?MIVAR name=UserInput COND=$(XST,$email)>$UserInput&email=$(URLENCODE,$email)<?/MIVAR>
+<?MIVAR name=UserInput COND=$(XST,$anon1text)>$UserInput&anon1text=$(URLENCODE,$anon1text)<?/MIVAR>
 
 <!--- Return to the previous set of Rows --->
 <?MIBLOCK COND="$(>,$BEGIN,1)">
 	
 <?MIVAR>
-	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$(-,$BEGIN,$WINSIZE)&BEGIN=$BEGIN&$UserInput">Prev</A>&nbsp;&nbsp;&nbsp;&nbsp;<br>
+	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$(-,$BEGIN,$WINSIZE)&BEGIN=$BEGIN&$selector$UserInput">Prev</A>&nbsp;&nbsp;&nbsp;&nbsp;<br>
 
 <!-- If current not First Page, create link to first page. -->
-	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=1&BEGIN=1&$UserInput">First Page</A>
+	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=1&BEGIN=1&$selector$UserInput">First Page</A>
 <?/MIVAR>
 
 <?/MIBLOCK>
@@ -184,19 +180,19 @@ $(IF,$(AND,$(EC,$6,NULL),$(EC,$5,NULL),$(EC,$6,NULL)),Unavailable.)
 
 <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,3)),0)">
 <td valign=top>
-  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,3))"> $(-,$CURRENT,3)</A> <?/MIVAR>
+  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,3))"> $(-,$CURRENT,3)</A> <?/MIVAR>
 		</td>
 <?/MIBLOCK>
 
 <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,2)),0)">
 <td valign=top>
-  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,2))"> $(-,$CURRENT,2)</A><?/MIVAR>
+  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,2))"> $(-,$CURRENT,2)</A><?/MIVAR>
 		</td>
 <?/MIBLOCK>
 
 <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,1)),0)">
 <td valign=top>
-  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,1))"> $(-,$CURRENT,1)</A><?/MIVAR>
+  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,1))"> $(-,$CURRENT,1)</A><?/MIVAR>
 		</td>
 <?/MIBLOCK>
 
@@ -208,19 +204,19 @@ $(IF,$(AND,$(EC,$6,NULL),$(EC,$5,NULL),$(EC,$6,NULL)),Unavailable.)
 
 <?MIVAR COND=$(<=,$(+,$BEGIN,$(*,$WINSIZE,1)),$num_recs)>
 <td valign=top>
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$END"> $(+,$CURRENT,1)</A>
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$END"> $(+,$CURRENT,1)</A>
 		</td>
 <?/MIVAR>
 
 <?MIVAR COND=$(<=,$(+,$BEGIN,$(*,$WINSIZE,2)),$num_recs)>
 <td valign=top>
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,2))"> $(+,$CURRENT,2)</A>
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,2))"> $(+,$CURRENT,2)</A>
 		</td>
 <?/MIVAR>
 
 <?MIVAR COND=$(<=,$(+,$BEGIN,$(*,$WINSIZE,3)),$num_recs)>
 <td valign=top>
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,3))"> $(+,$CURRENT,3)</A>
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,3))"> $(+,$CURRENT,3)</A>
 		</td>
 <?/MIVAR>
 
@@ -229,7 +225,7 @@ $(IF,$(AND,$(EC,$6,NULL),$(EC,$5,NULL),$(EC,$6,NULL)),Unavailable.)
 <!--- Get the next set of Rows --->
 <?MIBLOCK COND="$(<=,$(+,$BEGIN,$WINSIZE),$num_recs)">
 <?MIVAR>
-	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$END&BEGIN=$BEGIN&$UserInput">Next</A><br>
+	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$END&BEGIN=$BEGIN&$selector$UserInput">Next</A><br>
 <?/MIVAR>
 
 
@@ -243,7 +239,7 @@ $(IF,$(AND,$(EC,$6,NULL),$(EC,$5,NULL),$(EC,$6,NULL)),Unavailable.)
 <?/MIVAR>
 
 <?MIVAR>
-	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$START&$UserInput">Last Page</A>
+	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$START&$selector$UserInput">Last Page</A>
 <?/MIVAR>
 <?/MIBLOCK>
 
@@ -256,25 +252,32 @@ $(IF,$(AND,$(EC,$6,NULL),$(EC,$5,NULL),$(EC,$6,NULL)),Unavailable.)
 <!-- Cause a tile for the new page to appear in the navigator frame -->
 <!-- startframes.apg will pass variables on to appropriate page -->
 <!-- don't want a tile if got here via the accessionlister  -->
-<?MIBLOCK COND="$(NXST,$accession)">
-<?MIVAR NAME=page_title>Find PERSON<?/MIVAR>
-<?MIVAR NAME=navtile>true<?/MIVAR>
-<?MIVAR COND="$(NXST,$pname)" NAME=$pname><?/MIVAR>
-<?MIVAR COND="$(NXST,$address)" NAME=$address><?/MIVAR>
-<?MIVAR COND="$(NXST,$anon1text)" NAME=$anon1text><?/MIVAR>
-<?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>phone<?/MIVAR>
-<?MIVAR COND="$(NXST,$searchtype)" NAME=$searchtype>contains<?/MIVAR>
-<?MIVAR COND="$(NXST,$email)" NAME=$email><?/MIVAR>
-<?MIVAR COND="$(NXST,$BEGIN)" NAME=$BEGIN><?/MIVAR>
-<?MIVAR COND="$(NXST,$WINSIZE)" NAME=$WINSIZE><?/MIVAR>
 
-<?MIVAR>
-<SCRIPT>
-var page_id=top.content.location.href+'&navtile=$navtile&name=$pname&anon1text=$anon1text&address=$address&anon1=$anon1&searchtype=$searchtype&email=$email&WINSIZE=$WINSIZE&BEGIN=$BEGIN';
-top.update_hist(page_id,"$page_title");
-top.controls.location.reload(true);
-</SCRIPT>
-<?/MIVAR>
+<!-- URLENCODE calls retain value if variable in function had a value the foirst call and is null the second call-->
+<!--  be sure to force a reset of URLENCODE -->
+
+<?MIBLOCK COND="$(NXST,$accession)">
+  <?MIVAR NAME=page_title>Find PERSON<?/MIVAR>
+  <?MIVAR name=$TileInput>$TileInput&navtile=true<?/MIVAR>
+  <?MIVAR name=$TileInput COND="$(XST,$BEGIN)">$TileInput&BEGIN=$BEGIN<?/MIVAR>
+  <?MIVAR name=$TileInput COND="$(XST,$WINSIZE)">$TileInput&WINSIZE=$WINSIZE<?/MIVAR>
+
+  <?MIVAR COND="$(NXST,$pname)" NAME=$pname><?/MIVAR>
+  <?MIVAR COND="$(NXST,$address)" NAME=$address><?/MIVAR>
+  <?MIVAR COND="$(NXST,$anon1text)" NAME=$anon1text><?/MIVAR>
+  <?MIVAR COND="$(NXST,$email)" NAME=$email><?/MIVAR>
+  <?MIVAR COND="$(XST,$(URLENCODE,$address))" NAME=$(URLENCODE,$address)><?/MIVAR>
+  <?MIVAR COND="$(XST,$(URLENCODE,$anon1text))" NAME=$(URLENCODE,$anon1text)><?/MIVAR>
+  <?MIVAR COND="$(XST,$(URLENCODE,$email))" NAME=$(URLENCODE,$email)><?/MIVAR>
+  <?MIVAR COND="$(XST,$(URLENCODE,$pname))" NAME=$(URLENCODE,$pname)><?/MIVAR>
+
+  <?MIVAR>
+    <SCRIPT>
+      var page_id=top.content.location.href+'$TileInput&name=$(URLENCODE,$pname)&anon1text=$(URLENCODE,$anon1text)&address=$(URLENCODE,$address)&email=$(URLENCODE,$email)';
+      top.update_hist(page_id,"$page_title");
+      top.controls.location.reload(true);
+    </SCRIPT>
+  <?/MIVAR>
 <?/MIBLOCK>
 
 </HTML>
