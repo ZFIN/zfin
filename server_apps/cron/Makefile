@@ -42,7 +42,8 @@ include $(TOP)/make.default.rules
 # Provide targets to start and stop cron.
 #   stop	Clears the CURRENT USER's crontab file on this machine
 #   start	Sets the CURRENT USER's crontab file on this machine.
-#               If running on chromix this uses just the file "crontab".
+#               If not running on embryonix (i.e., you are running on the
+#               regular production machine) this uses just the file "crontab".
 #               If running on embryonix this uses the file "crontab" and
 #               the file "crontab.development" concatenated together.
 #   startdevl   Sets the CURRENT USER's crontable file on this machine
@@ -61,7 +62,7 @@ include $(TOP)/make.default.rules
 # ZFIN_WWW tree will not fire any targets in this directory.
 
 start : $(TARGETS)
-  ifeq ($(HOST),chromix)
+  ifneq ($(HOST),embryonix)
 	/bin/crontab $(TARGETDIR)/crontab
   else
 	/bin/cat $(TARGETDIR)/crontab $(TARGETDIR)/crontab.development | /bin/crontab
