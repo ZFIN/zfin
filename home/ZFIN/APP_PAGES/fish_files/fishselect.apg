@@ -367,9 +367,7 @@ function call_reset() {
 	<TH>Locus (abbrev) [previous names]</TH>
 	<TH>Gene</TH> 
 	<TH>Mut. Type</TH> 
-	<TH>LG</TH>
-	<TH>Location</TH> 
-	<TH> </TH>
+	<TH>Map</TH>
 
 	<!--- EXECUTION --->
 	<!--- Query Database --->
@@ -462,134 +460,8 @@ function call_reset() {
 	      $(IF,$(OR,$(EC,$q_chrom_change,NULL),$(EC,$q_chrom_change,unknown)),&nbsp;&nbsp;-&nbsp;&nbsp;,$q_chrom_change)</font> 
 	    </TD> 
 
-	    <!-- get independent linkage info for other members of linkage or 
-	      -- for allele itself if it is the only linkage member -->
-
-	    <?MIVAR NAME=$independ_lg>null<?/MIVAR>
-	    <?MISQL SQL="
-	      select distinct lnkg_or_lg 
-		from linkage, linkage_member
-	       where lnkgmem_member_zdb_id = '$fish_id'
-		and  lnkgmem_linkage_zdb_id = lnkg_zdb_id
-		and  lnkg_private = 'f'
-		;">
-	      <?MIVAR NAME=$independ_lg>$1<?/MIVAR>
-	      <?MIBLOCK COND="$(>,$MI_CURRENTROW,1)">
-		<?MIVAR>
-		  <TR bgcolor="$row_color">
-		    <TD>&nbsp;</TD>
-		    <TD>&nbsp;</TD>
-		    <TD>&nbsp;</TD>
-		    <TD>&nbsp;</TD>
-		    <TD>&nbsp;</TD>
-		  </TR>
-		<?/MIVAR>
-	      <?/MIBLOCK>
-	      <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
-		<TD align=center>
-		  <?MIVAR>$independ_lg<?/MIVAR> 
-		</TD> 
-		<TD align=center>
-		  &nbsp;&nbsp;-&nbsp;&nbsp;
-		</TD>
-	      </TR>
-	      <?/MIBLOCK>
-	    <?/MISQL>
-
-	  <!-- ref panel data -->
-	  <?MIVAR NAME=$lg>null<?/MIVAR>
-	    <?MISQL SQL="
-	      select or_lg, lg_location, metric 
-		from mapped_marker 
-		where marker_id in ( '$locus', '$fish_id');">
-	      <?MIVAR NAME=$lg>$1<?/MIVAR>
-	      <?MIVAR NAME=$lg_location>$2<?/MIVAR>      
-	      <?MIVAR NAME=$metric>$3<?/MIVAR>
-
-	      <?MIBLOCK COND="$(OR,$(>,$MI_CURRENTROW,1),$(AND,$(=,$MI_CURRENTROW,1),$(NC,$independ_lg,null)))">
-		<?MIVAR>
-		  <TR bgcolor="$row_color"> 
-		    <TD>&nbsp;</TD>
-		    <TD>&nbsp;</TD>
-		    <TD>&nbsp;</TD>
-		    <TD>&nbsp;</TD>
-		    <TD>&nbsp;</TD>
-		    <TD align=center>
-		      <?MIVAR>$lg<?/MIVAR> 
-		    </TD> 
-		    <TD>
-		      <?MIVAR>$lg_location<?/MIVAR> 
-		    </TD>
-		  </TR>
-		<?/MIVAR>
-	      <?/MIBLOCK>
-
-	      <?MIBLOCK COND="$(AND,$(=,$MI_CURRENTROW,1),$(EC,$independ_lg,null))">
-		<TD align=center>
-		  <?MIVAR>$lg<?/MIVAR> 
-		</TD> 
-		<TD>
-		  <?MIVAR>$lg_location<?/MIVAR> 
-		</TD>
-		</TR>
-	      <?/MIBLOCK>
-	    <?/MISQL>
-
-	    <!-- if mapping found location  view map buttons -->
-
-	    <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
-	      <!-- create view map buttons -->
-	      <?MIVAR>
-		<form method=post  name="$q_allele" action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi">
-		  <input type=hidden name=view_map value="view_map">
-		  <input type=hidden name=userid value="GUEST">
-		  <input type=hidden name=marker value=$q_abbrev>
-		  <input type=hidden name=MGH value=1> 
-		  <input type=hidden name=MOP value=1>
-		  <input type=hidden name=GAT value=1>
-		  <input type=hidden name=HS value=1>
-		  <input type=hidden name=LN54 value=1>
-		  <input type=hidden name=T51 value=1>
-
-		  <TR bgcolor="$row_color"> 
-		    <TD>&nbsp;</TD>
-		    <TD>&nbsp;</TD>
-		    <TD>&nbsp;</TD>
-		    <TD align=left>
-		      <font size=1>
-		      <input type=button value='VIEW MERGED MAP' 
-			     name=view_merge_map 
-			     onClick="document.$q_allele.action='/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi';document.$q_allele.submit();">
-		    </TD>
-		    <TD>&nbsp;</TD>
-		    <TD align=left>
-		      <font size=1>
-		      <input type=submit value='VIEW INDIVIDUAL MAPS' 
-			     name=view_map >
-		    </TD>
-		    <TD>&nbsp;</TD>
-		  </TR>
-		</form>
-	      <?/MIVAR>   
-	    <?/MIBLOCK>
-
-
-	    <!-- if no ref panel and no independ link and no lg know -->
-
-
-	    <?MIBLOCK COND="$(AND,$(EC,$q_chrom_num,0),$(EC,$lg,null),$(EC,$independ_lg,null))">
-	      <TD align=center>&nbsp;&nbsp;-&nbsp;&nbsp;</TD>
-	      <TD align=center>&nbsp;&nbsp;-&nbsp;&nbsp;</TD>
-	      </TR>
-	    <?/MIBLOCK>
-
-	    <!-- if no ref panel and no independ link and lg know -->
-	    <?MIBLOCK COND="$(AND,$(NC,$q_chrom_num,0),$(EC,$lg,null),$(EC,$independ_lg,null))">
-	      <TD align=center><?MIVAR>$q_chrom_num<?/MIVAR></TD>
-	      <TD align=center>&nbsp;&nbsp;-&nbsp;&nbsp;</TD>
-	      </TR>
-	    <?/MIBLOCK>
-
+ 	    <TD><?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini&split=break&hide_empty=t&oID=$fish_id') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+            </TD>
 
 	    </TR>
 
