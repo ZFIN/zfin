@@ -105,7 +105,7 @@ $redirect_fimgnew_height_param = "&fimgnew_height=";
 $redirect_fimgnew_width_param = "&fimgnew_width=";
 
 $redirect_xpcur_width_param = "&xpcur_width=";
-$redirect_xpcur_width_param = "&xpcur_height=";
+$redirect_xpcur_height_param = "&xpcur_height=";
 
 $redirect_height_param = "&height=";
 $redirect_width_param = "&width=";
