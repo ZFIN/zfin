@@ -49,6 +49,8 @@ Don't record this event as a 'login' in the login count!
    
     <?MIVAR COND="$(NXST,$login)" NAME=$login> <?/MIVAR>
     <?MIVAR COND="$(NXST,$password)" NAME=$password> <?/MIVAR>
+    <?MISQL SQL="select first 1 vet_password($password) from panels;"><?/MISQL>
+    <?MIVAR NAME=$password>$1<?/MIVAR>
     <?MISQL SQL="execute function sysexec('encryptpass', '$password');"><?/MISQL>
     <?MIVAR NAME=$encryptedpass>$1<?/MIVAR>
     <?MISQL SQL="select zdb_id,get_random_cookie(),access from ZDB_submitters where login='$login' and password='$encryptedpass';"><?/MISQL>
