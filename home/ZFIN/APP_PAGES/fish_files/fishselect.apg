@@ -10,7 +10,7 @@ function updateList() {
 
 <?MIVAR>
 function start_help(anchor) {
-   top.zfinhelp=open("/cgi-bin_B/webdriver?MIval=aa-helpframes.html&calling_page=$MIval&anchor="+anchor,"helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
+   top.zfinhelp=open("/cgi-bin_B/webdriver?MIval=aa-helpframes.html&calling_page=fishselecthelp.html&anchor="+anchor,"helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
 }
 <?/MIVAR>
 
