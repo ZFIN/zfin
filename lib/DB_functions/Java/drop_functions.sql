@@ -1,7 +1,7 @@
 -- drop functions
 
-drop function pad_string(varchar(255), int);
-drop function pad_string(varchar(255));
+drop function zero_pad(varchar(255), int);
+drop function zero_pad(varchar(255));
 
 -- uninstall the Java UDR jar file 
 
