@@ -11,13 +11,14 @@ import java.util.ArrayList;
 public class SearchCategory
     {
     // IMPORTANT! any changes to these categories means that both the IndexApp 
-    // and the SearchApp must also change!
+    // and the Spider.java must also change!
     public static final String MUTANTS_FISHVIEW         = "MUTANTS_FISHVIEW";
     public static final String MUTANTS_LOCUSVIEW        = "MUTANTS_LOCUSVIEW";
     public static final String MUTANTS_MAPPINGDETAIL    = "MUTANTS_MAPPINGDETAIL";
     public static final String GENES_MARKERVIEW         = "GENES_MARKERVIEW";
-    public static final String GENES_MARKERGOVIEW       = "GENES_MARKERGOVIEW";
     public static final String GENES_SEQUENCE           = "GENES_SEQUENCE";
+	public static final String GENES_GENEPRDDESCRIPTION = "GENES_GENEPRDDESCRIPTION";
+    public static final String GENES_MARKERGOVIEW       = "GENES_MARKERGOVIEW"; 
     public static final String GENES_MAPPINGDETAIL      = "GENES_MAPPINGDETAIL";
     public static final String IMAGES                   = "IMAGES";
     public static final String EXPRESSION_XPATVIEW      = "EXPRESSION_XPATVIEW";
@@ -45,7 +46,7 @@ public class SearchCategory
         String[] mutantTypes = {MUTANTS_FISHVIEW, MUTANTS_LOCUSVIEW, MUTANTS_MAPPINGDETAIL};
         categoryList.add(new SearchCategory("MUTANTS", "Mutants/Transgenics", mutantTypes));
         
-        String[] geneTypes = {GENES_MARKERVIEW, GENES_MARKERGOVIEW, GENES_SEQUENCE, GENES_MAPPINGDETAIL};
+        String[] geneTypes = {GENES_MARKERVIEW, GENES_SEQUENCE, GENES_GENEPRDDESCRIPTION, GENES_MARKERGOVIEW, GENES_MAPPINGDETAIL};
         categoryList.add(new SearchCategory("GENES", "Genes/Markers/Clones", geneTypes));
         
         String[] expressionTypes = {EXPRESSION_XPATVIEW, EXPRESSION_XPATINDEXVIEW};
@@ -57,11 +58,11 @@ public class SearchCategory
         String[] publicationTypes = {PUBLICATIONS};
         categoryList.add(new SearchCategory("PUBLICATIONS", "Publications", publicationTypes));
 
-        String[] peopleTypes = {PEOPLE_PERSVIEW, PEOPLE_LABVIEW};
-        categoryList.add(new SearchCategory("PEOPLE", "People", peopleTypes));
-
         String[] anatomyTypes = {ANATOMY_ITEM, ANATOMY_ZFINFO};
         categoryList.add(new SearchCategory("ANATOMY", "Anatomy", anatomyTypes));
+		
+        String[] peopleTypes = {PEOPLE_PERSVIEW, PEOPLE_LABVIEW};
+        categoryList.add(new SearchCategory("PEOPLE", "People", peopleTypes));
 
         String[] zfbookTypes = {ZEBRAFISH_BOOK};
         categoryList.add(new SearchCategory("ZF_BOOK", "The Zebrafish Book", zfbookTypes));
