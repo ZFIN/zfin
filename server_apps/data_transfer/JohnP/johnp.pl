@@ -1,6 +1,6 @@
 #!/local/bin/perl 
 #  Script to create files for John Postlethwait for checking SC sequence data
-#  output files are written to /research/zfin/chromix/www/home/transfer/JohnP
+#  output files are written to <!--|ROOT_PATH|-->/home/transfer/JohnP
 $ENV{"DBDATE"}="Y4MD-";
 $ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
 $ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
