@@ -22,6 +22,9 @@
   $(SETVAR,$OID,$1)
 <?/MISQL>
 
+<?MIVAR NAME=$userid>GUEST<?/MIVAR>
+<?MISQL SQL="select object from webPages where ID='aa-chromoscripts.apg';">$1<?/MISQL>
+
 <SCRIPT>
 
   <?MIVAR>
@@ -78,6 +81,8 @@
 <?/MIBLOCK>
 
 <?MIBLOCK COND="$(XST,$OID)">
+
+
 
   <?MIBLOCK COND="$(NXST,$accession)">
     <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
@@ -350,17 +355,16 @@
 	<!------------- Locus Description ------------------------>
 
      
-	<!------------- Linkage Group	  ------------------------>
-	
-	 <?MISQL SQL="
-	   select distinct chrom_num 
-	     from fish_search 
-	     where locus ='$OID' 
-	       and chrom_num <> 0 ;">
-	   $(IF,$(NC,$1,0),<p><b>"LINKAGE GROUP:" $1</b>)
-	 <?/MISQL>
-	
-	<!------------- ends Linkage Group	  ------------------------>
+        <!------------- mapping information   -------------------------->
+          <p>  
+	  <b>MAPPING INFORMATION:</b>
+          <TABLE width="100%" bgcolor=<?MIVAR>"$highlight"<?/MIVAR>>
+          <TR><TD>
+          &nbsp;&nbsp;<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini&oID=$OID') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+          </TD></TR>
+          </TABLE>
+
+         <!------------------ end mapping info  -------------------->  
 
 
         <!------------- Summary of alleles  ------------------------>
@@ -384,7 +388,6 @@
 	    <TD><b>Allele</b></TD>
 	    <TD><b>Prev. Names</b></TD>	
             <TD><b>Mut. Type</b></TD>
-            <TD><b>Avail. Map Info</b></TD>
             <TD><b>Brief Description</b></TD>
 	    </TR>
 	    <?MISQL SQL="
@@ -435,30 +438,7 @@
 	      </TD>
 
 	      <TD>$(IF,$(NC,$chrom_change,NULL),$chrom_change,"Unknown")</TD>
-	      <TD>
-	      <?MIBLOCK COND="$(OR,$(>,$paneled,0),$(>,$linkages,0))">
-                <?MISQL SQL="select distinct or_lg,private
-                  from mapped_marker
-                    where marker_id = '$OID'
-                union 
-                  select distinct lnkg_or_lg ,lnkg_private
-		    from linkage_member, linkage
-		      where lnkgmem_member_zdb_id = '$fish_id'
-			and lnkgmem_linkage_zdb_id = lnkg_zdb_id;">
-                 <?MIVAR NAME=$lg>$1<?/MIVAR>
-		 <?MIVAR NAME=$map_private>$2<?/MIVAR>
-                 <?MIBLOCK COND="$(NC,$map_private,t)"> 
-                   <?MIVAR>
-                     $(IF,$(=,$MI_CURRENTROW,1),LG $lg,,LG $lg) 
-                   <?/MIVAR>
-                 <?MIELSE>
-                   Mapped, but still confidential
-                 <?/MIBLOCK> 
-                <?/MISQL>
-              <?/MIBLOCK>
-	      $(IF,$(>,$del_markers,0),"+/- markers<br>")
-	      $(IF,$(AND,$(=,$del_markers,0),$(=,$linkages,0),$(=,$paneled,0)),"Unmapped")
-	      </td>
+	      
 	      <TD>
 	      $(IF,$(>,$mindex,0),$(SUBSTR,$phenotype,1,$(-,$mindex,1)),"")
 	      </TD>
