@@ -130,7 +130,28 @@ $(SETVAR,$pcount,$1)
 <?MIVAR NAME=$tcount>$1<?/MIVAR>
 
 <?MIVAR NAME=$true_count>0<?/MIVAR>
-<?MISQL SQL="select distinct count(*)::integer from all_mapped_markers a, db_link b where lower(b.acc_num) like lower('%$aname%') and b.linked_recid = a.zdb_id union select distinct count(*)::integer from all_mapped_markers a, db_link b, orthologue c where lower(b.acc_num) like lower('%$aname%') and b.linked_recid = c.zdb_id and c.c_gene_id = a.zdb_id union  select distinct count(*)::integer from all_genes a , db_link b where  lower(b.acc_num) like lower('%$aname%') and b.linked_recid= a.zdb_id union  select distinct count(*)::integer from all_genes a , db_link b, orthologue c where lower(b.acc_num) like lower('%$aname%') and  b.linked_recid = c.zdb_id and c.c_gene_id = a.zdb_id ;">
+<?MISQL SQL="
+  select distinct count(*)::integer 
+    from all_mapped_markers a, db_link b 
+    where lower(b.acc_num) like lower('%$aname%') 
+      and b.linked_recid = a.zdb_id 
+  union 
+  select distinct count(*)::integer 
+    from all_mapped_markers a, db_link b, orthologue c 
+    where lower(b.acc_num) like lower('%$aname%') 
+      and b.linked_recid = c.zdb_id 
+      and c.c_gene_id = a.zdb_id
+  union
+  select distinct count(*)::integer
+    from all_genes a , db_link b 
+    where lower(b.acc_num) like lower('%$aname%')
+      and b.linked_recid= a.zdb_id
+  union
+  select distinct count(*)::integer
+    from all_genes a , db_link b, orthologue c 
+    where lower(b.acc_num) like lower('%$aname%') 
+      and b.linked_recid = c.zdb_id 
+      and c.c_gene_id = a.zdb_id ;">
 
 $(SETVAR,$true_count,$(+,$true_count,$1))
 <?/MISQL>
@@ -185,7 +206,40 @@ Options:
 
 <?MIBLOCK COND="$(OR,$(NC,$mcount,0),$(NC,$gcount,0))">
 
-<?MISQL SQL="select abbrev as marker_name,mtype,lg_location,a.zdb_id,OR_lg,target_id,target_abbrev,abbrev,private,owner $ending, metric, day(entry_date::date),month(entry_date::date), year(entry_date::date) from all_mapped_markers a, db_link b where lower(b.acc_num) like lower('%$aname%') and b.linked_recid = a.zdb_id union select abbrev as marker_name,mtype,lg_location,a.zdb_id,OR_lg,target_id,target_abbrev,abbrev,private,owner $ending, metric, day(entry_date::date),month(entry_date::date), year(entry_date::date) from all_mapped_markers a, db_link b, orthologue c where lower(b.acc_num) like lower('%$aname%') and b.linked_recid = c.zdb_id and c.c_gene_id = a.zdb_id union  select a.abbrev, 'GENE',0, a.zdb_id, 0, 'NULL'::varchar(50),'NULL'::varchar(10),a.abbrev,'f'::boolean,''::varchar(50),NULL::numeric(8,2),'NULL'::varchar(10),'NULL'::varchar(5),day(NULL::date),month(NULL::date),year(NULL::date) from all_genes a , db_link b where a.OR_lg = 0 and lower(b.acc_num) like lower('%$aname%') and b.linked_recid = a.zdb_id union select a.abbrev, 'GENE',0, a.zdb_id, 0, 'NULL'::varchar(50),'NULL'::varchar(10),a.abbrev,'f'::boolean,'NULL'::varchar(50),NULL::numeric(8,2),'NULL'::varchar(10),'NULL'::varchar(5),day(NULL::date),month(NULL::date),year(NULL::date) from all_genes a , db_link b, orthologue c where a.OR_lg = 0 and lower(b.acc_num) like lower('%$aname%') and  b.linked_recid = c.zdb_id and c.c_gene_id = a.zdb_id ;" MAXROWS=$limit>
+<?MISQL SQL="
+  select abbrev as marker_name, mtype, lg_location, a.zdb_id, OR_lg, target_id,
+         target_abbrev, abbrev, private, owner $ending, metric, 
+         day(entry_date::date), month(entry_date::date), year(entry_date::date)
+    from all_mapped_markers a, db_link b
+    where lower(b.acc_num) like lower('%$aname%')
+      and b.linked_recid = a.zdb_id
+  union
+  select abbrev as marker_name, mtype, lg_location, a.zdb_id, OR_lg, target_id,
+	 target_abbrev, abbrev, private, owner $ending, metric,
+	 day(entry_date::date), month(entry_date::date), year(entry_date::date)
+    from all_mapped_markers a, db_link b, orthologue c
+    where lower(b.acc_num) like lower('%$aname%') 
+      and b.linked_recid = c.zdb_id
+      and c.c_gene_id = a.zdb_id
+  union
+  select a.abbrev, 'GENE', 0, a.zdb_id, '0', 'NULL'::varchar(50), 
+         'NULL'::varchar(10), a.abbrev, 'f'::boolean, ''::varchar(50), 
+	 NULL::numeric(8,2), 'NULL'::varchar(10), 'NULL'::varchar(5),
+	 day(NULL::date), month(NULL::date), year(NULL::date)
+    from all_genes a , db_link b
+    where a.OR_lg = 0
+      and lower(b.acc_num) like lower('%$aname%')
+      and b.linked_recid = a.zdb_id
+  union 
+  select a.abbrev, 'GENE', 0, a.zdb_id, '0', 'NULL'::varchar(50),
+	 'NULL'::varchar(10), a.abbrev, 'f'::boolean, 'NULL'::varchar(50),
+	 NULL::numeric(8,2), 'NULL'::varchar(10), 'NULL'::varchar(5), 
+	 day(NULL::date), month(NULL::date), year(NULL::date)
+    from all_genes a , db_link b, orthologue c
+    where a.OR_lg = 0 
+      and lower(b.acc_num) like lower('%$aname%')
+      and b.linked_recid = c.zdb_id
+      and c.c_gene_id = a.zdb_id ;" MAXROWS=$limit>
 
 
 <?MIBLOCK COND="$(NC,$15,NULL)">
