@@ -104,8 +104,8 @@ APGPREFIX = aa-
 
 # Preserve permissions on copies to target or staging directories.
 
-TARGET_CP  = cp -p
-STAGING_CP = cp -p
+TARGET_CP  = cp -fp
+STAGING_CP = cp -fp
 
 # Any created dirs should be created with 755 perms.
 
