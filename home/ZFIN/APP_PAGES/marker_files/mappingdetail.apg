@@ -21,7 +21,7 @@
 <?MISQL SQL="
 	SELECT or_lg
 	FROM mapped_marker
-	WHERE marker_id = '$oID' ";>
+	WHERE marker_id = '$oID';">
    $(SETVAR,$viewmap,t)
 <?/MISQL>
 
@@ -230,8 +230,7 @@ ERROR -- something bad happened -- no OID passed in!
 <?MISQL SQL="select object from webPages where ID='aa-chromoscripts.apg';">$1
 <?/MISQL>
 
-<?MIVAR NAME=$target_table>anon_marker<?/MIVAR>
-<?MIVAR NAME=$target_table COND="$(>,$(POSITION,$OID,GENE),0)">gene<?/MIVAR>
+<?MIVAR NAME=$target_table>marker<?/MIVAR>
 <?MIVAR NAME=$target_table COND="$(>,$(POSITION,$OID,FISH),0)">fish<?/MIVAR>
 <?MIVAR NAME=$target_table COND="$(>,$(POSITION,$OID,LOCUS),0)">locus<?/MIVAR> 
 
@@ -402,7 +401,6 @@ ERROR -- something bad happened -- no OID passed in!
         <?MIVAR NAME=$allele>$2<?/MIVAR>
 	<TR><TD><b>Allele <i><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$1">$2</A></i></b> 
         </TD></TR>
-	<?/MIVAR> 
 
 	<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&detOID=$allele_id&abbrev=$allele') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
     
@@ -689,7 +687,7 @@ ERROR -- something bad happened -- no OID passed in!
 		   from linkage_member
 		group by lnkgmem_linkage_zdb_id 
 		  having count(*) = 1 )
-           ;" >
+           ;">
      
     <?MIVAR NAME=$distance><?/MIVAR>
     <?MIVAR NAME=$lod><?/MIVAR>

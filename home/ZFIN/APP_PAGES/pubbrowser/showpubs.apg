@@ -43,10 +43,10 @@ ERROR -- something bad happened -- no OID passed in!
 <?MIVAR COND="$(NXST,$related_data_attrib_to_OID)" NAME=$related_data_attrib_to_OID><?/MIVAR>
 
 <?MIVAR>
-$(IF,$(OR,$(>,$(POSITION,$rtype,gene),0),$(>,$(POSITION,$rtype,anon_marker),0)),
+$(IF,$(>,$(POSITION,$rtype,marker),0),
       $(SETVAR,$return_page1,aa-markerupdate.apg)
       $(SETVAR,$return_page2,aa-do-markerupdate.apg)
-      $(SETVAR,$target_table,gene)
+      $(SETVAR,$target_table,marker)
       )
 
 $(IF,$(>,$(POSITION,$rtype,fish),0),
@@ -488,7 +488,7 @@ $(IF,$(>,$(POSITION,$rtype,go),0),
    	  from record_attribution, publication p, marker_go_term_evidence
      	 where mrkrgoev_mrkrgo_zdb_id='$OID'
 	   and mrkrgoev_zdb_id=recattrib_data_zdb_id
-      	   and recattrib_source_zdb_id = p.zdb_id and mrkrgoev_evidence_code='$evidence'";>
+      	   and recattrib_source_zdb_id = p.zdb_id and mrkrgoev_evidence_code='$evidence';">
 
   	<TR>
     	<TD align=left>
