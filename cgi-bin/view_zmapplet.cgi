@@ -275,9 +275,9 @@
 		 $Q->start_html(-TITLE => "ZFIN View ZMAP", -bgcolor=> 'white')."\n".
 		 "<script language='JavaScript' src='http://<!--|DOMAIN_NAME|-->/header.js'></script>" ."\n";
      	 mapper_select(Q);
-		 print
-	     "<p><p><p><p>\"<font color=red><i><b>$marker</b></i></font>\"". 
-		 " is not found in ZFIN.\n<p><p><p>".
+	  print
+	     "<p><p><p><p>No mapping data is available for ".
+		 "\"<font color=red><i><b>$marker</b></i></font>\"\n<p><p><p>".
 		 "<script language='JavaScript' src='http://<!--|DOMAIN_NAME|-->/footer.js'></script>";      
 	  exit 1;
 	}
