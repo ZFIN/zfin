@@ -105,7 +105,7 @@
   my ($sm_m, $sm_lg, $sm_panel, $sm_loc, $sm_refresh); #values Which might be used to repopulate the select map form  
   
   ### to supprt multiple java servers
-  my $jport = "<!--|JAVA_SERVER_PORT|-->";
+  my $jport = "0";
   
   
   ### incase we want the mapplet to open somewhere particular some day

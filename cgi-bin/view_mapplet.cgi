@@ -110,7 +110,7 @@
  
   
   ### to supprt multiple java servers
-  my $jport = "<!--|JAVA_SERVER_PORT|-->";
+  my $jport = "0";
   ### incase we want the mapplet to open somewhere particular some day
   my $frame = '_top';
   
