@@ -31,8 +31,7 @@
   $1
 <?/MISQL>
 
-<!-- Set colors -->    
-
+<!-- Set colors --> 
 <!-- Begin heading box -->
 <TABLE class="header" bgcolor=<!--|LINKBAR_COLOR|--> cellpadding=0 cellspacing=0 width=100%>
   <TR bgcolor=<!--|LINKBAR_COLOR|-->>
@@ -439,6 +438,7 @@
 		    <DIV class="root">
 		      <b>Regen Scripts:</b>
 		      <center>
+		      
 		      <form action='/<!--|CGI_BIN_DIR_NAME|-->/runSPL.cgi' 
 			    method="POST" >
 			<input type=submit 
@@ -447,13 +447,16 @@
 			       name="run" 
 			       value="regen_fishsearch">
 		      </form>
-		      <form action='/<!--|CGI_BIN_DIR_NAME|-->/runSPL.cgi' 
-			    method="GET" >
+
+		      <form action='/<!--|CGI_BIN_DIR_NAME|-->/runSPL.cgi' method="GET" >
+
 			<input type=hidden
 			       name="run"
 			       value="regen_genomics">
+
 			<input type=submit value="Regen Genomics data">
 		      </form>
+		      
 		      <form action='/<!--|CGI_BIN_DIR_NAME|-->/runSPL.cgi' 
 			    method="POST" >
 			<input type=submit value="Regen Orthologue Display data">
@@ -461,7 +464,7 @@
 			       name="run" 
 			       value="regen_oevdisp">
 		      </form>
-
+		     
 		      </center>
 		    </DIV>
 
