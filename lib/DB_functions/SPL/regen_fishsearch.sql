@@ -39,7 +39,11 @@ create dba function "informix".regen_fishsearch()
     create table fishsearch_new 
       (
 	fish_id		varchar (50), 
-	name		varchar (80), 
+	name		varchar (80)
+	  not null
+	    constraint fishsearch_name_not_null,
+	fishsearch_name_order	varchar(100)
+	  not null,
 	line_type	varchar (30),
 	abbrev		varchar (20), 
 	phenotype	html, 
@@ -47,6 +51,8 @@ create dba function "informix".regen_fishsearch()
 	chrom_change	varchar (30), 
 	comments	lvarchar, 
 	allele		varchar (20),
+	fishsearch_allele_order varchar(50)
+	  not null,
 	mutagen		varchar (20),
 	pheno_keywords	lvarchar, 
 	locus		varchar (50),
@@ -63,11 +69,10 @@ create dba function "informix".regen_fishsearch()
 
 
     insert into fishsearch_new 
-      select a.zdb_id, a.name, a.line_type, e.abbrev,
+      select a.zdb_id, a.name, fish_name_order, a.line_type, e.abbrev,
 	     a.phenotype, b.chrom_num, d.chrom_change, a.comments,
-	     d.allele, d.mutagen, a.pheno_keywords, d.locus,
+	     d.allele, alt_allele_order, d.mutagen, a.pheno_keywords, d.locus,
 	     'unknown'::varchar(50),'unknown'::varchar(15), d.zdb_id
-
 	from fish a, chromosome b, int_fish_chromo c, alteration d, locus e
 	where a.zdb_id = c.source_id 
 	  and c.target_id = b.zdb_id 

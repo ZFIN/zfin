@@ -12,7 +12,7 @@ create dba function "informix".regen_genomics() returning integer
   -- 1. If this function encounters  an exception it writes the exception
   --    number and associated text out to the file 
   --
-  --      /tmp/regen_genomics_exception.
+  --      /tmp/regen_genomics_exception_<!--|DB_NAME|-->.
   --
   --    This is a great place to start.  The associated text is often the
   --    name of a violated constraint, for example "u279_351".  The first
@@ -75,7 +75,7 @@ create dba function "informix".regen_genomics() returning integer
 			       ' SQL Error: ' || sqlError::varchar(200) || 
 			       ' ISAM Error: ' || isamError::varchar(200) ||
 			       ' ErrorText: ' || errorText ||
-			       '" >> /tmp/regen_genomics_exception';
+			       '" >> /tmp/regen_genomics_exception_<!--|DB_NAME|-->';
 	system exceptionMessage;
 
 	-- Change the mode of the regen_genomics_exception file.  This is
@@ -83,7 +83,7 @@ create dba function "informix".regen_genomics() returning integer
 	-- rerun the function from either the web page (as zfishweb) or 
 	-- from dbaccess (as whoever).
 
-	system '/bin/chmod 666 /tmp/regen_genomics_exception';
+	system '/bin/chmod 666 /tmp/regen_genomics_exception_<!--|DB_NAME|-->';
 
 	-- If in a transaction, then roll it back.  Otherwise, by default
 	-- exiting this exception handler will commit the transaction.
@@ -160,7 +160,10 @@ create dba function "informix".regen_genomics() returning integer
       (
 	zdb_id		varchar(50), 
 	mname		varchar(80),
-	abbrev		varchar(20), 
+	abbrev			varchar(20)
+	  not null,
+	panldmrkr_abbrev_order	varchar(60)
+	  not null,
 	mtype		varchar(10), 
 	OR_lg		varchar(2),
 	lg_location	numeric(8,2), 
@@ -181,7 +184,8 @@ create dba function "informix".regen_genomics() returning integer
     revoke all on paneled_m_new from "public";
 
     insert into paneled_m_new
-      select mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_type, mm.OR_lg,
+      select mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_abbrev_order, 
+	     mrkr_type, mm.OR_lg,
 	     mm.lg_location, mm.metric, pn.abbrev, pn.zdb_id, mm.private, 
 	     mm.owner, mm.scoring_data, mm.framework_t, mm.entry_date, 
 	     mm.map_name
@@ -192,7 +196,7 @@ create dba function "informix".regen_genomics() returning integer
     -- display all Tuebingen mutants on map_marker search 
     --  these will eventually be going in using the linked marker approach 
     insert into paneled_m_new
-      select a.zdb_id, a.name, a.allele, 'MUTANT', b.OR_lg,
+      select a.zdb_id, a.name, a.allele, fish_allele_order, 'MUTANT', b.OR_lg,
 	     b.lg_location, b.metric, c.abbrev, c.zdb_id, b.private, b.owner,
 	     b.scoring_data, b.framework_t, b.entry_date, b.map_name
 	from fish a, mapped_marker b, panels_new c
@@ -204,7 +208,8 @@ create dba function "informix".regen_genomics() returning integer
     -- on 2000/11/10
 
     insert into paneled_m_new
-      select a.zdb_id, a.locus_name, a.abbrev, 'MUTANT', b.OR_lg,
+      select a.zdb_id, a.locus_name, a.abbrev, locus_abbrev_order, 
+	     'MUTANT', b.OR_lg,
 	     b.lg_location, b.metric, c.abbrev, c.zdb_id, b.private, b.owner,
 	     b.scoring_data, b.framework_t, b.entry_date, b.map_name
 	from locus a, mapped_marker b, panels_new c
@@ -657,19 +662,21 @@ create dba function "informix".regen_genomics() returning integer
 	zdb_id		varchar(50), 
 	mname		varchar (80),
 	mtype		varchar(10), 
-	abbrev		varchar(20)
+	abbrev		varchar(20),
+	allmrkr_abbrev_order	varchar(60)
       )
       fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3  
       extent size 512 next size 512 lock mode page;
     revoke all on all_m_new from "public";
 
     insert into all_m_new
-	(zdb_id, mname, mtype, abbrev)
-      select mrkr_zdb_id, mrkr_name, mrkr_type, mrkr_abbrev
+	(zdb_id, mname, mtype, abbrev, allmrkr_abbrev_order)
+      select mrkr_zdb_id, mrkr_name, mrkr_type, mrkr_abbrev, mrkr_abbrev_order
 	from marker;
 
     insert into all_m_new
-      select zdb_id, locus_name, 'MUTANT'::varchar(10), abbrev
+      select zdb_id, locus_name, 'MUTANT'::varchar(10), 
+             abbrev, locus_abbrev_order
 	from locus;
     -- no zmap
 
@@ -721,6 +728,7 @@ create dba function "informix".regen_genomics() returning integer
 	alnkgmem_member_zdb_id  varchar(50),
 	alnkgmem_member_name    varchar(80),
 	alnkgmem_member_abbrev  varchar(10),
+	alnkgmem_member_abbrev_order  varchar(60),
 	alnkgmem_marker_type    varchar(10),
 	alnkgmem_source_zdb_id  varchar(50),
 	alnkgmem_private	boolean,
@@ -741,15 +749,17 @@ create dba function "informix".regen_genomics() returning integer
       in idxdbs3;
 
     insert into all_l_m_new
-      select lnkg_zdb_id, lnkgmem_member_zdb_id, mname, abbrev, mtype,
+      select lnkg_zdb_id, lnkgmem_member_zdb_id, mname, 
+	     abbrev, allmrkr_abbrev_order, mtype,
 	     lnkg_source_zdb_id, lnkg_private, lnkg_comments, '',
 	     'NULL'::varchar(40), lnkg_or_lg,''
-	from linkage, linkage_member, all_markers
+	from linkage, linkage_member, all_m_new
 	  where lnkg_zdb_id = lnkgmem_linkage_zdb_id 
-	    and lnkgmem_member_zdb_id = all_markers.zdb_id ;
+	    and lnkgmem_member_zdb_id = all_m_new.zdb_id ;
 
     insert into all_l_m_new
-      select lnkg_zdb_id, lnkgmem_member_zdb_id, name, locus.abbrev, 'MUTANT',
+      select lnkg_zdb_id, lnkgmem_member_zdb_id, name, 
+	     locus.abbrev, locus_abbrev_order, 'MUTANT',
 	     lnkg_source_zdb_id, lnkg_private, lnkg_comments, '',
 	     'NULL'::varchar(40), lnkg_or_lg, ''
 	from linkage, linkage_member, fish, locus 
@@ -806,7 +816,9 @@ create dba function "informix".regen_genomics() returning integer
       (
 	zdb_id		varchar(50), 
 	mname		varchar(80),
-	abbrev		varchar(20), 
+	abbrev		varchar(20),
+	allmapmrkr_abbrev_order	 varchar(60)
+	  not null,
 	mtype		varchar(10), 
 	OR_lg		varchar(2),
 	lg_location	numeric(8,2) ,
@@ -827,7 +839,8 @@ create dba function "informix".regen_genomics() returning integer
 
 
     insert into all_m_m_new
-      select zdb_id, mname, abbrev, mtype, OR_lg, lg_location, target_abbrev,
+      select zdb_id, mname, abbrev, panldmrkr_abbrev_order,
+	     mtype, OR_lg, lg_location, target_abbrev,
 	     target_id, private, owner, NULL::numeric(8,2), metric,
 	     'NULL'::varchar(10), entry_date
       from paneled_m_new;
@@ -836,7 +849,8 @@ create dba function "informix".regen_genomics() returning integer
 
     insert into all_m_m_new
       select alnkgmem_member_zdb_id, alnkgmem_member_name, 
-	     alnkgmem_member_abbrev, alnkgmem_marker_type, alnkgmem_or_lg,
+	     alnkgmem_member_abbrev, alnkgmem_member_abbrev_order,
+	     alnkgmem_marker_type, alnkgmem_or_lg,
 	     NULL::numeric(8,2), 'NULL'::varchar(20),
 	     alnkgmem_linkage_zdb_id, alnkgmem_private, alnkgmem_source_zdb_id,
 	     NULL::numeric(8,2), 'NULL'::varchar(5), 'NULL'::varchar(10),
