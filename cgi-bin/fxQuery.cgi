@@ -9,19 +9,27 @@ my $Query = new CGI();
 print "Content-type: text/html\n\n";
 header();
 
-if ($Query->param('scenario') == 2) {
+if ($Query->param('scenario') eq "2") {
 
   $scenario = "2";
+
+  $action = "fxQuery.cgi";
+  $results = "true";
 
   $gene = "";
   $gene_disabled = "disabled";
 
   $structures = "spinal cord";
-  $structures_disabled = "";
+  $structures_disabled = ""; 
+
+  
 
 } else {
 
   $scenario = "1";
+
+  $action = "fxResultsSummary.cgi";
+  $results = "false";
 
   $gene = "epha4b";
   $gene_disabled = "";
@@ -30,9 +38,152 @@ if ($Query->param('scenario') == 2) {
   $structures_disabled = "disabled"
 }
 
-print "[<a href=\"fxQuery.cgi?scenario=1\">Scenario 1</a> | <a href=\"fxQuery.cgi?scenario=2\">Scenario 2</a> ]<br>";
 
-  print <<ENDHTML ; 
+  $results_html = <<ENDRESULTS;
+<br>
+    <TABLE bgcolor="CCCCCC"> 
+      <TR>
+       <TD colspan=2>
+       <B><font size=-1>Anatomy Items Searched...</font></B>
+       </TD>
+      </TR>
+      <TR>
+       <TD bgcolor="#EEEEEE" valign=top> 
+        <font size=-1 style="font-family:arial; font-weight:bold;">
+	<u>presumptive spinal cord</u></font> 
+      </TD>
+      
+      <TD bgcolor="#EEEEEE">
+      <FONT size=-1 style="font-family:arial;">       
+      has <u><B>(4)</B></u> gene(s), total, expressed in all stages 
+     </FONT>
+     <FONT size=-1 style="font-family:arial; font-weight:bold;  ">
+
+      <I>(synonym match)</I> 
+     </FONT>
+   </TD>
+   </TR>
+  
+  </TABLE>     
+  <br>
+  <table width=100% border=0>
+    <tr>
+      <td width=20%>&nbsp;</td>
+      <td width=60% align=center>
+        <font size="+1">Expression Pattern Search Results<br>
+          (<b>4</b> genes with expression)</font>
+      </td>
+      <td width="20%" align="center">
+        <u>Modify Search</u>
+        <!-- Insert a form with one button. Label button Your Input Welcome -->
+         <table leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"
+         border="0" cellspacing="0" cellpadding="0">
+    <form method=post 
+          action="/cgi-bin_iguana/webdriver" 
+          target=comments>
+      <input type=hidden name=MIval value="aa-input_welcome_generic.apg">
+      <input type=hidden name=page_name value="ZFIN Expression Search Results">
+     <tr>
+      <td>
+        <input type=submit value="Your Input Welcome" disabled>
+      </td>
+    </tr>
+    </form>
+  </table>
+    </td>
+    </tr>
+  </table>   
+    <TABLE width="100%" border="0" cellspacing="0" cellpadding="3">
+      <TR>
+        <TH> &nbsp; </TH>
+        <TH align="left">Gene symbol - name</TH>
+	<TH align="left">Expression <font size="-1">(<u>current status</u>)</font></TH>
+
+	<TH align="left">Publication(s)</TH>
+      </TR>
+
+  <!-- row one -->
+  <TR bgcolor="#EEEEEE">
+
+    <TD> &nbsp; </TD>
+    <TD valign="top">      
+      <i><u>ashb</u>&nbsp;&nbsp;- achaete-scute complex-like 1b (Drosophila)</i>    
+    </TD>
+    <TD valign="top">
+      <u>cb939: RNA in situ whole mount</u>
+      <font size="-1">(15&nbsp;images)</font>    
+    </TD>
+    <TD valign="top">
+      <u>Thisse <i>et al</i>, 2001</u>
+    </TD>
+ </TR>
+ 
+ <!-- row two -->
+ <TR bgcolor="#FFFFFF">
+   <TD valign="top">&nbsp;</TD>
+   <TD valign="top"> 
+     <i><u>hdac1</u>&nbsp;&nbsp;- histone deacetylase 1 </i>
+   </TD>
+   <TD valign="top">     
+     <u>cb722: RNA in situ whole mount</u>
+     <font size="-1">(9&nbsp;images)</font>
+   </TD>
+   <TD valign="top"> 
+     <u>Thisse <i>et al</i>, 2001</u>   
+   </TD>
+ </TR>
+
+ <!-- row three -->
+ <TR bgcolor="#EEEEEE">
+    <TD valign="top">&nbsp;</TD>
+    <TD valign="top">
+    <i><u>neurog1</u>&nbsp;&nbsp;- neurogenin 1 </i>
+    </TD>
+    <TD valign="top">
+      <u>cb260: RNA in situ whole mount</u>
+    <small>(37&nbsp;images)</small>
+    </TD>
+    <TD valign="top">
+      <u>Thisse <i>et al</i>, 2001</u>
+    </TD>
+    <TR bgcolor="#EEEEEE"><TD>&nbsp;</TD><TD>&nbsp;</TD><TD valign = "top"><a href="fxResultsSummary.cgi?scenario=$scenario">Published Figures</a> &nbsp; <small>(6&nbsp;images)</small></TD>
+        <TD>(<u>4</u>)</TD></TR>
+    <TR bgcolor="#EEEEEE"><TD>&nbsp;</TD><TD>&nbsp;</TD><TD valign = "top"><u>Literature Index</u> &nbsp; <small>(70&nbsp;assays)</small></TD>
+        <TD>(<u>53</u>)</TD></TR>
+ </TR>
+
+ <!-- row four -->
+ <TR bgcolor="#FFFFFF">
+    <TD>&nbsp;</TD>
+   <TD valign="top">
+    <i><u>pax2a</u>&nbsp;&nbsp;- paired box gene 2a</i>
+   </TD>
+   <TD valign="top">
+     <u>cb378: RNA in situ whole mount</u>
+    <small>(47&nbsp;images)</small>
+   </TD>
+   <TD valign="top">
+     <u>Thisse <i>et al</i>, 2001</u>
+   </TD>
+ </TR>
+ <TR><TD>&nbsp;</TD><TD>&nbsp;</TD><TD valign = "top"><u>Published Figures</u> &nbsp; <small>(12&nbsp;images)</small></TD>
+     <TD>(<u>4</u>)</TD></TR>
+ <TR><TD>&nbsp;</TD><TD>&nbsp;</TD><TD valign = "top"><u>Literature Index</u> &nbsp; <small>(70&nbsp;assays)</small> </TD>
+     <TD>(<u>53</u>)</TD></TR>
+
+
+</TABLE>
+
+
+ENDRESULTS
+
+if ($Query->param('results') eq "true") {
+  print $results_html;
+} else {
+  print "[<a href=\"fxQuery.cgi?scenario=1\">Scenario 1</a> | <a href=\"fxQuery.cgi?scenario=2\">Scenario 2</a> ]<br>";
+}
+
+print <<ENDHTML ; 
 <table border=0 width=100% cellpadding=3 cellspacing=0>
     <tr>
       <td bgcolor="#CCCCCC" width=70%>
@@ -63,12 +214,12 @@ print "[<a href=\"fxQuery.cgi?scenario=1\">Scenario 1</a> | <a href=\"fxQuery.cg
     </tr>
   </table>
 
-        <form method=post
-        action="fxResultsSummary.cgi">
+        <form method=get
+        action="$action">
 
-    
-    
-    
+    <input type="hidden" name="scenario" value="$scenario">
+    <input type="hidden" name="results" value="$results">
+        
     <table border=0 width=100% cellpadding=3 cellspacing=0>
       
 	<tr>
