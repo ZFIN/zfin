@@ -240,8 +240,8 @@ mi_lvarchar *get_random_cookie () {
     long seed, pid;
     static unsigned count = 0;
     struct tms timeVals;
-    unsigned char in_hash[16];
-    unsigned char out_hash[16];
+    static unsigned char in_hash[16];
+    static unsigned char out_hash[16];
     struct MD5Context context;
     char cookie [COOKIE_MAX + 1];
     mi_lvarchar *var;
@@ -265,8 +265,7 @@ mi_lvarchar *get_random_cookie () {
        process in a short time.  To get around that, we add in a count
        of the number of times we've been called.
     */
-
-    time (  &seconds  );
+    time ( &seconds  );
     times( &timeVals );
     pid= getpid();
     ++count;
@@ -277,6 +276,7 @@ mi_lvarchar *get_random_cookie () {
     MD5Update( &context, (unsigned char*) &pid, sizeof pid );
     MD5Update( &context, (unsigned char*) &count, sizeof count );
     MD5Final( in_hash, &context );
+if(1) {
 
 
     /* Stir the state of the noize pool
@@ -303,10 +303,10 @@ mi_lvarchar *get_random_cookie () {
 	cookie [j++] = charList[in_hash[i+2] >> 2];
     }
     cookie [COOKIE_LENGTH] = '\0';
-
+}
+/*    cookie[0] = 'a'; cookie[1] = 'b'; cookie[2] = 'c'; cookie[3] = 0; */
     /* Get lvarchar to hold it */
-#    if (!(var = mi_string_to_lvarchar(cookie))) NO_MEMORY(get_random_cookie);
-    if (!(var = mi_string_to_lvarchar("Foo"))) NO_MEMORY(get_random_cookie);
+    if (!(var = mi_string_to_lvarchar(cookie))) NO_MEMORY(get_random_cookie);
     return var;
 }
 
