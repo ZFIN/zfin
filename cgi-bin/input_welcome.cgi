@@ -1,10 +1,10 @@
-#!/usr/local/bin/perl5
+#!/usr/local/bin/perl5 -w
 #
 # user_comments.cgi
 #
-# # submit comments from view.apg pages.
+# submit comments from view.apg pages. 
 #
-
+#
 # Script handles form input from users that have comments on the view pages.
 # Send an email to the curators, confirm to the user that input was received.
 # The relevant vars that are passed in, and composes into a nice email:
@@ -20,16 +20,19 @@ sub print_confirmation {
 print <<EOA;
 Content-type: text/HTML\n\n
 <HTML>
-<BODY bgcolor="#FFFFFF">
-<h1 align=center>Confirmation</h1>
-<b> Your comments have been emailed to ZFIN curators.</b> If you have given a contact email, you should receive a copy of this email and may be contacted for additional information.  <p>
+<script language="JavaScript" src="http://<!--|DOMAIN_NAME|-->/header.js"></script>
+
+Thank you for submitting comments. Your input has been emailed to ZFIN curators who may contact you if additional information is required. 
+<p>
 <form>
 <input type=button value="Close Window" onClick="window.close()">
 </form>
-</BODY></HTML>
+<script language="JavaScript" src="http://<!--|DOMAIN_NAME|-->/footer.js"></script>
+
 EOA
 }
 
+#parse user input
 read(STDIN, $raw_data, $ENV{CONTENT_LENGTH});
 
 $items = split('&', $raw_data);
@@ -40,42 +43,54 @@ for ($i = 0; $i < $items; $i++) {
   $data{"$key"} = $value;
 }
 
+
+#email input to curators
 $email=$data{email};
 if ($email eq 'Unknown') {$email=''};
 
 open(MAIL, "| $mailprog") || die "Content-type: text/plain\n\nCan't open mailprog $mailprog, stopped";
 print MAIL <<"STOP";
 To: curators\@zfin.org
-Cc: $email
 From: $email
 Subject: $data{subject}
 
-USER INPUT for $data{page_id}. 
+USER INPUT:
 
 Name: $data{firstname} $data{lastname}
 Contact Email: $data{email}
-ZFIN_ID: $data{marker_id}
-Marker Name: $data{marker_name}
+Institution: $data{institution}
+Originating Page: $data{page_name}
 
 Comments: $data{comments}
 
 STOP
 close(MAIL) || die "pipe exited $?";
 
+
+#email 'thanks' to submitter
+open(MAIL, "| $mailprog") || die "Content-type: text/plain\n\nCan't open mailprog $mailprog, stopped";
+print MAIL <<"STOP1";
+To: $email
+From: curators\@zfin.org
+Subject: ZFIN Thanks You For Your Input
+
+
+Dear $data{firstname}:
+
+Thank you for using ZFIN.  Your comments/suggestions are very important to us.
+We will respond to them as soon as possible.
+
+Your comments/suggestions are as follows: 
+-----------------------------------------------------------------
+$data{comments}
+-----------------------------------------------------------------
+
+Regards,
+Zebrafish Information Network
+
+STOP1
+close(MAIL) || die "pipe exited $?";
+
 &print_confirmation;
 
 exit;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
