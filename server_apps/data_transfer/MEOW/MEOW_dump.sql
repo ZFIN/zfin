@@ -297,11 +297,11 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_ortholinks.txt'
 -- generate a file of cDNAs and assoc GENBANK accession numbers
 
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/SC.txt'
-  DELIMITER "	" select distinct zdb_id, abbrev, acc_num  from marker, OUTER db_link  where (mrkr_type = 'EST')  and linked_recid = zdb_id and db_name = 'Genbank' order by 1; 
+  DELIMITER "	" select distinct mrkr_zdb_id, mrkr_abbrev, acc_num  from marker, OUTER db_link  where (mrkr_type = 'EST')  and linked_recid = mrkr_zdb_id and db_name = 'Genbank' order by 1; 
 
 -- generate a file of anonymous markers  and assoc GENBANK accession numbers
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/SC_sts.txt'
-  DELIMITER "	" select distinct zdb_id, abbrev, acc_num  from marker, db_link  where mrkr_type in ('STS', 'SSLP','RAPD', 'SSR') and linked_recid = zdb_id and db_name = 'Genbank' order by 1; 
+  DELIMITER "	" select distinct mrkr_zdb_id, mrkr_abbrev, acc_num  from marker, db_link  where mrkr_type in ('STS', 'SSLP','RAPD', 'SSR') and linked_recid = mrkr_zdb_id and db_name = 'Genbank' order by 1; 
 
 -- generate a file with zdb history data
 
