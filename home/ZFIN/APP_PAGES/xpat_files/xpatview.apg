@@ -9,6 +9,7 @@
 <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 
 <?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
+
 <?MIVAR NAME=$MI_NOVALUE> <?/MIVAR>
 <?MIVAR NAME=$MI_NULL><?/MIVAR>
 
@@ -97,6 +98,7 @@ ERROR -- something bad happened -- no OID passed in!
 
 <?MIBLOCK COND="$(XST,$OID)">
 
+
 <?MIVAR NAME=CODECOMMENTS> 
     If VIEWING, THROW UP THE ZDB DATA MANAGER(ZDB and UPDATE) FOR THE RECORD.
 <?/MIVAR> 
@@ -112,8 +114,8 @@ ERROR -- something bad happened -- no OID passed in!
 
 <?MIVAR COND="$(XST,$UPDATE)">
 <center>
-  <form NAME=updater method=post action="/<!--|CGI_BIN_DIR_NAME|-->/>
-    <font size=+2 color="#33ffCC">
+  <form NAME=updater method=post action="/<!--|CGI_BIN_DIR_NAME|-->/">
+    <font size=+2><!-- color="#33ffCC"-->
     <input type=button 
            value=" DONE UPDATING. Back to Viewing! " 
            onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatview.apg&OID=$OID')"> 
@@ -148,13 +150,14 @@ ERROR -- something bad happened -- no OID passed in!
      GET EACH MARKER'S NAME THAT MAPS TO THIS EXPRESSION PATTERN
 <?/MIVAR> 
 
-     <br>
-     <table width=100% border=0>
-       <tr>
-         <td width=15%>&nbsp;</td>
-         <td width=70% align=center>
-           <font size=+2> Expression of : &nbsp;<b>
 
+
+<!-------------- Name Title ----------------------------------->
+
+<table width=100% cellpadding = 2> 
+   <tr>    
+   <td width=85%>
+    
 <?MIVAR NAME=$COUNT>0<?/MIVAR>
 <?MISQL SQL="
      SELECT mrkr_abbrev, mrkr_zdb_id, mrkr_name, mrkr_type
@@ -165,6 +168,10 @@ ERROR -- something bad happened -- no OID passed in!
        AND mrkrlbl_marker_zdb_id = mrkr_zdb_id
      order by 4 desc;
      ">
+     <?MIVAR COND="$(=,$MI_CURRENTROW,1)">
+     <font size=+1><b> Expression of : &nbsp;
+     <?/MIVAR>
+ 
      <?MIBLOCK COND=$(AND,$(=,$COUNT,0),$(EC,$4,GENE))>
        <?MIVAR>
          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2"><i>$3($1)</i></a>
@@ -213,11 +220,11 @@ ERROR -- something bad happened -- no OID passed in!
 
      <?MIVAR NAME=$COUNT>1<?/MIVAR>
 <?/MISQL>
+ </b></font>
 
-           </font></b>
-         </td>
+ </td>
 
-   <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
+<?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
     
     <!-- look to see if replaced zdb_id -->
 
@@ -226,33 +233,40 @@ ERROR -- something bad happened -- no OID passed in!
     <?MIBLOCK COND="$(NXST,$new_oid)">
       <form><center><font size=+2>
         <b>Requested ID not found on ZFIN.</b>
+        </font></center>    
       </form>
     <?/MIBLOCK>
 
-  <?MIELSE>
-         <?MIVAR>
-           <form method=post 
+<?MIELSE>
+
+   <!---------------"your input welcome" button --------------------------->
+   
+   <?MIBLOCK COND="$(NXST,$UPDATE)">
+       <?MIVAR>
+         <form method=post 
                  action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
                  target=comments>
            <input type=hidden name=subject value="$fullname">
            <input type=hidden name=marker_id value="$gene_id">
            <input type=hidden name=MIval value="aa-your_input_welcome.apg">
            <input type=hidden name=page_id value="$OID">
-         <td width=15% align=center>
+          <td width=15% align=right>
            <input type=submit value="Your Input Welcome">
-         </td>
-           </form>
-         <?/MIVAR>
-       </tr>
-     </table>
+          </td>         
+	</form>
+       <?/MIVAR>
+   <?/MIBLOCK>
 
-<?MIBLOCK COND="$(XST,$ASSAY_NAME)">
+  </tr>
+ </table>
 
-  <?MIBLOCK COND="$(XST,$UPDATE)">
+
+  <!---------- Assay Type ------------------------------>
+
+ <?MIBLOCK COND="$(XST,$ASSAY_NAME)">
+  <table><tr> 
+   <?MIBLOCK COND="$(XST,$UPDATE)">
     <?MIVAR>
-    <table width=50%>
-      <tr>
-        <td>
           <FORM NAME=updateAssay method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatupdateAssay.apg">
              <INPUT TYPE="hidden" name="MIval" value="aa-xpatupdateAssay.apg">
              <INPUT TYPE="hidden" name="OID" value="$OID">
@@ -261,32 +275,28 @@ ERROR -- something bad happened -- no OID passed in!
              <INPUT TYPE="hidden" name="gene_abbrev" value="$1">
              <INPUT TYPE="submit" value=Update>
            </FORM>
-        </td>
-        <td>
-          <h2><b>Assay Type: &nbsp;</b>$ASSAY_NAME</h2>
-        </td>
-      </tr>
-    </table>
     <?/MIVAR>
-  <?MIELSE>
-    <?MIVAR>
-          <h2><b>Assay Type: &nbsp;</b>$ASSAY_NAME</h2>
-    <?/MIVAR>
-  <?/MIBLOCK>  <!-- end xst update -->
-<?/MIBLOCK>  <!-- end xst assay_name -->
+   <?/MIBLOCK>  <!-- end xst update -->
+    
+   <?MIVAR>
+     <td align=left><b>Assay Type: &nbsp;</b>$ASSAY_NAME<td> 
+   <?/MIVAR>
+  </tr></table>
+  <?/MIBLOCK>  <!-- end xst assay_name -->
 
-	</center>
+   <!---------- ends Assay Type ------------------------------>
 
-<?MIVAR NAME=CODECOMMENTS> 
+
+  <?MIVAR NAME=CODECOMMENTS> 
      CREATE A NEW TABLE CELL FOR EACH STAGE.  DISPLAY THUMBNAILS THAT LINK
      TO FISHIMAGE PAGES, RETRIEVE KEYWORDS FOR STRUCTURES, SYSTEMS, AND
      PROCESSES, THEN GIVE COMMENTS.
-<?/MIVAR>
-<?MIVAR>
- <table border="0" cellspacing="5" cellpadding="5" align=center width=100%>
-<?/MIVAR>
+  <?/MIVAR>
+  <?MIVAR>
+     <table border="0" cellspacing="5" cellpadding="5" align=center width=100%>
+  <?/MIVAR>
 
-<?MISQL SQL="
+  <?MISQL SQL="
 	SELECT xpatstg_xpat_zdb_id, xpatstg_start_stg_zdb_id, xpatstg_end_stg_zdb_id, xpatstg_comments, stg_hours_start
 	FROM expression_pattern_stage, stage 
 	WHERE xpatstg_xpat_zdb_id = '$OID'
@@ -618,15 +628,14 @@ ERROR -- something bad happened -- no OID passed in!
     <?MIVAR NAME=$COUNT>1<?/MIVAR>
   <?/MISQL>
 
-<?MIVAR><font size="+1"><br><b>Contact(s):&nbsp;</b>$CONTACT<?/MIVAR></font>
+<?MIVAR><b>Contact(s):&nbsp;</b>$CONTACT<?/MIVAR>
 
+
+<!-------------- Comments ------------------->
 
 <?MIVAR COND="$(XST,$XPAT_COMMENTS)"><br><br>
     <?MIBLOCK COND="$(XST,$UPDATE)">
     <?MIVAR>
-    <table>
-      <tr>
-        <td>
           <FORM NAME=updateComments method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatupdateComments.apg">
           <INPUT TYPE="hidden" name="MIval" value="aa-xpatupdateComments.apg">
           <INPUT TYPE="hidden" name="OID" value="$OID">
@@ -636,24 +645,16 @@ ERROR -- something bad happened -- no OID passed in!
           <INPUT TYPE="hidden" name="gene_id" value="$gene_id">
           <INPUT TYPE="submit" value=Update>
           </FORM>
-        </td>
-        <td>
-          <b>Comments:&nbsp;</b><br> $XPAT_COMMENTS
-        </td>
-      </tr>
-    </table>
-    <?/MIVAR>
-  <?MIELSE>
-    <?MIVAR>
-          <b>Comments:&nbsp;</b><br>$XPAT_COMMENTS
-    <?/MIVAR>
-  <?/MIBLOCK>  <!-- end xst update -->
+   <?/MIVAR>
+   <?/MIBLOCK>
+    <?MIVAR>   <b>Comments:&nbsp;</b>$XPAT_COMMENTS<?/MIVAR><p> 
+     
 <?/MIVAR>
 
-<?MIVAR COND="$(XST,$XPAT_RECEIVE_DATE)"><br><font size="+1"><b>Submission Date:</b> &nbsp;$XPAT_RECEIVE_DATE</font><?/MIVAR>
+<?MIVAR COND="$(XST,$XPAT_RECEIVE_DATE)"><b>Submission Date:</b> &nbsp;$XPAT_RECEIVE_DATE<?/MIVAR>
 
-
-	<hr width="95%">
+<!--------------------------- Probe ---------------------------->
+<hr width="85%">
 
 <?MIVAR NAME=CODECOMMENTS> 
      GET THE PROBE DATA SOURCE BEFORE RETRIEVING OTHER PROBE DATA.
@@ -700,9 +701,9 @@ ERROR -- something bad happened -- no OID passed in!
 	  AND lbl_zdb_id = lblrna_label_zdb_id;
 ">
 
-	<center><font size =+2><b>Probe:</b>&nbsp; $1</font></center>
+	<b>PROBE:</b>&nbsp; $1
 
-	<table width="95%" border=0 cellpadding=5>
+	<table width="100%" border=0 cellpadding=5 bgcolor="$highlight">
 		<tr>
 			<td>
 				<b>Vector:</b>&nbsp; $2
@@ -732,19 +733,28 @@ ERROR -- something bad happened -- no OID passed in!
 		</tr>
 	</table>
 
-	<hr width="95%">
+<hr width="85%">
 
 <?MIVAR NAME=comment>hard coded as "none given" for thisse load<?/MIVAR>
 <!-- <p align=left><b>Comments:</b><br>&nbsp;$3</p> -->
 <?/MISQL>
 
-<form>
-
 
 <!-- Throw up the publication info, using the standard display format -->
-<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-showpubs.apg';">$1<?/MISQL>
 
-</form>
+<?MIVAR>
+<A HREF=" /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=gene"><b>PUBLICATIONS</b></A>
+<?MISQL SQL="
+  select count(*) 
+  from record_attribution
+  where recattrib_data_zdb_id = '$OID'
+    and get_obj_type(recattrib_source_zdb_id) = 'PUB';
+  ">
+&nbsp; ($(FIX,$1)) 
+<?/MISQL>  	
+<?/MIVAR>
+
+
 <?/MIBLOCK> <!-- mielse of zdb_history -->
 <?/MIBLOCK> <!-- ends cond oid exists -->
 
