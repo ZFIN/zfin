@@ -41,6 +41,8 @@ public class mapplet extends Applet  {
 					SM.put("T51",getParameter("T51_m"));
 				if (getParameter("LN54_m") != null)
 					SM.put("LN54",getParameter("LN54_m"));
+				if (getParameter("JPAD_m") != null)
+					SM.put("JPAD",getParameter("JPAD_m"));	
 				MV = new MapViewer(getParameter("data"), SM);
 			}
 			
@@ -81,6 +83,7 @@ public class mapplet extends Applet  {
 							   + " where OR_lg = '7'"
 							   + " and ((target_abbrev = 'LN54' and lg_location > -1 and lg_location < 100) "
 							   + " or (target_abbrev = 'GAT' and lg_location > -1 and lg_location < 100) "
+							   + " or (target_abbrev = 'JPAD and lg_location > -1 and lg_location < 100) "
 							   + " or (target_abbrev = 'MOP' and lg_location > -1 and lg_location < 100) "
 							   + " or (target_abbrev = 'MGH' and lg_location > 10 and lg_location < 70)) "
 							   + " and private = 'f' order by 4, 5;", "zfin.org","7365", "ZDB123-1231312"); 
