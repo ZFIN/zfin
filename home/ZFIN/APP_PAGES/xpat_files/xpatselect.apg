@@ -516,7 +516,7 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 <!--***-->
 <?MIVAR COND="$(XST,$pubId)" NAME=sql>
   select mrkr_zdb_id, mrkr_type, mrkr_abbrev_order, mrkr_name, mrkr_abbrev
-    from marker a, expression_pattern b, record_attribution,marker_relationship
+    from marker a, expression_pattern b, record_attribution, marker_relationship
    where recattrib_source_zdb_id = '$pubId'
      and recattrib_data_zdb_id = b.xpat_zdb_id
      and xpat_probe_zdb_id = mrel_mrkr_2_zdb_id
@@ -527,11 +527,11 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 <!--*** add time order -->
 <?MIVAR NAME=ordr_by>order by 2 desc, 3<?/MIVAR>
 <?MIVAR COND="$(AND,$(XST,$order),$(EC,$order,date))">
-  $(SETVAR,$ordr_by, "order by xpat_direct_submission_date desc, 2 desc, 3")
+  $(SETVAR,$ordr_by, "order by xpat_direct_submission_date  desc, 2 desc, 3")
 <?/MIVAR>
 
 <?MIVAR COND="$(NXST,$pubId)" NAME=sql>
-  select $(IF,$(EC,$structure_bool,or),distinct )mrkr_zdb_id, mrkr_type, mrkr_abbrev_order, mrkr_name, mrkr_abbrev
+  select $(IF,$(EC,$structure_bool,or),distinct )mrkr_zdb_id, mrkr_type, mrkr_abbrev_order, mrkr_name, mrkr_abbrev, xpat_direct_submission_date
   $query_from, marker_relationship
   $query_where_with_mrel
   $(IF,$(XST,$query_grp_by),$query_grp_by $query_hvng)
