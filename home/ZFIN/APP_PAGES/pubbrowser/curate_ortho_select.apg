@@ -127,6 +127,17 @@ insert into int_marker_pub
     select gwo_gene_zdb_id, pub.zdb_id
     from tmp_gene_with_orthology, publication pub, record_attribution, marker_relationship
     where gwo_gene_zdb_id = mrel_mrkr_1_zdb_id
+      and mrel_zdb_id = recattrib_data_zdb_id
+      and pub.zdb_id = recattrib_source_zdb_id
+      and pub.jtype not in ('Unpublished','Curation') 
+;">
+<?/MISQL>
+  
+<?MISQL SQL="
+insert into int_marker_pub
+    select gwo_gene_zdb_id, pub.zdb_id
+    from tmp_gene_with_orthology, publication pub, record_attribution, marker_relationship
+    where gwo_gene_zdb_id = mrel_mrkr_1_zdb_id
       and mrel_mrkr_2_zdb_id = recattrib_data_zdb_id
       and pub.zdb_id = recattrib_source_zdb_id
       and pub.jtype not in ('Unpublished','Curation') 
@@ -165,6 +176,17 @@ insert into int_marker_pub
       and pub.jtype not in ('Unpublished','Curation')
 ;">
 <?/MISQL>
+  
+<?MISQL SQL="
+insert into int_marker_pub
+    select gwo_gene_zdb_id, pub.zdb_id
+    from tmp_gene_with_orthology, publication pub, record_attribution, orthologue_evidence_display
+    where gwo_gene_zdb_id = oevdisp_gene_zdb_id
+      and oevdisp_zdb_id = recattrib_data_zdb_id
+      and pub.zdb_id = recattrib_source_zdb_id
+      and pub.jtype not in ('Unpublished','Curation')
+;">
+<?/MISQL>
 
 
 <?MISQL SQL="update statistics high for table int_marker_pub;"><?/MISQL>
@@ -191,27 +213,13 @@ set gwo_dblink_attrib_count =
     where recattrib_data_zdb_id = oevdisp_zdb_id 
       and oevdisp_gene_zdb_id = gwo_gene_zdb_id
       and get_obj_type(recattrib_source_zdb_id) = 'PUB'
-      and recattrib_source_zdb_id not in ('ZDB-PUB-010810-1','ZDB-PUB-020723-1','ZDB-PUB-020723-2','ZDB-PUB-020723-3','ZDB-PUB-020723-4','ZDB-PUB-020723-5','ZDB-PUB-020724-1','ZDB-PUB-030129-1','ZDB-PUB-030508-1','ZDB-PUB-030508-2')
+      and recattrib_source_zdb_id not in (select zdb_id from publication where jtype in ('Unpublished','Curation'))
   )
 ;">
 <?/MISQL>
 
 <!-- ------------------------------------------------------------------------------ -->
   
-<?MISQL SQL="
-delete from int_marker_pub
-where imp_pub_zdb_id in
-  (
-    select recattrib_source_zdb_id
-    from record_attribution, orthologue_evidence_display, tmp_gene_with_orthology
-    where recattrib_data_zdb_id = oevdisp_zdb_id
-      and oevdisp_gene_zdb_id = gwo_gene_zdb_id
-  )
-;">
-<?/MISQL>
-
-<!-- ------------------------------------------------------------------------------ -->
-
 
 <?MICOMMENT>
 This script generates a list of genes with orthology. The genes are ordered by increasing quantity of 
@@ -295,10 +303,17 @@ O_ATTRIB_COUNT ::: number of orthology attribution records
 	select distinct mrkr_abbrev, mrkr_zdb_id, MAX(pub_date)
 	from marker, tmp_gene_with_orthology, int_marker_pub, publication
 	where gwo_gene_zdb_id = mrkr_zdb_id
-	  and gwo_gene_attrib_count - gwo_dblink_attrib_count $(IF,$(<,$G_ATTRIB_COUNT,3),=,>) $G_ATTRIB_COUNT
+	  and gwo_gene_attrib_count - gwo_dblink_attrib_count $(IF,$(<,$G_ATTRIB_COUNT,3),=,>=) $G_ATTRIB_COUNT
 	  and gwo_dblink_attrib_count $(IF,$(=,$O_ATTRIB_COUNT,0),=,>) 0
 	  and gwo_gene_zdb_id = imp_mrkr_zdb_id
 	  and imp_pub_zdb_id = zdb_id
+	  and zdb_id not in 
+	    (
+	      select recattrib_source_zdb_id 
+	      from record_attribution, orthologue_evidence_display
+	      where recattrib_data_zdb_id = oevdisp_zdb_id
+                and oevdisp_gene_zdb_id = gwo_gene_zdb_id
+            )
 	group by 1, 2
 	order by 3 desc;">
 	
