@@ -20,7 +20,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/LoadGO
 
-GENERICS = loadgo.pl test.pl loadgoterms.sql
+GENERICS = loadgo.pl test.pl loadgoterms.sql parse_defs.r
 
 
 # Define targets that require special handling.
