@@ -26,16 +26,16 @@ end
 #at `date`.
 #END
 
-# A while back unloads from chromix to the NFS mounted development RAID
+# A while back unloads from production to the NFS mounted development RAID
 # started taking a really long time, as much as 8 times longer than 
-# unloading the DB directly on to chromix disk and then copying it.
+# unloading the DB directly on to production disk and then copying it.
 # Therefore, to speed up the process from over 4 hours to well under
-# an hour, do the unload to chromix disk and then copy it.
+# an hour, do the unload to production disk and then copy it.
 
 if ($HOST == "chromix") then
-  /research/zcentral/Commons/bin/unloaddb.pl <!--|DB_NAME|--> /research/zfin/chromix/backup/$dirname
-  /bin/cp -pr /research/zfin/chromix/backup/$dirname $pth/$dirname
-  /bin/rm -rf /research/zfin/chromix/backup/$dirname
+  /research/zcentral/Commons/bin/unloaddb.pl <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/DB_maintenance/$dirname
+  /bin/cp -pr <!--|ROOT_PATH|-->/server_apps/DB_maintenance/$dirname $pth/$dirname
+  /bin/rm -rf <!--|ROOT_PATH|-->/server_apps/DB_maintenance/$dirname
 else 
   /research/zcentral/Commons/bin/unloaddb.pl <!--|DB_NAME|--> $pth/$dirname
 endif
