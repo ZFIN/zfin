@@ -8,23 +8,11 @@
 
 <HTML>
 
-<!-- First note that they have searched persons-->
-<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-identify.apg';">$1<?/MISQL>
-<?MISQL SQL="delete from int_person_places where pers_id='$ZDB_ident' and place_id='LAB';"><?/MISQL>
-<?MISQL COND="$(NC,$(SUBSTR,$ZDB_name,1,5),GUEST)" SQL="insert into int_person_places (pers_id,place_id,last_visit) values ('$ZDB_ident','LAB',current);"><?/MISQL>
-
 
 <?MIVAR NAME=$MI_NULL>NULL<?/MIVAR>
-<?MIVAR NAME=mcount>0<?/MIVAR>
 <?MIVAR NAME=gcount>0<?/MIVAR>
+<?MIVAR NAME=mcount>0<?/MIVAR>
 <?MIVAR NAME=pcount>0<?/MIVAR>
-
-<!-- THIS NEXT PART IS EXECUTED AFTER THE PERSON ENTERS SOME CRITERIA -->
-
-<!-- First note that they have searched persons-->
-<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-identify.apg';">$1<?/MISQL>
-<?MISQL SQL="delete from int_person_places where pers_id='$ZDB_ident' and place_id='MARKER';"><?/MISQL>
-<?MISQL COND="$(NOT,$(EQ,$(SUBSTR,$ZDB_name,1,5),GUEST))" SQL="insert into int_person_places (pers_id,place_id,last_visit) values ('$ZDB_ident','MARKER',current);"><?/MISQL>
 
 <!-- Cause a tile for the new page to appear in the navigator frame -->
 <!-- startframes.apg will pass variables on to appropriate page -->
@@ -33,11 +21,11 @@
 <?MIVAR NAME=navtile>true<?/MIVAR>
 <?MIVAR COND="$(NXST,$aname)" NAME=$aname><?/MIVAR>
 <?MIVAR>
-<SCRIPT>
-var page_id=top.content.location.href+'&navtile=$navtile&aname=$aname';
-top.update_hist(page_id,"$page_title");
-top.controls.location.reload(true);
-</SCRIPT>
+  <SCRIPT>
+    var page_id=top.content.location.href+'&navtile=$navtile&aname=$aname';
+    top.update_hist(page_id,"$page_title");
+    top.controls.location.reload(true);
+  </SCRIPT>
 <?/MIVAR>
 
 <!--   THIS BLOCK HANDLES ACCESSION NUMBER SEARCHES ONLY NON ZDB_ID -->
@@ -45,390 +33,150 @@ top.controls.location.reload(true);
 <?MIVAR name=OID>$aname<?/MIVAR>
 <?MIBLOCK COND="$(=,$(POSITION,$aname,ZDB),0)">
 
-<?MIVAR name=$inputaname>$aname <?/MIVAR>
-<!-- if the accession number specified has contains mgi:, omim: or gdb: , get rid of them -->
-<?MIBLOCK COND="$(>,$(POSITION,$aname,:),0)">
-<?MIVAR NAME=$newaname>$(SUBSTR,$aname,$(+,$(POSITION,$aname,:),1),$(STRLEN,$aname))<?/MIVAR>
-<?MIVAR name=$inputaname>$aname <?/MIVAR>
-<?MIVAR NAME=$aname>$newaname<?/MIVAR>
-<!-- DEBUGGING <?MIVAR> newaname = $newaname <?/MIVAR> -->
+  <?MIVAR name=$inputaname>$aname <?/MIVAR>
+  <!-- if the accession number specified has contains mgi:, omim: or gdb: , get rid of them -->
+  <?MIBLOCK COND="$(>,$(POSITION,$aname,:),0)">
+    <?MIVAR NAME=$newaname>$(SUBSTR,$aname,$(+,$(POSITION,$aname,:),1),$(STRLEN,$aname))<?/MIVAR>
+    <?MIVAR name=$inputaname>$aname <?/MIVAR>
+    <?MIVAR NAME=$aname>$newaname<?/MIVAR>
+  <!-- DEBUGGING <?MIVAR> newaname = $newaname <?/MIVAR> -->
+  <?/MIBLOCK>
+
+
+  <!-- look if accession number links to publication -->
+
+  <?MISQL SQL="select count(*)::integer from publication  where lower(accession_no) like lower('%$aname%') and status ='active';"> 
+    $(SETVAR,$pcount,$1)
+  <?/MISQL>
+  <?MIBLOCK COND="$(NC,$pcount,0)">
+    <form name=zdb_search method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$start_page" >
+      <?MIVAR NAME=$start_page>aa-publister2.apg<?/MIVAR>	
+      <?MIVAR NAME=$constraint> where accession_no = '$aname' <?/MIVAR> 
+      <?MIVAR> 
+	<input type=hidden name=MIval value=$start_page>
+	<input type=hidden name=constraint value="$constraint">
+	<input type=hidden name=jtype value="any">
+	<input type=hidden name=pub_status value="any">
+	<input type=hidden name=cur_status value="any">
+	<input type=hidden name=order_pref value="name">
+	<input type=hidden name=accession value="accession">
+      <?/MIVAR>
+
+      <script>
+	document.zdb_search.submit ();
+      </script>
+    </form>
+  <?/MIBLOCK>
+
+ <!-- look if accession number links to gene -->
+
+  <?MISQL SQL="select count(*)::integer from all_map_names a  where allmapnm_name = lower('$aname') and allmapnm_zdb_id like '%GENE%';">
+    $(SETVAR,$gcount,$1)
+  <?/MISQL>
+  <?MIBLOCK COND="$(NC,$gcount,0)">
+    <form name=zdb_search method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$start_page" >
+      <?MIVAR NAME=$start_page>aa-genelister.apg<?/MIVAR>	
+      <?MIVAR> 
+	<input type=hidden name=MIval value=$start_page>
+	<input type=hidden name=name value="$aname">
+        <input type=hidden name=searchtype value="contains">
+	<input type=hidden name=accession value="accession">
+      <?/MIVAR>
+
+      <script>
+	document.zdb_search.submit ();
+      </script>
+    </form>
+  <?/MIBLOCK>
+
+ <!-- look if accession number links to marker -->
+
+  <?MISQL SQL="select count(*)::integer from all_map_names a  where allmapnm_name = lower('$aname') and allmapnm_zdb_id not like '%GENE%';">
+    $(SETVAR,$mcount,$1)
+  <?/MISQL>
+  <?MIBLOCK COND="$(NC,$mcount,0)">
+    <form name=zdb_search method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$start_page" >
+      <?MIVAR NAME=$start_page>aa-markerlister.apg<?/MIVAR>	
+      <?MIVAR> 
+	<input type=hidden name=MIval value=$start_page>
+	<input type=hidden name=name value="$aname">
+        <input type=hidden name=searchtype value="contains">
+	<input type=hidden name=accession value="accession">
+      <?/MIVAR>
+
+      <script>
+	document.zdb_search.submit ();
+      </script>
+    </form>
+  <?/MIBLOCK>
+
+  <?MIBLOCK COND="$(AND,$(EC,$pcount,0),$(EC,$mcount,0),$(EC,$gcount,0))">
+    <form><center><font size=4><?MIVAR><b>Requested acession number is available in ZFIN.</b> <?/MIVAR>
+    </form>
+  <?/MIBLOCK>
+
 <?/MIBLOCK>
-
-
-<!--  see what type of accession number was input marker, gene, publication  -->
-<?MISQL SQL="select count(*)::integer from all_mapped_markers a, db_link b where lower(b.acc_num) like lower('%$aname%') and b.linked_recid = a.zdb_id;"> 
-$(SETVAR,$mcount,$1)
-<?/MISQL>
-
-
-<?MISQL SQL="select count(*)::integer from all_mapped_markers a, db_link b, orthologue c where lower(b.acc_num) like lower('%$aname%') and b.linked_recid = c.zdb_id and c.c_gene_id = a.zdb_id;">
-$(SETVAR,$mcount,$(+,$mcount,$1))
-<?/MISQL>
-
-<!-- look if accession number links to gene  -->
-
-<?MISQL SQL="select count(*)::integer from all_genes a, db_link b where lower(b.acc_num) like lower('%$aname%') and b.linked_recid = a.zdb_id;"> 
-$(SETVAR,$gcount,$1)
-<?/MISQL>
-
-<!-- QUERY: <?MIVAR>$MI_SQL<?/MIVAR> -->
-
-<?MISQL SQL="select count(*)::integer from all_genes a, db_link b, orthologue c where lower(b.acc_num) like lower('%$aname%') and b.linked_recid = c.zdb_id and c.c_gene_id = a.zdb_id;">
-$(SETVAR,$gcount,$(+,$gcount,$1))
-<?/MISQL>
-
-<!-- look if accession number links to publication -->
-
-<?MISQL SQL="select count(*)::integer from publication  where lower(accession_no) like lower('%$aname%') and status ='active';"> 
-$(SETVAR,$pcount,$1)
-<?/MISQL>
-
-
-<!-- QUERY: <?MIVAR>$MI_SQL<?/MIVAR> -->
-
-
-<!--  This block Handles gene and marker accession numbers  -->
-<?MIBLOCK COND="$(OR,$(NC,$mcount,0),$(NC,$gcount,0))">
-
-
-<body bgcolor="white" TEXT="black">
-<basefont COLOR="#000000" size=2>
-
-<HEAD>
-
-<?MISQL SQL="select object from webPages where ID='aa-chromoscripts.apg';">$1<?/MISQL>
-</HEAD>
-
-
-<?MIVAR NAME=$ending>,dist,m2_type<?/MIVAR>
-
-<!-- NOW JUST RETRIEVE AND DISPLAY ALL MATCHING ENTRIES. -->
-
-<?MIVAR>
-<center>
-<?MISQL SQL="select a.DB_name,conc(conc(b.DB_query,a.acc_num),b.url_suffix),acc_num from db_link a,foreign_DB b where a.DB_name=b.DB_name and lower(a.acc_num) like lower('%$aname%') order by a.DB_name;">
-<?MIVAR NAME=$addr>$2<?/MIVAR>
-<?/MISQL>
-<font size=4>Result Summary for <b><A HREF="$addr" target="content">$inputaname</A></b></font>
-
-<?/MIVAR>
-
-<br>
-
-
-<!-- Stuff to control retrieval volume -->
-<?MIVAR>
-<form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
-<input type=hidden name=MIval value=aa-accessionlister.apg>
-<input type=hidden name=aname value=$aname>
-<?/MIVAR>
-
-<?MIVAR COND="$(XST,$getsome)"><font color="red"><b>Showing only first $limit </b></font> of <?/MIVAR>
-
-
-<?MISQL SQL="select count(*)::integer from db_link where lower(acc_num) like lower('%$aname%');"><?/MISQL>
-<?MIVAR NAME=$tcount>$1<?/MIVAR>
-
-<?MIVAR NAME=$true_count>0<?/MIVAR>
-<?MISQL SQL="
-  select distinct count(*)::integer 
-    from all_mapped_markers a, db_link b 
-    where lower(b.acc_num) like lower('%$aname%') 
-      and b.linked_recid = a.zdb_id 
-  union 
-  select distinct count(*)::integer 
-    from all_mapped_markers a, db_link b, orthologue c 
-    where lower(b.acc_num) like lower('%$aname%') 
-      and b.linked_recid = c.zdb_id 
-      and c.c_gene_id = a.zdb_id
-  union
-  select distinct count(*)::integer
-    from all_genes a , db_link b 
-    where lower(b.acc_num) like lower('%$aname%')
-      and b.linked_recid= a.zdb_id
-  union
-  select distinct count(*)::integer
-    from all_genes a , db_link b, orthologue c 
-    where lower(b.acc_num) like lower('%$aname%') 
-      and b.linked_recid = c.zdb_id 
-      and c.c_gene_id = a.zdb_id ;">
-
-$(SETVAR,$true_count,$(+,$true_count,$1))
-<?/MISQL>
-<?MIVAR> <b>$tcount</b> matching gene or marker records found.<?/MIVAR>
-<!-- QUERY: <?MIVAR>$MI_SQL<?/MIVAR> -->
-
-<?MIVAR COND="$(XST,$getsome)">
-<input type=submit name=getall value="Get remaining $(-,$tcount,$limit) records">
-<input type=hidden name=limit value=99>
-
-
-<?/MIVAR>
-<br>
-(Click on individual markers for details)
-</center>
-<p>
-
-<!-- Param to set maximum returned at once -->
-<?MIVAR NAME=$maxreturn>50<?/MIVAR>
-
-
-<?MIVAR COND="$(AND,$(NXST,$limit),$(>,$tcount,$maxreturn))">
-<BIG>The search based on the above criteria has retrieved <B>$tcount</b> records. This number of records may take some time to download, depending on the speed of your machine and connection.<br>
-Options:
-<ul>
-<li> Further constrain your criteria above and click "search" to re-do search.
-<li> Get only the first <input name=limit value=$maxreturn type=text maxlength=3 size=3> records. <input type=submit name=getsome value="Do this">
-<li> Get all $tcount matching records. <input type=submit name=getall value="Do this">
-</ul>
-<?/MIVAR>
-
-</form>
-
-
-<form method=post  action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi" target="content" >
-<?MIVAR COND="$(OR,$(<=,$tcount,$maxreturn),$(XST,$getall))" NAME=$limit>$true_count<?/MIVAR>
-
-<?MIBLOCK COND="$(XST,$limit)">
-(Note: cM distances are measured from most telomeric marker)
-<TABLE width=100% border=0 cellspacing=0 cellpadding=3 >
-<TH> </TH><TH align=left>Name</TH> <TH align=left>Map Location</TH> <TH align=left>Panel</TH><TH align=left>Map</TH> <TH align=left>Updated</TH>
-
-<?MIVAR NAME=$prev_name>NULL<?/MIVAR>
-<?MIVAR NAME=$clr_cnt>0<?/MIVAR>
-<?MIVAR NAME=$ok_view_map>0<?/MIVAR>
-<?MIVAR NAME=$target_abbrev>$7<?/MIVAR>
-<?MIVAR NAME=$OID>$4<?/MIVAR>
-<?MIVAR NAME=$marker_name>$1<?/MIVAR>
-
-<! -- a mapped marker was found display it -->
-
-<?MIBLOCK COND="$(OR,$(NC,$mcount,0),$(NC,$gcount,0))">
-
-<?MISQL SQL="
-  select abbrev as marker_name, mtype, lg_location, a.zdb_id, OR_lg, target_id,
-         target_abbrev, abbrev, private, owner $ending, metric, 
-         day(entry_date::date), month(entry_date::date), year(entry_date::date)
-    from all_mapped_markers a, db_link b
-    where lower(b.acc_num) like lower('%$aname%')
-      and b.linked_recid = a.zdb_id
-  union
-  select abbrev as marker_name, mtype, lg_location, a.zdb_id, OR_lg, target_id,
-	 target_abbrev, abbrev, private, owner $ending, metric,
-	 day(entry_date::date), month(entry_date::date), year(entry_date::date)
-    from all_mapped_markers a, db_link b, orthologue c
-    where lower(b.acc_num) like lower('%$aname%') 
-      and b.linked_recid = c.zdb_id
-      and c.c_gene_id = a.zdb_id
-  union
-  select a.abbrev, 'GENE', 0, a.zdb_id, a.OR_lg, 'NULL'::varchar(50), 
-         'NULL'::varchar(10), a.abbrev, 'f'::boolean, ''::varchar(50), 
-	 NULL::numeric(8,2), 'NULL'::varchar(10), 'NULL'::varchar(5),
-	 day(NULL::date), month(NULL::date), year(NULL::date)
-    from all_genes a , db_link b
-    where a.OR_lg = '0'
-      and lower(b.acc_num) like lower('%$aname%')
-      and b.linked_recid = a.zdb_id
-  union 
-  select a.abbrev, 'GENE', 0, a.zdb_id, a.OR_lg, 'NULL'::varchar(50),
-	 'NULL'::varchar(10), a.abbrev, 'f'::boolean, 'NULL'::varchar(50),
-	 NULL::numeric(8,2), 'NULL'::varchar(10), 'NULL'::varchar(5), 
-	 day(NULL::date), month(NULL::date), year(NULL::date)
-    from all_genes a , db_link b, orthologue c
-    where a.OR_lg = '0' 
-      and lower(b.acc_num) like lower('%$aname%')
-      and b.linked_recid = c.zdb_id
-      and c.c_gene_id = a.zdb_id ;" MAXROWS=$limit>
-
-
-<?MIBLOCK COND="$(NC,$15,NULL)">
-<?MIVAR NAME=$upd_date> $(INDEX,$(-,$15,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $14,$16 <?/MIVAR>
-<?/MIBLOCK>
-
-<?MIBLOCK COND="$(EC,$15,NULL)">
-<?MIVAR NAME=$upd_date> <?/MIVAR>
-<?/MIBLOCK>
-
-<?MIBLOCK COND="$(AND,$(NC,$prev_name,$1),$(NC,$prev_name,0),$(EC,$ok_view_map,1))">
-<?MIVAR>
-
-<input type=hidden name=userid value=$userid>
-<input type=hidden name=marker value=$prev_name>
-$(SETVAR,$color,$(/,$clr_cnt,2))
-<TR valign=top $(IF,$(!=,$color,$(FIX,$color)),"bgcolor=#FCCE64")> 
-<TD></TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD align=left><font size=1>
-<input type=submit value='VIEW MAP' name=view_map ><TD>&nbsp;</TD>
-<?/MIVAR>
-</TR>
-</form>
-<form method=post  action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi" target="content">
-<?MIVAR NAME=$ok_view_map>0<?/MIVAR>
-<?/MIBLOCK>
-
-
-$(IF,$(NC,$prev_name,$1),$(SETVAR,$clr_cnt,$(+,$clr_cnt,1)))
-
-$(SETVAR,$color,$(/,$clr_cnt,2))
-<TR valign=top $(IF,$(!=,$color,$(FIX,$color)),"bgcolor=#FCCE64")> 
-
-<TD><font size=2> 
-$(IF,$(XST,$return_rec),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$4" TARGET=content>SELECT</A>") 
-</TD>
-
-$(SETVAR,$viewer,$(IF,$(EC,$2,MUTANT),aa-locusview.apg,aa-markerview.apg))
-
-$(IF,$(NC,$prev_name,$1),"<TD valign=top> <font size=2>"$2":<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$viewer&OID=$4" TARGET=content>"$1"</A></TD>","<TD>&nbsp;</TD>")
-
-<TD> <font size=2> 
-$(IF,$(EQ,$5,"0"),"Unmapped")
-
-$(IF,$(AND,$(EC,$11,NULL),$(EC,$9,f),$(NE,$5,0),$(NE,$5,MT)),"LG <b>"$5"</b>;<b> "$3"</b> "$13""<TD><font size=2> "<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$6">"$7"</A>"</TD>
-<TD><font size=2 COLOR=#A9A9A9><input type=checkbox name=$target_abbrev  value=1  CHECKED ></TD>
-<TD><font size=2>" "$upd_date""</TD>)
-
-$(IF,$(AND,$(EC,$11,NULL),$(NC,$9,f),$(NE,$5,"0"),$(NE,$5,MT)),"Mapped on <A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$6">"$7"  "$upd_date"</A>, but confidential.")
-
-$(IF,$(AND,$(NC,$11,NULL),$(EC,$9,f),$(NE,$5,"0"),$(NE,$5,MT)),"Linked at "$11" "$13" to <A target=content HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$6">"$7"</A> ("$12")")
-
-$(IF,$(AND,$(NC,$11,NULL),$(NC,$9,f),$(NE,$5,"0"),$(NE,$5,MT)),"Linked to "$12", but confidential.")
-
-$(IF,$(EQ,$5,MT),"LG <b>"$5"</b>")
-</TD>
-
-
-</TR>
-$(SETVAR,$prev_name,$1)
-<?/MISQL>
-
-<?MIBLOCK COND="$(EC,$ok_view_map,1)">
-<?MIVAR>
-<input type=hidden name=userid value=$userid>
-<input type=hidden name=marker value=$marker_name>
-$(SETVAR,$color,$(/,$clr_cnt,2))
-<TR valign=top $(IF,$(!=,$color,$(FIX,$color)),"bgcolor=#FCCE64")> 
-<TR valign=top $(IF,$(!=,$color,$(FIX,$color)),"bgcolor=#FCCE64")>
-<TD></TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD align=left><font size=1 COLOR=#A9A9A9><input type=submit value='VIEW MAP' name=view_map > <TD>&nbsp;</TD>
-</TR>
-<?/MIVAR>
-<?/MIBLOCK>
-
-
-</TABLE>
-</form>
-
-<!-- QUERY: <?MIVAR>$MI_SQL<?/MIVAR> -->
-
-<?/MIBLOCK>  <!-- ends mcount nc  0 -->
-
-
-<?/MIBLOCK>  <!-- ends exists limit -->
-
-<?/MIBLOCK>  <!-- ends if mcount or gcount NC 0  -->
-
-
-<!--   display publication matches  -->
-
-<?MIBLOCK COND="$(NC,$pcount,0)">
-<center>
-<?MIVAR> <b>$pcount</b> matching publication records found.<?/MIVAR>
-</center>
-<TABLE WIDTH=100%>
-<TH> </TH> <TH>YEAR</TH> <TH>TITLE</TH> <TH>AUTHORS</TH>
-
-<?MISQL SQL="select title,authors,zdb_id,year(pub_date) as pyear from publication where lower(accession_no) like lower('%$aname%') and status = 'active';">
-<TR> 
-<TD valign=top> 
-$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_pub.apg&OID=$3" TARGET=content>EDIT</A> </FONT>")
-$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-link_authors.apg&OID=$3" TARGET=content>LINK</A> </FONT>")
-$(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3" TARGET=content>SELECT</A> </FONT>")
-</TD>
-<TD valign=top> <FONT SIZE=-1> $4 </FONT> </TD>
-<TD valign=top> <FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3" TARGET="content">$1</A> </FONT> </TD>  
-<TD valign=top> <FONT SIZE=-1> $2 </FONT> </TD>
-</TR>
-<?/MISQL>
-</TABLE>
-
-
-<?/MIBLOCK>  <!-- ENDS PUBLICATION COUNT GT 0 -->
-
-<!-- DEBUGGING  <?MIVAR> mcount = $mcount <?/MIVAR>  -->
-<!-- DEBUGGING  <?MIVAR> gcount = $gcount <?/MIVAR>  -->
-<!-- DEBUGGING  <?MIVAR> pcount = $pcount <?/MIVAR>  -->
-
-
-
-<?MIBLOCK COND="$(AND,$(=,$mcount,0),$(=,$gcount,0),$(=,$pcount,0))">
-<form><center><font size=4>
-<?MIVAR> <font size=3><b>Accession Number is Not Found in ZFIN</b> <?/MIVAR>
-</form>
-<?/MIBLOCK>
-
-
-<?/MIBLOCK>  <!-- ENDS IF SEARCHTYPE ACCESSION NUMBER -->
 
 
 <!--  THIS BLOCK HANDLES ZDB ID SEARCHES  -->
 
 <?MIBLOCK COND="$(>,$(POSITION,$aname,ZDB),0)">
 
-<?MIVAR NAME=$start_page>NULL<?/MIVAR>
-<!-- if a zdb is passed in,  set second frame to it's viewer with specified zdb_id! -->
+  <?MIVAR NAME=$start_page>NULL<?/MIVAR>
+  <!-- if a zdb is passed in,  set second frame to it's viewer with specified zdb_id! -->
 
-<?MIBLOCK COND="$(XST,$aname)")>
-<?MIVAR name=aname>$(UPPER,$aname)<?/MIVAR>
-<?MIVAR name=$OID>$aname<?/MIVAR>
-<?MIVAR NAME=$constraint> where zdb_id = '$OID' <?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,LAB),0)">aa-lablister.apg<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PERS),0)">aa-perslister.apg<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,COMPANY),0)">aa-companylister.apg<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PUB),0)">aa-publister2.apg<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,FISH),0)">aa-fishlister.apg<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,GENE),0)">aa-genelister.apg<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,EST),0)">aa-markerlister.apg<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,SSLP),0)">aa-markerlister.apg<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,SSR),0)">aa-markerlister.apg<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,BAC),0)">aa-markerlister.apg<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,LOCUS),0)">aa-locusview.apg<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,REFCROSS),0)">aa-crossview.apg<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,RAPD),0)">aa-markerlister.apg<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,STS),0)">aa-markerlister.apg<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,RFLP),0)">aa-markerlister.apg<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,IMAGE),0)">aa-imageview.apg<?/MIVAR><?/MIBLOCK>
+  <?MIBLOCK COND="$(XST,$aname)")>
+    <?MIVAR name=aname>$(UPPER,$aname)<?/MIVAR>
+    <?MIVAR name=$OID>$aname<?/MIVAR>
+    <?MIVAR NAME=$constraint> where zdb_id = '$OID' <?/MIVAR>
+    <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,LAB),0)">aa-lablister.apg<?/MIVAR>
+    <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PERS),0)">aa-perslister.apg<?/MIVAR>
+    <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,COMPANY),0)">aa-companylister.apg<?/MIVAR>
+    <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PUB),0)">aa-publister2.apg<?/MIVAR>
+    <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,FISH),0)">aa-fishlister.apg<?/MIVAR>
+    <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,GENE),0)">aa-genelister.apg<?/MIVAR>
+    <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,EST),0)">aa-markerlister.apg<?/MIVAR>
+    <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,SSLP),0)">aa-markerlister.apg<?/MIVAR>
+    <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,SSR),0)">aa-markerlister.apg<?/MIVAR>
+    <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,BAC),0)">aa-markerlister.apg<?/MIVAR>
+    <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,LOCUS),0)">aa-locusview.apg<?/MIVAR>
+    <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,REFCROSS),0)">aa-crossview.apg<?/MIVAR>
+    <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,RAPD),0)">aa-markerlister.apg<?/MIVAR>
+    <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,STS),0)">aa-markerlister.apg<?/MIVAR>
+    <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,RFLP),0)">aa-markerlister.apg<?/MIVAR>
+    <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,IMAGE),0)">aa-imageview.apg<?/MIVAR>
+  <?/MIBLOCK>
 
-<?MIBLOCK COND="$(EC,$start_page,NULL)">
-<form><center><font size=4><?MIVAR><b>Requested ID is not found in ZFIN.</b> <?/MIVAR>
-</form>
-<?/MIBLOCK>  <!-- ends if start page is null -->
+  <?MIBLOCK COND="$(EC,$start_page,NULL)">
+    <form><center><font size=4><?MIVAR><b>Requested ID is not found in ZFIN.</b> <?/MIVAR>
+    </form>
+  <?/MIBLOCK>  <!-- ends if start page is null -->
 
 
-<?MIBLOCK COND="$(NC,$start_page,NULL)">
-<?MIVAR>
+  <?MIBLOCK COND="$(NC,$start_page,NULL)">
+    <?MIVAR>
+      <form name=zdb_search method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$start_page&OID=$OID" >
+      <input type=hidden name=MIval value=$start_page>
+      <input type=hidden name=OID value=$OID>
+      <input type=hidden name=constraint value="$constraint">
+      <input type=hidden name=jtype value="any">
+      <input type=hidden name=pub_status value="any">
+      <input type=hidden name=cur_status value="any">
+      <input type=hidden name=order_pref value="name">
+      <input type=hidden name=line_type value="accession">
+      <input type=hidden name=accession value="accession">
+      <input type=hidden name=mutagen value="any">
+      <input type=hidden name=chrom_change value="any">
+      <input type=hidden name=chrom_num value="0">
+      <input type=hidden name=searchtype value="begins">
+    <?/MIVAR>
 
-<form name=zdb_search method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$start_page&OID=$OID" >
- 
-<input type=hidden name=MIval value=$start_page>
-<input type=hidden name=OID value=$OID>
-<input type=hidden name=constraint value="$constraint">
-<input type=hidden name=jtype value="any">
-<input type=hidden name=pub_status value="any">
-<input type=hidden name=cur_status value="any">
-<input type=hidden name=order_pref value="name">
-<input type=hidden name=line_type value="accession">
-<input type=hidden name=accession value="accession">
-<input type=hidden name=mutagen value="any">
-<input type=hidden name=chrom_change value="any">
-<input type=hidden name=chrom_num value="0">
-<input type=hidden name=searchtype value="begins">
+    <script>
+      document.zdb_search.submit ();
+    </script>
+    </form>
 
-<?/MIVAR>
-
-<script>
-document.zdb_search.submit ();
-</script>
-</form>
-
-<?/MIBLOCK>  <!-- ends if valid start page, not null  -->
+  <?/MIBLOCK>  <!-- ends if valid start page, not null  -->
 
 <?/MIBLOCK>  <!-- ENDS IF SEARCHTYPE ZDB ID -->
 
