@@ -50,7 +50,7 @@ public class mapplet extends Applet  {
 			}
 			
 		} else if (getParameter("where") != null) 	{
-			String Q = "select zdb_id, abbrev, mtype, target_abbrev, lg_location::numeric(6,2), OR_lg, mghframework, metric from paneled_markers where " + getParameter("where") + " and private='f' order by 4,5 asc;";
+			String Q = "select zdb_id, abbrev, mtype, target_abbrev, lg_location::numeric(6,2), OR_lg, mghframework, metric from paneled_markers where " + getParameter("where") + " order by 4,5 asc;";
 			MV = new MapViewer(Q,"host", "port", getParameter("selected_marker"), getParameter("panel_order"));
 		} else if (getParameter("query") != null) 	{
 			 MV = new MapViewer(getParameter("query"),"host", "port", getParameter("selected_marker"), getParameter("panel_order"));
