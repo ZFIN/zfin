@@ -5,6 +5,9 @@
 
 <!-- ECK 1/98. Instead of searching a huge intersection table, we now search a special "search_table" that has all of the criteria culled out. Should speed things up -->
 
+<!-- Modified to support I.E.  Naviagtor tile buttons must know all user input from the query screen.  These values are posted to the lister form.  The lister form creates the tile bar button with appropriate variables. Startframes.apg will pass this variables on to the select form.  -->
+
+
 <HTML>
 
 <basefont size=2>
@@ -23,11 +26,24 @@
 
 <?MIVAR NAME=$knowngene COND="$(NXST,$knowngene)">NULL<?/MIVAR>
 <?MIVAR NAME=$previous> <?/MIVAR>
+
+<?MIVAR COND="$(NXST,$abbrev)" NAME=$nav_abbrev><?/MIVAR>
+<?MIVAR COND="$(NXST,$chrom_change)" NAME=$chrom_change>any<?/MIVAR>
+<?MIVAR COND="$(NXST,$chrom_num)" NAME=$chrom_num>0<?/MIVAR>
+<?MIVAR COND="$(NXST,$mutagen)" NAME=$mutagen>any<?/MIVAR>
+<?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>phenotype<?/MIVAR>
+<?MIVAR COND="$(NXST,$preselected)" NAME=$preselected><?/MIVAR>
+<?MIVAR COND="$(NXST,$selected_separator)" NAME=$selected_separator>and<?/MIVAR>
+
 <?MIVAR NAME=$target_table>fish_search a <?/MIVAR>
+
 
 <!-- First build CONSTRAINT CLAUSE common to both wild type and mutant line, ie., those constraints related only to fish. -->
 
 <?MIBLOCK COND="$(OR,$(XST,$fname),$(XST,$anon1text),$(XST,$abbrev),$(NC,$knowngene,NULL))">
+
+<!--  save abbrev input to pass to startframes for anv tile button -->
+<?MIVAR COND="$(XST,$abbrev)" NAME=$nav_abbrev>$abbrev<?/MIVAR>
 
 
 <!-- First filter name for apostrophes! -->
@@ -125,9 +141,19 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
 <input type=hidden name=MIval value=aa-fishlister.apg>
 <input type=hidden name=mut_constraint value="$mut_constraint">
 <input type=hidden name=line_type value="$line_type">
+
+<?/MIVAR>
 <?MIVAR COND="$(XST,$fname)"><input type=hidden name=fname value="$fname"><?/MIVAR>
 <?MIVAR COND="$(XST,$allele)"><input type=hidden name=allele value="$allele"><?/MIVAR>
-<?/MIVAR>
+<?MIVAR COND="$(NC,$knowngene,NULL)"> <input type=hidden name=knowngene value="$knowngene"><?/MIVAR>
+<?MIVAR COND="$(XST,$chrom_change)"><input type=hidden name=chrom_change value="$chrom_change"><?/MIVAR>
+<?MIVAR COND="$(XST,$chrom_num)"><input type=hidden name=chrom_num value="$chrom_num"><?/MIVAR>
+<?MIVAR COND="$(XST,$mutagen)"><input type=hidden name=mutagen value="$mutagen"><?/MIVAR>
+<?MIVAR COND="$(XST,$anon1)"><input type=hidden name=anon1 value="$anon1"><?/MIVAR>
+<?MIVAR COND="$(XST,$anon1text)"><input type=hidden name=anon1text value="$anon1text"><?/MIVAR>
+<?MIVAR COND="$(XST,$nav_abbrev)"><input type=hidden name=nav_abbrev value="$nav_abbrev"><?/MIVAR>
+<?MIVAR COND="$(XST,$preselected)"><input type=hidden name=preselected value="$preselected"><?/MIVAR>
+<?MIVAR COND="$(XST,$selected_separator)"><input type=hidden name=selected_separator value="$selected_separator"><?/MIVAR>
 
 <center>
 <FONT SIZE=4>Search Mutant Lines: Result Summary</font><br>
@@ -170,9 +196,9 @@ Options:
 <?MIVAR NAME=$gene_id>$11<?/MIVAR>
 <?MIVAR NAME=$gene_abbrev>$10<?/MIVAR>
 <?MIVAR NAME=$name>$1<?/MIVAR>
-<?MIVAR NAME=$mutagen>$4<?/MIVAR>
-<?MIVAR NAME=$chrom_change>$6<?/MIVAR>
-<?MIVAR NAME=$chrom_num>$7<?/MIVAR>
+<?MIVAR NAME=$mut>$4<?/MIVAR>
+<?MIVAR NAME=$chromchange>$6<?/MIVAR>
+<?MIVAR NAME=$chromnum>$7<?/MIVAR>
 <?MIVAR NAME=$num_images>$8<?/MIVAR>
 <?MIVAR NAME=$locus>$9<?/MIVAR>
 
@@ -227,14 +253,15 @@ $(IF,$(XST,$return_rec),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do
 <TD><font size=-1> $(IF,$(NC,$gene_id,UNKNOWN),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$gene_id TARGET=content>$gene_abbrev</A>,UNKNOWN)
 </font></TD>
 
-<TD><font size=-1> $(IF,$(EC,$chrom_change,NULL),UNKNOWN,$chrom_change)</font> </TD> 
+<TD><font size=-1> $(IF,$(EC,$chromchange,NULL),UNKNOWN,$chromchange)</font> </TD> 
 
 
-<TD><font size=-1> $(IF,$(EC,$mutagen,NULL),UNKNOWN,$mutagen)</font> </TD> 
-<TD><font size=-1> $(IF,$(EC,$chrom_num,0),UNKNOWN,$chrom_num)</font> </TD> 
+<TD><font size=-1> $(IF,$(EC,$mut,NULL),UNKNOWN,$mut)</font> </TD> 
+<TD><font size=-1> $(IF,$(EC,$chromnum,0),UNKNOWN,$chromnum)</font> </TD> 
 <TD><font size=-1>$8</font></TD>
 </TR>
 <?/MISQL>
+
 </TABLE>
 <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No matching records found<?/MIVAR>
 
@@ -286,5 +313,25 @@ $(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|
 
 <?/MIBLOCK>  <!-- ends the accession case -->
 
+<!-- Cause a tile for the new page to appear in the navigator frame -->
+<!-- startframes.apg will pass variables on to appropriate page -->
+<!-- don't want a tile if got here via the accessionlister  -->
+<?MIBLOCK COND="$(AND,$(NXST,$accession),$(NC,$line_type,wild_type))">
+<?MIVAR NAME=page_title>Find MUTANT<?/MIVAR>
+<?MIVAR NAME=navtile>true<?/MIVAR>
+<?MIVAR COND="$(NXST,$fname)" NAME=$fname><?/MIVAR>
+<?MIVAR COND="$(NXST,$allele)" NAME=$allele><?/MIVAR>
+<?MIVAR COND="$(NXST,$nav_abbrev)" NAME=$nav_abbrev><?/MIVAR>
+<?MIVAR COND="$(NXST,$anon1text)" NAME=$anon1text><?/MIVAR>
+<?MIVAR COND="$(NXST,$knowngene)" NAME=$knowngene><?/MIVAR>
+<?MIVAR COND="$(XST,$preselected)" NAME=$preselected DELIMIT=" " REPLACE="8">$preselected<?/MIVAR>
+<?MIVAR>
+<SCRIPT>
+var page_id=top.content.location.href+'&navtile=$navtile&fname=$fname&chrom_change=$chrom_change&chrom_num=$chrom_num&mutagen=$mutagen&anon1=$anon1&anon1text=$anon1text&allele=$allele&abbrev=$nav_abbrev&line_type=$line_type&knowngene=$knowngene&preselected=$preselected&selected_separator=$selected_separator';
+top.update_hist(page_id,"$page_title");
+top.controls.location.reload(true);
+</SCRIPT>
+<?/MIVAR>
+<?/MIBLOCK>
 
 </HTML>
