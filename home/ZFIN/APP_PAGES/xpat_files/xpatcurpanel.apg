@@ -1,0 +1,190 @@
+<?MICOMMENT>
+
+FILE:     xpatcurpanel.apg
+PREFIX:   xpcurpnl_
+
+This page manages the display of FX curation results.
+
+A simple form submits data to create new combinations of
+Experiment / Figure / Stage. Each new record is assigned the
+Unspecified anatomy_item by default.
+
+Each unique combination of Experiment-Figure-Stage (EFS) is 
+displayed as a table row. Structures for the EFS are displayed 
+as a comma separated list.
+
+INPUT VARS:
+
+  REQUIRED:
+    $OID :: publication zdb-id for the experiment
+    $AUTHORIZED :: this is a subroutine. the authorization must occur in the calling page.
+    $xpcur_G_fig_attrib_csv :: csv list of figures for the OID
+    
+  OPTIONAL:  
+    none
+      
+OUTPUT VARS:
+
+OUTPUT:
+  A table of expression results related to the publication OID.
+
+EFFECTS  
+   Submit form data for insert of an EFS.
+      xpcur_G_panel_add :: flag for new record
+      xpcur_G_panel_image :: image zdb
+      xpcur_G_panel_add_designation :: optional text
+      xpcur_G_panel_xpatex :: experiment zdb
+      xpcur_G_panel_add_start_stg :: stage zdb
+      xpcur_G_panel_add_end_stg :: stage zdb
+      xpcur_G_panel_add_anatitem :: anatomy zdb
+      xpcur_G_panel_add_expressed :: boolean (t/f)
+
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
+<?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
+
+<table width=100% border=0 bgcolor="<!--|HIGHLIGHT_COLOR|-->">
+  <tr bgcolor=#CCCCCC>
+    <td>Figure</td>
+    <td>Experiment</td>
+    <td>Stage Range</td>
+    <td width=25%>Expressed in</td>
+    <td>Delete</td>
+  </tr>  
+<?MISQL SQL="
+    select distinct fig_zdb_id, fig_label, xpatres_start_stg_zdb_id, xpatres_end_stg_zdb_id, xpatres_xpatex_zdb_id, mrkr_abbrev_order, stg_hours_start, LOWER(abbrev)
+    from fx_figure, fx_expression_pattern_figure, fx_expression_result, fx_expression_experiment, marker, stage, feature_experiment, fish
+    where fig_source_zdb_id = '$OID'
+      and xpatfig_fig_zdb_id = fig_zdb_id
+      and xpatfig_xpatres_zdb_id = xpatres_zdb_id
+      and xpatres_xpatex_zdb_id = xpatex_zdb_id 
+      and xpatex_gene_zdb_id = mrkr_zdb_id
+      and xpatres_start_stg_zdb_id = stg_zdb_id
+      and xpatex_featexp_zdb_id = featexp_zdb_id
+      and featexp_genome_feature_zdb_id = zdb_id
+      and fig_zdb_id in ('$xpcur_G_fig_attrib_csv')
+    order by fig_label, mrkr_abbrev_order, 8, stg_hours_start;">
+
+      <?MIVAR NAME=xpcurpnl_fig_zdb_id>$1<?/MIVAR>
+      <?MIVAR NAME=xpcurpnl_fig_label>$2<?/MIVAR>
+      <?MIVAR NAME=xpcurpnl_start_stg_zdb_id>$3<?/MIVAR>
+      <?MIVAR NAME=xpcurpnl_end_stg_zdb_id>$4<?/MIVAR>
+      <?MIVAR NAME=xpcurpnl_xpatex_zdb_id>$5<?/MIVAR>
+      <?MIVAR NAME=xpcurpnl_delete>panel,$1,$5,$3,$4<?/MIVAR>
+     
+    <tr>
+      <?MISQL SQL="
+        select start.stg_name_long, end.stg_name_long, anatitem_name, xpatres_expression_found, anatitem_name_order
+        from fx_expression_pattern_figure, fx_expression_result, anatomy_item, stage as start, stage as end       
+        where xpatfig_fig_zdb_id = '$xpcurpnl_fig_zdb_id'
+          and xpatfig_xpatres_zdb_id = xpatres_zdb_id
+          and xpatres_start_stg_zdb_id = '$xpcurpnl_start_stg_zdb_id'
+          and xpatres_end_stg_zdb_id = '$xpcurpnl_end_stg_zdb_id'
+          and xpatres_start_stg_zdb_id = start.stg_zdb_id
+          and xpatres_end_stg_zdb_id = end.stg_zdb_id
+          and xpatres_anat_item_zdb_id = anatitem_zdb_id
+          and xpatres_xpatex_zdb_id = '$xpcurpnl_xpatex_zdb_id'
+        order by anatitem_name_order
+        ;">
+   
+        <?MIVAR NAME=xpcurpnl_start_stg>$1<?/MIVAR>
+        <?MIVAR NAME=xpcurpnl_end_stg>$2<?/MIVAR>
+        <?MIVAR NAME=xpcurpnl_anatitem_name>$3<?/MIVAR>
+        <?MIVAR NAME=xpcurpnl_expression_found><font color="$(IF,$(EC,$4,t),#66CCFF,green)">$(IF,$(EC,$4,t),y,n)</font><?/MIVAR>
+      
+        <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">     
+          <?MISQL SQL="select WebExplode(object,'xpcurexpssdisp_xpatex_zdb_id=$xpcurpnl_xpatex_zdb_id') from webPages where ID='aa-xpatcurexpssdisplayname.apg';"><?/MISQL>
+          <?MIVAR NAME=xpcurpnl_xpatex_display_name>$xpcurexpssdisp_xpatex_display_name<?/MIVAR>
+          <?MIVAR>
+            <td valign=top>$xpcurpnl_fig_label</td>
+            <td valign=top>$xpcurpnl_xpatex_display_name</td>    
+            <td valign=top>$xpcurpnl_start_stg $(IF,$(NE,$xpcurpnl_start_stg,$xpcurpnl_end_stg),- <br>$xpcurpnl_end_stg)</td>
+            <td valign=top>$xpcurpnl_anatitem_name($xpcurpnl_expression_found)
+          <?/MIVAR>
+        <?MIELSE>  
+          <?MIVAR>, $xpcurpnl_anatitem_name($xpcurpnl_expression_found)<?/MIVAR>  
+        <?/MIBLOCK> <?MICOMMENT> MI_CURRENTROW = 1 <?/MICOMMENT>
+  
+      <?/MISQL>
+      
+      <td valign=top>
+        <?MIVAR><input name="delete" type=button value=" X " onClick="deleteZDB('$xpcurpnl_delete','panel')"><?/MIVAR>
+      </td>           
+    </tr>
+        
+    
+<?/MISQL>    
+<?MICOMMENT> ==| Enter a New Panel |== <?/MICOMMENT>
+  <tr>
+    <td colspan=5>
+      <hr>
+    </td>
+  </tr>
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#panel" method=post name="xpcur_G_panel_add" onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','panel');">
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg"> 
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+  <tr>
+    <td>
+      <input name="xpcur_G_panel_add" type=submit value="Add">
+
+        <select name="xpcur_G_panel_fig_zdb_id">
+          <?MISQL SQL="
+            select fig_zdb_id, fig_label
+	    from fx_figure
+	    where fig_zdb_id in ('$xpcur_G_fig_attrib_csv')
+            order by fig_label;">
+            <option value=$1>$2</option>
+          <?/MISQL>
+      </select>
+    </td>
+    <td>
+        <select name="xpcur_G_panel_add_xpatex">
+          <?MISQL SQL="
+            select xpatex_zdb_id, mrkr_abbrev_order, LOWER(abbrev)
+	    from fx_expression_experiment, marker, feature_experiment, fish
+	    where xpatex_source_zdb_id = '$OID'
+	      and xpatex_gene_zdb_id = mrkr_zdb_id
+	      and xpatex_featexp_zdb_id = featexp_zdb_id
+	      and featexp_genome_feature_zdb_id = zdb_id
+            order by mrkr_abbrev_order, 3;">
+            <?MIVAR NAME=xpcurpnl_xpatex_zdb_id>$1<?/MIVAR>  
+            <?MISQL SQL="select WebExplode(object,'xpcurexpssdisp_xpatex_zdb_id=$xpcurpnl_xpatex_zdb_id') from webPages where ID='aa-xpatcurexpssdisplayname.apg';"><?/MISQL>
+            <?MIVAR NAME=xpcurpnl_xpatex_display_name>$xpcurexpssdisp_xpatex_display_name<?/MIVAR>
+            <option value=$xpcurpnl_xpatex_zdb_id>$xpcurpnl_xpatex_display_name</option>
+          <?/MISQL>
+      </select></td>
+    <td colspan=3> 
+        Start: <select name="xpcur_G_panel_add_start_stg" onChange="setEndStage('xpcur_G_panel_add','xpcur_G_panel_add_start_stg','xpcur_G_panel_add_end_stg');">
+          <?MISQL SQL="
+            select stg_zdb_id, stg_name_long, stg_hours_start
+	    from stage
+            order by stg_hours_start;">
+            <option value="$1">$2</option>
+          <?/MISQL>
+      </select>
+      <br>
+      End: <select name="xpcur_G_panel_add_end_stg">
+          <?MISQL SQL="
+            select stg_zdb_id, stg_name_long, stg_hours_end
+	    from stage
+            order by stg_hours_end;">
+            <option value="$1">$2</option>
+          <?/MISQL>
+      </select>
+    </td>
+  </tr>
+</form> 
+  
+</table>
+
+<?/MIBLOCK> <?MICOMMENT> end authorize <?/MICOMMENT>

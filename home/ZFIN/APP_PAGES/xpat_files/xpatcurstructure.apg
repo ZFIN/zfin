@@ -1,0 +1,481 @@
+<?MICOMMENT>
+
+FILE:     xpatcurstructure.apg
+PREFIX:   xpcurstr_
+
+Display a list of anatomy (expressed and not expressed) and provide a mean of
+updating the expression results for figures of this publication.
+
+The display is a table of anatomy items; one item per line. 
+
+The update is controlled by a series of radio buttons and a select box. The 
+select box contains a distinct set of expression pattern figures (EPF). Each
+anatomy item has two radio buttons: Add / Remove. When the form is submitted, 
+each anatomy item checked 'Add' is attached to the EPF and each anatomy item 
+checked 'Remove' is removed. 
+
+It's important the anatomy are not removed accidentally. Javascript stores which
+anatomy are attached to each EPF at the time the page loads. When an EPF is
+selected, the radio buttons are updated. All attached anatomy are set to add. Non
+attached anatomy are set to remove.
+
+INPUT VARS:
+
+  REQUIRED:
+    OID :: publication zdb-id for the experiment
+    AUTHORIZED :: this is a subroutine. the authorization must occur in the calling page.
+    xpcur_G_fig_attrib_csv :: csv list of figures for the OID
+    xpcur_c_anatitem_add_csv :: csv list anatomy_item zdb ids last selected for expression_result
+    xpcur_G_structure_add :: csv list anatomy_item zdb ids recently added to the structure heap
+    
+  OPTIONAL:  
+    none
+      
+OUTPUT VARS:
+
+OUTPUT:
+  A table of structures related to the publication OID.
+
+EFFECTS  
+      fig_xpat_stg :: non-null, text, combines values (figure zdb, xpat zdb, sstage zdb, estage zdb)
+      "xpatres_zdb_id" radio (add/remove)
+      xpcur_G_structure_add :: flag for new record
+      xpcur_G_structure_add_id :: anatomy zdb
+      xpcur_G_structure_add_expressed :: boolean (t/f)
+      xpcur_G_structure_add_xpatex :: xpat zdb
+      xpcur_G_structure_add_start_stg :: stg zdb
+      xpcur_G_structure_add_end_stg :: stg zdb
+
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
+<?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
+
+  <script type="text/javascript" language="javascript">
+
+    function openChild(file,window) {
+      if (!self.childWindow) {      
+        childWindow=open(file,window,'resizable=yes,width=800,height=400,scrollbars=1');
+      }
+      else {
+        childWindow.focus();
+      }
+      if (childWindow.opener == null) childWindow.opener = self;
+      
+    }
+
+    //structures are a dynamic set
+    function dynamic_set_value_selection(dynamic_field,offset,span) {
+      var structures_add = '';
+      var structures_remove = '';
+      var end = parseInt(offset)+parseInt(span)*3;
+      //alert("(offset,span) = ("+offset+","+span+")");
+      for (i=offset; i<end; i++) {
+        if (dynamic_field[i].checked) {
+          if (dynamic_field[i].value == "add") {
+            if (structures_add == "") { structures_add = dynamic_field[i].name; }
+            else { structures_add = structures_add+"|"+dynamic_field[i].name; }
+          }
+          else {
+            if (structures_remove == "") { structures_remove = dynamic_field[i].name; }
+            else { structures_remove = structures_remove+"|"+dynamic_field[i].name; }
+          }
+        }
+      }
+      
+      if (structures_add != '') {
+        panelIndex = document.panel_structures.xpcurstr_fig_xpat_stg.selectedIndex;
+        fig_xpat_stg = document.panel_structures.xpcurstr_fig_xpat_stg.options[panelIndex].value;
+        
+        window.document.hidden_panel.xpcur_G_structures_add.value = structures_add;
+        window.document.hidden_panel.xpcur_G_structures_remove.value = structures_remove;
+        window.document.hidden_panel.xpcur_G_fig_xpat_stg.value = fig_xpat_stg;
+        setCookie('xpatcuration_update','update');
+        setCookie('anchor','structure');
+
+        window.document.hidden_panel.submit();
+
+      }
+      else {
+        alert('At least one item must be associated with a panel. Use the Delete button to remove a panel.')
+      }
+    
+    }
+
+    function StringTokenizer (material, separator)
+    {
+       // Attributes.
+       this.material = material;
+       this.separator = separator;
+
+       // Operations.
+       this.getTokens = getTokens;
+       this.nextToken = nextToken;
+       this.countTokens = countTokens;
+       this.hasMoreTokens = hasMoreTokens;
+       this.tokensReturned = tokensReturned;
+
+       // Initialisation code.
+       this.tokens = this.getTokens();
+       this.tokensReturned = 0; 
+
+    }  // end constructor
+
+
+    function trim (strToTrim) {
+       return(strToTrim.replace(/^\s+|\s+$/g, ''));
+    }  // end trim function
+
+
+    function URLDecode(str) {
+       return unescape(str.replace(/\+/g, " "));
+    }
+
+    function getTokens()
+    {
+       // Create array of tokens.
+       var tokens = new Array();
+       var nextToken;
+
+       // If no separators found, single token is the material string itself.
+    	if (this.material.indexOf (this.separator) < 0)
+    	{
+    		tokens [0] = this.material;
+    		return tokens;
+    	}  // end if
+
+       // Establish initial start and end positions of the first token.
+       start = 0;
+       end = this.material.indexOf (this.separator, start);
+
+       // Counter for how many tokens were found.
+       var counter = 0;
+
+       // Go through material, token at a time.
+     	while (this.material.length - start > 1)
+    	{
+		nextToken = this.material.substring (start, end);
+		start = end + 1;
+		if (this.material.indexOf (this.separator, start + 1) < 0)
+		{
+			end = this.material.length;
+		}  // end if
+		else
+		{
+			end = this.material.indexOf (this.separator, start + 1);
+		}  // end else
+
+          tokens [counter] = trim (nextToken);
+
+		counter ++;
+	}   // end if
+
+       // Return the initialised array.
+       return tokens;
+
+
+    }  // end getTokens function
+
+
+
+    function countTokens()
+    {
+      return this.tokens.length;
+    }  // end countTokens function
+
+
+
+
+    function nextToken()
+    {
+
+       if (this.tokensReturned >= this.tokens.length)
+       {
+          return null;
+       }  // end if
+       else
+       {
+          var returnToken = this.tokens [this.tokensReturned];
+          this.tokensReturned ++;
+          return returnToken;
+       }  // end else
+
+    }  // end nextToken function
+
+
+
+
+    function hasMoreTokens()
+    {
+       if (this.tokensReturned < this.tokens.length)
+       {
+          return true;
+       }  // end if
+       else
+       {
+          return false;
+       }  // end else
+    }  // end hasMoreTokens function
+
+    function tokensReturned()
+    {
+       return this.tokensReturned;
+    }  // end tokensReturned function
+    
+
+    //reset checked structures when experiment is selected.
+    
+    function reset_structures_for_panel(xpat_panel_fig_image_string) {
+          
+      var separator = ",";
+      var decodeStr = URLDecode(xpat_panel_fig_image_string) + ",";
+      var tokenizer = new StringTokenizer ( decodeStr, separator );
+      var count = 0;
+      var xpatex_zdb = "";
+      var panel = "";
+      var figure_zdb = "";
+      var image_zdb = "";
+      
+      while (count < 4)
+      {
+        if (count == 1) { var xpatex_zdb = tokenizer.nextToken(); }
+        
+        if (count == 0) { var fig_zdb = tokenizer.nextToken(); }
+        
+        if (count == 2) { var sstage_zdb = tokenizer.nextToken(); }
+        
+        if (count == 3) { var estage_zdb = tokenizer.nextToken(); }
+        
+        count++;
+      }
+      
+      //alert("xpat = "+xpatex_zdb+ "\nfig = "+figimgpan_zdb_id+ "\nsstage = "+sstage_zdb_id+ "\nestage = "+estage_zdb_id);
+      
+      <?MICOMMENT>
+          This is problem of finding the overlap of two list. One list is
+          experiments - defined as a combination of figure / experiment/ stage.
+          The other list is structures - defined as a combination of pub,
+          curator, and anatomy_item. The input is an experiment so it makes 
+          more sense to group by experiment first.
+          
+          Select each distinct set of {figure,experiment,stage}. Then for each
+          set, loop through the structures in expression_pattern_infrastructure. 
+          If the structure belongs to the experiment then set the radio button 
+          to ADD. Otherwise set the radio button to remove.
+          
+          Radio buttons are array objects. In the form on this page the ADD
+          button is listed first, so ADD is element 0 and remove is element 1.
+      <?/MICOMMENT>
+      
+          <?MICOMMENT>
+              This comment should be inside the following SQL. However, all web 
+              datablade code inside the SQL block which executes after the       
+              micomment is no longer interpreted when the micomment is inside the
+              SQL tag.
+                
+                    The '{' character causes strange behavior with the query results 
+                    when it is not encapsulated by a variable.
+                    
+                    The Curious programmer can replace the variable $loopEntryCondition 
+                    with the logic... gmake the file... refresh the web page... view 
+                    the source.
+          <?/MICOMMENT>
+      <?MISQL SQL="
+          SELECT distinct xpatfig_fig_zdb_id, xpatex_zdb_id, xpatres_start_stg_zdb_id, xpatres_end_stg_zdb_id
+            FROM fx_expression_experiment, fx_expression_pattern_figure, fx_expression_result
+           WHERE xpatres_zdb_id = xpatfig_xpatres_zdb_id
+             AND xpatex_source_zdb_id = '$OID'
+             AND xpatex_zdb_id = xpatres_xpatex_zdb_id;">
+
+          <?MIVAR NAME=xpcurstr_fig_zdb_id>$1<?/MIVAR>
+          <?MIVAR NAME=xpcurstr_xpatex_zdb_id>$2<?/MIVAR>
+          <?MIVAR NAME=xpcurstr_sstage_zdb_id>$3<?/MIVAR>
+          <?MIVAR NAME=xpcurstr_estage_zdb_id>$4<?/MIVAR>          
+
+          <?MIVAR NAME=loopEntryCondition>
+            if (fig_zdb == '$xpcurstr_fig_zdb_id' 
+                && xpatex_zdb == '$xpcurstr_xpatex_zdb_id' 
+                && sstage_zdb == '$xpcurstr_sstage_zdb_id' 
+                && estage_zdb == '$xpcurstr_estage_zdb_id') {
+          <?/MIVAR>
+          <?MIVAR NAME=closingBracket>}<?/MIVAR>
+          
+          $loopEntryCondition
+        
+          <?MISQL SQL="
+            SELECT distinct xpatinf_zdb_id, xpatres_zdb_id
+              FROM expression_pattern_infrastructure, OUTER(fx_expression_result, fx_expression_pattern_figure, fx_expression_experiment)
+             WHERE xpatinf_anatitem_zdb_id = xpatres_anat_item_zdb_id
+               AND xpatinf_expressed = xpatres_expression_found
+               AND xpatinf_pub_zdb_id = '$OID'
+               AND xpatres_zdb_id = xpatfig_xpatres_zdb_id
+               AND xpatfig_fig_zdb_id = '$xpcurstr_fig_zdb_id'
+               AND xpatres_xpatex_zdb_id = '$xpcurstr_xpatex_zdb_id'
+               AND xpatres_start_stg_zdb_id = '$xpcurstr_sstage_zdb_id'
+               AND xpatres_end_stg_zdb_id = '$xpcurstr_estage_zdb_id';">
+
+            <?MIBLOCK COND=$(NC,$2,NULL)> 
+              document.forms['panel_structures'].elements['<?MIVAR>$1<?/MIVAR>'][0].click();          
+            <?MIELSE> 
+              document.forms['panel_structures'].elements['<?MIVAR>$1<?/MIVAR>'][1].click();
+            <?/MIBLOCK>   
+          <?/MISQL>
+          
+          $closingBracket
+      <?/MISQL>
+    }    
+
+  </script>
+    
+<form name=hidden_panel action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=<?MIVAR>$OID<?/MIVAR>#structure" method=post>
+  <input type=hidden name=xpcur_G_structures_add value="">
+  <input type=hidden name=xpcur_G_structures_remove value="">   
+  <input type=hidden name=xpcur_G_fig_xpat_stg value=""> 
+  <input type=hidden name=MIval value="aa-xpatcuration.apg">
+  <input type=hidden name=OID value="<?MIVAR>$OID<?/MIVAR>">
+</form>
+
+
+<table width=100% border=0 bgcolor="<!--|HIGHLIGHT_COLOR|-->">
+<form name=panel_structures>
+  <tr>
+    <td colspan=4>
+<input type=button value="Update Structures for Experiment" onClick="if (document.panel_structures.xpcurstr_fig_xpat_stg.value != '---'){dynamic_set_value_selection(document.panel_structures.elements,'2',document.panel_structures.xpcurstr_field_count.value);}">
+<select name=xpcurstr_fig_xpat_stg onChange="reset_structures_for_panel(this.value);">
+  <option value="---">---------------------------------</option>
+  <?MISQL SQL="
+    select distinct xpatex_zdb_id, fig_label, fig_zdb_id, xpatres_start_stg_zdb_id, xpatres_end_stg_zdb_id, s.stg_hours_start, mrkr_abbrev_order, s.stg_abbrev, e.stg_abbrev, LOWER(abbrev)
+    from fx_expression_experiment, fx_expression_result, fx_figure, fx_expression_pattern_figure, marker, stage s, stage e, feature_experiment, fish
+    where xpatex_source_zdb_id = '$OID'
+      and xpatex_gene_zdb_id = mrkr_zdb_id
+      and xpatex_zdb_id = xpatres_xpatex_zdb_id
+      and xpatres_zdb_id = xpatfig_xpatres_zdb_id
+      and xpatfig_fig_zdb_id = fig_zdb_id
+      and fig_zdb_id in ('$xpcur_G_fig_attrib_csv')
+      and xpatres_start_stg_zdb_id = s.stg_zdb_id
+      and xpatres_end_stg_zdb_id = e.stg_zdb_id
+      and xpatex_featexp_zdb_id = featexp_zdb_id
+      and featexp_genome_feature_zdb_id = zdb_id
+    order by fig_label,mrkr_abbrev_order,10,s.stg_hours_start;">
+      
+    <?MIVAR NAME=xpcurstr_xpatex_zdb_id>$1<?/MIVAR>
+    <?MIVAR NAME=xpcurstr_figure_label>$2<?/MIVAR>
+    <?MIVAR NAME=xpcurstr_figure_zdb_id>$3<?/MIVAR>
+    <?MIVAR NAME=xpcurstr_sstage_zdb_id>$4<?/MIVAR>
+    <?MIVAR NAME=xpcurstr_estage_zdb_id>$5<?/MIVAR>
+    <?MIVAR NAME=xpcurstr_sstage_abbrev>$8<?/MIVAR>
+    <?MIVAR NAME=xpcurstr_estage_abbrev>$9<?/MIVAR>
+
+    <?MISQL SQL="select WebExplode(object,'xpatex_zdb_id=$xpcurstr_xpatex_zdb_id') from webPages where ID='aa-xpatexdisplayname.apg';"><?/MISQL>
+    <?MIVAR NAME=xpcurstr_xpatex_display_name>$xpatex_display_name<?/MIVAR>
+    <?MIVAR NAME=xpcurstr_distinct_experiment>$xpcurstr_figure_zdb_id,$xpcurstr_xpatex_zdb_id,$xpcurstr_sstage_zdb_id,$xpcurstr_estage_zdb_id<?/MIVAR>
+    
+    <option value="$xpcurstr_distinct_experiment">$xpcurstr_figure_label - $xpcurstr_xpatex_display_name ($xpcurstr_sstage_abbrev to $xpcurstr_estage_abbrev)</option>
+    
+  <?/MISQL>
+</select>
+    </td>
+  </tr>
+  <tr bgcolor=#CCCCCC>
+    <td>Add/Remove</td>
+    <td>Structure</td>
+    <td>Expressed</td>
+    <td>Delete all expression of this structure for this publication.</td>
+  </tr>  
+<?MIVAR NAME=xpcurstr_previous_anatitem><?/MIVAR>  
+<?MIVAR NAME=xpcurstr_field_count>0<?/MIVAR>  
+<?MIVAR COND=$(NXST,$xpcur_c_anatitem_add_csv) NAME=xpcur_c_anatitem_add_csv><?/MIVAR>
+<?MIVAR COND=$(EC,$debugg,true)>
+  $xpcur_c_anatitem_add_csv<BR>
+<?/MIVAR>
+<?MIVAR NAME=xpcur_c_anatitem_add_csv DELIMIT="'" REPLACE="">$xpcur_c_anatitem_add_csv<?/MIVAR>  
+<?MISQL SQL="
+    select anatitem_zdb_id, anatitem_name, xpatinf_expressed, anatitem_name_order, xpatinf_zdb_id, s1.stg_name_long, s2.stg_name_long
+    from expression_pattern_infrastructure, anatomy_item, stage s1, stage s2
+    where xpatinf_anatitem_zdb_id = anatitem_zdb_id
+      and xpatinf_pub_zdb_id = '$OID'
+      and anatitem_start_stg_zdb_id = s1.stg_zdb_id
+      and anatitem_end_stg_zdb_id = s2.stg_zdb_id
+    order by anatitem_name_order, xpatinf_expressed;">
+
+    <?MIVAR NAME=$xpcurstr_anatitem_zdb_id>$1<?/MIVAR>
+    <?MIVAR NAME=$xpcurstr_anatitem_name>$2<?/MIVAR>
+    <?MIVAR NAME=$xpcurstr_expression_found>$3<?/MIVAR>
+    <?MIVAR NAME=$xpcurstr_xpatinf_zdb_id>$5<?/MIVAR>
+    <?MIVAR NAME=$xpcurstr_start_stg_name>$6<?/MIVAR>
+    <?MIVAR NAME=$xpcurstr_end_stg_name>$7<?/MIVAR>
+    <?MIVAR>
+
+    <tr>
+      <td align=center>
+        <input type=radio 
+               name="$xpcurstr_xpatinf_zdb_id" 
+               value="add" 
+               $(IF,$(!=,0,$(POSITION,$xpcur_c_anatitem_add_csv,$xpcurstr_anatitem_zdb_id$xpcurstr_expression_found,1)),CHECKED)>
+        / <input type=radio 
+                 name="$xpcurstr_xpatinf_zdb_id" 
+                 value="remove" 
+                 $(IF,$(=,0,$(POSITION,$xpcur_c_anatitem_add_csv,$xpcurstr_anatitem_zdb_id$xpcurstr_expression_found,1)),CHECKED)>
+      </td>
+      <td>
+        <?MIBLOCK COND="$(AND,$(XST,$xpcur_G_structure_add),$(!=,0,$(POSITION,$xpcur_G_structure_add,$xpcurstr_anatitem_zdb_id)))">
+          <?MIVAR><b>$xpcurstr_anatitem_name</b> ($xpcurstr_start_stg_name - $xpcurstr_end_stg_name)<?/MIVAR>
+        <?MIELSE>
+          <?MIVAR>$xpcurstr_anatitem_name ($xpcurstr_start_stg_name - $xpcurstr_end_stg_name)<?/MIVAR>
+        <?/MIBLOCK>
+      </td>
+      <td> $(IF,$(EC,$xpcurstr_expression_found,t),YES,NO) </td>
+      <td colspan=3 align=left>
+        <?MIVAR><input name="delete" type=button value=" X " onClick="deleteZDB('$xpcurstr_xpatinf_zdb_id','anatitem')"><?/MIVAR>
+      </td> 
+    </tr>
+    <?/MIVAR>
+    <?MIVAR NAME=xpcurstr_field_count>$(+,$xpcurstr_field_count,1)<?/MIVAR>
+  <?/MISQL>    
+
+  <?MIVAR><input type=hidden name=xpcurstr_field_count value=$xpcurstr_field_count><?/MIVAR>
+
+
+</form>
+
+
+  <tr>
+    <td colspan=4><HR></td>
+  </tr>
+<?MICOMMENT> ==| Enter a New Structure |== <?/MICOMMENT>
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#structure" method=post name=structure2 onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','structure');">
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+  <tr>
+    <td>
+      <input name="xpcur_G_structure_add_button" type=submit value="Add">
+    </td>
+    <td align=left>
+        <input type=textbox name="xpcur_G_structure_add_name" size=80>
+        <input type=hidden name="xpcur_G_structure_add">
+    </td>
+    <td> 
+        <input name="structure_expressed" value=t type=radio CHECKED> Yes <br> 
+        <input name="structure_expressed" value=f type=radio> No
+    </td>
+    <td>
+      &nbsp;
+    </td>
+  </tr>
+  <tr>
+    <td colspan=4>
+      <a href="javascript:onClick=openChild('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=stages','AO');">Open AO Browser</a>
+    </td>
+  </tr>
+</form> 
+</table>
+<?/MIBLOCK> <?MICOMMENT> end authorize <?/MICOMMENT>

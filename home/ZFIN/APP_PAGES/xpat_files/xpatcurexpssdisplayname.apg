@@ -1,0 +1,53 @@
+<?MICOMMENT>
+
+FILE:     xatpurexpssdisplayname.apg
+PREFIX:   xpcurexpssdisp_
+
+This returns a display name for an experiment. 
+Format: gene abbrev / fish abbrev / environment name 
+
+
+
+INPUT VARS:
+  $xpcurexpssdisp_xpatex_zdb_id		experiment ZDB-ID
+
+OUTPUT VARS:
+  $xpcurexpssdisp_xpatex_display_name
+
+OUTPUT:
+  None
+
+EFFECTS  
+  None.
+
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
+<?MIVAR name="$xpcurexpssdisp_xpatex_display_name"><?/MIVAR>
+
+<?MISQL SQL="
+    select mrkr_abbrev, exp_name, abbrev, xpatassay_abbrev
+    from fx_expression_experiment, feature_experiment, experiment, fish, marker, expression_pattern_assay
+    where xpatex_zdb_id = '$xpcurexpssdisp_xpatex_zdb_id'
+      and xpatex_featexp_zdb_id = featexp_zdb_id
+      and featexp_exp_zdb_id = exp_zdb_id
+      and featexp_genome_feature_zdb_id = zdb_id
+      and xpatex_gene_zdb_id = mrkr_zdb_id
+      and xpatex_assay_name = xpatassay_name
+    ;">
+<?/MISQL>
+
+<?MIVAR NAME=xpcurexpssdisp_fish_non_sup_display>$(LOWER,$3)<?/MIVAR>
+<?MIVAR NAME=xpcurexpssdisp_fish_non_sup_display DELIMIT="<sup>" REPLACE=" (">$xpcurexpssdisp_fish_non_sup_display<?/MIVAR>
+<?MIVAR NAME=xpcurexpssdisp_fish_non_sup_display DELIMIT="</sup>" REPLACE=")">$xpcurexpssdisp_fish_non_sup_display<?/MIVAR>
+
+<?MIVAR NAME=xpcurexpssdisp_xpatex_display_name>$1 / $xpcurexpssdisp_fish_non_sup_display / $2 / $4<?/MIVAR>

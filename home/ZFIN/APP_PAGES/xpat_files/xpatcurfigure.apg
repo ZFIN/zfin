@@ -1,0 +1,237 @@
+<?MICOMMENT>
+
+FILE:     xpatcurfigure.apg
+PREFIX:   xpcurfig_
+
+This page manages the display and submition of Figure data.
+
+There are two display options. One option displays all figures
+the other option displays only one figure.
+
+Figure captions are only updatable in figure_only mode. The 
+legends are too lengthy to allow updates when all figures are
+displayed.
+
+Named HTML characters require special handeling. The characters
+are interpreted differently depending on the character set of 
+the operating system. Translate & characters before displaying
+the captions, then reverse translate when the form is submitted.
+
+For a list of these characters: http://www.theorem.ca/~mvcorks/code/charsets/named-entities.html .
+
+INPUT VARS:
+
+  REQUIRED:
+    $OID :: publication zdb-id for the experiment
+    $AUTHORIZED :: this is a subroutine. the authorization must occur in the calling page.
+    $xpcur_G_fig_attrib_csv :: csv list of figures for the OID
+    
+  OPTIONAL:  
+    xpcur_c_figure_only :: a cookie from the xpatcuration page
+      
+OUTPUT VARS:
+
+OUTPUT:
+  A table of figures related to the publication OID.
+
+EFFECTS  
+   Submit form data for insert/update.
+      xpcur_G_fig_update :: flag for updating a figure
+      xpcur_G_fig_zdb_id :: figure ZDB-ID
+      xpcur_G_fig_label :: non-null text
+      xpcur_G_fig_caption :: text
+      xpcur_G_fig_comments :: optional text
+      xpcur_G_fig_add :: flag for updates
+      xpcur_G_fig_add_label :: non-null text
+      xpcur_G_fig_add_caption :: non-null text
+      xpcur_G_fig_add_comments :: optional text
+
+    Setting figure_only constrains all data in xpatcuration.apg so
+    that only the data for figure_only is available for update
+    and display.
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
+<?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
+
+  <script>
+    <?MICOMMENT> 
+      Prefix Figure labels: either Fig. or TOD.
+      Set the figure label to "" if the prefix is TOD.
+      Return false if the prefix is Fig. and the label = "";
+    <?/MICOMMENT>
+
+    function uninterpretCaption() { 
+      var figCap = window.document.figureUpdate.xpcur_G_fig_caption.value;
+      var amped = unescape(figCap.replace(/;;;/g, ";&"));
+      amped = amped.replace(/;;/g, "&");
+      amped = amped.replace(/'/g, "&prime;");
+      window.document.figureUpdate.xpcur_G_fig_caption.value=amped;
+    }
+    
+    function validateFigLabel() {
+      var prefLabelIndex = document.figure_new.xpcur_G_fig_add_prefix_label.selectedIndex ;
+      var prefLabel = document.figure_new.xpcur_G_fig_add_prefix_label[prefLabelIndex].value ;
+      
+      if (prefLabel == "T.O.D.") {    
+        document.figure_new.xpcur_G_fig_add_label.value = 'T.O.D.' ;   
+        return true;
+      }
+      else {        
+        if ( document.figure_new.xpcur_G_fig_add_label.value == '')
+        {
+          return false;
+        }
+        else {
+          document.figure_new.xpcur_G_fig_add_label.value = 'Fig. '+document.figure_new.xpcur_G_fig_add_label.value ;
+          return true;
+        }
+      }
+    }
+  </script>
+
+  
+  <table width=100% border=0 bgcolor="<!--|HIGHLIGHT_COLOR|-->">
+    <tr bgcolor=#CCCCCC>
+
+  <?MIBLOCK COND=$(NXST,$xpcur_c_figure_only)>
+      <td></td>
+      <td>Label</td>
+      <td>Caption</td>
+      <td>Comments</td>
+      <td>Image</td>
+      <td>Delete</td>
+  <?MIELSE>
+      <td></td>
+      <td>Label</td>
+      <td>Caption</td>
+  <?/MIBLOCK>
+    </tr>  
+
+<?MISQL SQL="
+    select fig_zdb_id, fig_caption, fig_comments, fig_label
+    from fx_figure
+    where fig_zdb_id in ('$xpcur_G_fig_attrib_csv')
+    order by fig_label;">
+
+  <?MIVAR name=xpcurfig_fig_zdb_id>$1<?/MIVAR>
+  <?MIVAR name=xpcurfig_fig_caption>$2<?/MIVAR>
+  <?MIVAR name=xpcurfig_fig_comment>$3<?/MIVAR>
+  <?MIVAR name=xpcurfig_fig_label>$4<?/MIVAR>
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#figure" method=post name=figureUpdate> 
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+    <INPUT TYPE=HIDDEN NAME=xpcur_G_fig_zdb_id VALUE="<?MIVAR>$xpcurfig_fig_zdb_id<?/MIVAR>"> 
+
+<?MIBLOCK COND=$(NXST,$xpcur_c_figure_only)>
+  <?MIVAR>
+  <tr>
+    <td>
+      <a href="javascript:onClick=urlSetCookie('figure_only','$xpcurfig_fig_zdb_id');"><font color=blue>Only</font></a>
+    </td>
+    <td> 
+       $xpcurfig_fig_label
+    </td>
+    <td>  
+       $xpcurfig_fig_caption
+    </td>
+    <td> 
+       $xpcurfig_fig_comment
+    </td>
+    <td>
+      <?MISQL SQL="
+          select fimgp_thumbnail, fimgp_label
+          from fx_fish_image_private
+          where fimgp_fig_zdb_id = '$xpcurfig_fig_zdb_id'
+          order by fimgp_label;">
+          <?MIVAR COND=$(NC,$1,NULL)>
+            <img src="<!--|IMAGE_LOAD|-->/$1">$2 
+          <?/MIVAR>
+      <?/MISQL>
+    </td>
+    <td>
+      <?MIVAR><input name="delete" type=button value=" X " onClick="deleteZDB('$xpcurfig_fig_zdb_id','figure')"><?/MIVAR>
+    </td> 
+  </tr>  
+  <?/MIVAR>
+<?MIELSE>
+  <?MIVAR>
+  <tr>
+    <td>
+      <input name="xpcur_G_fig_update" type=button value="Update" onClick="if (document.figureUpdate.xpcur_G_fig_label.value != ''){uninterpretCaption();setCookie('xpatcuration_update','update');setCookie('anchor','figure');document.figureUpdate.submit();}"><br>
+      <a href="javascript:onClick=urlSetCookie('figure_only','');"><font color=blue>Show All</font></a>
+    </td>
+    <td> 
+        <input name="xpcur_G_fig_label" type=textbox size=5 value="$xpcurfig_fig_label">
+    </td>
+    <td>  $xpcurfig_fig_caption <br>
+            <?MIVAR NAME=$delimiter>&<?/MIVAR>
+            <?MIVAR NAME=$xpcur_G_fig_caption DELIMIT="$delimiter" REPLACE=";;">$xpcurfig_fig_caption<?/MIVAR>
+       <TEXTAREA name="xpcur_G_fig_caption" cols=85 rows=5 >$xpcurfig_fig_caption</TEXTAREA>
+    </td>
+  </tr>
+  <tr>
+    <td colspan=2> Comments:<br>
+        <input name="xpcur_G_fig_comments" type=textbox size=20 value="$xpcurfig_fig_comment">
+    </td>
+    <td>
+      <?MISQL SQL="
+          select fimgp_thumbnail, fimgp_label
+          from fx_fish_image_private
+          where fimgp_fig_zdb_id = '$xpcurfig_fig_zdb_id'
+          order by fimgp_label;">
+          <?MIVAR COND=$(NC,$1,NULL)>
+            <img src="<!--|IMAGE_LOAD|-->/$1">$2 
+          <?/MIVAR>
+      <?/MISQL>
+    </td>
+  </tr> 
+  <?/MIVAR>
+<?/MIBLOCK>
+</form>
+<?/MISQL>  
+
+  <tr>
+    <td colspan=6>
+      <hr>
+    </td>
+  </tr>
+  
+<?MICOMMENT> ==| Enter a New Figure |== <?/MICOMMENT>
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#figure" method=post name=figure_new>
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+  <tr>
+    <td>
+      <input name="xpcur_G_fig_add" type=button value="Add" onClick="if (validateFigLabel()){setCookie('xpatcuration_update','update');setCookie('anchor','figure');document.figure_new.submit();}">
+    </td>
+    <td> 
+        <select name="xpcur_G_fig_add_prefix_label">
+          <option value="Fig. ">Fig. </option>
+          <option value="T.O.D.">T.O.D.</option>
+        </select>
+        <input name="xpcur_G_fig_add_label" type=textbox size=5>
+    </td>
+    <td>
+        <TEXTAREA name="xpcur_G_fig_add_caption" cols=50 rows=3></TEXTAREA>
+    </td>
+    <td>
+        <input name="xpcur_G_fig_add_comments" type=textbox size=20>
+    </td>
+    <td> &nbsp;</td>
+  </tr>
+
+</form> 
+ 
+</table>
+
+<?/MIBLOCK> <?MICOMMENT> end authorize <?/MICOMMENT>
