@@ -219,11 +219,13 @@ Click to <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-refcrosslist.apg">
 <TH>LG</TH><TH>Markers on LG</TH><TH></TH><TH></TH>
 <?MIVAR><INPUT TYPE=hidden name=loc_panel value=$abbrev><?/MIVAR>
 <?MIVAR NAME=$last>0<?/MIVAR>
+<?MIVAR NAME=$marker>None<?/MIVAR>
+<?MIVAR NAME=$marker_abbrev>None<?/MIVAR>
 
 <?MISQL SQL="select OR_lg,mtype,count(*)::integer from public_paneled_markers a , panels b  where a.target_abbrev = b.abbrev and  b.zdb_id='$OID'  group by OR_lg,mtype order by OR_lg;">
 
 <?MIVAR>
-$(IF,$(AND,$(>,$1,$last),$(>,$MI_CURRENTROW,1)),"</TD><TD><font size=1><input type=submit name=view_map value='View Map' onClick='call_mapplet("$(-,$1,1)")'></TD><TD><font size=1><A HREF=javascript:view_scores('"$OID"','"$(-,$1,1)"');>Scoring Data</A></TD></TR>")
+$(IF,$(AND,$(>,$1,$last),$(>,$MI_CURRENTROW,1)),"</TD><TD><font size=1><input type=submit name=view_map value='View Map' onClick='call_mapplet("$(-,$1,1)")'></TD><TD><font size=1><A HREF=javascript:view_scores('"$OID"','"$(-,$1,1)"','"$marker"','"$marker_abbrev"');>Scoring Data</A></TD></TR>")
 <?/MIVAR>
 $(IF,$(>,$1,$last),"<TR align=center><TD><font size=1>"$1"</TD><TD><font size=1>")
 $(IF,$(=,$1,$last),"; ")
@@ -232,7 +234,7 @@ $(SETVAR,$last,$1)
 <?/MISQL>
 
 <?MIVAR>
-</TD><TD><font size=1><input type=submit name=view_map value='View Map' onClick='call_mapplet("$1")'></TD><TD><font size=1><A HREF="javascript:view_scores('$OID','$1');">Scoring Data</A></TD></TR>
+</TD><TD><font size=1><input type=submit name=view_map value='View Map' onClick='call_mapplet("$1")'></TD><TD><font size=1><A HREF="javascript:view_scores('$OID','$1','$marker','$marker_abbrev');">Scoring Data</A></TD></TR>
 <?/MIVAR>
 
 
