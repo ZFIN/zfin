@@ -61,13 +61,13 @@ if(theform.mname.value=='' || theform.abbrev.value=='') {
 <TR>
 <TD>
 <b>Abbreviation</b> (required):
-<input type=text name=abbrev size=7>
+<input type=text name=abbrev size=15>
 </TD>
 <TD>
 <?/MIVAR>
 <?MIVAR COND="$(EC,$marker_type,GENE)">
 <b>Allele<b> (if known): 
-<input type=text name=allele size=5>
+<input type=text name=allele size=15>
 <?/MIVAR>
 </TD>
 </TR>
