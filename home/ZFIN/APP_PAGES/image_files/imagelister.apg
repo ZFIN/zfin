@@ -57,7 +57,7 @@ Datablade documentation.
     (lower(get_fish_full_name(fimg_fish_zdb_id)) like '%$(LOWER,$stock)%')
   <?/MIVAR>
   <?MIVAR NAME=$constraintAlias>$constraint
-    and (lower(dalias_alias) like '%$(LOWER,$stock)%')
+    and (dalias_alias_lower like '%$(LOWER,$stock)%')
   <?/MIVAR>
 <?/MIBLOCK>
 

@@ -265,7 +265,7 @@ function call_reset() {
         <?MISQL SQL="
 	  SELECT anatitem_name, anatitem_zdb_id,''
   	  FROM anatomy_item
-	  WHERE lower(anatitem_name) = lower('$part')
+	  WHERE anatitem_name_lower = lower('$part')
 
   	  UNION
 
