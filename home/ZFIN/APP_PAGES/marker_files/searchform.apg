@@ -123,6 +123,8 @@ Input:
   	-->
   	<?MIVAR COND=$(XST,$return_rec)>
   	<input type=hidden NAME="return_rec" value=$return_rec>
+        <?MICOMMENT>in case there is a passed-in marker_type value<?/MICOMMENT>
+	<input type=hidden NAME=marker_type value=$marker_type>
   	<?/MIVAR>
 
 	<input type=submit name=action value="SEARCH";">
