@@ -189,13 +189,30 @@ registrations -- but not update of course.
       <TH>LOCUS</TH> <TH>OWNER</TH>  <TH align=left>STATUS</TH>
       <?MISQL SQL="
 	select locus_name, abbrev, allele, b.full_name, a.entry_time::date,
-	       status, month(current) - month(a.entry_time::date), a.zdb_id,
+	       status, (current::date - a.entry_time::date) units day,
+	       a.zdb_id,
 	       a.approval_time::date, a.expired_time::date, pheno_descr,
 	       fish_record
 	  from locus_registration a, person b
 	  where a.owner = b.zdb_id
-	    and a.approval_time is null
+	    and (   a.approval_time is null
+		 or not exists
+		      ( select *
+			  from record_attribution
+			  where recattrib_data_zdb_id = fish_record ) )
 	  order by locus_name;">
+	<?MIVAR NAME=$locus_name>$1<?/MIVAR>
+	<?MIVAR NAME=$abbrev>$2<?/MIVAR>
+	<?MIVAR NAME=$allele>$3<?/MIVAR>
+	<?MIVAR NAME=$person_full_name>$4<?/MIVAR>
+	<?MIVAR NAME=$entry_date>$5<?/MIVAR>
+	<?MIVAR NAME=$status>$6<?/MIVAR>
+	<?MIVAR NAME=$registration_age_days>$7<?/MIVAR>
+	<?MIVAR NAME=$locus_zdb_id>$8<?/MIVAR>
+	<?MIVAR NAME=$approval_date>$9<?/MIVAR>
+	<?MIVAR NAME=$expired_date>$10<?/MIVAR>
+	<?MIVAR NAME=$pheno_descr>$11<?/MIVAR>
+	<?MIVAR NAME=$fish_zdb_id>$12<?/MIVAR>
 	<TR>
 	  <TD colspan=6>
 	    <hr size=3>
@@ -204,22 +221,22 @@ registrations -- but not update of course.
 
 	<TR valign=bottom>
 	  <TD>
-	    $(IF,$(>,$7,6),"<font color='#ff0000'>") 
-	    <b>$1</b> ($2<sup>$3</SUP>)
-	    $(IF,$(>,$7,6),"</font>")
+	    $(IF,$(>,$registration_age_days,183),"<font color='#ff0000'>") 
+	    <b>$locus_name</b> ($abbrev<sup>$allele</SUP>)
+	    $(IF,$(>,$registration_age_days,183),"</font>")
 	  </TD>
 	  <TD>
-	    $4
+	    $person_full_name
 	  </TD>
 	  <TD rowspan=3 align=left valign=top>
 	    <font size=2>
-	    <B>Registered:</b> $5 
+	    <B>Registered:</b> $entry_date 
 	    <br>
 	    <B>Approved:</b> 
-	    $(IF,$(NC,$9,$MI_NULL),$9,"<input type=checkbox name=approve onClick=change_status(this,'"$8"','"$3"')>")
+	    $(IF,$(NC,$approval_date,$MI_NULL),$approval_date,"<input type=checkbox name=approve onClick=change_status(this,'"$locus_zdb_id"','"$allele"')>")
 	    <BR>
 	    <B>Expired:</b> 
-	    $(IF,$(NC,$10,$MI_NULL),$10,"<input type=checkbox name=expire onClick=change_status(this,'"$8"','"$3"')>")
+	    $(IF,$(NC,$expired_date,$MI_NULL),$expired_date,"<input type=checkbox name=expire onClick=change_status(this,'"$locus_zdb_id"','"$allele"')>")
 	    </font>
 	  </TD>
 	</TR>
@@ -227,7 +244,7 @@ registrations -- but not update of course.
 	  <TD colspan=2>
 	    <font size=2>
 	    FISH record: 
-	    $(IF,$(NC,$12,NULL),<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID="$12>$12</A>,"Not yet created")
+	    $(IF,$(NC,$fish_zdb_id,NULL),<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID="$fish_zdb_id>$fish_zdb_id</A>,"Not yet created")
 	    </font>
 	  </TD>
 	</TR>
@@ -236,10 +253,10 @@ registrations -- but not update of course.
 	    <font size=2>
 	    Description:
 <TEXTAREA NAME="SEL$MI_CURRENTROW" rows=3 cols=50 wrap=virtual>
-$11
+$pheno_descr
 </TEXTAREA>
 	    <input type=button name=descr value="Update" 
-	           onClick="change_descr(document.lociform.SEL$MI_CURRENTROW,'$8','$3');">
+	           onClick="change_descr(document.lociform.SEL$MI_CURRENTROW,'$locus_zdb_id','$allele');">
 	    </font>
 	  </TD>
 	</TR>
