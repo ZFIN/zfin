@@ -40,8 +40,7 @@ create dba function "informix".regen_fishsearch()
       (
 	fish_id		varchar (50), 
 	name		varchar (80)
-	  not null
-	    constraint fishsearch_name_not_null,
+	  not null,
 	fishsearch_name_order	varchar(100)
 	  not null,
 	line_type	varchar (30),
