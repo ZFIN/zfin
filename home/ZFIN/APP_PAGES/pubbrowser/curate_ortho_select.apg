@@ -12,7 +12,7 @@ RESULTS: The result section displays gene and publication links. Grouping is by
 <?/MICOMMENT>
 
 
-<?MIBLOCK COND="$(NXST,$G_ATTRIB_COUNT)">
+<?MIBLOCK COND="$(AND,$(NXST,$G_ATTRIB_COUNT),$(NXST,$ORGANISM))">
 
 <p>1) A gene record has orthology information, the orthology information 
 has no attribution, the gene record has no references.  (There should 
@@ -60,8 +60,22 @@ associated with the orthology attribution.
 <br>
 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curate_ortho_select.apg&G_ATTRIB_COUNT=3&O_ATTRIB_COUNT=1">Query 8</A>
 
+<FORM METHOD=post ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" >
+  <INPUT TYPE=HIDDEN NAME=MIval VALUE=aa-curate_ortho_select.apg>
+<p>9) A Gene record has an orthologue without an OEV for species:
+<SELECT NAME=ORGANISM>
+  <?MISQL SQL="
+      select distinct organism
+      from orthologue
+      order by 1;">
 
+    <OPTION VALUE=$1> $1
+  <?/MISQL>
+</SELECT>
+  <INPUT TYPE=SUBMIT VALUE=SUBMIT>
+</FORM>
 <?MIELSE>
+
 <?MICOMMENT>
 This script creates temp tables tmp_gene_with_orthology and int_marker_pub and populates them.
 
@@ -233,20 +247,69 @@ O_ATTRIB_COUNT ::: number of orthology attribution records
 <?MIVAR COND=$(NXST,$G_ATTRIB_COUNT) NAME=G_ATTRIB_COUNT>-1<?/MIVAR>
 <?MIVAR COND=$(NXST,$O_ATTRIB_COUNT) NAME=O_ATTRIB_COUNT>-1<?/MIVAR>
 
-    
-<?MIBLOCK COND="$(AND,$(=,$G_ATTRIB_COUNT,0),$(=,$O_ATTRIB_COUNT,0))">
+<?MIBLOCK COND="$(XST,$ORGANISM)">
+  <?MISQL SQL="
+	select COUNT(*)::INTEGER
+	from marker, tmp_gene_with_orthology, orthologue
+	where gwo_gene_zdb_id = mrkr_zdb_id
+	  and c_gene_id = mrkr_zdb_id
+	  and organism = '$ORGANISM'
+	  and not exists (
+	    select *
+	    from orthologue_evidence
+	    where zdb_id = oev_ortho_zdb_id
+	  );">
+  <?/MISQL>
 
-<?MISQL SQL="
+  <?MIVAR><font size=+1><b>Query Returned $1 Records</b></font><?/MIVAR>
+  <p>
+  <?MIVAR>ORGANISM: $ORGANISM<?/MIVAR>
+  
+  <TABLE border=0 cellspacing=3>
+    <TR>
+      <TH>
+        ZDB-ID
+      </TH>
+      <TH>
+        Gene Abbrev
+      </TH>
+    </TR>
+  <?MISQL SQL="
+	select mrkr_abbrev, mrkr_zdb_id
+	from marker, tmp_gene_with_orthology, orthologue
+	where gwo_gene_zdb_id = mrkr_zdb_id
+	  and c_gene_id = mrkr_zdb_id
+	  and organism = '$ORGANISM'
+	  and not exists (
+	    select *
+	    from orthologue_evidence
+	    where zdb_id = oev_ortho_zdb_id
+	  )
+	order by 1;">
+	<TR>
+	<TD>
+	  <font size=-1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$2</A></font>
+	</TD>
+	<TD>
+	  <font size=+1><b><i>$1</i></b></font> 
+	</TD>
+ 	</TR>
+  <?/MISQL>
+  </TABLE>  
+<?MIELSE>
+  <?MIBLOCK COND="$(AND,$(=,$G_ATTRIB_COUNT,0),$(=,$O_ATTRIB_COUNT,0))">
+
+  <?MISQL SQL="
 	select COUNT(*)::INTEGER
 	from marker, tmp_gene_with_orthology
 	where gwo_gene_zdb_id = mrkr_zdb_id
 	  and gwo_gene_attrib_count = 0
 	  and gwo_dblink_attrib_count = 0;">
-<?/MISQL>
+  <?/MISQL>
 
-<?MIVAR><font size=+1><b>Query Returned $1 Records</b></font><?/MIVAR>
-<p>
-<?MISQL SQL="
+  <?MIVAR><font size=+1><b>Query Returned $1 Records</b></font><?/MIVAR>
+  <p>
+  <?MISQL SQL="
 	select distinct mrkr_abbrev, mrkr_zdb_id
 	from marker, tmp_gene_with_orthology
 	where gwo_gene_zdb_id = mrkr_zdb_id
@@ -257,22 +320,22 @@ O_ATTRIB_COUNT ::: number of orthology attribution records
 	<b><i>$1</i></b> 
 	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$2</A>
  	<br>
-<?/MISQL>
+  <?/MISQL>
 
 
-<?MIELSE COND="$(=,$G_ATTRIB_COUNT,0)">
-
-<?MISQL SQL="
+  <?MIELSE COND="$(=,$G_ATTRIB_COUNT,0)">
+  
+  <?MISQL SQL="
 	select COUNT(*)::INTEGER
 	from marker, tmp_gene_with_orthology
 	where gwo_gene_zdb_id = mrkr_zdb_id
 	  and gwo_gene_attrib_count = 0
 	  and gwo_dblink_attrib_count > 0;">
-<?/MISQL>
+  <?/MISQL>
 
-<?MIVAR><font size=+1><b>Query Returned $1 Records</b></font><?/MIVAR>
-<p>
-<?MISQL SQL="
+  <?MIVAR><font size=+1><b>Query Returned $1 Records</b></font><?/MIVAR>
+  <p>
+  <?MISQL SQL="
 	select distinct mrkr_abbrev, mrkr_zdb_id
 	from marker, tmp_gene_with_orthology
 	where gwo_gene_zdb_id = mrkr_zdb_id
@@ -283,23 +346,23 @@ O_ATTRIB_COUNT ::: number of orthology attribution records
 	<b><i>$1</i></b> 
 	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$2</A>
  	<br>
-<?/MISQL>
+  <?/MISQL>
 
 
-<?MIELSE COND=$(NE,$G_ATTRIB_COUNT,-1)>
+  <?MIELSE COND=$(NE,$G_ATTRIB_COUNT,-1)>
 
 
-<?MISQL SQL="
-	select COUNT(distinct mrkr_abbrev)::INTEGER
+  <?MISQL SQL="
+ 	select COUNT(distinct mrkr_abbrev)::INTEGER
 	from marker, tmp_gene_with_orthology
 	where gwo_gene_zdb_id = mrkr_zdb_id
 	  and gwo_gene_attrib_count - gwo_dblink_attrib_count $(IF,$(<,$G_ATTRIB_COUNT,3),=,>=) $G_ATTRIB_COUNT
 	  and gwo_dblink_attrib_count $(IF,$(=,$O_ATTRIB_COUNT,0),=,>) 0;">
-<?/MISQL>
+  <?/MISQL>
 
-<?MIVAR><font size=+1><b>Query Returned $1 Records</b></font><?/MIVAR>
-<p>
-<?MISQL SQL="
+  <?MIVAR><font size=+1><b>Query Returned $1 Records</b></font><?/MIVAR>
+  <p>
+  <?MISQL SQL="
 	select distinct mrkr_abbrev, mrkr_zdb_id, MAX(pub_date)
 	from marker, tmp_gene_with_orthology, int_marker_pub, publication
 	where gwo_gene_zdb_id = mrkr_zdb_id
@@ -342,9 +405,10 @@ O_ATTRIB_COUNT ::: number of orthology attribution records
 		<li><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$6">$1 ($5) $3. $4.</A> $6
 	<?/MISQL>
 	</ul>
-<?/MISQL>
-<?/MIBLOCK>
+  <?/MISQL>
+  <?/MIBLOCK>
 
+<?/MIBLOCK> <?MICOMMENT> --| XST Organism |-- <?/MICOMMENT>
 
 <?MISQL SQL="INSERT INTO tmp_gene_with_orthology(gwo_gene_zdb_id) VALUES(NULL);
              DROP TABLE tmp_gene_with_orthology;">
