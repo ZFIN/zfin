@@ -24,7 +24,7 @@ create function populate_anat_display_stage_children(parent_id varchar(50),
 
   define child_indent int;
   define child_id varchar(50);
-  define lowercase_anatitem_name varchar(50);
+  define anatomy_order varchar(100);
   define distance int;
 
   -- insert record into anatomy_display from passed in values
@@ -43,8 +43,8 @@ create function populate_anat_display_stage_children(parent_id varchar(50),
   -- call function recursively for each anatitem that is contained by 
   -- the parent anatitem and 
   foreach
-    select anatcon_contained_zdb_id, anatitem_type_code, anatitem_name, LOWER(anatitem_name)
-      into child_id, hier_code, anatomy_name, lowercase_anatitem_name
+    select anatcon_contained_zdb_id, anatitem_type_code, anatitem_name, LOWER(anatitem_name_order)
+      into child_id, hier_code, anatomy_name, anatomy_order
       from anatomy_item, anatomy_contains, stage_items_contained, stage s1, stage xstrt, stage xend
       where parent_id = anatcon_container_zdb_id
         and anatitem_zdb_id = anatcon_contained_zdb_id
@@ -66,15 +66,15 @@ create function populate_anat_display_stage_children(parent_id varchar(50),
       order by 4
 
     insert into stage_item_child_list 
-      values(stage_id,parent_id,child_id,anatomy_name,hier_code);
+      values(stage_id,parent_id,child_id,anatomy_name,hier_code,anatomy_order);
 
     delete from stage_items_contained where sic_anatitem_zdb_id = child_id;
 
   end foreach -- retrieval of children
 
   foreach
-    select stimchilis_child_zdb_id, stimchilis_anat_name, LOWER(stimchilis_anat_name), stimchilis_hier_code
-      into child_id, anatomy_name, lowercase_anatitem_name, hier_code
+    select stimchilis_child_zdb_id, stimchilis_anat_name, stimchilis_anat_order, stimchilis_hier_code
+      into child_id, anatomy_name, anatomy_order, hier_code
       from stage_item_child_list
       where stimchilis_stg_zdb_id = stage_id
         and stimchilis_item_zdb_id = parent_id
@@ -511,7 +511,10 @@ create dba function "informix".regen_anatomy()
 	      constraint stimchilis_anat_name_not_null,
 	  stimchilis_hier_code		char(5)
 	    not null
-	      constraint stimchilis_hier_code_not_null
+	      constraint stimchilis_hier_code_not_null,
+	  stimchilis_anat_order		varchar(100)
+	    not null
+	      constraint stimchilis_anat_order_not_null
 	)
 	fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
 	extent size 128 next size 128;
