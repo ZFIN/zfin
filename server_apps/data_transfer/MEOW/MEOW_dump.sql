@@ -200,7 +200,7 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_genes_mutants.txt'
     from meow_mutant;
 
 
--- NOW let's create the table of pubs associated with these genes. Easy!
+-- NOW let's create the table of pubs associated with these genes.
 create table meow_exp2 (
   gene_id varchar(50),
   zdb_id varchar(50),
@@ -218,7 +218,7 @@ insert into meow_exp2
    where zdb_id = recattrib_source_zdb_id
      and recattrib_data_zdb_id in
        ( select zdb_id 
-           from meow_exp1 );
+           from meow_exp1 ) ;
 
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_pubs.txt' 
   DELIMITER "	" 
@@ -257,6 +257,15 @@ insert into meow_exp4
   select linked_recid, DB_name, acc_num 
     from db_link 
    where linked_recid in 
+       ( select zdb_id 
+           from meow_exp1 );
+
+insert into meow_exp4 
+  select  mrel_mrkr_1_zdb_id, DB_name, acc_num 
+    from db_link , marker_relationship
+   where   mrel_mrkr_2_zdb_id = linked_recid
+        and db_name = 'Genbank';
+	and mrel_mrkr_1_zdb_id in 
        ( select zdb_id 
            from meow_exp1 );
 
