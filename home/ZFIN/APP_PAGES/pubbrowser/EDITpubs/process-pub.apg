@@ -1,0 +1,59 @@
+<!-- FILE: process-pub.html
+
+This file processes a publication that has been submitted from edit_pub.html.
+If it is a new pub, then OID should be set to "new", else it is set to the 
+zdb_id of the pub to update. In the former case, we need to generate and 
+insert a new pub record into PUBLICATION. Then (both cases) we just update the
+pub in question with any new values passed in.
+
+-->
+<!-- First make sure the critical fields are there -->
+<?MIBLOCK COND="$(OR,$(NXST,$title),$(NXST,$authors),$(NXST,$pub_date),$(NXST,$source),$(NXST,$num_auths))"
+<center>
+<big> Insufficient information: Every publication is <b>REQUIRED</b> to have atleast a title,authors,date, and source specified to make an entry</big>. Please go back and try again.
+</center>
+<?/MIBLOCK>
+
+<!-- Looking good. Now just fix up the entries and create the record -->
+<?MIBLOCK COND="$(AND,$(XST,$title),$(XST,$authors),$(XST,$pub_date),$(XST,$source),$(XST,$num_auths))">
+
+<!-- Double check input for apostrophes; fix em where found -->
+<?MIVAR NAME=$title DELIMIT="'" REPLACE="''">$title<?/MIVAR>
+<?MIVAR NAME=$authors DELIMIT="'" REPLACE="''">$authors<?/MIVAR>
+<?MIVAR NAME=$source DELIMIT="'" REPLACE="''">$source<?/MIVAR>
+
+<?MIVAR COND="$(XST,$keywords)" NAME=$keywords DELIMIT="'" REPLACE="''">$keywords<?/MIVAR>
+<?MIVAR COND="$(XST,$abstract)" NAME=$abstract DELIMIT="'" REPLACE="''">$abstract<?/MIVAR>
+<?MIVAR COND="$(XST,$news_and_views)" NAME=$news_and_views DELIMIT="'" REPLACE="''">$news_and_views<?/MIVAR>
+<?MIVAR COND="$(XST,$errata_and_notes)" NAME=$errata_and_notes DELIMIT="'" REPLACE="''">$errata_and_notes<?/MIVAR>
+
+
+
+<!- If you're creating new PUB record,create and insert a blank record for it.-->
+<?MIBLOCK COND="$(EC,$OID,new)">
+<?MISQL SQL="execute function get_id('PUB');"><?/MISQL>
+<?MIVAR NAME=$OID>$1<?/MIVAR>
+<?MISQL SQL="insert into  publication (zdb_id,title,authors,medline_authors,source,pub_date,owner,entry_time) values ('$OID','temp','temp','Non-Medline entry','temp','1900-01-01'::date,'root',current);"><?/MISQL>
+<?/MIBLOCK>
+
+<!-- Now update the record with new info. Try to do it all in one insert! -->
+<?MIVAR NAME=$setvalues>set title='$title',jtype='$jtype',authors='$authors',source='$source',pub_date='$pub_date'::date,status='$status',num_auths='$num_auths'<?/MIVAR>
+<?MIVAR COND=$(XST,$keywords) NAME=$setvalues>$setvalues,keywords='$keywords'<?/MIVAR>
+<?MIVAR COND=$(XST,$abstract) NAME=$setvalues>$setvalues,abstract='$abstract'<?/MIVAR>
+<?MIVAR COND=$(XST,$accession_no) NAME=$setvalues>$setvalues,accession_no='$accession_no'<?/MIVAR>
+<?MIVAR COND=$(XST,$news_and_views) NAME=$setvalues>$setvalues,news_and_views='$news_and_views'<?/MIVAR>
+<?MIVAR COND=$(XST,$errata_and_notes) NAME=$setvalues>$setvalues,errata_and_notes='$errata_and_notes'<?/MIVAR>
+
+<!-- OKAY, now just do the update! -->
+
+<?MISQL SQL="update publication $setvalues where zdb_id='$OID';"><?/MISQL>
+
+<!-- And jump back to the previous window -->
+
+<SCRIPT>
+window.history.go(-2);
+</SCRIPT>
+
+<?/MIBLOCK> <!-- ends cond name,address,etc exists -->
+
+

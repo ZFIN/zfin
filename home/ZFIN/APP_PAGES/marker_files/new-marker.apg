@@ -1,0 +1,277 @@
+<HTML>
+
+<HEAD>
+<META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
+<TITLE>Add a new MARKER</TITLE>
+</HEAD>
+
+<?MISQL SQL="select WebExplode(object,'permission=submit&page_title=New Marker') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+<?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
+
+<!-- THIS IS A VERY TRICKY PAGE. The main challenge lies in the fact that users
+will be "building up" a submission, adding pubs to it, selecting affected gene,
+etc etc. In other words, they may engage in lots of "side processes" before they
+have built up their final submission and press the "submit" button. The challenge is to maintain the state of their evolving submission as they do this. The solution is clever: The FIRST thing this page does if this is the first entry into the page, is to create a "temporary" data record in the TEMP_MARKER table.
+Then it pops up the MARKER entry form. 
+The ZDB_ID for this record is passed around to all subsequent forms. Every time a submitter follows a link to, say, specify pubs or something, the current form values are saved off to the temp. record. When they finish selecting a pub or whatever, they are returned to this page, passing in the ZDB_ID of the temp. form, which causes the TEMP_MARKER entry form to be displayed with all current values. When they finally click SUBMIT, form values are updated one last time, and the entire data record copied to the actual MARKER table.
+-->
+
+<!-- Pass in any variables you want the form to be initialized with on the command-line. You will need to modify setup-new-marker to avoid blasting these values however.
+OTHER NOTABLE VARIABLES that could be passed in:
+-- FLAG. Contains a text string with dash-separated flags to allow one to pass in some info about where the call to NEW-MARKER came from; this info is used to customize the form you get from NEW-MARKER. 
+-- 
+-->
+
+<!-- FIRST DO SOME IMPORTANT SETUP. MOSTLY THIS IS IN SEPERATE FILE TO KEEP FILE 
+SIZE MANAGEABLE-->
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-setup-new-marker.apg';">
+$1<?/MISQL>
+
+
+<!-- NOW JUST THROW UP THE FORM FOR ENTERING A NEW MUTANT LINE -->
+<?MIVAR>
+<FORM METHOD=POST ACTION="/cgi-bin_B/webdriver">
+
+<INPUT type=hidden NAME=temp_oid VALUE=$temp_oid>
+<INPUT type=hidden NAME=MIval VALUE="aa-process-marker.apg">
+<INPUT type=hidden NAME=flag VALUE=$flag>
+<INPUT type=hidden NAME=marker_type VALUE=$marker_type>
+
+<A NAME="the_top">
+<h1>DATA SUBMISSION: New $(UPPER,$marker_type) </h1>
+<?/MIVAR>
+
+Fill in as many entries as you can and then click on the SUBMIT button.
+<p>
+
+<table width=100%>
+<TR> 
+<TD>
+<?MIVAR><A HREF="/ZDBB/help_files/help-marker.html#name">$(UPPER,$marker_type) NAME: </A> <?/MIVAR> 
+<INPUT TYPE=text <?MIVAR COND=$(NC,$name,NULL)>value=$name <?/MIVAR> NAME="name"> 
+</TD>
+<TD>
+<?MIBLOCK COND="$(EQ,$marker_type,GENE)">
+<A HREF="/ZDBB/help_files/help-marker.html#type">ABBREVIATION:</A>
+<INPUT TYPE=text SIZE=6 <?MIVAR COND=$(NC,$abbrev,NULL)>value=$abbrev <?/MIVAR> NAME="abbrev"> 
+</TD></TR>
+<TR>
+<TD colspan=2>
+<A HREF="/ZDBB/help_files/help-marker.html#type">ALLELE (if mutant gene):</A>
+<INPUT TYPE=text SIZE=6 <?MIVAR COND=$(NC,$allele,NULL)>value=$allele <?/MIVAR> NAME="allele"> 
+<?/MIBLOCK>
+</TD>
+
+</TR></TABLE>
+
+<TABLE width=100%>
+<TR> 
+<TD><A HREF="/ZDBB/help_files/help-marker.html#availability">DISCOVERER:</A> 
+<?MIVAR COND=$(EC,$discoverer,NULL)>UNKNOWN.<?/MIVAR>
+<?MIBLOCK COND=$(NC,$discoverer,NULL)>
+<?MISQL SQL="select full_name from person where zdb_id='$discoverer';"><b>$1</b><?/MISQL>
+<?/MIBLOCK>
+</TD><TD>
+<input type=submit name="s_discover" value="Specify Discoverer">
+</TD> </TR>
+
+<?MIBLOCK COND="$(OR,$(EQ,$marker_type,GENE),$(EQ,$marker_type,EST))">
+<TR> 
+<TD><A HREF="/ZDBB/help_files/help-marker.html#availability"> CURRENT SOURCE:</A>
+<?MIVAR COND=$(EC,$source,NULL)> UNKNOWN.<?/MIVAR>
+<?MIBLOCK COND=$(NC,$source,NULL)> 
+<?MISQL SQL="select full_name from person where zdb_id='$source';"><b>$1</b><?/MISQL>
+<?/MIBLOCK>
+</TD>
+<TD><input type=submit name="s_source" value="Specify current source"> </TD>
+</TR>
+<?/MIBLOCK>  <!-- ends if marker clone or est -->
+</TABLE>
+
+<!-- only ESTs and clones have sequences, so do following only for them. -->
+
+<?MIBLOCK COND="$(OR,$(EQ,$marker_type,GENE),$(EQ,$marker_type,EST))">
+
+<A NAME="seq_info">
+<HR width=100% size=3>
+<h3 align=center>SEQUENCE INFORMATION</h3>
+<p>
+<?MISQL SQL="select seq_type,sequence,genbank_num,start_codon,stop_codon,introns,zdb_id from sequence where marker_id='$temp_oid';">
+<big>$1 Sequence</big><br>
+<TABLE border cellpadding=5>
+<TR>
+<TD colspan=2>GENBANK ACC#: <b> $(IF,$(NC,$3,NULL),$3,Unspecified) </B>
+</TD></TR>
+<TR>
+<TD>Start CODON: $(IF,$(NC,$4,NULL),$4,Unspecified)</TD>
+<TD>Stop CODON: $(IF,$(NC,$5,NULL),$5,UNspecified) </TD></TR>
+<TR>
+<TD colspan=2>INTRONS: $(IF,$(NC,$6,NULL),$6,Unspecified)</TD>
+</TR>
+</TABLE>
+<p>
+<?/MISQL>
+<p>
+
+<!-- NOW put up buttons to let people add sequences  -->
+<?MIBLOCK COND="$(EQ,$marker_type,EST)">
+<input type=submit name="s_est_seq" value="Describe EST sequence">
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(EQ,$marker_type,GENE)">
+<input type=submit name="s_genomic_seq" value="Describe genomic sequence">
+<input type=submit name="s_cdna_seq" value="Describe cDNA sequence">
+<input type=submit name="s_protein_seq" value="Describe protein sequence">
+<?/MIBLOCK>
+
+<?/MIBLOCK>   <!-- ends if sequence EST or cloned gene -->
+
+
+
+<!-- If cloned gene, deal with expression pats and othologues -->
+
+<?MIBLOCK COND="$(EQ,$marker_type,GENE)"><HR width=100% size=3>
+
+<A NAME="exp_info">
+<h3 align=center>EXPRESSION PATTERNS</h3>
+
+<TABLE width=100%>
+<TR>
+<TD width=50%><A HREF="/ZDBB/help_files/help-marker.html#phenotype">EXPRESSED IN:</A>
+</TD><TD>
+<input type=submit name="s_expat" value="Add to list">
+</TD></TR>
+<TR>
+<TD colspan=2>
+<ul>
+<?MISQL SQL="select name, st_stage, end_stage from expression_pat where fish_id='$temp_oid';">
+<li> Involves changes to <b>$1</b> between the <b>$2</b> and the <b>$3</b> stage. 
+<?/MISQL>
+<?MIVAR COND="$(<,$MI_ROWCOUNT,1)">None described yet.<?/MIVAR>
+</ul>
+</TD>
+</TR></TABLE>
+<p>
+
+<A NAME="orth_info">
+<HR width=100% size=3>
+
+<h3 align=center>ORTHOLOGUES</h3>
+
+<TABLE width=100%>
+<TR>
+
+<TD width=50%><A HREF="/ZDBB/help_files/help-marker.html#phenotype">Gene is ORTHOLOGOUS TO:</A>
+</TD><TD>
+<input type=submit name="s_ortho" value="Add to list">
+</TD></TR>
+<TR>
+<TD colspan=2>
+<ul>
+<?MISQL SQL="select ortho_name, ortho_abbrev, organism, accession_num from orthologue where c_gene_id='$temp_oid';">
+<li> Orthologous to the gene <b>$1($2)</b> in <b>$3</b>  
+$(IF,$(NOT,$(EQ,$4,NULL)),"(<b>"$3"</b> database accession#:"$4")")
+<?/MISQL>
+<?MIVAR COND="$(<,$MI_ROWCOUNT,1)">None submitted yet.<?/MIVAR>
+</ul>
+</TD>
+</TR></TABLE>
+
+<?/MIBLOCK> <!-- Ends "if cloned gene (expats and orthologues) -->
+
+
+<A NAME="map_info">
+<HR width=100% size=3>
+
+<h3 align=center>MAPPING INFORMATION</h3>
+
+<?MIVAR NAME=$amp_kind>
+$(IF,$(OR,$(EC,$marker_type,GENE),$(EC,$marker_type,est),$(EC,$marker_type,STS)),PRIMER SETS)
+$(IF,$(EC,$marker_type,RAPD),PRIMERS)
+$(IF,$(EC,$marker_type,RFLP),RESTRICTION ENZYMES)
+<?/MIVAR>
+
+<TABLE WIDTH=100%>
+<TR>
+<TD colspan=2><A HREF="/ZDBB/help_files/help-marker.html#type">MAP LOCATION:</A>
+ <INPUT TYPE=text SIZE=10 <?MIVAR COND=$(NC,$lg_location,NULL)>value=$lg_location <?/MIVAR> NAME="lg_location"> </TD>
+</TR>
+<TR>
+<?MIVAR>
+<TD><b>$amp_kind:</B> </TD>
+<TD align=right><input type=submit name="s_amp" value="Add $amp_kind"></TD>
+<?/MIVAR>
+</TR>
+</TABLE>
+
+
+<TABLE width=100% border cellpadding=5>
+<TR>
+<!-- Now grab all amp_products/primers associated with the marker. The UNION in the following query is necessary because RFLPs have *no* primers, and this would not show up because of the join.
+-->
+<?MISQL SQL="select a.zdb_id as id,band_size,restr_enzyme,b.name,b.zdb_id from amp_product a,primer_seq b where marker_id='$temp_oid' and (b.zdb_id=a.forward_primer OR b.zdb_id=a.reverse_primer) UNION select c.zdb_id as id,band_size,restr_enzyme,'NULL'::varchar(30),'NULL'::varchar(50) from amp_product c where marker_id='$temp_oid' order by id;">
+$(IF,$(AND,$(>,$MI_CURRENTROW,1),$(NOT,$(EQ,$1,$last))),
+</TR><TR>
+<TD>RESTR. ENZYME: $(IF,$(EQ,$enzym,NULL),None,$enzym)</TD>
+<TD>BAND SIZE: $(IF,$(EQ,$band,NULL),Unspecified,$band)</TD></TR>
+</TABLE><p><TABLE width=100% border cellpadding=5><TR>)
+
+$(IF,$(NC,$4,NULL),"<TD width=50%>PRIMER: <A HREF="/cgi-bin_B/webdriver?MIval=aa-primerview.html&OID=$5">"$4"</A></TD>")
+
+$(SETVAR,$band,$2)
+$(SETVAR,$enzym,$3)
+$(SETVAR,$last,$1)
+<?/MISQL>
+<?MIVAR COND="$(>,$MI_ROWCOUNT,0)"></TR><TR>
+<TD>RESTR. ENZYME: $(IF,$(EQ,$enzym,NULL),None,$enzym)</TD>
+<TD>BAND SIZE: $(IF,$(EQ,$band,NULL),Unspecified,$band)</TD></TR>
+<?/MIVAR>
+<?MIVAR COND="$(=,$MI_ROWCOUNT,0)"><TR><TD colspan=2>None specified yet.</TD></TR>
+<?/MIVAR>
+</TABLE>
+
+
+<A NAME="pub_info">
+<HR width=100% size=3>
+<h3 align=center>PUBLICATIONS:</h3>
+
+<TABLE width=100%>
+<TR>
+<TD width=10%><input type=submit name="s_prim_pub" value="Specify"></TD> 
+<TD><b>Primary Publication:</b> 
+<?MISQL SQL="select b.title, b.zdb_id from int_data_pub a, publication b where source_id='$temp_oid' and target_id=b.zdb_id and info='primary';"><?/MISQL>
+<?MIVAR COND=$(EQ,$MI_ROWCOUNT,0)> <font color="#ff0000">UNPUBLISHED</font><?/MIVAR>
+</TD>
+</TR>
+<TR> <TD colspan=2>
+<?MIVAR COND="$(>,$MI_ROWCOUNT,0)"> <A HREF="/cgi-bin_B/webdriver?MIval=aa-pubview2.apg&OID=$2">$1</A>  <?/MIVAR>
+</TD></TR>
+
+<TR><TD colspan=2> <HR width=50%></TD></TR>
+
+<TR>
+<TD width=10%><input type=submit name="s_related_pub" value="Add one"> </TD>
+<TD><b>Related Publications:</b> </TD>
+</TR><TR>
+<TD colspan=2>
+<ul>
+<?MISQL SQL="select b.title, b.zdb_id from int_data_pub a, publication b where source_id='$temp_oid' and target_id=b.zdb_id and info='related';">
+<li> <A HREF="/cgi-bin_B/webdriver?MIval=aa-pubview2.apg&OID=$2">$1</A><br>
+<?/MISQL>
+</ul>
+</TD></TR></TABLE>
+
+<HR WIDTH=80% size=4>
+
+<?MIVAR>
+<input type=submit name="s_done" value="SUBMIT the new $marker_type record.">
+<?/MIVAR>
+
+</FORM>
+
+
+
+</HTML>
+
+<?/MIBLOCK>  <!-- ends cond authorized -->

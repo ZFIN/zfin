@@ -1,0 +1,110 @@
+<html><head></head><body>
+<TITLE>Zebrafish Database</TITLE>
+<H3>The Zebrafish Database Project</H3>
+<HR>
+<b>5. The Implementation Statement:</b><p>
+We propose a "distributed" database system, ZfishDB, accessed and maintained over the Internet by the zebrafish research community. Here we describe the
+implementation of our three aims. <p>
+<p>
+<b><i>Implementation of Specific Aim 1. A Multi-media Database. </b></i><p>
+<b><a name="1">Limitations of Existing Systems.</a></b> The type of database system we
+propose to implement must support image and spatialized graphical data in
+addition to text information (<a href="prob.html#1">Table 1</a>). One strategy might be to adapt or
+expand an existing system. We have reviewed two possible candidates and found
+both lacking. First is our WWW server for the zebrafish research community at
+the University of Oregon [<a href=""></a>]. It includes information on
+stocks of mutant fish, developmental staging, addresses of researchers, a
+bibliography of zebrafish research, etc. Although this system provides a
+valuable service, it has significant limitations when compared to a true
+database system. Because there is no data model, WWW client-server software (or
+any HyperText Markup Language (HTML) based browser) offers only simple file
+contents browsing, not querying. Additionally, all data must be tediously
+entered and linked by hand in the HTML source files. The zebrafish community
+needs model-based data organization and searching that only a true database
+system will provide.
+<p>
+Second, we adapted the ACeDB system [Durbin92] used by the worm community.
+ACeDB is a "home-grown" system specifically optimized for genetic map
+information. ACeDB lacks the full power of a relational database because it
+does not provide ad hoc querying like Structured Query Language (SQL
+[Robbins94]). Moreover, ACeDB does not store images within its database
+structure; the UNIX version can call an external viewer for image presentation,
+however the image and viewer are both external to the system, only the filename
+of the image is in the database thus precluding relational queries. Finally,
+ACeDB is not a complete DBMS because it lacks standard DBMS features like
+concurrency control, recovery, and transaction control.
+<p>
+<b><a name="2">Needed Approach:  An Object-Oriented Relational Database System.</a></b>Ê Because no suitable biological database systems exist, the DBMS
+must come from a commercial source and support:
+<UL>
+<LI>User defined data types
+<LI>A standard language for relational queries
+<LI>Image, spatial and temporal data types
+<LI>Security, query optimization, and data integrity
+</UL>
+To satisfy these requirements, we propose to use an Object-Oriented Relational
+Database Management System (ORDBMS). A relational database system supports an
+abstract data model that separates the logical data model from the low-level
+data structures and forms the foundation for relational querying. Adding
+object-oriented modeling [Gray92] to a relational database creates important
+advantages including inheritance and class structures; and its user-definable
+types, functions, and methods seem well-suited to the description of
+multi-media biological data. Moreover, an ORDBMS will provide traditional DBMS
+support for security, query optimization, data integrity and recovery.
+<p>
+<img src="fig6.gif">
+<br>
+Fig 6 shows a preliminary data model for the ZfishDB, a multi-media ORDBMS. The
+hierarchical object structure provides a data representation that is easy to
+communicate; we will develop the final data model collaboratively with the
+database users. The ZfishDB stores images and text documents as natural types.
+Although image and other multi-media data can be added to relational databases
+by using uninterpreted Binary Large OBjects (BLOBs), we favor an ORDBMS because
+object-oriented technology can easily add new data types (e.g. image, spatial,
+video), to traditional relational databases, as first-class data types .
+<p>
+<b><a name="3">Proposed DBMS<//a></b>. We propose to implement the ZfishDB in an ORDBMS
+called Illustra (Illustra Information Technologies, Inc.) which we have used
+previously [Shoop94]. Illustra is the commercialization of UC Berkeley's
+POSTGRES database research project under Michael Stonebraker [Stonebraker93].
+Illustra provides direct support for all the database requirements we have
+specified above; it has extensible data typing and allows traditional
+relational data types defined in SQL-89 such as character strings, integers,
+floating point numbers, etc. In addition, Illustra supports image, 2-D and 3-D
+spatial objects, text and HTML document data types. The image data type
+provides image and edge enhancement, edge detection and matching, and a variety
+of internal image formats. The 2-D and 3-D spatial data types support point,
+box, circle, polygon, and directed graph objects, efficiently accessed using
+R(quad)-trees. The text document data type allows the storage of journal
+articles, notes, manuals, etc. Functions are available for automatic indexing
+of documents and for searching all words and phrases in a large text library
+using a D-tree access method. We will use all these data storage types.
+<p>
+We also require the specialized software tools for handling image creation,
+editing, and scanning provided by Illustra, which support X11 data viewers
+(e.g. XVIEW, XV). Images may be manipulated in Illustra by scaling,
+enhancement, composition of images into a single image, and other image
+analysis. Illustra also allows us to write our own C and C++ routines to extend
+the functions and methods of the data types as well as to create new data
+types. Illustra provides an ANSI SQL-92 query language interface closely
+aligned with the emerging SQL-3 standard for object-oriented relational
+database queries. Illustra's SQL support provides querying for all types
+including natural data types like images. Illustra also provides the standard
+features of a relational database system that we require: concurrency control,
+data recovery from transaction failure, transaction control,  reports and
+alerts to the supervisor of arbitrary database events, user authentication, and
+automatic backups.
+<p>
+<b><a name="4">Challenges and Limitations. </a></b>Our implementation will need to
+define the object-oriented data model, modify and extend the data types for the
+multi-media demands of the ZfishDB, and create GUI interfaces to update and
+query the Illustra databases. The existing WWW and ACeDB servers will continue
+to provide some level of data support during the transition period.
+<HR>
+<B>The Zebrafish Database</B><p>
+Continue on to <a href="arch.html">Database System Architecture</a>
+<HR>
+<a href="cont.html">Return to Table of Contents</a>
+<HR>
+<A HREF="/index.html">ZFIN  <img src="fish_net.gif"></A>
+</body></html>

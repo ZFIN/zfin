@@ -1,0 +1,6 @@
+#!/bin/sh
+# A bug in esql prevents it from passing on the -G argument (it translates it to "-g")
+# This bug may only occur when there are no .ec files on the command line, I'm not sure.
+# In any case, it's a bug, and this file is a workaround.  
+# This file ensures a -G is specified
+cc -G $*

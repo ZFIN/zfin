@@ -1,0 +1,73 @@
+# With this configuration file you define webdriver specific variables
+# that allow a connection to the database where the full configuration
+# will be extracted by the webconfigs table.
+
+
+# Global: variables defined here are webdriver global variables that 
+#         are used for sizing and diagnostics.
+#         (dbconnmax, maxcharsize, driverdir, debug_file, debug_level, 
+#          anchorvar)
+<global>
+# 2000/08/15 Tried to entirely comment out the debug_file entry, but the 
+# server then complains that the entry is mandatory, in contradiction to
+# the documentation.  So, just redirect the trace info to /dev/null.
+debug_file /dev/null
+# debug_file /tmp/driver.log
+# debug_level 0x5006
+#anchorvar (global name) available to all app pages dynamically generated
+#          by the webdriver.
+#          typical values:
+# anchorvar WEB_HOME/              # NSAPI
+# anchorvar WEB_HOME/              # APACHE
+# anchorvar WEB_HOME/webdriver     # CGI
+# anchorvar WEB_HOME/drvisapi.dll  # ISAPI
+anchorvar WEB_HOME/webdriver
+config_user	admin
+config_password 382b61594a9f39784e26a79f71b6a1dbe22fce5c
+</global>
+
+
+# Setvar: variables defined here are variables that would usually be set in 
+#         the environment before executing the client program, INFORMIXDIR and
+#         INFORMIXSERVER should be set here if they are not set before starting 
+#         the appropriate webserver
+#
+<setvar>
+INFORMIXDIR		/export/chromix/private/apps/Informix_B
+INFORMIXSQLHOSTS	/export/chromix/private/apps/Informix_B/etc/sqlhosts.chrom
+INFORMIXSERVER		chrom_b
+DBDATE			Y4MD-
+</setvar>
+
+
+# Map path=/virtual: variables set here are use to map a URL into a connection
+#                    request, each map will require:
+#  (mandatory)       database, user, config_name
+#  (optional)        server, password, password_key
+#
+
+<map path=/ztest/admin>
+database ztest
+user zfinner
+password 5988dfc53be04b956a2f3a9f98d5478a
+password_key 382b680c
+config_name admin
+config_security on
+</map>
+
+<map path=/ztestb/admin>
+database ztest
+user zfinner
+password 5988dfc53be04b956a2f3a9f98d5478a
+password_key 382b680c
+config_name admin
+config_security on
+</map>
+
+<map path=/cgi-bin_B>
+database ztest
+user zfinner
+password 5988dfc53be04b956a2f3a9f98d5478a
+password_key 382b680c
+config_name zfin
+</map>

@@ -1,0 +1,139 @@
+#------------------------------------------------------------------------
+#
+# Include file for ZFIN_WWW makefiles.
+#
+# $Source$
+# $Id$
+#
+# This file is included in every makefile in the ZFIN_WWW directory tree.
+# It dontains definitions that are common across all makefiles.
+# 
+#------------------------------------------------------------------------ 
+
+# ----------------  Sanity Checks  --------------------------------------
+
+# The following error checks will abort make and print a nice explanatory
+# message as long as it can't find an executable named 'ERROR:' anywhwere.
+
+# Must be running GNU make.  The following line appears to be testing that,
+# but in actuallity, if you are not running GNU make then the make will
+# choke on the ifneq statement.
+
+ifneq ($(MAKE),gmake)
+ ifneq ($(MAKE),gnumake)
+MakeVersionCheck:
+	ERROR: Makefiles only compatible with GNU make.  Use gmake or gnumake.
+ endif
+endif
+
+
+# check that environment variables are defined
+
+# Check one Informix variable.  Assumed if it is defined, the rest are too.
+
+ifndef INFORMIXDIR
+$InformixDirCheck:
+	ERROR: Infomrix environment variables not all set.
+endif
+
+
+# Check Environment variables required by Makefiles.
+
+# TARGETROOT must be defined and be an absolute path.
+
+ifndef TARGETROOT
+TargetRootCheck:
+	ERROR: TARGETROOT environment variable not set.
+endif
+ifneq ($(filter /%,$(TARGETROOT)),$(TARGETROOT))
+TargetRootNotAbsolute:
+	ERROR: TARGETROOT must be an absolute path.
+endif
+
+# if TARGETROOT ends in a slash, strip it, double slashes in filenames
+# cause trouble for REBOL.
+ifeq ($(filter %/,$(TARGETROOT)),$(TARGETROOT))
+TARGETROOT := $(patsubst %/,%,$(TARGETROOT))
+endif
+
+
+# TARGETCGIBIN must be defined and be a relative path.
+
+ifndef TARGETCGIBIN
+TargetCgiDirNameCheck:
+	ERROR: TARGETCGIBIN environment variable not set.
+endif
+ifeq ($(filter /%,$(TARGETCGIBIN)),$(TARGETCGIBIN))
+TargetCgiBinNotRelative:
+	ERROR: TARGETCGIBIN must be relative to TARGETROOT
+endif
+
+
+
+ifndef DBNAME
+DbNameCheck:
+	ERROR: DBNAME Environment variable not set.
+endif
+
+
+# TRANSLATETABLE must be defined as an absolute path
+
+ifndef TRANSLATETABLE
+TranslateTableCheck:
+	ERROR: TRANSLATETABLE Environment variable not set.
+endif
+ifneq ($(filter /%,$(TRANSLATETABLE)),$(TRANSLATETABLE))
+TranslateTableNotAbsolute:
+	ERROR: TRANSLATETABLE must be an absolute path.
+endif
+
+
+
+
+# ---------------  Variable Definitions  --------------------------------
+
+# --- Misc Executables
+
+# Preserve permissions on copies to target or staging directories.
+
+TARGET_CP  = cp -p
+STAGING_CP = cp -p
+
+# Any created dirs should be created with 755 perms.
+
+TARGET_MKDIR = mkdir -m 755
+
+
+LOADAPPPAGE = /research/zfin/central/Commons/bin//loadapppage.pl
+UNLOADAPPPAGE = /research/zfin/central/Commons/bin/unloadapppage.pl
+
+# MAKESPECIFIC = /home/users/tomc/bin/makespecific
+MAKESPECIFIC = /research/zfin/central/Commons/bin/makespecific.pl
+
+SPECIFICCHECK = echo specificcheck -t $(TRANSLATETALE)
+
+DBACCESS = dbaccess
+# DBACCESS = echo dbaccess
+
+
+# --- Java
+
+JAVAC      = /bin/javac
+JAVACFLAGS = -g
+
+
+
+# ---- One time variables used in one time targets to make the specific files 
+# that were intially checked in to CVS, make them generic, and then check them
+#  back in to CVS.
+# This is invoked by the cvsgeneric, inside a foreach statement that must use
+# GNRC as its looping variable.  An example invocation is:
+#
+# 	$(foreach GNRC,$(GENERICS), $(CVSGENERIC))
+
+CVSGENERIC = \
+  $(MAKESPECIFIC) $(GNRC) $(TRANSLATETABLE) $(GNRC).spec; \
+  rm -f $(GNRC); \
+  mv $(GNRC).spec $(GNRC); \
+  cvs commit -m "First version of file with generic tags in it." $(GNRC);
+

@@ -1,0 +1,74 @@
+<?MIVAR COND="$(NXST,$order_clause)" NAME=$order_clause> <?/MIVAR>
+
+<?MIBLOCK COND="$(XST,$refer)">
+<?MIVAR>$(HTTPHEADER,content-type,application/rtf)<?/MIVAR>
+<?MISQL SQL="select title,authors,source,year(pub_date) as pyear from publication $constraint $order_clause;">
+%A $2 
+%D $4
+%T $1
+%J $3
+%V ?
+%P ?
+<?/MISQL>
+<?/MIBLOCK>
+
+
+<?MIBLOCK COND="$(XST,$printable)">
+
+<!-- FILE: pubprintable.html
+
+Mainly, (if variable 'printable' exists)
+This page simply generates a pretty listing of all of the publications
+currently selected and being displayed in the publister pane. This way, a user
+can search for a set of pubs, then generate and print out a list of them for his own personal use.
+
+
+Alternatively, (if variable 'refer' exists)
+This page simply generates a REFER format file for the selected pubs. Since we do not separate out Volume, Pages, Issue number and things like that in ZFIN, these things are not properly placed in the REFER file -- so some editting will be required by user. But this should give a good start.
+-->
+
+
+
+<?MISQL SQL="select WebExplode(object,'page_title=List Pubs') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+
+<?MISQL SQL="execute function expr(today);"><?/MISQL>
+
+<center>
+<BIG>Listing of selected Publication records:</BIG>
+<?MIVAR>(as of $1) <?/MIVAR>
+</center>
+
+<p>
+
+
+<?MISQL SQL="select count(*)::integer from publication $constraint;"><?/MISQL>
+
+<?MIBLOCK COND="$(OR,$(XST,$title),$(XST,$authors),$(XST,$anon1text),$(XST,$year))">
+<big>Criteria used to generate this listing:</big><br>
+<ul>
+<?MIVAR COND="$(XST,$title)"><li><B>TITLE</b> contains: $title  <?/MIVAR>
+<?MIVAR COND="$(XST,$authors)"><li><B>AUTHORS</b> contains: $authors  <?/MIVAR>
+<?MIVAR COND="$(XST,$anon1text)"><li><B>$(UPPER,$anon1)</b> contains: $anon1text  <?/MIVAR>
+<?MIVAR COND="$(XST,$year)"><li><B>YEAR</b> is: $year <?/MIVAR>
+<p>
+</ul>
+<p>
+<?/MIBLOCK>
+
+<?MIVAR>
+<b>Total of <big>$1</big> matching record(s) to display.</b>
+<?/MIVAR>
+<p>
+
+
+<?MISQL SQL="select title,authors,source,year(pub_date) as pyear from publication $constraint $order_clause;">
+$2 ($4) $1 $3
+<hr width=80%>
+
+<?/MISQL>
+</HTML>
+
+<?/MIBLOCK>
+
+

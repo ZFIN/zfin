@@ -1,0 +1,133 @@
+<!-- Used by root to police pending locus registrations. Root can change the status of a registration.  Note that a registration can never be deleted, however, because the allele designation is permanently assigned. 
+So the possible status states are:
+   unreviewed, conditional, expired
+PARAMS:
+update == optional, if exists then its the zdb_id of the locus_registration to update.
+action == is either 'approve' or 'expire' depending on which action to do.
+
+UPDATE ECK 4/21/99.  Will modify to allow public to see pending registrations -- but not update of course.
+ -->
+
+<HEAD>
+<SCRIPT>
+function change_status(selector,locus_id,the_allele) {
+var theAction=selector.name;
+  document.location='/cgi-bin_B/webdriver?MIval=aa-registered_loci.apg&update='+locus_id+'&allele='+the_allele+'&action='+theAction;
+}
+
+function change_descr(selector,locus_id,the_allele) {
+var theDescr=escape(selector.value);
+  document.location='/cgi-bin_B/webdriver?MIval=aa-registered_loci.apg&update='+locus_id+'&allele='+the_allele+'&action=descr&description='+theDescr;
+}
+</SCRIPT>
+</HEAD>
+
+<?MISQL SQL="select WebExplode(object,'page_title=Registered Loci&permission=root') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+<?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
+
+<?MIBLOCK COND="$(XST,$update)"> 
+<!-- Approve it and insert rudimentary fish record -->
+<?MIBLOCK COND="$(EC,$action,approve)">
+<?MISQL SQL="select zdb_id,locus_name,abbrev,allele,owner,pheno_descr,fish_record from locus_registration where zdb_id='$update' and allele='$allele';"><?/MISQL>
+
+<!-- only do it if not yet done! -->
+<?MIBLOCK COND=$(ISNULL,$7)>
+<?MIVAR NAME=$locus_id>$1<?/MIVAR>
+<?MIVAR NAME=$locus_name>$2<?/MIVAR>
+<?MIVAR NAME=$abbrev>$3<?/MIVAR>
+<?MIVAR NAME=$allele>$4<?/MIVAR>
+<?MIVAR NAME=$owner>$5<?/MIVAR>
+<?MIVAR NAME=$descr>$6<?/MIVAR>
+<?MISQL SQL="select target_id,info from int_person_lab where source_id='$owner' order by info;"><?/MISQL>
+<?MIVAR NAME=$lab>$1<?/MIVAR>
+<?MIVAR NAME=$full_abbrev>$abbrev<sup>$allele</sup><?/MIVAR>
+
+<?MISQL SQL="execute function get_id('FISH');"><?/MISQL>
+<?MIVAR NAME=$fish_id>$1<?/MIVAR>
+<?MISQL SQL="execute function get_id('CHROMO');"><?/MISQL>
+<?MIVAR NAME=$chromo_id>$1<?/MIVAR>
+<?MISQL SQL="execute function get_id('ALT');"><?/MISQL>
+<?MIVAR NAME=$alt_id>$1<?/MIVAR>
+<?MISQL SQL="insert into temp_fish (comments,submitter_id,entry_time,zdb_id,locus,allele,chrom_num,phenotype,lab,discoverer,source,line_type,abbrev,name,chrom_change,mutagen,protocol) values ('Provisional record for newly registered locus/allele','$owner',current,'$fish_id','$locus_id','$allele','0','$descr','$lab','$owner','$owner','mutant','$abbrev','$locus_name','UNKNOWN','UNKNOWN','UNKNOWN');"><?/MISQL>
+
+<?MIVAR NAME=$s_done>true<?/MIVAR>
+<?MIVAR NAME=$temp_oid>$fish_id<?/MIVAR>
+<?MIVAR NAME=$submitter_id>$owner<?/MIVAR>
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-process-fish.apg';"><?/MISQL>
+
+<!-- make a locus record if it's new! -->
+<?MISQL SQL="select count(*)::integer from locus where zdb_id='$locus_id';"><?/MISQL>
+<?MIVAR NAME=$locus_cnt>$1<?/MIVAR>
+<?MISQL COND="$(<,$locus_cnt,1)" SQL="insert into locus (zdb_id,locus_name,abbrev,comments,owner) values ('$locus_id','$locus_name','$abbrev','Provisional record for newly registered locus/allele','$owner');"><?/MISQL>
+
+<?MISQL SQL="update locus_registration set status='conditional', approval_time=current,fish_record='$fish_id' where zdb_id='$update' and allele='$allele';"><?/MISQL>
+
+<?/MIBLOCK>
+<?/MIBLOCK> <!-- ends approve actions -->
+
+<?MISQL COND="$(EC,$action,expire)" SQL="update locus_registration set status='expired', expired_time=current  where zdb_id='$update' and allele='$allele';"><?/MISQL>
+
+<?MIBLOCK COND="$(EC,$action,descr)">
+<?MIVAR NAME=$description DELIMIT="'" REPLACE="''">$description<?/MIVAR>
+<?MISQL SQL="update locus_registration set pheno_descr='$description'  where zdb_id='$update' and allele='$allele';"><?/MISQL>
+<?MISQL SQL="select fish_record from locus_registration where zdb_id='$update' and allele='$allele';"><?/MISQL>
+<?MIVAR NAME=$fish_rec>$1<?/MIVAR>
+<?MISQL SQL="update fish set phenotype='$description'  where zdb_id='$fish_rec';"><?/MISQL>
+<?MISQL SQL="update fish_search set phenotype='$description'  where fish_id='$fish_rec';"><?/MISQL>
+<?/MIBLOCK>
+
+<?/MIBLOCK>
+
+
+
+
+<center><font size=4><b>Pending Locus Registrations</b></font></center>
+<p>
+<form name=lociform>
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
+
+
+<TABLE width=100%>
+<TH>LOCUS</TH> <TH>OWNER</TH>  <TH align=left>STATUS</TH>
+<?MISQL SQL="select locus_name,abbrev,allele,b.full_name,a.entry_time::date,status, month(current) - month(a.entry_time::date), a.zdb_id,a.approval_time::date,a.expired_time::date,pheno_descr,fish_record from locus_registration a, person b where a.owner=b.zdb_id order by locus_name;">
+<TR><TD colspan=6><hr size=3></TD></TR>
+
+<TR valign=bottom>
+<TD>$(IF,$(>,$7,6),"<font color='#ff0000'>") <b>$1</b> ($2<sup>$3</SUP>)</font>
+</TD>
+<TD>$4</TD>
+<TD rowspan=3 align=left valign=top><font size=2>
+<B>Registered:</b> $5 
+<br>
+<B>Approved:</b> 
+$(IF,$(NC,$9,$MI_NULL),$9,"<input type=checkbox name=approve onClick=change_status(this,'"$8"','"$3"')>")
+<BR>
+<B>Expired:</b> 
+$(IF,$(NC,$10,$MI_NULL),$10,"<input type=checkbox name=expire onClick=change_status(this,'"$8"','"$3"')>")
+
+</TD>
+</TR>
+<TR><TD colspan=2><font size=2>FISH record: $(IF,$(NC,$12,NULL),<A HREF="/cgi-bin_B/webdriver?MIval=aa-fishview.apg&OID="$12>$12</A>,"Not yet created")</TD>
+</TR>
+<TR>
+<TD colspan=2><font size=2>
+Description:
+<TEXTAREA NAME="SEL$MI_CURRENTROW" rows=3 cols=50 wrap=virtual>
+$11
+</TEXTAREA>
+<input type=button name=descr value="Update" onClick="change_descr(document.lociform.SEL$MI_CURRENTROW,'$8','$3');">
+</TD>
+</TR>
+
+
+
+<?/MISQL>
+</TABLE>
+</form>
+<?MIVAR COND="$(=,$MI_ROWCOUNT,0)"> No Loci Registered<?/MIVAR>
+
+<?/MIBLOCK>
+
+</HTML>
+

@@ -1,0 +1,29 @@
+<!-- FILE: identify
+
+This file is a weak cousin of secure_navigation that you can call when you just want to set ZDB_name, ZDB_ident without all the other junk in secure_navigation.
+ -->
+
+<?MIVAR NAME=$ZDB_ident>GUEST<?/MIVAR>
+<?MIVAR NAME=$ZDB_name>GUEST<?/MIVAR>
+<?MIVAR NAME=$ZDB_access>GUEST<?/MIVAR>
+
+<?MIVAR NAME=$AUTHORIZED>GUEST<?/MIVAR>
+
+<!-- If authorize cookie passed in, pull out the info for it -->
+
+<?MIBLOCK COND="$(XST,$ZDB_authorize)">
+
+<?MISQL SQL="select zdb_id,name,access from ZDB_submitters where cookie='$ZDB_authorize';">
+<?/MISQL>
+
+<!-- If you got a single entry, set name and ident -->
+<?MIBLOCK COND="$(=,$MI_ROWCOUNT,1)">
+<?MIVAR NAME=$ZDB_name>$2<?/MIVAR>
+<?MIVAR NAME=$ZDB_ident>$1<?/MIVAR>
+<?MIVAR NAME=$AUTHORIZED>$3<?/MIVAR>
+<?MIVAR NAME=$ZDB_access>$3<?/MIVAR>
+<?/MIBLOCK>
+
+<?/MIBLOCK>
+
+

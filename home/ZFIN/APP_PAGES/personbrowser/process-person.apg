@@ -1,0 +1,52 @@
+<HTML>
+
+<!-- FIRST make sure the critical fields are there -->
+<?MIBLOCK COND=$(OR,$(NXST,$name),$(NXST,$full_name),$(NXST,$address))>
+<center>
+<big> Insufficient information: You must specify at least name, full_name, and address to make an entry</big>. Please go back and try again.
+</center>
+<?/MIBLOCK>
+
+<!-- Looking good. Now just fix up the entries and create the record -->
+<?MIBLOCK COND=$(AND,$(XST,$name),$(XST,$full_name),$(XST,$address))>
+
+<TITLE>Confirmation: Added PERSON record</TITLE>
+
+<!-- Double check input for apostrophes; fix em where found -->
+<?MIVAR NAME=$name DELIMIT="'" REPLACE="''">$name<?/MIVAR>
+<?MIVAR NAME=$full_name DELIMIT="'" REPLACE="''">$full_name<?/MIVAR>
+<?MIVAR NAME=$address DELIMIT="'" REPLACE="''">$address<?/MIVAR>
+
+
+<!- Make a new zdb_id for the record -->
+<?MISQL SQL="execute function get_id('PERS');"><?/MISQL>
+<?MIVAR NAME=$new_id>$1<?/MIVAR>
+
+<!-- Great, now insert the record -->
+<?MISQL SQL="insert into person (zdb_id, name, full_name, address,owner,entry_time) values ('$new_id','$name','$full_name','$address','$new_id',current);"><?/MISQL>
+
+<h1 align=center>Confirmation</h1>
+
+<big>Summary of action taken:</big><p>
+
+Inserted one new person record with the following attributes:<br>
+<?MIVAR>
+<DL>
+<DT> <b>Full name:</b>
+<DD> $full_name
+<DT> <b>MEDLINE name:</b>
+<DD> $name
+<DT> <b>Address:</b>
+<DD> $address
+<DT> <b>New record ID:</b>
+<DD> $new_id
+</DL>
+
+
+<p>
+You may now want to <A HREF="/cgi-bin_B/webdriver?MIval=aa-persview.apg&OID=$new_id">view the new PERSON record.</A> From there you can use the standard record updating mechanism to flesh out the remaining fields.
+<?/MIVAR>
+
+<?/MIBLOCK> <!-- ends cond name,address,etc exists -->
+
+</HTML>

@@ -1,0 +1,17 @@
+<!-- Defines the frameset for the document viewer Window -->
+
+<?MIVAR COND="$(NXST,$docpath)" NAME=$docpath>generichelp.html<?/MIVAR>
+<?MIVAR COND="$(NXST,$title)" NAME=$title>ZFIN document<?/MIVAR>
+
+
+<FRAMESET rows="50,*">
+<?MIVAR NAME=$title>$(URLENCODE,$title)<?/MIVAR>
+<?MIVAR>
+<FRAME NAME="label" scrolling=no
+SRC="/cgi-bin_B/webdriver?MIval=aa-doc_title.apg&title=$title"
+MARGINWIDTH=1 MARGINHEIGHT=1>
+
+<FRAME NAME="helpcontent" SRC="$docpath">
+<?/MIVAR>
+
+</FRAMESET>

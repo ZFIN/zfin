@@ -1,0 +1,95 @@
+<HTML>
+
+<basefont size=2>
+
+
+<!-- THIS NEXT PART IS EXECUTED AFTER THE PERSON ENTERS SOME CRITERIA -->
+
+<!-- First note that they have searched persons-->
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-identify.apg';">$1<?/MISQL>
+<?MISQL SQL="delete from int_person_places where pers_id='$ZDB_ident' and place_id='LAB';"><?/MISQL>
+<?MISQL COND="$(NC,$(SUBSTR,$ZDB_name,1,5),GUEST)" SQL="insert into int_person_places (pers_id,place_id,last_visit) values ('$ZDB_ident','LAB',current);"><?/MISQL>
+
+<!-- This next part builds up a query piece by piece, based on which criteria 
+  were passed in 
+-->
+
+<?MIVAR NAME=$constraint COND="$(NXST,$constraint)"> where status='active' <?/MIVAR>
+
+<?MIBLOCK COND="$(OR,$(XST,$pname),$(XST,$address),$(XST,$email),$(XST,$anon1text))">
+
+<!-- First filter name and address for apostrophes! -->
+<?MIVAR COND=$(XST,$pname) NAME=$pname DELIMIT="'" REPLACE="''">$pname<?/MIVAR>
+<?MIVAR COND=$(XST,$address) NAME=$address DELIMIT="'" REPLACE="''">$address<?/MIVAR>
+
+<?MIVAR NAME=$previous> and <?/MIVAR>
+
+<?MIVAR NAME=$constraint COND="$(XST,$pname)">
+$constraint $previous (lower(name) like '%$(LOWER,$pname)%')<?/MIVAR>
+
+<?MIVAR NAME=$previous COND="$(XST,$pname)"> and <?/MIVAR>
+
+<?MIVAR NAME=$constraint COND="$(XST,$address)">
+$constraint $previous (lower(address) like '%$(LOWER,$address)%')<?/MIVAR>
+
+<?MIVAR NAME=$previous COND="$(XST,$address)"> and <?/MIVAR>
+
+<?MIVAR NAME=$constraint COND="$(XST,$email)">
+$constraint $previous (lower(email) like '%$(LOWER,$email)%')<?/MIVAR>
+
+<!-- NOW  DEAL WITH THE ADDITIONAL CRITERIA -->
+<?MIVAR NAME=$previous COND="$(XST,$email)"> and <?/MIVAR>
+
+<?MIVAR NAME=$constraint COND="$(XST,$anon1text)">
+$constraint $previous (webhtml_like($anon1,'$anon1text'))<?/MIVAR>
+
+<?/MIBLOCK>
+
+<!-- Blast all constraints if they hit "LIST ALL" -->
+<?MIBLOCK COND="$(XST,$clear_all)">
+<?MIVAR NAME=$constraint> where status='active' <?/MIVAR>
+<?/MIBLOCK>
+
+<!-- NOW JUST RETRIEVE AND DISPLAY ALL MATCHING ENTRIES -->
+
+<form method=post target=content action="/cgi-bin_B/webdriver">
+<TABLE width=100%>
+<TR>
+<td width=90% align=center>
+<FONT SIZE=4>Search Results </font>  
+<?MISQL SQL="select count(*)::integer from lab $constraint;"><?/MISQL> 
+<?MIVAR NAME=$num_recs>$1<?/MIVAR>
+<?MIVAR><b> (Total of $num_recs records found) </b> <?/MIVAR>
+</TD>
+<TD><input type=submit value="Printable listing">
+</TD> </TR>
+</TABLE>
+
+<input type=hidden name=MIval value=aa-labprintable.apg>
+<?MIVAR COND="$(XST,$pname)"> <input type=hidden name=pname value="$pname"><?/MIVAR>
+<?MIVAR COND="$(XST,$address)"> <input type=hidden name=address value="$address"><?/MIVAR>
+<?MIVAR COND="$(XST,$anon1text)"> <input type=hidden name=anon1text value="$anon1text"><?/MIVAR>
+<?MIVAR COND="$(XST,$anon1text)"> <input type=hidden name=anon1 value="$anon1"><?/MIVAR>
+<?MIVAR COND="$(XST,$email)"> <input type=hidden name=email value="$email"><?/MIVAR>
+<?MIVAR> <input type=hidden name=constraint value="$constraint"><?/MIVAR>
+
+</form>
+
+<!-- NOW do slightly different displays, depending on whether you are selecting a value, or merely browsing. 
+-->
+
+<TABLE WIDTH=100%>
+<TH> </TH><TH align=left>LAB</TH> <TH align=left>ADDRESS</TH>
+
+<?MISQL SQL="select name,address,zdb_id from lab $constraint order by name;">
+<TR> 
+<TD valign=top>
+$(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3" TARGET=content>SELECT</A> </FONT>")
+</TD>
+<TD valign=top> <FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-labview.apg&OID=$3" TARGET="content">$1</A> </FONT> </TD>  
+<TD> <FONT SIZE=-1> <pre>$2</pre> </FONT> </TD>  </TR>
+<?/MISQL>
+</TABLE>
+
+
+</HTML>

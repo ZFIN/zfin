@@ -1,0 +1,33 @@
+#------------------------------------------------------------------------
+#
+# Makefile for ZFIN_WWW CVS Project, WWW/home/ZFIN/help_files subdirectory
+#
+# $Source$
+# $Id$
+#
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
+# !! of the makefile hierarchy this makefile is a part of, and of the  !!
+# !! format and conventions used in this makefile.                     !!
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#
+
+
+
+# ---------------  Variable Definitions  --------------------------------
+
+TOP = ../../..
+include $(TOP)/make.include
+
+TARGETDIR = $(TARGETROOT)/home/ZFIN/help_files
+
+GENERICS = mut_intro.html locus_intro.html Locus-policy.html
+STATICS  = fishselecthelp.html help-chromo.html help-fish.html genrichelp.html \
+	   label.html mapperselecthelp.html
+
+# --------------------------  Rules  ------------------------------------
+
+# Use default rules
+
+include $(TOP)/make.default.rules
+

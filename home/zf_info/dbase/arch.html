@@ -1,0 +1,183 @@
+<html><head></head><body>
+<title>Zebrafish Database</title>
+<H3>Database System Architecture:</H3>
+
+<img src="fig7.gif">
+<br>
+<B>Fig 7 </B> Functional architecture of the database system. Querying:  users interact with the WWW Server via a WWW Client Submitting data: Users submit and maintain data through the WWW Server; additionally, users at database sites can use the local Supervisor Module to enter and maintain their data without using the Internet. 
+<HR>
+<b><i><a name="1">The WWW Server and Clients.</a></i></b> All interaction between end users
+(e.g. Neuroiologists, Fig 7) and the ZfishDB is via the <i>WWW Server</i>.
+Users may use any WWW client (MOSAIC, Lynx, Netscape, etc.) on any platform,
+like SUN, Silicon Graphics, IBM PC and Macintosh workstations, that can run
+this client software. The <i>WWW Server</i> extracts user input, either
+database queries or new data submissions, from the data stream transmitted by
+the WWW client and passes it to the <i>Data Retrieval and Processing
+Engine</i>. It then waits for the <i>Data Retrieval and Processing Engine</i>
+to return an appropriate response, formatted as an HTML page. Forcing all
+database access through the <i>WWW Server</i> achieves two important
+implementation goals. First, it supports ubiquitous and uniform access; users
+need only have a viable (i.e. capable of HTML form handling) <i>WWW Client</i>
+to access the database. No special purpose software is required. Second, the
+data cannot be entered or retrieved except through the <i>WWW Server</i>. This
+enforces the common logical data model and dictionary.
+<p>
+We plan to use an essentially unmodified HyperText Transfer Protocol (HTTP)
+server as the <i>WWW Server</i> for the ZfishDB. HTTP server software is
+publicly available from both CERN and NCSA; commercial versions (e.g. Netscape)
+are available as well. We will implement this module of the ZfishDB by writing
+scripts to extract and decode user input, interact with the underlying
+processing components of the ZfishDB, and return results to the client. 
+<p>
+<i><a name="2">Challenges and Limitations.</a></i> Submitting image data presents a
+particularly interesting challenge given the WWW front end to the ZfishDB;
+there is (currently) no support in HTML, the markup language interpreted by WWW
+clients, for passing anything but text strings from a WWW client to a WWW
+server. There are a number of possible solutions to this problem; to avoid
+necessarily extending the HTML language and creating special-purpose WWW
+clients for all possible computing platforms, we propose a low-tech solution.
+The user interface allows researchers to transfer (e.g. using ftp) image files
+to a special directory on the server. They then formally submit the data using
+an HTML form (see <a href="fig4.gif">Fig 4</a>) specifying the image file name, and the interface
+integrates the image and its corresponding descriptive information into the
+database. We believe this will be a non-issue soon; requests to extend the HTML
+standard to support a "file" input type are currently under review by the HTML
+standards committee.
+<p>
+Another challenge arises because HTTP is a stateless protocol, based on
+discrete data retrieval operations. Thus, as a query is constructed,
+information is not maintained as the user moves from one HTML page to the next,
+setting various constraints. In one solution, the system could embed (e.g. in a
+TEXTAREA field) the state information within the HTML pages it dynamically
+generates and returns to the user. This information would then be returned to
+the system when the user submits the forms contained in those pages.
+Alternatively, the server could create a unique "state" file for each user. The
+name of this temporary file would be embedded in all transactions; after some
+interval of inactivity, the file would be purged.
+<p>
+Another potential limitation is that the use of a single WWW server will affect
+<i>reliability</i> and <i>performance</i> if the server goes down or is
+overloaded by requests. The parallel processor on which the system will be developed and tested, will serve
+as a backup for failures and the WWW servers at the other
+database sites will provide additional access points to the system, thus sharing
+the load.
+<p>
+<b><i><a name="3">Data Retrieval and Processing Engine</a></i></b>.  Queries or
+data submissions passed to the system via the <i>WWW Server</i> are processed
+by the <i>Processing Engine </i>(Fig 7). Processing differs according to the
+user's action: a broad database query, a request for a specific record, or a
+data submission.<p>
+<UL>
+<LI><i><a name="4">Query Processing:</a></i> For general queries, the constraints specified by
+the user are processed into an appropriate SQL database query by the <i>SQL
+Generator</i>. This query is then passed to the <i>Distribution Manager</i>,
+which contacts a remote site and submits the query to the databases at that
+site. Importantly, this component is based on a "lazy" strategy in the
+interest of efficiency; the returned values are merely a list of record
+(object) identifiers rather than the complete data records. In general, we can
+expect the user to refine the search several times to narrow down the set of
+returned records. Only when the user requests to view particular data items,
+are the requested data retrieved. The results from the site is
+passed to the <i>Results Integration</i> module and integrated
+into a single result. Record identifiers from the database are augmented to
+identify site of origin, sorted by data type, and then passed to the <i>HTML
+Synthesizer</i> for formatting into HTML output. For instance, each record
+identifier could be instantiated as a hypertext link to actual data.
+<p>
+<LI><i> <a name="5">Viewing a specific record: </a></i> After querying, further
+constraining, and requerying the database several times, the user may want to
+browse the resulting data set, viewing individual records. When the user
+selects a specific record, a request is sent to the <i>Record Manager</i>,
+which parses the request into a database request and sends it to the
+<i>Distribution Manager</i> which passes it to the appropriate database. As
+before, the returned record passes through the <i>Results Integration</i>
+module and is then formatted (e.g. <a href="fig4.gif">Fig 4</a>) by the <i>HTML Synthesizer</i>.
+<p>
+<LI><i><a name="6">Submitting New Data:</a> </i> The <i>Processing Engine</i> also
+supervises submissions of new information. Data extracted from the <i>WWW
+Client</i> data stream by the <i>WWW Server</i> is passed to the <i>Input
+Manager</i>, where it is checked for authenticity by verifying the submitter
+name and password. Equally important, the data are checked for correctness and
+consistency; although the rigid interface provides for syntactic correctness,
+semantic errors are possible and must be detected. For example, if an image is
+described as both a whole-mount and a reconstruction, the submission should be rejected and the user notified of the contradiction. If everything is in order,
+the submission is passed to the <i>Distribution Manager</i> and submitted to
+one of the site databases for incorporation. The site at which the data are
+actually stored is irrelevant to end-users; the <i>Distribution Manager</i> can
+heuristically decide where to place the data based on load at
+individual sites, etc. 
+<p></UL>
+The bulk of the <i>Data Retrieval and Processing Engine</i> will be implemented
+in C++ by developing logical objects corresponding to the various components
+(e.g. <i>SQL Generator</i>, <i>HTML Synthesizer</i>, Fig 7). The <i>Processing
+Engine</i> acts as an interpreter, translating the inputs received from the
+<i>WWW Server</i> into various database access requests, integrating the
+results, and formatting them as HTML output. We have extensive experience
+[Fickas89;Douglas92] with the programming tools and techniques required to
+implement such interpreter functionality. 
+<p>
+<i><a name="7">Challenges and Limitations.</a> </i> Implementing the <i>Distribution
+Manager</i> is a key challenge. The <i>Distribution Manager</i> must interact
+with the database components at the various sites, distributing database
+queries and collecting the results. Because these interactions are primarily
+file transfers between UNIX hosts, we propose to use a well-understood IP
+protocol like UUCP. Alternatively we could use a custom network file server as
+we have previously developed.
+<p>
+<b><i><a name="8">Supervisor Module. </a></i></b>The <i>Supervisor Module</i> provides tools to
+assist the site supervisor in maintaining the system. For example, the site
+supervisor might need to remove erroneous data from the system or restructure the database
+in response to changes in the logical data model as determined by the zebrafish
+community. The <i>Supervisor Module</i> automates integration into the ZfishDB
+of data posted to public databases like GenBank and MEDLINE. It provides
+bookkeeping operations for collecting and reporting database access activity.
+We will also implement an auxiliary X-Window based interface to the ZfishDB
+logically equivalent to the interface provided by the <i>WWW Server</i>. Thus,
+data submission for local researchers can be streamlined, bypassing the <i>WWW
+Server</i>. This is particularly sensible because we propose to place sites in
+the labs producing the most data. 
+<p>
+We plan to implement most of the <i>Supervisor Module</i> in C++ using OSF
+Motif to create the user interface. Interfacing with the Illustra database will
+be straightforward because Illustra provides an API for C/C++.
+<p>
+<b><i><a name="9">Databases. </a></i></b>The database components of the ZfishDB store, organize
+and provide access to the submitted data. During initial system development,
+the ZfishDB will begin with a single database at the Eugene site. We will also
+use a parallel processor in the Computational Science Institute for testing the client/server WWW software and as backup for the
+database. Later, other sites will be added to expand the system and to
+streamline submission of data to the database. The sites are
+distributed geographically, making the ZfishDB is a "distributed
+database", a single database system distributed over a number of nodes. Each
+site in the ZfishDB implements the identical logical data model of the Illustra
+database system.  The
+homogenous view of the ZfishDB presented to the user is constructed by the
+<i>Distribution Manager</i>. This architecture contributes significantly to
+system robustness and performance:
+<UL>
+<LI><i>Performance and Robustness:</i>  Query optimization [Andleigh92] is
+greatly simplified because related objects and tables are not distributed
+across sites. This modularity of function yields similar advantages for
+transaction management.
+<LI><i>Security Risks:</i>   Because most transactions are mediated by the <i>WWW
+Server</i>, there are only two users the database must accommodate, the <i>Site
+Supervisor</i> and the system process associated with the <i>Distribution
+Manager</i>. This greatly reduces security risks. 
+<LI><i>Site Failure and Recovery:</i>  Because each site is independently
+viable, network or site failures affect the system only by making query results
+temporarily unavailable from that site. 
+<LI><i>Expansion:</i>  New sites can be added easily; each becomes an independent
+storage component.
+</UL>
+We expect system performance to be limited primarily by the bandwidth, traffic
+patterns, and transfer rates of the Internet. This limitation will affect
+primarily image data. We plan to keep most in-line images under 20k, allowing
+users to download higher resolution images on demand.
+<HR>
+<B>The Zebrafish Database</B><p>
+Continue on to <a href="imp2.html">Implementation of Specific Aim 2</a>
+<HR>
+<a href="cont.html">Return to Table of Contents</a>
+<HR>
+<A HREF="/index.html">ZFIN  <img src="fish_net.gif"></A>
+</body></html>

@@ -1,0 +1,98 @@
+#------------------------------------------------------------------------
+#
+# Makefile for ZFIN_WWW CVS Project, Anatomical disctionary browser
+# Applet.
+#
+# $Source$
+# $Id$
+#
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
+# !! of the makefile hierarchy this makefile is a part of, and of the  !!
+# !! format and conventions used in this makefile.                     !!
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#
+# This makefile uses a staging directory to produce its targets.
+# This makefile populates the staging directory with source files and
+# then calls the makefile in the staging directory to produce the 
+# targets.  The staging makefile makes use of makefile variables 
+# inherited from this file.
+# 
+
+
+# ---------------  Variable Definitions  --------------------------------
+
+TOP = ../..
+include $(TOP)/make.include
+
+# TARGETDIR is handled by Staging directory
+
+STAGINGDIR = Staging
+
+
+# ---- Java source variables
+
+GENERICS = SQLQuery.java
+STATICS  = Browser.java OrganTree.java Selectable.java \
+	SelectedPanel.java SystemsPanel.java TreeNode.java TreePanel.java \
+	data_gatherer.java
+
+SPECIFICS = $(foreach GNRC, $(GENERICS), $(STAGINGDIR)/$(GNRC))
+STATICSTAGINGS = $(foreach STAT, $(STATICS), $(STAGINGDIR)/$(STAT))
+
+JAVAS   = $(GENERICS) $(STATICS)
+TARGETS = $(SPECIFICS) $(STATICSTAGINGS)
+
+
+
+# ---- Which variables are used by Makefile in Staging directory:
+
+export JAVAS
+
+
+
+# ---------------  Production Rules  ------------------------------------
+
+.PHONY : all sanitycheck clean clobber $(STAGINGDIR)
+
+
+all : $(TARGETS) $(STAGINGDIR) 
+
+$(STAGINGDIR) :
+	(cd $(STAGINGDIR); $(MAKE))
+
+
+# ----  Rules for moving Java sources to staging directory.
+
+$(SPECIFICS) : $(STAGINGDIR)/% : %
+	$(MAKESPECIFIC) $< $(TRANSLATETABLE) $@
+
+$(STATICSTAGINGS) : $(STAGINGDIR)/% : %
+	$(STAGING_CP) $< $@
+
+
+
+# ---------------  Maintenance Rules  -----------------------------------
+
+clean :		# remove copied files from staging directory
+	rm -rf $(JAVASTAGINGS)
+	$(MAKE) -C $(STAGINGDIR) $@
+
+
+clobber :			# Remove targets, but not target dir.
+	rm -f $(TARGETS)
+
+
+# check generics & possibly statics as well for values that should
+# be represented with tags instead of hard coded values
+
+sanitycheck : 
+	$(SPECIFICCHECK) $(JAVAS)
+	$(MAKE) -C $(STAGINGDIR) $@
+
+
+# define one time only target to make the specific files that were intially
+# checked in to CVS, make them generic, and then check them back in to CVS.
+
+cvsgeneric :
+	$(foreach GNRC,$(GENERICS), $(CVSGENERIC))

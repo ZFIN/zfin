@@ -1,0 +1,97 @@
+<!-- FILE: do-markerupdate.html
+
+Very simple. Just commits the updates requested in the forms tossed up by
+markerupdate.html. Also files update record.
+
+EXPECTED VARS:
+OID -- the zdb_id of the rec to update
+attr -- the column to be updated
+attr_type -- textarea,text,or pic
+new_value -- the new value to stick in the column
+old_value -- the previous value
+comments -- reasons for doing update 
+target_table -- either anon_marker or gene, depending on what you're updating
+info -- optional value used to pass in additional info
+
+
+-->
+
+<!-- If one of the values was an empty string, it won't get successfully passed to this page. -->
+<?MIVAR COND="$(NXST,$old_value)" NAME=$old_value><?/MIVAR>
+<?MIVAR COND="$(NXST,$new_value)" NAME=$new_value><?/MIVAR>
+
+
+<!-- First check security. Main purpose is just to get submitter id and name -->
+<?MISQL SQL="select WebExplode(object,'permission=owns&rtype=$target_table') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+<?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
+
+<?MIVAR COND="$(NXST,$new_value)" NAME=$new_value>NULL<?/MIVAR>
+<?MIVAR COND="$(NXST,$comments)" NAME=$comments>NULL<?/MIVAR>
+
+<?MIVAR COND="$(EC,$attr_type,special-listitem)" NAME=$comments>Deleted the record $old_value from the list of $attr associated with this marker.<?/MIVAR>
+
+<?MIVAR COND="$(EC,$attr_type,special-ortholink)" NAME=$comments>Deleted the record with accession $old_value from orthologue foreign db links  associated with this marker.<?/MIVAR>
+
+<?MIVAR COND="$(EC,$attr_type,special-newortho)" NAME=$comments>Created a new orthologue record for species=$old_value for this record.<?/MIVAR>
+
+<?MIVAR COND="$(EC,$attr_type,special-newseqnum)" NAME=$comments>Created new link to sequence DB: $old_value for this record.<?/MIVAR>
+
+
+<?MIVAR NAME=$new_value DELIMIT="'" REPLACE="''">$new_value<?/MIVAR>
+<?MIVAR NAME=$old_value DELIMIT="'" REPLACE="''">$old_value<?/MIVAR>
+<?MIVAR NAME=$comments DELIMIT="'" REPLACE="''">$comments<?/MIVAR>
+
+<!-- insert update record for the update! -->
+<?MISQL SQL="insert into updates (submitter_id,submitter_name, rec_id, field_name, old_value, comments, when) values ('$ZDB_ident', '$ZDB_name','$OID', '$attr',  '$old_value', '$comments', current);"><?/MISQL>
+
+<!-- OK, NOW UPDATE THE  ACTUAL DATA RECORD. HAVE TO DO THINGS SLIGHTLY
+     DIFFERENT FOR IMAGES, SO FIRST FIND OUT WHETHER YOU'RE UPDATING AN
+     IMAGE FIELD, THEN ACT ACCORDINGLY -->
+
+
+<?MISQL COND="$(OR,$(EC,$attr_type,text),$(EC,$attr_type,textarea))" SQL="update $target_table set $attr='$new_value' where zdb_id='$OID';"><?/MISQL>
+
+
+
+<!-- Special case for deleting one of the associated orthos/seqs/sources/pubs -->
+<?MIBLOCK COND="$(EC,$attr_type,special-listitem)">
+
+<?MISQL COND="$(EC,$attr,publication)" SQL="delete from int_data_pub where source_id='$OID' and target_id='$old_value';"><?/MISQL>
+
+<?MISQL COND="$(EC,$attr,db_link)" SQL="delete from db_link where linked_recid='$OID' and acc_num='$old_value';"><?/MISQL>
+
+<?MISQL COND="$(EC,$attr,orthologue)" SQL="delete from orthologue where zdb_id='$old_value';"><?/MISQL>
+
+<?/MIBLOCK>  <!-- ends special listitem case -->
+
+
+<!-- Special case for deleting db_links within orthos -->
+<?MIBLOCK COND="$(EC,$attr_type,special-ortholink)">
+
+<?/MIBLOCK>  <!-- ends special ortholink case -->
+
+<!-- Special case for adding new orthos -->
+<?MIBLOCK COND="$(EC,$attr_type,special-newortho)">
+<?MISQL SQL="execute function get_id('ORTHO');"><?/MISQL>
+<?MIVAR NAME=$ortho_id>$1<?/MIVAR>
+<?MISQL SQL="insert into orthologue (zdb_id,c_gene_id,ortho_name,ortho_abbrev,organism,entry_time) values ('$ortho_id','$OID','$new_value','$info','$old_value',current);"><?/MISQL>
+<!--has to create dummy link record so the piece of crap shows up. Need outer join!-->
+<?MISQL SQL="insert into db_link (linked_recid,DB_name,acc_num) values ('$ortho_id','Genbank','DUMMY');"><?/MISQL>
+<?/MIBLOCK>  <!-- ends special add_ortho case -->
+
+
+<!-- Special case for adding new sequence db link -->
+<?MIBLOCK COND="$(EC,$attr_type,special-newseqnum)">
+<?MISQL SQL="insert into db_link (linked_recid,DB_name,acc_num) values ('$OID','$old_value','$new_value');"><?/MISQL>
+<?/MIBLOCK>  <!-- ends special seqdb case -->
+
+<?/MIBLOCK> <!-- ends cond authorized -->
+
+<!-- okay, now just bail back to the markerview to view results -->
+<?MIVAR>
+<SCRIPT>
+location.replace("/cgi-bin_B/webdriver?MIval=aa-markerview.apg&OID=$OID&UPDATE=1")
+</SCRIPT>
+<?/MIVAR>
+

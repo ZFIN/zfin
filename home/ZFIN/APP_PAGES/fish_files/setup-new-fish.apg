@@ -1,0 +1,56 @@
+<!-- FILE: SETUP-NEW-FISH
+This file just does some important setup that needs to happen each time we enter the new-fish form. Essentially, it deals with the return_rec (if there is one) and sets up all the variables used by new-fish 
+-->
+
+<!-- IF THIS IS THE FIRST TIME INTO THIS PAGE, MAKE NEW TEMP ENTRY. If line_type is not passed in, make it mutant by default. -->
+<?MIBLOCK COND="$(NXST,$temp_oid)">
+<?MIVAR COND="$(NXST,$line_type)" NAME=$line_type>mutant<?/MIVAR>
+<?MISQL SQL="execute function get_id('TEMP');"><?/MISQL>
+<?MIVAR NAME=$temp_oid>$1<?/MIVAR>
+<?MISQL SQL="insert into temp_fish (zdb_id, line_type, chrom_num,entry_time) values ('$temp_oid', '$line_type', '0', current);">
+<?/MISQL>
+
+
+<!-- Now if there was a return_rec ID passed in, this means this new record was initiated in the
+course of filling out some other record -- we will need to go back there when we're done, so
+stick the return_rec ID into the temp record as well.
+-->
+<?MIBLOCK COND=$(XST,$return_rec)>
+<?MISQL SQL="update temp_fish set return_rec='$return_rec' where zdb_id='$temp_oid';"><?/MISQL>
+<?/MIBLOCK>
+
+<?/MIBLOCK>
+
+
+<!-- OK, NOW GET CURRENT VALUES FROM THE TEMP_FISH ENTRY, PUTTING THEM
+      INTO THE FORM. For certain variables, we want them to be able to be passed in on the call commandline call to this new form; for those variables, we avoid replacing the passed in value (dont reset it!) -->
+
+<?MISQL SQL="select name, abbrev, source, mother, father, discoverer, lab, phenotype, segregation, orig_crossnum, chrom_num, allele, mutagen, protocol, chrom_change, locus, genetic_loc, cyto_loc, breakpoints, flag, comments, status, line_type from temp_fish where zdb_id='$temp_oid';"><?/MISQL>
+<?MIVAR NAME=$name>$1<?/MIVAR>
+<?MIVAR NAME=$abbrev>$2<?/MIVAR>
+<?MIVAR NAME=$source>$3<?/MIVAR>
+<?MIVAR NAME=$mother>$4<?/MIVAR>
+<?MIVAR NAME=$father>$5<?/MIVAR>
+<?MIVAR NAME=$discoverer>$6<?/MIVAR>
+<?MIVAR NAME=$lab>$7<?/MIVAR>
+<?MIVAR NAME=$phenotype>$8<?/MIVAR>
+<?MIVAR NAME=$segregation>$9<?/MIVAR>
+<?MIVAR NAME=$orig_crossnum>$10<?/MIVAR>
+<?MIVAR NAME=$chrom_num>$11<?/MIVAR>
+<?MIVAR NAME=$allele>$12<?/MIVAR>
+<?MIVAR COND="$(NXST,$mutagen)" NAME=$mutagen>$13<?/MIVAR>
+<?MIVAR NAME=$protocol>$14<?/MIVAR>
+<?MIVAR NAME=$chrom_change>$15<?/MIVAR>
+<?MIVAR NAME=$locus>$16<?/MIVAR>
+<?MIVAR NAME=$genetic_loc>$17<?/MIVAR>
+<?MIVAR NAME=$cyto_loc>$18<?/MIVAR>
+<?MIVAR NAME=$breakpoints>$19<?/MIVAR>
+
+<?MIVAR COND="$(NXST,$flag)" NAME=$flag>$20<?/MIVAR>
+<?MIVAR NAME=$comments>$21<?/MIVAR>
+<?MIVAR NAME=$status>$22<?/MIVAR>
+<?MIVAR NAME=$line_type>$23<?/MIVAR>
+
+
+<!-- Now just returns back to new-fish, which uses these values to display form
+-->

@@ -1,0 +1,31 @@
+
+<!-- This page is called via WebExplode from other pages. It is essentially
+a "subroutine" that takes as input an OID and any number of attribute values, and updates the record with OID with all of those
+values. Since it is a subroutine, we can assume it inherits all variables from
+its caller.
+
+-->
+
+<?MIBLOCK COND="$(NXST,$temp_oid)">
+<h1> ERROR in UPDATE! No OID passed in! </H1>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(XST,$temp_oid)">
+
+<!-- Deal with apostrophes in name and address -->
+
+<?MIVAR COND="$(XST,$name)" NAME=$name DELIMIT="'" REPLACE="''">$name<?/MIVAR>
+<?MIVAR COND="$(XST,$address)" NAME=$address DELIMIT="'" REPLACE="''">$address<?/MIVAR>
+
+
+<!--NOW JUST update all existing fields -->
+
+<?MISQL COND="$(XST,$name)" SQL="update company set name='$name' where zdb_id='$temp_oid';"><?/MISQL>
+<?MISQL COND="$(XST,$address)" SQL="update company set address='$address' where zdb_id='$temp_oid';"><?/MISQL>
+<?MISQL COND="$(XST,$phone)" SQL="update company set phone='$phone' where zdb_id='$temp_oid';"><?/MISQL>
+<?MISQL COND="$(XST,$fax)" SQL="update company set fax='$fax' where zdb_id='$temp_oid';"><?/MISQL>
+<?MISQL COND="$(XST,$email)" SQL="update company set email='$email' where zdb_id='$temp_oid';"><?/MISQL>
+<?MISQL COND="$(XST,$url)" SQL="update company set url='$url' where zdb_id='$temp_oid';"><?/MISQL>
+
+<?/MIBLOCK>
+

@@ -1,0 +1,76 @@
+<!-- Just to get AUTHORIZED -->
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+<HTML>
+
+<basefont size=2>
+
+
+<form name=crit_form method=post TARGET="pbrowser" action="/cgi-bin_B/webdriver" 
+onSubmit="parent.pbrowser.document.location='/ZDBB/misc_html/saysearching.html'">
+
+<center>
+<U><B><FONT SIZE=5>Search for </font>
+<FONT SIZE=5 color="#ff0000" > PERSON</font></b></u>
+</center>
+
+<TABLE width=100%>
+<TR>
+<TD><font size=2>
+<b>Last Name 
+<SELECT name=searchtype>
+<option value=begins>begins with
+<option value=contains SELECTED>contains
+</select>:</b> <input type=text name=pname size=10 >
+</TD>
+<TD align=right><font size=2><b>Address contains:</b> <input type=text name=address size=10></TD>
+</TR>
+</TABLE>
+
+<TABLE width=100%> 
+<TR>
+<TD><font size=2><b>Email contains: </b> <input type=text name=email size=8  maxlength=15></TD> 
+<TD align=right> <font size=2>
+<SELECT NAME=anon1>
+<option>email<option>url<option selected>phone<option>fax<option>bio<option>zdb_id
+</SELECT> 
+contains <input type=text name=anon1text size=4>
+</TD> 
+</TR>
+</TABLE>
+
+<TABLE WIDTH=100%>
+<TR> 
+<TD align=center><input type=submit name=action value="SEARCH"></TD> 
+<TD align=center><input type=reset name=action value="Clear Settings"></TD> 
+<TD align=center><input type=button name=clear_all value="List all people" onClick="document.crit_form.reset();document.crit_form.submit()"></TD> 
+<TD>
+<font size=2>
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-quickfindpers.apg&select_from=PERSON&frame_size=75" TARGET=content>Simple Search</A>
+</font>
+</TD>
+
+</TR>
+</TABLE>
+
+
+<!-- This next little block executes only if we are using the browser as a
+selector. That is we want user to ultimately CHOOSE a browsed value. All
+we have to do at this point is pass the return record along to perslister.
+-->
+<?MIVAR COND=$(XST,$return_rec)>
+<input type=hidden NAME="return_rec" value=$return_rec>
+<?/MIVAR>
+
+
+<input type=hidden name=MIval value=aa-perslister.apg>
+<?MIVAR><input type=hidden name=AUTHORIZED value=$AUTHORIZED><?/MIVAR>
+
+
+</form>
+
+<!-- Put the cursor in the NAME criterion box -->
+<SCRIPT>document.crit_form.pname.focus();</SCRIPT>
+</HTML>
+
+

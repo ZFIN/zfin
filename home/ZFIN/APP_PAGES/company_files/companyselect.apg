@@ -1,0 +1,70 @@
+<HTML>
+
+
+<basefont size=2>
+
+
+<form name=crit_form method=post TARGET="pbrowser" action="/cgi-bin_B/webdriver" onSubmit="parent.pbrowser.document.location='/ZDBB/misc_html/saysearching.html'">
+
+<center>
+<U><B><FONT SIZE=5>Search for </font>
+<FONT SIZE=5 color="#ff0000" > COMPANY</font></b></u>
+</center>
+
+<TABLE width=100%>
+<TR>
+<TD><font size=-1>
+<b>Company NAME contains:</b> <input type=text name=pname size=10 > </font>
+</TD>
+<TD><font size=-1><b>Company ADDRESS contains:</b> <input type=text name=address size=10></font></TD>
+</TR> 
+</TABLE>
+
+<TABLE width=100%>
+<TR>
+<TD colspan=2><font size=-1> 
+<b><SELECT NAME=anon1>
+<option value="email">Contact person's email<option value="url">url<option value="phone">phone<option value="fax">fax<option value="zdb_id">ZFIN record ID<option SELECTED value="bio">Products/Services
+</SELECT> 
+contains <input type=text name=anon1text size=15>
+</b></font></TD> 
+</TR>
+</TABLE>
+
+<font>
+<b>Disclaimer:</b>  Companies are listed in ZFIN exclusively to provide
+information to the research community. Their listing is not in any way an endorsement.  Companies are included because they provide reagents or
+materials used in protocols described in "Fish Net" articles or ZFIN
+database entries.</font>
+
+
+<TABLE WIDTH=100%>
+<TR> 
+<TD align=center><font size=-1><input type=submit name=action value="SEARCH"></font></TD> 
+<TD align=right><font size=-1><input type=reset name=action value="Clear Settings"></font></TD> 
+<TD align=center><font size=-1><input type=button name=clear_all value="List all companies" onClick="document.crit_form.reset();document.crit_form.submit()"></font></TD> 
+</TR>
+</TABLE>
+<p>
+
+
+<!-- This next little block executes only if we are using the browser as a
+selector. That is we want user to ultimately CHOOSE a browsed value. All
+we have to do at this point is pass the return record along to perslister.
+-->
+<?MIVAR COND=$(XST,$return_rec)>
+<input type=hidden NAME="return_rec" value=$return_rec>
+<?/MIVAR>
+
+
+<input type=hidden name=MIval value=aa-companylister.apg>
+
+
+</form>
+
+<!-- Put the cursor in the NAME criterion box -->
+<SCRIPT>document.crit_form.pname.focus();</SCRIPT>
+
+</HTML>
+
+

@@ -1,0 +1,39 @@
+<!-- FILE: SHOWPUBS.HTML -->
+
+<!-- Within the viewers for all of the data types, you always want to do the same thing when it comes to pubs. This file factors out the commonality; everything just webexplodes this file. It assumes the existence of OID, which should be the zdb_id of the data record that you want the pubs for.
+
+ECK 8/30/97. Added sensitivity to UPDATE flag: If UPDATE exists, it tosses up a "Delete" button next to each pub. And added a "Add pub" to both primary and secondary pubs. THESE ASSUME THE EXISTENCE OF "Delete-listitem"  and "doit" functions (see fishview for example) in the viewing page! Obviously these functions should be connected to the "do-<class>update" script.
+-->
+
+<h3 align=center>PUBLICATIONS</h3>
+
+<?MIVAR COND="$(XST,$UPDATE)">
+<INPUT TYPE=button value="Add/Change" onClick="doit('prim_pub','selection','Add/Change')"> 
+<?/MIVAR>
+<b>Primary Publication:</b>
+<TABLE>
+<?MISQL SQL="select b.title, b.zdb_id, year(b.pub_date) as pyear from int_data_pub a, publication b where source_id='$OID' and target_id=b.zdb_id and info='primary' order by pyear desc;">
+<TR>
+<TD valign=top>$3</TD>
+<TD> <A HREF="/cgi-bin_B/webdriver?MIval=aa-pubview2.apg&OID=$2">$1</A>
+</TD></TR>
+<?/MISQL>
+</TABLE>
+<?MIVAR COND=$(EQ,$MI_ROWCOUNT,0)> <font color="#ff0000">UNPUBLISHED</font><?/MIVAR>
+<p>
+
+<?MIVAR COND="$(XST,$UPDATE)">
+<INPUT TYPE=button value="Add to" onClick="doit('rel_pub','selection','Add')"> 
+<?/MIVAR> 
+<b>Related Publications:</b>
+<TABLE>
+<?MISQL SQL="select b.title, b.zdb_id, year(b.pub_date) as pyear from int_data_pub a, publication b where source_id='$OID' and target_id=b.zdb_id and info='related' order by pyear desc;">
+<TR>
+$(IF,$(XST,$UPDATE),"<TD><font size=-1><input type=button value=delete onClick=Delete_listitem('publication','"$2"')></font></TD>")
+<TD valign=top>$3</TD>
+<TD> <A HREF="/cgi-bin_B/webdriver?MIval=aa-pubview2.apg&OID=$2">$1</A>
+</TD></TR>
+<?/MISQL>
+</TABLE>
+
+

@@ -1,0 +1,158 @@
+<!-- FILE: edit_pub.html
+
+This page is used by root to either add a new pub, or to edit an existing
+one. If the variable OID is passed in, open the pub specified by OID for
+editting, otherwise open a blank (new) pub.
+
+Variables expected:  OID (optional) -- the OID of a publication to edit.
+
+-->
+
+<HTML>
+
+<TITLE>Add a new PUBLICATION record</TITLE>
+
+
+
+<?MISQL COND="$(NXST,$OID)" SQL="select WebExplode(object,'page_title=ADD Publication&permission=root') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+<?MISQL COND="$(XST,$OID)" SQL="select WebExplode(object,'page_title=EDIT Publication&permission=root') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+
+<?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
+
+<!-- FIRST fill variables, depending on whether you are doing EDIT or NEW -->
+
+<?MIBLOCK COND="$(XST,$OID)">
+<h1 align=center> Edit PUBLICATION</h1>
+<p>
+<b>Make desired changes to the publication, then click on the "SUBMIT" button. Or you may click "CANCEL" to abort the update.</b>
+
+<?MISQL SQL="select authors,pub_date,title,source,keywords,abstract,news_and_views,errata_and_notes,accession_no,num_auths,status,jtype from publication where zdb_id='$OID';"><?/MISQL>
+<?MIVAR NAME=$authors>$1<?/MIVAR>
+<?MIVAR NAME=$pub_date>$2<?/MIVAR>
+<?MIVAR NAME=$title>$3<?/MIVAR>
+<?MIVAR NAME=$source>$4<?/MIVAR>
+<?MIVAR NAME=$keywords>$5<?/MIVAR>
+<?MIVAR NAME=$abstract>$6<?/MIVAR>
+<?MIVAR NAME=$news_and_views>$7<?/MIVAR>
+<?MIVAR NAME=$errata_and_notes>$8<?/MIVAR>
+<?MIVAR NAME=$accession_no>$9<?/MIVAR>
+<?MIVAR NAME=$num_auths>$10<?/MIVAR>
+<?MIVAR NAME=$status>$11<?/MIVAR>
+<?MIVAR NAME=$jtype>$12<?/MIVAR>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(NXST,$OID)">
+<h1 align=center> CREATE NEW PUBLICATION record</h1>
+<p>
+<b>Please enter the requested information in the boxes below, and then  click on the "SUBMIT" button. Or you may click "CANCEL" to abort the creation of the new record.</B>
+<p>
+<?MIVAR NAME=$OID>new<?/MIVAR>
+<?MIVAR NAME=$authors><?/MIVAR>
+<?MIVAR NAME=$pub_date><?/MIVAR>
+<?MIVAR NAME=$title><?/MIVAR>
+<?MIVAR NAME=$source><?/MIVAR>
+<?MIVAR NAME=$keywords><?/MIVAR>
+<?MIVAR NAME=$abstract><?/MIVAR>
+<?MIVAR NAME=$news_and_views><?/MIVAR>
+<?MIVAR NAME=$errata_and_notes><?/MIVAR>
+<?MIVAR NAME=$accession_no><?/MIVAR>
+<?MIVAR NAME=$num_auths><?/MIVAR>
+<?MIVAR NAME=$status>temporary<?/MIVAR>
+<?MIVAR NAME=$jtype>Unknown<?/MIVAR>
+
+<big>The following five pieces of information are <B>REQUIRED</B> to create the a new PUBLICATION record:</big>
+<?/MIBLOCK>
+
+<FORM METHOD=POST ACTION="/cgi-bin_B/webdriver" TARGET=content>
+<p>
+<?MIVAR>
+<TABLE border=4  width=100%>
+<TR align=center>
+<TD><font size=-1><b>ZDB_ID:</b> $OID</font></TD>
+<TD><font size=-1><b>STATUS:</B> 
+<SELECT name=status>
+<option $(IF,$(EC,$status,active),SELECTED)>active
+<option $(IF,$(EC,$status,inactive),SELECTED)>inactive
+<option $(IF,$(EC,$status,temporary),SELECTED)>temporary
+</SELECT>
+</font></TD>
+</TR>
+<TR>
+<?/MIVAR>
+<TD colspan=2 align=center>
+<?MIVAR COND="$(EC,$AUTHORIZED,root)">
+<font size=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-delete_record.apg&OID=$OID&rtype=publication">Permanently delete this publication</A> </font> <br>
+<?/MIVAR>
+</TD></TR>
+</TABLE>
+<p>
+
+<?MIVAR>
+<b>TITLE:</b><br>
+<TEXTAREA rows=4 cols=70 name="title" wrap=virtual>$title</TEXTAREA>
+<p>
+<b>Medline ID:</B>  <input type=text name="accession_no" $(IF,$(NC,$accession_no,NULL),"value="$accession_no) >
+<p>
+<b>AUTHORS:</b><br>
+Authors should be listed <b>exactly</b> as you wish them to show up in the reference, i.e., use the standard format:
+<font size=-1>
+<ul>
+<li>Last name, comma, space, initials, then comma to separate from next name
+<li>No commas or spaces <i>between</i> multiple initials
+<li>The last name in the listing is preceeded by the word 'and'
+</ul>
+</font>
+For instance, a paper by John Pat Dole, Richard M.Nixon and Newt Gingrinch would be "Dole, J.P., Nixon, R.M., and Gingrinch, N."<br>
+<TEXTAREA rows=2 cols=70 name="authors" wrap=virtual>$authors</TEXTAREA>
+<p>
+<b>NUMBER of authors listed:</b> (must be a number!) 
+<INPUT TYPE=text name=num_auths size=2 maxlength=2 value=$num_auths>
+<p>
+<b>DATE:</b> (format: yyyy-mm-dd) 
+<INPUT TYPE=text name=pub_date size=10 value="$pub_date">
+<p>
+<b>SOURCE:</b> The journal name, volume, number that article appeared in. <br>
+<TEXTAREA rows=2 cols=70 name="source" wrap=virtual>$source</TEXTAREA>
+<br>
+<font size=-1><b>Type of publication:</B> 
+<SELECT name=jtype>
+<option $(IF,$(EC,$jtype,Unknown),SELECTED)>Unknown
+<option $(IF,$(EC,$jtype,Journal),SELECTED)>Journal
+<option $(IF,$(EC,$jtype,Review),SELECTED)>Review
+<option $(IF,$(EC,$jtype,Abstract),SELECTED)>Abstract
+<option $(IF,$(EC,$jtype,Other),SELECTED)>Other
+</SELECT>
+</font>
+
+<hr width=80%>
+<input type=button value="CANCEL" onClick="window.history.go(-1)">
+<input type=submit value="SUBMIT">
+<hr width=80%>
+<?/MIVAR>
+
+<p>
+<?MIVAR COND="$(EC,$OID,new)"><big>The remaining items below are optional; you may leave them blank.</big>
+<p>
+<?/MIVAR>
+
+<?MIVAR>
+<b>KEYWORDS:</b><br>
+<TEXTAREA rows=4 cols=70 name="keywords" wrap=virtual>$keywords</TEXTAREA>
+<p>
+<b>ABSTRACT:</b><br>
+<TEXTAREA rows=4 cols=80 name="abstract" wrap=virtual>$abstract</TEXTAREA>
+<p>
+<b>NEWS and VIEWS:</b><br>
+<TEXTAREA rows=4 cols=80 name="news_and_views" wrap=virtual>$news_and_views</TEXTAREA>
+<p>
+<b>ERRATA and NOTES:</b><br>
+<TEXTAREA rows=4 cols=80 name="errata_and_notes" wrap=virtual>$errata_and_notes</TEXTAREA>
+
+<input type=hidden name=OID value=$OID>
+<input type=hidden name=MIval value="aa-process-pub.apg">
+
+<?/MIVAR>
+
+<?/MIBLOCK>  <!-- ends cond authorization -->
+</HTML>

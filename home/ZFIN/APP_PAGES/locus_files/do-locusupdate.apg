@@ -1,0 +1,55 @@
+<!-- FILE: do-locusupdate.apg
+
+Very simple. Just commits the updates requested in the forms tossed up by
+locusupdate.apg. Also files update record.
+
+EXPECTED VARS:
+OID -- the zdb_id of the rec to update
+attr -- the column to be updated
+attr_type -- textarea,text,or pic
+new_value -- the new value to stick in the column
+old_value -- the previous value
+comments -- reasons for doing update 
+
+
+-->
+
+<!-- First check security. Main purpose is just to get submitter id and name -->
+<?MISQL SQL="select WebExplode(object,'permission=owns&rtype=locus') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+<?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
+
+<?MIVAR COND="$(NXST,$new_value)" NAME=$new_value>NULL<?/MIVAR>
+<?MIVAR COND="$(NXST,$old_value)" NAME=$old_value>NULL<?/MIVAR>
+<?MIVAR COND="$(NXST,$comments)" NAME=$comments>NULL<?/MIVAR>
+
+<?MIVAR NAME=$new_value DELIMIT="'" REPLACE="''">$new_value<?/MIVAR>
+<?MIVAR NAME=$old_value DELIMIT="'" REPLACE="''">$old_value<?/MIVAR>
+<?MIVAR NAME=$comments DELIMIT="'" REPLACE="''">$comments<?/MIVAR>
+
+<!-- insert update record for the update! -->
+<?MISQL SQL="insert into updates (submitter_id,submitter_name, rec_id, field_name, old_value, comments, when) values ('$ZDB_ident', '$ZDB_name','$OID', '$attr',  '$old_value', '$comments', current);"><?/MISQL>
+
+
+<?MISQL COND="$(OR,$(EC,$attr_type,text),$(EC,$attr_type,textarea))" SQL="update locus set $attr='$new_value' where zdb_id='$OID';"><?/MISQL>
+
+
+<!-- Special case for deleting one of the associated images/sources/pubs -->
+<?MIBLOCK COND="$(EC,$attr_type,special-listitem)">
+
+<?MISQL COND="$(EC,$attr,publication)" SQL="delete from int_data_pub where source_id='$OID' and target_id='$old_value';"><?/MISQL>
+
+<?/MIBLOCK>  <!-- ends special listitem case -->
+
+
+
+
+<?/MIBLOCK> <!-- ends cond authorized -->
+
+<!-- okay, now just bail back to the locusupdate to view results -->
+<?MIVAR>
+<SCRIPT>
+location.replace("/cgi-bin_B/webdriver?MIval=aa-locusview.apg&OID=$OID&UPDATE=1")
+</SCRIPT>
+<?/MIVAR>
+

@@ -1,0 +1,113 @@
+<!-- FILE: process-user.html
+
+This file processes a ZFIN registered user that has been submitted from
+ edit_user.html.
+If it is a new ZFIN submitter, the variable 'new_user' should  exist.
+This will cause a blank record to be inserted for that user.
+Then we just update the user in question with any new values passed in.
+
+-->
+
+<?MISQL SQL="select WebExplode(object,'permission=owns&rtype=person') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+<?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
+
+
+<!-- If deleting,just do it! -->
+<?MIBLOCK COND="$(XST,$Deleteme)">
+<?MISQL SQL="delete from ZDB_submitters where zdb_id='$OID';"><?/MISQL>
+<!-- Confirm and offer jump back to the viewing window -->
+
+<h1 align=center>CONFIRMATION</h1>
+<big>You have successfully deleted the ZFIN registration of 
+<?MIVAR><b>$name</b><?/MIVAR>. 
+The changes you have specified are effective immediately.</big>
+<p>
+Note that this doesn't mean you've deleted the person's ZFIN record, just their ability to log in as a registered user.
+<p>
+<form>
+<input type=button value="Back to viewing PERSON record" onClick="window.history.go(-2)">
+</form>
+<?/MIBLOCK>
+
+
+
+
+<?MIBLOCK COND="$(NXST,$Deleteme)">
+
+<!-- IF not root update, stick in dummies for name,access,login. Don't worry, we will never stick them into the update! -->
+<?MIBLOCK COND="$(NC,$AUTHORIZED,root)">
+<?MIVAR NAME=$login><?/MIVAR>
+<?MIVAR NAME=$access><?/MIVAR>
+<?MIVAR NAME=$name><?/MIVAR>
+<?/MIBLOCK>
+
+<!-- If root and NXST new_user and password fields don't exist, it means leave 
+  current one unchanged -- so put in some dummies to allow it to pass
+  the following completeness checks. -->
+<?MIBLOCK COND="$(AND,$(EC,$AUTHORIZED,root),$(NXST,$new_user),$(NXST,$password),$(NXST,password2))">
+<?MIVAR NAME=$password>no_op<?/MIVAR>
+<?MIVAR NAME=$password2>no_op<?/MIVAR>
+<?/MIBLOCK>
+
+<!-- First make sure the critical fields are there -->
+<?MIBLOCK COND="$(OR,$(NXST,$login),$(NXST,$name),$(NXST,$access),$(NXST,$password),$(NXST,$password2))">
+<center>
+<H1 align=center> ERROR: Insufficient information </h1>
+<big>You have left one or more fields required fields in the preceeding form blank</big>. Please go back and try again.<p>
+<form>
+<input type=button value="Go Back" onClick="window.history.go(-1)">
+</form>
+</center>
+<?/MIBLOCK>
+
+<!-- check for consistent password -->
+<?MIBLOCK COND="$(AND,$(XST,$password),$(XST,$password2),$(NOT,$(EQ,$password,$password2)))">
+<center>
+<h1 align=center> ERROR Typing password</h1>
+<big>The  typed and re-typed copies of the password you entered are different. You may have made a typo. </big> Please go back and try again.<p>
+<form>
+<input type=button value="Go Back" onClick="window.history.go(-1)">
+</form>
+</center>
+<?/MIBLOCK>
+
+<!-- Looking good. Now just fix up the entries and create the record -->
+<?MIBLOCK COND="$(AND,$(XST,$name),$(XST,$login),$(XST,$access),$(XST,$password),$(XST,$password2),$(EQ,$password,$password2))">
+
+<!-- Double check input for apostrophes; fix em where found -->
+<?MIVAR NAME=$name DELIMIT="'" REPLACE="''">$(TRIM,$name)<?/MIVAR>
+<?MIVAR NAME=$password DELIMIT="'" REPLACE="''">$password<?/MIVAR>
+
+<!-- Encrypt the password -->
+<?MISQL SQL="execute function sysexec('encryptpass', '$password');"><?/MISQL>
+<?MIVAR NAME=$crypt_password>$1<?/MIVAR>
+
+<!-- If you're creating new registered USER record,create and insert a blank record for it.  -->
+<?MIBLOCK COND="$(XST,$new_user)">
+<?MISQL SQL="delete from ZDB_submitters where zdb_id='$OID';"><?/MISQL>
+<?MISQL SQL="insert into  ZDB_submitters (zdb_id,create_date) values ('$OID',today);"><?/MISQL>
+<?/MIBLOCK>
+
+<!-- OKAY, now just do the update! Different for owner and root. If root, update password only if it has been explicity changed -->
+
+<?MISQL COND="$(AND,$(EC,$AUTHORIZED,root),$(EC,$password,no_op))" SQL="update ZDB_submitters set name='$name',login='$login',access='$access',log_access='$log_access' where zdb_id='$OID';"><?/MISQL>
+
+<?MISQL COND="$(AND,$(EC,$AUTHORIZED,root),$(NC,$password,no_op))" SQL="update ZDB_submitters set name='$name',login='$login',password='$crypt_password',access='$access',log_access='$log_access' where zdb_id='$OID';"><?/MISQL>
+
+<?MISQL COND="$(EC,$AUTHORIZED,owner)" SQL="update ZDB_submitters set password='$crypt_password' where zdb_id='$OID';"><?/MISQL>
+
+<!-- Confirm and offer jump back to the viewing window -->
+
+<h1 align=center>CONFIRMATION</h1>
+<big>Your update was successfully completed. The changes you have specified are effective immediately.</big>
+<p>
+<form>
+<input type=button value="Back to viewing PERSON record" onClick="window.history.go(-2)">
+</form>
+
+<?/MIBLOCK> <!-- ends cond name,address,etc exists -->
+
+<?/MIBLOCK> <!-- ends cond not deleting the registration-->
+
+<?/MIBLOCK> <!-- cond authorize nc false -->

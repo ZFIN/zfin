@@ -1,0 +1,33 @@
+#------------------------------------------------------------------------
+#
+# Makefile for ZFIN_WWW CVS Project, Zebrafish Book Chapter 1 web pages.
+#
+# $Source$
+# $Id$
+#
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
+# !! of the makefile hierarchy this makefile is a part of, and of the  !!
+# !! format and conventions used in this makefile.                     !!
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#
+
+
+# ---------------  Variable Definitions  --------------------------------
+
+TOP = ../../../..
+include $(TOP)/make.include
+
+TARGETDIR = $(TARGETROOT)/home/zf_info/zfbook/chapt1
+
+GENERICS = 1.1.html 1.2.html 1.3.html 1.4.html 1.5.html 1.6.html 1.7.html \
+	1.8.html 1.9.html
+
+STATICS = 1-1.gif anim-zeb.pdf fish_net.gif
+
+
+# ---------------  Production Rules  ------------------------------------
+
+# Use default rules for directories without app pages in them.
+
+include $(TOP)/make.default.rules

@@ -1,0 +1,26 @@
+<HTML>
+<TITLE>A ZFIN searcher</TITLE>
+
+<h1> The Zebrafish Search Machine</h1>
+
+This engine will search all HTML files currently available on the Fish Net website for the specified string. Hot links to files containing the search string are returned, along with the sentence containing the search string.
+
+<p>
+<big>Type a text string to search for on the Fish Net site:</big>
+
+<p>
+
+<FORM TARGET=pbrowser METHOD=get action="/cgi-bin/searchwww.cgi">
+
+<TABLE width=100%><TR>
+<TD>
+<input type=text name=search_string size=15>
+<input type=submit value="Start Search">
+</TD>
+<TD align=right>
+<input type=button name=homer value="Back to Home Page" onClick="top.location.pathname='/'">
+</TD></TR></TABLE>
+
+</form>
+
+</HTML>

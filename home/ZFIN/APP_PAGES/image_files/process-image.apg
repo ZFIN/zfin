@@ -1,0 +1,165 @@
+<!-- This script handles the all actions that arise from processing a new IMAGE entry. Specifically, two things can happen:
+1) User can ask to specify some parameter like "primary pub" or "related pub". This should bring up a browser/selector for that particular data type. After browsing, it should  lead back to the submission form so user can continue submitting.
+2) User can hit the "final" submit button, indicating he is done specifying new enry. This should result in moving the record from temporary status (in the IMAGE table) to official submitted status (in the IMAGE table). It should then bring up a confirmation.
+-->
+
+
+
+<!-- First thing to ALWAYS do is to store all available values in the temp_oid record in the IMAGE table. This is how we maintain state.
+-->
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-update-image.apg';"><?/MISQL>
+
+
+<!-- OK, now decide which SUBMIT button did the deed. Need to check to be sure
+  the specified STOCK, so first go get that from the temp record. -->
+<?MISQL SQL="select stock from image where zdb_id='$temp_oid';"><?/MISQL>
+<?MIVAR NAME=$stock>$1<?/MIVAR>
+
+<!-- If they did a final submit, make sure they have specified STOCK, send
+them back to form if not! -->
+<?MIBLOCK COND="$(AND,$(XST,$s_done),$(EC,$stock,NULL))">
+<HTML>
+<h1 align=center>WARNING: Incomplete submission</h1>
+<center>
+<big> Your submission was <font color="#ff0000">INCOMPLETE!</FONT>.</big>
+</center>
+ You <b>MUST</b> specify the mutant line depicted in the image you are submitting. Otherwise, the image will be useless, since it will be impossible to know what sort of animal one is looking at.  Your submission will not be acceptable until you remedy this problem.
+<P>
+If you have tried to specify the mutant line, but are unable to find the appropriate mutation in ZFIN, it may be that the mutant line has not yet been added to the database. This is particularly likely if the line has only recently been developed. If this is the case, you will need to return to the ZFIN home page, then request to "add new mutant" to generate a record for the line. After defining the new line, you should try again to submit your image. Click on the "questions and comments" button at the top of the page to contact the database adminstrator if you have any questions.
+<p>
+<?MIVAR>
+Click to <A HREF="/cgi-bin_B/webdriver?MIval=aa-new-image.apg&temp_oid=$temp_oid">return to the your in-progress submission</A> to fill in the STOCK.
+<?/MIVAR>
+</HTML>
+<?/MIBLOCK> <!-- ends done but STOCK is NULL -->
+
+
+<!-- If they did a "final" submit and STOCK was specified, we're done; move the  record to the official IMAGE table, and report success -->
+<?MIBLOCK COND="$(AND,$(XST,$s_done),$(NC,$stock,NULL))">
+
+<!-- Make the temporary record permanent -->
+<?MISQL SQL="update image set status='active' where zdb_id='$temp_oid';"><?/MISQL>
+<!-- Get the fish_search table to update the number of available images -->
+<?MISQL SQL="update fish_search set num_images=(select unique count(*)::integer from image where stock=fish_id) where fish_id='$stock';"><?/MISQL>
+
+<!-- fill in the stock name for image -->
+<?MISQL SQL="update image set stock_name=conc((select unique name from fish b where stock=b.zdb_id),conc(' (',conc((select unique abbrev from fish c where stock=c.zdb_id),') '))) where zdb_id='$temp_oid';"><?/MISQL>
+
+<!-- Grab the return record (might be NULL) so we can know where to go back to -->
+<?MISQL SQL="select return_rec from image where zdb_id='$temp_oid';"><?/MISQL>
+<?MIVAR NAME=$return_rec>$1<?/MIVAR>
+
+<!-- NOW JUST THROW UP CONFIRMATION and allow user to decide where to go. -->
+
+<HTML>
+<h1 align=center>Notification</h1>
+<center>
+<big> Your submission was successful, the new IMAGE record you submitted has been added to the database.</big>
+</center>
+<p>
+
+<!-- NOW IF the new image was initiated from some other page,ie, has a non-NULL return_rec fieldin its temporary record, handle that by sending the return_rec and the id of the record we've just created (temp_oid) to do-select for final processing. It's up to do-select to do the right thing and return control to the calling form. -->
+
+<?MIVAR COND=$(NC,$return_rec,NULL)>
+<p>
+<BIG><FONT COLOR="#ff0000">PLEASE RECALL</FONT></BIG> that you were in the middle of creating or modifying some other record when you took time out to enter this new IMAGE record.<br>
+Click <A HREF="/cgi-bin_B/webdriver?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$temp_oid">here</A> to return to your work in progress!
+<?/MIVAR>
+<p>
+<?MIVAR>
+Click <A HREF="/cgi-bin_B/webdriver?MIval=aa-imageview.apg&OID=$temp_oid">here</A> to view the new IMAGE record.
+<?/MIVAR>
+<p>
+OR click <A TARGET=content HREF="/cgi-bin_B/webdriver?MIval=aa-ZDB_home.apg">here</A> to return to the ZDB home page.
+
+</HTML>
+
+<?/MIBLOCK>  <!-- ends the cond s_done -->
+
+
+
+<!-- OKAY, now handle the cases where user wants to specify some value -->
+<?MIBLOCK COND="$(OR,$(XST,$s_related_pub),$(XST,$s_prim_pub),$(XST,$s_strain))">
+
+<?MIVAR NAME=$file_name>/ZDBB/misc_html/error.html<?/MIVAR>
+
+<!-- VARIABLES DESCRIPTIONS for following. 
+Selection requests are handled using the standard return_rec processing mechanism used whenever we need to bail temporarily out of one form to do something else. Specifically, a new return_rec is created in the return_recs tables. The name of the form I'm coming from goes in the
+RETURN_FORM variable, the zdb_id of the temporary record (temp_oid) that we were working on goes in the RETURN_RECID variable. If we are wanting the OID of the eventually selected record to go directly into the evolving data record, the name of the field it should fill goes in FILL_FIELD and the table that field is in goes in FILL_TABLE. Else if we want the OID of the eventually selected record to be jammed into an intersection table with the evolving data record, the FILL_FIELD should be NULL, and FILL_TABLE should be the name of the intersection table. Finally, INFO just allows extra information to be placed in the INFO column of the intersection table.
+
+When filled, the ZDB_ID of the new return_rec is passed along into whatever browser is invoked. It is eventually used by do-select to process the selection.
+-->
+
+<?MISQL SQL="execute function get_id('RetRec');"><?/MISQL>
+<?MIVAR NAME=$return_rec>$1<?/MIVAR>
+<?MIVAR NAME=$return_form>aa-new-image.apg<?/MIVAR>
+
+<!-- Want to specify primary pub -->
+<?MIBLOCK COND=$(XST,$s_prim_pub)>
+<?MIVAR NAME=$select_from>PUBLICATION<?/MIVAR>
+<?MIVAR NAME=$action>intersect<?/MIVAR>
+<?MIVAR NAME=$fill_field>NULL<?/MIVAR>
+<?MIVAR NAME=$fill_table>int_data_pub<?/MIVAR>
+<?MIVAR NAME=$info>primary<?/MIVAR>
+<?MIVAR NAME=$selector>aa-pubselect2.apg<?/MIVAR>
+<?/MIBLOCK>
+
+<!-- Want to specify a related publication -->
+<?MIBLOCK COND=$(XST,$s_related_pub)>
+<?MIVAR NAME=$select_from>PUBLICATION<?/MIVAR>
+<?MIVAR NAME=$action>intersect<?/MIVAR>
+<?MIVAR NAME=$fill_field>NULL<?/MIVAR>
+<?MIVAR NAME=$fill_table>int_data_pub<?/MIVAR>
+<?MIVAR NAME=$info>related<?/MIVAR>
+<?MIVAR NAME=$selector>aa-pubselect2.apg<?/MIVAR>
+<?/MIBLOCK>
+
+<!-- Want to specify the line of the depicted animal -->
+<?MIBLOCK COND=$(XST,$s_strain)>
+<!-- Wipe out representative if you are (re)specifying line of fish! -->
+<?MISQL SQL="update image set representative=NULL where zdb_id='$temp_oid';">
+<?/MISQL>
+<?MIVAR NAME=$select_from>FISH<?/MIVAR>
+<?MIVAR NAME=$action>return_id<?/MIVAR>
+<?MIVAR NAME=$fill_field>stock<?/MIVAR>
+<?MIVAR NAME=$fill_table>image<?/MIVAR>
+<?MIVAR NAME=$info>NULL<?/MIVAR>
+<?MIVAR NAME=$selector>aa-fishselect.apg<?/MIVAR>
+<?/MIBLOCK>
+
+<!-- NOW CREATE THE NEW RETURN RECORD -->
+<?MISQL SQL="insert into return_recs (zdb_id, return_form, return_recid, fill_field, fill_table, info, action) values ('$return_rec','$return_form','$temp_oid','$fill_field','$fill_table','$info', '$action');">
+<?/MISQL>
+
+<!-- LAUNCHES THE FRAMES FOR THE ANY SELECTION BROWSER.-->
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-startframes_select.apg';">$1<?/MISQL>
+
+
+<?/MIBLOCK>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

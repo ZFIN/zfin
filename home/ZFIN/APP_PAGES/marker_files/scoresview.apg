@@ -1,0 +1,45 @@
+<HTML>
+
+<HEAD>
+<SCRIPT>
+<?MIVAR>
+function redisplay () {     
+top.helpcontent.location="/ZDBB/misc_html/saycomposing.html";
+top.helpcontent.location="/cgi-bin_B/webdriver?MIval=aa-showscores.apg&panel=$panel_id&lg=$OR_LG";
+
+}
+<?/MIVAR>
+</SCRIPT>
+</HEAD>
+
+
+<?MIBLOCK COND="$(NC,$panel_id,NULL)">
+<?MISQL SQL="select abbrev from panels where zdb_id='$panel_id';">
+<?/MISQL>
+<?MIVAR NAME=$panel_abbrev>$1<?/MIVAR>
+<?/MIBLOCK>
+
+<BODY bgcolor="#ffffb9">
+<basefont size=2>
+<form name=lgselect method=post>
+
+
+<?MIVAR>
+<TABLE width=100%>
+<TR>
+<TD align=center><b><font size=3>$panel_abbrev Panel; LG $OR_LG </B>
+</TD>
+<TD align=right><font size=2><input type=button value="Close" onClick="parent.close();"> </TD>
+</TR>
+</TABLE>
+<?/MIVAR>
+
+
+</form>
+
+
+<script>redisplay();   </script>
+
+
+</HTML>
+

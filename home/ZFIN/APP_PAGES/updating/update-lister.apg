@@ -1,0 +1,65 @@
+<HTML>
+
+<basefont size=2>
+
+
+<!-- THIS NEXT PART IS EXECUTED AFTER THE PERSON ENTERS SOME CRITERIA -->
+<!-- This next part builds up a query piece by piece, based on which criteria 
+  were passed in 
+-->
+
+<?MIVAR NAME=$constraint>rec_id='$OID'<?/MIVAR>
+
+<!-- If any constraining criteria were given -->
+<?MIBLOCK COND="$(AND,$(XST,$field),$(XST,$period),$(OR,$(NC,$field,ANY),$(EC,$period,dated)))">
+
+<?MIVAR NAME=$constraint COND="$(NC,$field,ANY)">
+$constraint and (field_name='$field')<?/MIVAR>
+
+<?MIBLOCK COND="$(EC,$period,dated)">
+<?MIVAR COND="$(NXST,$smonth)" NAME=$smonth>01<?/MIVAR>
+<?MIVAR COND="$(NXST,$emonth)" NAME=$emonth>12<?/MIVAR>
+<?MIVAR COND="$(NXST,$syear)" NAME=$syear>1900<?/MIVAR>
+<?MIVAR COND="$(NXST,$eyear)" NAME=$eyear>2000<?/MIVAR>
+
+<?MIVAR NAME=$sdate>$syear-$smonth-01<?/MIVAR>
+<?MIVAR NAME=$edate>$eyear-$emonth-01<?/MIVAR>
+
+<?MIVAR NAME=$constraint> $constraint and (when::date>'$sdate'::date AND when::date<'$edate'::date)<?/MIVAR>
+
+<?/MIBLOCK>
+<?/MIBLOCK>
+
+<!-- NOW JUST RETRIEVE AND DISPLAY ALL MATCHING ENTRIES -->
+<?MIVAR COND="$(NXST,$field)" NAME=$field>ANY<?/MIVAR>
+<?MIVAR COND="$(NXST,$period)" NAME=$period>open<?/MIVAR>
+
+<table width=100%>
+<?MISQL SQL="select submitter_id, when::date, when::datetime hour to minute, field_name, old_value, comments, when,submitter_name from updates where $constraint order by when desc;">
+<tr> <td colspan=2> <hr> </td> </tr>
+<tr> 
+<td colspan=2>
+	<TABLE cellpadding=3 width=100% border=2>
+	<tr>
+	<td width=30%> <b>Submitter:</b> 
+<A TARGET="content" HREF="/cgi-bin_B/webdriver?MIval=aa-persview.apg&OID=$1">$8</A></td>
+	<td> <b>Changed field:</b> $4 </td> 
+	<td> <b>Date:</b> $2 </td> 
+	</tr></TABLE>
+</td></tr>
+<tr>
+<td align=right valign=top><b>Old value:</b> </td>
+<td>$5 </td> </tr>
+<tr>
+<td align=right valign=top><b>Submitter comments:</b> </td>
+<td>$6</td> </tr>
+<?/MISQL>
+
+<?MIVAR COND="$(=,$MI_ROWCOUNT,0)">
+<p><center><b>No updates have occurred</b></center>
+<?/MIVAR>
+
+</table>
+
+
+</HTML>

@@ -1,0 +1,32 @@
+<HTML>
+
+<TITLE>View Updates</TITLE>
+
+<!-- FIRST MAKE  SURE WE GOT PASSED IN A RECORD ID. DIE IF NOT.
+     WE ALSO ASSUME THAT THE VARIABLE "rtype" IS PASSED IN, TO TELL
+     US WHAT TYPE OF RECORD IS BEING UPDATED.
+-->
+
+<?MIBLOCK COND=$(OR,$(NXST,$OID),$(NXST,$rtype))>
+<p>
+ERROR -- something bad happened -- no OID passed in!
+<?/MIBLOCK>
+
+<!-- EVERYTHING  IS KOSHER, SO GO AHEAD -->
+
+<?MIBLOCK COND=$(AND,$(XST,$OID),$(XST,$rtype))>
+
+<FRAMESET ROWS="30%,*">
+
+<?MIVAR>
+<FRAME SRC="/cgi-bin_B/webdriver?MIval=aa-update-select.apg&rtype=$rtype&OID=$OID" name=vcontrols>
+
+
+<FRAME SRC="/cgi-bin_B/webdriver?MIval=aa-update-lister.apg&rtype=$rtype&OID=$OID" NAME=updates>
+<?/MIVAR>
+
+</FRAMESET>
+
+<?/MIBLOCK>
+
+</HTML>

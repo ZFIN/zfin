@@ -1,0 +1,28 @@
+<!-- just gives scoring array for specified panel and lg
+VARS:
+panel -- the id of the panel
+lg  -- the lg you want
+-->
+
+<font size=2 face="Courier">
+<?MISQL SQL="select name,abbrev,current from panels where zdb_id='$panel';"><?/MISQL>
+
+
+<?MIVAR>PANEL: $1 ($2), LG $lg
+as of $3<?/MIVAR>
+
+<table width=100% cellpadding=0 cols=3>
+<TH><font size=2 face="Courier"> NAME</TH>	   <TH><font size=2 face="Courier">LOCATION</TH>	<TH><font size=2 face="Courier">SCORING VECTOR</TH>
+<?MISQL SQL="select abbrev,scores,lg_location,metric from paneled_markers where target_id='$panel' and OR_lg='$lg' and private='f' order by lg_location;">
+<TR>
+<TD width=10%><font size=2 face="Courier">$1</TD>
+<TD width=10%><font size=2 face="Courier">$3$4</TD>
+<TD width=80%><font size=2 face="Courier"><nobr>$2</nobr></TD>
+</TR>
+<?/MISQL>
+
+<?MIVAR COND="$(=,$MI_ROWCOUNT,0)"><b>Sorry, no publicly available markers on this Linkage Group!</B>
+<?/MIVAR>
+
+</table>
+</font>

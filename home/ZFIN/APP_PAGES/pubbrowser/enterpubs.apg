@@ -1,0 +1,34 @@
+<!-- FILE: ENTERPUBS.HTML -->
+
+<!-- This file is essentially a macro that is webexploded into each submission form to allow submitters to specify the pubs associated with a new data item. Used to be in each 'new-<data>' page, but I factored it out for efficiency.
+-->
+
+<A NAME="pub-info">
+<HR width=100% size=3>
+<h3 align=center>PUBLICATIONS:</h3>
+
+<TABLE width=100%>
+<TR>
+<TD width=10%><input type=submit name="s_prim_pub" value="Specify"></TD> 
+<TD><b>Primary Publication:</b> 
+<?MISQL SQL="select b.title, b.zdb_id from int_data_pub a, publication b where source_id='$temp_oid' and target_id=b.zdb_id and info='primary';"><?/MISQL>
+<?MIVAR COND=$(EQ,$MI_ROWCOUNT,0)> <font color="#ff0000">UNPUBLISHED</font><?/MIVAR>
+</TD>
+</TR>
+<TR> <TD colspan=2>
+<?MIVAR COND="$(>,$MI_ROWCOUNT,0)"> <A HREF="/cgi-bin_B/webdriver?MIval=aa-pubview2.apg&OID=$2">$1</A>  <?/MIVAR>
+</TD></TR>
+
+<TR><TD colspan=2> <HR width=50%></TD></TR>
+
+<TR>
+<TD width=10%><input type=submit name="s_related_pub" value="Add one"> </TD>
+<TD><b>Related Publications:</b> </TD>
+</TR><TR>
+<TD colspan=2>
+<ul>
+<?MISQL SQL="select b.title, b.zdb_id from int_data_pub a, publication b where source_id='$temp_oid' and target_id=b.zdb_id and info='related';">
+<li> <A HREF="/cgi-bin_B/webdriver?MIval=aa-pubview2.apg&OID=$2">$1</A><br>
+<?/MISQL>
+</ul>
+</TD></TR></TABLE>

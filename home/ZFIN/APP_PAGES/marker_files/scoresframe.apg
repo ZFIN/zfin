@@ -1,0 +1,22 @@
+<!-- Defines the frameset for scores report-->
+
+
+<?MIVAR COND="$(NXST,$panel)" NAME=$panel>NULL<?/MIVAR>
+<?MIVAR COND="$(NXST,$lg)" NAME=$lg>NULL<?/MIVAR>
+
+<?MIVAR>
+<title>Score View: $panel, LG $lg</title>
+<?/MIVAR>
+
+
+<FRAMESET rows="50,*">
+
+<?MIVAR>
+
+<FRAME NAME="label" scrolling=no SRC="/cgi-bin_B/webdriver?MIval=aa-scoresview.apg&panel_id=$panel&OR_LG=$lg" MARGINWIDTH=1 MARGINHEIGHT=1>
+
+<FRAME NAME="helpcontent" SRC="/ZDBB/misc_html/saycomposing.html">
+<?/MIVAR>
+
+</FRAMESET>
+

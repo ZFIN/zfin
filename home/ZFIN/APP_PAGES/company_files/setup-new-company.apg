@@ -1,0 +1,27 @@
+<!-- FILE: SETUP-NEW-COMPANY
+This file just does some important setup that needs to happen each time we enter the new-company form. Essentially, it deals with the return_rec (if there is one) and sets up all the variables used by new-company 
+-->
+
+<!-- IF THIS IS THE FIRST TIME INTO THIS PAGE, MAKE NEW TEMP ENTRY -->
+<?MIBLOCK COND=$(NXST,$temp_oid)>
+<?MISQL SQL="execute function get_id('COMPANY');"><?/MISQL>
+<?MIVAR NAME=$temp_oid>$1<?/MIVAR>
+<?MISQL SQL="insert into company (zdb_id, entry_time, status) values ('$temp_oid', current,'temporary');">
+<?/MISQL>
+<?/MIBLOCK>  <!-- ends cond no temp_oid -->
+
+
+<!-- OK, NOW GET CURRENT VALUES FROM THE temporary COMPANY ENTRY, PUTTING THEM
+      INTO THE FORM. For certain variables, we want them to be able to be passed in on the call commandline call to this new form; for those variables, we avoid replacing the passed in value (dont reset it!) -->
+
+<?MISQL SQL="select name, address,phone,fax,email,url,contact_person from company where zdb_id='$temp_oid';"><?/MISQL>
+<?MIVAR NAME=$name>$1<?/MIVAR>
+<?MIVAR NAME=$address>$2<?/MIVAR>
+<?MIVAR NAME=$phone>$3<?/MIVAR>
+<?MIVAR NAME=$fax>$4<?/MIVAR>
+<?MIVAR NAME=$email>$5<?/MIVAR>
+<?MIVAR NAME=$url>$6<?/MIVAR>
+<?MIVAR NAME=$contact_person>$7<?/MIVAR>
+
+<!-- Now just returns back to new-company, which uses these values to display form.
+-->

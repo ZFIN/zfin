@@ -1,0 +1,93 @@
+<!-- a simple app page used by root to add a curation record to a publication. Also used by the general public to view full details of curation records for the pub.
+
+Expected vars:
+OID:  the zdb_id of the pub record being curated
+curation: the curation action you want info on. This flag indicates that you want to view the details of the a curation record rather than wanting to add a new one.
+new_action,new_comments: Signal the processing phase for a new curation. A curation record is built and added.
+
+-->
+
+<HTML>
+
+<basefont size=2>
+
+<TITLE>Curate Publication</TITLE>
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+<?MIBLOCK COND="$(NC,AUTHORIZED,false)">
+
+<!-- Deal with the case where you just want to show info first -->
+<?MIBLOCK COND="$(XST,$curation)">
+
+
+<?MIVAR>
+<h1>$curation details for ZDB pub: $OID</h1>
+<?/MIVAR>
+
+<?MISQL SQL="select curation_action,entry_time,curator,comments from curation_status where pub_id='$OID' and curation_action='$curation';">
+<table width=100% cols=3 cellpadding=3>
+<TR>
+<TD><font size=2><b>Action:</b> $1</td>
+<TD><font size=2><b>Curator:</b> $3</td>
+<TD><font size=2><b>Date:</b> $2</td>
+</TR><TR>
+<TD colspan=3><font size=2><b>Comments:</b> $4</td>
+</TR>
+</TABLE>
+<HR>
+<?/MISQL>
+<form>
+<input type=button value="OK" onClick="window.close();">
+</form>
+<?/MIBLOCK> <!-- Ends viewing -->
+
+<!-- Suppose you want to add one -->
+<?MIBLOCK COND="$(AND,$(NXST,$curation),$(NXST,$new_action),$(EC,$AUTHORIZED,root))">
+<?MIVAR>
+<h1>Add curation record to ZDB pub: $OID</h1>
+<?/MIVAR>
+<form method=post action="/cgi-bin_B/webdriver">
+<input type=hidden name=MIval value=aa-curatepub.apg>
+<table border=2 width=100% cols=2>
+<TR>
+<?MIVAR>
+<input type=hidden name=OID value="$OID">
+<TD><font size=2><b>Curator:</b> $ZDB_name </td>
+<?/MIVAR>
+<td><font size=2><b>Action:</b>
+<SELECT name=new_action>
+<option value="Linked Authors">Linked Authors
+<option value="Curated Genes">Curated Gene Info
+<option value="Curated Expression data">Curated Expression Data
+<option value="Curated Mutant data">Curated Mutant Data
+<option value="Curated Markers/Mapping">Curated Mapping/Markers
+</SELECT>
+</TD>
+</TR><TR>
+<TD colspan=2><font size=2><b>Comments:</b><br>
+<TEXTAREA rows=5 cols=75 NAME="new_comments"></TEXTAREA>
+</td>
+</TR></TABLE>
+
+<input type=button value="Cancel" onClick="window.close();">
+<input type=submit value="Submit Record">
+</form>
+
+<?/MIBLOCK> <!-- ends adding new one -->
+
+<!-- Now to process a submission -->
+<?MIBLOCK COND="$(AND,$(EC,$AUTHORIZED,root),$(XST,$new_action))">
+
+<?MIVAR COND="$(NXST,$new_comments)" NAME=$new_comments>NULL<?/MIVAR>
+
+<?MISQL SQL="insert into curation_status (pub_id,curation_action,entry_time,curator,comments) values ('$OID','$new_action',current,'$ZDB_name','$new_comments');"><?/MISQL>
+
+<H1>Curation record successfully added!</h1>
+<form>
+<input type=button value="OK" onClick="window.close();">
+</form>
+<?/MIBLOCK>
+
+
+<?/MIBLOCK>  <!-- ends authorized -->
