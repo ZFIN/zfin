@@ -1,7 +1,6 @@
 #------------------------------------------------------------------------
 #
-# Makefile for ZFIN_WWW CVS Project, Genomic Map Viewer
-# Applet.
+# Makefile for ZFIN_WWW CVS Project, Genomic Map Viewer Applet.
 #
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
@@ -9,13 +8,9 @@
 # !! format and conventions used in this makefile.                     !!
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
-# This makefile uses a staging directory to produce its targets.
-# This makefile populates the staging directory with source files and
-# then calls the makefile in the staging directory to produce the 
-# targets.  The staging makefile makes use of makefile variables 
-# inherited from this file.
-# 
-
+# This makefile has two target dirs.  The first is actually a staging dir
+# where the work is done.  The second is the final target dir where the
+# JAR gets put.
 
 # ---------------  Variable Definitions  --------------------------------
 
@@ -24,88 +19,88 @@ include $(TOP)/make.include
 
 # TARGETDIR is handled by Staging directory
 
-STAGINGDIR = Staging
-STAGINGZMAPPER = $(STAGINGDIR)/zmapper
+TARGETDIR = $(TARGETROOT)/Staging/server_apps/mapimage
+STAGINGDIR = $(TARGETDIR)
+STAGINGZMDIR = $(STAGINGDIR)/zmapper
+FINALTARGETDIR = $(TARGETROOT)/server_apps/mapimage
+
 IMAGES = mapkey.gif
-
-IMPORTPATH = $(TARGETROOT)/lib/Java
-IMPORTDIR = netscape
-
-SYMLINK = $(TOP)/client_apps/Map/zmapper
-SYMLINKTARGET = zmapper
-
-# ---- Java source variables
-
-GENERICS = zmapper/SQLQuery.java zmapper/MarkerBuilder.java 
-STATICS  = mapimage.java cgi_lib.java \
-	zmapper/BackBone.java zmapper/Bin.java zmapper/BinGroup.java \
-	zmapper/LayoutManager.java zmapper/MapViewer.java zmapper/Marker.java 
+TARGETIMAGES = $(foreach IMG, $(IMAGES), $(FINALTARGETDIR)/$(IMG))
 
 
-SPECIFICS = $(foreach GNRC, $(GENERICS), $(STAGINGDIR)/$(GNRC))
-STATICSTAGINGS = $(foreach STAT, $(STATICS), $(STAGINGDIR)/$(STAT))
+# ---- Misc Java varaibles
 
-JAVAS   = $(GENERICS) $(STATICS)
-TARGETS = $(SYMLINKTARGET) $(SPECIFICS) $(STATICSTAGINGS)
+# Use the standard JAVAC_11, and JAVACFLAGS.  Still need to define classpath.
 
-# ---- Java destination variables
+CLASSPATH = $(STAGINGDIR):$(TOP)/lib/Java:$(JDBCHOME)/lib/ifxjdbc.jar
 
-JAR = mapplet-1.0.jar
+ZMSRCDIR = ../../client_apps/Map/zmapper
+NETSCAPEPATH = $(TARGETROOT)/lib/Java/netscape
+NETSCAPESYMLINK = $(STAGINGDIR)/netscape
 
-# ---- Which variables are used by Makefile in Staging directory:
 
-export JAVAS JAR IMAGES IMPORTPATH IMPORTDIR
+# ---- Java source and destination variables
 
+# Can't use just GENERICS and STATICS b/c of zmapper complications.
+
+STATICS    = mapimage.java cgi_lib.java
+ZMGENERICS = zmapper/SQLQuery.java zmapper/MarkerBuilder.java 
+ZMSTATICS  = zmapper/BackBone.java zmapper/Bin.java zmapper/BinGroup.java \
+	     zmapper/LayoutManager.java zmapper/MapViewer.java zmapper/Marker.java
+ZMSTAGINGSPECIFICS = $(foreach ZMG, $(ZMGENERICS), $(STAGINGDIR)/$(ZMG))
+ZMSTAGINGSTATICS   = $(foreach ZMS, $(ZMSTATICS), $(STAGINGDIR)/$(ZMS))
+
+JAVAS          = $(STATICS) $(ZMGENERICS) $(ZMSTATICS)
+CLASSES        = $(foreach JAVA, $(JAVAS), $(patsubst %.java,%.class,$(JAVA)))
+STAGINGJAVAS   = $(foreach JAVA, $(STATICS), $(STAGINGDIR)/$(JAVA)) \
+	         $(ZMSTAGINGSPECIFICS) $(ZMSTAGINGSTATICS)
+STAGINGCLASSES = $(foreach CLASS, $(STAGINGJAVAS), $(patsubst %.java,%.class,$(CLASS)))
+
+JAR = $(FINALTARGETDIR)/mapplet-1.0.jar
+
+
+# ---- Define endemic targets so we can use make.default.rules.
+
+ENDEMICTARGETS_POSTTARGETDIR = $(NETSCAPESYMLINK) $(STAGINGZMDIR) $(FINALTARGETDIR)
+ENDEMICTARGETS_POSTTARGETS = $(JAR) $(TARGETIMAGES)
+ENDEMICTARGETS_CLEAN = $(STAGINGJAVAS) $(STAGINGCLASSES)
 
 
 # ---------------  Production Rules  ------------------------------------
 
-.PHONY : all sanitycheck clean clobber onetimeonly $(STAGINGDIR)
+# Use default rules for most of the work
 
+include $(TOP)/make.default.rules
 
-all : $(STAGINGZMAPPER) $(TARGETS) $(STAGINGDIR) 
-
-$(STAGINGZMAPPER) :
+$(FINALTARGETDIR) $(STAGINGZMDIR) :
 	$(TARGET_MKDIR) $@
 
-$(STAGINGDIR) :
-	(cd $(STAGINGDIR); $(MAKE))
+$(TARGETIMAGES) : $(FINALTARGETDIR)/% : %
+	$(TARGET_CP) $^ $@
+	$(TOUCH) $@
 
-$(SYMLINKTARGET) :
-	rm -f $(SYMLINKTARGET)
-	ln -s $(SYMLINK) $(SYMLINKTARGET)
 
-# ----  Rules for moving Java sources to staging directory.
+# ----- Rules for compiling Java sources to class files
 
-$(SPECIFICS) : $(STAGINGDIR)/% : %
+$(ZMSTAGINGSPECIFICS) : $(STAGINGZMDIR)/% : $(ZMSRCDIR)/%
 	$(MAKESPECIFIC) $< $(TRANSLATETABLE) $@
 
-$(STATICSTAGINGS) : $(STAGINGDIR)/% : %
-	$(STAGING_CP) $< $@
+$(ZMSTAGINGSTATICS) : $(STAGINGZMDIR)/% : $(ZMSRCDIR)/%
+	$(TARGET_CP) $^ $@
+	$(TOUCH) $@
+
+# When any class file needs to be remade, remake all of them.
+
+$(STAGINGCLASSES) : $(STAGINGJAVAS)
+	$(JAVAC_11) $(JAVACFLAGS) -classpath $(CLASSPATH) $(STAGINGJAVAS)
 
 
+# ----- Rules for creating the JAR file.
 
-# ---------------  Maintenance Rules  -----------------------------------
+$(NETSCAPESYMLINK) :
+	ln -s $(NETSCAPEPATH) $(NETSCAPESYMLINK)
 
-clean :		# remove copied files from staging directory
-	rm -rf $(JAVASTAGINGS) $(STAGINGZMAPPER)
-	$(MAKE) -C $(STAGINGDIR) $@
+$(JAR) : $(STAGINGCLASSES) $(NETSCAPESYMLINK)
+	cd $(STAGINGDIR); $(JAVAHOME_11)/bin/jar -cvf $(JAR) $(CLASSES) netscape
+	chmod o+r $@
 
-
-clobber :			# Remove targets, but not target dir.
-	rm -rf $(TARGETS) $(STAGINGZMAPPER)
-	$(MAKE) -C $(STAGINGDIR) $@
-
-
-# check generics & possibly statics as well for values that should
-# be represented with tags instead of hard coded values
-
-sanitycheck : 
-	$(SPECIFICCHECK) $(JAVAS)
-	$(MAKE) -C $(STAGINGDIR) $@
-
-
-# define one time only target
-
-onetimeonly :
-	$(ONETIMEONLY)
