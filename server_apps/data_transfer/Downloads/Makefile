@@ -50,6 +50,7 @@ $(HTTP_DATA_TRANSFER_DIR) :
 # Run the download script.  This extracts data from ZFIN and places it in 
 # the public http directory
 
-run : $(TARGETDIR)/DownloadFiles.pl 
+run : $(TARGETDIR)/DownloadFiles.pl $(AD) 
 	$(TARGETDIR)/DownloadFiles.pl
-	cp  $(AD) $(HTTP_DATA_TRANSFER_DIR)/ad.txt  
+	cp  $(AD) $(HTTP_DATA_TRANSFER_DIR)/ad.txt
+	chmod a+r $(HTTP_DATA_TRANSFER_DIR)/ad.txt  
