@@ -166,9 +166,7 @@
   ###
   if( defined $Q->param('edit_panel') ) {
     $edit_panel = $Q->param('edit_panel');
-    #$Q->param($edit_panel,1);	# just in case 
-  }else{ $edit_panel = '';}
-  
+  }else{ $edit_panel = '';}  
   for $panel (@allpanels) {
     if( (defined $Q->param($panel))
 	&& ($Q->param($panel) == 1)
@@ -187,10 +185,10 @@
   
   ###  Coming from a "external"  unisource  page,
   
-  ###  markerlister -- view_map,
-  ###  genelister    --  view_map, markername, 
-  ###  markerview  -- view_map, markername, OID, 
-  ###  crossview    -- view_map, (panel)  , lg
+  ###  markerlister -- view_map, marker, {panel(s)}
+  ###  genelister   -- view_map, marker, {panel(s)}
+  ###  markerview   -- view_map, marker, OID, 
+  ###  crossview    -- view_map,(panel),lg
   
   ###  mapperselect -- view_map, 
   ###                            markername 
@@ -298,7 +296,10 @@
     ###
     
     if( (defined $Q->param("OID")) && ($Q->param("OID")) )  {
-      $g_OID = $zdbid  =  $Q->param("OID");   
+      $g_OID = $zdbid  =  $Q->param("OID"); 
+      $sm_m = get_OIDs_abbrev($zdbid);
+      $sm_refresh = 1;
+        
       if( defined $Q->param("lg") && $Q->param("lg") ) {$lg =  $Q->param("lg");} 
       else {			### need a linkage group
 	#get OID lg
@@ -1213,16 +1214,30 @@
   sub get_OIDs_lg {
     my  ($zdbid) = @_;
     $sql = 
-      "SELECT first 1 or_lg " .
+    "SELECT first 1 or_lg " .
 	"FROM public_paneled_markers WHERE zdb_id = \'$zdbid\'; " ;
 	 #"group by or_lg order by count(or_lg) DESC;"; # first random is lese biased 
-	
     $cur = $dbh->prepare($sql) ;
     $rc = $cur->execute();
     @row = $cur->fetchrow;
     $lg = shift(@row);
     $lg;
   }
+  ###############################################################################
+  ### input:  a marker zdbid  
+  ### output: a lingage group number that the marker is in  
+  sub  get_OIDs_abbrev{
+    my ($zdbid)= @_;
+    $sql = 
+    "SELECT first 1 abbrev " .
+	"FROM public_paneled_markers WHERE zdb_id = \'$zdbid\'; ";
+    $cur = $dbh->prepare($sql) ;
+    $rc = $cur->execute();
+    @row = $cur->fetchrow;
+    $marker = shift(@row);
+    $marker;
+  }
+  
   ################################################################################
   ### input:   panel lg location
   ### output:  zdbid $ marker_abbrev --not further than any other marker to location.
