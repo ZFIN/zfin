@@ -247,14 +247,14 @@ create dba function "informix".regen_genomics() returning integer
 
     create table all_m_names_new 
       (
-	-- ortho_name and mrkr_name are 120 characters long
+	-- ortho_name and mrkr_name are 255 characters long
 	-- locus_name, db_link.acc_num, and all the abbrev 
 	-- columns are all 80 characters or less
-	allmapnm_name		varchar (120),
+	allmapnm_name		varchar (255),
 	allmapnm_zdb_id		varchar(50),
 	allmapnm_significance	integer not null,
 	allmapnm_precedence	varchar(80),
-	allmapnm_name_lower	varchar(120) 
+	allmapnm_name_lower	varchar(255) 
 		check (allmapnm_name_lower = lower(allmapnm_name))
       )
       fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3  
@@ -361,6 +361,8 @@ create dba function "informix".regen_genomics() returning integer
     insert into all_m_names_new
     	select * from all_acc_names_new;
 	
+    let errorHint = "first" ;
+
     insert into all_m_names_new
     	select * from all_ortho_names_new;	
 
