@@ -625,7 +625,7 @@ Variables Expected:
 	<!-- Throw up the publication info, using the standard display format -->
 
 	<?MISQL SQL="
-  		select count(*) 
+  		select count(*)::integer 
   		from record_attribution
  		 where recattrib_data_zdb_id = '$OID'
    		 and get_obj_type(recattrib_source_zdb_id) = 'PUB';
@@ -634,12 +634,12 @@ Variables Expected:
 	<?/MISQL>
 	<?MIBLOCK COND="$(>,$1,0)">
 	  <?MIVAR>
-	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=fish_image&title=$title&name=$(URLENCODE,$name)"><b>Publications</b></A>
+	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=fish_image&title=$title&name=$(URLENCODE,$name)&total_count=$1"><b>Citations</b></A>
 	  <?/MIVAR>
 	<?MIELSE>
-	  <b>Publications</b>
+	  <b>Citations</b>
 	<?/MIBLOCK>
-	<?MIVAR>&nbsp; ($(FIX,$1))<?/MIVAR>
+	<?MIVAR>&nbsp; ($1)<?/MIVAR>
  
       </form>
     <?/MIBLOCK>  <!-- ends cond AUTHORIZED -->

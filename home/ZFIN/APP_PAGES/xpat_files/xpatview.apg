@@ -702,7 +702,7 @@ ERROR -- something bad happened -- no OID passed in!
 
 
 <?MISQL SQL="
-  select count(*) 
+  select count(*)::integer 
   from record_attribution
   where recattrib_data_zdb_id = '$OID'
     and get_obj_type(recattrib_source_zdb_id) = 'PUB';
@@ -711,12 +711,12 @@ ERROR -- something bad happened -- no OID passed in!
 
 <?MIBLOCK COND="$(OR,$(>,$1,0),$(XST,$UPDATE))"> 
  <?MIVAR>
- <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=gene&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)$(IF,$(XST,$UPDATE),&UPDATE=1)"><b>PUBLICATIONS</b></A> 	
+ <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=gene&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)$(IF,$(XST,$UPDATE),&UPDATE=1)&total_count=$1"><b>CITATIONS</b></A> 	
  <?/MIVAR>
 <?MIELSE>
- <b>PUBLICATIONS</b>
+ <b>CITATIONS</b>
 <?/MIBLOCK>
-<?MIVAR>&nbsp; ($(FIX,$1))<?/MIVAR> 
+<?MIVAR>&nbsp; ($1)<?/MIVAR> 
 
 <?/MIBLOCK> <!-- mielse of zdb_history -->
 <?/MIBLOCK> <!-- ends cond oid exists -->

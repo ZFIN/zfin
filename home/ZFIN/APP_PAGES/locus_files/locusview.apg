@@ -454,7 +454,7 @@
 	<?MIVAR NAME=$sum>0<?/MIVAR>
 
 	<?MISQL SQL="
-		select count(distinct recattrib_source_zdb_id) 
+		select count(distinct recattrib_source_zdb_id)::integer 
 	 	  from fish f, locus l, record_attribution
 	 	 where l.zdb_id = '$OID'
 		   and f.locus = l.zdb_id 
@@ -465,7 +465,7 @@
 	 <?MIVAR NAME=$sum>$1<?/MIVAR>	   
 
       	 <?MISQL SQL="		 
-		select count(distinct recattrib_source_zdb_id) 
+		select count(distinct recattrib_source_zdb_id)::integer 
 	 	  from locus l, record_attribution
 	 	 where l.zdb_id = '$OID'
 		   and l.zdb_id = recattrib_data_zdb_id
@@ -475,10 +475,10 @@
 	
 	<?MIBLOCK COND="$(OR,$(>,$sum,0),$(XST,$UPDATE))">
   	  <?MIVAR>
-  	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=$rtype&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev$(IF,$(XST,$UPDATE),&UPDATE=1)"><b>PUBLICATIONS</b></A>
+  	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=$rtype&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev$(IF,$(XST,$UPDATE),&UPDATE=1)&total_count=$sum"><b>CITATIONS</b></A>
   	  <?/MIVAR>
 	<?MIELSE>
-  	  <b>PUBLICATIONS</b>
+  	  <b>CITATIONS</b>
 	<?/MIBLOCK>
 	<?MIVAR>	
  	 &nbsp; ($(FIX,$sum))
