@@ -5,7 +5,7 @@
 	upper		Upper cases an lvarchar
 	sysexec		runs a system program and returns results from STDOUT
 	replace		replaces N occurrences of one substring with another
-	genid		Generates a new ID by appending a number to a string
+	get_id		Generates a new ID by appending a number to a string
 	concat		Concatenates to strings, the Informix concat seems brokeen
 	html_breaks	Replaces newlines with "<P>" which formats it for html
 	get_random_cookie Generate a random string of printable characters
@@ -273,7 +273,7 @@ static buflst *appbuf(buflst *buf, char *data, unsigned len) {
 	The Informix concat function seems to be broken, oh well
 	Returns an lvarchar.
 */
-mi_lvarchar *concat(mi_lvarchar *pre, mi_lvarchar *post) {
+mi_lvarchar *conc(mi_lvarchar *pre, mi_lvarchar *post) {
 	int		n, m;
 	char		*p;
 	mi_lvarchar	*lv;
@@ -291,6 +291,20 @@ mi_lvarchar *concat(mi_lvarchar *pre, mi_lvarchar *post) {
 	/* Finish up */
 	mi_set_varlen(lv, n + m);
 	return lv;
+}
+
+
+/*	get_id		Generates a new unique ID by concatenateing
+	the argument to an interger, Called with string, returns string
+	NOTE: FAKED for now, will not guarentee uniqueness untill rewriten
+*/
+mi_lvarchar *get_id(mi_lvarchar *name) {
+	static int	id;
+	char		buf[25];
+
+	sprintf(buf, "%d", id++);
+
+	return conc(name, mi_string_to_lvarchar(buf));
 }
 
 
