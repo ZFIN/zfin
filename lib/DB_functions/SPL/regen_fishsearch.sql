@@ -337,7 +337,9 @@ create dba function "informix".regen_fishsearch()
    (select marker_id from mapped_marker) 
    and (chrom_num like '0' or chrom_num is null) 
    and fish_id not like 'ZDB-FISH-990427-3' and
-    fish_id not like 'ZDB-FISH-040824-6';
+    fish_id not like 'ZDB-FISH-040824-6'
+   and fish_id not like 'ZDB-FISH-050209-10'
+   and fish_id not like 'ZDB-FISH-050209-16';
 
 --Then update fish search doing a join with mapped marker on locus
    
