@@ -816,7 +816,7 @@ Datablade documentation.
 <?MIVAR NAME=chimeric_clone_list>$(SEPARATE,$chimeric_clone_list,"','")<?/MIVAR>  
 
 <!-------  only for cloned genes or ests. ---------->
-<?MIBLOCK COND="$(OR,$(XST,$type_of_genedom),$(EC,$marker_type,EST))">
+<?MIBLOCK COND="$(OR,$(XST,$type_of_genedom),$(EC,$marker_type,EST),$(EC,$marker_type,CDNA))">
 
   <?MICOMMENT>******* GENE or EST **********<?/MICOMMENT>
   <?MIVAR NAME=$XPAT_ZDB_ID><?/MIVAR>
