@@ -22,7 +22,7 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/server_apps
 
 SUBDIRS = cron data_transfer mapimage sysexecs WebSiteTools \
-	DB_maintenance
+	DB_maintenance Reports
 
 MIRROR_SUBDIRS = WebSiteTools
 
