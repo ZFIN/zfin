@@ -6,11 +6,11 @@ create temp table probes_dup_check_tmp (
    prbdupchk_gb5p 			varchar (50),
    prbdupchk_gb3p 			varchar (50),
    prbdupchk_library 		varchar(80),
+   prbdupchk_digest 		varchar(20),
    prbdupchk_vector 		varchar(80),
    prbdupchk_pcr_amp 		lvarchar,
    prbdupchk_insert_kb 		float,
    prbdupchk_cloning_site 	varchar(20),
-   prbdupchk_digest 		varchar(20),
    prbdupchk_polymerase 	varchar(80),
    prbdupchk_comments 		lvarchar,              
    prbdupchk_modified 		varchar(20)          
