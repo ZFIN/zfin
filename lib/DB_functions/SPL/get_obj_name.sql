@@ -184,6 +184,11 @@ get_obj_name(zdbId varchar(50))
       into objName
       from stage
       where stg_zdb_id = zdbId;
+  elif (objType = "URLREF") then
+    select urlref_display_text
+      into objName
+      from url_ref
+      where urlref_zdb_id = zdbId ;
   elif (objType = "XPAT") then
     select xpat_zdb_id		-- don't have names, use ZDB ID
       into objName
