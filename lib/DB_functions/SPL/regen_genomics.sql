@@ -658,22 +658,17 @@ create dba function "informix".regen_genomics() returning integer
 	    and mrkr_type <> 'GENE';
 
       grant select on mapped_anons to public;
-	
- 
- 
-     -- delete from lock_func where func_name = "genomics";	
-
-
-      update zdb_flag set zflag_is_on = "f"
-	where zflag_name = "regen_genomics";
-	  
-      update zdb_flag set zflag_last_modified = CURRENT
-	where zflag_name = "regen_genomics";
 
       --trace off;
     end -- Local exception handler
 
     commit work;
+
+    update zdb_flag set zflag_is_on = "f"
+	where zflag_name = "regen_genomics";
+	  
+    update zdb_flag set zflag_last_modified = CURRENT
+	where zflag_name = "regen_genomics";
 
   end -- Global exception handler
 
