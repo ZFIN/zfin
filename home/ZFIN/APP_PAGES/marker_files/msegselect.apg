@@ -1,3 +1,9 @@
+<?MICOMMENT>
+FILE:   msegselect.apg
+PREFIX: msegsel_
+
+<?/MICOMMENT>
+
 <?MIERROR>
   <?MIVAR COND=$(XST,$MI_SQL)>
     SQL: $MI_SQL<br><br>
@@ -7,10 +13,8 @@
   State:   $MI_ERRORSTATE <br>
   Message: $MI_ERRORMSG <br>
 <?/MIERROR>	
-<!--
- 
--->
 
+ 
 <?MIBLOCK COND="$(NXST,$accession)">
  <HTML>
  <HEAD>
@@ -157,7 +161,37 @@
      <?MIVAR NAME=mchGeneIdLast><?/MIVAR>
      <?MICOMMENT>*** 08/26 name search will not search for accession number<?/MICOMMENT>
 
-    <!-- when the containing gene matches the entered name, sig is 1--> 
+     <?MISQL SQL="
+	select allmapnm_zdb_id, allmapnm_name, allmapnm_significance, allmapnm_precedence
+          from all_map_names
+	 where allmapnm_name_lower like '$wild_card$(LOWER,$input_name)%'
+	   and allmapnm_zdb_id like 'ZDB-$marker_type%'
+           and allmapnm_precedence <> 'Accession number'
+        order by allmapnm_zdb_id,allmapnm_significance, allmapnm_name; ">
+	<?MIVAR NAME=mrkrMchId>$1<?/MIVAR>
+	<?MISQL COND="$(NC,$mrkrMchId,$mrkrMchIdLast)" SQL="
+	  insert into $msegselect_temp_match 
+	      ( msegmatch_zdb_id, msegmatch_name,
+	        msegmatch_significance, msegmatch_precedence )
+	    values
+	      ( '$1', '$(URLENCODE,$2)', '$3', '$4');">
+ 	  $(SETVAR,$mrkrMchIdLast,$mrkrMchId)          	
+        <?/MISQL>
+     <?/MISQL>
+
+     <?MICOMMENT>
+      when containing gene matches the entered name, use "Marker relations"
+      significance.
+     <?/MICOMMENT>
+     <?MIVAR NAME=$msegsel_mrelPrecedence>Marker relations<?/MIVAR>
+     <?MISQL SQL="
+       select nmprec_significance
+         from name_precedence
+         where nmprec_precedence = '$msegsel_mrelPrecedence'">
+       <?MIVAR NAME=$msegsel_mrelSignificance>$1<?/MIVAR>
+     <?/MISQL>
+     <?MIVAR NAME=mrkrMchIdLast><?/MIVAR>
+     <?MIVAR NAME=mchGeneIdLast><?/MIVAR>
      <?MIVAR NAME=$contained_genes><?/MIVAR>	  
      <?MISQL SQL="
 	select mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id, allmapnm_name, 
@@ -168,6 +202,10 @@
            and allmapnm_name_lower like '$wild_card$(LOWER,$input_name)%'
            and mrel_mrkr_1_zdb_id like 'ZDB-$marker_type%'
 	   and allmapnm_precedence <> 'Accession number'
+           and not exists
+		( select 'x' 
+		    from $msegselect_temp_match
+                    where msegmatch_zdb_id = mrel_mrkr_1_zdb_id )
 	 order by mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id, allmapnm_significance; ">
 
         <?MIVAR NAME=mrkrMchId>$1<?/MIVAR>
@@ -181,7 +219,8 @@
 		      msegmatch_significance, msegmatch_precedence )
 		  values
 		    ( '$mrkrMchIdLast', 
-		      '$(URLENCODE,$contained_genes)', '1', 'Marker relations');">
+		      '$(URLENCODE,$contained_genes)', 
+                      $msegsel_mrelSignificance, '$msegsel_mrelPrecedence');">
              <?/MISQL> 	
 	     <?MIVAR>
 	       $(SETVAR,$contained_genes,$mchName)
@@ -196,36 +235,15 @@
         <?/MIBLOCK>
 
      <?/MISQL>
-     <?MISQL SQL="
+     <?MISQL COND="$(NE,$mrkrMchIdLast,)" SQL="
         insert into $msegselect_temp_match 
 	    ( msegmatch_zdb_id, msegmatch_name,
 	      msegmatch_significance, msegmatch_precedence )
 	   values
 	    ( '$mrkrMchIdLast', 
-	      '$(URLENCODE,$contained_genes)', '1', 'Marker relations'); ">
+	      '$(URLENCODE,$contained_genes)', 
+              $msegsel_mrelSignificance, '$msegsel_mrelPrecedence'); ">
      <?/MISQL> 
-
-
-     <?MISQL SQL="
-	select allmapnm_zdb_id, allmapnm_name, allmapnm_significance, allmapnm_precedence
-          from all_map_names
-	 where allmapnm_name_lower like '$wild_card$(LOWER,$input_name)%'
-	   and allmapnm_zdb_id like 'ZDB-$marker_type%'
-           and allmapnm_precedence <> 'Accession number'
-	   and allmapnm_zdb_id not in 
-		(select msegmatch_zdb_id 
-		   from $msegselect_temp_match)
-        order by allmapnm_zdb_id,allmapnm_significance, allmapnm_name; ">
-	<?MIVAR NAME=mrkrMchId>$1<?/MIVAR>
-	<?MISQL COND="$(NC,$mrkrMchId,$mrkrMchIdLast)" SQL="
-	  insert into $msegselect_temp_match 
-	      ( msegmatch_zdb_id, msegmatch_name,
-	        msegmatch_significance, msegmatch_precedence )
-	    values
-	      ( '$1', '$(URLENCODE,$2)', '$3', '$4');">
- 	  $(SETVAR,$mrkrMchIdLast,$mrkrMchId)          	
-        <?/MISQL>
-     <?/MISQL>
 
     <?MIVAR NAME=$msegsel_optional_match_table>, $msegselect_temp_match<?/MIVAR>
     <?MIVAR>
@@ -548,7 +566,6 @@
 	  <?MIVAR NAME=$clone_sequence_type>$5<?/MIVAR>
 	  <?MIVAR NAME=$vector_type_name>$6<?/MIVAR>
           <?MIVAR NAME=$match_name>$(URLDECODE,$7)<?/MIVAR>
-	  <?MIVAR NAME=$match_sig>$8<?/MIVAR>
 	  <?MIVAR NAME=$match_text>$9<?/MIVAR>
 	  <?MIVAR NAME=$mtype_display>$10<?/MIVAR>
 
