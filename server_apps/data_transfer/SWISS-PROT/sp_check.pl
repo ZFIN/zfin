@@ -2,7 +2,7 @@
 
 # sp_check.pl
 #
-# This script reads Swiss-Prot file(which consists of protain records),
+# This script reads Swiss-Prot file(which consists of protein records),
 # checks each record with corresponding gene record in ZFIN database 
 # and accordingly divides the records into several catagories. It checks 
 # the Database cross-references(DR) about whether ZFIN accession number is
@@ -42,7 +42,7 @@ my $dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password)
 while (<>) {
  
  
-  $record = "recd$$.txt"; # Store the whole record, might go problemfile
+  $record = "recd$$.txt"; # Store the whole record, might go to problemfile
   open REC, ">$record" or die "Cannot create the record file: $!";
   do{
     print REC;
@@ -57,7 +57,7 @@ while (<>) {
   $parsefile = "parse$$.txt";
   open PARSE, ">$parsefile" or die "Cannot create the parse file: $!";
   
-  ## Tempfile stores AC, GN, DR, CC, KW, ID, DE might go to Ok file.
+  ## Tempfile stores ID, AC, DE, GN, DR, CC, KW might go to Ok file.
   $tempfile = "temp$$.txt"; 
   open TMP, ">$tempfile" or die "Cannot create the temporary file: $!";
   open REC, "$record" or die "Cannot open the record file:$!";
@@ -66,9 +66,13 @@ while (<>) {
     if(/^AC/ || /^GN/ || /^CC/|| /^KW/|| /^ID/|| /^DE/ ) {  
       print TMP;
     }
-  
+    
+    if (/^ID\s+(\w+)/) {
+      $sp_id = $1; 
+      next;    
+    }
     if (/^AC/) {
-      print PARSE;
+      print PARSE; 
       next;    
     }
   
@@ -80,15 +84,43 @@ while (<>) {
       next;
     }
     
-    if (/^DR\s+EMBL;\s+(\w+).*/) {   # check for EMBL acc number, parse it  
+    if (/^DR\s+EMBL;\s+(\w+);\s+(\w+)\./) {   # check for EMBL acc number, parse it  
       print PARSE;            # make up the chomped '\n'
       $dr = $_; chomp ($dr);
       $embl_exist = 1;
-      $embl_ac = $1; 
-      @embl_match = Embl_Match (); # the matches in ZFIN for each EMBL No.
-      if (@embl_match){
-	print PARSE "\t@embl_match\n\n";
-      }    
+      $embl_nt = $1; 
+      $embl_gp = $2;
+
+#     print $sp_id . "\t";           
+#     print $embl_ac . " ";
+#      @embl_match = Embl_Match (); # the matches in ZFIN for each EMBL No.
+#      if (@embl_match){
+#	print PARSE "\t@embl_match\n\n";
+#      #}else{# second chance, to match on Genbank
+#         $embl_ac = $embl_nt;
+#         print "*** ".$embl_ac . "\n";
+#         @embl_match = Embl_Match (); 
+#         if (! @embl_match){print "not in zfin\n";}
+#      }  
+
+
+     print $sp_id . "\t";   
+     $embl_ac = $embl_gp;          # first try the polypeptide accession
+     print $embl_ac;
+     @embl_match = Embl_Match ();
+     $num_match = @embl_match;    # record number of genes directly or indirectly associated
+     print "\t$num_match\t";
+     if ($num_match != 1){        # if there is not a unique gene in ZFIN associated w/ the protein   
+        $embl_ac = $embl_nt;      # fallback and try with the nucelotide accession
+        print $embl_ac ;               
+        @embl_match = Embl_Match ();
+        $num_match = @embl_match; 
+        print "\t$num_match\n";
+     }else{print "\n";}   
+
+
+  
+          
       @EMBL = (@EMBL, @embl_match);  # collect all the matches for each record
       $num_match = @embl_match;      # number of matches for each EMBL No. 
       if (!$num_match) {  
@@ -174,10 +206,10 @@ while (<>) {
   }
 }
 system ("cat appokfile >> okfile");
-print "Final report: \n";
+print "\nFinal report: \n";
 print "\t problem records(#) : $num_prob \n";
 print "\t ok records(#)  : $num_ok \n";
-printf ("\t ok percentage   : %.3f\n", 1 - $num_prob/($num_prob+$num_ok));
+printf ("\t ok percentage   : %.1f\%\n", 100 - $num_prob/($num_prob+$num_ok) * 100.0);
 system ("cp prob1 <!--|ROOT_PATH|-->/home/data_transfer/SWISS-PROT/");
 system ("cp prob2 <!--|ROOT_PATH|-->/home/data_transfer/SWISS-PROT/");
 system ("cp prob3 <!--|ROOT_PATH|-->/home/data_transfer/SWISS-PROT/");
@@ -209,7 +241,7 @@ sub Embl_Match () {
   my ($sth, $zdbid);
   @embl_match = () ;
   $sth = $dbh->prepare("
-                  select dblink_linked_recid 
+                  select distinct dblink_linked_recid 
                   from db_link 
                   where dblink_acc_num = ?
                   union

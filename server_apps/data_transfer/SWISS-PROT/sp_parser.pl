@@ -71,15 +71,14 @@ while (<>) {
     next;
   }
   
+  #DE   Tyrosine-protein kinase Jak1 (EC 2.7.1.112) (Janus kinase 1) (Jak-1).q
   if (/^DE\s+(.*)/) {   
     push (@de, $de);    #put each item of the comments into array     
     $de = $de.' '.$1;
-    @ec=split(/EC/,$de);
-    @ecnum=split(' ',$ec[1]);
-    $ecnumber= $ecnum[0];
-    $ecnumber=~s/\).//;
-    $ecnumber=~s/\)//;
-    chomp $ecnumber;
+	if (/.* \(EC ([\d\.\-]*)\)/){ # see http://www.chem.qmul.ac.uk/iubmb/enzyme/ 
+		$ecnumber=$1;        
+		$ecnumber=~s/[\.\-]*$//; # chop trailing dot dash(s) because zfin does not allow -
+	}
     next;
   }
   
@@ -88,7 +87,7 @@ while (<>) {
   #CC       IONS.
   if (/^CC\s+-!-\s(.*)/) {
     push (@cc, $cc);    #put each item of the comments into array     
-    $cc = $1.' ';            #concatenate and form one item
+    $cc = $1.' ';       #concatenate and form one item
     next;
   }
   if (/^CC\s+(.*)/) {   
