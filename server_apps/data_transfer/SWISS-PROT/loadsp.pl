@@ -331,6 +331,9 @@ if (<F>) {
 }
 close F;
 
+#create new go_association file
+system ("../GO/go.pl"); 
+
 &sendRunningResult();
 
 exit;
