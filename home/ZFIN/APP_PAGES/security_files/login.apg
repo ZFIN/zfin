@@ -40,7 +40,10 @@ function submit_login(src){
       document.login_form.submit();
   }
 }
+
+//function login_form.submit(){return false;}
 </SCRIPT>
+    
     
 	<!-- table class login req's zfin_style.css -->
 <FORM name=login_form method=post  action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
