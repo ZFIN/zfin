@@ -102,6 +102,11 @@ create procedure regen_names_marker_list()
   -- regen_names_fish_list() and regen_names_locus_list().  
   -- IF YOU MODIFY THIS CODE, ALSO MODIFY THE OTHER TWO ROUTINES.
 
+  -- Unlike in the other routines, we have to take care here to avoid 
+  -- duplicate rows.  This is because markers use the same significance
+  -- for the different types of locus names, and the other routines
+  -- break them into different significances.
+
   let namePrecedence = "Locus";
   select nmprec_significance 
     into nameSignificance
@@ -122,13 +127,15 @@ create procedure regen_names_marker_list()
     select locus_name, cloned_gene, nameSignificance, namePrecedence, 
            lower(locus_name)
       from locus, regen_zdb_id_temp
-      where cloned_gene = rgnz_zdb_id;
+      where cloned_gene = rgnz_zdb_id
+        and abbrev is not null
+        and locus_name <> abbrev;
 
   insert into regen_all_names_temp
       ( rgnallnm_name, rgnallnm_zdb_id, rgnallnm_significance,
 	rgnallnm_precedence, rgnallnm_name_lower )
     select dalias_alias, cloned_gene, nameSignificance, namePrecedence,
-	   lower(dalias_alias)
+	   dalias_alias_lower
       from data_alias, regen_zdb_id_temp, locus
       where dalias_data_zdb_id = zdb_id
         and cloned_gene = rgnz_zdb_id;
