@@ -252,7 +252,7 @@ document.write("<table width=100% cellspacing=0 border=0 cellpadding=0 class=\"h
           document.write("</td>");
           document.write("<td align=center>");
 	   document.write("<DIV class=\"header\">");
-            document.write("<A HREF=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-geneselect.apg\">Genes</a>");
+            document.write("<A HREF=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-newmrkrselect.apg\">Genes / Markers / Clones</a>");
 	   document.write("</DIV>");
           document.write("</td>");
           document.write("<td align=center>");
@@ -260,18 +260,7 @@ document.write("<table width=100% cellspacing=0 border=0 cellpadding=0 class=\"h
             document.write("<A HREF=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg\">Expression</a>");
 	   document.write("</DIV>");
           document.write("</td>");
-
-          document.write("<!-- <td  align=center>");
-	   document.write("<DIV class=\"header\">");
-            document.write("<A HREF=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-msegselect.apg\">Segments</a>");
-	   document.write("</DIV>");
-          document.write("</td> -->");
-
-          document.write("<td  align=center>");
-	   document.write("<DIV class=\"header\">");
-            document.write("<A HREF=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg\">Markers</a>");
-	   document.write("</DIV>");
-          document.write("</td>");
+        
           document.write("<td  align=center>");
 	   document.write("<DIV class=\"header\">");
             document.write("<A HREF=\"/<!--|CGI_BIN_DIR_NAME|-->/mapper_select.cgi\">Maps</a>");
