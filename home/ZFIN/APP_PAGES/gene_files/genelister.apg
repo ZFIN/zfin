@@ -25,8 +25,8 @@
 
 <?MIVAR NAME=$private>NULL<?/MIVAR>
 <?MIVAR NAME=$navtile>NULL<?/MIVAR>
-<?MIVAR NAME=$MI_NULL><?/MIVAR
-
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
+<?MIVAR name=$TileInput>&navtile=true<?/MIVAR>
 
 <!-- THIS NEXT PART IS EXECUTED AFTER THE PERSON ENTERS SOME CRITERIA -->
 
@@ -487,14 +487,13 @@
 
 <?MIVAR name=selector>MIval=aa-genelister.apg&WINSIZE=$WINSIZE<?/MIVAR>
 <?MIVAR name=$UserInput><?/MIVAR>
-<?MIVAR name=$TileInput><?/MIVAR>
 <?MIVAR name=UserInput COND=$(XST,$lg)>$UserInput&lg=$lg<?/MIVAR>
 <?MIVAR name=UserInput COND=$(XST,$refcross)>$UserInput&refcross=$refcross<?/MIVAR>
 <?MIVAR name=UserInput COND=$(XST,$order_pref)>$UserInput&order_pref=$order_pref<?/MIVAR>
 <?MIVAR name=UserInput COND=$(XST,$knownloci)>$UserInput&knownloci=$knownloci<?/MIVAR>
 <?MIVAR name=UserInput COND=$(XST,$searchtype)>$UserInput&searchtype=$searchtype<?/MIVAR>
 <?MIVAR name=UserInput COND=$(XST,$ismapped)>$UserInput&ismapped=$ismapped<?/MIVAR>
-<?MIVAR name=$TileInput>$UserInput<?/MIVAR>
+<?MIVAR name=$TileInput>$TileInput$UserInput<?/MIVAR>
 <?MIVAR name=UserInput COND=$(XST,$name)>$UserInput&name=$(URLENCODE,$name)<?/MIVAR>
 
 <!--- Return to the previous set of Rows --->
@@ -600,7 +599,6 @@
 
 <?MIBLOCK COND="$(NXST,$accession)">
   <?MIVAR NAME=page_title>Find GENE<?/MIVAR>
-  <?MIVAR name=$TileInput>$TileInput&navtile=true<?/MIVAR>
   <?MIVAR name=$TileInput COND="$(XST,$BEGIN)">$TileInput&BEGIN=$BEGIN<?/MIVAR>
   <?MIVAR name=$TileInput COND="$(XST,$WINSIZE)">$TileInput&WINSIZE=$WINSIZE<?/MIVAR>
   
