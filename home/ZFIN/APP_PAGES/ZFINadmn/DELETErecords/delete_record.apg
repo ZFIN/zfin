@@ -14,6 +14,34 @@ Variables expected:
 -->
 
 <HTML>
+
+  <HEAD>
+
+    <TITLE>ZFIN Delete Record</TITLE>
+
+
+    <SCRIPT>
+
+    function set_values(oid,merge) {
+
+    document.merge.merge_oid.value=oid;
+    document.merge.merge.value=merge;
+    document.merge.submit();
+
+    }
+
+    function call_submit(oid,merge) { 
+
+    document.merge.MIval.value='aa-process_delete.apg';
+    document.merge.merge_oid.value=oid;
+    document.merge.merge.value=merge;
+    document.merge.submit();
+
+    }
+
+    </SCRIPT>
+  </HEAD>
+
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
 <?MISQL SQL="
@@ -26,49 +54,177 @@ Variables expected:
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
 
-<?MIBLOCK COND="$(AND,$(XST,$OID),$(XST,$rtype))">
+  <?MIBLOCK COND="$(AND,$(XST,$OID),$(XST,$rtype))">
 
-<?MIVAR>
-<TITLE>ZFIN WARNING: DELETING A $(UPPER,$rtype) RECORD</TITLE>
+    <!-- form posts to itself if merge record if requested -->
+    <form name=merge method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" >
+     <input type=hidden name=MIval value="aa-delete_record.apg">
+     <?MIVAR>
+       <input type=hidden name=OID value=$OID>
+       <input type=hidden name=rtype value=$rtype>
+       <input type=hidden name=merge_oid value='none'>
+       $(IF,$(XST,$ownerColumn),<input type=hidden name=ownerColumn value=$ownerColumn>)
+       $(IF,$(XST,$zdbIdColumn),<input type=hidden name=zdbIdColumn value=$zdbIdColumn>)
+     <?/MIVAR>
+
+   <?MIVAR COND="$(NXST,$merge_oid)" NAME=$merge_oid>none<?/MIVAR>
+   <?MIVAR COND="$(NXST,$merge)" NAME=$merge><?/MIVAR>
+   <?MIVAR>$(IF,$(NC,$merge_oid,none),<input type=hidden name=merge value=''>)<?/MIVAR>
+
+  <?MIVAR>
+    <h1 align=center><font color="#ff0000">CAUTION</font></h1>
+    You are about to <b>DELETE</b> 
+
+    <ul>
+    <b>$(UPPER,$rtype)</b> record with ZFIN id: <b>$OID</b>
+    </ul>
+  <?/MIVAR>
+  <p>
+
+ Click "Cancel" if you are unsure that this is what you want to do. <p>
+ To merge this record, select a record for merging then click on "Delete or Merge".<p>
+ Click "Delete or Merge" to delete this record.<p>
+
+  <?MIBLOCK COND="$(NC,$merge_oid,none)">
+    And <B>MERGE</B> with<br>
+    <?MIVAR>
+      <ul>
+        <b>$(UPPER,$mtype)</b> record $(URLDECODE,$merge): <b>$merge_oid</b> 
+      </ul>
+    <?/MIVAR>
+    <p>
+  <?/MIBLOCK> 
+ 
+ 
+
+  <?MIBLOCK COND="$(EC,$merge_oid,none)">
+    <?MIBLOCK COND="$(OR,$(EC,$rtype,anon_marker),$(EC,$rtype,gene),$(EC,$rtype,fish_image),$(EC,$rtype,fish),$(EC,$rtype,locus))">
+    <?MIVAR COND="$(NXST,$mtype)" NAME=$mtype>GENE<?/MIVAR>
+    <?MIVAR COND="$(NXST,$nsearch)" NAME=$nsearch><?/MIVAR>
+       <b>Merge this record with:</b>
+       <?MIVAR>
+	 <TABLE width="100%">
+	   <TR>
+	      <select name=mtype>
+		<option $(IF,$(EC,$mtype,MUTANT),SELECTED)>MUTANT
+		<option $(IF,$(EC,$mtype,LOCUS),SELECTED)>LOCUS
+		<option $(IF,$(EC,$mtype,GENE),SELECTED)>GENE
+		<option $(IF,$(EC,$mtype,EST),SELECTED)>EST
+		<option $(IF,$(EC,$mtype,RAPD),SELECTED)>RAPD
+		<option $(IF,$(EC,$mtype,SSLP),SELECTED)>SSLP
+		<option $(IF,$(EC,$mtype,SSR),SELECTED)>SSR
+		<option $(IF,$(EC,$mtype,STS),SELECTED)>STS
+		<option $(IF,$(EC,$mtype,BAC),SELECTED)>BAC
+	      </select>  and its abbrev contains:
+	      <input type=text name=merge value="$nsearch" size=8>  
+	      <input type=submit name=do_search value="Search">
+	    </TR>
+	  </TABLE>
+	<?/MIVAR>
+
+	<!-- search for a marker -->
+	<?MIBLOCK COND="$(AND,$(NC,$mtype,mutant),$(NC,$mtype,locus),$(XST,$do_search))">
+	  <hr>
+	  <TABLE cols=2>
+	  <TR><TH></TH><TH>Marker Name</TH><TH>Marker Type</TH></TR>
+	    <?MISQL SQL="select distinct zdb_id,mname,mtype,abbrev 
+	       from all_markers a, all_map_names b
+		 where a.mtype='$mtype' 
+		   and a.zdb_id = b.allmapnm_zdb_id 
+		   and b.allmapnm_name like '%$(LOWER,$merge)%' 
+		   order by a.abbrev;">
+	  <TR>
+	    <TD>
+              <?MIVAR>
+	        <input type=button value="Select" onClick= set_values('$1','$(URLENCODE,$2)') ;">
+              <?/MIVAR>
+	    </TD>
+	    <TD>
+	      $2($4)
+	    </TD>
+	    <TD>
+	      $3
+	    </TD>
+	   </TR>
+	    <?/MISQL>
+	   </TABLE>
+	   <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No matches.<?/MIVAR>
+	   <?/MIBLOCK>
 
 
-<h1 align=center><blink><font color="#ff0000">WARNING!!!</font></blink></h1>
-<big>You are about to <b><font color="#ff0000">PERMANENTLY</font></b> delete:<br>
+	   <?MIBLOCK COND="$(AND,$(EC,$mtype,mutant),$(XST,$do_search))">
+	     <hr>
+	     <TABLE cols=2>
+	     <TR><TD></TD><TD><b>Allele</b></TD><TD>Locus</TD></TR>
+	     <?MISQL SQL="select distinct a.zdb_id,a.allele,b.abbrev 
+	       from fish a, locus b
+		 where  a.locus = b.zdb_id 
+		   and a.allele like '%$(LOWER,$merge)%' 
+		   order by a.allele;">
+	       <TR>
+		 <TD>
+		   <input type=button name=merge_selected value="Select" onClick= set_values('$1','$(URLENCODE,$2)') ;">
+		 </TD>
+		 <TD>
+		   $2 
+		 </TD>
+		 <TD>
+		   $3
+		 </TD>
+	       </TR>
+	     <?/MISQL>
+	     </TABLE>
+	   <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No mutant matches.<?/MIVAR> 
+	   <p>
+      <?/MIBLOCK>
 
-<ul>
-$(UPPER,$rtype) record with ZFIN id: <b>$OID</b>
-</ul>
+	   <?MIBLOCK COND="$(AND,$(EC,$mtype,locus),$(XST,$do_search))">
+	     <hr>
+	     <TABLE cols=2>
+	     <TR><TD> </TD><TD><b>Locus</b></TD></TR>
+	     <?MISQL SQL="select distinct zdb_id,abbrev 
+	       from  locus 
+		 where  abbrev like '%$(LOWER,$merge)%' 
+		   order by abbrev;">
+	       <TR>
+		 <TD>
+		   <input type=button name=merge_selected value="Select" onClick= set_values('$1','$(URLENCODE,$2)') ;">	 
+                 </TD>
+		 <TD>
+		   $2 
+		 </TD>
+	       </TR>
+	     <?/MISQL>
+	     </TABLE>
+	   <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No locus matches.<?/MIVAR> 
+	   <p>
+      <?/MIBLOCK>
 
-<p>
-If you have <b>ANY</b> doubt that this is the correct thing to do, click "Cancel" below to go back to viewing the record. <p>
-Otherwise, click "Delete it" to delete the record and return to the 
-ZFIN home page.
+    <?MIELSE>
+       Click "Delete or Merge" to delete or merge this record and return to the ZFIN home page.
+    <?/MIBLOCK>
+  <?/MIBLOCK>  
 
-<form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
-<input type=hidden name=MIval value=aa-process_delete.apg>
-<input type=hidden name=OID value=$OID>
-<input type=hidden name=rtype value=$rtype>
-
-$(IF,$(XST,$ownerColumn),<input type=hidden name=ownerColumn value=$ownerColumn>)
-$(IF,$(XST,$zdbIdColumn),<input type=hidden name=zdbIdColumn value=$zdbIdColumn>)
+  <!-- present option to cancel or delete -->
 
 
-<TABLE width=100%>
-<TR align=center>
-<TD><input type=button value="CANCEL" onClick="window.history.go(-1)"></TD>
-<TD><INPUT type=submit value="Delete it"></TD>
-</TR></TABLE>
+    <TABLE width=100%>
+    <TR align=center>
+    <TD><input type=button value="CANCEL" onClick="window.history.go(-1)"></TD>
+    <?MIVAR>
+      <TD><INPUT type=button value="Delete or Merge" onClick="document.merge.MIval.value='aa-process_delete.apg';set_values('$merge_oid','$(URLENCODE,$merge)');"></TD>
+    <?/MIVAR>
+    </TR></TABLE>
 
-<?/MIVAR>
-</form>
+  </form>
 
 
 
-<?/MIBLOCK>  <!-- ends if oid and rtype exist -->
+  <?/MIBLOCK>  <!-- ends if oid and rtype exist -->
 
-<?MIBLOCK COND="$(OR,$(NXST,$rtype),$(NXST,$OID))">
-<h1 align=center>ERROR: Insufficient input</h1>
-<?/MIBLOCK> <!-- ends if rtype/oid dont exist -->
+  <?MIBLOCK COND="$(OR,$(NXST,$rtype),$(NXST,$OID))">
+    <h1 align=center>ERROR: Insufficient input</h1>
+  <?/MIBLOCK> <!-- ends if rtype/oid dont exist -->
 
 
 <?/MIBLOCK>  <!-- ends cond authorization -->

@@ -38,11 +38,109 @@ VARIABLES EXPECTED:
       -- delete the record from the record type's base table.
       -->
 
-    <?MIBLOCK COND="$(OR,$(EC,$rtype,anon_marker),$(EC,$rtype,gene),$(EC,$rtype,fish_image),$(EC,$rtype,fish))">
-      <?MISQL SQL="
-	delete from zdb_active_data
-	  where zactvd_zdb_id = '$OID';">
-      <?/MISQL>
+    <?MIBLOCK COND="$(OR,$(EC,$rtype,anon_marker),$(EC,$rtype,gene),$(EC,$rtype,fish_image),$(EC,$rtype,fish),$(EC,$rtype,locus))">
+
+      <?MIBLOCK COND="$(NC,$merge_oid,none)">
+
+
+	<?MIBLOCK COND="$(OR,$(EC,$rtype,anon_marker),$(EC,$rtype,gene),$(EC,$rtype,fish))">
+ 
+          <?MIBLOCK COND="$(EC,$rtype,fish)">
+	    <?MISQL SQL="
+	       select allele from fish where zdb_id = '$OID';">
+	    <?/MISQL>  
+            <?MIVAR NAME=$old_name>$1<?/MIVAR>          
+          <?MIELSE>
+	    <?MISQL SQL="
+	       select mname from all_markers where zdb_id = '$OID';">
+	    <?/MISQL>
+            <?MIVAR NAME=$old_name>$1<?/MIVAR>
+          <?/MIBLOCK>
+
+	  <!-- update any existence of zdb_replaced_id id that is being replaced --> 
+	  <?MISQL SQL="
+            update zdb_replaced_data set zrepld_new_zdb_id = '$merge_oid',  zrepld_old_name = '$old_name' where zrepld_new_zdb_id = '$OID';">
+          <?/MISQL>
+	  <!-- update any existence of mapping data for id that is being replaced --> 
+	  <?MISQL SQL="
+            update mapped_marker set marker_id = '$merge_oid' where marker_id = '$OID';">
+          <?/MISQL>
+	  <!-- update primer set for id that is being replaced --> 
+	  <?MISQL SQL="
+            update primer_set set marker_id = '$merge_oid' where marker_id = '$OID';">
+          <?/MISQL>
+	  <!-- update independent linkage for id that is being replaced --> 
+	  <!-- The "set explain off" is required to avoid a bug with the -->
+	  <!-- "set constraints" statement below.  The "set explain" statement was  -->
+	  <!-- picked because it was the most innoccuous statement I could think of. -->
+	  <?MISQL SQL="
+	    set explain off;
+	    set constraints lpmem_linkage_member_foreign_key deferred;">
+	  <?/MISQL>
+	  <?MISQL SQL="
+            update linkage_member set lnkgmem_member_zdb_id = '$merge_oid' where lnkgmem_member_zdb_id = '$OID';">
+          <?/MISQL>
+	  <?MISQL SQL="
+            update linkage_pair_member set lpmem_member_zdb_id = '$merge_oid' where lpmem_member_zdb_id = '$OID';">
+          <?/MISQL>
+
+	  <?MISQL SQL="
+            update fish_image set fimg_fish_zdb_id = '$merge_oid' where fimg_fish_zdb_id = '$OID';">
+          <?/MISQL>
+
+          <?MISQL SQL="
+	    delete from zdb_active_data
+	      where zactvd_zdb_id = '$OID';">
+	  <?/MISQL>
+	  <?MISQL SQL="
+	    insert into zdb_replaced_data values('$OID','$merge_oid','$old_name');">
+	  <?/MISQL>
+       <?/MIBLOCK>
+
+      <?MIBLOCK COND="$(EC,$rtype,locus)">
+	  <?MISQL SQL="
+            select locus_name from locus where zdb_id= '$OID';">
+	  <?/MISQL>
+         <?MIVAR NAME=$old_name>$1<?/MIVAR>
+         <?/MISQL>
+	  <!-- update any existence of mapping data for id that is being replaced --> 
+	  <?MISQL SQL="
+            update mapped_marker set marker_id = '$merge_oid' where marker_id = '$OID';">
+          <?/MISQL>
+	  <!-- update fish (allele) record for id that is being replaced --> 
+	  <?MISQL SQL="
+            update fish set locus = '$merge_oid' where locus = '$OID';">
+          <?/MISQL>
+	  <!-- update alteration record for id that is being replaced --> 
+	  <?MISQL SQL="
+            update alteration set locus = '$merge_oid' where locus = '$OID';">
+          <?/MISQL>
+	  <!-- update locus name for any occurrences in locus registration -->
+	  <?MISQL SQL="
+            update locus_registration set zdb_id = '$merge_oid', locus_name = '$old_name' where zdb_id = '$OID';">
+          <?/MISQL
+	  <!-- update any occurrences in zdb replaced data -->
+          <?MISQL SQL="
+            update zdb_replaced_data set zrepld_new_zdb_id = '$merge_oid',  zrepld_old_name = '$old_name' where zrepld_new_zdb_id = '$OID';">
+          <?/MISQL>
+	  <?MISQL SQL="
+	    delete from zdb_active_data
+	      where zactvd_zdb_id = '$OID';">
+	  <?/MISQL>
+	  <?MISQL SQL="
+	    insert into zdb_replaced_data values('$OID','$merge_oid','$old_name');">
+	  <?/MISQL>
+      <?/MIBLOCK>
+
+    <?MIELSE>
+          <!-- if not merging only deleting merge_oid is none>
+	  <?MISQL SQL="
+	    delete from zdb_active_data
+	      where zactvd_zdb_id = '$OID';">
+	  <?/MISQL>
+      <?/MIBLOCK>
+
+
     <?MIELSE COND="$(OR,$(EC,$rtype,company),$(EC,$rtype,person),$(EC,$rtype,lab),$(EC,$rtype,publication))">
       <?MISQL SQL="
 	delete from zdb_active_source
