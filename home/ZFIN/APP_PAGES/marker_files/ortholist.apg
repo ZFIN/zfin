@@ -68,19 +68,10 @@
 
 	<?MIVAR NAME=OID>$1<?/MIVAR>
 
-	<?MIVAR COND="$(>,$(POSITION,$OID,GENE),0)" NAME=sql>
-     		select gene_name, 'GENE', abbrev, comments 
-     		from gene 
-     		where zdb_id='$OID';
-  	<?/MIVAR>
-
-  	<?MIVAR COND="$(=,$(POSITION,$OID,GENE),0)" NAME=sql>
-    		select marker_name, marker_type, abbrev, comments 
-    		from anon_marker 
-    		where zdb_id='$OID';
-  	<?/MIVAR>
-
-	<?MISQL SQL=" $sql ">
+	<?MISQL SQL="
+          select mrkr_name, mrkr_type, mrkr_abbrev, mrkr_comments
+            from marker
+            where mrkr_zdb_id = '$OID';">
   		<?MIVAR NAME=$name>$1<?/MIVAR>
   		<?MIVAR NAME=$marker_type>$2<?/MIVAR>
   		<?MIVAR NAME=$abbrev>$3<?/MIVAR>

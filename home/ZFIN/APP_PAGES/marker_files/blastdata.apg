@@ -10,20 +10,11 @@ ERROR -- something bad happened -- no OID passed in!
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1
 <?/MISQL>
 
-<?MIVAR NAME=$target_table>anon_marker<?/MIVAR>
-<?MIVAR NAME=$target_table COND="$(>,$(POSITION,$OID,GENE),0)">gene<?/MIVAR>
-
-  <?MISQL COND="$(>,$(POSITION,$OID,GENE),0)" SQL="
-     select gene_name, 'GENE', abbrev, comments 
-     from gene 
-     where zdb_id='$OID';">
-  <?/MISQL>
-
-  <?MISQL COND="$(=,$(POSITION,$OID,GENE),0)" SQL="
-    select marker_name, marker_type, abbrev, comments 
-    from anon_marker 
-    where zdb_id='$OID';">
-  <?/MISQL>
+<?MISQL SQL="
+  select mrkr_name, mrkr_type, mrkr_abbrev, mrkr_comments 
+    from marker 
+    where mrkr_zdb_id = '$OID';">
+<?/MISQL>
 
   <?MIVAR NAME=$name>$1<?/MIVAR>
   <?MIVAR NAME=$marker_type>$2<?/MIVAR>

@@ -25,9 +25,9 @@
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
 
-<!-- 
+<?MICOMMENT>
   -- new_marker.apg.   A very simple data entry page (because it does not 
-  -- need to support digressions) to allow entry of new GENE and ANON_MARKER 
+  -- need to support digressions) to allow entry of new MARKER 
   -- records.
 
   -- VARS:
@@ -36,7 +36,7 @@
   -- s_new       -- if it exists, create new record and print a confirmation.
   -- Others      -- if s_new exists, then name, abbrev, comments should
   --                also exist.
-  -->
+<?/MICOMMENT>
 
 <basefont size=2>
 
@@ -196,15 +196,9 @@
         values ('$new_id');">
     <?/MISQL>
 
-    <?MISQL COND="$(EC,$marker_type,gene)" SQL="
-      insert into gene 
-        (zdb_id, gene_name, abbrev, comments, owner) 
-        values ('$new_id', '$mname', '$abbrev', '$comments', '$ZDB_ident');">
-    <?/MISQL>
-
-    <?MISQL COND="$(NC,$marker_type,gene)" SQL="
-      insert into anon_marker 
-        (zdb_id, marker_name, abbrev, marker_type, comments, owner) 
+    <?MISQL SQL="
+      insert into marker 
+        (mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_type, mrkr_comments, mrkr_owner) 
         values ('$new_id', '$mname', '$abbrev', '$(UPPER,$marker_type)',
                 '$comments', '$ZDB_ident');">
     <?/MISQL>

@@ -83,13 +83,13 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 </TD>
 
 <?MIBLOCK COND="$(EC,$AUTHORIZED,root)"> 
-  <?MIBLOCK COND="$(OR,$(EC,$rtype,anon_marker),$(EC,$rtype,gene),$(EC,$rtype,locus),$(EC,$rtype,fish))">
+  <?MIBLOCK COND="$(OR,$(EC,$rtype,marker),$(EC,$rtype,locus),$(EC,$rtype,fish))">
     <TD>
       <?MIVAR>
         <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-delete_record.apg&OID=$OID&rtype=$rtype"><font size=-1 color=red> Delete or Merge this record </font></A> 
       <?/MIVAR>
     </TD>
-    <?MIELSE>
+  <?MIELSE>
     <TD>
       <?MIVAR>
         <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-delete_record.apg&OID=$OID&rtype=$rtype"><font size=-1 color=red> Delete this record </font></A>

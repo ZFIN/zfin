@@ -38,8 +38,7 @@ VARIABLES EXPECTED:
       -- delete the record from the record type's base table.
       -->
 
-    <?MIBLOCK COND="$(OR,$(EC,$rtype,anon_marker),
-		         $(EC,$rtype,gene),
+    <?MIBLOCK COND="$(OR,$(EC,$rtype,marker),
 			 $(EC,$rtype,fish_image),
 			 $(EC,$rtype,fish),
 			 $(EC,$rtype,locus),
@@ -47,7 +46,7 @@ VARIABLES EXPECTED:
 
       <?MIBLOCK COND="$(NC,$merge_oid,none)">
 
-	<?MIBLOCK COND="$(OR,$(EC,$rtype,anon_marker),$(EC,$rtype,gene),$(EC,$rtype,fish))">
+	<?MIBLOCK COND="$(OR,$(EC,$rtype,marker),$(EC,$rtype,fish))">
  
           <?MIBLOCK COND="$(EC,$rtype,fish)">
 	    <?MISQL SQL="
@@ -126,7 +125,7 @@ VARIABLES EXPECTED:
                Record the mergee name as an alias. 
   <?/MICOMMENT>
         
-          <?MIBLOCK COND="$(EC,$rtype,gene)">
+          <?MIBLOCK COND="$(EC,$rtype,marker)">
             <?MIVAR NAME=mhist_id><?/MIVAR>
             <?MIVAR NAME=dalias_id><?/MIVAR>
 

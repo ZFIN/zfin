@@ -83,7 +83,7 @@ Variables expected:
  
 
   <?MIBLOCK COND="$(EC,$merge_oid,none)">
-    <?MIBLOCK COND="$(OR,$(EC,$rtype,anon_marker),$(EC,$rtype,gene),$(EC,$rtype,fish_image),$(EC,$rtype,fish),$(EC,$rtype,locus))">
+    <?MIBLOCK COND="$(OR,$(EC,$rtype,marker),$(EC,$rtype,fish_image),$(EC,$rtype,fish),$(EC,$rtype,locus))">
     <?MIVAR COND="$(NXST,$mtype)" NAME=$mtype>GENE<?/MIVAR>
     <?MIVAR COND="$(NXST,$nsearch)" NAME=$nsearch><?/MIVAR>
        <b>Merge this record into:</b>
