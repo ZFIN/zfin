@@ -1,6 +1,6 @@
 #------------------------------------------------------------------------
 #
-# Makefile for ZFIN_WWW CVS Project, Anatomical dictionary browser
+# Makefile for ZFIN_WWW CVS Project, ListSelector, pub linking applet
 # applet staging subdirectory
 #
 # $Source$
@@ -67,13 +67,14 @@ TARGETJAR = $(TARGETDIR)/$(JAR)
 
 .PHONY : all sanitycheck clean clobber
 
-all : $(TARGETDIR) $(TARGETJAR)
+all : $(TARGETDIR) $(IMPORTJAR) $(TARGETJAR) 
 
 $(TARGETDIR) :
 	$(TARGET_MKDIR) $@
 
 $(IMPORTJAR) :
-	ln -s $(IMPORTPATH)/$(IMPORTJAR) $(TARGETDIR)
+	rm -f $(TARGETDIR)/$(IMPORTJAR)
+	ln -s $(IMPORTPATH)/$(IMPORTJAR) $(TARGETDIR)/$(IMPORTJAR)
 
 # ----  Rules for creating Java classes.
 
@@ -82,7 +83,7 @@ $(TARGETJAR) : $(JAR)
 	$(TOUCH) $@
 	chmod o+r $@
 
-$(JAR) : $(CLASSES) $(IMPORTJAR)
+$(JAR) : $(CLASSES)
 	$(JAVAHOME_14)/bin/jar -cvf $(JAR) $(CLASSES)
 
 #$(TARGETS) : $(TARGETDIR)/%.class : %.class
@@ -101,11 +102,11 @@ $(CLASSES) : $(JAVAS)
 # ---------------  Maintenance Rules  -----------------------------------
 
 clean :			# remove almost everything in the directory
-	rm -f $(JAVAS) $(CLASSES) $(JAR)
+	rm -f $(JAVAS) $(CLASSES) $(JAR) 
 
 
 clobber :			# Remove targets, but not target dir.
-	rm -f $(TARGETJAR)
+	rm -f $(TARGETJAR) $(TARGETDIR)/$(IMPORTJAR)
 
 
 sanitycheck :		# nothing to do, all done by parent.
