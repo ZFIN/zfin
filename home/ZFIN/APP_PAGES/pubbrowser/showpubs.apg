@@ -34,11 +34,13 @@ ERROR -- something bad happened -- no OID passed in!
 <?MIVAR COND="$(NXST,$info)" NAME=$info><?/MIVAR>
 <?MIVAR COND="$(NXST,$pubOrder)" NAME=$pubOrder>6<?/MIVAR>
 
+<?MIVAR COND="$(NXST,$add_cit_count)" NAME=$add_cit_count>0<?/MIVAR>
 
 <?MIVAR COND="$(NXST,$return_page1)" NAME=$return_page1><?/MIVAR>
 <?MIVAR COND="$(NXST,$return_page2)" NAME=$return_page2><?/MIVAR>
 <?MIVAR COND="$(NXST,$target_table)" NAME=$target_table><?/MIVAR>
 
+<?MIVAR COND="$(NXST,$related_data_attrib_to_OID)" NAME=$related_data_attrib_to_OID><?/MIVAR>
 
 <?MIVAR>
 $(IF,$(OR,$(>,$(POSITION,$rtype,gene),0),$(>,$(POSITION,$rtype,anon_marker),0)),
@@ -70,6 +72,14 @@ $(IF,$(>,$(POSITION,$rtype,locus),0),
        $(SETVAR,$return_page2,aa-do-locusupdate.apg)
        $(SETVAR,$target_table,"")
        )
+
+$(IF,$(>,$(POSITION,$rtype,go),0),
+       $(SETVAR,$return_page1,aa-markergoview.apg)
+       $(SETVAR,$return_page2,aa-do-markergoedit.apg)
+       $(SETVAR,$target_table,"")
+       )
+
+
 <?/MIVAR>
 
 
@@ -124,6 +134,25 @@ $(IF,$(>,$(POSITION,$rtype,locus),0),
 <?/MIVAR>
 
 
+
+<?MIVAR NAME=OID_of_nongene_or_related_data_has_recattrib>
+  (  recattrib_data_zdb_id = '$OID'
+   or
+     $related_data_attrib_to_OID
+  )
+<?/MIVAR>
+
+
+<?MIVAR NAME=OID_of_gene_or_related_data_has_recattrib>
+  (  recattrib_data_zdb_id = '$OID'
+   or
+     recattrib_data_zdb_id in (select mrel_mrkr_2_zdb_id from marker_relationship where mrel_mrkr_1_zdb_id = '$OID')
+   or
+     recattrib_data_zdb_id in (select mrel_mrkr_1_zdb_id from marker_relationship where mrel_mrkr_2_zdb_id = '$OID')
+   or
+     $related_data_attrib_to_OID
+  )
+<?/MIVAR>
   <?MIVAR NAME=related_data_attrib_to_OID>
       recattrib_data_zdb_id in (select mrel_zdb_id from marker_relationship where mrel_mrkr_2_zdb_id = '$OID')
     or
@@ -134,6 +163,8 @@ $(IF,$(>,$(POSITION,$rtype,locus),0),
       recattrib_data_zdb_id in (select dblink_zdb_id from db_link where linked_recid = '$OID')
     or
       recattrib_data_zdb_id in (select oevdisp_zdb_id from orthologue_evidence_display where oevdisp_gene_zdb_id = '$OID')
+    or
+     recattrib_data_zdb_id in (select mrkrgoev_zdb_id from marker_go_term_evidence,marker_go_term  where mrkrgo_mrkr_zdb_id = '$OID' and mrkrgo_zdb_id=mrkrgoev_mrkrgo_zdb_id)
    <?/MIVAR>
 
 <TABLE width=100%><TR><TD bgcolor=#ccccccc>
@@ -144,7 +175,7 @@ $(IF,$(>,$(POSITION,$rtype,locus),0),
    <?MIVAR>($total_count total)<?/MIVAR>
 <?MIELSE>
 
-  <?MIBLOCK COND="$(NXST,$attribtype)">	
+  <?MIBLOCK COND="$(AND,$(NXST,$attribtype),$(=,$(POSITION,$OID,MRKRGO),0))">	
     <?MISQL SQL="
       select count(distinct recattrib_source_zdb_id) 
         from record_attribution
@@ -155,6 +186,31 @@ $(IF,$(>,$(POSITION,$rtype,locus),0),
      ($(FIX,$1) total) 
     <?/MISQL>	
 
+<?MIELSE COND="$(AND,$(NXST,$attribtype),$(>,$(POSITION,$OID,MRKRGO),0))">	
+    <?MISQL SQL="select distinct title, zdb_id, year(pub_date) as pyear, authors, source,lower(authors), pub_date from record_attribution,publication,marker_go_term_evidence where mrkrgoev_mrkrgo_zdb_id='$OID' and mrkrgoev_zdb_id=recattrib_data_zdb_id and mrkrgoev_evidence_code='$evidence' and recattrib_source_zdb_id=zdb_id";><?/MISQL> 
+<?MIVAR>
+   ($(FIX,$MI_ROWCOUNT) total)<?/MIVAR> 
+
+<?MIELSE COND="$(AND,$(NXST,$attribtype),$(=,$(POSITION,$OID,LOCUS),0))">	
+  <?MISQL SQL="
+    select count(distinct recattrib_source_zdb_id)  
+      from record_attribution
+     where $OID_of_nongene_or_related_data_has_recattrib
+       and get_obj_type(recattrib_source_zdb_id) = 'PUB';
+    ">
+   ($(FIX,$1) total) 
+  <?/MISQL>
+
+<?MIELSE COND="$(EC,$attribtype,colattrib)">
+<?MISQL SQL="
+  select count(*) 
+  from column_attribution
+  where colattrib_data_zdb_id = '$OID'
+    and colattrib_column_name = '$info'	
+    and get_obj_type(colattrib_source_zdb_id) = 'PUB';
+  ">
+($(FIX,$1) total) 
+<?/MISQL>
   <?MIELSE COND="$(EC,$attribtype,colattrib)">
     <?MISQL SQL="
       select count(*) 
@@ -266,8 +322,20 @@ $(IF,$(>,$(POSITION,$rtype,locus),0),
   	<TR></TR><TR></TR>
       <?/MISQL> 
 
-  <?MIELSE>
 
+<?MIELSE COND="$(AND,$(NXST,$attribtype),$(>,$(POSITION,$OID,MRKRGO),0))">	
+    <?MISQL SQL="select distinct title, zdb_id, year(pub_date) as pyear, authors, source,lower(authors), pub_date from record_attribution,publication,marker_go_term_evidence where mrkrgoev_mrkrgo_zdb_id='$OID' and mrkrgoev_zdb_id=recattrib_data_zdb_id and recattrib_source_zdb_id=zdb_id and mrkrgoev_evidence_code='$evidence'";>
+      $(IF,$(XST,$UPDATE),"<TD><font size=-1><input type=button value=delete onClick=Delete_listitem('publication','"$2"')></font></TD>")
+      <TR>
+      <TD align=left>
+      <DIV class="show_pubs">
+	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$4 ($3) $1. $5.</A>
+      </DIV>
+      </TD>
+     </TR>
+     <TR></TR><TR></TR>
+    <?/MISQL>
+<?MIELSE>
     <?MISQL SQL="
       select distinct title, zdb_id, year(pub_date) as pyear, authors, source, 
 	 lower(authors), pub_date  
@@ -287,8 +355,55 @@ $(IF,$(>,$(POSITION,$rtype,locus),0),
      <TR></TR><TR></TR>
     <?/MISQL>
   <?/MIBLOCK> <!-- end of if locus else --> 
-
   <TR><TD>&nbsp;</TD><TR>
+
+
+<?MIBLOCK COND="$(>,$add_cit_count,0)">
+<br>
+Additional Citations:
+<table>
+<?MISQL SQL="
+    select distinct title, zdb_id, year(pub_date) as pyear, authors, source, 
+	 lower(authors), pub_date  
+    from record_attribution, publication 
+    where $OID_of_gene_or_related_data_has_recattrib
+      and recattrib_source_zdb_id = zdb_id 
+      and jtype in ('Curation','Unpublished')
+    order by $pubOrder;">
+  $(IF,$(XST,$UPDATE),"<TD><font size=-1><input type=button value=delete onClick=Delete_listitem('publication','"$2"')></font></TD>")
+  <TR>
+    <TD align=left>
+      <DIV class="show_pubs">
+	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$4 ($3) $1. $5.</A>
+      </DIV>
+    </TD>
+  </TR>
+  <TR></TR><TR></TR>
+
+<?/MISQL>
+<?/MIBLOCK> <!-- add_cit_count > 0 -->
+
+<?MIELSE COND="$(AND,$(NXST,$attribtype),$(=,$(POSITION,$OID,LOCUS),0),$(NC,$rtype,go))">	
+<?MISQL SQL="
+  select distinct title, zdb_id, year(pub_date) as pyear, authors, source, 
+	 lower(authors), pub_date
+    from record_attribution, publication 
+    where $OID_of_nongene_or_related_data_has_recattrib
+      and recattrib_source_zdb_id = zdb_id 
+      and jtype not in ('Curation','Unpublished')
+    order by $pubOrder;">
+  $(IF,$(XST,$UPDATE),"<TD><font size=-1><input type=button value=delete onClick=Delete_listitem('publication','"$2"')></font></TD>")
+  <TR>
+    <TD align=left>
+      <DIV class="show_pubs">
+	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$4 ($3) $1. $5.</A>
+      </DIV>
+    </TD>
+  </TR>
+  <TR></TR><TR></TR>
+
+<?/MISQL>
+</table>
 
 
   <?MISQL SQL="
@@ -327,6 +442,22 @@ $(IF,$(>,$(POSITION,$rtype,locus),0),
 
    <?/MISQL>
   <?/MIBLOCK> <!-- add_cit_count > 0 -->
+
+<?MIELSE COND="$(AND,$(NXST,$attribtype),$(>,$(POSITION,$rtype,go),0))">
+    <?MISQL SQL="select distinct title, zdb_id, year(pub_date) as pyear, authors, source,lower(authors), pub_date from record_attribution,publication,marker_go_term_evidence where mrkrgoev_mrkrgo_zdb_id='$OID' and mrkrgoev_zdb_id=recattrib_data_zdb_id and recattrib_source_zdb_id=zdb_id";> 
+
+  <TR>
+    <TD align=left>
+      <DIV class="show_pubs">
+	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$4 ($3) $1. $5.</A>
+      </DIV>
+    </TD>
+  </TR>
+  <TR></TR><TR></TR>
+
+<?/MISQL>
+
+
 
 <?MIELSE COND="$(EC,$attribtype,colattrib)">
   <?MISQL SQL="
