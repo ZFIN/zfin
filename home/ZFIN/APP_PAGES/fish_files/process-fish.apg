@@ -167,17 +167,6 @@
       -- by-breeding cases
       -->
 
-    <!-- Insert a new record into fish_search for it -->
-    <?MISQL SQL="
-      insert into fish_search 
-         (fish_id, name, line_type, abbrev, phenotype, chrom_num, chrom_change,
-          comments, allele, mutagen)
-        select '$fish_id', name, 'mutant', abbrev, phenotype, chrom_num, 
-               chrom_change, comments, allele, mutagen
-          from temp_fish 
-          where zdb_id='$temp_oid';">
-    <?/MISQL>
-
     <!-- First, link all chromo recs inherited from parents to new FISH. -->
     <?MISQL SQL="
       select mother, father 
