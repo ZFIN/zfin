@@ -213,9 +213,11 @@ marker = '';
 
 
 <basefont size=2>
+
+<?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
 <?MIBLOCK COND="$(NXST,$OID)">
-<p>
-ERROR -- something bad happened -- no OID passed in!
+  <p>
+  ERROR -- something bad happened -- no OID passed in!
 <?/MIBLOCK>
 
 <?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
@@ -223,8 +225,6 @@ ERROR -- something bad happened -- no OID passed in!
 <?MIVAR COND="$(NXST,$distance)" NAME=$distance><?/MIVAR>
 <?MIVAR COND="$(NXST,$lod)" NAME=$lod><?/MIVAR>
 <?MIVAR COND="$(NXST,$metric)" NAME=$metric><?/MIVAR>
-
-
 
 <?MIVAR NAME=$userid>GUEST<?/MIVAR>
 <?MISQL SQL="select object from webPages where ID='aa-chromoscripts.apg';">$1
@@ -310,13 +310,13 @@ ERROR -- something bad happened -- no OID passed in!
   <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
   <TABLE width="100%" cellspacing=0 border=0>
   <?MISQL COND="$(>,$(POSITION,$MID,FISH),0)" SQL="
-		select abbrev
+		select name
 		  from fish
 		where zdb_id = '$MID';">
 	<?MIVAR NAME=mrkr_abbrev>$1<?/MIVAR>
   <?/MISQL>
   <?MISQL COND="$(>,$(POSITION,$MID,LOCUS),0)" SQL="
-		select abbrev
+		select locus_name
 		  from locus
 		where zdb_id = '$MID';">
 	<?MIVAR NAME=mrkr_abbrev>$1<?/MIVAR>
@@ -350,7 +350,7 @@ ERROR -- something bad happened -- no OID passed in!
         <b>$marker_type_display Symbol: &nbsp; <i><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID'>$mrkr_abbrev</A></i></b><br>
       <?/MIVAR>
     	
-      <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&detOID=$OID&abbrev=$mrkr_abbrev') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+      <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&orgOID=$MID&detOID=$OID&abbrev=$mrkr_abbrev') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
      
       <?MIVAR NAME=$locus_id><?/MIVAR>
       <?MISQL SQL="
@@ -361,7 +361,7 @@ ERROR -- something bad happened -- no OID passed in!
   
          <TR><TD><b>Locus <i><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$1">$2</A></i> corresponding to gene <i><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID">$mrkr_abbrev</A></i></b>
          </TD></TR>
-         <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&detOID=$1&abbrev=$2') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+         <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&orgOID=$MID&detOID=$1&abbrev=$2') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
          <?MIVAR NAME=$locus_id>$1<?/MIVAR>
       <?/MISQL>
       
@@ -389,7 +389,7 @@ ERROR -- something bad happened -- no OID passed in!
 	<TR><TD><b>Allele <i><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$1">$2</A></i> corresponding to gene <i><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID">$mrkr_abbrev</A></i> </b> 
         </TD></TR>
 
-	<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&detOID=$allele_id&abbrev=$2') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+	<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&orgOID=$MID&detOID=$allele_id&abbrev=$2') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
     
       <?/MISQL> 
 
@@ -409,7 +409,7 @@ ERROR -- something bad happened -- no OID passed in!
       <b>Locus Name: &nbsp;<i>$locus_name</i></b><br>
       <b>Locus Abbreviation: &nbsp;<i><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$OID'>$locus_abbrev</A></i></b> 
      <?/MIVAR>
-     <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&detOID=$OID&abbrev=$(IF,$(NC,$locus_abbrev,),$2,null)') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+     <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&orgOID=$MID&detOID=$OID&abbrev=$(IF,$(NC,$locus_abbrev,),$2,null)') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
 	
      <?MISQL SQL=" 
                select zdb_id, allele
@@ -431,7 +431,7 @@ ERROR -- something bad happened -- no OID passed in!
 	<TR><TD><b>Allele <i><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$1">$2</A></i></b> 
         </TD></TR>
 
-	<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&detOID=$allele_id&abbrev=$allele') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+	<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&orgOID=$MID&detOID=$allele_id&abbrev=$allele') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
     
       <?/MISQL>
        
@@ -454,13 +454,13 @@ ERROR -- something bad happened -- no OID passed in!
           <b> Abbreviation: &nbsp; <i>$abbrev</i></b><br>
 	<?/MIVAR>
   
-	<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&detOID=$OID&abbrev=$allele') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+	<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&orgOID=$MID&detOID=$OID&abbrev=$allele') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
    <?/MIBLOCK>	
 
   <?MIBLOCK COND="$(AND,$(=,$(POSITION,$OID,FISH),0), $(=,$(POSITION,$OID,LOCUS),0),$(=,$(POSITION,$OID,GENE),0))">
       <?MIVAR>
       <TR><TD><b>$marker_type_display: &nbsp; <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID">$mrkr_name</A> </b></TD></TR><br>
-      <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&detOID=$OID&abbrev=$mrkr_abbrev') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+      <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&orgOID=$MID&detOID=$OID&abbrev=$mrkr_abbrev') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
       <?/MIVAR>
   <?/MIBLOCK>
   </TD></TR>
@@ -514,8 +514,7 @@ ERROR -- something bad happened -- no OID passed in!
 <!-------------- start details mode ------------------------------------->
 
 <?MIBLOCK COND="$(EC,$mapdetails_mode,details)">
-
-<?MIVAR>
+<?MIVAR COND="$(EC,$orgOID,$detOID)">
 <script>
 	function new_attrib_delmarker(formobj, oid) {
 		var del_marker=formobj.elements[0].value;
@@ -530,11 +529,11 @@ ERROR -- something bad happened -- no OID passed in!
 	}
 
 	function doit_marker(attr,attr_type,print_name,lg) {
-	  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishupdate.apg&OID=$detOID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name+'&lg='+lg)
+	  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishupdate.apg&caller=mappingdetail.apg&OID=$detOID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name+'&lg='+lg)
 	}
 
 	function Delete_marker(allele,marker_id) {
-	  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$detOID&attr='+allele+'&attr_type=marker-delete&old_value='+marker_id+'&new_value=deleted');
+	  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&caller=mappingdetail.apg&OID=$detOID&attr='+allele+'&attr_type=marker-delete&old_value='+marker_id+'&new_value=deleted');
 	}
 </script>
 <?/MIVAR>
@@ -563,17 +562,17 @@ ERROR -- something bad happened -- no OID passed in!
 	      <TR><TD><b>Deletion Markers: 
 	      <table>
 	      <tr><td>
-		<?MIVAR COND="$(XST,$UPDATE)">
+		<?MIVAR COND="$(AND,$(EC,$orgOID,$detOID),$(XST,$UPDATE))">
 		  <form name=mpdt_update>
     		  <br><b>Add Reference:</b> 
     		  Symbol:<input type=text name=attrib_delmarker>	
                   Reference:<input type=text name=attrib_delmarker_pubid>
     		  <input type=button value="Add" onClick=new_attrib_delmarker(this.form,"$detOID");> 
 		  </form>
-  		 <?/MIVAR>
+		<?/MIVAR>
                </td></tr><tr><td>
 
-            <?/MIBLOCK>	
+           <?/MIBLOCK>	
 
 	   <?MISQL SQL="
 		select b.mrkr_abbrev,a.marker_id,a.present_t,b.mrkr_type, a.mapdel_zdb_id
@@ -601,8 +600,8 @@ ERROR -- something bad happened -- no OID passed in!
 	
 
 	   <?MIBLOCK COND="$(AND,$(NC,$last,$3),$(EC,$3,F))">
-	      <?MIVAR COND="$(XST,$UPDATE)">
-	       <INPUT TYPE=button value="Add" onClick="doit_marker('marker','selection','missing',0)"> 	   
+	      <?MIVAR COND="$(AND,$(EC,$orgOID,$detOID),$(XST,$UPDATE))">
+	       <INPUT TYPE=button value="Add" onClick=doit_marker('marker','selection','missing',0)> 	   
 	      <?/MIVAR>
 	    	    
 	       <b>Missing:</b>
@@ -614,13 +613,13 @@ ERROR -- something bad happened -- no OID passed in!
 	     </td></tr>
              <tr><td align=left>
              <?MIVAR>$(SETVAR,$last,)<?/MIVAR><?MICOMMENT>reset $last to control ";" display<?/MICOMMENT>    
-	     <?MIVAR COND="$(XST,$UPDATE)">	    
-	       <INPUT TYPE=button value="Add" onClick="doit_marker('marker','selection','present',0)"> 
+	     <?MIVAR COND="$(AND,$(EC,$orgOID,$detOID),$(XST,$UPDATE))">	    
+	       <INPUT TYPE=button value="Add" onClick=doit_marker('marker','selection','present',0)> 
 	     <?/MIVAR>	
 	     <b>Present:</b>
 	   <?/MIBLOCK>
 	  
-	  $(IF,$(XST,$UPDATE),"<font size=-1><input type=button value=delete onClick=Delete_marker('"$allele"','"$mrkrZdbId"')>")
+	  $(IF,$(AND,$(EC,$orgOID,$detOID),$(XST,$UPDATE)),"<font size=-1><input type=button value=delete onClick=Delete_marker('"$allele"','"$mrkrZdbId"')>")
 
 	  $(IF, $(AND,$(NXST,$UPDATE),$(NE,$last,)),;)
 	  <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrZdbId">$1</A> 
@@ -633,22 +632,22 @@ ERROR -- something bad happened -- no OID passed in!
 	  <?/MISQL>
 
 	
-	  <?MIBLOCK COND="$(AND,$(XST,$UPDATE),$(EC,$marker_missing,0))">
+	  <?MIBLOCK COND="$(AND,$(EC,$orgOID,$detOID),$(XST,$UPDATE),$(EC,$marker_missing,0))">
 	    </TD></TR><TR><TD align=left>
-	    <INPUT TYPE=button value="Add" onClick="doit_marker('marker','selection','missing',0)"> 
+	    <INPUT TYPE=button value="Add" onClick=doit_marker('marker','selection','missing',0)> 
 	    <b>Missing:</b><br>
 	  <?/MIBLOCK>
 
-	  <?MIBLOCK COND="$(AND,$(XST,$UPDATE),$(EC,$marker_present,0))">
+	  <?MIBLOCK COND="$(AND,$(EC,$orgOID,$detOID),$(XST,$UPDATE),$(EC,$marker_present,0))">
 	    </TD></TR><TR><TD align=left>
-	    <INPUT TYPE=button value="Add" onClick="doit_marker('marker','selection','present',0)"> 
+	    <INPUT TYPE=button value="Add" onClick=doit_marker('marker','selection','present',0)> 
 	    <b>Present:</b><br>
 	  <?/MIBLOCK>
 
 	  <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
 	    $(SETVAR,$mapped,t) 
 	  <?/MIVAR>
-          <?MIVAR COND="$(OR,$(>,$MI_ROWCOUNT,0),$(XST,$UPDATE))">
+          <?MIVAR COND="$(OR,$(>,$MI_ROWCOUNT,0),$(AND,$(EC,$orgOID,$detOID),$(XST,$UPDATE)))">
 	   </td></tr></table>
  	   </TD></TR></TABLE>
 	  </TD></TR>
@@ -748,7 +747,7 @@ ERROR -- something bad happened -- no OID passed in!
         <?/MISQL>
     <?/MIBLOCK>
    
-     $(IF,$(XST,$UPDATE),"<TR><TD><INPUT TYPE=button value=Update onClick=edit_linkage('"$link_id"','"$distance"')></TD>","<TR>")	
+     $(IF,$(AND,$(EC,$orgOID,$detOID),$(XST,$UPDATE)),"<TR><TD><INPUT TYPE=button value=Update onClick=edit_linkage('"$link_id"','"$distance"')></TD>","<TR>")	
      <TD>LG $lg</TD>
      <TD><A href="$sourceviewer$2">$source_name</a></TD><TD><A HREF=javascript:show_detail('$link_id','$detOID','$(IF,$(XST,$abbrev),$abbrev)','$(IF,$(XST,$abbrev),$abbrev)');>Details</A></TD><TR>
       <?MIVAR NAME=$mapped>t<?/MIVAR>
@@ -836,7 +835,7 @@ ERROR -- something bad happened -- no OID passed in!
     <?/MIBLOCK>
 
     <TR>
-    $(IF,$(XST,$UPDATE),"<TD><INPUT TYPE=button value=Update onClick=edit_linkage('"$link_id"','"$member_zdb_id"')></TD>","<TD> &nbsp;</TD>")
+    $(IF,$(AND,$(EC,$orgOID,$detOID),$(XST,$UPDATE)),"<TD><INPUT TYPE=button value=Update onClick=edit_linkage('"$link_id"','"$member_zdb_id"')></TD>","<TD> &nbsp;</TD>")
 
 
     <?MIVAR NAME=$source_display><?/MIVAR>
