@@ -1,22 +1,38 @@
 /*
 	ZFIN database external user defined functions.
+
+	$Id$
+	$Source$
 	
-	lower		Lower cases an lvarchar
-	upper		Upper cases an lvarchar
-	sysexec		runs a system program and returns results from STDOUT
-	replace		replaces N occurrences of one substring with another
-	position	Find the position of a character in a string
+	
+	Functions that are callable from SQL
+	------------------------------------
+	conc		Concatenates to strings; in use, but could be 
+	                replaced by Informix concat() or ||
+	expr		returns its single argument to get the parser to eval it
 	get_id		Generates a new ID by appending a number to a string
-	get_id_test	Test function for get_id
-	concat		Concatenates to strings, the Informix concat seems brokeen
-	html_breaks	Replaces newlines with "<BR>" which formats it for html
-	html_breaks_html	Replaces newlines with "<BR>" which formats it for html
-	            This version accepts an HTML object as argument and produces one
-				as a result.
-	now		returns current timestamp
-	todays_date	returns a todays date as an mi_date
-	expr		returns it's single argument to get the parser to eval it
 	get_random_cookie Generate a random string of printable characters
+	html_breaks	Replaces newlines with "<BR>" which formats it for html
+	html_breaks_html Replaces newlines with "<BR>" which formats it for 
+	                html. This version accepts an HTML object as argument
+			and produces one as a result.
+	position	Find the position of a character in a string
+	sysexec		runs a system program and returns results from STDOUT
+
+
+	Functions that are internal to this file
+	----------------------------------------
+	lower		Lower cases an lvarchar
+	replace		Replaces N occurrences of one substring with another
+	upper		Upper cases an lvarchar
+
+
+	Functions that have been dropped in previous revisions
+	------------------------------------------------------
+	get_id_test	Test function for get_id.  Dropped in r1.16
+	now		returned current timestamp.  Dropped in r1.16
+	todays_date	returned todays date as an mi_date.  Dropped in r1.16
+
 
 	Notes: Could be a little more efficent. Add in meaningfull error returns
 		Change text errors to standard error codes
@@ -122,7 +138,7 @@ static int get_results (MI_CONNECTION *conn, MI_SAVE_SET *ss);
 	Called with an lvarchar, returns an lvarchar.
 	Could probably skip copying the lvarchar to double the speed.
 */
-mi_lvarchar *lower(mi_lvarchar *lv) {
+static mi_lvarchar *lower(mi_lvarchar *lv) {
 	mi_lvarchar	*new;
 	char		*p;
 	int		i;
@@ -138,7 +154,7 @@ mi_lvarchar *lower(mi_lvarchar *lv) {
 	Called with an lvarchar, returns an lvarchar
 	Could probably skip copying the lvarchar to double the speed.
 */
-mi_lvarchar *upper(mi_lvarchar *lv) {
+static mi_lvarchar *upper(mi_lvarchar *lv) {
 	mi_lvarchar	*new;
 	char		*p;
 	int		i;
@@ -227,7 +243,7 @@ if (1) {
 	substring new in string src. If N is 0 then all occurrences are replaced.
 	Called with three lvarchars and an integer. Returns an lvarchar.
 */
-mi_lvarchar *replace(mi_lvarchar *old, mi_lvarchar *new,
+static mi_lvarchar *replace(mi_lvarchar *old, mi_lvarchar *new,
 		     mi_lvarchar *src, mi_integer n) {
 	char		*old_s, *new_s, *src_s, *sptr, *p;
 	buflst		*head, *buf;
@@ -413,30 +429,6 @@ if (0) {
 }
 
 
-/*	get_id_test
-*/
-mi_lvarchar *get_id_test(mi_lvarchar *name, mi_integer num) {
-	char		cmdbuf[MAXLEN], *name_s;
-	MI_CONNECTION	*conn;
-	MI_SAVE_SET	*ss;
-	MI_ROW		*row;
-	mi_lvarchar	*lv;
-
-	if (!(name_s = mi_lvarchar_to_string(name))) NO_MEMORY(get_id);
-
-	conn = mi_open(NULL, NULL, NULL);	/* Open connection */
-	if (conn == NULL) EXCEPTION("ERROR: conn is NULL\n");
-
-	while (num--) {
-		lv = get_id(mi_string_to_lvarchar("GENE"));
-		sprintf (cmdbuf, 			/* Get values */
-			"insert into %s values (\'%s\');",
-			name_s, mi_lvarchar_to_string(lv));
-		if (send_sql(conn, &ss, cmdbuf) != 1)
-			EXCEPTION("Cant insert row in get_id_test");
-	}
-	return lv;
-}
 
 
 /*	html_breaks		Replaces newlines in text with <BR>, This
@@ -498,34 +490,6 @@ HTML *html_breaks_html (HTML *html) {
 
 
 
-
-/*	now		Returns the current datetime something like the
-	Illustra now.
-	Returns a datetime;
-*/
-mi_datetime *now() {
-	time_t		seconds;
-	char		buf[25];
-	
-	time(&seconds);			/* What time is it Now? */
-
-	cftime(buf, "%Y-%m-%d %T.000", &seconds);
-	return mi_string_to_datetime(buf, "datetime year to fraction(3)");
-}
-
-
-/*	todays_date	Returns the current date
-	Returns a date;
-*/
-mi_date todays_date() {
-	time_t		seconds;
-	char		buf[25];
-	
-	time(&seconds);			/* What time is it Now? */
-
-	cftime(buf, "%m/%d/%Y", &seconds);
-	return mi_string_to_date(buf);
-}
 
 
 /*	expr	Does nothing except return its argument. This allows you to

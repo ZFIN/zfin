@@ -9,14 +9,6 @@ external name
 language c
 end function;
 
-create function replace(old lvarchar, new lvarchar, src lvarchar, n
-integer)
-returning lvarchar
-external name
-"<!--|ROOT_PATH|-->/lib/DB_functions/zextend.so"
-language c
-end function;
-
 create function html_breaks(lvarchar)
 returning lvarchar
 external name
@@ -46,13 +38,6 @@ external name
 language c
 end function;
 
-create function get_id_test(name lvarchar, n integer)
-returning lvarchar
-external name
-"<!--|ROOT_PATH|-->/lib/DB_functions/zextend.so"
-language c
-end function;
-
 create function expr(date)
 returning date
 external name
@@ -60,29 +45,8 @@ external name
 language c
 end function;
 
-create function expr(datetime year to fraction)
-returning datetime year to fraction
-external name
-"<!--|ROOT_PATH|-->/lib/DB_functions/zextend.so"
-language c
-end function;
-
 create function get_random_cookie()
 returning lvarchar
-external name
-"<!--|ROOT_PATH|-->/lib/DB_functions/zextend.so"
-language c
-end function;
-
-create function now()
-returning datetime year to fraction
-external name
-"<!--|ROOT_PATH|-->/lib/DB_functions/zextend.so"
-language c
-end function;
-
-create function todays_date()
-returning date
 external name
 "<!--|ROOT_PATH|-->/lib/DB_functions/zextend.so"
 language c
