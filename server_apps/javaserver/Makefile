@@ -45,7 +45,7 @@ JAVAGENERICS  = Server.java
 JAVASPECIFICS = $(foreach GNRC, $(JAVAGENERICS), $(STAGINGDIR)/$(GNRC))
 
 JAVASTATICS  = MIConnection.java Statement.java ResultSet.java \
-               SQLException.java
+               SQLException.java DBConnection.java
 JAVASTATICSTAGINGS = $(foreach STAT, $(JAVASTATICS), $(STAGINGDIR)/$(STAT))
 
 JAVASRCS     = $(JAVAGENERICS) $(JAVASTATICS)
