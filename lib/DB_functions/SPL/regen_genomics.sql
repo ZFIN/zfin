@@ -876,6 +876,8 @@ create dba function "informix".regen_genomics() returning integer
 	panel_id	varchar(50),
 	panel_abbrev	varchar(10),
 	abbrev		varchar(20),
+	allgene_abbrev_order varchar(60)
+	  not null,
 	private		boolean,
 	owner		varchar(50),
 	entry_date	datetime year to fraction, 
@@ -893,9 +895,9 @@ create dba function "informix".regen_genomics() returning integer
 
     insert into all_g_new 
 	(gene_name, lg_location, metric, zdb_id, OR_lg, panel_id, panel_abbrev,
-	 abbrev, private, owner, entry_date, locus_zdb_id, locus_name ) 
+	 abbrev, allgene_abbrev_order, private, owner, entry_date, locus_zdb_id, locus_name ) 
       select mrkr_name, lg_location, mm.metric, mrkr_zdb_id, OR_lg, pn.zdb_id,
-	     pn.abbrev, mrkr_abbrev, mm.private, mm.owner, mm.entry_date,
+	     pn.abbrev, mrkr_abbrev, mrkr_abbrev_order, mm.private, mm.owner, mm.entry_date,
 	     locus.zdb_id, locus.locus_name
 	from marker, mapped_marker mm, panels_new pn, OUTER locus
 	where mm.marker_id = mrkr_zdb_id 
@@ -906,7 +908,7 @@ create dba function "informix".regen_genomics() returning integer
     -- mapped by independent linkages
     insert into all_g_new
 	(gene_name,lg_location, metric, zdb_id, or_lg, panel_id, panel_abbrev,
-	 abbrev, private, owner, entry_date, locus_zdb_id, locus_name)
+	 abbrev, allgene_abbrev_order, private, owner, entry_date, locus_zdb_id, locus_name)
       select x0.mrkr_name,
 	     NULL::numeric(8,2),
 	     'NULL'::varchar(5),
@@ -915,6 +917,7 @@ create dba function "informix".regen_genomics() returning integer
 	     x1.alnkgmem_linkage_zdb_id,
 	     'NULL'::varchar(10),
 	     x0.mrkr_abbrev,
+	     x0.mrkr_abbrev_order,
 	     x1.alnkgmem_private,
 	     'NULL'::varchar(50),
 	     NULL::datetime year to fraction,
@@ -932,7 +935,7 @@ create dba function "informix".regen_genomics() returning integer
 
     insert into all_g_new
       select mrkr_name, 0, '', mrkr_zdb_id,0, 'na'::varchar(50),
-	     'na'::varchar(10), mrkr_abbrev, 'f'::boolean, 'na'::varchar(50),
+	     'na'::varchar(10), mrkr_abbrev, mrkr_abbrev_order, 'f'::boolean, 'na'::varchar(50),
 	     NULL::datetime year to fraction, locus.zdb_id, locus.locus_name
 	from marker, OUTER locus
 	where not exists 
@@ -961,6 +964,8 @@ create dba function "informix".regen_genomics() returning integer
 	zdb_id		varchar(50) not null,
 	gene_name	varchar(80),
 	abbrev		varchar(15),
+	mapgene_abbrev_order varchar(60)
+	  not null,
 	or_lg		varchar(2),
 	lg_location	decimal(8,2),
 	panel_abbrev	varchar(10),
@@ -977,12 +982,13 @@ create dba function "informix".regen_genomics() returning integer
     revoke all on mapped_g_new from "public";
 
     insert into mapped_g_new
-	(zdb_id, gene_name, abbrev, or_lg, lg_location, panel_abbrev, panel_id,
+	(zdb_id, gene_name, abbrev, mapgene_abbrev_order, or_lg, lg_location, panel_abbrev, panel_id,
 	 private, owner, metric, entry_date, locus_zdb_id, locus_name)
       select 
 	  mrkr_zdb_id,
 	  mrkr_name,
 	  mrkr_abbrev,
+	  mrkr_abbrev_order,
 	  x1.or_lg,
 	  x1.lg_location, 
 	  x2.abbrev,
@@ -1004,12 +1010,13 @@ create dba function "informix".regen_genomics() returning integer
 
     -- mapped by independent linkages
     insert into mapped_g_new
-	(zdb_id, gene_name, abbrev, or_lg, lg_location, panel_abbrev, panel_id,
+	(zdb_id, gene_name, abbrev, mapgene_abbrev_order, or_lg, lg_location, panel_abbrev, panel_id,
 	 private, owner, metric, entry_date, locus_zdb_id, locus_name)
       select 
 	  x0.mrkr_zdb_id,
 	  x0.mrkr_name,
 	  x0.mrkr_abbrev,
+	  x0.mrkr_abbrev_order,
 	  x1.alnkgmem_or_lg,
 	  NULL::numeric(8,2),
 	  'NULL'::varchar(5),
