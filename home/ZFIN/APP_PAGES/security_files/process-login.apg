@@ -1,0 +1,97 @@
+<!-- FILE:process-login 
+
+Just checks to see whether given login is valid, installes the appropriate cookies, and reloads the ZDB home page.
+
+Expects  login and, IFF this is present, it also needs password. If NXST login, it just changes login to GUEST,ie, logs previous person out. DOn't record this
+ event as a 'login' in the login count!
+-->
+
+<HTML>
+<head>
+<META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
+</HEAD>
+
+
+<!-- If no user login passed in, login as GUEST -->
+<?MIBLOCK COND="$(NXST,$login)">
+<?MISQL SQL="execute function conc('GUEST',get_random_cookie());"><?/MISQL>
+<?MIVAR>$(HTTPHEADER,set-cookie,ZDB_authorize=$1;path=/cgi-bin_B)<?/MIVAR>
+
+<!-- Close any aux windows user may have open -->
+<SCRIPT>
+if(top.lglist){
+   for(i=1;i<top.lgindex;i++) {
+     if (top.lglist[i]) {
+        top.lglist[i].close();
+     }
+   }
+top.lgindex=1;
+};
+
+if(top.zfinstudy) {
+   if(top.zfinstudy.zfinreviewer) {
+       top.zfinstudy.zfinreviewer.close();
+   };
+   if (!top.zfinstudy.closed) {top.zfinstudy.close();}
+};
+
+if(top.zfinhelp) {top.zfinhelp.close();};
+
+</SCRIPT>
+
+
+<SCRIPT>
+window.location.replace("/cgi-bin_B/webdriver?MIval=aa-ZDB_home.apg")
+</SCRIPT>
+
+<?/MIBLOCK>  <!-- ends not exist login -->
+
+
+
+<!-- Check out an Auth Submitter -->
+<?MIBLOCK COND="$(XST,$login)">
+
+<?MIVAR COND="$(NXST,$login)" NAME=$login> <?/MIVAR>
+<?MIVAR COND="$(NXST,$password)" NAME=$password> <?/MIVAR>
+
+<?MISQL SQL="execute function sysexec('encryptpass', '$password');"><?/MISQL>
+<?MIVAR NAME=$encryptedpass>$1<?/MIVAR>
+
+<?MISQL SQL="select zdb_id,get_random_cookie(),access from ZDB_submitters where login='$login' and password='$encryptedpass';"><?/MISQL>
+<?MIVAR NAME=$hits>$MI_ROWCOUNT<?/MIVAR>
+
+<?MIBLOCK COND="$(=,$hits,1)">
+<?MIVAR NAME=$user_id>$1<?/MIVAR>
+<?MIVAR NAME=$new_cookie>$2<?/MIVAR>
+<?MIVAR NAME=$user_access>$3<?/MIVAR>
+<?MISQL SQL="update ZDB_submitters set cookie='$new_cookie',previous_login=issue_time::datetime year to fraction,issue_time=current where zdb_id='$user_id' and login='$login';"><?/MISQL>
+
+<?MISQL SQL="insert into login_log values ('$user_id','$user_access',current);"><?/MISQL>
+
+<?MIVAR>
+$(HTTPHEADER,set-cookie,ZDB_authorize=$new_cookie;path=/cgi-bin_B)
+<?/MIVAR>
+
+
+<SCRIPT>
+window.location.replace("/cgi-bin_B/webdriver?MIval=aa-ZDB_home.apg")
+</SCRIPT>
+
+<?/MIBLOCK> <!-- ends if hits=1 -->
+
+
+<!-- Now handle the case where you had no hits, ie, the authorization failed for the user. Should just send him back to the login page to try again. -->
+<?MIBLOCK COND="$(!=,$hits,1)">
+<SCRIPT>
+<?MIVAR>
+window.alert("SORRY! Your login as USER=$login is not acceptable.\n Please click OK and try again.");
+<?/MIVAR>
+window.location.replace("/cgi-bin_B/webdriver?MIval=aa-ZDB_home.apg")
+</SCRIPT>
+
+<?/MIBLOCK>
+
+
+<?/MIBLOCK> <!-- ends cond exist login -->
+
+
