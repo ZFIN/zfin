@@ -897,10 +897,9 @@ Datablade documentation.
 
         <?MIVAR NAME=count>0<?/MIVAR>
         <?MISQL SQL="
-	    select count(distinct recattrib_source_zdb_id)::integer 
-	      from expression_pattern, record_attribution 
+	    select count(distinct xpat_source_zdb_id)::integer 
+	      from expression_pattern 
 	     where '$OID' in (xpat_gene_zdb_id, xpat_probe_zdb_id)
-	       and xpat_zdb_id = recattrib_data_zdb_id
 	       and xpat_zdb_id not in (select xpatfimg_xpat_zdb_id
 					from expression_pattern_image)
 	       and xpat_zdb_id not in (select xpatstg_xpat_zdb_id
