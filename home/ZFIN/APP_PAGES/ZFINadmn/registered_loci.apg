@@ -60,8 +60,21 @@ var theDescr=escape(selector.value);
     <!-- make a locus record if it's new! -->
     <?MISQL SQL="select count(*)::integer from locus where zdb_id='$locus_id';"><?/MISQL>
     <?MIVAR NAME=$locus_cnt>$1<?/MIVAR>
-    <?MISQL COND="$(<,$locus_cnt,1)" SQL="insert into locus (zdb_id,locus_name,abbrev,comments,owner) values ('$locus_id','$locus_name','$abbrev','Provisional record for newly registered locus/allele','$owner');"><?/MISQL>
-
+    <?MIBLOCK COND="$(<,$locus_cnt,1)">
+      <?MISQL SQL="
+	insert into zdb_active_data
+	    (zactvd_zdb_id)
+	  values
+	    ('$locus_id');">
+      <?/MISQL>
+      <?MISQL SQL="
+	insert into locus 
+	    (zdb_id, locus_name, abbrev, comments, owner) 
+	  values 
+	    ('$locus_id', '$locus_name', '$abbrev',
+	     'Provisional record for newly registered locus/allele','$owner');">
+      <?/MISQL>
+    <?/MIBLOCK>
     <?MISQL SQL="update locus_registration set status='conditional', approval_time=current,fish_record='$fish_id' where zdb_id='$update' and allele='$allele';"><?/MISQL>
 
   <?/MIBLOCK>
