@@ -11,6 +11,7 @@
 # translate stage code, and adjust expression comments.
 #
 # Output  :  probes.raw
+#            frAcc.unl
 #            expression.unl
 #            keywords.unl
 #            images.unl
@@ -145,6 +146,7 @@ open ERR, ">parseThisse.err" or die "Cannot open parseThisse.err to write";
 
 open PROBE_IN, "<probes.csv" or die "Cannot open probes.csv file for read";
 open PROBE_OUT, ">probes.raw" or die "Cannnot open probes.raw file for write";
+open FR_ACC, ">frAcc.unl" or die "Cannot open frAcc.unl file for write";
 
 while (<PROBE_IN>) {
     
@@ -159,9 +161,11 @@ while (<PROBE_IN>) {
     print ERR "$probe[1] misses insert_kb \n" unless $probe[8];
 
     print PROBE_OUT join("|", @probe)."|\n";
+	print FR_ACC "$probe[1]|$probe[3]|\n";   #for FR# - ZFIN gene translation table
 }
 close (PROBE_IN);
 close (PROBE_OUT);
+close (FR_ACC);
 
 ##################
 # EXPRESSION  
