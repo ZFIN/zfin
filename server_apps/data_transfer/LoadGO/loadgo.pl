@@ -71,7 +71,7 @@ system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> loadgoterms.sql >out 
 sub sendLoadReport ($) {
   
   my $SUBJECT="Auto LoadGOTerms:".$_[0];
-  my $MAILTO="staylor";
+  my $MAILTO="doughowe@uoregon.edu";
   my $TXTFILE="./newannotsecterms.unl";
  
   # Create a new multipart message:
