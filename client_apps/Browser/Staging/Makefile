@@ -47,7 +47,7 @@ TARGETDIR = $(TARGETROOT)/client_apps/Browser
 
 # Use the standard JAVAC_11, and JAVACFLAGS.  Still need to define classpath.
 
-CLASSPATH = .:$(JAVAHOME_11)/lib/classes.zip:$(TOP)/lib/Java
+CLASSPATH = .:$(JAVAHOME_11)/lib/classes.zip:$(TOP)/lib/Java:$(JDBCHOME)/lib/ifxjdbc.jar
 
 # ---- Java source and class file variables
 

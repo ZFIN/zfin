@@ -224,7 +224,7 @@ public class data_gatherer {
 	
 	
   public Vector constraintQuery(String query) {
-    return Q.selectConstrained(1, query);
+    return Q.selectAll(1, query);
   }
   
 
