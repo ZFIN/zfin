@@ -1,4 +1,4 @@
-#! /local/bin/perl -w 
+#! /private/bin/perl -w 
 
 ##
 # validatedata.pl
@@ -276,137 +276,6 @@ sub anatomyItemStageWindowConsistent ($) {
   }
   &recordResult($routineName, $nRecords);
 }
-  
-#-------------------------------------------------------------- 
-#Parameter
-# $      Email Address for recipients
-
-sub anatomyContainsStageWindowConsistent ($) {
-  
-  my $routineName = "anatomyContainsStageWindowConsistent";
- 
-  my $sql = '
-             select anatcon_container_zdb_id, 
-                    anatcon_contained_zdb_id,
-                    anatcon_start_stg_zdb_id, 
-                    anatcon_end_stg_zdb_id
-               from anatomy_contains
-              where stg_window_consistent (
-                                   anatcon_start_stg_zdb_id,
-                                   anatcon_end_stg_zdb_id
-                                   )="f"  ';
-
-  my $nRecords = execSql ($sql); 
-  
-  if ( $nRecords > 0 ) {
-    
-    my $sqlDtl = '
-                  select anatcon_container_zdb_id,
-                         i1.anatitem_name,
-                         anatcon_contained_zdb_id,
-                         i2.anatitem_name,
-                         anatcon_start_stg_zdb_id,
-                         s1.stg_name_long,
-                         anatcon_end_stg_zdb_id,
-                         s2.stg_name_long 
-                    from anatomy_contains,
-                         anatomy_item i1, anatomy_item i2,
-                         stage s1, stage s2
-                   where stg_window_consistent (
-                                   anatcon_start_stg_zdb_id,
-                                   anatcon_end_stg_zdb_id
-                                   )="f"
-                     and anatcon_container_zdb_id = i1.anatitem_zdb_id
-                     and anatcon_contained_zdb_id = i2.anatitem_zdb_id
-                     and anatcon_start_stg_zdb_id = s1.stg_zdb_id
-                     and anatcon_end_stg_zdb_id = s2.stg_zdb_id
-                   ';
-
-    my @colDesc = ("Anatcon container ZDB ID ",
-		   "Container name           ",
-                   "Anatcon contained ZDB ID ",
-		   "Contained name           ",
-		   "Anatcon start stg ZDB ID ",
-		   "Start stg name and period",
-		   "Anatcon end stg ZDB ID   ",
-		   "End stg name and period  " );
-
-    my $nRecordsDtl = execSql($sqlDtl, undef, @colDesc);
- 
-    if ( $nRecords == $nRecordsDtl ) {
-     
-      my $sendToAddress = $_[0];
-      my $subject = "Stage window inconsistence in anatomy_contains";
-      my $errMsg = "In anatomy_contain, $nRecords records have inconsistent " 
-                 ."stage window.";
-                
-      logError ($errMsg);
-      sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql, $sqlDtl);
-    }else {
-      print "Two queries are not consistent.";
-    }
-  }
-  &recordResult($routineName, $nRecords);
-}
-
-#------------------------------------------------------------
-#Parameter
-# $      Email Address for recipients
- 
-
-sub anatomyContainsStageWindowInContainerStageWindow($){
-
-  my $routineName = "anatomyContainsStageWindowInContainerStageWindow";
-
-  my $sql = '
-              select anatcon_container_zdb_id,
-                     anatitem_name,
-  		     anatitem_start_stg_zdb_id,
-                     s1.stg_name_long,
-                     anatitem_end_stg_zdb_id,
-                     s2.stg_name_long,
-  		     anatcon_start_stg_zdb_id,
-                     s3.stg_name_long,
-                     anatcon_end_stg_zdb_id,
-                     s4.stg_name_long
-	        from anatomy_contains, 
-                     anatomy_item, 
-                     stage s1, stage s2, stage s3, stage s4
-               where anatcon_container_zdb_id = anatitem_zdb_id
-                and anatitem_start_stg_zdb_id = s1.stg_zdb_id             
-                and anatitem_end_stg_zdb_id = s2.stg_zdb_id
-                and anatcon_start_stg_zdb_id = s3.stg_zdb_id
-                and anatcon_end_stg_zdb_id = s4.stg_zdb_id
-                and (s1.stg_hours_start > s3.stg_hours_start
-                    or s2.stg_hours_end < s4.stg_hours_end) 
-                ';
-
-  my @colDesc = ( "Anatcon container ZDB ID   ",
-		  "Container name             ",
-		  "Container start stg ZDB ID ",
-		  "Start stg name and peroid  ",
-		  "Container end stg ZDB ID   ",
-		  "End stg name and period    ",
-		  "Anatcon start stg ZDB ID   ",
-		  "Start stg name and period  ",
-		  "Anatcon end stg ZDB ID     ",
-		  "End stg name and period    " );
-
-  my $nRecords = execSql ($sql, undef, @colDesc);
-
-  if ( $nRecords > 0 ) {
-
-    my $sendToAddress = $_[0];
-    my $subject = "Stage window out of range";
-    my $errMsg = "In anatomy_contains, $nRecords records have stage window " 
-                 ."out of the range of container's stage window. ";
-
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
-  }
-  &recordResult($routineName, $nRecords);
-}
-
 
 
 #===================Environment ==========================
@@ -3157,8 +3026,6 @@ if($daily) {
   stageWindowConsistent ($adEmail);
 
   anatomyItemStageWindowConsistent($adEmail);
-  anatomyContainsStageWindowConsistent($adEmail);
-  anatomyContainsStageWindowInContainerStageWindow($adEmail);
 
   expressionPatternStageWindowConsistent($xpatEmail);
   expressionPatternAnatomyStageWindowOverlapsAnatomyItem($xpatEmail);
