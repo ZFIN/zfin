@@ -22,12 +22,13 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/misc_files
 
-# betainfo.html and stub.html are unusual.  They are HTML files, but they
-# are loaded in the database like an app page.  Treat them like app pages.
+# betainfo.html,stub.html & helpframes.html are unusual.  
+# They are HTML files, but they are loaded in the database 
+# like an app page.  Treat them like app pages.
 
 GENERICS = ZDB_home.apg betainfo.html data_mgr.apg doc_title.apg \
 	docframes.apg jump_to.apg process_notification.apg startframes.apg \
-	startframes_select.apg stub.html
+	startframes_select.apg stub.html helpframes.html
 
 
 # --------------------------  Rules  ------------------------------------
