@@ -42,7 +42,7 @@ annotations -- big string of annotations for the image
 <p>
 
 
-<FORM ACTION="/<!--|CGI_BIN_DIR_NAME|-->/SuperWebdriver" METHOD=post ENCTYPE="multipart/form-data">
+<FORM ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" METHOD=post ENCTYPE="multipart/form-data">
 <?MIVAR>
 <INPUT TYPE=hidden name=MIval Value=aa-do-imageupdate.apg>
 <INPUT TYPE=hidden name=OID Value=$OID>
