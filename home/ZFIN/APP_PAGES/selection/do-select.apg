@@ -141,9 +141,10 @@ Note that the opening conditional also ensures that you don't specify a fish as 
 <!-- Now install new parent. This is stolen from process-fish-->
 <?MISQL SQL="select  '$return_recid' as a0, target_id, info, 'inherited'  as a3 from int_fish_chromo  where source_id='$new_oid' into temp select_temp_5;"><?/MISQL>
 <?MISQL SQL="insert into int_fish_chromo (source_id, target_id, info,status) select * from select_temp_5;"><?/MISQL>
-<?MISQL SQL="select  '$return_recid' as a0, target_id, 'related'  as a2 from int_data_pub  where source_id='$new_oid' into temp select_temp_6;"><?/MISQL>
-<?MISQL SQL="insert into int_data_pub (source_id, target_id, info) select * from select_temp_6;"><?/MISQL>
 
+<!-- don't want to inherit parents pubs ,remove code  -->
+<!-- SQL="select  '$return_recid' as a0, target_id, 'related'  as a2 from int_data_pub  where source_id='$new_oid' into temp select_temp_6;" -->
+<!--SQL="insert into int_data_pub (source_id, target_id, info) select * from select_temp_6;"   -->
 
 <!-- Now just change the fish record and write update record -->
 <?MISQL SQL="update fish set $fill_field='$new_oid' where zdb_id='$return_recid';"><?/MISQL>
