@@ -22,8 +22,8 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/home/ZFIN/help_files
 
 GENERICS = mut_intro.html locus_intro.html Locus-policy.html
-STATICS  = fishselecthelp.html help-chromo.html help-fish.html genrichelp.html \
-	   label.html mapperselecthelp.html
+STATICS  = fishselecthelp.html help-chromo.html help-fish.html \
+	   generichelp.html label.html mapperselecthelp.html
 
 # --------------------------  Rules  ------------------------------------
 
