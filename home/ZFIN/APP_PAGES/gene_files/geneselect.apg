@@ -400,7 +400,7 @@ document.critform.START.value = "";
 		      and (   lower(ortho_name) <> '$(LOWER,$gene_name')
 			   or lower(ortho_abbrev) <> '$(LOWER,$marker_name'));">
 
-		  <?MIVAR NAME=$ortho_name>$1<?/MIVAR>
+		  <?MIVAR NAME=$ortho_name>$(URLDECODE,$1)<?/MIVAR>
 		  <?MIVAR NAME=$ortho_abbrev>$2<?/MIVAR>
 		  <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
 		    <?MIVAR NAME=$aliases>$aliases / <?/MIVAR>
