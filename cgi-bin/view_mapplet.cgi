@@ -219,17 +219,17 @@
 	 ### $note = $note . $unique . " ->Too Many Choices  <p>\n";
 	  my $bot = LWP::UserAgent->new();
 	  my $req = POST 'http://<!--|DOMAIN_NAME|-->/<!--|WEBDRIVER_PATH_FROM_ROOT|-->',
-	  [   compare=> '%',
-	      marker_type=> 'any',
+	  [   compare=> 'contains',
+	      marker_type=> 'all',
 	      lg=> 0,
 	      refcross=> 'NULL',
 	      plinks=> 'on',
 	      action=> 'SEARCH',
               paged_by=> 'mapper',
               map_type=> 'individual',
-	      MIval=> 'aa-markerselect.apg',
+	      MIval=> 'aa-newmrkrselect.apg',
               query_results=> 'exist',
-	      name=> "$marker",
+	      input_name=> "$marker",
 	      ZDB_authorize=> $Q->cookie('ZDB_authorize')
 	  ];
 	  print 'Content-Type: text/html; charset=ISO-8859-1\r\n\r\n';
