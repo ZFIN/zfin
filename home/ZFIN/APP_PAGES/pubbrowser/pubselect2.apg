@@ -57,7 +57,7 @@ function form_submit() {
 document.critform.submit();
 }
 
-function call_reset() {
+function call_reset(user_access) {
   <?MIVAR>
 document.critform.authors.value = "";
 document.critform.title.value = "";
@@ -75,7 +75,8 @@ document.critform.Fmonth.value = "$(SUBSTR,$MIN_ARRIVAL,6,2)";
 document.critform.Fyear.value = "$(SUBSTR,$MIN_ARRIVAL,1,4)";
 document.critform.yr_cmpr.selectedIndex = 0;
 document.critform.century.selectedIndex = 1;
-document.critform.anon1.selectedIndex = 0;
+if (user_access != 'root') {document.critform.anon1.selectedIndex = 0;}
+if (user_access = 'root') {document.critform.anon1.selectedIndex = 5;}
 document.critform.order_pref.selectedIndex = 0;
 document.critform.authtype.selectedIndex = 0;
 document.critform.WINSIZE.value = 10;
@@ -88,7 +89,7 @@ function start_help(anchor) {
 }
 
 function list_all() {
-  call_reset();
+  call_reset(user_access);
   form_submit();
 }
 
@@ -737,17 +738,17 @@ $(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/
 	  <?/MIVAR> 
 	<?/MIBLOCK>
       </td>
-  <?/MIVAR>
+ 
     </tr>
     <tr>
       <td class=submitbar colspan=2 align="right">
 	<input type=submit name=action value="SEARCH" onSubmit="document.critform.submit();"> 
-	<input type=button name=action value="RESET" onClick="call_reset()"> 
+	<input type=button name=action value="RESET" onClick="call_reset('$ZDB_access')"> 
 	<input type=button name=clear_all value="List all publications" onClick="list_all();">
       </td>
     </tr>
   </table>
-
+ <?/MIVAR>
 
 
     <input type=hidden NAME="START" value=1>
