@@ -90,11 +90,7 @@ sub goInf()
        $inf=~s/SWISS-PROT:/SPTR:/;
      }
 
-    # this will be corrected later.
-    if (index($inf,'GenPept:')==0) {
-       $inf=~s/GenPept:/NCBI_NP:/;
-     }
-
+    $inf =~ s/GenPept:/protein_id:/;
     $inf =~ s/RefSeq:NM_/NCBI_NM:NM_/;
     $inf =~ s/RefSeq:NP_/NCBI_NP:NP_/;
 
