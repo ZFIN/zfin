@@ -421,6 +421,10 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),
      or (a.alnkgmem_member_zdb_id = '$detOID'   
           and a.alnkgmem_num_members = 1) ;">
 
+    <?MIVAR NAME=$distance><?/MIVAR>
+    <?MIVAR NAME=$lod><?/MIVAR>
+    <?MIVAR NAME=$distance><?/MIVAR>
+    <?MIVAR NAME=$pair_id>null<?/MIVAR>
     <?MIVAR NAME=$member_zdb_id>$1<?/MIVAR>
     <?MIVAR NAME=$lg>$9<?/MIVAR>
     <?MIVAR NAME=$map_comments>$5<?/MIVAR>
@@ -444,7 +448,7 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),
       <?MIVAR NAME=$pair_id>$1<?/MIVAR>
     <?/MISQL>
 
-    <?MIBLOCK COND="$(XST,$pair_id)">
+    <?MIBLOCK COND="$(NC,$pair_id,null)">
       <?MISQL SQL="select lnkgpair_distance, lnkgpair_lod, lnkgpair_metric from linkage_pair
 	where lnkgpair_zdb_id = '$pair_id';">
 	<?MIVAR NAME=$distance>$1<?/MIVAR>	
