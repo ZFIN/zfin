@@ -1,0 +1,44 @@
+<!-- FILE: process-delete.html
+
+This file processes a record deletion. Since the (root) user has confirmed that the record needs to be deleted, all we do is go ahead and blast it out of there. Control then is returned to the ZFIN home page.
+
+VARIABLES EXPECTED:
+  OID (REQUIRED) -- the ZFIN id of the record to delete.
+  rtype (REQUIRED) -- the data type of the record.
+
+-->
+
+<?MISQL SQL="select WebExplode(object,'permission=root') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+<?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
+
+
+<?MIBLOCK COND="$(AND,$(XST,$OID),$(XST,$rtype))">
+
+<?MIBLOCK COND="$(EC,$rtype,image)">
+<?MISQL SQL="select unique stock from image where zdb_id='$OID';"><?/MISQL>
+<?MIVAR NAME=$fish_id>$1<?/MIVAR>
+<?/MIBLOCK>
+
+<?MISQL SQL="delete from $rtype where zdb_id='$OID';"><?/MISQL>
+
+<!-- Special case: if it's an IMAGE, update the image count in fish_search -->
+<?MISQL COND="$(EC,$rtype,image)" SQL="update fish_search a set num_images=(select unique count(*)::integer from image where stock=a.fish_id) where a.fish_id='$fish_id';"><?/MISQL>
+
+
+
+
+<!-- Jump back to home -->
+<SCRIPT>
+top.content.history.go('aa-ZDB_home.apg');
+</SCRIPT>
+
+<?/MIBLOCK> <!-- ends cond oid and rtype exist -->
+
+
+
+<?MIVAR COND="$(OR,$(NXST,$OID),$(NXST,$rtype))">
+<h1 align=center>ERROR: Insufficient input; no action taken </h1>
+<?/MIVAR>
+
+<?/MIBLOCK> <!-- cond authorize nc false -->
