@@ -34,6 +34,9 @@ PI Name:
 PI Email:
 [PIEmail]
 ---
+PI Telephone:
+[PITelephone]
+---
 PI Fax:
 [PIFax]
 ---
@@ -45,10 +48,10 @@ PI Address:
 ---
 ---
 Grant Number:
-[required_grantNumber]
+[grantNumber]
 ---
 Funding Organization:
-[required_grantOrganization]
+[grantOrganization]
 ---
 ---
 Bill To Name:
