@@ -72,6 +72,9 @@
 	      <table border=0 cellpadding=3>
 		<tr>
 		  <td>
+
+<!-- "New" image:   <img src="/images/new1.gif">-->
+
 	            <A HREF="/zf_info/dbase/db.html">About ZFIN</A><BR>
 		    <A HREF="/zf_info/citation.html">Citing ZFIN</A><BR>
 		    <A HREF="/ZFIN/misc_html/tips.html">Helpful Hints</A><BR>
@@ -102,8 +105,9 @@
 	      <table border=0 cellpadding=3>
 		<tr>
 		  <td>
-		    <A HREF="/zf_info/anatomy/dict/sum.html">Anatomical Atlases</A><BR>
-		    <A HREF="/zf_info/news/mtgs.html">Meetings</A> / <A HREF="/zf_info/news/jobs.html"> Jobs</A> / <br>&nbsp; <A HREF="http://zebra.biol.sc.edu">News</A><BR>
+            	    <A HREF="/zf_info/anatomy/dict/sum.html">Anatomical Atlases</A><BR>
+		    <A HREF="/zf_info/news/mtgs.html">Meetings</A> / <A HREF="/zf_info/news/jobs.html"> Jobs</A> <br>
+                    <A HREF="/zf_info/news/funding_opps.html">Grants</A><img src="/images/new1.gif"><BR>
 		    <A HREF="/zf_info/zfbook/zfbk.html">The Zebrafish Book</A><BR>
 		    <A HREF="/zf_info/monitor/mon.html">The Zebrafish <br>&nbsp; Science Monitor</A><BR>
 		    <A HREF="/zf_info/news/newsgroup.html">Zebrafish Newsgroup</A><BR>
