@@ -3,9 +3,6 @@
 # Makefile for ZFIN_WWW CVS Project, zextend.so external database 
 # function library
 #
-# $Source$
-# $Id$
-#
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
 # !! of the makefile hierarchy this makefile is a part of, and of the  !!
@@ -62,7 +59,7 @@ LIBDIR = $(INFORMIXDIR)/lib
 
 # Use xcode because we are creating an so.  See cc man page for details.
 
-CFLAGS = -xcode=pic32 -xtarget=ultra2 -xarch=v9a
+CFLAGS = -fast -xcode=pic32 -xtarget=ultra2 -xarch=v9a
 MICFLAGS = -DPLATFORM=solaris -g -DELF -v -DPOSIX_SIGNALS -DSOLARIS -I $(INCDIR)
 MILIBS = -lsocket -lnsl -L$(LIBDIR)
 
