@@ -1,4 +1,5 @@
-<!-- FILE: process_locus.html
+<?MICOMMENT> 
+FILE: process_locus.html
 
 Called from locus_lister.
 
@@ -11,15 +12,14 @@ ZFIN_id: the ZFIN_id of the sender
 locus:  the locus name
 abbrev: the abbrev
 allele: the allele being registered
-descrip:  a brief description of phenotype
+descrip:  a brief description of phenotype, optional
 action: the action being requested -- either new_locus or new_allele
 warnings:  warnings to include in email to nomenclature
--->
+<?/MICOMMENT> 
 <body>
 
 <?MIVAR COND="$(NXST,$email)" NAME=$email>Unknown<?/MIVAR>
-<?MIVAR COND="$(NXST,$descrip)" NAME=$descrip>None given.<?/MIVAR>
-<?MIVAR NAME=$descrip DELIMIT="'" REPLACE="">$descrip<?/MIVAR>
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
 
 <!-- First verify identity -->
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-identify.apg';">$1<?/MISQL>
@@ -59,7 +59,15 @@ warnings:  warnings to include in email to nomenclature
 	<?/MIBLOCK>
 <?/MIBLOCK>
 
-<?MISQL SQL="insert into locus_registration (zdb_id,locus_name,abbrev,allele,owner,entry_time,status,pheno_descr) values ('$locus_id','$locus','$abbrev','$allele','$ZDB_ident',current,'unreviewed','$descrip');"><?/MISQL>
+<?MIBLOCK COND="$(XST,$descrip)">
+  <?MIVAR NAME=$descrip DELIMIT="'" REPLACE="">$descrip<?/MIVAR>  
+<?/MIBLOCK>
+
+<?MISQL SQL="
+  insert into locus_registration 
+      (zdb_id, locus_name, abbrev, allele, owner, entry_time, status, pheno_descr)
+    values 
+      ('$locus_id', '$locus', '$abbrev', '$allele', '$ZDB_ident', current, 'unreviewed', $(IF,$(XST,$descrip),'$descrip',NULL));"><?/MISQL>
 
 <!-- Okay, now package all info up as a form and send it on to the script that sends out the notification email.  Kind of roundabout, but seems only way to do this without resorting to MIEXEC
 -->
@@ -73,7 +81,7 @@ warnings:  warnings to include in email to nomenclature
 <input type=hidden name=allele value="$allele">
 <input type=hidden name=ZFIN_id value="$ZDB_ident">
 <input type=hidden name=email value="$email">
-<input type=hidden name=descrip value="$descrip">
+<input type=hidden name=descrip value="$(IF,$(XST,$descrip),$descrip,)">
 <input type=hidden name=warnings value="$warnings">
 <?/MIVAR>
 </form>
