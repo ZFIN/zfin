@@ -23,6 +23,9 @@ $ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
 $ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
 $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
+$count_images = "" ;
+$count_pdfs = "" ;
+
 # remove old files
 
 system("rm -f /tmp/orphan_file_report.txt") ;
