@@ -1,4 +1,4 @@
-#!/nfs/home/users/tomc/bin/rebol --cgi
+#!/private/apps/rebol --cgi
 rebol[]
 header: 
 {POST http://www.ncbi.nlm.nih.gov/blast/blast.cgi HTTP/1.0
