@@ -25,12 +25,20 @@ go_term -- the new value of locus.
   <?MIVAR NAME=$gotermid>$(SUBSTR,$OID,4,10)<?/MIVAR>
   <?MIVAR NAME=sql>
    "select goterm_name from go_term where goterm_go_id='$gotermid'"><?/MIVAR>
-   <?MISQL SQL="select goterm_name from go_term where goterm_go_id='$gotermid'">   <?/MISQL>
+   <?MISQL SQL="select goterm_name,goterm_is_obsolete from go_term where goterm_go_id='$gotermid'">   <?/MISQL>
    <?MIVAR NAME=$gotermname>$1<?/MIVAR>
+   <?MIVAR NAME=$obsolete>$2<?/MIVAR>
    <?MIVAR NAME=pos>$(POSITION,$gotermname,unknown)<?/MIVAR>
    <?MIBLOCK COND="$(EC,$gotermname,NOVALUE)">
      <script>
        window.alert("Please enter a valid GO ID");
+     </script> 
+     <?MIVAR NAME=$gotermname><?/MIVAR>
+   <?/MIBLOCK>
+
+   <?MIBLOCK COND="$(EC,$obsolete,t)">
+     <script>
+       window.alert("This term is obsolete. Please enter another valid GO ID");
      </script> 
      <?MIVAR NAME=$gotermname><?/MIVAR>
    <?/MIBLOCK>
