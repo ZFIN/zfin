@@ -264,12 +264,6 @@ function formValues(formCookieName) {
   }   //end of function formValues() 
 /************************************************************/
 
-function checkRef() {
-	if (document.referrer.indexOf('<!--|DOMAIN_NAME|-->/zf_info/stckctr/submission/submitTerms2.html') != -1) {
-	}
-	else {window.location.href = 'submitTryAgain.html';}
-}
-
 function sendMail(subjectTopic) {
 	window.location.href = ('mailto:form_comments@zfin.org?subject=' + subjectTopic);
 }
