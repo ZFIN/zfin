@@ -27,6 +27,19 @@
   <?MIVAR NAME=$userid>$ZDB_ident<?/MIVAR>
 <?/MIBLOCK>
 
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
+
+<!--- WALKING WINDOW --->
+<!--- Initialization --->
+
+<?MIVAR NAME=WINSIZE DEFAULT=25>$WINSIZE<?/MIVAR>
+<?MIVAR NAME=BEGIN DEFAULT=1>$START<?/MIVAR>
+
+<!--- DEFINITION OF RANGES --->
+<?MIVAR NAME=BEGIN>$(IF,$(<,$BEGIN,1),1,$BEGIN)<?/MIVAR> 
+<?MIVAR NAME=END>$(+,$BEGIN,$WINSIZE)<?/MIVAR>
+
+
 <!-- This next part builds up a query piece by piece, based on which criteria 
   were passed in 
 -->
@@ -40,6 +53,7 @@
 <?MIVAR COND="$(NXST,$mutagen)" NAME=$mutagen>any<?/MIVAR>
 <?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>phenotype<?/MIVAR>
 <?MIVAR COND="$(NXST,$selected_separator)" NAME=$selected_separator>and<?/MIVAR>
+
 
 <?MIVAR NAME=$target_table>fish_search a <?/MIVAR>
 
@@ -157,6 +171,7 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
 <?MIVAR COND="$(XST,$anon1text)"><input type=hidden name=anon1text value="$anon1text"><?/MIVAR>
 <?MIVAR COND="$(XST,$nav_abbrev)"><input type=hidden name=nav_abbrev value="$nav_abbrev"><?/MIVAR>
 <?MIVAR COND="$(XST,$structures)"><input type=hidden name=structures value="$structures"><?/MIVAR>
+<?MIVAR COND="$(XST,$selected)"><input type=hidden name=selected value="$selected"><?/MIVAR>
 <?MIVAR COND="$(XST,$selected_separator)"><input type=hidden name=selected_separator value="$selected_separator"><?/MIVAR>
 
 
@@ -164,234 +179,199 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
 <FONT SIZE=4>Search Mutant Lines: Result Summary</font><br>
 
 <?MISQL SQL="select count(*)::integer from $target_table  where line_type='mutant' $mut_constraint;"> <b>$1</b> matching records found.
-<?MIVAR name=$num_recs>$1<?/MIVAR><?/MISQL>
-
-<br>
-(Click on individual alleles for details)
-</center> 
-<p>
-
-</form>
-
-<TABLE width=100%
-
-><TH> </TH><TH>Allele [previous names]</TH> <TH>Locus (abbrev) [previous names]</TH> <TH>Gene</TH> <TH>Mut. Type</TH> <TH>LG</TH> <TH>Location</TH> <TH> </TH>
-
-<?MIVAR NAME=$MI_NULL><?/MIVAR>
-
-<!--- WALKING WINDOW --->
-<!--- Initialization --->
-
-<?MIVAR NAME=WINSIZE DEFAULT=25>$WINSIZE<?/MIVAR>
-<?MIVAR NAME=BEGIN DEFAULT=1>$START<?/MIVAR>
-
-
-<!--- DEFINITION OF RANGES --->
-<?MIVAR NAME=BEGIN>$(IF,$(<,$BEGIN,1),1,$BEGIN)<?/MIVAR> 
-<?MIVAR NAME=END>$(+,$BEGIN,$WINSIZE)<?/MIVAR>
-
-
-<!--- EXECUTION --->
-<!--- Query Database --->
-<?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE
-
-<?MISQL SQL="select distinct name, fish_id, abbrev, allele, chrom_change, chrom_num,locus,gene_abbrev,gene_id from $target_table where line_type='mutant' $mut_constraint $order_by;" MAXROWS=$limit>
-<?MIVAR NAME=$gene_id>$9<?/MIVAR>
-<?MIVAR NAME=$gene_abbrev>$8<?/MIVAR>
-<?MIVAR NAME=$name>$1<?/MIVAR>
-<?MIVAR NAME=$q_mutagen>$4<?/MIVAR>
-<?MIVAR NAME=$q_chrom_change>$5<?/MIVAR>
-<?MIVAR NAME=$q_chrom_num>$6<?/MIVAR>
-<?MIVAR NAME=$locus>$7<?/MIVAR>
-<?MIVAR NAME=$q_allele>$4<?/MIVAR>
-<?MIVAR NAME=$fish_id>$2<?/MIVAR>
-
-$(IF,$(>,$MI_CURRENTROW,1),"<TR><TD colspan=7> <HR width=80%> </TD> </TR>")
-
-$(IF,$(=,$MI_CURRENTROW,1),"<TR><TD colspan=7> <HR size=5> </TD> </TR>")
-
-
-<?MIVAR NAME=$q_abbrev>$3<?/MIVAR>
-<?MIBLOCK COND="$(EC,$q_abbrev,NULL)">
-<?MIVAR NAME=$q_abbrev>None<?/MIVAR>
-<?/MIBLOCK>
-
-<?MIBLOCK COND="$(EC,$q_abbrev,xxx)">
-<?MIVAR NAME=$q_abbrev>None<?/MIVAR>
-<?/MIBLOCK>
-
-
-<TR align=center valign=top> 
-<TD>$MI_CURRENTROW. 
-$(IF,$(XST,$return_rec),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$fish_id" TARGET=content>SELECT</A>") 
-</TD>
-<TD valign=top> 
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$fish_id" TARGET=content>$q_allele</A>
-
-<!-- allele_name contains all names pull aliases only -->
-<?MISQL SQL="select distinct alleali_allele_name_alias from allele_alias , fish_search where  fish_id = '$2' and alleali_alt_zdb_id = alt_zdb_id;">
-  <?MIVAR COND="$(=,$MI_CURRENTROW,1)">&nbsp;[<?/MIVAR>
-  <?MIVAR COND="$(>,$MI_CURRENTROW,1)">;<?/MIVAR>$1
+  <?MIVAR name=$num_recs>$1<?/MIVAR>
 <?/MISQL>
 
-<?MIVAR COND="$(>=,$MI_CURRENTROW,1)">]<?/MIVAR>
+<?MIBLOCK COND="$(>,$num_recs,0)">
+  <br>
+  (Click on individual alleles for details)
+  </center> 
+  <p>
 
-</TD> 
+  </form>
 
-<TD><font size=-1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$locus" TARGET=content>$name</A> ($q_abbrev)
-<?MIVAR NAME=$found>false<?/MIVAR>
-<?MISQL SQL="select distinct lcsali_locus_name_alias, lcsali_locus_abbrev_alias from locus_alias where  lcsali_locus_zdb_id = '$9';">
-<?MIVAR COND="$(=,$MI_CURRENTROW,1)">&nbsp;[<?/MIVAR>
-<?MIVAR COND="$(=,$MI_CURRENTROW,1)" NAME=$found>true<?/MIVAR>
-<?MIVAR COND="$(>,$MI_CURRENTROW,1)">;<?/MIVAR>$1
-<?MIVAR COND="$(NC,$2,"")">($2)<?/MIVAR>
-<?/MISQL>
-<?MISQL SQL="select distinct fishali_fish_name_alias from fish_alias where fishali_fish_zdb_id = '$2';">
-<?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(NC,$found,true))">&nbsp;[<?/MIVAR>
-<?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(EC,$found,true))">;<?/MIVAR>
-<?MIVAR COND="$(=,$MI_CURRENTROW,1)" NAME=$found>true<?/MIVAR>
-<?MIVAR COND="$(>,$MI_CURRENTROW,1)">;<?/MIVAR>$1
-<?/MISQL>
-<?MIVAR COND="$(EC,$found,true)">]<?/MIVAR>
+  <TABLE width=100%
 
-</font></TD>
+  ><TH> </TH><TH>Allele [previous names]</TH> <TH>Locus (abbrev) [previous names]</TH> <TH>Gene</TH> <TH>Mut. Type</TH> <TH>LG</TH> <TH>Location</TH> <TH> </TH>
 
-<TD><font size=-1> $(IF,$(NC,$gene_id,UNKNOWN),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$gene_id TARGET=content>$gene_abbrev</A>,UNKNOWN)
-</font></TD>
+  <!--- EXECUTION --->
+  <!--- Query Database --->
+  <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE
 
-<TD><font size=-1> $(IF,$(EC,$q_chrom_change,NULL),UNKNOWN,$q_chrom_change)</font> </TD> 
-<TD><font size=-1> $(IF,$(EC,$q_chrom_num,0),UNKNOWN,$q_chrom_num)</font> </TD> 
+  <?MISQL SQL="select distinct name, fish_id, abbrev, allele, chrom_change, chrom_num,locus,gene_abbrev,gene_id from $target_table where line_type='mutant' $mut_constraint $order_by;" MAXROWS=$limit>
+  <?MIVAR NAME=$gene_id>$9<?/MIVAR>
+  <?MIVAR NAME=$gene_abbrev>$8<?/MIVAR>
+  <?MIVAR NAME=$name>$1<?/MIVAR>
+  <?MIVAR NAME=$q_mutagen>$4<?/MIVAR>
+  <?MIVAR NAME=$q_chrom_change>$5<?/MIVAR>
+  <?MIVAR NAME=$q_chrom_num>$6<?/MIVAR>
+  <?MIVAR NAME=$locus>$7<?/MIVAR>
+  <?MIVAR NAME=$q_allele>$4<?/MIVAR>
+  <?MIVAR NAME=$fish_id>$2<?/MIVAR>
 
-  <?MISQL SQL="select lg_location,metric from public_paneled_markers where zdb_id = '$fish_id';">
+  $(IF,$(>,$MI_CURRENTROW,1),"<TR><TD colspan=7> <HR width=80%> </TD> </TR>")
 
-    <?MIVAR NAME=$lg_location>$1<?/MIVAR>
-    <?MIVAR NAME=$metric>$2<?/MIVAR>
+  $(IF,$(=,$MI_CURRENTROW,1),"<TR><TD colspan=7> <HR size=5> </TD> </TR>")
 
-    <?MIBLOCK COND="$(>,$MI_CURRENTROW,1)">
-	<TR><TD> </TD><TD> </TD><TD> </TD><TD> </TD><TD> </TD><TD> </TD>
-    <?/MIBLOCK>
 
-    <TD align=center>
-      <font size=-1>
-	$lg_location $metric
-      </font>
-    </TD></TR>
+  <?MIVAR NAME=$q_abbrev>$3<?/MIVAR>
+  <?MIBLOCK COND="$(EC,$q_abbrev,NULL)">
+  <?MIVAR NAME=$q_abbrev>None<?/MIVAR>
+  <?/MIBLOCK>
 
-    <!-- create view map buttons -->
-    <?MIVAR>
-      <form method=post  name="$q_allele" target="content" action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi">
-        <input type=hidden name=view_map value="view_map">
-        <input type=hidden name=userid value=$userid>
-        <input type=hidden name=OID value=$fish_id>
-        <input type=hidden name=MGH value=1>  <!-- we currently display "mapped" mutants on MGH panel -->
-        <TR><TD> </TD><TD> </TD><TD> </TD>
-        <TD align=left><font size=1><input type=button value='VIEW MERGED MAP' name=view_merge_map onClick="document.$q_allele.action='/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi';document.$q_allele.submit();"></TD><TD>&nbsp;</TD><TD align=left><font size=1><input type=submit value='VIEW INDIVIDUAL MAPS' name=view_map ></TD></TR>
-      </form>
-    <?/MIVAR>   
+  <?MIBLOCK COND="$(EC,$q_abbrev,xxx)">
+  <?MIVAR NAME=$q_abbrev>None<?/MIVAR>
+  <?/MIBLOCK>
+
+
+  <TR align=center valign=top> 
+  <TD>$MI_CURRENTROW. 
+  $(IF,$(XST,$return_rec),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$fish_id" TARGET=content>SELECT</A>") 
+  </TD>
+  <TD valign=top> 
+  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$fish_id" TARGET=content>$q_allele</A>
+
+  <!-- allele_name contains all names pull aliases only -->
+  <?MISQL SQL="select distinct alleali_allele_name_alias from allele_alias , fish_search where  fish_id = '$2' and alleali_alt_zdb_id = alt_zdb_id;">
+    <?MIVAR COND="$(=,$MI_CURRENTROW,1)">&nbsp;[<?/MIVAR>
+    <?MIVAR COND="$(>,$MI_CURRENTROW,1)">;<?/MIVAR>$1
   <?/MISQL>
 
-<?/MISQL>
+  <?MIVAR COND="$(>=,$MI_CURRENTROW,1)">]<?/MIVAR>
 
-</TABLE>
+  </TD> 
 
-<?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No matching records found<?/MIVAR>
+  <TD><font size=-1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$locus" TARGET=content>$name</A> ($q_abbrev)
+  <?MIVAR NAME=$found>false<?/MIVAR>
+  <?MISQL SQL="select distinct lcsali_locus_name_alias, lcsali_locus_abbrev_alias from locus_alias where  lcsali_locus_zdb_id = '$9';">
+  <?MIVAR COND="$(=,$MI_CURRENTROW,1)">&nbsp;[<?/MIVAR>
+  <?MIVAR COND="$(=,$MI_CURRENTROW,1)" NAME=$found>true<?/MIVAR>
+  <?MIVAR COND="$(>,$MI_CURRENTROW,1)">;<?/MIVAR>$1
+  <?MIVAR COND="$(NC,$2,"")">($2)<?/MIVAR>
+  <?/MISQL>
+  <?MISQL SQL="select distinct fishali_fish_name_alias from fish_alias where fishali_fish_zdb_id = '$2';">
+  <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(NC,$found,true))">&nbsp;[<?/MIVAR>
+  <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(EC,$found,true))">;<?/MIVAR>
+  <?MIVAR COND="$(=,$MI_CURRENTROW,1)" NAME=$found>true<?/MIVAR>
+  <?MIVAR COND="$(>,$MI_CURRENTROW,1)">;<?/MIVAR>$1
+  <?/MISQL>
+  <?MIVAR COND="$(EC,$found,true)">]<?/MIVAR>
 
+  </font></TD>
 
-  <!-- ends if no overflow -->
-<?/MIBLOCK>  <!-- ends the mutant case -->
+  <TD><font size=-1> $(IF,$(NC,$gene_id,UNKNOWN),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$gene_id TARGET=content>$gene_abbrev</A>,UNKNOWN)
+  </font></TD>
 
+  <TD><font size=-1> $(IF,$(EC,$q_chrom_change,NULL),UNKNOWN,$q_chrom_change)</font> </TD> 
+  <TD><font size=-1> $(IF,$(EC,$q_chrom_num,0),UNKNOWN,$q_chrom_num)</font> </TD> 
 
+    <?MISQL SQL="select lg_location,metric from public_paneled_markers where zdb_id = '$fish_id';">
 
-<?MIBLOCK COND="$(AND,$(NC,$line_type,mutant),$(NC,$line_type,accession))">
-<center>
-<FONT SIZE=4>Search Wild Type Lines: Result Summary</font><br>
-(Click on individual stocks for more detail)
-</center> 
-<p>
-<TABLE width=100%>
-<TH> </TH><TH align=left>Strain</TH> <TH align=left>Lab</TH>
+      <?MIVAR NAME=$lg_location>$1<?/MIVAR>
+      <?MIVAR NAME=$metric>$2<?/MIVAR>
 
-<!--- WALKING WINDOW --->
-<!--- Initialization --->
+      <?MIBLOCK COND="$(>,$MI_CURRENTROW,1)">
+	  <TR><TD> </TD><TD> </TD><TD> </TD><TD> </TD><TD> </TD><TD> </TD>
+      <?/MIBLOCK>
 
-<?MIVAR NAME=WINSIZE DEFAULT=25>$WINSIZE<?/MIVAR>
-<?MIVAR NAME=BEGIN DEFAULT=1>$START<?/MIVAR>
+      <TD align=center>
+	<font size=-1>
+	  $lg_location $metric
+	</font>
+      </TD></TR>
 
+      <!-- create view map buttons -->
+      <?MIVAR>
+	<form method=post  name="$q_allele" target="content" action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi">
+	  <input type=hidden name=view_map value="view_map">
+	  <input type=hidden name=userid value=$userid>
+	  <input type=hidden name=OID value=$fish_id>
+	  <input type=hidden name=MGH value=1>  <!-- we currently display "mapped" mutants on MGH panel -->
+	  <TR><TD> </TD><TD> </TD><TD> </TD>
+	  <TD align=left><font size=1><input type=button value='VIEW MERGED MAP' name=view_merge_map onClick="document.$q_allele.action='/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi';document.$q_allele.submit();"></TD><TD>&nbsp;</TD><TD align=left><font size=1><input type=submit value='VIEW INDIVIDUAL MAPS' name=view_map ></TD></TR>
+	</form>
+      <?/MIVAR>   
+    <?/MISQL>
 
-<!--- DEFINITION OF RANGES --->
-<?MIVAR NAME=BEGIN>$(IF,$(<,$BEGIN,1),1,$BEGIN)<?/MIVAR> 
-<?MIVAR NAME=END>$(+,$BEGIN,$WINSIZE)<?/MIVAR>
+  <?/MISQL>
 
+  </TABLE>
 
-<!-- <?MIVAR>where line_type='wild type' $constraint<?/MIVAR>  use for debugging -->
-
-
-<!--- EXECUTION --->
-<!--- Query Database --->
-<?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE
-	SQL="select a.name, a.zdb_id, a.abbrev, b.name,b.zdb_id from fish a, lab b where line_type='wild type' and a.lab=b.zdb_id $constraint order by a.name;">
-
-<TR valign=top> <TD> 
-$(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$2" TARGET=content>SELECT</A> </FONT>") 
-</TD>
-<TD valign=top> <FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$2" TARGET="content">$1</A> ($3) </FONT> </TD>  
-<TD><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$5" TARGET="content">$4</TD>
-</TR>
-<?/MISQL>
-</TABLE>
-<?MIVAR name=$num_recs>$MI_ROWCOUNT<?/MIVAR>
-<?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No matching records found<?/MIVAR>
-
-<?/MIBLOCK>  <!-- ends the wild type case -->
-
-<!--  search for zdb id for accession lister  -->
-<?MIBLOCK COND="$(EC,$line_type,accession)">
-<center>
-<FONT SIZE=4>Search Fish Lines: Result Summary</font><br>
-(Click on individual stocks for more detail)
-</center> 
-<p>
-<TABLE width=100%>
-<TH> </TH><TH align=left>Strain</TH> <TH align=left>Lab</TH>
-
-<!--- WALKING WINDOW --->
-<!--- Initialization --->
-
-<?MIVAR NAME=WINSIZE DEFAULT=25>$WINSIZE<?/MIVAR>
-<?MIVAR NAME=BEGIN DEFAULT=1>$START<?/MIVAR>
+  <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No matching records found<?/MIVAR>
 
 
-<!--- DEFINITION OF RANGES --->
-<?MIVAR NAME=BEGIN>$(IF,$(<,$BEGIN,1),1,$BEGIN)<?/MIVAR> 
-<?MIVAR NAME=END>$(+,$BEGIN,$WINSIZE)<?/MIVAR>
+    <!-- ends if no overflow -->
+  <?/MIBLOCK>  <!-- ends the mutant case -->
+<?/MIBLOCK <!-- end of num_recs gt 0 -->
 
 
- <!-- <?MIVAR>where $constraint<?/MIVAR> use for debugging -->
+  <?MIBLOCK COND="$(AND,$(NC,$line_type,mutant),$(NC,$line_type,accession))">
+  <center>
+    <FONT SIZE=4>Search Wild Type Lines: Result Summary</font><br>
+    (Click on individual stocks for more detail)
+    </center> 
+    <p>
+    <TABLE width=100%>
+    <TH> </TH><TH align=left>Strain</TH> <TH align=left>Lab</TH>
 
 
-<!--- EXECUTION --->
-<!--- Query Database --->
-<?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE
-	SQL="select a.name, a.zdb_id, a.abbrev, b.name,b.zdb_id from fish a, lab b where  a.lab=b.zdb_id and a.zdb_id = '$OID' order by a.name;">
+    <!-- <?MIVAR>where line_type='wild type' $constraint<?/MIVAR>  use for debugging -->
 
-<TR valign=top> <TD> 
-$(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$2" TARGET=content>SELECT</A> </FONT>") 
-</TD>
-<TD valign=top> <FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$2" TARGET="content">$1</A> ($3) </FONT> </TD>  
-<TD><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$5" TARGET="content">$4</TD>
-</TR>
-<?/MISQL>
-</TABLE>
-<?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No matching records found<?/MIVAR>
 
-<?/MIBLOCK>  <!-- ends the accession case -->
+    <!--- EXECUTION --->
+    <!--- Query Database --->
+    <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE
+	    SQL="select a.name, a.zdb_id, a.abbrev, b.name,b.zdb_id from fish a, lab b where line_type='wild type' and a.lab=b.zdb_id $constraint order by a.name;">
 
-<BR>
+    <TR valign=top> <TD> 
+    $(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$2" TARGET=content>SELECT</A> </FONT>") 
+    </TD>
+    <TD valign=top> <FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$2" TARGET="content">$1</A> ($3) </FONT> </TD>  
+    <TD><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$5" TARGET="content">$4</TD>
+    </TR>
+    <?/MISQL>
+    </TABLE>
+    <?MIVAR name=$num_recs>$MI_ROWCOUNT<?/MIVAR>
+    <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No matching records found<?/MIVAR>
 
-<Center>
-<Table width="70%" border="0">
-	<tr>
-		<td width="45%" align=right valign=top>&nbsp;
+  <?/MIBLOCK>  <!-- ends the wild type case -->
+
+  <!--  search for zdb id for accession lister  -->
+  <?MIBLOCK COND="$(EC,$line_type,accession)">
+    <center>
+    <FONT SIZE=4>Search Fish Lines: Result Summary</font><br>
+    (Click on individual stocks for more detail)
+    </center> 
+    <p>
+    <TABLE width=100%>
+    <TH> </TH><TH align=left>Strain</TH> <TH align=left>Lab</TH>
+
+     <!-- <?MIVAR>where $constraint<?/MIVAR> use for debugging -->
+
+
+    <!--- EXECUTION --->
+    <!--- Query Database --->
+    <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE
+	    SQL="select a.name, a.zdb_id, a.abbrev, b.name,b.zdb_id from fish a, lab b where  a.lab=b.zdb_id and a.zdb_id = '$OID' order by a.name;">
+
+    <TR valign=top> <TD> 
+    $(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$2" TARGET=content>SELECT</A> </FONT>") 
+    </TD>
+    <TD valign=top> <FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$2" TARGET="content">$1</A> ($3) </FONT> </TD>  
+    <TD><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$5" TARGET="content">$4</TD>
+    </TR>
+    <?/MISQL>
+    </TABLE>
+    <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No matching records found<?/MIVAR>
+
+  <?/MIBLOCK>  <!-- ends the accession case -->
+
+  <BR>
+
+  <Center>
+  <Table width="70%" border="0">
+	  <tr>
+		  <td width="45%" align=right valign=top>&nbsp;
 
 <?MIVAR name=comment>  Build array of user data  <?/MIVAR>
 	<?MIVAR name=UserInput>MIval=aa-fishlister.apg&WINSIZE=$WINSIZE<?/MIVAR>
@@ -431,105 +411,106 @@ $(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|
 		<?MIVAR name=UserInput COND=$(XST,$anon1text)>
 			$UserInput&anon1text=$anon1text
 		<?/MIVAR>
-	<?MIVAR name=UserInput COND=$(XST,$structures)>
+	        <?MIVAR name=UserInput COND=$(XST,$structures)>
 			$UserInput&structures=$structures
 		<?/MIVAR>
-	<?MIVAR name=UserInput COND=$(XST,$selected_separator)>
+	        <?MIVAR name=UserInput COND=$(XST,$selected_separator)>
 			$UserInput&selected_separator=$selected_separator
 		<?/MIVAR>
+	        <?MIVAR name=UserInput COND=$(XST,$selected)>
+			$UserInput&selected=$(URLENCODE,$selected)
+		<?/MIVAR>
+  <!--- Return to the previous set of Rows --->
+  <?MIBLOCK COND="$(>,$BEGIN,1)">
 
-<!--- Return to the previous set of Rows --->
-<?MIBLOCK COND="$(>,$BEGIN,1)">
-	
-<?MIVAR>
-	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$(-,$BEGIN,$WINSIZE)&BEGIN=$BEGIN&$UserInput">Prev</A>&nbsp;&nbsp;&nbsp;&nbsp;<br>
+  <?MIVAR>
+	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$(-,$BEGIN,$WINSIZE)&BEGIN=$BEGIN&$UserInput">Prev</A>&nbsp;&nbsp;&nbsp;&nbsp;<br>
 
-<!-- If current not First Page, create link to first page. -->
-	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=1&BEGIN=1&$UserInput">First Page</A>
-<?/MIVAR>
+  <!-- If current not First Page, create link to first page. -->
+	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=1&BEGIN=1&$UserInput">First Page</A>
+  <?/MIVAR>
 
-<?/MIBLOCK>
+  <?/MIBLOCK>
 
-		</td>
-
-
-<!-- Calculate 3 pages before and 3 pages after current page. -->
-<?MIVAR name=$CURRENT>$(FIX,$(+,$(/,$BEGIN,$WINSIZE),1))<?/MIVAR>
-
-<?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,3)),0)">
-<td valign=top>
-  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,3))"> $(-,$CURRENT,3)</A> <?/MIVAR>
-		</td>
-<?/MIBLOCK>
-
-<?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,2)),0)">
-<td valign=top>
-  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,2))"> $(-,$CURRENT,2)</A><?/MIVAR>
-		</td>
-<?/MIBLOCK>
-
-<?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,1)),0)">
-<td valign=top>
-  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,1))"> $(-,$CURRENT,1)</A><?/MIVAR>
-		</td>
-<?/MIBLOCK>
-
-<?MIBLOCK COND="$(>,$num_recs,$WINSIZE)">
-<td align=center valign=top>
-	<?MIVAR>  $CURRENT  <?/MIVAR>
-</td>
-<?/MIBLOCK>
+		  </td>
 
 
-<?MIVAR COND=$(<=,$(+,$BEGIN,$(*,$WINSIZE,1)),$num_recs)>
-<td valign=top>
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$END"> $(+,$CURRENT,1)</A>
-		</td>
-<?/MIVAR>
+  <!-- Calculate 3 pages before and 3 pages after current page. -->
+  <?MIVAR name=$CURRENT>$(FIX,$(+,$(/,$BEGIN,$WINSIZE),1))<?/MIVAR>
 
-<?MIVAR COND=$(<=,$(+,$BEGIN,$(*,$WINSIZE,2)),$num_recs)>
-<td valign=top>
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,2))"> $(+,$CURRENT,2)</A>
-		</td>
-<?/MIVAR>
+  <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,3)),0)">
+  <td valign=top>
+    <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,3))"> $(-,$CURRENT,3)</A> <?/MIVAR>
+		  </td>
+  <?/MIBLOCK>
 
-<?MIVAR COND=$(<=,$(+,$BEGIN,$(*,$WINSIZE,3)),$num_recs)>
-<td valign=top>
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,3))"> $(+,$CURRENT,3)</A>
-		</td>
-<?/MIVAR>
+  <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,2)),0)">
+  <td valign=top>
+    <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,2))"> $(-,$CURRENT,2)</A><?/MIVAR>
+		  </td>
+  <?/MIBLOCK>
 
-		<td width="45%" align=left valign=top>&nbsp;
+  <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,1)),0)">
+  <td valign=top>
+    <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,1))"> $(-,$CURRENT,1)</A><?/MIVAR>
+		  </td>
+  <?/MIBLOCK>
 
-<!--- Get the next set of Rows --->
-<?MIBLOCK COND="$(<=,$(+,$BEGIN,$WINSIZE),$num_recs)">
-<?MIVAR>
-	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$END&BEGIN=$BEGIN&$UserInput">Next</A><br>
-<?/MIVAR>
-
-
-<!-- Calculate last page -->
-<?MIVAR name=$START COND="$(=,$(MOD,$num_recs,$WINSIZE),0)">
-	$(+,$(*,$(-,$(/,$num_recs,$WINSIZE),1),$WINSIZE),1)
-<?/MIVAR>
-
-<?MIVAR name=$START COND="$(!=,$(MOD,$num_recs,$WINSIZE),0)">
-	$(+,$(*,$(FIX,$(/,$num_recs,$WINSIZE)),$WINSIZE),1)
-<?/MIVAR>
-
-<?MIVAR>
-	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$START&$UserInput">Last Page</A>
-<?/MIVAR>
-<?/MIBLOCK>
-
-			&nbsp;
-
-		</td>
-	</tr>
-</Table>
-</Center>
+  <?MIBLOCK COND="$(>,$num_recs,$WINSIZE)">
+  <td align=center valign=top>
+	  <?MIVAR>  $CURRENT  <?/MIVAR>
+  </td>
+  <?/MIBLOCK>
 
 
+  <?MIVAR COND=$(<=,$(+,$BEGIN,$(*,$WINSIZE,1)),$num_recs)>
+  <td valign=top>
+  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$END"> $(+,$CURRENT,1)</A>
+		  </td>
+  <?/MIVAR>
+
+  <?MIVAR COND=$(<=,$(+,$BEGIN,$(*,$WINSIZE,2)),$num_recs)>
+  <td valign=top>
+  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,2))"> $(+,$CURRENT,2)</A>
+		  </td>
+  <?/MIVAR>
+
+  <?MIVAR COND=$(<=,$(+,$BEGIN,$(*,$WINSIZE,3)),$num_recs)>
+  <td valign=top>
+  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,3))"> $(+,$CURRENT,3)</A>
+		  </td>
+  <?/MIVAR>
+
+		  <td width="45%" align=left valign=top>&nbsp;
+
+  <!--- Get the next set of Rows --->
+  <?MIBLOCK COND="$(<=,$(+,$BEGIN,$WINSIZE),$num_recs)">
+    <?MIVAR>
+	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$END&BEGIN=$BEGIN&$UserInput">Next</A><br>
+    <?/MIVAR>
+
+    <!-- Calculate last page -->
+    <?MIVAR name=$START COND="$(=,$(MOD,$num_recs,$WINSIZE),0)">$(+,$(*,$(-,$(/,$num_recs,$WINSIZE),1),$WINSIZE),1)<?/MIVAR>
+
+    <?MIVAR name=$START COND="$(!=,$(MOD,$num_recs,$WINSIZE),0)">$(+,$(*,$(FIX,$(/,$num_recs,$WINSIZE)),$WINSIZE),1)<?/MIVAR>
+
+    <?MIVAR>
+      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$START">Last Page</A>
+    <?/MIVAR>
+  <?/MIBLOCK>
+
+
+			  &nbsp;
+
+		  </td>
+	  </tr>
+  </Table>
+  </Center>
+
+
+
+
+</HTML>
 <!-- Cause a tile for the new page to appear in the navigator frame -->
 <!-- startframes.apg will pass variables on to appropriate page -->
 <!-- don't want a tile if got here via the accessionlister  -->
@@ -549,9 +530,7 @@ $(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|
       <?MIVAR>
         var page_id=top.content.location.href+'&structures=$structures&navtile=$navtile&fname=$fname&chrom_change=$chrom_change&chrom_num=$chrom_num&mutagen=$mutagen&anon1=$anon1&anon1text=$anon1text&allele=$allele&abbrev=$nav_abbrev&line_type=$line_type&knowngene=$knowngene&selected_separator=$selected_separator&WINSIZE=$WINSIZE&BEGIN=$BEGIN';
       <?/MIVAR>
-    <?/MIBLOCK>
-
-    <?MIBLOCK COND="$(NXST,$structures)">
+    <?MIELSE>
       <?MIVAR>
         var page_id=top.content.location.href+'&navtile=$navtile&fname=$fname&chrom_change=$chrom_change&chrom_num=$chrom_num&mutagen=$mutagen&anon1=$anon1&anon1text=$anon1text&allele=$allele&abbrev=$nav_abbrev&line_type=$line_type&knowngene=$knowngene&WINSIZE=$WINSIZE&BEGIN=$BEGIN';
       <?/MIVAR>
@@ -564,5 +543,3 @@ $(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|
 
   </SCRIPT>
 <?/MIBLOCK>
-
-</HTML>
