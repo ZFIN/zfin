@@ -147,6 +147,25 @@ $1
      happens when adding people to int_person_lab from the new_lab form. -->
 
 <?MIBLOCK COND="$(EC,$action,r_intersect)">
+ 
+  <?MIBLOCK COND="$(EC,$fill_table,int_data_source)">
+
+  <!-- FIRST delete duplicates. Don't want redundant links -->
+  <?MISQL SQL="
+    delete from $fill_table 
+      where ids_data_zdb_id = '$return_recid'
+        and ids_source_zdb_id = '$new_oid';">
+  <?/MISQL>
+
+  <!-- Then just jam in new intersection entry -->
+  <?MISQL SQL="
+    insert into $fill_table
+	( ids_source_zdb_id, ids_data_zdb_id) 
+      values 
+	( '$new_oid', '$return_recid');">
+  <?/MISQL>
+
+  <?MIELSE>
   <!-- FIRST delete duplicates. Don't want redundant links -->
   <?MISQL SQL="
     delete from $fill_table 
@@ -172,6 +191,7 @@ $1
 	  'Not available', '$new_oid', 
 	  'Added $return_recid to list of records associated with data record $new_oid');">
   <?/MISQL>
+  <?/MIBLOCK> <!-- end if fill_table int_data_source -->
 <?/MIBLOCK>
 
 
