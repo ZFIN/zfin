@@ -7,12 +7,13 @@
 -- File collection
 ---------------------
 
-   * Export FMP files into .csv files. Open files with password "thisse", from File pulldown menu, choose Export, give names as defined below, use default .csv extension. Make sure "date last modified" is the last column, then export without changing any other settings.
+   * Download data package (.sitx file) from ftp://ftp-igbmc.u-strasbg.fr/pub/Thisse/, use STUFFITS (www.stuffit.com) to expand the package. 
+   * Use FileMaker Pro to open and export FileMake Pro Database files (listed below) into .csv files. Open files with password "thisse". From File pulldown menu, choose Export, give names as defined below, use .csv extension. Make sure "date last modified" is the last column, then export without changing any other settings.
 
-	rel_authors->authors.csv, 
-	rel_expression->expression.csv, 
-	rel_images->images.csv, 
-	DATA_FRX->probes.csv. 
+	DATA_FRX->probes(.csv) 
+	rel_authors->authors(.csv) 
+	rel_expression->expression(.csv) 
+	rel_images->images(.csv) 
 
             
    * Transfer all images and  probes.csv, images.csv, expression.csv, authors.csv files to one new directory, recommended name FR#_mmdd, # is the package number if given.
@@ -24,6 +25,11 @@
 --------------------
 
    * ISPELL check for each .csv files, expression.csv normally needs some correction. 
+
+	    >ispell -p ispell_common expression.csv
+
+     You will be using and updating a common ispell dictionary
+
    * In case of Thisse annotated (CB) loads, (otherwise, skip)
        - Run
 		>/private/bin/rebol -sqw get_annotation_txt.r 
@@ -46,11 +52,11 @@
 
 	  labname:                  Thisse / Talbot
           release_type: 	    cb    with annotation
-          (in case of Thisse)       fr    without annotation
+          (in case of Thisse)   fr    without annotation
     
     $resulted files$:  images.dim	
     $description$ :
-	It creates Imagesdir/ and move all .jpg a(nd corresponding .txt files) into it. It does image reality check with images.csv file, if no missed entries reported, answer "y" to continue when it prompts, otherwise, answer "n" and solve the inconsistency with Curator, and launch the process again. 
+	    It creates Imagesdir/ and move all .jpg a(nd corresponding .txt files) into it. It does image reality check with images.csv file, if no missed entries reported, answer "y" to continue when it prompts, otherwise, answer "n" and solve the inconsistency with Curator, and launch the process again. 
 	The second half of the program calls thumbnail.sh to generate thumbnail images, upon finish, it checks for completeness. Answer "y" to finish with cleanup if no missed images reported, otherwise, answer "n" to quit and investigate.
 
 
@@ -58,25 +64,30 @@
 -- Preload processing: Parsing, Naming, Blasting
 --------------------------------------------------
 
-    $note$ : Update your test database and source the environment. The scripts would inherit environment from the running shell. 
-
+    $note$ : 
+		- Update your test database and source the environment. The scripts would inherit environment from the running shell. 
+        - Ask Peiran to update the ZFIN blast database, or run 
+			  /research/zblastfiles/users/peirans/Scripts/ZFIN/processZFIN.pl 0
+ 
     $executables$:  parseThisse.pl  nameClone.pl blast2tab.pl 
 		    filterBlast.pl thisseData2Unl.sh
 
     $command$    :
 
-	> thisseData2Unl.sh <your_db_name>
+	   > thisseData2Unl.sh <your_db_name>
 
-    $resulted files$:   probes.unl
+    $resulted files$:   
+			probes.unl
 			expression.unl 
 			keywords.unl 
 			images.unl 
 			authors.unl 
 			(acc_imClone.unl)
 			(is_gene.unl)
-			(blast2zfin.out)	
+			(blast2zfin.out)
+	
     $description$ :
-	This master script calls parseThisse.pl and  nameClone.pl first, and generates a group of .unl file for loading. If there is unknown accession number, it will blast the accessions against ZFIN sequence database, use blast2tab.pl to convert the results to table format while filter out matches with <90% identity. The blast2zfin.fst file is then feeded into filterBlast.pl which exams the results and write qualified matches into is_gene.unl, and the rest to blast2zfin.scnd for manual curation. 
+	    This master script calls parseThisse.pl and  nameClone.pl first, and generates a group of .unl file for loading. If there is unknown accession number, it will blast the accessions against ZFIN sequence database, use blast2tab.pl to convert the results to table format while filter out matches with <90% identity. The blast2zfin.fst file is then feeded into filterBlast.pl which exams the results and write qualified matches into is_gene.unl, and the rest to blast2zfin.scnd for manual curation. 
 
 ----------------
 -- Loading
@@ -88,13 +99,13 @@
 
     $command$    :
 
-	> load_gxp.sh <db_name> <lab_name> [release_type]
+	  > load_gxp.sh <db_name> <lab_name> [release_type]
 
-        lab_name   :     Thisse /Talbot
-        release_type:    fr/cb
+          lab_name   :     Thisse /Talbot
+          release_type:    fr/cb
 
     $description$ :
-	This master script first calls pre_gxp_load.sql to load the files into a set of tables and conduct quality check with zfin db. Errors are written to separate .err file. The script would exit on any error with temp tables cleaned up. (Error file description is provided below, read first one at least!) Upon success, it executes the gxp_load_func.sql and then uses the SPL function with a set of predefined parameters to load the data into database. If the load fails with exit value "1", check /tmp/gxp_load_exception for reasons. If the load successes with "0", the gxp_load_quantity_check.sql would generate related table contents comparison report. Finally, you would choose to clean up all the temporary tables right away, or keep the table for diagnose and run post_gxp_load.sql later. 
+	  This master script first calls pre_gxp_load.sql to load the files into a set of tables and conduct quality check with zfin db. Errors are written to separate .err file. The script would exit on any error with temp tables cleaned up. (Error file description is provided below, read first one at least!) Upon success, it executes the gxp_load_func.sql and then uses the SPL function with a set of predefined parameters to load the data into database. If the load fails with exit value "1", check /tmp/gxp_load_exception for reasons. If the load successes with "0", the gxp_load_quantity_check.sql would generate related table contents comparison report. Finally, you would choose to clean up all the temporary tables right away, or keep the table for diagnose and run post_gxp_load.sql later. 
 
 ---------------------
 -- Appendix
