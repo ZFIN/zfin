@@ -4,19 +4,6 @@
 # loadsp.pl
 #
 use MIME::Lite;
-#------------------- Download -----------
-
-sub downloadGOtermFiles () {
-
-   system("/local/bin/wget -q http://www.geneontology.org/ontology/function.ontology -O function.ontology");
-   system("/local/bin/wget -q http://www.geneontology.org/ontology/process.ontology -O process.ontology");
-   system("/local/bin/wget -q http://www.geneontology.org/ontology/component.ontology -O component.ontology");
-
- }
-#   Main
-#
-
-
 #set environment variables
 $ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
 $ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
@@ -27,100 +14,125 @@ $dir = "<!--|ROOT_PATH|-->/server_apps/data_transfer/LoadGO/";
 chdir "$dir";
 print "$dir" ;
 
+
+#------------------- Download -----------
+
+sub downloadGOtermFiles () {
+
+    system("/local/bin/wget -q http://www.geneontology.org/ontology/function.ontology -O function.ontology") and die "can not download function";
+    system("/local/bin/wget -q http://www.geneontology.org/ontology/process.ontology -O process.ontology") and die "can not download process";
+    system("/local/bin/wget -q http://www.geneontology.org/ontology/component.ontology -O component.ontology") and die "can not download component";
+
+}
+
+#create output of new secondary and obsolete terms.
+
+sub sendLoadReport ($) {
+    
+#. is concantenate
+#$_[x] means to take from the array of values passed to the fxn, the 
+#number indicated: $_[0] takes the first member.
+    
+    my $SUBJECT="Auto LoadGOTerms:".$_[0];
+    my $MAILTO=$_[1];
+    my $TXTFILE=$_[2];
+    
+    # Create a new multipart message:
+    $msg1 = new MIME::Lite 
+	From    => "$ENV{LOGNAME}",
+	To      => "$MAILTO",
+	Subject => "$SUBJECT",
+	Type    => 'multipart/mixed';
+
+    attach $msg1 
+	Type     => 'text/plain',   
+	Path     => "$TXTFILE";
+
+    # Output the message to sendmail
+    
+    open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
+    $msg1->print(\*SENDMAIL);
+    close (SENDMAIL);
+    
+}
+
+#   Main
+#
+
 #remove old files
  
-system("/bin/rm -f *.ontology");
-system("/bin/rm -f *.unl");
-system("/bin/rm -f *.txt");
+system("/bin/rm -f *.ontology") and die "can not rm ontology";
+system("/bin/rm -f *.unl") and die "can not rm unl" ;
+system("/bin/rm -f *.txt") and die "can not rm txt" ;
 
 &downloadGOtermFiles();
 
 print "Download done\n";
 
-system("parse_defs.r");
+system("parse_defs.r") and die "can not parse_defs" ;
 
 $count = 0;
 $retry = 1;
 # wait till parsing is finished
 while( !( -e "godefs_parsed.unl")) {
-
-  $count++;
-  if ($count > 10)
-  {
-    if ($retry) 
-    {
-      $count = 0;
-      $retry = 0;
-      print "retry parse_defs.r\n";
-      system("parse_defs.r");
-    }
-    else
-    {
-         print ("Failed to run parse_defs.r"); 
-      exit;
-    }
-  }  
+    
+    $count++;
+    if ($count > 10) {
+	if ($retry) {
+	    $count = 0;
+	    $retry = 0;
+	    print "retry parse_defs.r\n";
+	    system("parse_defs.r");
+	}
+	else {
+	    print ("Failed to run parse_defs.r"); 
+	    exit;
+	}
+    }  
 }
+
+open(GODEFS_PARSED, "< ./godefs_parsed.unl") or die "can't open godefs_parsed";
+
+$count++ while <GODEFS_PARSED>;
+
+if ($count < 10) {
+    &sendLoadReport("parse_defs.r failed","<!--|GO_EMAIL_CURATOR|-->", "./godefs_parsed.unl") ;
+}
+else {	 
+    print "godefs_parsed is not null $count \n";
+}
+
+$count = 0 ;
+
+close GODEFS_PARSED;
 
 print "parsing obo file done\n";
 print "parsing ontology.pl function.ontology process.ontology component.ontology\n";
 
-system ("test.pl function.ontology process.ontology component.ontology");
+system ("test.pl function.ontology process.ontology component.ontology") and die "can not test.pl";
 
 $count = 0;
 $retry = 1;
 
 # wait till parsing is finished
 while( !( -e "ontology.unl")) {
-
-  $count++;
-  if ($count > 10)
-  {
-    if ($retry) 
-    {
-      $count = 0;
-      $retry = 0;
-      print "retry ontology.pl\n";
-      system("test.pl function.ontology process.ontology component.ontology");
-    }
-    else
-    {
-      print("Failed to run ontology.pl"); 
-      exit;
-    }
-  }  
+    
+    $count++;
+    if ($count > 10) {
+	if ($retry) {
+	    $count = 0;
+	    $retry = 0;
+	    print "retry ontology.pl\n";
+	    system("test.pl function.ontology process.ontology component.ontology") and die "can not test.pl second time";
+	}
+	else {
+	    print("Failed to run ontology.pl"); 
+	    exit;
+	}
+    }  
 }
 
-#create output of new secondary and obsolete terms.
 
-sub sendLoadReport ($) {
-
-#. is concantenate
-#$_[x] means to take from the array of values passed to the fxn, the 
-#number indicated: $_[0] takes the first member.
-  
-  my $SUBJECT="Auto LoadGOTerms:".$_[0];
-  my $MAILTO=$_[1];
-  my $TXTFILE=$_[2];
-
-  # Create a new multipart message:
-  $msg1 = new MIME::Lite 
-    From    => "$ENV{LOGNAME}",
-    To      => "$MAILTO",
-    Subject => "$SUBJECT",
-      Type    => 'multipart/mixed';
-
-  attach $msg1 
-   Type     => 'text/plain',   
-   Path     => "$TXTFILE";
-
-  # Output the message to sendmail
-
-  open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
-  $msg1->print(\*SENDMAIL);
-  close (SENDMAIL);
-
-}
 # ------------ Loading ---------------------
 print "loading...\n";
 
@@ -133,7 +145,7 @@ $count = 0;
 
 #while the new_obsolete_terms.unl file does not exist,
 
-    while( !( -e "./new_obsolete_terms.unl")) {
+while( !( -e "./new_obsolete_terms.unl")) {
 
 #auto incriment the counter
 
@@ -155,19 +167,19 @@ $count = 0;
 
 #while the newannotsecterms.unl file does not exist,
 
-    while( !( -e "./newannotsecterms.unl")) {
-
+while( !( -e "./newannotsecterms.unl")) {
+	
 #auto incriment the counter
 
-  $count++;
+    $count++;
 
 #if the count gets too large, fail the load as we don't want any infinite
 #counting
 
- if ($count > 100) {
-      print "loadgo.pl failed at creating secondary term unload file" ;
-      exit ;
-  }
+    if ($count > 100) {
+	print "loadgo.pl failed at creating secondary term unload file" ;
+	exit ;
+    }
 }
 
 #open the files we create and count line by line until we read the EOF.
@@ -185,13 +197,15 @@ $count++ while <FILE1>;
 
 #count now holds the number of lines read
 
-  if ($count < 1) {
+if ($count < 1) {
       print "No new secondary terms\n" ;
-  }
-  else {
+}
+else {
     &sendLoadReport("Terms now secondary","<!--|GO_EMAIL_CURATOR|-->", 
 		"./newannotsecterms.unl") ;
-  }
+}
+
+close FILE1;
 
 $count = 0;
 
@@ -203,14 +217,18 @@ $count++ while <FILE2>;
 
 #count now holds the number of lines read
 
-  if ($count < 1) {
-      print "No new obsolete terms\n" ;
-  }
-  else {
-    
-      &sendLoadReport("Terms now obsolete","<!--|GO_EMAIL_CURATOR|-->",
-		      "./new_obsolete_terms.unl");
+if ($count < 1) {
+    print "No new obsolete terms\n" ;
+}
 
-  }
+else {
+    
+    &sendLoadReport("Terms now obsolete","<!--|GO_EMAIL_CURATOR|-->",
+		    "./new_obsolete_terms.unl");
+
+}
+
+close FILE2 ;
+
 
 exit;
