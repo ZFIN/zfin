@@ -13,14 +13,18 @@ function show_doc(title,docpath) {
 function check_submission(doAction) {
  var acceptable=1;
  var myform=document.ldata;
- if ((myform.fname.value == '') || (myform.allele.value == '') ||
-     (myform.abbrev.value == '' && myform.fname.value.substr (0,2) != "df"))
+ if ((myform.fname.value == '') || (myform.allele.value == '') || ((myform.abbrev.value == '') && (myform.fname.value.substr (0,2) != "Df") && (myform.fname.value.substr (0,2) != "Cr")&&( myform.fname.value.substr (0,2) != "In") && ( myform.fname.value.substr (0,2) != "Is") && ( myform.fname.value.substr (0,1) != "T") && ( myform.fname.value.substr (0,2) != "Dp")))
  {
       acceptable=0;
       window.alert('Incomplete submission!\n You must specify all three values: Locus name, abbreviation and allele designation!');
  }
- var glob=myform.fname.value+myform.abbrev.value+myform.allele.value;
- if(glob != glob.toLowerCase()) {
+
+ if (( myform.fname.value.substr (0,2) == "Df")||(myform.fname.value.substr (0,2) == "Tg")||(myform.fname.value.substr (0,2) == "Cr")||(myform.fname.value.substr (0,2) == "Dp")||(myform.fname.value.substr (0,2) == "In")||(myform.fname.value.substr (0,2) == "Is")||(myform.fname.value.substr (0,1) == "T")){
+  var glob=myform.abbrev.value+myform.allele.value;
+ } else {
+    var glob=myform.fname.value+myform.abbrev.value+myform.allele.value;
+ }
+ if(glob != glob.toLowerCase() ){
   acceptable=0;
   window.alert('Nomenclature violation: Capitalization.\n Locus Name, Abbreviation and allele may not contain any upper case letters! \n Please correct and try again.');
  }
