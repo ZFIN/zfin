@@ -725,7 +725,7 @@
 				     $g_opt."\n".
 				       $Q->submit(-name=>"Hide / Show / Adjust a Panel",-align=>'right')."\n".
 					 $Q->end_form."\n</td>";
-    print '<td><img src=http://zfin.org/client_apps/mapkey.gif><p>'."\n";
+    print '<td><img src=/client_apps/mapkey.gif><p>'."\n";
     
     print "<td>". $Q->start_form (
 				  -method=>'GET',
