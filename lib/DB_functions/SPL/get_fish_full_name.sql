@@ -2,7 +2,7 @@ create function
 get_fish_full_name(
   fishZdbId varchar(50) )
 
-  returning varchar(180);	-- fish.name + fish.abbrev + 20 misc spaces
+  returning varchar(255);	-- fish.name + fish.abbrev + 20 misc spaces
 
   -- Given the ZDB ID of a fish, returns a fully qualified fish name of
   -- the form:
@@ -22,9 +22,9 @@ get_fish_full_name(
   --
   -- is returned.
 
-  define fishName	varchar(80);
+  define fishName	varchar(255);
   define fishAbbrev	varchar(80);
-  define fishFullName	varchar(180);
+  define fishFullName	varchar(255);
   define fishLineType   varchar(30);
 
   select name, abbrev, line_type
