@@ -160,7 +160,7 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
 	    select DB_name, acc_num
 	      from db_link
 	      where linked_recid = '$ortho_id';">
-	    <option value=$2>$1:$2
+	    <option value=$1:$2>$1:$2
 	  <?/MISQL>
          </SELECT>
          </TD> 
