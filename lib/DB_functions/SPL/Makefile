@@ -49,8 +49,7 @@ STAGE_FUNCS = \
 GENERICS = $(REGEN_FUNCS)
 STATICS  = $(DBLINK_FUNCS) $(FISH_FUNCS) $(IMAGE_FUNCS) $(MRKR_FUNCS) \
 	   $(PUB_FUNCS) $(STAGE_FUNCS) $(ZDB_FUNCS) \
-	gene_contains_seg.sql 	insert_clone.sql vet_password.sql\
-	syscall.sql
+	gene_contains_seg.sql 	insert_clone.sql syscall.sql
 
 SPECIFICTARGETS = $(foreach SPEC, $(GENERICS), $(TARGETDIR)/$(SPEC))
 STATICTARGETS = $(foreach STAT, $(STATICS), $(TARGETDIR)/$(STAT))
