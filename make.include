@@ -164,6 +164,13 @@ JDBCHOME     = /private/apps/jdbc3
 JAVACFLAGS = 
 
 
+# --- Tomcat related
+
+CONTEXT_DIR = /private/tomcat/conf/Catalina/$(DOMAIN_NAME)
+
+SET_CONTEXT_DESCRIPTOR = /research/zusers/clements/Zfin/Commons/bin/setContextDescriptor.pl
+
+
 
 # ---- One time variables used in onetimeonlyl targets.  The onetimeonly 
 # targets are set up so that if we ever need to do a sweeping change in
