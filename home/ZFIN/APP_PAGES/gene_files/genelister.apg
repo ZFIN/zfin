@@ -1,10 +1,11 @@
-<!-- FILE: genelister.apg -->
+<!-- FILE:<HTML>
+ genelister.apg -->
 
 <!-- This app-page handles the criteria collected by geneselect.html, and 
   -- actually does the search, displaying the results. 
   -->
 <!-- Modified to support I.E.  Naviagtor tile buttons must know all user input from the query screen.  These values are posted to the lister form.  The lister form creates the tile bar button with appropriate variables. Startframes.apg will pass this variables on to the select form.  -->
-
+<!-- modified to use web datablade walking windows  -->
 
 <HTML>
 
@@ -58,13 +59,17 @@
 
 
 <!-- This next part builds up a query piece by piece, based on which criteria 
-  -- were passed in 
+  -- were passed in, an inner constraint must be used to account for the 
+	-- the possibility that the user leaves all fields blank; in that instance 
+	-- the constraint isn't set, thus an error results when the inner query
+	-- attempts to append an additional constraint to a non-existant constraint. 
   -->
 
 <?MIVAR NAME=$lead_wildcard><?/MIVAR>
 <?MIVAR COND="$(NC,$searchtype,begins)" NAME=$lead_wildcard>%<?/MIVAR>
 
 <?MIVAR NAME=$constraint COND="$(NXST,$constraint)"> <?/MIVAR>
+<?MIVAR NAME=$inner_constraint>where <?/MIVAR>
 <?MIVAR NAME=$lg COND="$(NXST,$lg)">0<?/MIVAR>
 <?MIVAR NAME=$refcross COND="$(NXST,$refcross)">NULL<?/MIVAR>
 <?MIVAR NAME=$order_pref COND="$(NXST,$order_pref)">name<?/MIVAR>
@@ -107,11 +112,12 @@
   <?MIVAR NAME=$constraint COND="$(NC,$knownloci,NULL)">$constraint $previous (locus_name is not null)<?/MIVAR>
 
   <?MIVAR NAME=$previous COND="$(NC,$knownloci,NULL)"> and <?/MIVAR>
+	<?MIVAR name=$inner_constraint>$constraint and <?/MIVAR>
 
 <?/MIBLOCK> <!-- ends cond any constraints specified -->
 
-<?MIVAR NAME=$order_clause COND="$(EC,$order_pref,name)">order by abbrev, panel_id desc <?/MIVAR>
-<?MIVAR NAME=$order_clause COND="$(EC,$order_pref,location)">order by OR_lg,gene_name, panel_id desc<?/MIVAR>
+<?MIVAR NAME=$order_clause COND="$(EC,$order_pref,name)">order by abbrev<?/MIVAR>
+<?MIVAR NAME=$order_clause COND="$(EC,$order_pref,location)">order by OR_lg,gene_name<?/MIVAR>
 
 <?MIVAR NAME=$target_table COND="$(XST,$ismapped)">mapped_genes a <?/MIVAR>
 <?MIVAR NAME=$target_table COND="$(NXST,$ismapped)">all_genes a <?/MIVAR>
@@ -157,225 +163,225 @@
     <?/MIVAR>
   <?/MIVAR>
 
-  <?MIVAR COND="$(XST,$getsome)">
-    <font color="red"><b>Showing only first $limit </b></font> of 
-  <?/MIVAR>
+</form>
 
-  <?MISQL SQL="
-    select count(distinct gene_name)::integer, count(*)::integer 
-      from $target_table 
-      $constraint;">
-  <?/MISQL>
-  <?MIVAR NAME=$tcount>$1<?/MIVAR>
-  <?MIVAR NAME=$true_count>$2<?/MIVAR>
-  <?MIVAR> 
-    <b>$tcount</b> matching records found.
-    <!-- QUERY: $MI_SQL -->
-  <?/MIVAR>
 
-  <?MIVAR COND="$(XST,$getsome)">
-    <input type=submit name=getall value="Get remaining $(-,$tcount,$limit) records">
-    <input type=hidden name=limit value=99>
-  <?/MIVAR>
-  <br>
+<!-- Query database and construct table based on user constraints. -->
+
+<!-- Count the number of gene names that will be returned. -->
+<!-- query count(*) -->
+<?MISQL SQL="
+	select count(distinct gene_name)::integer, count(*)::integer 
+	from $target_table 
+	$constraint;">
+<?/MISQL>
+
+<?MIVAR NAME=$num_recs>$1<?/MIVAR>
+<?MIVAR NAME=$true_count>$2<?/MIVAR>
+<?MIVAR> 
+	<b>$num_recs</b> matching records found.
+	<!-- QUERY: $MI_SQL -->
+<?/MIVAR>
+
+
+<?MIBLOCK COND="$(>,$num_recs,0)">
+	<br>
   (Click on individual markers for details)
   </center>
   <p>
 
-  <!-- Param to set maximum returned at once -->
-  <?MIVAR NAME=$maxreturn>50<?/MIVAR>
-
-  <?MIVAR COND="$(AND,$(NXST,$limit),$(>,$tcount,$maxreturn))">
-    <BIG>The search based on the above criteria has retrieved <B>$tcount</b> 
-    records. This number of records may take some time to download, depending 
-    on the speed of your machine and connection.<br>
-    Options:
-    <ul>
-      <li> Further constrain your criteria above and click "search" to re-do 
-           search.
-      <li> Get only the first 
-           <input name=limit value=$maxreturn type=text maxlength=3 size=3> 
-           records. <input type=submit name=getsome value="Do this">
-      <li> Get all $tcount matching records. 
-           <input type=submit name=getall value="Do this">
-    </ul>
-  <?/MIVAR>
-
-  <?MIVAR COND="$(OR,$(<=,$tcount,$maxreturn),$(XST,$getall))" 
-    NAME=$limit>$true_count
-  <?/MIVAR>
-
-  <?MIBLOCK COND="$(AND,$(XST,$limit),$(NC,$limit,0))">
-
     <TABLE width=100% border=0 cellspacing=0 cellpadding=3>
 
-      <TH> </TH>
-      <TD align=left><B>Gene symbol </b>- name  &nbsp;[previous names / orthologues]</TD>
-      <TD><B> Mutant Locus</b>
-      <TD align=left><B>Location</b></TD> 
-      <TD align=left><B>Panel</b></TD> 
-      <TD align=left><B>Map<b></TD>
-      <TD align=left><B>Updated<b></TD>
-
+      <TR>
+				<TH></TH>
+      	<TH align=left><B>Gene symbol </b>- name  &nbsp;[previous names / orthologues]</TH>
+      	<TH><B> Mutant Locus</b></TH>
+      	<TH align=left><B>Location</b></TH> 
+      	<TH align=left><B>Panel</b></TH> 
+      	<TH align=left><B>Map<b></TH>
+      	<TH align=left><B>Updated<b></TH>
+			</TR>
 
       <!-- DEBUGGING <?MIVAR>  constraint=$constraint <?/MIVAR> -->
 
-      <?MIVAR NAME=$prev_name>0<?/MIVAR>
-      <?MIVAR NAME=$prev_gp>0<?/MIVAR>
-      <?MIVAR NAME=$clr_cnt>0<?/MIVAR>
-      <?MIVAR NAME=$ok_view_map>0<?/MIVAR>
-</form>
+<!-- Outer SQL contains WW, retrieves gene names. -->
+<?MIVAR NAME=WINSIZE DEFAULT=25>$WINSIZE<?/MIVAR>
+<?MIVAR NAME=BEGIN DEFAULT=1>$START<?/MIVAR>
 
-      <?MISQL SQL="
-	select gene_name, lg_location, zdb_id, OR_lg, panel_id, panel_abbrev,
-	       abbrev, private, owner, metric, day(entry_date::date), 
-               month(entry_date::date), year(entry_date::date), locus_name, 
-	       locus_zdb_id from $target_table $constraint $order_clause;" 
-	MAXROWS=$limit>
-        <form> 
 
-        <!-- the record retrieved is a different marker than the previous one - create view map buttons if mapping data was available.  Close marker specific form and open generic one.-->
+<!--- DEFINITION OF RANGES --->
+<?MIVAR NAME=BEGIN>$(IF,$(<,$BEGIN,1),1,$BEGIN)<?/MIVAR> 
+<?MIVAR NAME=END>$(+,$BEGIN,$WINSIZE)<?/MIVAR>
 
-        <?MIBLOCK COND="$(AND,$(NC,$prev_name,$1),
-			      $(NC,$prev_gp,0),
-			      $(EC,$ok_view_map,1))">
-          <?MIVAR>
-            <input type=hidden name=userid value=$userid>
-            <input type=hidden name=marker value=$marker_name>
-	    $(SETVAR,$color,$(/,$clr_cnt,2))
-	    <TR valign=top $(IF,$(!=,$color,$(FIX,$color)),"bgcolor=#FCCE64")>
-	    <TD></TD>
-	    <TD>&nbsp;</TD>
-	    <TD>&nbsp;</TD>
-	    <TD align=left><font size=1><input type=button value='VIEW MERGED MAP' name=view_merge_map onClick="document.$map_abbrev.action='/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi';document.$map_abbrev.submit();"><TD>&nbsp;</TD><TD align=left><font size=1><input type=submit value='VIEW INDIVIDUAL MAPS' name=view_map ></TD>
-            </form>
-            </TR>
-          <?/MIVAR> 
-            <form>
-            <?MIVAR NAME=$ok_view_map>0<?/MIVAR>
-        <?/MIBLOCK>
 
+<!--- EXECUTION --->
+<!-- set row_color to green -->
+<?MIVAR name=row_color>#FCCE64<?/MIVAR>
+<?MIVAR NAME=$ok_view_map>0<?/MIVAR>
+<?MIVAR NAME=$rowNUM>$BEGIN<?/MIVAR>
+
+
+<!--- Query Database --->
+<?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
+	select distinct gene_name, zdb_id, abbrev
+	FROM $target_table 
+	$constraint 
+	$order_clause;">
 
 	<?MIVAR NAME=$gene_name>$1<?/MIVAR>
-	<?MIVAR NAME=$lg_loc>$2<?/MIVAR>
-	<?MIVAR NAME=$OID>$3<?/MIVAR>
-	<?MIVAR NAME=$OR_lg>$4<?/MIVAR>
-	<?MIVAR NAME=$panel_id>$5<?/MIVAR>
-	<?MIVAR NAME=$panel_abbrev>$6<?/MIVAR>
-	<?MIVAR NAME=$marker_name>$7<?/MIVAR>
-	<?MIVAR NAME=$private>$8<?/MIVAR>
-	<?MIVAR NAME=$owner>$9<?/MIVAR>
-	<?MIVAR NAME=$metric>$10<?/MIVAR>
-	<?MIVAR NAME=$day>$11<?/MIVAR>
-	<?MIVAR NAME=$month>$12<?/MIVAR>
-	<?MIVAR NAME=$year>$13<?/MIVAR>
-	<?MIVAR NAME=$locus_name>$14<?/MIVAR>
-	<?MIVAR NAME=$locus_zdb_id>$15<?/MIVAR>
+	<?MIVAR NAME=$OID>$2<?/MIVAR>
+	<?MIVAR name=$marker_name>$3<?/MIVAR>
+	
+		<!-- create form for each gene -->
 
-	$(IF,$(NC,$prev_name,$1),$(SETVAR,$clr_cnt,$(+,$clr_cnt,1)))
+    <!-- get rid of dashes to avoid javascript error -->
+    <?MIVAR NAME=$form_name DELIMIT="-" REPLACE="">$OID<?/MIVAR>
 
-	$(IF,$(AND,$(EC,$order_pref,location),$(NC,$prev_gp,$4)),
-          "<TR><TD colspan=3 align=center><HR size=4 width=80%></TD></TR>")
+		<form method=post action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi" target=content name="$form_name">
 
-	$(SETVAR,$color,$(/,$clr_cnt,2))
-	<TR valign=top $(IF,$(!=,$color,$(FIX,$color)),"bgcolor=#FCCE64")>
+		<?MIVAR name=$first_row>1<?/MIVAR>
 
-	<TD><font size=1> 
-	$(IF,$(XST,$return_rec),
-          <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3 TARGET=content>SELECT</A>)
-	</TD>
+<?MIVAR NAME=$order_clause>$order_clause , panel_id desc<?/MIVAR>
 
-	<?MIBLOCK COND="$(EC,$prev_name,$gene_name)">
-	  <TD>&nbsp;</TD>
-	<?/MIBLOCK>
+	<!--  Run inner query for fields associated with current gene_name -->
+	<?MISQL SQL="
+		select distinct lg_location, zdb_id, OR_lg, panel_id, panel_abbrev,
+	       abbrev, private, owner, metric, day(entry_date::date), 
+         month(entry_date::date), year(entry_date::date), locus_name, 
+         locus_zdb_id 
+    from $target_table 
+    $inner_constraint gene_name = '$gene_name'
+    $order_clause;">
 
-	<?MIBLOCK COND="$(NC,$prev_name,$gene_name)">
-	  <?MIVAR>
-	    <TD valign=top> <font size=2>
-            <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID TARGET=content>$marker_name</A>
-            &nbsp;&nbsp; - $gene_name &nbsp; [ 
+		<!--      list all fields       -->
+		<?MIVAR NAME=$lg_loc>$1<?/MIVAR>
+		<?MIVAR NAME=$ZID>$2<?/MIVAR>
+		<?MIVAR NAME=$OR_lg>$3<?/MIVAR>
+		<?MIVAR NAME=$panel_id>$4<?/MIVAR>
+		<?MIVAR NAME=$panel_abbrev>$5<?/MIVAR>
+		<?MIVAR NAME=$marker_name>$6<?/MIVAR>
+		<?MIVAR NAME=$private>$7<?/MIVAR>
+		<?MIVAR NAME=$owner>$8<?/MIVAR>
+		<?MIVAR NAME=$metric>$9<?/MIVAR>
+		<?MIVAR NAME=$day>$10<?/MIVAR>
+		<?MIVAR NAME=$month>$11<?/MIVAR>
+		<?MIVAR NAME=$year>$12<?/MIVAR>
+		<?MIVAR NAME=$locus_name>$13<?/MIVAR>
+		<?MIVAR NAME=$locus_zdb_id>$14<?/MIVAR>
 
-	    <?MISQL SQL="
+		<?MIBLOCK COND="$(EC,$first_row,1)">
+			<!-- start new row and column -->
+			<?MIVAR><TR bgcolor="$row_color"><?/MIVAR>
+
+				<?MIVAR>
+				<TD>&nbsp;</TD>
+				<TD valign=top> <font size=2>
+					<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID TARGET=content>$marker_name</A>
+					&nbsp;&nbsp; - $gene_name &nbsp; [
+				<?/MIVAR>
+		<?MIVAR name=$rowNUM>$(+,$rowNUM,1)<?/MIVAR>
+
+	   <?MISQL SQL="
 	      select mrkrali_marker_name_alias
 		from marker_alias 
-		where mrkrali_marker_zdb_id = '$OID';">
+		where mrkrali_marker_zdb_id = '$ZID';">
 	      <?MIVAR NAME=$alias>$1<?/MIVAR>
               $(IF,$(AND,$(XST,$alias),$(=,$MI_CURRENTROW,1)), $alias , ; $alias )
 	    <?/MISQL>
 
-	    <?MISQL SQL="
-	      select distinct ortho_name, ortho_abbrev 
-		from orthologue 
-		where c_gene_id = '$OID' 
-		  and ((lower(ortho_name) <> '$(LOWER,$gene_name')) 
-		   or (lower(ortho_abbrev) <> '$(LOWER,$marker_name')));">
-	      <?MIVAR NAME=$ortho_name>$1<?/MIVAR>
-	      <?MIVAR NAME=$ortho_abbrev>$2<?/MIVAR>
-	      $(IF,$(AND,$(=,$MI_CURRENTROW,1),$(XST,$ortho_name)), /)
-	      $(IF,$(>,$MI_CURRENTROW,1),;) $ortho_name ($ortho_abbrev)
-	    <?/MISQL>
-	    ]</TD>
-	  <?/MIVAR>
-        <?/MIBLOCK>
+
+			<?MISQL SQL="
+					select distinct ortho_name, ortho_abbrev 
+					from orthologue 
+					where c_gene_id = '$ZID' 
+						and ((lower(ortho_name) <> '$(LOWER,$gene_name')) 
+						or (lower(ortho_abbrev) <> '$(LOWER,$marker_name')));">
+
+						<?MIVAR NAME=$ortho_name>$1<?/MIVAR>
+						<?MIVAR NAME=$ortho_abbrev>$2<?/MIVAR>
+						$(IF,$(AND,$(=,$MI_CURRENTROW,1),$(XST,$ortho_name)), /)
+						$(IF,$(>,$MI_CURRENTROW,1),;) $ortho_name ($ortho_abbrev)
+
+				<?/MISQL>
+				]</TD>
+		<?/MIBLOCK>
+
+	<?MIBLOCK COND="$(EC,$first_row,0)">
+		<!--   start new row and column   -->
+		<?MIVAR><TR bgcolor="$row_color"><?/MIVAR>
+			<TD>&nbsp;</TD>
+      <TD><font size=1> &nbsp;</font></TD>
+	<?/MIBLOCK>
+
+			<TD><FONT SIZE=2>
+			$(IF,$(OR,$(ISNULL,$locus_zdb_id),$(EC,$locus_zdb_id,"")),
+       	    "Unknown",
+            "<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID="$locus_zdb_id" TARGET=content>"$locus_name"</A>")
+			</TD>
+
+			<!-- Location --> 
+      <TD> <font size=2> 
+
+      <?MIBLOCK COND="$(AND,$(EC,$panel_abbrev,na),$(=,$(POSITION,$panel_id,LINK),0))">
+				Unmapped</TD>
+				<TD>&nbsp; </TD><TD>&nbsp; </TD><TD>&nbsp; </TD>
+			<?/MIBLOCK>
+
+			<?MIVAR NAME=$upd_day>$month<?/MIVAR>
+			<?MIBLOCK COND="$(NC,$upd_day,"")">
+				<?MIVAR NAME=$upd_date> $(INDEX,$(-,$month,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $day,$year 
+				<?/MIVAR>
+			<?/MIBLOCK>
+
+			<?MIBLOCK COND="$(EC,$upd_day,"")">
+				<?MIVAR NAME=$upd_date> <?/MIVAR>
+			<?/MIBLOCK>
 
 
-        <TD><font size=-1> 
-        $(IF,$(NC,$prev_name,$gene_name),
-          $(IF,$(OR,$(ISNULL,$locus_zdb_id),
-                    $(EC,$locus_zdb_id,"")),
-       	    Unknown,<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$locus_zdb_id TARGET=content>$locus_name</A>),
-          &nbsp;)
-        </font></TD>
+	   <?MIBLOCK COND="$(>,$(POSITION,$panel_id,REF),0)">
+       <?MIVAR>  
+			   $(IF,$(AND,$(>,$OR_lg,0),$(EC,$private,f)),
+						"LG <b>"$OR_lg"</b>;
+						<b> "$lg_loc"</b> "$metric""&nbsp;&nbsp;
+						<A HREF="javascript:view_scores('"$panel_id"','"$OR_lg"','"$ZID"','"$marker_name"')";>Scoring Data</A>
+
+				</TD>
 
 
-        <?MIVAR NAME=$upd_day>$month<?/MIVAR>
-        <?MIBLOCK COND="$(NC,$upd_day,"")">
-          <?MIVAR NAME=$upd_date> $(INDEX,$(-,$month,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $day,$year 
-          <?/MIVAR>
-        <?/MIBLOCK>
-
-        <?MIBLOCK COND="$(EC,$upd_day,"")">
-          <?MIVAR NAME=$upd_date> <?/MIVAR>
-        <?/MIBLOCK>
-
-  <?MIBLOCK COND="$(AND,$(EC,$panel_abbrev,na),$(=,$(POSITION,$panel_id,LINK),0))">
-    <TD>  Unmapped</TD>
-    <TD> </TD><TD> </TD><TD> </TD>
-  <?/MIBLOCK>
+						<!-- Panel --> 
+				<TD><font size=2> 
+					"<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$panel_id">"$panel_abbrev"</A>"
+					</font>
+				</TD>
 
 
-  <?MIBLOCK COND="$(>,$(POSITION,$panel_id,REF),0)">
-    <?MIVAR>  
-        $(IF,$(AND,$(>,$OR_lg,0),
-                   $(NC,$private,f)),
-          "<TD> <font size=2>Mapped on <A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$panel_id">"$panel_abbrev" panel; updated "$upd_date"</A>, 
-           but still confidential.</TD>")
-    <?/MIVAR>
-
-        <?MIBLOCK COND="$(AND,$(>,$OR_lg,0),$(EC,$private,f))">
-
-        <!-- if this is the first mapping record for the marker - close the open form and create a form of marker_name.  Each marker with mapping data will have it's own form.  -->
+						<!-- MAP Checkbox --> 
+				<TD><font size=2 COLOR=#A9A9A9> 
+					<input type=checkbox name=$panel_abbrev value=1 CHECKED >
+					</font>
+				</TD>
 
 
-	   <?MIBLOCK COND="$(NC,$prev_name,$1)">
-	   </form>
-	     <?MIVAR><form method=post  name="$7" target="content" action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi"><?/MIVAR>
-	     <input type=hidden name=view_map value="view_map">
-	     <?MIVAR><input type=hidden name=marker value="$7"><?/MIVAR>
-	     <?MIVAR><input type=hidden name=userid value=$userid><?/MIVAR>
-	   <?/MIBLOCK>
+						<!-- Updated Date -->
+				<TD><font size=2>" "$upd_date" ")
+				<!--   end if   -->
 
-	   <?MIVAR>
-	     <TD><font size=2>LG <b>$OR_lg</b>;<b> $lg_loc</b> $10&nbsp;&nbsp;<A HREF="javascript:view_scores('$panel_id','$OR_lg','$OID','$marker_name')";>Scoring Data</TD> 
-	     <TD><font size=2><A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=$panel_id>$panel_abbrev</A></TD>
-	     <TD><font size=2 COLOR=#A9A9A9> <input type=checkbox name=$panel_abbrev value=1  CHECKED ></TD><TD><font size=2>$upd_date</TD>
-	   <?/MIVAR>
+					<?MIBLOCK COND="$(AND,$(>,$OR_lg,0),$(EC,$private,f))">
+						<?MIVAR name=$ok_view_map>1<?/MIVAR>
+					<?/MIBLOCK>
 
-           <!-- a mapping record has been written - we will need a view map button -->
-           <?MIVAR name=$ok_view_map>1<?/MIVAR>
-         <?/MIBLOCK>
+					$(IF,$(AND,$(>,$OR_lg,0),$(NC,$private,f)),
+						"Mapped on <A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$panel_id">"$panel_abbrev" panel</A>, but still confidential.
+					</TD>
+					<TD>&nbsp;</TD>
+					<TD>&nbsp;</TD>
+					<TD ALIGN=left><FONT SIZE=2>"$upd_date""
+					)
 
-    <?/MIBLOCK>  <!-- panel like ref -->
+				</TD>
+			</TR>
+     <?/MIVAR>
+   <?/MIBLOCK>  <!-- panel like ref -->
 
 
     <?MIBLOCK COND="$(>,$(POSITION,$panel_id,LINK),0)">  <!-- independent linkage -->
@@ -383,22 +389,23 @@
 
       <?MISQL SQL="select alnkgmem_member_name, alnkgmem_comments, alnkgmem_or_lg,alnkgmem_private from all_linked_members where alnkgmem_member_zdb_id = '$OID' and alnkgmem_linkage_zdb_id = '$panel_id' order by alnkgmem_comments desc;">
 
-	<?MIVAR NAME=$map_name>$1<?/MIVAR>
-        <?MIVAR NAME=$map_comments>$2<?/MIVAR>
-        <?MIVAR NAME=$map_lg>$3<?/MIVAR>
-        <?MIVAR NAME=$map_private>$4<?/MIVAR>
+	      <?MIVAR NAME=$map_name>$1<?/MIVAR>
+				<?MIVAR NAME=$map_comments>$2<?/MIVAR>
+				<?MIVAR NAME=$map_lg>$3<?/MIVAR>
+				<?MIVAR NAME=$map_private>$4<?/MIVAR>
 
-          <TD><font size=2>
-          $(IF,$(NC,$map_lg,0),LG <b>$map_lg</b>)
+				<TD><font size=2>
+				$(IF,$(NC,$map_lg,0),LG <b>$map_lg</b>)
 
-	  <?MIBLOCK COND="$(NC,$map_comments,"")">
-	    <?MIVAR>
-	      <A HREF=javascript:show_detail('$panel_id','$OID','$marker_name','""');>Map Details</A>
-	    <?/MIVAR>
-	  <?/MIBLOCK>
-          </font>
+			  <?MIBLOCK COND="$(NC,$map_comments,"")">
+				  <?MIVAR>
+					  <A HREF=javascript:show_detail('$panel_id','$OID','$marker_name','""');>Map Details</A>
+				  <?/MIVAR>
+          </TD><TD>&nbsp; </TD><TD>&nbsp; </TD><TD>&nbsp; </TD>
+			  <?/MIBLOCK>
+						 </font>
 
-        <?MIBLOCK COND="$(AND,$(EC,$map_lg,0),$(EC,$map_comments,""))"> 
+        <?MIBLOCK COND="$(AND,$(NC,$map_lg,0),$(EC,$map_comments,""))"> 
           &nbsp;</TD>
           <TD>&nbsp; </TD><TD>&nbsp; </TD><TD>&nbsp; </TD>
         <?/MIBLOCK>
@@ -409,43 +416,179 @@
 
     <?/MIBLOCK>  <!-- panel id like link -->  
 
-    </TR>       
-    $(SETVAR,$prev_gp,$OR_lg)
-    $(SETVAR,$prev_name,$gene_name)
-    $(SETVAR,$map_abbrev,$7)
+	 <?MIVAR name=$first_row>0<?/MIVAR>
 
-     <?/MISQL>
+	<!--   end inner SQL query    --> 
+		<?/MISQL>
 
-      <!-- add view map buttons if the last record written had mapping data -->
-      <?MIBLOCK COND="$(EC,$ok_view_map,1)">
+
+<!--      if(view_map == true)     -->
+<!--      insert Submit view_map button    -->
+ <?MIBLOCK COND="$(EC,$ok_view_map,1)">
+
 	<?MIVAR>
 	  <input type=hidden name=userid value=$userid>
 	  <input type=hidden name=marker value=$marker_name>
-	  $(SETVAR,$color,$(/,$clr_cnt,2))
-	  <TR valign=top $(IF,$(!=,$color,$(FIX,$color)),"bgcolor=#FCCE64")>
-	  <TD></TD>
+	  <input type=hidden name=view_map value="view_map">
+
+	  <?MIVAR><TR bgcolor="$row_color")><?/MIVAR>
 	  <TD>&nbsp;</TD>
 	  <TD>&nbsp;</TD>
-	  <TD align=left><font size=1><input type=button value='VIEW MERGED MAP' name=view_merge_map onClick="document.$map_abbrev.action='/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi';document.$map_abbrev.submit();"><TD>&nbsp;</TD><TD align=left><font size=1><input type=submit value='VIEW INDIVIDUAL MAPS' name=view_map ></TD>
-	  </form>
+	  <TD align=left><font size=1><input type=button value='VIEW MERGED MAP' name=view_merge_map onClick="document.$form_name.action='/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi';document.$form_name.submit();"><TD>&nbsp;</TD><TD align=left><font size=1><input type=submit value='VIEW INDIVIDUAL MAPS' name=view_map ></TD> <TD>&nbsp;</TD><TD>&nbsp;</TD>
 	  </TR>
 	<?/MIVAR>
-      <?/MIBLOCK>
+
+	<?MIVAR name=$ok_view_map>0<?/MIVAR>
+ <?/MIBLOCK>
+
+        
+<!--    change row_color    -->
+<?MIBLOCK>
+  <?MIBLOCK COND="$(EC,$row_color,#FCCE64)">     
+		<?MIVAR name=$row_color>#FFFFFF<?/MIVAR>
+		<?MIVAR>$(EXIT,3)<?/MIVAR>
+	<?/MIBLOCK>
+
+  <?MIVAR COND="$(EC,$row_color,#FFFFFF)">      
+		<?MIVAR name=$row_color>#FCCE64<?/MIVAR>
+	<?/MIVAR>
+<?/MIBLOCK>    
+
+	<!-- end form for map_marker -->         
+	</FORM>
 
 
-      <?MIVAR>
-	$(IF,$(AND,$(EC,$private,f),$(>,$OR_lg,0)),"</form>")
-      <?/MIVAR>
+<!-- end gene exists miblock  -->
 
- 
-    </TABLE>
 
-    <?MIVAR><!-- SQL: $MI_SQL <?/MIVAR>
+<!-- end gene_name SQL -->
+<?/MISQL>
+
+	</TABLE>
+
+<BR>
+
+<Center>
+<Table width="70%" border="0">
+	<tr>
+		<td width="45%" align=right valign=top>&nbsp;
+
+<?MIVAR name=comment>  Build array of user data  <?/MIVAR>
+	<?MIVAR name=UserInput>MIval=aa-genelister.apg&WINSIZE=$WINSIZE<?/MIVAR>
+		<?MIVAR name=UserInput COND=$(XST,$lg)>
+			$UserInput&lg=$lg
+		<?/MIVAR>
+		<?MIVAR name=UserInput COND=$(XST,$refcross)>
+			$UserInput&refcross=$refcross
+		<?/MIVAR>
+		<?MIVAR name=UserInput COND=$(XST,$name)>
+			$UserInput&name=$name
+		<?/MIVAR>
+		<?MIVAR name=UserInput COND=$(XST,$order_pref)>
+			$UserInput&order_pref=$order_pref
+		<?/MIVAR>
+		<?MIVAR name=UserInput COND=$(XST,$knownloci)>
+			$UserInput&knownloci=$knownloci	
+		<?/MIVAR>
+		<?MIVAR name=UserInput COND=$(XST,$searchtype)>
+			$UserInput&searchtype=$searchtype
+		<?/MIVAR>
+	  <?MIVAR name=UserInput COND=$(XST,$ismapped)>
+			$UserInput&ismapped=$ismapped
+		<?/MIVAR>
+<!--- Return to the previous set of Rows --->
+<?MIBLOCK COND="$(>,$BEGIN,1)">
+	
+<?MIVAR>
+	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$(-,$BEGIN,$WINSIZE)&BEGIN=$BEGIN&$UserInput">Prev</A>&nbsp;&nbsp;&nbsp;&nbsp;<br>
+
+<!-- If current not First Page, create link to first page. -->
+	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=1&BEGIN=1&$UserInput">First Page</A>
+<?/MIVAR>
+
+<?/MIBLOCK>
+
+		</td>
+
+
+<!-- Calculate 3 pages before and 3 pages after current page. -->
+<?MIVAR name=$CURRENT>$(FIX,$(+,$(/,$BEGIN,$WINSIZE),1))<?/MIVAR>
+
+<?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,3)),0)">
+<td valign=top>
+  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,3))"> $(-,$CURRENT,3)</A> <?/MIVAR>
+		</td>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,2)),0)">
+<td valign=top>
+  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,2))"> $(-,$CURRENT,2)</A><?/MIVAR>
+		</td>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,1)),0)">
+<td valign=top>
+  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,1))"> $(-,$CURRENT,1)</A><?/MIVAR>
+		</td>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(>,$num_recs,$WINSIZE)">
+<td align=center valign=top>
+	<?MIVAR>  $CURRENT <?/MIVAR>
+</td>
+<?/MIBLOCK>
+
+<?MIVAR COND="$(<=,$(+,$BEGIN,$(*,$WINSIZE,1)),$num_recs)">
+<td valign=top>
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$END"> $(+,$CURRENT,1)</A>
+		</td>
+<?/MIVAR>
+
+<?MIVAR COND="$(<=,$(+,$BEGIN,$(*,$WINSIZE,2)),$num_recs)">
+<td valign=top>
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,2))"> $(+,$CURRENT,2)</A>
+		</td>
+<?/MIVAR>
+
+<?MIVAR COND="$(<=,$(+,$BEGIN,$(*,$WINSIZE,3)),$num_recs)">
+<td valign=top>
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,3))"> $(+,$CURRENT,3)</A>
+		</td>
+<?/MIVAR>
+
+		<td width="45%" align=left valign=top>&nbsp;
+
+<!--- Get the next set of Rows --->
+<?MIBLOCK COND="$(<=,$(+,$BEGIN,$WINSIZE),$num_recs)">
+	<?MIVAR>
+		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$END&BEGIN=$BEGIN&$UserInput">Next</A><br>
+	<?/MIVAR>
+
+	<!-- Calculate last page -->
+	<?MIVAR name=$START COND="$(=,$(MOD,$num_recs,$WINSIZE),0)">
+		$(+,$(*,$(-,$(/,$num_recs,$WINSIZE),1),$WINSIZE),1)
+	<?/MIVAR>
+
+
+	<?MIVAR name=$START COND="$(!=,$(MOD,$num_recs,$WINSIZE),0)">
+		$(+,$(*,$(FIX,$(/,$num_recs,$WINSIZE)),$WINSIZE),1)
+	<?/MIVAR>
+
+	<?MIVAR>
+		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$START&$UserInput">Last Page</A>
+	<?/MIVAR>
+<?/MIBLOCK>
+
+		</td>
+	</tr>
+</Table>
+</Center>
+
+<?/MIBLOCK>  <!-- num_rec gt 0 -->
+
+    <?MIVAR><!-- SQL: $MI_SQL --><?/MIVAR>
 
     <?MIVAR COND=$(EQ,$MI_ROWCOUNT,0)>No matching records found<?/MIVAR>
-
-  <?/MIBLOCK>  <!-- ends exists limit -->
-
 
 <!-- Cause a tile for the new page to appear in the navigator frame -->
 <!-- startframes.apg will pass variables on to appropriate page -->
@@ -456,10 +599,13 @@
   <?MIVAR COND="$(NXST,$name)" NAME=$name><?/MIVAR>
   <?MIVAR COND="$(NXST,$ismapped)" NAME=$ismapped><?/MIVAR>
   <?MIVAR COND="$(NXST,$knownloci)" NAME=$knownloci><?/MIVAR>
+	<?MIVAR COND="$(NXST,$BEGIN)" NAME=$BEGIN><?/MIVAR>
+	<?MIVAR COND="$(NXST,$WINSIZE)" NAME=$WINSIZE><?/MIVAR>
+
 
   <?MIVAR>
     <SCRIPT>
-    var page_id=top.content.location.href+'&ismapped=$ismapped&navtile=$navtile&name=$name&searchtype=$searchtype&lg=$lg&refcross=$refcross&knownloci=$knownloci';
+    var page_id=top.content.location.href+'&ismapped=$ismapped&navtile=$navtile&name=$name&searchtype=$searchtype&lg=$lg&refcross=$refcross&knownloci=$knownloci&WINSIZE=$WINSIZE&BEGIN=$BEGIN';
     top.update_hist(page_id,"$page_title");
     top.controls.location.reload(true);
     </SCRIPT>
@@ -467,3 +613,8 @@
 <?/MIBLOCK>
 
 </HTML>
+
+
+
+
+
