@@ -434,14 +434,14 @@ create dba function regen_anatomy()
 	    not null
 	      constraint non_parent_stage_end_hour_not_null
 	)
-	in zfindbs_b
+	in tbldbs3
 	extent size 8 next size 8;
 
 	-- primary key
 
 	create unique index non_parent_stage_primary_key_index
 	  on non_parent_stage (zdb_id)
-	  in zfindbs_c;
+	  in idxdbs3;
 	alter table non_parent_stage add constraint
 	  primary key (zdb_id)
 	  constraint non_parent_stage_primary_key;
@@ -461,14 +461,14 @@ create dba function regen_anatomy()
 	  sic_stg_zdb_id 	varchar(50),
 	  sic_anatitem_zdb_id 	varchar(50)
 	)
-	in zfindbs_b
+	in tbldbs3
 	extent size 64 next size 64;
 
       -- primary key
 
       create unique index stage_items_contained_primary_key_index
 	on stage_items_contained (sic_stg_zdb_id,sic_anatitem_zdb_id)
-	in zfindbs_c;
+	in idxdb2;
       alter table stage_items_contained add constraint
 	primary key (sic_stg_zdb_id,sic_anatitem_zdb_id)
 	constraint stage_items_contained_primary_key;
@@ -477,7 +477,7 @@ create dba function regen_anatomy()
 
       create index sic_stg_zdb_id_index
 	on stage_items_contained (sic_stg_zdb_id)
-	in zfindbs_c;
+	in idxdbs2;
       alter table stage_items_contained add constraint
 	foreign key (sic_stg_zdb_id)
 	references stage
@@ -485,7 +485,7 @@ create dba function regen_anatomy()
 
       create index sic_anatitem_zdb_id_index
 	on stage_items_contained (sic_anatitem_zdb_id)
-	in zfindbs_c;
+	in idxdbs2;
       alter table stage_items_contained add constraint
 	foreign key (sic_anatitem_zdb_id)
 	references anatomy_item
@@ -513,7 +513,7 @@ create dba function regen_anatomy()
 	    not null
 	      constraint stimchilis_hier_code_not_null
 	)
-	fragment by round robin in zfindbs_a , zfindbs_b , zfindbs_c
+	fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
 	extent size 128 next size 128;
 
       -- primary key
@@ -522,7 +522,7 @@ create dba function regen_anatomy()
         on stage_item_child_list (stimchilis_stg_zdb_id,
 				  stimchilis_item_zdb_id,
 				  stimchilis_child_zdb_id)  
-	in zfindbs_b;
+	in idxdbs1;
       alter table stage_item_child_list add constraint
         primary key (stimchilis_stg_zdb_id,
 		     stimchilis_item_zdb_id,
@@ -533,7 +533,7 @@ create dba function regen_anatomy()
 
       create index stimchilis_stg_zdb_id_index
         on stage_item_child_list (stimchilis_stg_zdb_id)
-	in zfindbs_b;
+	in idxdbs1;
       alter table stage_item_child_list add constraint
         foreign key (stimchilis_stg_zdb_id)
 	references stage
@@ -541,7 +541,7 @@ create dba function regen_anatomy()
 
       create index stimchilis_item_zdb_id_index
         on stage_item_child_list (stimchilis_item_zdb_id)
-	in zfindbs_b;
+	in idxdbs1;
       alter table stage_item_child_list add constraint
         foreign key (stimchilis_item_zdb_id)
 	references anatomy_item
@@ -549,7 +549,7 @@ create dba function regen_anatomy()
 
       create index stimchilis_child_zdb_id_index
         on stage_item_child_list (stimchilis_child_zdb_id)
-	in zfindbs_b;
+	in idxdbs1;
       alter table stage_item_child_list add constraint
         foreign key (stimchilis_child_zdb_id)
 	references anatomy_item
@@ -575,22 +575,22 @@ create dba function regen_anatomy()
 	  xpatstganat_stg_zdb_id		varchar(50),
 	  xpatstganat_anat_item_zdb_id		varchar(50)
 	)
-	fragment by round robin in zfindbs_a , zfindbs_b , zfindbs_c
+	fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
 	extent size 64 next size 64;
 
       -- other indexes
 
       create index xpatstganat_xpat_zdb_id_index
         on xpat_stg_anat(xpatstganat_xpat_zdb_id)
-	in zfindbs_c;
+	in idxdbs3;
 
       create index xpatstganat_stg_zdb_id_index 
         on xpat_stg_anat(xpatstganat_stg_zdb_id)
-	in zfindbs_c;
+	in idxdbs3;
 
       create index xpatstganat_anat_item_zdb_id_index 
         on xpat_stg_anat(xpatstganat_anat_item_zdb_id)
-	in zfindbs_c;
+	in idxdbs3;
 
 
       -- ---- STG_XPAT_ANAT ----
@@ -609,22 +609,22 @@ create dba function regen_anatomy()
 	  sxa_stg_zdb_id		varchar(50),
 	  sxa_anat_item_zdb_id		varchar(50)
 	)
-	fragment by round robin in zfindbs_a , zfindbs_b , zfindbs_c
+	fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
 	extent size 64 next size 64;
 
       -- other indexes
 
       create index sxa_xpat_zdb_id_index 
         on stg_xpat_anat(sxa_xpat_zdb_id)
-	in zfindbs_b;
+	in idxdbs2;
 
       create index sxa_stg_zdb_id_index 
         on stg_xpat_anat(sxa_stg_zdb_id)
-	in zfindbs_b;
+	in idxdbs2;
 
       create index sxa_anat_item_zdb_id_index 
         on stg_xpat_anat(sxa_anat_item_zdb_id)
-	in zfindbs_b;
+	in idxdbs2;
 
 
       -- ---- ALL_ITEM_EXPRESSION_PATTERN ----
@@ -642,7 +642,7 @@ create dba function regen_anatomy()
 	  aixp_seq_num integer,
 	  aixp_indent integer
 	)
-	in zfindbs_b
+	in tbldbs2
 	extent size 32 next size 32;
 
 
@@ -663,7 +663,7 @@ create dba function regen_anatomy()
 	  anatdispstg_item_zdb_id varchar(50),
 	  anatdispstg_indent integer
 	)
-	in zfindbs_b
+	in tbldbs1
 	extent size 64 next size 64;
 
 
@@ -686,7 +686,7 @@ create dba function regen_anatomy()
 	  allanatstg_anat_item_zdb_id varchar(50),
 	  allanatstg_stg_zdb_id	      varchar(50)
 	)
-	fragment by round robin in zfindbs_a , zfindbs_b , zfindbs_c
+	fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
 	extent size 64 next size 64;
 
       -- create temporary indexes, these are dropped when table is renamed.
@@ -694,11 +694,11 @@ create dba function regen_anatomy()
       create unique index all_anatomy_stage_new_primary_key_index
         on all_anatomy_stage_new (allanatstg_anat_item_zdb_id,
 				  allanatstg_stg_zdb_id)
-        in zfindbs_c;
+        in idxdbs1;
 
       create index allanatstg_new_stg_zdb_id_index
         on all_anatomy_stage_new (allanatstg_stg_zdb_id)
-	in zfindbs_c;
+	in idxdbs1;
 
 
       -- ---- ANATOMY_DISPLAY ----
@@ -721,7 +721,7 @@ create dba function regen_anatomy()
 	  anatdisp_indent		integer
 	    not null
 	)
-	fragment by round robin in zfindbs_a , zfindbs_b , zfindbs_c
+	fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
 	extent size 128 next size 128;
 
       -- create temporary indexes, these are dropped when table is renamed.
@@ -730,11 +730,11 @@ create dba function regen_anatomy()
         on anatomy_display_new (anatdisp_hier_code,
 			        anatdisp_stg_zdb_id,
 				anatdisp_seq_num)
-	in zfindbs_c;
+	in idxdbs1;
 
       create index anatdisp_new_stg_zdb_id_index
         on anatomy_display_new (anatdisp_stg_zdb_id)
-	in zfindbs_c;
+	in idxdbs1;
 
 
       -- ---- ANATOMY_STAGE_STATS ----
@@ -757,7 +757,7 @@ create dba function regen_anatomy()
 	  anatstgstat_total_count               integer
 	     not null
         )
-	fragment by round robin in zfindbs_a , zfindbs_b , zfindbs_c
+	fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
 	extent size 256 next size 256;
 
 
@@ -775,7 +775,7 @@ create dba function regen_anatomy()
 	  allanatcon_contained_zdb_id		varchar(50),
 	  allanatcon_min_contain_distance	integer not null 
         )
-	fragment by round robin in zfindbs_a , zfindbs_b , zfindbs_c
+	fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
 	extent size 512 next size 512;
 
     end
@@ -809,10 +809,10 @@ create dba function regen_anatomy()
 
       create index non_parent_stage_start_hour_index 
         on non_parent_stage(start_hour)
-	in zfindbs_c;
+	in idxdbs3;
       create index non_parent_stage_end_hour_index
         on non_parent_stage(end_hour)
-	in zfindbs_c;
+	in idxdbs3;
 
 
       --for each anatitem find all stages it is contained in
@@ -1088,7 +1088,7 @@ create dba function regen_anatomy()
         on all_anatomy_stage (allanatstg_anat_item_zdb_id,
 			      allanatstg_stg_zdb_id)
 	fillfactor 100
-        in zfindbs_c;
+        in idxdbs1;
 
       alter table all_anatomy_stage add constraint
         primary key (allanatstg_anat_item_zdb_id, allanatstg_stg_zdb_id)
@@ -1099,7 +1099,7 @@ create dba function regen_anatomy()
       create index allanatstg_anat_item_zdb_id_index
         on all_anatomy_stage (allanatstg_anat_item_zdb_id)
 	fillfactor 100
-	in zfindbs_c;
+	in idxdbs1;
 
       -- DO NOT include the foreign key clauses.  Allows us to
       -- do maintenance on the base tables without worrying about ripple
@@ -1114,7 +1114,7 @@ create dba function regen_anatomy()
       create index allanatstg_stg_zdb_id_index
         on all_anatomy_stage (allanatstg_stg_zdb_id)
 	fillfactor 100
-	in zfindbs_c;
+	in idxdbs1;
 
       { alter table all_anatomy_stage add constraint
         foreign key (allanatstg_stg_zdb_id)
@@ -1134,7 +1134,7 @@ create dba function regen_anatomy()
 			    anatdisp_stg_zdb_id,
 			    anatdisp_seq_num)
 	fillfactor 100
-	in zfindbs_c;
+	in idxdbs1;
       alter table anatomy_display add constraint 
         primary key (anatdisp_hier_code, anatdisp_stg_zdb_id, anatdisp_seq_num)
 	constraint anatomy_display_primary_key;
@@ -1144,7 +1144,7 @@ create dba function regen_anatomy()
       create index anatdisp_hier_code_index
         on anatomy_display (anatdisp_hier_code)
 	fillfactor 100
-	in zfindbs_c;
+	in idxdbs1;
       { alter table anatomy_display add constraint
         foreign key (anatdisp_hier_code)
 	references anatomy_hierarchy 
@@ -1155,7 +1155,7 @@ create dba function regen_anatomy()
       create index anatdisp_stg_zdb_id_index
         on anatomy_display (anatdisp_stg_zdb_id)
 	fillfactor 100
-	in zfindbs_c;
+	in idxdbs1;
       { alter table anatomy_display add constraint
         foreign key (anatdisp_stg_zdb_id)
 	references stage 
@@ -1165,7 +1165,7 @@ create dba function regen_anatomy()
       create index anatdisp_item_zdb_id_index
         on anatomy_display (anatdisp_item_zdb_id)
 	fillfactor 100
-	in zfindbs_c;
+	in idxdbs1;
       alter table anatomy_display add constraint
         foreign key (anatdisp_item_zdb_id)
 	references anatomy_item 
@@ -1175,7 +1175,7 @@ create dba function regen_anatomy()
       create index anatdisp_item_name_index
         on anatomy_display (anatdisp_item_name)
 	fillfactor 100
-	in zfindbs_c;
+	in idxdbs1;
       { alter table anatomy_display add constraint
         foreign key (anatdisp_item_name)
 	references anatomy_item (anatitem_name) 
@@ -1193,7 +1193,8 @@ create dba function regen_anatomy()
         on anatomy_stage_stats (anatstgstat_anat_item_zdb_id,
 			        anatstgstat_stg_zdb_id,
 				anatstgstat_object_type)
-	in zfindbs_c;
+	fillfactor 100
+	in idxdbs1;
       alter table anatomy_stage_stats add constraint
         primary key (anatstgstat_anat_item_zdb_id,
 		     anatstgstat_stg_zdb_id,
@@ -1205,7 +1206,7 @@ create dba function regen_anatomy()
       create index anatstgstat_anat_item_zdb_id_index
         on anatomy_stage_stats (anatstgstat_anat_item_zdb_id)
 	fillfactor 100
-	in zfindbs_c;
+	in idxdbs1;
       { alter table anatomy_stage_stats add constraint
         foreign key (anatstgstat_anat_item_zdb_id)
 	references anatomy_item
@@ -1215,7 +1216,7 @@ create dba function regen_anatomy()
       create index anatstgstat_stg_zdb_id_index
         on anatomy_stage_stats (anatstgstat_stg_zdb_id)
 	fillfactor 100
-	in zfindbs_c;
+	in idxdbs1;
       { alter table anatomy_stage_stats add constraint
         foreign key (anatstgstat_stg_zdb_id)
 	references stage
@@ -1233,7 +1234,7 @@ create dba function regen_anatomy()
         on all_anatomy_contains (allanatcon_container_zdb_id,     
 				 allanatcon_contained_zdb_id)
 	fillfactor 100
-	in zfindbs_c;
+	in idxdbs2;
       alter table all_anatomy_contains add constraint
         primary key (allanatcon_container_zdb_id,     
 		     allanatcon_contained_zdb_id)
@@ -1244,7 +1245,7 @@ create dba function regen_anatomy()
       create index allanatcon_container_zdb_id_index
         on all_anatomy_contains (allanatcon_container_zdb_id)
 	fillfactor 100
-	in zfindbs_c;
+	in idxdbs2;
       { alter table all_anatomy_contains add constraint
         foreign key (allanatcon_container_zdb_id)
 	references anatomy_item
@@ -1253,7 +1254,7 @@ create dba function regen_anatomy()
       create index allanatcon_contained_zdb_id_index
         on all_anatomy_contains (allanatcon_contained_zdb_id)
 	fillfactor 100
-	in zfindbs_c;
+	in idxdbs2;
       { alter table all_anatomy_contains add constraint
         foreign key (allanatcon_contained_zdb_id)
 	references anatomy_item
