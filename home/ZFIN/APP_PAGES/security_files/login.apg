@@ -6,11 +6,21 @@ Put in empty Mivar so Clif's script knows it needs to load to webblade
 
 
 <SCRIPT>
+var readytologin = 0;
+
 function submit_complete () {
-  if ((document.login_form.login.value !='')&&(document.login_form.password.value !='')) {
+  readytologin = 1;
+  if ((document.login_form.login.value !='')&&(document.login_form.password.value !='')&&(readytologin==1)) {
      document.login_form.submit();
   }
 }
+
+function submit_login () {
+  if ((document.login_form.login.value !='')&&(document.login_form.password.value !='')&&(readytologin==0)) {
+     document.login_form.submit();
+  }
+}
+
 </SCRIPT>
 
 <form name=login_form method=post  action="/cgi-bin_B/webdriver">
@@ -27,7 +37,7 @@ function submit_complete () {
 <b>Password:</b> <input TYPE=password size=8 maxlength=8 name=password onChange="submit_complete();">
 </TD>
 <TD>
-<input type=submit name=s_user value="Log in">
+<input type=button name=s_user value="Log in" onClick="submit_login();">
 </TD></TR>
 <TR><TD colspan=4><font size=-1>Only registered users may submit or update data in ZFIN. Please <A HREF="mailto:zfinadmn@zfin.org">contact the database administrator</a> for information on how to become a registered user.</font>
 </TD></TR></TABLE>
