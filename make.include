@@ -135,10 +135,10 @@ TOUCH = /bin/touch
 
 TARGET_MKDIR = /bin/mkdir -pm 775
 
-LOADAPPPAGE = /research/zcentral/Commons/bin/loadapppage.pl
-UNLOADAPPPAGE = /research/zcentral/Commons/bin/unloadapppage.pl
+LOADAPPPAGE = /private/ZfinLinks/Commons/bin/loadapppage.pl
+UNLOADAPPPAGE = /private/ZfinLinks/Commons/bin/unloadapppage.pl
 
-MAKESPECIFIC = /research/zcentral/Commons/bin/makespecific.pl
+MAKESPECIFIC = /private/ZfinLinks/Commons/bin/makespecific.pl
 
 SPECIFICCHECK = $(foreach GNRC,$(GENERICS),echo 'Informix weblint $(GNRC)'; $(WEBLINTIFMX) $(GNRC);)
 
@@ -148,7 +148,7 @@ WEBLINTIFMX = $(INFORMIXDIR)/extend/web.4.13.FC2/utils/weblint 2 <
 # --- Java
 
 JAVAHOME_11   = /private/apps/java1.1
-JAVAC_11      = $(JAVAHOME)/bin/javac
+JAVAC_11      = $(JAVAHOME_11)/bin/javac
 
 JAVAHOME_14  = /private/apps/java1.4
 JAVAC_14      = $(JAVAHOME_14)/bin/javac
