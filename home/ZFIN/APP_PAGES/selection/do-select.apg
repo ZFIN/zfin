@@ -41,7 +41,7 @@ FINALLY, if this selection was made while updating an existing record, we will w
 <?MIVAR NAME=$info>$5<?/MIVAR>
 <?MIVAR NAME=$rec_update>$8<?/MIVAR>
 <?MIVAR NAME=$rtnrec_zdb_id_column_name>$9<?/MIVAR>
-<?MIVAR NAME=$rtnrec_owner_column_name>$9<?/MIVAR>
+<?MIVAR NAME=$rtnrec_owner_column_name>$10<?/MIVAR>
 
 <!-- First call secure_navigate. Only reason is to set ZDB_ident and ZDB_name to use in recording updates, so only call it if updating! -->
 <?MISQL COND="$(EC,$rec_update,t)" SQL="select WebExplode(object,'') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
