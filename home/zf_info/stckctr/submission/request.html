@@ -1,0 +1,638 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.74 [en] (Win98; U) [Netscape]">
+   <title>ZIRC Request Form</title>
+   
+   <style type="text/css">
+   <!--
+   .comments {font-family: serif;
+   				font-size: 9pt;}
+   p.acknowledgement {font-family: serif;
+				text-indent: 10px;}
+   -->
+   </style>
+
+<SCRIPT language="JavaScript1.1">
+/*	*** I've changed this script to suit our needs at zfin.org ***
+	Cut-N-Paste JavaScript from ISN Toolbox 
+     Copyright 1996, Infohiway, Inc.  Restricted use is hereby
+     granted (commercial and personal OK) so long as this code
+     is not *directly* sold and the copyright notice is buried
+     somewhere deep in your HTML document.  A link to our site
+     http://www.infohiway.com is always appreciated of course,
+     but is absolutely and positively not necessary. ;-)
+*/
+<!-- hide from older browsers
+var expires = new Date()
+expires.setTime(expires.getTime() + 10*24*60*60*1000); //days*hrs*min*sec*millisec -- this cookie expires in 10 days
+formItems = 22; //set the number of items in the form to save
+
+function Set_Cookie(name,value,expires,path,domain,secure) {
+      document.cookie = name + "=" +escape(value) +
+          ( (expires) ? ";expires=" + expires.toGMTString() : "") +
+          ( (path) ? ";path=" + path : "") + 
+          ( (domain) ? ";domain=" + domain : "") +
+          ( (secure) ? ";secure" : "");
+  }
+
+function getCookie(name) {
+	var allcookies = document.cookie;
+	if (allcookies == "") return false;
+	var start = allcookies.indexOf(name + '=');
+		if (start == -1) return false;
+	start += name.length + 1;
+	var end = allcookies.indexOf(';', start);
+		if (end == -1) end = allcookies.length;
+	return allcookies.substring(start, end); 
+}
+
+function deleteCookie(name, path, domain) {
+  if (getCookie(name)) {
+    document.cookie = name + "=" + 
+    ((path) ? "; path=" + path : "") +
+    ((domain) ? "; domain=" + domain : "") +
+    "; expires=Thu, 01-Jan-70 00:00:01 GMT";
+	window.location.href = "request.html";
+  }
+}
+
+function cookieExists(name, path, domain) {
+  if (getCookie(name)=="") {
+    return "no";
+  } else {
+    return "yes";
+  }
+}
+
+function cookiesOK() {
+  var resultCookieExists = cookieExists('zircMaterialsRequestProfile'); 
+   if (resultCookieExists == "yes") {
+ 	     return "yes";}  // cookies appear to be OK with this user
+   else {
+      use_cookies = (confirm("Will you allow the contact information and grant number you enter into this form "
+                            +"to be stored on your computer so that those values will be pre-filled the next "
+                            +"time you return to request materials from the Resource Center?") ? "yes":"no");
+ 	   if (use_cookies == "yes") {
+ 	     return "yes";}  //cookies are OK for this user
+ 	   else {  //end of if (use_cookies == "yes")
+	     deleteCookie('zircMaterialsRequestProfile'); //if the user clicks 'cancel' the cookie (if it can be found) is deleted
+ 	     return null;}
+    }  // end of if/else (resultCookieExists == "yes")
+} // end of function cookies OK () 
+
+function saveValues() {
+ var bakeOK = cookiesOK();
+ if (bakeOK == "yes") {
+  var zircCookie = "";
+  for (i=0;i<document.forms.length;i++) { 
+   for (j=0;j<formItems; j++) {  //find the number of items for this form//old data=document.forms[i].elements.length
+    var cookieElement = document.forms[i].elements[j].name; //find the form element
+	if ((document.forms[i].elements[j].type == "text")
+		|| (document.forms[i].elements[j].type == "password")
+		|| (document.forms[i].elements[j].type == "textarea")
+		|| (document.forms[i].elements[j].type == "radio")) {
+	var elementValue = document.forms[i].elements[j].value;
+  } else if (document.forms[i].elements[j].type.indexOf("select") != -1) {
+   var elementValue = "";
+   for(k=0;k<document.forms[i].elements[j].length;k++)
+    if (document.forms[i].elements[j].options[k].selected)
+     elementValue += k+"|";
+  } else if (document.forms[i].elements[j].type == "checkbox") {
+   var elementValue = document.forms[i].elements[j].checked;
+  } 
+	var elementPair = (cookieElement + "=" + elementValue);
+	if (zircCookie == "") {
+		zircCookie = elementPair
+		} else {
+		zircCookie = zircCookie + "&" + elementPair
+		} //end of if (zircCookie == "")
+	} //end of for (j=0;j<14; j++)	
+   } //end of for (i=0;i<document.forms.length;i++)
+  Set_Cookie("zircMaterialsRequestProfile",zircCookie); //set the cookie
+ } //end of if (bakeOK == "yes")
+}   //end of function saveValues() 
+
+function storedValues() {
+	for (i=0;i<document.forms.length;i++) {
+    val = getCookie("zircMaterialsRequestProfile");
+	if (val) {
+	var a = val.split(escape('&')); //parsing name/value pairs
+	for(var x=0; x<a.length; x++){
+		a[x] = a[x].split(escape('=')); //breaking pairs into an array
+		}
+    for (j=0;j<formItems; j++) { //loop to fill in the form (variable 'formItems' = 14 items)
+	if (a[j]) {var elementValue = a[j].slice(1,2);} //find value in this value pair
+	var elementValue = unescape(elementValue); //this makes it readable
+     if ((document.forms[i].elements[j].type == "text")
+     || (document.forms[i].elements[j].type == "password")
+     || (document.forms[i].elements[j].type == "textarea")) {
+      document.forms[i].elements[j].value = elementValue;
+	 } else if (document.forms[i].elements[j].type.indexOf("select") != -1) {
+      document.forms[i].elements[j].selectedIndex = -1;
+      while (((pos = elementValue.indexOf("|")) != -1) && (elementValue.length > 1)) {
+       sel = parseInt(elementValue.substring(0,pos));
+       elementValue = elementValue.substring(pos+1,elementValue.length);
+       if (sel < document.forms[i].elements[j].length)
+        document.forms[i].elements[j].options[sel].selected = true;
+      }
+     } else if (document.forms[i].elements[j].type == "checkbox") {
+      document.forms[i].elements[j].checked = elementValue;
+     } else if (document.forms[i].elements[j].type == "radio") {
+      if (document.forms[i].elements[j].value == elementValue)
+       document.forms[i].elements[j].checked = true;
+    }	//end of for (j=0;j<document.forms[i].elements.length; j++)
+   }   //end of if (val) 
+  }   //end of for for (i=0;i<document.forms.length;i++) 
+ }   //end of if (document.images) 
+}   //end of function storedValues() 
+
+window.onload = storedValues;
+
+function sendMail() {
+	window.location.href = ('mailto:form_comments@zfin.org?subject=ZIRC request form');
+}
+
+function popup(URL) {
+	popupWindow = window.open(URL,"name","width=320,height=240,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,directories=no,status=no");
+     }
+	 
+//-->
+</SCRIPT>
+</head>
+<BODY text="#000000" bgcolor="#FFFFFF">
+<center><H2>Zebrafish International Resource Center<BR>
+    Request Form</H2>
+<noscript>
+<font color="#FF0000">Javascript is required to use links on this page and to 
+  save your contact information between sessions. <br>
+Please set your preferences to allow Javascript and then Reload.</font>
+</noscript>
+  <table width="600" border="0">
+    <tr> 
+      <td>Although the Resource Center is still functioning on a limited basis 
+        as we move into our new building, we will do the best we can to help you 
+        obtain the materials you need. You can get most of the information you 
+        need on-line: 
+        <ul>
+          <li> Types of lines: <a href="http://zfin.org/ZFIN">http://zfin.org/ZFIN</a> 
+          </li>
+          <li> Availability of lines: <a href="http://zfin.org/zf_info/stckctr/guide.html">http://zfin.org/zf_info/stckctr/guide.html</a> 
+          </li>
+          <li> Obtaining lines: <a href="http://zfin.org/zf_info/stckctr/guide.html">http://zfin.org/zf_info/stckctr/guide.html</a> 
+          </li>
+          <li> Fees: <a href="http://zfin.org/zf_info/stckctr/fees.html">http://zfin.org/zf_info/stckctr/fees.html</a> 
+          </li>
+		  <li> Resource Center Information: <a href="http://zfin.org/zf_info/stckctr/stckctr.html">http://zfin.org/zf_info/stckctr/stckctr.html</a> 
+          </li>
+        </ul>
+      </td>
+    </tr>
+	<tr> 
+      <td><br>
+        If you are requesting animals, we ask that the Principle Investigator 
+        verify that they will be treated according to NIH animal use guidelines. 
+        We will fax you the necessary form.<br>
+        Please feel free to communicate with us if you have any questions: <a href="mailto:fish_requests@zfin.org">fish_requests@zfin.org</a></td>
+    </tr>
+	<tr> 
+      <td>
+	  <br><b>Acknowledging materials and services:</b><br>
+			The Zebrafish International Resource Center is supported by grant #RR12546 from the NIH-NCRR.  Please acknowledge the Zebrafish
+International Resource Center and this grant number in all publications
+resulting from the materials and/or services we are providing to you.
+<br>Thank you.
+</td>
+    </tr>
+    <tr> 
+      <td align="center"> <br>
+        Please fill out this form if you want to request materials from the Resource 
+        Center. <br>
+        A * indicates a required field. <br>
+        <a href="javascript:popup('links.html')">Links</a> provide useful information 
+        in a new window without changing the form. </td>
+    </tr>
+  </table>
+
+<form NAME="theRequestForm" onSubmit="saveValues()" METHOD="POST" ACTION="http://<!--|DOMAIN_NAME|-->/<!--|CGI_BIN_DIR_NAME|-->/cgiemail/zf_info/stckctr/submission/request.txt">
+<input TYPE="hidden" NAME="success" VALUE="http://<!--|DOMAIN_NAME|-->/zf_info/stckctr/submission/thankyou.html">
+    <table BORDER BGCOLOR="#E5E5E5">
+      <tr> 
+        <td WIDTH="150"><b>Your&nbsp;</b> <br>
+          <b>Contact Information</b></td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr> 
+        <td><font size=-1>Your Name *</font></td>
+        <td> 
+          <input type="text" name="required_requesterName" size="50">
+        </td>
+      </tr>
+      <tr> 
+        <td><font size=-1>Your Email *</font></td>
+        <td> 
+          <input type="text" name="required_requesterEMail" size="50">
+        </td>
+      </tr>
+      <tr> 
+        <td><font size=-1>Your Telephone *</font></td>
+        <td> 
+          <input type="text" name="required_requesterTelephone" size="50">
+        </td>
+      </tr>
+      <tr> 
+        <td><font size=-1>Your Fax *</font></td>
+        <td> 
+          <input type="text" name="required_requesterFax" size="50">
+        </td>
+      </tr>
+      <tr> 
+        <td><font size=-1>Your Institution / Lab *</font></td>
+        <td>
+          <input type="text" name="required_requesterLab" size="50">
+        </td>
+      </tr>
+      <tr> 
+        <td><font size=-1>Your Position *</font></td>
+        <td> 
+          <select name="required_requesterPosition" size="1">
+            <option value=""></option>
+            <option value="PI / Director">PI / Director</option>
+            <option value="Post-Doc">Post-Doc</option>
+            <option value="Graduate Student">Graduate Student</option>
+            <option value="Research Staff">Research Staff</option>
+            <option value="Other">Other</option>
+          </select>
+        </td>
+      </tr>
+      <tr> 
+        <td><font size=-1>Your Address *<br>(No PO Boxes-this is the "Ship To" address.)</font></td>
+        <td> 
+          <textarea name="required_requesterAddress" cols="50" wrap="VIRTUAL" rows="4"></textarea>
+        </td>
+      </tr>
+    </table>
+    <br>
+    <table BORDER BGCOLOR="#E5E5E5" >
+<tr>
+<td WIDTH="150"><b>Principal Investigator</b>
+<br><b>Contact Information</b>
+<br><b>(if different)</b></td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td><font size=-1>PI Name</font></td>
+<td><input type="text" name="PIName" size="50"></td>
+</tr>
+<tr>
+<td><font size=-1>PI Email</font></td>
+<td><input type="text" name="PIEMail" size="50"></td>
+</tr>
+<tr>
+<td><font size=-1>PI Telephone</font></td>
+<td><input type="text" name="PITelephone" size="50"></td>
+</tr>
+<tr>
+<td><font size=-1>PI Fax</font></td>
+<td><input type="text" name="PIFax" size="50"></td>
+</tr>
+<tr>
+<td><font size=-1>PI Institution / Lab</font></td>
+<td><input type="text" name="PILab" size="50"></td>
+</tr>
+<tr>
+<td><font size=-1>PI Address</font></td>
+<td><textarea name="PIAddress" cols="50" wrap="VIRTUAL" rows="4"></textarea></td>
+</tr>
+</table>
+    <br>
+    <table BORDER bgcolor="#E5E5E5" >
+      <tr> 
+        <td width="150"><b>Billing Information</b></td>
+        <td>&nbsp;</td>
+      </tr>
+	  <tr> 
+        <td><font size="-1">Purchase Order Number *</font></td>
+        <td>
+          <input type="text" name="required_BillToPONumber" size="50">
+        </td>
+      </tr>
+      <tr> 
+        <td><font size="-1">&quot;Bill To:&quot; Name</font></td>
+        <td>
+          <input type="text" name="BillToName" size="50">
+        </td>
+      </tr>
+      <tr> 
+        <td><font size=-1>&quot;Bill To:&quot; Email</font></td>
+        <td>
+          <input type="text" name="BillToEmail" size="50">
+        </td>
+      </tr>
+      <tr> 
+        <td><font size=-1>&quot;Bill To:&quot; Telephone</font></td>
+        <td>
+          <input type="text" name="BillToTelephone" size="50">
+        </td>
+      </tr>
+      <tr> 
+        <td><font size=-1>&quot;Bill To:&quot; Fax</font></td>
+        <td>
+          <input type="text" name="BillToFax" size="50">
+        </td>
+      </tr>
+      <tr> 
+        <td><font size=-1>&quot;Bill To:&quot; Institution / Lab</font></td>
+        <td>
+          <input type="text" name="BillToLab" size="50">
+        </td>
+      </tr>
+      <tr> 
+        <td><font size=-1>&quot;Bill To:&quot; Address</font></td>
+        <td>
+          <textarea name="BillToAddress" cols="50" wrap="VIRTUAL" rows="4"></textarea>
+        </td>
+      </tr>
+    </table>
+    <br>
+    <table BORDER BGCOLOR="#E5E5E5" >
+<tr>
+<td WIDTH="300">
+          <div align=right><font size=-1>Your NIH <a name="requestAnimals"></a><a href="javascript:popup('grant.html')">grant number</a> or other grant number *</font></div>
+</td>
+<td><input type="text" name="required_grantNumber" size="30"></td>
+</tr>
+</table>
+    <br>
+    <table BORDER BGCOLOR="#E5E5E5" name="liveAnimals">
+      <tr> 
+        <td WIDTH="200"><b>Requesting Live Animals</b></td>
+        <td>&nbsp;</td>
+      </tr>      
+	  <tr> 
+        <td><font size="-1"><b>Line / Mutant Information</b></font></td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr> 
+        <td><font size="-1"><a href="javascript:popup('zdbId.html')">ZFIN ID Number</a></font></td>
+        <td> 
+          <input type="text" name="lineZFIN_ID" size="50" value="ZFIN ID:">
+        </td>
+      </tr>
+      <tr> 
+        <td><font size=-1>Line / Mutant Name</font></td>
+        <td> 
+          <input type="text" name="lineName" size="50">
+        </td>
+      </tr>
+      <tr> 
+        <td><font size=-1>Allele(s)</font></td>
+        <td> 
+          <input type="text" name="mutantAlleles" size="30">
+        </td>
+      </tr>
+      <tr> 
+        <td><font size="-1">Type</font></td>
+        <td><font size="-1"> 
+          <input type="checkbox" name="requestingEmbryos" value="requestingEmbryos">
+          Embryos
+          <input type="checkbox" name="requestingAdults" value="requestingAdults">
+          Adults
+		  <br>
+          Other, please be specific:
+          <input type="text" name="requestingOther" size="30">
+		  </font>
+		</td>
+      </tr>
+	  <tr> 
+        <td><font size="-1">Quantity</font></td>
+        <td> <font size="-1">Quantity</font>: 
+          <input type="text" name="quantity" size="10" >
+        </td>
+      </tr>
+	  <tr> 
+        <td><font size="-1">&nbsp;</font></td>
+        <td>
+		 <font size="-1">Do you currently have fish in your lab?</font>
+		 <br>
+          <input type="checkbox" name="yesFishInLab" value="yesFishInLab">
+		  Yes
+        </td>
+	  </tr>
+	  <tr>
+		<td><font size="-1"><a name="requestProbes"></a>&nbsp;</font></td>
+        <td>
+		 <font size="-1">Are you raising fish from eggs?</font>
+		 <br>
+          <input type="checkbox" value="yesRaisingEggs" name="yesRaisingEggs">
+		  Yes
+        </td>
+      </tr>
+    </table>
+    <br>
+    <table BORDER bgcolor="#E5E5E5" name="probes" >
+      <tr> 
+        <td colspan="2"><b>Requesting EST or cDNA Probes</b></td>
+      </tr>
+      <tr> 
+        <td><font size="-1">Probe 1</font> </td>
+        <td align="center"> 
+          <table width="100%" border="0">
+            <tr> 
+              <td width="19%"><font size="-1"><a href="javascript:popup('zdbGeneId.html')">ZFIN 
+                ID Number</a></font> </td>
+              <td width="81%"> 
+                <input type="text" name="probe1ZFIN_ID" size="50" value="ZFIN ID:">
+              </td>
+            </tr>
+            <tr> 
+              <td width="19%"><font size="-1">Name </font></td>
+              <td width="81%"> 
+                <input type="text" name="probe1Name" size="50">
+              </td>
+            </tr>
+            <tr> 
+              <td width="19%"><br>
+                <font size="-1">Other Description </font></td>
+              <td width="81%"> 
+                <textarea name="probe1OtherDescription" cols="50" rows="2" wrap="VIRTUAL"></textarea>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr> 
+        <td><font size="-1">Probe 2</font></td>
+        <td align="center"> 
+          <table width="100%" border="0">
+            <tr> 
+              <td width="19%"><font size="-1"><a href="javascript:popup('zdbGeneId.html')">ZFIN 
+                ID Number</a></font> </td>
+              <td width="81%"> 
+                <input type="text" name="probe2ZFIN_ID" size="50" value="ZFIN ID:">
+              </td>
+            </tr>
+            <tr> 
+              <td width="19%"><font size="-1">Name </font></td>
+              <td width="81%"> 
+                <input type="text" name="probe2Name" size="50">
+              </td>
+            </tr>
+            <tr> 
+              <td width="19%"><br>
+                <font size="-1">Other Description </font></td>
+              <td width="81%"> 
+                <textarea name="probe2OtherDescription" cols="50" rows="2" wrap="VIRTUAL"></textarea>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr> 
+        <td><font size="-1">Probe 3</font></td>
+        <td align="center"> 
+          <table width="100%" border="0">
+            <tr> 
+              <td width="19%"><font size="-1"><a href="javascript:popup('zdbGeneId.html')">ZFIN 
+                ID Number</a></font> </td>
+              <td width="81%"> 
+                <input type="text" name="probe3ZFIN_ID" size="50" value="ZFIN ID:">
+              </td>
+            </tr>
+            <tr> 
+              <td width="19%"><font size="-1">Name </font></td>
+              <td width="81%"> 
+                <input type="text" name="probe3Name" size="50">
+              </td>
+            </tr>
+            <tr> 
+              <td width="19%"><br>
+                <font size="-1">Other Description </font></td>
+              <td width="81%"> 
+                <textarea name="probe3OtherDescription" cols="50" rows="2" wrap="VIRTUAL"></textarea>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr> 
+        <td><font size="-1">Probe 4</font></td>
+        <td align="center"> 
+          <table width="100%" border="0">
+            <tr> 
+              <td width="19%"><font size="-1"><a href="javascript:popup('zdbGeneId.html')">ZFIN 
+                ID Number</a></font> </td>
+              <td width="81%"> 
+                <input type="text" name="probe4ZFIN_ID" size="50" value="ZFIN ID:">
+              </td>
+            </tr>
+            <tr> 
+              <td width="19%"><font size="-1">Name </font></td>
+              <td width="81%"> 
+                <input type="text" name="probe4Name" size="50">
+              </td>
+            </tr>
+            <tr> 
+              <td width="19%"><br>
+                <font size="-1">Other Description </font></td>
+              <td width="81%"> 
+                <textarea name="probe4OtherDescription" cols="50" rows="2" wrap="VIRTUAL"></textarea>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr> 
+        <td><font size="-1">Probe 5</font></td>
+        <td align="center"> 
+          <table width="100%" border="0">
+            <tr> 
+              <td width="19%"><font size="-1"><a href="javascript:popup('zdbGeneId.html')">ZFIN 
+                ID Number</a></font> </td>
+              <td width="81%"> 
+                <input type="text" name="probe5ZFIN_ID" size="50" value="ZFIN ID:">
+              </td>
+            </tr>
+            <tr> 
+              <td width="19%"><font size="-1">Name </font></td>
+              <td width="81%"> 
+                <input type="text" name="probe5Name" size="50">
+              </td>
+            </tr>
+            <tr> 
+              <td width="19%"><br>
+                <font size="-1">Other Description </font></td>
+              <td width="81%"> 
+                <textarea name="probe5OtherDescription" cols="50" rows="2" wrap="VIRTUAL"></textarea>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <br>
+    <table BORDER BGCOLOR="#E5E5E5" name="otherMaterials">
+      <tr> 
+        <td WIDTH="200"><a name="requestOther"></a><b>Requesting Other Materials</b></td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr> 
+        <td><font size="-1"><a href="javascript:popup('zdbId.html')">ZFIN ID Number</a></font></td>
+        <td> 
+          <input type="text" name="otherZFIN_ID" size="50" value="ZFIN ID:">
+        </td>
+      </tr>
+      <tr> 
+        <td><font size="-1">Name</font></td>
+        <td> 
+          <input type="text" name="otherName" size="50">
+        </td>
+      </tr>
+      <tr> 
+        <td><font size="-1">Other Description</font></td>
+        <td> 
+          <textarea name="otherDescription" cols="50" rows="2" wrap="VIRTUAL"></textarea>
+        </td>
+      </tr>
+    </table>
+	<br>
+    <table BORDER WIDTH="600" BGCOLOR="#E5E5E5" name="considerations">
+      <tr> 
+        <td width="200"> 
+          <p><b>Considerations and Comments</b></p>
+          </td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr> 
+        <td><font size="-1">Any considerations or comments</font></td>
+        <td> 
+          <textarea name="considerationsOther" cols="50" wrap="VIRTUAL" rows="2"></textarea>
+        </td>
+      </tr>
+    </table>
+    <br>
+    <table BORDER=0 WIDTH="90%" >
+      <tr> 
+        <td align="center">
+            <input type="submit" value="Send this request to ZIRC" name="submit">
+        </td>
+      </tr>
+      <tr> 
+        <td align="center">
+        </td>
+      </tr>
+      <tr> 
+        <td>&nbsp;
+        </td>
+      </tr>
+      <tr> 
+        <td align="center">
+            <input type="button" value="Send us comments about this form" name="email" class="comments" onClick="sendMail()">
+        </td>
+      </tr>
+    </table>
+</form></center>
+</body>
+</html>
+

@@ -21,9 +21,12 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/stckctr/submission
 
-GENERICS = submit.html success.html
+GENERICS = submit.html  request.html
 
-STATICS = index.html reasons.html submit.txt husbandry.html marker.html links.html
+STATICS = index.html reasons.html submit.txt husbandry.html marker.html links.html \
+zfinId.jpg zfinGene.jpg zdbId.html zdbGeneId.html thankyou.html grant.html\
+request.txt  success.html
+
 # ---------------  Production Rules  ------------------------------------
 
 # Use default rules for directories without app pages in them.
