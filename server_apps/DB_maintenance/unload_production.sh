@@ -5,9 +5,9 @@ setenv INFORMIXSERVER <!--|INFORMIX_SERVER|-->
 setenv ONCONFIG <!--|ONCONFIG_FILE|-->
 setenv INFORMIXSQLHOSTS ${INFORMIXDIR}/etc/<!--|SQLHOSTS_FILE|-->
 setenv LD_LIBRARY_PATH ${INFORMIXDIR}/lib:${INFORMIXDIR}/lib/esql
-setenv PATH <!--|INFORMIX_DIR|-->/bin:/research/zfin/central/Commons/bin:$PATH
+setenv PATH <!--|INFORMIX_DIR|-->/bin:/research/zcentral/Commons/bin:$PATH
 
-set pth=/research/zfin/unloads/databases/<!--|DB_NAME|-->
+set pth=/research/zunloads/databases/<!--|DB_NAME|-->
 set dirname=`date +"%Y.%m.%d.1"`
 
 # increment until we get name which has not been taken
@@ -26,7 +26,7 @@ $pth/$dirname
 at `date`.
 END
 
-/research/zfin/central/Commons/bin/unloaddb.pl <!--|DB_NAME|--> $pth/$dirname
+/research/zcentral/Commons/bin/unloaddb.pl <!--|DB_NAME|--> $pth/$dirname
 
 chgrp -R fishadmin $pth/$dirname
 chmod -R g+rw $pth/$dirname
