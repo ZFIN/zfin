@@ -161,19 +161,6 @@
 	    </td>
 	  </tr>
 	</NOSCRIPT>
-        <TR>
-          <TD class="content_left">
-            <DIV class="content">
-              <a href="/SearchApp/category_search.jsp"><b>Quick Search</b></a>
-            </DIV>
-          </TD>
-          <TD class="content_right">
-            <DIV class="content">
-               <form method="GET" action="/SearchApp/category_search.jsp" name="uniquery_search">
-                 <input type="text" name="query" size="30"> <input type="submit" value="Search">
-               </form>
-            </DIV>
-          </TD>
         </TR>
 	<TR>
 	  <TD class="content_left">
