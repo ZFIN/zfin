@@ -71,16 +71,18 @@ DESCRIPTION:
 
 <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
     
-    <!-- look to see if replaced zdb_id -->
+   <!-- if no match for the entered ID, display not found msg ------>
 
-    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-zdb_history.apg';">$1<?/MISQL>
+     <!-- page header display ----------------->
+     <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+     <!-- look to see if replaced zdb_id -->
+     <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-zdb_history.apg';">$1<?/MISQL>
     
-    <?MIBLOCK COND="$(NXST,$new_oid)">
-      <form><center><font size=+2>
-        <b>Requested ID not found on ZFIN.</b>
-        </font></center>    
-      </form>
-    <?/MIBLOCK>
+     <?MIBLOCK COND="$(NXST,$new_oid)">
+       <form><center><font size=4>
+        <?MIVAR> <b>Requested ID not found on ZFIN.<?/MIVAR></font>      
+       </form>
+     <?/MIBLOCK> 
 
 <?MIELSE>
 
