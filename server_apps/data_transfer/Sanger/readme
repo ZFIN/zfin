@@ -79,18 +79,15 @@ http://zfin.org/data_transfer/Downloads/ad.txt
 
 CV tables for anatomy and stages
 ---------------------------------
-vega_xpat_anatomy_contains.unl
-        defines a parent-child relationship between anatomy items and
-        the stage window over which the relation holds
-Format: parent-item-id|child-item-id|start-stage-id|end-stage-id|
+vega_xpat_anatomy_relationship.unl
+        defines a parent-child relationship between anatomy items
+Format: parent-item-id|child-item-id|
 
 
 vega_xpat_anatomy_item.unl
-        mostly derivable from 'vega_xpat_anatomy_contains.unl' but
-        also associates item-name and primary-tree.
-        stage window is the earliest and latest stages which the item exists
+        defines anatomy item name, primary tree, and stage range.
         the primary tree is the "native" hirearchy
-        i.e. [structures,processes,behaviors,functional systems]
+        i.e. [structures,functional systems]
         the item is most relevant to.
 Format: item-id|item-name|primary-tree|start-stage-id|end-stage-id|
 
