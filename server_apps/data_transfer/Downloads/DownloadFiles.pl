@@ -13,9 +13,9 @@
 #
 # Orthology - separate files for: 
 #   zebrafish - human
-#	zfin id , zebrafish symbol, human symbol, OMIM id, LocusLink id
+#	zfin id , zebrafish symbol, human symbol, OMIM id, Entrez Gene id
 #   zebrafish - mouse
-#	zfin id , zebrafish symbol, mouse symbol, MGI id, LocusLink id
+#	zfin id , zebrafish symbol, mouse symbol, MGI id, Entrez Gene id
 #   zebrafish - fly
 #	zfin id,  zebrafish symbol, fly symbol,  Flybase id
 #   zebrafish - yeast
@@ -30,7 +30,7 @@
 # Mapping data
 #	zfin id, symbol, panel symbol, LG, loc, metric
 #
-# Sequence data - separate files for GenBank, RefSeq, LocusLink, Unigene, 
+# Sequence data - separate files for GenBank, RefSeq, EntrezGene, Unigene, 
 # SWISS-PROT, Interpro
 #	zfin id, symbol, accession number
 #	
