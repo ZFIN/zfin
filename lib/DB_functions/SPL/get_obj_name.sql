@@ -29,11 +29,11 @@ get_obj_name(zdbId varchar(50))
       into objName
       from marker_go_term_evidence
       where mrkrgoev_zdb_id = zdbId;
-  elif (objType = "ENV") then
-    select env_name 
+  elif (objType = "EXP") then
+    select exp_name 
       into objName
-      from environment
-      where env_zdb_id = zdbId ;
+      from experiment
+      where exp_zdb_id = zdbId ;
   elif (objType = "FIG") then
     select fig_zdb_id 
       into objName
@@ -92,6 +92,11 @@ get_obj_name(zdbId varchar(50))
       into objName
       from anatomy_item_homolog
       where anathlog_zdb_id = zdbId;
+   elif (objType = "CDT") then
+    select cdt_name
+      into objName
+      from condition_data_type
+      where cdt_zdb_id = zdbId ;
   elif (objType = "CHROMO") then
     select print_name
       into objName
@@ -125,16 +130,21 @@ get_obj_name(zdbId varchar(50))
       from db_link, foreign_db_contains
       where dblink_zdb_id = zdbId
         and dblink_fdbcont_zdb_id = fdbcont_zdb_id;
-   elif (objType = "ENVCOND") then    --no name so return zdb_id
-    select envcond_zdb_id
+   elif (objType = "EXPCOND") then    --no name so return zdb_id
+    select expcond_zdb_id
       into objName
-      from environment_condition
+      from experiment_condition
       where envcond_zdb_id = zdbId;
-  elif (objType = "FEATENV") then     --no name so return zdb_id
-    select featenv_zdb_id
+   elif (objType = "EXPUNIT") then    --no name so return zdb_id
+    select expunit_name
       into objName
-      from feature_environment
-      where featenv_zdb_id = zdbId;
+      from experiment_unit
+      where envcond_zdb_id = zdbId;
+  elif (objType = "FEATEXP") then     --no name so return zdb_id
+    select featexp_zdb_id
+      into objName
+      from feature_experiment
+      where featexp_zdb_id = zdbId;
   elif (objType = "EXTNOTE") then
     select extnote_zdb_id
       into objName
@@ -150,6 +160,11 @@ get_obj_name(zdbId varchar(50))
       into objName
       from go_term
       where goterm_zdb_id = zdbId;
+ elif (objType = "JRNL") then
+    select jrnl_name
+      into objName
+      from journal
+      where jrnl_zdb_id = zdbId;
   elif (objType = "LABEL") then
     select lbl_name 
       into objName
@@ -185,6 +200,11 @@ get_obj_name(zdbId varchar(50))
       into objName
       from marker_go_term
       where mrkrgo_zdb_id = zdbId;
+  elif (objType = "MRKRSEQ") then
+    select mrkrseq_zdb_id
+      into objName
+      from marker_sequence
+      where mrkrseq_zdb_id = zdbId;
   elif (objType = "NOMEN") then
     select mhist_zdb_id
       into objName
