@@ -22,7 +22,7 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/home/zf_info/catch
 
 GENERICS = MCF_8_99.html RFA.html catch.html feb99.html fishman.html nih.html \
-	oct98.html resources.html talbot.html zon.html
+	oct98.html resources.html talbot.html zon.html BAC_library.html
 
 STATICS = bkgrd.jpeg catch.gif fish.gif fish_bgd.gif fish_net.gif zfin.gif
 
