@@ -1,0 +1,234 @@
+<?MICOMMENT>
+
+FILE: notif_content.apg
+
+  Code the content of the notificatioin letter, both the form and the preview.
+
+INPUT VARS:
+  status   :: edit or preview (GLOBAL, set in parent)
+     OID   :: the publication zdb id (GLOBAL, set in parent)
+ sender_id :: current login user's zdb id (GLOBAL, set in parent)
+
+OUTPUT VARS: 
+  none
+
+<?/MICOMMENT>
+
+
+<SCRIPT>
+
+      function isEmpty(string) {
+	return ((string == null) || (string.length == 0))	
+      }
+
+      function validateContent() {
+        var recipient = document.letter.notif_recipient.value;
+	var topic     = document.letter.notif_topic.value;
+	var item_grp  = document.letter.notif_item;
+	var valid     = false;
+
+        if (isEmpty(recipient)) { 
+          alert("Please fill in the name of the recipients."); 
+          return false;
+        }
+        if (isEmpty(topic)) { 
+          alert("Please fill in the curated topic(s)."); 
+          return false;
+        }
+
+	if( item_grp.length > 0) {
+          for (i=0; i<item_grp.length&&!valid; i++) {
+	
+		if(item_grp[i].checked) {
+			valid = true; 
+			break;
+		}
+	   }
+	} else if (item_grp.checked){
+		valid = true;
+	}
+	if(!valid){
+		var msg = "No marker is checked. Are you sure to process?";
+		if (confirm (msg)) {
+			return true;
+		} else {
+			return false;
+		}
+	}		       
+        return true;
+      }
+   
+</SCRIPT>
+
+
+<?MICOMMENT>== prepare the variables that will be used in the letter ==<?/MICOMMENT>
+<?MISQL SQL="select title, source 
+               from publication 
+              where zdb_id = '$OID'"; >
+	<?MIVAR NAME=pub_title>$1<?/MIVAR>
+        <?MIVAR NAME=pub_source>$2<?/MIVAR>
+<?/MISQL>
+
+<?MISQL SQL="select name 
+               from ZDB_submitters
+              where zdb_id = '$sender_id'"; >
+	<?MIVAR NAME=sender_name>$1<?/MIVAR>
+<?/MISQL>
+
+<?MISQL SQL="select email 
+               from person 
+              where zdb_id = '$sender_id'"; >
+       <?MIVAR NAME=sender_email>$1<?/MIVAR>
+<?/MISQL>
+
+<?MIVAR COND="$(AND,$(EC,$status,preview),$(XST,$notif_item))" NAME=$notif_items>
+  	  $(TRIM,$(SEPARATE,$notif_item,",")) 
+<?/MIVAR>
+
+<?MICOMMENT>==Letter content. Under edit status, it is a template; under preview, it is html formatted.==<?/MICOMMENT> 
+<FORM action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method=post name=letter>
+    <?MIVAR>
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-notif_frame.apg">
+    
+    <?/MIVAR>
+
+Dear <?MIVAR>$(IF,$(EC,$status,preview),$notif_recipient,<input type=text size=50 name=notif_recipient $(IF,$(XST,$notif_recipient),value='$notif_recipient')>)<?/MIVAR>, 
+<p>
+
+<?MIVAR>
+I am pleased to report that information about <?MIVAR>$(IF,$(EC,$status,preview),$notif_topic,<input type=text size=50 name=notif_topic $(IF,$(XST,$notif_topic),value='$notif_topic')>)<?/MIVAR> has been curated from your publication "$pub_title", $pub_source, and entered into ZFIN, the Zebrafish Information Network. You can view this information beginning at the following locations:  
+<?/MIVAR>
+<p>
+
+<?MICOMMENT>==An order of Gene, Gene Expression, Fish, Locus is expected. Currently there is significance order for marker types, but Mutant is not ranked yet, and XPAT is not included. In zdb_object_type, GENE and XPAT are labeled as first tier, while FISH and LOCUS second. So borrow that for ordering.
+==<?/MICOMMENT>
+<?MISQL SQL="select recattrib_data_zdb_id, zobjtype_attribution_display_tier
+               from record_attribution, zdb_object_type
+              where recattrib_source_zdb_id = '$OID'
+	        and get_obj_type(recattrib_data_zdb_id) = zobjtype_name
+           order by zobjtype_attribution_display_tier,recattrib_data_zdb_id ;">
+ 
+	<?MIVAR NAME=attrib_data_id>$1<?/MIVAR>
+  
+  <?MIVAR NAME=attrib_data_title><?/MIVAR>
+  <?MIBLOCK COND="$(>,$(POSITION,$attrib_data_id,FISH),0)">
+    <?MIVAR NAME=attrib_data_title>Mutant<?/MIVAR>
+    <?MIVAR NAME=query_attrib_data>
+		select name, abbrev
+                 from fish
+                where zdb_id ='$attrib_data_id'
+    <?/MIVAR> 
+  <?/MIBLOCK>
+  <?MIBLOCK COND="$(>,$(POSITION,$attrib_data_id,LOCUS),0)">
+    <?MIVAR NAME=attrib_data_title>Mutant<?/MIVAR>
+    <?MIVAR NAME=query_attrib_data>
+		select locus_name, abbrev
+                 from locus
+                where zdb_id ='$attrib_data_id'
+    <?/MIVAR> 
+  <?/MIBLOCK>
+  <?MIBLOCK COND="$(>,$(POSITION,$attrib_data_id,GENE),0)">
+    <?MIVAR NAME=attrib_data_title>Gene<?/MIVAR>
+    <?MIVAR NAME=query_attrib_data>
+		select mrkr_name, mrkr_abbrev
+                 from marker
+                where mrkr_zdb_id ='$attrib_data_id'
+    <?/MIVAR> 
+  <?/MIBLOCK>
+  <?MIBLOCK COND="$(>,$(POSITION,$attrib_data_id,XPAT),0)">
+    <?MIVAR NAME=attrib_data_title>Gene Expression<?/MIVAR>
+    <?MIVAR NAME=query_attrib_data>
+		select mrkr_name, mrkr_abbrev
+                 from marker, expression_pattern, marker_relationship
+                where xpat_zdb_id ='$attrib_data_id'    
+		  AND mrel_mrkr_2_zdb_id = xpat_probe_zdb_id
+                  AND mrel_mrkr_1_zdb_id = mrkr_zdb_id
+    	     
+    <?/MIVAR> 
+  <?/MIBLOCK>
+	
+  <?MIBLOCK COND="$(NC,$attrib_data_title,)">
+    <?MISQL SQL="$query_attrib_data;">
+	<?MIVAR NAME=attrib_data_name>$1<?/MIVAR>
+        <?MIVAR NAME=attrib_data_abbrev>$2<?/MIVAR> 
+	
+    <?/MISQL>
+ 
+    <?MIVAR COND="$(EC,$status,edit)">
+       <INPUT TYPE=checkbox NAME=notif_item VALUE="$attrib_data_id" $(IF,$(AND,$(XST,$notif_items),$(>,$(POSITION,$notif_items,$attrib_data_id),0)), CHECKED)>
+        $attrib_data_title: <i>$attrib_data_name</i> (<i>$attrib_data_abbrev</i>)
+        <br>
+        <a href="http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id">http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id</a> 
+        <br>
+    <?/MIVAR>
+    <?MIVAR COND="$(AND,$(EC,$status,preview),$(XST,$notif_items),$(>,$(POSITION,$notif_items,$attrib_data_id),0))">       
+	$attrib_data_title: <i>$attrib_data_name</i> (<i>$attrib_data_abbrev</i>)
+        <br>
+  	<a href="http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id">http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id</a> 
+        <br>
+     <?/MIVAR>
+  <?/MIBLOCK>	
+<?/MISQL>
+
+
+<?MIVAR COND="$(OR,$(EC,$status,edit),$(XST,$notif_item))">
+<p>
+<?/MIVAR>
+
+<?MIBLOCK COND="$(AND,$(EC,$status,preview),$(XST,$notif_optnote))">
+    <?MIVAR NAME=$notif_optnote_display>$(URLENCODE,$notif_optnote)<?/MIVAR>
+    <?MIVAR NAME=$notif_optnote_display>$(REPLACE,$notif_optnote_display,%0a,<BR>)<?/MIVAR>
+    <?MIVAR NAME=$notif_optnote_display>$(REPLACE,$notif_optnote_display,++,&nbsp;&nbsp;)<?/MIVAR>
+    <?MIVAR NAME=$notif_optnote_display>$(URLDECODE,$notif_optnote_display)<?/MIVAR>
+    <?MIVAR>$notif_optnote_display<?/MIVAR>
+<?MIELSE COND="$(EC,$status,edit)">
+
+  <?MIVAR>
+    <TEXTAREA NAME=notif_optnote rows="4" cols="70" wrap="virtual")></TEXTAREA>
+  <?/MIVAR>  
+<?/MIBLOCK>
+
+<?MIVAR COND="$(OR,$(EC,$status,edit),$(XST,$notif_optnote))">
+<p>
+<?/MIVAR>
+
+ZFIN is the zebrafish model organism database and, as such, serves as the centralized community resource for integration of zebrafish genetic, genomic, and developmental data. We encourage and appreciate any feedback that you are able to offer. Community input is vital to our success and value as a public resource. If you have corrections, comments, or additional data that you would like to submit to ZFIN, please contact me. 
+<p>
+
+Sincerely yours,
+<br>
+<?MIVAR>
+$sender_name  
+<p>
+<a href="mailto:$sender_email">$sender_email</a>
+<br>
+<?/MIVAR>
+
+Scientific Curation Group
+<br>
+Zebrafish Information Network
+<br>
+Eugene, Oregon, USA
+<p>
+ZFIN home: <a href="http://zfin.org">http://zfin.org</a>
+
+<p><p>
+
+
+
+<?MIVAR>
+<INPUT TYPE=hidden NAME=contacts_email VALUE="$contacts_email">
+<INPUT TYPE=hidden NAME=contacts_name VALUE="$contacts_name">
+<INPUT TYPE=hidden NAME=OID VALUE="$OID">
+<INPUT TYPE=hidden NAME=sender_id  VALUE="$sender_id">
+<?/MIVAR>
+
+<?MIBLOCK COND="$(EC,$status,edit)">
+  <INPUT TYPE=HIDDEN NAME=status VALUE="preview">	
+  <INPUT TYPE=SUBMIT VALUE="Done and Preview the letter" onClick="return validateContent()">
+<?MIELSE>
+ 
+  <INPUT TYPE=Button VALUE="ReEdit the Letter" onClick="history.go(-1)">
+<?/MIBLOCK>
+
+</FORM>
