@@ -71,6 +71,11 @@
 #  2. We actually start looking at the output.
 #13 15 * * 0 <!--|ROOT_PATH|-->/server_apps/WebSiteTools/run.checklinks
 #
+# Tuesday
+# --------
+# weely run of GO file generation
+15 01 * * 2 <!--|ROOT_PATH|-->/server_apps/data_transfer/GO/go.pl
+#
 # Wednesday
 # ---------
 # Weekly dump of data for ZIRC to pick up
