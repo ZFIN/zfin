@@ -1,5 +1,5 @@
 create function get_obj_type(src lvarchar)
-  returning lvarchar
+  returning varchar(10)
   with (not variant)
   external name
     "<!--|ROOT_PATH|-->/lib/DB_functions/get_obj_type.so"
