@@ -123,8 +123,12 @@ For security reasons, please <b>click "Goodbye" to LOG OUT</b> if you have finis
 <TR align=center>
 <TD><B>FISH</B><p><font size=-1>Mutant<br>and<br>Wild Type<br>Lines</font>
 <?MIVAR COND="$(EC,$AUTHORIZED,root)">
-<form><input type=button onClick="location='/<!--|CGI_BIN_DIR_NAME|-->/run-regen-fish.pl';" value="Regen Mutant (fishsearch) data">
+
+<form action='/<!--|CGI_BIN_DIR_NAME|-->/runSPL.cgi' method="POST" >
+<input type=submit value="Regen Mutant (fishsearch) data">
+<input type=hidden name="stored_procedure" value="regen_fishsearch">
 </form>
+
 <?/MIVAR>
 </TD>
 <TD>
@@ -202,8 +206,12 @@ For security reasons, please <b>click "Goodbye" to LOG OUT</b> if you have finis
 <TR align=center>
 <TD> <B>GENOMICS</B><br> Mapping Panels,Markers,<br>and Primers
 <?MIVAR COND="$(EC,$AUTHORIZED,root)">
-<form><input type=button onClick="location='/<!--|CGI_BIN_DIR_NAME|-->/run-regen.pl';" value="Regen Genomics data">
+
+<form action='/<!--|CGI_BIN_DIR_NAME|-->/runSPL.cgi' method="POST" >
+<input type=submit value="Regen Genomics data">
+<input type=hidden name="stored_procedure" value="regen_genomics">
 </form>
+
 <?/MIVAR>
 </TD>
 <TD>
