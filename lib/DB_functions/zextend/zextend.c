@@ -6,7 +6,6 @@
 	conc		Concatenates to strings; in use, but could be 
 	                replaced by Informix ||.  Handles nulls	differently 
 			then Informix ||.
-	expr		returns its single argument to get the parser to eval it
 	get_random_cookie Generate a random string of printable characters
 	html_breaks	Replaces newlines with "<BR>" which formats it for html
 	html_breaks_html Replaces newlines with "<BR>" which formats it for 
@@ -440,18 +439,6 @@ HTML *html_breaks_html (HTML *html) {
 /*	html_compare Takes in an HTML data type and converts it to an LVARCHAR and then performs a string search for specified text.  The conversion to lvarchar datatype is as described in Chapter 14 of Web Datablade Module Application Developer's Guide 4.0. */
 
 
-
-
-
-/*	expr	Does nothing except return its argument. This allows you to
-		create a context in which to evaluate expressions in SQL as long
-		as the resulting type is referred to by a pointer rather than
-		passed as an actual value.
-		You can create lots of function signatures with this one routine.
-*/
-void *expr(void *arg) {
-	return arg;
-}
 
 
 /*	get_random_cookie	Generates a random cookie of printable
