@@ -59,12 +59,6 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
 	<?/MISQL>
 	<?MIVAR NAME=$dblink_zdb_id>$1<?/MIVAR>
 	<?MISQL SQL="
-	  insert into zdb_active_source
-	      ( zactvs_zdb_id )
-	    values
-	      ( '$dblink_zdb_id' );">
-	<?/MISQL>
-	<?MISQL SQL="
 	  insert into zdb_active_data
 	      ( zactvd_zdb_id )
 	    values
@@ -87,19 +81,12 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
     <?MIBLOCK COND="$(XST,$delacc)">
       <!-- deleting a link -->
       <?MISQL SQL="
-	select dblink_zdb_id 
-	  from db_link
-	  where linked_recid = '$OID'
-	    and acc_num = '$delacc' ;">
-      <?/MISQL>
-      <?MIVAR NAME=$dblink_zdb_id>$1<?/MIVAR>
-      <?MISQL SQL="
-	delete from zdb_active_source
-	  where zactvs_zdb_id = '$dblink_zdb_id';">
-      <?/MISQL>
-      <?MISQL SQL="
 	delete from zdb_active_data
-	  where zactvd_zdb_id = '$dblink_zdb_id';">
+	  where zactvd_zdb_id = 
+		( select dblink_zdb_id 
+		    from db_link
+		    where linked_recid = '$OID'
+		      and acc_num = '$delacc' ) ;">
       <?/MISQL>
     <?/MIBLOCK>
 
@@ -109,18 +96,11 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
 	-- from being orphaned.  
 	-->
       <?MISQL SQL="
-	select dblink_zdb_id 
-	  from db_link 
-	  where linked_recid = '$OID';">
-	<?MIVAR NAME=$dblink_zdb_id>$1<?/MIVAR>
-	<?MISQL SQL="
-	  delete from zdb_active_source
-	    where zactvs_zdb_id = '$dblink_zdb_id';">
-	<?/MISQL>
-	<?MISQL SQL="
-	  delete from zdb_active_data
-	    where zactvd_zdb_id = '$dblink_zdb_id';">
-	<?/MISQL>
+	delete from zdb_active_data
+	  where zactvd_zdb_id = 
+		( select dblink_zdb_id 
+		    from db_link 
+		    where linked_recid = '$OID' );">
       <?/MISQL>
       <?MISQL SQL="
 	delete from zdb_active_data

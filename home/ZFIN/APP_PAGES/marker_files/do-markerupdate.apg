@@ -114,19 +114,12 @@ info -- optional value used to pass in additional info
 
     <?MIBLOCK COND="$(EC,$attr,db_link)">
       <?MISQL SQL="
-	select dblink_zdb_id 
-	  from db_link
-	  where linked_recid = '$OID'
-	    and acc_num = '$old_value' ;">
-      <?/MISQL>
-      <?MIVAR NAME=$dblink_zdb_id>$1<?/MIVAR>
-      <?MISQL SQL="
-	delete from zdb_active_source
-	  where zactvs_zdb_id = '$dblink_zdb_id';">
-      <?/MISQL>
-      <?MISQL SQL="
 	delete from zdb_active_data
-	  where zactvd_zdb_id = '$dblink_zdb_id';">
+	  where zactvd_zdb_id = 
+		( select dblink_zdb_id 
+		    from db_link
+		    where linked_recid = '$OID'
+		      and acc_num = '$old_value' );">
       <?/MISQL>
     <?/MIBLOCK>
   <?/MIBLOCK>  <!-- ends special listitem case -->
@@ -156,18 +149,11 @@ info -- optional value used to pass in additional info
     <?/MISQL>
     <?MIVAR NAME=$dblink_zdb_id>$1<?/MIVAR>
     <?MISQL SQL="
-      insert into zdb_active_source
-          ( zactvs_zdb_id )
-        values
-          ( '$dblink_zdb_id' );">
-    <?/MISQL>
-    <?MISQL SQL="
       insert into zdb_active_data
           ( zactvd_zdb_id )
         values
           ( '$dblink_zdb_id' );">
     <?/MISQL>
-
     <?MISQL SQL="
       insert into db_link 
           ( linked_recid, DB_name, acc_num, dblink_zdb_id ) 
