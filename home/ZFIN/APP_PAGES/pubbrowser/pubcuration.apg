@@ -1,0 +1,518 @@
+<?MICOMMENT>
+An apg page for the record keeping of Curating Publications.
+
+This page is only accessable with as root.
+
+Expected Vars:
+  $OID :: the ZDB of a Publication
+
+OPTIONAL VARS:
+  $open :: topic to open
+  $close :: topic to close
+  $unclaim :: topic to unclaim
+  $release :: topic to release
+  $pub_file :: new pdf to upload
+  $paper_status :: set paper to $paper_status
+  $pnote :: a new publication note
+  $delete_note :: the zdb_id of a publication note
+  $reassignTopic :: topic name
+  $reassignCurator :: curator ZDB-ID to assign $reassignTopic
+
+<?/MICOMMENT>
+
+<?MIBLOCK COND="$(XST,$OID)">
+
+  <?MISQL SQL="select WebExplode(object,'permission=root&page_title=Curate Pub') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+<?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
+
+  <?MISQL SQL="SELECT title FROM publication WHERE zdb_id='$OID'">
+    <?MIVAR NAME=$title>$1<?/MIVAR>
+  <?/MISQL>
+
+<?MIBLOCK COND="$(XST,$title)">
+
+  <?MIBLOCK COND=$(XST,$pub_file)>
+    <?MISQL SQL="UPDATE publication SET pub_file = NULL WHERE zdb_id = '$OID';"><?/MISQL>
+    <?MISQL SQL="UPDATE publication SET pub_file = FILETOBLOB('$pub_file', 'client') WHERE zdb_id = '$OID';"><?/MISQL>
+  <?/MIBLOCK>
+
+  <?MIBLOCK COND=$(XST,$unclaim)>
+    <?MISQL SQL="select WebExplode(object,'pubtopfnd_PUB=$OID&pubtopfnd_CUR=$ZDB_ident&pubtopfnd_TOP=$unclaim&pubtopfnd_DATA=f') from webPages where ID='aa-pubtopic_found.apg';">$1<?/MISQL>
+  <?/MIBLOCK>
+
+  <?MIBLOCK COND=$(XST,$release)>
+    <?MISQL SQL="select WebExplode(object,'PUB=$OID&CUR=$ZDB_ident&TOP=$release') from webPages where ID='aa-pubtopic_unclaim.apg';">$1<?/MISQL>
+  <?/MIBLOCK>
+
+  <?MIBLOCK COND=$(XST,$claim)>
+      <?MISQL SQL="select WebExplode(object,'pubtopfnd_PUB=$OID&pubtopfnd_CUR=$ZDB_ident&pubtopfnd_TOP=$claim&pubtopfnd_DATA=t') from webPages where ID='aa-pubtopic_found.apg';">$1<?/MISQL>
+  <?/MIBLOCK>
+
+  <?MIBLOCK COND=$(XST,$open)>
+      <?MISQL SQL="select WebExplode(object,'PUB=$OID&CUR=$ZDB_ident&TOP=$open') from webPages where ID='aa-pubtopic_open.apg';">$1<?/MISQL>
+  <?/MIBLOCK>
+
+  <?MIBLOCK COND=$(XST,$close)>
+      <?MISQL SQL="select WebExplode(object,'pubtopclose_PUB=$OID&pubtopclose_CUR=$ZDB_ident&pubtopclose_TOP=$close') from webPages where ID='aa-pubtopic_close.apg';">$1<?/MISQL>
+  <?/MIBLOCK>
+
+  <?MIBLOCK COND=$(AND,$(XST,$reassignTopic),$(XST,$reassignCurator))>
+    <?MISQL SQL="select WebExplode(object,'PUB=$OID&CUR=$reassignCurator&TOP=$reassignTopic') from webPages where ID='aa-pubtopic_reassign.apg';">$1<?/MISQL>
+  <?/MIBLOCK>
+
+  <?MIBLOCK COND=$(AND,$(XST,$paper_status),$(EC,$paper_status,close))>
+    <?MISQL SQL="select curtopic_name from curation_topic where curtopic_name != 'Linked Authors';">
+      <?MIVAR NAME=topic>$1<?/MIVAR>
+      <?MISQL SQL="select WebExplode(object,'pubtopclose_PUB=$OID&pubtopclose_CUR=$ZDB_ident&pubtopclose_TOP=$topic') from webPages where ID='aa-pubtopic_close.apg';">$1<?/MISQL>
+    <?/MISQL>
+    <?MISQL SQL="UPDATE publication SET pub_completion_date = TODAY WHERE zdb_id = '$OID';"><?/MISQL>
+  <?/MIBLOCK>
+
+  <?MIBLOCK COND=$(AND,$(XST,$paper_status),$(EC,$paper_status,open))>
+    <?MISQL SQL="UPDATE publication SET pub_completion_date = NULL WHERE zdb_id = '$OID';"><?/MISQL>
+  <?/MIBLOCK>
+
+  <?MIBLOCK COND=$(XST,$pnote)>
+    <?MIVAR NAME=encoded_note>$(URLENCODE,$pnote)<?/MIVAR>
+    <?MISQL SQL="select WebExplode(object,'PUB=$OID&CUR=$ZDB_ident&NOTE=$encoded_note') from webPages where ID='aa-pnote_new.apg';">$1<?/MISQL>
+  <?/MIBLOCK>
+
+  <?MIBLOCK COND=$(XST,$delete_pnote)>
+    <?MISQL SQL="DELETE FROM publication_note WHERE pnote_zdb_id = '$delete_pnote';"><?/MISQL>
+  <?/MIBLOCK>
+  
+  <?MIVAR>
+    <TITLE>ZFIN Curate Pub: $title</TITLE>
+  <?/MIVAR>
+
+  <SCRIPT>
+      function replaceLocation(url) {
+        if (navigator.userAgent.indexOf("Safari") >= 0) 
+          location = url;        
+        else 
+          location.replace(url);
+        
+      }
+  
+      function closePaper() {
+        var pnote = 'Closed Paper';
+	<?MISQL SQL="SELECT pubcl_topic
+	             FROM publication_claim
+	             WHERE pubcl_pub_zdb_id = '$OID';">
+	    <?MIVAR NAME=OPEN_TOPICS>$1<?/MIVAR>
+        <?/MISQL>
+          
+        <?MIBLOCK COND="$(XST,$OPEN_TOPICS)">
+          if (confirm('Warning: Open topics exist and will be closed.')) {
+            <?MIVAR>
+            replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID&paper_status=close&pnote="+pnote);
+            <?/MIVAR>
+          }
+        <?MIELSE>
+          <?MIVAR>
+            replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID&paper_status=close&pnote="+pnote);
+          <?/MIVAR>
+        <?/MIBLOCK>
+      }
+      
+      function openPaper(){
+        var pnote = 'Reopen Paper';
+        <?MIVAR>
+        replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID&paper_status=open&pnote="+pnote);
+        <?/MIVAR>
+      }
+      
+      function reassignTopic(topic,list){
+        var curatorID = escape(list.value);
+        <?MIVAR>
+        replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID&reassignTopic="+topic+"&reassignCurator="+curatorID);
+        <?/MIVAR>
+      }
+      
+      function curate(topic,action){
+        <?MIVAR>
+        replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID&"+action+"="+topic+"#topics");
+        <?/MIVAR>
+      }
+      
+      function editNote(pnote_zdb_id) {
+        helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pnote_editor.apg&OID="+pnote_zdb_id,"helpwindow","scrollbars=yes,width=800,height=500");
+        <?MIVAR>replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID#notes");<?/MIVAR>
+      }
+      
+      function deleteNote(pnote_zdb_id) {
+        <?MIVAR>replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID&delete_pnote="+pnote_zdb_id+"#notes");<?/MIVAR>
+      }
+      
+      function noData() {
+        var pnote = 'Upon Review, this publication contains no information currently curated by ZFIN.';
+        <?MIVAR>
+            replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID&paper_status=close&pnote="+pnote);
+        <?/MIVAR>
+      }
+      function isEmpty(string) {
+        if (string.length == 0){
+          return true;
+        }
+        for (var i = 0; i<string.length; i++) {
+          if (string.charAt(i) != ' ')
+            return false;
+          else
+            alert(string.charAt(i));
+        }
+        
+        return true;
+      }
+      
+      function isValidTextArea(ta) {
+        var string = escape(ta.value);
+        if (isEmpty(string)) { 
+          alert('Invalid Input: Empty ('+string+')'); 
+          return false;
+        }
+        return true;
+      }
+  </SCRIPT>
+
+  <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
+  
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+
+  
+<?MICOMMENT> 
+  ========================
+  =    GET PUB VALUES    =
+  ========================
+<?/MICOMMENT>
+
+  
+  <?MISQL SQL="SELECT pub_file FROM publication WHERE zdb_id = '$OID';"><?/MISQL>
+  <?MIVAR NAME=$pub_file>$1<?/MIVAR>
+  
+  <?MISQL SQL="SELECT pub_completion_date FROM publication WHERE zdb_id = '$OID';"><?/MISQL>
+  <?MIVAR NAME=$pub_completion_date>$1<?/MIVAR>
+  
+    
+  <FORM ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" METHOD=post NAME=upload  
+        ENCTYPE="multipart/form-data">
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-pubcuration.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+ 
+  
+<?MICOMMENT> 
+  ===============================
+  =    CURATION TABLE HEADER    =
+  ===============================
+<?/MICOMMENT>
+
+  <table cellspacing=0 cellpadding=3 width=100%>
+    <tr bgcolor="<!--|SIDEBAR_COLOR|-->">
+      <td>
+        <FONT SIZE=+1><b> Curation </b></FONT> 
+        <?MIVAR>
+          $(IF,$(NE,$pub_completion_date,NULL),<FONT color=red>Closed: $pub_completion_date</FONT>)
+        <?/MIVAR>
+      </td>
+    </tr>
+    <tr bgcolor="<!--|HIGHLIGHT_COLOR|-->">
+      <td>
+        <?MIVAR>
+          <b>Title:</b>
+          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$OID">$title</a>
+        <?/MIVAR>
+      </td>
+    </tr>
+    <tr>
+      <td>
+          <b>File:</b>
+          <?MIVAR COND="$(=,0,1)">
+          <?MISQL SQL="SELECT LOTOFILE(pub_file,'<!--|ROOT_PATH|-->/home/$ZDB_ident.pdf!','server')
+                       FROM publication
+                       WHERE zdb_id = '$OID'">
+            <a href="/$ZDB_ident.pdf">(PDF)</a>
+          <?/MISQL>
+          <?/MIVAR>
+         <?MIBLOCK COND="$(NC,$pub_file,NULL)">
+           <?MIVAR>
+             <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$pub_file&MItypeObj=application/pdf" target=new>PDF</a>
+             Replace file:
+           <?/MIVAR>
+         <?MIELSE>
+           Upload PDF: 
+         <?/MIBLOCK>
+           <input type=file name="pub_file" size=50> 
+           <input type=submit value=Upload>
+      </td>
+    </tr>
+  </table>
+  
+  </form>
+  
+<?MICOMMENT> 
+  ===========================
+  =    CLOSE PUB BUTTONS    =
+  ===========================
+<?/MICOMMENT>
+  
+  <form name=closing>
+  <?MIBLOCK COND="$(EC,$pub_completion_date,NULL)">
+    <?MISQL SQL="SELECT count(*)::integer 
+                 FROM curation 
+                 WHERE cur_pub_zdb_id='$OID'
+                   AND cur_topic != 'Linked Authors'
+                   AND cur_data_found = 't';"><?/MISQL>
+    <?MIVAR NAME=curation_count>$1<?/MIVAR>
+  
+    <?MIBLOCK COND="$(=,$curation_count,0)">
+        <input type=button value="Close Paper with No Data Found" onClick="noData()";>
+    <?MIELSE>             
+          <input type=button value="Close Paper" onClick="closePaper()";>
+    <?/MIBLOCK>
+  <?MIELSE>
+    <input type=button value="ReOpen Paper" onClick="openPaper()";>
+  <?/MIBLOCK>
+  </form> 
+  
+  
+  
+<?MICOMMENT> 
+  ======================
+  =    TOPIC STATUS    =
+  ======================
+<?/MICOMMENT>
+
+<P>
+  <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method=post name=status>
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-pubcuration.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+<!--  
+  <table bgcolor="<!--|SIDEBAR_COLOR|-->">
+    <tr>
+      <td>
+        <font size=+1 color="<!--|LINKBAR_COLOR|-->"><b> Status </b></font>
+      </td>
+    </tr>
+  </table>
+-->  
+
+  <a name=topics></a>
+  <TABLE cellspacing=0 cellpadding=5 width=66%>
+    <tr>
+      <td>
+        <b>Topic</b>
+      </td>
+      <td>
+        <b>Open</b>
+      </td>
+      <td>
+        <b>Close</b>
+      </td>
+      <td>
+        <b>Curator</b>
+      </td>
+    </tr>
+    
+<?MICOMMENT> --------------- VARS FOR STATUS TABLE --------------- <?/MICOMMENT>
+  <?MIVAR NAME=CURRENTROW>0<?/MIVAR>  
+  <?MIVAR NAME=QUERY_CURATORS>
+      SELECT p.name, p.zdb_id
+      FROM person p, lab l, int_person_lab
+      WHERE p.zdb_id = source_id 
+        AND target_id = l.zdb_id 
+        AND l.name like 'ZFIN%'
+        AND (   position = 'Research Staff'
+             or
+                p.name like 'Sprunger%'
+             or
+                position = 'Adminstrative Staff'
+            )
+      ORDER BY p.name;
+  <?/MIVAR>
+  
+  <?MISQL SQL="SELECT curtopic_name, cur_closed_date, cur_data_found, p1.zdb_id, p1.name, 
+               pubcl_curator_zdb_id, p2.name
+               FROM curation_topic, OUTER(curation, person p1), OUTER(publication_claim, person p2)
+               WHERE curtopic_name = cur_topic
+                 and cur_pub_zdb_id = '$OID'
+                 and cur_curator_zdb_id = p1.zdb_id
+                 and pubcl_pub_zdb_id = '$OID'
+                 and pubcl_topic = curtopic_name
+                 and pubcl_curator_zdb_id = p2.zdb_id
+                 and curtopic_name != 'Linked Authors'
+               ORDER BY curtopic_name;">
+              
+          <!--    $1, $2, $3, $4, $5, $6 <br>   -->
+          <?MIVAR NAME=curtopic_name>$1<?/MIVAR>
+          <?MIVAR NAME=cur_closed_date>$2<?/MIVAR>
+          <?MIVAR NAME=cur_data_found>$3<?/MIVAR>
+          <?MIVAR NAME=cur_curator_zdb_id>$4<?/MIVAR>
+          <?MIVAR NAME=cur_curator_name>$5<?/MIVAR>
+          <?MIVAR NAME=pubcl_curator_zdb_id>$6<?/MIVAR>
+          <?MIVAR NAME=pubcl_curator_name>$7<?/MIVAR>
+          
+          $(SETVAR,$CURRENTROW,$(+,$CURRENTROW,1))
+    <tr $(IF,$(=,$(MOD,$CURRENTROW,2),1),bgcolor=<!--|HIGHLIGHT_COLOR|-->)>
+      
+    <?MIBLOCK COND="$(NE,$cur_closed_date,NULL)">
+      <?MIVAR>
+      <td>
+          <input type=checkbox value="c_claim$CURRENTROW" 
+          $(IF,$(EC,$cur_data_found,t),CHECKED)
+          onClick="curate('$curtopic_name','$(IF,$(EC,$cur_data_found,t),unclaim,claim)')">
+          $curtopic_name 
+      </td>
+      <td>
+          <input type=checkbox value="c_open$CURRENTROW" 
+          onClick="curate('$curtopic_name','open')"> 
+      </td>
+      <td>
+          <input type=checkbox value="c_close$CURRENTROW" CHECKED
+          onClick="curate('$curtopic_name','open')"> 
+      </td>
+      <td>
+          $cur_curator_name
+      </td>
+      <?/MIVAR>
+    <?MIELSE COND="$(NE,$pubcl_curator_zdb_id,NULL)">
+      <?MIVAR>
+      <td>
+          <input type=checkbox value="o_claim$CURRENTROW" CHECKED
+          onClick="window.alert('Invalid Entry: Topic is Open.'); return false;">
+          $curtopic_name 
+      </td>
+      <td>
+          <input type=checkbox value="o_open$CURRENTROW" CHECKED
+          <?MIVAR>       onClick="curate('$curtopic_name','release')";> <?/MIVAR>
+      </td>
+      <td>
+          <input type=checkbox value="o_close$CURRENTROW"
+          <?MIVAR> onClick="curate('$curtopic_name','close')"; <?/MIVAR>> 
+      </td>
+      <td>
+          <SELECT NAME="curator$CURRENTROW" SIZE=1
+               onChange="reassignTopic('$curtopic_name', document.status.curator$CURRENTROW);">
+          <?MISQL SQL="$QUERY_CURATORS">
+            <OPTION VALUE="$2" $(IF,$(EC,$pubcl_curator_name,$1),SELECTED)> $1
+          <?/MISQL>
+          </SELECT>
+      </td>
+      <?/MIVAR>
+    <?MIELSE>
+      <?MIVAR>
+      <td>
+          <input type=checkbox value="claim$CURRENTROW"
+            <?MIVAR COND="$(EC,$cur_data_found,t)"> CHECKED onClick="curate('$curtopic_name','unclaim')";<?/MIVAR>
+            <?MIVAR COND="$(NE,$cur_data_found,t)"> onClick="curate('$curtopic_name','claim')";<?/MIVAR> >
+          $curtopic_name 
+            
+      </td>
+      <td>
+          <input type=checkbox value="open$CURRENTROW"
+          <?MIVAR COND="$(NC,$curtopic_name,Linked Authors)"> 
+              onClick="curate('$curtopic_name','open')"; 
+          <?/MIVAR>
+          <?MIVAR COND="$(EQ,$curtopic_name,Linked Authors)"> 
+              onClick="window.alert('Invalid Entry: Use Linked Author Form.'); return false;"
+          <?/MIVAR>
+          >
+      </td>
+      <td>
+          <input type=checkbox value="close$CURRENTROW"
+          <?MIVAR COND="$(NC,$curtopic_name,Linked Authors)"> 
+              onClick="curate('$curtopic_name','close')"; 
+          <?/MIVAR>
+          <?MIVAR COND="$(EQ,$curtopic_name,Linked Authors)"> 
+              onClick="window.alert('Invalid Entry: Close using $curtopic_name Form.'); return false;"
+          <?/MIVAR>
+          > 
+      </td>
+      <td>
+          &nbsp;
+      </td>
+      <?/MIVAR>
+    <?/MIBLOCK>
+    </tr>
+  <?/MISQL>
+
+    
+  </table>
+  
+  </form>
+
+
+
+<?MICOMMENT> 
+  ===========
+  =  NOTES  =
+  ===========
+<?/MICOMMENT>
+
+
+<P>
+  <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method=post name=new_notes>
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-pubcuration.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+        
+  <font color="black"><b> Notes </b></font><a name=notes></a>  
+
+
+  <br><TEXTAREA NAME="pnote" rows=3 cols=50 wrap=virtual></TEXTAREA> 
+  <br><input type=submit value="New Note" onClick="return isValidTextArea(window.new_notes.pnote)";> 
+  
+  </form>
+  
+  <form name=edit_notes>
+  <?MISQL SQL="SELECT p.zdb_id, p.name, pnote_text, pnote_date, pnote_zdb_id
+               FROM publication_note, person p
+               WHERE pnote_pub_zdb_id = '$OID'
+                 AND pnote_curator_zdb_id = p.zdb_id
+               ORDER BY pnote_date desc;">
+                 
+      <?MIVAR NAME=pnote_curator_id>$1<?/MIVAR>
+      <?MIVAR NAME=pnote_curator_name>$2<?/MIVAR>
+      <?MIVAR NAME=pnote_text>$3<?/MIVAR>
+      <?MIVAR NAME=pnote_date>$4<?/MIVAR>
+      <?MIVAR NAME=pnote_zdb_id>$5<?/MIVAR>
+      
+      <?MIVAR>
+        <p>
+        $pnote_curator_name - $(SUBSTR,$pnote_date,1,10)
+        <?MIVAR COND="$(EC,$ZDB_ident,$pnote_curator_id)">
+          <input type=button value=edit onClick=editNote('$pnote_zdb_id');>
+          <input type=button value=delete onClick=deleteNote('$pnote_zdb_id');>
+        <?/MIVAR>
+        <br><UL><PRE>$pnote_text<PRE></UL>
+      <?/MIVAR>
+  <?/MISQL>
+  
+  </form>
+
+<?MICOMMENT> 
+  ====================
+  =  ERROR MESSAGES  =
+  ====================
+<?/MICOMMENT>
+  
+<?MIELSE>
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+  <b>Requested ID not found in ZFIN.</b>
+<?/MIBLOCK> <!-- title is null -->
+
+<?MIELSE>
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+  <p>Authorization for this page failed.
+  <p>A session error may have occurred. Try logging out and logging back in. If that does not work, contact your database administrator.
+<?/MIBLOCK> <!-- not authorized -->
+
+<?MIELSE>
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+  <P>
+  ERROR -- something bad happened -- no OID passed in!
+<?/MIBLOCK>
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+
+
+
+
