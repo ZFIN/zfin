@@ -845,6 +845,128 @@ sub fishAbbrevStartsWithLocusAbbrev ($) {
 } 
 
 
+
+#======= FISH - ALLELE - INT_FISH_CHROMO - CHROMOSOME - ALLELE - FISH ======
+#
+# Before recorded history there was an unsuccessful attempt to support 
+# double mutants and ZFIN.  While the attempt failed, it failed only
+# after the tables had been modified in certain ways.  The tables still
+# only support single mutants, however due to the way they are designed
+# they can easilyt support single mutants incorrectly.  These tests
+# attempt to verify that single mutants are done correctly.
+#
+# Mutant data is spread across 4 tables (5 if you count locus, but those
+# tests are elsewhere).  These 4 tables form a box, with 1:1 relationships
+# between each of them.  These tests make sure that relationships are in
+# fact 1:1.
+#
+# The mutant table box is:
+#
+#   ALTERATION -- 1 ------------------------- 1 -- FISH
+#     |                                             |
+#     1                                             1
+#     |                                             |
+#     |                                             |
+#     |                                             |
+#     |                                             |
+#     1                                             1
+#     |                                             |
+#   CHROMOSOME -- 1 -------------- 1 -- INT_FISH_CHROMO
+
+
+#--------------------------------------------------------------
+# alterationHas1Fish(
+#
+# Confirm that an alteration record has a single fish record
+# Can't make the allele column of fish be unique because it is null
+# for wildtype fish.
+#
+# Parameter
+#  $        Email address of recipients
+#
+
+sub alterationHas1Fish($) {
+
+  logHeader ("Checking each alteration has 1 fish");
+
+  my $sql = 'select allele, zdb_id 
+               from alteration a
+               where 1 <>
+                     ( select count(*) 
+                         from fish f
+                         where f.allele = a. allele )
+               order by allele';
+
+  my @colDesc = ("Alteration Name   ",
+		 "Alteration ZDB ID ");
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Alterations have 0 or > 1 associated fish";
+    my $errMsg = "$nRecords alterations had 0 or more than 1 associated fish.\n ";
+
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+  }else {
+    print "Passed!\n";
+  }
+} 
+
+
+
+#--------------------------------------------------------------
+# mutantHas4TableBox
+#
+# Every mutant fish must have an alteration record.  The previous test
+# verified that every alteration had a mutant.  This test asks the 
+# mirror of that question, but it does so by going all the way around 
+# the box, thus also confirming that the int_fish_chromo and chromosome
+# records exist as well.
+#
+# Parameter
+#  $        Email address of recipients
+#
+
+sub mutantHas4TableBox($) {
+
+  logHeader ("Checking each mutant has 1 record in all 4 mutant tables");
+
+  # I originally tried this a 4 way outer join, but I couldn't get it to
+  # work.
+
+  my $sql = 'select abbrev, name, allele, zdb_id
+               from fish f
+               where line_type = "mutant"
+                 and 1 <> 
+                     ( select count(*)
+                         from int_fish_chromo ifc, chromosome c, alteration a
+                         where f.zdb_id = ifc.source_id
+                           and ifc.target_id = c.zdb_id
+                           and c.zdb_id = a.chrom_id )
+               order by abbrev, name, allele';
+
+  my @colDesc = ("Fish Abbrev       ",
+		 "Fish Name         ",
+		 "Fish Allele       ",
+		 "Fish ZDB ID       ");
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Mutant FISH records missing records in other mutant tables ";
+    my $errMsg = "$nRecords mutant(s) had 0 or more than 1 records in associated tables.\n ";
+
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+  }else {
+    print "Passed!\n";
+  }
+} 
+
+
 #======================== Locus Names, Abbrevs =====================
 #
 # Strictly speaking, locus names and abbrevs are not unique, and therefore
@@ -1998,6 +2120,9 @@ if($daily) {
   fishNameEqualLocusName($mutantEmail);
   fishAbbrevContainsFishAllele($mutantEmail);
   fishAbbrevStartsWithLocusAbbrev($mutantEmail);
+
+  alterationHas1Fish($mutantEmail);
+  mutantHas4TableBox($mutantEmail);
 
   locusAbbrevUnique($mutantEmail);
   locusNameUnique($mutantEmail);
