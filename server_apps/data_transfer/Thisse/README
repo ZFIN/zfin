@@ -4,7 +4,7 @@ site:ftp-igbmc.u-strasbg.fr/pub/Thisse
 
 The Thisse combine their files for dowload using .sit compression. Unsit the file. StuffIt can be downloaded via the internet to unsit the file. 
 
-After unsitting you should find image folders and FileMaker Pro files. The files that need to be included are: "expression 1", "IMAGES 1", "keywords 1", "PROBES 1."  Contact the Thisse if any of these files does not exist. For each probe a folder will exist with name CB###.jpeg+text. Scripts will be executed later to validate the contents of the image folders so they do not need to be checked at this time.
+After unsitting you should find image folders and FileMaker Pro files. The files that need to be included are: "expression 1", "IMAGES 1", "keywords 1", "PROBES 1(or XPAT_START 1)".  Contact the Thisse if any of these files does not exist. For each probe a folder will exist with name CB###.jpeg+text. Scripts will be executed later to validate the contents of the image folders so they do not need to be checked at this time.
 
 Translate FMP files into .csv files.
 1. Start FileMaker Pro (FMP)
@@ -87,7 +87,7 @@ NO - Excellent, move on.
 YES - Let's track down the problem. Leaving this uncorrected will cause a fatal load error.
  
 1. Commonly files are missnamed. 
-   If there are images in both parts of the load, check to see if they have similar names 
+   If there are images in both parts of the reports, check to see if they have similar names 
    and might really be the same.
    Image names submitted with prefix 'cb' are translated to prefix 'CB'. All occurrences 
    will display here. Ignore these.
@@ -158,7 +158,8 @@ Check for image name discrepancies and make corrections to images.unl as necessa
 > check_new_images.pl
 
 
-at this point you should be ready to start loading the data into a fresh 
+
+At this point you should be ready to start loading the data into a fresh 
 test_db once you have a fresh copy ...
 
 open file ../load_gxp.sql and comment out the commit statement until the data loads cleanly.
@@ -184,21 +185,38 @@ previous process until the load is clean. Then run Regen Genomics.
 
 
 ----------------  EST-GENE Relationships  --------------
+Started 2003/11/06, Thisse no longer makes gene assignments, only hundred percent matched ZFIN genes are provided. ZFIN curators will do the gene assignments based on blast results. 
+
+== get the sequences
+
+   Run command to get the sequence accession numbers. 
+     > cut -d\| -f6 probes.unl > probe_acc.txt
+
+   Go to http://www.ncbi.nlm.nih.gov/entrez/batchentrez.cgi?db=Nucleotide
+   At the top, send file probe_acc.txt, and retrieve back the FASTA format sequence file, batchseq.fa. Put the file in the working directory.
+
+   cp the scripts for blast checking to working dir
+     > cp ../Scripts/blastThisse.sh .
+     > cp ../Scripts/blast2unl.pl .
+     > cp ../Scripts/getMarker.sql .
+
+   Run the blast processing.. it will take about 5 hours at least !! I have added "nice +10" to the two demanding blast.  
+
+     > blastThisse.sh batchseq.fa
+
+   The finally files to be sended to Ken and Sridhar are is_gene.txt, thisse2gb.txt, thisse2est.txt and thisse2sp.txt. (After another round, we could probably delete the intermediate files end with .unl, .fin as the last step in the script)
+
 ------------------get curator approval------------------
-Currently, Ken is sent a list of probes/Genes that Bernard has assigned. 
-(Send file is_gene.txt)
 
-------------------create load file----------------------
-Curator approved relationships should state cb_name | Marker_abbrev.
-
+Curator approved relationships should state "cb_name|Marker_abbrev|". 
+Check the file to make sure that no fake gene assignment is done ahead of time. The loading script will generate "sb:" genes correspondingly.
+ 
 Create file 
 > touch is_gene.unl
 
-Open file
-> xemacs is_gene.unl
-
 Write each relationship on a separte line using format:
   cb_name|mrkr_name|
+
 
 
 ---------------- validate relationships ----------------
