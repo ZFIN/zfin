@@ -262,30 +262,55 @@ requested from publication page for related data list.
     <?/MIVAR>
 
     <?MIVAR NAME=constraint SEPARATE=" AND ">$constraint<?/MIVAR>
+
   <?/MIBLOCK> <!-- end build constraint for gene/marker search -->
 
-  <?MIBLOCK COND="$(AND,$(XST,$pubId),$(EC,$type,gene))">
-     <?MISQL SQL="
-	select recattrib_data_zdb_id as data_zdb_id
-	from  record_attribution
-	where recattrib_source_zdb_id = '$pubId'
-	and  recattrib_data_zdb_id like 'ZDB-GENE-%'
-	into temp attrib_data_temp with no log; 
-	">
-     <?/MISQL>	
- 	
-    <?MIVAR NAME=$constraint> 
-	mrkr_zdb_id in (select data_zdb_id from attrib_data_temp)
-    <?/MIVAR>	 		
-  <?/MIBLOCK>  <!-- constraint build for request from publication pages -->
-
+  
 
   <?MICOMMENT>main execution of data collection<?/MICOMMENT>
   <?MICOMMENT>the first block select markers match the constraint and furthur filter out the mapped ones if needed, the second part deals with the mapped data links from publication page which only collect linkage group mapping, and not only for marker but also mutant
   <?/MICOMMENT>
 
 
-  <?MIBLOCK COND="$(NC,$type,mapped)">
+  <?MIBLOCK COND="$(EC,$type,pub_mrkr)">
+
+     <?MISQL SQL="
+	select mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_abbrev_order, mrkr_type $name_sig_col
+	from  record_attribution, marker 
+	where recattrib_source_zdb_id = '$pubId'
+	  and recattrib_data_zdb_id = mrkr_zdb_id 
+	  and mrkr_type in 
+		  (select mtgrpmem_mrkr_type from marker_type_group_member
+                    where mtgrpmem_mrkr_type_group = 'SEARCH_MK')
+	into temp mrkrselect_tmp_markers with no log; 
+	">
+     <?/MISQL>	
+
+  <?MIELSE COND="$(EC,$type,pub_mapped)" >     
+     <?MISQL SQL="
+	select mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_abbrev_order, mrkr_type $name_sig_col, lnkg_or_lg as or_lg
+  	from record_attribution, linkage_member,linkage, marker
+  	where recattrib_source_zdb_id = '$pubId'
+    	and recattrib_data_zdb_id = lnkgmem_linkage_zdb_id
+    	and lnkgmem_linkage_zdb_id = lnkg_zdb_id	
+    	and lnkgmem_member_zdb_id = mrkr_zdb_id
+	and lnkg_or_lg <> '0'
+		
+ 	UNION
+
+  	select l.zdb_id as mrkr_zdb_id, locus_name as mrkr_name, l.abbrev as mrkr_abbrev, l.locus_abbrev_order as mrkr_abbrev_order $name_sig_col, 'MUTANT', lnkg_or_lg as or_lg
+  	from record_attribution, linkage_member, linkage, fish f, locus l
+  	where recattrib_source_zdb_id = '$pubId'
+    	and recattrib_data_zdb_id = lnkgmem_linkage_zdb_id
+    	and lnkgmem_linkage_zdb_id = lnkg_zdb_id
+    	and lnkgmem_member_zdb_id = f.zdb_id 
+    	and f.locus = l.zdb_id 
+	and lnkg_or_lg <> '0'
+  	into temp mrkrselect_tmp_pub_mapped_markers with no log;  ">
+     <?/MISQL>
+     <?MIVAR NAME=$xpat_loci_cols>n<?/MIVAR>
+  
+  <?MIELSE>
 
     <?MISQL SQL="
 	  select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_abbrev_order, 
@@ -311,41 +336,13 @@ requested from publication page for related data list.
 	set explain off;
 	drop table mrkrselect_on_lg; ">
     <?/MISQL>
-    
 
-  <?MIELSE>      <!-- COND="$(AND,$(XST,$pubId),$(EC,$type,mapped))"-->
-     <?MISQL SQL="
-	select mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_abbrev_order, mrkr_type $name_sig_col, lnkg_or_lg as or_lg
-  	from record_attribution, linkage_member,linkage, marker
-  	where recattrib_source_zdb_id = '$pubId'
-    	and recattrib_data_zdb_id = lnkgmem_linkage_zdb_id
-    	and lnkgmem_linkage_zdb_id = lnkg_zdb_id	
-    	and lnkgmem_member_zdb_id = mrkr_zdb_id
-	and lnkg_or_lg <> '0'
-		
- 	UNION
-
-  	select l.zdb_id as mrkr_zdb_id, locus_name as mrkr_name, l.abbrev as mrkr_abbrev, l.locus_abbrev_order as mrkr_abbrev_order $name_sig_col, 'MUTANT', lnkg_or_lg as or_lg
-  	from record_attribution, linkage_member, linkage, fish f, locus l
-  	where recattrib_source_zdb_id = '$pubId'
-    	and recattrib_data_zdb_id = lnkgmem_linkage_zdb_id
-    	and lnkgmem_linkage_zdb_id = lnkg_zdb_id
-    	and lnkgmem_member_zdb_id = f.zdb_id 
-    	and f.locus = l.zdb_id 
-	and lnkg_or_lg <> '0'
-  	into temp mrkrselect_tmp_pub_mapped_markers with no log;  ">
-    <?/MISQL><?MICOMMENT><?MIVAR> $MI_SQL $(SETVAR,$MI_SQL,)<?/MIVAR><br><?/MICOMMENT>
-    <?MIVAR NAME=$xpat_loci_cols>n<?/MIVAR>
 
   <?/MIBLOCK>
-   
-  <?MISQL COND="$(AND,$(XST,$pubId),$(NC,$type,mapped))" SQL="
-	insert into attrib_data_temp(data_zdb_id) values ('x');
-	drop table attrib_data_temp; ">
-  <?/MISQL>
+  
 
   <?MIVAR NAME=$target_table>	
-     $(IF,$(AND,$(XST,$pubId),$(EC,$type,mapped)),mrkrselect_tmp_pub_mapped_markers,mrkrselect_tmp_markers)
+     $(IF,$(AND,$(XST,$pubId),$(EC,$type,pub_mapped)),mrkrselect_tmp_pub_mapped_markers,mrkrselect_tmp_markers)
   <?/MIVAR>
   <?MISQL SQL="
 	select distinct mrkr_zdb_id
@@ -366,7 +363,7 @@ requested from publication page for related data list.
       <TD width=90%> 
           <font size="+1"><center>
 	  <?MIBLOCK COND="$(XST,$pubId)">
-            <?MIVAR>$(IF,$(EC,$type,gene),Gene,Marker Mapping Data) List (<b>$num_recs</b> records.)<?/MIVAR>
+            <?MIVAR>$(IF,$(EC,$type,pub_mrkr),Genes / Markers, Mapping Data) List (<b>$num_recs</b> records.)<?/MIVAR>
 	  <?MIELSE COND="$(XST,$accession)">
 	    <?MIVAR>Marker List (<b>$num_recs</b> records.)<?/MIVAR>
 	  <?MIELSE>
@@ -400,13 +397,8 @@ requested from publication page for related data list.
       </TD></TR>
     <?/MIBLOCK>		 
    </TABLE>
-  <?/MIBLOCK> <!--end of whether one record or more -->
 
-
-
-  <?MIBLOCK COND="$(>,$num_recs,0)">
-
-    <!-- Stuff to control retrieval volume -->
+   <!-- Stuff to control retrieval volume -->
     <FORM method=post 
           name=markerlister 
           action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
@@ -479,7 +471,7 @@ requested from publication page for related data list.
 	<TD valign=top>
 	  <?MIVAR>	
             $(IF,$(XST,$return_rec),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$OID>SELECT</A>)
-	    $(IF,$(OR,$(XST,$accession),$(AND,$(XST,$pubId),$(EC,$type,mapped))),$mtype:)
+	    $(IF,$(OR,$(XST,$accession),$(XST,$pubId)),$mtype:)
 	    $(IF,$(EC,$mtype,GENE),<i>)<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID">$marker_abbrev</A>$(IF,$(EC,$mtype,GENE),</i>)
 	    $(IF,$(=,$(POSITION,$OID,GENE),0),</TD>)
 	    $(IF,$(AND,$(=,$(POSITION,$OID,GENE),0),$(EC,$xpat_loci_cols,y)),<TD>&nbsp;</TD><TD>&nbsp;</TD>)
@@ -658,16 +650,16 @@ requested from publication page for related data list.
     </Table>
     </Center>
 
-  <?/MIBLOCK> <!-- if $num_recs greater than 0 -->
+  <?/MIBLOCK> <!-- if not redirect to markerview -->
 
-  <?MISQL COND="$(NC,$type,mapped)" SQL="
+  <?MISQL COND="$(NC,$type,pub_mapped)" SQL="
 	set explain off;
 	drop table mrkrselect_tmp_markers;
       ">
   <?/MISQL>
 
 
-  <?MISQL COND="$(EC,$type,mapped)" SQL="
+  <?MISQL COND="$(EC,$type,pub_mapped)" SQL="
 	set explain off;
 	drop table mrkrselect_tmp_pub_mapped_markers; ">
   <?/MISQL>
