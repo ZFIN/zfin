@@ -29,7 +29,8 @@ GENERICS = validatedata.pl
 
 include $(TOP)/make.default.rules
 
-# ---------------  Misc Targets  ----------------------------------------
 
-run :
-	$(TARGETDIR)/validatedata.pl
+
+# ---------------  Misc Targets  ----------------------------------------
+#run :
+#	$(TARGETDIR)/validatedata.pl

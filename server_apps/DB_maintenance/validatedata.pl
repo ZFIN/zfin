@@ -1280,17 +1280,23 @@ GetOptions (
 # Define GLOBALS
 #
 
-$globalDbName = $ARGV[0];
+$globalDbName = $ARGV[0]; #"<!--|DB_NAME|-->";
 $globalUsername = "";
 $globalPassword = "";
 
 $globalErrorCount = 0;
 $globalResultFile = "checkresult.txt";
 
+#set environment variables
+$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
+$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
+$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
+$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
+
 $dbh = DBI->connect("DBI:Informix:$globalDbName", 
 			      $globalUsername, 
 			      $globalPassword) 
-       or die "Cannot connect to Informix database $globalDbName";
+       or die "Cannot connect to Informix database $globalDbName:$DBI::errstr\n";
 
 
 #$globalWorkingDir = "/tmp/validatedata";  # Created & deleted by this script.
