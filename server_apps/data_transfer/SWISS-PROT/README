@@ -4,12 +4,31 @@ This readme is intended to explain the process of loading SWISS-PROT
 report into ZFIN.   by Peiran Song,  Sep 2002.
 
 =================================================================
+by Peiran Song, Jun 2004
+
+The SP/GO load process has changes a lot in the GO project. The GO
+terms loading is now separated out to be nightly efforts. The scripts are
+stored in LoadGO directory. EC accession to GO translation is added as
+the third translation table in the process. Prita has been working on the 
+GO project. I committed her files into CVS. 
+
+There is now again changes to the process. sp_check.pl is using GenPept
+accession to match ZFIN gene first, nucleotide accession matching is put 
+to secondary. There are table merging changes reflected in sp_delete.sql and 
+sp_load.sql. 
+ 
+Follow loadsp.pl, it will work you through the process. ;)
+
+
+=================================================================
 To create file for export to SWISS-PROT
                % gmake create
    
 ---------------------------------------------------------------
 
 =================================================================
+by Peiran Song,  Sep 2002.
+
 To run the SWISS-PROT loading process:
 
                % gmake run

@@ -1,4 +1,4 @@
-#!/local/bin/perl 
+#!/private/bin/perl 
 
 #
 # loadsp.pl
@@ -148,7 +148,7 @@ close F;
  
 # --------------- Check SWISS-PROT file --------------
 # good records for loading are placed in "okfile"
-print "\n sp_check.pl SPDoc >checkreport.txt \n";
+print "\n sp_check.pl zfin.dat >checkreport.txt \n";
 system ("sp_check.pl zfin.dat >checkreport.txt" );
 
 $count = 0;
@@ -296,14 +296,14 @@ while( !( -e "ec_mrkrgoterm.unl")) {
 
 # ------------ Loading ---------------------
 print "\nloading...\n";
-system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> sploaddbnew.sql >out 2> report.txt");
+system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> sp_load.sql >out 2> report.txt");
 
-#open F, "out" or die "Cannot open out";
-#if (<F>) {
-#   &sendErrorReport("Failed to load SWISS_PROT records");
-#  exit;
-#}
-#close F;
+open F, "out" or die "Cannot open out";
+if (<F>) {
+   &sendErrorReport("Failed to load SWISS_PROT records");
+  exit;
+}
+close F;
 
 #create new go_association file
 
