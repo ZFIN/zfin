@@ -41,6 +41,9 @@ ERROR -- something bad happened -- no OID passed in!
      <?MIVAR NAME=infvector><?/MIVAR>
 <?MIVAR NAME=SQL1>select distinct goterm_ontology,goterm_name,mrkrgoev_evidence_code,gont_order,mrkrgo_zdb_id,goterm_go_id,mrkrgoev_zdb_id,mrkrgoev_infered_from,mrkrgoev_source_zdb_id,mrkrgo_go_term_zdb_id,mrkrgo_is_false_ref from go_term g,marker_go_term_evidence e,marker_go_term m ,go_ontology o where m.mrkrgo_mrkr_zdb_id='$OID' and m.mrkrgo_go_term_zdb_id=g.goterm_zdb_id and m.mrkrgo_zdb_id=e.mrkrgoev_mrkrgo_zdb_id and g.goterm_ontology=o.gont_ontology_name order by gont_order,goterm_name<?/MIVAR>
  
+      <?MISQL SQL="select distinct mrkrgoev_source_zdb_id from marker_go_term_evidence,go_term,marker_go_term where  mrkrgoev_mrkrgo_zdb_id=mrkrgo_zdb_id and mrkrgo_go_term_zdb_id=goterm_zdb_id and mrkrgo_mrkr_zdb_id='$OID' and goterm_ontology='Biological Process'"><?/MISQL>
+      <?MIVAR NAME=$biocount>$MI_ROWCOUNT<?/MIVAR>
+
      <?MISQL SQL="select distinct goterm_ontology,goterm_name,mrkrgoev_evidence_code,gont_order,mrkrgo_zdb_id,goterm_go_id,mrkrgoev_zdb_id,mrkrgoev_infered_from,mrkrgoev_source_zdb_id,mrkrgo_go_term_zdb_id,mrkrgo_is_false_ref from go_term g,marker_go_term_evidence e,marker_go_term m ,go_ontology o where m.mrkrgo_mrkr_zdb_id='$OID' and m.mrkrgo_go_term_zdb_id=g.goterm_zdb_id and m.mrkrgo_zdb_id=e.mrkrgoev_mrkrgo_zdb_id and g.goterm_ontology=o.gont_ontology_name order by gont_order,goterm_name">
 
 <?MIVAR NAME=SQL4>"select mrkrgoev_infered_from from marker_go_term_evidence where mrkrgoev_mrkrgo_zdb_id='$5' and mrkrgoev_source_zdb_id='$9' and mrkrgoev_evidence_code='$3'"><?/MIVAR>
@@ -71,7 +74,8 @@ ERROR -- something bad happened -- no OID passed in!
       <?/MIBLOCK>
 
       <?MIBLOCK COND="$(EC,$ontology,Cellular Component)">
-          <?MIVAR name=$row_color>$highlight<?/MIVAR>
+          <?MIVAR NAME=$row_color>$(IF,$(EC,$biocount,0),#FFFFFF,$highlight)<?/MIVAR>
+<?MIVAR name=$color>$highlight<?/MIVAR>
       <?/MIBLOCK>
 
       <tr bgcolor=<?MIVAR>$row_color<?/MIVAR>>
