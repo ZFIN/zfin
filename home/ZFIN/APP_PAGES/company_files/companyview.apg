@@ -232,7 +232,9 @@ ahead and look for it -- convert to OID if necessary -->
 	<?/MIVAR>
 	</font>
       <?MIELSE>
+      <?MIBLOCK COND="$(NC,$compos,Other)">
 	, <?MIVAR>$compos<?/MIVAR>
+       <?/MIBLOCK>
       <?/MIBLOCK>
 
       <br>
