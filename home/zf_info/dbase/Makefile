@@ -2,9 +2,6 @@
 #
 # Makefile for ZFIN_WWW CVS Project, Database desciption Static web pages
 #
-# $Source$
-# $Id$
-#
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
 # !! of the makefile hierarchy this makefile is a part of, and of the  !!
@@ -25,10 +22,10 @@ SUBDIRS = PAPERS
 
 GENERICS = aim1.html aim2.html aims.html arch.html bib.html cont.html \
 	cost.html data.html db.html imp1.html imp2.html mtgprop.html \
-	mtgsum.html prob.html sig.html sum.html zfin-job1.html zfin-job2.html
+	mtgsum.html prob.html sig.html sum.html
 
 STATICS = fig1.gif fig2.gif fig3.gif fig4.gif fig4a.gif fig4b.gif fig5.gif \
-	fig6.gif fig7.gif fish_net.gif zfin.gif
+	fig6.gif fig7.gif
 
 
 # ---------------  Production Rules  ------------------------------------
