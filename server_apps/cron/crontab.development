@@ -25,10 +25,10 @@
 # Nights   When      Comments
 # SMTWT    10:00pm   Reload almdb, remake web site.
 #
-00 10 * * 0-4 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/load_and_index_almost.pl
+00 22 * * 0-4 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/load_and_index_almost.pl
 #
 #
-#      F     10:00pm   Reload almdb, remake web site, generate quick search
-#                      index, and copy it to production.
-00 10 * * 5 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/load_and_index_almost.pl -i
+#      F   10:00pm   Reload almdb, remake web site, generate quick search
+#                    index, and copy it to production.
+00 22 * * 5 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/load_and_index_almost.pl -i
 #
