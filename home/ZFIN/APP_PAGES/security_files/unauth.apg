@@ -1,10 +1,14 @@
-<!-- FILE: unauth.html
-  This file is webexploded by 'check-security' if a user fails a security check while deep in the database (as opposed to as they enter the home page).
--->
+
+<?MICOMMENT> FILE: unauth.html
+  This file is webexploded by 'secure_navigation.apg' if a user fails a security
+  check while deep in the database (as opposed to as they enter the home page).
+<?/MICOMMENT>
 
 
-<!-- If they ended up here, their cookie has expired or some other security breach. So just give them a new GUEST cookie for now.
--->
+<?MICOMMENT>
+  If they ended up here, their cookie has expired or some other security breach.
+  So just give them a new GUEST cookie for now.
+<?/MICOMMENT>
 <?MISQL SQL="execute function conc('GUEST',get_random_cookie());"><?/MISQL>
 <?MIVAR>$(HTTPHEADER,set-cookie,ZDB_authorize=$1;path=/<!--|CGI_BIN_DIR_NAME|-->)<?/MIVAR>
 
@@ -19,21 +23,11 @@
 You have attempted to access a page for which you are not authorized. This means one of two things:</big>
 <ol>
 <li><b>You have tried to do something you simply aren't authorized to do.</b> You may <A HREF="mailto:zfinadmn@zfin.org">send mail to the ZFIN administrator</a> if you think you <i>should</i> have access.
-<li><b>Your authorization has expired.</b> You have not logged in since starting your current Netscape session, or you have not accessed ZDB for more than a day, causing the system to revoke your authorization as a security precaution. In any case, the solution is to return to the ZFIN home page (click on the 'ZFIN Home' tile at the top of your screen) and log in again.
+<li><b>Your authorization has expired.</b> You have not logged in since starting
+   your current browser session, or you have not accessed ZFIN for more than a 
+   day, causing the system to revoke your authorization as a security 
+   precaution. Please return to the <a href="/">ZFIN home page</a> 
+   and log in again.
 </ol>
-
-<p>
-<FORM>
-<center>
-
-<TABLE width=80%>
-<TR align=center><TR>
-<TD><input type=button value="Never mind, back to last page" onClick="window.history.go(-1)"> </TD>
-<TD><input type=button value="Go to ZDB HOME Page" onClick="window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg')"> </TD>
-</TR>
-</TABLE>
-
-</center>
-</FORM>
 
 </HTML>
