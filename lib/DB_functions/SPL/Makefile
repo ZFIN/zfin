@@ -22,6 +22,7 @@ TOP = ../../..
 include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/lib/DB_functions/SPL
+SUBDIRS = Regen_names
 
 # Group the SPLs according to these characteristcs
 # 1. General area the SPL is for.  This is basically a comment.
@@ -41,8 +42,9 @@ MRKR_STATS   = gene_contains_seg.sql mhist_event.sql p_mrel_grpmem_correct.sql \
 	       p_insert_marker_go_ev.sql p_populate_go_unknowns.sql \
 	       p_check_drop_go_unknown.sql				
 PUB_STATS    = get_pub_mini_ref.sql p_drop_go_unknown_attribution.sql
-REGEN_GNRCS  = regen_fishsearch.sql regen_genomics.sql regen_oevdisp.sql \
+REGEN_GNRCS  = regen_fishsearch.sql regen_oevdisp.sql \
 	       regen_panelcount.sql regen_maps.sql
+REGEN_STATS  = grab_zdb_flag.sql release_zdb_flag.sql
 ZDB_GNRCS    = table_exists.sql
 ZDB_STATS    = get_obj_name.sql zdb_date.sql get_date_from_id.sql \
 	       p_check_zdb_object_table.sql syscall.sql \
@@ -69,7 +71,7 @@ MULTIPLE_PROCS = insert_clone.sql regen_anatomy.sql clone_2_sanger.sql
 
 GENERIC_PROCS = $(ZDB_GNRCS) $(REGEN_GNRCS)
 STATIC_PROCS  = $(DBLINK_STATS) $(FISH_STATS) $(MRKR_STATS) $(PUB_STATS) \
-		$(ZDB_STATS) $(STAGE_STATS)
+		$(REGEN_STATS) $(ZDB_STATS) $(STAGE_STATS)
 
 SPECIFIC_PROC_TARGETS = $(foreach SPEC, $(GENERIC_PROCS), $(TARGETDIR)/$(SPEC))
 STATIC_PROC_TARGETS   = $(foreach STAT, $(STATIC_PROCS),  $(TARGETDIR)/$(STAT))
