@@ -128,8 +128,21 @@ $(IF,$(>,$(POSITION,$rtype,locus),0),
 	<?/MISQL>	   	
 	   
       <?MIVAR>($(FIX,$sum) total)<?/MIVAR>	
-<?MIELSE COND="$(AND,$(NXST,$attribtype),$(=,$(POSITION,$OID,LOCUS),0))">
-	
+
+<?MIELSE COND="$(AND,$(NXST,$attribtype),$(>,$(POSITION,$OID,GENE),0))">	
+  <?MISQL SQL="
+    select count(*) 
+      from record_attribution
+     where (  recattrib_data_zdb_id = '$OID'
+           or
+             recattrib_data_zdb_id in (select mrel_mrkr_2_zdb_id from marker_relationship where mrel_mrkr_1_zdb_id = '$OID')
+          )
+       and get_obj_type(recattrib_source_zdb_id) = 'PUB';
+    ">
+   ($(FIX,$1) total) 
+  <?/MISQL>	
+
+<?MIELSE COND="$(AND,$(NXST,$attribtype),$(=,$(POSITION,$OID,LOCUS),0))">	
   <?MISQL SQL="
     select count(*) 
       from record_attribution
@@ -202,6 +215,29 @@ $(IF,$(>,$(POSITION,$rtype,locus),0),
   	<TR></TR><TR></TR>
 
       <?/MISQL>
+
+<?MIELSE COND="$(AND,$(NXST,$attribtype),$(>,$(POSITION,$OID,GENE),0))">	
+<?MISQL SQL="
+    select distinct title, zdb_id, year(pub_date) as pyear, authors, source, 
+	 lower(authors)  
+    from record_attribution, publication 
+    where (  recattrib_data_zdb_id = '$OID'
+           or
+             recattrib_data_zdb_id in (select mrel_mrkr_2_zdb_id from marker_relationship where mrel_mrkr_1_zdb_id = '$OID')
+          )
+      and recattrib_source_zdb_id = zdb_id 
+    order by 6 asc;">
+  $(IF,$(XST,$UPDATE),"<TD><font size=-1><input type=button value=delete onClick=Delete_listitem('publication','"$2"')></font></TD>")
+  <TR>
+    <TD align=left>
+      <DIV class="show_pubs">
+	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$4 ($3) $1. $5.</A>
+      </DIV>
+    </TD>
+  </TR>
+  <TR></TR><TR></TR>
+
+<?/MISQL>
 
 <?MIELSE COND="$(AND,$(NXST,$attribtype),$(=,$(POSITION,$OID,LOCUS),0))">	
 <?MISQL SQL="
