@@ -92,7 +92,7 @@ $cookie = "";
 # image or xpat or pub zdb_id)
 
 $redirect_OID_param = "&OID=";
-$redirect_new_OID_param = "&OID=";
+$redirect_new_OID_param = "&xpcur_image_OID=";
 
 # redirect_new_OID_param is the prefix for the image or pub OID being sent
 # back to the redirected/calling apg page. 
@@ -122,6 +122,11 @@ $redirect_build = "";
 $new_image_redirect = "aa-new-image.apg";
 $xpat_redirect = "aa-xpatcuration.apg";
 $update_image_redirect = "aa-do-imageupdate.apg";
+$xpcur_image_OID_param = "&xpcur_image_OID=";
+$xpcur_fig_param = "&xpcur_image_fig=";
+$xpcur_fig = "";
+$xpcur_image_label_param="&xpcur_image_label";
+$xpcur_image_label="";
 
 # optional redirct parameters, have to 'strip' newline characters
 # off of new_value and old_value in order to send them as a url.
@@ -132,14 +137,14 @@ $update_image_redirect = "aa-do-imageupdate.apg";
 # set attr_type equal to 1 so that we can check if it got set by the calling
 # apg rather than this cgi.
 
-$attr = "" ;
+$attr = "";
 $attr_type = "1";
 $old_value = "" ;
 $attr_comments = "";
 $zdb_id = "";
-$MIval = "" ;
+$MIval = "";
 $new_value = "";
-$table = "" ; 
+$table = ""; 
 $pub_file = "";
 
 # directory for saving uploaded files.
@@ -478,14 +483,12 @@ sub makeFiles () {# uploads the files, builds a thumbnail, gets the height
 		
         # redirect to the correct apg page based on the passed-in redirect_url.
 
-    } #end if OID not pub
-    
-    else { # if OID is a pub zdb_id
-
 	if ( (substr($redirect_url,0,-19)) eq $xpat_redirect) { # if the redirect_OID parameter is not null
 	    $redirect_OID = $query->param("redirect_OID");
 	    
-	    $redirect_build = $redirect_url.$redirect_OID_param.$redirect_OID.$redirect_new_OID_param.$OID.$redirect_suffix_param.$suffix.$redirect_height_param.$height.$redirect_width_param.$width.$redirect_attr_param.$attr.$redirect_attr_type_param.$attr_type.$redirect_old_value_param.$old_value.$redirect_comments_param.$attr_comments;
+	    $redirect_new_OID_param = $xpcur_image_OID_param ;
+
+	    $redirect_build = $redirect_url.$redirect_OID_param.$redirect_OID.$redirect_new_OID_param.$OID.$redirect_suffix_param.$suffix.$redirect_height_param.$height.$redirect_width_param.$width.$xpcur_fig_param.$xpcur_fig.$xpcur_image_label_param.$xpcur_image_label;
 	    
 	    if ($attr_type ne "text" &&
 		$attr_type ne "textarea" &&
@@ -495,15 +498,19 @@ sub makeFiles () {# uploads the files, builds a thumbnail, gets the height
 		&filename_error ($attr_type.'attr_type not ZFIN type!') ;
 		
 	    }
-	    
-	    print $query->redirect ("$redirect_build");
-	    
-	    exit;
+	    else {
 
+		print $query->redirect ("$redirect_build");
+	    
+		exit;
+	    }
 
-        }
-	else {
-	      
+	}
+	else  { # if redirect is not xpatcur, but is an image still
+
+	    $redirect_build = $redirect_url.$redirect_OID_param.$OID.$redirect_fimgnew_suffix_param.$suffix.$redirect_fimgnew_height_param.$height.$redirect_fimgnew_width_param.$width.$redirect_attr_param.$attr.$redirect_attr_type_param.$attr_type.$redirect_table_param.$table.$redirect_zdb_id_param.$zdb_id.$redirect_comments_param.$attr_comments.$redirect_old_value_param.$old_value.$redirect_new_value_param.$new_value;
+
+	
 	    if ($attr_type ne "text" &&
 		$attr_type ne "textarea" &&
 		$attr_type ne "pic" &&
@@ -512,19 +519,21 @@ sub makeFiles () {# uploads the files, builds a thumbnail, gets the height
 		&filename_error ($attr_type.'attr_type not ZFIN type!') ;
 
 	    }
-	    
-	    $redirect_build = $redirect_url.$redirect_new_OID_param.$OID.$redirect_fimgnew_suffix_param.$suffix.$redirect_fimgnew_height_param.$height.$redirect_fimgnew_width_param.$width.$redirect_attr_param.$attr.$redirect_attr_type_param.$attr_type.$redirect_old_value_param.$old_value.$redirect_comments_param.$attr_comments;
 
 	    print $query->redirect ("$redirect_build");
 	    exit;
 	}
 
 
-	$pub_file = $filename ;
-	$redirect_build = $redirect_url.$redirect_new_OID_param.$OID.$redirect_pub_file_param.$pub_file ;
+    } #end if OID not pub
+    
+    else { # if OID is a pub zdb id
+	      
+	    $pub_file = $filename ;
+	    $redirect_build = $redirect_url.$redirect_OID_param.$OID.$redirect_pub_file_param.$pub_file ;
 
-	print $query->redirect ("$redirect_build");
-	exit;
+	    print $query->redirect ("$redirect_build");
+	    exit;
     }
     
 } # end makeFiles 
@@ -579,9 +588,6 @@ sub filename_error() { # standard error for file nomenclature problems
 sub emailError() { # email error to db_owner
     &writeReport($_[0]);
     &sendReport();
-    print "</body>";
-    print "</html>";
-    exit ;
 
 } # end emailError
 
@@ -697,7 +703,10 @@ elsif (!($filename) &&
 
 	    # the redirect if no image to upload, just hold and pass params
 
-	    $redirect_build = $redirect_url.$redirect_new_OID_param.$OID.$redirect_attr_param.$attr.$redirect_attr_type_param.$attr_type.$redirect_table_param.$table.$redirect_zdb_id_param.$zdb_id.$redirect_comments_param.$attr_comments.$redirect_old_value_param.$old_value.$redirect_new_value_param.$new_value; 
+	    $redirect_build = $redirect_url.$redirect_OID_param.$OID.$redirect_attr_param.$attr.$redirect_attr_type_param.$attr_type.$redirect_table_param.$table.$redirect_zdb_id_param.$zdb_id.$redirect_comments_param.$attr_comments.$redirect_old_value_param.$old_value.$redirect_new_value_param.$new_value; 
+
+	    &emailError($redirect_build) ;
+
 
 	    print $query->redirect ($redirect_build);
 
@@ -776,7 +785,7 @@ else { # filename isn't null or redirect isn't do-imageupdate.apg
 	    
 		elsif ((substr($redirect_url,-19) eq $xpat_redirect)
 		       &&($access eq "root")) { 
-                    # else if $access is not null
+                    # else if $access is not null AND redirect is xpatcuration
 
 		    &getOID; # get a new OID
 		    
@@ -786,7 +795,10 @@ else { # filename isn't null or redirect isn't do-imageupdate.apg
 		
 		} # end else $access is root and redirect_url is xpat
 
-		elsif (substr($redirect_url,-16) eq $new_image_redirect) {
+		elsif (substr($redirect_url,-16) eq $new_image_redirect &&
+		       $access) {
+		    # if its a new image, we can't set access to root
+		    # but does need access
 
 		    &getOID; # get a new OID
 		    
