@@ -1,4 +1,4 @@
-#!/private/bin/perl -wT # changed tec 01-18-01
+#!/private/bin/perl # -wT # changed tec 01-18-01
 #!/local/bin/perl
 
 #Date: 10/22
