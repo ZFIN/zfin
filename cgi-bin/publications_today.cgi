@@ -15,7 +15,6 @@
 ########################################################################
 
 use DBI;
-use lib "/research/zfin/users/bsprunge/Perl/lib";
 use MIME::Lite;
 
 
@@ -119,7 +118,7 @@ sub sendReport()
     open(REPORT, "report") || die "cannot open report";
 
     print MAIL "To: curators\@zfin.org\n";
- #   print MAIL "To: bsprunge\@cs.uoregon.edu\n";
+#    print MAIL "To: bsprunge\@cs.uoregon.edu\n";
     print MAIL "Subject: Publications Entered Today\n";
     while($line = <REPORT>)
     {

@@ -8,7 +8,6 @@
 ##################################################################
 
 use DBI;
-use lib "/research/zfin/users/bsprunge/Perl/lib";
 use MIME::Lite;
 
 
