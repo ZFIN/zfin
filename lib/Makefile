@@ -21,7 +21,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/lib
 
-SUBDIRS = DB_functions
+SUBDIRS = DB_functions Java
 
 
 # ---------------  Production Rules  ------------------------------------
