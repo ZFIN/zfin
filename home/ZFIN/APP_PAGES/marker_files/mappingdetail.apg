@@ -17,24 +17,27 @@
 <?MIBLOCK COND="$(NXST,$OID)">No ZDB-ID Passed In!<?/MIBLOCK>
   <font size=-1>
   <?MISQL SQL="
-	SELECT unique OR_lg
-	FROM paneled_markers
-	WHERE zdb_id = '$OID'
+	SELECT unique or_lg
+	FROM mapped_marker
+	WHERE marker_id = '$OID'
       UNION
-	SELECT unique OR_lg
-	FROM paneled_markers, marker_relationship
-	WHERE zdb_id = mrel_mrkr_2_zdb_id
+	SELECT unique or_lg
+	FROM mapped_marker, marker_relationship
+	WHERE marker_id = mrel_mrkr_2_zdb_id
 	  and mrel_mrkr_1_zdb_id = '$OID'
       UNION
-	SELECT unique alnkgmem_or_lg
-	FROM all_linked_members
-	WHERE alnkgmem_member_zdb_id = '$OID'
+	SELECT unique lnkg_or_lg
+	FROM linkage, linkage_member
+	WHERE lnkgmem_member_zdb_id = '$OID'
+	  and lnkg_zdb_id = lnkgmem_linkage_zdb_id
       UNION
-	SELECT unique alnkgmem_or_lg
-	FROM all_linked_members, marker_relationship
-	WHERE alnkgmem_member_zdb_id = mrel_mrkr_2_zdb_id
+	SELECT unique lnkg_or_lg
+	FROM linkage, linkage_member, marker_relationship
+	WHERE lnkgmem_member_zdb_id = mrel_mrkr_2_zdb_id
 	  and mrel_mrkr_1_zdb_id = '$OID'
-;"> <?MIBLOCK COND="$(EC,$MI_CURRENTROW,1)">LG:&nbsp;<?/MIBLOCK><?MIBLOCK COND="$(>,$MI_CURRENTROW,1)">,&nbsp;<?/MIBLOCK>$1<?MIVAR NAME=$mapdetLG>$1<?/MIVAR><?/MISQL> 
+	  and lnkgmem_linkage_zdb_id = lnkg_zdb_id
+;"> <?MIBLOCK COND="$(EC,$MI_CURRENTROW,1)">LG:&nbsp;<?/MIBLOCK><?MIBLOCK COND="$(>,$MI_CURRENTROW,1)">,&nbsp;<?/MIBLOCK>$1<?MIVAR NAME=$mapdetLG>$1<?/MIVAR>
+  <?/MISQL> 
 
 <?MIBLOCK COND="$(AND,  $(EC,$hide_empty,f) , $(EC,$MI_ROWCOUNT,0))">None submitted.<?/MIBLOCK>
 
@@ -45,17 +48,17 @@
    <?MIBLOCK COND="$(AND,$(<,$mapdetLG,10),$(=,1,$MI_ROWCOUNT))  ">&nbsp;<?/MIBLOCK> 
  <?/MIBLOCK>
 
-<?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mappingdetail.apg&OID=$OID"> Details</A><?/MIVAR>
-<?MIVAR NAME=$mapped><?/MIVAR>
-<?MISQL SQL="
-	SELECT unique OR_lg
-	FROM paneled_markers
-	WHERE zdb_id = '$OID'
+ <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mappingdetail.apg&OID=$OID"> Details</A><?/MIVAR>
+ <?MIVAR NAME=$mapped><?/MIVAR>
+ <?MISQL SQL="
+	SELECT unique or_lg
+	FROM mapped_marker
+	WHERE marker_id = '$OID'
 ">
-<?MIVAR NAME=$mapped>t<?/MIVAR>
-<?/MISQL>
-<?MIBLOCK COND="$(EC,$mapped,t)">
-<?MIVAR>
+ <?MIVAR NAME=$mapped>t<?/MIVAR>
+ <?/MISQL>
+ <?MIBLOCK COND="$(EC,$mapped,t)">
+  <?MIVAR>
 
 	    $split View Map:
   	      &nbsp;
@@ -67,10 +70,9 @@
 	      <A HREF="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi?&userid=$userid&OID=$OID&view_map=view_map$vmpanels">Individual Panels</A>
 	    </font>
 
-<?/MIVAR>
+  <?/MIVAR>
+ <?/MIBLOCK>
 <?/MIBLOCK>
-<?/MIBLOCK>
-
 
 <!-------------- end mini mode --------------->
 
@@ -189,7 +191,7 @@ ERROR -- something bad happened -- no OID passed in!
 </form>  
 
 
-<!------------------------------------------------->
+   <!------------------------------------------------->
 
 <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&detOID=$OID') from webPages where ID='aa-mappingdetail.apg';">
 $1<?/MISQL>
@@ -203,53 +205,84 @@ $1<?/MISQL>
 <?/MIBLOCK>
 <!------------- end standalone mode --------->
 
+
+
+
 <!-------------- start details mode ----->
 <?MIBLOCK COND="$(EC,$mapdetails_mode,details)">
 
-<?MIBLOCK COND="$(NXST,$detOID)">
-Eek! No detOID passed into details mode
-<?/MIBLOCK>
+  <?MIBLOCK COND="$(NXST,$detOID)">
+  Eek! No detOID passed into details mode
+  <?/MIBLOCK>
 
-<?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
+  <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 
-<TABLE width="100%" cellpadding=5 border=0>
+  <TABLE width="100%" cellpadding=5 border=0>
 
-<TR><TD bgcolor=#ccccccc colspan=2>
-<FONT SIZE=+2><b>Mapping Details</b></FONT>
-</TD></TR>
-<TR><TD colspan=2>
-<!-- wrap Mapping table in mapper form -->
-<!-- form tag brings in extra space line. For display sake, 
+  <TR><TD bgcolor=#ccccccc colspan=2>
+  <FONT SIZE=+2><b>Mapping Details</b></FONT>
+  </TD></TR>
+  <TR><TD colspan=2>
+  <!-- wrap Mapping table in mapper form -->
+  <!-- form tag brings in extra space line. For display sake, 
      it is put a bit in advance. -->
-<form NAME=mapper 
+  <form NAME=mapper 
       method=get 
       action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi">
 
-<?MISQL SQL="SELECT mrkr_abbrev, mrkr_name, mrkr_type
-	     FROM marker
-	     WHERE mrkr_zdb_id = '$detOID'
+  <?MISQL SQL="SELECT mrkr_abbrev, mrkr_name, mrkr_type, ''
+	       FROM marker
+	       WHERE mrkr_zdb_id = '$detOID'
+	     union
+	       SELECT abbrev, name, line_type, locus
+	       FROM fish
+	       WHERE zdb_id = '$detOID'
+	     union		
+	       SELECT abbrev, locus_name, 'locus', ''
+	       FROM locus 
+	       WHERE zdb_id = '$detOID'				
 ;">
 	<?MIVAR name=$abbrev>$1<?/MIVAR>
 	<?MIVAR name=$name>$2<?/MIVAR>
 	<?MIVAR name=$marker_type>$3<?/MIVAR>
-<?/MISQL>
+	<?MIVAR name=$locus>$4<?/MIVAR>
+  <?/MISQL>
 
-<!--------------- Gene name ---------------------->
-<FONT size=+1>
-<?MIBLOCK COND="$(EC,$marker_type,GENE)">
-    	<?MIVAR>
-      		<b>Gene Name: <i>&nbsp;$name</i> </b>
-    	<?/MIVAR>
-<?MIELSE>
-    	<?MIVAR>
-      		<b>$(UPPER,$marker_type): &nbsp; <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID">$name</A> </b>
-    	<?/MIVAR>
-<?/MIBLOCK>
-<br>
-<?MIVAR>
+<!--------------- Marker name ---------------------->
+  <FONT size=+1>
+  <?MIVAR COND="$(EC,$marker_type,GENE)">   
+      	<b>Gene Name: <i>&nbsp;$name</i> </b>
+  <?/MIVAR>
+ 
+  <?MIVAR COND="$(EC,$marker_type,mutant)">
+	<b>Name: &nbsp; <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$locus"><i> $name</i> </A></b>
+	<?MIVAR NAME=$locus_abbrev>$(SUBSTR,$abbrev,1,$(-,$(POSITION,$abbrev,"<"),1))<?/MIVAR>
+  <?/MIVAR>
+
+  <?MIVAR COND="$(EC,$marker_type,'wild type')">
+	<b>Name: &nbsp;<i> $name</i> </A></b>
+  <?/MIVAR>
+
+  <?MIVAR COND="$(EC,$marker_type,locus)">
+	<b>Locus:  &nbsp;<i>$name</i> </A></b>
+  <?/MIVAR>
+
+  <?MIVAR COND="$(AND,$(NC,$marker_type,locus),$(NC,$marker_type,'wild type'),$(NC,$marker_type,mutant),$(NC,$marker_type,GENE))">
+        <b>$(UPPER,$marker_type): &nbsp; <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID">$name</A> </b>
+  <?/MIVAR>
+ 
+  <br>
+  <?MIBLOCK COND="$(OR,$(EC,$marker_type,mutant),$(EC,$marker_type,'wild type'),$(EC,$marker_type,locus))">
+	<?MIVAR> 
+          <b>Abbreviation: &nbsp; <i>$abbrev</i></b>
+        <?/MIVAR>
+  <?MIELSE>
+     <?MIVAR>
     	$(IF,$(EC,$marker_type,GENE),"<b>Gene Symbol:&nbsp;<i><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID="$OID"'>"$abbrev"</A></i></b>")
-<?/MIVAR>
-</FONT>
+     <?/MIVAR>
+  <?/MIBLOCK> 
+
+  </FONT>
 
      </TD>
     </TR>
@@ -258,181 +291,226 @@ Eek! No detOID passed into details mode
      </TD>
     </TR>
     <TR bgcolor=<?MIVAR>$highlight<?/MIVAR>>
-      <TD valign=top colspan=3>
+     <TD valign=top colspan=3>
 
+     <?MIVAR> 
+       <B>Reference Panel Location(s): $abbrev </B>
+     <?/MIVAR> 
+     <TABLE width="100%">
 
+     <?MIVAR NAME=$override>$(IF,$(OR,$(EC,$ZDB_access,root),$(EC,$ZDB_access,fishauth)),true,false)<?/MIVAR>
 
-      <?MIVAR> 
-        <B>Reference Panel Location(s): $abbrev </B>
-      <?/MIVAR> 
-        <TABLE width="100%">
+     <?MISQL SQL="
+	select a.owner, lg_location, refcross_id as panel_id, or_lg, c.abbrev as panel_abbrev,private,b.full_name,a.metric,day(a.entry_date::date),month(a.entry_date::date), year(a.entry_date::date), map_name, disp_order 
+	from mapped_marker a, person b, panels c  
+	where a.marker_id='$detOID' 
+	and or_lg is not null 
+	and a.owner=b.zdb_id 
+	and a.refcross_id = c.zdb_id 
+	order by c.disp_order;">
 
-<?MIVAR NAME=$override>$(IF,$(OR,$(EC,$ZDB_access,root),$(EC,$ZDB_access,fishauth)),true,false)<?/MIVAR>
+     <TR>
 
-<?MISQL SQL="select a.owner, lg_location, target_id as panel_id, OR_lg, target_abbrev as panel_abbrev,private,b.full_name,a.metric,day(a.entry_date::date),month(a.entry_date::date), year(a.entry_date::date), map_name, disp_order from paneled_markers a,person b, panels c  where a.zdb_id='$detOID' and OR_lg is not null and a.owner=b.zdb_id and a.target_id = c.zdb_id order by c.disp_order;">
+    <?MIVAR NAME=$upd_day>$9<?/MIVAR>
+    <?MIBLOCK COND="$(NC,$upd_day,NULL)">
+    <?MIVAR NAME=$upd_date>$(INDEX,$(-,$10,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $9,$11 
+    <?/MIVAR>
+    <?/MIBLOCK>
 
-<TR>
+    <?MIBLOCK COND="$(EC,$upd_day,NULL)">
+      <?MIVAR NAME=$upd_date> <?/MIVAR>
+    <?/MIBLOCK>
 
-<?MIVAR NAME=$upd_day>$9<?/MIVAR>
-<?MIBLOCK COND="$(NC,$upd_day,NULL)">
-  <?MIVAR NAME=$upd_date>$(INDEX,$(-,$10,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $9,$11 
-  <?/MIVAR>
-<?/MIBLOCK>
-
-<?MIBLOCK COND="$(EC,$upd_day,NULL)">
-  <?MIVAR NAME=$upd_date> <?/MIVAR>
-<?/MIBLOCK>
-
-$(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),
+   $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),
            "<TD> <font size=-1>
               LG <b>"$4"</b>;<b> "$2"</b> "$8" (<A  HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$3">"$5" Panel; updated "$upd_date"</A>) "
-  $(IF,$(ISNULL,$12),,<br>&nbsp;&nbsp;<b>Mapped as $12</b>)
+          $(IF,$(ISNULL,$12),,<br>&nbsp;&nbsp;<b>Mapped as $12</b>)
            "</TD>",
 
            <!-- else -->
            "<TD>
               Mapped on <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$3">"$5" Panel; updated "$upd_date"</A>, but still confidential.
             </font></TD><!--added-->
-")
+    ")
 
             
-             <TD> <font size=-1>mapped by <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$1">$7</A> </font> </TD> <TD><font size=-1><A HREF="javascript:view_scores('$3','$4','$detOID','$abbrev');">Scoring Data</A>
-          </font>  </TD> 
-          </TR>
-
-<?/MISQL>
-
-<?MIVAR COND="$(=,$MI_ROWCOUNT,0)">
-  <p>Not mapped on any reference panel
-<?/MIVAR>
-
-        </TABLE>
-
-      </TD>
+      <TD> <font size=-1>mapped by <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$1">$7</A> </font> </TD> <TD><font size=-1><A HREF="javascript:view_scores('$3','$4','$detOID','$abbrev');">Scoring Data</A>
+      </font>  </TD> 
       </TR>
-      <TR bgcolor=<?MIVAR>$highlight<?/MIVAR>>	   
-<!-- ************************************** -->
 
-<?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+    <?/MISQL>
+
+   <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">
+      <p>Not mapped on any reference panel
+   <?/MIVAR>
+
+   </TABLE>
+
+   </TD>
+   </TR>
+
+
+   <!-- ************************************** -->
+   <TR bgcolor=<?MIVAR>$highlight<?/MIVAR>>	   
+
+   <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
       <TD valign=top colspan=1>
         <A  HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=ZDB-REFCROSS-010114-1>ZMAP</A> 
         <b>Location(s): <?MIVAR>$abbrev<?/MIVAR></b>
 
-<?MIVAR COND="$(=,$MI_ROWCOUNT,0)">
-        <p>Not mapped.
-<?/MIVAR>
-
-<?MIBLOCK COND="$(!=,$MI_ROWCOUNT,0)">
         <TABLE>
    <!-- look for a match of the last two characters in the 
-        public_paneled_markers abbrev to match the last two characters in the 
+        markers abbrev to match the last two characters in the 
         panels abbrev for table join to find disp_order -->
    <!-- naming convention is xxx_ln54  -->
    <!-- this might be a bit risky but we don't anticipate any new panels since sequencing is underway. -->
-   <?MISQL SQL="select or_lg,lg_location,a.abbrev,disp_order from public_paneled_markers a, panels b where a.zdb_id='$detOID' and target_abbrev = 'ZMAP'and SUBSTRING(a.abbrev from LENGTH(a.abbrev)-1 for 2) = SUBSTRING(b.abbrev from LENGTH(b.abbrev)-1 for 2) order by disp_order;">
+   <?MISQL SQL="
+	select or_lg,lg_location,mrkr_abbrev,disp_order 
+	from mapped_marker a, marker, panels b 
+	where mrkr_zdb_id='$detOID' 
+	and b.abbrev = 'ZMAP'
+	and a.refcross_id = b.zdb_id
+	and a.marker_id = mrkr_zdb_id
+	and SUBSTRING(mrkr_abbrev from LENGTH(mrkr_abbrev)-1 for 2) = SUBSTRING(b.abbrev from LENGTH(b.abbrev)-1 for 2) 
+	order by disp_order;">
           <TR>
             <TD> 
               LG <b>$1</b>; <b>$2</b> cM  $(SUBSTR,$3,$(+,1,$(POSITION,$3,"_") ))
             </TD>
           </TR>
    <?/MISQL>
+	  <TR>
             <TD align=right>
 	     
               <input type=button value='VIEW MERGED MAP' 
                      name=view_map onClick="call_zmapplet()">
             </TD>
           </TR>
-        </TABLE>
+         </TABLE>
 
-<?/MIBLOCK>
+     </TD>
 
-      </TD>
+     <!-- ************************************ -->
+     <TD valign=top colspan=2>
 
-<!-- ************************************ -->
-      <TD valign=top colspan=2>
-
-<?MIVAR>
+      <?MIVAR>
         <b>View Map for: $abbrev</b>
-<?/MIVAR> 
-<TABLE cellspacing=0 cellpadding=0><TR>
+      <?/MIVAR> 
+    <TABLE cellspacing=0 cellpadding=0><TR>
 
-<?MISQL SQL="SELECT distinct p.abbrev, p.disp_order, a.private, a.OR_lg
-	     FROM panels p, outer (paneled_markers a, person b)  
-	     WHERE a.zdb_id='$detOID' 
-               and OR_lg is not null 
+     <?MISQL SQL="SELECT distinct p.abbrev, p.disp_order, a.private, a.or_lg
+	     FROM panels p, outer (mapped_marker a, person b)  
+	     WHERE a.marker_id='$detOID' 
+               and or_lg is not null 
                and a.owner=b.zdb_id 
-               and a.target_id = p.zdb_id 
+               and a.refcross_id = p.zdb_id 
 	       and p.disp_order > 0
 	     ORDER BY disp_order
-;">
-  <?MIVAR NAME=$private>$3<?/MIVAR>
+        ;">
+       <?MIVAR NAME=$private>$3<?/MIVAR>
 
-  <?MIBLOCK COND="$(OR,$(EC,$private,f),$(EC,$private,))">
-    <?MIVAR>
+      <?MIBLOCK COND="$(OR,$(EC,$private,f),$(EC,$private,))">
+       <?MIVAR>
 	<?MIBLOCK COND="$(=,$MI_CURRENTROW,4)"></TR><TR><?/MIBLOCK>
         <TD><input type=checkbox name="$1" value=1 <?MIBLOCK COND="$(NE,$4,)"> CHECKED <?/MIBLOCK> >
-        $1 </TD>
-    <?/MIVAR>
+          $1 </TD>
+       <?/MIVAR>
 
-    <?MIVAR NAME=$ref_map>true<?/MIVAR>
+       <?MIVAR NAME=$ref_map>true<?/MIVAR>
+       <?/MIBLOCK>
 
-  <?/MIBLOCK>
-<?/MISQL>
-</TR></TABLE>
+     <?/MISQL>
 
 
-<?MIBLOCK COND="$(EC,$ref_map,true)">
+   <?MIBLOCK COND="$(EC,$ref_map,true)">
 
-  <?MIBLOCK COND="$(NOT,$(EQ,$(SUBSTR,$ZDB_name,1,5),GUEST))">
-    <?MIVAR NAME=$userid>$ZDB_ident<?/MIVAR>
-  <?/MIBLOCK>
+      <?MIBLOCK COND="$(NOT,$(EQ,$(SUBSTR,$ZDB_name,1,5),GUEST))">
+        <?MIVAR NAME=$userid>$ZDB_ident<?/MIVAR>
+      <?/MIBLOCK>
 
-  <!-- set blade variables to javascript variables for passing to view_mapplet -->
+    <!-- set blade variables to javascript variables for passing to view_mapplet -->
 
-  <?MIVAR>
-    <INPUT TYPE=hidden name=OID value=$detOID>
-    <INPUT TYPE=hidden name=userid value=$userid>
-    <INPUT TYPE=hidden name=marker value=$abbrev>
-  <?/MIVAR>
+     <?MIVAR>
+       <INPUT TYPE=hidden name=OID value=$detOID>
+       <INPUT TYPE=hidden name=userid value=$userid>
+       <INPUT TYPE=hidden name=marker value=$abbrev>
+     <?/MIVAR>
 
-  <INPUT TYPE=hidden name=view_map value="viewmap">
+     <INPUT TYPE=hidden name=view_map value="viewmap">
                <input type=button value='VIEW INDIVIDUAL MAPS' 
                       name=view_map onClick="call_mapplet()";>
-<?/MIBLOCK>
-       </TD>
-     </TR>
-<?/MIBLOCK>
+    <?/MIBLOCK>
 
-     <TR>
+         </TD></TR></Table>
+   <?/MIBLOCK> <!-- end of  $MI_ROWCOUNT > 0 -->
+  </TR>
+   
+    <!-- **************************-->  
+ 
+  <TR>
       <TD valign=top colspan=4>
 	<br><b>NON-REFERENCE PANEL MAPPING INFORMATION:</b>
       </TD>
-     </TR>
-     <TR bgcolor=<?MIVAR>$highlight<?/MIVAR>>
+  </TR>
+  <TR bgcolor=<?MIVAR>$highlight<?/MIVAR>>
       <TD colspan=2>
 
-<?MIVAR NAME=$MI_NULL><?/MIVAR>
-<TABLE cellpadding=1 cellspacing=0 bgcolor=<?MIVAR>$highlight<?/MIVAR>>
-<?MIVAR NAME=$curviewer>/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=<?/MIVAR>
+    <?MIVAR NAME=$MI_NULL><?/MIVAR>
+    <TABLE cellpadding=1 cellspacing=0 bgcolor=<?MIVAR>$highlight<?/MIVAR>>
+    <?MIVAR NAME=$curviewer>/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=
+    <?/MIVAR>
 
-<!-- get independent linkage info for other members of linkage or for marker itself if it is the only linkage member -->
-  <?MISQL SQL="select alnkgmem_member_zdb_id, alnkgmem_member_abbrev, alnkgmem_marker_type, alnkgmem_private, alnkgmem_comments, alnkgmem_source_zdb_id, alnkgmem_source_name,alnkgmem_linkage_zdb_id,alnkgmem_or_lg, alnkgmem_num_members from all_linked_members a
-    where (alnkgmem_linkage_zdb_id in 
-      (select alnkgmem_linkage_zdb_id from all_linked_members b 
-          where b.alnkgmem_linkage_zdb_id = a.alnkgmem_linkage_zdb_id
-          and b.alnkgmem_member_zdb_id = '$detOID')
-       and a.alnkgmem_member_zdb_id <> '$detOID')
-     or (a.alnkgmem_member_zdb_id = '$detOID'   
-          and a.alnkgmem_num_members = 1) ;">
+   <!-- get independent linkage info for other members of linkage or for marker itself if it is the only linkage member -->
+
+   <?MISQL SQL="select * from linkage_member
+		where lnkgmem_member_zdb_id = '$detOID';">
+   <?/MISQL>
+
+   <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">	
+    <?MISQL SQL="
+	select lnkgmem_linkage_zdb_id as t_lnkg_zdb_id, lnkgmem_member_zdb_id as t_lnkgmem_zdb_id
+	from linkage_member 
+	where lnkgmem_linkage_zdb_id in 
+	 	(select lnkgmem_linkage_zdb_id from linkage_member
+		  where lnkgmem_member_zdb_id = '$detOID')	  
+	into temp temp_lnkgmem with no log;"> 
+  
+    <?/MISQL>
+  
+    <?MISQL SQL="delete from temp_lnkgmem 
+			 where  t_lnkgmem_zdb_id = '$detOID'
+			   and	t_lnkg_zdb_id in 
+				(select lnkgmem_linkage_zdb_id
+				   from linkage_member 
+			 	group by lnkgmem_linkage_zdb_id
+			 	  having count(*) > 1); ">
+
+    <?/MISQL>
+  
+   <?MISQL SQL="
+	select mrkr_zdb_id, mrkr_abbrev, mrkr_type, lnkg_private, lnkg_comments, recattrib_source_zdb_id, lnkg_zdb_id,lnkg_or_lg
+         from temp_lnkgmem , linkage, marker, record_attribution 
+        where t_lnkgmem_zdb_id = mrkr_zdb_id	
+          and t_lnkg_zdb_id = lnkg_zdb_id
+	  and recattrib_data_zdb_id = lnkg_zdb_id
+	UNION
+	    select f.zdb_id, l.abbrev, 'MUTANT', lnkg_private, lnkg_comments, recattrib_source_zdb_id, lnkg_zdb_id,lnkg_or_lg
+	    from temp_lnkgmem , linkage, fish f, locus l, record_attribution 
+    	   where t_lnkgmem_zdb_id = f.zdb_id	
+            and t_lnkg_zdb_id = lnkg_zdb_id
+	    and f.locus = l.zdb_id
+	    and recattrib_data_zdb_id = lnkg_zdb_id
+	;">
+   	
 
     <?MIVAR NAME=$distance><?/MIVAR>
     <?MIVAR NAME=$lod><?/MIVAR>
     <?MIVAR NAME=$metric><?/MIVAR>
     <?MIVAR NAME=$pair_id>null<?/MIVAR>
     <?MIVAR NAME=$member_zdb_id>$1<?/MIVAR>
-    <?MIVAR NAME=$lg>$9<?/MIVAR>
+    <?MIVAR NAME=$lg>$8<?/MIVAR>
     <?MIVAR NAME=$map_comments>$5<?/MIVAR>
-    <?MIVAR NAME=$link_id>$8<?/MIVAR>
+    <?MIVAR NAME=$link_id>$7<?/MIVAR>
 
     <?MIVAR COND="$(=,$MI_CURRENTROW,1)"
       <TR>
@@ -475,6 +553,21 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),
 	<?MIVAR NAME=$metric>$3<?/MIVAR>	
        <?/MISQL>
     <?/MIBLOCK>
+   
+    <?MIBLOCK COND="$(>,$(POSITION,$6,PER),0)">
+      <?MISQL SQL="select full_name
+		    from person
+		   where zdb_id = '$6';">
+	<?MIVAR NAME=$source_name>$1<?/MIVAR>
+       <?/MISQL>
+    <?MIELSE>				 	
+ 	<?MISQL SQL="select pub_mini_ref
+		    from publication
+		   where zdb_id = '$6';">
+	  <?MIVAR NAME=$source_name>$1<?/MIVAR>
+        <?/MISQL>
+    <?/MIBLOCK>
+    	
 
     <TR>
     $(IF,$(XST,$UPDATE),"<TD><INPUT TYPE=button value=Update onClick=edit_linkage('"$link_id"','"$1"')></TD>","<TD> &nbsp;</TD>")
@@ -483,32 +576,37 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),
 
     <?MIBLOCK COND="$(AND,$(NC,$map_comments,NULL),$(NC,$map_comments,""))">
       <?MIVAR>
+       $(IF,$(XST,$locus_abbrev),$(SETVAR,$abbrev,$locus_abbrev))
        $(IF,$(OR,$(EC,$override,true),$(EC,$4,f),$(EC,$ZDB_ident,$6)),"<TD></TD><TD><A HREF="$curviewer$1">"$2"</A> ("$3")</TD>
         <TD align=center>"$lg"</TD>
 	<TD align=center>"$distance" "$metric"</TD>
-	<TD align=center>"$lod"</TD><TD><A href="$sourceviewer$6">"$7"</a></TD><TD>&nbsp; &nbsp;</TD><TD><A HREF=javascript:show_detail('"$link_id"','"$1"','"$2"','"$abbrev"');>Details</A></TD>","<TD colspan=4><A href=javascript:info();>"$4$MI_CURRENTROW"</A>: Unpublished! <A href="sourceviewer$6">Contact "$7"</a>.</TD>")
+	<TD align=center>"$lod"</TD><TD><A href="$sourceviewer$6">"$source_name"</a></TD><TD>&nbsp; &nbsp;</TD><TD><A HREF=javascript:show_detail('"$link_id"','"$1"','"$2"','"$abbrev"');>Details</A></TD>","<TD colspan=4><A href=javascript:info();>"$4$MI_CURRENTROW"</A>: Unpublished! <A href="sourceviewer$6">Contact "$source_name"</a>.</TD>")
       <?/MIVAR>
     <?MIELSE>
       <?MIVAR>
 	$(IF,$(OR,$(EC,$override,true),$(EC,$4,f),$(EC,$ZDB_ident,$6)),"<TD></TD><TD><A HREF="$curviewer$1">"$2"</A> ("$3")</TD>
         <TD align=center>"$lg"</TD>
 	<TD align=center>"$distance" "$metric"</TD>
-	<TD align=center>"$lod"</TD><TD><A href="$sourceviewer$6">"$7"</a></TD><TD></TD>","<TD colspan=4><A href=javascript:info();>"$4$MI_CURRENTROW"</A>: Unpublished! <A href="sourceviewer$6">Contact "$7"</a>.</TD>")
+	<TD align=center>"$lod"</TD><TD><A href="$sourceviewer$6">"$source_name"</a></TD><TD></TD>","<TD colspan=4><A href=javascript:info();>"$4$MI_CURRENTROW"</A>: Unpublished! <A href="sourceviewer$6">Contact "$source_name"</a>.</TD>")
 	<?/MIVAR>
     <?/MIBLOCK>    
 
-</TR>
-<?/MISQL>
-</TABLE>
+  </TR>
+ <?/MISQL>
+ </TABLE>
+ <?MISQL SQL=" 
+  		insert into temp_lnkgmem (t_lnkg_zdb_id) values (NULL);
+		drop table temp_lnkgmem ; "> 
+ <?/MISQL>
+ <?/MIBLOCK> <!-- end of linkage -->
 
+ <?MIVAR NAME=$linked_rowcount>$MI_ROWCOUNT<?/MIVAR>
+ <?MIVAR COND="$(>,$linked_rowcount,0)">
+   <br>
+ <?/MIVAR>
 
-<?MIVAR NAME=$linked_rowcount>$MI_ROWCOUNT<?/MIVAR>
-<?MIVAR COND="$(>,$linked_rowcount,0)">
-  <br>
-<?/MIVAR>
-
-<TABLE cellpadding=1 cellspacing=0 bgcolor=<?MIVAR>$highlight<?/MIVAR>>
-<?MISQL SQL="SELECT mrel_mrkr_2_zdb_id, mrkr_abbrev
+ <TABLE cellpadding=1 cellspacing=0 bgcolor=<?MIVAR>$highlight<?/MIVAR>>
+ <?MISQL SQL="SELECT mrel_mrkr_2_zdb_id, mrkr_abbrev
              FROM marker_relationship, marker_relationship_type, marker
 	     WHERE mrel_mrkr_1_zdb_id = '$OID'
 	       and mrel_type = mreltype_name
@@ -538,16 +636,19 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),
       <TD>
         <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$insideq_OID"><b>$insideq_abbrev</b></A> &nbsp; $1
       </TD>
-    </TR>
+     </TR>
+    <?/MISQL>
+ 
   <?/MISQL>
-<?/MISQL>
 
-<?MIVAR COND="$(AND,$(=,$MI_ROWCOUNT,0),$(=,$linked_rowcount,0))">
-  <TR bgcolor=<?MIVAR>$highlight<?/MIVAR>>
-    <TD>None submitted.</TD>
-  </TR>
-<?/MIVAR>
-</TABLE>
+  <?MIVAR COND="$(AND,$(=,$MI_ROWCOUNT,0),$(=,$linked_rowcount,0))">
+    <TR bgcolor=<?MIVAR>$highlight<?/MIVAR>>
+      <TD>None submitted.</TD>
+    </TR>
+  <?/MIVAR>
+ </TABLE>
+
+
 
 </form> <!-- end form for view maps. -->
 
