@@ -21,7 +21,7 @@ echo "#########################################################################"
 #echo "Swiss-Prot Pull:"# -- expected ~ 2004-Jun
 #<!--|ROOT_PATH|-->/server_apps/data_transfer/ ... SP
 #echo "#########################################################################"
-echo "Get genbank daily update :" 
+echo "Get GenBank daily update :" 
 <!--|ROOT_PATH|-->/server_apps/data_transfer/Genbank/gbaccession.pl
 echo "#########################################################################"
 
