@@ -674,6 +674,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 <?/MIVAR>
 <?MIVAR NAME=gblinks><?/MIVAR>
 <?MIVAR NAME=gbaccs><?/MIVAR>
+<?MIVAR NAME=gblinkId><?/MIVAR>
 <?MIVAR NAME=$count>0<?/MIVAR>
 <?MIVAR NAME=$empty>1<?/MIVAR>
 <?MIVAR NAME=$more>0<?/MIVAR>
@@ -699,13 +700,15 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 
      <?MIBLOCK COND="$(=,$empty,1)">
 	<?MIVAR>$(SETVAR,$gblinks[1],$2)<?/MIVAR>
-	<?MIVAR>$(SETVAR,$gbaccs[1],$3)<?/MIVAR>	
+	<?MIVAR>$(SETVAR,$gbaccs[1],$3)<?/MIVAR>
+	<?MIVAR>$(SETVAR,$gblinkId[1],$4)<?/MIVAR>	
         <?MIVAR>$(SETVAR,$empty,0)<?/MIVAR>
         <?MIVAR>$(SETVAR,$count,1)<?/MIVAR>
      <?MIELSE>  
        <?MIBLOCK COND="$(<,$count,4)">
 	 <?MIVAR>$(VECAPPEND,$gblinks,$2)<?/MIVAR>
 	 <?MIVAR>$(VECAPPEND,$gbaccs,$3)<?/MIVAR>
+	 <?MIVAR>$(VECAPPEND,$gblinkId,$4)<?/MIVAR>
 	 <?MIVAR>$(SETVAR,$count,$(+,$count,1))<?/MIVAR>
        <?MIELSE>
          <?MIVAR>$(SETVAR,$more,1)<?/MIVAR>
@@ -731,8 +734,8 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 	<li><?MIVAR>
 	$(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,Genbank:$gbaccs[$n])"')>")
 	<A HREF="$link">Genbank:$gbaccs[$n]</A>
-        $(SETVAR,$n,$(+,$n,1))
-	<?MISQL SQL="select WebExplode(object,'dataId=$4&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+	<?MISQL SQL="select WebExplode(object,'dataId=$gblinkId[$n]&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+	$(SETVAR,$n,$(+,$n,1))
         <?/MIVAR>
    <?/MIBLOCK>
 
