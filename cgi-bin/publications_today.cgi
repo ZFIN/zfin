@@ -34,7 +34,8 @@ openReport();
     $date = d8();
     $query = "select title, zdb_id, year(pub_date) as pyear, authors, source
               from publication
-              where get_date_from_id(zdb_id) = '$date'";
+              where get_date_from_id(zdb_id) = '$date'
+              order by zdb_id";
 
     open (REPORT, ">>report") or die "can not open report";
 
@@ -66,14 +67,10 @@ exit;
 
 
 sub cleanTail () {
-  my $var;
-  my $length;
+  my $var = $_[0];
 
-  $var = $_;
-
-  if ($var !~ /\w$/) {
-    $length = length($_[0]);
-    $var = substr($_[0],0,$length-2);
+  while ($var =~ /\000$/) {
+    chop ($var);
   }
 
   return $var;
