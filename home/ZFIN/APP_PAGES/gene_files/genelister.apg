@@ -104,7 +104,10 @@
 
 <?/MIBLOCK> <!-- ends cond any constraints specified -->
 
-<?MIVAR NAME=$order_clause>order by $allmapnm_significance_colno abbrev<?/MIVAR>
+<?MIVAR NAME=$order_col COND="$(XST,$ismapped)">mapgene_abbrev_order as abbrev_order<?/MIVAR>
+<?MIVAR NAME=$order_col COND="$(NXST,$ismapped)">allgene_abbrev_order as abbrev_order<?/MIVAR>
+
+<?MIVAR NAME=$order_clause>order by $allmapnm_significance_colno 5<?/MIVAR>
 
 <?MIVAR NAME=$target_table COND="$(XST,$ismapped)">mapped_genes a <?/MIVAR>
 <?MIVAR NAME=$target_table COND="$(NXST,$ismapped)">all_genes a <?/MIVAR>
@@ -215,17 +218,17 @@
       --       the allmapnm_significance_colno variable, which is part of
       --       the order_clause.  -->
     <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
-      select gene_name, zdb_id, abbrev $allmapnm_significance
+      select gene_name, zdb_id, abbrev $allmapnm_significance , $order_col
     	FROM $target_table $all_map_names
     	$constraint 
-	group by gene_name, zdb_id, abbrev
+	group by gene_name, zdb_id, abbrev, 5
     	$order_clause;">
 
       <?MIVAR NAME=$gene_name>$1<?/MIVAR>
       <?MIVAR NAME=$OID>$2<?/MIVAR>
       <?MIVAR name=$marker_name>$3<?/MIVAR>
       <!-- create form for each gene -->
-
+	
       <!-- get rid of dashes to avoid javascript error -->
       <?MIVAR NAME=$form_name DELIMIT="-" REPLACE="">$OID<?/MIVAR>
 
