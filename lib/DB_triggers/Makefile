@@ -11,9 +11,6 @@
 #
 # Every trigger that is defined on ZFIN tables is defined in its own 
 # file in this directory.  
-
-# ST: modified trigger files and this Makefile to have the Makefile itself 
-# drop all the triggers at make-time.   
 # Each file creates the trigger.  
 # Files *must* have the same name as the trigger they define.
 # ---------------  Variable Definitions  --------------------------------
