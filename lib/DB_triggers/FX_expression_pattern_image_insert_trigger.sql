@@ -4,5 +4,7 @@ create trigger FX_expression_pattern_image_insert_trigger
   for each row (
 	execute procedure p_check_figure_image_pair_exists (
 		new_xpatfimg.xpatfimg_fimgp_zdb_id,
-		new_xpatfimg.xpatfimg_fig_zdb_id)
+		new_xpatfimg.xpatfimg_fig_zdb_id),
+	execute function scrub_char(new_xpatfimg.xpatfimg_panel_designation) 
+		into xpatfimg_panel_designation
 ) ;
