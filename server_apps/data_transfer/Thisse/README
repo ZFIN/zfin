@@ -1,0 +1,218 @@
+
+ftp latest file from Bernard's ftp site
+site:ftp-igbmc.u-strasbg.fr/pub/Thisse
+
+The Thisse combine their files for dowload using .sit compression. Unsit the file. StuffIt can be downloaded via the internet to unsit the file. 
+
+After unsitting you should find image folders and FileMaker Pro files. The files that need to be included are: "expression 1", "IMAGES 1", "keywords 1", "PROBES 1."  Contact the Thisse if any of these files does not exist. For each probe a folder will exist with name CB###.jpeg+text. Scripts will be executed later to validate the contents of the image folders so they do not need to be checked at this time.
+
+Translate FMP files into .csv files.
+1. Start FileMaker Pro (FMP)
+2. Select 'Open existing file'; open PROBES 1 -- password thisse 
+                               {edit template password cyclops}
+3. foreach table (PROBES 1, IMAGES 1, keywords 1, expression 1, authors)
+     {
+	File -> Export Records...
+		File name: -> "Lowercase the tablename and leave off the 1."
+                	ex.: PROBES 1 -> probes
+		Save as type: -> *.csv 
+                -> save 
+			Character set -> windows (ANSI)
+			Don't format output
+			Move All
+			(check that "date modified" is the last field)
+			-> EXPORT.
+     }
+
+These files should now exist. Check that they do exist.
+   probes.csv, images.csv, expression.csv, keywords.csv, authors.csv
+
+UPLOAD FILES
+  If this is your first time through the thisse load process...
+  1. create directory GXP in your home directory.
+  2. copy the Scripts dir into GXP. the Scripts path    
+     .../ZFIN_WWW/server_apps/data_transfer/thisse/Scripts/
+
+1. Create a folder with the current date in GXP.
+2. Copy all original files, directories and the .csv files into the new dir.
+3. cd to the directory you just populated.
+
+ 
+SPELLCHECK
+1. Run each .csv file through ispell. 
+
+The probes and images file have alot of kruft in them so hit spacebar when in doubt. Anything that shows up in the keyword file should be added to your spelling dictionary.
+
+
+IMAGE PREPARATION
+in the current date directory run... 
+
+create Imagesdir directory where all images will be moved
+  > mkdir Imagesdir
+copy the scripts that copy the images and provide integrity checks
+  > cp ../Scripts/move_2Imagedir.sh .
+  > cp ../Scripts/check_image_table.sh .
+  > cp ../Scripts/parse-bt.r .
+  > cp ../Scripts/check_new_images.pl
+copys all the files to one dir named Imagesdir. 
+  > move_2Imagedir.sh
+move into the Imagesdir
+  > cd Imagesdir
+
+move scripts into the Imagesdir 
+  > cp ../../Scripts/Imagesdir/get_image_dim.sh .
+  > cp ../../Scripts/Imagesdir/get-anotate-txt.r .  
+  > cp ../../Scripts/Imagesdir/anotate_thumb.sh .
+  > cp ../../Scripts/Imagesdir/thumbnail.sh .
+
+
+get the sizes of the images. also acts as a list of images sent for reality checks.
+  > get_image_dim.sh
+
+Next. Run an image check. 
+back to the main dir
+  > cd ..
+  > check_image_table.sh
+
+
+IMAGE CHECK REPORT:
+ - Report unmatched image.csv records. 
+   ie. we have a name but did not receive an image.  
+ - Report unattributed images. 
+   ie. we received an image that was not named in the image.csv file.
+
+Images Reported?
+NO - Excellent, move on.
+
+YES - Let's track down the problem. Leaving this uncorrected will cause a fatal load error.
+ 
+1. Commonly files are missnamed. 
+   If there are images in both parts of the load, check to see if they have similar names 
+   and might really be the same.
+   Image names submitted with prefix 'cb' are translated to prefix 'CB'. All occurrences 
+   will display here. Ignore these.
+   
+2. Unmatched images.csv records.
+   Likely: The images were not included in the file downloaded from the Thisse.
+      Check if the image was received. It will be in the associated 
+      CB###.jpeg+text folder. 
+      Found?
+        no - the only options are to delete or modify the row in image.csv 
+            or get the image resent. ignoring this now will cause the load 
+            script to crash badly part way thru later on.
+        yes - a bug exists in the preceding scripts
+3. Unattributed images.
+   Likely: The image has no FMP record. Bernard may send images but not include
+           a row in the images table and the ommission will pass silently.
+      Open FMP. 
+      Select Window -> IMAGES 1. 
+      Search records for imagename.
+      Found?
+        no - email the thisses
+        yes - hmmmm.
+
+     
+back in the Imagesdir
+> cd Imagesdir     
+
+> /private/bin/rebol -sqw  get-anotate-txt.r > anotate.text 
+this will isolate the filenames and all the anotations into one file.
+
+((((((((((((((((((((((((((
+for now -- check the file for colons
+> grep ':'  anotate.text
+
+and remove/change any offending occurances _IN_THE_.TXT_FILES
+Kevin's  Java app intended to use three colons as record dividers 
+but when it comes across a stray one in an anotation it goes boom
+this step may be dropped when he fixes it
+))))))))))))))))))))))))))
+
+check all text files for null. delete from anotate.text the image name 
+of all offenders.
+> find . -name "*xt" -exec fgrep -li "null" {} \;
+
+run ispell on the anotate.text file --
+_BUT_EDIT_THE_INDIVIDUAL_.TXT_FILES! 
+
+when the .txt files are cleaned up run 
+
+> anotate_thumb.sh 
+
+which will 
+	generate the anotated image
+	generate a thumbnail of the anotated image
+	move/copy all the needed data to the parent directory
+  
+move to main dir
+> cd ..
+the .csv files are manipulated by running 
+> /private/bin/rebol -sq parse-bt.r
+which does some massaging and translating of the four .csv files and 
+generates four .unl files which are informix unload files
+(Dec 2001 part of this now includes stripping out the Blast reports 
+so they can be loaded as CLOBS)
+
+
+Check for image name discrepancies and make corrections to images.unl as necessary.
+> check_new_images.pl
+
+
+at this point you should be ready to start loading the data into a fresh 
+test_db once you have a fresh copy ...
+
+open file ../load_gxp.sql and comment out the commit statement until the data loads cleanly.
+
+> dbaccess -your_db-@wavy ../load_gxp.sql
+
+and see what happens. 
+
+Watch the output for sql error.
+
+Check unload files: 
+	addto_expression.unl
+	bad_exp_pat_anat.unl
+	bad_exp_pat_img.unl
+	foo_image_dump.unl
+
+repeat the cycle of: change something, load_gxp.sql untill it loads cleanly 
+then uncomment the commit statement. test again. dump database and repeat 
+previous process until the load is clean. Then run Regen Genomics.
+
+
+----------------  EST-GENE Relationships  --------------
+------------------get curator approval------------------
+Currently, Ken is sent a list of probes/Genes that Bernard has assigned. 
+(Send file is_gene.txt)
+
+------------------create load file----------------------
+Curator approved relationships should state cb_name | Marker_abbrev.
+
+Create file 
+> touch is_gene.unl
+
+Open file
+> xemacs is_gene.unl
+
+Write each relationship on a separte line using format:
+  cb_name|mrkr_name|
+
+
+---------------- validate relationships ----------------
+reload biondb
+
+load new data on bionix
+> dbaccess biondb@wavy ../load_gxp.sql
+
+
+Some relationships may not load. Genes created for the Thisse load
+will not appear in the latest dump until the following day. Establish 
+that the date delay is not the cause of error. If unloaded relationships
+persist, check the spelling. Do not load data until all relationships
+load properly. Contact the currator if relationship errors persist.
+
+------------------- move to production ------------------
+
+then move onto chromix and   
+
+> dbaccess zfindb@wildtype load_gxp.sql 
