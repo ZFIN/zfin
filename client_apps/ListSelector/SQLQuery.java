@@ -43,14 +43,13 @@ public class SQLQuery
 
 	}
 
-    public Vector selectAll(int numFields, String request) {
-		Vector V = new Vector();
-		Vector results = new Vector();
+    public Connection connect() {
+
 		String CC = "sswo";
 		
 		String C = "<!--|ZFIN_COOKIE|-->";
 		C = cook(C);
-		String newUrl = "jdbc:informix-sqli://128.223.4.109:<!--|INFORMIX_PORT|-->/<!--|DB_NAME|-->:INFORMIXSERVER=<!--|INFORMIX_SERVER|-->;user=zfinner;pa"+CC + "r" + "d="+ C;
+		String newUrl = "jdbc:informix-sqli://<!--|DOMAIN_NAME|-->:<!--|INFORMIX_PORT|-->/<!--|DB_NAME|-->:INFORMIXSERVER=<!--|INFORMIX_SERVER|-->;user=zfinner;pa"+CC + "r" + "d="+ C;
 
 		System.err.println(newUrl);
 		
@@ -62,6 +61,29 @@ public class SQLQuery
 		try {  conn = DriverManager.getConnection(newUrl);  } 
 		catch (SQLException e) { System.out.println("ERROR: failed to connect! - " + e); } 
 
+		return conn;
+	}
+
+
+    public int update(String query)  {
+		int result = -1;
+		Connection conn = connect();
+		
+		try {
+			Statement update = conn.createStatement();
+			result = update.executeUpdate(query);
+		} catch (SQLException e) {
+			System.out.println("ERROR: Insert/Update/Delete statement failed: " + e.getMessage());
+		}
+		return result;
+	}
+
+ 
+    public Vector selectAll(int numFields, String request) {
+		Vector V = new Vector();
+		Vector results = new Vector();
+
+		Connection conn = connect();
 	
 
 		try {

@@ -113,7 +113,7 @@ public class SelectablePanel extends Panel {
     if (pappy.liveupdate == true) {
       String query = "insert into " + pappy.LUtable + " (" + pappy.LUcol1 + "," + pappy.LUcol2 + ") values ('" + ((ListItem)selectHash.get(selectables.getSelectedItem())).get_data() + "','" + pappy.LUcol2val + "');";
       System.out.println(query);
-      Q.selectAll(1,query);
+      Q.update(query);
       
       
     }
