@@ -217,7 +217,7 @@ Expected vars:  None.
     <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No matches.<?/MIVAR>
   <?/MIBLOCK>
 
-  <!-- source has been selected, display it then get private field, or_lg and comments -->
+  <!-- source has been selected, display it then get or_lg and comments -->
 
   <?MIBLOCK COND="$(EC,$source_specified,true)">
 
@@ -281,10 +281,6 @@ Expected vars:  None.
       <?/MIVAR>
       <p>
 
-      <font size=2>
-	<input type=checkbox name=private value="t"> <b>Private!</b> Keep specifics confidential.
-
-      <p>
       <B>Comments:</B>
       <br>
       <?MIVAR>   
