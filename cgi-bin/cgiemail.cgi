@@ -126,7 +126,7 @@ foreach ad parse addy "," [
            From:   frm
            Subject: sbj
        ]
-       send/header to-email ad template header    
+       send/header to-email trim ad template header    
 ]          
 
 ;;; append a copy of the email to a flatfile
