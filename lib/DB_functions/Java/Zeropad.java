@@ -7,17 +7,17 @@ public class Zeropad {
 	
 /*	public static void main (String[] args) {
 		String testStr = "cb3a022";
-		System.out.println("Before: " + testStr + " , After: " + pad_string(testStr, 5));
+		System.out.println("Before: " + testStr + " , After: " + zero_pad(testStr, 5));
 
 		} */
 
-	public static String pad_string(String before) {
-		return pad_string(before, DEFAULT_PADDING); 
+	public static String zero_pad(String before) {
+		return zero_pad(before, DEFAULT_PADDING); 
 //		return before;
 	}
 	
 	
-	public static String pad_string(String before, int size) {
+	public static String zero_pad(String before, int size) {
 		int i;
 		String after = "";
 		String subString = "";
