@@ -46,7 +46,7 @@ dumpserver : $(TARGETDIR)/dumpServer.pl
 	$(TARGETDIR)/dumpServer.pl
 
 dumplogscontinuous : $(TARGETDIR)/dumpLogsContinuous.pl
-	$(TARGETDIR)/dumpServer.pl
+	$(TARGETDIR)/dumpLogsContinuous.pl
 
 runorphans : $(TARGETDIR)/validatedata.pl
 	$(TARGETDIR)/validatedata.pl $(DBNAME) -o
