@@ -8,7 +8,7 @@ After unsitting you should find image folders and FileMaker Pro files. The files
 
 Translate FMP files into .csv files.
 1. Start FileMaker Pro (FMP)
-2. Select 'Open existing file'; open PROBES 1 -- password thisse 
+2. Select 'Open existing file'; open PROBES 1 -- password thisse (sometimes they might send an XPAT_START 1.fm file instead of a PROBES file; handle this file the same as you would the PROBES 1 file) 
                                {edit template password cyclops}
 3. foreach table (PROBES 1, IMAGES 1, keywords 1, expression 1, authors)
      {
@@ -40,7 +40,7 @@ UPLOAD FILES
  
 SPELLCHECK
 1. Run each .csv file through ispell. 
-
+For reference use Tom's word finder located at ~tomc/bin/dic This utility goes out and checks several online dictionaries to interpret the meaning of a word.
 The probes and images file have alot of kruft in them so hit spacebar when in doubt. Anything that shows up in the keyword file should be added to your spelling dictionary.
 
 
@@ -174,6 +174,9 @@ Check unload files:
 	bad_exp_pat_anat.unl
 	bad_exp_pat_img.unl
 	foo_image_dump.unl
+        bad_relationships.unl
+NOTE: If there are records in foo_image_dump.unl, it is ok..these are the images that loaded in the database
+The records in bad_exp_pat_anat.unl with ZDB id's assigned to anatomy items indicate that the anatomy items that the Thisse's sent did not map to our stage ranges and adjustments needed to be made.
 
 repeat the cycle of: change something, load_gxp.sql untill it loads cleanly 
 then uncomment the commit statement. test again. dump database and repeat 
