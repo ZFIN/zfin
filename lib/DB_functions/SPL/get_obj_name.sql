@@ -139,7 +139,7 @@ get_obj_name(zdbId varchar(50))
     select expunit_name
       into objName
       from experiment_unit
-      where expcond_zdb_id = zdbId;
+      where expunit_zdb_id = zdbId;
   elif (objType = "FEATEXP") then     --no name so return zdb_id
     select featexp_zdb_id
       into objName
