@@ -1,31 +1,31 @@
-To: aprilm@uoneuro.uoregon.edu, dlains@uoneuro.uoregon.edu, kelly@uoneuro.uoregon.edu, mason@uoneuro.uoregon.edu, rholland@uoneuro.uoregon.edu, equinn@uoneuro.uoregon.edu
-From: zirc@zfin.org
-Subject: [reqName]'s request for Zebrafish Books
+To: rholland@uoneuro.uoregon.edu
+From: zirc_order@zfin.org
+Subject: [rqfName]'s request for Zebrafish Books
 
 **************************************** 
-quantity:[reqBookQty]
+quantity:[rqfBookQty]
 ---
 ---
 Name:
-[reqName]
+[rqfName]
 ---
 Email:
-[reqEmail]
+[rqfEmail]
 ---
 Telephone:
-[reqPhone]
+[rqfPhone]
 ---
 Fax:
-[reqFax]
+[rqfFax]
 ---
 Lab:
-[reqLab]
+[rqfLab]
 ---
 Position:
-[reqPos]
+[rqfPos]
 ---
 Address:
-[reqAddr]
+[rqfAddr]
 ---
 ---
 PI Name:
@@ -55,22 +55,22 @@ Funding Organization:
 ---
 ---
 Bill To Name:
-[billName]
+[rqfBillName]
 ---
 Bill To Email:
-[billEmail]
+[rqfBillEmail]
 ---
 Bill To Telephone:
-[billPhone]
+[rqfBillPhone]
 ---
 Bill To Fax:
-[billFax]
+[rqfBillFax]
 ---
 Bill To Lab:
-[billLab]
+[rqfBillLab]
 ---
 Bill To Address:
-[billAddr]
+[required_BillAddr]
 ---
 Billing Preference:
 [billPref]
@@ -80,7 +80,7 @@ Bill To PO Number:
 ---
 ---
 Zebrafish Books Quantity:
-[reqBookQty]
+[rqfBookQty]
 ---
 ---
 ---
