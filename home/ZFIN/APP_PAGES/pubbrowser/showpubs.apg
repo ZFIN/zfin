@@ -282,7 +282,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 
 <?MICOMMENT>  ==================== hide "order by" button for rtype=xpat ============== <?/MICOMMENT>
 
-<?MIBLOCK COND="$(EC,pigs,flying")>
+<?MIBLOCK COND="$(EC,pigs,flying)">
 <?MIELSE>
 <?MIVAR>
   <?MIBLOCK COND="$(NXST,$total_count)">
@@ -630,12 +630,11 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 	    else
 		'aa-locusview.apg'
 	    end as stock_page, xpat_stock_zdb_id
-	from publication, record_attribution, expression_pattern
+	from publication, expression_pattern
 	     left outer join fish on xpat_stock_zdb_id = fish.zdb_id
 	     left outer join locus on xpat_stock_zdb_id = locus.zdb_id 
 	where recattrib_data_zdb_id in ('$showpubs_inXpatList')
-	  and recattrib_source_zdb_id = publication.zdb_id          
-          and recattrib_data_zdb_id = xpat_zdb_id
+	  and xpat_source_zdb_id = publication.zdb_id          
           and xpat_gene_zdb_id = '$OID'
         group by publication.zdb_id, 2, authors, source, 5, 6, 7, 8, 9, 10
 	order by authors_lower">
