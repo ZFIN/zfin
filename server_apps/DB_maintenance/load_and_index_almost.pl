@@ -13,9 +13,9 @@
 #    web site in sync with the database backing it.
 #    Approx run time: < 3 minutes
 #
-# If the needed option is specified then it will also
+# If the -i option is specified then it will also
 #
-# 3. Runs the uniquery indexer.  It runs the indexer with how every many
+# 3. Runs the uniquery indexer.  It runs the indexer with how ever many
 #    threads are specified in the index script.  It will consume that many
 #    CPUs for the whole time it is running.
 #    Approx run time as of 2004/07: 
@@ -237,13 +237,11 @@ if ($indexing) {
     if ($status) {
 	abort("regenerateindex.pl failed.\n");
     }
-    # Need to copy indexes to production.  The problem is this script can't
-    # tell if production is running on chromix or embryonix.  Copy to both.
-    # If either copy gets an error, report it, but keep running.
+    # Need to copy indexes to production.  Use the /private/ZfinLinks
+    # directory to copy it to production, wherever zfin.org is currently 
+    # residing.
     copyIndexes("<!--|ROOT_PATH|-->/j2ee/uniquery/indexes",
-		"/research/zfin/chromix/www/j2ee/uniquery");
-    copyIndexes("<!--|ROOT_PATH|-->/j2ee/uniquery/indexes",
-		"/research/zcentral/www_homes/embryonix/j2ee/uniquery");
+		"/private/ZfinLinks/www/j2ee/uniquery");
 }
 
 exit 0;
