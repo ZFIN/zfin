@@ -24,11 +24,13 @@ TARGETDIR = $(TARGETROOT)/home/zf_info/news
 
 SUBDIRS = Texas_meeting_files
 
+GENERICS = siteNews.html
+
 # List permanent files first -- files that will stay around no matter what
 # announcements come and go.  Follow that list with files that will disappear
 # when the meetings or jobs they go with will disappear.
 
-PERMANENT_STATICS = bluline.gif jobs.html mtgs.html siteNews.html
+PERMANENT_STATICS = bluline.gif jobs.html mtgs.html
 
 STATICS = $(PERMANENT_STATICS) \
           Texas_meeting.htm Texas.doc Texas.pdf
