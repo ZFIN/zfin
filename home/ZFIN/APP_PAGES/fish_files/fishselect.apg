@@ -695,7 +695,7 @@ function call_reset() {
 
         <?MIVAR name=comment>  Build array of user data  <?/MIVAR>
 	<?MIVAR name=selector>MIval=aa-fishselect.apg&WINSIZE=$WINSIZE<?/MIVAR>
-        <?MIVAR name=$UserInput><?/MIVAR>
+        <?MIVAR name=UserInput><?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$allele)>$UserInput&allele=$allele<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$abbrev)>$UserInput&abbrev=$abbrev<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(NC,$chrom_change,unknown)>$UserInput&chrom_change=$chrom_change<?/MIVAR>
@@ -708,7 +708,7 @@ function call_reset() {
 	<?MIVAR name=UserInput COND=$(XST,$anon1)>$UserInput&anon1=$anon1<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$structures)>$UserInput&structures=$structures<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$selected_separator)>$UserInput&selected_separator=$selected_separator<?/MIVAR>
-        <?MIVAR name=$UserInput COND=$(XST,$return_rec)>$UserInput&return_rec=$return_rec<?/MIVAR>
+        <?MIVAR name=UserInput COND=$(XST,$return_rec)>$UserInput&return_rec=$return_rec<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$selected)>$UserInput&selected=$(URLENCODE,$selected)<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$fname)>$UserInput&fname=$(URLENCODE,$fname)<?/MIVAR>
         <?MIVAR name=UserInput COND=$(XST,$anon1text)>$UserInput&anon1text=$(URLENCODE,$anon1text)<?/MIVAR>
@@ -809,12 +809,11 @@ function call_reset() {
 
 
 
-
-
-<?MIBLOCK COND="$(NXST,$accession)">  <!-- don't want modify search result if come from accessionalister -->
-
-
 <?MIVAR COND="$(NXST,$line_type)" NAME=$line_type>NULL<?/MIVAR>
+<?MIBLOCK COND="$(AND,$(NXST,$accession),$(NC,$line_type,wild_type))">  <!-- don't want modify search result if come from accessionlister or if wild type being displayed for lineage update -->
+<!-- update_linage indicates this page is being called from fishview (for update or new record) and parentla linage is being specified.  A pulldown menu of line_types is needed in the title bar.  The 'your input welcome' button and it's form do not allow this to happen easily so an miblock has been added so that this mode does not have the input welcome button.  Do not want the modify search option for wild_type -->
+
+
 <?MIVAR COND="$(NXST,$selected_separator)" NAME=$selected_separator>and<?/MIVAR>
 <?MIVAR COND="$(NXST,$chrom_num)" NAME=$chrom_num>0<?/MIVAR>
 <?MIVAR COND="$(NXST,$mutagen)" NAME=$mutagen>any<?/MIVAR>
@@ -822,28 +821,54 @@ function call_reset() {
 <?MIVAR COND="$(NXST,$chrom_change)" NAME=$chrom_change>any<?/MIVAR>
 <?MIVAR NAME=$START>1<?/MIVAR>
 
-<?MIBLOCK COND="$(NXST,$query_results)">
- <table class=search width=100% border=0 cellspacing=0 cellpadding=1>
-    <tr>
-      <td class=titlebar valign=middle>
-        <b>&nbsp;&nbsp;Search for MUTANT Lines</b>
-      </td>
-<?MIELSE>
-<table class=search width=100% border=0 cellspacing=0 cellpadding=1>
-    <tr>
-      <td class=titlebar>
-        <a name=modify></a>&nbsp;&nbsp;<b>Modify your search</b>
-      </td>
-<?/MIBLOCK>
+<?MIBLOCK COND="$(NXST,$update_lineage)">
+   <?MIBLOCK COND="$(NXST,$query_results)">
+    <table class=search width=100% border=0 cellspacing=0 cellpadding=1>
+       <tr>
+	 <td class=titlebar valign=middle>
+	   <b>&nbsp;&nbsp;Search for MUTANT Lines</b>
+	 </td>
+   <?MIELSE>
+   <table class=search width=100% border=0 cellspacing=0 cellpadding=1>
+       <tr>
+	 <td class=titlebar>
+	   <a name=modify></a>&nbsp;&nbsp;<b>Modify your search</b>
+	 </td>
+   <?/MIBLOCK>
 
-      <td class=titlebar align=right>
-        <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>
-      </td>
-    </TR>
+	 <td class=titlebar align=right>
+	   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>
+	 </td>
+       </TR>
+<?/MIBLOCK>
 
 <form name="BrowserForm" method=post
   onSubmit="updateList();"
   action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+
+<?MIBLOCK COND="$(XST,$update_lineage)">
+   <input type=hidden NAME="update_lineage" value="true">
+   <?MIBLOCK COND="$(NXST,$query_results)">
+    <table class=search width=100% border=0 cellspacing=0 cellpadding=1>
+       <tr>
+	 <td class=titlebar>
+	   <b>&nbsp;&nbsp;Search for <select name=line_type> <option value="wild_type">wild type<option value="mutant" selected>mutant</select> Lines</b>
+	 </td>
+	 <td class=titlebar>&nbsp;
+         </td>
+   <?MIELSE>
+   <table class=search width=100% border=0 cellspacing=0 cellpadding=1>
+       <tr>
+	 <td class=titlebar>
+	   <a name=modify></a>&nbsp;&nbsp;<b>Modify your search for <select name=line_type> <option value="wild_type">wild type<option value="mutant" selected>mutant</select> Lines</b>
+	 </td>
+	 <td class=titlebar>&nbsp;
+         </td>
+   <?/MIBLOCK>
+
+       </TR>
+<?/MIBLOCK>
+
 
   <TR>
     <TD class="halfwidth">
@@ -876,7 +901,7 @@ function call_reset() {
 		<option $(IF,$(EC,$anon1,fish_id),SELECTED) value="fish_id">ZFIN ID#
 		<option $(IF,$(EC,$anon1,comments),SELECTED) value="comments">Comments
 	</SELECT>
-        </b><A HREF="javascript:start_help('phenotype')"> contains </A>
+        </b><A HREF="javascript:start_help('phenotype')"> contains</A>&nbsp;
         <input type=text name=anon1text size=12 onChange='document.BrowserForm.START.value = "";' $(IF,$(XST,$anon1text),value='$anon1text')>
    </TD>
    </TR>
