@@ -67,7 +67,6 @@ sub execSql {
   my $sql = shift;
   my $subSqlRef = shift;
   my @colDesc = @_;
-
   my $nRecords = 0;
  
   my $sth = $dbh->prepare($sql) or die "Prepare fails";
@@ -85,9 +84,9 @@ sub execSql {
       my $i = 0;
       $nRecords ++;
 
-      while ($i < @row) {
-
-	print RESULT "$colDesc[$i]\t $row[$i]\n";
+      foreach (@row) {
+	$_ = '' unless defined;
+	print RESULT "$colDesc[$i]\t $_\n";
 	$i ++;
       }
       print RESULT "\n";    
@@ -1694,7 +1693,7 @@ sub pubTitlesAreUnique($) {
 	"ZDB-PUB-961014-1233","ZDB-PUB-961014-1234",
 	"ZDB-PUB-961014-106", "ZDB-PUB-961014-107",
 	"ZDB-PUB-010417-9",   "ZDB-PUB-990414-35",
---	"ZDB-PUB-010711-2",   "ZDB-PUB-010814-8",
+	"ZDB-PUB-010711-2",   "ZDB-PUB-010814-8",
 	"ZDB-PUB-000824-10",  "ZDB-PUB-990824-40",
 	"ZDB-PUB-010912-1",   "ZDB-PUB-021017-13"
       )
@@ -2251,6 +2250,7 @@ if($monthly) {
 }
 if($yearly) {
   print "run yearly check. \n";
+    pubTitlesAreUnique($otherEmail);
 }
 
 	   
