@@ -11,7 +11,7 @@ document.write("	   </DIV>");
 document.write("          </td>");
 document.write("          <td align=center class=\"footer\">");
 document.write("	   <DIV class=\"header\">");
-document.write("	     <a href=\"mailto:fishadmn@zfin.org\">Email ZFIN</a>");
+document.write("	     <a href=\"mailto:zfinadmn@zfin.org\">Email ZFIN</a>");
 document.write("	   </DIV>");
 document.write("          </td>");
 document.write("          <td align=center class=\"footer\">");
