@@ -24,9 +24,9 @@ chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/RefSeq/";
 &openReport();
 
 #remove old RefSeq files
-system("rm LL.out*");
-system("rm *.unl");
-system("rm loc2*");
+system("rm -f LL.out*");
+system("rm -f *.unl");
+system("rm -f loc2*");
 
 #get new RefSeq files
 &downloadLocusLinkFiles();
@@ -60,7 +60,7 @@ while( !(
 }
 
 #decompress files
-system("gunzip *.gz");
+system("/local/bin/gunzip *.gz");
 
 $count = 0;
 $retry = 1;
@@ -80,7 +80,7 @@ while( !(
       $count = 0;
       $retry = 0;
       print "retry gunzip\n";
-      system("gunzip -f *.gz");
+      system("/local/bin/gunzip -f *.gz");
     }
     else
     {
@@ -140,11 +140,11 @@ sub emailError()
 
 sub downloadLocusLinkFiles()
   {
-    system("wget ftp://ftp.ncbi.nih.gov/refseq/LocusLink/loc2ref -O loc2ref");
-    system("wget ftp://ftp.ncbi.nih.gov/refseq/LocusLink/loc2UG -O loc2UG");
-    system("wget ftp://ftp.ncbi.nih.gov/refseq/LocusLink/LL.out_dr.gz");
-    system("wget ftp://ftp.ncbi.nih.gov/refseq/LocusLink/LL.out_hs.gz");
-    system("wget ftp://ftp.ncbi.nih.gov/refseq/LocusLink/LL.out_mm.gz");
+    system("/local/bin/wget ftp://ftp.ncbi.nih.gov/refseq/LocusLink/loc2ref -O loc2ref");
+    system("/local/bin/wget ftp://ftp.ncbi.nih.gov/refseq/LocusLink/loc2UG -O loc2UG");
+    system("/local/bin/wget ftp://ftp.ncbi.nih.gov/refseq/LocusLink/LL.out_dr.gz");
+    system("/local/bin/wget ftp://ftp.ncbi.nih.gov/refseq/LocusLink/LL.out_hs.gz");
+    system("/local/bin/wget ftp://ftp.ncbi.nih.gov/refseq/LocusLink/LL.out_mm.gz");
   }
 
 sub writeReport()
@@ -156,7 +156,7 @@ sub writeReport()
 
 sub openReport()
   {
-    system("/bin/rm report");
+    system("/bin/rm -f report");
     system("touch report");
     dblinksReport();
   }
