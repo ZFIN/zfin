@@ -181,21 +181,7 @@ $1<?/MISQL>
 
         </TD> 
       </TR>
-    </TABLE>
-
-    <TABLE cellpadding=6 width=100%>
-      <TR> 
-	<TD><A HREF="/ZFIN/help_files/help-chromo.html#lab">STATUS of this line:</A>
-	  <SELECT NAME=status>
-	    <option value="Dead" <?MIVAR COND="$(EC,$status,Dead)"> SELECTED <?/MIVAR> >Extinct
-
-
-	    <?MIBLOCK COND="$(EC,$line_type,mutant)">
-	      <option value="Frozen" <?MIVAR COND="$(EC,$status,Frozen)"> SELECTED <?/MIVAR> >Frozen
-	    <?/MIBLOCK>
-	    <option value="Alive" <?MIVAR COND="$(OR,$(EC,$status,NULL),$(EC,$status,Alive))"> SELECTED <?/MIVAR> >Live
-	  </SELECT>
-	</TD>
+      <TR>
 	<TD>
 	  <b> Original Stock/Cross Number: </b>
 	  <INPUT type=text size=30
@@ -206,39 +192,45 @@ $1<?/MISQL>
     </TABLE>
 
     <TABLE cellpadding=6 width=100%>
+      <TR> 
+	<TD colspan="3">
+	  <A HREF="/ZFIN/help_files/help-chromo.html#lab">STATUS and CURRENT SOURCES of this line:</A>
+	</TD>
+      </TR>
       <TR>
-	<TD><A HREF="/ZFIN/help_files/help-fish.html#availability"> CURRENT SOURCE(s):</A>
-	  <?MIVAR COND="$(EC,$status,Dead)"> Not Applicable; Dead strain.<?/MIVAR>
-	  <?MIBLOCK COND="$(NC,$status,Dead)">
+	<TD colspan="3">
+	  <INPUT type="checkbox" value="fish_extinct">Fish line is extinct.  
+	  Note that an extinct fish line cannot have any current sources.
+	</TD>
+      </TR>
+      <TR>
+	<TD>
+	  Current Source(s):
 	</TD>
 	<TD>
-	    <input type=hidden name=source_type value="lab">
-	    <input type=hidden name=s_source value="">
-	    <SELECT name=sub_source onChange="add_source(this);">
-	      <option value="none" SELECTED>Select source to add
-	      <option value="lab">Add a lab to source list
-	      <option value="person">Add a person to source list
-	      <option value="company">Add a company to source list
-	    </SELECT>
+	  <input type=hidden name=source_type value="lab">
+	  <input type=hidden name=s_source value="">
+	  <SELECT name=sub_source onChange="add_source(this);">
+	    <option value="none" SELECTED>Select source to add
+	    <option value="lab">Add a lab to source list
+	    <option value="person">Add a person to source list
+	    <option value="company">Add a company to source list
+	  </SELECT>
+	</TD>
+      </TR>
+      <TR>
+	<TD>
+	  <?MISQL SQL="
+	    select name, address
+	      from int_data_supplier, sources
+	      where idsup_data_zdb_id = '$temp_oid'
+		and idsup_supplier_zdb_id = zdb_id;">
+	    <b>$1</b><br>
+	    <font size="-1">$2</font>
+	  <?/MISQL>
 	</TD>
       </TR>
 
-	  <?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
-	  <?MISQL SQL="select b.name, b.address from int_fish_source a,sources b where source_id='$temp_oid' and target_id=b.zdb_id;" DATASET=2>
-	    <TR>
-	      <TD width=50%><b>$1</b><br><font size=-1>$2</font>
-	      <TD width=50%><b>$1[2]</b><br><font size=-1>$2[2]</font>
-	    </TR>
-	  <?/MISQL>
-	  <?MIVAR COND="$(AND,$(NC,$status,Dead),$(<,$MI_ROWCOUNT,1))"> 
-	    <TR>
-	      <TD colspan=2>No sources specified yet.
-	      </TD>
-	    </TR>
-	  <?/MIVAR>
-        <?/MIBLOCK>
-
-      </TR>
     </TABLE>
 
     <A NAME="pheno-info">
