@@ -1,4 +1,4 @@
-#!/private/bin/perl -w
+!/private/bin/perl -w
 
 # FILE: upload.cgi
 # PREFIX: made decision to not use prefix, as it makes this page
@@ -99,9 +99,13 @@ $redirect_new_OID_param = "&xpcur_image_OID=";
 
 $redirect_fimgnew_suffix_param = "&fimgnew_suffix=";
 $redirect_suffix_param = "&suffix=";
+$redirect_xpcur_suffix_param = "&xpcur_suffix=";
 
 $redirect_fimgnew_height_param = "&fimgnew_height=";
 $redirect_fimgnew_width_param = "&fimgnew_width=";
+
+$redirect_xpcur_width_param = "&xpcur_width=";
+$redirect_xpcur_width_param = "&xpcur_height=";
 
 $redirect_height_param = "&height=";
 $redirect_width_param = "&width=";
@@ -484,11 +488,14 @@ sub makeFiles () {# uploads the files, builds a thumbnail, gets the height
         # redirect to the correct apg page based on the passed-in redirect_url.
 
 	if ( (substr($redirect_url,0,-19)) eq $xpat_redirect) { # if the redirect_OID parameter is not null
+
 	    $redirect_OID = $query->param("redirect_OID");
+	    $xpcur_fig = $query->param("xpcur_image_fig");
+	    $xpcur_image_label = $query->param("xpcur_image_label");
 	    
 	    $redirect_new_OID_param = $xpcur_image_OID_param ;
 
-	    $redirect_build = $redirect_url.$redirect_OID_param.$redirect_OID.$redirect_new_OID_param.$OID.$redirect_suffix_param.$suffix.$redirect_height_param.$height.$redirect_width_param.$width.$xpcur_fig_param.$xpcur_fig.$xpcur_image_label_param.$xpcur_image_label;
+	    $redirect_build = $redirect_url.$redirect_OID_param.$redirect_OID.$redirect_new_OID_param.$OID.$redirect_xpcur_suffix_param.$suffix.$redirect_xpcur_height_param.$height.$redirect_xpcur_width_param.$width.$xpcur_fig_param.$xpcur_fig.$xpcur_image_label_param.$xpcur_image_label;
 	    
 	    if ($attr_type ne "text" &&
 		$attr_type ne "textarea" &&
