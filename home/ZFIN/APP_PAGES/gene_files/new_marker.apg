@@ -1,12 +1,16 @@
 <?MICOMMENT>
 
 FILE: new_marker.apg
-PREFIX: newmrkr_ (but none replaced as of Feb. 2005)
+PREFIX: newmrkr_ 
 
 DESCRIPTION:
 This is the first page of entering a new marker into ZFIN., 
 
 INPUT VARS:
+  newmrkrSource  ::  option Pub Zdb id, attribute submitted data
+  newmrkrDisplaySequence  ::  if exists, enter in marker_sequence
+  newmrkrCuratorNote  ::  supporting text for sequence
+  
 OUTPUT VARS:
 
 EFFECTS: Adds a new marker (currently, only genes, psuedogenes) to
@@ -52,7 +56,7 @@ marker table.
   -- s_new       -- if it exists, create new record and print a confirmation.
   -- Others      -- if s_new exists, then name, abbrev, comments should
   --                also exist.
-  -- nMrkrSource -- if exists, must be a pub_zdb_id
+  -- newmrkrSource -- if exists, must be a pub_zdb_id
 <?/MICOMMENT>
 
 <basefont size=2>
@@ -70,7 +74,7 @@ marker table.
 
     <form name=newdata method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
       <input type=hidden name=MIval value=aa-new_marker.apg>
-      <?MIVAR COND=$(XST,$nMrkrSource)><input type=hidden name=nMrkrSource value=$nMrkrSource><?/MIVAR>
+      <?MIVAR COND=$(XST,$newmrkrSource)><input type=hidden name=newmrkrSource value=$newmrkrSource><?/MIVAR>
 
       <b>Type of new marker to create:</b>
       <SELECT name=marker_type>
@@ -136,7 +140,117 @@ marker table.
           return true;
       }
 
+      function validSequence(s)
+      {
+          if ( s.length > 100 )
+          {
+              alert('Sequence Validation Error:\n\n Sequence length restricted to 100 characters or less.');
+              return false;
+          }
+      
+          var reg = new RegExp("^(A|T|C|G)*$");
+          
+          if ( ! reg.test(s) )
+          {
+              return confirm('Sequence Validation:\n\n Non "ATCG" letters detected. Continue?') 
+          }
+          return true;
+      }
+      
+      
+      function baseComplement (s)
+      
+      {   var i;
+          var complement = "";
+            
+          // Search through string's characters one by one
+          // For each base, return the complementary base. true.
+      
+          for (i = 0; i < s.length; i++)
+          {   
+              if (s.charAt(i) == 'A') {
+                complement = complement + "T";
+              }
+              else if (s.charAt(i) == 'T') {
+                complement = complement + "A";
+              }
+              else if (s.charAt(i) == 'C') {
+                complement = complement + "G";
+              }
+              else if (s.charAt(i) == 'G') {
+                complement = complement + "C";
+              }
+          }
+      
+          return complement;
+      }
+      
+      // Returns the characters of string (s) in reverse order
+   
+      function reverseString (s)
+      
+      {   
+          var i;
+          var reverse = "";
+      
+          // Walk the input string backwards
+      
+          for (i = s.length-1; i >= 0; i--)
+          {   
+              // Append the character at position i to the reverse string;
+              reverse = reverse + s.charAt(i);      
+          }
+      
+          return reverse;
+      }
 
+
+      function complementSequence (seq, note)      
+      {   
+          var compSeq;      
+          
+            compSeq = baseComplement(seq);
+            
+            if (note != "")
+            {
+              document.newdata.newmrkrDisplaySequence.value = compSeq;
+              curatorNote(note);
+            }
+      }
+
+
+      function reverseSequence (seq, note)
+      {   
+          var revSeq;      
+           
+            revSeq = reverseString(seq);
+            
+            if (note != "")
+            {
+              document.newdata.newmrkrDisplaySequence.value = revSeq;
+              curatorNote(note);
+            }
+      }
+
+
+      function reverseComplementSequence ()
+      
+      {   
+          if ( validSequence(document.newdata.newmrkrReportedSequence.value) )
+          {
+            complementSequence(document.newdata.newmrkrReportedSequence.value, "");
+            reverseSequence(document.newdata.newmrkrDisplaySequence.value, "reversed and complemented");            
+          }          
+      }
+      
+      function curatorNote (action)
+      
+      {
+          var note = document.newdata.newmrkrCuratorNote.value;
+          document.newdata.newmrkrCuratorNote.value = "Reported Sequence: '"+ document.newdata.newmrkrReportedSequence.value + "' was " + action +".\n\n" + note;           
+      }
+      
+      
       //Radio Buttons are stored as an array
       //Loop through the array
       //Return the checked item
@@ -160,7 +274,7 @@ marker table.
           var reserve = GetChecked(theform.reserve);
           var rsrvComment = theform.rsrvComment.value;
         
-          if (theform.mname.value=='' || theform.abbrev.value=='') 
+          if (isWhitespace(theform.mname.value) || isWhitespace(theform.abbrev.value) ) 
           {
   	    alert('You must supply both name and abbreviation');
 	    return false;
@@ -173,36 +287,33 @@ marker table.
             return false;
           }
 
+        <?MIELSE>
+          if (isWhitespace(theform.mname.value) ) 
+          {
+  	    alert('Name is required.');
+	    return false;
+          }           
         <?/MIBLOCK>
+        
+          if ( !validSequence(theform.newmrkrReportedSequence.value) )
+          {
+            return false;
+          }
+          
+          if ( !isWhitespace(theform.newmrkrReportedSequence.value) && isWhitespace(theform.newmrkrDisplaySequence.value) ) 
+          {
+            theform.newmrkrDisplaySequence.value = theform.newmrkrReportedSequence.value;
+          }
+
         
         return true;
       }
 
-      <?MICOMMENT> 
-        Sequnce end options indicate the direction of the sequnce.
-        When one end is changed, set the other to be the opposite. 
-        
-        The option menus are arange in oposing order. Thus the  
-        values are oposite when the selected indexes of the menus 
-        are the same. 
-      <?/MICOMMENT>
-      function sequencesEndAgree(changedEnd)
-      {
-        if (changedEnd == "left")
-        {
-          document.newdata.nMrkrRightEnd.selectedIndex = document.newdata.nMrkrLeftEnd.selectedIndex;
-        }
-        else
-        {
-          document.newdata.nMrkrLeftEnd.selectedIndex = document.newdata.nMrkrRightEnd.selectedIndex;
-        }        
-      
-      }
     </SCRIPT>
 
     <?MIVAR>
       <form name=newdata  method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"
-            <?MIVAR COND="$(>,$(POSITION,$marker_type,GENE),0)">onSubmit="return validate(this);"<?/MIVAR>>
+            onSubmit="return validate(this);">
         <input type=hidden name=MIval value=aa-new_marker.apg>
         <input type=hidden name=marker_type value="$marker_type">
 	<input type=hidden name=marker_type_display value="$marker_type_display">
@@ -231,11 +342,36 @@ marker table.
         <input type=submit name=s_new value="Submit new $marker_type_display">
         
         <p>
-        <b>sequence:</b> <select name=nMrkrLeftEnd onChange="sequencesEndAgree('left');"><option value=5>5'</option><option value=3>3'</option></select>
-        <input type=text name=nMrkrSequence size=40>
-        <select name=nMrkrRightEnd onChange="sequencesEndAgree('right');"><option value=3>3'</option><option value="5">5'</option></select>
+        <table border=0>
+          <tr>
+            <td valign=top>
+              <b>Sequence:</b>           
+              <input type=button value="Reverse" onClick="if ( validSequence(document.newdata.newmrkrReportedSequence.value) ){reverseSequence(document.newdata.newmrkrReportedSequence.value, 'reversed')}};"> 
+              <input type=button value="Complement" onClick="if ( validSequence(document.newdata.newmrkrReportedSequence.value) ){complementSequence(document.newdata.newmrkrReportedSequence.value, 'complemented')};"> 
+              <input type=button value="mRNA-->MO" onClick="reverseComplementSequence();"> 
+            </td>
+            <td width=20></td><!-- spacer column -->
+            <td>
+              <b>Curator Note:</b>
+            </td>
+          </tr>
+          <tr>
+            <td>  
+              Reported: 5'-   <input type=text name=newmrkrReportedSequence size=40 onChange="this.value = this.value.toUpperCase();"> -3'
+            </td>
+            <td> </td>
+            <td valign=top rowspan=2>
+              <textarea name=newmrkrCuratorNote rows=5 cols=50></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Displayed: 5'-   <input type=text name=newmrkrDisplaySequence size=40> -3'
+            </td>
+          </tr>
+        </table>
         <br>
-        <b>publication:</b> <input type=text name=nMrkrSource $(IF,$(XST,$nMrkrSource),value=$nMrkrSource)>
+        <b>publication:</b> <input type=text name=newmrkrSource $(IF,$(XST,$newmrkrSource),value=$newmrkrSource)>
         
       </form>
     <?/MIVAR>
@@ -275,9 +411,9 @@ marker table.
     <?/MISQL>
 	
 
-    <?MISQL COND=$(XST,$nMrkrSource) SQL="
+    <?MISQL COND=$(XST,$newmrkrSource) SQL="
         insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
-        values ('$new_id','$nMrkrSource');">
+        values ('$new_id','$newmrkrSource');">
     <?/MISQL>
 
     <?MIBLOCK COND=$(EC,$reserve,yes)>
@@ -309,12 +445,17 @@ marker table.
       <?/MISQL>
     <?/MIBLOCK>
     
-    <?MIBLOCK COND="$(XST,$nMrkrSequence)">
+    <?MIBLOCK COND="$(XST,$newmrkrDisplaySequence)">
+      <?MICOMMENT> 
+        ============================================================
+          Create a marker_sequence record and a curator note.
+        ============================================================
+      <?/MICOMMENT>
+            
       <?MISQL SQL="execute function get_id('MRKRSEQ')">
-        <?MIVAR NAME=$nMrkrMrkrSeqId>$1<?/MIVAR>
+        <?MIVAR NAME=$newmrkrMrkrSeqId>$1<?/MIVAR>
       <?/MISQL>
-      <?MIVAR NAME="nMrkrEndWithPrime">$nMrkrLeftEnd''<?/MIVAR>
-      <?MISQL SQL="insert into zdb_active_data (zactvd_zdb_id) values ('$nMrkrMrkrSeqId');"><?/MISQL>
+      <?MISQL SQL="insert into zdb_active_data (zactvd_zdb_id) values ('$newmrkrMrkrSeqId');"><?/MISQL>
       <?MISQL SQL="
         insert into marker_sequence (
           mrkrseq_zdb_id,
@@ -322,11 +463,40 @@ marker table.
           mrkrseq_sequence,
           mrkrseq_left_end)
         values (
-          '$nMrkrMrkrSeqId',
+          '$newmrkrMrkrSeqId',
           '$new_id',
-          '$nMrkrSequence',
-          '$nMrkrEndWithPrime');">
+          '$newmrkrDisplaySequence',
+          '5''');">
       <?/MISQL>
+                 	
+      <?MISQL COND=$(XST,$newmrkrSource) SQL="
+          insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
+          values ('$newmrkrMrkrSeqId','$newmrkrSource');">
+      <?/MISQL>
+
+      <?MIBLOCK COND=$(XST,$newmrkrCuratorNote)>
+        <?MISQL SQL="execute function get_id('DNOTE')">
+          <?MIVAR NAME=$newmrkrDataNoteId>$1<?/MIVAR>
+        <?/MISQL>
+        
+        <?MIVAR NAME=$newmrkrNoteSql>$(REPLACE,$newmrkrCuratorNote,','')<?/MIVAR>
+        
+        <?MISQL SQL="insert into zdb_active_data (zactvd_zdb_id) values ('$newmrkrDataNoteId');"><?/MISQL>
+        <?MISQL SQL="
+          insert into data_note (
+            dnote_zdb_id,
+            dnote_text,
+            dnote_data_zdb_id,
+            dnote_curator_zdb_id,
+            dnote_date)
+          values (
+            '$newmrkrDataNoteId',
+            '$newmrkrNoteSql',
+            '$newmrkrMrkrSeqId',
+            '$ZDB_ident',
+            TODAY);">
+        <?/MISQL>                       
+      <?/MIBLOCK>    
     
     <?/MIBLOCK>
 
