@@ -67,24 +67,34 @@ pub in question with any new values passed in.
     <?MIVAR COND="$(XST,$authors)" NAME=$authors DELIMIT=" " REPLACE="|">$authors<?/MIVAR>
     <?MIVAR COND="$(XST,$title)" NAME=$title DELIMIT=" " REPLACE="|">$title<?/MIVAR>
     <?MIVAR NAME=$returnVariables COND="$(XST,$authors)">$returnVariables&authors=$authors<?/MIVAR>
-     <?MIVAR NAME=$returnVariables COND="$(XST,$title)">$returnVariables&title=$title<?/MIVAR>
+    <?MIVAR NAME=$returnVariables COND="$(XST,$title)">$returnVariables&title=$title<?/MIVAR>
+    <?MIVAR NAME=$returnVariables COND="$(XST,$anon1text)">$returnVariables&anon1text=$anon1text<?/MIVAR>
+    <?MIVAR NAME=$returnVariables COND="$(XST,$authtype)">$returnVariables&authtype=$authtype<?/MIVAR>
+    <?MIVAR NAME=$returnVariables COND="$(XST,$anon1)">$returnVariables&anon1=$anon1<?/MIVAR>
+    <?MIVAR NAME=$returnVariables COND="$(XST,$jtype)">$returnVariables&jtype=$jtype<?/MIVAR>
+    <?MIVAR NAME=$returnVariables COND="$(XST,$yr_cmpr)">$returnVariables&yr_cmpr=$yr_cmpr<?/MIVAR>
+    <?MIVAR NAME=$returnVariables COND="$(XST,$century)">$returnVariables&century=$century<?/MIVAR>
+    <?MIVAR NAME=$returnVariables COND="$(XST,$year)">$returnVariables&year=$year<?/MIVAR>
+    <?MIVAR NAME=$returnVariables COND="$(XST,$order_pref)">$returnVariables&order_pref=$order_pref<?/MIVAR>
+    <?MIVAR NAME=$returnVariables COND="$(XST,$cur_status)">$returnVariables&cur_status=$cur_status<?/MIVAR>
+    <?MIVAR NAME=$returnVariables COND="$(XST,$pub_status)">$returnVariables&pub_status=$pub_status<?/MIVAR>
   <?MIELSE>
     <?MIVAR COND="$(XST,$search_authors)" NAME=$search_authors DELIMIT=" " REPLACE="|">$search_authors<?/MIVAR>
     <?MIVAR COND="$(XST,$search_title)" NAME=$search_title DELIMIT=" " REPLACE="|">$search_title<?/MIVAR>
+    <?MIVAR NAME=$returnVariables COND="$(XST,$search_anon1text)">$returnVariables&anon1text=$search_anon1text<?/MIVAR>
+    <?MIVAR NAME=$returnVariables COND="$(XST,$search_authtype)">$returnVariables&authtype=$search_authtype<?/MIVAR>
+    <?MIVAR NAME=$returnVariables COND="$(XST,$search_anon1)">$returnVariables&anon1=$search_anon1<?/MIVAR>
+    <?MIVAR NAME=$returnVariables COND="$(XST,$search_jtype)">$returnVariables&jtype=$search_jtype<?/MIVAR>
+    <?MIVAR NAME=$returnVariables COND="$(XST,$search_yr_cmpr)">$returnVariables&yr_cmpr=$search_yr_cmpr<?/MIVAR>
+    <?MIVAR NAME=$returnVariables COND="$(XST,$search_century)">$returnVariables&century=$search_century<?/MIVAR>
+    <?MIVAR NAME=$returnVariables COND="$(XST,$search_year)">$returnVariables&year=$search_year<?/MIVAR>
+    <?MIVAR NAME=$returnVariables COND="$(XST,$search_order_pref)">$returnVariables&order_pref=$search_order_pref<?/MIVAR>
+    <?MIVAR NAME=$returnVariables COND="$(XST,$search_cur_status)">$returnVariables&cur_status=$search_cur_status<?/MIVAR>
+    <?MIVAR NAME=$returnVariables COND="$(XST,$search_pub_status)">$returnVariables&pub_status=$search_pub_status<?/MIVAR>
     <?MIVAR NAME=$returnVariables COND="$(XST,$search_authors)">$returnVariables&authors=$search_authors<?/MIVAR>
-     <?MIVAR NAME=$returnVariables COND="$(XST,$search_title)">$returnVariables&title=$search_title<?/MIVAR>
+    <?MIVAR NAME=$returnVariables COND="$(XST,$search_title)">$returnVariables&title=$search_title<?/MIVAR>
   <?/MIBLOCK>
 
-  <?MIVAR NAME=$returnVariables COND="$(XST,$anon1text)">$returnVariables&anon1text=$anon1text<?/MIVAR>
-  <?MIVAR NAME=$returnVariables COND="$(XST,$authtype)">$returnVariables&authtype=$authtype<?/MIVAR>
-  <?MIVAR NAME=$returnVariables COND="$(XST,$anon1)">$returnVariables&anon1=$anon1<?/MIVAR>
-  <?MIVAR NAME=$returnVariables COND="$(XST,$jtype)">$returnVariables&jtype=$jtype<?/MIVAR>
-  <?MIVAR NAME=$returnVariables COND="$(XST,$yr_cmpr)">$returnVariables&yr_cmpr=$yr_cmpr<?/MIVAR>
-  <?MIVAR NAME=$returnVariables COND="$(XST,$century)">$returnVariables&century=$century<?/MIVAR>
-  <?MIVAR NAME=$returnVariables COND="$(XST,$year)">$returnVariables&year=$year<?/MIVAR>
-  <?MIVAR NAME=$returnVariables COND="$(XST,$order_pref)">$returnVariables&order_pref=$order_pref<?/MIVAR>
-  <?MIVAR NAME=$returnVariables COND="$(XST,$cur_status)">$returnVariables&cur_status=$cur_status<?/MIVAR>
-  <?MIVAR NAME=$returnVariables COND="$(XST,$pub_status)">$returnVariables&pub_status=$pub_status<?/MIVAR>
 
 <!-- jump back to the previous window -->
 

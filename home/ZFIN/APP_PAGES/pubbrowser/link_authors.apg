@@ -52,6 +52,24 @@ Variables expected:  OID  -- the OID of a publication to link
 <?/MIVAR>
 </applet>
 
+<!-- need to pass values to startframes - on submit - so pubselect will return to same values as before link -->
+
+  <?MIVAR COND="$(NXST,$search_authors)" NAME=$search_authors><?/MIVAR>
+  <?MIVAR COND="$(NXST,$search_title)" NAME=$search_title><?/MIVAR>
+  <?MIVAR COND="$(NXST,$search_anon1text)" NAME=$search_anon1text><?/MIVAR>
+  <?MIVAR COND="$(NXST,$search_anon1)" NAME=$search_anon1>abstract<?/MIVAR>
+  <?MIVAR COND="$(NXST,$search_authtype)" NAME=$search_authtype>anyauth<?/MIVAR>
+  <?MIVAR COND="$(NXST,$search_jtype)" NAME=$search_jtype>any<?/MIVAR>
+  <?MIVAR COND="$(NXST,$search_yr_cmpr)" NAME=$search_yr_cmpr>=<?/MIVAR>
+  <?MIVAR COND="$(NXST,$search_century)" NAME=$search_century>19<?/MIVAR>
+  <?MIVAR COND="$(NXST,$search_year)" NAME=$search_year><?/MIVAR>
+  <?MIVAR COND="$(NXST,$search_order_pref)" NAME=$search_order_pref>date<?/MIVAR>
+  <?MIVAR COND="$(NXST,$search_cur_status)" NAME=$search_cur_status>any<?/MIVAR>
+  <?MIVAR COND="$(NXST,$search_pub_status)" NAME=$search_pub_status>any<?/MIVAR>
+  <?MIVAR COND="$(XST,$search_cur_status)" NAME=$search_cur_status DELIMIT=" " REPLACE="|">$search_cur_status<?/MIVAR>
+  <?MIVAR COND="$(XST,$search_title)" NAME=$search_title DELIMIT=" " REPLACE="|">$search_title<?/MIVAR>
+  <?MIVAR COND="$(XST,$search_authors)" NAME=$search_authors DELIMIT=" " REPLACE="|">$search_authors<?/MIVAR>
+
 <!-- Suppose you want to add one -->
 <?MIBLOCK COND="$(AND,$(NXST,$curation),$(NXST,$new_action),$(EC,$AUTHORIZED,root))">
 
@@ -85,34 +103,19 @@ Variables expected:  OID  -- the OID of a publication to link
 </td>
 </TR></TABLE>
 
-
-<!-- need to pass values to startframes - on submit - so pubselect will return to same values as before link -->
-
-  <?MIVAR COND="$(NXST,$search_authors)" NAME=$search_authors><?/MIVAR>
-  <?MIVAR COND="$(NXST,$search_title)" NAME=$search_title><?/MIVAR>
-  <?MIVAR COND="$(NXST,$anon1text)" NAME=$anon1text><?/MIVAR>
-  <?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>abstract<?/MIVAR>
-  <?MIVAR COND="$(NXST,$authtype)" NAME=$authtype>anyauth<?/MIVAR>
-  <?MIVAR COND="$(NXST,$search_jtype)" NAME=$search_jtype>any<?/MIVAR>
-  <?MIVAR COND="$(NXST,$yr_cmpr)" NAME=$yr_cmpr>=<?/MIVAR>
-  <?MIVAR COND="$(NXST,$century)" NAME=$century>19<?/MIVAR>
-  <?MIVAR COND="$(NXST,$year)" NAME=$year><?/MIVAR>
-  <?MIVAR COND="$(NXST,$order_pref)" NAME=$order_pref>date<?/MIVAR>
-  <?MIVAR COND="$(NXST,$cur_status)" NAME=$cur_status>any<?/MIVAR>
-  <?MIVAR COND="$(NXST,$pub_status)" NAME=$pub_status>any<?/MIVAR>
   <?MIVAR>
-    <input type=hidden name=authtype value=$authtype>
+    <input type=hidden name=search_authtype value=$search_authtype>
     <input type=hidden name=search_authors value=$search_authors>
     <input type=hidden name=search_title value=$search_title>
-    <input type=hidden name=anon1text value=$anon1text>
-    <input type=hidden name=anon1 value=$anon1>
+    <input type=hidden name=search_anon1text value=$search_anon1text>
+    <input type=hidden name=search_anon1 value=$search_anon1>
     <input type=hidden name=search_jtype value=$search_jtype>
-    <input type=hidden name=yr_cmpr value=$yr_cmpr>
-    <input type=hidden name=century value=$century>
-    <input type=hidden name=year value=$year>
-    <input type=hidden name=order_pref value=$order_pref>
-    <input type=hidden name=cur_status value=$cur_status>
-    <input type=hidden name=pub_status value=$pub_status>
+    <input type=hidden name=search_yr_cmpr value=$search_yr_cmpr>
+    <input type=hidden name=search_century value=$search_century>
+    <input type=hidden name=search_year value=$search_year>
+    <input type=hidden name=search_order_pref value=$search_order_pref>
+    <input type=hidden name=search_cur_status value=$search_cur_status>
+    <input type=hidden name=search_pub_status value=$search_pub_status>
   <?/MIVAR>
 <hr width=80%>
 <input type=button value="CANCEL" onClick="window.history.go(-1)">
@@ -137,24 +140,9 @@ Variables expected:  OID  -- the OID of a publication to link
 
 <?MISQL SQL="insert into curation_status (pub_id,curation_action,entry_time,curator,comments) values ('$OID','$new_action',current,'$ZDB_name','$new_comments');"><?/MISQL>
 
-  <?MIVAR COND="$(NXST,$search_authors)" NAME=$search_authors><?/MIVAR>
-  <?MIVAR COND="$(NXST,$search_title)" NAME=$search_title><?/MIVAR>
-  <?MIVAR COND="$(NXST,$anon1text)" NAME=$anon1text><?/MIVAR>
-  <?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>abstract<?/MIVAR>
-  <?MIVAR COND="$(NXST,$authtype)" NAME=$authtype>anyauth<?/MIVAR>
-  <?MIVAR COND="$(NXST,$search_jtype)" NAME=$search_jtype>any<?/MIVAR>
-  <?MIVAR COND="$(NXST,$yr_cmpr)" NAME=$yr_cmpr>=<?/MIVAR>
-  <?MIVAR COND="$(NXST,$century)" NAME=$century>19<?/MIVAR>
-  <?MIVAR COND="$(NXST,$year)" NAME=$year><?/MIVAR>
-  <?MIVAR COND="$(NXST,$order_pref)" NAME=$order_pref>date<?/MIVAR>
-  <?MIVAR COND="$(NXST,$cur_status)" NAME=$cur_status>any<?/MIVAR>
-  <?MIVAR COND="$(NXST,$pub_status)" NAME=$pub_status>any<?/MIVAR>
-  <?MIVAR COND="$(XST,$search_title)" NAME=$search_title DELIMIT=" " REPLACE="|">$search_title<?/MIVAR>
-  <?MIVAR COND="$(XST,$search_authors)" NAME=$search_authors DELIMIT=" " REPLACE="|">$search_authors<?/MIVAR>
-
 <?MIVAR>
 <SCRIPT>
-window.location.href=('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-pubselect2.apg&select_from=PUBLICATION&navtile=true&authors=$search_authors&anon1text=$anon1text&authtype=$authtype&anon1=$anon1&title=$search_title&jtype=$search_jtype&yr_cmpr=$yr_cmpr&century=$century&year=$year&order_pref=$order_pref&cur_status=$cur_status&pub_status=$pub_status');
+window.location.href=('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-pubselect2.apg&select_from=PUBLICATION&navtile=true&authors=$search_authors&anon1text=$search_anon1text&authtype=$search_authtype&anon1=$search_anon1&title=$search_title&jtype=$search_jtype&yr_cmpr=$search_yr_cmpr&century=$search_century&year=$search_year&order_pref=$search_order_pref&cur_status=$search_cur_status&pub_status=$search_pub_status');
 </SCRIPT>
 <?/MIVAR>
 
