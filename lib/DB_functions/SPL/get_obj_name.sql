@@ -74,6 +74,11 @@ get_obj_name(zdbId varchar(50))
       into objName
       from company
       where zdb_id = zdbId;
+  elif (objType = "CUR") then
+    select cur_zdb_id
+      into objName
+      from curation
+      where cur_zdb_id = zdbId;
   elif (objType = "DALIAS") then
     select dalias_alias
       into objName
@@ -139,6 +144,11 @@ get_obj_name(zdbId varchar(50))
       into objName
       from orthologue
       where zdb_id = zdbId;
+  elif (objType = "PNOTE") then
+    select pnote_zdb_id
+      into objName
+      from publication_note
+      where pnote_zdb_id = zdbId;
   elif (objType = "PRIMER") then
     select zdb_id		-- don't have names, use ZDB ID
       into objName
