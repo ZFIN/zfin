@@ -1,10 +1,14 @@
-#!/private/bin/perl 
+#!/private/bin/perl -w
 #
-# Script to get genbank daily update and update the accession information 
-# in accessoin_bank and db_link. 
+# The script gets genbank daily update flat file, parses it,
+# and updates the acc information in accession_bank and db_link. 
+# In the case the script is run from zfin.org, the resulted FASTA 
+# files as well as the original flat file are moved to 
+# /research/zblastfiles/files/daily for weekly BLAST db updates.   
 #
+use strict;
 
-my ($mailprog, $md_date, $prefix, $upzipfile, $newfile, $dir_on_bionix, $accfile, $report);
+my ($mailprog, $md_date, $prefix, $unzipfile, $newfile, $dir_on_embryonix, $accfile, $report);
 
 $mailprog = '/usr/lib/sendmail -t -oi -oem';
 
@@ -16,8 +20,8 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/Genbank/";
 
-# a place on bionix is used to store the fasta files for blast db update.
-$dir_on_bionix = "/research/zblastfiles/files/daily/" ;
+# a place on embryonix is used to store the fasta files for blast db update.
+$dir_on_embryonix = "/research/zblastfiles/files/daily/" ;
 
 $report = "acc_update.report";
 
@@ -25,6 +29,7 @@ $report = "acc_update.report";
 system("/bin/rm -f $report");
 system("/bin/rm -f *.unl");
 system("/bin/rm -f *.fa");
+system("/bin/rm -f *.flat");
 
 if (@ARGV > 0) {
     $md_date = $ARGV[0];
@@ -87,22 +92,31 @@ while( !(-e "$unzipfile") ) {
 # parse out accession number, length, datatype for zebrafish records,
 # also parse out flat file into several fasta files for blast db update
 
-system ("parseDaily.pl $unzipfile");
+system ("parseDaily.pl $unzipfile")  &&  &writeReport("parseDaily.pl failed.");
 
 
-if (! system ("/bin/mv *.fa *.flat $dir_on_bionix") ) {
+# only move the FASTA files and flat files to embryonix if that script
+# is run from production. 
 
-    &writeReport("Fasta files moved to bionix."); 
-    system ("/bin/touch $dir_on_bionix/fileMoved.$md_date");
+if ("<!--|DOMAIN_NAME|-->" eq "zfin.org") {
+	if (! system ("/bin/mv *.fa *.flat $dir_on_embryonix") ) {
+		
+		&writeReport("Fasta files moved to embryonix."); 
+		system ("/bin/touch $dir_on_embryonix/fileMoved.$md_date");
+	}
+	else {
+		&writeReport("Failed to move the fasta files to embryonix.");
+	}
 }
 else {
-     &writeReport("Failed to move the fasta files to bionix.");
- }
-
+	&writeReport("Files generated for BLAST db updates are dropped assuming you are only testing.");
+}
+	
+# rename daily zebrafish accession file and use that to update the database
 if (! system ("/bin/mv $accfile nc_zf_acc.unl")) {
 
   # load the updates into accesson_bank and db_link
-  system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> dailyUpdate.sql > $report 2>&1");
+  system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> dailyUpdate.sql >> $report 2>&1");
 } else {
      &writeReport("Failed to rename the daily accession file.");
  }
@@ -118,8 +132,6 @@ sub downloadDailyUpdateFile() {
     #print "download: $file\n";
     system("/local/bin/wget -q ftp://ftp.ncbi.nih.gov/genbank/daily-nc/$newfile;");
 }
-
-
 
 sub emailError()
   {
@@ -142,7 +154,7 @@ sub sendReport()
 
     print MAIL "To: peirans\@cs.uoregon.edu\n";
     print MAIL "Subject: Genbank accession update report\n";
-    while($line = <REPORT>)
+    while(my $line = <REPORT>)
     {
       print MAIL $line;
     }
