@@ -21,3 +21,10 @@ echo "#########################################################################"
 #echo "Swiss-Prot Pull:"# -- expected ~ 2004-Jun
 #<!--|ROOT_PATH|-->/server_apps/data_transfer/ ... SP
 #echo "#########################################################################"
+echo "Get genbank daily update :" 
+<!--|ROOT_PATH|-->/server_apps/data_transfer/Genbank/gbaccession.pl
+echo "#########################################################################"
+
+echo "Unload production: "
+<!--|ROOT_PATH|-->/server_apps/DB_maintenance/unload_production.sh
+echo "#########################################################################"
