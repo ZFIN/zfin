@@ -86,10 +86,12 @@ rtype (optional) -- Only necessary if permission=owns.
 <?MIVAR COND="$(EC,$1,$ZDB_ident)" NAME=$AUTHORIZED>owner<?/MIVAR>
 <?/MIBLOCK>
 
+<?MIBLOCK COND="$(AND,$(EC,$ZDB_access,adminasst),$(XST,$rtype))">
+<?MIVAR COND="$(OR,$(EC,$rtype,person),$(EC,$rtype,lab))" NAME=$AUTHORIZED>owner<?/MIVAR>
+<?/MIBLOCK>
+
 <!-- Last chance to AUTHORIZE is if you're root -->
 <?MIVAR COND="$(AND,$(XST,$ZDB_access),$(EC,$ZDB_access,root))" NAME=$AUTHORIZED>root<?/MIVAR>
-
-
 
 
 <!-- OKAY, now cause a tile for the new page to appear in the navigator frame -->
