@@ -148,7 +148,7 @@ $constraint $previous (a.zdb_id=b.pub_id and b.curation_action='$cur_status')<?/
 <?MISQL SQL="select title,authors,zdb_id,year(pub_date) as pyear, source from $target_tables $constraint $order_clause;">
 <TR><TD valign=top>
 $(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_pub.apg&OID=$3&search_title=$title&cur_status=$cur_status&search_authors=$authors&anon1text=$anon1text&authtype=$authtype&anon1=$anon1&search_jtype=$jtype&yr_cmpr=$yr_cmpr&century=$century&year=$year&order_pref=$order_pref&pub_status=$pub_status" TARGET=content>EDIT</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT>")
-$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-link_authors.apg&OID=$3" TARGET=content>LINK</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT>")
+$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-link_authors.apg&OID=$3&search_title=$title&cur_status=$cur_status&search_authors=$authors&anon1text=$anon1text&authtype=$authtype&anon1=$anon1&search_jtype=$jtype&yr_cmpr=$yr_cmpr&century=$century&year=$year&order_pref=$order_pref&pub_status=$pub_status" TARGET=content>LINK</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT>")
 $(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3" TARGET=content>SELECT</A>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;</FONT>")
 </TD>
 <TD colspan=1 align=left><font size=3> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3" TARGET=content>$2 ($4) $1. $5.</A></TD></TR>
