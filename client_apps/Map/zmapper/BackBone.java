@@ -15,7 +15,8 @@ public class BackBone {
 	private Hashtable BinTable;
 	private Vector Bins; //the ordered list
 	private Hashtable FWTable; //Maps Marker.abbrev to Bin for framework markers
-
+	private Vector Markers; //all markers in bin
+	
 	private Marker selected_marker; //the selected marker for this backbone;
 	
 	public int X; //this is the offset in the X axis, updated within the draw method
@@ -41,6 +42,8 @@ public class BackBone {
 	private int marker_count;
 
 	public boolean watermark_t;
+
+	public static final String MERGEDPANEL = "ZMAP";
 	
 	public BackBone (String panel_name, Integer OR_lg, String metric, boolean watermark_t)	{
 		this.watermark_t = watermark_t;
@@ -55,7 +58,7 @@ public class BackBone {
 		BinTable = new Hashtable();
 		Bins = new Vector();
 		FWTable = new Hashtable();
-
+		Markers = new Vector();
 		//System.err.println("FONT HEIGHT: " + FM.getHeight());
 		
 	}
@@ -69,6 +72,7 @@ public class BackBone {
 		if (M.getSelected())
 			this.setSelected(M);
 			
+		Markers.addElement(M);
 		
 		low_loc = new Float(Math.min(M.getLg_location().floatValue(), low_loc.floatValue()));
 		high_loc = new Float(Math.max(M.getLg_location().floatValue(), high_loc.floatValue()));
@@ -122,6 +126,31 @@ public class BackBone {
 		this.X = X;
 		this.MAX_WIDTH = MAX_WIDTH;
 
+		if (getPanel_name().equals(MERGEDPANEL)) 
+		{
+			g.setColor(new Color(240,240,240));
+			g.fillRect(X, TOP_SPACE-35, MAX_WIDTH - DIAG_WIDTH - 3, HEIGHT); //the background
+			
+			g.setColor(Color.black);
+			g.fillRect(X+MAX_WIDTH-DIAG_WIDTH-40, TOP_SPACE-35, 39, 21); //the box
+			
+//			g.fillRect(X+MAX_WIDTH-DIAG_WIDTH-50, TOP_SPACE-21, 47, 2); //horiz line
+//			g.fillRect(X+MAX_WIDTH-DIAG_WIDTH-5, TOP_SPACE-20 , 2 , HEIGHT);  //vert line
+
+			//a box?
+			g.fillRect(X, TOP_SPACE-35, MAX_WIDTH-DIAG_WIDTH-2, 1); //horiz line
+			g.fillRect(X, HEIGHT-1, MAX_WIDTH-DIAG_WIDTH-2, 1); //horiz
+			g.fillRect(X+MAX_WIDTH-DIAG_WIDTH-2, TOP_SPACE-35 , 1 , HEIGHT); //vert
+			g.fillRect(X, TOP_SPACE-35, 1, HEIGHT); //vert
+			
+			g.setFont(new Font("SansSerif", Font.PLAIN, 8));
+//			g.setColor(new Color(240,240,240));
+			g.setColor(Color.white);
+			g.drawString("MERGED", X+MAX_WIDTH-DIAG_WIDTH-38, TOP_SPACE-26);
+			g.drawString("MAP", X+MAX_WIDTH-DIAG_WIDTH-28, TOP_SPACE-17);
+			
+		}
+			
 		Bin B;
 
 		//draw the backbone label
@@ -310,6 +339,20 @@ public class BackBone {
 		return clickedMarker;
 	}
 
+	public Vector highlightID(String ZDB_ID, Vector V) 	{
+		Marker M;
+		Enumeration E = Markers.elements();
+
+		while(E.hasMoreElements()) 	{
+			M = (Marker)E.nextElement();
+			if (M.getZdb_id().equals(ZDB_ID))
+				V.addElement(M);
+		}
+		
+		return V;
+	}
+	
+	
 	public String panelClick(int x, int y) 	{
 		if ((x >= (X + 5)) && (x <= (X + 5 + BoldFM.stringWidth(getPanel_name()))))
 			return getPanel_name();

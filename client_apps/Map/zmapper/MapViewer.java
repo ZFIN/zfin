@@ -328,15 +328,20 @@ public class MapViewer extends Canvas {
 		Vector Rh_s = new Vector();
 		BackBone BB;
 
-
+		BackBone ZMAP = null;
 		
 		Enumeration E = BBTable.elements();
-		while( E.hasMoreElements()) {  //first find the panels without markers selected
+
+		
+
+		while( E.hasMoreElements()) {  //find the panels without markers selected
 			BB = ((BackBone)E.nextElement());
 
 			if (BB.getSelected() == null) 
 			{
-				if (BB.getMetric().equals("cM"))
+				if (BB.getPanel_name().equals(BackBone.MERGEDPANEL))
+					ZMAP = BB;
+				else if (BB.getMetric().equals("cM"))
 					M.addElement(BB);
 				else
 					Rh.addElement(BB);
@@ -350,7 +355,9 @@ public class MapViewer extends Canvas {
 
 			if (BB.getSelected() != null) 
 			{
-				if (BB.getMetric().equals("cM"))
+				if (BB.getPanel_name().equals(BackBone.MERGEDPANEL))
+					ZMAP = BB;
+				else if (BB.getMetric().equals("cM"))
 					M_s.addElement(BB);
 				else
 					Rh_s.addElement(BB);
@@ -358,6 +365,8 @@ public class MapViewer extends Canvas {
 			
 		}
 
+		if (ZMAP != null)
+			Results.addElement(ZMAP);
 		int i;
 
 		if ((Rh.size() > 1) && (BBTable.size() > 2))
