@@ -33,6 +33,15 @@ VARIABLES:
       <?MIVAR NAME=$NOTE>$(TRIM,$NOTE)<?/MIVAR>
       <?MIVAR NAME=$NOTE DELIMIT="'" REPLACE="''">$NOTE<?/MIVAR>
       
+
+      <?MICOMMENT> ==| Replace line returns with <br> |== <?/MICOMMENT>
+      <?MIVAR>
+        <?MIVAR NAME=$NOTE>$(URLENCODE,$NOTE)<?/MIVAR>
+        <?MIVAR NAME=$NOTE>$(REPLACE,$NOTE,%0a,<BR>)<?/MIVAR>
+        <?MIVAR NAME=$NOTE>$(REPLACE,$NOTE,++,&nbsp;&nbsp;)<?/MIVAR>
+        <?MIVAR NAME=$NOTE>$(URLDECODE,$NOTE)<?/MIVAR>
+      <?/MIVAR>
+  
       <?MICOMMENT> ==| Update Note |== <?/MICOMMENT>
       <?MISQL SQL="
 	UPDATE publication_note
@@ -78,6 +87,11 @@ VARIABLES:
     <?/MISQL>
     
     <?MIVAR NAME=pnote_text>$1<?/MIVAR>
+      <?MICOMMENT> ==| Replace <br> with line returns |== <?/MICOMMENT>
+      <?MIVAR>
+        <?MIVAR NAME=$pnote_text>$(REPLACE,$pnote_text,<BR>,%0a)<?/MIVAR>
+        <?MIVAR NAME=$pnote_text>$(URLDECODE,$pnote_text)<?/MIVAR>
+      <?/MIVAR>
 
     <form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
       <?MIVAR>

@@ -463,11 +463,14 @@ OPTIONAL VARS:
   <font color="black"><b> Notes </b></font><a name=notes></a>  
 
 
-  <br><TEXTAREA NAME="pnote" rows=3 cols=50 wrap=virtual></TEXTAREA> 
+  <br><TEXTAREA NAME="pnote" rows=4 cols=70 wrap=off></TEXTAREA> 
   <br><input type=submit value="New Note" onClick="return isValidTextArea(window.new_notes.pnote)";> 
   
   </form>
   
+  <table border=0 width=66%>
+    <tr>
+      <td>
   <form name=edit_notes>
   <?MISQL SQL="SELECT p.zdb_id, p.name, pnote_text, pnote_date, pnote_zdb_id
                FROM publication_note, person p
@@ -488,12 +491,16 @@ OPTIONAL VARS:
           <input type=button value=edit onClick=editNote('$pnote_zdb_id');>
           <input type=button value=delete onClick=deleteNote('$pnote_zdb_id');>
         <?/MIVAR>
-        <br><UL><PRE>$pnote_text<PRE></UL>
+        <br><UL>$pnote_text</UL>
       <?/MIVAR>
   <?/MISQL>
   
   </form>
 
+      </td>
+    </tr>
+  </table>
+  
 <?MICOMMENT> 
   ====================
   =  ERROR MESSAGES  =

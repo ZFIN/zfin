@@ -26,6 +26,14 @@ EFFECTS:
 
   <?MIVAR>$(UNSETVAR,$pnotenew_PNOTE_ZDB)<?/MIVAR>
 
+  <?MICOMMENT> ==| Replace line returns with <br> |== <?/MICOMMENT>
+  <?MIVAR>
+    <?MIVAR NAME=$pnotenew_NOTE>$(URLENCODE,$pnotenew_NOTE)<?/MIVAR>
+    <?MIVAR NAME=$pnotenew_NOTE>$(REPLACE,$pnotenew_NOTE,%0a,<BR>)<?/MIVAR>
+    <?MIVAR NAME=$pnotenew_NOTE>$(REPLACE,$pnotenew_NOTE,++,&nbsp;&nbsp;)<?/MIVAR>
+    <?MIVAR NAME=$pnotenew_NOTE>$(URLDECODE,$pnotenew_NOTE)<?/MIVAR>
+  <?/MIVAR>
+  
   <?MICOMMENT> ==| Replace ' with '' |== <?/MICOMMENT>
   <?MIVAR NAME=$pnotenew_NOTE DELIMIT="'" REPLACE="''">$pnotenew_NOTE<?/MIVAR>
 
