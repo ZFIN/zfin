@@ -147,11 +147,12 @@ Linkage Members:   (At least one member must be specified) <br>
       <select name=mtype>
 	<option value=MUTANT $(IF,$(EC,$mtype,MUTANT),SELECTED)>Mutant
 	<?MISQL SQL="
-	      select marker_type, mrkrtype_type_display
+	      select marker_type, mrkrtype_type_display, mrkrtype_significance
                 from marker_types
 	       where marker_type in (select mtgrpmem_mrkr_type
 				       from marker_type_group_member
 				      where mtgrpmem_mrkr_type_group='SEARCH_MKSEG')
+	       order by mrkrtype_significance
 		;">	
 	   <option value=$1 $(IF,$(EC,$mtype,$1),SELECTED)>$2
         <?/MISQL>
