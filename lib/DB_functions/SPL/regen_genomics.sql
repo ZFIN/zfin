@@ -329,16 +329,18 @@ create dba function "informix".regen_genomics() returning integer
     -- numbers are the least significant.  The assignment of significance is
     -- as follows
     --
-    --   1 marker name, marker abbrev
-    --   2 locus name, locus abbrev
-    --   3 marker alias 
-    --   4 locus name alias, locus abbrev alias
-    --   5 fish name, fish allele
-    --   6 fish alias
-    --   7 known correspondences for genes
-    --   8 putative gene assignments
-    --   9 othologue name, orthologue abbrev
-    --  10 accession numbers from other databases
+    --   1 marker abbrev
+    --   2 marker name
+    --   3 locus abbrev
+    --   4 locus name
+    --   5 marker alias 
+    --   6 locus name alias, locus abbrev alias
+    --   7 fish name, fish allele
+    --   8 fish alias
+    --   9 known correspondences for genes
+    --  10 putative gene assignments
+    --  11 othologue name, orthologue abbrev
+    --  12 accession numbers from other databases
 
     if (exists (select *
 	          from systables
@@ -368,55 +370,57 @@ create dba function "informix".regen_genomics() returning integer
     -- Get name, abbrev, and aliases from marker, fish, and locus
     -- Finally get accession numbers from db_link
 
-    -- Get names first
-
-    insert into all_m_names_new 
-	(allmapnm_name, allmapnm_zdb_id, allmapnm_significance)
-      select lower(mrkr_name), mrkr_zdb_id, 1
-	from marker;
-
-    insert into all_m_names_new 
-	(allmapnm_name, allmapnm_zdb_id, allmapnm_significance)
-      select lower(locus_name), zdb_id, 2
-	from locus;
-
-    insert into all_m_names_new 
-	(allmapnm_name, allmapnm_zdb_id, allmapnm_significance)
-      select lower(name), zdb_id, 5
-	from fish;
-
-    -- Get abbrevs next
+    -- Get abbrevs first 
 
     insert into all_m_names_new 
 	(allmapnm_name, allmapnm_zdb_id, allmapnm_significance)
       select lower(mrkr_abbrev), mrkr_zdb_id, 1
+	from marker;
+
+    insert into all_m_names_new 
+	(allmapnm_name, allmapnm_zdb_id, allmapnm_significance)
+      select lower(abbrev), zdb_id, 3
+	from locus
+	where abbrev is not NULL;
+
+    insert into all_m_names_new 
+	(allmapnm_name, allmapnm_zdb_id, allmapnm_significance)
+      select lower(allele), zdb_id, 7
+	from fish
+	where allele is not NULL;
+
+    -- Get names next
+
+    insert into all_m_names_new 
+	(allmapnm_name, allmapnm_zdb_id, allmapnm_significance)
+      select lower(mrkr_name), mrkr_zdb_id, 2
 	from marker
 	where not exists
 	      ( select * 
 		  from all_m_names_new an
-		  where lower(mrkr_abbrev) = an.allmapnm_name
+		  where lower(mrkr_name) = an.allmapnm_name
 		    and mrkr_zdb_id = an.allmapnm_zdb_id );
 
-    insert into all_m_names_new 
-	(allmapnm_name, allmapnm_zdb_id, allmapnm_significance)
-      select lower(abbrev), zdb_id, 2
-	from locus
-	where abbrev is not NULL
-	  and not exists
-	      ( select * 
-		  from all_m_names_new an
-		  where lower(locus.abbrev) = an.allmapnm_name
-		    and locus.zdb_id = an.allmapnm_zdb_id );
 
     insert into all_m_names_new 
 	(allmapnm_name, allmapnm_zdb_id, allmapnm_significance)
-      select lower(allele), zdb_id, 5
-	from fish
-	where allele is not NULL
-	  and not exists
+      select lower(locus_name), zdb_id, 4
+	from locus
+	where not exists
 	      ( select * 
 		  from all_m_names_new an
-		  where lower(fish.allele) = an.allmapnm_name
+		  where lower(locus_name) = an.allmapnm_name
+		    and locus.zdb_id = an.allmapnm_zdb_id );
+
+
+    insert into all_m_names_new 
+	(allmapnm_name, allmapnm_zdb_id, allmapnm_significance)
+      select lower(name), zdb_id, 7
+	from fish
+	where not exists
+	      ( select * 
+		  from all_m_names_new an
+		  where lower(name) = an.allmapnm_name
 		    and fish.zdb_id = an.allmapnm_zdb_id );
 
 
@@ -426,7 +430,7 @@ create dba function "informix".regen_genomics() returning integer
     insert into all_m_names_new 
 	(allmapnm_name, allmapnm_zdb_id, allmapnm_significance)
       select distinct lower(mrkrali_marker_name_alias), 
-	     mrkrali_marker_zdb_id, 3
+	     mrkrali_marker_zdb_id, 5
 	from marker_alias
 	where not exists
 	      ( select * 
@@ -441,7 +445,7 @@ create dba function "informix".regen_genomics() returning integer
 
     insert into all_m_names_new 
 	(allmapnm_name, allmapnm_zdb_id, allmapnm_significance)
-      select lower(lcsali_locus_name_alias), lcsali_locus_zdb_id, 4
+      select lower(lcsali_locus_name_alias), lcsali_locus_zdb_id, 6
 	from locus_alias
 	where not exists
 	      ( select * 
@@ -451,7 +455,7 @@ create dba function "informix".regen_genomics() returning integer
 
     insert into all_m_names_new 
 	(allmapnm_name, allmapnm_zdb_id, allmapnm_significance)
-      select lower(lcsali_locus_abbrev_alias), lcsali_locus_zdb_id, 4
+      select lower(lcsali_locus_abbrev_alias), lcsali_locus_zdb_id, 6
 	from locus_alias
 	where lcsali_locus_abbrev_alias is not NULL 
 	  and lcsali_locus_abbrev_alias <> ""
@@ -464,7 +468,7 @@ create dba function "informix".regen_genomics() returning integer
 
     insert into all_m_names_new 
 	(allmapnm_name, allmapnm_zdb_id, allmapnm_significance)
-      select lower(fishali_fish_name_alias), fishali_fish_zdb_id, 6
+      select lower(fishali_fish_name_alias), fishali_fish_zdb_id, 8
 	from fish_alias
 	where not exists
 	      ( select * 
@@ -478,7 +482,7 @@ create dba function "informix".regen_genomics() returning integer
 
     insert into all_m_names_new
 	(allmapnm_name, allmapnm_zdb_id, allmapnm_significance)
-      select allmapnm_name, cloned_gene, 7
+      select allmapnm_name, cloned_gene, 9
 	from all_m_names_new an2, locus
 	where an2.allmapnm_zdb_id = locus.zdb_id
 	  and cloned_gene is not null
@@ -493,7 +497,7 @@ create dba function "informix".regen_genomics() returning integer
 
     insert into all_m_names_new 
 	(allmapnm_name, allmapnm_zdb_id, allmapnm_significance)
-      select lower(putgene_putative_gene_name), putgene_mrkr_zdb_id, 8
+      select lower(putgene_putative_gene_name), putgene_mrkr_zdb_id, 10
 	from putative_gene
 	where not exists		-- avoid duplicates
 	      ( select * 
@@ -509,7 +513,7 @@ create dba function "informix".regen_genomics() returning integer
 
     insert into all_m_names_new 
 	(allmapnm_name, allmapnm_zdb_id, allmapnm_significance)
-      select distinct lower(ortho_name), c_gene_id, 9
+      select distinct lower(ortho_name), c_gene_id, 11
 	from orthologue
 	where not exists
 	      ( select *
@@ -519,7 +523,7 @@ create dba function "informix".regen_genomics() returning integer
 
     insert into all_m_names_new 
 	(allmapnm_name, allmapnm_zdb_id, allmapnm_significance)
-      select distinct lower(ortho_abbrev), c_gene_id, 9
+      select distinct lower(ortho_abbrev), c_gene_id, 11
 	from orthologue
 	where not exists
 	      ( select *
@@ -543,7 +547,7 @@ create dba function "informix".regen_genomics() returning integer
 
     insert into all_m_names_new 
 	(allmapnm_name, allmapnm_zdb_id, allmapnm_significance)
-      select distinct lower(acc_num), linked_recid, 10
+      select distinct lower(acc_num), linked_recid, 12
 	from db_link, all_m_names_new
 	where acc_num <> "DUMMY" 
 	  and acc_num not like "%,%"
@@ -590,7 +594,7 @@ create dba function "informix".regen_genomics() returning integer
 			and allmapnm_zdb_id = marker_zdb_id)) then 
 		insert into all_m_names_new
 		  (allmapnm_name, allmapnm_zdb_id, allmapnm_significance)
-		  values (single_acc_num, marker_zdb_id, 10);
+		  values (single_acc_num, marker_zdb_id, 12);
 	      end if
 	    end if
 	    -- move past current name
