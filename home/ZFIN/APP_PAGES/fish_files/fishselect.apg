@@ -52,6 +52,7 @@ function form_submit() {
 }
 
 function call_reset() {
+  i=0;
 
 	document.BrowserForm.fname.value = "";
 	document.BrowserForm.allele.value = "";
@@ -63,8 +64,10 @@ function call_reset() {
 	document.BrowserForm.anon1.selectedIndex = 0;
 	document.BrowserForm.knowngene.checked = false;
   document.BrowserForm.WINSIZE.value = 20;
-	document.BrowserForm.preselected.value = "";
   document.BrowserForm.selected_separator.value = "and";
+	while (i < document.BrowserForm.structure_list.options.length) {
+				 document.BrowserForm.structure_list.options[i] = null;       
+			}
 	document.Browser.clear();
 }
 
