@@ -1,0 +1,111 @@
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+
+<?/MIERROR>
+
+<HTML>
+<HEAD>
+
+</HEAD>
+<!------------------------------------------------------>   
+<BODY>
+<basefont size=2>
+
+<?MIBLOCK COND="$(NXST,$OID)">
+  <p>
+  ERROR -- something bad happened -- no OID passed in!
+<?/MIBLOCK>
+
+<?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
+<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
+
+<?MISQL SQL="
+  select WebExplode(object,'page_title=geneprddescription&permission=root') 
+    from webPages 
+    where ID='aa-secure_navigation.apg';">$1
+<?/MISQL>
+
+<?MIVAR NAME=$userid>GUEST<?/MIVAR>
+
+<TITLE>ZFIN Gene Product Description </TITLE>
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+<?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=marker') from webpages where ID='aa-data_mgr.apg';">$1<?/MISQL>
+  
+<?MISQL SQL="
+    select mrkr_name, mrkr_abbrev
+      from marker
+      where mrkr_zdb_id = '$OID';">
+<?/MISQL>
+<?MIVAR NAME=mrkr_name>$1<?/MIVAR>
+<?MIVAR NAME=mrkr_abbrev>$2<?/MIVAR>
+
+<TABLE width=100%>
+   <TR bgcolor=#cccccc>
+     <TD>
+          <FONT SIZE=+1><b>Gene Product Description</b></FONT>
+     </TD>
+   </TR>
+</TABLE>
+
+<table border=0 width=100%>
+  <tr>
+    <td width=85%><font><b>
+        <?MIVAR>
+	  Gene Name:  <i>$mrkr_name</i><br>
+	  Gene Symbol: <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID"><i>$mrkr_abbrev</i></a>
+	<?/MIVAR>
+        </b></font>	
+    </td>
+    <td width="15%" align=right> 
+      <?MIVAR>
+        <form method=post 
+              action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
+              target=comments>
+           <input type=hidden name=subject value="$mrkr_abbrev">
+           <input type=hidden name=marker_id value="$OID">
+           <input type=hidden name=MIval value="aa-your_input_welcome.apg">
+           <input type=hidden name=page_id value="$OID">
+           <td><input type=submit value="Your Input Welcome"></td>         
+         </form>
+      <?/MIVAR>
+    </td>
+  </tr>
+</table>
+<p>
+
+<?MISQL SQL="  select dblink_acc_num, REPLACE(extnote_note,'CTRL','<br>')
+		 from external_note, db_link
+		where extnote_data_zdb_id = dblink_zdb_id
+		  and dblink_linked_recid = '$OID';">
+
+	<?MIVAR NAME=sp_acc>$1<?/MIVAR>
+	<?MIVAR NAME=comments>$2<?/MIVAR>
+	
+	<table border=0 width=100% bgcolor=$highlight>
+	  <tr>
+	    <td>Swiss-Prot ID: $sp_acc</td>
+          </tr>
+	  <tr>
+	    <td><KBD>$comments</KBD></td>
+          </tr>
+        </table> 
+        <p>
+<?/MISQL>
+
+<table> <tr>
+   <td> This information was provided by Swiss-Prot through a collaboration with ZFIN. (<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=ZDB-PUB-020723-2">1</a>)
+   </td>
+  </tr>
+</table>
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+
+
+</HTML>
