@@ -8,6 +8,7 @@ Variables Expected:
  -- temp_oid -- could be passed instead of OID --
 -->
 
+<?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
 
 <?MISQL SQL="select stage, stage_pct, stock, specimen, image_type, orientation,HTML_breaks(comments), image, resolution,stage_hours_start,stage_hours_end,owner,annotations,stock_name from image where zdb_id='$OID';"><?/MISQL>
 
@@ -31,7 +32,6 @@ Variables Expected:
 <head>
 <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
 
-<?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
 <?MIVAR>
 <SCRIPT>
 
