@@ -31,21 +31,21 @@ endif
 #try to make this script check a couple of times before sending an
 #email--during writing of logical logs to disk, ontape process
 #may disapear from process list--but if it disapears for longer
-#than 10 tries, we want to know about it.
+#than 6 seconds (except when backing up the db) we want to know about it.
 
 if ($backupon != 2) then
-endif
 
-if ($logon != 2) then
-    sleep 6
+  if ($logon != 2) then
+      sleep 6
+     set logon=`ps -ef | grep -c "/private/apps/Informix/informix_wildtype/bin/ontape"`
+     if ($logon != 2) then
+         set logmode="check ontape"
+         echo $logmode | /bin/mailx -s "<!--|INFORMIX_SERVER|-->  ABNORMAL!" <!--|VALIDATION_EMAIL_OTHER|-->
+     endif 
 
-    if ($logon != 2) then
-        set logmode="check ontape"
-        echo $logmode | /bin/mailx -s "<!--|INFORMIX_SERVER|-->  ABNORMAL!" <!--|VALIDATION_EMAIL_OTHER|-->
-    endif 
+  endif
 
-endif
-	
+endif	
 #cd /research/zfin/users/bionixprod/ZFIN_WWW/;onmode -ky;oninit;echo ""|/private/bin/onlog.pl	
 
 
