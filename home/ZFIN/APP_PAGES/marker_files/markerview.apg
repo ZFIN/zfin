@@ -998,14 +998,16 @@ Datablade documentation.
 	<?MISQL SQL="
 	      SELECT stg_name
 		FROM stage 
-	       WHERE stg_hours_start = $XPAT_start_time;">
+	       WHERE stg_hours_start = $XPAT_start_time
+		 AND stg_name <> 'Unknown';">
 
 	      <?MIVAR NAME=$XPAT_STAGE1>$1<?/MIVAR>
 	 <?/MISQL>
 	 <?MISQL SQL="
 	      SELECT stg_name
 		FROM stage 
-	       WHERE stg_hours_end = $XPAT_end_time;">
+	       WHERE stg_hours_end = $XPAT_end_time
+		 AND stg_name <> 'Unknown';">
 
 	      <?MIVAR NAME=$XPAT_STAGE2>$1<?/MIVAR>
 	 <?/MISQL>
