@@ -449,7 +449,7 @@ Variables Expected:
 	  <p>
 	  <b>Shows part of <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatview.apg&OID=$xpat_zdb_id">expression pattern</a>
 	  of $labeledMarkerList 
-	  by $xpat_assay_name</a><br><br>
+	  by $xpat_assay_name<br>
 
 	  <!-- Get the anatomy items labeled in the expression pattern -->
 
@@ -524,13 +524,15 @@ Variables Expected:
 		  <?/MISQL>
 		  $anatItemList
 	    <?/MISQL>
-	  </center>
-	  </TABLE>
-	  <br>
-	  <hr width=80%>
-	<?/MISQL>
+            <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+                      </tr>
+	              </center>
+	              </TABLE>
+            <?/MIBLOCK>
+        <?/MISQL>
+	 <br>
 
-
+	 <hr width=80%>
 	<b>Image Preparation:</B> <p>
 	<TABLE border=0 WIDTH=100% cellpadding=4>
 	  <TH>Preparation</TH>
