@@ -24,7 +24,7 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/lib/DB_functions/SPL
 
 DBLINK_FUNCS = get_dblink_acc_num_display.sql p_dblink_has_parent.sql
-FISH_FUNCS  = get_fish_full_name.sql
+FISH_FUNCS  = get_fish_full_name.sql p_locus_name_abbrev_equal.sql
 IMAGE_FUNCS = get_image_stats.sql
 MRKR_FUNCS  = mhist_event.sql p_mrel_grpmem_correct.sql \
 		p_two_linkage_pairs.sql p_check_zdb_id_in_genedom.sql \
