@@ -91,7 +91,7 @@
 
 <center>
 <font size=4>Search Genes: Result Summary</font>
-<?MIVAR><SCRIPT> window.alert("$target_table $constraint") </SCRIPT><?/MIVAR>
+
 <?MIVAR COND="$(NC,$lg,0)">
 <p><font size=3 color="red">PLEASE NOTE:</font> <font size=2> Because you have constrained this search to a specific linkage group, the results shown below <b>DO NOT</b> include confidential mapping results. This is to avoid tacitly giving away linkage group information for these markers.</font>
 <?/MIVAR>
@@ -278,7 +278,7 @@ $(IF,$(AND,$(EC,$private,f),$(>,$OR_lg,0)),"</form>")
 
 <?MIVAR COND=$(EQ,$MI_ROWCOUNT,0)>No matching records found<?/MIVAR>
 
-<?/MIBLOCK>  <!-- ends exists limit -->/
-<?/MISQL>	
+<?/MIBLOCK>  <!-- ends exists limit -->
+
 
 </HTML>
