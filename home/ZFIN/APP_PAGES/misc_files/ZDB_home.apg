@@ -34,7 +34,7 @@ function open_Study() {
 <IMG SRC="/ZDBB/gifs/newlogosmall.gif">
 </TD>
 <TD>
-<A HREF="http://zfin.org/zf_info/dbase/db.html" target="_top">About the Zebrafish Database project</a>
+<A HREF="http://zfin.org/zf_info/dbase/db.html" >About the Zebrafish Database project</a>
 <p>
 <A HREF="/ZDBB/misc_html/tips.html">Helpful Hints</a>
 <p>
@@ -118,114 +118,7 @@ For security reasons, please <b>click "Goodbye" to LOG OUT</b> if you have finis
 <?MIVAR COND="$(EC,$AUTHORIZED,root)"><font color="#ff0000">$ZDB_name</font> <?/MIVAR>
 </TH>
 
-<TR align=center>
-<TD><B>ACCESSION</B><br>Accession Number and Zdb_ids</TD> 
-<TD>
-
-<TABLE width=100%> <TR align=center> 
-<TD>
-<?MIVAR COND="$(NC,$AUTHORIZED,false)">
-<A HREF="/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-accessionselect.apg&select_from=ACCESSION">SEARCH</A> 
-<?/MIVAR>
-</TD> 
- </TR> </TABLE>
-
-
-
-<TR align=center>
-<TD> <B>PEOPLE </B></TD> 
-<TD>
-
-<TABLE width=100%> 
-<TR align=center>
-<TD>
-<?MIVAR COND="$(NC,$AUTHORIZED,false)">
-<A HREF="/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-quickfindpers.apg&select_from=PERSON&frame_size=75">SEARCH</A> 
-<?/MIVAR>
-<?MIVAR COND="$(EC,$AUTHORIZED,root)">
-<p><A HREF="/cgi-bin_B/webdriver?MIval=aa-mkdist_list.apg" TARGET=NEW_WIN>Generate Dist. list</A>
-<?/MIVAR>
-<?MIVAR COND="$(EC,$AUTHORIZED,root)">
-<p><A HREF="/cgi-bin_B/webdriver?MIval=aa-mkdist_list_usa.apg" TARGET=NEW_WIN>Generate USA Dist. list</A>
-<?/MIVAR>
-</TD> 
-<TD>
-<?MIVAR COND="$(NC,$AUTHORIZED,GUEST)">
-<A HREF="/cgi-bin_B/webdriver?MIval=aa-persview.apg&OID=$ZDB_ident">
-Jump to your personal ZFIN record</A>
-<?/MIVAR>
-<?MIVAR COND="$(EC,$AUTHORIZED,root)">
-<br><A HREF="/cgi-bin_B/webdriver?rtype=person&MIval=aa-new_person.apg">ADD NEW PERSON</A>
-<?/MIVAR>
- </TD> </TR> </TABLE>
-
-
-</TD></TR>
-
-<TR align=center>
-<TD><B> LABS </B></TD> 
-<TD>
-
-<TABLE width=100%> <TR align=center> 
-<TD>
-<?MIVAR COND="$(NC,$AUTHORIZED,false)">
-<A HREF="/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-labselect.apg&select_from=LAB">SEARCH</A> 
-<?/MIVAR>
-</TD> 
-<TD>
-<?MIVAR COND="$(EC,$AUTHORIZED,root)">
-<A HREF="/cgi-bin_B/webdriver?rtype=lab&MIval=aa-new_lab.apg">ADD NEW LAB</A>
-<?/MIVAR>
- </TD> </TR> </TABLE>
-
-</TD></TR>
-
-<TR align=center>
-<TD><B>COMPANIES</B><br>Biotech Companies and Suppliers</TD> 
-<TD>
-
-<TABLE width=100%> <TR align=center> 
-<TD>
-<?MIVAR COND="$(NC,$AUTHORIZED,false)">
-<A HREF="/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-companyselect.apg&select_from=COMPANY&frame_size=230">SEARCH</A> 
-<?/MIVAR>
-</TD> 
-<TD>
-<?MIVAR COND="$(EC,$AUTHORIZED,root)">
-<A HREF="/cgi-bin_B/webdriver?rtype=company&MIval=aa-new_company.apg">ADD NEW COMPANY</A>
-<?/MIVAR>
- </TD> </TR> </TABLE>
-
-</TD></TR>
-
-
-<TR align=center>
-<TD><B>PUBLICATIONS</B> </TD>
-<TD>
-
-<TABLE width=100%> <TR align=center> 
-<TD>
-<?MIVAR COND="$(NC,$AUTHORIZED,false)">
-<A HREF="/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-pubselect2.apg&select_from=PUBLICATION">SEARCH</A>
-<?/MIVAR>
-</TD> 
-<TD>
-<font size=-1>
-<?MIVAR COND="$(EC,$AUTHORIZED,root)">
-<A HREF="/cgi-bin_B/webdriver?rtype=publication&MIval=aa-edit_pub.apg">NEW PUB</A>
-<?/MIVAR>
-</font>
-</TD>
-
-<TD>
-<font size=-1>
-<?MIVAR COND="$(EC,$AUTHORIZED,root)">
-<A HREF="/cgi-bin_B/webdriver?MIval=aa-start_medline.apg">Inc. MEDLINE</A>
-<?/MIVAR>
- </font></TD> 
-</TR> </TABLE>
-
-</TD> </TR>
+<!--  FISH -->
 
 <TR align=center>
 <TD><B>FISH</B><p><font size=-1>Mutant<br>and<br>Wild Type<br>Lines</font>
@@ -283,6 +176,7 @@ Jump to your personal ZFIN record</A>
 </TD> </TR>
 
 
+<!-- Genes -->
 
 
 <TR align=center>
@@ -303,6 +197,7 @@ Jump to your personal ZFIN record</A>
 
 </TD></TR>
 
+<! -- Genomics -->
 
 <TR align=center>
 <TD> <B>GENOMICS</B><br> Mapping Panels,Markers,<br>and Primers
@@ -318,6 +213,9 @@ Jump to your personal ZFIN record</A>
 <A HREF="/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-markerselect.apg&select_from=MARKER">SEARCH map markers</A> 
 <p>
 <A HREF="/cgi-bin_B/webdriver?MIval=aa-refcrosslist.apg">Mapping Panels</A>
+<p>
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-mapperselect.apg&select_from=MAPPER&frame_size=220"> VIEW MAP </A> <img src="/ZDBB/gifs/new1.gif"> 
+
 
 <?MIVAR COND="$(EC,$AUTHORIZED,root)">
 <p><A HREF="/cgi-bin_B/webdriver?MIval=aa-haffter_linkages.apg">Haffter linkages</A>
@@ -337,6 +235,129 @@ Jump to your personal ZFIN record</A>
 </TABLE>
 
 </TD> </TR>
+
+
+<!-- Publications  -->
+
+<TR align=center>
+<TD><B>PUBLICATIONS</B> </TD>
+<TD>
+
+<TABLE width=100%> <TR align=center> 
+<TD>
+<?MIVAR COND="$(NC,$AUTHORIZED,false)">
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-pubselect2.apg&select_from=PUBLICATION">SEARCH</A>
+<?/MIVAR>
+</TD> 
+<TD>
+<font size=-1>
+<?MIVAR COND="$(EC,$AUTHORIZED,root)">
+<A HREF="/cgi-bin_B/webdriver?rtype=publication&MIval=aa-edit_pub.apg">NEW PUB</A>
+<?/MIVAR>
+</font>
+</TD>
+
+<TD>
+<font size=-1>
+<?MIVAR COND="$(EC,$AUTHORIZED,root)">
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-start_medline.apg">Inc. MEDLINE</A>
+<?/MIVAR>
+ </font></TD> 
+</TR> </TABLE>
+
+</TD> </TR>
+
+
+<!-- People -->
+
+<TR align=center>
+<TD> <B>PEOPLE </B></TD> 
+<TD>
+
+<TABLE width=100%> 
+<TR align=center>
+<TD>
+<?MIVAR COND="$(NC,$AUTHORIZED,false)">
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-quickfindpers.apg&select_from=PERSON&frame_size=75">SEARCH</A> 
+<?/MIVAR>
+<?MIVAR COND="$(EC,$AUTHORIZED,root)">
+<p><A HREF="/cgi-bin_B/webdriver?MIval=aa-mkdist_list.apg" TARGET=NEW_WIN>Generate Dist. list</A>
+<?/MIVAR>
+<?MIVAR COND="$(EC,$AUTHORIZED,root)">
+<p><A HREF="/cgi-bin_B/webdriver?MIval=aa-mkdist_list_usa.apg" TARGET=NEW_WIN>Generate USA Dist. list</A>
+<?/MIVAR>
+</TD> 
+<TD>
+<?MIVAR COND="$(NC,$AUTHORIZED,GUEST)">
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-persview.apg&OID=$ZDB_ident">
+Jump to your personal ZFIN record</A>
+<?/MIVAR>
+<?MIVAR COND="$(EC,$AUTHORIZED,root)">
+<br><A HREF="/cgi-bin_B/webdriver?rtype=person&MIval=aa-new_person.apg">ADD NEW PERSON</A>
+<?/MIVAR>
+ </TD> </TR> </TABLE>
+
+
+</TD></TR>
+
+<!-- Labs -->
+
+<TR align=center>
+<TD><B> LABS </B></TD> 
+<TD>
+
+<TABLE width=100%> <TR align=center> 
+<TD>
+<?MIVAR COND="$(NC,$AUTHORIZED,false)">
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-labselect.apg&select_from=LAB">SEARCH</A> 
+<?/MIVAR>
+</TD> 
+<TD>
+<?MIVAR COND="$(EC,$AUTHORIZED,root)">
+<A HREF="/cgi-bin_B/webdriver?rtype=lab&MIval=aa-new_lab.apg">ADD NEW LAB</A>
+<?/MIVAR>
+ </TD> </TR> </TABLE>
+
+</TD></TR>
+
+<!-- Companies -->
+
+<TR align=center>
+<TD><B>COMPANIES</B><br>Biotech Companies and Suppliers</TD> 
+<TD>
+
+<TABLE width=100%> <TR align=center> 
+<TD>
+<?MIVAR COND="$(NC,$AUTHORIZED,false)">
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-companyselect.apg&select_from=COMPANY&frame_size=230">SEARCH</A> 
+<?/MIVAR>
+</TD> 
+<TD>
+<?MIVAR COND="$(EC,$AUTHORIZED,root)">
+<A HREF="/cgi-bin_B/webdriver?rtype=company&MIval=aa-new_company.apg">ADD NEW COMPANY</A>
+<?/MIVAR>
+ </TD> </TR> </TABLE>
+
+</TD></TR>
+
+
+<!-- Accession -->
+
+<TR align=center>
+<TD><B>ACCESSION</B><br>Accession Number and Zdb_ids</TD> 
+<TD>
+
+<TABLE width=100%> <TR align=center> 
+<TD>
+<?MIVAR COND="$(NC,$AUTHORIZED,false)">
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-accessionselect.apg&select_from=ACCESSION">SEARCH</A> 
+<?/MIVAR>
+</TD> 
+ </TR> </TABLE>
+
+
+
+
 
 
 <?MIBLOCK COND="$(OR,$(EC,$AUTHORIZED,root),$(EC,$AUTHORIZED,preview))">
