@@ -1,4 +1,4 @@
- -- pre-process the .csv files from Bernard
+-- pre-process the .csv files from Bernard
 -- to create informix loadable .unl files with 
 -- the data somewhat closer to it's final form.
 ! echo "parsing Bernard's data" 
@@ -24,8 +24,6 @@ probe_id varchar(10) not null,
 clone varchar(120) not null,
 isgene varchar(15) default null,
 genename varchar(120)default null,
-top_blast varchar(200),
-blast_result clob, 
 gb5p varchar (50),
 gb3p varchar (50),
 or_lg varchar(2),
@@ -447,7 +445,7 @@ select * from  tmp_mrkr_update;
 
 
 
--- set up genbank & BLAST records for markers with accession numbers
+-- set up genbank records for markers with accession numbers
 
 create temp table tmp_db_link
   (
@@ -499,45 +497,25 @@ drop table  linked_markers;
 drop table  link_db;
 
 
-!echo "Add BLAST Links"
-select linked_recid 
-from db_link 
-where db_name = 'BLAST' 
-into temp linked_markers
-;
 
-!echo "making active data records for new blast links"
-select mrkr_zdb_id, mrkr_abbrev
-from marker,probes_tmp
-where clone = mrkr_abbrev
-and mrkr_zdb_id not in (select * from linked_markers)
-into temp link_db;
+! echo "-- GENBANK --" 
+-- make sure the genbank numbers exist --
+select gb5p from probes_tmp where gb5p is not null into temp gb5p_tmp with no log;
+delete from gb5p_tmp where gb5p in (select genbank_acc_num from genbank);
+-- check for duplicates
+select gb5p from gb5p_tmp group by 1 having count(*) > 1;
+
+insert into genbank select gb5p,"5'" from gb5p_tmp;
+drop table gb5p_tmp;
+
+select gb3p from probes_tmp where gb3p is not null into temp gb3p_tmp with no log;
+delete from gb3p_tmp where gb3p in (select genbank_acc_num from genbank);
+-- check for duplicates
+select * from gb3p_tmp group by 1 having count(*) > 1;
+insert into genbank select gb3p,"3'" from gb3p_tmp;
+drop table gb3p_tmp;
 
 
-insert into tmp_db_link
-select mrkr_zdb_id,'BLAST',gb5p, 'uncurated ' || TODAY, 'x'
-from link_db,probes_tmp
-where clone = mrkr_abbrev
-and gb5p is not NULL
---and gb3p is NULL
-;
-insert into tmp_db_link
-select mrkr_zdb_id,'BLAST', gb3p, 'uncurated ' || TODAY, 'x'
-from link_db,probes_tmp
-where clone = mrkr_abbrev
-and gb3p is not NULL
---and gb5p is NULL
-;
-
-update tmp_db_link set dblink_zdb_id = get_id('DBLINK');
-
-insert into zdb_active_data select dblink_zdb_id from tmp_db_link;
-insert into db_link(linked_recid,db_name, acc_num,info,dblink_zdb_id)
-       select * from tmp_db_link;
-
-delete from tmp_db_link;
-drop table  linked_markers;
-drop table  link_db;
 
 
 ! echo "-- CLONE --"
@@ -569,10 +547,10 @@ insert into tmp_clone
         'cDNA'
 	from probes_tmp, probe_library, tmp_mrkr
 	where library = probelib_name
-          and clone = mrkr_name
+          and clone = mrkr_abbrev
 ;
 
-select distinct library from probes_tmp where library not in (select probelib_name from probe_library);
+unload to 'unkown_probelib.unl' select distinct library from probes_tmp where library not in (select probelib_name from probe_library);
 
 insert into vector
 select distinct vector, 'Plasmid' from probes_tmp where vector not in (select vector_name from vector);
@@ -617,51 +595,6 @@ insert into int_data_source select xpat_zdb_id,'ZDB-LAB-980204-15' from tmp_exp_
 insert into record_attribution select xpat_zdb_id, 'ZDB-PUB-010810-1' from tmp_exp_pat;
 
 
-
-! echo "-- GENBANK --" 
--- make sure the genbank numbers exist --
-select gb5p from probes_tmp where gb5p is not null into temp gb5p_tmp with no log;
-delete from gb5p_tmp where gb5p in (select genbank_acc_num from genbank);
--- check for duplicates
-select gb5p from gb5p_tmp group by 1 having count(*) > 1;
-
-insert into genbank select gb5p,"5'" from gb5p_tmp;
-drop table gb5p_tmp;
-
-select gb3p from probes_tmp where gb3p is not null into temp gb3p_tmp with no log;
-delete from gb3p_tmp where gb3p in (select genbank_acc_num from genbank);
--- check for duplicates
-select * from gb3p_tmp group by 1 having count(*) > 1;
-insert into genbank select gb3p,"3'" from gb3p_tmp;
-drop table gb3p_tmp;
-
-
-
-! echo "-- BLAST --"  
---------------------------
--- 
--- top_blast is not being used now???
-
-select * from tmp_mrkr tm where tm.mrkr_zdb_id not in ( select m.mrkr_zdb_id from marker m); 
-
---select blast_result from probes_tmp;
-
-insert into blast 
-    select distinct mrkr_zdb_id, gb5p, TODAY, 'none given', locopy(blast_result,'blast','blast_results')
-    from tmp_mrkr, probes_tmp p 
-    where p.clone = mrkr_abbrev
-    and  gb5p   is not null
-    and p.blast_result is not null
-;
-
-insert into blast 
-    select distinct mrkr_zdb_id, gb3p, TODAY, 'none given', locopy(blast_result,'blast','blast_results')
-    from tmp_mrkr, probes_tmp p 
-    where p.clone = mrkr_abbrev
-    and gb3p is not null
-    and p.blast_result is not null
-    and mrkr_zdb_id not in (select blast_mrkr_zdb_id from blast)
-;
 
 
 
@@ -1279,5 +1212,5 @@ insert into record_attribution
 select zdb_id, 'ZDB-PUB-010810-1' from mrel_tmp;
 
 
---rollback work;
-commit work;
+rollback work;
+--commit work;

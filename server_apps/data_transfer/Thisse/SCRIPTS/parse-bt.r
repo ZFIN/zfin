@@ -22,8 +22,8 @@ create temp table probes_tmp (
 2	label varchar (80) not null,
 3	isgene varchar(15),
 4	genename varchar(100),
-5	top_blast varchar(200),
-6	blast_result lvarchar, 
+5	top_blast varchar(200), --removed beginning 09/24/2003
+6	blast_result lvarchar,  --removed beginning 09/24/2003
 7	gb5p varchar (50),
 8	gb3p varchar (50),
 9	or_lg integer,
@@ -67,20 +67,16 @@ create temp table probes_tmp (
 	   replace/all line " |"   "|"
  
 		row: parse/all line {|}
-		replace row/15 "," "."     ; change decimal point in lg_location to dot
-		buf:  copy row/7
-		insert (skip row 6)  rejoin [row/3 ".blast"]	
-		remove (skip row 7)
-		;probe row
-		;print ["row 7" row/7 ]
+		replace row/13 "," "."     ; change decimal point in lg_location to dot
+
 		;foreach field row [append line (join field ["|"])] ;what the h_ll! puts the blast back in?
  	   ;hack 
-		line: rejoin [row/1 "|" row/2 "|" row/3 "|" row/4 "|" row/5 "|" row/6 "|" row/7 "|" row/8 "|" row/9 "|" row/10 "|" row/11 "|" row/12 "|" row/13 "|" row/14 "|" row/15 "|" row/16 "|" row/17 "|" row/18 "|" row/19 "|" row/20 "|" row/21 "|" row/22 "|"]  	   replace/all line "<PIPE73>" "\|"
+		line: rejoin [row/1 "|" row/2 "|" row/3 "|" row/4 "|" row/5 "|" row/6 "|" row/7 "|" row/8 "|" row/9 "|" row/10 "|" row/11 "|" row/12 "|" row/13 "|" row/14 "|" row/15 "|" row/16 "|" row/17 "|" row/18 "|" row/19 "|" row/20 "|"]  	   replace/all line "<PIPE73>" "\|"
 		write/append %probes.unl rejoin [line newline]
   
 		replace/all buf "<PIPE73>" "|"
 		replace/all buf "\" "<br>"	
-		write to-file rejoin [row/3 ".blast"]	 rejoin ["<pre>" buf "</pre>"]
+		;;;write to-file rejoin [row/3 ".blast"]	 rejoin ["<pre>" buf "</pre>"]
 		
 	]
 	
