@@ -145,7 +145,7 @@ Options:
 
 </form>
 
-<?MIVAR COND="$(OR,$(<,$num_recs,25),$(XST,$getall))" NAME=$limit>$num_recs<?/MIVAR>
+<?MIVAR COND="$(OR,$(<=,$num_recs,25),$(XST,$getall))" NAME=$limit>$num_recs<?/MIVAR>
 
 
 <?MIBLOCK COND="$(XST,$limit)">
