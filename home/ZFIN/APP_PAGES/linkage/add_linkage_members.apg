@@ -193,7 +193,7 @@ Linkage Members:   (At least one member must be specified) <br>
   <?MIBLOCK COND="$(AND,$(NXST,$update),$(NXST,$member))">
     <?MIVAR>
       <input type=button value="Add Distances" onClick="return call_distance('$link_id','$num_members');">   
-      <input type=button value="Submit" onClick=" return call_submit('$num_members');">
+      <input type=button value="Entry Complete" onClick=" return call_submit('$num_members');">
     <?/MIVAR>
   <?/MIBLOCK>
 
