@@ -649,7 +649,7 @@ ERROR -- something bad happened -- no OID passed in!
 
     <font size=-1>
     <TR><TD>      
-        LG <b>$4</b><b> $2</b> $7 (<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=$3>$5 Panel</A>) 
+        LG&nbsp;<b>$4</b><b>&nbsp;$2</b>&nbsp;$7 (<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=$3>$5 Panel</A>) 
           $(IF,$(ISNULL,$11),,<br>&nbsp;&nbsp;Mapped as $11)
     </TD>
     
