@@ -84,18 +84,18 @@ $pdf_extension = ".pdf";
 # loadup_full_path points to /research/zprod/loadUp (on production)
 # image_load points to /research/zcentral/loadUp/ImageLoadUp (on production)
 
-system ("ls -1 <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|--> > file_list_image");
+system ("ls -1 <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|--> > /tmp/file_list_image");
 
 # make a list of all the pdf files available for viewing in the fielsystem
 # loadup_full_path points to /research/zprod/loadUp (on production)
 # pdf_load points to /research/zcentral/loadUp/PDFLoadUp (on production)
 
-system ("ls -1 <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|--> > file_list_pdf");
+system ("ls -1 <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|--> > /tmp/file_list_pdf");
 
 
 # file_list_image is the file of all image files available on filesystem
 
-open (FILE_LIST_IMAGE, "< ./file_list_image")
+open (FILE_LIST_IMAGE, "< /tmp/file_list_image")
     or die "Cannot open the file_list_image file:$!\n";
 
 # fl_image_modified is the file containing all image files with their 
@@ -106,7 +106,7 @@ open FL_IMAGE_MODIFIED, ">fl_image_modified"
 
 # same comments as above, except with PDFs.
 
-open (FILE_LIST_PDF, "< ./file_list_pdf")
+open (FILE_LIST_PDF, "< /tmp/file_list_pdf")
     or die "Cannot open the file_list_pdf file:$!\n";
 
 open FL_PDF_MODIFIED, ">fl_pdf_modified" 
@@ -156,23 +156,23 @@ print "loading...\n";
 # load the files created by the above steps into the database using 
 # the load_files.sql script
 
-system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> load_files.sql >out 2> orphan_file_report.txt");
+system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> load_files.sql >out 2> /tmp/orphan_file_report.txt");
 
 close FL_PDF_MODIFIED;
 close FL_IMAGE_MODIFIED;
 close FILE_LIST_PDF;
 close FILE_LIST_IMAGE;
 
-open (ORPHAN_IMAGE_FILES, "< ./orphan_image_files.unl") 
+open (ORPHAN_IMAGE_FILES, "< /tmp/orphan_image_files.unl") 
     or die "Cannot open the orphan_image_file.unl file:$!\n";
 
-open (ORPHAN_PDF_FILES, "< ./orphan_pdf_files.unl") 
+open (ORPHAN_PDF_FILES, "< /tmp/orphan_pdf_files.unl") 
     or die "Cannot open the orphan_image_file.unl file:$!\n";
 
-open MOVED_IMAGE_FILES, ">moved_image_files.unl"
+open MOVED_IMAGE_FILES, "> /tmp/moved_image_files.unl"
     or die "Cannot open the moved_image_files.unl file:$!\n";
 
-open MOVED_PDF_FILES, ">moved_pdf_files.unl"
+open MOVED_PDF_FILES, "> /tmp/moved_pdf_files.unl"
     or die "Cannot open the moved_pdf_files.unl file:$!\n";
 
 print "moving orphan files.\n";
@@ -224,10 +224,10 @@ close MOVED_IMAGE_FILES;
 close MOVED_PDF_FILES;
 
 &sendLoadReport("Image Files Moved","<!--|DB_OWNER|-->\@cs.uoregon.edu", 
-		"./orphan_image_files.unl") ;
+		"/tmp/orphan_image_files.unl") ;
 
 &sendLoadReport("PDF Files Moved","<!--|DB_OWNER|-->\@cs.uoregon.edu", 
-		"./orphan_pdf_files.unl") ;
+		"/tmp/orphan_pdf_files.unl") ;
 
 print "starting rsync...\n" ;
 
