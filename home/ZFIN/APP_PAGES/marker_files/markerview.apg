@@ -599,7 +599,7 @@
 </TABLE>
 <?MIBLOCK COND="$(>,$rowcount,0)">
     <?MIVAR><TABLE width =100% border=0 bgcolor=$highlight><?/MIVAR>
-	<?MIVAR><TR><TD><b>All GO annotations <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoview.apg&OID=$OID"><?MIVAR>($rowcount)</A></b><?/MIVAR><?/MIVAR></TD>
+	<?MIVAR><TR><TD><b>All GO annotations (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoview.apg&OID=$OID"><?MIVAR>$rowcount</A>)</b><?/MIVAR><?/MIVAR></TD>
 </TR></TABLE>
 <?/MIBLOCK>
 <?/MIBLOCK>
