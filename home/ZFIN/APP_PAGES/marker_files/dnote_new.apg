@@ -1,0 +1,62 @@
+<?MICOMMENT>
+
+FILE: dnote_new.apg
+PREFIX: dnotenew_
+
+  Adds a record to data_note.
+
+INPUT VARS:
+  AUTHORIZED - user access level (GLOBAL, set in parent)
+  dnotenew_DATA - data ZDB ID
+  dnotenew_CUR - curator's person ZDB ID
+  dnotenew_NOTE - the text message
+
+OUTPUT VARS: 
+  none
+
+OUTPUT:
+  None (white space).
+
+EFFECTS:
+  Insert a data_note record.
+  
+<?/MICOMMENT>
+
+<?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
+
+  <?MIVAR>$(UNSETVAR,$dnotenew_ZDB)<?/MIVAR>
+
+  <?MICOMMENT> ==| Replace line returns with <br> |== <?/MICOMMENT>
+  <?MIVAR>
+    <?MIVAR NAME=$dnotenew_NOTE>$(URLENCODE,$dnotenew_NOTE)<?/MIVAR>
+    <?MIVAR NAME=$dnotenew_NOTE>$(REPLACE,$dnotenew_NOTE,%0a,<BR>)<?/MIVAR>
+    <?MIVAR NAME=$dnotenew_NOTE>$(REPLACE,$dnotenew_NOTE,++,&nbsp;&nbsp;)<?/MIVAR>
+    <?MIVAR NAME=$dnotenew_NOTE>$(URLDECODE,$dnotenew_NOTE)<?/MIVAR>
+  <?/MIVAR>
+  
+  <?MICOMMENT> ==| Replace ' with '' |== <?/MICOMMENT>
+  <?MIVAR NAME=$dnotenew_NOTE DELIMIT="'" REPLACE="''">$dnotenew_NOTE<?/MIVAR>
+
+  <?MICOMMENT> ==| Get next ZDB-ID |== <?/MICOMMENT>
+  <?MISQL SQL="execute function get_id('DNOTE');">$(SETVAR,$dnotenew_ZDB,$1)<?/MISQL>
+  
+  <?MICOMMENT> ==| Add New DNote |== <?/MICOMMENT>  
+  <?MISQL SQL="INSERT INTO zdb_active_data VALUES('$dnotenew_ZDB');"><?/MISQL>
+  <?MISQL SQL="
+      INSERT INTO data_note (
+          dnote_zdb_id,
+          dnote_data_zdb_id,
+          dnote_curator_zdb_id,
+          dnote_text,
+          dnote_date)
+      VALUES ( 
+          '$dnotenew_ZDB',
+          '$dnotenew_DATA',
+          '$dnotenew_CUR',
+          '$dnotenew_NOTE',
+          CURRENT);">                   
+  <?/MISQL>
+
+<?MIELSE>
+  <p>Authorization failed for dnote_new.apg
+<?/MIBLOCK> <!-- not authorized -->
