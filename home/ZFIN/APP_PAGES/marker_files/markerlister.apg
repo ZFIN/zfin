@@ -1,3 +1,4 @@
+
 <!-- FILE: markerlister.html -->
 
 <!-- This app-page handles the criteria collected by markerselect.html, 
@@ -12,7 +13,8 @@ Startframes.apg will pass this variables on to the select form.  -->
 
 <HTML>
 <HEAD>
-<?MIVAR NAME=$OID>NULL<?/MIVAR>
+
+<?MIVAR NAME=$OID COND="$(NXST,$OID)">NULL<?/MIVAR>
 
 <?MISQL SQL="
   select object 
@@ -108,7 +110,7 @@ Startframes.apg will pass this variables on to the select form.  -->
 <?MIBLOCK COND="$(NXST,$plinks)">
   <?MIVAR NAME=$target_table>paneled_markers a <?/MIVAR>
   <?MIVAR NAME=$insert_ending><?/MIVAR>
-  <?MIVAR NAME=$select_ending>, NULL<?/MIVAR>
+  <?MIVAR NAME=$select_ending>, NULL::numeric(6,2) as dist <?/MIVAR>
 <?MIELSE>
   <?MIVAR NAME=$insert_ending>, dist<?/MIVAR>
   <?MIVAR NAME=$select_ending>, dist<?/MIVAR>
@@ -180,6 +182,12 @@ Startframes.apg will pass this variables on to the select form.  -->
 <?/MISQL>
 <?MIVAR NAME=$num_recs>$MI_ROWCOUNT<?/MIVAR>
 
+<!-- <?MIVAR>CONSTRAINT: $order_clause<?/MIVAR> -->
+<!-- <?MIVAR>CONSTRAINT: $target_table<?/MIVAR> -->
+
+
+<!-- <?MIVAR>CONSTRAINT: $num_recs<?/MIVAR> -->
+
 
 <?MIVAR> 
   <center>
@@ -246,6 +254,10 @@ Startframes.apg will pass this variables on to the select form.  -->
 	<?MIVAR name=$first_row>1<?/MIVAR>
 	<?MIVAR NAME=$order_clause>$order_clause , target_id desc<?/MIVAR>
 
+<!-- <?MIVAR>marker abbrev: $marker_abbrev<?/MIVAR> -->
+<!-- <?MIVAR>mtype: $mtype<?/MIVAR> -->
+<!-- <?MIVAR>order clause: $order_clause<?/MIVAR> -->
+<!-- <?MIVAR>select ending: $select_ending<?/MIVAR> -->
 
 	<!--  Run inner query for fields associated with current gene_name -->
 	<?MISQL SQL="
@@ -430,7 +442,8 @@ Startframes.apg will pass this variables on to the select form.  -->
 	<!-- end form for map_marker -->         
       </FORM>
 
-      <!-- end outer SQL -->
+  
+    <!-- end outer SQL -->
     <?/MISQL>
 
   </TABLE>
