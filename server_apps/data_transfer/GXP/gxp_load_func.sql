@@ -584,7 +584,9 @@ create table tmp_fish_image(
     t_fimg_owner_zdb_id 	varchar(50)not null,
     t_fimg_external_name 	varchar(50)not null
     
-)  PUT t_fimg_image_w_annot in  (smartbs1)(log);
+)  PUT t_fimg_image_w_annot in (smartbs1, smartbs2, smartbs3, smartbs4)(log), 
+	   t_fimg_image in (smartbs1, smartbs2, smartbs3, smartbs4)(log),
+	   t_fimg_thumbnail in (smartbs1, smartbs2, smartbs3, smartbs4)(log);
 
 if (sbm_lab_name = "Thisse" AND sbm_release_type = "cb") then 
 
