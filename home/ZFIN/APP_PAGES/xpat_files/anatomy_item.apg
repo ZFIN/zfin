@@ -1,12 +1,11 @@
 <HTML>
-
-
 <?MIBLOCK COND="$(NXST,$OID)"> No OID Passed In! <?/MIBLOCK>  <!-- open OID check -->
 <?MIBLOCK COND="$(XST,$OID)">
 <?MISQL SQL="
 	SELECT anatitem_name, anathier_name,
 	       s1.stg_name_long, s2.stg_name_long, s1.stg_comments_relative_url, 
-	       s2.stg_comments_relative_url, anatitem_abbrev
+	       s2.stg_comments_relative_url, anatitem_abbrev, anatitem_definition,
+	       anatitem_description
 	FROM anatomy_item, anatomy_hierarchy, stage s1, stage s2
 	WHERE anatitem_zdb_id = '$OID'
 	  and anatitem_type_code = anathier_code
@@ -20,7 +19,19 @@
 <?MIVAR NAME="item_stg_start_url">$5<?/MIVAR>
 <?MIVAR NAME="item_stg_end_url">$6<?/MIVAR>
 <?MIVAR NAME="item_abbrev">$7<?/MIVAR>
+<?MIVAR NAME="item_definition">$8<?/MIVAR>
+<?MIVAR NAME="item_description">$9<?/MIVAR>
 <?/MISQL>
+
+<?MIVAR NAME=$item_abbrev COND="$(EC,$item_abbrev,NULL)"><?/MIVAR>
+<?MIVAR NAME=$item_definition COND="$(EC,$item_definition,NULL)"><?/MIVAR>
+<?MIVAR NAME=$item_description COND="$(EC,$item_description,NULL)"><?/MIVAR>
+
+<?MIVAR NAME=$item_name_safe DELIMIT="'" REPLACE="''">$item_name<?/MIVAR>
+<?MIVAR NAME=$item_name_url>$(URLENCODE,$item_name)<?/MIVAR>
+<?MIVAR NAME="$processed_item_name">$(REPLACE,$item_name,',','|')<?/MIVAR>
+
+
 
 
 <!-- user authorization check-------------------------------> 
@@ -36,6 +47,8 @@
  			<TITLE>View ZFIN Anatomy Item: $item_name</title>
 		<?/MIVAR>
           <?/MIBLOCK>
+
+
 
 	  <!-- page header display ----------------->
   	  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
@@ -70,75 +83,265 @@
    </table>
 <?/MIBLOCK> 
 
+
+
+
+<?MIBLOCK COND="$(XST,$UPDATE)">
+<!-- First, do any updates -->
+
+  <?MIBLOCK COND="$(XST,$updated_abbrev)">
+    <?MISQL SQL="update anatomy_item 
+                 set anatitem_abbrev = '$updated_abbrev' 
+                 where anatitem_zdb_id = '$OID';">
+    <?/MISQL>
+    <?MIVAR NAME="item_abbrev">$updated_abbrev<?/MIVAR>
+  <?/MIBLOCK>
+
+ <?MIBLOCK COND="$(XST,$delete_abbrev)">
+    <?MISQL SQL="update anatomy_item 
+                 set anatitem_abbrev = null 
+                 where anatitem_zdb_id = '$OID';">
+    <?/MISQL>
+    <?MIVAR NAME="item_abbrev"><?/MIVAR>
+  <?/MIBLOCK>
+
+
+  <?MIBLOCK COND="$(XST,$delete_synonym)"> 
+    <?MISQL SQL="DELETE FROM data_alias WHERE dalias_zdb_id = '$updated_synonym_zdb_id';"><?/MISQL>
+    <?MISQL SQL="DELETE FROM record_attribution WHERE recattrib_data_zdb_id = '$updated_synonym_zdb_id';"><?/MISQL>
+  <?/MIBLOCK>
+
+  <?MIBLOCK COND="$(AND,$(NXST,$delete_synonym),$(XST,$updated_synonym))">
+    <?MISQL SQL="UPDATE data_alias 
+		 SET dalias_alias = '$updated_synonym'
+		 WHERE dalias_zdb_id = '$updated_synonym_zdb_id';"><?/MISQL>
+    <?MISQL COND="$(XST,$updated_synonym_ref)" SQL="
+		UPDATE record_attribution
+		SET recattrib_source_zdb_id = '$updated_synonym_ref'
+		WHERE recattrib_data_zdb_id = '$updated_synonym_zdb_id'
+      ;"> <?/MISQL>
+
+  <?/MIBLOCK>
+
+  <?MIBLOCK COND="$(XST,$new_synonym)">
+    <?MISQL SQL="select get_id('DALIAS') from single;">
+      <?MIVAR NAME="new_synonym_zdb_id">$1<?/MIVAR>
+    <?/MISQL>
+    <?MISQL SQL="insert into zdb_active_data values ('$new_synonym_zdb_id');"><?/MISQL>
+    <?MISQL SQL="INSERT into data_alias (dalias_zdb_id, dalias_data_zdb_id, dalias_alias, dalias_group)
+                 values ('$new_synonym_zdb_id', '$OID', '$new_synonym', 'alias');"><?/MISQL>
+
+    <?MISQL COND="$(XST,$new_synonym_ref)" SQL="
+		INSERT into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
+		values ('$new_synonym_zdb_id','$new_synonym_ref');"><?/MISQL>
+
+  <?/MIBLOCK>
+ 
+  <?MIBLOCK COND="$(XST,$updated_definition)">
+   <?MIVAR NAME=$updated_definition_safe DELIMIT="'" REPLACE="''">$updated_definition<?/MIVAR>
+   <?MIVAR NAME="item_definition">$updated_definition<?/MIVAR>
+    <?MISQL SQL="update anatomy_item set anatitem_definition = '$updated_definition_safe' 
+	         where anatitem_zdb_id = '$OID';">
+    <?/MISQL>
+  <?/MIBLOCK>
+
+  <?MIBLOCK COND="$(XST,$delete_definition)">
+   <?MIVAR NAME="item_definition"><?/MIVAR>
+    <?MISQL SQL="update anatomy_item set anatitem_definition = null 
+	         where anatitem_zdb_id = '$OID';">
+    <?/MISQL>
+  <?/MIBLOCK>
+
+
+  <?MIBLOCK COND="$(XST,$updated_description)">
+   <?MIVAR NAME=$updated_description_safe DELIMIT="'" REPLACE="''">$updated_description<?/MIVAR>
+   <?MIVAR NAME="item_description">$updated_description<?/MIVAR>
+    <?MISQL SQL="update anatomy_item set anatitem_description = '$updated_description_safe' 
+	         where anatitem_zdb_id = '$OID';">
+    <?/MISQL>
+  <?/MIBLOCK>
+
+
+
+<!-- Now bring up the table with update goodies -->
+
+<TABLE BORDER=0 WIDTH="90%" BGCOLOR="#EEEEEE" ALIGN="CENTER">
+  <TR>
+    <TD BGCOLOR="#CCCCCC">
+      <?MIVAR><B>Update Anatomy Record</B><?/MIVAR>
+    </TD>
+  </TR>
+  <TR>
+    <TD>
+ <?MIVAR>
+  <FORM action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" name="update_abbrev" method="get">
+
+      <INPUT type="hidden" name="MIval" value="aa-anatomy_item.apg">
+      <INPUT type="hidden" name="OID" value="$OID">
+      <INPUT type="hidden" name="UPDATE" value="1">
+      <INPUT type="text" name="updated_abbrev" size="10" value="$item_abbrev">
+      <INPUT type="submit" value="Update Abbrev">
+      <INPUT type="hidden" name="delete_abbrev">
+      <INPUT type="button" value="Delete Abbrev"
+	   onClick="document.update_abbrev.delete_abbrev.value='1';
+		    document.update_abbrev.submit();">
+  </FORM>
+  <?/MIVAR>
+    </TD>
+  </TR>
+  
+  <?MIVAR NAME="$alias_number">0<?/MIVAR>
+
+  <?MISQL SQL="SELECT dalias_alias, dalias_zdb_id
+	       FROM data_alias
+	       WHERE dalias_data_zdb_id = '$OID';">
+    <?MIVAR name="current_synonym">$1<?/MIVAR>
+    <?MIVAR name="current_synonym_zdb_id">$2<?/MIVAR>
+
+    <?MISQL SQL="SELECT recattrib_source_zdb_id
+	         FROM record_attribution 
+		 WHERE recattrib_data_zdb_id = '$current_synonym_zdb_id';">
+    	<?MIVAR name="current_synonym_ref">$1<?/MIVAR>
+    <?/MISQL>
+    <?MIVAR COND="$(NXST,$current_synonym_ref)" NAME="current_synonym_ref"><?/MIVAR>
+    <TR>
+      <TD>
+ <?MIVAR>
+
+  <?MIVAR $NAME="alias_number">$(+,$alias_number,1)<?/MIVAR>
+
+  <FORM action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" name="update_synonym_$alias_number" method="get">
+
+      <INPUT type="hidden" name="MIval" value="aa-anatomy_item.apg">
+      <INPUT type="hidden" name="OID" value="$OID">
+      <INPUT type="hidden" name="UPDATE" value="1">
+      <INPUT type="hidden" name="updated_synonym_zdb_id" value="$current_synonym_zdb_id">
+      <INPUT type="text" name="updated_synonym" size="22" value="$current_synonym">
+      <INPUT type="text" name="updated_synonym_ref" size="22" value="$current_synonym_ref">
+      <INPUT type="submit" value="Update Synonym/Ref">
+      <INPUT type="hidden" name="delete_synonym">
+      <INPUT type="button" value="Delete $current_synonym"
+             onClick="document.update_synonym_$alias_number.delete_synonym.value='1'
+		      document.update_synonym_$alias_number.submit();">
+
+  </FORM>
+
+  <?/MIVAR>
+      </TD>
+    </TR>
+    <?MICOMMENT> -- clear this guy for the next loop -- <?/MICOMMENT>
+    <?MIVAR NAME="current_synonym_ref"><?/MIVAR>
+  <?/MISQL>
+
+  <TR>
+    <TD>
+<?MIVAR>
+  <FORM action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" name="new_anat_synonym" method="get">
+
+      <INPUT type="hidden" name="MIval" value="aa-anatomy_item.apg">
+      <INPUT type="hidden" name="OID" value="$OID">
+      <INPUT type="hidden" name="UPDATE" value="1">
+      <INPUT type="text" name="new_synonym" size="22">
+      <INPUT type="text" name="new_synonym_ref" size="22">
+      <INPUT type="submit" value="New Synonym/Ref">
+   
+  </FORM>
+  <?/MIVAR> 
+    </TD>
+  </TR
+  <TR>
+    <TD>
+      <?MIVAR> 
+      <FORM action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" name="update_definition" method="get">
+         <INPUT type="hidden" name="MIval" value="aa-anatomy_item.apg">
+        <INPUT type="hidden" name="OID" value="$OID">
+        <INPUT type="hidden" name="UPDATE" value="1">
+        <TEXTAREA cols=80 rows=3 name="updated_definition">$item_definition</TEXTAREA>
+        <INPUT type="submit" value="Update Definition">
+	<INPUT type="hidden" name="delete_definition">
+	<INPUT type="button" value="Delete Definition" 
+	   onClick="document.update_definition.delete_definition.value='1';
+		    document.update_definition.submit();">
+     </FORM>
+     <?/MIVAR>
+    </TD>
+  </TR>
+
+<?MICOMMENT> ---- commented out until we make description an lvarchar ----
+  <TR>
+    <TD>
+      <?MIVAR> 
+      <FORM action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" name="update_description" method="get">
+         <INPUT type="hidden" name="MIval" value="aa-anatomy_item.apg">
+        <INPUT type="hidden" name="OID" value="$OID">
+        <INPUT type="hidden" name="UPDATE" value="1">
+        <TEXTAREA cols=80 rows=3 name="updated_description">$item_description</TEXTAREA>
+        <INPUT type="submit" value="Update Description" 
+               onClick="if (document.update_description.updated_description.value = '') {
+		    document.update_description.delete_description = 1;  }  ">
+	<INPUT type="hidden" name="delete_description">
+	<INPUT type="button" value="Delete Description" onClick=" document.update_description.delete_description.value='1';
+					       		          document.update_description.submit();">
+     </FORM>
+     <?/MIVAR>
+    </TD>
+  </TR>
+<?/MICOMMENT>
+
+  <TR>
+    <TD bgcolor="#CCCCCC" ALIGN="right">
+      <?MIVAR>
+      <FORM /<!--|WEBDRIVER_PATH_FROM_ROOT|-->" name="done_updating" method="get">
+	<INPUT type="hidden" name="MIval" value="aa-anatomy_item.apg">
+        <INPUT type="hidden" name="OID" value="$OID">
+	<INPUT type="submit" value="Done Updating">
+      </FORM>
+      <?/MIVAR>
+    </TD
+  </TR>
+</TABLE>
+<?/MIBLOCK>
+<BR>
 <?MIVAR>
   <FONT SIZE=+1><STRONG>Name: <I>$item_name</I> </STRONG><BR> </FONT>
 <?/MIVAR>
 
-<?MIBLOCK COND="$(XST,$UPDATE)">
-<FORM>
-<INPUT type=button value="Update" onClick="
-window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-anatupdateAbbrev&abbrev=' + document.abbrev.anatitem_abbrev.value + '&OID='+oid);
-">
-<?/MIBLOCK>
 
-<?MIBLOCK COND="$(NE,$item_abbrev,NULL)">
+<?MIBLOCK COND="$(AND,$(NE,$item_abbrev,NULL),$(NE,$item_abbrev,))">
    <STRONG>Abbreviation: </STRONG> <?MIVAR>$item_abbrev<?/MIVAR>
 
-
-   <?MIBLOCK COND="$(XST,$UPDATE)">
-     <?MIVAR>
-       <INPUT type=text name="anatitem_abbrev" value="$item_abbrev">
-     <?/MIVAR>
-   </FORM>
-   <?/MIBLOCK>
 <BR>
 <?/MIBLOCK>
 
 <!--------- Display previous names (synonyms, but I stole this code from markerview, 
             really both should be webexploded)        --------------------------------> 
-<?MIVAR COND="$(XST,$UPDATE)">
-  <INPUT TYPE=button 
-    value=Add
-    onClick="doit('dalias_alias','text','Alias','alias')">
-<?/MIVAR> 
+
 
 <?MISQL SQL="
   select dalias_alias, dalias_zdb_id
     from data_alias
     where dalias_data_zdb_id = '$OID' and dalias_group = 'alias';">
   <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
-     <STRONG>Synonymns:</STRONG>
+     <STRONG>Synonyms:</STRONG>
   <?/MIBLOCK>
-
-
-  <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(XST,$UPDATE))">
-    <br><b>Add Reference:</b> 
-    Previous name:<input type=text name=attrib_prevname>	
-    Reference:<input type=text name=attrib_prevname_pubid>
-    <input type=button value="Add" onClick=new_attrib_prevname();> 
-  <?/MIVAR>
-
 
   <?MIVAR NAME=$alias>$1<?/MIVAR>
   <?MIVAR NAME=$aliasId>$2<?/MIVAR>
-  <?MIVAR COND="$(XST,$alias)" NAME=$alias_plus DELIMIT=" " REPLACE="+">$alias<?/MIVAR>
-  <?MIVAR COND="$(XST,$UPDATE)">
-    <br> 
-    <INPUT TYPE=button 
-      value=Delete 
-      onClick="Delete_alias('$alias_plus','$OID')">
-  <?/MIVAR>
-  $(IF,$(AND,$(NXST,$UPDATE),$(>,$MI_CURRENTROW,1)),;) $alias
+
+  $(IF,$(>,$MI_CURRENTROW,1),",") $alias
 
   <?MIBLOCK COND="$(XST,$aliasId)">	
       <?MISQL SQL="select WebExplode(object,'dataId=$aliasId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
   <?/MIBLOCK>
 	
   <?MIBLOCK COND="$(=,$MI_CURRENTROW,$MI_ROWCOUNT)">
-    <BR>
+  
   <?/MIBLOCK>
-<?/MISQL>
 
+<?/MISQL>
+<?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+<BR>
+<?/MIBLOCK>
 <!----------------------------------------------------------------> 
 
 
@@ -159,8 +362,18 @@ window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-anatupda
 <?MICOMMENT> <!-- I'm not sure that this is meaningful to the users.. -->
     <?MIVAR><STRONG>Type: </STRONG> $item_type_code <BR><?/MIVAR> 
 <?/MICOMMENT>
-<br>
 
+
+<?MISQL SQL="SELECT anatitem_definition from anatomy_item where anatitem_zdb_id = '$OID' and anatitem_definition is not null;">
+<STRONG>Definition:</STRONG> $1<BR>
+<?/MISQL>
+
+<?MISQL SQL="SELECT anatitem_description from anatomy_item where anatitem_zdb_id = '$OID' and anatitem_description is not null;">
+<STRONG>Description:</STRONG> $1<BR>
+<?/MISQL>
+
+
+<br>
 <TABLE width="90%">
   <TR>
     <TD bgcolor="#CCCCCC">
@@ -189,14 +402,11 @@ window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-anatupda
 <BR>
 
 <?MISQL SQL="
-	SELECT count (distinct gene.mrkr_abbrev)::Integer
-	FROM expression_pattern_anatomy, expression_pattern, marker as segment, 
-	     marker_relationship, marker as gene
+	SELECT count (distinct mrkr_abbrev)::Integer
+	FROM expression_pattern_anatomy, expression_pattern, marker
 	WHERE xpatanat_anat_item_zdb_id = '$OID'
 	  and xpat_zdb_id = xpatanat_xpat_zdb_id
-	  and xpat_probe_zdb_id = segment.mrkr_zdb_id
-	  and segment.mrkr_zdb_id = mrel_mrkr_2_zdb_id
-	  and mrel_mrkr_1_zdb_id = gene.mrkr_zdb_id
+	  and xpat_gene_zdb_id = mrkr_zdb_id
 ;">
   <?MIVAR NAME=$totalxpats>$1<?/MIVAR>
 <?/MISQL>
@@ -208,7 +418,7 @@ window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-anatupda
      <TD bgcolor="#CCCCCC">
        <?MIVAR>
        <STRONG>Expresses
-       (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselectnew.apg&query_results=true&START=0&WINSIZE=25&selected_structures=$item_name">$totalxpats</A>) 
+       (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name_url&processed_selected_structures=$processed_item_name">$totalxpats</A>) 
 Genes
         <?MIBLOCK COND="$(>,$totalxpats,10)">, first 10: <?/MIBLOCK>
        </STRONG>
@@ -218,16 +428,13 @@ Genes
    <TR>
      <TD bgcolor="#EEEEEE">
 <?MISQL SQL="
-	SELECT FIRST 10 distinct gene.mrkr_abbrev, gene.mrkr_zdb_id, segment.mrkr_abbrev, segment.mrkr_zdb_id, 
-	       xpat_assay_name, xpat_zdb_id, gene.mrkr_abbrev_order
-	FROM expression_pattern_anatomy, expression_pattern, marker as segment, 
-	     marker_relationship, marker as gene
+	SELECT FIRST 10 distinct mrkr_abbrev, mrkr_zdb_id,  
+	       xpat_assay_name, xpat_zdb_id, mrkr_abbrev_order
+	FROM expression_pattern_anatomy, expression_pattern, marker
 	WHERE xpatanat_anat_item_zdb_id = '$OID'
 	  and xpat_zdb_id = xpatanat_xpat_zdb_id
-	  and xpat_probe_zdb_id = segment.mrkr_zdb_id
-	  and segment.mrkr_zdb_id = mrel_mrkr_2_zdb_id
-	  and mrel_mrkr_1_zdb_id = gene.mrkr_zdb_id
-	ORDER BY gene.mrkr_abbrev_order
+	  and xpat_gene_zdb_id = mrkr_zdb_id
+	ORDER BY mrkr_abbrev_order
 ;">
 <?MIVAR NAME="gene_abbrev">$1<?/MIVAR>
 <?MIVAR NAME="gene_zdb_id">$2<?/MIVAR>
@@ -238,7 +445,7 @@ Genes
 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$gene_zdb_id">$gene_abbrev</A>
 <?/MISQL>
 <?MIBLOCK COND="$(>,$totalxpats,10)">
-  <?MIVAR>, <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselectnew.apg&query_results=true&START=0&WINSIZE=25&selected_structures=$item_name"><b>Find all $totalxpats</b></A> <?/MIVAR>
+  <?MIVAR>, <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name_url&processed_selected_structures=$processed_item_name"><b>All ($totalxpats)</b></A> <?/MIVAR>
 <?/MIBLOCK>
       </TD>
     </TR>
@@ -303,14 +510,14 @@ Genes
 <?MISQL SQL="
 	SELECT start.stg_name, start.stg_zdb_id, end.stg_name, 
 	       end.stg_zdb_id, parent.anatitem_zdb_id, parent.anatitem_name,
-	       start.stg_hours_start, end.stg_hours_start
+	       start.stg_hours_start, end.stg_hours_start, parent.anatitem_name_order
 	FROM all_anatomy_contains, stage as start, stage as end, anatomy_item parent
 	WHERE allanatcon_contained_zdb_id = '$OID'
 	  and allanatcon_container_zdb_id = parent.anatitem_zdb_id
 	  and start.stg_zdb_id = parent.anatitem_start_stg_zdb_id
 	  and end.stg_zdb_id = parent.anatitem_end_stg_zdb_id
 	  and allanatcon_min_contain_distance = '1'
-	ORDER BY 7,8
+	ORDER BY 9
 ;">
 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$5">$6</A> &nbsp; 
 <?/MISQL>
@@ -324,14 +531,14 @@ Genes
 <?MISQL SQL="
 SELECT start.stg_name, start.stg_zdb_id, end.stg_name, 
 	       end.stg_zdb_id, child.anatitem_zdb_id, child.anatitem_name,
-	       start.stg_hours_start, end.stg_hours_start
+	       start.stg_hours_start, end.stg_hours_start, child.anatitem_name_order
 	FROM all_anatomy_contains, stage as start, stage as end, anatomy_item child
 	WHERE allanatcon_container_zdb_id = '$OID'
 	  and allanatcon_contained_zdb_id = child.anatitem_zdb_id
 	  and start.stg_zdb_id = child.anatitem_start_stg_zdb_id
 	  and end.stg_zdb_id = child.anatitem_end_stg_zdb_id
 	  and allanatcon_min_contain_distance = '1'
-	ORDER BY 7,8
+	ORDER BY 9
 ;">
 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$5">$6</A> &nbsp; 
 <?/MISQL>
@@ -340,9 +547,7 @@ SELECT start.stg_name, start.stg_zdb_id, end.stg_name,
   </TABLE>
 <!-- end hierarchy relationships -->
 
-
-
-<?MIBLOCK COND="$(EC,$item_name,inner ear)">
+<?MIBLOCK COND="$(EC,pigs,flying)">
 
 <BR>
 
@@ -367,7 +572,7 @@ SELECT start.stg_name, start.stg_zdb_id, end.stg_name,
 
 <?/MIBLOCK>
 
-<?MIBLOCK COND="$(EC,$item_name,inner ear)">
+<?MIBLOCK COND="$(EC,pigs,flying)">
 
 <BR>
 
@@ -442,27 +647,29 @@ Fly
 
 
 <!-- start image relationships -->
-<?MIBLOCK COND="$(EC,pigs,flying)"> 
-<-- I'm leaving this code here because 
-     if there were data, it would work -->
 
 <?MISQL SQL="
 	SELECT count(fimganat_fimg_zdb_id)::integer
 	FROM fish_image_anatomy
 	WHERE fimganat_anat_item_zdb_id = '$OID'
 ;">
-<STRONG> $1 Image(s) </STRONG> <BR>
+<?MIBLOCK COND="$(>,$1,0)">
+<?MIVAR><STRONG> $1 Image(s) </STRONG> <BR><?/MIVAR>
+<?/MIBLOCK>
 <?/MISQL>
 
 <?MISQL SQL="
-	SELECT fimganat_fimg_zdb_id
-	FROM fish_image_anatomy
+	SELECT fimganat_fimg_zdb_id, fimg_thumbnail
+	FROM fish_image_anatomy, fish_image
 	WHERE fimganat_anat_item_zdb_id = '$OID'
+	  and fimganat_fimg_zdb_id = fimg_zdb_id
 ;">
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$1">img</A><BR>
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$1">
+<IMG SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$2&MItypeObj=image/gif">
+</A>
 <?/MISQL>
+<BR>
 
-<?/MIBLOCK>
 
 <!-- end image relatiohsips -->
 
@@ -471,7 +678,7 @@ Fly
 
 <?MISQL SQL="select count(*)::Integer
 	     from publication 
-             where pub_abstract like '%$item_name%';">
+             where pub_abstract like '%$item_name_safe%';">
 <?MIVAR NAME="$pubcount">$1<?/MIVAR>
 <?MIBLOCK COND="$(>,$pubcount,0)">
 <?MIVAR>
