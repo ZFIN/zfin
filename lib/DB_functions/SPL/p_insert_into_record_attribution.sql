@@ -19,6 +19,11 @@ create procedure p_insert_into_record_attribution (vTableZdbId varchar(50),
 
 	define vOk_tableId integer ;
 	define vOk_dataId integer ;
+	define vCuratorPub integer ;
+
+	let vOk_tableId = 0 ;
+	let vOk_dataId = 0 ;
+	let vCuratorPub = 0 ;	
 
 	let vOk_tableId = (select count(*)
 		     		from record_attribution
@@ -45,13 +50,30 @@ create procedure p_insert_into_record_attribution (vTableZdbId varchar(50),
 				and recattrib_source_zdb_id = 
 					vSourceZdbId
 		 	) ;
+
+	 let vCuratorPub = (select count(*) 
+				from publication
+				where zdb_id = vSourceZdbId  
+				and zdb_id in ('ZDB-PUB-020723-1',
+				'ZDB-PUB-040330-1',
+                            	'ZDB-PUB-031118-3',
+				'ZDB-PUB-020724-1')
+			) ;
+
+
 	if vOk_dataId > 0
 
 	then
 	
 	   let vOk_dataId = 1 ;
 
-        else 
+        elif 
+
+	  vCuratorPub > 0
+
+	  then let vOk_dataId = 1 ;
+	
+	else
 		insert into record_attribution (recattrib_data_zdb_id,
 						recattrib_source_zdb_id)
 			values (vDataZdbId, vSourceZdbId) ;
