@@ -57,11 +57,8 @@ include $(TOP)/make.include
 #	support libraries we compile with must match the version
 #	of the JVM this code will be linked into at runtime.
 
-JAVAHOME  = /local/apps/jdk-1.1
 CLASSLIB  = $(JAVAHOME)/lib/classes.zip
-JAVABIN   = $(JAVAHOME)/bin
-JAVAC     = $(JAVABIN)/javac
-JAVAH     = $(JAVABIN)/javah
+JAVAH     = $(JAVAHOME)/bin/javah
 JAVAFLAGS = -g -classpath .:$(CLASSLIB)
 
 

@@ -50,7 +50,7 @@ TARGETDIR = $(TARGETROOT)/client_apps/Browser
 
 # Use the standard JAVAC, and JAVACFLAGS.  Still need to define classpath.
 
-CLASSPATH = .:/private/apps/java/lib/classes.zip:$(TOP)/lib/Java
+CLASSPATH = .:$(JAVAHOME)/lib/classes.zip:$(TOP)/lib/Java
 
 # ---- Java source and class file variables
 
@@ -80,7 +80,7 @@ $(TARGETJAR) : $(JAR)
 	chmod o+r $@
 
 $(JAR) : $(CLASSES) $(IMPORTDIR)
-	/local/apps/jdk-1.1/bin/jar -cvf $(JAR) $(CLASSES) $(IMPORTDIR)
+	$(JAVAHOME)/bin/jar -cvf $(JAR) $(CLASSES) $(IMPORTDIR)
 
 # When any class file needs to be remade, remake all of them.
 

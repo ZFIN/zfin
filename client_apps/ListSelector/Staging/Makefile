@@ -50,7 +50,7 @@ TARGETDIR = $(TARGETROOT)/client_apps/ListSelector
 
 # Use the standard JAVAC, and JAVACFLAGS.  Still need to define classpath.
 
-CLASSPATH = .:/private/apps/java/lib/classes.zip:$(TOP)/lib/Java
+CLASSPATH = .:$(JAVAHOME)/lib/classes.zip:$(TOP)/lib/Java
 
 # ---- Java source and class file variables
 
