@@ -1,0 +1,58 @@
+This file contains any messages produced by compilers while
+running configure, to aid debugging if configure makes a mistake.
+
+configure:555: checking cgienv
+configure:570: checking owner-bounce
+configure:585: checking x-headers
+configure:603: checking for sendmail
+configure:635: checking for gcc
+configure:712: checking whether the C compiler (gcc  ) works
+configure:726: gcc -o conftest    conftest.c  1>&5
+configure:746: checking whether the C compiler (gcc  ) is a cross-compiler
+configure:751: checking whether we are using GNU C
+configure:760: gcc -E conftest.c
+configure:775: checking whether gcc accepts -g
+configure:804: checking how to run the C preprocessor
+configure:825: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:865: checking for ANSI C header files
+configure:878: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:945: gcc -o conftest -g -O2   conftest.c  1>&5
+configure:970: checking for size_t
+configure:1006: checking for sigprocmask
+configure:1034: gcc -o conftest -g -O2   conftest.c  1>&5
+configure:1006: checking for strerror
+configure:1034: gcc -o conftest -g -O2   conftest.c  1>&5
+configure:1059: checking for socket
+configure:1087: gcc -o conftest -g -O2   conftest.c  1>&5
+Undefined			first referenced
+ symbol  			    in file
+socket                              /var/tmp/cckurtua.o
+ld: fatal: Symbol referencing errors. No output written to conftest
+collect2: ld returned 1 exit status
+configure: failed program was:
+#line 1064 "configure"
+#include "confdefs.h"
+/* System header to define __stub macros and hopefully few prototypes,
+    which can conflict with char socket(); below.  */
+#include <assert.h>
+/* Override any gcc2 internal prototype to avoid an error.  */
+/* We use char because int might match the return type of a gcc2
+    builtin and then its argument prototype would still apply.  */
+char socket();
+
+int main() {
+
+/* The GNU C library defines this for functions which it implements
+    to always fail with ENOSYS.  Some functions are actually named
+    something starting with __ and the normal name is an alias.  */
+#if defined (__stub_socket) || defined (__stub___socket)
+choke me
+#else
+socket();
+#endif
+
+; return 0; }
+configure:1107: checking for gethostbyname in -lnsl
+configure:1126: gcc -o conftest -g -O2   conftest.c -lnsl   1>&5
+configure:1154: checking for socket in -lsocket
+configure:1173: gcc -o conftest -g -O2   conftest.c -lsocket  -lnsl  1>&5

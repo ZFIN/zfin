@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+  <TITLE>Test cgiemail @CGIEMAIL_RELEASE@</TITLE>
+</HEAD>
+<BODY>
+
+<h1>Test cgiemail @CGIEMAIL_RELEASE@</h1>
+
+<p>This page doubles as a test for cgiemail and a feedback mechanism as
+to how long it takes to get cgiemail up and running.  If you don't want
+to send the feedback to cgiemail@mit.edu, then uncheck the box
+below.</p>
+
+
+<FORM method="POST" action="/cgi-bin/cgiemail/testce.txt">
+
+<INPUT TYPE="hidden" NAME="cgiemail-mailopt" VALUE="sync">
+
+<p>This information will be sent to
+<ul>
+  <li><INPUT TYPE="checkbox" name="cgiemail" VALUE="cgiemail@mit.edu"
+      CHECKED> cgiemail@mit.edu
+  <li>Your address: <INPUT NAME="required-webmaster">
+</ul></p>
+
+<p>Variant of Unix used: <INPUT NAME="os"
+VALUE="@CGIEMAIL_PLATFORM@"></p>
+
+<p>Release built: <INPUT NAME="required-release" size=6
+VALUE="@CGIEMAIL_RELEASE@"></p>
+
+<p>How many minutes ago did you download cgiemail? <input name="min"
+size=4></p>
+
+<p>
+
+<p>Include any comments here.  If it took more than 20 minutes from
+download to testing, please say what was most time-consuming.
+<TEXTAREA WRAP=PHYSICAL NAME="comments" ROWS=5 COLS=60></TEXTAREA>
+</p>
+
+<p><INPUT TYPE="checkbox" name="listme" VALUE=" ** LIST ON ISP PAGE **">
+List this site on <a
+href="http://web.mit.edu/wwwdev/cgiemail/isp.html">the cgiemail ISP
+page</a>.</p>
+
+<p>Site name: <INPUT NAME="isp" size=40></p>
+
+<p>URL: <INPUT NAME="url" size=40></p>
+
+You should be able to <INPUT TYPE="submit" VALUE="send mail"> now, or
+<INPUT TYPE="reset" VALUE="reset this form"> if you want to start over.
+
+</FORM>
+
+<hr>
+<address><a href="http://web.mit.edu/wwwdev/cgiemail/">cgiemail</a>
+&lt;cgiemail@mit.edu&gt;</address>
+</BODY>
+</HTML>

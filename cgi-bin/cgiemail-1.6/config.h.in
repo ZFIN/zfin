@@ -1,0 +1,28 @@
+/* config.h.in.  Generated automatically from configure.in by autoheader.  */
+
+/* Define to `unsigned' if <sys/types.h> doesn't define.  */
+#undef size_t
+
+/* Define if you have the ANSI C header files.  */
+#undef STDC_HEADERS
+
+/* Define if you want to enable use of environment variables.  */
+#undef ENABLE_CGIENV
+
+/* Define to attempt to send bounces to owner of template file.  */
+#undef ENABLE_OWNER_BOUNCE
+
+/* Define if you want to enable the X-Mailer header.  */
+#undef ENABLE_XHEADERS
+
+/* Define if you have the sigprocmask function.  */
+#undef HAVE_SIGPROCMASK
+
+/* Define if you have the strerror function.  */
+#undef HAVE_STRERROR
+
+/* Define if you have the nsl library (-lnsl).  */
+#undef HAVE_LIBNSL
+
+/* Define if you have the socket library (-lsocket).  */
+#undef HAVE_LIBSOCKET

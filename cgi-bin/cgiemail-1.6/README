@@ -1,0 +1,371 @@
+Copyright 1994, 1995, 1996, 1997 by the Massachusetts Institute of
+Technology.  For copying and distribution information, please see the
+file mit-copyright.h
+
+Complete information on building, installing and using cgiemail is
+available on the WWW:
+
+	http://web.mit.edu/wwwdev/cgiemail/
+
+This information is not distributed with cgiemail in order to prevent
+proliferation of out-of-date documents.  The documents are frequently
+updated for clarity, and any version-specific features are prominently
+labeled as such.
+
+In case the URL above becomes inaccessible, here are quick instructions
+for building and installing.  Type:
+
+	./configure
+	make
+
+Then copy cgiemail and cgiecho into your cgi-bin directory.
+
+Here is a dump of documenation on how to use it as of October 1997.
+The up-to-date version is:
+	http://web.mit.edu/wwwdev/cgiemail/user.html
+
+
+                            The cgiemail user guide
+                                       
+   This guide will help you write a WWW form that sends an e-mail message
+   to you. The following steps are required:
+   
+    1. [1]Create an e-mail template.
+    2. [2]Put a link to the template on your page.
+    3. [3]Decide if a mailto: link will do.
+    4. [4]Create the HTML form.
+    5. [5]Create more advanced HTML forms.
+    6. [6]Make sure the ACTION is correct.
+    7. [7]Try out your form with cgiecho.
+    8. [8]Go live with cgiemail.
+    9. [9]Debug if you don't get mail
+       
+   The following steps are optional.
+     * [10]Add text to the success page.
+     * [11]Use an alternate success page.
+     * [12]Make some inputs required.
+     * [13]Specify formatting for some inputs.
+     * [14]Use CGI environment variables.
+       
+1. Create an e-mail template.
+
+   Before you start receiving e-mail messages through the web, you should
+   decide what these messages should look like. Create an ASCII file,
+   called an e-mail template, that looks something like this:
+   
+To: strangeman@chasm.big                          HEADER LINES
+Subject: questions three
+                                                  blank line
+What is your name?              [yourname]
+What is your quest?             [quest]           BODY
+What is your favourite colour?  [colour]
+
+   In one sense, this template is free-form. People who want to send you
+   e-mail can download this template, fill it out, and mail it to you.
+   However, the template will also be used by the cgiemail program, so
+   before you upload the file to your WWW server, be careful to follow
+   these guidelines:
+   
+    1. Wherever you want the user of your form to supply information, use
+       a single word inside square brackets with no spaces, e.g. Your
+       name: [yourname]. Not [Put your name here].
+    2. Make sure the address in the To: field is correct.
+    3. If there are blank lines among the header lines, remove them.
+    4. If there are blank lines before the header lines, remove them.
+    5. Make sure all your header lines are valid. The first character on
+       the line must be a letter. Most information should go in the
+       message body; don't make up your own headers.
+    6. Make sure there is a blank line between the header lines and the
+       body.
+    7. Make sure you save it as ASCII text. For example, if you are using
+       Microsoft Word, use "Save As" and choose "Text Only with Line
+       Breaks."
+    8. If you created the file on a Mac, be sure to upload it as text,
+       i.e. CR's translated. (Unix computers have different codes
+       denoting the end of a line than Mac's do, so your file might look
+       like one long line to the Unix computer.)
+       
+   Within these guidelines there is a lot of flexibility. You can put
+   Bcc:, X-Face:, or any other header in the headers. You can put things
+   like Cc: [yourname] in the headers. Be creative. Just don't put
+   anything in there you wouldn't want your webmaster to see, because
+   that's where [15]bounced messages go.
+   
+   Now go ahead and upload your e-mail template to the WWW server and
+   look at it with your WWW browser.
+   
+2. Put a link to the template on your page.
+
+   Here's an example:
+   
+     Would you like to cross the bridge? Download my [16]"questions
+     three" form and send it to [17]<strangeman@chasm.big>.
+     
+   Even after you create your WWW form, you will want to leave this link
+   in to increase [18]accessibility to users with disabilities.
+   
+3. Decide if a mailto: link will do.
+
+   Already, without any complicated HTML, you have a way for people on
+   the WWW to send you the information you want. Before you go to the
+   effort of making an HTML form, decide if it's really worth it. Forms
+   on the WWW have two particular disadvantages:
+    1. You will get a lot of frivolous e-mail from people who are merely
+       ``surfing the web.''
+    2. The user's e-mail address is typed manually, and is often
+       mistyped, so that you have no way to reply. This is less of a
+       problem with mailto: links.
+       
+4. Create the HTML form.
+
+   If you've decided to create an HTML form, you need to give people a
+   way to supply an e-mail address. With the mailto: link, their mailer
+   would supply the From: address for them. But now you need to add a
+   line to the top of your e-mail [19]template like this:
+   
+     From: [email]
+     
+   Here is an example HTML form.
+   
+     Your e-mail address: ____________________
+     
+     Your name: ____________________
+     
+     Your quest: ____________________
+     
+     Your favourite colour: ____________________
+     
+     Send e-mail (This example doesn't actually send e-mail.)
+     _________________________________________________________________
+   
+   This is the HTML source:
+   
+<FORM METHOD="POST"
+ ACTION="http://web.mit.edu/bin/cgiecho/wwwdev/cgiemail/questions3.txt">
+
+Your e-mail address: <INPUT NAME="email"><p>
+Your name: <INPUT NAME="yourname"><p>
+Your quest: <INPUT NAME="quest"><p>
+Your favourite colour: <INPUT NAME="colour"><p>
+<INPUT TYPE="submit" value="Send e-mail">
+</FORM>
+
+   This is a very simple example. Note that the NAME of each input
+   corresponds to what you previously put in the e-mail template. In this
+   example they are email, yourname, quest, and colour. This is the key
+   concept in using cgiemail. Be careful to make them exactly the same;
+   if you put NAME="colour" in your HTML form and [color] (note the
+   spelling difference) in your e-mail template, the input will not show
+   up in the e-mail.
+   
+5. Create more advanced HTML forms.
+
+   To learn to create more complicated forms, read [20]NCSA's guide. All
+   of their example forms can be converted to cgiemail forms merely by
+   changing the ACTION. Unlike other forms-to-email programs, you are not
+   required to use hidden inputs with special names.
+   
+   All types of inputs (radio buttons, etc.) work the same way. Each
+   input needs a NAME, and that name must appear within square brackets
+   in your e-mail template. It's that simple. To get more ideas, see
+   [21]the cgiemail example page.
+   
+6. Make sure the ACTION is correct.
+
+   The trickiest part of the HTML form is getting the ACTION set
+   correctly. Start with the URL of your e-mail template, then split it
+   into two parts, e.g.
+
+http://web.mit.edu/wwwdev/cgiemail/questions3.txt
+\                /\                             /
+ `--- Part 1 ---'  ` -------- Part 2 ----------'
+
+   Then you put the script name in the middle. Usually this is
+   ``/cgi-bin/cgiecho'', but it depends on how your server is configured.
+   On web.mit.edu it happens to be ``/bin/cgiecho'', thus my ACTION looks
+   like this:
+
+http://web.mit.edu/bin/cgiecho/wwwdev/cgiemail/questions3.txt
+\                /\          /\                             /
+ `--- Part 1 ---'  script name ` -------- Part 2 ----------'
+
+   For simplicity, you may leave out part 1, but you must include it if
+   you want to test your form as a local file. If you don't know what
+   that means, just feel free to omit part 1.
+   
+7. Try out your form with cgiecho.
+
+   Pop your form into your favorite WWW browser, fill in the inputs, and
+   submit it. You should see what the processed form looks like. If
+   instead you see an error with a number near 500, your ACTION is
+   probably set wrong. Go back to the [23]previous step.
+   
+   If some of your inputs don't seem to be showing up in the processed
+   form, make sure that the inputs have the exact same names in the HTML
+   form as in the ASCII template. E.g. NAME="yourname" in the HTML form
+   and [yourname] in the e-mail template.
+   
+8. Go live with cgiemail.
+
+   Now change cgiecho to cgiemail in the ACTION of your HTML form. Try it
+   out. You should receive an e-mail message with the processed form. If
+   you get a success page but don't receive mail, there is some problem
+   with your template file. Go back and make sure you correctly followed
+   the guidelines in [24]step 1.
+   
+   If it works, congratulations!
+   
+9. Debug if you don't get mail
+
+   Normally, mail gets sent asynchronously, meaning it goes into a queue
+   to be sent at at a convenient time. Asynchronous mail is sent more
+   efficiently and reliably, but has the disadvantage that problems can
+   only be reported by mailing an error message back to the sender. To
+   the mail system, it appears that the sender of the mail is the web
+   server, so the error message won't get to you.
+   
+   If you aren't getting mail, you can temporarily use synchronous mail
+   delivery by creating a hidden input named cgiemail-mailopt and giving
+   it a value containing "sync", e.g.
+
+<INPUT TYPE="hidden" NAME="cgiemail-mailopt" VALUE="sync">
+
+   Note: For release 1.1, this won't work. Ask your webmaster to install
+   a newer release. Some mailers have a nonstandard extension that sends
+   bounces to an address in an Errors-To: header in addition to the web
+   server. However, some errors make this header line unreadable, so
+   there's no way to make absolutely sure the bounce will go to you.
+   
+Optional: Add text to the success page.
+
+   When mail is sent, a page titled ``Success'' appears with the text of
+   the e-mail message. You may use a hidden variable called ``addendum''
+   to add your own text. Here is a simple example:
+
+<INPUT TYPE="hidden" NAME="addendum" VALUE="Thank you!">
+
+   If you are willing to assume that readers of your form are using
+   recent browser software like [25]Lynx 2.6 or Netscape 3.0, then you
+   may put HTML markup into this variable using the appropriate
+   [26]character entities. For example, if you wanted to add
+   
+     Thank you!
+     
+   then the HTML markup would be
+   
+     <em>Thank you!</em>
+     
+   meaning you would need the following in your form:
+   
+<INPUT TYPE="hidden" NAME="addendum"
+ VALUE="&lt;em&gt;Thank you!&lt;/em&gt;">
+
+   Note that besides being difficult to write, this feature won't work
+   for people using older browser software.
+   
+Optional: Use an alternate success page.
+
+   If you don't like the default page that comes up when email is
+   successfully sent, you can specify an alternate URL using a hidden
+   variable called ``success'' in your HTML form, e.g.
+
+<INPUT TYPE="hidden" NAME="success" VALUE="http://web.mit.edu/">
+
+   Note: Start your URL with / or with http://. Otherwise cgiemail will
+   direct your browser to a second invocation of cgiemail, resulting in
+   the error No variable substitutions.
+   
+   As of release 1.3, there is no way to make this alternate success page
+   contain information the user submitted in the form. This feature is
+   likely to be added in a [27]future release.
+   
+Optional: Make some inputs required.
+
+   If you would like to automatically reject forms with certain inputs
+   left blank, add the prefix ``required-'' to the name of the input in
+   both your HTML form and your e-mail template. Here is an example:
+   
+   In the HTML form:
+   
+Your name: <INPUT NAME="required-yourname">
+
+   In the e-mail template
+   
+Your name:      [required-yourname]
+
+Optional: Specify formatting for some inputs.
+
+   If, in your e-mail template, the text inside square brackets begins
+   with %, cgiemail will use the printf() function in C on the field name
+   after the comma. If you're not familiar with this function, look in a
+   book on C. If you are familiar with it, please note these two
+   differences:
+   
+    1. The first character in the format string must be %.
+    2. Characters like \n and \t must be literal. If you want a newline,
+       you have to put a newline just before the comma, even though this
+       looks strange. For example, if [28]Godzilla's Pizza wanted
+       toppings listed one per line, they would put the following in
+       their e-mail template:
+
+ [%s
+,topping]
+       
+Optional: Use CGI environment variables.
+
+   This feature may or may not work, depending on whether or not your
+   webmaster enabled it when [29]configuring cgiemail.
+   
+   In addition to form inputs, your e-mail template can include [30]CGI
+   environment variables simply by preceding the variable's name with a
+   dollar sign. For example,
+
+        [$HTTP_USER_AGENT]
+
+   will put the name of the user's browser and/or gateway in your e-mail
+   message. In order to be respectful of privacy, your HTML form should
+   warn users about any information about them that will be included in
+   the e-mail, e.g. HTTP_USER_AGENT, REMOTE_ADDR.
+     _________________________________________________________________
+   
+   
+    [31]cgiemail <cgiemail@mit.edu>
+    
+   Last modified: Wed Oct 22 12:11:00 EDT 1997
+   
+   [32]HTML 3.2 Checked!
+
+References
+
+   1. http://web.mit.edu/wwwdev/cgiemail/user.html#template
+   2. http://web.mit.edu/wwwdev/cgiemail/user.html#link
+   3. http://web.mit.edu/wwwdev/cgiemail/user.html#mailto
+   4. http://web.mit.edu/wwwdev/cgiemail/user.html#form
+   5. http://web.mit.edu/wwwdev/cgiemail/user.html#advanced
+   6. http://web.mit.edu/wwwdev/cgiemail/user.html#action
+   7. http://web.mit.edu/wwwdev/cgiemail/user.html#cgiecho
+   8. http://web.mit.edu/wwwdev/cgiemail/user.html#go
+   9. http://web.mit.edu/wwwdev/cgiemail/user.html#debug
+  10. http://web.mit.edu/wwwdev/cgiemail/user.html#addendum
+  11. http://web.mit.edu/wwwdev/cgiemail/user.html#success
+  12. http://web.mit.edu/wwwdev/cgiemail/user.html#required
+  13. http://web.mit.edu/wwwdev/cgiemail/user.html#printf
+  14. http://web.mit.edu/wwwdev/cgiemail/user.html#cgienv
+  15. http://web.mit.edu/wwwdev/cgiemail/user.html#bounce
+  16. http://web.mit.edu/wwwdev/cgiemail/questions3.txt
+  17. mailto:strangeman@chasm.big
+  18. http://www.trace.wisc.edu/text/guidelns/htmlgide/htmlgide.htm#input.forms
+  19. http://web.mit.edu/wwwdev/cgiemail/user.html#template
+  20. http://www.ncsa.uiuc.edu/SDG/Software/Mosaic/Docs/fill-out-forms/overview.html
+  21. http://web.mit.edu/wwwdev/cgiemail/example.html
+  22. http://web.mit.edu/wwwdev/cgiemail/questions3.txt
+  23. http://web.mit.edu/wwwdev/cgiemail/user.html#action
+  24. http://web.mit.edu/wwwdev/cgiemail/user.html#template
+  25. http://www.nyu.edu/pages/wsn/subir/lynx.html
+  26. http://www.w3.org/pub/WWW/MarkUp/html-spec/html-spec_9.html#SEC9.7
+  27. http://web.mit.edu/wwwdev/cgiemail/webmaster.html#releases
+  28. http://www.ncsa.uiuc.edu/SDG/Software/Mosaic/Docs/fill-out-forms/example-3.html
+  29. http://web.mit.edu/wwwdev/cgiemail/webmaster.html#install
+  30. http://hoohoo.ncsa.uiuc.edu/cgi/env.html
+  31. http://web.mit.edu/wwwdev/cgiemail/index.html
+  32. http://ugweb.cs.ualberta.ca/~gerald/validate/

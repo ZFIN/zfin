@@ -1,0 +1,160 @@
+Tue Apr 14 17:01:07 1998  Bruce R. Lewis  <brlewis@MIT.EDU>
+
+	* configure.in: release 1.6
+
+Wed Feb  4 17:09:59 1998  Bruce R. Lewis  <brlewis@MIT.EDU>
+
+	* cgilib.c: add code to make sure incoming.txt (for cgifile) is
+ 	not a link
+
+	* cgilib.c: don't use P_tmpdir if it's not defined
+
+Mon Jan 26 14:53:17 1998  Bruce R. Lewis  <brlewis@MIT.EDU>
+
+	* Makefile.in: compile cgifile by default
+
+	* cgilib.c: do right thing on error with success/failure template
+ 	divide error information better between errmsg and errinfo
+	fix parallel_file bug (found by Ed Orcutt)
+
+Mon Oct 27 14:39:27 1997  Bruce R. Lewis  <brlewis@MIT.EDU>
+
+	* cgilib.c: support --enable-owner-bounce configuration
+
+	* cgilib.c: eat leading whitespace from template
+	better error reporting re. temporary file
+
+Fri Oct 24 16:12:39 1997  Bruce R. Lewis  <brlewis@MIT.EDU>
+
+	* cgifile.c: cgifile support
+
+	* cgilib.c: add support for %U - URL formatting
+	(already added %H - HTML formatting)
+
+Thu Oct 23 16:14:46 1997  Bruce R. Lewis  <brlewis@MIT.EDU>
+
+	* cgilib.c: bugfix: get correct exit status of sendmail
+
+	* cgilib.c: allow for "special" variables
+
+	* cgilib.c: customized success/failure messages using form input
+ 	values
+
+Wed Oct 22 16:36:44 1997  Bruce R. Lewis  <brlewis@MIT.EDU>
+
+	* cgilib.c: only do required- check from template (better for
+ 	multiple same-name inputs)
+	translate CR or CRLF to LF when filling out template
+
+Wed Jul 23 09:55:11 1997  Bruce R. Lewis  <brlewis@MIT.EDU>
+
+	* cgilib.c: add command to error message for failed popen
+
+Thu Jul 10 10:21:52 1997  Bruce R. Lewis  <brlewis@MIT.EDU>
+
+	* cgi.h.in: change required prefix because javascript doesn't like
+ 	dashes.  Now just has to start with "required", which can be
+	followed by a dash, underscore, or whatever.
+
+Thu May 29 14:34:29 1997  Bruce R. Lewis  <brlewis@MIT.EDU>
+
+	* configure.in: work around NetBSD /bin/sh bug that affects
+ 	AC_PATH_PROG
+
+	* cgilib.c: add x-headers support
+
+	* configure.in: enable cgienv by default
+ 	add --enable-x-headers option
+
+Tue May 13 12:06:34 1997  Bruce R. Lewis  <brlewis@MIT.EDU>
+
+	* Makefile.in: cso head/foot files now live where mbwall wants
+ 	them
+
+	* csoget.c: remove redundant code
+	add ifdef'ed main() for debugging
+
+	* cgilibcso.c: do all appropriate hyperlinks
+ 	cosmetic changes
+
+Fri Dec  6 12:54:16 1996  Bruce R. Lewis  <brlewis@MIT.EDU>
+
+	* configure.in: Set SENDMAIL_PATH to "sendmail" if explicit path
+ 	not found.
+
+	* cgilib.c: fix invalid html
+ 	handle unset PATH_TRANSLATED better
+
+Thu Oct  3 16:03:28 1996  Bruce R. Lewis  <brlewis@MIT.EDU>
+
+	* cgicso: cosmetic changes to search results
+
+Wed Jul 24 16:50:39 1996  Bruce R. Lewis  <brlewis@MIT.EDU>
+
+	* Makefile.in: use more conventional release name
+
+	* cgilib.c: put release tag on success/failure pages
+ 	hopefully handle systems w/o sigprocmask()
+
+	* cgilib.c: check for read() error (client went away)
+	solve problem of pclose() returning -1 with ECHILD
+
+Mon Jul 22 17:19:04 1996  Bruce R. Lewis  <brlewis@MIT.EDU>
+
+	* cgilib.c: handle required checkboxes properly
+ 	use autoconf for sendmail path
+ 	safer variable name: mypipe (not pipe)
+
+Tue Aug 22 17:23:21 1995  Bruce R. Lewis  <brlewis@MIT.EDU>
+
+	* cgilibcso.c: add URL hack - make url: field into hyperlink
+
+	* cgilib.c: fix non-rfc822-compliance in Received header
+
+Thu Apr 20 17:48:34 1995  Bruce R. Lewis  <brlewis@MIT.EDU>
+
+	* Makefile.in: added "register" target to report a successful
+        build
+
+	* cgilib.c: check for malloc() returning 0
+
+Sat Feb 25 10:17:38 1995  Bruce R. Lewis  <brlewis@MIT.EDU>
+
+	* mkcmtform.1: added note indicating use outside of Athena is most
+        likely unnecessary
+
+Tue Feb 21 15:19:55 1995  Bruce R. Lewis  <brlewis@MIT.EDU>
+
+	* cgilib.c: handle environment variables
+
+	* Makefile.in: make dist create tarfile that untars into subdir
+
+	* cgilib.c: added debug-source input. cleaned up strerror()
+	handling. workaround for ECHILD bug on some OS's. fixed bug that
+	truncated long textarea inputs
+
+Tue Feb 14 16:09:31 1995  Bruce R. Lewis  <brlewis@MIT.EDU>
+
+	* cgilib.c: be more strict about blank required fields - use
+        isgraph()
+
+Sat Feb  4 15:18:43 1995  Bruce R. Lewis  <brlewis@MIT.EDU (Bruce R. Lewis)>
+
+	* cgilibcso.c: fall back on title if neither dept or year
+        available (e.g. ves*@mitdir)
+
+	* Makefile.in: make cgicso compile last, since it's the least
+        useful to outside MIT
+
+	* cgilib.c: removed temp variable from cgi_output_value
+
+Sat Feb  4 15:05:28 1995  Bruce R. Lewis  <brlewis@MIT.EDU>
+
+	* cgilib.c: changes to allow formatted output,
+	e.g. [%-10s,varname]
+	from Karl Schricker <karl@erlking.corp.hp.com>
+
+Wed Jan 31 12:57:01 1995  Bruce R. Lewis  <brlewis@MIT.EDU>
+
+	* Makefile.in: include README in dist
+

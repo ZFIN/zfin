@@ -1,0 +1,75 @@
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(cgiemail.c)
+
+dnl Release Version
+CGIEMAIL_RELEASE=1.6
+AC_SUBST(CGIEMAIL_RELEASE)
+
+dnl Crude Platform Information
+CGIEMAIL_PLATFORM=`uname -sr`
+AC_SUBST(CGIEMAIL_PLATFORM)
+
+dnl options to compile with
+AC_ARG_ENABLE(cgienv,
+[  --disable-cgienv        turn off handling of CGI environment variables])
+AC_ARG_ENABLE(owner-bounce,
+[  --enable-owner-bounce   attempt to send bounces to owner of template file])
+AC_ARG_ENABLE(x-headers,
+[  --disable-x-headers     turn off the X-Mailer header])
+
+AC_MSG_CHECKING(cgienv)
+case "$enable_cgienv" in
+	"no")
+		AC_MSG_RESULT(no)
+		;;
+	*)
+		AC_DEFINE(ENABLE_CGIENV)
+		AC_MSG_RESULT(yes)
+		;;
+esac
+
+AC_MSG_CHECKING(owner-bounce)
+case "$enable_owner_bounce" in
+	"yes")
+		AC_DEFINE(ENABLE_OWNER_BOUNCE)
+		AC_MSG_RESULT(yes)
+		;;
+	*)
+		AC_MSG_RESULT(no)
+		;;
+esac
+
+AC_MSG_CHECKING(x-headers)
+case "$enable_x_headers" in
+	"no")
+		AC_MSG_RESULT(no)
+		;;
+	*)
+		AC_DEFINE(ENABLE_XHEADERS)
+		AC_MSG_RESULT(yes)
+		;;
+esac
+
+dnl Checks for programs.
+SENDMAIL_LOCATIONS=/usr/sbin:/usr/lib:$PATH
+AC_PATH_PROG(SENDMAIL_PATH, sendmail, sendmail, $SENDMAIL_LOCATIONS)
+AC_PROG_CC
+
+dnl Checks for header files.
+AC_HEADER_STDC
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+AC_TYPE_SIZE_T
+
+dnl Checks for library functions.
+AC_CHECK_FUNCS(sigprocmask strerror)
+AC_CHECK_FUNC(socket,
+	: found - no need to add libraries
+      ,
+	: not found - probably Solaris
+	AC_CHECK_LIB(nsl,gethostbyname)
+	AC_CHECK_LIB(socket,socket)
+     )
+
+AC_CONFIG_HEADER(config.h)
+AC_OUTPUT(cgi.h Makefile testce.html)
