@@ -118,16 +118,16 @@ Variables expected:
 	  <hr>
 	  <TABLE cols=2>
 	  <TR><TH></TH><TH>Marker Name</TH><TH>Marker Type</TH></TR>
-	    <?MISQL SQL="select distinct zdb_id,mname,mtype,abbrev 
-	       from all_markers a, all_map_names b
-		 where a.mtype='$mtype' 
-		   and a.zdb_id = b.allmapnm_zdb_id 
+	    <?MISQL SQL="select distinct mrkr_zdb_id,mrkr_name,mrkr_type,mrkr_abbrev 
+	       from marker a, all_map_names b
+		 where a.mrkr_type='$mtype' 
+		   and a.mrkr_zdb_id = b.allmapnm_zdb_id 
 		   and b.allmapnm_name like '%$(LOWER,$merge)%' 
-		   order by a.abbrev;">
+		   order by a.mrkr_abbrev;">
 	  <TR>
 	    <TD>
               <?MIVAR>
-	        <input type=button value="Select" onClick= set_values('$1','$(URLENCODE,$2)') ;">
+	        <input type=button value="Select" onClick= set_values('$1','$(URLENCODE,$2)') ;>
               <?/MIVAR>
 	    </TD>
 	    <TD>
@@ -154,7 +154,7 @@ Variables expected:
 		   order by a.allele;">
 	       <TR>
 		 <TD>
-		   <input type=button name=merge_selected value="Select" onClick= set_values('$1','$(URLENCODE,$2)') ;">
+		   <input type=button name=merge_selected value="Select" onClick= set_values('$1','$(URLENCODE,$2)') ;>
 		 </TD>
 		 <TD>
 		   $2 
@@ -179,7 +179,7 @@ Variables expected:
 		   order by abbrev;">
 	       <TR>
 		 <TD>
-		   <input type=button name=merge_selected value="Select" onClick= set_values('$1','$(URLENCODE,$2)') ;">	 
+		   <input type=button name=merge_selected value="Select" onClick= set_values('$1','$(URLENCODE,$2)') ;>	 
                  </TD>
 		 <TD>
 		   $2 

@@ -56,7 +56,7 @@ VARIABLES EXPECTED:
             <?MIVAR NAME=$old_name>$1<?/MIVAR>          
           <?MIELSE>
 	    <?MISQL SQL="
-	       select mname from all_markers where zdb_id = '$OID';">
+	       select mrkr_name from marker where zdb_id = '$OID';">
 	    <?/MISQL>
             <?MIVAR NAME=$old_name>$1<?/MIVAR>
           <?/MIBLOCK>
@@ -78,6 +78,26 @@ VARIABLES EXPECTED:
 	  <?MISQL SQL="
             update primer_set set marker_id = '$merge_oid' where marker_id = '$OID';">
           <?/MISQL>
+
+	  <!-- update marker_go_term for id that is being replaced -->
+  	  <?MISQL SQL="
+	    select mrkrgo_go_term_zdb_id 
+	      from marker_go_term
+	     where mrkrgo_mrkr_zdb_id = '$merge_oid'
+	      into temp tmp_marker_go_term; 
+ 			
+            update marker_go_term set mrkrgo_mrkr_zdb_id = '$merge_oid' 
+                                where mrkrgo_mrkr_zdb_id = '$OID'
+                                  and mrkrgo_go_term_zdb_id not in (
+					select *
+					  from tmp_marker_go_term
+					);
+	    drop table tmp_marker_go_term;	  
+                    ">
+          <?/MISQL>
+
+	
+
 	  <!-- update independent linkage for id that is being replaced --> 
 	  <!-- The "set explain off" is required to avoid a bug with the -->
 	  <!-- "set constraints" statement below.  The "set explain" statement was  -->
@@ -102,7 +122,9 @@ VARIABLES EXPECTED:
 	      where zactvd_zdb_id = '$OID';">
 	  <?/MISQL>
 	  <?MISQL SQL="
-	    insert into zdb_replaced_data values('$OID','$merge_oid','$old_name');">
+	    insert into zdb_replaced_data 
+		(zrepld_old_zdb_id, zrepld_new_zdb_id, zrepld_old_name)
+	     values('$OID','$merge_oid','$old_name');">
 	  <?/MISQL>
        <?/MIBLOCK>
 
@@ -137,7 +159,9 @@ VARIABLES EXPECTED:
 	      where zactvd_zdb_id = '$OID';">
 	  <?/MISQL>
 	  <?MISQL SQL="
-	    insert into zdb_replaced_data values('$OID','$merge_oid','$old_name');">
+	    insert into zdb_replaced_data 
+               (zrepld_old_zdb_id, zrepld_new_zdb_id, zrepld_old_name)
+             values('$OID','$merge_oid','$old_name');">
 	  <?/MISQL>
       <?/MIBLOCK>
 
