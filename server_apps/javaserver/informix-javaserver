@@ -1,8 +1,5 @@
 #!/bin/sh
 #
-# $Source$
-# $Id$
-#
 # A script to start up the Java server for Illustra
 # ted Feb. 28, 1998.
 # Hacked on by clif 12/23/99
@@ -14,7 +11,7 @@
 # Use the /usr filesystem so that we are assured it is mounted when 
 # this script is run in rc3.d
 
-JAVA_DIR=/private/apps/java
+JAVA_DIR=/private/apps/java1.1
 
 SERVER_HOME=<!--|JAVASERVER_PATH|-->
 cd $SERVER_HOME
