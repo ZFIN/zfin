@@ -45,19 +45,6 @@ function add_part(item_name) {
       self.opener.critform.TA_selected_structures.value = current + item_name;
 }
 
-function do_submit() {
-  
-  if ((document.dictform.mode.value == 'stages') &&
-      (document.dictform.structures.checked != true) &&
-      (document.dictform.systems.checked != true) &&
-      (document.dictform.processes.checked != true)) {
-    alert("You've unchecked the Structures, Processes and Systems checkboxes.\nTo get results, at least one must be checked");
-  } else {
-    document.dictform.submit();
-  }
-}
-
-    
 function updateParent(AOname, AOid) {
   if (opener == null) opener = self;
   var terms = opener.document.structure2.xpcur_G_structure_add_name.value;
@@ -138,7 +125,7 @@ function updateParent(AOname, AOid) {
 	    	<?MIVAR COND="$(XST,$searchterm)"> value="$searchterm" <?/MIVAR>
           >
           <INPUT type="button" value="Search" onclick="document.dictform.mode.value='search';
-						 do_submit();">
+						 document.dictform.submit();">
 	<?/MIBLOCK>
       </TD>
     </TR>
@@ -303,17 +290,6 @@ function updateParent(AOname, AOid) {
               </TABLE>
 	      <HR width=500 size=1 noshade align=left>
 
-	      <?MIVAR NAME="$type_code"><?/MIVAR>
-	      <?MIVAR NAME="$type_code" COND="$(AND,$(XST,$structures),$(EC,$structures,on))">
-		 'ST'
-	      <?/MIVAR>
-	      <?MIVAR NAME="$type_code" COND="$(AND,$(XST,$processes),$(EC,$processes,on))">
-		 $type_code $(IF,$(NE,$type_code,),",") 'PR'  
-	      <?/MIVAR>
-	      <?MIVAR NAME="$type_code" COND="$(AND,$(XST,$systems),$(EC,$systems,on))">
-		 $type_code $(IF,$(NE,$type_code,),",") 'FS'  
-	      <?/MIVAR>
-	      <?MIVAR NAME="$type_code" COND="$(NE,$type_code,)">and anatitem_type_code IN ( $type_code )<?/MIVAR>
 
 	      <TABLE BORDER=0 WIDTH=100%>
 		<TR>
@@ -322,13 +298,12 @@ function updateParent(AOname, AOid) {
 		    <?MISQL SQL="
 		      select anatdisp_item_name, anatdisp_item_zdb_id, anatdisp_seq_num,
 			     anatdisp_indent, anatitem_abbrev, anatstat_synonym_count
-		      from   anatomy_display, anatomy_item, anatomy_stats
-		      where  anatitem_zdb_id = anatdisp_item_zdb_id
-			     and anatitem_zdb_id = anatstat_anatitem_zdb_id
-			     and anatstat_object_type = 'GENE'
-			     and anatdisp_indent <= '$resolution'
-			     and anatdisp_stg_zdb_id = '$OID' 
-			     $type_code
+		        from anatomy_display, anatomy_item, anatomy_stats
+		       where anatitem_zdb_id = anatdisp_item_zdb_id
+			 and anatitem_zdb_id = anatstat_anatitem_zdb_id
+			 and anatstat_object_type = 'GENE'
+		         and anatdisp_indent <= '$resolution'
+		         and anatdisp_stg_zdb_id = '$OID' 
 		      order by anatdisp_seq_num
 		      ;">
 		      <?MIVAR NAME="$item_name">$1<?/MIVAR>
