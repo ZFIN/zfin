@@ -725,7 +725,7 @@
 				     $g_opt."\n".
 				       $Q->submit(-name=>"Hide / Show / Adjust a Panel",-align=>'right')."\n".
 					 $Q->end_form."\n</td>";
-    print '<td><img src=/client_apps/mapkey.gif><p>'."\n";
+    print '<td><img src=/client_apps/Map/mapkey.gif><p>'."\n";
     
     print "<td>". $Q->start_form (
 				  -method=>'GET',
@@ -752,7 +752,7 @@
       "<APPLET \n".
 	" code\t   = \"mapplet.class\"\n".
 	  " archive  = \"mapplet-1.0.jar\"\n".
-	    " codebase = \"/client_apps/mapplet/release/\"\n".
+	    " codebase = \"/client_apps/Map/\"\n".
 	      " height\t = \"$g_height\"\n".
 		" width\t  = \"$g_width\"\n".
 		  " mayscript>\n";
