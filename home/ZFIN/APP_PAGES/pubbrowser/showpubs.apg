@@ -13,6 +13,7 @@ abbrev -- for title display
 orgOID -- OID for a gene, or fish or locus... record when
          OID is used for some specific item like 'DALIAS'
 info  -- column name for colattrib itme.
+pubOrder -- the column # to order results by (must be a number because of 'union')
         
 -->
 
@@ -31,6 +32,7 @@ ERROR -- something bad happened -- no OID passed in!
 
 <?MIVAR COND="$(NXST,$orgOID)" NAME=$orgOID>$OID<?/MIVAR>
 <?MIVAR COND="$(NXST,$info)" NAME=$info><?/MIVAR>
+<?MIVAR COND="$(NXST,$pubOrder)" NAME=$pubOrder>6<?/MIVAR>
 
 
 <?MIVAR COND="$(NXST,$return_page1)" NAME=$return_page1><?/MIVAR>
@@ -72,17 +74,26 @@ $(IF,$(>,$(POSITION,$rtype,locus),0),
 <?/MIVAR>
 
 
- <SCRIPT>
-      <?MIVAR COND="$(XST,$UPDATE)">
-	function doit(attr,attr_type,print_name) {
-		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$return_page1&OID=$orgOID&dataOID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name+'&target_table=$target_table');
-	}
+  <SCRIPT>
+    <?MIVAR>
+    
+      function doit(attr,attr_type,print_name) {
+        window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$return_page1&OID=$orgOID&dataOID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name+'&target_table=$target_table');
+      }
 
-	function Delete_listitem(item_name,item_id,info) {
-		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$return_page2&OID=$orgOID&dataOID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted&target_table=$target_table&info=$info');
-	}
+      function Delete_listitem(item_name,item_id,info) {
+        window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$return_page2&OID=$orgOID&dataOID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted&target_table=$target_table&info=$info');
+      }
+  
+      function result_order(pubOrder)
+      {
+        var url = '/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=$rtype&name=$name&abbrev=$abbrev&title=$title&pubOrder='+pubOrder;
+        $(IF,$(XST,$UPDATE),url += '&UPDATE=1';)
+    
+        location.replace(url);
+      }  
 
-       <?/MIVAR> 
+   <?/MIVAR> 
  </SCRIPT>
 </HEAD>
 
@@ -145,6 +156,14 @@ $(IF,$(>,$(POSITION,$rtype,locus),0),
      where (  recattrib_data_zdb_id = '$OID'
            or
              recattrib_data_zdb_id in (select mrel_mrkr_2_zdb_id from marker_relationship where mrel_mrkr_1_zdb_id = '$OID')
+           or
+             recattrib_data_zdb_id in (select dalias_zdb_id from data_alias where dalias_data_zdb_id = '$OID')
+           or
+             recattrib_data_zdb_id in (select dblink_zdb_id from db_link where linked_recid = '$OID')
+           or
+             recattrib_data_zdb_id in (select zdb_id from locus where cloned_gene = '$OID')
+           or
+             recattrib_data_zdb_id in (select oevdisp_zdb_id from orthologue_evidence_display where oevdisp_gene_zdb_id = '$OID')
           )
        and get_obj_type(recattrib_source_zdb_id) = 'PUB';
     ">
@@ -190,12 +209,17 @@ $(IF,$(>,$(POSITION,$rtype,locus),0),
 	$(IF,$(OR,$(>,$(POSITION,$OID,GENE),0),$(>,$(POSITION,$OID,OEVDISP),0)),<i>$abbrev</i>,$abbrev)	
 	<?/MIVAR><br>
   <?/MIBLOCK>
-</b></font>		
-		
+</b></font>	
+<br>
+<?MIVAR>
+  <form>
+    <input type=button name=resultOrder onClick="result_order($(IF,$(EC,$pubOrder,6),'7 desc','6'))"
+           value="$(IF,$(EC,$pubOrder,6),Order By Date,Order By Author)">
+  </form>
+<?/MIVAR>		
 <!-------------------------------------------------------------------------------->
 
   
-<br>
 <?MIVAR COND="$(XST,$UPDATE)">
 <INPUT TYPE=button value="Add Publication" onClick="doit('rel_pub','selection','Add')"> 
 <?MIBLOCK COND="$(AND,$(NXST,$attribtype),$(>,$(POSITION,$OID,LOCUS),0))">
@@ -211,7 +235,7 @@ $(IF,$(>,$(POSITION,$rtype,locus),0),
 <!-- want to include pubs for alleles associated with locus and locus itself -->
     <?MISQL SQL="
   	select distinct title, p.zdb_id, year(pub_date) as pyear, authors, source, 
-	 	lower(authors)  
+	 	lower(authors), pub_date
    	  from record_attribution, publication p, fish f, locus l 
      	 where l.zdb_id = '$OID'
 	   and f.locus = l.zdb_id 
@@ -219,12 +243,12 @@ $(IF,$(>,$(POSITION,$rtype,locus),0),
       	   and recattrib_source_zdb_id = p.zdb_id
 	UNION
  	select distinct title, p.zdb_id, year(pub_date) as pyear, authors, source, 
-	 	lower(authors)  
+	 	lower(authors), pub_date
    	  from record_attribution, publication p, locus l 
      	 where l.zdb_id = '$OID'
 	   and recattrib_data_zdb_id = l.zdb_id
       	   and recattrib_source_zdb_id = p.zdb_id
-    	order by 6 asc;">
+    	order by $pubOrder;">
   	$(IF,$(XST,$UPDATE),"<TD><font size=-1><input type=button value=delete onClick=Delete_listitem('publication','"$2"')></font></TD>")
   	<TR>
     	<TD align=left>
@@ -235,19 +259,64 @@ $(IF,$(>,$(POSITION,$rtype,locus),0),
   	</TR>
   	<TR></TR><TR></TR>
 
-      <?/MISQL>
+      <?/MISQL> 
 
-<?MIELSE COND="$(AND,$(NXST,$attribtype),$(>,$(POSITION,$OID,GENE),0))">	
+<?MIELSE COND="$(AND,$(NXST,$attribtype),$(>,$(POSITION,$OID,GENE),0))">
+
 <?MISQL SQL="
     select distinct title, zdb_id, year(pub_date) as pyear, authors, source, 
-	 lower(authors)  
+	 lower(authors), pub_date  
     from record_attribution, publication 
     where (  recattrib_data_zdb_id = '$OID'
            or
              recattrib_data_zdb_id in (select mrel_mrkr_2_zdb_id from marker_relationship where mrel_mrkr_1_zdb_id = '$OID')
+           or
+             recattrib_data_zdb_id in (select dalias_zdb_id from data_alias where dalias_data_zdb_id = '$OID')
+           or
+             recattrib_data_zdb_id in (select dblink_zdb_id from db_link where linked_recid = '$OID')
+           or
+             recattrib_data_zdb_id in (select zdb_id from locus where cloned_gene = '$OID')
+           or
+             recattrib_data_zdb_id in (select oevdisp_zdb_id from orthologue_evidence_display where oevdisp_gene_zdb_id = '$OID')
           )
       and recattrib_source_zdb_id = zdb_id 
-    order by 6 asc;">
+      and jtype not in ('Curation','Unpublished')
+    order by $pubOrder;">
+  $(IF,$(XST,$UPDATE),"<TD><font size=-1><input type=button value=delete onClick=Delete_listitem('publication','"$2"')></font></TD>")
+  <TR>
+    <TD align=left>
+      <DIV class="show_pubs">
+	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$4 ($3) $1. $5.</A>
+      </DIV>
+    </TD>
+  </TR>
+  <TR></TR><TR></TR>
+
+<?/MISQL>
+</table>
+
+<br>
+Additional Citations:
+<table>
+<?MISQL SQL="
+    select distinct title, zdb_id, year(pub_date) as pyear, authors, source, 
+	 lower(authors), pub_date  
+    from record_attribution, publication 
+    where (  recattrib_data_zdb_id = '$OID'
+           or
+             recattrib_data_zdb_id in (select mrel_mrkr_2_zdb_id from marker_relationship where mrel_mrkr_1_zdb_id = '$OID')
+           or
+             recattrib_data_zdb_id in (select dalias_zdb_id from data_alias where dalias_data_zdb_id = '$OID')
+           or
+             recattrib_data_zdb_id in (select dblink_zdb_id from db_link where linked_recid = '$OID')
+           or
+             recattrib_data_zdb_id in (select zdb_id from locus where cloned_gene = '$OID')
+           or
+             recattrib_data_zdb_id in (select oevdisp_zdb_id from orthologue_evidence_display where oevdisp_gene_zdb_id = '$OID')
+          )
+      and recattrib_source_zdb_id = zdb_id 
+      and jtype in ('Curation','Unpublished')
+    order by $pubOrder;">
   $(IF,$(XST,$UPDATE),"<TD><font size=-1><input type=button value=delete onClick=Delete_listitem('publication','"$2"')></font></TD>")
   <TR>
     <TD align=left>
@@ -263,11 +332,11 @@ $(IF,$(>,$(POSITION,$rtype,locus),0),
 <?MIELSE COND="$(AND,$(NXST,$attribtype),$(=,$(POSITION,$OID,LOCUS),0))">	
 <?MISQL SQL="
   select title, zdb_id, year(pub_date) as pyear, authors, source, 
-	 lower(authors)  
+	 lower(authors), pub_date
     from record_attribution, publication 
     where recattrib_data_zdb_id = '$OID'
       and recattrib_source_zdb_id = zdb_id 
-    order by 6 asc;">
+    order by $pubOrder;">
   $(IF,$(XST,$UPDATE),"<TD><font size=-1><input type=button value=delete onClick=Delete_listitem('publication','"$2"')></font></TD>")
   <TR>
     <TD align=left>
@@ -283,12 +352,12 @@ $(IF,$(>,$(POSITION,$rtype,locus),0),
 <?MIELSE COND="$(EC,$attribtype,colattrib)">
 <?MISQL SQL="
   select title, zdb_id, year(pub_date) as pyear, authors, source, 
-	 lower(authors)  
+	 lower(authors), pub_date
     from column_attribution, publication 
     where colattrib_data_zdb_id = '$OID'
       and colattrib_column_name = '$info'		
       and colattrib_source_zdb_id = zdb_id 
-    order by 6 asc;">
+    order by $pubOrder;">
   $(IF,$(XST,$UPDATE),"<TD><font size=-1><input type=button value=delete onClick=Delete_listitem('colattrib','"$2"','"$info"')></font></TD>")
   <TR>
     <TD align=left>
