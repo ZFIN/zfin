@@ -474,6 +474,22 @@
 		   and recattrib_data_zdb_id = f.alt_zdb_id	
     		   and recattrib_source_zdb_id = p.zdb_id
      		   and p.jtype not in ('Curation', 'Unpublished')
+	    UNION
+		select distinct zdb_id
+	 	  from fish_search f,  mapped_deletion m, record_attribution,publication p
+	 	 where f.locus = '$OID'
+	  	   and f.allele = m.allele
+	   	   and recattrib_data_zdb_id  = m.mapdel_zdb_id
+    		   and recattrib_source_zdb_id = p.zdb_id
+     		   and p.jtype  not in ('Curation', 'Unpublished')
+	    UNION
+		select distinct zdb_id
+	 	  from fish_search f,  mapped_deletion m, record_attribution,publication p
+	 	 where f.locus = '$OID'
+	  	   and f.locus = m.allele
+	   	   and recattrib_data_zdb_id  = m.mapdel_zdb_id
+    		   and recattrib_source_zdb_id = p.zdb_id
+     		   and p.jtype not in ('Curation', 'Unpublished')
  	    UNION
 		select distinct zdb_id 
 	 	  from fish_search f, data_alias, record_attribution, publication p
@@ -540,6 +556,13 @@
 	 	 where f.locus = '$OID'
 		   and recattrib_data_zdb_id = '$OID'
     		   and recattrib_source_zdb_id = p.zdb_id
+     		   and p.jtype in ('Curation', 'Unpublished')
+	    UNION
+		select distinct zdb_id
+	 	  from fish_search f,  column_attribution,publication p
+	 	 where f.locus = '$OID'
+		   and colattrib_data_zdb_id in (f.alt_zdb_id, f.locus, f.fish_id)
+    		   and colattrib_source_zdb_id = p.zdb_id
      		   and p.jtype in ('Curation', 'Unpublished')
 	    UNION		 
 		select distinct zdb_id 
