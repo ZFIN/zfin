@@ -145,7 +145,7 @@ sub sendMail(@) {
      print MAIL "To: $sendToAddress\n";
      print MAIL "Subject: $subject\n";
 
-     print MAIL "$msg";
+     print MAIL "$msg\n";
 
      # get the checking result from last run
      my $query = "select vldcheck_count, vldcheck_date
@@ -1484,7 +1484,7 @@ sub linkagePairHas2Members ($) {
   }
 } 
 
-#=========================== Dblink =====================================   	
+#=========================== Orthology, DB Link ===========================
 
 #-------------------------------------------------------------
 #Parameter
@@ -1524,7 +1524,81 @@ sub orthologueHasDblink ($) {
     print "Passed!\n";
   }
 } 
-   			
+
+
+
+#-------------------------------------------------------------
+# orthologueNomenclatureValid 
+# 
+# Do minimal nomenclature rule checking on orthologue names and symbols.
+# This routine checks rules that are easy to check (such as "must be all caps"),
+# and excludes common exceptions to those rules (such as Riken at Mouse).
+# However, it still reports a small number of valid names and abbrevs.  
+# In other words, names and abbrevs reported by this check are not necessarily 
+# in error -- they might be errors, or they just might be exceptions to 
+# the standard nomenclature.  These exceptions are why this check is not
+# done with a trigger.  See case 314 for more details.
+#
+# There are some rules that we know about that we don't enforce:
+# Everything, from Ken
+#   Dashes and periods are frowned upon in symbols, but there are exceptions.
+# Yeast, from Ceri:
+#   all symbols (gene abbreviations in the yeast community) must contain 3 
+#   letters and then the numbers.  The exceptions are the systematic names 
+#   such as YMR043W which will have 3 letters followed by numbers (I think 
+#   standard # of numbers #=3 but not sure) followed either by W or C
+#   However, The Systematic names are not used as identifiers by the yeast 
+#   community after the gene has been given a (standard) name.
+#
+# Parameter
+# $      Email Address for recipients
+# 
+sub orthologueNomenclatureValid ($) {
+
+  logHeader ("Checking orthologue nomenclature");
+
+  my $sql = '
+    select organism, ortho_abbrev, ortho_name, c_gene_id
+      from orthologue 
+      where ortho_abbrev like "% %" 
+         or (    organism = "Human" 
+             and ortho_abbrev <> upper(ortho_abbrev)
+             and ortho_abbrev not like "C%orf%"
+             and ortho_abbrev not like "DKFZp%")
+         or (    organism = "Mouse"
+             and (   ortho_abbrev[1,1] <> upper(ortho_abbrev[1,1])
+                  or (    substr(ortho_abbrev,2) <> lower(substr(ortho_abbrev,2)) 
+                      and ortho_abbrev not like "%Rik"
+                      and ortho_abbrev not like "LOC%")))
+         or (    organism = "Yeast"
+             and (   ortho_abbrev <> upper(ortho_abbrev)
+	          or ortho_name <> upper(ortho_name)
+                  or ortho_name <> ortho_abbrev
+                  or length(ortho_abbrev) < 4))
+      order by organism, ortho_abbrev;';
+ 
+  my @colDesc = ("Organism    ",
+		 "Ortho Abbrev",
+		 "Ortho Name  ",
+		 "Gene ID     " );
+
+  my $nRecords = execSql ($sql, undef, @colDesc);
+
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Orthologue(s) with suspect nomenclature";
+    my $routineName = "orthologueNomenclatureValid";
+    my $errMsg = "$nRecords orthologue(s) have suspect nomenclature.  ";
+    logError ($errMsg); 
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
+    &recordResult($routineName, $nRecords);
+  }else {
+    print "Passed!\n";
+  }
+} 
+
+
+
 #======================= ZDB Object Type ================================
 #---------------------------------------------------------
 #Parameter
@@ -2366,6 +2440,7 @@ if($weekly) {
 if($monthly) {
   print "run monthly check. \n";
   orthologueHasDblink($geneEmail);
+  orthologueNomenclatureValid($geneEmail);
   locusAbbrevIsSet($mutantEmail);
   prefixedIbdGenesHave1Est($estEmail);
 }
