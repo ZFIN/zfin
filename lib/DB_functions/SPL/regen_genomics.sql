@@ -28,10 +28,9 @@ create dba function "informix".regen_genomics() returning integer
   --    on tracing.  Tracing produces a large volume of information and
   --    tends to run mind-numbingly slow.
   --
-  --    To turn tracing on uncomment the next statement (and change the
-  --    the filename to be unique to your database!).
+  --    To turn tracing on uncomment the next statement
 
-  -- set debug file to '/tmp/debug-regen';
+  -- set debug file to '/tmp/debug-regen_<!--|DB_NAME|-->';
 
   --    This enables tracing, but doesn't turn it on.  To turn on tracing,
   --    add a "trace on;" before the first piece of code that you suspect
@@ -143,12 +142,48 @@ create dba function "informix".regen_genomics() returning integer
 	     disp_order, 'cM'
 	from meiotic_panel;
 
-  -- create temporary index.
 
-    create unique index panels_new_primary_key_index
-      on panels_new (zdb_id)
-      in idxdbs3;
+    -- create indexes; constraints that use them are added at the end.
+
+    if (exists (select *
+	          from sysindexes
+		  where idxname = "panels_primary_key_index_b")) then
+
+      -- use the "a" set of names
+      -- primary key
+      create unique index panels_primary_key_index_a
+	on panels_new (zdb_id)
+	fillfactor 100
+	in idxdbs3;
+      -- alternate keys
+      create unique index panels_name_index_a
+	on panels_new (name)
+	fillfactor 100
+	in idxdbs3;
+      create unique index panels_abbrev_index_a
+	on panels_new (abbrev)
+	fillfactor 100
+	in idxdbs3;
+    else 
+      -- primary key
+      create unique index panels_primary_key_index_b
+	on panels_new (zdb_id)
+	fillfactor 100
+	in idxdbs3;
+      -- alternate keys
+      create unique index panels_name_index_b
+	on panels_new (name)
+	fillfactor 100
+	in idxdbs3;
+      create unique index panels_abbrev_index_b
+	on panels_new (abbrev)
+	fillfactor 100
+	in idxdbs3;
+    end if
+
+    update statistics high for table panels_new;
  
+
 
     ---------------- paneled_markers
     let errorHint = "paneled_markers";
@@ -227,6 +262,51 @@ create dba function "informix".regen_genomics() returning integer
     update paneled_m_new 
       set map_name = NULL 
       where map_name = abbrev;
+
+    -- create indexes; constraints that use them are added at the end.
+
+    if (exists (select *
+	          from sysindexes
+		  where idxname = "paneled_markers_mtype_index_b")) then
+      -- use the "a" set of names
+      -- other indexes
+      create index paneled_markers_mtype_index_a
+	on paneled_m_new (mtype) 
+	fillfactor 100
+	in idxdbs3;
+      create index paneled_markers_mname_index_a 
+	on paneled_m_new (mname)
+	fillfactor 100
+	in idxdbs3;
+      create index paneled_markers_target_id_index_a
+	on paneled_m_new (target_id) 
+	fillfactor 100
+	in idxdbs3;
+      create index paneled_markers_zdb_id_index_a 
+	on paneled_m_new (zdb_id)
+	fillfactor 100
+	in idxdbs3;
+    else
+      -- other indexes
+      create index paneled_markers_mtype_index_b
+	on paneled_m_new (mtype) 
+	fillfactor 100
+	in idxdbs3;
+      create index paneled_markers_mname_index_b 
+	on paneled_m_new (mname)
+	fillfactor 100
+	in idxdbs3;
+      create index paneled_markers_target_id_index_b
+	on paneled_m_new (target_id) 
+	fillfactor 100
+	in idxdbs3;
+      create index paneled_markers_zdb_id_index_b
+	on paneled_m_new (zdb_id)
+	fillfactor 100
+	in idxdbs3;
+    end if
+
+    update statistics high for table paneled_m_new;
 
 
     --------------- public_paneled_markers
@@ -343,9 +423,51 @@ create dba function "informix".regen_genomics() returning integer
 		  and m1.marker_id = m2.marker_id );
 
 
+    -- drop temporary index from above
+    drop index public_paneled_m_new_zdb_id_index;
+
+    -- create indexes; constraints that use them are added at the end.
+
+    if (exists (select *
+	          from sysindexes
+		  where idxname = "public_paneled_markers_mtype_index_b")) then
+      -- use the "a" set of names
+      -- other indexes
+      create index public_paneled_markers_mtype_index_a
+	on public_paneled_m_new (mtype)
+	fillfactor 100
+	in idxdbs3;
+      -- to speed up map generation	
+      create index public_paneled_markers_target_abbrev_etc_index_a
+	on public_paneled_m_new (target_abbrev,or_lg,mtype,zdb_id)
+	fillfactor 100
+	in idxdbs3;
+      create index public_paneled_markers_zdb_id_index_a
+	on public_paneled_m_new (zdb_id)
+	fillfactor 100
+	in idxdbs3;
+    else
+      -- other indexes
+      create index public_paneled_markers_mtype_index_b
+	on public_paneled_m_new (mtype)
+	fillfactor 100
+	in idxdbs3;
+      -- to speed up map generation	
+      create index public_paneled_markers_target_abbrev_etc_index_b
+	on public_paneled_m_new (target_abbrev,or_lg,mtype,zdb_id)
+	fillfactor 100
+	in idxdbs3;
+      create index public_paneled_markers_zdb_id_index_b
+	on public_paneled_m_new (zdb_id)
+	fillfactor 100
+	in idxdbs3;
+    end if
+
+    update statistics high for table public_paneled_m_new;
 
 
     ----------------  all_map_names;
+
     let errorHint = "all_map_names";
 
     -- Contains all the possible names and abbreviations of markers and fish,
@@ -540,16 +662,40 @@ create dba function "informix".regen_genomics() returning integer
     insert into all_m_names_new select * from amnn;
 
     drop table amnn;
-    -- recreate temporary indexes & primary key
-    {
-    create unique index all_m_names_new_primary_key_index
-      on all_m_names_new (allmapnm_name, allmapnm_zdb_id)
-      in idxdbs1;
 
-    alter table all_m_names_new add constraint
-      primary key (allmapnm_name, allmapnm_zdb_id)
-      constraint all_m_names_new_primary_key;
-   }
+
+    -- create indexes; constraints that use them are added at the end.
+
+    if (exists (select *
+	          from sysindexes
+		  where idxname = "all_map_names_primary_key_index_b")) then
+      -- use the "a" set of names
+      -- primary key
+      create unique index all_map_names_primary_key_index_a
+	on all_m_names_new (allmapnm_name, allmapnm_zdb_id)
+	fillfactor 100
+	in idxdbs1;
+      -- other indexes
+      create index allmapnm_zdb_id_index_a
+        on all_m_names_new (allmapnm_zdb_id)
+	fillfactor 100
+	in idxdbs4;
+    else
+      -- primary key
+      create unique index all_map_names_primary_key_index_b
+	on all_m_names_new (allmapnm_name, allmapnm_zdb_id)
+	fillfactor 100
+	in idxdbs1;
+      -- other indexes
+      create index allmapnm_zdb_id_index_b
+        on all_m_names_new (allmapnm_zdb_id)
+	fillfactor 100
+	in idxdbs4;
+    end if
+
+    update statistics high for table all_m_names_new;
+
+
     --trace on;
 
 
@@ -585,6 +731,26 @@ create dba function "informix".regen_genomics() returning integer
 	from locus;
     -- no zmap
 
+    -- create indexes; constraints that use them are added at the end.
+    if (exists (select *
+	          from sysindexes
+		  where idxname = "all_markers_primary_key_index_b")) then
+      -- use the "a" set of names
+      -- primary key  
+      create unique index all_markers_primary_key_index_a
+	on all_m_new (zdb_id)
+	fillfactor 100
+	in idxdbs3;
+    else
+      -- primary key  
+      create unique index all_markers_primary_key_index_b
+	on all_m_new (zdb_id)
+	fillfactor 100
+	in idxdbs3;
+    end if
+
+    update statistics high for table all_m_new;
+
 
 
     -------------- total_links_copy
@@ -618,6 +784,26 @@ create dba function "informix".regen_genomics() returning integer
       select m2_id as from_id, m1_id as to_id, dist, LOD, owner, private
 	from linkages_COPY;
 
+    -- create indexes; constraints that use them are added at the end.
+
+    if (exists (select *
+	          from sysindexes
+		  where idxname = "total_links_copy_primary_key_index_b")) then
+      -- use the "a" set of names
+      -- primary key
+      create unique index total_links_copy_primary_key_index_a
+	on total_l_new_copy (from_id,to_id)
+	fillfactor 100
+	in idxdbs3;
+    else
+      -- primary key
+      create unique index total_links_copy_primary_key_index_b
+	on total_l_new_copy (from_id,to_id)
+	fillfactor 100
+	in idxdbs3;
+    end if
+
+    update statistics high for table total_l_new_copy;
 
 
     ------------- all_linked_members;
@@ -650,9 +836,6 @@ create dba function "informix".regen_genomics() returning integer
     revoke all on all_l_m_new from "public";
 
     
-
-    
-
     insert into all_l_m_new
       select lnkg_zdb_id, lnkgmem_member_zdb_id, mname, 
 	     abbrev, allmrkr_abbrev_order, mtype,
@@ -673,11 +856,6 @@ create dba function "informix".regen_genomics() returning integer
 	  and fish.locus = locus.zdb_id
 	  and fish.line_type = 'mutant';
     
-   -- create temporary index	  
-    create index all_l_m_new_member_zdb_id_index
-      on all_l_m_new (alnkgmem_member_zdb_id)
-      in idxdbs3;	  
-
     update all_l_m_new 
       set alnkgmem_source_name =
 	  ( select full_name 
@@ -704,6 +882,39 @@ create dba function "informix".regen_genomics() returning integer
 	  ( select count(*) 
 	      from linkage_member
 	      where lnkgmem_linkage_zdb_id = alnkgmem_linkage_zdb_id );
+
+
+    -- create indexes; constraints that use them are added at the end.
+    if (exists (select *
+	          from sysindexes
+		  where idxname = "all_linked_members_primary_key_index_b")) then
+      -- use the "a" set of names
+      -- primary key
+      create unique index all_linked_members_primary_key_index_a
+	on all_l_m_new (alnkgmem_linkage_zdb_id,alnkgmem_member_zdb_id)
+	fillfactor 100
+	in idxdbs3;
+      -- other indexes
+      create index alnkgmem_member_zdb_id_index_a
+	on all_l_m_new (alnkgmem_member_zdb_id)
+	fillfactor 100
+	in idxdbs3;
+    else
+      -- primary key
+      create unique index all_linked_members_primary_key_index_b
+	on all_l_m_new (alnkgmem_linkage_zdb_id,alnkgmem_member_zdb_id)
+	fillfactor 100
+	in idxdbs3;
+      -- other indexes
+      create index alnkgmem_member_zdb_id_index_b
+	on all_l_m_new (alnkgmem_member_zdb_id)
+	fillfactor 100
+	in idxdbs3;
+    end if;
+
+    update statistics high for table all_l_m_new;
+
+
 
     ------------- all_mapped_markers;
     let errorHint = "all_mapped_markers";
@@ -759,6 +970,45 @@ create dba function "informix".regen_genomics() returning integer
 	     NULL::datetime year to fraction
 	from all_l_m_new
 	where alnkgmem_or_lg <> '0';
+
+    -- create indexes; constraints that use them are added at the end.
+
+    if (exists (select *
+	          from sysindexes
+		  where idxname = "all_mapped_markers_mname_index_b")) then
+      -- use the "a" set of names
+      -- other indexes
+      create index all_mapped_markers_mname_index_a
+	on all_m_m_new (mname)
+	fillfactor 100
+	in idxdbs3;
+      create index all_mapped_markers_mtype_index_a
+	on all_m_m_new (mtype)
+	fillfactor 100
+	in idxdbs3;
+      create index all_mapped_markers_zdb_id_index_a
+	on all_m_m_new (zdb_id)
+	fillfactor 100
+	in idxdbs3;
+    else
+      -- other indexes
+      create index all_mapped_markers_mname_index_b
+	on all_m_m_new (mname)
+	fillfactor 100
+	in idxdbs3;
+      create index all_mapped_markers_mtype_index_b
+	on all_m_m_new (mtype)
+	fillfactor 100
+	in idxdbs3;
+      create index all_mapped_markers_zdb_id_index_b
+	on all_m_m_new (zdb_id)
+	fillfactor 100
+	in idxdbs3;
+    end if
+
+    update statistics high for table all_m_m_new;
+
+
 
     ----------------- all_genes
     let errorHint = "all_genes";
@@ -853,6 +1103,28 @@ create dba function "informix".regen_genomics() returning integer
 		  where mrkr_zdb_id = alnkgmem_member_zdb_id
 		    and alnkgmem_marker_type in ('GENE','EST') );
 
+    -- create indexes; constraints that use them are added at the end.
+
+    if (exists (select *
+	          from sysindexes
+		  where idxname = "all_genes_zdb_id_index_b")) then
+      -- use the "a" set of names
+      -- other indexes
+      create index all_genes_zdb_id_index_a 
+	on all_g_new (zdb_id)
+	fillfactor 100
+	in idxdbs3;
+    else
+      -- other indexes
+      create index all_genes_zdb_id_index_b
+	on all_g_new (zdb_id)
+	fillfactor 100
+	in idxdbs3;
+    end if
+
+    update statistics high for table all_g_new;
+
+
 
     ------------------ mapped_genes
     let errorHint = "mapped_genes";
@@ -938,6 +1210,26 @@ create dba function "informix".regen_genomics() returning integer
 	  AND x0.mrkr_zdb_id = x2.cloned_gene
 	  AND mrkr_type = 'GENE';
 
+    -- create indexes; constraints that use them are added at the end.
+
+    if (exists (select *
+	          from sysindexes
+		  where idxname = "mapped_genes_zdb_id_index_b")) then
+      -- use the "a" set of names
+      -- other indexes
+      create index mapped_genes_zdb_id_index_a
+	on mapped_g_new (zdb_id)
+	fillfactor 100
+	in idxdbs1;
+    else
+      -- other indexes
+      create index mapped_genes_zdb_id_index_b
+	on mapped_g_new (zdb_id)
+	fillfactor 100
+	in idxdbs1;
+    end if
+
+    update statistics high for table mapped_g_new;
 
 
 
@@ -972,6 +1264,30 @@ create dba function "informix".regen_genomics() returning integer
       select zdb_id, name, address
 	from company;
 
+    -- create indexes; constraints that use them are added at the end.
+
+    if (exists (select *
+	          from sysindexes
+		  where idxname = "sources_primary_key_index_b")) then
+      -- use the "a" set of names
+      -- primary key
+      create unique index sources_primary_key_index_a
+	on sources_new (zdb_id)
+	fillfactor 100
+	in idxdbs1;
+    else
+      -- primary key
+      create unique index sources_primary_key_index_b
+	on sources_new (zdb_id)
+	fillfactor 100
+	in idxdbs1;
+    end if
+
+    update statistics high for table sources_new;
+
+
+    -- --------------------------------------------------------------------
+
     -- To this point, we haven't done anything visible to actual users.
     -- Now we start to make visible changes, so we enclose it all in a
     -- transaction and have an exception handler ready to roll back
@@ -979,48 +1295,10 @@ create dba function "informix".regen_genomics() returning integer
 
     begin work;
 
-    -- Delete the old tables.  Some may not exist (if the DB has just
-    -- been created), so ignore errors from the drops.
-    
-    let errorHint = "dropping old tables";
-    begin -- local exception handler for dropping of original tables
-    
-      on exception in (-206)
-	-- ignore any table that doesn't already exist
-      end exception with resume;
+    let errorHint = "dropping & renaming old tables";
 
-      -- The following statement also drops the view mapped_anons,
-      -- because it depends upon panels.
-      drop table panels;
-      drop table paneled_markers;
-      drop table public_paneled_markers;
-      let errorHint = "dropping old table public_paneled_markers";
-      drop table all_map_names;
-      let errorHint = "dropping old table all_map_names";
-      drop table all_markers;
-      drop table total_links_copy;
-      
-      drop table all_linked_members;
-      drop table all_mapped_markers;
-      drop table all_genes;
-      drop table mapped_genes;
-      drop table sources;
-      let errorHint = "dropped old tables all";	
-    end -- local exception handler for dropping of original tables
+    begin -- local exception handler dropping, renaming, and constraints
 
-    -- Now rename our new tables to have the permanent names.
-    -- Also define primary keys, alternate keys, and other indexes for newly
-    -- created tables.
-
-    -- This also requires dropping and recreating any indexes that were created
-    -- with the temporary names.  Informix does not support renaming existing 
-    -- indexes.  We can't just use the permanent names to begin with because
-    -- they conflict with the names of the indexes on the prior version of the
-    -- tables.
-
-    -- Note that the exception-handler at the top of this file is still active
-
-    begin -- local exception handler
       define esql, eisam int;
 
       on exception set esql, eisam
@@ -1031,35 +1309,37 @@ create dba function "informix".regen_genomics() returning integer
 	raise exception esql, eisam;
       end exception;
 
-    let errorHint = "rename  PANELS ";
-      -- ===== PANELS =====
+      on exception in (-206)
+	-- ignore error when dropping a table that doesn't already exist
+      end exception with resume;
 
+
+      -- Now rename our new tables to have the permanent names.
+      -- Also define primary keys and alternate keys.  The indexes to support 
+      -- these constraints are defined at the end of the sections that populate 
+      -- the tables.
+
+      -- Note that the exception-handler at the top of this file is still active
+
+      -- ===== PANELS =====
+      let errorHint = "rename  PANELS ";
+
+      -- The following statement also drops the view mapped_anons,
+      -- because it depends upon panels.
+
+      drop table panels;
       rename table panels_new to panels;
 
+      -- define constraints.  indexes for them are defined earlier.
       -- primary key
-
-      drop index panels_new_primary_key_index;
-      create unique index panels_primary_key_index
-	on panels (zdb_id)
-	fillfactor 100
-	in idxdbs3;
       alter table panels add constraint
 	primary key (zdb_id)
 	  constraint panels_primary_key;
 
       -- alternate keys
-
-      create unique index panels_name_index
-	on panels (name)
-	fillfactor 100
-	in idxdbs3;
       alter table panels add constraint
 	unique (name)
 	  constraint panels_name_unique;
-      create unique index panels_abbrev_index
-	on panels (abbrev)
-	fillfactor 100
-	in idxdbs3;
       alter table panels add constraint
 	unique (abbrev)
 	  constraint panels_abbrev_unique;
@@ -1067,103 +1347,57 @@ create dba function "informix".regen_genomics() returning integer
       grant select on panels to "public";
 
 
+
       -- ===== PANELED_MARKERS =====
       let errorHint = "rename PANELED_MARKERS ";
 
+      drop table paneled_markers;
       rename table paneled_m_new to paneled_markers;
 
-      -- other indexes
-
-      create index paneled_markers_mtype_index
-	on paneled_markers (mtype) 
-	fillfactor 100
-	in idxdbs3;
-
-      create index paneled_markers_mname_index 
-	on paneled_markers (mname)
-	fillfactor 100
-	in idxdbs3;
-
-      create index paneled_markers_target_id_index
-	on paneled_markers (target_id) 
-	fillfactor 100
-	in idxdbs3;
-
-      create index paneled_markers_zdb_id_index 
-	on paneled_markers (zdb_id)
-	fillfactor 100
-	in idxdbs3;
+      -- define constraints, indexes are defined earlier.
+      -- however, there are no constraints on this table.
 
       grant select on paneled_markers to "public";
+
 
 
       -- ===== PUBLIC_PANELED_MARKERS =====
       let errorHint = "rename PUBLIC_PANELED_MARKERS ";
 
+      drop table public_paneled_markers;
       rename table public_paneled_m_new to public_paneled_markers;
 
-      -- other indexes
-
-      create index public_paneled_markers_mtype_index 
-	on public_paneled_markers (mtype)
-	fillfactor 100
-	in idxdbs3;
-
-      -- to speed up map generation	
-      create index public_paneled_markers_target_abbrev_etc_index 
-	on public_paneled_markers (target_abbrev,or_lg,mtype,zdb_id)
-	fillfactor 100
-	in idxdbs3;
-
-      drop index public_paneled_m_new_zdb_id_index;
-      create index public_paneled_markers_zdb_id_index 
-	on public_paneled_markers (zdb_id)
-	fillfactor 100
-	in idxdbs3;
+      -- define constraints, indexes are defined earlier.
+      -- however, there are no constraints on this table.
 
       grant select on public_paneled_markers to "public";
+
 
 
       -- ===== ALL_MAP_NAMES =====
       let errorHint = "rename ALL_MAP_NAMES ";
 
+      drop table all_map_names;
       rename table all_m_names_new to all_map_names;
 
+      -- define constraints, indexes are defined earlier.
       -- primary key
-
-      --alter table all_map_names drop constraint all_m_names_new_primary_key;
-      
-      --drop index all_m_names_new_primary_key_index;
-      
-      create unique index all_map_names_primary_key_index
-	on all_map_names (allmapnm_name, allmapnm_zdb_id)
-	fillfactor 100
-	in idxdbs1;
       alter table all_map_names add constraint
 	primary key (allmapnm_name, allmapnm_zdb_id)
 	constraint all_map_names_primary_key;
 
-      -- other indexes
-
-      create index allmapnm_zdb_id_index 
-        on all_map_names (allmapnm_zdb_id)
-	fillfactor 100
-	in idxdbs4;
-
       grant select on all_map_names to "public";
+
 
 
       -- ===== ALL_MARKERS =====
       let errorHint = "rename ALL_MARKERS";
 
+      drop table all_markers;
       rename table all_m_new to all_markers;
 
+      -- define constraints.  indexes for them are defined earlier.
       -- primary key
-
-      create unique index all_markers_primary_key_index
-	on all_markers (zdb_id)
-	fillfactor 100
-	in idxdbs3;
       alter table all_markers add constraint
 	primary key (zdb_id)
 	  constraint all_markers_primary_key;
@@ -1171,16 +1405,14 @@ create dba function "informix".regen_genomics() returning integer
       grant select on all_markers to "public";
 
 
+
       -- ===== TOTAL_LINKS_COPY =====
 
+      drop table total_links_copy;
       rename table total_l_new_copy to total_links_copy;
 
+      -- define constraints.  indexes for them are defined earlier.
       -- primary key
-
-      create unique index total_links_copy_primary_key_index
-	on total_links_copy (from_id,to_id)
-	fillfactor 100
-	in idxdbs3;
       alter table total_links_copy add constraint
 	primary key (from_id,to_id)
 	  constraint total_links_copy_primary_key;
@@ -1188,93 +1420,62 @@ create dba function "informix".regen_genomics() returning integer
       grant select on total_links_copy to "public";
 
 
+
       -- ===== ALL_LINKED_MEMBERS =====
 
+      drop table all_linked_members;
       rename table all_l_m_new to all_linked_members;
 
+      -- define constraints.  indexes for them are defined earlier.
       -- primary key
-
-      create unique index all_linked_members_primary_key_index
-	on all_linked_members (alnkgmem_linkage_zdb_id,alnkgmem_member_zdb_id)
-	fillfactor 100
-	in idxdbs3;
       alter table all_linked_members add constraint
 	primary key (alnkgmem_linkage_zdb_id,alnkgmem_member_zdb_id)
 	  constraint all_linked_members_primary_key;
 
-      -- other indexes
-
-      drop index all_l_m_new_member_zdb_id_index;
-      create index alnkgmem_member_zdb_id_index
-	on all_linked_members (alnkgmem_member_zdb_id)
-	fillfactor 100
-	in idxdbs3;
-
       grant select on all_linked_members to "public";
+
 
 
       -- ===== ALL_MAPPED_MARKERS =====
 
+      drop table all_mapped_markers;
       rename table all_m_m_new to all_mapped_markers;
 
-      -- other indexes
-
-      create index all_mapped_markers_mname_index
-	on all_mapped_markers (mname)
-	fillfactor 100
-	in idxdbs3;
-
-      create index all_mapped_markers_mtype_index
-	on all_mapped_markers (mtype)
-	fillfactor 100
-	in idxdbs3;
-
-      create index all_mapped_markers_zdb_id_index 
-	on all_mapped_markers (zdb_id)
-	fillfactor 100
-	in idxdbs3;
+      -- no constraints
 
       grant select on all_mapped_markers to "public";
 
 
+
       -- ===== ALL_GENES =====
 
+      drop table all_genes;
       rename table all_g_new to all_genes;
 
-      -- other indexes
-
-      create index all_genes_zdb_id_index 
-	on all_genes (zdb_id)
-	fillfactor 100
-	in idxdbs3;
+      -- no constraints
 
       grant select on all_genes to "public";
 
 
+
       -- ===== MAPPED_GENES =====
 
+      drop table mapped_genes;
       rename table mapped_g_new to mapped_genes;
 
-      -- other indexes
-
-      create index mapped_genes_zdb_id_index 
-	on mapped_genes (zdb_id)
-	fillfactor 100
-	in idxdbs1;
+      -- no constraints
 
       grant select on mapped_genes to "public";
 
 
+
       -- ===== SOURCES =====
 
+      drop table sources;
       rename table sources_new to sources;
 
+      -- define constraints.  indexes for them are defined earlier.
       -- primary key
-
-      create unique index sources_primary_key_index
-	on sources (zdb_id)
-	fillfactor 100
-	in idxdbs1;
       alter table sources add constraint
 	primary key (zdb_id)
 	  constraint sources_primary_key;
@@ -1306,24 +1507,6 @@ create dba function "informix".regen_genomics() returning integer
     commit work;
 
   end -- Global exception handler
-
-
-  -- Update statistics on tables that were just created.
-
-  begin work;
-
-  update statistics high for table panels;
-  update statistics high for table paneled_markers;
-  update statistics high for table public_paneled_markers;
-  update statistics high for table all_map_names;
-  update statistics high for table all_markers;
-  update statistics high for table total_links_copy;
-  update statistics high for table all_linked_members;
-  update statistics high for table all_mapped_markers;
-  update statistics high for table all_genes;
-  update statistics high for table sources;
-
-  commit work;
 
   return 1;
 
