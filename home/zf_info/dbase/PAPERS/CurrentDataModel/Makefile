@@ -57,5 +57,6 @@ $(MISSINGLINKTARGETS) : $(INTERNALFILETARGET)
 	ln -s $^ $@
 
 $(REMOTELINKS) : $(TARGETDIR)/% : $(DOCDIR)/%
+	/bin/rm -f $@
 	ln -s $< $@
 
