@@ -140,7 +140,7 @@ Requires:  $CLONE_MARKER_ID, $highlight
     
     <TABLE width="100%" border=0 cellpadding=5 bgcolor="$highlight">    
     
-    <?MIBLOCK COND="$(EC,$mrkr_type,EST)">
+    <?MIBLOCK COND="$(OR,$(EC,$mrkr_type,EST),$(EC,$mrkr_type,cDNA))">
       <?MIVAR>
        <TR>
          <TD colspan=3><b>Species:</b> $probelib_species</TD>
