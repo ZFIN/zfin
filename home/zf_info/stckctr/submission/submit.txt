@@ -1,4 +1,4 @@
-To: mason@uoneuro.uoregon.edu,april@zfin.org,trevarro@uoneuro.uoregon.edu,monte@uoneuro.uoregon.edu,edwards@uoneuro.uoregon.edu,seger@uoneuro.uoregon.edu, ksf@cs.uoregon.edu
+To: april@zfin.org, trevarro@uoneuro.uoregon.edu, monte@uoneuro.uoregon.edu, edwards@uoneuro.uoregon.edu, seger@uoneuro.uoregon.edu, ksf@cs.uoregon.edu, mason@uoneuro.uoregon.edu
 From: zirc@darkwing.uoregon.edu
 Subject: [required_submitterName]'s ZIRC Submission Form 
 
