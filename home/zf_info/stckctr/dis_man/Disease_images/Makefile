@@ -53,6 +53,7 @@ STATICS = BigHeartGross4.jpg              MicrosporHisto4_small.jpg \
 	LiverTumorsDMBA4.jpg            mycobactHisto4_small.jpg \
 	LiverTumorsDMBA4_small.jpg      seminoma24.jpg \
 	seminoma24_small.jpg		Zebrafish_Histo_Section4.jpg \
+	Zebrafish_Histo_Section4_small.jpg \
 	MicroHistoOther4.jpg            skinny4.jpg \
 	MicroHistoOther4_small.jpg      skinny4_small.jpg \
 	MicroWetGiemsa4.jpg             thyroidHisto4.jpg \
