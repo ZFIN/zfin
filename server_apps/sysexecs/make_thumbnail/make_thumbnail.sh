@@ -7,5 +7,5 @@ $ENV{PATH} = "/local/apps/netpbm/bin:$ENV{PATH}";
 system("/local/apps/netpbm/bin/anytopnm $fullImageFile | " .
        "/local/apps/netpbm/bin/pnmscale -h 64 | " .
        "/local/apps/netpbm/bin/ppmtojpeg > $thumbnailFile");
-system("chmod 644 $thumbnailFile");
+system("/bin/chmod 644 $thumbnailFile");
 exit(0);

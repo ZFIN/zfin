@@ -70,6 +70,6 @@ else {
 
 print(STDOUT "$width $height");
 
-system("rm -rf $tmpDir");
+system("/bin/rm -rf $tmpDir");
 
 exit ($retVal);
