@@ -2,14 +2,25 @@
 ! echo "First make sure all the manualy curated GenPepts are in."
 
 begin work;
-create temp table manual_genpept (gene varchar(50), genpept varchar(20)) with no log;
-load from 'manual_curation.genpept' insert into manual_genpept;
+
+create temp table manual_genpept 
+  (
+    gene_abbrev varchar(40),
+    genpept varchar(20),
+    gene varchar(50)
+  ) with no log;
+
+load from 'manual_curation.genpept' 
+  insert into manual_genpept
+    ( gene_abbrev, genpept );
 
 update manual_genpept set gene = (
-	select mrkr_zdb_id from marker where mrkr_abbrev = gene
-) 
-where gene in (select mrkr_abbrev from marker where mrkr_type = 'GENE')
-;
+	select mrkr_zdb_id 
+          from marker 
+          where mrkr_abbrev = gene_abbrev
+) ;
+
+
 !echo "drop db_links without manual curation that will conflict with these"
 delete from zdb_active_data 
 where zactvd_zdb_id in (
@@ -51,12 +62,12 @@ where exists (
 );
 
 ! echo "did any symbols fail to translate to ZDB IDs? indicating merge or nomenclature activity"
-select * from manual_genpept where gene[1,9] <> 'ZDB-GENE-';
+select gene_abbrev, genpept from manual_genpept where gene is NULL;
 
 ! echo "insert new manualy curated GenPept links"
 select distinct gene, genpept, '123456789012345678901234567890'::varchar(50) zad
 from manual_genpept
-where gene[1,9] == 'ZDB-GENE-' 
+where gene is not NULL
 into temp tmp_db_link with no log;
 
 update tmp_db_link set zad = get_id('DBLINK');
