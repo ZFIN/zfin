@@ -17,14 +17,8 @@ body {
 body { 
 	font-family:arial, sans-serif;
 }
-a {
-      font-weight:bold;
-      color:#0000CC;
-      }
-a:visited {
-      font-weight:bold;
-      color:#551a8b;
-      }
+
+
 
 .header  {
 	font-family: arial, sans-serif;
