@@ -73,7 +73,7 @@
   <?MIBLOCK COND="$(AND,$(XST,$marker_type),$(NXST,$s_new))">
      <?MISQL SQL=" select mrkrtype_type_display
                     from marker_types
-                   where marker_type='$marker_type'";>
+                   where marker_type='$marker_type';">
       <?MIVAR NAME=marker_type_display>$1<?/MIVAR>
     <?/MISQL>
 
@@ -141,11 +141,13 @@
         var reserve = GetChecked(theform.reserve);
         var rsrvComment = theform.rsrvComment.value;
         
-        if (theform.mname.value=='' || theform.abbrev.value=='') 
-        {
-	  alert('You must supply both name and abbreviation');
-	  return false;
-        } 
+        <?MIBLOCK COND=$(OR,$(EC,$marker_type,GENE),$(EC,$marker_type,GENEP))>
+          if (theform.mname.value=='' || theform.abbrev.value=='') 
+          {
+  	    alert('You must supply both name and abbreviation');
+	    return false;
+          }  
+        <?/MIBLOCK>
         
         if (reserve=='yes' && isWhitespace(rsrvComment)) 
         {
@@ -168,8 +170,10 @@
         <p><B>$marker_type_display name</b> (required):
         <input type=text name=mname size=80>
 
-        <p><b>Abbreviation</b> (required):
-        <input type=text name=abbrev size=15>
+        <?MIBLOCK COND=$(OR,$(EC,$marker_type,GENE),$(EC,$marker_type,GENEP))>
+          <p><b>Abbreviation</b> (required):
+          <input type=text name=abbrev size=15>
+        <?/MIBLOCK>
         
         <p>
         <b>Description:</b><br>
@@ -195,7 +199,8 @@
     <?MIVAR COND="$(NXST,$comments)" NAME=$comments><?/MIVAR>
 
     <?MIVAR NAME=$mname DELIMIT="'" REPLACE="''">$mname<?/MIVAR>
-    <?MIVAR NAME=$abbrev DELIMIT="'" REPLACE="''">$abbrev<?/MIVAR>
+    <?MIVAR COND=$(XST,$abbrev) NAME=$abbrev DELIMIT="'" REPLACE="''">$abbrev<?/MIVAR>
+    <?MIVAR COND=$(NXST,$abbrev) NAME=$abbrev>$mname<?/MIVAR>
     <?MIVAR NAME=$comments DELIMIT="'" REPLACE="''">$comments<?/MIVAR>
 
     <?MISQL SQL="execute function get_id('$(UPPER,$marker_type)');"><?/MISQL>
