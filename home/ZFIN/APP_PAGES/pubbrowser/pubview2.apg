@@ -180,7 +180,8 @@ ERROR -- something bad happened -- no OID passed in!
                 from publication 
 	       where zdb_id = '$OID' ;">
 <?/MISQL>
-<?MIBLOCK COND="$(AND,$(NC,$1,Unpublished),$(NC,$1,Curation))">
+<!--?MIBLOCK COND="$(AND,$(NC,$1,Unpublished),$(NC,$1,Curation))"-->
+<?MIBLOCK COND="$(NC,$1,Curation)">
   <B>ADDITIONAL INFORMATION: </B>
   <?MICOMMENT>Curators decided to not include related markers' attribution.<?/MICOMMENT>
   <ul>

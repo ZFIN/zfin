@@ -281,7 +281,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 <?/MIVAR>
 
 <?MICOMMENT>  ==================== hide "order by" button for rtype=xpat ============== <?/MICOMMENT>
-
+<?MICOMMENT>
 <?MIBLOCK COND="$(EC,pigs,flying)">
 <?MIELSE>
 <?MIVAR>
@@ -292,6 +292,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
            value="$(IF,$(EC,$pubOrder,6),Order By Date,Order By Author)"> 
 <?/MIVAR>   
 <?/MIBLOCK>
+<?/MICOMMENT>
 
 <?/MIBLOCK>
 <?/MIVAR>		
