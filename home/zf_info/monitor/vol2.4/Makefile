@@ -2,9 +2,6 @@
 #
 # Makefile for ZFIN_WWW CVS Project, Zebrafish Science Monitor Vol 2.4
 #
-# $Source$
-# $Id$
-#
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
 # !! of the makefile hierarchy this makefile is a part of, and of the  !!
@@ -22,7 +19,7 @@ TARGETDIR = $(TARGETROOT)/home/zf_info/monitor/vol2.4
 
 GENERICS = vol2.4.html
 
-STATICS = fish_net.gif vol2.4.pdf
+STATICS = vol2.4.pdf
 
 
 # ---------------  Production Rules  ------------------------------------

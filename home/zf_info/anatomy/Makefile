@@ -2,9 +2,6 @@
 #
 # Makefile for ZFIN_WWW CVS Project, Anatomy Static web pages
 #
-# $Source$
-# $Id$
-#
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
 # !! of the makefile hierarchy this makefile is a part of, and of the  !!
@@ -22,7 +19,7 @@ TARGETDIR = $(TARGETROOT)/home/zf_info/anatomy
 
 SUBDIRS = 24hrs 48hrs 72hrs 120hrs dict highres lowres stages
 
-STATICS = 24hrs.gif 48hrs.gif 72hrs.gif 120hrs.gif fish_net.gif
+STATICS = 24hrs.gif 48hrs.gif 72hrs.gif 120hrs.gif
 
 GENERICS = dev_atlas.html
 

@@ -86,7 +86,7 @@
 #  STATICS	      List of files that don't need to be translated from
 #			a generic form into a specific form.  These files 
 #			don't contain anything that needs translation.
-#			Example STATICS = fish_bgd.gif fish_net.gif
+#			Example STATICS = favicon.ico
 #
 #  SPECIFICTARGETS     List of specific versions of generic files.  Depending
 #                  	upon the nature of the generic file, this may or 

@@ -37,7 +37,7 @@ SUBDIRS = SEARCH_SITE anatomy catch dbase images monitor movies news stckctr \
 GENERICS = defs.html genome.html nomen.html nomen_comm.html \
 	updates.html zfprbs.html citation.html anatomy.html contact_us.html glossary.html GO.html oev.html downloads.html
 
-STATICS = 227.gif fish.gif fish_net.gif logo.jpeg \
+STATICS = 227.gif fish.gif logo.jpeg \
 	translocation.jpeg zfin.gif 
 
 

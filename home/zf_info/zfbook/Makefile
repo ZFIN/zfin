@@ -2,9 +2,6 @@
 #
 # Makefile for ZFIN_WWW CVS Project, Zebrafish Book web pages.
 #
-# $Source$
-# $Id$
-#
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
 # !! of the makefile hierarchy this makefile is a part of, and of the  !!
@@ -25,7 +22,7 @@ SUBDIRS = chapt1 chapt2 chapt3 chapt4 chapt5 chapt7 chapt8 chapt9 stages
 GENERICS = chapt6.html chapt10.html cont.html lab_desig.html zfbk.html \
 	zfmabs.html zfrefs.html zfstrn.html
 
-STATICS = fish_net.gif streis.gif
+STATICS = streis.gif
 
 
 # ---------------  Production Rules  ------------------------------------

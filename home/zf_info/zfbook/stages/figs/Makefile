@@ -3,9 +3,6 @@
 # Makefile for ZFIN_WWW CVS Project, Zebrafish Book, Stages figures 
 # web pages.
 #
-# $Source$
-# $Id$
-#
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
 # !! of the makefile hierarchy this makefile is a part of, and of the  !!
@@ -40,7 +37,7 @@ STATICS = fig10.gif fig11.gif fig12.gif fig13.gif fig14.gif \
 	fig30.gif fig31.gif fig32.gif fig33.gif fig34.gif fig35.gif  \
 	fig36.gif fig37.gif fig38.gif fig39a.jpg fig39b.jpg fig4.gif fig40.gif \
 	fig41.gif fig42.gif fig43.gif fig5.gif fig6.gif fig7.gif  \
-	fig8.gif fig9.gif fish_net.gif
+	fig8.gif fig9.gif
 
 
 # ---------------  Production Rules  ------------------------------------

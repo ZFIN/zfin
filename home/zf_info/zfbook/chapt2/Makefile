@@ -2,9 +2,6 @@
 #
 # Makefile for ZFIN_WWW CVS Project, Zebrafish Book Chapter 2 web pages.
 #
-# $Source$
-# $Id$
-#
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
 # !! of the makefile hierarchy this makefile is a part of, and of the  !!
@@ -23,7 +20,7 @@ TARGETDIR = $(TARGETROOT)/home/zf_info/zfbook/chapt2
 GENERICS = 2.1.html 2.2.html 2.3.html 2.4.html 2.5.html 2.6.html 2.7.html \
 	2.8.html
 
-STATICS = 2-1.gif fish_net.gif
+STATICS = 2-1.gif
 
 
 

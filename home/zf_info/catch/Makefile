@@ -2,9 +2,6 @@
 #
 # Makefile for ZFIN_WWW CVS Project, Catch of the day Static web pages
 #
-# $Source$
-# $Id$
-#
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
 # !! of the makefile hierarchy this makefile is a part of, and of the  !!
@@ -24,7 +21,7 @@ TARGETDIR = $(TARGETROOT)/home/zf_info/catch
 GENERICS = MCF_8_99.html RFA.html catch.html feb99.html fishman.html nih.html \
 	oct98.html resources.html talbot.html zon.html BAC_library.html
 
-STATICS = bkgrd.jpeg catch.gif fish.gif fish_net.gif zfin.gif
+STATICS = bkgrd.jpeg catch.gif fish.gif zfin.gif
 
 
 # ---------------  Production Rules  ------------------------------------
