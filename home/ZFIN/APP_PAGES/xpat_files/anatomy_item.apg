@@ -1,0 +1,487 @@
+<HTML>
+
+
+<?MIBLOCK COND="$(NXST,$OID)"> No OID Passed In! <?/MIBLOCK>  <!-- open OID check -->
+<?MIBLOCK COND="$(XST,$OID)">
+<?MISQL SQL="
+	SELECT anatitem_name, anathier_name,
+	       s1.stg_name_long, s2.stg_name_long, s1.stg_comments_relative_url, 
+	       s2.stg_comments_relative_url, anatitem_abbrev
+	FROM anatomy_item, anatomy_hierarchy, stage s1, stage s2
+	WHERE anatitem_zdb_id = '$OID'
+	  and anatitem_type_code = anathier_code
+	  and s1.stg_zdb_id = anatitem_start_stg_zdb_id
+	  and s2.stg_zdb_id = anatitem_end_stg_zdb_id
+;">
+<?MIVAR NAME="item_name">$1<?/MIVAR>
+<?MIVAR NAME="item_type_code">$2<?/MIVAR>
+<?MIVAR NAME="item_stg_start">$3<?/MIVAR>
+<?MIVAR NAME="item_stg_end">$4<?/MIVAR>
+<?MIVAR NAME="item_stg_start_url">$5<?/MIVAR>
+<?MIVAR NAME="item_stg_end_url">$6<?/MIVAR>
+<?MIVAR NAME="item_abbrev">$7<?/MIVAR>
+<?/MISQL>
+
+
+<!-- user authorization check-------------------------------> 
+
+
+	  <!-- title for webpage history ----------->	
+          <?MIBLOCK COND="$(XST,$UPDATE)">
+		<?MIVAR>
+ 			<TITLE>Update ZFIN Anatomy Item: $item_name</title>
+		<?/MIVAR>
+	  <?MIELSE>
+		<?MIVAR>
+ 			<TITLE>View ZFIN Anatomy Item: $item_name</title>
+		<?/MIVAR>
+          <?/MIBLOCK>
+
+	  <!-- page header display ----------------->
+  	  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+
+	  <!-- NOW JUST TOSS OUT THE RETRIEVED DATA IN A TABLE -->
+	  <!-- FIRST THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
+
+  	   <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=anatomy_item') from webPages where ID='aa-data_mgr.apg';">$1
+	   <?/MISQL>
+
+	  <!----- OKAY, NOW  THROW UP THE  MARKER INFO ------------------>
+
+
+<!---------------------------------------------------------->       
+
+
+<?MIBLOCK COND="$(NXST,$UPDATE)"> <!---- define Input Welcome button---->     
+  <table width="15%" align=right>
+   <tr> 
+   <?MIVAR>
+        <form method=post 
+              action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
+              target=comments>
+           <input type=hidden name=subject value="$item_name">
+           <input type=hidden name=marker_id value="$OID">
+           <input type=hidden name=MIval value="aa-your_input_welcome.apg">
+           <input type=hidden name=page_id value="$OID">
+           <td><input type=submit value="Your Input Welcome"></td>         
+         </form>
+    <?/MIVAR>
+    </tr>
+   </table>
+<?/MIBLOCK> 
+
+<?MIVAR>
+  <FONT SIZE=+1><STRONG>Name: <I>$item_name</I> </STRONG><BR> </FONT>
+<?/MIVAR>
+
+<?MIBLOCK COND="$(XST,$UPDATE)">
+<FORM>
+<INPUT type=button value="Update" onClick="
+window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-anatupdateAbbrev&abbrev=' + document.abbrev.anatitem_abbrev.value + '&OID='+oid);
+">
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(NE,$item_abbrev,NULL)">
+   <STRONG>Abbreviation: </STRONG> <?MIVAR>$item_abbrev<?/MIVAR>
+
+
+   <?MIBLOCK COND="$(XST,$UPDATE)">
+     <?MIVAR>
+       <INPUT type=text name="anatitem_abbrev" value="$item_abbrev">
+     <?/MIVAR>
+   </FORM>
+   <?/MIBLOCK>
+<BR>
+<?/MIBLOCK>
+
+<!--------- Display previous names (synonyms, but I stole this code from markerview, 
+            really both should be webexploded)        --------------------------------> 
+<?MIVAR COND="$(XST,$UPDATE)">
+  <INPUT TYPE=button 
+    value=Add
+    onClick="doit('dalias_alias','text','Alias','alias')">
+<?/MIVAR> 
+
+<?MISQL SQL="
+  select dalias_alias, dalias_zdb_id
+    from data_alias
+    where dalias_data_zdb_id = '$OID' and dalias_group = 'alias';">
+  <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
+     <STRONG>Synonymns:</STRONG>
+  <?/MIBLOCK>
+
+
+  <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(XST,$UPDATE))">
+    <br><b>Add Reference:</b> 
+    Previous name:<input type=text name=attrib_prevname>	
+    Reference:<input type=text name=attrib_prevname_pubid>
+    <input type=button value="Add" onClick=new_attrib_prevname();> 
+  <?/MIVAR>
+
+
+  <?MIVAR NAME=$alias>$1<?/MIVAR>
+  <?MIVAR NAME=$aliasId>$2<?/MIVAR>
+  <?MIVAR COND="$(XST,$alias)" NAME=$alias_plus DELIMIT=" " REPLACE="+">$alias<?/MIVAR>
+  <?MIVAR COND="$(XST,$UPDATE)">
+    <br> 
+    <INPUT TYPE=button 
+      value=Delete 
+      onClick="Delete_alias('$alias_plus','$OID')">
+  <?/MIVAR>
+  $(IF,$(AND,$(NXST,$UPDATE),$(>,$MI_CURRENTROW,1)),;) $alias
+
+  <?MIBLOCK COND="$(XST,$aliasId)">	
+      <?MISQL SQL="select WebExplode(object,'dataId=$aliasId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+  <?/MIBLOCK>
+	
+  <?MIBLOCK COND="$(=,$MI_CURRENTROW,$MI_ROWCOUNT)">
+    <BR>
+  <?/MIBLOCK>
+<?/MISQL>
+
+<!----------------------------------------------------------------> 
+
+
+
+<?MICOMMENT> ------------ miniature synonyms code from before I grabbed it from markerview  ---------------
+
+<?MISQL SQL="
+  select dalias_alias, dalias_zdb_id
+    from data_alias
+    where dalias_data_zdb_id = '$OID' and dalias_group = 'alias';">
+  <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)"><STRONG>Synonyms: </STRONG> <?/MIBLOCK>
+  $1   
+  <?MIBLOCK COND="$(<,$MI_CURRENTROW,$MI_ROWCOUNT)">,<?MIELSE><BR><?/MIBLOCK>
+<?/MISQL>
+
+<?/MICOMMENT>
+
+<?MICOMMENT> <!-- I'm not sure that this is meaningful to the users.. -->
+    <?MIVAR><STRONG>Type: </STRONG> $item_type_code <BR><?/MIVAR> 
+<?/MICOMMENT>
+<br>
+
+<TABLE width="90%">
+  <TR>
+    <TD bgcolor="#CCCCCC">
+      <STRONG>Appears at..</STRONG>
+    </TD>
+    <TD bgcolor="#CCCCCC">
+      <STRONG>Until</STRONG>
+    </TD>
+  </TR>
+  <TR>
+    <TD bgcolor="#EEEEEE">
+      <?MIVAR>
+      <A HREF="$item_stg_start_url">
+      $item_stg_start<?/MIVAR>
+      </A>
+    </TD>
+    <TD bgcolor="#EEEEEE">
+      <?MIVAR>
+      <A HREF="$item_stg_end_url">
+      $item_stg_end<?/MIVAR>
+      </A>
+    </TD>
+</TABLE>
+
+
+<BR>
+
+<?MISQL SQL="
+	SELECT count (distinct gene.mrkr_abbrev)::Integer
+	FROM expression_pattern_anatomy, expression_pattern, marker as segment, 
+	     marker_relationship, marker as gene
+	WHERE xpatanat_anat_item_zdb_id = '$OID'
+	  and xpat_zdb_id = xpatanat_xpat_zdb_id
+	  and xpat_probe_zdb_id = segment.mrkr_zdb_id
+	  and segment.mrkr_zdb_id = mrel_mrkr_2_zdb_id
+	  and mrel_mrkr_1_zdb_id = gene.mrkr_zdb_id
+;">
+  <?MIVAR NAME=$totalxpats>$1<?/MIVAR>
+<?/MISQL>
+
+<?MIBLOCK COND="$(>,$totalxpats,0)">
+
+  <TABLE width="90%">
+    <TR>
+     <TD bgcolor="#CCCCCC">
+       <?MIVAR>
+       <STRONG>Expresses
+       (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselectnew.apg&query_results=true&START=0&WINSIZE=25&selected_structures=$item_name">$totalxpats</A>) 
+Genes
+        <?MIBLOCK COND="$(>,$totalxpats,10)">, first 10: <?/MIBLOCK>
+       </STRONG>
+       <?/MIVAR>
+     </TD>
+   </TR>
+   <TR>
+     <TD bgcolor="#EEEEEE">
+<?MISQL SQL="
+	SELECT FIRST 10 distinct gene.mrkr_abbrev, gene.mrkr_zdb_id, segment.mrkr_abbrev, segment.mrkr_zdb_id, 
+	       xpat_assay_name, xpat_zdb_id, gene.mrkr_abbrev_order
+	FROM expression_pattern_anatomy, expression_pattern, marker as segment, 
+	     marker_relationship, marker as gene
+	WHERE xpatanat_anat_item_zdb_id = '$OID'
+	  and xpat_zdb_id = xpatanat_xpat_zdb_id
+	  and xpat_probe_zdb_id = segment.mrkr_zdb_id
+	  and segment.mrkr_zdb_id = mrel_mrkr_2_zdb_id
+	  and mrel_mrkr_1_zdb_id = gene.mrkr_zdb_id
+	ORDER BY gene.mrkr_abbrev_order
+;">
+<?MIVAR NAME="gene_abbrev">$1<?/MIVAR>
+<?MIVAR NAME="gene_zdb_id">$2<?/MIVAR>
+<?MIVAR NAME="segment_abbrev">$3<?/MIVAR>
+<?MIVAR NAME="segment_zdb_id">$4<?/MIVAR>
+<?MIVAR NAME="xpat_assay_name">$5<?/MIVAR>
+<?MIVAR NAME="xpat_zdb_id">$6<?/MIVAR>
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$gene_zdb_id">$gene_abbrev</A>
+<?/MISQL>
+<?MIBLOCK COND="$(>,$totalxpats,10)">
+  <?MIVAR>, <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselectnew.apg&query_results=true&START=0&WINSIZE=25&selected_structures=$item_name"><b>Find all $totalxpats</b></A> <?/MIVAR>
+<?/MIBLOCK>
+      </TD>
+    </TR>
+  </TABLE>
+<BR>
+<?/MIBLOCK>
+
+<!-- start hierarchy relationships --->
+
+<?MICOMMENT> <!-- commented out complicated hierarchy thing -->
+
+<TABLE width=100%>
+<TR><TD bgcolor="#DDDDDD"><STRONG>Appears at this stage...</STRONG></TD>
+    <TD bgcolor="#DDDDDD"><STRONG>...until this stage...</STRONG></TD>
+    <TD bgcolor="#DDDDDD"><STRONG>...as a child of</STRONG></TD></TR>
+<?MISQL SQL="
+	SELECT start.stg_name, start.stg_zdb_id, end.stg_name, 
+	       end.stg_zdb_id, parent.anatitem_zdb_id, parent.anatitem_name,
+	       start.stg_hours_start, end.stg_hours_start
+	FROM all_anatomy_contains, stage as start, stage as end, anatomy_item parent
+	WHERE allanatcon_contained_zdb_id = '$OID'
+	  and allanatcon_container_zdb_id = parent.anatitem_zdb_id
+	  and start.stg_zdb_id = parent.anatitem_start_stg_zdb_id
+	  and end.stg_zdb_id = parent.anatitem_end_stg_zdb_id
+	  and allanatcon_min_contain_distance = '1'
+	ORDER BY 7,8
+;">
+<?MIVAR NAME="start_stg_name">$1<?/MIVAR>
+<?MIVAR NAME="start_stg_zdb_id">$2<?/MIVAR>
+<?MIVAR NAME="end_stg_name">$3<?/MIVAR>
+<?MIVAR NAME="end_stg_zdb_id">$4<?/MIVAR>
+<?MIVAR NAME="parent_zdb_id">$5<?/MIVAR>
+<?MIVAR NAME="parent_name">$6<?/MIVAR>
+<?MIVAR>
+<TR>
+ <TD bgcolor="#EEEEEE">$start_stg_name</TD>
+ <TD bgcolor="#EEEEEE">$end_stg_name</TD>
+ <TD bgcolor="#EEEEEE">
+  <FONT style="font-family:arial; font-size:small; font-weight:bold">
+   <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$parent_zdb_id">  $parent_name
+  </FONT>
+ </TD>
+</TR>
+<?/MIVAR>
+<?/MISQL>
+</TABLE>
+<?/MICOMMENT>
+
+<!-- new hierarchy relationship display -->
+
+<TABLE width="90%">
+  <TR>
+    <TD bgcolor="#CCCCCC" colspan=2>
+      <STRONG>Relationships</STRONG>
+    </TD>
+   </TR>
+  <TR>
+    <TD bgcolor="#EEEEEE" valign=top align=left width=110>
+      Contained by: 
+    </TD>
+    <TD bgcolor="#EEEEEE">
+<?MISQL SQL="
+	SELECT start.stg_name, start.stg_zdb_id, end.stg_name, 
+	       end.stg_zdb_id, parent.anatitem_zdb_id, parent.anatitem_name,
+	       start.stg_hours_start, end.stg_hours_start
+	FROM all_anatomy_contains, stage as start, stage as end, anatomy_item parent
+	WHERE allanatcon_contained_zdb_id = '$OID'
+	  and allanatcon_container_zdb_id = parent.anatitem_zdb_id
+	  and start.stg_zdb_id = parent.anatitem_start_stg_zdb_id
+	  and end.stg_zdb_id = parent.anatitem_end_stg_zdb_id
+	  and allanatcon_min_contain_distance = '1'
+	ORDER BY 7,8
+;">
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$5">$6</A> &nbsp; 
+<?/MISQL>
+      </TD>
+    </TR>
+    <TR>
+      <TD bgcolor="#EEEEEE" valign=top align=left>
+        Contains: 
+      </TD>
+      <TD bgcolor="#EEEEEE">
+<?MISQL SQL="
+SELECT start.stg_name, start.stg_zdb_id, end.stg_name, 
+	       end.stg_zdb_id, child.anatitem_zdb_id, child.anatitem_name,
+	       start.stg_hours_start, end.stg_hours_start
+	FROM all_anatomy_contains, stage as start, stage as end, anatomy_item child
+	WHERE allanatcon_container_zdb_id = '$OID'
+	  and allanatcon_contained_zdb_id = child.anatitem_zdb_id
+	  and start.stg_zdb_id = child.anatitem_start_stg_zdb_id
+	  and end.stg_zdb_id = child.anatitem_end_stg_zdb_id
+	  and allanatcon_min_contain_distance = '1'
+	ORDER BY 7,8
+;">
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$5">$6</A> &nbsp; 
+<?/MISQL>
+      </TD>
+    </TR>
+  </TABLE>
+<!-- end hierarchy relationships -->
+
+
+
+<?MIBLOCK COND="$(EC,$item_name,inner ear)">
+
+<BR>
+
+<STRONG>Definition: </STRONG>The auditory (hearing) and vestibular (balance) organ of the fish, equivalent 
+  to the inner ear of amniotes (fish do not have an outer or middle ear). Develops 
+  from a cranial ectodermal thickening, the otic placode, which arises on either 
+  side of the head midway between the eye and the first somite. This cavitates 
+  to form a simple vesicle, from which all structures of the inner ear (<a href="../semi_canal/semi.html">semicircular 
+  canals</a>,<a href="../sens/sens.html"> sensory patches</a> and neurons of the 
+  <a href="../stato/stato.html">statoacoustic (VIIIth) ganglion</a>) are thought 
+  to arise. Five sensory patches develop in the embryonic ear: three cristae (each 
+  associated with a <a href="../semi_canal/semi.html">semicircular canal</a>) 
+  and two maculae (each associated with an <a href="../oto/otolith.html">otolith</a>). 
+  Two further <a href="../sens/sens.html">sensory patches</a>, and one additional 
+  <a href="../oto/otolith.html">otolith</a>, are present in the adult ear. Neuroblasts 
+  delaminate from the epithelium of the ventral floor of the otic vesicle to form 
+  the <a href="../stato/stato.html">statoacoustic (VIIIth) ganglion</a> between 
+  22 and 42h. Epithelial projections forming the <a href="../semi_canal/semi.html">semicircular 
+  canal system</a> protrude into the vesicle and fuse between 44 and 72h. A dorsolateral 
+  septum, dividing the anterior and posterior <a href="../semi_canal/semi.html">canals</a>, 
+  grows into the ear during the same period. <!-- /DESC --></p> 
+
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(EC,$item_name,inner ear)">
+
+<BR>
+
+<TABLE>
+  <TR>
+    <TD bgcolor="#CCCCCC" colspan=2>
+      <STRONG>Homologues</STRONG>
+
+
+    </TD>
+  </TR>
+  <TR>
+    <TD bgcolor="#EEEEEE"> 
+      Human
+    </TD>
+    <TD bgcolor="#EEEEEE">
+      otic placode, otic vesicle, inner ear
+    </TD>
+  </TR>
+  <TR>
+    <TD bgcolor="#EEEEEE">
+Mouse
+    </TD>
+    <TD bgcolor="#EEEEEE">
+ otic placode, otic vesicle, inner ear
+    </TD>
+  <TR>
+    <TD bgcolor="#EEEEEE">
+      Chicken
+    </TD>
+    <TD bgcolor="#EEEEEE">
+      otic placode, otic vesicle, inner ear
+
+    </TD>
+  </TR>
+  <TR>
+    <TD bgcolor="#EEEEEE">
+?
+    </TD>
+    <TD bgcolor="#EEEEEE">
+
+Fish do not have a counterpart of the cochlea, the specialised auditory organ of amniotes, with its associated sensory patch (organ of Corti (mouse, human); basilar papilla (chick)). Instead, the macular organs of the sacculus, lagena and macula neglecta detect sound waves in the adult fish, in addition to their vestibular roles. The utriculus and cristae of the semicircular canals have the same vestibular functions in all species, detecting linear accelerations and gravity (utriculus) and angular accelerations (cristae).
+    </TD>
+  </TR>
+  <TR>
+    <TD bgcolor="#EEEEEE">  
+Frog
+    </TD>
+    <TD bgcolor="#EEEEEE">  
+ otic placode, otic vesicle, inner ear
+    </TD>
+  </TR>
+  <TR>
+    <TD bgcolor="#EEEEEE">
+Fly
+    </TD>
+     <TD bgcolor="#EEEEEE">
+
+ No direct counterparts. Hearing insects hear using auditory receptors (chordotonal sensilla, also known as scolopidia) associated with auditory (tympanal or flagellar) organs, which may be in a variety of anatomical locations. In Drosophila, Johnston’s organs, found on the antennae, discriminate species-specific courtship songs. The halteres (reduced and specialised hind wings, rich in campaniform sensilla) function to maintain balance during flight and motion.
+
+    </TD>
+  </TR>
+</TABLE>
+
+<?/MIBLOCK>
+
+<BR>
+
+<!-- start gene expression relationships -->
+
+<!-- end gene expression relationships -->
+
+
+<!-- start image relationships -->
+<?MIBLOCK COND="$(EC,pigs,flying)"> 
+<-- I'm leaving this code here because 
+     if there were data, it would work -->
+
+<?MISQL SQL="
+	SELECT count(fimganat_fimg_zdb_id)::integer
+	FROM fish_image_anatomy
+	WHERE fimganat_anat_item_zdb_id = '$OID'
+;">
+<STRONG> $1 Image(s) </STRONG> <BR>
+<?/MISQL>
+
+<?MISQL SQL="
+	SELECT fimganat_fimg_zdb_id
+	FROM fish_image_anatomy
+	WHERE fimganat_anat_item_zdb_id = '$OID'
+;">
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$1">img</A><BR>
+<?/MISQL>
+
+<?/MIBLOCK>
+
+<!-- end image relatiohsips -->
+
+
+<!-- start pub relationships -->
+
+<?MISQL SQL="select count(*)::Integer
+	     from publication 
+             where webhtml_like(abstract,'$item_name') 
+;">
+<?MIVAR NAME="$pubcount">$1<?/MIVAR>
+<?MIBLOCK COND="$(>,$pubcount,0)">
+<?MIVAR>
+<STRONG>(<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubselect2.apg&anon1=abstract&anon1text=$item_name&query_results=exists">$1</A>) Publication(s)</STRONG> with "$item_name" occuring in the abstract.
+<?/MIVAR>
+<?/MIBLOCK>
+<?/MISQL>
+<!---  end pub relationships -->
+
+
+<?/MIBLOCK> <!-- close OID check -->
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
