@@ -126,7 +126,8 @@
     <?/MIBLOCK>  <!-- ends if start page is null -->
 
 
-    <?MIBLOCK COND="$(NC,$start_page,NULL)">       
+    <?MIBLOCK COND="$(NC,$start_page,NULL)">  
+	<?MIVAR COND="$(>,$(POSITION,$start_page,marker),0)" NAME=$constraint> where mrkr_zdb_id = '$OID' <?/MIVAR>    
         <?MISQL SQL="select WebExplode(object,'') from webPages where ID='$start_page';">$1<?/MISQL>
     <?/MIBLOCK>  <!-- ends if valid start page, not null  -->
 
