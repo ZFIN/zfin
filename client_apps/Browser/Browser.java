@@ -419,7 +419,7 @@ public class Browser extends Applet {
 		String cgi = sTok.nextToken();
 		QS = sTok.nextToken();
 
-		sTok = new StringTokenizer(QS, "&");
+		sTok = new StringTokenizer(QS, ";");
 		QS = "";
 		String tmp;
 		while(sTok.hasMoreTokens()) {
@@ -431,6 +431,7 @@ public class Browser extends Applet {
 				tmp = getParameter("submit");
 			if (!tmp.startsWith("structure_list"))
 				QS = QS + "&" + tmp;
+			System.out.println("QS: " + QS);
 		}
 		
 		Enumeration E = selectedPanel.SelectedVector.elements();
@@ -469,7 +470,7 @@ public class Browser extends Applet {
 /*		try {
 
 			// open the connection and prepare it to POST
-			URL u = new URL("http://" + getParameter("host") + "/cgi-bin/" + cgi);
+			URL u = new URL("http://" + "host" + "/cgi-bin/" + cgi);  //won't do nuffin 
 			URLConnection uc = u.openConnection();
 			uc.setDoOutput(true);
 			uc.setDoInput(true);

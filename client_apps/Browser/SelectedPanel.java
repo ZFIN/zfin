@@ -197,7 +197,7 @@ public class SelectedPanel extends Panel {
     if (pappy.getParameter("liveupdate") != null) {
  
       System.out.println("SQL: delete from " + LUtable + " where " + LUcol2 + "='" + LUcol2val + "' and " + LUcol1 + "='" + node.get_data() + "';");
-      SQLQuery Q = new SQLQuery(pappy.getParameter("host"), pappy.getParameter("port"));
+      SQLQuery Q = new SQLQuery();
       String query = "delete from " + LUtable + " where " + LUcol2 + "='" + LUcol2val + "' and " + LUcol1 + "='" + node.get_data() + "';";
       Q.selectAll(1,query);
     }

@@ -169,7 +169,7 @@ public class TreePanel extends Panel {
   public void fillTree() {
 
     if (pappy.Data.organs == null) {
-      SQLQuery Q = new SQLQuery(pappy.getParameter("host"),pappy.getParameter("port"));
+      SQLQuery Q = new SQLQuery();
       
       String table;
       if (pappy.getParameter("table") == null)

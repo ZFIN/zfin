@@ -22,7 +22,7 @@ public class data_gatherer {
   // Nothing to do currently in constructor
   public data_gatherer(Applet app) {
     pappy = app;
-    Q = new SQLQuery(pappy.getParameter("host"),pappy.getParameter("port"));
+    Q = new SQLQuery();
   }
 
   // silderRangeNames() : Returns a vector of strings containing the
