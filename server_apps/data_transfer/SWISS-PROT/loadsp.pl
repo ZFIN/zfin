@@ -1,0 +1,338 @@
+#!/local/bin/perl 
+
+#
+# loadsp.pl
+#
+# Run this script to do SWISS-PROT load. 
+# % loadsp.pl
+#
+# It contains all the subroutine of SWISS-PROT load.
+ 
+use MIME::Lite;
+
+# ----------------- Send Error Report -------------
+
+sub sendErrorReport () {
+  
+  $SUBJECT="Auto SWISS-PROT:".$_[0];
+  $MAILTO="peirans\@cs.uoregon.edu";
+  $TXTFILE="./report.txt";
+ 
+  # Create a new multipart message:
+  $msg1 = new MIME::Lite 
+    From    => "$ENV{LOGNAME}",
+    To      => "$MAILTO",
+    Subject => "$SUBJECT",
+    Type    => 'multipart/mixed';
+ 
+  attach $msg1 
+   Type     => 'text/plain',   
+   Path     => "$TXTFILE";
+
+  # Output the message to sendmail
+
+  open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
+  $msg1->print(\*SENDMAIL);
+  close (SENDMAIL);
+
+}
+
+#------------------ Send Running Result ----------------
+
+sub sendRunningResult () {
+		
+ #----- One mail send out the checking report----
+
+  $SUBJECT="Auto: SWISS-PROT check report";
+  $MAILTO="peirans\@cs.uoregon.edu clements\@cs.uoregon.edu";
+  $TXTFILE="./checkreport.txt";
+ 
+  # Create a new multipart message:
+  $msg2 = new MIME::Lite 
+    From    => "$ENV{LOGNAME}",
+    To      => "$MAILTO",
+    Subject => "$SUBJECT",
+    Type    => 'multipart/mixed';
+ 
+  attach $msg2 
+   Type     => 'text/plain',   
+   Path     => "$TXTFILE";
+
+  # Output the message to sendmail
+
+  open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
+  $msg2->print(\*SENDMAIL);
+
+  
+ #----- Another mail send out problem files ----
+
+  $SUBJECT="Auto: SWISS-PROT problem file";
+  $MAILTO="peirans\@cs.uoregon.edu";     
+  $ATTFILE = "allproblems.txt";
+
+  # Create another new multipart message:
+  $msg3 = new MIME::Lite 
+    From    => "$ENV{LOGNAME}",
+    To      => "$MAILTO",
+    Subject => "$SUBJECT",
+    Type    => 'multipart/mixed';
+
+  attach $msg3 
+    Type     => 'application/octet-stream',
+    Encoding => 'base64',
+    Path     => "./$ATTFILE",
+    Filename => "$ATTFILE";
+
+  # Output the message to sendmail
+  open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
+  $msg3->print(\*SENDMAIL);
+
+  close(SENDMAIL);
+}
+
+
+#------------------- Download -----------
+
+sub downloadGOtermFiles () {
+
+   system("wget http://www.geneontology.org/ontology/function.ontology -O function.ontology");
+   system("wget http://www.geneontology.org/ontology/process.ontology -O process.ontology");
+   system("wget http://www.geneontology.org/ontology/component.ontology -O component.ontology");
+   system("wget http://www.geneontology.org/external2go/spkw2go -O spkw2go");
+   system("wget http://www.geneontology.org/external2go/interpro2go -O interpro2go");
+ 
+ }
+
+
+#=======================================================
+#
+#   Main
+#
+
+
+#set environment variables
+$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
+$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
+$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
+$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
+
+chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/";
+
+
+#remove old files
+ 
+system("rm -f ./ccnote/*");
+system("rmdir ./ccnote");
+system("rm -f *.ontology");
+system("rm -f *2go");
+system("rm -f prob*");
+system("rm -f okfile");
+system("rm -f *.unl");
+system("rm -f *.txt");
+system("mkdir ./ccnote");
+
+
+&downloadGOtermFiles();
+
+$count = 0;
+$retry = 1;
+# verify the files are downloaded
+while ( !( (-e "function.ontology") &&
+           (-e "process.ontology") && 
+           (-e "component.ontology") && 
+           (-e "spkw2go") &&
+           (-e "interpro2go")) ) {
+
+  $count++;
+  if ($count > 30 )
+  {
+    if ($retry) 
+    {
+      $count = 0;
+      $retry = 0;
+      print "\nreload...\n";
+      &downloadGOtermFiles();
+    }
+    else
+    {
+      &sendErrorReport("Failed to download GO term files.");
+      exit;
+    }
+  }
+}
+
+#--------------- Delete records from last SWISS-PROT loading-----
+
+system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> sp_delete.sql >out 2> report.txt");
+open F, "out" or die "Cannot open out file";
+if (<F>) {
+ 
+  &sendErrorReport("Failed to delete old records");
+  exit;
+}
+close F;
+  
+# --------------- Check SWISS-PROT file --------------
+# good records for loading are placed in "okfile"
+print "\n sp_check.pl SPDoc >checkreport.txt \n";
+system ("sp_check.pl SPDoc >checkreport.txt" );
+
+$count = 0;
+$retry = 1;
+# wait till checking is finished
+while( !( -e "okfile" && 
+          -e "prob1" && 
+          -e "problemfile")) {
+
+  $count++;
+  if ($count > 10)
+  {
+    if ($retry) 
+    {
+      $count = 0;
+      $retry = 0;
+      print "retry sp_check.pl\n";
+      system("sp_check.pl SPDoc");
+    }
+    else
+    {
+      &sendErrorReport("Failed to run sp_check.pl");
+      exit;
+    }
+  }  
+}
+
+# concatenate all the sub problem files
+system("cat prob1 prob2 prob3 prob4 prob5 prob6 prob7 > allproblems.txt");
+
+
+# ----------- Parse the SWISS-PROT file ----------------
+ print "\n sp_parser.pl okfile \n";
+system ("sp_parser.pl okfile");
+
+$count = 0;
+$retry = 1;
+# wait till parsing is finished
+while( !( -e "dr_dblink.unl" && 
+          -e "ac_dalias.unl" && 
+          -e "gn_dalias.unl" &&
+          -e "cc_external.unl" &&
+	  -e "kd_spkeywd.unl" )) {
+
+  $count++;
+  if ($count > 10)
+  {
+    if ($retry) 
+    {
+      $count = 0;
+      $retry = 0;
+      print "retry sp_parser.pl\n";
+      system("sp_parser.pl okfile");
+    }
+    else
+    {
+      &sendErrorReport("Failed to run sp_parser.pl");
+      exit;
+    }
+  }  
+}
+
+
+
+# ------------ Parse spkw2go ---------------
+print "\nsptogo.pl spkw2go\n";
+system ("sptogo.pl spkw2go");
+$count = 0;
+$retry = 1;
+# wait till parsing is finished
+while( !( -e "sp_mrkrgoterm.unl")) {
+
+  $count++;
+  if ($count > 10)
+  {
+    if ($retry) 
+    {
+      $count = 0;
+      $retry = 0;
+      print "retry sptogo.pl\n";
+      system("sptogo.pl spkw2go");
+    }
+    else
+    {
+      &sendErrorReport("Failed to run sptogo.pl"); 
+      exit; 
+    }
+  }  
+}
+
+# ------------ Parse interpro2go ---------------
+
+system ("iptogo.pl interpro2go");
+$count = 0;
+$retry = 1;
+# wait till parsing is finished
+while( !( -e "ip_mrkrgoterm.unl")) {
+
+  $count++;
+  if ($count > 10)
+  {
+    if ($retry) 
+    {
+      $count = 0;
+      $retry = 0;
+      print "retry iptogo.pl\n";
+      system("iptogo.pl interpro2go");
+    }
+    else
+    {
+      &sendErrorReport("Failed to run iptogo.pl"); 
+      exit;     
+    }
+  }  
+}
+
+
+# ------------ Parse ontology files ---------------
+
+system ("ontology.pl function.ontology process.ontology component.ontology");
+$count = 0;
+$retry = 1;
+# wait till parsing is finished
+while( !( -e "ontology.unl")) {
+
+  $count++;
+  if ($count > 10)
+  {
+    if ($retry) 
+    {
+      $count = 0;
+      $retry = 0;
+      print "retry ontology.pl\n";
+      system("ontology.pl function.ontology process.ontology component.ontology");
+    }
+    else
+    {
+         &sendErrorReport("Failed to run ontology.pl"); 
+      exit;
+    }
+  }  
+}
+
+
+# ------------ Loading ---------------------
+
+system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> sp_load.sql >out 2> report.txt");
+
+open F, "out" or die "Cannot open out";
+if (<F>) {
+   &sendErrorReport("Failed to load SWISS_PROT records");
+  exit;
+}
+close F;
+
+&sendRunningResult();
+
+exit;
+
+
+
