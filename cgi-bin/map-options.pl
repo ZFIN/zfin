@@ -90,7 +90,7 @@ ENDCSS
  
  
  
- print $query->startform(-method=>'get',-action=>'/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi',-name=>'options',-target=>'pbrowser');
+ print $query->startform(-method=>'get',-action=>'/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi',-name=>'options',-target=>'pbrowser', -onSubmit=>'call_mapplet();');
 my $edit = '';
 my $buf =''; 
 # $query->hidden(-name=>'edit_panel');
@@ -122,8 +122,8 @@ my $buf ='';
  print "\n<center>";
 # print '<P align=right>' . $query->submit(-name=>'refresh_map',-value=>'View Map') . '</P>';
  
- my $units;
- my $notes;
+ my $units = '';
+ my $notes = '';
  if ($query->param('edit_panel') ne "") {
    
   for ($query->param('edit_panel')) {
@@ -199,11 +199,13 @@ my $buf ='';
 
 #tec    $NLlg = ' LG ' . $query->popup_menu(-name=>$panel.'_lg',-values=>[qw/?? 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25/], -default=>'??',-onChange=>$loc_onchange);
      $NL_onchange = $loc_onchange . $jsform . "_lg_or.value=\'near\'; " . $jsform . "_lg_hi.value=\'\'; " . $jsform . "_lg_lo.value=\'\'; ";
-     print $LG_OR[0] . 'near location: ' . $query->textfield(-name=>$panel.'_near_loc',-size=>'5',-onChange=>$NL_onchange) . ' ' . $units . '<br>'; 
+     print 'near location: ' . $query->textfield(-name=>$panel.'_near_loc',-size=>'5',-onChange=>$NL_onchange) . ' ' . $units . '<br>'; 
+
+
 
      $BL_onchange = $loc_onchange . $jsform . "_lg_or.value=\'units\'; " . $jsform . "_near_loc.value=\'\'; ";
 #tec     $BLlg = ' LG ' . $query->popup_menu(-name=>$panel.'_lg',-values=>[qw/?? 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25/], -default=>'??',-onChange=>$BL_onchange);
-     print $LG_OR[1] . ' &nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;  <font size=-1 color=red>or</font><br> between locations: ' . $query->textfield(-name=>$panel.'_lg_lo',-size=>'5',-onChange=>$BL_onchange) . ' ' . $units . ' and ' . $query->textfield(-name=>$panel.'_lg_hi',-size=>'5',-onChange=>$BL_onchange) . ' ' . $units . '<br>';
+     print ' &nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;  <font size=-1 color=red>or</font><br> between locations: ' . $query->textfield(-name=>$panel.'_lg_lo',-size=>'5',-onChange=>$BL_onchange) . ' ' . $units . ' and ' . $query->textfield(-name=>$panel.'_lg_hi',-size=>'5',-onChange=>$BL_onchange) . ' ' . $units . '<br>';
 
 #     $BM_onchange = $loc_onchange . "document.options." . $panel . "_lg_or[1].checked=true;";
 #     print $LG_OR[1] . 'between markers: ' . $query->textfield(-name=>$panel.'_lg_m_lo',-size=>'10' ,-onChange=>$BM_onchange) . ' and ' . $query->textfield(-name=>$panel.'_lg_m_hi',-size=>'10',-onChange=>$BM_onchange) . '<br>';
@@ -219,7 +221,7 @@ my $buf ='';
 #     print $query->checkbox(-name=>$panel.'_anon',-checked=>'checked',-value=>'1',-label=>'Anonymous',-onClick=>$onchange) . ' ';
      print $query->hidden(-name=>$panel.'_anon',-value=>'1');
 
-     print $query->button(-name=>'refresh_map',-value=>'Submit Changes', -onClick=>'call_mapplet();') . ' ';
+     print $query->submit(-name=>'refresh_map',-value=>'Submit Changes') . ' ';
      print $query->button(-name=>'cancel', -value=>'Cancel', -onClick=>'parent.pbrowser.document.selectform.submit();');
 #"self.location='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mapperselect.apg';") . ' ';
 
