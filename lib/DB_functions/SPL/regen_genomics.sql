@@ -867,7 +867,8 @@ create dba function "informix".regen_genomics() returning integer
 	     all_l_m_new x1 ,
 	     outer locus x2 
 	where x1.alnkgmem_member_zdb_id = x0.mrkr_zdb_id
-	  AND x0.mrkr_zdb_id = x2.cloned_gene;
+	  AND x0.mrkr_zdb_id = x2.cloned_gene
+          and x0.mrkr_type = 'GENE';
 
 
     -- get genes that aren't mapped
