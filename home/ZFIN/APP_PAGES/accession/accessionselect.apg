@@ -184,7 +184,7 @@
   <TR>
    <TD class="fullwidth">
     <?MIVAR>
-    <b>Accession Number:</b> <input type=text name=aname size=15 value=$(IF,$(XST,$aname),$aname, )> </font>
+    <b>Accession Number:</b> <input type=text name=aname size=50 value=$(IF,$(XST,$aname),$aname, )> </font>
     <?/MIVAR>
    </TD>
   </TR>
