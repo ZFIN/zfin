@@ -8,8 +8,9 @@
 <script type="text/javascript" language="JavaScript1.1" src="zirc.js"></script>
 <script type="text/javascript" language="javaScript">
    function loadFormData() {
-      storedValues('zircESTRequestProfile');
       storedMTAValues('zircMTAProfile');
+      storedValues('zircAntibodyRequest');
+      storedValues('zircAntibodyRequestProfile');
    }
 </script>
 </head>
@@ -25,7 +26,7 @@
   save your contact information between sessions. <br>
 Please set your preferences to allow Javascript and then Reload.</font>
 </noscript>
-<form NAME="theRequestForm" onSubmit="saveValues('zircAntibodyProfile','10',''); formValues('zircAntibodyRequest');" METHOD="post" ACTION="http://<!--|DOMAIN_NAME|-->/<!--|CGI_BIN_DIR_NAME|-->/cgiemail.cgi">
+<form NAME="theRequestForm" onSubmit="saveValues('zircAntibodyRequestProfile','10',''); formValues('zircAntibodyRequest');" METHOD="post" ACTION="http://<!--|DOMAIN_NAME|-->/<!--|CGI_BIN_DIR_NAME|-->/cgiemail.cgi">
   <table border=0 width=585 cellpadding=0 cellspacing=0 background="bgimage.jpg" name="AntibodyProfile">
       <tr> 
         <td colspan=2 valign=top><img src="bgtop.jpg"></td>
