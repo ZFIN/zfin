@@ -107,7 +107,7 @@ COND="$(AND,$(NC,$attr,dalias_alias),$(NC,$attr,putgene_comments),
     <?/MISQL>
     <?MISQL SQL="
       update marker_history
-        set mhist_reason = '$xtra_param',
+        set mhist_reason = '$mhistrsn_name',
             mhist_comments = '$comments'
         where mhist_mrkr_zdb_id = '$OID'
           and mhist_date = '$MHIST_DATE'">

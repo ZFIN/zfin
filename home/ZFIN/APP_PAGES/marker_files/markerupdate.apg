@@ -134,7 +134,7 @@ function make_correction(mrkr_id,old_v,attr) {
               <td>
               <input type=hidden name=info value=nomenclature>
               Reason 
-              <SELECT name=xtra_param>
+              <SELECT name=mhistrsn_name>
               <?MISQL SQL="select mhistrsn_name from marker_history_reason order by mhistrsn_name">
                 <option value="$1">$1
               <?/MISQL>
