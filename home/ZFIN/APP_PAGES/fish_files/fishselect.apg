@@ -323,13 +323,13 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
 
     <TR align=left border="0" cellspacing="0" cellpadding="3" valign=top bgcolor="$row_color"> 
     <TD>
-    $(IF,$(XST,$return_rec),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$fish_id">SELECT</A>") 
+    $(IF,$(XST,$return_rec),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$fish_id">SELECT</A>",&nbsp;) 
     </TD>
     <TD valign=top> 
     <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$fish_id" >$q_allele</A>
     <?MIBLOCK COND="$(AND,$(NC,$q_abbrev,NULL),$(NC,$q_abbrev,xxx))">
       <?MIVAR>
-	<i>($q_abbrev)</i></FONT></b>
+	<i>($q_abbrev)</i></b>
       <?/MIVAR>
     <?/MIBLOCK>
 
@@ -344,10 +344,10 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
 
     </TD> 
 
-    <TD><font size=-1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$locus" >$name</A> 
+    <TD><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$locus" >$name</A> 
     <?MIBLOCK COND="$(AND,$(NC,$q_abbrev,NULL),$(NC,$q_abbrev,xxx),$(NC,$q_abbrev,none))">
       <?MIVAR>
-	<i>($q_abbrev)</i></FONT></b>
+	<i>($q_abbrev)</i></b>
       <?/MIVAR>
     <?/MIBLOCK>
 
@@ -368,68 +368,114 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
 
     </font></TD>
 
-    <TD><font size=-1> $(IF,$(NC,$gene_id,unknown),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$gene_id >$gene_abbrev</A>,&nbsp;&nbsp;-&nbsp;&nbsp;)
-    </font></TD>
+    <TD align=center> $(IF,$(NC,$gene_id,unknown),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$gene_id >$gene_abbrev</A>,&nbsp;&nbsp;-&nbsp;&nbsp;)
+    </TD>
 
-    <TD><font size=-1> $(IF,$(OR,$(EC,$q_chrom_change,NULL),$(EC,$q_chrom_change,unknown)),&nbsp;&nbsp;-&nbsp;&nbsp;,$q_chrom_change)</font> </TD> 
+    <TD align=center> $(IF,$(OR,$(EC,$q_chrom_change,NULL),$(EC,$q_chrom_change,unknown)),&nbsp;&nbsp;-&nbsp;&nbsp;,$q_chrom_change)</font> </TD> 
 
-      <?MISQL SQL="select or_lg,lg_location,metric from public_paneled_markers where zdb_id = '$fish_id';">
-        <?MIVAR NAME=$lg>$1<?/MIVAR>
-	<?MIVAR NAME=$lg_location>$2<?/MIVAR>      
-	<?MIVAR NAME=$metric>$3<?/MIVAR>
+    <!-- get independent linkage info for other members of linkage or for allele itself if it is the only linkage member -->
 
-
-	<?MIBLOCK COND="$(>,$MI_CURRENTROW,1)">
-	  <?MIVAR><TR bgcolor="$row_color"><?/MIVAR><TD>&nbsp;</TD<TD>&nbsp;</TD>><TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD>
-	<?/MIBLOCK>
-
-        <TD align=center>
-          <font size=-1>$lg
-          </font> 
-        </TD> 
-	<TD align=center>
-	  <font size=-1>
-	    $lg_location $metric
-	  </font>
-	</TD></TR>
+      <?MIVAR NAME=$independ_lg>null<?/MIVAR>
+      <?MISQL SQL="select alnkgmem_or_lg, alnkgmem_num_members from all_linked_members a
+		where (alnkgmem_linkage_zdb_id in 
+		  (select alnkgmem_linkage_zdb_id from all_linked_members b 
+		      where b.alnkgmem_linkage_zdb_id = a.alnkgmem_linkage_zdb_id
+		      and b.alnkgmem_member_zdb_id = '$fish_id')
+		      and a.alnkgmem_member_zdb_id <> '$fish_id'
+                      and a.alnkgmem_private='f')
+		  or (a.alnkgmem_member_zdb_id = '$fish_id'   
+		      and a.alnkgmem_num_members = 1
+                      and a.alnkgmem_private='f') ;">
+        <?MIVAR NAME=$independ_lg>$1<?/MIVAR>
+        <?MIBLOCK COND="$(>,$MI_CURRENTROW,1)">
+          <?MIVAR>
+            <TR bgcolor="$row_color"> <TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD></TR>
+          <?/MIVAR>
+        <?/MIBLOCK>
+        <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
+	  <TD align=center>
+	    <?MIVAR>$independ_lg<?/MIVAR> 
+	  </TD> 
+	  <TD align=center>
+	      &nbsp;&nbsp;-&nbsp;&nbsp;
+	  </TD></TR>
+        <?/MIBLOCK>
 
       <?/MISQL>
 
-  <!-- if mapping not found location display a dash otherwise view map buttons -->
 
-        <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
-          <?MIBLOCK COND="$(EC,$q_chrom_num,0)">
-            <?MIVAR NAME=$print_lg>&nbsp;&nbsp;-&nbsp;&nbsp;<?/MIVAR>
-          <?MIELSE>
-            <?MIVAR NAME=$print_lg>$q_chrom_num<?/MIVAR>
-          <?/MIBLOCK>
-          <?MIVAR><TD align=center><font size=-1>$print_lg</TD><TD align=center>&nbsp;&nbsp;-&nbsp;&nbsp;</font></TD><?/MIVAR>
-        <?MIELSE>
-	<!-- create view map buttons -->
-	<?MIVAR>
-	  <form method=post  name="$q_allele" action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi">
-	    <input type=hidden name=view_map value="view_map">
-	    <input type=hidden name=userid value=$userid>
-	    <input type=hidden name=marker value=$q_abbrev>
-	    <input type=hidden name=MGH value=1> 
-            <input type=hidden name=MOP value=1>
-            <input type=hidden name=GAT value=1>
-            <input type=hidden name=HS value=1>
-            <input type=hidden name=LN54 value=1>
-            <input type=hidden name=T51 value=1>
-            
-            <TR bgcolor="$row_color"><TD>&nbsp;</TD><TD>&nbsp;</TD>
-	    <TD align=left><font size=1><input type=button value='VIEW MERGED MAP' name=view_merge_map onClick="document.$q_allele.action='/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi';document.$q_allele.submit();"></TD><TD>&nbsp;</TD><TD align=left><font size=1><input type=submit value='VIEW INDIVIDUAL MAPS' name=view_map ></TD><TD>&nbsp;</TD><TD>&nbsp;</TD></TR>
-	  </form>
-	<?/MIVAR>   
-        <?/MIBLOCK>
+              <!-- ref panel data -->
+              <?MIVAR NAME=$lg>null<?/MIVAR>
+       	      <?MISQL SQL="select or_lg,lg_location,metric from public_paneled_markers where zdb_id = '$locus';">
+		<?MIVAR NAME=$lg>$1<?/MIVAR>
+		<?MIVAR NAME=$lg_location>$2<?/MIVAR>      
+		<?MIVAR NAME=$metric>$3<?/MIVAR>
+
+		 <?MIBLOCK COND="$(OR,$(>,$MI_CURRENTROW,1),$(AND,$(=,$MI_CURRENTROW,1),$(NC,$independ_lg,null)))">
+		    <?MIVAR>
+		      <TR bgcolor="$row_color"> 
+                        <TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD>                      <TD align=center>
+		          <?MIVAR>$lg<?/MIVAR> 
+		        </TD> 
+		        <TD>
+		          <?MIVAR>$lg_location<?/MIVAR> 
+		        </TD>
+                      </TR>
+		    <?/MIVAR>
+		  <?/MIBLOCK>
+
+		 <?MIBLOCK COND="$(AND,$(=,$MI_CURRENTROW,1),$(EC,$independ_lg,null))">
+          	   <TD align=center>
+		     <?MIVAR>$lg<?/MIVAR> 
+		   </TD> 
+		   <TD>
+		     <?MIVAR>$lg_location<?/MIVAR> 
+		   </TD></TR>
+                 <?/MIBLOCK>
+	      <?/MISQL>
+
+	  <!-- if mapping found location  view map buttons -->
+
+		<?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+		<!-- create view map buttons -->
+		<?MIVAR>
+		  <form method=post  name="$q_allele" action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi">
+		    <input type=hidden name=view_map value="view_map">
+		    <input type=hidden name=userid value="GUEST">
+		    <input type=hidden name=marker value=$q_abbrev>
+		    <input type=hidden name=MGH value=1> 
+		    <input type=hidden name=MOP value=1>
+		    <input type=hidden name=GAT value=1>
+		    <input type=hidden name=HS value=1>
+		    <input type=hidden name=LN54 value=1>
+		    <input type=hidden name=T51 value=1>
+
+		    <TR bgcolor="$row_color"> <TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD>
+		    <TD align=left><font size=1><input type=button value='VIEW MERGED MAP' name=view_merge_map onClick="document.$q_allele.action='/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi';document.$q_allele.submit();"></TD><TD>&nbsp;</TD><TD align=left><font size=1><input type=submit value='VIEW INDIVIDUAL MAPS' name=view_map ></TD><TD>&nbsp;</TD></TR>
+		  </form>
+		<?/MIVAR>   
+		<?/MIBLOCK>
+
+
+           <!-- if no ref panel and no independ link and no lg know -->
+
+
+	   <?MIBLOCK COND="$(AND,$(EC,$q_chrom_num,0),$(EC,$lg,null),$(EC,$independ_lg,null))">
+             <TD align=center>&nbsp;&nbsp;-&nbsp;&nbsp;</TD><TD align=center>&nbsp;&nbsp;-&nbsp;&nbsp;</TD></TR>
+           <?/MIBLOCK>
+             
+           <!-- if no ref panel and no independ link and lg know -->
+          <?MIBLOCK COND="$(AND,$(NC,$q_chrom_num,0),$(EC,$lg,null),$(EC,$independ_lg,null))">
+             <TD align=center><?MIVAR>$q_chrom_num<?/MIVAR></TD><TD align=center>&nbsp;&nbsp;-&nbsp;&nbsp;</TD></TR>
+           <?/MIBLOCK>
+ 
+
+	</TR>
 
 	<!--    change row_color    -->
 	<?MIVAR name=$row_color>$(IF,$(EC,$row_color,#FFFFFF),$highlight,#FFFFFF)<?/MIVAR>
 
-
-    <?/MISQL>
-
+      <?/MISQL>
     </TABLE>
 
     <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No matching records found<?/MIVAR>
@@ -460,9 +506,9 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
 
       <TR valign=top bgcolor="$row_color"> 
         <TD> 
-          $(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$2" >SELECT</A> </FONT>") 
+          $(IF,$(XST,$return_rec),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$2" >SELECT</A>") 
         </TD>
-        <TD valign=top> <FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$2">$1</A> ($3) </FONT> 
+        <TD valign=top> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$2">$1</A> ($3)  
         </TD>  
         <TD><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$5">$4
         </TD>
@@ -523,9 +569,9 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
 	    SQL="select a.name, a.zdb_id, a.abbrev, b.name,b.zdb_id from fish a, lab b where  a.lab=b.zdb_id and a.zdb_id = '$OID' order by a.name;">
 
     <TR valign=top> <TD> 
-    $(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$2">SELECT</A> </FONT>") 
+    $(IF,$(XST,$return_rec),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$2">SELECT</A>") 
     </TD>
-    <TD valign=top> <FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$2">$1</A> ($3) </FONT> </TD>  
+    <TD valign=top> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$2">$1</A> ($3) </TD>  
     <TD><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$5">$4</TD>
     </TR>
     <?/MISQL>

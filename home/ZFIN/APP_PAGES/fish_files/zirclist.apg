@@ -101,24 +101,68 @@
 	    <?/MIVAR></font></TD>
 
 	    <TD align=center><?MIVAR> $(IF,$(OR,$(EC,$chrom_change,NULL),$(EC,$chrom_change,unknown)),&nbsp;&nbsp;-&nbsp;&nbsp;,$chrom_change)<?/MIVAR></font> </TD> 
-	   <TD align=center><?MIVAR> $(IF,$(EC,$chrom_num,0),&nbsp;&nbsp;-&nbsp;&nbsp;</TD>,$chrom_num)</TD><TD>&nbsp;</TD></TR> <?/MIVAR>
 
-	      <?MISQL SQL="select or_lg,lg_location,metric from public_paneled_markers where zdb_id = '$locus';">
+    <!-- get independent linkage info for other members of linkage or for allele itself if it is the only linkage member -->
+
+      <?MIVAR NAME=$independ_lg>null<?/MIVAR>
+      <?MISQL SQL="select alnkgmem_or_lg, alnkgmem_num_members from all_linked_members a
+		where (alnkgmem_linkage_zdb_id in 
+		  (select alnkgmem_linkage_zdb_id from all_linked_members b 
+		      where b.alnkgmem_linkage_zdb_id = a.alnkgmem_linkage_zdb_id
+		      and b.alnkgmem_member_zdb_id = '$zdb_id')
+		      and a.alnkgmem_member_zdb_id <> '$zdb_id'
+                      and a.alnkgmem_private='f')
+		  or (a.alnkgmem_member_zdb_id = '$zdb_id'   
+		      and a.alnkgmem_num_members = 1
+                      and a.alnkgmem_private='f') ;">
+        <?MIVAR NAME=$independ_lg>$1<?/MIVAR>
+        <?MIBLOCK COND="$(>,$MI_CURRENTROW,1)">
+          <?MIVAR>
+            <TR bgcolor="$row_color"> <TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD></TR>
+          <?/MIVAR>
+        <?/MIBLOCK>
+        <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
+	  <TD align=center>
+	    <?MIVAR>$independ_lg<?/MIVAR> 
+	  </TD> 
+	  <TD align=center>
+	      &nbsp;&nbsp;-&nbsp;&nbsp;
+	  </TD></TR>
+        <?/MIBLOCK>
+
+      <?/MISQL>
+
+
+              <!-- ref panel data -->
+              <?MIVAR NAME=$lg>null<?/MIVAR>
+       	      <?MISQL SQL="select or_lg,lg_location,metric from public_paneled_markers where zdb_id = '$locus';">
 		<?MIVAR NAME=$lg>$1<?/MIVAR>
 		<?MIVAR NAME=$lg_location>$2<?/MIVAR>      
 		<?MIVAR NAME=$metric>$3<?/MIVAR>
 
-		<TR bgcolor="$row_color"> <TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD>
+		 <?MIBLOCK COND="$(OR,$(>,$MI_CURRENTROW,1),$(AND,$(=,$MI_CURRENTROW,1),$(NC,$independ_lg,null)))">
+		    <?MIVAR>
+		      <TR bgcolor="$row_color"> 
+                        <TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD>                      <TD align=center>
+		          <?MIVAR>$lg<?/MIVAR> 
+		        </TD> 
+		        <TD>
+		          <?MIVAR>$lg_location<?/MIVAR> 
+		        </TD>
+                      </TR>
+		    <?/MIVAR>
+		  <?/MIBLOCK>
 
-		<TD align=center>
-		  $lg 
-		</TD> 
-		<TD align=center>
-		    $lg_location $metric
-		</TD>
-
+		 <?MIBLOCK COND="$(AND,$(=,$MI_CURRENTROW,1),$(EC,$independ_lg,null))">
+          	   <TD align=center>
+		     <?MIVAR>$lg<?/MIVAR> 
+		   </TD> 
+		   <TD>
+		     <?MIVAR>$lg_location<?/MIVAR> 
+		   </TD></TR>
+                 <?/MIBLOCK>
 	      <?/MISQL>
-              </TR>
+
 	  <!-- if mapping found location  view map buttons -->
 
 		<?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
@@ -140,7 +184,21 @@
 		  </form>
 		<?/MIVAR>   
 		<?/MIBLOCK>
-	 <?MIELSE>
+
+
+           <!-- if no ref panel and no independ link and no lg know -->
+
+
+	   <?MIBLOCK COND="$(AND,$(EC,$chrom_num,0),$(EC,$lg,null),$(EC,$independ_lg,null))">
+             <TD align=center>&nbsp;&nbsp;-&nbsp;&nbsp;</TD><TD align=center>&nbsp;&nbsp;-&nbsp;&nbsp;</TD></TR>
+           <?/MIBLOCK>
+             
+           <!-- if no ref panel and no independ link and lg know -->
+          <?MIBLOCK COND="$(AND,$(NC,$chrom_num,0),$(EC,$lg,null),$(EC,$independ_lg,null))">
+             <TD align=center><?MIVAR>$chrom_num<?/MIVAR></TD><TD align=center>&nbsp;&nbsp;-&nbsp;&nbsp;</TD></TR>
+           <?/MIBLOCK>
+
+	 <?MIELSE>  <!-- line type is not mutant -->
             <?MIVAR>
 	      <TD> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$zdb_id">$fish_name </A>($wt_abbrev)  
 	      </TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD>
