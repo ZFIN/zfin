@@ -180,6 +180,19 @@
 #			This target is present only in high level makefiles
 #			where some, but not all, of the subdirectories are
 #			going in to the mirror.
+#  postloaddb	      Should be invoked after calling loaddb.pl to load a
+#			database into an already existing development 
+#			environment.  Here's why:  loaddb.pl loads everything,
+#			or almost everything, into the DB.  This includes
+#			 o webpages table
+#			 o execweb table
+#			 o all SQL functions
+#			 o all external (e.g. zextend.c) functions
+#                       After a load all of these things effectively point
+#			back to the database that the data was originally 
+#			unloaded from, usually production.
+#			Making the postloaddb target causes all of these 
+#			things to be reloaded from the local DB.
 #  start	      Start processes.  Starts up any processes that need
 #			to be running for the environment to work.  Initially
 #			this starts only the Java Server.  The database server
@@ -197,7 +210,7 @@ TOP = .
 include $(TOP)/make.include
 
 SUBDIRS = home server_apps cgi-bin momspider lib client_apps 
-
+POSTLOADDB_SUBDIRS = home server_apps lib
 
 # use the default set of rules
 
@@ -213,6 +226,8 @@ include $(TOP)/make.default.rules
 mirror : home
 	$(MAKE) -C home $@
 
+postloaddb :
+	$(foreach PLDIR,$(POSTLOADDB_SUBDIRS), $(MAKE) -C $(PLDIR) $@; )
 
-start stop :
-	$(MAKE) -C server_apps $@
+start stop : server_apps
+	$(MAKE) -C $^ $@

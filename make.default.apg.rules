@@ -36,7 +36,6 @@
 
 # ---------------  Variable Definitions  --------------------------------
 
-
 SPECIFICTARGETS = $(foreach SPEC, $(GENERICS), $(TARGETDIR)/$(SPEC))
 STATICTARGETS = $(foreach STAT, $(STATICS), $(TARGETDIR)/$(STAT))
 TARGETS = $(SPECIFICTARGETS) $(STATICTARGETS)
@@ -70,10 +69,15 @@ $(SUBDIRS) :
 clean :				# No local intermediate files
 	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
 
+
+# Clobber, in addition to its usual behavior, also deletes the app pages
+# from the web pages table.
+
 clobber :			# Remove targets, but not target dir.
     ifdef TARGETS
 	rm -f $(TARGETS)
     endif
+	echo '$(foreach GNRC,$(GENERICS), delete from webpages where id = "$(APGPREFIX)$(GNRC)";)' | $(DBACCESS) $(DBNAME)
 	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
 
 sanitycheck :
@@ -83,9 +87,8 @@ sanitycheck :
 	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
 
 
-# define one time only target to make the specific files that were intially
-# checked in to CVS, make them generic, and then check them back in to CVS.
+# define one time only target for special uses
 
-cvsgeneric :
-	$(foreach GNRC,$(GENERICS), $(CVSGENERIC))
+onetimeonly :
+	$(ONETIMEONLY)
 	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )

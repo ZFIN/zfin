@@ -41,6 +41,51 @@ SUBDIRS = SQL_docs \
 	updating
 
 
-# Use default rules.
+# ---------------  Production Rules  ------------------------------------
 
-include $(TOP)/make.default.rules
+.PHONY : all sanitycheck clean clobber postloaddb $(SUBDIRS)
+
+
+all : $(TARGETDIR) $(SUBDIRS)
+
+
+$(TARGETDIR) :
+	$(TARGET_MKDIR) $(TARGETDIR);
+
+$(SUBDIRS) :
+	$(MAKE) -C $@
+
+
+
+# ---------------  Maintenance Rules  -----------------------------------
+
+clean :				# No local intermediate files
+	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
+
+
+# The clobber target is why this file can't use the make.defualt.rules file.
+# In addition to the usual chores of clobber.  This one also deletes all
+# the app pages in the webpages table.
+
+clobber :			# Remove targets, but not target dir.
+	echo 'delete from webpages' | $(DBACCESS) $(DBNAME) 
+	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
+
+sanitycheck :
+	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
+
+
+onetimeonly :
+	$(ONETIMEONLY)
+	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
+
+
+# ---------------  Special Targets  ------------------------------------
+
+# The postloaddb target is invoked after loading a database to clean out and
+# repopulate, among other things, the webpages table.  The postloaddb target
+# here takes care of the webpages table and the the SQL functions defined in
+# SQL_docs.
+
+postloaddb : clobber all
+

@@ -30,3 +30,9 @@ SUBDIRS = DB_functions
 
 include $(TOP)/make.default.rules
 
+
+
+# ---------------  Special Targets  -------------------------------------
+
+postloaddb :
+	$(MAKE) -C DB_functions $@

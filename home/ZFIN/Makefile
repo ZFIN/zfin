@@ -34,3 +34,8 @@ GENERICS = index.html
 
 include $(TOP)/make.default.rules
 
+
+# ---------------  Special Targets  ------------------------------------
+
+postloaddb :
+	$(MAKE) -C APP_PAGES $@

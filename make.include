@@ -92,6 +92,14 @@ endif
 
 # ---------------  Variable Definitions  --------------------------------
 
+
+# When app pages are loaded into the db, their ID becomes the name of the 
+# file containing the app page, with a "aa-" appended to the front of it.
+
+APGPREFIX = aa-
+
+
+
 # --- Misc Executables
 
 # Preserve permissions on copies to target or staging directories.
@@ -103,17 +111,14 @@ STAGING_CP = cp -p
 
 TARGET_MKDIR = mkdir -m 755
 
-
 LOADAPPPAGE = /research/zfin/central/Commons/bin//loadapppage.pl
 UNLOADAPPPAGE = /research/zfin/central/Commons/bin/unloadapppage.pl
 
-# MAKESPECIFIC = /home/users/tomc/bin/makespecific
 MAKESPECIFIC = /research/zfin/central/Commons/bin/makespecific.pl
 
 SPECIFICCHECK = echo specificcheck -t $(TRANSLATETALE)
 
 DBACCESS = dbaccess
-# DBACCESS = echo dbaccess
 
 
 # --- Java
@@ -123,17 +128,8 @@ JAVACFLAGS = -g
 
 
 
-# ---- One time variables used in one time targets to make the specific files 
-# that were intially checked in to CVS, make them generic, and then check them
-#  back in to CVS.
-# This is invoked by the cvsgeneric, inside a foreach statement that must use
-# GNRC as its looping variable.  An example invocation is:
-#
-# 	$(foreach GNRC,$(GENERICS), $(CVSGENERIC))
+# ---- One time variables used in onetimeonlyl targets.  The onetimeonly 
+# targets are set up so that if we ever need to do a sweeping change in
+# all directories, we might be able to use the onetimeonly targets to do it.
 
-CVSGENERIC = \
-  $(MAKESPECIFIC) $(GNRC) $(TRANSLATETABLE) $(GNRC).spec; \
-  rm -f $(GNRC); \
-  mv $(GNRC).spec $(GNRC); \
-  cvs commit -m "First version of file with generic tags in it." $(GNRC);
-
+ONETIMEONLY = echo "ontimeonly targets are currently undefined.

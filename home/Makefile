@@ -27,6 +27,7 @@ TARGETDIR = $(TARGETROOT)/home
 
 SUBDIRS  = ZFIN zf_info images
 MIRROR_SUBDIRS = zf_info images
+POSTLOADDB_SUBDIRS = ZFIN
 
 GENERICS = index.html robots.txt
 
@@ -81,6 +82,10 @@ mirror : $(MIRROR_SUBDIRS) $(SPECIFICTARGETS) $(STATICTARGETS)
 	gzip -f $(TARGETROOT)/mirror.tar
 
 
+postloaddb :
+	$(foreach PLDIR,$(POSTLOADDB_SUBDIRS), $(MAKE) -C $(PLDIR) $@)
+
+
 # ---------------  Maintenance Rules  -----------------------------------
 
 clean :				# No local intermediate files
@@ -96,9 +101,6 @@ sanitycheck :
 	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
 
 
-# define one time only target to make the specific files that were intially
-# checked in to CVS, make them generic, and then check them back in to CVS.
-
-cvsgeneric :
-	$(foreach GNRC,$(GENERICS), $(CVSGENERIC))
+onetimeonly :
+	$(ONETIMEONLY)
 	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )

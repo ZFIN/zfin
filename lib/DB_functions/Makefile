@@ -31,3 +31,7 @@ SUBDIRS = zextend
 
 include $(TOP)/make.default.rules
 
+
+# ---------------  Special Rules  ---------------------------------------
+
+postloaddb : clobber all
