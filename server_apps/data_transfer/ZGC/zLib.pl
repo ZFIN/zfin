@@ -26,7 +26,9 @@ if ($vLibDiff ne "")
 
 	while ($line = <LIB>)
 	{
-	  if ($line =~ /^NAME: (.*)<BR>/) { print UNL "$1||\n"; }
+	  if ($line =~ /^NAME: (.*)<BR>/) { print UNL "$1||"; }
+	  if ($line =~ /^VECTOR: (.*)<BR>/) { print UNL "$1|"; }
+	  if ($line =~ /^V_TYPE: (.*)<BR>/) { print UNL "$1|\n"; }
 	}
 
 	close (LIB);

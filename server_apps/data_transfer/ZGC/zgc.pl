@@ -38,13 +38,16 @@ system("wget 'http://zgc.nci.nih.gov/Reagents/StaticCloneList?PAGE=0&ORG=Dr&STAT
 $vCloneDiff = `diff StaticCloneList StaticCloneList.previous`;
 
 
-#if ($vCloneDiff ne ""){
-    
+if ($vCloneDiff ne "")
+{
+
+  #Get the latest library list
+  system('zLib.pl');
+
   #Initial state of database
   &openReport();
 
-  print "parse StaticCloneList into StaticCloneList.unl returns " .
-  #system("sed -f zgc.sed StaticCloneList | grep -v '^$' > StaticCloneList.unl");
+  #parse files
   system("sed -f zgc.sed StaticCloneList > StaticCloneList.unl");
   
   #load links
@@ -56,7 +59,7 @@ $vCloneDiff = `diff StaticCloneList StaticCloneList.previous`;
   &reportFile('unNoDbLink.unl','Missing Db_link'); 
   &reportFile('unRefSeqAttrib.unl','Attributed to RefSeq'); 
   &sendReport();
-#}
+}
 
 exit;
 
