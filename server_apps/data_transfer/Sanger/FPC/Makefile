@@ -8,32 +8,24 @@
 # !! format and conventions used in this makefile.                     !!
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
-# This makefile produces the script that creates data files for Sanger 
-# folk  to download.
-# The script is run by cron every week.  It invokes the sql script.
-# The dump uses the HTTP directory structure.
+# This makefile produces the script that downloads data files from
+# Sanger FPC .
+# The script is run by hand when FPC updates occur. (gmake run/commit)
+# It invokes the update_fpc.sql sql script.
 
 # ---------------  Variable Definitions  --------------------------------
 
-TOP = ../../..
+TOP = ../../../..
 include $(TOP)/make.include
 
-TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Sanger
+TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Sanger/FPC
 
-GENERICS = SangerFiles.pl SangerFiles.sql
+GENERICS = fetch_load_fpc.sh
 
-STATICS  = readme
-
-SUBDIRS = FPC
+STATICS  = update_fpc.sql rollback.sql commit.sql marker-to-fpc_zdb.r README
 
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.
-
-HTTP_DATA_TRANSFER_DIR = $(TARGETROOT)/home/data_transfer/Sanger
-README_TARGET = $(HTTP_DATA_TRANSFER_DIR)/index.html
-
-ENDEMICTARGETS_PRE =  $(HTTP_DATA_TRANSFER_DIR)
-ENDEMICTARGETS_POST = $(README_TARGET)
 
 # ---------------  Production Rules  ------------------------------------
 
@@ -41,19 +33,13 @@ ENDEMICTARGETS_POST = $(README_TARGET)
 
 include $(TOP)/make.default.rules
 
-# ---------------  Endemic Targets  -------------------------------------
-
-$(HTTP_DATA_TRANSFER_DIR) :
-	$(TARGET_MKDIR) $@
-
-$(README_TARGET) : $(TARGETDIR)/readme
-	cp -fp $(TARGETDIR)/readme  $(HTTP_DATA_TRANSFER_DIR)/index.html
-
-
 # ---------------  Misc Targets  ----------------------------------------
 
-# Run the download script.  This extracts data from ZFIN and places it in 
-# the public http directory
+# Run the download script.
+# This extracts data from Sanger and places it in ZFIN
 
-run : $(TARGETDIR)/SangerFiles.pl 
-	$(TARGETDIR)/SangerFiles.pl
+run : $(TARGETDIR)/fetch_load_fpc.sh 
+	$(TARGETDIR)/fetch_load_fpc.sh rollback
+
+commit : $(TARGETDIR)/fetch_load_fpc.sh 
+	$(TARGETDIR)/fetch_load_fpc.sh commit
