@@ -18,7 +18,7 @@
  
 <?MIVAR COND="$(NXST,$dataId)" NAME=dataId><?/MIVAR>  
  
-  <?MIVAR NAME=related_data_attrib_to_OID>
+<?MIVAR NAME=related_data_attrib_to_OID>
       recattrib_data_zdb_id in (select mrel_zdb_id from marker_relationship where mrel_mrkr_2_zdb_id = '$OID')
     or
       recattrib_data_zdb_id in (select mrel_zdb_id from marker_relationship where mrel_mrkr_1_zdb_id = '$OID')
@@ -30,8 +30,14 @@
       recattrib_data_zdb_id in (select oevdisp_zdb_id from orthologue_evidence_display where oevdisp_gene_zdb_id = '$OID')
     or 
       recattrib_data_zdb_id in (select mrkrgoev_zdb_id from marker_go_term_evidence where mrkrgoev_mrkr_zdb_id = '$OID')	
-  <?/MIVAR>
+<?/MIVAR>
 
+<?MIBLOCK COND="$(NC,$pubId,ZDB-PUB-031118-1)">
+  <?MICOMMENT>the above pub is a curation pub for go 'unknown', we now have 
+      procedure and db triggers to delete its attribution when go 'unknown'
+      annotation is dropped. Curator feel favorable to make it an exception
+      and minimize annoying pop-ups.
+  <?/MICOMMENT> 
 
   <?MISQL SQL="
       select distinct recattrib_data_zdb_id
@@ -48,4 +54,4 @@
         window.alert("Note: This is the last attribution of $pubId to the marker. You should consider deleting this reference from the CITATIONS section if appropriate.");
       </script>
    <?/MIVAR>
-
+<?/MIBLOCK>
