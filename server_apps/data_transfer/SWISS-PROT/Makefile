@@ -20,10 +20,10 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/SWISS-PROT
 
-GENERICS = loadsp.pl sp_check.pl sp_parser.pl  index.html \
+GENERICS = pre_loadsp.pl loadsp.pl sp_check.pl sp_parser.pl  index.html \
 	create_file_for_swiss_prot.pl sp_badgo_report.pl 	
 
-STATICS = sptogo.pl iptogo.pl ectogo.pl sp_delete.sql \
+STATICS = sp_match.pl sptogo.pl iptogo.pl ectogo.pl sp_delete.sql \
 	sp_load.sql create_file_for_swiss_prot.sql README  
 
 # Define targets that require special handling.
@@ -49,6 +49,9 @@ $(HTTP_DATA_TRANSFER_DIR) :
 
 # ---------------  Misc Targets  ----------------------------------------
 
-run :
+runpre:
+	$(TARGETDIR)/pre_loadsp.pl
+
+run:
 	$(TARGETDIR)/loadsp.pl
 
