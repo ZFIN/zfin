@@ -203,7 +203,7 @@ $(IF,$(AND,$(EC,$panel_abbrev,na),$(=,$4,0)),"Unmapped")
 
 
 
-$(IF,$(AND,$(>,$4,0),$(EC,$8,f)),"LG <b>"$4"</b>;<b> "$2"</b> "$10""&nbsp;&nbsp;<A HREF="javascript:view_scores('"$5"','"$4"','"$3"','"$1"')";>Scoring Data  <TD><font size=2> "<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$5">"$6"</A>"</TD><TD><font size=2 COLOR=#A9A9A9> <input type=checkbox name=$6 value=1  CHECKED ></TD><TD><font size=2>" "$upd_date""</TD>)
+$(IF,$(AND,$(>,$4,0),$(EC,$8,f)),"LG <b>"$4"</b>;<b> "$2"</b> "$10""&nbsp;&nbsp;<A HREF="javascript:view_scores('"$5"','"$4"','"$3"','"$7"')";>Scoring Data  <TD><font size=2> "<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$5">"$6"</A>"</TD><TD><font size=2 COLOR=#A9A9A9> <input type=checkbox name=$6 value=1  CHECKED ></TD><TD><font size=2>" "$upd_date""</TD>)
 <?MIBLOCK COND="$(AND,$(>,$4,0),$(EC,$8,f))">
 <?MIVAR name=$ok_view_map>1<?/MIVAR>
 
