@@ -26,10 +26,15 @@ init_files();
 
 my $num_ok = 0;    # number of good records that are going to be loaded 
 my $num_prob = 0;  # number of problem records
+$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
+$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
+$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
+$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 my $dbname = "<!--|DB_NAME|-->";
 my $username = "";
 my $password = "";
+
 
 my $dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password) 
           or die "Cannot connect to Informix database: $DBI::errstr\n";
@@ -52,13 +57,13 @@ while (<>) {
   $parsefile = "parse$$.txt";
   open PARSE, ">$parsefile" or die "Cannot create the parse file: $!";
   
-  ## Tempfile stores AC, GN, DR, CC, KW, might go to Ok file.
+  ## Tempfile stores AC, GN, DR, CC, KW, ID, DE might go to Ok file.
   $tempfile = "temp$$.txt"; 
   open TMP, ">$tempfile" or die "Cannot create the temporary file: $!";
   open REC, "$record" or die "Cannot open the record file:$!";
   while (<REC>){               #read each SP record
  
-    if(/^AC/ || /^GN/ || /^CC/|| /^KW/ ) {  
+    if(/^AC/ || /^GN/ || /^CC/|| /^KW/|| /^ID/|| /^DE/ ) {  
       print TMP;
     }
   
@@ -79,9 +84,8 @@ while (<>) {
       print PARSE;            # make up the chomped '\n'
       $dr = $_; chomp ($dr);
       $embl_exist = 1;
-      $embl_ac = $1;    
+      $embl_ac = $1; 
       @embl_match = Embl_Match (); # the matches in ZFIN for each EMBL No.
-     
       if (@embl_match){
 	print PARSE "\t@embl_match\n\n";
       }    
@@ -152,7 +156,7 @@ while (<>) {
 	  }
 	}
       }
-      print PARSE "//\n"; close PARSE;   
+      print PARSE "//\n";    
       print TMP "//\n";   close TMP;     
       if ($fileno eq "0") {
 	system ("cat '$tempfile' >> okfile");
@@ -169,12 +173,19 @@ while (<>) {
     }    
   }
 }
+system ("cat appokfile >> okfile");
 print "Final report: \n";
 print "\t problem records(#) : $num_prob \n";
 print "\t ok records(#)  : $num_ok \n";
 printf ("\t ok percentage   : %.3f\n", 1 - $num_prob/($num_prob+$num_ok));
-  
-
+system ("cp prob1 <!--|ROOT_PATH|-->/home/data_transfer/SWISS-PROT/");
+system ("cp prob2 <!--|ROOT_PATH|-->/home/data_transfer/SWISS-PROT/");
+system ("cp prob3 <!--|ROOT_PATH|-->/home/data_transfer/SWISS-PROT/");
+system ("cp prob4 <!--|ROOT_PATH|-->/home/data_transfer/SWISS-PROT/");
+system ("cp prob5 <!--|ROOT_PATH|-->/home/data_transfer/SWISS-PROT/");
+system ("cp prob6 <!--|ROOT_PATH|-->/home/data_transfer/SWISS-PROT/");
+system ("cp prob7 <!--|ROOT_PATH|-->/home/data_transfer/SWISS-PROT/");
+system ("cp index.html <!--|ROOT_PATH|-->/home/data_transfer/SWISS-PROT/");
 
 sub init_var(){
 
@@ -198,18 +209,21 @@ sub Embl_Match () {
   my ($sth, $zdbid);
   @embl_match = () ;
   $sth = $dbh->prepare("
-                  select linked_recid 
+                  select dblink_linked_recid 
                   from db_link 
-                  where db_name = ? and acc_num = ? 
-                 " );
-  $sth ->execute("Genbank", $embl_ac);    
- 
+                  where dblink_acc_num = ?
+                  union
+                  select mrel_mrkr_1_zdb_id from marker_relationship,db_link
+                  where mrel_mrkr_2_zdb_id=dblink_linked_recid and dblink_acc_num= ?");
+  $sth ->execute($embl_ac,$embl_ac);
   while ($zdbid = $sth->fetchrow_array ) {
-    if($zdbid =~ /ZDB-GENE/){
+    if ($zdbid =~ /ZDB-GENE/){
       #print "embl: #$zdbid#\n";
       push @embl_match, $zdbid;
     }
-  }   
+  }  
+  open EMBL, ">emblmatch" or die "Cannot create the parse file: $!";
+  print EMBL "@embl_match"; 
   return (@embl_match);  #matches in ZFIN db for each EMBL number 
 }
 

@@ -14,7 +14,10 @@ my $first = 1;       #indicate the beginning of DR(the end of CC)
 my @zdb_gname = ();
 my @ext_dr = ();
 my @cc = (); $cc = '';
+my @de = (); $de = '';
+my @sp_ac=(); $sp_ac='';
 my @zdbid_spac = ();
+$desc="";
 
 
 # Files to be loaded into zfin.
@@ -23,21 +26,38 @@ open ACC, ">ac_dalias.unl" or die "Cannot open ac_dalias.unl:$!";
 open GNAME, ">gn_dalias.unl" or die "Cannot open gn_dalias.unl:$!";
 open COMMT, ">cc_external.unl" or die "Cannot open cc_external.unl:$!";
 open KEYWD, ">kd_spkeywd.unl" or die "Cannot open kd_spkeywd.unl:$!";
+open DESC, ">sp_desc.unl";
+open LEN, ">sp_len.unl";
+open DESCNEW, ">spdesc.unl";
+open GENELEN, ">splen.unl";
+open ECNUM, ">ecgene.unl";
+open SPGO, ">spgo.unl";
 
 my $dbname = "<!--|DB_NAME|-->";
 my $username = "";
 my $password = "";
 
+
+
 my $dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password) 
           or die "Cannot connect to Informix database: $DBI::errstr\n";
 
 while (<>) {
+ if (/^ID\s+(.*)/) {
+     $id=$1;
+     @sp_length = split(/PRT; /,$id);
+     $length = $sp_length[1] ;             #chop period sign
+     @len=split(' ',$length);
+     $len=$len[0];
+     print LEN "$len|\n";
+     next;
+  }
   
   #AC   O12990; O73880;
   if (/^AC\s+(.*)/) {
     @sp_ac = split(' ',$1); 
     $prm_ac = shift @sp_ac;
-    chop $prm_ac; 
+    chop $prm_ac;
     while ($sp_ac = shift @sp_ac){
       chop $sp_ac;
       print ACC "$prm_ac|$sp_ac|\n";
@@ -48,6 +68,18 @@ while (<>) {
   if (/^GN\s+(.*)/) {
     $gn = $1;  chop($gn);              #chop period sign
     @sp_gname = split(/\s+OR\s+/i, "$gn"); 
+    next;
+  }
+  
+  if (/^DE\s+(.*)/) {   
+    push (@de, $de);    #put each item of the comments into array     
+    $de = $de.' '.$1;
+    @ec=split(/EC/,$de);
+    @ecnum=split(' ',$ec[1]);
+    $ecnumber= $ecnum[0];
+    $ecnumber=~s/\).//;
+    $ecnumber=~s/\)//;
+    chomp $ecnumber;
     next;
   }
   
@@ -88,7 +120,7 @@ while (<>) {
        next;
      }else{
        #$attribute = Get_attribute();
-       print DBLINK "$gene|$dbname|$acc_no|\n";
+       print DBLINK "$gene|$dbname|$acc_no| |\n";
        #print ACTV "$attribute|\n";
        next;
      }
@@ -104,7 +136,6 @@ while (<>) {
     }
     next;
   } 
-
   if(/\/\//) {
     if (@cc) {
      
@@ -114,10 +145,11 @@ while (<>) {
       print COMMT "$gene|$cwd/ccnote/$prm_ac|\n";  
     }
     
-    print DBLINK "$gene|SWISS-PROT|$prm_ac|\n";
+    print DBLINK "$gene|SWISS-PROT|$prm_ac|$len|\n";
+    print SPGO "$gene|$prm_ac|\n";
 
     while ($embl_unl = shift @embl_unl) {
-      print DBLINK "$gene|Genbank|$embl_unl|\n";
+      print DBLINK "$gene|Genbank|$embl_unl| |\n";
     }
        
     my $get_abbrv = $dbh->selectrow_array("
@@ -151,11 +183,16 @@ while (<>) {
 	print GNAME "$prm_ac|$gene|$sp_gname|\n";
       }
     }
-  
+    print DESC "$de|$gene|\n"; 
+    print GENELEN "$gene|$len|\n";
+    if (length($ecnumber)>0){
+       print DBLINK "$gene|EC-ENZYME|$ecnumber| |\n"; 
+    }
     # reinitiate the variables for loop
     @sp_ac=();
     $gn=''; $cc=''; $dbname=''; $acc_no=''; $kw=''; $gene=''; $prm_ac = '';
-    @cc = ();  @dr = (); @zfin = ();@zdb_gname = (); @info = ();
+    @cc = ();  @dr = (); @zfin = ();@zdb_gname = (); @info = (); @de=();$de='';
+    @sp_ac=(); $sp_ac='';
     $first = 1;$one = 1;
   }
 }

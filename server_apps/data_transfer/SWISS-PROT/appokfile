@@ -1,0 +1,210 @@
+ID   NU6M_BRARE     STANDARD;      PRT;   172 AA.
+AC   Q9MIX9;
+DE   NADH-ubiquinone oxidoreductase chain 6 (EC 1.6.5.3).
+GN   MTND6 OR ND6.
+RX   MEDLINE=21549095; PubMed=11691861;
+RL   Genome Res. 11:1958-1967(2001).
+CC   -!- CATALYTIC ACTIVITY: NADH + ubiquinone = NAD(+) + ubiquinol.
+DR   EMBL; AC024175; AAF74308.1; -.   ZDB-GENE-011205-13
+DR   InterPro; IPR001457; Oxidored_q3.
+DR   Pfam; PF00499; oxidored_q3; 1.
+KW   Oxidoreductase; NAD; Ubiquinone; Mitochondrion.
+//
+ID   NU5M_BRARE     STANDARD;      PRT;   606 AA.
+AC   Q9MIY0;
+DE   NADH-ubiquinone oxidoreductase chain 5 (EC 1.6.5.3).
+GN   MTND5 OR ND5.
+RX   MEDLINE=21549095; PubMed=11691861;
+RL   Genome Res. 11:1958-1967(2001).
+CC   -!- CATALYTIC ACTIVITY: NADH + ubiquinone = NAD(+) + ubiquinol.
+DR   EMBL; AC024175; AAF74307.1; -.    ZDB-GENE-011205-12
+DR   InterPro; IPR003916; NADHub_oxred5.
+DR   InterPro; IPR001750; Oxidored_q1.
+DR   InterPro; IPR001516; Oxidored_q1_N.
+DR   Pfam; PF00361; oxidored_q1; 1.
+DR   Pfam; PF00662; oxidored_q1_N; 1.
+KW   Oxidoreductase; NAD; Ubiquinone; Mitochondrion.
+//
+ID   NU4M_BRARE     STANDARD;      PRT;   460 AA.
+AC   Q9MIY1;
+DE   NADH-ubiquinone oxidoreductase chain 4 (EC 1.6.5.3).
+GN   MTND4 OR ND4.
+RX   MEDLINE=21549095; PubMed=11691861;
+RL   Genome Res. 11:1958-1967(2001).
+CC   -!- CATALYTIC ACTIVITY: NADH + ubiquinone = NAD(+) + ubiquinol.
+DR   EMBL; AC024175; AAF74306.1; -.    ZDB-GENE-011205-10
+DR   InterPro; IPR003918; NADHub_oxred4.
+DR   InterPro; IPR001750; Oxidored_q1.
+DR   InterPro; IPR000260; Oxidored_q5_N.
+DR   Pfam; PF00361; oxidored_q1; 1.
+DR   Pfam; PF01059; oxidored_q5_N; 1.
+KW   Oxidoreductase; NAD; Ubiquinone; Mitochondrion.
+//
+ID   NULM_BRARE     STANDARD;      PRT;    98 AA.
+AC   Q9MIY2;
+DE   NADH-ubiquinone oxidoreductase chain 4L (EC 1.6.5.3).
+GN   MTND4L OR ND4L.
+RX   MEDLINE=21549095; PubMed=11691861;
+RL   Genome Res. 11:1958-1967(2001).
+CC   -!- CATALYTIC ACTIVITY: NADH + ubiquinone = NAD(+) + ubiquinol.
+DR   EMBL; AC024175; AAF74305.1; -.   ZDB-GENE-011205-11
+DR   InterPro; IPR001133; Oxidored_4L.
+DR   InterPro; IPR003214; Oxidred4L.
+DR   Pfam; PF00420; oxidored_q2; 1.
+KW   Oxidoreductase; NAD; Ubiquinone; Mitochondrion.
+//
+ID   NU3M_BRARE     STANDARD;      PRT;   116 AA.
+AC   Q9MIY3;
+DE   NADH-ubiquinone oxidoreductase chain 3 (EC 1.6.5.3).
+GN   MTND3 OR ND3.
+RX   MEDLINE=21549095; PubMed=11691861;
+RL   Genome Res. 11:1958-1967(2001).
+CC   -!- CATALYTIC ACTIVITY: NADH + ubiquinone = NAD(+) + ubiquinol.
+CC   -!- SIMILARITY: Belongs to the complex I subunit 3 family.
+DR   EMBL; AC024175; AAF74304.1; -.   ZDB-GENE-011205-9
+DR   InterPro; IPR000440; Oxidored_q4.
+DR   Pfam; PF00507; oxidored_q4; 1.
+KW   Oxidoreductase; NAD; Ubiquinone; Mitochondrion.
+//
+ID   COX3_BRARE     STANDARD;      PRT;   261 AA.
+AC   Q9MIY4;
+DE   Cytochrome c oxidase polypeptide III (EC 1.9.3.1).
+GN   MTCO3 OR COX3.
+RX   MEDLINE=21549095; PubMed=11691861;
+RL   Genome Res. 11:1958-1967(2001).
+CC   -!- FUNCTION: Subunits I, II and III form the functional core of
+CC       the enzyme complex.
+CC   -!- CATALYTIC ACTIVITY: 4 ferrocytochrome c + O(2) = 4 ferricytochrome
+CC       c + 2 H(2)O.
+CC   -!- SIMILARITY: Belongs to the cytochrome c oxidase subunit 3 family.
+DR   EMBL; AC024175; AAF74303.1; -.  ZDB-GENE-011205-16
+DR   InterPro; IPR000298; CytC_oxdse_III.
+DR   Pfam; PF00510; COX3; 1.
+DR   PROSITE; PS50253; COX3; 1.
+KW   Oxidoreductase; Mitochondrion; Transmembrane.
+//
+ID   ATP6_BRARE     STANDARD;      PRT;   227 AA.
+AC   Q9MIY5;
+DE   ATP synthase A chain (EC 3.6.3.14) (Protein 6).
+GN   MTATP6 OR ATP6.
+RX   MEDLINE=21549095; PubMed=11691861;
+RL   Genome Res. 11:1958-1967(2001).
+CC   -!- FUNCTION: Key component of the proton channel; it may play a
+CC       direct role in the translocation of protons across the membrane.
+CC   -!- CATALYTIC ACTIVITY: ATP + H(2)O + H(+)(In) = ADP + phosphate +
+CC       H(+)(Out).
+CC   -!- SUBUNIT: F-type ATPases have 2 components, CF(1) - the catalytic
+CC       core - and CF(0) - the membrane proton channel. CF(1) has five
+CC       subunits: alpha(3), beta(3), gamma(1), delta(1), epsilon(1). CF(0)
+CC       has three main subunits: a, b and c.
+CC   -!- SUBCELLULAR LOCATION: Integral membrane protein.
+CC   -!- SIMILARITY: Belongs to the ATPase A chain family.
+DR   EMBL; AC024175; AAF74302.1; -.    ZDB-GENE-011205-18
+DR   InterPro; IPR000568; ATPsynt_Asub.
+DR   Pfam; PF00119; ATP-synt_A; 1.
+DR   PROSITE; PS00449; ATPASE_A; 1.
+KW   Hydrogen ion transport; CF(0); Mitochondrion; Transmembrane.
+//
+ID   ATP8_BRARE     STANDARD;      PRT;    54 AA.
+AC   Q9MIY6;
+DE   ATP synthase protein 8 (EC 3.6.3.14) (ATPase subunit 8) (A6L).
+GN   MTATP8 OR ATP8.
+RX   MEDLINE=21549095; PubMed=11691861;
+RL   Genome Res. 11:1958-1967(2001).
+CC   -!- FUNCTION: This is one of the chains of the nonenzymatic component
+CC       (CF(0) subunit) of the mitochondrial ATPase complex.
+CC   -!- CATALYTIC ACTIVITY: ATP + H(2)O + H(+)(In) = ADP + phosphate +
+CC       H(+)(Out).
+CC   -!- SUBCELLULAR LOCATION: Membrane-bound.
+CC   -!- SIMILARITY: Belongs to the ATPase protein 8 family.
+DR   EMBL; AC024175; AAF74301.1; -.  ZDB-GENE-011205-19
+DR   InterPro; IPR001421; ATPase8_mit.
+DR   Pfam; PF00895; ATP-synt_8; 1.
+KW   Hydrogen ion transport; CF(0); Mitochondrion; Transmembrane.
+//
+ID   COX2_BRARE     STANDARD;      PRT;   230 AA.
+AC   Q9MIY7;
+DE   Cytochrome c oxidase polypeptide II (EC 1.9.3.1).
+GN   MTCO2 OR COX2.
+RX   MEDLINE=21549095; PubMed=11691861;
+RL   Genome Res. 11:1958-1967(2001).
+CC   -!- FUNCTION: Cytochrome c oxidase is the component of the respiratory
+CC       chain that catalyzes the reduction of oxygen to water. Subunits 1-
+CC       3 form the functional core of the enzyme complex. Subunit 2
+CC       transfers the electrons from cytochrome c via its binuclear copper
+CC       A center to the bimetallic center of the catalytic subunit 1.
+CC   -!- CATALYTIC ACTIVITY: 4 ferrocytochrome c + O(2) = 4 ferricytochrome
+CC       c + 2 H(2)O.
+CC   -!- COFACTOR: Copper A.
+CC   -!- SUBCELLULAR LOCATION: Integral membrane protein. Mitochondrial
+CC       inner membrane.
+CC   -!- SIMILARITY: Belongs to the cytochrome c oxidase subunit 2 family.
+DR   EMBL; AC024175; AAF74300.1; -.    ZDB-GENE-011205-15
+DR   InterPro; IPR001505; Copper_CuA.
+DR   InterPro; IPR008972; Cupredoxin.
+DR   InterPro; IPR002429; Cyt_c_ox_2.
+DR   Pfam; PF00116; COX2; 1.
+DR   Pfam; PF02790; COX2_TM; 1.
+DR   PROSITE; PS00078; COX2; 1.
+KW   Oxidoreductase; Copper; Mitochondrion; Transmembrane; Inner membrane;
+KW   Electron transport; Respiratory chain.
+//
+ID   COX1_BRARE     STANDARD;      PRT;   516 AA.
+AC   Q9MIY8;
+DE   Cytochrome c oxidase polypeptide I (EC 1.9.3.1).
+GN   MTCO1 OR COX1.
+RX   MEDLINE=21549095; PubMed=11691861;
+RL   Genome Res. 11:1958-1967(2001).
+CC   -!- FUNCTION: Cytochrome c oxidase is the component of the respiratory
+CC       chain that catalyzes the reduction of oxygen to water. Subunits
+CC       1-3 form the functional core of the enzyme complex. CO I is the
+CC       catalytic subunit of the enzyme. Electrons originating in
+CC       cytochrome c are transferred via the copper A center of subunit 2
+CC       and heme A of subunit 1 to the bimetallic center formed by heme A3
+CC       and copper B.
+CC   -!- CATALYTIC ACTIVITY: 4 ferrocytochrome c + O(2) = 4 ferricytochrome
+CC       c + 2 H(2)O.
+CC   -!- PATHWAY: Respiratory chain; terminal step.
+CC   -!- SUBCELLULAR LOCATION: Integral membrane protein. Mitochondrial
+CC       inner membrane. Contains 12 potential transmembrane domains.
+CC   -!- SIMILARITY: Belongs to the heme-copper respiratory oxidase family.
+DR   EMBL; AC024175; AAF74299.1; -.  ZDB-GENE-011205-14
+DR   ZFIN; ZDB-GENE-011205-14; mtco1.
+DR   InterPro; IPR000883; COX1.
+DR   Pfam; PF00115; COX1; 1.
+DR   PROSITE; PS00077; COX1; 1.
+KW   Oxidoreductase; Heme; Copper; Mitochondrion; Transmembrane;
+KW   Respiratory chain; Inner membrane.
+//
+ID   NU2M_BRARE     STANDARD;      PRT;   348 AA.
+AC   Q9MIY9;
+DE   NADH-ubiquinone oxidoreductase chain 2 (EC 1.6.5.3).
+GN   MTND2 OR ND2.
+RX   MEDLINE=21549095; PubMed=11691861;
+RL   Genome Res. 11:1958-1967(2001).
+CC   -!- CATALYTIC ACTIVITY: NADH + ubiquinone = NAD(+) + ubiquinol.
+CC   -!- SUBCELLULAR LOCATION: Integral membrane protein. Mitochondrial
+CC       inner membrane.
+CC   -!- SIMILARITY: Belongs to the complex I subunit 2 family.
+DR   EMBL; AC024175; AAF74298.1; -.   ZDB-GENE-011205-8
+DR   ZFIN; ZDB-GENE-011205-8; mtnd2.
+DR   InterPro; IPR003917; NADHub_oxred2.
+DR   InterPro; IPR001750; Oxidored_q1.
+DR   Pfam; PF00361; oxidored_q1; 1.
+KW   Oxidoreductase; NAD; Ubiquinone; Mitochondrion; Transmembrane.
+//
+ID   NU1M_BRARE     STANDARD;      PRT;   324 AA.
+AC   Q9MIZ0;
+DE   NADH-ubiquinone oxidoreductase chain 1 (EC 1.6.5.3).
+GN   MTND1 OR ND1.
+RX   MEDLINE=21549095; PubMed=11691861;
+RL   Genome Res. 11:1958-1967(2001).
+CC   -!- CATALYTIC ACTIVITY: NADH + ubiquinone = NAD(+) + ubiquinol.
+CC   -!- SIMILARITY: Belongs to the complex I subunit 1 family.
+DR   EMBL; AC024175; AAF74297.1; -.   ZDB-GENE-011205-7
+DR   InterPro; IPR001694; Resp_NADH_dh1.
+DR   Pfam; PF00146; NADHdh; 1.
+DR   PROSITE; PS00667; COMPLEX1_ND1_1; 1.
+DR   PROSITE; PS00668; COMPLEX1_ND1_2; 1.
+KW   Oxidoreductase; NAD; Ubiquinone; Mitochondrion; Transmembrane.
+//

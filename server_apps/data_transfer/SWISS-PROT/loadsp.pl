@@ -15,7 +15,7 @@ use MIME::Lite;
 sub sendErrorReport ($) {
   
   my $SUBJECT="Auto SWISS-PROT:".$_[0];
-  my $MAILTO="<!--|SWISSPROT_EMAIL_ERR|-->";
+  my $MAILTO="pm";
   my $TXTFILE="./report.txt";
  
   # Create a new multipart message:
@@ -68,7 +68,7 @@ sub sendRunningResult {
  #----- Another mail send out problem files ----
 
   my $SUBJECT="Auto: SWISS-PROT problem file";
-  my $MAILTO="<!--|SWISSPROT_EMAIL_CURATOR|-->";     
+  my $MAILTO="pm";     
   my $ATTFILE = "allproblems.txt";
 
   # Create another new multipart message:
@@ -96,12 +96,10 @@ sub sendRunningResult {
 
 sub downloadGOtermFiles () {
 
-   system("wget http://www.geneontology.org/ontology/function.ontology -O function.ontology");
-   system("wget http://www.geneontology.org/ontology/process.ontology -O process.ontology");
-   system("wget http://www.geneontology.org/ontology/component.ontology -O component.ontology");
+   system("wget ftp://ftp.ebi.ac.uk/pub/contrib/dbarrell/zfin.dat -O zfin.dat");
    system("wget http://www.geneontology.org/external2go/spkw2go -O spkw2go");
    system("wget http://www.geneontology.org/external2go/interpro2go -O interpro2go");
- 
+   system("wget http://www.geneontology.org/external2go/ec2go -O ec2go");
  }
 
 
@@ -130,37 +128,12 @@ system("rm -f prob*");
 system("rm -f okfile");
 system("rm -f *.unl");
 system("rm -f *.txt");
+system("rm -f *.dat");
 system("mkdir ./ccnote");
 
 
 &downloadGOtermFiles();
 
-$count = 0;
-$retry = 1;
-# verify the files are downloaded
-while ( !( (-e "function.ontology") &&
-           (-e "process.ontology") && 
-           (-e "component.ontology") && 
-           (-e "spkw2go") &&
-           (-e "interpro2go")) ) {
-
-  $count++;
-  if ($count > 30 )
-  {
-    if ($retry) 
-    {
-      $count = 0;
-      $retry = 0;
-      print "\nreload...\n";
-      &downloadGOtermFiles();
-    }
-    else
-    {
-      &sendErrorReport("Failed to download GO term files.");
-      exit;
-    }
-  }
-}
 
 #--------------- Delete records from last SWISS-PROT loading-----
 print "\n delete records source from last SWISS-PROT loading.\n";
@@ -176,7 +149,7 @@ close F;
 # --------------- Check SWISS-PROT file --------------
 # good records for loading are placed in "okfile"
 print "\n sp_check.pl SPDoc >checkreport.txt \n";
-system ("sp_check.pl SPDoc >checkreport.txt" );
+system ("sp_check.pl zfin.dat >checkreport.txt" );
 
 $count = 0;
 $retry = 1;
@@ -193,7 +166,7 @@ while( !( -e "okfile" &&
       $count = 0;
       $retry = 0;
       print "retry sp_check.pl\n";
-      system("sp_check.pl SPDoc");
+      system("sp_check.pl zfin.dat >checkreport.txt ");
     }
     else
     {
@@ -238,7 +211,7 @@ while( !( -e "dr_dblink.unl" &&
   }  
 }
 
-
+system("ls *.unl");
 
 # ------------ Parse spkw2go ---------------
 print "\nsptogo.pl spkw2go\n";
@@ -294,12 +267,13 @@ while( !( -e "ip_mrkrgoterm.unl")) {
 
 
 # ------------ Parse ontology files ---------------
-print "\nontology.pl function.ontology process.ontology component.ontology\n";
-system ("ontology.pl function.ontology process.ontology component.ontology");
+
+print "\nectogo.pl ec2go\n";
+system ("ectogo.pl ec2go");
 $count = 0;
 $retry = 1;
 # wait till parsing is finished
-while( !( -e "ontology.unl")) {
+while( !( -e "ec_mrkrgoterm.unl")) {
 
   $count++;
   if ($count > 10)
@@ -308,13 +282,13 @@ while( !( -e "ontology.unl")) {
     {
       $count = 0;
       $retry = 0;
-      print "retry ontology.pl\n";
-      system("ontology.pl function.ontology process.ontology component.ontology");
+      print "retry ectogo.pl\n";
+      system("ectogo.pl ec2go");
     }
     else
     {
-         &sendErrorReport("Failed to run ontology.pl"); 
-      exit;
+      &sendErrorReport("Failed to run ectogo.pl"); 
+      exit;     
     }
   }  
 }
@@ -322,17 +296,16 @@ while( !( -e "ontology.unl")) {
 
 # ------------ Loading ---------------------
 print "\nloading...\n";
-system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> sp_load.sql >out 2> report.txt");
+system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> sploaddblink.sql >out 2> report.txt");
 
-open F, "out" or die "Cannot open out";
-if (<F>) {
-   &sendErrorReport("Failed to load SWISS_PROT records");
-  exit;
-}
-close F;
+#open F, "out" or die "Cannot open out";
+#if (<F>) {
+#   &sendErrorReport("Failed to load SWISS_PROT records");
+#  exit;
+#}
+#close F;
 
 #create new go_association file
-system ("../GO/go.pl"); 
 
 &sendRunningResult();
 

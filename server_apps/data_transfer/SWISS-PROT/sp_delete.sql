@@ -1,6 +1,5 @@
 begin work;
 
--------------------- Preparing ---------------------
 
 	create temp table pre_delete(
 		rec_data_zdb_id		varchar(50)
@@ -9,34 +8,40 @@ begin work;
 	insert into pre_delete
 		select recattrib_data_zdb_id from record_attribution
 		where recattrib_source_zdb_id in(
-		  'ZDB-PUB-020723-2','ZDB-PUB-020723-1','ZDB-PUB-020724-1');
+		  'ZDB-PUB-020723-2','ZDB-PUB-020723-1','ZDB-PUB-020724-1','ZDB-PUB-031118-3');
+
+
 		
 --!echo '//Delete from record_attribution records from SP load'
 	delete from record_attribution
 		where recattrib_source_zdb_id in(
-		  'ZDB-PUB-020723-2','ZDB-PUB-020723-1','ZDB-PUB-020724-1');
+		  'ZDB-PUB-020723-2','ZDB-PUB-020723-1','ZDB-PUB-020724-1','ZDB-PUB-031118-3');
 		  
 --!echo '//Take the records that have other sources from the delete list' 
+
 	delete from pre_delete
 		where rec_data_zdb_id in (
 			select recattrib_data_zdb_id 
 			from record_attribution);
 
 			
---!echo '//Delete from zdb_active_data and cause delete cascade'
+
+--!echo '//Delete from zdb_active_data and cause delete cascade this deletes DB link and EXT note records'
 	delete from zdb_active_data
 		where zactvd_zdb_id in (
 			select * 
 			from pre_delete
-			where get_obj_type(rec_data_zdb_id) <> 'GOTERM'
+			where get_obj_type(rec_data_zdb_id) <> 'MRKRGOEV'
 			);
-				
---!echo '//Delete GOTERM from zdb_active_data'
+
+--!echo '//Delete MRKRGOEV from zdb_active_data'
 	delete from zdb_active_data
 		where zactvd_zdb_id in (
 			select * 
 			from pre_delete
-		--	where get_obj_type(zactvd_zdb_id) = 'GOTERM'
+			where get_obj_type(zactvd_zdb_id) = 'MRKRGOEV'
 			);
+delete from zdb_active_data where zactvd_zdb_id like 'ZDB-MRKRGOEV-031230%' and zactvd_zdb_id not in (select mrkrgoev_zdb_id from marker_go_term_evidence where mrkrgoev_zdb_id like 'ZDB-MRKRGOEV-031230%' and mrkrgoev_notes is not null);
+--rollback work;
 
 commit work;
