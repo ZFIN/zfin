@@ -218,7 +218,7 @@ should be closed comment here
 select 
      est.dblink_linked_recid, 
      pla_prot acc,
-    '1234567890123456789012345' zad, 
+     NULL::varchar(50) zad, 
      max(pla_len) len,
      fdbcont_zdb_id
 from  db_link est, prot_len_acc, marker, foreign_db_contains
@@ -302,7 +302,7 @@ delete from tmp_Genomic_pla where pla_prot in ( -- just in case
 select
     dblink_linked_recid, 
      pla_prot acc,
-    '1234567890123456789012345' zad, 
+     NULL::varchar(50) zad, 
      max(pla_len) len,
      fdbcont_zdb_id
 from  db_link, tmp_Genomic_pla, marker, foreign_db_contains
@@ -410,7 +410,7 @@ group by  1,2,3
 select 
     dblink_linked_recid, 
      pla_prot acc,
-    '1234567890123456789012345' zad, 
+     NULL::varchar(50) zad, 
      max(pla_len) len, --,pla_gene,
     fdbcont_zdb_id
 from  db_link, tmp_Genomic_pla, marker, data_alias, foreign_db_contains
