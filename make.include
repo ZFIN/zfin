@@ -37,14 +37,6 @@ InformixDirCheck:
 endif
 
 
-# If we are building a mirror then disable calling gmake with no target.
-
-ifeq ($(INFORMIXSERVER),bogus.informix.server.for.mirrors)
-InvokingMirrorWithoutTarget:
-	ERROR: Reinvoke gmake with a mirror target.
-endif
-
-
 # Check Environment variables required by Makefiles.
 
 # TARGETROOT must be defined and be an absolute path.

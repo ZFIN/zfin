@@ -54,6 +54,14 @@ TARGETS         = $(SPECIFICTARGETS) $(STATICTARGETS) $(FTPTARGET) \
 .PHONY : all sanitycheck clean clobber $(SUBDIRS) mirror postloaddb onetimeonly
 
 
+# If we are building a mirror then disable calling gmake with no target.
+
+ifeq ($(INFORMIXSERVER),bogus.informix.server.for.mirrors)
+InvokingMirrorWithoutTarget:
+	ERROR: Reinvoke gmake with a mirror target.
+endif
+
+
 all : $(TARGETDIR) $(TARGETS) $(SUBDIRS)
 
 

@@ -218,6 +218,17 @@ include $(TOP)/make.include
 SUBDIRS = home server_apps cgi-bin momspider lib client_apps 
 POSTLOADDB_SUBDIRS = home server_apps lib
 
+
+# If we are building a mirror then disable calling gmake with no target.
+
+ifeq ($(INFORMIXSERVER),bogus.informix.server.for.mirrors)
+InvokingMirrorWithoutTarget:
+	ERROR: Reinvoke gmake with a mirror target.
+endif
+
+
+
+
 # use the default set of rules
 
 include $(TOP)/make.default.rules
