@@ -155,11 +155,39 @@ $search_string=$form_data{search_string};
 $hit_count=0;
 
 # Okay, now start the HTML output
-print "Content-type: text/HTML\n\n<HTML><h1>RESULTS: Search for $search_string</h1>\n\n<UL>";
 
+print "Content-type: text/HTML\n\n<HTML>";
+
+ print "<script language='JavaScript' src='http://<!--|DOMAIN_NAME|-->/header.js'>
+ </script>";
+
+print "<table width='100%'><TR><TD width='80%'><font size=+1><b>RESULTS: Search for $search_string</b></font></TD><TD width='20%'><a href=#modify>Modify Search</a></TD></TR></table>\n\n<UL>";
+ 
 # Call do_directory on the first target directory to start things off!
 $search_string_lc = lc($search_string);
 &do_directory($search_string_lc,$start_directory,$indent);
 
-print "</UL>\n\n<b>Total of $hit_count matches found.</b>\n</HTML>";
+print "</UL>\n\n<b>Total of $hit_count matches found.</b>\n";
+print "<p>";
+
+print "<Table class=search width=100%>";
+print "<TR>";
+print "<Td class=titlebar colspan=2>";
+print "<a name=modify></a>Modify your search.";
+print "</Td>";
+print "</TR>";
+print "<FORM  METHOD=get action='/<!--|CGI_BIN_DIR_NAME|-->/searchwww.cgi'>";
+
+print "<TR>";
+print "<TD>";
+print "<input type=text name=search_string size=15 value='$search_string'>";
+print "<input type=submit value='Start Search'>";
+print "</TD>";
+print "</TR></TABLE>";
+
+print "</form>";
+
+
+print "<script language='JavaScript' src='http://<!--|DOMAIN_NAME|-->/footer.js'></script></HTML>";
+
 
