@@ -226,9 +226,9 @@ function call_done() {
      <?MIVAR><input type=button name=refadd align=center value="Add Reference" onClick=goaddpub('$OID','pub','$mrkrgoevid','add','$geneid','$OID')><?/MIVAR>
      <hr>
      <?MIBLOCK COND="$(=,$(STRLEN,$infdb),0)">
-            <select name=infdb><option value=ZFIN>ZFIN<option value=GO>GO<?MISQL SQL="select distinct fdbcont_db_name from foreign_db_contains where fdbcont_db_name in ('Genbank','RefSeq','SWISS-PROT','InterPro','GenPept')"><option value="$1">$1<?/MISQL></select>
+            <select name=infdb><option value=ZFIN>ZFIN<option value=GO>GO<?MISQL SQL="select distinct fdbcont_fdb_db_name from foreign_db_contains where fdbcont_fdb_db_name in ('Genbank','RefSeq','SWISS-PROT','InterPro','GenPept')"><option value="$1">$1<?/MISQL></select>
      <?MIELSE>
-            <select name=infdb><option value=GO>GO<option value=ZFIN>ZFIN<?MISQL SQL="select distinct fdbcont_db_name from foreign_db_contains where fdbcont_db_name in ('Genbank','RefSeq','SWISS-PROT','InterPro','GenPept')"><option value="$1">$1<?/MISQL></select>
+            <select name=infdb><option value=GO>GO<option value=ZFIN>ZFIN<?MISQL SQL="select distinct fdbcont_fdb_db_name from foreign_db_contains where fdbcont_fdb_db_name in ('Genbank','RefSeq','SWISS-PROT','InterPro','GenPept')"><option value="$1">$1<?/MISQL></select>
      <?/MIBLOCK>
      <?MIVAR><input type=text name=inference  size=20 onChange=call_valinf('$OID','$mrkrgoevid','$geneid','modify','GO:$goterm','$evidence','$pub') <?MIBLOCK COND="$(XST,$inference)">value=<?MIVAR>$inference<?/MIVAR>><?/MIBLOCK><?/MIVAR>
      <?MIBLOCK COND="$(EC,$added,false)">
@@ -247,9 +247,9 @@ function call_done() {
          <?MIVAR>Add Inference for $pub<?/MIVAR>
          <br>            
          <?MIBLOCK COND="$(=,$(STRLEN,$infdb),0)">
-            <select name=infdb><option value=ZFIN>ZFIN<option value=GO>GO<?MISQL SQL="select distinct fdbcont_db_name from foreign_db_contains where fdbcont_db_name in ('Genbank','RefSeq','SWISS-PROT','InterPro','GenPept')"><option value="$1">$1<?/MISQL></select>
+            <select name=infdb><option value=ZFIN>ZFIN<option value=GO>GO<?MISQL SQL="select distinct fdbcont_fdb_db_name from foreign_db_contains where fdbcont_fdb_db_name in ('Genbank','RefSeq','SWISS-PROT','InterPro','GenPept')"><option value="$1">$1<?/MISQL></select>
          <?MIELSE>
-            <select name=infdb><option value=GO>GO<option value=ZFIN>ZFIN<?MISQL SQL="select distinct fdbcont_db_name from foreign_db_contains where fdbcont_db_name in ('Genbank','RefSeq','SWISS-PROT','InterPro','GenPept')"><option value="$1">$1<?/MISQL></select>
+            <select name=infdb><option value=GO>GO<option value=ZFIN>ZFIN<?MISQL SQL="select distinct fdbcont_fdb_db_name from foreign_db_contains where fdbcont_fdb_db_name in ('Genbank','RefSeq','SWISS-PROT','InterPro','GenPept')"><option value="$1">$1<?/MISQL></select>
          <?/MIBLOCK>
 
         <?MIVAR><input type=text name=inference  size=20 onChange=call_valinf('$OID','$mrkrgoevid','$geneid','modify','GO:$goterm','$evidence','$pub') <?MIBLOCK COND="$(XST,$inference)">value=<?MIVAR>$inference<?/MIVAR>><?/MIBLOCK><?/MIVAR>

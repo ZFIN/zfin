@@ -38,6 +38,8 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
         <input type=hidden name=target_table value=$target_table>
 	<input type=hidden name=UPDATEORTHO value=1>
 	<input type=hidden name=anchor value=orthologue>
+	<input type=hidden name=fdbcont_super value=orthologue>
+	<input type=hidden name=fdbcont_data value=orthologue>
       <?/MIVAR>  
       <p>
 
@@ -120,12 +122,12 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
          DB: 
          <SELECT name=newdb> 
 	  <?MISQL COND="$(XST,$species_update)" SQL="
-	    select fdbcont_db_name, db_significance 
+	    select fdbcont_fdb_db_name, fdb_db_significance 
 	     from foreign_db_contains, foreign_db
-	     where fdbcont_data_type = 'orthologue'
-               and fdbcont_organism = '$species_update'
-	       and fdbcont_db_name = db_name
-	     order by db_significance;">
+	     where fdbcont_fdbdt_data_type = 'orthologue'
+               and fdbcont_organism_common_name = '$species_update'
+	       and fdbcont_fdb_db_name = fdb_db_name
+	     order by fdb_db_significance;">
 	    <option value="$1">$1
   	   <?/MISQL>
          </SELECT> 
@@ -157,9 +159,10 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
          <SELECT name=delacc>
          <option selected></option>
           <?MISQL SQL="
-	    select DB_name, acc_num
-	      from db_link
-	      where linked_recid = '$ortho_id';">
+	    select fdbcont_fdb_DB_name, dblink_acc_num
+	      from db_link, foreign_db_contains
+	      where dblink_linked_recid = '$ortho_id'
+	        and dblink_fdbcont_zdb_id = fdbcont_zdb_id;">
 	    <option value=$1:$2>$1:$2
 	  <?/MISQL>
          </SELECT>

@@ -80,10 +80,11 @@ document.critform.century.selectedIndex = 1;
 
 <?MISQL SQL="
 select count(distinct mrkr_zdb_id) 
-from expression_pattern, int_data_source, marker
-where ids_source_zdb_id = 'ZDB-LAB-980204-15'
-  and ids_data_zdb_id = xpat_zdb_id
-  and mrkr_zdb_id = xpat_probe_zdb_id 
+from expression_pattern, marker -- int_data_source, marker
+where 
+--ids_data_zdb_id = xpat_zdb_id
+-- and ids_source_zdb_id = 'ZDB-LAB-980204-15'
+   mrkr_zdb_id = xpat_probe_zdb_id 
   and xpat_direct_submission_date = DATE('$month/$day/$century$year');">
   
 $(IF,$(>,$1,0),
@@ -100,10 +101,10 @@ $(IF,$(>,$1,0),
 
 <?MISQL SQL="
 select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev_order,mrkr_comments 
-from expression_pattern, int_data_source, marker
-where ids_source_zdb_id = 'ZDB-LAB-980204-15'
-  and ids_data_zdb_id = xpat_zdb_id
-  and mrkr_zdb_id = xpat_probe_zdb_id 
+from expression_pattern, marker --int_data_source, marker
+where 
+-- ids_data_zdb_id = xpat_zdb_id
+  mrkr_zdb_id = xpat_probe_zdb_id 
   and xpat_direct_submission_date = DATE('$month/$day/$century$year')
 order by 3;">
 
@@ -120,10 +121,11 @@ order by 3;">
 
     <td>
   <?MISQL SQL="
-      select acc_num
-      from db_link
-      where '$label_id' = linked_recid
-        and db_name = 'Genbank';">
+      select dblink_acc_num
+      from db_link, foreign_db_contains
+      where '$label_id' = dblink_linked_recid
+        and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+        and fdbcont_fdb_db_name = 'Genbank';">
     $(IF,$(>,$MI_CURRENTROW,1),", ")
       $1
   <?/MISQL>
@@ -204,8 +206,8 @@ order by 3;">
 <?MISQL SQL="
 select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev_order,mrkr_comments 
 from expression_pattern, int_data_source, marker
-where ids_source_zdb_id = 'ZDB-LAB-980204-15'
-  and ids_data_zdb_id = xpat_zdb_id
+where ids_data_zdb_id = xpat_zdb_id
+--and ids_source_zdb_id = 'ZDB-LAB-980204-15'
   and mrkr_zdb_id = xpat_probe_zdb_id 
   and xpat_direct_submission_date = DATE('$month/$day/$century$year')
 order by 3;">

@@ -11,7 +11,7 @@
     or
       recattrib_data_zdb_id in (select dalias_zdb_id from data_alias where dalias_data_zdb_id = '$OID')
     or
-      recattrib_data_zdb_id in (select dblink_zdb_id from db_link where linked_recid = '$OID')
+      recattrib_data_zdb_id in (select dblink_zdb_id from db_link where dblink_linked_recid = '$OID')
     or
       recattrib_data_zdb_id in (select oevdisp_zdb_id from orthologue_evidence_display where oevdisp_gene_zdb_id = '$OID')
   <?/MIVAR>

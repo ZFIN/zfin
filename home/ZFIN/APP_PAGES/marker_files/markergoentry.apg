@@ -149,9 +149,9 @@ function new_go(mrkrid) {
 <!--since $infdb may or may not be NULL, there can be 2 kinds of combo boxes-->
     <td align=right><b>Inferred from </b>
     <?MIBLOCK COND="$(=,$(STRLEN,$infdb),0)">
-     <td><select name=infdb tabindex = 4><option value=ZFIN>ZFIN<option value=GO>GO<?MISQL SQL="select distinct fdbcont_db_name from foreign_db_contains where fdbcont_db_name in ('Genbank','RefSeq','SWISS-PROT','InterPro','GenPept')"><option value="$1">$1<?/MISQL></select>
+     <td><select name=infdb tabindex = 4><option value=ZFIN>ZFIN<option value=GO>GO<?MISQL SQL="select distinct fdbcont_fdb_db_name from foreign_db_contains where fdbcont_fdb_db_name in ('Genbank','RefSeq','SWISS-PROT','InterPro','GenPept')"><option value="$1">$1<?/MISQL></select>
     <?MIELSE>
-     <td><select name=infdb tabindex = 4><option value=<?MIVAR>$infdb<?/MIVAR>><?MIVAR>$infdb<?/MIVAR><option value=ZFIN>ZFIN<?MISQL SQL="select distinct fdbcont_db_name from foreign_db_contains where fdbcont_db_name in ('Genbank','RefSeq','SWISS-PROT','InterPro','GenPept')"><option value="$1">$1<?/MISQL></select>
+     <td><select name=infdb tabindex = 4><option value=<?MIVAR>$infdb<?/MIVAR>><?MIVAR>$infdb<?/MIVAR><option value=ZFIN>ZFIN<?MISQL SQL="select distinct fdbcont_fdb_db_name from foreign_db_contains where fdbcont_fdb_db_name in ('Genbank','RefSeq','SWISS-PROT','InterPro','GenPept')"><option value="$1">$1<?/MISQL></select>
     <?/MIBLOCK>
 
     <td><input type = text NAME = "inf"  tabindex = 5 size = "23" onChange=call_valinf('$OID','$gotermenc')
@@ -176,7 +176,7 @@ function new_go(mrkrid) {
 
   <hr>
   <?MISQL SQL="
-        select db_query from foreign_db where db_name='QuickGO';">
+        select fdb_db_query from foreign_db where fdb_db_name='QuickGO';">
    <?MIVAR NAME=$dbquery>$1<?/MIVAR>
   <?/MISQL>
 
@@ -261,13 +261,13 @@ function new_go(mrkrid) {
               <?MIVAR NAME=$currinflink><a href=http://zfin.org/cgi-bin/ZFIN_jump?record=$encaccID>$accID</a><?/MIVAR>
           <?MIELSE>
                <?MIBLOCK COND="$(EC,$dbase,GO)">
-                  <?MISQL SQL="select db_query from foreign_db  where db_name = 'QuickGO'"><?/MISQL>
+                  <?MISQL SQL="select fdb_db_query from foreign_db  where fdb_db_name = 'QuickGO'"><?/MISQL>
                   <?MIVAR NAME=query>$1<?/MIVAR>
                   <?MIVAR NAME=$accID>$(SUBSTR,$accID,4,$(STRLEN,$accID))<?/MIVAR>
                   <?MIVAR NAME=$link>$query$accID<?/MIVAR>
                   <?MIVAR NAME=$currinflink><a href=$link>GO:$accID</a><?/MIVAR>
                <?MIELSE> 
-                  <?MISQL SQL="select a.db_query from db_link b,foreign_db a where b.db_name = '$dbase' and a.db_name=b.db_name"><?/MISQL>
+                  <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = '$dbase'><?/MISQL>
                   <?MIVAR NAME=query>$1<?/MIVAR>
                   <?MIVAR NAME=$link>$query$accID<?/MIVAR>
                   <?MIVAR NAME=$currinflink><a href=$link>$dbase:$accID</a><?/MIVAR>

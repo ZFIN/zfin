@@ -330,16 +330,16 @@ create dba function "informix".regen_genomics() returning integer
     let errorHint = "all_map_names-accession_numbers";
    
 
-    select acc_num allmapnm_name, linked_recid allmapnm_zdb_id, 12 allmapnm_significance,
-	   "Accession number" allmapnm_precedence, lower(acc_num) allmapnm_name_lower
+    select dblink_acc_num as allmapnm_name, dblink_linked_recid as allmapnm_zdb_id, 12 as allmapnm_significance,
+	   "Accession number" as allmapnm_precedence, lower(dblink_acc_num) as allmapnm_name_lower
     from db_link, all_marker_names_new
-    where db_link.linked_recid = allmapnm_zdb_id
-    and lower(acc_num) <> lower(allmapnm_name)	    
+    where dblink_linked_recid = allmapnm_zdb_id
+    and lower(dblink_acc_num) <> lower(allmapnm_name)	    
     union
-    select acc_num allmapnm_name, c_gene_id allmapnm_zdb_id, 12 allmapnm_significance,
-	   "Accession number" allmapnm_precedence, lower(acc_num) allmapnm_name_lower
+    select dblink_acc_num as allmapnm_name, c_gene_id as allmapnm_zdb_id, 12 as allmapnm_significance,
+	   "Accession number" as allmapnm_precedence, lower(dblink_acc_num) as allmapnm_name_lower
     from db_link,  orthologue
-    where db_link.linked_recid = orthologue.zdb_id		
+    where dblink_linked_recid = orthologue.zdb_id		
     into temp all_acc_names_new with no log;
 
 

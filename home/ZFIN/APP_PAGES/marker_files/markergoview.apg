@@ -29,7 +29,7 @@
  <?MIBLOCK COND="$(NC,PUB,$caller)">
      <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=go') from webpages where ID='aa-data_mgr.apg';">$1<?/MISQL>
 <p>
- <?MISQL SQL="select db_query from foreign_db where db_name='QuickGO'"><?/MISQL>
+ <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name='QuickGO'"><?/MISQL>
    <?MIVAR NAME=$dbquery>$1<?/MIVAR>
 
 <!--creating table to display added GO annotations-->
@@ -127,13 +127,13 @@
               <?MIVAR NAME=$currinflink><a href=http://zfin.org/cgi-bin/ZFIN_jump?record=$encaccID>$accID</a><?/MIVAR>
           <?MIELSE>
                <?MIBLOCK COND="$(EC,$dbase,GO)">
-                  <?MISQL SQL="select db_query from foreign_db  where db_name = 'QuickGO'"><?/MISQL>
+                  <?MISQL SQL="select fdb_db_query from foreign_db  where fdb_db_name = 'QuickGO'"><?/MISQL>
                   <?MIVAR NAME=query>$1<?/MIVAR>
                   <?MIVAR NAME=$accID>$(SUBSTR,$accID,4,$(STRLEN,$accID))<?/MIVAR>
                   <?MIVAR NAME=$link>$query$accID<?/MIVAR>
                   <?MIVAR NAME=$currinflink><a href=$link>GO:$accID</a><?/MIVAR>
                <?MIELSE> 
-                  <?MISQL SQL="select a.db_query from db_link b,foreign_db a where b.db_name = '$dbase' and a.db_name=b.db_name"><?/MISQL>
+                  <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = '$dbase'><?/MISQL>
                   <?MIVAR NAME=query>$1<?/MIVAR>
                   <?MIVAR NAME=$link>$query$accID<?/MIVAR>
                   <?MIVAR NAME=$currinflink><a href=$link>$dbase:$accID</a><?/MIVAR>

@@ -30,7 +30,7 @@ GENERICS = chromoscripts.apg crossview.apg clonebox.apg do-markerupdate.apg \
         do-markergoupdate.apg markergodelete.apg do-goedit.apg gonotes.apg \
         markergoinf.apg nomenview.apg nomeneditor.apg orthoview.apg \
 	marker_history_correction.apg do-oevdispupdate.apg attrib_check.apg \
-	newmrkrselect.apg searchform.apg
+	newmrkrselect.apg searchform.apg sequence.apg
 
 
 # Use default rules for app page directories.

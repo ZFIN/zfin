@@ -90,10 +90,11 @@ get_obj_name(zdbId varchar(50))
       from data_alias
       where dalias_zdb_id = zdbId;
   elif (objType = "DBLINK") then
-    select db_name || ":" || acc_num
+    select fdbcont_fdb_db_name || ":" || dblink_acc_num
       into objName
-      from db_link
-      where dblink_zdb_id = zdbId;
+      from db_link, foreign_db_contains
+      where dblink_zdb_id = zdbId
+        and dblink_fdbcont_zdb_id = fdbcont_zdb_id;
   elif (objType = "EXTNOTE") then
     select extnote_zdb_id
       into objName

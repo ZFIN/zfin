@@ -35,16 +35,17 @@
 
   <!-- Main Query to get orthologue -->
   <?MISQL SQL="
-   select ortho_name, ortho_abbrev, organism, b.DB_name,
-         c.DB_query || b.acc_num, dblink_acc_num_display, a.zdb_id, 
-         d.organism_display_order, c.db_significance
-    from orthologue a, OUTER (db_link b, foreign_DB c), organism d 
-    where a.zdb_id = b.linked_recid 
-      and b.DB_name = c.DB_name 
+   select ortho_name, ortho_abbrev, organism, fdb_DB_name,
+         fdb_DB_query || dblink_acc_num, dblink_acc_num_display, a.zdb_id, 
+         d.organism_display_order, fdb_db_significance
+    from orthologue a, OUTER (db_link,foreign_db_contains,foreign_DB), organism d 
+    where a.zdb_id = dblink_linked_recid 
+      and dblink_fdbcont_zdb_id = fdbcont_zdb_id 
+      and fdbcont_fdb_db_name = fdb_db_name
       and c_gene_id = '$OID' 
-      and c.db_significance < 10
+      and fdb_db_significance < 10
       and a.organism = d.organism_common_name	
-    order by d.organism_display_order, c.db_significance;">
+    order by d.organism_display_order, fdb_db_significance;">
 	
    <?MIVAR NAME=$ortho_name>$1<?/MIVAR>
    <?MIVAR NAME=$ortho_abbrev>$2<?/MIVAR>

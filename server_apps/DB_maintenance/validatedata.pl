@@ -1580,7 +1580,7 @@ sub orthologueHasDblink ($) {
                     entry_time
                from orthologue
               where zdb_id not in (
-                                select linked_recid 
+                                select dblink_linked_recid 
                                   from db_link) 
              ';
  

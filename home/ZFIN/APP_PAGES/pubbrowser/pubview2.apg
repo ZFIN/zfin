@@ -159,10 +159,11 @@ ERROR -- something bad happened -- no OID passed in!
 	       where goterm_go_id = '$goid';">		
   The GO term <?MIVAR><i><b>$1</b></i><?/MIVAR> associated with <?MIVAR><i><b>$abbrev</b></i><?/MIVAR> was derived from <?MIVAR>$fdbname<?/MIVAR> record (
   <?/MISQL>
-  <?MISQL SQL="select conc(conc(b.DB_query,a.acc_num),b.url_suffix),a.acc_num 
-                from db_link a, foreign_db b
-	        where linked_recid='$geneid' and a.db_name='$fdbname'
-                      and a.db_name=b.db_name;
+  <?MISQL SQL="select conc(conc(fdb_DB_query,dblink_acc_num),fdb_url_suffix), dblink_acc_num 
+                from db_link, foreign_db_contains, foreign_db
+	        where dblink_linked_recid='$geneid' 
+	          and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+	          and fdbcont_fdb_db_name ='$fdbname';
 	        ">	
   <?MIVAR>
   $(IF,$first,$(SETVAR,$first,0),",")<?/MIVAR>	

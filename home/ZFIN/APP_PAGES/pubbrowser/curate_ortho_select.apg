@@ -180,7 +180,7 @@ insert into int_marker_pub
 insert into int_marker_pub
     select gwo_gene_zdb_id, pub.zdb_id
     from tmp_gene_with_orthology, publication pub, record_attribution, db_link
-    where gwo_gene_zdb_id = linked_recid
+    where gwo_gene_zdb_id = dblink_linked_recid
       and dblink_zdb_id = recattrib_data_zdb_id
       and pub.zdb_id = recattrib_source_zdb_id
       and pub.jtype not in ('Unpublished','Curation')

@@ -2,7 +2,16 @@
 
 Commits the updates requested in the forms tossed up by
 markerupdate.html. Also files update record.
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
 
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+
+<?/MIERROR>
 
 <html>
 EXPECTED VARS:
@@ -63,8 +72,27 @@ COND="$(OR,$(EC,$attr,putgene_putative_gene_name),$(EC,$attr,putgene_comments),$
 the record $old_value from the list of $attr associated with this 
 marker.<?/MIVAR>
 
-  <?MIVAR COND="$(EC,$attr_type,special-newseqnum)" NAME=$comments>Created 
-new link to sequence DB: $old_value for this record.<?/MIVAR>
+  <?MIVAR COND="$(OR,$(EC,$attr_type,special-newseqnum),$(EC,$attr_type,special-check-newseqnum))" NAME=$comments>Created 
+new link $old_value:$new_value for this record.<?/MIVAR>
+
+  <?MIBLOCK COND="$(EC,$attr_type,special-updateseqnum)">
+    <?MISQL SQL="select fdbcont_fdb_db_name, dblink_acc_num, dblink_length, fdbcont_fdbdt_data_type
+                 from db_link, foreign_db_contains
+                 where dblink_zdb_id = '$dataOID'
+                   and dblink_fdbcont_zdb_id = fdbcont_zdb_id;">
+      <?MIVAR NAME=$comments>Update $1:$2
+                 <table border=0 cellpadding=3>   
+                   <tr><td>&nbsp;</td><td>Length</td><td>Acc_Num</td></tr>
+                   <tr><td>New</td><td>$(IF,$(EC,$new_value,),$3,$new_value)</td><td>$xtra_param</td></tr>
+                   <tr><td>Old</td><td>$3</td><td>$4</td></tr>
+                 </table>
+      <?/MIVAR>
+    <?/MISQL>
+<?MIVAR>
+  $MI_SQL <BR><BR> $attr_type <BR><BR> 
+<?/MIVAR>
+  
+  <?/MIBLOCK>
 
 
   <?MIVAR COND="$(EC,$attr_type,special-newmrkrrel)" 
@@ -86,7 +114,9 @@ comments,
       values ('$ZDB_ident', '$ZDB_name','$OID', '$attr',  '$old_value', 
               '$comments', current);">
   <?/MISQL>
-
+<?MIVAR>
+  $MI_SQL <BR><BR> $attr_type <BR><BR> $dataOID
+<?/MIVAR>
   <!-- OK, NOW UPDATE THE  ACTUAL DATA RECORD. -->
   <?MIBLOCK COND="$(AND,$(NC,$attr,dalias_alias),
                       $(NC,$attr,putgene_comments),
@@ -167,18 +197,17 @@ comments,
       <!-- separate values -->
       <?MIVAR NAME=delimit>$(POSITION,$old_value,":")<?/MIVAR>
       <?MIVAR NAME=db_name>$(SUBSTR,$old_value,1,$(-,$delimit,1))<?/MIVAR>
-      <?MIVAR 
-NAME=acc_len>$(-,$(STRLEN,$old_value),$(-,$delimit,1))<?/MIVAR>
-      <?MIVAR 
-NAME=acc_num>$(SUBSTR,$old_value,$(+,$delimit,1),$acc_len)<?/MIVAR>
+      <?MIVAR NAME=acc_len>$(-,$(STRLEN,$old_value),$(-,$delimit,1))<?/MIVAR>
+      <?MIVAR NAME=acc_num>$(SUBSTR,$old_value,$(+,$delimit,1),$acc_len)<?/MIVAR>
 
       <?MISQL SQL="
 	select recattrib_source_zdb_id, dblink_zdb_id
-	  from record_attribution, db_link
+	  from record_attribution, db_link, foreign_db_contains
 	 where recattrib_data_zdb_id = dblink_zdb_id
-	   and linked_recid = '$OID'
-	   and db_name = '$db_name'
-	   and acc_num = '$acc_num' ; ">
+	   and dblink_linked_recid = '$OID'
+	   and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+	   and fdbcont_fdb_db_name = '$db_name'
+	   and dblink_acc_num = '$acc_num' ; ">
  
        <?MISQL SQL="select WebExplode(object,'pubId=$1&dataId=$2') from webPages where ID='aa-attrib_check.apg';">$1<?/MISQL>
      <?/MISQL>
@@ -187,10 +216,11 @@ NAME=acc_num>$(SUBSTR,$old_value,$(+,$delimit,1),$acc_len)<?/MIVAR>
 	delete from zdb_active_data
 	  where zactvd_zdb_id = 
 		( select dblink_zdb_id 
-		    from db_link
-		    where linked_recid = '$OID'
-                      and db_name = '$db_name'
-		      and acc_num = '$acc_num' );">
+		    from db_link, foreign_db_contains
+		    where dblink_linked_recid = '$OID'
+		      and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                      and fdbcont_fdb_db_name = '$db_name'
+		      and dblink_acc_num = '$acc_num' );">
       <?/MISQL>
     <?/MIBLOCK>
 
@@ -220,6 +250,19 @@ NAME=acc_num>$(SUBSTR,$old_value,$(+,$delimit,1),$acc_len)<?/MIVAR>
   <?/MIBLOCK>  <!-- ends special listitem case -->
 
 
+  <?MICOMMENT> 
+      Update the chimericism of a clone. 
+      A potential problem: not all ESTs have clones.
+  <?/MICOMMENT>
+  
+  <?MIBLOCK COND="$(EC,$attr,clone_is_chimeric)">
+    <?MISQL SQL="
+      UPDATE clone
+      SET clone_is_chimeric = '$new_value'
+      WHERE clone_mrkr_zdb_id = '$OID';">
+    <?/MISQL>  
+  <?/MIBLOCK>
+
 
   <!-- Special case for checking new sequence db link -->
   <?MIBLOCK COND="$(EC,$attr_type,special-check-newseqnum)">
@@ -228,13 +271,13 @@ NAME=acc_num>$(SUBSTR,$old_value,$(+,$delimit,1),$acc_len)<?/MIVAR>
 	   select dblink_zdb_id
              from marker_relationship, db_link
 	    where mrel_mrkr_1_zdb_id ='$OID'
-              and mrel_mrkr_2_zdb_id = linked_recid
-              and acc_num = '$new_value' 
+              and mrel_mrkr_2_zdb_id = dblink_linked_recid
+              and dblink_acc_num = '$new_value' 
 	  UNION
            select dblink_zdb_id
              from db_link
-	    where linked_recid = '$OID'
-              and acc_num = '$new_value'; ">
+	    where dblink_linked_recid = '$OID'
+              and dblink_acc_num = '$new_value'; ">
        <?/MISQL>
        <?MIBLOCK COND="$(NC,$1,)">
            <SCRIPT>
@@ -245,9 +288,9 @@ NAME=acc_num>$(SUBSTR,$old_value,$(+,$delimit,1),$acc_len)<?/MIVAR>
           <?MIVAR NAME=markerlist><?/MIVAR>
 	  <?MISQL SQL="
 	     select mrkr_abbrev
-	       from db_link,marker
-	      where acc_num = '$new_value'
-	        and linked_recid=mrkr_zdb_id; ">
+	       from db_link, marker
+	      where dblink_acc_num = '$new_value'
+	        and dblink_linked_recid=mrkr_zdb_id; ">
              <?MIBLOCK COND="$(EC,$MI_CURRENTROW,1)">
 	 	<?MIVAR>$(SETVAR,$markerlist[1],$1)<?/MIVAR>
 	     <?MIELSE>
@@ -277,6 +320,47 @@ NAME=acc_num>$(SUBSTR,$old_value,$(+,$delimit,1),$acc_len)<?/MIVAR>
   <!-- Special case for adding new sequence db link -->
   <?MIBLOCK COND="$(OR,$(EC,$attr_type,special-newseqnum),$(XST,$donecheck))">
 
+    <?MISQL SQL="
+      select fdbcont_zdb_id
+      from foreign_db_contains
+      where fdbcont_fdbdt_super_type = '$fdbcont_super'
+        and fdbcont_fdbdt_data_type = '$fdbcont_data'
+        and fdbcont_fdb_db_name = '$old_value';">
+        
+        $(SETVAR,fdbcont_zdb_id,$1)
+        
+    <?/MISQL>
+
+    <?MIBLOCK COND=$(NXST,$fdbcont_zdb_id)>
+     <?MISQL SQL="
+       execute function get_id('FDBCONT');">
+     <?/MISQL>
+     <?MIVAR NAME=$fdbcont_zdb_id>$1<?/MIVAR>
+     <?MISQL SQL="
+       insert into zdb_active_data
+           ( zactvd_zdb_id )
+         values
+          ( '$fdbcont_zdb_id' );">
+     <?/MISQL>
+     <?MISQL SQL="
+       insert into foreign_db_contains 
+          ( fdbcont_zdb_id, 
+            fdbcont_fdb_db_name, 
+            fdbcont_fdbdt_super_type, 
+            fdbcont_fdbdt_data_type, 
+            fdbcont_organism_common_name
+          ) 
+         values 
+	  ( '$fdbcont_zdb_id', 
+	    '$old_value', 
+	    '$fdbcont_super', 
+	    '$fdbcont_data', 
+	    'Zebrafish'
+	  )
+       ;">
+     <?/MISQL>
+    <?/MIBLOCK>
+
      <?MISQL SQL="
        execute function get_id('DBLINK');">
      <?/MISQL>
@@ -289,14 +373,88 @@ NAME=acc_num>$(SUBSTR,$old_value,$(+,$delimit,1),$acc_len)<?/MIVAR>
      <?/MISQL>
      <?MISQL SQL="
        insert into db_link 
-          ( linked_recid, DB_name, acc_num, dblink_zdb_id ,info) 
+          ( dblink_linked_recid, 
+            dblink_acc_num, 
+            dblink_zdb_id,
+            dblink_info,
+            dblink_fdbcont_zdb_id
+          ) 
          values 
-	  ( '$OID', '$old_value', '$new_value', '$dblink_zdb_id', '$ZDB_name'||' '||TODAY );">
+	  ( '$OID', 
+	    '$new_value', 
+	    '$dblink_zdb_id', 
+	    '$ZDB_name'||' '||TODAY,
+	    '$fdbcont_zdb_id'
+	  );">
 
      <?/MISQL>
-
+     
    <?/MIBLOCK>  <!-- ends special seqdb case ---->
 
+   
+
+   <?MIBLOCK COND="$(EC,$attr_type,special-updateseqnum)">
+     <?MISQL COND="$(AND,$(EC,$old_value,dblink_length),$(NC,$new_value,))" SQL="
+       update db_link
+       set dblink_length = $new_value
+       where dblink_zdb_id = '$dataOID';">
+     <?/MISQL>
+
+    <?MISQL SQL="
+      select fdbcont_zdb_id
+      from foreign_db_contains
+      where fdbcont_fdbdt_super_type = 'sequence'
+        and fdbcont_fdbdt_data_type = '$xtra_param'
+        and fdbcont_fdb_db_name = 
+             (
+               select b.fdbcont_fdb_db_name 
+               from db_link, foreign_db_contains as b 
+               where dblink_zdb_id = '$dataOID'
+                 and dblink_fdbcont_zdb_id = b.fdbcont_zdb_id
+             );">
+        
+        $(SETVAR,fdbcont_zdb_id,$1)
+        
+    <?/MISQL>
+
+    <?MIBLOCK COND=$(NXST,$fdbcont_zdb_id)>
+      <?MISQL SQL="
+        execute function get_id('FDBCONT');">
+      <?/MISQL>
+      <?MIVAR NAME=$fdbcont_zdb_id>$1<?/MIVAR>
+      <?MISQL SQL="
+        insert into zdb_active_data
+            ( zactvd_zdb_id )
+          values
+           ( '$fdbcont_zdb_id' );">
+      <?/MISQL>
+      <?MISQL SQL="
+        insert into foreign_db_contains 
+           ( fdbcont_zdb_id, 
+             fdbcont_fdb_db_name, 
+             fdbcont_fdbdt_super_type, 
+             fdbcont_fdbdt_data_type, 
+             fdbcont_organism_common_name
+           ) 
+        select 
+	   '$fdbcont_zdb_id', 
+	   fdbcont_fdb_db_name, 
+	   'sequence', 
+	   '$xtra_param', 
+	   'Zebrafish'
+	from foreign_db_contains, db_link
+	where dblink_zdb_id = '$dataOID'
+	  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+        ;">
+      <?/MISQL>
+    <?/MIBLOCK>
+    
+     <?MISQL SQL="
+       update db_link
+       set dblink_fdbcont_zdb_id = '$fdbcont_zdb_id'
+       where dblink_zdb_id = '$dataOID';">
+     <?/MISQL>
+   <?/MIBLOCK>  <!-- ends update seqdb case -->
 
 
   <!------ Special case for adding new attribution------->
@@ -321,8 +479,8 @@ NAME=acc_num>$(SUBSTR,$old_value,$(+,$delimit,1),$acc_len)<?/MIVAR>
       <?MISQL COND="$(EC,$info,seqacc)" SQL="
 	   select dblink_zdb_id 
 	     from db_link
-	    where linked_recid = '$OID'
-	      and acc_num = '$old_value'
+	    where dblink_linked_recid = '$OID'
+	      and dblink_acc_num = '$old_value'
 	    ;">
 	<?MIVAR>$(SETVAR,$old_value,$1)<?/MIVAR>
       <?/MISQL>	
@@ -655,6 +813,8 @@ colattrib_source_zdb_id)
            and organism = '$species_update' ;">
        <?MIVAR NAME=ortho_id>$1<?/MIVAR>   
       <?/MISQL>
+      
+      <?MIVAR NAME=$fdbcont_organism>$species_update<?/MIVAR>
 
       <?MIBLOCK COND="$(AND,$(XST,$newabbrev),$(XST,$newname))">
         
@@ -682,30 +842,82 @@ colattrib_source_zdb_id)
         <?MIVAR NAME=$newacc>$(TRIM,$newacc)<?/MIVAR>
         <?MISQL SQL="
 		select * 
- 		  from db_link
-		 where linked_recid = '$ortho_id'
-		   and db_name = '$newdb'
-		   and acc_num = '$newacc'; ">
+ 		  from db_link, foreign_db_contains
+		 where dblink_linked_recid = '$ortho_id'
+		   and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+		   and fdbcont_fdb_db_name = '$newdb'
+		   and dblink_acc_num = '$newacc'; ">
 	<?/MISQL>
 	<?MIBLOCK COND="$(<,$MI_ROWCOUNT,1)">
           <?MIBLOCK COND="$(NC,$newacc,)">
-	    <?MISQL SQL="
-	      execute function get_id('DBLINK');">
-	    <?/MISQL>
-	    <?MIVAR NAME=$dblink_zdb_id>$1<?/MIVAR>
-	    <?MISQL SQL="
-	      insert into zdb_active_data
-	        ( zactvd_zdb_id )
-	        values
-	        ( '$dblink_zdb_id' );">
-	    <?/MISQL>
-	    <?MISQL SQL="
-	      insert into db_link 
-	         ( linked_recid, DB_name, acc_num, dblink_zdb_id )
-	       values
-	        ( '$ortho_id', '$newdb', '$newacc', '$dblink_zdb_id' );">
+
+            <?MISQL SQL="
+              select fdbcont_zdb_id
+              from foreign_db_contains
+              where fdbcont_fdbdt_super_type = '$fdbcont_super'
+                and fdbcont_fdbdt_data_type = '$fdbcont_data'
+                and fdbcont_fdb_db_name = '$newdb';">
+                
+                $(SETVAR,fdbcont_zdb_id,$1)
+                
             <?/MISQL>
-	
+
+            <?MIBLOCK COND=$(NXST,$fdbcont_zdb_id)>
+             <?MISQL SQL="
+               execute function get_id('FDBCONT');">
+             <?/MISQL>
+             <?MIVAR NAME=$fdbcont_zdb_id>$1<?/MIVAR>
+             <?MISQL SQL="
+               insert into zdb_active_data
+                   ( zactvd_zdb_id )
+                 values
+                  ( '$fdbcont_zdb_id' );">
+             <?/MISQL>
+             <?MISQL SQL="
+               insert into foreign_db_contains 
+                  ( fdbcont_zdb_id, 
+                    fdbcont_fdb_db_name, 
+                    fdbcont_fdbdt_super_type, 
+                    fdbcont_fdbdt_data_type, 
+                    fdbcont_organism_common_name
+                  ) 
+                 values 
+        	  ( '$fdbcont_zdb_id', 
+        	    '$newdb', 
+        	    '$fdbcont_super', 
+        	    '$fdbcont_data', 
+        	    '$fdbcont_organism'
+        	  )
+               ;">
+             <?/MISQL>
+            <?/MIBLOCK>
+
+            <?MISQL SQL="
+              execute function get_id('DBLINK');">
+            <?/MISQL>
+            <?MIVAR NAME=$dblink_zdb_id>$1<?/MIVAR>
+            <?MISQL SQL="
+              insert into zdb_active_data
+                  ( zactvd_zdb_id )
+                values
+                 ( '$dblink_zdb_id' );">
+            <?/MISQL>
+            <?MISQL SQL="
+              insert into db_link 
+                 ( dblink_linked_recid, 
+                   dblink_acc_num, 
+                   dblink_zdb_id,
+                   dblink_info,
+                   dblink_fdbcont_zdb_id
+                 ) 
+                values 
+              	  ( '$ortho_id', 
+              	    '$newacc', 
+              	    '$dblink_zdb_id', 
+              	    '$ZDB_name'||' '||TODAY,
+              	    '$fdbcont_zdb_id'
+              	  );">
+	    <?/MISQL>
           <?/MIBLOCK>
         <?MIELSE>
 	  <SCRIPT>
@@ -764,10 +976,11 @@ colattrib_source_zdb_id)
    	  delete from zdb_active_data
 	    where zactvd_zdb_id = 
 		( select dblink_zdb_id 
-		    from db_link
-		    where linked_recid = '$ortho_id'
-		      and db_name = '$deldb'
-		      and acc_num = '$delacc' ) ;">
+		    from db_link, foreign_db_contains
+		    where dblink_linked_recid = '$ortho_id'
+		      and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+		      and fdbcont_fdb_db_name = '$deldb'
+		      and dblink_acc_num = '$delacc' ) ;">
         <?/MISQL>     
       <?/MIBLOCK>
 
@@ -856,6 +1069,7 @@ colattrib_source_zdb_id)
 
 <!-- okay, now just bail back to the markerview to view results -->
 
+
 <?MIBLOCK COND="$(NXST,$species_update)">
 
   <SCRIPT><?MIVAR>
@@ -871,4 +1085,3 @@ colattrib_source_zdb_id)
   </SCRIPT> 
 
 <?/MIBLOCK>
-
