@@ -227,7 +227,7 @@ Click "View Map" in table at right to see a graphical map of an individual linka
 OR
 </p>
 <?MIVAR>
-Search the <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval==aa-markerselect.apg&panelid=$OID">$abbrev Panel for particular mapped markers.</A>.
+Search the <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&panelid=$OID">$abbrev Panel for particular mapped markers.</A>.
 <?/MIVAR>
 <p align=center>
 OR
@@ -275,7 +275,7 @@ Click to <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-refcrosslist.apg">
 
     <?MIBLOCK COND="$(AND,$(>,$1,$last),$(>,$MI_CURRENTROW,1))">
       <?MIVAR>
-	</TD><TD bgcolor="$highlight"><font size=1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mapperselect.apg">View Map</A></TD><TD bgcolor="$highlight" ></TD></TR>
+	</TD><TD bgcolor="$highlight"><font size=1><A HREF="/<!--|CGI_BIN_DIR_NAME|-->/mapper_select.cgi">View Map</A></TD><TD bgcolor="$highlight" ></TD></TR>
       <?/MIVAR>
     <?/MIBLOCK>
 
