@@ -5,7 +5,7 @@
 <HTML>
 <head>
 <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
-
+<?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
 <?MIVAR NAME=$MI_NOVALUE> <?/MIVAR>
 <?MIVAR NAME=$MI_NULL><?/MIVAR>
 
@@ -47,7 +47,6 @@ marker = '';
 <body bgcolor="#e5e5e5"  TEXT="black">
 <basefont COLOR="#000000" size=2>
 
-<?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
 
 <?MIBLOCK COND="$(NXST,$OID)">
 <p>
@@ -147,7 +146,7 @@ if (seq_acc != '') {
 
 <!-- OKAY, NOW  THROW UP THE  MARKER INFO -->
 <P>
-<form NAME=updater  method=post action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi" target="content" >
+<form NAME=updater method=post action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi" target="content"  >
 <?MIVAR COND="$(XST,$UPDATE)">
 <center><font size=5 color="#00ff00"><input type=button 
 value=" DONE UPDATING. Back to Viewing! " onClick="document.location.search='?MIval=aa-markerview.apg&OID=$OID'"> </font></center>
@@ -427,9 +426,7 @@ $(SETVAR,$lastitem,$3)
 <?/MIBLOCK>   <!-- ends expats and orthos -->
 
 
-
 <HR width=80%>
-
 
 <!-- Throw up the publication info, using the standard display format -->
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-showpubs.apg';">$1<?/MISQL>
