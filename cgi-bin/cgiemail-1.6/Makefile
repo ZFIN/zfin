@@ -40,7 +40,8 @@ EMAIL_OBJ=cgilib.o cgiemail.o
 LIBSRC=cgilib.c cgilibcso.c
 
 all: $(PROG)
-	cp -p cgiemail $(TARGETDIR)
+	cp -pf cgiemail $(TARGETDIR)
+	chmod 555 $(TARGETS)
 
 cgiemail: $(EMAIL_OBJ)
 	$(CC) $(LDFLAGS) -o $@ $(EMAIL_OBJ)
