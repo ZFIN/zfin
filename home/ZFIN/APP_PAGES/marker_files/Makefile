@@ -26,7 +26,7 @@ GENERICS = chromoscripts.apg crossview.apg do-markerupdate.apg \
 	markerview.apg orthoedit.apg refcrosslist.apg \
 	scoresframe.apg scoresview.apg showscores.apg \
 	mappingdetail.apg blastdata.apg genbank.apg \
-	orthoview.apg ortholist.apg
+	orthoview.apg
 
 
 # Use default rules for app page directories.
