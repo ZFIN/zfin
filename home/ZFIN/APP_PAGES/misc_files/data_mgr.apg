@@ -5,9 +5,7 @@ each data type.
 <HEAD>
 <?MIVAR>
 <SCRIPT>
-function do_submit(object,who) {
-var the_title
-    the_title='$(IF,$(XST,$rec_title),$rec_title,Untitled:$OID)';
+function do_submit(object,who,the_title) {
 
   document.location="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-process_notification.apg&"+who+"="+object.checked+"&OID=$OID&ZDB_ident=$ZDB_ident&ZDB_name="+escape('$ZDB_name')+"&title="+escape(the_title)+"&record_MIval="+escape(document.location.search);
 }
@@ -17,6 +15,8 @@ var the_title
 
 <?MIVAR NAME=$MI_NOVALUE>NOVALUE<?/MIVAR>
 
+<?MIVAR COND="$(NXST,$rec_title)" NAME=$rec_title>Untitled:$OID<?/MIVAR>
+  <?MIVAR COND="$(XST,$rec_title)" NAME=$rec_title DELIMIT="'" REPLACE="">$rec_title<?/MIVAR>   
 
 <!-- First find out the last modification date of the record in question. -->
 <?MISQL SQL="select when, day(when), comments, month(when), year(when) from updates where rec_id='$OID' order by when;">
@@ -52,7 +52,7 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 
 <?MISQL SQL="select count(*)::integer from datawatch where pers_id='$ZDB_ident' and record_id='$OID' and flag_type='bookmark';"><?/MISQL>
 <?MIVAR>
-<INPUT TYPE=checkbox name=bookmark $(IF,$(>,$1,0),CHECKED) OnClick="do_submit(this,'bookmark');">
+<INPUT TYPE=checkbox name=bookmark $(IF,$(>,$1,0),CHECKED) OnClick="do_submit(this,'bookmark','$rec_title');">
 Bookmark
 <?/MIVAR>
 
@@ -97,7 +97,7 @@ Bookmark
 <form><font size=-1>
 <?MISQL SQL="select count(*)::integer from datawatch where pers_id='$ZDB_ident' and record_id='$OID' and flag_type='notify';"><?/MISQL>
 <?MIVAR>
-<INPUT TYPE=checkbox name=notify $(IF,$(>,$1,0),CHECKED) OnClick="do_submit(this,'notification');">
+<INPUT TYPE=checkbox name=notify $(IF,$(>,$1,0),CHECKED) OnClick="do_submit(this,'notification','$rec_title');">
 Email notify
 <?/MIVAR>
 <?/MIBLOCK> <!--ends if fishauth -->
