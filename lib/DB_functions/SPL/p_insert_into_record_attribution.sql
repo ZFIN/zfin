@@ -1,3 +1,6 @@
+create procedure p_insert_into_record_attribution (vTableZdbId varchar(50), 
+					vSourceZdbId varchar(50),
+					vDataZdbId varchar(50))
 --p_insert_into_record_attribution.
 -----------------------------------
 --table_zdb_ids and data_zdb_ids should be attributed to pubs.
@@ -13,11 +16,6 @@
 --for every new table_zdb_id entered, and one into record_attribution
 --for every new combo of data_zdb_id, source. 
 
-drop procedure p_insert_into_record_attribution ;
-
-create procedure p_insert_into_record_attribution (vTableZdbId varchar(50), 
-					vSourceZdbId varchar(50),
-					vDataZdbId varchar(50))
 
 	define vOk_tableId integer ;
 	define vOk_dataId integer ;
