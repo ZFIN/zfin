@@ -31,10 +31,10 @@
 
 system ("cd <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->");
 
-system("/local/bin/rsync -upvvnab --backup-dir=/tmp --suffix=uploadbkup --delete --ignore-existing --copy-links <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/ /research/zcentral/loadUp/imageLoadUp/");
+system("/local/bin/rsync -upvvab --backup-dir=/tmp --suffix=uploadbkup --delete --ignore-existing --copy-links <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/ /research/zcentral/loadUp/imageLoadUp/");
 
 system ("cd <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|--> ");
 
-system("/local/bin/rsync -upvvnab --backup-dir=/tmp --suffix=uploadbkup --delete --ignore-existing --copy-links <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->/ /research/zcentral/loadUp/PDFLoadUp/");
+system("/local/bin/rsync -upvvab --backup-dir=/tmp --suffix=uploadbkup --delete --ignore-existing --copy-links <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->/ /research/zcentral/loadUp/PDFLoadUp/");
 
 exit;
