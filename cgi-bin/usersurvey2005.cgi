@@ -258,7 +258,7 @@ sub writeData {
   close RESULTS;
 
   # send results as an attachment using MIME-encoded message
-  # &emailresults('judys@cs.uoregon.edu','usersurvey2005@zfin.org',"new result posted","$resultsfile");
+  &emailresults('judys@cs.uoregon.edu','usersurvey2005@zfin.org',"new result posted","$resultsfile");
 
   # system "rm $path/*.txt";
 
