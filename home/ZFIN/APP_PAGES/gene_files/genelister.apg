@@ -123,7 +123,7 @@ Options:
 <?MIVAR NAME=$prev_name>0<?/MIVAR>
 <?MIVAR NAME=$prev_gp>0<?/MIVAR>
 <?MIVAR NAME=$clr_cnt>0<?/MIVAR>
-<?MISQL SQL="select gene_name, lg_location, zdb_id,OR_lg, panel_id, panel_abbrev,abbrev,private,owner from $target_table $constraint $order_clause;" MAXROWS=$limit>
+<?MISQL SQL="select gene_name, lg_location, zdb_id,OR_lg, panel_id, panel_abbrev,abbrev,private,owner,metric from $target_table $constraint $order_clause;" MAXROWS=$limit>
 
 $(IF,$(NC,$prev_name,$1),$(SETVAR,$clr_cnt,$(+,$clr_cnt,1)))
 
@@ -143,7 +143,7 @@ $(IF,$(NC,$prev_name,$1),<TD valign=top> <font size=2><A HREF=/cgi-bin_B/webdriv
 
 $(IF,$(=,$4,0),"Unmapped")
 
-$(IF,$(AND,$(>,$4,0),$(EC,$8,f)),"LG <b>"$4"</b>;<b> "$2"</b> cM (<A target=content HREF=/cgi-bin_B/webdriver?MIval=aa-crossview.apg&OID="$5">"$6" Panel</A>)")
+$(IF,$(AND,$(>,$4,0),$(EC,$8,f)),"LG <b>"$4"</b>;<b> "$2"</b> "$10" (<A target=content HREF=/cgi-bin_B/webdriver?MIval=aa-crossview.apg&OID="$5">"$6" Panel</A>)")
 
 $(IF,$(AND,$(>,$4,0),$(NC,$8,f)),"Mapped on <A target=content HREF=/cgi-bin_B/webdriver?MIval=aa-crossview.apg&OID="$5">"$6" panel</A>, but still confidential.")
 </TD>
