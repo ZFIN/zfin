@@ -12,6 +12,7 @@ pub in question with any new values passed in.
 
 <!-- if calling page is edit_pub -->
 <!-- First make sure the critical fields are there -->
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
 <?MIBLOCK COND="$(NXST,$link_authors)">
 
@@ -66,10 +67,17 @@ pub in question with any new values passed in.
 
   <!-- Now to process curation comment from link_authors>
   <?MIBLOCK COND="$(XST,$link_authors)">
-
-    <?MIVAR COND="$(NXST,$new_comments)" NAME=$new_comments>NULL<?/MIVAR>
-
-    <?MISQL SQL="insert into curation_status (pub_id,curation_action,entry_time,curator,comments) values ('$OID','$new_action',current,'$ZDB_name','$new_comments');"><?/MISQL>
+  
+    <?MICOMMENT> ==| Close Linked Authors |== <?/MICOMMENT>
+    <?MIVAR NAME=Linked_Authors>Linked Authors<?/MIVAR>
+    <?MISQL SQL="select WebExplode(object,'pubtopclose_PUB=$OID&pubtopclose_CUR=$ZDB_ident&pubtopclose_TOP=$Linked_Authors') from webPages where ID='aa-pubtopic_close.apg';">$1<?/MISQL>
+    <?MISQL SQL="select WebExplode(object,'pubtopfnd_PUB=$OID&pubtopfnd_CUR=$ZDB_ident&pubtopfnd_TOP=$Linked_Authors&pubtopfnd_DATA=t') from webPages where ID='aa-curdatafound.apg';">$1<?/MISQL>
+    
+    <?MIBLOCK COND="$(XST,$new_comments)">
+    <?MICOMMENT> ==| Create Note |== <?/MICOMMENT>
+     <?MIVAR NAME=encoded_note>$(URLENCODE,$new_comments)<?/MIVAR>
+     <?MISQL SQL="select WebExplode(object,'PUB=$OID&CUR=$ZDB_ident&NOTE=$encoded_note') from webPages where ID='aa-pnote_new.apg';">$1<?/MISQL>
+   <?/MIBLOCK>
 
   <?/MIBLOCK>
 
@@ -95,6 +103,15 @@ pub in question with any new values passed in.
     <?MIVAR NAME=$returnVariables COND="$(XST,$order_pref)">$returnVariables&order_pref=$order_pref<?/MIVAR>
     <?MIVAR NAME=$returnVariables COND="$(XST,$cur_status)">$returnVariables&cur_status=$cur_status<?/MIVAR>
     <?MIVAR NAME=$returnVariables COND="$(XST,$pub_status)">$returnVariables&pub_status=$pub_status<?/MIVAR>
+    <?MIVAR NAME=$returnVariables COND="$(XST,$curator)">$returnVariables&curator=$curator<?/MIVAR>
+    <?MIVAR NAME=$returnVariables COND="$(XST,$cur_topic)">$returnVariables&cur_topic=$cur_topic<?/MIVAR>
+    <?MIVAR NAME=$returnVariables COND="$(XST,$data_found)">$returnVariables&data_found=$data_found<?/MIVAR>
+    <?MIVAR NAME=$returnVariables COND="$(XST,$Tday)">$returnVariables&Tday=$Tday<?/MIVAR>
+    <?MIVAR NAME=$returnVariables COND="$(XST,$Tmonth)">$returnVariables&Tmonth=$Tmonth<?/MIVAR>
+    <?MIVAR NAME=$returnVariables COND="$(XST,$Tyear)">$returnVariables&Tyear=$Tyear<?/MIVAR>
+    <?MIVAR NAME=$returnVariables COND="$(XST,$Fday)">$returnVariables&Fday=$Fday<?/MIVAR>
+    <?MIVAR NAME=$returnVariables COND="$(XST,$Fmonth)">$returnVariables&Fmonth=$Fmonth<?/MIVAR>
+    <?MIVAR NAME=$returnVariables COND="$(XST,$Fyear)">$returnVariables&Fyear=$Fyear<?/MIVAR>
   <?MIELSE>  <!-- use new pub variables -->
     <?MIVAR NAME=$returnVariables COND="$(XST,$q_authors)">$returnVariables&authors=$(URLENCODE,$q_authors)<?/MIVAR>
     <?MIVAR NAME=$returnVariables COND="$(XST,$q_title)">$returnVariables&title=$(URLENCODE,$q_title)<?/MIVAR>
