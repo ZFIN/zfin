@@ -656,7 +656,9 @@ Variables Expected:
 
 		  <b>Mutagenesis Protocol: </b> 
 		  $(IF,$(EC,$alt_mutagen,spontaneous),"None -- Spontaneous Mutation")
-		  $(IF,$(AND,$(NC,$alt_mutagen,spontaneous),$(OR,$(NXST,$UPDATE),$(NC,$intfc_status,original))),$alt_protocol" treated with "$alt_mutagen)
+		  $(IF,$(AND,$(EC,$alt_mutagen,Unknown),$(EC,$alt_protocol,Unknown)),"Unknown")
+                  <?MIVAR COND="$(EC,$alt_protocol,Unknown)" NAME=$alt_protocol><?/MIVAR>
+		  $(IF,$(AND,$(NC,$alt_mutagen,spontaneous),$(NC,$alt_mutagen,Unknown),$(OR,$(NXST,$UPDATE),$(NC,$intfc_status,original))),$alt_protocol" treated with "$alt_mutagen)
 
 		  $(IF,$(AND,$(NC,$alt_mutagen,spontaneous),$(XST,$UPDATE),$(EC,$intfc_status,original)),"<SELECT name=protocol onChange=doProtocol(this.options[this.selectedIndex].value,'"$alt_protocol"','"$alt_zdb_id"')>
 		  <option "$(IF,$(EC,$alt_protocol,Unknown),SELECTED)" value=Unknown>Unknown
