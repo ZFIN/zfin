@@ -4,8 +4,6 @@
 # loadsp.pl
 #
 # Run this script to do SWISS-PROT load. 
-# % loadsp.pl
-#
 # It contains all the subroutine of SWISS-PROT load.
  
 use MIME::Lite;
@@ -44,7 +42,7 @@ sub sendRunningResult () {
  #----- One mail send out the checking report----
 
   $SUBJECT="Auto: SWISS-PROT check report";
-  $MAILTO="peirans\@cs.uoregon.edu clements\@cs.uoregon.edu";
+  $MAILTO="peirans\@cs.uoregon.edu";
   $TXTFILE="./checkreport.txt";
  
   # Create a new multipart message:
@@ -266,7 +264,7 @@ while( !( -e "sp_mrkrgoterm.unl")) {
 }
 
 # ------------ Parse interpro2go ---------------
-
+print "\niptogo.pl interpro2go\n";
 system ("iptogo.pl interpro2go");
 $count = 0;
 $retry = 1;
@@ -293,7 +291,7 @@ while( !( -e "ip_mrkrgoterm.unl")) {
 
 
 # ------------ Parse ontology files ---------------
-
+print "\nontology.pl function.ontology process.ontology component.ontology\n";
 system ("ontology.pl function.ontology process.ontology component.ontology");
 $count = 0;
 $retry = 1;
@@ -320,7 +318,7 @@ while( !( -e "ontology.unl")) {
 
 
 # ------------ Loading ---------------------
-
+print "\nloading...\n";
 system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> sp_load.sql >out 2> report.txt");
 
 open F, "out" or die "Cannot open out";
