@@ -27,7 +27,9 @@ create procedure set_session_params()
   -- Wait up to 5 seconds on locks
   set lock mode to wait 5;
 
-  -- Set isolation to dirty read.  Use ANSI set transaction statement
-  set transaction isolation level read uncommitted;
+  -- Set isolation to dirty read.  Can't use ANSI set transaction statement,
+  -- because that requires you to be in a transaction at the time you set
+  -- the isolation mode.
+  set isolation to dirty read;
 
 end procedure;
