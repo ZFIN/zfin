@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+
+    <servlet>
+        <servlet-name>SearchPage</servlet-name>
+        <jsp-file>/category_search.jsp</jsp-file>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>SearchPage</servlet-name>
+        <url-pattern>/search</url-pattern>
+    </servlet-mapping>
+
+    <error-page>
+        <exception-type>org.apache.lucene.queryParser.ParseException</exception-type>
+        <location>/search_parse_error.jsp</location>
+    </error-page>
+
+    <error-page>
+        <error-code>500</error-code>
+        <location>/internal_error.jsp</location>
+    </error-page>
+    
+</web-app>
+
+
