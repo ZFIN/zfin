@@ -487,7 +487,7 @@ create dba function "informix".regen_genomics() returning integer
     --   3 locus abbrev
     --   4 locus name
     --   5 marker alias 
-    --   6 locus name alias, locus abbrev alias
+    --   6 locus alias
     --   7 fish name, fish allele
     --   8 fish alias
     --   9 known correspondences for genes
@@ -539,14 +539,11 @@ create dba function "informix".regen_genomics() returning integer
     and dalias_group = aliasgrp_name
     and aliasgrp_significance = 1
     union all 
-    select lower(lcsali_locus_name_alias) allmapnm_name, lcsali_locus_zdb_id allmapnm_zdb_id, 6 allmapnm_significance
-    from locus_alias
+      select lower(dalias_alias) allmapnm_name, 
+	     dalias_data_zdb_id allmapnm_zdb_id, 6 allmapnm_significance
+        from data_alias, locus
+        where dalias_data_zdb_id = zdb_id
     union all 
-    select lower(lcsali_locus_abbrev_alias) allmapnm_name, lcsali_locus_zdb_id allmapnm_zdb_id, 6 allmapnm_significance
-    from locus_alias
-    where lcsali_locus_abbrev_alias is not NULL 
-    and lcsali_locus_abbrev_alias <> ""
-    union all
     select lower(allele) allmapnm_name, zdb_id allmapnm_zdb_id, 7 allmapnm_significance
     from fish
     where allele is not NULL
