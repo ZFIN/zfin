@@ -96,10 +96,10 @@ sub sendRunningResult {
 
 sub downloadGOtermFiles () {
 
-   system("wget ftp://ftp.ebi.ac.uk/pub/contrib/dbarrell/zfin.dat -O zfin.dat");
-   system("wget http://www.geneontology.org/external2go/spkw2go -O spkw2go");
-   system("wget http://www.geneontology.org/external2go/interpro2go -O interpro2go");
-   system("wget http://www.geneontology.org/external2go/ec2go -O ec2go");
+   system("wget -q ftp://ftp.ebi.ac.uk/pub/contrib/dbarrell/zfin.dat -O zfin.dat");
+   system("wget -q http://www.geneontology.org/external2go/spkw2go -O spkw2go");
+   system("wget -q http://www.geneontology.org/external2go/interpro2go -O interpro2go");
+   system("wget -q http://www.geneontology.org/external2go/ec2go -O ec2go");
  }
 
 

@@ -127,14 +127,14 @@ sub emailError()
 
 sub downloadLocusLinkFiles()
   {
-    system("/local/bin/wget ftp://ftp.ncbi.nih.gov/refseq/LocusLink/loc2ref -O loc2ref");
-    system("/local/bin/wget ftp://ftp.ncbi.nih.gov/refseq/LocusLink/loc2acc -O loc2acc");
-    system("/local/bin/wget ftp://ftp.ncbi.nih.gov/refseq/LocusLink/loc2UG -O loc2UG");
-    system("/local/bin/wget ftp://ftp.ncbi.nih.gov/refseq/D_rerio/mRNA_Prot/zebrafish.rna.gbff.gz -O zebrafish.gbff.gz");
-    system("/local/bin/wget ftp://ftp.ncbi.nih.gov/refseq/D_rerio/mRNA_Prot/zebrafish.protein.gpff.gz -O zebrafish.gnp.gz");
-    system("/local/bin/wget ftp://ftp.ncbi.nih.gov/refseq/LocusLink/LL.out_dr.gz");
-    system("/local/bin/wget ftp://ftp.ncbi.nih.gov/refseq/LocusLink/LL.out_hs.gz");
-    system("/local/bin/wget ftp://ftp.ncbi.nih.gov/refseq/LocusLink/LL.out_mm.gz");
+    system("/local/bin/wget -q ftp://ftp.ncbi.nih.gov/refseq/LocusLink/loc2ref -O loc2ref");
+    system("/local/bin/wget -q ftp://ftp.ncbi.nih.gov/refseq/LocusLink/loc2acc -O loc2acc");
+    system("/local/bin/wget -q ftp://ftp.ncbi.nih.gov/refseq/LocusLink/loc2UG -O loc2UG");
+    system("/local/bin/wget -q ftp://ftp.ncbi.nih.gov/refseq/D_rerio/mRNA_Prot/zebrafish.rna.gbff.gz -O zebrafish.gbff.gz");
+    system("/local/bin/wget -q ftp://ftp.ncbi.nih.gov/refseq/D_rerio/mRNA_Prot/zebrafish.protein.gpff.gz -O zebrafish.gnp.gz");
+    system("/local/bin/wget -q ftp://ftp.ncbi.nih.gov/refseq/LocusLink/LL.out_dr.gz");
+    system("/local/bin/wget -q ftp://ftp.ncbi.nih.gov/refseq/LocusLink/LL.out_hs.gz");
+    system("/local/bin/wget -q ftp://ftp.ncbi.nih.gov/refseq/LocusLink/LL.out_mm.gz");
   }
 
 sub writeReport()

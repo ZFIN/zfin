@@ -8,10 +8,10 @@ use MIME::Lite;
 
 sub downloadGOtermFiles () {
 
-   system("/local/bin/wget http://www.geneontology.org/ontology/function.ontology -O function.ontology");
-   system("/local/bin/wget http://www.geneontology.org/ontology/process.ontology -O process.ontology");
-   system("/local/bin/wget http://www.geneontology.org/ontology/component.ontology -O component.ontology");
-   system("/local/bin/wget http://www.geneontology.org/ontology/GO.defs -O go.defs");
+   system("/local/bin/wget -q http://www.geneontology.org/ontology/function.ontology -O function.ontology");
+   system("/local/bin/wget -q http://www.geneontology.org/ontology/process.ontology -O process.ontology");
+   system("/local/bin/wget -q http://www.geneontology.org/ontology/component.ontology -O component.ontology");
+   system("/local/bin/wget -q http://www.geneontology.org/ontology/GO.defs -O go.defs");
  
  }
 #   Main
