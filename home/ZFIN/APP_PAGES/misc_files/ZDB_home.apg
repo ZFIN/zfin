@@ -38,6 +38,8 @@ function open_Study() {
 <p>
 <A HREF="/ZFIN/misc_html/tips.html">Helpful Hints</a>
 <p>
+<img src="/images/new1.gif"> <A HREF="/zf_info/citation.html">Citing ZFIN in publications</a>
+<p>
 <A HREF="/index.html" target="_top">The Zebrafish WWW homepage</a>
 <p>
 <!--font size=-1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZFIN_stats.html">Current ZFIN stats</A></font-->
