@@ -106,8 +106,8 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
 
 <?MIBLOCK COND="$(EC,$line_type,mutant)">
 
-<?MIVAR NAME=$order_by>order by allele,name,chrom_num<?/MIVAR>
-<?MIVAR NAME=$order_by COND="$(AND,$(OR,$(XST,$fname),$(XST,$abbrev)),$(NXST,$allele))">order by name,allele,chrom_num<?/MIVAR>
+<?MIVAR NAME=$order_by>order by locus,allele,name,chrom_num<?/MIVAR>
+<?MIVAR NAME=$order_by COND="$(AND,$(OR,$(XST,$fname),$(XST,$abbrev)),$(NXST,$allele))">order by locus,name,allele,chrom_num<?/MIVAR>
 
 <?MIVAR>
 <form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
