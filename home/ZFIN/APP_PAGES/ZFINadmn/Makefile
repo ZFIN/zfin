@@ -2,9 +2,6 @@
 #
 # Makefile for ZFIN_WWW CVS Project, ZFIN Admin APP pages.
 #
-# $Source$
-# $Id$
-#
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
 # !! of the makefile hierarchy this makefile is a part of, and of the  !!
@@ -24,7 +21,8 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/ZFINadmn
 SUBDIRS = DELETErecords EDITusers
 
 GENERICS = classify_pubs.apg do_direct.apg \
-        mkdist_list.apg mkdist_list_usa.apg mkmailmerge.apg
+        mkdist_list.apg mkdist_list_usa.apg mkmailmerge.apg \
+	registered_loci.apg
 
 # Use default make rules for app page directories.
 
