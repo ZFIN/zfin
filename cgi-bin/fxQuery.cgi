@@ -110,11 +110,11 @@ if ($Query->param('scenario') eq "2") {
       <i><u>ashb</u>&nbsp;&nbsp;- achaete-scute complex-like 1b (Drosophila)</i>    
     </TD>
     <TD valign="top">
-      <u>cb939: RNA in situ whole mount</u>
+      <u>Expression Summary</u> (n assays)
       <font size="-1">(15&nbsp;images)</font>    
     </TD>
     <TD valign="top">
-      <u>Thisse <i>et al</i>, 2001</u>
+      <u>(6)</u>
     </TD>
  </TR>
  
@@ -125,11 +125,11 @@ if ($Query->param('scenario') eq "2") {
      <i><u>hdac1</u>&nbsp;&nbsp;- histone deacetylase 1 </i>
    </TD>
    <TD valign="top">     
-     <u>cb722: RNA in situ whole mount</u>
+     <u>Expression Summary </u> (n assays)
      <font size="-1">(9&nbsp;images)</font>
    </TD>
    <TD valign="top"> 
-     <u>Thisse <i>et al</i>, 2001</u>   
+     <u>(1)</u>   
    </TD>
  </TR>
 
@@ -140,16 +140,14 @@ if ($Query->param('scenario') eq "2") {
     <i><u>neurog1</u>&nbsp;&nbsp;- neurogenin 1 </i>
     </TD>
     <TD valign="top">
-      <u>cb260: RNA in situ whole mount</u>
-    <small>(37&nbsp;images)</small>
+      <a href="fxExpSummary.cgi">Expression Summary</a>
+    <small>(71&nbsp;assays)</small>
     </TD>
     <TD valign="top">
-      <u>Thisse <i>et al</i>, 2001</u>
+      <u>(6)</u>
     </TD>
     <TR bgcolor="#EEEEEE"><TD>&nbsp;</TD><TD>&nbsp;</TD><TD valign = "top"><a href="fxResultsSummary.cgi?scenario=$scenario">Published Figures</a> &nbsp; <small>(6&nbsp;images)</small></TD>
         <TD>(<u>4</u>)</TD></TR>
-    <TR bgcolor="#EEEEEE"><TD>&nbsp;</TD><TD>&nbsp;</TD><TD valign = "top"><u>Literature Index</u> &nbsp; <small>(70&nbsp;assays)</small></TD>
-        <TD>(<u>53</u>)</TD></TR>
  </TR>
 
  <!-- row four -->
@@ -159,17 +157,15 @@ if ($Query->param('scenario') eq "2") {
     <i><u>pax2a</u>&nbsp;&nbsp;- paired box gene 2a</i>
    </TD>
    <TD valign="top">
-     <u>cb378: RNA in situ whole mount</u>
-    <small>(47&nbsp;images)</small>
+     <u>Expression Summary</u>
+    <small>(71&nbsp;assays)</small>
    </TD>
    <TD valign="top">
-     <u>Thisse <i>et al</i>, 2001</u>
+     <u>(5)</u>
    </TD>
  </TR>
  <TR><TD>&nbsp;</TD><TD>&nbsp;</TD><TD valign = "top"><u>Published Figures</u> &nbsp; <small>(12&nbsp;images)</small></TD>
      <TD>(<u>4</u>)</TD></TR>
- <TR><TD>&nbsp;</TD><TD>&nbsp;</TD><TD valign = "top"><u>Literature Index</u> &nbsp; <small>(70&nbsp;assays)</small> </TD>
-     <TD>(<u>53</u>)</TD></TR>
 
 
 </TABLE>
@@ -180,7 +176,7 @@ ENDRESULTS
 if ($Query->param('results') eq "true") {
   print $results_html;
 } else {
-  print "[<a href=\"fxQuery.cgi?scenario=1\">Scenario 1</a> | <a href=\"fxQuery.cgi?scenario=2\">Scenario 2</a> ]<br>";
+  print "[<a href=\"fxQuery.cgi?scenario=1\">Scenario 1</a> | <a href=\"fxQuery.cgi?scenario=2\">Scenario 2</a> | <a href=fxExpSummary.cgi>Link from Gene page</a> | <a href=fxFigures.cgi>Link from Publications Page </a> ]<br>";
 }
 
 print <<ENDHTML ; 
