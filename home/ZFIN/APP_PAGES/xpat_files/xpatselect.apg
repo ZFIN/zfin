@@ -647,7 +647,7 @@ where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
 		 xpatassay_name, xpatassay_display_order, 
 		 match.xpat_image_count,
 		 match.xpat_matching_text, match.xpat_matching_precedence,
-		 match.xpat_ann_exist
+		 match.xpat_ann_exist, xp.xpat_source_zdb_id
 	    from expression_pattern xp, $xpatselect_temp_match match,
 		 expression_pattern_assay
 	    where xp.xpat_gene_zdb_id = '$xpatsel_gene_zdb_id'
@@ -663,14 +663,7 @@ where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
 	  <?MIVAR NAME=$xpatsel_matching_text>$7<?/MIVAR>
 	  <?MIVAR NAME=$xpatsel_matching_precedence>$8<?/MIVAR>
 	  <?MIVAR NAME=$xpatsel_ann_exist>$9<?/MIVAR>
-
-	  <?MIVAR NAME=$xpatsel_probe_name><?/MIVAR>
-	  <?MISQL COND="$(NE,$xpatsel_xpat_probe_zdb_id,NULL)" SQL="
-	    select mrkr_name
-	      from marker
-	      where mrkr_zdb_id = '$xpatsel_xpat_probe_zdb_id'">
-	    <?MIVAR NAME=$xpatsel_probe_name>$1<?/MIVAR>
-	  <?/MISQL>
+	  <?MIVAR NAME=$xpatsel_xpat_source_zdb_id>$10<?/MIVAR>
 
 	  <?MIBLOCK COND=$(OR,$(!=,$xpatsel_image_count,0),$(EC,$xpatsel_ann_exist,t))>
 	    <?MICOMMENT>
@@ -678,6 +671,14 @@ where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
 	      ==========  We have images, Call row display page
 	      ============================================================================
 	    <?/MICOMMENT>
+            <?MIVAR NAME=$xpatsel_probe_name_link_text><?/MIVAR>
+            <?MISQL COND="$(NE,$xpatsel_xpat_probe_zdb_id,NULL)" SQL="
+              select mrkr_name
+                from marker
+                where mrkr_zdb_id = '$xpatsel_xpat_probe_zdb_id'">
+              <?MIVAR NAME=$xpatsel_probe_name_link_text>$1:<?/MIVAR>
+            <?/MISQL>
+
 	    <?MIVAR>
 	      $(UNSETVAR,$xpatsel_rowVec)
 	      $(VECAPPEND,$xpatsel_rowVec,xpatselrow_color=$row_color)
@@ -691,7 +692,8 @@ where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
 	      $(IF,$(NE,$xpatsel_prevPrintedXpatId,$xpatsel_xpat_zdb_id),
 		$(VECAPPEND,$xpatsel_rowVec,xpatselrow_showXpat=exists))
 	      $(VECAPPEND,$xpatsel_rowVec,xpatselrow_xpatZdbId=$xpatsel_xpat_zdb_id)
-	      $(VECAPPEND,$xpatsel_rowVec,xpatselrow_xpatLinkText=$(IF,$(NE,$xpatsel_probe_name,),$xpatsel_probe_name: )$xpatsel_assay_name)
+	      $(VECAPPEND,$xpatsel_rowVec,xpatselrow_xpatLinkText=$xpatsel_probe_name_link_text $xpatsel_assay_name)
+	      $(VECAPPEND,$xpatsel_rowVec,xpatselrow_xpatSourceZdbId=$xpatsel_xpat_source_zdb_id)
 	      $(VECAPPEND,$xpatsel_rowVec,xpatselrow_imageCount=$xpatsel_image_count)
 
 	      $(IF,$(AND,$(XST,$xpatsel_sortByDate),$(NE,$xpatsel_xpat_direct_submission_date,NULL)),
@@ -1129,7 +1131,5 @@ document.onkeydown = keyDown;
 if (navigator.appName == "Netscape") document.captureEvents(Event.KEYDOWN|Event.KEYUP);
 </SCRIPT>
 <?/MICOMMENT>
-
-
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>

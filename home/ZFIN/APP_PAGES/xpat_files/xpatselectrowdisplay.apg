@@ -24,6 +24,8 @@ INPUT VARS:
   $xpatselrow_xpatZdbId		If exists then this is the XPAT ZDB ID 
 				of current row.
   $xpatselrow_xpatLinkText	Text to use for xpat link.
+  $xpatselrow_xpatSourceZdbId   If exists, then this is the pub ID for
+				expression pattern for xpatselrow_xpatZdbId
   $xpatselrow_imageCount	# of images for this row.
 
   $xpatselrow_directSubmissionDate  If exists, contains the direct
@@ -60,17 +62,6 @@ EFFECTS
 <?/MIERROR>
 
 <?MIVAR name="$xpatselrow_form" DELIMIT="-" REPLACE="">$xpatselrow_geneZdbId<?/MIVAR>
-
-<?MIBLOCK COND=$(XST,$xpatselrow_noImagesXpats)>
-  <?MIVAR NAME=$xpatselrow_inXpatList>'$(REPLACE,$xpatselrow_noImagesXpats,.,"','")'<?/MIVAR>
-  <?MISQL SQL="
-    select count (distinct zdb_id)
-      from publication, record_attribution
-      where recattrib_data_zdb_id in ($xpatselrow_inXpatList)
-	  and recattrib_source_zdb_id = zdb_id">
-    <?MIVAR NAME=$xpatselrow_pubCount>$1<?/MIVAR>
-  <?/MISQL>
-<?/MIBLOCK>
 
 <TR <?MIVAR>bgcolor="$xpatselrow_color"<?/MIVAR>>
   <TD>&nbsp;</TD>
@@ -124,33 +115,28 @@ EFFECTS
 	   of pubs.
     <?/MICOMMENT>
     <?MIBLOCK COND=$(NXST,$xpatselrow_noImagesXpats)>
-      <?MICOMMENT> 
-	Expression pattern has supporting images.
-
-	In rare cases an expression pattern is linked to 2 (possibly more)
-	publications.  1 is the direct submission, the other is a publication
-	by approximately the same authors, describing the same work.
-	This is a temporary situation until we have full expression, when
-	the pub ID will be included in the PK or AK of expression patterns.
-      <?/MICOMMENT>
+      <?MICOMMENT> Expression pattern has supporting images. <?/MICOMMENT>
       <?MISQL SQL="
-	select recattrib_source_zdb_id, pub_mini_ref, pub_date
-	  from record_attribution, publication
-	  where '$xpatselrow_xpatZdbId' = recattrib_data_zdb_id
-	    and recattrib_source_zdb_id = zdb_id
-	  order by pub_date">
+	select zdb_id, pub_mini_ref
+	  from publication
+	  where zdb_id = '$xpatselrow_xpatSourceZdbId'">
 	<?MIVAR NAME=$xpatselrow_pub_zdb_id>$1<?/MIVAR>
 	<?MIVAR NAME=$xpatselrow_pub_mini_ref>$2<?/MIVAR>
-	<?MIVAR>$(VECAPPEND,$xpatselrow_pubList,
-	  <a href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$xpatselrow_pub_zdb_id'>$xpatselrow_pub_mini_ref</a>)
+	<?MIVAR>
+          <a href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$xpatselrow_pub_zdb_id'>$xpatselrow_pub_mini_ref</a>
 	<?/MIVAR>
       <?/MISQL>
-      <?MIVAR>$(SEPARATE,$xpatselrow_pubList,"<br>")<?/MIVAR>
-      <?MIVAR>$(UNSETVAR,$xpatselrow_pubList)<?/MIVAR>
       <?MIVAR COND=$(XST,$xpatselrow_directSubmissionDate)>
 	<br><font size="-1">($xpatselrow_directSubmissionDate)</font>
       <?/MIVAR>
     <?MIELSE>  <?MICOMMENT> expression patterns do not have supporting images. <?/MICOMMENT>
+      <?MIVAR NAME=$xpatselrow_inXpatList>'$(REPLACE,$xpatselrow_noImagesXpats,.,"','")'<?/MIVAR>
+      <?MISQL SQL="
+        select count (distinct xpat_source_zdb_id)
+          from expression_pattern
+          where xpat_zdb_id in ($xpatselrow_inXpatList)">
+        <?MIVAR NAME=$xpatselrow_pubCount>$1<?/MIVAR>
+      <?/MISQL>
       <?MIVAR>
         <A HREF="javascript:document.$xpatselrow_form.justpubs.value=true; document.$xpatselrow_form.submit();">($xpatselrow_pubCount)</A>
         <FORM name="$xpatselrow_form" method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
