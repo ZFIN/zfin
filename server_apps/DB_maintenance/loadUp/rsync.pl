@@ -24,10 +24,10 @@
 
 system ("cd <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->");
 
-system("/local/bin/rsync -up --delete --ignore-existing <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|--> /research/zcentral/loadUp/imageLoadUp");
+system("/local/bin/rsync -upvvvn --delete --ignore-existing <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|--> /research/zcentral/loadUp/imageLoadUp");
 
 system ("cd <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|--> ");
 
-system("/local/bin/rsync -up --delete --ignore-existing <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|--> /research/zcentral/loadUp/PDFLoadUp");
+system("/local/bin/rsync -upvvvn --delete --ignore-existing <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|--> /research/zcentral/loadUp/PDFLoadUp");
 
 exit;
