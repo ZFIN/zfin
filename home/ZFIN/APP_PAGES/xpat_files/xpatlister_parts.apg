@@ -290,34 +290,24 @@
 <!--QUERY DATABASE AND CONSTRUCT TABLE BASED ON USER CONSTRIANTS. -->
 
 <!-- Count the number of xpats that will be returned. -->
-<!-- query count(*) -->
-
-  <?MIVAR>    $(SETVAR,xpat_count,1)  <?/MIVAR>  
-
 <?MISQL SQL="
-      select distinct mrkr_zdb_id
+      select count(distinct mrkr_zdb_id)::integer
       $query_from
       $query_where
-             ;">
-  <?MIVAR>
-    $(SETVAR,xpat_count,$(+,$xpat_count,1))
-  <?/MIVAR>  
+      ;">
 <?/MISQL>
 
-
-  <?MIVAR>
-    $(SETVAR,xpat_count,$(-,$xpat_count,1))
-  <?/MIVAR>  
+<?MIVAR NAME=$num_recs>$1<?/MIVAR>
 
 <?MIVAR> 
-	<b>$xpat_count</b> matching record(s) found.
+	<b>$num_recs</b> matching record(s) found.
 	<!--  <br> QUERY: $MI_SQL  -->
 <?/MIVAR>
 
 
 <?MIBLOCK COND="$(=,1,1)">
 
-<?MIBLOCK COND="$(>,$xpat_count,0)">
+<?MIBLOCK COND="$(>,$num_recs,0)">
   <br>(Click on individual Assay Types for details.) 
 	<br>
   </center>
@@ -337,15 +327,13 @@
       	<TH align=center>Stage Range</TH> 
       </TR>
 
-<!-- Outer SQL contains WW, retrieves gene names. -->
-<?MIVAR NAME=WINSIZE DEFAULT=100>$WINSIZE<?/MIVAR>
-<?MIVAR NAME=BEGIN DEFAULT=1>$START<?/MIVAR>
 
+<?MIVAR NAME=WINSIZE DEFAULT=20>$WINSIZE<?/MIVAR>
+<?MIVAR NAME=BEGIN DEFAULT=1>$START<?/MIVAR>
 
 <!--- DEFINITION OF RANGES --->
 <?MIVAR NAME=BEGIN>$(IF,$(<,$BEGIN,1),1,$BEGIN)<?/MIVAR> 
 <?MIVAR NAME=END>$(+,$BEGIN,$WINSIZE)<?/MIVAR>
-
 
 <!--- EXECUTION --->
 <!-- set row_color to green -->
@@ -378,12 +366,15 @@
 <!--       INNER LOOP CREATES A TABLE ROW FOR EACH ASSAY_TYPE   -->
 
 
-<?MISQL SQL="
+
+<?MIBLOCK>
+<?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
         select distinct xpatassay_name, xpatassay_display_order, xp.xpat_zdb_id, mrkr_name, mrkr_abbrev, mrkr_zdb_id, mrkr_type, mrkr_abbrev_order
         $query_from
         $query_where
-      order by mrkr_abbrev_order
-               ;">
+        order by mrkr_type,mrkr_abbrev_order
+        ;">
+
   <?MIVAR NAME=$GENE_OID>$6<?/MIVAR>
   <?MIVAR NAME=$GENE_NAME>$4<?/MIVAR>
   <?MIVAR NAME=$GENE_ABREV>$5<?/MIVAR>
@@ -467,7 +458,7 @@
                and xpatstg_start_stg_zdb_id = s1.stg_zdb_id
                and xpatstg_end_stg_zdb_id = s2.stg_zdb_id
                and s3.stg_zdb_id = '$stage_start'
-      order by xpat_assay_name
+      order by xpat_assay_name,s1.stg_hours_start
               ;">
       <?MIBLOCK COND="$(=,$ROWCOUNT,1)">
         <?MIVAR NAME=$first_stage><a href="javascript:popup_stage_comments('$3')">$2</a><?/MIVAR>
@@ -555,7 +546,142 @@
 <!-- end gene_X SQL -->
 <?/MISQL>
 
+<?/MIBLOCK>
+
 </TABLE>
+
+  <BR>
+
+  <Center>
+  <Table width="70%" border="0">
+    <tr>
+      <td width="45%" align=right valign=top>&nbsp;
+
+	<?MIVAR name=comment>  Build array of user data  <?/MIVAR>
+
+	<!-- to be used by walking windows and nav tile page_id -->
+	<!-- javascript of nav tile logic can not deal with preformed string 
+	  -- using urlencode so save non-urlencoded string for use by nav tile
+	  -- others will be appended -->
+	<!-- want GET string as short as possible - append only when variable 
+	  -- exists, buffer overflow may cause segmentation fault -->
+
+
+	<?MIVAR name=selector>MIval=aa-xpatlister_parts.apg&WINSIZE=$WINSIZE<?/MIVAR>
+	<?MIVAR name=$UserInput><?/MIVAR>
+	<?MIVAR name=$UserInput COND=$(XST,$gene_name)>$UserInput&gene_name=$(URLENCODE,$gene_name)<?/MIVAR>
+	<?MIVAR name=$UserInput COND=$(XST,$gene_lg)>$UserInput&gene_lg=$gene_lg<?/MIVAR>
+	<?MIVAR name=$UserInput COND=$(XST,$searchtype)>$UserInput&searchtype=$searchtype<?/MIVAR>
+  <?MIBLOCK COND=$(XST,$user_stg_rng)>
+	<?MIVAR name=$UserInput>$UserInput&stage_start=$stage_start<?/MIVAR>
+	<?MIVAR name=$UserInput>$UserInput&stage_end=$stage_end<?/MIVAR>
+  <?/MIBLOCK>
+	<?MIVAR name=$UserInput COND=$(XST,$structure_bool)>$UserInput&structure_bool=$structure_bool<?/MIVAR>
+	<?MIVAR name=$UserInput COND=$(XST,$query_results)>$UserInput&query_results=$query_results<?/MIVAR>
+	<?MIVAR name=UserInput COND=$(XST,$user_entered)>$UserInput&user_entered=$(URLENCODE,$user_entered)<?/MIVAR>
+
+
+<?MIBLOCK COND="$(AND,$(XST,$structure_list),$(NE,$structure_list,-))">
+  <?MIVAR COND="$(NXST,$s_list)" NAME=$s_list><?/MIVAR>
+
+  <?MIBLOCK INDEX=$parti FOREACH=$structure_list >
+
+      <?MIVAR>
+        <?MIVAR NAME=$parti DELIMIT="'" REPLACE="''">$parti<?/MIVAR>
+        $(SETVAR,gene_list[$gene_count],$parti)
+        <?MIVAR name=$s_list>$s_list&structure_list[$gene_count]=$(URLENCODE,$parti)<?/MIVAR>
+        $(SETVAR,gene_count,$(+,$gene_count,1))
+      <?/MIVAR>
+
+  <?/MIBLOCK>
+
+  <?MIVAR NAME=UserInput>$UserInput&structure_list=$s_list<?/MIVAR>
+<?/MIBLOCK>
+
+
+	<!--- Return to the previous set of Rows --->
+	<?MIBLOCK COND="$(>,$BEGIN,1)">
+	
+	  <?MIVAR>
+	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$(-,$BEGIN,$WINSIZE)&BEGIN=$BEGIN&$selector$UserInput">Prev</A>&nbsp;&nbsp;&nbsp;&nbsp;<br>
+
+	    <!-- If current not First Page, create link to first page. -->
+	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=1&BEGIN=1&$selector$UserInput">First Page</A>
+	  <?/MIVAR>
+
+	<?/MIBLOCK>
+
+      </td>
+
+
+      <!-- Calculate 3 pages before and 3 pages after current page. -->
+      <?MIVAR name=$CURRENT>$(FIX,$(+,$(/,$BEGIN,$WINSIZE),1))<?/MIVAR>
+
+      <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,3)),0)">
+        <td valign=top>
+	  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,3))"> $(-,$CURRENT,3)</A> <?/MIVAR>
+	</td>
+      <?/MIBLOCK>
+
+      <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,2)),0)">
+	<td valign=top>
+	  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,2))"> $(-,$CURRENT,2)</A><?/MIVAR>
+	</td>
+      <?/MIBLOCK>
+
+      <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,1)),0)">
+	<td valign=top>
+	  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,1))"> $(-,$CURRENT,1)</A><?/MIVAR>
+	</td>
+      <?/MIBLOCK>
+
+      <?MIBLOCK COND="$(>,$num_recs,$WINSIZE)">
+	<td align=center valign=top>
+	  <?MIVAR>  $CURRENT <?/MIVAR>
+	</td>
+      <?/MIBLOCK>
+
+      <?MIVAR COND="$(<=,$(+,$BEGIN,$(*,$WINSIZE,1)),$num_recs)">
+	<td valign=top>
+	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$END"> $(+,$CURRENT,1)</A>
+	</td>
+      <?/MIVAR>
+
+      <?MIVAR COND="$(<=,$(+,$BEGIN,$(*,$WINSIZE,2)),$num_recs)">
+	<td valign=top>
+	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,2))"> $(+,$CURRENT,2)</A>
+	</td>
+      <?/MIVAR>
+
+      <?MIVAR COND="$(<=,$(+,$BEGIN,$(*,$WINSIZE,3)),$num_recs)">
+	<td valign=top>
+	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,3))"> $(+,$CURRENT,3)</A>
+	</td>
+      <?/MIVAR>
+
+      <td width="45%" align=left valign=top>&nbsp;
+
+	<!--- Get the next set of Rows --->
+	<?MIBLOCK COND="$(<=,$(+,$BEGIN,$WINSIZE),$num_recs)">
+	  <?MIVAR>
+	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$END&BEGIN=$BEGIN&$selector$UserInput">Next</A><br>
+	  <?/MIVAR>
+
+	  <!-- Calculate last page -->
+	  <?MIVAR name=$START COND="$(=,$(MOD,$num_recs,$WINSIZE),0)">$(+,$(*,$(-,$(/,$num_recs,$WINSIZE),1),$WINSIZE),1)<?/MIVAR>
+
+
+	  <?MIVAR name=$START COND="$(!=,$(MOD,$num_recs,$WINSIZE),0)">$(+,$(*,$(FIX,$(/,$num_recs,$WINSIZE)),$WINSIZE),1)<?/MIVAR>
+
+	  <?MIVAR>
+	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$START&$selector$UserInput">Last Page</A>
+	  <?/MIVAR>
+	<?/MIBLOCK>
+
+      </td>
+    </tr>
+  </Table>
+  </Center>
 
 <!-- row count gt 0 -->
 <?MIELSE> <!-- Query suggestions -->
@@ -583,6 +709,8 @@
 <?MIVAR COND="$(XST,$(URLENCODE,$gene_name))" NAME=$(URLENCODE,$gene_name)><?/MIVAR>
 <?MIVAR COND="$(NXST,$gene_name)" NAME=$gene_name><?/MIVAR>
 <?MIVAR COND="$(NXST,$gene_lg)" NAME=$gene_lg>0<?/MIVAR>
+
+
 <?MIVAR COND="$(XST,$nav_gene_name)" NAME=$gene_name>$nav_gene_name<?/MIVAR>
 
 <?MIVAR>$(SETVAR,gene_count,1)<?/MIVAR>
