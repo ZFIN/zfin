@@ -151,30 +151,21 @@ ERROR -- something bad happened -- no OID passed in!
 
 
 <!-------------- Name Title ----------------------------------->
+<!---------- Xpat Header Table ---------->
 
-<table width=100% cellpadding = 2> 
-   <tr>    
-   <td width=85%>
+<table width=100%> 
+  <tr>    
+    <td <?MIVAR COND="$(XST,$UPDATE)">colspan=2<?/MIVAR> >
     
-<?MIVAR NAME=$COUNT>0<?/MIVAR>
+      <font size=+1><b> Expression of: &nbsp;
+
 <?MISQL SQL="
-     SELECT mrkr_abbrev, mrkr_zdb_id, mrkr_name, mrkr_type
-     FROM marker, expression_pattern
-     WHERE xpat_zdb_id = '$OID' 
-       AND mrkr_zdb_id = xpat_probe_zdb_id
-  UNION
-     SELECT mrkr_abbrev, mrkr_zdb_id, mrkr_name, mrkr_type
+     SELECT mrkr_abbrev, mrkr_zdb_id, mrkr_name
      FROM marker, expression_pattern, marker_relationship
      WHERE xpat_zdb_id = '$OID' 
        AND mrel_mrkr_2_zdb_id = xpat_probe_zdb_id
-       AND mrel_mrkr_1_zdb_id = mrkr_zdb_id
-     order by 4 desc;
+       AND mrel_mrkr_1_zdb_id = mrkr_zdb_id;
      ">
-     <?MIVAR COND="$(=,$MI_CURRENTROW,1)">
-     <font size=+1><b> Expression of : &nbsp;
-     <?/MIVAR>
- 
-     <?MIBLOCK COND=$(AND,$(=,$COUNT,0),$(EC,$4,GENE))>
        <?MIVAR>
          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2"><i>$3($1)</i></a>
        $(SETVAR,gene_name,$3)
@@ -182,49 +173,10 @@ ERROR -- something bad happened -- no OID passed in!
        $(SETVAR,gene_id,$2)
        <?MIVAR NAME=fullname>$gene_name($gene_abbrev)<?/MIVAR>
        <?/MIVAR> 
-     <?/MIBLOCK>
-
-     <?MIBLOCK COND=$(AND,$(=,$COUNT,0),$(NC,$4,GENE))>
-       <?MIVAR>
-         <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$3</a>
-       $(SETVAR,gene_name,$3)
-       $(SETVAR,gene_abbrev,$1)
-       $(SETVAR,gene_id,$2)
-       <?MIVAR NAME=fullname>$gene_name<?/MIVAR>
-       <?/MIVAR> 
-     <?/MIBLOCK>
-
-     <?MIBLOCK COND=$(AND,$(=,$COUNT,1),$(EC,$4,GENE))>
-       <?MIVAR>
-         , <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2"><i>$3($1)</i></a>
-       $(SETVAR,gene_name,$3)
-       $(SETVAR,gene_abbrev,$1)
-       $(SETVAR,gene_id,$2)
-       <?MIVAR NAME=fullname>$fullname, $gene_name($gene_abbrev)<?/MIVAR>
-       <?/MIVAR> 
-     <?/MIBLOCK>
-
-     <?MIBLOCK COND=$(AND,$(=,$COUNT,1),$(NC,$4,GENE))>
-       <?MIVAR>
-         , <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$3</a>
-       $(SETVAR,gene_name,$3)
-       $(SETVAR,gene_abbrev,$1)
-       $(SETVAR,gene_id,$2)
-       <?MIVAR NAME=fullname>$fullname, $gene_name<?/MIVAR>
-       <?/MIVAR> 
-     <?/MIBLOCK>
-
-     <?MIBLOCK COND=$(=,$COUNT,-1)>
-       <?MIVAR>
-         , <i><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$3($1)</a></i>
-       <?/MIVAR> 
-     <?/MIBLOCK>
-
-     <?MIVAR NAME=$COUNT>1<?/MIVAR>
 <?/MISQL>
- </b></font>
 
- </td>
+       </b></font>
+     </td>
 
 <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
     
@@ -260,15 +212,34 @@ ERROR -- something bad happened -- no OID passed in!
    <?/MIBLOCK>
 
   </tr>
- </table>
 
+ <!------------- Probe --------------------------------->
 
+  <tr>
+     <td align=left colspan=2>
+
+       <font size=+1><b> Probe: 
+
+<?MISQL SQL="
+     SELECT mrkr_name
+     FROM marker, expression_pattern
+     WHERE xpat_zdb_id = '$OID'
+       AND xpat_probe_zdb_id = mrkr_zdb_id;
+     ">
+       <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$1</a>
+
+<?/MISQL>
+       </b></font>
+     </td>
+  </tr>
+</table>
   <!---------- Assay Type ------------------------------>
-
+<table>
  <?MIBLOCK COND="$(XST,$ASSAY_NAME)">
-  <table><tr> 
+  <tr> 
    <?MIBLOCK COND="$(XST,$UPDATE)">
     <?MIVAR>
+    <td with=10>
           <FORM NAME=updateAssay method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatupdateAssay.apg">
              <INPUT TYPE="hidden" name="MIval" value="aa-xpatupdateAssay.apg">
              <INPUT TYPE="hidden" name="OID" value="$OID">
@@ -278,15 +249,88 @@ ERROR -- something bad happened -- no OID passed in!
              <INPUT TYPE="submit" value=Update>
            </FORM>
     <?/MIVAR>
+    </td>
    <?/MIBLOCK>  <!-- end xst update -->
     
    <?MIVAR>
-     <td align=left><b>Assay Type: &nbsp;</b>$ASSAY_NAME<td> 
+    <td>
+     <b>Assay Type: &nbsp;</b>$ASSAY_NAME 
    <?/MIVAR>
-  </tr></table>
+    </td>
+  </tr>
   <?/MIBLOCK>  <!-- end xst assay_name -->
 
-   <!---------- ends Assay Type ------------------------------>
+  <!---------- ends Assay Type ------------------------------>
+
+
+  <!---------- Xpat Authors ---------->
+  <?MIVAR NAME=AUTH_HTML><?/MIVAR>
+    <tr>
+    
+   <?MIBLOCK COND="$(XST,$UPDATE)">
+     <?MIVAR NAME=AUTH_HTML>
+       <td width=10>
+          <FORM NAME=updateAuthor method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-update-ids.apg">
+             <INPUT TYPE="hidden" name="MIval" value="aa-update-ids.apg">
+             <INPUT TYPE="hidden" name="DATA_ID" value="$OID">
+             <INPUT TYPE="hidden" name="returnTo" value="aa-xpatview.apg&UPDATE=1&OID=$OID">
+             <INPUT TYPE="hidden" name="action" value="add">
+             <INPUT TYPE="hidden" name="sourceType" value="person">
+             <INPUT TYPE="submit" value="Add">
+           </FORM>
+      </td>
+    <?/MIVAR>
+  <?/MIBLOCK> <!-- end xst update for Add -->
+
+  <?MIVAR NAME=AUTH_HTML>$AUTH_HTML
+      <td valign=top>
+        <b>Submitted by:</b> 
+
+  <?MISQL SQL="
+     SELECT full_name, zdb_id
+     FROM person, int_data_source
+     WHERE ids_data_zdb_id = '$OID'
+       and ids_source_zdb_id = zdb_id
+     ORDER by 1;">
+
+     <?MIVAR NAME=AUTH_LINK><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$2">$1</a><?/MIVAR>
+     <?MIBLOCK COND=$(XST,$UPDATE)>
+      </td>
+    </tr>
+
+       <?MIVAR>
+    <tr>
+      <td>  
+          <FORM NAME=updateAuthor method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-remove-ids.apg">
+             <INPUT TYPE="hidden" name="MIval" value="aa-remove-ids.apg">
+             <INPUT TYPE="hidden" name="DATA_ID" value="$OID">
+             <INPUT TYPE="hidden" name="SOURCE_ID" value="$2">
+             <INPUT TYPE="hidden" name="returnTo" value="aa-xpatview.apg&UPDATE=1&OID=$OID">
+             <INPUT TYPE="hidden" name="action" value="remove">
+             <INPUT TYPE="hidden" name="sourceType" value="person">
+             <INPUT TYPE="submit" value="Remove">
+           </FORM>
+      </td>
+      <td valign=top>
+        $AUTH_LINK
+       <?/MIVAR>
+     <?MIELSE>
+       <?MIVAR>
+       $(IF,$(=,$MI_CURRENTROW,1),$AUTH_LINK,", "$AUTH_LINK)
+       <?/MIVAR>
+     <?/MIBLOCK>
+     $(SETVAR,$XPAT_AUTH[$MI_CURRENTROW],$1)
+
+  <?/MISQL>
+
+      </td>
+  <?/MIVAR>
+
+  <?MIVAR COND="$(OR,$(XST,$UPDATE),$(!=,0,$MI_ROWCOUNT))">$AUTH_HTML<?/MIVAR>
+    </tr>
+ </table>
+  
+  <!---------- ends Xpat Header Table ---------->
 
 
   <?MIVAR NAME=CODECOMMENTS> 
@@ -656,96 +700,8 @@ ERROR -- something bad happened -- no OID passed in!
 
 <?MIVAR COND="$(XST,$XPAT_RECEIVE_DATE)"><b>Submission Date:</b> &nbsp;$XPAT_RECEIVE_DATE<?/MIVAR>
 
-<!--------------------------- Probe ---------------------------->
-<hr width="85%">
-
-<?MIVAR NAME=CODECOMMENTS> 
-     GET THE PROBE DATA SOURCE BEFORE RETRIEVING OTHER PROBE DATA.
-<?/MIVAR>
-
-<?MIVAR NAME=$SOURCE><?/MIVAR>
-<?MIVAR NAME=$COUNT>0<?/MIVAR>
-
-  <?MISQL SQL="
-    SELECT l.zdb_id, l.name 
-    FROM lab l, int_data_supplier, expression_pattern
-    WHERE '$XPATSTG_ID' = xpat_zdb_id
-      AND xpat_probe_zdb_id = idsup_data_zdb_id
-      AND idsup_supplier_zdb_id = l.zdb_id;
-  ">
-    <?MIBLOCK COND="$(=,$COUNT,0)">
-      <?MIVAR NAME=$SOURCE>
-
-        <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$1">$2</a>
-   
-      <?/MIVAR>
-    <?/MIBLOCK>
-    <?MIBLOCK COND="$(=,$COUNT,1)">
-      <?MIVAR NAME=$SOURCE>
-
-        $SOURCE, 
-        <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$1">$2</a>
-
-      <?/MIVAR>
-    <?/MIBLOCK>
-    <?MIVAR NAME=$COUNT>1<?/MIVAR>
-  <?/MISQL>
-
-<?MIVAR NAME=CODECOMMENTS> 
-     THERE IS ONE PROBE CONNECTED TO AN EXPRESSION PATTERN.  SEARCH THE
-     LABEL_RNA TABLE FOR THAT PROBE'S DATA. 
-<?/MIVAR>
-
-
-<?MISQL SQL="
-	SELECT mrkr_name, clone_vector_name, clone_comments, clone_polymerase_name, clone_cloning_site, clone_digest, probelib_name, clone_insert_size
-	FROM clone, marker, probe_library
-	WHERE '$MARKER_ID' = clone_mrkr_zdb_id
-          and clone_mrkr_zdb_id = mrkr_zdb_id
-          and clone_probelib_zdb_id = probelib_zdb_id;
-
-">
-
-	<b>PROBE:&nbsp; $1</b>
-
-	<table width="100%" border=0 cellpadding=5 bgcolor="$highlight">
-		<tr>
-			<td>
-				<b>Vector:</b>&nbsp; $2
-			</td>
-			<td>
-				<b>Polymerase:</b>&nbsp; $4
-			</td>
-			<td>
-				<b>Cloning Site:</b>&nbsp; $5
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<b>Digest:</b>&nbsp; $6
-			</td>
-			<td>
-				<b>Library:</b>&nbsp; $7
-			</td>
-			<td>
-                          <?MIVAR>
-				<b>Insert Size:</b>&nbsp; $8 $(IF,$(NE,$8,),bp,NA)
-                          <?/MIVAR>
-			</td>
-		</tr>
-		<tr>
-			<td colspan=3>
-				<b>Source:</b>&nbsp; $SOURCE
-			</td>
-		</tr>
-	</table>
-
-<hr width="85%">
-
-<?MIVAR NAME=comment>hard coded as "none given" for thisse load<?/MIVAR>
-<!-- <p align=left><b>Comments:</b><br>&nbsp;$3</p> -->
-<?/MISQL>
-
+<!--------------------------- Pubs ---------------------------->
+<p>
 
 <!-- Throw up the publication info, using the standard display format -->
 
