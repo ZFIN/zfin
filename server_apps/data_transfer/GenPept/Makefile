@@ -33,6 +33,6 @@ include $(TOP)/make.default.rules
 
 # Run the load script.  This pulls data from GenPept and loads it into ZFIN.
 
-run : $(TARGETDIR)/fetch_load_GenPept.sh 
+run : $(TARGETS)
 	$(TARGETDIR)/fetch_load_GenPept.sh
 
