@@ -23,7 +23,9 @@ $ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
 $ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
 $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
-#chdir "/research/zcentral/www_homes/hoover/server_apps/data_transfer/LoadGO/";
+$dir = "<!--|ROOT_PATH|-->/server_apps/data_transfer/LoadGO/";
+chdir "$dir";
+print "$dir" ;
 
 #remove old files
  
