@@ -134,11 +134,11 @@ open ERR, ">parseThisse.err" or die "Cannot open parseThisse.err to write";
 #      3  gb5p 
 #      4  gb3p 
 #      5  library 
-#      6  vector
-#      7  pcr amplification 
-#      8  insert_kb 
-#      9  cloning_site 
-#      0  digest 
+#      6  digest
+#      7  vector 
+#      8  pcr amplification
+#      9  insert_kb
+#      0  cloning_site
 #      1  polymerase 
 #      2  comments 
 #      3  modified_date 
@@ -152,10 +152,10 @@ while (<PROBE_IN>) {
     
     my @probe = processCsvRow ($_); 
 
-    $probe[7] =~ s/\222/\' /g;     #\222 is for windows single quote
-    $probe[7] =~ s/3\'\s+5\'/3\'<br>5\'/;
+    $probe[8] =~ s/\222/\' /g;     #\222 is for windows single quote
+    $probe[8] =~ s/3\'\s+5\'/3\'<br>5\'/;
     
-    $probe[8] =~ tr /,/./;         #insert_kb   
+    $probe[9] =~ tr /,/./;         #insert_kb   
  
     $probe[12] =~ s/<br>/ /g;      #remove line break in comments field, conservatively replace by space
     print ERR "$probe[1] misses insert_kb \n" unless $probe[8];
