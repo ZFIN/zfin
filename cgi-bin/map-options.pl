@@ -1,4 +1,4 @@
-#!/private/bin/perl -wT
+#!/private/bin/perl -T
 {
  use CGI;
  # Jan. 22, 2001 tec commented out vars defines but not used
@@ -85,14 +85,26 @@ ENDCSS
  
 
 
- print $query->start_html(-title=>'ZFIN Map Options',-GCOLOR=>'#FFFFFF',-script=>$JSCRIPT,-style=>$CSS);
- print "<script language='JavaScript' src='http://<!--|DOMAIN_NAME|-->/header.js'></script>";
+ print $query->start_html(-title=>'ZFIN Map Options',-GCOLOR=>'#FFFFFF');
+
+ print "<SCRIPT LANGUAGE='javascript1.2'>";
+ print $JSCRIPT;
+ print "</SCRIPT>";
+
+ print "<STYLE type='text/css'>";
+ print $CSS;
+ print "</STYLE>";
+
+
+ print "<script language='JavaScript1.2' src='http://<!--|DOMAIN_NAME|-->/header.js'></script>";
 
  if  (  $query->param ('ZMAP')   ) {
    print $query->startform(-method=>'get',-action=>'/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi',-name=>'options');
  } else {
    print $query->startform(-method=>'get',-action=>'/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi', -name=>'options'); 
  }
+
+
 
 my $edit = '';
 my $buf =''; 
