@@ -1,9 +1,16 @@
 <!-- FILE: genelister.apg -->
 
-<!-- This app-page handles the criteria collected by geneselect.html, and actually does the search, displaying the results. -->
+<!-- This app-page handles the criteria collected by geneselect.html, and 
+  -- actually does the search, displaying the results. 
+  -->
 <HTML>
 
-<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-chromoscripts.apg';">$1<?/MISQL>
+<?MISQL SQL="
+  select WebExplode(object,'') 
+    from webPages 
+    where ID='aa-chromoscripts.apg';">
+  $1
+<?/MISQL>
 
 <body bgcolor="white" TEXT="black">
 <basefont COLOR="#000000" size=2>
@@ -12,28 +19,38 @@
 <!-- THIS NEXT PART IS EXECUTED AFTER THE PERSON ENTERS SOME CRITERIA -->
 
 <!-- First note that they have searched persons-->
-<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-identify.apg';">$1<?/MISQL>
-<?MISQL SQL="delete from int_person_places where pers_id='$ZDB_ident' and place_id='MARKER';"><?/MISQL>
-<?MISQL COND="$(NOT,$(EQ,$(SUBSTR,$ZDB_name,1,5),GUEST))" SQL="insert into int_person_places (pers_id,place_id,last_visit) values ('$ZDB_ident','MARKER',current);"><?/MISQL>
+<?MISQL SQL="
+  select WebExplode(object,'') 
+    from webPages 
+    where ID='aa-identify.apg';">
+  $1
+<?/MISQL>
+<?MISQL SQL="
+  delete from int_person_places 
+    where pers_id='$ZDB_ident' 
+      and place_id='MARKER';">
+<?/MISQL>
+<?MISQL COND="$(NOT,$(EQ,$(SUBSTR,$ZDB_name,1,5),GUEST))" SQL="
+  insert into int_person_places 
+      (pers_id,place_id,last_visit) 
+    values ('$ZDB_ident','MARKER',current);">
+<?/MISQL>
 
 
 
 <!-- set userid to ZDB_ID of user or GUEST to be used by the map viewer -->
 <?MIVAR NAME=$userid>GUEST<?/MIVAR>
 <?MIBLOCK COND="$(NOT,$(EQ,$(SUBSTR,$ZDB_name,1,5),GUEST))">
-<?MIVAR NAME=$userid>$ZDB_ident<?/MIVAR>
+  <?MIVAR NAME=$userid>$ZDB_ident<?/MIVAR>
 <?/MIBLOCK>
 
 
 <!-- This next part builds up a query piece by piece, based on which criteria 
-  were passed in 
--->
+  -- were passed in 
+  -->
 
-<?MIVAR NAME=$alt_wild_card>%; <?/MIVAR>
-<?MIVAR NAME=$wild_card><?/MIVAR>
-<?MIVAR COND="$(NC,$searchtype,begins)" NAME=$wild_card>%<?/MIVAR>
-<?MIVAR COND="$(NC,$searchtype,begins)" NAME=$alt_wild_card>%<?/MIVAR>
-<!-- DEBUGGING <?MIVAR>  wildcard=$wild_card <?/MIVAR> -->
+<?MIVAR NAME=$lead_wildcard><?/MIVAR>
+<?MIVAR COND="$(NC,$searchtype,begins)" NAME=$lead_wildcard>%<?/MIVAR>
 
 <?MIVAR NAME=$constraint COND="$(NXST,$constraint)"> <?/MIVAR>
 <?MIVAR NAME=$lg COND="$(NXST,$lg)">0<?/MIVAR>
@@ -43,36 +60,36 @@
 
 <?MIBLOCK COND="$(OR,$(XST,$name),$(NC,$lg,0),$(NC,$refcross,NULL),$(NC,$knownloci,NULL),$(AND,$(XST,$within_cm),$(XST,$wm_name)))">
 
-<!-- First filter name for apostrophes! -->
-<?MIVAR COND="$(XST,$name)" NAME=$name DELIMIT="'" REPLACE="''">$name<?/MIVAR>
+  <!-- First filter name for apostrophes! -->
+  <?MIVAR COND="$(XST,$name)" NAME=$name DELIMIT="'" REPLACE="''">$name<?/MIVAR>
 
 
-<?MIVAR NAME=$previous> <?/MIVAR>
-<?MIVAR NAME=$constraint> where (<?/MIVAR>
+  <?MIVAR NAME=$previous> <?/MIVAR>
+  <?MIVAR NAME=$constraint> where <?/MIVAR>
 
-<!-- NOW BUILD UP THE CONSTRAINT CLAUSE -->
+  <!-- NOW BUILD UP THE CONSTRAINT CLAUSE -->
 
-<?MIVAR COND="$(AND,$(NC,$searchtype,begins),$(XST,$name))" NAME=$constraint>$constraint ((lower(conc(conc(a.gene_name,a.abbrev),a.alt_names)) like '$wild_card$(LOWER,$name)%') or (exists (select 'x' from orthologue where a.zdb_id = c_gene_id and ((lower(ortho_name) like '$wild_card$(LOWER,$name)%') or  (lower(ortho_abbrev) like '$wild_card$(LOWER,$name)%')))) )  <?/MIVAR>
+  <?MIVAR NAME=$constraint>$constraint 
+    exists 
+      ( select 'x' 
+          from all_map_names 
+          where a.zdb_id = allmapnm_zdb_id 
+            and allmapnm_name like '$lead_wildcard$(LOWER,$name)%' )
+  <?/MIVAR>
 
-<?MIVAR COND="$(AND,$(EC,$searchtype,begins),$(XST,$name))" NAME=$constraint>$constraint (lower(gene_name) like '$(LOWER,$name)%') or (lower(abbrev) like '$(LOWER,$name)%') or (lower(alt_names) like '%; $(LOWER,$name)%') or (lower(alt_names) like '%;$(LOWER,$name)%') or (lower(alt_names) like '$(LOWER,$name)%') or (exists (select 'x' from orthologue where a.zdb_id = c_gene_id and ((lower(ortho_name) like '$(LOWER,$name)%') or  (lower(ortho_abbrev) like '$(LOWER,$name)%') ))) <?/MIVAR>
- 
-<?MIVAR NAME=$previous COND="$(XST,$name)"> and <?/MIVAR>
+  <?MIVAR NAME=$previous COND="$(XST,$name)"> and <?/MIVAR>
 
-<?MIVAR NAME=$constraint COND="$(NC,$lg,0)">$constraint $previous (OR_lg=$lg and private='f')<?/MIVAR>
+  <?MIVAR NAME=$constraint COND="$(NC,$lg,0)">$constraint $previous (OR_lg=$lg and private='f')<?/MIVAR>
 
-<?MIVAR NAME=$previous COND="$(NC,$lg,0)"> and <?/MIVAR>
+  <?MIVAR NAME=$previous COND="$(NC,$lg,0)"> and <?/MIVAR>
 
-<?MIVAR NAME=$constraint COND="$(NC,$refcross,NULL)">$constraint $previous (panel_id='$refcross')<?/MIVAR>
+  <?MIVAR NAME=$constraint COND="$(NC,$refcross,NULL)">$constraint $previous (panel_id='$refcross')<?/MIVAR>
 
-<?MIVAR NAME=$previous COND="$(NC,$refcross,NULL)"> and <?/MIVAR>
+  <?MIVAR NAME=$previous COND="$(NC,$refcross,NULL)"> and <?/MIVAR>
 
-<?MIVAR NAME=$constraint COND="$(NC,$knownloci,NULL)">$constraint $previous (locus_name is not null)<?/MIVAR>
+  <?MIVAR NAME=$constraint COND="$(NC,$knownloci,NULL)">$constraint $previous (locus_name is not null)<?/MIVAR>
 
-<?MIVAR NAME=$previous COND="$(NC,$knownloci,NULL)"> and <?/MIVAR>
-
-<?MIVAR NAME=$constraint>$constraint ) <?/MIVAR>
-
-
+  <?MIVAR NAME=$previous COND="$(NC,$knownloci,NULL)"> and <?/MIVAR>
 
 <?/MIBLOCK> <!-- ends cond any constraints specified -->
 
@@ -93,192 +110,265 @@
 <font size=4>Search Genes: Result Summary</font>
 
 <?MIVAR COND="$(NC,$lg,0)">
-<p><font size=3 color="red">PLEASE NOTE:</font> <font size=2> Because you have constrained this search to a specific linkage group, the results shown below <b>DO NOT</b> include confidential mapping results. This is to avoid tacitly giving away linkage group information for these markers.</font>
+  <p><font size=3 color="red">PLEASE NOTE:</font> <font size=2> Because you 
+  have constrained this search to a specific linkage group, the results 
+  shown below <b>DO NOT</b> include confidential mapping results. This is 
+  to avoid tacitly giving away linkage group information for these markers.
+  </font>
 <?/MIVAR>
 <br>
 
 
 <!-- Stuff to control retrieval volume -->
-<?MIVAR>
 <form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"  name=genelister>
-<input type=hidden name=MIval value=aa-genelister.apg>
-<input type=hidden name=constraint value="$constraint">
-<input type=hidden name=searchtype value="$searchtype">
-<input type=hidden name=order_pref value="$order_pref">
-<?MIVAR COND="$(XST,$ismapped)"> <input type=hidden name=ismapped value="$ismapped"><?/MIVAR>
-<?/MIVAR>
+  <?MIVAR>
+    <input type=hidden name=MIval value=aa-genelister.apg>
+    <input type=hidden name=constraint value="$constraint">
+    <input type=hidden name=searchtype value="$searchtype">
+    <input type=hidden name=order_pref value="$order_pref">
+    <?MIVAR COND="$(XST,$ismapped)"> 
+      <input type=hidden name=ismapped value="$ismapped">
+    <?/MIVAR>
+  <?/MIVAR>
 
-<?MIVAR COND="$(XST,$getsome)"><font color="red"><b>Showing only first $limit </b></font> of <?/MIVAR>
+  <?MIVAR COND="$(XST,$getsome)">
+    <font color="red"><b>Showing only first $limit </b></font> of 
+  <?/MIVAR>
 
-<?MISQL SQL="select count(distinct gene_name)::integer,count(*)::integer from $target_table $constraint;"><?/MISQL>
-<?MIVAR NAME=$tcount>$1<?/MIVAR>
-<?MIVAR NAME=$true_count>$2<?/MIVAR>
-<?MIVAR> <b>$tcount</b> matching records found.
-<!-- QUERY: $MI_SQL -->
-<?/MIVAR>
+  <?MISQL SQL="
+    select count(distinct gene_name)::integer, count(*)::integer 
+      from $target_table 
+      $constraint;">
+  <?/MISQL>
+  <?MIVAR NAME=$tcount>$1<?/MIVAR>
+  <?MIVAR NAME=$true_count>$2<?/MIVAR>
+  <?MIVAR> 
+    <b>$tcount</b> matching records found.
+    <!-- QUERY: $MI_SQL -->
+  <?/MIVAR>
 
-<?MIVAR COND="$(XST,$getsome)">
-<input type=submit name=getall value="Get remaining $(-,$tcount,$limit) records">
-<input type=hidden name=limit value=99>
-<?/MIVAR>
-<br>
-(Click on individual markers for details)
-</center>
-<p>
+  <?MIVAR COND="$(XST,$getsome)">
+    <input type=submit name=getall value="Get remaining $(-,$tcount,$limit) records">
+    <input type=hidden name=limit value=99>
+  <?/MIVAR>
+  <br>
+  (Click on individual markers for details)
+  </center>
+  <p>
 
-<!-- Param to set maximum returned at once -->
-<?MIVAR NAME=$maxreturn>50<?/MIVAR>
+  <!-- Param to set maximum returned at once -->
+  <?MIVAR NAME=$maxreturn>50<?/MIVAR>
 
-<?MIVAR COND="$(AND,$(NXST,$limit),$(>,$tcount,$maxreturn))">
-<BIG>The search based on the above criteria has retrieved <B>$tcount</b> records. This number of records may take some time to download, depending on the speed of your machine and connection.<br>
-Options:
-<ul>
-<li> Further constrain your criteria above and click "search" to re-do search.
-<li> Get only the first <input name=limit value=$maxreturn type=text maxlength=3 size=3> records. <input type=submit name=getsome value="Do this">
-<li> Get all $tcount matching records. <input type=submit name=getall value="Do this">
-</ul>
-<?/MIVAR>
+  <?MIVAR COND="$(AND,$(NXST,$limit),$(>,$tcount,$maxreturn))">
+    <BIG>The search based on the above criteria has retrieved <B>$tcount</b> 
+    records. This number of records may take some time to download, depending 
+    on the speed of your machine and connection.<br>
+    Options:
+    <ul>
+      <li> Further constrain your criteria above and click "search" to re-do 
+           search.
+      <li> Get only the first 
+           <input name=limit value=$maxreturn type=text maxlength=3 size=3> 
+           records. <input type=submit name=getsome value="Do this">
+      <li> Get all $tcount matching records. 
+           <input type=submit name=getall value="Do this">
+    </ul>
+  <?/MIVAR>
 
 </form>
 
 <form method=post action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi" target="content">	
-<?MIVAR COND="$(OR,$(<=,$tcount,$maxreturn),$(XST,$getall))" NAME=$limit>$true_count<?/MIVAR>
+  <?MIVAR COND="$(OR,$(<=,$tcount,$maxreturn),$(XST,$getall))" 
+    NAME=$limit>$true_count
+  <?/MIVAR>
 
-<?MIBLOCK COND="$(AND,$(XST,$limit),$(NC,$limit,0))">
+  <?MIBLOCK COND="$(AND,$(XST,$limit),$(NC,$limit,0))">
 
-<TABLE width=100% border=0 cellspacing=0 cellpadding=3>
+    <TABLE width=100% border=0 cellspacing=0 cellpadding=3>
 
-<TH> </TH><TD align=left><B>Gene symbol </b>- name  &nbsp;[previous names / orthologues]</TD><TD><B> Mutant Locus</b><TD align=left><B>Location</b></TD> <TD align=left><B>Panel</b></TD> <TD align=left><B>Map<b></TD><TD align=left><B>Updated<b></TD>
+      <TH> </TH>
+      <TD align=left><B>Gene symbol </b>- name  &nbsp;[previous names / orthologues]</TD>
+      <TD><B> Mutant Locus</b>
+      <TD align=left><B>Location</b></TD> 
+      <TD align=left><B>Panel</b></TD> 
+      <TD align=left><B>Map<b></TD>
+      <TD align=left><B>Updated<b></TD>
 
 
-<!-- DEBUGGING <?MIVAR>  constraint=$constraint <?/MIVAR> -->
+      <!-- DEBUGGING <?MIVAR>  constraint=$constraint <?/MIVAR> -->
 
-<?MIVAR NAME=$prev_name>0<?/MIVAR>
-<?MIVAR NAME=$prev_gp>0<?/MIVAR>
-<?MIVAR NAME=$clr_cnt>0<?/MIVAR>
-<?MIVAR NAME=$ok_view_map>0<?/MIVAR>
-<?MISQL SQL="select gene_name, lg_location, zdb_id,OR_lg, panel_id, panel_abbrev,abbrev,private,owner,metric,alt_names,day(entry_date::date), month(entry_date::date), year(entry_date::date), locus_name, locus_zdb_id from $target_table $constraint $order_clause;" MAXROWS=$limit>
+      <?MIVAR NAME=$prev_name>0<?/MIVAR>
+      <?MIVAR NAME=$prev_gp>0<?/MIVAR>
+      <?MIVAR NAME=$clr_cnt>0<?/MIVAR>
+      <?MIVAR NAME=$ok_view_map>0<?/MIVAR>
+      <?MISQL SQL="
+	select gene_name, lg_location, zdb_id, OR_lg, panel_id, panel_abbrev,
+	       abbrev, private, owner, metric, day(entry_date::date), 
+               month(entry_date::date), year(entry_date::date), locus_name, 
+	       locus_zdb_id from $target_table $constraint $order_clause;" 
+	MAXROWS=$limit>
 
-<?MIBLOCK COND="$(AND,$(NC,$prev_name,$1),$(NC,$prev_gp,0),$(EC,$ok_view_map,1))">
-<?MIVAR>
-<input type=hidden name=userid value=$userid>
-<input type=hidden name=marker value=$marker_name>
-$(SETVAR,$color,$(/,$clr_cnt,2))
-<TR valign=top $(IF,$(!=,$color,$(FIX,$color)),"bgcolor=#FCCE64")> <TD></TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD align=left><font size=1><input type=submit value='VIEW MAP' name=view_map ><TD>&nbsp;</TD>
-<?/MIVAR>
+        <?MIBLOCK COND="$(AND,$(NC,$prev_name,$1),
+			      $(NC,$prev_gp,0),
+			      $(EC,$ok_view_map,1))">
+          <?MIVAR>
+            <input type=hidden name=userid value=$userid>
+            <input type=hidden name=marker value=$marker_name>
+            $(SETVAR,$color,$(/,$clr_cnt,2))
+            <TR valign=top $(IF,$(!=,$color,$(FIX,$color)),"bgcolor=#FCCE64")> 
+            <TD></TD>
+            <TD>&nbsp;</TD>
+            <TD>&nbsp;</TD>
+            <TD>&nbsp;</TD>
+            <TD align=left><font size=1><input type=submit value='VIEW MAP' name=view_map >
+            <TD>&nbsp;</TD>
+          <?/MIVAR>
 </form>
 <form method=post  action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi" target="content">
-<?MIVAR NAME=$ok_view_map>0<?/MIVAR>
-</TR>
-<?/MIBLOCK>
+          <?MIVAR NAME=$ok_view_map>0<?/MIVAR>
+          </TR>
+        <?/MIBLOCK>
 
 
-<?MIVAR NAME=$gene_name>$1<?/MIVAR>
-<?MIVAR NAME=$lg_loc>$2<?/MIVAR>
-<?MIVAR NAME=$OID>$3<?/MIVAR>
-<?MIVAR NAME=$OR_lg>$4<?/MIVAR>
-<?MIVAR NAME=$panel_id>$5<?/MIVAR>
-<?MIVAR NAME=$panel_abbrev>$6<?/MIVAR>
-<?MIVAR NAME=$marker_name>$7<?/MIVAR>
-<?MIVAR NAME=$private>$8<?/MIVAR>
-<?MIVAR NAME=$owner>$9<?/MIVAR>
-<?MIVAR NAME=$metric>$10<?/MIVAR>
-<?MIVAR NAME=$alt_names>$11<?/MIVAR>
-<?MIVAR NAME=$day>$12<?/MIVAR>
-<?MIVAR NAME=$month>$13<?/MIVAR>
-<?MIVAR NAME=$year>$14<?/MIVAR>
-<?MIVAR NAME=$locus_name>$15<?/MIVAR>
-<?MIVAR NAME=$locus_zdb_id>$16<?/MIVAR>
+	<?MIVAR NAME=$gene_name>$1<?/MIVAR>
+	<?MIVAR NAME=$lg_loc>$2<?/MIVAR>
+	<?MIVAR NAME=$OID>$3<?/MIVAR>
+	<?MIVAR NAME=$OR_lg>$4<?/MIVAR>
+	<?MIVAR NAME=$panel_id>$5<?/MIVAR>
+	<?MIVAR NAME=$panel_abbrev>$6<?/MIVAR>
+	<?MIVAR NAME=$marker_name>$7<?/MIVAR>
+	<?MIVAR NAME=$private>$8<?/MIVAR>
+	<?MIVAR NAME=$owner>$9<?/MIVAR>
+	<?MIVAR NAME=$metric>$10<?/MIVAR>
+	<?MIVAR NAME=$day>$11<?/MIVAR>
+	<?MIVAR NAME=$month>$12<?/MIVAR>
+	<?MIVAR NAME=$year>$13<?/MIVAR>
+	<?MIVAR NAME=$locus_name>$14<?/MIVAR>
+	<?MIVAR NAME=$locus_zdb_id>$15<?/MIVAR>
 
-$(IF,$(NC,$prev_name,$1),$(SETVAR,$clr_cnt,$(+,$clr_cnt,1)))
+	$(IF,$(NC,$prev_name,$1),$(SETVAR,$clr_cnt,$(+,$clr_cnt,1)))
 
-$(IF,$(AND,$(EC,$order_pref,location),$(NC,$prev_gp,$4)),"<TR><TD colspan=3 align=center><HR size=4 width=80%></TD></TR>")
+	$(IF,$(AND,$(EC,$order_pref,location),$(NC,$prev_gp,$4)),
+          "<TR><TD colspan=3 align=center><HR size=4 width=80%></TD></TR>")
 
+	$(SETVAR,$color,$(/,$clr_cnt,2))
+	<TR valign=top $(IF,$(!=,$color,$(FIX,$color)),"bgcolor=#FCCE64")>
 
-$(SETVAR,$color,$(/,$clr_cnt,2))
-<TR valign=top $(IF,$(!=,$color,$(FIX,$color)),"bgcolor=#FCCE64")>
+	<TD><font size=1> 
+	$(IF,$(XST,$return_rec),
+          <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3 TARGET=content>SELECT</A>)
+	</TD>
 
-<TD><font size=1> 
-$(IF,$(XST,$return_rec),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3 TARGET=content>SELECT</A>) 
-</TD>
+	<?MIBLOCK COND="$(EC,$prev_name,$gene_name)">
+	  <TD>&nbsp;</TD>
+	<?/MIBLOCK>
 
-<?MIVAR COND="$(EC,$alt_names,NULL)" NAME=$alt_names><?/MIVAR>
-<?MIBLOCK COND="$(EC,$prev_name,$gene_name)">
-<TD>&nbsp;</TD>
-<?/MIBLOCK>
+	<?MIBLOCK COND="$(NC,$prev_name,$gene_name)">
+	  <?MIVAR>
+	    <TD valign=top> <font size=2>
+            <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID TARGET=content>$marker_name</A>
+            &nbsp;&nbsp; - $gene_name &nbsp; [ 
 
-<?MIBLOCK COND="$(NC,$prev_name,$gene_name)">
-<?MIVAR>
-<TD valign=top> <font size=2><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID TARGET=content>$marker_name</A>&nbsp;&nbsp; - $gene_name &nbsp; [ $alt_names 
-<?MISQL SQL="select distinct ortho_name, ortho_abbrev from orthologue where c_gene_id = '$OID' and ((lower(ortho_name) <> '$(LOWER,$gene_name')) or (lower(ortho_abbrev) <> '$(LOWER,$marker_name')));">
-<?MIVAR NAME=$ortho_name>$1<?/MIVAR>
-<?MIVAR NAME=$ortho_abbrev>$2<?/MIVAR>
-$(IF,$(AND,$(=,$MI_CURRENTROW,1),$(XST,$ortho_name)), /)
-$(IF,$(>,$MI_CURRENTROW,1),;) $ortho_name ($ortho_abbrev)
-<?/MISQL>
- ]</TD>
-<?/MIVAR>
-<?/MIBLOCK>
+	    <?MISQL SQL="
+	      select mrkrali_marker_name_alias
+		from marker_alias 
+		where mrkrali_marker_zdb_id = '$OID';">
+	      <?MIVAR NAME=$alias>$1<?/MIVAR>
+              $(IF,$(AND,$(XST,$alias),$(=,$MI_CURRENTROW,1)), $alias , ; $alias )
+	    <?/MISQL>
 
-
-<TD><font size=-1> $(IF,$(NC,$prev_name,$gene_name),$(IF,$(OR,$(ISNULL,$locus_zdb_id),$(EC,$locus_zdb_id,NULL)),Unknown,<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$locus_zdb_id TARGET=content>$locus_name</A>),&nbsp;)
-</font></TD>
-<TD> <font size=2> 
-
-$(IF,$(AND,$(EC,$panel_abbrev,na),$(=,$OR_lg,0)),"Unmapped")
-
-<?MIVAR NAME=$upd_day>$month<?/MIVAR>
-<?MIBLOCK COND="$(NC,$upd_day,NULL)">
-<?MIVAR NAME=$upd_date> $(INDEX,$(-,$month,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $day,$year 
-<?/MIVAR>
-<?/MIBLOCK>
-
-<?MIBLOCK COND="$(EC,$upd_day,NULL)">
-<?MIVAR NAME=$upd_date> <?/MIVAR>
-<?/MIBLOCK>
+	    <?MISQL SQL="
+	      select distinct ortho_name, ortho_abbrev 
+		from orthologue 
+		where c_gene_id = '$OID' 
+		  and ((lower(ortho_name) <> '$(LOWER,$gene_name')) 
+		   or (lower(ortho_abbrev) <> '$(LOWER,$marker_name')));">
+	      <?MIVAR NAME=$ortho_name>$1<?/MIVAR>
+	      <?MIVAR NAME=$ortho_abbrev>$2<?/MIVAR>
+	      $(IF,$(AND,$(=,$MI_CURRENTROW,1),$(XST,$ortho_name)), /)
+	      $(IF,$(>,$MI_CURRENTROW,1),;) $ortho_name ($ortho_abbrev)
+	    <?/MISQL>
+	    ]</TD>
+	  <?/MIVAR>
+        <?/MIBLOCK>
 
 
+        <TD><font size=-1> 
+        $(IF,$(NC,$prev_name,$gene_name),
+          $(IF,$(OR,$(ISNULL,$locus_zdb_id),
+                    $(EC,$locus_zdb_id,NULL)),
+       	    Unknown,<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$locus_zdb_id TARGET=content>$locus_name</A>),
+          &nbsp;)
+        </font></TD>
+        <TD> <font size=2> 
 
-$(IF,$(AND,$(>,$OR_lg,0),$(EC,$private,f)),"LG <b>"$OR_lg"</b>;<b> "$lg_loc"</b> "$metric""&nbsp;&nbsp;<A HREF="javascript:view_scores('"$panel_id"','"$OR_lg"','"$OID"','"$marker_name"')";>Scoring Data  <TD><font size=2> "<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$panel_id">"$panel_abbrev"</A>"</TD><TD><font size=2 COLOR=#A9A9A9> <input type=checkbox name=$panel_abbrev value=1  CHECKED ></TD><TD><font size=2>" "$upd_date""</TD>)
-<?MIBLOCK COND="$(AND,$(>,$OR_lg,0),$(EC,$private,f))">
-<?MIVAR name=$ok_view_map>1<?/MIVAR>
+        $(IF,$(AND,$(EC,$panel_abbrev,na),
+                   $(=,$OR_lg,0)),
+          "Unmapped")
+
+        <?MIVAR NAME=$upd_day>$month<?/MIVAR>
+        <?MIBLOCK COND="$(NC,$upd_day,NULL)">
+          <?MIVAR NAME=$upd_date> $(INDEX,$(-,$month,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $day,$year 
+          <?/MIVAR>
+        <?/MIBLOCK>
+
+        <?MIBLOCK COND="$(EC,$upd_day,NULL)">
+          <?MIVAR NAME=$upd_date> <?/MIVAR>
+        <?/MIBLOCK>
+
+        $(IF,$(AND,$(>,$OR_lg,0),
+             $(EC,$private,f)),
+          "LG <b>"$OR_lg"</b>;<b> "$lg_loc"</b> "
+	  $metric""&nbsp;&nbsp;
+          <A HREF="javascript:view_scores('"$panel_id"','"$OR_lg"','"$OID"','"$marker_name"')";>Scoring Data</A>
+          <TD><font size=2> "<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$panel_id">"$panel_abbrev"</A>"</TD>
+          <TD><font size=2 COLOR=#A9A9A9> <input type=checkbox name=$panel_abbrev value=1  CHECKED ></TD>
+          <TD><font size=2>" "$upd_date""</TD>)
+        <?MIBLOCK COND="$(AND,$(>,$OR_lg,0),$(EC,$private,f))">
+          <?MIVAR name=$ok_view_map>1<?/MIVAR>
+        <?/MIBLOCK>
 
 
-<?/MIBLOCK>
+        $(IF,$(AND,$(>,$OR_lg,0),
+                   $(NC,$private,f)),
+          "Mapped on <A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$panel_id">"$panel_abbrev" panel; updated "$upd_date"</A>, 
+           but still confidential.")
+        </TD>
 
 
-$(IF,$(AND,$(>,$OR_lg,0),$(NC,$private,f)),"Mapped on <A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$panel_id">"$panel_abbrev" panel; updated "$upd_date"</A>, but still confidential.")
-</TD>
+        </TR>
+        $(SETVAR,$prev_gp,$OR_lg)
+        $(SETVAR,$prev_name,$gene_name)
+      <?/MISQL>
 
 
-</TR>
-$(SETVAR,$prev_gp,$OR_lg)
-$(SETVAR,$prev_name,$gene_name)
-<?/MISQL>
+      <?MIBLOCK COND="$(EC,$ok_view_map,1)">
+	<?MIVAR>
+	  <input type=hidden name=userid value=$userid>
+	  <input type=hidden name=marker value=$marker_name>
+	  $(SETVAR,$color,$(/,$clr_cnt,2))
+	  <TR valign=top $(IF,$(!=,$color,$(FIX,$color)),"bgcolor=#FCCE64")>
+	  <TD></TD>
+	  <TD>&nbsp;</TD>
+	  <TD>&nbsp;</TD>
+	  <TD>&nbsp;</TD>
+	  <TD align=left><font size=1 COLOR=#A9A9A9><input type=submit value='VIEW MAP' name=view_map > 
+	  <TD>&nbsp;</TD>
+	  </TR>
+	<?/MIVAR>
+      <?/MIBLOCK>
 
-
-<?MIBLOCK COND="$(EC,$ok_view_map,1)">
-<?MIVAR>
-<input type=hidden name=userid value=$userid>
-<input type=hidden name=marker value=$marker_name>
-$(SETVAR,$color,$(/,$clr_cnt,2))
-<TR valign=top $(IF,$(!=,$color,$(FIX,$color)),"bgcolor=#FCCE64")>
-<TD></TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD align=left><font size=1 COLOR=#A9A9A9><input type=submit value='VIEW MAP' name=view_map > <TD>&nbsp;</TD>
-</TR>
-<?/MIVAR>
-<?/MIBLOCK>
-
-<?MIVAR>
+      <?MIVAR>
 $(IF,$(AND,$(EC,$private,f),$(>,$OR_lg,0)),"</form>")
-<?/MIVAR>
+      <?/MIVAR>
 
-</TABLE>
+    </TABLE>
 
-<?MIVAR><!-- SQL: $MI_SQL <?/MIVAR>
+    <?MIVAR><!-- SQL: $MI_SQL <?/MIVAR>
 
-<?MIVAR COND=$(EQ,$MI_ROWCOUNT,0)>No matching records found<?/MIVAR>
+    <?MIVAR COND=$(EQ,$MI_ROWCOUNT,0)>No matching records found<?/MIVAR>
 
-<?/MIBLOCK>  <!-- ends exists limit -->
+  <?/MIBLOCK>  <!-- ends exists limit -->
 
 
 </HTML>
