@@ -1,8 +1,22 @@
-<!--
-  
+<?MICOMMENT>
+  Check the attribution of a publication on a marker. If the publication
+  has attribution only to the marker but not any related data (like db_link
+  data, orthologue data), pop up a suggestion of dropping the pub from the 
+  citation list. 
 
--->
- <?MIVAR COND="$(NXST,$dataId)" NAME=dataId><?/MIVAR>  
+  INPUT:
+	$OID :   marker zdb id 
+	$pubId:  pub zdb id
+	$dataId: optional. A data object id like dblink_zdb_id
+  OUTPUT:
+	none
+  EFFECT:
+	window alert of last attribution
+  RETURN:
+	none
+<?/MICOMMENT>
+ 
+<?MIVAR COND="$(NXST,$dataId)" NAME=dataId><?/MIVAR>  
  
   <?MIVAR NAME=related_data_attrib_to_OID>
       recattrib_data_zdb_id in (select mrel_zdb_id from marker_relationship where mrel_mrkr_2_zdb_id = '$OID')
@@ -14,6 +28,8 @@
       recattrib_data_zdb_id in (select dblink_zdb_id from db_link where dblink_linked_recid = '$OID')
     or
       recattrib_data_zdb_id in (select oevdisp_zdb_id from orthologue_evidence_display where oevdisp_gene_zdb_id = '$OID')
+    or 
+      recattrib_data_zdb_id in (select mrkrgoev_zdb_id from marker_go_term_evidence where mrkrgoev_mrkr_zdb_id = '$OID')	
   <?/MIVAR>
 
 
