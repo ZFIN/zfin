@@ -36,6 +36,7 @@ pub in question with any new values passed in.
 <!- If you're creating new PUB record,create and insert a blank record for it.-->
 <?MIBLOCK COND="$(EC,$OID,new)">
 <?MISQL SQL="execute function get_id('PUB');"><?/MISQL>
+<?MIVAR NAME=$new>true<?/MIVAR>
 <?MIVAR NAME=$OID>$1<?/MIVAR>
 <?MISQL SQL="insert into  publication (zdb_id,title,authors,medline_authors,source,pub_date,owner,entry_time) values ('$OID','temp','temp','Non-Medline entry','temp','01/01/1900'::date,'root',current);"><?/MISQL>
 <?/MIBLOCK>
@@ -52,8 +53,11 @@ pub in question with any new values passed in.
 
 <?MISQL SQL="update publication $setvalues where zdb_id='$OID';"><?/MISQL>
 
+
+<!-- it editing an existing record -->
 <!-- And jump back to the previous window -->
 
+<?MIBLOCK COND="$(NXST,$new)">
 <?MIVAR COND="$(NXST,$search_authors)" NAME=$search_authors><?/MIVAR>
 <?MIVAR COND="$(NXST,$search_title)" NAME=$search_title><?/MIVAR>
 <?MIVAR COND="$(NXST,$anon1text)" NAME=$anon1text><?/MIVAR>
@@ -65,6 +69,16 @@ pub in question with any new values passed in.
 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-pubselect2.apg&select_from=PUBLICATION&navtile=true&authors=$search_authors&anon1text=$anon1text&authtype=$authtype&anon1=$anon1&title=$search_title&jtype=$search_jtype&yr_cmpr=$yr_cmpr&century=$century&year=$year&order_pref=$order_pref&cur_status=$cur_status&pub_status=$pub_status');
 <?/MIVAR>
 </SCRIPT>
+<?/MIBLOCK>
+
+
+<?MIBLOCK COND="$(XST,$new)">
+<SCRIPT>
+<?MIVAR>
+window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg');
+<?/MIVAR>
+</SCRIPT>
+<?/MIBLOCK>
 
 <?/MIBLOCK> <!-- ends cond name,address,etc exists -->
 
