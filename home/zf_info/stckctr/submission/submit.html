@@ -22,64 +22,40 @@ Center.
 <br><a href="javascript:popup('links.html')">Links</a> provide useful information
 in a new window without changing the form.&nbsp;<noscript>
 <br><font color="#FF0000">Javascript is required for links on this page.</font></noscript></center>
-<center><form NAME="theSubmissionForm" METHOD="POST" ACTION="http://<!--|DOMAIN_NAME|-->/<!--|CGI_BIN_DIR_NAME|-->/cgiemail/zf_info/stckctr/submission/submit.txt">
+<center><form NAME="theSubmissionForm" METHOD="POST" 
+ACTION="http://<!--|DOMAIN_NAME|-->/<!--|CGI_BIN_DIR_NAME|-->/cgiemail/zf_info/stckctr/submission/submit.txt">
 <input TYPE="hidden" NAME="success" VALUE="http://<!--|DOMAIN_NAME|-->/zf_info/stckctr/submission/success.html">
-    <table BORDER BGCOLOR="#E5E5E5">
-      <tr> 
-        <td WIDTH="150"><b>Your&nbsp;</b> <br>
-          <b>Contact Information</b></td>
-        <td>&nbsp;</td>
-      </tr>
-      <tr> 
-        <td><font size=-1>Your Name *&nbsp;</font></td>
-        <td> 
-          <input type="text" name="required_submitterName" size="50">
-        </td>
-      </tr>
-      <tr> 
-        <td><font size=-1>Your Email *&nbsp;</font></td>
-        <td> 
-          <input type="text" name="required_submitterEMail" size="50">
-        </td>
-      </tr>
-      <tr> 
-        <td><font size=-1>Your Telephone *</font></td>
-        <td> 
-          <input type="text" name="required_submitterTelephone" size="50">
-        </td>
-      </tr>
-      <tr> 
-        <td><font size=-1>Your Fax&nbsp;</font></td>
-        <td> 
-          <input type="text" name="submitterFax" size="50">
-        </td>
-      </tr>
-      <tr> 
-        <td><font size=-1>Your Institution / Lab *</font></td>
-        <td>
-          <input type="text" name="required_submitterLab" size="50">
-        </td>
-      </tr>
-      <tr> 
-        <td><font size=-1>Your Position * </font></td>
-        <td> 
-          <select name="required_submitterPosition" size="1">
-            <option value=""></option>
-			<option value="PI / Director">PI / Director</option>
-            <option value="Post-Doc">Post-Doc</option>
-            <option value="Graduate Student">Graduate Student</option>
-            <option value="Research Staff">Research Staff</option>
-            <option value="Other">Other</option>
-          </select>
-        </td>
-      </tr>
-      <tr> 
-        <td><font size=-1>Your Address *&nbsp;</font></td>
-        <td> 
-          <textarea name="required_submitterAddress" cols="50" wrap="VIRTUAL" rows="4"></textarea>
-        </td>
-      </tr>
-    </table>
+<table BORDER BGCOLOR="#E5E5E5">
+<tr>
+<td WIDTH="150"><b>Your&nbsp;</b>
+<br><b>Contact Information</b></td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td><font size=-1>Your Name *&nbsp;</font></td>
+<td><input type="text" name="required_submitterName" size="50"></td>
+</tr>
+<tr>
+<td><font size=-1>Your Email *&nbsp;</font></td>
+<td><input type="text" name="required_submitterEMail" size="50"></td>
+</tr>
+<tr>
+<td><font size=-1>Your Telephone *</font></td>
+<td><input type="text" name="required_submitterTelephone" size="50"></td>
+</tr>
+<tr>
+<td><font size=-1>Your Fax&nbsp;</font></td>
+<td><input type="text" name="submitterFax" size="50"></td>
+</tr>
+<tr>
+<td><font size=-1>Your Institution / Lab *</font></td>
+<td><input type="text" name="required_submitterLab" size="50"></td>
+</tr>
+<tr>
+<td><font size=-1>Your Address *&nbsp;</font></td>
+<td><textarea name="required_submitterAddress" cols="50" wrap="VIRTUAL" rows="4"></textarea></td>
+</tr>
+</table>
     <br>
     <table BORDER BGCOLOR="#E5E5E5" >
 <tr>
@@ -130,20 +106,20 @@ in a new window without changing the form.&nbsp;<noscript>
         <td>&nbsp;</td>
       </tr>
       <tr> 
-        <td><font size="-1">Discoverer's Name</font></td>
+        <td>Discoverer's Name</td>
         <td> 
           <input type="text" name="lineDiscoverer" size="50">
         </td>
       </tr>
       <tr> 
         <td><font size=-1>Line Type</font></td>
-        <td> <font size=-1> 
+        <td> 
+          <input type="checkbox" name="lineWildType" value="wild type">
+          <font size=-1>wild-type 
           <input type="checkbox" name="lineMutant" value="mutant">
           mutant 
           <input type="checkbox" name="lineTransgenic" value="transgenic">
-          transgenic
-          <input type="checkbox" name="lineWildType" value="wild type">
-          <font size=-1>wild-type</font></font></td>
+          transgenic</font></td>
       </tr>
       <tr> 
         <td><font size=-1>Current Status</font> <br>
@@ -171,7 +147,7 @@ in a new window without changing the form.&nbsp;<noscript>
       <tr> 
         <td><font size=-1>Phenotype</font></td>
         <td> 
-          <textarea name="linePhenotype" cols="50" wrap="VIRTUAL" rows="2"></textarea>
+          <textarea name="linePhenotype" cols="50"></textarea>
         </td>
       </tr>
       <tr> 
@@ -268,7 +244,7 @@ in a new window without changing the form.&nbsp;<noscript>
       </tr>
       <tr> 
         <td><b><font size=-1>Linked Markers</font></b></td>
-        <td>&nbsp;</td>
+        <td></td>
       </tr>
       <tr> 
         <td> 
@@ -296,54 +272,33 @@ in a new window without changing the form.&nbsp;<noscript>
           <div align=right><font size=-1>Description of Transgene</font></div>
         </td>
         <td> 
-          <textarea name="transgeneDescription" cols="50" wrap="VIRTUAL" rows="2"></textarea>
+          <textarea name="transgeneDescription" cols="50"></textarea>
         </td>
       </tr>
     </table>
     <br>
     <table BORDER BGCOLOR="#E5E5E5" >
-      <tr> 
-        <td WIDTH="200"><b>Genetics and Background</b></td>
-        <td height="17">&nbsp;</td>
-      </tr>
-      <tr> 
-        <td><font size=-1>Segregation * </font></td>
-        <td> 
-          <select name="required_segregation" size="1">
-            <option value=""></option>
-            <option value="Mendelian Recessive">Mendelian Recessive</option>
-            <option value="Mendelian Dominant">Mendelian Dominant</option>
-            <option value="Non-Mendelian">Non-Mendelian</option>
-			<option value="Wild-Type">Wild-Type</option>
-          </select>
-        </td>
-      </tr>
-      <tr> 
-        <td>&nbsp;</td>
-        <td><font size="-1">If non-Mendelian enter percentage of mutant progeny 
-          </font>
-          <input type="text" name="geneticsSegregationPercentage" size="4">
-          <font size="-1">% </font></td>
-      </tr>
-      <tr> 
-        <td><font size=-1>Maternal Lineage (Background) *</font></td>
-        <td> 
-          <input type="text" name="required_lineageMaternal" size="30">
-        </td>
-      </tr>
-      <tr> 
-        <td><font size=-1>Paternal Lineage (Background) *</font></td>
-        <td> 
-          <input type="text" name="required_lineagePaternal" size="30">
-        </td>
-      </tr>
-      <tr> 
-        <td><font size=-1>Submitter's Comments</font></td>
-        <td> 
-          <textarea name="geneticsComments" cols="50" wrap="VIRTUAL" rows="2"></textarea>
-        </td>
-      </tr>
-    </table>
+<tr>
+<td WIDTH="200"><b>Lineage and Breeding</b></td>
+<td></td>
+</tr>
+<tr>
+<td><font size=-1>Maternal Lineage</font></td>
+<td><input type="text" name="lineageMaternal" size="30"></td>
+</tr>
+<tr>
+<td><font size=-1>Paternal Lineage</font></td>
+<td><input type="text" name="lineagePaternal" size="30"></td>
+</tr>
+<tr>
+<td><font size=-1>Segregation</font></td>
+<td><input type="text" name="breedingSegregation" size="50"></td>
+</tr>
+<tr>
+<td><font size=-1>Submitter's Comments</font></td>
+<td><textarea name="breedingComments" cols="50"></textarea></td>
+</tr>
+</table>
     <br>
     <table BORDER BGCOLOR="#E5E5E5" >
 <tr>
@@ -352,35 +307,29 @@ in a new window without changing the form.&nbsp;<noscript>
 </tr>
 <tr>
 <td><font size=-1>Primary (First) Publication</font></td>
-<td WIDTH="8">
-          <textarea name="publications1" cols="75" wrap="VIRTUAL" rows="2"></textarea>
-        </td>
+<td WIDTH="8"><textarea name="publications1" cols="75"></textarea></td>
 </tr>
 <tr>
 <td><font size=-1>Secondary Publications</font></td>
-<td WIDTH="8">
-          <textarea name="publications2" cols="75" wrap="VIRTUAL" rows="2"></textarea>
-        </td>
+<td WIDTH="8"><textarea name="publications2" cols="75"></textarea></td>
 </tr>
 </table>
     <br>
     <table BORDER BGCOLOR="#E5E5E5" >
 <tr>
 <td><b>Husbandry</b></td>
-        <td>&nbsp;</td>
+<td></td>
 </tr>
 <tr>
 <td><font size=-1><a href="javascript:popup('husbandry.html')">Any special husbandry requirements</a></font></td>
-<td>
-          <textarea name="husbandrySpecial" cols="75" wrap="VIRTUAL" rows="2"></textarea>
-        </td>
+<td><textarea name="husbandrySpecial" cols="75"></textarea></td>
 </tr>
 <tr>
-<td>&nbsp;</td>
+<td></td>
 <td><b><font size=-1>Mutant/Transgenic Identification Techniques: describe in detail the technique you use to detect carriers:</font></b></td>
 </tr>
 <tr>
-<td>&nbsp;</td>
+<td></td>
 <td>
 <table BORDER WIDTH="100%" >
 <tr>
@@ -402,21 +351,13 @@ in a new window without changing the form.&nbsp;<noscript>
 </tr>
 <tr>
 <td VALIGN=TOP HEIGHT="170"><font size=-1>protocol:</font>
-<br>
-                <textarea name="mutantIDvisDesc" cols="20" rows="9" wrap="VIRTUAL"></textarea>
-              </td>
+<br><textarea name="mutantIDvisDesc" cols="20" rows="9"></textarea></td>
 <td VALIGN=TOP><font size=-1>protocol:</font>
-<br>
-                <textarea name="mutantIDpcrDesc" cols="20" rows="9" wrap="VIRTUAL"></textarea>
-              </td>
+<br><textarea name="mutantIDpcrDesc" cols="20" rows="9"></textarea></td>
 <td VALIGN=TOP><font size=-1>protocol:</font>
-<br>
-                <textarea name="mutantIDinsituDesc" cols="20" rows="9" wrap="VIRTUAL"></textarea>
-              </td>
+<br><textarea name="mutantIDinsituDesc" cols="20" rows="9"></textarea></td>
 <td VALIGN=TOP><font size=-1>protocol:</font>
-<br>
-                <textarea name="mutantIDotherDesc" cols="20" rows="9" wrap="VIRTUAL"></textarea>
-              </td>
+<br><textarea name="mutantIDotherDesc" cols="20" rows="9"></textarea></td>
 </tr>
 </table>
 </td>
@@ -425,14 +366,12 @@ in a new window without changing the form.&nbsp;<noscript>
     <br>
     <table BORDER WIDTH="90%" BGCOLOR="#E5E5E5" >
 <tr>
-        <td width="150"><b>Considerations and Information</b></td>
+<td><b>Considerations and Information</b></td>
 <td WIDTH="500">&nbsp;</td>
 </tr>
 <tr>
-<td NOWRAP><font size=-1><a href="javascript:popup('reasons.html')">Tell us why the Resource Center should take this line.</a> *</font></td>
-<td WIDTH="500">
-          <textarea name="required_considerationsWhy" cols="75" wrap="VIRTUAL" rows="2"></textarea>
-        </td>
+<td NOWRAP><font size=-1><a href="javascript:popup('reasons.html')">Tell us why the Resource Center should take this line.</a></font></td>
+<td WIDTH="500"><textarea name="considerationsReasons" cols="75"></textarea></td>
 </tr>
 <tr>
 <td><font size=-1>Is there a Material Transfer Agreement associated with this line?</font></td>
@@ -440,9 +379,7 @@ in a new window without changing the form.&nbsp;<noscript>
 </tr>
 <tr>
 <td><font size=-1>Other Considerations or Information</font></td>
-<td WIDTH="500">
-          <textarea name="considerationsOther" cols="75" wrap="VIRTUAL" rows="2"></textarea>
-        </td>
+<td WIDTH="500"><textarea name="considerationsOther" cols="75"></textarea></td>
 </tr>
 </table>
     <br>
