@@ -142,6 +142,7 @@ ID='aa-data_mgr.apg';">$1<?/MISQL>
 value=" DONE UPDATING. Back to Viewing! " onClick="all_done();"> </font></center>
 <?/MIVAR>
 
+<?MIBLOCK COND="$(NC,$image_type,movie)">
 
 <?MIVAR>
 <center>
@@ -149,32 +150,14 @@ value=" DONE UPDATING. Back to Viewing! " onClick="all_done();"> </font></center
 <TR><TD align=center>
 <?/MIVAR>
 
-<!-- Only Fishauth user gets to see applet for now -->
-<?MIBLOCK COND="$(EC,$ZDB_ident,ZDB-PERS-970827-9)">
-<applet code="Annotator.class" archive="/client_apps/Annotator/AppletClasses.jar" width=500 height=425 name=annotator>
-<param name=annotations value="One: yadda~~~yadda~~~Two: I wonder ~~~about this..```One```red```100```100```100```200```Two```yellow```300```300```350```375">
-<?MIVAR COND="$(NC,$annotations,NULL)">
-<param name=annotations value="$annotations">
-<?/MIVAR>
-<?MIVAR>
-<PARAM name=image value="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$image&MItypeObj=image/gif">
-<PARAM name=mode value="$(IF,$(XST,$UPDATE),EDIT,VIEW)">
-<param name=delim value="```">
-<param name=rdelim value="~~~">
-<?/MIVAR>
-</APPLET>
-<?/MIBLOCK>
-
-<?MIVAR COND="$(NC,$ZDB_ident,ZDB-PERS-970827-9)">
-<IMG SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$image&MItypeObj=image/gif">
-<?/MIVAR>
+<?MIVAR> <IMG SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$image&MItypeObj=image/gif"><?/MIVAR>
 
 <?MIVAR COND="$(XST,$UPDATE)">
 <br><INPUT TYPE=button value="Change Image file" onClick="doit('image','pic','Image+file')">
 <?/MIVAR>
 </TD></TR></TABLE>
 </center>
-
+<?/MIBLOCK>
 
 <A NAME="image_info">
 <p>
@@ -189,12 +172,12 @@ value=" DONE UPDATING. Back to Viewing! " onClick="all_done();"> </font></center
 <TR><TD bgcolor="white">
 
 <TABLE><TR><TD><font size=-1>
+<B>Caption/Comments:</b></font></TD></TR>
 <?MIVAR COND="$(XST,$UPDATE)">
 <INPUT TYPE=button value=Update onClick="doit('comments','textarea','Image+Caption')">
 <?/MIVAR>
 <?MIVAR>
-<B>Caption/Comments:</b></font></TD>
-<TD><font size=-1>$comments</font></TD></TR>
+<TR><TD><font size=-1>$comments</font></TD></TR>
 <?/MIVAR>
 </TABLE>
 
