@@ -85,7 +85,7 @@
           <?MIVAR>$(SETVAR,$hasEv,1)<?/MIVAR>
 	  <?MIBLOCK INDEX=$item FOREACH=$oevcode>
     	   <?MIVAR>
-	    <TD colspan=$oevcount[$idx]><b><a href="/zf_info/oev.html">$item</a></b></TD>
+	    <TD colspan=$oevcount[$idx] align=center><b><a href="/zf_info/oev.html">$item</a></b></TD>
 	    $(SETVAR,$idx,$(+,$idx,1))
            <?/MIVAR>         
  	   <?/MIBLOCK>
@@ -95,7 +95,7 @@
         <?MIVAR><TD>$abbrev</TD><TD bgcolor=$highlight></TD><?/MIVAR>
   	<?MIBLOCK COND="$(AND,$(>,$MI_ROWCOUNT,0),$(>,$envNum,0))">	 
 	    <?MIBLOCK INDEX=$subitem TO=$envNum FROM=1 STEP=1>
-	      <TD><b>*</b></TD>	   
+	      <TD align=center><b>*</b></TD>	   
 	    <?/MIBLOCK>
 	<?/MIBLOCK>
 	</TR>
@@ -111,7 +111,7 @@
 	     order by oevcode_order
 	     ;">
        <?MIVAR>
-       $(IF,$(>,$(POSITION,$1,$lastitem),0),"<TD><b>*</b></TD>", "<TD></TD>")
+       $(IF,$(>,$(POSITION,$1,$lastitem),0),"<TD align=center><b>*</b></TD>", "<TD></TD>")
        <?/MIVAR>
      <?/MISQL>
     </TR><TR>
@@ -140,7 +140,7 @@
 	     order by oevcode_order
 	     ;">
        <?MIVAR>
-       $(IF,$(>,$(POSITION,$1,$lastitem),0),"<TD><b>*</b></TD>", "<TD></TD>")
+       $(IF,$(>,$(POSITION,$1,$lastitem),0),"<TD align=center><b>*</b></TD>", "<TD></TD>")
        <?/MIVAR>
   <?/MISQL>
   </TR> 
@@ -160,7 +160,7 @@
 		oevdisp_organism_list, oevcode_order 
 	order by oevcode_order,oevdisp_organism_list
 	;">
-    <?MIVAR><TD><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$2&rtype=gene&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev">$1</A></TD><?/MIVAR>
+    <?MIVAR><TD align=center><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$2&rtype=gene&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev">$1</A></TD><?/MIVAR>
    <?/MISQL>
    </TR>
   <?/MIBLOCK>
