@@ -55,14 +55,14 @@ if (version != "n3") {
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,REFCROSS),0)">MIval=aa-crossview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,IMAGE),0)">MIval=aa-imageview.apg&OID=$record<?/MIVAR> 
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,COMPANY),0)">MIval=aa-companyview.apg&OID=$record<?/MIVAR> 
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOGENE),0)">MIval=aa-geneselect.apg<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOGENE),0)">MIval=aa-newmrkrselect.apg<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOLAB),0)">MIval=aa-labselect.apg<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOPERSON),0)">MIval=aa-quickfindpers.apg<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOPUB),0)">MIval=aa-pubselect2.apg<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOMUTANT),0)">MIval=aa-fishselect.apg&<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOWILD),0)">MIval=aa-wtlist.apg<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOREFCROSS),0)">MIval=aa-mapperselect.apg<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOEST),0)">MIval=aa-markerselect.apg<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOREFCROSS),0)">MIval=aa-refcrosslist.apg<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOEST),0)">MIval=aa-newmrkrselect.apg<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOXPAT),0)">MIval=aa-xpatselect.apg<?/MIVAR>
 <?/MIBLOCK>
 
