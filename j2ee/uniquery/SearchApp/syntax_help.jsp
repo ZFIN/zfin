@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>ZFIN Quick Search Help</title>
+<title>Search ZFIN Tips</title>
 <style type="text/css">
 .help_body   { margin-left: 40px; margin-right: 40px; }
 </style>
@@ -8,329 +8,73 @@
 <script language="JavaScript" src="/header.js"></script>
 
 <div class="help_body">
-    <h1 align="center">Quick Search Tips</h1>
-    <table border="0" cellspacing="0" cellpadding="2" width="100%">
-        <tr>
-        <td bgcolor="#CCCCCC">
-            <a name="Terms"><strong>Multiple word searches</strong></a>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <blockquote>
-                    <p>Queries that include one or more spaces should be surrounded by double quotes.</p>
-                    <p>To search for inner ear use the search: </p>
-                    <div align="left">
-                        <table cellspacing="4" cellpadding="0" border="0">
-                            <tr>
-                                <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                <td bgcolor="#023264" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                            </tr>
-                            <tr>
-                                <td bgcolor="#023264" width="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                <td bgcolor="#ffffff"><pre>"inner ear"</pre></td>
-                                <td bgcolor="#023264" width="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                            </tr>
-                            <tr>
-                                <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                <td bgcolor="#023264" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                            </tr>
-                        </table>
-                    </div>
-                </blockquote>
-            </td>
-        </tr>
+    <h2 align="center">Search ZFIN Tips</h2>
+    <p>The <b>Search ZFIN</b> feature provides a quick and easy glance at data available on the ZFIN web site.  You may use this feature by entering the topic of interest to you.  Snapshots of all ZFIN pages are searched for an occurrence of the query string
+     <p>You may find differences in results from the <b>Search ZFIN</b> versus the specific search forms. <b>Search ZFIN</b> will scan the entire ZFIN site including the Zebrafish Book, meetings and jobs.  <b>Search ZFIN</b> does not take advantage of the relationships that are defined for data in our database.  For a comprehensive search of expression or anatomical structures we recommend you use the <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg">Expression</a> or  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=search">Anatomy</a> search forms.
+     <p>If you do not find what you are looking for, please be sure to try one of ZFIN's more specific search forms that may be accessed from the links in the top menu bar.</p>
+    <h3>Comparison of <b>Search ZFIN</b> and specific ZFIN search forms</h3>
+    <br>
+    <table>
+      <tr>
+	<th> </th>
+        <th>ZFIN Search</th> 
+        <th>Specific Search Forms</th>
+      </tr>
+      <tr>
+        <td><b>Highly Customizable Searches</b></td>
+        <td align="center">No</td>
+        <td align="center">Yes</td>
+      </tr>
+      <tr>
+        <td><b>Uses established relationships between data in ZFIN</b></td>
+        <td align="center">No</td>
+        <td align="center">Yes</td>
+      </tr>
+      <tr>
+        <td><b>Provides a quick view of data in ZFIN related to query term</b></td>
+        <td align="center">Yes</td>
+        <td align="center">No</td>
+      </tr>
     </table>
+      <p>Search for <b>eye</b> using <b>Search ZFIN</b></p>
+      <ul>
+	<li> Results will include all occurrences of <b>eye</b> and words for which <b>eye</b> is a root such as:<b>eye</b>less, <b>eye</b>sight, <b>eye</b>cup.  
+	<li>Results are organized by categories that reflect the various data types in ZFIN. Categories include:
+	  <ul>
+	    <li>Mutants/Trangenics
+	    <li>Genes/Markers/Clones
+	    <li>Expression
+	    <li>Images
+	    <li>Anatomy
+	    <li>Publications
+	    <li>People
+	    <li>The Zebrafish Book
+	  </ul>
+	<li>The number of matches for each category are displayed.  
+	<li>Each category links to a complete list of matches for that category.
+	<li>Each item in the complete results category will link directly to data for that category type. 
+      </ul>
+      <p>Search for <b>eye</b> using <b>Gene Expression Search Form</b></p>
+      <ul>
+	<li>Queries may be refined by specifying other parameters such as: Gene/EST, developmental stage or stage range,author or assay name.
+	<li>Results will include all expression data that has been annotated to the <b>eye</b> and to any substructures of the <b>eye</b>. (lens, optic vesicle, presumptive retina, etc.)
+        <li>Results are limited to expression data.
+	<li>Results list will provide hot links to expression data, genes and publications.
+	<li>Results are ordered by gene symbol.
+      </ul>
+      <p>
+    <h3>Wildcard Searches</h3>
+      <p><b>Search ZFIN</b> does not require use of wildcards.  Wildcard matches are performed automatically. To search for all hox genes, you may use the search: <b>hox</b><br>
+      Links to all members of the hox gene family (<b>hox</b>a1a, <b>hox</b>a2b, <b>hox</b>a3a, etc.)</p>
 
-    <table border="0" cellspacing="0" cellpadding="2" width="100%">
-        <tr>
-            <td bgcolor="#CCCCCC">
-                <a name="Wildcard Searches"><strong>Wildcard Searches</strong></a>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <blockquote>
-                    <p>To perform a single character wildcard search use the "?" symbol. The single character wildcard search looks for terms that match that with the single character replaced.</p>
-                    <p>To search for "hoxa1a" or "hoxa2a" you may use the search: </p>
-                    <div align="left">
-                        <table cellspacing="4" cellpadding="0" border="0">
-                            <tr>
-                                <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                <td bgcolor="#023264" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                            </tr>
-                            <tr>
-                                <td bgcolor="#023264" width="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                <td bgcolor="#ffffff"><pre>hoxa?a</pre></td>
-                                <td bgcolor="#023264" width="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                            </tr>
-                            <tr>
-                                <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                <td bgcolor="#023264" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                            </tr>
-                        </table>
-                    </div>
-                    <p>To perform a multiple character wildcard search use the "*" symbol.  Multiple character wildcard searches looks for 0 or more characters.</p> 
-                    <p>To search for all hox genes, you may use the search: </p>
-                    <div align="left">
-                        <table cellspacing="4" cellpadding="0" border="0">
-                            <tr>
-                                <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                <td bgcolor="#023264" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                            </tr>
-                            <tr>
-                                <td bgcolor="#023264" width="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                <td bgcolor="#ffffff"><pre>hox*</pre></td>
-                                <td bgcolor="#023264" width="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                            </tr>
-                            <tr>
-                                <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                <td bgcolor="#023264" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                            </tr>
-                        </table>
-                    </div>
-                    <p>You may also use the wildcard searches in the middle of a term or as the first character of the search.</p>
-                </blockquote>
-            </td>
-        </tr>
-    </table>
+    <h3>Multiple Word Searches</h3>
+      <p>Searches may include one or more words separated by spaces.  A search for <b>inner ear</b> will return instances of <b>inner ear</b> as well as matches to root words <b>inner</b> and <b>ear</b> such as <b>inner</b>vating, <b>ear</b>ly, and <b>ear</b>ly <b>ear</b>.</p>
 
-    <table border="0" cellspacing="0" cellpadding="2" width="100%">
-        <tr>
-            <td bgcolor="#CCCCCC">
-                <a name="Boolean operators"><strong>Combining Terms</strong></a>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <blockquote>
-                    <p>AND, "+", OR, NOT and "-" may be used to combine terms.  (Note: Please use ALL CAPS).</p>
-                </blockquote>
-            </td>
-        </tr>
-    </table>
-    
-    <table border="0" cellspacing="0" cellpadding="2" width="100%">
-        <tr>
-            <td bgcolor="#CCCCCC">
-                <a name="OR"><strong>OR</strong></a>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <blockquote>
-                    <p>The OR operator is used by default in queries.  The OR operator links two terms and finds a matching document if either of the terms exist in a document. </p> 
-                    <p>To search for documents that contain either "inner ear" or neuron use the query:</p>
-                    <div align="left">
-                        <table cellspacing="4" cellpadding="0" border="0">
-                            <tr>
-                                <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                <td bgcolor="#023264" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                            </tr>
-                            <tr>
-                                <td bgcolor="#023264" width="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                <td bgcolor="#ffffff"><pre>inner ear neuron</pre></td>
-                                <td bgcolor="#023264" width="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                            </tr>
-                            <tr>
-                                <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                <td bgcolor="#023264" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                            </tr>
-                        </table>
-                    </div>
-                </blockquote>
-            </td>
-        </tr>
-    </table>
+   <h3>Excluded Words</h3>
+      <p>Commonly occurring words such as <b>from</b>, <b>any</b>, <b>but</b>, <b>some</b>, <b>were</b>, <b>what</b> and <b>when</b> that are specified in a query are not included in search results.</p>
 
-    <table border="0" cellspacing="0" cellpadding="2" width="100%">
-        <tr>
-            <td bgcolor="#CCCCCC">
-                <a name="AND"><strong>AND</strong></a>
-            </td>
-        </tr> 
-        <tr>
-            <td>     
-                <blockquote>
-                    <p>The AND operator matches documents where both terms exist anywhere in the text of a single document.</p>
-                    <p>To search for documents that contain "inner ear" and neuron use the query:</p>
-                    <div align="left">
-                        <table cellspacing="4" cellpadding="0" border="0">
-                            <tr>
-                                <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                <td bgcolor="#023264" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                            </tr>
-                            <tr>
-                                <td bgcolor="#023264" width="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                <td bgcolor="#ffffff"><pre>"inner ear" AND neuron</pre></td>
-                                <td bgcolor="#023264" width="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                            </tr>
-                            <tr>
-                                <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                <td bgcolor="#023264" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                            </tr>
-                        </table>
-                    </div>
-                </blockquote>
-            </td>
-        </tr>
-        </table>
 
-        <table border="0" cellspacing="0" cellpadding="2" width="100%">   
-            <tr>
-                <td bgcolor="#CCCCCC">
-                    <a name="+"><strong>+</strong></a>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <blockquote>
-                        <p>The "+" operator requires that the term after the "+" symbol exist somewhere in a the field of a single document.</p>
-                        <p>To search for documents that must contain "endoderm" and may contain "mesoderm" use the query:</p>
-                        <div align="left">
-                            <table cellspacing="4" cellpadding="0" border="0">
-                                <tr>
-                                    <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                    <td bgcolor="#023264" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                    <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                </tr>
-                                <tr>
-                                    <td bgcolor="#023264" width="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                    <td bgcolor="#ffffff"><pre>+endoderm mesoderm</pre></td>
-                                    <td bgcolor="#023264" width="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                </tr>
-                                <tr>
-                                    <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                    <td bgcolor="#023264" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                    <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                </tr>
-                            </table>
-                        </div>
-                    </blockquote>
-                </td>
-            </tr>
-        </table>
-
-        <table border="0" cellspacing="0" cellpadding="2" width="100%">
-            <tr>
-                <td bgcolor="#CCCCCC">
-                    <a name="NOT"><strong>NOT</strong></a>
-                </td>
-            </tr>
-            <tr>
-                <td>   
-                    <blockquote>
-                        <p>The NOT operator excludes documents that contain the term after NOT.</p> 
-                        <p> To search for documents that contain "mesoderm" but not "endoderm" use the query:</p>
-                        <div align="left">
-                            <table cellspacing="4" cellpadding="0" border="0">
-                                <tr>
-                                    <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                    <td bgcolor="#023264" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                    <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                </tr>
-                                <tr>
-                                    <td bgcolor="#023264" width="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                    <td bgcolor="#ffffff"><pre>NOT endoderm mesoderm</pre></td>
-                                    <td bgcolor="#023264" width="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                </tr>
-                                <tr>
-                                    <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                    <td bgcolor="#023264" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                    <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                </tr>
-                            </table>
-                        </div>
-                        <p>Note: The NOT operator cannot be used with just one term.  A search for NOT endoderm will return no results</p>
-                    </blockquote>
-                </td>
-            </tr>
-        </table>
-
-        <table border="0" cellspacing="0" cellpadding="2" width="100%">
-            <tr>
-                <td bgcolor="#CCCCCC">
-                    <a name="-"><strong>-</strong></a>
-                </td>
-            </tr>
-            <tr>
-                <td>   
-                    <blockquote>
-                        <p>The "-" operator excludes documents that contain the term after the "-" symbol.</p>
-                        <p> To search for documents that contain "mesoderm" but not "endoderm" use the query:</p>
-                        <div align="left">
-                            <table cellspacing="4" cellpadding="0" border="0">
-                                <tr>
-                                    <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                    <td bgcolor="#023264" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                    <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                </tr>
-                                <tr>
-                                    <td bgcolor="#023264" width="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                    <td bgcolor="#ffffff"><pre>-endoderm mesoderm</pre></td>
-                                    <td bgcolor="#023264" width="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                </tr>
-                                <tr>
-                                    <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                    <td bgcolor="#023264" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                    <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                </tr>
-                            </table>
-                        </div>
-                    </blockquote>
-                </td>
-            </tr>
-        </table>
-        
-        <table border="0" cellspacing="0" cellpadding="2" width="100%">
-            <tr>
-                <td bgcolor="#CCCCCC">
-                    <a name="Escaping Special Characters"><strong>Escaping Special Characters</strong></a>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <blockquote>
-                        <p>You may escape special characters to include them as part of your query.  The current list special characters are</p>
-                        <p>+ - &amp;&amp; || ! ( ) { } [ ] ^ " ~ * ? : \</p>
-                        <p>To escape these character use the \ before the character.</p> 
-                        <p>To search for "pBluescript KS+"  use the query:</p>
-                        <div align="left">
-                            <table cellspacing="4" cellpadding="0" border="0">
-                                <tr>
-                                <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                <td bgcolor="#023264" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                            </tr>
-                            <tr>
-                                <td bgcolor="#023264" width="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                <td bgcolor="#ffffff"><pre>"pBluescript KS\+"</pre></td>
-                                <td bgcolor="#023264" width="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                            </tr>
-                            <tr>
-                                <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                <td bgcolor="#023264" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                                <td bgcolor="#023264" width="1" height="1"><img src="/images/void.gif" width="1" height="1" vspace="0" hspace="0" border="0"/></td>
-                            </tr>
-                        </table>
-                    </div>
-                </blockquote>
-            </td>
-        </tr>
-    </table>
-</div>
-
-<p>Quick Search is powered by <a HREF="http://jakarta.apache.org/lucene/docs/index.html">Lucene</a>.</p>
+<p><b>Search ZFIN</b> is powered by <a HREF="http://jakarta.apache.org/lucene/docs/index.html">Lucene</a>.</p>
 <p>&nbsp;</p>
 
 <script language="JavaScript" src="/footer.js"></script>
