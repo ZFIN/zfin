@@ -5,12 +5,14 @@ fishupdate.html. Also files update record.
 
 EXPECTED VARS:
 OID -- the zdb_id of the rec to update
-attr -- the column to be updated
+attr -- the column to be updated,also used to distinct
+        colattrib and recattrib
 attr_type -- textarea, or text
 new_value -- the new value to stick in the column
 old_value -- the previous value
 comments -- reasons for doing update 
-
+info -- additional information, eg. column name for colattrib
+dataOID --zdb id of data item that attributed	
 -->
 
 <!-- First check security. Main purpose is just to get submitter id and name -->
@@ -21,10 +23,16 @@ comments -- reasons for doing update
 <?MIVAR COND="$(NXST,$new_value)" NAME=$new_value>NULL<?/MIVAR>
 <?MIVAR COND="$(NXST,$old_value)" NAME=$old_value>NULL<?/MIVAR>
 <?MIVAR COND="$(NXST,$comments)" NAME=$comments>NULL<?/MIVAR>
+<?MIVAR COND="$(NXST,$info)" NAME=$info>NULL<?/MIVAR>
+<?MIVAR COND="$(NXST,$dataOID)" NAME=$dataOID><?/MIVAR>
+
 
 <?MIVAR COND="$(EC,$attr_type,special-listitem)" NAME=$comments>Deleted the record $old_value from the list of $attr associated with this line.<?/MIVAR>
 
 <?MIVAR COND="$(EC,$attr_type,special-chromnum)" NAME=$comments>Note: This change in the chromosome number will also be (automatically) reflected in all lines produced by cross-breeding with this one.<?/MIVAR>
+
+<?MIVAR COND="$(EC,$attr_type,special-newattrib)" NAME=$comments>Add attribution $new_value to the item $old_value associated with this record.<?/MIVAR>
+
 
 <?MIVAR NAME=$new_value DELIMIT="'" REPLACE="''">$new_value<?/MIVAR>
 <?MIVAR NAME=$old_value DELIMIT="'" REPLACE="''">$old_value<?/MIVAR>
@@ -108,17 +116,91 @@ comments -- reasons for doing update
 
 <!-- Special case for deleting one of the associated sources/pubs -->
 <?MIBLOCK COND="$(EC,$attr_type,special-listitem)">
+  
   <?MISQL COND="$(EC,$attr,publication)" SQL="
     delete from record_attribution
-      where recattrib_data_zdb_id = '$OID'
+      where recattrib_data_zdb_id = '$dataOID'
 	and recattrib_source_zdb_id = '$old_value';">
   <?/MISQL>
+
   <?MISQL COND="$(EC,$attr,source)" SQL="
     delete from int_data_supplier
       where idsup_data_zdb_id = '$OID' 
         and idsup_supplier_zdb_id = '$old_value';">
   <?/MISQL>
+
+  <?MISQL COND="$(EC,$attr,recattrib)" SQL="
+      delete from record_attribution
+	where recattrib_data_zdb_id = '$dataOID'
+	  and recattrib_source_zdb_id = '$old_value';">
+   <?/MISQL>
+
+   <?MISQL COND="$(EC,$attr,colattrib)" SQL="
+      delete from column_attribution
+	where colattrib_data_zdb_id = '$dataOID'
+	  and colattrib_source_zdb_id = '$old_value'
+	  and colattrib_column_name = '$info';">
+   <?/MISQL>
+   
+
+
+
+
 <?/MIBLOCK>  <!-- ends special listitem case -->
+
+
+<!-- Special case for adding data attribution -->
+
+ <?MIBLOCK COND="$(EC,$attr_type,special-newattrib)">
+    <!-- check whether the pub zdb id is validate. -->
+    <?MISQL SQL="
+	   select * from publication
+             where zdb_id = '$new_value'	
+                ;">
+    <?/MISQL>	
+    <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+      <?MISQL COND="$(EC,$info,namealias)" SQL="
+	   select dalias_zdb_id 
+	     from data_alias
+	    where dalias_data_zdb_id = '$OID'
+	      and dalias_alias = '$old_value'
+	    ;">
+	<?MIVAR>$(SETVAR,$old_value,$1)<?/MIVAR>
+
+      <?/MISQL>
+
+      <?MISQL COND="$(EC,$info,allelalias)" SQL="
+	   select dalias_zdb_id 
+	     from data_alias
+	    where dalias_data_zdb_id = '$dataOID'
+	      and dalias_alias = '$old_value'
+	    ;">
+	<?MIVAR>$(SETVAR,$old_value,$1)<?/MIVAR>
+
+      <?/MISQL>
+		 		
+      <?MIBLOCK COND="$(EC,$attr,recattrib)">
+         <?MISQL SQL="
+	    insert into record_attribution
+              values('$old_value', '$new_value')	
+                ;">
+         <?/MISQL>
+
+      <?MIELSE COND="$(EC,$attr,colattrib)">
+         <?MISQL SQL="
+	    insert into column_attribution
+              values('$old_value','$info', '$new_value')	
+                ;">
+         <?/MISQL>
+      <?/MIBLOCK>
+    <?MIELSE> 
+ 	<script>
+	window.alert('ERROR: Pub ZdbId is not in ZFIN, please check.');
+	</script>
+   <?/MIBLOCK> 
+ <?/MIBLOCK> <!-- special-newattrib -->
+
+
 
 
 
