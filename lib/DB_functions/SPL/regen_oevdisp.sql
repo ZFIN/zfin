@@ -20,6 +20,7 @@ create dba function "informix".regen_oevdisp()
   define preGeneZdbId		varchar(50);
   define prePubZdbId		varchar(50);
   define preEvidenceCode	char(2);
+  define oevdisp_temp		INT;  
 
   begin	-- master exception handler
 
@@ -150,6 +151,16 @@ create dba function "informix".regen_oevdisp()
 	values
 	  ( preGeneZdbId, prePubZdbId, preEvidenceCode, organismList );
 
+--return error message if orthologue_evidence_display_temp is empty. (ST, 07/23/03)
+	
+	let oevdisp_temp = (select count(*) from orthologue_evidence_display_temp);
+		if oevdisp_temp == 0 then
+			let errorHint = "temp table empty";
+			raise exception -746,0, "temp table empty";
+		return -1;
+		else let oevdisp_temp ="";
+		end if;  
+
     let errorHint = "Creating pre_";	
     if (exists( select *
 		  from systables
@@ -217,11 +228,11 @@ create dba function "informix".regen_oevdisp()
           and o.oevdisp_evidence_code = t.evidence_code
 	  and o.oevdisp_organism_list = t.organism_list;
 
-    let errorHint = "Dropping tables";	
-
+    let errorHint = "Dropping tables";	  
+  
     drop table orthologue_evidence_display_temp;   
     drop table pre_orthologue_evidence_display;
-    
+
     commit work;
 
   end -- global exception handler
