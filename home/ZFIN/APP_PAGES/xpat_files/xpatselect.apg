@@ -497,7 +497,7 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
         select distinct xpatassay_name, xpatassay_display_order, xp.xpat_zdb_id, mrkr_name, mrkr_abbrev, mrkr_zdb_id, mrkr_type, mrkr_abbrev_order
         $query_from
         $query_where
-      order by mrkr_abbrev_order
+      order by mrkr_type desc, mrkr_abbrev_order 
                ;">
   <?MIVAR NAME=$GENE_OID>$6<?/MIVAR>
   <?MIVAR NAME=$GENE_NAME>$4<?/MIVAR>
