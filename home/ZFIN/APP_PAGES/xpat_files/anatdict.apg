@@ -1,0 +1,562 @@
+<HTML>
+
+<script language="JavaScript" src="http://<!--|DOMAIN_NAME|-->/client_sniff.js"></script>
+
+<SCRIPT> 
+if (is_nav4) {
+document.write('<LINK rel=stylesheet type="text/css" href="/nn4_zfin_style.css">');
+} else {
+document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
+}
+</SCRIPT>
+
+<TITLE>Anatomical Ontology Browser</TITLE>
+
+<BODY vlink="blue" bgcolor="#FFFFFF" border=0>
+<basefont size=2>
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+
+
+<?MIVAR COND="$(NXST,$resolution)" NAME="resolution">9<?/MIVAR>
+<?MIVAR COND="$(NXST,$highlight_text)" NAME="highlight_text"><?/MIVAR>
+<?MIVAR COND="$(NXST,$mode)" NAME="mode">none<?/MIVAR>
+
+<SCRIPT>
+
+function add_part(item_name) {
+      
+      current = self.opener.critform.TA_selected_structures.value;
+      if (current != '') {
+       current = current + ', ';    
+      }
+      self.opener.critform.TA_selected_structures.value = current + item_name;
+}
+
+function do_submit() {
+  
+  if ((document.dictform.mode.value == 'stages') &&
+      (document.dictform.structures.checked != true) &&
+      (document.dictform.systems.checked != true) &&
+      (document.dictform.processes.checked != true)) {
+    alert("You've unchecked the Structures, Processes and Systems checkboxes.\nTo get results, at least one must be checked");
+  } else {
+    document.dictform.submit();
+  }
+}
+
+</SCRIPT>
+
+<FORM name="dictform" method="GET" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+<INPUT type="hidden" name="MIval" value="aa-anatdict.apg">
+
+<?MIVAR>
+  <INPUT type="hidden" name="mode" value="$mode">
+<?/MIVAR>
+
+
+<TABLE width=100%>
+ <TR>
+  <TD valign=top bgcolor="#CCCCCC">
+<FONT size=+1 color="#OOOOOO">Anatomical Ontology Browser</FONT>
+
+	<FONT style="font-weight:bold;">
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	[
+	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=stages">
+          Browse by Stage
+        </A>
+	] &nbsp;&nbsp; [
+	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=search">
+          Search
+        </A>
+        ] &nbsp;&nbsp; [
+        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=alpha">
+          Complete List 
+        </A>
+	]
+	</FONT>
+  </TD>
+ </TR>
+</TABLE>
+
+<?MICOMMENT>
+  <TD width=300>
+    <FONT size=-1>Search Anatomical Ontology:<BR></FONT>
+    <INPUT type=text size=20 name=searchterm
+	<?MIBLOCK COND="$(XST,$searchterm)"> <?MIVAR> value='$searchterm' <?/MIVAR> <?/MIBLOCK>
+    >
+    <INPUT type="button" value="Search" onclick="document.dictform.mode.value='search';
+						 do_submit();">
+
+  </TD>
+ </TR>
+</TABLE>
+<?/MICOMMENT>
+
+<TABLE width=100% >
+  <TR>
+    <TD>
+<?MIBLOCK COND="$(AND,$(XST,$mode),$(EC,$mode,stages))">
+   
+  
+     <FONT size=2><B>Developmental Stage:</B></FONT><BR>
+     <SELECT name="OID" onChange="document.dictform.mode.value='stages'; document.dictform.submit();">
+       <?MISQL SQL="
+		select unique stg_name_long, stg_hours_start, stg_hours_end, stg_zdb_id
+		from stage, anatomy_display
+		where stg_zdb_id = anatdisp_stg_zdb_id
+		order by stg_hours_start, stg_hours_end desc
+  	;">
+         <OPTION VALUE="$4"$(IF,$(AND,$(XST,$OID),$(EC,$OID,$4)),SELECTED)> $1 </OPTION>
+       <?/MISQL>
+     </select>
+
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(AND,$(XST,$mode),$(EC,$mode,search))">
+   
+    <FONT size=2><B>Search Anatomical Ontology:</B></FONT>
+    <INPUT type=text size=20 name=searchterm
+	<?MIBLOCK COND="$(XST,$searchterm)"> <?MIVAR> value='$searchterm' <?/MIVAR> <?/MIBLOCK>
+    >
+    <INPUT type="button" value="Search" onclick="document.dictform.mode.value='search';
+						 do_submit();">
+
+<?MICOMMENT>
+    <B>Resolution:</B><BR>
+    <SELECT name="resolution">
+      <?MIVAR>
+       <OPTION value="9" $(IF,$(EC,$resolution,9),SELECTED) >All terms
+       <OPTION value="8" $(IF,$(EC,$resolution,8),SELECTED) >Top 9 levels of hierarchy
+       <OPTION value="7" $(IF,$(EC,$resolution,7),SELECTED) >Top 8 levels of hierarchy
+       <OPTION value="6" $(IF,$(EC,$resolution,6),SELECTED) >Top 7 levels of hierarchy
+       <OPTION value="5" $(IF,$(EC,$resolution,5),SELECTED) >Top 6 levels of hierarchy
+       <OPTION value="4" $(IF,$(EC,$resolution,4),SELECTED) >Top 5 levels of hierarchy
+       <OPTION value="3" $(IF,$(EC,$resolution,3),SELECTED) >Gross anatomy
+      <?/MIVAR>
+    </SELECT>
+<?/MICOMMENT>
+
+<?/MIBLOCK>
+
+    </TD>
+  </TR>
+  <TR>
+   <TD bgcolor="#CCCCCC">
+     &nbsp;
+   </TD>
+  </TR>
+
+  <?MICOMMENT>
+  <TR>
+   <TD>
+    <B>Restrict Ontology: </B>
+
+    <INPUT type=checkbox name="structures" <?MIBLOCK COND="$(AND,$(XST,$structures),$(EC,$structures,on))">
+				            CHECKED
+                                           <?/MIBLOCK>
+					   <?MIBLOCK COND="$(NXST,$structures)">
+					    CHECKED
+					   <?/MIBLOCK> > Anatomical Structures and Cell Types
+    <INPUT type=checkbox name="processes" <?MIBLOCK COND="$(AND,$(XST,$processes),$(EC,$processes,on))">
+				           CHECKED
+                                          <?/MIBLOCK>
+					  <?MIBLOCK COND="$(NXST,$processes)">
+					   CHECKED
+      					  <?/MIBLOCK> > Processes
+    <INPUT type=checkbox name="systems" <?MIBLOCK COND="$(AND,$(XST,$systems),$(EC,$systems,on))">
+				           CHECKED
+                                          <?/MIBLOCK>
+					  <?MIBLOCK COND="$(NXST,$systems)">
+					   CHECKED
+      					  <?/MIBLOCK> > Systems
+   </TD>
+  </TR>
+  <?/MICOMMENT>
+
+
+</TABLE>
+
+
+<CENTER>
+ <TABLE width=98% bgcolor=#FFFFFF>
+  <TR>
+   <TD border=1>
+
+
+<?MIBLOCK COND="$(AND,$(XST,$mode),$(EC,$mode,search))">
+
+  <?MIBLOCK COND="$(AND,$(XST,$searchterm),$(NE,$searchterm,))">
+
+    <?MIVAR>Search results for <B>$searchterm</B><?/MIVAR>
+    <HR width=500 size=1 noshade align=left>
+
+    
+    <?MISQL SQL="
+	SELECT unique anatitem_name, anatitem_zdb_id, anatitem_abbrev,
+  		( select count(*) 
+	 	  from data_alias 
+	 	  where dalias_data_zdb_id = anatitem_zdb_id) synonymcount, anatitem_name_order
+	FROM anatomy_item LEFT OUTER JOIN data_alias ON dalias_data_zdb_id = anatitem_zdb_id 
+	WHERE lower(anatitem_name) like lower('%$searchterm%')
+	   OR lower(anatitem_abbrev) like lower('%$searchterm%')
+	   OR lower(dalias_alias) like lower ('%$searchterm%') 
+        ORDER BY anatitem_name_order
+     ;">
+
+      <?MIVAR NAME="$item_name">$1<?/MIVAR>
+      <?MIVAR NAME="$item_zdb_id">$2<?/MIVAR>
+      <?MIVAR NAME="$item_abbrev">$3<?/MIVAR>
+      <?MIVAR NAME="$synonymcount">$4<?/MIVAR>
+      <?MIVAR NAME="$highlight">false<?/MIVAR>
+
+     <?MISQL SQL="select distinct xpat_gene_zdb_id
+from expression_pattern_anatomy, anatomy_item, expression_pattern
+where xpatanat_anat_item_zdb_id = anatitem_zdb_id 
+  and xpatanat_xpat_zdb_id = xpat_zdb_id
+  and anatitem_zdb_id = '$item_zdb_id' 
+UNION
+select distinct xpat_gene_zdb_id
+from expression_pattern_anatomy, all_anatomy_contains, anatomy_item, expression_pattern
+where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
+  and allanatcon_container_zdb_id = anatitem_zdb_id 
+  and xpatanat_xpat_zdb_id = xpat_zdb_id
+  and anatitem_zdb_id = '$item_zdb_id'
+
+;">
+      <?/MISQL>
+
+      <?MIVAR name=$totalcount>$MI_ROWCOUNT<?/MIVAR>
+
+      <?MIVAR NAME=$item_name_safe DELIMIT="'" REPLACE="''">$item_name<?/MIVAR>
+      <?MIVAR NAME="$processed_item_name">$(REPLACE,$item_name,',','|')<?/MIVAR>
+
+      <?MIBLOCK COND="$(NE,$highlight_text,)">
+        <?MIVAR COND="$(>,$(POSITION,$item_name,$highlight_text),0)" NAME="$highlight">true<?/MIVAR>
+      <?/MIBLOCK>
+	
+      <?MIVAR>
+        <font style="font-family:arial; font-size:small; font-weight:bold;  $(IF,$(EQ,$highlight,true),background-color:#ffff99)">
+        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">
+        $item_name<?MIBLOCK COND="$(NE,$item_abbrev,NULL)"><?/MIBLOCK></A></font> &nbsp;
+	 
+      <?/MIVAR>
+      <?MIBLOCK COND="$(>,$totalcount,0)">
+        <?MIVAR> 
+        [<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name&processed_selected_structures=$processed_item_name&include_substructures=checked">$totalcount gene(s) expressed</A> in all stages]&nbsp;&nbsp;
+        <?/MIVAR>
+      <?/MIBLOCK>
+
+
+
+      <?MIBLOCK COND="$(NE,$item_abbrev,NULL)">
+        <font style="font-family:arial; font-size:small; font-weight:bold;)">
+
+	<?MIVAR><I>
+	   (abbrev: <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">$item_abbrev</A>
+
+	  <?MIBLOCK COND="$(>,$synonymcount,0)"> 
+
+	  <?MICOMMENT> --------- dear gentle reader of the lines below, I know that the lack of 
+		  		 returns makes it a impossible to read, but it has to be that way
+				 to make the comma spacing look right.  Sorry.    ---------------
+	  <?/MICOMMENT>
+
+	  <?MISQL SQL="SELECT dalias_alias
+		       FROM data_alias
+		       WHERE dalias_data_zdb_id = '$item_zdb_id';">,<?MIBLOCK COND="$(=,$MI_CURRENTROW,1)"> synonym(s): <?/MIBLOCK> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">$1</A><?/MISQL>
+	<?/MIBLOCK>)
+
+	</I><?/MIVAR>
+	</font>
+      <?MIELSE> <?MICOMMENT> --- No Abbrev, but maybe still a synonym ---- <?/MICOMMENT>
+	  <?MIBLOCK COND="$(>,$synonymcount,0)"> 
+	  
+	  <?MICOMMENT> --------- ditto the above statement about crimes against readability   ---------------
+	  <?/MICOMMENT>
+  	  <font style="font-family:arial; font-size:small; font-weight:bold;)"><I>
+	  (<?MISQL SQL="SELECT dalias_alias
+		       FROM data_alias
+		       WHERE dalias_data_zdb_id = '$item_zdb_id';"><?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">synonym(s): <?MIELSE>, <?/MIBLOCK> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">$1</A><?/MISQL> ) </font></I>
+	  
+	<?/MIBLOCK>
+
+      <?/MIBLOCK>
+      <BR>
+
+
+    <?/MISQL>
+
+
+    <?MIBLOCK COND="$(EC,$MI_ROWCOUNT,0)">
+      <?MIVAR>
+      No results found for "<b>$searchterm</b>", try viewing the <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=alpha">complete list</a>.
+      <?/MIVAR>
+      <?MICOMMENT> ---- capturing failed searches for use as possible synonyms ---- <?/MICOMMENT>
+      <?MISQL SQL="insert into xpat_anatomy_capture values ('$searchterm',current);"><?/MISQL>
+    <?/MIBLOCK>
+
+  <?/MIBLOCK>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(AND,$(XST,$mode),$(EC,$mode,stages))">
+  <?MIBLOCK COND="$(XST,$OID)">
+
+   <!-- got a stage -->
+
+ <TABLE width="100%">
+   <TR>
+     <TD>
+       <?MISQL SQL="select stg_name_long from stage where stg_zdb_id = '$OID'"><B>$1</B><?/MISQL>
+     </TD>
+     <TD align=left>
+       <FONT size=2> <B>Highlight terms containing:</B> </FONT> <BR>
+       <?MIVAR><INPUT type="text" size="20" 
+                  name="highlight_text"
+                  value="$highlight_text"
+                  onChange="document.dictform.submit();"><?/MIVAR>   
+     </TD>
+   </TR>
+ </TABLE>
+ <HR width=500 size=1 noshade align=left>
+
+ <?MIVAR NAME="$type_code"><?/MIVAR>
+ <?MIVAR NAME="$type_code" COND="$(AND,$(XST,$structures),$(EC,$structures,on))">
+    'ST'
+ <?/MIVAR>
+ <?MIVAR NAME="$type_code" COND="$(AND,$(XST,$processes),$(EC,$processes,on))">
+    $type_code $(IF,$(NE,$type_code,),",") 'PR'  
+ <?/MIVAR>
+ <?MIVAR NAME="$type_code" COND="$(AND,$(XST,$systems),$(EC,$systems,on))">
+    $type_code $(IF,$(NE,$type_code,),",") 'FS'  
+ <?/MIVAR>
+ <?MIVAR NAME="$type_code" COND="$(NE,$type_code,)">and anatitem_type_code IN ( $type_code )<?/MIVAR>
+
+ <TABLE BORDER=0 WIDTH=100%><TR><TD nowrap>
+
+ <?MISQL SQL="
+select '0',
+       anatdisp_item_name, anatdisp_item_zdb_id, anatdisp_seq_num,
+       anatdisp_indent, anatstgstat_total_count, anatitem_abbrev,
+       ( select count(*) 
+	 from data_alias 
+	 where dalias_data_zdb_id = anatitem_zdb_id) synonymcount
+from   anatomy_display, anatomy_stage_stats, anatomy_item 
+where  anatitem_zdb_id = anatdisp_item_zdb_id
+       and anatdisp_indent <= '$resolution'
+       and anatdisp_stg_zdb_id = '$OID' 
+       and anatdisp_item_zdb_id = anatstgstat_anat_item_zdb_id
+       and anatstgstat_stg_zdb_id = anatdisp_stg_zdb_id
+       $type_code
+order by anatdisp_seq_num
+
+;">
+<?MIVAR NAME="$selfcount">$1<?/MIVAR>
+<?MIVAR NAME="$item_name">$2<?/MIVAR>
+<?MIVAR NAME="$item_zdb_id">$3<?/MIVAR>
+<?MIVAR NAME="$item_abbrev">$7<?/MIVAR>
+<?MIVAR NAME="$synonymcount">$8<?/MIVAR>
+<?MIVAR NAME="$highlight">false<?/MIVAR>
+
+     <?MIVAR NAME=$item_name_safe DELIMIT="'" REPLACE="''">$item_name<?/MIVAR>
+     <?MIVAR NAME="$processed_item_name">$(REPLACE,$item_name,',','|')<?/MIVAR>
+
+<?MIVAR NAME="$indent">$(*,$(-,$5,1),20)<?/MIVAR>
+
+
+     <?MISQL SQL="select distinct xpat_gene_zdb_id
+from anatomy_item, expression_pattern, 
+     expression_pattern_anatomy, stage as start, stage as end, 
+     stage as mystage
+where xpatanat_anat_item_zdb_id = anatitem_zdb_id 
+  and xpatanat_xpat_zdb_id = xpat_zdb_id
+  and anatitem_zdb_id = '$item_zdb_id' 
+  and xpatanat_anat_item_zdb_id = anatitem_zdb_id
+  and start.stg_zdb_id = xpatanat_xpat_start_stg_zdb_id
+  and end.stg_zdb_id = xpatanat_xpat_end_stg_zdb_id
+  and mystage.stg_zdb_id = '$OID'
+  and mystage.stg_hours_start >= start.stg_hours_start
+  and mystage.stg_hours_end <= end.stg_hours_end
+UNION
+select distinct xpat_gene_zdb_id
+from all_anatomy_contains, anatomy_item,
+     expression_pattern, expression_pattern_anatomy,
+     stage as start, stage as end, stage as mystage
+where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
+  and allanatcon_container_zdb_id = anatitem_zdb_id 
+  and xpatanat_xpat_zdb_id = xpat_zdb_id
+  and anatitem_zdb_id = '$item_zdb_id'
+  and start.stg_zdb_id = xpatanat_xpat_start_stg_zdb_id
+  and end.stg_zdb_id = xpatanat_xpat_end_stg_zdb_id
+  and mystage.stg_zdb_id = '$OID'
+  and mystage.stg_hours_start >= start.stg_hours_start
+  and mystage.stg_hours_end <= end.stg_hours_end
+;">
+      <?/MISQL>
+
+      <?MIVAR name=$totalcount>$MI_ROWCOUNT<?/MIVAR>
+
+
+<?MIBLOCK COND="$(NE,$highlight_text,)">
+  <?MIVAR COND="$(>,$(POSITION,$item_name,$highlight_text),0)" NAME="$highlight">true<?/MIVAR>
+<?/MIBLOCK>
+
+<?MICOMMENT>
+<?MIVAR>
+ $(IF,$(EQ,$highlight,true),<A NAME="#highlighted"></A>)
+<?/MIVAR>
+<?/MICOMMENT>
+
+
+<?MIVAR>
+  <font style="font-family:arial; font-size:small; font-weight:bold;  margin-left:$indent; $(IF,$(EQ,$highlight,true),background-color:#ffff99)">
+    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">
+      $item_name
+    </A>
+  </font> &nbsp; <?/MIVAR>
+  <?MIBLOCK COND="$(>,$totalcount,0)">
+  <?MIVAR>
+    [<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name&processed_selected_structures=$processed_item_name&include_substructures=checked&stage_start=$OID&stage_end=$OID" target="_parent">$totalcount gene(s) expressed at this stage</A>]
+   <?/MIVAR> 
+
+   <?MIBLOCK COND="$(NE,$item_abbrev,NULL)">
+        <font style="font-family:arial; font-size:small; font-weight:bold;)">
+	<?MIVAR><I>
+	   &nbsp;&nbsp;(abbrev: <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">$item_abbrev</A>
+	<?MIBLOCK COND="$(>,$synonymcount,0)">
+
+	  <?MICOMMENT> --------- dear gentle reader of the lines below, I know that the lack of 
+		  		 returns makes it a impossible to read, but it has to be that way
+				 to make the comma spacing look right.  Sorry.    ---------------
+	  <?/MICOMMENT>
+
+	  <?MISQL SQL="SELECT dalias_alias
+		       FROM data_alias
+		       WHERE dalias_data_zdb_id = '$item_zdb_id';">,<?MIBLOCK COND="$(=,$MI_CURRENTROW,1)"> synonym(s): <?/MIBLOCK> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">$1</A><?/MISQL>
+	<?/MIBLOCK>)
+	</I><?/MIVAR>
+	</font>
+   <?/MIBLOCK>
+  <?/MIBLOCK>
+<BR>
+<?/MISQL>  
+
+</TD></TR></TABLE>
+
+  <?/MIBLOCK>
+<?/MIBLOCK>
+
+  <?MIBLOCK COND="$(EC,$mode,none)">
+	Use the form elements in this box to find search terms.<br>
+  <?/MIBLOCK>
+
+  <?MIBLOCK COND=$(EC,$mode,alpha)">
+
+    <?MISQL SQL="
+	SELECT unique anatitem_name, anatitem_zdb_id, anatitem_abbrev,
+  		( select count(*) 
+	 	  from data_alias 
+	 	  where dalias_data_zdb_id = anatitem_zdb_id) synonymcount, anatitem_name_order
+	FROM anatomy_item LEFT OUTER JOIN data_alias ON dalias_data_zdb_id = anatitem_zdb_id 
+	ORDER BY anatitem_name_order
+	;">
+      <?MIVAR NAME="$item_name">$1<?/MIVAR>
+      <?MIVAR NAME="$item_zdb_id">$2<?/MIVAR>
+      <?MIVAR NAME="$item_abbrev">$3<?/MIVAR>
+      <?MIVAR NAME="$selfcount">$4<?/MIVAR>
+      <?MIVAR NAME="$synonymcount">$4<?/MIVAR>
+      <?MIVAR NAME="$highlight">false<?/MIVAR>
+
+
+     <?MISQL SQL="select distinct xpat_gene_zdb_id
+from expression_pattern_anatomy, anatomy_item, expression_pattern
+where xpatanat_anat_item_zdb_id = anatitem_zdb_id 
+  and xpatanat_xpat_zdb_id = xpat_zdb_id
+  and anatitem_zdb_id = '$item_zdb_id' 
+UNION
+select distinct xpat_gene_zdb_id
+from expression_pattern_anatomy, all_anatomy_contains, anatomy_item, expression_pattern
+where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
+  and allanatcon_container_zdb_id = anatitem_zdb_id 
+  and xpatanat_xpat_zdb_id = xpat_zdb_id
+  and anatitem_zdb_id = '$item_zdb_id'
+
+;">
+      <?/MISQL>
+
+      <?MIVAR name=$totalcount>$MI_ROWCOUNT<?/MIVAR>
+
+
+      <?MIVAR NAME=$item_name_safe DELIMIT="'" REPLACE="''">$item_name<?/MIVAR>
+      <?MIVAR NAME="$processed_item_name">$(REPLACE,$item_name,',','|')<?/MIVAR>
+
+
+      <?MIBLOCK COND="$(NE,$highlight_text,)">
+        <?MIVAR COND="$(>,$(POSITION,$item_name,$highlight_text),0)" NAME="$highlight">true<?/MIVAR>
+      <?/MIBLOCK>
+	
+      <?MIVAR>
+        <font style="font-family:arial; font-size:small; font-weight:bold;  $(IF,$(EQ,$highlight,true),background-color:#ffff99)">
+        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">
+        $item_name<?MIBLOCK COND="$(NE,$item_abbrev,NULL)"><?/MIBLOCK></A></font> &nbsp;
+      <?/MIVAR>
+
+
+
+      <?MIBLOCK COND="$(>,$totalcount,0)">
+        <?MIVAR> 
+        [<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name&processed_selected_structures=$processed_item_name&include_substructures=checked">$totalcount gene(s) expressed</A>]&nbsp;&nbsp;
+        <?/MIVAR>
+      <?/MIBLOCK>
+
+      <?MIBLOCK COND="$(NE,$item_abbrev,NULL)">
+        <font style="font-family:arial; font-size:small; font-weight:bold;)">
+
+	<?MIVAR><I>
+	   (abbrev: <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">$item_abbrev</A>
+
+	  <?MIBLOCK COND="$(>,$synonymcount,0)"> 
+
+	  <?MICOMMENT> --------- dear gentle reader of the lines below, I know that the lack of 
+		  		 returns makes it a impossible to read, but it has to be that way
+				 to make the comma spacing look right.  Sorry.    ---------------
+	  <?/MICOMMENT>
+
+	  <?MISQL SQL="SELECT dalias_alias
+		       FROM data_alias
+		       WHERE dalias_data_zdb_id = '$item_zdb_id';">,<?MIBLOCK COND="$(=,$MI_CURRENTROW,1)"> synonym(s): <?/MIBLOCK> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">$1</A><?/MISQL>
+	<?/MIBLOCK>)
+
+	</I><?/MIVAR>
+	</font>
+      <?MIELSE> <?MICOMMENT> --- No Abbrev, but maybe still a synonym ---- <?/MICOMMENT>
+	  <?MIBLOCK COND="$(>,$synonymcount,0)"> 
+	  
+	  <?MICOMMENT> --------- ditto the above statement about crimes against readability   ---------------
+	  <?/MICOMMENT>
+  	  <font style="font-family:arial; font-size:small; font-weight:bold;)"><I>
+	  (<?MISQL SQL="SELECT dalias_alias
+		       FROM data_alias
+		       WHERE dalias_data_zdb_id = '$item_zdb_id';"><?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">synonym(s): <?MIELSE>, <?/MIBLOCK> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">$1</A><?/MISQL> ) </font></I>
+	  
+	<?/MIBLOCK>
+
+      <?/MIBLOCK>
+      <BR>
+    <?/MISQL>
+
+
+
+  <?/MIBLOCK>
+   </TD>
+  </TR>
+ </TABLE>
+</CENTER>
+
+</FORM>
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+
+
+
