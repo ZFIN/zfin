@@ -381,7 +381,10 @@ requested from publication page for related data list.
 	 
     <?/MISQL>
 
-    <?MISQL COND="$(XST,$input_name)" SQL="
+    <?MICOMMENT>
+      Delete can be expensive, only do it if you actually inserted records
+    <?/MICOMMENT>
+    <?MISQL COND="$(OR,$(XST,$input_name),$(XST,$input_acc))" SQL="
  	delete from markerselect_temp_match
 	  where mstmatch_session_id = $mrkrsel_session_id; ">
     <?/MISQL>
@@ -708,7 +711,11 @@ requested from publication page for related data list.
 
   <?/MIBLOCK> <!-- if not redirect to markerview -->
 
-  <?MISQL COND="$(NC,$type,pub_mapped)" SQL="
+  <?MICOMMENT>
+    If you get to this point, then the code at least tried to insert records
+    into markerselect_temp_marker.  Therefore always do the delete.
+  <?/MICOMMENT>
+  <?MISQL SQL="
     delete from markerselect_temp_marker
       where mstmrkr_session_id = $mrkrsel_session_id;">
   <?/MISQL>
