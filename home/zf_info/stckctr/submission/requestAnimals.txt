@@ -3,7 +3,7 @@ From: zirc@darkwing.uoregon.edu
 Subject: [required_requesterName]'s request for [lineName] [mutantAlleles] 
 
 **************************************** 
-[required_requesterName] [lineName] [mutantAlleles] [type][requestingOther] [quantity]
+[required_requesterName] (PI=[PIName]) [lineName] [mutantAlleles] [type][requestingOther] [quantity]
 ---
 ---
 Name:

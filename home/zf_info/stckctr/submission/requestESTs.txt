@@ -3,7 +3,7 @@ From: zirc@darkwing.uoregon.edu
 Subject: [required_requesterName]'s request for EST/cDNA probes
 
 **************************************** 
-probe(s):[probe1Name] [probe2Name] [probe3Name] [probe4Name] [probe5Name]
+[required_requesterName] (PI=[PIName]) probe(s):[probe1Name] [probe2Name] [probe3Name] [probe4Name] [probe5Name]
 ---
 ---
 Name:

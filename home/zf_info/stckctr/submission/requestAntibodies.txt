@@ -3,7 +3,7 @@ From: zirc@darkwing.uoregon.edu
 Subject: [required_requesterName]'s request for antibodies
 
 **************************************** 
-person:[required_requesterName] antibodies:[antibodyName1] [antibodyName2] [antibodyName3] [antibodyName4] SamplePack:[antibodySPname1][antibodySPname2][antibodySPnam3][antibodySPname4][antibodySPname5][antibodySPname6]
+person:[required_requesterName] (PI=[PIName]) antibodies:[antibodyName1] [antibodyName2] [antibodyName3] [antibodyName4] SamplePack:[antibodySPname1][antibodySPname2][antibodySPnam3][antibodySPname4][antibodySPname5][antibodySPname6]
 ---
 ---
 Name:
