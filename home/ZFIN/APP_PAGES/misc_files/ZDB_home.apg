@@ -123,7 +123,7 @@ For security reasons, please <b>click "Goodbye" to LOG OUT</b> if you have finis
 <!--  FISH -->
 
 <TR align=center>
-<TD><B>FISH</B><p><font size=-1>Mutant<br>and<br>Wild Type<br>Lines</font>
+<TD><B>FISH</B><p><font size=-1>Mutant<br>and<br>Wild-Type<br>Lines</font>
 <?MIVAR COND="$(EC,$AUTHORIZED,root)">
 
 <form action='/<!--|CGI_BIN_DIR_NAME|-->/runSPL.cgi' method="POST" >
@@ -142,7 +142,7 @@ For security reasons, please <b>click "Goodbye" to LOG OUT</b> if you have finis
 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&frame_size=250&selector=aa-fishselect.apg&select_from=Mutants&line_type=mutant&intro=/ZFIN/help_files/mut_intro.html">SEARCH Mutants</A> <p>
 <p>
 
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishlister.apg&line_type=wild_type">Wild Type Lines</A> 
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishlister.apg&line_type=wild_type">Wild-Type Lines</A> 
 <?/MIVAR>
 <p>
 <?MIVAR COND="$(NC,$AUTHORIZED,GUEST)">
@@ -170,7 +170,7 @@ For security reasons, please <b>click "Goodbye" to LOG OUT</b> if you have finis
 
 <TABLE>
 <?MIVAR COND="$(EC,$AUTHORIZED,root)">
-<TR><TD><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new-fish.apg&line_type=wild+type">ADD NEW WILD TYPE</A>
+<TR><TD><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new-fish.apg&line_type=wild+type">ADD NEW WILD-TYPE</A>
 </TD></TR>
 <?/MIVAR>
 
