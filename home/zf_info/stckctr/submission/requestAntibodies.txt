@@ -1,9 +1,9 @@
-To: aprilm@uoneuro.uoregon.edu, dlains@uoneuro.uoregon.edu, kelly@uoneuro.uoregon.edu, cjones@uoneuro.uoregon.edu, ngoebel@uoneuro.uoregon.edu, mason@uoneuro.uoregon.edu, rholland@uoneuro.uoregon.edu, bennettl@uoneuro.uoregon.edu
+To: aprilm@uoneuro.uoregon.edu, dlains@uoneuro.uoregon.edu, kelly@uoneuro.uoregon.edu, ngoebel@uoneuro.uoregon.edu, mason@uoneuro.uoregon.edu, rholland@uoneuro.uoregon.edu, bennettl@uoneuro.uoregon.edu
 From: zirc@darkwing.uoregon.edu
 Subject: [nameInd] [nameFam]'s request for antibodies
 
 **************************************** 
-person:[nameInd] [nameFam] (PI=[PIName]) antibodies:[antibodyName1] [antibodyName2] [antibodyName3] [antibodyName4] SamplePack:[antibodySPname1][antibodySPname2][antibodySPname3][antibodySPname4][antibodySPname5][antibodySPname6]
+person:[nameInd] [nameFam] (PI=[PIName]) antibodies(5 mil):[antibodyName1] [antibodyName2] [antibodyName3] [antibodyName4] SampleUnits(0.5 mil): [antibodySName1] [antibodySName2] [antibodySName3] [antibodySName4] [antibodySName5] [antibodySName6]
 ---
 ---
 Name:
@@ -79,6 +79,8 @@ Bill To PO Number:
 [billToPONumber]
 ---
 ---
+ANTIBODIES: 5 MIL UNITS
+---
 Antibody 1:
 [antibodyName1]
 Quantity 1:
@@ -100,24 +102,37 @@ Quantity 4:
 [antibodyQuantity4]
 ---
 ---
-ANTIBODY SAMPLE PACK
-antibody 1:
-[antibodySPname1]
-
-antibody 2:
-[antibodySPname2]
-
-antibody 3:
-[antibodySPname3]
-
-antibody 4:
-[antibodySPname4]
-
-antibody 5:
-[antibodySPname5]
-
-antibody 6:
-[antibodySPname6]
+ANTIBODIES: 0.5 SAMPLES
+---
+Antibody 1:
+[antibodySName1]
+Quantity 1:
+[antibodySQty1]
+---
+Antibody 2:
+[antibodySName2]
+Quantity 2:
+[antibodySQty2]
+---
+Antibody 3:
+[antibodySName3]
+Quantity 4:
+[antibodySQty3]
+---
+Antibody 4:
+[antibodySName4]
+Quantity 4:
+[antibodySQty4]
+---
+Antibody 5:
+[antibodySName5]
+Quantity 5:
+[antibodySQty5]
+---
+Antibody 6:
+[antibodySName6]
+Quantity 6:
+[antibodySQty6]
 ---
 ---
 Considerations and Comments:
