@@ -55,20 +55,21 @@ insert into sec_unload
 
 create temp table sec_unload_report 
   (
-    sec_id varchar(50),
-    prim_id varchar(50),
+    sec_id varchar(70),
+    prim_id varchar(70),
     term_name varchar(255),
-    onto varchar(30),
-    goterm_zdb_id   varchar(50),
-    go_concant	varchar(40),
-    go_marker	varchar(50),
-    go_mrkrgo_zdb_id  varchar(50),
-    mrkrgo_pub_zdb_id varchar(50)
+    onto varchar(50),
+    go_marker	varchar(70),
+    mrkrgo_pub_zdb_id varchar(70)
   );
 
 insert into sec_unload_report
-  select sec_id, prim_id, term_name, onto, goterm_zdb_id,
-     'GO:'||sec_id, mrkrgo_mrkr_zdb_id, mrkrgo_zdb_id, mrkrgoev_source_zdb_id
+  select 'Now Secondary: GO:'||sec_id, 
+	'Now Primary: GO:'||prim_id, 
+	'Name: '||term_name, 
+	'Ontology: '||onto,
+ 	'Gene: '||mrkrgo_mrkr_zdb_id, 
+	'Pub: '||mrkrgoev_source_zdb_id
     from sec_unload, go_term, marker_go_term, marker_go_term_Evidence
     where sec_id = goterm_go_id
     and mrkrgo_go_term_zdb_id = goterm_zdb_id 
@@ -128,7 +129,8 @@ create temp table new_goterm (
 		goterm_id	varchar(10),
 		goterm_name	varchar(255),
 		goterm_onto	varchar(30),
-                goterm_is_obsolete boolean
+                goterm_is_obsolete boolean,
+		goterm_is_secondary boolean
         )with no log;
 
 create index new_goterm_index 
@@ -149,11 +151,11 @@ select distinct count(*)
 insert into new_goterm (goterm_id,
 			goterm_name,
 			goterm_onto,
-			goterm_is_obsolete) 
+			goterm_is_obsolete, goterm_is_secondary) 
   select distinct goterm_id,
 		  trim(goterm_name),
 		  goterm_onto,
-		  'f' 
+		  'f', 'f' 
   from goterm_onto 
   where goterm_id not in (select goterm_go_id 
  	    		    from go_term);
