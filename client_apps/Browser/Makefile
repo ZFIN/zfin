@@ -1,7 +1,6 @@
 #------------------------------------------------------------------------
 #
-# Makefile for ZFIN_WWW CVS Project, Anatomical disctionary browser
-# Applet.
+# Makefile for ZFIN_WWW CVS Project, Anatomical disctionary browser Applet.
 #
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
@@ -9,91 +8,78 @@
 # !! format and conventions used in this makefile.                     !!
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
-# This makefile uses a staging directory to produce its targets.
-# This makefile populates the staging directory with source files and
-# then calls the makefile in the staging directory to produce the 
-# targets.  The staging makefile makes use of makefile variables 
-# inherited from this file.
-# 
-
+# This makefile has two target dirs.  The first is actually a staging dir
+# where the work is done.  The second is the final target dir where the
+# JAR gets put.
 
 # ---------------  Variable Definitions  --------------------------------
 
 TOP = ../..
 include $(TOP)/make.include
 
-# TARGETDIR is handled by Staging directory
+# This makefile lies about what the target dir is.  TARGETDIR is actually a
+# staging dir.  FINALTARGETDIR is the real target.
 
-STAGINGDIR = Staging
+TARGETDIR = $(TARGETROOT)/Staging/client_apps/Browser
+STAGINGDIR = $(TARGETDIR)
+FINALTARGETDIR = $(TARGETROOT)/client_apps/Browser
+
+# ---- Misc Java variables
+
+# Use the standard JAVAC_11, and JAVACFLAGS.  Still need to define classpath.
+
+CLASSPATH = $(STAGINGDIR):$(JAVAHOME_11)/lib/classes.zip:$(TOP)/lib/Java:$(JDBCHOME)/lib/ifxjdbc.jar
 
 IMPORTPATH = $(TARGETROOT)/lib/Java
-IMPORTDIR = netscape
+NETSCAPEPATH = $(IMPORTPATH)/netscape
+NETSCAPESYMLINK = $(STAGINGDIR)/netscape
 
-# ---- Java source variables
+
+# ---- Java source and destination variables
 
 GENERICS = SQLQuery.java
 STATICS  = Browser.java OrganTree.java Selectable.java \
-	SelectedPanel.java SystemsPanel.java TreeNode.java TreePanel.java \
-	data_gatherer.java
+	   SelectedPanel.java SystemsPanel.java TreeNode.java TreePanel.java \
+	   data_gatherer.java
+JAVAS    = $(STATICS) $(GENERICS)
+CLASSES  = $(foreach JAVA, $(JAVAS), $(patsubst %.java,%.class,$(JAVA)))
 
-SPECIFICS = $(foreach GNRC, $(GENERICS), $(STAGINGDIR)/$(GNRC))
-STATICSTAGINGS = $(foreach STAT, $(STATICS), $(STAGINGDIR)/$(STAT))
+STAGINGJAVAS     = $(foreach JAVA, $(JAVAS), $(STAGINGDIR)/$(JAVA))
+STAGINGCLASSES   = $(foreach CLASS, $(CLASSES), $(STAGINGDIR)/$(CLASS))
 
-JAVAS   = $(GENERICS) $(STATICS)
-TARGETS = $(SPECIFICS) $(STATICSTAGINGS)
+JAR = $(FINALTARGETDIR)/browser.jar
 
-# ---- Java destination variables
 
-JAR = browser.jar
+# ---- Define endemic targets so we can use make.default.rules.
 
-# ---- Which variables are used by Makefile in Staging directory:
-
-export JAVAS JAR IMPORTPATH IMPORTDIR
-
+ENDEMICTARGETS_POSTTARGETDIR = $(NETSCAPESYMLINK) $(FINALTARGETDIR)
+ENDEMICTARGETS_POSTTARGETS = $(JAR)
+ENDEMICTARGETS_CLEAN = $(STAGINGJAVAS) $(STAGINGCLASSES)
 
 
 # ---------------  Production Rules  ------------------------------------
 
-.PHONY : all sanitycheck clean clobber onetimeonly $(STAGINGDIR)
+# Use default rules for most of the work
+
+include $(TOP)/make.default.rules
+
+$(FINALTARGETDIR) :
+	$(TARGET_MKDIR) $@
 
 
-all : $(TARGETS) $(STAGINGDIR) 
+# ----- Rules for compiling Java sources to class files
 
-$(STAGINGDIR) :
-	(cd $(STAGINGDIR); $(MAKE))
+# When any class file needs to be remade, remake all of them.
 
-
-# ----  Rules for moving Java sources to staging directory.
-
-$(SPECIFICS) : $(STAGINGDIR)/% : %
-	$(MAKESPECIFIC) $< $(TRANSLATETABLE) $@
-
-$(STATICSTAGINGS) : $(STAGINGDIR)/% : %
-	$(STAGING_CP) $< $@
-	$(TOUCH) $@
+$(STAGINGCLASSES) : $(STAGINGJAVAS)
+	$(JAVAC_11) $(JAVACFLAGS) -classpath $(CLASSPATH) $(STAGINGJAVAS)
 
 
-# ---------------  Maintenance Rules  -----------------------------------
+# ----- Rules for creating the JAR file.
 
-clean :		# remove copied files from staging directory
-	rm -rf $(JAVASTAGINGS)
-	$(MAKE) -C $(STAGINGDIR) $@
+$(NETSCAPESYMLINK) :
+	ln -s $(NETSCAPEPATH) $(NETSCAPESYMLINK)
 
-
-clobber :			# Remove targets, but not target dir.
-	rm -f $(TARGETS)
-	$(MAKE) -C $(STAGINGDIR) $@
-
-
-# check generics & possibly statics as well for values that should
-# be represented with tags instead of hard coded values
-
-sanitycheck : 
-	$(SPECIFICCHECK) $(JAVAS)
-	$(MAKE) -C $(STAGINGDIR) $@
-
-
-# define one time only target
-
-onetimeonly :
-	$(ONETIMEONLY)
+$(JAR) : $(STAGINGCLASSES) $(NETSCAPESYMLINK)
+	cd $(STAGINGDIR); $(JAVAHOME_11)/bin/jar -cvf $(JAR) $(CLASSES) netscape
+	chmod o+r $@
