@@ -1,10 +1,9 @@
 <!-- FILE: refcrosslist.html.  Just provides a listing of all panels in ZFIN -->
 
+<TITLE> ZFIN Panel list </TITLE>
 
-<!-- Toss navigator tile -->
-<?MISQL SQL="select WebExplode(object,'page_title=List Panels') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
-
-<body bgcolor="#e5e5e5"  TEXT="black">
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+<?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 <basefont COLOR="#000000" size=2>
 
 <center>
@@ -13,13 +12,11 @@
 (Click on individual panels for details)
 </center>
 <p>
-<b><U>ACTIVE PANELS</u></b>
+
 <TABLE width=100% cellpadding=4 cellspacing=0 border=0>
 
 <?MIVAR NAME=$last>NULL<?/MIVAR>
 <?MIVAR NAME=$count>0<?/MIVAR>
-<?MIVAR NAME=$clr_cnt>0<?/MIVAR>
-<?MIVAR NAME=$line_clr>#e5e5e5<?/MIVAR>
 <?MIVAR NAME=$lasttype><?/MIVAR>
 <?MISQL SQL="select a.zdb_id,
                 name,
@@ -50,16 +47,12 @@
 $(IF,$(AND,$(NC,$last,$1),$(NC,$last,NULL)),"</TD><TD>&nbsp;</TD><TD><font size=2><b>Total markers on panel:</b> "$count"</TD></TR>")
 
 $(IF,$(NC,$last,$1),$(SETVAR,$count,0))
-$(IF,$(NC,$last,$1),$(SETVAR,$clr_cnt,$(+,$clr_cnt,1)))
-
-$(SETVAR,$color,$(/,$clr_cnt,2))
-$(SETVAR,$line_clr,$(IF,$(!=,$color,$(FIX,$color)),#FCCE64,#e5e5e5))
 
 <?MIVAR NAME=$upd_date> $(INDEX,$(-,$9,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $8,$10 
 <?/MIVAR>
 
-$(IF,$(NC,$4,$lasttype),"<TR><TD><font size=2>&nbsp;</TD></TR><TR bgcolor="#c4c4c4"><td colspan=2><b>"$4" Panels</b></TD></TR>")
-$(IF,$(NC,$last,$1),"<TR bgcolor="$line_clr"><TD><font size=3><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$1">"$2" ("$6")</A></TD><TD><font size=2><b>Updated;</B>"$upd_date"</TD><TD><font size=2><b>Type:</B> "$4"</TD></TR><TR bgcolor="$line_clr"><TD><font size=2><b>Marker types on panel:</b> "$5)
+$(IF,$(NC,$4,$lasttype),"<TR><TD><font size=2>&nbsp;</TD></TR><TR bgcolor="$highlight"><td colspan=2><b>"$4" Panels</b></TD></TR>")
+$(IF,$(NC,$last,$1),"<TR><TD><font size=3><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$1">"$2" ("$6")</A></TD><TD><font size=2><b>Updated;</B>"$upd_date"</TD><TD><font size=2><b>Type:</B> "$4"</TD></TR><TR><TD><font size=2><b>Marker types on panel:</b> "$5)
 
 $(SETVAR,$count,$(+,$count,$7))
 $(IF,$(EC,$last,$1),","$5)
@@ -85,22 +78,18 @@ $(SETVAR,$lasttype,$4)
 
 <?MIVAR NAME=$last>NULL<?/MIVAR>
 <?MIVAR NAME=$count>0<?/MIVAR>
-<?MIVAR NAME=$clr_cnt>0<?/MIVAR>
-<?MIVAR NAME=$line_clr>#e5e5e5<?/MIVAR>
 
 <?MISQL SQL="select zdb_id,name,panel_date,ptype,abbrev from panels where status='incomplete';">
 
-$(SETVAR,$clr_cnt,$(+,$clr_cnt,1))
 
-$(SETVAR,$color,$(/,$clr_cnt,2))
-$(SETVAR,$line_clr,$(IF,$(!=,$color,$(FIX,$color)),#FCCE64,#e5e5e5))
-
-<TR bgcolor=$line_clr><TD><font size=3><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=$1>$2 ($5)</A></TD><TD><font size=2><b>Type:</B> $4</TD></TR>
+<TR><TD><font size=3><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=$1>$2 ($5)</A></TD><TD><font size=2><b>Type:</B> $4</TD></TR>
 
 <?/MISQL>
 
 </TABLE>
 
 <?/MIBLOCK>  <!-- if there are undisplayed panels -->
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 
 </HTML>

@@ -26,6 +26,7 @@ STATICS = 24hrs.gif 48hrs.gif 72hrs.gif 120hrs.gif fish_net.gif
 
 GENERICS = dev_atlas.html
 
+
 # ---------------  Production Rules  ------------------------------------
 
 # Use default rules for directories without app pages in them.

@@ -1,3 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+
+<?MIBLOCK COND="$(XST,$mname)">
+  <?MIVAR>  <TITLE>ZFIN Marker Added: $mname</TITLE>  <?/MIVAR>
+<?MIELSE>
+  <TITLE>ZFIN Add Marker</TITLE>
+<?/MIBLOCK>
+
+<?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
+
+
+
+<?MISQL SQL="
+  select WebExplode(object,'') 
+    from webPages 
+    where ID='aa-chromoscripts.apg';">
+  $1
+<?/MISQL>
+
+  </head>
+
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+
+
 <!-- 
   -- new_marker.apg.   A very simple data entry page (because it does not 
   -- need to support digressions) to allow entry of new GENE and ANON_MARKER 
@@ -122,5 +149,8 @@
 
 <?/MIBLOCK> <!-- ends Authorized -->
 
+
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 
 

@@ -1,24 +1,19 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<head>
+	<head>
+		<script>
+		function call_close(){
+			var buttonstring = '<form><input type=button name=close value=Close onclick=window.close();></form>';
+			document.writeln(buttonstring);
+		}
+		</script>
+		<title>
+			ZFIN Glossary of Staging Terms
+		</title>
+	</head>
 
-<SCRIPT>
+<script language="JavaScript" src="http://<!--|DOMAIN_NAME|-->/header.js"></script>
 
-function call_close(){
-   var buttonstring = '<FORM><input type=button name=close value=Close onclick=window.close();></FORM>';
-   document.writeln(buttonstring);
-}
-
-function call_zfin(){
-   var hrefstring = '<A HREF="/index.html">ZFIN  <img src="/fish_net.gif"></A><p>';
-   document.writeln(hrefstring);
-}
-
-</SCRIPT>
-
-<TITLE>Glossary of Staging Terms</TITLE>
-</head>
-
-<body bgcolor="#FFFFFF" text="#000000">
 <H3>GLOSSARY</H3>
 
 <p><i>Modified from: 
@@ -241,25 +236,13 @@ zygote</b>: the fertilized egg, defining in the series the period between fertil
 
 <hr>
 <A HREF="stages.html">Return to <I>Developmental Stages</I> Contents</A>
-<hr>
-
-Questions or comments:
-<address>Pat Edwards<br>
-Institute of Neuroscience<br>
-University of Oregon<br>
-Eugene, OR 97403 USA<br>
-fax: 503-346-4548<br>
-<a href="mailto:edwards@uoneuro.uoregon.edu"> edwards@uoneuro.uoregon.edu</a>
-</address>
-<hr>
 
 <SCRIPT>
-  if ((window.name=='')||(window.name=='ZFIN')){
-    call_zfin();
-  } else {
+  if (window.name=='popup'){
     call_close();
   }
 </SCRIPT>
 
 </body>
-</html>
+
+<script language="JavaScript" src="http://<!--|DOMAIN_NAME|-->/footer.js"></script>

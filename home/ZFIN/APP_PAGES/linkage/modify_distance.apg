@@ -18,8 +18,8 @@ Expected vars: link_id, pair_id
 </SCRIPT>
 </HEAD>
 
-<body bgcolor="#e5e5e5"  TEXT="black">
-<basefont COLOR="#000000" size=2>
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+
 
 <form name=modify_distance method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 
@@ -88,4 +88,4 @@ Expected vars: link_id, pair_id
   </TD>
 </TABLE>
 
-</HTML>
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>

@@ -5,7 +5,7 @@
 <?MIBLOCK COND="$(EC,$ZDB_access,root)">
 
 
-<title> Pub classification tool</title>
+<title> ZFIN Pub classification tool</title>
 
 <h1 align=center>Pub classification tool</h1>
 

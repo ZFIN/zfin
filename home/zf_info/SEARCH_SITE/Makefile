@@ -21,9 +21,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/SEARCH_SITE
 
-GENERICS = searchcrit.html
-
-STATICS = searchsiteINSTR.html startsearch.html
+GENERICS = searchcrit.html searchsiteINSTR.html startsearch.html
 
 
 # ---------------  Production Rules  ------------------------------------

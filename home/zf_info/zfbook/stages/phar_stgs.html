@@ -1,23 +1,19 @@
-<head>
-<SCRIPT>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<script>
+		function call_close(){
+			var buttonstring = '<form><input type=button name=close value=Close onclick=window.close();></form>';
+			document.writeln(buttonstring);
+		}
+		</script>
+		<title>
+			ZFIN Pharyngula Stages
+		</title>
+	</head>
 
-function call_close(){
-   var buttonstring = '<FORM><input type=button name=close value=Close onclick=window.close();></FORM>';
-   document.writeln(buttonstring);
-}
+<script language="JavaScript" src="http://<!--|DOMAIN_NAME|-->/header.js"></script>
 
-function call_zfin(){
-   var hrefstring = '<A HREF="/index.html">ZFIN  <img src="/fish_net.gif"></A><p>';
-   document.writeln(hrefstring);
-}
-
-</SCRIPT>
-
-<TITLE>Pharyngula Stages</TITLE>
-
-</head>
-
-<body bgcolor="#FFFFFF" text="#000000">
 
 <h3>Stages During the Pharyngula Period</h3>
 
@@ -65,23 +61,13 @@ The bend in the heart is now prominent and marks the division between the atrium
 Dechorionated embryos lie on their sides when at rest, yolk sac obliquely upwards.  A touch elicits a vigorous and rapid response, with a wriggling rhythm just slow enough that its beat is still barely discernable.  The response propels the embryo from a few body lengths in many cases, or up to the whole width of a 5 cm dish in others.  At the end of the bout of swimming the embryo comes to rest on its side, not dorsal-up.
 <hr>
 <A HREF="index.html">Return to Developmental Stages Contents</A>
-<hr>
-Questions or comments:
-<address>Pat Edwards<br>
-Institute of Neuroscience<br>
-University of Oregon<br>
-Eugene, OR 97403 USA<br>
-fax: 503-346-4548<br>
-<a href="mailto:edwards@uoneuro.uoregon.edu"> edwards@uoneuro.uoregon.edu</a>
-</address>
-<hr>
 
 <SCRIPT>
-  if ((window.name=='')||(window.name=='ZFIN')){
-    call_zfin();	
-  } else {
+  if (window.name=='popup'){
     call_close();
   }
 </SCRIPT>
 <p>
 </body>
+
+<script language="JavaScript" src="http://<!--|DOMAIN_NAME|-->/footer.js"></script>

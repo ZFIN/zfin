@@ -3,15 +3,13 @@
 This is the handler that is called whenever a user clicks a button in the 
 "updating  mode" of the MARKER viewer. It should toss up the appropriate 
 form to get the update from the user. In most cases (text fields) this 
-just means a place to put in text. For "selected" fields (e.g. the 
-'mother' of a strain), it would throw up the appropriate browser to 
-select a new one.
+just means a place to put in text.
 
 EXPECTED VARS:
 OID -- the zdb_id of the record to update
 attr -- the column name that is being updated.
 attr_type -- the type of attr being updated. Either 'text','textarea',
-  'pic' or 'selection'. Used to choose the right course of action.
+  'pic'. Used to choose the right course of action.
 print_name -- The human-understandable name (vs. the database column name) of
   the attribute to be updated. So for ex, the print name for 'phone' 
   would be 'phone number'
@@ -19,10 +17,7 @@ target_table -- either anon_marker or gene, depending on what you're updating
 
 -->
 
-<!-- first update navigation and double-check permissions. Don't put up 
-  -- navigator tile if you are doing selection since you are jumping 
-  -- directly to a browser 
-  -->
+<!-- first double-check permissions.   -->
 
 
   <?MISQL SQL="
@@ -36,8 +31,9 @@ target_table -- either anon_marker or gene, depending on what you're updating
 
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
   <!-- If the attribute is something we can just specify locally, go ahead and throw up the right form to do it. -->
-  <?MIBLOCK COND="$(NC,$attr_type,selection)">
+
     <?MIBLOCK COND="$(AND,$(NC,$attr,putgene_putative_gene_name),$(NC,$attr,putgene_comments))">
       <?MIVAR NAME=$name_col>marker_name<?/MIVAR>
       <?MIVAR COND="$(EC,$target_table,gene)" NAME=$name_col>gene_name<?/MIVAR>
@@ -75,7 +71,7 @@ target_table -- either anon_marker or gene, depending on what you're updating
 
     <HTML>
     <?MIVAR>
-      <TITLE>Updating $print_name</TITLE>
+      <TITLE>ZFIN Updating $print_name</TITLE>
 
       <center><font size=6>
       Update <u>$print_name</u> for $(UPPER,$target_table):$update_target
@@ -142,102 +138,7 @@ target_table -- either anon_marker or gene, depending on what you're updating
 
     </FORM>
 
-  <?/MIBLOCK>  <!-- ends cond attr_type not= selection -->
-
-
-
-  <!-- If attr_type is 'select', then you need to setup and launch the 
-    -- appropriate selector to find/select the appropriate record. Very 
-    -- much like what happens in the process_<data> files 
-    -->
-  <?MIBLOCK COND="$(EC,$attr_type,selection)">
-
-    <!-- VARIABLES DESCRIPTIONS for following. 
-      -- Selection requests are handled using the standard return_rec 
-      -- processing mechanism used whenever we need to bail temporarily 
-      -- out of one form to do something else. Specifically, a new 
-      -- return_rec is created in the return_recs tables. The name of the 
-      -- form I'm coming from goes in the RETURN_FORM variable, the zdb_id 
-      -- of the temporary record (temp_oid) that we were working on goes 
-      -- in the RETURN_RECID variable. If we are wanting the OID of the 
-      -- eventually selected record to go directly into the evolving data 
-      -- record, the name of the field it should fill goes in FILL_FIELD 
-      -- and the table that field is in goes in FILL_TABLE. Else if we want 
-      -- the OID of the eventually selected record to be jammed into an 
-      -- intersection table with the evolving data record, the FILL_FIELD 
-      -- should be NULL, and FILL_TABLE should be the name of the 
-      -- intersection table. Finally, INFO just allows extra information to 
-      -- be placed in the INFO column of the intersection table.
-      -- 
-      -- When filled, the ZDB_ID of the new return_rec is passed along into 
-      -- whatever browser is invoked. It is eventually used by do-select to 
-      -- process the results of the digression, and send control back to 
-      -- where it came from. 
-      -->
-    <?MIVAR NAME=$target_table>anon_marker<?/MIVAR>
-    <?MIVAR COND="$(>,$(POSITION,$OID,GENE),0)" NAME=$target_table>gene<?/MIVAR>
-
-    <?MISQL SQL="
-      execute function get_id('sys');">
-    <?/MISQL>
-    <?MIVAR NAME=$return_rec>$1<?/MIVAR>
-    <?MIVAR NAME=$return_form>aa-markerview.apg&UPDATE=1<?/MIVAR>
-    <?MIVAR NAME=$temp_oid>$OID<?/MIVAR>
-
-    <!-- Want to specify an owner.  -->
-    <?MIBLOCK COND="$(EC,$attr,owner)">
-      <?MIVAR NAME=$select_from>PERSON<?/MIVAR>
-      <?MIVAR NAME=$action>return_id<?/MIVAR>
-      <?MIVAR NAME=$fill_field>owner<?/MIVAR>
-      <?MIVAR NAME=$fill_table>$target_table<?/MIVAR>
-      <?MIVAR NAME=$jump_to>top<?/MIVAR>
-      <?MIVAR NAME=$info>NULL<?/MIVAR>
-      <?MIVAR NAME=$selector>aa-persselect.apg<?/MIVAR>
-    <?/MIBLOCK>
-
-
-    <?MIBLOCK COND="$(EC,$attr,prim_pub)">
-      <?MIVAR NAME=$select_from>PUBLICATION<?/MIVAR>
-      <?MIVAR NAME=$action>intersect<?/MIVAR>
-      <?MIVAR NAME=$fill_field>NULL<?/MIVAR>
-      <?MIVAR NAME=$fill_table>int_data_pub<?/MIVAR>
-      <?MIVAR NAME=$jump_to>pub-info<?/MIVAR>
-      <?MIVAR NAME=$info>primary<?/MIVAR>
-      <?MIVAR NAME=$selector>aa-pubselect2.apg<?/MIVAR>
-    <?/MIBLOCK>
-
-    <?MIBLOCK COND="$(EC,$attr,rel_pub)">
-      <?MIVAR NAME=$select_from>PUBLICATION<?/MIVAR>
-      <?MIVAR NAME=$action>intersect<?/MIVAR>
-      <?MIVAR NAME=$fill_field>NULL<?/MIVAR>
-      <?MIVAR NAME=$fill_table>int_data_pub<?/MIVAR>
-      <?MIVAR NAME=$jump_to>pub-info<?/MIVAR>
-      <?MIVAR NAME=$info>related<?/MIVAR>
-      <?MIVAR NAME=$selector>aa-pubselect2.apg<?/MIVAR>
-    <?/MIBLOCK>
-
-
-    <!-- NOW CREATE THE NEW RETURN RECORD -->
-    <?MISQL SQL="
-      insert into return_recs 
-          (zdb_id, return_form, return_recid, fill_field, fill_table, info, 
-	   action, jump_to, rec_update) 
-        values ('$return_rec', '$return_form', '$temp_oid', '$fill_field',
-		'$fill_table', '$info', '$action', '$jump_to', 't');">
-    <?/MISQL>
-
-    <!-- LAUNCHES THE FRAMES FOR THE ANY SELECTION BROWSER.-->
-    <?MIVAR COND="$(NXST,$constraint)" NAME=$constraint><?/MIVAR>
-    <?MISQL SQL="
-      select WebExplode(object,'$constraint') 
-	from webPages 
-	where ID='aa-startframes_select.apg';">
-      $1
-    <?/MISQL>
-
-
-  <?/MIBLOCK>  <!-- ends cond attr_type=selection -->
-
   </HTML>
 <?/MIBLOCK> <!-- ends if authorized not false -->
 
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>

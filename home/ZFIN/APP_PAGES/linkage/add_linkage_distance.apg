@@ -21,7 +21,8 @@ Possible vars:  update-->
 </HEAD>
 
 
-<body bgcolor="#e5e5e5"  TEXT="black">
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+
 <basefont COLOR="#000000" size=2>
 
 <form name=linkage method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" onSubmit="return check_marker(document.linkage.marker1.selectedIndex, document.linkage.marker2.selectedIndex );">
@@ -43,6 +44,8 @@ Possible vars:  update-->
 
 <?MISQL SQL="select WebExplode(object,'permission=root') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
+
+<TITLE> Add ZFIN Linkage Distance </TITLE>
 
 <p>
 <?MISQL SQL="select distinct lnkg_source_zdb_id, lnkg_or_lg,lnkg_private, lnkg_comments from linkage  
@@ -190,5 +193,7 @@ Linkage Distance:<br>
 	<input type=button value="Submit" onClick="window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_linkage.apg&link_id=$link_id&update=true'">  
       <?/MIVAR>
     <?/MIBLOCK>
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 
 </form>

@@ -12,10 +12,6 @@ Variables expected:  OID (optional) -- the OID of a publication to edit.
 
 <HTML>
 
-<TITLE>Add a new PUBLICATION record</TITLE>
-
-
-
 <?MISQL COND="$(NXST,$OID)" SQL="select WebExplode(object,'page_title=ADD Publication&permission=root') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 <?MISQL COND="$(XST,$OID)" SQL="select WebExplode(object,'page_title=EDIT Publication&permission=root') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
@@ -25,6 +21,9 @@ Variables expected:  OID (optional) -- the OID of a publication to edit.
 <!-- FIRST fill variables, depending on whether you are doing EDIT or NEW -->
 
   <?MIBLOCK COND="$(XST,$OID)">
+    <TITLE>ZFIN Edit Publication</TITLE>
+    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+
     <h1 align=center> Edit PUBLICATION</h1>
     <p>
     <b>Make desired changes to the publication, then click on the "SUBMIT" button. Or you may click "CANCEL" to abort the update.</b>
@@ -45,6 +44,9 @@ Variables expected:  OID (optional) -- the OID of a publication to edit.
   <?/MIBLOCK>
 
   <?MIBLOCK COND="$(NXST,$OID)">
+    <TITLE>Add New Publication record</TITLE>
+    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+
     <h1 align=center> CREATE NEW PUBLICATION record</h1>
     <p>
     <b>Please enter the requested information in the boxes below, and then  click on the "SUBMIT" button. Or you may click "CANCEL" to abort the creation of the new record.</B>
@@ -66,10 +68,10 @@ Variables expected:  OID (optional) -- the OID of a publication to edit.
     <big>The following five pieces of information are <B>REQUIRED</B> to create the a new PUBLICATION record:</big>
   <?/MIBLOCK>
 
-  <FORM NAME="process_form" METHOD=POST ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" TARGET=content>
+  <FORM NAME="process_form" METHOD=POST ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
   <p>
   <?MIVAR>
-    <TABLE border=4  width=100%>
+    <TABLE border=1  width=100%>
     <TR align=center>
     <TD><font size=-1><b>ZDB_ID:</b> $OID</font></TD>
     <TD><font size=-1><b>STATUS:</B> 
@@ -135,7 +137,7 @@ Variables expected:  OID (optional) -- the OID of a publication to edit.
     <!-- build return rec needed by cancel and hidden needed to post origianl search criteria to process-pub -->  
     <!-- variables input for new pub are posted to process-pub via html data types q_authors ... -->
  
-    <?MIVAR NAME=$returnVariables>MIval=aa-startframes.apg&selector=aa-pubselect2.apg&select_from=PUBLICATION&navtile=true<?/MIVAR>
+    <?MIVAR NAME=$returnVariables>MIval=aa-pubselect2.apg&query_results=true<?/MIVAR>
  
     <?MIBLOCK COND="$(XST,$anon1text)">
       <?MIVAR NAME=$returnVariables>$returnVariables&anon1text=$(URLENCODE,$anon1text)<?/MIVAR>
@@ -194,9 +196,9 @@ Variables expected:  OID (optional) -- the OID of a publication to edit.
       <?MIVAR><input type=hidden name=title value="$title"><?/MIVAR>
     <?/MIBLOCK>
 
-    <?MIBLOCK COND="$(XST,$BEGIN)">
-      <?MIVAR NAME=$returnVariables COND="$(XST,$BEGIN)">$returnVariables&BEGIN=$BEGIN<?/MIVAR>
-      <?MIVAR><input type=hidden name=BEGIN value="$BEGIN"><?/MIVAR>
+    <?MIBLOCK COND="$(XST,$START)">
+      <?MIVAR NAME=$returnVariables COND="$(XST,$START)">$returnVariables&START=$START<?/MIVAR>
+      <?MIVAR><input type=hidden name=START value="$START"><?/MIVAR>
     <?/MIBLOCK>
 
     <?MIBLOCK COND="$(XST,$WINSIZE)">
@@ -236,5 +238,6 @@ Variables expected:  OID (optional) -- the OID of a publication to edit.
   <?/MIVAR>
 
 <?/MIBLOCK>  <!-- ends cond authorization -->
-</HTML>
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 

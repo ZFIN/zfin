@@ -1,23 +1,19 @@
-<head>
-<SCRIPT>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<script>
+		function call_close(){
+			var buttonstring = '<form><input type=button name=close value=Close onclick=window.close();></form>';
+			document.writeln(buttonstring);
+		}
+		</script>
+		<title>
+			ZFIN Hatching Period Description
+		</title>
+	</head>
 
-function call_close(){
-   var buttonstring = '<FORM><input type=button name=close value=Close onclick=window.close();></FORM>';
-   document.writeln(buttonstring);
-}
+<script language="JavaScript" src="http://<!--|DOMAIN_NAME|-->/header.js"></script>
 
-function call_zfin(){
-   var hrefstring = '<A HREF="/index.html">ZFIN  <img src="/fish_net.gif"></A><p>';
-   document.writeln(hrefstring);
-}
-
-</SCRIPT>
-
-<TITLE>Hatching Period</TITLE>
-
-</head>
-
-<body bgcolor="#FFFFFF" text="#000000">
 
 <H3>HATCHING PERIOD (48-72 h)</H3>
 <p><i>Modified from: 
@@ -43,25 +39,13 @@ The last arch of the pharyngeal series (branchial arch 5 or pharyngeal arch 7) d
 
 The cartilages of the branchial arches begin to develop morphologically about a half day after the jaw cartilages.  Each branchial arch initially develops a single simple linear element, a ceratobranchial cartilage, not dorsal and ventral elements developing nearly together as discussed above for the jaw arches.  Moreover, the series of ceratobranchial cartilages does not develop synchronously; the first and cartilages (ceratobranchials 1 and 5) develop ahead of the others (Fig. 42 B &amp; C).  The cartilages of middle branchial arches in the series, particularly ceratobranchials 3 and 4, are still undifferentiated by end of the third day.<P>
 <A HREF="hatch_stgs.html">Detailed description of Hatching stages.</A>
-<hr>
-<A HREF="index.html">Return to Developmental Stages Contents</A>
-<hr>
-Questions or comments:
-<address>Pat Edwards<br>
-Institute of Neuroscience<br>
-University of Oregon<br>
-Eugene, OR 97403 USA<br>
-fax: 503-346-4548<br>
-<a href="mailto:edwards@uoneuro.uoregon.edu"> edwards@uoneuro.uoregon.edu</a>
-</address>
-<hr>
 
 <SCRIPT>
-  if ((window.name=='')||(window.name=='ZFIN')){
-    call_zfin();
-  } else {
+  if (window.name=='popup'){
     call_close();
   }
 </SCRIPT>
 <p>
 </body>
+
+<script language="JavaScript" src="http://<!--|DOMAIN_NAME|-->/footer.js"></script>

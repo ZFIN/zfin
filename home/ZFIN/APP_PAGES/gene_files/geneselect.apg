@@ -1,12 +1,22 @@
-<!-- Modified to support I.E.  Naviagtor tile buttons must know all user input from the query screen.  These values are posted to the lister form.  The lister form creates the tile bar button with appropriate variables. Startframes.apg will pass this variables on to the select form.  -->
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
 
-<! added onChange to each variable to reset START for walking windows - this is needed if users alter query after using the navtile button and without using the reset button. if the new query resul thas fewer than the first query and they had been on a page that would not exist with this new query the ww code breaks  -->
+<?MISQL SQL="
+  select WebExplode(object,'') 
+    from webPages 
+    where ID='aa-chromoscripts.apg';">
+  $1
+<?/MISQL>
 
-<HTML>
 
+<?MIVAR name=page_name>ZFIN Gene $(IF,$(XST,$query_results),List,Select)<?/MIVAR>
+
+<?MIVAR>
+  <title>$page_name</title>
+<?/MIVAR>
 
 <SCRIPT>
-
 function form_submit() {
 document.critform.submit();
 }
@@ -16,158 +26,761 @@ function call_reset() {
 document.critform.name.value = "";
 document.critform.refcross.selectedIndex = 0;
 document.critform.lg.selectedIndex = 0;
-document.critform.searchtype.selectedIndex = 1;
-document.critform.ismapped.checked = false;
 document.critform.knownloci.checked = false;
+document.critform.searchtype.selectedIndex = 1;
 document.critform.WINSIZE.value = 20;
 document.critform.START.value = "";
 }
 
 </SCRIPT>
 
-<basefont size=2>
+  </head>
 
-<form name=critform method=post TARGET="pbrowser" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"  >
+<?MIBLOCK COND="$(NXST,$accession)">
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+<?/MIBLOCK>
 
-<input type=hidden name=MIval value=aa-genelister.apg>
+<?MIVAR NAME=$knownloci COND="$(NXST,$knownloci)">NULL<?/MIVAR>
 
-<center>
-<U><B><FONT SIZE=5>Search for </font>
-<FONT SIZE=4 color="#ff0000" > GENES</font></b></u>
-</center>
+<?MIBLOCK COND="$(XST,$query_results)">
 
-
-<?MIVAR COND="$(NXST,$refcross)" NAME=$refcross>NULL<?/MIVAR>
-<?MIVAR COND="$(NXST,$searchtype)" NAME=$searchtype>contains<?/MIVAR>
-<?MIVAR COND="$(NXST,$lg)" NAME=$lg>0<?/MIVAR>
-<?MIVAR COND="$(NXST,$START)" NAME=$START>1<?/MIVAR>
-
-<?MIVAR>
-<TABLE width=100%>
-	<TR>
-
-		<TD><font size=2>
-			<b>
-			<SELECT name=searchtype onChange='document.critform.START.value = "";'>
-			  <option $(IF,$(EC,$searchtype,begins),SELECTED) value=begins>Name begins with
-                           <option $(IF,$(EC,$searchtype,contains),SELECTED) value=contains>Name contains
-			</select>:
-			</b> 
-			<input type=text name=name size=10 onChange='document.critform.START.value = "";'>
-			</font>
-		</TD>
-
-		<!--  assign navtile value to name - can not do with a value="name" in input statement - reset will not work -->
-		<?MIBLOCK COND="$(XST,$nav_name)"><?MIVAR> <SCRIPT> document.critform.name.value = "$nav_name" </SCRIPT><?/MIVAR> <?/MIBLOCK>
+<?MIVAR NAME=$private>NULL<?/MIVAR>
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
 
 
-		<TD align=right><font size=-1>
-			<b>Mapping panel:</b> 
-			<SELECT NAME=refcross onChange='document.critform.START.value = "";'>
-				<option <?MIVAR COND="$(EC,$refcross,NULL)">SELECTED<?/MIVAR> value=NULL>Any
-					<?MISQL SQL="select zdb_id,abbrev,ptype from panels order by ptype, abbrev;">
-						<option $(IF,$(EC,$refcross,$1),SELECTED) value=$1>$2($3)
-					<?/MISQL>
-			</SELECT></font>
-		</TD> 
-	</TR>
-</table>
-<?/MIVAR>
+<!-- THIS NEXT PART IS EXECUTED AFTER THE PERSON ENTERS SOME CRITERIA -->
 
-<table width=100%>
-<TR>
+<!-- First note that they have searched persons-->
 
-<?MIVAR>
-	<TD><font size=-1><b>LG:</b> 
-  <select NAME=lg onChange='document.critform.START.value = "";'>
-    <?MISQL SQL="select distinct lg_name,lg_order from linkage_group order by lg_order"> 
-      <option value="$1" $(IF,$(EC,$lg,$1),SELECTED) >$(IF,$(EC,$1,0),any,$1)
-    <?/MISQL>
-  </SELECT>
-<?/MIVAR>
-</font></TD>
+<?MISQL SQL="
+  select WebExplode(object,'') 
+    from webPages 
+    where ID='aa-identify.apg';">
+  $1
+<?/MISQL>
 
-<TD colspan=2> 
-<font size=-1>
+<a name=results></a>
 
-<input type=checkbox name=ismapped onChange='document.critform.START.value = "";'> Show only mapped genes<br>
-<!--  assign navtile value to ismapped  -->
-<?MIBLOCK COND="$(XST,$nav_ismapped)"><?MIVAR> <SCRIPT> document.critform.ismapped.checked = true </SCRIPT><?/MIVAR> <?/MIBLOCK>
-
-<!-- STUBBED out for now 
-
-<font size=-1><b>within</b> <INPUT type=text size=3 name=within_cm>cM of 
-<select name=wm_type onChange="check_syns(this)"> 
-<option $(IF,$(EC,$marker_type,SSLP),SELECTED) >SSLP
-<option $(IF,$(EC,$marker_type,RAPD),SELECTED)>RAPD
-<option $(IF,$(EC,$marker_type,STS),SELECTED)>STS
-<option $(IF,$(EC,$marker_type,RFLP),SELECTED)>RFLP
-<option $(IF,$(EC,$marker_type,EST),SELECTED)>EST
-<option $(IF,$(EC,$marker_type,SSR),SELECTED)>SSR
-<option>MicroSatellite
-<option>CA-repeat
-</select>
-<INPUT type=text size=3 name=wm_name></font>
-
--->
-
-</TD>
+<!-- set userid to ZDB_ID of user or GUEST to be used by the map viewer -->
+<?MIVAR NAME=$userid>GUEST<?/MIVAR>
+<?MIBLOCK COND="$(NOT,$(EQ,$(SUBSTR,$ZDB_name,1,5),GUEST))">
+  <?MIVAR NAME=$userid>$ZDB_ident<?/MIVAR>
+<?/MIBLOCK>
 
 
-<?MIVAR>
-<TD colspan=2> 
-<font size=-1>
-<input type=checkbox name=knownloci onChange='document.critform.START.value = "";'> Show only genes with known mutant loci<br>
-</TD>
-<!--  assign navtile value to knownloci  -->
-<?MIBLOCK COND="$(XST,$nav_knownloci)"><?MIVAR> <SCRIPT> document.critform.knownloci.checked = true </SCRIPT><?/MIVAR> <?/MIBLOCK>
+<!-- This next part builds up a query piece by piece, based on which criteria 
+  -- were passed in, an inner constraint must be used to account for the 
+  -- the possibility that the user leaves all fields blank; in that instance 
+  -- the constraint isn't set, thus an error results when the inner query
+  -- attempts to append an additional constraint to a non-existant constraint. 
+  -->
+
+<?MIVAR NAME=$lead_wildcard><?/MIVAR>
+<?MIVAR COND="$(NC,$searchtype,begins)" NAME=$lead_wildcard>%<?/MIVAR>
+
+<?MIVAR NAME=$constraint COND="$(NXST,$constraint)"> <?/MIVAR>
+<?MIVAR NAME=$lg COND="$(NXST,$lg)">0<?/MIVAR>
+<?MIVAR NAME=$refcross COND="$(NXST,$refcross)">NULL<?/MIVAR>
+<?MIVAR NAME=$all_map_names><?/MIVAR>
+<?MIVAR NAME=$allmapnm_significance><?/MIVAR>
+<?MIVAR NAME=$allmapnm_significance_colno><?/MIVAR>
+
+<?MIBLOCK COND="$(OR,$(XST,$name),$(NC,$lg,0),$(NC,$refcross,NULL),$(NC,$knownloci,NULL),$(AND,$(XST,$within_cm),$(XST,$wm_name)))">
+
+  <!-- First filter name for apostrophes! -->
+  <?MIVAR COND="$(XST,$name)" NAME=$name DELIMIT="'" REPLACE="''">$name<?/MIVAR>
+
+  <!-- NOW BUILD UP THE CONSTRAINT CLAUSE -->
+
+  <?MIVAR NAME=$previous> <?/MIVAR>
+  <?MIVAR NAME=$constraint> where <?/MIVAR>
+
+  <?MIBLOCK COND="$(XST,$name)">
+    <?MIVAR NAME=$all_map_names>, all_map_names<?/MIVAR>
+    <?MIVAR NAME=$allmapnm_significance>, min(allmapnm_significance)<?/MIVAR>
+    <?MIVAR NAME=$allmapnm_significance_colno>4, <?/MIVAR>
+
+    <?MIVAR NAME=$constraint>$constraint 
+          a.zdb_id = allmapnm_zdb_id 
+      and allmapnm_name like '$lead_wildcard$(LOWER,$name)%' 
+    <?/MIVAR>
+  <?/MIBLOCK> 
+
+  <?MIVAR NAME=$previous COND="$(XST,$name)"> and <?/MIVAR>
+
+  <?MIVAR NAME=$constraint COND="$(NC,$lg,0)">$constraint $previous (OR_lg='$lg' and private='f')<?/MIVAR>
+
+  <?MIVAR NAME=$previous COND="$(NC,$lg,0)"> and <?/MIVAR>
+
+  <?MIVAR NAME=$constraint COND="$(NC,$refcross,NULL)">$constraint $previous (panel_id='$refcross')<?/MIVAR>
+
+  <?MIVAR NAME=$previous COND="$(NC,$refcross,NULL)"> and <?/MIVAR>
+
+  <?MIVAR NAME=$constraint COND="$(NC,$knownloci,NULL)">$constraint $previous (locus_name is not null)<?/MIVAR>
+
+  <?MIVAR NAME=$previous COND="$(NC,$knownloci,NULL)"> and <?/MIVAR>
+
+<?/MIBLOCK> <!-- ends cond any constraints specified -->
+
+<?MIVAR NAME=$order_col>allgene_abbrev_order as abbrev_order<?/MIVAR>
+<?MIVAR NAME=$group_col>allgene_abbrev_order<?/MIVAR>
+<?MIVAR NAME=$order_clause>order by $allmapnm_significance_colno abbrev_order<?/MIVAR>
+
+<?MIVAR NAME=$target_table>all_genes a <?/MIVAR>
 
 
-
-<TD align=right colspan="2">  
-	Display results in groups of 
-	<input type="text" name="WINSIZE" size="3" value="20" onChange='document.critform.START.value = "";'>.
-     <?MIBLOCK COND="$(AND,$(NOT,$(ISNULL,$WINSIZE)),$(XST,$WINSIZE))">
-        <?MIVAR> 
-          <SCRIPT> 
-            document.critform.WINSIZE.value = "$WINSIZE" 
-          </SCRIPT>
-        <?/MIVAR> 
-      <?/MIBLOCK> 
-	<input type=submit name=action value="SEARCH" onSubmit="parent.pbrowser.document.location.href='/ZFIN/misc_html/saysearching.html';document.critform.submit();">
-	<input type=button value="RESET" onClick="call_reset();">
-</TD>
-
-</TR>
-</TABLE>
-<p>
-
-<?MIVAR>
-  <input type=hidden NAME="START" value=$START>
-<?/MIVAR>
+<!-- NOW JUST RETRIEVE AND DISPLAY ALL MATCHING ENTRIES. -->
 
 
-<!-- This next little block executes only if we are using the browser as a
-selector. That is we want user to ultimately CHOOSE a browsed value. All
-we have to do at this point is pass the return record along to the markerlister.
--->
-<?MIVAR COND=$(XST,$return_rec)>
-<input type=hidden NAME="return_rec" value=$return_rec>
-<?/MIVAR>
-
-
-
-<!-- If we have gotten to this page from a nav bar tile - we need to autosubmit to get
- pbrowser frame populated -->
-
-
-<?MIVAR COND="$(XST,$navtile)">
-<SCRIPT>
-form_submit();
-</SCRIPT>
-<?/MIVAR>
+<!-- Stuff to control retrieval volume -->
+<form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"  name=genelister>
+  <?MIVAR>
+    <input type=hidden name=MIval value=aa-geneselect.apg>
+    <input type=hidden name=constraint value="$constraint">
+    <input type=hidden name=searchtype value="$searchtype">
+   
+    <?MIVAR COND="$(XST,$name)"> 
+      <input type=hidden name=name value="$name">
+    <?/MIVAR>
+    <?MIVAR COND="$(XST,$lg)"> 
+      <input type=hidden name=lg value="$lg">
+    <?/MIVAR>
+    <?MIVAR COND="$(XST,$refcross)"> 
+      <input type=hidden name=refcross value="$refcross">
+    <?/MIVAR>
+    <?MIVAR COND="$(XST,$knowloci)"> 
+      <input type=hidden name=knowloci value="$knowloci">
+    <?/MIVAR>
+  <?/MIVAR>
 
 </form>
 
-</HTML>
 
+<!-- Query database and construct table based on user constraints. -->
+
+<!-- Count the number of gene names that will be returned. -->
+<!-- query count(*) -->
+<?MISQL SQL="
+  select count(distinct gene_name)::integer, count(*)::integer 
+    from $target_table $all_map_names
+    $constraint;">
+<?/MISQL>
+
+<?MIVAR NAME=$num_recs>$1<?/MIVAR>
+<?MIVAR NAME=$true_count>$2<?/MIVAR>
+<?MIVAR> 
+  <!-- QUERY: $MI_SQL -->
+<?/MIVAR>
+
+
+<table width=100%>
+  <tr>
+    <td width=20%>&nbsp;</td>
+    <td width=60% align=center>
+      <?MIVAR>
+        <font size="+1">
+          Gene Search Results (<b>$num_recs</b> records found.)
+        </font>
+      <?/MIVAR>
+    </td>
+    <td width=20% align=center>
+      <a href=#modify>Modify Search</a>
+      <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>
+    </td>
+  </tr>
+</table>    
+
+<br>
+
+<?MIBLOCK COND="$(>,$num_recs,0)">
+
+  <?MIVAR COND="$(NC,$lg,0)">
+    <p><font color="red">PLEASE NOTE:</font> <font size=2> Because you 
+    have constrained this search to a specific linkage group, the results 
+    shown below <b>do not</b> include confidential mapping results. This is 
+    to avoid tacitly giving away linkage group information for these markers.
+    </font></p>
+  <?/MIVAR>
+
+  <TABLE width=100% border=0 cellspacing=0 cellpadding=3>
+    <TR>
+      <TD></TD>
+      <TD align=left>
+	<b>Gene symbol - name</b>
+	<br>[previous names / orthologues]
+      </TD>
+      <TD align=left><B>Expression</B></TD>
+      <TD align=left><B>Mutant Locus</b></TD>
+      <TD align=left><B>Location</b></TD> 
+      <TD align=left><B>Panel</b></TD> 
+      <TD align=left><B>Map<b></TD>
+    </TR>
+
+    <!-- DEBUGGING <?MIVAR>  constraint=$constraint <?/MIVAR> -->
+
+    <!-- Outer SQL contains WW, retrieves gene names. -->
+    <?MIVAR NAME=WINSIZE DEFAULT=25>$WINSIZE<?/MIVAR>
+    <?MIVAR NAME=BEGIN DEFAULT=1>$START<?/MIVAR>
+
+
+    <!--- DEFINITION OF RANGES --->
+    <?MIVAR NAME=BEGIN>$(IF,$(<,$BEGIN,1),1,$BEGIN)<?/MIVAR> 
+    <?MIVAR NAME=END>$(+,$BEGIN,$WINSIZE)<?/MIVAR>
+
+
+    <!--- EXECUTION --->
+    <!-- set row_color to green -->
+    <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
+    <?MIVAR name=row_color>$highlight<?/MIVAR>
+    <?MIVAR NAME=$ok_view_map>0<?/MIVAR>
+    <?MIVAR NAME=$rowNUM>$BEGIN<?/MIVAR>
+
+
+    <!--- Query Database --->
+    <!-- NOTE: if you change the select list, you may also need to update
+      --       the allmapnm_significance_colno variable, which is part of
+      --       the order_clause.  -->
+    <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
+      select gene_name, zdb_id, abbrev $allmapnm_significance , $order_col
+    	FROM $target_table $all_map_names
+    	$constraint 
+	group by gene_name, zdb_id, abbrev, $group_col
+    	$order_clause;">
+
+      <?MIVAR NAME=$gene_name>$1<?/MIVAR>
+      <?MIVAR NAME=$OID>$2<?/MIVAR>
+      <?MIVAR name=$marker_name>$3<?/MIVAR>
+      <?MIVAR name=$xpat> <?/MIVAR>
+
+      <!--  GENE EXPRESSION QUERY  -->
+      <?MISQL SQL="
+        select count(*)
+          from marker, marker_label, label, expression_pattern
+          where     '$OID' =  mrkr_zdb_id
+                and mrkr_zdb_id = mrkrlbl_marker_zdb_id
+                and mrkrlbl_label_zdb_id = lbl_zdb_id
+                and lbl_zdb_id = xpat_label_zdb_id 
+                ;">
+        <?MIVAR NAME=$XPAT_COUNT>$1<?/MIVAR>
+      <?/MISQL>
+
+      <?MIVAR NAME=$xpat COND="$(>,$XPAT_COUNT,0)">
+        <font size=2><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=exists&gene_name=$marker_name>assays</A></font>
+      <?/MIVAR>
+
+
+      <!-- create form for each gene -->
+	
+      <!-- get rid of dashes to avoid javascript error -->
+      <?MIVAR NAME=$form_name DELIMIT="-" REPLACE="">$OID<?/MIVAR>
+
+      <form method=post action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi" 
+	     name="$form_name">
+
+	<?MIVAR name=$first_row>1<?/MIVAR>
+
+	<!--  Run inner query for fields associated with current gene_name -->
+	<?MISQL SQL="
+	  select distinct lg_location, OR_lg, panel_id, panel_abbrev,
+	         private, a.metric, day(entry_date::date), 
+         	 month(entry_date::date), year(entry_date::date), locus_name, 
+         	 locus_zdb_id, disp_order
+	    from $target_table, OUTER panels
+	    where a.zdb_id = '$OID'
+	      and panels.zdb_id = panel_id
+	    order by panels.disp_order;">
+
+	  <!--      list all fields       -->
+	  <?MIVAR NAME=$lg_loc>$1<?/MIVAR>
+	  <?MIVAR NAME=$OR_lg>$2<?/MIVAR>
+	  <?MIVAR NAME=$panel_id>$3<?/MIVAR>
+	  <?MIVAR NAME=$panel_abbrev>$4<?/MIVAR>
+	  <?MIVAR NAME=$private>$5<?/MIVAR>
+	  <?MIVAR NAME=$metric>$6<?/MIVAR>
+	  <?MIVAR NAME=$day>$7<?/MIVAR>
+	  <?MIVAR NAME=$month>$8<?/MIVAR>
+	  <?MIVAR NAME=$year>$9<?/MIVAR>
+	  <?MIVAR NAME=$locus_name>$10<?/MIVAR>
+	  <?MIVAR NAME=$locus_zdb_id>$11<?/MIVAR>
+
+	  <!-- start new row and column -->
+	  <TR <?MIVAR>bgcolor="$row_color"<?/MIVAR> >
+	    <TD>&nbsp;</TD>
+	    <?MIBLOCK COND="$(EC,$first_row,1)">
+	      
+	        <?MIVAR>
+		  <?MIBLOCK COND="$(>,$(POSITION,$OID,GENE),0)">
+                    <?MIVAR NAME=$GENE_LINK>
+                     $(IF,$(XST,$return_rec),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$OID>SELECT</A>)
+                      <i><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID">$marker_name</a> &nbsp;&nbsp;- $gene_name</i>
+                    <?/MIVAR>
+                    <?MIVAR name=$GENE_TYPE>GENE<?/MIVAR>
+	            <?MIVAR name=$aliases> <?/MIVAR>
+		  <?MIELSE>
+                    <?MIVAR NAME=$GENE_LINK>
+                      $(IF,$(XST,$return_rec),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$OID>SELECT</A>)
+	              <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID">$marker_name</a> <!-- &nbsp;&nbsp; - $gene_name -->
+                    <?/MIVAR>
+                    <?MIVAR name=$GENE_TYPE>EST<?/MIVAR>
+		    <?MIVAR name=$aliases> <?/MIVAR>
+                  <?/MIBLOCK>
+	        <?/MIVAR>
+
+		<?MISQL SQL="
+		  select mrkrali_marker_name_alias,mrkrali_marker_zdb_id
+		    from marker_alias 
+		    where mrkrali_marker_zdb_id = '$OID'
+		  union 
+		  select putgene_putative_gene_name,putgene_pub_zdb_id
+		    from putative_gene
+		    where putgene_mrkr_zdb_id = '$OID';">
+		  <?MIVAR NAME=$alias>$(IF,$(=,$(POSITION,$2,GENE),0),$1,<i>$1</i>)<?/MIVAR>
+		  <?MIVAR NAME=$aliases>$(IF,$(=,$MI_CURRENTROW,1),$aliases $alias,$aliases; $alias)<?/MIVAR>
+		<?/MISQL>
+
+		<?MISQL SQL="
+		  select distinct ortho_name, ortho_abbrev 
+		    from orthologue 
+		    where c_gene_id = '$OID' 
+		      and (   lower(ortho_name) <> '$(LOWER,$gene_name')
+			   or lower(ortho_abbrev) <> '$(LOWER,$marker_name'));">
+
+		  <?MIVAR NAME=$ortho_name>$1<?/MIVAR>
+		  <?MIVAR NAME=$ortho_abbrev>$2<?/MIVAR>
+		  <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
+		    <?MIVAR NAME=$aliases>$aliases / <?/MIVAR>
+		  <?MIELSE>
+		    <?MIVAR NAME=$aliases>$aliases; <?/MIVAR>
+		  <?/MIBLOCK>
+		  <?MIVAR NAME=$aliases>$aliases $ortho_name ($ortho_abbrev)<?/MIVAR>
+		<?/MISQL>
+		<?MIBLOCK COND="$(NE,$aliases, )">
+		  <?MIBLOCK COND="$(>,$(POSITION,$OID,GENE),0)">
+		    <?MIVAR name=$aliases>
+		      [$aliases]
+		    <?/MIVAR>
+		  <?MIELSE>
+		    <?MIVAR name=$aliases>
+		      [$aliases]
+		    <?/MIVAR>
+		  <?/MIBLOCK>
+		<?MIELSE>
+		  <?MIVAR name=$aliases>
+                    []
+                  <?/MIVAR>
+		<?/MIBLOCK>
+
+              <?MIVAR>
+        <TD>
+          $GENE_TYPE:$GENE_LINK $aliases
+        </TD>
+              <?/MIVAR>
+
+            <?/MIBLOCK> <!-- first row -->
+
+	    <?MIBLOCK COND="$(EC,$first_row,0)">
+              <TD>&nbsp;</TD>
+	    <?/MIBLOCK>
+
+	    <?MIVAR><TD>$xpat &nbsp;</TD><?/MIVAR>
+	    
+            <TD><FONT SIZE=2>
+	      $(IF,$(OR,$(ISNULL,$locus_zdb_id),$(EC,$locus_zdb_id,"")),
+	        "Unknown",
+	        "<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID="$locus_zdb_id">"<i>$locus_name</i>"</A>")
+	    </TD>
+
+	    <!-- Location --> 
+            <TD> <font size=2> 
+
+	    <?MIBLOCK COND="$(AND,$(EC,$panel_abbrev,na),$(=,$(POSITION,$panel_id,LINK),0))">
+	      Unmapped</TD>
+	      <TD>&nbsp; </TD><TD>&nbsp; </TD>
+            <?/MIBLOCK>
+
+	    <?MIBLOCK COND="$(>,$(POSITION,$panel_id,REF),0)">
+	      <?MIVAR>  
+	        $(IF,$(AND,$(NC,$OR_lg,0),$(EC,$private,f)),
+		  "LG <b>"$OR_lg"</b>;
+		  <b> "$lg_loc"</b> "$metric""&nbsp;&nbsp;
+		  <A HREF="javascript:view_scores('"$panel_id"','"$OR_lg"','"$OID"','"$marker_name"')";>Scoring Data</A>
+
+	     </TD>
+
+
+		  <!-- Panel --> 
+		  <TD><font size=2> 
+		    "<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$panel_id">"$panel_abbrev"</A>"
+		    </font>
+		  </TD>
+
+
+		  <!-- MAP Checkbox --> 
+		  <TD><font size=2 COLOR=#A9A9A9> 
+		    <input type=checkbox name=$panel_abbrev value=1 CHECKED > 
+		    </font> 
+		  </TD>  )
+
+	        <!--   end if   -->
+
+	        <?MIBLOCK COND="$(AND,$(NC,$OR_lg,0),$(EC,$private,f))">
+		  <?MIVAR name=$ok_view_map>1<?/MIVAR>
+	        <?/MIBLOCK>
+
+	        $(IF,$(AND,$(NC,$OR_lg,0),$(NC,$private,f)),
+		  "Mapped on <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$panel_id">"$panel_abbrev" panel</A>, but still confidential.
+		  </TD>
+		  <TD>&nbsp;</TD>
+		  <TD>&nbsp; </TD> ")
+	      <?/MIVAR>
+	    <?/MIBLOCK>  <!-- panel like ref -->
+
+
+	    <?MIBLOCK COND="$(>,$(POSITION,$panel_id,LINK),0)">
+	      <!-- independent linkage -->
+
+
+	      <?MISQL SQL="
+	        select alnkgmem_member_name, alnkgmem_comments, 
+		       alnkgmem_or_lg, alnkgmem_private 
+		  from all_linked_members 
+		  where alnkgmem_member_zdb_id = '$OID' 
+		    and alnkgmem_linkage_zdb_id = '$panel_id'
+		  order by alnkgmem_comments desc;">
+
+	        <?MIVAR NAME=$map_name>$1<?/MIVAR>
+	        <?MIVAR NAME=$map_comments>$2<?/MIVAR>
+	        <?MIVAR NAME=$map_lg>$3<?/MIVAR>
+	        <?MIVAR NAME=$map_private>$4<?/MIVAR>
+
+	        <?MIBLOCK COND="$(NC,$map_private,t)">
+	          <font size=2>
+		  <?MIVAR>
+		    $(IF,$(NC,$map_lg,0),LG <b>$map_lg</b>)
+		  <?/MIVAR>
+
+		  <?MIBLOCK COND="$(NC,$map_comments,"")">
+		    <?MIVAR>
+		      <A HREF=javascript:show_detail('$panel_id','$OID','$marker_name','""');>Map Details</A>
+		    <?/MIVAR>
+                    </TD><TD>&nbsp; </TD><TD>&nbsp; </TD> <TD>&nbsp;</TD>
+	          <?/MIBLOCK>
+		  </font>
+
+		  <?MIBLOCK COND="$(AND,$(NC,$map_lg,0),$(EC,$map_comments,""))">
+		    &nbsp;</TD>
+		    <TD>&nbsp; </TD><TD>&nbsp; </TD>
+	          <?/MIBLOCK>
+	        <?/MIBLOCK>
+
+	        <?MIBLOCK COND="$(EC,$map_private,t)">
+		  Linked but still confidential. </TD> </TD><TD>&nbsp; </TD><TD>&nbsp; </TD>
+	        <?/MIBLOCK>
+	      <?/MISQL>
+	    <?/MIBLOCK>  <!-- end of panel id like link -->  
+	  </TR>
+
+	  <?MIVAR name=$first_row>0<?/MIVAR>
+
+	  <!--   end inner SQL query    --> 
+	<?/MISQL>
+
+	<!--      if(view_map == true)     -->
+	<!--      insert Submit view_map button    -->
+	<?MIBLOCK COND="$(EC,$ok_view_map,1)">
+
+	  <?MIVAR>
+	    <input type=hidden name=userid value=$userid>
+	    <input type=hidden name=marker value=$marker_name>
+	    <input type=hidden name=view_map value="view_map">
+
+	    <TR <?MIVAR>bgcolor="$row_color"<?/MIVAR> >
+	      <TD>&nbsp;</TD>
+	      <TD>&nbsp;</TD>
+	      <TD>&nbsp;</TD>
+	      <TD align=left>
+		<font size=1>
+		<input type=button value='VIEW MERGED MAP' name=view_merge_map
+		       onClick="document.$form_name.action='/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi';document.$form_name.submit();">
+	      </TD>
+	      <TD align=left>
+		<font size=1>
+		<input type=submit value='VIEW INDIVIDUAL MAPS' name=view_map >
+	      </TD>
+             <TD>&nbsp;</TD>
+	     <TD>&nbsp;</TD>
+	    </TR>
+	  <?/MIVAR>
+
+	  <?MIVAR name=$ok_view_map>0<?/MIVAR>
+	<?/MIBLOCK>
+
+
+	<!--    change row_color    -->
+	
+<?MIBLOCK>
+  <?MIBLOCK COND="$(EC,$row_color,white)">     
+    <?MIVAR name=$row_color>$highlight<?/MIVAR><!--#cc9900 orange-->
+    <?MIVAR>$(EXIT,3)<?/MIVAR>
+  <?/MIBLOCK>
+
+  <?MIVAR COND="$(EC,$row_color,$highlight)">      
+    <?MIVAR name=$row_color>white<?/MIVAR>
+  <?/MIVAR>
+<?/MIBLOCK>    
+
+	<!-- end form for map_marker -->         
+      </FORM>
+
+      <!-- end gene_name SQL -->
+    <?/MISQL>
+
+  </TABLE>
+
+  <BR>
+
+  <Center>
+  <Table width="70%" border="0">
+    <tr>
+      <td width="45%" align=right valign=top>&nbsp;
+
+	<?MIVAR name=comment>  Build array of user data  <?/MIVAR>
+
+	<!-- to be used by walking windows -->
+	<!-- want GET string as short as possible - append only when variable 
+	  -- exists, buffer overflow may cause segmentation fault -->
+
+	<?MIVAR name=selector>MIval=aa-geneselect.apg&WINSIZE=$WINSIZE<?/MIVAR>
+        <?MIVAR name=$UserInput><?/MIVAR>
+	<?MIVAR name=$UserInput COND=$(XST,$lg)>$UserInput&lg=$lg<?/MIVAR>
+	<?MIVAR name=$UserInput COND=$(XST,$refcross)>$UserInput&refcross=$refcross<?/MIVAR>
+	<?MIVAR name=$UserInput COND=$(XST,$knownloci)>$UserInput&knownloci=$knownloci<?/MIVAR>
+	<?MIVAR name=$UserInput COND=$(XST,$searchtype)>$UserInput&searchtype=$searchtype<?/MIVAR>
+	<?MIVAR name=$UserInput COND=$(XST,$return_rec)>$UserInput&return_rec=$return_rec<?/MIVAR>
+	<?MIVAR name=UserInput COND=$(XST,$name)>$UserInput&name=$(URLENCODE,$name)<?/MIVAR>
+        <?MIVAR name=UserInput COND=$(XST,$query_results)>$UserInput&query_results=$(URLENCODE,$query_results)<?/MIVAR>
+
+	<!--- Return to the previous set of Rows --->
+	<?MIBLOCK COND="$(>,$BEGIN,1)">
+	
+	  <?MIVAR>
+	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$(-,$BEGIN,$WINSIZE)&BEGIN=$BEGIN&$selector$UserInput">Prev</A>&nbsp;&nbsp;&nbsp;&nbsp;<br>
+
+	    <!-- If current not First Page, create link to first page. -->
+	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=1&BEGIN=1&$selector$UserInput">First Page</A>
+	  <?/MIVAR>
+
+	<?/MIBLOCK>
+
+      </td>
+
+
+      <!-- Calculate 3 pages before and 3 pages after current page. -->
+      <?MIVAR name=$CURRENT>$(FIX,$(+,$(/,$BEGIN,$WINSIZE),1))<?/MIVAR>
+
+      <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,3)),0)">
+        <td valign=top>
+	  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,3))"> $(-,$CURRENT,3)</A> <?/MIVAR>
+	</td>
+      <?/MIBLOCK>
+
+      <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,2)),0)">
+	<td valign=top>
+	  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,2))"> $(-,$CURRENT,2)</A><?/MIVAR>
+	</td>
+      <?/MIBLOCK>
+
+      <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,1)),0)">
+	<td valign=top>
+	  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,1))"> $(-,$CURRENT,1)</A><?/MIVAR>
+	</td>
+      <?/MIBLOCK>
+
+      <?MIBLOCK COND="$(>,$num_recs,$WINSIZE)">
+	<td align=center valign=top>
+	  <?MIVAR>  $CURRENT <?/MIVAR>
+	</td>
+      <?/MIBLOCK>
+
+      <?MIVAR COND="$(<=,$(+,$BEGIN,$(*,$WINSIZE,1)),$num_recs)">
+	<td valign=top>
+	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$END"> $(+,$CURRENT,1)</A>
+	</td>
+      <?/MIVAR>
+
+      <?MIVAR COND="$(<=,$(+,$BEGIN,$(*,$WINSIZE,2)),$num_recs)">
+	<td valign=top>
+	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,2))"> $(+,$CURRENT,2)</A>
+	</td>
+      <?/MIVAR>
+
+      <?MIVAR COND="$(<=,$(+,$BEGIN,$(*,$WINSIZE,3)),$num_recs)">
+	<td valign=top>
+	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,3))"> $(+,$CURRENT,3)</A>
+	</td>
+      <?/MIVAR>
+
+      <td width="45%" align=left valign=top>&nbsp;
+
+	<!--- Get the next set of Rows --->
+	<?MIBLOCK COND="$(<=,$(+,$BEGIN,$WINSIZE),$num_recs)">
+	  <?MIVAR>
+	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$END&BEGIN=$BEGIN&$selector$UserInput">Next</A><br>
+	  <?/MIVAR>
+
+	  <!-- Calculate last page -->
+	  <?MIVAR name=$START COND="$(=,$(MOD,$num_recs,$WINSIZE),0)">$(+,$(*,$(-,$(/,$num_recs,$WINSIZE),1),$WINSIZE),1)<?/MIVAR>
+
+
+	  <?MIVAR name=$START COND="$(!=,$(MOD,$num_recs,$WINSIZE),0)">$(+,$(*,$(FIX,$(/,$num_recs,$WINSIZE)),$WINSIZE),1)<?/MIVAR>
+
+	  <?MIVAR>
+	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$START&$selector$UserInput">Last Page</A>
+	  <?/MIVAR>
+	<?/MIBLOCK>
+
+      </td>
+    </tr>
+  </Table>
+  </Center>
+
+<?/MIBLOCK>  <!-- num_rec gt 0 -->
+
+<?MIVAR><!-- SQL: $MI_SQL --><?/MIVAR>
+
+<?MIVAR COND=$(EQ,$MI_ROWCOUNT,0)>No matching records found<?/MIVAR>
+
+
+<?/MIBLOCK> <!-- xst query_results -->
+
+
+<?MIBLOCK COND="$(NXST,$accession)">  <!-- don't want modify search result if come from accessionalister -->
+
+    <Table class=search width="100%" border=0 cellpadding=1 cellspacing=0>
+      <TR>
+	<td class=titlebar>
+          &nbsp;&nbsp;
+
+  <?MIBLOCK COND="$(NXST,$query_results)">
+	  <b>Search for GENES</b>
+  <?MIELSE>
+          <a name=modify></a><b>Modify your search</b>
+  <?/MIBLOCK>
+
+        </td>
+        <td class=titlebar align=right>
+        <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>          
+        </td>
+      </tr>
+
+    <?MIVAR COND="$(NXST,$START)" NAME=$START>1<?/MIVAR>
+
+  <form name=critform method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+
+    <input type=hidden name=MIval value=aa-geneselect.apg>
+    <input type=hidden name=query_results value="exist">
+    <input type=hidden name=START value=1>
+
+  <?MIVAR COND="$(NXST,$refcross)" NAME=$refcross>NULL<?/MIVAR>
+  <?MIVAR COND="$(XST,$gnslct_rfcrss)" NAME=$refcross>$gnslct_rfcrss<?/MIVAR>
+  <?MIVAR COND="$(NXST,$searchtype)" NAME=$searchtype>contains<?/MIVAR>
+  <?MIVAR COND="$(XST,$gnslct_srchtyp)" NAME=$searchtype>$gnslct_srchtyp<?/MIVAR>
+  <?MIVAR COND="$(NXST,$lg)" NAME=$lg>0<?/MIVAR>
+  <?MIVAR COND="$(XST,$gnslct_lg)" NAME=$lg>gnslct_lg<?/MIVAR>
+
+  <?MIVAR>
+
+    <TR>
+      <TD class="halfwidth">
+	  <font size=2>
+	  <b>Name 
+	  <SELECT name=searchtype onChange='document.critform.START.value = "";'>
+	    <option $(IF,$(EC,$searchtype,begins),SELECTED) value=begins>begins with
+	    <option $(IF,$(EC,$searchtype,contains),SELECTED) value=contains>contains
+	  </select>:
+	  </b> 
+	  <input type=text name=name size=10 $(IF,$(XST,$gnslct_name), value=$gnslct_name) onChange='document.critform.START.value = ""' $(IF,$(XST,$name),value='$name')>
+	  </font>
+      </TD>
+      <TD class="halfwidth">
+	  <b>Mapping panel:</b> 
+	  <SELECT NAME=refcross onChange='document.critform.START.value = "";'>
+	  <option <?MIVAR COND="$(EC,$refcross,NULL)">SELECTED<?/MIVAR> value=NULL>Any
+	  <?MISQL SQL="select zdb_id,abbrev,ptype from panels order by ptype, abbrev;">
+	  <option $(IF,$(EC,$refcross,$1),SELECTED) value=$1>$2($3)
+	  <?/MISQL>
+	  </SELECT>
+  <?/MIVAR>
+  <?MIVAR>
+	  <b>LG:</b> 
+	  <select NAME=lg onChange='document.critform.START.value = "";'>
+	  <?MISQL SQL="select distinct lg_name,lg_order from linkage_group order by lg_order"> 
+	    <option value="$1" $(IF,$(EC,$lg,$1),SELECTED) >$(IF,$(EC,$1,0),any,$1)
+	  <?/MISQL>
+	  </SELECT>
+  <?/MIVAR>
+     </TD>
+   </TR>
+   <TR>
+     <TD> 
+       <input type=checkbox name=knownloci onChange='document.critform.START.value = "";'> Show only genes with known mutant loci<br>
+     </TD>
+
+     <?MIBLOCK COND="$(NC,$knownloci,NULL)">
+       <SCRIPT> 
+         document.critform.knownloci.checked = true 
+       </SCRIPT>
+     <?/MIBLOCK>
+
+   </TR>
+   <TR>
+     <TD class="resultcount" colspan=2>
+	   Display results in groups of 
+	  <?MIVAR><input type="text" name="WINSIZE" size="3" onChange='document.critform.START.value = "";' $(IF,$(XST,$WINSIZE),value='$WINSIZE',value="20")>.<?/MIVAR>
+	  <?MIBLOCK COND="$(AND,$(NOT,$(ISNULL,$WINSIZE)),$(XST,$WINSIZE))">
+	   <?MIVAR> 
+	    <SCRIPT> 
+	      document.critform.WINSIZE.value = "$WINSIZE" 
+	    </SCRIPT>
+	  <?/MIVAR> 
+	<?/MIBLOCK> 
+      </TD>
+     </TR>
+     <TR>
+      <TD class="submitbar" colspan=2 align="right">
+	  <input type=submit name=action value="SEARCH" onSubmit="document.critform.submit();">
+	  <input type=button value="RESET" onClick="call_reset();">
+      </TD>
+     </TR>
+  </TABLE>
+  <p>
+
+    <input type=hidden NAME="START" value=1>
+
+
+
+  <!-- This next little block executes only if we are using the browser as a
+  selector. That is we want user to ultimately CHOOSE a browsed value. All
+  we have to do at this point is pass the return record along to the markerlister.
+  -->
+  <?MIVAR COND=$(XST,$return_rec)>
+  <input type=hidden NAME="return_rec" value=$return_rec>
+  <?/MIVAR>
+
+
+  </form>
+<?/MIBLOCK>  <!-- nxst accession -->
+
+<?MIBLOCK COND="$(XST,$query_results)">
+    </TD>
+  </TR>
+</TABLE>
+<?MIELSE>
+  <!-- Put the cursor in the NAMES criterion box -->
+  <SCRIPT>document.critform.name.focus();</SCRIPT>
+<?/MIBLOCK>
+
+
+<?MIBLOCK COND="$(NXST,$accession)">
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>  
+<?/MIBLOCK>

@@ -1,20 +1,19 @@
-<head>
-<SCRIPT>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<script>
+		function call_close(){
+			var buttonstring = '<form><input type=button name=close value=Close onclick=window.close();></form>';
+			document.writeln(buttonstring);
+		}
+		</script>
+		<title>
+			ZFIN Zebrafish Developmental Stages Introduction
+		</title>
+	</head>
 
-function call_close(){
-   var buttonstring = '<FORM><input type=button name=close value=Close onclick=window.close();></FORM>';
-   document.writeln(buttonstring);
-}
+<script language="JavaScript" src="http://<!--|DOMAIN_NAME|-->/header.js"></script>
 
-function call_zfin(){
-   var hrefstring = '<A HREF="/index.html">ZFIN  <img src="/fish_net.gif"></A><p>';
-   document.writeln(hrefstring);
-}
-
-</SCRIPT>
-<Title>Introduction</title>
-</head>
-<body bgcolor="#FFFFFF" text="#000000">
 
 <H3>INTRODUCTION</H3>
 <p><i>Modified from: 
@@ -29,23 +28,13 @@ As for other kinds of embryos, staging by morphological criteria partly resolves
 An earlier staging series for zebrafish, although less complete than the present one, fairly accurately portrays the first third (or first day) of embryonic development, and includes useful sets of photographs (Hisaoka &amp; Battle, 1958; Hisaoka &amp; Firlit, 1960).  Warga &amp; Kimmel (1990) briefly described stages of the blastula and gastrula.  Preliminary versions of this series were circulated and published in <i>The Zebrafish Book</i> (Westerfield, 1994).  The present version substantially revises, corrects, and expands the earlier ones.  Hard copies of the figures can be obtained from Bonnie Ullmann: <I>ullmann@uoneuro.uoregon.edu</I>.
 <hr>
 <A HREF="stages.html">Return to <I>Developmental Stages</I> Contents</A>
-<hr>
 
-Questions or comments:
-<address>Pat Edwards<br>
-Institute of Neuroscience<br>
-University of Oregon<br>
-Eugene, OR 97403 USA<br>
-fax: 503-346-4548<br>
-<a href="mailto:edwards@uoneuro.uoregon.edu"> edwards@uoneuro.uoregon.edu</a>
-</address>
-<hr>
 <SCRIPT>
-  if ((window.name=='')||(window.name=='ZFIN')){
-    call_zfin();
-  } else {
+  if (window.name=='popup'){
     call_close();
   }
 </SCRIPT>
 <p>
 </body>
+
+<script language="JavaScript" src="http://<!--|DOMAIN_NAME|-->/footer.js"></script>

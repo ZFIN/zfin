@@ -1,4 +1,5 @@
 
+
 -- Drop all out-of-date functions.
 drop function regen_anatomy;
 drop function populate_all_anatomy_contains;

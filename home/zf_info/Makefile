@@ -35,10 +35,10 @@ SUBDIRS = SEARCH_SITE anatomy catch dbase images monitor movies news stckctr \
 	zfbook sequence
 
 GENERICS = defs.html genome.html nomen.html nomen_comm.html \
-	updates.html zfprbs.html glossary.shtml
+	updates.html zfprbs.html citation.html anatomy.html contact_us.html glossary.shtml
 
-STATICS = 227.gif anatomy.html fish.gif fish_bgd.gif fish_net.gif logo.jpeg \
-	translocation.jpeg zfin.gif citation.html
+STATICS = 227.gif fish.gif fish_net.gif logo.jpeg \
+	translocation.jpeg zfin.gif 
 
 
 

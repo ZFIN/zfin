@@ -15,7 +15,9 @@ Variables expected:  OID (REQUIRED) -- the zdb_id of the user to edit.
 
 <HTML>
 
-<TITLE>EDIT ZFIN USER</TITLE>
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+
+<TITLE>Edit ZFIN User</TITLE>
 
 
 <?MISQL SQL="
@@ -31,7 +33,7 @@ Variables expected:  OID (REQUIRED) -- the zdb_id of the user to edit.
 
   <!-- FIRST fill variables with user's data. IF new user, fill with nothing.-->
 
-  <FORM METHOD=POST ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" TARGET=content>
+  <FORM METHOD=POST ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 
   <?MISQL SQL="
     select login, issue_time, access, name
@@ -94,7 +96,7 @@ Variables expected:  OID (REQUIRED) -- the zdb_id of the user to edit.
   <p>
   <?MIVAR>
     <center>
-    <TABLE border=4  cellpadding=8>
+    <TABLE border=1  cellpadding=8>
       <TR align=center>
         <TD>
 
@@ -192,4 +194,5 @@ Variables expected:  OID (REQUIRED) -- the zdb_id of the user to edit.
 
 
 <?/MIBLOCK>  <!-- ends cond authorization -->
-</HTML>
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>

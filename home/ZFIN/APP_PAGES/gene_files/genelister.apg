@@ -28,9 +28,8 @@
 <basefont COLOR="#000000" size=2>
 
 <?MIVAR NAME=$private>NULL<?/MIVAR>
-<?MIVAR NAME=$navtile>NULL<?/MIVAR>
 <?MIVAR NAME=$MI_NULL><?/MIVAR>
-<?MIVAR name=$TileInput>&navtile=true<?/MIVAR>
+
 
 <!-- THIS NEXT PART IS EXECUTED AFTER THE PERSON ENTERS SOME CRITERIA -->
 
@@ -105,10 +104,9 @@
 <?/MIBLOCK> <!-- ends cond any constraints specified -->
 
 <?MIVAR NAME=$order_col COND="$(XST,$ismapped)">mapgene_abbrev_order as abbrev_order<?/MIVAR>
-<?MIVAR NAME=$group_col COND="$(XST,$ismapped)">mapgene_abbrev_order<?/MIVAR>
 <?MIVAR NAME=$order_col COND="$(NXST,$ismapped)">allgene_abbrev_order as abbrev_order<?/MIVAR>
-<?MIVAR NAME=$group_col COND="$(NXST,$ismapped)">allgene_abbrev_order<?/MIVAR>
-<?MIVAR NAME=$order_clause>order by $allmapnm_significance_colno abbrev_order<?/MIVAR>
+
+<?MIVAR NAME=$order_clause>order by $allmapnm_significance_colno 5<?/MIVAR>
 
 <?MIVAR NAME=$target_table COND="$(XST,$ismapped)">mapped_genes a <?/MIVAR>
 <?MIVAR NAME=$target_table COND="$(NXST,$ismapped)">all_genes a <?/MIVAR>
@@ -188,7 +186,6 @@
 	<b>Gene symbol - name</b>
 	<br>[previous names / orthologues]
       </TD>
-      <TD align=left><B>Expression</B></TD>
       <TD align=left><B>Mutant Locus</b></TD>
       <TD align=left><B>Location</b></TD> 
       <TD align=left><B>Panel</b></TD> 
@@ -223,31 +220,12 @@
       select gene_name, zdb_id, abbrev $allmapnm_significance , $order_col
     	FROM $target_table $all_map_names
     	$constraint 
-	group by gene_name, zdb_id, abbrev, $group_col
+	group by gene_name, zdb_id, abbrev, 5
     	$order_clause;">
 
       <?MIVAR NAME=$gene_name>$1<?/MIVAR>
       <?MIVAR NAME=$OID>$2<?/MIVAR>
       <?MIVAR name=$marker_name>$3<?/MIVAR>
-      <?MIVAR name=$xpat> <?/MIVAR>
-
-      <!--  GENE EXPRESSION QUERY  -->
-      <?MISQL SQL="
-        select count(*)
-          from marker, marker_label, label, expression_pattern
-          where     '$OID' =  mrkr_zdb_id
-                and mrkr_zdb_id = mrkrlbl_marker_zdb_id
-                and mrkrlbl_label_zdb_id = lbl_zdb_id
-                and lbl_zdb_id = xpat_label_zdb_id 
-                ;">
-        <?MIVAR NAME=$XPAT_COUNT>$1<?/MIVAR>
-      <?/MISQL>
-
-      <?MIVAR NAME=$xpat COND="$(>,$XPAT_COUNT,0)">
-        <font size=2><A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatlister_parts.apg&gene_name=$marker_name>assays</A></font>
-      <?/MIVAR>
-
-
       <!-- create form for each gene -->
 	
       <!-- get rid of dashes to avoid javascript error -->
@@ -286,34 +264,25 @@
 	  <TR <?MIVAR>bgcolor="$row_color"<?/MIVAR> >
 	    <TD>&nbsp;</TD>
 	    <?MIBLOCK COND="$(EC,$first_row,1)">
-	      
+	      <TD valign=top> <font size=2>
 	        <?MIVAR>
-		  <?MIBLOCK COND="$(>,$(POSITION,$OID,GENE),0)">
-                    <?MIVAR NAME=$GENE_LINK>
-                     $(IF,$(XST,$return_rec),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$OID TARGET=content>SELECT</A>)
-                      <i><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID" target=content>$marker_name</a> &nbsp;&nbsp;- $gene_name</i>
-                    <?/MIVAR>
-                    <?MIVAR name=$GENE_TYPE>GENE<?/MIVAR>
-	            <?MIVAR name=$aliases> <?/MIVAR>
-		  <?MIELSE>
-                    <?MIVAR NAME=$GENE_LINK>
-                      $(IF,$(XST,$return_rec),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$OID TARGET=content>SELECT</A>)
-	              <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID" target=content>$marker_name</a> <!-- &nbsp;&nbsp; - $gene_name -->
-                    <?/MIVAR>
-                    <?MIVAR name=$GENE_TYPE>EST<?/MIVAR>
-		    <?MIVAR name=$aliases> <?/MIVAR>
-                  <?/MIBLOCK>
+	          $(IF,$(XST,$return_rec),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$OID TARGET=content>SELECT</A>)
+		  <i>
+	          <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID TARGET=content>$marker_name</A>
+		  &nbsp;&nbsp; - $gene_name</i>
+		  <?MIVAR name=$aliases><br>[<i><?/MIVAR>
 	        <?/MIVAR>
+		<?MIVAR name=$rowNUM>$(+,$rowNUM,1)<?/MIVAR>
 
 		<?MISQL SQL="
-		  select mrkrali_marker_name_alias,mrkrali_marker_zdb_id
+		  select mrkrali_marker_name_alias
 		    from marker_alias 
 		    where mrkrali_marker_zdb_id = '$OID'
 		  union 
-		  select putgene_putative_gene_name,putgene_pub_zdb_id
+		  select putgene_putative_gene_name
 		    from putative_gene
 		    where putgene_mrkr_zdb_id = '$OID';">
-		  <?MIVAR NAME=$alias>$(IF,$(=,$(POSITION,$2,GENE),0),$1,<i>$1</i>)<?/MIVAR>
+		  <?MIVAR NAME=$alias>$1<?/MIVAR>
 		  <?MIVAR NAME=$aliases>$(IF,$(=,$MI_CURRENTROW,1),$aliases $alias,$aliases; $alias)<?/MIVAR>
 		<?/MISQL>
 
@@ -333,37 +302,17 @@
 		  <?/MIBLOCK>
 		  <?MIVAR NAME=$aliases>$aliases $ortho_name ($ortho_abbrev)<?/MIVAR>
 		<?/MISQL>
-		<?MIBLOCK COND="$(NE,$aliases, )">
-		  <?MIBLOCK COND="$(>,$(POSITION,$OID,GENE),0)">
-		    <?MIVAR name=$aliases>
-		      [$aliases]
-		    <?/MIVAR>
-		  <?MIELSE>
-		    <?MIVAR name=$aliases>
-		      [$aliases]
-		    <?/MIVAR>
-		  <?/MIBLOCK>
-		<?MIELSE>
-		  <?MIVAR name=$aliases>
-                    []
-                  <?/MIVAR>
-		<?/MIBLOCK>
-
-              <?MIVAR>
-        <TD>
-          $GENE_TYPE:$GENE_LINK $aliases
-        </TD>
-              <?/MIVAR>
-
-            <?/MIBLOCK> <!-- first row -->
+		<?MIVAR COND="$(NC,$aliases,<br>[<i>)">
+		  $aliases </i>]
+		<?/MIVAR>
+	      </TD>
+	    <?/MIBLOCK>
 
 	    <?MIBLOCK COND="$(EC,$first_row,0)">
               <TD>&nbsp;</TD>
 	    <?/MIBLOCK>
 
-	    <?MIVAR><TD>$xpat &nbsp;</TD><?/MIVAR>
-	    
-            <TD><FONT SIZE=2>
+	    <TD><FONT SIZE=2>
 	      $(IF,$(OR,$(ISNULL,$locus_zdb_id),$(EC,$locus_zdb_id,"")),
 	        "Unknown",
 	        "<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID="$locus_zdb_id" TARGET=content>"<i>$locus_name</i>"</A>")
@@ -491,7 +440,6 @@
 	    <input type=hidden name=view_map value="view_map">
 
 	    <TR <?MIVAR>bgcolor="$row_color"<?/MIVAR> >
-	      <TD>&nbsp;</TD>
 	      <TD>&nbsp;</TD>
 	      <TD>&nbsp;</TD>
 	      <TD align=left>
@@ -641,33 +589,6 @@
 
 <?MIVAR COND=$(EQ,$MI_ROWCOUNT,0)>No matching records found<?/MIVAR>
 
-<!-- Cause a tile for the new page to appear in the navigator frame -->
-<!-- startframes.apg will pass variables on to appropriate page -->
-<!-- don't want a tile if got here via the accessionlister  -->
-
-<!-- URLENCODE calls retain value if variable in function had a value 
-  -- the first call and is null the second call-->
-<!--  be sure to force a reset of URLENCODE -->
-
-<?MIBLOCK COND="$(NXST,$accession)">
-  <?MIVAR NAME=page_title>Find GENE<?/MIVAR>
-  <?MIVAR name=$TileInput COND="$(XST,$BEGIN)">$TileInput&BEGIN=$BEGIN<?/MIVAR>
-  <?MIVAR name=$TileInput COND="$(XST,$WINSIZE)">$TileInput&WINSIZE=$WINSIZE<?/MIVAR>
-  
-  <?MIVAR COND="$(XST,$(URLENCODE,$name))" NAME=$(URLENCODE,$name)><?/MIVAR>
-  <?MIVAR COND="$(NXST,$name)" NAME=$name><?/MIVAR>
-
-	
-
-  <?MIVAR>
-    <SCRIPT>
-
-      var page_id='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-geneselect.apg&select_from=GENE&frame_size=130$TileInput&name=$(URLENCODE,$name)';
-      top.update_hist(page_id,"$page_title");
-      top.controls.location.reload(true);
-    </SCRIPT>
-  <?/MIVAR>
-<?/MIBLOCK>
 
 </HTML>
 

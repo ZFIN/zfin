@@ -5,75 +5,219 @@
    <meta name="GENERATOR" content="Mozilla/4.74 [en] (Win98; U) [Netscape]">
    <title>ZIRC Fish Line Submission Form</title>
    
-<style type="text/css" src="zirc.css"></style>
+   <style type="text/css">
+   <!--
+   .comments {font-family: serif;
+   				font-size: 9pt;}
+   -->
+   </style>
 
-<SCRIPT language="JavaScript1.1" src="zirc.js"></SCRIPT>
+<SCRIPT language="JavaScript1.1">
+/*	*** I've changed this script to suit our needs at zfin.org ***
+	Cut-N-Paste JavaScript from ISN Toolbox 
+     Copyright 1996, Infohiway, Inc.  Restricted use is hereby
+     granted (commercial and personal OK) so long as this code
+     is not *directly* sold and the copyright notice is buried
+     somewhere deep in your HTML document.  A link to our site
+     http://www.infohiway.com is always appreciated of course,
+     but is absolutely and positively not necessary. ;-)
+*/
+<!-- hide from older browsers
+var expires = new Date()
+expires.setTime(expires.getTime() + 10*24*60*60*1000); //years*days*hours*min*sec*millisec Our data expires in 10 days
+formItems = 15; //we're interested in the first 14 items of the form
 
+function Set_Cookie(name,value,expires,path,domain,secure) {
+      document.cookie = name + "=" +escape(value) +
+          ( (expires) ? ";expires=" + expires.toGMTString() : "") +
+          ( (path) ? ";path=" + path : "") + 
+          ( (domain) ? ";domain=" + domain : "") +
+          ( (secure) ? ";secure" : "");
+  }
+
+function getCookie(name) {
+	var allcookies = document.cookie;
+	if (allcookies == "") return false;
+	var start = allcookies.indexOf(name + '=');
+		if (start == -1) return false;
+	start += name.length + 1;
+	var end = allcookies.indexOf(';', start);
+		if (end == -1) end = allcookies.length;
+	return allcookies.substring(start, end); 
+} //end of getCookie()
+
+function deleteCookie(name, path, domain) {
+  if (getCookie(name)) {
+    document.cookie = name + "=" + 
+    ((path) ? "; path=" + path : "") +
+    ((domain) ? "; domain=" + domain : "") +
+    "; expires=Thu, 01-Jan-70 00:00:01 GMT";
+	window.scrollTo(0,0);
+  }
+}
+
+function cookieExists(name, path, domain) {
+  if (getCookie(name)=="") {
+    return "no";
+  } else {
+    return "yes";
+  }
+}
+
+function cookiesOK() {
+  var resultCookieExists = cookieExists('zircLineSubmissionProfile'); 
+   if (resultCookieExists == "yes") {
+ 	     return "yes";}  // cookies appear to be OK with this user
+   else {
+  use_cookies = (confirm("Will you allow the contact information and grant number you enter into this form "
+   +"to be stored as cookies so that those values will be pre-filled the next "
+   +"time you return to submit a fish line?") ? "yes":"no");
+ 	   if (use_cookies == "yes") {
+ 	     return "yes";}  //cookies are OK for this user
+ 	   else {  //end of if (use_cookies == "yes")
+	     deleteCookie('zircLineSubmissionProfile'); //if the user clicks 'cancel' the cookie (if it can be found) is deleted
+ 	     return null;}
+    }  // end of if/else (resultCookieExists == "yes")
+} // end of function cookies OK () 
+
+
+function saveValues() {
+ var bakeOK = cookiesOK();
+ if (bakeOK == "yes") {
+ if (document.images) { // only do it in JavaScript 1.1 browsers
+  var zircCookie = "";
+  for (i=0;i<document.forms.length;i++) { 
+   for (j=0;j<formItems; j++) {  //find the first 14 items of the form//old data=document.forms[i].elements.length
+    var cookieElement = document.forms[i].elements[j].name; //find the form element
+	if ((document.forms[i].elements[j].type == "text")
+		|| (document.forms[i].elements[j].type == "password")
+		|| (document.forms[i].elements[j].type == "textarea")
+		|| (document.forms[i].elements[j].type == "radio")) {
+	var elementValue = document.forms[i].elements[j].value;
+  } else if (document.forms[i].elements[j].type.indexOf("select") != -1) {
+   var elementValue = "";
+   for(k=0;k<document.forms[i].elements[j].length;k++)
+    if (document.forms[i].elements[j].options[k].selected)
+     elementValue += k+"|";
+  } else if (document.forms[i].elements[j].type == "checkbox") {
+   var elementValue = document.forms[i].elements[j].checked;
+  } 
+	var elementPair = (cookieElement + "=" + elementValue);
+	if (zircCookie == "") {
+		zircCookie = elementPair
+		} else {
+		zircCookie = zircCookie + "&" + elementPair
+		} //end of if (zircCookie == "")
+	} //end of for (j=0;j<14; j++)	
+   } //end of for (i=0;i<document.forms.length;i++)
+  } //end of if (document.images)
+  Set_Cookie("zircLineSubmissionProfile",zircCookie); //set the cookie
+ } //end of if (bakeOK == "yes")
+}   //end of function saveValues() 
+
+function storedValues() {
+ if (document.images) { // only do it in JavaScript 1.1 browsers
+  for (i=0;i<document.forms.length;i++) {
+    val = getCookie("zircLineSubmissionProfile");
+	if (val) {
+	var a = val.split(escape('&')); //parsing name/value pairs
+	for(var x=0; x<a.length; x++){
+		a[x] = a[x].split(escape('=')); //breaking pairs into an array
+		}
+    for (j=0;j<formItems; j++) { //loop to fill in the form (variable 'formItems' = 14 items)
+	if (a[j]) {var elementValue = a[j].slice(1,2);} //find value in this value pair
+	var elementValue = unescape(elementValue); //this makes it readable
+     if ((document.forms[i].elements[j].type == "text")
+     || (document.forms[i].elements[j].type == "password")
+     || (document.forms[i].elements[j].type == "textarea")) {
+      document.forms[i].elements[j].value = elementValue;
+	 } else if (document.forms[i].elements[j].type.indexOf("select") != -1) {
+      document.forms[i].elements[j].selectedIndex = -1;
+      while (((pos = elementValue.indexOf("|")) != -1) && (elementValue.length > 1)) {
+       sel = parseInt(elementValue.substring(0,pos));
+       elementValue = elementValue.substring(pos+1,elementValue.length);
+       if (sel < document.forms[i].elements[j].length)
+        document.forms[i].elements[j].options[sel].selected = true;
+      }
+     } else if (document.forms[i].elements[j].type == "checkbox") {
+      document.forms[i].elements[j].checked = elementValue;
+     } else if (document.forms[i].elements[j].type == "radio") {
+      if (document.forms[i].elements[j].value == elementValue)
+       document.forms[i].elements[j].checked = true;
+	 }
+    }	//end of for (j=0;j<document.forms[i].elements.length; j++)
+   }   //end of if (val) 
+  }   //end of for for (i=0;i<document.forms.length;i++) 
+ }   //end of if (document.images) 
+}   //end of function storedValues() 
+
+window.onload = storedValues;
+
+function sendMail() {
+	window.location.href = ('mailto:form_comments@zfin.org?subject=ZIRC fish line submission form');
+}
+
+function popup(URL) {
+	popupWindow = window.open(URL,"name","width=280,height=200,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,directories=no,status=no");
+     }
+	 
+//-->
+</SCRIPT>
 </head>
 
-<BODY text="#000000" bgcolor="#FFFFFF" onLoad="storedValues('zircLineSubmissionProfile')">
-<center>
-	<p id=header>
-		Zebrafish International Resource Center<br>
-   		Fish Line Submission Form
-   </p>
+<script language="JavaScript" src="http://<!--|DOMAIN_NAME|-->/header.js"></script>
+
+<center><H2>Zebrafish International Resource Center<BR>Fish Line Submission Form</H2>
 <noscript>
-		<font color="#FF0000">Javascript is required to use links on this page and to save your contact information between sessions. <br>
-		Please set your preferences to allow Javascript and then Reload.</font>
+<font color="#FF0000">Javascript is required to use links on this page and to 
+  save your contact information between sessions. <br>
+Please set your preferences to allow Javascript and then Reload.</font>
 </noscript>
-<form NAME="theSubmissionForm" onSubmit="saveValues('zircLineSubmissionProfile','10','');" METHOD="post" ACTION="http://<!--|DOMAIN_NAME|-->/<!--|CGI_BIN_DIR_NAME|-->/cgiemail.cgi">
-<INPUT TYPE="hidden" NAME="template" VALUE="http://<!--|DOMAIN_NAME|-->/zf_info/stckctr/submission/submit.txt">
-<INPUT TYPE="hidden" NAME="success" VALUE="http://<!--|DOMAIN_NAME|-->/zf_info/stckctr/submission/submitSuccess.html">
-  <table border=0 width=585 cellpadding=0 cellspacing=0 background="bgimage.jpg" name="lineSubmissionProfile">
-	<tr> 
-        <td colspan=2 valign=top><img src="bgtop.jpg"></td>
-	  </tr>    
-	  <tr> 
-        <td align=center colspan=2>
-        	Please fill out this form if you want to submit a line to the Resource Center.
-        	<br>A <font color="#FF0000">*</font> indicates a required field.
-        	<br><a href="javascript:popup('links.html')">Links</a> provide useful information in a new window without changing the form. 
-		</td>
-	  </tr>
-	  <tr>	
-		<td colspan=2 ><img src="bgblank.gif"></td>
-      </tr>
-<!-----customer contact information----->
+
+<p>Please fill out this form if you want to submit a line to the <a href="http://zfin.org/zf_info/stckctr/stckctr.html">Resource Center</a>.
+<br>A * indicates a required field.
+<br><a href="javascript:popup('links.html')">Links</a> provide useful information in a new window without changing the form.&nbsp;
+</p>
+<form NAME="theSubmissionForm" onSubmit="saveValues()" METHOD="POST" ACTION="http://<!--|DOMAIN_NAME|-->/<!--|CGI_BIN_DIR_NAME|-->/cgiemail.cgi/zf_info/stckctr/submission/submit.txt">
+<input TYPE="hidden" NAME="success" VALUE="http://<!--|DOMAIN_NAME|-->/zf_info/stckctr/submission/success.html">
+    <table BORDER BGCOLOR="#E5E5E5">
       <tr> 
-        <td colspan=2><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Your Contact Information</b></td>
+        <td WIDTH="150"><b>Your&nbsp;</b> <br>
+          <b>Contact Information</b></td>
+        <td>&nbsp;</td>
       </tr>
       <tr> 
-        <td align=right>Your Name <font color="#FF0000">*</font></td>
+        <td><font size=-1>Your Name *</font></td>
         <td> 
-          <input type="text" name="required_submitterName" size="40">
+          <input type="text" name="required_submitterName" size="50">
         </td>
       </tr>
       <tr> 
-        <td align=right>Your Email <font color="#FF0000">*</font></td>
+        <td><font size=-1>Your Email *</font></td>
         <td> 
-          <input type="text" name="required_submitterEMail" size="40">
+          <input type="text" name="required_submitterEMail" size="50">
         </td>
       </tr>
       <tr> 
-        <td align=right>Your Telephone <font color="#FF0000">*</font></td>
+        <td><font size=-1>Your Telephone *</font></td>
         <td> 
-          <input type="text" name="required_submitterTelephone" size="40">
+          <input type="text" name="required_submitterTelephone" size="50">
         </td>
       </tr>
       <tr> 
-        <td align=right>Your Fax <font color="#FF0000">*</font></td>
+        <td><font size=-1>Your Fax</font></td>
         <td> 
-          <input type="text" name="required_submitterFax" size="40">
+          <input type="text" name="submitterFax" size="50">
         </td>
       </tr>
       <tr> 
-        <td align=right>Your Institution / Lab <font color="#FF0000">*</font></td>
+        <td><font size=-1>Your Institution / Lab *</font></td>
         <td>
-          <input type="text" name="required_submitterLab" size="40">
+          <input type="text" name="required_submitterLab" size="50">
         </td>
       </tr>
       <tr> 
-        <td align=right>Your Position <font color="#FF0000">*</font></td>
+        <td><font size=-1>Your Position *</font></td>
         <td> 
           <select name="required_submitterPosition" size="1">
             <option value=""></option>
@@ -86,270 +230,245 @@
         </td>
       </tr>
       <tr> 
-        <td align=right valign=top>
-			Your Address <font color="#FF0000">*</font>&nbsp;
-			<br>(No PO Boxes-&nbsp;
-			<br>this is the "Ship To" address.)&nbsp; 
-		</td>
+        <td><font size=-1>Your Address *</font></td>
         <td> 
-          <textarea name="required_submitterAddress" cols="30" wrap="VIRTUAL" rows="4"></textarea>
+          <textarea name="required_submitterAddress" cols="50" wrap="VIRTUAL" rows="4"></textarea>
         </td>
       </tr>
-	  <tr>	
-		<td colspan=2 ><img src="bgblank.gif"></td>
-      </tr>
-<!-----PI contact information----->
-		<tr>
-			<td colspan=2>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Principal Investigator Contact Information (if different)</b>
-			</td>
-		</tr>
-		<tr>
-			<td align=right>PI Name </td>
-			<td><input type="text" name="PIName" size="40"></td>
-		</tr>
-		<tr>
-			<td align=right>PI Email </td>
-			<td><input type="text" name="PIEmail" size="40"></td>
-		</tr>
-		<tr>
-			<td align=right>PI Telephone </td>
-			<td><input type="text" name="PITelephone" size="40"></td>
-		</tr>
-		<tr>
-			<td align=right>PI Fax </td>
-			<td><input type="text" name="PIFax" size="40"></td>
-		</tr>
-		<tr>
-			<td align=right>PI Institution / Lab </td>
-			<td><input type="text" name="PILab" size="40"></td>
-		</tr>
-		<tr>
-			<td align=right valign=top>PI Address </td>
-			<td><textarea name="PIAddress" cols="30" wrap="VIRTUAL" rows="4"></textarea></td>
-		</tr>
-	  <tr>	
-		<td colspan=2 ><img src="bgblank.gif"></td>
-      </tr>		
- <!-----grant number information----->
-		<tr>
-			<td colspan=2>
-          		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Your NIH <a href="javascript:popup('grant.html')">grant number</a> or other grant number <font color="#FF0000">*</font> 
-			</td>
-		</tr>
-		<tr>
-			<td>&nbsp;</td>
-        	<td>
-          		<input type="text" name="required_grantNumber" size="40">
-        	</td>
-		</tr>
-		<tr>
-			<td colspan=2>
-          		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The organization responsible for funding <font color="#FF0000">*</font>
-			</td>
-		</tr>
-		<tr>
-			<td>&nbsp;</td>
-        	<td>
-          		<input type="text" name="required_grantOrganization" size="40">
-        	</td>
-		</tr>
-	  <tr>	
-		<td colspan=2 ><a name="mutantInformation"></a><img src="bgblank.gif"></td>
+    </table>
+    <br>
+    <table BORDER BGCOLOR="#E5E5E5" >
+<tr>
+<td WIDTH="150"><b>Principal Investigator</b>
+<br><b>Contact Information</b>
+<br><b>(if different)</b></td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td><font size=-1>PI Name</font></td>
+<td><input type="text" name="PIName" size="50"></td>
+</tr>
+<tr>
+<td><font size=-1>PI Email</font></td>
+<td><input type="text" name="PIEMail" size="50"></td>
+</tr>
+<tr>
+<td><font size=-1>PI Telephone</font></td>
+<td><input type="text" name="PITelephone" size="50"></td>
+</tr>
+<tr>
+<td><font size=-1>PI Fax</font></td>
+<td><input type="text" name="PIFax" size="50"></td>
+</tr>
+<tr>
+<td><font size=-1>PI Institution / Lab</font></td>
+<td><input type="text" name="PILab" size="50"></td>
+</tr>
+<tr>
+<td><font size=-1>PI Address</font></td>
+<td><textarea name="PIAddress" cols="50" wrap="VIRTUAL" rows="4"></textarea></td>
+</tr>
+</table>
+    <br>
+    <table BORDER BGCOLOR="#E5E5E5" >
+<tr>
+<td WIDTH="300">
+          <div align=right><a name="mutantInformation"></a><font size=-1>Your NIH <a href="javascript:popup('grant.html')">grant number</a> or other grant number *</font></div>
+</td>
+<td><input type="text" name="required_grantNumber" size="30"></td>
+</tr>
+</table>
+    <br>
+    <table BORDER BGCOLOR="#E5E5E5" >
+      <tr> 
+        <td WIDTH="150"><b>Line / Mutant Information</b></td>
+        <td>&nbsp;</td>
       </tr>
       <tr> 
-        <td colspan=2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Line / Mutant Information</b></td>
-      </tr>
-      <tr> 
-        <td width=150 align=right>Discoverer's Name </td>
+        <td><font size="-1">Discoverer's Name</font></td>
         <td> 
-          <input type="text" name="lineDiscoverer" size="40">
+          <input type="text" name="lineDiscoverer" size="50">
         </td>
       </tr>
       <tr> 
-        <td align=right>Line Type </td>
-        <td class=types>  
+        <td><font size=-1>Line Type</font></td>
+        <td> <font size=-1> 
           <input type="checkbox" name="lineMutant" value="mutant">
           mutant 
           <input type="checkbox" name="lineTransgenic" value="transgenic">
           transgenic 
           <input type="checkbox" name="lineWildType" value="wild type">
-          wild-type</td>
+          <font size=-1>wild-type</font></font></td>
       </tr>
       <tr> 
-        <td align=right>Current Status </td>
-		<td class=types>(What are you proposing to send?)</td>
-      </tr>
-	  <tr>
-	  	<td align=right>&nbsp;</td>
-        <td class=types> 
+        <td><font size=-1>Current Status</font> <br>
+          <font size=-1>(What are you proposing to send?)</font></td>
+        <td> 
           <input type="checkbox" name="statusAdults" value="adults">
-          adults 
+          <font size=-1>adults 
           <input type="checkbox" name="statusEmbryos" value="embryos">
           embryos 
           <input type="checkbox" name="statusFrozenSperm" value="frozen sperm">
-          frozen sperm</td>
-	  </tr>
+          frozen sperm</font></td>
+      </tr>
       <tr> 
-        <td align=right>Line / Mutant Name </td>
+        <td><font size=-1>Line / Mutant Name</font></td>
         <td> 
-          <input type="text" name="lineName" size="40">
+          <input type="text" name="lineName" size="50">
         </td>
       </tr>
       <tr> 
-        <td align=right>Previous / Other Name(s) </td>
+        <td><font size=-1>Previous / Other Name(s)</font></td>
         <td> 
-          <input type="text" name="lineNamePrevious" size="40">
+          <input type="text" name="lineNamePrevious" size="50">
         </td>
       </tr>
       <tr> 
-        <td align=right>Allele(s) </td>
+        <td><font size=-1>Allele(s)</font></td>
         <td>
-          <input type="text" name="mutantAlleles" size="40">
+          <input type="text" name="mutantAlleles" size="30">
         </td>
       </tr>
       <tr> 
-        <td align=right valign=top>Phenotype </td>
+        <td><font size=-1>Phenotype</font></td>
         <td> 
-          <textarea name="linePhenotype" cols="30" wrap="VIRTUAL" rows="2"></textarea>
+          <textarea name="linePhenotype" cols="50" wrap="VIRTUAL" rows="2"></textarea>
         </td>
       </tr>
       <tr> 
-        <td align=right>Mutagenesis Protocol </td>
+        <td><font size=-1>Mutagenesis Protocol</font></td>
         <td> 
-          <input type="text" name="mutagenProtocol" size="40">
+          <input type="text" name="mutagenProtocol" size="50">
         </td>
       </tr>
       <tr> 
-        <td align=right valign=top>Mutation Type </td>
-        <td class=types> 
-          <table BORDER=0 cellpadding=0 cellspacing=0 >
+        <td><font size=-1>Mutation Type</font></td>
+        <td> 
+          <table BORDER=0 WIDTH="100%" >
             <tr> 
-              <td class=types> 
+              <td> 
                 <input type="checkbox" name="mutantTypePoint" value="point mutation">
-                point mutation </td>
-              <td class=types> 
+                <font size="-1">point mutation</font> </td>
+              <td> 
                 <input type="checkbox" name="mutantTypeDf" value="Df, deficiency">
-                Df, deficiency</td>
-            </tr>
-            <tr> 
-              <td class=types> 
+                <font size=-1>Df, deficiency</font></td>
+              <td> 
                 <input type="checkbox" name="mutantTypeDp" value="Dp, duplication">
-                Dp, duplication</td>
-              <td class=types> 
+                <font size=-1>Dp, duplication</font></td>
+            </tr>
+            <tr> 
+              <td> 
                 <input type="checkbox" name="mutantTypeIn" value="In, inversion">
-                In, inversion</td>
-            </tr>
-            <tr> 
-              <td class=types> 
+                <font size=-1>In, inversion</font></td>
+              <td> 
                 <input type="checkbox" name="mutantTypeIs" value="Is, insertion">
-                Is, insertion</td>
-              <td class=types> 
+                <font size=-1>Is, insertion</font></td>
+              <td> 
                 <input type="checkbox" name="mutantTypeT" value="T, translocation">
-                T, translocation</td>
+                <font size=-1>T, translocation</font></td>
             </tr>
             <tr> 
-              <td class=types> 
+              <td> 
                 <input type="checkbox" name="mutantTypeTg" value="Tg, transgene">
-                Tg, transgene</td>
-              <td class=types> 
+                <font size=-1>Tg, transgene</font></td>
+              <td> 
                 <input type="checkbox" name="mutantTypeCr" value="Cr, complex rearrangement">
-                Cr, complex rearrangement </td>
+                <font size=-1>Cr, complex rearrangement</font> </td>
+              <td>&nbsp; </td>
             </tr>
             <tr> 
-              <td class=types> 
+              <td> 
                 <input type="checkbox" name="mutantTypeUn" value="unknown">
-                unknown </td>
-              <td class=types>other 
+                <font size=-1>unknown</font> </td>
+              <td><font size="-1">other</font> 
                 <input type="text" name="mutantTypeOther" size="20">
               </td>
+              <td>&nbsp;</td>
             </tr>
           </table>
         </td>
       </tr>
       <tr> 
-        <td align=right>Mutated Gene (if known) </td>
+        <td><font size=-1>Mutated Gene (if known)</font></td>
         <td>
-          <input type="text" name="mutatedGene" size="40">
+          <input type="text" name="mutatedGene" size="50">
         </td>
       </tr>
       <tr> 
-        <td align=right>Linkage Group </td>
+        <td><font size=-1>Linkage Group</font></td>
         <td> 
           <select name="linkageGroup">
-            <option value="unknown">unknown</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-            <option value="10">10</option>
-            <option value="11">11</option>
-            <option value="12">12</option>
-            <option value="13">13</option>
-            <option value="14">14</option>
-            <option value="15">15</option>
-            <option value="16">16</option>
-            <option value="17">17</option>
-            <option value="18">18</option>
-            <option value="19">19</option>
-            <option value="20">20</option>
-            <option value="21">21</option>
-            <option value="22">22</option>
-            <option value="23">23</option>
-            <option value="24">24</option>
-            <option value="25">25</option>
+            <option value="unknown"><font size="-1">unknown</font></option>
+            <option value="1"><font size="-1">1</font></option>
+            <option value="2"><font size="-1">2</font></option>
+            <option value="3"><font size="-1">3</font></option>
+            <option value="4"><font size="-1">4</font></option>
+            <option value="5"><font size="-1">5</font></option>
+            <option value="6"><font size="-1">6</font></option>
+            <option value="7"><font size="-1">7</font></option>
+            <option value="8"><font size="-1">8</font></option>
+            <option value="9"><font size="-1">9</font></option>
+            <option value="10"><font size="-1">10</font></option>
+            <option value="11"><font size="-1">11</font></option>
+            <option value="12"><font size="-1">12</font></option>
+            <option value="13"><font size="-1">13</font></option>
+            <option value="14"><font size="-1">14</font></option>
+            <option value="15"><font size="-1">15</font></option>
+            <option value="16"><font size="-1">16</font></option>
+            <option value="17"><font size="-1">17</font></option>
+            <option value="18"><font size="-1">18</font></option>
+            <option value="19"><font size="-1">19</font></option>
+            <option value="20"><font size="-1">20</font></option>
+            <option value="21"><font size="-1">21</font></option>
+            <option value="22"><font size="-1">22</font></option>
+            <option value="23"><font size="-1">23</font></option>
+            <option value="24"><font size="-1">24</font></option>
+            <option value="25"><font size="-1">25</font></option>
           </select>
         </td>
       </tr>
-	  <tr>	
-		<td colspan=2 ><img src="bgblank.gif"></td>
+      <tr> 
+        <td><b><font size=-1>Linked Markers</font></b></td>
+        <td>&nbsp;</td>
       </tr>
       <tr> 
-        <td colspan=2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Linked Markers</b></td>
-      </tr>
-      <tr> 
-        <td align=right> 
-          <a href="javascript:popup('marker.html')">Marker Name and Distance</a>&nbsp;
+        <td> 
+          <div align=right><font size=-1><a href="javascript:popup('marker.html')">Marker 
+            Name and Distance</a></font></div>
         </td>
         <td> 
-          <input type="text" name="markerNameDistance" size="40">
+          <input type="text" name="markerNameDistance" size="50">
         </td>
       </tr>
-	  <tr>	
-		<td colspan=2 ><img src="bgblank.gif"></td>
+      <tr> 
+        <td><b><font size=-1>Transgenes</font></b></td>
+        <td>&nbsp;</td>
       </tr>
       <tr> 
-        <td colspan=2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Transgenes</b></td>
-      </tr>
-      <tr> 
-        <td align=right> 
-          Name of Transgene 
+        <td> 
+          <div align=right><font size=-1>Name of Transgene</font></div>
         </td>
         <td> 
-          <input type="text" name="transgeneName" size="40">
+          <input type="text" name="transgeneName" size="50">
         </td>
       </tr>
       <tr> 
-        <td align=right valign=top> 
-          Description of Transgene 
+        <td> 
+          <div align=right><font size=-1>Description of Transgene</font></div>
         </td>
         <td> 
-          <textarea name="transgeneDescription" cols="30" wrap="VIRTUAL" rows="2"></textarea>
+          <textarea name="transgeneDescription" cols="50" wrap="VIRTUAL" rows="2"></textarea>
         </td>
       </tr>
-	  <tr>	
-		<td colspan=2 ><img src="bgblank.gif"></td>
+    </table>
+    <br>
+    <table BORDER BGCOLOR="#E5E5E5" >
+      <tr> 
+        <td WIDTH="200"><b>Genetics and Background</b></td>
+        <td height="17">&nbsp;</td>
       </tr>
       <tr> 
-        <td colspan=2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Genetics and Background</b></td>
-      </tr>
-      <tr> 
-        <td align=right>Segregation <font color="#FF0000">*</font> </td>
+        <td><font size=-1>Segregation *</font></td>
         <td> 
           <select name="required_segregation" size="1">
             <option value=""></option>
@@ -361,184 +480,147 @@
         </td>
       </tr>
       <tr> 
-        <td colspan=2>
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If non-Mendelian enter percentage of mutant progeny <input type="text" name="geneticsSegregationPercentage" size="4">% 
-		</td>
-      </tr>
-	  <tr> 
-        <td align=right>Background</td>
-		<td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td><font size="-1">If non-Mendelian enter percentage of mutant progeny 
+          </font>
+          <input type="text" name="geneticsSegregationPercentage" size="4">
+          <font size="-1">% </font></td>
       </tr>
       <tr> 
-        <td align=right>Maternal Lineage <font color="#FF0000">*</font> </td>
+        <td><font size=-1>Maternal Lineage (Background) *</font></td>
         <td> 
-          <input type="text" name="required_lineageMaternal" size="40">
+          <input type="text" name="required_lineageMaternal" size="30">
         </td>
       </tr>
       <tr> 
-        <td align=right nowrap>Paternal Lineage <font color="#FF0000">*</font> </td>
+        <td><font size=-1>Paternal Lineage (Background) *</font></td>
         <td> 
-          <input type="text" name="required_lineagePaternal" size="40">
+          <input type="text" name="required_lineagePaternal" size="30">
         </td>
       </tr>
       <tr> 
-        <td align=right valign=top>Submitter's Comments </td>
+        <td><font size=-1>Submitter's Comments</font></td>
         <td> 
-          <textarea name="geneticsComments" cols="30" wrap="VIRTUAL" rows="3"></textarea>
+          <textarea name="geneticsComments" cols="50" wrap="VIRTUAL" rows="2"></textarea>
         </td>
       </tr>
-	  <tr>	
-		<td colspan=2 ><img src="bgblank.gif"></td>
-      </tr>
-	<tr>
-		<td colspan=2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Publications</b></td>
-	</tr>
-	<tr>
-		<td align=right valign=top>Primary (First) Publication </td>
-		<td>
-          <textarea name="publications1" cols="30" wrap="VIRTUAL" rows="2"></textarea>
-        </td>
-	</tr>
-	<tr>
-	<td align=right valign=top>Secondary Publications </td>
-	<td>
-          <textarea name="publications2" cols="30" wrap="VIRTUAL" rows="2"></textarea>
-        </td>
-	</tr>
-	  <tr>	
-		<td colspan=2 ><img src="bgblank.gif"></td>
-      </tr>
-	<tr>
-		<td colspan=2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Husbandry</b></td>
-    </tr>
-	<tr>
-		<td colspan=2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:popup('husbandry.html')">Any special husbandry requirements</a>&nbsp;</td>
-	</tr>
-	<tr>
-		<td>&nbsp;</td>
-		<td>
-          <textarea name="husbandrySpecial" cols="30" wrap="VIRTUAL" rows="3"></textarea>
-        </td>
-	</tr>
-	  <tr>	
-		<td colspan=2 ><img src="bgblank.gif"></td>
-      </tr>
-	<tr>
-	<td colspan=2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mutant/Transgenic Identification Techniques 
-		<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Describe in detail the technique you use to detect carriers:</td>
-	</tr>
-<!-----visual phenotype----->
-	<tr>
-		<td align=right class=types><input type="checkbox" name="mutantIDvisual" value="visual phenotype">&nbsp;</td>
-		<td>visual phenotype</td>
-	</tr>
-	<tr>
-		<td align=right class=types> optimal stage to identify </td>
-		<td><input type="text" name="mutantIDvisualStage" size="15"></td>
-	</tr>
-	<tr>
-		<td align=right valign=top class=types> protocol: </td>
-		<td><textarea name="mutantIDvisDesc" cols="30" rows="3" wrap="VIRTUAL"></textarea></td>		
-	</tr>
-	<tr>
-		<td align=center colspan=2><hr width="75%"></td>			
-	</tr>
-<!-----pcr----->
-	<tr>
-		<td align=right class=types> <input type="checkbox" name="mutantIDPCR" value="PCR">&nbsp;</td>
-		<td>PCR</td>
-	</tr>
-	<tr>	
-		<td align=right class=types> optimal stage to identify </td>
-		<td><input type="text" name="mutantIDPCRStage" size="15"></td>
-	</tr>
-	<tr>	
-		<td align=right valign=top class=types> protocol: </td>
-		<td><textarea name="mutantIDpcrDesc" cols="30" rows="3" wrap="VIRTUAL"></textarea></td>
-	</tr>
-	<tr>
-		<td align=center colspan=2><hr width="75%"></td>			
-	</tr>
-<!-----in situ----->
-	<tr>
-		<td  align=right class=types> <input type="checkbox" name="mutantIDinSitu" value="in situ">&nbsp;</td>
-		<td>in situ</td>
-	</tr>
-	<tr>	
-		<td  align=right class=types> optimal stage to identify </td>
-		<td><input type="text" name="mutantIDinsituStage" size="15"></td>
-	</tr>
-	<tr>	
-		<td  align=right valign=top class=types> protocol: </td>
-		<td><textarea name="mutantIDinsituDesc" cols="30" rows="3" wrap="VIRTUAL"></textarea></td>
-	</tr>
-	<tr>
-		<td align=center colspan=2><hr width="75%"></td>			
-	</tr>
-<!-----other----->
-	<tr>
-		<td align=right class=types> other techniques (please list) </td>
-		<td><input type="text" name="mutantIDother" size="40" value=""></td>			
-	</tr>
-	<tr>
-		<td align=right class=types> optimal stage to identify </td>
-		<td><input type="text" name="mutantIDotherStage" size="15"></td>				
-	</tr>
-	<tr>
-		<td align=right valign=top class=types> protocol: </td>
-		<td><textarea name="mutantIDotherDesc" cols="30" rows="3" wrap="VIRTUAL"></textarea></td>
-	</tr>
-	<tr>
-		<td align=center colspan=2><hr width="75%"></td>			
-	</tr>
-	  <tr>	
-		<td colspan=2 ><img src="bgblank.gif"></td>
-      </tr>
-	<tr>
-        <td colspan=2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Considerations and Information</b></td>
-	</tr>
-	<tr>
-		<td colspan=2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:popup('reasons.html')">Tell us why the Resource Center should take this line.</a> <font color="#FF0000">*</font></td>
-	</tr>
-		<td>&nbsp;</td>
-		<td>
-          <textarea name="required_considerationsWhy" cols="30" wrap="VIRTUAL" rows="2"></textarea></td>
-	</tr>
-	<tr>
-		<td colspan=2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Is there a Material Transfer Agreement associated with this line?</td>
-	</tr>
-	<tr>
-		<td>&nbsp;</td>
-		<td><input type="checkbox" name="considerationsMTAyes" value="yes MTA">Yes&nbsp;<input type="checkbox" name="considerationsMTAno" value="no MTA">No</td>
-	</tr>
-	<tr>
-		<td colspan=2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Other Considerations or Information</td>
-	</tr>
-	<tr>
-		<td>&nbsp;</td>
-		<td>
-          <textarea name="considerationsOther" cols="30" wrap="VIRTUAL" rows="2"></textarea>
-        </td>
-	</tr>
-	  <tr>	
-		<td colspan=2 ><img src="bgblank.gif"></td>
-      </tr>
-      <tr> 
-        <td align="center" colspan=2> 
-          <input type="submit" value="Submit to ZIRC" name="submit" class="buttons">
-        </td>
-      </tr>
-      <tr> 
-        <td align="center" colspan=2>
-          <input type="button" value="Send us comments about this form" name="email" id=comments class="buttons" onClick="sendMail('ZIRC Submission Form')">
-        </td>
-      </tr>
-      <tr> 
-        <td colspan=2 valign=bottom><img src="bgbtm.jpg"></td>
-	  </tr>
     </table>
-</form>
-</center>
+    <br>
+    <table BORDER BGCOLOR="#E5E5E5" >
+<tr>
+<td WIDTH="199"><b>Publications</b></td>
+<td WIDTH="478">&nbsp;</td>
+</tr>
+<tr>
+<td><font size=-1>Primary (First) Publication</font></td>
+<td WIDTH="8">
+          <textarea name="publications1" cols="75" wrap="VIRTUAL" rows="2"></textarea>
+        </td>
+</tr>
+<tr>
+<td><font size=-1>Secondary Publications</font></td>
+<td WIDTH="8">
+          <textarea name="publications2" cols="75" wrap="VIRTUAL" rows="2"></textarea>
+        </td>
+</tr>
+</table>
+    <br>
+    <table BORDER BGCOLOR="#E5E5E5" >
+<tr>
+<td><b>Husbandry</b></td>
+        <td>&nbsp;</td>
+</tr>
+<tr>
+<td><font size=-1><a href="javascript:popup('husbandry.html')">Any special husbandry requirements</a></font></td>
+<td>
+          <textarea name="husbandrySpecial" cols="75" wrap="VIRTUAL" rows="2"></textarea>
+        </td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td><b><font size=-1>Mutant/Transgenic Identification Techniques: describe in detail the technique you use to detect carriers:</font></b></td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>
+<table BORDER WIDTH="100%" >
+<tr>
+<td><input type="checkbox" name="mutantIDvisual" value="visual phenotype"><font size=-1>visual phenotype</font></td>
+<td><input type="checkbox" name="mutantIDPCR" value="PCR"><font size=-1>PCR</font></td>
+<td><input type="checkbox" name="mutantIDinSitu" value="in situ"><font size=-1>in situ</font></td>
+<td WIDTH="160"><font size=-1>other (please list)</font>
+<br><input type="text" name="mutantIDother" size="20" value=""></td>
+</tr>
+<tr>
+<td><font size=-1>optimal stage to identify</font>
+<br><input type="text" name="mutantIDvisualStage" size="20"></td>
+<td><font size=-1>optimal stage to identify</font>
+<br><input type="text" name="mutantIDPCRStage" size="20"></td>
+<td><font size=-1>optimal stage to identify</font>
+<br><input type="text" name="mutantIDinsituStage" size="20"></td>
+<td><font size=-1>optimal stage to identify</font>
+<br><input type="text" name="mutantIDotherStage" size="20"></td>
+</tr>
+<tr>
+<td VALIGN=TOP HEIGHT="170"><font size=-1>protocol:</font>
+<br>
+                <textarea name="mutantIDvisDesc" cols="20" rows="9" wrap="VIRTUAL"></textarea>
+              </td>
+<td VALIGN=TOP><font size=-1>protocol:</font>
+<br>
+                <textarea name="mutantIDpcrDesc" cols="20" rows="9" wrap="VIRTUAL"></textarea>
+              </td>
+<td VALIGN=TOP><font size=-1>protocol:</font>
+<br>
+                <textarea name="mutantIDinsituDesc" cols="20" rows="9" wrap="VIRTUAL"></textarea>
+              </td>
+<td VALIGN=TOP><font size=-1>protocol:</font>
+<br>
+                <textarea name="mutantIDotherDesc" cols="20" rows="9" wrap="VIRTUAL"></textarea>
+              </td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+    <br>
+    <table BORDER WIDTH="90%" BGCOLOR="#E5E5E5" >
+<tr>
+        <td width="150"><b>Considerations and Information</b></td>
+<td WIDTH="500">&nbsp;</td>
+</tr>
+<tr>
+<td NOWRAP><font size=-1><a href="javascript:popup('reasons.html')">Tell us why the Resource Center should take this line.</a> *</font></td>
+<td WIDTH="500">
+          <textarea name="required_considerationsWhy" cols="75" wrap="VIRTUAL" rows="2"></textarea>
+        </td>
+</tr>
+<tr>
+<td><font size=-1>Is there a Material Transfer Agreement associated with this line?</font></td>
+<td WIDTH="500"><input type="checkbox" name="considerationsMTAyes" value="yes MTA"><font size=-1>Yes&nbsp;<input type="checkbox" name="considerationsMTAno" value="no MTA">No</font></td>
+</tr>
+<tr>
+<td><font size=-1>Other Considerations or Information</font></td>
+<td WIDTH="500">
+          <textarea name="considerationsOther" cols="75" wrap="VIRTUAL" rows="2"></textarea>
+        </td>
+</tr>
+</table>
+    <br>
+    <table BORDER=0 WIDTH="640" cellpadding="10" >
+      <tr> 
+        <td align="center"> 
+          <input type="submit" value="Submit to ZIRC" name="submit">
+        </td>
+      </tr>
+      <tr> 
+        <td align="center">
+          <input type="button" value="Send us comments about this form" name="email" class="comments" onClick="sendMail()">
+        </td>
+      </tr>
+    </table>
+</form></center>
 </body>
+<script language="JavaScript" src="http://<!--|DOMAIN_NAME|-->/footer.js"></script>
 </html>
 

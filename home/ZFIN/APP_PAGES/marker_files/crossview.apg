@@ -8,6 +8,8 @@
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-chromoscripts.apg';">$1<?/MISQL>
 
+
+
 <SCRIPT>
 
 
@@ -23,9 +25,6 @@ document.mapview.submit();
 }
 </SCRIPT>
 </HEAD>
-
-<body bgcolor="#e5e5e5"  TEXT="black">
-<basefont COLOR="#000000" size=3>
 
 
 <?MIBLOCK COND="$(NXST,$OID)">
@@ -69,6 +68,7 @@ ERROR -- something bad happened -- no OID passed in!
 <?MIVAR NAME=$comments>$5<?/MIVAR>
 <?MIVAR NAME=$abbrev>$7<?/MIVAR>
 
+
 <?MIBLOCK COND="$(NC,$panel_date,NULL)">
 <?MIVAR NAME=$upd_date>$(INDEX,$(-,$9,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $8, $10 
 <?/MIVAR>
@@ -88,6 +88,17 @@ ERROR -- something bad happened -- no OID passed in!
 <?MIVAR NAME=$mapping_URL>$3<?/MIVAR>
 <?/MIBLOCK>
 
+<?MIVAR><TITLE> ZFIN View Panel: $panel_name </TITLE><?/MIVAR>
+
+<?MIBLOCK COND="$(NXST,$accession)">
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+<?/MIBLOCK>
+
+<basefont COLOR="#000000" size=3>
+<?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
+
+
+
 <!-- NOW JUST TOSS OUT THE RETRIEVED DATA IN A TABLE -->
 
 <!-- FIRST THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
@@ -97,7 +108,7 @@ ID='aa-data_mgr.apg';">$1<?/MISQL>
 
 
 <!-- OKAY, NOW  THROW UP THE  PANEL INFO -->
-<form method=post name=mapview  action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi" target="content">
+<form method=post name=mapview  action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi" >
 <input type=hidden name=view_map  value='viewmap'>
 <INPUT TYPE=hidden name=loc_lg value=0 > 
 <?MIVAR><input type=hidden name=userid value="$userid"><?/MIVAR>
@@ -167,7 +178,7 @@ $(IF,$(NC,$num_meioses,NULL),$num_meioses,UNKNOWN)
 </TABLE>
 
 <?MIVAR COND="$(AND,$(EC,$panel_type,Rad_Hybrid),$(NC,$mapping_URL,null))">
-<TABLE width=100% cellpadding=5 border=4 bgcolor="#f8fabb" cols=1 rows=1>
+<TABLE width=100% cellpadding=5 border=0 bgcolor="$highlight" cols=1 rows=1>
 <TR>
 <TD align=center>
 <b>Interactive Mapping:</b> <A HREF="$mapping_URL">Place markers on $panel_name panel</a>.<br><font size=-1>(Courtesy of the Dawid Lab, NIH)</font>
@@ -192,7 +203,7 @@ $(IF,$(NC,$num_meioses,NULL),$num_meioses,UNKNOWN)
 <?MIBLOCK COND="$(NC,$abbrev,ZMAP)">
   <?MISQL SQL="select mtype,count(*)::integer from public_paneled_markers a , panels b  where  a.target_abbrev = b.abbrev and b.zdb_id='$OID'  group by mtype;">
   $(IF,$(NC,$MI_CURRENTROW,1),"<br>")
-  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-markerselect.apg&select_from=MARKER&panelid=$OID&marker_type=$1">$1</A> (total of $2)
+  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&panelid=$OID&marker_type=$1">$1</A> (total of $2)
   $(SETVAR,$mcount,$(+,$mcount,$2))
   <?/MISQL>
   </ul>
@@ -201,7 +212,7 @@ $(IF,$(NC,$num_meioses,NULL),$num_meioses,UNKNOWN)
 <?MIBLOCK COND="$(EC,$abbrev,ZMAP)">
   <?MISQL SQL="select mtype,count(*)::integer from zmap_pub_pan_mark a , panels b  where  a.target_abbrev = b.abbrev and b.zdb_id='$OID' and or_lg <> '0' group by mtype;">
   $(IF,$(NC,$MI_CURRENTROW,1),"<br>")
-  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-markerselect.apg&select_from=MARKER&panelid=$OID&marker_type=$1">$1</A> (total of $2)
+  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&panelid=$OID&marker_type=$1">$1</A> (total of $2)
   $(SETVAR,$mcount,$(+,$mcount,$2))
   <?/MISQL>
   </ul>
@@ -216,7 +227,7 @@ Click "View Map" in table at right to see a graphical map of an individual linka
 OR
 </p>
 <?MIVAR>
-Search the <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-markerselect.apg&select_from=MARKER&panelid=$OID">$abbrev Panel for particular mapped markers.</A>.
+Search the <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval==aa-markerselect.apg&panelid=$OID">$abbrev Panel for particular mapped markers.</A>.
 <?/MIVAR>
 <p align=center>
 OR
@@ -228,8 +239,10 @@ Click to <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-refcrosslist.apg">
 
 
 <TD>
-<TABLE BORDER cellpadding=2 bgcolor="#f8fabb" cols=4>
-<TH>LG</TH><TH>Markers on LG</TH><TH></TH><TH></TH>
+<?MIVAR>
+<TABLE BORDER=0 cellpadding=2 bgcolor="white" cols=4>
+<?/MIVAR>
+<TH>LG</TH><TH>Markers on LG</TH><TH> </TH><TH> </TH>
 <?MIVAR><INPUT TYPE=hidden name=loc_panel value=$abbrev><?/MIVAR>
 <?MIVAR NAME=$last>0<?/MIVAR>
 <?MIVAR NAME=$marker>None<?/MIVAR>
@@ -241,16 +254,16 @@ Click to <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-refcrosslist.apg">
 
     <?MIBLOCK COND="$(AND,$(>,$1,$last),$(>,$MI_CURRENTROW,1))">
       <?MIVAR>
-	</TD><TD><font size=1><input type=button name=view_map value="View Map" onClick=call_mapplet("$(-,$1,1)","$abbrev")></TD><TD><font size=1><A HREF=javascript:view_scores('$OID','$(-,$1,1)','$marker','$marker_abbrev');>Scoring Data</A></TD></TR>
+	</TD><TD bgcolor="$highlight" ><font size=1><input type=button name=view_map value="View Map" onClick=call_mapplet("$(-,$1,1)","$abbrev")></TD><TD bgcolor="$highlight"><font size=1><A HREF=javascript:view_scores('$OID','$(-,$1,1)','$marker','$marker_abbrev');>Scoring Data</A></TD></TR>
       <?/MIVAR>
     <?/MIBLOCK>
-    $(IF,$(>,$1,$last),"<TR align=center><TD><font size=1>"$1"</TD><TD><font size=1>")
+    $(IF,$(>,$1,$last),"<TR align=center><TD bgcolor="$highlight"><font size=1>"$1"</TD><TD bgcolor="$highlight"><font size=1>")
     $(IF,$(=,$1,$last),"; ")
     $2($3)
     $(SETVAR,$last,$1)
   <?/MISQL>
   <?MIVAR>
-    </TD><TD><font size=1><input type=button name=view_map value='View Map' onClick='call_mapplet("$1","$abbrev")'></TD><TD><font size=1><A HREF="javascript:view_scores('$OID','$1','$marker','$marker_abbrev');">Scoring Data</A></TD></TR>
+    </TD><TD bgcolor="$highlight" ><font size=1><input type=button name=view_map value='View Map' onClick='call_mapplet("$1","$abbrev")'></TD><TD bgcolor="$highlight"><font size=1><A HREF="javascript:view_scores('$OID','$1','$marker','$marker_abbrev');">Scoring Data</A></TD></TR>
   <?/MIVAR>
 
 
@@ -262,17 +275,17 @@ Click to <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-refcrosslist.apg">
 
     <?MIBLOCK COND="$(AND,$(>,$1,$last),$(>,$MI_CURRENTROW,1))">
       <?MIVAR>
-	</TD><TD><font size=1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-mapperselect.apg&select_from=MAPPER&frame_size=220">View Map</A></TD><TD></TD></TR>
+	</TD><TD bgcolor="$highlight"><font size=1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mapperselect.apg">View Map</A></TD><TD bgcolor="$highlight" ></TD></TR>
       <?/MIVAR>
     <?/MIBLOCK>
 
-    $(IF,$(>,$1,$last),"<TR align=center><TD><font size=1>"$1"</TD><TD><font size=1>")
+    $(IF,$(>,$1,$last),"<TR align=center><TD bgcolor="$highlight"><font size=1>"$1"</TD><TD bgcolor="$highlight"><font size=1>")
     $(IF,$(=,$1,$last),"; ")
     $2($3)
     $(SETVAR,$last,$1)
   <?/MISQL>
       <?MIVAR>
-	</TD><TD><font size=1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-mapperselect.apg&select_from=MAPPER&frame_size=220">View Map</A></TD><TD></TD></TR>
+	</TD><TD bgcolor="$highlight"><font size=1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mapperselect.apg">View Map</A></TD><TDbgcolor="$highlight" ></TD></TR>
       <?/MIVAR>
 <?/MIBLOCK>
 
@@ -292,6 +305,7 @@ Click to <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-refcrosslist.apg">
 
 <HR width=80%>
 
+</form>
 
 <!-- Throw up the publication info, using the standard display format -->
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-showpubs.apg';">$1<?/MISQL>
@@ -304,6 +318,11 @@ Click to <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-refcrosslist.apg">
 <?/MIBLOCK> <!-- ends cond oid exists -->
 
 <?/MIBLOCK> <!-- ends mirowcount gt 0 -->
+
+
+<?MIBLOCK COND="$(NXST,$accession)">
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+<?/MIBLOCK>
 
 </HTML>
 

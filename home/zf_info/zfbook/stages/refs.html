@@ -1,23 +1,19 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<head>
-<SCRIPT>
+	<head>
+		<script>
+		function call_close(){
+			var buttonstring = '<form><input type=button name=close value=Close onclick=window.close();></form>';
+			document.writeln(buttonstring);
+		}
+		</script>
+		<title>
+			ZFIN Staging References
+		</title>
+	</head>
 
-function call_close(){
-   var buttonstring = '<FORM><input type=button name=close value=Close onclick=window.close();></FORM>';
-   document.writeln(buttonstring);
-}
+<script language="JavaScript" src="http://<!--|DOMAIN_NAME|-->/header.js"></script>
 
-function call_zfin(){
-   var hrefstring = '<A HREF="/index.html">ZFIN  <img src="/fish_net.gif"></A><p>';
-   document.writeln(hrefstring);
-}
-
-</SCRIPT>
-
-<TITLE>Staging References</TITLE>
-</head>
-
-<body bgcolor="#FFFFFF" text="#000000">
 
 <H3>REFERENCES</H3>
 
@@ -125,10 +121,9 @@ Wilson, S.W., Ross, L.S., Parrett, T., and Easter, Jr., S.S. (1990) The developm
 <A HREF="stages.html">Return to <I>Developmental Stages</I> Contents</A>
 <hr>
 <SCRIPT>
-  if ((window.name=='')||(window.name=='ZFIN')){
-    call_zfin();	
-  } else {
+  if (window.name=='popup'){
     call_close();
   }
 </SCRIPT>
-</body></html>
+</body>
+<script language="JavaScript" src="http://<!--|DOMAIN_NAME|-->/footer.js"></script>

@@ -19,15 +19,17 @@ TARGETDIR = $(TARGETROOT)/home/zf_info/news
 
 # Subdirectories come and go as meetings come and go.
 
-GENERICS = siteNews.html
 
 # List permanent files first -- files that will stay around no matter what
 # announcements come and go.  Follow that list with files that will disappear
 # when the meetings or jobs they go with will disappear.
 
-PERMANENT_STATICS = bluline.gif jobs.html mtgs.html
+VARIABLE_GENERICS = jobs.html mtgs.html
 
-STATICS = $(PERMANENT_STATICS) workshop.pdf zebrafish2.jpg
+GENERICS = siteNews.html  $(VARIABLE_GENERICS)
+
+
+STATICS = bluline.gif workshop.pdf zebrafish2.jpg
 
 
 

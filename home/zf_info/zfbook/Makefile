@@ -25,7 +25,7 @@ SUBDIRS = chapt1 chapt2 chapt3 chapt4 chapt5 chapt7 chapt8 chapt9 stages
 GENERICS = chapt6.html chapt10.html cont.html lab_desig.html zfbk.html \
 	zfmabs.html zfrefs.html zfstrn.html
 
-STATICS = fish_bgd.gif fish_net.gif streis.gif
+STATICS = fish_net.gif streis.gif
 
 
 # ---------------  Production Rules  ------------------------------------

@@ -57,6 +57,6 @@ window.alert('Added: A Bookmark to this record has been added to your personal b
 
 
 <SCRIPT>
-<?MIVAR>window.location.search="$record_MIval";<?/MIVAR>
+<?MIVAR>window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->$record_MIval");<?/MIVAR>
 </SCRIPT>
 

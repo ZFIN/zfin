@@ -11,8 +11,9 @@ top.helpcontent.location="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showdetail
 </SCRIPT>
 </HEAD>
 
+<?MIVAR NAME=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 
-<BODY bgcolor="#ffffb9">
+<?MIVAR><BODY bgcolor="$highlight"><?/MIVAR>
 <basefont size=2>
 
 

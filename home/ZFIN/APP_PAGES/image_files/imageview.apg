@@ -6,7 +6,7 @@ as well.
 
 Variables Expected: 
  -- OID -- the OID of the fish record to view
- -- UPDATE -- a flag variable to indicate we're in update mode
+ -- PDATE -- a flag variable to indicate we're in update mode
  -- temp_oid -- could be passed instead of OID --
 -->
 
@@ -60,9 +60,6 @@ Variables Expected:
     document.doUpdate.submit();
   }
 
-  function Delete_listitem(item_name,item_id) {
-    window.location.search='?MIval=aa-do-imageupdate.apg&OID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted';
-  }
 
 <?MIVAR>
   <?MIVAR NAME=$window_name DELIMIT="-" REPLACE="d">$OID<?/MIVAR>
@@ -72,13 +69,14 @@ Variables Expected:
 <?/MIVAR>
 
   function popup_url(url) {
-    open(url,"Description","toolbar=yes,scrollbars=yes,resizable=yes");
+    open(url,"popup","toolbar=yes,scrollbars=yes,resizable=yes");
   }
 
 </SCRIPT>
 
 </HEAD>
 
+<?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 
 <?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
 
@@ -102,6 +100,13 @@ Variables Expected:
 <?MIVAR NAME=$fimg_form>$9<?/MIVAR>
 <?MIVAR NAME=$fimg_preparation>$10<?/MIVAR>
 <?MIVAR NAME=$full_fish_name>$11<?/MIVAR>
+
+
+<?MIBLOCK COND="$(NXST,$accession)">
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+<?/MIBLOCK>
+
+<?MIVAR><TITLE> ZFIN View Image</TITLE><?/MIVAR>
 
 <!-- tried MIBLOCK with COND here.  Didn't work.  -->
 
@@ -179,17 +184,17 @@ Variables Expected:
       <?MIBLOCK COND="$(NC,$fimg_form,movie)">
 
 	<center>
-	<TABLE border>
+	<TABLE border=0 cellpadding=20>
 	  <TR>
-	    <TD align=center>
+	    <TD align=center bgcolor=#000000>
 	      <?MIVAR> 
 		<script>
 		  var frameWidth;
 		  if (navigator.appName == "Microsoft Internet Explorer") {
-		    frameWidth = parent.frames[1].document.body.clientWidth - 38;
+		    frameWidth = parent.document.body.clientWidth - 38;
 		  }
 		  else {
-		    frameWidth = parent.frames[1].innerWidth - 38;
+		    frameWidth = parent.innerWidth - 38;
 		  }
 
 		  if ($fimg_width > frameWidth) {   
@@ -222,15 +227,15 @@ Variables Expected:
 
       <A NAME="image_info">
       <p>
-      <TABLE border width=100% cellpadding=3>
+      <TABLE border=0 width=100% cellpadding=3>
         <TR align=center>
-          <TD bgcolor="#f8fab">
+          <?MIVAR><TD bgcolor="$highlight"><?/MIVAR>
             <?MIVAR COND="$(XST,$UPDATE)">
               <INPUT TYPE=button value=Update onClick="doit('stock','selection','Depicted+Stock','fish_image','fimg_zdb_id')">
             <?/MIVAR>
 	    <big>Stock:</big> 
 	    <?MIVAR>
-              <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$fimg_fish_zdb_id">$full_fish_name</A>
+              $(IF,$(NC,$full_fish_name,UNKNOWN),<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$fimg_fish_zdb_id">$full_fish_name</A>,$full_fish_name)
             <?/MIVAR>
           </TD>
         </TR>
@@ -314,7 +319,7 @@ Variables Expected:
 	
 	<!-- Display anatomy associated with image -->
 
-	<TABLE border="2" WIDTH="100%" cellpadding="4">
+	<TABLE border="0" WIDTH="100%" cellpadding="4">
 
 	  <?MISQL SQL="
 	    select anathier_code, anathier_name 
@@ -446,7 +451,7 @@ Variables Expected:
 
             <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
               <b>Keywords:</b>
-	      <TABLE border="2" WIDTH="90%">
+	      <TABLE border="0" WIDTH="90%">
               <center>
             <?/MIBLOCK>
 	    <tr>
@@ -481,7 +486,7 @@ Variables Expected:
 
       
       <b>Image Preparation:</B> <p>
-      <TABLE border=2 WIDTH=100% cellpadding=4>
+      <TABLE border=0 WIDTH=100% cellpadding=4>
 	<TH>Preparation</TH>
         <TH>Image Form</TH>
         <TH>View</TH>
@@ -574,12 +579,14 @@ Variables Expected:
         $1
       <?/MISQL>
 
-    <!-- Missing form terminator? -->
-
+   
+    </form>
   <?/MIBLOCK>  <!-- ends cond AUTHORIZED -->
 <?/MIBLOCK>  <!-- ends cond OID exist -->
 
-
+<?MIBLOCK COND="$(NXST,$accession)">
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+<?/MIBLOCK>
 
 
 </HTML>

@@ -26,7 +26,10 @@ Possible vars: update
    </SCRIPT>
 </HEAD>
 
-<body bgcolor="#e5e5e5"  TEXT="black">
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+
+<TITLE> Add ZFIN Linkage Members </TITLE>
+
 <basefont COLOR="#000000" size=2>
 
 <!-- new linkage has been inserted - begin getting linkage members -->
@@ -188,5 +191,8 @@ Linkage Members:<br>
 	<input type=button value="Submit" onClick="window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_linkage.apg&link_id=$link_id&update=true'">  
       <?/MIVAR>
     <?/MIBLOCK>
+
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 
 </form>

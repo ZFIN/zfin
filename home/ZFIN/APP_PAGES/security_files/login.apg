@@ -23,29 +23,17 @@ function submit_login () {
 }
 
 </SCRIPT>
-
+	<!-- table class login req's zfin_style.css -->
 <form name=login_form method=post  action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 <INPUT TYPE=hidden name=MIval value=aa-process-login.apg>
+<?MIVAR>
 
-<TABLE bgcolor="#f8fabb" border=1 width=100%>
-<TR align=center>
-<TD>
-
-<TABLE width=100%> <TR>
-<TD><b>Login:</b> <INPUT TYPE=text size=8 maxlength=12 name=login onChange="submit_complete();">
-</TD>
-<TD>
+<?/MIVAR>
+<b>Login:</b> <INPUT TYPE=text size=8 maxlength=12 name=login onChange="submit_complete();">
 <b>Password:</b> <input TYPE=password size=8 maxlength=8 name=password onChange="submit_complete();">
-</TD>
-<TD>
-<input type=submit name=s_user value="Log in" onSubmit="submit_login();">
-</TD></TR>
-<TR><TD colspan=4><font size=-1>Only registered users may submit or update data in ZFIN. Please <A HREF="mailto:zfinadmn@zfin.org">contact the database administrator</a> for information on how to become a registered user.</font>
-</TD></TR></TABLE>
-
-</TD></TR></TABLE>
-
+&nbsp;&nbsp;<input type=submit name=s_user value="Log in" onSubmit="submit_login();">
+<br><font size=1>(Login required only to update personal records)</font>
 </FORM>
-
 <!-- Put the cursor in the login name box -->
 <SCRIPT>document.login_form.login.focus();</SCRIPT>
+

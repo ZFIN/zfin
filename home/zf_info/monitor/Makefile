@@ -26,7 +26,7 @@ SUBDIRS = vol1 vol2.1 vol2.2 vol2.3 vol2.4 vol3.1 vol3.2 vol3.3 vol3.4 vol3.5 \
 
 GENERICS = mon.html
 
-STATICS = fish_bgd.gif fish_net.gif
+STATICS = fish_net.gif
 
 
 # ---------------  Production Rules  ------------------------------------

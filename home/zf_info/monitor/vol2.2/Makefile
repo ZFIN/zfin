@@ -20,8 +20,9 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/monitor/vol2.2
 
-STATICS = 1.html 2.html 3.html 4.html 5.html 6.html 7.html 8.html 9.html \
-	contents.html fish_net.gif vol2.2.pdf
+GENERICS = 1.html 2.html 3.html 4.html 5.html 6.html 7.html 8.html 9.html contents.html 
+
+STATICS = fish_net.gif vol2.2.pdf
 
 
 # ---------------  Production Rules  ------------------------------------

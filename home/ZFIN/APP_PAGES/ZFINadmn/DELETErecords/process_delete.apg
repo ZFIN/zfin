@@ -8,6 +8,7 @@ VARIABLES EXPECTED:
 
 -->
 
+
 <?MISQL SQL="
   select WebExplode(object,'permission=root') 
     from webPages where ID='aa-secure_navigation.apg';">
@@ -24,18 +25,18 @@ VARIABLES EXPECTED:
       -- delete the record from the record type's base table.
       -->
 
-    <?MIBLOCK COND="$(OR,$(EC,$rtype,anon_marker),$(EC,$rtype,gene),$(EC,$rtype,marker),$(EC,$rtype,fish_image),$(EC,$rtype,locus))">
+    <?MIBLOCK COND="$(OR,$(EC,$rtype,anon_marker),$(EC,$rtype,gene),$(EC,$rtype,fish_image))">
       <?MISQL SQL="
 	delete from zdb_active_data
 	  where zactvd_zdb_id = '$OID';">
       <?/MISQL>
-    <?MIELSE COND="$(OR,$(EC,$rtype,company),$(EC,$rtype,person),$(EC,$rtype,lab),$(EC,$rtype,publication))">>
+    <?MIELSE COND="$(OR,$(EC,$rtype,company),$(EC,$rtype,person),$(EC,$rtype,lab),$(EC,$rtype,publication))">
       <?MISQL SQL="
 	delete from zdb_active_source
 	  where zactvs_zdb_id = '$OID';">
       <?/MISQL>		
     <?MIELSE>
-      <?MISQL $SQL="
+      <?MISQL SQL="
 	delete from $rtype 
 	  where zdb_id='$OID';">
       <?/MISQL>
@@ -45,7 +46,7 @@ VARIABLES EXPECTED:
 
     <!-- Jump back to home -->
     <SCRIPT>
-      top.content.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg';
+      window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg';
     </SCRIPT>
 
   <?/MIBLOCK> <!-- ends cond oid and rtype exist -->
@@ -55,3 +56,4 @@ VARIABLES EXPECTED:
   <?/MIVAR>
 
 <?/MIBLOCK> <!-- cond authorize nc false -->
+

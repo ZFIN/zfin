@@ -462,8 +462,8 @@ public class Browser extends Applet {
 		try { U = new URL("http", getDocumentBase().getHost(), "/cgi-bin/webdriver?" + QS); }
 		catch (MalformedURLException e) { System.err.println(e); }
 
-		getAppletContext().showDocument(U, "criteria");
-		
+//		getAppletContext().showDocument(U, "criteria");
+		getAppletContext().showDocument(U);
 /*		try {
 
 			// open the connection and prepare it to POST

@@ -20,7 +20,9 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/monitor/vol2.1
 
-STATICS = inject.JPG slotmkr2.GIF vol2.1.html vol2.1.pdf
+GENERICS = vol2.1.html
+
+STATICS = inject.JPG slotmkr2.GIF  vol2.1.pdf
 
 
 # ---------------  Production Rules  ------------------------------------

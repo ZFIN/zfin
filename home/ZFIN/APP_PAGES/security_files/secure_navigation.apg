@@ -122,14 +122,6 @@ to the guest cookie. This way logging will be to their unique cookie name  -->
 <!-- Last chance to AUTHORIZE is if you're root -->
 <?MIVAR COND="$(AND,$(XST,$ZDB_access),$(EC,$ZDB_access,root))" NAME=$AUTHORIZED>root<?/MIVAR>
 
-<!-- OKAY, now cause a tile for the new page to appear in the navigator frame -->
-<?MIVAR COND="$(AND,$(XST,$page_title),$(NC,$page_title,List Persons))">
-  <SCRIPT>
-    var page_id=window.location.href;
-    top.update_hist(page_id,"$page_title");
-    top.controls.location.reload(true)
-  </SCRIPT>
-<?/MIVAR>
 
 <!-- If authorization fails, let them know. -->
 <?MIBLOCK COND="$(EC,$AUTHORIZED,false)">

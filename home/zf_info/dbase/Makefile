@@ -28,7 +28,7 @@ GENERICS = aim1.html aim2.html aims.html arch.html bib.html cont.html \
 	mtgsum.html prob.html sig.html sum.html zfin-job1.html zfin-job2.html
 
 STATICS = fig1.gif fig2.gif fig3.gif fig4.gif fig4a.gif fig4b.gif fig5.gif \
-	fig6.gif fig7.gif fish_bgd.gif fish_net.gif zfin.gif
+	fig6.gif fig7.gif fish_net.gif zfin.gif
 
 
 # ---------------  Production Rules  ------------------------------------

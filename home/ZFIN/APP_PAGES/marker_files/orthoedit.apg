@@ -30,6 +30,8 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
   $1
 <?/MISQL>
 
+<?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
+
 <?MIBLOCK COND="$(NC,AUTHORIZED,false)">
 
   <?MIBLOCK COND="$(XST,$UPDATE)">
@@ -158,7 +160,7 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
 
       <p>
 
-      <TABLE bgcolor="#f8fabb" cols=1 rows=1 border cellpadding=5>
+      <TABLE <?MIVAR>bgcolor="$highlight"<?/MIVAR> cols=1 rows=1 border cellpadding=5>
 	<TR><TD>
 	<font size=2>
 	<?MISQL SQL="

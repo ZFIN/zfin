@@ -9,6 +9,9 @@ UPDATE ECK 4/21/99.  Will modify to allow public to see pending registrations --
  -->
 
 <HEAD>
+
+<title>ZFIN Registered Loci</title>
+
 <SCRIPT>
 function change_status(selector,locus_id,the_allele) {
 var theAction=selector.name;
@@ -21,6 +24,8 @@ var theDescr=escape(selector.value);
 }
 </SCRIPT>
 </HEAD>
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
 <?MISQL SQL="select WebExplode(object,'page_title=Registered Loci&permission=root') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
@@ -44,7 +49,6 @@ var theDescr=escape(selector.value);
     <!-- if owner is a member of ZFIN database team do not set ZFIN as lab, set lab to null -->
     <?MIVAR COND="$(OR,$(EC,$lab,ZDB-LAB-000914-1),$(EC,$lab,ZDB-LAB-991005-53))" NAME=$lab><?/MIVAR>
     <?MIVAR NAME=$full_abbrev>$abbrev<sup>$allele</sup><?/MIVAR>
-
     <?MISQL SQL="execute function get_id('FISH');"><?/MISQL>
     <?MIVAR NAME=$fish_id>$1<?/MIVAR>
     <?MISQL SQL="execute function get_id('CHROMO');"><?/MISQL>

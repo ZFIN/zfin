@@ -6,6 +6,7 @@ Expected vars:  None.
 
 <HTML>
 <HEAD>
+
   <SCRIPT>
 
      function pick_pub(pub_id) {
@@ -24,9 +25,11 @@ Expected vars:  None.
    </SCRIPT>
 </HEAD>
 
-<body bgcolor="#e5e5e5"  TEXT="black">
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+
 <basefont COLOR="#000000" size=2>
 
+<TITLE> Add ZFIN Linkage </TITLE>
 
 <form name=linkage method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 <input type=hidden name=MIval value=aa-add_linkage.apg>
@@ -290,5 +293,7 @@ Expected vars:  None.
   <?/MIBLOCK>  <!-- source specified -->
 <?/MIBLOCK>  <!-- ends if authorized -->
 
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 
 </HTML>

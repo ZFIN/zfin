@@ -18,7 +18,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/gene_files
 
-GENERICS = genelister.apg geneselect.apg haffter_linkages.apg new_marker.apg 
+GENERICS = geneselect.apg haffter_linkages.apg new_marker.apg 
 
 # use default rules for app page directories
 

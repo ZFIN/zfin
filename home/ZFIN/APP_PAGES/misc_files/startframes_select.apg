@@ -35,16 +35,19 @@ You may also optionally pass many other constraints on the upcoming selection th
 
 <html>
 
-<?MIVAR><FRAMESET rows="$frame_size,*"><?/MIVAR>
+<!-- <?MIVAR><FRAMESET rows="$frame_size,*"><?/MIVAR> -->
 
 <!-- Now just throw up the right selector, depending in what your data type you want to select from (as indicated in $selector) -->
 
 
 <?MIVAR>
-<FRAME NAME="criteria" SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$selector$constraint">
+<!-- <FRAME NAME="criteria" SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$selector$constraint"> -->
+  <SCRIPT>
+    window.location.search='?MIval=$selector$constraint';
+  </SCRIPT>
 <?/MIVAR>
 
-<FRAME NAME="pbrowser"  SRC="/ZFIN/misc_html/intro1.html">
+<!-- <FRAME NAME="pbrowser"  SRC="/ZFIN/misc_html/intro1.html"> -->
 
 </FRAMESET>
 

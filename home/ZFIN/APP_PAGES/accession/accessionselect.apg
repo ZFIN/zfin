@@ -1,79 +1,200 @@
-<!-- Modified to support I.E.  Naviagtor tile buttons must know all user input from the query screen.  These values are posted to the lister form.  The lister form creates the tile bar button with appropriate variables. Startframes.apg will pass this variables on to the select form.  -->
-
 <HTML>
+
+<?MIVAR Name=page_name>$(IF,$(XST,$query_results),ZFIN Accession Search Results,ZFIN Accession Search)<?/MIVAR>
+
+<?MIVAR><TITLE>$page_name</TITLE><?/MIVAR>
 
 <SCRIPT>
 
-function form_submit() {
-parent.pbrowser.document.location='/ZFIN/misc_html/saysearching.html'
-document.critform.submit();
-}
-
-
-function call_reset() {
-document.critform.aname.value = "";
-}
-
-
 
 </SCRIPT>
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+
 <basefont size=2>
 
+<?MIVAR NAME=$accession>exists<?/MIVAR>
 
-<form name=critform method=post TARGET="pbrowser" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" >
+<?MIBLOCK COND="$(XST,$query_results)">
+
+  <?MIVAR NAME=$MI_NULL>NULL<?/MIVAR>
+  <?MIVAR NAME=gcount>0<?/MIVAR>
+  <?MIVAR NAME=mcount>0<?/MIVAR>
+  <?MIVAR NAME=pcount>0<?/MIVAR>
+  <?MIVAR name=jtype>any<?/MIVAR>
+  <?MIVAR name=pub_status>any<?/MIVAR>
+  <?MIVAR name=cur_status>any<?/MIVAR>
+  <?MIVAR name=order_pref>name<?/MIVAR>
+  <?MIVAR name=line_type>accession<?/MIVAR>
+  <?MIVAR name=mutagen>any<?/MIVAR>
+  <?MIVAR name=chrom_change>any<?/MIVAR>
+  <?MIVAR name=chrom_num>0<?/MIVAR>
+  <?MIVAR name=searchtype>begins<?/MIVAR>
+  <?MIVAR name=query_results>exists<?/MIVAR>
 
 
-<center>
-<U><B><FONT SIZE=5>Search for </font>
-<FONT SIZE=5 color="#ff0000" > ACCESSION Number</font></b></u>
-</center>
+  <!--   THIS BLOCK HANDLES ACCESSION NUMBER SEARCHES ONLY NON ZDB_ID -->
+  <?MIVAR name=aname>$(UPPER,$aname)<?/MIVAR>
+  <?MIVAR name=OID>$aname<?/MIVAR>
+  <?MIBLOCK COND="$(=,$(POSITION,$aname,ZDB),0)">
 
-<TABLE width=100%>
-<TR>
-<TD><font size=-1>
-<b>Accession Number:</b> <input type=text name=aname size=15 > </font>
-</TD>
-</TR>
-<!--  assign navtile value to name - can not do with a value="name" in input statement - reset will not work -->
-<?MIBLOCK COND="$(XST,$nav_name)"><?MIVAR> <SCRIPT> document.critform.aname.value = "$nav_name" </SCRIPT><?/MIVAR> <?/MIBLOCK>
+    <?MIVAR name=$inputaname>$aname <?/MIVAR>
+    <!-- if the accession number specified has contains mgi:, omim: or gdb: , get rid of them -->
+    <?MIBLOCK COND="$(>,$(POSITION,$aname,:),0)">
+      <?MIVAR NAME=$newaname>$(SUBSTR,$aname,$(+,$(POSITION,$aname,:),1),$(STRLEN,$aname))<?/MIVAR>
+      <?MIVAR name=$inputaname>$aname <?/MIVAR>
+      <?MIVAR NAME=$aname>$newaname<?/MIVAR>
+    <!-- DEBUGGING <?MIVAR> newaname = $newaname <?/MIVAR> -->
+    <?/MIBLOCK>
 
-<TR> 
-<TD align=right WIDTH=30%>
-<input type=submit name=action value="SEARCH">
-<input type=button value="RESET" onClick="call_reset()"> 
-</TD> 
-</TR>
+
+    <!-- look if accession number links to publication -->
+
+    <?MISQL SQL="select count(*)::integer from publication  where lower(accession_no) like lower('%$aname%') and status ='active';"> 
+      $(SETVAR,$pcount,$1)
+    <?/MISQL>
+    <?MIBLOCK COND="$(NC,$pcount,0)">
+	<?MIVAR NAME=$start_page>aa-pubselect2.apg<?/MIVAR>	
+	<?MIVAR NAME=$constraint> where accession_no = '$aname' <?/MIVAR> 
+        <?MISQL SQL="select WebExplode(object,'') from webPages where ID='$start_page';">$1<?/MISQL>
+    <?/MIBLOCK>
+
+   <!-- look if accession number links to gene , significance 11 and 12 signify orthologue or accession numbers -->
+
+    <?MISQL SQL="select count(*)::integer from all_map_names a  where allmapnm_name = lower('$aname') and allmapnm_zdb_id like '%GENE%' and allmapnm_significance in (11,12);">
+      $(SETVAR,$gcount,$1)
+    <?/MISQL>
+    <?MIBLOCK COND="$(NC,$gcount,0)">
+	<?MIVAR NAME=$start_page>aa-geneselect.apg<?/MIVAR>	
+        <?MIVAR NAME=$name>$aname<?/MIVAR>
+        <?MISQL SQL="select WebExplode(object,'') from webPages where ID='$start_page';">$1<?/MISQL>
+    <?/MIBLOCK>
+
+   <!-- look if accession number links to marker-->
+
+    <?MISQL SQL="select count(*)::integer from all_map_names a  where allmapnm_name = lower('$aname') and allmapnm_zdb_id not like '%GENE%' and allmapnm_significance in (11,12);">
+      $(SETVAR,$mcount,$1)
+    <?/MISQL>
+    <?MIBLOCK COND="$(NC,$mcount,0)">
+	<?MIVAR NAME=$start_page>aa-markerselect.apg<?/MIVAR>	
+        <?MIVAR NAME=$name>$aname<?/MIVAR>
+        <?MISQL SQL="select WebExplode(object,'') from webPages where ID='$start_page';">$1<?/MISQL>
+    <?/MIBLOCK>
+
+    <?MIBLOCK COND="$(AND,$(EC,$pcount,0),$(EC,$mcount,0),$(EC,$gcount,0))">
+      <form><center><font size=4><?MIVAR><b>Requested acession number is not available in ZFIN.</b></font></center> <?/MIVAR>
+      </form>
+    <?/MIBLOCK>
+
+  <?/MIBLOCK>
+
+
+  <!--  THIS BLOCK HANDLES ZDB ID SEARCHES  -->
+
+  <?MIBLOCK COND="$(>,$(POSITION,$aname,ZDB),0)">
+
+    <?MIVAR NAME=$start_page>NULL<?/MIVAR>
+    <!-- if a zdb is passed in,  set second frame to it's viewer with specified zdb_id! -->
+
+    <?MIBLOCK COND="$(XST,$aname)")>
+      <?MIVAR name=aname>$(UPPER,$aname)<?/MIVAR>
+      <?MIVAR name=$OID>$aname<?/MIVAR>
+      <?MIVAR NAME=$constraint> where zdb_id = '$OID' <?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,LAB),0)">aa-labselect.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PERS),0)">aa-persselect.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,COMPANY),0)">aa-companyselect.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PUB),0)">aa-pubselect2.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,FISH),0)">aa-fishselect.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,GENE),0)">aa-geneselect.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,EST),0)">aa-markerselect.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,SSLP),0)">aa-markerselect.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,SSR),0)">aa-markerselect.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,BAC),0)">aa-markerselect.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,LOCUS),0)">aa-locusview.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,REFCROSS),0)">aa-crossview.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,RAPD),0)">aa-markerselect.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,STS),0)">aa-markerselect.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,RFLP),0)">aa-markerselect.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,IMAGE),0)">aa-imageview.apg<?/MIVAR>
+    <?/MIBLOCK>
+
+    <?MIBLOCK COND="$(EC,$start_page,NULL)">
+      <form><center><font size=4><?MIVAR><b>Requested ID is not available in ZFIN.</b> </font></center><?/MIVAR>
+      </form>
+    <?/MIBLOCK>  <!-- ends if start page is null -->
+
+
+    <?MIBLOCK COND="$(NC,$start_page,NULL)">       
+        <?MISQL SQL="select WebExplode(object,'') from webPages where ID='$start_page';">$1<?/MISQL>
+    <?/MIBLOCK>  <!-- ends if valid start page, not null  -->
+
+  <?/MIBLOCK>  <!-- ENDS IF SEARCHTYPE ZDB ID -->
+
+
+<?/MIBLOCK> <!--XST query_results-->
+
+
+
+<!------------- search ------------->
+
+
+    <Table class=search width="100%" border=0 cellpadding=1 cellspacing=0>
+      <TR>
+	<td class=titlebar>
+          &nbsp;&nbsp;
+
+  <?MIBLOCK COND="$(NXST,$query_results)">
+	  <b>Search for ACCESSION Number</b>
+  <?MIELSE>
+          <a name=modify></a><b>Modify your search</b>
+  <?/MIBLOCK>
+
+        </td>
+        <td class=titlebar align=right>
+        <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>          
+        </td>
+      </tr>
+
+<form name=critform method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" >
+
+  <TR>
+   <TD class="fullwidth">
+    <?MIVAR>
+    <b>Accession Number:</b> <input type=text name=aname size=15 value=$(IF,$(XST,$aname),$aname, )> </font>
+    <?/MIVAR>
+   </TD>
+  </TR>
+  <TR> 
+   <TD class="submitbar" colspan=2 align="right">
+    <input type=submit name=action value="SEARCH">
+    <input type=button value="RESET" onClick='document.critform.aname.value = ""'> 
+   </TD> 
+  </TR>
 </TABLE>
 
 
-<input type=hidden name=MIval value=aa-accessionlister.apg>
-
+<input type=hidden name=MIval value=aa-accessionselect.apg>
+<input type=hidden name=query_results value="exists">
 
 
 <!-- This next little block executes only if we are using the browser as a
 selector. That is we want user to ultimately CHOOSE a browsed value. All
-we have to do at this point is pass the return record along to perslister.
+we have to do at this point is pass the return record along the appropriate form.
 -->
 <?MIVAR COND="$(XST,$return_rec)">
 <input type=hidden NAME="return_rec" value=$return_rec>
 <?/MIVAR>
 
-
-<!-- If we have gotten to this page from a nav bar tile - we need to autosubmit to get
- pbrowser frame populated -->
-
-
-<?MIVAR COND="$(XST,$navtile)">
-<SCRIPT>
-form_submit();
-</SCRIPT>
+<?MIVAR COND="$(XST,$query_results)">
+    </td>
+  </tr>
+</table>
 <?/MIVAR>
 
 </form>
-</form>
 
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 
-</HTML>
 
 
 

@@ -29,9 +29,9 @@ SUBDIRS  = ZFIN zf_info images unavailable
 MIRROR_SUBDIRS = zf_info images
 POSTLOADDB_SUBDIRS = ZFIN
 
-GENERICS = index.html robots.txt 
+GENERICS = index.html robots.txt zfin_style.css nn4_zfin_style.css header.js footer.js client_sniff.js
 
-STATICS  = fish_bgd.gif fish_net.gif favicon.ico
+STATICS  = fish_net.gif favicon.ico
 
 # This also creates a symbolic link to to an FTP directory to provide an 
 # http interface to the FTP directory.
@@ -75,6 +75,7 @@ $(STATICTARGETS) : $(TARGETDIR)/% : %
 	$(TARGET_CP) $^ $@
 
 $(FTPTARGET) : 
+	rm -f $(FTPTARGET)
 	ln -s $(TARGETFTPROOT)/pub/transfer $(FTPTARGET)
 
 $(CLIENTAPPSTARGET) : 

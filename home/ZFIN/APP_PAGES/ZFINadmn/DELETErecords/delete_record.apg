@@ -14,6 +14,7 @@ Variables expected:
 -->
 
 <HTML>
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
 <?MISQL SQL="
   select WebExplode(object,'permission=root&rtype=$rtype&page_title=DELETE $(UPPER,$rtype)$(XST,$ownerColumn,&ownerColumn=$ownerColumn)$(XST,$zdbIdColumn,&zdbIdColumn=$zdbIdColumn)') 
@@ -28,7 +29,7 @@ Variables expected:
 <?MIBLOCK COND="$(AND,$(XST,$OID),$(XST,$rtype))">
 
 <?MIVAR>
-<TITLE>WARNING: DELETING A $(UPPER,$rtype) RECORD</TITLE>
+<TITLE>ZFIN WARNING: DELETING A $(UPPER,$rtype) RECORD</TITLE>
 
 
 <h1 align=center><blink><font color="#ff0000">WARNING!!!</font></blink></h1>
@@ -71,4 +72,5 @@ $(IF,$(XST,$zdbIdColumn),<input type=hidden name=zdbIdColumn value=$zdbIdColumn>
 
 
 <?/MIBLOCK>  <!-- ends cond authorization -->
-</HTML>
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>

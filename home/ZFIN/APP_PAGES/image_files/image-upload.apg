@@ -14,7 +14,14 @@ So again, in this file, we simply ask the user to upload the image.
 -->
 
 <HTML>
-<title>Image Upload</title>
+<title>ZFIN Image Upload</title>
+<HTML>
+
+<HEAD>
+  <title>Upload Image</title>
+</HEAD>
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
 <h1 align=center>Image Upload</h1>
 
@@ -48,4 +55,5 @@ the form below to select the image file, and specify its type.
 
 </FORM>
 
-</HTML>
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+

@@ -26,26 +26,23 @@
 <SCRIPT>
   <?MIVAR>
     function doit(attr,attr_type,print_name) {
-      window.location.search='?MIval=aa-locusupdate.apg&OID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name
+      window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusupdate.apg&OID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name)
     }
   <?/MIVAR>
 
   function info() {
-    window.alert('ANONYMOUS LINKAGE:\n This marker is a dummy placeholder for a marker that has been linked to this locus, \nbut has not been published yet. ZFIN supports anonymous linkages to promote scientific \ncollaboration; you should contact the submitter of this mapping data (just click the link) \nto negotiate access to this information.');
+    window.alert('ANONYMOUS LINKAGE:\n This marker is a dummy placeholder for a
+ marker that has been linked to this locus, \nbut has not been published yet. ZFIN supports anonymous linkages to promote scientific \ncollaboration; you should contact the submitter of this mapping data (just click the link) \nto negotiate access to this information.');
   }
 
   function Delete_listitem(item_name,item_id,oid) {
-    window.location.search='?MIval=aa-do-locusupdate.apg&OID='+oid+'&attr='+item_name+'&attr_type=Delete_listitem&old_value='+item_id+'&new_value=deleted'
+    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-locusupdate.apg&OID='+oid+'&attr='+item_name+'&attr_type=Delete_listitem&old_value='+item_id+'&new_value=deleted')
   }
 
 
 </SCRIPT>
 
 </HEAD>
-
-<body bgcolor="#e5e5e5"  TEXT="black">
-<basefont COLOR="#000000" size=2>
-
 
 
 <?MIBLOCK COND="$(NXST,$OID)">
@@ -77,28 +74,47 @@
 
   <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
+
     <?MISQL SQL="
       select locus_name, abbrev, comments, owner, cloned_gene 
 	from locus 
 	where zdb_id='$OID';">
     <?/MISQL>
 
-    <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
-      <form><center><font size=4>
-	<?MIVAR> <b>Invalid ZFIN ID.</b><?/MIVAR>
-      </form>
-    <?/MIBLOCK>
-
-
-    <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
       <?MIVAR NAME=$name>$1<?/MIVAR>
       <?MIVAR NAME=$abbrev>$2<?/MIVAR>
       <?MIVAR NAME=$comments>$3<?/MIVAR>
       <?MIVAR NAME=$owner>$4<?/MIVAR>
       <?MIVAR NAME=$cloned_gene>$5<?/MIVAR>
 
+    <?MIBLOCK COND="$(EC,$name,$MI_NOVALUE)">
+      <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+      <form><center><font size=+2>
+	<b>Requested ID not found in ZFIN.</b>
+      </form>
+    <?/MIBLOCK>
 
+
+    <?MIBLOCK COND="$(NC,$name,$MI_NOVALUE)">
       <?MIVAR NAME=$rec_title>Record for LOCUS $name<?/MIVAR>
+
+
+  <?MIBLOCK COND="$(XST,$UPDATE)">
+    <?MIVAR>
+      <TITLE>ZFIN Update Locus:$name </TITLE>
+    <?/MIVAR>
+  <?MIELSE>
+    <?MIVAR>
+      <TITLE>ZFIN View Locus:$name </TITLE>
+    <?/MIVAR>
+  <?/MIBLOCK>
+
+  <?MIBLOCK COND="$(NXST,$accession)">
+    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+  <?/MIBLOCK>
+  <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
+  <basefont COLOR="#000000" size=2>
+
 
       <!-- If viewing, THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
       <?MISQL COND="$(NXST,$UPDATE)" SQL="
@@ -108,26 +124,32 @@
         $1
       <?/MISQL>
 
-      <A NAME="top">
+      <A NAME="top"></A>
 
       <!-- OKAY, NOW  THROW UP THE  LOCUS INFO -->
-      <form NAME=updater>
-	<?MIVAR COND="$(XST,$UPDATE)">
- 	  <center><font size=5 color="#00ff00">
+      <?MIVAR COND="$(XST,$UPDATE)">
+        <form NAME=updater>
+ 	  <center><font size=+2 color="#00ff00">
 	  <input type=button 
 	    value=" DONE UPDATING. Back to Viewing! " 
-	    onClick="document.location.search='?MIval=aa-locusview.apg&OID=$OID'"> 
+	    onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$OID')"> 
 	  </font></center>
 	<?/MIVAR>
 
-	<center>
+
+  <table width=100% border=0>
+    <tr>
+      <td width=15%>
+        &nbsp;
+      </td>
+      <td width=70% align=center>
 	<?MIVAR COND="$(XST,$UPDATE)">
 	  <INPUT TYPE=button 
 	    value=Update 
             onClick="doit('locus_name','text','Locus+Name')">
 	<?/MIVAR> 
 	<?MIVAR>
-	  <B> <FONT SIZE=6>Locus: <i>$name</i></B>
+	  <B> <FONT SIZE=+2>Locus: <i>$name</i></B>
 	<?/MIVAR>
 
 	<?MIVAR COND="$(XST,$UPDATE)">
@@ -166,9 +188,27 @@
 	    </font>
  	  <?/MISQL>
 	<?/MIBLOCK> <!-- if root -->
+      </td>
+      <?MIBLOCK COND="$(NXST,$UPDATE)">
+        <?MIVAR>
+          <form method=post 
+                action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
+                target=comments>
+            <input type=hidden name=subject value="$name">
+            <input type=hidden name=marker_id value="$OID">
+            <input type=hidden name=MIval value="aa-your_input_welcome.apg">
+            <input type=hidden name=page_id value="$OID">
+      <td width=15% align=center>
+            <input type=submit value="Your Input Welcome">
+      </td>
+          </form>
+        <?/MIVAR>
+      <?MIELSE>
+        <td width=15%>&nbsp;</td>
+      <?/MIBLOCK>
+    </tr>
+  </table>
 
-	<p>
-	</CENTER>
 
 	  <p><font size=+1>
           <?MIBLOCK COND="$(XST,$UPDATE)">
@@ -246,7 +286,7 @@
 		        from all_linked_members
 			where alnkgmem_member_zdb_id=a.fish_id) as linkages,
 		     (select unique count(*)::integer
-		        from paneled_markers where zdb_id = a.fish_id) as paneled 
+		        from paneled_markers where zdb_id = a.locus) as paneled 
 	        from fish_search a 
 		where locus ='$OID' 
 		order by allele;">
@@ -285,11 +325,11 @@
 	      </TD>
 
 	      <TD valign=bottom><font size=-1>$(IF,$(NC,$chrom_change,NULL),$chrom_change,"Unknown")</TD>
-	      <TD><font size=-1>
+	      <TD align=center><font size=-1>
 	      <?MIBLOCK COND="$(OR,$(>,$paneled,0),$(>,$linkages,0))">
                 <?MISQL SQL="select distinct OR_lg,private
                   from paneled_markers 
-                    where zdb_id = '$fish_id'
+                    where zdb_id = '$OID'
                 union 
                   select distinct alnkgmem_or_lg ,alnkgmem_private
 		    from all_linked_members
@@ -333,7 +373,7 @@
 	  select gene_name, abbrev 
 	    from gene 
 	    where zdb_id='$cloned_gene';">
-	  <TABLE width=100% cellpadding=5 border=4 bgcolor="#f8fabb" cols=2 rows=1>
+	  <TABLE width=100% cellpadding=5 border=0 bgcolor="$highlight" cols=2 rows=1>
 	    <TR><TD>
 	    <font color="red"><B>Cloned Gene:</b>  </font>
 	    <font size=2>The GENE <b><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$cloned_gene">$1 ($2) </A> </b> 
@@ -351,6 +391,10 @@
   <?/MIBLOCK> <!-- ends cond oid exists -->
 
 <?/MIBLOCK> <!-- ends mirowcount gt 0 -->
+
+<?MIBLOCK COND="$(NXST,$accession)">
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+<?/MIBLOCK>
 
 </HTML>
 

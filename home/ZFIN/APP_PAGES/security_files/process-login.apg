@@ -11,6 +11,7 @@ Expects  login and, IFF this is present, it also needs password. If NXST login, 
 <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
 </HEAD>
 
+
 <!-- If no user login passed in, login as GUEST -->
 <?MIBLOCK COND="$(NXST,$login)">
 <?MISQL SQL="execute function conc('GUEST',get_random_cookie());"><?/MISQL>
@@ -65,13 +66,14 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.ap
 <?MIVAR NAME=$user_id>$1<?/MIVAR>
 <?MIVAR NAME=$new_cookie>$2<?/MIVAR>
 <?MIVAR NAME=$user_access>$3<?/MIVAR>
+
 <?MISQL SQL="update ZDB_submitters set cookie='$new_cookie',previous_login=issue_time::datetime year to fraction,issue_time=current where zdb_id='$user_id' and login='$login';"><?/MISQL>
 
 <?MIVAR>
 $(HTTPHEADER,set-cookie,ZDB_authorize=$new_cookie;path=/<!--|CGI_BIN_DIR_NAME|-->)
 <?/MIVAR>
 
-<?MIBLOCK COND="$(NXST,$ZDB_authorize)">
+<?MIBLOCK COND="$(OR,$(NXST,$ZDB_authorize),$(EC,$ZDB_authorize,GUEST))">
 <SCRIPT>
 window.alert ("Cookies must be enabled to login.\n Please enable cookies in your browser and login again");
 </SCRIPT>
@@ -97,5 +99,4 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.ap
 
 
 <?/MIBLOCK> <!-- ends cond exist login -->
-
 
