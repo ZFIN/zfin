@@ -582,7 +582,11 @@ colattrib_source_zdb_id)
           insert into zdb_active_data (zactvd_zdb_id)
 	    values ('$ortho_id');">
         <?/MISQL>
-        <?MIVAR NAME=$oname>$(URLENCODE,$(TRIM,$oname))<?/MIVAR>
+        
+        <?MICOMMENT> ==| Replace ' with '' |== <?/MICOMMENT>
+        <?MIVAR NAME=$oname DELIMIT="'" REPLACE="''">$oname<?/MIVAR>
+        
+        <?MIVAR NAME=$oname>$(TRIM,$oname)<?/MIVAR>
         <?MIVAR NAME=$oabbrev>$(TRIM,$oabbrev)<?/MIVAR>
         <?MISQL SQL="
           insert into orthologue 
@@ -615,7 +619,11 @@ colattrib_source_zdb_id)
       <?/MISQL>
 
       <?MIBLOCK COND="$(AND,$(XST,$newabbrev),$(XST,$newname))">
-        <?MIVAR NAME=$newname>$(URLENCODE,$(TRIM,$newname))<?/MIVAR>
+        
+        <?MICOMMENT> ==| Replace ' with '' |== <?/MICOMMENT>
+        <?MIVAR NAME=$newname DELIMIT="'" REPLACE="''">$newname<?/MIVAR>
+        
+        <?MIVAR NAME=$newname>$(TRIM,$newname)<?/MIVAR>
         <?MIVAR NAME=$newabbrev>$(TRIM,$newabbrev)<?/MIVAR>
         <?MISQL COND="$(AND,$(NC,$newabbrev,),$(NC,$newname,))" SQL="
 	  update orthologue 
