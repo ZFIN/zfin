@@ -2676,7 +2676,6 @@ SUBMITTER COMMENTS:
           <?MISQL SQL="
             select stg_zdb_id, stg_name_long, stg_hours_start
 	    from stage
-	    where stg_zdb_id not in (select stgcon_container_zdb_id from stage_contains)
             order by stg_hours_start;">
             <option value="$1">$2</option>
           <?/MISQL>
@@ -2686,7 +2685,6 @@ SUBMITTER COMMENTS:
           <?MISQL SQL="
             select stg_zdb_id, stg_name_long, stg_hours_end
 	    from stage
-	    where stg_zdb_id not in (select stgcon_container_zdb_id from stage_contains)
             order by stg_hours_end;">
             <option value="$1">$2</option>
           <?/MISQL>
@@ -2977,7 +2975,6 @@ SUBMITTER COMMENTS:
           <?MISQL SQL="
             select stg_zdb_id, stg_name_long, stg_hours_start
 	    from stage
-	    where stg_zdb_id not in (select stgcon_container_zdb_id from stage_contains)
             order by stg_hours_start;">
             <option value=$1>$2</option>
           <?/MISQL>
@@ -2988,7 +2985,6 @@ SUBMITTER COMMENTS:
           <?MISQL SQL="
             select stg_zdb_id, stg_name_long, stg_hours_end
 	    from stage
-	    where stg_zdb_id not in (select stgcon_container_zdb_id from stage_contains)
             order by stg_hours_end;">
             <option value=$1>$2</option>
           <?/MISQL>
