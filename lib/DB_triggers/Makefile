@@ -58,6 +58,7 @@ TRIGGERS = \
 	mrkr_name_update_trigger.sql \
 	marker_go_term_insert_trigger.sql \
 	marker_go_term_update_trigger.sql \
+	marker_go_term_evidence_insert_trigger.sql \
 	inference_group_member_insert_trigger.sql \
 	inference_group_member_notes_update_trigger.sql \
 	inference_group_member_inferred_from_update_trigger.sql \
@@ -83,7 +84,7 @@ ENDEMICTARGETS_POSTTARGETDIR = $(foreach TRIG, $(TRIGGERS), $(TARGETDIR)/$(TRIG)
 include ../../make.default.rules
 
 $(ENDEMICTARGETS_POSTTARGETDIR) : $(TARGETDIR)/% : %
-	-echo "drop trigger $(patsubst %.sql,%,$^)" | $(DBACCESS) $(DBNAME) #drop trigger > /dev/null 2>&1
+	-echo "drop trigger $(patsubst %.sql,%,$^)" | $(DBACCESS) $(DBNAME) > /dev/null 2>&1
 	$(TARGET_CP) $^ $@
 	$(TOUCH) $@
 	$(DBACCESS) $(DBNAME) $@
