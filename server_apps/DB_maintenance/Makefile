@@ -18,7 +18,9 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/DB_maintenance
 
-GENERICS = regen.sh scrubscan.pl unload_production.sh validatedata.pl
+GENERICS = regen.sh scrubscan.pl unload_production.sh validatedata.pl \
+	   load_and_index_almost.pl
+STATICS = postloaddb_almost.csh
 
 
 # ---------------  Production Rules  ------------------------------------
@@ -36,6 +38,9 @@ runregen : $(TARGETDIR)/regen.sh
 
 runscrub : $(TARGETDIR)/scrubscan.pl
 	$(TARGETDIR)/scrubscan.pl
+
+runloadindex : $(TARGETDIR)/load_and_index_almost.pl
+	$(TARGETDIR)/load_and_index_almost.pl -i
 
 runorphans : $(TARGETDIR)/validatedata.pl
 	$(TARGETDIR)/validatedata.pl $(DBNAME) -o
