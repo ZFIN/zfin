@@ -42,60 +42,61 @@ document.critform.START.value = "";
 
 <?MIVAR NAME=$knownloci COND="$(NXST,$knownloci)">NULL<?/MIVAR>
 
-<?MIBLOCK COND="$(XST,$query_results)">
 
-<?MIVAR NAME=$private>NULL<?/MIVAR>
-<?MIVAR NAME=$MI_NULL><?/MIVAR>
+<?MIBLOCK COND="$(OR,$(XST,$query_results),$(XST,$pubId))"> 
 
+  <?MIVAR NAME=$private>NULL<?/MIVAR>
+  <?MIVAR NAME=$MI_NULL><?/MIVAR>
+  <?MIVAR COND="$(NXST,$searchtype)" NAME=$searchtype><?/MIVAR>
 
-<!-- THIS NEXT PART IS EXECUTED AFTER THE PERSON ENTERS SOME CRITERIA -->
+  <!-- THIS NEXT PART IS EXECUTED AFTER THE PERSON ENTERS SOME CRITERIA -->
 
-<!-- First note that they have searched persons-->
+  <!-- First note that they have searched persons-->
 
-<?MISQL SQL="
-  select WebExplode(object,'') 
+  <?MISQL SQL="
+    select WebExplode(object,'') 
     from webPages 
     where ID='aa-identify.apg';">
-  $1
-<?/MISQL>
+    $1
+  <?/MISQL>
 
-<a name=results></a>
+  <a name=results></a>
 
-<!-- set userid to ZDB_ID of user or GUEST to be used by the map viewer -->
-<?MIVAR NAME=$userid>GUEST<?/MIVAR>
-<?MIBLOCK COND="$(NOT,$(EQ,$(SUBSTR,$ZDB_name,1,5),GUEST))">
-  <?MIVAR NAME=$userid>$ZDB_ident<?/MIVAR>
-<?/MIBLOCK>
+  <!-- set userid to ZDB_ID of user or GUEST to be used by the map viewer -->
+  <?MIVAR NAME=$userid>GUEST<?/MIVAR>
+  <?MIBLOCK COND="$(NOT,$(EQ,$(SUBSTR,$ZDB_name,1,5),GUEST))">
+    <?MIVAR NAME=$userid>$ZDB_ident<?/MIVAR>
+  <?/MIBLOCK>
 
 
-<!-- This next part builds up a query piece by piece, based on which criteria 
+ <!-- This next part builds up a query piece by piece, based on which criteria 
   -- were passed in, an inner constraint must be used to account for the 
   -- the possibility that the user leaves all fields blank; in that instance 
   -- the constraint isn't set, thus an error results when the inner query
   -- attempts to append an additional constraint to a non-existant constraint. 
   -->
+ 
+ <?MIVAR NAME=$lead_wildcard><?/MIVAR>
+ <?MIVAR COND="$(NC,$searchtype,begins)" NAME=$lead_wildcard>%<?/MIVAR>
 
-<?MIVAR NAME=$lead_wildcard><?/MIVAR>
-<?MIVAR COND="$(NC,$searchtype,begins)" NAME=$lead_wildcard>%<?/MIVAR>
+ <?MIVAR NAME=$constraint COND="$(NXST,$constraint)"> <?/MIVAR>
+ <?MIVAR NAME=$lg COND="$(NXST,$lg)">0<?/MIVAR>
+ <?MIVAR NAME=$refcross COND="$(NXST,$refcross)">NULL<?/MIVAR>
+ <?MIVAR NAME=$all_map_names><?/MIVAR>
+ <?MIVAR NAME=$allmapnm_significance><?/MIVAR>
+ <?MIVAR NAME=$allmapnm_significance_colno><?/MIVAR>
 
-<?MIVAR NAME=$constraint COND="$(NXST,$constraint)"> <?/MIVAR>
-<?MIVAR NAME=$lg COND="$(NXST,$lg)">0<?/MIVAR>
-<?MIVAR NAME=$refcross COND="$(NXST,$refcross)">NULL<?/MIVAR>
-<?MIVAR NAME=$all_map_names><?/MIVAR>
-<?MIVAR NAME=$allmapnm_significance><?/MIVAR>
-<?MIVAR NAME=$allmapnm_significance_colno><?/MIVAR>
+ <?MIBLOCK COND="$(OR,$(XST,$name),$(NC,$lg,0),$(NC,$refcross,NULL),$(NC,$knownloci,NULL),$(AND,$(XST,$within_cm),$(XST,$wm_name)))">
 
-<?MIBLOCK COND="$(OR,$(XST,$name),$(NC,$lg,0),$(NC,$refcross,NULL),$(NC,$knownloci,NULL),$(AND,$(XST,$within_cm),$(XST,$wm_name)))">
-
-  <!-- First filter name for apostrophes! -->
-  <?MIVAR COND="$(XST,$name)" NAME=$name DELIMIT="'" REPLACE="''">$name<?/MIVAR>
+   <!-- First filter name for apostrophes! -->
+   <?MIVAR COND="$(XST,$name)" NAME=$name DELIMIT="'" REPLACE="''">$name<?/MIVAR>
 
   <!-- NOW BUILD UP THE CONSTRAINT CLAUSE -->
 
-  <?MIVAR NAME=$previous> <?/MIVAR>
-  <?MIVAR NAME=$constraint> where <?/MIVAR>
+   <?MIVAR NAME=$previous> <?/MIVAR>
+   <?MIVAR NAME=$constraint> where <?/MIVAR>
 
-  <?MIBLOCK COND="$(XST,$name)">
+   <?MIBLOCK COND="$(XST,$name)">
     <?MIVAR NAME=$all_map_names>, all_map_names<?/MIVAR>
     <?MIVAR NAME=$allmapnm_significance>, min(allmapnm_significance)<?/MIVAR>
     <?MIVAR NAME=$allmapnm_significance_colno>6, <?/MIVAR>
@@ -104,23 +105,61 @@ document.critform.START.value = "";
           a.zdb_id = allmapnm_zdb_id 
       and allmapnm_name like '$lead_wildcard$(LOWER,$name)%' 
     <?/MIVAR>
-  <?/MIBLOCK> 
+   <?/MIBLOCK> 
 
-  <?MIVAR NAME=$previous COND="$(XST,$name)"> and <?/MIVAR>
+   <?MIVAR NAME=$previous COND="$(XST,$name)"> and <?/MIVAR>
 
-  <?MIVAR NAME=$constraint COND="$(NC,$lg,0)">$constraint $previous (OR_lg='$lg' and private='f')<?/MIVAR>
+   <?MIVAR NAME=$constraint COND="$(NC,$lg,0)">$constraint $previous (OR_lg='$lg' and private='f')<?/MIVAR>
 
-  <?MIVAR NAME=$previous COND="$(NC,$lg,0)"> and <?/MIVAR>
+   <?MIVAR NAME=$previous COND="$(NC,$lg,0)"> and <?/MIVAR>
 
-  <?MIVAR NAME=$constraint COND="$(NC,$refcross,NULL)">$constraint $previous (panel_id='$refcross')<?/MIVAR>
+   <?MIVAR NAME=$constraint COND="$(NC,$refcross,NULL)">$constraint $previous (panel_id='$refcross')<?/MIVAR>
 
-  <?MIVAR NAME=$previous COND="$(NC,$refcross,NULL)"> and <?/MIVAR>
+   <?MIVAR NAME=$previous COND="$(NC,$refcross,NULL)"> and <?/MIVAR>
 
-  <?MIVAR NAME=$constraint COND="$(NC,$knownloci,NULL)">$constraint $previous (locus_name is not null)<?/MIVAR>
+   <?MIVAR NAME=$constraint COND="$(NC,$knownloci,NULL)">$constraint $previous (locus_name is not null)<?/MIVAR>
 
-  <?MIVAR NAME=$previous COND="$(NC,$knownloci,NULL)"> and <?/MIVAR>
+   <?MIVAR NAME=$previous COND="$(NC,$knownloci,NULL)"> and <?/MIVAR>
 
-<?/MIBLOCK> <!-- ends cond any constraints specified -->
+ <?/MIBLOCK> <!-- ends cond any constraints specified. -->
+
+ <!--try to use this page also for gene list from a link in publication
+    page -->
+
+ <?MIBLOCK COND="$(XST,$pubId)">
+
+   <?MIVAR NAME=$all_map_names>, all_map_names<?/MIVAR>
+   <?MIVAR NAME=$allmapnm_significance>, min(allmapnm_significance)<?/MIVAR>
+   <?MIVAR NAME=$allmapnm_significance_colno>4, <?/MIVAR>
+   
+   <?MISQL SQL="
+	select recattrib_data_zdb_id as gene_zdb_id
+	from  record_attribution
+	where recattrib_source_zdb_id = '$pubId'
+	and  recattrib_data_zdb_id like 'ZDB-GENE%'
+	union 
+	select mrel_mrkr_2_zdb_id as gene_zdb_id
+	from  record_attribution, marker_relationship
+	where recattrib_source_zdb_id = '$pubId'
+	and  recattrib_data_zdb_id = mrel_mrkr_1_zdb_id
+	and mrel_mrkr_2_zdb_id like 'ZDB-GENE-%'		 
+	union 
+	select mrel_mrkr_1_zdb_id as gene_zdb_id
+	from  record_attribution, marker_relationship
+	where recattrib_source_zdb_id = '$pubId'
+	and  recattrib_data_zdb_id = mrel_mrkr_2_zdb_id
+	and mrel_mrkr_1_zdb_id like 'ZDB-GENE-%'
+	into temp genes_temp with no log; ">
+    <?/MISQL>	
+
+  <?MIVAR NAME=$constraint> 
+	where  genes_temp.gene_zdb_id = a.zdb_id 
+          and  a.zdb_id = allmapnm_zdb_id  
+  <?/MIVAR>
+	
+ <?/MIBLOCK>
+
+
 
 <?MIVAR NAME=$order_col>allgene_abbrev_order as abbrev_order<?/MIVAR>
 <?MIVAR NAME=$group_col>allgene_abbrev_order<?/MIVAR>
@@ -155,22 +194,25 @@ document.critform.START.value = "";
 
 </form>
 
+<!--***-->
 
+<?MIVAR NAME=$addTable><?/MIVAR>
+<?MIVAR COND="$(XST,$pubId)" NAME=addTable>, genes_temp<?/MIVAR>
+	
 <!-- Query database and construct table based on user constraints. -->
 
 <!-- Count the number of gene names that will be returned. -->
 <!-- query count(*) -->
+
 <?MISQL SQL="
   select count(distinct gene_name)::integer, count(*)::integer 
-    from $target_table $all_map_names
+    from $target_table $all_map_names $addTable
     $constraint;">
-<?/MISQL>
+ <?/MISQL>
 
 <?MIVAR NAME=$num_recs>$1<?/MIVAR>
 <?MIVAR NAME=$true_count>$2<?/MIVAR>
-<?MIVAR> 
-  <!-- QUERY: $MI_SQL -->
-<?/MIVAR>
+
 
 <?MIBLOCK COND="$(=,$num_recs,0)">
     
@@ -180,7 +222,23 @@ document.critform.START.value = "";
 
 <?/MIBLOCK>
 
-<?MIBLOCK COND="$(NXST,$new_oid)">    
+<?MIBLOCK COND="$(AND,$(NXST,$new_oid),$(XST,$pubId))">
+ <table width=100%>
+  <tr>
+    <td align=center>	
+      <?MIVAR>
+        <font size="+1">
+          $(IF,$(EC,$type,gene),Gene List)
+	  --$(IF,$(EC,$type,mrkrmap),Marker Mapping Data List)
+	  --$(IF,$(EC,$type,others), Molecular Probes and Segments List) 
+	  (<b>$num_recs</b> records)
+        </font>
+      <?/MIVAR>
+    </td>
+   </tr>
+ </table>
+
+<?MIELSE COND="$(NXST,$new_oid)">    
 <table width=100%>
   <tr>
     <td width=20%>&nbsp;</td>
@@ -241,7 +299,7 @@ document.critform.START.value = "";
     <?MIVAR name=row_color>$highlight<?/MIVAR>
     <?MIVAR NAME=$ok_view_map>0<?/MIVAR>
     <?MIVAR NAME=$rowNUM>$BEGIN<?/MIVAR>
-
+	
 
     <!--- Query Database --->
     <!-- NOTE: if you change the select list, you may also need to update
@@ -256,8 +314,9 @@ document.critform.START.value = "";
     </pre><?/MIVAR><?/MIBLOCK>
 
     <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
-      select gene_name, zdb_id, locus_name, locus_zdb_id, abbrev $allmapnm_significance , $order_col 
-    	FROM $target_table $all_map_names
+
+      select gene_name, zdb_id, locus_name, locus_zdb_id, abbrev $allmapnm_significance , $order_col
+    	FROM $target_table $all_map_names $addTable
     	$constraint 
 	group by gene_name, zdb_id, abbrev, locus_name, locus_zdb_id, $group_col
     	$order_clause;">
@@ -421,16 +480,22 @@ document.critform.START.value = "";
 	<!-- to be used by walking windows -->
 	<!-- want GET string as short as possible - append only when variable 
 	  -- exists, buffer overflow may cause segmentation fault -->
-
+         
 	<?MIVAR name=selector>MIval=aa-geneselect.apg&WINSIZE=$WINSIZE<?/MIVAR>
         <?MIVAR name=$UserInput><?/MIVAR>
-	<?MIVAR name=$UserInput COND=$(XST,$lg)>$UserInput&lg=$lg<?/MIVAR>
-	<?MIVAR name=$UserInput COND=$(XST,$refcross)>$UserInput&refcross=$refcross<?/MIVAR>
-	<?MIVAR name=$UserInput COND=$(XST,$knownloci)>$UserInput&knownloci=$knownloci<?/MIVAR>
-	<?MIVAR name=$UserInput COND=$(XST,$searchtype)>$UserInput&searchtype=$searchtype<?/MIVAR>
-	<?MIVAR name=$UserInput COND=$(XST,$return_rec)>$UserInput&return_rec=$return_rec<?/MIVAR>
-	<?MIVAR name=UserInput COND=$(XST,$name)>$UserInput&name=$(URLENCODE,$name)<?/MIVAR>
-        <?MIVAR name=UserInput COND=$(XST,$query_results)>$UserInput&query_results=$(URLENCODE,$query_results)<?/MIVAR>
+
+        <?MIBLOCK COND="$(NXST,$pubId)">
+	 <?MIVAR name=$UserInput COND=$(XST,$lg)>$UserInput&lg=$lg<?/MIVAR>
+	 <?MIVAR name=$UserInput COND=$(XST,$refcross)>$UserInput&refcross=$refcross<?/MIVAR>
+	 <?MIVAR name=$UserInput COND=$(XST,$knownloci)>$UserInput&knownloci=$knownloci<?/MIVAR>
+	 <?MIVAR name=$UserInput COND=$(XST,$searchtype)>$UserInput&searchtype=$searchtype<?/MIVAR>
+	 <?MIVAR name=$UserInput COND=$(XST,$return_rec)>$UserInput&return_rec=$return_rec<?/MIVAR>
+	 <?MIVAR name=UserInput COND=$(XST,$name)>$UserInput&name=$(URLENCODE,$name)<?/MIVAR>
+         <?MIVAR name=UserInput COND=$(XST,$query_results)>$UserInput&query_results=$(URLENCODE,$query_results)<?/MIVAR>
+        
+	<?MIELSE>
+         <?MIVAR name=$UserInput>$UserInput&pubId=$pubId&type=$type<?/MIVAR>
+        <?/MIBLOCK>
 
 	<!--- Return to the previous set of Rows --->
 	<?MIBLOCK COND="$(>,$BEGIN,1)">
@@ -521,12 +586,16 @@ document.critform.START.value = "";
 <?MIVAR><!-- SQL: $MI_SQL --><?/MIVAR>
 
 <?MIVAR COND=$(EQ,$MI_ROWCOUNT,0)>No matching records found<?/MIVAR>
-
+<?MISQL COND="$(XST,$pubId)" SQL="
+	insert into genes_temp values (NULL);
+	drop table genes_temp; ">
+<?/MISQL>
 
 <?/MIBLOCK> <!-- xst query_results -->
 
 
-<?MIBLOCK COND="$(NXST,$accession)">  <!-- don't want modify search result if come from accessionalister -->
+
+<?MIBLOCK COND="$(AND,$(NXST,$accession),$(NXST,$pubId))">  <!-- don't want modify search result if come from accessionalister -->
 
     <Table class=search width="100%" border=0 cellpadding=1 cellspacing=0>
       <TR>
@@ -550,19 +619,19 @@ document.critform.START.value = "";
   <form name=critform method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 
     <input type=hidden name=MIval value=aa-geneselect.apg>
-    <input type=hidden name=query_results value="exist">
     <input type=hidden name=START value=1>
+   
+    <input type=hidden name=query_results value="exist">
+    <?MIVAR COND="$(NXST,$refcross)" NAME=$refcross>NULL<?/MIVAR>
+    <?MIVAR COND="$(XST,$gnslct_rfcrss)" NAME=$refcross>$gnslct_rfcrss<?/MIVAR>
+    <?MIVAR COND="$(NXST,$searchtype)" NAME=$searchtype>contains<?/MIVAR>
+    <?MIVAR COND="$(XST,$gnslct_srchtyp)" NAME=$searchtype>$gnslct_srchtyp<?/MIVAR>
+    <?MIVAR COND="$(NXST,$lg)" NAME=$lg>0<?/MIVAR>
+    <?MIVAR COND="$(XST,$gnslct_lg)" NAME=$lg>gnslct_lg<?/MIVAR>
+    
+    <?MIVAR>
 
-  <?MIVAR COND="$(NXST,$refcross)" NAME=$refcross>NULL<?/MIVAR>
-  <?MIVAR COND="$(XST,$gnslct_rfcrss)" NAME=$refcross>$gnslct_rfcrss<?/MIVAR>
-  <?MIVAR COND="$(NXST,$searchtype)" NAME=$searchtype>contains<?/MIVAR>
-  <?MIVAR COND="$(XST,$gnslct_srchtyp)" NAME=$searchtype>$gnslct_srchtyp<?/MIVAR>
-  <?MIVAR COND="$(NXST,$lg)" NAME=$lg>0<?/MIVAR>
-  <?MIVAR COND="$(XST,$gnslct_lg)" NAME=$lg>gnslct_lg<?/MIVAR>
-
-  <?MIVAR>
-
-    <TR>
+     <TR>
       <TD class="halfwidth">
 	  <font size=2>
 	  <b>Name 
@@ -656,3 +725,4 @@ document.critform.START.value = "";
 <?MIBLOCK COND="$(NXST,$accession)">
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>  
 <?/MIBLOCK>
+
