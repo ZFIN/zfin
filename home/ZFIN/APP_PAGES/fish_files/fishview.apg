@@ -863,10 +863,20 @@ Variables Expected:
 	   <?MIVAR NAME=$last><?/MIVAR>
 	   <?MIVAR name=marker_present>0<?/MIVAR>
 	   
-	   <?MISQL SQL="select b.abbrev,b.zdb_id,a.present_t,b.mtype from mapped_deletion a,all_markers b where a.marker_id=b.zdb_id and allele='$allele' order by a.present_t,b.mtype;">
+	   <?MISQL SQL="
+		select b.mrkr_abbrev,a.marker_id,a.present_t,b.mrkr_type
+		from mapped_deletion a, marker b 
+		where a.marker_id=b.mrkr_zdb_id 
+		and allele='$allele' 
+		union
+		select b.abbrev,a.marker_id,a.present_t,'MUTANT'
+		from mapped_deletion a, locus b 
+		where a.marker_id=b.zdb_id 
+		and allele='$allele' 
+		order by 3,4 ;">
 	
 	    <?MIVAR COND="$(=,$MI_CURRENTROW,1)">
-	      <TABLE width=100% bgcolor="$highlight" cellpadding=2>
+	      <TABLE width=100%  bgcolor = "$highlight" cellpadding=2>
 	      <TR><TD><b>Deletion Markers: 
 	      <table>
 	      <tr><td>
@@ -915,7 +925,7 @@ Variables Expected:
 	
   <!----------------------------------------------------->
 	  <?MIVAR>
-	    <TABLE width=100% cellpadding=5 border=0 bgcolor="$highlight">
+	    <TABLE width=100% cellpadding=5 bgcolor = "$highlight" border=0>
 	  <?/MIVAR>
 	  <TR>
 	  <TD valign=top>
@@ -926,20 +936,14 @@ Variables Expected:
 	  <?MIVAR NAME=$override>$(IF,$(OR,$(EC,$ZDB_access,root),$(EC,$ZDB_access,fishauth)),true,false)<?/MIVAR>
 
 	  <?MISQL SQL="
-		select a.owner, lg_location, target_id as panel_id, OR_lg, target_abbrev as panel_abbrev,private,b.full_name,a.metric,day(a.entry_date::date),month(a.entry_date::date), year(a.entry_date::date), map_name, disp_order 
-		from paneled_markers a,person b, panels c  
-		where a.zdb_id='$locus' 
-		  and OR_lg is not null 
+		select a.owner, lg_location, c.zdb_id as panel_id, or_lg, c.abbrev as panel_abbrev,private,b.full_name,a.metric,day(a.entry_date::date),month(a.entry_date::date), year(a.entry_date::date), map_name, disp_order 
+		from mapped_marker a,person b, panels c  
+		where (a.marker_id='$locus'
+		   or a.marker_id = '$OID') 
+		  and or_lg is not null 
  		  and a.owner=b.zdb_id 
-	 	  and a.target_id = c.zdb_id 
-             union 
-		select a.owner, lg_location, target_id as panel_id, OR_lg, target_abbrev as panel_abbrev,private,b.full_name,a.metric,day(a.entry_date::date),month(a.entry_date::date), year(a.entry_date::date), map_name, disp_order 
-		from paneled_markers a,person b, panels c  
-		where a.zdb_id='$OID' 
-		and OR_lg is not null 
-		and a.owner=b.zdb_id 
-		and a.target_id = c.zdb_id 
-		order by 13;">
+	 	  and a.refcross_id = c.zdb_id 
+         	  order by 13;">
 
           <?MIBLOCK COND="$(AND,$(EC,$MI_CURRENTROW,1),$(NC,$cloned_gene,NULL))">
             <?MIVAR>
@@ -1015,15 +1019,17 @@ Variables Expected:
 
 	    <TABLE>
 	  <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
-	    <!-- look for a match of the last two characters in the public_paneled_markers abbrev to match the last two characters in the panels abbrev for table join to find disp_order -->
+	    <!-- look for a match of the last two characters in the mapped_markers abbrev to match the last two characters in the panels abbrev for table join to find disp_order -->
 	    <!--  naming convention is xxx_ln54  -->
 	    <!-- this might be a bit risky but we don't anticipate any new panels since sequencing is underway. -->
 	    <?MISQL SQL="
-		select or_lg,lg_location,a.abbrev,b.disp_order 
-		 from public_paneled_markers a, panels b 
-		where a.zdb_id='$locus' 
-		  and target_abbrev = 'ZMAP'
-		  and SUBSTRING(a.abbrev from LENGTH(a.abbrev)-1 for 2) = SUBSTRING(b.abbrev from LENGTH(b.abbrev)-1 for 2) 
+		select or_lg,lg_location,l.abbrev,b.disp_order 
+		 from mapped_marker a, panels b, locus l 
+		where marker_id='$locus' 
+		  and b.abbrev = 'ZMAP'
+		  and a.marker_id = l.zdb_id
+		  and b.zdb_id = a.refcross_id	
+		  and SUBSTRING(l.abbrev from LENGTH(l.abbrev)-1 for 2) = SUBSTRING(b.abbrev from LENGTH(b.abbrev)-1 for 2) 
 		order by disp_order;">
 	      <TR>
 		<TD>
@@ -1051,19 +1057,13 @@ Variables Expected:
 	    <TABLE cellpadding=0 cellspacing=0 >
 
 	  <?MISQL SQL="
-		select distinct target_abbrev, private as panel_abbrev, disp_order 
-		from paneled_markers a,person b ,panels c 
-		where a.zdb_id='$locus' 
-		 and OR_lg is not null 
+		select distinct c.abbrev as panel_abbrev, private, disp_order 
+		from mapped_marker a,person b ,panels c 
+		where (a.marker_id='$locus' or a.marker_id = '$OID')
+		 and or_lg is not null 
 		 and a.owner=b.zdb_id 
-		 and a.target_id = c.zdb_id 
-	    union 
-		select distinct target_abbrev, private as panel_abbrev, disp_order 
-		 from paneled_markers a,person b ,panels c 
-		where a.zdb_id='$OID' 
-		 and OR_lg is not null 
-		 and a.owner=b.zdb_id 
-		 and a.target_id = c.zdb_id order by 3;">
+		 and a.refcross_id = c.zdb_id 
+	         order by 3;">
 
 	    <?MIVAR NAME=$private>$2<?/MIVAR>
 
@@ -1109,7 +1109,7 @@ Variables Expected:
     </TABLE> <!-- end referenced panel locations table -->
 
 	    <?MIVAR>
-	      <TABLE width=100% cellpadding=5 border=0 bgcolor="$highlight" cols=3 rows=1>
+	      <TABLE width=100% cellpadding=5 bgcolor = "$highlight" border=0 cols=3 rows=1>
             <?/MIVAR>
 	    <TR>
 	    <TD valign=top colspan=4>
@@ -1121,19 +1121,50 @@ Variables Expected:
 
 	    <!-- get independent linkage info for other members of linkage or for marker itself if it is the only linkage member -->
 
-	      <?MISQL SQL="select alnkgmem_member_zdb_id, alnkgmem_member_abbrev, alnkgmem_marker_type, alnkgmem_private, alnkgmem_comments, alnkgmem_source_zdb_id, alnkgmem_source_name,alnkgmem_linkage_zdb_id,alnkgmem_or_lg, alnkgmem_num_members from all_linked_members a
-		where (alnkgmem_linkage_zdb_id in 
-		  (select alnkgmem_linkage_zdb_id from all_linked_members b 
-		      where b.alnkgmem_linkage_zdb_id = a.alnkgmem_linkage_zdb_id
-		      and b.alnkgmem_member_zdb_id = '$OID')
-		      and a.alnkgmem_member_zdb_id <> '$OID')
-		  or (a.alnkgmem_member_zdb_id = '$OID'   
-		      and a.alnkgmem_num_members = 1) ;">
+ 	<?MISQL SQL="select * from linkage_member
+		where lnkgmem_member_zdb_id = '$OID';">
+  	<?/MISQL>
 
+      <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">	
+    	  <?MISQL SQL="
+		select lnkgmem_linkage_zdb_id as t_lnkg_zdb_id, lnkgmem_member_zdb_id as t_lnkgmem_zdb_id
+		from linkage_member 
+		where lnkgmem_linkage_zdb_id in 
+	 		(select lnkgmem_linkage_zdb_id from linkage_member
+		  	where lnkgmem_member_zdb_id = '$OID')	  
+		into temp temp_lnkgmem with no log;"> 
+  
+    	 <?/MISQL>
+  
+    	 <?MISQL SQL="delete from temp_lnkgmem 
+			 where  t_lnkgmem_zdb_id = '$OID'
+			   and	t_lnkg_zdb_id in 
+				(select lnkgmem_linkage_zdb_id
+				   from linkage_member 
+			 	group by lnkgmem_linkage_zdb_id
+			 	  having count(*) > 1); ">
+
+    	  <?/MISQL>
+  
+   	  <?MISQL SQL="
+		select mrkr_zdb_id, mrkr_abbrev, mrkr_type, lnkg_private, lnkg_comments, recattrib_source_zdb_id, lnkg_zdb_id, lnkg_or_lg
+         	 from temp_lnkgmem , linkage, marker, record_attribution 
+        	where t_lnkgmem_zdb_id = mrkr_zdb_id	
+          	  and t_lnkg_zdb_id = lnkg_zdb_id
+		  and recattrib_data_zdb_id = lnkg_zdb_id
+		UNION
+	    	select f.zdb_id, l.abbrev, 'MUTANT', lnkg_private, lnkg_comments, recattrib_source_zdb_id, lnkg_zdb_id,lnkg_or_lg
+	   	 from temp_lnkgmem , linkage, fish f, locus l, record_attribution
+    	   	where t_lnkgmem_zdb_id = f.zdb_id	
+            	  and t_lnkg_zdb_id = lnkg_zdb_id
+	    	  and f.locus = l.zdb_id
+ 		  and recattrib_data_zdb_id = lnkg_zdb_id
+		;">
+   
 		<?MIVAR NAME=$member_zdb_id>$1<?/MIVAR>
-		<?MIVAR NAME=$lg>$9<?/MIVAR>
+		<?MIVAR NAME=$lg>$8<?/MIVAR>
 		<?MIVAR NAME=$map_comments>$5<?/MIVAR>
-		<?MIVAR NAME=$link_id>$8<?/MIVAR>
+		<?MIVAR NAME=$link_id>$7<?/MIVAR>
 		<?MIVAR NAME=$is_private>$4<?/MIVAR>
 
 		$(IF,$(=,$MI_CURRENTROW,1),"<TR><TD colspan=2></TD><TD></TD><TD><U>LG</U></TD><TD><U>Distance</U></TD><TD><U>LOD</U></TD><TD><U>Source</U></TD><TD></TD></TR>")
@@ -1144,16 +1175,30 @@ Variables Expected:
 
 		$(IF,$(>,$(POSITION,$6,PER),0),$(SETVAR,$sourceviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID="),$(SETVAR,$sourceviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID="))
 	
+    	 	<?MIBLOCK COND="$(>,$(POSITION,$6,PER),0)">
+      	   	  <?MISQL SQL="select full_name
+		    		from person
+		   		where zdb_id = '$6';">
+			<?MIVAR NAME=$source_name>$1<?/MIVAR>
+       	    	  <?/MISQL>
+    		<?MIELSE>				 	
+ 	   	    <?MISQL SQL="select pub_mini_ref
+		    		from publication
+		   		where zdb_id = '$6';">
+	     	      <?MIVAR NAME=$source_name>$1<?/MIVAR>
+           	    <?/MISQL>
+        	<?/MIBLOCK>
 
-		<?MISQL SQL="select lpmem_linkage_pair_zdb_id from linkage_pair_member a
+
+	       <?MISQL SQL="select lpmem_linkage_pair_zdb_id from linkage_pair_member a
 		  where lpmem_member_zdb_id = '$member_zdb_id' 
 		   and lpmem_linkage_zdb_id = '$link_id'
 		   and exists (select 'x' from linkage_pair_member b 
 		      where a.lpmem_linkage_zdb_id = '$link_id'
 			and a.lpmem_linkage_pair_zdb_id = b.lpmem_linkage_pair_zdb_id
 			and b.lpmem_member_zdb_id = '$OID');">
-		  <?MIVAR NAME=$pair_id>$1<?/MIVAR>
-		<?/MISQL>
+		   <?MIVAR NAME=$pair_id>$1<?/MIVAR>
+	        <?/MISQL>
 
 		<?MIBLOCK COND="$(XST,$pair_id)">
 		  <?MISQL SQL="select lnkgpair_distance, lnkgpair_lod, lnkgpair_metric from linkage_pair
@@ -1174,23 +1219,32 @@ Variables Expected:
 		   $(IF,$(OR,$(EC,$override,true),$(EC,$is_private,f),$(EC,$ZDB_ident,$6)),"<TD></TD><TD><font size=-1><A HREF="$curviewer$1">"$2"</A> ("$3")</TD>
 		    <TD align=center><font size=-1>"$lg"</TD>
 		    <TD align=center><font size=-1>"$distance" "$metric"</TD>
-		    <TD align=center><font size=-1>"$lod"</TD><TD><font size=-1><A href="$sourceviewer$6">"$7"</a></TD><TD>&nbsp; &nbsp;</TD><TD><font size=-1><A HREF=javascript:show_detail('"$link_id"','"$1"','"$2"','"$locus_abbrev"');>Details</A></TD>","<TD colspan=4><font size=-1><A href=javascript:info();>"$4$MI_CURRENTROW"</A>: Unpublished <A href="$sourceviewer$6">Contact "$7"</a>.</TD>")
+		    <TD align=center><font size=-1>"$lod"</TD><TD><font size=-1><A href="$sourceviewer$6">"$source_name"</a></TD><TD>&nbsp; &nbsp;</TD><TD><font size=-1><A HREF=javascript:show_detail('"$link_id"','"$1"','"$2"','"$locus_abbrev"');>Details</A></TD>","<TD colspan=4><font size=-1><A href=javascript:info();>"$4$MI_CURRENTROW"</A>: Unpublished <A href="$sourceviewer$6">Contact "$source_name"</a>.</TD>")
 		  <?/MIVAR>
 		<?MIELSE>
 		  <?MIVAR>
 		    $(IF,$(OR,$(EC,$override,true),$(EC,$is_private,f),$(EC,$ZDB_ident,$6)),"<TD></TD><TD><font size=-1><A HREF="$curviewer$1">"$2"</A> ("$3")</TD>
 		    <TD align=center><font size=-1>"$lg"</TD>
 		    <TD align=center><font size=-1>"$distance" "$metric"</TD>
-		    <TD align=center><font size=-1>"$lod"</TD><TD><font size=-1><A href="$sourceviewer$6">"$7"</a></TD><TD></TD>","<TD colspan=4><font size=-1><A href=javascript:info();>"$4$MI_CURRENTROW"</A>: Unpublished <A href="$sourceviewer$6">Contact "$7"</a>.</TD>")
+		    <TD align=center><font size=-1>"$lod"</TD><TD><font size=-1><A href="$sourceviewer$6">"$source_name"</a></TD><TD></TD>","<TD colspan=4><font size=-1><A href=javascript:info();>"$4$MI_CURRENTROW"</A>: Unpublished <A href="$sourceviewer$6">Contact "$source_name"</a>.</TD>")
 		    <?/MIVAR>
 	      <?/MIBLOCK>    
 
 	  </TR>
 	  <?/MISQL>
-          </TABLE>
-	  <?MIVAR COND="$(=,$MI_ROWCOUNT,0)"><p>None submitted.<?/MIVAR>
+          </Table>
+	  <?MISQL SQL=" 
+  		insert into temp_lnkgmem (t_lnkg_zdb_id) values (NULL);
+		drop table temp_lnkgmem ; "> 
+ 	  <?/MISQL>
+
+ 	 <?MIELSE>  <!-- if no linkage group information -->
+	    <?MIVAR COND="$(=,$MI_ROWCOUNT,0)"><p>None submitted.<?/MIVAR>
+	    </Table>	
+	 <?/MIBLOCK>  <!-- end of linkage member part -->
 	  </TD>
-	  </TR></TABLE>
+	  </TR>
+	</TABLE>
 
 	  <?/MIBLOCK>
           </form> <!--end mapper form -->
