@@ -133,20 +133,6 @@
  		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=marker_relationship&attr_type=delete-mrkrrelation&old_value='+mrel_id+'&new_value=deleted&target_table=$target_table&info='+type);
 	}
 
-	function new_ortho() {
-		var speciesind=document.updater1.species.selectedIndex;
-		var species=document.updater1.species[speciesind].value;
-		var oname=document.updater1.oname.value;
-		var oabbrev=document.updater1.oabbrev.value;
-		if ((oname != '') && (oabbrev != '')) {
-  		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=orthologue&attr_type=special-newortho&old_value='+species+'&new_value='+escape(oname)+'&target_table=$target_table&info='+oabbrev);
-  		}
-	}
-
-	function edit_ortho(ortho_id) {
-  		 helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-orthoedit.apg&OID="+ortho_id+"&geneId=$OID","helpwindow","scrollbars=yes,width=600,height=600");
-	}
-
 	function new_seqnum() {
 		var dbind=document.updateseq.seqdb.selectedIndex;
 		var dbname=document.updateseq.seqdb[dbind].value;
@@ -1153,22 +1139,13 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 <!------ only for cloned genes.------------------- -->
 <?MIBLOCK COND="$(EC,$marker_type,GENE)">
  <HR width="80%">
- <b>ORTHOLOGUES:</b>
+  <a name=orthologue><b>ORTHOLOGUES:</b></a>
+  <?MICOMMENT>at update mode, user will choose species, and invoke refresh<?/MICOMMENT>
 
- <?MIVAR COND="$(XST,$UPDATE)">
-  
-  <br><b>Add Orthologue:</b>
-  <SELECT name=species>
-    <option value=Mouse>Mouse 
-    <option value=Human>Human
-    <option value=Yeast>Yeast
-    <option value=Fly>Fly
-  </select>
-  Name:<input type=text size=15 name=oname> 
-  Abbrev:<input type=text size=5 name=oabbrev> 
-  <input type=button value="Add it!" onClick=new_ortho();>
-  <br>
- <?/MIVAR>
+  <?MIBLOCK COND="$(XST,$UPDATE)">
+   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-orthoedit.apg';">$1<?/MISQL> 
+ 
+  <?/MIBLOCK>
 
  <?MISQL SQL="select WebExplode(object,'OID=$OID') from webPages where ID='aa-orthoview.apg';">$1<?/MISQL> 
   	
