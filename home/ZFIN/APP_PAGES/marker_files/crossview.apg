@@ -1,12 +1,26 @@
-<!-- FILE: REFCROSSVIEW.HTML. This file implements a viewer for mapping and reference crosses.  Should display all info on cross as whole, plus list markers mapped in the cross.
--->
+<!-- FILE: CROSSVIEW.APG. This file implements a viewer for mapping and reference crosses.  Should display all info on cross as whole, plus list markers mapped in the cross.-->
 
 <HTML>
 <HEAD>
 <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
 
+<?MIVAR NAME=$userid COND="$(NXST,$userid)">GUEST<?/MIVAR>
+
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-chromoscripts.apg';">$1<?/MISQL>
 
+<SCRIPT>
+
+
+
+function call_mapplet(lg) {
+for (var count = 0; count <= 25; count++){
+	if ( lg == count) document.mapview.loc_lg.value = count ;
+
+}
+
+
+}
+</SCRIPT>
 </HEAD>
 
 <body bgcolor="#e5e5e5"  TEXT="black">
@@ -19,6 +33,16 @@ ERROR -- something bad happened -- no OID passed in!
 <?/MIBLOCK>
 
 <?MIBLOCK COND="$(XST,$OID)">
+<!-- Get user identity -->
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-identify.apg';">$1<?/MISQL>
+
+
+<!-- set userid to ZDB_ID of user or GUEST to be used by the map viewer -->
+
+<?MIBLOCK COND="$(NOT,$(EQ,$(SUBSTR,$ZDB_name,1,5),GUEST))">
+<?MIVAR NAME=$userid>$ZDB_ident<?/MIVAR>
+<?/MIBLOCK>
+
 
 <?MISQL SQL="select WebExplode(object,'page_title=View Panel') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
@@ -29,7 +53,7 @@ ERROR -- something bad happened -- no OID passed in!
 
 <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
 <form><center><font size=4>
-<?MIVAR> <b>Invalid ZFIN ID.<?/MIVAR>
+<b> ID not found in ZFIN </b> </center>
 </form>
 <?/MIBLOCK>
 
@@ -72,6 +96,12 @@ ID='aa-data_mgr.apg';">$1<?/MISQL>
 
 
 <!-- OKAY, NOW  THROW UP THE  PANEL INFO -->
+<form method=post name=mapview  action="/cgi-bin_B/view_mapplet.cgi" target="content">
+
+<INPUT TYPE=hidden name=loc_lg value=0 >  
+<?MIVAR><input type=hidden name=userid value="$userid"><?/MIVAR>
+
+
 <P>
 
 <CENTER>
@@ -181,10 +211,14 @@ Click to <A HREF="/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-mark
 <TD><font size=2>
 <TABLE BORDER cellpadding=2 bgcolor="#f8fabb" cols=4>
 <TH>LG</TH><TH>Markers on LG</TH><TH></TH><TH></TH>
+<?MIVAR><INPUT TYPE=hidden name=loc_panel value=$abbrev><?/MIVAR>
 <?MIVAR NAME=$last>0<?/MIVAR>
 
 <?MISQL SQL="select OR_lg,mtype,count(*)::integer from paneled_markers where target_id='$OID'  group by OR_lg,mtype order by OR_lg;">
-$(IF,$(AND,$(>,$1,$last),$(>,$MI_CURRENTROW,1)),"</TD><TD><font size=1><A HREF=javascript:view_chromo('"$OID"','"$(-,$1,1)"');>Show Map</A></TD><TD><font size=1><A HREF=javascript:view_scores('"$OID"','"$(-,$1,1)"');>Scoring Data</A></TD></TR>")
+
+<?MIVAR>
+$(IF,$(AND,$(>,$1,$last),$(>,$MI_CURRENTROW,1)),"</TD><TD><font size=1><input type=submit name=view_map value='View Map' onClick='call_mapplet("$(-,$1,1)")'></TD><TD><font size=1><A HREF=javascript:view_scores('"$OID"','"$(-,$1,1)"');>Scoring Data</A></TD></TR>")
+<?/MIVAR>
 $(IF,$(>,$1,$last),"<TR align=center><TD><font size=1>"$1"</TD><TD><font size=1>")
 $(IF,$(=,$1,$last),"; ")
 $2($3)
@@ -192,8 +226,9 @@ $(SETVAR,$last,$1)
 <?/MISQL>
 
 <?MIVAR>
-</TD><TD><font size=1><A HREF="javascript:view_chromo('$OID','$1');">Show Map</A></TD><TD><font size=1><A HREF="javascript:view_scores('$OID','$1');">Scoring Data</A></TD></TR>
+</TD><TD><font size=1><input type=submit name=view_map value='View Map' onClick='call_mapplet("$1")'></TD><TD><font size=1><A HREF="javascript:view_scores('$OID','$1');">Scoring Data</A></TD></TR>
 <?/MIVAR>
+
 
 </TABLE>
 
