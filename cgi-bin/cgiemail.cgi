@@ -118,15 +118,33 @@ template: copy next find template "^/"
 ;;; clean off the top of the template
 while [(pick template 1) = "^/" ][remove template]
 
+
+header-obj: context [
+    To: none
+    CC: none
+    BCC: none
+    From: none
+    Reply-To: none
+    Date: none
+    Subject: none
+    Message-Id: none
+    MIME-Version: 1.0
+    Content-Type: "TEXT/plain; charset=us-ascii"
+    Content: none    
+]    
+
 foreach ad parse addy "," [
                 ;;; build a mail header
-                header: make system/standard/email [
+                header: make header-obj [
                         To:     ad
                         From:   frm
                         Subject: sbj
            ]
-           send/header to-email ad template header
-]
+                    
+           if error? err: try [send/header to-email ad template header][
+               send tomc@cs.uoregon.edu  rejoin [probe disarm err "^/" ad "^/" template "^/" header]
+           ]
+]   
 
 ;;; append a copy of the email to a flatfile
 
