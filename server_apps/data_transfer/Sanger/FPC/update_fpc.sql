@@ -1,29 +1,35 @@
 set pdqpriority high;
-
 ! echo "load marker - name"
-drop table fpc_marker;
-create table fpc_marker(fpm_mrkr varchar(25),fpm_acc varchar(25)); 
+--drop table fpc_marker;
+create table fpc_marker(fpm_mrkr varchar(25),fpm_acc varchar(25))
+fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3  
+; 
 load from 'fpc_zdb.unl' insert into fpc_marker;
 update fpc_marker set fpm_mrkr = lower(fpm_mrkr) where fpm_mrkr[1,4] <> 'ZDB-';
-create index fpm_acc_ndx on fpc_marker(fpm_acc);
-create index fpm_mrkr_ndx on fpc_marker(fpm_mrkr);
+create index fpm_acc_ndx on fpc_marker(fpm_acc) in idxdbs4;
+create index fpm_mrkr_ndx on fpc_marker(fpm_mrkr)in idxdbs3;
 update statistics medium for table fpc_marker;
 ---------------------------------------------------
 ! echo "load clone - marker"
-drop table fpc_clone;
-create table fpc_clone (fpcl_cln varchar(20), fpcl_acc varchar(20), fpcl_junk integer);
+--drop table fpc_clone;
+create table fpc_clone (fpcl_cln varchar(20), fpcl_acc varchar(20), fpcl_junk integer)
+fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3 
+;
 load from 'fpc_clone.unl' insert into fpc_clone;
-create index fpcl_cln_ndx on fpc_clone(fpcl_cln);
-create index fpcl_acc_ndx on fpc_clone(fpcl_acc);
+create index fpcl_cln_ndx on fpc_clone(fpcl_cln) in idxdbs1;
+create index fpcl_acc_ndx on fpc_clone(fpcl_acc)in idxdbs2;
 alter table fpc_clone drop fpcl_junk;
 update statistics medium for table fpc_clone;
 ---------------------------------------------------
 ! echo "load contig - clone"
-drop table fpc_contig;
-create table fpc_contig(fpct_ctg varchar(20), fpct_cln varchar(20), fpct_junk varchar(20));
+--drop table fpc_contig;
+create table fpc_contig(fpct_ctg varchar(20), fpct_cln varchar(20), fpct_junk varchar(20))
+fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3 
+extent size 4096 next size 4096
+;
 load from 'fpc_contig.unl' insert into fpc_contig;
-create index fpct_ctg_ndx on fpc_contig(fpct_ctg);
-create index fpct_cln_ndx on fpc_contig(fpct_cln);
+create index fpct_ctg_ndx on fpc_contig(fpct_ctg)in idxdbs3;
+create index fpct_cln_ndx on fpc_contig(fpct_cln)in idxdbs4;
 alter table fpc_contig drop fpct_junk;
 update statistics medium for table fpc_contig;
 ---------------------------------------------------

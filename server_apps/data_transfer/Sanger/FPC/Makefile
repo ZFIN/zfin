@@ -39,7 +39,7 @@ include $(TOP)/make.default.rules
 # This extracts data from Sanger and places it in ZFIN
 
 run : $(TARGETDIR)/fetch_load_fpc.sh 
-	$(TARGETDIR)/fetch_load_fpc.sh rollback
+	cd $(TARGETDIR);fetch_load_fpc.sh rollback
 
 commit : $(TARGETDIR)/fetch_load_fpc.sh 
-	$(TARGETDIR)/fetch_load_fpc.sh commit
+	cd $(TARGETDIR);fetch_load_fpc.sh commit
