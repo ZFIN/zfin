@@ -174,53 +174,6 @@ CREATE INDEX tmp_acc_num_index ON tmp_db_link
 
 
 
--- ======================= --
---  MULTIPLE REFSEQ LINKS  --
--- ======================= --
-
--- --------------  DELETE REDUNDANT LINKS  ----------------- --
-DELETE FROM tmp_db_link
-WHERE EXISTS 
-  (
-    SELECT *
-    FROM db_link link
-    WHERE link.linked_recid = tmp_linked_recid
-      AND link.db_name = tmp_db_name
-      AND link.acc_num = tmp_acc_num
-  );
-
--- --------------  DELETE MULTIPLES ----------------- --
--- Find all genes that have multiple RefSeq acc_nums.
--- Unload the gene_abbrev/acc_num and delete the records.
--- Failing to do this will result in a unique constraint violation.
-
-SELECT tmp_linked_recid as multref_linked_recid, 
-       count(tmp_linked_recid) as multref_count
-FROM tmp_db_link
-WHERE tmp_db_name = "RefSeq"
-GROUP BY tmp_linked_recid
-HAVING count(tmp_linked_recid) > 1
-order by 1
-INTO temp tmp_multiple_refseq;
-
-UNLOAD to gene_with_multiple_linked_recid.unl
-SELECT mrkr_abbrev, tmp_acc_num
-FROM tmp_multiple_refseq, tmp_db_link, marker
-WHERE multref_linked_recid = tmp_linked_recid
-  AND tmp_db_name = 'RefSeq'
-  AND tmp_linked_recid = mrkr_zdb_id;
-
-DELETE FROM tmp_db_link
-WHERE tmp_linked_recid in 
-    (SELECT multref_linked_recid FROM tmp_multiple_refseq)
-  AND tmp_db_name = 'RefSeq';
-
-
--- ---------  CREATE DB_LINK ZDB IDs  ----------- --
--- Don't add zdb_ids until all redundant data has been removed.
-
-  UPDATE tmp_db_link
-  SET tmp_dblink_zdb_id = get_id('DBLINK');
 
 
 !echo 'CREATE TEMP TABLE ortho_link'
@@ -282,8 +235,8 @@ INSERT INTO ortho_link
 
 CREATE INDEX lnkortho_dblink_zdb_id_index ON ortho_link
     (lnkortho_dblink_zdb_id) using btree;
-
-
+    
+    
 ------------------------------------------------------
 --| RECORD THE AUTOMATED and NON-AUTOMATED DBLINKS |--
 ------------------------------------------------------
@@ -326,6 +279,7 @@ DELETE FROM zdb_active_data WHERE zactvd_zdb_id in (SELECT link_id FROM automate
   INTO temp old_omim_and_ll
   with no log;
 
+-- Delete orthologue load links that are redundant with existing production links.
   DELETE FROM ortho_link
   WHERE EXISTS
     (
@@ -334,6 +288,147 @@ DELETE FROM zdb_active_data WHERE zactvd_zdb_id in (SELECT link_id FROM automate
       WHERE lnkortho_db_name = db_name
         AND lnkortho_acc_num = acc_num
     );
+
+
+-- ======================= --
+--  MULTIPLE REFSEQ LINKS  --
+-- ======================= --
+
+-- --------------  DELETE REDUNDANT DB_LINKS  ----------------- --
+DELETE FROM tmp_db_link
+WHERE EXISTS 
+  (
+    SELECT *
+    FROM db_link link
+    WHERE link.linked_recid = tmp_linked_recid
+      AND link.db_name = tmp_db_name
+      AND link.acc_num = tmp_acc_num
+  );
+
+-- --------------  DELETE MULTIPLES REFSEQ  ----------------- --
+-- Find all genes that have multiple RefSeq acc_nums.
+-- Unload the gene_abbrev/acc_num and delete the records.
+-- Failing to do this will result in a unique constraint violation.
+
+SELECT tmp_linked_recid as multref_linked_recid, 
+       count(tmp_linked_recid) as multref_count
+FROM tmp_db_link
+WHERE tmp_db_name = "RefSeq"
+GROUP BY tmp_linked_recid
+HAVING count(tmp_linked_recid) > 1
+order by 1
+INTO temp tmp_multiple_refseq;
+
+UNLOAD to gene_with_multiple_linked_recid.unl
+SELECT mrkr_abbrev, tmp_acc_num
+FROM tmp_multiple_refseq, tmp_db_link, marker
+WHERE multref_linked_recid = tmp_linked_recid
+  AND tmp_db_name = 'RefSeq'
+  AND tmp_linked_recid = mrkr_zdb_id;
+
+DELETE FROM tmp_db_link
+WHERE tmp_linked_recid in 
+    (SELECT multref_linked_recid FROM tmp_multiple_refseq)
+  AND tmp_db_name = 'RefSeq';
+
+
+-- ----------------------  DB_LINK  ------------------------ --
+
+-- ---------  CREATE DB_LINK ZDB IDs  ----------- --
+-- Don't add zdb_ids until all redundant data has been removed.
+
+  UPDATE tmp_db_link
+  SET tmp_dblink_zdb_id = get_id('DBLINK');
+  
+-- ------------------  add new links  ---------------------- --
+!echo 'add active data'
+INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link WHERE tmp_db_name = "RefSeq";
+INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link WHERE tmp_db_name = "LocusLink";
+INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link WHERE tmp_db_name = "Genbank";
+ 
+!echo 'insert new db_links'
+INSERT INTO db_link
+        (linked_recid,
+        db_name,
+        acc_num,
+        info,
+        dblink_zdb_id,
+        dblink_acc_num_display) SELECT *, tmp_acc_num FROM tmp_db_link WHERE tmp_db_name = "RefSeq";
+INSERT INTO db_link
+        (linked_recid,
+        db_name,
+        acc_num,
+        info,
+        dblink_zdb_id,
+        dblink_acc_num_display) SELECT *, tmp_acc_num FROM tmp_db_link WHERE tmp_db_name = "LocusLink";
+INSERT INTO db_link
+        (linked_recid,
+        db_name,
+        acc_num,
+        info,
+        dblink_zdb_id,
+        dblink_acc_num_display) SELECT *, tmp_acc_num FROM tmp_db_link WHERE tmp_db_name = "Genbank";
+
+
+!echo 'Attribute ZFIN_LL links to an artificial pub record.'
+INSERT INTO record_attribution
+    SELECT dblink_zdb_id, 'ZDB-PUB-020723-3'
+    FROM db_link, tmp_db_link
+    WHERE dblink_zdb_id = tmp_dblink_zdb_id
+;
+
+
+-- ------------------  UNI_GENE  ------------------- --
+!echo 'remove existing temp_db_link records'
+DELETE FROM tmp_db_link;
+
+!echo 'INSERT INTO temp_db_link'
+INSERT INTO tmp_db_link
+  SELECT
+    llzdb_zdb_id,
+    'UniGene',
+    uni_cluster_id,
+    'Uncurrated: RefSeq load ' || TODAY,
+    get_id('DBLINK')
+  FROM uni_gene, ll_zdb, zdb_active_data
+  WHERE uni_ll_id = llzdb_ll_id
+    AND llzdb_zdb_id = zactvd_zdb_id
+;
+
+-- ------------------ add new records ------------------ --
+!echo 'get all UniGene db_links that remain'
+  SELECT * 
+  FROM db_link 
+  WHERE db_name = "UniGene"
+  INTO temp unigene_link
+  with no log;
+
+
+!echo 'add active source AND active data'
+INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link
+       WHERE tmp_acc_num NOT IN (SELECT acc_num FROM unigene_link);
+
+
+!echo 'insert new db_links'
+INSERT INTO db_link
+        (linked_recid,
+        db_name,
+        acc_num,
+        info,
+        dblink_zdb_id,
+        dblink_acc_num_display)
+    SELECT *, tmp_acc_num
+    FROM tmp_db_link
+    WHERE tmp_acc_num NOT IN (SELECT acc_num FROM unigene_link);
+
+
+!echo 'Attribute RefSeq links to an artificial pub record.'
+INSERT INTO record_attribution
+    SELECT a.dblink_zdb_id, 'ZDB-PUB-020723-3'
+    FROM db_link a
+    WHERE a.db_name = "UniGene"
+      AND a.acc_num NOT IN (SELECT acc_num FROM unigene_link)
+;
 
       
 -----------------------------------------------
@@ -449,6 +544,7 @@ INSERT INTO record_attribution
     SELECT dblink_zdb_id, 'ZDB-PUB-020723-3'
     FROM db_link
     WHERE db_name = "LocusLink"
+      AND dblink_zdb_id IN (SELECT lnkortho_dblink_zdb_id FROM ortho_link)
       AND dblink_zdb_id NOT IN (SELECT dblink_zdb_id FROM old_omim_and_ll);
 
 !echo 'Attribute OMIM links to source LocusLink curation pub.'
@@ -459,97 +555,7 @@ INSERT INTO record_attribution
       AND dblink_zdb_id NOT IN (SELECT dblink_zdb_id FROM old_omim_and_ll);
 
 
--- ----------------------  DB_LINK  ------------------------ --
 
--- ------------------  add new links  ---------------------- --
-!echo 'add active data'
-INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link WHERE tmp_db_name = "RefSeq";
-INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link WHERE tmp_db_name = "LocusLink";
-INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link WHERE tmp_db_name = "Genbank";
- 
-!echo 'insert new db_links'
-INSERT INTO db_link
-        (linked_recid,
-        db_name,
-        acc_num,
-        info,
-        dblink_zdb_id,
-        dblink_acc_num_display) SELECT *, tmp_acc_num FROM tmp_db_link WHERE tmp_db_name = "RefSeq";
-INSERT INTO db_link
-        (linked_recid,
-        db_name,
-        acc_num,
-        info,
-        dblink_zdb_id,
-        dblink_acc_num_display) SELECT *, tmp_acc_num FROM tmp_db_link WHERE tmp_db_name = "LocusLink";
-INSERT INTO db_link
-        (linked_recid,
-        db_name,
-        acc_num,
-        info,
-        dblink_zdb_id,
-        dblink_acc_num_display) SELECT *, tmp_acc_num FROM tmp_db_link WHERE tmp_db_name = "Genbank";
-
-
-!echo 'Attribute ZFIN_LL links to an artificial pub record.'
-INSERT INTO record_attribution
-    SELECT dblink_zdb_id, 'ZDB-PUB-020723-3'
-    FROM db_link, tmp_db_link
-    WHERE dblink_zdb_id = tmp_dblink_zdb_id
-;
-
-
--- ------------------  UNI_GENE  ------------------- --
-!echo 'remove existing temp_db_link records'
-DELETE FROM tmp_db_link;
-
-!echo 'INSERT INTO temp_db_link'
-INSERT INTO tmp_db_link
-  SELECT
-    llzdb_zdb_id,
-    'UniGene',
-    uni_cluster_id,
-    'Uncurrated: RefSeq load ' || TODAY,
-    get_id('DBLINK')
-  FROM uni_gene, ll_zdb, zdb_active_data
-  WHERE uni_ll_id = llzdb_ll_id
-    AND llzdb_zdb_id = zactvd_zdb_id
-;
-
--- ------------------ add new records ------------------ --
-!echo 'get all UniGene db_links that remain'
-  SELECT * 
-  FROM db_link 
-  WHERE db_name = "UniGene"
-  INTO temp unigene_link
-  with no log;
-
-
-!echo 'add active source AND active data'
-INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link
-       WHERE tmp_acc_num NOT IN (SELECT acc_num FROM unigene_link);
-
-
-!echo 'insert new db_links'
-INSERT INTO db_link
-        (linked_recid,
-        db_name,
-        acc_num,
-        info,
-        dblink_zdb_id,
-        dblink_acc_num_display)
-    SELECT *, tmp_acc_num
-    FROM tmp_db_link
-    WHERE tmp_acc_num NOT IN (SELECT acc_num FROM unigene_link);
-
-
-!echo 'Attribute RefSeq links to an artificial pub record.'
-INSERT INTO record_attribution
-    SELECT a.dblink_zdb_id, 'ZDB-PUB-020723-3'
-    FROM db_link a
-    WHERE a.db_name = "UniGene"
-      AND a.acc_num NOT IN (SELECT acc_num FROM unigene_link)
-;
 
 commit work;
 
