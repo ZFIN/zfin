@@ -50,7 +50,7 @@ ENDEMICTARGETS_CLEAN = $(OBJS)
 
 # ---- C compilation defines
 
-CC= cc
+CC= /local/apps/Lang/SUNWspro/bin/cc
 
 INCDIR = $(INFORMIXDIR)/incl/dmi
 LIBDIR = $(INFORMIXDIR)/lib 
@@ -68,7 +68,7 @@ include $(TOP)/make.default.rules
 
 $(OBJS) : %.so : %.c
 	$(CC) $(CFLAGS) -I $(INCDIR) $(MICFLAGS) -G $^ -o $@
-	chmod o+x,o+r $@
+	/bin/chmod o+x,o+r $@
 
 $(TARGETDIR_OBJS) : $(TARGETDIR)/% : %
 	-$(DBACCESS) $(DBNAME) $(patsubst %.so,drop_%.sql,$^)  > /dev/null 2>&1
@@ -76,5 +76,5 @@ $(TARGETDIR_OBJS) : $(TARGETDIR)/% : %
 	$(TOUCH) $@
 	$(MAKESPECIFIC) $(patsubst %.so,create_%.sql,$^) $(TRANSLATETABLE) tempcreate.sql
 	$(DBACCESS) $(DBNAME) tempcreate.sql  	  # create function in DB
-	rm -f tempcreate.sql			  # prevent hanky panky
+	/bin/rm -f tempcreate.sql		  # prevent hanky panky
 
