@@ -22,6 +22,11 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/GO
 
 GENERICS = go.pl
 
+# Define targets that require special handling.  
+
+HTTP_DATA_TRANSFER_DIR = $(TARGETROOT)/home/data_transfer/GO
+
+ENDEMICTARGETS_PRE = $(HTTP_DATA_TRANSFER_DIR)
 
 # ---------------  Production Rules  ------------------------------------
 
@@ -29,3 +34,16 @@ GENERICS = go.pl
 
 include $(TOP)/make.default.rules
 
+
+# ---------------  Endemic Targets  -------------------------------------
+
+$(HTTP_DATA_TRANSFER_DIR) :
+	$(TARGET_MKDIR) $@
+
+
+# ---------------  Misc Targets  ----------------------------------------
+
+# Run the GO script.
+
+run : $(TARGETDIR)/go.pl 
+	$(TARGETDIR)/go.pl 
