@@ -285,7 +285,11 @@
 		 <?MISQL SQL="
 		   select mrkrali_marker_name_alias
 		     from marker_alias 
-		     where mrkrali_marker_zdb_id = '$ZID';">
+		     where mrkrali_marker_zdb_id = '$ZID'
+                     union 
+                   select putgene_putative_gene_name
+		     from putative_gene
+		     where putgene_mrkr_zdb_id = '$ZID';">
 		   <?MIVAR NAME=$alias>$1<?/MIVAR>
 		   $(IF,$(AND,$(XST,$alias),$(=,$MI_CURRENTROW,1)), $alias , ; $alias )
 		 <?/MISQL>
