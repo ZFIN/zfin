@@ -6,7 +6,7 @@ report into ZFIN.   by Peiran Song,  Sep 2002.
 =================================================================
 To run the SWISS-PROT loading process:
 
-               % loadsp.pl
+               % gmake run
    
 ---------------------------------------------------------------
 -- loadsp.pl
