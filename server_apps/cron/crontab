@@ -23,6 +23,9 @@
 # Weekly load of data from ZIRC
 15 01 * * 4 <!--|ROOT_PATH|-->/server_apps/data_transfer/ZIRC/pullFromZirc.pl
 #
+#  weekly download data run, Sunday evening.
+0 20 * * 0 <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/DownloadFiles.pl
+#
 # unload production at 11:45 PM mon-fri
 45 23 * * 1,2,3,4,5 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/unload_production.sh
 #
