@@ -316,6 +316,43 @@ mi_lvarchar *get_id(mi_lvarchar *name) {
 }
 
 
+/*	get_id_new	Generates a new unique ID by concatenateing
+	the argument to an interger, Called with string, returns string
+	Deffently not finished or even checked for syntax errors
+*/
+mi_lvarchar *get_id_new(mi_lvarchar *name) {
+	static int	id;
+	char		buf[25];
+	char		cmdbuf[MAXLEN], *cmds, *p;
+	int		total = 0;
+	buflst		head, *buf= &head;
+	MI_CONNECTION	*conn;
+	MI_SAVE_SET	*ss;
+	MI_ROW		*row;
+	MI_DATUM	colval;
+	mi_integer	collen, error;
+	mi_lvarchar	*lv;
+
+
+	conn = mi_open(NULL, NULL, NULL);	/* Open connection */
+	if (conn == NULL) EXCEPTION("ERROR: conn is NULL\n");
+	
+	if (sizeof(SYSMSG) + mi_get_varlen(cmd) >= MAXLEN)	/* Check size */
+		EXCEPTION("Command ID is too long");
+	sprintf (cmdbuf, SYSMSG, mi_lvarchar_to_string(cmd));	/* Build it */
+	if (send_sql(conn, &ss, cmdbuf) != 1)			/* Send it */
+		EXCEPTION("Invalid sysexec command");
+	row = mi_save_set_get_first(ss, &error);		/* Get it */
+	if (!row) EXCEPTION("Can't get row from save set!");
+	mi_value(row, 0, &colval, &collen);
+
+
+	sprintf(buf, "%d", id++);
+
+	return conc(name, mi_string_to_lvarchar(buf));
+}
+
+
 /*	html-breaks		Replaces newlines in text with <P>, This
 	prepares it to be displayed in html. Called with an lvarchar.
 	Returns an lvarchar.
