@@ -308,13 +308,13 @@ public class Spider implements Runnable
                     if (summary.title != null && summary.title.length() > 0)
                         {
                         String str = summary.title.trim();
+						if (str.startsWith("ZFIN View"))
+                            {
+                            str = str.substring(10).trim();
+                            }
                         if (str.startsWith("ZFIN"))
                             {
                             str = str.substring(4).trim();
-                            }
-						if (str.startsWith("ZFIN View"))
-                            {
-                            str = str.substring(9).trim();
                             }
                         if (str.startsWith(":"))
                             {
