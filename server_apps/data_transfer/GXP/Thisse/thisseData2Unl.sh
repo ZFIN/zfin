@@ -64,15 +64,16 @@ else
     xdget -n -f -Tgb1 -e probe_fasta_retrieve.log gbk_zf_all acc4blast.txt > acc4blast.fa
 
     nice +10 /private/apps/wublast/blastn zfin_seq acc4blast.fa -e 1e-20 | \
-    ./blast2tab.pl -p 90 | \
-    ./filterBlast.pl $dbname
+    ./blast2tab.pl -p 90 > blast2zfin.fst
+
+    ./filterBlast.pl $dbname < blast2zfin.fst
 
     echo ""
     if (! -z is_gene.unl) then
 	echo "auto gene assignments exist in is_gene.unl"
     endif 
 
-    echo "please send blast2zfin.out file to curator "
+    echo "please send blast2zfin.scnd (and blast2zfin.fst) to curator "
     echo ""
 
 endif 
