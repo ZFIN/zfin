@@ -96,7 +96,7 @@ sub downloadFiles(@) {
 #
 # Now, get the subroutines for handling each type of data.
 
-require ("pullEstsFromZirc.pl");
+require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ZIRC/pullEstsFromZirc.pl");
 
 
 
