@@ -181,8 +181,6 @@ $filename_no_suffix = "";
 $add_thumb = "_thumb";
 $add_annot = "_annot" ;
 $newthumb = "";
-$file_thumb = "";
-$file_annot = "";
 $image_thumb_exists ="";
 $image_annot_exists ="";
 $image_file_exists="";
@@ -905,10 +903,7 @@ else { # filename isn't null or redirect isn't do-imageupdate.apg
 			    $filename_no_suffix = $OID_from_apg_page;
 			    
 			    $OID = $OID_from_apg_page;
-			    
-			    $file_thumb = $OID.$add_thumb.$suffix;
-			    $file_annot = $OID.$add_annot.$suffix;
-				
+			   
 			    # move the existing file to a bkup directory
 			    
 			    $image_file_exists = system("/bin/test 'grep $filename <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/'");
@@ -953,14 +948,7 @@ else { # filename isn't null or redirect isn't do-imageupdate.apg
 				    # OID in db and redirect != 
 				    # new_image.apg
 				   
-				    system("/bin/mv <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/$filename <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/bkup/$filename.$date.$person_id");
-				    if ($image_thumb_exists == 0) {
-					system("/bin/mv <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/$file_thumb <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/bkup/$file_thumb.$date.$person_id");
-					if ($image_annot_exists == 0) {
-					    system("/bin/mv <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/$file_annot <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/bkup/$file_annot.$date.$person_id");	
-					}
-				    }
-				    
+				    system("/bin/mv <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/$filename_no_suffix* <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/bkup/");
 				    $attr=$query->param("attr");
 				    $attr_type=$query->param("attr_type");
 				    $old_value=$query->param("old_value");
