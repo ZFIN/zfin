@@ -16,7 +16,7 @@ EXPECTED VARS:
 Last updated on 1/4/2005 by Prita
 Added code to recognize characters like ' and " in go term names
 used URLENCODE
-<?/MICOMENT>
+<?/MICOMMENT>
 
 <?MIERROR>
   <?MIVAR COND=$(XST,$MI_SQL)>
