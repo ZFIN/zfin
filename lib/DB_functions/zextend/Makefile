@@ -76,6 +76,7 @@ $(OBJS) : %.so : %.c
 $(TARGETDIR_OBJS) : $(TARGETDIR)/% : %
 	-$(DBACCESS) $(DBNAME) drop_functions.sql > /dev/null 2>&1
 	$(TARGET_CP) $^ $@		  # put it where DB will find it
+	$(TOUCH) $@
 	$(MAKESPECIFIC) create_functions.sql $(TRANSLATETABLE) cftemp.sql
 	$(DBACCESS) $(DBNAME) cftemp.sql  	  # create functions in DB
 	rm -f cftemp.sql			  # prevent hanky panky
