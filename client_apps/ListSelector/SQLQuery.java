@@ -31,6 +31,7 @@ public class SQLQuery
 	{
 
 		this.host = app.getDocumentBase().getHost();
+
 	}
 
 	public SQLQuery(String host, String port)
@@ -59,7 +60,7 @@ public class SQLQuery
         Socket s = null;
 		StringTokenizer sTok; 
 
-		System.err.println(host + ", " + port);
+		System.err.println("selectAll: " + host + ", " + port);
 		
 		Vector result = new Vector ();
         try {
