@@ -530,487 +530,595 @@ hatching - pec fin (60h)
 hatching - protruding mouth (72h)
 have sections
 Adult
-  Terms of direction
-     Dorsal
-     Ventral
-     Rostral (anterior)
-     Caudal (posterior)
-     Medial
-     Lateral
+Terms of direction
+	Dorsal
+	Ventral
+	Rostral (anterior)
+	Caudal (posterior)
+	Medial
+	Lateral
+
+Surface Anatomy
+	Dorsal Fin
+	Caudal Fin (tail)
+	Anal Fin
+	Pectoral Fin (2)
+	Pelvic Fin (2)
+	Eye (2)
+	Nares (2) (nostril)
+	Mouth (no teeth)
+		Premaxilla
+		Maxilla
+		Mandible
+	Barble (2)
+	Gill
+		Opercle
+		Subopercle
+		Preopercle
+		Interopercle
+		Branchiostegal membrane
+	Vent
+	Caudal Peduncle
+	Lateral line
+
+Integument
+	Scales
+
+Skeletal System
+	Neurocranium (skull)
+		Ethmoid region
+			Lateral ethmoids
+			Mesethmoid
+			Vomer
+			Nasal bones
+		Supraorbital bridge
+			Frontals
+			Orbitosphenoid
+			Pterosphenoids
+		Infraorbital bridge
+			Parashenoid
+			Basisphenoid
+		Cranial vault
+			Sphenoptics
+			Prootics
+			Pterotics
+			Parietals
+			Epioccipitals
+			Supraoccipitals
+			Exoccipitals
+			Intercalars
+			Basioccipital
+	Suspensoria
+		Lateral plate
+		Autopalatines
+		Metapterygoids
+		Quadrates
+		Hyomandibulae
+		Symplectics
+		Dermopalatines
+		Ectopterygoids
+		Endopterygoids
+		Preopercles
+	Opercular-branchiostegal series
+		Opercles
+		Subopercles
+		Interopercles
+		Branchiostegal rays
+	Hyoid Bars
+		Rostral (anterior) ceratohyal
+		Caudal (posterior) ceratohyal
+		Interhyal
+		Dorsal hypohyal
+		Ventral hypohyal
+		Urohyal
+	Circumorbital series
+		Infraorbital series
+			Lachrymal
+			???
+			Dermosphenotic
+		Supraorbital series
+			Supraorbitals
+			Antorbital
+	Oral Jaw
+		Premaxillae
+		Maxillae
+		Supramaxillae (?)
+	Mandible
+		Dentary
+		Articular
+		Retroarticular
+		Angular
+	Branchial Arches
+		Epibranchials (4 pairs ?)
+		Ceratobranchials (5 pairs)
+			teeth
+		Pharyngobranchials (3-4 ?)
+		Upper pharyngeal jaws (?)
+		Hypbranchials
+		Basibranchial
+		basihyal
+	Weberian Ossicles
+		Tripus
+		Intercalarium
+		Scaphium
+		Claustrum
+	Body
+		Precaudal Vertebrae
+		Caudal Verebrae
+		Pleural Ribs (abdominal region)
+		Intermuscular bones
+			Epineurals
+			Epicentrals
+			epipleurals
+		Hemal arches (caudal region)
+	Dorsal fin
+		Supraneurals (predorsals)
+		Proximal pterygiophores
+		Medial pterygiophores
+		Distal pterygiophores
+	Pectoral Girdle
+		Postemporal
+		Supracleithrum
+		Cleithrum
+		Postcleithrum
+		Extrascapular
+		Scapula
+		Coracoid
+		Mesocoracoid
+		Radials
+	Pelvic Girdle
+		Basipterygia
+		Pelvic radials
+	Anal Fin
+		Proximal pterygiophores
+		Medial pterygiophores
+		Distal pterygiophores
+	Caudal fin (Tail)
+		Last preural centrum
+		Parhyural
+		Ural ossifications (2) (urostyle)
+		Hypurals
+		Epurals (?)
+		Uroneurals (?)
+
+Musculature System
+	Cephalic Musculature
+		Mandibular muscles
+			Sternohyoid
+			Levator Arcus Palatini
+			Dilator operculi
+			Adductor mandibulae complex
+			Intermandibularis
+		Hyoid muscles
+			Adductor arcus palatini
+			Adductor operculi
+			Levator operculi
+			Protractor hyoidei
+			inferior hyohyoid
+			abductor hyohyoid
+			adductor hyohyoid
+		Branchial muscles
+			external levatores
+			caudal levator
+			internal Levator
+			dorsal Oblique
+			caudal Oblique
+			dorsal transverse
+			dorsal retractor
+			Adductor
+			oesophagial sphincter
+			ventral oblique
+			ventral transverse
+			ventral recti
+			Pharyngohyoid
+			internal pharyngoclavicularis
+			external pharyngoclavicularis
+    
+		Extraocular muscles
+			Dorsal oblique
+			Ventral oblique
+			Medial rectus
+			Lateral rectus
+			Dorsal rectus
+			Ventral rectus
+	Body Musculature
+		Myomeres
+			Vertical myoseptum
+			Horizontal myoseptum
+		Epaxialis
+		Hypaxialis
+		superficial lateralis
+		Supracarinalis
+		Infracarinalis
+	Fin musculature
+		Dorsal fin
+			Dorsal Erector
+			Dorsal Depressor
+			Dorsal Inclinator
+		Anal fin
+			Anal Erector
+			Anal Depressor
+			Anal Inclinator
+		Pectoral fin
+			Superficial abductor
+			Abductor profundus
+			Superficial adductor
+			Adductor profundus
+			Dorsal arrector
+			ventral arrector
+			coracoradialis
+		Pelvic fin
+			dorsal pelvic arrector
+			ventral pelvic arrector
+			superficial pelvic abductor
+			pelvic abductor profundus
+			superficial pelvic adductor
+			pelvic adductor profundus
+		Caudal fin
+			dorsal flexor
+			superior dorsal flexor
+			ventral flexor
+			inferior ventral flexor
+			external ventral flexor
+			longitudinal hypochordal
+			interradialis
+
+Digestive System
+	Labial Cavity
+		Upper oral valve
+		Lower oral valve
+	Oral Cavity
+	Pharynx
+		Branchial bars
+		Pharyngeal teeth (on 5th ceratobrachial bone)
+	Dental Plate
+	Esophagus
+	Stomach
+	Duodenum
+	Small intestine
+	Large intestine
+	Cloacal chamber
+	Liver
+	Gall Bladder
+	Pancreas
+	Spleen
+
+Excretory System
+	Kidney
+	Mesonephric duct
+
+Reproductive System
+	Ovaries
+		Mesovarium
+	Oviduct
+	Testes
+
+Cardiovascular System
+	Pericardial sac
+	Heart
+		Hypobranchial vessels (from gills)
+		Sinus venosus
+		Atrium
+			Sinoatrial valve
+		Ventricle
+		Bulbus arteriosus
+	Common cardinal veins
+	Hepatic veins
+	Ventral aorta
+	Hypobranchial artery
+	Afferent branchial artery
+	Filamental arteries
+	Efferent branchial artery
+	Dorsal aorta
+	Segmental intercostal arteries
+	Celiacomesenteric artery
+	Renal arteries
+	Spinal arteries
+	Caudal vein
+	Renal Portal vein
+	Caudal (Posterior) cardinal vein
+	Rostral (Anterior) cardinal vein
   
-  Surface Anatomy
-     Dorsal Fin
-     Caudal Fin (tail)
-     Anal Fin
-     Pectoral Fin (2)
-     Pelvic Fin (2)
-     Eye (2)
-     Nares (2) (nostril)
-     Mouth (no teeth)
-            Premaxilla
-            Maxilla
-            Mandible
-     Barble (2)
-     Gill
-            Opercle
-            Subopercle
-            Preopercle
-            Interopercle
-            Branchiostegal membrane
-     Vent
-     Caudal Peduncle
-     Lateral line
+Respiratory System
+	Gill arch
+	Gill raker
+	Gill filament
+	Gill lamellae
+	Opercular flap (?)
   
-  Integument
-     Scales
+Gas Bladder
+
+Lymphatic
+	Head kidney (thymus?)
   
-  Skeletal System
-     Neurocranium (skull)
-            Ethmoid region
-                  Lateral ethmoids
-                  Mesethmoid
-                  Vomer
-                  Nasal bones
-            Supraorbital bridge
-                  Frontals
-                  Orbitosphenoid
-                  Pterosphenoids
-            Infraorbital bridge
-                  Parashenoid
-                  Basisphenoid
-            Cranial vault
-                  Sphenoptics
-                  Prootics
-                  Pterotics
-                  Parietals
-                  Epioccipitals
-                  Supraoccipitals
-                  Exoccipitals
-                  Intercalars
-                  Basioccipital
-     Suspensoria
-            Lateral plate
-            Autopalatines
-            Metapterygoids
-            Quadrates
-            Hyomandibulae
-            Symplectics
-            Dermopalatines
-            Ectopterygoids
-            Endopterygoids
-            Preopercles
-     Opercular-branchiostegal series
-            Opercles
-            Subopercles
-            Interopercles
-            Branchiostegal rays
-     Hyoid Bars
-            Anterior ceratohyal
-            Posterior ceratohyal
-            Interhyal
-            Dorsal hypohyal
-            Ventral hypohyal
-            Urohyal
-     Circumorbital series
-            Infraorbital series
-                  Lachrymal
-                  ???
-                  Dermosphenotic
-            Supraorbital series
-                  Supraorbitals
-                  Antorbital
-     Oral Jaw
-            Premaxillae
-            Maxillae
-            Supramaxillae (?)
-     Mandible
-            Dentary
-            Articular
-            Retroarticular
-            Angular
-     Branchial Arches
-       Epibranchials (4 pairs ?)
-       Ceratobranchials (5 pairs)
-                  teeth
-       Pharyngobranchials (3-4 ?)
-       Upper pharyngeal jaws (?)
-       Hypbranchials
-       Basibranchial
-       basihyal
-     Weberian Ossicles
-            Tripus
-            Intercalarium
-            Scaphium
-            Claustrum
-     Body
-            Precaudal Vertebrae
-            Caudal Verebrae
-            Pleural Ribs (abdominal region)
-            Intermuscular bones
-                  Epineurals
-                  Epicentrals
-                  epipleurals
-            Hemaluarches (caudal region)
-     Dorsal fin
-            Supraneurals (predorsals)
-            Proximal pterygiophores
-            Medial pterygiophores
-            Distal pterygiophores
-     Pectoral Girdle
-            Postemporal
-            Supracleithrum
-            Cleithrum
-            Postcleithrum
-            Extrascapular
-            Scapula
-            Coracoid
-            Mesocoracoid
-            Radials
-     Pelvic Girdle
-            Basipterygia
-            Pelvic radials
-     Anal Fin
-            Proximal pterygiophores
-            Medial pterygiophores
-            Distal pterygiophores
-     Caudal fin (Tail)
-            Last preural centrum
-            Parhyural
-            Ural ossifications (2) (urostyle)
-            Hypurals
-            Epurals (?)
-            Uroneurals (?)
+Nervous system
+	Inner ear (vestibular end-organ)
+		Otolith organs
+			Utricle
+				macula
+				Lapillus (otolith)
+			Saccule
+			macula
+			Sagitta (otolith)
+			Lagena
+				macula
+				Asteriscus (otolith)
+			Macula Neglecta
+				Sensory hair cells
+		Semicircular Canals
+			Horizontal (lateral)
+				lateral crista
+			Rostral (anterior) Vertical
+				rostral (anterior) crista
+			Caudal (posterior) Vertical
+				caudal (posterior) crista
+	Statoacoustic (VIIIth) ganglion
+	Lateral line
+		supraorbital lateral line
+		infraorbital lateral line
+		mandibular lateral line
+		opercular lateral line
+		otic lateral line
+		middle lateral line
+		occipital lateral line
+	Eye
+		Cornea
+		Lens
+		Retina
+		Retinal Pigmented epithelium
+	Nares
+		Olfactory epithelium
+Telencephalon
+	Olfactory bulb
+		external cellular layer
+		glomerular layer
+		primary olfactory fiber layer
+		internal cellular layer (with mitral cells)
+	ventral telencephalon
+		dorsal nucleus of V
+		ventral nucleus of V
+		supracommissural nucleus of V
+		postcommissural nucleus of V central entopeduncular nucleus
+		lateral entopeduncular nucleus
+		dorsal entopeduncular nucleus
+		ventral entopeduncular nucleus V
+		pars subcommissuralis of V
+	telencephalic ventricle
+		tela chorioidea
+	dorsal telencephalon
+		medial zone of D
+		sulcus ypsiloniformis
+		dorsal zone of D
+		lateral zone of D
+		caudal (posterior) zone of D
+		central zone of D
+		nucleus taeniae
+	telencephalic tracts
+		commissura rostral (anterior), pars dorsalis
+		commissura rostral (anterior), pars ventralis
+		lateral forebrain bundle
+		medial forebrain bundle
+		lateral olfactory tract
+		medial olfactory tract
   
-  Musculature System
-     Cephalic Musculature
-            Mandibular muscles
-            Sternohyoideus
-            Levator Arcus Palatini
-            Dilator operculi
-            Adductor mandibulae complex
-            Intermandibularis
-     Hyoid muscles
-            Adductor arcus palatini
-            Adductor operculi
-            Levator operculi
-            Protractor hyoidei
-            Hyohyoides inferioris
-            Hyohyoides abductores
-            Hyohyoides adductores
-     Branchial muscles
-            Levatores externi
-            Levator posterior
-            Levatores interni
-            Obliqui dorsales
-            Obliqui posterior
-            Transversi dorsales
-            Retractor dorsalis
-            Adductores
-            Sphincter oesophagi
-            Obliquiventrales
-            Transversi ventrales
-            Recti ventrales
-            Pharyngohyoideus
-            Pharyngoclavicularis internus
-            Pharyngoclavicularis externus
-     Extraocular muscles
-            Dorsal oblique
-            Ventral oblique
-            Medial rectus
-            Lateral rectus
-            Dorsal rectus
-            Ventral rectus
-     Body Musculature
-                  Myomeres
-                      Vertical myoseptum
-                      Horizontal myoseptum
-            Epaxialis
-            Hypaxialis
-            Lateralisus perficialis
-            Supracarinalis
-            Infracarinalis
-     Fin musculature
-            Dorsal fin
-                  Erectores dorsales
-                  Depressores dorsales
-                  Inclinatores dorsales
-            Anal fin
-                  Erectores anales
-                  Depressores anales
-                  Inclinatores anales
-            Pectoral fin
-                  Abductorus perficialis
-                  Abductor profundus
-                  Adductorus perficialis
-                  Adductor profundus
-                  Arrector dorsalis
-                  Arrector ventralis coracoradialis
-            Pelvic fin
-                  Arrector dorsalis pelvicus
-                  Arrector ventralis pelvicus
-                  Abductor superficialis pelvicus
-                  Abductor profundus pelvicus
-                  Adductorus perficialis pelvicus
-                  Adductor profundus pelvicus
-            Caudal fin
-                  Flexor dorsalis
-                  Flexor dorsalisus perior
-                  Flexor ventralis
-                  Flexor ventralis inferior
-                  Flexor ventralis externus
-                  Hypochordal longitudinalis
-                  interradialis
-  
-  Digestive System
-     Labial Cavity
-            Upper oral valve
-            Lower oral valve
-     Oral Cavity
-     Pharynx
-            Branchial bars
-            Pharyngeal teeth (on 5th ceratobrachial bone)
-            Dental Plate
-     Esophagus
-     Stomach
-     Duodenum
-     Small intestine
-     Large intestine
-     Cloacal chamber
-     Liver
-     Gall Bladder
-     Pancreas
-     Spleen
-  
-  Excretory System
-     Kidney
-     Mesonephricuduct
-  
-  Reproductive System
-     Ovaries
-            Mesovarium
-     Oviduct
-     Testes
-  
-  Cardiovascular System
-     Pericardial sac
-     Heart
-            Hypobranchial vessels (from gills)
-            Sinus venosus
-            Atrium
-            Sinoatrial valve
-            Ventricle
-            Bulbus arteriosus
-     Common cardinal veins
-     Hepatic veins
-     Ventral aorta
-     Hypobranchial artery
-     Afferent branchial artery
-     Filamental arteries
-     Efferent branchial artery
-     Dorsal aorta
-     Segmental intercostal arteries
-     Celiacomesenteric artery
-     Renal arteries
-     Spinal arteries
-     Caudal vein
-     Renal Portal vein
-     Caudal (Posterior) cardinal vein
-     Rostral  (Anterior) cardinal vein
-  
-  Respiratory System
-     Gill arch
-     Gill raker
-     Gill filament
-     Gill lamellae
-     Opercular flap (?)
-  
-  Gas Bladder
-  
-  Lymphatic
-     Head kidney (thymus?)
-  
-  Nervous system
-     Inner ear (vestibular end-organ)
-            Otolith organs
-                  Utricle
-                      Lapillus (otolith)
-                  Saccule
-                      Sagitta (otolith)
-                  Lagena
-                      Asteriscus (otolith)
-                  Macula Neglecta
-            Semicircular Canals
-                  Horizontal
-                  Rostral (anterior) Vertical
-                  Caudal (posterior) Vertical
-     Olfactory bulb
-            external cellular layer
-            glomerular layer
-            primary olfactory fiber layer
-                  internal cellular layer (with mitral cells)
-            area dorsalis telencephali
-            lateral olfactory tract
-            medial olfactory tract
-            area ventralis telencephali
-            dorsal zone of V
-            central zone of V
-            lateral zone of V
-            ventral zone of V
-            central zone of D
-            lateral zone of D
-            medial zone of D
-            posterior zone of D
-            nucleus commissuralis of V
-            commissura anterior, pars dorsalis
-            dorsal zone of D
-            commissura anterior, pars ventralis
-            lateral forebrain bundle
-            nucleus entopeduncularis
-            nucleus preopticusparvocellularispars anterior
-            pars subcommissuralis of V
-            pars postcommissuralis of V
-            chiasma opticum
-            optic tract
-            medial forebrain bundle
-            pars lateralis posterior of D
-               nucleus preopticus magnocellularis pars magnocellularis
-            nucleus preopticus parvocellularis pars posterior
-            nucleus suprachiasmaticus
-            commissura horizontalis
-            commissura supraoptica
-            epiphysis
-            habenula
-            nucleus intermedius thalami
-               nucleus preopticus magnocellularis pars gigantocellularis
-            nucleus pretectalis superficialis parvocellularis
-            rostral nucleus of Saidel & Butler
-            nucleus Suprachiasmaticus
-            nucleus ventrolateralis thalami
-            nucleus ventromedialis thalami
-            ventral optic tract
-            dorsomedial optic tract
-            fasciculus retroflexus
-            periventricular zone of ventral hypothalamus
-            dorsal accessory optic nucleus
-            nucleus pretectalis superficialis magnocellularis
-            tectum opticum
-            nucleus anterior thalami
-            posterior pretectal nucleus
-            accessory pretectal nucleus
-            commmissura habenularis
-            central pretectal nucleus
-            ventral accessory optic nucleus
-            nucleus tuberis anterior
-            nucleus preglomerulosus pars anterior
-            nucleus preglomerulosus pars lateralis
-            posterior pretectal nucleus
-            perventricular nucleus of posterior tuberculum
-            commissura tecti
-            nucleus centralis posterior thalami
-            commissura posterior
-            nucleus dorsalis posterior thalami
-            dorsal periventricular hypothalamus
-            nucleus lateralis hypothalami
-            nucleus diffusus lobus inferior hypothalamus
-            nucleus paracommissuralis
-            nucleus preglomerulosus pars medialis
-            nucleus pretectalis periventricularis
-            recessus lateralis
-            torus longitudinalis
-            nucleus tuberis posterior
-            torus lateralis
-            tractus pretecto-mamillaris
-            mesencephalic nucleus of trigeminal nerve
-            nucleus posterior thalami
-            paraventricular organ
-            caudal periventricular hypothalamus
-            tertiary gustatory nucleus
-            torus semicircularis
-            fasciculus longitudinalis medialis
-            nucleus fasciculus longitudinalis medialis
-            nucleus tegmentalis rostralis
-            nucleus subglomerulosis
-            lateral division of valvula cerebelli
-            vascular laguna of area postrema
-            dorsal tegmental nucleus
-            nucleus Edinger-Westphal
-            fasciculus longitundinalis lateralis
-            granular layer of valvula cerebelli
-            molecular layer of valvula cerebelli
-            nucleus preglomerulosis pars caudalis
-            tractus tecto-bulbaris
-            valvula cerebelli lateral division
-            commissura ansulata
-            nervus oculomotorius
-            nucleus centralis of lobus inferior hypothalami
-            nucleus nervi oculomotorius
-            medial division of valvula cerebelli
-            brachium conjunctivium
-            corpus mamillare
-            nucleus interpeduncularis
-            nucleus lateralis valvulae
-            nervus trochlearis
-            nucleus nervi trochlearis
-            tractus mesencephalo-cerebellaris
-            tractus tecto-bulbaris cruciatus
-       tractus tecto-bulbaris rectus
-            nucleus raphe
-            corpus cerebelli
-            decussatio trochulearis
-            griseum centrale
-            nucleus isthmi
-            superior reticular formation
-            commissura interbulbularis
-            nucleus motorius nervi trigemini pars dorsalis
-            commissura cerebelli
-            commissura gustatoria
-            granular layer of corpus cerebelli
-            molecular layer of corpus cerebelli
-            secondary gustatory nucleus
-            nucleus motorius nervi trigemini pars ventralis
-            nervus trigeminus
-            anterior lateral line nerves
-            eminentia granularis
-            sensory trigeminal nucleus
-            secondary gustatory tract
-            nervus facialis
-            dorsal motor root of V
-            descending trigeminal root
-            posterior cerebellar tract
-            nucleus motorius nervi trigemini pars ventralis
-            rostral root of abducens nerve
-            anterior octaval nucleus
-            granular layer of lobus caudalis cerebelli
-            Mauthner cell
-            medial octavolateralis nucleus
-            medial reticular nucleus
-            nervus octavus
-            Mauthner axon
-            nucleus nervus abducens
-  
-            crista cerebellaris
-            descending octaval nucleus
-            nucleus motorius nervus facialis
-            posterior lateral line nerve
-            sensory root or nervus facialis
-            lobus caudalis cerebelli
-            lobus facialis
-            tractus bulbo-spinalis
-            decussation of the medial octavolateralis nucleus
-            oliva inferior
-            nervus glossopharyngeus
-            inferior reticular formation
-            lobus glossopharyngealeus
-            tractus vestibulo-spinalis
-            nucleus motorius of nervi vagi
-            lobus vagus
-            caudal octavolateralis nucleus
-            nervus vagus
-            nucleus motoris of nervi vagi
-            funiculus lateralis
-            decussation of nucleus funiculi medialis
-            nucleus funiculi medialis
-            cornu dorsale
-            cornu ventrale
-            funiculus lateralis
-            radix dorsalis
+Diencephalon
+	Diencephalic ventricle
+	Area praeoptica
+		rostral (anterior) parvocellular preoptic nucleus
+		caudal (posterior) parvocellular preoptic nucleus
+		magnocellular preoptic nucleus
+		gigantocellular part of magnocellular preoptic nucleus
+	Epithalamus
+		Habenula
+			Dorsal nucleus
+			Ventral nucleus
+		Epiphysis
+		Saccus dorsalis
+	Dorsal Thalamus
+		rostral (anterior) thalamic nucleus
+		dorsal caudal (posterior) thalamic nucleus
+		central caudal (posterior) thalamic nucleus
+	Ventral Thalamus
+		intermediate thalamic nucleus
+		ventrolateral thalamic nucleus
+		ventromedial thalamic nucleus
+		rostrolateral thalamic nucleus of Butler & Saidel
+	Caudal (posterior) Tuberculum
+		perventricular nucleus of caudal (posterior) tuberculum
+		caudal (posterior) tuberal nucleus
+		paraventricular organ
+		rostral (anterior) preglomerular nucleus
+		lateral preglomerular nucleus
+		medial preglomerular nucleus
+		caudal preglomerular nucleus
+		tertiary gustatory nucleus
+		corpus mamillare
+		caudal (posterior) thalamic nucleus
+		nucleus subglomerulosis
+		torus lateralis
+	Hypothalamus
+		Median tuberal portion
+			Ventral zone
+				periventricular nucleus
+				rostral (anterior) tuberal nucleus
+				lateral hypothalamic nucleus
+			Caudal zone
+				caudal periventricular hypothalamus
+		ventralsulcus
+		Dorsal zone
+			Inferior lobes
+				Central nucleus
+				diffuse nuclei
+			Dorsal periventricular hypothalamus
+	Pituitary
+	Synencephalon
+		Nucleus of the medial longitudinal fasciculus
+		pretectal periventricular nucleus
+		paracommissural nucleus
+		subcommissural organ
+		caudal (posterior) commissure
+	Pretectum
+		Superficial pretectum
+			parvocellular superficial pretectal nucleus
+			magnocellular superficial pretectal nucleus
+			caudal (posterior) pretectal nucleus
+		Central pretectum
+			central pretectal nucleus
+			accessory pretectal nucleus
+			dorsal accessory optic nucleus
+			ventral accessory optic nucleus
+			suprachiasmatic nucleus
+	Diencephalic tracts and commissures
+		lateral forebrain bundle
+		medial forebrain bundle
+		optic nerve
+		optic chiasm
+		optic tract
+			dorsomedial optic tract
+			ventrolateral optic tract
+		pretecto-mamillary tract
+		fasciculus retroflexus
+		habenular commmissure
+		supraoptic (postoptic) commissure
+		horizontal commissure
+		commissure of the caudal tuberculum
+Mesencephalon
+	optic tectum
+		periventricular grey zone
+		deep white zone
+		central zone
+		superficial grey and white zones
+		torus longitudinalis
+		medial tectal ventricle
+			lateral recess
+		intertectal commissure
+	torus semicircularis
+		central nucleus
+		ventrolateral nucleus
+	tegmentum
+		oculomotor nucleus
+		occulomotor nerve
+		trochlear motor nucleus
+		trochlear nerve
+		nucleus Edinger-Westphal
+		nucleus ruber
+		superior reticular formation
+		rostral tegmental nucleus
+		dorsal tegmental nucleus
+		lateral lemniscus nucleus
+		interpeduncular nucleus
+Rhombencephalon
+	cerebellum
+		granular eminence
+		vestibulolateralis lobe
+			medial caudal lobe
+			lateral granular eminence (paired)
+		corpus cerebelli
+			granular layer
+			molecular layer
+		valvula cerebelli
+			lateral division
+			medial division
+			granular layer
+			molecular layer
+		commissura cerebelli
+	Medulla oblongata
+		medial funicular nucleus
+		decussation of medial funicular nucleus
+		dorsal motor root of V
+		dorsal motor nucleus trigeminal nerve
+		ventral motor nucleus trigeminal nerve
+		sensory trigeminal nuclei
+			isthmic primary nucleus
+			secondary gustatory nucleus
+			nucleus of the descending root
+			medial funicular nucleus
+			mesencephalic nucleus of trigeminal nerve
+		descending trigeminal root
+		rostral root of abducens nerve
+		caudal root of abducens nerve
+		abducens motor nuclei
+			rostral motor nucleus
+			caudal motor nucleus
+		sensory root of facial nerve
+		facial lobe
+		facial nerve motor nucleus
+		glossopharyngeal lobe
+		nucleus motorius of nervi vagi
+		lateral longitundinal fasciculus
+		ventral rhombencephalic commissure
+		interpeduncular nucleus
+		octaval nerve sensory nuclei
+			rostral (anterior) octaval nucleus
+			magnocellular octavl nucleus
+			descending octaval nucleus
+			caudal octaval nucleus
+			tangential nucleus
+		Lateral line sensory nuclei
+			caudal octavolateralis nucleus
+			medial octavolateralis nucleus
+				Cerebellar crest
+			decussation of the medial octavolateralis nucleus
+		secondary gustatory tract
+		visceromotor column
+		vagal lobe
+		viscerosensory commissural nucleus of Cajal
+		nucleus of the medial longitudinal fasciculus
+		reticular formation
+			midline column
+				superior raphe nucleus
+				inferior raphe nucleus
+			medial column
+				superior reticular formation
+				intermediate reticular formation
+				inferior reticular formation
+			lateral column
+				lateral reticular nucleus
+		griseum centrale
+		locus Coeruleus
+		nucleus lateralis valvulae
+		nucleus isthmi
+		secondary gustatory nucleus
+		Mauthner cell
+		Mauthner axon
+		inferior olive
+Brain stem/spinal tracts and commissures
+	tecto-bulbar tract
+	crossed tecto-bulbar tract
+	uncrossed tecto-bulbar tract
+	ansulate commissure
+	medial longitudinal fasciculus
+	ventral rhombencephalic commissure
+	lateral longitudinal fasciculus
+	rostral mesencephalo-cerebellar tract
+	caudal mesencephalo-cerebellar tract
+	rostral (anterior) cerebellar tract
+	caudal (posterior) cerebellar tract
+	brachium conjunctivium (?)
+	bulbo-spinal tract
+	vestibulo-spinal tract
+	commissure of the secondary gustatory nuclei
+	commissure infima of Haller
+Spinal cord
+	Dorsal root
+		Dorsal root ganglion
+	Ventral root
+	Dorsal horn
+	Ventral horn
+	Dorsal funiculus
+	Ventral funiculus
+	Lateral funiculus
+
+Cranial Nerves
+	Olfactory
+	Optic
+	Occulomotor
+	Trochlear
+	Trigeminal
+	Abducens nerve
+	Facial Nerve
+	Octaval nerve
+	Glossopharyngeal nerve
+	Vagus Nerve
+	Rostral lateral line nerve
+	Caudal lateral line nerve
