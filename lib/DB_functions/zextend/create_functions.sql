@@ -51,10 +51,3 @@ external name
 "<!--|ROOT_PATH|-->/lib/DB_functions/zextend.so"
 language c
 end function;
-
-create function webhtml_like(html, lvarchar)
-returning boolean
-external name
-"<!--|ROOT_PATH|-->/lib/DB_functions/zextend.so(webhtml_like)"
-language c
-end function;

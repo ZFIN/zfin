@@ -9,5 +9,3 @@ drop function conc;
 drop function expr(date);
 drop function get_random_cookie;
 drop function position;
-drop function webhtml_like(html,lvarchar);
-
