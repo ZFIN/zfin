@@ -145,56 +145,44 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/yeast_orthos.txt'
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpat.txt'
  DELIMITER "	"  
- select gene.mrkr_zdb_id[1,26] ene_zdb,
-    gene.mrkr_abbrev[1,20] gene_sym,
-    probe.mrkr_zdb_id[1,26] probe_zdb,
-    probe.mrkr_abbrev[1,20] probe_sym,
-    --dblink_acc_num[1,10] genbank_acc,
-    xpat_assay_name[1,20] assay_type, 
-    xpat_zdb_id[1,26] xpad_zdb_id, 
-    recattrib_source_zdb_id[1,26] pub_zdb
+ select gene.mrkr_zdb_id ene_zdb,
+    gene.mrkr_abbrev gene_sym,
+    probe.mrkr_zdb_id probe_zdb,
+    probe.mrkr_abbrev probe_sym,
+    --dblink_acc_num genbank_acc,
+    xpat_assay_name assay_type, 
+    xpat_zdb_id xpad_zdb_id, 
+    xpat_source_zdb_id pub_zdb
  from marker gene, marker probe, 
-    expression_pattern_assay, 
-    expression_pattern, 
-    marker_relationship,
-    db_link,
-    record_attribution,
-    foreign_db_contains
- where gene.mrkr_zdb_id = mrel_mrkr_1_zdb_id 
- and mrel_mrkr_2_zdb_id = xpat_probe_zdb_id 
- and xpat_assay_name = xpatassay_name
+    expression_pattern
+    --db_link,
+    --foreign_db_contains
+ where gene.mrkr_zdb_id = xpat_gene_zdb_id
  and probe.mrkr_zdb_id = xpat_probe_zdb_id
- and probe.mrkr_zdb_id = dblink_linked_recid
- and dblink_fdbcont_zdb_id = fdbcont_zdb_id
- and fdbcont_fdb_db_name in ('Genbank','RefSeq')
- and fdbcont_fdbdt_data_type = 'cDNA'
- and xpat_zdb_id = recattrib_data_zdb_id
+ --and probe.mrkr_zdb_id = dblink_linked_recid
+ --and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+ --and fdbcont_fdb_db_name in ('Genbank','RefSeq')
+ --and fdbcont_fdbdt_data_type = 'cDNA'
  union
- select gene.mrkr_zdb_id[1,26] gene_zdb,
-    gene.mrkr_abbrev[1,20] gene_sym,
-    probe.mrkr_zdb_id[1,26] probe_zdb,
-    probe.mrkr_abbrev[1,20] probe_sym,
-    --dblink_acc_num[1,10] genbank_acc,
-    xpat_assay_name[1,20] assay_type, 
-    xpat_zdb_id[1,26] xpad_zdb_id, 
-    recattrib_source_zdb_id[1,26] pub_zdb
+ select gene.mrkr_zdb_id gene_zdb,
+    gene.mrkr_abbrev gene_sym,
+    probe.mrkr_zdb_id probe_zdb,
+    probe.mrkr_abbrev probe_sym,
+    --dblink_acc_num genbank_acc,
+    xpat_assay_name assay_type, 
+    xpat_zdb_id xpad_zdb_id, 
+    xpat_source_zdb_id pub_zdb
 from marker gene, marker probe, 
-    expression_pattern_assay, 
-    expression_pattern, 
-    marker_relationship,
-    db_link,
-    record_attribution,
-    foreign_db_contains
- where gene.mrkr_zdb_id = mrel_mrkr_1_zdb_id 
- and mrel_mrkr_2_zdb_id = xpat_probe_zdb_id 
- and xpat_assay_name = xpatassay_name
+    expression_pattern
+    --db_link,
+    --foreign_db_contains
+ where gene.mrkr_zdb_id = xpat_gene_zdb_id
  and probe.mrkr_zdb_id = xpat_probe_zdb_id
- and gene.mrkr_zdb_id = dblink_linked_recid
- and dblink_fdbcont_zdb_id = fdbcont_zdb_id
- and fdbcont_fdb_db_name in ('Genbank','RefSeq')
- and fdbcont_fdbdt_data_type = 'cDNA'
- and xpat_zdb_id = recattrib_data_zdb_id
- order by 1,3,7;
+ --and gene.mrkr_zdb_id = dblink_linked_recid
+ --and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+ --and fdbcont_fdb_db_name in ('Genbank','RefSeq')
+ --and fdbcont_fdbdt_data_type = 'cDNA'
+ order by 1,3,6;
 
 
 
