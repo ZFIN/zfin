@@ -138,7 +138,7 @@ ERROR -- something bad happened -- no OID passed in!
 <?MIVAR COND="$(EC,$AUTHORIZED,root)">
   <B>FILE:</B>
   <?MIVAR COND="$(NC,$pub_file,NULL)">
-    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$pub_file&MItypeObj=application/pdf" target=$OID>PDF</A>
+    <A HREF="<!--|PDF_LOAD|-->/$pub_file">PDF</A>
   <?/MIVAR>
   <?MIVAR COND="$(EC,$pub_file,NULL)">
     Upload a PDF from the 
