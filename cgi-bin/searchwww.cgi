@@ -1,4 +1,5 @@
-#!/private/bin/perl -wT # changed tec 01-18-01
+#!/private/bin/perl 
+# -wT # changed tec 01-18-01
 #!/local/bin/perl
 #
 # NOTE: AS OF 2000/11/16 THIS IS THE ONLY CGI SCRIPT FROM THE ZFIN WEB SITE
