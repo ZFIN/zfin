@@ -152,6 +152,8 @@ FROM acc_length
 GROUP BY 1
 INTO TEMP tmp_acclength_longest;
 
+UPDATE STATISTICS HIGH FOR TABLE tmp_acclength_longest;
+
 UPDATE acc_length
 SET acclen_max_len = 't'
 WHERE 1 = 
@@ -257,6 +259,7 @@ INSERT INTO tmp_db_link
     AND refseq_nP_acc != ''
     AND acclen_acc = refseq_nP_acc
 ;
+
 INSERT INTO tmp_db_link
   SELECT
     mrkr_zdb_id,
@@ -294,6 +297,25 @@ INSERT INTO tmp_db_link
     AND accbk_db_name = 'Genbank'
 ;
 
+select distinct gbacc_pept as pept_acc, dblink_linked_recid as seg_zdb
+    from db_link, foreign_db_contains, genbank_acc 
+    where gbacc_acc = dblink_acc_num
+      and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+      and fdbcont_fdb_db_name = "Genbank"
+      and fdbcont_fdbdt_data_type = "cDNA"
+      and gbacc_pept != "-"
+      and dblink_linked_recid not like "ZDB-GENE%"
+into temp tmp_put_genpept_on_segment;
+
+select pept_acc  as mPept_acc
+from tmp_put_genpept_on_segment
+group by 1
+having count(*) > 1
+into temp tmp_non_unique_pept_acc;
+
+delete from tmp_put_genpept_on_segment
+where pept_acc in (select mPept_acc from tmp_non_unique_pept_acc);
+      
 !echo 'insert GenPept INTO temp_db_link'
 INSERT INTO tmp_db_link
   SELECT distinct
@@ -312,6 +334,17 @@ INSERT INTO tmp_db_link
     AND gbacc_pept != '-'
     AND gbacc_pept = pla_prot
 ;
+
+update tmp_db_link
+set tmp_linked_recid = (select seg_zdb from tmp_put_genpept_on_segment where pept_acc = tmp_acc_num)
+where exists 
+  (select * 
+   from tmp_put_genpept_on_segment
+   where tmp_db_name = "GenPept" 
+   and pept_acc = tmp_acc_num);
+
+select seg_zdb from tmp_put_genpept_on_segment,tmp_db_link where pept_acc = tmp_acc_num group by 1 having count(*) > 1;
+
 
 !echo 'insert ZF_LL INTO temp_db_link'
 INSERT INTO tmp_db_link
@@ -644,6 +677,20 @@ DROP TABLE TMP_MULTIPLE_ORTHO_GENE;
 UPDATE STATISTICS HIGH FOR TABLE tmp_db_link;
 UPDATE STATISTICS HIGH FOR TABLE db_link;
 
+-- 06/15/2004
+-- GenPept links from the LocusLink load have precedence.
+-- Conflicting GenPepts should be deleted.
+
+    delete from zdb_active_data
+    where zactvd_zdb_id in
+      (
+        select dblink_zdb_id
+        from db_link, tmp_put_genpept_on_segment, record_attribution
+        where pept_acc = dblink_acc_num
+          and dblink_zdb_id = recattrib_data_zdb_id
+          and recattrib_source_zdb_id = "ZDB-PUB-030924-6"      
+      );
+    
 
 --Redundant links. A record with Marker/Acc_num/DB exists in ZFIN. Delete the matching record in tmp_db_link.
 
@@ -712,7 +759,7 @@ UPDATE STATISTICS HIGH FOR TABLE db_link;
 --These records are not linked through marker relationship. However, they have the same
 --accession record. They will be unloaded for curatorial investigation.
 
-    SELECT distinct dblink_linked_recid, 
+    SELECT distinct dblink_linked_recid conf, 
            tmp_linked_recid as conf_linked_recid, 
            dblink_acc_num, 
            fdbcont_fdb_db_name,
@@ -724,7 +771,7 @@ UPDATE STATISTICS HIGH FOR TABLE db_link;
       AND fdbcont_fdbdt_data_type != 'Genomic'
       AND dblink_acc_num = tmp_acc_num
     into temp tmp_conflict_db_link;
-    
+        
 
     UNLOAD to conflict_dblink.unl
     select * from tmp_conflict_db_link;
@@ -753,8 +800,8 @@ UPDATE STATISTICS HIGH FOR TABLE db_link;
       and mrel_type NOT IN ('gene encodes small segment',
                             'gene contains small segment',
                             'gene hybridized by small segment');
-}
 
+}
 
 
     
