@@ -17,7 +17,7 @@
 TOP = ../../..
 include $(TOP)/make.include
 
-SUBDIRS = submission
+SUBDIRS = submission dis_man
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/stckctr
 

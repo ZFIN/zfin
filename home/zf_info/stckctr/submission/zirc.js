@@ -1,12 +1,3 @@
- /*	*** I've changed this script to suit our needs at zfin.org ***
-	Cut-N-Paste JavaScript from ISN Toolbox 
-     Copyright 1996, Infohiway, Inc.  Restricted use is hereby
-     granted (commercial and personal OK) so long as this code
-     is not *directly* sold and the copyright notice is buried
-     somewhere deep in your HTML document.  A link to our site
-     http://www.infohiway.com is always appreciated of course,
-     but is absolutely and positively not necessary. ;-)
-*/
 <!-- hide from older browsers
 
 function Set_Cookie(name,value,expires,path,domain,secure) {
@@ -119,17 +110,19 @@ var formCheck = emptyFormCheck();
     var cookieElement = document.forms[i].elements[j].name; 
 	if ((document.forms[i].elements[j].type == "text")
 		|| (document.forms[i].elements[j].type == "password")
-		|| (document.forms[i].elements[j].type == "textarea")){
+		|| (document.forms[i].elements[j].type == "textarea")
+		|| (document.forms[i].elements[j].type == "radio")) {
 	var elementValue = document.forms[i].elements[j].value;
   } else if (document.forms[i].elements[j].type.indexOf("select") != -1) {
    var elementValue = "";
    for(k=0;k<document.forms[i].elements[j].length;k++)
     if (document.forms[i].elements[j].options[k].selected)
      elementValue += k+"|";
-  } else if ((document.forms[i].elements[j].type == "checkbox")
-  			  || (document.forms[i].elements[j].type == "radio")) {
-		var elementValue = document.forms[i].elements[j].checked;
-  } 
+  } else if (document.forms[i].elements[j].type == "checkbox") {
+   var elementValue = document.forms[i].elements[j].checked;
+  } else if (document.forms[i].elements[j].type == "radio") {
+      		var elementValue = document.forms[i].elements[j].value
+       		} 
   var elementPair = (cookieElement + "=" + elementValue);
 	// These next lines loop together the long string that makes the cookie (e[0]=v[0]&e[1]=v[1]&...)
 	if (zircCookie == "") {
@@ -147,6 +140,7 @@ if (nextPage) {
  }
  } // end of else emptyFormCheck
 }   //end of function saveValues() 
+
 
 function storedValues(cookieName) {
   var val = getCookie(cookieName);
@@ -186,6 +180,51 @@ function storedValues(cookieName) {
  }  // end of if (val) {
 }  //end of function storedValues() 
 
+function saveForm (cookieName, nextPage) {
+//checking for data...
+var formCheck = emptyFormCheck();
+ if (formCheck != true) {
+ 	alert("You didn't enter anything. Please try again.");
+	window.location.href=this.location.href;
+	}
+ else {   
+// after checking for data we continue...
+var zircCookie = "";
+  for (i=0;i<document.forms.length;i++) { 
+   for (j=0;j<document.forms[i].elements.length; j++) { 
+    var cookieElement = document.forms[i].elements[j].name; 
+  if ((document.forms[i].elements[j].type == "text")
+		|| (document.forms[i].elements[j].type == "password")
+		|| (document.forms[i].elements[j].type == "textarea")){
+	var elementValue = document.forms[i].elements[j].value;
+  } else if (document.forms[i].elements[j].type.indexOf("select") != -1) {
+		var elementValue = "";
+		for(k=0;k<document.forms[i].elements[j].length;k++) {
+			if (document.forms[i].elements[j].options[k].selected) {
+     			   elementValue = document.forms[i].elements[j].options[k].text;}
+		}//end of for(k= 
+  } 
+//note that these types are not entirely supported 
+  else if ((document.forms[i].elements[j].type == "checkbox") || 
+			   (document.forms[i].elements[j].type == "radio")) {
+					var elementValue = document.forms[i].elements[j].checked;
+  } 
+//after gathering the name and value we continue...
+  var elementPair = (cookieElement + "=" + elementValue);
+	// These next lines loop together the long string that makes the cookie (e[0]=v[0]&e[1]=v[1]&...)
+	if (zircCookie == "") {
+		zircCookie = elementPair;} 
+	else {
+		zircCookie = zircCookie + "&" + elementPair;} //end of if (zircCookie == "")
+	} //end of for (j=0;j<document.forms[i].elements.length; j++) { 	
+   } //end of for (i=0;i<document.forms.length;i++)
+var expires = new Date((new Date()).getTime() + 1 *24*60*60*1000);//days*hrs*min*sec*millisec -- this cookie expires in 1 day
+   Set_Cookie(cookieName, zircCookie, expires); //set the cookie
+if (nextPage) {
+ window.location.href=nextPage;}
+ } // end of else emptyFormCheck
+}   //end of function saveForm() 
+
 function formValues(formCookieName) {
 	for (i=0; i<document.forms.length; i++) {
 	var cookieValue = getCookie(formCookieName);
@@ -209,6 +248,13 @@ function formValues(formCookieName) {
 	  }   //end of if (cookieValue) {
 	}   //end of for (i=0; i<document.length; i++) {
   }   //end of function formValues() 
+/************************************************************/
+
+function checkRef() {
+	if (document.referrer.indexOf('<!--|DOMAIN_NAME|-->/zf_info/stckctr/submission/submitTerms2.html') != -1) {
+	}
+	else {window.location.href = 'submitTryAgain.html';}
+}
 
 function sendMail(subjectTopic) {
 	window.location.href = ('mailto:form_comments@zfin.org?subject=' + subjectTopic);
