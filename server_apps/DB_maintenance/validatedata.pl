@@ -1495,7 +1495,7 @@ sub xpatHasConsistentMarkerRelationship ($) {
 
   my $routineName = "xpatHasConsistentMarkerRelationship";
 
-  my $sql = "select xpat_zdb_id, xpat_probe_zdb_id, xpat_gene_zdb_id
+  my $sql = 'select xpat_zdb_id, xpat_probe_zdb_id, xpat_gene_zdb_id
                from expression_pattern
                where xpat_probe_zdb_id is not null
                and not exists
@@ -1504,7 +1504,7 @@ sub xpatHasConsistentMarkerRelationship ($) {
                      from marker_relationship
                      where xpat_probe_zdb_id = mrel_mrkr_2_zdb_id
                      and xpat_gene_zdb_id = mrel_mrkr_1_zdb_id
-                 );
+                 )';
 
   my @colDesc = ("xpat ZDB ID       ",
 		 "probe ZDB ID      ",
