@@ -27,7 +27,7 @@ GENERICS = siteNews.html
 
 PERMANENT_STATICS = bluline.gif jobs.html mtgs.html
 
-STATICS = $(PERMANENT_STATICS) 
+STATICS = $(PERMANENT_STATICS) workshop.pdf
 
 
 
@@ -37,3 +37,5 @@ STATICS = $(PERMANENT_STATICS)
 # Use default rules for directories without app pages in them.
 
 include $(TOP)/make.default.rules
+
+
