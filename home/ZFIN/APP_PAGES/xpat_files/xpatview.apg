@@ -732,7 +732,7 @@ ERROR -- something bad happened -- no OID passed in!
 		</tr>
 	</table>
 
-<p align=left><font size="+1"><b>Comments:</b><br>&nbsp;$3</p>
+<p align=left><b>Comments:</b><br>&nbsp;$3</p>
 <?/MISQL>
 
 <form>
