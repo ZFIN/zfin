@@ -1852,6 +1852,8 @@ sub pubTitlesAreUnique($) {
 	
   # Only need to exclude 1 record per pair.  That means if a duplicate
   # becomes a triplicate, we will detect it.
+  # Exclude direct data submission pubs as we want many of these to have
+  # the same title.
 
   my $sql1 = '
     select title 
@@ -1876,14 +1878,9 @@ sub pubTitlesAreUnique($) {
 	"ZDB-PUB-010912-1",   { "ZDB-PUB-021017-13", }
         "ZDB-PUB-980420-9",   { "ZDB-PUB-030425-13", }
         "ZDB-PUB-010718-13",  { "ZDB-PUB-020913-1",  }
-        "ZDB-PUB-990414-54",  { "ZDB-PUB-021017-3", }
-        "ZDB-PUB-031001-4",   { "ZDB-PUB-030312-6", }
-        "ZDB-PUB-031001-5",   { "ZDB-PUB-030312-4", }
-        "ZDB-PUB-031001-6",   { "ZDB-PUB-030312-2", }
-        "ZDB-PUB-031001-2",   { "ZDB-PUB-030312-7", }
-        "ZDB-PUB-030128-1",   { "ZDB-PUB-031001-7", }
-        "ZDB-PUB-031001-3"    { "ZDB-PUB-030221-1"  }
-)
+        "ZDB-PUB-990414-54"   { "ZDB-PUB-021017-3", }
+        )
+        and source <> "ZFIN Direct Data Submission"
       group by title 
       having count(*) > 1 
      into temp dup_titles with no log;';
@@ -2491,7 +2488,6 @@ if($monthly) {
 }
 if($yearly) {
   print "run yearly check. \n";
-  foreigndbNotInFdbcontains($otherEmail);
 }
 
 	   
