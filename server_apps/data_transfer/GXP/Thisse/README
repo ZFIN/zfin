@@ -8,7 +8,7 @@
 ---------------------
 
    * Download data package (.sitx file) from ftp://ftp-igbmc.u-strasbg.fr/pub/Thisse/, use STUFFITS (www.stuffit.com) to expand the package. 
-   * Use FileMaker Pro to open and export FileMake Pro Database files (listed below) into .csv files. Open files with password "thisse". From File pulldown menu, choose Export, give names as defined below, use .csv extension. Make sure "date last modified" is the last column, then export without changing any other settings.
+   * Use FileMaker Pro to open and export FileMake Pro Database files (listed below) into .csv files. Open files with account name "Thisse" and password "thisse". From File pulldown menu, choose Export, give names as defined below, use .csv extension. When exporting DATA_FRX, the default exporting columns might be of a wrong order, DO "Clear All", Then move columns till "date last modified". Make sure "digest" column is right after "library". For others, it is safe to use the default, just double check "date last modified" is the last column for exporting. The output character set should be Windows(ANSI).
 
 	DATA_FRX->probes(.csv) 
 	rel_authors->authors(.csv) 
@@ -28,7 +28,9 @@
 
 	    >ispell -p ispell_common expression.csv
 
-     You will be using and updating a common ispell dictionary
+     You will be using and updating a common ispell dictionary. To enable update, 
+		chmod u+w ispell_common
+     and commit it back into cvs if you made any updates. 
 
    * In case of Thisse annotated (CB) loads, (otherwise, skip)
        - Run
@@ -69,7 +71,7 @@
         - Ask Peiran to update the ZFIN blast database, or run 
 			  /research/zblastfiles/users/peirans/Scripts/ZFIN/processZFIN.pl 0
  
-    $executables$:  parseThisse.pl  nameClone.pl blast2tab.pl 
+    $executables$:  parseThisse.pl  checkDups.sql nameClone.pl blast2tab.pl 
 		    filterBlast.pl thisseData2Unl.sh
 
     $command$    :
@@ -95,7 +97,8 @@
 
     $note$ : Test load on your database and almostdb before running on production. 
     $executables$: pre_gxp_load.sql gxp_load_func.sql post_gxp_load.sql
-		   gxp_load_quantity_check.sql load_gxp.sh
+		   gxp_load_quantity_check.sql load_gxp.sh get_fr_gene_list.sql
+		   getStat4Load.sql
 
     $command$    :
 
@@ -105,7 +108,7 @@
           release_type:    fr/cb
 
     $description$ :
-	  This master script first calls pre_gxp_load.sql to load the files into a set of tables and conduct quality check with zfin db. Errors are written to separate .err file. The script would exit on any error with temp tables cleaned up. (Error file description is provided below, read first one at least!) Upon success, it executes the gxp_load_func.sql and then uses the SPL function with a set of predefined parameters to load the data into database. If the load fails with exit value "1", check /tmp/gxp_load_exception for reasons. If the load successes with "0", the gxp_load_quantity_check.sql would generate related table contents comparison report. Finally, you would choose to clean up all the temporary tables right away, or keep the table for diagnose and run post_gxp_load.sql later. 
+	  This master script first calls pre_gxp_load.sql to load the files into a set of tables and conduct quality check with zfin db. Errors are written to separate .err file. The script would exit on any error with temp tables cleaned up. (Error file description is provided below, read first one at least!) Upon success, it executes the gxp_load_func.sql and then uses the SPL function with a set of predefined parameters to load the data into database. If the load fails with exit value "1", check /tmp/gxp_load_exception for reasons. If the load successes with "0", the gxp_load_quantity_check.sql would generate related table contents comparison report. Please go over the report. If everything looks good, answer yes to the prompt to clean up all the temporary tables, otherwise, keep the table for diagnose and run post_gxp_load.sql later.
 
 ---------------------
 -- Appendix
