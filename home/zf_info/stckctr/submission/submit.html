@@ -159,6 +159,10 @@
 		<td> <input type="text" name="lineDiscoverer" size="30"></td>
 	</tr>
 	<tr>
+		<td align="right"><a href="javascript:popup('provider.html')">Provider's Name</a> <font color="#FF0000">*</font>&nbsp;</td>
+		<td> <input type="text" name="required_lineProvider" size="30"></td>
+	</tr>
+	<tr>
 		<td align="right">Line Type&nbsp;</td>
 		<td class="types">
 			<input type="radio" name="lineType" value="mutant">mutant 
@@ -275,11 +279,11 @@
 			<td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Transgenes</b></td>
 		</tr>
 		<tr>
-			<td align="right"> Name of Transgene&nbsp;</td>
+			<td align="right"> Name of Transgene Insert&nbsp;</td>
 			<td> <input type="text" name="transgeneName" size="30"></td>
 		</tr>
 		<tr>
-			<td align="right" valign=top> Description of Transgene&nbsp;</td>
+			<td align="right" valign=top> Description of Transgene Insert&nbsp;</td>
 			<td> <textarea name="transgeneDescription" cols="30" wrap="VIRTUAL" rows="2"></textarea></td>
 		</tr>
 		<tr>
@@ -304,16 +308,29 @@
 			</td>
 		</tr>
 		<tr>
-			<td align="right">Background</td>
+			<td align="right"><a href="javascript:popup('background.html')">Background</a></td>
 			<td>&nbsp;</td>
 		</tr>
 		<tr>
-			<td align="right">Maternal Lineage <font color="#FF0000">*</font>&nbsp; </td>
+			<td align="right">Maternal Genetic Background <font color="#FF0000">*</font>&nbsp; </td>
 			<td> <input type="text" name="required_lineageMaternal" size="30"></td>
 		</tr>
 		<tr>
-			<td align="right" nowrap>Paternal Lineage <font color="#FF0000">*</font>&nbsp; </td>
+			<td align="right" nowrap>Paternal Genetic Background <font color="#FF0000">*</font>&nbsp; </td>
 			<td> <input type="text" name="required_lineagePaternal" size="30"></td>
+		</tr>
+		<tr>
+			<td colspan="2" align="center">&nbsp;</td>
+		</tr>
+		<tr>
+			<td colspan="2" align="center">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can the proposed line be moved to a different background without affecting the mutant phenotype(s)?<font color="#FF0000">*</font></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td><input type="radio" name="required_considerationsBackground" value="OK">Yes&nbsp;<input type="radio" name="required_considerationsBackground" value="No">No&nbsp;<input type="radio" name="required_considerationsBackground" value="unknown">Unknown</td>
+		</tr>
+		<tr>
+			<td colspan="2" align="center">&nbsp;</td>
 		</tr>
 		<tr> <td align="right" valign=top>Submitter's Comments&nbsp;</td>
 <td> <textarea name="geneticsComments" cols="30" wrap="VIRTUAL" rows="3"></textarea>
