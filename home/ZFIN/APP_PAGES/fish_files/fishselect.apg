@@ -126,7 +126,7 @@ CODE="Browser.class" NAME ="Browser" WIDTH=470 HEIGHT=120>
 <param name=format_post value=";%'" >
 <param name=list_label value="Keyword Dictionary">
 <param name=selected_label value="Selected Keywords">
-<param name = "host"             value = "zfin.org">
+<param name = "host"             value = "<!--|DOMAIN_NAME|-->">
 <param name = "port"             value = "<!--|JAVA_SERVER_PORT|-->">
 </APPLET>
 <?/MIBLOCK>
