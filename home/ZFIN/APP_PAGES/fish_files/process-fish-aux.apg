@@ -15,12 +15,13 @@ When filled, the ZDB_ID of the new return_rec is passed along into whatever brow
 <?MIVAR NAME=$return_rec>$1<?/MIVAR>
 <?MIVAR NAME=$return_form>aa-new-fish.apg<?/MIVAR>
 
-<!-- Want to specify person or LAB from whom fish available. Need to stick selected person/lab into int_fish_source -->
+<!-- Want to specify person or LAB from whom fish available. Need to 
+     stick selected person/lab into int_data_supplier -->
 <?MIBLOCK COND="$(XST,$s_source)">
 <?MIVAR NAME=$select_from>$(UPPER,$source_type)<?/MIVAR>
 <?MIVAR NAME=$action>intersect<?/MIVAR>
 <?MIVAR NAME=$fill_field>NULL<?/MIVAR>
-<?MIVAR NAME=$fill_table>int_fish_source<?/MIVAR>
+<?MIVAR NAME=$fill_table>int_data_supplier<?/MIVAR>
 <?MIVAR NAME=$jump_to>source-info<?/MIVAR>
 <?MIVAR NAME=$info>1<?/MIVAR>
 <?MIVAR NAME=$selector COND="$(EC,$source_type,lab)">aa-labselect.apg<?/MIVAR>
