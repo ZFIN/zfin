@@ -3,7 +3,7 @@ drop function get_obj_name;
 create function
 get_obj_name(zdbId varchar(50))
 
-  returning varchar(120);  -- longest name in DB is 120 characters long.
+  returning varchar(255);  -- longest name in DB is 255 characters long.
 
   -- Given a ZDB ID, gets the name of the object associated with that ZDB ID.
   -- If the object does not have a name per se, then its ZDB ID is returned
@@ -11,7 +11,7 @@ get_obj_name(zdbId varchar(50))
   -- Returns NULL if ZDB ID does not point to a record.
 
   define objType	like zdb_object_type.zobjtype_name;
-  define objName	varchar(120);
+  define objName	varchar(255);
 
   let objName = NULL;
   let objType = get_obj_type (zdbId);
