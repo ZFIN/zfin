@@ -116,7 +116,12 @@ $1
 <A HREF="/zf_info/stckctr/stckctr.html">Info</A>, <A HREF="/zf_info/stckctr/guide.html">Strains</A>, <A HREF="/zf_info/zfprbs.html">Probes</A>, <br><A HREF="/zf_info/stckctr/health.html">Pathology Services</A>.<BR>
 </td></tr></table>
 </DIV>
-          </TD>
+<BR>
+<DIV class="sidebar">
+<table border=0 cellpadding=3><tr><td>
+<A HREF="/zf_info/SEARCH_SITE/searchcrit.html">Search This Site</A>
+</td></tr></table>
+</DIV>         </TD>
          </TR>
         </TABLE>
       </TD>
