@@ -628,12 +628,31 @@ Accession:<input type=text size=15 name=seq_acc> <input type=button value="Add i
 <TABLE cellpadding=5 width="100%" border=0 bgcolor="$highlight">
 <?/MIVAR>
 <TR>
+<?MIVAR name=comment>
+  List all significance-1 links in one cell. 
+  Seperate significance-2 foreign_dbs into their own table cell.
+<?/MIVAR>
 <?MISQL SQL="
   select a.DB_name, conc(conc(b.DB_query,a.acc_num),b.url_suffix), acc_num 
     from db_link a, foreign_DB b 
     where a.DB_name = b.DB_name
       and a.linked_recid = '$OID' 
-    order by a.DB_name;">
+      and b.db_significance = 1
+    order by a.DB_name, acc_num;">
+  $(IF,$(=,$MI_CURRENTROW,1),<TD align=center>)
+  <li>
+  $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$3"')>")
+  <A HREF="$2">$1:$3</A>
+  $(SETVAR,$lastitem,$1)
+<?/MISQL>
+<?MIVAR> $(IF,$(!=,$MI_CURRENTROW,0),</TD>) <?/MIVAR>
+<?MISQL SQL="
+  select a.DB_name, conc(conc(b.DB_query,a.acc_num),b.url_suffix), acc_num 
+    from db_link a, foreign_DB b 
+    where a.DB_name = b.DB_name
+      and a.linked_recid = '$OID' 
+      and b.db_significance = 2
+    order by a.DB_name,acc_num;">
   $(IF,$(AND,$(NC,$lastitem,$1),$(>,$MI_CURRENTROW,1)),</TD>)
   $(IF,$(NC,$lastitem,$1),<TD align=center>)
   <li>
@@ -648,6 +667,9 @@ Accession:<input type=text size=15 name=seq_acc> <input type=button value="Add i
 <!-- display blast info if exists -->
 
   <br>
+
+<?MIVAR><B>Mrkr_zdb_id: $OID</B><?/MIVAR>
+
 
   <?MISQL SQL="
     SELECT distinct blast_results, blast_date
@@ -688,12 +710,12 @@ Name:<input type=text size=15 name=oname> Abbrev:<input type=text size=5 name=oa
 <TR>
 <?MISQL SQL="
   select ortho_name, ortho_abbrev, organism, zdb_id, b.DB_name,
-	 conc(c.DB_query,b.acc_num), acc_num, a.zdb_id 
+	 conc(c.DB_query,b.acc_num), acc_num, a.zdb_id, c.db_significance
     from orthologue a, OUTER (db_link b, OUTER foreign_DB c) 
     where a.zdb_id = b.linked_recid 
       and b.DB_name = c.DB_name 
       and c_gene_id = '$OID' 
-    order by organism, b.db_name;">
+    order by organism, c.db_significance, b.db_name;">
   $(IF,$(AND,$(NC,$lastitem,$3),$(>,$MI_CURRENTROW,1)),</TD></TR><TR>)
   $(IF,$(AND,$(NC,$lastitem,$3),$(XST,$UPDATE)),"<TD align=center><input type=button value=edit onClick=edit_ortho('"$8"')></TD>")
   $(IF,$(NC,$3,$lastitem),"<TD><b>"$3"</b>: "$1" ("$2") --> ")
