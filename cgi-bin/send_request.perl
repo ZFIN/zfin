@@ -9,7 +9,7 @@
 # Modified some code from Jeff Hobbs Jeffrey Hobbs 
 # Jan 15 1997
 
-# Script deals with forms that are to be mailed to locusreg. Locusreg is an alias which points to edwards@uoneuro.uoregon.edu and nomenclature@zfin.org.  It grabs
+# Script deals with forms that are to be mailed to locusreg. Locusreg is an alias which points to ZFIN members of the nomenclature committee.  It grabs
 # the relevant vars that are passed in, and composes into a nice email.
 # Required Variables:
 # Sender: The name of the person sending the request.
