@@ -17,9 +17,9 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/GenPept
 
-GENERICS =  fetch_load_GenPept.sh 
+GENERICS =  fetch_load_GenPept.sh fetch-genpept.pl
 
-STATICS =   fetch-genpept.pl load_prot_len_acc.sql README manual_curation.genpept\
+STATICS =   load_prot_len_acc.sql README manual_curation.genpept\
 	load_manual_genpept.sql parse-genpept.r
 
 # ---------------  Production Rules  ------------------------------------
