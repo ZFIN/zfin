@@ -118,18 +118,19 @@ $1<?/MISQL>
           <?MIBLOCK COND="$(NC,$mutagen,spontaneous)">
             <br>
             <SELECT NAME=protocol>
-              <OPTION <?MIVAR COND="$(EC,$protocol,sperm)">SELECTED<?/MIVAR> >sperm
-              <OPTION <?MIVAR COND="$(EC,$protocol,embryos)">SELECTED<?/MIVAR> >embryos
-              <OPTION <?MIVAR COND="$(OR,$(EC,$protocol,NULL),$(EC,$protocol,adult_males))">SELECTED<?/MIVAR> >adult_males
-              <OPTION <?MIVAR COND="$(EC,$protocol,adult_females)">SELECTED<?/MIVAR> >adult_females
+		  <?MISQL SQL="
+		         select * from mutagee"; >
+		    
+		    <option $(IF,$(EC,$protocol,$1),SELECTED)>$1
+		   <?/MISQL>
             </SELECT>
             treated with 
             <SELECT NAME=mutagen>
-              <OPTION <?MIVAR COND="$(OR,$(EC,$mutagen,ENU),$(EC,$mutagen,NULL))">SELECTED<?/MIVAR> >ENU
-              <OPTION <?MIVAR COND="$(EC,$mutagen,EMS)">SELECTED<?/MIVAR> >EMS
-              <OPTION <?MIVAR COND="$(EC,$mutagen,g-rays)">SELECTED<?/MIVAR> >g-rays
-              <OPTION <?MIVAR COND="$(EC,$mutagen,DNA)">SELECTED<?/MIVAR> >DNA
-              <OPTION <?MIVAR COND="$(EC,$mutagen,spontaneous)">SELECTED<?/MIVAR> >spontaneous
+ 	        <?MISQL SQL="
+		         select * from mutagen" ;>
+
+		  	<option $(IF,$(EC,$mutagen,$1),SELECTED)>$1
+		<?/MISQL>
             </SELECT>
           <?/MIBLOCK> <!-- ends if not spontaneous -->
 
@@ -374,15 +375,12 @@ $1<?/MISQL>
 	<TD>
 	  <A HREF="/ZFIN/help_files/help-chromo.html#chrom_change">CHROMOSOME CHANGE:</A>
 	  <SELECT NAME="chrom_change">
-	    <option <?MIVAR COND="$(EC,$chrom_change,point)"> SELECTED <?/MIVAR> >point
-	    <option <?MIVAR COND="$(EC,$chrom_change,duplication)"> SELECTED<?/MIVAR> >duplication
-	    <option <?MIVAR COND="$(EC,$chrom_change,deficiency)"> SELECTED <?/MIVAR> >deficiency
-	    <option <?MIVAR COND="$(EC,$chrom_change,translocation)"> SELECTED <?/MIVAR> >translocation
-	    <option <?MIVAR COND="$(EC,$chrom_change,transposition)"> SELECTED <?/MIVAR> >transposition
-	    <option <?MIVAR COND="$(EC,$chrom_change,insertion)"> SELECTED <?/MIVAR> >insertion
-	    <option <?MIVAR COND="$(EC,$chrom_change,inversion)"> SELECTED <?/MIVAR> >inversion
-	    <option <?MIVAR COND="$(OR,$(EC,$chrom_change,unknown),$(EC,$chrom_change,NULL))"> 
-	    SELECTED <?/MIVAR> >unknown
+	      <?MISQL SQL="
+		           select * from alteration_type" ;>
+
+		 <option $(IF,$(EC,$chrom_change,$1),SELECTED) value=$1>$1
+	      <?/MISQL>
+	    
           </SELECT>
 	</TD>
        </TR>
