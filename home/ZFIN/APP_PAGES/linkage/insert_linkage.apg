@@ -1,9 +1,22 @@
-!-- this app page is used to insert new linkage group info. The table where the record insertion occurs is dependent upon the calling form.  The page the user is returned to is also dependent upon the calling form
+<?MICOMMENT>
+this app page is used to insert new linkage group info. The table where the 
+record insertion occurs is dependent upon the calling form.  The page the user 
+is returned to is also dependent upon the calling form
 
 Expected vars:  calling_form
 Possible vars: link_id, usercomments, lg, source , ZDB_ident
+<?/MICOMMENT>
 
--->
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL
+  <?/MIVAR>
+
+  <br>Code: $MI_ERRORCODE
+  <br>State: $MI_ERRORSTATE
+  <br>Message: $MI_ERRORMSG 
+<?/MIERROR>
+
 
 <?MIVAR COND="$(NXST,$usercomments)" NAME=$usercomments><?/MIVAR>
 

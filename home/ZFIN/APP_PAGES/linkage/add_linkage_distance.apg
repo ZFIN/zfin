@@ -1,7 +1,22 @@
-<!-- This app page is used to add records to the table linkage pair members and linkage_pair. It associates a distance, LOD, and metric with the members of the linkage pair.  
+<?MICOMMENT>
+This app page is used to add records to the table linkage pair members and 
+linkage_pair. It associates a distance, LOD, and metric with the members of 
+the linkage pair.  
 
 Required vars:  link_id  
-Possible vars:  update-->
+Possible vars:  update
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL
+  <?/MIVAR>
+
+  <br>Code: $MI_ERRORCODE
+  <br>State: $MI_ERRORSTATE
+  <br>Message: $MI_ERRORMSG 
+<?/MIERROR>
+
 
 <HTML>
 <HEAD>
