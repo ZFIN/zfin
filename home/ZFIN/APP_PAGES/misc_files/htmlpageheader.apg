@@ -79,12 +79,12 @@ document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
             <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg">Markers</a>
 	   </DIV>
           </td>
-<!--       <td  align=center>
+          <td  align=center>
 	   <DIV class="header">
             <A HREF="mapper_select.cgi">Maps</a>
 	   </DIV>
           </td>	   
-          <td  align=center>
+<!--          <td  align=center>
 	   <DIV class="header">
             <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubselect2.apg">Publications</a>
 	   </DIV>
