@@ -1657,6 +1657,43 @@ sub subZdbObjectHandledByGetObjName {
 }
 
 #======================== Others ====================================
+#locusAlleleHaveDupPub 
+#
+# if a source is to one allele, it should only be an attribution to the 
+# allele not also to the locus in the database. But on the website, the 
+# sources of all the alleles of the locus are all collected in the 
+# publication section of the locus.
+
+sub locusAlleleHaveDupPub ($) {
+  
+  logHeader ("Reporting locus and its allele attributed to the same source");
+
+  my $sql = '
+             select f.zdb_id, l.zdb_id, r1.recattrib_source_zdb_id 
+               from record_attribution r1, record_attribution r2, 
+                    fish f, locus l 
+              where f.locus = l.zdb_id 
+                and f.zdb_id = r1.recattrib_data_zdb_id 
+                and l.zdb_id = r2.recattrib_data_zdb_id 
+                and r1.recattrib_source_zdb_id = r2.recattrib_source_zdb_id';
+
+  my @colDesc = ("Allele ZDB ID       ",
+                 "Locus  ZDB ID       ",
+                 "Source ZDB ID       ");
+
+  my $nRecords = execSql ($sql, undef, @colDesc);
+
+  if ($nRecords > 0) {
+     my $sendToAddress = $_[0];
+     my $subject = "locus&allele attribute to the same source";
+     my $errMsg = "$nRecords pairs of locus and allele have the same attribution.\n";
+
+     logError ($errMsg);
+     &sendMail($sendToAddress, $subject, $errMsg, $sql);
+   }else {
+     print "Passed!\n";
+   }
+}
 
 #-------------------------------------------------------------
 # pubTitlesAreUnique
@@ -2211,6 +2248,7 @@ if($daily) {
 
   locusAbbrevUnique($mutantEmail);
   locusNameUnique($mutantEmail);
+  locusAlleleHaveDupPub($mutantEmail);
 
   linkageHasMembers($linkageEmail);
   linkagePairHas2Members($linkageEmail);
@@ -2250,7 +2288,6 @@ if($monthly) {
 }
 if($yearly) {
   print "run yearly check. \n";
-    pubTitlesAreUnique($otherEmail);
 }
 
 	   
