@@ -151,6 +151,10 @@ registrations -- but not update of course.
 		('$locus_id', '$locus_name', '$abbrev',
 		 'Provisional record for newly registered locus/allele','$owner');">
 	  <?/MISQL>
+          <?MICOMMENT>Add new locus to names fast search tables.<?/MICOMMENT>
+          <?MISQL SQL="
+            execute procedure regen_names_locus('$OID');">
+          <?/MISQL>    
 	<?/MIBLOCK>
 
       <?/MIBLOCK>
