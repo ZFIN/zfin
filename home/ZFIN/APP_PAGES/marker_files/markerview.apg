@@ -1217,15 +1217,17 @@ Datablade documentation.
       </TD>
       <TD align=left width=80% bgcolor=#EEEEEE>
 	<?MISQL SQL="
-	  select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrel_type,  mreltype_name, mreltype_1_to_2_comments, mrkrtype_type_display, mrel_zdb_id, idsup_supplier_zdb_id
-	  from marker, marker_relationship, marker_relationship_type, outer(int_data_supplier), marker_types
+	  select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrel_type,  mreltype_name, mreltype_1_to_2_comments, mrkrtype_type_display, mrel_zdb_id, idsup_supplier_zdb_id, srcurl_display_text, srcurl_url 
+	  from marker, marker_relationship, marker_relationship_type, outer(int_data_supplier, source_url), marker_types
 	  where mrel_mrkr_1_zdb_id = '$OID' 
   	    and mrel_mrkr_2_zdb_id = mrkr_zdb_id 
 	    and mrel_type = mreltype_name 
 	    and mreltype_name = '$mrkrview_mrel_type'  
 	    and mrel_mrkr_2_zdb_id = idsup_data_zdb_id
 	    and mrkr_type = marker_type
-	  group by mrkrtype_type_display, mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrel_type, mreltype_name, mreltype_1_to_2_comments, mrel_zdb_id, idsup_supplier_zdb_id
+	    and idsup_supplier_zdb_id = srcurl_source_zdb_id
+	    and srcurl_purpose = 'order'
+	  group by mrkrtype_type_display, mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrel_type, mreltype_name, mreltype_1_to_2_comments, mrel_zdb_id, idsup_supplier_zdb_id, srcurl_display_text, srcurl_url 
 	  order by mrkrtype_type_display, mrkr_abbrev_order;">
 	  
 	  <?MIVAR NAME=mrkrview_segment_mrkr_zdb_id>$2<?/MIVAR> 
@@ -1233,6 +1235,8 @@ Datablade documentation.
 	  <?MIVAR NAME=mrkrview_segment_mrkr_type>$7<?/MIVAR> 
 	  <?MIVAR NAME=mrkrview_segment_mrel_zdb_id>$8<?/MIVAR> 
 	  <?MIVAR NAME=mrkrview_segment_supplier>$9<?/MIVAR> 
+	  <?MIVAR NAME=mrkrview_segment_supplier_display>$10<?/MIVAR> 
+	  <?MIVAR NAME=mrkrview_segment_supplier_url>$11<?/MIVAR> 
 	
 	<?MIBLOCK COND="$(NC,$mrkrview_segment_mrkr_type,$mrkrview_last_mrkr_type)">
 	  <?MIBLOCK COND="$(NE,$MI_CURRENTROW,1)"><br><?/MIBLOCK>
@@ -1250,8 +1254,10 @@ Datablade documentation.
          <font size=-1>
 
         <?MIBLOCK COND="$(NC,$mrkrview_segment_supplier,)">
-          <?MIBLOCK COND="$(EC,$mrkrview_segment_supplier,ZDB-LAB-991005-53)">
-            <A HREF="/zirc/home/guide.php">(available from)</A>
+          <?MIBLOCK COND="$(NC,$mrkrview_segment_supplier_display,)">
+            <?MIVAR>
+              <A HREF="$mrkrview_segment_supplier_url">($mrkrview_segment_supplier_display)</A>
+            <?/MIVAR>
           <?MIELSE>
             <?MIVAR>
               <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$mrkrview_segment_supplier">(available from)</A>

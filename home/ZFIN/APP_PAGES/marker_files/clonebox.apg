@@ -7,27 +7,27 @@ Requires:  $CLONE_MARKER_ID, $highlight
 <?MIVAR NAME=$COUNT>0<?/MIVAR>
 
   <?MISQL SQL="
-    SELECT l.zdb_id, l.name 
-    FROM lab l, int_data_supplier
+    SELECT l.zdb_id, l.name, srcurl_url, srcurl_display_text
+    FROM lab l, int_data_supplier, OUTER(source_url)
     WHERE '$OID' = idsup_data_zdb_id
-      AND idsup_supplier_zdb_id = l.zdb_id;
+      AND idsup_supplier_zdb_id = l.zdb_id
+      AND idsup_supplier_zdb_id = srcurl_source_zdb_id
+;
   ">
-      <?MIBLOCK COND=$(EC,$1,ZDB-LAB-991005-53)>
-	  <?MIVAR NAME=$SOURCE>
+      <?MIBLOCK COND=$(EC,$COUNT,0)>
 
-	    <a href="/zirc/home/guide.php">$2</a>
-
-	  <?/MIVAR>
-        <?MIELSE>
 	  <?MIVAR NAME=$SOURCE>
 
 	    <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$1">$2</a>
+	    <?MIVAR COND="$(NE,$3,)">
+	      <font size=-1">(<a href="$3">$4</a>)</font><img src="/images/new1.gif">
+	    <?/MIVAR>
 
 	  <?/MIVAR>
-    <?/MIBLOCK>
-    <?MIBLOCK COND="$(=,$COUNT,1)">
 
-      <?MIBLOCK COND=$(EC,$1,ZDB-LAB-991005-53)>
+      <?MIELSE>
+
+        <?MIBLOCK COND=$(EC,$1,ZDB-LAB-991005-53)>
 	  <?MIVAR NAME=$SOURCE>
 	    $SOURCE,
 	    <a href="/zirc/home/guide.php">$2</a>
@@ -39,9 +39,10 @@ Requires:  $CLONE_MARKER_ID, $highlight
 	    <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$1">$2</a>
 
 	  <?/MIVAR>
-    <?/MIBLOCK>
+	   
+        <?/MIBLOCK>
 
-    <?/MIBLOCK>
+      <?/MIBLOCK>
     <?MIVAR NAME=$COUNT>1<?/MIVAR>
   <?/MISQL>
 
@@ -70,7 +71,7 @@ Requires:  $CLONE_MARKER_ID, $highlight
     Make the internals apply to EST, PAC, or BAC. Display nothing if the type does not
     match.
     
-    EST:				
+    EST/CDNA:				
     
     Species				
     				
