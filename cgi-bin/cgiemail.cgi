@@ -133,7 +133,12 @@ foreach ad parse addy "," [
 ;print error? try[delete lock-file]
 
 ;;; make sure only one cgi writes to the file at a time
-while [not error? try[read lock-file]][wait 2]
+
+;;; need to make sure it does not wait forever
+then: now/time
+while [all[(not error? try[read lock-file]) (now/time - then) < 00:00:30]][wait 2]
+
+
 write  lock-file ""
 write/append  output-file rejoin ["# "now/date "--" now/time "^/"]
 write/append  output-file template
