@@ -219,7 +219,7 @@ print(LOG "Using dump $dumpDir/$latestDump\n");
 
 # load it
 close(LOG) or abort("Cannot close log file $logFile.\n");
-$status = system("/research/zcentral/Commons/bin/loaddb.pl -ee $dbName $dumpDir/$latestDump >> $logFile 2>&1");
+$status = system("/research/zcentral/Commons/bin/loaddb.pl $dbName $dumpDir/$latestDump >> $logFile 2>&1");
 if ($status) {
     abort("loadddb.pl $dbName $dumpDir/$latestDump failed.\n");
 }
