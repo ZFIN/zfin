@@ -17,11 +17,13 @@ Variables Expected:
 
 <SCRIPT>
 
-  function doit(attr,attr_type,print_name) {
+  function doit(attr,attr_type,print_name,table,zdb_id) {
     document.doUpdate.MIval.value='aa-imageupdate.apg';
     document.doUpdate.attr.value=attr;
     document.doUpdate.attr_type.value=attr_type;
     document.doUpdate.print_name.value=print_name;
+    document.doUpdate.table.value=table;
+    document.doUpdate.zdb_id.value=zdb_id;
     /* check_annotations(); */
     document.doUpdate.submit();
   }
@@ -38,12 +40,14 @@ Variables Expected:
   }
   */
 
-  function dopopup(new_value,old_value,field) {
+  function dopopup(new_value,old_value,field,table,zdb_id) {
     document.doUpdate.MIval.value='aa-do-imageupdate.apg';
     document.doUpdate.attr.value=field;
     document.doUpdate.attr_type.value='text';
     document.doUpdate.old_value.value=old_value;
     document.doUpdate.new_value.value=new_value;
+    document.doUpdate.table.value=table;
+    document.doUpdate.zdb_id.value=zdb_id;
     /* check_annotations(); */
     document.doUpdate.submit();
   }
@@ -136,6 +140,8 @@ Variables Expected:
 	<input type=hidden name=attr value="">
 	<input type=hidden name=attr_type value="">
 	<input type=hidden name=old_value value="">
+	<input type=hidden name=table value="">
+        <input type=hidden name=zdb_id value="">
 	<input type=hidden name=new_value value="">
 	<input type=hidden name=print_name value="">
 	<input type=hidden name=annotations value="NULL">
@@ -199,7 +205,7 @@ Variables Expected:
 	        <br>
 		<INPUT TYPE=button 
 		       value="Change Image file" 
-		       onClick="doit('fimg_image','pic','Image+file')">
+		       onClick="doit('fimg_image','pic','Image+file','fish_image','fimg_zdb_id')">
               <?/MIVAR>
 	    </TD>
           </TR>
@@ -213,7 +219,7 @@ Variables Expected:
         <TR align=center>
           <TD bgcolor="#f8fab">
             <?MIVAR COND="$(XST,$UPDATE)">
-              <INPUT TYPE=button value=Update onClick="doit('stock','selection','Depicted+Stock')">
+              <INPUT TYPE=button value=Update onClick="doit('stock','selection','Depicted+Stock','fish_image','fimg_zdb_id')">
             <?/MIVAR>
 	    <big>Stock:</big> 
 	    <?MIVAR>
@@ -231,7 +237,7 @@ Variables Expected:
                 </TD>
               </TR>
               <?MIVAR COND="$(XST,$UPDATE)">
-                <INPUT TYPE=button value=Update onClick="doit('fimg_comments','textarea','Image+Caption')">
+                <INPUT TYPE=button value=Update onClick="doit('fimg_comments','textarea','Image+Caption','fish_image','fimg_zdb_id')">
               <?/MIVAR>
               <?MIVAR>
 	        <TR>
@@ -278,21 +284,21 @@ Variables Expected:
 	  <?/MIVAR>
         <?MIELSE>
 	  <?MIVAR>
-	    <SELECT NAME=stage  onChange="dopopup(this.options[this.selectedIndex].value,'$start_stg_name','stage')">
+	    <SELECT NAME=stage  onChange="dopopup(this.options[this.selectedIndex].value,'$start_stg_zdb_id','fimgstg_start_stg_zdb_id','fish_image_stage','fimgstg_fimg_zdb_id')">
 	      <?MISQL SQL="
-	        select stg_name, stg_hours_start, stg_hours_end 
+	        select stg_name, stg_hours_start, stg_hours_end ,stg_zdb_id
                   from stage 
                   order by stg_hours_start, stg_hours_end desc;">
-	        <option $(IF,$(EC,$start_stg_name,$1),SELECTED) value="$1">$1
+	        <option $(IF,$(EC,$start_stg_name,$1),SELECTED) value="$4">$1
 	      <?/MISQL>
 	    </SELECT>
 	    to 
-	    <SELECT NAME=stage  onChange="dopopup(this.options[this.selectedIndex].value,'$end_stg_name','stage')">
+	    <SELECT NAME=stage  onChange="dopopup(this.options[this.selectedIndex].value,'$end_stg_zdb_id','fimgstg_end_stg_zdb_id','fish_image_stage','fimgstg_fimg_zdb_id')">
 	      <?MISQL SQL="
-	        select stg_name, stg_hours_start, stg_hours_end 
+	        select stg_name, stg_hours_start, stg_hours_end, stg_zdb_id 
                   from stage 
                   order by stg_hours_start, stg_hours_end desc;">
-	        <option $(IF,$(EC,$start_stg_name,$1),SELECTED) value="$1">$1
+	        <option $(IF,$(EC,$end_stg_name,$1),SELECTED) value="$4">$1
 	      <?/MISQL>
 	    </SELECT>
 	  <?/MIVAR>
@@ -481,7 +487,7 @@ Variables Expected:
 	      <?/MIVAR>
 	    <?MIELSE>
 	      <?MIVAR>
-		<SELECT name=preparation onChange=dopopup(this.options[this.selectedIndex].value,'$fimg_preparation','fimg_preparation')>
+		<SELECT name=preparation onChange="dopopup(this.options[this.selectedIndex].value,'$fimg_preparation','fimg_preparation','fish_image','fimg_zdb_id')">
 		  <?MISQL SQL="
 	            select fimgprep_name
                       from fish_image_preparation
@@ -499,7 +505,7 @@ Variables Expected:
 	      <?/MIVAR>
 	    <?MIELSE>
 	      <?MIVAR>
-		<SELECT name=form onChange=dopopup(this.options[this.selectedIndex].value,'$fimg_form','fimg_form')>
+		<SELECT name=form onChange="dopopup(this.options[this.selectedIndex].value,'$fimg_form','fimg_form','fish_image','fimg_zdb_id')">
 		  <?MISQL SQL="
 	            select fimgform_name
                       from fish_image_form
@@ -517,7 +523,7 @@ Variables Expected:
 	      <?/MIVAR>
 	    <?MIELSE>
 	      <?MIVAR>
-		<SELECT name=view onChange=dopopup(this.options[this.selectedIndex].value,'$fimg_view','fimg_view')>
+		<SELECT name=view onChange="dopopup(this.options[this.selectedIndex].value,'$fimg_view','fimg_view','fish_image','fimg_zdb_id')">
 		  <?MISQL SQL="
 	            select fimgview_name
                       from fish_image_view
@@ -535,7 +541,7 @@ Variables Expected:
 	      <?/MIVAR>
 	    <?MIELSE>
 	      <?MIVAR>
-		<SELECT name=direction onChange=dopopup(this.options[this.selectedIndex].value,'$fimg_direction','fimg_direction')>
+		<SELECT name=direction onChange="dopopup(this.options[this.selectedIndex].value,'$fimg_direction','fimg_direction','fish_image','fimg_zdb_id')">
 		  <?MISQL SQL="
 	            select fimgdir_name
                       from fish_image_direction
