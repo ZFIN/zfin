@@ -133,7 +133,7 @@ TOUCH = /bin/touch
 
 # Any created dirs should be created with 775 perms.
 
-TARGET_MKDIR = /bin/mkdir -pm 775
+TARGET_MKDIR = /bin/mkdir -pm 2775
 
 LOADAPPPAGE = /private/ZfinLinks/Commons/bin/loadapppage.pl
 UNLOADAPPPAGE = /private/ZfinLinks/Commons/bin/unloadapppage.pl
