@@ -76,19 +76,20 @@ delete from zdb_active_data where zactvd_zdb_id in (
 );
 
 ! echo "find the new Genpept links to add"
-select distinct 
-    linked_recid , 
+select 
+    linked_recid, 
     'GenPept' dbname,
-    pla_prot acc,
+     pla_prot acc,
     'uncurrated ' || TODAY info, 
     '1234567890123456789012345' zad, 
-    pla_prot acc_display ,
-    'Zebrafish'organism ,
+     pla_prot acc_display,
+    'Zebrafish' organism,
     'protein sequence' type,
-    pla_len
+     max(pla_len) len
 from  db_link, prot_len_acc
 where db_name in ('Genbank','SwissProt', 'RefSeq', 'LocusLink')
-and   acc_num = pla_acc 
+and   acc_num = pla_acc
+group by 1,3,6 
 into temp tmp_dblk with no log;
 
 update tmp_dblk set zad = get_id('DBLINK');  
