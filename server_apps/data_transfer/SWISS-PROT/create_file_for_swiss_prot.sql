@@ -2,9 +2,10 @@
 
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/swiss_prot.txt' 
   DELIMITER "	"
-  select distinct linked_recid , mrkr_abbrev, acc_num from db_link, marker
-    where linked_recid = mrkr_zdb_id
-    and DB_name = 'SWISS-PROT'
+  select distinct dblink_linked_recid, mrkr_abbrev, dblink_acc_num 
+    from db_link, marker
+   where dblink_linked_recid = mrkr_zdb_id
+     and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-47'
     order by 1;
 
 
