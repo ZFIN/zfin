@@ -35,7 +35,8 @@ FISH_STATS   = get_fish_full_name.sql get_image_stats.sql \
 MRKR_STATS   = gene_contains_seg.sql mhist_event.sql p_mrel_grpmem_correct.sql \
 	       p_2_linkage_pairs.sql p_check_zdb_id_in_genedom.sql \
 	       p_goterm_not_obsolete.sql p_marker_has_goterm.sql \
-	       p_check_mrkr_abbrev.sql
+	       p_check_mrkr_abbrev.sql \
+               p_insert_into_record_attribution.sql
 PUB_STATS    = get_pub_mini_ref.sql
 REGEN_GNRCS  = regen_fishsearch.sql regen_genomics.sql regen_oevdisp.sql \
 	       regen_panelcount.sql regen_maps.sql
