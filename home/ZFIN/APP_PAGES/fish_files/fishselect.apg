@@ -1,11 +1,15 @@
-<?MIVAR COND="$(NXST,$line_type)" NAME=$line_type>NULL<?/MIVAR>
+
+<!-- Modified to support I.E.  Naviagtor tile buttons must know all user input from the query screen.  These values are posted to the lister form.  The lister form creates the tile bar button with appropriate variables. Startframes.apg will pass this variables on to the select form.  -->
 
 <HTML>
 <HEAD>
 <SCRIPT>
 
 function updateList() {
+
       document.BrowserForm.selected.value=document.Browser.getList();
+      document.BrowserForm.preselected.value=document.Browser.getList('9');
+      document.BrowserForm.selected_separator.value=document.Browser.getSelectedSeparator();
 }
 
 <?MIVAR>
@@ -14,85 +18,221 @@ function start_help(anchor) {
 }
 <?/MIVAR>
 
+
+function form_submit() { 
+  	document.BrowserForm.submit();
+}
+
+function call_reset() {
+
+	document.BrowserForm.fname.value = "";
+	document.BrowserForm.allele.value = "";
+	document.BrowserForm.abbrev.value = "";
+	document.BrowserForm.anon1text.value = "";
+	document.BrowserForm.chrom_num.selectedIndex = 0;
+	document.BrowserForm.chrom_change.selectedIndex = 0;
+	document.BrowserForm.mutagen.selectedIndex = 0;
+	document.BrowserForm.anon1.selectedIndex = 0;
+	document.BrowserForm.knowngene.checked = false;
+	document.BrowserForm.preselected.value = "";
+        document.BrowserForm.selected_separator.value = "and";
+	document.Browser.clear();
+}
+
+
 </SCRIPT>
 </head>
 
 <basefont size=2>
 
 <form name="BrowserForm" method=post TARGET="pbrowser" 
-onSubmit="parent.pbrowser.document.location='/ZFIN/misc_html/saysearching.html'; 
-<?MIVAR COND="$(NC,$line_type,wild_type)">
-updateList();<?/MIVAR>
-" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+onSubmit="<?MIVAR COND="$(NOT,$(AND,$(>,$(POSITION,$HTTP_USER_AGENT,Mac),0),$(>,$(POSITION,$HTTP_USER_AGENT,MSIE),0),$(NC,$line_type,wild_type)))">updateList();<?/MIVAR>"
+ action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+
+
+<?MIVAR COND="$(NXST,$line_type)" NAME=$line_type>NULL<?/MIVAR>
+<?MIVAR COND="$(NXST,$selected_separator)" NAME=$selected_separator>and<?/MIVAR>
+<?MIVAR COND="$(NXST,$preselected)" NAME=$preselected><?/MIVAR>
+<?MIVAR COND="$(XST,$preselected)" NAME=$preselected DELIMIT="8" REPLACE=" ">$preselected<?/MIVAR>
+<?MIVAR COND="$(NXST,$chrom_num)" NAME=$chrom_num>0<?/MIVAR>
+<?MIVAR COND="$(NXST,$mutagen)" NAME=$mutagen>any<?/MIVAR>
+<?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>phenotype<?/MIVAR>
+<?MIVAR COND="$(NXST,$chrom_change)" NAME=$chrom_change>any<?/MIVAR>
+
 
 <center>
-<FONT SIZE=3 color="#ff0000" > <B>SEARCH for 
-<?MIVAR>
-$(IF,$(NC,$line_type,null),$(UPPER,$line_type),"<select name=line_type> <option>wild type<option selected>mutant</select>")
-Lines </B></font>
-<?/MIVAR>
+  <FONT SIZE=3 color="#ff0000" > <B>SEARCH for 
+  <?MIVAR>
+	$(IF,$(NC,$line_type,null),$(UPPER,$line_type),"<select name=line_type> <option>wild type<option selected>mutant</select>")
+	Lines </B></font>
+  <?/MIVAR>
 </center>
 
 <TABLE width=100% border=0>
 <TR>
 <?MIVAR COND="$(NC,$line_type,wild_type)">
-<TD><font size=-1>
-<A HREF="javascript:start_help('allele')"><b>Allele:</b> </A>
-<input type=text name=allele size=5 ></font></TD>
+	<TD><font size=-1>
+	<A HREF="javascript:start_help('allele')"><b>Allele:</b> </A>
+	<input type=text name=allele size=5 ></font></TD>
 <?/MIVAR>
+<!--  assign navtile value to allele - can not do with a value="allele" in input statement - reset will not work -->
+<?MIBLOCK COND="$(XST,$allele)">
+	<?MIVAR> 
+		<SCRIPT> 
+			document.BrowserForm.allele.value = "$allele" 
+		</SCRIPT>
+	<?/MIVAR> 
+<?/MIBLOCK>
+
 <TD><font size=-1><A HREF="javascript:start_help('locus')"><b>
-<?MIVAR>$(IF,$(EC,$line_type,mutant),"Locus name","Name")<?/MIVAR>
+<?MIVAR>
+	$(IF,$(EC,$line_type,mutant),"Locus name","Name")
+<?/MIVAR>
  contains:</b></A>
  <input type=text name=fname size=6 ></font></TD> 
+
+<!--  assign navtile value to fname - can not do with a value="fname" in input statement - reset will not work -->
+<?MIBLOCK COND="$(XST,$fname)">
+	<?MIVAR> 
+		<SCRIPT> 
+			document.BrowserForm.fname.value = "$fname" 
+		</SCRIPT>
+	<?/MIVAR> 
+<?/MIBLOCK>
 
 <?MIBLOCK COND="$(NC,$line_type,wild_type)">
 
 <TD><font size=-1><A HREF="javascript:start_help('abbrev')"><b>3-letter abbrev.:</b></A> <input type=text maxlength=3 name=abbrev size=3 ></font></TD>
+
+<!--  assign navtile value to abbrev - can not do with a value="abbrev" in input statement - reset will not work -->
+	<?MIBLOCK COND="$(XST,$abbrev)">
+		<?MIVAR> 
+			<SCRIPT> 
+				document.BrowserForm.abbrev.value = "$abbrev" 
+			</SCRIPT>
+		<?/MIVAR> 
+<?/MIBLOCK>
+
 </TR>
 </TABLE>
 
 
 <TABLE width=100% border=0>
 <TR>
-<TD><font size=-1> <A HREF="javascript:start_help('lg')"><b>LG:</b></A>
-<select NAME=chrom_num>
-<option selected value=0>All<option value=1>1<option value=2>2<option value=3>3<option value=4>4<option value=5>5<option value=6>6<option value=7>7<option value=8>8<option value=9>9<option value=10>10<option value=11>11<option value=12>12<option value=13>13<option value=14>14<option value=15>15<option value=16>16<option value=17>17<option value=18>18<option value=19>19<option value=20>20<option value=21>21<option value=22>22<option value=23>23<option value=24>24<option value=25>25
-</SELECT></font></TD> 
+<?MIVAR>
+	<TD><font size=-1> <A HREF="javascript:start_help('lg')"><b>LG:</b></A>
+	<select NAME=chrom_num>
+		<option $(IF,$(EC,$chrom_num,0),SELECTED)  value=0>All	
+		<option  $(IF,$(EC,$chrom_num,1),SELECTED)  value=1>1
+		<option  $(IF,$(EC,$chrom_num,2),SELECTED)  value=2>2
+		<option  $(IF,$(EC,$chrom_num,3),SELECTED)  value=3>3
+		<option  $(IF,$(EC,$chrom_num,4),SELECTED)  value=4>4
+		<option  $(IF,$(EC,$chrom_num,5),SELECTED)  value=5>5
+		<option  $(IF,$(EC,$chrom_num,6),SELECTED)  value=6>6
+		<option  $(IF,$(EC,$chrom_num,7),SELECTED)  value=7>7
+		<option  $(IF,$(EC,$chrom_num,8),SELECTED)  value=8>8
+		<option  $(IF,$(EC,$chrom_num,9),SELECTED)  value=9>9
+		<option  $(IF,$(EC,$chrom_num,10),SELECTED)  value=10>10
+		<option  $(IF,$(EC,$chrom_num,11),SELECTED)  value=11>11
+		<option  $(IF,$(EC,$chrom_num,12),SELECTED)  value=12>12
+		<option  $(IF,$(EC,$chrom_num,13),SELECTED)  value=13>13
+		<option  $(IF,$(EC,$chrom_num,14),SELECTED)  value=14>14
+		<option  $(IF,$(EC,$chrom_num,15),SELECTED)  value=15>15
+		<option  $(IF,$(EC,$chrom_num,16),SELECTED)  value=16>16
+		<option  $(IF,$(EC,$chrom_num,13),SELECTED)  value=13>13
+		<option  $(IF,$(EC,$chrom_num,14),SELECTED)  value=14>14
+		<option  $(IF,$(EC,$chrom_num,15),SELECTED)  value=15>15
+		<option  $(IF,$(EC,$chrom_num,16),SELECTED)  value=16>16
+		<option  $(IF,$(EC,$chrom_num,17),SELECTED)  value=17>17
+		<option  $(IF,$(EC,$chrom_num,18),SELECTED)  value=18>18
+		<option  $(IF,$(EC,$chrom_num,19),SELECTED)  value=19>19
+		<option  $(IF,$(EC,$chrom_num,20),SELECTED)  value=20>20
+		<option  $(IF,$(EC,$chrom_num,21),SELECTED)  value=21>21
+		<option  $(IF,$(EC,$chrom_num,21),SELECTED)  value=22>22
+		<option  $(IF,$(EC,$chrom_num,23),SELECTED)  value=23>23
+		<option  $(IF,$(EC,$chrom_num,24),SELECTED)  value=24>24
+		<option  $(IF,$(EC,$chrom_num,25),SELECTED)  value=25>25
+	</SELECT>
+<?/MIVAR>
+</font>
+</TD> 
 
-<!-- add option for complex rearrangement  -->
-<TD><font size=-1><A HREF="javascript:start_help('mtype')"><b>Mut. Type:</b> </A>
-<select NAME=chrom_change><option SELECTED value=any>Any<option>point_mutation<option>deficiency<option>insertion<option>translocation<option>transposition<option>duplication<option>complex_rearrangement</select>
+<!-- add option for complex rearrangement  -->	
+<?MIVAR>
+	<TD><font size=-1><A HREF="javascript:start_help('mtype')"><b>Mut. Type:</b> </A>
+	<select NAME=chrom_change>
+		<option  $(IF,$(EC,$chrom_change,any),SELECTED) value=any>Any
+		<option  $(IF,$(EC,$chrom_change,point_mutation),SELECTED) value=point_mutation>point_mutation
+		<option  $(IF,$(EC,$chrom_change,deficiency),SELECTED) value=deficiency >deficiency
+		<option  $(IF,$(EC,$chrom_change,insertion),SELECTED) value=insertion>insertion
+		<option  $(IF,$(EC,$chrom_change,translocation),SELECTED) value=translocation>translocation
+		<option  $(IF,$(EC,$chrom_change,transposition),SELECTED) value=transposition>transposition
+		<option  $(IF,$(EC,$chrom_change,duplication),SELECTED) value=duplication>duplication
+		<option  $(IF,$(EC,$chrom_change,complex_rearrangement),SELECTED) value=complex_rearrangement>complex_rearrangement
+	</select>
+<?/MIVAR>
 </font></TD>
 
 <TD><font size=-1><A HREF="javascript:start_help('mutagen')"><b>Mutagen:</b></A>
-<select NAME=mutagen><option SELECTED value=any>Any<option value=ENU>ENU<option value=EMS>EMS<option value=g-rays>gamma rays<option value=DNA>DNA<option value=spontaneous>spontaneous</SELECT>
+	<select NAME=mutagen>
+		<?MIVAR>
+			<option $(IF,$(EC,$mutagen,any),SELECTED) value=any>Any
+			<option $(IF,$(EC,$mutagen,ENU),SELECTED) value=ENU>ENU
+			<option $(IF,$(EC,$mutagen,EMS),SELECTED) value=EMS>EMS
+			<option $(IF,$(EC,$mutagen,g-rays),SELECTED) value=g-rays>gamma rays
+			<option $(IF,$(EC,$mutagen,DNA),SELECTED) value=DNA>DNA
+			<option $(IF,$(EC,$mutagen,spontaneous),SELECTED) value=spontaneous>spontaneous
+		<?/MIVAR>
+	</SELECT>
 </font></TD>
 </TR>
 </TABLE>
 
 <TABLE width=100% border=0>
 <TR>
+<?MIVAR>
 <TD><font size=-1> <b> 
-<SELECT name=anon1>
-<option selected value="phenotype">Phenotype
-<option value="fish_id">ZFIN ID#
-<option value="comments">Comments
-</SELECT>
+	<SELECT name=anon1>
+		<option $(IF,$(EC,$anon1,phenotype),SELECTED) value="phenotype">Phenotype
+		<option $(IF,$(EC,$anon1,fish_id),SELECTED) value="fish_id">ZFIN ID#
+		<option $(IF,$(EC,$anon1,comments),SELECTED) value="comments">Comments
+	</SELECT>
+<?/MIVAR>
 </b><A HREF="javascript:start_help('phenotype')"> contains </A>
 <input type=text name=anon1text size=12>
 </font></TD> 
+
+<!--  assign navtile value to anon1text - can not do with a value="anon1text" in input statement - reset will not work -->
+<?MIBLOCK COND="$(XST,$nav_text)">
+	<?MIVAR> 
+		<SCRIPT> 
+			document.BrowserForm.anon1text.value = "$nav_text" 
+		</SCRIPT>
+	<?/MIVAR> 
+<?/MIBLOCK>
+
 
 <TD colspan=2> 
 <font size=-1>
 <input type=checkbox name=knowngene> Show only mutants with known genes<br>
 </TD>
 
+<!--  assign navtile value to knowngene  -->
+<?MIBLOCK COND="$(XST,$nav_knowngene)">
+	<?MIVAR> 
+		<SCRIPT> 
+			document.BrowserForm.knowngene.checked = true 
+		</SCRIPT>
+	<?/MIVAR> 
+<?/MIBLOCK>
+
 <?/MIBLOCK> <!-- ends if line type not wildtype -->
 
 <TD  align=right><font size=-1>
-<input type=submit name=action value="SEARCH"></font>
-<input type=reset 
-<?MIVAR COND="$(NC,$line_type,wild_type)"> onClick="document.Browser.clear();"
+<input type=submit name=action value="SEARCH" ></font>
+<input type=button 
+<?MIVAR COND="$(NC,$line_type,wild_type)"> 
+	onClick="call_reset(); "
 <?/MIVAR>
 value="Clear Settings">  
 </TD>
@@ -108,33 +248,75 @@ selecto. That is we want user to ultimately CHOOSE a browsed value. All
 we have to do at this point is pass the return record along to the fishlister.
 -->
 <?MIVAR COND="$(XST,$return_rec)">
-<input type=hidden NAME="return_rec" value=$return_rec>
+	<input type=hidden NAME="return_rec" value=$return_rec>
 <?/MIVAR>
 
 <input type=hidden name=MIval value=aa-fishlister.apg>
 
+<?MIVAR>
+	<input type=hidden name=preselected>
+<?/MIVAR>
+
+<?MIVAR>
+	<input type=hidden name=selected_separator>
+<?/MIVAR>
+
 <?MIVAR COND="$(NC,$line_type,NULL)">
-<input type=hidden name=line_type value=$line_type>
+	<input type=hidden name=line_type value=$line_type>
 <?/MIVAR>
 
 
 <?MIBLOCK COND="$(NC,$line_type,wild_type)">
-<INPUT type="hidden" name="selected"  value="'t'::boolean">
+  	<INPUT type="hidden" name="selected"  value="'t'::boolean">
 
-<A HREF="javascript:start_help('phenokeywords')"><b>Affected Structures or defects</A> include:</b> (select with list tool below)
-<br>
-<APPLET 
-codebase = "/client_apps/Browser"
-CODE="Browser.class" NAME ="Browser" WIDTH=470 HEIGHT=120>
+	<!-- mac I.E. java - jscript doesn't support applet -->
+	<?MIBLOCK COND="$(AND,$(>,$(POSITION,$HTTP_USER_AGENT,Mac),0),$(>,$(POSITION,$HTTP_USER_AGENT,MSIE),0))">
+		<P><b><A HREF="javascript:start_help('phenokeywords')"><b>Affected Structures or defects</A> feature is not currently supported by Macintosh Internet Explorer.<br>You may access this feature with Macintosh Netscape or PC Internet Explorer.</b>
+	<?/MIBLOCK>
 
-<param name=format_pre value=" a.pheno_keywords like '%;" >
-<param name=format_post value=";%'" >
-<param name=list_label value="Keyword Dictionary">
-<param name=selected_label value="Selected Keywords">
-<param name = "host"             value = "<!--|DOMAIN_NAME|-->">
-<param name = "port"             value = "<!--|JAVA_SERVER_PORT|-->">
-</APPLET>
+	<?MIBLOCK COND="$(NOT,$(AND,$(>,$(POSITION,$HTTP_USER_AGENT,Mac),0),$(>,$(POSITION,$HTTP_USER_AGENT,MSIE),0)))">
+		<A HREF="javascript:start_help('phenokeywords')"><b>Affected Structures or defects</A> include:</b> (select with list tool below)
+	<br>
+
+		<APPLET MAYSCRIPT 
+		archive = "browser.jar"
+		codebase = "/client_apps/Browser"
+		CODE="Browser.class" NAME ="Browser" WIDTH=470 HEIGHT=120>
+
+		<param name=format_pre value=" a.pheno_keywords like '%;" >
+		<param name=format_post value=";%'" >
+		<param name=list_label value="Keyword Dictionary">
+		<param name=selected_label value="Selected Keywords">
+		<?MIVAR>
+	  		<param name = "preselected"   value="$preselected">
+		<?/MIVAR>
+		<?MIVAR COND="$(EC,$selected_separator,and)">
+	  		<param name = "selected_separator"   value="and">
+		<?/MIVAR>
+		<?MIVAR COND="$(EC,$selected_separator,or)">
+	  		<param name = "selected_separator"   value="or">
+		<?/MIVAR>
+		<param name = "preselected_delim"  value="9">
+		<param name = "host"             value = "<!--|DOMAIN_NAME|-->">
+		<param name = "port"             value = "<!--|JAVA_SERVER_PORT|-->">
+		<param name = "data" value="<?MISQL SQL="SELECT name, stage, level, seq_num FROM anatomical_parts ORDER BY seq_num;">
+$1|$2|$3|$4|<?/MISQL>">
+		<param name = "data_delim"       value = "|">
+		<!-- If we have gotten to this page from a nav bar tile - must autosubmit to get pbrowser frame populated -->
+		<?MIVAR COND="$(XST,$navtile)">
+  	           <param name = "autosubmit"   value="document.BrowserForm.selected.value=document.Browser.getList();document.BrowserForm.submit();document.BrowserForm.selected_separator.value=document.Browser.getSelectedSeparator();document.BrowserForm.preselected.value=document.Browser.getList('9');">
+		<?/MIVAR>
+		</APPLET>
+	<?/MIBLOCK>
+
 <?/MIBLOCK>
+
+
+<?MIVAR COND="$(AND,$(>,$(POSITION,$HTTP_USER_AGENT,Mac),0),$(>,$(POSITION,$HTTP_USER_AGENT,MSIE),0),$(XST,$navtile))">
+  <SCRIPT>
+    form_submit();
+  </SCRIPT>
+<?/MIVAR>
 
 
 </form>
