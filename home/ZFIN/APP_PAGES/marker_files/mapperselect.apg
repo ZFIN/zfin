@@ -14,6 +14,7 @@
 <?MIVAR NAME=$MGH COND="$(NXST,$MGH)">1<?/MIVAR>
 <?MIVAR NAME=$MOP COND="$(NXST,$MOP)">1<?/MIVAR>
 <?MIVAR NAME=$GAT COND="$(NXST,$GAT)">1<?/MIVAR>
+<?MIVAR NAME=$JPAD COND="$(NXST,$JPAD)">1<?/MIVAR>
 
 <SCRIPT>
 
@@ -21,7 +22,7 @@ function call_mapplet() {
 
 <!-- make sure at least one panel is specified -->
 
-if ((document.mapplet.MGH.checked == 0)&&(document.mapplet.GAT.checked == 0)&&(document.mapplet.MOP.checked ==0)&&(document.mapplet.LN54.checked == 0)&&(document.mapplet.T51.checked == 0)&&(document.mapplet.HS.checked == 0)) {
+if ((document.mapplet.MGH.checked == 0)&&(document.mapplet.GAT.checked == 0)&&(document.mapplet.MOP.checked ==0)&&(document.mapplet.LN54.checked == 0)&&(document.mapplet.T51.checked == 0)&&(document.mapplet.JPAD.checked == 0)&&(document.mapplet.HS.checked == 0)) {
 	 alert ('Please check at least one panel');
   	 return;
 	}
@@ -33,6 +34,7 @@ if (document.mapplet.loc_panel.selectedIndex !=0) {
 	else if (document.mapplet.loc_panel.selectedIndex ==3) document.mapplet.HS.checked = true;
 	else if (document.mapplet.loc_panel.selectedIndex ==4) document.mapplet.MGH.checked = true;
 	else if (document.mapplet.loc_panel.selectedIndex ==5) document.mapplet.MOP.checked = true;
+	else if (document.mapplet.loc_panel.selectedIndex ==5) document.mapplet.JPAD.checked = true;
 	else if (document.mapplet.loc_panel.selectedIndex ==6) document.mapplet.GAT.checked = true;
 }
 
@@ -87,6 +89,7 @@ document.mapplet.loc_panel.selectedIndex = 0;
 document.mapplet.MGH.checked = true;
 document.mapplet.GAT.checked = true;
 document.mapplet.HS.checked = true;
+document.mapplet.JPAD.checked = true;
 document.mapplet.MOP.checked = true;
 document.mapplet.T51.checked = true;
 document.mapplet.LN54.checked = true;
@@ -141,6 +144,7 @@ var HS=0;
 var MOP=0;
 var T51=0;
 var LN54=0;
+var JPAD=0;
 
 </SCRIPT>
 
@@ -190,7 +194,7 @@ var LN54=0;
 <option $(IF,$(EC,$loc_panel,MGH),SELECTED) value=MGH>MGH(Meiotic panel)
 <option $(IF,$(EC,$loc_panel,MOP),SELECTED) value=MOP>MOP(Meiotic panel)
 <option $(IF,$(EC,$loc_panel,GAT),SELECTED) value=GAT>GAT(Meiotic panel)
-
+<option $(IF,$(EC,$loc_panel,JPAD),SELECTED) value=JPAD>JPAD(Meiotic panel)
 </SELECT></font></TD> 
 </TR>
  
@@ -218,7 +222,8 @@ var LN54=0;
 <input type=checkbox name=MOP value=1  $(IF,$(EC,$MOP,1),CHECKED)>  MOP  
 &nbsp;&nbsp;&nbsp;
 <input type=checkbox name=GAT value=1 $(IF,$(EC,$GAT,1),CHECKED)>  GAT 
-<?/MIVAR>
+&nbsp;&nbsp;&nbsp;
+<input type=checkbox name=JPAD value=1 $(IF,$(EC,$JPAD,1),CHECKED)>  JPAD <?/MIVAR>
 </font>
 </TD> 
 </TR>
