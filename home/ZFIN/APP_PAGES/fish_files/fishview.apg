@@ -603,7 +603,7 @@ $(SETVAR,$last,$3)
 <TABLE width=100% cellpadding=5 border=4 bgcolor="#f8fabb" cols=2 rows=1>
 <TR><TD>
 <font color="red"><B>Cloned Gene:</b>  </font>
-<font size=2>The GENE <b><A HREf="/cgi-bin_A/webdriver?MIval=aa-markerview.apg&OID=$cloned_gene">$1 ($2) </A> </b> has been shown to correspond to the <b>$name</b> locus. Please consult the GENE record for further mapping information.
+<font size=2>The GENE <b><A HREf="/cgi-bin_B/webdriver?MIval=aa-markerview.apg&OID=$cloned_gene">$1 ($2) </A> </b> has been shown to correspond to the <b>$name</b> locus. Please consult the GENE record for further mapping information.
 </TD>
 </TR></TABLE>
 <?/MISQL>
