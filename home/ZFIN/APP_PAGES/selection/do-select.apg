@@ -77,29 +77,47 @@ $1
      new record into table with the recid passed in through return_recid. -->
 
 <?MIBLOCK COND="$(EQ,$action,intersect)">
-  <!-- FIRST delete duplicates. -->
-  <?MISQL SQL="
-    delete from $fill_table
-      where source_id = '$return_recid'
-	and target_id = '$new_oid';">
-  <?/MISQL>
+  <?MIBLOCK COND="$(EC,$fill_table,record_attribution)">
+    <!-- Doing a record level attribution. First, delete duplicates -->
+    <?MISQL SQL="
+      delete from record_attribution
+	where recattrib_data_zdb_id = '$return_recid'
+	  and recattrib_source_zdb_id = '$new_oid';">
+    <?/MISQL>
 
-  <!-- Now guard against conflicting "primary" publications for 
-       single data record. -->
-  <?MISQL COND="$(AND,$(EC,$fill_table,int_data_pub),$(EC,$info,primary))" SQL="
-    delete from 
-      $fill_table 
-      where source_id = '$return_recid'
-        and info = 'primary';">
-  <?/MISQL>
+    <!-- Now guard against conflicting "primary" publications for 
+         single data record. -->
+    <?MISQL COND="$(EC,$info,primary)" SQL="
+      delete from record_attribution
+        where recattrib_data_zdb_id = '$return_recid'
+          and recattrib_source_rank = 'primary';">
+    <?/MISQL>
 
-  <!-- Then just jam in new intersection entry -->
-  <?MISQL SQL="
-    insert into $fill_table 
-        ( source_id, target_id, info ) 
-      values 
-        ( '$return_recid', '$new_oid', '$info');">
-  <?/MISQL>
+    <!-- Insert new attribution record. -->
+    <?MISQL SQL="
+      insert into record_attribution
+	  ( recattrib_data_zdb_id, recattrib_source_zdb_id, 
+	    recattrib_source_rank )
+	values
+	  ( '$return_recid', '$new_oid', '$info');">
+    <?/MISQL>
+  <?MIELSE>
+    <!-- creating an intersection record. -->
+    <!-- FIRST delete duplicates. -->
+    <?MISQL SQL="
+      delete from $fill_table
+        where source_id = '$return_recid'
+	  and target_id = '$new_oid';">
+    <?/MISQL>
+
+    <!-- create new intersection entry -->
+    <?MISQL SQL="
+      insert into $fill_table 
+          ( source_id, target_id, info ) 
+        values 
+          ( '$return_recid', '$new_oid', '$info');">
+    <?/MISQL>
+  <?/MIBLOCK>
 
   <!-- Record update is the rec_update flag is set -->
   <?MISQL COND="$(EC,$rec_update,t)" SQL="
@@ -218,9 +236,8 @@ $1
      there are no inherited mutations to deal with. On other hand, if 
      it was a mutant, we have to 
      (1) delete old inherited chromos from int_fish_chromo, 
-     (2) delete newly inherited pubs from int_data_pub and 
-     (3) re-install newly inherited chromos and pubs and 
-     (4) run Ted's chromo overlap checking routine. 
+     (2) re-install newly inherited chromos and 
+     (3) run Ted's chromo overlap checking routine. 
      The installation steps can mirror what happened in process-chromo 
      during new fish creation. FINALLY, need to write an update record.
      Note that the opening conditional also ensures that you don't 
@@ -243,7 +260,7 @@ $1
 
   <!-- okay, if you got any hits, the  parent is non-null and mutant. 
        So do special stuff to wipe out previous  inherited info: delete 
-       chromo and pub intersections. -->
+       chromo intersection -->
   <?MIBLOCK COND="$(>,$1,0)">
     <?MISQL SQL="
       select target_id 
@@ -258,24 +275,10 @@ $1
 	        ( select target_id 
 		    from delete_temp_1);">
     <?/MISQL>
-    <?MISQL SQL="
-      select target_id
-        from int_data_pub
-	where source_id = '$old_parent' 
-	into temp delete_temp_2;">
-    <?/MISQL>
-    <?MISQL SQL="
-      delete from int_data_pub
-	where source_id = '$return_recid'
-	  and target_id in 
-		( select target_id 
-		    from delete_temp_2);">
-    <?/MISQL>
   <?/MIBLOCK> <!-- ends if old parent was mutant -->
 
 
-  <!-- Guard against duplications,ie, if other parent is same line and/or 
-       has ssame pubs --> 
+  <!-- Guard against duplications,ie, if other parent is same line -->
   <?MISQL SQL="
     select target_id 
       from int_fish_chromo 
@@ -289,19 +292,7 @@ $1
 	      ( select target_id 
 		  from delete_temp_3);">
   <?/MISQL>
-  <?MISQL SQL="
-    select target_id 
-      from int_data_pub 
-      where source_id = '$new_oid'
-      into temp delete_temp_4;">
-  <?/MISQL>
-  <?MISQL SQL="
-    delete from int_data_pub
-      where source_id = '$return_recid'
-	and target_id in 
-	      ( select target_id 
-		  from delete_temp_4);">
-  <?/MISQL>
+
   <!-- Now install new parent. This is stolen from process-fish-->
   <?MISQL SQL="
     select  '$return_recid' as a0, target_id, info, 'inherited' as a3 
@@ -315,10 +306,6 @@ $1
       select * 
 	from select_temp_5;">
   <?/MISQL>
-
-  <!-- don't want to inherit parents pubs ,remove code  -->
-  <!-- SQL="select  '$return_recid' as a0, target_id, 'related'  as a2 from int_data_pub  where source_id='$new_oid' into temp select_temp_6;" -->
-  <!--SQL="insert into int_data_pub (source_id, target_id, info) select * from select_temp_6;"   -->
 
   <!-- Now just change the fish record and write update record -->
   <?MISQL SQL="
