@@ -3,6 +3,7 @@
 <!-- This app-page is a weak cousin of fishlister which merely handles searches for locus names and abbrevs.
 It will also handle registration of the locus name and abbrev, checking first to see that it does not already exist in the FISH and registered_locus tables.
 -->
+<!-- Modified to support I.E.  Naviagtor tile buttons must know all user input from the query screen.  These values are posted to the lister form.  The lister form creates the tile bar button with appropriate variables. Startframes.apg will pass this variables on to the select form.  -->
 
 
 
@@ -363,6 +364,25 @@ $warnings
 <?/MIBLOCK>  <!-- no abbrev specified but a mutant of deficiency class -->
 
 <?/MIBLOCK>  <!-- ends alls values specified -->
+
+
+<!-- Cause a tile for the new page to appear in the navigator frame -->
+<!-- startframes.apg will pass variables on to appropriate page -->
+
+<?MIVAR NAME=page_title>Register LOCUS<?/MIVAR>
+<?MIVAR NAME=navtile>true<?/MIVAR>
+<?MIVAR COND="$(NXST,$fname)" NAME=$fname><?/MIVAR>
+<?MIVAR COND="$(NXST,$abbrev)" NAME=$abbrev><?/MIVAR>
+<?MIVAR COND="$(NXST,$allele)" NAME=$allele><?/MIVAR>
+<?MIVAR COND="$(NXST,$doAction)" NAME=$doAction><?/MIVAR>
+<?MIVAR COND="$(NXST,$prefix)" NAME=$prefix><?/MIVAR>
+<?MIVAR>
+<SCRIPT>
+var page_id=top.content.location.href+'&navtile=$navtile&name=$fname&nav_abbrev=$abbrev&nav_allele=$allele&doAction=$doAction&prefix=$prefix';
+top.update_hist(page_id,"$page_title");
+top.controls.location.reload(true);
+</SCRIPT>
+<?/MIVAR>
 
 
 </HTML>
