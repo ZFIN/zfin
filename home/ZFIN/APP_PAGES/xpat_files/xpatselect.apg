@@ -1,14 +1,6 @@
 
 <HTML>
 
-<?MIERROR ERR=APG_ERROR_HANDLER>
-  An error has ocured while serving your request. Please contct system administrator and pass on the following details: <br>
-    Error Code: $MI_ERRORCODE <BR>
-    Error State: $MI_ERRORSTATE <BR>
-    Error Message: $MI_ERRORMSG <BR>
-<?/MIERROR>
-    
-
 <?MIVAR Name=page_name>$(IF,$(NXST,$query_results),ZFIN Search Expressions,ZFIN Expression Search Results)<?/MIVAR>
 
 <?MIVAR><TITLE>$page_name</TITLE><?/MIVAR>
@@ -228,7 +220,7 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
   <?/MIBLOCK>
 <?/MIBLOCK>
 
-<?MIBLOCK ERR=APG_ERROR_HANDLER COND="$(XST,$structure_list)">
+<?MIBLOCK COND="$(XST,$structure_list)">
   <?MIVAR NAME=str_count>1<?/MIVAR>
   <?MIBLOCK INDEX=$parti FOREACH=$structure_list>
     <?MIVAR COND="$(AND,$(NC,$parti,deleteme),$(NC,$parti,----------------------------------------------))">
@@ -870,8 +862,10 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 
 <?MIBLOCK COND="$(NXST,$query_results)">
         <font size="+1"><b>Search for Gene Expression Data </b></font>
+<!--
         <br>
         &nbsp;&nbsp;(<a href="http://zf.nichd.nih.gov/pubzf/" target="_top">Link to Dawid lab expression data</a>)
+-->
 <?MIELSE>
         <a name=modify></a><b>Modify your search.</b>
 <?/MIBLOCK>
@@ -931,7 +925,7 @@ Gene/EST
         <font size=-1>
 
 
-<?MIBLOCK COND="$(AND,$(XST,$structure_list[2]),$(NC,$structure_list[2],deleteme))">
+<?MIBLOCK COND="$(AND,$(XST,$structure_list),$(XST,$structure_list[2]),$(NC,$structure_list[2],deleteme))">
 
         <select multiple size=8 name="structure_list">
            <SCRIPT>  <!-- weird - this line seems to need to be here twice to work in Netscape -->
