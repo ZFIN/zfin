@@ -19,12 +19,12 @@
  
 -- Create the main zfin_genes file
 
-create table meow_exp1_dup (
+create temp table meow_exp1_dup (
   zdb_id varchar(50),
   mname varchar(120),
   abbrev varchar(20),
   OR_lg varchar(2)
-);
+) with no log;
 
 -- get panel mappings
 insert into meow_exp1_dup 
@@ -44,12 +44,12 @@ insert into meow_exp1_dup
      and b.mrkr_zdb_id = mrel_mrkr_2_zdb_id
      and refcross_id = p.zdb_id;
 
-create table meow_exp1 (
+create temp table meow_exp1 (
   zdb_id varchar(50),
   mname varchar(120),
   abbrev varchar(20),
   OR_lg varchar(2)
-);
+) with no log;
 
 insert into  meow_exp1 
   select distinct * 
@@ -116,7 +116,7 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_genes.txt'
 
 -- Create the main zfin_genes file for Locus Link - they would like mapping info also
 
-create table meow_expll_dup (
+create temp table meow_expll_dup (
   zdb_id varchar(50),
   gene_name varchar(120),
   abbrev varchar(20),
@@ -125,7 +125,7 @@ create table meow_expll_dup (
   panel_id varchar(50),
   panel_abbrev varchar(10),
   metric varchar(5)
-);
+) with no log;
 
 -- get panel mappings
 
@@ -146,7 +146,7 @@ insert into meow_expll_dup
      and b.mrkr_zdb_id = mrel_mrkr_2_zdb_id
      and refcross_id = p.zdb_id;
 
-create table meow_expll (
+create temp table meow_expll (
   zdb_id varchar(50),
   gene_name varchar(120),
   abbrev varchar(20),
@@ -155,7 +155,7 @@ create table meow_expll (
   panel_id varchar(50),
   panel_abbrev varchar(10),
   metric varchar(5)
-);
+) with no log;
 
 insert into meow_expll
   select distinct * 
@@ -222,12 +222,12 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_genes_locuslink.txt'
 
 
 -- Create the file of known correspondences
-create table meow_mutant (
+create temp table meow_mutant (
   gene_id varchar(50),
   gene_abbrev varchar(20),
   locus_id varchar(50),
   locus_abbrev varchar(10)
-);  
+) with no log;  
 
 insert into meow_mutant (gene_id,gene_abbrev,locus_id,locus_abbrev)
    select a.zdb_id, a.abbrev, a.cloned_gene, b.mrkr_abbrev from locus a, marker b
@@ -241,7 +241,7 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_genes_mutants.txt'
 
 
 -- NOW let's create the table of pubs associated with these genes.
-create table meow_exp2 (
+create temp table meow_exp2 (
   gene_id varchar(50),
   zdb_id varchar(50),
   title lvarchar,
@@ -249,7 +249,7 @@ create table meow_exp2 (
   pub_date date ,
   source lvarchar ,
   accession_no varchar(80)
-);
+) with no log;
 
 insert into meow_exp2 
   select recattrib_data_zdb_id, zdb_id, title, authors, pub_date, source,
@@ -266,13 +266,13 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_pubs.txt'
     from meow_exp2;
 
 -- Now the orthologues!
-create table meow_exp3 (
+create temp table meow_exp3 (
   gene_id varchar(50),
   organism varchar(30),
   ortho_name varchar(120),
   ortho_abbrev varchar(15), 
   ortho_id varchar(50)
-);
+) with no log;
 
 insert into meow_exp3 
   select c_gene_id, organism, ortho_name, ortho_abbrev, zdb_id
@@ -287,11 +287,11 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_orthos.txt'
     from meow_exp3;
 
 -- And now the links to sequence DBs
-create table meow_exp4 (
+create temp table meow_exp4 (
   gene_id varchar(50),
   DB_name varchar(50),
   acc_num varchar(50)
-);
+) with no log;
 
 insert into meow_exp4 
   select linked_recid, DB_name, acc_num 
@@ -315,11 +315,11 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_dblinks.txt'
     from meow_exp4;
 
 --  generate the ortho_links file with DB_links to other species DBs
-create table meow_exp5 (
+create temp table meow_exp5 (
   linked_recid varchar(50), 
   DB_name varchar(50), 
   acc_num varchar(50)
-);
+) with no log;
 
 insert into meow_exp5
   select linked_recid, DB_name, acc_num
@@ -374,20 +374,6 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/marker_alias.txt'
 
   DELIMITER "	" select distinct mrkr_zdb_id, dalias_alias from marker , data_alias where mrkr_zdb_id = dalias_data_zdb_id order by 1;
 
-
-
--- Clean up
-drop table meow_exp1;
-drop table meow_exp1_dup;
-drop table meow_exp2;
-drop table meow_exp3;
-drop table meow_exp4;
-drop table meow_exp5;
-drop table meow_expll;
-drop table meow_expll_dup;
-drop table meow_mutant;
-
- 
 -- NOW just notify Don Gilbert that the updated files are there and he
 -- can download them!
 
