@@ -6,8 +6,28 @@
     07/29
 -->
 
-
 <?MISQL SQL="
+	select * 
+          from orthologue,orthologue_evidence
+	 where c_gene_id = '$geneId'
+	   and zdb_id = oev_ortho_zdb_id ;">
+<?/MISQL>	
+<?MIVAR NAME=$count>$MI_ROWCOUNT<?/MIVAR>
+
+<?MIBLOCK COND="$(=,$count,0)"><?MICOMMENT>no evidence code left for the gene<?/MICOMMENT>
+
+  <?MISQL SQL="
+	
+    delete from	zdb_active_data 
+      where zactvd_zdb_id in (
+		select oevdisp_zdb_id 
+                  from orthologue_evidence_display 
+                 where oevdisp_gene_zdb_id = '$geneId');">
+  <?/MISQL>
+
+<?MIELSE> <?MICOMMENT>repopulate oev disp data<?/MICOMMENT>
+
+  <?MISQL SQL="
    create temp table one_orthologue_evidence_display_temp
       (
         gene_zdb_id	varchar(50),
@@ -16,14 +36,14 @@
     	organism_list	varchar(100)
       	  not null		
       ); ">
-<?/MISQL> 
+  <?/MISQL> 
 
     <?MIVAR NAME=prePubZdbId><?/MIVAR>
     <?MIVAR NAME=preEvidenceCode><?/MIVAR>
     <?MIVAR NAME=organismList><?/MIVAR>
     
    
-<?MISQL SQL="
+  <?MISQL SQL="
 	select oev_pub_zdb_id, oev_evidence_code, organism
           from orthologue, orthologue_evidence
          where zdb_id = oev_ortho_zdb_id
@@ -52,27 +72,27 @@
         <?/MIVAR>
      <?/MIBLOCK>
 
-<?/MISQL>
+  <?/MISQL>
 
-<?MISQL SQL="
+  <?MISQL COND="$(NC,$organismList,)" SQL="
 	   insert into one_orthologue_evidence_display_temp
 	     values
 	       ('$geneId', '$prePubZdbId', 
                 '$preEvidenceCode', '$organismList'); ">
- <?/MISQL> 
+  <?/MISQL>
 
-<?MISQL SQL="
-   create temp table pre_one_orthologue_evidence_display
+  <?MISQL SQL="
+    create temp table pre_one_orthologue_evidence_display
       (
   	 oevdisp_zdb_id         varchar(50),
 	 oevdisp_gene_zdb_id	varchar(50),
 	 oevdisp_evidence_code	char(2),  
 	 oevdisp_organism_list	varchar(100)
       ) ;">
-<?/MISQL>
-<?MICOMMENT>** 07/29/03 the SQL to create a temp table need to be in a separate execution from those querying it. <?/MICOMMENT>
+  <?/MISQL>
+  <?MICOMMENT>** 07/29/03 the SQL to create a temp table need to be in a separate execution from those querying it. <?/MICOMMENT>
 
-<?MISQL SQL="
+  <?MISQL SQL="
 
     insert into pre_one_orthologue_evidence_display
         (oevdisp_gene_zdb_id, oevdisp_evidence_code, 
@@ -83,26 +103,30 @@
  
     update pre_one_orthologue_evidence_display 
 		set oevdisp_zdb_id = get_id('OEVDISP');">
-<?/MISQL>
+  <?/MISQL>
 
-<?MISQL SQL="
+  <?MISQL SQL="
  
     delete from	zdb_active_data 
       where zactvd_zdb_id in (
 		select oevdisp_zdb_id 
                   from orthologue_evidence_display 
-                 where oevdisp_gene_zdb_id = '$geneId');
+                 where oevdisp_gene_zdb_id = '$geneId');">
+  <?/MISQL>
+
+  <?MISQL SQL="
 
     insert into zdb_active_data
       select oevdisp_zdb_id
-   	from pre_one_orthologue_evidence_display; 
+   	from pre_one_orthologue_evidence_display;
 
     insert into orthologue_evidence_display 
 	(oevdisp_zdb_id, oevdisp_gene_zdb_id, oevdisp_evidence_code, 
 	  oevdisp_organism_list )
-       select * 
+       select oevdisp_zdb_id, oevdisp_gene_zdb_id, oevdisp_evidence_code, 
+	      oevdisp_organism_list 
          from pre_one_orthologue_evidence_display; 
-
+ 
     insert into record_attribution
         ( recattrib_data_zdb_id, recattrib_source_zdb_id )
       select oevdisp_zdb_id, pub_zdb_id
@@ -111,15 +135,17 @@
 	where o.oevdisp_gene_zdb_id = t.gene_zdb_id
           and o.oevdisp_evidence_code = t.evidence_code
 	  and o.oevdisp_organism_list = t.organism_list; ">
-<?/MISQL>
+  <?/MISQL>
 
-<?MISQL SQL="
+
+  <?MISQL SQL="
     update statistics high for table one_orthologue_evidence_display_temp;
     drop table one_orthologue_evidence_display_temp; ">
 
-<?/MISQL>
+  <?/MISQL>
 
-<?MISQL SQL="
+  <?MISQL SQL="
     update statistics high for table pre_one_orthologue_evidence_display;
     drop table pre_one_orthologue_evidence_display; ">
-<?/MISQL>
+  <?/MISQL>
+<?/MIBLOCK>
