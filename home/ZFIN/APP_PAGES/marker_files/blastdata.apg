@@ -74,7 +74,6 @@ ERROR -- something bad happened -- no OID passed in!
     <?/MIBLOCK>
   <?/MISQL>
 
-
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 
 </HTML>
