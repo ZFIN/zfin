@@ -1,6 +1,6 @@
 #!/private/bin/perl 
 #  Script to create files for ZIRC to load
-#  output files are written to <!--|FTP_ROOT|-->/pub/transfer/ZIRC
+#  output files are written to <!--|ROOT_PATH|-->/home/data_transfer/ZIRC/
 $ENV{"DBDATE"}="Y4MD-";
 $ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
 $ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
