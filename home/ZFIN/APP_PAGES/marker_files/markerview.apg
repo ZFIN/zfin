@@ -777,7 +777,7 @@ $(IF,$(AND,$(NC,$4[2],NOVALUE),$(NC,$4[2],""),$(OR,$(EC,$override,true),$(EC,$6[
    <?MIVAR>
    $(IF,$(=,$getinfo,0),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mappingdetail.apg&OID=$OID&abbrev=$abbrev&marker_type=$marker_type"> Details</A>"$(SETVAR,$getinfo,1))
   
-   <TABLE width="50%" bgcolor=<?MIVAR>"$highlight"<?/MIVAR>><TR align=left><TD>LG$lg</TD></TR></TABLE>
+   <TABLE width="50%" bgcolor=<?MIVAR>"$highlight"<?/MIVAR>><TR align=left><TD>LG <b>$lg</b></TD></TR></TABLE>
    <?/MIVAR>
  <?/MIBLOCK> 
 <?/MIBLOCK>
