@@ -45,7 +45,7 @@ else
 	echo "auto gene assignments exist in is_gene.unl"
     endif 
 
-    echo "please send blast2zfin.out file to curator "
+    echo "please send blast2zfin.scnd file to curator "
     echo ""
 
 endif 
