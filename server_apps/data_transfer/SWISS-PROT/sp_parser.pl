@@ -119,8 +119,8 @@ while (<>) {
 	  if(/ZDB/ ){
 	      $gene= $_;
 	  }
-	  push (@embl_gb, $gb_acc) if ($gb_acc && $gbacc ne '-');
-	  push (@embl_gp, $gp_acc) if ($gp_acc && $gpacc ne '-');
+	  push (@embl_gb, $gb_acc) if ($gb_acc && $gb_acc ne '-');
+	  push (@embl_gp, $gp_acc) if ($gp_acc && $gp_acc ne '-');
 	  next;
       }
       if (!$gene && ($dbname eq "ZFIN")) {
