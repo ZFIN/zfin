@@ -18,8 +18,7 @@
 		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted&target_table=$target_table');
 	}
 	function new_seqnum() {
-		var dbind=document.updater.seqdb.selectedIndex;
-		var dbname=document.updater.seqdb[dbind].value;
+		var dbname='Genbank';
 		var seq_acc=document.updater.seq_acc.value;
 		if (seq_acc != '') {
   		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value='+dbname+'&new_value='+seq_acc+'&target_table=$target_table');
