@@ -329,7 +329,7 @@ unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/stage_ontology.txt'
            stg_hours_start,
            stg_hours_end
   from stage
-  order by stg_hours_start ASC
+  order by stg_hours_start, stg_hours_end desc
 ;
 
 unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/anatomy_item.txt'
