@@ -1,5 +1,6 @@
 
 <!-- search form for genes and markers -->
+<?MIBLOCK COND="$(NXST,$accession)">
  <HTML>
  <HEAD>
  <?MIVAR Name=page_name>ZFIN Marker Search $(IF,$(XST,$query_results),Results)<?/MIVAR>
@@ -33,8 +34,12 @@
 
  <BODY>
 
-
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+
+
+<?/MIBLOCK><!-- end XST accession which means it is called by Accession Search --> 
+
+
 
   <?MISQL SQL="
     select WebExplode(object,'') 
