@@ -21,7 +21,7 @@ pub in question with any new values passed in.
 <!-- Looking good. Now just fix up the entries and create the record -->
 <?MIBLOCK COND="$(AND,$(XST,$title),$(XST,$authors),$(XST,$pub_date),$(XST,$source),$(XST,$num_auths))">
 
-<!-- do a search when returing to publication page -->
+<!-- do a search when returning to publication page -->
 
 <!-- Double check input for apostrophes; fix em where found -->
 <?MIVAR NAME=$title DELIMIT="'" REPLACE="''">$title<?/MIVAR>
@@ -56,25 +56,35 @@ pub in question with any new values passed in.
 <!-- OKAY, now just do the update! -->
 
 <?MISQL SQL="update publication $setvalues where zdb_id='$OID';"><?/MISQL>
-<?MIVAR NAME=$returnVariables>MIval=aa-startframes.apg&selector=aa-pubselect2.apg&select_from=PUBLICATION<?/MIVAR>
+<?MIVAR NAME=$returnVariables>MIval=aa-startframes.apg&selector=aa-pubselect2.apg&select_from=PUBLICATION&navtile=true<?/MIVAR>
 
 <!-- 
      if editing an existing or creating a new record and passsing values,
      determine which variables exist, concatonate
 -->
-<?MIBLOCK COND="$(NXST,$new)">
-  <?MIVAR NAME=$returnVariables>$returnVariables&navtile=true<?/MIVAR>
-  <?MIVAR NAME=$returnVariables COND="$(XST,$search_authors)">$returnVariables&authors=$search_authors<?/MIVAR>
-  <?MIVAR NAME=$returnVariables COND="$(XST,$search_title)">$returnVariables&title=$search_title<?/MIVAR>
+
+  <?MIBLOCK COND="$(XST,$new)">
+    <?MIVAR COND="$(XST,$authors)" NAME=$authors DELIMIT=" " REPLACE="|">$authors<?/MIVAR>
+    <?MIVAR COND="$(XST,$title)" NAME=$title DELIMIT=" " REPLACE="|">$title<?/MIVAR>
+    <?MIVAR NAME=$returnVariables COND="$(XST,$authors)">$returnVariables&authors=$authors<?/MIVAR>
+     <?MIVAR NAME=$returnVariables COND="$(XST,$title)">$returnVariables&title=$title<?/MIVAR>
+  <?MIELSE>
+    <?MIVAR COND="$(XST,$search_authors)" NAME=$search_authors DELIMIT=" " REPLACE="|">$search_authors<?/MIVAR>
+    <?MIVAR COND="$(XST,$search_title)" NAME=$search_title DELIMIT=" " REPLACE="|">$search_title<?/MIVAR>
+    <?MIVAR NAME=$returnVariables COND="$(XST,$search_authors)">$returnVariables&authors=$search_authors<?/MIVAR>
+     <?MIVAR NAME=$returnVariables COND="$(XST,$search_title)">$returnVariables&title=$search_title<?/MIVAR>
+  <?/MIBLOCK>
+
   <?MIVAR NAME=$returnVariables COND="$(XST,$anon1text)">$returnVariables&anon1text=$anon1text<?/MIVAR>
-  <?MIVAR NAME=$returnVariables COND="$(XST,$year)">$returnVariables&year=$year<?/MIVAR>
+  <?MIVAR NAME=$returnVariables COND="$(XST,$authtype)">$returnVariables&authtype=$authtype<?/MIVAR>
+  <?MIVAR NAME=$returnVariables COND="$(XST,$anon1)">$returnVariables&anon1=$anon1<?/MIVAR>
+  <?MIVAR NAME=$returnVariables COND="$(XST,$jtype)">$returnVariables&jtype=$jtype<?/MIVAR>
   <?MIVAR NAME=$returnVariables COND="$(XST,$yr_cmpr)">$returnVariables&yr_cmpr=$yr_cmpr<?/MIVAR>
   <?MIVAR NAME=$returnVariables COND="$(XST,$century)">$returnVariables&century=$century<?/MIVAR>
-  <?MIVAR NAME=$returnVariables COND="$(XST,$search_jtype)">$returnVariables&jtype=$search_jtype<?/MIVAR>
+  <?MIVAR NAME=$returnVariables COND="$(XST,$year)">$returnVariables&year=$year<?/MIVAR>
   <?MIVAR NAME=$returnVariables COND="$(XST,$order_pref)">$returnVariables&order_pref=$order_pref<?/MIVAR>
   <?MIVAR NAME=$returnVariables COND="$(XST,$cur_status)">$returnVariables&cur_status=$cur_status<?/MIVAR>
   <?MIVAR NAME=$returnVariables COND="$(XST,$pub_status)">$returnVariables&pub_status=$pub_status<?/MIVAR>
-<?/MIBLOCK>
 
 <!-- jump back to the previous window -->
 

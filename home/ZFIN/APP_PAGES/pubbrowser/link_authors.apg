@@ -149,6 +149,8 @@ Variables expected:  OID  -- the OID of a publication to link
   <?MIVAR COND="$(NXST,$order_pref)" NAME=$order_pref>date<?/MIVAR>
   <?MIVAR COND="$(NXST,$cur_status)" NAME=$cur_status>any<?/MIVAR>
   <?MIVAR COND="$(NXST,$pub_status)" NAME=$pub_status>any<?/MIVAR>
+  <?MIVAR COND="$(XST,$search_title)" NAME=$search_title DELIMIT=" " REPLACE="|">$search_title<?/MIVAR>
+  <?MIVAR COND="$(XST,$search_authors)" NAME=$search_authors DELIMIT=" " REPLACE="|">$search_authors<?/MIVAR>
 
 <?MIVAR>
 <SCRIPT>
