@@ -705,8 +705,8 @@
 <!-------  only for cloned genes or ests. ---------->
 <?MIBLOCK COND="$(OR,$(EC,$marker_type,GENE),$(EC,$marker_type,EST))">
 
+  <?MICOMMENT>******* GENE **********<?/MICOMMENT>
   <?MIVAR NAME=$XPAT_ZDB_ID><?/MIVAR>
-
   <?MIVAR NAME=$titledisplay>0<?/MIVAR>
 
   <?MISQL COND="$(EC,$marker_type,GENE)" SQL="
@@ -718,6 +718,7 @@
 	  AND xpatstg_start_stg_zdb_id = stg_zdb_id
      ORDER by 1, 3
           ;">
+     <?MIVAR NAME=currentrow>$MI_CURRENTROW<?/MIVAR>
      <?MIBLOCK COND=$(NC,$XPAT_ZDB_ID,$1)>
 	<?MIVAR NAME=$XPAT_ZDB_ID>$1<?/MIVAR>
 	<?MIVAR NAME=$XPAT_ASSAY_NAME>$2<?/MIVAR>
@@ -743,8 +744,7 @@
 	<?/MISQL>
 
        <?MIVAR>
-     	
-    	$(IF,$(AND, $(>=,$MI_CURRENTROW,1), $(=,$titledisplay,0)),
+    	$(IF,$(AND, $(=,$currentrow,1), $(=,$titledisplay,0)),
 		<HR width="80%">
 		<b>GENE EXPRESSION: </b>
 		<!--<ul>-->
@@ -753,7 +753,11 @@
 	<?/MIVAR>
 	
     <?/MIBLOCK>
- <?/MISQL>
+  <?/MISQL>
+
+  <?MICOMMENT>******* EST **********<?/MICOMMENT>
+  <?MIVAR NAME=$XPAT_ZDB_ID><?/MIVAR>
+  <?MIVAR NAME=$titledisplay>0<?/MIVAR>
 
   <?MISQL COND="$(EC,$marker_type,EST)" SQL="
      SELECT distinct xpat_zdb_id, xpat_assay_name, stg_hours_start, stg_name, stg_zdb_id
@@ -763,7 +767,7 @@
 	  AND xpatstg_start_stg_zdb_id = stg_zdb_id
      ORDER by 1, 3
           ;">
-
+     <?MIVAR NAME=currentrow>$MI_CURRENTROW<?/MIVAR>
      <?MIBLOCK COND=$(NC,$XPAT_ZDB_ID,$1)>
 	<?MIVAR NAME=$XPAT_ZDB_ID>$1<?/MIVAR>
 	<?MIVAR NAME=$XPAT_ASSAY_NAME>$2<?/MIVAR>
@@ -789,11 +793,9 @@
 	<?/MISQL>
 
        <?MIVAR>
-  	
-    	$(IF,$(AND, $(>,$MI_CURRENTROW,1), $(=,$titledisplay,0)),
+    	$(IF,$(AND, $(=,$currentrow,1), $(=,$titledisplay,0)),
 		<HR width="80%">
 		<b>GENE EXPRESSION: </b>
-		<!--<ul>-->
 		$(SETVAR,$titledisplay,1))
     	<li><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatview.apg&OID=$XPAT_ZDB_ID>$XPAT_ASSAY_NAME</A>  -  $XPAT_STAGE1 to $XPAT_STAGE2  ($XPAT_start_time hr to $XPAT_end_time hr)  <?MISQL SQL="select WebExplode(object,'dataId=$XPAT_ZDB_ID&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
 	<?/MIVAR>
@@ -984,7 +986,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
   select a.db_name, 
 	 b.db_query || a.acc_num || 
 	   (case b.url_suffix when NULL then '' else b.url_suffix end),
-	 acc_num, dblink_acc_num_display
+	 acc_num, dblink_acc_num_display, 'self', 'placeholder'
     from db_link a, foreign_db b, foreign_db_contains
     where a.db_name = b.db_name
       and b.db_name = fdbcont_db_name
@@ -995,7 +997,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
   select a.db_name, 
 	 b.db_query || a.acc_num || 
 	   (case b.url_suffix when NULL then '' else b.url_suffix end),
-         acc_num, dblink_acc_num_display
+         acc_num, dblink_acc_num_display, 'related', mrel_mrkr_2_zdb_id
     from db_link a, foreign_db b, foreign_db_contains, marker_relationship c
     where a.db_name = b.db_name
       and b.db_name = fdbcont_db_name
@@ -1009,6 +1011,9 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
   <?MIVAR NAME=$dbquery>$2<?/MIVAR>
   <?MIVAR NAME=$accnum>$3<?/MIVAR>
   <?MIVAR NAME=$dblink_acc_num_display>$4<?/MIVAR>
+  <?MIVAR NAME=$attachto>$5<?/MIVAR>
+  <?MIVAR NAME=$related_zdb_id>$6<?/MIVAR>
+  <?MICOMMENT>*** 07/22/03 Add 'self/related' to distinguish the sources of db links that have significance '1'. When from 'related', disable the update function.<?/MICOMMENT>
 
   $(IF,$(=,$MI_CURRENTROW,1),<TD align=left>)
 
@@ -1031,40 +1036,53 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
    <?/MISQL>
 
  
-  <!-- if more than five Genbank, Genbank info go to another page -->
-
   <?MIBLOCK COND="$(NC,$dbname,Genbank)">
 
     <li><?MIVAR>
-    $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$dbname:$accnum)"')>")
-    <A HREF="$dbquery">$dbname:$dblink_acc_num_display</A><?/MIVAR>
+   
+    $(IF,$(AND,$(XST,$UPDATE),$(EC,$attachto,self)),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$dbname:$accnum)"')>")
+    <A HREF="$dbquery">$dbname:$dblink_acc_num_display</A>
+    <?MIBLOCK COND="$(AND,$(XST,$UPDATE),$(EC,$attachto,related))">
+        <?MISQL SQL="
+	    select mrkr_abbrev, mrkr_zdb_id
+              from marker
+             where mrkr_zdb_id = '$related_zdb_id'; ">
+            
+           ( <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$1</A> )
+        <?/MISQL
+    <?/MIBLOCK>
 
    <?MISQL SQL="select WebExplode(object,'dataId=$dataId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL> 
-
+   <?/MIVAR>
   <?MIELSE>
+  <!-- if more than five Genbank, Genbank info go to another page -->
+
 
      <?MIBLOCK COND="$(=,$empty,1)">
 	<?MIVAR>$(SETVAR,$gblinks[1],$dbquery)<?/MIVAR>
 	<?MIVAR>$(SETVAR,$gbaccs[1],$accnum)<?/MIVAR>
 	<?MIVAR>$(SETVAR,$gblinkId[1],$dataId)<?/MIVAR>	
-        <?MIVAR>$(SETVAR,$empty,0)<?/MIVAR>
+        <?MIVAR>$(SETVAR,$gbsource[1],$attachto)<?/MIVAR>
+        <?MIVAR>$(SETVAR,$gbrelatedmrkr[1],$related_zdb_id)<?/MIVAR>     
         <?MIVAR>$(SETVAR,$count,1)<?/MIVAR>
      <?MIELSE>  
-       <?MIBLOCK COND="$(<,$count,4)">
-	 <?MIVAR>$(VECAPPEND,$gblinks,$dbquery)<?/MIVAR>
-	 <?MIVAR>$(VECAPPEND,$gbaccs,$accnum)<?/MIVAR>
-	 <?MIVAR>$(VECAPPEND,$gblinkId,$dataId)<?/MIVAR>
-	 <?MIVAR>$(SETVAR,$count,$(+,$count,1))<?/MIVAR>
-       <?MIELSE>
-         <?MIVAR>$(SETVAR,$more,1)<?/MIVAR>
-       <?/MIBLOCK>
+        <?MIBLOCK COND="$(<,$count,4)">
+	  <?MIVAR>$(VECAPPEND,$gblinks,$dbquery)<?/MIVAR>
+	  <?MIVAR>$(VECAPPEND,$gbaccs,$accnum)<?/MIVAR>
+	  <?MIVAR>$(VECAPPEND,$gblinkId,$dataId)<?/MIVAR>
+          <?MIVAR>$(VECAPPEND,$gbsource,$attachto)<?/MIVAR>
+	  <?MIVAR>$(VECAPPEND,$gbrelatedmrkr,$related_zdb_id)<?/MIVAR>
+	  <?MIVAR>$(SETVAR,$count,$(+,$count,1))<?/MIVAR>
+        <?MIELSE>
+          <?MIVAR>$(SETVAR,$more,1)<?/MIVAR>
+        <?/MIBLOCK>
      <?/MIBLOCK>
+     <?MIVAR>$(SETVAR,$empty,0)<?/MIVAR>
 
   <?/MIBLOCK>
  
   $(SETVAR,$lastitem,$dbname)
 <?/MISQL>
-
 <?MIBLOCK COND="$(=,$more,1)">
 
   <li><?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genbank.apg&OID=$OID$(IF,$(XST,$UPDATE),&UPDATE=1)">nucleotide sequence info</A><?/MIVAR>
@@ -1077,12 +1095,21 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 
   <?MIBLOCK INDEX=$link FOREACH=$gblinks>
 	<li><?MIVAR>
-	$(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,Genbank:$gbaccs[$n])"')>")
+	$(IF,$(AND,$(XST,$UPDATE),$(NC,$gbsource[$n],related)),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,Genbank:$gbaccs[$n])"')>")
 	<A HREF="$link">Genbank:$gbaccs[$n]</A>
+	<?MIBLOCK COND="$(AND,$(XST,$UPDATE),$(EC,$gbsource[$n],related))">
+         <?MISQL SQL="
+	    select mrkr_abbrev, mrkr_zdb_id
+              from marker
+             where mrkr_zdb_id = '$gbrelatedmrkr[$n]'; ">
+            
+           ( <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$1</A> )
+         <?/MISQL>
+       <?/MIBLOCK>
 
 	<?MISQL SQL="select WebExplode(object,'dataId=$gblinkId[$n]&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
-	$(SETVAR,$n,$(+,$n,1))
-
+	
+        $(SETVAR,$n,$(+,$n,1))
         <?/MIVAR>
    <?/MIBLOCK>
 
