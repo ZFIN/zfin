@@ -143,7 +143,7 @@ for($i=0; $i<scalar(@keywordsOld); $i++)
 
 
 #insert new keywords
-for($i=0; $i<=scalar(@addedKeywords); $i++)
+for($i=0; $i<=1; $i++) #scalar(@addedKeywords); $i++)
   {
     if($addedKeywords[$i])
       {
@@ -243,18 +243,29 @@ for($i=0; $i <= scalar(@commentsOld); $i++)
 	
 	#print "$gene:$start_stg_name-$commentsOld[$i] <=> $commentsNew[$i]\n";
 
-	open(QUERY,">modified_xpat_comment.sql");
-	print QUERY "update expression_pattern_stage 
-                  set xpatstg_comments = \"$commentsNew[$i]\"
-                where xpatstg_xpat_zdb_id = \"$xpat_id\"
-                  and xpatstg_start_stg_zdb_id = \"$start_stg_zdb\"
-                  and xpatstg_end_stg_zdb_id = \"$end_stg_zdb\";";
-	close(QUERY);
-	chmod 0700,"modified_xpat_comment.sql";
-	$query = `dbaccess $db modified_xpat_comment.sql`;
+	#open(QUERY,">modified_xpat_comment.sql");
+	#print QUERY "update expression_pattern_stage 
+        #          set xpatstg_comments = \"$commentsNew[$i]\"
+        #        where xpatstg_xpat_zdb_id = \"$xpat_id\"
+        #          and xpatstg_start_stg_zdb_id = \"$start_stg_zdb\"
+        #          and xpatstg_end_stg_zdb_id = \"$end_stg_zdb\";";
+	#close(QUERY);
+	#chmod 0700,"modified_xpat_comment.sql";
+	#$query = `dbaccess $db modified_xpat_comment.sql`;
+	
+
+	$queryDB = $dbh->prepare("update expression_pattern_stage 
+                         set xpatstg_comments = \"$commentsNew[$i]\"
+                         where xpatstg_xpat_zdb_id = \"$xpat_id\"
+                           and xpatstg_start_stg_zdb_id = \"$start_stg_zdb\"
+                           and xpatstg_end_stg_zdb_id = \"$end_stg_zdb\";")
+	  or die "Cannot prepare statement: $DBI::errstr\n";
+	$queryDB->execute;
+	$query_results = $queryDB->fetchrow();
+	$queryDB->finish;
 	
 	#output error message if Informix complains
-	if($query =~ /error/is)
+	if($query_results =~ /error/is)
 	  {
 	    #print "ERROR: ".$query."\n";
 	    open(KEYWORD,">>$rejected_comment_list");
@@ -295,22 +306,23 @@ sub numDataRecords
 
 sub getStgZdbFromStgName
   {
-    open(QUERY,">get_stg_name.sql");
-    print QUERY "select stg_zdb_id from stage where stg_name = \"$_[0]\";";
-    chmod 0700,"get_stg_name.sql";
-    close(QUERY);
-    $query =  `dbaccess $db get_stg_name.sql`;
-    
-    unless($query =~ /No rows/is #lowercase,one line, ot is short for not
-	   ||  $query =~ /error/is) #lowercase,one line
-      {
-	$query =~ /(ZDB-.*?)\s/;
-	return $1;
-      }
-    else
-      {
-	return "$_[0] is not a stage.";
-      }
+    #open(QUERY,">get_stg_name.sql");
+    #print QUERY "select stg_zdb_id from stage where stg_name = \"$_[0]\";";
+    #chmod 0700,"get_stg_name.sql";
+    #close(QUERY);
+    #$query =  `dbaccess $db get_stg_name.sql`;
+
+    $queryDB = $dbh->prepare("select stg_zdb_id 
+                              from stage 
+                              where stg_name = \"$_[0]\";") 
+      or die "Cannot prepare statement: $DBI::errstr\n";
+    $queryDB->execute;
+    $stage_zdb = $queryDB->fetchrow();
+    $queryDB->finish;
+
+    return $stage_zdb unless($stage_zdb =~ /No rows/is 
+			     ||  $stage_zdb =~ /error/is); #lowercase,one line
+    die "$_[0] is not a stage.";
   }
 
 sub printLineDiff
