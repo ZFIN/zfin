@@ -23,6 +23,7 @@ set modeon=`onstat -|cut -f2- -d\-|cut -c3,4`
 if ($modeon != "On") then
     set mode="`onstat -`|$modeon"
     echo $mode | /local/bin/mail -s "ZFIN ABNORMAL!" tomc@cs.uoregon.edu
+    echo $mode | /local/bin/mail -s "ZFIN ABNORMAL!" staylor@cs.uoregon.edu
 #    echo $mode | /local/bin/mail -s "ZFIN ABNORMAL!" judys@cs.uoregon.edu
 #    echo $mode | /local/bin/mail -s "ZFIN ABNORMAL!" clements@cs.uoregon.edu	
 #    cd /research/zfin/users/bionixprod/ZFIN_WWW/;onmode -ky;oninit;echo ""|/private/bin/onlog.pl	
