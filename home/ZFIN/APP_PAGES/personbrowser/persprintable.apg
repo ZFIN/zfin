@@ -1,15 +1,16 @@
-<!-- FILE: persprintable.html
+<?MICOMMENT>
+FILE: persprintable.html
 
 This page simply generates a pretty listing of all of the persons
 currently selected and being displayed in the perslister pane. This way, a user
 can search for a set of PERSONS, then generate and print out a list of them for his own personal use.
 
--->
+<?/MICOMMENT>
 
 <?MISQL SQL="select WebExplode(object,'page_title=List Persons') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
 
-<?MISQL SQL="execute function expr(today);"><?/MISQL>
+<?MISQL SQL="select today from single;"><?/MISQL>
 
 <center>
 <BIG>Listing of selected Person records:</BIG>

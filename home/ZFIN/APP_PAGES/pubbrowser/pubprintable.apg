@@ -16,7 +16,8 @@
 
 <?MIBLOCK COND="$(XST,$printable)">
 
-<!-- FILE: pubprintable.html
+<?MICOMMENT>
+FILE: pubprintable.html
 
 Mainly, (if variable 'printable' exists)
 This page simply generates a pretty listing of all of the publications
@@ -26,14 +27,14 @@ can search for a set of pubs, then generate and print out a list of them for his
 
 Alternatively, (if variable 'refer' exists)
 This page simply generates a REFER format file for the selected pubs. Since we do not separate out Volume, Pages, Issue number and things like that in ZFIN, these things are not properly placed in the REFER file -- so some editting will be required by user. But this should give a good start.
--->
+<?/MICOMMENT>
 
 
 
 <?MISQL SQL="select WebExplode(object,'page_title=List Pubs') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
 
-<?MISQL SQL="execute function expr(today);"><?/MISQL>
+<?MISQL SQL="select today from single;"><?/MISQL>
 
 <center>
 <BIG>Listing of selected Publication records:</BIG>
