@@ -187,10 +187,18 @@ for($i=0; $i<=scalar(@addedKeywords); $i++)
 	      {
 		#2.check stage constraint for anatitems
 		#3.add keyword
-		open(QUERY,">insertKeyword.sql");
-		print QUERY "execute function expression_pattern_anatomy_insert_anatitem(\"$anat_zdb\",\"$xpatN\",\"$start_stg_zdb_N\",\"$end_stg_zdb_N\");";
-		close(QUERY);
-		$queryResults = `dbaccess $db insertKeyword.sql`;
+		#open(QUERY,">insertKeyword.sql");
+		#print QUERY "execute function expression_pattern_anatomy_insert_anatitem(\"$anat_zdb\",\"$xpatN\",\"$start_stg_zdb_N\",\"$end_stg_zdb_N\");";
+		#close(QUERY);
+		#$queryResults = `dbaccess $db insertKeyword.sql`;
+
+
+		$queryDB = $dbh->prepare( "execute function expression_pattern_anatomy_insert_anatitem(\"$anat_zdb\",\"$xpatN\",\"$start_stg_zdb_N\",\"$end_stg_zdb_N\")")
+		  or die "Cannot prepare statement: $DBI::errstr\n";
+		$queryDB->execute;
+		$queryResults = $queryDB->fetchrow();
+		$queryDB->finish;
+
 		if($queryResults =~ /2/)
 		  {
 		    open(KEYWORD,$keyword_stg_window_did_not_overlap);
@@ -202,7 +210,7 @@ for($i=0; $i<=scalar(@addedKeywords); $i++)
 		  }
 		elsif($queryResults !~ /0/)
 		  {
-		    print "$geneO - Could not insert - \"$keyword\" with $xpatstgNew[$i]; it already exists\n\n";
+		    print "$geneO - Could not insert - execute function expression_pattern_anatomy_insert_anatitem(\"$anat_zdb\",\"$xpatN\",\"$start_stg_zdb_N\",\"$end_stg_zdb_N\") - \"$keyword\" with $xpatstgNew[$i]; it already exists\n\n";
 		  }
 	      }
 	    else
