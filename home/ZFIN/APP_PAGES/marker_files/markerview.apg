@@ -570,99 +570,53 @@ Datablade documentation.
 <!-- only for genes, and only display when there is information---->
 
 <?MIBLOCK COND="$(XST,$type_of_genedom)">
-<?MIVAR NAME=isnot>f<?/MIVAR>
-<?MIVAR NAME=contribs>f<?/MIVAR>
-<?MIVAR NAME=bisnot>f<?/MIVAR>
-<?MIVAR NAME=cisnot>f<?/MIVAR>
-<?MIVAR NAME=bcontribs>f<?/MIVAR>
-<?MIVAR NAME=ccontribs>f<?/MIVAR>
 
-<?MIVAR NAME=flgct>0<?/MIVAR>
-<?MIVAR NAME=flag><?/MIVAR>
-<?MIVAR NAME=bflgct>0<?/MIVAR>
-<?MIVAR NAME=bflag><?/MIVAR>
-<?MIVAR NAME=cflgct>0<?/MIVAR>
-<?MIVAR NAME=cflag><?/MIVAR>
-<?MIVAR NAME=qualifier>false<?/MIVAR>
-
+    <?MIVAR NAME=qualifier>false<?/MIVAR>
     <?MIVAR NAME=$molgoid><?/MIVAR>
     <?MIVAR NAME=$moldisp><?/MIVAR>
     <?MIVAR NAME=$molterm><?/MIVAR>
     <?MIVAR NAME=$molmrkrgoevid><?/MIVAR>
 
 
-    <?MIVAR NAME=$biogoid><?/MIVAR>
-    <?MIVAR NAME=$biodisp><?/MIVAR>
-    <?MIVAR NAME=$bioterm><?/MIVAR>
-    <?MIVAR NAME=$biomrkrgoevid><?/MIVAR>
-
-    <?MIVAR NAME=$cellgoid><?/MIVAR>
-    <?MIVAR NAME=$celldisp><?/MIVAR>
-    <?MIVAR NAME=$cellterm><?/MIVAR>
-    <?MIVAR NAME=$cellmrkrgoevid><?/MIVAR>
-
   <?MIVAR NAME=$titledisplay>0<?/MIVAR>
   <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name='QuickGO'">
      <?MIVAR NAME=$dbquery>$1<?/MIVAR>
   <?/MISQL>
 
-    <?MISQL MAXROWS=1 SQL="select mrkrgoev_zdb_id from go_term,go_evidence_code,marker_go_term,marker_go_term_evidence where mrkrgo_mrkr_zdb_id='$OID' and mrkrgo_go_term_zdb_id=goterm_zdb_id and mrkrgo_zdb_id=mrkrgoev_mrkrgo_zdb_id and mrkrgoev_evidence_code=goev_code and goterm_ontology='Molecular Function' order by goev_display_order"><?/MISQL>
-   <?MIVAR NAME=$evid>$1<?/MIVAR>
-   <?MISQL SQL="select count(*) from go_evidence_flag where goevflag_mrkrgoev_zdb_id='$evid'">
-   <?MIBLOCK COND="$(>,$1,0)">
-    <?MIVAR NAME=qualifier>true<?/MIVAR>
-   <?/MIBLOCK>
-  <?/MISQL>
+<!-- use vector storing the three ontology and loop through -->
+<?MIVAR NAME=ontologies><?/MIVAR>
+<?MISQL SQL="select gont_ontology_name from go_ontology order by gont_order"> 
+	$(SETVAR,$ontologies[$MI_CURRENTROW],$1)
+<?/MISQL>
+<?MIBLOCK INDEX=$ontology FOREACH=$ontologies>
 
-    <?MISQL MAXROWS=1 SQL="select mrkrgoev_zdb_id from go_term,go_evidence_code,marker_go_term,marker_go_term_evidence where mrkrgo_mrkr_zdb_id='$OID' and mrkrgo_go_term_zdb_id=goterm_zdb_id and mrkrgo_zdb_id=mrkrgoev_mrkrgo_zdb_id and mrkrgoev_evidence_code=goev_code and goterm_ontology='Biological Process' order by goev_display_order"><?/MISQL>
+    <?MISQL MAXROWS=1 SQL="select mrkrgoev_zdb_id from go_term,go_evidence_code,marker_go_term_evidence where mrkrgoev_mrkr_zdb_id='$OID' and mrkrgoev_go_term_zdb_id=goterm_zdb_id and mrkrgoev_evidence_code=goev_code and goterm_ontology='$ontology' order by goev_display_order"><?/MISQL>
    <?MIVAR NAME=$evid>$1<?/MIVAR>
    <?MISQL SQL="select count(*) from go_evidence_flag where goevflag_mrkrgoev_zdb_id='$evid'">
    <?MIBLOCK COND="$(>,$1,0)">
     <?MIVAR NAME=qualifier>true<?/MIVAR>
    <?/MIBLOCK>
   <?/MISQL>
-
-    <?MISQL MAXROWS=1 SQL="select mrkrgoev_zdb_id from go_term,go_evidence_code,marker_go_term,marker_go_term_evidence where mrkrgo_mrkr_zdb_id='$OID' and mrkrgo_go_term_zdb_id=goterm_zdb_id and mrkrgo_zdb_id=mrkrgoev_mrkrgo_zdb_id and mrkrgoev_evidence_code=goev_code and goterm_ontology='Cellular Component' order by goev_display_order"><?/MISQL>
-   <?MIVAR NAME=$evid>$1<?/MIVAR>
-   <?MISQL SQL="select count(*) from go_evidence_flag where goevflag_mrkrgoev_zdb_id='$evid'">
-   <?MIBLOCK COND="$(>,$1,0)">
-    <?MIVAR NAME=qualifier>true<?/MIVAR>
-   <?/MIBLOCK>
-  <?/MISQL>
+<?/MIBLOCK>
 
   <?MISQL SQL="
-        select  distinct goterm_ontology, goterm_go_id, goterm_name,
-               mrkrgoev_evidence_code, gont_order
-        from marker_go_term m, go_term g, marker_go_term_evidence e, go_ontology
- o
-        where m.mrkrgo_mrkr_zdb_id = '$OID' and
-              m.mrkrgo_go_term_zdb_id = g.goterm_zdb_id and
-              m.mrkrgo_zdb_id = e.mrkrgoev_mrkrgo_zdb_id and
-              g.goterm_ontology=o.gont_ontology_name
-        order by gont_order, goterm_name
-        ;"> <?/MISQL>
+        select count(distinct mrkrgoev_go_term_zdb_id) :: integer
+          from marker_go_term_evidence
+         where mrkrgoev_mrkr_zdb_id = '$OID'  ;">
+  <?/MISQL>
 
-<?MIVAR NAME=SQL1>
-        select goterm_ontology, goterm_go_id, goterm_name,
-               mrkrgoev_evidence_code, gont_order
-        from marker_go_term m, go_term g, marker_go_term_evidence e, go_ontology
- o
-        where m.mrkrgo_mrkr_zdb_id = '$OID' and
-              m.mrkrgo_go_term_zdb_id = g.goterm_zdb_id and
-              m.mrkrgo_zdb_id = e.mrkrgoev_mrkrgo_zdb_id and
-              g.goterm_ontology=o.gont_ontology_name<?/MIVAR>
 
- <?MIVAR NAME=$rowcount>$MI_ROWCOUNT<?/MIVAR> 
-    <?MIBLOCK COND="$(>,$rowcount,0)">  
+ <?MIVAR NAME=$rowcount>$1<?/MIVAR> 
+ <?MIBLOCK COND="$(>,$rowcount,0)">  
 	<hr width = "80%"> 
   	<b>GENE PRODUCTS: </b><br> 
         <?MIVAR>$(SETVAR,$titledisplay,1)<?/MIVAR>
-<?MIVAR>
+    <?MIVAR>
 	<p><b>Gene Ontology</b><?/MIVAR>
       <?MIVAR COND="$(XST,$UPDATE)">
       <INPUT TYPE=button value="Update" onClick="edit_go('$OID')"> 
-  <?/MIVAR> 
-   <?MIELSE>
+    <?/MIVAR> 
+ <?MIELSE>
 
       <?MIBLOCK COND="$(XST,$UPDATE)">
 
@@ -674,6 +628,7 @@ Datablade documentation.
       <INPUT TYPE=button value="Update" onClick="edit_go('$OID')"><?/MIVAR> 
      <?/MIBLOCK>
   <?/MIBLOCK>
+
     <?MIBLOCK COND="$(>,$rowcount,0)">  
     <?MIVAR><TABLE width =100% border=0 bgcolor=$highlight><?/MIVAR>
     <TR bgcolor=#ccccccc>
@@ -682,204 +637,88 @@ Datablade documentation.
         <TD align=left width = 13%><b>Qualifier</b></TD>           
         <?/MIBLOCK> 
          <TD><b>GO Term</b></TD> 
-<?MICOMMENT>
-<?MISQL SQL="select gont_ontology_name,gont_order from go_ontology order by gont_order">
-   <?MIVAR NAME=$ontology>$1<?/MIVAR>
-   <?MIVAR NAME=$goorder>$2<?/MIVAR>
-<?/MICOMMENT>
 
-<!--begin Mol Function-->
-    <?MISQL MAXROWS=1 SQL="select goterm_go_id,goev_display_order,goterm_name,mrkrgoev_zdb_id from go_term,go_evidence_code,marker_go_term,marker_go_term_evidence where mrkrgo_mrkr_zdb_id='$OID' and mrkrgo_go_term_zdb_id=goterm_zdb_id and mrkrgo_zdb_id=mrkrgoev_mrkrgo_zdb_id and mrkrgoev_evidence_code=goev_code and goterm_ontology='Molecular Function' order by goev_display_order"><?/MISQL>
+
+<!-- use vector storing the three ontology and loop through for display -->
+
+<?MIBLOCK INDEX=$ontology FOREACH=$ontologies>
+    
+    <?MIVAR NAME=flgct>0<?/MIVAR>
+    <?MIVAR NAME=flag><?/MIVAR>
+    <?MIVAR NAME=isnot>f<?/MIVAR>
+    <?MIVAR NAME=contribs>f<?/MIVAR>
+
+    <?MISQL MAXROWS=1 SQL="select goterm_go_id,goev_display_order,goterm_name,mrkrgoev_zdb_id from go_term,go_evidence_code,marker_go_term_evidence where mrkrgoev_mrkr_zdb_id='$OID' and mrkrgoev_go_term_zdb_id=goterm_zdb_id and mrkrgoev_evidence_code=goev_code and goterm_ontology='$ontology' order by goev_display_order, goterm_name"><?/MISQL>
 
     <?MIVAR NAME=$molgoid>$1<?/MIVAR>
     <?MIVAR NAME=$moldisp>$2<?/MIVAR>
     <?MIVAR NAME=$molterm>$3<?/MIVAR>
     <?MIVAR NAME=$molmrkrgoevid>$4<?/MIVAR>
 
-<?MISQL SQL="select goevflag_gflag_name from go_evidence_flag where goevflag_mrkrgoev_zdb_id='$molmrkrgoevid'"><?/MISQL>
-<?MIVAR NAME=flgct>$MI_ROWCOUNT<?/MIVAR>
-<?MIVAR NAME=flag>$1<?/MIVAR>
-    <?MISQL SQL="select distinct goterm_go_id,goev_display_order,goterm_name,'f' as mrkrgo_is_false_ref from go_term,go_evidence_code,marker_go_term,marker_go_term_evidence where mrkrgo_mrkr_zdb_id='$OID' and mrkrgo_go_term_zdb_id=goterm_zdb_id and mrkrgo_zdb_id=mrkrgoev_mrkrgo_zdb_id and mrkrgoev_evidence_code=goev_code and goterm_ontology='Molecular Function' order by goev_display_order"><?/MISQL>
-<?MIVAR NAME=$anncount>$MI_ROWCOUNT<?/MIVAR>
-<?MIVAR>
-<?MIBLOCK COND="$(>,$flgct,0)">
-   <?MIBLOCK COND="$(=,$flgct,2)">
-     <?MIVAR NAME=$isnot>t<?/MIVAR>
-     <?MIVAR NAME=$contribs>t<?/MIVAR>
+    <?MISQL SQL="select goevflag_gflag_name from go_evidence_flag where goevflag_mrkrgoev_zdb_id='$molmrkrgoevid'"><?/MISQL>
+    <?MIVAR NAME=flgct>$MI_ROWCOUNT<?/MIVAR>
+    <?MIVAR NAME=flag>$1<?/MIVAR>
+    
+    <?MICOMMENT>??? donot know what "'f' as mrkrgo_is_false_ref" is for ???<?/MICOMMENT> 
+    <?MISQL SQL="select distinct goterm_go_id,goev_display_order,goterm_name,'f' as mrkrgo_is_false_ref from go_term,go_evidence_code,marker_go_term_evidence where mrkrgoev_mrkr_zdb_id='$OID' and mrkrgoev_go_term_zdb_id=goterm_zdb_id and mrkrgoev_evidence_code=goev_code and goterm_ontology='$ontology' order by goev_display_order"><?/MISQL>
+    <?MIVAR NAME=$anncount>$MI_ROWCOUNT<?/MIVAR>
+    
+    <?MIBLOCK COND="$(>,$flgct,0)">
+       <?MIBLOCK COND="$(=,$flgct,2)">
+     	<?MIVAR NAME=$isnot>t<?/MIVAR>
+     	<?MIVAR NAME=$contribs>t<?/MIVAR>
+      <?MIELSE>
+        <?MIBLOCK COND="$(EC,$flag,not)">
+           <?MIVAR NAME=$isnot>t<?/MIVAR>
+        <?/MIBLOCK>
+        <?MIBLOCK COND="$(EC,$flag,contributes to)">
+        	<?MIVAR NAME=$contribs>t<?/MIVAR>
+        <?/MIBLOCK>
+     <?/MIBLOCK>
+   <?/MIBLOCK>
+   <?MIBLOCK COND="$(EC,$isnot,t)">
+  	<?MIVAR NAME=not><i>NOT</i><?/MIVAR>
    <?MIELSE>
-     <?MIBLOCK COND="$(EC,$flag,not)">
-       <?MIVAR NAME=$isnot>t<?/MIVAR>
+  	<?MIVAR NAME=not><?/MIVAR>
+   <?/MIBLOCK>
+   <?MIBLOCK COND="$(>,$anncount,0)">
+	<TR><TD nowrap><?MIVAR>$ontology<?/MIVAR></TD>
+   <?/MIBLOCK>
+   <?MIBLOCK COND="$(OR,$(EC,$contribs,t),$(EC,$isnot,t))">
+     <?MIBLOCK COND="$(EC,$contribs,t)">
+      <td nowrap><?MIVAR>$not<?/MIVAR><i>Contributes to</i></td>
+     <?MIELSE>
+      <td nowrap><i><?MIVAR>$not<?/MIVAR></i></td>
      <?/MIBLOCK>
-     <?MIBLOCK COND="$(EC,$flag,contributes to)">
-       <?MIVAR NAME=$contribs>t<?/MIVAR>
+   <?MIELSE>
+     <?MIBLOCK COND="$(EC,$qualifier,true)">
+       <td></td>
      <?/MIBLOCK>
    <?/MIBLOCK>
-<?/MIBLOCK>
-<?MIBLOCK COND="$(EC,$isnot,t)">
-  <?MIVAR NAME=not><i>NOT</i><?/MIVAR>
-<?MIELSE>
-  <?MIVAR NAME=not><?/MIVAR>
-<?/MIBLOCK>
-<?MIBLOCK COND="$(>,$anncount,0)">
-<TR><TD>Molecular Function</TD>
-<?/MIBLOCK>
-<?MIBLOCK COND="$(OR,$(EC,$contribs,t),$(EC,$isnot,t))">
-    <?MIBLOCK COND="$(EC,$contribs,t)">
-      <td><?MIVAR>$not<?/MIVAR><i>Contributes to</i></td>
-    <?MIELSE>
-      <td><i><?MIVAR>$not<?/MIVAR></i></td>
-    <?/MIBLOCK>
-<?MIELSE>
-   <?MIBLOCK COND="$(EC,$qualifier,true)">
-     <td></td>
-   <?/MIBLOCK>
-<?/MIBLOCK>
 
-<?MIBLOCK COND="$(>,$anncount,1)">
+   <?MIBLOCK COND="$(>,$anncount,1)">
        <?MIVAR><TD align=left><A HREF=$dbquery$molgoid>$(TRIM,$molterm)</a>
      (<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoview.apg&OID=$OID"><i>more</i></a>)</TD><?/MIVAR>
-<?/MIBLOCK>
+   <?/MIBLOCK>
 
-<?MIBLOCK COND="$(=,$anncount,1)">
-    <?MIVAR><TD align=left><A HREF=$dbquery$molgoid>$molterm</a>
+   <?MIBLOCK COND="$(=,$anncount,1)">
+     <?MIVAR><TD align=left><A HREF=$dbquery$molgoid>$molterm</a>
      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoview.apg&OID=$OID"></a></TD><?/MIVAR>
-<?/MIBLOCK>
-<?/MIVAR>
+   <?/MIBLOCK>
    </TR>
-<!--end Mol Funcn-->
-
-<!--begin Biol Process-->
-
-    <?MISQL MAXROWS=1 SQL="select goterm_go_id,goev_display_order,goterm_name,mrkrgoev_zdb_id from go_term,go_evidence_code,marker_go_term,marker_go_term_evidence where mrkrgo_mrkr_zdb_id='$OID' and mrkrgo_go_term_zdb_id=goterm_zdb_id and mrkrgo_zdb_id=mrkrgoev_mrkrgo_zdb_id and mrkrgoev_evidence_code=goev_code and goterm_ontology='Biological Process' order by goev_display_order"><?/MISQL>
-
-    <?MIVAR NAME=$biogoid>$1<?/MIVAR>
-    <?MIVAR NAME=$biodisp>$2<?/MIVAR>
-    <?MIVAR NAME=$bioterm>$3<?/MIVAR>
-    <?MIVAR NAME=$biomrkrgoevid>$4<?/MIVAR>
-
-<?MISQL SQL="select goevflag_gflag_name from go_evidence_flag where goevflag_mrkrgoev_zdb_id='$biomrkrgoevid'"><?/MISQL>
-<?MIVAR NAME=bflgct>$MI_ROWCOUNT<?/MIVAR>
-<?MIVAR NAME=bflag>$1<?/MIVAR>
-
-    <?MISQL SQL="select distinct goterm_go_id,goev_display_order,goterm_name,'f' as mrkrgo_is_false_ref from go_term,go_evidence_code,marker_go_term,marker_go_term_evidence where mrkrgo_mrkr_zdb_id='$OID' and mrkrgo_go_term_zdb_id=goterm_zdb_id and mrkrgo_zdb_id=mrkrgoev_mrkrgo_zdb_id and mrkrgoev_evidence_code=goev_code and goterm_ontology='Biological Process' order by goev_display_order"><?/MISQL>
-<?MIVAR NAME=$biocount>$MI_ROWCOUNT<?/MIVAR>
-<?MIVAR>
-<?MIBLOCK COND="$(>,$bflgct,0)">
-   <?MIBLOCK COND="$(=,$bflgct,2)">
-     <?MIVAR NAME=$bisnot>t<?/MIVAR>
-     <?MIVAR NAME=$bcontribs>t<?/MIVAR>
-   <?MIELSE>
-     <?MIBLOCK COND="$(EC,$bflag,not)">
-       <?MIVAR NAME=$bisnot>t<?/MIVAR>
-     <?/MIBLOCK>
-     <?MIBLOCK COND="$(EC,$bflag,contributes to)">
-       <?MIVAR NAME=$bcontribs>t<?/MIVAR>
-     <?/MIBLOCK>
-   <?/MIBLOCK>
 <?/MIBLOCK>
-<?MIBLOCK COND="$(EC,$bisnot,t)">
-  <?MIVAR NAME=not><i>NOT</i><?/MIVAR>
-<?MIELSE>
-  <?MIVAR NAME=not><?/MIVAR>
-<?/MIBLOCK>
-<?MIBLOCK COND="$(>,$biocount,0)">
-<TR><TD>Biological Process</TD>
-<?/MIBLOCK>
-
-<?MIBLOCK COND="$(OR,$(EC,$bcontribs,t),$(EC,$bisnot,t))">
-    <?MIBLOCK COND="$(EC,$bcontribs,t)">
-      <td><?MIVAR>$not<?/MIVAR><i>Contributes to</i></td>
-    <?MIELSE>
-      <td><i><?MIVAR>$not<?/MIVAR></i></td>
-    <?/MIBLOCK>
-<?MIELSE>
-   <?MIBLOCK COND="$(EC,$qualifier,true)">
-     <td></td>
-   <?/MIBLOCK>
-<?/MIBLOCK>
-
-
-<?MIBLOCK COND="$(>,$biocount,1)">
-    <?MIVAR><TD align=left><A HREF=$dbquery$biogoid>$(TRIM,$bioterm)</a>
-     (<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoview.apg&OID=$OID"><i>more</i></a>)</TD><?/MIVAR>
-<?/MIBLOCK>
-<?MIBLOCK COND="$(=,$biocount,1)">
-    <?MIVAR><TD align=left><A HREF=$dbquery$biogoid>$(TRIM,$bioterm)</a>
-     <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoview.apg&OID=$OID"></a></TD><?/MIVAR>
-<?/MIBLOCK>
-<?/MIVAR>
-   </TR>
-<!--end bio process-->
-
-<!--begin cell comp-->
-
-    <?MISQL MAXROWS=1 SQL="select goterm_go_id,goev_display_order,goterm_name,mrkrgoev_zdb_id from go_term,go_evidence_code,marker_go_term,marker_go_term_evidence where mrkrgo_mrkr_zdb_id='$OID' and mrkrgo_go_term_zdb_id=goterm_zdb_id and mrkrgo_zdb_id=mrkrgoev_mrkrgo_zdb_id and mrkrgoev_evidence_code=goev_code and goterm_ontology='Cellular Component' order by goev_display_order"><?/MISQL>
-
-    <?MIVAR NAME=$cellgoid>$1<?/MIVAR>
-    <?MIVAR NAME=$celldisp>$2<?/MIVAR>
-    <?MIVAR NAME=$cellterm>$3<?/MIVAR>
-    <?MIVAR NAME=$cellmrkrgoevid>$4<?/MIVAR>
-
-<?MISQL SQL="select goevflag_gflag_name from go_evidence_flag where goevflag_mrkrgoev_zdb_id='$cellmrkrgoevid'"><?/MISQL>
-<?MIVAR NAME=cflgct>$MI_ROWCOUNT<?/MIVAR>
-<?MIVAR NAME=cflag>$1<?/MIVAR>
-
-    <?MISQL SQL="select distinct goterm_go_id,goev_display_order,goterm_name,'f' as mrkrgo_is_false_ref from go_term,go_evidence_code,marker_go_term,marker_go_term_evidence where mrkrgo_mrkr_zdb_id='$OID' and mrkrgo_go_term_zdb_id=goterm_zdb_id and mrkrgo_zdb_id=mrkrgoev_mrkrgo_zdb_id and mrkrgoev_evidence_code=goev_code and goterm_ontology='Cellular Component' order by goev_display_order"><?/MISQL>
-<?MIVAR NAME=$cellcount>$MI_ROWCOUNT<?/MIVAR>
-<?MIVAR>
-<?MIBLOCK COND="$(>,$cflgct,0)">
-   <?MIBLOCK COND="$(=,$cflgct,2)">
-     <?MIVAR NAME=$cisnot>t<?/MIVAR>
-     <?MIVAR NAME=$ccontribs>t<?/MIVAR>
-   <?MIELSE>
-     <?MIBLOCK COND="$(EC,$cflag,not)">
-       <?MIVAR NAME=$cisnot>t<?/MIVAR>
-     <?/MIBLOCK>
-     <?MIBLOCK COND="$(EC,$cflag,contributes to)">
-       <?MIVAR NAME=$ccontribs>t<?/MIVAR>
-     <?/MIBLOCK>
-   <?/MIBLOCK>
-<?/MIBLOCK>
-<?MIBLOCK COND="$(EC,$cisnot,t)">
-  <?MIVAR NAME=not><i>NOT</i><?/MIVAR>
-<?MIELSE>
-  <?MIVAR NAME=not><?/MIVAR>
-<?/MIBLOCK>
-<?MIBLOCK COND="$(>,$cellcount,0)">
-<TR><TD>Cellular Component</TD>
-<?/MIBLOCK>
-<?MIBLOCK COND="$(OR,$(EC,$ccontribs,t),$(EC,$cisnot,t))">
-    <?MIBLOCK COND="$(EC,$ccontribs,t)">
-      <td><?MIVAR>$not<?/MIVAR><i>Contributes to</i></td>
-    <?MIELSE>
-      <td><i><?MIVAR>$not<?/MIVAR></i></td>
-    <?/MIBLOCK>
-<?MIELSE>
-   <?MIBLOCK COND="$(EC,$qualifier,true)">
-     <td></td>
-   <?/MIBLOCK>
-<?/MIBLOCK>
-
-<?MIBLOCK COND="$(>,$cellcount,1)">
-       <?MIVAR><TD align=left><A HREF=$dbquery$cellgoid>$(TRIM,$cellterm)</a>
-     (<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoview.apg&OID=$OID"><i>more</i></a>)</TD><?/MIVAR>
-<?/MIBLOCK>
-<?MIBLOCK COND="$(=,$cellcount,1)">
-    <?MIVAR><TD align=left><A HREF=$dbquery$cellgoid>$cellterm</a>
-     <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoview.apg&OID=$OID"></a></TD><?/MIVAR>
-<?/MIBLOCK>
-<?/MIVAR>
-   </TR>
-
+<?-- end three functions -->
 </TABLE>
-<?MIBLOCK COND="$(>,$rowcount,0)">
+  <?MIBLOCK COND="$(>,$rowcount,0)">
     <?MIVAR><TABLE width =100% border=0 bgcolor=$highlight><?/MIVAR>
-	<?MIVAR><TR><TD><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoview.apg&OID=$OID">All GO Annotations (<?MIVAR>$rowcount)</A><?/MIVAR><?/MIVAR></TD>
+	<?MIVAR><TR><TD><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoview.apg&OID=$OID">All GO Terms (<?MIVAR>$rowcount)</A><?/MIVAR><?/MIVAR></TD>
 </TR></TABLE>
+  <?/MIBLOCK>
 <?/MIBLOCK>
-<?/MIBLOCK>
-  <!------------------------------>
-  <!------  protein sequence  ------>
+  <!--------------- end of Gene Ontology --------------->
+
+
+  <!-----------------  Protein Sequence  -------------->
   <?MIVAR NAME=$lastitem><?/MIVAR>
   <?MISQL SQL="
     select fdb_db_name, 
@@ -1911,7 +1750,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
     or 
       recattrib_data_zdb_id = '$OID' 
     or
-      recattrib_data_zdb_id in (select mrkrgoev_zdb_id from marker_go_term_evidence,marker_go_term where mrkrgo_mrkr_zdb_id='$OID' and mrkrgoev_mrkrgo_zdb_id=mrkrgo_zdb_id)
+      recattrib_data_zdb_id in (select mrkrgoev_zdb_id from marker_go_term_evidence where mrkrgoev_mrkr_zdb_id='$OID')
  
  <?/MIVAR>
 
