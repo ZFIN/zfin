@@ -135,20 +135,16 @@ header-obj: context [
 
 foreach ad parse addy "," [
                 ;;; build a mail header
-                header: make header-obj [
+                header: make header-obj[
                         To:     ad
                         From:   frm
                         Subject: sbj
-           ]
-                    
-           if error? err: try [send/header to-email ad template header][
-               send tomc@cs.uoregon.edu rejoin [
-                    probe disarm err "^/" ad "^/" template "^/" header
-               ]
-               send rholland@zfin.org rejoin [
-                    probe disarm err "^/" ad "^/" template "^/" header
-               ]
-           ]
+                ]
+    if error? try [send/header to-email ad template header][
+        send tomc@cs.uoregon.edu join "cgiemail error^/" probe disarm err            
+    ]
+]        
+       
 ]   
 
 ;;; append a copy of the email to a flatfile
