@@ -6,9 +6,9 @@
 
 #	Files
 $prefix		=	"/private/httpd";
-$logs		=	"$prefix/logs";
+$logs		=	"$prefix/logs/zfin.org";
 $old_dir	=	"old";
-$pidfile	=	"$logs/httpd.pid";
+$pidfile	=	"$prefix/logs/httpd.pid";
 $DOMLU		=	"<!--|ROOT_PATH|-->/server_apps/WebSiteTools/domainlookup.pl";
 $BZIP		=	"/local/bin/bzip2";
 
