@@ -68,22 +68,26 @@ create temp table tmp_not_in_pub_files (
 insert into tmp_not_in_images
   select filename
 	from tmp_image_file_list
-	where not exists (select fimg_image 
+	where not exists (select 'x' 
 				from fish_image
 				where filename = fimg_image)
-        and not exists (select fimgp_image 
+        and not exists (select 'x'
 				from fx_fish_image_private
 				where filename = fimgp_image);
 
-insert into tmp_not_in_image_files
-  select fimg_image 
-	from fish_image
-        where not exists (select filename from tmp_image_file_list);
 
 insert into tmp_not_in_image_files
-  select fimgp_image 
-	from fx_fish_image_private
-        where not exists (select filename from tmp_image_file_list);
+  select fimg_image 
+	from fish_image 
+	where fimg_image not in (select filename
+				   from tmp_image_file_list) ;
+
+insert into tmp_not_in_image_files
+    select fimgp_image
+	from fx_fish_image_private	
+        where fimgp_image not in (select filename
+		            	    from tmp_image_file_list);
+
 
 unload to /tmp/filesystem_images_not_in_database.unl
   select * from tmp_not_in_image_files ;
