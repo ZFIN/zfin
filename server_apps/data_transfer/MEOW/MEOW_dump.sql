@@ -264,7 +264,7 @@ insert into meow_exp4
   select  mrel_mrkr_1_zdb_id, DB_name, acc_num 
     from db_link , marker_relationship
    where   mrel_mrkr_2_zdb_id = linked_recid
-        and db_name = 'Genbank';
+        and db_name = 'Genbank'
 	and mrel_mrkr_1_zdb_id in 
        ( select zdb_id 
            from meow_exp1 );
