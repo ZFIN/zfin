@@ -23,6 +23,7 @@
 
 <?MIVAR NAME=$knowngene COND="$(NXST,$knowngene)">NULL<?/MIVAR>
 <?MIVAR NAME=$previous> <?/MIVAR>
+<?MIVAR NAME=$target_table>fish_search a <?/MIVAR>
 
 <!-- First build CONSTRAINT CLAUSE common to both wild type and mutant line, ie., those constraints related only to fish. -->
 
@@ -31,17 +32,19 @@
 
 <!-- First filter name for apostrophes! -->
 <?MIVAR COND="$(XST,$fname)" NAME=$fname DELIMIT="'" REPLACE="''">$fname<?/MIVAR>
-
+<?MIVAR COND="$(XST,$fname)" NAME=$fname>$(LOWER,$fname)<?/MIVAR>
 <?MIVAR NAME=$constraint> and <?/MIVAR>
 
+<!-- first look for match in fish_search locus or locus_alias lcsali_locus_name or fish_alias fishali_fish_name_alias -->
 <?MIVAR NAME=$constraint COND="$(XST,$fname)">
-$constraint (lower(a.name) like '%$(LOWER,$fname)%')<?/MIVAR>
+$constraint ((lower(a.name) like '%$fname%') or exists (select 'x' from locus_alias where (a.locus = lcsali_locus_zdb_id) and (lower(lcsali_locus_name_alias) like '%$fname%')) or exists (select 'x' from fish_alias where (a.fish_id = fishali_fish_zdb_id) and (lower(fishali_fish_name_alias) like '%$fname%')))
+<?/MIVAR>
 
-<?MIVAR NAME=$previous COND="$(XST,$fname)"> and <?/MIVAR>
+<?MIVAR NAME=$previous COND="$(XST,$fname)"> and<?/MIVAR>
 
 <!-- change to look for abbrev within () in name  Sept. 00  -->
 <?MIVAR NAME=$constraint COND="$(XST,$abbrev)">
-$constraint $previous (lower(abbrev)='$(LOWER,$abbrev)' or name like '%$(LOWER,($abbrev)%')<?/MIVAR>
+$constraint $previous (lower(abbrev)='$(LOWER,$abbrev)') or (name like '(%$(LOWER,$abbrev)%)') or (exists (select 'x' from locus_alias where lcsali_locus_abbrev_alias like '%$(LOWER,$abbrev)%' and  (a.locus = lcsali_locus_zdb_id)))<?/MIVAR>
 
 <?MIVAR NAME=$previous COND="$(XST,$abbrev)"> and <?/MIVAR>
 
@@ -51,11 +54,14 @@ $constraint $previous (webhtml_like($anon1,'$anon1text'))<?/MIVAR>
 <?MIVAR NAME=$constraint COND="$(AND,$(XST,$anon1text),$(NC,$anon1,phenotype))">
 $constraint $previous (lower($anon1) like '%$(LOWER,$anon1text)%')<?/MIVAR>
 
-
 <?/MIBLOCK> <!-- ends shared mutant/wild-type block -->
 
 
+
+
 <!-- NOW for mutant queries, BUILD the mutant constraint clause by extending the basic one to constrain on mutant attributes too -->
+
+<?MIVAR COND="$(XST,$allele)" NAME=$allele>$(LOWER,$allele)<?/MIVAR>
 
 <?MIBLOCK COND="$(AND,$(NXST,$mut_constraint),$(EC,$line_type,mutant),$(OR,$(XST,$constraint),$(NC,$chrom_change,any),$(>,$chrom_num,0),$(XST,$allele),$(NC,$mutagen,any),$(XST,$selected)))">
 
@@ -70,7 +76,8 @@ $mut_constraint $previous (mutagen='$mutagen')<?/MIVAR>
 <?MIVAR NAME=$previous COND="$(NC,$mutagen,any)"> and <?/MIVAR>
 
 <?MIVAR NAME=$mut_constraint COND="$(XST,$allele)">
-$mut_constraint $previous (lower(allele) like LOWER('$allele%'))<?/MIVAR>
+$mut_constraint $previous ((lower(a.allele) like '$allele%') or exists (select 'x' from allele_alias where (a.fish_id = alleali_alt_zdb_id) and (lower(alleali_allele_name_alias) like '$allele%'))) 
+<?/MIVAR>
 
 <?MIVAR NAME=$previous COND="$(XST,$allele)"> and <?/MIVAR>
 
@@ -98,7 +105,6 @@ $mut_constraint $previous ($selected)<?/MIVAR>
 <?/MIBLOCK> <!-- ends mutant case -->
 
 
-
 <!-- NOW JUST RETRIEVE AND DISPLAY ALL MATCHING ENTRIES. Do slightly different things for mutant and wild type queries  -->
 
 <?MIVAR NAME=$constraint COND="$(NXST,$constraint)"> <?/MIVAR>
@@ -119,6 +125,8 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
 <input type=hidden name=MIval value=aa-fishlister.apg>
 <input type=hidden name=mut_constraint value="$mut_constraint">
 <input type=hidden name=line_type value="$line_type">
+<?MIVAR COND="$(XST,$fname)"><input type=hidden name=fname value="$fname"><?/MIVAR>
+<?MIVAR COND="$(XST,$allele)"><input type=hidden name=allele value="$allele"><?/MIVAR>
 <?/MIVAR>
 
 <center>
@@ -126,7 +134,7 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
 
 <?MIVAR COND="$(XST,$getsome)"><font color="red"><b>Showing only first $limit </b></font> of <?/MIVAR>
 
-<?MISQL SQL="select count(*)::integer from fish_search a  where line_type='mutant' $mut_constraint;"> <b>$1</b> matching records found.<?/MISQL>
+<?MISQL SQL="select count(*)::integer from $target_table  where line_type='mutant' $mut_constraint;"> <b>$1</b> matching records found.<?/MISQL>
 
 <?MIVAR COND="$(XST,$getsome)">
 <input type=submit name=getall value="Get remaining $(-,$1,$limit) records">
@@ -156,9 +164,20 @@ Options:
 
 <?MIBLOCK COND="$(XST,$limit)">
 <TABLE width=100%>
-<TH> </TH><TH>Allele</TH> <TH>Locus (abbrev)</TH> <TH>Gene</TH> <TH>Mut. Type</TH> <TH>Mutagen</TH> <TH>LG</TH> <TH>Images</TH>
-<?MISQL SQL="select distinct name, fish_id, abbrev, mutagen, allele, chrom_change, chrom_num,num_images,locus,gene_abbrev,gene_id from fish_search a  where line_type='mutant' $mut_constraint $order_by;" MAXROWS=$limit>
-$(IF,$(>,$MI_CURRENTROW,1),"<TR><TD colspan=7> <HR width=99%> </TD> </TR>")
+
+<TH> </TH><TH>Allele [previous names]</TH> <TH>Locus (abbrev) [previous names]</TH> <TH>Gene</TH> <TH>Mut. Type</TH> <TH>Mutagen</TH> <TH>LG</TH> <TH>Images</TH>
+<?MISQL SQL="select distinct name, fish_id, abbrev, mutagen, allele, chrom_change, chrom_num,num_images,locus,gene_abbrev,gene_id from $target_table where line_type='mutant' $mut_constraint $order_by;" MAXROWS=$limit>
+<?MIVAR NAME=$gene_id>$11<?/MIVAR>
+<?MIVAR NAME=$gene_abbrev>$10<?/MIVAR>
+<?MIVAR NAME=$name>$1<?/MIVAR>
+<?MIVAR NAME=$mutagen>$4<?/MIVAR>
+<?MIVAR NAME=$chrom_change>$6<?/MIVAR>
+<?MIVAR NAME=$chrom_num>$7<?/MIVAR>
+<?MIVAR NAME=$num_images>$8<?/MIVAR>
+<?MIVAR NAME=$locus>$9<?/MIVAR>
+
+$(IF,$(>,$MI_CURRENTROW,1),"<TR><TD colspan=7> <HR width=80%> </TD> </TR>")
+
 $(IF,$(=,$MI_CURRENTROW,1),"<TR><TD colspan=7> <HR size=5> </TD> </TR>")
 
 <?MIVAR NAME=$abbrev>$3<?/MIVAR>
@@ -177,13 +196,42 @@ $(IF,$(XST,$return_rec),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do
 </TD>
 <TD valign=top> 
 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$2" TARGET=content>$5</A>
+
+<!-- allele_name contains all names pull aliases only -->
+<?MISQL SQL="select distinct alleali_allele_name_alias from allele_alias , fish_search where  fish_id = '$2' and alleali_alt_zdb_id = alt_zdb_id;">
+<?MIVAR COND="$(=,$MI_CURRENTROW,1)">&nbsp;[<?/MIVAR>
+<?MIVAR COND="$(>,$MI_CURRENTROW,1)">;<?/MIVAR>$1
+<?/MISQL>
+<?MIVAR COND="$(>=,$MI_CURRENTROW,1)">]<?/MIVAR>
+
 </TD> 
-<TD><font size=-1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$9" TARGET=content>$1</A> ($abbrev)</font></TD>
-<TD><font size=-1> $(IF,$(NC,$11,UNKNOWN),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$11 TARGET=content>$10</A>,UNKNOWN)
+
+<TD><font size=-1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$locus" TARGET=content>$name</A> ($abbrev)
+<?MIVAR NAME=$found>false<?/MIVAR>
+<?MISQL SQL="select distinct lcsali_locus_name_alias, lcsali_locus_abbrev_alias from locus_alias where  lcsali_locus_zdb_id = '$9';">
+<?MIVAR COND="$(=,$MI_CURRENTROW,1)">&nbsp;[<?/MIVAR>
+<?MIVAR COND="$(=,$MI_CURRENTROW,1)" NAME=$found>true<?/MIVAR>
+<?MIVAR COND="$(>,$MI_CURRENTROW,1)">;<?/MIVAR>$1
+<?MIVAR COND="$(NC,$2,"")">($2)<?/MIVAR>
+<?/MISQL>
+<?MISQL SQL="select distinct fishali_fish_name_alias from fish_alias where fishali_fish_zdb_id = '$2';">
+<?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(NC,$found,true))">&nbsp;[<?/MIVAR>
+<?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(EC,$found,true))">;<?/MIVAR>
+<?MIVAR COND="$(=,$MI_CURRENTROW,1)" NAME=$found>true<?/MIVAR>
+<?MIVAR COND="$(>,$MI_CURRENTROW,1)">;<?/MIVAR>$1
+<?/MISQL>
+<?MIVAR COND="$(EC,$found,true)">]<?/MIVAR>
+
 </font></TD>
-<TD><font size=-1> $(IF,$(EC,$6,NULL),UNKNOWN,$6)</font> </TD> 
-<TD><font size=-1> $(IF,$(EC,$4,NULL),UNKNOWN,$4)</font> </TD> 
-<TD><font size=-1> $(IF,$(EC,$7,0),UNKNOWN,$7)</font> </TD> 
+
+<TD><font size=-1> $(IF,$(NC,$gene_id,UNKNOWN),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$gene_id TARGET=content>$gene_abbrev</A>,UNKNOWN)
+</font></TD>
+
+<TD><font size=-1> $(IF,$(EC,$chrom_change,NULL),UNKNOWN,$chrom_change)</font> </TD> 
+
+
+<TD><font size=-1> $(IF,$(EC,$mutagen,NULL),UNKNOWN,$mutagen)</font> </TD> 
+<TD><font size=-1> $(IF,$(EC,$chrom_num,0),UNKNOWN,$chrom_num)</font> </TD> 
 <TD><font size=-1>$8</font></TD>
 </TR>
 <?/MISQL>
@@ -237,7 +285,6 @@ $(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|
 <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No matching records found<?/MIVAR>
 
 <?/MIBLOCK>  <!-- ends the accession case -->
-
 
 
 </HTML>
