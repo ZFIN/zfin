@@ -550,17 +550,36 @@ Startframes.apg will pass this variables on to the select form.  -->
 <!-- OKAY, now cause a tile for the new page to appear in the navigator frame
   -- startframes.apg will pass variables on to appropriate page
   -- don't want a tile if got here via the accessionlister  -->
+<!-- markerlister may also be called by mapperselect when the marker name is ambigious.  A variable ampper is passed only by  mapperselect.  Create navtile button for mapperselect.  Pass marker_name rather than name and pass map_type if this can from a merged map request -->
+
 <?MIBLOCK COND="$(NXST,$accession)">
-  <?MIVAR NAME=page_title>Find MARKER<?/MIVAR>
   <?MIVAR NAME=navtile>true<?/MIVAR>
-  <?MIVAR COND="$(NXST,$name)" NAME=$name><?/MIVAR>
   <?MIVAR COND="$(NXST,$plinks)" NAME=$plinks>NULL<?/MIVAR>
   <?MIVAR NAME=$mlist DELIMIT="','" REPLACE="">$mlist<?/MIVAR>
   <?MIVAR COND="$(NXST,$BEGIN)" NAME=$BEGIN><?/MIVAR>
   <?MIVAR COND="$(NXST,$WINSIZE)" NAME=$WINSIZE><?/MIVAR>
+  <?MIVAR COND="$(NXST,$name)" NAME=$name><?/MIVAR>
+
+
+  <!-- when called by markerselect -->
+  <?MIBLOCK COND="$(NXST,$paged_by)">
+    <?MIVAR NAME=page_title>Find MARKER<?/MIVAR>
+    <?MIVAR>
+      <SCRIPT>
+	var page_id=top.content.location.href+'&navtile=$navtile&name=$(URLENCODE,$name)&lg=$lg&refcross=$refcross&marker_type=$mlist&compare=$compare&plinks=$plinks&WINSIZE=$WINSIZE&BEGIN=$BEGIN';
+      </SCRIPT>
+    <?/MIVAR>
+  <?MIELSE>  <!-- when called by mapperselect -->
+    <?MIVAR NAME=page_title>View Map<?/MIVAR>
+    <?MIVAR>
+      <SCRIPT>
+	var page_id=top.content.location.href+'&navtile=$navtile&marker=$(URLENCODE,$name)&lg=$lg&refcross=$refcross&marker_type=$mlist&compare=$compare&plinks=$plinks&WINSIZE=$WINSIZE&BEGIN=$BEGIN&map_type=$map_type';
+      </SCRIPT>
+    <?/MIVAR>
+  <?/MIBLOCK>
+  <!-- for all cases -->
   <?MIVAR>
     <SCRIPT>
-      var page_id=top.content.location.href+'&navtile=$navtile&name=$(URLENCODE,$name)&lg=$lg&refcross=$refcross&marker_type=$mlist&compare=$compare&plinks=$plinks&WINSIZE=$WINSIZE&BEGIN=$BEGIN';
       top.update_hist(page_id,"$page_title");
       top.controls.location.reload(true);
     </SCRIPT>
@@ -570,3 +589,4 @@ Startframes.apg will pass this variables on to the select form.  -->
 </HTML>
 
 
+ 
