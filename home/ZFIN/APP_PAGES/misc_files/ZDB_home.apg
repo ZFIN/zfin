@@ -72,6 +72,7 @@
 	      <table border=0 cellpadding=3>
 		<tr>
 		  <td>
+	            <A HREF="/zf_info/news/curator.html">Positions with<br>&nbsp;ZFIN</A><BR>
 		    <A HREF="/zf_info/dbase/db.html">About ZFIN</A><BR>
 		    <A HREF="/zf_info/citation.html">Citing ZFIN</A><BR>
 		    <A HREF="/ZFIN/misc_html/tips.html">Helpful Hints</A><BR>
@@ -143,16 +144,7 @@
 	      </table>
 	    </DIV>
 
-	    <BR>
-	    <DIV class="sidebar">
-	      <table border=0 cellpadding=3>
-		<tr>
-		  <td>
-		    <A HREF="/zf_info/SEARCH_SITE/searchcrit.html">Search This Site</A>
-		  </td>
-		</tr>
-	      </table>
-	    </DIV>
+
 	  </TD>
 	</TR>
       </TABLE>
@@ -169,7 +161,20 @@
 	    </td>
 	  </tr>
 	</NOSCRIPT>
-
+        <TR>
+          <TD class="content_left">
+            <DIV class="content">
+              <a href="/SearchApp/category_search.jsp"><b>Quick Search</b></a>
+            </DIV>
+          </TD>
+          <TD class="content_right">
+            <DIV class="content">
+               <form method="GET" action="/SearchApp/category_search.jsp" name="uniquery_search">
+                 <input type="text" name="query" size="30"> <input type="submit" value="Search">
+               </form>
+            </DIV>
+          </TD>
+        </TR>
 	<TR>
 	  <TD class="content_left">
 	    <DIV class="content">
@@ -512,7 +517,7 @@
 	    <DIV class="header">
 	      <P align=center>
 	      Development of the Zebrafish Database is generously supported by
-	      <br>by the NIH (P41 HG002659). 
+	      <br>the NIH (P41 HG002659). 
 	      <br>
 	      <A HREF="/warranty.html"><u>Copyright</u> <font color="#FFFFFF">&copy</font> <A HREF="http://www.uoregon.edu"><u>University of Oregon</u></a>, 1994-2004,<A HREF="http://www.ci.eugene.or.us"> <u>Eugene</u></a>, Oregon.
 	      <br> <font size="-2">ZFIN logo design by Kari Pape, </font><A HREF="http://www.uoregon.edu"><font size="-2">University of Oregon</font></a> 
@@ -524,6 +529,10 @@
     </TD>
   </TR>
 </TABLE>
+
+<!-- Put the cursor in the login name box -->
+<SCRIPT>document.uniquery_search.query.focus();</SCRIPT>
+
 <script language=javascript src="/js/awstats_misc_tracker.js"></script>
 </BODY>
 </HTML>
