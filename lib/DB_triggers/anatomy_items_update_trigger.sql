@@ -1,15 +1,19 @@
---CREATE ANATOMY_ITEM TRIGGERS
+-- CREATE ANATOMY_ITEM UPDATE TRIGGER
 ----------------------------------------------------------
---Check that the stage hours are logical: that the stage_start_hours are > 
---the end_stage_hours.    
---REPLACES:
---sub anatomyItemStageWindowConsistent in validatedata.pl
+-- The stage window check replaced the anatomyItemStageWindowConsistent 
+-- test in validatedata.pl
 
 create trigger anatomy_items_update_trigger 
-  update of anatitem_start_stg_zdb_id, anatitem_end_stg_zdb_id on anatomy_item
-    referencing old as old_stage new as new_stage
+  update on anatomy_item
+    referencing new as new_anatomy_item
     for each row (
         execute procedure p_stg_hours_consistent
-  	  (new_stage.anatitem_start_stg_zdb_id, 
-           new_stage.anatitem_end_stg_zdb_id)
+  	  (new_anatomy_item.anatitem_start_stg_zdb_id, 
+           new_anatomy_item.anatitem_end_stg_zdb_id),
+        execute function 
+	  zero_pad(new_anatomy_item.anatitem_name) into anatitem_name_order,
+	execute function 
+	  lower(new_anatomy_item.anatitem_name) into anatitem_name_lower,
+        execute function 
+	  lower(new_anatomy_item.anatitem_abbrev) into anatitem_abbrev_lower
     );
