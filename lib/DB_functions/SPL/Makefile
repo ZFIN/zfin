@@ -25,6 +25,7 @@ TARGETDIR = $(TARGETROOT)/lib/DB_functions/SPL
 
 FISH_FUNCS  = get_fish_full_name.sql
 IMAGE_FUNCS = get_image_stats.sql
+PUB_FUNCS   = get_pub_mini_ref.sql
 REGEN_FUNCS = regen_anatomy.sql regen_fishsearch.sql regen_genomics.sql \
 		regen_oevdisp.sql get_date_from_id.sql
 ZDB_FUNCS   = get_obj_name.sql
@@ -44,7 +45,7 @@ STAGE_FUNCS = \
 	stg_windows_overlap.sql
 
 GENERICS = $(REGEN_FUNCS)
-STATICS  = $(FISH_FUNCS) $(IMAGE_FUNCS) $(STAGE_FUNCS) $(ZDB_FUNCS)
+STATICS  = $(FISH_FUNCS) $(IMAGE_FUNCS) $(PUB_FUNCS) $(STAGE_FUNCS) $(ZDB_FUNCS)
 
 SPECIFICTARGETS = $(foreach SPEC, $(GENERICS), $(TARGETDIR)/$(SPEC))
 STATICTARGETS = $(foreach STAT, $(STATICS), $(TARGETDIR)/$(STAT))
