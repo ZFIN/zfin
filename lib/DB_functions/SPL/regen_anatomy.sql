@@ -360,7 +360,7 @@ create dba function "informix".regen_anatomy()
 
   -- see regen_genomics.sql for details on how to debug SPL routines.
 
-  set debug file to "/tmp/debug_regen_anatomy.luckdb";
+  --set debug file to "/tmp/debug_regen_anatomy.<!--|DB_NAME|-->";
   --trace on;
 
   begin	-- global exception handler
@@ -409,6 +409,9 @@ create dba function "informix".regen_anatomy()
         -- Don't drop the tables here.  Leave them around in an effort to
         -- figure out what went wrong.
 
+	update zdb_flag set zflag_is_on = 'f'
+		where zflag_name = "regen_anatomy" 
+	 	  and zflag_is_on = 't'; 
 	return -1;
       end
     end exception;
@@ -416,6 +419,24 @@ create dba function "informix".regen_anatomy()
     --trace on;
 
     begin
+
+    define nrows integer;
+
+    -- zdb_flag
+	
+    update zdb_flag set zflag_is_on = 't'
+	where zflag_name = "regen_anatomy" 
+	 and zflag_is_on = 'f';
+
+    let nrows = DBINFO('sqlca.sqlerrd2');
+
+    if (nrows == 0)	then
+	return 1;
+    end if
+ 			
+    update zdb_flag set zflag_last_modified = CURRENT
+	where zflag_name = "regen_anatomy";
+			
 
       -- ======  CREATE TABLES THAT ONLY EXIST IN THIS FUNCTION  ======
 
@@ -1169,7 +1190,7 @@ create dba function "informix".regen_anatomy()
             
     end -- Local exception handler
     commit work;
-
+    
   end -- Global exception handler
   
   -- Update statistics on tables that were just created.
@@ -1180,6 +1201,12 @@ create dba function "informix".regen_anatomy()
   update statistics high for table anatomy_stage_stats;
   update statistics high for table all_anatomy_contains;
   commit work;
+
+  update zdb_flag set zflag_is_on = "f"
+	where zflag_name = "regen_anatomy";
+	  
+  update zdb_flag set zflag_last_modified = CURRENT
+	where zflag_name = "regen_anatomy";
 
   return 0;
 
