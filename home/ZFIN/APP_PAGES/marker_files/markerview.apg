@@ -221,20 +221,22 @@ $(IF,$(EC,$marker_type,GENE),"("$abbrev")")</B> </FONT>
 
 
 
-<hr width=90%>
+<hr width="90%">
 <b>MAPPING INFORMATION:</b><p>
 
-<TABLE width=100% cellpadding=5 border=4 bgcolor="#f8fabb" cols=2 rows=1>
+<TABLE width="100%" cellpadding=5 border=4 bgcolor="#f8fabb" cols=2 rows=1>
 <TR>
 <TD valign=top colspan=2>
+
 
 <?MIVAR> <B>Reference Panel Location(s): $abbrev  </B><?/MIVAR> 
 <TABLE cols=3 width=100% colspan=2>
 
+
 <?MISQL SQL="select a.owner, lg_location, target_id as panel_id, OR_lg, target_abbrev as panel_abbrev,private,b.full_name,a.metric,day(a.entry_date::date),month(a.entry_date::date), year(a.entry_date::date), map_name, disp_order from paneled_markers a,person b, panels c  where a.zdb_id='$OID' and OR_lg is not null and a.owner=b.zdb_id and a.target_id = c.zdb_id order by c.disp_order;">
 
 
-$(IF,$(>,$MI_CURRENTROW,1),<TR><td colspan=2><hr width=80%></TD></TR>)
+$(IF,$(>,$MI_CURRENTROW,1),<TR><td colspan=2><hr width="80%"></TD></TR>)
 <TR>
 
 <?MIVAR NAME=$upd_day>$9<?/MIVAR>
@@ -295,17 +297,21 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),"<TD colspan=3><font size=2>LG <b>"$4
 
 <?MIVAR NAME=$private>$2<?/MIVAR>
 
-<?MIVAR COND="$(EC,$private,f)">
-<TR>
-<TD colspan=1><font size=2 COLOR=#A9A9A9>
+<?MIBLOCK COND="$(EC,$private,f)">
+  <?MIVAR>
+    <TR>
+    <TD colspan=1><font size=2 COLOR="#A9A9A9">
 
-<input type=checkbox name="$1" value=1 type=hidden CHECKED ><font size=2 COLOR=#000000> $1 </TD>
-</TR><?/MIVAR>
+    <input type=checkbox name="$1" value=1 type=hidden CHECKED ><font size=2 COLOR="#000000"> $1 </TD>
+    </TR>
+    <?MIVAR NAME=$ref_map>true<?/MIVAR>
+  <?/MIVAR>
+<?/MIBLOCK>
 <?/MISQL>
 
 <?MIVAR COND="$(=,$MI_ROWCOUNT,0)"><p>Not mapped on any reference panel<?/MIVAR>
 
-<?MIBLOCK COND="$(AND,$(>,$MI_ROWCOUNT,0),$(EC,$private,f))">
+<?MIBLOCK COND="$(EC,$ref_map,true)">
 
 
 <?MIBLOCK COND="$(NOT,$(EQ,$(SUBSTR,$ZDB_name,1,5),GUEST))">
@@ -334,7 +340,7 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),"<TD colspan=3><font size=2>LG <b>"$4
 </TD>
 </TABLE>
 
-<TABLE width=100% cellpadding=5 border=4 bgcolor="#f8fabb" cols=3 rows=1>
+<TABLE width="100%" cellpadding=5 border=4 bgcolor="#f8fabb" cols=3 rows=1>
 <TR>
 <TD valign=top colspan=4>
 <?MIVAR> <B>Other markers linked to $abbrev:</b><?/MIVAR>
@@ -366,7 +372,7 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$7,f),$(EC,$ZDB_ident,$6)),"<TD><font size=-
 <?MISQL SQL="select zdb_id, locus_name, abbrev from locus where cloned_gene='$OID';"><?/MISQL>
 <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
 <p>
-<TABLE width=100% cellpadding=5 border=4 bgcolor="#f8fabb" cols=2 rows=1>
+<TABLE width="100%" cellpadding=5 border=4 bgcolor="#f8fabb" cols=2 rows=1>
 <TR><TD><font size=2 color="red">
 <?MIVAR>
 <B>MUTANT LOCUS:</b>  </font><font size=2>The mutant locus <b><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$1">$2 ($3) </A> </b> has been shown to correspond to GENE <b>$abbrev</b>. Please consult the locus record for further mapping information.
@@ -375,7 +381,7 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$7,f),$(EC,$ZDB_ident,$6)),"<TD><font size=-
 </TR></TABLE>
 <?/MIBLOCK>
 
-<hr width=80%>
+<hr width="80%">
 
 <b>PRIMER SETS:</b><p>
 
@@ -384,7 +390,7 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$7,f),$(EC,$ZDB_ident,$6)),"<TD><font size=-
 -->
 <?MISQL SQL="select a.zdb_id, band_size,restr_enzyme, fwd_primer, rev_primer, anneal_temp::numeric(6,2), a.comments,strain_id,b.name from primer_set a,fish b where marker_id='$OID' and b.zdb_id=a.strain_id;">
 
-<TABLE width=100% cellpadding=5>
+<TABLE width="100%" cellpadding=5>
 <TR>
 <TD><b>Strain:</b> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$8">$9</A> </TD>
 <TD>
@@ -409,7 +415,7 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$7,f),$(EC,$ZDB_ident,$6)),"<TD><font size=-
 <?/MIVAR>
 </TABLE>
 
-<HR width=80%>
+<HR width="80%">
 
 <b>SEQUENCE INFORMATION:</b>
 <?MIBLOCK COND="$(XST,$UPDATE)">
@@ -424,7 +430,7 @@ Accession:<input type=text size=15 name=seq_acc> <input type=button value="Add i
 <?/MIBLOCK>
 
 <?MIVAR NAME=$lastitem><?/MIVAR>
-<TABLE cellpadding=5 width=100% border bgcolor="#f8fabb">
+<TABLE cellpadding=5 width="100%" border bgcolor="#f8fabb">
 <TR>
 <?MISQL SQL="select a.DB_name,conc(conc(b.DB_query,a.acc_num),b.url_suffix),acc_num from db_link a,foreign_DB b where a.DB_name=b.DB_name and a.linked_recid='$OID' order by a.DB_name;">
 $(IF,$(AND,$(NC,$lastitem,$1),$(>,$MI_CURRENTROW,1)),</TD>)
@@ -442,7 +448,7 @@ $(SETVAR,$lastitem,$1)
 <!-- Now, for cloned genes, do expression patterns and orthologues. -->
 <?MIBLOCK COND="$(EC,$marker_type,GENE)">
 <p>
-<HR width=80%>
+<HR width="80%">
 <p>
 <b>ORTHOLOGUES:</b>
 <?MIVAR COND="$(XST,$UPDATE)">
@@ -451,7 +457,7 @@ Name:<input type=text size=15 name=oname> Abbrev:<input type=text size=5 name=oa
 <br><?/MIVAR>
 
 <?MIVAR NAME=$lastitem><?/MIVAR>
-<TABLE width=100% border bgcolor="#f8fabb">
+<TABLE width="100%" border bgcolor="#f8fabb">
 <TR>
 <?MISQL SQL="select ortho_name, ortho_abbrev, organism, zdb_id, b.DB_name,conc(c.DB_query,b.acc_num),acc_num,a.zdb_id from orthologue a,db_link b, foreign_DB c where a.zdb_id=b.linked_recid and b.DB_name=c.DB_name and c_gene_id='$OID' order by organism;">
 $(IF,$(AND,$(NC,$lastitem,$3),$(>,$MI_CURRENTROW,1)),</TD></TR><TR>)
@@ -468,7 +474,7 @@ $(SETVAR,$lastitem,$3)
 
 
 <p>
-<HR width=80%>
+<HR width="80%">
 <p>
 <b>GENE EXPRESSION</b>
 <ul>
@@ -481,7 +487,7 @@ $(SETVAR,$lastitem,$3)
 <?/MIBLOCK>   <!-- ends expats and orthos -->
 
 
-<HR width=80%>
+<HR width="80%">
 
 <!-- Throw up the publication info, using the standard display format -->
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-showpubs.apg';">$1<?/MISQL>
