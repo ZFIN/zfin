@@ -34,6 +34,8 @@ TRIGGERS = \
 	db_link_update_trigger.sql \
 	environment_insert_trigger.sql \
 	environment_update_trigger.sql \
+	environment_condition_insert_trigger.sql \
+	environment_condition_update_trigger.sql \
 	expression_pattern_insert_trigger.sql \
 	expression_pattern_update_trigger.sql \
 	expression_pattern_anatomy_insert_trigger.sql \
