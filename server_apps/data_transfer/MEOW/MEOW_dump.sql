@@ -308,6 +308,30 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/SC_sts.txt'
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zdb_history.txt'
  DELIMITER "	" select zrepld_old_zdb_id, zrepld_new_zdb_id from zdb_replaced_data;
 
+-- generate a file with genes and associated expression patterns
+
+UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/xpat.txt'
+ DELIMITER "	"  select mrkr_zdb_id, xpat_zdb_id from marker, expression_pattern_assay, expression_pattern, marker_relationship where mrkr_zdb_id = mrel_mrkr_1_zdb_id and mrel_mrkr_2_zdb_id = xpat_probe_zdb_id and xpat_assay_name = xpatassay_name;
+
+--- generate mapping data for LocusLink
+
+UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/panels.txt' 
+  DELIMITER "	" select zdb_id, abbrev, metric from panels; 
+
+UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/mappings.txt' 
+  DELIMITER "	" select distinct target_id, zdb_id, abbrev, OR_lg, lg_location from public_paneled_markers  where (zdb_id not like '%FISH%') and (zdb_id not like '%LOCUS%') order by 1;
+
+-- wait to see what to do with mutants  union select distinct a.target_id, b.locus, c.abbrev, a.OR_lg, a.lg_location from public_paneled_markers a, fish b, locus c where a.zdb_id like '%FISH%' and a.zdb_id = b.zdb_id and b.locus = c.zdb_id
+
+-- comment out selection of zmap makers temporarily   union select target_id, zdb_id, abbrev||'_'||panel_abbrev, OR_lg, lg_location from zmap_pub_pan_mark
+
+UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/markers.txt' 
+  DELIMITER "	" select distinct zdb_id, abbrev from public_paneled_markers;
+
+UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/marker_alias.txt' 
+  DELIMITER "	" select distinct a.zdb_id, dalias_alias from public_paneled_markers a, data_alias where a.zdb_id = dalias_data_zdb_id union select b.zdb_id, a.map_name from mapped_marker a ,public_paneled_markers b where a.marker_id = b.zdb_id and a.map_name <> b.abbrev order by 1;
+
+
 
 -- Clean up
 drop table meow_exp1;
