@@ -74,6 +74,16 @@ ERROR -- something bad happened -- no OID passed in!
 <?MIVAR NAME=$abbrev>$4<?/MIVAR>
 <?MIVAR NAME=$comments>$5<?/MIVAR>
 
+<!-- debugging <?MIVAR> name = $name <?/MIVAR>  -->
+
+<?MIBLOCK COND="$(OR,$(EC,$name,NOVALUE),$(=,$MI_ROWCOUNT,0))">
+<form><center><font size=4>
+<?MIVAR> <b>Requested ID not found on ZFIN.<?/MIVAR>
+</form>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(AND,$(NC,$name,NOVALUE),$(>,$MI_ROWCOUNT,0))">
+
 <?MIVAR NAME=$rec_title>$marker_type: $name<?/MIVAR>
 
 <?MIVAR COND="$(EQ,$marker_type,GENE)" NAME=$allele>$6<?/MIVAR>
@@ -119,11 +129,6 @@ if (seq_acc != '') {
 <!-- If updating, only let owner update anything -->
 <?MISQL COND="$(XST,$UPDATE)" SQL="select WebExplode(object,'page_title=Update Gene&permission=owns&rtype=$target_table') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
-<?MIBLOCK COND="$(EC,$name,NOVALUE)">
-<form><center><font size=4>
-<?MIVAR> <b>Requested ID not found on ZFIN.<?/MIVAR>
-</form>
-<?/MIBLOCK>
 
 
 <?MIBLOCK COND="$(NC,$name,NOVALUE)">
@@ -435,6 +440,8 @@ $(SETVAR,$lastitem,$3)
 <?/MIBLOCK> <!-- ends cond oid exists -->
 
 <?/MIBLOCK> <!-- name NC novalue --> 
+
+<?/MIBLOCK> <!-- name NC novalue and romwcount > 0 -->
 
 </HTML>
 
