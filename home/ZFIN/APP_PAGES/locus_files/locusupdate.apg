@@ -21,9 +21,18 @@ print_name -- The human-understandable name (vs. the database column name) of
 <!-- If the attribute is something we can just specify locally, go ahead and throw up the right form to do it. -->
 <?MIBLOCK COND="$(NC,$attr_type,selection)">
 
+<?MIBLOCK COND="$(NC,$attr,lcsali_locus_name_alias)">
 <?MISQL SQL="select $attr,locus_name from locus where zdb_id='$OID';"><?/MISQL>
 <?MIVAR NAME=$current_value>$1<?/MIVAR>
 <?MIVAR NAME=$update_target>$2<?/MIVAR>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(EC,$attr,lcsali_locus_name_alias)">
+<?MISQL SQL="select locus_name from locus where zdb_id='$OID';"><?/MISQL>
+<?MIVAR NAME=$update_target>$1<?/MIVAR>
+<?MIVAR NAME=$current_value><?/MIVAR>
+<?/MIBLOCK>
+
 
 <HTML>
 <?MIVAR>
@@ -34,7 +43,9 @@ print_name -- The human-understandable name (vs. the database column name) of
 <p>
 
 
+
 <FORM ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" METHOD=post ENCTYPE="multipart/form-data">
+
 <?MIVAR>
 <INPUT TYPE=hidden name=MIval Value=aa-do-locusupdate.apg>
 <INPUT TYPE=hidden name=OID Value=$OID>
@@ -65,6 +76,15 @@ print_name -- The human-understandable name (vs. the database column name) of
 $(IF,$(NC,$current_value,NULL),VALUE='$current_value') SIZE=70>
 </TD>
 <?/MIVAR>
+<?MIBLOCK COND="$(EC,$attr,lcsali_locus_name_alias)">
+<p>
+<?MIVAR>
+<TD><b>Abbrev</b>:</TD>
+<TD>
+<INPUT TYPE=text name=abbrev SIZE=10>
+</TD>
+<?/MIVAR>
+<?/MIBLOCK>
 <?/MIBLOCK>
 
 </TR></TABLE>
