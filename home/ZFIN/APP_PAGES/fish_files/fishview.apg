@@ -356,7 +356,7 @@ Datablade documentation.
 	  <br><INPUT TYPE=button value=Update onClick="doit('name','text','Name')">
 	<?/MIVAR> 
 	<?MIVAR>
-	  <B> <FONT SIZE=+1>Name: &nbsp;</FONT> </b>
+	  <b> <FONT SIZE=+1>Name: &nbsp;</FONT> </b>
 	<?/MIVAR>
 
 	<i><font size = +1>
@@ -365,7 +365,7 @@ Datablade documentation.
 	   <b> <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$locus"> $name </A></b>
 	  <?/MIVAR>
 	<?MIELSE>
-	  <?MIVAR> $name <?/MIVAR>
+	  <?MIVAR><b> $name </b><?/MIVAR>
 	<?/MIBLOCK>
 	</font></i>
 	<br>
@@ -376,7 +376,7 @@ Datablade documentation.
 	<?/MIVAR>
  
 	<?MIVAR> 
-	  <b><font size= +1>Abbreviation: &nbsp; <i>$abbrev</i></font></b>
+	  <font size= +1><b>Abbreviation: &nbsp; <i>$abbrev</i></b></font>
 	<?/MIVAR>
 	<br>
 	<?MIBLOCK COND="$(OR,$(EC,$AUTHORIZED,root),$(EC,$AUTHORIZED,fishauth))">
@@ -391,7 +391,9 @@ Datablade documentation.
 
 
       <!------------------- Previous Name ------------------->
+      <!---- previous name, cloned gene and affected gene are only for mutants ---> 
 
+            <?MIBLOCK COND=$(EC,$title,mutant)>
 	      <?MIVAR COND="$(XST,$UPDATE)">
 		<INPUT TYPE=button 
 		       value=Add 
@@ -424,12 +426,12 @@ Datablade documentation.
               	    <?MISQL SQL="select WebExplode(object,'dataId=$daliasId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
 	          <?/MIBLOCK>
 	      <?/MISQL>
-	     
+
 	
 	<!-------------- ends Previous Name -------------------->
 
 
-        <!--  need to get cloned gene name for use with mapping data and for gene correspondence -->
+        <!--  need to get cloned gene name for use with mapping data and for gene correspondence-->
         <?MIBLOCK COND="$(NC,$cloned_gene,)">
  	   <?MISQL SQL="
              select mrkr_name, mrkr_abbrev 
@@ -439,33 +441,34 @@ Datablade documentation.
               <?MIVAR NAME=$gene_name>$1<?/MIVAR>
               <?MIVAR NAME=$gene_abbrev>$2<?/MIVAR>
         <?/MIBLOCK>
-
  
 	<!------------------- Affected Gene ---------------------->
 	    <br>
-	    <B>Affected Gene: &nbsp;</B> 
-	    <?MIVAR COND="$(XST,$UPDATE)">
- 	     <br>Add reference:&nbsp;
-  	      Reference:<input type=text name=attrib_affgene_pubid>
-  	      <input type=button value="Add" onClick=new_attrib_affgene("$locus");><br> 
-  	    <?/MIVAR>
+	      <B>Affected Gene: &nbsp;</B> 
+	      <?MIVAR COND="$(XST,$UPDATE)">
+	       <br>Add reference:&nbsp;
+		Reference:<input type=text name=attrib_affgene_pubid>
+		<input type=button value="Add" onClick=new_attrib_affgene("$locus");><br> 
+	      <?/MIVAR>
 
-	    <?MIBLOCK COND="$(EC,$cloned_gene,)">
-               Not yet established.
-            <?MIELSE>
-	      <?MIVAR>
-		<TABLE width=100% cellpadding=5 border=0 bgcolor="$highlight" cols=2 rows=1>
-		  <TR><TD>
-		  <font color="red"><B>Cloned Gene:</b>  </font>
-		  <b><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$cloned_gene"><i>$gene_name ($gene_abbrev)</i></A></b>  
-		    has been shown to correspond to the <b><i>$name</b></i> locus.
-	            <?MISQL SQL="select WebExplode(object,'dataId=$locus&type=colattrib&info=cloned_gene') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
-		   </TD>
-		   </TR>
-		 </TABLE>
-	       <?/MIVAR>
-             <?/MIBLOCK>
+	      <?MIBLOCK COND="$(EC,$cloned_gene,)">
+		 Not yet established.
+	      <?MIELSE>
+		<?MIVAR>
+		  <TABLE width=100% cellpadding=5 border=0 bgcolor="$highlight" cols=2 rows=1>
+		    <TR><TD>
+		    <font color="red"><B>Cloned Gene:</b>  </font>
+		    <b><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$cloned_gene"><i>$gene_name ($gene_abbrev)</i></A></b>  
+		      has been shown to correspond to the <b><i>$name</b></i> locus.
+		      <?MISQL SQL="select WebExplode(object,'dataId=$locus&type=colattrib&info=cloned_gene') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+		     </TD>
+		     </TR>
+		   </TABLE>
+		 <?/MIVAR>
+	       <?/MIBLOCK>
 	<!---------------- ends Affected Gene ---------------------->
+             <?/MIBLOCK>
+
 
 	<hr width=80%>
 
