@@ -45,7 +45,7 @@ echo "these are the new potential problems for the curators to resolve"
 
 diff previous_potential_problems.unl potential_problems.unl
 
-echo "If any suould be added as manual curation please return a list"
+echo "If any should be added as manual curation please return a list"
 echo "with a 'gene' and a 'genpept' per row.";
 
 # 
