@@ -60,36 +60,7 @@ $(IF,$(>,$(POSITION,$OID,IMAGE),0),
  </SCRIPT>
 </HEAD>
 
-<basefont size=2>
-
 <?MIVAR NAME=$userid>GUEST<?/MIVAR>
-<?MIBLOCK COND="$(>,$(POSITION,$OID,IMAGE),0)">
-    <?MIBLOCK COND="$(NXST,$UPDATE)">
-      <?MISQL SQL="
-	select WebExplode(object, 'ownerColumn=fimg_owner_zdb_id&zdbIdColumn=fimg_zdb_id') 
-	  from webPages 
-	  where ID='aa-secure_navigation.apg';">
-	$1
-      <?/MISQL>
-    <?MIELSE>  <!-- If updating, only let owner update anything -->
-      <?MISQL SQL="
-	select WebExplode(object, 
-			  'rtype=fish_image&ownerColumn=fimg_owner_zdb_id&zdbIdColumn=fimg_zdb_id')
-	  from webPages 
-	  where ID='aa-secure_navigation.apg';">
-	$1
-      <?/MISQL>
-    <?/MIBLOCK>
-   
-<?MIELSE>
-      <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'') from webPages where ID='aa-secure_navigation.apg';">$1
-      <?/MISQL>
-
-      <!-- If updating, only let owner update anything -->
-      <?MISQL COND="$(XST,$UPDATE)" SQL="select WebExplode(object,'permission=owns&rtype=$rtype') from webPages where ID='aa-secure_navigation.apg';">$1
-      <?/MISQL>
-<?/MIBLOCK>
-
 
 <!--------------------------------------------->
 
