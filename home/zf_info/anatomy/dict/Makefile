@@ -10,12 +10,10 @@
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
 # This directory has a logical (but not physical) association with the
-# ZFIN/Workgroup_dirs/AnatDict directory.  That directory is a symbolic
-# link to an FTP directory on Chromix.  Members of the Anatomical
-# Dictionary Workgroup have access to that FTP directory.
+# ZFIN/Workgroup_dirs/AnatDict directory.
 #
-# Some files in this directory were copied from the FTP directory to here
-# and the static web pages were updated to point here, at the time
+# Some files in this directory were copied from the FTP pub/AnatDict directory 
+# to here and the static web pages were updated to point here, at the time
 # the makefile hierarchy was created (late 2000).
 #
 
