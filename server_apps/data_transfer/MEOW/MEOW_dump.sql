@@ -358,7 +358,7 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zdb_history.txt'
 -- generate a file with genes and associated expression patterns
 
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/xpat.txt'
- DELIMITER "	"  select mrkr_zdb_id, xpat_zdb_id from marker, expression_pattern_assay, expression_pattern, marker_relationship where mrkr_zdb_id = mrel_mrkr_1_zdb_id and mrel_mrkr_2_zdb_id = xpat_probe_zdb_id and xpat_assay_name = xpatassay_name;
+ DELIMITER "	"  select xpat_gene_zdb_id, xpat_zdb_id from expression_pattern;
 
 --- generate mapping data for LocusLink
  
