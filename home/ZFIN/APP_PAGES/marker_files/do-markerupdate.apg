@@ -68,7 +68,7 @@ info -- optional value used to pass in additional info
 
   <!-- OK, NOW UPDATE THE  ACTUAL DATA RECORD. -->
 
-  <?MISQL COND="$(AND,$(NC,$attr,mrkrali_marker_name_alias),$(NC,$attr,putgene_comments),
+  <?MISQL COND="$(AND,$(NC,$attr,dalias_alias),$(NC,$attr,putgene_comments),
 		      $(NC,$attr,putgene_putative_gene_name),
 		      $(OR,$(EC,$attr_type,text),
 		           $(EC,$attr_type,textarea)))" SQL="
@@ -76,13 +76,25 @@ info -- optional value used to pass in additional info
       set $attr='$new_value' 
       where zdb_id='$OID';">
   <?/MISQL>
-  <?MISQL COND="$(AND,$(EC,$attr,mrkrali_marker_name_alias),
-		      $(EC,$attr_type,text))" SQL="
-    insert into marker_alias  
-	(mrkrali_marker_zdb_id, mrkrali_marker_name_alias)
-      values ('$OID', '$new_value');">
-  <?/MISQL>
-
+  <?MIBLOCK COND="$(AND,$(EC,$attr,dalias_alias),
+		        $(EC,$attr_type,text))">
+    <?MISQL SQL="
+      execute function get_id('DALIAS');">
+      <?MIVAR NAME=$dalias_zdb_id>$1<?/MIVAR>
+    <?/MISQL>
+    <?MISQL SQL="
+      insert into zdb_active_data
+	  (zactvd_zdb_id)
+        values 
+	  ('$dalias_zdb_id');">
+    <?/MISQL>
+    <?MISQL SQL="
+      insert into data_alias  
+	  (dalias_zdb_id, dalias_data_zdb_id, dalias_alias)
+        values 
+	  ('$dalias_zdb_id', '$OID', '$new_value');">
+    <?/MISQL>
+  <?/MIBLOCK>
   <?MISQL COND="$(OR,$(EC,$attr,putgene_comments),
 		      $(EC,$attr,putgene_putative_gene_name))" SQL="
     update putative_gene  
@@ -166,10 +178,13 @@ info -- optional value used to pass in additional info
 
   <!-- Special case for deleting an alias -->
   <?MIBLOCK COND="$(EC,$attr_type,delete-alias)">
-    <?MISQL COND="$(EC,$attr,mrkrali_marker_name_alias)" SQL="
-      delete from marker_alias 
-        where mrkrali_marker_zdb_id='$OID' 
-         and mrkrali_marker_name_alias='$old_value';">
+    <?MISQL COND="$(EC,$attr,dalias_alias)" SQL="
+      delete from zdb_active_data
+        where zactvd_zdb_id = 
+		( select dalias_zdb_id
+		    from data_alias
+		    where dalias_data_zdb_id = '$OID'
+		      and dalias_alias = '$old_value' ) ;">
     <?/MISQL>
   <?/MIBLOCK>
 
