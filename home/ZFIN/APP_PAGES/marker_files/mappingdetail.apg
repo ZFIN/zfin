@@ -293,9 +293,6 @@ ERROR -- something bad happened -- no OID passed in!
   <!-- wrap Mapping table in mapper form -->
   <!-- form tag brings in extra space line. For display sake, 
      it is put a bit in advance. -->
-  <form NAME=mapper 
-      method=get 
-      action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi">
 
   <!-------------- Name titles --------------------------------------->
  <TR><TD colspan=2>
@@ -469,11 +466,23 @@ ERROR -- something bad happened -- no OID passed in!
 
 <?MIVAR>
 <script>
-function doit_marker(attr,attr_type,print_name,lg) {
+	function new_attrib_delmarker() {
+		var del_marker=document.mpdt_update.attrib_delmarker.value;
+		var pub_id=document.mpdt_update.attrib_delmarker_pubid.value;
+		if ((del_marker != '') && (pub_id != '')) {
+		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&caller=mappingdetail.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+del_marker+'&new_value='+pub_id+'&target_table=$target_table&info=deletionmarker');
+  		}
+	}
+
+	function Delete_attrib(subattr,data_zdbId,source_zdbId,info) {
+		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&caller=mappingdetail.apg&OID=$OID&dataOID='+data_zdbId+'&attr='+subattr+'&attr_type=special-listitem&old_value='+source_zdbId+'&new_value=deleted&target_table=$target_table&info='+info);
+	}
+
+	function doit_marker(attr,attr_type,print_name,lg) {
 	  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishupdate.apg&OID=$detOID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name+'&lg='+lg)
 	}
 
-function Delete_marker(allele,marker_id) {
+	function Delete_marker(allele,marker_id) {
 	  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$detOID&attr='+allele+'&attr_type=marker-delete&old_value='+marker_id+'&new_value=deleted');
 	}
 </script>
@@ -484,6 +493,7 @@ function Delete_marker(allele,marker_id) {
   <?/MIBLOCK>  
   <?MIVAR NAME=$mapped>f<?/MIVAR>
 
+  
   <!-- Now if it's a mutant deletion, also show present/missing markers -->
   <?MIBLOCK COND="$(>,$(POSITION,$detOID,FISH),0)">
 	<?MISQL SQL="select chrom_change from fish_search where fish_id='$detOID';"><?/MISQL>
@@ -495,34 +505,49 @@ function Delete_marker(allele,marker_id) {
 	   <?MIVAR NAME=$last><?/MIVAR>
 	   <?MIVAR name=marker_present>0<?/MIVAR>
 	   <?MIVAR name=marker_missing>0<?/MIVAR>
-	   
-	   <?MIVAR COND="$(XST,$UPDATE)">
-	      <TR><TD colspan=3>
+
+	   <?MIBLOCK COND="$(XST,$UPDATE)">
+	      <TR><TD colspan=3> <?MIVAR>
 	      <TABLE width=100%  bgcolor = "$highlight" cellpadding=2>
+                                 <?/MIVAR>
 	      <TR><TD><b>Deletion Markers: 
 	      <table>
 	      <tr><td>
-            <?/MIVAR>	
+		<?MIVAR COND="$(XST,$UPDATE)">
+		  <form name=mpdt_update>
+    		  <br><b>Add Reference:</b> 
+    		  Symbol:<input type=text name=attrib_delmarker>	
+                  Reference:<input type=text name=attrib_delmarker_pubid>
+    		  <input type=button value="Add" onClick=new_attrib_delmarker();> 
+		  </form>
+  		 <?/MIVAR>
+               </td></tr><tr><td>
+
+            <?/MIBLOCK>	
 
 	   <?MISQL SQL="
-		select b.mrkr_abbrev,a.marker_id,a.present_t,b.mrkr_type
+		select b.mrkr_abbrev,a.marker_id,a.present_t,b.mrkr_type, a.mapdel_zdb_id
 		from mapped_deletion a, marker b 
 		where a.marker_id=b.mrkr_zdb_id 
 		and allele='$abbrev' 
 		union
-		select b.abbrev,a.marker_id,a.present_t,'MUTANT'
+		select b.abbrev,a.marker_id,a.present_t,'MUTANT', a.mapdel_zdb_id
 		from mapped_deletion a, locus b 
 		where a.marker_id=b.zdb_id 
 		and allele='$abbrev' 
 		order by 3,4 ;">
-	
-	    <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(NXST,$UPDATE))">
-	      <TR><TD colspan=3>
+		
+		<?MIVAR NAME=mrkrZdbId>$2<?/MIVAR>
+		<?MIVAR NAME=mapdelZdbId>$5<?/MIVAR>
+	    <?MIBLOCK COND="$(AND,$(=,$MI_CURRENTROW,1),$(NXST,$UPDATE))">
+	      <TR><TD colspan=3><?MIVAR>
 	      <TABLE width=100%  bgcolor = "$highlight" cellpadding=2>
+                                <?/MIVAR>
 	      <TR><TD><b>Deletion Markers: 
 	      <table>
 	      <tr><td>
-            <?/MIVAR>
+ 	
+             <?/MIBLOCK>
 	
 
 	   <?MIBLOCK COND="$(AND,$(NC,$last,$3),$(EC,$3,F))">
@@ -545,10 +570,10 @@ function Delete_marker(allele,marker_id) {
 	     <b>Present:</b>
 	   <?/MIBLOCK>
 	  
-	  $(IF,$(XST,$UPDATE),"<font size=-1><input type=button value=delete onClick=Delete_marker('"$allele"','"$2"')>")
+	  $(IF,$(XST,$UPDATE),"<font size=-1><input type=button value=delete onClick=Delete_marker('"$allele"','"$mrkrZdbId"')>")
 
 	  $(IF, $(AND,$(NXST,$UPDATE),$(NE,$last,)),;)
-	  <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$1</A>
+	  <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrZdbId">$1</A> <?MISQL SQL="select WebExplode(object,'dataId=$mapdelZdbId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
 	  
 	  $(SETVAR,$last,$3)
 	  <?/MISQL>
@@ -575,7 +600,8 @@ function Delete_marker(allele,marker_id) {
 	  </TD></TR>
 	  <?/MIVAR>           
 	<?/MIBLOCK> <!-- ends deficiency -->
-     <?/MIBLOCK>   	
+     <?/MIBLOCK>   
+    	
   <!----------------------------------------------------->
 
 
@@ -844,8 +870,7 @@ function Delete_marker(allele,marker_id) {
     </TD></TR>
      <?MIVAR NAME=$mapped>t<?/MIVAR>	
    <?/MISQL>
- 
- </form> <!-- end form for view maps. -->
+
  </TABLE></TD></TR>
 <?MIBLOCK COND="$(EC,$mapped,t)"> <p><TR><TD> <hr width=80%></TD></TR> 
   <?MIVAR>$(SETVAR,$mapped, f)<?/MIVAR>
