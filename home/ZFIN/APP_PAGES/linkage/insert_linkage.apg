@@ -11,6 +11,7 @@ Possible vars: link_id, comments, lg, private, source , ZDB_ident
   <?MIVAR COND="$(NXST,$comments)" NAME=$comments><?/MIVAR>  
   <?MISQL SQL="execute function get_id('LINK');"><?/MISQL>
   <?MIVAR NAME=$link_id>$1<?/MIVAR>
+  <?MIVAR NAME=$comments DELIMIT="'" REPLACE="''">$comments<?/MIVAR>
   <?MISQL SQL="insert into linkage (lnkg_zdb_id, lnkg_or_lg, lnkg_comments, lnkg_private, lnkg_submitter_zdb_id, lnkg_source_zdb_id) values ('$link_id','$lg','$comments','$private','$ZDB_ident','$source');">
   <?/MISQL>
 
