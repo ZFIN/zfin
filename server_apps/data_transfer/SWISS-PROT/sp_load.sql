@@ -269,24 +269,14 @@ begin work;
 	update pre_marker_go_evidence set mrkrgoev_zdb_id = get_id ("MRKRGOEV");
 	update pre_marker_go_evidence set mrkrgoev_evidence_code = "IEA";
 
---!echo 'these 3 have term name "* unknown", we donot want to include'
+--!echo 'these 3 have term name "* unknown", we do not want to include'
         delete from pre_marker_go_evidence where go_zdb_id in 
-		(select goterm_zdb_id from go_term where goterm_name like "% unknown");
+		(select goterm_zdb_id 
+		   from go_term 
+		  where goterm_go_id in ("0005554", "0000004", "0008372"));
 
---!echo 'if a known go term is assigned to the same marker that has an unknown go term, delete the unknown one'
-	delete from zdb_active_data where zactvd_zdb_id in 
-				      (	select m.mrkrgoev_zdb_id 
-					  from marker_go_term_evidence m, go_term u,
-						pre_marker_go_evidence p, go_term g
-					 where m.mrkrgoev_mrkr_zdb_id = p.mrkr_zdb_id
-					   and m.mrkrgoev_go_term_zdb_id = u.goterm_zdb_id	
-					   and p.go_zdb_id  = g.goterm_zdb_id
-					   and u.goterm_ontology = g.goterm_ontology
-					   and u.goterm_go_id in ("0005554", "0000004", "0008372")
-					   and u.goterm_go_id <> g.goterm_go_id  );
-
-
-
+-- if a known go term is assigned to the same marker that has an unknown go term, delete the unknown one
+-- db trigger is added for this purpose. 
 
 --!echo 'Insert MRKRGOEV into zdb_active_data'
 	insert into zdb_active_data

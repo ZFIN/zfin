@@ -113,31 +113,8 @@ PREFIX: mkrgoupdate_
      		   values ('$ZDB_ident', '$ZDB_name','$OID', 'go annotation', '$comments', current);">
    <?/MISQL>
 
-   <?MICOMMENT>when a new known annotation is made, delete the exist unknown term in the same ontology on the same marker if any<?/MICOMMENT>
-   <?MIBLOCK COND="$(AND,$(NC,$go_num,0005554),$(NC,$go_num,0000004),$(NC,$go_num,0008372))"> 
-  
-     <?MISQL COND="$(EC,$go_ontology,Molecular Function)" SQL="
-	  delete from zdb_active_data where zactvd_zdb_id = (select mrkrgoev_zdb_id
-							      from marker_go_term_evidence, go_term
-							     where mrkrgoev_mrkr_zdb_id = '$OID'
-							       and mrkrgoev_go_term_zdb_id = goterm_zdb_id
-							       and goterm_go_id = '0005554') ">
-     <?/MISQL>
-     <?MISQL COND="$(EC,$go_ontology,Biological Process)" SQL="
-	  delete from zdb_active_data where zactvd_zdb_id = (select mrkrgoev_zdb_id
-							      from marker_go_term_evidence, go_term
-							     where mrkrgoev_mrkr_zdb_id = '$OID'
-							       and mrkrgoev_go_term_zdb_id = goterm_zdb_id
-							       and goterm_go_id = '0000004') ">
-     <?/MISQL>
-     <?MISQL COND="$(EC,$go_ontology,Cellular Component)" SQL="
-	  delete from zdb_active_data where zactvd_zdb_id = (select mrkrgoev_zdb_id
-							      from marker_go_term_evidence, go_term
-							     where mrkrgoev_mrkr_zdb_id = '$OID'
-							       and mrkrgoev_go_term_zdb_id = goterm_zdb_id
-							       and goterm_go_id = '0008372') ">
-     <?/MISQL>
-   <?/MIBLOCK>
+   <?MICOMMENT>database trigger will check and clean unknown terms if any<?/MICOMMENT>
+
 
 <?MISQL SQL="execute function get_id('MRKRGOEV');"><?/MISQL>
    <?MIVAR NAME=$evnew_id>$1<?/MIVAR>
