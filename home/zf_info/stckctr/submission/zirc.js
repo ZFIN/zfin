@@ -21,10 +21,10 @@ function getCookie(name) {
 	var allcookies = document.cookie;
 	if (allcookies == "") return false;
 	var start = allcookies.indexOf(name + '=');
-		if (start == -1) return false;
+	if (start == -1) return false;
 	start += name.length + 1;
 	var end = allcookies.indexOf(';', start);
-		if (end == -1) end = allcookies.length;
+	if (end == -1) end = allcookies.length;
 	return allcookies.substring(start, end); 
 }
 
@@ -92,12 +92,12 @@ function emptyFormCheck() {
 
 function saveValues(cookieName, days, nextPage) {
 //checking for permission to use cookies...
- 	if (cookieName.indexOf("Profile") != -1) {
-  		var bakeOK = cookiesOK(cookieName);
- 		} 
-	else {
+// 	if (cookieName.indexOf("Profile") != -1) {
+//  		var bakeOK = cookiesOK(cookieName);
+// 		} 
+//	else {
   		var bakeOK = "yes";
-		}
+//		}
 //checking for data...
 var formCheck = emptyFormCheck();
  if (formCheck != true) {
