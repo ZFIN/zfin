@@ -29,7 +29,7 @@
 --	zfin id, symbol, panel symbol, LG, loc, metric
 --
 -- Sequence data - separate files for Genbank, RefSeq, LocusLink, Unigene, 
--- SWISS-PROT, Interpro
+-- SWISS-PROT, Interpro, and GenPept
 --	zfin id, symbol, accession number
 --	
 -- Alleles
@@ -138,7 +138,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpat.txt'
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/mappings.txt'
  DELIMITER "	" select marker_id, mrkr_abbrev, p.abbrev,or_lg, lg_location, p.metric from mapped_marker, panels p, marker m where refcross_id = p.zdb_id and marker_id = mrkr_zdb_id order by 1;
 
--- Generate sequence data files for Genbank, RefSeq, LocusLink, UniGene, SWISS-PROT, Interpro
+-- Generate sequence data files for Genbank, RefSeq, LocusLink, UniGene, SWISS-PROT, Interpro and GenPept
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genbank.txt'
  DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev, acc_num from marker, db_link
@@ -175,6 +175,13 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/pfam.txt'
  DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,acc_num from marker, db_link
 	where mrkr_zdb_id = linked_recid
 	  and db_name = 'Pfam' order by 1;
+
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genpept.txt'
+ DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,acc_num from marker, db_link
+	where mrkr_zdb_id = linked_recid
+	  and db_name = 'GenPept' order by 1;
+
+
 
 -- Generate alleles file
 
