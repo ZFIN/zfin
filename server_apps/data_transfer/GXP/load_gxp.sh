@@ -75,11 +75,13 @@ echo "== Diff table counts before(<) and after(>) the load =="
 diff preload_quantity.txt postload_quantity.txt
 echo "======================================================="
 
+$INFORMIXDIR/bin/dbaccess $dbname getStat4Load.sql >& statistics.txt 
+
 echo "Ready to drop the temporary tables? (y or n)"
 set goahead = $< 
 if ($goahead == 'y') then
     $INFORMIXDIR/bin/dbaccess $dbname post_gxp_load.sql
-    echo "Please submit fr_gene.txt to curator." 
+    echo "Please submit fr_gene.txt and statistics.txt to curator." 
 else 
     echo "Abort with the 15 temporary tables in db"
 endif
