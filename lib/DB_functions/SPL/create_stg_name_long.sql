@@ -9,7 +9,8 @@ create_stg_name_long(
 
   -- Creates the "long name" for a stage.  The long name includes
   -- the name of the stage, plus the hours it spans, and the contents 
-  -- of the stg_other_features column.
+  -- of the stg_other_features column. The Unknown stage has the long 
+  -- name the same as the name.
   -- In addition, any times greater than 168 hours (7 days) are displayed
   -- as days, rather than as hours.
   --
@@ -27,12 +28,15 @@ create_stg_name_long(
   --   Large-stage:Sub-stage (60.00h - 72.00h, 3.0/4.0mm NL/SL)
   --   Larval:Middle to late (168.00h - 90d)
   --   Adult (90 d to 730 d)
-  --
+  --   Unknown
+  -- 
 
   define stgNameLong      varchar(130);
 
   if (stgName is NULL) then
     let stgNameLong = "UNKNOWN";
+  elif (stgName = "Unknown") then
+    let stgNameLong = "Unknown";
   else
     -- get stage name 
     let stgNameLong = stgName || " " ||
