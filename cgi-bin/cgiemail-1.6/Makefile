@@ -29,53 +29,22 @@ SHELL=/bin/sh
 RELEASE=1.6
 CC=gcc
 
-PROG=cgiemail cgiecho cgifile cgicso
+PROG=cgiemail
 
-DISTFILES=README ChangeLog *.[ch] configure *.in testce.txt
+DISTFILES=README 
 DISTBASE=cgiemail-$(RELEASE)
-DISTTAR=$(DISTBASE).tar
 DISTDIR=/usr/tmp
-DISTHOME=/mit/wwwdev/cgiemail
 
-ECHO_OBJ=cgilib.o cgiecho.o
 EMAIL_OBJ=cgilib.o cgiemail.o
-FILE_OBJ=cgilib.o cgifile.o
-CSO_OBJ=cgilib.o cgilibcso.o csoget.o cgicso.o
-CSODIR=/afs/net.mit.edu/admin/www/root
-CSODEFS=-DCSOHEADER=\"$(CSODIR)/csoheader\" -DCSOFOOTER=\"$(CSODIR)/csofooter\"
-# For CodeCenter
-CSODEFS2=-DCSOHEADER="$(CSODIR)/csoheader" -DCSOFOOTER="$(CSODIR)/csofooter"
+
 LIBSRC=cgilib.c cgilibcso.c
 
 all: $(PROG)
 	cp -p cgiemail $(TARGETDIR)
 
-cgiecho: $(ECHO_OBJ)
-	$(CC) $(LDFLAGS) -o $@ $(ECHO_OBJ)
-
 cgiemail: $(EMAIL_OBJ)
 	$(CC) $(LDFLAGS) -o $@ $(EMAIL_OBJ)
 
-cgifile: $(FILE_OBJ)
-	$(CC) $(LDFLAGS) -o $@ $(FILE_OBJ)
-
-cgilibcso.o: cgilibcso.c Makefile
-	$(CC) $(CFLAGS) $(CSODEFS) -c $*.c
-
-cgicso: $(CSO_OBJ)
-	$(CC) $(LDFLAGS) -o $@ $(CSO_OBJ) -lsocket -lnsl 
-
-check:
-	@echo No tests are supplied.
-
-
-
-register: all
-	(echo To: cgiemail@mit.edu; echo Subject: built cgiemail on `uname`; \
-	 echo ''; uname -a) | /usr/lib/sendmail -t
-
-distclean: clean
-	rm -f Makefile config.h config.status config.cache config.log
 
 dist:
 	rm -rf $(DISTDIR)/$(DISTBASE)
@@ -89,30 +58,6 @@ dist:
 cgi-ptypes.h: $(LIBSRC)
 	mkptypes $(LIBSRC) > $@
 
-# Autoconf rules
-
-Makefile config.h: Makefile.in config.status
-	./config.status
-
-config.status: configure
-	./config.status --recheck
-
-configure: configure.in
-	autoconf
-
-# CodeCenter rules
-
-cgiemail_src:
-	#load cgilib.c cgiemail.c
-	#setenv QUERY_STRING email=brlewis@mit.edu\&required-subject=subj\&body=test\&
-	#setenv REQUEST_METHOD GET
-	#setenv PATH_TRANSLATED /mit/brlewis/www/comments.txt
-
-cgicso_src:
-	#load $(CSODEFS2) cgilib.c cgilibcso.c csoget.c cgicso.c -lsocket -lnsl 
-	#setenv QUERY_STRING query=logan
-	#setenv REQUEST_METHOD GET
-	#setenv SCRIPT_NAME /cgi-bin/cgicso
 
 version.ht: all
 	sysname=`fs sysname | awk -F\' '{ print $$2 }'`; \
