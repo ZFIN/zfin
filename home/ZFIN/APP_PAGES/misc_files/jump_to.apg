@@ -86,7 +86,7 @@ top.name="ZFIN";
 
 <!-- now if a start page is passed in, set second frame to it! -->
 <?MIBLOCK COND="$(XST,$record)")>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,LAB),0)">MIval=aa-labview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-LAB-),0)">MIval=aa-labview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,PERS),0)">MIval=aa-persview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,PUB),0)">MIval=aa-pubview2.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,FISH),0)">MIval=aa-fishview.apg&OID=$record<?/MIVAR>
