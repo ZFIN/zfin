@@ -25,7 +25,7 @@ TARGETDIR = $(TARGETROOT)/lib/DB_functions/SPL
 
 FISH_FUNCS  = get_fish_full_name.sql
 IMAGE_FUNCS = get_image_stats.sql
-REGEN_FUNCS = regen_genomics.sql regen_fishsearch.sql
+REGEN_FUNCS = regen_anatomy.sql regen_fishsearch.sql regen_genomics.sql
 
 # Some of the stage functions call other stage functions.  Therefore
 # the order they are listed matters.
@@ -40,11 +40,14 @@ STAGE_FUNCS = \
 	anatitem_overlaps_stg_window.sql \
 	stg_windows_overlap.sql
 
+GENERICS = $(REGEN_FUNCS)
+STATICS  = $(FISH_FUNCS) $(IMAGE_FUNCS) $(STAGE_FUNCS)
 
-STATICS  = $(FISH_FUNCS) $(IMAGE_FUNCS) $(REGEN_FUNCS) $(STAGE_FUNCS)
-
+SPECIFICTARGETS = $(foreach SPEC, $(GENERICS), $(TARGETDIR)/$(SPEC))
 STATICTARGETS = $(foreach STAT, $(STATICS), $(TARGETDIR)/$(STAT))
-TARGETS =  $(STATICTARGETS) 
+
+
+TARGETS =  $(SPECIFICTARGETS) $(STATICTARGETS) 
 
 
 # ---------------  Production Rules  ------------------------------------
@@ -61,6 +64,10 @@ $(TARGETDIR) :
 # SPL procedures need to be loaded into the DB.
 # This makefile assumes that code to delete the old version of the function
 # is in the file.
+
+$(SPECIFICTARGETS) : $(TARGETDIR)/% : %
+	$(MAKESPECIFIC) $< $(TRANSLATETABLE) $@
+	$(DBACCESS) $(DBNAME) $@
 
 $(STATICTARGETS) : $(TARGETDIR)/% : %
 	$(TARGET_CP) $^ $@
