@@ -38,6 +38,7 @@ pub in question with any new values passed in.
 <?MISQL SQL="execute function get_id('PUB');"><?/MISQL>
 <?MIVAR NAME=$new>true<?/MIVAR>
 <?MIVAR NAME=$OID>$1<?/MIVAR>
+<?MISQL SQL="insert into zdb_active_source (zactvs_zdb_id) values ('$OID');"><?/MISQL>
 <?MISQL SQL="insert into  publication (zdb_id,title,authors,medline_authors,source,pub_date,owner,entry_time) values ('$OID','temp','temp','Non-Medline entry','temp','01/01/1900'::date,'root',current);"><?/MISQL>
 <?/MIBLOCK>
 
