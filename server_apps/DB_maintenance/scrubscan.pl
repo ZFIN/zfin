@@ -46,6 +46,7 @@ my $tmpDir = "/tmp/scrubscan.$PROCESS_ID";
 my $tablesFile  = "$tmpDir/tables";
 my $columnsBase = "$tmpDir/columns";
 my $resultsBase = "$tmpDir/results";
+my $dbaccess = "<!--|INFORMIX_DIR|-->/bin/dbaccess";
 
 my $dirPerms = oct(770);
 mkdir($tmpDir, $dirPerms);
@@ -89,7 +90,7 @@ my $sql = "select tabname "
         . "    and tabname not like \"sysbld%\" "
         . "  order by tabname;";
 
-system("echo '$sql' | dbaccess $database - > $tablesFile 2>/dev/null");
+system("echo '$sql' | $dbaccess $database - > $tablesFile 2>/dev/null");
 
 open(TABLESFILE, $tablesFile) 
     or die "Unable to open $tablesFile";
@@ -109,7 +110,7 @@ while (my $line = <TABLESFILE>) {
 	    . "   and st.tabid = sc.tabid "
 	    . "   and sc.coltype in (0, 13)";
 	my $columnsFile = "$columnsBase.$tableName";
-	system("echo '$sql' | dbaccess $database - > $columnsFile 2>/dev/null");
+	system("echo '$sql' | $dbaccess $database - > $columnsFile 2>/dev/null");
 
 	# open columns file and read in character columns.
 	open(COLUMNSFILE, $columnsFile) 
@@ -129,7 +130,7 @@ while (my $line = <TABLESFILE>) {
 			    $sql = "select $colName from $tableName where $condition";
 			    my $resultsFile = "$resultsBase.$tableName";
 			    my $msgFile = "$resultsBase.$tableName.messages";
-			    system("echo '$sql' | dbaccess $database - > $resultsFile 2>$msgFile ");
+			    system("echo '$sql' | $dbaccess $database - > $resultsFile 2>$msgFile ");
 			    # open message file.  We care about 2 things:
 			    #  The number of rows selected, and
 			    #  error messages.
