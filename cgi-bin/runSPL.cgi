@@ -17,10 +17,10 @@ $ENV{"INFORMIXDIR"}      = "<!--|INFORMIX_DIR|-->";
 $ENV{"INFORMIXSQLHOSTS"} = "$ENV{INFORMIXDIR}/etc/<!--|SQLHOSTS_FILE|-->";
 $ENV{"ONCONFIG"}         = "<!--|ONCONFIG_FILE|-->";
 $ENV{"INFORMIXSERVER"}   = "<!--|INFORMIX_SERVER|-->";
-my stored_procdure = $q->param('stored_procedure');
+my $stored_procedure = $q->param('stored_procedure');
 my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->', '', '', {AutoCommit => 1, RaiseError => 1})
   || die "Failed while connecting to <!--|DB_NAME|-->  \n $DBI::errstr \n";
-my $sth = $dbh->prepare("execute function $stored_procedure()");
+my $sth = $dbh->prepare("execute function ". $stored_procedure ."();");
 my $rc = $sth->execute();
 my @row = $sth->fetchrow;
 print $q->header . "\n";
