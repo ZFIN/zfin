@@ -1,3 +1,5 @@
+<html><head></head><body><pre>
+
 Data exchange files from ZFIN to Sanger.
 These files are rebuild each weekend.
 
@@ -21,6 +23,15 @@ currently there are only two expression pattern sources,
 one sends EST named CBxxx  (Christine & Benard Thiesse)
 the other EST named IBDxxx (Igor B. Dawid)
 this condition is not expected to hold.
+
+###############################################################################
+http://zfin.org/data_transfer/Sanger/VegaGeneSeq.txt 
+
+tab separated file containing:
+        zfin gene id          
+        zfin gene symbol
+        Genbank accession          
+
 ###############################################################################
 http://zfin.org/data_transfer/Sanger/FPC_mapping.unl
 
@@ -38,3 +49,18 @@ pipe terminated file containing:
 	sanger marker id
 	zfin id
 	zfin name
+
+####################################################################
+NOTE: not automaticaly updated
+ 
+http://zfin.org/data_transfer/Sanger/zdb-primer_set-panel.unl
+
+pipe terminated file containing:
+	zfin id
+	5' primer
+	3' primer
+	panel name
+
+  
+
+</pre></body></html>
