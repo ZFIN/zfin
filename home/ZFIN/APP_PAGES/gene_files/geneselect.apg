@@ -22,7 +22,14 @@
 <TABLE width=100%>
 <TR>
 
-<TD><font size=-1><b>NAME contains:</b> <input type=text name=name size=10 ></font></TD>
+<TD><font size=2>
+<b>
+<SELECT name=searchtype>
+<option value=begins>Name begins with
+<option SELECTED value=contains>Name contains
+</select>:</b> <input type=text name=name size=10 >
+</font></TD>
+
 
 <TD align=right><font size=-1>
 <b>Mapping panel:</b> 
