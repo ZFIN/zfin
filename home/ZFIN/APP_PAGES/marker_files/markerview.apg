@@ -606,11 +606,13 @@ Accession:<input type=text size=15 name=seq_acc>
 <?MIELSE COND="$(>, $MI_ROWCOUNT,0)">
 
   <?MIVAR NAME=link><?/MIVAR>
-  <?MIVAR NAME=acc><?/MIVAR>
-  <?MIBLOCK INDEX=$link FOREACH=$gblinks INDEX=$acc FOREACH=$gbaccs>
+  <?MIVAR NAME=n>1<?/MIVAR>
+  <?MIBLOCK INDEX=$link FOREACH=$gblinks>
 	<li><?MIVAR>
 	$(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$acc"')>")
-	<A HREF="$link">Genbank:$acc</A><?/MIVAR>
+	<A HREF="$link">Genbank:$gbaccs[$n]</A>
+        $(SETVAR,$n,$(+,$n,1))
+        <?/MIVAR>
    <?/MIBLOCK>
 
 <?MIELSE>
