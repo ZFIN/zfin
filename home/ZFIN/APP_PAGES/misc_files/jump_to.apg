@@ -88,6 +88,7 @@ top.name="ZFIN";
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,SSR),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,LOCUS),0)">MIval=aa-locusview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,REFCROSS),0)">MIval=aa-crossview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,IMAGE),0)">MIval=aa-imageview.apg&OID=$record<?/MIVAR> 
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOGENE),0)">MIval=aa-startframes.apg&selector=aa-geneselect.apg&select_from=GENE&frame_size=130<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOLAB),0)">MIval=aa-startframes.apg&selector=aa-labselect.apg&select_from=LAB<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOPERSON),0)">MIval=aa-startframes.apg&selector=aa-quickfindpers.apg&select_from=PERSON&frame_size=75<?/MIVAR>
