@@ -42,8 +42,8 @@ create function populate_anat_display_stage_children(parent_id varchar(50),
   -- Called by populate_anat_display_stage procedure.
 
   define child_indent int;
-  define child_id varchar(50);
-  define anatomy_order varchar(100);
+  define child_id like anatomy_item.anatitem_zdb_id;
+  define anatomy_order like anatomy_item.anatitem_name_order;
   define distance int;
 
   -- insert record into anatomy_display from passed in values
@@ -125,8 +125,9 @@ create procedure populate_anat_display_stage(stage_id varchar(50))
   define seqNum int;
   define indent int;
   define distance int;
-  define hierCode, prevCode char(2);
-  define anatomyId, anatomy_name, lowercase_anatitem_name varchar(50);
+  define hierCode, prevCode like anatomy_hierarchy.anathier_code;
+  define anatomyId like anatomy_item.anatitem_zdb_id;
+  define anatomy_name, lowercase_anatitem_name like anatomy_item.anatitem_name;
   define temp int;
 
   -- Start the seq_num at zero and indent at one.
@@ -303,11 +304,9 @@ create dba function "informix".regen_anatomy()
       begin
 
 	-- Something terrible happened while creating the new tables
-	-- Get rid of them, and leave the original tables around
+	-- Get out, and leave the original tables around
 
-	on exception in (-206, -255, -668)
-          --  206: OK to get "Table not found" here, since we might
-          --       not have created all tables at the time of the exception
+	on exception in (-255, -668)
           --  255: OK to get a "Not in transaction" here, since
           --       we might not be in a transaction when the rollback work 
           --       below is performed.
@@ -374,39 +373,6 @@ create dba function "informix".regen_anatomy()
       set pdqpriority high;
 
       -- ======  CREATE TABLES THAT ONLY EXIST IN THIS FUNCTION  ======
-
-      -- ---- NON_PARENT_STAGE ----
-
-      if (exists (select *
-	           from systables
-		   where tabname = "non_parent_stage")) then
-	drop table non_parent_stage;
-      end if
-
-      create table non_parent_stage
-	(
-	  zdb_id	varchar(50),
-	  start_hour	decimal(7,2) 
-	    not null
-	      constraint non_parent_stage_start_hour_not_null,
-	  end_hour	decimal(7,2)
-	    not null
-	      constraint non_parent_stage_end_hour_not_null
-	)
-	in tbldbs3
-	extent size 8 next size 8
-	lock mode page;
-
-	-- primary key
-
-	create unique index non_parent_stage_primary_key_index
-	  on non_parent_stage (zdb_id)
-	  in idxdbs3;
-	alter table non_parent_stage add constraint
-	  primary key (zdb_id)
-	  constraint non_parent_stage_primary_key;
-
-
 
       -- ---- STAGE_ITEMS_CONTAINED ----
 
@@ -659,17 +625,7 @@ create dba function "informix".regen_anatomy()
     end
 
 
-    --reduce query comparisons by using a table with only non-parent stages.
-    insert into non_parent_stage
-      select s.stg_zdb_id, s.stg_hours_start, s.stg_hours_end
-	from stage s
-	where not exists 
-	      (
-		select *
-		  from stage_contains
-		  where s.stg_zdb_id = stgcon_container_zdb_id
-	      );
-
+{
     create index non_parent_stage_start_hour_index 
       on non_parent_stage(start_hour)
 	in idxdbs3;
@@ -678,6 +634,7 @@ create dba function "informix".regen_anatomy()
 	in idxdbs3;
 	
     update statistics high for table non_parent_stage; 	
+}
 
     begin
       -- ----------------------------------------------------------------------------
@@ -687,33 +644,31 @@ create dba function "informix".regen_anatomy()
       -- For each anatomy_item_zdb_id, find all stages the item occurs in,
       -- then insert the item and stage zdb_id's into all_anatomy stage.
 
-      define stage_id varchar(50);
-      define item_id varchar(50);
-      define item_start_stg varchar(50);
-      define item_end_stg varchar(50);
-      define start_hour decimal(7,2);
-      define end_hour decimal(7,2);
+      define stage_id like stage.stg_zdb_id;
+      define item_id like anatomy_item.anatitem_zdb_id;
+      define item_start_stg like stage.stg_zdb_id;
+      define item_end_stg like stage.stg_zdb_id;
 
       --for each anatitem find all stages it is contained in
       insert into all_anatomy_stage_new
-    	select anatitem_zdb_id, s1.zdb_id
-	  from non_parent_stage s1, anatomy_item a1
-	  where anatitem_name != 'structures'
+    	select anatitem_zdb_id, s1.stg_zdb_id
+	  from stage s1, anatomy_item a1
+	  where anatitem_name_lower not in ('structures', 'not specified')
 	    and exists 
 		(
 		  select *
-		    from non_parent_stage s2, non_parent_stage s3
-		    where a1.anatitem_start_stg_zdb_id = s2.zdb_id
-		      and a1.anatitem_end_stg_zdb_id = s3.zdb_id             
+		    from stage s2, stage s3
+		    where a1.anatitem_start_stg_zdb_id = s2.stg_zdb_id
+		      and a1.anatitem_end_stg_zdb_id = s3.stg_zdb_id             
 		      and (
-			      (    s1.start_hour >= s2.start_hour
-			       and s1.start_hour < s3.end_hour)
+			      (    s1.stg_hours_start >= s2.stg_hours_start
+			       and s1.stg_hours_start < s3.stg_hours_end)
 			   or
-			      (    s1.end_hour > s2.start_hour
-			       and s1.end_hour <= s3.end_hour)
+			      (    s1.stg_hours_end > s2.stg_hours_start
+			       and s1.stg_hours_end <= s3.stg_hours_end)
 			   or      
-			      (    s1.start_hour <= s2.start_hour
-			       and s1.end_hour >= s3.end_hour)
+			      (    s1.stg_hours_start <= s2.stg_hours_start
+			       and s1.stg_hours_end >= s3.stg_hours_end)
 			 )           
 		);
 		
@@ -732,12 +687,12 @@ create dba function "informix".regen_anatomy()
       -- Anatomy_display has variables that are stage based, so use each
       -- stage_id to insert associated anatomy_items. 
 
-      define stage_ID varchar(50);
+      define stage_ID like stage.stg_zdb_id;
 
       foreach
-	select s1.zdb_id 
+	select s1.stg_zdb_id 
 	  into stage_ID 
-	  from non_parent_stage s1
+	  from stage s1
 
 	execute procedure populate_anat_display_stage(stage_ID);
 
@@ -762,8 +717,8 @@ create dba function "informix".regen_anatomy()
 
     begin
 
-      define anatid varchar(50);
-      define stgid varchar(50);
+      define anatid like anatomy_item.anatitem_zdb_id;
+      define stgid like stage.stg_zdb_id;
       define nSynonyms int;
       define nGenesForThisItem int;
       define nGenesForChildItems int;
@@ -917,7 +872,6 @@ create dba function "informix".regen_anatomy()
 	      -- ignore any table that doesn't already exist
       end exception with resume;
 
-      drop table non_parent_stage;
       drop table stage_items_contained;
       drop table stage_item_child_list;
 
