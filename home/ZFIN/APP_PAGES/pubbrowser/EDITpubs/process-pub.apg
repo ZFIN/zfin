@@ -16,7 +16,7 @@ pub in question with any new values passed in.
 
 <?MIBLOCK COND="$(NXST,$link_authors)">
 
-  <?MIBLOCK COND="$(OR,$(NXST,$q_title),$(NXST,$q_authors),$(NXST,$q_pub_date),$(NXST,$q_source),$(NXST,$q_num_auths))"
+  <?MIBLOCK COND="$(OR,$(NXST,$q_title),$(NXST,$q_authors),$(NXST,$q_pub_date),$(NXST,$q_source),$(NXST,$q_num_auths))">
     <center>
     <big> Insufficient information: Every publication is <b>REQUIRED</b> to have at least a title,authors,date, and source specified to make an entry</big>. Please go back and try again.
     </center>
@@ -34,7 +34,6 @@ pub in question with any new values passed in.
 
     <?MIVAR COND="$(XST,$q_keywords)" NAME=$q_keywords DELIMIT="'" REPLACE="''">$q_keywords<?/MIVAR>
     <?MIVAR COND="$(XST,$q_abstract)" NAME=$q_abstract DELIMIT="'" REPLACE="''">$q_abstract<?/MIVAR>
-    <?MIVAR COND="$(XST,$q_news_and_views)" NAME=$q_news_and_views DELIMIT="'" REPLACE="''">$q_news_and_views<?/MIVAR>
     <?MIVAR COND="$(XST,$q_errata_and_notes)" NAME=$q_errata_and_notes DELIMIT="'" REPLACE="''">$q_errata_and_notes<?/MIVAR>
 
 
@@ -55,7 +54,6 @@ pub in question with any new values passed in.
     <?MIVAR COND=$(XST,$q_keywords) NAME=$setvalues>$setvalues,keywords='$q_keywords'<?/MIVAR>
     <?MIVAR COND=$(XST,$q_abstract) NAME=$setvalues>$setvalues,abstract='$q_abstract'<?/MIVAR>
     <?MIVAR COND=$(XST,$q_accession_no) NAME=$setvalues>$setvalues,accession_no='$q_accession_no'<?/MIVAR>
-    <?MIVAR COND=$(XST,$q_news_and_views) NAME=$setvalues>$setvalues,news_and_views='$q_news_and_views'<?/MIVAR>
     <?MIVAR COND=$(XST,$q_errata_and_notes) NAME=$setvalues>$setvalues,errata_and_notes='$q_errata_and_notes'<?/MIVAR>
 
     <!-- OKAY, now just do the update! -->

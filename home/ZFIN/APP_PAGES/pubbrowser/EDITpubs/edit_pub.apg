@@ -18,7 +18,9 @@ Variables expected:  OID (optional) -- the OID of a publication to edit.
 
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
-<!-- FIRST fill variables, depending on whether you are doing EDIT or NEW -->
+  <!-- FIRST fill variables, depending on whether you are doing EDIT or NEW -->
+
+  <?MIVAR NAME=$MI_NULL><?/MIVAR>
 
   <?MIBLOCK COND="$(XST,$OID)">
     <TITLE>ZFIN Edit Publication</TITLE>
@@ -28,19 +30,23 @@ Variables expected:  OID (optional) -- the OID of a publication to edit.
     <p>
     <b>Make desired changes to the publication, then click on the "SUBMIT" button. Or you may click "CANCEL" to abort the update.</b>
 
-    <?MISQL SQL="select authors,pub_date,title,source,keywords,abstract,news_and_views,errata_and_notes,accession_no,num_auths,status,jtype from publication where zdb_id='$OID';"><?/MISQL>
+    <?MISQL SQL="
+      select authors,pub_date,title,source,keywords,abstract,errata_and_notes,
+	     accession_no,num_auths,status,jtype
+	from publication 
+	where zdb_id='$OID';">
+    <?/MISQL>
     <?MIVAR NAME=$q_authors>$1<?/MIVAR>
     <?MIVAR NAME=$q_pub_date>$2<?/MIVAR>
     <?MIVAR NAME=$q_title>$3<?/MIVAR>
     <?MIVAR NAME=$q_source>$4<?/MIVAR>
     <?MIVAR NAME=$q_keywords>$5<?/MIVAR>
     <?MIVAR NAME=$q_abstract>$6<?/MIVAR>
-    <?MIVAR NAME=$q_news_and_views>$7<?/MIVAR>
-    <?MIVAR NAME=$q_errata_and_notes>$8<?/MIVAR>
-    <?MIVAR NAME=$q_accession_no>$9<?/MIVAR>
-    <?MIVAR NAME=$q_num_auths>$10<?/MIVAR>
-    <?MIVAR NAME=$q_status>$11<?/MIVAR>
-    <?MIVAR NAME=$q_jtype>$12<?/MIVAR>
+    <?MIVAR NAME=$q_errata_and_notes>$7<?/MIVAR>
+    <?MIVAR NAME=$q_accession_no>$8<?/MIVAR>
+    <?MIVAR NAME=$q_num_auths>$9<?/MIVAR>
+    <?MIVAR NAME=$q_status>$10<?/MIVAR>
+    <?MIVAR NAME=$q_jtype>$11<?/MIVAR>
   <?/MIBLOCK>
 
   <?MIBLOCK COND="$(NXST,$OID)">
@@ -58,7 +64,6 @@ Variables expected:  OID (optional) -- the OID of a publication to edit.
     <?MIVAR NAME=$q_source><?/MIVAR>
     <?MIVAR NAME=$q_keywords><?/MIVAR>
     <?MIVAR NAME=$q_abstract><?/MIVAR>
-    <?MIVAR NAME=$q_news_and_views><?/MIVAR>
     <?MIVAR NAME=$q_errata_and_notes><?/MIVAR>
     <?MIVAR NAME=$q_accession_no><?/MIVAR>
     <?MIVAR NAME=$q_num_auths><?/MIVAR>
@@ -96,7 +101,10 @@ Variables expected:  OID (optional) -- the OID of a publication to edit.
     <b>TITLE:</b><br>
     <TEXTAREA rows=4 cols=70 name="q_title" wrap=virtual>$q_title</TEXTAREA>
     <p>
-    <b>Medline ID:</B>  <input type=text name="q_accession_no" $(IF,$(NC,$q_accession_no,NULL),"value="$q_accession_no) >
+    <b>Medline ID:</B>
+    <br>Enter "none" if this publication does not exist in Medline.  
+    Leave it blank if you don't know.
+    <input type=text name="q_accession_no" $(IF,$(NC,$q_accession_no,NULL),"value="$q_accession_no) > 
     <p>
     <b>AUTHORS:</b><br>
     Authors should be listed <b>exactly</b> as you wish them to show up in the reference, i.e., use the standard format:
@@ -113,7 +121,7 @@ Variables expected:  OID (optional) -- the OID of a publication to edit.
     <b>NUMBER of authors listed:</b> (must be a number!) 
     <INPUT TYPE=text name=q_num_auths size=2 maxlength=2 value=$q_num_auths>
     <p>
-    <b>DATE:</b> (format: mm/ddyyyy) 
+    <b>DATE:</b> (format: mm/dd/yyyy) 
     <INPUT TYPE=text name=q_pub_date size=10 value="$q_pub_date">
     <p>    <b>SOURCE:</b> The journal name, volume, number that article appeared in. <br>
     <TEXTAREA rows=2 cols=70 name="q_source" wrap=virtual>$q_source</TEXTAREA>
@@ -224,9 +232,6 @@ Variables expected:  OID (optional) -- the OID of a publication to edit.
     <p>
     <b>ABSTRACT:</b><br>
     <TEXTAREA rows=4 cols=80 name="q_abstract" wrap=virtual>$q_abstract</TEXTAREA>
-    <p>
-    <b>NEWS and VIEWS:</b><br>
-    <TEXTAREA rows=4 cols=80 name="q_news_and_views" wrap=virtual>$q_news_and_views</TEXTAREA>
     <p>
     <b>ERRATA and NOTES:</b><br>
     <TEXTAREA rows=4 cols=80 name="q_errata_and_notes" wrap=virtual>$q_errata_and_notes</TEXTAREA>
