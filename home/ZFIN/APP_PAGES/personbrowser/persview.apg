@@ -229,12 +229,14 @@ $(IF,$(=,$MI_CURRENTROW,2),<font size=-1>and also: )
 
 <?MIVAR NAME=$medline DELIMIT="'" REPLACE="''">$name<?/MIVAR>
 
-<TABLE WIDTH=100%>
+
 <?MISQL SQL="select a.title, year(pub_date) as pyear, a.zdb_id, a.authors, a.source from publication a, int_person_pub b where b.target_id=a.zdb_id and b.source_id='$OID' order by pyear desc;">
-<TR>
-<TD> <FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3" TARGET="content">$4 ($2) $1 $5 </A> </FONT> <br></TD></TR>
+<dl><dt><table>
+<TR><TD colspan=1 align=left><font size=3> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3">$4 </A>($2)</TD></TR></table></dt>
+<DD>$1</DD>
+<DD> $5 </D>
+</dl>
 <?/MISQL>
-</TABLE>
 
 
 <P> <HR>
