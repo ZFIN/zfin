@@ -7,6 +7,9 @@
   use HTTP::Request::Common qw/POST/;
   use LWP::UserAgent;
   use URI::Escape qw/uri_escape/;
+  
+  require('./mapper_select.pl'); 
+  
   $CGI::POST_MAX=1024 * 100;    # max 100K posts
   $CGI::DISABLE_UPLOADS = 1;    # no uploads 
   my $Q = new CGI();
@@ -132,28 +135,28 @@
   ### if refresh_map is a given parameter then the frameset already exists.
   ### otherwise we are comming from someware "outside the options/mapplet frameset
   ### 
-  if( ! defined $Q->param("refresh_map") )  {
-    ### comming from outside frameset so build frameset and nav buttons
-    ### or shunt off to a search results page  
-    ###       
-    my $qstring = 'view_zmapplet.cgi?refresh_map=1&';
+ # if( ! defined $Q->param("refresh_map") )  {
+#    ### comming from outside frameset so build frameset and nav buttons
+#    ### or shunt off to a search results page  
+#    ###       
+#    my $qstring = 'view_zmapplet.cgi?refresh_map=1&';
     
-    if ( defined $Q->param('loc_panel') && $Q->param('loc_panel') ){
-      $qstring = $qstring .$Q->param('loc_panel').'=1&';
-    } 
-    ############################################################################
-    ###
-    ### BUILD A FRAMESET
-    ### beware very long gets
-    my @keyval = split /\?/, $Q->self_url; 
-    $qstring = $qstring . $keyval[1];   
-    print $Q->header ."\n".
-	      $Q->frameset({-rows=> '220,*'},
-			   $Q->frame({-name=> 'criteria',-src=> 'view_zmapplet.cgi?'}),
-			   $Q->frame({-name=> 'pbrowser',-src=> $qstring })
-			  );   
-    exit 1;    
-  }				# end coming from "outside" frameset 
+#    if ( defined $Q->param('loc_panel') && $Q->param('loc_panel') ){
+#      $qstring = $qstring .$Q->param('loc_panel').'=1&';
+#    } 
+#    ############################################################################
+#    ###
+#    ### BUILD A FRAMESET
+#    ### beware very long gets
+#    my @keyval = split /\?/, $Q->self_url; 
+#    $qstring = $qstring . $keyval[1];   
+#    print $Q->header ."\n".
+#	      $Q->frameset({-rows=> '220,*'},
+#			   $Q->frame({-name=> 'criteria',-src=> 'view_zmapplet.cgi?'}),
+#			   $Q->frame({-name=> 'pbrowser',-src=> $qstring })
+#			  );   
+#    exit 1;    
+#  }				# end coming from "outside" frameset 
   ################################################################################
   ################################################################################
   ### Begin Frame_Set Exists
@@ -241,7 +244,8 @@
 	      action=> 'SEARCH',
               paged_by=> 'mapper',
               map_type=> 'merged',
-	      MIval=> 'aa-markerlister.apg',
+	      MIval=> 'aa-markerselect.apg',
+              query_results=> 'exist',
 	      name=> "$marker",
 	      ZDB_authorize=> $Q->cookie('ZDB_authorize')
 	  ];
@@ -263,7 +267,7 @@
 	###
 	elsif( ! defined $rowref ) { #$unique < 1) {
 	  print $Q->header(). "\n".
-	    $Q->start_html(-TITLE => "View Marker", -bgcolor=> 'white', -link=> 'black', -vlink=>'black')."\n".
+	    $Q->start_html(-TITLE => "ZFIN View ZMAP", -bgcolor=> 'white', -link=> 'black', -vlink=>'black')."\n".
 	      "<p>The name: \"<font color=red><b>$marker</b></font>\" ". 
 		"is not part of any name or 'previous name' for any marker in the database.<p>\n".
 		  "Please submit a different name above\n".
@@ -739,13 +743,17 @@
   ### build up the "Mapplet" page
   $note = $note . " <p> END NOTE <P>\n";
   print $Q->header . "\n";   
-  print $Q->start_html(-TITLE => "View Marker", -bgcolor=> 'white',-link=>'black',-vlink=>'black')."\n";
+  print $Q->start_html(-TITLE => "ZFIN View ZMAP", -bgcolor=> 'white')."\n";
+  print "<script language='JavaScript' src='http://<!--|DOMAIN_NAME|-->/header.js'></script>";
+  
   ### based on error codes emit the dynamic part of the page
   if ($g_error == 0 && $g_data)  {
     $g_height *= 18; 
     $g_height += 95; 
       
     if( $g_height < 210){$g_height = 210;} 
+
+    mapper_select(Q);
     
     ###    
     ### -- wrap the pair of buttons in a table to keep them on one line.
@@ -757,8 +765,7 @@
 				  -method=>'POST',
 				  -action=>'/<!--|CGI_BIN_DIR_NAME|-->/map-options.pl',
 				  -encoding=>'application/x-www-form-urlencoded',
-				  -name=>'optform',
-				  -target=>'criteria'
+				  -name=>'optform'
 				 )."\n".
 				   ### emit the set of constant values the option page  needs 
 				   pass_hidden()."\n".
@@ -766,7 +773,7 @@
 				     $g_opt."\n".
 				       $Q->submit(-name=>"Hide / Show / Adjust a Panel",-align=>'right')."\n".
 					 $Q->end_form."\n</td>";
-    print '<td><img src=/client_apps/Map/mapkey.gif><p>'."\n";
+    print '<td><img src=/client_apps/Map/mapkey.gif>'."\n";
     
     my $POprint = 'ZMAP|';
     #for $panel (@panels) { $POprint = $POprint . $panel . "|"; }### kevin's code
@@ -774,14 +781,14 @@
     my $from_panels = "";
     for $panel (@panels) { $from_panels = $from_panels . $panel . "|"; }### kevin's code
     
-    print "<td>". $Q->start_form (
+    print "</td><td>" . $Q->start_form (
 				  -method=>'GET',
 				  -action=>'/<!--|CGI_BIN_DIR_NAME|-->/print_map.cgi',
 				  -encoding=>'application/x-www-form-urlencoded',
 				  -name=>'print_map',
 				  -target=>'print'
 				 ). "\n".    
-				   $Q->submit(-name=>"New Window with Printer Friendly  Map",-align=>'left') . "\n".
+				   $Q->submit(-name=>"New Window with Printer Friendly  Map") . "\n".
 				     $Q->hidden("height",$g_height)."\n".
 				       $Q->hidden("width" ,$g_width)."\n".
 					 $Q->hidden("host","<!--|DOMAIN_NAME|-->")."\n".
@@ -823,7 +830,6 @@
     " onClick=\"document.optform.edit_panel.value='".$panel."';". 
     " document.optform.".$panel."_zoom.value = '-".$newz."';".
     " document.optform.refresh_map.value = 1; ". 
-    " document.optform.target='pbrowser'; ".
     " document.optform.action='view_zmapplet.cgi'; ".
     " document.optform.submit();\">\n\n";
 
@@ -844,14 +850,13 @@
     " onClick=\"document.optform.edit_panel.value='".$panel ."';".
     " document.optform.".$panel."_zoom.value = '-".$newz ."';".
     " document.optform.refresh_map.value = 1;".
-    " document.optform.target='pbrowser';".
     " document.optform.action='view_zmapplet.cgi';".
     " document.optform.submit();\">\n\n";
     
 	print "<br><font size=-1><b>&nbsp;&nbsp;".
     "<a href=\"http://<!--|DOMAIN_NAME|-->/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=". 
     $allpanels_id[$order_increment]."\"".
-    " target=\"content\">". $panel . "</a>".
+    ">". $panel . "</a>".
     " panel, LG: ".$lg .", units: cM".
     "</b></font></td>"; 
 	$order_increment++;
@@ -890,15 +895,14 @@
       
       "<param name = \"panel_url\"\t value = \"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=\">\n".
 	
-	"<param name = \"target_frame\"\t value = \"$frame\">\n".
-	  "<param name = \"host\"\t\t value = \"<!--|DOMAIN_NAME|-->\">\n".
-	    "<param name = \"port\"\t\t value = \"$jport\">\n".
-	      "<param name = \"selected_marker\"\t value = \"". $Q->param('OID')."\">\n". 
-		"<param name = \"fish_url\" value = \"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=\">\n".
-		  "<param name = \"locus_url\" value = \"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=\">\n".
-		    "<param name = \"zoom_url\" value = \"/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi\">\n".	      
-		      "<param name = \"data\"\t\t value = \"$g_data\">\n".
-			"</APPLET><p>\n";
+	"<param name = \"host\"\t\t value = \"<!--|DOMAIN_NAME|-->\">\n".
+	  "<param name = \"port\"\t\t value = \"$jport\">\n".
+	    "<param name = \"selected_marker\"\t value = \"". $Q->param('OID')."\">\n". 
+	      "<param name = \"fish_url\" value = \"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=\">\n".
+		"<param name = \"locus_url\" value = \"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=\">\n".
+		  "<param name = \"zoom_url\" value = \"/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi\">\n".	      
+		    "<param name = \"data\"\t\t value = \"$g_data\">\n".
+		      "</APPLET><p>\n";
   }  else {			# mistakes were made...
     ###     
     print "<P><H3><font color = red>No Map Data Returned </font></H3><p>\n";
@@ -909,42 +913,41 @@
   
   ### if a first query or  option/edit put select map back 
   ### if it was a zoom  it should not need to change
-  if( defined $sm_refresh && $sm_refresh > 0)  {    
-    print $Q->start_form (
-			  -method=>'POST',
-			  -action=>'/<!--|WEBDRIVER_PATH_FROM_ROOT|-->',
-			  -encoding=>'application/x-www-form-urlencoded',
-			  -name=>'selectform',
-			  -target=>'criteria'
-			 )
-	. $Q->hidden("MIval","aa-mapperselect.apg"). "\n";
+#  if( defined $sm_refresh && $sm_refresh > 0)  {    
+#    print $Q->start_form (
+#			  -method=>'POST',
+#			  -action=>'/<!--|WEBDRIVER_PATH_FROM_ROOT|-->',
+#			  -encoding=>'application/x-www-form-urlencoded',
+#			  -name=>'selectform',
+#			  -target=>'criteria'
+#			 )
+#	. $Q->hidden("MIval","aa-mapperselect.apg"). "\n";
       
-    for $tmp (@allpanels){
-      print $Q->hidden($tmp, (defined $Q->param($tmp))? $Q->param($tmp) :0) . "\n";
-    }           
-    if ( ($sm_m ||  $Q->param('name')) ){ #&& ($sm_refresh == 1))  {
-      #print  $Q->hidden('marker', ($sm_refresh==1 )? $sm_m:  $Q->param('name')). "\n";
-      print  $Q->hidden('marker', (defined $sm_m )? $sm_m:  $Q->param('name')). "\n";
-    }else {   
-      #print  $Q->hidden('loc_lg', ($sm_refresh >= 1)? $sm_lg : $Q->param('lg')) . "\n".
-	  #$Q->hidden('loc_panel',($sm_refresh >= 1)? $sm_panel : $Q->param('edit_panel')) . "\n".
-	  #$Q->hidden('loc ', ($sm_refresh >= 1)? $sm_loc : $Q->param('loc')) . "\n";
+#    for $tmp (@allpanels){
+#      print $Q->hidden($tmp, (defined $Q->param($tmp))? $Q->param($tmp) :0) . "\n";
+#    }           
+#    if ( ($sm_m ||  $Q->param('name')) ){ #&& ($sm_refresh == 1))  {
+#      #print  $Q->hidden('marker', ($sm_refresh==1 )? $sm_m:  $Q->param('name')). "\n";
+#      print  $Q->hidden('marker', (defined $sm_m )? $sm_m:  $Q->param('name')). "\n";
+#    }else {   
+#      #print  $Q->hidden('loc_lg', ($sm_refresh >= 1)? $sm_lg : $Q->param('lg')) . "\n".
+#	  #$Q->hidden('loc_panel',($sm_refresh >= 1)? $sm_panel : $Q->param('edit_panel')) . "\n".
+#	  #$Q->hidden('loc ', ($sm_refresh >= 1)? $sm_loc : $Q->param('loc')) . "\n";
       
-      print  $Q->hidden('loc_lg', (defined $sm_lg)? $sm_lg : $Q->param('lg')) . "\n".
-	  $Q->hidden('loc_panel',(defined $sm_panel)? $sm_panel : $Q->param('edit_panel')) . "\n".
-	  $Q->hidden('loc ', (defined $sm_loc)? $sm_loc : $Q->param('loc')) . "\n";
+#      print  $Q->hidden('loc_lg', (defined $sm_lg)? $sm_lg : $Q->param('lg')) . "\n".
+#	  $Q->hidden('loc_panel',(defined $sm_panel)? $sm_panel : $Q->param('edit_panel')) . "\n".
+#	  $Q->hidden('loc ', (defined $sm_loc)? $sm_loc : $Q->param('loc')) . "\n";
       
-    }
+#    }
     
-    print $Q->hidden('map_type','merged')."\n".
-    #$Q->submit("continue...")."\n".
-    $Q->end_form() . "\n";
-    print "\n<SCRIPT> document.selectform.submit()</SCRIPT>\n";
-  }
+#    print $Q->hidden('map_type','merged')."\n".
+#    #$Q->submit("continue...")."\n".
+#    $Q->end_form() . "\n";
+#    print "\n<SCRIPT> document.selectform.submit()</SCRIPT>\n";
+#  }
   
-  
-  
-  
+
+  print "<script language='JavaScript' src='http://<!--|DOMAIN_NAME|-->/footer.js'></script>";
   print  $Q->end_html."\n";
   $dbh->disconnect;
   

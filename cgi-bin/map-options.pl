@@ -85,12 +85,13 @@ ENDCSS
  
 
 
- print $query->start_html(-title=>'Map Options',-BGCOLOR=>'#FFFFFF',-script=>$JSCRIPT,-style=>$CSS);
- 
+ print $query->start_html(-title=>'ZFIN Map Options',-GCOLOR=>'#FFFFFF',-script=>$JSCRIPT,-style=>$CSS);
+ print "<script language='JavaScript' src='http://<!--|DOMAIN_NAME|-->/header.js'></script>";
+
  if  (  $query->param ('ZMAP')   ) {
-   print $query->startform(-method=>'get',-action=>'/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi',-name=>'options',-target=>'pbrowser');
+   print $query->startform(-method=>'get',-action=>'/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi',-name=>'options');
  } else {
-   print $query->startform(-method=>'get',-action=>'/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi',-name=>'options',-target=>'pbrowser'); 
+   print $query->startform(-method=>'get',-action=>'/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi', -name=>'options'); 
  }
 
 my $edit = '';
@@ -223,8 +224,8 @@ my $buf ='';
 #     print $query->checkbox(-name=>$panel.'_anon',-checked=>'checked',-value=>'1',-label=>'Anonymous',-onClick=>$onchange) . ' ';
      print $query->hidden(-name=>$panel.'_anon',-value=>'1');
 
-     print $query->submit(-name=>'refresh_map',-value=>'Submit Changes') . ' ';
-     print $query->button(-name=>'cancel', -value=>'Cancel', -onClick=>'parent.pbrowser.document.selectform.submit();');
+     print $query->submit(-name=>'refresh_map',-value=>'Submit Changes' ) . ' ';
+     print $query->button(-name=>'cancel', -value=>'Cancel', -onClick=>'document.options.submit();');
 #"self.location='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mapperselect.apg';") . ' ';
 
    #}
@@ -263,11 +264,11 @@ my $buf ='';
 	   
 	 }
 	 print "<br>".  
-	   $query->button(-name=>'ZMAP' . '_opts', -value=>'Adjust ' . $panel, -onClick=>"document.options.edit_panel.value='" . $panel . "'; document.options.target=''; document.options.action='/<!--|CGI_BIN_DIR_NAME|-->/map-options.pl'; document.options.submit();   ") . "</td>";
+	   $query->button(-name=>'ZMAP' . '_opts', -value=>'Adjust ' . $panel, -onClick=>"document.options.edit_panel.value='" . $panel . "'; document.options.action='/<!--|CGI_BIN_DIR_NAME|-->/map-options.pl'; document.options.target=''; document.options.submit();   ") . "</td>";
        }
   }
     print "</tr></table>";
-    print "<br><br></center>" . $query->button(-name=>'back',-value=>'Return to search form.',-onClick=>'parent.pbrowser.document.selectform.submit();');  
+    print "<br><br></center>" . $query->button(-name=>'back',-value=>'Return to search form.', -onClick=>'document.options.submit();');  
 }
 
 
@@ -277,6 +278,8 @@ my $buf ='';
 # print $query->button(-name=>'test',value=>'test',-onClick=>'call_mapplet();'); 
  print '</form>';
 # print $query->endform();
+
+ print "<script language='JavaScript' src='http://<!--|DOMAIN_NAME|-->/footer.js'></script>";
 
  print $query->end_html;
 
