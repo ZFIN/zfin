@@ -194,9 +194,10 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/pfam.txt'
 	  and fdbcont_fdb_db_name = 'Pfam' order by 1;
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genpept.txt'
- DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,acc_num from marker, db_link
-	where mrkr_zdb_id = linked_recid
-	  and db_name = 'GenPept' order by 1;
+ DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains
+	where mrkr_zdb_id = dblink_linked_recid
+	  and fdbcont_zdb_id = dblink_fdbcont_zdb_id
+	  and fdbcont_fdb_db_name = 'GenPept' order by 1;
 
 
 
