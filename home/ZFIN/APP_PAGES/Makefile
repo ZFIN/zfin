@@ -30,6 +30,7 @@ SUBDIRS = SQL_docs \
 	groupware \
 	image_files \
 	lab_files \
+	linkage \
 	locus_files \
 	marker_files \
 	misc_files \
