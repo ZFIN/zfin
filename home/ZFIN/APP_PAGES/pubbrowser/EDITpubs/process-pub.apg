@@ -58,6 +58,8 @@ pub in question with any new values passed in.
 <?MISQL SQL="update publication $setvalues where zdb_id='$OID';"><?/MISQL>
 <?MIVAR NAME=$returnVariables>MIval=aa-startframes.apg&selector=aa-pubselect2.apg&select_from=PUBLICATION&navtile=true<?/MIVAR>
 
+<?MIVAR NAME=$returnVariables COND="$(XST,$BEGIN)">$returnVariables&BEGIN=$BEGIN<?/MIVAR>
+<?MIVAR NAME=$returnVariables COND="$(XST,$WINSIZE)">$returnVariables&WINSIZE=$WINSIZE<?/MIVAR>
 <!-- 
      if editing an existing or creating a new record and passsing values,
      determine which variables exist, concatonate

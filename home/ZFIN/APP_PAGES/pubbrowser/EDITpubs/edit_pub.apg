@@ -142,47 +142,51 @@ For instance, a paper by John Pat Dole, Richard M.Nixon and Newt Gingrinch would
 <?/MIVAR>
 
 <?MIVAR>
-<b>KEYWORDS:</b><br>
-<TEXTAREA rows=4 cols=70 name="keywords" wrap=virtual>$keywords</TEXTAREA>
-<p>
-<b>ABSTRACT:</b><br>
-<TEXTAREA rows=4 cols=80 name="abstract" wrap=virtual>$abstract</TEXTAREA>
-<p>
-<b>NEWS and VIEWS:</b><br>
-<TEXTAREA rows=4 cols=80 name="news_and_views" wrap=virtual>$news_and_views</TEXTAREA>
-<p>
-<b>ERRATA and NOTES:</b><br>
-<TEXTAREA rows=4 cols=80 name="errata_and_notes" wrap=virtual>$errata_and_notes</TEXTAREA>
+	<b>KEYWORDS:</b><br>
+	<TEXTAREA rows=4 cols=70 name="keywords" wrap=virtual>$keywords</TEXTAREA>
+	<p>
+	<b>ABSTRACT:</b><br>
+	<TEXTAREA rows=4 cols=80 name="abstract" wrap=virtual>$abstract</TEXTAREA>
+	<p>
+	<b>NEWS and VIEWS:</b><br>
+	<TEXTAREA rows=4 cols=80 name="news_and_views" wrap=virtual>$news_and_views</TEXTAREA>
+	<p>
+	<b>ERRATA and NOTES:</b><br>
+	<TEXTAREA rows=4 cols=80 name="errata_and_notes" wrap=virtual>$errata_and_notes</TEXTAREA>
 
-<?MIVAR COND="$(NXST,$inputs)" NAME=$inputs><?/MIVAR>
+	<?MIVAR COND="$(NXST,$inputs)" NAME=$inputs><?/MIVAR>
 
-<input type=hidden name=OID value=$OID>
-<input type=hidden name=MIval value="aa-process-pub.apg">
-<?MIVAR COND="$(NXST,$search_authors)" NAME=$search_authors><?/MIVAR>
-<?MIVAR COND="$(NXST,$search_title)" NAME=$search_title><?/MIVAR>
-<?MIVAR COND="$(NXST,$search_anon1text)" NAME=$search_anon1text><?/MIVAR>
-<?MIVAR COND="$(NXST,$search_anon1)" NAME=$search_anon1>abstract<?/MIVAR>
-<?MIVAR COND="$(NXST,$search_authtype)" NAME=$search_authtype>anyauth<?/MIVAR>
-<?MIVAR COND="$(NXST,$search_jtype)" NAME=$search_jtype>any<?/MIVAR>
-<?MIVAR COND="$(NXST,$search_yr_cmpr)" NAME=$search_yr_cmpr>=<?/MIVAR>
-<?MIVAR COND="$(NXST,$search_century)" NAME=$search_century>19<?/MIVAR>
-<?MIVAR COND="$(NXST,$search_year)" NAME=$search_year><?/MIVAR>
-<?MIVAR COND="$(NXST,$search_order_pref)" NAME=$search_order_pref>date<?/MIVAR>
-<?MIVAR COND="$(NXST,$search_cur_status)" NAME=$search_cur_status>any<?/MIVAR>
-<?MIVAR COND="$(NXST,$search_pub_status)" NAME=$search_pub_status>any<?/MIVAR>
+	<input type=hidden name=OID value=$OID>
+	<input type=hidden name=MIval value="aa-process-pub.apg">
+	<?MIVAR COND="$(NXST,$search_authors)" NAME=$search_authors><?/MIVAR>
+	<?MIVAR COND="$(NXST,$search_title)" NAME=$search_title><?/MIVAR>
+	<?MIVAR COND="$(NXST,$search_anon1text)" NAME=$search_anon1text><?/MIVAR>
+	<?MIVAR COND="$(NXST,$search_anon1)" NAME=$search_anon1>abstract<?/MIVAR>
+	<?MIVAR COND="$(NXST,$search_authtype)" NAME=$search_authtype>anyauth<?/MIVAR>
+	<?MIVAR COND="$(NXST,$search_jtype)" NAME=$search_jtype>any<?/MIVAR>
+	<?MIVAR COND="$(NXST,$search_yr_cmpr)" NAME=$search_yr_cmpr>=<?/MIVAR>
+	<?MIVAR COND="$(NXST,$search_century)" NAME=$search_century>19<?/MIVAR>
+	<?MIVAR COND="$(NXST,$search_year)" NAME=$search_year><?/MIVAR>
+	<?MIVAR COND="$(NXST,$search_order_pref)" NAME=$search_order_pref>date<?/MIVAR>
+	<?MIVAR COND="$(NXST,$search_cur_status)" NAME=$search_cur_status>any<?/MIVAR>
+	<?MIVAR COND="$(NXST,$search_pub_status)" NAME=$search_pub_status>any<?/MIVAR>
+	<?MIVAR COND="$(NXST,$BEGIN)" NAME=$BEGIN>1<?/MIVAR>
+	<?MIVAR COND="$(NXST,$WINSIZE)" NAME=$WINSIZE>10<?/MIVAR>
 
-<input type=hidden name=search_authtype value=$search_authtype>
-<input type=hidden name=search_authors value=$search_authors>
-<input type=hidden name=search_title value=$search_title>
-<input type=hidden name=search_anon1text value=$search_anon1text>
-<input type=hidden name=search_anon1 value=$search_anon1>
-<input type=hidden name=search_jtype value=$search_jtype>
-<input type=hidden name=search_yr_cmpr value=$search_yr_cmpr>
-<input type=hidden name=search_century value=$search_century>
-<input type=hidden name=search_year value=$search_year>
-<input type=hidden name=search_order_pref value=$search_order_pref>
-<input type=hidden name=search_cur_status value=$search_cur_status>
-<input type=hidden name=search_pub_status value=$search_pub_status>
+	<input type=hidden name=search_authtype value=$search_authtype>
+	<input type=hidden name=search_authors value=$search_authors>
+	<input type=hidden name=search_title value=$search_title>
+	<input type=hidden name=search_anon1text value=$search_anon1text>
+	<input type=hidden name=search_anon1 value=$search_anon1>
+	<input type=hidden name=search_jtype value=$search_jtype>
+	<input type=hidden name=search_yr_cmpr value=$search_yr_cmpr>
+	<input type=hidden name=search_century value=$search_century>
+	<input type=hidden name=search_year value=$search_year>
+	<input type=hidden name=search_order_pref value=$search_order_pref>
+	<input type=hidden name=search_cur_status value=$search_cur_status>
+	<input type=hidden name=search_pub_status value=$search_pub_status>
+  <input type=hidden name=BEGIN value=$BEGIN>
+  <input type=hidden name=WINSIZE value=$WINSIZE>
 <?/MIVAR>
 
 <?/MIBLOCK>  <!-- ends cond authorization -->

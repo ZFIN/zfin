@@ -31,6 +31,11 @@ You may also optionally pass many other constraints on the upcoming selection th
 <?MIVAR COND="$(EC,$selector,aa-mapperselect.apg)" NAME=$intro>/ZFIN/misc_html/intro_mapper.html<?/MIVAR>
 <?MIVAR COND="$(EC,$selector,aa-mapperselect.apg)" NAME=$constraint>&startframes=true$constraint<?/MIVAR>
 
+<!-- pass walking windows variables if they exist -->
+<?MIVAR COND="$(XST,$BEGIN)" NAME=$constraint>&START=$BEGIN$constraint<?/MIVAR>
+<?MIVAR COND="$(XST,$WINSIZE)" NAME=$constraint>&WINSIZE=$WINSIZE$constraint<?/MIVAR>
+
+
 <!-- special constraints to possibly pass -->
 <?MIVAR COND="$(XST,$stock)" NAME=$constraint>&stock=$stock$constraint<?/MIVAR>
 <?MIVAR COND="$(XST,$panelid)" NAME=$constraint>&refcross=$panelid$constraint<?/MIVAR>
