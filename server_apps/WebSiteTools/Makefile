@@ -20,8 +20,9 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/WebSiteTools
 
-GENERICS = checklinks run.checklinks run.checklinks.mirror signsoflife.sh
-STATICS = makemirror.csh
+GENERICS = checklinks run.checklinks run.checklinks.mirror signsoflife.sh \
+           webrotate.pl
+STATICS = makemirror.csh domainlookup.pl
 
 # ---------------  Production Rules  ------------------------------------
 
