@@ -10,10 +10,10 @@
 #
 # All this makefile does is create symbolic links into the ZFIN Commons
 # directory.  Note that it makes links into the ZFIN Commons directory
-# on bionix, rather than to the backup copy on chromix.  This means that
-# if bionix is down then these documents won't be available.  On the other
-# hand, when bionix is up, the latest and greatest copies of these documents
-# will be available.
+# on embryonix, rather than to the backup copy on the production server.
+# This means that if embryonix is down then these documents won't be available.
+# On the other hand, when embryonix is up, the latest and greatest copies of 
+# these documents will be available.
 # 
 
 
@@ -28,7 +28,8 @@ DOCDIR = /research/zcentral/Commons/doc
 # All of the local files are sym links that point at internal.html.
 
 INTERNALFILE = internal.html
-MISSINGLINKS = admin.html curation.html impl.html index.html intro.html
+MISSINGLINKS = admin.html curation.html impl.html index.html intro.html \
+               standards.html
 
 INTERNALFILETARGET = $(TARGETDIR)/$(INTERNALFILE)
 MISSINGLINKTARGETS = $(foreach LINK, $(MISSINGLINKS), $(TARGETDIR)/$(LINK))
