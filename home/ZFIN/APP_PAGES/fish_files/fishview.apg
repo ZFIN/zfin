@@ -160,6 +160,12 @@ Variables Expected:
 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr=colattrib&attr_type=special-newattrib&old_value='+altOID+'&new_value='+pub_id+'&info=mutagen');
   		}
 	}
+	function new_attrib_alle_mutation(altOID) {
+		var pub_id=document.updater0.attrib_alle_mutation_pubid.value.toUpperCase();
+		if (pub_id != '') {
+		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr=colattrib&attr_type=special-newattrib&old_value='+altOID+'&new_value='+pub_id+'&info=mutation');
+  		}
+	}
       </SCRIPT>
     <?/MIVAR>
 
@@ -759,8 +765,7 @@ Variables Expected:
 		   <BR>
   	           Add Ref.:&nbsp;
                    <input type=text size=16 name=attrib_alle_muta_pubid>
-		   <input type=button value="Add" onClick=new_attrib_alle_mutagen("$ALTOID");> <br>
-                  <?/MIVAR>
+		   <input type=button value="Add" onClick=new_attrib_alle_mutagen("$ALTOID");> <br>                      <?/MIVAR>
 
 
 		  $(IF,$(EC,$alt_mutagen,spontaneous),"None -- Spontaneous Mutation")
@@ -798,21 +803,33 @@ Variables Expected:
 		  </TD>
 		  <TD>
 
-		  $(IF,$(OR,$(NXST,$UPDATE),$(NC,$intfc_status,original)),$alt_chrom_change)
+		  <?MIBLOCK COND="$(OR,$(NXST,$UPDATE),$(NC,$intfc_status,original))">
+		    <?MIVAR>$alt_chrom_change<?/MIVAR>
+		    <?MISQL SQL="select WebExplode(object,'dataId=$ALTOID&type=colattrib&info=mutation') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+		  <?/MIBLOCK>
 
-		  <!-- add option for complex rearrangement , required db change to inncrease size of field chrom_change 12/06/00  -->
+		  <!-- add option for complex rearrangement , required db change to increase size of field chrom_change 12/06/00  -->
 
-		  $(IF,$(AND,$(XST,$UPDATE),$(EC,$intfc_status,original)),"<SELECT name=chrom_change onChange=doChromChange(this.options[this.selectedIndex].value,'"$alt_chrom_change"','"$alt_zdb_id"')>
-		  <option "$(IF,$(EC,$alt_chrom_change,point),SELECTED)" value=point>point
-		  <option "$(IF,$(EC,$alt_chrom_change,duplication),SELECTED)" value=duplication>duplication
-		  <option "$(IF,$(EC,$alt_chrom_change,deficiency),SELECTED)" value=deficiency>deficiency
-		  <option "$(IF,$(EC,$alt_chrom_change,translocation),SELECTED)" value=translocation>translocation
-		  <option "$(IF,$(EC,$alt_chrom_change,transposition),SELECTED)" value=transposition>transposition
-		  <option "$(IF,$(EC,$alt_chrom_change,insertion),SELECTED)" value=insertion>insertion
-		  <option "$(IF,$(EC,$alt_chrom_change,inversion),SELECTED)" value=inversion>inversion
-		  <option "$(IF,$(EC,$alt_chrom_change,complex_rearrangement),SELECTED)" value=complex_rearrangement>complex rearrangement
-		  <option "$(IF,$(EC,$alt_chrom_change,unknown),SELECTED)" value=unknown>Unknown
-		  </SELECT>")
+		  <?MIBLOCK COND="$(AND,$(XST,$UPDATE),$(EC,$intfc_status,original))">
+		    <?MIVAR>	
+		      <BR>
+		      Add Ref.:&nbsp;
+		      <input type=text size=16 name=attrib_alle_mutation_pubid>
+		      <input type=button value="Add" onClick=new_attrib_alle_mutation("$ALTOID");> <br>	
+			<SELECT name=chrom_change onChange=doChromChange(this.options[this.selectedIndex].value,'"$alt_chrom_change"','"$alt_zdb_id"')>
+		          <option "$(IF,$(EC,$alt_chrom_change,point),SELECTED)" value=point>point
+		          <option "$(IF,$(EC,$alt_chrom_change,duplication),SELECTED)" value=duplication>duplication
+		          <option "$(IF,$(EC,$alt_chrom_change,deficiency),SELECTED)" value=deficiency>deficiency
+		          <option "$(IF,$(EC,$alt_chrom_change,translocation),SELECTED)" value=translocation>translocation
+		          <option "$(IF,$(EC,$alt_chrom_change,transposition),SELECTED)" value=transposition>transposition
+		          <option "$(IF,$(EC,$alt_chrom_change,insertion),SELECTED)" value=insertion>insertion
+		          <option "$(IF,$(EC,$alt_chrom_change,inversion),SELECTED)" value=inversion>inversion
+		          <option "$(IF,$(EC,$alt_chrom_change,complex_rearrangement),SELECTED)" value=complex_rearrangement>complex rearrangement
+		          <option "$(IF,$(EC,$alt_chrom_change,unknown),SELECTED)" value=unknown>Unknown
+		      </SELECT>
+		    <?/MIVAR>
+		  <?MISQL SQL="select WebExplode(object,'dataId=$ALTOID&type=colattrib&info=mutation') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+                   <?/MIBLOCK>
 		  
 		  </TD>
 		  <TD> 
