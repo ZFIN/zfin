@@ -22,11 +22,18 @@ drop function detect_DAG_cycle;
 create function detect_DAG_cycle()
   returning integer 
   define i int; 
+  delete from dag where child  is null;   
+  delete from dag where parent is null;
+
   select (count(*) + 1) into i from dag; 
   while (i <> (select count(*) from dag))
     select count(*) into i from dag; 
-    delete from dag where child in(select parent from dag);
-    delete from dag where parent in(select child from dag);
+    select parent from dag into temp root with no log;  -- overkill
+    select child  from dag into temp leaf with no log;
+    delete from dag where child  not in (select * from root);
+    delete from dag where parent not in (select * from leaf);
+    drop table root;
+    drop table leaf;
   end while
   return i;-- _AT_LEAST_ the number of rows involved in cycle(s) 
 end function;
