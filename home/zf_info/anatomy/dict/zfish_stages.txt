@@ -531,7 +531,7 @@ hatching - protruding mouth (72h)
 have sections
 Adult
 Terms of direction
-	Dorsal
+  Dorsal
 	Ventral
 	Rostral (anterior)
 	Caudal (posterior)
@@ -549,7 +549,7 @@ Surface Anatomy
 	Mouth (no teeth)
 		Premaxilla
 		Maxilla
-		Mandible
+		Mandiblea
 	Barble (2)
 	Gill
 		Opercle
@@ -603,7 +603,7 @@ Skeletal System
 		Opercles
 		Subopercles
 		Interopercles
-		Branchiostegal rays
+		Branchiostegal rays	
 	Hyoid Bars
 		Rostral (anterior) ceratohyal
 		Caudal (posterior) ceratohyal
@@ -705,7 +705,7 @@ Musculature System
 			caudal Oblique
 			dorsal transverse
 			dorsal retractor
-			Adductor
+       			Adductor
 			oesophagial sphincter
 			ventral oblique
 			ventral transverse
@@ -713,7 +713,7 @@ Musculature System
 			Pharyngohyoid
 			internal pharyngoclavicularis
 			external pharyngoclavicularis
-    
+
 		Extraocular muscles
 			Dorsal oblique
 			Ventral oblique
@@ -790,7 +790,7 @@ Excretory System
 Reproductive System
 	Ovaries
 		Mesovarium
-	Oviduct
+	Oviduct	
 	Testes
 
 Cardiovascular System
@@ -818,19 +818,88 @@ Cardiovascular System
 	Renal Portal vein
 	Caudal (Posterior) cardinal vein
 	Rostral (Anterior) cardinal vein
-  
+	mandibular arch
+	hyoid arch
+	first branchial arch
+	second branchial arch
+	third branchial arch
+	fourth branchial arch
+	afferent branchial artery
+	efferent branchial artery
+	rostral (anterior) cerebral vein
+	rostral (anterior) cardinal vein
+	laminar branchial artery
+	afferent laminar branchial artery
+	efferent laminar branchial artery
+	rostral (anterior) mesenteric artery
+	rostral (anterior) mesencephalic central artery
+	basilar artery
+	basal communicating artery
+	bulbus arteriosus
+	caudal artery
+	caudal division of the internal carotid artery
+	cerebellar central artery
+	rostral division of the internal carotid artery
+	central artery
+	caudal vein
+	choroidal vascular plexus
+	dorsal aorta
+	dorsal ciliary vein
+	dorsal longitudinal anastomotic vessel
+	dorsal longitudinal vein
+	hepatic portal vein
+	internal carotid artery
+	inner optic circle
+	lateral dorsal aorta
+	middle cerebral vein
+	middle mesencephalic central artery
+	median palatocerebral vein
+	mesencephalic artery
+	mesencephalic vein
+	metencephalic artery
+	nasal artery
+	nasal ciliary artery
+	nasal vein
+	optic artery
+	ophthalmic vein
+	opercular artery
+	optic vein
+	pectoral artery
+	parachordal vessel
+	caudal (posterior) cerebral vein
+	caudal (posterior) communicating segment
+	caudal (posterior) cardinal vein
+	primary head sinus
+	primitive internal carotid artery
+	palatocerebral artery
+	palatocerebral vein
+	caudal (posterior) mesenteric artery
+	caudal (posterior) mesencephalic central artery
+	prosencephalic artery
+	pectoral vein
+	swim bladder artery
+	intersegmental vessel
+	intersegmental artery
+	intersegmental vein
+	supraintestinal artery
+	subintestinal vein
+	sinus venosus
+	ventral aorta
+	ventral intersegmental/intercostal
+	vertebral artery
+
 Respiratory System
 	Gill arch
 	Gill raker
 	Gill filament
 	Gill lamellae
 	Opercular flap (?)
-  
+
 Gas Bladder
 
 Lymphatic
 	Head kidney (thymus?)
-  
+
 Nervous system
 	Inner ear (vestibular end-organ)
 		Otolith organs
