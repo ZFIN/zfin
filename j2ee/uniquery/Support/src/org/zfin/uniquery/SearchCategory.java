@@ -51,14 +51,14 @@ public class SearchCategory
         String[] expressionTypes = {EXPRESSION_XPATVIEW, EXPRESSION_XPATINDEXVIEW};
         categoryList.add(new SearchCategory("EXPRESSION", "Expression", expressionTypes));
         
+        String[] imageTypes = {IMAGES};
+        categoryList.add(new SearchCategory("IMAGES", "Images", imageTypes));
+
         String[] publicationTypes = {PUBLICATIONS};
         categoryList.add(new SearchCategory("PUBLICATIONS", "Publications", publicationTypes));
 
         String[] peopleTypes = {PEOPLE_PERSVIEW, PEOPLE_LABVIEW};
         categoryList.add(new SearchCategory("PEOPLE", "People", peopleTypes));
-
-        String[] imageTypes = {IMAGES};
-        categoryList.add(new SearchCategory("IMAGES", "Images", imageTypes));
 
         String[] anatomyTypes = {ANATOMY_ITEM, ANATOMY_ZFINFO};
         categoryList.add(new SearchCategory("ANATOMY", "Anatomy", anatomyTypes));
