@@ -1,5 +1,9 @@
 #!/local/bin/perl 
-#  Script to create RefSeq/LocusLink links in the database
+#  This script creates a file that ZFIN sends to Stanford. The file is tab 
+#  delimitted with 14 columns, each GO term/gene association on a seperate  
+#  line. 
+#  We must send the file via email to GO after running the script. A reminder
+#  email, containing the path to the file, is sent to a member of ZFIN. 
 
 use DBI;
 $mailprog = '/usr/lib/sendmail -t -oi -oem';
@@ -18,9 +22,15 @@ my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
 		      )
   || emailError("Failed while connecting to <!--|DB_NAME|--> "); 
 
-chdir "<!--|ROOT_PATH|-->/home/data_transfer/GO/";
-
+if ("<!--|INFORMIX_SERVER|-->" eq "wavy") {
+  $dir = "/research/zfin/central/www_homes/gorp/server_apps/data_transfer/GO/";
+}
+else {
+  $dir = "/research/zfin/central/www_homes/gorp/home/data_transfer/GO/";
+}
+chdir "$dir";
 $outFile = "gene_association.zfin";
+
 
 &GOReport();
 &sendReport();
@@ -55,7 +65,8 @@ sub GOReport()
                                     goterm_go_id,
                                     mrkrgoev_source_zdb_id,
                                     goev_code,
-                                    get_date_from_id(mrkrgo_zdb_id)
+                                    get_date_from_id(mrkrgo_zdb_id),
+                                    goterm_ontology[1]
                              from   marker,
                                     marker_go_term,
                                     go_term,
@@ -67,11 +78,12 @@ sub GOReport()
                                and  mrkrgoev_evidence_code = goev_code;'
 			   );
     $cur->execute;
-    my($mrkr_id, $mrkr_abbrev, $go_id, $source_id, $ev_code, $ev_date);
-    $cur->bind_columns(\$mrkr_id,\$mrkr_abbrev,\$go_id,\$source_id,\$ev_code,\$ev_date);
+    my($mrkr_id, $mrkr_abbrev, $go_id, $source_id, $ev_code, $ev_date, $go_o);
+    $cur->bind_columns(\$mrkr_id,\$mrkr_abbrev,\$go_id,\$source_id,\$ev_code,\$ev_date,\$go_o);
     while ($cur->fetch)
     {
-      print REPORT "ZFIN\t$mrkr_id\t$mrkr_abbrev\t\t$go_id\t$source_id\t$ev_code\t\t\t\tgene\ttaxon:7955\t$ev_date\n";
+      $go_o = goAspect($go_o);
+      print REPORT "ZFIN\t$mrkr_id\t$mrkr_abbrev\t\tGO:$go_id\t$source_id\t$ev_code\t\t$go_o\t\t\tgene\ttaxon:7955\t$ev_date\tZFIN\n";
     }
     print REPORT "\n";
     close(REPORT);
@@ -82,10 +94,21 @@ sub sendReport()
   {
     open(MAIL, "| $mailprog") || die "cannot open mailprog $mailprog, stopped";
 
-    print MAIL "To: judys\@cs.uoregon.edu\n";
+    print MAIL "To: <!--|SWISSPROT_EMAIL_ERR|-->\n";
     print MAIL "Subject: GO report\n";
 
-    print MAIL "Path to GO file:\n\n<!--|ROOT_PATH|-->/home/data_transfer/GO/$outFile";
+    print MAIL "Please submit updated GO file:\n\n$dir$outFile";
     close (MAIL);
     $dbh->disconnect();
+  }
+
+
+sub goAspect()
+  {
+    $aspect = $_[0];
+
+    $aspect = 'P' if ($aspect eq 'B');
+    $aspect = 'F' if ($aspect eq 'M');
+
+    return $aspect;
   }
