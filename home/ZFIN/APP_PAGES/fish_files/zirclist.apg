@@ -9,7 +9,10 @@
     <?MIVAR NAME=$MI_NULL><?/MIVAR>
 
     <?MISQL SQL="
-        select count(*)::integer from fish a, int_fish_source b where a.zdb_id = b.source_id  and b.target_id = 'ZDB-LAB-991005-53';">
+      select count(*)::integer 
+	from fish a, int_data_supplier
+        where a.zdb_id = idsup_data_zdb_id
+	  and idsup_supplier_zdb_id = 'ZDB-LAB-991005-53';">
     <?/MISQL>
     <?MIVAR NAME=$num_recs>$1<?/MIVAR>
 
@@ -37,19 +40,29 @@
     <!--- EXECUTION --->
     <!--- Query Database --->
       <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
-        select distinct a.allele, a.zdb_id, c.abbrev, a.line_type, c.gene_id, c.chrom_change, c.chrom_num, a.name, a.abbrev, c.gene_abbrev, c.locus, d.locus_name, lower(d.locus_name)  from fish a, int_fish_source b, OUTER fish_search c, OUTER locus d where a.zdb_id = b.source_id  and b.target_id = 'ZDB-LAB-991005-53' and a.zdb_id = c.fish_id and a.locus = d.zdb_id order by 13,a.allele, c.abbrev;">
-    <?MIVAR NAME=$allele>$1<?/MIVAR>
-    <?MIVAR NAME=$zdb_id>$2<?/MIVAR>
-    <?MIVAR NAME=$abbrev>$3<?/MIVAR>
-    <?MIVAR NAME=$line_type>$4<?/MIVAR>
-    <?MIVAR NAME=$c_gene>$5<?/MIVAR>
-    <?MIVAR NAME=$chrom_change>$6<?/MIVAR>
-    <?MIVAR NAME=$chrom_num>$7<?/MIVAR>
-    <?MIVAR NAME=$fish_name>$8<?/MIVAR>
-    <?MIVAR NAME=$wt_abbrev>$9<?/MIVAR>
-    <?MIVAR NAME=$gene_abbrev>$10<?/MIVAR>
-    <?MIVAR NAME=$locus>$11<?/MIVAR>
-    <?MIVAR NAME=$locus_name>$12<?/MIVAR>
+        select distinct a.allele, a.zdb_id, c.abbrev, a.line_type, c.gene_id, 
+	       c.chrom_change, c.chrom_num, a.name, a.abbrev, c.gene_abbrev, 
+	       c.locus, d.locus_name, lower(d.locus_name)  
+	  from fish a, int_data_supplier, 
+	       OUTER fish_search c, 
+	       OUTER locus d 
+	  where a.zdb_id = idsup_data_zdb_id 
+	    and idsup_supplier_zdb_id = 'ZDB-LAB-991005-53' 
+	    and a.zdb_id = c.fish_id 
+	    and a.locus = d.zdb_id 
+	  order by 13, a.allele, c.abbrev;">
+	<?MIVAR NAME=$allele>$1<?/MIVAR>
+	<?MIVAR NAME=$zdb_id>$2<?/MIVAR>
+	<?MIVAR NAME=$abbrev>$3<?/MIVAR>
+	<?MIVAR NAME=$line_type>$4<?/MIVAR>
+	<?MIVAR NAME=$c_gene>$5<?/MIVAR>
+	<?MIVAR NAME=$chrom_change>$6<?/MIVAR>
+	<?MIVAR NAME=$chrom_num>$7<?/MIVAR>
+	<?MIVAR NAME=$fish_name>$8<?/MIVAR>
+	<?MIVAR NAME=$wt_abbrev>$9<?/MIVAR>
+	<?MIVAR NAME=$gene_abbrev>$10<?/MIVAR>
+	<?MIVAR NAME=$locus>$11<?/MIVAR>
+	<?MIVAR NAME=$locus_name>$12<?/MIVAR>
 
 
        <TR bgcolor="$row_color"> 
