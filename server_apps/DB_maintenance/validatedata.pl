@@ -944,7 +944,8 @@ sub mutantHas4TableBox($) {
                          from int_fish_chromo ifc, chromosome c, alteration a
                          where f.zdb_id = ifc.source_id
                            and ifc.target_id = c.zdb_id
-                           and c.zdb_id = a.chrom_id )
+                           and c.zdb_id = a.chrom_id
+                           and a.allele = f.allele )
                order by abbrev, name, allele';
 
   my @colDesc = ("Fish Abbrev       ",
