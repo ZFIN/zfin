@@ -9,23 +9,33 @@
 <?MISQL SQL="select object from webPages where ID='aa-vet_input.apg';">$1<?/MISQL>
 
 <SCRIPT>
-function check_passw (){
-  document.login_form.password.value = vet_pw(document.login_form.password.value);
-  if (document.login_form.password.value !=''){
-    document.login_form.s_user.focus();
-  }  
-}
-
-function check_login(){
+function check_login(src){
   document.login_form.login.value = vet_pw(document.login_form.login.value);
-  if (document.login_form.login.value !=''){
-    document.login_form.password.focus();
-  } 
+  if (document.login_form.login.value ==''){
+    document.login_form.login.focus();src = 0;
+  }
+  else 
+  if (document.login_form.password.value ==''){ 
+      document.login_form.password.focus();
+  }
+  else {submit_login(src + 1);}
+}
+    
+function check_passw (src){
+  document.login_form.password.value = vet_pw(document.login_form.password.value);
+  if (document.login_form.password.value ==''){
+    document.login_form.password.focus();src = 0;
+  }
+  else 
+  if (document.login_form.login.value ==''){ 
+      document.login_form.login.focus();
+  }
+  else {submit_login(src + 2);}
 }
 
-function submit_login(){
-  check_login();
-  check_passw();
+function submit_login(src){
+  if (! src & 1){check_login(src);}
+  if (! src & 2){check_passw(src);}
   if ((document.login_form.login.value !='')&&(document.login_form.password.value !='')) {
       document.login_form.submit();
   }
@@ -35,9 +45,9 @@ function submit_login(){
 	<!-- table class login req's zfin_style.css -->
 <FORM name=login_form method=post  action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
     <INPUT TYPE=hidden name=MIval value=aa-process-login.apg>
-    <b>Login:</b>   <input type=text     size=12 maxlength=12 name=login    onChange="check_login();">
-    <b>Password:</b><input type=password size=8  maxlength=12 name=password onChange="check_passw();">
-    &nbsp;&nbsp;    <input type=button                        name=s_user value="Log in" onClick="submit_login();">
+    <b>Login:</b>   <input type=text     size=12 maxlength=12 name=login    onChange="check_login(1);">
+    <b>Password:</b><input type=password size=8  maxlength=8  name=password onChange="check_passw(2);">
+    &nbsp;&nbsp;    <input type=button           name=s_user value="Log in" onClick="submit_login(4);">
     <br><font size=1>(Login required only to update personal records)</font>
 </FORM>
 <!-- Put the cursor in the login name box -->
