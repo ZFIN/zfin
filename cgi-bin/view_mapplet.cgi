@@ -148,12 +148,12 @@
 
   #$note = $note . "All Panels \n<p>";
   for $panel (@allpanels) {
-     $note .= "$panel  \n <p>";
-  ### if loc_panel handles the crossview request for an entire LG for one panel, 
-  ### prior to frameless this was hanlded by setting the panel to 1 in qstring 
-  ### when building a new frameset
-     if($panel eq $Q->param("loc_panel"))  {
-        $Q->param($panel,1);
+    $note .= "$panel  \n <p>";
+    ### if loc_panel handles the crossview request for an entire LG for one panel, 
+    ### prior to frameless this was hanlded by setting the panel to 1 in qstring 
+    ### when building a new frameset
+    if(defined $Q->param("loc_panel") && $panel eq $Q->param("loc_panel"))  {
+      $Q->param($panel,1);
     }
     if( (defined $Q->param($panel))
 	&& ($Q->param($panel) == 1)

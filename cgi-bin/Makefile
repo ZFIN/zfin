@@ -21,7 +21,7 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/$(TARGETCGIBIN)
 
 
-STATICS = 
+STATICS = favicon.ico
 
 GENERICS = ZFIN_jump map-options.pl print_map.cgi runSPL.cgi cgiemail.cgi\
 	   DebugWebdriver searchwww.cgi send_request.perl \

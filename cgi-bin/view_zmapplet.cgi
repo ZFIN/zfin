@@ -70,47 +70,46 @@
   ### number of mappings above and below $marker to gather (aproximatly)
   ### running out of linkage group or running into a bin will affect the number of mappings returned;
   my $g_zoom = 60;
-  my $zoom  = 60;		### the target number of markers for any one backbone 
-  my %zooms;                    ### hash of zoom values
-  my $lg;			### the linkgage group containing $marker 
-  my $lgs;                      ### hash of linkage groups
-  my $loc;			### the location of $marker 
-  my $lo;			### name above $loc on map
-  my $hi;			### name below $loc on map
-  my $m_lo;			### offset above $loc on map
-  my $m_hi;			### offset below $loc on map
-  my $lg_lo;			### $loc - $m_lo;
-  my $lg_hi;			### $loc + $m_hi;
+  my $zoom  = 60;       ### the target number of markers for any one backbone 
+  my %zooms;            ### hash of zoom values
+  my $lg;               ### the linkgage group containing $marker 
+  my $lgs;              ### hash of linkage groups
+  my $loc;              ### the location of $marker 
+  my $lo;               ### name above $loc on map
+  my $hi;               ### name below $loc on map
+  my $m_lo;             ### offset above $loc on map
+  my $m_hi;             ### offset below $loc on map
+  my $lg_lo;            ### $loc - $m_lo;
+  my $lg_hi;            ### $loc + $m_hi;
   
-  my @row;			### a row returned from a sql query
-  my $g_OID ='';		### the zdb_id of marker we found -- for applet, and options to ID unique name
-  my $lines ;			### all the rows returned from a paticular sql query with fields terminated with '|' 
-  my $g_data ='';		### all the $lines returned from all the sql queries --- param to the applet
-  my $g_printdata ='';		### all the $lines returned from all the sql queries --- param to the applet
-  my $print_type =0;            ### a code for types to print --1 gene, 2 est, 4 anon, 8 fish (0 == 15)
-  my $g_height = 1;		### the maximum number of (distinct) rows returned by any query --- anticipated heigth of the applet
-  my $g_width =  1024;		### fixed width
+  my @row;              ### a row returned from a sql query
+  my $g_OID ='';        ### the zdb_id of marker we found -- for applet, and options to ID unique name
+  my $lines ;           ### all the rows returned from a paticular sql query with fields terminated with '|' 
+  my $g_data ='';       ### all the $lines returned from all the sql queries --- param to the applet
+  my $g_printdata ='';  ### all the $lines returned from all the sql queries --- param to the applet
+  my $print_type =0;    ### a code for types to print --1 gene, 2 est, 4 anon, 8 fish (0 == 15)
+  my $g_height = 1;     ### the maximum number of (distinct) rows returned by any query --- anticipated heigth of the applet
+  my $g_width =  1024;  ### fixed width
   my $g_zdbid;
   my $g_lg;
-  my $zdbid = '';		### the zdbid comming in from a search marker page.
+  my $zdbid = '';       ### the zdbid comming in from a search marker page.
   
-  my $or;			### is used to flag marker or lg options, 
-  my $lg_or;			### used to choose between near and between when location is choosen
-  my $rowref;			### a refference to an array of rows;-- use  %$rowref   $%$rowref[0]
+  my $or;               ### is used to flag marker or lg options, 
+  my $lg_or;            ### used to choose between near and between when location is choosen
+  my $rowref;           ### a refference to an array of rows;-- use  %$rowref   $%$rowref[0]
   
-  my $g_error = 0;		### global error 
+  my $g_error = 0;      ### global error 
   
-  my $edit_panel;		### if given, the panel that is being changed
+  my $edit_panel;       ### if given, the panel that is being changed
   
   my ($sm_m, $sm_lg, $sm_panel, $sm_loc, $sm_refresh); #values Which might be used to repopulate the select map form  
   
   ### to supprt multiple java servers
   my $jport = "<!--|JAVA_SERVER_PORT|-->";
-  #if( defined $Q->param("port") ) {$jport= $Q->param("port");}
+  
   
   ### incase we want the mapplet to open somewhere particular some day
   my $frame = '_top';
-  #if( defined $Q->param("frame") ){$frame= $Q->param("frame");}
   
   ### holds the maximum number of markers that contain the given name on any panel.
   ### changing~ 
@@ -118,7 +117,7 @@
   
   ### the page that will be output, either mapplet or error message or 
   ### option help generation, ...
-  my $g_opt= '';		# options form (global)
+  my $g_opt= '';        # options form (global)
   
   ### used to pass scafolding notes to the web page
   my $note = "Begin Notes(M)<p>\n"; 
@@ -128,38 +127,13 @@
   ###
   if( ! $Q->param ) {
     print  $Q->header .  
-      $Q->start_html("This Page Is Intentionaly Left Blank... go figure").'Loading...' . 
-	$Q->end_html."\n"; exit;
+      $Q->start_html("This Page Is Intentionaly Left Blank... go figure").
+        "aren't you suppose to be somewhere else?\n". 
+        $Q->end_html."\n"; 
+        exit;
   }
   
-  ### if refresh_map is a given parameter then the frameset already exists.
-  ### otherwise we are comming from someware "outside the options/mapplet frameset
-  ### 
- # if( ! defined $Q->param("refresh_map") )  {
-#    ### comming from outside frameset so build frameset and nav buttons
-#    ### or shunt off to a search results page  
-#    ###       
-#    my $qstring = 'view_zmapplet.cgi?refresh_map=1&';
-    
-#    if ( defined $Q->param('loc_panel') && $Q->param('loc_panel') ){
-#      $qstring = $qstring .$Q->param('loc_panel').'=1&';
-#    } 
-#    ############################################################################
-#    ###
-#    ### BUILD A FRAMESET
-#    ### beware very long gets
-#    my @keyval = split /\?/, $Q->self_url; 
-#    $qstring = $qstring . $keyval[1];   
-#    print $Q->header ."\n".
-#	      $Q->frameset({-rows=> '220,*'},
-#			   $Q->frame({-name=> 'criteria',-src=> 'view_zmapplet.cgi?'}),
-#			   $Q->frame({-name=> 'pbrowser',-src=> $qstring })
-#			  );   
-#    exit 1;    
-#  }				# end coming from "outside" frameset 
-  ################################################################################
-  ################################################################################
-  ### Begin Frame_Set Exists
+  ### Begin Frame_Set Exists -- frames are gone so they exist
   ###
   ### isolate panels of interest, (undefined is not false)
   ### and a panel to be edited (if one is available)
@@ -171,14 +145,15 @@
     }  
   } else { $edit_panel = 'ZMAP';}
   
-  #$note = $note . "All Panels \n<p>";
+  $note = $note . "All Panels \n<p>";
   for $panel (@allpanels)  {
-    #$note = $note . $panel ."\n <p>";
+    $note = $note . $panel ."\n <p>";
     if( (defined $Q->param($panel))
 	&& ($Q->param($panel) == 1)
-	&& ($panel ne $edit_panel )){ push(@panels, $panel);$Q->param($panel,1);
-      $panels_string = $panels_string . $panel . "\',\'"; 
-    }
+	&& ($panel ne $edit_panel )){ push(@panels, $panel);
+				      $Q->param($panel,1);
+				      $panels_string = $panels_string . $panel . "\',\'"; 
+				    }
     elsif($panel ne $edit_panel )  {$Q->param($panel,0);}
   }
   #if no panels are implicated -- select them all
@@ -210,77 +185,79 @@
   ###                            panel, lg, location  
   
   
-  if( (defined $Q->param("view_map")) && ($g_error == 0) )  { # view_map is defined and no error reported
-    
+  if( (defined $Q->param("view_map")) && ($g_error == 0) )  { 
+    ### view_map is defined and no error reported
     ### types is never defined by an external page so use them all.
     $types = "SSLP\',\'RAPD\',\'RFLP\',\'SSR\',\'STS\',\'GENE\',\'BAC\',\'PAC'\,'EST\',\'FISH\',\'MUTANT\',\'LOCUS";
     
-    if( ( !(defined $Q->param("OID")) ) || ($Q->param("OID") eq '') ) { # parse it as  ZDB-type-date-nunber  ?
-      ### coming from some single source search 
-      ### (mapperselect name or near or lg ...) 
-      ### check sutibility of given marker name if given
-      ### if not unique shunt off to "search results" 
-      ### they can return to their specific marker from there
-      ### if there is no such marker just say so
+    if( ( !(defined $Q->param("OID")) ) || ($Q->param("OID") eq '') ) { 
+        ### should I parse it as  ZDB-type-date-number  ???
+        ### coming from some single source search 
+        ### (mapperselect name or near or lg ...) 
+        ### check sutibility of given marker name if given
+        ### if not unique shunt off to "search results" 
+        ### they can return to their specific marker from there
+        ### if there is no such marker just say so
       
-      if( (defined $Q->param("marker")) && ($Q->param("marker")) ) { 
-	$marker = lc($Q->param("marker"));
-    undef $rowref;
-	$rowref = check_uniq($marker);
+        if( (defined $Q->param("marker")) && ($Q->param("marker")) ) { 
+            $marker = lc($Q->param("marker"));
+            undef $rowref;
+            $rowref = check_uniq($marker);
 
-	$unique = (defined $$rowref[0][0])? @$rowref: 0;
-	#print "UNIQUE " . $unique; 
+            $unique = (defined $$rowref[0][0])? @$rowref: 0;
+            #print "UNIQUE " . $unique; 
 
-	#$note = $note . "\trow ref length " . $unique . "\n";
+            $note = $note . "\trow ref length " . $unique . "\n";
 
-	###
-	### yow!  too many answers
-	###
-	if( $unique > 1) {	   #defined @$rowref[1] ){ #
-	  # not unique shunt off to search result page
-	  #$note = $note . $unique . " ->Too Many Choices  <p>\n";  
-	  my $bot = LWP::UserAgent->new(); 
-	  my $req = POST 'http://<!--|DOMAIN_NAME|-->/<!--|WEBDRIVER_PATH_FROM_ROOT|-->',
-	  [   compare=> '%',
-	      marker_type=> 'any',
-	      lg=> 0,
-	      refcross=> 'NULL',
-	      plinks=> 'on',
-	      action=> 'SEARCH',
-              paged_by=> 'mapper',
-              map_type=> 'merged',
-	      MIval=> 'aa-markerselect.apg',
-              query_results=> 'exist',
-	      name=> "$marker",
-	      ZDB_authorize=> $Q->cookie('ZDB_authorize')
-	  ];
-	  print 'Content-Type: text/html; charset=ISO-8859-1\r\n\r\n';   
-	  my $res = $bot->request($req);
-	  # check the outcome
-	  if ($res->is_success) {print $res->content . "\n";} 
-	  else { print "Error: " . $res->status_line . "\n";}
+            ###
+            ### yow!  too many answers
+            ###
+            if( $unique > 1) {#defined @$rowref[1] ){ 
+                ### not unique shunt off to search result page
+                #$note = $note . $unique . " ->Too Many Choices  <p>\n";  
+                my $bot = LWP::UserAgent->new(); 
+                my $req = POST 'http://<!--|DOMAIN_NAME|-->/<!--|WEBDRIVER_PATH_FROM_ROOT|-->',
+                [   
+                compare=> '%',
+                marker_type=> 'any',
+                lg=> 0,
+                refcross=> 'NULL',
+                plinks=> 'on',
+                action=> 'SEARCH',
+                paged_by=> 'mapper',
+                map_type=> 'merged',
+                MIval=> 'aa-markerselect.apg',
+                query_results=> 'exist',
+                name=> "$marker",
+                ZDB_authorize=> $Q->cookie('ZDB_authorize')
+                ];
+                print 'Content-Type: text/html; charset=ISO-8859-1\r\n\r\n';   
+                my $res = $bot->request($req);
+                # check the outcome
+                if ($res->is_success) {print $res->content . "\n";} 
+                else { print "Error: " . $res->status_line . "\n";}
       
-      #open(IN, ">> /tmp/tomc_zmapplet.log") || die "input dump failed";
-      #print IN "\n*****************************************************".
-      #      $note. "\nrowref\t@$rowref \n";
-      #close IN;
+                # debugging
+                #open(IN, ">> /tmp/tomc_zmapplet.log") || die "input dump failed";
+                #print IN "\n*****************************************************".
+                #      $note. "\nrowref\t@$rowref \n";
+                #close IN;
       
-	  exit 1;       
-	}            
-	###
-	### huh? got nothing, advance to re-try do not pass map
-	###
-	elsif(  $unique < 1) { #! defined $rowref ) {
-	  print $Q->header(). "\n".
-		 $Q->start_html(-TITLE => "ZFIN View ZMAP", -bgcolor=> 'white')."\n".
-		 "<script language='JavaScript' src='http://<!--|DOMAIN_NAME|-->/header.js'></script>" ."\n";
-     	 mapper_select(Q);
-	  print
-	     "<p><p><p><p>No mapping data is available for ".
-		 "\"<font color=red><i><b>$marker</b></i></font>\"\n<p><p><p>".
-		 "<script language='JavaScript' src='http://<!--|DOMAIN_NAME|-->/footer.js'></script>";      
-	  exit 1;
-	}
+                exit 1;       
+           }            
+            ###
+            ### huh? got nothing, advance to re-try do not pass map
+            ###
+            elsif(  $unique < 1) { #! defined $rowref ) {
+                print $Q->header(). "\n".
+                $Q->start_html(-TITLE => "ZFIN View ZMAP", -bgcolor=> 'white')."\n".
+                "<script language='JavaScript' src='http://<!--|DOMAIN_NAME|-->/header.js'></script>" ."\n";
+                mapper_select(Q);
+                print  "<p><p><p><p>No mapping data is available for ".
+                "\"<font color=red><i><b>$marker</b></i></font>\"\n<p><p><p>".
+                "<script language='JavaScript' src='http://<!--|DOMAIN_NAME|-->/footer.js'></script>";      
+                exit 1;
+            }
 	###
 	### ding! add the lg and zdbid for the unique marker found (or approximated with "contains") 
 	### 
