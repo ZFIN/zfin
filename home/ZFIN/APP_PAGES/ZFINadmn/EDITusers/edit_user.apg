@@ -12,13 +12,12 @@ It is called via a link, visible to 'root' only, on the persview.html page when 
 
 Variables expected:  OID (REQUIRED) -- the zdb_id of the user to edit.
 
-requires chromoscripts.apg for vet_pw()
 -->
 <?/MICOMMENT>
 
 <HTML><HEAD>
 
-<?MISQL SQL="select object from webPages where ID='aa-vet_input.apg';">$1<?/MISQL>
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-vet_input.apg';">$1<?/MISQL>
 <SCRIPT>
 function check_login(src){
   document.login_form.login.value = vet_pw(document.login_form.login.value);
@@ -36,6 +35,7 @@ function check_login(src){
 }
 function check_passw(src){
   document.login_form.password.value = vet_pw(document.login_form.password.value);
+
   if (document.login_form.password.value != ''){
     if (document.login_form.password2.value ==  ''){
         document.login_form.password2.focus(); return;
@@ -202,7 +202,13 @@ function submit_delete () {
       <TR align=center>
 	<TD>
 	  <b>LOGIN:</b>
-	  $(IF,$(EC,$AUTHORIZED,root),"<INPUT TYPE=text name='login' value='"$login"' size=12 maxlength=12 onChange='check_login(1);'>",$login)
+          <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
+		<?MIVAR>
+		  <INPUT TYPE=text name='login' value='$login' size=12 maxlength=12 onChange='check_login(1);'>
+		<?/MIVAR>
+	 <?MIELSE>
+	        <input type=hidden name=login value=$login><?MIVAR>$login<?/MIVAR>
+	<?/MIBLOCK>
 	</TD>
 	<TD>
 	  <b>ACCESS:</B> 
