@@ -23,7 +23,7 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/SWISS-PROT
 GENERICS = loadsp.pl sp_check.pl sp_parser.pl  index.html appokfile
 
 STATICS = sptogo.pl iptogo.pl ectogo.pl  \
-	sp_delete.sql sploaddbnew.sql README 
+	sp_delete.sql sp_load.sql README 
 
 # Define targets that require special handling.
 
