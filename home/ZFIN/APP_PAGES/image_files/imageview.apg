@@ -385,7 +385,31 @@ Variables Expected:
 		  $anatItemList
 	    <?/MISQL>
 	  </TABLE>
-	<?/MISQL>  <!-- end developmental stages -->
+	<?/MISQL>  <!-- end developmental stages SQL -->
+
+        <!-- display stages for new images --> 
+        <?MIBLOCK COND="$(EC,$MI_ROWCOUNT,0)">
+          <SELECT NAME=stage  onChange="dopopup(this.options[this.selectedIndex].value,'','fimgstg_start_stg_zdb_id','fish_image_stage','fimgstg_fimg_zdb_id')">
+             <?MISQL SQL="
+	       select stg_name, stg_hours_start, stg_hours_end ,stg_zdb_id
+		 from stage 
+		    order by stg_hours_start, stg_hours_end desc;">
+		<option value="$4">$1
+	      <?/MISQL>
+	    </SELECT>
+	      to 
+	    <SELECT NAME=stage  onChange="dopopup(this.options[this.selectedIndex].value,'','fimgstg_end_stg_zdb_id','fish_image_stage','fimgstg_fimg_zdb_id')">
+	      <?MISQL SQL="
+		  select stg_name, stg_hours_start, stg_hours_end, stg_zdb_id 
+		    from stage 
+		    order by stg_hours_start, stg_hours_end desc;">
+		  <option value="$4">$1
+	      <?/MISQL>
+	    </SELECT>
+ 	 <?/MIBLOCK>   <!-- end developmental stages -->
+
+
+
 
 	<hr width=80%>
 
