@@ -59,7 +59,7 @@ $(TARGETDIR) :
 $(STATICTARGETS) : $(TARGETDIR)/% : %
 	$(TARGET_CP) $^ $@
 	$(TOUCH) $@
-	$(DBACCESS) $(DBNAME) $@
+	-$(DBACCESS) $(DBNAME) $@
 
 
 # ---------------  Maintenance Rules  -----------------------------------
