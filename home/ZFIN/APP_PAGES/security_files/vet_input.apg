@@ -1,5 +1,4 @@
 <?MICOMMENT>
-<!--    
 FILE: vet_input.apg
 client side cleaning of user input to be passed thru unix shells safely
 
@@ -11,9 +10,7 @@ accepts chars in the set are:
 vet_input.apg is webexploded on  
     login.apg 
     edit-user.apg
--->
 <?/MICOMMENT>
-
 
 <SCRIPT>
 <!-- vet_input.apg -->
