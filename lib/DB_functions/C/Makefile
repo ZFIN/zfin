@@ -75,6 +75,7 @@ $(TARGETDIR) :
 
 $(OBJS) : %.so : %.c
 	$(CC) $(CFLAGS) -I $(INCDIR) $(MICFLAGS) -G $^ -o $@
+	chmod o+x,o+r $@
 
 $(TARGETS) : $(TARGETDIR)/% : %
 	-$(DBACCESS) $(DBNAME) $(patsubst %.so,drop_%.sql,$^)  # drop function
