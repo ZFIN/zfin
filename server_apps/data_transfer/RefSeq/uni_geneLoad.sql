@@ -85,7 +85,9 @@ insert into foreign_db
 
 --INSERT NEW DATA
 !echo 'remove UniGENE records'
-delete from db_link where db_name = 'UniGENE'
+delete from zdb_active_data where zactvd_zdb_id in (
+ select dblink_zdb_id from db_link 
+ where db_name = 'UniGENE'
   and acc_num in (
           select b.acc_num 
           from tmp_db_link b
@@ -102,7 +104,8 @@ delete from db_link where db_name = 'UniGENE'
           where a.recattrib_source_zdb_id = "ZDB-PUB-020723-3"
             and b.recattrib_source_zdb_id != "ZDB-PUB-020723-3"
             and a.recattrib_data_zdb_id = b.recattrib_data_zdb_id
-      );
+      )
+);
 
 !echo 'get all UniGENE db_links that remain'
   select * 
