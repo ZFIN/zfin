@@ -88,7 +88,7 @@ function do_submit() {
           <FONT size=2><B>Developmental Stage:</B></FONT><BR>
           <SELECT name="OID" onChange="document.dictform.mode.value='stages'; document.dictform.submit();">
             <?MISQL SQL="
-		select unique stg_name_long, 
+		select stg_name_long, 
 			stg_hours_start, 
 			stg_hours_end, 
 			stg_zdb_id
@@ -137,17 +137,19 @@ function do_submit() {
 	      <HR width=500 size=1 noshade align=left>
     
 	      <?MISQL SQL="
-		SELECT unique anatitem_name, anatitem_zdb_id, anatitem_abbrev,
+		SELECT anatitem_name, anatitem_zdb_id, anatitem_abbrev,
   		       ( select count(*) 
 	 		   from data_alias 
 	 		   where dalias_data_zdb_id = anatitem_zdb_id) synonymcount, 
 		       anatitem_name_order
 		  FROM anatomy_item 
-		       LEFT OUTER JOIN data_alias 
-		         ON dalias_data_zdb_id = anatitem_zdb_id 
 		  WHERE anatitem_name_lower like lower('%$searchterm%')
 		     OR anatitem_abbrev_lower like lower('%$searchterm%')
-		     OR dalias_alias_lower like lower ('%$searchterm%') 
+		     OR exists 
+			( select 1
+			    from data_alias 
+		            where dalias_data_zdb_id = anatitem_zdb_id 
+			      and dalias_alias_lower like lower ('%$searchterm%') )
 	          ORDER BY anatitem_name_order
      		;">
 
@@ -158,19 +160,17 @@ function do_submit() {
 	        <?MIVAR NAME="$highlight">false<?/MIVAR>
 
 	        <?MISQL SQL="
-		  select distinct xpat_gene_zdb_id
-		    from expression_pattern_anatomy, anatomy_item, expression_pattern
-		    where xpatanat_anat_item_zdb_id = anatitem_zdb_id 
+		  select xpat_gene_zdb_id
+		    from expression_pattern_anatomy, expression_pattern
+		    where xpatanat_anat_item_zdb_id = '$item_zdb_id' 
 		      and xpatanat_xpat_zdb_id = xpat_zdb_id
-		      and anatitem_zdb_id = '$item_zdb_id' 
 		  UNION
-		  select distinct xpat_gene_zdb_id
+		  select xpat_gene_zdb_id
 		    from expression_pattern_anatomy, all_anatomy_contains, 
-			 anatomy_item, expression_pattern
+			 expression_pattern
 		    where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
-		      and allanatcon_container_zdb_id = anatitem_zdb_id 
+		      and allanatcon_container_zdb_id = '$item_zdb_id'
 		      and xpatanat_xpat_zdb_id = xpat_zdb_id
-		      and anatitem_zdb_id = '$item_zdb_id'
 		  ;">
 		<?/MISQL>
 
@@ -292,57 +292,51 @@ function do_submit() {
 		  <TD nowrap>
 
 		    <?MISQL SQL="
-		      select '0',
-			     anatdisp_item_name, anatdisp_item_zdb_id, anatdisp_seq_num,
-			     anatdisp_indent, anatstgstat_total_count, anatitem_abbrev,
+		      select anatdisp_item_name, anatdisp_item_zdb_id, anatdisp_seq_num,
+			     anatdisp_indent, anatitem_abbrev,
 			     ( select count(*) 
 			       from data_alias 
 			       where dalias_data_zdb_id = anatitem_zdb_id) synonymcount
-		      from   anatomy_display, anatomy_stage_stats, anatomy_item 
+		      from   anatomy_display, anatomy_item 
 		      where  anatitem_zdb_id = anatdisp_item_zdb_id
 			     and anatdisp_indent <= '$resolution'
 			     and anatdisp_stg_zdb_id = '$OID' 
-			     and anatdisp_item_zdb_id = anatstgstat_anat_item_zdb_id
-			     and anatstgstat_stg_zdb_id = anatdisp_stg_zdb_id
 			     $type_code
 		      order by anatdisp_seq_num
 		      ;">
-		      <?MIVAR NAME="$selfcount">$1<?/MIVAR>
-		      <?MIVAR NAME="$item_name">$2<?/MIVAR>
-		      <?MIVAR NAME="$item_zdb_id">$3<?/MIVAR>
-		      <?MIVAR NAME="$item_abbrev">$7<?/MIVAR>
-		      <?MIVAR NAME="$synonymcount">$8<?/MIVAR>
+		      <?MIVAR NAME="$item_name">$1<?/MIVAR>
+		      <?MIVAR NAME="$item_zdb_id">$2<?/MIVAR>
+		      <?MIVAR NAME="$item_indent">$4<?/MIVAR>
+		      <?MIVAR NAME="$item_abbrev">$5<?/MIVAR>
+		      <?MIVAR NAME="$synonymcount">$6<?/MIVAR>
 		      <?MIVAR NAME="$highlight">false<?/MIVAR>
 
 		      <?MIVAR NAME=$item_name_safe DELIMIT="'" REPLACE="''">$item_name<?/MIVAR>
                       <?MIVAR NAME="$processed_item_name">$(REPLACE,$item_name,',','|')<?/MIVAR>
 
-		      <?MIVAR NAME="$indent">$(*,$(-,$5,1),20)<?/MIVAR>
+		      <?MIVAR NAME="$indent">$(*,$(-,$item_indent,1),20)<?/MIVAR>
 
 
 		      <?MISQL SQL="
-			select distinct xpat_gene_zdb_id
-			  from anatomy_item, expression_pattern, 
+			select xpat_gene_zdb_id
+			  from expression_pattern, 
 			       expression_pattern_anatomy, stage as start, stage as end, 
 			       stage as mystage
-			  where xpatanat_anat_item_zdb_id = anatitem_zdb_id 
+			  where xpatanat_anat_item_zdb_id = '$item_zdb_id' 
 			    and xpatanat_xpat_zdb_id = xpat_zdb_id
-			    and anatitem_zdb_id = '$item_zdb_id' 
-			    and xpatanat_anat_item_zdb_id = anatitem_zdb_id
 			    and start.stg_zdb_id = xpatanat_xpat_start_stg_zdb_id
 			    and end.stg_zdb_id = xpatanat_xpat_end_stg_zdb_id
 			    and mystage.stg_zdb_id = '$OID'
 			    and mystage.stg_hours_start >= start.stg_hours_start
 			    and mystage.stg_hours_end <= end.stg_hours_end
 			UNION
-			select distinct xpat_gene_zdb_id
-			  from all_anatomy_contains, anatomy_item,
+			select xpat_gene_zdb_id
+			  from all_anatomy_contains,
 			       expression_pattern, expression_pattern_anatomy,
 			       stage as start, stage as end, stage as mystage
 			  where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
-			    and allanatcon_container_zdb_id = anatitem_zdb_id 
+			    and allanatcon_container_zdb_id = '$item_zdb_id'
 			    and xpatanat_xpat_zdb_id = xpat_zdb_id
-			    and anatitem_zdb_id = '$item_zdb_id'
 			    and start.stg_zdb_id = xpatanat_xpat_start_stg_zdb_id
 			    and end.stg_zdb_id = xpatanat_xpat_end_stg_zdb_id
 			    and mystage.stg_zdb_id = '$OID'
@@ -391,7 +385,7 @@ function do_submit() {
 			<?/MIBLOCK>
 		      <?/MIBLOCK> <?MICOMMENT> end totalcount > 0 <?/MICOMMENT>
 		      <BR>
-		    <?/MISQL> <?MICOMMENT> end select 0, anatdisp_item_name ... <?/MICOMMENT>
+		    <?/MISQL> <?MICOMMENT> end select anatdisp_item_name ... <?/MICOMMENT>
 		  </TD>
 		</TR>
 	      </TABLE>
@@ -411,33 +405,30 @@ function do_submit() {
 	    <?/MICOMMENT>
 
 	    <?MISQL SQL="
-	      SELECT unique anatitem_name, anatitem_zdb_id, anatitem_abbrev,
+	      SELECT anatitem_name, anatitem_zdb_id, anatitem_abbrev,
 			( select count(*) 
 			  from data_alias 
 			  where dalias_data_zdb_id = anatitem_zdb_id) synonymcount, anatitem_name_order
-		FROM anatomy_item LEFT OUTER JOIN data_alias ON dalias_data_zdb_id = anatitem_zdb_id 
+		FROM anatomy_item
 		ORDER BY anatitem_name_order
 	      ;">
 	      <?MIVAR NAME="$item_name">$1<?/MIVAR>
 	      <?MIVAR NAME="$item_zdb_id">$2<?/MIVAR>
 	      <?MIVAR NAME="$item_abbrev">$3<?/MIVAR>
-	      <?MIVAR NAME="$selfcount">$4<?/MIVAR>
 	      <?MIVAR NAME="$synonymcount">$4<?/MIVAR>
 	      <?MIVAR NAME="$highlight">false<?/MIVAR>
 
 	      <?MISQL SQL="
-		select distinct xpat_gene_zdb_id
-		  from expression_pattern_anatomy, anatomy_item, expression_pattern
-		  where xpatanat_anat_item_zdb_id = anatitem_zdb_id 
+		select xpat_gene_zdb_id
+		  from expression_pattern_anatomy, expression_pattern
+		  where xpatanat_anat_item_zdb_id = '$item_zdb_id' 
 		    and xpatanat_xpat_zdb_id = xpat_zdb_id
-		    and anatitem_zdb_id = '$item_zdb_id' 
 		UNION
-		select distinct xpat_gene_zdb_id
-		  from expression_pattern_anatomy, all_anatomy_contains, anatomy_item, expression_pattern
+		select xpat_gene_zdb_id
+		  from expression_pattern_anatomy, all_anatomy_contains, expression_pattern
 		  where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
-		    and allanatcon_container_zdb_id = anatitem_zdb_id 
+		    and allanatcon_container_zdb_id = '$item_zdb_id'
 		    and xpatanat_xpat_zdb_id = xpat_zdb_id
-		    and anatitem_zdb_id = '$item_zdb_id'
 		;">
 	      <?/MISQL>
 
