@@ -301,7 +301,7 @@
 	      <TD><font size=-1>
 	      $(IF,$(>,$del_markers,0),"+/- markers<br>")
 	      $(IF,$(OR,$(>,$paneled,0),$(>,$linkages,0)),"Mapped linkages")
-	      $(IF,$(AND,$(=,$del_markers,0),$(=,$linkages,0)),"Unmapped")
+	      $(IF,$(AND,$(=,$del_markers,0),$(=,$linkages,0),$(=,$paneled,0)),"Unmapped")
 	      </td>
 	      <TD valign=bottom><font size=-1>
 	      $(IF,$(>,$mindex,0),$(SUBSTR,$phenotype,1,$(-,$mindex,1)),"")
