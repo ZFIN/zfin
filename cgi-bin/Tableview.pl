@@ -58,7 +58,7 @@ Figures("gene");
       print "<td>$assay</td>";
       print "<td>$xpression</td>";
       print "<td>$figure</td>";
-      print "<td><u>$condn</u></td>";
+      print "<td><a href=fxenv2.cgi>$condn</a></td>";
     } else {
       if ($genesym ne '') {
 	print "</table>";
@@ -73,7 +73,7 @@ Figures("gene");
       print "<td><strong>Assay</strong></td>";
       print "<td><strong>Expr</strong></td>";
       print "<td><strong>Fig</strong></td>";
-      print "<td><strong>Conditions</strong></td>";
+      print "<td><strong>Environment</strong></td>";
       print "</tr>";
       print "<tr bgcolor=$mycolor><td><u>$fish</u></td>";
       print "<td><u>$structure</u></td>";
@@ -81,7 +81,7 @@ Figures("gene");
       print "<td>$assay</td>";
       print "<td>$xpression</td>";
       print "<td>$figure</td>";
-      print "<td><u>$condn</u></td>";
+      print "<td><a href=fxenv2.cgi>$condn</a></td>";
 
       $genesym=$gene;
     }
