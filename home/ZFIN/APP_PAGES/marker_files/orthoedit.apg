@@ -1,0 +1,145 @@
+<!-- a simple app page used to edit (in a newly created window) the dblinks
+associated with an orthologue record.  A simpler alternative to trying to do it all in the markerview file 
+
+Expected vars:
+OID:  the zdb_id of the orthologue to edit
+UPDATE: true if you are passing in update values
+oname,abbrev --- name and abbrev to update; must be non-empty or no effect
+newdb,newacc -- to create a new accession entry
+delacc -- to delete a dblink, delacc holds the accession of the link to del
+-->
+
+<HTML>
+<HEAD>
+<?MIVAR>
+<SCRIPT>
+function delete_link(acc_num) {
+  document.location='/cgi-bin_B/webdriver?MIval=aa-orthoedit.apg&UPDATE=1&OID=$OID&delacc='+acc_num;
+}
+</SCRIPT>
+<?/MIVAR>
+</HEAD>
+
+<basefont size=2>
+
+<?MISQL SQL="select WebExplode(object,'permission=root') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+<?MIBLOCK COND="$(NC,AUTHORIZED,false)">
+
+<?MIBLOCK COND="$(XST,$UPDATE)">
+
+<?MIBLOCK COND="$(AND,$(XST,$oname),$(XST,$abbrev))">
+<?MIVAR NAME=$oname>$(TRIM,$oname)<?/MIVAR>
+<?MIVAR NAME=$abbrev>$(TRIM,$abbrev)<?/MIVAR>
+<?MISQL COND="$(AND,$(NC,$oname,),$(NC,$abbrev,))" SQL="update orthologue set ortho_name='$oname',ortho_abbrev='$abbrev' where zdb_id='$OID';"><?/MISQL>
+<?MIVAR COND="$(NOT,$(AND,$(NC,$oname,),$(NC,$abbrev,)))">
+<SCRIPT>window.alert('Could not update. Both name and abbrev must be non-empty');</SCRIPT>
+<?/MIVAR>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(AND,$(XST,$newseq),$(XST,$newacc))">
+<?MIVAR NAME=$newacc>$(TRIM,$newacc)<?/MIVAR>
+<?MISQL COND="$(NC,$newacc,)" SQL="insert into db_link (linked_recid,DB_name,acc_num) values ('$OID','$newdb','$newacc');"><?/MISQL>
+<?MIVAR COND="$(EC,$newacc,)"
+<SCRIPT>window.alert('Could add link. DB accession must be non-empty');</SCRIPT>
+<?/MIVAR>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(XST,$delacc)">
+<!-- deleting a link. Because we dont have outer joins, we have to stick in a dmmy record if we're down to the last link -- if there are NO dblink records for an ortho, then join of ortho<->db_link fails causing not even the ortho shows up in markerview listing or orthos. -->
+<?MISQL SQL="select unique count(*)::integer from db_link where linked_recid='$OID';"><?/MISQL>
+<?MIVAR NAME=$curlinks>$1<?/MIVAR>
+<?MISQL COND="$(=,$curlinks,1)" SQL="insert into db_link (linked_recid,DB_name,acc_num) values ('$OID','Genbank','DUMMY');"><?/MISQL>
+<?MISQL SQL="delete from db_link where linked_recid='$OID' and acc_num='$delacc';"><?/MISQL>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(XST,$bigdelete)">
+<!-- Delete orthologue. Assume there is rule in place to delete all dependent
+     db_link records.-->
+
+<?MISQL SQL="delete from orthologue where zdb_id='$OID';"><?/MISQL>
+<?MIVAR NAME=exiter>true<?/MIVAR>
+<?/MIBLOCK>
+
+
+<?/MIBLOCK> <!-- end updating -->
+
+
+<?MIBLOCK COND="$(NXST,$exiter)">
+
+<h1 align=center>Orthologue editor</h1>
+
+<?MISQL SQL="select ortho_name,ortho_abbrev, c_gene_id,organism,(select unique count(*)::integer from db_link where linked_recid='$OID') from orthologue where zdb_id='$OID';"><?/MISQL>
+<?MIVAR NAME=$oname>$1<?/MIVAR>
+<?MIVAR NAME=$abbrev>$2<?/MIVAR>
+<?MIVAR NAME=$gene_id>$3<?/MIVAR>
+<?MIVAR NAME=$organism>$4<?/MIVAR>
+<?MIVAR NAME=$linkcnt>$5<?/MIVAR>
+
+<!-- If you have more than two db_links, you can safely blast dummy placeholders-->
+<?MISQL COND="$(>,$linkcnt,1)" SQL="delete from db_link where linked_recid='$OID' and acc_num='DUMMY';"><?/MISQL>
+
+<?MISQL SQL="select abbrev from gene where zdb_id='$gene_id';"><?/MISQL>
+<?MIVAR NAME=$gabbrev>$1<?/MIVAR>
+
+<?MIVAR>
+<form method=post action="/cgi-bin_B/webdriver">
+<input type=hidden name=MIval value=aa-orthoedit.apg>
+<input type=hidden name=OID value=$OID>
+<input type=hidden name=UPDATE value=1>
+
+<center><big>EDITING: <b>$organism</b> orthologue to zebrafish gene <b>$gabbrev</b></big><br> <font size=2> (ZFIN ID: $OID)</font>
+</center>
+<p>
+<b>Name</b> (in $organism community):
+<input type=text name=oname value="$oname" size=40>
+<p>
+<b>Abbreviation</b> (in $organism community):
+<input type=text name=abbrev value="$abbrev" size=10>
+<p>
+<?/MIVAR>
+
+<b>Foreign Database accessions for this orthologue:</b>
+
+<p>
+
+<TABLE bgcolor="#f8fabb" cols=1 rows=1 border cellpadding=5>
+<TR><TD>
+<font size=2>
+<?MISQL SQL="select DB_name, acc_num,info from db_link where linked_recid='$OID' and acc_num<>'DUMMY';">
+<input type=button  value="Delete" onClick="delete_link('$2');"> 
+$1 [$2 ] <br>
+<?/MISQL>
+<?MIVAR COND="$(<,$MI_ROWCOUNT,1)">None.<?/MIVAR>
+</font>
+</TD></TR></TABLE>
+
+<p>
+<b>Add DB accession:</b> DB_name:
+<SELECT name=newdb>
+<?MISQL SQL="select distinct DB_name from foreign_DB;">
+<option value="$1">$1
+<?/MISQL>
+</SELECT> 
+Accession: <input type=text size=10 name=newacc> 
+<input type=submit name=newseq value="Add it!">
+
+<hr width=90%>
+<font color="red"><input type=submit value="Delete entire orthologue record" name=bigdelete></font> including all Database Accessions associated with the orthologue (very scary, think carefullly!).
+
+<hr width=90%>
+<input type=submit value="Commit Changes">
+<input type=submit name=exiter value="Done-exit">
+
+</form>
+<?/MIBLOCK>  <!-- ends authorized -->
+
+<?/MIBLOCK> <!-- end NXST exiter -->
+
+
+<?MIVAR COND="$(XST,$exiter)">
+<SCRIPT>
+window.confirm('Exiting. Please return to the main window.\n Note that your updates will not be reflected there until that\n window is reloaded (so do not panic!)\Just continue working and all will be well!');
+window.close();</SCRIPT>
+<?/MIVAR>
+
