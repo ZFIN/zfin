@@ -32,7 +32,7 @@ end
 # Therefore, to speed up the process from over 4 hours to well under
 # an hour, do the unload to production disk and then copy it.
 
-if ($HOST == "chromix") then
+if ($HOST != "embryonix") then
   /research/zcentral/Commons/bin/unloaddb.pl <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/DB_maintenance/$dirname
   /bin/cp -pr <!--|ROOT_PATH|-->/server_apps/DB_maintenance/$dirname $pth/$dirname
   /bin/rm -rf <!--|ROOT_PATH|-->/server_apps/DB_maintenance/$dirname
