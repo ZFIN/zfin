@@ -862,6 +862,7 @@ function URLDecode(str) {
   <?MIBLOCK COND=$(XST,$fig_add_label)>
   
     <?MIVAR COND=$(NXST,$fig_add_comments) NAME=fig_add_comments><?/MIVAR>
+    <?MIVAR NAME=fig_add_caption COND=$(NXST,$fig_add_caption)><?/MIVAR>
     <?MIVAR NAME=fig_add_caption DELIMIT="'" REPLACE="''">$fig_add_caption<?/MIVAR>
     
     <?MICOMMENT> ==| Get next ZDB-ID |== <?/MICOMMENT>
@@ -893,6 +894,7 @@ function URLDecode(str) {
   <?/MIBLOCK>
   
   <?MIBLOCK COND=$(XST,$fig_label)>
+    <?MIVAR NAME=fig_caption COND=$(NXST,$fig_caption)><?/MIVAR>
   
     <?MIVAR COND=$(NXST,$fig_comments) NAME=fig_comments><?/MIVAR>
     <?MICOMMENT>
@@ -938,6 +940,13 @@ function URLDecode(str) {
     Code from new-image.apg which should be consolidated into a single apg
     when fx tables are merged.
 <?/MICOMMENT>
+  <?MIVAR NAME=$fimgp_comments>OPTICS:
+MAGNIFICATION:
+DATE OF IMAGE:
+SUBMITTER COMMENTS:
+  <?/MIVAR>
+  
+<?MIBLOCK COND=$(XST,$upload_image)>
   <!-- create a thumbnail for the new image with a sysexec call.
     -- That way we will have a thumbnail image to upload 
     -- along with the original in the following step. -->
@@ -952,12 +961,63 @@ function URLDecode(str) {
     <?MIVAR NAME=$fimgp_width>$1<?/MIVAR>
     <?MIVAR NAME=$fimgp_height>$2<?/MIVAR>
   <?/MISQL>
+  
+  <?MIBLOCK COND=$(NXST,$fimgp_width)>
+    <script>
+      alert("fimgp_width is null. 1");
+    </script>
+    <?MISQL SQL="
+      execute function sysexec('make_thumbnail', '$upload_image $mythumb');">
+    <?/MISQL>
+  
+    <!-- Get width and height of image -->
+    <?MISQL SQL="
+      execute function get_image_stats('$upload_image');">
+      <?MIVAR NAME=$fimgp_width>$1<?/MIVAR>
+      <?MIVAR NAME=$fimgp_height>$2<?/MIVAR>
+    <?/MISQL>
 
-  <?MIVAR NAME=$fimgp_comments>OPTICS:
-MAGNIFICATION:
-DATE OF IMAGE:
-SUBMITTER COMMENTS:
-  <?/MIVAR>
+  <?MIBLOCK COND=$(NXST,$fimgp_width)>
+    <script>
+      alert("fimgp_width is null. 2");
+    </script>
+    <?MISQL SQL="
+      execute function sysexec('make_thumbnail', '$upload_image $mythumb');">
+    <?/MISQL>
+  
+    <!-- Get width and height of image -->
+    <?MISQL SQL="
+      execute function get_image_stats('$upload_image');">
+      <?MIVAR NAME=$fimgp_width>$1<?/MIVAR>
+      <?MIVAR NAME=$fimgp_height>$2<?/MIVAR>
+    <?/MISQL>
+  <?/MIBLOCK>
+  
+  <?/MIBLOCK>
+  
+    <?MIVAR NAME=xpcur_image_insert_values>
+         '$fimgp_zdb_id', '$image_add_fig', FILETOBLOB('$upload_image', 'client'), NULL, NULL,
+	 FILETOBLOB('$mythumb', 'server'), $fimgp_width, $fimgp_height,
+	 NULL, '$fimgp_comments',
+	 'not specified', 'not specified', 'still', 'not specified', 
+	 '$ZDB_ident', NULL,'$image_add_label'  
+    <?/MIVAR>
+    
+<?MIELSE>
+  
+    <?MIVAR NAME=upload_image><?/MIVAR>
+    <?MIVAR NAME=mythumb><?/MIVAR>
+
+    <?MIVAR NAME=xpcur_image_insert_values>
+         '$fimgp_zdb_id', '$image_add_fig', 
+         NULL, NULL, NULL, NULL, 0, 0,
+	 NULL, '$fimgp_comments',
+	 'not specified', 'not specified', 'not specified', 'not specified', 
+	 '$ZDB_ident', NULL,'$image_add_label'  
+    <?/MIVAR>    
+    
+<?/MIBLOCK> <?MICOMMENT> Not Exist upload_image <?/MICOMMENT>
+
 
   <?MISQL SQL="
     insert into fx_fish_image_private
@@ -968,13 +1028,9 @@ SUBMITTER COMMENTS:
 	 fimgp_owner_zdb_id, fimgp_external_name,
 	 fimgp_label)
       values 
-	('$fimgp_zdb_id', '$image_add_fig', FILETOBLOB('$upload_image', 'client'), NULL, NULL,
-	 FILETOBLOB('$mythumb', 'server'), $fimgp_width, $fimgp_height,
-	 NULL, '$fimgp_comments',
-	 'not specified', 'not specified', 'still', 'not specified', 
-	 '$ZDB_ident', NULL,'$image_add_label');">
+	($xpcur_image_insert_values);">
   <?/MISQL>
-    
+  
 <?MICOMMENT> End code from new-image.apg <?/MICOMMENT>
 
   <?MISQL SQL="
@@ -2103,7 +2159,9 @@ SUBMITTER COMMENTS:
           from fx_fish_image_private
           where fimgp_fig_zdb_id = '$fig_zdb_id'
           order by fimgp_label;">
-          <img src="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$1&MItypeObj=image/jpg">$2 
+          <?MIVAR COND=$(NC,$1,NULL)>
+            <img src="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$1&MItypeObj=image/jpg">$2 
+          <?/MIVAR>
       <?/MISQL>
     </td>
   </tr> 
@@ -2201,8 +2259,11 @@ SUBMITTER COMMENTS:
       </select>
     </td>
     <td>  
-        <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$image_zdb_id&image_table=fx_fish_image_private">
-        <img src="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$thumbnail&MItypeObj=image/jpg"></a>
+
+        <?MIVAR COND=$(NC,$thumbnail,NULL)>
+          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$image_zdb_id&image_table=fx_fish_image_private">
+          <img src="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$thumbnail&MItypeObj=image/jpg"></a>
+        <?/MIVAR>
         <input name="image_label" type=textbox width=15 value="$image_label">
         <input type=file name="upload_image" size=30> 
     </td>
