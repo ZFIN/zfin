@@ -1,4 +1,4 @@
-#!/private/bin/perl 
+#!/local/bin/perl 
 
 #
 # loadsp.pl
@@ -15,7 +15,7 @@ use MIME::Lite;
 sub sendErrorReport ($) {
   
   my $SUBJECT="Auto SWISS-PROT:".$_[0];
-  my $MAILTO="pm";
+  my $MAILTO="<!--|SWISSPROT_EMAIL_ERR|-->";
   my $TXTFILE="./report.txt";
  
   # Create a new multipart message:
@@ -68,7 +68,7 @@ sub sendRunningResult {
  #----- Another mail send out problem files ----
 
   my $SUBJECT="Auto: SWISS-PROT problem file";
-  my $MAILTO="pm";     
+  my $MAILTO="<!--|SWISSPROT_EMAIL_REPORT|-->";     
   my $ATTFILE = "allproblems.txt";
 
   # Create another new multipart message:
@@ -155,7 +155,6 @@ $count = 0;
 $retry = 1;
 # wait till checking is finished
 while( !( -e "okfile" && 
-          -e "prob1" && 
           -e "problemfile")) {
 
   $count++;
@@ -177,11 +176,11 @@ while( !( -e "okfile" &&
 }
 
 # concatenate all the sub problem files
-system("cat prob1 prob2 prob3 prob4 prob5 prob6 prob7 > allproblems.txt");
+system("cat prob1A prob1B prob2B prob3B prob4B prob5B prob6B prob7B prob8B > allproblems.txt");
 
 
 # ----------- Parse the SWISS-PROT file ----------------
- print "\n sp_parser.pl okfile \n";
+print "\n sp_parser.pl okfile \n";
 system ("sp_parser.pl okfile");
 
 $count = 0;
@@ -266,7 +265,7 @@ while( !( -e "ip_mrkrgoterm.unl")) {
 }
 
 
-# ------------ Parse ontology files ---------------
+# ------------ Parse ec2go ---------------
 
 print "\nectogo.pl ec2go\n";
 system ("ectogo.pl ec2go");
