@@ -356,9 +356,7 @@ create dba function "informix".regen_genomics() returning integer
     --  11 othologue name, orthologue abbrev
     --  12 accession numbers from other databases
 
-    if (exists (select *
-	          from systables
-		  where tabname = "all_m_names_new")) then
+    if (exists (select * from systables where tabname = "all_m_names_new")) then
       drop table all_m_names_new;
     end if
 
@@ -382,9 +380,7 @@ create dba function "informix".regen_genomics() returning integer
     -- Get name, abbrev, and aliases from marker, fish, and locus
     -- Finally get accession numbers from db_link
 
-    -- Get abbrevs first 
-
-        --insert into all_m_names_new (allmapnm_name, allmapnm_zdb_id, allmapnm_significance)
+    --insert into all_m_names_new (allmapnm_name, allmapnm_zdb_id, allmapnm_significance)
     select lower(mrkr_abbrev)allmapnm_name, mrkr_zdb_id allmapnm_zdb_id, 1 allmapnm_significance
     from marker
     union all
@@ -405,7 +401,7 @@ create dba function "informix".regen_genomics() returning integer
     union all 
     select lower(lcsali_locus_name_alias) allmapnm_name, lcsali_locus_zdb_id allmapnm_zdb_id, 6 allmapnm_significance
     from locus_alias
-    union  
+    union all 
     select lower(lcsali_locus_abbrev_alias) allmapnm_name, lcsali_locus_zdb_id allmapnm_zdb_id, 6 allmapnm_significance
     from locus_alias
     where lcsali_locus_abbrev_alias is not NULL 
@@ -414,7 +410,7 @@ create dba function "informix".regen_genomics() returning integer
     select lower(allele) allmapnm_name, zdb_id allmapnm_zdb_id, 7 allmapnm_significance
     from fish
     where allele is not NULL
-    union     
+    union all    
     select lower(name) allmapnm_name, zdb_id allmapnm_zdb_id, 7 allmapnm_significance
     from fish
     union all
@@ -422,6 +418,10 @@ create dba function "informix".regen_genomics() returning integer
     from data_alias, fish
     where dalias_data_zdb_id = zdb_id
     into temp amnn with no log;
+    
+    create index amnn_tmp_index
+        on amnn (allmapnm_name, allmapnm_zdb_id)
+        in idxdbs1;
 
     -- For genes that have known correspondences with loci, also include the
     -- locus's possible names as possible names for the gene.
@@ -436,7 +436,7 @@ create dba function "informix".regen_genomics() returning integer
         where an3.allmapnm_name   = amn2.allmapnm_name 
         and   an3.allmapnm_zdb_id = locus.cloned_gene
     );
-
+    drop index 	amnn_tmp_index;
 
     insert into amnn
     -- Include putative gene assignments 
@@ -455,8 +455,7 @@ create dba function "informix".regen_genomics() returning integer
     from orthologue
     where ortho_abbrev is not null 
     ;
-
-    
+  
     insert into all_m_names_new (allmapnm_name, allmapnm_zdb_id, allmapnm_significance)
         select allmapnm_name, allmapnm_zdb_id, min(allmapnm_significance)  
         from amnn
@@ -517,6 +516,7 @@ create dba function "informix".regen_genomics() returning integer
 
     drop table amnn;
     -- recreate temporary indexes & primary key
+    {
     create unique index all_m_names_new_primary_key_index
       on all_m_names_new (allmapnm_name, allmapnm_zdb_id)
       in idxdbs1;
@@ -524,7 +524,7 @@ create dba function "informix".regen_genomics() returning integer
     alter table all_m_names_new add constraint
       primary key (allmapnm_name, allmapnm_zdb_id)
       constraint all_m_names_new_primary_key;
-
+   }
     --trace on;
 
 
@@ -966,7 +966,7 @@ create dba function "informix".regen_genomics() returning integer
     -- Delete the old tables.  Some may not exist (if the DB has just
     -- been created), so ignore errors from the drops.
     
-    let errorHint = "dropping of original tables";
+    let errorHint = "dropping old tables";
     begin -- local exception handler for dropping of original tables
     
       on exception in (-206)
@@ -978,15 +978,18 @@ create dba function "informix".regen_genomics() returning integer
       drop table panels;
       drop table paneled_markers;
       drop table public_paneled_markers;
+      let errorHint = "dropping old table public_paneled_markers";
       drop table all_map_names;
+      let errorHint = "dropping old table all_map_names";
       drop table all_markers;
       drop table total_links_copy;
+      
       drop table all_linked_members;
       drop table all_mapped_markers;
       drop table all_genes;
       drop table mapped_genes;
       drop table sources;
-
+      let errorHint = "dropped old tables all";	
     end -- local exception handler for dropping of original tables
 
     -- Now rename our new tables to have the permanent names.
@@ -1012,7 +1015,7 @@ create dba function "informix".regen_genomics() returning integer
 	raise exception esql, eisam;
       end exception;
 
-    let errorHint = "rename our new tables";
+    let errorHint = "rename  PANELS ";
       -- ===== PANELS =====
 
       rename table panels_new to panels;
@@ -1049,6 +1052,7 @@ create dba function "informix".regen_genomics() returning integer
 
 
       -- ===== PANELED_MARKERS =====
+      let errorHint = "rename PANELED_MARKERS ";
 
       rename table paneled_m_new to paneled_markers;
 
@@ -1078,6 +1082,7 @@ create dba function "informix".regen_genomics() returning integer
 
 
       -- ===== PUBLIC_PANELED_MARKERS =====
+      let errorHint = "rename PUBLIC_PANELED_MARKERS ";
 
       rename table public_paneled_m_new to public_paneled_markers;
 
@@ -1104,14 +1109,16 @@ create dba function "informix".regen_genomics() returning integer
 
 
       -- ===== ALL_MAP_NAMES =====
+      let errorHint = "rename ALL_MAP_NAMES ";
 
       rename table all_m_names_new to all_map_names;
 
       -- primary key
 
-      alter table all_map_names 
-        drop constraint all_m_names_new_primary_key;
-      drop index all_m_names_new_primary_key_index;
+      --alter table all_map_names drop constraint all_m_names_new_primary_key;
+      
+      --drop index all_m_names_new_primary_key_index;
+      
       create unique index all_map_names_primary_key_index
 	on all_map_names (allmapnm_name, allmapnm_zdb_id)
 	fillfactor 100
@@ -1131,6 +1138,7 @@ create dba function "informix".regen_genomics() returning integer
 
 
       -- ===== ALL_MARKERS =====
+      let errorHint = "rename ALL_MARKERS";
 
       rename table all_m_new to all_markers;
 
