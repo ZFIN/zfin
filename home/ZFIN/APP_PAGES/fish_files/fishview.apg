@@ -125,6 +125,15 @@ window.location.search='?MIval=aa-do-fishupdate.apg&OID=$OID&attr='+item_name+'&
 
 <?MIVAR NAME=$rec_title>Record for $line_type $abbrev<?/MIVAR>
 
+<?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
+<form><center><font size=4>
+<?MIVAR> <b>Invalid ZFIN ID.<?/MIVAR>
+</form>
+<?/MIBLOCK>
+
+
+<?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+
 <!-- If viewing, THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
 <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=fish') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
 
@@ -600,7 +609,7 @@ $(SETVAR,$last,$3)
 
 <?/MIBLOCK> <!-- ends cond oid exists -->
 
-
+<?/MIBLOCK> <!-- ends mirowcount gt 0 -->
 
 </HTML>
 
