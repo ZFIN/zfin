@@ -342,7 +342,7 @@ NAME="segregation">
 <TD>
 <A HREF="/ZFIN/help_files/help-chromo.html#chrom_change">CHROMOSOME CHANGE:</A>
 <SELECT NAME="chrom_change">
-<option <?MIVAR COND="$(EC,$chrom_change,point_mutation)"> SELECTED <?/MIVAR> >point_mutation
+<option <?MIVAR COND="$(EC,$chrom_change,point)"> SELECTED <?/MIVAR> >point
 <option <?MIVAR COND="$(EC,$chrom_change,duplication)"> SELECTED<?/MIVAR> >duplication
 <option <?MIVAR COND="$(EC,$chrom_change,deficiency)"> SELECTED <?/MIVAR> >deficiency
 <option <?MIVAR COND="$(EC,$chrom_change,translocation)"> SELECTED <?/MIVAR> >translocation
