@@ -1,6 +1,6 @@
 <!-- FILE: do-markerupdate.html
 
-Very simple. Just commits the updates requested in the forms tossed up by
+Commits the updates requested in the forms tossed up by
 markerupdate.html. Also files update record.
 
 EXPECTED VARS:
@@ -24,7 +24,7 @@ dataOID -- the zdbid of the attributed item
 <?MIVAR COND="$(NXST,$old_value)" NAME=$old_value><?/MIVAR>
 <?MIVAR COND="$(NXST,$new_value)" NAME=$new_value><?/MIVAR>
 
-<?MIVAR COND="$(NXST,$xtra_param)" NAME=$xtra_param><?/MIVAR>
+<?MIVAR COND="$(NXST,$xtra_param)" NAME=$xtra_param>alias<?/MIVAR>
 <?MIVAR COND="$(NXST,$dataOID)" NAME=$dataOID><?/MIVAR>
 <?MIVAR COND="$(NXST,$info)" NAME=$info><?/MIVAR>
 
@@ -98,6 +98,7 @@ dataOID -- the zdbid of the attributed item
         values 
 	  ('$dalias_zdb_id');">
     <?/MISQL>
+
     <?MISQL SQL="
       insert into data_alias  
 	  (dalias_zdb_id, dalias_data_zdb_id, dalias_alias, dalias_group)
