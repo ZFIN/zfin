@@ -61,17 +61,22 @@ ERROR -- something bad happened -- no OID passed in!
 <?MIVAR NAME=$target_table>anon_marker<?/MIVAR>
 <?MIVAR NAME=$target_table COND="$(>,$(POSITION,$OID,GENE),0)">gene<?/MIVAR>
 
-<?MISQL COND="$(>,$(POSITION,$OID,GENE),0)" SQL="select gene_name, 'GENE', alt_names,abbrev,comments from gene where zdb_id='$OID';">
+<?MISQL COND="$(>,$(POSITION,$OID,GENE),0)" SQL="
+  select gene_name, 'GENE', abbrev, comments 
+    from gene 
+    where zdb_id='$OID';">
 <?/MISQL>
 
-<?MISQL COND="$(=,$(POSITION,$OID,GENE),0)" SQL="select marker_name, marker_type, alt_names,abbrev,comments from anon_marker where zdb_id='$OID';">
+<?MISQL COND="$(=,$(POSITION,$OID,GENE),0)" SQL="
+  select marker_name, marker_type, abbrev, comments 
+    from anon_marker 
+    where zdb_id='$OID';">
 <?/MISQL>
 
 <?MIVAR NAME=$name>$1<?/MIVAR>
 <?MIVAR NAME=$marker_type>$2<?/MIVAR>
-<?MIVAR NAME=$alt_names>$3<?/MIVAR>
-<?MIVAR NAME=$abbrev>$4<?/MIVAR>
-<?MIVAR NAME=$comments>$5<?/MIVAR>
+<?MIVAR NAME=$abbrev>$3<?/MIVAR>
+<?MIVAR NAME=$comments>$4<?/MIVAR>
 
 <!-- debugging <?MIVAR> name = $name <?/MIVAR>  -->
 
@@ -93,6 +98,10 @@ window.location.search='?MIval=aa-markerupdate.apg&OID=$OID&attr='+attr+'&attr_t
 
 function Delete_listitem(item_name,item_id) {
 window.location.search='?MIval=aa-do-markerupdate.apg&OID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted&target_table=$target_table';
+}
+
+function Delete_alias(alias,marker_id) {
+  window.location.search='?MIval=aa-do-markerupdate.apg&OID=$OID&attr=mrkrali_marker_name_alias&attr_type=delete-alias&old_value='+alias+'&new_value=deleted&target_table=$target_table';
 }
 
 function new_ortho() {
@@ -169,10 +178,26 @@ $(IF,$(EC,$marker_type,GENE),"("$abbrev")")</B> </FONT>
  
 <TD colspan=2>
 <?MIVAR COND="$(XST,$UPDATE)">
-<INPUT TYPE=button value=Update onClick="doit('alt_names','text','Aliases')"> 
+  <INPUT TYPE=button 
+    value=Add
+    onClick="doit('mrkrali_marker_name_alias','text','Alias')">
 <?/MIVAR> 
 <b>Previous names:</b> 
-<?MIVAR>$(IF,$(NC,$alt_names,NULL),$alt_names,None)<?/MIVAR>
+<?MISQL SQL="
+  select mrkrali_marker_name_alias
+    from marker_alias
+    where mrkrali_marker_zdb_id = '$OID';">
+  <?MIVAR NAME=$alias>$1<?/MIVAR>
+  <?MIVAR COND="$(XST,$alias)" NAME=$alias_plus DELIMIT=" " REPLACE="+">$alias<?/MIVAR>
+  <?MIVAR COND="$(XST,$UPDATE)">
+    <br> 
+    <INPUT TYPE=button 
+      value=Delete 
+      onClick="Delete_alias('$alias_plus','$OID')">
+  <?/MIVAR>
+  $(IF,$(AND,$(NXST,$UPDATE),$(>,$MI_CURRENTROW,1)),;) $alias
+<?/MISQL>
+
 <p>
 <?MIVAR COND="$(XST,$UPDATE)">
 <INPUT TYPE=button value="Update" onClick="doit('comments','textarea','Description')"> 
