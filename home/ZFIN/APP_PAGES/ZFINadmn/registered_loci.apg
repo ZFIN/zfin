@@ -158,6 +158,11 @@ registrations -- but not update of course.
 	  update locus_registration
 	    set status = 'public', locusreg_public_release_date = current
 	    where zdb_id = '$update' and allele='$allele';">
+        <?MIVAR>
+ 	<script>
+	window.alert('The status for $allele has been set to public and a new mutant record was created. Please attribute the mutant record using fishview.apg.');
+	</script>
+	<?/MIVAR>
 	<?/MISQL>
 
     <?/MIBLOCK> <!-- ends make_public actions -->
@@ -173,13 +178,23 @@ registrations -- but not update of course.
     <?MISQL COND="$(EC,$action,extend)" SQL="
       update locus_registration 
 	set locusreg_expiration_deadline = 
-              locusreg_expiration_deadline + '6'::interval month to month
+              TODAY + '6'::interval month to month
 	where zdb_id = '$update' and allele='$allele';">
+        <?MIVAR>
+ 	<script>
+	window.alert('UPDATE: Deadline extended for $allele.');
+	</script>
+	<?/MIVAR>
     <?/MISQL>
 
     <?MISQL COND="$(EC,$action,expire)" SQL="
       delete from locus_registration 
 	where zdb_id = '$update' and allele='$allele';">
+        <?MIVAR>
+ 	<script>
+	window.alert('UPDATE: Registration for $allele has been deleted.');
+	</script>
+	<?/MIVAR>
     <?/MISQL>
     
     <?MIBLOCK COND="$(EC,$action,descr)">
