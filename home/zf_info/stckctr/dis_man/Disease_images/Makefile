@@ -59,6 +59,7 @@ STATICS = BigHeartGross4.jpg              MicrosporHisto4_small.jpg \
 	MicroWetGiemsa4.jpg             thyroidHisto4.jpg \
 	MicroWetGiemsa4_small.jpg       thyroidHisto4_small.jpg \
 	MicrosporHisto4.jpg             ultimobranchialTumors4.jpg \
+	PseudolFungiFlorFluorCNS4_small.jpg  ultimobranchialTumors4_small.jpg
 
 
 
