@@ -14,8 +14,7 @@ create function insrt_cln( est_id varchar(50),est_abbrev varchar(25) ) returning
       --clone_cloning_site,
       --clone_digest,
         clone_probelib_zdb_id,
-        clone_sequence_type,
-        clone_type_name
+        clone_sequence_type
     )
     select distinct
            est_id,                   --clone_mrkr_zdb_id
@@ -26,8 +25,7 @@ create function insrt_cln( est_id varchar(50),est_abbrev varchar(25) ) returning
          --null,                     --clone_cloning_site
          --null ,                    --clone_digest
            probelib_zdb_id,          --clone_probelib_zdb_id
-           'cDNA',                   --clone_sequence_type
-           'Plasmid'                 --clone_type_name
+           'cDNA'                   --clone_sequence_type
 
     from probe_library,
          probe_lib,
