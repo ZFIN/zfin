@@ -1,6 +1,26 @@
 <head>
-</head><body background="/fish_bgd.gif">
-<b>Table 2:  Stages of embryonic Development</b><p>
+<SCRIPT>
+
+function call_close(){
+   var buttonstring = '<FORM><input type=button name=close value=Close onclick=window.close();></FORM>';
+   document.writeln(buttonstring);
+}
+
+function call_zfin(){
+   var hrefstring = '<A HREF="/index.html">ZFIN  <img src="/fish_net.gif"></A><p>';
+   document.writeln(hrefstring);
+}
+
+</SCRIPT>
+
+</head><TITLE>Stages of Embryonic Development</TITLE><body bgcolor="#FFFFFF" text="#000000">
+<p><i>Modified from: 
+<a href="../stages.html">Kimmel et al., 1955. 
+Developmental Dynamics 203:253-310</a>. Copyright &copy; 1995 Wiley-Liss, Inc.
+Reprinted only by permission of Wiley-Liss, a subsidiary of John Wiley &
+Sons, Inc.
+</i>
+<p><b>Table 2:  Stages of Embryonic Development</b><p>
 <b><p>
 Stage - h - HB - Description </b><p><b><i>
 Zygote period</i></b><b><br>
@@ -76,7 +96,23 @@ Protruding-mouth</b> - 72 -  - EL = 3.5 mm; HTA = 25 degrees; wide open mouth pr
 <hr>
 Abbreviations</b>: <b>EL</b>: embryo length, <b>PF</b>: pectoral fin, <b>h</b>: hours of development at 28.5C.  <b>HB</b>: approximate stage number in the Hisoaka &amp; Battle (1958) zebrafish staging series (reasonably accurate through HB stage 20), <b>HD</b>: head diameter in dorsal view, <b>NO</b>: Nomarski optics, <b>H/W</b>: height/width, <b>Prim</b>: Prim stages refer to the number of the myotome to which the leading end of the posterior lateral line <i>prim</i>ordium has advanced. <b>YB</b>: yolk ball, <b>YE</b>: yolk extension, <b>YSL</b>: yolk syncytial layer<p>
 <HR>
-<A HREF="/zf_info/zfbook/stages/stages.html">Return to <I>Developmental Stages</I> Contents</A>
+Questions or comments:
+<address>Pat Edwards<br>
+Institute of Neuroscience<br>
+University of Oregon<br>
+Eugene, OR 97403 USA<br>
+fax: 503-346-4548<br>
+<a href="mailto:edwards@uoneuro.uoregon.edu"> edwards@uoneuro.uoregon.edu</a>
+</address>
+
 <hr>
-<A HREF="/index.html">ZFIN  <img src="fish_net.gif"></A>
+<SCRIPT>
+  if ((window.name=='')||(window.name=='ZFIN')){
+    call_zfin();        
+  } else {
+    call_close();
+  }
+</SCRIPT>
+<p>
+
 </body>
