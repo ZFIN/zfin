@@ -45,9 +45,11 @@ TARGETDIR = $(TARGETROOT)/lib/DB_functions
 # GENERICS = create_functions.sql
 
 SRCS = zextend.c
-OBJS = zextend.o
+OBJS = zextend.so
 
-TARGET = $(TARGETDIR)/zextend.so
+TARGETDIR_OBJS = $(TARGETDIR)/zextend.so
+ENDEMICTARGETS_POSTTARGETDIR = $(TARGETDIR_OBJS)
+ENDEMICTARGETS_CLEAN = $(OBJS)
 
 
 # ---- C compilation defines
@@ -66,43 +68,15 @@ MILIBS = -lsocket -lnsl -L$(LIBDIR)
 
 # ---------------  Production Rules  ------------------------------------
 
-.PHONY : all sanitycheck clean clobber onetimeonly
+include $(TOP)/make.default.rules
 
+$(OBJS) : %.so : %.c
+	$(CC) $(CFLAGS) -I $(INCDIR) $(MICFLAGS) -G $^ -o $@
 
-all : $(TARGETDIR) $(TARGET)
-
-
-$(TARGETDIR) :
-	$(TARGET_MKDIR) $(TARGETDIR);
-
-$(TARGET) : $(OBJS)
-	$(CC) $(CFLAGS) -G $(OBJS) -o zextend.so            # create local copy
-	-$(DBACCESS) $(DBNAME) drop_functions.sql  # drop functions in DB
-	$(TARGET_CP) zextend.so $(TARGET)	  # where DB will find it
+$(TARGETDIR_OBJS) : $(TARGETDIR)/% : %
+	-$(DBACCESS) $(DBNAME) drop_functions.sql > /dev/null 2>&1
+	$(TARGET_CP) $^ $@		  # put it where DB will find it
 	$(MAKESPECIFIC) create_functions.sql $(TRANSLATETABLE) cftemp.sql
 	$(DBACCESS) $(DBNAME) cftemp.sql  	  # create functions in DB
 	rm -f cftemp.sql			  # prevent hanky panky
 
-$(OBJS) : %.o : %.c
-	$(CC) $(CFLAGS) -I $(INCDIR) $(MICFLAGS) -c $<
-
-
-
-# ---------------  Maintenance Rules  -----------------------------------
-
-clean :
-	rm -f $(OBJS) zextend.so
-
-
-clobber :                       # Remove targets, but not target dir.
-	-$(DBACCESS) $(DBNAME) drop_functions.sql  # drop functions in DB
-	rm -f $(TARGET)
-
-
-sanitycheck :
-
-
-# define one time only target
-
-onetimeonly :
-	$(ONETIMEONLY)

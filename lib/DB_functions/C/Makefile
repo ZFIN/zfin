@@ -44,10 +44,9 @@ TARGETDIR = $(TARGETROOT)/lib/DB_functions
 
 SRCS = get_id.c get_obj_type.c zero_pad.c get_time.c scrub_char.c
 OBJS = $(foreach SRC, $(SRCS), $(patsubst %.c,%.so,$(SRC)))
-TARGETS = $(foreach OBJ, $(OBJS), $(patsubst %,$(TARGETDIR)/%,$(OBJ)))
-
-DROPS = $(foreach SRC, $(SRCS), $(patsubst %.c,drop_%.sql,$(SRC)))
-
+TARGETDIR_OBJS = $(foreach OBJ, $(OBJS), $(patsubst %,$(TARGETDIR)/%,$(OBJ)))
+ENDEMICTARGETS_POSTTARGETDIR = $(TARGETDIR_OBJS)
+ENDEMICTARGETS_CLEAN = $(OBJS)
 
 # ---- C compilation defines
 
@@ -65,44 +64,17 @@ MILIBS = -lsocket -lnsl -L$(LIBDIR)
 
 # ---------------  Production Rules  ------------------------------------
 
-.PHONY : all sanitycheck clean clobber onetimeonly
-
-
-all : $(TARGETDIR) $(TARGETS)
-
-$(TARGETDIR) :
-	$(TARGET_MKDIR) $(TARGETDIR);
+include $(TOP)/make.default.rules
 
 $(OBJS) : %.so : %.c
 	$(CC) $(CFLAGS) -I $(INCDIR) $(MICFLAGS) -G $^ -o $@
 	chmod o+x,o+r $@
 
-$(TARGETS) : $(TARGETDIR)/% : %
-	-$(DBACCESS) $(DBNAME) $(patsubst %.so,drop_%.sql,$^)  # drop function
+$(TARGETDIR_OBJS) : $(TARGETDIR)/% : %
+	-$(DBACCESS) $(DBNAME) $(patsubst %.so,drop_%.sql,$^)  > /dev/null 2>&1
 	$(TARGET_CP) $^ $@ 			 # put it where DB will find it
 	$(TOUCH) $@
 	$(MAKESPECIFIC) $(patsubst %.so,create_%.sql,$^) $(TRANSLATETABLE) tempcreate.sql
 	$(DBACCESS) $(DBNAME) tempcreate.sql  	  # create function in DB
 	rm -f tempcreate.sql			  # prevent hanky panky
 
-
-
-
-# ---------------  Maintenance Rules  -----------------------------------
-
-clean :
-	rm -f $(OBJS)
-
-
-clobber :                       # Remove targets, but not target dir.
-	-$(foreach DROP, $(DROPS), $(DBACCESS) $(DBNAME) $(DROP);)
-	rm -f $(TARGETS)
-
-
-sanitycheck :
-
-
-# define one time only target
-
-onetimeonly :
-	$(ONETIMEONLY)
