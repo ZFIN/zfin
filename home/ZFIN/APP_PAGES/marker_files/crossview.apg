@@ -198,12 +198,18 @@ $(SETVAR,$mcount,$(+,$mcount,$2))
 <?MIBLOCK COND="$(>,$mcount,0)">
 <?MIVAR>Total of <b>$mcount</b> markers on panel<?/MIVAR>
 <p>
-<font size=2>Click on a linkage group in table at right to see a graphical map of individual linkage group.
+<font size=2>Click "View Map" in table at right to see a graphical map of an individual linkage group. 
 <p align=center>
 OR
 </p>
 <?MIVAR>
-Click to <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-markerselect.apg&select_from=MARKER&panelid=$OID">search the $abbrev Panel by marker attributes</A>.
+Search the <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-markerselect.apg&select_from=MARKER&panelid=$OID">$abbrev Panel for particular mapped markers.</A>.
+<?/MIVAR>
+<p align=center>
+OR
+</p>
+<?MIVAR>
+Click to <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-refcrosslist.apg">see a list of all mapping panels.</A>
 <?/MIVAR>
 </TD>
 
