@@ -90,12 +90,12 @@ do %../Scripts/fix-date.r
       3  gene_zdb_id varchar(15),
       4  gb5p varchar (50),
       5  gb3p varchar (50),
-      6  pcr amplification varchar(5),
-      7  library varchar(80),
+      6  library varchar(80),
+      7  digest varchar(20),
       8  vector varchar(80),
-      9  insert_kb float,
-      0  cloning_site varchar(20),
-      1  digest varchar(20),
+      9  pcr amplification varchar(5),
+      0  insert_kb float,
+      1  cloning_site varchar(20),
       2  polymerase varchar(80),
       3  comments lvarchar,
       4  modified DATETIME YEAR TO DAY)
@@ -122,7 +122,7 @@ do %../Scripts/fix-date.r
       replace/all line " |"   "|"
  
       row: parse/all line {|}
-      replace row/9 "," "."     ; change decimal point in lg_location to dot
+      replace row/10 "," "."     ; change decimal point in lg_location to dot
 
       line: rejoin [row/1 "|" row/2 "|" row/3 "|" row/4 "|" row/5 "|" row/6 "|" row/7 "|" row/8 "|" row/9 "|" row/10 "|" row/11 "|" row/12 "|" row/13 "|" row/14 "|" ]
                 replace/all line "<PIPE73>" "\|"
