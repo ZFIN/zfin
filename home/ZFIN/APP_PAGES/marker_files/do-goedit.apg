@@ -72,15 +72,33 @@ optional:
    <!--- pubid validation check --->
    <?MISQL SQL="select WebExplode(object, 'attr=pubid&value=$new_value&return_page=gomodify.apg&return_id=$OID') from webPages where ID='aa-markergovalidate.apg';">$1<?/MISQL>
 
-
-   <?MISQL COND="$(EC,$isValid,t)" SQL="
+   <?MICOMMENT>database trigger inserts new attribution, here need to delete
+	  the old one. The update might trigger go unknown curation attribution
+          be deleted.   
+   <?/MICOMMENT>
+   <?MIBLOCK COND="$(EC,$isValid,t)">
+     <?MISQL SQL="delete from record_attribution 
+			where recattrib_source_zdb_id = '$old_value'
+			  and recattrib_data_zdb_id = '$OID';">
+     <?/MISQL>
+     <?MISQL SQL="
 	update marker_go_term_evidence set mrkrgoev_source_zdb_id = '$new_value',
 					   mrkrgoev_date_modified = CURRENT,
 					   mrkrgoev_modified_by   = '$ZDB_name'	
 				where mrkrgoev_zdb_id = '$OID' 	">
-   <?/MISQL>
+     <?/MISQL>
 
-   <?MICOMMENT>the update in record_attribution is done by database trigger<?/MICOMMENT>
+     <?MICOMMENT> call attrib_check.apg to check and pop-up alert in the case 
+	that the old pub now has no more specific referencial data.
+     <?/MICOMMENT>
+     <?MISQL SQL="select mrkrgoev_mrkr_zdb_id
+		    from marker_go_term_evidence
+		   where mrkrgoev_zdb_id = '$OID';">
+     <?/MISQL>	
+     <?MIVAR NAME=OID_save>$OID<?/MIVAR>
+     <?MISQL SQL="select WebExplode(object,'pubId=$old_value&OID=$1') from webPages where ID='aa-attrib_check.apg';">$1<?/MISQL>
+     <?MIVAR NAME=OID>$OID_save<?/MIVAR>	
+    <?/MIBLOCK>
 <?/MIBLOCK>
 
 
@@ -205,8 +223,20 @@ optional:
 
 <?/MIBLOCK>
 
+<?MICOMMENT>======= delete the entire marker go term evidence record ======<?/MICOMMENT>
 <?MIBLOCK COND="$(EC,$attr,delall)">
-  <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id='$OID'"><?/MISQL>
+  <?MICOMMENT>delete from zactive data, check if that deletes the last go unknown for 
+              the gene, if so, clean out the curation pub on go unknown. 
+  <?/MICOMMENT>
+  <?MISQL SQL="select mrkrgoev_mrkr_zdb_id
+		 from marker_go_term_evidence
+		where mrkrgoev_zdb_id = '$OID';">
+	<?MIVAR NAME=mrkrzdbid>$1<?/MIVAR>
+  <?/MISQL>
+  <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id='$OID'; 
+	       execute procedure p_drop_go_unknown_attribution('$mrkrzdbid');">
+  <?/MISQL>
+
   <?MISQL SQL="
       insert into updates (submitter_id,submitter_name, rec_id, old_value,field_name, comments,when)
      		   values ('$ZDB_ident','$ZDB_name','$mrkrzdbid', '$OID','go annotation','delete this annotation',current);">
