@@ -9,7 +9,7 @@
 # !! format and conventions used in this makefile.                     !!
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
-# The meow.pl script is run by cron every week.  It invokes the sql script.
+# The Meow script is run by cron every week.  It invokes the sql script.
 # The MEOW DB dump uses the FTP directory structure.  See the 
 # ZFIN Documentation for how FTP is handled differently in test versus 
 # production.
@@ -20,7 +20,7 @@
 TOP = ../../..
 include $(TOP)/make.include
 
-TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/RefSeq
+TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/GenPept
 
 GENERICS =  fetch_load_GenPept.sh 
 

@@ -12,7 +12,7 @@
 set dbname="<!--|DB_NAME|-->";
 
 echo "fetching GenPept `date`";
-#/private/bin/rebol -sqw fetch-genpept.r
+/private/bin/rebol -sqw fetch-genpept.r
 echo "GenPept fetched `date`" 
 
 # set up the ENV to run dbaccess

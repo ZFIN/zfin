@@ -119,7 +119,7 @@ from tmp_dblk
 ;           
 
 drop table tmp_dblk;
---rollback work;
---
+drop table prot_len_acc;
+
 commit work;
 
