@@ -245,12 +245,19 @@ ERROR -- something bad happened -- no OID passed in!
        <font size=+1><b> Probe: 
 
 <?MISQL SQL="
-     SELECT mrkr_name, mrkr_zdb_id
-     FROM marker, expression_pattern
+     SELECT mrkr_name, mrkr_zdb_id, idsup_supplier_zdb_id
+     FROM marker, expression_pattern, outer(int_data_supplier)
      WHERE xpat_zdb_id = '$OID'
-       AND xpat_probe_zdb_id = mrkr_zdb_id;
+       AND xpat_probe_zdb_id = mrkr_zdb_id
+       AND xpat_probe_zdb_id = idsup_data_zdb_id;
      ">
        <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$1</a>
+       
+     <?MIVAR COND="$(NC,$3,)">
+       <font size=-1>
+         <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$3">(available from)</a>
+       </font>
+     <?/MIVAR>
 
 <?/MISQL>
        </b></font>
@@ -655,41 +662,6 @@ ERROR -- something bad happened -- no OID passed in!
 <?/MISQL> <!-- ends stages -->
 
 </table>
-
-
-<?MIVAR NAME=CODECOMMENTS> 
-     GET THE CONTACT(S) ASSOCIATED WITH THIS EXPRESSSION PATTERN AND THEIR ID,
-     THEN DISPLAY THE LIST OF CONTACTS AS HOTLINKS TO THEIR PERSON PAGE.
-<?/MIVAR>
-
-<?MIVAR NAME=$CONTACT><?/MIVAR>
-<?MIVAR NAME=$COUNT>0<?/MIVAR>
-
-  <?MISQL SQL="
-    SELECT l.zdb_id, l.name 
-    FROM lab l, int_data_source
-    WHERE '$XPATSTG_ID' = ids_data_zdb_id
-      AND ids_source_zdb_id = l.zdb_id;
-  ">
-    <?MIBLOCK COND="$(=,$COUNT,0)">
-      <?MIVAR NAME=$CONTACT>
-
-        <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$1">$2</a>
-   
-      <?/MIVAR>
-    <?/MIBLOCK>
-    <?MIBLOCK COND="$(=,$COUNT,1)">
-      <?MIVAR NAME=$CONTACT>
-
-        $CONTACT, 
-        <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$1">$2</a>
-
-      <?/MIVAR>
-    <?/MIBLOCK>
-    <?MIVAR NAME=$COUNT>1<?/MIVAR>
-  <?/MISQL>
-
-<?MIVAR><b>Contact(s):&nbsp;</b>$CONTACT<?/MIVAR>
 
 
 <?MIVAR COND="$(XST,$XPAT_RECEIVE_DATE)"><p><b>Submission Date:</b> &nbsp;$XPAT_RECEIVE_DATE<?/MIVAR>

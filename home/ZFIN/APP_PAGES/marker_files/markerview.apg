@@ -865,11 +865,12 @@
 
 <TABLE border=0 width=100%>
  <?MISQL SQL="select mreltype_name from marker_relationship_type;">
-  <?MIVAR NAME="$mreltype">$1<?/MIVAR>
+   <?MIVAR NAME="$mrkrview_mrel_type">$1<?/MIVAR>
+   <?MIVAR NAME=$mrkrview_last_mrkr_type><?/MIVAR>
 
-    <?MISQL SQL="select mreltype_2_to_1_comments from marker_relationship_type where mreltype_name = '$mreltype';">
+    <?MISQL SQL="select mreltype_2_to_1_comments from marker_relationship_type where mreltype_name = '$mrkrview_mrel_type';">
     <?MIVAR NAME="$mrel2to1comments">$1<?/MIVAR>
-     <?MISQL SQL="select count(*)::Integer from marker_relationship where mrel_mrkr_2_zdb_id = '$OID' and mrel_type='$mreltype';">
+     <?MISQL SQL="select count(*)::Integer from marker_relationship where mrel_mrkr_2_zdb_id = '$OID' and mrel_type='$mrkrview_mrel_type';">
     <?MIBLOCK COND="$(>,$1,0)">
 
      <TR>
@@ -877,23 +878,43 @@
        <?MIVAR>$mrel2to1comments<?/MIVAR>
       </TD>
       <TD align=left width=80% bgcolor=#EEEEEE>
-	<?MISQL SQL="select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrel_type,  mreltype_name, mreltype_2_to_1_comments, mrkr_type, mrel_zdb_id from marker, marker_relationship, marker_relationship_type where mrel_mrkr_2_zdb_id = '$OID' and mrel_mrkr_1_zdb_id = mrkr_zdb_id and mrel_type = mreltype_name and mreltype_name = '$mreltype'  group by mrkr_type, mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrel_type, mreltype_name, mreltype_2_to_1_comments, mrel_zdb_id order by mrkr_type, mrkr_abbrev_order;">
+	<?MISQL SQL="
+	  select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrel_type, mreltype_name, mreltype_2_to_1_comments, mrkr_type, mrel_zdb_id, idsup_supplier_zdb_id
+	  from marker, marker_relationship, marker_relationship_type, outer(int_data_supplier)
+	  where mrel_mrkr_2_zdb_id = '$OID' 
+	    and mrel_mrkr_1_zdb_id = mrkr_zdb_id 
+	    and mrel_type = mreltype_name 
+	    and mreltype_name = '$mrkrview_mrel_type'  
+	    and mrel_mrkr_1_zdb_id = idsup_data_zdb_id
+	  group by mrkr_type, mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrel_type, mreltype_name, mreltype_2_to_1_comments, mrel_zdb_id, idsup_supplier_zdb_id
+	  order by mrkr_type, mrkr_abbrev_order;">
+	  
+	  <?MIVAR NAME=mrkrview_segment_mrkr_zdb_id>$2<?/MIVAR> 
+	  <?MIVAR NAME=mrkrview_segment_mrel_type>$4<?/MIVAR> 
+	  <?MIVAR NAME=mrkrview_segment_mrkr_type>$7<?/MIVAR> 
+	  <?MIVAR NAME=mrkrview_segment_mrel_zdb_id>$8<?/MIVAR> 
+	  <?MIVAR NAME=mrkrview_segment_supplier>$9<?/MIVAR> 
 	
-	<?MIBLOCK COND="$(NE,$7,$mrel_mtype)">
+	<?MIBLOCK COND="$(NE,$mrkrview_segment_mrkr_type,$mrkrview_last_mrkr_type)">
 	 <?MIBLOCK COND="$(NE,$MI_CURRENTROW,1)"><br><?/MIBLOCK>
- 	 <?MIVAR><font size=-1>[$7]</font><?/MIVAR>
+ 	 <?MIVAR><font size=-1>[$mrkrview_segment_mrkr_type]</font><?/MIVAR>
         <?MIELSE>,
 	<?/MIBLOCK>
-	<?MIVAR NAME=$mrel_mtype>$7<?/MIVAR>	
+	<?MIVAR NAME=$mrkrview_last_mrkr_type>$mrkrview_segment_mrkr_type<?/MIVAR>	
 	
         <?MIVAR COND="$(XST,$UPDATE)">
          <INPUT TYPE=button 
          value=Delete 
-         onClick="Delete_mrel('$2','$OID','$4')">
+         onClick="Delete_mrel('$mrkrview_segment_mrkr_zdb_id','$OID','$mrkrview_segment_mrel_type')">
         <?/MIVAR>
 
-        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$1</A>
-	<?MISQL SQL="select WebExplode(object,'dataId=$8&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrview_segment_mrkr_zdb_id">$1</A>
+        
+        <?MIVAR COND="$(NC,$mrkrview_segment_supplier,)">
+          <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$mrkrview_segment_supplier">(available from)</A>
+        <?/MIVAR>
+        
+	<?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_segment_mrel_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
         <?/MISQL>
 	</TD>
      </TR>
@@ -901,31 +922,50 @@
 
 <?/MISQL>
 <?/MISQL>
-    <?MISQL SQL="select mreltype_1_to_2_comments from marker_relationship_type where mreltype_name = '$mreltype';">
+    <?MISQL SQL="select mreltype_1_to_2_comments from marker_relationship_type where mreltype_name = '$mrkrview_mrel_type';">
      <?MIVAR NAME="$mrel1to2comments">$1<?/MIVAR>
-     <?MISQL SQL="select count(*)::Integer from marker_relationship where mrel_mrkr_1_zdb_id = '$OID' and mrel_type='$mreltype';">
+     <?MISQL SQL="select count(*)::Integer from marker_relationship where mrel_mrkr_1_zdb_id = '$OID' and mrel_type='$mrkrview_mrel_type';">
      <?MIBLOCK COND="$(>,$1,0)">
+     
      <TR>
       <TD bgcolor=#EEEEEE>
        <?MIVAR>$mrel1to2comments<?/MIVAR> 
        <?MIVAR NAME=$mrel_mtype><?/MIVAR>
       </TD>
       <TD align=left width=80% bgcolor=#EEEEEE>
-	<?MISQL SQL="select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrel_type,  mreltype_name, mreltype_1_to_2_comments, mrkr_type, mrel_zdb_id from marker, marker_relationship, marker_relationship_type where mrel_mrkr_1_zdb_id = '$OID' and mrel_mrkr_2_zdb_id = mrkr_zdb_id and mrel_type = mreltype_name and mreltype_name = '$mreltype'  group by mrkr_type, mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrel_type, mreltype_name, mreltype_1_to_2_comments, mrel_zdb_id order by mrkr_type, mrkr_abbrev_order;">
-
-	<?MIBLOCK COND="$(NE,$7,$mrel_mtype)">
-	 <?MIBLOCK COND="$(NE,$MI_CURRENTROW,1)"><br><?/MIBLOCK>
- 	 <?MIVAR><font size=-1>[$7]</font><?/MIVAR>
+	<?MISQL SQL="
+	  select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrel_type,  mreltype_name, mreltype_1_to_2_comments, mrkr_type, mrel_zdb_id, idsup_supplier_zdb_id
+	  from marker, marker_relationship, marker_relationship_type, outer(int_data_supplier)
+	  where mrel_mrkr_1_zdb_id = '$OID' 
+  	    and mrel_mrkr_2_zdb_id = mrkr_zdb_id 
+	    and mrel_type = mreltype_name 
+	    and mreltype_name = '$mrkrview_mrel_type'  
+	    and mrel_mrkr_2_zdb_id = idsup_data_zdb_id
+	  group by mrkr_type, mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrel_type, mreltype_name, mreltype_1_to_2_comments, mrel_zdb_id, idsup_supplier_zdb_id
+	  order by mrkr_type, mrkr_abbrev_order;">
+	  
+	  <?MIVAR NAME=mrkrview_segment_mrkr_zdb_id>$2<?/MIVAR> 
+	  <?MIVAR NAME=mrkrview_segment_mrel_type>$4<?/MIVAR> 
+	  <?MIVAR NAME=mrkrview_segment_mrkr_type>$7<?/MIVAR> 
+	  <?MIVAR NAME=mrkrview_segment_mrel_zdb_id>$8<?/MIVAR> 
+	  <?MIVAR NAME=mrkrview_segment_supplier>$9<?/MIVAR> 
+	
+	<?MIBLOCK COND="$(NC,$mrkrview_segment_mrkr_type,$mrkrview_last_mrkr_type)">
+	  <?MIBLOCK COND="$(NE,$MI_CURRENTROW,1)"><br><?/MIBLOCK>
+ 	  <?MIVAR><font size=-1>[$mrkrview_segment_mrkr_type]</font><?/MIVAR>
         <?MIELSE>,
 	<?/MIBLOCK>
-	<?MIVAR NAME=$mrel_mtype>$7<?/MIVAR>
+	<?MIVAR NAME=$mrkrview_last_mrkr_type>$mrkrview_segment_mrkr_type<?/MIVAR>
         <?MIVAR COND="$(XST,$UPDATE)">
-         <INPUT TYPE=button 
+         <INPUT TYPE=button  
           value=Delete 
-          onClick="Delete_mrel('$2','$OID','$4')">
+          onClick="Delete_mrel('$mrkrview_segment_mrkr_zdb_id','$OID','$mrkrview_segment_mrel_type')">
         <?/MIVAR>	
-	 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$1</A>
-         <?MISQL SQL="select WebExplode(object,'dataId=$8&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+	 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrview_segment_mrkr_zdb_id">$1</A>
+         <font size=-1>
+           <?MIVAR COND="$(NC,$mrkrview_segment_supplier,)"><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$mrkrview_segment_supplier">(available from)</A><?/MIVAR>
+         </font>
+	<?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_segment_mrel_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
        <?/MISQL> 
        </TD>
      </TR>
@@ -1081,7 +1121,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 <?/MISQL>
 <?MIBLOCK COND="$(=,$more,1)">
 
-  <li><?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genbank.apg&OID=$OID$(IF,$(XST,$UPDATE),&UPDATE=1)">nucleotide sequence info</A><?/MIVAR>
+  <li><?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sequence.apg&OID=$OID$(IF,$(XST,$UPDATE),&UPDATE=1)">nucleotide sequence info</A><?/MIVAR>
 
 <?MIELSE COND="$(>,$count,0)">
 
