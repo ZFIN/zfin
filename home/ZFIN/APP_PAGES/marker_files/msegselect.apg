@@ -1,4 +1,12 @@
-	
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>	
 <!--
  
 -->
@@ -114,21 +122,24 @@
  	$(VECAPPEND,$constraintList,$typeConstraint)
    <?/MIVAR>
 
-   <?MICOMMENT>** 08/14/03 We would like to order the return list with the significance of the matched name. We create temp tables to hold the zdb id, matched name, and significance.<?/MICOMMENT>
+   <?MICOMMENT>
+     We would like to order the return list with the significance of
+     the matched name.  We use app page specific tables to hold the zdb id, 
+     matched name, and significance.
+   <?/MICOMMENT>
   
-   <?MIVAR NAME=$name_sig_col><?/MIVAR>
-   <?MIVAR NAME=$name_match_table><?/MIVAR>
-   <?MIVAR NAME=$sig_order><?/MIVAR>
+   <?MIVAR NAME=msegsel_optional_match_table><?/MIVAR>
+   <?MIVAR NAME=msegsel_optional_match_cols><?/MIVAR>
+   <?MIVAR NAME=msegsel_optional_marker_cols><?/MIVAR>
    <?MIVAR NAME=$name_constraint><?/MIVAR>
  
+   <?MISQL SQL="
+     select dbinfo('sessionid') 
+       from single;">
+     <?MIVAR NAME=$msegsel_session_id>$1<?/MIVAR>
+   <?/MISQL>
+
    <?MIBLOCK COND="$(XST,$input_name)">
-     <?MISQL SQL="
-	  create temp table msegselect_name_match(
-		msegmch_zdb_id	varchar(50),
-		msegmch_name	varchar(200),
-		msegmch_significance	int,
-		msegmch_precedence	varchar(80) ); ">
-     <?/MISQL> 
      <?MIVAR NAME=mrkrMchIdLast><?/MIVAR>
      <?MIVAR NAME=mchGeneIdLast><?/MIVAR>
      <?MICOMMENT>*** 08/26 name search will not search for accession number<?/MICOMMENT>
@@ -137,14 +148,14 @@
      <?MIVAR NAME=$contained_genes><?/MIVAR>	  
      <?MISQL SQL="
 	select mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id, allmapnm_name, 
-		allmapnm_significance
+	       allmapnm_significance
 	  from marker_relationship, all_map_names 
 	 where mrel_mrkr_2_zdb_id = allmapnm_zdb_id 
 	   and mrel_type = 'clone contains gene'
            and allmapnm_name_lower like '$wild_card$(LOWER,$input_name)%'
            and mrel_mrkr_1_zdb_id like 'ZDB-$marker_type%'
 	   and allmapnm_precedence <> 'Accession number'
-	  order by mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id, allmapnm_significance; ">
+	 order by mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id, allmapnm_significance; ">
 
         <?MIVAR NAME=mrkrMchId>$1<?/MIVAR>
 	<?MIVAR NAME=mchGeneId>$2<?/MIVAR>
@@ -152,8 +163,12 @@
 	<?MIBLOCK COND="$(NC,$mrkrMchIdLast,$mrkrMchId)">
 
  	     <?MISQL COND="$(NC,$mrkrMchIdLast,)" SQL="
-	        insert into msegselect_name_match 
-		  values('$mrkrMchIdLast', '$(URLENCODE,$contained_genes)', '1', 'Marker relations'); ">
+	        insert into msegselect_temp_match 
+		    ( msegmatch_session_id, msegmatch_zdb_id, msegmatch_name,
+		      msegmatch_significance, msegmatch_precedence )
+		  values
+		    ( $msegsel_session_id, '$mrkrMchIdLast', 
+		      '$(URLENCODE,$contained_genes)', '1', 'Marker relations');">
              <?/MISQL> 	
 	     <?MIVAR>
 	       $(SETVAR,$contained_genes,$mchName)
@@ -169,8 +184,12 @@
 
      <?/MISQL>
      <?MISQL SQL="
-	    insert into msegselect_name_match 
-		 values('$mrkrMchIdLast', '$(URLENCODE,$contained_genes)', '1', 'Marker relations'); ">
+        insert into msegselect_temp_match 
+	    ( msegmatch_session_id, msegmatch_zdb_id, msegmatch_name,
+	      msegmatch_significance, msegmatch_precedence )
+	   values
+	    ( $msegsel_session_id, '$mrkrMchIdLast', 
+	      '$(URLENCODE,$contained_genes)', '1', 'Marker relations'); ">
      <?/MISQL> 
 
 
@@ -180,23 +199,30 @@
 	 where allmapnm_name_lower like '$wild_card$(LOWER,$input_name)%'
 	   and allmapnm_zdb_id like 'ZDB-$marker_type%'
            and allmapnm_precedence <> 'Accession number'
-	   and allmapnm_zdb_id not in (select msegmch_zdb_id from msegselect_name_match)
+	   and allmapnm_zdb_id not in 
+		(select msegmatch_zdb_id 
+		   from msegselect_temp_match
+		  where msegmatch_session_id = $msegsel_session_id)
         order by allmapnm_zdb_id,allmapnm_significance, allmapnm_name; ">
 	<?MIVAR NAME=mrkrMchId>$1<?/MIVAR>
 	<?MISQL COND="$(NC,$mrkrMchId,$mrkrMchIdLast)" SQL="
-           insert into msegselect_name_match 
-	    values('$1', '$(URLENCODE,$2)', '$3', '$4');">
- 		$(SETVAR,$mrkrMchIdLast,$mrkrMchId)          	
+	  insert into msegselect_temp_match 
+	      ( msegmatch_session_id, msegmatch_zdb_id, msegmatch_name,
+	        msegmatch_significance, msegmatch_precedence )
+	    values
+	      ( $msegsel_session_id, '$1', '$(URLENCODE,$2)', '$3', '$4');">
+ 	  $(SETVAR,$mrkrMchIdLast,$mrkrMchId)          	
         <?/MISQL>
      <?/MISQL>
 
   
     <?MIVAR>
-        $(SETVAR,$name_sig_col,",msegmch_name,msegmch_significance, msegmch_precedence")
-        $(SETVAR,$name_match_table,",msegselect_name_match")
-        $(SETVAR,$sig_order,"msegmch_significance, ")
-        $(SETVAR,$name_constraint," mrkr_zdb_id = msegmch_zdb_id ")
+        $(SETVAR,$msegsel_optional_match_table,", msegselect_temp_match")
+        $(SETVAR,$msegsel_optional_match_cols,", msegmatch_name, msegmatch_significance, msegmatch_precedence")
+        $(SETVAR,$msegsel_optional_marker_cols,", msegtmrkr_match_name, msegtmrkr_significance, msegtmrkr_precedence")
+        $(SETVAR,$name_constraint," mrkr_zdb_id = msegmatch_zdb_id ")
 	$(VECAPPEND, $constraintList,$name_constraint)
+        $(VECAPPEND, $constraintList, msegmatch_session_id = $msegsel_session_id )
     <?/MIVAR>
  
   <?/MIBLOCK><!-- end name is provided -->
@@ -204,23 +230,34 @@
    
   <?MIBLOCK COND="$(XST,$input_acc)">
     <?MISQL SQL="
-	select allmapnm_zdb_id, allmapnm_name, allmapnm_significance, allmapnm_precedence
+      insert into msegselect_temp_match 
+	      ( msegmatch_session_id, msegmatch_zdb_id, msegmatch_name,
+	        msegmatch_significance, msegmatch_precedence )
+	select $msegsel_session_id, allmapnm_zdb_id, allmapnm_name, 
+	       allmapnm_significance, allmapnm_precedence
           from all_map_names
 	 where allmapnm_name_lower like '$wild_card$(LOWER,$input_acc)%'
-           and allmapnm_precedence = 'Accession number'
-        UNION
-	select mrel_mrkr_1_zdb_id, allmapnm_name, allmapnm_significance, allmapnm_precedence
+           and allmapnm_precedence = 'Accession number';">
+    <?/MISQL>
+    <?MISQL SQL="
+      insert into msegselect_temp_match 
+	      ( msegmatch_session_id, msegmatch_zdb_id, msegmatch_name,
+	        msegmatch_significance, msegmatch_precedence )
+	select $msegsel_session_id, mrel_mrkr_1_zdb_id, allmapnm_name, 
+	       allmapnm_significance, allmapnm_precedence
           from all_map_names, marker_relationship
 	 where allmapnm_name_lower like '$wild_card$(LOWER,$input_acc)%'
            and allmapnm_precedence = 'Accession number'
 	   and mrel_mrkr_2_zdb_id = allmapnm_zdb_id
-	   and mrel_type = 'clone contains small segment'
-	into temp msegselect_acc_match; ">
+	   and mrel_type = 'clone contains small segment';">
     <?/MISQL>
     <?MIVAR>
-        $(SETVAR,$name_match_table,",msegselect_acc_match")
-        $(SETVAR,$name_constraint," mrkr_zdb_id = allmapnm_zdb_id ")
+        $(SETVAR,$msegsel_optional_match_table,", msegselect_temp_match")
+        $(SETVAR,$msegsel_optional_match_cols,", msegmatch_name, msegmatch_significance, msegmatch_precedence")
+        $(SETVAR,$msegsel_optional_marker_cols,", msegtmrkr_match_name, msegtmrkr_significance, msegtmrkr_precedence")
+        $(SETVAR,$name_constraint," mrkr_zdb_id = msegmatch_zdb_id ")
 	$(VECAPPEND, $constraintList,$name_constraint)
+	$(VECAPPEND, $constraintList, msegmatch_session_id = $msegsel_session_id )
     <?/MIVAR>
   <?/MIBLOCK>
 
@@ -229,46 +266,62 @@
   <?MIBLOCK COND="$(NC,$lg,0)">
     <?MICOMMENT>*** 08/22 we are not pulling gene/markers mapping info to related segment. So here only need to check the segmentself's map info. *** things changed later, we should do pullover mapping.  <?/MICOMMENT>
     <?MISQL  SQL="
-	select marker_id 
+      insert into msegselect_temp_on_lg
+	  ( msegtlg_session_id, msegtlg_mrkr_zdb_id )
+	select $msegsel_session_id, marker_id 
           from mapped_marker
-	 where or_lg = '$lg'
-      UNION 
-	select mrel_mrkr_2_zdb_id as marker_id
+	 where or_lg = '$lg';">
+    <?/MISQL>
+    <?MISQL  SQL="
+      insert into msegselect_temp_on_lg
+	  ( msegtlg_session_id, msegtlg_mrkr_zdb_id )
+	select $msegsel_session_id, mrel_mrkr_2_zdb_id
 	  from mapped_marker, marker_relationship
 	 where mrel_mrkr_1_zdb_id = marker_id
 	   and or_lg = '$lg'
-	   and mrel_type = 'clone contains small segment'
-       UNION 
-	select mrel_mrkr_1_zdb_id as marker_id
+	   and mrel_type = 'clone contains small segment';">
+    <?/MISQL>
+    <?MISQL  SQL="
+      insert into msegselect_temp_on_lg
+	  ( msegtlg_session_id, msegtlg_mrkr_zdb_id )
+	select $msegsel_session_id, mrel_mrkr_1_zdb_id
 	  from mapped_marker, marker_relationship
 	 where mrel_mrkr_2_zdb_id = marker_id
 	   and or_lg = '$lg'
 	   and mrel_type in ('clone contains gene',
-			     'clone contains small segment')
-       UNION
-        select lnkgmem_member_zdb_id as marker_id
+			     'clone contains small segment');">
+    <?/MISQL>
+    <?MISQL  SQL="
+      insert into msegselect_temp_on_lg
+	  ( msegtlg_session_id, msegtlg_mrkr_zdb_id )
+        select $msegsel_session_id, lnkgmem_member_zdb_id
 	  from linkage, linkage_member
 	 where lnkg_or_lg = '$lg'
-  	   and lnkgmem_linkage_zdb_id = lnkg_zdb_id 
-       UNION	
-	select mrel_mrkr_2_zdb_id as marker_id
+  	   and lnkgmem_linkage_zdb_id = lnkg_zdb_id ;">
+    <?/MISQL>
+    <?MISQL  SQL="
+      insert into msegselect_temp_on_lg
+	  ( msegtlg_session_id, msegtlg_mrkr_zdb_id )
+	select $msegsel_session_id, mrel_mrkr_2_zdb_id
 	  from marker_relationship, linkage, linkage_member
 	 where mrel_mrkr_1_zdb_id = lnkgmem_member_zdb_id
   	   and lnkgmem_linkage_zdb_id = lnkg_zdb_id 
 	   and lnkg_or_lg = '$lg'
-	   and mrel_type = 'clone contains small segment'
-       UNION 
-	select mrel_mrkr_1_zdb_id as marker_id
+	   and mrel_type = 'clone contains small segment';">
+    <?/MISQL>
+    <?MISQL  SQL="
+      insert into msegselect_temp_on_lg
+	  ( msegtlg_session_id, msegtlg_mrkr_zdb_id )
+	select $msegsel_session_id, mrel_mrkr_1_zdb_id
 	  from marker_relationship, linkage, linkage_member
 	 where mrel_mrkr_2_zdb_id = lnkgmem_member_zdb_id
   	   and lnkgmem_linkage_zdb_id = lnkg_zdb_id 
 	   and lnkg_or_lg = '$lg'
 	   and mrel_type in ('clone contains gene',
-			     'clone contains small segment')
-	  into temp msegselect_tmp_on_lg with no log; ">
+			     'clone contains small segment');">
      <?/MISQL> 
     
-     <?MIVAR NAME=$lgConstraint> mrkr_zdb_id in (select marker_id from msegselect_tmp_on_lg)<?/MIVAR>
+     <?MIVAR NAME=$lgConstraint> mrkr_zdb_id in (select distinct msegtlg_mrkr_zdb_id from msegselect_temp_on_lg where msegtlg_session_id = $msegsel_session_id)<?/MIVAR>
      <?MIVAR>
        $(VECAPPEND, $constraintList, $lgConstraint)
      <?/MIVAR>	
@@ -315,49 +368,55 @@
 
 <!--** for data reverse link from publication table-->
 
-<?MIVAR NAME=$optional_table><?/MIVAR>
-
 <?MIBLOCK COND="$(XST,$pubId)">
   <?MISQL SQL="
-	select mrkr_abbrev, mrkr_type, mrkr_zdb_id, clone_sequence_type, vector_type_name, mrkr_abbrev_order $name_sig_col
+    insert into msegselect_temp_marker
+	( msegtmrkr_session_id, msegtmrkr_abbrev, msegtmrkr_type, 
+	  msegtmrkr_zdb_id, msegtmrkr_clone_sequence_type, 
+	  msegtmrkr_vector_type_name, msegtmrkr_abbrev_order )
+	select $msegsel_session_id, mrkr_abbrev, mrkr_type, mrkr_zdb_id, 
+	       clone_sequence_type, vector_type_name, mrkr_abbrev_order
 	 from marker, record_attribution $clone_and_vector 
 	where recattrib_source_zdb_id = '$pubId'
 	  and recattrib_data_zdb_id = mrkr_zdb_id
 	  and mrkr_zdb_id = clone_mrkr_zdb_id
  	  and clone_vector_name = vector_name
 	  and mrkr_type in  (select mtgrpmem_mrkr_type from marker_type_group_member
-                    	      where mtgrpmem_mrkr_type_group = 'SEARCH_SEG')
-	into temp msegselect_tmp_markers with no log;">
+                    	      where mtgrpmem_mrkr_type_group = 'SEARCH_SEG');">
    <?/MISQL>
 
 <?MIELSE>
 
    <?MISQL SQL="
-	select mrkr_abbrev, mrkr_type, mrkr_zdb_id, clone_sequence_type, vector_type_name, mrkr_abbrev_order $name_sig_col
-	 from marker $clone_and_vector $name_match_table $optional_table
-	where $constraint
-	into temp msegselect_tmp_markers with no log;">
+     insert into msegselect_temp_marker
+	( msegtmrkr_session_id, msegtmrkr_abbrev, msegtmrkr_type, 
+	  msegtmrkr_zdb_id, msegtmrkr_clone_sequence_type, 
+	  msegtmrkr_vector_type_name, msegtmrkr_abbrev_order $msegsel_optional_marker_cols )
+	select distinct $msegsel_session_id, mrkr_abbrev, mrkr_type, 
+			mrkr_zdb_id, clone_sequence_type, vector_type_name, 
+			mrkr_abbrev_order $msegsel_optional_match_cols
+	 from marker $msegsel_optional_match_table $clone_and_vector 
+	where $constraint;">
    <?/MISQL>
 
 <?/MIBLOCK>
 
- <?MIVAR NAME=msegtable> msegselect_tmp_markers <?/MIVAR>
-
  <?MISQL COND="$(NC,$lg,0)" SQL="
-	set explain off;
-	drop table msegselect_tmp_on_lg; ">
+   delete from msegselect_temp_on_lg
+     where msegtlg_session_id = $msegsel_session_id;">
  <?/MISQL>
  <?MISQL COND="$(XST,$input_name)" SQL="
-	set explain off;
-	drop table msegselect_name_match; ">
+    delete from msegselect_temp_match
+     where msegmatch_session_id = $msegsel_session_id;">
  <?/MISQL>
 
  <!--  Count the number of marker names that will be returned. -->
  <!--  query count(*) -->
  <?MISQL SQL="
-  select distinct mrkr_zdb_id, mrkr_abbrev
-    from $msegtable;">
-  <?MIVAR NAME=$the_marker>$1<?/MIVAR>
+   select distinct msegtmrkr_zdb_id, msegtmrkr_abbrev
+     from msegselect_temp_marker
+     where msegtmrkr_session_id = $msegsel_session_id;">
+   <?MIVAR NAME=$the_marker>$1<?/MIVAR>
  <?/MISQL>
  <?MIVAR NAME=$num_recs>$MI_ROWCOUNT<?/MIVAR>
 
@@ -390,12 +449,6 @@
   </tr>
   </table>
 <?/MIBLOCK><!-- end of whether one return or more -->
-
-<?MISQL COND="$(XST,$input_acc)" SQL="
-	set explain off;
-	drop table msegselect_acc_match; ">
-<?/MISQL>
-
 
 <!-- Stuff to control retrieval volume -->
 <form method=post 
@@ -446,11 +499,15 @@
 
     <!--- Query Database --->
     <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
-	  select mrkr_abbrev, mrkr_type, mrkr_zdb_id,mrkr_abbrev_order,
-		 clone_sequence_type, vector_type_name $name_sig_col, mrkrtype_type_display
-	    from $msegtable, marker_types
-           where mrkr_type = marker_type
-	  order by $sig_order mrkr_abbrev_order ;">
+	  select distinct msegtmrkr_abbrev, msegtmrkr_type, msegtmrkr_zdb_id,
+		          msegtmrkr_abbrev_order, msegtmrkr_clone_sequence_type,
+			  msegtmrkr_vector_type_name, msegtmrkr_match_name, 
+			  msegtmrkr_significance, msegtmrkr_precedence, 
+			  mrkrtype_type_display
+	    from msegselect_temp_marker, marker_types
+           where msegtmrkr_type = marker_type
+	     and msegtmrkr_session_id = $msegsel_session_id
+	   order by msegtmrkr_significance, msegtmrkr_abbrev_order ;">
 	  <?MIVAR NAME=$abbrev>$1<?/MIVAR>
 	  <?MIVAR NAME=$mtype>$2<?/MIVAR>
 	  <?MIVAR NAME=$OID>$3<?/MIVAR>
@@ -669,8 +726,8 @@
 
 
  <?MISQL SQL="
-  insert into msegselect_tmp_markers (mrkr_abbrev) values (NULL);
-  drop table msegselect_tmp_markers;">
+   delete from msegselect_temp_marker 
+     where msegtmrkr_session_id = $msegsel_session_id;">
  <?/MISQL>
 
 
