@@ -108,7 +108,7 @@
               from orthologue_evidence_display, orthologue_evidence_code
              where oevdisp_gene_zdb_id = '$OID'
 	       and oevdisp_evidence_code = oevcode_code
-	     order by oevcode_order
+	     order by oevcode_order, oevdisp_organism_list
 	     ;">
        <?MIVAR>
        $(IF,$(>,$(POSITION,$1,$lastitem),0),"<TD align=center><b>*</b></TD>", "<TD></TD>")
@@ -137,7 +137,7 @@
               from orthologue_evidence_display, orthologue_evidence_code
              where oevdisp_gene_zdb_id = '$OID'
 	       and oevdisp_evidence_code = oevcode_code
-	     order by oevcode_order
+	     order by oevcode_order, oevdisp_organism_list
 	     ;">
        <?MIVAR>
        $(IF,$(>,$(POSITION,$1,$lastitem),0),"<TD align=center><b>*</b></TD>", "<TD></TD>")
@@ -172,7 +172,7 @@
   <?/MIVAR>	
 
 <?MIELSE> <!-- if any orthologue-->
-  None submitted.
+  <TR><TD>&nbsp None submitted.</TD></TR>
 <?/MIBLOCK>
 
 </TABLE>
