@@ -1051,6 +1051,22 @@ colattrib_source_zdb_id)
   <?/MIBLOCK> <!----- end UPDATEORTHO     ------------------------------->
 
 
+
+  <?MICOMMENT>
+    ============================================================================
+    ==========  DONE UPDATING INFORMATION
+    ============================================================================
+    We are done updating base information.  Now update the names fast search 
+    tables for this marker.  This code could only do the names update if 
+    names fields were updated.  However, that is a lot of conditions to check
+    and it doesn't take that long to do the update, so just do it in all
+    cases.
+  <?/MICOMMENT>
+
+  <?MISQL SQL="
+    execute procedure regen_names_marker('$OID');">
+  <?/MISQL>    
+
 <?/MIBLOCK> <!-- ends cond authorized -->
 
 <!-- okay, now just bail back to the markerview to view results -->
