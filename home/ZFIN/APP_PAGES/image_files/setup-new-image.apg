@@ -20,7 +20,8 @@ ANYWAY, this file just does some important setup stuff to be done before the a d
 <?MISQL SQL="execute function sysexec('make_thumbnail', '$upload_image $mythumb -g -Yb32 -+ ');"><?/MISQL>
 <?MIVAR NAME=$void>$1<?/MIVAR>
 
-<?MISQL SQL="update image set thumbnail=FILETOBLOB('$mythumb', 'client') where zdb_id='$temp_oid';"><?/MISQL>
+<?MISQL SQL="update image set thumbnail=FILETOBLOB('$mythumb', 'server') where zdb_id='$temp_oid';"><?/MISQL>
+<?MISQL SQL="execute function sysexec('rm', '$mythumb');"><?/MISQL>
 
 <!-- Now if there was a return_rec ID passed in, this means this new record was initiated in the
 course of filling out some other record -- we will need to go back there when we're done, so
