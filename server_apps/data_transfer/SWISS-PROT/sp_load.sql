@@ -96,11 +96,11 @@ begin work;
 		dalias_zdb_id		varchar(50),
     		dalias_data_zdb_id	varchar(50),
     		dalias_alias		varchar(120),
-   	 	dalias_significance	int
+   	 	dalias_group		varchar(30)
               ) with no log;
 	insert into pre_ac_alias
 	    select get_id("DALIAS"), dblink_zdb_id, 
-                   alias_acc_num, 1
+                   alias_acc_num, "alias"
 	    from pre_db_link db, temp_ac_alias al
  	    where db.acc_num = al.prm_acc_num;
 
@@ -141,12 +141,12 @@ begin work;
 		  dalias_zdb_id	varchar(50),
                   dalias_data_zdb_id varchar(50),
      		  dalias_alias       varchar(120),
-		  dalias_significance  int
+		  dalias_group       varchar(30)
 		)with no log;				 
 	insert into pre_gn_dalias 
-		(dalias_data_zdb_id, dalias_alias, dalias_significance)
+		(dalias_data_zdb_id, dalias_alias, dalias_group)
                  select distinct gnalias_data_zdb_id,
-			         gnalias_gname, 1
+			         gnalias_gname, "alias"
 		 from gn_dalias_with_dups;	  
 	update pre_gn_dalias
 		set dalias_zdb_id = get_id("DALIAS");
