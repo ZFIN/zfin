@@ -25,23 +25,23 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 # remove old files
 
-system("rm -f <!--|ROOT_PATH|-->/server_apps/DB_maintenance/orphan_file_report.txt") ;
+system("rm -f /tmp/orphan_file_report.txt") ;
 
-system("rm -f <!--|ROOT_PATH|-->/server_apps/DB_maintenance/file_list_image") ;
+system("rm -f /tmp/file_list_image") ;
 
-system("rm -f <!--|ROOT_PATH|-->/server_apps/DB_maintenance/file_list_pdf") ;
+system("rm -f /tmp/file_list_pdf") ;
 
-system("rm -f <!--|ROOT_PATH|-->/server_apps/DB_maintenance/fl_image_modified") ;
+system("rm -f /tmp/fl_image_modified") ;
 
-system("rm -f <!--|ROOT_PATH|-->/server_apps/DB_maintenance/fl_pdf_modified") ;
+system("rm -f /tmp/fl_pdf_modified") ;
 
-system("rm -f <!--|ROOT_PATH|-->/server_apps/DB_maintenance/moved_image_files.unl") ;
+system("rm -f /tmp/moved_image_files.unl") ;
 
-system("rm -f <!--|ROOT_PATH|-->/server_apps/DB_maintenance/moved_pdf_files.unl") ;
+system("rm -f /tmp/moved_pdf_files.unl") ;
 
-system("rm -f <!--|ROOT_PATH|-->/server_apps/DB_maintenance/orphan_image_files.unl") ;
+system("rm -f /tmp/orphan_image_files.unl") ;
 
-system("rm -f <!--|ROOT_PATH|-->/server_apps/DB_maintenance/orphan_pdf_files.unl") ;
+system("rm -f /tmp/orphan_pdf_files.unl") ;
 
 
 sub sendLoadReport ($) { # routine to send email to owner of db 
