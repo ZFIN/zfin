@@ -540,13 +540,14 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 
 
 <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
-  $sql
- ";>
+  $sql ;">
 
   <?MIVAR NAME=$GENE_OID>$1<?/MIVAR>
   <?MIVAR NAME=$GENE_NAME>$4<?/MIVAR>
   <?MIVAR NAME=$GENE_ABREV>$5<?/MIVAR>
   <?MIVAR NAME=$GENE_TYPE>$2<?/MIVAR>
+  
+  <?MIBLOCK COND="$(OR,$(NXST,$previous_gene),$(NC,$GENE_OID,$previous_gene))">
  
 	        <?MIVAR>
 		  <?MIBLOCK COND="$(>,$(POSITION,$GENE_OID,GENE),0)">
@@ -717,6 +718,8 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 
 <!--    change row_color    -->
 <?MIVAR NAME=$row_color>$(IF,$(EC,$row_color,$highlight),#FFFFFF,$highlight)<?/MIVAR>
+
+  <?/MIBLOCK> <!--  Not a previous gene  -->
 <?/MISQL>
 </TABLE>
 
