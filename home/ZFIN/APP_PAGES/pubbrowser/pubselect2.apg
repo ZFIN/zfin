@@ -1,0 +1,141 @@
+<HTML>
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-identify.apg';">$1<?/MISQL>
+
+<basefont size=2>
+
+
+<center>
+<U><B><FONT SIZE=4>Search for </font>
+<FONT SIZE=4 color="#ff0000" > PUBLICATION</font></b></u>
+</center>
+
+
+<form name=crit_form method=post TARGET="pbrowser" action="/cgi-bin_B/webdriver" onSubmit="parent.pbrowser.document.location='/ZDBB/misc_html/saysearching.html'">
+
+<TABLE width=100%>
+<TR>
+<TD><font size=-1>
+<b>AUTHOR contains:</b> <input type=text name=authors size=10 >
+</font>
+</TD> 
+<TD><font size=-1>
+<b>TITLE contains:</b> <input type=text name=title size=10>
+</font>
+</TD>
+<TD align=right><font size=-1>
+<b>TYPE:</b>
+<SELECT NAME=jtype>
+<option SELECTED value=any>ALL
+<option value=Journal>Journal
+<option value=Review>Review
+<option value=Abstract>Abstract
+<option value=Other>Other
+<?MIVAR COND="$(EC,$ZDB_access,root)">
+<option value=Unknown>Unknown
+<?/MIVAR>
+
+</SELECT>
+</font></TD> 
+</TR>
+
+</TABLE>
+
+<TABLE width=100%>
+<TR>
+<TD><font size=-1><b>YEAR </b> 
+<SELECT NAME=yr_cmpr>
+<option selected value="=">equals
+<option value="<" >before
+<option value=">" >after
+</SELECT>
+<SELECT name=century>
+<option selected>19 <option>20 <option>18 </SELECT>
+<input type=text name=year size=2 maxlength=2>
+</font></TD> 
+<TD align=right><font size=-1>
+<SELECT NAME=anon1>
+<option selected value=abstract>Abstract
+<option value=source>Source
+<option value=keywords>Keywords
+<option value=accession_no>Medline acc#
+<option value=zdb_id>ZFIN ID
+</SELECT>
+contains <input type=text name=anon1text size=10>
+</font></TD>
+</TR>
+</TABLE>
+
+<TABLE width=100%>
+<TR align=center>
+<TD><font size=-1>Order results by <SELECT NAME=order_pref> <option value=name>Author <option selected value=date>Pub Date </SELECT></font></TD>
+<TD><font size=-1><input type=submit name=action value="SEARCH"></font></TD>
+<TD align=right><font size=-1><input type=reset name=action value="Clear Settings"></font></TD>
+<TD align=center><font size=-1><input type=button name=clear_all value="List all publications" onClick="document.crit_form.reset();document.crit_form.submit()"></font></TD> </TR>
+</TABLE>
+
+<!-- Let root curators search based on curation status -->
+<?MIBLOCK COND="$(EC,$ZDB_access,root)">
+<TABLE width=100%>
+<TR>
+<TD> <font size=2>
+<b>Curation Status:</b>
+<SELECT name=cur_status>
+<option SELECTED value="any">Any
+<option value="Linked Authors">Linked Authors
+<option value="Curated Genes">Curated Gene Info
+<option value="Curated Expression data">Curated Expression Data
+<option value="Curated Mutant data">Curated Mutant Data
+<option value="Curated Markers/Mapping">Curated Mapping/Markers
+</SELECT>  
+</TD>
+<TD> <font size=2>
+<input type=button onClick="window.open('/cgi-bin_B/webdriver?MIval=aa-classify_pubs.apg','editor','scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=500');" value="Classify Pubs">
+</TD>
+</TR></TABLE>
+<?/MIBLOCK>
+
+
+<!-- Let root curators search based on publication status -->
+
+<?MIBLOCK COND="$(EC,$ZDB_access,root)">
+<TABLE width=100%>
+<TR>
+<TD> <font size=2>
+<b>Publication Status:</b>
+<SELECT name=pub_status>
+<option SELECTED value="any">Any
+<option value="active">Active
+<option value="inactive">Inactive
+<option value="temporary">Temporary
+<option value="uncurated">Uncurated
+</SELECT>  
+</TD>
+</TR></TABLE>
+
+<?/MIBLOCK>
+
+<!-- This next little block executes only if we are using the browser as a
+selector. That is we want user to ultimately CHOOSE a browsed value. All
+we have to do at this point is pass the return record along to the publister.
+-->
+<?MIVAR COND=$(XST,$return_rec)>
+<input type=hidden NAME="return_rec" value=$return_rec>
+<?/MIVAR>
+
+
+
+<input type=hidden name=MIval value=aa-publister2.apg>
+
+
+</form>
+
+<?MIVAR COND="$(EC,$ZDB_access,root)">
+
+<?/MIVAR>
+
+
+<!-- Put the cursor in the AUTHORS criterion box -->
+<SCRIPT>document.crit_form.authors.focus();</SCRIPT>
+</HTML>
+
