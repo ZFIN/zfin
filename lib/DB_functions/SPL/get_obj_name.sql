@@ -92,6 +92,13 @@ get_obj_name(zdbId varchar(50))
       into objName
       from data_alias
       where dalias_zdb_id = zdbId;
+  elif (objType = "DNOTE") then
+    -- danger, recursive call.  Not sure if it is the right thing to return
+    -- the name of the object the note is for, or just the data note's ZDB ID.
+    select get_obj_name(dnote_data_zdb_id)
+      into objName
+      from data_note
+      where dnote_zdb_id = zdbId;
   elif (objType = "DBLINK") then
     select fdbcont_fdb_db_name || ":" || dblink_acc_num
       into objName
