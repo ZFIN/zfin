@@ -21,6 +21,9 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/lib/DB_triggers
 
+DBLINK_TRIGGERS = dblink_insert_trigger.sql \
+		  dblink_acc_num_update_trigger.sql
+
 PUB_TRIGGERS = publication_insert_trigger.sql \
 	       publication_update_trigger.sql
 
@@ -38,7 +41,8 @@ ZERO_PAD_TRIGGERS = alteration_insert_trigger.sql \
 		    fish_allele_update_trigger.sql \
 		    fish_name_update_trigger.sql
 
-STATICS = $(PUB_TRIGGERS) $(STAGE_TRIGGERS) $(ZERO_PAD_TRIGGERS)
+STATICS = $(DBLINK_TRIGGERS) $(PUB_TRIGGERS) \
+          $(STAGE_TRIGGERS) $(ZERO_PAD_TRIGGERS)
 STATICTARGETS = $(foreach STAT, $(STATICS), $(TARGETDIR)/$(STAT))
 
 TARGETS =  $(STATICTARGETS)
