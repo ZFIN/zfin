@@ -1,9 +1,12 @@
--------------------------------------------------
--- This procedure checks that every anatomy 
--- relationship pair involving the input anatomy 
--- item still follows the stage rule with the new
--- stage range definition of that anatomy item
--- 
+----------------------------------------------------------------
+-- This procedure checks that every anatomy relationship pair
+-- involving the input anatomy item still follows the stage rule 
+-- with the new stage range definition of that anatomy item
+-- If the child's start stage is the "Unknown" stage, assign the 
+-- parent's start hour for this check, if the child's end stage is the 
+-- "Unknown" stage, assign the parent's end hour. In case the parent
+-- has an Unknown start/end stage, it doesn't affect this check.
+--
 -- INPUT VARS:
 --  		anatZdbId
 --		startStgZdbId
@@ -16,7 +19,7 @@
 -- RETURNS:
 --		successful: nothing
 --		fails: throws a -746 exception
--------------------------------------------------
+-------------------------------------------------------------
 
 create procedure p_check_anat_anatrel_stg_consistent (
 		anatZdbId 	like anatomy_item.anatitem_zdb_id,
@@ -31,16 +34,19 @@ create procedure p_check_anat_anatrel_stg_consistent (
     define endHour       	like stage.stg_hours_end;
     define parentStartHour	like stage.stg_hours_start;
     define parentEndHour    	like stage.stg_hours_end;
+    define startStgName		like stage.stg_name;
+    define endStgName    	like stage.stg_name;
+	
 
     -- retrieve the start hour and end hour of the input anatomy item
 
-    select stg_hours_start
-      into startHour
+    select stg_hours_start, stg_name
+      into startHour, startStgName
       from stage 
      where stg_zdb_id = startStgZdbId;
 
-    select stg_hours_end
-      into endHour
+    select stg_hours_end, stg_name
+      into endHour, endStgName
       from stage 
      where stg_zdb_id = endStgZdbId;
 
@@ -72,6 +78,15 @@ create procedure p_check_anat_anatrel_stg_consistent (
          where anatitem_zdb_id = parentAnatZdbId
            and anatitem_start_stg_zdb_id = sstart.stg_zdb_id
            and anatitem_end_stg_zdb_id = send.stg_zdb_id;
+
+	 -- if child's start stage is Unknown, set it to be the parent's start
+ 	 -- if child's end stage is Unknown, set it to the parent's end
+  	if ( startStgName = "Unknown") then
+		let startHour = parentStartHour;
+  	end if
+  	if ( endStgName = "Unknown") then
+		let endHour = parentEndHour;
+ 	 end if
 
 	execute procedure p_check_anatrel_stg_consistent
 		(parentAnatZdbId, anatZdbId, dageditId, parentStartHour, parentEndHour, startHour, endHour);
