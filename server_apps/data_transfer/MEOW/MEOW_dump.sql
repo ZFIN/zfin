@@ -226,11 +226,13 @@ create temp table meow_mutant (
   gene_id varchar(50),
   gene_abbrev varchar(20),
   locus_id varchar(50),
+  locus_name   varchar(50),
   locus_abbrev varchar(10)
 ) with no log;  
 
-insert into meow_mutant (gene_id,gene_abbrev,locus_id,locus_abbrev)
-   select a.zdb_id, a.abbrev, a.cloned_gene, b.mrkr_abbrev from locus a, marker b
+insert into meow_mutant (gene_id,gene_abbrev,locus_id,locus_name,locus_abbrev)
+   select a.cloned_gene, b.mrkr_abbrev, a.zdb_id, a.locus_name, a.abbrev 
+   from locus a, marker b
    where a.cloned_gene is not null 
    and a.cloned_gene = b.mrkr_zdb_id;
 
