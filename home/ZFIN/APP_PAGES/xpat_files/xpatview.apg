@@ -256,10 +256,10 @@ ERROR -- something bad happened -- no OID passed in!
      <?MIBLOCK COND="$(NC,$3,)">
        <font size=-1>
           <?MIBLOCK COND="$(EC,$3,ZDB-LAB-991005-53)">
-            <A HREF="/zirc/home/guide.php">(available from)</A>
+            <A HREF="/zirc/home/guide.php">(Order This)</A>
           <?MIELSE>
             <?MIVAR>
-              <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$3">(available from)</a>
+              <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$3">(Order This)</a>
             <?/MIVAR>
           <?/MIBLOCK>
        </font>
