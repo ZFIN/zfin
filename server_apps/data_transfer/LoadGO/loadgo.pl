@@ -1,4 +1,4 @@
-#!/local/bin/perl 
+#!/private/bin/perl 
 
 #
 # loadsp.pl
@@ -65,7 +65,36 @@ while( !( -e "ontology.unl")) {
 
 # ------------ Loading ---------------------
 print "\nloading...\n";
+
 system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> loadgoterms.sql >out 2> report.txt");
+
+sub sendLoadReport ($) {
+  
+  my $SUBJECT="Auto LoadGOTerms:".$_[0];
+  my $MAILTO="staylor";
+  my $TXTFILE="./newannotsecterms.unl";
+ 
+  # Create a new multipart message:
+  $msg1 = new MIME::Lite 
+    From    => "$ENV{LOGNAME}",
+    To      => "$MAILTO",
+    Subject => "$SUBJECT",
+    Type    => 'multipart/mixed';
+ 
+  attach $msg1 
+   Type     => 'text/plain',   
+   Path     => "$TXTFILE";
+
+  # Output the message to sendmail
+
+  open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
+  $msg1->print(\*SENDMAIL);
+  close (SENDMAIL);
+
+}
+
+&sendLoadReport("Terms with secondary annotations");
+
 
 exit;
 
