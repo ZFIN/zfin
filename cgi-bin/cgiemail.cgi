@@ -11,12 +11,6 @@ print "Content-Type: text/html^/"
 maintainer-email: tomc@cs.uoregon.edu
 set-net [zfishweb@cs.uoregon.edu mailhost.cs.uoregon.edu none none none]
 
-lock-file: %/tmp/stkctr.lock
-;lock-file: %../stkctr.lock
-
-output-file:   %<!--|FTP_ROOT|-->/pub/stockcenter/stockcenter.txt
-;output-file:    %/cs/ftp/pub/tomc/stockcenter.txt
-
 ;;; TO-DO read a local config file that contains domains to accept
 ;;; template files from
 
@@ -128,22 +122,6 @@ foreach ad parse addy "," [
        ]
        send/header to-email trim ad template header    
 ]          
-
-;;; append a copy of the email to a flatfile
-
-;print error? try[delete lock-file]
-
-;;; make sure only one cgi writes to the file at a time
-
-;;; need to make sure it does not wait forever
-then: now/time
-while [all[(not error? try[read lock-file]) (now/time - then) < 00:00:30]][wait 2]
-
-
-write  lock-file ""
-write/append  output-file rejoin ["# "now/date "--" now/time "^/"]
-write/append  output-file template
-delete lock-file
 
 ;;; output the happy ending version
 ;print read to-url (select keyval "success")
