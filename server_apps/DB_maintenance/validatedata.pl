@@ -1262,12 +1262,16 @@ sub prefixedIbdGenesHave1Est ($) {
 # If an EST does not have a corresponding clone record, then its corresponding
 # gene record must begin with xx.
 # 
+# This test explicitly excludes 6 ESTs from France.  ZFIN has these 6 ESTs
+# beacuse ZIRC carries them.  However, we don't have any expression data
+# for them yet.
+#
 #Parameter
 # $      Email Address for recipients
 # 
 sub estsWithoutClonesHaveXxGenes ($) {
 
-  logHeader ("Checking ESTs without clones have an XX gene");
+  logHeader ("Checking ESTs without clones have an XX gene (excluding 6)");
 
   my $sql = 'select mrkr_zdb_id, mrkr_name, mrkr_abbrev
                from marker est
@@ -1283,6 +1287,8 @@ sub estsWithoutClonesHaveXxGenes ($) {
                            and mrel_mrkr_2_zdb_id = est.mrkr_zdb_id
                            and mrel_type = "gene contains small segment"
                            and m1.mrkr_name like "xx:%" )
+                 and mrkr_name not in ("cb23", "cb42", "cb70", "cb104",
+                                       "cb109", "cb114")
                order by mrkr_name';
 
   my @colDesc = ("EST ZDB ID        ",
