@@ -1,4 +1,4 @@
-#!/local/bin/perl 
+!/local/bin/perl 
 
 ##################################################################
 #
@@ -47,13 +47,13 @@ sub messageContent () {
 
   $message = $message."\n";
   $message = $message."Thanks for your help.\n";
-  $message = $message."Pat Edwards\n";
+  $message = $message."Sherry Giglia\n";
   $message = $message."ZF Administrative Coordinator\n";
-  $message = $message."Institute of Neuroscience\n";
-  $message = $message."1254 University of Oregon\n";
-  $message = $message."Eugene, OR 97403-1254 USA\n";
-  $message = $message."(541) 346-5222 / FAX (541) 346-4548\n";
-  $message = $message."e-mail: edwards\@uoneuro.uoregon.edu\n";
+  $message = $message."ZFIN\n";
+  $message = $message."5291 University of Oregon\n";
+  $message = $message."Eugene, OR 97403-5291 USA\n";
+  $message = $message."(541) 346-4979 / FAX (541) 346-0322\n";
+  $message = $message."e-mail: zfinadmn\@zfin.org\n";
 
   return $message;
 }
