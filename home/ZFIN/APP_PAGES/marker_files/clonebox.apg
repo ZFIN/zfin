@@ -27,7 +27,7 @@ Requires:  $CLONE_MARKER_ID, $highlight
 
 	    <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$viewpage&OID=$1">$2</a>
 	    <?MIVAR COND="$(NE,$3,)">
-	      <font size=-1">(<a href="$3">$4</a>)</font><img src="/images/new1.gif">
+	      <font size=-1">&nbsp;&nbsp;&nbsp;(<a href="$3">$4</a>)</font><img src="/images/new1.gif">
 	    <?/MIVAR>
 
       <?/MIVAR>
@@ -203,10 +203,8 @@ Requires:  $CLONE_MARKER_ID, $highlight
     <?/MIBLOCK>
     
     </TABLE>
-    <?/MIVAR>
     
     
-  
 <?MIVAR NAME=comment>hard coded as "none given" for thisse load<?/MIVAR>
 <!-- <p align=left><b>Comments:</b><br>&nbsp;$3</p> -->
 <?/MISQL>

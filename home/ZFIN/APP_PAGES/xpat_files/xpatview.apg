@@ -189,12 +189,12 @@ FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN record
      <?MIBLOCK COND="$(NC,$3,)">
        <font size=-1>
        <?MIBLOCK COND="$(NC,$4,)">
-          <?MIVAR><A HREF="$4">($5)</A><?/MIVAR>
+          <?MIVAR>&nbsp;&nbsp;&nbsp;(<A HREF="$4">$5</A>)<?/MIVAR>
        <?MIELSE>
 	  <?MIVAR COND="$(>,$(POSITION,$3,LAB),0)" NAME=viewpage>labview.apg<?/MIVAR>
           <?MIVAR COND="$(>,$(POSITION,$3,COMPANY),0)" NAME=viewpage>companyview.apg<?/MIVAR>
           <?MIVAR>
-            <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$viewpage&OID=$3">(Order This)</a>
+            &nbsp;&nbsp;&nbsp;(<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$viewpage&OID=$3">Order This</a>)
           <?/MIVAR>
        <?/MIBLOCK>
        </font>
