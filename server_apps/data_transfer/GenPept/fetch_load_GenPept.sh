@@ -23,10 +23,9 @@ set Prompt="%";
 
 if (`/local/bin/hostname` == "embryonix") then
     source /research/zcentral/Commons/env/wanda
-else if (`/local/bin/hostname` == "chromix") then
+else
+    # assume production
     source /research/zcentral/Commons/env/wildtype
-else 
-	echo "Where the heck am I?"; exit(1);	
 endif
 
 
