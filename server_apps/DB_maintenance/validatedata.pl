@@ -1258,9 +1258,10 @@ sub oldOrphanDataCheck($) {
   my $sth = $dbh->prepare($sql) or die "Prepare fails";  
   $sth -> execute();
 
+  my $fileNotEmpt;
   while (my @row = $sth ->fetchrow_array()) {
 
-    my $filenotempt = 1;
+    $fileNotEmpt = 1;
     my $orphan = subZdbActiveDataSourceStillInUse(@row);
 
     if($orphan) {
@@ -1278,8 +1279,8 @@ sub oldOrphanDataCheck($) {
  
   close (ORPH);
   
-  if($filenotempt) {
-    my $sentToAddress = $_[0];
+  if($fileNotEmpt) {
+    my $sendToAddress = $_[0];
     my $subject = "about previous orphans.";
     my $msg = "Actions on the orphans detected last time.\n";
     &sendMail($sendToAddress, $subject, $msg, );
@@ -1299,9 +1300,10 @@ sub oldOrphanSourceCheck($) {
   my $sth = $dbh->prepare($sql) or die "Prepare fails";  
   $sth -> execute();
 
+  my $fileNotEmpt;
   while (my @row = $sth ->fetchrow_array()) {
    
-    my $fileNotEmpt = 1;
+    $fileNotEmpt = 1;
     my $orphan = subZdbActiveDataSourceStillInUse(@row);
     
     if($orphan) {
@@ -1318,7 +1320,7 @@ sub oldOrphanSourceCheck($) {
   }
   close(ORPH);
   if($fileNotEmpt) {
-    my $sentToAddress = $_[0];
+    my $sendToAddress = $_[0];
     my $subject = "about previous orphans.";
     my $msg = "Actions on the orphans detected last time.\n";
     &sendMail($sendToAddress, $subject, $msg, );
