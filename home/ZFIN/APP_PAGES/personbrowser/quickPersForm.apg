@@ -28,7 +28,7 @@
       <SELECT name=searchtype onChange='document.critform.START.value = "";'  >
        <option $(IF,$(EC,$searchtype,begins),SELECTED) value=begins>Name begins with
        <option $(IF,$(EC,$searchtype,contains),SELECTED) value=contains>Name contains
-      </select>:</b> <input type=text name=pname size=10 onChange='document.critform.START.value = "";' $(IF,$(XST,$pname),value='$pname')>
+      </select>:</b> <input type=text name=pname size=20 onChange='document.critform.START.value = "";' value="$(IF,$(XST,$pname),$pname)">
       </font>
       <?/MIVAR>
     </TD>

@@ -1,3 +1,13 @@
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
 <!-- added onChange to each variable to reset START for walking windows - 
      this is needed if users alter query after using the navtile button and 
      without using the reset button. if the new query result has fewer than 
@@ -54,10 +64,6 @@ function start_help(anchor) {
 
 
 
-
-
-
-
 <!-- THIS NEXT PART IS EXECUTED AFTER THE PERSON ENTERS SOME CRITERIA -->
 
 
@@ -77,7 +83,14 @@ function start_help(anchor) {
 <?MIBLOCK COND="$(OR,$(XST,$pname),$(XST,$address),$(XST,$email),$(XST,$anon1text),$(XST,$anon2text))">
 
   <!-- First filter name and address for apostrophes! -->
-  <?MIVAR COND="$(XST,$pname)" NAME=$pname DELIMIT="'" REPLACE="''">$pname<?/MIVAR>
+  <?MIVAR COND="$(XST,$pname)" NAME=$pname DELIMIT="'" REPLACE="''">$(TRIM,$pname)<?/MIVAR>
+
+  <?MICOMMENT>first code the "'" for scrub_char function, the function will condense "''" back to "'", so need to recode it afterwards.<?/MICOMMENT>
+  <?MIVAR COND="$(XST,$address)" NAME=$address DELIMIT="'" REPLACE="''">$address<?/MIVAR>
+  <?MISQL COND="$(XST,$address)" SQL="
+	execute function scrub_char('$address');">
+	$(SETVAR,$address,$1)
+  <?/MISQL>
   <?MIVAR COND="$(XST,$address)" NAME=$address DELIMIT="'" REPLACE="''">$address<?/MIVAR>
 
   <?MIVAR NAME=$wild_card><?/MIVAR>
@@ -107,6 +120,10 @@ function start_help(anchor) {
   <?MIVAR NAME=$constraint COND="$(XST,$anon1text)">
     $constraint $previous (webhtml_like($anon1,'$anon1text'))
   <?/MIVAR>
+
+  <?MICOMMENT>restore the inputs<?/MICOMMENT>
+  <?MIVAR COND="$(XST,$pname)" NAME=$pname DELIMIT="''" REPLACE="'">$pname<?/MIVAR>
+  <?MIVAR COND="$(XST,$address)" NAME=$address DELIMIT="''" REPLACE="'">$address<?/MIVAR>
 
 <?/MIBLOCK>
 
@@ -378,14 +395,14 @@ to the left of each item.
       <option $(IF,$(EC,$searchtype,begins),SELECTED) value=begins>begins with
       <option $(IF,$(EC,$searchtype,contains),SELECTED) value=contains>contains
      </select>:</b> 
-     <input type=text name=pname size=10  
+     <input type=text name=pname size=20  
 	onChange='document.critform.START.value = "";'
-     $(IF,$(XST,$pname),value='$pname')>
+        value="$(IF,$(XST,$pname),$pname)">
     </TD>
     <?/MIVAR>
     <TD class="halfwidth">
      <b>Address contains:</b> 
-     <?MIVAR><input type=text size=10 name=address $(IF,$(XST,$address),value='$address')> <?/MIVAR>
+     <?MIVAR><input type=text size=30 name=address value="$(IF,$(XST,$address),$address)"> <?/MIVAR>
     </TD>
    </TR>
    <tr>
@@ -398,7 +415,7 @@ to the left of each item.
     <TD class="halfwidth"> 
       <b>Email contains: </b> 
       <?MIVAR>
-      <input type=text name=email size=8  maxlength=15 
+      <input type=text name=email size=15  maxlength=15 
        onChange='document.critform.START.value = "";'
        $(IF,$(XST,$email),value='$email')>
       <?/MIVAR>
@@ -417,7 +434,7 @@ to the left of each item.
        <option $(IF,$(EC,$anon1,bio),SELECTED) value="bio">bio
       </SELECT>
       contains 
-      <input type=text name=anon1text size=4  
+      <input type=text name=anon1text size=10
 	 onChange='document.critform.START.value = "";'
 	 $(IF,$(XST,$anon1text),value='$anon1text')>
       <?/MIVAR> </font>

@@ -1,4 +1,12 @@
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
 
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
 <!-- added onChange to each variable to reset START for walking windows - this is needed if users alter query after using the navtile button and without using the reset button. if the new query result thas fewer than the first query and they had been on a page that would not exist with this new query the ww code breaks  -->
 
 <HTML>
@@ -48,7 +56,19 @@ document.critform.START.value = "";
 <?MIBLOCK COND="$(OR,$(XST,$pname),$(XST,$address),$(XST,$email),$(XST,$anon1text))">
 
 <!-- First filter name and address for apostrophes! -->
+<?MICOMMENT>first code the "'" for scrub_char function, the function will condense "''" back to "'", so need to recode it afterwards.<?/MICOMMENT>
 <?MIVAR COND="$(XST,$pname)" NAME=$pname DELIMIT="'" REPLACE="''">$pname<?/MIVAR>
+<?MISQL COND="$(XST,$pname)" SQL="
+     execute function scrub_char('$pname');">
+     $(SETVAR,$pname,$1)
+<?/MISQL>
+<?MIVAR COND="$(XST,$pname)" NAME=$pname DELIMIT="'" REPLACE="''">$pname<?/MIVAR>
+
+<?MIVAR COND="$(XST,$address)" NAME=$address DELIMIT="'" REPLACE="''">$address<?/MIVAR>
+<?MISQL COND="$(XST,$address)" SQL="
+	 execute function scrub_char('$address');">
+	 $(SETVAR,$address,$1)
+<?/MISQL>
 <?MIVAR COND="$(XST,$address)" NAME=$address DELIMIT="'" REPLACE="''">$address<?/MIVAR>
 
 <?MIVAR NAME=$previous> and <?/MIVAR>
@@ -71,6 +91,11 @@ $constraint $previous (lower(email) like '%$(LOWER,$email)%')<?/MIVAR>
 
 <?MIVAR NAME=$constraint COND="$(XST,$anon1text)">
 $constraint $previous (webhtml_like($anon1,'$anon1text'))<?/MIVAR>
+
+
+<?MICOMMENT>restore the inputs<?/MICOMMENT>
+<?MIVAR COND="$(XST,$pname)" NAME=$pname DELIMIT="''" REPLACE="'">$pname<?/MIVAR>
+<?MIVAR COND="$(XST,$address)" NAME=$address DELIMIT="''" REPLACE="'">$address<?/MIVAR>
 
 <?/MIBLOCK>
 
@@ -303,13 +328,13 @@ Company Search Results
   <TR>
     <TD class=fullwidth>
       <b>Name contains:</b> 
-      <input type=text name=pname size=10  onChange='document.critform.START.value = "";' $(IF,$(XST,$pname),value='$pname')> 
+      <input type=text name=pname size=20  onChange='document.critform.START.value = "";' value="$(IF,$(XST,$pname),$pname)"> 
     </TD>
   </tr>
   <tr>
     <TD class=fullwidth>
       <b>Address contains:</b> 
-      <input type=text name=address size=10  onChange='document.critform.START.value = "";' $(IF,$(XST,$address),value='$address')>
+      <input type=text name=address size=30  onChange='document.critform.START.value = "";' value="$(IF,$(XST,$address),$address)">
     </TD>
   </TR> 
   <tr>

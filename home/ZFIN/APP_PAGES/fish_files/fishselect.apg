@@ -247,7 +247,7 @@ function call_reset() {
 
 
   <!-- NOW JUST RETRIEVE AND DISPLAY ALL MATCHING ENTRIES. Do slightly different things for mutant and wild type queries  -->
-
+  <?MIVAR NAME=$fname COND="$(XST,$fname)" DELIMIT="''" REPLACE="'">$fname<?/MIVAR>
   <?MIVAR NAME=$constraint COND="$(NXST,$constraint)"> <?/MIVAR>
   <?MIVAR NAME=$mut_constraint COND="$(NXST,$mut_constraint)"> <?/MIVAR>
 
@@ -836,7 +836,7 @@ function call_reset() {
       <A HREF="javascript:start_help('locus')"><b>
       <?MIVAR>
 	$(IF,$(EC,$line_type,mutant),"Locus name","Name") contains:</b></A>
-        <input type=text name=fname size=25  onChange='document.BrowserForm.START.value = "";' $(IF,$(XST,$fname),value='$fname')>
+        <input type=text name=fname size=25  onChange='document.BrowserForm.START.value = "";' value="$(IF,$(XST,$fname),$fname)">
       <?/MIVAR>
     </TD>
    <TD class="halfwidth">
