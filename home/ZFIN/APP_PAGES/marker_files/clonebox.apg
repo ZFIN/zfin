@@ -14,7 +14,6 @@ Requires:  $CLONE_MARKER_ID, $highlight
       AND idsup_supplier_zdb_id = srcurl_source_zdb_id
 ;
   ">
-      <?MIBLOCK COND=$(EC,$COUNT,0)>
 
 	  <?MIVAR NAME=$SOURCE>
 
@@ -24,26 +23,6 @@ Requires:  $CLONE_MARKER_ID, $highlight
 	    <?/MIVAR>
 
 	  <?/MIVAR>
-
-      <?MIELSE>
-
-        <?MIBLOCK COND=$(EC,$1,ZDB-LAB-991005-53)>
-	  <?MIVAR NAME=$SOURCE>
-	    $SOURCE,
-	    <a href="/zirc/home/guide.php">$2</a>
-
-	  <?/MIVAR>
-        <?MIELSE>
-	  <?MIVAR NAME=$SOURCE>
-	    $SOURCE,
-	    <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$1">$2</a>
-
-	  <?/MIVAR>
-	   
-        <?/MIBLOCK>
-
-      <?/MIBLOCK>
-    <?MIVAR NAME=$COUNT>1<?/MIVAR>
   <?/MISQL>
 
 
