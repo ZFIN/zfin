@@ -34,6 +34,11 @@ get_obj_name(zdbId varchar(50))
       into objName
       from environment
       where env_zdb_id = zdbId ;
+  elif (objType = "FIMGP") then
+    select fimgp_zdb_id
+      into objName
+      from fx_fish_image_private
+      where fimgp_zdb_id = zdbId ;
   elif (objType = "FIG") then
     select fig_zdb_id 
       into objName
