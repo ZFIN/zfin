@@ -235,14 +235,16 @@ begin work;
 		on spkw_goterm_with_dups (sp_kwd);
 
 --!echo 'unload obsolete or secondary goterm, send to curators, delete from loading'
+-- order the boolean column secondary, obsolete makes the obsolete(t) comes first,
+-- secondary(t) comes second, if obsolete&secondary(?) comes last. 
 	unload to "spkw2go_obsl_secd.unl" 
-		select distinct "SP_KW:"||sp_kwd, goterm_name, goterm_id
-		  from spkw_goterm_with_dups
-	         where goterm_id in (select goterm_go_id
-				       from go_term
-			              where goterm_is_obsolete = "t"
-		                        or  goterm_is_secondary = "t"
-				     );	
+		select distinct "SP_KW:"||sp_kwd, s.goterm_name, s.goterm_id,
+			g.goterm_is_obsolete, g.goterm_is_secondary 
+		  from spkw_goterm_with_dups s, go_term g
+		 where s.goterm_id = g.goterm_go_id
+	 	   and (g.goterm_is_obsolete = "t"
+		       or g.goterm_is_secondary = "t")
+		  order by g.goterm_is_secondary, g.goterm_is_obsolete;	
 	delete from spkw_goterm_with_dups
 		where goterm_id in (select goterm_go_id
 				       from go_term
@@ -260,20 +262,19 @@ begin work;
 	load from ip_mrkrgoterm.unl insert into ip_goterm_with_dups;
 --!echo 'unload obsolete or secondary goterm, send to curators, delete from loading'
 	unload to "ip2go_obsl_secd.unl" 
-		select distinct "InterPro:"||ip_acc, goterm_name, goterm_id
-		  from ip_goterm_with_dups
-	         where goterm_id in (select goterm_go_id
-				       from go_term
-			              where goterm_is_obsolete = "t"
-		                        or  goterm_is_secondary = "t"
-				     );	
+		select distinct "InterPro:"||ip_acc, i.goterm_name, i.goterm_id, 
+			g.goterm_is_obsolete, g.goterm_is_secondary 
+		  from ip_goterm_with_dups i,  go_term g
+	         where i.goterm_id = g.goterm_go_id
+	           and (g.goterm_is_obsolete = "t"
+	             or g.goterm_is_secondary = "t")
+		order by g.goterm_is_secondary, g.goterm_is_obsolete;	
 	delete from ip_goterm_with_dups
 		where goterm_id in (select goterm_go_id
 				       from go_term
 			              where goterm_is_obsolete = "t"
 		                        or  goterm_is_secondary = "t"
 				     );		
-
 --!echo 'Load ec_mrkrgoterm.unl: ectogo translation table'
 
 	create temp table ec_goterm_with_dups (
@@ -285,19 +286,20 @@ begin work;
 	load from ec_mrkrgoterm.unl insert into ec_goterm_with_dups;
 --!echo 'unload obsolete or secondary goterm, send to curators, delete from loading'
 	unload to "ec2go_obsl_secd.unl" 
-		select distinct "EC:"||ec_acc, goterm_name, goterm_id
-		  from ec_goterm_with_dups
-	         where goterm_id in (select goterm_go_id
-				       from go_term
-			              where goterm_is_obsolete = "t"
-		                        or  goterm_is_secondary = "t"
-				     );	
+		select distinct "EC:"||ec_acc, e.goterm_name, e.goterm_id,
+			g.goterm_is_obsolete, g.goterm_is_secondary 
+		  from ec_goterm_with_dups e, go_term g
+	         where e.goterm_id = g.goterm_go_id
+	           and (g.goterm_is_obsolete = "t"
+		       or g.goterm_is_secondary = "t")
+		order by g.goterm_is_secondary, g.goterm_is_obsolete;	
 	delete from ec_goterm_with_dups
 		where goterm_id in (select goterm_go_id
 				       from go_term
 			              where goterm_is_obsolete = "t"
 		                        or  goterm_is_secondary = "t"
 				     );		
+
 
 --!echo ' load in information of keywords with specific S-P record'
 	create temp table sp_kwd (
