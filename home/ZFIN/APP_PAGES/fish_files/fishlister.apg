@@ -73,7 +73,11 @@ $mut_constraint $previous (lower(allele) like LOWER('$allele%'))<?/MIVAR>
 
 <?MIVAR NAME=$previous COND="$(XST,$allele)"> and <?/MIVAR>
 
-<?MIVAR NAME=$mut_constraint COND="$(NC,$chrom_change,any)">
+<!-- change to allow a query for deficiencies to look for deficiency, translocations, and complex_rearrangements  12/06/00-->
+<?MIVAR NAME=$mut_constraint COND="$(EC,$chrom_change,deficiency)">
+$mut_constraint $previous (chrom_change in ('deficiency','translocation','complex_rearrangement'))<?/MIVAR>
+
+<?MIVAR NAME=$mut_constraint COND="$(AND,$(NC,$chrom_change,any),$(NC,$chrom_change,deficiency))">
 $mut_constraint $previous (chrom_change='$chrom_change')<?/MIVAR>
 
 <?MIVAR NAME=$previous COND="$(NC,$chrom_change,any)"> and <?/MIVAR>
