@@ -210,13 +210,11 @@
 #			Making the postloaddb target causes all of these 
 #			things to be reloaded from the local DB.
 #  start	      Start processes.  Starts up any processes that need
-#			to be running for the environment to work.  Initially
-#			this starts only the Java Server.  The database server
-#			and apache are not controlled by this.  The all target
-#			must have been run previously.
+#			to be running for the environment to work.  The 
+#			database server and apache are not controlled by 
+#			this.  As of 2003/03, this doesn't start anything.
 #  stop		      Stop processes.  Stops any processes started by the 
-#			start target.  Initially, this is only the 
-#			java server.
+#			start target.
 #
 
 
