@@ -32,10 +32,10 @@
   <?MIVAR name=searchtype>begins<?/MIVAR>
   <?MIVAR name=query_results>exists<?/MIVAR>
 
+  <?MIVAR name=aname>$(TRIM,$(UPPER,$aname))<?/MIVAR>
+  <?MIVAR name=OID>$aname<?/MIVAR>
 
   <!--   THIS BLOCK HANDLES ACCESSION NUMBER SEARCHES ONLY NON ZDB_ID -->
-  <?MIVAR name=aname>$(UPPER,$aname)<?/MIVAR>
-  <?MIVAR name=OID>$aname<?/MIVAR>
   <?MIBLOCK COND="$(=,$(POSITION,$aname,ZDB),0)">
 
     <?MIVAR name=$inputaname>$aname <?/MIVAR>
@@ -110,48 +110,42 @@
   <!--  THIS BLOCK HANDLES ZDB ID SEARCHES  -->
 
   <?MIBLOCK COND="$(>,$(POSITION,$aname,ZDB),0)">
+    
+     <?MIVAR NAME=$start_page>NULL<?/MIVAR>
+     <!-- if a zdb is passed in,  set second frame to it's viewer with specified zdb_id! -->
 
-    <?MIVAR NAME=$start_page>NULL<?/MIVAR>
-    <!-- if a zdb is passed in,  set second frame to it's viewer with specified zdb_id! -->
-
-    <?MIBLOCK COND="$(XST,$aname)")>
-      <?MIVAR name=aname>$(UPPER,$aname)<?/MIVAR>
-      <?MIVAR name=$OID>$aname<?/MIVAR>
       <?MIVAR NAME=$constraint> where zdb_id = '$OID' <?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,LAB),0)">aa-labselect.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PERS),0)">aa-persselect.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,COMPANY),0)">aa-companyselect.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PUB),0)">aa-pubselect2.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,FISH),0)">aa-fishselect.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,GENE),0)">aa-markerselect.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,SSLP),0)">aa-markerselect.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,LAB),0)">aa-labview.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PERS),0)">aa-persview.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,COMPANY),0)">aa-companyview.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PUB),0)">aa-pubview2.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,FISH),0)">aa-fishview.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,GENE),0)">aa-markerview.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,SSLP),0)">aa-markerview.apg<?/MIVAR>
 
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,EST),0)">aa-msegselect.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,BAC),0)">aa-msegselect.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PAC),0)">aa-msegselect.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,EST),0)">aa-markerview.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,BAC),0)">aa-markerview.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PAC),0)">aa-markerview.apg<?/MIVAR>
 
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,BAC_END),0)">aa-markerselect.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PAC_END),0)">aa-markerselect.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,BAC_END),0)">aa-markerview.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PAC_END),0)">aa-markerview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,LOCUS),0)">aa-locusview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,REFCROSS),0)">aa-crossview.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,RAPD),0)">aa-markerselect.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,STS),0)">aa-markerselect.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,RFLP),0)">aa-markerselect.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,RAPD),0)">aa-markerview.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,STS),0)">aa-markerview.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,RFLP),0)">aa-markerview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,IMAGE),0)">aa-imageview.apg<?/MIVAR>
 
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,XPAT),0)">aa-xpatview.apg<?/MIVAR>
-    <?/MIBLOCK><!-- end XST aname -->
+   
 
     <?MIBLOCK COND="$(EC,$start_page,NULL)">
       <form><center><font size=4><?MIVAR><b>Requested ID is not available in ZFIN.</b> </font></center><?/MIVAR>
       </form>
     <?MIELSE>
-
-      <?MIVAR COND="$(EC,$start_page,aa-pubselect2.apg)" NAME=pub_acc_constraint> where zdb_id = '$OID' <?/MIVAR>
-      <?MIVAR COND="$(>,$(POSITION,$start_page,marker),0)" NAME=$constraint> where mrkr_zdb_id = '$OID' <?/MIVAR>    
-	
-      <?MISQL SQL="select WebExplode(object,'') from webPages where ID='$start_page';">$1<?/MISQL>
-
+      <script>
+        <?MIVAR>location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$start_page&OID=$OID")<?/MIVAR>
+      </script>
     <?/MIBLOCK>  <!-- ends if valid start page, not null  -->
 
 
