@@ -1,6 +1,7 @@
 
 <!-- Modified to support I.E.  Naviagtor tile buttons must know all user input from the query screen.  These values are posted to the lister form.  The lister form creates the tile bar button with appropriate variables. Startframes.apg will pass this variables on to the select form.  -->
 
+<! added onChange to each variable to reset START for walking windows - this is needed if users alter query after using the navtile button and without using the reset button. if the new query resul thas fewer than the first query and they had been on a page that would not exist with this new query the ww code breaks  -->
 
 <HTML>
 <SCRIPT>
@@ -16,7 +17,7 @@ document.critform.address.value = "";
 document.critform.anon1text.value = "";
 document.critform.anon1.selectedIndex = 5;
 document.critform.WINSIZE.value = 10;
-
+document.critform.START.value = "";
 }
 
 </SCRIPT>
@@ -35,12 +36,12 @@ document.critform.WINSIZE.value = 10;
 <TABLE width=100%>
 <TR>
 <TD><font size=-1>
-<b>Lab NAME contains:</b> <input type=text name=pname size=10 > </font>
+<b>Lab NAME contains:</b> <input type=text name=pname size=10  onChange='document.critform.START.value = "";'> </font>
 </TD>
 <!--  assign navtile value to name - can not do with a value="name" in input statement - reset will not work -->
 <?MIBLOCK COND="$(XST,$nav_name)"><?MIVAR> <SCRIPT> document.critform.pname.value = "$nav_name" </SCRIPT><?/MIVAR> <?/MIBLOCK>
 
-<TD><font size=-1><b>Lab ADDRESS contains:</b> <input type=text name=address size=10></font></TD>
+<TD><font size=-1><b>Lab ADDRESS contains:</b> <input type=text name=address size=10 onChange='document.critform.START.value = "";' ></font></TD>
 
 <!--  assign navtile value to address - can not do with a value="address" in input statement - reset will not work -->
 <?MIBLOCK COND="$(XST,$nav_address)"><?MIVAR> <SCRIPT> document.critform.address.value = "$nav_address" </SCRIPT><?/MIVAR> <?/MIBLOCK>
@@ -54,7 +55,7 @@ document.critform.WINSIZE.value = 10;
 <TR>
 <TD colspan=2><font size=-1> 
 <?MIVAR>
-<b><SELECT NAME=anon1>
+<b><SELECT NAME=anon1  onChange='document.critform.START.value = "";'>
 <option $(IF,$(EC,$anon1,email),SELECTED) value="email">Contact person's email
 <option $(IF,$(EC,$anon1,url),SELECTED) value="url">url
 <option $(IF,$(EC,$anon1,phone),SELECTED) value="phone">phone
@@ -63,7 +64,7 @@ document.critform.WINSIZE.value = 10;
 <option $(IF,$(EC,$anon1,bio),SELECTED) value="bio">Research Interests
 </SELECT>
 <?/MIVAR> 
-contains <input type=text name=anon1text size=15>
+contains <input type=text name=anon1text size=15  onChange='document.critform.START.value = "";'>
 </b></font></TD> 
 <?MIBLOCK COND="$(XST,$nav_text)"><?MIVAR> <SCRIPT> document.critform.anon1text.value = "$nav_text" </SCRIPT><?/MIVAR> <?/MIBLOCK>
 
@@ -77,7 +78,7 @@ contains <input type=text name=anon1text size=15>
 
 		<TD align=left><font size=-1>
 			Display results in groups of 
-			<input type="text" name="WINSIZE" size="3" value="10">. 
+			<input type="text" name="WINSIZE" size="3" value="10"  onChange='document.critform.START.value = "";'>. 
       <?MIBLOCK COND="$(AND,$(NOT,$(ISNULL,$WINSIZE)),$(XST,$WINSIZE))">
         <?MIVAR> 
           <SCRIPT> 

@@ -22,10 +22,9 @@ document.critform.yr_cmpr.selectedIndex = 0;
 document.critform.century.selectedIndex = 0;
 document.critform.anon1.selectedIndex = 0;
 document.critform.order_pref.selectedIndex = 1;
-document.critform.cur_status.selectedIndex = 0;
-document.critform.pub_status.selectedIndex = 0;
 document.critform.authtype.selectedIndex = 0;
 document.critform.WINSIZE.value = 10;
+document.critform.START.value = "";
 
 }
 
@@ -64,10 +63,10 @@ document.critform.WINSIZE.value = 10;
 <TD><font size=-1>
 <b>
 <?MIVAR>
-<SELECT name=authtype>
+<SELECT name=authtype onChange='document.critform.START.value = "";'>
 <option $(IF,$(EC,$authtype, anyauth),SELECTED) value=anyauth>AUTHOR contains
 <option $(IF,$(EC,$authtype,firstauth),SELECTED) value=firstauth>First AUTHOR begins with
-</select>:</b> <input type=text name=authors size=10 >
+</select>:</b> <input type=text name=authors size=10 onChange='document.critform.START.value = "";'>
 </font>
 </TD> 
 
@@ -76,7 +75,7 @@ document.critform.WINSIZE.value = 10;
 <?MIBLOCK COND="$(XST,$nav_authors)"><?MIVAR> <SCRIPT> document.critform.authors.value = "$nav_authors" </SCRIPT><?/MIVAR> <?/MIBLOCK>
 
 <TD><font size=-1>
-<b>TITLE contains:</b> <input type=text name=title size=10>
+<b>TITLE contains:</b> <input type=text name=title size=10 onChange='document.critform.START.value = "";'> 
 </font>
 </TD>
 <!--  assign navtile value to title - can not do with a value="title" in input statement - reset will not work -->
@@ -85,7 +84,7 @@ document.critform.WINSIZE.value = 10;
 <?MIVAR>
 <TD align=right><font size=-1>
 <b>TYPE:</b>
-<SELECT NAME=jtype>
+<SELECT NAME=jtype onChange='document.critform.START.value = "";'>
 <option $(IF,$(EC,$jtype,any),SELECTED) value=any>ALL
 <option $(IF,$(EC,$jtype,Journal),SELECTED) value=Journal>Journal
 <option $(IF,$(EC,$jtype,Review),SELECTED) value=Review>Review
@@ -107,31 +106,31 @@ document.critform.WINSIZE.value = 10;
 <TR>
 <?MIVAR>
 <TD><font size=-1><b>YEAR </b> 
-<SELECT NAME=yr_cmpr>
+<SELECT NAME=yr_cmpr onChange='document.critform.START.value = "";'>
 <option  $(IF,$(EC,$yr_cmpr,=),SELECTED) value="=">equals
 <option  $(IF,$(EC,$yr_cmpr,<),SELECTED) value="<" >before
 <option  $(IF,$(EC,$yr_cmpr,>),SELECTED) value=">" >after
 </SELECT>
-<SELECT name=century>
+<SELECT name=century onChange='document.critform.START.value = "";'>
 <option  $(IF,$(EC,$century,19),SELECTED) value=19>19 
 <option  $(IF,$(EC,$century,20),SELECTED) value=20>20
 <option  $(IF,$(EC,$century,18),SELECTED) value=18>18 
 </SELECT>
-<input type=text name=year size=2 maxlength=2>
+<input type=text name=year size=2 maxlength=2 onChange='document.critform.START.value = "";'>
 </font></TD><?/MIVAR> 
 <!--  assign navtile value to year - can not do with a value="year" in input statement - reset will not work -->
 <?MIBLOCK COND="$(XST,$nav_year)"><?MIVAR> <SCRIPT> document.critform.year.value = "$nav_year" </SCRIPT><?/MIVAR> <?/MIBLOCK>
 
 <?MIVAR>
 <TD align=right><font size=-1>
-<SELECT NAME=anon1>
+<SELECT NAME=anon1 onChange='document.critform.START.value = "";'>
 <option $(IF,$(EC,$anon1,abstract),SELECTED) value=abstract>Abstract 
 <option $(IF,$(EC,$anon1,source),SELECTED) value=source>Source
 <option $(IF,$(EC,$anon1,keywords),SELECTED) value=keywords>Keywords
 <option $(IF,$(EC,$anon1,accession_no),SELECTED) value=accession_no>Medline acc#
 <option $(IF,$(EC,$anon1,zdb_id),SELECTED) value=zdb_id>ZFIN ID
 </SELECT>
-contains <input type=text name=anon1text size=10>
+contains <input type=text name=anon1text size=10 onChange='document.critform.START.value = "";'>
 </font></TD>
 <?/MIVAR>
 <!--  assign navtile value to anon1text - can not do with a value="anon1text" in input statement - reset will not work -->
@@ -144,13 +143,13 @@ contains <input type=text name=anon1text size=10>
 <TR align=center>
 <?MIVAR>
 <TD><font size=-1>Order results by 
-<SELECT NAME=order_pref> 
+<SELECT NAME=order_pref onChange='document.critform.START.value = "";'> 
 <option $(IF,$(EC,$order_pref,date),SELECTED) value=date>Pub Date 
 <option $(IF,$(EC,$order_pref,name),SELECTED) value=name>Author 
 </SELECT></font><?/MIVAR></TD>
 <TD><font size=-1>
 		Display results in groups of 
-		<input type="text" name="WINSIZE" size="3" value="10">. 
+		<input type="text" name="WINSIZE" size="3" value="10" onChange='document.critform.START.value = "";'>. 
       <?MIBLOCK COND="$(AND,$(NOT,$(ISNULL,$WINSIZE)),$(XST,$WINSIZE))">
         <?MIVAR> 
           <SCRIPT> 
@@ -164,6 +163,7 @@ contains <input type=text name=anon1text size=10>
 
 </TABLE>
 
+
 <!-- Let root curators search based on curation status -->
 <?MIBLOCK COND="$(EC,$ZDB_access,root)">
 <TABLE width=100%>
@@ -171,7 +171,7 @@ contains <input type=text name=anon1text size=10>
 <?MIVAR>
 <TD> <font size=2>
 <b>Curation Status:</b>
-<SELECT name=cur_status>
+<SELECT name=cur_status onChange='document.critform.START.value = "";'>
 <option $(IF,$(EC,$cur_status,any),SELECTED) value="any">Any
 <option $(IF,$(EC,$cur_status,Linked Authors),SELECTED) value="Linked Authors">Linked Authors
 <option $(IF,$(EC,$cur_status,Curated Genes),SELECTED) value="Curated Genes">Curated Gene Info
@@ -196,7 +196,7 @@ contains <input type=text name=anon1text size=10>
 <?MIVAR>
 <TD> <font size=2>
 <b>Publication Status:</b>
-<SELECT name=pub_status>
+<SELECT name=pub_status onChange='document.critform.START.value = "";'>
 <option $(IF,$(EC,$pub_status,any),SELECTED) value="any">Any
 <option $(IF,$(EC,$pub_status,active),SELECTED) value="active">Active
 <option $(IF,$(EC,$pub_status,inactive),SELECTED )value="inactive">Inactive

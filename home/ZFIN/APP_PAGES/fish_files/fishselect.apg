@@ -1,6 +1,9 @@
 
 <!-- Modified to support I.E.  Naviagtor tile buttons must know all user input from the query screen.  These values are posted to the lister form.  The lister form creates the tile bar button with appropriate variables. Startframes.apg will pass this variables on to the select form.  -->
 
+<! added onChange to each variable to reset START for walking windows - this is needed if users alter query after using the navtile button and without using the reset button. if the new query resul thas fewer than the first query and they had been on a page that would not exist with this new query the ww code breaks  -->
+
+
 <HTML>
 <HEAD>
 <SCRIPT>
@@ -64,6 +67,7 @@ function call_reset() {
 	document.BrowserForm.anon1.selectedIndex = 0;
 	document.BrowserForm.knowngene.checked = false;
   document.BrowserForm.WINSIZE.value = 20;
+  document.BrowserForm.START.value = "";  
   document.BrowserForm.selected_separator.value = "and";
 	while (i < document.BrowserForm.structure_list.options.length) {
 				 document.BrowserForm.structure_list.options[i] = null;       
@@ -103,7 +107,7 @@ function call_reset() {
 <?MIVAR COND="$(NC,$line_type,wild_type)">
 	<TD><font size=-1>
 	<A HREF="javascript:start_help('allele')"><b>Allele:</b> </A>
-	<input type=text name=allele size=5 ></font></TD>
+	<input type=text name=allele size=5 onChange='document.BrowserForm.START.value = "";'  ></font></TD>
 <?/MIVAR>
 
 
@@ -121,7 +125,7 @@ function call_reset() {
 	$(IF,$(EC,$line_type,mutant),"Locus name","Name")
 <?/MIVAR>
  contains:</b></A>
- <input type=text name=fname size=6 ></font></TD> 
+ <input type=text name=fname size=6  onChange='document.BrowserForm.START.value = "";'></font></TD> 
 
 <!--  assign navtile value to fname - can not do with a value="fname" in input statement - reset will not work -->
 <?MIBLOCK COND="$(XST,$fname)">
@@ -134,7 +138,7 @@ function call_reset() {
 
 <?MIBLOCK COND="$(NC,$line_type,wild_type)">
 
-<TD><font size=-1><A HREF="javascript:start_help('abbrev')"><b>3-letter abbrev.:</b></A> <input type=text maxlength=3 name=abbrev size=3 ></font></TD>
+<TD><font size=-1><A HREF="javascript:start_help('abbrev')"><b>3-letter abbrev.:</b></A> <input type=text maxlength=3 name=abbrev size=3 onChange='document.BrowserForm.START.value = "";'></font></TD>
 <TD>
 	&nbsp;
 </TD>
@@ -153,7 +157,7 @@ function call_reset() {
 <TR>
 <?MIVAR>
 	<TD><font size=-1> <A HREF="javascript:start_help('lg')"><b>LG:</b></A>
-	<select NAME=chrom_num>
+	<select NAME=chrom_num onChange='document.BrowserForm.START.value = "";'>
 		<option $(IF,$(EC,$chrom_num,0),SELECTED)  value=0>All	
 		<option  $(IF,$(EC,$chrom_num,1),SELECTED)  value=1>1
 		<option  $(IF,$(EC,$chrom_num,2),SELECTED)  value=2>2
@@ -192,7 +196,7 @@ function call_reset() {
 <!-- add option for complex rearrangement  -->	
 <?MIVAR>
 	<TD><font size=-1><A HREF="javascript:start_help('mtype')"><b>Mut. Type:</b> </A>
-	<select NAME=chrom_change>
+	<select NAME=chrom_change onChange='document.BrowserForm.START.value = "";'>
 		<option  $(IF,$(EC,$chrom_change,any),SELECTED) value=any>Any
 		<option  $(IF,$(EC,$chrom_change,point),SELECTED) value=point>point
 		<option  $(IF,$(EC,$chrom_change,deficiency),SELECTED) value=deficiency >deficiency
@@ -206,7 +210,7 @@ function call_reset() {
 </font></TD>
 
 <TD><font size=-1><A HREF="javascript:start_help('mutagen')"><b>Mutagen:</b></A>
-	<select NAME=mutagen>
+	<select NAME=mutagen onChange='document.BrowserForm.START.value = "";'>
 		<?MIVAR>
 			<option $(IF,$(EC,$mutagen,any),SELECTED) value=any>Any
 			<option $(IF,$(EC,$mutagen,ENU),SELECTED) value=ENU>ENU
@@ -217,30 +221,19 @@ function call_reset() {
 		<?/MIVAR>
 	</SELECT>
 </font></TD>
-<TD align="right">
-	Display results in groups of 
-	<input type="text" name="WINSIZE" size="3" value="20">.
-    <?MIBLOCK COND="$(AND,$(NOT,$(ISNULL,$WINSIZE)),$(XST,$WINSIZE))">
-      <?MIVAR> 
-        <SCRIPT> 
-          document.BrowserForm.WINSIZE.value = "$WINSIZE"         
-        </SCRIPT>
-      <?/MIVAR> 
-    <?/MIBLOCK>
-</TD>
 </TR>
 
 <TR>
 <?MIVAR>
 <TD><font size=-1> <b> 
-	<SELECT name=anon1>
+	<SELECT name=anon1 onChange='document.BrowserForm.START.value = "";'>
 		<option $(IF,$(EC,$anon1,phenotype),SELECTED) value="phenotype">Phenotype
 		<option $(IF,$(EC,$anon1,fish_id),SELECTED) value="fish_id">ZFIN ID#
 		<option $(IF,$(EC,$anon1,comments),SELECTED) value="comments">Comments
 	</SELECT>
 <?/MIVAR>
 </b><A HREF="javascript:start_help('phenotype')"> contains </A>
-<input type=text name=anon1text size=12>
+<input type=text name=anon1text size=12 onChange='document.BrowserForm.START.value = "";' >
 </font></TD> 
 
 <!--  assign navtile value to anon1text - can not do with a value="anon1text" in input statement - reset will not work -->
@@ -255,7 +248,7 @@ function call_reset() {
 
 <TD colspan=2> 
 <font size=-1>
-<input type=checkbox name=knowngene> Show only mutants with known genes<br>
+<input type=checkbox name=knowngene onChange='document.BrowserForm.START.value = "";'> Show only mutants with known genes<br>
 </TD>
 
 <!--  assign navtile value to knowngene  -->
@@ -269,6 +262,21 @@ function call_reset() {
 
 <?/MIBLOCK> <!-- ends if line type not wildtype -->
 
+</TR>
+
+<TR>
+<TD>&nbsp;</TD>
+<TD align="right">
+	Display results in groups of 
+	<input type="text" name="WINSIZE" size="3" value="20" onChange='document.BrowserForm.START.value = "";'>.
+    <?MIBLOCK COND="$(AND,$(NOT,$(ISNULL,$WINSIZE)),$(XST,$WINSIZE))">
+      <?MIVAR> 
+        <SCRIPT> 
+          document.BrowserForm.WINSIZE.value = "$WINSIZE"         
+        </SCRIPT>
+      <?/MIVAR> 
+    <?/MIBLOCK>
+</TD>
 <TD  align=right><font size=-1>
 <input type=submit name=search value="SEARCH" ></font>
 <input type=button 
@@ -278,6 +286,7 @@ function call_reset() {
 value="Clear Settings">  
 </TD>
 </TR>
+
 </TABLE>
 
 
@@ -366,7 +375,8 @@ while (i < document.BrowserForm.structure_list.options.length) {
 <input type=radio name="selected_sep_box" value="or" <?MIVAR COND="$(EC,$selected_separator,or)">CHECKED<?/MIVAR>> ANY Listed Defects
 </center>
 </font>
-</td></tr></table>
+</td></tr>
+</table>
 
 <!-- applet replacement -->
 
