@@ -2648,6 +2648,7 @@ if($daily) {
   expressionPatternStageWindowConsistent($xpatEmail);
   expressionPatternAnatomyStageWindowOverlapsAnatomyItem($xpatEmail);
   expressionPatternHasMismatchedMarkerRelationship($xpatEmail);
+  checkFigXpatexSourceConsistant($dbaEmail);
 
   fishNameEqualLocusName($mutantEmail);
   fishAbbrevContainsFishAllele($mutantEmail);
