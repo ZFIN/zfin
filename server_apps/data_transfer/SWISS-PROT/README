@@ -19,6 +19,7 @@ sp_load.sql.
  
 Follow loadsp.pl, it will work you through the process. ;)
 
+----------------------------------------------------------------
 
 =================================================================
 To create file for export to SWISS-PROT
