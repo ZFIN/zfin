@@ -184,8 +184,8 @@ get_obj_name(zdbId varchar(50))
       into objName
       from stage
       where stg_zdb_id = zdbId;
-  elif (objType = "URLREF") then
-    select urlref_display_text
+  elif (objType = "URLREF") then --don't have names, use ZDB ID
+    select urlref_zdb_id
       into objName
       from url_ref
       where urlref_zdb_id = zdbId ;
