@@ -218,9 +218,12 @@ $(IF,$(>,$(POSITION,$rtype,go),0),
    <br>
   <?/MIVAR>
 
+  <?MICOMMENT>previously I made a bad decision of passing $title to CITATION page, $marker_type_display would be a better choice. But to avoid changing all the view pages, stay on it for a bit longer<?/MICOMMENT>
+  <?MIVAR NAME=$marker_type_display>$(SUBSTR,$title,1,$(-,$(POSITION,$title,Name),2))<?/MIVAR>
+
   <?MIBLOCK COND="$(AND,$(NC,$abbrev,),$(NC,$abbrev,''))">
 	<?MIVAR>
-	$(IF,$(OR,$(>,$(POSITION,$OID,GENE),0),$(>,$(POSITION,$OID,OEVDISP),0)),"Gene Symbol:&nbsp;","Abbreviation:&nbsp;")
+	$(IF,$(OR,$(>,$(POSITION,$OID,GENE),0),$(>,$(POSITION,$OID,OEVDISP),0)),$marker_type_display Symbol:&nbsp;,"Abbreviation:&nbsp;")
 	$(IF,$(OR,$(>,$(POSITION,$OID,GENE),0),$(>,$(POSITION,$OID,OEVDISP),0)),<i>$abbrev</i>,$abbrev)	
 	<?/MIVAR><br>
   <?/MIBLOCK>
