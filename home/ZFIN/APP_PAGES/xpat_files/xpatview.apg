@@ -254,43 +254,31 @@ DESCRIPTION:
   <?/MIVAR>
 
   <?MISQL SQL="
-	SELECT xpatstg_xpat_zdb_id, xpatstg_start_stg_zdb_id, xpatstg_end_stg_zdb_id, xpatstg_comments, stg_hours_start
+	SELECT xpatstg_xpat_zdb_id, xpatstg_start_stg_zdb_id, xpatstg_end_stg_zdb_id, 
+	       get_stg_name_long_html(xpatstg_start_stg_zdb_id),
+	       get_stg_name_long_html(xpatstg_end_stg_zdb_id),	
+	       xpatstg_comments, stg_hours_start
 	FROM expression_pattern_stage, stage 
 	WHERE xpatstg_xpat_zdb_id = '$OID'
 	  AND xpatstg_start_stg_zdb_id = stg_zdb_id
-	ORDER by 5
+	ORDER by stg_hours_start
   ;">
 	<?MIVAR NAME=$XPATSTG_ID>$1<?/MIVAR>
 	<?MIVAR NAME=$XPATSTG_START_ID>$2<?/MIVAR>
 	<?MIVAR NAME=$XPATSTG_END_ID>$3<?/MIVAR>
-	<?MIVAR NAME=$XPATSTG_COMMENTS>$4<?/MIVAR>
+	<?MIVAR NAME=$XPATSTG_START_HTML>$4<?/MIVAR>
+	<?MIVAR NAME=$XPATSTG_END_HTML>$5<?/MIVAR>	
+	<?MIVAR NAME=$XPATSTG_COMMENTS>$6<?/MIVAR>
 
         <tr width="95%" bgcolor="$highlight">
-		<td>
-			<center>
-
-        <?MIVAR><a name=$XPATSTG_START_ID>
-                          <b>Stage(s):</b> </a><?/MIVAR>
-
-<?MIVAR NAME=CODECOMMENTS> 
-     GET THE START AND END STAGE, GET THE START AND END TIME.
-     CREATE LINKS THAT START POPUP WINDOWS FOR STAGE COMMENTS.
-<?/MIVAR>
-
-  <?MISQL SQL="
-    SELECT  s1.stg_name_long, s2.stg_name_long, s1.stg_comments_relative_url, s2.stg_comments_relative_url
-    FROM stage s1, stage s2
-    WHERE '$XPATSTG_START_ID' = s1.stg_zdb_id
-      AND '$XPATSTG_END_ID' = s2.stg_zdb_id
-    ;">
-      $(SETVAR,start_stage_name,$1)
-      $(SETVAR,end_stage_name,$2)
-      <a href="javascript:popup_stage_comments('$3')">$1</a> to
-      <a href="javascript:popup_stage_comments('$4')">$2</a>
-  <?/MISQL>
-
-    </center><br>
-
+	  <td>
+	  <center>
+     
+	    <b>Stage(s):</b>      
+            $XPATSTG_START_HTML to $XPATSTG_END_HTML
+          </center>
+          <br>
+  
 
 <?MIVAR NAME=CODECOMMENTS> 
      DISPLAY IMAGES GROUPED BY PREPARATION TYPE.  EACH PREPERATION TYPE HAS 

@@ -137,7 +137,8 @@ document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
       <?MISQL SQL="
 	select m.mrkr_abbrev, f.abbrev, xpat.xpat_assay_name, xpatstg.xpatstg_expression_found,
 	       stg.stg_name,xpat.xpat_zdb_id, xpat.xpat_direct_submission_date, lower(f.abbrev),
-	       stg.stg_hours_start, stg.stg_hours_end, m.mrkr_zdb_id, f.zdb_id,stg.stg_name_long, 'aa-fishview.apg'
+	       stg.stg_hours_start, stg.stg_hours_end, m.mrkr_zdb_id, f.zdb_id,
+	       get_stg_name_long_html(stg.stg_zdb_id), 'aa-fishview.apg'
 
 	from marker m, expression_pattern xpat, fish f, stage stg,
 	     expression_pattern_stage xpatstg 
@@ -152,7 +153,8 @@ document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
 
 	select mrkr_abbrev, abbrev, xpat_assay_name, xpatstg_expression_found,
 	       stg_name, xpat_zdb_id, xpat_direct_submission_date, lower(abbrev),
-	       stg_hours_start, stg_hours_end, mrkr_zdb_id, zdb_id, stg_name_long, 'aa-locusview.apg'
+	       stg_hours_start, stg_hours_end, mrkr_zdb_id, zdb_id, 
+               get_stg_name_long_html(stg_zdb_id), 'aa-locusview.apg'
 
 	from marker, expression_pattern, expression_pattern_stage, locus, stage 
 
@@ -170,7 +172,7 @@ document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
 	<?MIVAR name="$xiview_stockZdbId">$12<?/MIVAR>
 	<?MIVAR name="$xiview_stockPage">$14<?/MIVAR>
 	<?MIVAR name="$xiview_assayName">$3<?/MIVAR>
-	<?MIVAR name="$xiview_stageName">$13<?/MIVAR>
+	<?MIVAR name="$xiview_stageNameHtml">$13<?/MIVAR>
 	<?MIVAR name="$xiview_xpatZdbId">$6<?/MIVAR>
 
 	<?MIVAR COND="$(NC,$xiview_xpatZdbId,$prev_xpat_id)" NAME=$row_color>$(IF,$(EC,$row_color,$highlight),#FFFFFF,$highlight)<?/MIVAR>
@@ -193,7 +195,7 @@ document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
           <?/MIBLOCK>
           <?MIVAR>
 	  <td>
-	    $xiview_stageName
+	    $xiview_stageNameHtml
 	  </td>
           <?/MIVAR>
 	</tr>
