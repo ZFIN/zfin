@@ -21,7 +21,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/j2ee/uniquery/IndexApp
 
-GENERICS = regenerateindex.sh
+GENERICS = regenerateindex.pl
 
 SUBDIRS = logs etc lib src
 
@@ -36,5 +36,5 @@ include $(TOP)/make.default.rules
 
 # ---------------  Misc Rules  ------------------------------------
 
-run : $(TARGETDIR)/regenerateindex.sh
-	cd $(TARGETDIR); ./regenerateindex.sh
+run : $(TARGETDIR)/regenerateindex.pl
+	cd $(TARGETDIR); ./regenerateindex.pl
