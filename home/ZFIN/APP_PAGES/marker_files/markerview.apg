@@ -898,9 +898,12 @@
      </TR>
     <?/MIBLOCK>
 
-<?/MISQL>
-<?/MISQL>
-    <?MISQL SQL="select mreltype_1_to_2_comments from marker_relationship_type where mreltype_name = '$mrkrview_mrel_type';">
+   <?/MISQL>
+  <?/MISQL>
+
+  <?MIVAR>$(SETVAR,$mrkrview_last_mrkr_type,)<?/MIVAR>
+
+  <?MISQL SQL="select mreltype_1_to_2_comments from marker_relationship_type where mreltype_name = '$mrkrview_mrel_type';">
      <?MIVAR NAME="$mrel1to2comments">$1<?/MIVAR>
      <?MISQL SQL="select count(*)::Integer from marker_relationship where mrel_mrkr_1_zdb_id = '$OID' and mrel_type='$mrkrview_mrel_type';">
      <?MIBLOCK COND="$(>,$1,0)">
