@@ -68,8 +68,6 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.ap
 <?MIVAR NAME=$user_access>$3<?/MIVAR>
 <?MISQL SQL="update ZDB_submitters set cookie='$new_cookie',previous_login=issue_time::datetime year to fraction,issue_time=current where zdb_id='$user_id' and login='$login';"><?/MISQL>
 
-<?MISQL SQL="insert into login_log values ('$user_id','$user_access',current);"><?/MISQL>
-
 <?MIVAR>
 $(HTTPHEADER,set-cookie,ZDB_authorize=$new_cookie;path=/<!--|CGI_BIN_DIR_NAME|-->)
 <?/MIVAR>
