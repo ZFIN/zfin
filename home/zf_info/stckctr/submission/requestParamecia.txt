@@ -1,0 +1,92 @@
+To: aprilm@uoneuro.uoregon.edu, dlains@uoneuro.uoregon.edu, tomas@uoneuro.uoregon.edu, kelly@uoneuro.uoregon.edu, mason@uoneuro.uoregon.edu
+From: zirc@darkwing.uoregon.edu
+Subject: [required_requesterName]'s request for Paramecia (starter culture)
+
+**************************************** 
+quantity:[required_zfParameciaQuantity]
+---
+---
+Name:
+[required_requesterName]
+---
+Email:
+[required_requesterEmail]
+---
+Telephone:
+[required_requesterTelephone]
+---
+Fax:
+[required_requesterFax]
+---
+Lab:
+[required_requesterLab]
+---
+Position:
+[required_requesterPosition]
+---
+Address:
+[required_requesterAddress]
+---
+---
+PI Name:
+[PIName]
+---
+PI Email:
+[PIEmail]
+---
+PI Telephone:
+[PITelephone]
+---
+PI Fax:
+[PIFax]
+---
+PI Lab:
+[PILab]
+---
+PI Address:
+[PIAddress]
+---
+---
+Grant Number:
+[grantNumber]
+---
+Funding Organization:
+[grantOrganization]
+---
+---
+Bill To Name:
+[required_BillToName]
+---
+Bill To Email:
+[required_BillToEmail]
+---
+Bill To Telephone:
+[required_BillToTelephone]
+---
+Bill To Fax:
+[required_BillToFax]
+---
+Bill To Lab:
+[required_BillToLab]
+---
+Bill To Address:
+[required_BillToAddress]
+---
+Billing Preference:
+[billingPreference]
+---
+Bill To PO Number:
+[billToPONumber]
+---
+---
+Zebrafish Paramecia (starter culture) Quantity:
+[required_zfParameciaQuantity]
+---
+---
+---
+End of Form
+
+
+
+
+
