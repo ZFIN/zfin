@@ -1,6 +1,6 @@
 #------------------------------------------------------------------------
 #
-# Makefile for ZFIN_WWW CVS Project, RefSeq automated data load directory
+# Makefile for ZFIN_WWW CVS Project, GenPept automated data load directory
 #
 #
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -9,11 +9,6 @@
 # !! format and conventions used in this makefile.                     !!
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
-# The Meow script is run by cron every week.  It invokes the sql script.
-# The MEOW DB dump uses the FTP directory structure.  See the 
-# ZFIN Documentation for how FTP is handled differently in test versus 
-# production.
-
 
 # ---------------  Variable Definitions  --------------------------------
 
@@ -36,8 +31,7 @@ include $(TOP)/make.default.rules
 
 # ---------------  Misc Targets  ----------------------------------------
 
-# Run the download script.  This extracts data from ZFIN and places it in 
-# the public ftp directory
+# Run the load script.  This pulls data from GenPept and loads it into ZFIN.
 
 run : $(TARGETDIR)/fetch_load_GenPept.sh 
 	$(TARGETDIR)/fetch_load_GenPept.sh

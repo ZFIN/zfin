@@ -1,6 +1,6 @@
 #------------------------------------------------------------------------
 #
-# Makefile for ZFIN_WWW CVS Project, creates data files for public downloads
+# Makefile for ZFIN_WWW CVS Project, downloads data from ENSEMBL to ZFIN.
 #
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
@@ -8,10 +8,6 @@
 # !! format and conventions used in this makefile.                     !!
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
-# This makefile produces the script that creates data files for Sanger 
-# folk  to download.
-# The script is run by cron every week.  It invokes the sql script.
-# The dump uses the HTTP directory structure.
 
 # ---------------  Variable Definitions  --------------------------------
 
