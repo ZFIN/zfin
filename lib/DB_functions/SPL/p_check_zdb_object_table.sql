@@ -1,6 +1,4 @@
-begin work;
-
-  --P_CHECK_ZDB_OBJECT_TABLE
+--P_CHECK_ZDB_OBJECT_TABLE
   ------------------------------------------------------
   --procedure that checks to make sure tables and columns in 
   --zdb_object_type table exist in systables and syscolumns.
@@ -39,5 +37,3 @@ begin work;
   end if;
  
   end procedure;
-
-commit work;
