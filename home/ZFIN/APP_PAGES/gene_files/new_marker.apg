@@ -314,6 +314,14 @@
       to return to the ZFIN home page.
     <?/MIVAR>
 
+    <?MICOMMENT>
+      Add new marker's name information to the names fast search tables, so 
+      the new marker can be found through the search interface.
+    <?/MICOMMENT>
+    <?MISQL SQL="
+      execute procedure regen_names_marker('$new_id');">
+    <?/MISQL>    
+
   <?/MIBLOCK>
 
 <?/MIBLOCK> <!-- ends Authorized -->
