@@ -268,7 +268,7 @@ ERROR -- something bad happened -- no OID passed in!
      PROCESSES, THEN GIVE COMMENTS.
 <?/MIVAR>
 <?MIVAR>
- <table border="0" cellspacing="4" cellpadding="4" bgcolor="$highlight" align=center width=100%>
+ <table border="0" cellspacing="5" cellpadding="5" align=center width=100%>
 <?/MIVAR>
 
 <?MISQL SQL="
@@ -283,7 +283,7 @@ ERROR -- something bad happened -- no OID passed in!
 	<?MIVAR NAME=$XPATSTG_END_ID>$3<?/MIVAR>
 	<?MIVAR NAME=$XPATSTG_COMMENTS>$4<?/MIVAR>
 
-        <tr width="95%">
+        <tr width="95%" bgcolor="$highlight">
 		<td>
 			<center>
 
@@ -369,9 +369,19 @@ ERROR -- something bad happened -- no OID passed in!
                 <td valign=top>
                   <b>Preparation:<br>Orientation:</b>
                 </td>
+            <?MIBLOCK COND="$(AND,$(EQ,$4,not specified),$(EQ,$4,$5))">
+              <?MIVAR>
+                <td align=left valign=top>
+                  $5<br>&nbsp;
+                </td>
+              <?/MIVAR>
+            <?MIELSE>
+              <?MIVAR>
                 <td align=left valign=top>
                   $5<br>$4, $1
                 </td>
+              <?/MIVAR>
+            <?/MIBLOCK>
               </tr>
             </table>
           </td>
@@ -391,9 +401,19 @@ ERROR -- something bad happened -- no OID passed in!
                 <td valign=top>
                   <b>Preparation:<br>Orientation:</b>
                 </td>
+            <?MIBLOCK COND="$(AND,$(EQ,$4,not specified),$(EQ,$4,$5))">
+              <?MIVAR>
+                <td align=left valign=top>
+                  $5<br>&nbsp;
+                </td>
+              <?/MIVAR>
+            <?MIELSE>
+              <?MIVAR>
                 <td align=left valign=top>
                   $5<br>$4, $1
                 </td>
+              <?/MIVAR>
+            <?/MIBLOCK>
               </tr>
             </table>
           </td>
@@ -418,7 +438,7 @@ ERROR -- something bad happened -- no OID passed in!
       </table>
 
       <br>
-      <hr width="95%">
+      <!-- <hr width="95%"> -->
 
 <?MIVAR NAME=CODECOMMENTS> 
      LIST EACH HIERARCHY PART IN THE FIRST TABLE CELL AND LIST ASSOCIATED
@@ -472,12 +492,12 @@ ERROR -- something bad happened -- no OID passed in!
             <?MIVAR NAME=$anatitem_list><?/MIVAR>
             <b>$5:&nbsp;&nbsp;</b>
           </td>
+          <td width="85%">
         <?/MIVAR>
         <?MIVAR NAME=$COUNT>0<?/MIVAR>
       <?/MIBLOCK>
       <?MIBLOCK COND="$(NC,$TEMP_PART,$1)">
         <?MIVAR>
-          <td width="85%">
             <?MIBLOCK COND="$(>,$COUNT,0)">
               <?MIVAR NAME=$anatitem_list>$anatitem_list, $3<?/MIVAR>
             <?MIELSE>
