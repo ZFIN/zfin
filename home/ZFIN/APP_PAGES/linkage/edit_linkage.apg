@@ -11,6 +11,7 @@ Expected vars: link_id
      var replaced_comments;
 
      function modify_update_with_distance(link_id,lg,zfin_private,comments,distance,lod,metric) {
+window.alert(metric);
        if (metric==0)metric_value='cM';
        if (metric==1)metric_value='cR';
        if (zfin_private==0)zfin_private='f';
@@ -20,7 +21,6 @@ Expected vars: link_id
        }
        else {
          replaced_comments = comments.replace(/ /g,plus);
-         window.alert(replaced_comments);
          window.location.href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-modify_linkage.apg&link_id="+link_id+"&calling_form=update_linkage_with_distance&lg="+lg+"&private="+zfin_private+"&distance="+distance+"&lod="+lod+"&metric="+metric_value+"&comments="+replaced_comments;
        }
      }
@@ -33,7 +33,6 @@ Expected vars: link_id
        }
        else {
          replaced_comments = comments.replace(/ /g,plus);
- window.alert(replaced_comments);
          window.location.href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-modify_linkage.apg&link_id="+link_id+"&calling_form=update_linkage_with_distance&lg="+lg+"&private="+zfin_private+"&distance="+distance+"&lod="+lod+"&metric="+metric_value+"&comments="+replaced_comments;
        }
      }
@@ -220,8 +219,8 @@ Expected vars: link_id
     </TR>
     <br>
     <?/MISQL>
-    </b>
   <?/MISQL>
+  </b>
 
 <p>
 
