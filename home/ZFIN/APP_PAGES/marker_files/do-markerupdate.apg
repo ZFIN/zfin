@@ -1,7 +1,3 @@
-<!-- FILE: do-markerupdate.html
-
-Commits the updates requested in the forms tossed up by
-markerupdate.html. Also files update record.
 <?MIERROR>
   <?MIVAR COND=$(XST,$MI_SQL)>
     SQL: $MI_SQL<br><br>
@@ -12,8 +8,12 @@ markerupdate.html. Also files update record.
   Message: $MI_ERRORMSG <br>
 
 <?/MIERROR>
+<?MICOMMENTS>
+FILE: do-markerupdate.html
 
-<html>
+Commits the updates requested in the forms tossed up by
+markerupdate.html. Also files update record.
+
 EXPECTED VARS:
 OID -- the zdb_id of the rec to update
 attr -- the column to be updated
@@ -25,7 +25,7 @@ comments -- reasons for doing update
 info -- optional value used to pass in additional info
 dataOID -- the zdbid of the attributed item
 caller -- the page the initiate the update function 
--->
+<?/MICOMMENTS>
 
 <META HTTP-EQUIV="EXPIRES" CONTENT="-2d">
 <!-- If one of the values was an empty string, it won't get successfully
@@ -88,10 +88,6 @@ new link $old_value:$new_value for this record.<?/MIVAR>
                  </table>
       <?/MIVAR>
     <?/MISQL>
-<?MIVAR>
-  $MI_SQL <BR><BR> $attr_type <BR><BR> 
-<?/MIVAR>
-  
   <?/MIBLOCK>
 
 
@@ -114,9 +110,6 @@ comments,
       values ('$ZDB_ident', '$ZDB_name','$OID', '$attr',  '$old_value', 
               '$comments', current);">
   <?/MISQL>
-<?MIVAR>
-  $MI_SQL <BR><BR> $attr_type <BR><BR> $dataOID
-<?/MIVAR>
   <!-- OK, NOW UPDATE THE  ACTUAL DATA RECORD. -->
   <?MIBLOCK COND="$(AND,$(NC,$attr,dalias_alias),
                       $(NC,$attr,putgene_comments),
