@@ -1,4 +1,5 @@
-<!-- FILE: IMAGEVIEW.HTML. This file implements a viewer for IMAGE records. 
+<?MICOMMENT>
+ FILE: IMAGEVIEW.HTML. This file implements a viewer for IMAGE records. 
 The goal is to display all of the information associated with the IMAGE 
 record, and to provide an interface for updating certain values
 as well.
@@ -8,7 +9,7 @@ Variables Expected:
  -- OID -- the OID of the fish record to view
  -- PDATE -- a flag variable to indicate we're in update mode
  -- temp_oid -- could be passed instead of OID --
--->
+<?/MICOMMENT>
 
 <HTML>
 
@@ -369,7 +370,7 @@ Variables Expected:
 		<td>
 		  <?MIVAR NAME=$anatItemList><?/MIVAR>
 		  <?MISQL SQL="
-		    select anatitem_name, anatitem_comments_relative_url
+		    select anatitem_name
 		      from fish_image_anatomy, anatomy_item
 		      where fimganat_fimg_zdb_id           = '$OID'
 			and fimganat_fimg_start_stg_zdb_id = '$start_stg_zdb_id'
@@ -379,7 +380,6 @@ Variables Expected:
 			order by anatitem_name;">
 
 		    <?MIVAR NAME=$anatitem_name>$1<?/MIVAR>
-		    <?MIVAR NAME=$anatitem_comments_relative_url>$2<?/MIVAR>
 
 		    <?MIBLOCK COND=$(!=,$MI_CURRENTROW,1)>
 		      <?MIVAR NAME=$anatItemList>$anatItemList, <?/MIVAR>
@@ -420,7 +420,7 @@ Variables Expected:
 	<!-- Show expression patterns if they exist -->
 
 	<?MISQL SQL="
-	  select xpat_zdb_id, xpat_probe_zdb_id, xpat_assay_name
+	  select xpat_zdb_id, xpat_gene_zdb_id, xpat_assay_name
 	    from expression_pattern
 	    where exists 
 		  ( select * 
@@ -429,14 +429,14 @@ Variables Expected:
 			and xpatfimg_xpat_zdb_id = xpat_zdb_id);">
 
 	  <?MIVAR NAME=$xpat_zdb_id>$1<?/MIVAR>
-	  <?MIVAR NAME=$xpat_probe_zdb_id>$2<?/MIVAR>
+	  <?MIVAR NAME=$xpat_gene_zdb_id>$2<?/MIVAR>
 	  <?MIVAR NAME=$xpat_assay_name>$3<?/MIVAR>
 
 	  <?MIVAR NAME=$labeledMarkerList><?/MIVAR>
 	  <?MISQL SQL="
 	    select mrkr_zdb_id, mrkr_abbrev
 	      from marker
-	      where mrkr_zdb_id = '$xpat_probe_zdb_id'
+	      where mrkr_zdb_id = '$xpat_gene_zdb_id'
 	      order by mrkr_abbrev;">
 
 	    <?MIVAR NAME=$mrkr_zdb_id>$1<?/MIVAR>
@@ -508,7 +508,7 @@ Variables Expected:
 		<td width="85%">
 		  <?MIVAR NAME=$anatItemList><?/MIVAR>
 		  <?MISQL SQL="
-		    select distinct anatitem_name, anatitem_comments_relative_url
+		    select distinct anatitem_name, anatitem_zdb_id
 		      from anatomy_item, expression_pattern_anatomy
 		      where xpatanat_xpat_zdb_id      = '$xpat_zdb_id'
 			and ($xpatanatStgCondition)
@@ -517,12 +517,15 @@ Variables Expected:
 		      order by anatitem_name;">
 
 		    <?MIVAR NAME=$anatitem_name>$1<?/MIVAR>
-		    <?MIVAR NAME=$anatitem_comments_relative_url>$2<?/MIVAR>
+		    <?MIVAR NAME=$anatitem_zdb_id>$2<?/MIVAR>
 
 		    <?MIBLOCK COND=$(!=,$MI_CURRENTROW,1)>
 		      <?MIVAR NAME=$anatItemList>$anatItemList, <?/MIVAR>
 		    <?/MIBLOCK>
-		    <?MIVAR NAME=$anatItemList>$anatItemList $anatitem_name<?/MIVAR>
+		    <?MIVAR NAME=$anatItemList>$anatItemList 
+                      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$anatitem_zdb_id">
+                         $anatitem_name </A>
+                    <?/MIVAR>
 		  <?/MISQL>
 		  $anatItemList
 	    <?/MISQL>
