@@ -1,8 +1,5 @@
 #!/local/bin/perl
 #
-#	$Id$
-#	$Source$
-#
 # Hacked up web log rotate script by Clif Cox 11/30/98
 # 2001/01/02, clements.  Modified to use httpd in new location.
 #
@@ -12,8 +9,7 @@ $prefix		=	"/private/httpd";
 $logs		=	"$prefix/logs";
 $old_dir	=	"old";
 $pidfile	=	"$logs/httpd.pid";
-$DOMLU		=	"/private/bin/domainlookup.pl";
-# $UPDATE	=	"/private/bin/update_stats.pl";
+$DOMLU		=	"<!--|ROOT_PATH|-->/server_apps/WebSiteTools/domainlookup.pl";
 $BZIP		=	"/local/bin/bzip2";
 
 
@@ -40,8 +36,6 @@ $date = sprintf("%s%02d", $months[($mon-1)%12], $year);
 kill (USR1, $pid);		# Ask the server to start using the new logs
 				# May cause problems with older servers
 
-# exit;				# TEST
-
 sleep 1500;			# Wait a good amount of time for all children to exit
 
 
@@ -50,10 +44,5 @@ sleep 1500;			# Wait a good amount of time for all children to exit
 
 system("$DOMLU " . join(" ", @files));
 system("$BZIP  " . join(" ", @files));
-
-# Bypass updating statistics.  Statistics generation is now handled 
-# through other means.
-#
-# system("$UPDATE");
 
 #       All Done!
