@@ -17,9 +17,7 @@ create dba function "informix".regen_maps()
 	-- Something terrible happened while creating the new table
 	-- Get rid of it, and leave the original table around.
 
-	on exception in (-206, -255, -668)
-	  --  206: OK to get "Table not found" here, since we might
-	  --       not have created all tables at the time of the exception
+	on exception in (-255, -668)
 	  --  255: OK to get a "Not in transaction" here, since
 	  --       we might not be in a transaction when the rollback work 
 	  --       below is performed.
@@ -86,7 +84,7 @@ create dba function "informix".regen_maps()
     create table paneled_m_new 
       (
 	zdb_id		varchar(50),
-	abbrev		varchar(20), 
+	abbrev		varchar(40), 
 	mtype		varchar(10), 
 	OR_lg		varchar(2),
 	lg_location		numeric(8,2), 
@@ -94,7 +92,7 @@ create dba function "informix".regen_maps()
 	target_abbrev	varchar(20),
 	mghframework	boolean,
 	target_id		varchar(50),
-        map_name        varchar(20)  
+        map_name        varchar(40)  
 
 	-- paneled_markers does not have a primary key.
       )
