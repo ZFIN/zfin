@@ -17,7 +17,6 @@
 <?MIVAR NAME=$GAT COND="$(NXST,$GAT)">1<?/MIVAR>
 <?MIVAR NAME=$ZMAP COND="$(NXST,$ZMAP)">1<?/MIVAR>
 
-<?MIVAR COND="$(NXST,$map_type)"NAME=$map_type><?/MIVAR>
 
 <SCRIPT>
 
@@ -160,7 +159,6 @@ userid = "$userid";
 
 <?MIVAR><input type=hidden name=userid value="$userid"><?/MIVAR>
 <input type=hidden name=view_map value=1>
-<?MIVAR><input type=hidden name=map_type value="$map_type"><?/MIVAR>
 
 <center><FONT SIZE=+2><A HREF="javascript:start_help('title')"><b>View a map region, choose either a marker or location</font></center></b></A> 
 
@@ -178,10 +176,6 @@ var T51=0;
 var LN54=0;
 
 </SCRIPT>
-
-<?MIVAR COND="$(NXST,$loc_lg)" NAME=$loc_lg>0<?/MIVAR>
-<?MIVAR COND="$(NXST,$loc_panel)" NAME=$loc_panel>any<?/MIVAR>
-
 
 
 <TR><TD>
@@ -299,11 +293,10 @@ var LN54=0;
  	<?MIVAR NAME=page_title>View Map<?/MIVAR>
 	<?MIVAR COND="$(NXST,$marker)" NAME=$marker><?/MIVAR>
 	<?MIVAR COND="$(NXST,$loc)" NAME=$loc><?/MIVAR>
-	<?MIVAR COND="$(NXST,map_type)" NAME=$map_type><?/MIVAR>  
 	<?MIVAR>
         <SCRIPT>
 
-	var page_id='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-mapperselect.apg&select_from=MAPPER&frame_size=220&navtile=true&marker=$marker&loc=$loc&loc_panel=$loc_panel&loc_lg=$loc_lg&T51=$T51&LN54=$LN54&MGH=$MGH&HS=$HS&GAT=$GAT&MOP=$MOP&map_type='+document.mapplet.map_type.value;
+	var page_id='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-mapperselect.apg&select_from=MAPPER&frame_size=220&navtile=true&marker=$marker&loc=$loc&loc_panel=$loc_panel&loc_lg=$loc_lg&T51=$T51&LN54=$LN54&MGH=$MGH&HS=$HS&GAT=$GAT&MOP=$MOP&map_type=$map_type';
 	top.update_hist(page_id,"$page_title");
 	top.controls.location.reload(true);
 	</SCRIPT>
@@ -314,6 +307,7 @@ var LN54=0;
  pbrowser frame populated -->
 
 <?MIVAR COND="$(XST,$navtile)">
+        <?MIVAR COND="$(NXST,$map_type)" NAME=$map_type><?/MIVAR>  
 	<SCRIPT>
 	form_submit('$map_type');
 	</SCRIPT>
