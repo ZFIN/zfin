@@ -113,7 +113,7 @@ $(SETVAR,$pcount,$1)
 <?MIVAR NAME=$tcount>$1<?/MIVAR>
 
 <?MIVAR NAME=$true_count>0<?/MIVAR>
-<?MISQL SQL="select distinct count(*)::integer from all_mapped_markers a, db_link b where lower(b.acc_num) like lower('%$aname%') and b.linked_recid = a.zdb_id union select distinct count(*)::integer from all_mapped_markers a, db_link b, orthologue c where lower(b.acc_num) like lower('%$aname%') and b.linked_recid = c.zdb_id and c.c_gene_id = a.zdb_id union  select distinct count(*)::integer from all_genes a , db_link b where a.OR_lg = 0 and  lower(b.acc_num) like lower('%$aname%') and b.linked_recid= a.zdb_id union  select distinct count(*)::integer from all_genes a , db_link b, orthologue c where a.OR_lg = 0 and lower(b.acc_num) like lower('%$aname%') and  b.linked_recid = c.zdb_id and c.c_gene_id = a.zdb_id ;">
+<?MISQL SQL="select distinct count(*)::integer from all_mapped_markers a, db_link b where lower(b.acc_num) like lower('%$aname%') and b.linked_recid = a.zdb_id union select distinct count(*)::integer from all_mapped_markers a, db_link b, orthologue c where lower(b.acc_num) like lower('%$aname%') and b.linked_recid = c.zdb_id and c.c_gene_id = a.zdb_id union  select distinct count(*)::integer from all_genes a , db_link b where  lower(b.acc_num) like lower('%$aname%') and b.linked_recid= a.zdb_id union  select distinct count(*)::integer from all_genes a , db_link b, orthologue c where lower(b.acc_num) like lower('%$aname%') and  b.linked_recid = c.zdb_id and c.c_gene_id = a.zdb_id ;">
 
 $(SETVAR,$true_count,$(+,$true_count,$1))
 <?/MISQL>
@@ -156,7 +156,7 @@ Options:
 <TABLE width=100% border=0 cellspacing=0 cellpadding=3 >
 <TH> </TH><TH align=left>Name</TH> <TH align=left>Map Location</TH> <TH align=left>Panel</TH> <TH align=left>Updated</TH>
 
-<?MIVAR NAME=$prev_name>0<?/MIVAR>
+<?MIVAR NAME=$prev_name>NULL<?/MIVAR>
 <?MIVAR NAME=$prev_gp>0<?/MIVAR>
 <?MIVAR NAME=$clr_cnt>0<?/MIVAR>
 
