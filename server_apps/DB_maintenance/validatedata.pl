@@ -734,7 +734,7 @@ sub fishNameEqualLocusName ($) {
 	
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
-    my $subject = "linkage has no member(s)";
+    my $subject = "Fish name and locus name disagree";
     my $errMsg = "The name field in $nRecords fish record(s) does not equal locus name.\n ";
     
     logError ($errMsg);
@@ -763,7 +763,7 @@ sub fishNameEqualLocusName ($) {
 # 
 sub fishAbbrevContainsFishAllele ($) {
 
-  logHeader ("Checking fish.abbrev starts with locus.abbrev");
+  logHeader ("Checking fish.abbrev contains fish.allele");
 	
   my $sql = 'select fish.abbrev, locus.abbrev, fish.zdb_id, locus.zdb_id, 
                     get_fish_full_name(fish.zdb_id), locus_name
@@ -784,7 +784,7 @@ sub fishAbbrevContainsFishAllele ($) {
 	
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
-    my $subject = "linkage has no member(s)";
+    my $subject = "Fish abbrev does not start with locus abbrev";
     my $errMsg = "The abbrev field in $nRecords fish record(s) does not start with the locus's abbrev.\n ";
     
     logError ($errMsg);
@@ -808,32 +808,175 @@ sub fishAbbrevContainsFishAllele ($) {
 # 
 sub fishAbbrevStartsWithLocusAbbrev ($) {
 
-  logHeader ("Checking fish.abbrev starts with = any locus.name");
-	
-  my $sql = 'select fish.name, locus_name, fish.zdb_id, locus.zdb_id, 
-                    get_fish_full_name(fish.zdb_id), 
-                    fish.abbrev, fish.allele, locus.abbrev
-               from fish, locus
-              where fish.locus = locus.zdb_id
-                and line_type = "mutant"
-                and fish.name <> locus_name';
+  logHeader ("Checking fish.abbrev starts with locus.abbbrev");
 
-  my @colDesc = ("Fish name         ",
-		 "Locus name        ",
+  my $sql = 'select fish.abbrev, locus.abbrev,
+                    fish.zdb_id, get_fish_full_name(fish.zdb_id), fish.name, 
+                    fish.allele, locus.zdb_id, locus_name
+	       from fish, locus
+	       where fish.locus = locus.zdb_id
+		 and line_type = "mutant"
+		 and fish.abbrev not like (locus.abbrev || "%")
+		 and locus.abbrev <> ""';
+
+  my @colDesc = ("Fish abbrev       ",
+		 "Locus abbrev      ",
 		 "Fish ZDB ID       ",
-		 "Locus ZDB ID      ",
 		 "Full fish name    ",
-		 "Fish abbrev       ",
+		 "Fish name         ",
 		 "Fish allele       ",
-		 "Locus abbrev      " );
+		 "Locus ZDB ID      ",
+		 "Locus name        ");
   
   my $nRecords = execSql ($sql, undef, @colDesc);
 	
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
-    my $subject = "linkage has no member(s)";
-    my $errMsg = "The name field in $nRecords fish record(s) does not equal any locus names.\n ";
-    
+    my $subject = "Fish abbrev does not start with locus abbrev";
+    my $errMsg = "The abbrev field in $nRecords fish record(s) does not start with locus abbrev.\n ";
+
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+  }else {
+    print "Passed!\n";
+  }
+} 
+
+
+#======================== Locus Names, Abbrevs =====================
+#
+# Strictly speaking, locus names and abbrevs are not unique, and therefore
+# we can't enforce their uniqueness with a database constraint.  However,
+# the number of cases where they can be non-unique is a small set, and
+# therefore we can check for non-unique names and abbrevs that are 
+# outside that set.  
+#
+# A request has been passed on to Erik to think about nomenclature changes
+# which would get rid of the duplicate names and abbrevs altogether.
+
+#---------------------------------------------------------------
+# locusAbbrevUnique
+#
+# Check that all locus abbrevs outside the special cases are unique.
+# 
+#Parameter
+# $      Email Address for recipients
+# 
+sub locusAbbrevUnique ($) {
+
+  logHeader ("Checking locus abbrev is unique");
+	
+  my $sql = 'select abbrev, locus_name, zdb_id
+               from locus loc1
+	       where (   abbrev <> "xxx"
+		      or abbrev is NULL)
+		 and exists
+		     ( select count(*), abbrev
+			 from locus loc2
+			 where loc1.abbrev = loc2.abbrev
+			   and locus_name not like "Df%"
+			   and locus_name not like "T%"
+			   and locus_name <> "un-named"
+		       group by abbrev
+		       having count(*) > 1 )
+               order by abbrev, locus_name, zdb_id';
+
+  my @colDesc = ("Locus abbrev      ",
+		 "Locus name        ",
+		 "Locus ZDB ID      ");
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Locus record(s) with non-unique abbrevs";
+    my $errMsg = "$nRecords locus records have non-unique abbrevs.\n ";
+
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+  }else {
+    print "Passed!\n";
+  }
+} 
+
+
+
+#---------------------------------------------------------------
+# locusNameUnique
+#
+# Check that all locus name outside the special cases are unique.
+# 
+#Parameter
+# $      Email Address for recipients
+# 
+sub locusNameUnique ($) {
+
+  logHeader ("Checking locus name is unique");
+	
+  my $sql = 'select locus_name, abbrev, zdb_id
+	       from locus 
+	       where exists
+		     ( select count(*), locus_name
+			 from locus 
+			 where locus_name not like "Df%"
+			   and locus_name not like "T%"
+			   and locus_name <> "un-named"
+			 group by locus_name 
+			 having count(*) > 1 )
+	       order by locus_name, abbrev, zdb_id';
+
+  my @colDesc = ("Locus name        ",
+		 "Locus abbrev      ",
+		 "Locus ZDB ID      ");
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "locus record(s) with non-unique names";
+    my $errMsg = "$nRecords locus records have non-unique names.\n ";
+
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+  }else {
+    print "Passed!\n";
+  }
+} 
+
+
+
+#---------------------------------------------------------------
+# locusAbbrevIsSet
+#
+# Reports all locus abbrevs (outside the special cases) that are not set.
+# 
+#Parameter
+# $      Email Address for recipients
+# 
+sub locusAbbrevIsSet ($) {
+
+  logHeader ("Checking locus abbrev is set");
+	
+  my $sql = 'select abbrev, locus_name, zdb_id
+	       from locus 
+	       where (   abbrev = "xxx" 
+                      or abbrev is NULL)
+                 and locus_name not like "Df%"
+	         and locus_name not like "T%"
+		 and locus_name <> "un-named"
+	       order by abbrev, locus_name, zdb_id';
+
+  my @colDesc = ("Locus abbrev      ",
+		 "Locus name        ",
+		 "Locus ZDB ID      ");
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Locus abbrev not set";
+    my $errMsg = "Locus abbrev not set in $nRecords locus record(s).\n ";
+
     logError ($errMsg);
     &sendMail($sendToAddress, $subject, $errMsg, $sql); 
   }else {
@@ -1609,6 +1752,9 @@ if($daily) {
   fishAbbrevContainsFishAllele($curatorEmail);
   fishAbbrevStartsWithLocusAbbrev($curatorEmail);
 
+  locusAbbrevUnique($curatorEmail);
+  locusNameUnique($curatorEmail);
+
   linkageHasMembers($linkageEmail);
   linkagePairHas2Members($linkageEmail);
 
@@ -1634,6 +1780,7 @@ if($weekly) {
 if($monthly) {
   print "run monthly check. \n";
   orthologueHasDblink($curatorEmail);
+  locusAbbrevIsSet($curatorEmail);
 }
 if($yearly) {
   print "run yearly check. \n";
