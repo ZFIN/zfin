@@ -1082,13 +1082,15 @@ Datablade documentation.
         <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrview_segment_mrkr_zdb_id">$1</A>
         
         <?MIBLOCK COND="$(NC,$mrkrview_segment_supplier,)">
+        <font size=-1>
           <?MIBLOCK COND="$(EC,$mrkrview_segment_supplier,ZDB-LAB-991005-53)">
-            <A HREF="/zirc/home/guide.php">(available from)</A>
+            <A HREF="/zirc/home/guide.php">(Order This)</A>
           <?MIELSE>
 	    <?MIVAR>
-              <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$mrkrview_segment_supplier">(available from)</A>
+              <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$mrkrview_segment_supplier">(Order This)</A>
             <?/MIVAR>
           <?/MIBLOCK>
+        </font>
         <?/MIBLOCK>
         
 	<?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_segment_mrel_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
