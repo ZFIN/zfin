@@ -16,22 +16,58 @@
 
 
 <p></p>
-<h4 align="left"><em>(Updated 20 August 2004)</em></h4>
+<h4 align="left"><em>(Updated 30 September 2004)</em></h4>
 <b><font size="+1">Genome and Map Resources</font></b
 <ul>
   <li><b><a href="http://www.sanger.ac.uk/Projects/D_rerio/">The Danio rerio Sequencing Project at Sanger</a>:</b><br>
-    Sanger site hosts all of the efforts of the zebrafish 
-    genome sequencing project, including whole genome 
-    shotgun sequence and selective BAC shotgun sequences. 
-    In addition, the fingerprinting (physical map) of 
-    the zebrafish genome is presented in a graphic display. 
+The <a href="http://www.sanger.ac.uk/Projects/D_rerio/"><b>Sanger zebrafish homepage</b></a> hosts all of the efforts of the zebrafish genome sequencing project, including the <a href="http://www.sanger.ac.uk/Projects/D_rerio/wgs.shtml"><b>whole genome sequencing and assembly project</b></a> with automated annotation in <a href="http://www.ensembl.org/Danio_rerio/"><b>Ensembl</b></a> and the <a href="http://www.sanger.ac.uk/Projects/D_rerio/clones.shtml"><b>clone mapping and sequencing project</b></a> with manual annotation in <a href="http://vega.sanger.ac.uk/Danio_rerio/"><b>Vega</b></a>.
   </LI>
 
   <li><b><a href="http://vega.sanger.ac.uk/Danio_rerio/">Zebrafish Genome Annotation Browser (Vega)</a>:</b><br>
-    This site allows browsing of zebrafish BAC and PAC clones that were sequenced and manually annotated within the Sanger zebrafish genome project. The manual annotation is a joined effort between the Sanger Institute (gene structure annotation) and ZFIN (nomenclature).
-  </LI>
+This site allows browsing of zebrafish BAC and PAC clones that were sequenced, analysed and manually annotated within the Sanger zebrafish genome project. Vega includes
+    <ul type=circle>
+      <li> manually annotated genes with poly A features
+      <li> protein feature and domain annotation
+      <li> Blast searches against all zebrafish ESTs, cDNAs and the WashU and IMCB EST cluster</li>
+      <li> Blast searches against all vertebrate proteins, cDNAs and ESTs</li>
+      <li> mapping of unists markers</li>
+      <li> ab initio gene predictions</li>
+      <li> tRNA prediction</li>
+      <li> CpG island prediction and repeat masking</li>
+    </ul>
+You can search Vega with <a href="http://vega.sanger.ac.uk/Multi/blastview?species=Danio_rerio"><b>Blast</b></a>.  For Blast searches against all finished and unfinished clones go <a href="http://www.sanger.ac.uk/cgi-bin/blast/submitblast/d_rerio"><b>here</b></a>.<br>
+The manual annotation is a joined effort between the Sanger Institute (gene structure annotation) and ZFIN (nomenclature).
+ </lI>
+  <li><a href="http://www.ensembl.org/Danio_rerio/"><b>Zebrafish Genome Browser at Ensembl</b></a><b>:</b><br>
+  This site allows browsing of the latest zebrafish whole genome assembly <a href="http://www.sanger.ac.uk/Projects/D_rerio/Zv4_assembly_information.shtml"><b>Zv4</b></a>
+    <ul type=circle>
+      <li> automatically annotated Ensembl genes</li>
+      <li> automatically annotated Ensembl EST genes</li>
+      <li> protein feature and domain annotation</li>
+      <li> Blast searches against all zebrafish ESTs, cDNAs and the WashU and IMCB EST clusters</li>
+      <li> Blast searches against all vertebrate proteins, Uniprot, all vertebrate cDNAs and ESTs</li>
+      <li> mapping of unists markers</li>
+      <li> mapping of the Affymetrix zebrafish probes</li>
+      <li> mapping of SNps in dbSNP</li>
+      <li> comparative analysis with other Ensembl species (human, mouse, rat, chicken, fugu, tetraodon)</li>
+      <li> BAC end placement</li>
+      <li> transcription start site predictions with Eponine</li>
+      <li> ab initio gene predictions</li>
+      <li> tRNA prediction</li>
+      <li> CpG island prediction and repeat masking</li>
+    </ul>
+Additional DAS tracks with SNP and indel analysis derived from the comparison of the whole genome shotgun reads are available. Ensembl also offers completely customizable downloads with <a href ="http://www.ensembl.org/Multi/martview?species=Danio_rerio"><b>EnsMart</b></a><br>
+You can search Ensembl with either <a href="http://www.ensembl.org/Multi/blastview?species=Danio_rerio"><b>Blast</b></a> or <a href="http://www.ensembl.org/Multi/blastview?species=Danio_rerio"><b>SSAHA</b></a>.
+  </li>
+  <li>Additional services available at the Sanger Institute
+      <ul type=circle>
+        <li> The <a href="http://www.sanger.ac.uk/Projects/D_rerio/WebFPC/zebrafish/small.shtml"><b>WebFPC database</b></a> hosts the physical map and allows searching and browsing for clone information.</li>
+        <li> The <a href="http://www.sanger.ac.uk/cgi-bin/Projects/D_rerio/mapsearch"><b>mapsearch site</b></a> offers easy access to all mapping related data (mapped ESTs, markers, BAC ends) in the current assembly.</li>
+        <li> The <a href="http://www.sanger.ac.uk/Projects/D_rerio/fishmask.shtml"><b>RepeatMasker</b></a> service masks your sequence data with a choice of repeat libraries.</li>
+       </ul>
+   </li>
 
-  <li><b><a href="http://genome.ucsc.edu">Zebrafish Genome Browser at UCSC </a>:</b><br>
+ <li><b><a href="http://genome.ucsc.edu">Zebrafish Genome Browser at UCSC</a>:</b><br>
     A joint collaboration between UCSC and the Zebrafish Genome Initiative at Children's Hospital Boston provides several useful tracks of genome data, including: 
       <br>
 <ul type=circle><li>Mapping & Sequencing:  Position / Conigs / Scaffolds / RH Map / BAC End Pairs & Singles / Gap / GC Percent</li>
@@ -40,38 +76,22 @@
      <li>Expression & Regulation:  Affy ZF</li>
      <li>Comparative Genomics:  Fugu Chain & Net / Human Proteins / HG Blast</li>
      <li>Variation & Repeats:  RepeatMasker / SimpleRepeats</li></ul>
-    Custom annotation tracks for the zebrafish research community include: RH Map (about 9K sequences), BAC End Clones (over 288K pairs, 23K singletons), WZ ESTs (43K 
-    sequences, 76K alignments, 39K EST alignments), Affymetrix Zebrafish Microarray Probe Alignments (15K probes), and Human Protein (over 40K alignments).
+     Custom annotation tracks for the zebrafish research community include: 
+     <ul type=circle>
+       <li> RH Map (about 9K sequences)</li>
+       <li> BAC End Clones (over 288K pairs, 23K singletons)</li>
+       <li> WZ ESTs (43K sequences, 76K alignments, 39K EST alignments)</li>
+       <li> Affymetrix Zebrafish Microarray Probe Alignments (15K probes)
+       <li> Human Protein (over 40K alignments)</li>
+     </ul>
 
-  <li><a href="http://www.ensembl.org/Danio_rerio/"><b>Zebrafish Genome Browser at Ensembl</b></a><b>:<br>
-    </b>Provides easy access to sequence data including 
-    predicted structure and location of known genes 
-    in the genome sequence and predictions of novel 
-    genes, with supporting evidence. </li>
-  <li><a href="http://www.sanger.ac.uk/Projects/D_rerio/mapping.shtml"><b>Zebrafish Genome Fingerprinting Project </b></a><b>:</b><br>
-    Sanger site hosts a bacterial clone physical map of the genome is 
-    being constructed using restriction enzyme fingerprinting<b>.</b> 
-  </li>
-  <li><b> <a href="http://www.sanger.ac.uk/cgi-bin/blast/submitblast/d_rerio">Zebrafish Blast Server at Sanger</a>:</b><br>    Sanger site offers searches on a database containing Danio rerio DNA
-    sequences from finished and unfinished BAC and PAC clones.
-  </li>
-  <li><b> <a href="http://www.sanger.ac.uk/cgi-bin/Projects/D_rerio/mapsearch">Zebrafish Marker Mapping Data at Sanger</a>:</b><br>
-    Search for mapped ESTs, STS markers and BAC ends in the current
-    zebrafish genome assembly at this Sanger site.
-  </li>
-  <li><a href="http://www.sanger.ac.uk/Projects/D_rerio/fishmask.shtml"><b>Zebrafish 
-    RepeatMasker Server</a>:</b><br>
-    Sanger site hosts a RepeatMasker service that screens DNA sequences 
-    in fasta format against a library of repetitive 
-    elements identified for zebrafish and returns a 
-    masked query sequence.
-  </li>
   <li><b><a href="http://danio.mgh.harvard.edu/blast/blast_grp.html">Zebrafish BLAST 
     server at MGH</a>:</b> <br>
     MGH site provides a BLAST search of a gene or marker 
     of interest to the assembled sequence contigs of 
     the zebrafish genomic shotgun sequence from the 
     Sanger project. </li>
+
  <li><b><a href="http://danio.mgh.harvard.edu/markers/ssr.html">MGH web-based tool for automating primer selection</a>:</b><br>
     MGH site offers this tool which searches for a Zv3 supercontig or BAC clones by name, derives 
 all di- and tri- nucleotide repeat sequences in the supercontig, masks the
@@ -98,7 +118,7 @@ sequence around the repeats for larger zebrafish repetitive sequences and then d
 <p>
 <ul>
   <li><a href="http://zgc.nci.nih.gov/"><strong>Zebrafish Gene
-  Collection</strong></a><b>:</b> NIH initiative for production of
+  Collection (ZGC)</strong></a><b>:</b> NIH initiative for production of
   full length sequences and cDNA clones.</li>
  <li><a href="http://www.genetics.wustl.edu/fish_lab/frank/cgi-bin/fish/"><b>Washington 
     University EST sequencing project</b></a><b>: </b><br>
