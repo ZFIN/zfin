@@ -43,7 +43,8 @@ parse file: read ftp://ftp.geneontology.org/go/ontology/gene_ontology.obo
 	opt ["date:" thru newline]	
 	opt ["saved-by:" thru newline]
 	opt ["auto-generated-by:" thru newline]
-	opt ["default-namespace:" thru newline] 
+	opt ["default-namespace:" thru newline]
+	opt ["subsetdef:" thru newline]
 	opt ["remark:" thru newline]
 	some ["subsetdef:" thru newline]
 
