@@ -554,9 +554,10 @@ Variables Expected:
 	<!-- allow display of phenotype descriptions for curators only until they are more up to date 6/25/03--> 
 	<!-- br was moved to within MIBLOCK, MIVAR xst $update was changed to MIBLOCK -->
 
-	<?MIBLOCK COND="$(XST,$UPDATE)">
+	<?MIBLOCK COND="$(OR,$(XST,$UPDATE),$(NC,$title,mutant))">
 	<br>
-	  <INPUT TYPE=button value="Update" onClick="doit('phenotype','textarea','Phenotype+description')"> 
+	  <?MIVAR COND="$(XST,$UPDATE)">
+	    <INPUT TYPE=button value="Update" onClick="doit('phenotype','textarea','Phenotype+description')"> 		<?/MIVAR>
 	 
 
 	  <b><?MIVAR>$(IF,$(EC,$title,mutant),Phenotype,Description)<?/MIVAR>
