@@ -87,10 +87,10 @@ sub alteration_reportUnchangedCount($) {
     $cur->fetch();
     &writeReport(int($rowCount) . " alteration records are unchanged\n");
 
-#    if ($rowCount == 0) {
-#	&errorExit("Aborting run!!!!  Something is probably wrong because the",
-#		   "  status of EVERY ZIRC alteration record is changing.");
-#    }
+    if ($rowCount == 0) {
+	&errorExit("Aborting run!!!!  Something is probably wrong because the",
+		   "  status of EVERY ZIRC alteration record is changing.");
+    }
     return ();
 }
 
