@@ -34,7 +34,7 @@ set modeon=`onstat -| tr -d '\12' | cut -f2- -d\-|cut -c3,4`
 
 if ($HOST != "embryonix") then 
 
-  set logon=`ps -ef | grep -c "/private/apps/Informix/informix_wildtype/bin/ontape"`
+  set logon=`ps -ef | grep -c "$INFORMIXDIR/bin/ontape"`
 
 # find the process that signifies a backup is taking place
 
@@ -61,7 +61,7 @@ if ($HOST != "embryonix") then
 # if ontape is not in the process list, wait and check again. 
 
      sleep 6
-     set logon=`ps -ef | grep -c "/private/apps/Informix/informix_wildtype/bin/ontape"`
+     set logon=`ps -ef | grep -c "$INFORMIXDIR/bin/ontape"`
 
 # if ontape is still not in the process list, email informix@cs.uoregon.edu
 
