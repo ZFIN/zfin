@@ -972,14 +972,14 @@ Variables Expected:
 		   $(IF,$(OR,$(EC,$override,true),$(EC,$is_private,f),$(EC,$ZDB_ident,$6)),"<TD></TD><TD><font size=-1><A HREF="$curviewer$1">"$2"</A> ("$3")</TD>
 		    <TD align=center><font size=-1>"$lg"</TD>
 		    <TD align=center><font size=-1>"$distance" "$metric"</TD>
-		    <TD align=center><font size=-1>"$lod"</TD><TD><font size=-1><A href="$sourceviewer$6">"$7"</a></TD><TD><font size=-1><A HREF=javascript:show_detail('"$link_id"','"$1"','"$2"','"$locus_abbrev"');>Details</A></TD>","<TD colspan=4><font size=-1><A href=javascript:info();>"$4$MI_CURRENTROW"</A>: Unpublished! <A href="sourceviewer$6">Contact "$7"</a>.</TD>")
+		    <TD align=center><font size=-1>"$lod"</TD><TD><font size=-1><A href="$sourceviewer$6">"$7"</a></TD><TD><font size=-1><A HREF=javascript:show_detail('"$link_id"','"$1"','"$2"','"$locus_abbrev"');>Details</A></TD>","<TD colspan=4><font size=-1><A href=javascript:info();>"$4$MI_CURRENTROW"</A>: Unpublished <A href="$sourceviewer$6">Contact "$7"</a>.</TD>")
 		  <?/MIVAR>
 		<?MIELSE>
 		  <?MIVAR>
 		    $(IF,$(OR,$(EC,$override,true),$(EC,$is_private,f),$(EC,$ZDB_ident,$6)),"<TD></TD><TD><font size=-1><A HREF="$curviewer$1">"$2"</A> ("$3")</TD>
 		    <TD align=center><font size=-1>"$lg"</TD>
 		    <TD align=center><font size=-1>"$distance" "$metric"</TD>
-		    <TD align=center><font size=-1>"$lod"</TD><TD><font size=-1><A href="$sourceviewer$6">"$7"</a></TD><TD></TD>","<TD colspan=4><font size=-1><A href=javascript:info();>"$4$MI_CURRENTROW"</A>: Unpublished! <A href="sourceviewer$6">Contact "$7"</a>.</TD>")
+		    <TD align=center><font size=-1>"$lod"</TD><TD><font size=-1><A href="$sourceviewer$6">"$7"</a></TD><TD></TD>","<TD colspan=4><font size=-1><A href=javascript:info();>"$4$MI_CURRENTROW"</A>: Unpublished <A href="$sourceviewer$6">Contact "$7"</a>.</TD>")
 		    <?/MIVAR>
 	      <?/MIBLOCK>    
 
