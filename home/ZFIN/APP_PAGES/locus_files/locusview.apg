@@ -318,11 +318,11 @@
 	  <TABLE width=100% cellpadding=5 border=0 bgcolor="$highlight" cols=2 rows=1>
 	    <TR><TD>
 	    <font color="red"><B>Cloned Gene:</b>  </font>
-	    <font size=2>The GENE <b><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$cloned_gene">$1 ($2) </A> </b> 
+	    <b><i><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$cloned_gene">$1 ($2) </A> </i></b> 
 	    has been shown to correspond to the <b><i>$name</i></b> locus.
 	    <?MISQL SQL="select WebExplode(object,'dataId=$OID&type=colattrib&info=cloned_gene') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
 	 
-	    Please consult the GENE record for further mapping information.
+	    Please consult the gene record for further mapping information.
 	   </TD>
 	   </TR>
 	  </TABLE>
@@ -353,13 +353,12 @@
 
      
 	<!------------- Linkage Group	  ------------------------>
-	<p><HR WIDTH=80%>
 	<?MISQL SQL="
 	  select distinct chrom_num 
 	    from fish_search 
 	    where locus ='$OID' 
 	      and chrom_num <> 0 ;">
-	  $(IF,$(NC,$1,0),<b>"LINKAGE GROUP:" $1</b>)
+	  $(IF,$(NC,$1,0),<p><b>"LINKAGE GROUP:" $1</b>)
 	<?/MISQL>
 	<!------------- ends Linkage Group	  ------------------------>
 
@@ -368,21 +367,24 @@
 	<HR WIDTH=80%>
 	
 	<?MIVAR>
-	  <b>SUMMARY of <i>$name</i> ALLELES:</b>
+	  <b>ALLELES OF <i>$name</i>:</b>
         <?/MIVAR>
-        </font> 
-        <font size=-1>(Click allele to see details)</font>
+        <font size=-1>(Select allele name to view details)</font>
 	<?MIVAR COND="$(XST,$UPDATE)">
 	  <BR>CAN NOT UPDATE ALLELES: New alleles for a locus a created via 
           the locus registration mechanism. When a proposed allele designation
 	  is accepted, a new fish record for the allele is created.
 	<?/MIVAR>
-
-	<TABLE border=0 cellspacing=3 cellpadding=4 width="100%">
-	    <TH valign="bottom">Allele [previous names]</TH>
-            <TH valign="bottom">Type</TH>
-            <TH valign="bottom">Avail. Map Info</TH>
-            <TH valign="bottom">Brief Description</TH>
+	<?MIVAR>
+	<TABLE bgcolor="$highlight" width="100%" border=0 cellpadding=2>
+	<?/MIVAR>
+	    <TR bgcolor=#ccccccc>
+	    <TD><b>Allele</b></TD>
+	    <TD><b>Prev. Names</b></TD>	
+            <TD><b>Mut. Type</b></TD>
+            <TD><b>Avail. Map Info</b></TD>
+            <TD><b>Brief Description</b></TD>
+	    </TR>
 	    <?MISQL SQL="
 	      select fish_id, abbrev, allele, phenotype, chrom_change,
                      (select unique count(*)::integer 
@@ -408,8 +410,8 @@
 	      $(SETVAR,$mindex,$(POSITION,$phenotype,"Details:"))
 	      <TR>
 
-	      <TD valign=bottom><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$fish_id"><i>$allele</i></A> 
-
+	      <TD><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$fish_id"><i>$allele</i></A> </TD>
+	      <TD>	
 	      <!-- find any allele alias -->
 	      <?MISQL SQL="
 		select alteration.zdb_id 
@@ -424,14 +426,14 @@
 		  from data_alias 
 		  where dalias_data_zdb_id = '$ALTOID'">
 	        <?MIVAR NAME=$allele_alias>$1<?/MIVAR>
-	        $(IF,$(AND,$(=,$MI_CURRENTROW,1),$(XST,$allele_alias)), [<i>)
+	        $(IF,$(AND,$(=,$MI_CURRENTROW,1),$(XST,$allele_alias)), <i>)
 	        $(IF,$(>,$MI_CURRENTROW,1),;) $allele_alias
 	      <?/MISQL>
-	      $(IF,$(AND,$(>=,$MI_ROWCOUNT,1),$(XST,$allele_alias)),</i>])
+	      $(IF,$(AND,$(>=,$MI_ROWCOUNT,1),$(XST,$allele_alias)),</i>)
 	      </TD>
 
-	      <TD valign=bottom><font size=-1>$(IF,$(NC,$chrom_change,NULL),$chrom_change,"Unknown")</TD>
-	      <TD align=center><font size=-1>
+	      <TD>$(IF,$(NC,$chrom_change,NULL),$chrom_change,"Unknown")</TD>
+	      <TD>
 	      <?MIBLOCK COND="$(OR,$(>,$paneled,0),$(>,$linkages,0))">
                 <?MISQL SQL="select distinct OR_lg,private
                   from paneled_markers 
@@ -454,7 +456,7 @@
 	      $(IF,$(>,$del_markers,0),"+/- markers<br>")
 	      $(IF,$(AND,$(=,$del_markers,0),$(=,$linkages,0),$(=,$paneled,0)),"Unmapped")
 	      </td>
-	      <TD valign=bottom><font size=-1>
+	      <TD>
 	      $(IF,$(>,$mindex,0),$(SUBSTR,$phenotype,1,$(-,$mindex,1)),"")
 	      </TD>
 	      </TR>
@@ -465,18 +467,16 @@
 	<!------------------ PUBLICATION ------------------------------------>
 	<HR width="80%" align=center>
 	<?MIVAR NAME=$sum>0<?/MIVAR>
-	   <?MISQL SQL="
+	<?MISQL SQL="
 		select count(distinct recattrib_source_zdb_id) 
 	 	  from fish f, locus l, record_attribution
 	 	 where l.zdb_id = '$OID'
 		   and f.locus = l.zdb_id 
 		   and f.zdb_id = recattrib_data_zdb_id
   		;">	
-	   <?/MISQL>
+	 <?/MISQL>
 	    
-	   <?MIVAR NAME=$sum>$1<?/MIVAR>
-	   
-	<?/MISQL>
+	 <?MIVAR NAME=$sum>$1<?/MIVAR>	   
 	
 	<?MIBLOCK COND="$(OR,$(>,$sum,0),$(XST,$UPDATE))">
   	  <?MIVAR>

@@ -241,6 +241,7 @@ Variables Expected:
 	<!-- If viewing, THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
 	<?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=fish') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
 
+ 	<p>
 	<!-- OKAY, NOW  THROW UP THE  FISH INFO -->
 
       <!--------- BACK button ------------------>
@@ -295,11 +296,11 @@ Variables Expected:
 	  <br><INPUT TYPE=button 
 		     value=Update 
 		     onClick="doit('abbrev','text','Abbreviation')">
-	<?/MIVAR> 
+	<?/MIVAR>
+ 
 	<?MIVAR> 
 	  <b><font size= +1>Abbreviation: &nbsp; <i>$abbrev</i></font></b>
 	<?/MIVAR>
-
 	<br>
 	<?MIBLOCK COND="$(OR,$(EC,$AUTHORIZED,root),$(EC,$AUTHORIZED,fishauth))">
 	  <?MIVAR COND="$(XST,$UPDATE)">
@@ -375,7 +376,7 @@ Variables Expected:
 		<TABLE width=100% cellpadding=5 border=0 bgcolor="$highlight" cols=2 rows=1>
 		  <TR><TD>
 		  <font color="red"><B>Cloned Gene:</b>  </font>
-		  The gene <b><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$cloned_gene"><i>$gene_name ($gene_abbrev)</i></A></b>  
+		  <b><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$cloned_gene"><i>$gene_name ($gene_abbrev)</i></A></b>  
 		    has been shown to correspond to the <b><i>$name</b></i> locus.
 	            <?MISQL SQL="select WebExplode(object,'dataId=$locus&type=colattrib&info=cloned_gene') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
 		    Please consult the gene record for further mapping information.
@@ -386,12 +387,11 @@ Variables Expected:
              <?/MIBLOCK>
 	<!---------------- ends Affected Gene ---------------------->
 
-
+	<hr width=80%>
 
        <!-------------------- Images  ----------------------------->
 	<!-- Toss up images, if any, and description. -->
 
-	<br>
         <b>Images: </b>
 
 	<?MIVAR COND="$(XST,$UPDATE)">
@@ -527,7 +527,7 @@ Variables Expected:
 
 
  	<!-------------------- Keywords  ----------------------------->
-	 <br>
+	 <p>
 	  <?MIVAR COND="$(XST,$UPDATE)">
 	    <INPUT TYPE=button value=Update onClick="doit('pheno_keywords','textarea','Phenotype_Keywords')">
 	  <?/MIVAR> 
@@ -566,7 +566,7 @@ Variables Expected:
 	<A NAME="origins-info"></a>
 	<HR width=85%>
 
-	<b>ORIGINS and AVAILABILITY</b>
+	<b>ORIGINS AND AVAILABILITY</b>
 
 	<TABLE width=100% cellpadding=4 border=0><!-- bgcolor="$highlight"-->
 	  <TR>
@@ -675,7 +675,7 @@ Variables Expected:
 
 	  <HR width=85%>
 	  
-	  <b>ALLELE(s) carried in this mutant line:</b>
+	  <b>ALLELE(S) CARRIED IN THIS MUTANT LINE:</b>
 
 	  <!-- If we're updating,its crucial to know whether this FISH "owns" the chromosome, ie, it is the original mutant on which that chromo was found, or if itinherited the chromosome from some parent. We only allow updating if the former is the case. We check this by looking at the "status" field of the intersection record: if it="original" then we allow updating, else not.-->
 
@@ -699,28 +699,43 @@ Variables Expected:
 	    <?MIVAR NAME=$intfc_status>$7<?/MIVAR>
 	    <?MIVAR NAME=$alt_zdb_id>$8<?/MIVAR>
 
-	    $(IF,$(>,$MI_CURRENTROW,1),</TD></TR></TABLE><hr width=80%>)
-
-	    <TABLE width=100%>
-	      <TR>
-		<TD bgcolor="$highlight" valign=middle align=center width=10%>
-		  <font color="#ff0000"><b>$alt_allele</b></font>
-		</TD>
-
-		<TD><font size=-1>
-		  <?MIVAR COND="$(XST,$UPDATE)">
-		    <INPUT TYPE=button value=Add 
-		      	   onClick="doit('alt_alias','text','Alias')">
-		  <?/MIVAR> 
-		  <?MISQL SQL="
+	    <?MISQL SQL="
 		    select alteration.zdb_id 
 		      from alteration, fish
 		      where fish.zdb_id = '$OID' 
 			and fish.allele = '$alt_allele'
 			and fish.allele = alteration.allele;">
 		    <?MIVAR NAME=$ALTOID>$1<?/MIVAR>
-		  <?/MISQL>
-		  <b>Previous names: </b>
+	    <?/MISQL>
+
+  	    <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(XST,$UPDATE))">	
+		      <br>Add Reference: &nbsp;
+		      Previous name:<input type=text size=8 name=attrib_alle_prevname>
+    		      Reference:<input type=text name=attrib_alle_prevname_pubid>
+    		      <input type=button value="Add" onClick=new_attrib_alle_prevname("$ALTOID");> <br>
+            <?/MIVAR>
+	    <?MIVAR COND="$(=,$MI_CURRENTROW,1)">	
+	      <TABLE width=100% bgcolor="$highlight" cellpadding=2>
+	      <TR bgcolor=#ccccccc>
+		<TD><b>Allele</b></TD>
+		<TD>
+		<?MIVAR COND="$(XST,$UPDATE)">
+		    <INPUT TYPE=button value=Add 
+		      	   onClick="doit('alt_alias','text','Alias')">
+		<?/MIVAR> 
+	        <b>Prev. Names</b></TD>
+		<TD><b>Mut. Protocol</b></TD>
+		<TD><b>Mut. Type</b></TD>
+		<TD><b>Linkage Group</b></TD>
+	      </TR>
+	     <?/MIVAR>
+	      <TR>	 
+		<TD align=center><b><i>$alt_allele</i></b>
+		</TD>
+
+		<TD>		  
+		 
+		  
 		  <?MISQL SQL="
 		    select dalias_alias, dalias_zdb_id 
 		      from data_alias
@@ -728,28 +743,22 @@ Variables Expected:
 		    <?MIVAR NAME=$allele_alias>$1<?/MIVAR>
 		    <?MIVAR NAME=$aliasId>$2<?/MIVAR>
 		    <?MIVAR COND="$(XST,$allele_alias)" NAME=$allele_alias DELIMIT=" " REPLACE="+">$allele_alias<?/MIVAR>
-                    <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(XST,$UPDATE))">	
-		      <br>Add Reference: &nbsp;
-		      Previous name:<input type=text name=attrib_alle_prevname>
-    		      Reference:<input type=text name=attrib_alle_prevname_pubid>
-    		      <input type=button value="Add" onClick=new_attrib_alle_prevname("$ALTOID");> <br>
-                    <?/MIVAR>	 
+                   
 		    	
 
 		    <?MIVAR COND="$(XST,$UPDATE)">
 		      <br> <INPUT TYPE=button value=Delete onClick="Delete_listitem_alias('alt_alias','$allele_alias','$OID','$ALTOID')">
 	            <?/MIVAR>
-		    $(IF,$(AND,$(NXST,$UPDATE),$(>,$MI_CURRENTROW,1)),;) $1
+		    $(IF,$(AND,$(NXST,$UPDATE),$(>,$MI_CURRENTROW,1)),;) <i>$1</i>
  		    <?MISQL SQL="select WebExplode(object,'dataId=$aliasId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
 		  <?/MISQL>
-		  <br>
-
-		  <b>Mutagenesis Protocol: </b> 
+		  </TD>
+		  <TD>
 		  
 		  <?MIVAR COND="$(AND,$(XST,$UPDATE),$(NC,$alt_mutagen,unknown),$(NC,$alt_mutagen,spontaneous))">
 		   <BR>
-  	           Add Reference:&nbsp; Reference:
-                   <input type=text name=attrib_alle_muta_pubid>
+  	           Add Ref.:&nbsp;
+                   <input type=text size=16 name=attrib_alle_muta_pubid>
 		   <input type=button value="Add" onClick=new_attrib_alle_mutagen("$ALTOID");> <br>
                   <?/MIVAR>
 
@@ -765,28 +774,30 @@ Variables Expected:
 		  <?/MIBLOCK>
 
  	
-		  <?MIBLOCK COND="$(AND,$(NC,$alt_mutagen,spontaneous),$(XST,$UPDATE),$(EC,$intfc_status,original))">
-		  <SELECT name=protocol onChange=doProtocol(this.options[this.selectedIndex].value,'"$alt_protocol"','"$alt_zdb_id"')>
-		  <option "$(IF,$(EC,$alt_protocol,Unknown),SELECTED)" value=Unknown>Unknown
-		  <option "$(IF,$(EC,$alt_protocol,Adult_Males),SELECTED)" value="Adult_Males">Adult Males
-		  <option "$(IF,$(EC,$alt_protocol,Adult_Females),SELECTED)" value="Adult_Females">Adult Females
-		  <option "$(IF,$(EC,$alt_protocol,Embryos),SELECTED)" value=Embryos>Embryos
-		  <option "$(IF,$(EC,$alt_protocol,Sperm),SELECTED)" value=Sperm>Sperm
+		  <?MIBLOCK COND="$(AND,$(NC,$alt_mutagen,spontaneous),$(XST,$UPDATE),$(EC,$intfc_status,original))">		  
+		  <?MIVAR>
+		  <SELECT name=protocol onChange=doProtocol(this.options[this.selectedIndex].value,'$alt_protocol','$alt_zdb_id')>
+		  <option $(IF,$(EC,$alt_protocol,Unknown),SELECTED) value="Unknown">Unknown
+		  <option $(IF,$(EC,$alt_protocol,Adult_Males),SELECTED) value="Adult_Males">Adult Males
+		  <option $(IF,$(EC,$alt_protocol,Adult_Females),SELECTED) value="Adult_Females">Adult Females
+		  <option $(IF,$(EC,$alt_protocol,Embryos),SELECTED) value=Embryos>Embryos
+		  <option $(IF,$(EC,$alt_protocol,Sperm),SELECTED) value=Sperm>Sperm
 		  </SELECT> treated with 
-		  <SELECT NAME=mutagen onChange=doMutagen(this.options[this.selectedIndex].value,'"$alt_mutagen"','"$alt_zdb_id"')>
-		  <option "$(IF,$(EC,$alt_mutagen,Unknown),SELECTED)" value=Unknown>Unknown
-		  <option "$(IF,$(EC,$alt_mutagen,ENU),SELECTED)" value=ENU>ENU
-		  <option "$(IF,$(EC,$alt_mutagen,EMS),SELECTED)" value=EMS>EMS
-		  <option "$(IF,$(EC,$alt_mutagen,g-rays),SELECTED)" value=g-rays>g-rays
-		  <option "$(IF,$(EC,$alt_mutagen,DNA),SELECTED)" value=DNA>DNA
-		  <option "$(IF,$(EC,$alt_mutagen,spontaneous),SELECTED)" value=spontaneous>spontaneous
-		  </SELECT>	          		 
+		  <SELECT NAME=mutagen onChange=doMutagen(this.options[this.selectedIndex].value,'$alt_mutagen','$alt_zdb_id')>
+		  <option $(IF,$(EC,$alt_mutagen,Unknown),SELECTED) value=Unknown>Unknown
+		  <option $(IF,$(EC,$alt_mutagen,ENU),SELECTED) value=ENU>ENU
+		  <option $(IF,$(EC,$alt_mutagen,EMS),SELECTED) value=EMS>EMS
+		  <option $(IF,$(EC,$alt_mutagen,g-rays),SELECTED) value=g-rays>g-rays
+		  <option $(IF,$(EC,$alt_mutagen,DNA),SELECTED) value=DNA>DNA
+		  <option $(IF,$(EC,$alt_mutagen,spontaneous),SELECTED) value=spontaneous>spontaneous
+		  </SELECT>
+		  <?/MIVAR>	          		 
 		  <?MISQL SQL="select WebExplode(object,'dataId=$ALTOID&type=colattrib&info=mutagen') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
 		  <?/MIBLOCK>
 		 
-		  <br>
+		  </TD>
+		  <TD>
 
-		  <b>Mutation Type:</b> 
 		  $(IF,$(OR,$(NXST,$UPDATE),$(NC,$intfc_status,original)),$alt_chrom_change)
 
 		  <!-- add option for complex rearrangement , required db change to inncrease size of field chrom_change 12/06/00  -->
@@ -802,11 +813,9 @@ Variables Expected:
 		  <option "$(IF,$(EC,$alt_chrom_change,complex_rearrangement),SELECTED)" value=complex_rearrangement>complex rearrangement
 		  <option "$(IF,$(EC,$alt_chrom_change,unknown),SELECTED)" value=unknown>Unknown
 		  </SELECT>")
-		  </font>
-
-		  <table border=0 cellpadding=0 cellspacing=0 width=100%>
-		  <TR>
-		  <TD> <font size=-1><b>Linkage Group:</b> 
+		  
+		  </TD>
+		  <TD> 
 		  <?MIVAR NAME=$lg>$chrom_num<?/MIVAR>
 
 	<!-- Special case for update  -->
@@ -821,22 +830,20 @@ Variables Expected:
 		      </SELECT>
 		    <?/MIVAR>
 		  <?/MIBLOCK>
-		  </font>
-		</TD>
-	      </TR>
-	    </TABLE>
-
+		</TD></TR>
 	  <?/MISQL>
 
-	  </TD></TR></TABLE>
+	  </TABLE>
 
 	  <?MIBLOCK COND="$(>,$MI_ROWCOUNT,1)">
 	    <b>Please refer to parental lineages (click links below) for detailed mapping information on the alleles carried by this double-mutant line.</b>
 	  <?/MIBLOCK>
           
-          </form> <!--end the form named updater>  
+          </form> <!--end the form named updater-->  
+
 
 	  <?MIBLOCK COND="$(=,$MI_ROWCOUNT,1)">
+
 	  <hr width=85%>
 
 <!-- wrap Mapping table in mapper form -->
@@ -847,78 +854,92 @@ Variables Expected:
       action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi">
 
 	  <!-- Now if it's a deletion, also show present/missing markers -->
-	  <?MISQL SQL="select chrom_change from fish_search where fish_id='$OID';"><?/MISQL>
-	  <?MIVAR NAME=$chrom_change>$1<?/MIVAR>
+	 <?MISQL SQL="select chrom_change from fish_search where fish_id='$OID';"><?/MISQL>
+	 <?MIVAR NAME=$chrom_change>$1<?/MIVAR>
 
-	  <?MIBLOCK COND="$(OR,$(EC,$chrom_change,deficiency),$(EC,$chrom_change,translocation),$(EC,$chrom_change,unknown))">
-	  <A NAME="markers-missing"></a>
+	 <?MIBLOCK COND="$(OR,$(EC,$chrom_change,deficiency),$(EC,$chrom_change,translocation),$(EC,$chrom_change,unknown))">
+	   <A NAME="markers-missing"></a>
+	  
+	   <?MIVAR NAME=$last><?/MIVAR>
+	   <?MIVAR name=marker_present>0<?/MIVAR>
+	   
+	   <?MISQL SQL="select b.abbrev,b.zdb_id,a.present_t,b.mtype from mapped_deletion a,all_markers b where a.marker_id=b.zdb_id and allele='$allele' order by a.present_t,b.mtype;">
+	
+	    <?MIVAR COND="$(=,$MI_CURRENTROW,1)">
+	      <TABLE width=100% bgcolor="$highlight" cellpadding=2>
+	      <TR><TD><b>Deletion Markers: 
+	      <table>
+	      <tr><td>
+	      <?MIVAR COND="$(XST,$UPDATE)">
+	       <INPUT TYPE=button value="Add" onClick="doit_marker('marker','selection','missing',$lg)"> 	   
+	      <?/MIVAR>
 
-	  <TABLE width=100%><TR><TD><font size=2>
+            <?/MIVAR>
+	
 
-	  <?MIVAR NAME=$last><?/MIVAR>
-	  <?MIVAR name=marker_present>0<?/MIVAR>
-	  <?MIVAR COND="$(XST,$UPDATE)">
-	  <INPUT TYPE=button value="Add" onClick="doit_marker('marker','selection','missing',$lg)"> 
-	  <b>Markers missing:</b>
-	  <br>
-	  <?/MIVAR>
+	   <?MIBLOCK COND="$(AND,$(NC,$last,$3),$(EC,$3,F))">	    	    
+	       <b>Missing:</b>
 
-	  <?MISQL SQL="select b.abbrev,b.zdb_id,a.present_t,b.mtype from mapped_deletion a,all_markers b where a.marker_id=b.zdb_id and allele='$allele' order by a.present_t,b.mtype;">
+	    <?/MIBLOCK>
 
-	  <?MIVAR COND="$(AND,$(NC,$last,$3),$(EC,$3,F),$(NXST,$UPDATE))">
-
-	  <b>Markers missing:</b>
-
-
-	  <?MIVAR COND="$(XST,$UPDATE)">
-	  <br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	  <?/MIVAR>
-	  <?/MIVAR>
-
-	  $(IF,$(AND,$(NC,$last,$3),$(EC,$3,t),$(NXST,$UPDATE)),"</TD></TR></TABLE><TABLE><TR><TD><font size=2><b>Markers present:</b> ")
+	  $(IF,$(AND,$(NC,$last,$3),$(EC,$3,t),$(NXST,$UPDATE)),"</TD></TR><TR><TD><b>Present:</b> ")
 
 	  <?MIVAR COND="$(AND,$(NC,$last,$3),$(EC,$3,t),$(XST,$UPDATE))">
-	  <?MIVAR name=marker_present>1<?/MIVAR>
-	  </TD></TABLE><TABLE><TD align=left><font size=2>
-	  <INPUT TYPE=button value="Add" onClick="doit_marker('marker','selection','present',$lg)"> 
-	  <b>Markers present:</b>
-	  <br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	  <?/MIVAR>
+	    <?MIVAR name=marker_present>1<?/MIVAR>
+	    </td></tr><tr><td align=left>
+	    <INPUT TYPE=button value="Add" onClick="doit_marker('marker','selection','present',$lg)"> 
+	    <b>Present:</b>
+	    
+	   <?/MIVAR>
 
-	  $(IF,$(XST,$UPDATE),"<font size=-1><input type=button value=delete onClick=Delete_marker('"$allele"','"$2"')></font>")
+	  $(IF,$(XST,$UPDATE),"<font size=-1><input type=button value=delete onClick=Delete_marker('"$allele"','"$2"')>")
 
 	  <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$1</A>
 	  $(IF,$(NXST,$UPDATE),";")
-	  $(IF,$(XST,$UPDATE),"<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
+	  
 	  $(SETVAR,$last,$3)
 	  <?/MISQL>
 
-	  <!-- debugging <?MIVAR>  marker_present = $marker_present <?/MIVAR>   -->
-
+	
 	  <?MIVAR COND="$(AND,$(XST,$UPDATE),$(EC,$marker_present,0))">
-	  </TD></TABLE><TABLE><TD align=left><font size=2>
-	  <INPUT TYPE=button value="Add" onClick="doit_marker('marker','selection','present',$lg)"> 
-	  <b>Markers present:</b>
-	  <br>
+	    </TD></TR><TR><TD align=left>
+	    <INPUT TYPE=button value="Add" onClick="doit_marker('marker','selection','present',$lg)"> 
+	    <b>Present:</b>
+	  
 	  <?/MIVAR>
-	  </TD></TR></TABLE>
-
-	  <?/MIBLOCK> <!-- ends deficiency -->
-
-
- 	  <?MIVAR>
+	  <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
+	    </td></tr></table>
+ 	   </TD></TR></TABLE>
+	  <?/MIVAR>
+	<?/MIBLOCK> <!-- ends deficiency -->
+	
+  <!----------------------------------------------------->
+	  <?MIVAR>
 	    <TABLE width=100% cellpadding=5 border=0 bgcolor="$highlight">
 	  <?/MIVAR>
 	  <TR>
 	  <TD valign=top>
-
 
 	  <?MIVAR> <B>Reference Panel Location(s): <i>$abbrev</i>  </B><?/MIVAR> 
 	  <TABLE width=100%>
 
 	  <?MIVAR NAME=$override>$(IF,$(OR,$(EC,$ZDB_access,root),$(EC,$ZDB_access,fishauth)),true,false)<?/MIVAR>
 
-	  <?MISQL SQL="select a.owner, lg_location, target_id as panel_id, OR_lg, target_abbrev as panel_abbrev,private,b.full_name,a.metric,day(a.entry_date::date),month(a.entry_date::date), year(a.entry_date::date), map_name, disp_order from paneled_markers a,person b, panels c  where a.zdb_id='$locus' and OR_lg is not null and a.owner=b.zdb_id and a.target_id = c.zdb_id union select a.owner, lg_location, target_id as panel_id, OR_lg, target_abbrev as panel_abbrev,private,b.full_name,a.metric,day(a.entry_date::date),month(a.entry_date::date), year(a.entry_date::date), map_name, disp_order from paneled_markers a,person b, panels c  where a.zdb_id='$OID' and OR_lg is not null and a.owner=b.zdb_id and a.target_id = c.zdb_id order by 13;">
+	  <?MISQL SQL="
+		select a.owner, lg_location, target_id as panel_id, OR_lg, target_abbrev as panel_abbrev,private,b.full_name,a.metric,day(a.entry_date::date),month(a.entry_date::date), year(a.entry_date::date), map_name, disp_order 
+		from paneled_markers a,person b, panels c  
+		where a.zdb_id='$locus' 
+		  and OR_lg is not null 
+ 		  and a.owner=b.zdb_id 
+	 	  and a.target_id = c.zdb_id 
+             union 
+		select a.owner, lg_location, target_id as panel_id, OR_lg, target_abbrev as panel_abbrev,private,b.full_name,a.metric,day(a.entry_date::date),month(a.entry_date::date), year(a.entry_date::date), map_name, disp_order 
+		from paneled_markers a,person b, panels c  
+		where a.zdb_id='$OID' 
+		and OR_lg is not null 
+		and a.owner=b.zdb_id 
+		and a.target_id = c.zdb_id 
+		order by 13;">
 
           <?MIBLOCK COND="$(AND,$(EC,$MI_CURRENTROW,1),$(NC,$cloned_gene,NULL))">
             <?MIVAR>
@@ -997,7 +1018,13 @@ Variables Expected:
 	    <!-- look for a match of the last two characters in the public_paneled_markers abbrev to match the last two characters in the panels abbrev for table join to find disp_order -->
 	    <!--  naming convention is xxx_ln54  -->
 	    <!-- this might be a bit risky but we don't anticipate any new panels since sequencing is underway. -->
-	    <?MISQL SQL="select or_lg,lg_location,a.abbrev,disp_order from public_paneled_markers a, panels b where a.zdb_id='$locus' and target_abbrev = 'ZMAP'and SUBSTRING(a.abbrev from LENGTH(a.abbrev)-1 for 2) = SUBSTRING(b.abbrev from LENGTH(b.abbrev)-1 for 2) order by disp_order;">
+	    <?MISQL SQL="
+		select or_lg,lg_location,a.abbrev,b.disp_order 
+		 from public_paneled_markers a, panels b 
+		where a.zdb_id='$locus' 
+		  and target_abbrev = 'ZMAP'
+		  and SUBSTRING(a.abbrev from LENGTH(a.abbrev)-1 for 2) = SUBSTRING(b.abbrev from LENGTH(b.abbrev)-1 for 2) 
+		order by disp_order;">
 	      <TR>
 		<TD>
 		 <font size=2> LG <b>$1</b>; <b>$2</b> cM  $(SUBSTR,$3,$(+,1,$(POSITION,$3,"_") ))
@@ -1023,7 +1050,20 @@ Variables Expected:
 
 	    <TABLE cellpadding=0 cellspacing=0 >
 
-	  <?MISQL SQL="select distinct target_abbrev, private as panel_abbrev, disp_order from paneled_markers a,person b ,panels c where a.zdb_id='$locus' and OR_lg is not null and a.owner=b.zdb_id and a.target_id = c.zdb_id union select distinct target_abbrev, private as panel_abbrev, disp_order from paneled_markers a,person b ,panels c where a.zdb_id='$OID' and OR_lg is not null and a.owner=b.zdb_id and a.target_id = c.zdb_id order by 3;">
+	  <?MISQL SQL="
+		select distinct target_abbrev, private as panel_abbrev, disp_order 
+		from paneled_markers a,person b ,panels c 
+		where a.zdb_id='$locus' 
+		 and OR_lg is not null 
+		 and a.owner=b.zdb_id 
+		 and a.target_id = c.zdb_id 
+	    union 
+		select distinct target_abbrev, private as panel_abbrev, disp_order 
+		 from paneled_markers a,person b ,panels c 
+		where a.zdb_id='$OID' 
+		 and OR_lg is not null 
+		 and a.owner=b.zdb_id 
+		 and a.target_id = c.zdb_id order by 3;">
 
 	    <?MIVAR NAME=$private>$2<?/MIVAR>
 
@@ -1066,7 +1106,7 @@ Variables Expected:
 
 	</TD>
       <?/MIBLOCK>
- 	</TABLE> <!-- end referenced panel locations table -->
+    </TABLE> <!-- end referenced panel locations table -->
 
 	    <?MIVAR>
 	      <TABLE width=100% cellpadding=5 border=0 bgcolor="$highlight" cols=3 rows=1>
@@ -1212,7 +1252,7 @@ Variables Expected:
 	<?/MIBLOCK>  <!-- ends EC type mutant -->
 
 
-	<HR width=80%>
+	<HR width=85%>
 
 	<?MIVAR COND="$(XST,$UPDATE)">
 	<INPUT TYPE=button value="Update" onClick="doit('comments','textarea','Submitter+comments')"> 
@@ -1258,5 +1298,7 @@ Variables Expected:
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 
 </HTML>
+
+
 
 
