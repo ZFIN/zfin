@@ -34,11 +34,11 @@ function open_Study() {
 <IMG SRC="/ZDBB/gifs/newlogosmall.gif">
 </TD>
 <TD>
-<A HREF="/zf_info/dbase/db.html">About the Zebrafish Database project</a>
+<A HREF="http://zfin.org/zf_info/dbase/db.html" target="_top">About the Zebrafish Database project</a>
 <p>
 <A HREF="/ZDBB/misc_html/tips.html">Helpful Hints</a>
 <p>
-<A HREF="/">The Zebrafish WWW homepage</a>
+<A HREF="http://zfin.org/index.html" target="_top">The Zebrafish WWW homepage</a>
 <p>
 <!--font size=-1><A HREF="/cgi-bin/Webdriver?MIval=aa-ZFIN_stats.html">Current ZFIN stats</A></font-->
 </TD>
@@ -117,6 +117,20 @@ For security reasons, please <b>click "Goodbye" to LOG OUT</b> if you have finis
 <?MIVAR COND="$(OR,$(EC,$AUTHORIZED,fishauth),$(EC,$AUTHORIZED,preview),$(EC,$AUTHORIZED,betatest))"><font color="#893286">$ZDB_name</font> <?/MIVAR>
 <?MIVAR COND="$(EC,$AUTHORIZED,root)"><font color="#ff0000">$ZDB_name</font> <?/MIVAR>
 </TH>
+
+<TR align=center>
+<TD><B>ACCESSION</B><br>Accession Number and Zdb_ids</TD> 
+<TD>
+
+<TABLE width=100%> <TR align=center> 
+<TD>
+<?MIVAR COND="$(NC,$AUTHORIZED,false)">
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-accessionselect.apg&select_from=ACCESSION">SEARCH</A> 
+<?/MIVAR>
+</TD> 
+ </TR> </TABLE>
+
+
 
 <TR align=center>
 <TD> <B>PEOPLE </B></TD> 
