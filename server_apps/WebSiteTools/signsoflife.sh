@@ -25,7 +25,7 @@ if ($modeon != "On") then
     set mode="`onstat -` | $modeon"
     echo $mode | /local/bin/mail -s "<!--|INFORMIX_SERVER|-->  ABNORMAL!" tomc@cs.uoregon.edu
     echo $mode | /local/bin/mail -s "<!--|INFORMIX_SERVER|-->  ABNORMAL!" staylor@cs.uoregon.edu
-elif ($logon != "root") then
+elif ($logon != "roots") then
     if ($logon != "informix") then
      set logmode="check ontape"
      echo $logmode | /local/bin/mail -s "<!--|INFORMIX_SERVER|-->  ABNORMAL!" tomc@cs.uoregon.edu
