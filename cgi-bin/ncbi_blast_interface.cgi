@@ -1,6 +1,6 @@
-#!/private/apps/rebol --cgi
+#!/private/apps/rebol/rebol --cgi
 rebol[]
-header: 
+header:
 {POST http://www.ncbi.nlm.nih.gov/blast/blast.cgi HTTP/1.0
 Referer: http://zfin.org/
 Proxy-Connection: Keep-Alive
