@@ -586,9 +586,8 @@ requested from publication page for related data list.
  	      <?MICOMMENT>gene expression<?/MICOMMENT>
 	      <?MISQL SQL="
           	  select count(*)
-          	    from expression_pattern, marker_relationship
-          	   where '$OID' = mrel_mrkr_1_zdb_id
-            	     and mrel_mrkr_2_zdb_id = xpat_probe_zdb_id 
+          	    from expression_pattern
+          	   where '$OID' = xpat_gene_zdb_id
                    ;">
                  <?MIVAR NAME=$xpat_count>$1<?/MIVAR>
       	      <?/MISQL>
