@@ -1,4 +1,4 @@
-To: aprilm@uoneuro.uoregon.edu, monte@uoneuro.uoregon.edu, edwards@uoneuro.uoregon.edu, seger@uoneuro.uoregon.edu, ksf@cs.uoregon.edu, jmatthews@uoneuro.uoregon.edu, mason@uoneuro.uoregon.edu
+To: aprilm@uoneuro.uoregon.edu, monte@uoneuro.uoregon.edu, edwards@uoneuro.uoregon.edu, seger@uoneuro.uoregon.edu, ksf@cs.uoregon.edu, mason@uoneuro.uoregon.edu
 From: zirc@darkwing.uoregon.edu
 Subject: [lineName] [mutantAlleles] [transgeneName] for [required_submitterName]
 
@@ -129,6 +129,9 @@ NIH grant number or other grant number:
 organization responsible for funding:
 [required_grantOrganization]
 ------
+Provider:
+[required_lineProvider]
+---
 Type of Line:
 [lineType]
 ---
@@ -146,11 +149,14 @@ Segregation:
 Segregation Mutant Percentage:
 [geneticsSegregationPercentage]
 ---
-Maternal Lineage:
+Maternal Genetic Background:
 [required_lineageMaternal]
 ---
-Paternal Lineage:
+Paternal Genetic Background:
 [required_lineagePaternal]
+---
+Move to a different background:
+[required_considerationsBackground]
 ---
 Submitter's Comments:
 [geneticsComments]
