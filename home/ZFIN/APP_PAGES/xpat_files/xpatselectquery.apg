@@ -70,6 +70,12 @@ EFFECTS
   Message: $MI_ERRORMSG <br>
 <?/MIERROR>
 
+
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Starting query page
+<?/MISQL>
+
 <?MICOMMENT>
   ============================================================================
   ==========  Page Architecture
@@ -101,12 +107,18 @@ EFFECTS
 <?MIVAR COND="$(XST,$xpatselqry_fishName)" NAME=$xpatselqry_fishName DELIMIT="'" REPLACE="''">$xpatselqry_fishName<?/MIVAR> 
 <?MIVAR COND="$(XST,$xpatselqry_author)" NAME=$xpatselqry_author DELIMIT="'" REPLACE="''">$xpatselqry_author<?/MIVAR> 
 
+
 <?MIBLOCK COND="$(XST,$xpatselqry_mrkrName)">
   <?MICOMMENT>
     ============================================================================
     ==========  MARKER NAME TESTS
     ============================================================================
   <?/MICOMMENT>
+
+  <?MISQL COND=$(XST,$debug_timing) SQL="
+    execute function get_time()">
+    <br>$1 Before marker name tests
+  <?/MISQL>
 
   <?MICOMMENT> Create or reuse temp table <?/MICOMMENT>
   <?MIVAR NAME=$xpatselectquery_temp_marker>$(CONCAT,xpatselectquery_temp_marker_,$xpatselqry_session_id)<?/MIVAR>
@@ -126,13 +138,17 @@ EFFECTS
     <?/MISQL>
   <?/MISQL>
 
+  <?MIVAR NAME=$xpatselqry_nameEndsTable><?/MIVAR>
   <?MIBLOCK COND="$(EC,$xpatselqry_mrkrSearchType,begins)">
-    <?MIVAR NAME=$xpatselqry_likeString>$(LOWER,$xpatselqry_mrkrName)%<?/MIVAR>
-  <?MIELSE COND=$(EC,$xpatselqry_mrkrSearchType,equals)">
-    <?MICOMMENT> Not really a like test at all <?/MICOMMENT>
-    <?MIVAR NAME=$xpatselqry_likeString>$(LOWER,$xpatselqry_mrkrName)<?/MIVAR>
+    <?MIVAR NAME=$xpatselqry_nameCond>allmapnm_name_lower like '$(LOWER,$xpatselqry_mrkrName)%'<?/MIVAR>
+  <?MIELSE COND="$(EC,$xpatselqry_mrkrSearchType,equals)">
+    <?MIVAR NAME=$xpatselqry_nameCond>allmapnm_name_lower = '$(LOWER,$xpatselqry_mrkrName)'<?/MIVAR>
   <?MIELSE>
-    <?MIVAR NAME=$xpatselqry_likeString>%$(LOWER,$xpatselqry_mrkrName)%<?/MIVAR>
+    <?MIVAR NAME=$xpatselqry_nameEndsTable>, all_name_ends<?/MIVAR>
+    <?MIVAR NAME=$xpatselqry_nameCond>
+          allnmend_name_end_lower like '$(LOWER,$xpatselqry_mrkrName)%'
+      and allmapnm_serial_id = allnmend_allmapnm_serial_id
+    <?/MIVAR>
   <?/MIBLOCK>
 
   <?MICOMMENT> 
@@ -144,15 +160,28 @@ EFFECTS
   <?MISQL SQL="
     select xpat_zdb_id, xpat_stock_zdb_id, xpat_assay_name, 
 	   allmapnm_name, allmapnm_precedence, allmapnm_significance,
-	   xpat_probe_zdb_id, allmapnm_zdb_id, xpat_source_zdb_id
+	   xpat_probe_zdb_id, allmapnm_zdb_id, xpat_source_zdb_id,
+	   mrkrtype_significance, allmapnm_name_lower
       from $xpatselqry_matchTable, all_map_names, marker, marker_types
-      where allmapnm_zdb_id in (xpat_gene_zdb_id, xpat_probe_zdb_id)
-	and allmapnm_name_lower like '$xpatselqry_likeString'
- 	and allmapnm_precedence <> 'Accession number'
+	   $xpatselqry_nameEndsTable
+      where allmapnm_zdb_id = xpat_gene_zdb_id
+	and $xpatselqry_nameCond
+        and allmapnm_precedence <> 'Accession number'
         and allmapnm_zdb_id = mrkr_zdb_id
 	and mrkr_type = marker_type
-      order by xpat_zdb_id, mrkrtype_significance, allmapnm_significance, 
-	       allmapnm_precedence, allmapnm_name_lower">
+    UNION
+    select xpat_zdb_id, xpat_stock_zdb_id, xpat_assay_name, 
+	   allmapnm_name, allmapnm_precedence, allmapnm_significance,
+	   xpat_probe_zdb_id, allmapnm_zdb_id, xpat_source_zdb_id,
+	   mrkrtype_significance, allmapnm_name_lower
+      from $xpatselqry_matchTable, all_map_names, marker, marker_types
+	   $xpatselqry_nameEndsTable
+      where allmapnm_zdb_id = xpat_probe_zdb_id
+	and $xpatselqry_nameCond
+        and allmapnm_precedence <> 'Accession number'
+        and allmapnm_zdb_id = mrkr_zdb_id
+	and mrkr_type = marker_type
+    ORDER BY 1, 10, 6, 5, 11">
     <?MIVAR NAME=$xpatselqry_xpat_zdb_id>$1<?/MIVAR>
     <?MIBLOCK COND="$(NE,$xpatselqry_prevSavedXpat,$xpatselqry_xpat_zdb_id)">
       <?MIVAR NAME=$xpatselqry_xpat_stock_zdb_id>$2<?/MIVAR>
@@ -185,6 +214,7 @@ EFFECTS
       <?MIVAR NAME=$xpatselqry_prevSavedXpat>$xpatselqry_xpat_zdb_id<?/MIVAR>
     <?/MIBLOCK>
   <?/MISQL>
+
   <?MIVAR>$(VECAPPEND,$xpatselqry_testNameVec,Gene/EST)<?/MIVAR>
   <?MISQL SQL="
     select count(*)::integer 
@@ -203,6 +233,10 @@ EFFECTS
     ============================================================================
   <?/MICOMMENT>
 
+  <?MISQL COND=$(XST,$debug_timing) SQL="
+    execute function get_time()"><br>$1 Before fish name tests
+  <?/MISQL>
+
   <?MICOMMENT> Create or reuse temp table <?/MICOMMENT>
   <?MIVAR NAME=$xpatselectquery_temp_fish>$(CONCAT,xpatselectquery_temp_fish_,$xpatselqry_session_id)<?/MIVAR>
   <?MISQL SQL="
@@ -220,10 +254,15 @@ EFFECTS
     <?/MISQL>
   <?/MISQL>
 
+  <?MIVAR NAME=$xpatselqry_nameEndsTable><?/MIVAR>
   <?MIBLOCK COND="$(EC,$xpatselqry_fishSearchType,begins)">
-    <?MIVAR NAME=$xpatselqry_likeString>$(LOWER,$xpatselqry_fishName)%<?/MIVAR>
+    <?MIVAR NAME=$xpatselqry_nameCond>allmapnm_name_lower like '$(LOWER,$xpatselqry_fishName)%'<?/MIVAR>
   <?MIELSE>
-    <?MIVAR NAME=$xpatselqry_likeString>%$(LOWER,$xpatselqry_fishName)%<?/MIVAR>
+    <?MIVAR NAME=$xpatselqry_nameEndsTable>, all_name_ends<?/MIVAR>
+    <?MIVAR NAME=$xpatselqry_nameCond>
+          allnmend_name_end_lower like '$(LOWER,$xpatselqry_fishName)%'
+      and allnmend_allmapnm_serial_id = allmapnm_serial_id
+    <?/MIVAR>
   <?/MIBLOCK>
 
   <?MICOMMENT> 
@@ -236,10 +275,10 @@ EFFECTS
     select xpat_zdb_id, xpat_assay_name, 
 	   allmapnm_name, allmapnm_precedence, allmapnm_significance,
 	   $xpatselqry_matchingCols, xpat_source_zdb_id
-      from $xpatselqry_matchTable, fish, all_map_names
+      from $xpatselqry_matchTable, fish, all_map_names $xpatselqry_nameEndsTable
       where xpat_stock_zdb_id = zdb_id
 	and allmapnm_zdb_id = zdb_id
-	and allmapnm_name_lower like '$xpatselqry_likeString'
+	and $xpatselqry_nameCond
       order by xpat_zdb_id, allmapnm_significance, allmapnm_precedence, allmapnm_name_lower">
     <?MIVAR NAME=$xpatselqry_xpat_zdb_id>$1<?/MIVAR>
     <?MIBLOCK COND="$(NE,$xpatselqry_prevSavedXpat,$xpatselqry_xpat_zdb_id)">
@@ -297,6 +336,11 @@ EFFECTS
     ============================================================================
   <?/MICOMMENT>
 
+  <?MISQL COND=$(XST,$debug_timing) SQL="
+    execute function get_time()">
+    <br>$1 Before author name tests
+  <?/MISQL>
+
   <?MICOMMENT> Create or reuse temp table <?/MICOMMENT>
   <?MIVAR NAME=$xpatselectquery_temp_author>$(CONCAT,xpatselectquery_temp_author_,$xpatselqry_session_id)<?/MIVAR>
   <?MISQL SQL="
@@ -342,6 +386,11 @@ EFFECTS
     ==========  ANATOMICAL STRUCTURES TESTS
     ============================================================================
   <?/MICOMMENT>
+
+  <?MISQL COND=$(XST,$debug_timing) SQL="
+    execute function get_time()">
+    <br>$1 Before anatomy tests
+  <?/MISQL>
 
   <?MICOMMENT> Create or reuse temp table <?/MICOMMENT>
   <?MIVAR NAME=$xpatselectquery_temp_anatomy>$(CONCAT,xpatselectquery_temp_anatomy_,$xpatselqry_session_id)<?/MIVAR>
@@ -536,6 +585,11 @@ EFFECTS
     run.
   <?/MICOMMENT>
 
+  <?MISQL COND=$(XST,$debug_timing) SQL="
+    execute function get_time()">
+    <br>$1 Before stage window tests
+  <?/MISQL>
+
   <?MICOMMENT> Create or reuse temp table <?/MICOMMENT>
   <?MIVAR NAME=$xpatselectquery_temp_stage>$(CONCAT,xpatselectquery_temp_stage_,$xpatselqry_session_id)<?/MIVAR>
   <?MISQL SQL="
@@ -579,6 +633,11 @@ EFFECTS
     ============================================================================
   <?/MICOMMENT>
 
+  <?MISQL COND=$(XST,$debug_timing) SQL="
+    execute function get_time()">
+    <br>$1 Before Assay test
+  <?/MISQL>
+
   <?MICOMMENT> create or reuse temp table <?/MICOMMENT>
   <?MIVAR NAME=$xpatselectquery_temp_assay>$(CONCAT,xpatselectquery_temp_assay_,$xpatselqry_session_id)<?/MIVAR>
   <?MISQL SQL="
@@ -608,6 +667,10 @@ EFFECTS
   <?MIVAR NAME=$xpatselqry_matchTable>$xpatselectquery_temp_assay<?/MIVAR>
 <?/MIBLOCK>
 
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Moving results to output table
+<?/MISQL>
 
 <?MICOMMENT>
   ============================================================================
@@ -628,6 +691,12 @@ EFFECTS
 <?/MISQL>
 <?MIVAR>$(VECAPPEND,$xpatselqry_testCountVec,$MI_ROWCOUNT)<?/MIVAR>
 <?MIVAR>$(VECAPPEND,$xpatselqry_testNameVec,Select only expression patterns with images)<?/MIVAR>
+
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Setting ann_exist
+<?/MISQL>
+
 <?MISQL SQL="
 	update $xpatselqry_resultTable
           set xpat_ann_exist = 't'
@@ -641,6 +710,16 @@ EFFECTS
 <?/MISQL>
 
 
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 deleting data from temp
+<?/MISQL>
+
 <?MISQL COND="$(NC,$xpatselqry_matchTable,expression_pattern)" SQL="
   delete from $xpatselqry_matchTable">
+<?/MISQL>
+
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 exiting query page
 <?/MISQL>
