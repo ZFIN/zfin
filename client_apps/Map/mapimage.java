@@ -71,6 +71,8 @@ public class mapimage {
 				panel = panel.substring(1, panel.length()); //starts with a return..
 			lg = sTok.nextToken();
 			selected = sTok.nextToken();
+			if (selected == null)
+				selected = new String("NULL");
 			low = sTok.nextToken();
 			high = sTok.nextToken();
 			visible_types = (new Integer(sTok.nextToken())).intValue();
@@ -123,7 +125,14 @@ public class mapimage {
 		}
 
 		query_string = query_string + " ) order by 4, 5, 2 asc;";
-		//System.err.println(query_string);
+
+		int p = -1;
+		while (query_string.indexOf('\n') > -1) {
+			p = query_string.indexOf('\n');
+			query_string = query_string.substring(0,p-1) + query_string.substring(p+1, query_string.length());
+		}
+		
+        //System.err.println(query_string);
 
         //if (form.get("selected_marker") != null)
 		//	System.err.println("NO SELECTED MARKER");
@@ -131,7 +140,9 @@ public class mapimage {
 		//selected_marker = (String)form.get("selected_marker");
 
 
-		MV = new MapViewer(query_string, (String)form.get("host"), (String)form.get("port"), SM);
+		String panel_order = (String)form.get("panel_order");
+
+		MV = new MapViewer(query_string, (String)form.get("host"), (String)form.get("port"), SM, panel_order);
 		//MV = new MapViewer(data,selected_marker);
 
 
