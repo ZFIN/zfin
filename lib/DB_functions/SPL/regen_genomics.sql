@@ -258,7 +258,7 @@ create dba function "informix".regen_genomics() returning integer
 		check (allmapnm_name_lower = lower(allmapnm_name))
       )
       fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3  
-      extent size 1024 next size 1024 lock mode page;
+      extent size 8192 next size 8192 lock mode page;
     revoke all on all_m_names_new from "public";
 
     
