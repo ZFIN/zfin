@@ -46,7 +46,7 @@ TARGETS         = $(SPECIFICTARGETS) $(STATICTARGETS) $(FTPTARGET)
 
 # ---------------  Production Rules  ------------------------------------
 
-.PHONY : all sanitycheck clean clobber $(SUBDIRS) mirror
+.PHONY : all sanitycheck clean clobber $(SUBDIRS) mirror postloaddb onetimeonly
 
 
 all : $(TARGETDIR) $(TARGETS) $(SUBDIRS)
@@ -94,6 +94,7 @@ clean :				# No local intermediate files
 
 clobber :			# Remove targets, but not target dir.
 	rm -f $(TARGETS)
+	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
 
 
 sanitycheck :
