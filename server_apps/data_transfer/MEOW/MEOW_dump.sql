@@ -294,6 +294,12 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/SC.txt'
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/SC_sts.txt'
   DELIMITER "	" select distinct zdb_id, abbrev, acc_num  from all_markers, db_link  where mtype in ('STS', 'SSLP','RAPD', 'SSR') and linked_recid = zdb_id and db_name = 'Genbank' order by 1; 
 
+-- generate a file with zdb history data
+
+UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zdb_history.txt'
+ DELIMITER "	" select zrepld_old_zdb_id, zrepld_new_zdb_id from zdb_replaced_data;
+
+ 
 -- Clean up
 drop table meow_exp1;
 drop table meow_exp2;
