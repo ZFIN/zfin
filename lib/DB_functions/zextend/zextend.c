@@ -10,6 +10,7 @@
 	get_random_cookie Generate a random string of printable characters
 
 	Notes: Could be a little more efficent. Add in meaningfull error returns
+		Change text errors to standard error codes
 */
 
 #include <stdio.h>
@@ -17,12 +18,31 @@
 #include <time.h>		/* For get_random_cookie */
 #include <sys/times.h>		/* For get_random_cookie */
 #include <unistd.h>		/* For get_random_cookie */
-#include "md5.h"		/* For get_random_cookie */
+#include <pthread.h>		/* For get_random_cookie */
+#include <mi.h>
 #include <milib.h>
+#include "md5.c"		/* For get_random_cookie */
 
 #define		MAXREAD		2000
+#define		MAXLEN		200
+#define		SYSMSG	"select execweb_executable from execWeb where execweb_id = \'%s\';"
 #define		NO_MEMORY(fun)	mi_db_error_raise(NULL, MI_SQL,\
 				"UGEN2", "FUNCTION%s", #fun, NULL)
+#define		EXCEPTION(msg)	mi_db_error_raise (NULL, MI_EXCEPTION, msg)
+#define		CHECK(condition, string)\
+				if ( ! (condition)) mi_db_error_raise (NULL,\
+				MI_EXCEPTION, string)
+/*
+   Illustra's documentation alludes to this without explicitly saying it (but it's true):
+   any error condition for an SQL command isn't raised until mi_query_finish () 
+   processing.
+   
+   Use the following macro to check for correct execution of any SQL-related mi_XXX
+   command.
+*/
+#define		CHECK_QUERY(condition, string)\
+				if ( ! (condition)) {mi_db_error_raise (NULL,\
+				MI_EXCEPTION, string); mi_query_finish (conn);}
 
 
 /* More stuff for get_random_cookie
@@ -30,6 +50,8 @@
 #define COOKIE_LENGTH 21			/* Longest usable is 21 */
 #define COOKIE_MAX 24				/* Don't change this! */
 
+/* Intraprocess only, it's not clear wether this is correct under Informix */
+pthread_mutex_t cookie_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 static unsigned char noiz[] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,
 19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,
@@ -43,9 +65,6 @@ static unsigned char noiz[] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,
 197,198,199,200,201,202,203,204,205,206,207,208,209,210,211,212,213,214,215,216,
 217,218,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235,236,
 237,238,239,240,241,242,243,244,245,246,247,248,249,250,251,252,253,254,255};
- 
-static unsigned char in_hash[16];
-static unsigned char out_hash[16];
 
 /* This is a list of 64 characters which can be indexed by a 6 bit value */
 static char charList[] =
@@ -64,7 +83,8 @@ struct BUFLST {
 static buflst *appbuf(buflst *buf, char *data, unsigned len);
 static buflst *newbuf(mi_integer size);
 static void freebuf(buflst *cur);
-
+static mi_integer send_sql (MI_CONNECTION *conn, MI_SAVE_SET **ss, char *sql);
+static void get_results (MI_CONNECTION *conn, MI_SAVE_SET *ss);
 
 /*
  *	*** Functions ***
@@ -108,20 +128,36 @@ mi_lvarchar *upper(mi_lvarchar *lv) {
 	from the program as an lvarchar.
 	Note: If the program generates an error the whole server exits! :-(
 */
-mi_lvarchar *sysexec(mi_lvarchar *cmd) {
+mi_lvarchar *sysexec(mi_lvarchar *cmd, mi_lvarchar *args) {
 	FILE		*outf;
-	char		*cmds, *p;
+	char		cmdbuf[MAXLEN], *cmds, *p;
 	int		total = 0;
 	buflst		head, *buf= &head;
+	MI_CONNECTION	*conn;
+	MI_SAVE_SET	*ss;
+	MI_ROW		*row;
+	MI_DATUM	colval;
+	mi_integer	collen, error;
 	mi_lvarchar	*lv;
-/*
-mi_db_error_raise(NULL, MI_EXCEPTION,
-"Call of %PROG% failed in sysexec: %ERROR%",
-"ARG%s", cmds, "ERROR%s", strerror(92), NULL);
-*/	
+
+	conn = mi_open(NULL, NULL, NULL);	/* Open connection */
+	if (conn == NULL) EXCEPTION("ERROR: conn is NULL\n");
+
+	sprintf (cmdbuf, SYSMSG, mi_lvarchar_to_string(cmd));	/* Build it */
+	if (send_sql(conn, &ss, cmdbuf) != 1)			/* Send it */
+		EXCEPTION("Invalid sysexec command");
+	row = mi_save_set_get_first(ss, &error);		/* Get it */
+	if (!row) EXCEPTION("Can't get row from save set!");
+	mi_value(row, 0, &colval, &collen);
+
+	/* Build command */ /* NOTE: we should remove all special chars! */
+	if (strlen(colval) + mi_get_varlen(args) >= MAXLEN)
+		EXCEPTION("Command and args are too long");
+	sprintf(cmdbuf, "%s %s", colval, mi_lvarchar_to_string(args));
+
 	/* Exec command */
-	if (	!(cmds =  mi_lvarchar_to_string(cmd)) ||
-		!(outf = popen(cmds, "r")) ) return NULL; /* ERROR! put something here!!! */
+ 	if (!(outf = popen(cmdbuf, "r")))
+ 		EXCEPTION("Can't execute command");
 
 	/* Collect output */
 	while(!feof(outf) && !ferror(outf)) {
@@ -140,7 +176,7 @@ mi_db_error_raise(NULL, MI_EXCEPTION,
 	
 	/* Clean up */
 	mi_set_varlen(lv, total);
-	pclose(outf); mi_free(cmds); freebuf(head.next);
+	pclose(outf); mi_close(conn); mi_free(cmds); freebuf(head.next);
 	return lv;
 }
 
@@ -237,11 +273,10 @@ mi_lvarchar *html_breaks(mi_lvarchar *text) {
 mi_lvarchar *get_random_cookie () {
     int i, j, row;
     time_t seconds;
-    long seed, pid;
+    long pid;
     static unsigned count = 0;
     struct tms timeVals;
-    static unsigned char in_hash[16];
-    static unsigned char out_hash[16];
+    unsigned char in_hash[16], out_hash[16];
     struct MD5Context context;
     char cookie [COOKIE_MAX + 1];
     mi_lvarchar *var;
@@ -275,9 +310,7 @@ mi_lvarchar *get_random_cookie () {
     MD5Update( &context, (unsigned char*) &timeVals, sizeof timeVals );
     MD5Update( &context, (unsigned char*) &pid, sizeof pid );
     MD5Update( &context, (unsigned char*) &count, sizeof count );
-    MD5Final( in_hash, &context );
-if(1) {
-
+    MD5Final(in_hash, &context );
 
     /* Stir the state of the noize pool
     */
@@ -287,9 +320,11 @@ if(1) {
             MD5Update( &context, in_hash, 16 );
             MD5Update( &context, in_hash, row+1 );
             MD5Final( out_hash, &context );
+            pthread_mutex_lock(&cookie_mutex);		/* Lock while writing */
             for ( i=0; i<16; i++ ) {
                     noiz[16*row+i] ^= out_hash[i];
             }
+            pthread_mutex_unlock(&cookie_mutex);	/* Unlock */
     }
 
 
@@ -303,8 +338,7 @@ if(1) {
 	cookie [j++] = charList[in_hash[i+2] >> 2];
     }
     cookie [COOKIE_LENGTH] = '\0';
-}
-/*    cookie[0] = 'a'; cookie[1] = 'b'; cookie[2] = 'c'; cookie[3] = 0; */
+
     /* Get lvarchar to hold it */
     if (!(var = mi_string_to_lvarchar(cookie))) NO_MEMORY(get_random_cookie);
     return var;
@@ -338,3 +372,73 @@ static void freebuf(buflst *next) {
 		mi_free(cur);
 	}
 }
+
+
+/*
+ *	Send SQL statement, returns number of rows returned
+*/
+static mi_integer send_sql(MI_CONNECTION *conn, MI_SAVE_SET **ss, char *sql) {
+	int		count;
+
+	*ss = mi_save_set_create(conn);		/* Create save set */
+	if (!*ss) EXCEPTION("Can't create save set\n");
+
+	if (MI_ERROR == mi_exec(conn, sql, 0))	/* Send SQL statemnet */
+		EXCEPTION("Can't send SQL in send_sql\n");
+
+	get_results(conn, *ss);			/* Get results */
+	count = mi_save_set_count(*ss);
+
+	if (count == MI_ERROR)
+		EXCEPTION("Can't get count of save set in send_sql\n");
+
+	if (MI_ERROR == mi_query_finish(conn))
+		EXCEPTION("Can't finish query in send_sql\n");
+
+	return count;
+}
+
+
+/*
+ *	Get results of SQL statement and insert into a save set
+*/
+static void get_results (MI_CONNECTION *conn, MI_SAVE_SET *ss) {
+	mi_integer	result, error;
+	MI_ROW		*row;
+	
+	while ((result = mi_get_result(conn)) != MI_NO_MORE_RESULTS) {
+		switch(result) {
+	case MI_ERROR:
+		EXCEPTION("could not get results (result MI_ERROR)");
+		break;
+	case MI_DDL:
+	case MI_DML:
+		break;
+	case MI_ROWS:
+		row = mi_next_row (conn, &error);
+		if (row) mi_save_set_insert(ss, row);
+		break;
+	default:
+		EXCEPTION("unknown result from mi_get_result");
+		break;
+	}}
+}
+
+/*
+		EXCEPTION("Case MI_DML from mi_get_result");
+		count = mi_result_row_count(conn);
+		if (count == MI_ERROR) EXCEPTION("Can't get row count.\n");
+		if (count > 1) EXCEPTION("More than one row returned.\n");
+		sprintf(buf, "count = %d\n", count);
+		mi_db_error_raise (NULL, MI_MESSAGE, buf);
+
+		rowdesc = mi_get_row_desc_without_row(conn);
+		CHECK_QUERY (rowdesc != NULL, "mi_get_row_desc failed");
+		numcols = mi_column_count (rowdesc);
+		CHECK_QUERY (numcols != MI_ERROR, "mi_column_count failed");
+		sprintf(buf, "numcols = %d\n", numcols);
+		EXCEPTION(buf);
+		sprintf(buf, "colname = %s\n", mi_column_name(rowdesc, 0));
+		EXCEPTION(buf);
+		EXCEPTION(mi_column_name(mi_get_row_desc(row), 0));
+*/
