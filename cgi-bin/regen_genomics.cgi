@@ -18,6 +18,23 @@
 
   print "<CENTER><TABLE width=400 bgcolor=#000000 border=2><TR><TD><font color=#FFFF66>";
 
+ 
+  my ($modf, $modtime) = $dbh->selectrow_array("
+                                  select zflag_is_on, zflag_last_modified 
+                                  from zdb_flag
+                                  where zflag_name = 'regen_genomics'");
+
+ if ($modf == 't') {
+   print "<font color='#FF0000'>regen genomics is currently RUNNING ... </font><br>";
+   print "Started at $modtime <br>";
+   print "Please wait, and retry later. <br>";
+   print "<font></TD></TR></TABLE></CENTER>";
+   print "<script language='JavaScript' src='http://<!--|DOMAIN_NAME|-->/footer.js'></script>";
+   print  $Q->end_html."\n"; 
+   $dbh->disconnect;
+   exit;
+ }
+
   ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
   print "Starting regen_genomics at $hour:$min:$sec ... <br>"; 
   my $result;
@@ -31,10 +48,23 @@
      $cur->execute;
      $cur->bind_col(1, \$result);
      $cur->fetch;
-     if ($result eq "1") {
+     if ($result eq "0") {
        print "<br><font color='#00FF00'>woohoo! regen genomics completed succussfully</font><br>";
-     } else {
+     } elsif($result eq "1"){
+       
+       print "<br><font color='#FF0000'>regen genomics is currently RUNNING...</font><br>";
+       print "Started at $modtime <br>";
+       print "Please wait, and retry later. <br>";
+     }else {
        print "<br><font color='#FF0000'>doh! regen genomics failed.</font><br>";
+       my $resetf = $dbh->do ("
+                      update zdb_flag set zflag_is_on = 'f'
+	               where zflag_name = 'regen_genomics' ");
+       if ($resetf == 1) {
+	 my $resetT = $dbh->do ("
+                       update zdb_flag set zflag_last_modified = CURRENT
+	                where zflag_name = 'regen_genomics' ");
+       }
      }
      kill 9, $pid;
    } elsif (defined $pid) {
