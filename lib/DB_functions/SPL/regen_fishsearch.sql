@@ -29,9 +29,11 @@ create dba function "informix".regen_fishsearch()
 
 	drop table fishsearch_new;
 
-	return 0;
+	return -1;
       end
     end exception;
+
+    insert into lock_func values("fishsearch");	
 
     -- Create a new fishsearch table under a temp name, loaded with results 
     -- of a huge join across the underlying tables.
@@ -162,6 +164,8 @@ create dba function "informix".regen_fishsearch()
 
       grant select on fish_search to "public";
 
+	delete from lock_func where func_name = "fishsearch";
+    
     end -- Local exception handler
 
     commit work;
@@ -176,7 +180,7 @@ create dba function "informix".regen_fishsearch()
 
   commit work;
 
-  return 1;
+  return 0;
 
 end function;
 

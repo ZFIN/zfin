@@ -69,7 +69,7 @@ create dba function "informix".regen_oevdisp()
 	-- Don't drop the tables here.  Leave them around in an effort to
 	-- figure out what went wrong.
 
-	return 0;
+	return -1;
       end
     end exception;
 
@@ -214,7 +214,7 @@ create dba function "informix".regen_oevdisp()
 
   commit work;
 
-  return 1;
+  return 0;
 
 end function;
 

@@ -408,7 +408,7 @@ create dba function "informix".regen_anatomy()
         -- Don't drop the tables here.  Leave them around in an effort to
         -- figure out what went wrong.
 
-	return 1;
+	return -1;
       end
     end exception;
 
