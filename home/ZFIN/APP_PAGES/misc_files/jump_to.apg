@@ -93,6 +93,7 @@ top.name="ZFIN";
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOPERSON),0)">MIval=aa-startframes.apg&selector=aa-quickfindpers.apg&select_from=PERSON&frame_size=75<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOPUB),0)">MIval=aa-startframes.apg&selector=aa-pubselect2.apg&select_from=PUBLICATION<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOMUTANT),0)">MIval=aa-startframes.apg&selector=aa-fishselect.apg&select_from=Mutants&line_type=mutant&intro=/ZDBB/help_files/mut_intro.html&frame_size=250<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOREFCROSS),0)">MIval=aa-refcrosslist.apg<?/MIVAR>
 <?/MIBLOCK>
 
 
