@@ -570,14 +570,13 @@ insert into clone select * from tmp_clone;
 create temp table tmp_exp_pat (
     xpat_zdb_id varchar(50)not null,
     xpat_fish_zdb_id varchar(50)not null,
-    xpat_comments lvarchar,
     xpat_assay_name varchar(40),
     xpat_direct_submission_date DATETIME YEAR TO DAY,
     xpat_probe_zdb_id varchar(50)not null
 ) with no log;
 
 insert into tmp_exp_pat 
-    select distinct 'x', 'ZDB-FISH-010924-10', '', 'RNA in situ', TODAY, mrkr_zdb_id
+    select distinct 'x', 'ZDB-FISH-010924-10', 'RNA in situ', TODAY, mrkr_zdb_id
     from tmp_mrkr
     where mrkr_name in (select distinct clone from expression_tmp)
 ;
