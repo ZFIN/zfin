@@ -1349,8 +1349,9 @@ if($daily) {
   zdbReplacedDataIsReplaced($dbaEmail);
 }
 if($orphan) {
-  zdbActiveSourceStillActive($dbaEmail);
+  
   zdbActiveDataStillActive($dbaEmail);
+  zdbActiveSourceStillActive($dbaEmail);
 }
 if($weekly) {
   print "run weekly check. \n";
