@@ -15,5 +15,5 @@ java \
     -Dcgi.server_port=$SERVER_PORT \
     -Dcgi.script_name=$SCRIPT_NAME \
     -Dcgi.path_info=$PATH_INFO \
-    -classpath .:<!--|ROOT_PATH|-->/home/client_apps/mapplet/release/mapplet.jar  \
+    -classpath .:<!--|ROOT_PATH|-->/home/client_apps/Map/mapplet-1.0.jar  \
     mapimage 
