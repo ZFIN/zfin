@@ -47,6 +47,8 @@ TRIGGERS = marker_relationship_insert_trigger.sql \
 	fish_image_anatomy_update_trigger.sql \
 	linkage_pair_member_insert_trigger.sql \
 	linkage_pair_member_update_trigger.sql \
+	marker_go_term_insert_trigger.sql \
+	marker_go_term_update_trigger.sql \
 # DROPS = $(foreach TRIG, $(TRIGGERS), $(patsubst %,drop_%,$(TRIG)))
 
 STATICS = $(TRIGGERS) 
