@@ -12,7 +12,6 @@
 <?MIVAR COND="$(NXST,$authtype)" NAME=$authtype>anyauth<?/MIVAR>
 <?MIVAR COND="$(NXST,$jtype)" NAME=$jtype>any<?/MIVAR>
 <?MIVAR COND="$(NXST,$century)" NAME=$century>20<?/MIVAR>
-<?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>abstract<?/MIVAR>
 <?MIVAR COND="$(NXST,$order_pref)" NAME=$order_pref>date<?/MIVAR>
 <?MIVAR COND="$(NXST,$yr_cmpr)" NAME=$yr_cmpr>=<?/MIVAR>
 <?MIVAR COND="$(NXST,$START)" NAME=$START>1<?/MIVAR>
@@ -97,6 +96,11 @@ function list_all() {
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-identify.apg';">$1<?/MISQL>
 
+<?MIBLOCK COND="$(NC,$ZDB_access,root)"> 
+  <?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>abstract<?/MIVAR>
+<?MIELSE>
+  <?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>zdb_id<?/MIVAR>
+<?/MIBLOCK>
 
 <?MIBLOCK COND="$(XST,$query_results)">
 
@@ -558,7 +562,6 @@ $(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/
   <?/MIVAR>
       </TD> 
     </tr>
-
 
 
   <?MIVAR>
