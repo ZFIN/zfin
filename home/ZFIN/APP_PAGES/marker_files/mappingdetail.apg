@@ -309,14 +309,26 @@ ERROR -- something bad happened -- no OID passed in!
 
   <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
   <TABLE width="100%" cellspacing=0 border=0>
+  <?MISQL COND="$(>,$(POSITION,$MID,FISH),0)" SQL="
+		select abbrev
+		  from fish
+		where zdb_id = '$MID';">
+	<?MIVAR NAME=mrkr_abbrev>$1<?/MIVAR>
+  <?/MISQL>
+  <?MISQL COND="$(>,$(POSITION,$MID,LOCUS),0)" SQL="
+		select abbrev
+		  from locus
+		where zdb_id = '$MID';">
+	<?MIVAR NAME=mrkr_abbrev>$1<?/MIVAR>
+  <?/MISQL>
   <?MIVAR>
        <form method=post 
               action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
               target=comments>
            <input type=hidden name=subject value="$mrkr_abbrev">
-           <input type=hidden name=marker_id value="$OID">
+           <input type=hidden name=marker_id value="$MID">
            <input type=hidden name=MIval value="aa-your_input_welcome.apg">
-           <input type=hidden name=page_id value="$OID">
+           <input type=hidden name=page_id value="$MID">
   <?/MIVAR>
   <TR bgcolor=#ccccccc>
   <TD colspan=2>
@@ -368,6 +380,9 @@ ERROR -- something bad happened -- no OID passed in!
 			  (select lnkgmem_member_zdb_id 
 			     from linkage_member, linkage
 			    where lnkg_zdb_id = lnkgmem_linkage_zdb_id)
+		    or f.allele in 
+			  (select allele
+			     from mapped_deletion  )			    	
                        ) ;">
         <?MIVAR NAME=$allele_id>$1<?/MIVAR>
         <?MIVAR NAME=$allele>$2<?/MIVAR>
@@ -502,16 +517,16 @@ ERROR -- something bad happened -- no OID passed in!
 
 <?MIVAR>
 <script>
-	function new_attrib_delmarker() {
-		var del_marker=document.mpdt_update.attrib_delmarker.value;
-		var pub_id=document.mpdt_update.attrib_delmarker_pubid.value;
+	function new_attrib_delmarker(formobj, oid) {
+		var del_marker=formobj.elements[0].value;
+		var pub_id=formobj.elements[1].value;
 		if ((del_marker != '') && (pub_id != '')) {
-		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&caller=mappingdetail.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+del_marker+'&new_value='+pub_id+'&target_table=$target_table&info=deletionmarker');
+		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&caller=mappingdetail.apg&OID='+oid+'&attr=recattrib&attr_type=special-newattrib&old_value='+del_marker+'&new_value='+pub_id+'&target_table=$target_table&info=deletionmarker');
   		}
 	}
 
 	function Delete_attrib(subattr,data_zdbId,source_zdbId,info) {
-		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&caller=mappingdetail.apg&OID=$OID&dataOID='+data_zdbId+'&attr='+subattr+'&attr_type=special-listitem&old_value='+source_zdbId+'&new_value=deleted&target_table=$target_table&info='+info);
+		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&caller=mappingdetail.apg&OID=$detOID&dataOID='+data_zdbId+'&attr='+subattr+'&attr_type=special-listitem&old_value='+source_zdbId+'&new_value=deleted&target_table=$target_table&info='+info);
 	}
 
 	function doit_marker(attr,attr_type,print_name,lg) {
@@ -528,7 +543,6 @@ ERROR -- something bad happened -- no OID passed in!
   Eek! No detOID passed into details mode
   <?/MIBLOCK>  
   <?MIVAR NAME=$mapped>f<?/MIVAR>
-
   
   <!-- Now if it's a mutant deletion, also show present/missing markers -->
   <?MIBLOCK COND="$(>,$(POSITION,$detOID,FISH),0)">
@@ -554,7 +568,7 @@ ERROR -- something bad happened -- no OID passed in!
     		  <br><b>Add Reference:</b> 
     		  Symbol:<input type=text name=attrib_delmarker>	
                   Reference:<input type=text name=attrib_delmarker_pubid>
-    		  <input type=button value="Add" onClick=new_attrib_delmarker();> 
+    		  <input type=button value="Add" onClick=new_attrib_delmarker(this.form,"$detOID");> 
 		  </form>
   		 <?/MIVAR>
                </td></tr><tr><td>
@@ -609,8 +623,12 @@ ERROR -- something bad happened -- no OID passed in!
 	  $(IF,$(XST,$UPDATE),"<font size=-1><input type=button value=delete onClick=Delete_marker('"$allele"','"$mrkrZdbId"')>")
 
 	  $(IF, $(AND,$(NXST,$UPDATE),$(NE,$last,)),;)
-	  <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrZdbId">$1</A> <?MISQL SQL="select WebExplode(object,'dataId=$mapdelZdbId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
-	  
+	  <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrZdbId">$1</A> 
+          <!---- we need to save the OID, and set it to the detOID when calling the miniref_display.apg which calls showpubs.apg--------!> 
+          <?MIVAR NAME=savedOID>$OID<?/MIVAR>
+	  <?MISQL SQL="select WebExplode(object,'OID=$detOID&dataId=$mapdelZdbId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+	  <?MIVAR>$(SETVAR,$OID,$savedOID)<?/MIVAR>
+
 	  $(SETVAR,$last,$3)
 	  <?/MISQL>
 
@@ -1012,8 +1030,6 @@ ERROR -- something bad happened -- no OID passed in!
   <?/MIBLOCK>
  <!------------------- end Clone containing ------------------->
  
- </form> <!-- end form for view maps. -->
-
  </TABLE></TD></TR>
 <?MIBLOCK COND="$(EC,$mapped,t)"> <p><TR><TD> <hr width=80%></TD></TR> 
   <?MIVAR>$(SETVAR,$mapped, f)<?/MIVAR>
