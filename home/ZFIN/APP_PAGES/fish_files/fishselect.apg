@@ -672,21 +672,11 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
    </TR>
    <TR>
     <TD class="halfwidth">
-      <?MIBLOCK COND="$(NC,$line_type,wild_type)">
-      <A HREF="javascript:start_help('locus')"><b>
-      <?MIVAR>
-	$(IF,$(EC,$line_type,mutant),"Locus name","Name") contains:</b></A>
-        <input type=text name=fname size=6  onChange='document.BrowserForm.START.value = "";' $(IF,$(XST,$fname),value='$fname')>
-      <?/MIVAR>
-    </TD>
-    <TD class="halfwidth">
       <?MIVAR>
         <A HREF="javascript:start_help('abbrev')"><b>Abbreviation:</b></A>
         <input type=text maxlength=20 name=abbrev size=10 onChange='document.BrowserForm.START.value = "";' $(IF,$(XST,$abbrev),value='$abbrev')>
       <?/MIVAR>
     </TD> 
-   </TR>
-   <TR>
     <TD class="halfwidth">
 <SELECT name=anon1 onChange='document.BrowserForm.START.value = "";'>
 		<option $(IF,$(EC,$anon1,phenotype),SELECTED) value="phenotype">Phenotype
@@ -696,6 +686,16 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
         </b><A HREF="javascript:start_help('phenotype')"> contains </A>
         <input type=text name=anon1text size=12 onChange='document.BrowserForm.START.value = "";' $(IF,$(XST,$anon1text),value='$anon1text')>
    </TD>
+   </TR>
+   <TR>
+    <TD class="halfwidth">
+      <?MIBLOCK COND="$(NC,$line_type,wild_type)">
+      <A HREF="javascript:start_help('locus')"><b>
+      <?MIVAR>
+	$(IF,$(EC,$line_type,mutant),"Locus name","Name") contains:</b></A>
+        <input type=text name=fname size=6  onChange='document.BrowserForm.START.value = "";' $(IF,$(XST,$fname),value='$fname')>
+      <?/MIVAR>
+    </TD>
    <TD class="halfwidth">
       <A HREF="javascript:start_help('mutagen')"><b>Mutagen:</b></A>
       <select NAME=mutagen onChange='document.BrowserForm.START.value = "";'>
