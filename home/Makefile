@@ -40,16 +40,7 @@ FTPTARGET = $(TARGETDIR)/transfer
 
 CLIENTAPPSTARGET = $(TARGETDIR)/client_apps
 
-SPECIFICTARGETS = $(foreach SPEC, $(GENERICS), $(TARGETDIR)/$(SPEC))
-STATICTARGETS   = $(foreach STAT, $(STATICS), $(TARGETDIR)/$(STAT))
-TARGETS         = $(SPECIFICTARGETS) $(STATICTARGETS) $(FTPTARGET) \
-                  $(CLIENTAPPSTARGET)
-
-
-# ---------------  Production Rules  ------------------------------------
-
-.PHONY : all sanitycheck clean clobber $(SUBDIRS) mirror postloaddb onetimeonly
-
+ENDEMICTARGETS_POSTTARGETS = $(FTPTARGET) $(CLIENTAPPSTARGET)
 
 # If we are building a mirror then disable calling gmake with no target.
 
@@ -59,28 +50,21 @@ InvokingMirrorWithoutTarget:
 endif
 
 
-all : $(TARGETDIR) $(TARGETS) $(SUBDIRS)
+# ---------------  Production Rules  ------------------------------------
+
+# Bring in standard set of make rules
+
+include $(TOP)/make.default.rules
 
 
-$(TARGETDIR) :
-	$(TARGET_MKDIR) $(TARGETDIR);
-
-$(SPECIFICTARGETS) : $(TARGETDIR)/% : %
-	$(MAKESPECIFIC) $< $(TRANSLATETABLE) $@
-
-$(STATICTARGETS) : $(TARGETDIR)/% : %
-	$(TARGET_CP) $^ $@
-	$(TOUCH) $@
+# Rules that are endemic to this makefile
 
 $(FTPTARGET) : 
-	rm -f $(FTPTARGET)
-	ln -s $(TARGETFTPROOT)/pub/transfer $(FTPTARGET)
+	if [ ! -h $(FTPTARGET) ] ; then ln -s $(TARGETFTPROOT)/pub/transfer $(FTPTARGET); fi
 
-$(CLIENTAPPSTARGET) : 
-	ln -s ../client_apps $(CLIENTAPPSTARGET)
+$(CLIENTAPPSTARGET) :
+	if [ ! -h $(CLIENTAPPSTARGET) ] ; then ln -s $(TARGETDIR)/../client_apps $(CLIENTAPPSTARGET); fi
 
-$(SUBDIRS) :
-	$(MAKE) -C $@
 
 
 # ---------------  Special Targets  ------------------------------------
@@ -107,24 +91,3 @@ mirror : $(TARGETDIR) $(MIRROR_SUBDIRS) $(SPECIFICTARGETS) $(STATICTARGETS)
 
 postloaddb :
 	$(foreach PLDIR,$(POSTLOADDB_SUBDIRS), $(MAKE) -C $(PLDIR) $@)
-
-
-# ---------------  Maintenance Rules  -----------------------------------
-
-clean :				# No local intermediate files
-	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
-
-
-clobber :			# Remove targets, but not target dir.
-	rm -f $(TARGETS)
-	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
-
-
-sanitycheck :
-	$(SPECIFICCHECK) $(GENERICS)
-	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
-
-
-onetimeonly :
-	$(ONETIMEONLY)
-	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
