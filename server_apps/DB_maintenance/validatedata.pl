@@ -2502,7 +2502,7 @@ my $estEmail     = "<!--|VALIDATION_EMAIL_EST|-->";
 my $geneEmail    = "<!--|VALIDATION_EMAIL_GENE|-->";
 my $mutantEmail  = "<!--|VALIDATION_EMAIL_MUTANT|-->";
 my $dbaEmail     = "<!--|VALIDATION_EMAIL_DBA|-->";
-my $goEmail      = "<!--|GO_EMAIL_ERR|-->";
+my $goEmail      = "<!--|GO_EMAIL_CURATOR|-->";
 
 if($daily) {
   stageWindowConsistent ($adEmail);
@@ -2540,11 +2540,11 @@ if($daily) {
   putativeNonZfinGeneNotInZfin($geneEmail);
   zdbReplacedDataIsReplaced($dbaEmail);
 
-  mrkrgoevDuplicatesFound($dbaEmail);
-  mrkrgoevInfgrpDuplicatesFound($dbaEmail);
-  mrkrgoevGoevflagDuplicatesFound($dbaEmail);
-  mrkrgoevObsoleteAnnotationsFound($dbaEmail);
-  mrkrgoevSecondaryAnnotationsFound($dbaEmail);
+  mrkrgoevDuplicatesFound($goEmail);
+  mrkrgoevInfgrpDuplicatesFound($goEmail);
+  mrkrgoevGoevflagDuplicatesFound($goEmail);
+  mrkrgoevObsoleteAnnotationsFound($goEmail);
+  mrkrgoevSecondaryAnnotationsFound($goEmail);
 }
 if($orphan) {
   
