@@ -26,7 +26,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer
 
-SUBDIRS = MEOW JohnP RefSeq SWISS-PROT Thisse GO ZIRC Downloads GenPept
+SUBDIRS = MEOW JohnP RefSeq SWISS-PROT Thisse GO ZIRC Downloads GenPept ZGC
 
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.
