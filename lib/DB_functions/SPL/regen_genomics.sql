@@ -354,6 +354,14 @@ create dba function "informix".regen_genomics() returning integer
     where mrkr_zdb_id = dalias_data_zdb_id
     and dalias_group = aliasgrp_name
     and aliasgrp_significance = 1;
+    
+    -- sequence simalarities
+    insert into all_marker_names_new
+    select distinct lower(dalias_alias) allmapnm_name, dalias_data_zdb_id allmapnm_zdb_id, 13 allmapnm_significance
+    from data_alias, alias_group, marker
+    where mrkr_zdb_id = dalias_data_zdb_id
+    and dalias_group = aliasgrp_name
+    and aliasgrp_significance = 2;
 
     insert into all_marker_names_new
     select lower(putgene_putative_gene_name) allmapnm_name, putgene_mrkr_zdb_id allmapnm_zdb_id, 10 allmapnm_significance

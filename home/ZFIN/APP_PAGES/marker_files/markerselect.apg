@@ -623,11 +623,14 @@ document.critform.START.value = "";
 	<td>
 	<select multiple size=5 name=marker_type onChange="check_syns(this)"> 
 	<option $(IF,$(EC,$marker_type,NULL),SELECTED) value="any">All types
-	<option $(IF,$(>,$(POSITION,$marker_type,GENE),0),SELECTED) >GENE
-	<option $(IF,$(>,$(POSITION,$marker_type,MUTANT),0),SELECTED) >MUTANT
+	<option $(IF,$(>,$(POSITION,$marker_type,GENE),0),SELECTED)>GENE
+	<option $(IF,$(>,$(POSITION,$marker_type,MUTANT),0),SELECTED)>MUTANT
 	<option $(IF,$(>,$(POSITION,$marker_type,EST),0),SELECTED)>EST
-	<option $(IF,$(>,$(POSITION,$marker_type,SSLP),0),SELECTED) >SSLP
+	<option $(IF,$(>,$(POSITION,$marker_type,SSLP),0),SELECTED)>SSLP
 	<option $(IF,$(>,$(POSITION,$marker_type,BAC),0),SELECTED)>BAC
+	<option $(IF,$(>,$(POSITION,$marker_type,PAC),0),SELECTED)>PAC
+	<option $(IF,$(>,$(POSITION,$marker_type,BAC_END),0),SELECTED)>BAC_END
+	<option $(IF,$(>,$(POSITION,$marker_type,PAC_END),0),SELECTED)>PAC_END
 	<option $(IF,$(>,$(POSITION,$marker_type,RAPD),0),SELECTED)>RAPD
 	<option $(IF,$(>,$(POSITION,$marker_type,STS),0),SELECTED)>STS
 	<option $(IF,$(>,$(POSITION,$marker_type,RFLP),0),SELECTED)>RFLP

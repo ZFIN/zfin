@@ -106,6 +106,9 @@ Variables expected:
 		<option $(IF,$(EC,$mtype,SSR),SELECTED)>SSR
 		<option $(IF,$(EC,$mtype,STS),SELECTED)>STS
 		<option $(IF,$(EC,$mtype,BAC),SELECTED)>BAC
+		<option $(IF,$(EC,$mtype,PAC),SELECTED)>PAC
+		<option $(IF,$(EC,$mtype,BAC_END),SELECTED)>BAC_END
+		<option $(IF,$(EC,$mtype,PAC_END),SELECTED)>PAC_END
 	      </select>  and its abbrev contains:
 	      <input type=text name=merge value="$nsearch" size=8>  
 	      <input type=submit name=do_search value="Search">
