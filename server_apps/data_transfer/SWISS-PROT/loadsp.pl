@@ -163,8 +163,8 @@ while ( !( (-e "function.ontology") &&
 }
 
 #--------------- Delete records from last SWISS-PROT loading-----
-
-system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> sp_delete.sql >out 2> report.txt");
+print "\n delete records source from last SWISS-PROT loading.\n";
+system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> sp_delete.sql >out 2>report.txt");
 open F, "out" or die "Cannot open out file";
 if (<F>) {
  
@@ -172,7 +172,7 @@ if (<F>) {
   exit;
 }
 close F;
-  
+ 
 # --------------- Check SWISS-PROT file --------------
 # good records for loading are placed in "okfile"
 print "\n sp_check.pl SPDoc >checkreport.txt \n";

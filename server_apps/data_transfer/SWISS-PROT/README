@@ -116,4 +116,7 @@ publication record the explains SWISS-PROT to GO translation table file
 internal publication record ("ZDB-PUB-020723-2") that explains the 
 SWISS-PROT loading process. These attribution facts are stored in the 
 record_attribution table.
-  
+  The reloading also need to take care of the information that are in the 
+unloading file, but already recorded in zfin. The unique zdb id of those
+records will be put into a temp table. The conflict loading will be avoid, 
+while a new attribution to SWISS-PROT loading will be added. 
