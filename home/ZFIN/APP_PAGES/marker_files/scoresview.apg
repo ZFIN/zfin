@@ -4,7 +4,6 @@
 <SCRIPT>
 <?MIVAR>
 function redisplay () {     
-top.helpcontent.location="/ZFIN/misc_html/saycomposing.html";
 top.helpcontent.location="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showscores.apg&panel=$panel_id&lg=$OR_LG&marker_id=$marker&marker_abbrev=$marker_abbrev";
 
 }
