@@ -2,9 +2,6 @@
 #
 # Makefile for ZFIN_WWW CVS Project, Zebrafish Book Stages web pages.
 #
-# $Source$
-# $Id$
-#
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
 # !! of the makefile hierarchy this makefile is a part of, and of the  !!
@@ -24,10 +21,9 @@ SUBDIRS = figs
 
 GENERICS = abst.html blast.html blast_stgs.html cleave.html cleave_stgs.html \
 	gast.html gast_stgs.html gloss.html hatch.html hatch_stgs.html \
-	intro.html larval.html org.html phar.html phar_stgs.html proc.html \
+	index.html intro.html larval.html larv_stgs.html \
+	org.html phar.html phar_stgs.html proc.html \
 	refs.html seg.html seg_stgs.html stages.html temp.html zygote.html
-
-STATICS = fish_net.gif
 
 
 # ---------------  Production Rules  ------------------------------------

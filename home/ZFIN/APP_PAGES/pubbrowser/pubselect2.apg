@@ -26,6 +26,7 @@ document.critform.authtype.selectedIndex = 0;
 document.critform.WINSIZE.value = 10;
 document.critform.START.value = "";
 
+
 }
 
 </SCRIPT>
@@ -51,6 +52,7 @@ document.critform.START.value = "";
 <?MIVAR COND="$(NXST,$pub_status)" NAME=$pub_status>any<?/MIVAR>
 <?MIVAR COND="$(NXST,$yr_cmpr)" NAME=$yr_cmpr>=<?/MIVAR>
 <?MIVAR COND="$(NXST,$START)" NAME=$START>1<?/MIVAR>
+
 
 <TABLE width=100%>
 <TR>
@@ -87,6 +89,7 @@ document.critform.START.value = "";
 <option $(IF,$(EC,$jtype,Book),SELECTED) value=Book>Book
 <option $(IF,$(EC,$jtype,Chapter),SELECTED) value=Chapter>Chapter
 <option $(IF,$(EC,$jtype,Other),SELECTED) value=Other>Other
+<option $(IF,$(EC,$jtype,Unpublished),SELECTED) value=Unpublished>Unpublished
 <?MIVAR COND="$(EC,$ZDB_access,root)"><option value=Unknown>Unknown<?/MIVAR>
 </SELECT>
 </font></TD> 

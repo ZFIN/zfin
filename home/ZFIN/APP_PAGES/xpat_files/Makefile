@@ -1,7 +1,7 @@
 #------------------------------------------------------------------------
 #
-# Makefile for ZFIN_WWW CVS Project, Anatomical dictionary-ear static web 
-# pages.
+# Makefile for ZFIN_WWW CVS Project, Mutant/Fish related pages.
+#
 #
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
@@ -9,22 +9,20 @@
 # !! format and conventions used in this makefile.                     !!
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
+#
 
 
 # ---------------  Variable Definitions  --------------------------------
 
-TOP = ../../../../..
+
+TOP = ../../../..
 include $(TOP)/make.include
 
-TARGETDIR = $(TARGETROOT)/home/zf_info/anatomy/dict/caud_fin
+TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/xpat_files
 
-GENERICS = centra.html ha.html hyp.html phy.html hs.html
-STATICS  = ha1.jpg ha2.jpg ha3.jpg
+GENERICS = xpatview.apg
 
+# Use default rules for app page directories.
 
+include $(TOP)/make.default.apg.rules
 
-# ---------------  Production Rules  ------------------------------------
-
-# Use default rules for directories without app pages in them.
-
-include $(TOP)/make.default.rules

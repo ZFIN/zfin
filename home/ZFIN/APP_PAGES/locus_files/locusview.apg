@@ -127,7 +127,7 @@
             onClick="doit('locus_name','text','Locus+Name')">
 	<?/MIVAR> 
 	<?MIVAR>
-	  <B> <FONT SIZE=6>Locus:  $name 
+	  <B> <FONT SIZE=6>Locus: <i>$name</i>
 	<?/MIVAR>
 
 	<?MIVAR COND="$(XST,$UPDATE)">
@@ -148,7 +148,7 @@
 	<?/MIBLOCK>
 
 	<?MIVAR>
-	  ($abbrev)</FONT></b>
+	  <i>($abbrev)</i></FONT></b>
 	<?/MIVAR>
 
 	<!-- I PURPOSEFULLY DO NOT ALLOW UPDATING OF NAME/ABBREV because 
@@ -190,7 +190,7 @@
             value=Add 
 	    onClick="doit('lcsali_locus_name_alias','text','Alias')">
 	<?/MIVAR> 
-	<b>Previous names: </b>
+	<b>Previous names: </b><i>
 	<?MISQL SQL="
 	  select lcsali_locus_name_alias, lcsali_locus_abbrev_alias  
 	    from locus_alias 
@@ -212,7 +212,7 @@
 	  <?MIVAR COND="$(XST,$UPDATE)"><br> <INPUT TYPE=button value=Delete onClick="Delete_listitem('fishali_fish_name_alias','$fish_alias','$OID')"><?/MIVAR>
 	  $(IF,$(AND,$(NXST,$UPDATE),$(OR,$(XST,$alias),$(>,$MI_CURRENTROW,1))),;) $1 
 	<?/MISQL>
-
+	</i>
 	<p>
 	<?MISQL SQL="
 	  select distinct chrom_num 
@@ -226,7 +226,7 @@
 	<p>
 	<font size=+1>
 	<?MIVAR>
-	  <b>Summary of <u>$name</u> alleles:</B>
+	  <b>Summary of <i>$name</i> alleles:</B>
         <?/MIVAR>
         </font> 
         <font size=-1>(Click allele to see details)</font>
@@ -236,12 +236,11 @@
 	  is accepted, a new fish record for the allele is created.
 	<?/MIVAR>
 
-	<ul>
-	  <TABLE border=0 cellspacing=3 cellpadding=4>
-	    <TH align=center>Allele [previous names]</TH>
-            <TH>Type</TH>
-            <TH>Avail. Map Info</TH>
-            <TH align=center>Brief Description</TH>
+	<TABLE border=0 cellspacing=3 cellpadding=4 width="100%">
+	    <TH valign="bottom">Allele [previous names]</TH>
+            <TH valign="bottom">Type</TH>
+            <TH valign="bottom">Avail. Map Info</TH>
+            <TH valign="bottom">Brief Description</TH>
 	    <?MISQL SQL="
 	      select fish_id, abbrev, allele, phenotype, chrom_change,
                      (select unique count(*)::integer 
@@ -267,7 +266,7 @@
 	      $(SETVAR,$mindex,$(POSITION,$phenotype,"Details:"))
 	      <TR>
 
-	      <TD valign=bottom><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$fish_id">$allele</A> 
+	      <TD valign=bottom><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$fish_id"><i>$allele</i></A> 
 
 	      <!-- find any allele alias -->
 	      <?MISQL SQL="
@@ -283,10 +282,10 @@
 		  from allele_alias 
 		  where alleali_alt_zdb_id = '$ALTOID'">
 	        <?MIVAR NAME=$allele_alias>$1<?/MIVAR>
-	        $(IF,$(AND,$(=,$MI_CURRENTROW,1),$(XST,$allele_alias)), [)
+	        $(IF,$(AND,$(=,$MI_CURRENTROW,1),$(XST,$allele_alias)), [<i>)
 	        $(IF,$(>,$MI_CURRENTROW,1),;) $allele_alias
 	      <?/MISQL>
-	      $(IF,$(AND,$(>=,$MI_ROWCOUNT,1),$(XST,$allele_alias)),])
+	      $(IF,$(AND,$(>=,$MI_ROWCOUNT,1),$(XST,$allele_alias)),</i>])
 	      </TD>
 
 	      <TD valign=bottom><font size=-1>$(IF,$(NC,$chrom_change,NULL),$chrom_change,"Unknown")</TD>
@@ -318,8 +317,7 @@
 	      </TD>
 	      </TR>
 	    <?/MISQL>
-	  </TABLE>
-	</ul>
+	</TABLE>
 
 	<HR WIDTH=80%>
 	<p>
@@ -343,7 +341,7 @@
 	    <TR><TD>
 	    <font color="red"><B>Cloned Gene:</b>  </font>
 	    <font size=2>The GENE <b><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$cloned_gene">$1 ($2) </A> </b> 
-	    has been shown to correspond to the <b>$name</b> locus. 
+	    has been shown to correspond to the <b><i>$name</i></b> locus. 
 	    Please consult the GENE record for further mapping information.
 	   </TD>
 	   </TR>

@@ -103,15 +103,9 @@ You may also optionally pass many other constraints on the upcoming selection th
 <!-- arrange for any variables that need to be passed for nav tile bar call -->
 <?MIBLOCK COND="$(AND,$(XST,$navtile),$(EC,$selector,aa-imageselect.apg))">
   <?MIVAR COND="$(XST,$navtile)" NAME=$constraint>&navtile=$navtile$constraint<?/MIVAR>
-  <?MIVAR COND="$(XST,$resolution)" NAME=$constraint>&resolution=$resolution$constraint<?/MIVAR>
-  <?MIVAR COND="$(XST,$specimen)" NAME=$constraint>&specimen=$specimen$constraint<?/MIVAR>
-  <?MIVAR COND="$(XST,$anon1text)" NAME=$constraint>&nav_anon1text=$anon1text$constraint<?/MIVAR>
-  <?MIVAR COND="$(XST,$multiplier)" NAME=$constraint>&multiplier=$anon1$constraint<?/MIVAR>
-  <?MIVAR COND="$(XST,$end_stage)" NAME=$constraint>&end_stage=$end_stage$constraint<?/MIVAR>
-  <?MIVAR COND="$(XST,$start_stage)" NAME=$constraint>&start_stage=$start_stage$constraint<?/MIVAR>
-  <?MIVAR COND="$(XST,$dev_time_start)" NAME=$constraint>&nav_dev_time_start=$dev_time_start$constraint<?/MIVAR>
-  <?MIVAR COND="$(XST,$dev_time_end)" NAME=$constraint>&nav_dev_time_end=$dev_time_end$constraint<?/MIVAR>
-  <?MIVAR COND="$(XST,$anon1)" NAME=$constraint>&anon1=$anon1$constraint<?/MIVAR>
+  <?MIVAR COND="$(XST,$comments)" NAME=$constraint>&nav_comments=$comments$constraint<?/MIVAR>
+  <?MIVAR COND="$(XST,$stock)" NAME=$constraint>&stock=$stock$constraint<?/MIVAR>
+  <?MIVAR COND="$(XST,$preparation)" NAME=$constraint>&preparation=$preparation$constraint<?/MIVAR>
 <?/MIBLOCK>
 
 <!-- arrange for any variables that need to be passed for nav tile bar call -->

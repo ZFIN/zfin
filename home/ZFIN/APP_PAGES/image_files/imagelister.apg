@@ -6,271 +6,199 @@ Startframes.apg will pass this variables on to the select form.  -->
 
 <HTML>
 
-<basefont size=2>
+<HEAD>
+<SCRIPT>
+  function popup_url(url) {
+    open(url,"Description","toolbar=yes,scrollbars=yes,resizable=yes");
+  }
+</SCRIPT>
+</HEAD>
 
+<body bgcolor="white" TEXT="black">
+<basefont size=2>
 
 <!-- THIS NEXT PART IS EXECUTED AFTER THE PERSON ENTERS SOME CRITERIA -->
 <!-- This next part builds up a query piece by piece, based on which criteria 
   were passed in 
 -->
 
-<?MIVAR NAME=$previous> and <?/MIVAR>
-<?MIVAR NAME=$constraint> where status='active'<?/MIVAR>
-
-
+<?MIVAR NAME=$constraint><?/MIVAR>
 
 <!-- First look at standard constraints -->
-<?MIBLOCK COND="$(OR,$(XST,$stock),$(NC,$specimen,any),$(XST,$anon1text))">
 
-  <!-- First filter name for apostrophes! -->
-  <?MIVAR COND="$(XST,$stock)" NAME=$stock DELIMIT="'" REPLACE="''">$stock<?/MIVAR>
-
-
-  <!-- match against Concat of stock and abbrev for more matching power -->
-  <?MIBLOCK COND="$(XST,$stock)">
-    <?MIVAR NAME=$constraint>
-      $constraint $previous (lower(stock_name) like '%$(LOWER,$stock)%')
-    <?/MIVAR>
-    <?MIVAR NAME=$previous> and <?/MIVAR>
-  <?/MIBLOCK>
-
-
-  <?MIBLOCK COND="$(NC,$specimen,any)">
-    <?MIVAR NAME=$constraint>$constraint $previous (specimen='$specimen')<?/MIVAR>
-    <?MIVAR NAME=$previous> and <?/MIVAR>
-  <?/MIBLOCK>
-
-
-  <?MIBLOCK COND="$(XST,$anon1text)">
-    <?MIVAR NAME=$constraint>
-      $constraint $previous (lower($anon1) like '%$(LOWER,$anon1text)%')
-    <?/MIVAR>
-    <?MIVAR NAME=$previous> and <?/MIVAR>
-  <?/MIBLOCK>
-
-<?MIBLOCK COND="$(XST,$anon1text)">
-<?MIVAR NAME=$constraint>$constraint $previous (lower($anon1) like '%$(LOWER,$anon1text)%')<?/MIVAR>
-<?MIVAR NAME=$previous> and <?/MIVAR>
+<?MIBLOCK COND="$(XST,$comments)">
+  <?MIVAR NAME=$constraint>
+    $(IF,$(NE,$constraint,""),and) 
+    (lower(fimg_comments) like '%$(LOWER,$comments)%')
+  <?/MIVAR>
 <?/MIBLOCK>
 
-<?/MIBLOCK> <!-- end_stages constraints exist -->
-
-
-
-<!-- If dev. stage constrained, do some calculating to figure out the 
-  -- target time frame -->
-<?MIBLOCK COND="$(NC,$resolution,any)">
-
-  <?MIBLOCK COND="$(EC,$resolution,stage)">
-    <?MISQL SQL="
-      select a.stage_hours_start::numeric(6,2), b.stage_hours_end::numeric(6,2)
-        from dev_stage a, dev_stage b 
-        where a.stage_name='$start_stage' 
-          and b.stage_name='$end_stage';">
-    <?/MISQL>
-    <?MIVAR NAME=$start_hours>$1<?/MIVAR>
-    <?MIVAR NAME=$end_hours>$2<?/MIVAR>
+<?MIBLOCK COND=$(XST,$preparation)>
+  <?MIBLOCK COND=$(NE,$preparation,ANY)>
+    <?MIVAR NAME=$constraint>$constraint
+      $(IF,$(NE,$constraint,""),and) 
+      (fimg_preparation = '$preparation')
+    <?/MIVAR>
   <?/MIBLOCK>
+<?/MIBLOCK>
 
-  <?MIBLOCK COND="$(EC,$resolution,time)">
-    <?MIVAR NAME=$start_hours>$(*,$dev_time_start,$multiplier)<?/MIVAR>
-    <?MIVAR NAME=$end_hours>$(*,$dev_time_end,$multiplier)<?/MIVAR>
-  <?/MIBLOCK>
-
-  <?MIVAR NAME=$constraint_possibles>
-    (   (stage_hours_start between '$start_hours'::real and '$end_hours'::real)
-     or (stage_hours_end between '$start_hours'::real and '$end_hours'::real))
+<?MIBLOCK COND="$(XST,$stock)">
+  <!-- First filter name for apostrophes! -->
+  <?MIVAR COND="$(XST,$stock)" NAME=$stock DELIMIT="'" REPLACE="''">$stock<?/MIVAR>
+  <?MIVAR NAME=$constraint>$constraint 
+    $(IF,$(NE,$constraint,""),and) 
+    (lower(get_fish_full_name(fimg_fish_zdb_id)) like '%$(LOWER,$stock)%')
   <?/MIVAR>
-
-  <?MIVAR NAME=$constraint_hits>
-    (    stage_hours_end   - '$end_hours'::real   <= 0 
-     and stage_hours_start - '$start_hours'::real >= 0)
-   <?/MIVAR>
-
-<?/MIBLOCK> <!-- ends cond dev. stage constrained -->
+  <?MIVAR NAME=$constraintAlias>$constraint
+    and (lower(fishali_fish_name_alias) like '%$(LOWER,$stock)%')
+  <?/MIVAR>
+<?/MIBLOCK>
 
 
 
+<!-- Make a prepass over the images, gathering information necessary to 
+  -- display them in stock name, stage window order.  The prepass is
+  -- necessary because of bugs in the DBMS. -->
 
-<!-- NOW JUST RETRIEVE AND DISPLAY ALL MATCHING ENTRIES. Do a different 
-  -- display, where you stratify display by "goodness" of time frame 
-  -- overlap, if a time  frame is specified. -->
+<?MISQL SQL="
+  create temp table temp_fish_image (
+    tempfimg_fimg_zdb_id varchar(50),
+    tempfimg_fish_full_name varchar(180),
+    tempfimg_stg_hours_start decimal(7,2),
+    tempfimg_stg_hours_end decimal(7,2)
+  ) with no log;">
+<?/MISQL>
 
-<!-- Constraints: <?MIVAR>$constraint<?/MIVAR> -->
+<?MISQL SQL="
+  insert into temp_fish_image
+  select fimg_zdb_id, get_fish_full_name(fimg_fish_zdb_id),
+	 MIN(lo.stg_hours_start), MAX(hi.stg_hours_end)
+    from fish_image, OUTER (fish_image_stage, stage lo, stage hi)
+    where 
+      $(IF,$(NE,$constraint,""),$constraint and)
+          fimg_zdb_id = fimgstg_fimg_zdb_id
+      and fimgstg_start_stg_zdb_id = lo.stg_zdb_id
+      and fimgstg_end_stg_zdb_id = hi.stg_zdb_id
+    group by fimg_zdb_id, 2;">
+<?/MISQL>
 
-<center><FONT SIZE=4>Search Results </font> (Ordered by ascending age) 
+<?MIBLOCK COND=$(XST,$constraintAlias)>
+  <?MISQL SQL="
+    -- Also pick up the records that match on aliases.
+    insert into temp_fish_image
+    select fimg_zdb_id, get_fish_full_name(fimg_fish_zdb_id),
+           MIN(lo.stg_hours_start), MAX(hi.stg_hours_end)
+      from fish_image, fish_alias, OUTER (fish_image_stage, stage lo, stage hi)
+      where $constraintAlias
+	and fimg_fish_zdb_id = fishali_fish_zdb_id
+	and fimg_zdb_id = fimgstg_fimg_zdb_id
+      	and fimgstg_start_stg_zdb_id = lo.stg_zdb_id
+      	and fimgstg_end_stg_zdb_id = hi.stg_zdb_id
+	and not exists 
+	    ( select * 
+		from temp_fish_image
+		where tempfimg_fimg_zdb_id = fimg_zdb_id)
+      group by fimg_zdb_id, 2;">
+
+  <?/MISQL>
+<?/MIBLOCK>
+
+<!-- RETRIEVE AND DISPLAY ALL MATCHING ENTRIES. -->
+
+<center>
+<FONT SIZE=4>Search Images: Result Summary </font>
+<br>Ordered by age, stock name.
+<br>(Click on thumbnails for image details)
 </center> 
 
 
-<?MIBLOCK COND="$(EC,$resolution,any)">
+<TABLE WIDTH=100%>
+  <?MIVAR NAME=$firstIteration>1<?/MIVAR>
 
-  <TABLE WIDTH=100%>
-    <TH> </TH>
-    <TH> </TH>
-    <TH align=left>Strain</TH>
-    <TH align=left>Type</TH>
-    <TH align=left width=30%>Age</TH>
-    <?MISQL SQL="
-      select stock_name, specimen, thumbnail, zdb_id, stage, 
-	     stage_hours_start::numeric(6,2) as start_hours,
-	     stage_hours_end::numeric(6,2) as end_hours, resolution, stage_pct 
-	from image 
-	$constraint 
-	order by start_hours,end_hours;">
-      <TR>
-	<TD valign=top>
-	  $(IF,$(XST,$return_rec), <FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec="$return_rec"&new_oid="$4 TARGET=content>SELECT</A> </FONT>, )
-	</TD>
-	<TD align=center>
-	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$4" TARGET="content"><IMG border=0 SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$3&MItypeObj=image/gif"></A> 
-	</TD>
-	<TD valign=top> 
-	  <FONT SIZE=-1> 
-	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$4" TARGET="content"> $1</A>
-	  </FONT> 
-	</TD>  
-	<TD> <FONT SIZE=-1> $2 </FONT> </TD>
-	<TD> 
-	  <FONT SIZE=-1> 
-	  <b>$5</b>
-	  $(IF,$(EC,$8,dev_hours)," hours")
-	  $(IF,$(EC,$8,dev_days)," days")
-	  </FONT> 
-	</TD>
-      </TR>
-    <?/MISQL>
-  </TABLE>
+  <?MISQL SQL="
+    select fimg_zdb_id, fimg_thumbnail, fimg_fish_zdb_id, 
+	   tempfimg_fish_full_name, 
+	   tempfimg_stg_hours_start, tempfimg_stg_hours_end
+      from fish_image, temp_fish_image
+      where fimg_zdb_id = tempfimg_fimg_zdb_id
+      order by tempfimg_stg_hours_start, tempfimg_stg_hours_end,
+	       tempfimg_fish_full_name">
 
-<?/MIBLOCK> <!-- ends if dev. time not specified -->
+    <?MIVAR NAME=$fimg_zdb_id>$1<?/MIVAR>
+    <?MIVAR NAME=$fimg_thumbnail>$2<?/MIVAR>
+    <?MIVAR NAME=$fimg_fish_zdb_id>$3<?/MIVAR>
+    <?MIVAR NAME=$fish_full_name>$4<?/MIVAR>
+    <?MIVAR NAME=$tempfimg_stg_hours_start>$5<?/MIVAR>
+    <?MIVAR NAME=$tempfimg_stg_hours_end>$6<?/MIVAR>
 
-
-
-<!-- Now deal with dev. time constraints. -->
-
-<!-- for debug
-<?MIVAR COND=$(XST,$constraint)>constraint is $constraint<?/MIVAR><br>
-<?MIVAR COND=$(XST,$constraint_possibles)>constraintposs is $constraint_possibles<?/MIVAR><br>
-<?MIVAR COND=$(XST,$constraint_hits)>constrainthits is $constraint_hits<?/MIVAR><br>
--->
-
-<!-- Converted all queries to avoid doing a big join with fish. Speed was 
-     impossible the old way -->
-
-<?MIBLOCK COND="$(NC,$resolution,any)">
-
-  <center>
-  <?MIVAR><b>Time Frame= $start_hours-$end_hours h.</b><?/MIVAR>
-  </center> 
-  <p>
-
-  <TABLE WIDTH=100% border>
-    <TH width=5%> </TH>
-    <TH>Strain</TH> 
-    <TH>Specimen Type</TH> 
-    <TH>Orientation</TH> 
-    <TH width=30%>Developmental Age</TH>
-
+    <?MIBLOCK COND=$(=,$firstIteration,1)>
+      <?MIBLOCK COND=$(XST,$return_rec)>
+        <TH> </TH>
+      <?/MIBLOCK>
+      <TH> </TH>
+      <TH align=left>Stage(s)</TH>
+      <TH align=left>Stock</TH>
+      <?MIVAR NAME=$firstIteration>0<?/MIVAR>
+    <?/MIBLOCK>
     <TR>
-      <TD colspan=5 align=center bgcolor="#b9ffa0">
-        The following animals' ages <B>fall completely within</b> the 
-        specified time frame
+      <?MIBLOCK COND=$(XST,$return_rec)>
+        <TD valign=top>
+	  <FONT SIZE=-1> 
+	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec="$return_rec"&new_oid="$fimg_zdb_id 
+	     TARGET=content>SELECT</A> 
+	  </FONT>
+        </TD>
+      <?/MIBLOCK>
+      <TD align=center>
+	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$fimg_zdb_id"> 
+	  <IMG SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$fimg_thumbnail&MItypeObj=image/gif"></A> 
       </TD>
-    </TR>
+      <TD valign="TOP"> 
+	<FONT SIZE=-1> 
+	<?MISQL SQL="
+	  select lo.stg_name, lo.stg_hours_start,
+		 get_stg_name_long_html(lo.stg_zdb_id, 'popup_url'), 
+	 	 hi.stg_name, hi.stg_hours_end,
+		 get_stg_name_long_html(hi.stg_zdb_id, 'popup_url')
+	    from stage lo, stage hi, fish_image_stage
+	    where fimgstg_fimg_zdb_id = '$fimg_zdb_id'
+	      and fimgstg_start_stg_zdb_id = lo.stg_zdb_id
+	      and fimgstg_end_stg_zdb_id = hi.stg_zdb_id
+	    order by lo.stg_hours_start, hi.stg_hours_end desc;">
 
-    <?MISQL SQL="
-      select stock_name, specimen, orientation, zdb_id, stage, 
-             stage_hours_start::numeric(6,2) as start_time,
-             stage_hours_end::numeric(6,2) as end_time, resolution, stage_pct
-        from image 
-        $constraint 
-          and $constraint_hits 
-        order by start_time, end_time;">
-      <TR bgcolor="#b9ffa0" align=center> 
-        <TD valign=top>
-          $(IF,$(XST,$return_rec), <FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec="$return_rec"&new_oid="$4 TARGET=content>SELECT</A> </FONT>, )
-        </TD>
+	  <?MIVAR NAME=$lo_stg_name>$1<?/MIVAR>
+	  <?MIVAR NAME=$lo_stg_name_long_html>$3<?/MIVAR>
+	  <?MIVAR NAME=$hi_stg_name>$4<?/MIVAR>
+	  <?MIVAR NAME=$hi_stg_name_long_html>$6<?/MIVAR>
 
-        <TD valign=top> 
-          <FONT SIZE=-1> 
-          <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$4" TARGET="content">$1</A> 
-          </FONT> 
-        </TD>  
-        <TD> <FONT SIZE=-1> $2 </FONT> </TD>
-        <TD> <FONT SIZE=-1> $3 </FONT> </TD>  
-        <TD> 
-          <FONT SIZE=-1> 
-          <b>$5</b>
-          $(IF,$(EC,$8,dev_stage)," ("$6"-"$7" h)")
-          $(IF,$(EC,$8,dev_hours)," hours")
-          $(IF,$(EC,$8,dev_days)," days ("$6"-"$7" h)")
-          </FONT> 
-        </TD>
-      </TR>
-    <?/MISQL>
-
-    <?MIVAR NAME=$solid_hits>$MI_ROWCOUNT<?/MIVAR>
-    <?MIVAR COND="$(EC,$MI_ROWCOUNT,0)">
-      <TR>
-        <TD colspan=5 align=center>
-          <b>No records in this category</b> 
-        </td>
-      </TR>
-    <?/MIVAR>
-
-    <TR>
-      <TD align=center bgcolor="#f4f8ac" colspan=5>
-        The following animals' ages <b>partially overlap</b> the 
-        specified time frame
+	  $lo_stg_name_long_html
+	  <?MIVAR COND=$(NE,$lo_stg_name,$hi_stg_name)>
+	    to $hi_stg_name_long_html
+	  <?/MIVAR>
+	<?/MISQL>
+	</FONT> 
       </TD>
+      <TD valign=top> 
+	<FONT SIZE=-1> 
+	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$fimg_fish_zdb_id" 
+	   TARGET="content">$fish_full_name</A>
+	</FONT> 
+      </TD>  
     </TR>
+  <?/MISQL>
 
-    <?MISQL SQL="
-      select stock_name, specimen, orientation, zdb_id, stage, 
-             stage_hours_start::numeric(6,2) as start_time,
-             stage_hours_end::numeric(6,2) as end_time, resolution, stage_pct 
-        from image 
-        $constraint 
-          and $constraint_possibles 
-          and not ($constraint_hits) 
-        order by start_time, end_time;">
-      <TR align=center bgcolor="#f4f8ac"> 
-        <TD valign=top>
-          $(IF,$(XST,$return_rec), <FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$4" TARGET=content>SELECT</A> </FONT>, )
-        </TD>
-
-        <TD valign=top>
-          <FONT SIZE=-1> 
-          <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$4" TARGET="content">$1</A> 
-          </FONT>
-        </TD>  
-        <TD> <FONT SIZE=-1> $2 </FONT> </TD>
-        <TD> <FONT SIZE=-1> $3 </FONT> </TD>  
-        <TD> 
-          <FONT SIZE=-1> 
-          <b>$5</b>
-          $(IF,$(EC,$8,dev_stage)," ($6-$7 h)")
-          $(IF,$(EC,$8,dev_hours)," hours")
-          $(IF,$(EC,$8,dev_days)," days ($6-$7 h)")
-          </FONT> 
-        </TD>
-      </TR>
-    <?/MISQL>
-
-    <?MIVAR NAME=$part_hits>$MI_ROWCOUNT<?/MIVAR>
-    <?MIVAR NAME=$total_hits>$(+,$MI_ROWCOUNT,$solid_hits)<?/MIVAR>
-
-    <?MIVAR COND="$(EC,$MI_ROWCOUNT,0)">
-      <TR>
-        <TD colspan=5 align=center>
-          <b>No records in this category</b>
-        </td>
-      </TR>
-    <?/MIVAR>
-
-  </TABLE>
+</TABLE>
 
 
-<?/MIBLOCK> <!-- ends cond time frame is specified -->
+<?MIBLOCK COND=$(=,$MI_ROWCOUNT,0)>
+  <center><p><b>0</b> matching images found.</center>
+<?/MIBLOCK>
+
+<?MISQL SQL="
+  -- without the insert statement, informix rejects the drop statement.
+  insert into temp_fish_image values ('','',0,0);
+  drop table temp_fish_image;">
+<?/MISQL>
 
 <!-- Cause a tile for the new page to appear in the navigator frame -->
 <!-- startframes.apg will pass variables on to appropriate page -->
@@ -278,18 +206,11 @@ Startframes.apg will pass this variables on to the select form.  -->
 <?MIVAR NAME=page_title>Find IMAGE<?/MIVAR>
 <?MIVAR NAME=navtile>true<?/MIVAR>
 <?MIVAR COND="$(NXST,$stock)" NAME=$stock><?/MIVAR>
-<?MIVAR COND="$(NXST,$specimen)" NAME=$specimen><?/MIVAR>
-<?MIVAR COND="$(NXST,$resolution)" NAME=$resolution><?/MIVAR>
-<?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>anon1<?/MIVAR>
-<?MIVAR COND="$(NXST,$anon1text)" NAME=$anon1text><?/MIVAR>
-<?MIVAR COND="$(NXST,$dev_time_start)" NAME=$dev_time_start><?/MIVAR>
-<?MIVAR COND="$(NXST,$dev_time_end)" NAME=$dev_time_end><?/MIVAR>
-<?MIVAR COND="$(NXST,$multiplier)" NAME=$multiplier><?/MIVAR>
-<?MIVAR COND="$(NXST,$start_stage)" NAME=$start_stage><?/MIVAR>
-<?MIVAR COND="$(NXST,$end_stage)" NAME=$end_stage><?/MIVAR>
+<?MIVAR COND="$(NXST,$comments)" NAME=$comments><?/MIVAR>
+<?MIVAR COND="$(NXST,$preparation)" NAME=$preparation><?/MIVAR>
 <?MIVAR>
   <SCRIPT>
-    var page_id=top.content.location.href+'&navtile=$navtile&stock=$stock&anon1text=$anon1text&specimen=$specimen&anon1=$anon1&resolution=$resolution&dev_time_start=$dev_time_start&dev_time_end=$dev_time_end&multiplier=$multiplier&start_stage=$start_stage&end_stage=$end_stage';
+    var page_id='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-imageselect.apg&select_from=IMAGE&navtile=$navtile&stock=$stock&comments=$comments&preparation=$preparation';
     top.update_hist(page_id,"$page_title");
     top.controls.location.reload(true);
   </SCRIPT>

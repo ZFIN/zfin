@@ -2,9 +2,6 @@
 #
 # Makefile for ZFIN_WWW CVS Project, WWW Server Apps sysexecs directory
 #
-# $Source$
-# $Id$
-#
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
 # !! of the makefile hierarchy this makefile is a part of, and of the  !!
@@ -34,7 +31,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/sysexecs
 
-SUBDIRS = encryptpass make_thumbnail unix_commands
+SUBDIRS = encryptpass image_stats make_thumbnail unix_commands
 
 # There are no local targets
 

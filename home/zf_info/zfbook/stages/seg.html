@@ -1,7 +1,34 @@
 <head>
-</head><body background="/fish_bgd.gif">
+<SCRIPT>
+
+function call_close(){
+   var buttonstring = '<FORM><input type=button name=close value=Close onclick=window.close();></FORM>';
+   document.writeln(buttonstring);
+}
+
+function call_zfin(){
+   var hrefstring = '<A HREF="/index.html">ZFIN  <img src="/fish_net.gif"></A><p>';
+   document.writeln(hrefstring);
+}
+
+</SCRIPT>
+
 <TITLE>Segmentation Period</TITLE>
-<b>SEGMENTATION PERIOD (10-24 h)</b>	<p>
+
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000">
+
+<b>SEGMENTATION PERIOD (10-24 h)</b>
+
+<p><i>Modified from: 
+<a href="stages.html">Kimmel et al., 1955. 
+Developmental Dynamics 203:253-310</a>. Copyright &copy; 1995 Wiley-Liss, Inc.
+Reprinted only by permission of Wiley-Liss, a subsidiary of John Wiley &
+Sons, Inc.
+</i>
+
+<p>
 A wonderful variety of morphogenetic movements now occur, the somites develop, the rudiments of the primary organs become visible, the tail bud becomes more prominent and the embryo elongates <A HREF="figs/fig15.html">(Fig. 15)</A>.  The AP and DV axes are unambiguous.  The first cells differentiate morphologically, and the first body movements appear.
 <p>
 We  might have called this period the "tail bud period" because the tail bud appears at the caudal end of the lengthening axis during the whole time.  Indeed, because tail morphogenesis is so prominent during this period of development, simply noting the overall shape of the embryo is a surprisingly effective way to determine its stage.  Furthermore, as the tail extends, the overall body length of the embryo very rapidly increases, reasonably linearly, such that length is a fairly useful staging index after about 15 h <A HREF="figs/fig16.html">(Fig. 16)</A>.<P>
@@ -38,7 +65,24 @@ The pharyngeal arches and rhombomeres are visible components of the head segment
 
 <A HREF="seg_stgs.html">Detailed description of Segmentation stages.</A>
 <hr>
-<A HREF="stages.html">Return to <I>Developmental Stages</I> Contents</A>
+<A HREF="index.html">Return to Developmental Stages Contents</A>
 <hr>
-<A HREF="/index.html">ZFIN  <img src="fish_net.gif"></A><p>
+Questions or comments:
+<address>Pat Edwards<br>
+Institute of Neuroscience<br>
+University of Oregon<br>
+Eugene, OR 97403 USA<br>
+fax: 503-346-4548<br>
+<a href="mailto:edwards@uoneuro.uoregon.edu"> edwards@uoneuro.uoregon.edu</a>
+</address>
+<hr>
+
+<SCRIPT>
+  if ((window.name=='')||(window.name=='ZFIN')){
+    call_zfin();
+  } else {
+    call_close();
+  }
+</SCRIPT>
+
 </body>

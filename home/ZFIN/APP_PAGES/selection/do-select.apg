@@ -25,7 +25,13 @@ FINALLY, if this selection was made while updating an existing record, we will w
 -->
 
 <!-- Extract the goodies from the return rec -->
-<?MISQL SQL="select return_form, return_recid, fill_field, fill_table, info, action, jump_to,rec_update from return_recs where zdb_id='$return_rec';"><?/MISQL>
+<?MISQL SQL="
+  select return_form, return_recid, fill_field, fill_table, info, action, 
+         jump_to, rec_update, rtnrec_zdb_id_column_name, 
+	 rtnrec_owner_column_name
+    from return_recs 
+    where zdb_id='$return_rec';">
+<?/MISQL>
 <?MIVAR NAME=$return_form>$1<?/MIVAR>
 <?MIVAR NAME=$return_recid>$2<?/MIVAR>
 <?MIVAR NAME=$fill_field>$3<?/MIVAR>
@@ -34,7 +40,8 @@ FINALLY, if this selection was made while updating an existing record, we will w
 <?MIVAR NAME=$action>$6<?/MIVAR>
 <?MIVAR NAME=$info>$5<?/MIVAR>
 <?MIVAR NAME=$rec_update>$8<?/MIVAR>
-
+<?MIVAR NAME=$rtnrec_zdb_id_column_name>$9<?/MIVAR>
+<?MIVAR NAME=$rtnrec_owner_column_name>$9<?/MIVAR>
 
 <!-- First call secure_navigate. Only reason is to set ZDB_ident and ZDB_name to use in recording updates, so only call it if updating! -->
 <?MISQL COND="$(EC,$rec_update,t)" SQL="select WebExplode(object,'') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
@@ -78,15 +85,31 @@ FINALLY, if this selection was made while updating an existing record, we will w
 <!-- If ACTION=return_id, then we want to stick the oid of the new object directly into the field specified by fill_field of fill_table (which presumbly represents calling class). So OID of created/selected record stored in calling class.
 -->
 <?MIBLOCK COND="$(EQ,$action,return_id)">
-<?MISQL SQL="update $fill_table set $fill_field='$new_oid' where zdb_id='$return_recid';"><?/MISQL>
+  <?MISQL SQL="
+    update $fill_table 
+      set $fill_field = '$new_oid' 
+      where $rtnrec_zdb_id_column_name ='$return_recid';">
+  <?/MISQL>
 
-<!-- if a contact_person for a lab or company is specified - owner must be set to the same value -->
-<?MIBLOCK COND="$(AND,$(EQ,$action,return_id),$(EQ,$fill_field,contact_person))">
-<?MISQL SQL="update $fill_table set owner='$new_oid' where zdb_id='$return_recid';"><?/MISQL>
-<?/MIBLOCK>
+  <!-- if a contact_person for a lab or company is specified - owner must 
+    -- be set to the same value -->
+  <?MIBLOCK COND="$(AND,$(EQ,$action,return_id),$(EQ,$fill_field,contact_person))">
+    <?MISQL SQL="
+      update $fill_table 
+        set $rtnrec_owner_column_name = '$new_oid' 
+        where $rtnrec_zdb_id_column_name = '$return_recid';">
+    <?/MISQL>
+  <?/MIBLOCK>
 
-<!-- Record update if the rec_update flag is set. -->
-<?MISQL COND="$(EC,$rec_update,t)" SQL="insert into updates (submitter_name, submitter_id, when,rec_id,field_name,old_value,new_value, comments) values ('$ZDB_name','$ZDB_ident',current,'$return_recid','$fill_field','Not available','$new_oid','Selected replacement value');"><?/MISQL>
+  <!-- Record update if the rec_update flag is set. -->
+  <?MISQL COND="$(EC,$rec_update,t)" SQL="
+    insert into updates 
+        (submitter_name, submitter_id, when, rec_id, field_name, old_value,
+	 new_value, comments) 
+      values 
+	('$ZDB_name', '$ZDB_ident', current, '$return_recid', '$fill_field',
+	 'Not available', '$new_oid', 'Selected replacement value');">
+  <?/MISQL>
 
 <?/MIBLOCK>
 
@@ -94,25 +117,25 @@ FINALLY, if this selection was made while updating an existing record, we will w
 
 <!-- If ACTION=index_me, then we want to stick the oid of the calling object into the newly created record. That way the new object is indexed by the calling bject. So we stick $return_recid into the fill_field of the fill_table under the entry for new_oid. -->
 <?MIBLOCK COND="$(EQ,$action,index_me)">
-<?MISQL SQL="update $fill_table set $fill_field='$return_recid' where zdb_id='$new_oid';"><?/MISQL>
+  <?MISQL SQL="
+    update $fill_table 
+      set $fill_field = '$return_recid' 
+      where $rtnrec_zdb_id_column_name = '$new_oid';">
+  <?/MISQL>
 
-<!-- Record update is the rec_update flag is set -->
-<?MISQL COND="$(EC,$rec_update,t)" SQL="insert into updates (submitter_name, submitter_id, when,rec_id,field_name,old_value,new_value, comments) values ('$ZDB_name','$ZDB_ident',current,'$new_oid','$fill_field','Not available','$return_recid','Selected indexing');"><?/MISQL>
+  <!-- Record update is the rec_update flag is set -->
+  <?MISQL COND="$(EC,$rec_update,t)" SQL="
+    insert into updates 
+        (submitter_name, submitter_id, when, rec_id, field_name, old_value, 
+	 new_value, comments) 
+      values 
+        ('$ZDB_name', '$ZDB_ident', current, '$new_oid', '$fill_field',
+	 'Not available', '$return_recid', 'Selected indexing');">
+  <?/MISQL>
 <?/MIBLOCK>
 
 
 <!-- OKAY, NOW DEAL WITH SPECIAL PURPOSE ACTIONS ASSOCIATED ONLY WITH FISH UPDATES -->
-
-
-<!-- If ACTION=special_ref_image, then you want to replace the current reference image with the selected one. This means changing the boolean "reference" field for that line in the IMAGE table. First, blast all other reference flags, then install new one -->
-<?MIBLOCK COND="$(EC,$action,special_ref_image)">
-<?MISQL SQL="update image set representative='f' where stock='$return_recid' and representative='t';"><?/MISQL>
-<?MISQL SQL="update image set representative='t' where stock='$return_recid' and zdb_id='$new_oid';"><?/MISQL>
-
-<!-- Record update is the rec_update flag is set -->
-<?MISQL COND="$(EC,$rec_update,t)" SQL="insert into updates (submitter_name, submitter_id, when,rec_id,field_name,old_value,new_value, comments) values ('$ZDB_name','$ZDB_ident',current,'$return_recid','representative','Not available','$new_oid','Selected $new_oid as representative image');"><?/MISQL>
-<?/MIBLOCK>
-
 
 
 <!-- If ACTION=special_parent, then user has asked to update/change one of the parents of a mutant strain. This is trivial if previous value was "UNKNOWN" (NULL) or was a wild-type line since there are no inherited mutations to deal with. On other hand, if it was a mutant, we have to (1) delete old inherited chromos from int_fish_chromo, (2) delete newly inherited pubs from int_data_pub and (3) re-install newly inherited chromos and pubs and (4) run Ted's chromo overlap checking routine. The installation steps can mirror what happened in process-chromo during new fish creation. FINALLY, need to write an update record.

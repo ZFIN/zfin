@@ -1,10 +1,34 @@
-<html><head>
-</head><body background="/fish_bgd.gif"><TITLE>Glossary of Staging Terms</TITLE>
-<hr>
-<A HREF="stages.html">Return to <I>Developmental Stages</I> Contents</A>
-<hr>
-<A HREF="/index.html">ZFIN  <img src="fish_net.gif"></A><hr>
+<html>
+<head>
+
+<SCRIPT>
+
+function call_close(){
+   var buttonstring = '<FORM><input type=button name=close value=Close onclick=window.close();></FORM>';
+   document.writeln(buttonstring);
+}
+
+function call_zfin(){
+   var hrefstring = '<A HREF="/index.html">ZFIN  <img src="/fish_net.gif"></A><p>';
+   document.writeln(hrefstring);
+}
+
+</SCRIPT>
+
+<TITLE>Glossary of Staging Terms</TITLE>
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000">
 <H3>GLOSSARY</H3>
+
+<p><i>Modified from: 
+<a href="stages.html">Kimmel et al., 1955. 
+Developmental Dynamics 203:253-310</a>. Copyright &copy; 1995 Wiley-Liss, Inc.
+Reprinted only by permission of Wiley-Liss, a subsidiary of John Wiley &
+Sons, Inc.
+</i>
+
+<p>
 <b>actinotrichia</b>: unsegmented collagenous fin rays of the embryo and early larva, replaced later by the lepidotrichia, the definitive segmented bony fin rays<b><p>
 adaxial: </b>paraxial mesoderm subregion developing just adjacent to the chorda mesoderm <b><p>
 animal pole</b>: location on the egg where the polar bodies emerge, corresponding to the point of fertilization in fish like zebrafish, just below where the sperm penetrates the chorion through the  micropile (passage way)<b><p>
@@ -214,5 +238,28 @@ yolk stripe</b>: a late-forming melanophore stripe along the median ventral aspe
 yolk syncytial layer (YSL)</b>: peripheral layer of the yolk cell including nuclei and non-yolky cytoplasm<b><p>
 YSL</b>: yolk syncytial layer <b><p>
 zygote</b>: the fertilized egg, defining in the series the period between fertilization and the end of the first cleavage
+
+<hr>
+<A HREF="stages.html">Return to <I>Developmental Stages</I> Contents</A>
+<hr>
+
+Questions or comments:
+<address>Pat Edwards<br>
+Institute of Neuroscience<br>
+University of Oregon<br>
+Eugene, OR 97403 USA<br>
+fax: 503-346-4548<br>
+<a href="mailto:edwards@uoneuro.uoregon.edu"> edwards@uoneuro.uoregon.edu</a>
+</address>
+<hr>
+
+<SCRIPT>
+  if ((window.name=='')||(window.name=='ZFIN')){
+    call_zfin();
+  } else {
+    call_close();
+  }
+</SCRIPT>
+
 </body>
 </html>

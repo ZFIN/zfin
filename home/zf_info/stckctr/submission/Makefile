@@ -1,10 +1,6 @@
-
 #------------------------------------------------------------------------
 #
 # Makefile for ZFIN_WWW CVS Project, Stock Center Mutant submission directory
-#
-# $Source$
-# $Id$
 #
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!

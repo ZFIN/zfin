@@ -8,59 +8,50 @@ VARIABLES EXPECTED:
 
 -->
 
-<?MISQL SQL="select WebExplode(object,'permission=root') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+<?MISQL SQL="
+  select WebExplode(object,'permission=root') 
+    from webPages where ID='aa-secure_navigation.apg';">
+    $1
+<?/MISQL>
 
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
+  <?MIBLOCK COND="$(AND,$(XST,$OID),$(XST,$rtype))">
 
-<?MIBLOCK COND="$(AND,$(XST,$OID),$(XST,$rtype))">
+    <!-- If record type has been added to zdb_active_data or zdb_active_source
+      -- then delete it from
+      -- there and have it cascade out.  If it has not been added yet, then
+      -- delete the record from the record type's base table.
+      -->
 
-<?MIBLOCK COND="$(EC,$rtype,image)">
-<?MISQL SQL="select unique stock from image where zdb_id='$OID';"><?/MISQL>
-<?MIVAR NAME=$fish_id>$1<?/MIVAR>
-<?/MIBLOCK>
-
-<!-- If record type has been added to zdb_active_data then delete it from
-  -- there and have it cascade out.  If it has not been added yet, then
-  -- delete the record from the record type's base table.
-  -->
-
-<?MIBLOCK COND="$(OR,$(EC,$rtype,gene),$(EC,$rtype,anon_marker),$(EC,$rtype,company),$(EC,$rtype,person),$(EC,$rtype,lab),$(EC,$rtype,publication))">
-	<?MIBLOCK COND="$(OR,$(EC,$rtype,gene),$(EC,$rtype,anon_marker))">
-	  <?MISQL SQL="
-  	  delete from zdb_active_data
-    	  where zactvd_zdb_id = '$OID';">
-  	<?/MISQL>
-	<?MIELSE>
-	  <?MISQL SQL="
-  	  delete from zdb_active_source
-    	  where zactvs_zdb_id = '$OID';">
-  	<?/MISQL>		
-	<?/MIBLOCK>
-<?MIELSE>
-  <?MISQL $SQL="
-    delete from $rtype 
-      where zdb_id='$OID';">
-  <?/MISQL>
-<?/MIBLOCK>
-
-<!-- Special case: if it's an IMAGE, update the image count in fish_search -->
-<?MISQL COND="$(EC,$rtype,image)" SQL="update fish_search set num_images=(select unique count(*)::integer from image where stock=fish_id) where fish_id='$fish_id';"><?/MISQL>
+    <?MIBLOCK COND="$(OR,$(EC,$rtype,anon_marker),$(EC,$rtype,gene),$(EC,$rtype,fish_image))">
+      <?MISQL SQL="
+	delete from zdb_active_data
+	  where zactvd_zdb_id = '$OID';">
+      <?/MISQL>
+    <?MIELSE COND="$(OR,$(EC,$rtype,company),$(EC,$rtype,person),$(EC,$rtype,lab),$(EC,$rtype,publication))">>
+      <?MISQL SQL="
+	delete from zdb_active_source
+	  where zactvs_zdb_id = '$OID';">
+      <?/MISQL>		
+    <?MIELSE>
+      <?MISQL $SQL="
+	delete from $rtype 
+	  where zdb_id='$OID';">
+      <?/MISQL>
+    <?/MIBLOCK>
 
 
 
+    <!-- Jump back to home -->
+    <SCRIPT>
+      top.content.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg';
+    </SCRIPT>
 
-<!-- Jump back to home -->
-<SCRIPT>
-top.content.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg';
-</SCRIPT>
+  <?/MIBLOCK> <!-- ends cond oid and rtype exist -->
 
-<?/MIBLOCK> <!-- ends cond oid and rtype exist -->
-
-
-
-<?MIVAR COND="$(OR,$(NXST,$OID),$(NXST,$rtype))">
-<h1 align=center>ERROR: Insufficient input; no action taken </h1>
-<?/MIVAR>
+  <?MIVAR COND="$(OR,$(NXST,$OID),$(NXST,$rtype))">
+    <h1 align=center>ERROR: Insufficient input; no action taken </h1>
+  <?/MIVAR>
 
 <?/MIBLOCK> <!-- cond authorize nc false -->

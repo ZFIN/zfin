@@ -15,176 +15,84 @@ Startframes.apg will pass this variables on to the select form.  -->
     document.getcrits.submit();
   }
 
-  function redraw(resetter) {
-    var resind=document.getcrits.resolution.selectedIndex;
-    var resolution=document.getcrits.resolution.options[resind].value;
-    var specind=document.getcrits.specimen.selectedIndex;
-    var stock_name=document.getcrits.stock.value;
-    var specimen=document.getcrits.specimen.options[specind].value;
-    var specind2=document.getcrits.anon1.selectedIndex;
-    var anon1=document.getcrits.anon1.options[specind2].value;
-    var anon1text=document.getcrits.anon1text.value;
-    <?MIVAR>
-      var mival="$MIval";
-    <?/MIVAR>
-    if (resetter==1) {
-       window.location.search="?MIval="+mival;
-     } else {
-       window.location.search="?stock="+ stock_name + "&specimen="+specimen+"&resolution="+resolution+"&anon1="+anon1+"&anon1text="+anon1text+"&MIval="+mival;
-     }
-  }
-
-
-
-  function validate(field) {
-    var num_input=parseInt(field.value);
-    if (isNaN(num_input)) {
-      window.alert('You must enter a real number in this field');
-      field.value="";
-      field.focus();
-    }
+  function call_reset() {
+    document.getcrits.stock.value = "";
+    document.getcrits.comments.value ="";
+    document.getcrits.preparation.selectedIndex=0;  
   }
 
 </SCRIPT>
 
 </HEAD>
 
-<?MIVAR COND="$(NXST,$resolution)" NAME=$resolution>any<?/MIVAR>
-<?MIVAR COND="$(NXST,$specimen)" NAME=$specimen>any<?/MIVAR>
 <?MIVAR COND="$(NXST,$stock)" NAME=$stock><?/MIVAR>
-<?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>comments<?/MIVAR>
-<?MIVAR COND="$(NXST,$anon1text)" NAME=$anon1text><?/MIVAR>
+<?MIVAR COND="$(NXST,$comments)" NAME=$comments><?/MIVAR>
+<?MIVAR COND="$(NXST,$preparation)" NAME=$preparation>ANY<?/MIVAR>
 
 
-<form name=getcrits method=post TARGET="pbrowser" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+<form name=getcrits 
+      method=post 
+      TARGET="pbrowser" 
+      action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
   <center>
   <U><B><FONT SIZE=5>Search for </font>
   <FONT SIZE=5 color="#ff0000" > IMAGES</font></b></u>
   </center>
 
   <TABLE width=100%>
-    <TR>
-      <?MIVAR>
-	<TD>
+    <?MIVAR>
+      <TR>
+	<TD align="right">
 	  <font size=-1>
-	  <b>Name contains:</b> 
-	  <input type=text name=stock size=15 value="$stock">
-	  </font>
-	</TD> 
+	  <b>Stock name contains:</b> 
+	</TD>
 	<TD>
-	  <font size=-1>
-	  <b>SPECIMEN type:</b> 
-	  <SELECT NAME="specimen">
-	    <OPTION $(IF,$(EC,$specimen,any),SELECTED) value="any">Unspecified
-	    <OPTION $(IF,$(EC,$specimen,UNKNOWN),SELECTED) value="UNKNOWN">UNKNOWN
-	    <OPTION $(IF,$(EC,$specimen,LM-section),SELECTED) value="LM-section">LM-section
-	    <OPTION $(IF,$(EC,$specimen,EM-section),SELECTED) value="EM-section">EM-section
-	    <OPTION $(IF,$(EC,$specimen,whole-mount),SELECTED) value="whole-mount">whole-mount
-	  </SELECT>
+	  <input type=text name=stock size=40 value="$stock">
 	  </font>
-	</TD> 
-      <?/MIVAR>
-    </TR> 
-  </TABLE>
+	</TD>
+      <TR>   
+	<TD align="right">
+	  <font size=-1>
+	  <b>Image comments contain:</b> 
+	</TD>
+	<TD>
+	  <input type=text name=comments size=40 value="$comments">
+	  </font>
+        </TD>
 
-
-  <TABLE width=100%>
-    <TR>
-      <TD valign=top>
-        <font size=-1>
-        <b>AGE of animal:</b> 
-        <?MIVAR>
-          <SELECT NAME="resolution" onChange="redraw(0)">
-            <OPTION $(IF,$(EC,$resolution,any),SELECTED) VALUE="any">Don't Care - Any
-            <OPTION $(IF,$(EC,$resolution,time),SELECTED) VALUE="time">In hours/days is...
-            <OPTION $(IF,$(EC,$resolution,stage),SELECTED) VALUE="stage">By dev. stage is...
-          </SELECT>
-        <?/MIVAR>
-
-        <?MIVAR COND="$(NC,$resolution,any)"> between <br> <?/MIVAR>
-
-        <?MIBLOCK COND="$(EC,$resolution,time)">
-          <input type=text name=dev_time_start value=0 size=6 maxlength=6  onChange="validate(this)"> and 
-          <input type=text name=dev_time_end size=6 maxlength=6 value=144  onChange="validate(this)">  
-          <?MIBLOCK COND="$(XST,$nav_dev_time_start)">
-            <?MIVAR> 
-              <SCRIPT> 
-                document.getcrits.dev_time_start.value = "$nav_dev_time_start"
-              </SCRIPT>
-            <?/MIVAR>
-          <?/MIBLOCK>
-          <?MIBLOCK COND="$(XST,$nav_dev_time_end)">
-            <?MIVAR>
-              <SCRIPT> 
-                document.getcrits.dev_time_end.value = "$nav_dev_time_end"
-              </SCRIPT>
-            <?/MIVAR> 
-          <?/MIBLOCK>
-
-          <?MIVAR COND="$(NXST,$multiplier)" NAME=$multiplier>1<?/MIVAR>
-
-          <select name=multiplier>
-            <option $(IF,$(EC,$multiplier,1),SELECTED)  value=1>hours
-            <option $(IF,$(EC,$multiplier,24),SELECTED)  value=24>days
-          </SELECT>
+        <!-- assign navtile value to comments - can not do with a 
+          -- value="comments" in input statement - reset will not work -->
+        <?MIBLOCK COND="$(XST,$nav_comments)">
+          <?MIVAR> 
+            <SCRIPT> 
+              document.getcrits.comments.value = "$nav_comments" 
+            </SCRIPT>
+          <?/MIVAR>
         <?/MIBLOCK>
-
-
-        <?MIBLOCK COND="$(EC,$resolution,stage)">
-	  <?MIVAR COND="$(NXST,$start_stage)" NAME=$start_stage>Zygote:1-cell<?/MIVAR>
-	  <?MIVAR COND="$(NXST,$end_stage)" NAME=$end_stage>Hatching:Protruding-mouth<?/MIVAR>
-	  <SELECT NAME=start_stage >
+      </TR>
+      <TR>   
+	<TD align="right">
+	  <font size=-1>
+	  <b>Preparation:</b> 
+	</TD>
+	<TD>
+	  <SELECT NAME=preparation>
+            <option $(IF,$(EC,$preparation,ANY),SELECTED) value="ANY">ANY
 	    <?MISQL SQL="
-              select stage_name::lvarchar, stage_hours_start 
-	        from dev_stage 
-	        where index_key = 'submit' 
-                order by stage_hours_start;">
-	      <option $(IF,$(EC,$start_stage,$1),SELECTED)>$1
-	    <?/MISQL>
-	  </SELECT> 
-	  and 
-	  <SELECT NAME=end_stage >
-	    <?MISQL SQL="
-	      select stage_name::lvarchar, stage_hours_start
-                from dev_stage 
-                where index_key='submit' 
-                order by stage_hours_start;">
-	      <option $(IF,$(EC,$end_stage,$1),SELECTED)>$1
-	    <?/MISQL> 
-	  </SELECT> 
-	  stage.
-	<?/MIBLOCK>
-        </font>
-      </TD>
-
-      <TD align=right> 
-        <?MIVAR>
-          <SELECT NAME=anon1>
-            <option $(IF,$(EC,$anon1,comments),SELECTED) value="comments">Comments
-            <option $(IF,$(EC,$anon1,zdb_id),SELECTED) value="zdb_id">ZFIN ID
-          </SELECT> 
-          contains <input type=text name=anon1text value="$anon1text" size=8>
-        <?/MIVAR>
-      </TD>
-      <!-- assign navtile value to anon1text - can not do with a 
-        -- value="anon1text" in input statement - reset will not work -->
-      <?MIBLOCK COND="$(XST,$nav_anon1text)">
-        <?MIVAR> 
-          <SCRIPT> 
-            document.getcrits.anon1text.value = "$nav_anon1text" 
-          </SCRIPT>
-        <?/MIVAR>
-      <?/MIBLOCK>
-    </TR>
-
-
-    <TR>
-      <TD colspan=2 align=right valign=top>
-        <input type=submit name=action value="SEARCH" >
-        <input type=button name=nothing value="Clear All" onClick="redraw(1);">
-      </TD>
-    </TR>
-
+	      select fimgprep_name
+		from fish_image_preparation
+		order by fimgprep_name;">
+              <option $(IF,$(EC,$preparation,$1),SELECTED) value="$1">$1
+            <?/MISQL>
+	  </SELECT>
+	</TD>
+      <TR>
+        <TD colspan=2 align=right valign=top>
+          <input type=submit name=action value="SEARCH" >
+          <input type=button name=nothing value="RESET" onClick="call_reset()" >
+        </TD>
+      </TR>
+    <?/MIVAR>
   </TABLE>
 
 

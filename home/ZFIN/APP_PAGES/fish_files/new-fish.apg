@@ -230,19 +230,6 @@ NAME="orig_crossnum">
 </TD>
 <TD>
 
-<!-- ECK 6/2/97  COMMENT out the link to the anatomical parts selector for now.Since Bonnie will be putting in mutants, we will just want her to fill out a Filemaker checkbox page for this mutant. So, we give her the header info for that page; we'll suck in the filemaker files later.
-
-<input type=submit name="s_expat" value="Add to list">
-</TD></TR>
-<TR>
-<TD colspan=2>
-<ul>
-<?MISQL SQL="select name, st_stage, end_stage from expression_pat where fish_id='$temp_oid';">
-<li> Involves changes to <b>$1</b> between the <b>$2</b> and the <b>$3</b> stage. 
-<?/MISQL>
-<?MIVAR COND=$(<,$MI_ROWCOUNT,1)>None described yet.<?/MIVAR>
-</ul>
--->
 
 <!-- Instead of anat. parts picker, tell user to fill out a filemaker form. Note that we give the ultimate ZFIN ID for the new fish, namely the TEMPOID with the word TEMP replaced with the word FISH. This will be what we will do to generate the final ZFIN ID for the new FISH 
  -->

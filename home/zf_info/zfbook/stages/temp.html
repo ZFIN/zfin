@@ -1,10 +1,50 @@
 <head>
-</head><body background="/fish_bgd.gif">
+<SCRIPT>
+
+function call_close(){
+   var buttonstring = '<FORM><input type=button name=close value=Close onclick=window.close();></FORM>';
+   document.writeln(buttonstring);
+}
+
+function call_zfin(){
+   var hrefstring = '<A HREF="/index.html">ZFIN  <img src="/fish_net.gif"></A><p>';
+   document.writeln(hrefstring);
+}
+
+</SCRIPT>
 <Title>Temperature</title>
-<b>TEMPERATURE AND STANDARD DEVELOPMENTAL TIME</b>	<p>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<H3>TEMPERATURE AND STANDARD DEVELOPMENTAL TIME</H3>
+
+<p><i>Modified from: 
+<a href="stages.html">Kimmel et al., 1955. 
+Developmental Dynamics 203:253-310</a>. Copyright &copy; 1995 Wiley-Liss, Inc.
+Reprinted only by permission of Wiley-Liss, a subsidiary of John Wiley &
+Sons, Inc.
+</i>
+
+<p>
 We convert staging information to 'standard developmental time', as designated by the letter 'h', and defined as normalized <i>h</i>ours after fertilization at 28.5C, an optimal temperature of incubation (G. Streisinger, unpublished experiments).  Incubation at another temperature will change developmental rate, as may be useful in particular studies, e.g to bring embryos to two different stages at the same time for heterochronic transplantation.  Comparisons of embryos raised at different temperatures should be made with caution, because there is no assurance that all features of the embryo coordinately change their rates of development when the temperature is changed.  Nevertheless, embryos appear to develop normally if they are kept within a range of about 8C, between 25C (perhaps a few degrees lower; see Shiorone and Gross, 1968) and 33C.  Incubating them for long periods above or below these extremes may produce abnormalities.  <A HREF="figs/fig2.html">Figure 2</A> shows the rates of development at the extremes, and the legend to this figure provides a simple formula permitting one to estimate when an embryo developing at any temperature within this range will reach a given stage.		
 <hr>
 <A HREF="stages.html">Return to <I>Developmental Stages</I> Contents</A>
 <hr>
-<A HREF="/index.html">ZFIN  <img src="fish_net.gif"></A><p>
+
+Questions or comments:
+<address>Pat Edwards<br>
+Institute of Neuroscience<br>
+University of Oregon<br>
+Eugene, OR 97403 USA<br>
+fax: 503-346-4548<br>
+<a href="mailto:edwards@uoneuro.uoregon.edu"> edwards@uoneuro.uoregon.edu</a>
+</address>
+<hr>
+<SCRIPT>
+  if ((window.name=='')||(window.name=='ZFIN')){
+    call_zfin();	
+  } else {
+    call_close();
+  }
+</SCRIPT>
+<p>
 </body>

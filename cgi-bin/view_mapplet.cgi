@@ -1,6 +1,5 @@
 #!/private/bin/perl -wT
 #
-# $Id$
  {   ### mod it
   #use strict;
   use CGI  qw / :standard/;

@@ -36,7 +36,7 @@ comments -- reasons for doing update
 
 <!-- insert update record for the update! -->
 
-<!-- Special case for deleting one of the associated images/sources/pubs -->
+<!-- Special case for deleting one of the associated sources/pubs -->
 <?MIBLOCK COND="$(EC,$attr_type,special-listitem)">
 
 <?MISQL COND="$(EC,$attr,publication)" SQL="delete from int_data_pub where source_id='$OID' and target_id='$old_value';"><?/MISQL>

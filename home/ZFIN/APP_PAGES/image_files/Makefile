@@ -2,9 +2,6 @@
 #
 # Makefile for ZFIN_WWW CVS Project, Images app pages.
 #
-# $Source$
-# $Id$
-#
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
 # !! of the makefile hierarchy this makefile is a part of, and of the  !!
@@ -24,7 +21,7 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/image_files
 SUBDIRS = UPDATING
 
 GENERICS = image-upload.apg imagelister.apg imageselect.apg imageview.apg \
-	new-image.apg process-image.apg setup-new-image.apg update-image.apg
+	new-image.apg
 
 
 # Use default rules for app page directories

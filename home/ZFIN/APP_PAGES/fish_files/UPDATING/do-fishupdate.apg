@@ -6,7 +6,7 @@ fishupdate.html. Also files update record.
 EXPECTED VARS:
 OID -- the zdb_id of the rec to update
 attr -- the column to be updated
-attr_type -- textarea,text,or pic
+attr_type -- textarea, or text
 new_value -- the new value to stick in the column
 old_value -- the previous value
 comments -- reasons for doing update 
@@ -22,7 +22,6 @@ comments -- reasons for doing update
 <?MIVAR COND="$(NXST,$old_value)" NAME=$old_value>NULL<?/MIVAR>
 <?MIVAR COND="$(NXST,$comments)" NAME=$comments>NULL<?/MIVAR>
 
-<?MIVAR COND="$(EC,$attr_type,special-delete)" NAME=$comments>Deleted $comments as the reference image for this line.<?/MIVAR>
 <?MIVAR COND="$(EC,$attr_type,special-listitem)" NAME=$comments>Deleted the record $old_value from the list of $attr associated with this line.<?/MIVAR>
 
 <?MIVAR COND="$(EC,$attr_type,special-chromnum)" NAME=$comments>Note: This change in the chromosome number will also be (automatically) reflected in all lines produced by cross-breeding with this one.<?/MIVAR>
@@ -34,15 +33,7 @@ comments -- reasons for doing update
 <!-- insert update record for the update! -->
 <?MISQL SQL="insert into updates (submitter_id,submitter_name, rec_id, field_name, old_value, comments, when) values ('$ZDB_ident', '$ZDB_name','$OID', '$attr',  '$old_value', '$comments', current);"><?/MISQL>
 
-<!-- OK, NOW UPDATE THE  ACTUAL DATA RECORD. HAVE TO DO THINGS SLIGHTLY
-     DIFFERENT FOR IMAGES, SO FIRST FIND OUT WHETHER YOU'RE UPDATING AN
-     IMAGE FIELD, THEN ACT ACCORDINGLY -->
-
-<?MIBLOCK COND="$(EC,$attr_type,pic)">
-<?MISQL COND="$(NXST,$null_image)" SQL="update fish set $attr=FILETOBLOB('<!--|ROOT_PATH|-->/<!--|CGI_BIN_DIR_NAME|-->/$new_value', 'client') where zdb_id='$OID';"><?/MISQL>
-
-<?MISQL COND="$(XST,$null_image)" SQL="update fish set $attr=NULL where zdb_id='$OID';"><?/MISQL>
-<?/MIBLOCK> <!-- ends if its an image -->
+<!-- NOW UPDATE THE  ACTUAL DATA RECORD. -->
 
 <?MISQL COND="$(AND,$(NC,$attr,fishali_fish_name_alias),$(NC,$attr,alleali_allele_name_alias),$(OR,$(EC,$attr_type,text),$(EC,$attr_type,textarea)))" SQL="update fish set $attr='$new_value' where zdb_id='$OID';"><?/MISQL>
 
@@ -69,11 +60,6 @@ comments -- reasons for doing update
 
 
 
-<!-- Special case for blasting the representative image for the line  -->
-<?MIBLOCK COND="$(EC,$attr_type,special-delete)">
-<?MISQL SQL="update image set representative='f' where stock='$OID' and representative='t';"><?/MISQL>
-<?/MIBLOCK>  <!-- ends special delete representative image case -->
-
 <!-- Special case for updating the chromosome number for some line. Have to update the chromosome record, int_fish_chromo (where another copy of chronum is stored in info), and insert special update record for the CHROMO record.-->
 <?MIBLOCK COND="$(EC,$attr_type,special-chromnum)">
 <?MISQL SQL="update chromosome set chrom_num='$new_value' where zdb_id='$chrom_id';"><?/MISQL>
@@ -93,15 +79,18 @@ comments -- reasons for doing update
 
 
 
-<!-- Special case for deleting one of the associated images/sources/pubs -->
+<!-- Special case for deleting one of the associated sources/pubs -->
 <?MIBLOCK COND="$(EC,$attr_type,special-listitem)">
-<?MIBLOCK COND="$(EC,$attr,image)">
-<?MISQL SQL="delete from image where zdb_id='$old_value';"><?/MISQL>
-<?MISQL SQL="update fish_search set num_images=(select unique count(*)::integer from image where stock='$OID') where fish_id='$OID';"><?/MISQL>
-<?/MIBLOCK>
-
-<?MISQL COND="$(EC,$attr,publication)" SQL="delete from int_data_pub where source_id='$OID' and target_id='$old_value';"><?/MISQL>
-<?MISQL COND="$(EC,$attr,source)" SQL="delete from int_fish_source where source_id='$OID' and target_id='$old_value';"><?/MISQL>
+  <?MISQL COND="$(EC,$attr,publication)" SQL="
+    delete from int_data_pub 
+      where source_id = '$OID'
+        and target_id = '$old_value';">
+  <?/MISQL>
+  <?MISQL COND="$(EC,$attr,source)" SQL="
+    delete from int_fish_source
+      where source_id = '$OID' 
+        and target_id='$old_value';">
+  <?/MISQL>
 <?/MIBLOCK>  <!-- ends special listitem case -->
 
 

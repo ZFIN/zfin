@@ -99,6 +99,7 @@ contains <input type=text name=anon1text size=4  onChange='document.critform.STA
       <?/MIBLOCK>
 			<input type=submit name=action value="SEARCH" onSubmit="parent.pbrowser.document.location='/ZFIN/misc_html/saysearching.html';document.critform.submit()"></TD> 
 <TD align=center><input type=button name=action value="Clear Settings" onClick="call_reset()"></TD> 
+
 <TD align=center><input type=button name=clear_all value="List all people" onClick="document.critform.reset();document.critform.submit()"></TD> 
 
 <TD>

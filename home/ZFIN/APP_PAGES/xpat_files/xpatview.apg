@@ -1,0 +1,506 @@
+
+<!-- FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN records.
+-->
+
+<HTML>
+<head>
+<META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
+
+
+<?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
+<?MIVAR NAME=$MI_NOVALUE> <?/MIVAR>
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
+
+<?MIVAR NAME=$userid>GUEST<?/MIVAR>
+
+<?MISQL SQL="select object from webPages where ID='aa-chromoscripts.apg';">$1<?/MISQL>
+
+<SCRIPT>
+  function popup_anatitem_comments(relative_url) {
+    open(relative_url,"AnatomyItem","toolbar=yes,scrollbars=yes,resizable=yes");
+  }
+  function popup_stage_comments(relative_url) {
+    open(relative_url,"StageDescription","toolbar=yes,scrollbars=yes,resizable=yes");
+  }
+</SCRIPT>
+
+<?MIVAR NAME=$target_table>anon_marker<?/MIVAR>
+<?MIVAR NAME=$target_table COND="$(>,$(POSITION,$OID,GENE),0)">gene<?/MIVAR>
+<?MIVAR NAME=$ref_map><?/MIVAR>
+
+
+<?MISQL COND="$(>,$(POSITION,$OID,GENE),0)" SQL="
+  select gene_name, 'GENE', abbrev, comments 
+    from gene 
+    where zdb_id='$OID';">
+<?/MISQL>
+
+<?MISQL COND="$(=,$(POSITION,$OID,GENE),0)" SQL="
+  select marker_name, marker_type, abbrev, comments 
+    from anon_marker 
+    where zdb_id='$OID';">
+<?/MISQL>
+
+<?MIVAR NAME=$name>$1<?/MIVAR>
+<?MIVAR NAME=$marker_type>$2<?/MIVAR>
+<?MIVAR NAME=$abbrev>$3<?/MIVAR>
+<?MIVAR NAME=$comments>$4<?/MIVAR>
+
+</HEAD>
+
+<body bgcolor="#e5e5e5" text="#000000" link="#0000ff" vlink="#800080" alink="#ff0000">
+<basefont COLOR="#000000" size=2>
+
+
+<?MIBLOCK COND="$(NXST,$OID)">
+<p>
+ERROR -- something bad happened -- no OID passed in!
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(XST,$OID)">
+
+<?MIVAR NAME=CODECOMMENTS> 
+    If VIEWING, THROW UP THE ZDB DATA MANAGER(ZDB and UPDATE) FOR THE RECORD.
+<?/MIVAR> 
+
+<?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'page_title=View Expression') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+<?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=gene') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
+
+
+<?MIVAR NAME=CODECOMMENTS> 
+     RETRIEVE COMMON DATA TO THE EXPRESSION PATTERN
+<?/MIVAR> 
+
+<?MIVAR NAME=$ASSAY_NAME><?/MIVAR>
+<?MIVAR NAME=$XPAT_COMMENTS><?/MIVAR>
+<?MIVAR NAME=$XPAT_RECEIVE_DATE><?/MIVAR>
+<?MIVAR NAME=$LABEL_ID> <?/MIVAR>
+<?MISQL SQL="
+     SELECT xpat_assay_name, xpat_comments, xpat_label_zdb_id, xpat_direct_submission_date
+     FROM expression_pattern, expression_pattern_assay
+     WHERE xpat_zdb_id = '$OID' 
+       AND xpat_assay_name = xpatassay_name;
+     ">
+	<?MIVAR NAME=ASSAY_NAME>$1<?/MIVAR>
+	<?MIVAR NAME=XPAT_COMMENTS>$2<?/MIVAR>
+	<?MIVAR NAME=$LABEL_ID>$3<?/MIVAR>
+	<?MIVAR NAME=$XPAT_RECEIVE_DATE>$4<?/MIVAR>
+<?/MISQL>
+
+
+<?MIVAR NAME=CODECOMMENTS> 
+     GET EACH MARKER'S NAME THAT MAPS TO THIS EXPRESSION PATTERN
+<?/MIVAR> 
+
+     <br><center><font size=6> Expression of : &nbsp;<b>
+
+<?MIVAR NAME=$COUNT>0<?/MIVAR>
+<?MISQL SQL="
+     SELECT mrkr_abbrev, mrkr_zdb_id, mrkr_name, mrkr_type
+     FROM marker, marker_label, label, expression_pattern
+     WHERE xpat_zdb_id = '$OID' 
+       AND lbl_zdb_id = xpat_label_zdb_id
+       AND mrkrlbl_label_zdb_id = lbl_zdb_id
+       AND mrkrlbl_marker_zdb_id = mrkr_zdb_id;
+     ">
+     <?MIBLOCK COND=$(AND,$(=,$COUNT,0),$(EC,$4,GENE))>
+       <?MIVAR>
+         <i><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$3($1)</a></i>
+       <?/MIVAR> 
+     <?/MIBLOCK>
+
+     <?MIBLOCK COND=$(AND,$(=,$COUNT,0),$(NC,$4,GENE))>
+       <?MIVAR>
+         <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$3($1)</a>
+       <?/MIVAR> 
+     <?/MIBLOCK>
+
+     <?MIBLOCK COND=$(=,$COUNT,1)>
+       <?MIVAR>
+         , <i><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$3($1)</i>
+       <?/MIVAR> 
+     <?/MIBLOCK>
+
+     <?MIVAR NAME=$COUNT>1<?/MIVAR>
+<?/MISQL>
+
+     </font></b>
+
+<?MIVAR COND="$(XST,$ASSAY_NAME)">
+ <h2><b>Assay Type: &nbsp;</b>$ASSAY_NAME</h2>
+<?/MIVAR>
+
+	</center>
+
+<?MIVAR NAME=CODECOMMENTS> 
+     CREATE A NEW TABLE CELL FOR EACH STAGE.  DISPLAY THUMBNAILS THAT LINK
+     TO FISHIMAGE PAGES, RETRIEVE KEYWORDS FOR STRUCTURES, SYSTEMS, AND
+     PROCESSES, THEN GIVE COMMENTS.
+<?/MIVAR>
+
+ <table border="4" cellspacing="4" cellpadding="4" bgcolor="#f8fabb" align=center width=100%>
+
+<?MISQL SQL="
+	SELECT xpatstg_xpat_zdb_id, xpatstg_start_stg_zdb_id, xpatstg_end_stg_zdb_id, xpatstg_comments, stg_hours_start
+	FROM expression_pattern_stage, stage 
+	WHERE xpatstg_xpat_zdb_id = '$OID'
+	  AND xpatstg_start_stg_zdb_id = stg_zdb_id
+	ORDER by 5
+  ;">
+	<?MIVAR NAME=$XPATSTG_ID>$1<?/MIVAR>
+	<?MIVAR NAME=$XPATSTG_START_ID>$2<?/MIVAR>
+	<?MIVAR NAME=$XPATSTG_END_ID>$3<?/MIVAR>
+	<?MIVAR NAME=$XPATSTG_COMMENTS>$4<?/MIVAR>
+
+	<tr width="95%">
+		<td>
+			<center><b>Stage(s):</b> 
+
+<?MIVAR NAME=CODECOMMENTS> 
+     GET THE START AND END STAGE, GET THE START AND END TIME.
+     CREATE LINKS THAT START POPUP WINDOWS FOR STAGE COMMENTS.
+<?/MIVAR>
+
+  <?MISQL SQL="
+    SELECT  s1.stg_name_long, s2.stg_name_long, s1.stg_comments_relative_url, s2.stg_comments_relative_url
+    FROM stage s1, stage s2
+    WHERE '$XPATSTG_START_ID' = s1.stg_zdb_id
+      AND '$XPATSTG_END_ID' = s2.stg_zdb_id
+    ;">
+      <a href="javascript:popup_stage_comments('$3')">$1</a> to
+      <a href="javascript:popup_stage_comments('$4')">$2</a>
+  <?/MISQL>
+
+    </center><br>
+    <div align=left><b>Images:</b></div>
+
+
+<?MIVAR NAME=CODECOMMENTS> 
+     DISPLAY IMAGES GROUPED BY PREPARATION TYPE.  EACH PREPERATION TYPE HAS 
+     IT'S OWN TWO COLUMN TABLE.
+<?/MIVAR>
+
+<?MIVAR NAME=$COUNT>0<?/MIVAR>    
+<?MIVAR NAME=$TEMP_FIMG_PREP> <?/MIVAR>
+
+  <?MISQL SQL="
+    SELECT fimg_direction, fimg_zdb_id, fimg_thumbnail, fimg_view, fimg_preparation
+    FROM expression_pattern_image, fish_image
+    WHERE '$XPATSTG_ID' = xpatfimg_xpat_zdb_id
+      AND '$XPATSTG_START_ID' = xpatfimg_xpat_start_stg_zdb_id
+      AND '$XPATSTG_END_ID' = xpatfimg_xpat_end_stg_zdb_id
+      AND xpatfimg_fimg_zdb_id = fimg_zdb_id
+      ORDER BY 5,4,1
+    ;">
+
+<?MIVAR NAME=CODECOMMENTS> 
+     EVERY TIME THE FIMG_PREP CHANGES, CREATE A NEW TABLE.  IF COUNT = 0, 
+     THEN IT IS THE FIRST QUERY ROW RETURNED SO ONLY BUILD A NEW TABLE.
+     IF COUNT > 0 THEN CLOSE THE CURRENT TABLE BEFORE STARTING A NEW TABLE.
+<?/MIVAR>
+
+    <?MIBLOCK COND="$(=,$COUNT,0)">
+      <?MIVAR>
+
+        <table cellspacing=2 cellpadding=5 border=1 align=center width=90% bgcolor="#e5e5e5">
+
+      <?/MIVAR>
+      <?MIVAR NAME=$COUNT>1<?/MIVAR>
+    <?/MIBLOCK>
+    
+    <?MIVAR NAME=$COUNT COND=$(=,$COUNT,3)>2<?/MIVAR>
+
+    <?MIBLOCK COND="$(=,$COUNT,1)">
+      <?MIVAR>
+        <tr>
+          <td width=50%>
+            <table border=0 cellpadding=2>
+              <tr>
+                <td>
+                  <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$2">
+                  <img src="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$3&MItypeObj=image/jpg"></a>
+                </td>
+                <td valign=top>
+                  <b>Preparation:<br>Orientation:</b>
+                </td>
+                <td align=left valign=top>
+                  $5<br>$4, $1
+                </td>
+              </tr>
+            </table>
+          </td>
+      <?/MIVAR>
+      <?MIVAR NAME=$COUNT>3<?/MIVAR>
+    <?/MIBLOCK>
+
+    <?MIBLOCK COND="$(=,$COUNT,2)">
+      <?MIVAR>
+          <td width=50%>
+            <table border=0 cellpadding=2>
+              <tr>
+                <td>
+                  <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$2">
+                  <img src="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$3&MItypeObj=image/jpg"></a>
+                </td>
+                <td valign=top>
+                  <b>Preparation:<br>Orientation:</b>
+                </td>
+                <td align=left valign=top>
+                  $5<br>$4, $1
+                </td>
+              </tr>
+            </table>
+          </td>
+        <tr>
+      <?/MIVAR>
+      <?MIVAR NAME=$COUNT>1<?/MIVAR>
+    <?/MIBLOCK>
+  <?/MISQL>
+
+<?MIVAR COND="$(NC,$MI_ROWCOUNT,0)">
+<?/MIVAR>
+
+<?MIVAR COND="$(EC,$MI_ROWCOUNT,0)">
+      <table cellspacing=2 cellpadding=5 border=1 align=center width=90% bgcolor="#e5e5e5">
+        <tr>
+          <td>
+            No Images Submitted
+          </td>
+        </tr>
+<?/MIVAR>
+
+      </table>
+
+      <br>
+      <hr width="95%">
+
+<?MIVAR NAME=CODECOMMENTS> 
+     LIST EACH HIERARCHY PART IN THE FIRST TABLE CELL AND LIST ASSOCIATED
+     KEYWORDS AS LINKS IN THE SECOND TABLE CELL.
+<?/MIVAR>
+
+<?MIVAR NAME=$KEYWORDS>&nbsp;<?/MIVAR>
+<?MIVAR NAME=$TEMP_PART> <?/MIVAR>
+<?MIVAR NAME=$COUNT>0<?/MIVAR>
+      <b>Keywords:</b>
+
+      <center>
+      <table border="2" width="90%">
+
+  <?MIVAR NAME=$anatitem_list><?/MIVAR>
+  <?MISQL SQL="
+    SELECT anatitem_type_code, anatitem_zdb_id, anatitem_name, anatitem_comments_relative_url, anathier_name
+    FROM expression_pattern_anatomy, anatomy_item, anatomy_hierarchy 
+    WHERE '$XPATSTG_ID' = xpatanat_xpat_zdb_id
+      AND '$XPATSTG_START_ID' = xpatanat_xpat_start_stg_zdb_id
+      AND '$XPATSTG_END_ID' = xpatanat_xpat_end_stg_zdb_id 
+      AND xpatanat_anat_item_zdb_id = anatitem_zdb_id
+      AND anatitem_type_code = anathier_code
+    ORDER BY 1
+  ;">
+    <?MIBLOCK COND="$(=,$COUNT,0)">
+      <?MIVAR>
+        <tr width="100%">
+          <td width="15%">
+            <b>$5:&nbsp;&nbsp;</b>
+          </td>
+          <td width="85%">
+          <?MIVAR NAME=$anatitem_list>$3<?/MIVAR>
+<!--  files are not ready for linking          <a href="javascript:popup_anatitem_comments('$4')">$3</a> -->
+      <?/MIVAR>
+      <?MIVAR NAME=$TEMP_PART>$1<?/MIVAR>
+    <?/MIBLOCK>
+    <?MIBLOCK COND="$(=,$COUNT,1)">
+      <?MIBLOCK COND="$(NC,$TEMP_HIER,$5)">
+        <?MIVAR>
+          <?MIVAR>$anatitem_list<?/MIVAR>
+          </td>
+        </tr>
+        <tr width="100%">
+          <td width="15%">
+            <?MIVAR NAME=$anatitem_list><?/MIVAR>
+            <b>$5:&nbsp;&nbsp;</b>
+          </td>
+        <?/MIVAR>
+        <?MIVAR NAME=$COUNT>0<?/MIVAR>
+      <?/MIBLOCK>
+      <?MIBLOCK COND="$(NC,$TEMP_PART,$1)">
+        <?MIVAR>
+          <td width="85%">
+            <?MIBLOCK COND="$(>,$COUNT,0)">
+              <?MIVAR NAME=$anatitem_list>$anatitem_list, $3<?/MIVAR>
+            <?MIELSE>
+              <?MIVAR NAME=$anatitem_list>$3<?/MIVAR>
+            <?/MIBLOCK>
+
+<!-- files not ready for linking           <a href="javascript:popup_anatitem_comments('$4')">$3</a>    -->
+
+        <?/MIVAR>
+        <?MIVAR NAME=$TEMP_PART>$3<?/MIVAR>
+      <?/MIBLOCK>
+      <?MIBLOCK COND="$(EC,$TEMP_PART,$1)">
+        <?MIVAR>
+            <?MIBLOCK COND="$(>,$COUNT,0)">
+              <?MIVAR NAME=$anatitem_list>$anatitem_list, $3<?/MIVAR>
+            <?MIELSE>
+              <?MIVAR NAME=$anatitem_list>$3<?/MIVAR>
+            <?/MIBLOCK>
+            <!-- files not ready for linking <a href="javascript:popup_anatitem_comments('$4')">$3</a>-->
+        <?/MIVAR>
+      <?/MIBLOCK>
+    <?/MIBLOCK>
+    <?MIVAR NAME=$COUNT>1<?/MIVAR>
+    <?MIVAR NAME=$TEMP_HIER>$5<?/MIVAR>
+  <?/MISQL>
+  <?MIVAR>$anatitem_list<?/MIVAR>
+
+          </td>
+        </tr>
+      </table>
+      </center>
+
+    <?MIVAR><p align=left><b>Description:&nbsp;</b><br>$XPATSTG_COMMENTS</p><?/MIVAR>
+
+      
+    </td>
+  </tr>
+
+<?/MISQL> <!-- ends stages -->
+
+</table>
+
+
+
+<?MIVAR NAME=CODECOMMENTS> 
+     GET THE CONTACT(S) ASSOCIATED WITH THIS EXPRESSSION PATTERN AND THEIR ID,
+     THEN DISPLAY THE LIST OF CONTACTS AS HOTLINKS TO THEIR PERSON PAGE.
+<?/MIVAR>
+
+<?MIVAR NAME=$CONTACT><?/MIVAR>
+<?MIVAR NAME=$COUNT>0<?/MIVAR>
+
+  <?MISQL SQL="
+    SELECT l.zdb_id, l.name 
+    FROM lab l, int_data_source
+    WHERE '$XPATSTG_ID' = ids_data_zdb_id
+      AND ids_source_zdb_id = l.zdb_id;
+  ">
+    <?MIBLOCK COND="$(=,$COUNT,0)">
+      <?MIVAR NAME=$CONTACT>
+
+        <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$1">$2</a>
+   
+      <?/MIVAR>
+    <?/MIBLOCK>
+    <?MIBLOCK COND="$(=,$COUNT,1)">
+      <?MIVAR NAME=$CONTACT>
+
+        $CONTACT, 
+        <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$1">$2</a>
+
+      <?/MIVAR>
+    <?/MIBLOCK>
+    <?MIVAR NAME=$COUNT>1<?/MIVAR>
+  <?/MISQL>
+
+<?MIVAR><font size="+1"><br><b>Contact(s):&nbsp;</b>$CONTACT<?/MIVAR></font>
+
+<?MIVAR COND="$(XST,$XPAT_COMMENTS)"><br><br><b><font size="+1">Comments:</font>&nbsp;</b><br>$XPAT_COMMENTS</font><?/MIVAR>
+
+
+<?MIVAR COND="$(XST,$XPAT_RECEIVE_DATE)"><br><font size="+1"><b>Submission Date:</b> &nbsp;$XPAT_RECEIVE_DATE</font><?/MIVAR>
+
+
+	<hr width="95%">
+
+<?MIVAR NAME=CODECOMMENTS> 
+     GET THE PROBE DATA SOURCE BEFORE RETRIEVING OTHER PROBE DATA.
+<?/MIVAR>
+
+<?MIVAR NAME=$SOURCE><?/MIVAR>
+<?MIVAR NAME=$COUNT>0<?/MIVAR>
+
+  <?MISQL SQL="
+    SELECT l.zdb_id, l.name 
+    FROM lab l, int_data_supplier, expression_pattern
+    WHERE '$XPATSTG_ID' = xpat_zdb_id
+      AND xpat_label_zdb_id = idsup_data_zdb_id
+      AND idsup_supplier_zdb_id = l.zdb_id;
+  ">
+    <?MIBLOCK COND="$(=,$COUNT,0)">
+      <?MIVAR NAME=$SOURCE>
+
+        <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$1">$2</a>
+   
+      <?/MIVAR>
+    <?/MIBLOCK>
+    <?MIBLOCK COND="$(=,$COUNT,1)">
+      <?MIVAR NAME=$SOURCE>
+
+        $SOURCE, 
+        <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$1">$2</a>
+
+      <?/MIVAR>
+    <?/MIBLOCK>
+    <?MIVAR NAME=$COUNT>1<?/MIVAR>
+  <?/MISQL>
+
+<?MIVAR NAME=CODECOMMENTS> 
+     THERE IS ONE PROBE CONNECTED TO AN EXPRESSION PATTERN.  SEARCH THE
+     LABEL_RNA TABLE FOR THAT PROBE'S DATA. 
+<?/MIVAR>
+
+
+<?MISQL SQL="
+	SELECT lbl_name, lblrna_vector_name, lbl_comments, lblrna_polymerase_name, lblrna_cloning_site, lblrna_digest, lblrna_library, lblrna_insert_size
+	FROM label, label_rna 
+	WHERE '$LABEL_ID' = lbl_zdb_id 
+	  AND lbl_zdb_id = lblrna_label_zdb_id;
+">
+
+	<br><center><font size =+2><b>Probe:</b>&nbsp; $1</font></center>
+
+	<table width="95%" border=0>
+		<tr>
+			<td>
+				<b>Vector:</b>&nbsp; $2
+			</td>
+			<td>
+				<b>Polymerase:</b>&nbsp; $4
+			</td>
+			<td>
+				<b>Cloning Site:</b>&nbsp; $5
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<b>Digest:</b>&nbsp; $6
+			</td>
+			<td>
+				<b>Library:</b>&nbsp; $7
+			</td>
+			<td>
+				<b>Insert Size:</b>&nbsp; $8 bp
+			</td>
+		</tr>
+		<tr>
+			<td colspan=3>
+				<b>Source:</b>&nbsp; $SOURCE
+			</td>
+		</tr>
+	</table>
+
+<p align=left><font size="+1"><b>Comments:</b><br>&nbsp;$3</p>
+<?/MISQL>
+
+
+
+<!-- Throw up the publication info, using the standard display format -->
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-showpubs.apg';">$1<?/MISQL>
+
+
+<?/MIBLOCK> <!-- ends cond oid exists -->
+
+</HTML>
+

@@ -4,53 +4,22 @@
 <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
 <TITLE>Add a new IMAGE</TITLE>
 
-<!-- FOLLOWS STANDARD APPROACH. That is, makes a temporary record which 
-is used to maintain state if/when user takes "side-trips" to select other 
-records, or to define new ones. Returning from these digressions reloads 
-this page, drawing data from the temporary record.
+<!-- 
+Creates a record in fish_image that has vaild values in the image
+and thumbnail fields, and default values in the other fields.  
+It then launches imageview.apg so the user can update the other
+columns
 
 You MUST pass in $upload_image, which should be a local filename resulting 
 from a FILE UPLOAD file picker. You may optionally pass is 'stock', to 
 present the stock of the image.
-
 -->
 
-<SCRIPT>
-  function radioupdate(flag) {
-    document.getparams.resolution[flag].checked=true;
-    if (flag==0){
-      document.getparams.dev_time.value="";
-      document.getparams.error_range.value="0";
-    } else {
-      document.getparams.stage.options[0].selected=true;
-      document.getparams.stage_pct.options[0].selected=true;
-    }
-  }
-
-  function time_update(flag) {
-    if (flag==0){
-      document.getparams.time_scale2.selectedIndex=document.getparams.time_scale.selectedIndex;
-    } else {
-      document.getparams.time_scale.selectedIndex=document.getparams.time_scale2.selectedIndex;
-    }
-  }
-
-
-  function validate_num(field) {
-    var num_input=parseInt(field.value);
-    if (isNaN(num_input)) {
-      window.alert('You must enter a number in this field. Try again.');
-      field.value="";
-      field.focus();
-    }
-  }
-
-</SCRIPT>
 </HEAD>
 
 
 <?MISQL SQL="
-  select WebExplode(object, 'permission=submit&page_title=New Image') 
+  select WebExplode(object,'') 
     from webPages 
     where ID='aa-secure_navigation.apg';">
   $1
@@ -58,373 +27,63 @@ present the stock of the image.
 
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
-  <!-- FIRST webexplode the setup file to do various important preliminaries -->
   <?MISQL SQL="
-    select WebExplode(object, '') 
-      from webPages 
-      where ID='aa-setup-new-image.apg';">
-    $1
+    execute function get_id('IMAGE');">
+  <?/MISQL>
+  <?MIVAR NAME=$OID>$1<?/MIVAR>
+
+  <!-- create a thumbnail for the new image with a sysexec call.
+    -- That way we will have a thumbnail image to upload 
+    -- along with the original in the following step. -->
+  <?MIVAR NAME=$mythumb>/tmp/$OID.gif<?/MIVAR>
+  <?MISQL SQL="
+    execute function sysexec('make_thumbnail', '$upload_image $mythumb');">
+  <?/MISQL>
+  <?MIVAR NAME=$void>$1<?/MIVAR>
+
+  <!-- Get width and height of image -->
+  <?MISQL SQL="
+    execute function get_image_stats('$upload_image');">
+    <?MIVAR NAME=$fimg_width>$1<?/MIVAR>
+    <?MIVAR NAME=$fimg_height>$2<?/MIVAR>
   <?/MISQL>
 
-  <!-- NOW THROW UP THE FORM. All the variables were set by setup-new-image -->
-
-  <FORM name=getparams METHOD=POST ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
-    <?MIVAR>
-      <INPUT type=hidden NAME=temp_oid VALUE=$temp_oid>
-      <INPUT type=hidden NAME=MIval VALUE="aa-process-image.apg">
-      <INPUT type=hidden NAME=flag VALUE=$flag>
-    <?/MIVAR>
-
-    <!-- COMMENT OUT FOR NOW!! Toss up the image within the image annotator applet
-    <?MIVAR>
-      <center>
-      <big>Step 1: Annotate the new image </big>
-      </center>
-      <TABLE border>
-        <TR>
-	  <TD>
-
-            <applet codebase="/ted" code="ImageAnnotator.class" width=604 height=568>
-              <PARAM name="imageZDB" value="$temp_oid">
-              <PARAM name="type" value="annotator">
-              <IMG SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$image&MItypeObj=image/gif">
-            </APPLET>
-          </TD>
-        </TR>
-      </TABLE>
-    <?/MIVAR>
-    -->
-
-    <!-- For NOW, just display the image! -->
-    <center>
-    <table border>
-      <tr>
-        <td>
-          <?MIVAR>
-            <IMG SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$image&MItypeObj=image/gif">
-          <?/MIVAR>
-        </TD>
-      </TR>
-    </TABLE>
-    </CENTER>
-
-    <center>
-    <big>Step 2: Image Description</big> 
-    </center>
-    Please fill in the following information to describe this image, then click the SUBMIT button to complete the submission.
-    <p>
-    <hr width=80%>
-    <p>
-    <A HREF="/ZFIN/help_files/help-chromo.html#name">ABOUT THE ANIMAL:</A>
-    <p>
-
-
-
-    <TABLE>
-      <TR>
-	<TD bgcolor="#f8fabb">
-	  <big>Mutant Line: </big>
-	  <?MIVAR COND="$(EQ,$stock,NULL)">UNKNOWN.<?/MIVAR>
-
-	  <!-- Now if entered here from an in-progress FISH submission, 
-	    -- we want to fill in the stock and NOT allow it to be changed! -->
-	  <?MIBLOCK COND="$(>,$(POSITION,$flag,from_fish),0)">
-	    <?MISQL SQL="
-	      select name 
-	        from temp_fish 
-	        where zdb_id='$stock';"> 
-	      $(IF,$(EQ,$1,NULL),"<b>un-named new line</b>-->"$stock,"<big>"$1"</big>")
-	    <?/MISQL>
-	    </TD>
-            <TD> 
-	    </TD>
-          <?/MIBLOCK>
-
-          <!-- IF not entered from in-progress FISH submission, 
-	    -- just do the usual -->
-          <?MIBLOCK COND="$(=,$(POSITION,$flag,from_fish),0)">
-            <?MIVAR COND=$(NC,$stock,NULL)>$fish_name ($fish_abbrev)<?/MIVAR>
-            </TD>
-            <TD>
-              <input type=submit name="s_strain" value="Specify a mutant line">
-            </TD>
-          <?/MIBLOCK> <!-- ends 'if not from FISH' -->
-      </TR>
-
-
-      <!-- If the STOCK has been specified, and if there is not already 
-        -- an existing representative image for this line of fish, put 
-        -- up a checkbox to allow user to mark this image as the 
-	-- representative 
-
-        -- COMMENT IT OUT --- will probably delete
-
-      <?MIBLOCK COND="$(NOT,$(EQ,$stock,NULL))">
-        <?MISQL SQL="
-          select zdb_id 
-	    from image 
-            where stock='$stock' 
-              and representative='t' 
-              and status='active';">
-        <?/MISQL>
-        <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
-          <TR>
-            <TD colspan=2>
-	      Check here (
-              <INPUT NAME=representative 
-	        TYPE=checkbox VALUE=t 
-                <?MIVAR COND="$(EC,$representative,t)"> checked <?/MIVAR>  >)
-	      to designate this image as the "representative" image for 
-	      this line of fish. This means that this image will be 
-	      presented as the prototypic example of this line.
-              <p>
-            </TD>
-          </TR>
-        <?/MIBLOCK>
-      <?/MIBLOCK> 
-      -->
-
-    </TABLE>
-
-    <B>DEVELOPMENTAL AGE</B> of depicted animal: <br>
-    <TABLE border width=100% cellpadding=6>
-      <TR>
-	<TD width=20% align=right valign=middle >
-	  <input type=radio name=resolution value=dev_stage 
-            onClick="radioupdate(0)" 
-	    <?MIVAR COND="$(EC,$resolution,dev_stage)"> CHECKED<?/MIVAR> >
-          <b> by stage:</b>
-        </TD>
-	<TD>
-          Animal is at 
-	  <SELECT NAME=stage  onChange="radioupdate(0)">
-	    <?MISQL SQL="
-              select stage_name::lvarchar, stage_hours_start 
-	        from dev_stage
-	        where index_key = 'submit' 
-                order by stage_hours_start;">
-	      <option $(IF,$(EC,$stage,$1),SELECTED)>$1
-	    <?/MISQL>
-	  </SELECT>
-	  stage, about 
-	  <SELECT NAME=stage_pct onChange="radioupdate(0)">
-	    <OPTION <?MIVAR COND=$(OR,$(EC,$stage_pct,NULL),$(EC,$stage_pct,UNKNOWN))>selected<?/MIVAR> >UNKNOWN
-	    <OPTION <?MIVAR COND=$(EC,$stage_pct,0%)>selected<?/MIVAR> >0%
-	    <OPTION <?MIVAR COND=$(EC,$stage_pct,20%)>selected<?/MIVAR> >20%
-	    <OPTION <?MIVAR COND=$(EC,$stage_pct,40%)>selected<?/MIVAR> >40%
-	    <OPTION <?MIVAR COND=$(EC,$stage_pct,60%)>selected<?/MIVAR> >60%
-	    <OPTION <?MIVAR COND=$(EC,$stage_pct,80%)>selected<?/MIVAR> >80%
-	  </SELECT> 
-	  through this stage.
-	</TD>
-      </TR>
-
-      <?MIVAR>
-	<TR>
-	  <TD width=20% valign=middle align=right>
-	    <input type=radio name=resolution value=dev_time 
-              onClick="radioupdate(1)"
-	      $(IF,$(NC,$resolution,dev_stage), CHECKED) > 
-	    <b>by time (h):</b>
-          </TD>
-	  <TD>
-	    Animal is at 
-	    <input type=text name=dev_time size=5 maxlength=5 
-              onFocus="radioupdate(1)" onChange="validate_num(this)" 
-	      $(IF,$(NC,$resolution,dev_stage),value=$stage)>  
-	    <select name=time_scale onChange="time_update(0)">
-	      <option value=dev_hours $(IF,$(NC,$resolution,dev_days),selected)>hours
-	      <option value=dev_days $(IF,$(EC,$resolution,dev_days),selected)>days
-	    </SELECT>
-	    of age, plus or minus about 
-            <input type=text name=error_range value=0 size=3 maxlength=3 
-              onSelect="radioupdate(1)" onFocus="radioupdate(1)" 
-              onChange="validate_num(this)" 
-	      $(IF,$(NC,$resolution,dev_stage),value=$stage_pct) > 
-	    <select name=time_scale2 onChange="time_update(1)">
-	      <option value=dev_hours $(IF,$(NC,$resolution,dev_days),selected)>hours
-	      <option value=dev_days $(IF,$(EC,$resolution,dev_days),selected)>days
-	    </SELECT>.
-	  </TD>
-        </TR>
-      <?/MIVAR>
-    </TABLE>
-
-
-    <table>
-      <TR>
-	<TD colspan=2>
-	  <hr width=80%>
-	  <p>
-	  <A HREF="/ZFIN/help_files/help-chromo.html#chrom_num">IMAGE PREPARATION:</A>
-	  <p>
-	</TD>
-      </TR>
-
-      <TR>
-	<TD>
-	  <B>SPECIMEN: </B>
-          <?MIVAR>
-	    <SELECT NAME="specimen">
-	      <OPTION  VALUE="UNKNOWN" $(IF,$(OR,$(EC,$specimen,NULL),$(EC,$specimen,UNKNOWN)),selected) >UNKNOWN
-	      <OPTION $(IF,$(EC,$specimen,"LM-section"),selected) >LM-section
-	      <OPTION $(IF,$(EC,$specimen,"EM-section"),selected) >EM-section
-	      <OPTION $(IF,$(EC,$specimen,"whole-mount"),selected) >whole-mount
-	      <OPTION $(IF,$(EC,$specimen,"live"),selected) >live
-	    </SELECT>
-          <?/MIVAR>
-	</TD>
-
-        <TD>
-	  <B>IMAGE TYPE: </B>
-	  <SELECT NAME="image_type">
-	    <OPTION VALUE="UNKNOWN" <?MIVAR COND=$(OR,$(EC,$image_type,NULL),$(EC,$image_type,UNKNOWN))>selected<?/MIVAR> >UNKNOWN
-	    <OPTION <?MIVAR COND=$(EC,$image_type,still)>selected<?/MIVAR> >still
-	    <OPTION <?MIVAR COND=$(EC,$image_type,movie)>selected<?/MIVAR> >movie
-	    <OPTION <?MIVAR COND=$(EC,$image_type,optical_series)>selected<?/MIVAR> >optical_series
-	    <OPTION <?MIVAR COND=$(EC,$image_type,3-D)>selected<?/MIVAR> >3-D
-	  </SELECT>
-	</TD>
-      </TR>
-
-      <TR>
-	<TD colspan=2>
-	  <B>ORIENTATION: </B>
-	  <SELECT NAME="orientation">
-	    <OPTION VALUE="UNKNOWN" <?MIVAR COND=$(OR,$(EC,$orientation,NULL),$(EC,$orientation,UNKNOWN))>selected<?/MIVAR> >UNKNOWN
-	    <OPTION VALUE="dorsal-anterior_to_top" <?MIVAR COND=$(EC,$orientation,dorsal-anterior_to_top)>selected<?/MIVAR> >DORSAL VIEW,anterior to top
-	    <OPTION VALUE="dorsal_oblique" <?MIVAR COND=$(EC,$orientation,dorsal_oblique)>selected<?/MIVAR> >DORSAL VIEW,oblique
-	    <OPTION VALUE="ventral-anterior_to_top" <?MIVAR COND=$(EC,$orientation,ventral-anterior_to_top)>selected<?/MIVAR> >VENTRAL VIEW,anterior to top
-	    <OPTION  VALUE="ventral_oblique"<?MIVAR COND=$(EC,$orientation,ventral_oblique)>selected<?/MIVAR> >VENTRAL VIEW,oblique
-	    <OPTION VALUE="sagittal-anterior_to_left" <?MIVAR COND=$(EC,$orientation,sagittal-anterior_to_left)>selected<?/MIVAR> >SAGITTAL VIEW,anterior to left
-	    <OPTION VALUE="sagittal-anterior_to_right" <?MIVAR COND=$(EC,$orientation,sagittal-anterior_to_right)>selected<?/MIVAR> >SAGITTAL VIEW,anterior to right
-	    <OPTION VALUE="parasagittal-anterior_to_left" <?MIVAR COND=$(EC,$orientation,parasagittal-anterior_to_left)>selected<?/MIVAR> >PARASAGITTAL VIEW,anterior to left
-	    <OPTION VALUE="parasagittal-anterior_to_right" <?MIVAR COND=$(EC,$orientation,parasagittal-anterior_to_right)>selected<?/MIVAR> >PARASAGITTAL VIEW,anterior to right
-	    <OPTION VALUE="transverse-dorsal_to_top" <?MIVAR COND=$(EC,$orientation,transverse-dorsal_to_top)>selected<?/MIVAR> >TRANSVERSE VIEW,dorsal to top
-	    <OPTION VALUE="transverse oblique-dorsal_to_top" <?MIVAR COND=$(EC,$orientation,transverse oblique-dorsal_to_top)>selected<?/MIVAR> >TRANSVERSE OBLIQUE VIEW,dorsal_to_top
-	  </SELECT>
-	</TD>
-      </TR>
-    </TABLE>
-
-    <TABLE>
-
-      <!-- STUBBED. Should do a join on the int_image_label and labels to 
-	-- extract the names and OIDs of all labels for the image. 
-	-- But have to wait for LABELS to get put in!
-      <TR>
-        <TD>
-	  <b>LABELING: </B>
-	  <?MISQL SQL="
-	    select b.title, b.zdb_id 
-	      from int_data_pub a, publication b 
-	      where source_id = '$temp_oid' 
-		and target_id=b.zdb_id 
-		and info='related';">
-	    <br><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$1</A>
-	  <?/MISQL>
-	  <?MIVAR COND="$(<,$MI_ROWCOUNT,1)">None specified.<?/MIVAR>
-        </TD>
-        <TD>
-	  <input type=submit name="s_stain" value="Specify a Label"> 
-	</TD>
-      </TR>
-      -->
-
-
-      <TR>
-	<TD colspan=2>
-	  <b>ADDITIONAL INFORMATION: </B> 
-	</TD>
-      </TR>
-      <TR>
-	<TD colspan=2>
-	  <?MIVAR>
-	    <TEXTAREA NAME=comments rows=8 cols=70 wrap=virtual>$(IF,$(EC,$comments,NULL),"OPTICS:
+  <?MIVAR NAME=$comments>OPTICS:
 MAGNIFICATION:
 DATE OF IMAGE:
-SUBMITTER COMMENTS:",$comments)
-</TEXTAREA>
-	  <?/MIVAR>
-	</TD>
-      </TR>
+SUBMITTER COMMENTS:
+  <?/MIVAR>
 
-    </TABLE>
+  <?MISQL SQL="
+    insert into zdb_active_data 
+        (zactvd_zdb_id)
+      values
+        ('$OID');">
+  <?/MISQL>
+  <?MISQL SQL="
+    insert into fish_image
+        (fimg_zdb_id, fimg_image, fimg_annotation, fimg_image_with_annotation,
+	 fimg_thumbnail, fimg_width, fimg_height,
+	 fimg_fish_zdb_id, fimg_comments, 
+	 fimg_view, fimg_direction, fimg_form, fimg_preparation, 
+	 fimg_owner_zdb_id, fimg_external_name)
+      values 
+	('$OID', FILETOBLOB('$upload_image', 'client'), NULL, NULL,
+	 FILETOBLOB('$mythumb', 'server'), $fimg_width, $fimg_height,
+	 NULL, '$comments',
+	 'not specified', 'not specified', 'still', 'not specified', 
+	 '$ZDB_ident', NULL);">
+  <?/MISQL>
 
-    <HR width=80%>
-    <p>
-
-    <A HREF="/ZFIN/help_files/help-fish.html#publications">PUBLICATIONS: </A>
-    <p>
-    <TABLE width=100%>
-      <TR>
-	<TD width=10%>
-	  <input type=submit name="s_prim_pub" value="Specify">
-	</TD> 
-	<TD>
-	  <b>Primary Publication:</b> 
-	  <?MISQL SQL="
-	    select b.title, b.zdb_id 
-	      from int_data_pub a, publication b 
-	      where source_id='$temp_oid' 
-		and target_id=b.zdb_id 
-		and info='primary';">
-	  <?/MISQL>
-	  <?MIVAR COND="$(=,$MI_ROWCOUNT,0)"> 
-	    <font color="#ff0000">UNPUBLISHED</font>
-	  <?/MIVAR>
-	</TD>
-      </TR>
-      <TR> 
-	<TD colspan=2>
-	  <?MIVAR COND=$(<,0,$MI_ROWCOUNT)> 
-	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$1</A>  
-	  <?/MIVAR>
-	</TD>
-      </TR>
-
-      <TR>
-        <TD colspan=2>
-	  <HR width=50%>
-	</TD>
-      </TR>
-
-      <TR>
-	<TD width=10%>
-	  <input type=submit name="s_related_pub" value="Add one"> 
-	</TD>
-	<TD>
-          <b>Related Publications:</b> 
-	</TD>
-      </TR>
-      <TR>
-	<TD colspan=2>
-	  <ul>
-	    <?MISQL SQL="
-	      select b.title, b.zdb_id 
-		from int_data_pub a, publication b 
-		where source_id='$temp_oid' 
-		  and target_id=b.zdb_id 
-		  and info='related';">
-	      <li> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$1</A><br>
-	    <?/MISQL>
-	  </ul>
-	</TD>
-      </TR>
-    </TABLE>
-    <p>
-
-
-    <HR>
-    <p>
-
-
-
-    <input type=submit name="s_done" value="SUBMIT the new image record.">
-
-  </FORM>
-
-
+  <?MISQL SQL="
+    execute function sysexec('rm', '$mythumb');">
+  <?/MISQL>
+  
+  <SCRIPT>
+    <?MIVAR>
+      window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&UPDATE=1&OID=$OID');
+    <?/MIVAR>
+  </SCRIPT>
 
 <?/MIBLOCK>  <!-- ends cond authorize -->
 

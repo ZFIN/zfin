@@ -40,6 +40,10 @@ document.updater.action='/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi';
 document.updater.submit();
 }
 
+  function popup_url(url) {
+    open(url,"Description","toolbar=yes,scrollbars=yes,resizable=yes");
+  }
+
 </SCRIPT>
 </HEAD>
 
@@ -90,10 +94,6 @@ window.location.search='?MIval=aa-do-fishupdate.apg&OID=$OID&attr=protocol&attr_
 
 function doChromChange(new_value,old_value,alt_id) {
 window.location.search='?MIval=aa-do-fishupdate.apg&OID=$OID&attr=chrom_change&attr_type=special-alteration&old_value='+old_value+'&new_value='+new_value+'&alt_id='+alt_id
-}
-
-function Delete_repr(image) {
-window.location.search='?MIval=aa-do-fishupdate.apg&OID=$OID&attr=reference&attr_type=special-delete&old_value='+image+'&new_value=none&comments='+image
 }
 
 function Delete_listitem(item_name,item_id) {
@@ -180,15 +180,22 @@ value=" DONE UPDATING. Back to Viewing! " onClick="document.location.search='?MI
 <?MIVAR COND="$(XST,$UPDATE)">
 <br><INPUT TYPE=button value=Update onClick="doit('name','text','Name')">
 <?/MIVAR> 
+<i>
 <?MIBLOCK COND="$(EC,$line_type,mutant)">
-<?MIVAR> <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$locus"> $name </A><?/MIVAR>
+  <?MIVAR> 
+    <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$locus"> $name </A>
+  <?/MIVAR>
 <?MIELSE>
-<?MIVAR> $name <?/MIVAR>
+  <?MIVAR> $name <?/MIVAR>
 <?/MIBLOCK>
+</i>
 <?MIVAR COND="$(XST,$UPDATE)">
-<br><INPUT TYPE=button value=Update onClick="doit('abbrev','text','Abbreviation')">
+  <br><INPUT TYPE=button 
+	     value=Update 
+	     onClick="doit('abbrev','text','Abbreviation')">
 <?/MIVAR> 
-<?MIVAR> ($abbrev)</FONT></b>
+<?MIVAR> 
+  <i>($abbrev)</i></FONT></b>
 <?/MIVAR>
 
 <?MIBLOCK COND="$(OR,$(EC,$AUTHORIZED,root),$(EC,$AUTHORIZED,fishauth))">
@@ -212,72 +219,154 @@ value=" DONE UPDATING. Back to Viewing! " onClick="document.location.search='?MI
 <!-- Toss up images, if any, and description. -->
 
 <?MIVAR COND="$(XST,$UPDATE)">
-<TABLE width=100%>
-<TR><TD><B>Adding images:</B> To add new images of this line, return to the ZFIN home page and select "Submit new image".</TD></TR>
-</TABLE>
+  <TABLE width="100%">
+    <TR>
+      <TD>
+        <B>Adding images:</B> To add new images of this line, return to the 
+        ZFIN home page and select "Submit new image".
+    <TR>
+      <TD>
+	<B>Deleting images:</B> To delete an image, click on the thumbnail
+	and then select "Permanently delete this record" on the image page.
+    <TR>
+      <TD>
+	<B>Reassigning images:</b> To reassign an image to another line,
+	click on the thumbnail and then update the stock associated with the
+	image.
+  </TABLE>
 <?/MIVAR>
 
-<TABLE width=100% cellpadding=6 border>
 
-<?MIVAR NAME=$MI_NOVALUE>empty<?/MIVAR>
-<?MISQL SQL="select stage, specimen, zdb_id, resolution,thumbnail from image where stock='$OID' and status='active';" DATASET=2>
-<TR>
+<!-- Suppress images if fish is wildtype and NOT doing an update -->
 
-<TD>
-<TABLE><TR>
-<TD align=center>
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$3">
-<IMG SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$5&MItypeObj=image/jpg"></A>
-</TD><TD><font size=-1>
-<b>Image type:</b> $(IF,$(EC,$2,Unknown),Unknown,$2) <br>
-<b>Dev. Stage:</b>
-$(IF,$(EC,$4,dev_stage),$1 stage.)
-$(IF,$(EC,$4,dev_hours),$1 hours.)
-$(IF,$(EC,$4,dev_days),$1 days.)
-</font></TD></TR>
-$(IF,$(XST,$UPDATE),"<TR><TD align=center colspan=2><font size=-1><input type=button value=delete onClick=Delete_listitem('image','"$3"')></font> </TD></TR>") 
-</TABLE>
-</TD>
+<?MIBLOCK COND=$(OR,$(EC,$line_type,mutant),$(XST,$UPDATE))>
+  <?MIVAR NAME=$MI_NOVALUE>empty<?/MIVAR>
+  <?MIVAR NAME=$old_lo_stg_hours_start><?/MIVAR>
+  <?MIVAR NAME=$old_hi_stg_hours_start><?/MIVAR>
+  <?MIVAR NAME=$column>1<?/MIVAR>
+  <?MIVAR NAME=$firstTime>T<?/MIVAR>
 
-$(IF,$(NC,$1[2],empty),
-<TD>
-<TABLE><TR>
-<TD align=center>
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID="$3[2]>
-<IMG SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO="$5[2]"&MItypeObj=image/jpg"></A>
-</TD><TD><font size=-1>
-<b>Image type:</b> $(IF,$(EC,$2[2],Unknown),Unknown,$2[2]) <br>
-<b>Dev. Stage:</b>$1[2] 
-$(IF,$(EC,$4[2],dev_stage), stage.)
-$(IF,$(EC,$4[2],dev_hours), hours.)
-$(IF,$(EC,$4[2],dev_days), days.)
-</font></TD></TR>
-$(IF,$(XST,$UPDATE),"<TR><TD align=center colspan=2><font size=-1><input type=button value=delete onClick=Delete_listitem('image','"$3[2]"')></font> </TD></TR>") 
-</TABLE>
-</TD>
-)
+  <?MISQL SQL="
+    select fimg_zdb_id, fimg_thumbnail, fimg_preparation, fimg_view, 
+	   fimg_direction, 
+	   get_stg_name_html(lo.stg_zdb_id, 'popup_url'),
+	   get_stg_name_html(hi.stg_zdb_id, 'popup_url'),
+	   lo.stg_hours_start, hi.stg_hours_end
+      from fish_image, OUTER (fish_image_stage, stage lo, stage hi)
+      where fimg_fish_zdb_id = '$OID'
+	and fimgstg_fimg_zdb_id = fimg_zdb_id
+	and lo.stg_zdb_id = fimgstg_start_stg_zdb_id
+	and hi.stg_zdb_id = fimgstg_end_stg_zdb_id
+      order by lo.stg_hours_start, hi.stg_hours_end desc, fimg_preparation,
+	    fimg_view, fimg_direction;">
 
-</TR>
-<?/MISQL>
-</TABLE>
+    <?MIVAR NAME=$fimg_zdb_id>$1<?/MIVAR>
+    <?MIVAR NAME=$fimg_thumbnail>$2<?/MIVAR>
+    <?MIVAR NAME=$fimg_preparation>$3<?/MIVAR>
+    <?MIVAR NAME=$fimg_view>$4<?/MIVAR>
+    <?MIVAR NAME=$fimg_direction>$5<?/MIVAR>
+    <?MIVAR NAME=$lo_stg_name_html>$6<?/MIVAR>
+    <?MIVAR NAME=$hi_stg_name_html>$7<?/MIVAR>
+    <?MIVAR NAME=$lo_stg_hours_start>$8<?/MIVAR>
+    <?MIVAR NAME=$hi_stg_hours_start>$9<?/MIVAR>
 
-<?MIVAR COND="$(<,$MI_ROWCOUNT,1)"><center><TABLE cellpadding=4 border><TR><TD>No images of this line available.</TD></TR></TABLE></center><?/MIVAR>
+    <!-- Break images up by stage windows -->
+    <?MIVAR COND=$(OR,$(NE,$old_lo_stg_hours_start,$lo_stg_hours_start),$(NE,$old_hi_stg_hours_start,$hi_stg_hours_start))>
+      <?MIVAR NAME=$old_lo_stg_hours_start>$lo_stg_hours_start<?/MIVAR>
+      <?MIVAR NAME=$old_hi_stg_hours_start>$hi_stg_hours_start<?/MIVAR>
+      <?MIVAR NAME=$column>1<?/MIVAR>
+
+      <?MIBLOCK COND=$(EQ,$firstTime,T)>
+	<?MIVAR NAME=$firstTime>F<?/MIVAR>
+      <?MIELSE>
+	</TABLE>
+      <?/MIBLOCK>
+
+      <p>
+      <TABLE width="100%" border="1">
+	<TR>
+	  <TD colspan="2">
+    	    <font size=-1>
+	    <b>Dev. Stage(s):</b> $lo_stg_name_html
+  	    <?MIVAR COND=$(NE,$lo_stg_name_html,$hi_stg_name_html)>
+  	      to $hi_stg_name_html
+  	    <?/MIVAR>
+    	    </font>
+    <?/MIVAR> 
+
+    <?MIVAR COND=$(=,$column,1)>
+        <TR>
+    <?/MIVAR>
+	  <TD>
+	    <TABLE>
+	      <TR>
+		<TD align="center">
+		  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$fimg_zdb_id">
+	          <IMG SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$fimg_thumbnail&MItypeObj=image/jpg"></A>
+		  </TD>
+		<TD valign="top">
+		  <font size=-1><b>
+		  Preparation:<br>
+		  Oreintation:
+		  </b><font>
+		</TD>
+		<TD valign="top">
+		  <font size=-1>
+		  $fimg_preparation<br>
+		  $fimg_view, $fimg_direction
+		  </font>
+		</TD>
+	      </TR>
+	    </TABLE>
+	  </TD>
+    <?MIBLOCK COND=$(=,$column,1)>
+        <?MIVAR NAME=$column>2<?/MIVAR>
+    <?MIELSE>
+	</TR>
+        <?MIVAR NAME=$column>1<?/MIVAR>
+    <?/MIBLOCK>
+
+  <?/MISQL>
+
+  <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+    </TABLE>
+  <?MIELSE>
+    <center>
+    <TABLE cellpadding=4 border>
+      <TR>
+        <TD>No images of this line are available.</TD>
+      </TR>
+    </TABLE>
+    </center>
+  <?/MIBLOCK>
+<?/MIBLOCK>
 
 <p>
 <TABLE width=100%>
-<TR>
-<TD>
-<?MIVAR COND="$(XST,$UPDATE)">
-<INPUT TYPE=button value=Add onClick="doit('fishali_fish_name_alias','text','Alias')">
-<?/MIVAR> 
-<b>Previous names: </b>
-<?MISQL SQL="select fishali_fish_name_alias from fish_alias where fishali_fish_zdb_id='$OID';">
-<?MIVAR NAME=$alias>$1<?/MIVAR>
-<?MIVAR COND="$(XST,$alias)" NAME=$alias DELIMIT=" " REPLACE="+">$alias<?/MIVAR>
-<?MIVAR COND="$(XST,$UPDATE)"><br> <INPUT TYPE=button value=Delete onClick="Delete_listitem_alias('fishali_fish_name_alias','$alias','$OID','$ALTOID')">
-<?/MIVAR>$(IF,$(AND,$(NXST,$UPDATE),$(>,$MI_CURRENTROW,1)),;) $1 
-<?/MISQL>
-</TD></TR>
+  <TR>
+    <TD>
+      <?MIVAR COND="$(XST,$UPDATE)">
+        <INPUT TYPE=button 
+	       value=Add 
+	       onClick="doit('fishali_fish_name_alias','text','Alias')">
+      <?/MIVAR> 
+      <b>Previous names: </b>
+      <?MISQL SQL="
+	select fishali_fish_name_alias 
+	  from fish_alias 
+	  where fishali_fish_zdb_id='$OID';">
+	<?MIVAR NAME=$alias>$1<?/MIVAR>
+	<?MIVAR COND="$(XST,$alias)" NAME=$alias DELIMIT=" " REPLACE="+">$alias<?/MIVAR>
+	<?MIVAR COND="$(XST,$UPDATE)">
+	  <br> 
+	  <INPUT TYPE=button 
+		 value=Delete 
+		 onClick="Delete_listitem_alias('fishali_fish_name_alias','$alias','$OID','$ALTOID')">
+	<?/MIVAR>
+	$(IF,$(AND,$(NXST,$UPDATE),$(>,$MI_CURRENTROW,1)),;) <i>$1</i>
+      <?/MISQL>
+    </TD>
+  </TR>
 </TABLE>
 
 
@@ -298,23 +387,6 @@ $(IF,$(XST,$UPDATE),"<TR><TD align=center colspan=2><font size=-1><input type=bu
 </TABLE>
 
 
-<!-- COmment out for now, since we aren't putting this in
-<TABLE width=100%> 
-<TR>
-<TD valign=top>
-<B>Affected Parts:</B> </TD>
-<TD> <ul>
-<?MISQL SQL="select name, st_stage, end_stage from expression_pat where fish_id='$OID';">
-<li> Changes to <b>$1</b> between the <b>$2</b> and the <b>$3</b> stage. 
-<?/MISQL>
-<?MIVAR COND=$(<,$MI_ROWCOUNT,1)>No expression patterns described.<?/MIVAR>
-</ul>
-<p>
-</TD></TR>
-</TABLE>
--->
-
-
 <p>
 <A NAME="origins-info">
 <HR width=80%>
@@ -331,7 +403,7 @@ $(IF,$(XST,$UPDATE),"<TR><TD align=center colspan=2><font size=-1><input type=bu
 <?MISQL COND="$(NC,$discoverer,NULL)" SQL="select full_name from person where zdb_id='$discoverer';">
 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$discoverer">$1</A>
 <?/MISQL>
-<?MIVAR COND="$(EC,$discoverer,NULL)"> UNKNOWN. <?/MIVAR>
+<?MIVAR COND="$(EC,$discoverer,NULL)"> unknown <?/MIVAR>
 </TD>
 
 <TD>
@@ -362,7 +434,7 @@ $(IF,$(EC,$lab,$1),$(SETVAR,$foundlab,$1))
 <?MIVAR><font size=-1>(<b>Stock#:</b> $orig_crossnum)</font> <?/MIVAR>
 <?/MIBLOCK>
 
-<?MIVAR COND="$(AND,$(EC,$orig_crossnum,NULL),$(XST,$UPDATE))"
+<?MIVAR COND="$(AND,$(EC,$orig_crossnum,NULL),$(XST,$UPDATE))">
 <br><INPUT TYPE=button value="Specify an original cross number" onClick="doit('orig_crossnum','text','Original+Cross+Number')"> 
 <?/MIVAR>
 </TD></TR>
@@ -628,7 +700,7 @@ $(SETVAR,$last,$3)
 <TR>
 <TD valign=top colspan=2>
 
-<?MIVAR> <B>Reference Panel Location(s): $abbrev  </B><?/MIVAR> 
+<?MIVAR> <B>Reference Panel Location(s): <i>$abbrev</i>  </B><?/MIVAR> 
 <TABLE cols=3 width=100% colspan=2>
 
 <?MIVAR NAME=$override>$(IF,$(OR,$(EC,$ZDB_access,root),$(EC,$ZDB_access,fishauth)),true,false)<?/MIVAR>
@@ -667,7 +739,8 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),"<TD colspan=3><font size=2>LG <b>"$4
 </TD>
 <!-- ************************************** -->
 <TD valign=top>
-<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=ZDB-REFCROSS-010114-1>ZMAP</A> <b>Location(s): <?MIVAR>$abbrev</b><?/MIVAR>
+<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=ZDB-REFCROSS-010114-1>ZMAP</A> 
+<b>Location(s): <?MIVAR><i>$abbrev</i></b><?/MIVAR>
 <TABLE>
 <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
 <!-- look for a match of the last two characters in the public_paneled_markers abbrev to match the last two characters in the panels abbrev for table join to find disp_order -->
@@ -691,7 +764,7 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),"<TD colspan=3><font size=2>LG <b>"$4
 
 <TD valign=top>
 
-<?MIVAR><b>View Map for: $abbrev</b> <?/MIVAR> 
+<?MIVAR><b>View Map for: <i>$abbrev</i></b> <?/MIVAR> 
 
 <TABLE cellpadding=0 cellspacing=0 >
 
@@ -740,7 +813,7 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),"<TD colspan=3><font size=2>LG <b>"$4
 <TABLE width=100% cellpadding=5 border=4 bgcolor="#f8fabb" cols=3 rows=1>
 <TR>
 <TD valign=top colspan=4>
-<?MIVAR> <B>Other markers linked to $abbrev:</b><?/MIVAR>
+<?MIVAR> <B>Other markers linked to <i>$abbrev</i>:</b><?/MIVAR>
 
 <?MIVAR NAME=$MI_NULL><?/MIVAR>
 <TABLE cellpadding=1 cellspacing=0>
@@ -833,7 +906,9 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),"<TD colspan=3><font size=2>LG <b>"$4
 <TABLE width=100% cellpadding=5 border=4 bgcolor="#f8fabb" cols=2 rows=1>
 <TR><TD>
 <font color="red"><B>Cloned Gene:</b>  </font>
-<font size=2>The GENE <b><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$cloned_gene">$1 ($2) </A> </b> has been shown to correspond to the <b>$name</b> locus. Please consult the GENE record for further mapping information.
+<font size=2>The gene <b><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$cloned_gene"><i>$1 ($2)</i></A> </b> 
+has been shown to correspond to the <b><i>$name</b></i> locus. 
+Please consult the gene record for further mapping information.
 </TD>
 </TR></TABLE>
 <?/MISQL>

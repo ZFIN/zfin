@@ -23,7 +23,7 @@ navigator tile if you are doing selection since you are jumping directly
 to a browser -->
 <?MISQL SQL="
   select WebExplode(object, 
-                    'permission=owns&rtype=image$(IF,$(NC,$attr_type,selection),&page_title=Update $print_name)') 
+                    'permission=owns&rtype=fish_image$(IF,$(NC,$attr_type,selection),&page_title=Update $print_name)&ownerColumn=fimg_owner_zdb_id&zdbIdColumn=fimg_zdb_id') 
     from webPages
     where ID = 'aa-secure_navigation.apg';">
   $1
@@ -36,9 +36,9 @@ to a browser -->
   <?MIBLOCK COND="$(NC,$annotations,NULL)">
     <?MIVAR NAME=$annotations DELIMIT="'" REPLACE="''">$annotations<?/MIVAR>
     <?MISQL SQL="
-      update image 
-        set annotations = '$annotations' 
-          where zdb_id = '$OID';">
+      update fish_image 
+        set fimg_annotations = '$annotations' 
+        where fimg_zdb_id = '$OID';">
     <?/MISQL>
   <?/MIBLOCK>
 
@@ -47,9 +47,9 @@ to a browser -->
   <?MIBLOCK COND="$(NC,$attr_type,selection)">
 
     <?MISQL SQL="
-      select $attr, thumbnail 
-        from image 
-        where zdb_id = '$OID';">
+      select $attr, fimg_thumbnail 
+        from fish_image 
+        where fimg_zdb_id = '$OID';">
     <?/MISQL>
     <?MIVAR NAME=$current_value>$1<?/MIVAR>
     <?MIVAR NAME=$target_image>$2<?/MIVAR>
@@ -206,8 +206,8 @@ to a browser -->
     <?MIBLOCK COND="$(EC,$attr,stock)">
       <?MIVAR NAME=$select_from>FISH<?/MIVAR>
       <?MIVAR NAME=$action>return_id<?/MIVAR>
-      <?MIVAR NAME=$fill_field>stock<?/MIVAR>
-      <?MIVAR NAME=$fill_table>image<?/MIVAR>
+      <?MIVAR NAME=$fill_field>fimg_fish_zdb_id<?/MIVAR>
+      <?MIVAR NAME=$fill_table>fish_image<?/MIVAR>
       <?MIVAR NAME=$jump_to>image_info<?/MIVAR>
       <?MIVAR NAME=$info>NULL<?/MIVAR>
       <?MIVAR NAME=$selector>aa-fishselect.apg<?/MIVAR>
@@ -239,15 +239,17 @@ to a browser -->
     <?MISQL SQL="
       insert into return_recs 
 	  (zdb_id, return_form, return_recid, fill_field, fill_table, info, 
-	   action, jump_to, rec_update)
+	   action, jump_to, rec_update, rtnrec_zdb_id_column_name,
+	   rtnrec_owner_column_name)
 	values ('$return_rec', '$return_form', '$temp_oid', '$fill_field',
-		'$fill_table', '$info', '$action', '$jump_to', 't');">
+		'$fill_table', '$info', '$action', '$jump_to', 't',
+		'fimg_zdb_id', 'fimg_owner_zdb_id');">
     <?/MISQL>
 
     <!-- LAUNCHES THE FRAMES FOR THE ANY SELECTION BROWSER.-->
-    <?MIVAR COND="$(NXST,$constraint)" NAME=$constraint><?/MIVAR>
+
     <?MISQL SQL="
-      select WebExplode(object, '$constraint') 
+      select WebExplode(object, '') 
 	from webPages where ID = 'aa-startframes_select.apg';">
       $1
     <?/MISQL>

@@ -7,12 +7,20 @@ It is called via a link, visible to 'root' only, on the data_manager.html bar th
 Variables expected:  
   OID (REQUIRED) -- the zdb_id of the record to delete.
   rtype (REQUIRED) -- the data type of the record to delete.
-
+  ownerColumn (optional) -- Name of the column containing the record owner's
+    ZDB ID.  Needed only if the name of the column is not "owner"
+  zdbIdColumn (optional) -- Name of the column containing the record's 
+    ZDB ID.  Needed only if the name of the column is not "zdb_id".
 -->
 
 <HTML>
 
-<?MISQL SQL="select WebExplode(object,'permission=root&rtype=$rtype&page_title=DELETE $(UPPER,$rtype)') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+<?MISQL SQL="
+  select WebExplode(object,'permission=root&rtype=$rtype&page_title=DELETE $(UPPER,$rtype)$(XST,$ownerColumn,&ownerColumn=$ownerColumn)$(XST,$zdbIdColumn,&zdbIdColumn=$zdbIdColumn)') 
+    from webPages 
+    where ID='aa-secure_navigation.apg';">
+  $1
+<?/MISQL>
 
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
@@ -32,17 +40,22 @@ $(UPPER,$rtype) record with ZFIN id: <b>$OID</b>
 
 <p>
 If you have <b>ANY</b> doubt that this is the correct thing to do, click "Cancel" below to go back to viewing the record. <p>
-Otherwise, click "Trash it" to delete the record and return to the ZFIN home page.
+Otherwise, click "Delete it" to delete the record and return to the 
+ZFIN home page.
 
 <form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 <input type=hidden name=MIval value=aa-process_delete.apg>
 <input type=hidden name=OID value=$OID>
 <input type=hidden name=rtype value=$rtype>
 
+$(IF,$(XST,$ownerColumn),<input type=hidden name=ownerColumn value=$ownerColumn>)
+$(IF,$(XST,$zdbIdColumn),<input type=hidden name=zdbIdColumn value=$zdbIdColumn>)
+
+
 <TABLE width=100%>
 <TR align=center>
 <TD><input type=button value="CANCEL" onClick="window.history.go(-1)"></TD>
-<TD><INPUT type=submit value="Trash it"></TD>
+<TD><INPUT type=submit value="Delete it"></TD>
 </TR></TABLE>
 
 <?/MIVAR>

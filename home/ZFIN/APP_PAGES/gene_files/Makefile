@@ -2,9 +2,6 @@
 #
 # Makefile for ZFIN_WWW CVS Project, Gene pages
 #
-# $Source$
-# $Id$
-#
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
 # !! of the makefile hierarchy this makefile is a part of, and of the  !!
@@ -21,8 +18,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/gene_files
 
-GENERICS = genelister.apg geneselect.apg haffter_linkages.apg new_marker.apg
-
+GENERICS = genelister.apg geneselect.apg haffter_linkages.apg new_marker.apg 
 
 # use default rules for app page directories
 

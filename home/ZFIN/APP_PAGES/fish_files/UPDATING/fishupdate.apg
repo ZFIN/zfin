@@ -5,7 +5,8 @@ This is the handler that is called whenever a user clicks a button in the "updat
 EXPECTED VARS:
 OID-- the zdb_id of the record to update
 attr -- the column name that is being updated.
-attr_type -- the type of attr being updated. Either 'text','textarea','pic' or 'selection'. Used to choose the right course of action.
+attr_type -- the type of attr being updated. Either 'text','textarea', 
+  or 'selection'. Used to choose the right course of action.
 print_name -- The human-understandable name (vs. the database column name) of
   the attribute to be updated. So for ex, the print name for 'phone' 
   would be 'phone number'
@@ -61,33 +62,6 @@ print_name -- The human-understandable name (vs. the database column name) of
 
 <TABLE width=100%>
 <TR>
-
-<!-- If youre replacing the fishs snapshot -->
-<?MIBLOCK COND="$(EC,$attr_type,pic)">
-<TD valign=middle><b>Current Snapshot:</B></TD>
-<TD>
-<?MIVAR COND="$(NC,$current_value,NULL)">
-<IMG align=center hspace=5 SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$current_value&type=image/gif">
-<?/MIVAR>
-<?MIVAR COND="$(EC,$current_value,NULL)">
-No image currently specified.
-<?/MIVAR>
-</TD></TR>
-<TR><TD colspan=2>
-<HR>
-<p>
-<BIG>Specify a new image:</BIG><p>
-<font size=-1><b>Snapshot Format:</b> You must submit a GIF image file. For the most aesthetic result, we strongly recommend an image no larger than about 3 inches wide and 1.5 inch tall, at a resolution of 72dpi. Larger images tend to displace the other information associated with your fish. </font> <br>
-<INPUT type="file" size=50 name=new_value>
-</TD>
-
-<?MIVAR COND="$(NC,$current_value,NULL)">
-</TR><TR><TD colspan=2>
-Or check here (<input type=checkbox name=null_image>) to simply delete the current image without submitting a replacement.
-</TD>
-<?/MIVAR>
-
-<?/MIBLOCK>
 
 <!-- If you are replacing a TEXTAREA field -->
 <?MIBLOCK COND="$(EC,$attr_type,textarea)">
@@ -233,18 +207,6 @@ When filled, the ZDB_ID of the new return_rec is passed along into whatever brow
 <?MIVAR NAME=$jump_to>pub-info<?/MIVAR>
 <?MIVAR NAME=$info>related<?/MIVAR>
 <?MIVAR NAME=$selector>aa-pubselect2.apg<?/MIVAR>
-<?/MIBLOCK>
-
-
-<?MIBLOCK COND="$(EC,$attr,ref_image)">
-<?MIVAR NAME=$select_from>IMAGE<?/MIVAR>
-<?MIVAR NAME=$action>special_ref_image<?/MIVAR>
-<?MIVAR NAME=$fill_field>representative<?/MIVAR>
-<?MIVAR NAME=$fill_table>image<?/MIVAR>
-<?MIVAR NAME=$jump_to>top<?/MIVAR>
-<?MIVAR NAME=$info>NULL<?/MIVAR>
-<?MIVAR NAME=$selector>aa-imageselect.apg<?/MIVAR>
-<?MIVAR NAME=$constraint>stock=$temp_oid<?/MIVAR>
 <?/MIBLOCK>
 
 <!-- NOW CREATE THE NEW RETURN RECORD -->

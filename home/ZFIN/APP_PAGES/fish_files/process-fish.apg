@@ -171,9 +171,9 @@
     <?MISQL SQL="
       insert into fish_search 
          (fish_id, name, line_type, abbrev, phenotype, chrom_num, chrom_change,
-          comments, allele, mutagen, num_images)
+          comments, allele, mutagen)
         select '$fish_id', name, 'mutant', abbrev, phenotype, chrom_num, 
-               chrom_change, comments, allele, mutagen, 0 
+               chrom_change, comments, allele, mutagen
           from temp_fish 
           where zdb_id='$temp_oid';">
     <?/MISQL>
@@ -272,14 +272,9 @@
       where source_id='$temp_oid';">
   <?/MISQL>
   <?MISQL COND="$(EC,$line_type,mutant)" SQL="
-    update image 
-      set stock='$fish_id'
-      where stock='$temp_oid';">
-  <?/MISQL>
-  <?MISQL COND="$(EC,$line_type,mutant)" SQL="
-    update expression_pat
-      set fish_id='$fish_id'
-      where fish_id='$temp_oid';">
+    update fish_image 
+      set fimg_fish_zdb_id = '$fish_id'
+      where fimg_fish_zdb_id = '$temp_oid';">
   <?/MISQL>
   <?MISQL SQL="
     update int_fish_source 
@@ -367,25 +362,12 @@
   <?/MISQL>
 
 
-  <!-- IF you are taking time-out to CREATE A NEW RECORD, FIRE OFF THE 
-    -- appropriate form.
-    -->
-  <?MIBLOCK COND="$(OR,$(XST,$s_image),$(XST,$s_expat))">
-    <?MISQL SQL="
-      select WebExplode(object,'temp_oid=NULL&return_rec=$return_rec&$presets')
-        from webPages 
-        where ID='$selector';">
-      $1
-    <?/MISQL>
-  <?/MIBLOCK>
-
-
-  <!-- ELSE IF YOU ARE SELECTING a record, fire off the appropriate browser 
+  <!-- YOU ARE SELECTING a record, fire off the appropriate browser 
     -- frameset 
     --
     -- LAUNCHES THE FRAMES FOR THE ANY SELECTION BROWSER.
     -->
-  <?MISQL COND="$(NOT,$(OR,$(XST,$s_image),$(XST,$s_expat)))" SQL="
+  <?MISQL SQL="
     select WebExplode(object,'') 
       from webPages 
       where ID='aa-startframes_select.apg';">

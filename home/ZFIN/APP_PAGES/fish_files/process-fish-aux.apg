@@ -28,30 +28,6 @@ When filled, the ZDB_ID of the new return_rec is passed along into whatever brow
 <?MIVAR NAME=$selector COND="$(EC,$source_type,company)">aa-companyselect.apg<?/MIVAR>
 <?/MIBLOCK>
 
-<!-- Want to create a NEW IMAGE and associate it with this record. Note the 'presets' variable where I can specify values to send to (ie. preset in) the NEW_IMAGE form. -->
-<?MIBLOCK COND=$(XST,$s_image)>
-<?MIVAR NAME=$select_from>IMAGE<?/MIVAR>
-<?MIVAR NAME=$presets>stock=$temp_oid&flag=from_fish<?/MIVAR>
-<?MIVAR NAME=$action>index_me<?/MIVAR>
-<?MIVAR NAME=$fill_field>stock<?/MIVAR>
-<?MIVAR NAME=$fill_table>image<?/MIVAR>
-<?MIVAR NAME=$jump_to>pheno-info<?/MIVAR>
-<?MIVAR NAME=$info>NULL<?/MIVAR>
-<?MIVAR NAME=$selector>aa-image-upload.apg<?/MIVAR>
-<?/MIBLOCK>
-
-<!-- Want to create a NEW EXPRESSION PATTERN record and associate it with this record -->
-<?MIBLOCK COND=$(XST,$s_expat)>
-<?MIVAR NAME=$select_from>EXPRESSION PATTERN<?/MIVAR>
-<?MIVAR NAME=$presets>fishid=$temp_oid&flag=from_fish<?/MIVAR>
-<?MIVAR NAME=$action>index_me<?/MIVAR>
-<?MIVAR NAME=$fill_field>data_id<?/MIVAR>
-<?MIVAR NAME=$fill_table>expat<?/MIVAR>
-<?MIVAR NAME=$jump_to>pheno-info<?/MIVAR>
-<?MIVAR NAME=$info>NULL<?/MIVAR>
-<?MIVAR NAME=$selector>aa-stub.html<?/MIVAR>
-<?/MIBLOCK>
-
 <!-- Want to specify FISH who is maternal strain -->
 <?MIBLOCK COND=$(XST,$s_mother)>
 <?MIVAR NAME=$select_from>FISH<?/MIVAR>

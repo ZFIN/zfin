@@ -24,12 +24,22 @@ info -- optional value used to pass in additional info
 
 
 <!-- First check security. Main purpose is just to get submitter id and name -->
-<?MISQL SQL="
-  select WebExplode(object,'permission=owns&rtype=$target_table') 
-    from webPages 
-    where ID='aa-secure_navigation.apg';">
-  $1
-<?/MISQL>
+
+<?MIBLOCK COND="$(OR,$(EC,$attr,putgene_putative_gene_name),$(EC,$attr,putgene_comments))">
+  <?MISQL SQL="
+    select WebExplode(object,'permission=root') 
+      from webPages 
+      where ID='aa-secure_navigation.apg';">
+    $1
+  <?/MISQL>
+<?MIELSE>
+  <?MISQL SQL="
+    select WebExplode(object,'permission=owns&rtype=$target_table') 
+      from webPages 
+      where ID='aa-secure_navigation.apg';">
+    $1
+  <?/MISQL>
+<?/MIBLOCK>
 
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
@@ -56,11 +66,10 @@ info -- optional value used to pass in additional info
               '$comments', current);">
   <?/MISQL>
 
-  <!-- OK, NOW UPDATE THE  ACTUAL DATA RECORD. HAVE TO DO THINGS SLIGHTLY
-       DIFFERENT FOR IMAGES, SO FIRST FIND OUT WHETHER YOU'RE UPDATING AN
-       IMAGE FIELD, THEN ACT ACCORDINGLY -->
+  <!-- OK, NOW UPDATE THE  ACTUAL DATA RECORD. -->
 
-  <?MISQL COND="$(AND,$(NC,$attr,mrkrali_marker_name_alias),
+  <?MISQL COND="$(AND,$(NC,$attr,mrkrali_marker_name_alias),$(NC,$attr,putgene_comments),
+		      $(NC,$attr,putgene_putative_gene_name),
 		      $(OR,$(EC,$attr_type,text),
 		           $(EC,$attr_type,textarea)))" SQL="
     update $target_table 
@@ -73,6 +82,14 @@ info -- optional value used to pass in additional info
 	(mrkrali_marker_zdb_id, mrkrali_marker_name_alias)
       values ('$OID', '$new_value');">
   <?/MISQL>
+
+  <?MISQL COND="$(OR,$(EC,$attr,putgene_comments),
+		      $(EC,$attr,putgene_putative_gene_name))" SQL="
+    update putative_gene  
+      set $attr='$new_value' 
+      where putgene_mrkr_zdb_id='$OID';">
+  <?/MISQL>
+
 
   <!-- Special case for deleting one of the associated orthos/seqs/sources/pubs -->
   <?MIBLOCK COND="$(EC,$attr_type,special-listitem)">

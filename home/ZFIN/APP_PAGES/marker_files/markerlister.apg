@@ -182,11 +182,6 @@ Startframes.apg will pass this variables on to the select form.  -->
 <?/MISQL>
 <?MIVAR NAME=$num_recs>$MI_ROWCOUNT<?/MIVAR>
 
-<!-- <?MIVAR>CONSTRAINT: $order_clause<?/MIVAR> -->
-<!-- <?MIVAR>CONSTRAINT: $target_table<?/MIVAR> -->
-
-
-<!-- <?MIVAR>CONSTRAINT: $num_recs<?/MIVAR> -->
 
 
 <?MIVAR> 
@@ -254,10 +249,6 @@ Startframes.apg will pass this variables on to the select form.  -->
 	<?MIVAR name=$first_row>1<?/MIVAR>
 	<?MIVAR NAME=$order_clause>$order_clause , target_id desc<?/MIVAR>
 
-<!-- <?MIVAR>marker abbrev: $marker_abbrev<?/MIVAR> -->
-<!-- <?MIVAR>mtype: $mtype<?/MIVAR> -->
-<!-- <?MIVAR>order clause: $order_clause<?/MIVAR> -->
-<!-- <?MIVAR>select ending: $select_ending<?/MIVAR> -->
 
 	<!--  Run inner query for fields associated with current gene_name -->
 	<?MISQL SQL="
@@ -390,7 +381,6 @@ Startframes.apg will pass this variables on to the select form.  -->
 		    &nbsp;
 		  <?/MIBLOCK>
 		<?/MIBLOCK>
-		</font>
               </TD>
 	      <TD>&nbsp; </TD>
 	      <TD>&nbsp; </TD>
@@ -442,8 +432,7 @@ Startframes.apg will pass this variables on to the select form.  -->
 	<!-- end form for map_marker -->         
       </FORM>
 
-  
-    <!-- end outer SQL -->
+      <!-- end outer SQL -->
     <?/MISQL>
 
   </TABLE>
@@ -612,4 +601,3 @@ Startframes.apg will pass this variables on to the select form.  -->
 </HTML>
 
 
- 

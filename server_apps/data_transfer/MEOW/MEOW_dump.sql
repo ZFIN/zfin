@@ -1,6 +1,3 @@
--- $Id$
--- $Source$
-
 -- Command file to dump out GENE information for the MEOW server. Produces
 -- 5 files in the FTP pub/transfer/MEOW directory.  This is currently (2001/02)
 -- run as a cron job every week.  Don Gilbert at MEOW is then responsible for

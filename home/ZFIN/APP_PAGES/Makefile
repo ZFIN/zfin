@@ -2,9 +2,6 @@
 #
 # Makefile for ZFIN_WWW CVS Project, App Pages hierarchy.
 #
-# $Source$
-# $Id$
-#
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
 # !! of the makefile hierarchy this makefile is a part of, and of the  !!
@@ -15,6 +12,7 @@
 
 
 # ---------------  Variable Definitions  --------------------------------
+
 
 TOP = ../../..
 include $(TOP)/make.include
@@ -39,7 +37,8 @@ SUBDIRS = SQL_docs \
 	pubbrowser \
 	security_files \
 	selection \
-	updating
+	updating \
+	xpat_files
 
 
 # ---------------  Production Rules  ------------------------------------

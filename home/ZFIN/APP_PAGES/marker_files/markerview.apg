@@ -1,4 +1,3 @@
-
 <!-- FILE: MARKERVIEW.HTML. This file implements a viewer for MARKER records.
 -->
 
@@ -99,6 +98,7 @@ ERROR -- something bad happened -- no OID passed in!
 
 <?MIVAR NAME=$rec_title>$marker_type: $name<?/MIVAR>
 
+
 <SCRIPT>
 <?MIVAR COND="$(XST,$UPDATE)">
 function doit(attr,attr_type,print_name) {
@@ -169,14 +169,21 @@ value=" DONE UPDATING. Back to Viewing! " onClick="document.location.search='?MI
 <?/MIVAR>
 
 <CENTER>
-<?MIVAR>
-<FONT SIZE=6> $(UPPER,$marker_type): <b> $name
-<?/MIVAR>
+<?MIBLOCK COND="$(EC,$marker_type,GENE)">
+  <?MIVAR>
+    <FONT SIZE=6> $(UPPER,$marker_type): <b> <i>$name</i>
+  <?/MIVAR>
+<?MIELSE>
+  <?MIVAR>
+    <FONT SIZE=6> $(UPPER,$marker_type): <b> $name
+  <?/MIVAR>
+<?/MIBLOCK>
+
 <?MIVAR COND="$(XST,$UPDATE)">
 <INPUT TYPE=button value=Update onClick="doit('gene_name','text','Gene+Name')"> 
 <br><?/MIVAR> 
 <?MIVAR>
-$(IF,$(EC,$marker_type,GENE),"("$abbrev")")</B> </FONT>
+$(IF,$(EC,$marker_type,GENE),"<i>("$abbrev")</i>")</B> </FONT>
 <?/MIVAR>
 <?MIVAR COND="$(XST,$UPDATE)">
 <INPUT TYPE=button value=Update onClick="doit('abbrev','text','Gene+Abbrev')"> 
@@ -191,7 +198,7 @@ $(IF,$(EC,$marker_type,GENE),"("$abbrev")")</B> </FONT>
     value=Add
     onClick="doit('mrkrali_marker_name_alias','text','Alias')">
 <?/MIVAR> 
-<b>Previous names:</b> 
+<b>Previous Names:</b> 
 <?MISQL SQL="
   select mrkrali_marker_name_alias
     from marker_alias
@@ -214,6 +221,28 @@ $(IF,$(EC,$marker_type,GENE),"("$abbrev")")</B> </FONT>
 <b>Description:</b>
 <?MIVAR>$(IF,$(NC,$comments,NULL),$comments,None submitted.)<?/MIVAR>
 
+<!-- display any putative gene name assignments -->
+
+<?MISQL SQL="SELECT  putgene_putative_gene_name, putgene_comments FROM putative_gene WHERE putgene_mrkr_zdb_id = '$OID' ;">
+    <?MIVAR NAME=$putgene_name>$1<?/MIVAR>
+    <?MIVAR NAME=$putgene_comments>$2<?/MIVAR>
+<?/MISQL>
+
+<?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+  <hr width="90%">
+  <?MIVAR COND="$(XST,$UPDATE)">
+    <INPUT TYPE=button 
+      value=Update
+      onClick="doit('putgene_putative_gene_name','text','Name')">
+  <?/MIVAR> 
+  <b>Putative Gene Name: </b><?MIVAR>$putgene_name<?/MIVAR>
+  <p>
+  <?MIVAR COND="$(XST,$UPDATE)">
+    <INPUT TYPE=button value="Update" onClick="doit('putgene_comments','textarea','Comments')"> 
+  <?/MIVAR> 
+  <b>Comments: </b><?MIVAR>$putgene_comments<?/MIVAR>
+  <br>
+<?/MIBLOCK>    
 
 
 <hr width="90%">
@@ -498,8 +527,32 @@ $(SETVAR,$lastitem,$1)
 </TR></TABLE>
 <?MIVAR COND="$(EC,$MI_ROWCOUNT,0)"> None.<?/MIVAR>
 
+<!-- display blast info if exists -->
 
-<!-- Now, for cloned genes, do expression patterns and orthologues. -->
+  <br>
+
+  <?MISQL SQL="
+    SELECT distinct blast_results, blast_date
+    FROM blast
+    WHERE '$OID' = blast_mrkr_zdb_id
+    ;">
+    <?MIVAR NAME="$BLAST_DATE">$2<?/MIVAR>
+    <?MIVAR NAME="$BLAST_RESULT">$1<?/MIVAR>
+
+    <?MIBLOCK COND="$(!=,$MI_CURRENTROW,0)">
+      <?MIVAR>
+
+	<b>Blast Date:</b> &nbsp;$BLAST_DATE
+	<br>
+	<b>Blast Result:</b> &nbsp;$BLAST_RESULT
+	<br>
+
+      <?/MIVAR>
+    <?/MIBLOCK>
+  <?/MISQL>
+
+
+<!-- Now, for cloned genes, do  orthologues. -->
 <?MIBLOCK COND="$(EC,$marker_type,GENE)">
 <p>
 <HR width="80%">
@@ -526,19 +579,62 @@ $(SETVAR,$lastitem,$3)
 
 <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No information submitted (yet).<?/MIVAR>
 
+<?/MIBLOCK> <!-- end of ortho -->
 
+<!-- Now, for cloned genes or ests, do  xpat. -->
+<?MIBLOCK COND="$(OR,$(EC,$marker_type,GENE),$(EC,$marker_type,EST))">
+<?MIVAR NAME=$XPAT_ZDB_ID> <?/MIVAR>
 <p>
 <HR width="80%">
 <p>
 <b>GENE EXPRESSION</b>
 <ul>
-<?MISQL SQL="select name, st_stage, end_stage from expression_pat where fish_id='$OID';">
-<li> Expressed in the <b>$1</b> between the <b>$2</b> and the <b>$3</b> stage. 
+<?MISQL SQL="
+     SELECT distinct xpat_zdb_id, xpat_assay_name, stg_hours_start, stg_name, stg_zdb_id
+     FROM marker_label, label, expression_pattern, expression_pattern_stage, stage
+     WHERE mrkrlbl_marker_zdb_id ='$OID' 
+          AND mrkrlbl_label_zdb_id = lbl_zdb_id
+          AND lbl_zdb_id = xpat_label_zdb_id
+	  AND xpat_zdb_id = xpatstg_xpat_zdb_id
+	  AND xpatstg_start_stg_zdb_id = stg_zdb_id
+     ORDER by 1, 3
+          ;">
+
+	<?MIBLOCK COND=$(NC,$XPAT_ZDB_ID,$1)>
+	<?MIVAR NAME=$XPAT_ZDB_ID>$1<?/MIVAR>
+	<?MIVAR NAME=$XPAT_ASSAY_NAME>$2<?/MIVAR>
+	<?MIVAR NAME=$XPAT_start_time>$3<?/MIVAR>
+	<?MIVAR NAME=$XPAT_STAGE1>$4<?/MIVAR>
+	<?MIVAR NAME=$XPAT_STAGE1_ID>$5<?/MIVAR>
+	<?MIVAR NAME=$XPAT_STAGE2><?/MIVAR>
+	<?MIVAR NAME=$XPAT_end_time><?/MIVAR>
+
+
+	<?MISQL SQL="
+	  SELECT s2.stg_name, s2.stg_hours_end
+	  FROM stage s1, stage s2, expression_pattern_stage
+	  WHERE '$XPAT_ZDB_ID' = xpatstg_xpat_zdb_id
+	    AND '$XPAT_STAGE1_ID' = s1.stg_zdb_id
+	    AND xpatstg_end_stg_zdb_id = s2.stg_zdb_id
+	  ORDER by 2
+	;">
+	  
+	  <?MIVAR NAME=$XPAT_STAGE2>$1<?/MIVAR>
+	  <?MIVAR NAME=$XPAT_end_time>$2<?/MIVAR>
+	
+	<?/MISQL>
+
+<?MIVAR>
+    <li><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatview.apg&OID=$XPAT_ZDB_ID>$XPAT_ASSAY_NAME</A>  -  $XPAT_STAGE1 to $XPAT_STAGE2  ($XPAT_start_time hr to $XPAT_end_time hr) 
+<?/MIVAR>
+	
+	<?/MIBLOCK>
 <?/MISQL>
+
 <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No information submitted (yet).<?/MIVAR>
 </ul>
 
-<?/MIBLOCK>   <!-- ends expats and orthos -->
+<?/MIBLOCK>   <!-- ends expats  -->
 
 
 <HR width="80%">
@@ -556,6 +652,4 @@ $(SETVAR,$lastitem,$3)
 <?/MIBLOCK> <!-- name NC novalue and romwcount > 0 -->
 
 </HTML>
-
-
 

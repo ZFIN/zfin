@@ -18,7 +18,7 @@ annotations -- huge string of urlencoded changed annotations for the image.
 
 <!-- First check security. Main purpose is just to get submitter id and name -->
 <?MISQL SQL="
-  select WebExplode(object, 'permission=owns&rtype=image') 
+  select WebExplode(object, 'permission=owns&rtype=fish_image&ownerColumn=fimg_owner_zdb_id&zdbIdColumn=fimg_zdb_id') 
     from webPages 
     where ID = 'aa-secure_navigation.apg';">
   $1
@@ -52,40 +52,52 @@ annotations -- huge string of urlencoded changed annotations for the image.
        IMAGE FIELD, THEN ACT ACCORDINGLY -->
 
   <?MIBLOCK COND="$(EC,$attr_type,pic)">
-    <?MISQL COND="$(NXST,$null_image)" SQL="
-      update image 
+    <?MISQL SQL="
+      update fish_image 
         set $attr = FILETOBLOB('$new_value', 'client') 
-        where zdb_id = '$OID';">
+        where fimg_zdb_id = '$OID';">
     <?/MISQL>
 
-    <!-- Create a thumbnail for the new image using image alchemy call -->
+    <!-- Create a thumbnail for the new image -->
     <?MIVAR NAME=$mythumb>/tmp/$OID.gif<?/MIVAR>
     <?MISQL SQL="
-      execute function sysexec('make_thumbnail', 
-	                       '$new_value $mythumb -o -g -Yb32 -+ ');">
+      execute function sysexec('make_thumbnail', '$new_value $mythumb');">
     <?/MISQL>
     <?MIVAR NAME=$void>$1<?/MIVAR>
 
+    <!-- Get width and height of new image -->
     <?MISQL SQL="
-      update image 
-        set thumbnail = FILETOBLOB('$mythumb', 'client') 
-        where zdb_id='$OID';">
+      execute function get_image_stats('$new_value');">
+      <?MIVAR NAME=$fimg_width>$1<?/MIVAR>
+      <?MIVAR NAME=$fimg_height>$2<?/MIVAR>
+    <?/MISQL>
+
+    <?MISQL SQL="
+      update fish_image 
+        set fimg_thumbnail = FILETOBLOB('$mythumb', 'client'),
+	    fimg_width = $fimg_width,
+	    fimg_height = $fimg_height
+        where fimg_zdb_id='$OID';">
+    <?/MISQL>
+
+    <?MISQL SQL="
+      execute function sysexec('rm', '$mythumb');">
     <?/MISQL>
 
   <?/MIBLOCK> <!-- ends if its an image -->
 
   <?MISQL COND="$(OR,$(EC,$attr_type,text),$(EC,$attr_type,textarea))" SQL="
-    update image
-      set $attr = '$new_value' 
-      where zdb_id='$OID';">
+    update fish_image
+      set $attr = '$new_value'
+      where fimg_zdb_id='$OID';">
   <?/MISQL>
 
   <?MIBLOCK COND="$(NC,$annotations,NULL)">
     <?MIVAR NAME=$annotations DELIMIT="'" REPLACE="''">$annotations<?/MIVAR>
     <?MISQL SQL="
-      update image 
-        set annotations = '$annotations' 
-        where zdb_id = '$OID';">
+      update fish_image 
+        set fimg_annotations = '$annotations' 
+        where fimg_zdb_id = '$OID';">
     <?/MISQL>
   <?/MIBLOCK>
 
@@ -98,9 +110,6 @@ annotations -- huge string of urlencoded changed annotations for the image.
           and target_id = '$old_value';">
     <?/MISQL>
   <?/MIBLOCK>  <!-- ends special listitem case -->
-
-
-
 
 <?/MIBLOCK> <!-- ends cond authorized -->
 

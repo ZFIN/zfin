@@ -23,40 +23,54 @@ target_table -- either anon_marker or gene, depending on what you're updating
   -- navigator tile if you are doing selection since you are jumping 
   -- directly to a browser 
   -->
-<?MISQL SQL="
-  select WebExplode(object,
-	            'permission=owns&rtype=$target_table$(IF,$(NC,$attr_type,selection),&page_title=Update $print_name)') 
-    from webPages 
-    where ID='aa-secure_navigation.apg';">
-  $1
-<?/MISQL>
+
+
+  <?MISQL SQL="
+    select WebExplode(object,
+		      'permission=owns&rtype=$target_table$(IF,$(NC,$attr_type,selection),&page_title=Update $print_name)') 
+      from webPages 
+      where ID='aa-secure_navigation.apg';">
+    $1
+  <?/MISQL>
 
 
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
   <!-- If the attribute is something we can just specify locally, go ahead and throw up the right form to do it. -->
   <?MIBLOCK COND="$(NC,$attr_type,selection)">
-    <?MIVAR NAME=$name_col>marker_name<?/MIVAR>
-    <?MIVAR COND="$(EC,$target_table,gene)" NAME=$name_col>gene_name<?/MIVAR>
+    <?MIBLOCK COND="$(AND,$(NC,$attr,putgene_putative_gene_name),$(NC,$attr,putgene_comments))">
+      <?MIVAR NAME=$name_col>marker_name<?/MIVAR>
+      <?MIVAR COND="$(EC,$target_table,gene)" NAME=$name_col>gene_name<?/MIVAR>
 
-    <?MIBLOCK COND="$(NC,$attr,mrkrali_marker_name_alias)">
-      <?MISQL SQL="
-	select $attr, $name_col 
-	  from $target_table 
-	  where zdb_id='$OID';">
-      <?/MISQL>
-      <?MIVAR NAME=$current_value>$1<?/MIVAR>
-      <?MIVAR NAME=$update_target>$2<?/MIVAR>
-    <?MIELSE>
-      <?MISQL SQL="
-	select $name_col 
-	  from $target_table 
-	  where zdb_id='$OID';">
-      <?/MISQL>
-      <?MIVAR NAME=$update_target>$1<?/MIVAR>
-      <?MIVAR NAME=$current_value><?/MIVAR>
+      <?MIBLOCK COND="$(NC,$attr,mrkrali_marker_name_alias)">
+	<?MISQL SQL="
+	  select $attr, $name_col 
+	    from $target_table 
+	    where zdb_id='$OID';">
+	<?/MISQL>
+	<?MIVAR NAME=$current_value>$1<?/MIVAR>
+	<?MIVAR NAME=$update_target>$2<?/MIVAR>
+      <?MIELSE>
+	<?MISQL SQL="
+	  select $name_col 
+	    from $target_table 
+	    where zdb_id='$OID';">
+	<?/MISQL>
+	<?MIVAR NAME=$update_target>$1<?/MIVAR>
+	<?MIVAR NAME=$current_value><?/MIVAR>
+      <?/MIBLOCK>
     <?/MIBLOCK>
 
+    <?MIBLOCK COND="$(OR,$(NC,$attr,putgene_putative_gene_name),$(NC,$attr,putgene_comments))">
+        <?MISQL SQL="
+	  select mrkr_name 
+	    from marker 
+	    where mrkr_zdb_id='$OID';">
+	<?/MISQL>
+	<?MIVAR NAME=$update_target>$1<?/MIVAR>
+	<?MIVAR NAME=$current_value><?/MIVAR>
+      <?MIVAR NAME=$target_table>putative_gene<?/MIVAR>
+    <?/MIBLOCK>
 
     <HTML>
     <?MIVAR>
@@ -67,7 +81,6 @@ target_table -- either anon_marker or gene, depending on what you're updating
       </font></center>
     <?/MIVAR>
     <p>
-
 
     <FORM ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" METHOD=post ENCTYPE="multipart/form-data">
       <?MIVAR>

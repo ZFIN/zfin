@@ -1,7 +1,22 @@
 <head>
-</head><TITLE>Developmental Stages</TITLE><body background="/fish_bgd.gif">
+<SCRIPT>
+
+function call_close(){
+   var buttonstring = '<FORM><input type=button name=close value=Close onclick=window.close();></FORM>';
+   document.writeln(buttonstring);
+}
+
+function call_zfin(){
+   var hrefstring = '<A HREF="/index.html">ZFIN  <img src="/fish_net.gif"></A><p>';
+   document.writeln(hrefstring);
+}
+
+</SCRIPT>
+<TITLE>Embyonic Developmental Stages</TITLE>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
 <CENTER>
-<H2>Stages of Embryonic Development of the Zebrafish</H2>
+<H2><a href="/<!--|CGI_BIN_DIR_NAME|-->/ZFIN_jump?record=ZDB-PUB-961014-576">Stages of Embryonic Development of the Zebrafish</a></H2>
 <b>CHARLES B. KIMMEL, WILLIAM W. BALLARD*, SETH R. KIMMEL,  BONNIE ULLMANN, AND THOMAS F. SCHILLING</b><i><p>
 Institute of Neuroscience, University of Oregon, Eugene, OR 97403; *Department of Biology, Dartmouth College, Hanover, NH 03755</i><p>
 Developmental Dynamics 203:253-310 (1995).  
@@ -23,7 +38,6 @@ Copyright  &copy; 1995 Wiley-Liss, Inc.  Reprinted only by permission of Wiley-L
 <LI>Segmentation Period (10-24 h) <A HREF="seg.html">Description</A> and <A HREF="seg_stgs.html">Stages</A><br>
 <LI>Pharyngula Period (24-48 h) <A HREF="phar.html">Description</A> and <A HREF="phar_stgs.html">Stages</A><br>
 <LI>Hatching Period (48-72 h) <A HREF="hatch.html">Description</A> and <A HREF="hatch_stgs.html">Stages</A><br>
-<LI><A HREF="larval.html">Early Larval Period Description</A><br>
 <LI><A HREF="gloss.html">Glossary</A><br>
 <LI><A HREF="refs.html">References</A><p>
 </UL>
@@ -73,7 +87,24 @@ Copyright  &copy; 1995 Wiley-Liss, Inc.  Reprinted only by permission of Wiley-L
 <LI><A HREF="figs/fig42.html">Fig. 42</A>.   Branchial arches develop late in embryogenesis.<br>  
 <li><A HREF="figs/fig43.html">Fig. 43</A>.   The appearance of the cleithrum, the first easily visible bone, marks the end of embryogenesis.<br>
 </UL>
+<hr>
+
+Questions or comments:
+<address>Pat Edwards<br>
+Institute of Neuroscience<br>
+University of Oregon<br>
+Eugene, OR 97403 USA<br>
+fax: 503-346-4548<br>
+<a href="mailto:edwards@uoneuro.uoregon.edu"> edwards@uoneuro.uoregon.edu</a>
+</address>
 
 <hr>
-<A HREF="/index.html">ZFIN  <img src="fish_net.gif"></A><p>
+<SCRIPT>
+  if ((window.name=='')||(window.name=='ZFIN')){
+    call_zfin();	
+  } else {
+    call_close();
+  }
+</SCRIPT>
+<p>
 </body>
