@@ -1,7 +1,7 @@
 create dba function "informix".regen_anatomy_tokens() returning integer
 
   -- ---------------------------------------------------------------------
-  -- This routine creates the all_anatomy_name_tokens table, which
+  -- This routine creates the all_anatomy_tokens table, which
   -- contains all possible names for anatomy items broken up into tokens.
   --
   -- It uses the general ZFIN approach for SPL routines that generate 
@@ -30,7 +30,7 @@ create dba function "informix".regen_anatomy_tokens() returning integer
   --
   -- EFFECTS:
   --   Success:
-  --     all_anatomy_name_tokens table has been replaced with a new
+  --     all_anatomy_tokens table has been replaced with a new
   --       version of the table.  
   --     If any staging tables existed from a previous run of this routine, 
   --       then they will have been dropped.
@@ -161,7 +161,7 @@ create dba function "informix".regen_anatomy_tokens() returning integer
 
 
     -- -------------------------------------------------------------------
-    --   CREATE ALL_ANATOMY_NAME_TOKENS TABLE
+    --   CREATE ALL_ANATOMY_TOKENS TABLE
     -- -------------------------------------------------------------------
     -- Contains all tokens for all anatomy names
 
@@ -169,11 +169,11 @@ create dba function "informix".regen_anatomy_tokens() returning integer
 
     if exists (select * 
                  from systables 
-                 where tabname = "all_anatomy_name_tokens_new") then
-      drop table all_anatomy_name_tokens_new;
+                 where tabname = "all_anatomy_tokens_new") then
+      drop table all_anatomy_tokens_new;
     end if
 
-    create table all_anatomy_name_tokens_new
+    create table all_anatomy_tokens_new
       (
         anattok_token_lower      varchar(255) not null,
            check (anattok_token_lower = lower(anattok_token_lower)),
@@ -181,7 +181,7 @@ create dba function "informix".regen_anatomy_tokens() returning integer
       )
       fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3  
       extent size 128 next size 128 lock mode page;
-    revoke all on all_anatomy_name_tokens_new from "public";
+    revoke all on all_anatomy_tokens_new from "public";
 
 
 
@@ -232,7 +232,7 @@ create dba function "informix".regen_anatomy_tokens() returning integer
     -- ------------------------------------------------------------------
 
     let errorHint = "Moving tokens to new table";
-    insert into all_anatomy_name_tokens_new
+    insert into all_anatomy_tokens_new
         ( anattok_anatitem_zdb_id, anattok_token_lower )
       select distinct tokout_zdb_id, tokout_token
         from tokenize_out_temp;
@@ -243,21 +243,20 @@ create dba function "informix".regen_anatomy_tokens() returning integer
     -- -------------------------------------------------------------------
 
     -- primary key
-    let errorHint = "all_anatomy_name_tokens create PK index";
-    create unique index all_anatomy_name_tokens_primary_key_index_transient
-      on all_anatomy_name_tokens_new (anattok_token_lower, 
-                                      anattok_anatitem_zdb_id)
+    let errorHint = "all_anatomy_tokens create PK index";
+    create unique index all_anatomy_tokens_primary_key_index_transient
+      on all_anatomy_tokens_new (anattok_token_lower, anattok_anatitem_zdb_id)
       fillfactor 100
       in idxdbs3;
 
     -- foreign key
     let errorHint = "create anattok_anatitem_zdb_id FK index";
     create index anattok_anatitem_zdb_id_index_transient
-      on all_anatomy_name_tokens_new (anattok_anatitem_zdb_id)
+      on all_anatomy_tokens_new (anattok_anatitem_zdb_id)
       fillfactor 100
       in idxdbs3;
 
-    update statistics high for table all_anatomy_name_tokens_new;
+    update statistics high for table all_anatomy_tokens_new;
 
 
 
@@ -295,34 +294,34 @@ create dba function "informix".regen_anatomy_tokens() returning integer
 
 
       let errorHint = "drop table";
-      drop table all_anatomy_name_tokens;
+      drop table all_anatomy_tokens;
 
       let errorHint = "rename table";
-      rename table all_anatomy_name_tokens_new to all_anatomy_name_tokens;
+      rename table all_anatomy_tokens_new to all_anatomy_tokens;
  
       let errorHint = "rename index";
-      rename index all_anatomy_name_tokens_primary_key_index_transient
-        to all_anatomy_name_tokens_primary_key_index;
+      rename index all_anatomy_tokens_primary_key_index_transient
+        to all_anatomy_tokens_primary_key_index;
        rename index anattok_anatitem_zdb_id_index_transient 
         to anattok_anatitem_zdb_id_index;
 
 
       -- define constraints
 
-      let errorHint = "all_anatomy_name_tokens PK constraint";
-      alter table all_anatomy_name_tokens add constraint
+      let errorHint = "all_anatomy_tokens PK constraint";
+      alter table all_anatomy_tokens add constraint
 	primary key (anattok_token_lower, anattok_anatitem_zdb_id)
-	constraint all_anatomy_name_tokens_primary_key;
+	constraint all_anatomy_tokens_primary_key;
 
       let errorHint = "anattok_anatitem_zdb_id FK constraint";
-      alter table all_anatomy_name_tokens add constraint
+      alter table all_anatomy_tokens add constraint
 	foreign key (anattok_anatitem_zdb_id)
         references anatomy_item
         on delete cascade
 	constraint anattok_anatitem_zdb_id_foreign_key;
 
       let errorHint = "grant select";
-      grant select on all_anatomy_name_tokens to "public";
+      grant select on all_anatomy_tokens to "public";
 
 
       --trace off;

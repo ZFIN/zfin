@@ -56,21 +56,23 @@ $(STATIC_PROC_TARGETS) : $(TARGETDIR)/% : %
 
 # TEST REGEN_ANATOMY_TOKENS()
 
+runanat :
+	/bin/date
+	echo 'execute function regen_anatomy_tokens()' | $(DBACCESS) $(DBNAME)
+	/bin/date
+
 testanatpre : 
 	-mkdir -p $(TESTDIR)
 	echo ' \
-  unload to "$(TESTDIR)/all_anatomy_name_tokens.pre" \
+  unload to "$(TESTDIR)/all_anatomy_tokens.pre" \
     select anattok_token_lower, anattok_anatitem_zdb_id \
-      from all_anatomy_name_tokens \
+      from all_anatomy_tokens \
       order by anattok_anatitem_zdb_id, anattok_token_lower' | $(DBACCESS) $(DBNAME)
-
-
-# post test gets a make error if the pre and post files are different.
 
 testanatpost :
 	echo ' \
-  unload to "$(TESTDIR)/all_anatomy_name_tokens.post" \
+  unload to "$(TESTDIR)/all_anatomy_tokens.post" \
     select anattok_token_lower, anattok_anatitem_zdb_id \
-      from all_anatomy_name_tokens \
+      from all_anatomy_tokens \
       order by anattok_anatitem_zdb_id, anattok_token_lower' | $(DBACCESS) $(DBNAME)
-	diff $(TESTDIR)/all_anatomy_name_tokens.pre $(TESTDIR)/all_anatomy_name_tokens.post
+	-/bin/diff $(TESTDIR)/all_anatomy_tokens.pre $(TESTDIR)/all_anatomy_tokens.post
