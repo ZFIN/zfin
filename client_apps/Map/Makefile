@@ -33,11 +33,10 @@ IMPORTDIR = netscape
 
 # ---- Java source variables
 
-GENERICS = zmapper/SQLQuery.java
+GENERICS = zmapper/SQLQuery.java zmapper/MarkerBuilder.java
 STATICS  = mapplet.java \
 	zmapper/BackBone.java zmapper/Bin.java zmapper/BinGroup.java \
-	zmapper/LayoutManager.java zmapper/MapViewer.java zmapper/Marker.java \
-	zmapper/MarkerBuilder.java 
+	zmapper/LayoutManager.java zmapper/MapViewer.java zmapper/Marker.java
 
 SPECIFICS = $(foreach GNRC, $(GENERICS), $(STAGINGDIR)/$(GNRC))
 STATICSTAGINGS = $(foreach STAT, $(STATICS), $(STAGINGDIR)/$(STAT))
