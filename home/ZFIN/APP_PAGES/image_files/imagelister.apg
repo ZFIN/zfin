@@ -157,7 +157,7 @@ Datablade documentation.
       <?/MIBLOCK>
       <TD align=center>
 	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$fimg_zdb_id"> 
-	  <IMG SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$fimg_thumbnail&MItypeObj=image/gif"></A> 
+	  <IMG SRC="<!--|IMAGE_LOAD|-->/$fimg_thumbnail"></A> 
       </TD>
       <TD valign="TOP"> 
 	<FONT SIZE=-1> 
