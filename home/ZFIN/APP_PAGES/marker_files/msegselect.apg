@@ -159,14 +159,28 @@ PREFIX: msegsel_
      <?MIVAR NAME=$input_name DELIMIT="'" REPLACE="''">$input_name<?/MIVAR>
      <?MIVAR NAME=mrkrMchIdLast><?/MIVAR>
      <?MIVAR NAME=mchGeneIdLast><?/MIVAR>
+
+     <?MIBLOCK COND="$(EC,$compare,starts)">
+       <?MIVAR NAME=$msegsel_nameTable><?/MIVAR>
+       <?MIVAR NAME=$msegsel_nameTest>
+         and allmapnm_name_lower like '$(LOWER,$input_name)%'
+       <?/MIVAR>
+     <?MIELSE>
+       <?MIVAR NAME=$msegsel_nameTable>, all_name_ends<?/MIVAR>
+       <?MIVAR NAME=$msegsel_nameTest>
+         and allmapnm_serial_id = allnmend_allmapnm_serial_id
+         and allnmend_name_end_lower like '$(LOWER,$input_name)%' 
+       <?/MIVAR>
+     <?/MIBLOCK>
+
      <?MICOMMENT>*** 08/26 name search will not search for accession number<?/MICOMMENT>
 
      <?MISQL SQL="
 	select allmapnm_zdb_id, allmapnm_name, allmapnm_significance, allmapnm_precedence
-          from all_map_names
-	 where allmapnm_name_lower like '$wild_card$(LOWER,$input_name)%'
-	   and allmapnm_zdb_id like 'ZDB-$marker_type%'
+          from all_map_names $msegsel_nameTable
+	 where allmapnm_zdb_id like 'ZDB-$marker_type%'
            and allmapnm_precedence <> 'Accession number'
+           $msegsel_nameTest
         order by allmapnm_zdb_id,allmapnm_significance, allmapnm_name; ">
 	<?MIVAR NAME=mrkrMchId>$1<?/MIVAR>
 	<?MISQL COND="$(NC,$mrkrMchId,$mrkrMchIdLast)" SQL="
@@ -196,10 +210,10 @@ PREFIX: msegsel_
      <?MISQL SQL="
 	select mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id, allmapnm_name, 
 	       allmapnm_significance
-	  from marker_relationship, all_map_names 
+	  from marker_relationship, all_map_names $msegsel_nameTable
 	 where mrel_mrkr_2_zdb_id = allmapnm_zdb_id 
 	   and mrel_type = 'clone contains gene'
-           and allmapnm_name_lower like '$wild_card$(LOWER,$input_name)%'
+           $msegsel_nameTest
            and mrel_mrkr_1_zdb_id like 'ZDB-$marker_type%'
 	   and allmapnm_precedence <> 'Accession number'
            and not exists
