@@ -12,6 +12,7 @@
 
 <basefont size=2>
 
+<?MISQL SQL="select object from webPages where ID='aa-chromoscripts.apg';">$1<?/MISQL>
 
 <!-- THIS NEXT PART IS EXECUTED AFTER THE PERSON ENTERS SOME CRITERIA -->
 
@@ -19,6 +20,12 @@
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-identify.apg';">$1<?/MISQL>
 <?MISQL SQL="delete from int_person_places where pers_id='$ZDB_ident' and place_id='FISH';"><?/MISQL>
 <?MISQL COND="$(NOT,$(EQ,$(SUBSTR,$ZDB_name,1,5),GUEST))" SQL="insert into int_person_places (pers_id,place_id,last_visit) values ('$ZDB_ident','FISH',current);"><?/MISQL>
+
+<!-- set userid to ZDB_ID of user or GUEST to be used by the map viewer -->
+<?MIVAR NAME=$userid>GUEST<?/MIVAR>
+<?MIBLOCK COND="$(NOT,$(EQ,$(SUBSTR,$ZDB_name,1,5),GUEST))">
+  <?MIVAR NAME=$userid>$ZDB_ident<?/MIVAR>
+<?/MIBLOCK>
 
 <!-- This next part builds up a query piece by piece, based on which criteria 
   were passed in 
@@ -71,8 +78,6 @@ $constraint $previous (webhtml_like($anon1,'$anon1text'))<?/MIVAR>
 $constraint $previous (lower($anon1) like '%$(LOWER,$anon1text)%')<?/MIVAR>
 
 <?/MIBLOCK> <!-- ends shared mutant/wild-type block -->
-
-
 
 
 <!-- NOW for mutant queries, BUILD the mutant constraint clause by extending the basic one to constrain on mutant attributes too -->
@@ -160,6 +165,7 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
 
 <?MIVAR COND="$(XST,$getsome)"><font color="red"><b>Showing only first $limit </b></font> of <?/MIVAR>
 
+
 <?MISQL SQL="select count(*)::integer from $target_table  where line_type='mutant' $mut_constraint;"> <b>$1</b> matching records found.<?/MISQL>
 
 <?MIVAR COND="$(XST,$getsome)">
@@ -191,20 +197,24 @@ Options:
 <?MIBLOCK COND="$(XST,$limit)">
 <TABLE width=100%>
 
-<TH> </TH><TH>Allele [previous names]</TH> <TH>Locus (abbrev) [previous names]</TH> <TH>Gene</TH> <TH>Mut. Type</TH> <TH>Mutagen</TH> <TH>LG</TH> <TH>Images</TH>
-<?MISQL SQL="select distinct name, fish_id, abbrev, mutagen, allele, chrom_change, chrom_num,num_images,locus,gene_abbrev,gene_id from $target_table where line_type='mutant' $mut_constraint $order_by;" MAXROWS=$limit>
-<?MIVAR NAME=$gene_id>$11<?/MIVAR>
-<?MIVAR NAME=$gene_abbrev>$10<?/MIVAR>
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
+
+<TH> </TH><TH>Allele [previous names]</TH> <TH>Locus (abbrev) [previous names]</TH> <TH>Gene</TH> <TH>Mut. Type</TH> <TH>LG</TH> <TH>Location</TH> <TH> </TH>
+
+<?MISQL SQL="select distinct name, fish_id, abbrev, allele, chrom_change, chrom_num,locus,gene_abbrev,gene_id from $target_table where line_type='mutant' $mut_constraint $order_by;" MAXROWS=$limit>
+<?MIVAR NAME=$gene_id>$9<?/MIVAR>
+<?MIVAR NAME=$gene_abbrev>$8<?/MIVAR>
 <?MIVAR NAME=$name>$1<?/MIVAR>
-<?MIVAR NAME=$mut>$4<?/MIVAR>
-<?MIVAR NAME=$chromchange>$6<?/MIVAR>
-<?MIVAR NAME=$chromnum>$7<?/MIVAR>
-<?MIVAR NAME=$num_images>$8<?/MIVAR>
-<?MIVAR NAME=$locus>$9<?/MIVAR>
+<?MIVAR NAME=$chromchange>$5<?/MIVAR>
+<?MIVAR NAME=$chromnum>$6<?/MIVAR>
+<?MIVAR NAME=$locus>$7<?/MIVAR>
+<?MIVAR NAME=$allele>$4<?/MIVAR>
+<?MIVAR NAME=$fish_id>$2<?/MIVAR>
 
-$(IF,$(>,$MI_CURRENTROW,1),"<TR><TD colspan=7> <HR width=80%> </TD> </TR>")
 
-$(IF,$(=,$MI_CURRENTROW,1),"<TR><TD colspan=7> <HR size=5> </TD> </TR>")
+$(IF,$(>,$MI_CURRENTROW,1),"<TR><TD colspan=8> <HR width=80%> </TD> </TR>")
+
+$(IF,$(=,$MI_CURRENTROW,1),"<TR><TD colspan=8> <HR size=5> </TD> </TR>")
 
 <?MIVAR NAME=$abbrev>$3<?/MIVAR>
 <?MIBLOCK COND="$(EC,$abbrev,NULL)">
@@ -218,16 +228,17 @@ $(IF,$(=,$MI_CURRENTROW,1),"<TR><TD colspan=7> <HR size=5> </TD> </TR>")
 
 <TR align=center valign=top> 
 <TD>$MI_CURRENTROW. 
-$(IF,$(XST,$return_rec),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$2" TARGET=content>SELECT</A>") 
+$(IF,$(XST,$return_rec),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$fish_id" TARGET=content>SELECT</A>") 
 </TD>
 <TD valign=top> 
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$2" TARGET=content>$5</A>
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$fish_id" TARGET=content>$allele</A>
 
 <!-- allele_name contains all names pull aliases only -->
 <?MISQL SQL="select distinct alleali_allele_name_alias from allele_alias , fish_search where  fish_id = '$2' and alleali_alt_zdb_id = alt_zdb_id;">
-<?MIVAR COND="$(=,$MI_CURRENTROW,1)">&nbsp;[<?/MIVAR>
-<?MIVAR COND="$(>,$MI_CURRENTROW,1)">;<?/MIVAR>$1
+  <?MIVAR COND="$(=,$MI_CURRENTROW,1)">&nbsp;[<?/MIVAR>
+  <?MIVAR COND="$(>,$MI_CURRENTROW,1)">;<?/MIVAR>$1
 <?/MISQL>
+
 <?MIVAR COND="$(>=,$MI_CURRENTROW,1)">]<?/MIVAR>
 
 </TD> 
@@ -253,17 +264,53 @@ $(IF,$(XST,$return_rec),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do
 <TD><font size=-1> $(IF,$(NC,$gene_id,UNKNOWN),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$gene_id TARGET=content>$gene_abbrev</A>,UNKNOWN)
 </font></TD>
 
-<TD><font size=-1> $(IF,$(EC,$chromchange,NULL),UNKNOWN,$chromchange)</font> </TD> 
+  <TD>
+    <font size=-1> 
+      $(IF,$(EC,$chromchange,NULL),UNKNOWN,$chromchange)
+    </font> 
+  </TD> 
+  <TD>
+    <font size=-1> 
+      $(IF,$(EC,$chromnum,0),UNKNOWN,$chromnum)
+    </font> 
+  </TD> 
 
+  <?MISQL SQL="select lg_location,metric from public_paneled_markers where zdb_id = '$fish_id';">
 
-<TD><font size=-1> $(IF,$(EC,$mut,NULL),UNKNOWN,$mut)</font> </TD> 
-<TD><font size=-1> $(IF,$(EC,$chromnum,0),UNKNOWN,$chromnum)</font> </TD> 
-<TD><font size=-1>$8</font></TD>
-</TR>
+    <?MIVAR NAME=$lg_location>$1<?/MIVAR>
+    <?MIVAR NAME=$metric>$2<?/MIVAR>
+
+    <?MIBLOCK COND="$(>,$MI_CURRENTROW,1)">
+	<TR><TD> </TD><TD> </TD><TD> </TD><TD> </TD><TD> </TD><TD> </TD>
+    <?/MIBLOCK>
+
+    <TD align=center>
+      <font size=-1>
+	$lg_location $metric
+      </font>
+    </TD></TR>
+
+    <!-- create view map buttons -->
+    <?MIVAR>
+      <form method=post  name="$allele" target="content" action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi">
+        <input type=hidden name=view_map value="view_map">
+        <input type=hidden name=userid value=$userid>
+        <input type=hidden name=OID value=$fish_id>
+        <input type=hidden name=MGH value=1>  <!-- we currently display "mapped" mutants on MGH panel -->
+        <TR><TD> </TD><TD> </TD><TD> </TD>
+        <TD align=left><font size=1><input type=button value='VIEW MERGED MAP' name=view_merge_map onClick="document.$allele.action='/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi';document.$allele.submit();"></TD><TD>&nbsp;</TD><TD align=left><font size=1><input type=submit value='VIEW INDIVIDUAL MAPS' name=view_map ></TD></TR>
+      </form>
+    <?/MIVAR>   
+
+  <?/MISQL>
+
 <?/MISQL>
 
 </TABLE>
+
 <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No matching records found<?/MIVAR>
+
+
 
 <?/MIBLOCK>  <!-- ends if no overflow -->
 <?/MIBLOCK>  <!-- ends the mutant case -->

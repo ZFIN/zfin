@@ -1,5 +1,4 @@
 
-
 <!-- FILE: FISHVIEW.HTML. This file implements a viewer for FISH records. The goal is to display all of the information associated with, not only the FISH record, but also all mutant alleles (ie. CHROMOSOME and ALTERATION recs) associated with the FISH.
 
 
@@ -16,20 +15,32 @@ Variables Expected:
 <?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
 <?MIVAR COND="$(NXST,$lg)" NAME=$lg>0<?/MIVAR>
 <?MIVAR COND="$(NXST,$ALTOID)" NAME=$ALTOID><?/MIVAR>
+<?MIVAR COND="$(NXST,$link_id)" NAME=$link_id><?/MIVAR>
+<?MIVAR COND="$(NXST,$distance)" NAME=$distance><?/MIVAR>
+<?MIVAR COND="$(NXST,$lod)" NAME=$lod><?/MIVAR>
+<?MIVAR COND="$(NXST,$metric)" NAME=$metric><?/MIVAR>
+
+<?MIVAR NAME=$userid>GUEST<?/MIVAR>
+
+<?MISQL SQL="select object from webPages where ID='aa-chromoscripts.apg';">$1<?/MISQL>
+
 
 <SCRIPT>
 function info() {
   window.alert('ANONYMOUS LINKAGE:\n This marker is a dummy placeholder for a marker that has been linked to this locus, \nbut has not been published yet. ZFIN supports anonymous linkages to promote scientific \ncollaboration; you should contact the submitter of this mapping data (just click the link) \nto negotiate access to this information.');
 }
 
-<?MIVAR>
-function add_linkage() {
-   helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-linkagedit.apg&OID=$OID","helpwindow","scrollbars=yes,width=550,height=300");
+function call_mapplet() {
+
+document.updater.submit();
 }
 
-function edit_linkage(link_id) {
-   helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-linkagedit.apg&OID=$OID&edit_link="+link_id,"helpwindow","scrollbars=yes,width=550,height=300");
+function call_zmapplet() {
+document.updater.action='/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi';
+document.updater.submit();
 }
+
+<?MIVAR>
 
 function deleteLinkage(mid,dist,lod) {
 window.location.search='?MIval=aa-do-fishupdate.apg&OID=$OID&attr=protocol&attr_type=special-alteration&old_value='+old_value+'&new_value='+new_value+'&alt_id='+alt_id
@@ -103,7 +114,9 @@ function Delete_marker(allele,marker_id) {
 window.location.search='?MIval=aa-do-fishupdate.apg&OID=$OID&attr='+allele+'&attr_type=marker-delete&old_value='+marker_id+'&new_value=deleted'
 }
 
-
+function edit_linkage(link_id,oid) {
+window.location.search='?MIval=aa-edit_linkage.apg&link_id='+link_id+'&OID='+oid
+}
 </SCRIPT>
 <?/MIVAR>
 
@@ -120,7 +133,7 @@ window.location.search='?MIval=aa-do-fishupdate.apg&OID=$OID&attr='+allele+'&att
 
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
-<?MISQL SQL="select name, abbrev, upper(line_type), source, mother, father, discoverer, lab, HTML_breaks(phenotype), segregation, orig_crossnum, HTML_breaks(comments),status,owner,pheno_keywords,allele,locus from fish where zdb_id='$OID';"><?/MISQL>
+<?MISQL SQL="select name, a.abbrev, upper(line_type), source, mother, father, discoverer, lab, HTML_breaks(phenotype), segregation, orig_crossnum, HTML_breaks(a.comments),status,a.owner,pheno_keywords,allele,locus, b.abbrev from fish a, locus b where a.zdb_id='$OID' and b.zdb_id = a.locus;"><?/MISQL>
 
 
 <?MIVAR NAME=$name>$1<?/MIVAR>
@@ -140,6 +153,7 @@ window.location.search='?MIval=aa-do-fishupdate.apg&OID=$OID&attr='+allele+'&att
 <?MIVAR NAME=$pheno_keywords>$15<?/MIVAR>
 <?MIVAR NAME=$allele>$16<?/MIVAR>
 <?MIVAR NAME=$locus>$17<?/MIVAR>
+<?MIVAR NAME=$locus_abbrev>$18<?/MIVAR>
 
 <?MIVAR NAME=$rec_title>Record for $line_type $abbrev<?/MIVAR>
 
@@ -158,7 +172,7 @@ window.location.search='?MIval=aa-do-fishupdate.apg&OID=$OID&attr='+allele+'&att
 <A NAME="top">
 
 <!-- OKAY, NOW  THROW UP THE  FISH INFO -->
-<form NAME=updater>
+<form NAME=updater method=post action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi" target="content" >
 <?MIVAR COND="$(XST,$UPDATE)">
 <center><font size=5 color="#00ff00"><input type=button 
 value=" DONE UPDATING. Back to Viewing! " onClick="document.location.search='?MIval=aa-fishview.apg&OID=$OID'"> </font></center>
@@ -482,7 +496,7 @@ $(IF,$(OR,$(NXST,$UPDATE),$(NC,$10,original)),$3)
 <!-- add option for complex rearrangement , required db change to inncrease size of field chrom_change 12/06/00  -->
 
 $(IF,$(AND,$(XST,$UPDATE),$(EC,$10,original)),"<SELECT name=chrom_change onChange=doChromChange(this.options[this.selectedIndex].value,'"$3"','"$11"')>
-<option "$(IF,$(EC,$3,point_mutation),SELECTED)" value=point_mutation>point mutation
+<option "$(IF,$(EC,$3,point),SELECTED)" value=point>point
 <option "$(IF,$(EC,$3,duplication),SELECTED)" value=duplication>duplication
 <option "$(IF,$(EC,$3,deficiency),SELECTED)" value=deficiency>deficiency
 <option "$(IF,$(EC,$3,translocation),SELECTED)" value=translocation>translocation
@@ -535,39 +549,18 @@ $(IF,$(AND,$(XST,$UPDATE),$(EC,$10,original)),"<SELECT name=chrom_number onChang
 
 <?/MISQL>
 
+</TD></TR></TABLE>
 
 <?MIBLOCK COND="$(>,$MI_ROWCOUNT,1)">
-</TD></TR></TABLE>
 <b>Please refer to parental lineages (click links below) for detailed mapping information on the alleles carried by this double-mutant line.</b>
 <?/MIBLOCK>
 
-<!-- If its just a single mutant, go ahead and show mapping info -->
+
+
 <?MIBLOCK COND="$(=,$MI_ROWCOUNT,1)">
+<hr width=90%>
+<font size=3><b>Mapping Information:</b><p>
 
-<font size=-1><?MIVAR><b>Mapped linkages</b> to  </font> $abbrev:<?/MIVAR>
-<?MIVAR COND="$(XST,$UPDATE)">
-<INPUT TYPE=button value="ADD new linkage" onClick="add_linkage();">
-<?/MIVAR>
-
-<?MIVAR NAME=$override>$(IF,$(OR,$(EC,$ZDB_access,root),$(EC,$ZDB_access,fishauth)),true,false)<?/MIVAR>
-
-<TABLE cellpadding=2>
-<?MIVAR NAME=$curviewer>/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=<?/MIVAR>
-<?MISQL SQL="select m1_abbrev,LOD,dist,m1_type,m1_id,a.owner,private,b.full_name,a.link_id,a.metric  from all_linked_markers a,person b where m2_id='$OID' and a.owner=b.zdb_id order by m1_type,dist;">
-
-$(IF,$(=,$MI_CURRENTROW,1),"<TR><TD></TD><TD></TD><TD><U>Distance</U></TD><TD><U>LOD</U></TD><td></TD></TR>")
-
-$(IF,$(NC,$4,GENE),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID="))
-
-<TR>
-$(IF,$(XST,$UPDATE),"<TD><font size=2><input type=button value=edit onClick=edit_linkage('"$9"');></TD>","<TD></TD>")
-$(IF,$(OR,$(EC,$override,true),$(EC,$7,f),$(EC,$ZDB_ident,$6)),"<TD><font size=-1><A HREF="$curviewer$5">"$1"</A> ("$4")</TD>
-<TD align=center><font size=-1>"$3" "$10"</TD>
-<TD align=center><font size=-1>"$2"</TD><TD><font size=-1>mapped by <A href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID="$6">"$8"</a></TD>","<TD colspan=4><font size=-1><A href=javascript:info();>"$4$MI_CURRENTROW"</A>: Unpublished! <A href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID="$6">Contact "$8"</a>.</TD>")
-</TR>
-<?/MISQL>
-</TABLE>
-<?MIVAR COND="$(=,$MI_ROWCOUNT,0)"><font size=2>&nbsp;&nbsp;&nbsp;No linkage data submitted (yet).</font><?/MIVAR>
 
 <!-- Now if it's a deletion, also show present/missing markers -->
 <?MISQL SQL="select chrom_change from fish_search where fish_id='$OID';"><?/MISQL>
@@ -576,9 +569,6 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$7,f),$(EC,$ZDB_ident,$6)),"<TD><font size=-
 <?MIBLOCK COND="$(OR,$(EC,$chrom_change,deficiency),$(EC,$chrom_change,translocation),$(EC,$chrom_change,UNKNOWN))">
 <A NAME="markers-missing">
 
-
-
-<hr width=80%>
 <TABLE width=100%><TR><TD><font size=2>
 
 <?MIVAR NAME=$last><?/MIVAR>
@@ -628,17 +618,216 @@ $(SETVAR,$last,$3)
 <br>
 <?/MIVAR>
 
-</TD></TR></TABLE>
-
 
 <?/MIBLOCK> <!-- ends deficiency -->
 
 </TD></TR></TABLE>
 
+<!--KKKKKK-->
+
+<TABLE width=100% cellpadding=5 border=4 bgcolor="#f8fabb" cols=2 rows=1>
+<TR>
+<TD valign=top colspan=2>
+
+<?MIVAR> <B>Reference Panel Location(s): $abbrev  </B><?/MIVAR> 
+<TABLE cols=3 width=100% colspan=2>
+
+<?MIVAR NAME=$override>$(IF,$(OR,$(EC,$ZDB_access,root),$(EC,$ZDB_access,fishauth)),true,false)<?/MIVAR>
+
+<?MISQL SQL="select a.owner, lg_location, target_id as panel_id, OR_lg, target_abbrev as panel_abbrev,private,b.full_name,a.metric,day(a.entry_date::date),month(a.entry_date::date), year(a.entry_date::date), map_name, disp_order from paneled_markers a,person b, panels c  where a.zdb_id='$OID' and OR_lg is not null and a.owner=b.zdb_id and a.target_id = c.zdb_id order by c.disp_order;">
+
+
+$(IF,$(>,$MI_CURRENTROW,1),<TR><td colspan=2><hr width=80%></TD></TR>)
+<TR>
+
+<?MIVAR NAME=$upd_day>$9<?/MIVAR>
+<?MIBLOCK COND="$(NC,$upd_day,NULL)">
+<?MIVAR NAME=$upd_date>$(INDEX,$(-,$10,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $9,$11 
+<?/MIVAR>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(EC,$upd_day,NULL)">
+<?MIVAR NAME=$upd_date> <?/MIVAR>
+<?/MIBLOCK>
+
+$(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),"<TD colspan=3><font size=2>LG <b>"$4"</b>;<b> "$2"</b> "$8" (<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$3">"$5" Panel; updated "$upd_date"</A>) "$(IF,$(ISNULL,$12),,Mapped as $12)" </TD>","<TD colspan=2><font size=2>Mapped on <A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$3">"$5" Panel; updated "$upd_date"</A>, but still confidential.")
+
+</TD>
+
+
+</TR><TR>
+<TD colspan=2><font size=2>&nbsp;&nbsp;&nbsp; mapped by <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$1">$7</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="javascript:view_scores('$3','$4','$OID','$abbrev');">Scoring Data</A></TD> 
+</TR>
+
+<?/MISQL>
+
+
+<?MIVAR COND="$(=,$MI_ROWCOUNT,0)"><p>Not mapped on any reference panel<?/MIVAR>
+</TABLE>
+
+</TD>
+<!-- ************************************** -->
+<TD valign=top>
+<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=ZDB-REFCROSS-010114-1>ZMAP</A> <b>Location(s): <?MIVAR>$abbrev</b><?/MIVAR>
+<TABLE>
+<?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+<!-- look for a match of the last two characters in the public_paneled_markers abbrev to match the last two characters in the panels abbrev for table join to find disp_order -->
+<!--  naming convention is xxx_ln54  -->
+<!-- this might be a bit risky but we don't anticipate any new panels since sequencing is underway. -->
+<?MISQL SQL="select or_lg,lg_location,a.abbrev,disp_order from public_paneled_markers a, panels b where a.zdb_id='$OID' and target_abbrev = 'ZMAP'and SUBSTRING(a.abbrev from LENGTH(a.abbrev)-1 for 2) = SUBSTRING(b.abbrev from LENGTH(b.abbrev)-1 for 2) order by disp_order;">
+  <TR>
+    <TD>
+     <font size=2> LG <b>$1</b>; <b>$2</b> cM  $(SUBSTR,$3,$(+,1,$(POSITION,$3,"_") ))
+    </TD>
+  </TR>
+<?/MISQL>
+
+<TD align=right><font size=2>
+<input type=button value='VIEW MERGED MAP' name=view_map onClick="call_zmapplet()">
+</TD>
+<?/MIBLOCK>
+</TABLE>
+</TD>
+<!-- ************************************ -->
+
+<TD valign=top>
+
+<?MIVAR><b>View Map for: $abbrev</b> <?/MIVAR> 
+
+<TABLE cellpadding=0 cellspacing=0 >
+
+<?MISQL SQL="select distinct target_abbrev, private as panel_abbrev, disp_order from paneled_markers a,person b ,panels c where a.zdb_id='$OID' and OR_lg is not null and a.owner=b.zdb_id and a.target_id = c.zdb_id order by disp_order;">
+
+<?MIVAR NAME=$private>$2<?/MIVAR>
+
+<?MIVAR COND="$(EC,$private,f)">
+<TR>
+<TD colspan=1><font size=2 COLOR=#A9A9A9>
+
+<input type=checkbox name="$1" value=1 type=hidden CHECKED ><font size=2 COLOR=#000000> $1 </TD>
+</TR><?/MIVAR>
+<?/MISQL>
+
+<?MIVAR COND="$(=,$MI_ROWCOUNT,0)"><p>Not mapped on any reference panel<?/MIVAR>
+
+<?MIBLOCK COND="$(NOT,$(EQ,$(SUBSTR,$ZDB_name,1,5),GUEST))">
+  <?MIVAR NAME=$userid>$ZDB_ident<?/MIVAR>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(AND,$(>,$MI_ROWCOUNT,0),$(EC,$private,f))">
+
+<!-- set blade variables to javascript variables for passing to view_mapplet -->
+
+<?MIVAR>
+  <INPUT TYPE=hidden name=OID value=$OID>
+  <INPUT TYPE=hidden name=userid value=$userid>
+  <INPUT TYPE=hidden name=marker value=$allele>
+<?/MIVAR>
+
+<INPUT TYPE=hidden name=view_map value="viewmap">
+
+<TD align=right><font size=2>
+<input type=button value='VIEW INDIVIDUAL MAPS' name=view_map onClick="call_mapplet()";>
+</TD>
+
+<?/MIBLOCK>
+
+
+</TABLE>
+
+</TD>
+</TABLE>
+
+<TABLE width=100% cellpadding=5 border=4 bgcolor="#f8fabb" cols=3 rows=1>
+<TR>
+<TD valign=top colspan=4>
+<?MIVAR> <B>Other markers linked to $abbrev:</b><?/MIVAR>
+
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
+<TABLE cellpadding=1 cellspacing=0>
+<?MIVAR NAME=$curviewer>/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=<?/MIVAR>
+
+
+  <?MISQL SQL="select alnkgmem_member_zdb_id, alnkgmem_member_abbrev, alnkgmem_marker_type, alnkgmem_private, alnkgmem_comments, alnkgmem_source_zdb_id, alnkgmem_source_name,alnkgmem_linkage_zdb_id,alnkgmem_or_lg from all_linked_members a
+    where alnkgmem_linkage_zdb_id in 
+      (select alnkgmem_linkage_zdb_id from all_linked_members b 
+          where b.alnkgmem_linkage_zdb_id = a.alnkgmem_linkage_zdb_id
+          and b.alnkgmem_member_zdb_id = '$OID')
+       and a.alnkgmem_member_zdb_id <> '$OID';">
+
+    <?MIVAR NAME=$member_zdb_id>$1<?/MIVAR>
+    <?MIVAR NAME=$lg>$9<?/MIVAR>
+    <?MIVAR NAME=$map_comments>$5<?/MIVAR>
+    <?MIVAR NAME=$link_id>$8<?/MIVAR>
+
+    $(IF,$(=,$MI_CURRENTROW,1),"<TR><TD colspan=2></TD><TD></TD><TD><U>LG</U></TD><TD><U>Distance</U></TD><TD><U>LOD</U></TD><TD><U>Source</U></TD><TD></TD></TR>")
+
+    $(IF,$(NC,$3,GENE),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID="))
+
+    $(IF,$(AND,$(NC,$3,GENE),$(NC,$3,MUTANT)),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID="))
+
+    $(IF,$(>,$(POSITION,$6,PER),0),$(SETVAR,$sourceviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID="),$(SETVAR,$sourceviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID="))
+
+
+    <?MISQL SQL="select lpmem_linkage_pair_zdb_id from linkage_pair_member a
+      where lpmem_member_zdb_id = '$member_zdb_id' 
+       and lpmem_linkage_zdb_id = '$link_id'
+       and exists (select 'x' from linkage_pair_member b 
+          where a.lpmem_linkage_zdb_id = '$link_id'
+            and a.lpmem_linkage_pair_zdb_id = b.lpmem_linkage_pair_zdb_id
+            and b.lpmem_member_zdb_id = '$OID');">
+      <?MIVAR NAME=$pair_id>$1<?/MIVAR>
+    <?/MISQL>
+
+    <?MISQL SQL="select lnkgpair_distance, lnkgpair_lod, lnkgpair_metric from linkage_pair
+      where lnkgpair_zdb_id = '$pair_id';">
+      <?MIVAR NAME=$distance>$1<?/MIVAR>	
+      <?MIVAR NAME=$lod>$2<?/MIVAR>	
+      <?MIVAR NAME=$metric>$3<?/MIVAR>	
+     <?/MISQL>
+
+    <TR>
+    $(IF,$(XST,$UPDATE),"<TD><INPUT TYPE=button value=Update onClick=edit_linkage('"$link_id"','"$1"')></TD>","<TD> &nbsp;</TD>")
+
+    <?MIVAR NAME=$lg COND="$(AND,$(NC,$lg,""),$(=,$lg,0))"><?/MIVAR>
+
+    <?MIBLOCK COND="$(AND,$(NC,$comments,NULL),$(NC,$map_comments,""))">
+      <?MIVAR>
+       $(IF,$(OR,$(EC,$override,true),$(EC,$4,f),$(EC,$ZDB_ident,$6)),"<TD></TD><TD><font size=-1><A HREF="$curviewer$1">"$2"</A> ("$3")</TD>
+        <TD align=center><font size=-1>"$lg"</TD>
+	<TD align=center><font size=-1>"$distance" "$metric"</TD>
+	<TD align=center><font size=-1>"$lod"</TD><TD><font size=-1><A href="$sourceviewer$6">"$7"</a></TD><TD><font size=-1><A HREF=javascript:show_detail('"$link_id"','"$1"','"$2"','"$locus_abbrev"');>Details</A></TD>","<TD colspan=4><font size=-1><A href=javascript:info();>"$4$MI_CURRENTROW"</A>: Unpublished! <A href="sourceviewer$6">Contact "$7"</a>.</TD>")
+      <?/MIVAR>
+    <?/MIBLOCK>
+
+
+
+ 
+    <?MIBLOCK COND="$(NOT,$(NC,$map_comments,""))">
+      <?MIVAR>
+	$(IF,$(OR,$(EC,$override,true),$(EC,$4,f),$(EC,$ZDB_ident,$6)),"<TD></TD><TD><font size=-1><A HREF="$curviewer$1">"$2"</A> ("$3")</TD>
+        <TD align=center><font size=-1>"$lg"</TD>
+	<TD align=center><font size=-1>"$distance" "$metric"</TD>
+	<TD align=center><font size=-1>"$lod"</TD><TD><font size=-1><A href="$sourceviewer$6">"$7"</a></TD><TD></TD>","<TD colspan=4><font size=-1><A href=javascript:info();>"$4$MI_CURRENTROW"</A>: Unpublished! <A href="sourceviewer$6">Contact "$7"</a>.</TD>")
+	<?/MIVAR>
+    <?/MIBLOCK>    
+
+</TR>
+<?/MISQL>
+</TABLE>
+<?MIVAR COND="$(=,$MI_ROWCOUNT,0)"><p>None submitted (yet).<?/MIVAR>
+</TD>
+</TR></TABLE>
+
+<?/MIBLOCK>
+<!KKKKKKKK-->
+
+
+<hr width=90%>
 <?MISQL SQL="select cloned_gene, b.abbrev from locus a, gene b where a.locus_name='$name' and a.cloned_gene=b.zdb_id;">
 <?MIVAR NAME=$cloned_gene>$1<?/MIVAR>
 <p>
-<B>Affected Gene:</B> 
+<font size=3><B>Affected Gene:</B> 
 <?MIVAR COND="$(EC,$cloned_gene,NULL)">Not yet established.<?/MIVAR>
 
 <?MISQL COND="$(NC,$cloned_gene,NULL)" SQL="select gene_name, abbrev from gene where zdb_id='$cloned_gene';">
@@ -650,11 +839,6 @@ $(SETVAR,$last,$3)
 </TR></TABLE>
 <?/MISQL>
 <?/MISQL>
-
-
-<?/MIBLOCK><!-- ends non-double mutant -->
-
-
 
 
 <p>
