@@ -1,0 +1,2918 @@
+<?MICOMMENT>
+An apg page for the record keeping of Curating Publications.
+
+This page is only accessable as root.
+
+Expected Vars:
+  $OID :: the ZDB of a Publication
+
+OPTIONAL VARS:
+  Environment
+      env_update :: exist/not-exists, indicates an environment update action
+      env_zdb_id :: environment ZDB-ID 
+      env_name :: non-null environment name specific to publication $OID
+      environment_add :: flag for new environment
+      env_add_name :: new non-null environment name 
+  
+  Condition
+      cond_add :: flag for a new condition
+      cond_add_env :: non-null environemnt ZDB-ID
+      cond_add_cond :: non-null condition name 
+      cond_add_value :: text
+      cond_add_unit :: text - constrained vocabulary
+      cond_add_comments :: text
+      
+  Figure
+      fig_update :: flag for updating a figure
+      fig_zdb_id :: figure ZDB-ID
+      fig_label :: non-null text
+      fig_caption :: text
+      fig_comments :: optional text
+      fig_add :: flag for updates
+      fig_add_label :: non-null text
+      fig_add_caption :: non-null text
+      fig_add_comments :: optional text
+  
+  Image
+      image_update :: flag for update
+      image_zdb_id :: zdb-id
+      image_fig :: figure zdb
+      image_label :: optional text
+      upload_image --nomenclature from image_upload.apg
+      image_add :: flag for new record
+      image_add_fig :: figure zdb
+      image_add_label :: optional text     
+  
+  Experiment
+      xpatex :: update or add; switch to execute update code or add new record code.
+      xpatex_zdb_id :: xpatex_zdb_id of record being updated
+      xpatex_gene :: marker_zdb_id for a gene
+      xpatex_fish :: fish_zdb_id
+      xpatex_env :: environment zdb_id
+      xpatex_assay :: assay name
+      xpatex_genbank :: genbank accession number
+  
+  Expression
+      panel_add :: flag for new record
+      panel_image :: image zdb
+      panel_add_designation :: optional text
+      panel_xpatex :: experiment zdb
+      panel_add_start_stg :: stage zdb
+      panel_add_end_stg :: stage zdb
+      panel_add_anatitem :: anatomy zdb
+      panel_add_expressed :: boolean (t/f)
+  
+  Structure
+      panel_desig_and_xpatex_zdb_id :: non-null text combined values (image zdb, figure zdb, xpat zdb, panel name)
+      "xpatres_zdb_id" radio (add/remove)
+      structure_add :: flag for new record
+      structure_add_id :: anatomy zdb
+      structure_add_expressed :: boolean (t/f)
+      structure_add_xpatex :: xpat zdb
+      structure_add_start_stg :: stg zdb
+      structure_add_end_stg :: stg zdb
+  
+  T.O.D.
+      tod_add :: flag for new record
+      tod_add_anat_item_zdb :: anatomy zdb
+      tod_add_expressed :: boolean (t/f)
+      tod_add_xpatex :: xpat zdb
+      tod_add_start_stg :: stg zdb
+      tod_add_end_stg :: stg zdb
+      tod_add_comment :: optional text
+
+COOKIES:
+  Previous Publication
+      c_xpatCuration :: previous pub-zdb-id this curator did fx curation for. reset cookie variables if different from $OID.
+  
+  Hide/Show 
+      c_environment :: boolean; show or hide data for environments
+      c_condition :: boolean; show or hide data for conditions
+      c_experiment :: boolean; show or hide data for experiments
+      c_figure :: boolean; show or hide data for figures
+      c_image :: boolean; show or hide data for images
+      c_panel :: boolean; show or hide data for panels
+      c_structure :: boolean; show or hide data for structures
+      c_figure_only :: a figure zdb_id; only show data for this figure
+      
+  Structure Lists
+      c_anatitem_add_csv :: comma seperated list of anatomy items; check anatomy item in the add column.
+      c_anatitem_remove_csv :: comma seperated list of anatomy items; check anatomy item in the remove column.
+
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+
+<?/MIERROR> 
+
+<?MIVAR NAME=debugg>false<?/MIVAR>
+
+<?MIBLOCK COND="$(XST,$OID)">
+
+  <?MISQL SQL="select WebExplode(object,'permission=root&page_title=Curate Pub') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+<?MIBLOCK COND="$(NC,$AUTHORIZED,false)"> <!--,$(EC,$ZDB_ident,ZDB-PERS-010716-1))">  -->
+  <?MISQL SQL="SELECT title FROM publication WHERE zdb_id='$OID'">
+    <?MIVAR NAME=$title>$1<?/MIVAR>
+  <?/MISQL>
+<?MIBLOCK COND="$(XST,$title)">
+
+
+   <script type="text/javascript" language="javascript" src="<!--|DOMAIN_NAME|-->/stringTokenizer.js"></script>
+
+  <script type="text/javascript" language="javascript">
+
+    function replaceLocation(url) {
+        if (navigator.userAgent.indexOf("Safari") >= 0) 
+          location = url;        
+        else 
+          location.replace(url);        
+    }
+    
+   
+    function setCookie(name,value) {
+      var thisCookie = "c_"+name;
+      document.cookie = thisCookie+"="+value;
+    }
+    
+    function urlSetCookie(name,value) {
+      setCookie(name,value)
+      <?MIVAR>
+    	replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID&cookie="+name+value+"#"+name);
+      <?/MIVAR>
+    }
+    
+    <?MICOMMENT>
+       Do housecleaning whenever the user visits a new pub.
+       
+       1. reset cookies
+       2. clean table expression_pattern_infrastructure
+       3. insert records for the structure list
+    <?/MICOMMENT>
+    <?MIVAR COND=$(OR,$(NXST,$c_xpatCuration),$(NC,$OID,$c_xpatCuration))>
+    
+      setCookie('xpatCuration','$OID')
+      setCookie('environment','')
+      setCookie('condition','')
+      setCookie('experiment','')
+      setCookie('figure','')
+      setCookie('image','')
+      setCookie('panel','')
+      setCookie('structure','')
+      setCookie('anatitem_add_csv','')
+      setCookie('anatitem_remove_csv','')
+      setCookie('figure_only','')
+      setCookie('tod','')
+      replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID");
+
+      <?MICOMMENT> Keep the table clean. Delete all entries for this pub that were not entered today. <?/MICOMMENT>
+      <?MISQL SQL="DELETE FROM expression_pattern_infrastructure WHERE xpatinf_curator_zdb_id = '$ZDB_ident' and xpatinf_date != TODAY;"><?/MISQL>
+
+      <?MISQL SQL="
+          SELECT count(*)
+          FROM expression_pattern_infrastructure
+          WHERE xpatinf_pub_zdb_id = '$OID';">
+          <?MIVAR NAME=count>$1<?/MIVAR>
+      <?/MISQL>
+
+      <?MICOMMENT> There aren't any entries today. Generate the list <?/MICOMMENT>
+      <?MISQL COND=$(EC,$count,0) SQL="  
+          SELECT distinct xpatres_anat_item_zdb_id, xpatres_expression_found
+          FROM fx_expression_experiment, fx_expression_result, fx_expression_pattern_image
+          WHERE xpatex_source_zdb_id = '$OID'
+            AND xpatex_zdb_id = xpatres_xpatex_zdb_id
+            AND xpatres_zdb_id = xpatfimg_xpatres_zdb_id;">
+            
+          <?MICOMMENT> ==| Get next ZDB-ID |== <?/MICOMMENT>
+          <?MISQL SQL="execute function get_id('XPATINF');">$(SETVAR,$xpatinf_zdb_id,$1)<?/MISQL>
+     
+          <?MICOMMENT> ==| Add New XPATINF |== <?/MICOMMENT>  
+          <?MISQL SQL="INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES('$xpatinf_zdb_id');"><?/MISQL>   
+          
+          <?MISQL SQL="    
+              INSERT INTO expression_pattern_infrastructure (
+                  xpatinf_zdb_id,
+                  xpatinf_curator_zdb_id,
+                  xpatinf_pub_zdb_id,
+                  xpatinf_anatitem_zdb_id,
+                  xpatinf_expressed,
+                  xpatinf_date )
+              VALUES (
+                  '$xpatinf_zdb_id',
+                  '$ZDB_ident', 
+                  '$OID', 
+                  '$1',
+                  '$2',
+                  TODAY);">
+          <?/MISQL>
+            
+      <?/MISQL>
+    
+    <?/MIVAR>
+
+    <?MIVAR COND=$(AND,$(XST,$c_show_all),$(EC,$c_show_all,true))>
+      setCookie('environment','show')
+      setCookie('condition','show')
+      setCookie('experiment','show')
+      setCookie('figure','show')
+      setCookie('image','show')
+      setCookie('panel','show')
+      setCookie('structure','show')
+      setCookie('tod','show')
+      setCookie('show_all','')
+      replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID");          
+    <?/MIVAR>    
+
+
+    //structures are a dynamic set
+    function dynamic_set_value_selection(dynamic_field,offset,span) {
+      var structures_add = '';
+      var structures_remove = '';
+      var end = parseInt(offset)+parseInt(span)*3;
+      //alert("(offset,span) = ("+offset+","+span+")");
+      for (i=offset; i<end; i++) {
+        if (dynamic_field[i].checked) {
+          if (dynamic_field[i].value == "add") {
+            if (structures_add == "") { structures_add = dynamic_field[i].name; }
+            else { structures_add = structures_add+"|"+dynamic_field[i].name; }
+          }
+          else {
+            if (structures_remove == "") { structures_remove = dynamic_field[i].name; }
+            else { structures_remove = structures_remove+"|"+dynamic_field[i].name; }
+          }
+        }
+      }
+      
+      if (structures_add != '') {
+        panelIndex = document.panel_structures.panel_desig_and_xpatex_zdb_id.selectedIndex;
+        fx_panel_desig_and_xpatex = document.panel_structures.panel_desig_and_xpatex_zdb_id.options[panelIndex].value;
+      
+        <?MIVAR>
+  	  replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID&structures_add="+structures_add+"&structures_remove="+structures_remove+"&panel_desig_and_xpatex_zdb_id="+fx_panel_desig_and_xpatex+"#structure");
+        <?/MIVAR>
+      }
+      else {
+        alert('At least one item must be associated with a panel. Use the Delete button to remove a panel.')
+      }
+    
+    }
+
+
+function StringTokenizer (material, separator)
+{
+   // Attributes.
+   this.material = material;
+   this.separator = separator;
+
+   // Operations.
+   this.getTokens = getTokens;
+   this.nextToken = nextToken;
+   this.countTokens = countTokens;
+   this.hasMoreTokens = hasMoreTokens;
+   this.tokensReturned = tokensReturned;
+
+   // Initialisation code.
+   this.tokens = this.getTokens();
+   this.tokensReturned = 0;
+
+}  // end constructor
+
+
+
+
+
+function getTokens()
+{
+   // Create array of tokens.
+   var tokens = new Array();
+   var nextToken;
+
+   // If no separators found, single token is the material string itself.
+	if (this.material.indexOf (this.separator) < 0)
+	{
+		tokens [0] = this.material;
+		return tokens;
+	}  // end if
+
+   // Establish initial start and end positions of the first token.
+   start = 0;
+   end = this.material.indexOf (this.separator, start);
+
+   // Counter for how many tokens were found.
+   var counter = 0;
+
+   // Go through material, token at a time.
+ 	while (this.material.length - start > 1)
+	{
+		nextToken = this.material.substring (start, end);
+		start = end + 1;
+		if (this.material.indexOf (this.separator, start + 1) < 0)
+		{
+			end = this.material.length;
+		}  // end if
+		else
+		{
+			end = this.material.indexOf (this.separator, start + 1);
+		}  // end else
+
+      tokens [counter] = trim (nextToken);
+
+		counter ++;
+	}   // end if
+
+   // Return the initialised array.
+   return tokens;
+
+
+}  // end getTokens function
+
+
+
+function countTokens()
+{
+  return this.tokens.length;
+}  // end countTokens function
+
+
+
+
+function nextToken()
+{
+
+   if (this.tokensReturned >= this.tokens.length)
+   {
+      return null;
+   }  // end if
+   else
+   {
+      var returnToken = this.tokens [this.tokensReturned];
+      this.tokensReturned ++;
+      return returnToken;
+   }  // end else
+
+}  // end nextToken function
+
+
+
+
+function hasMoreTokens()
+{
+   if (this.tokensReturned < this.tokens.length)
+   {
+      return true;
+   }  // end if
+   else
+   {
+      return false;
+   }  // end else
+}  // end hasMoreTokens function
+
+function tokensReturned()
+{
+   return this.tokensReturned;
+}  // end tokensReturned function
+
+
+function trim (strToTrim) {
+   return(strToTrim.replace(/^\s+|\s+$/g, ''));
+}  // end trim function
+
+
+
+
+function URLDecode(str) {
+     return unescape(str.replace(/\+/g, " "));
+}
+
+
+
+    function uninterpretCaption() { 
+        var figCap = window.document.figureUpdate.fig_caption.value;
+        var amped = unescape(figCap.replace(/;;;/g, ";&"));
+        amped = amped.replace(/;;/g, "&");
+        window.document.figureUpdate.fig_caption.value=amped;
+    }
+
+    
+    function setEndStage( form_name, start_stg, end_stg ) {
+
+      var startStageIndex = document.forms[form_name].elements[start_stg].selectedIndex; 
+      document.forms[form_name].elements[end_stg].selectedIndex = startStageIndex;
+         
+    }    
+
+    
+    function enforceMorpholino(condValue) {
+      var condIndex = document.condition_new.cond_add_cond.selectedIndex;
+      var condSelected = document.condition_new.cond_add_cond[condIndex].value;
+      
+      if (condSelected != "morpholino") { return true } 
+      else {
+      validMorpholino = new Array (
+        <?MISQL SQL="select recattrib_data_zdb_id from record_attribution where recattrib_data_zdb_id[1,9] = 'ZDB-MRPHL' and recattrib_source_zdb_Id = '$OID';">
+         $(IF,$(EC,$MI_CURRENTROW,1),'$1',",'$1'")
+        <?/MISQL>
+        )
+        
+        for (i=0; i<validMorpholino.length; i++) {
+          if (condValue = validMorpholino[i]) { return true }//document.condition_new.submit() }
+        }
+                
+        alert("Valid morpholinos have this publication attributed. \n\n "+condValue +" is not associated with this publication and is not valid.");        
+      }
+      return false
+    }
+
+    function validateConditionForm(condValue) {
+      if (document.condition_new.cond_add_attribute.value == "") {
+        alert("Please enter an Attribute.")
+        return false}
+      if (document.condition_new.cond_add_env.value == "") {
+        alert("Please select an Environment.")
+        return false}
+      return enforceMorpholino(condValue);     
+    }
+
+    function setCondAttrib(text) {
+      document.condition_new.cond_add_attribute.value = text;
+      for (i=0; i<document.condition_new.cond_add_cond.length; i++) {
+        if (document.condition_new.cond_add_cond[i].value == 'morpholino') {
+          document.condition_new.cond_add_cond.selectedIndex = i;
+        }
+      }
+    }
+  
+  </SCRIPT>
+
+
+  <?MIBLOCK COND=$(XST,$delete_item)>
+    <?MICOMMENT> 
+      MOST FX records are data types with ZDB-IDs. The exception is panel. Panels have 
+      a three-way identifier {panel_designation,figure_zdb_id,image_zdb_id} and all 
+      records in fx_expression_pattern_image with the three way combination must be
+      deleted. ZDB-IDs are deleted from zdb_active_data.
+    <?/MICOMMENT>
+  
+    <?MIBLOCK COND=$(EC,ZDB-,$(SUBSTR,$delete_item,1,4))>
+      <?MIBLOCK COND=$(EC,ZDB-XPAT-,$(SUBSTR,$delete_item,1,9))>
+        <?MISQL SQL="
+            SELECT xpatres_zdb_id 
+            FROM fx_expression_result, expression_pattern_infrastructure
+            WHERE xpatres_anat_item_zdb_id = xpatinf_anatitem_zdb_id
+              AND xpatres_expression_found = xpatinf_expressed
+              AND xpatinf_zdb_id = '$delete_item';">
+            
+            <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id = '$1';"><?/MISQL>
+     
+        <?/MISQL>
+        <?MISQL SQL="delete from expression_pattern_infrastructure where xpatinf_zdb_id = '$delete_item';"><?/MISQL>
+      <?MIELSE>  
+        <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id = '$delete_item';"><?/MISQL>
+      <?/MIBLOCK>
+    <?MIELSE>
+      <?MICOMMENT>  <?/MICOMMENT>
+      <?MIVAR NAME=panel_designation>$(INDEX,0,$delete_item)<?/MIVAR>
+      <?MIVAR NAME=panel_fig>$(INDEX,1,$delete_item)<?/MIVAR>
+      <?MIVAR NAME=panel_image>$(INDEX,2,$delete_item)<?/MIVAR> 
+      <?MIVAR NAME=xpatres_delete><?/MIVAR>             
+
+      <?MISQL SQL="
+        SELECT xpatfimg_xpatres_zdb_id, count(*)
+          FROM fx_expression_pattern_image 
+         WHERE '$panel_designation' = xpatfimg_panel_designation
+           AND xpatfimg_fig_zdb_id = '$panel_fig'
+           AND xpatfimg_fimgp_zdb_id = '$panel_image'
+         GROUP BY 1
+        HAVING count(*) = 1
+          ;">
+        <?MIVAR>$(VECAPPEND,$xpatres_delete,$1)<?/MIVAR>
+      <?/MISQL> 
+  
+      <?MIVAR NAME=xpatres_delete_csv SEPARATE="','">$xpatres_delete<?/MIVAR>
+      
+      <?MISQL SQL="
+         delete from fx_expression_pattern_image 
+          where '$panel_designation' = xpatfimg_panel_designation
+            and xpatfimg_fig_zdb_id = '$panel_fig'
+            and xpatfimg_fimgp_zdb_id = '$panel_image'
+          ;">
+      <?/MISQL>            
+      
+      <?MISQL SQL="
+        delete from fx_expression_result
+        where xpatres_zdb_id in ('$xpatres_delete_csv');">
+      <?/MISQL>
+    <?/MIBLOCK>  
+    
+    <?MIVAR>
+      <SCRIPT>
+        replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID#$anchor");
+      </SCRIPT>
+    <?/MIVAR>
+  
+  <?/MIBLOCK>
+
+<?MICOMMENT>
+    This page is unlike other update forms in ZFIN. There is not a non-update state. 
+    The first form submission is the only data we want to capture. If the page is reloaded
+    or the back button is used, resubmitted form data should be ignored. 
+    
+    To ignore repeat submission, there must be a way to set a variable independent of the 
+    form submission. The variable is set when the form submit action triggers it and 
+    before the page is loaded. When the page loads, the variable is set to NULL. Browser 
+    activity which may cause the page to be resubmitted will not set the variable. 
+    
+    Ignore form data if cookie c_xpatcuration_update != 'update';
+<?/MICOMMENT>
+
+<?MIBLOCK COND=$(AND,$(XST,$c_xpatcuration_update),$(EC,$c_xpatcuration_update,update))>
+
+  <?MICOMMENT> ================| Experiment |================ <?/MICOMMENT>
+  <?MIBLOCK COND=$(XST,$xpatex)>
+  
+    <?MICOMMENT>
+      required: xpatex_add_gene, xpatex_add_fish, xpatex_add_assay, xpatex_add_env
+      optional: xpatex_genbank
+      
+      unique constraint on {gene/fish/assay/env}
+    <?/MICOMMENT>    
+    
+    <?MIBLOCK COND=$(AND,$(XST,$xpatex_gene),$(XST,$xpatex_fish),$(XST,$xpatex_assay),$(XST,$xpatex_env))>
+    
+    <?MISQL SQL="
+        select count(*) 
+        from fx_expression_experiment, feature_environment
+        where xpatex_gene_zdb_id = '$xpatex_gene'
+          and xpatex_assay_name = '$xpatex_assay'
+          and xpatex_featenv_zdb_id = featenv_zdb_id
+          and featenv_genome_feature_zdb_id = '$xpatex_fish'
+          and featenv_env_zdb_id = '$xpatex_env'
+        ;">
+    <?/MISQL>
+    
+    <?MIBLOCK COND=$(EC,$1,0)>
+  
+    <?MIBLOCK COND=$(NXST,$xpatex_genbank)>
+        <?MIVAR NAME=xpatex_genbank><?/MIVAR>
+        <?MIVAR NAME=xpatex_probe><?/MIVAR>
+    <?MIELSE>
+        <?MISQL SQL="select dblink_linked_recid from marker_relationship, db_link where mrel_mrkr_1_zdb_id = '$xpatex_gene' and mrel_mrkr_2_zdb_id = dblink_linked_recid and dblink_zdb_id = '$xpatex_genbank';">
+          <?MIVAR NAME=xpatex_probe>$1<?/MIVAR>
+        <?/MISQL>
+    <?/MIBLOCK>
+    
+    
+    <?MIBLOCK COND="$(XST,$xpatex_probe)">
+      <?MICOMMENT> Gene and Probe must be related through marker_relationship <?/MICOMMENT>
+          
+      <?MICOMMENT> ==| Check existence of Feature Environment |== <?/MICOMMENT>
+      <?MISQL SQL="
+          select featenv_zdb_id
+          from feature_environment 
+          where featenv_genome_feature_zdb_id = '$xpatex_fish'
+            and featenv_env_zdb_id = '$xpatex_env';">
+        <?MIVAR NAME=featenv_zdb_id>$1<?/MIVAR>
+      <?/MISQL>
+    
+      <?MIBLOCK COND="$(NXST,$featenv_zdb_id)">  
+          <?MICOMMENT> ==| Get next ZDB-ID |== <?/MICOMMENT>
+          <?MISQL SQL="execute function get_id('FEATENV');">$(SETVAR,$featenv_zdb_id,$1)<?/MISQL>
+     
+          <?MICOMMENT> ==| Add New FEATENV |== <?/MICOMMENT>  
+          <?MISQL SQL="INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES('$featenv_zdb_id');"><?/MISQL>    
+    
+          <?MICOMMENT> ==| CREATE FEATENV RECORD |== <?/MICOMMENT>  
+          <?MISQL SQL="
+              INSERT INTO feature_environment(
+                 featenv_zdb_id,
+                 featenv_genome_feature_zdb_id,
+                 featenv_env_zdb_id)
+              VALUES(
+                 '$featenv_zdb_id',
+                 '$xpatex_fish',
+                 '$xpatex_env');">
+          <?/MISQL>
+    
+      <?/MIBLOCK>
+
+<?MIBLOCK COND=$(EC,$xpatex,add)>         
+      <?MICOMMENT> ==| Get next ZDB-ID |== <?/MICOMMENT>
+      <?MISQL SQL="execute function get_id('XPAT');">$(SETVAR,$xpatnew_XPAT_ZDB,$1)<?/MISQL>
+    
+      <?MICOMMENT> ==| Add New XPATEX |== <?/MICOMMENT>  
+      <?MISQL SQL="INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES('$xpatnew_XPAT_ZDB');"><?/MISQL>
+  
+      <?MIBLOCK COND="$(NC,$xpatex_probe,)">
+        <?MISQL SQL="
+          INSERT into fx_expression_experiment(
+              xpatex_zdb_id,
+              xpatex_source_zdb_id,
+              xpatex_assay_name,
+              xpatex_gene_zdb_id,
+              xpatex_probe_feature_zdb_id,
+              xpatex_featenv_zdb_id,
+              xpatex_direct_submission_date)
+          VALUES (
+              '$xpatnew_XPAT_ZDB',
+              '$OID',
+              '$xpatex_assay',
+              '$xpatex_gene',
+              '$xpatex_probe',
+              '$featenv_zdb_id',
+              TODAY);">
+        <?/MISQL> 
+      <?MIELSE>
+        <?MISQL SQL="
+          INSERT into fx_expression_experiment(
+              xpatex_zdb_id,
+              xpatex_source_zdb_id,
+              xpatex_assay_name,
+              xpatex_gene_zdb_id,
+              xpatex_featenv_zdb_id,
+              xpatex_direct_submission_date)
+          VALUES (
+              '$xpatnew_XPAT_ZDB',
+              '$OID',
+              '$xpatex_assay',
+              '$xpatex_gene',
+              '$featenv_zdb_id',
+              TODAY);">
+        <?/MISQL>       
+      <?/MIBLOCK>
+     
+      <?MICOMMENT>  ===================================================
+                      Search for record attribution of genbank record
+                      and publication. If no record found, enter 
+                      record attribution.
+                    ===================================================
+      <?/MICOMMENT>
+
+      <?MIBLOCK COND=$(NE,$xpatex_genbank,)>      
+          <?MISQL SQL="
+              select count(*)::integer
+              from record_attribution 
+              where recattrib_data_zdb_id = '$xpatex_genbank'
+              and recattrib_source_zdb_id = '$OID'
+              ;">
+          <?/MISQL>
+
+          <?MISQL COND=$(EC,$1,0) SQL="
+              insert into record_attribution(recattrib_data_zdb_id, recattrib_source_zdb_id)
+              values ('$xpatex_genbank','$OID')
+              ;">
+          <?/MISQL>
+      <?/MIBLOCK>
+
+
+      <?MIELSE COND=$(EC,$xpatex,update)>
+
+      <?MIVAR NAME=old_genbank><?/MIVAR>
+      <?MISQL SQL="
+              select dblink_zdb_id
+              from db_link, fx_expression_experiment, record_attribution
+              where xpatex_zdb_id = '$xpatex_zdb_id'
+                and xpatex_probe_feature_zdb_id = dblink_linked_recid
+                and dblink_zdb_id = recattrib_data_zdb_id
+                and recattrib_source_zdb_id = '$OID'
+              ;">
+          <?MIVAR NAME=old_genbank>$1<?/MIVAR>
+      <?/MISQL>
+
+      <?MIBLOCK COND=$(NC,$old_genbank,$xpatex_genbank)>
+          <?MISQL SQL="
+              delete from record_attribution 
+              where recattrib_data_zdb_id = '$old_genbank'
+              and recattrib_source_zdb_id = '$OID'
+              ;">
+          <?/MISQL>
+
+          <?MISQL COND=$(NC,$xpatex_genbank,) SQL="
+              insert into record_attribution(recattrib_data_zdb_id, recattrib_source_zdb_id)
+              values ('$xpatex_genbank','$OID')
+              ;">
+          <?/MISQL>
+      <?/MIBLOCK>
+ 
+      <?MISQL SQL="
+          UPDATE fx_expression_experiment
+              set xpatex_assay_name = '$xpatex_assay',
+              xpatex_gene_zdb_id = '$xpatex_gene',
+              xpatex_probe_feature_zdb_id = $(IF,$(EC,$xpatex_probe,),NULL,'$xpatex_probe'),
+              xpatex_featenv_zdb_id = '$featenv_zdb_id'
+          where xpatex_zdb_id = '$xpatex_zdb_id'
+          ;">
+      <?/MISQL> 
+
+      <?/MIBLOCK>
+    
+    <?MIELSE> 
+      <?MICOMMENT> ============================================================
+                      Gene and Probe not related through marker relationship
+                   ============================================================
+      <?/MICOMMENT>
+      <?MISQL SQL="select gene.mrkr_abbrev, probe.mrkr_abbrev, dblink_acc_num
+                   from marker as gene, marker as probe, db_link
+                   where gene.mrkr_zdb_id = '$xpatex_gene'
+                     and probe.mrkr_zdb_id = dblink_linked_recid
+                     and dblink_zdb_id = '$xpatex_genbank';">
+           <?MIVAR NAME=gene_abbrev>$1<?/MIVAR>
+           <?MIVAR NAME=probe_abbrev>$2<?/MIVAR>
+           <?MIVAR NAME=probe_acc_num>$3<?/MIVAR>
+      <?/MISQL>
+      <?MIVAR>
+        <SCRIPT>
+          alert('Required: Gene has relationship to Probe.\n\nAccession number "+$probe_acc_num+" is with marker "+$probe_abbrev+". \n\n"$probe_abbrev" and "$gene_abbrev" do not have a relationship in the database. \n\n Create this relationship on the gene page.');
+        </SCRIPT>    
+      <?/MIVAR>
+    <?/MIBLOCK>
+
+    <?MIELSE>
+        <SCRIPT>
+          alert('The combination of: Publication, Gene, Fish, Env, Assay duplicates a record in the database.\n\nPlease check your data and renter.');
+        </SCRIPT>  
+    <?/MIBLOCK>
+    
+    <?MIELSE>
+        <SCRIPT>
+          alert('One of these required data elements was missing: Gene, Fish, Env, Assay.\n\nPlease check your data and renter.');
+        </SCRIPT>        
+    <?/MIBLOCK>
+            
+  <?/MIBLOCK>
+  
+
+
+  <?MICOMMENT> ================| Environment |================ <?/MICOMMENT>
+  <?MIBLOCK COND=$(XST,$environment_add)>
+  
+  <?MISQL SQL="
+      select count(*) 
+      from environment 
+      where env_name = '$env_add_name'
+        and env_source_zdb_id = '$OID';"><?/MISQL>
+  
+    <?MIBLOCK COND=$(=,$1,0)>
+      <?MICOMMENT> ==| Get next ZDB-ID |== <?/MICOMMENT>
+      <?MISQL SQL="execute function get_id('ENV');">$(SETVAR,$env_zdb_id,$1)<?/MISQL>
+    
+      <?MICOMMENT> ==| Add New ZDB-ID |== <?/MICOMMENT>  
+      <?MISQL SQL="INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES('$env_zdb_id');"><?/MISQL>
+    
+      <?MISQL SQL="
+          INSERT into environment(env_zdb_id, env_name, env_source_zdb_id)
+          VALUES ('$env_zdb_id','$env_add_name','$OID');">
+      <?/MISQL> 
+    <?MIELSE>
+      <SCRIPT>
+        alert("Environment '<?MIVAR>$env_add_name<?/MIVAR>' exists for this publication.");      
+      </SCRIPT>
+    <?/MIBLOCK>             
+  <?/MIBLOCK>
+
+  <?MIBLOCK COND=$(AND,$(XST,$update_env_zdb_id),$(XST,$env_name))>
+  
+    <?MISQL SQL="
+        Update environment
+        set env_name = '$env_name'
+        where env_zdb_id = '$update_env_zdb_id'
+        ;">
+    <?/MISQL> 
+    
+  <?/MIBLOCK>
+
+  
+
+  <?MICOMMENT> ================| Condition |================ <?/MICOMMENT>
+  <?MIBLOCK COND=$(XST,$cond_add)>
+    <?MIVAR COND=$(NXST,$cond_add_comments) NAME=cond_add_comments><?/MIVAR>
+    <?MIVAR COND=$(NXST,$cond_add_unit) NAME=cond_add_unit><?/MIVAR>
+    <?MIVAR COND=$(NXST,$cond_add_value) NAME=cond_add_value><?/MIVAR>
+    <?MIVAR COND=$(NXST,$cond_add_attribute) NAME=cond_add_attribute><?/MIVAR>
+  
+    <?MICOMMENT> ==| Get next ZDB-ID |== <?/MICOMMENT>
+    <?MISQL SQL="execute function get_id('ENVCOND');">$(SETVAR,$envcond_zdb_id,$1)<?/MISQL>
+    
+    <?MICOMMENT> ==| Add New ZDB-ID |== <?/MICOMMENT>  
+    <?MISQL SQL="INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES('$envcond_zdb_id');"><?/MISQL>
+    
+    <?MISQL SQL="
+        INSERT into environment_condition(
+            envcond_zdb_id,
+            envcond_env_zdb_id,
+            envcond_condition_name,
+            envcond_value,
+            envcond_unit,
+            envcond_comments,
+            envcond_attribute)
+        VALUES (
+            '$envcond_zdb_id',
+            '$cond_add_env',
+            '$cond_add_cond',
+            '$cond_add_value',
+            '$cond_add_unit',
+            '$cond_add_comments',
+            '$cond_add_attribute');">
+    <?/MISQL> 
+    
+    <?MISQL SQL="insert into record_attribution(recattrib_data_zdb_id, recattrib_source_zdb_id)
+                 values('$envcond_zdb_id','$OID');">
+    <?/MISQL>
+    
+  <?/MIBLOCK>
+  
+  <?MICOMMENT> ================| Figure |================ <?/MICOMMENT>
+  <?MIBLOCK COND=$(XST,$fig_add_label)>
+  
+    <?MIVAR COND=$(NXST,$fig_add_comments) NAME=fig_add_comments><?/MIVAR>
+    <?MICOMMENT> ==| Get next ZDB-ID |== <?/MICOMMENT>
+    <?MISQL SQL="execute function get_id('FIG');">$(SETVAR,$fig_zdb_id,$1)<?/MISQL>
+    
+    <?MICOMMENT> ==| Add New ZDB-ID |== <?/MICOMMENT>  
+    <?MISQL SQL="INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES('$fig_zdb_id');"><?/MISQL>
+    
+    <?MISQL SQL="
+        INSERT into fx_figure(
+            fig_zdb_id,
+            fig_caption,
+            fig_label,
+            fig_comments,
+            fig_source_zdb_id)
+        VALUES (
+            '$fig_zdb_id',
+            '$fig_add_caption',
+            '$fig_add_label',
+            '$fig_add_comments',
+            '$OID');">
+    <?/MISQL> 
+    
+    <?MIVAR NAME=c_figure_only>$fig_zdb_id<?/MIVAR>
+    <SCRIPT>
+      <?MIVAR>setCookie('figure_only','$fig_zdb_id');<?/MIVAR>
+    </SCRIPT>
+    
+  <?/MIBLOCK>
+  
+  <?MIBLOCK COND=$(XST,$fig_zdb_id)>
+  
+    <?MIVAR COND=$(NXST,$fig_comments) NAME=fig_comments><?/MIVAR>
+    <?MICOMMENT>
+       This is a text substitution for ISO named entity characters.
+       http://www.theorem.ca/~mvcorks/code/charsets/named-entities.html       
+    <?/MICOMMENT>  
+
+    <?MISQL SQL="
+        Update fx_figure
+        Set fig_caption = '$fig_caption',
+            fig_comments = '$fig_comments',
+            fig_label = '$fig_label'
+        where fig_zdb_id = '$fig_zdb_id'
+        ;">
+    <?/MISQL> 
+
+  <?/MIBLOCK>  
+
+
+
+  <?MICOMMENT> ================| Image |================ <?/MICOMMENT>
+
+  <?MIBLOCK COND=$(XST,$image_add)>
+    <?MIVAR NAME=image_add_label COND=$(NXST,$image_add_label)><?/MIVAR>
+    
+    <?MICOMMENT> Enforce Unique combination of Figure Label & Image Label <?/MICOMMENT>
+    <?MISQL SQL="
+        select count(*) 
+        from fx_fish_image_private 
+        where fimgp_label = '$image_add_label'
+          and fimgp_fig_zdb_id = '$image_add_fig';">
+    <?/MISQL>
+        
+    <?MIBLOCK COND=$(=,$1,0)>
+  
+    <?MICOMMENT> ==| Get next ZDB-ID |== <?/MICOMMENT>
+    <?MISQL SQL="execute function get_id('IMAGE');">$(SETVAR,$fimgp_zdb_id,$1)<?/MISQL>
+    
+    <?MICOMMENT> ==| Add New ZDB-ID |== <?/MICOMMENT>  
+    <?MISQL SQL="INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES('$fimgp_zdb_id');"><?/MISQL>
+
+<?MICOMMENT> 
+    Code from new-image.apg which should be consolidated into a single apg
+    when fx tables are merged.
+<?/MICOMMENT>
+  <!-- create a thumbnail for the new image with a sysexec call.
+    -- That way we will have a thumbnail image to upload 
+    -- along with the original in the following step. -->
+  <?MIVAR NAME=$mythumb>/tmp/$fimgp_zdb_id.gif<?/MIVAR>
+  <?MISQL SQL="
+    execute function sysexec('make_thumbnail', '$upload_image $mythumb');">
+  <?/MISQL>
+
+  <!-- Get width and height of image -->
+  <?MISQL SQL="
+    execute function get_image_stats('$upload_image');">
+    <?MIVAR NAME=$fimgp_width>$1<?/MIVAR>
+    <?MIVAR NAME=$fimgp_height>$2<?/MIVAR>
+  <?/MISQL>
+
+  <?MIVAR NAME=$fimgp_comments>OPTICS:
+MAGNIFICATION:
+DATE OF IMAGE:
+SUBMITTER COMMENTS:
+  <?/MIVAR>
+
+  <?MISQL SQL="
+    insert into fx_fish_image_private
+        (fimgp_zdb_id, fimgp_fig_zdb_id, fimgp_image, fimgp_annotation, 
+         fimgp_image_with_annotation, fimgp_thumbnail, fimgp_width, fimgp_height,
+	 fimgp_fish_zdb_id, fimgp_comments, 
+	 fimgp_view, fimgp_direction, fimgp_form, fimgp_preparation, 
+	 fimgp_owner_zdb_id, fimgp_external_name,
+	 fimgp_label)
+      values 
+	('$fimgp_zdb_id', '$image_add_fig', FILETOBLOB('$upload_image', 'client'), NULL, NULL,
+	 FILETOBLOB('$mythumb', 'server'), $fimgp_width, $fimgp_height,
+	 NULL, '$fimgp_comments',
+	 'not specified', 'not specified', 'still', 'not specified', 
+	 '$ZDB_ident', NULL,'$image_add_label');">
+  <?/MISQL>
+    
+<?MICOMMENT> End code from new-image.apg <?/MICOMMENT>
+
+  <?MISQL SQL="
+      insert into record_attribution(recattrib_data_zdb_id, recattrib_source_zdb_id)
+      values ('$fimgp_zdb_id','$OID');">
+  <?/MISQL>
+  
+  <?MIELSE>
+    <?MISQL SQL="select fig_label from fx_figure where fig_zdb_id = '$image_add_fig';"><?/MISQL>
+  
+    <SCRIPT>
+      <?MIVAR>
+      alert("Each image for a figure must have a unique name. Image name '$image_add_label' exists for Figure '$1'. \n\n Please enter a unique name.")
+      <?/MIVAR>
+    </SCRIPT>
+  <?/MIBLOCK>
+<?/MIBLOCK>
+
+
+  <?MIBLOCK COND=$(XST,$image_update)>
+    <?MIVAR NAME=image_label COND=$(NXST,$image_label)><?/MIVAR>
+    
+    <?MICOMMENT> Enforce unique combination of Figure Label & Image Label <?/MICOMMENT>
+    <?MISQL SQL="
+        select count(*) 
+        from fx_fish_image_private 
+        where fimgp_label = '$image_label'
+          and fimgp_fig_zdb_id = '$image_fig'
+          and fimgp_zdb_id <> '$image_zdb_id';">
+    <?/MISQL>
+            
+    <?MIBLOCK COND=$(=,$1,0)>
+    
+    <?MIBLOCK COND=$(XST,$upload_image)>
+<?MICOMMENT> 
+    Code from new-image.apg which should be consolidated into a single apg
+    when fx tables are merged.
+<?/MICOMMENT>
+
+  <!-- create a thumbnail for the new image with a sysexec call.
+    -- That way we will have a thumbnail image to upload 
+    -- along with the original in the following step. -->
+  <?MIVAR NAME=$mythumb>/tmp/$image_zdb_id.gif<?/MIVAR>
+  <?MISQL SQL="
+    execute function sysexec('make_thumbnail', '$upload_image $mythumb');">
+  <?/MISQL>
+
+  <!-- Get width and height of image -->
+  <?MISQL SQL="
+    execute function get_image_stats('$upload_image');">
+    <?MIVAR NAME=$fimgp_width>$1<?/MIVAR>
+    <?MIVAR NAME=$fimgp_height>$2<?/MIVAR>
+  <?/MISQL>
+
+  <?MISQL SQL="
+    Update fx_fish_image_private
+    Set fimgp_image = FILETOBLOB('$upload_image', 'client'),
+        fimgp_thumbnail = FILETOBLOB('$mythumb', 'server'),
+        fimgp_label = '$image_label',
+        fimgp_fig_zdb_id = '$image_fig',
+        fimgp_width = $fimgp_width,
+        fimgp_height = $fimgp_height
+    where fimgp_zdb_id = '$image_zdb_id'
+    ;">
+  <?/MISQL>
+
+   <?MIELSE>
+
+    <?MISQL SQL="
+      Update fx_fish_image_private
+      Set fimgp_label = '$image_label',
+          fimgp_fig_zdb_id = '$image_fig'
+      where fimgp_zdb_id = '$image_zdb_id'
+      ;">
+    <?/MISQL>
+
+   <?/MIBLOCK>    
+<?MICOMMENT> End code from new-image.apg <?/MICOMMENT>
+  
+  <?MIELSE>
+    <?MISQL SQL="select fig_label from fx_figure where fig_zdb_id = '$image_fig';"><?/MISQL>
+  
+    <SCRIPT>
+      <?MIVAR>
+      alert("Each image for a figure must have a unique name. Image name '$image_label' exists for Figure '$1'. \n\n Please enter a unique name.")
+      <?/MIVAR>
+    </SCRIPT>
+  <?/MIBLOCK>
+
+<?/MIBLOCK>
+
+
+
+
+
+
+  <?MICOMMENT> ================| Panel |================ <?/MICOMMENT>
+  <?MIBLOCK COND=$(XST,$panel_add)>
+    <?MISQL SQL="
+        select fimgp_fig_zdb_id
+        from fx_fish_image_private
+        where fimgp_zdb_id = '$panel_add_image';">
+        <?MIVAR NAME=panel_fig_zdb_id>$1<?/MIVAR>
+    <?/MISQL>
+    
+      <?MISQL SQL="select WebExplode(object,'gPSLitem_xpatex_zdb_id=$panel_add_xpatex&gPSLitem_anatitem_zdb_id=$panel_add_anatitem&gPSLitem_expressed=$panel_add_expressed&gPSLitem_stg_start_zdb_id=$panel_add_start_stg&gPSLitem_stg_end_zdb_id=$panel_add_end_stg') from webPages where ID='aa-getPubStructureListItem.apg';">$1<?/MISQL>
+
+      <?MIVAR NAME=panel_add_xpatres_zdb_id>$gPSLitem_xpatres_zdb_id<?/MIVAR>    
+      <?MIVAR COND=$(NXST,$panel_add_designation) NAME=panel_add_designation><?/MIVAR>
+
+    <?MIBLOCK COND=$(NC,$gPSLitem_xpatres_zdb_id,)>
+      <?MISQL SQL="
+        select count(*)
+        from fx_expression_pattern_image
+        where xpatfimg_fig_zdb_id = '$panel_fig_zdb_id'
+          and xpatfimg_fimgp_zdb_id = '$panel_add_image'
+          and xpatfimg_panel_designation = '$panel_add_designation'
+          and xpatfimg_xpatres_zdb_id = '$panel_add_xpatres_zdb_id'
+        ;">
+      <?/MISQL>
+    
+      <?MIBLOCK COND=$(=,$1,0)>    
+      
+        <?MISQL SQL="
+          INSERT into fx_expression_pattern_image (
+            xpatfimg_xpatres_zdb_id,
+            xpatfimg_fimgp_zdb_id,
+            xpatfimg_panel_designation,
+            xpatfimg_fig_zdb_id)
+          VALUES (
+            '$panel_add_xpatres_zdb_id',
+            '$panel_add_image',
+            '$panel_add_designation',
+            '$panel_fig_zdb_id');">
+        <?/MISQL> 
+
+      <?MIELSE>
+        <SCRIPT>
+          <?MIVAR>
+          alert("Warning:: Duplicate panel. \n\n Please enter a unique combination of Figure / Image / Panel Structure.")
+          <?/MIVAR>
+        </SCRIPT>
+      <?/MIBLOCK>
+    <?/MIBLOCK>  
+  <?/MIBLOCK>  
+
+
+
+  <?MICOMMENT> ================| Panel_Structure |================ <?/MICOMMENT>
+  <?MIBLOCK COND=$(OR,$(AND,$(XST,$structures_add),$(NE,$structures_add,)),$(AND,$(XST,$structures_remove),$(NE,$structures_remove,)))>
+  
+    <?MICOMMENT>
+        Figures will often have panels with duplicate sets of Structures expressed. Duplicate
+        entry can be avoided if the structures are added to a panel as a set. 
+        
+        Selecting a set of structures requires a list and this is complicated. The list is 
+        specific to the publication and doesn't represent data for searching. To accomodate
+        the unusual nature of this data, it is put into a table and flagged. In this case 
+        the flag is not a field in the table, the flag is a record in record_attribution. 
+        
+        When the data is entered as a member of the list, the data is flagged. This can 
+        happen two ways:
+          1- The add structure form.
+          2- An orphanned structure - a structure which is associate with 0 panels. This may
+             happen via a curator update.
+        
+        Flagged data must be unflagged when the structure is associated with a panel.     
+    <?/MICOMMENT>
+    
+    <?MICOMMENT> ============================================================== 
+                  Extract panel designation, figure_zdb_id, and image_zdb_id
+                  from variable panel_desig_and_xpatex_zdb_id
+                ==============================================================
+    <?/MICOMMENT>    
+    <?MIVAR NAME=panel_desig_and_xpatex_zdb_id>$(URLDECODE,$panel_desig_and_xpatex_zdb_id)<?/MIVAR>
+    <?MIVAR NAME=panel_designation>$(INDEX,3,$panel_desig_and_xpatex_zdb_id)<?/MIVAR>
+    <?MIVAR NAME=panel_xpatex_zdb_id>$(INDEX,0,$panel_desig_and_xpatex_zdb_id)<?/MIVAR>
+    <?MIVAR NAME=panel_fig_zdb_id>$(INDEX,2,$panel_desig_and_xpatex_zdb_id)<?/MIVAR>
+    <?MIVAR NAME=panel_fimgp_zdb_id>$(INDEX,1,$panel_desig_and_xpatex_zdb_id)<?/MIVAR>
+    
+    <?MIVAR COND=$(EC,$debugg,true)>
+      <b>$panel_desig_and_xpatex_zdb_id</b><BR>
+      panel = $panel_designation<BR>
+      xpatex = $panel_xpatex_zdb_id<BR>
+      fig = $panel_fig_zdb_id<BR>
+      image = $panel_fimgp_zdb_id<br>
+    <?/MIVAR>
+
+    <?MICOMMENT> ============================================================== 
+                   At Least One xpatres record exists for each panel. Use the 
+                   xpatres stage range for all new xpatres records. 
+                 ==============================================================
+    <?/MICOMMENT>    
+    
+    <?MISQL SQL="
+      select distinct xpatres_start_stg_zdb_id, xpatres_end_stg_zdb_id, xpatres_zdb_id
+      from fx_expression_pattern_image, fx_expression_experiment, fx_expression_result
+      where xpatex_source_zdb_id = '$OID'
+        and xpatex_zdb_id = xpatres_xpatex_zdb_id
+        and xpatres_zdb_id = xpatfimg_xpatres_zdb_id
+        and xpatfimg_panel_designation = '$panel_designation'
+        and xpatex_zdb_id = '$panel_xpatex_zdb_id'
+        and xpatfimg_fig_zdb_id = '$panel_fig_zdb_id'
+        and xpatfimg_fimgp_zdb_id = '$panel_fimgp_zdb_id';">
+      
+        <?MIVAR NAME=panel_start_stg_zdb_id>$1<?/MIVAR>
+        <?MIVAR NAME=panel_end_stg_zdb_id>$2<?/MIVAR>
+        <?MIVAR NAME=panel_xpatres_zdb_id>$3<?/MIVAR>
+    <?/MISQL>
+    
+    <?MIVAR COND=$(EC,$debugg,true)>
+      start_stg = $panel_start_stg_zdb_id<BR>
+      end_stg = $panel_end_stg_zdb_id<BR>
+    <?/MIVAR>
+
+    <?MICOMMENT> ============================================================== 
+                   Create lists of structures to add and remove from the 
+                   selected panel.
+                 ==============================================================
+    <?/MICOMMENT>    
+    
+    <?MIVAR NAME=structures_add COND=$(NXST,$structures_add)><?/MIVAR>
+    <?MIVAR NAME=structures_remove COND=$(NXST,$structures_remove)><?/MIVAR>
+    <?MIVAR NAME=anatitem_add><?/MIVAR>
+    <?MIVAR NAME=anatitem_remove><?/MIVAR>
+    
+    <?MIVAR NAME=xpatinf_add_csv DELIMIT="|" REPLACE="','">$structures_add<?/MIVAR>
+    
+    <?MISQL SQL="
+      select xpatinf_anatitem_zdb_id, xpatinf_expressed
+      from expression_pattern_infrastructure
+      where xpatinf_zdb_id in ('$xpatinf_add_csv')
+      ;">
+      <?MIVAR NAME=item DELIMIT="'" REPLACE="''">$1<?/MIVAR>
+      <?MIVAR>$(VECAPPEND,$anatitem_add,$item$2)<?/MIVAR>
+    <?/MISQL>
+    <?MIVAR NAME=anatitem_add_csv SEPARATE="','">$anatitem_add<?/MIVAR>
+    <?MIVAR NAME=c_anatitem_add_csv>$anatitem_add_csv<?/MIVAR>
+    <?MIVAR NAME=c_anatitem_add_csv DELIMIT="'" REPLACE="">$c_anatitem_add_csv<?/MIVAR>  
+    <SCRIPT>
+      setCookie('anatitem_add_csv','<?MIVAR>$(URLENCODE,$c_anatitem_add_csv)<?/MIVAR>')
+    </SCRIPT>
+
+
+    <?MIVAR NAME=xpatinf_remove_csv DELIMIT="|" REPLACE="','">$structures_remove<?/MIVAR>
+    
+    <?MISQL SQL="
+      select xpatinf_anatitem_zdb_id, xpatinf_expressed
+      from expression_pattern_infrastructure
+      where xpatinf_zdb_id in ('$xpatinf_remove_csv')
+      ;">
+      <?MIVAR NAME=item DELIMIT="'" REPLACE="''">$1<?/MIVAR>
+      <?MIVAR>$(VECAPPEND,$anatitem_remove,$item$2)<?/MIVAR>
+    <?/MISQL>
+    <?MIVAR NAME=anatitem_remove_csv SEPARATE="','">$anatitem_remove<?/MIVAR>
+    <?MIVAR NAME=url_anatitem_remove_csv>$anatitem_remove_csv<?/MIVAR>
+    <?MIVAR NAME=url_anatitem_remove_csv DELIMIT="'" REPLACE="">$url_anatitem_remove_csv<?/MIVAR>  
+    <SCRIPT>
+      setCookie('anatitem_remove_csv','<?MIVAR>$(URLENCODE,$url_anatitem_remove_csv)<?/MIVAR>')
+    </SCRIPT>
+    
+    
+    <?MICOMMENT> =============================================================== 
+                   Create xpatres and xpatfimg records  
+                 ===============================================================      
+    <?/MICOMMENT>  
+
+    <?MIVAR NAME=xpatfimg_xpatres_add_list><?/MIVAR>
+    <?MISQL SQL="
+      select xpatinf_anatitem_zdb_id, xpatinf_expressed
+      from expression_pattern_infrastructure
+      where xpatinf_zdb_id in ('$xpatinf_add_csv')
+      ;">
+      <?MISQL SQL="select WebExplode(object,'gPSLitem_anatitem_zdb_id=$1&gPSLitem_expressed=$2&gPSLitem_xpatex_zdb_id=$panel_xpatex_zdb_id&gPSLitem_stg_start_zdb_id=$panel_start_stg_zdb_id&gPSLitem_stg_end_zdb_id=$panel_end_stg_zdb_id') from webPages where ID='aa-getPubStructureListItem.apg';">$1<?/MISQL>
+
+      <?MIVAR>$(VECAPPEND,$xpatfimg_xpatres_add_list,$gPSLitem_xpatres_zdb_id)<?/MIVAR>              
+    <?/MISQL>
+
+    <?MIVAR NAME=xpatfimg_xpatres_add_csv SEPARATE="','">$xpatfimg_xpatres_add_list<?/MIVAR>
+       
+    <?MISQL SQL="
+      select xpatres_zdb_id
+      from fx_expression_result 
+      where xpatres_zdb_id in ('$xpatfimg_xpatres_add_csv')
+        and xpatres_zdb_id not in
+            (
+              select xpatfimg_xpatres_zdb_id
+              from fx_expression_pattern_image
+              where xpatfimg_fig_zdb_id = '$panel_fig_zdb_id'
+                and xpatfimg_fimgp_zdb_id = '$panel_fimgp_zdb_id'
+                and xpatfimg_panel_designation = '$panel_designation'
+            );">
+
+        <?MIVAR NAME=panel_xpatres_zdb_id>$1<?/MIVAR>
+        <?MISQL SQL="
+          INSERT into fx_expression_pattern_image (
+            xpatfimg_xpatres_zdb_id,
+            xpatfimg_fimgp_zdb_id,
+            xpatfimg_panel_designation,
+            xpatfimg_fig_zdb_id)
+          VALUES (
+            '$panel_xpatres_zdb_id',
+            '$panel_fimgp_zdb_id',
+            '$panel_designation',
+            '$panel_fig_zdb_id');">
+        <?/MISQL>         
+        
+    <?/MISQL>
+
+    <?MICOMMENT> =============================================================== 
+                   Deleted removed structures from fx_expression_pattern_image. 
+                 ===============================================================
+    <?/MICOMMENT>
+
+    <?MISQL SQL="
+        delete from fx_expression_pattern_image
+        where xpatfimg_panel_designation = '$panel_designation'
+          and xpatfimg_fimgp_zdb_id = '$panel_fimgp_zdb_id'
+          and xpatfimg_fig_zdb_Id = '$panel_fig_zdb_id'
+          and exists
+            (
+              select *
+              from fx_expression_result, expression_pattern_infrastructure
+              where xpatfimg_xpatres_zdb_id = xpatres_zdb_id
+                and xpatres_anat_item_zdb_id = xpatinf_anatitem_zdb_id
+                and xpatres_expression_found = xpatinf_expressed
+                and xpatinf_zdb_id in ('$xpatinf_remove_csv')
+            )
+        ;">
+    <?/MISQL>
+    
+    <?MIVAR COND=$(EC,$debugg,true)>
+      <br>Delete Panel Structures: $MI_SQL<br><br>
+    <?/MIVAR>
+
+    <?MICOMMENT> ============================================================== 
+                   Orphan records. Deleted these from fx_expression_result. 
+                 ==============================================================
+    <?/MICOMMENT>
+    
+    <?MIVAR NAME=xpatres_orphan><?/MIVAR>
+    <?MISQL SQL="
+      select orphan.xpatres_zdb_id
+      from fx_expression_result orphan, fx_expression_experiment
+      where xpatex_source_zdb_id = '$OID'
+        and xpatex_zdb_id = orphan.xpatres_xpatex_zdb_id
+        and xpatres_start_stg_zdb_id = '$panel_start_stg_zdb_id'
+        and xpatres_end_stg_zdb_id = '$panel_end_stg_zdb_id'
+        and xpatres_xpatex_zdb_id = '$panel_xpatex_zdb_id'
+        and not exists
+            (
+              select * 
+              from fx_expression_pattern_image
+              where orphan.xpatres_zdb_id = xpatfimg_xpatres_zdb_id
+            )
+      ;">
+      <?MIVAR>$(VECAPPEND,$xpatres_orphan,$1)<?/MIVAR>
+    <?/MISQL>
+    <?MIVAR NAME=xpatres_orphan_csv SEPARATE="','">$xpatres_orphan<?/MIVAR>    
+    <?MISQL SQL="
+        delete from zdb_active_data
+        where zactvd_zdb_id in ('$xpatres_orphan_csv')
+        ;">
+    <?/MISQL>
+    
+    <?MIVAR COND=$(EC,$debugg,true)>
+      <br>Delete Results: $MI_SQL<br><br>
+    <?/MIVAR>
+
+  <?/MIBLOCK>  
+
+
+
+
+  <?MICOMMENT> ================| Structure |================ <?/MICOMMENT>
+  <?MIBLOCK COND=$(XST,$structure_add)>
+  
+    <?MICOMMENTS>
+       ================================================          
+         Add a record to table expression_pattern_infrastructure
+       ================================================
+    <?/MICOMMENTS>
+    
+    <?MISQL SQL="
+        select count(*)
+        from expression_pattern_infrastructure
+        where xpatinf_pub_zdb_id = '$OID'
+          and xpatinf_anatitem_zdb_id = '$structure_add_id'
+          and xpatinf_expressed = '$structure_expressed'
+        ;">
+    <?/MISQL>
+    
+    <?MIBLOCK COND="$(EC,$1,0)">  
+
+        <?MICOMMENT> ==| Get next ZDB-ID |== <?/MICOMMENT>
+        <?MISQL SQL="execute function get_id('XPATINF');">$(SETVAR,$xpatinf_zdb_id,$1)<?/MISQL>
+     
+        <?MICOMMENT> ==| Add New XPATINF |== <?/MICOMMENT>  
+        <?MISQL SQL="INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES('$xpatinf_zdb_id');"><?/MISQL>   
+          
+        <?MISQL SQL="    
+            INSERT INTO expression_pattern_infrastructure (
+                xpatinf_zdb_id,
+                xpatinf_curator_zdb_id,
+                xpatinf_pub_zdb_id,
+                xpatinf_anatitem_zdb_id,
+                xpatinf_expressed,
+                xpatinf_date )
+            VALUES (
+                '$xpatinf_zdb_id',
+                '$ZDB_ident', 
+                '$OID', 
+                '$structure_add_id',
+                '$structure_expressed',
+                TODAY);">
+        <?/MISQL>
+    
+    <?MIELSE>
+      <?MISQL SQL="SELECT anatitem_name FROM anatomy_item WHERE anatitem_zdb_id = '$structure_add_id';"><?/MISQL>
+      <SCRIPT>
+        alert("The structure  '<?MIVAR>$1<?/MIVAR>' - already exists for this publication.")
+      </SCRIPT>
+    <?/MIBLOCK> <?MICOMMENT> end xpatres count != 0 <?/MICOMMENT>    
+  <?/MIBLOCK> 
+
+
+  <?MICOMMENT> ================| TOD |================ <?/MICOMMENT>
+  <?MIBLOCK COND=$(XST,$tod_add)>
+  
+    <?MICOMMENTS>
+       =========================================================================================          
+         When adding a structure independent of a panel, enter the xpatres_zdb_id in 
+         record_attribution.
+           When modifying the set of xpatres for a panel, special treatment for xpatres records 
+           in record_attribution is required. Modify the stage range and delete the attribution.
+       =========================================================================================
+    <?/MICOMMENTS>
+    <?MIVAR COND=$(NXST,$tod_add_comment) NAME=tod_add_comment><?/MIVAR>
+    
+    <?MISQL SQL="
+        select count(*)
+        from fx_expression_result
+        where xpatres_xpatex_zdb_id = '$tod_add_xpatex'
+          and xpatres_anat_item_zdb_id = '$tod_add_anat_item_zdb_id'
+          and xpatres_expression_found = '$tod_expressed'
+          and xpatres_start_stg_zdb_id = '$tod_add_start_stg'
+          and xpatres_end_stg_zdb_id = '$tod_add_end_stg'
+        ;">
+    <?/MISQL>
+    
+    <?MIBLOCK COND="$(EC,$1,0)">  
+      
+      <?MICOMMENT> ==| Get next ZDB-ID |== <?/MICOMMENT>
+      <?MISQL SQL="execute function get_id('XPATRES');">$(SETVAR,$xpatres_zdb_id,$1)<?/MISQL>
+    
+      <?MICOMMENT> ==| Add New XPATRES |== <?/MICOMMENT>  
+      <?MISQL SQL="INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES('$xpatres_zdb_id');"><?/MISQL>
+    
+   
+      <?MISQL SQL="
+        INSERT into fx_expression_result(
+            xpatres_zdb_id,
+            xpatres_xpatex_zdb_id,
+            xpatres_anat_item_zdb_id,
+            xpatres_start_stg_zdb_id,
+            xpatres_end_stg_zdb_id,
+            xpatres_expression_found,
+            xpatres_comments)
+        VALUES (
+            '$xpatres_zdb_id',
+            '$tod_add_xpatex',
+            '$tod_add_anat_item_zdb_id',
+            '$tod_add_start_stg',
+            '$tod_add_end_stg',
+            '$tod_expressed',
+            '$tod_add_comment ' || TODAY || ' xpatcuration');">
+      <?/MISQL> 
+    
+      <?MISQL SQL="insert into record_attribution(recattrib_data_zdb_id, recattrib_source_zdb_id)
+                   values('$xpatres_zdb_id','$OID');">
+      <?/MISQL>
+    
+    <?MIELSE>
+      <?MISQL SQL="SELECT anatitem_name FROM anatomy_item WHERE anatitem_zdb_id = '$tod_add_anat_item_zdb_id';"><?/MISQL>
+      <SCRIPT>
+        alert("The structure  '<?MIVAR>$1<?/MIVAR>' - already exists for this publication.")
+      </SCRIPT>
+    <?/MIBLOCK> <?MICOMMENT> end xpatres count != 0 <?/MICOMMENT>    
+  <?/MIBLOCK> 
+  
+    <SCRIPT>
+      setCookie('xpatcuration_update','no')
+    </SCRIPT>
+<?/MIBLOCK>  
+
+  <?MIVAR>
+    <TITLE>ZFIN Curate FX</TITLE>
+  <?/MIVAR>
+  
+  <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
+
+<SCRIPT>
+
+    //reset checked structures when experiment is selected.
+    
+    function reset_structures_for_panel(xpat_panel_fig_image_string) {
+          
+      var separator = ",";
+      var decodeStr = URLDecode(xpat_panel_fig_image_string) + ",";
+      var tokenizer = new StringTokenizer ( decodeStr, separator );
+      var count = 0;
+      var xpatex_zdb = "";
+      var panel = "";
+      var figure_zdb = "";
+      var image_zdb = "";
+      
+      while (tokenizer.hasMoreTokens())
+      {
+        if (count == 0) { var xpatex_zdb = tokenizer.nextToken(); }
+        
+        if (count == 1) { var image_zdb = tokenizer.nextToken(); }
+                
+        if (count == 2) { var figure_zdb = tokenizer.nextToken(); }
+            
+        if (count == 3) { var panel = tokenizer.nextToken(); }
+        
+        count++;
+      }
+      
+      //alert("xpat = "+xpatex_zdb+ "\npanel = "+panel+"\nfigure_zdb = "+figure_zdb+"\nimage_zdb = "+image_zdb);
+      
+      <?MICOMMENT>
+          This is problem of finding the overlap of two list. One list is
+          experiments - defined as a combination of panel, image, and figure.
+          The other list is structures - defined as a combination of pub,
+          curator, and anatomy_item. The input is an experiment so it makes 
+          more sense to group by experiment first.
+          
+          Select each distinct set of {panel, image, figure}. Then for each
+          set, loop through the structures in expression_pattern_infrastructure. If the
+          structure belongs to the experiment then set the radio button to
+          ADD. Otherwise set the radio button to remove.
+          
+          Radio buttons are array objects. In the form on this page the ADD
+          button is listed first, so ADD is element 0 and remove is element 1.
+      <?/MICOMMENT>
+      
+          <?MICOMMENT>
+              This comment should be inside the following SQL. However, all web 
+              datablade code inside the SQL block which executes after the       
+              micomment is no longer interpreted when the micomment is inside the
+              SQL tag.
+                
+                    The '{' character causes strange behavior with the query results 
+                    when it is not encapsulated by a variable.
+                    
+                    The Curious can replace the variable $loopEntryCondition with the
+                    logic... gmake the file... refresh the web page... view the source.
+          <?/MICOMMENT>
+      <?MISQL SQL="
+          SELECT distinct xpatfimg_panel_designation, xpatfimg_fig_zdb_id, xpatfimg_fimgp_zdb_id, xpatex_zdb_id
+            FROM fx_expression_experiment, fx_expression_pattern_image, fx_expression_result
+           WHERE xpatres_zdb_id = xpatfimg_xpatres_zdb_id
+             AND xpatex_source_zdb_id = '$OID'
+             AND xpatex_zdb_id = xpatres_xpatex_zdb_id;">
+
+          <?MIVAR NAME=xpatfimg_panel_designation>$1<?/MIVAR>
+          <?MIVAR NAME=xpatfimg_fig_zdb_id>$2<?/MIVAR>
+          <?MIVAR NAME=xpatfimg_fimgp_zdb_id>$3<?/MIVAR>
+          <?MIVAR NAME=xpatex_zdb_id>$4<?/MIVAR>
+          
+
+          <?MIVAR NAME=loopEntryCondition>
+            if (figure_zdb == '$xpatfimg_fig_zdb_id' 
+                && image_zdb == '$xpatfimg_fimgp_zdb_id' 
+                && panel == '$xpatfimg_panel_designation'
+                && xpatex_zdb == '$xpatex_zdb_id') {
+          <?/MIVAR>
+          <?MIVAR NAME=closingBracket>}<?/MIVAR>
+          
+          $loopEntryCondition
+        
+          <?MISQL SQL="
+            SELECT distinct xpatinf_zdb_id, xpatres_zdb_id
+              FROM expression_pattern_infrastructure, OUTER(fx_expression_result, fx_expression_pattern_image, fx_expression_experiment)
+             WHERE xpatinf_anatitem_zdb_id = xpatres_anat_item_zdb_id
+               AND xpatinf_expressed = xpatres_expression_found
+               AND xpatinf_pub_zdb_id = '$OID'
+               AND xpatres_zdb_id = xpatfimg_xpatres_zdb_id
+               AND xpatfimg_panel_designation = '$xpatfimg_panel_designation'
+               AND xpatfimg_fig_zdb_id = '$xpatfimg_fig_zdb_id'
+               AND xpatfimg_fimgp_zdb_id = '$xpatfimg_fimgp_zdb_id'
+               AND xpatres_xpatex_zdb_id = '$xpatex_zdb_id';">
+
+            <?MIBLOCK COND=$(NC,$2,NULL)> 
+              document.forms['panel_structures'].elements['<?MIVAR>$1<?/MIVAR>'][0].click();          
+            <?MIELSE> 
+              document.forms['panel_structures'].elements['<?MIVAR>$1<?/MIVAR>'][1].click();
+            <?/MIBLOCK>   
+          <?/MISQL>
+          
+          $closingBracket
+      <?/MISQL>
+    }
+      
+      function deleteZDB(item,anchor) {
+        <?MIVAR>
+          replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID&delete_item="+item+"&anchor="+anchor);
+        <?/MIVAR>
+      }
+
+
+</SCRIPT>
+
+
+<?MICOMMENT> 
+  ==========================
+  =    Data Compilation    =
+  ==========================
+
+  select subsets of data specific to this publication.
+  ZDB-id List
+  Gene List
+  Fish List
+  Probe List
+  Acc_num List
+  Environment List
+  Figure List
+  Image List
+
+<?/MICOMMENT>
+
+    <?MIVAR NAME=hide><font color=blue size=-1><u>hide</u></font><?/MIVAR>
+    <?MIVAR NAME=unhide><font color=blue size=-1><u>show</u></font><?/MIVAR>
+
+    <?MIVAR NAME=oid_attrib><?/MIVAR>
+    <?MISQL SQL="
+        select recattrib_data_zdb_id
+        from record_attribution 
+        where recattrib_source_zdb_id = '$OID'
+        ;">
+        <?MIVAR> $(VECAPPEND,$oid_attrib,$1)<?/MIVAR>
+    <?/MISQL>
+      <?MIVAR NAME=oid_attrib_csv SEPARATE="','">$oid_attrib<?/MIVAR>
+
+
+    <?MIVAR NAME=fish_attrib><?/MIVAR>
+    <?MISQL SQL="
+        select zdb_id
+        from fish
+        where zdb_id in ('$oid_attrib_csv')
+        ;">
+        <?MIVAR> $(VECAPPEND,$fish_attrib,$1)<?/MIVAR>
+    <?/MISQL>
+      <?MIVAR NAME=fish_attrib_csv SEPARATE="','">$fish_attrib<?/MIVAR>
+      
+      
+    <?MIVAR NAME=gene_attrib><?/MIVAR>
+    <?MISQL SQL="
+        select mrkr_zdb_id
+        from marker 
+        where mrkr_zdb_id in ('$oid_attrib_csv')
+          and mrkr_type in (select mtgrpmem_mrkr_type from marker_type_group_member where mtgrpmem_mrkr_type_group = 'GENEDOM')
+        ;">
+        <?MIVAR> $(VECAPPEND,$gene_attrib,$1)<?/MIVAR>
+    <?/MISQL>
+      <?MIVAR NAME=gene_attrib_csv SEPARATE="','">$gene_attrib<?/MIVAR>
+
+      
+    <?MIVAR NAME=est_attrib><?/MIVAR>
+    <?MISQL SQL="
+        select mrel_mrkr_2_zdb_id
+        from marker_relationship, record_attribution
+        where mrel_mrkr_1_zdb_id in ('$gene_attrib_csv')
+          and mrel_mrkr_2_zdb_id = recattrib_data_zdb_id
+          and recattrib_source_zdb_id = '$OID'
+        ;">
+        <?MIVAR> $(VECAPPEND,$est_attrib,$1)<?/MIVAR>
+    <?/MISQL>
+      <?MIVAR NAME=est_attrib_csv SEPARATE="','">$est_attrib<?/MIVAR>
+
+
+    <?MIVAR NAME=dblink_genbank><?/MIVAR>
+    <?MISQL SQL="
+        select dblink_zdb_id
+        from db_link, foreign_db_contains
+        where dblink_linked_recid in ('$gene_attrib_csv','$est_attrib_csv')
+          and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+          and fdbcont_fdb_db_name = 'Genbank'
+        ;">
+        <?MIVAR> $(VECAPPEND,$dblink_genbank,$1)<?/MIVAR>
+    <?/MISQL>
+      <?MIVAR NAME=dblink_genbank_csv SEPARATE="','">$dblink_genbank<?/MIVAR>
+
+
+    <?MIVAR NAME=dblink_attrib><?/MIVAR>
+    <?MISQL SQL="
+        select dblink_zdb_id
+        from db_link
+        where dblink_zdb_id in ('$oid_attrib_csv')
+        ;">
+        <?MIVAR> $(VECAPPEND,$dblink_attrib,$1)<?/MIVAR>
+    <?/MISQL>
+      <?MIVAR NAME=dblink_attrib_csv SEPARATE="','">$dblink_attrib<?/MIVAR>
+
+
+    <?MIVAR NAME=env_attrib><?/MIVAR>
+    <?MISQL SQL="
+        select env_zdb_id
+        from environment 
+        where env_zdb_id in ('$oid_attrib_csv')
+        ;">
+        <?MIVAR> $(VECAPPEND,$env_attrib,$1)<?/MIVAR>
+    <?/MISQL>
+      <?MIVAR NAME=env_attrib_csv SEPARATE="','">$env_attrib<?/MIVAR>
+
+
+    <?MIVAR NAME=fig_attrib><?/MIVAR>
+    <?MISQL SQL="
+        select fig_zdb_id
+        from fx_figure
+        where fig_zdb_id in ('$oid_attrib_csv')
+        $(IF,$(XST,$c_figure_only),and fig_zdb_id = '$c_figure_only')
+        ;">
+        <?MIVAR> $(VECAPPEND,$fig_attrib,$1)<?/MIVAR>
+    <?/MISQL>
+      <?MIVAR NAME=fig_attrib_csv SEPARATE="','">$fig_attrib<?/MIVAR>
+
+
+    <?MIVAR NAME=image_attrib><?/MIVAR>
+    <?MISQL SQL="
+        select fimgp_zdb_id
+        from fx_fish_image_private
+        where fimgp_zdb_id in ('$oid_attrib_csv')
+          and fimgp_fig_zdb_id in ('$fig_attrib_csv')
+        ;">
+        <?MIVAR> $(VECAPPEND,$image_attrib,$1)<?/MIVAR>
+    <?/MISQL>
+      <?MIVAR NAME=image_attrib_csv SEPARATE="','">$image_attrib<?/MIVAR>
+      
+<?MIVAR COND=$(EC,$debugg,true)>
+ $MI_SQL<BR><BR>
+  $oid_attrib_csv <BR><BR>
+  $fig_attrib_csv <BR><BR>
+  $image_attrib_csv <BR>
+  
+<?/MIVAR>
+
+
+  
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+
+  
+<?MICOMMENT> 
+  ===========================
+  =    EMULATE DATA MNGR    =
+  ===========================
+<?/MICOMMENT>
+
+<TABLE WIDTH=100% border=0 bgcolor="<!--|HIGHLIGHT_COLOR|-->">
+  <TR align=center>
+    <TD><font size=-1> <b>ZFIN ID:</b> <?MIVAR>$OID<?/MIVAR> </font></TD>
+  </TR>
+</TABLE>
+  
+<?MICOMMENT> 
+  ==================================
+  =    PUBLICATION TABLE HEADER    =
+  ==================================
+<?/MICOMMENT>
+
+<?MISQL SQL="
+  select title, authors, year(pub_date) as pyear, source 
+  from publication
+  where zdb_id = '$OID';">
+<?/MISQL>
+<?MIVAR NAME=title>$1<?/MIVAR>
+<?MIVAR NAME=authors>$2<?/MIVAR>
+<?MIVAR NAME=year>$3<?/MIVAR>
+<?MIVAR NAME=source>$4<?/MIVAR>
+
+
+  <table cellspacing=0 cellpadding=3 width=100%>
+    <tr>
+      <td>
+        <FONT SIZE=+1><u> Publication </u></FONT> <?MIVAR>&nbsp;(<a href="javascript:onClick=urlSetCookie('show_all','true')">Show All</a>)<?/MIVAR>
+        <br>
+        <?MIVAR>
+          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$OID">$authors ($year)
+          $title $source</a>
+          
+        <?/MIVAR>
+      </td>
+    </tr>
+  </table>
+
+<?MICOMMENT> 
+	  =================
+	  =  ENVIRONMENT  =
+	  =================
+<?/MICOMMENT>
+<a name=environment>
+<p><b><font size=3>Environment:</font>
+<?MIBLOCK COND=$(OR,$(NXST,$c_environment),$(EC,$c_environment,hide))>
+  <?MIVAR><a href="javascript:onClick=urlSetCookie('environment','show')">$unhide</a><?/MIVAR>
+  <br>
+  
+<?MIELSE>
+  <?MIVAR><a href="javascript:onClick=urlSetCookie('environment','hide')">$hide</a><?/MIVAR>
+<br>
+<table width=100% border=0 bgcolor="<!--|HIGHLIGHT_COLOR|-->">
+  <tr bgcolor=#CCCCCC>
+    <td width="5%">&nbsp;</td>
+    <td>Name</td>
+    <td>Delete</td>
+  </tr>  
+<?MISQL SQL="
+    select env_zdb_id, env_name
+    from environment
+    where env_zdb_id in ('$env_attrib_csv')
+       or env_name = 'Standard'
+    order by env_name;">
+
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#environment" method=post name=env onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','environment');">
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+    <INPUT TYPE=HIDDEN NAME=update_env_zdb_id VALUE="$1"> 
+  <tr>
+    <?MIBLOCK COND="$(NE,$2,Standard)">
+      <?MIVAR>
+      <td><input name="env_update" type=submit value="Update"></td>
+      <td> <input name="env_name" type=textbox size=15 value="$2">
+      </td>
+      <td>
+        <?MIVAR><input name="delete" type=button value=" X " onClick="deleteZDB('$1','environment')"><?/MIVAR>
+      </td> 
+      <?/MIVAR>
+    <?MIELSE>
+      <?MIVAR>
+      <td> &nbsp; </td>
+      <td> $2 </td>
+      <td> &nbsp; </td> 
+      <?/MIVAR>    
+    <?/MIBLOCK>
+  </tr>
+</form>
+<?/MISQL>    
+
+  <tr>
+    <td colspan=3>
+      <hr>
+    </td>
+  </tr>
+  
+<?MICOMMENT> ==| Enter a New Env |== <?/MICOMMENT>
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#environment" method=post name=environment_new onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','environment');">
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+  <tr>
+    <td>
+      <input name="environment_add" type=submit value="Add">
+    </td>
+    <td>
+         Name: <input name="env_add_name" type=textbox width=50>
+    </td>
+    <td>
+     &nbsp;
+    </td> 
+  </tr>
+</form> 
+  
+</table>
+<?/MIBLOCK>
+
+
+<?MICOMMENT> 
+	  ===============
+	  =  Condition  =
+	  ===============
+<?/MICOMMENT>
+<a name=condition>
+
+    
+<p><b><font size=3>Define Environments:</font> 
+
+<?MIBLOCK COND=$(OR,$(NXST,$c_condition),$(EC,$c_condition,hide))>
+  <?MIVAR><a href="javascript:onClick=urlSetCookie('condition','show')">$unhide</a><?/MIVAR>
+  <br>
+  
+<?MIELSE>
+  <?MIVAR><a href="javascript:onClick=urlSetCookie('condition','hide')">$hide</a><?/MIVAR>
+<br>
+<table width=100% border=0 bgcolor="<!--|HIGHLIGHT_COLOR|-->">
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#condition" method=post name=condition onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','condition');">
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+  <tr bgcolor=#CCCCCC>
+    <td>&nbsp;</td>
+    <td>Env.</td>
+    <td>Condition</td>
+    <td>Attribute</td>
+    <td>Value</td>
+    <td>Units</td> 
+    <td>Comments</td>
+    <td>Delete</td>
+  </tr>  
+<?MISQL SQL="
+    select env_name, envcond_zdb_id, envcond_condition_name, envcond_value, envcond_unit, envcond_comments, envcond_attribute, mrkr_abbrev
+    from environment, environment_condition, OUTER(marker_relationship,marker)
+    where env_zdb_id in ('$env_attrib_csv') 
+      and env_zdb_id = envcond_env_zdb_id
+      and envcond_attribute = mrel_mrkr_1_zdb_id
+      and mrel_mrkr_2_zdb_id = mrkr_zdb_id
+    order by env_name, envcond_condition_name;">
+
+  <tr>
+    <td>&nbsp;</td>
+    <td> $1
+    </td>
+    <td> $3
+    </td>
+    <td> $7 <?MIVAR COND=$(NC,$8,NULL)>($8)<?/MIVAR>
+    </td>
+    <td> $4
+    </td>
+    <td> $5
+    </td>
+    <td> $6
+    </td>    
+    <td>
+        <?MIVAR><input name="delete" type=button value=" X " onClick="deleteZDB('$2','condition')"><?/MIVAR>
+    </td> 
+  </tr>
+<?/MISQL>    
+</form>
+
+  <tr>
+    <td colspan=8>
+      <hr>
+    </td>
+  </tr>
+
+<?MICOMMENT> ==| Enter a New Condition |== <?/MICOMMENT>
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#condition" method=get name=condition_new onSubmit=setCookie('xpatcuration_update','update')>
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg"> 
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+    <INPUT TYPE=HIDDEN NAME=cond_add VALUE="Add"> 
+  <tr>
+    <td>
+      <input name="cond_add" type=button value="Add" onClick="if (validateConditionForm(document.condition_new.cond_add_attribute.value)){setCookie('xpatcuration_update','update');setCookie('anchor','condition');document.condition_new.submit()}">
+    </td>
+    <td>
+        <select name="cond_add_env">
+          <?MISQL SQL="
+              select env_zdb_id, env_name
+              from environment 
+              where env_zdb_id in ('$env_attrib_csv') 
+              order by 1;">
+            <option value="$1">$2</option>
+          <?/MISQL>
+      </select>
+    </td>
+    <td>
+        <select name="cond_add_cond">
+          <?MISQL SQL="select condition_name from condition order by 1;">
+            <option value="$1">$1</option>
+          <?/MISQL>
+      </select>
+    </td>
+    <td>
+        <input name="cond_add_attribute" type=textbox size=20>
+    </td>
+    <td>
+        <input name="cond_add_value" type=textbox size=10>
+    </td>
+    <td>
+        <select name="cond_add_unit">
+          <option value="deg C">deg C</option>
+          <option value="%">%</option>
+          <option value="mg/ml">mg/ml</option>
+          <option value="mM">mM</option>
+          <option value="micro molar">micro molar</option>
+        </select>
+    </td>
+    <td>
+        <input name="cond_add_comments" type=textbox size=20>
+    </td>
+    <td> &nbsp;</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>Morpholino:
+      <select name=cond_morph_select onChange="setCondAttrib(this.value);">
+        <option value=" "></option>
+        <?MISQL SQL="
+          select recattrib_data_zdb_id, mrkr_abbrev 
+            from record_attribution, marker, marker_relationship 
+           where recattrib_data_zdb_id[1,9] = 'ZDB-MRPHL' 
+             and recattrib_source_zdb_Id = '$OID'
+             and recattrib_data_zdb_id = mrel_mrkr_1_zdb_id
+             and mrel_mrkr_2_zdb_id = mrkr_zdb_id;">
+           <option value="$1">$1 ($2)</option>
+        <?/MISQL>
+      </select>
+    </td>
+    <td colspan=3>&nbsp;</td>
+  </tr>
+</form> 
+  
+</table>
+<?/MIBLOCK> 
+
+
+<?MICOMMENT> 
+	  =============
+	  =  FIGURES  =
+	  =============
+<?/MICOMMENT>
+<a name=figure>
+
+<p><b><font size=3>Figure:</font>
+<?MIBLOCK COND=$(OR,$(NXST,$c_figure),$(EC,$c_figure,hide))>
+  <?MIVAR><a href="javascript:onClick=urlSetCookie('figure','show')">$unhide</a><?/MIVAR>
+  <br>
+  
+<?MIELSE>
+  <?MIVAR><a href="javascript:onClick=urlSetCookie('figure','hide')">$hide</a><?/MIVAR>
+  <br>
+  <table width=100% border=0 bgcolor="<!--|HIGHLIGHT_COLOR|-->">
+    <tr bgcolor=#CCCCCC>
+
+  <?MIBLOCK COND=$(NXST,$c_figure_only)>
+      <td></td>
+      <td>Label</td>
+      <td>Caption</td>
+      <td>Comments</td>
+      <td>Image</td>
+      <td>Delete</td>
+  <?MIELSE>
+      <td></td>
+      <td>Label</td>
+      <td>Caption</td>
+  <?/MIBLOCK>
+    </tr>  
+
+<?MISQL SQL="
+    select fig_zdb_id, fig_caption, fig_comments, fig_label
+    from fx_figure
+    where fig_zdb_id in ('$fig_attrib_csv')
+    order by fig_label;">
+
+  <?MIVAR name=fig_zdb_id>$1<?/MIVAR>
+  <?MIVAR name=fig_caption>$2<?/MIVAR>
+  <?MIVAR name=fig_comment>$3<?/MIVAR>
+  <?MIVAR name=fig_label>$4<?/MIVAR>
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#figure" method=post name=figureUpdate> 
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+    <INPUT TYPE=HIDDEN NAME=fig_zdb_id VALUE="<?MIVAR>$fig_zdb_id<?/MIVAR>"> 
+
+<?MIBLOCK COND=$(NXST,$c_figure_only)>
+  <?MIVAR>
+  <tr>
+    <td>
+       <!-- <input name="fig_update" type=submit value="Update"><br> -->
+      <a href="javascript:onClick=urlSetCookie('figure_only','$fig_zdb_id');"><font color=blue>Only</font></a>
+    </td>
+    <td> 
+       <!-- <input name="fig_label" type=textbox size=5 value="$fig_label"> --> $fig_label
+    </td>
+    <td>  
+       <!-- <TEXTAREA name="fig_caption" cols=50 rows=3>$fig_caption</TEXTAREA> --> $fig_caption
+    </td>
+    <td> 
+       <!-- <input name="fig_comments" type=textbox size=20 value="$fig_comment"> --> $fig_comment
+    </td>
+    <td>
+      <?MISQL SQL="
+          select fimgp_thumbnail, fimgp_label
+          from fx_fish_image_private
+          where fimgp_fig_zdb_id = '$fig_zdb_id'
+          order by fimgp_label;">
+          <img src="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$1&MItypeObj=image/jpg">$2 
+      <?/MISQL>
+    </td>
+    <td>
+      <?MIVAR><input name="delete" type=button value=" X " onClick="deleteZDB('$fig_zdb_id','figure')"><?/MIVAR>
+    </td> 
+  </tr>  
+  <?/MIVAR>
+<?MIELSE>
+  <?MIVAR>
+  <tr>
+    <td>
+      <input name="fig_update" type=button value="Update" onClick="if (document.figureUpdate.fig_label.value != ''){uninterpretCaption();setCookie('xpatcuration_update','update');setCookie('anchor','figure');document.figureUpdate.submit();}"><br>
+      <a href="javascript:onClick=urlSetCookie('figure_only','');"><font color=blue>Show All</font></a>
+    </td>
+    <td> 
+        <input name="fig_label" type=textbox size=5 value="$fig_label">
+    </td>
+    <td>  $fig_caption <br>
+            <?MIVAR NAME=$delimiter>&<?/MIVAR>
+            <?MIVAR NAME=$fig_caption DELIMIT="$delimiter" REPLACE=";;">$fig_caption<?/MIVAR>
+       <TEXTAREA name="fig_caption" cols=85 rows=5 >$fig_caption</TEXTAREA>
+    </td>
+  </tr>
+  <tr>
+    <td colspan=2> Comments:<br>
+        <input name="fig_comments" type=textbox size=20 value="$fig_comment">
+    </td>
+    <td>
+      <?MISQL SQL="
+          select fimgp_thumbnail, fimgp_label
+          from fx_fish_image_private
+          where fimgp_fig_zdb_id = '$fig_zdb_id'
+          order by fimgp_label;">
+          <img src="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$1&MItypeObj=image/jpg">$2 
+      <?/MISQL>
+    </td>
+  </tr> 
+  <?/MIVAR>
+<?/MIBLOCK>
+</form>
+<?/MISQL>  
+
+<?MIBLOCK COND=$(NXST,$c_figure_only)>
+  <tr>
+    <td colspan=6>
+      <hr>
+    </td>
+  </tr>
+  
+<?MICOMMENT> ==| Enter a New Figure |== <?/MICOMMENT>
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#figure" method=post name=figure_new>
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+  <tr>
+    <td>
+      <input name="fig_add" type=button value="Add" onClick="if (document.figure_new.fig_add_label.value != ''){setCookie('xpatcuration_update','update');setCookie('anchor','figure');document.figure_new.submit();}">
+    </td>
+    <td> 
+        <input name="fig_add_label" type=textbox size=5>
+    </td>
+    <td>
+        <TEXTAREA name="fig_add_caption" cols=50 rows=3></TEXTAREA>
+    </td>
+    <td>
+        <input name="fig_add_comments" type=textbox size=20>
+    </td>
+    <td> &nbsp;</td>
+  </tr>
+</form> 
+
+<?/MIBLOCK><?MICOMMENT> XST c_figure_only <?/MICOMMENT>  
+</table>
+<?/MIBLOCK>
+
+
+<?MICOMMENT> 
+	  ============
+	  =  IMAGES  =
+	  ============
+<?/MICOMMENT>
+<a name=image>
+<p><b><font size=3>Image:</font>
+<?MIBLOCK COND=$(OR,$(NXST,$c_image),$(EC,$c_image,hide))>
+  <?MIVAR><a href="javascript:onClick=urlSetCookie('image','show')">$unhide</a><?/MIVAR>
+  <br>
+  
+<?MIELSE>
+  <?MIVAR><a href="javascript:onClick=urlSetCookie('image','hide')">$hide</a><?/MIVAR>
+  <br>
+<table width=100% border=0 bgcolor="<!--|HIGHLIGHT_COLOR|-->">
+  <tr bgcolor=#CCCCCC>
+    <td>&nbsp;</td>
+    <td>Figure</td>
+    <td>Image</td>
+    <td>Panels</td>
+    <td>Delete</td>
+  </tr>  
+<?MISQL SQL="
+          select fig_zdb_id, fig_label, fimgp_thumbnail, fimgp_zdb_id, fimgp_label
+	  from fx_fish_image_private, fx_figure
+	  where fig_zdb_id in ('$fig_attrib_csv')
+            and fimgp_fig_zdb_id = fig_zdb_id
+          order by fimgp_label;">
+          
+      <?MIVAR name=fig_zdb_id>$1<?/MIVAR>
+      <?MIVAR name=fig_label>$2<?/MIVAR>
+      <?MIVAR name=thumbnail>$3<?/MIVAR>
+      <?MIVAR name=image_zdb_id>$4<?/MIVAR>
+      <?MIVAR name=image_label>$5<?/MIVAR>
+      
+<form name=image action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#image" onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','image');" method=post ENCTYPE="multipart/form-data"> 
+
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+    <INPUT TYPE=HIDDEN NAME=image_zdb_id VALUE="<?MIVAR>$image_zdb_id<?/MIVAR>">   
+  <tr>
+    <td>
+      <input name="image_update" type=submit value="Update">
+    </td>
+    <td>
+      <select name="image_fig">
+        <?MISQL SQL="
+          select fig_zdb_id, fig_label
+	  from fx_figure
+	  where fig_zdb_id in ('$fig_attrib_csv')
+          order by fig_label;">
+            <option value=$1 $(IF,$(EC,$1,$fig_zdb_id),SELECTED)>$2</option>
+        <?/MISQL>
+      </select>
+    </td>
+    <td>  
+        <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$image_zdb_id&image_table=fx_fish_image_private">
+        <img src="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$thumbnail&MItypeObj=image/jpg"></a>
+        <input name="image_label" type=textbox width=15 value="$image_label">
+        <input type=file name="upload_image" size=30> 
+    </td>
+    <td>    
+      <?MISQL SQL="
+          select distinct xpatfimg_panel_designation
+          from fx_expression_pattern_image, fx_fish_image_private
+          where xpatfimg_fimgp_zdb_id = fimgp_zdb_id
+            and fimgp_zdb_id = '$image_zdb_id'
+          ;">
+          <?MIVAR COND=$(=,$MI_CURRENTROW,1)>$1<?/MIVAR>
+          <?MIVAR COND=$(!=,$MI_CURRENTROW,1)>, $1<?/MIVAR>
+      <?/MISQL>
+    </td>
+    <td>
+      <?MIVAR><input name="delete" type=button value=" X " onClick="if (confirm('All Experiment data for this image will be deleted.')){deleteZDB('$image_zdb_id','image');}"><?/MIVAR>
+    </td> 
+  </tr>  
+
+</form>
+<?/MISQL>    
+
+  <FORM ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#image" method=post NAME=new_image  onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','image');"
+        ENCTYPE="multipart/form-data">
+    <?MIVAR>
+      <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
+      <INPUT TYPE=HIDDEN NAME=OID VALUE="$OID"> 
+    <?/MIVAR>
+
+  <tr>
+    <td colspan=5>
+      <hr>
+    </td>
+  </tr>
+  
+<?MICOMMENT> ==| Enter a New Image |== <?/MICOMMENT>
+  <tr>
+    <td>
+      <input name="image_add" type=submit value="Add">
+    </td>
+    <td>
+      Fig: <select name="image_add_fig">
+        <?MISQL SQL="
+          select fig_zdb_id, fig_label
+	  from fx_figure
+	  where fig_zdb_id in ('$fig_attrib_csv')
+          order by fig_label;">
+            <option value=$1>$2</option>
+        <?/MISQL>
+      </select>
+    </td>
+    <td> 
+      Label: <input name="image_add_label" type=textbox size=15>
+      Image: <input type=file name="upload_image" size=30>    
+    </td>
+    <td> 
+      &nbsp;
+    </td>
+  </tr>
+</form> 
+  
+</table>
+<?/MIBLOCK>
+
+<?MICOMMENT> 
+	  =================
+	  =  Experiments  =
+	  =================
+<?/MICOMMENT>
+<a name=experiment>
+
+<p><b><font size=3>Experiments:</font>
+<?MIBLOCK COND=$(OR,$(NXST,$c_experiment),$(EC,$c_experiment,hide))>
+  <?MIVAR><a href="javascript:onClick=urlSetCookie('experiment','show')">$unhide</a><?/MIVAR>
+  <br>
+  
+<?MIELSE>
+  <?MIVAR><a href="javascript:onClick=urlSetCookie('experiment','hide')">$hide</a><?/MIVAR>
+  <br>
+<table width=100% border=0 bgcolor="<!--|HIGHLIGHT_COLOR|-->">
+  <tr bgcolor=#CCCCCC>
+    <td>&nbsp;</td>
+    <td>Display Name</td>
+	<td><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg">Gene </a></td>
+    <td><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusselect.html&select_from=LOCI&frame_size=230&intro=/ZFIN/help_files/locus_intro.html">Fish</a></td>
+	<td>Env.</td>
+	<td>Assay</td>
+	<td>Genbank</td>
+	<td>Delete</td>
+  </tr>  
+<?MISQL SQL="
+    select distinct xpatex_zdb_id, xpatex_assay_name, xpatex_probe_feature_zdb_id, featenv_genome_feature_zdb_id, featenv_env_zdb_id, abbrev, xpatex_gene_zdb_id, dblink_zdb_id
+    from fx_expression_experiment, feature_environment, fish, OUTER(db_link)
+    where xpatex_source_zdb_id = '$OID'
+      and xpatex_featenv_zdb_id = featenv_zdb_id
+      and featenv_genome_feature_zdb_id = zdb_id
+      and xpatex_probe_feature_zdb_id = dblink_linked_recid
+      and dblink_zdb_id in ('$dblink_attrib_csv')
+    order by 6,5,2,3;">
+
+<?MIVAR COND=$(EC,$debugg,true)><p>Experiment Select:<br> $MI_SQL <?/MIVAR>
+
+    <?MIVAR NAME=xpatex_zdb_id>$1<?/MIVAR>
+    <?MIVAR NAME=xpatex_assay>$2<?/MIVAR>
+    <?MIVAR NAME=xpatex_probe>$3<?/MIVAR>
+    <?MIVAR NAME=xpatex_fish>$4<?/MIVAR>
+    <?MIVAR NAME=xpatex_env>$5<?/MIVAR>
+    <?MIVAR NAME=xpatex_gene>$7<?/MIVAR>
+    <?MIVAR NAME=xpatex_genbank>$8<?/MIVAR>
+    
+    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-xpatexdisplayname.apg';">$1<?/MISQL>
+    
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#experiment" method=post name=experiment onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','experiment');">
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+    <INPUT TYPE=HIDDEN NAME=xpatex_zdb_id VALUE="<?MIVAR>$xpatex_zdb_id<?/MIVAR>"> 
+    <INPUT TYPE=HIDDEN NAME=xpatex VALUE="update"> 
+  <tr>
+    <td><input name="xpatex_update" type=submit value="Update"></td>
+    <td>$xpatex_display_name</td>
+    <td> 
+        <select name="xpatex_gene">
+          <?MISQL SQL="select mrkr_zdb_id, mrkr_abbrev 
+                       from marker 
+                       where mrkr_zdb_id in ('$gene_attrib_csv')
+                       order by mrkr_abbrev;">
+            <option value="$1" $(IF,$(EC,$xpatex_gene,$1),SELECTED)>$2</option>
+            <?MIVAR> $(VECAPPEND,$gene_attrib,$1)<?/MIVAR>
+          <?/MISQL>
+      </select>
+    </td>
+    <td> 
+        <select name="xpatex_fish">
+          <?MISQL SQL="
+            select zdb_id, LOWER(abbrev) 
+            from fish
+            where zdb_id in ('$fish_attrib_csv')
+               or abbrev = 'WT'
+            order by fish_name_order;">
+            <?MIVAR NAME=fishOption>$2<?/MIVAR>
+            <?MIVAR NAME=fishOption DELIMIT="<sup>" REPLACE=" (">$fishOption<?/MIVAR>
+            <?MIVAR NAME=fishOption DELIMIT="</sup>" REPLACE=")">$fishOption<?/MIVAR>
+            <option value="$1" $(IF,$(EC,$xpatex_fish,$1),SELECTED)>$fishOption</option>
+          <?/MISQL>
+      </select>
+    </td>
+    <td> 
+        <select name="xpatex_env">
+          <?MISQL SQL="
+              select env_zdb_id, env_name
+              from environment 
+              where env_zdb_id in ('$env_attrib_csv') 
+                 or env_name = 'Standard'
+              order by 1;">
+            <option value="$1" $(IF,$(EC,$xpatex_env,$1),SELECTED)>$2</option>
+          <?/MISQL>
+      </select>
+    </td>
+    <td> 
+        <select name="xpatex_assay">
+            <option value=""></option>
+          <?MISQL SQL="select xpatassay_name, xpatassay_display_order from expression_pattern_assay order by 2;">
+            <option value="$1" $(IF,$(EC,$xpatex_assay,$1),SELECTED)>$1</option>
+          <?/MISQL>
+      </select>
+    </td>
+
+    <td> 
+        <select name="xpatex_genbank">
+            <option value=""></option>
+          
+          <?MISQL SQL="select dblink_zdb_id, dblink_acc_num
+                       from db_link
+                       where dblink_zdb_id in ('$dblink_genbank_csv')
+                       order by dblink_acc_num;">
+            <option value=$1 $(IF,$(EC,$1,$xpatex_genbank),SELECTED)>$2</option>
+          <?/MISQL>
+        </select>
+    </td>
+    <td>
+      <?MIVAR><input name="delete" type=button value=" X " onClick="deleteZDB('$xpatex_zdb_id','experiment')"><?/MIVAR>
+    </td>    
+  </tr>
+  </form>
+<?/MISQL>    
+
+  <tr>
+    <td colspan=8>
+      <hr>
+    </td>
+  </tr>
+  
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#experiment" method=post name=new_experiment onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','experiment');">
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+    <INPUT TYPE=HIDDEN NAME=xpatex VALUE="add"> 
+<?MICOMMENT> ==| Enter a New Experiment |== <?/MICOMMENT>
+  <tr>
+    <td>
+      <input name="xpatex_add" type=submit value="Add">
+    </td>
+    <td>&nbsp;</td>
+    <td> 
+        <select name="xpatex_gene">
+          <?MISQL SQL="select mrkr_zdb_id, mrkr_abbrev 
+                       from marker 
+                       where mrkr_zdb_id in ('$gene_attrib_csv')
+                       order by mrkr_abbrev;">
+            <option value="$1">$2</option>
+          <?/MISQL>
+      </select></td>
+    
+    <td><b>
+      </b> 
+        <select name="xpatex_fish">
+          <?MISQL SQL="
+            select zdb_id, LOWER(abbrev) 
+            from fish
+            where zdb_id in ('$fish_attrib_csv')
+               or abbrev = 'WT'
+            order by fish_name_order;">
+            <?MIVAR NAME=fishOption>$2<?/MIVAR>
+            <?MIVAR NAME=fishOption DELIMIT="<sup>" REPLACE=" (">$fishOption<?/MIVAR>
+            <?MIVAR NAME=fishOption DELIMIT="</sup>" REPLACE=")">$fishOption<?/MIVAR>
+            <option value="$1">$fishOption</option>
+          <?/MISQL>
+      </select></td>
+    <td>
+        <select name="xpatex_env">
+          <?MISQL SQL="
+              select env_zdb_id, env_name
+              from environment
+              where env_zdb_id in ('$env_attrib_csv') 
+                 or env_name = 'Standard'
+              order by 1;">
+            <option value="$1">$2</option>
+          <?/MISQL>
+      </select></td>
+    <td> 
+        <select name="xpatex_assay">
+          <?MISQL SQL="select xpatassay_name, xpatassay_display_order from expression_pattern_assay order by 2;">
+            <option value="$1">$1</option>
+          <?/MISQL>
+      </select>
+    </td>    
+  
+    <td> 
+        <select name="xpatex_genbank">
+            <option value=""></option>
+          <?MISQL SQL="select dblink_zdb_id, dblink_acc_num, mrkr_abbrev
+                       from marker, db_link
+                       where dblink_zdb_id in ('$dblink_genbank_csv')
+                         and dblink_linked_recid = mrkr_zdb_id
+                       UNION
+                       select dblink_zdb_id, dblink_acc_num, mrkr_abbrev
+                       from marker, marker_relationship, db_link
+                       where dblink_zdb_id in ('$dblink_genbank_csv')
+                         and dblink_linked_recid = mrel_mrkr_2_zdb_id
+                         and mrel_mrkr_1_zdb_id = mrkr_zdb_id
+                         and mrkr_zdb_id in ('$gene_attrib_csv')                       
+                       order by 3,2;">
+            <option value=$1>$2 ($3)</option>
+          <?/MISQL>
+        </select>
+      </td>
+  </tr>
+</form> 
+  
+</table>
+<?/MIBLOCK>
+
+
+<?MICOMMENT> 
+	  ============
+	  =  PANELS  =
+	  ============
+<?/MICOMMENT>
+<a name=panel>
+<p><b><font size=3>Expression:</font>
+<?MIBLOCK COND=$(OR,$(NXST,$c_panel),$(EC,$c_panel,hide))>
+  <?MIVAR><a href="javascript:onClick=urlSetCookie('panel','show')">$unhide</a><?/MIVAR>
+  <br>
+  
+<?MIELSE>
+  <?MIVAR><a href="javascript:onClick=urlSetCookie('panel','hide')">$hide</a><?/MIVAR>
+  <br>
+<table width=100% border=0 bgcolor="<!--|HIGHLIGHT_COLOR|-->">
+  <tr bgcolor=#CCCCCC>
+    <td colspan=2>Image</td>
+	<td>Panel</td>
+	<td>Experiment</td>
+	<td>Stage Range</td>
+	<td>Expressed in</td>
+	<td>Delete</td>
+  </tr>  
+<?MISQL SQL="
+    select distinct xpatfimg_panel_designation, xpatex_zdb_id, xpatfimg_fimgp_zdb_id, xpatfimg_fig_zdb_id
+    from fx_expression_pattern_image, fx_expression_experiment, fx_expression_result
+    where xpatex_source_zdb_id = '$OID'
+      and xpatex_zdb_id = xpatres_xpatex_zdb_id
+      and xpatres_zdb_id = xpatfimg_xpatres_zdb_id
+      and xpatfimg_fig_zdb_id in ('$fig_attrib_csv')
+    order by xpatfimg_panel_designation, xpatfimg_fimgp_zdb_id;">
+
+      <?MIVAR NAME=panel_designation>$1<?/MIVAR>
+      <?MIVAR NAME=panel_experiment>$2<?/MIVAR>
+      <?MIVAR NAME=panel_image>$3<?/MIVAR>
+      <?MIVAR NAME=panel_fig>$4<?/MIVAR>
+    <tr>
+      <?MISQL SQL="
+        select fimgp_label, xpatex_zdb_id, start.stg_name_long, end.stg_name_long, anatitem_name, xpatres_expression_found, anatitem_name_order, fig_label, fig_zdb_id
+        from fx_fish_image_private, fx_figure, fx_expression_pattern_image, fx_expression_result, anatomy_item, fx_expression_experiment, stage as start, stage as end
+        where xpatfimg_panel_designation = '$panel_designation'
+          and xpatfimg_fig_zdb_id = '$panel_fig'
+          and xpatfimg_fimgp_zdb_Id = '$panel_image'
+          and xpatfimg_fimgp_zdb_id = fimgp_zdb_id
+          and fimgp_fig_zdb_id = fig_zdb_id
+          and xpatfimg_xpatres_zdb_id = xpatres_zdb_id
+          and xpatres_start_stg_zdb_id = start.stg_zdb_id
+          and xpatres_end_stg_zdb_id = end.stg_zdb_id
+          and xpatres_anat_item_zdb_id = anatitem_zdb_id
+          and xpatres_xpatex_zdb_id = xpatex_zdb_id
+          and xpatex_source_zdb_id = '$OID'
+          and xpatex_zdb_id = '$panel_experiment'
+        order by anatitem_name_order
+        ;">
+
+      <?MIVAR NAME=panel_img>$1<?/MIVAR>
+      <?MIVAR NAME=xpatex_zdb_id>$2<?/MIVAR>
+      <?MIVAR NAME=panel_start_stg>$3<?/MIVAR>
+      <?MIVAR NAME=panel_end_stg>$4<?/MIVAR>
+      <?MIVAR NAME=panel_anatitem_name>$5<?/MIVAR>
+      <?MIVAR NAME=panel_expression_found><font color="$(IF,$(EC,$6,t),#66CCFF,green)">$(IF,$(EC,$6,t),y,n)</font><?/MIVAR>
+      <?MIVAR NAME=panel_fig>$8<?/MIVAR>
+      <?MIVAR NAME=panel_fig_zdb_id>$9<?/MIVAR>
+      
+      <?MIVAR NAME=panel_display>$panel_fig$(IF,$(NC,$panel_img,),.$panel_img)<?/MIVAR>
+ 
+<?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
+
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-xpatexdisplayname.apg';"><?/MISQL>
+  
+  <?MIVAR>
+        <td colspan=2>$panel_display
+        </td>
+        <td>$panel_designation
+        </td>
+        <td>$xpatex_display_name
+        </td>
+        <td>$panel_start_stg - $panel_end_stg
+        </td>
+        <td>$panel_anatitem_name($panel_expression_found)
+  <?/MIVAR>
+<?MIELSE><?MIVAR>, $panel_anatitem_name($panel_expression_found)<?/MIVAR>
+<?/MIBLOCK>
+      <?/MISQL>
+
+        </td> 
+    <td>
+      <?MIVAR><input name="delete" type=button value=" X " onClick="deleteZDB('$panel_designation,$panel_fig_zdb_id,$panel_image,','panel')"><?/MIVAR>
+    </td> 
+        
+    </tr>
+    
+<?/MISQL>    
+<?MICOMMENT> ==| Enter a New Panel |== <?/MICOMMENT>
+  <tr>
+    <td colspan=8>
+      <hr>
+    </td>
+  </tr>
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#panel" method=post name="panel_add" onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','panel');">
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg"> 
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+  <tr>
+    <td>
+      <input name="panel_add" type=submit value="Add">
+    </td>
+    <td><b>
+      </b>
+        <select name="panel_add_image">
+          <?MISQL SQL="
+            select fimgp_zdb_id, fimgp_label, fig_label
+	    from fx_fish_image_private, fx_figure
+	    where fimgp_zdb_id in ('$image_attrib_csv')
+	      and fimgp_fig_zdb_id = fig_zdb_id
+            order by fig_label,fimgp_label;">
+            <?MIVAR NAME=panel_display>$3$(IF,$(NC,$2,),.$2)<?/MIVAR>
+            <option value=$1>$panel_display</option>
+          <?/MISQL>
+      </select>
+    </td>
+    <td>
+        <input name="panel_add_designation" type=textbox size=5>
+    </td>
+    <td>
+        <select name="panel_add_xpatex">
+          <?MISQL SQL="
+            select xpatex_zdb_id
+	    from fx_expression_experiment
+	    where xpatex_source_zdb_id = '$OID'
+            order by 1;">
+            <?MIVAR NAME=xpatex_zdb_id>$1<?/MIVAR>
+            <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-xpatexdisplayname.apg';"><?/MISQL>
+            <option value=$xpatex_zdb_id>$xpatex_display_name</option>
+          <?/MISQL>
+      </select></td>
+    <td> 
+        Start: <select name="panel_add_start_stg" onChange="setEndStage('panel_add','panel_add_start_stg','panel_add_end_stg');">
+          <?MISQL SQL="
+            select stg_zdb_id, stg_name_long, stg_hours_start
+	    from stage
+	    where stg_zdb_id not in (select stgcon_container_zdb_id from stage_contains)
+            order by stg_hours_start;">
+            <option value="$1">$2</option>
+          <?/MISQL>
+      </select>
+      <br>
+      End: <select name="panel_add_end_stg">
+          <?MISQL SQL="
+            select stg_zdb_id, stg_name_long, stg_hours_end
+	    from stage
+	    where stg_zdb_id not in (select stgcon_container_zdb_id from stage_contains)
+            order by stg_hours_end;">
+            <option value="$1">$2</option>
+          <?/MISQL>
+      </select>
+    </td>
+    <td> 
+        <select name="panel_add_anatitem">
+          <?MISQL SQL="
+            select anatitem_zdb_id, anatitem_name, anatitem_name_order
+	    from anatomy_item
+            order by anatitem_name_order;">
+            <option value="$1">$2</option>
+          <?/MISQL>
+      </select>
+    </td>
+    <td>
+        <select name="panel_add_expressed">
+          <option value="t">Y</option>
+          <option value="f">N</option>
+        </select>
+    </td>
+  </tr>
+</form> 
+  
+</table>
+<?/MIBLOCK>
+
+<?MICOMMENT> 
+	  ================
+	  =  STRUCTURES  =
+	  ================
+<?/MICOMMENT>
+<a name=structure>
+<p>
+<b><font size=3>Structure:</font>
+<?MIBLOCK COND=$(OR,$(NXST,$c_structure),$(EC,$c_structure,hide))>
+  <?MIVAR><a href="javascript:onClick=urlSetCookie('structure','show')">$unhide</a><?/MIVAR>
+  <br>
+  
+<?MIELSE>
+  <?MIVAR><a href="javascript:onClick=urlSetCookie('structure','hide')">$hide</a><?/MIVAR>
+    
+
+<form name=panel_structures>
+<input type=button value="Update Structures for Experiment" onClick="if (document.panel_structures.panel_desig_and_xpatex_zdb_id.value != '---'){dynamic_set_value_selection(document.panel_structures.elements,'2',document.panel_structures.field_count.value);setCookie('xpatcuration_update','update');setCookie('anchor','structure');}">
+<select name=panel_desig_and_xpatex_zdb_id onChange="reset_structures_for_panel(this.value);">
+  <option value="---">---------------------------------</option>
+  <?MISQL SQL="
+    select distinct xpatfimg_panel_designation, xpatex_zdb_id, fimgp_label, fig_label, fig_zdb_id, fimgp_zdb_id
+    from fx_expression_pattern_image, fx_expression_experiment, fx_expression_result, fx_fish_image_private, fx_figure
+    where xpatex_source_zdb_id = '$OID'
+      and xpatex_zdb_id = xpatres_xpatex_zdb_id
+      and xpatres_zdb_id = xpatfimg_xpatres_zdb_id
+      and xpatfimg_fimgp_zdb_id = fimgp_zdb_id
+      and xpatfimg_fig_zdb_id = fig_zdb_id
+      and fig_zdb_id in ('$fig_attrib_csv');">
+      
+    <?MIVAR NAME=panel_desig>$1<?/MIVAR>
+    <?MIVAR NAME=xpatex_zdb_id>$2<?/MIVAR>
+    <?MIVAR NAME=image_label>$3<?/MIVAR>
+    <?MIVAR NAME=figure_label>$4<?/MIVAR>        
+    <?MIVAR NAME=figure_zdb_id>$5<?/MIVAR>
+    <?MIVAR NAME=image_zdb_id>$6<?/MIVAR>
+    
+    <?MIVAR NAME=figure_display>$figure_label$(IF,$(NC,$image_label,),.$image_label)$(IF,$(NC,$panel_desig,),.$panel_desig)<?/MIVAR>
+
+    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-xpatexdisplayname.apg';"><?/MISQL>
+    <?MIVAR NAME=encode_panel_and_xpatex>$xpatex_zdb_id,$image_zdb_id,$figure_zdb_id,$panel_desig<?/MIVAR>
+    <option value="$(URLENCODE,$encode_panel_and_xpatex)">$figure_display - $xpatex_display_name</option>
+    
+  <?/MISQL>
+</select>
+
+<table width=100% border=0 bgcolor="<!--|HIGHLIGHT_COLOR|-->">
+  <tr bgcolor=#CCCCCC>
+    <td>Add/Remove</td>
+    <td>Structure</td>
+    <td>Expressed</td>
+    <td>Delete all expression of this structure for this publication.</td>
+  </tr>  
+<?MIVAR NAME=previous_anatitem><?/MIVAR>  
+<?MIVAR NAME=field_count>0<?/MIVAR>  
+<?MIVAR COND=$(NXST,$c_anatitem_add_csv) NAME=c_anatitem_add_csv><?/MIVAR>
+<?MIVAR COND=$(EC,$debugg,true)>
+  $c_anatitem_add_csv<BR>
+<?/MIVAR>
+<?MIVAR NAME=c_anatitem_add_csv DELIMIT="'" REPLACE="">$c_anatitem_add_csv<?/MIVAR>  
+<?MISQL SQL="
+    select anatitem_zdb_id, anatitem_name, xpatinf_expressed, anatitem_name_order, xpatinf_zdb_id, s1.stg_name_long, s2.stg_name_long
+    from expression_pattern_infrastructure, anatomy_item, stage s1, stage s2
+    where xpatinf_anatitem_zdb_id = anatitem_zdb_id
+      and xpatinf_pub_zdb_id = '$OID'
+      and anatitem_start_stg_zdb_id = s1.stg_zdb_id
+      and anatitem_end_stg_zdb_id = s2.stg_zdb_id
+    order by anatitem_name_order, xpatinf_expressed;">
+
+    <?MIVAR NAME=$anatitem_zdb_id>$1<?/MIVAR>
+    <?MIVAR NAME=$anatitem_name>$2<?/MIVAR>
+    <?MIVAR NAME=$expression_found>$3<?/MIVAR>
+    <?MIVAR NAME=$xpatinf_zdb_id>$5<?/MIVAR>
+    <?MIVAR NAME=$start_stg_name>$6<?/MIVAR>
+    <?MIVAR NAME=$end_stg_name>$7<?/MIVAR>
+    <?MIVAR>
+
+    <tr>
+      <td align=center>
+        <input type=radio 
+               name="$xpatinf_zdb_id" 
+               value="add" 
+               $(IF,$(!=,0,$(POSITION,$c_anatitem_add_csv,$anatitem_zdb_id$expression_found,1)),CHECKED)>
+        / <input type=radio 
+                 name="$xpatinf_zdb_id" 
+                 value="remove" 
+                 $(IF,$(=,0,$(POSITION,$c_anatitem_add_csv,$anatitem_zdb_id$expression_found,1)),CHECKED)>
+      </td>
+      <td>$anatitem_name ($start_stg_name - $end_stg_name)</td>
+      <td> $(IF,$(EC,$expression_found,t),YES,NO) </td>
+      <td colspan=3 align=left>
+        <?MIVAR><input name="delete" type=button value=" X " onClick="deleteZDB('$xpatinf_zdb_id','anatitem')"><?/MIVAR>
+      </td> 
+    </tr>
+    <?/MIVAR>
+    <?MIVAR NAME=field_count>$(+,$field_count,1)<?/MIVAR>
+  <?/MISQL>    
+<?MIVAR><input type=hidden name=field_count value=$field_count><?/MIVAR>
+</form>
+
+  <tr>
+    <td colspan=4><HR></td>
+  </tr>
+<?MICOMMENT> ==| Enter a New Structure |== <?/MICOMMENT>
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#structure" method=post name=structure2 onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','structure');">
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+  <tr>
+    <td>
+      <input name="structure_add" type=submit value="Add">
+    </td>
+    <td><b>
+      </b> 
+        <select name="structure_add_id">
+          <?MISQL SQL="
+              select anatitem_zdb_id, anatitem_name, anatitem_name_order
+              from anatomy_item
+              order by 3;">
+            <option value=$1>$2</option>
+          <?/MISQL>
+        </select>
+    </td>
+    <td> 
+        <input name="structure_expressed" value=t type=radio CHECKED> Yes <br> 
+        <input name="structure_expressed" value=f type=radio> No
+    </td>
+    <td>
+      &nbsp;
+    </td>
+  </tr>
+</form> 
+</table>
+<?/MIBLOCK>
+
+
+<?MICOMMENT> 
+	  ================
+	  =  TOD / GELI  =
+	  ================
+<?/MICOMMENT>
+<a name=tod>
+<p>
+<b><font size=3>TOD / GELI:</font>
+<?MIBLOCK COND=$(OR,$(NXST,$c_tod),$(EC,$c_tod,hide))>
+  <?MIVAR><a href="javascript:onClick=urlSetCookie('tod','show')">$unhide</a><?/MIVAR>
+  <br>
+  
+<?MIELSE>
+  <?MIVAR><a href="javascript:onClick=urlSetCookie('tod','hide')">$hide</a><?/MIVAR>
+
+<?MIVAR NAME=tod_experiment_previous><?/MIVAR>
+<table width=100% border=0 bgcolor="<!--|HIGHLIGHT_COLOR|-->">
+  <tr bgcolor=#CCCCCC>
+    <td>&nbsp;</td>
+    <td>Experiment</td>
+    <td>Structure</td>
+    <td>Expressed</td>
+    <td>Stage Range</td>
+    <td>Delete</td>
+  </tr>  
+ 
+<form name=tod_list>
+<?MISQL SQL="
+    select xpatex_zdb_id, mrkr_abbrev_order, anatitem_name, xpatres_expression_found, anatitem_name_order, sstg.stg_name_long, estg.stg_name_long, xpatres_comments, xpatres_zdb_id
+    from fx_expression_result, anatomy_item, fx_expression_experiment, stage as sstg, stage as estg, marker
+    where xpatres_anat_item_zdb_id = anatitem_zdb_id      
+      and xpatres_xpatex_zdb_id = xpatex_zdb_id
+      and xpatex_source_zdb_id = '$OID'
+      and xpatex_gene_zdb_id = mrkr_zdb_id
+      and xpatres_start_stg_zdb_id = sstg.stg_zdb_id
+      and xpatres_end_stg_zdb_id = estg.stg_zdb_id
+      and not exists
+        (
+          select *
+          from fx_expression_pattern_image
+          where xpatres_zdb_id = xpatfimg_xpatres_zdb_id
+        )
+    order by mrkr_abbrev_order, anatitem_name_order;">    
+
+    <?MIVAR NAME=xpatex_zdb_id>$1<?/MIVAR>
+    <?MIVAR NAME=tod_anatitem_name>$3<?/MIVAR>
+    <?MIVAR NAME=tod_expression_found>$4<?/MIVAR>
+    <?MIVAR NAME=tod_stage_range>$6 - $7<?/MIVAR>
+    <?MIVAR NAME=tod_comments>$8<?/MIVAR>
+    <?MIVAR NAME=tod_xpatres_zdb_id>$9<?/MIVAR>
+    <tr>
+      <td>&nbsp;</td>
+      <td>
+        <?MIVAR COND=$(NC,$tod_experiment_previous,$xpatex_zdb_id)>
+           <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-xpatexdisplayname.apg';"><?/MISQL>
+            <option value=$xpatex_zdb_id>$xpatex_display_name</option>        
+        <?/MIVAR>
+      </td>
+      <td>$tod_anatitem_name</td>
+      <td>$tod_expression_found</td>
+      <td>$tod_stage_range</td>
+      <td>
+        <?MIVAR><input name="delete" type=button value=" X " onClick="deleteZDB('$tod_xpatres_zdb_id','tod')"><?/MIVAR>
+      </td> 
+    </tr> 
+    <?MIVAR NAME=tod_experiment_previous>$xpatex_zdb_id<?/MIVAR>
+<?/MISQL>   
+</form>
+
+  <tr>
+    <td colspan=7><HR></td>
+  </tr>
+<?MICOMMENT> ==| Enter a New Structure |== <?/MICOMMENT>
+
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#tod" method=post name="tod2" onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','tod');">
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+  <tr>
+    <td>
+      <input name="tod_add" type=submit value="Add">
+    </td>
+    <td>
+        <select name="tod_add_xpatex">
+          <?MISQL SQL="
+            select xpatex_zdb_id
+	    from fx_expression_experiment
+	    where xpatex_source_zdb_id = '$OID'
+            order by 1;">
+           <?MIVAR NAME=xpatex_zdb_id>$1<?/MIVAR>    
+           <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-xpatexdisplayname.apg';"><?/MISQL>
+            <option value=$xpatex_zdb_id>$xpatex_display_name</option>
+          <?/MISQL>
+        </select>
+    </td>
+    <td>
+        <select name="tod_add_anat_item_zdb_id">
+          <?MISQL SQL="
+              select anatitem_zdb_id, anatitem_name, anatitem_name_order
+              from anatomy_item
+              order by 3;">
+            <option value=$1>$2</option>
+          <?/MISQL>
+        </select>
+    </td>
+    <td> 
+        <input name="tod_expressed" value=t type=radio CHECKED> Yes <br> 
+        <input name="tod_expressed" value=f type=radio> No
+    </td>
+    <td> Start:
+        <select name="tod_add_start_stg" onClick="setEndStage('tod2','tod_add_start_stg','tod_add_end_stg');">
+          <?MISQL SQL="
+            select stg_zdb_id, stg_name_long, stg_hours_start
+	    from stage
+	    where stg_zdb_id not in (select stgcon_container_zdb_id from stage_contains)
+            order by stg_hours_start;">
+            <option value=$1>$2</option>
+          <?/MISQL>
+      </select>
+
+    <br> End:
+        <select name="tod_add_end_stg">
+          <?MISQL SQL="
+            select stg_zdb_id, stg_name_long, stg_hours_end
+	    from stage
+	    where stg_zdb_id not in (select stgcon_container_zdb_id from stage_contains)
+            order by stg_hours_end;">
+            <option value=$1>$2</option>
+          <?/MISQL>
+      </select>
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td colspan=5>
+      Comments: <input name="tod_add_comment" type=textbox size=30>
+    </td>
+  </tr>
+</form> 
+
+</table>
+<?/MIBLOCK>
+
+
+<?MICOMMENT> 
+  ====================
+  =  ERROR MESSAGES  =
+  ====================
+<?/MICOMMENT>
+  
+<?MIELSE>
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+  <b>Requested ID not found in ZFIN.</b>
+<?/MIBLOCK> <?MICOMMENT> title is null <?/MICOMMENT>
+
+<?MIELSE>
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+  <p>Authorization for this page failed.
+  <p>A session error may have occurred. Try logging out and logging back in. If that does not work, contact your database administrator.
+<?/MIBLOCK> <?MICOMMENT> not authorized <?/MICOMMENT>
+
+<?MIELSE>
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+  <P>
+  ERROR -- something bad happened -- no OID passed in!
+<?/MIBLOCK>
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+
+
+
