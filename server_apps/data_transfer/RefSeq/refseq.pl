@@ -27,6 +27,7 @@ chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/RefSeq/";
 system("rm -f LL.out*");
 system("rm -f *.unl");
 system("rm -f loc2*");
+system("rm -f gene_with_multiple_linked_recid.unl");
 
 #get new RefSeq files
 &downloadLocusLinkFiles();
@@ -128,6 +129,8 @@ system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> load_refSeq.sql");
 
 &dblinksReport();
 &reportOmimDups();
+&reportRefSeqDups();
+&reportOrthologueDups();
 &sendReport();
 
 exit;
@@ -215,6 +218,46 @@ sub reportOmimDups()
     }
     print REPORT "\n";
     close(REPORT);
+  }
+
+
+sub reportRefSeqDups()
+  {
+    open (REPORT, ">>report") or die "can not open report";
+    open (FILE, "gene_with_multiple_linked_recid.unl") or die "can not open file";
+    
+    print REPORT "\n";
+    print REPORT "RefSeq Multiples\n";
+
+    while($line = <FILE>)
+    {
+      print REPORT $line;
+    }
+    
+    print REPORT "\n";
+
+    close (FILE);
+    close (REPORT);
+  }
+
+
+sub reportOrthologueDups()
+  {
+    open (REPORT, ">>report") or die "can not open report";
+    open (FILE, "ortho_with_multiple_acc_num.unl") or die "can not open file";
+    
+    print REPORT "\n";
+    print REPORT "Orthologue Multiples\n";
+
+    while($line = <FILE>)
+    {
+      print REPORT $line;
+    }
+
+    print REPORT "\n";
+    
+    close (FILE);
+    close (REPORT);
   }
 
 sub sendReport()
