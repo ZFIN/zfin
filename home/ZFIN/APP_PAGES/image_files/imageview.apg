@@ -234,9 +234,16 @@ Variables Expected:
               <INPUT TYPE=button value=Update onClick="doit('stock','selection','Depicted+Stock','fish_image','fimg_zdb_id')">
             <?/MIVAR>
 	    <big>Stock:</big> 
-	    <?MIVAR>
-              $(IF,$(NC,$full_fish_name,UNKNOWN),<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$fimg_fish_zdb_id">$full_fish_name</A>,$full_fish_name)
-            <?/MIVAR>
+            <?MIBLOCK COND="$(NC,$full_fish_name,UNKNOWN)">
+              <?MIVAR>
+                <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$fimg_fish_zdb_id">$full_fish_name</A>
+              <?/MIVAR>
+            <?MIELSE>
+              <?MIVAR>
+                $full_fish_name
+              <?/MIVAR>
+            <?/MIBLOCK>
+
           </TD>
         </TR>
         <TR>
