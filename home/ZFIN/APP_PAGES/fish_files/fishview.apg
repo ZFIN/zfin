@@ -1,0 +1,607 @@
+
+<!-- FILE: FISHVIEW.HTML. This file implements a viewer for FISH records. The goal is to display all of the information associated with, not only the FISH record, but also all mutant alleles (ie. CHROMOSOME and ALTERATION recs) associated with the FISH.
+
+
+Variables Expected: 
+ -- OID -- the OID of the fish record to view
+ -- UPDATE -- a flag variable to indicate we're in update mode
+ -- temp_oid -- could be passed instead of OID --
+-->
+
+<HTML>
+<head>
+<META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
+
+<?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
+
+<SCRIPT>
+function info() {
+  window.alert('ANONYMOUS LINKAGE:\n This marker is a dummy placeholder for a marker that has been linked to this locus, \nbut has not been published yet. ZFIN supports anonymous linkages to promote scientific \ncollaboration; you should contact the submitter of this mapping data (just click the link) \nto negotiate access to this information.');
+}
+
+<?MIVAR>
+function add_linkage() {
+   helpwin=open("/cgi-bin_B/webdriver?MIval=aa-linkagedit.apg&OID=$OID","helpwindow","scrollbars=yes,width=550,height=300");
+}
+
+function edit_linkage(link_id) {
+   helpwin=open("/cgi-bin_B/webdriver?MIval=aa-linkagedit.apg&OID=$OID&edit_link="+link_id,"helpwindow","scrollbars=yes,width=550,height=300");
+}
+
+function deleteLinkage(mid,dist,lod) {
+window.location.search='?MIval=aa-do-fishupdate.apg&OID=$OID&attr=protocol&attr_type=special-alteration&old_value='+old_value+'&new_value='+new_value+'&alt_id='+alt_id
+}
+<?/MIVAR>
+</SCRIPT>
+</HEAD>
+
+<body bgcolor="#e5e5e5"  TEXT="black">
+<basefont COLOR="#000000" size=2>
+
+<?MIBLOCK COND="$(NXST,$OID)">
+<p>
+ERROR -- something bad happened -- no OID passed in!
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(XST,$OID)">
+
+<?MIVAR>
+<SCRIPT>
+function doit(attr,attr_type,print_name) {
+window.location.search='?MIval=aa-fishupdate.apg&OID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name
+}
+
+function add_source(selector) {
+var selectedValue=selector[selector.selectedIndex].value;
+selector.selectedIndex=0;
+if (selectedValue != 'none') {
+window.location.search='?MIval=aa-fishupdate.apg&OID=$OID&attr=source&attr_type=selection&print_name=Add+source&source_type='+selectedValue;
+}
+}
+
+function dopopup(new_value,old_value,field) {
+window.location.search='?MIval=aa-do-fishupdate.apg&OID=$OID&attr='+field+'&attr_type=text&old_value='+old_value+'&new_value='+new_value
+}
+
+function doChromnum(new_value,old_value,chrom_id) {
+window.location.search='?MIval=aa-do-fishupdate.apg&OID=$OID&attr=chrom_num&attr_type=special-chromnum&old_value='+old_value+'&new_value='+new_value+'&chrom_id='+chrom_id
+}
+
+function doMutagen(new_value,old_value,alt_id) {
+window.location.search='?MIval=aa-do-fishupdate.apg&OID=$OID&attr=mutagen&attr_type=special-alteration&old_value='+old_value+'&new_value='+new_value+'&alt_id='+alt_id
+}
+
+function doProtocol(new_value,old_value,alt_id) {
+window.location.search='?MIval=aa-do-fishupdate.apg&OID=$OID&attr=protocol&attr_type=special-alteration&old_value='+old_value+'&new_value='+new_value+'&alt_id='+alt_id
+}
+
+function doChromChange(new_value,old_value,alt_id) {
+window.location.search='?MIval=aa-do-fishupdate.apg&OID=$OID&attr=chrom_change&attr_type=special-alteration&old_value='+old_value+'&new_value='+new_value+'&alt_id='+alt_id
+}
+
+function Delete_repr(image) {
+window.location.search='?MIval=aa-do-fishupdate.apg&OID=$OID&attr=reference&attr_type=special-delete&old_value='+image+'&new_value=none&comments='+image
+}
+
+function Delete_listitem(item_name,item_id) {
+window.location.search='?MIval=aa-do-fishupdate.apg&OID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted'
+}
+</SCRIPT>
+<?/MIVAR>
+
+
+<!-- if not updating -->
+<?MIBLOCK COND="$(NXST,$UPDATE)">
+<?MISQL SQL="select WebExplode(object,'page_title=View Stock') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+<?/MIBLOCK>
+
+<!-- If updating, only let owner update anything -->
+<?MIBLOCK COND="$(XST,$UPDATE)">
+<?MISQL SQL="select WebExplode(object,'page_title=Update Stock&permission=owns&rtype=fish') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
+
+<?MISQL SQL="select name, abbrev, upper(line_type), source, mother, father, discoverer, lab, HTML_breaks(phenotype), segregation, orig_crossnum, HTML_breaks(comments),status,owner,pheno_keywords,allele,locus from fish where zdb_id='$OID';"><?/MISQL>
+
+
+<?MIVAR NAME=$name>$1<?/MIVAR>
+<?MIVAR NAME=$abbrev>$2<?/MIVAR>
+<?MIVAR NAME=$line_type>$3<?/MIVAR>
+<?MIVAR NAME=$source>$4<?/MIVAR>
+<?MIVAR NAME=$mother>$5<?/MIVAR>
+<?MIVAR NAME=$father>$6<?/MIVAR>
+<?MIVAR NAME=$discoverer>$7<?/MIVAR>
+<?MIVAR NAME=$lab>$8<?/MIVAR>
+<?MIVAR NAME=$phenotype>$9<?/MIVAR>
+<?MIVAR NAME=$segregation>$10<?/MIVAR>
+<?MIVAR NAME=$orig_crossnum>$11<?/MIVAR>
+<?MIVAR NAME=$comments>$12<?/MIVAR>
+<?MIVAR NAME=$status>$13<?/MIVAR>
+<?MIVAR NAME=$owner>$14<?/MIVAR>
+<?MIVAR NAME=$pheno_keywords>$15<?/MIVAR>
+<?MIVAR NAME=$allele>$16<?/MIVAR>
+<?MIVAR NAME=$locus>$17<?/MIVAR>
+
+<?MIVAR NAME=$rec_title>Record for $line_type $abbrev<?/MIVAR>
+
+<!-- If viewing, THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
+<?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=fish') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
+
+<A NAME="top">
+
+<!-- OKAY, NOW  THROW UP THE  FISH INFO -->
+<form NAME=updater>
+<?MIVAR COND="$(XST,$UPDATE)">
+<center><font size=5 color="#00ff00"><input type=button 
+value=" DONE UPDATING. Back to Viewing! " onClick="document.location.search='?MIval=aa-fishview.apg&OID=$OID'"> </font></center>
+<?/MIVAR>
+
+<center>
+<?MIVAR>
+<B> <FONT SIZE=6>$line_type:  
+<?/MIVAR>
+
+<?MIVAR COND="$(XST,$UPDATE)">
+<br><INPUT TYPE=button value=Update onClick="doit('name','text','Name')">
+<?/MIVAR> 
+<?MIVAR> $name <?/MIVAR>
+<?MIVAR COND="$(XST,$UPDATE)">
+<br><INPUT TYPE=button value=Update onClick="doit('abbrev','text','Abbreviation')">
+<?/MIVAR> 
+<?MIVAR> ($abbrev)</FONT></b>
+<?/MIVAR>
+
+<?MIBLOCK COND="$(OR,$(EC,$AUTHORIZED,root),$(EC,$AUTHORIZED,fishauth))">
+<br>
+<?MIVAR COND="$(XST,$UPDATE)">
+<INPUT TYPE=button value=Update onClick="doit('owner','selection','Owner')">
+<?/MIVAR> 
+<?MISQL SQL="select full_name from person where zdb_id='$owner';"><font color="#ff0000">(Record Owner is $1)<?/MISQL>
+<br>
+<?MIVAR COND="$(XST,$UPDATE)">
+<INPUT TYPE=button value=Update onClick="doit('pheno_keywords','textarea','Phenotype_Keywords')">
+<?/MIVAR> 
+<?MIVAR> (Search Keywords: $(IF,$(NC,$pheno_keywords,NULL),$pheno_keywords) )
+<?/MIVAR>
+</font>
+<?/MIBLOCK> <!-- if root -->
+
+<p>
+</CENTER>
+
+<!-- Toss up images, if any, and description. -->
+
+<?MIVAR COND="$(XST,$UPDATE)">
+<TABLE width=100%>
+<TR><TD><B>Adding images:</B> To add new images of this line, return to the ZFIN home page and select "Submit new image".</TD></TR>
+</TABLE>
+<?/MIVAR>
+
+<TABLE width=100% cellpadding=6 border>
+
+<?MIVAR NAME=$MI_NOVALUE>empty<?/MIVAR>
+<?MISQL SQL="select stage, specimen, zdb_id, resolution,thumbnail from image where stock='$OID' and status='active';" DATASET=2>
+<TR>
+
+<TD>
+<TABLE><TR>
+<TD align=center>
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-imageview.apg&OID=$3">
+<IMG SRC="/cgi-bin_B/webdriver?LO=$5&MItypeObj=image/jpg"></A>
+</TD><TD><font size=-1>
+<b>Image type:</b> $(IF,$(EC,$2,Unknown),Unknown,$2) <br>
+<b>Dev. Stage:</b>
+$(IF,$(EC,$4,dev_stage),$1 stage.)
+$(IF,$(EC,$4,dev_hours),$1 hours.)
+$(IF,$(EC,$4,dev_days),$1 days.)
+</font></TD></TR>
+$(IF,$(XST,$UPDATE),"<TR><TD align=center colspan=2><font size=-1><input type=button value=delete onClick=Delete_listitem('image','"$3"')></font> </TD></TR>") 
+</TABLE>
+</TD>
+
+$(IF,$(NC,$1[2],empty),
+<TD>
+<TABLE><TR>
+<TD align=center>
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-imageview.apg&OID="$3[2]>
+<IMG SRC="/cgi-bin_B/webdriver?LO="$5[2]"&MItypeObj=image/jpg"></A>
+</TD><TD><font size=-1>
+<b>Image type:</b> $(IF,$(EC,$2[2],Unknown),Unknown,$2[2]) <br>
+<b>Dev. Stage:</b>$1[2] 
+$(IF,$(EC,$4[2],dev_stage), stage.)
+$(IF,$(EC,$4[2],dev_hours), hours.)
+$(IF,$(EC,$4[2],dev_days), days.)
+</font></TD></TR>
+$(IF,$(XST,$UPDATE),"<TR><TD align=center colspan=2><font size=-1><input type=button value=delete onClick=Delete_listitem('image','"$3[2]"')></font> </TD></TR>") 
+</TABLE>
+</TD>
+)
+
+</TR>
+<?/MISQL>
+</TABLE>
+
+<?MIVAR COND="$(<,$MI_ROWCOUNT,1)"><center><TABLE cellpadding=4 border><TR><TD>No images of this line available.</TD></TR></TABLE></center><?/MIVAR>
+
+<p>
+<TABLE width=100%>
+<TR>
+<TD colspan=2 valign=top>
+<?MIVAR COND="$(XST,$UPDATE)">
+<INPUT TYPE=button value="Update" onClick="doit('phenotype','textarea','Phenotype+description')"> 
+<?/MIVAR> 
+
+<b><?MIVAR>$(IF,$(EC,$line_type,mutant),Phenotype,Description)<?/MIVAR>
+:</b> <br>
+<?MIVAR COND=$(NE,$phenotype,NULL)> $phenotype <?/MIVAR>
+<?MIVAR COND=$(EC,$phenotype,NULL)>NONE GIVEN. <?/MIVAR>
+<p>
+</TD></TR>
+</TABLE>
+
+
+<!-- COmment out for now, since we aren't putting this in
+<TABLE width=100%> 
+<TR>
+<TD valign=top>
+<B>Affected Parts:</B> </TD>
+<TD> <ul>
+<?MISQL SQL="select name, st_stage, end_stage from expression_pat where fish_id='$OID';">
+<li> Changes to <b>$1</b> between the <b>$2</b> and the <b>$3</b> stage. 
+<?/MISQL>
+<?MIVAR COND=$(<,$MI_ROWCOUNT,1)>No expression patterns described.<?/MIVAR>
+</ul>
+<p>
+</TD></TR>
+</TABLE>
+-->
+
+
+<p>
+<A NAME="origins-info">
+<HR width=80%>
+
+<h3>ORIGINS and AVAILABILITY</h3>
+
+<TABLE WIDTH=100% cellpadding=4>
+<TR>
+<TD> 
+<?MIVAR COND="$(XST,$UPDATE)">
+<INPUT TYPE=button value=Update onClick="doit('discoverer','selection','Discoverer')">
+<?/MIVAR> 
+<b>Discoverer: </b>
+<?MISQL COND="$(NC,$discoverer,NULL)" SQL="select full_name from person where zdb_id='$discoverer';">
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-persview.apg&OID=$discoverer">$1</A>
+<?/MISQL>
+<?MIVAR COND="$(EC,$discoverer,NULL)"> UNKNOWN. <?/MIVAR>
+</TD>
+
+<TD>
+<b> Lab:</b> 
+
+<?MIBLOCK COND="$(XST,$UPDATE)">
+<?MIVAR>
+<SELECT NAME=lab_select onChange="dopopup(this.options[this.selectedIndex].value,'$lab','lab')">
+<?/MIVAR>
+<?MISQL SQL="select zdb_id,name from lab where allele_prefix is not null order by name;">
+<option $(IF,$(EC,$lab,$1),SELECTED) value="$1">$2
+$(IF,$(EC,$lab,$1),$(SETVAR,$foundlab,$1))
+<?/MISQL>
+<?MISQL COND="$(NXST,$foundlab)" SQL="select zdb_id,name from lab where zdb_id='$lab';">
+<option SELECTED value="$1">$2
+<?/MISQL>
+</SELECT>
+<?/MIBLOCK>
+
+<?MISQL COND="$(NXST,$UPDATE)" SQL="select name from lab where zdb_id='$lab';">
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-labview.apg&OID=$lab">$1</A>
+<?/MISQL>
+
+<?MIBLOCK COND="$(NC,$orig_crossnum,NULL)"> 
+<?MIVAR COND="$(XST,$UPDATE)">
+<br><INPUT TYPE=button value=Update onClick="doit('orig_crossnum','text','Original+Cross+Number')"> 
+<?/MIVAR>
+<?MIVAR><font size=-1>(<b>Stock#:</b> $orig_crossnum)</font> <?/MIVAR>
+<?/MIBLOCK>
+
+<?MIVAR COND="$(AND,$(EC,$orig_crossnum,NULL),$(XST,$UPDATE))"
+<br><INPUT TYPE=button value="Specify an original cross number" onClick="doit('orig_crossnum','text','Original+Cross+Number')"> 
+<?/MIVAR>
+</TD></TR>
+</TABLE>
+
+
+<TABLE width=100% cellpadding=4>
+<TR>
+<TD valign=top> <b>Stock Status: </b> 
+<?MIVAR COND="$(NXST,$UPDATE)">$(IF,$(NC,$status,NULL),$status,UNKNOWN)<?/MIVAR>
+<?MIVAR COND="$(XST,$UPDATE)">
+<SELECT name=stock_status onChange=dopopup(this.options[this.selectedIndex].value,'$status','status')>
+<option $(IF,$(EC,$status,alive),SELECTED) value=alive>alive
+<option $(IF,$(EC,$status,frozen),SELECTED) value=frozen>frozen
+<option $(IF,$(EC,$status,extinct),SELECTED) value=extinct>extinct
+</SELECT>
+<?/MIVAR>
+</TD>
+
+
+<!-- Deal with current source. This is complex! -->
+<TD valign=top align=right>
+<?MIVAR COND="$(XST,$UPDATE)">
+<input type=hidden name=source_type value="lab">
+<input type=hidden name=s_source value="">
+<SELECT name=sub_source onChange="add_source(this);">
+<option value="none" SELECTED>Select source to add
+<option value="lab">Add a lab to source list
+<option value="person">Add a person to source list
+<option value="company">Add a company to source list
+</SELECT>
+<?/MIVAR>
+
+<b>Source(s): </b>
+</TD>
+
+<TD>
+<!--If it's a dead strain, don't bother with more! -->
+<?MIVAR COND="$(EC,$status,DEAD)"> Extinct! No longer available.<?/MIVAR>
+
+<?MIBLOCK COND="$(NC,$status,DEAD)">
+<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
+<?MISQL SQL="select zdb_id,name,HTML_breaks(address) from sources a, int_fish_source b where (a.zdb_id=b.target_id OR b.target_id='DEAD') and b.source_id='$OID';">
+<TABLE><TR><TD valign=top>
+$(IF,$(XST,$UPDATE),"<font size=-1><input type=button value=delete onClick=Delete_listitem('source','"$1"')></font>")
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-sourceview.apg&OID=$1">$2</A>
+</TD><TD align=right>
+<FONT SIZE=-2>$3</FONT>
+</TD></TR></TABLE>
+<?/MISQL>
+
+<?MIVAR COND="$(=,$MI_ROWCOUNT,0)"> 
+Not Specified. Contact Lab.<?/MIVAR>
+
+<?/MIBLOCK>  <!-- NC status dead -->
+</TD></TR></TABLE>
+
+
+
+
+
+
+<!-- This next part only for mutants! -->
+<?MIBLOCK COND="$(EC,$line_type,mutant)">
+
+<HR width=80%>
+<p>
+<h3>ALLELE(s) carried in this mutant line:</h3>
+
+<!-- If we're updating,its crucial to know whether this FISH "owns" the chromosome, ie, it is the original mutant on which that chromo was found, or if itinherited the chromosome from some parent. We only allow updating if the former is the case. We check this by looking at the "status" field of the intersection record: if it="original" then we allow updating, else not.-->
+
+<!-- ECK 2/15/99.  A much better solution that avoids this mess: if it's a double mutants, make them go to the (parental) single mutant record to edit the allele info!
+-->
+
+
+<?MISQL SQL="select distinct c.allele, b.chrom_num, c.chrom_change, c.genetic_loc, c.cyto_loc, c.breakpoints, c.mutagen,c.protocol,b.zdb_id,a.status,c.zdb_id from int_fish_chromo a, chromosome b, alteration c where (source_id='$OID' and target_id=b.zdb_id) and (c.chrom_id=b.zdb_id);">
+
+$(IF,$(>,$MI_CURRENTROW,1),</TD></TR></TABLE><hr width=80%>)
+
+<TABLE width=100%>
+<TR>
+<TD bgcolor="#f8fabb" valign=middle align=center width=10%><font color="#ff0000"><b>$1</b></font></TD>
+
+<TD><font size=-1>
+<b>Mutagenizing Protocol: </b> 
+$(IF,$(EC,$7,spontaneous),"None -- Spontaneous Mutation")
+$(IF,$(AND,$(NC,$7,spontaneous),$(OR,$(NXST,$UPDATE),$(NC,$10,original))),$8" treated with "$7)
+
+$(IF,$(AND,$(NC,$7,spontaneous),$(XST,$UPDATE),$(EC,$10,original)),"<SELECT name=protocol onChange=doProtocol(this.options[this.selectedIndex].value,'"$8"','"$11"')>
+<option "$(IF,$(EC,$8,Unknown),SELECTED)" value=Unknown>Unknown
+<option "$(IF,$(EC,$8,Adult_Males),SELECTED)" value="Adult_Males">Adult Males
+<option "$(IF,$(EC,$8,Adult_Females),SELECTED)" value="Adult_Females">Adult Females
+<option "$(IF,$(EC,$8,Embryos),SELECTED)" value=Embryos>Embryos
+<option "$(IF,$(EC,$8,Sperm),SELECTED)" value=Sperm>Sperm
+</SELECT> treated with 
+<SELECT NAME=mutagen onChange=doMutagen(this.options[this.selectedIndex].value,'"$7"','"$11"')>
+<option "$(IF,$(EC,$7,Unknown),SELECTED)" value=Unknown>Unknown
+<option "$(IF,$(EC,$7,ENU),SELECTED)" value=ENU>ENU
+<option "$(IF,$(EC,$7,EMS),SELECTED)" value=EMS>EMS
+<option "$(IF,$(EC,$7,g-rays),SELECTED)" value=g-rays>g-rays
+<option "$(IF,$(EC,$7,DNA),SELECTED)" value=DNA>DNA
+<option "$(IF,$(EC,$7,spontaneous),SELECTED)" value=spontaneous>spontaneous
+</SELECT>
+")
+<br>
+<b>Mutation Type:</b> 
+$(IF,$(OR,$(NXST,$UPDATE),$(NC,$10,original)),$3)
+
+$(IF,$(AND,$(XST,$UPDATE),$(EC,$10,original)),"<SELECT name=chrom_change onChange=doChromChange(this.options[this.selectedIndex].value,'"$3"','"$11"')>
+<option "$(IF,$(EC,$3,point_mutation),SELECTED)" value=point_mutation>point mutation
+<option "$(IF,$(EC,$3,duplication),SELECTED)" value=duplication>duplication
+<option "$(IF,$(EC,$3,deficiency),SELECTED)" value=deficiency>deficiency
+<option "$(IF,$(EC,$3,translocation),SELECTED)" value=translocation>translocation
+<option "$(IF,$(EC,$3,transposition),SELECTED)" value=transposition>transposition
+<option "$(IF,$(EC,$3,insertion),SELECTED)" value=insertion>insertion
+<option "$(IF,$(EC,$3,inversion),SELECTED)" value=inversion>inversion
+<option "$(IF,$(EC,$3,UNKNOWN),SELECTED)" value=Unknown>Unknown
+</SELECT>")
+</font>
+
+<table border=0 cellpadding=0 cellspacing=0 width=100%>
+<TR>
+<TD> <font size=-1><b>Linkage Group:</b> 
+$(IF,$(OR,$(NXST,$UPDATE),$(NC,$10,original)),$(IF,$(EC,$2,0),UNKNOWN,$2))
+
+$(IF,$(AND,$(XST,$UPDATE),$(EC,$10,original)),"<SELECT name=chrom_number onChange=doChromnum(this.options[this.selectedIndex].value,'"$2"','"$9"')>
+<option "$(IF,$(EC,$2,0),SELECTED)" value=0>UNKNOWN
+<option "$(IF,$(EC,$2,1),SELECTED)" value=1>1
+<option "$(IF,$(EC,$2,2),SELECTED)" value=2>2
+<option "$(IF,$(EC,$2,3),SELECTED)" value=3>3
+<option "$(IF,$(EC,$2,4),SELECTED)" value=4>4
+<option "$(IF,$(EC,$2,5),SELECTED)" value=5>5
+<option "$(IF,$(EC,$2,6),SELECTED)" value=6>6
+<option "$(IF,$(EC,$2,7),SELECTED)" value=7>7
+<option "$(IF,$(EC,$2,8),SELECTED)" value=8>8
+<option "$(IF,$(EC,$2,9),SELECTED)" value=9>9
+<option "$(IF,$(EC,$2,10),SELECTED)" value=10>10
+<option "$(IF,$(EC,$2,11),SELECTED)" value=11>11
+<option "$(IF,$(EC,$2,12),SELECTED)" value=12>12
+<option "$(IF,$(EC,$2,13),SELECTED)" value=13>13
+<option "$(IF,$(EC,$2,14),SELECTED)" value=14>14
+<option "$(IF,$(EC,$2,15),SELECTED)" value=15>15
+<option "$(IF,$(EC,$2,16),SELECTED)" value=16>16
+<option "$(IF,$(EC,$2,17),SELECTED)" value=17>17
+<option "$(IF,$(EC,$2,18),SELECTED)" value=18>18
+<option "$(IF,$(EC,$2,19),SELECTED)" value=19>19
+<option "$(IF,$(EC,$2,20),SELECTED)" value=20>20
+<option "$(IF,$(EC,$2,21),SELECTED)" value=21>21
+<option "$(IF,$(EC,$2,22),SELECTED)" value=22>22
+<option "$(IF,$(EC,$2,23),SELECTED)" value=23>23
+<option "$(IF,$(EC,$2,24),SELECTED)" value=24>24
+<option "$(IF,$(EC,$2,25),SELECTED)" value=25>25</SELECT>")
+</font></TD>  
+
+<TD><font size=-1><b>Cytological position:</b> $(IF,$(NC,$5,NULL),$5,Unknown)</font></TD>
+</TR>
+</TABLE>
+
+<?/MISQL>
+
+
+<?MIBLOCK COND="$(>,$MI_ROWCOUNT,1)">
+</TD></TR></TABLE>
+<b>Please refer to parental lineages (click links below) for detailed mapping information on the alleles carried by this double-mutant line.</b>
+<?/MIBLOCK>
+
+<!-- If its just a single mutant, go ahead and show mapping info -->
+<?MIBLOCK COND="$(=,$MI_ROWCOUNT,1)">
+
+<?MIVAR><b>Mapped linkages</b> to $abbrev:<?/MIVAR>
+<?MIVAR COND="$(XST,$UPDATE)">
+<INPUT TYPE=button value="ADD new linkage" onClick="add_linkage();">
+<?/MIVAR>
+
+<?MIVAR NAME=$override>$(IF,$(OR,$(EC,$ZDB_access,root),$(EC,$ZDB_access,fishauth)),true,false)<?/MIVAR>
+
+<TABLE cellpadding=2>
+<?MIVAR NAME=$curviewer>/cgi-bin_B/webdriver?MIval=aa-geneview.html&OID=<?/MIVAR>
+<?MISQL SQL="select m1_abbrev,LOD,dist,m1_type,m1_id,a.owner,private,b.full_name,a.link_id,a.metric  from all_linked_markers a,person b where m2_id='$OID' and a.owner=b.zdb_id order by m1_type,dist;">
+
+$(IF,$(=,$MI_CURRENTROW,1),"<TR><TD></TD><TD></TD><TD><U>Distance</U></TD><TD><U>LOD</U></TD><td></TD></TR>")
+
+$(IF,$(NC,$4,GENE),$(SETVAR,$curviewer,"/cgi-bin_B/webdriver?MIval=aa-markerview.apg&OID="))
+
+<TR>
+$(IF,$(XST,$UPDATE),"<TD><font size=2><input type=button value=edit onClick=edit_linkage('"$9"');></TD>","<TD></TD>")
+$(IF,$(OR,$(EC,$override,true),$(EC,$7,f),$(EC,$ZDB_ident,$6)),"<TD><font size=-1><A HREF="$curviewer$5">"$1"</A> ("$4")</TD>
+<TD align=center><font size=-1>"$3" "$10"</TD>
+<TD align=center><font size=-1>"$2"</TD><TD><font size=-1>mapped by <A href=/cgi-bin_B/webdriver?MIval=aa-persview.apg&OID="$6">"$8"</a></TD>","<TD colspan=4><font size=-1><A href=javascript:info();>"$4$MI_CURRENTROW"</A>: Unpublished! <A href=/cgi-bin_B/webdriver?MIval=aa-persview.apg&OID="$6">Contact "$8"</a>.</TD>")
+</TR>
+<?/MISQL>
+</TABLE>
+<?MIVAR COND="$(=,$MI_ROWCOUNT,0)"><font size=2>&nbsp;&nbsp;&nbsp;No linkage data submitted (yet).</font><?/MIVAR>
+
+<!-- Now if it's a deletion, also show present/missing markers -->
+<?MISQL SQL="select chrom_change from fish_search where fish_id='$OID';"><?/MISQL>
+<?MIVAR NAME=$chrom_change>$1<?/MIVAR>
+
+<?MIBLOCK COND="$(EC,$chrom_change,deficiency)">
+<hr width=80%>
+<TABLE width=100%>
+<TR><TD><font size=2><b>Markers missing:</b> 
+<?MIVAR NAME=$last><?/MIVAR>
+<?MISQL SQL="select b.abbrev,b.zdb_id,a.present_t,b.mtype from mapped_deletion a,all_markers b where a.marker_id=b.zdb_id and allele='$allele' order by a.present_t,b.mtype;">
+$(IF,$(AND,$(NC,$last,$3),$(EC,$3,t)),"</TD><TD><font size=2><b>Markers present:</b> ")
+<A href="/cgi-bin_B/webdriver?MIval=aa-markerview.apg&OID=$2">$1</A>;
+$(SETVAR,$last,$3)
+<?/MISQL>
+</TD></TR></TABLE>
+
+<?/MIBLOCK> <!-- ends deficiency -->
+
+<?MISQL SQL="select cloned_gene, b.abbrev from locus a, gene b where a.locus_name='$name' and a.cloned_gene=b.zdb_id;">
+<p></font><font size=2 color="red"><b>Known correspondence!</b></font><font size=2> The <A HREF="/cgi-bin_B/webdriver?MIval=aa-locusview.apg&OID=$locus">$name</A> locus has been shown to correspond to GENE:  <A HREF="/cgi-bin_B/webdriver?MIval=aa-markerview.apg&OID=$1">$2</A>. Please refer to the locus and gene records for further mapping information.
+<?/MISQL>
+
+</TD></TR></TABLE>
+
+
+<?/MIBLOCK><!-- ends non-double mutant -->
+
+
+
+
+<p>
+<HR width=80%>
+
+<p>
+<A NAME="breeding">
+
+<h3>LINEAGE AND BREEDING</h3>
+<TABLE width=100% cellpadding=4>
+<TR align=center> 
+<TD> <font size=-1>
+<b>Maternal:</b> 
+<?MIVAR COND="$(XST,$UPDATE)">
+<INPUT TYPE=button value="Update" onClick="doit('mother','selection','Maternal+Stock')"> 
+<?/MIVAR>
+
+<?MIBLOCK COND="$(NC,$mother,NULL)">
+<?MISQL SQL="select name,abbrev from fish where zdb_id='$mother';">
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-fishview.apg&OID=$mother">$1($2)</A>
+<?/MISQL>
+<?/MIBLOCK>
+<?MIVAR COND="$(EC,$mother,NULL)"> UNKNOWN. <?/MIVAR>
+</font></TD> 
+
+<TD> <font size=-1>
+<b>Paternal: </b>
+<?MIVAR COND="$(XST,$UPDATE)">
+<INPUT TYPE=button value="Update" onClick="doit('father','selection','Paternal+Stock')"> 
+<?/MIVAR>
+
+<?MIBLOCK COND="$(NC,$father,NULL)">
+<?MISQL SQL="select name,abbrev from fish where zdb_id='$father';">
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-fishview.apg&OID=$father">$1($2)</A>
+<?/MISQL>
+<?/MIBLOCK>
+<?MIVAR COND="$(EC,$father,NULL)"> UNKNOWN. <?/MIVAR>
+</font></TD>
+</TR>
+
+<TR> <TD colspan=2 > <font size=-1>
+<?MIVAR COND="$(XST,$UPDATE)">
+<INPUT TYPE=button value="Update" onClick="doit('segregation','textarea','Segregation')"> 
+<?/MIVAR> 
+<b>Segregation: </b> 
+<?MIVAR COND="$(NC,$segregation,NULL)">$segregation <?/MIVAR>
+<?MIVAR COND="$(EC,$segregation,NULL)"> UNKNOWN <?/MIVAR> 
+</font></TD> </TR> </TABLE>
+
+
+<?/MIBLOCK>  <!-- ends EC type mutant -->
+
+
+<HR width=80%>
+<p>
+<?MIVAR COND="$(XST,$UPDATE)">
+<INPUT TYPE=button value="Update" onClick="doit('comments','textarea','Submitter+comments')"> 
+<?/MIVAR> 
+
+<b>Submitter's Comments:</b><?MIVAR COND="$(NC,$comments,NULL)"> $comments <?/MIVAR>
+
+<HR WIDTH=80%>
+
+
+<!-- Throw up the publication info, using the standard display format -->
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-showpubs.apg';">$1<?/MISQL>
+
+<?/MIBLOCK> <!-- Cond AUTHORIZED -->
+
+<?/MIBLOCK> <!-- ends cond oid exists -->
+
+
+
+</HTML>
+
+
+
