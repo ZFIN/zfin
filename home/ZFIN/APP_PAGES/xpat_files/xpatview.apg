@@ -178,7 +178,6 @@ ERROR -- something bad happened -- no OID passed in!
        <?MIVAR NAME=name>$gene_name($gene_abbrev)<?/MIVAR>
        <?/MIVAR> 
 
-     <?/MIBLOCK>
 
      <?MIBLOCK COND=$(AND,$(=,$COUNT,0),$(NC,$4,GENE))>
        <?MIVAR>
