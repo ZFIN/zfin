@@ -395,9 +395,10 @@ create dba function "informix".regen_genomics() returning integer
     from locus
     union all
     select distinct lower(dalias_alias) allmapnm_name, dalias_data_zdb_id allmapnm_zdb_id, 5 allmapnm_significance
-    from data_alias, marker
+    from data_alias, alias_group, marker
     where mrkr_zdb_id = dalias_data_zdb_id
-    and dalias_significance = 1
+    and dalias_group = aliasgrp_name
+    and aliasgrp_significance = 1
     union all 
     select lower(lcsali_locus_name_alias) allmapnm_name, lcsali_locus_zdb_id allmapnm_zdb_id, 6 allmapnm_significance
     from locus_alias
