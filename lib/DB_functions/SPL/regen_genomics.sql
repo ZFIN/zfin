@@ -558,17 +558,18 @@ create dba function "informix".regen_genomics() returning integer
    -- create indexes; constraints that use them are added at the end.
 
 	select distinct zdb_id mpd from all_g_new into temp tmp_agn with no log;
-	create index agn_zdb_id_ndx on tmp_agn(mpd);
+	create unique index agn_zdb_id_ndx on tmp_agn(mpd);
     update statistics high for table tmp_agn;
-
+    
 	insert into all_g_new
 	select mrkr_name, 0, '', mrkr_zdb_id,0, 'na'::varchar(50),
 	'na'::varchar(10), mrkr_abbrev, mrkr_abbrev_order, 'na'::varchar(50),
 	NULL::datetime year to fraction, locus.zdb_id, locus.locus_name
 	from marker, OUTER locus
-	where mrkr_zdb_id = locus.cloned_gene
-	and   mrkr_type = 'GENE'
-	and not exists(select 'x' from tmp_agn where mpd = zdb_id);
+	where mrkr_type = 'GENE' 
+	and   mrkr_zdb_id not in (select mpd from tmp_agn)
+	and   mrkr_zdb_id = locus.cloned_gene
+	;
 	
 	drop table tmp_agn;
 	
