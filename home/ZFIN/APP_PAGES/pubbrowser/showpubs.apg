@@ -94,9 +94,9 @@ $(IF,$(>,$(POSITION,$rtype,go),0),
         window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$return_page2&OID=$orgOID&dataOID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted&target_table=$target_table&info=$info');
       }
   
-      function result_order(pubOrder)
+      function result_order(pubOrder,total_count,count_of_real_pub,evidence)
       {
-        var url = '/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=$rtype&name=$(URLENCODE,$name)&abbrev=$abbrev&title=$(URLENCODE,$title)&pubOrder='+pubOrder;
+        var url = '/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=$rtype&name=$(URLENCODE,$name)&abbrev=$abbrev&title=$(URLENCODE,$title)&total_count='+total_count+'&count_of_real_pub='+count_of_real_pub+'&pubOrder='+pubOrder+'&evidence='+evidence;
         $(IF,$(XST,$UPDATE),url += '&UPDATE=1';)
     
         location.replace(url);
@@ -129,7 +129,8 @@ $(IF,$(>,$(POSITION,$rtype,go),0),
 <?MIVAR COND="$(XST,$UPDATE)">
         <form>
 	<center><font size=+2><input type=button 
-	value=" DONE UPDATING. Back to Viewing! " onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$orgOID&dataOID=$OID&rtype=$rtype&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev')"> </font></center>
+	value=" DONE UPDATING. Back to Viewing! " onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$orgOID&dataOID=$OID&rtype=$rtype&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev$(IF,$(XST,$total_count),&total_count=$total_count)$(IF,$(XST,$count_of_real_pub),&count_of_real_pub=$count_of_real_pub)')"> </font></center>
+
        </form>
 <?/MIVAR>
 
@@ -162,22 +163,22 @@ $(IF,$(>,$(POSITION,$rtype,go),0),
     or
       recattrib_data_zdb_id in (select dblink_zdb_id from db_link where linked_recid = '$OID')
     or
-      recattrib_data_zdb_id in (select oevdisp_zdb_id from orthologue_evidence_display where oevdisp_gene_zdb_id = '$OID')
-    or
-     recattrib_data_zdb_id in (select mrkrgoev_zdb_id from marker_go_term_evidence,marker_go_term  where mrkrgo_mrkr_zdb_id = '$OID' and mrkrgo_zdb_id=mrkrgoev_mrkrgo_zdb_id)
+      recattrib_data_zdb_id in (select oevdisp_zdb_id from orthologue_evidence_display where oevdisp_gene_zdb_id = '$OID')    or
+     recattrib_data_zdb_id in (select mrkrgoev_zdb_id from marker_go_term_evidence,marker_go_term  where mrkrgo_mrkr_zdb_id = '$OID' and mrkrgo_zdb_id = mrkrgoev_mrkrgo_zdb_id)
    <?/MIVAR>
 
 <TABLE width=100%><TR><TD bgcolor=#ccccccc>
 <font size=+2><b>CITATIONS</b></font>
 <!-- want to include pubs associated with alleles of the locus and with locus itself -->
 <?MICOMMENT> marker, locus and fish page will pass along total_count. Only for the attribution list, need to recalculate the pubs for the data items. <?/MICOMMENT>
+
 <?MIBLOCK COND="$(XST,$total_count)">
    <?MIVAR>($total_count total)<?/MIVAR>
 <?MIELSE>
 
   <?MIBLOCK COND="$(NXST,$attribtype)">
     <?MIBLOCK COND="$(>,$(POSITION,$OID,MRKRGO),0)">
-      <?MISQL SQL="select count(distinct recattrib_source_zdb_id) from record_attribution, marker_go_term,marker_go_term_evidence where mrkrgoev_mrkrgo_zdb_id='$OID' and mrkrgoev_zdb_id=recattrib_data_zdb_id and mrkrgoev_evidence_code='$evidence'";>
+      <?MISQL SQL="select count(distinct recattrib_source_zdb_id) from record_attribution, marker_go_term,marker_go_term_evidence where mrkrgoev_mrkrgo_zdb_id='$OID' and mrkrgoev_zdb_id=recattrib_data_zdb_id and mrkrgoev_evidence_code='$evidence';">
      ($(FIX,$1) total) 
     <?/MISQL>
    <?MIELSE>	
@@ -190,19 +191,9 @@ $(IF,$(>,$(POSITION,$rtype,go),0),
       ">
      ($(FIX,$1) total) 
     <?/MISQL>	
-    <?/MIBLOCK>
+  <?/MIBLOCK>
 
 
-<?MIELSE COND="$(EC,$attribtype,colattrib)">
-<?MISQL SQL="
-  select count(*) 
-  from column_attribution
-  where colattrib_data_zdb_id = '$OID'
-    and colattrib_column_name = '$info'	
-    and get_obj_type(colattrib_source_zdb_id) = 'PUB';
-  ">
-($(FIX,$1) total) 
-<?/MISQL>
   <?MIELSE COND="$(EC,$attribtype,colattrib)">
     <?MISQL SQL="
       select count(*) 
@@ -236,10 +227,12 @@ $(IF,$(>,$(POSITION,$rtype,go),0),
 </b></font>	
 
 <?MIVAR>
-  
-    <input type=button name=resultOrder onClick="result_order($(IF,$(EC,$pubOrder,6),'7 desc','6'))"
-           value="$(IF,$(EC,$pubOrder,6),Order By Date,Order By Author)">
-  
+    <?MIVAR COND="$(NXST,$total_count)" NAME=$total_count><?/MIVAR>
+    <?MIVAR COND="$(NXST,$count_of_real_pub)" NAME=$count_of_real_pub>-9<?/MIVAR>
+    <?MIVAR COND="$(NXST,$evidence)" NAME=$evidence><?/MIVAR>
+
+    <input type=button name=resultOrder onClick="result_order($(IF,$(EC,$pubOrder,6),'7 desc','6'),'$total_count','$count_of_real_pub','$evidence')"
+           value="$(IF,$(EC,$pubOrder,6),Order By Date,Order By Author)"> 
 <?/MIVAR>		
 <!--------------------------------------------------------------------------->
 
@@ -254,6 +247,8 @@ $(IF,$(>,$(POSITION,$rtype,go),0),
 
 
 <TABLE>
+
+<?MIBLOCK COND="$(=,$count_of_real_pub,-9)">
   <?MIVAR NAME=$count_of_real_pub>0<?/MIVAR>
   <?MISQL COND="$(>,$(POSITION,$OID,LOCUS),0)" SQL="
 		select count(distinct recattrib_source_zdb_id) 
@@ -276,8 +271,11 @@ $(IF,$(>,$(POSITION,$rtype,go),0),
     ">
     <?MIVAR>$(SETVAR,$count_of_real_pub,$(+,$1,$count_of_real_pub))<?/MIVAR>
   <?/MISQL>
+<?/MIBLOCK>
+
+
 <?MIVAR COND="$(>,$count_of_real_pub,0)">
-   <TR><TD><b>Publications ($count_of_real_pub): </b></TD></TR>
+   <TR><TD><b>Publications  $(FIX,$count_of_real_pub): </b></TD></TR>
 <?/MIVAR>
 
 <?MIBLOCK COND="$(NXST,$attribtype)">
@@ -288,20 +286,78 @@ $(IF,$(>,$(POSITION,$rtype,go),0),
       <?MISQL SQL="
   	select distinct title, p.zdb_id, year(pub_date) as pyear, authors, source, 
 	 	lower(authors), pub_date
-   	  from record_attribution, publication p, fish f, locus l 
-     	 where l.zdb_id = '$OID'
-	   and f.locus = l.zdb_id 
-	   and recattrib_data_zdb_id = f.zdb_id
-      	   and recattrib_source_zdb_id = p.zdb_id
-           and p.jtype not in ('Curation', 'Unpublished')
-	UNION
- 	select distinct title, p.zdb_id, year(pub_date) as pyear, authors, source, 
+	 	  from fish_search f, record_attribution,publication p
+	 	 where f.locus = '$OID'
+		   and recattrib_data_zdb_id = '$OID'
+    		   and recattrib_source_zdb_id = p.zdb_id
+     		   and p.jtype not in ('Curation', 'Unpublished')
+	    UNION
+  	select distinct title, p.zdb_id, year(pub_date) as pyear, authors, source, 
 	 	lower(authors), pub_date
-   	  from record_attribution, publication p, locus l 
-     	 where l.zdb_id = '$OID'
-	   and recattrib_data_zdb_id = l.zdb_id
-      	   and recattrib_source_zdb_id = p.zdb_id
-	   and p.jtype not in ('Curation', 'Unpublished')
+	 	  from fish_search f, record_attribution,publication p
+	 	 where f.locus = '$OID'
+		   and recattrib_data_zdb_id = f.fish_id
+    		   and recattrib_source_zdb_id = p.zdb_id
+     		   and p.jtype not in ('Curation', 'Unpublished')
+	    UNION
+  	select distinct title, p.zdb_id, year(pub_date) as pyear, authors, source, 
+	 	lower(authors), pub_date
+	 	  from fish_search f, record_attribution,publication p
+	 	 where f.locus = '$OID'
+		   and recattrib_data_zdb_id = f.alt_zdb_id
+    		   and recattrib_source_zdb_id = p.zdb_id
+     		   and p.jtype not in ('Curation', 'Unpublished')
+            UNION		 
+	select distinct title, p.zdb_id, year(pub_date) as pyear, authors, source, 
+	 	lower(authors), pub_date
+	 	  from fish_search f, data_alias, record_attribution, publication p
+	 	 where f.locus = '$OID'
+		   and dalias_data_zdb_id = f.locus
+		   and dalias_zdb_id = recattrib_data_zdb_id
+    		   and recattrib_source_zdb_id = p.zdb_id
+     		   and p.jtype not in ('Curation', 'Unpublished')
+            UNION		 
+	select distinct title, p.zdb_id, year(pub_date) as pyear, authors, source, 
+	 	lower(authors), pub_date
+	 	  from fish_search f, data_alias, record_attribution, publication p
+	 	 where f.locus = '$OID'
+		   and dalias_data_zdb_id = f.alt_zdb_id
+		   and dalias_zdb_id = recattrib_data_zdb_id
+    		   and recattrib_source_zdb_id = p.zdb_id
+     		   and p.jtype not in ('Curation', 'Unpublished')
+            UNION		 
+	select distinct title, p.zdb_id, year(pub_date) as pyear, authors, source, 
+	 	lower(authors), pub_date
+	 	  from fish_search f, data_alias, record_attribution, publication p
+	 	 where f.locus = '$OID'
+		   and dalias_data_zdb_id = f.fish_id
+		   and dalias_zdb_id = recattrib_data_zdb_id
+    		   and recattrib_source_zdb_id = p.zdb_id
+     		   and p.jtype not in ('Curation', 'Unpublished')
+	    UNION		 
+	 select distinct title, p.zdb_id, year(pub_date) as pyear, authors, source, 
+	 	lower(authors), pub_date
+	 	  from fish_search f,column_attribution,publication p
+	 	 where f.locus = '$OID'
+		   and colattrib_data_zdb_id = f.locus	
+    		   and colattrib_source_zdb_id = p.zdb_id
+     		   and p.jtype not in ('Curation', 'Unpublished')
+	    UNION		 
+	 select distinct title, p.zdb_id, year(pub_date) as pyear, authors, source, 
+	 	lower(authors), pub_date
+	 	  from fish_search f,column_attribution,publication p
+	 	 where f.locus = '$OID'
+		   and colattrib_data_zdb_id = f.fish_id	
+    		   and colattrib_source_zdb_id = p.zdb_id
+     		   and p.jtype not in ('Curation', 'Unpublished')
+	    UNION		 
+	 select distinct title, p.zdb_id, year(pub_date) as pyear, authors, source, 
+	 	lower(authors), pub_date
+	 	  from fish_search f,column_attribution,publication p
+	 	 where f.locus = '$OID'
+		   and colattrib_data_zdb_id = f.alt_zdb_id	
+    		   and colattrib_source_zdb_id = p.zdb_id
+     		   and p.jtype not in ('Curation', 'Unpublished')
     	order by $pubOrder;">
   	$(IF,$(XST,$UPDATE),"<TD><font size=-1><input type=button value=delete onClick=Delete_listitem('publication','"$2"')></font></TD>")
   	<TR>
@@ -313,8 +369,118 @@ $(IF,$(>,$(POSITION,$rtype,go),0),
   	</TR>
   	<TR></TR><TR></TR>
       <?/MISQL> 
+     <?/MIBLOCK>
 
-<?MIELSE>
+   <?MIBLOCK COND="$(AND,$(=,$(POSITION,$OID,LOCUS),0),$(=,$(POSITION,$OID,FISH),0))">
+    <?MISQL SQL="
+      select distinct title, p.zdb_id, year(pub_date) as pyear, authors, source, 
+	 lower(authors), pub_date  
+      from record_attribution, publication p
+      where recattrib_data_zdb_id = '$OID'
+        and recattrib_source_zdb_id = p.zdb_id 
+        and p.jtype not in ('Curation','Unpublished')
+ 	UNION		 
+	select distinct title, p.zdb_id, year(pub_date) as pyear, authors, source, 
+	 lower(authors), pub_date  
+	 	  from record_attribution, publication p, locus l
+	 	 where l.cloned_gene = '$OID'
+		   and l.zdb_id = recattrib_data_zdb_id
+    		   and recattrib_source_zdb_id = p.zdb_id
+     		   and p.jtype not in ('Curation', 'Unpublished')
+      order by $pubOrder;">
+      $(IF,$(XST,$UPDATE),"<TD><font size=-1><input type=button value=delete onClick=Delete_listitem('publication','"$2"')></font></TD>")
+      <TR>
+      <TD align=left>
+      <DIV class="show_pubs">
+	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$4 ($3) $1. $5.</A>
+      </DIV>
+      </TD>
+     </TR>
+     <TR></TR><TR></TR>
+    <?/MISQL>
+  <?/MIBLOCK>
+
+  <?MIBLOCK COND="$(>,$(POSITION,$OID,FISH),0)">
+    <?MISQL SQL="
+      select distinct title, zdb_id, year(pub_date) as pyear, authors, source, 
+	 lower(authors), pub_date  
+      from fish_search f, record_attribution, publication p
+	where  f.fish_id = '$OID'
+	   and recattrib_data_zdb_id  = f.fish_id
+    	   and recattrib_source_zdb_id = p.zdb_id
+     	   and p.jtype not in ('Curation', 'Unpublished')
+    UNION
+      select distinct title, zdb_id, year(pub_date) as pyear, authors, source, 
+	 lower(authors), pub_date  
+      from fish_search f, record_attribution, publication p
+	where  f.fish_id = '$OID'
+	   and recattrib_data_zdb_id  = f.alt_zdb_id
+    	   and recattrib_source_zdb_id = p.zdb_id
+     	   and p.jtype not in ('Curation', 'Unpublished')
+    UNION
+      select distinct title, zdb_id, year(pub_date) as pyear, authors, source, 
+	 lower(authors), pub_date  
+	from fish_search f,data_alias,record_attribution,publication p 
+	  where f.fish_id = '$OID'
+	    and dalias_data_zdb_id  = f.fish_id
+	    and recattrib_data_zdb_id = dalias_zdb_id 
+    	    and recattrib_source_zdb_id = p.zdb_id
+            and p.jtype not in ('Curation', 'Unpublished')
+    UNION
+      select distinct title, zdb_id, year(pub_date) as pyear, authors, source, 
+	 lower(authors), pub_date  
+	from fish_search f,data_alias,record_attribution,publication p 
+	  where f.fish_id = '$OID'
+	    and dalias_data_zdb_id  = f.locus
+	    and recattrib_data_zdb_id = dalias_zdb_id 
+    	    and recattrib_source_zdb_id = p.zdb_id
+            and p.jtype not in ('Curation', 'Unpublished')
+    UNION
+      select distinct title, zdb_id, year(pub_date) as pyear, authors, source, 
+	 lower(authors), pub_date  
+	from fish_search f,data_alias,record_attribution,publication p 
+	  where f.fish_id = '$OID'
+	    and dalias_data_zdb_id  = f.alt_zdb_id
+	    and recattrib_data_zdb_id = dalias_zdb_id 
+    	    and recattrib_source_zdb_id = p.zdb_id
+            and p.jtype not in ('Curation', 'Unpublished')
+    UNION
+      select distinct title, zdb_id, year(pub_date) as pyear, authors, source, 
+	 lower(authors), pub_date  
+ 	    from fish_search f,column_attribution,publication p
+  	      where f.fish_id = '$OID'
+		and colattrib_data_zdb_id = f.fish_id
+    		and colattrib_source_zdb_id = p.zdb_id
+		and p.jtype not in ('Curation','Unpublished')
+    UNION
+      select distinct title, zdb_id, year(pub_date) as pyear, authors, source, 
+	 lower(authors), pub_date  
+ 	    from fish_search f,column_attribution,publication p
+  	      where f.fish_id = '$OID'
+		and colattrib_data_zdb_id = f.alt_zdb_id
+    		and colattrib_source_zdb_id = p.zdb_id
+		and p.jtype not in ('Curation','Unpublished')
+    UNION
+      select distinct title, zdb_id, year(pub_date) as pyear, authors, source, 
+	 lower(authors), pub_date  
+ 	    from fish_search f,column_attribution,publication p
+  	      where f.fish_id = '$OID'
+		and colattrib_data_zdb_id = f.locus
+    		and colattrib_source_zdb_id = p.zdb_id
+		and p.jtype not in ('Curation','Unpublished')
+      order by $pubOrder;">
+      $(IF,$(XST,$UPDATE),"<TD><font size=-1><input type=button value=delete onClick=Delete_listitem('publication','"$2"')></font></TD>")
+      <TR>
+      <TD align=left>
+      <DIV class="show_pubs">
+	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$4 ($3) $1. $5.</A>
+      </DIV>
+      </TD>
+     </TR>
+     <TR></TR><TR></TR>
+    <?/MISQL>
+   <?/MIBLOCK>
+
     <?MIBLOCK COND="$(>,$(POSITION,$OID,MRKRGO),0)">
       <?MISQL SQL="
   	select distinct title, p.zdb_id, year(pub_date) as pyear, authors, source, 
@@ -333,30 +499,9 @@ $(IF,$(>,$(POSITION,$rtype,go),0),
   	</TR>
   	<TR></TR><TR></TR>
       <?/MISQL> 
-<?MIELSE>
+    <?/MIBLOCK> 
 
-    <?MISQL SQL="
-      select distinct title, zdb_id, year(pub_date) as pyear, authors, source, 
-	 lower(authors), pub_date  
-      from record_attribution, publication 
-      where recattrib_data_zdb_id = '$OID'
-        and recattrib_source_zdb_id = zdb_id 
-        and jtype not in ('Curation','Unpublished')
-      order by $pubOrder;">
-      $(IF,$(XST,$UPDATE),"<TD><font size=-1><input type=button value=delete onClick=Delete_listitem('publication','"$2"')></font></TD>")
-      <TR>
-      <TD align=left>
-      <DIV class="show_pubs">
-	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$4 ($3) $1. $5.</A>
-      </DIV>
-      </TD>
-     </TR>
-     <TR></TR><TR></TR>
-    <?/MISQL>
-<?/MIBLOCK>
-  <?/MIBLOCK> <!-- end of if locus else --> 
   <TR><TD>&nbsp;</TD><TR>
-
 
   <?MISQL SQL="
     select count(distinct recattrib_source_zdb_id)::integer
