@@ -783,9 +783,26 @@ Datablade documentation.
     $(SETVAR,$lastitem,$1)
  <?/MISQL>
  <?MIVAR>$(IF,$(>,$MI_ROWCOUNT,0),</TD></TR></TABLE>)<?/MIVAR>
-<?MIBLOCK COND="$(EC,hh,yy)">
- <?MIVAR COND="$(AND,$(EC,$MI_ROWCOUNT,0),$(=,$titledisplay,1))">None submitted.<?/MIVAR>
-<?/MIBLOCK>
+
+  <!--------------end of Protein Sequences --------->
+
+  <!--------------- Gene Product Description ------->
+  <?MISQL SQL="select dblink_linked_recid 
+		 from external_note, db_link
+		where extnote_data_zdb_id = dblink_zdb_id
+		  and dblink_linked_recid = '$OID';">
+  <?/MISQL>	
+  <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">	
+        <?MIBLOCK COND="$(=,$titledisplay,0)">
+		<hr width = "80%">
+  		<b>GENE PRODUCTS: </b> 
+		<?MIVAR>$(SETVAR,$titledisplay,1)<?/MIVAR>
+	<?/MIBLOCK>
+	<p><?MIVAR><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-geneprddescription.apg&OID=$OID><b>Gene Product Description</b></A><?/MIVAR>
+
+  <?/MIBLOCK>
+  <!-----------end of Gene Product Description ------->
+
 <?/MIBLOCK>
 <p>
 <!------------------ end of GENE PRODUCT ---------------------->
@@ -904,7 +921,7 @@ Datablade documentation.
 
 <?MISQL SQL="select count(*)::Integer from marker_relationship where mrel_mrkr_1_zdb_id = '$OID' or mrel_mrkr_2_zdb_id = '$OID';">
   <?MIVAR NAME=$mrel_count>$1<?/MIVAR>
-<?MIBLOCK COND="$(OR,$(NC,$mrel_count,0),$(XST,$UPDATE))"><br>
+<?MIBLOCK COND="$(OR,$(NC,$mrel_count,0),$(XST,$UPDATE))">
 <HR width="80%"><b>
   <?MIBLOCK COND="$(XST,$type_of_genedom)">
     SEGMENT (CLONE AND PROBE) RELATIONSHIPS:
