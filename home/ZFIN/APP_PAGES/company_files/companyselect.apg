@@ -36,6 +36,8 @@ document.critform.START.value = "";
 <FONT SIZE=5 color="#ff0000" > COMPANY</font></b></u>
 </center>
 
+<?MIVAR COND="$(NXST,$START)" NAME=$START>1<?/MIVAR>
+
 <TABLE width=100%>
 <TR>
 <TD><font size=-1>
@@ -108,7 +110,7 @@ database entries.</font>
 </TABLE>
 <p>
 
-<?MIVAR COND="$(AND,$(NOT,$(ISNULL,$START)),$(XST,$START))">
+<?MIVAR>
   <input type=hidden NAME="START" value=$START>
 <?/MIVAR>
 

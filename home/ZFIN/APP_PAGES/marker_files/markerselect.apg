@@ -51,6 +51,8 @@ document.critform.START.value = "";
 <?MIVAR COND="$(NXST,$refcross)" NAME=$refcross>NULL<?/MIVAR>
 <?MIVAR COND="$(NXST,$marker_type)" NAME=$marker_type>NULL<?/MIVAR>
 <?MIVAR COND="$(NXST,$compare)" NAME=$compare>contains<?/MIVAR>
+<?MIVAR COND="$(NXST,$START)" NAME=$START>1<?/MIVAR>
+
 
 <BR>
 
@@ -197,7 +199,7 @@ document.critform.START.value = "";
 </TABLE>
 <p>
 
-<?MIVAR COND="$(AND,$(NOT,$(ISNULL,$START)),$(XST,$START))">
+<?MIVAR>
   <input type=hidden NAME="START" value=$START>
 <?/MIVAR>
 
