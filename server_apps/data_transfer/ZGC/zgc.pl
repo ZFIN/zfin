@@ -38,12 +38,13 @@ system("wget 'http://zgc.nci.nih.gov/Reagents/StaticCloneList?PAGE=0&ORG=Dr&STAT
 $vCloneDiff = `diff StaticCloneList StaticCloneList.previous`;
 
 
-if ($vCloneDiff ne "")
-{
+#if ($vCloneDiff ne ""){
+    
   #Initial state of database
   &openReport();
 
-  #parse files
+  print "parse StaticCloneList into StaticCloneList.unl returns " .
+  #system("sed -f zgc.sed StaticCloneList | grep -v '^$' > StaticCloneList.unl");
   system("sed -f zgc.sed StaticCloneList > StaticCloneList.unl");
   
   #load links
@@ -55,7 +56,7 @@ if ($vCloneDiff ne "")
   &reportFile('unNoDbLink.unl','Missing Db_link'); 
   &reportFile('unRefSeqAttrib.unl','Attributed to RefSeq'); 
   &sendReport();
-}
+#}
 
 exit;
 
@@ -137,7 +138,7 @@ sub sendReport()
     open(MAIL, "| $mailprog") || die "cannot open mailprog $mailprog, stopped";
     open(REPORT, "report") || die "cannot open report";
 
-    print MAIL "To: bsprunge\@cs.uoregon.edu\n";
+    print MAIL "To: <!--|DB_OWNER|-->\@cs.uoregon.edu\n";
     print MAIL "Subject: ZGC Report\n";
     while($line = <REPORT>)
     {
