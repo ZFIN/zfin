@@ -24,9 +24,9 @@ create temp table probes_tmp (
    genename varchar(120)default null, -- 11/17 changed from abbrev to ZDB-id
    gb5p varchar (50),
    gb3p varchar (50),
-   pcr_amp varchar(200),
-   library varchar(80),
    vector varchar(80),
+   library varchar(80),
+   pcr_amp varchar(200),
    insert_kb float,
    cloning_site varchar(20),
    digest varchar(20),
