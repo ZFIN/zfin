@@ -1,13 +1,7 @@
-<!-- FILE: imageupdate.html
+<!-- 
+FILE: imageupdate.html
 
-This is the handler that is called whenever a user clicks a button in the 
-"updating  mode" of the IMAGE viewer. It should toss up the appropriate 
-form to get the update from the user. In most cases (text fields) this 
-just means a place to put in text. For "selected" fields (e.g. the 
-'mother' of a strain), it would throw up the appropriate browser to 
-select a new one.
-
-EXPECTED VARS:
+INPUT_VARS:
 OID -- the zdb_id of the record to update
 attr -- the column name that is being updated.
 attr_type -- the type of attr being updated. Either 'text','textarea','pic' 
@@ -16,6 +10,20 @@ print_name -- The human-understandable name (vs. the database column name) of
   the attribute to be updated. So for ex, the print name for 'phone' 
   would be 'phone number'
 annotations -- big string of annotations for the image
+
+OUTPUT VARS: none
+
+OUTPUT:
+redirect to do-imageupdate.apg
+
+DESCRIPTION:
+This is the handler that is called whenever a user clicks a button in the 
+"updating  mode" of the IMAGE viewer. It should toss up the appropriate 
+form to get the update from the user. In most cases (text fields) this 
+just means a place to put in text. For "selected" fields (e.g. the 
+'mother' of a strain), it would throw up the appropriate browser to 
+select a new one.
+
 -->
 
 <META HTTP-EQUIV="EXPIRES" CONTENT="-2d"> 
@@ -42,7 +50,7 @@ to a browser -->
     <?MIVAR NAME=$annotations DELIMIT="'" REPLACE="''">$annotations<?/MIVAR>
     <?MISQL SQL="
       update fish_image 
-        set fimg_annotations = '$annotations' 
+        set fimg_annotations = '$annotations'
         where fimg_zdb_id = '$OID';">
     <?/MISQL>
   <?/MIBLOCK>
@@ -52,28 +60,29 @@ to a browser -->
   <?MIBLOCK COND="$(NC,$attr_type,selection)">
 
     <?MISQL SQL="
-      select $attr, fimg_thumbnail 
+      select $attr, fimg_thumbnail
         from fish_image 
         where fimg_zdb_id = '$OID';">
     <?/MISQL>
     <?MIVAR NAME=$current_value>$1<?/MIVAR>
     <?MIVAR NAME=$target_image>$2<?/MIVAR>
+ 
 
     <HTML>
     <?MIVAR>
       <TITLE>Updating $print_name</TITLE>
 
       <center>
-      <IMG ALIGN=center SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$target_image&MItypeObj=image/gif">
-      <font size=6>Update <u>$print_name</u> for this image</font></center>
+      <IMG ALIGN=center SRC="<!--|IMAGE_LOAD|-->/$target_image">
+      <font size=6>Update <u>$print_name:<br>for this image</u> </font></center>
     <?/MIVAR>
     <p>
 
-
-    <FORM ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
+    <FORM ACTION="upload.cgi" 
       METHOD=post ENCTYPE="multipart/form-data">
       <?MIVAR>
 	<INPUT TYPE=hidden name=MIval Value=aa-do-imageupdate.apg>
+	<INPUT TYPE=hidden name=redirect_url value="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-imageupdate.apg">
 	<INPUT TYPE=hidden name=OID Value=$OID>
 	<INPUT TYPE=hidden name=old_value Value="$current_value">
 	<INPUT TYPE=hidden name=attr Value=$attr>
@@ -92,7 +101,7 @@ to a browser -->
 	    </TD>
 	    <TD>
 	      <?MIVAR COND="$(NC,$current_value,NULL)">
-	        <IMG ALIGN=center SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$target_image&MItypeObj=image/gif">
+	        <IMG ALIGN=center SRC="<!--|IMAGE_LOAD|-->/$target_image">
 	      <?/MIVAR>
 	      <?MIVAR COND="$(EC,$current_value,NULL)">
 	        No image currently specified.
@@ -107,8 +116,7 @@ to a browser -->
 	  <TR>
 	    <TD colspan=2>
 	      <br>
-	      <b>New image file: </b><INPUT type="file" size=50 name=new_value>
-
+	      <b>New image file: </b><INPUT type="file" size=50 name=upload>
 	    </TD>
 	  </TR>
 
