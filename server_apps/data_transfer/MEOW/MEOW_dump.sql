@@ -21,7 +21,7 @@
 create table meow_exp1 (
   zdb_id varchar(50),
   mname varchar(80),
-  abbrev varchar(10),
+  abbrev varchar(20),
   OR_lg integer
 );
 
