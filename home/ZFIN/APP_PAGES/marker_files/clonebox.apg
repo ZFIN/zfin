@@ -66,7 +66,7 @@ Requires:  $CLONE_MARKER_ID, $highlight
 	<?MIVAR COND="$(NC,$15,)">$(VECAPPEND,$fields,<b>Host:</b> $15)<?/MIVAR>
 	<?MIVAR COND="$(NC,$16,)">$(VECAPPEND,$fields,<b>Restriction Sites:</b> $16)<?/MIVAR>
 	<?MIVAR COND="$(NC,$17,)">$(VECAPPEND,$fields,<b>Polymerase:</b> $17)<?/MIVAR>
-	<?MIVAR COND="$(NC,$18,)">$(VECAPPEND,$fields,<b>Insert Size:</b> $18 $(IF,$(NE,$18,),bp,NA))<?/MIVAR>
+	<?MIVAR COND="$(AND,$(NC,$18,),$(!=,$18,0))">$(VECAPPEND,$fields,<b>Insert Size:</b> $18 $(IF,$(NE,$18,),bp,NA))<?/MIVAR>
 
 	
 	<TABLE width="100%" border=0 cellpadding=5 bgcolor="$highlight">
