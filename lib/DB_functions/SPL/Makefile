@@ -72,6 +72,7 @@ $(SPECIFICTARGETS) : $(TARGETDIR)/% : %
 
 $(STATICTARGETS) : $(TARGETDIR)/% : %
 	$(TARGET_CP) $^ $@
+	touch $@
 	$(DBACCESS) $(DBNAME) $@
 
 
