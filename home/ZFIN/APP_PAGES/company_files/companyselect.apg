@@ -7,7 +7,13 @@
   State:   $MI_ERRORSTATE <br>
   Message: $MI_ERRORMSG <br>
 <?/MIERROR>
-<!-- added onChange to each variable to reset START for walking windows - this is needed if users alter query after using the navtile button and without using the reset button. if the new query result thas fewer than the first query and they had been on a page that would not exist with this new query the ww code breaks  -->
+<?MICOMMENT>
+added onChange to each variable to reset START for walking windows - this 
+is needed if users alter query after using the navtile button and without 
+using the reset button. if the new query result thas fewer than the first 
+query and they had been on a page that would not exist with this new query 
+the ww code breaks
+<?/MICOMMENT>
 
 <HTML>
 
@@ -90,7 +96,8 @@ $constraint $previous (lower(email) like '%$(LOWER,$email)%')<?/MIVAR>
 <?MIVAR NAME=$previous COND="$(XST,$email)"> and <?/MIVAR>
 
 <?MIVAR NAME=$constraint COND="$(XST,$anon1text)">
-$constraint $previous (webhtml_like($anon1,'$anon1text'))<?/MIVAR>
+$constraint $previous lower($anon1) like lower('%$anon1text%')
+<?/MIVAR>
 
 
 <?MICOMMENT>restore the inputs<?/MICOMMENT>
@@ -339,14 +346,14 @@ Company Search Results
   </TR> 
   <tr>
     <TD class=fullwidth>
-      <?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>bio<?/MIVAR>
+      <?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>company_bio<?/MIVAR>
       <b><SELECT NAME=anon1  onChange='document.critform.START.value = "";'>
       <option $(IF,$(EC,$anon1,email),SELECTED) value="email">Contact person's email
       <option $(IF,$(EC,$anon1,URL),SELECTED) value="url">URL
       <option $(IF,$(EC,$anon1,phone),SELECTED) value="phone">phone
       <option $(IF,$(EC,$anon1,fax),SELECTED) value="fax">fax
       <option $(IF,$(EC,$anon1,zdb_id),SELECTED) value="zdb_id">ZFIN record ID
-      <option $(IF,$(EC,$anon1,bio),SELECTED) value="bio">Products/Services
+      <option $(IF,$(EC,$anon1,company_bio),SELECTED) value="company_bio">Products/Services
       </SELECT>
        contains <input type=text name=anon1text size=15  onChange='document.critform.START.value = "";' $(IF,$(XST,$anon1text),value='$anon1text')>
       </b>

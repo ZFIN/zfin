@@ -7,13 +7,13 @@
   State:   $MI_ERRORSTATE <br>
   Message: $MI_ERRORMSG <br>
 <?/MIERROR>
-
-<!-- added onChange to each variable to reset START for walking windows - 
+<?MICOMMENT>
+     added onChange to each variable to reset START for walking windows - 
      this is needed if users alter query after using the navtile button and 
      without using the reset button. if the new query result has fewer than 
      the first query and they had been on a page that would not exist with 
      this new query the ww code breaks  
--->
+<?/MICOMMENT>
 
 
 <HTML>
@@ -118,7 +118,7 @@ function start_help(anchor) {
   <?MIVAR NAME=$previous COND="$(XST,$email)"> and <?/MIVAR>
 
   <?MIVAR NAME=$constraint COND="$(XST,$anon1text)">
-    $constraint $previous (webhtml_like($anon1,'$anon1text'))
+    $constraint $previous lower($anon1) like lower('%$anon1text%')
   <?/MIVAR>
 
   <?MICOMMENT>restore the inputs<?/MICOMMENT>
@@ -431,7 +431,7 @@ to the left of each item.
        <option $(IF,$(EC,$anon1,phone),SELECTED) value="phone">phone
        <option $(IF,$(EC,$anon1,fax),SELECTED) value="fax">fax
        <option $(IF,$(EC,$anon1,zdb_id),SELECTED) value="zdb_id">ZFIN record ID
-       <option $(IF,$(EC,$anon1,bio),SELECTED) value="bio">bio
+       <option $(IF,$(EC,$anon1,pers_bio),SELECTED) value="pers_bio">bio
       </SELECT>
       contains 
       <input type=text name=anon1text size=10

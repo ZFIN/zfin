@@ -1,11 +1,12 @@
-<!-- FILE: PERSVIEW.html
+<?MICOMMENT>
+FILE: PERSVIEW.html
 
 This file is used both for displaying and updating a PERSON record. If the variable UPDATE is passed in, then we are in updating mode, and "UPDATE" buttons are placed next to each of the field this user (based on permissions) is allowed to update.
 
 VARIABLES EXPECTED:
 OID -- The zdb_id of the PERSON record. Could also be passed in as TEMP_OID.
 UPDATE -- optional, signifies we are in updating mode.
--->
+<?/MICOMMENT>
 
 <HTML>
 <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
@@ -50,7 +51,11 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-update-pers
 
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
-<?MISQL SQL="select name, HTML_breaks(address), phone, fax, email, url, snapshot, full_name, HTML_breaks(bio), HTML_breaks(nonZF_pubs),on_dist_list from person where zdb_id='$OID';"><?/MISQL>
+<?MISQL SQL="
+  select name, HTML_breaks(address), phone, fax, email, url, snapshot, 
+	 full_name, HTML_breaks(pers_bio), HTML_breaks(nonZF_pubs), on_dist_list
+    from person where zdb_id='$OID';">
+<?/MISQL>
 <?MIVAR NAME=$name>$1<?/MIVAR>
 <?MIVAR NAME=$address>$2<?/MIVAR>
 <?MIVAR NAME=$phone>$3<?/MIVAR>
@@ -59,7 +64,7 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-update-pers
 <?MIVAR NAME=$url>$6<?/MIVAR>
 <?MIVAR NAME=$snapshot>$7<?/MIVAR>
 <?MIVAR NAME=$full_name>$8<?/MIVAR>
-<?MIVAR NAME=$bio>$9<?/MIVAR>
+<?MIVAR NAME=$pers_bio>$9<?/MIVAR>
 <?MIVAR NAME=$nonZF_pubs>$10<?/MIVAR>
 <?MIVAR NAME=$on_dist_list>$11<?/MIVAR>
 
@@ -237,10 +242,10 @@ $(IF,$(=,$MI_CURRENTROW,2),<font size=-1>and also: )
 
 <HR>
 <?MIVAR COND="$(XST,$UPDATE)">
-<INPUT TYPE=button value=Update onClick="doit('bio','textarea')">
+<INPUT TYPE=button value=Update onClick="doit('pers_bio','textarea')">
 <?/MIVAR>
 <B>Biography and Research Interests:</B><p>
-<?MIVAR COND=$(NE,$bio,NULL)>$bio<?/MIVAR>
+<?MIVAR COND=$(NE,$pers_bio,NULL)>$pers_bio<?/MIVAR>
 
 <HR>
 
