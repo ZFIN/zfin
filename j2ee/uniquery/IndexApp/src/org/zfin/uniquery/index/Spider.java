@@ -312,6 +312,10 @@ public class Spider implements Runnable
                             {
                             str = str.substring(4).trim();
                             }
+						if (str.startsWith("ZFIN View"))
+                            {
+                            str = str.substring(9).trim();
+                            }
                         if (str.startsWith(":"))
                             {
                             str = str.substring(1);
