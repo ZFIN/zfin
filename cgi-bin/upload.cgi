@@ -90,20 +90,20 @@ $cookie = "";
 # image or xpat or pub zdb_id)
 
 $redirect_OID_param = "&OID=";
-$redirect_new_OID_param = "&xpcur_image_OID=";
+$redirect_new_OID_param = "&xpcur_G_image_OID=";
 
 # redirect_new_OID_param is the prefix for the image or pub OID being sent
 # back to the redirected/calling apg page. 
 
 $redirect_fimgnew_suffix_param = "&fimgnew_suffix=";
 $redirect_suffix_param = "&suffix=";
-$redirect_xpcur_suffix_param = "&xpcur_suffix=";
+$redirect_xpcurup_suffix_param = "&xpcurup_suffix=";
 
 $redirect_fimgnew_height_param = "&fimgnew_height=";
 $redirect_fimgnew_width_param = "&fimgnew_width=";
 
-$redirect_xpcur_width_param = "&xpcur_width=";
-$redirect_xpcur_height_param = "&xpcur_height=";
+$redirect_xpcurup_width_param = "&xpcurup_width=";
+$redirect_xpcurup_height_param = "&xpcurup_height=";
 
 $redirect_height_param = "&height=";
 $redirect_width_param = "&width=";
@@ -124,11 +124,11 @@ $redirect_build = "";
 $new_image_redirect = "aa-new-image.apg";
 $xpat_redirect = "aa-xpatcuration.apg";
 $update_image_redirect = "aa-do-imageupdate.apg";
-$xpcur_image_OID_param = "&xpcur_image_OID=";
-$xpcur_fig_param = "&xpcur_image_fig=";
-$xpcur_fig = "";
-$xpcur_image_label_param="&xpcur_image_label=";
-$xpcur_image_label="";
+$xpcur_G_image_OID_param = "&xpcur_G_image_OID=";
+$xpcur_G_fig_param = "&xpcur_G_image_fig=";
+$xpcur_G_fig = "";
+$xpcur_G_image_label_param="&xpcur_G_image_label=";
+$xpcur_G_image_label="";
 
 # optional redirct parameters, have to 'strip' newline characters
 # off of new_value and old_value in order to send them as a url.
@@ -487,8 +487,8 @@ sub makeFiles () {# uploads the files, builds a thumbnail, gets the height
 	if ( (substr($redirect_url,-19)) eq $xpat_redirect) { # if the redirect_OID parameter is not null
 
 	    $redirect_OID = $query->param("redirect_OID");
-	    $xpcur_fig = $query->param("xpcur_image_fig");
-	    $xpcur_image_label = $query->param("xpcur_image_label");
+	    $xpcur_G_fig = $query->param("xpcur_G_image_fig");
+	    $xpcur_G_image_label = $query->param("xpcur_G_image_label");
 
 	    $xpat_fig =~ s/\s/\_/g;
 	    $xpat_image_label =~ s/\s/\_/g;
@@ -497,9 +497,9 @@ sub makeFiles () {# uploads the files, builds a thumbnail, gets the height
 		&access_error("redirect_OID not a ZDB_id");
 	    }
 
-	    $redirect_new_OID_param = $xpcur_image_OID_param ;
+	    $redirect_new_OID_param = $xpcur_G_image_OID_param ;
 
-	    $redirect_build = $redirect_url.$redirect_OID_param.$redirect_OID.$redirect_new_OID_param.$OID.$redirect_xpcur_suffix_param.$suffix.$redirect_xpcur_height_param.$height.$redirect_xpcur_width_param.$width.$xpcur_fig_param.$xpcur_fig.$xpcur_image_label_param.$xpcur_image_label;
+	    $redirect_build = $redirect_url.$redirect_OID_param.$redirect_OID.$redirect_new_OID_param.$OID.$redirect_xpcurup_suffix_param.$suffix.$redirect_xpcurup_height_param.$height.$redirect_xpcurup_width_param.$width.$xpcur_G_fig_param.$xpcur_G_fig.$xpcur_G_image_label_param.$xpcur_G_image_label;
 	    
 	    if ($attr_type ne "text" &&
 		$attr_type ne "textarea" &&
