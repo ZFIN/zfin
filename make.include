@@ -153,6 +153,7 @@ JAVAC_11      = $(JAVAHOME)/bin/javac
 JAVAHOME_14  = /private/apps/java1.4
 JAVAC_14      = $(JAVAHOME_14)/bin/javac
 
+JDBCHOME     = /private/apps/jdbc2.21
 
 JAVACFLAGS = -g
 
