@@ -19,9 +19,7 @@
 	"<param name=format_pre value=\" a.pheno_keywords like '%;\" >\n" .
 	"<param name=format_post value=\";%'\" >\n" .
 	"<param name=list_label value=\"Keyword Dictionary\">\n" .
-	"<param name=selected_label value=\"Selected Keywords\">\n" .	
-	"<param name = \"host\"             value = \"<!--|DOMAIN_NAME|-->\">\n" .
-	"<param name = \"port\"             value = \"<!--|JAVA_SERVER_PORT|-->\">\n";
+	"<param name=selected_label value=\"Selected Keywords\">\n";
 
  print "<param name = \"data\"   value = \"";
  
