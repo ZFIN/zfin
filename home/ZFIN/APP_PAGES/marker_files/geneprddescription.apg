@@ -34,8 +34,6 @@
 
 <?MIVAR NAME=$userid>GUEST<?/MIVAR>
 
-<TITLE>ZFIN Gene Product Description </TITLE>
-
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=marker') from webpages where ID='aa-data_mgr.apg';">$1<?/MISQL>
   
@@ -46,6 +44,8 @@
 <?/MISQL>
 <?MIVAR NAME=mrkr_name>$1<?/MIVAR>
 <?MIVAR NAME=mrkr_abbrev>$2<?/MIVAR>
+
+<TITLE>ZFIN Gene Product Description for<?MIVAR> $mrkr_abbrev:<?/MIVAR> </TITLE>
 
 <TABLE width=100%>
    <TR bgcolor=#cccccc>
