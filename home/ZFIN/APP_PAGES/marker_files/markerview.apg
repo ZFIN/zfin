@@ -557,6 +557,7 @@ Datablade documentation.
  	
     <?MISQL SQL="select WebExplode(object,'dataId=$mrkrseq_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>	
    
+<br>
     <?MIVAR COND="$(XST,$UPDATE)"></form><?/MIVAR>
   
  <?/MISQL>
