@@ -14,42 +14,45 @@
 
     define vAccbkLength 	integer ;
     define vAccbkType   	varchar(40) ;
-    define vFdbcontsType 	varchar(20) ;
+    define vFdbcontType 	varchar(20) ;
     define vFdbcontZdbID	varchar(50) ;
 
-      if exists (select * 
-                   from accession_bank 
-  		   where accbk_acc_num = vDblinkAccNum 
-                   and accbk_db_name = 'GenBank')
+      if vDblinkFdbcontZdbID is not null then
+     	
+          if exists (select * 
+        	       	from accession_bank 
+  		       	where accbk_acc_num = vDblinkAccNum 
+                       	and accbk_db_name = 'GenBank')
 
-      then 
+          then 
         
-        select accbk_length, accbk_data_type
-	  into vAccbkLength, vAccbkType
-    	  from accession_bank
-     	  where accbk_acc_num = vDblinkAccNum 
-    	  and accbk_db_name = 'GenBank' ;
+             select accbk_length, accbk_data_type
+	       into vAccbkLength, vAccbkType
+    	       from accession_bank
+     	       where accbk_acc_num = vDblinkAccNum 
+    	       and accbk_db_name = 'GenBank' ;
 
-	if vAccbkType = 'mRNA'
-      		then 
-		  let vAccbkType = 'cDNA' ;
-   	end if ;
+	     if vAccbkType = 'mRNA'
+      		    then 
+		      let vAccbkType = 'cDNA' ;
+   	     end if ;
    
-   	if vAccbkType = 'DNA'
-      		then 
-		  let vAccbkType = 'Genomic' ;
+   	     if vAccbkType = 'DNA'
+      		  then 
+		    let vAccbkType = 'Genomic' ;
 
-        end if ;
+             end if ;
        
-        select fdbcont_zdb_id
-    	  into vFdbcontZdbId
-    	  from foreign_db_contains
-    	  where fdbcont_fdbdt_data_type = vAccbkType
-      	  and fdbcont_fdbdt_super_type = 'sequence'
-      	  and fdbcont_organism_common_name = 'Zebrafish'
-          and fdbcont_fdb_db_name =  'GenBank' ;
+             select fdbcont_zdb_id
+    	       into vFdbcontZdbId
+    	       from foreign_db_contains
+    	       where fdbcont_fdbdt_data_type = vAccbkType
+      	       and fdbcont_fdbdt_super_type = 'sequence'
+      	       and fdbcont_organism_common_name = 'Zebrafish'
+               and fdbcont_fdb_db_name =  'GenBank' ;
 
-          return vFdbcontZdbId, vAccbkLength ;
+	end if ;
+            return vFdbcontZdbId, vAccbkLength ;
 
       else  
           
