@@ -124,6 +124,11 @@ get_obj_name(zdbId varchar(50))
       into objName
       from marker_go_term
       where mrkrgo_zdb_id = zdbId;
+  elif (objType = "NOMEN") then
+    select mhist_zdb_id
+      into objName
+      from marker_history
+      where mhist_zdb_id = zdbId;
   elif (objType = "OEVDISP") then
     select oevdisp_zdb_id
       into objName
