@@ -20,7 +20,7 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 chdir("/research/zcentral/loadUp/PDFLoadUp/");
 
-system("echo 'select lotofile(pub_file, " . '"/research/zcentral/loadUp/PDFLoadUp/" || zdb_id, "server")' . " from publication where pub_file is not null;' | dbaccess $ENV{DBNAME}");
+system("echo 'select lotofile(pub_file, " . '"/research/zprod/loadUp/PDFLoadUp/" || zdb_id, "server")' . " from publication where pub_file is not null;' | dbaccess $ENV{DBNAME}");
 
 my @files = `ls`;
 my $file;
