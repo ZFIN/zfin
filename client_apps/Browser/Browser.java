@@ -432,7 +432,18 @@ public class Browser extends Applet {
 		}
 		
 		Enumeration E = selectedPanel.SelectedVector.elements();
+
 		TreeNode tn;
+		QS = QS + "&structures=";
+
+		while(E.hasMoreElements()) {
+			tn = (TreeNode)E.nextElement();
+			QS = QS + tn.get_seq_num() + ",";
+		}
+		if (QS.endsWith(",")) //true as long as there's at least one seq number
+			QS = QS.substring(0,QS.length()-1);
+		
+/*		TreeNode tn;
 		QS = QS + "&structures=%28";
 		while (E.hasMoreElements()) {
 			tn = (TreeNode)E.nextElement();
@@ -442,9 +453,9 @@ public class Browser extends Applet {
 		if (QS.endsWith("or%20")) //should always be true
 			QS = QS.substring(0,QS.length()-5);
 		QS = QS + "%29";
-
+*/
 		QS = QS + "&selected_separator=" + getSelectedSeparator();
-
+		
 		System.out.println("QS: " + QS);
 			
 		URL U = null;
