@@ -173,6 +173,15 @@
 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=mrkrrel&attr_type=special-newmrkrrel&old_value='+mrkrrel_name+'&new_value='+mrkr_abbrev+'&target_table=$target_table');
   		}
 	}
+
+
+	function new_attrib_mrel() {
+		var mrkr_abbrev=document.updaterrel.attrib_mrkr_abbrev.value;
+		var pub_id=document.updaterrel.attrib_mrel_pubid.value.toUpperCase();
+		if ((mrkr_abbrev != '') && (pub_id != '')) {
+		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+mrkr_abbrev+'&new_value='+pub_id+'&target_table=$target_table&info=mrel');
+  		}
+	}
 	
 
 	function new_attrib_prevname() {
@@ -716,10 +725,12 @@
 <?MIBLOCK COND="$(EC,'foo','foo')">
 
 <?MIVAR NAME=$mrel_mtype><?/MIVAR>
+<?MIVAR NAME=$mrel_count><?/MIVAR>
 
 
 <?MISQL SQL="select count(*)::Integer from marker_relationship where mrel_mrkr_1_zdb_id = '$OID' or mrel_mrkr_2_zdb_id = '$OID';">
-<?MIBLOCK COND="$(OR,$(NC,$1,0),$(XST,$UPDATE))"><br>
+  <?MIVAR NAME=$mrel_count>$1<?/MIVAR>
+<?MIBLOCK COND="$(OR,$(NC,$mrel_count,0),$(XST,$UPDATE))"><br>
 <HR width="80%"><b>
   <?MIBLOCK COND="$(EC,$marker_type,GENE)">
     SEGMENT (CLONE AND PROBE) RELATIONSHIPS
@@ -743,6 +754,7 @@
                 and mrkr_zdb_id = '$OID'   ">
  <option value="1to2-$1">$1-$2
  <?/MISQL>
+  
  <?MISQL SQL="select unique mreltype_name, mreltype_2_to_1_comments 
 	       from marker_relationship_type,
 	            marker_type_group_member, marker
@@ -754,6 +766,14 @@
  </SELECT>
  partner Symbol:<input type=text size=15 name=mrkr_abbrev> 
  <input type=button value="Add it!" onClick=new_mrkrrel();>
+ 
+   <?MIVAR COND="$(AND,$(>,$mrel_count,0),$(XST,$UPDATE))">
+     <br><b>Add Reference:</b> 
+     Marker abbrev:<input type=text name=attrib_mrkr_abbrev>	
+     Reference:<input type=text name=attrib_mrel_pubid>
+     <input type=button value="Add" onClick=new_attrib_mrel();> 
+   <?/MIVAR>
+  
 <?/MIBLOCK>
 
 
@@ -771,22 +791,25 @@
        <?MIVAR>$mrel2to1comments<?/MIVAR>
       </TD>
       <TD align=left width=80% bgcolor=#EEEEEE>
-	<?MISQL SQL="select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrel_type,  mreltype_name, mreltype_2_to_1_comments, mrkr_type from marker, marker_relationship, marker_relationship_type where mrel_mrkr_2_zdb_id = '$OID' and mrel_mrkr_1_zdb_id = mrkr_zdb_id and mrel_type = mreltype_name and mreltype_name = '$mreltype'  group by mrkr_type, mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrel_type, mreltype_name, mreltype_2_to_1_comments  order by mrkr_type, mrkr_abbrev_order;">
-        <?MIVAR COND="$(XST,$UPDATE)">
-         <INPUT TYPE=button 
-          value=Delete 
-          onClick="Delete_mrel('$2','$OID','$4')">
-        <?/MIVAR>
+	<?MISQL SQL="select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrel_type,  mreltype_name, mreltype_2_to_1_comments, mrkr_type, mrel_zdb_id from marker, marker_relationship, marker_relationship_type where mrel_mrkr_2_zdb_id = '$OID' and mrel_mrkr_1_zdb_id = mrkr_zdb_id and mrel_type = mreltype_name and mreltype_name = '$mreltype'  group by mrkr_type, mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrel_type, mreltype_name, mreltype_2_to_1_comments, mrel_zdb_id order by mrkr_type, mrkr_abbrev_order;">
 	
 	<?MIBLOCK COND="$(NE,$7,$mrel_mtype)">
 	 <?MIBLOCK COND="$(NE,$MI_CURRENTROW,1)"><br><?/MIBLOCK>
  	 <?MIVAR><font size=-1>[$7]</font><?/MIVAR>
+        <?MIELSE>,
 	<?/MIBLOCK>
 	<?MIVAR NAME=$mrel_mtype>$7<?/MIVAR>	
 	
-        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$1</A>&nbsp;
-	<?/MISQL>
-      </TD>
+        <?MIVAR COND="$(XST,$UPDATE)">
+         <INPUT TYPE=button 
+         value=Delete 
+         onClick="Delete_mrel('$2','$OID','$4')">
+        <?/MIVAR>
+
+        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$1</A>
+	<?MISQL SQL="select WebExplode(object,'dataId=$8&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+        <?/MISQL>
+	</TD>
      </TR>
     <?/MIBLOCK>
 
@@ -801,21 +824,23 @@
        <?MIVAR>$mrel1to2comments<?/MIVAR> 
       </TD>
       <TD align=left width=80% bgcolor=#EEEEEE>
-	<?MISQL SQL="select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrel_type,  mreltype_name, mreltype_1_to_2_comments, mrkr_type from marker, marker_relationship, marker_relationship_type where mrel_mrkr_1_zdb_id = '$OID' and mrel_mrkr_2_zdb_id = mrkr_zdb_id and mrel_type = mreltype_name and mreltype_name = '$mreltype'  group by mrkr_type, mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrel_type, mreltype_name, mreltype_1_to_2_comments order by mrkr_type, mrkr_abbrev_order;">
-        <?MIVAR COND="$(XST,$UPDATE)">
-         <INPUT TYPE=button 
-          value=Delete 
-          onClick="Delete_mrel('$2','$OID','$4')">
-        <?/MIVAR>
+	<?MISQL SQL="select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrel_type,  mreltype_name, mreltype_1_to_2_comments, mrkr_type, mrel_zdb_id from marker, marker_relationship, marker_relationship_type where mrel_mrkr_1_zdb_id = '$OID' and mrel_mrkr_2_zdb_id = mrkr_zdb_id and mrel_type = mreltype_name and mreltype_name = '$mreltype'  group by mrkr_type, mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrel_type, mreltype_name, mreltype_1_to_2_comments, mrel_zdb_id order by mrkr_type, mrkr_abbrev_order;">
 
 	<?MIBLOCK COND="$(NE,$7,$mrel_mtype)">
 	 <?MIBLOCK COND="$(NE,$MI_CURRENTROW,1)"><br><?/MIBLOCK>
  	 <?MIVAR><font size=-1>[$7]</font><?/MIVAR>
+        <?MIELSE>,
 	<?/MIBLOCK>
-	<?MIVAR NAME=$mrel_mtype>$7<?/MIVAR>	
-	 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$1</A>&nbsp;
-       <?/MISQL>
-      </TD>
+	<?MIVAR NAME=$mrel_mtype>$7<?/MIVAR>
+        <?MIVAR COND="$(XST,$UPDATE)">
+         <INPUT TYPE=button 
+          value=Delete 
+          onClick="Delete_mrel('$2','$OID','$4')">
+        <?/MIVAR>	
+	 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$1</A>
+         <?MISQL SQL="select WebExplode(object,'dataId=$8&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+       <?/MISQL> 
+       </TD>
      </TR>
     <?/MIBLOCK>
     <?/MISQL>
@@ -1036,11 +1061,17 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 <!-------------- ends ORTHOLOGUES ------------------------------------>
 <!------------------ PUBLICATION ------------------------------------>
 <HR width="80%" align=center>
+<?MIVAR NAME=$mtype_is_gene><?/MIVAR>
+<?MIVAR NAME=$mtype_is_gene COND="$(NE,$(POSITION,$OID,GENE),0)">
+     recattrib_data_zdb_id in (select mrel_mrkr_2_zdb_id from marker_relationship where mrel_mrkr_1_zdb_id = '$OID')
+  or
+<?/MIVAR>
 
 <?MISQL SQL="
   select count(*) 
   from record_attribution
-  where recattrib_data_zdb_id = '$OID'
+  where $mtype_is_gene
+           recattrib_data_zdb_id = '$OID'
     and get_obj_type(recattrib_source_zdb_id) = 'PUB';
   ">
 
