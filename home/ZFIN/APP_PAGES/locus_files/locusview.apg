@@ -315,14 +315,13 @@
 	  select gene_name, abbrev 
 	    from gene 
 	    where zdb_id='$cloned_gene';">
+	  <?MIVAR NAME=$gene_abbrev>$2<?/MIVAR>
 	  <TABLE width=100% cellpadding=5 border=0 bgcolor="$highlight" cols=2 rows=1>
 	    <TR><TD>
 	    <font color="red"><B>Cloned Gene:</b>  </font>
 	    <b><i><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$cloned_gene">$1 ($2) </A> </i></b> 
 	    has been shown to correspond to the <b><i>$name</i></b> locus.
 	    <?MISQL SQL="select WebExplode(object,'dataId=$OID&type=colattrib&info=cloned_gene') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
-	 
-	    Please consult the gene record for further mapping information.
 	   </TD>
 	   </TR>
 	  </TABLE>
@@ -337,7 +336,6 @@
               value="Update" 
               onClick="doit('comments','textarea','Locus+Description');"> 
 	  <?/MIBLOCK>
-
 	    <b>Locus Description:</b>
 	    <?MIVAR COND="$(AND,$(NC,$comments,NULL),$(XST,$UPDATE))">
 	     <br>Add Reference: &nbsp; Reference:
@@ -353,18 +351,21 @@
 
      
 	<!------------- Linkage Group	  ------------------------>
-	<?MISQL SQL="
-	  select distinct chrom_num 
-	    from fish_search 
-	    where locus ='$OID' 
-	      and chrom_num <> 0 ;">
-	  $(IF,$(NC,$1,0),<p><b>"LINKAGE GROUP:" $1</b>)
-	<?/MISQL>
+	
+	 <?MISQL SQL="
+	   select distinct chrom_num 
+	     from fish_search 
+	     where locus ='$OID' 
+	       and chrom_num <> 0 ;">
+	   $(IF,$(NC,$1,0),<p><b>"LINKAGE GROUP:" $1</b>)
+	 <?/MISQL>
+	
 	<!------------- ends Linkage Group	  ------------------------>
 
 
         <!------------- Summary of alleles  ------------------------>
 	<a NAME="allele"></a>
+
 	<HR WIDTH=80%>
 	
 	<?MIVAR>
@@ -392,10 +393,10 @@
 		        from mapped_deletion 
 		        where allele=a.allele) as del_markers,
 		     (select unique count(*)::integer 
-		        from all_linked_members
-			where alnkgmem_member_zdb_id=a.fish_id) as linkages,
+		        from linkage_member
+			where lnkgmem_member_zdb_id=a.fish_id) as linkages,
 		     (select unique count(*)::integer
-		        from paneled_markers where zdb_id = a.locus) as paneled 
+		        from mapped_marker where marker_id = a.locus) as paneled 
 	        from fish_search a 
 		where locus ='$OID' 
 		order by allele;">
@@ -436,13 +437,14 @@
 	      <TD>$(IF,$(NC,$chrom_change,NULL),$chrom_change,"Unknown")</TD>
 	      <TD>
 	      <?MIBLOCK COND="$(OR,$(>,$paneled,0),$(>,$linkages,0))">
-                <?MISQL SQL="select distinct OR_lg,private
-                  from paneled_markers 
-                    where zdb_id = '$OID'
+                <?MISQL SQL="select distinct or_lg,private
+                  from mapped_marker
+                    where marker_id = '$OID'
                 union 
-                  select distinct alnkgmem_or_lg ,alnkgmem_private
-		    from all_linked_members
-		      where alnkgmem_member_zdb_id = '$fish_id';">
+                  select distinct lnkg_or_lg ,lnkg_private
+		    from linkage_member, linkage
+		      where lnkgmem_member_zdb_id = '$fish_id'
+			and lnkgmem_linkage_zdb_id = lnkg_zdb_id;">
                  <?MIVAR NAME=$lg>$1<?/MIVAR>
 		 <?MIVAR NAME=$map_private>$2<?/MIVAR>
                  <?MIBLOCK COND="$(NC,$map_private,t)"> 
