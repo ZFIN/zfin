@@ -129,15 +129,16 @@ $update_image_redirect = "aa-do-imageupdate.apg";
 # lvarchar field, and scrub char does not check lvarchar, blob, html
 # fields as these fields usually are supposed to have formatting as such.
 
+# set attr_type equal to 1 so that we can check if it got set by the calling
+# apg rather than this cgi.
+
 $attr = "" ;
-$attr_type = "";
+$attr_type = "1";
 $old_value = "" ;
-$old_value_stripped = "";
 $attr_comments = "";
 $zdb_id = "";
 $MIval = "" ;
 $new_value = "";
-$new_value_stripped = "" ;
 $table = "" ; 
 $pub_file = "";
 
@@ -171,7 +172,14 @@ $OID = "";
 
 $filename_no_suffix = "";
 $add_thumb = "_thumb";
+$add_annot = "_annot" ;
 $newthumb = "";
+$file_thumb = "";
+$file_annot = "";
+$image_thumb_exists ="";
+$image_annot_exists ="";
+$image_file_exists="";
+$date="";
 
 # height, width variables.
 
@@ -472,10 +480,17 @@ sub makeFiles () {# uploads the files, builds a thumbnail, gets the height
 
 	if ( (substr($redirect_url,0,-16)) eq $xpat_redirect) { # if the redirect_OID parameter is not null
 	    $redirect_OID = $query->param("redirect_OID");
-
+	   
 	    $redirect_build = $redirect_url.$redirect_OID_param.$redirect_OID.$redirect_new_OID_param.$OID.$redirect_suffix_param.$suffix.$redirect_height_param.$height.$redirect_width_param.$width.$redirect_attr_param.$attr.$redirect_attr_type_param.$attr_type.$redirect_old_value_param.$old_value.$redirect_comments_param.$attr_comments;
-	
 
+	    if ($attr_type ne "text" &&
+		$attr_type ne "textarea" &&
+		$attr_type ne "pic" &&
+		$attr_type ne "1") {
+
+		&filename_error ($attr_type.'attr_type not ZFIN type!') ;
+
+	    }
 
 	    print $query->redirect ("$redirect_build");
 
@@ -485,6 +500,15 @@ sub makeFiles () {# uploads the files, builds a thumbnail, gets the height
         }
 	else {
 	      
+	    if ($attr_type ne "text" &&
+		$attr_type ne "textarea" &&
+		$attr_type ne "pic" &&
+		$attr_type ne "1") {
+		
+		&filename_error ($attr_type.'attr_type not ZFIN type!') ;
+
+	    }
+	    
 	    $redirect_build = $redirect_url.$redirect_new_OID_param.$OID.$redirect_fimgnew_suffix_param.$suffix.$redirect_fimgnew_height_param.$height.$redirect_fimgnew_width_param.$width.$redirect_attr_param.$attr.$redirect_attr_type_param.$attr_type.$redirect_old_value_param.$old_value.$redirect_comments_param.$attr_comments;
 
 	    print $query->redirect ("$redirect_build");
@@ -556,6 +580,7 @@ sub emailError() { # email error to db_owner
     &sendReport();
     print "</body>";
     print "</html>";
+    exit ;
 
 } # end emailError
 
@@ -580,6 +605,13 @@ sub sendReport() { # does the email creation
 
 } # end SendReport
 
+sub getDate {
+    ($sec,$min,$hour,$day,$mon,$year) = (localtime)[0,1,2,3,4,5];
+    $year = $year + 1900 ;
+
+    $date = $sec."_".$min."_".$hour."_".$day."_".$mon."_".$year; 
+
+}
 #-------------------End_Sub_Routines-----------------#
 
 #-------------------BEGIN_MAIN-----------------------#
@@ -594,6 +626,9 @@ $query = new CGI();
 
 $redirect_url = $query->param("redirect_url");
 
+if ($redirect_url !~ m/.apg/) {
+    &filename_error('redirect url not ZFIN-esque '.$redirect_url); 
+}
 $filename = $query->param("upload");
 
 # if a blank image file is uploaded, return to calling apg with no 
@@ -777,8 +812,13 @@ else { # filename isn't null or redirect isn't do-imageupdate.apg
 		    # get the OID of the calling apg.
 		
 		    $OID_from_apg_page = $query->param("OID");
+
+		    if ($OID_from_apg_page !~ m/ZDB\-\D{1,10}\-\d{1,6}\-\d{1,5}/){
+			&filename_error($OID_from_apge_page.'OID is not ZFIN pattern') ;
+		    }
 		
-		    if (substr($OID_from_apg_page, 0,10) ne $image_prefix) {
+		    if (substr($OID_from_apg_page, 0,10) ne $image_prefix){
+			
 			&filename_error('try to load image from pdf page');
 		    }
 		
@@ -786,89 +826,110 @@ else { # filename isn't null or redirect isn't do-imageupdate.apg
 		
 		    else {
 		
-			&getRecordOwnership("fimg_owner_zdb_id","fish_image", 
+			&getRecordOwnership("fimg_owner_zdb_id",
+					    "fish_image", 
 					    "fimg_zdb_id",
 					    $OID_from_apg_page,
 					    "fimgp_owner_zdb_id",
 					    "fx_fish_image_private",
 					    "fimgp_zdb_id");
-		    
+			
 			&getSuffix; # get the file suffix
-		    
+			
 			if ($owner_id eq $person_id) {
-			
-			    $filename = $OID_from_apg_page.$suffix;
-			
-			    $filename_no_suffix = $OID_from_apg_page;
-
-			    $OID = $OID_from_apg_page;
-			
-			    # move the existing file to a bkup directory
-			
-			    $image_file_exists = system("/bin/test 'grep $filename_no_suffix* <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/'");
-	
-			    if ($image_file_exists == 0) {	            
 			    
+			    $filename = $OID_from_apg_page.$suffix;
+			    
+			    $filename_no_suffix = $OID_from_apg_page;
+			    
+			    $OID = $OID_from_apg_page;
+			    
+			    $file_thumb = $OID.$add_thumb.$suffix;
+			    $file_annot = $OID.$add_annot.$suffix;
+				
+			    # move the existing file to a bkup directory
+			    
+			    $image_file_exists = system("/bin/test 'grep $filename <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/'");
+			    
+			    &getDate ;
+			    
+			    if ($image_file_exists == 0) {	            
+				
 				&checkForOID ('fish_image',
 					      'fimg_zdb_id',
 					      'fimgp_zdb_id',
 					      'fx_fish_image_private',
 					      $OID); 
-
+				    
+				$image_thumb_exists = system("/bin/test 'grep $file_thumb <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/'");  
+				    
+				$image_annot_exists = system("/bin/test 'grep $file_annot <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/'");
+				
 				# returns $OID_in_DB if OID exists in the 
 				# database
-			    
+				
 				# if the OID does not exist in the tables, 
-				# or if the OID exists, but the redirect-url 
-				# takes the user to the 'new' image page, then 
-				# something is wrong
-
+				# or if the OID exists,
+				# but the redirect-url 
+				# takes the user to the 'new' image page, 
+				# then something is wrong
+				
 				if ((!($OID_in_DB))||
 				    ($redirect_url eq "/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new-image.apg")){
 				    &filename_error('!OID_in_DB');
 				    
 				}  # end OID_in_DB 
-
+				
 				# if the filename is ok, and the 
 				# ZDB-id exists, 
 				# go ahead and make the new files, 
 				# which means the
-				# old file should exist in the bkup directory
+				# old file should exist in the 
+				# bkup directory
 				
 				else { 
-                                   # OID in db and redirect != new_image.apg
-			    
-				    system("/bin/mv <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/$filename_no_suffix* <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/bkup/");
-
-				    $attr = $query->param("attr");
-				    $attr_type = $query->param("attr_type");
-				    $old_value = $query->param("old_value");
-				    $attr_comments = $query->param("comments");
-
+				    # OID in db and redirect != 
+				    # new_image.apg
+				   
+				    system("/bin/mv <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/$filename <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/bkup/$filename.$date.$person_id");
+				    if ($image_thumb_exists == 0) {
+					system("/bin/mv <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/$file_thumb <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/bkup/$file_thumb.$date.$person_id");
+					if ($image_annot_exists == 0) {
+					    system("/bin/mv <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/$file_annot <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/bkup/$file_annot.$date.$person_id");	
+					}
+				    }
+				    
+				    $attr=$query->param("attr");
+				    $attr_type=$query->param("attr_type");
+				    $old_value=$query->param("old_value");
+				    $attr_comments=$query->param("comments");
+				    
 				    &makeFiles;
 				    
-				} # end OID in db and redirect != new_image.apg
+				} # end OID in db and redirect != 
+				# new_image.apg
 				
 			    } # ends if image file exists
-
+			   
+			
 			} # ends if owner is person		
-
-			else { # owner is not cookie owner
 		    
+			else { # owner is not cookie owner
+			
 			    &access_error ('owner is not cookie owner'); 
 			}
-
+			
 		    } # ends oid_from_apg_page prefix is zdb-image
-
+		
 		} # ends access is root
-	       
+	    
 		else { # access is not root or submit and trying to update
 		
 		    &access_error ('access is not root, or submit');
 		}
-	    
+		
 	    }  # ends else redirect isn't new-image.apg
-	  
+	
 	} # ends suffix in .jpg, .jpeg, or .gif
 
 #--------------------END_IMAGES---------------------#
@@ -925,7 +986,9 @@ else { # filename isn't null or redirect isn't do-imageupdate.apg
 		
 		    if ($pdf_file_exists == 0) { # already has pdf, move it.
 
-			system("/bin/mv <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->/$filename_no_suffix* <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->/bkup/'");
+			&getDate ;
+
+			system("/bin/mv <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->/$filename <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->/bkup/$filename.$date.$person_id'");
 		    
 			&makeFiles;
 
