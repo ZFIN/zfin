@@ -109,8 +109,6 @@
   my ($sm_m, $sm_lg, $sm_panel, $sm_loc, $sm_refresh); #values Which might be used to repopulate the select map form 
  
   
-  ### to supprt multiple java servers
-  my $jport = "0";
   ### incase we want the mapplet to open somewhere particular some day
   my $frame = '_top';
   
@@ -939,17 +937,28 @@
     # 4         15)mghframework "informix".boolean)
     
     my $stmt1 = 
-      'INSERT INTO PANLG SELECT zdb_id,abbrev,mtype,target_abbrev,lg_location,or_lg,mghframework,metric '.
-	'FROM public_paneled_markers '. 
-	  "WHERE target_abbrev = ?" . #panel
-	    'AND or_lg = ? '.
-	      "AND mtype IN (\'$types\');";
+      'INSERT INTO PANLG ' .
+      '   SELECT zdb_id, abbrev, mtype, target_abbrev, lg_location, or_lg, ' .
+      '          case mghframework ' .
+      '            when "t" then "t"::char(1) ' .
+      '            when "f" then "f"::char(1) ' .
+      '            else NULL ' .
+      '          end, ' .
+      '          metric '.
+      '    FROM public_paneled_markers '. 
+      "    WHERE target_abbrev = ?" . #panel
+      '      AND or_lg = ? '.
+      "      AND mtype IN (\'$types\');";
     
     my $stmt2 = 'SELECT FIRST 1 * FROM PANLG WHERE zdb_id = ?;';
 
     # Note that this query in its original format was deadly to the informix 
     # server.  The original format used an ABS() function call instead of a
     # case.  We aren't sure if the new format will fix the problem or not.
+    #
+    # Update on that: Removiing the ABS did not remove the problem.  IBM
+    # suggested changing the mghframework column from boolean to char.
+    # Not sure if that will fix the problem either.
 
     my $stmt3 = 
       'SELECT zdb_id, abbrev, mtype, target_abbrev, lg_location, or_lg,' .
@@ -991,7 +1000,7 @@
 	       "    target_abbrev varchar(10), " .
 	       "    lg_location decimal(8,2), " .
 	       "    or_lg integer, " .
-	       "    mghframework boolean, " .
+	       "    mghframework char(1), " .
 	       "    metric varchar(5) " .
 	       "  ) WITH NO LOG ;"); 
       $dbh->do("CREATE TEMP TABLE fool " . 
@@ -1002,7 +1011,7 @@
 	       "    target_abbrev varchar(10), " .
 	       "    lg_location decimal(8,2), " .
 	       "    or_lg integer, " .
-	       "    mghframework boolean, " .
+	       "    mghframework char(1), " .
 	       "    metric varchar(5) " .
 	       "  ) WITH NO LOG ;"); 
       $dbh->do("CREATE TEMP TABLE PANLG " . 
@@ -1013,7 +1022,7 @@
 	       "    target_abbrev varchar(10), " .
 	       "    lg_location decimal(8,2), " .
 	       "    or_lg integer, " .
-	       "    mghframework boolean, " .
+	       "    mghframework char(1), " .
 	       "    metric varchar(5) " .
 	       "  ) WITH NO LOG ;"); 
       # $dbh->do( "CREATE INDEX panlg_zdb_idx ON PANLG(zdb_id)");  
@@ -1194,8 +1203,15 @@
   
   sub get_between {   
     my ($panel, $lg, $types, $lg_lo, $lg_hi) = @_;    
-    $sql =  "SELECT zdb_id,abbrev,mtype,target_abbrev,lg_location,or_lg,mghframework,metric ".
-      "FROM public_paneled_markers  ".
+    $sql =  
+	"SELECT zdb_id,abbrev,mtype,target_abbrev,lg_location,or_lg, " .
+	"       case mghframework " .
+	"         when 't' then 't'::char(1) " .
+	"         when 'f' then 'f'::char(1) " .
+	"         else NULL " .
+	"       end, " .
+	"       metric " .
+	"FROM public_paneled_markers  ".
 	"WHERE target_abbrev = \'$panel\' ".  # $panel
 	  "AND or_lg = \'$lg\' " .	              # $lg
 	    "AND mtype in (\'$types\' ) ".    # $types 
@@ -1237,8 +1253,11 @@
     $lg_hi = $loc;   
     #    $note = $note . "get_ZOOM looking around $loc<p>\n";   
 
-    # Note: rewrote the following query to avoid an ABS() call.  We have reason to 
-    # suspect that ABS() calls might be causing the informix server to crash.
+    # Note: rewrote the following query to avoid an ABS() call.  We have reason 
+    # to suspect that ABS() calls might be causing the informix server to crash.
+    #
+    # Update on that: Removiing the ABS did not remove the problem.  Which
+    # means that this particular query probably never had a problem.
 
     $sql =  
       " SELECT lg_location, " .
@@ -1275,11 +1294,18 @@
     my $ztotal = 1;
     $note = $note . "IN LG QUERY<p>\n";
     $sql =  
-    " SELECT zdb_id,abbrev,mtype,target_abbrev,lg_location,or_lg,mghframework,metric ". 
-	" FROM public_paneled_markers WHERE target_abbrev = ? ".
-     " AND or_lg = ? ".
-	  "AND mtype in  ( \'$types\') ".
-	    "ORDER BY lg_location, abbrev;";
+	"SELECT zdb_id,abbrev,mtype,target_abbrev,lg_location,or_lg, " .
+	"       case mghframework " .
+	"         when 't' then 't'::char(1) " .
+	"         when 'f' then 'f'::char(1) " .
+	"         else NULL " .
+	"       end, " .
+	"       metric " .
+	"  FROM public_paneled_markers " .
+	"  WHERE target_abbrev = ? ".
+	"    AND or_lg = ? ".
+	"    AND mtype in  ( \'$types\') ".
+	"  ORDER BY lg_location, abbrev;";
     
     $cur = $dbh->prepare($sql) ;
     $rc = $cur->execute($panel, $lg );

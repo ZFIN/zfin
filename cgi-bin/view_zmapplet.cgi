@@ -104,9 +104,6 @@
   
   my ($sm_m, $sm_lg, $sm_panel, $sm_loc, $sm_refresh); #values Which might be used to repopulate the select map form  
   
-  ### to supprt multiple java servers
-  my $jport = "0";
-  
   
   ### incase we want the mapplet to open somewhere particular some day
   my $frame = '_top';
@@ -992,7 +989,14 @@
     
     
     my $stmt1 = 
-      'INSERT INTO PANLG SELECT zdb_id,abbrev,mtype,target_abbrev,lg_location,or_lg,mghframework,metric,abbrevp '.
+      'INSERT INTO PANLG ' .
+      '  SELECT zdb_id,abbrev,mtype,target_abbrev,lg_location,or_lg, ' .
+      '         case mghframework ' .
+      '           when "t" then "t"::char(1) ' .
+      '           when "f" then "f"::char(1) ' .
+      '           else NULL ' .
+      '         end, ' .
+      '         metric, abbrevp '.
 	'FROM zmap_pub_pan_mark '. 
 	  "WHERE panel_abbrev in (\'$pan\' )" . # panels
 	    'AND or_lg = ? '.
@@ -1004,7 +1008,11 @@
     # Note that this query in its original format was deadly to the informix 
     # server.  The original format used an ABS() function call instead of a
     # case.  We aren't sure if the new format will fix the problem or not.
- 
+    #
+    # Update on that: Removiing the ABS did not remove the problem.  IBM
+    # suggested changing the mghframework column from boolean to char.
+    # Not sure if that will fix the problem either.
+
     my $stmt3 = 
       'SELECT zdb_id, abbrev, mtype, target_abbrev, lg_location, or_lg,' .
       '       mghframework, metric, map_name, ' .
@@ -1027,9 +1035,47 @@
     $dbh->{RaiseError} = 1;
     eval  {	    
 		#                                zdb_id 1,          abbrev 2,          mtype 3,          target_abbrev 4,          lg_location 5,           or_lg 6,      mghframework 7,      metric 8
-      $dbh->do( "CREATE TEMP TABLE pool (zdb_id varchar(50),abbrev varchar(15),mtype varchar(10),target_abbrev varchar(10),lg_location decimal(8,2),or_lg integer,mghframework boolean,metric varchar(5),map_name varchar(25) )WITH NO LOG ;"); 
-      $dbh->do( "CREATE TEMP TABLE fool (zdb_id varchar(50),abbrev varchar(15),mtype varchar(10),target_abbrev varchar(10),lg_location decimal(8,2),or_lg integer,mghframework boolean,metric varchar(5),map_name varchar(25) )WITH NO LOG ;");
-      $dbh->do( "CREATE TEMP TABLE PANLG (zdb_id varchar(50),abbrev varchar(15),mtype varchar(10),target_abbrev varchar(10),lg_location decimal(8,2),or_lg integer,mghframework boolean,metric varchar(5),map_name varchar(25) ) WITH NO LOG ;"); # $dbh->do( "CREATE INDEX panlg_zdb_idx ON PANLG(zdb_id)");  # $dbh->do( "CREATE INDEX panlg_loc_idx ON PANLG(lg_location)");    
+      $dbh->do("CREATE TEMP TABLE pool " .
+	       "  ( " .
+	       "    zdb_id varchar(50)," .
+	       "    abbrev varchar(15)," .
+	       "    mtype varchar(10)," .
+	       "    target_abbrev varchar(10)," .
+	       "    lg_location decimal(8,2)," .
+	       "    or_lg integer," .
+	       "    mghframework char(1)," .
+	       "    metric varchar(5)," .
+	       "    map_name varchar(25)" .
+	       "  ) " .
+	       "  WITH NO LOG ;"); 
+      $dbh->do("CREATE TEMP TABLE fool " .
+	       "  ( " .
+	       "    zdb_id varchar(50)," .
+	       "    abbrev varchar(15)," .
+	       "    mtype varchar(10)," .
+	       "    target_abbrev varchar(10)," .
+	       "    lg_location decimal(8,2)," .
+	       "    or_lg integer," .
+	       "    mghframework char(1)," .
+	       "    metric varchar(5)," .
+	       "    map_name varchar(25)" .
+	       "  ) " .
+	       "  WITH NO LOG ;");
+      $dbh->do("CREATE TEMP TABLE PANLG " .
+	       "  ( " .
+	       "    zdb_id varchar(50)," .
+	       "    abbrev varchar(15)," .
+	       "    mtype varchar(10)," .
+	       "    target_abbrev varchar(10)," .
+	       "    lg_location decimal(8,2)," .
+	       "    or_lg integer," .
+	       "    mghframework char(1)," .
+	       "    metric varchar(5)," .
+	       "    map_name varchar(25)" .
+	       "  ) " .
+	       "  WITH NO LOG ;");
+      # $dbh->do( "CREATE INDEX panlg_zdb_idx ON PANLG(zdb_id)");  
+      # $dbh->do( "CREATE INDEX panlg_loc_idx ON PANLG(lg_location)");    
       
       #should we try bulding a tmp table for each panel & lg once and keeping it for the transaction .... maybe (24 * 6)  permenant tables i.e HS1,HS2,... 
       my $sth1 = $dbh->prepare($stmt1) or $note = $note . "SQL stmt1 failed <b> " .$stmt1 ."\n<br>";
@@ -1141,10 +1187,17 @@
   
   sub get_between {
     my ($panel, $lg, $types, $lg_lo, $lg_hi) = @_; 
-    $sql =  "SELECT zdb_id,abbrev,mtype,target_abbrev,lg_location,or_lg,mghframework,metric,abbrevp  ".
-      "FROM zmap_pub_pan_mark  ".
-	"WHERE panel_abbrev in (\'$panel\') ". # $panels
-	  "AND or_lg = \'$lg\' " . # $lg
+    $sql =  
+	"SELECT zdb_id,abbrev,mtype,target_abbrev,lg_location,or_lg," .
+	"       case mghframework " .
+	"         when 't' then 't'::char(1) " .
+	"         when 'f' then 'f'::char(1) " .
+	"         else NULL " .
+	"       end, " .
+	"       metric,abbrevp  ".
+	"  FROM zmap_pub_pan_mark  ".
+	"  WHERE panel_abbrev in (\'$panel\') ". # $panels
+	"    AND or_lg = \'$lg\' " . # $lg
 	    "AND mtype in (\'$types\' ) ". # $types 
 	      "AND lg_location >= \'$lg_lo\' ".	# $lo
 		"AND lg_location <= \'$lg_hi\' ". # $hi
@@ -1257,9 +1310,16 @@
     my $ztotal = 1;
     #$note = $note . "IN LG QUERY<p>\n";
     $sql =  
-    " SELECT zdb_id,abbrev,mtype,target_abbrev,lg_location,or_lg,mghframework,metric,abbrevp ". 
-	" FROM zmap_pub_pan_mark WHERE panel_abbrev in (\'$panel\') ".
-	  "AND or_lg = ? ".
+	"SELECT zdb_id,abbrev,mtype,target_abbrev,lg_location,or_lg," .
+	"       case mghframework " .
+	"         when 't' then 't'::char(1) " .
+	"         when 'f' then 'f'::char(1) " .
+	"         else NULL " .
+	"       end, " .
+	"       metric,abbrevp ". 
+	"  FROM zmap_pub_pan_mark " .
+	"  WHERE panel_abbrev in (\'$panel\') ".
+	"    AND or_lg = ? ".
 	    "AND mtype in  ( \'$types\') ".
 	      "ORDER BY lg_location, abbrev;";
     
