@@ -6,14 +6,27 @@
 
 <script language="JavaScript" src="/client_sniff.js"></script>
 
-<SCRIPT> 
+<SCRIPT > 
   if (is_nav4) {
     document.write('<LINK rel=stylesheet type="text/css" href="/nn4_zfin_style.css">');
   } else {
     document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
   }
-
 </SCRIPT>
+
+<script type="text/javascript">
+  function checkEmail(theForm) {
+    if ((document.survey.question5.value == "yes" || document.survey.question9.value == "yes")) {
+       if (document.survey.email.value.length < 1) {
+         alert("Because you answered YES to question 5 or 9, please enter your email address.");
+         document.survey.email.focus();
+         return false;
+       }
+    }
+    return true;
+  }
+</script>
+
 
 <!-- <STYLE type="text/css">
   @import url(/zfin_style.css);
@@ -54,7 +67,7 @@
 
       <h2>User Survey 2005</h2>
 	
-	<form method="POST" action="/<!--|CGI_BIN_DIR_NAME|-->/usersurvey2005.cgi">
+	<form name="survey" method="POST" action="/<!--|CGI_BIN_DIR_NAME|-->/usersurvey2005.cgi" onsubmit=" return checkEmail(this);">
 	
 	<p>1.  How often do you use ZFIN?</p>
 	
@@ -194,11 +207,14 @@
 	Comments:<br>
 	<textarea name="question3comment" cols=55 rows=10></textarea><br><br>
 	
-	<p>4.  ZFIN is expanding support for mutant and morpholino phenotypes.  Phenotypes will be described using standard terms to explain how anatomical structures and biological processes are affected.  What new features would you like to see to support phenotypes in ZFIN?  Please rank your suggestions in order of importance (1=can't live without it; 5=icing on the cake!)</p>
+	<p>4.  ZFIN is expanding support for mutant and morpholino phenotypes.  Phenotypes will be described using standard terms to explain how anatomical structures and biological processes are affected.  What new features would you like to see to support phenotypes in ZFIN?  Please rank your suggestions in order of importance (1=highest priority; 5=lowest priority)</p>
 	
 	<textarea name="question4comment" cols=55 rows=10></textarea><br><br>
 	
-	<p>5.  Would you be interested in providing phenotype and expression data to ZFIN? If yes, please contact <a href="mailto:zfinadmn@zfin.org">zfinadmn@zfin.org</a></p>
+	<p>5.  Would you be interested in providing phenotype and expression data to ZFIN? </p>
+	       <input type="radio" name="providedata" value="yes" onclick="document.survey.question5.value=this.value;">Yes &nbsp;&nbsp;  <input type="radio" name="providedata" value="no" onclick="document.survey.question5.value=this.value;">No<br>  
+             <input type="hidden" name="question5" value="no">
+	      <b>If yes, please include your name and e-mail address at the end of this survey.</b><br><br>
 	
 	<p>6.  Rank the following for ease with which you can find desired data in ZFIN (1=easy to find;  5=can't find what I need).  Please elaborate on problem areas in "comments":</p>
 	  
@@ -324,16 +340,19 @@
 	Comments:<br>
 	<textarea name="question6comment" cols=55 rows=10></textarea><br><br>
 	
-	<p>7.  What other resources would you like to see in ZFIN?  Please rank your suggestions in order of importance (1=can't live without it;  5=icing on the cake!):</p>
+	<p>7.  What other resources would you like to see in ZFIN?  Please rank your suggestions in order of importance (1=highest priority;  5=lowest priority):</p>
 	
 	<textarea name="question7comment" cols=55 rows=10></textarea><br><br>
 	
-	<p>8.  Please comment on the "look and feel" of the ZFIN home page.  What would you like to see added or changed? Again, please rank your suggestions in order of importance (1=can't live without it;  5=icing on the cake!):</p>
+	<p>8.  Please comment on the "look and feel" of the ZFIN home page.  What would you like to see added or changed? Again, please rank your suggestions in order of importance (1=highest priority;  5=lowest priority):</p>
 	
 	<textarea name="question8comment" cols=55 rows=10></textarea><br><br>
 	
-	<p>9.  Community input is invaluable in helping us maximize the utility and usability of ZFIN.  We often ask for community input on new forms and features as they are being developed.  Please contact <a href="mailto:zfinadmn@zfin.org">zfinadmn@zfin.org</a>  if you would be willing to help with future beta testing.</p>
-	
+	<p>9.  Community input is invaluable in helping us maximize the utility and usability of ZFIN.  We often ask for community input on new forms and features as they are being developed.  Would you be interested in being involved in future beta testing?  </p>
+	       <input type="radio" name="betatest" value="yes" onClick="document.survey.question9.value=this.value;">Yes &nbsp;&nbsp;  <input type="radio" name="betatest" value="no" onClick="document.survey.question9.value=this.value;">No<br>
+             <input type="hidden" name="question9" value="no">
+	      <b>If yes, please include your name and e-mail address at the end of this survey.</b><br><br> 
+	      	
 	<p>10.  Any other comments or suggestions?</p>
 	
 	<textarea name="question10comment" cols=55 rows=10></textarea><br><br>
@@ -344,12 +363,12 @@
 	<input type="text" name="name" size="55"><br><br>
 
 	E-mail address:<br>
-	<input type="text" name="email" size="55">
+	<input type="text" id="email" name="email" size="55">
 	
 	<hr>	
 	
-	<input type="submit" value="SUBMIT">
-	<input type="reset" value="clear form">
+	<input type="submit" name="submitButton" value="SUBMIT">
+	<input type="reset" name="resetButton" value="clear form">
 	
 	</form>
 </div>
@@ -373,3 +392,4 @@
 
 	</body>
 </html>
+

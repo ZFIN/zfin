@@ -55,6 +55,7 @@ sub writeData {
   $header .= "importance-meetings" . "\t";
   $header .= "importance rank comments" . "\t";
   $header .= "phenotype support comments" . "\t";
+  $header .= "phenotype submission interest" . "\t";
   $header .= "ease of use-genes" . "\t";
   $header .= "ease of use-phenotypes" . "\t";
   $header .= "ease of use-expression" . "\t";
@@ -75,6 +76,7 @@ sub writeData {
   $header .= "ease of use comments" . "\t";
   $header .= "other resource suggestions" . "\t";
   $header .= "look and feel suggestions" . "\t";
+  $header .= "beta test interest" . "\t";
   $header .= "other comments" . "\t";
   $header .= "name" . "\t";
   $header .= "email" . "\t";
@@ -115,6 +117,7 @@ sub writeData {
   $question3q = $cgi->param('question3q');
   $question3comment = $cgi->param('question3comment');
   $question4comment = $cgi->param('question4comment');
+  $question5 = $cgi->param('question5');
   $question6a = $cgi->param('question6a');
   $question6b = $cgi->param('question6b');
   $question6c = $cgi->param('question6c');
@@ -135,6 +138,7 @@ sub writeData {
   $question6comment = $cgi->param('question6comment');
   $question7comment = $cgi->param('question7comment');
   $question8comment = $cgi->param('question8comment');
+  $question9 = $cgi->param('question9');
   $question10comment = $cgi->param('question10comment');
   $name = $cgi->param('name');
   $email = $cgi->param('email');
@@ -180,6 +184,7 @@ sub writeData {
   $data .= $question3q . "\t";
   $data .= $question3comment . "\t";
   $data .= $question4comment . "\t";
+  $data .= $question5 . "\t";
   $data .= $question6a . "\t";
   $data .= $question6b . "\t";
   $data .= $question6c . "\t";
@@ -200,6 +205,7 @@ sub writeData {
   $data .= $question6comment . "\t";
   $data .= $question7comment . "\t";
   $data .= $question8comment . "\t";
+  $data .= $question9 . "\t";
   $data .= $question10comment . "\t";
   $data .= $name . "\t";
   $data .= $email . "\t";
