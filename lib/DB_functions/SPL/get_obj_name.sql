@@ -124,6 +124,11 @@ get_obj_name(zdbId varchar(50))
       into objName
       from marker_go_term
       where mrkrgo_zdb_id = zdbId;
+  elif (objType = "OEVDISP") then
+    select oevdisp_zdb_id
+      into objName
+      from orthologue_evidence_display
+      where oevdisp_zdb_id = zdbId;
   elif (objType = "ORTHO") then
     select ortho_name 
       into objName
