@@ -188,6 +188,7 @@
 	<b>Gene symbol - name</b>
 	<br>[previous names / orthologues]
       </TD>
+      <TD align=left><B>Expression</B></TD>
       <TD align=left><B>Mutant Locus</b></TD>
       <TD align=left><B>Location</b></TD> 
       <TD align=left><B>Panel</b></TD> 
@@ -228,6 +229,25 @@
       <?MIVAR NAME=$gene_name>$1<?/MIVAR>
       <?MIVAR NAME=$OID>$2<?/MIVAR>
       <?MIVAR name=$marker_name>$3<?/MIVAR>
+      <?MIVAR name=$xpat> <?/MIVAR>
+
+      <!--  GENE EXPRESSION QUERY  -->
+      <?MISQL SQL="
+        select count(*)
+          from marker, marker_label, label, expression_pattern
+          where     '$OID' =  mrkr_zdb_id
+                and mrkr_zdb_id = mrkrlbl_marker_zdb_id
+                and mrkrlbl_label_zdb_id = lbl_zdb_id
+                and lbl_zdb_id = xpat_label_zdb_id 
+                ;">
+        <?MIVAR NAME=$XPAT_COUNT>$1<?/MIVAR>
+      <?/MISQL>
+
+      <?MIVAR NAME=$xpat COND="$(>,$XPAT_COUNT,0)">
+        <font size=2><A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatlister_parts.apg&gene_name=$gene_name>assays</A></font>
+      <?/MIVAR>
+
+
       <!-- create form for each gene -->
 	
       <!-- get rid of dashes to avoid javascript error -->
@@ -341,7 +361,9 @@
               <TD>&nbsp;</TD>
 	    <?/MIBLOCK>
 
-	    <TD><FONT SIZE=2>
+	    <?MIVAR><TD>$xpat &nbsp;</TD><?/MIVAR>
+	    
+            <TD><FONT SIZE=2>
 	      $(IF,$(OR,$(ISNULL,$locus_zdb_id),$(EC,$locus_zdb_id,"")),
 	        "Unknown",
 	        "<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID="$locus_zdb_id" TARGET=content>"<i>$locus_name</i>"</A>")
@@ -469,6 +491,7 @@
 	    <input type=hidden name=view_map value="view_map">
 
 	    <TR <?MIVAR>bgcolor="$row_color"<?/MIVAR> >
+	      <TD>&nbsp;</TD>
 	      <TD>&nbsp;</TD>
 	      <TD>&nbsp;</TD>
 	      <TD align=left>
