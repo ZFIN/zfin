@@ -1,3 +1,20 @@
+<?MICOMMENT>
+
+FILE: delete_record.html
+PREFIX: delrec_
+
+This page is used by root to delete some ZFIN record. The goal is to 
+provide an intermediate step, warning of impending doom, so as to avoid 
+accidental deletions.
+
+It is called via a link, visible to 'root' only, on the data_manager.html 
+bar that appears at the top of each viewing page.
+
+Variables expected:  
+  OID (REQUIRED) -- the zdb_id of the record to delete.
+  rtype (REQUIRED) -- the data type of the record to delete.
+<?/MICOMMENT>
+
 
 <?MIERROR>
 <?MIVAR COND=$(XST,$MI_SQL)>
@@ -9,17 +26,6 @@ Code: $MI_ERRORCODE
 State: $MI_ERRORSTATE
 Message: $MI_ERRORMSG 
 <?/MIERROR>
-
-<!-- FILE: delete_record.html
-
-This page is used by root to delete some ZFIN record. The goal is to provide an intermediate step, warning of impending doom, so as to avoid accidental deletions.
-
-It is called via a link, visible to 'root' only, on the data_manager.html bar that appears at the top of each viewing page.
-
-Variables expected:  
-  OID (REQUIRED) -- the zdb_id of the record to delete.
-  rtype (REQUIRED) -- the data type of the record to delete.
--->
 
 <HTML>
 
@@ -126,30 +132,37 @@ Variables expected:
 	<?MIBLOCK COND="$(AND,$(NC,$mtype,mutant),$(NC,$mtype,locus),$(XST,$do_search))">
 	  <hr>
 	  <TABLE cols=3>
-	  <TR><TD></TD><TD><b>Marker Name</b></TD><TD><b>Marker Type</b></TD></TR>
-	    <?MISQL SQL="select distinct mrkr_zdb_id,mrkr_name,mrkr_type,mrkr_abbrev 
-	       from marker a, all_map_names b
-		 where a.mrkr_type='$mtype' 
-		   and a.mrkr_zdb_id = b.allmapnm_zdb_id 
-		   and b.allmapnm_name_lower like '%$(LOWER,$merge)%' 
-		   order by a.mrkr_abbrev;">
-	  <TR>
-	    <TD width=15%>
-              <?MIVAR>
-	        <input type=button value="Select" onClick= set_values('$1','$(URLENCODE,$2)') ;>
-              <?/MIVAR>
-	    </TD>
-	    <TD>
-	      $2($4)
-	    </TD>
-	    <TD>
-	      $3
-	    </TD>
-	   </TR>
-	    <?/MISQL>
-	   </TABLE>
-	   <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No matches.<?/MIVAR>
-	   <?/MIBLOCK>
+            <TR><TD></TD><TD><b>Marker Name</b></TD><TD><b>Marker Type</b></TD></TR>
+            <?MISQL SQL="
+              select distinct mrkr_zdb_id, mrkr_name, mrkr_type, mrkr_abbrev 
+                from marker, all_map_names, all_name_ends
+                where mrkr_type = '$mtype' 
+                  and mrkr_zdb_id = allmapnm_zdb_id 
+                  and allmapnm_serial_id = allnmend_allmapnm_serial_id
+                  and allnmend_name_end_lower like '$(LOWER,$merge)%' 
+                order by mrkr_abbrev;">
+              <?MIVAR NAME=$delrec_mrkrZdbId>$1<?/MIVAR>
+              <?MIVAR NAME=$delrec_mrkrName>$2<?/MIVAR>
+              <?MIVAR NAME=$delrec_mrkrType>$3<?/MIVAR>
+              <?MIVAR NAME=$delrec_mrkrAbbrev>$4<?/MIVAR>
+              <TR>
+                <TD width=15%>
+                  <?MIVAR>
+                    <input type=button value="Select" 
+                      onClick=set_values('$delrec_mrkrZdbId','$(URLENCODE,$delrec_mrkrName)') ;>
+                  <?/MIVAR>
+                </TD>
+                <TD>
+                  $delrec_mrkrName($delrec_mrkrAbbrev)
+                </TD>
+                <TD>
+                  $delrec_mrkrType
+                </TD>
+              </TR>
+            <?/MISQL>
+          </TABLE>
+          <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No matches.<?/MIVAR>
+        <?/MIBLOCK>
 
 
 	   <?MIBLOCK COND="$(AND,$(EC,$mtype,mutant),$(XST,$do_search))">
