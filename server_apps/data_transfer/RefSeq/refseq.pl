@@ -38,7 +38,8 @@ system("rm -f gene_with_multiple_linked_recid.unl");
 
 
 system("/local/bin/gunzip -f *.gz");
-#system("/private/bin/rebol -sq ../GenPept/fetch-genpept.r");
+system("fetch-genpept.pl");
+system("/private/bin/rebol -sq ../GenPept/parse-genpept.r");
 
 $count = 0;
 $retry = 1;
