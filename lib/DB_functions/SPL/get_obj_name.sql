@@ -6,6 +6,8 @@ get_obj_name(zdbId varchar(50))
   returning varchar(120);  -- longest name in DB is 120 characters long.
 
   -- Given a ZDB ID, gets the name of the object associated with that ZDB ID.
+  -- If the object does not have a name per se, then its ZDB ID is returned
+  --   as the name.
   -- Returns NULL if ZDB ID does not point to a record.
 
   define objType	like zdb_object_type.zobjtype_name;
@@ -16,8 +18,8 @@ get_obj_name(zdbId varchar(50))
 
   -- list the most likely types first.
 
-  if (objType in ("GENE", "EST",  "BAC", "PAC", 
-		  "SSLP", "SSR", "RAPD", "STS")) then
+  if (objType in (select marker_type
+		    from marker_types)) then
     select mrkr_name 
       into objName
       from marker
@@ -72,6 +74,26 @@ get_obj_name(zdbId varchar(50))
       into objName
       from company
       where zdb_id = zdbId;
+  elif (objType = "DALIAS") then
+    select dalias_alias
+      into objName
+      from data_alias
+      where dalias_zdb_id = zdbId;
+  elif (objType = "DBLINK") then
+    select db_name || ":" || acc_num
+      into objName
+      from db_link
+      where dblink_zdb_id = zdbId;
+  elif (objType = "EXTNOTE") then
+    select extnote_zdb_id
+      into objName
+      from external_note
+      where extnote_zdb_id = zdbId;
+  elif (objType = "GOTERM") then
+    select goterm_name
+      into objName
+      from go_term
+      where goterm_zdb_id = zdbId;
   elif (objType = "LABEL") then
     select lbl_name 
       into objName
@@ -92,6 +114,16 @@ get_obj_name(zdbId varchar(50))
       into objName
       from mapped_marker
       where zdb_id = zdbId;
+  elif (objType = "MREL") then  -- Doesn't have name, could use mrel_type
+    select mrel_zdb_id
+      into objName
+      from marker_relationship
+      where mrel_zdb_id = zdbId;
+  elif (objType = "MRKRGO") then
+    select mrkrgo_zdb_id
+      into objName
+      from marker_go_term
+      where mrkrgo_zdb_id = zdbId;
   elif (objType = "ORTHO") then
     select ortho_name 
       into objName
@@ -107,11 +139,29 @@ get_obj_name(zdbId varchar(50))
       into objName
       from panels		-- Note: this is a fast search table.
       where zdb_id = zdbId;
+  elif (objType = "STAGE") then
+    select stg_name		-- other choices exist here.  this is simplest
+      into objName
+      from stage
+      where stg_zdb_id = zdbId;
   elif (objType = "XPAT") then
     select xpat_zdb_id		-- don't have names, use ZDB ID
       into objName
       from expression_pattern
       where xpat_zdb_id = zdbId;
+
+  -- and finally 2 oddball cases
+
+  elif (objType = "TEMP") then
+    select zdb_id		-- don't return a fish name.  We want to flag 
+      into objName		-- this as odd.
+      from temp_fish
+      where zdb_id = zdbId;
+  elif (objType = "sys") then
+    select zdb_id		-- not sure why we would ever do this
+      into objName
+      from return_recs
+      where zdb_id = zdbId;				
   end if
 
   return objName;
