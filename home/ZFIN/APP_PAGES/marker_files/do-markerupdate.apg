@@ -115,13 +115,28 @@ info -- optional value used to pass in additional info
     <?/MISQL>
 
     <?MIBLOCK COND="$(EC,$attr,db_link)">
+      <!-- $old_value syntax like db_name:acc_num -->
+      <!-- separate values -->
+      <?MIVAR NAME=delimit>$(POSITION,$old_value,":")<?/MIVAR>
+      <?MIVAR NAME=db_name>$(SUBSTR,$old_value,1,$(-,$delimit,1))<?/MIVAR>
+      <?MIVAR NAME=acc_len>$(-,$(STRLEN,$old_value),$(-,$delimit,1))<?/MIVAR>
+      <?MIVAR NAME=acc_num>$(SUBSTR,$old_value,$(+,$delimit,1),$acc_len)<?/MIVAR>
+
+      <?MIVAR COND=$(=,0,1)>
+	<b>
+		db_name = $db_name<br>
+		acc_num = $acc_num
+	</b>
+      <?/MIVAR>
+
       <?MISQL SQL="
 	delete from zdb_active_data
 	  where zactvd_zdb_id = 
 		( select dblink_zdb_id 
 		    from db_link
 		    where linked_recid = '$OID'
-		      and acc_num = '$old_value' );">
+                      and db_name = '$db_name'
+		      and acc_num = '$acc_num' );">
       <?/MISQL>
     <?/MIBLOCK>
   <?/MIBLOCK>  <!-- ends special listitem case -->

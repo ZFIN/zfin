@@ -456,7 +456,7 @@
     $(IF,$(AND,$(NC,$lastitem,$1),$(>,$MI_CURRENTROW,1)),</TD>)
     $(IF,$(NC,$lastitem,$1),<TD align=left>)
     <li>
-    $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$3"')>")
+    $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$1:$3)"')>")
     <A HREF="$2">$1:$3</A>
     $(SETVAR,$lastitem,$1)
  <?/MISQL>
@@ -623,7 +623,7 @@ Accession:<input type=text size=15 name=seq_acc>
   <?MIBLOCK COND="$(NC,$1,Genbank)">
 
     <li><?MIVAR>
-    $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$3"')>")
+    $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$1:$3)"')>")
     <A HREF="$2">$1:$3</A><?/MIVAR>
 
   <?MIELSE>
@@ -650,7 +650,7 @@ Accession:<input type=text size=15 name=seq_acc>
 
 <?MIBLOCK COND="$(=,$more,1)">
 
-  <li><?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genbank.apg&OID=$OID">nucleotide sequence info</A><?/MIVAR>
+  <li><?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genbank.apg&OID=$OID$(IF,$(XST,$UPDATE),&UPDATE=1)">nucleotide sequence info</A><?/MIVAR>
 
 <?MIELSE COND="$(>,$count,0)">
 
@@ -660,7 +660,7 @@ Accession:<input type=text size=15 name=seq_acc>
 
   <?MIBLOCK INDEX=$link FOREACH=$gblinks>
 	<li><?MIVAR>
-	$(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$gbaccs[$n]"')>")
+	$(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,Genbank:$gbaccs[$n])"')>")
 	<A HREF="$link">Genbank:$gbaccs[$n]</A>
         $(SETVAR,$n,$(+,$n,1))
         <?/MIVAR>
@@ -684,7 +684,7 @@ Accession:<input type=text size=15 name=seq_acc>
   $(IF,$(AND,$(NC,$lastitem,$1),$(>,$MI_CURRENTROW,1)),</TD>)
   $(IF,$(NC,$lastitem,$1),<TD align=left>)
   <li>
-  $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$3"')>")
+  $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$1:$3)"')>")
   <A HREF="$2">$1:$3</A>
   <!--------- ---------------->
   <?MIBLOCK COND="$(EC,$1,SWISS-PROT)">		
