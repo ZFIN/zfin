@@ -94,7 +94,7 @@ is_not
              values ('$evnew_id','$pub_id');">
              <?/MISQL>
               <?MIVAR NAME=$inflink>$inf_db:$inferred<?/MIVAR>
-              <?MISQL SQL="select a.fdb_db_query from foreign_db a where a.db_name='$inf_db'"><?/MISQL>
+              <?MISQL SQL="select a.fdb_db_query from foreign_db a where a.fdb_db_name='$inf_db'"><?/MISQL>
               <?MIBLOCK COND="$(NE,$MI_ROWCOUNT,0)">
                 <?MIVAR NAME=$link>$1$inferred<?/MIVAR>
                 <?MIVAR NAME=$currinflink>$inflink<?/MIVAR>
