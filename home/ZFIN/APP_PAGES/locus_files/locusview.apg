@@ -139,17 +139,24 @@ value=" DONE UPDATING. Back to Viewing! " onClick="document.location.search='?MI
 <p>
 </CENTER>
 
+<!-- move mivar cond from input type=button to miblock which includes entire locus description until curation on this item improves -->
+<?MIBLOCK COND="$(XST,$UPDATE)">
 <p>
 <table width=100%>
 <TR>
 <TD bgcolor="#ffffff">
-<?MIVAR COND="$(XST,$UPDATE)">
+
 <INPUT TYPE=button value="Update" onClick="doit('comments','textarea','Locus+Description')"> 
-<?/MIVAR> 
+ 
 
 <b>Locus Description:</b><?MIVAR>$(IF,$(NC,$comments,NULL),$comments,"No description available") <?/MIVAR>
 </TD>
 </TR></TABLE>
+<?/MIBLOCK>
+
+<?MISQL SQL="select distinct chrom_num from fish_search where locus ='$OID' and chrom_num <> 0 ;">
+$(IF,$(NC,$1,0),<font size=+1><b>"Linkage Group:" $1</b>)
+<?/MISQL>
 
 
 <HR WIDTH=80%>
@@ -171,7 +178,7 @@ $(IF,$(>,$7,0),"Mapped linkages")
 $(IF,$(AND,$(=,$6,0),$(=,$7,0)),"Unmapped")
 </td>
 <TD valign=bottom><font size=-1>
-$(IF,$(>,$mindex,0),$(SUBSTR,$4,1,$(-,$mindex,1)),"Not Available")
+$(IF,$(>,$mindex,0),$(SUBSTR,$4,1,$(-,$mindex,1)),"")
 </TD>
 </TR>
 <?/MISQL>
