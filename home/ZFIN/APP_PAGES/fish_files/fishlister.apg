@@ -52,7 +52,7 @@
 <?MIVAR COND="$(NXST,$mutagen)" NAME=$mutagen>any<?/MIVAR>
 <?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>phenotype<?/MIVAR>
 <?MIVAR COND="$(NXST,$selected_separator)" NAME=$selected_separator>and<?/MIVAR>
-
+<?MIVAR COND="$(NXST,$num_recs)" NAME=$num_recs>0<?/MIVAR>
 
 <?MIVAR NAME=$target_table>fish_search a <?/MIVAR>
 
