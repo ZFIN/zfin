@@ -23,6 +23,7 @@ chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/ZGC/";
 #remove old files
 system("/bin/rm -f zLib_not_found");
 system("/bin/rm -f *.previous");
+system("/bin/rm -f *.copy");
 
 
 #make room for the new version 
@@ -40,7 +41,6 @@ $vCloneDiff = `diff StaticCloneList StaticCloneList.previous`;
 
 if ($vCloneDiff ne "")
 {
-
   #Get the latest library list
   system('zLib.pl');
 
@@ -49,6 +49,10 @@ if ($vCloneDiff ne "")
 
   #parse files
   system("sed -f zgc.sed StaticCloneList > StaticCloneList.unl");
+
+  #delete blank lines
+  system("sed -e '/^$/d' StaticCloneList.unl > StaticCloneList.unl.copy");
+  system("/bin/mv -f StaticCloneList.unl.copy  StaticCloneList.unl");
   
   #load links
   system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> load_zgc.sql");
