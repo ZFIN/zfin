@@ -100,12 +100,23 @@ info -- optional value used to pass in additional info
           and target_id='$old_value';">
     <?/MISQL>
 
-    <?MISQL COND="$(EC,$attr,db_link)" SQL="
-      delete from db_link 
-        where linked_recid='$OID'
-          and acc_num='$old_value';">
-    <?/MISQL>
-
+    <?MIBLOCK COND="$(EC,$attr,db_link)">
+      <?MISQL SQL="
+	select dblink_zdb_id 
+	  from db_link
+	  where linked_recid = '$OID'
+	    and acc_num = '$old_value' ;">
+      <?/MISQL>
+      <?MIVAR NAME=$dblink_zdb_id>$1<?/MIVAR>
+      <?MISQL SQL="
+	delete from zdb_active_source
+	  where zactvs_zdb_id = '$dblink_zdb_id';">
+      <?/MISQL>
+      <?MISQL SQL="
+	delete from zdb_active_data
+	  where zactvd_zdb_id = '$dblink_zdb_id';">
+      <?/MISQL>
+    <?/MIBLOCK>
   <?/MIBLOCK>  <!-- ends special listitem case -->
 
   <!-- Special case for adding new orthos -->
@@ -123,23 +134,33 @@ info -- optional value used to pass in additional info
           (zdb_id, c_gene_id, ortho_name, ortho_abbrev, organism, entry_time)
         values ('$ortho_id','$OID','$new_value','$info','$old_value',current);">
     <?/MISQL>
-    <!-- has to create dummy link record so the piece of crap shows up. 
-      -- Need outer join!
-      -->
-    <?MISQL SQL="
-      insert into db_link 
-          (linked_recid,DB_name,acc_num) 
-        values ('$ortho_id','Genbank','DUMMY');">
-    <?/MISQL>
   <?/MIBLOCK>  <!-- ends special add_ortho case -->
 
 
   <!-- Special case for adding new sequence db link -->
   <?MIBLOCK COND="$(EC,$attr_type,special-newseqnum)">
     <?MISQL SQL="
+      execute function get_id('DBLINK');">
+    <?/MISQL>
+    <?MIVAR NAME=$dblink_zdb_id>$1<?/MIVAR>
+    <?MISQL SQL="
+      insert into zdb_active_source
+          ( zactvs_zdb_id )
+        values
+          ( '$dblink_zdb_id' );">
+    <?/MISQL>
+    <?MISQL SQL="
+      insert into zdb_active_data
+          ( zactvd_zdb_id )
+        values
+          ( '$dblink_zdb_id' );">
+    <?/MISQL>
+
+    <?MISQL SQL="
       insert into db_link 
-          (linked_recid,DB_name,acc_num) 
-        values ('$OID','$old_value','$new_value');">
+          ( linked_recid, DB_name, acc_num, dblink_zdb_id ) 
+        values 
+	  ( '$OID', '$old_value', '$new_value', '$dblink_zdb_id' );">
     <?/MISQL>
   <?/MIBLOCK>  <!-- ends special seqdb case -->
 
