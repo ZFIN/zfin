@@ -161,7 +161,6 @@
 	    </td>
 	  </tr>
 	</NOSCRIPT>
-        </TR>
 	<TR>
 	  <TD class="content_left">
 	    <DIV class="content">
@@ -518,7 +517,6 @@
 </TABLE>
 
 <!-- Put the cursor in the login name box -->
-<SCRIPT>document.uniquery_search.query.focus();</SCRIPT>
 
 <script language=javascript src="/js/awstats_misc_tracker.js"></script>
 </BODY>
