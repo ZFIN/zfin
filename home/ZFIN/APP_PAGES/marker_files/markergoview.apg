@@ -103,7 +103,11 @@
      <TD><A HREF="http://www.geneontology.org/doc/GO.evidence.html">$3</A></TD>
      <?MIVAR NAME=$inf_from>$8<?/MIVAR>
      <?MIVAR NAME=infvector> <?/MIVAR>
-     <?MIVAR NAME=currinfs> <?/MIVAR>
+     <?MIVAR NAME=currinfs><?/MIVAR>
+
+     <?MISQL SQL="select distinct mrkrgoev_infered_from from marker_go_term_evidence where mrkrgoev_mrkrgo_zdb_id='$markergotermid' and mrkrgoev_evidence_code='$evidence'">
+     <?/MISQL>
+<?MIVAR NAME=$inferencecount>$MI_ROWCOUNT<?/MIVAR>
 
      <!--getting inferences for a particular annotation-->
      <?MISQL SQL="select distinct mrkrgoev_infered_from from marker_go_term_evidence where mrkrgoev_mrkrgo_zdb_id='$markergotermid' and mrkrgoev_evidence_code='$evidence'">
@@ -135,12 +139,14 @@
                   <?MIVAR NAME=$currinflink><a href=$link>$dbase:$accID</a><?/MIVAR>
                <?/MIBLOCK>
            <?/MIBLOCK>
-       <?MIVAR NAME=currinfs>$(IF,$(=,$MI_CURRENTROW,1),$currinflink$currinfs,$currinfs<br>$currinflink)<?/MIVAR>
+       <?MIVAR NAME=currinfs>$(IF,$(=,$inferencecount,1),$currinflink$currinfs,$(TRIM,$currinfs)<br>$currinflink)<?/MIVAR>
+
        <?MIELSE>
-        <?MIVAR NAME=currinfs> <?/MIVAR>
+        <?MIVAR NAME=currinfs><?/MIVAR>
        <?/MIBLOCK>
      <?/MISQL>
-     <td><?MIVAR>$currinfs<?/MIVAR></td>
+     <td><?MIVAR>$currinfs<?/MIVAR>
+     </td>
 
 <!--depening on pub count, call pubview or showpubs-->
  
