@@ -551,11 +551,11 @@ create dba function "informix".regen_genomics() returning integer
 		and   tad.allmapnm_significance <  all_m_names_new.allmapnm_significance);  
     drop table tmp_amn_dup;
 	
+	insert into regen_genomics_error
 	select allmapnm_name, allmapnm_zdb_id, count(*)
       	  from all_m_names_new
           group by allmapnm_zdb_id, allmapnm_name
-          having count(*) > 1
-          into regen_genomics_error;
+          having count(*) > 1;
 
     -- -------------------------------------------------------------------
     --   create indexes; constraints that use them are added at the end.
