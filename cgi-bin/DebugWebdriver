@@ -27,10 +27,24 @@ my $q = new CGI();                      # cgi object populated with the argument
 print  "Content-Type: text/html; charset=ISO-8859-1 \r\n\r\n"; # minimal HTTP response header
 my $key;
 my $qs  = $q->query_string();           # users question
-my $bot = LWP::UserAgent->new();        # think mini-browser  
-# I would prefer to go with a POSt here but... this is working  
-my $req = HTTP::Request->new('GET', 'http://<!--|DOMAIN_NAME|-->/<!--|CGI_BIN_DIR_NAME|-->/webdriver?'.$qs );# request we will send in the mini-browser 
-   $req->header( 'Cookie' => 'ZDB_authorize='.$q->cookie('ZDB_authorize') ); # forward the cookie as well
+my $bot = LWP::UserAgent->new();        # think mini-browser   
+my $req = HTTP::Request->new('POST', 'http://<!--|DOMAIN_NAME|-->/<!--|CGI_BIN_DIR_NAME|-->/webdriver');# request we will send in the mini-browser 
+    
+
+#$req->header( 'Referer' => http://zfin.org/cgi-bin_B/webdriver?MIval=aa-ZDB_home.apg );
+$req->header( 'Proxy-Connection; => 'Keep-Alive');
+#$req->header( 'Host' => zfin.org );
+$req->header( 'Accept' => 'image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, image/png, */*');
+$req->header( 'Accept-Encoding' => 'gzip');
+$req->header( 'Accept-Language' => 'en');
+$req->header( 'Accept-Charset' => 'iso-8859-1,*,utf-8');
+$req->header( 'Content-type' => 'application/x-www-form-urlencoded');
+$req->header( 'Cookie' => 'ZDB_authorize='.$q->cookie('ZDB_authorize') ); # forward the cookie as well
+$req->header( 'Content-length' => length($qs) );    
+$req->content( $qs ); 
+   
+   
+
 my $rsp = $bot->request($req); # 'page' returned by mini-browser
 
 open( LP, ">> <!--|ROOT_PATH|-->/<!--|CGI_BIN_DIR_NAME|-->/lastpage") || die "can't open lastpage"; # opening a file handle on lastpage named LP
@@ -45,7 +59,12 @@ print LP "\n----- Webdriver output -----\n";
 print LP $rsp->content;                  # recording the output
 print LP "\n----- Request dump ----- \n";
 print LP $req->as_string ."\n";
+print LP "\n----- Param dump ----- \n";
+foreach  $key ($q->param()) {      # recording parameters
+print LP $key, "=", $q->param($key), "|"};
+print LP "\n\n";
 close LP;
 print $rsp->content ."\n";              # forwarding the results to the user
 }### ~mod it
+
 
