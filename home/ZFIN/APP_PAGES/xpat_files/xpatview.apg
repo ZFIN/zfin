@@ -263,25 +263,7 @@ ERROR -- something bad happened -- no OID passed in!
 
   </tr>
 
- <!------------- Probe --------------------------------->
-
-  <tr>
-     <td align=left colspan=2>
-
-       <font size=+1><b> Probe: 
-
-<?MISQL SQL="
-     SELECT mrkr_name, mrkr_zdb_id
-     FROM marker, expression_pattern
-     WHERE xpat_zdb_id = '$OID'
-       AND xpat_probe_zdb_id = mrkr_zdb_id;
-     ">
-       <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$1</a>
-
-<?/MISQL>
-       </b></font>
-     </td>
-  </tr>
+ 
 </table>
   <!---------- Assay Type ------------------------------>
 <table>
