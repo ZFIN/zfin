@@ -1068,7 +1068,7 @@ insert
   into mrel_tmp
 select 
   get_id('MREL'),
-  'gene contains small segment', 
+  'gene encodes small segment', 
   m1.mrkr_zdb_id, 
   m2.mrkr_zdb_id, 
   'Thisse load ' || TODAY
