@@ -256,7 +256,7 @@ function call_reset() {
     <TABLE bgcolor="CCCCCC"> 
       <TR>
        <TD colspan=2>
-       <B><font size=-1>Anatomy Items Searched...</font></B>
+       <B><font size=-1>Anatomy Terms Searched...</font></B>
        </TD>
       </TR>
       <?MIBLOCK INDEX=$part FOREACH=$str_dlmt_list>
@@ -1034,12 +1034,12 @@ where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
 	  <TABLE border=0 bgcolor="#EEEEEE"> 
             <TR>
 	      <TD colspan=2>
-		<FONT size=2><B>Expressed In</B></FONT>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-
- 	          <FONT size="-1">[<I>Enter a return separated list of structures</I>]</FONT>
+		<span style="float: left;">
+                  <FONT size=2><B>Anatomy</B></FONT>
+                </span>
+                <span style="float: right;">
+                  <FONT size="-1">[<I>Enter one anatomical term per line</I>]</FONT>
+                </span>
 
 	     </TD>
 	     </TR>
@@ -1051,7 +1051,7 @@ where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
 
 	 	<br>
 		<FONT SIZE=-1>
-		  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=search"><B>Search</B> the Anatomical Ontology</A>
+		  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=search"><B>Search</B> the Anatomical Dictionary</A>
 		</FONT>
 	      </TD> <?MICOMMENT> <!--- end new selected structures textarea ---> <?/MICOMMENT>
 	      <TD>
@@ -1071,12 +1071,12 @@ where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
 		  <?MIVAR COND="$(NXST,$structure_bool)" NAME="structure_bool">and<?/MIVAR>
 
 	          <b>Return data for genes<br>expressed in:</b> <br>
-		  <input type="radio" name="structure_bool" value="and" <?MIVAR>$(IF,$(EC,$structure_bool,and),checked="checked")<?/MIVAR>
-	          <b>Every</b> structure entered
-		  <br>
+		  <input type="radio" name="structure_bool" value="and" <?MIVAR>$(IF,$(EC,$structure_bool,and),checked="checked")<?/MIVAR> >
+	          <b>Every</b> term entered <br>
+		  
 
-		  <input type="radio" name="structure_bool" value="or"  <?MIVAR>$(IF,$(EC,$structure_bool,or),checked="checked")<?/MIVAR>  > 
-	          <b>Any</b> of structure entered 
+		  <input type="radio" name="structure_bool" value="or"  <?MIVAR>$(IF,$(EC,$structure_bool,or),checked="checked")<?/MIVAR> > 
+	          <b>Any</b> term entered 
 		</FONT>
 	      </TD>
 	    </TR>
