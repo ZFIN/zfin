@@ -185,6 +185,7 @@ for($i=0; $i<=20; $i++) #scalar(@addedKeywords); $i++)
 	    
 	    if ($anat_zdb && $anat_zdb =~ /ZDB/)
 	      {
+		$failed = 0; #db_query flag instead of death.
 		#2.check stage constraint for anatitems
 		#3.add keyword
 		#open(QUERY,">insertKeyword.sql");
@@ -197,10 +198,10 @@ for($i=0; $i<=20; $i++) #scalar(@addedKeywords); $i++)
 		$queryDB = $dbh->prepare( "execute function expression_pattern_anatomy_insert_anatitem(\"$anat_zdb\",\"$xpatN\",\"$start_stg_zdb_N\",\"$end_stg_zdb_N\")")
 		  or die "Cannot prepare statement: $DBI::errstr\n";
 		$queryDB->execute;
-		$queryResults = $queryDB->fetchrow();
+		$queryResults = $queryDB->fetchrow() or $failed = 1;
 		$queryDB->finish;
 
-		if($queryResults =~ /2/)
+		if(!$failed && $queryResults =~ /2/)
 		  {
 		    open(KEYWORD,$keyword_stg_window_did_not_overlap);
 		    print KEYWORD "$geneN\t$xpatN\t$start_stg_name_N\t$end_stg_name_N\t$keyword\t \n";
@@ -209,7 +210,7 @@ for($i=0; $i<=20; $i++) #scalar(@addedKeywords); $i++)
 		    print KEYWORD "$geneO\t$xpatO\t$start_stg_name_O\t$end_stg_name_O\t \t \n";
 		    close(KEYWORD);
 		  }
-		elsif($queryResults !~ /0/)
+		elsif(!$failed && $queryResults !~ /0/)
 		  {
 		    print "$geneO - Could not insert - execute function expression_pattern_anatomy_insert_anatitem(\"$anat_zdb\",\"$xpatN\",\"$start_stg_zdb_N\",\"$end_stg_zdb_N\") - \"$keyword\" with $xpatstgNew[$i]; it already exists\n\n";
 		  }
