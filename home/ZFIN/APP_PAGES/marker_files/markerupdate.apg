@@ -61,13 +61,13 @@ target_table -- either anon_marker or gene, depending on what you're updating
     <?MIBLOCK COND="$(OR,$(EC,$attr,putgene_putative_gene_name),$(EC,$attr,putgene_comments))">
         <?MISQL SQL="
 	  select $attr, mrkr_name 
-	    from putative_gene, marker 
+	    from putative_non_zfin_gene, marker 
 	    where mrkr_zdb_id='$OID'
             and putgene_mrkr_zdb_id = mrkr_zdb_id;">
 	<?/MISQL>
         <?MIVAR NAME=$current_value>$1<?/MIVAR>
         <?MIVAR NAME=$update_target>$2<?/MIVAR>
-        <?MIVAR NAME=$target_table>putative_gene<?/MIVAR>
+        <?MIVAR NAME=$target_table>putative_non_zfin_gene<?/MIVAR>
     <?/MIBLOCK>
 
     <HTML>

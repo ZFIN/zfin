@@ -275,7 +275,10 @@ value=" DONE UPDATING. Back to Viewing! " onClick="document.location.replace('/<
 
 <!-- display any putative gene name assignments -->
 
-<?MISQL SQL="SELECT  putgene_putative_gene_name, putgene_comments FROM putative_gene WHERE putgene_mrkr_zdb_id = '$OID' ;">
+<?MISQL SQL="
+  SELECT putgene_putative_gene_name, putgene_comments 
+    FROM putative_non_zfin_gene 
+    WHERE putgene_mrkr_zdb_id = '$OID' ;">
     <?MIVAR NAME=$putgene_name>$1<?/MIVAR>
     <?MIVAR NAME=$putgene_comments>$2<?/MIVAR>
 <?/MISQL>

@@ -280,7 +280,7 @@
 		    where dalias_data_zdb_id = '$OID'
 		  union 
 		  select putgene_putative_gene_name
-		    from putative_gene
+		    from putative_non_zfin_gene
 		    where putgene_mrkr_zdb_id = '$OID';">
 		  <?MIVAR NAME=$alias>$1<?/MIVAR>
 		  <?MIVAR NAME=$aliases>$(IF,$(=,$MI_CURRENTROW,1),$aliases $alias,$aliases; $alias)<?/MIVAR>

@@ -528,7 +528,7 @@ create dba function "informix".regen_genomics() returning integer
     insert into all_m_names_new 
 	(allmapnm_name, allmapnm_zdb_id, allmapnm_significance)
       select lower(putgene_putative_gene_name), putgene_mrkr_zdb_id, 10
-	from putative_gene
+	from putative_non_zfin_gene
 	where not exists		-- avoid duplicates
 	      ( select * 
 		  from all_m_names_new an

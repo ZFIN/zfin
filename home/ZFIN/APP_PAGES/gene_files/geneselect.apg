@@ -341,7 +341,7 @@ document.critform.START.value = "";
 		    where dalias_data_zdb_id = '$OID'
 		  union 
 		  select putgene_putative_gene_name,putgene_pub_zdb_id
-		    from putative_gene
+		    from putative_non_zfin_gene
 		    where putgene_mrkr_zdb_id = '$OID';">
 		  <?MIVAR NAME=$alias>$(IF,$(=,$(POSITION,$2,GENE),0),$1,<i>$1</i>)<?/MIVAR>
 		  <?MIVAR NAME=$aliases>$(IF,$(=,$MI_CURRENTROW,1),$aliases $alias,$aliases; $alias)<?/MIVAR>

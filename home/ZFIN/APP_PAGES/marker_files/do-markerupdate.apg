@@ -97,7 +97,7 @@ info -- optional value used to pass in additional info
   <?/MIBLOCK>
   <?MISQL COND="$(OR,$(EC,$attr,putgene_comments),
 		      $(EC,$attr,putgene_putative_gene_name))" SQL="
-    update putative_gene  
+    update putative_non_zfin_gene  
       set $attr='$new_value' 
       where putgene_mrkr_zdb_id='$OID';">
   <?/MISQL>
