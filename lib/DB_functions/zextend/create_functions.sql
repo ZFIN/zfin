@@ -31,13 +31,6 @@ external name
 language c
 end function;
 
-create function get_id(lvarchar)
-returning lvarchar
-external name
-"<!--|ROOT_PATH|-->/lib/DB_functions/zextend.so"
-language c
-end function;
-
 create function expr(date)
 returning date
 external name
