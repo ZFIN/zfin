@@ -2251,7 +2251,8 @@ sub pubTitlesAreUnique($) {
         "ZDB-PUB-990414-54",  { "ZDB-PUB-021017-3", }
         "ZDB-PUB-010718-27",  { "ZDB-PUB-010821-1", }
         "ZDB-PUB-021017-74"   {, "ZDB-PUB-041012-5" }
-        ,"ZDB-PUB-010918-3"   {, "ZDB-PUB-040216-6" } 
+        ,"ZDB-PUB-010918-3"   {, "ZDB-PUB-040216-6" }
+        , "ZDB-PUB-050127-1" {, "ZDB-PUB-030408-12"}
         )
         and source <> "ZFIN Direct Data Submission"
       group by title 
