@@ -1,3 +1,19 @@
+<?MICOMMENT>
+
+FILE: new_marker.apg
+PREFIX: newmrkr_ (but none replaced as of Feb. 2005)
+
+DESCRIPTION:
+This is the first page of entering a new marker into ZFIN., 
+
+INPUT VARS:
+OUTPUT VARS:
+
+EFFECTS: Adds a new marker (currently, only genes, psuedogenes) to
+marker table.  
+
+<?/MICOMMENT>
+
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
   <head>
@@ -156,6 +172,7 @@
             theform.rsrvComment.focus();
             return false;
           }
+
         <?/MIBLOCK>
         
         return true;
@@ -199,13 +216,13 @@
         <?/MIBLOCK>
         
         <p>
-        <b>Description:</b><br>
+        <b>Note:</b><br>
         <TEXTAREA rows=5 cols=50 name=comments></TEXTAREA>
 
         <?MIBLOCK COND="$(>,$(POSITION,$marker_type,GENE),0)">
         <p><b>Is this a reservation?</b>:
         Yes <input type=radio name=reserve value=yes> / No <input type=radio name=reserve value=no checked>
-        <br>Comments: <input type=text name=rsrvComment size=50>
+        <br>Reservation Comments: <input type=text name=rsrvComment size=50>
         <?MIELSE>
           <input type=hidden name=reserve value="no">
 	<?/MIBLOCK>
@@ -233,7 +250,6 @@
     <?MIVAR COND=$(XST,$abbrev) NAME=$abbrev DELIMIT="'" REPLACE="''">$abbrev<?/MIVAR>
     <?MIVAR COND=$(NXST,$abbrev) NAME=$abbrev>$mname<?/MIVAR>
     <?MIVAR NAME=$comments DELIMIT="'" REPLACE="''">$comments<?/MIVAR>
-
     <?MISQL SQL="execute function get_id('$(UPPER,$marker_type)');"><?/MISQL>
     <?MIVAR NAME=$new_id>$1<?/MIVAR>
 
@@ -249,7 +265,16 @@
         values ('$new_id', '$mname', '$abbrev', '$(UPPER,$marker_type)',
                 '$comments', '$ZDB_ident');">
     <?/MISQL>
-      
+    <?MISQL SQL="
+      update marker 
+	set mrkr_comments = NULL
+        where mrkr_zdb_id = '$new_id'
+	and mrkr_abbrev = '$abbrev'
+	and mrkr_name = '$mname'
+	and mrkr_comments = '';">
+    <?/MISQL>
+	
+
     <?MISQL COND=$(XST,$nMrkrSource) SQL="
         insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
         values ('$new_id','$nMrkrSource');">
