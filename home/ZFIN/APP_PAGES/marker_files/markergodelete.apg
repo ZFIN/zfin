@@ -1,6 +1,6 @@
 <!-- FILE: markergodelete.apg
 
-Deletes a GO annotation
+for performing deletes of a GO annotation
 
 EXPECTED VARS:
 OID -- the zdb_id of the rec to update
@@ -21,18 +21,57 @@ is_not
       where ID='aa-secure_navigation.apg';">
     $1
   <?/MISQL>
-<?MIVAR>$geneid<?/MIVAR>
 <?MIVAR COND="$(NXST,$goev)" NAME=$goev><?/MIVAR>
 <?MIVAR COND="$(NXST,$markergoid)" NAME=$markergoid><?/MIVAR>
+<?MIVAR COND="$(NXST,$infzdbid)" NAME=$infzdbid><?/MIVAR>
+<?MIVAR COND="$(NXST,$sourcezdbid)" NAME=$sourcezdbid><?/MIVAR>
 <?MIBLOCK COND="$(AND,$(XST,$AUTHORIZED),$(NC,$AUTHORIZED,false))">
 
-<?MISQL SQL="select mrkrgoev_zdb_id,mrkrgoev_mrkrgo_zdb_id from marker_go_term_evidence where mrkrgoev_mrkrgo_zdb_id='$markergoid' and mrkrgoev_evidence_code='$goev'">
+<?MIBLOCK COND="$(EC,$infzdbid,)">
+<?MISQL SQL="select mrkrgoev_zdb_id,mrkrgoev_mrkrgo_zdb_id from marker_go_term_evidence where mrkrgoev_mrkrgo_zdb_id='$markergoid' and mrkrgoev_evidence_code='$goev' and mrkrgoev_source_zdb_id='$sourcezdbid'">
    <?MIVAR NAME=$goevid>$1<?/MIVAR>
-   <?MIVAR NAME=$mrkrgoid>$2<?/MIVAR>
+   <?MIVAR NAME=SQL1>"delete from zdb_active_data where zactvd_zdb_id='$goevid'"<?/MIVAR>
    <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id='$goevid'"><?/MISQL>
 <?/MISQL>   
+<?MIELSE>
+<?MISQL SQL="select mrkrgoev_zdb_id,mrkrgoev_mrkrgo_zdb_id from marker_go_term_evidence where mrkrgoev_mrkrgo_zdb_id='$markergoid' and mrkrgoev_evidence_code='$goev' and mrkrgoev_source_zdb_id='$sourcezdbid'"><?/MISQL>
+<?MIVAR NAME=$goevid>$1<?/MIVAR>
+<?MISQL SQL="select infgrp_zdb_id from inference_group where infgrp_mrkrgoev_zdb_id='$goevid'"><?/MISQL>
+<?MIVAR NAME=$infcount>$MI_ROWCOUNT<?/MIVAR>
+<?MIBLOCK COND="$(>,$infcount,1)">
+    <?MISQL SQL="delete from inference_group_member  where infgrmem_infgrp_zdb_id='$infzdbid'"><?/MISQL>
+    <?MISQL SQL="delete from inference_group  where infgrp_zdb_id='$infzdbid'"><?/MISQL>
+    <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id='$infzdbid'"><?/MISQL>
+<?MIELSE>
+   <?MISQL SQL="delete from inference_group where infgrp_mrkrgoev_zdb_id='$goevid'"><?/MISQL>
+   <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id='$goevid'"><?/MISQL>
+<?/MIBLOCK>
+
+<?MISQL SQL="select mrkrgoev_zdb_id,mrkrgoev_mrkrgo_zdb_id from marker_go_term_evidence where mrkrgoev_mrkrgo_zdb_id='$markergoid' and mrkrgoev_evidence_code='$goev' and mrkrgoev_source_zdb_id='$sourcezdbid'"><?/MISQL>
+<?MIVAR NAME=$goevid>$1<?/MIVAR>
+
+<?MISQL SQL="select infgrp_zdb_id from inference_group where infgrp_mrkrgoev_zdb_id='$goevid'"><?/MISQL>
+
+<?MIVAR NAME=$infcount>$MI_ROWCOUNT<?/MIVAR>
+<?MIBLOCK COND="$(>,$infcount,1)">
+    <?MIVAR NAME=SQL1>delete from inference_group_member  where infgrmem_infgrp_zdb_id='$infzdbid'"<?/MIVAR>
+
+    <?MIVAR NAME=SQL2>"delete from inference_group  where infgrp_zdb_id='$infzdbid'<?/MIVAR>
+
+    <?MIVAR NAME=SQL3>delete from zdb_active_data where zactvd_zdb_id='$infzdbid'"<?/MIVAR>
+
+<?MIELSE>
+   <?MIVAR NAME=SQL3>delete from zdb_active_data where zactvd_zdb_id='$goevid'"<?/MIVAR>
+
+<?/MIBLOCK>
+
+
+<?/MIBLOCK>
+
+
 
 <?/MIBLOCK> 
+
 <?MIVAR>
 <SCRIPT>
   location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoentry.apg&OID=$geneid")
