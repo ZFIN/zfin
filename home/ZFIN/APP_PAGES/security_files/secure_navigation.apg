@@ -93,16 +93,14 @@ rtype (optional) -- Only necessary if permission=owns.
 <!-- Last chance to AUTHORIZE is if you're root -->
 <?MIVAR COND="$(AND,$(XST,$ZDB_access),$(EC,$ZDB_access,root))" NAME=$AUTHORIZED>root<?/MIVAR>
 
-
 <!-- OKAY, now cause a tile for the new page to appear in the navigator frame -->
-<?MIVAR COND="$(XST,$page_title)">
+<?MIVAR COND="$(AND,$(XST,$page_title),$(NC,$page_title,List Persons))">
 <SCRIPT>
 var page_id=window.location.href;
-top.ZDB.update(page_id,"$page_title");
+top.update_hist(page_id,"$page_title");
 top.controls.location.reload(true)
 </SCRIPT>
 <?/MIVAR>
-
 
 <!-- Finally, if we're supposed to be tracking (logging) access for this user, go ahead and save the ID of the requested page to ZFIN_log -->
 <?MIBLOCK COND="$(EC,$ZDB_log_access,t)">
