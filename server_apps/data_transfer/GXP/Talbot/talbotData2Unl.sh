@@ -7,7 +7,7 @@ if ($#argv < 1) then
     exit;
 endif
 
-setenv PATH    "/private/apps/wublast/"$PATH
+setenv PATH    "/private/apps/wublast:"$PATH
 setenv BLASTDB "/research/zblastdb/db/wu-db";
 
 set dbname = $1
