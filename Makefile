@@ -223,7 +223,7 @@ include $(TOP)/make.default.rules
 # Make the directories needed for the mirror, TAR file created by home
 # directory Makefile.
 
-mirror : home
+mirror : 
 	$(MAKE) -C home $@
 
 postloaddb :
