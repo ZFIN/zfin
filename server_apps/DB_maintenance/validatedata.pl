@@ -2288,8 +2288,6 @@ my $mutantEmail  = "<!--|VALIDATION_EMAIL_MUTANT|-->";
 my $dbaEmail     = "<!--|VALIDATION_EMAIL_DBA|-->";
 
 if($daily) {
-  print "run daily check. \n\n";
-
   stageWindowConsistent ($adEmail);
   stageContainsStageWindowInContainerStageWindow($adEmail);
 
@@ -2331,8 +2329,6 @@ if($orphan) {
   zdbActiveSourceStillActive($dbaEmail);
 }
 if($weekly) {
-  print "run weekly check. \n\n";
-
   # put these here until we get them down to 0 records.  Then move them to 
   # daily.
   estsHave1Gene($estEmail);
@@ -2342,7 +2338,6 @@ if($weekly) {
   fishAbbrevStartsWithLocusAbbrev($mutantEmail);
 }
 if($monthly) {
-  print "run monthly check. \n\n";
   orthologueHasDblink($geneEmail);
   orthologueNomenclatureValid($geneEmail);
   locusAbbrevIsSet($mutantEmail);
