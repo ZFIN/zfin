@@ -56,7 +56,7 @@ CLASSPATH = .:/private/apps/java/lib/classes.zip:$(TOP)/lib/Java
 # ---- Java source and class file variables
 
 # Java related Makefile variables inherited from parent:
-#  JAVAS JAR IMAGES
+#  JAVAS JAR IMAGES IMPORTPATH IMPORTDIR
 
 CLASSES = $(foreach JVS, $(JAVAS), $(patsubst %.java,%.class,$(JVS)))
 
@@ -75,14 +75,17 @@ $(TARGETDIR) :
 $(TARGETDIR)/$(IMAGES) : ../$(IMAGES)
 	$(TARGET_CP) $^ $(TARGETDIR)
  
+$(IMPORTDIR) :
+	ln -s $(IMPORTPATH)/$(IMPORTDIR)
+
 # ----  Rules for creating Java classes.
 
 $(TARGETJAR) : $(JAR)
 	$(TARGET_CP) $(JAR) $@
 	chmod o+r $@
 
-$(JAR) : $(CLASSES)
-	/local/apps/jdk-1.1/bin/jar -cf $(JAR) $(CLASSES)
+$(JAR) : $(CLASSES) $(IMPORTDIR)
+	/local/apps/jdk-1.1/bin/jar -cf $(JAR) $(CLASSES) $(IMPORTDIR)
 
 
 # When any class file needs to be remade, remake all of them.
@@ -95,7 +98,7 @@ $(CLASSES) : $(JAVAS)
 # ---------------  Maintenance Rules  -----------------------------------
 
 clean :			# remove almost everything in the directory
-	rm -f $(JAVAS) $(CLASSES) $(JAR)
+	rm -f $(JAVAS) $(CLASSES) $(JAR) $(IMPORTDIR)
 
 
 clobber :			# Remove targets, but not target dir.
