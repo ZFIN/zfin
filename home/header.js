@@ -226,8 +226,8 @@ document.write("<table width=100% cellspacing=0 border=0 cellpadding=0 class=\"h
             document.write("<A HREF=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubselect2.apg\"><font color=\"<!--|LINKBAR_COLOR|-->\">Publications</font></a>&nbsp;&nbsp;");
             document.write("<A HREF=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-quickfindpers.apg\"><font color=\"<!--|LINKBAR_COLOR|-->\">People</font></a> &nbsp;&nbsp;");
             document.write("<A HREF=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labselect.apg\"><font color=\"<!--|LINKBAR_COLOR|-->\">Labs</font></a> &nbsp;&nbsp;");
-            document.write("<A HREF=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-companyselect.apg\"><font color=\"<!--|LINKBAR_COLOR|-->\">Companies </font></a>&nbsp;&nbsp;");
-	    document.write("<A HREF=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-accessionselect.apg\"><font color=\"<!--|LINKBAR_COLOR|-->\">Acc #</font></a>");
+            document.write("<A HREF=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-companyselect.apg\"><font color=\"<!--|LINKBAR_COLOR|-->\">Companies </font></a> &nbsp;&nbsp;");
+            document.write("<A HREF=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-accessionselect.apg\"><font color=\"<!--|LINKBAR_COLOR|-->\">Acc #</font></a>");
 	   document.write("</DIV>");
           document.write("</td>");
     document.write("</tr>");
@@ -242,7 +242,7 @@ document.write("<table width=100% cellspacing=0 border=0 cellpadding=0 class=\"h
           document.write("</td>");
 	  document.write("<td align=center>");
 	   document.write("<DIV class=\"header\">");
-            document.write("<A HREF=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&line_type=mutant\">Mutants</a>");
+            document.write("<A HREF=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&line_type=mutant\">Mutants / Transgenics</a>");
 	   document.write("</DIV>");
           document.write("</td>");
           document.write("<td align=center>");
@@ -277,7 +277,12 @@ document.write("<table width=100% cellspacing=0 border=0 cellpadding=0 class=\"h
             document.write("<A HREF=\"/<!--|CGI_BIN_DIR_NAME|-->/mapper_select.cgi\">Maps</a>");
 	   document.write("</DIV>");
           document.write("</td>");
-document.write("<!--          <td  align=center>");
+	 document.write("<!--  <td  align=center>");
+	   document.write("<DIV class=\"header\">");
+            document.write("<A HREF=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-accessionselect.apg\">Acc #</a>");
+	   document.write("</DIV>");
+          document.write("</td>");
+	 document.write	("<td  align=center>");
 	   document.write("<DIV class=\"header\">");
             document.write("<A HREF=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubselect2.apg\">Publications</a>");
 	   document.write("</DIV>");
