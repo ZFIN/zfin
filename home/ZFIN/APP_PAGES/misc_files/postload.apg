@@ -1,6 +1,4 @@
 
-<?MIVAR name="WARNING"> Blast results are stored as a CLOB data type. Entries with no blast are stored as 'no results'. CLOBs are not searchable so a know record with no results is used for comparison. If ZDB-IDs are changed and a new record is not used for comparison, the results will display all 'no'.<?/MIVAR>
-
 
 <html>
   <head>
@@ -31,7 +29,7 @@ function call_reset() {
 
 document.critform.day.selectedIndex = 1;
 document.critform.month.selectedIndex = 1;
-document.critform.year.selectedIndex = 1;
+document.critform.year.selectedIndex = 3;
 document.critform.century.selectedIndex = 1;
 
 }
@@ -91,7 +89,6 @@ where ids_source_zdb_id = 'ZDB-LAB-980204-15'
 $(IF,$(>,$1,0),
   <tr>
     <TD><u>Name</u></td>
-    <TD><u>Blast Data</u></td>
     <TD><u>Genbank #s</u></td>
     <TD><u>Image Count</u></td>
     <TD><u>Stage w/o Image</u></td>
@@ -119,17 +116,7 @@ order by 3;">
       <a href=#$label_name>$label_name</a>
     </td>
 
-  <!-- PROBE STATS:image count, genbank, blast -->
-  <?MISQL SQL="
-      select count(*)::integer
-      from blast b1, blast b2
-      where '$label_id' = b1.blast_mrkr_zdb_id
-        and b2.blast_mrkr_zdb_id = 'ZDB-EST-010914-2'
-        and b1.blast_results != b2.blast_results;">
-    <td>
-      $(IF,$(=,$1,0),no,yes)
-    </td>
-  <?/MISQL>
+  <!-- PROBE STATS:image count, genbank -->
 
     <td>
   <?MISQL SQL="
@@ -384,6 +371,7 @@ order by 3;">
 	<option  $(IF,$(EQ,$year,01),SELECTED) value=01>01
 	<option  $(IF,$(EQ,$year,02),SELECTED) value=02>02 
 	<option  $(IF,$(EQ,$year,03),SELECTED) value=03>03 
+	<option  $(IF,$(EQ,$year,04),SELECTED) value=04>04 
 	</SELECT> Month:
 	<SELECT name=month>
 	<option  $(IF,$(=,$month,1),SELECTED) value=01>01 
