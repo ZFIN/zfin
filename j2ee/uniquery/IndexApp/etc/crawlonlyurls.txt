@@ -1,0 +1,18 @@
+# This file contains keywords indicating which urls to avoid indexing. Note that these
+# pages will still be crawled and urls contained in them will be indexed. This section is 
+# useful for search results pages where we don't want to index the list of results but
+# we do want to index the individual items.
+# When the spider encounters a URL, it looks through this list of keys, if any of them
+# appear in anywhere in the URL then the page won't be indexed.
+#
+
+
+aa-fishselect.apg
+aa-newmrkrselect.apg
+aa-markerselect.apg
+aa-msegselect.apg
+aa-xpatselect.apg
+aa-pubselect2.apg
+aa-persselect.apg
+aa-labselect.apg
+aa-companyselect.apg
