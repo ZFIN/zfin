@@ -1,12 +1,18 @@
 create procedure p_check_figure_image_pair_exists (vImgZdbId varchar(50), 
 						   vFigZdbId varchar(50))
   define vOk	integer ;
+  define vImgComments varchar(50) ;
 
   if vImgZdbId is not null 
 
-  then
+  then 
 
-	if vImgZdbId != 'not specified'
+      let vImgComments = (select fimgp_comments 
+	    		    from fx_fish_image_private
+			    where vImgZdbID = fimgp_zdb_id
+			    and fimgp_owner_zdb_id = 'ZDB-PERS-030520-1') ;
+
+	if vImgComments != 'not specified'
 
   	then
 
