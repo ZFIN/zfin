@@ -53,7 +53,8 @@ document.critform.authtype.selectedInidex = 0;
 <?MIVAR COND="$(EC,$yr_cmpr,greater)">$(SETVAR,$yr_cmpr,>)<?/MIVAR>
 <?MIVAR COND="$(EC,$yr_cmpr,less)">$(SETVAR,$yr_cmpr,<)<?/MIVAR>
 <?MIVAR COND="$(XST,$cur_status)" NAME=$cur_status DELIMIT="9" REPLACE=" ">$cur_status<?/MIVAR>
-
+<?MIVAR COND="$(XST,$nav_authors)" NAME=$nav_authors DELIMIT="|" REPLACE=" ">$nav_authors<?/MIVAR>
+<?MIVAR COND="$(XST,$nav_title)" NAME=$nav_title DELIMIT="|" REPLACE=" ">$nav_title<?/MIVAR>
 
 <TABLE width=100%>
 <TR>
