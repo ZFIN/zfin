@@ -235,8 +235,11 @@ var LN54=0;
 </TR>
 </TABLE>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <!-- <IMG SRC="/images/ANIMATED/perlorangeblink.gif"> -->
-NOTE: Large maps may take a few moments to load.
-
+<TABLE>
+<TR>
+<TD align=left>NOTE: Large maps may take a few moments to load.  </TD> <TD></TD>
+<TD align=right> * indicates markers that map to different linkage groups on different panels.  </TD>
+</TR></TABLE>
 </form>
 
 
