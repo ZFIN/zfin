@@ -39,6 +39,7 @@ while( !(
           (-e "LL.out_hs.gz") && 
           (-e "LL.out_mm.gz") && 
           (-e "loc2ref") &&
+          (-e "loc2acc") &&
           (-e "loc2UG")
         ) 
      )
@@ -99,7 +100,8 @@ while( !(
           -e "ll_id.unl" && 
           -e "ll_hs_id.unl" && 
 	  -e "ll_mm_id.unl" &&
-	  -e "refseq_acc.unl" &&
+	  -e "loc2acc.unl" &&
+	  -e "loc2ref.unl" &&
 	  -e "loc2UG.unl" 
 	 )
      )
@@ -125,6 +127,7 @@ while( !(
 system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> load_refSeq.sql");
 
 &dblinksReport();
+&reportOmimDups();
 &sendReport();
 
 exit;
@@ -141,6 +144,7 @@ sub emailError()
 sub downloadLocusLinkFiles()
   {
     system("/local/bin/wget ftp://ftp.ncbi.nih.gov/refseq/LocusLink/loc2ref -O loc2ref");
+    system("/local/bin/wget ftp://ftp.ncbi.nih.gov/refseq/LocusLink/loc2acc -O loc2acc");
     system("/local/bin/wget ftp://ftp.ncbi.nih.gov/refseq/LocusLink/loc2UG -O loc2UG");
     system("/local/bin/wget ftp://ftp.ncbi.nih.gov/refseq/LocusLink/LL.out_dr.gz");
     system("/local/bin/wget ftp://ftp.ncbi.nih.gov/refseq/LocusLink/LL.out_hs.gz");
@@ -182,6 +186,32 @@ sub dblinksReport()
     while ($cur->fetch)
     {
       print REPORT "$db_name\t$db_count\n";
+    }
+    print REPORT "\n";
+    close(REPORT);
+  }
+
+
+sub reportOmimDups()
+  {
+    open (REPORT, ">>report") or die "can not open report";
+
+    print REPORT "OMIM dups\n";
+
+    my $cur = $dbh->prepare('select mrkr_abbrev
+                               from db_link, orthologue, marker
+                              where db_name = "OMIM"
+                                and linked_recid = zdb_id
+                                and c_gene_id = mrkr_zdb_id
+                              group by mrkr_abbrev
+                             having count(*) > 1;'
+			   );
+    $cur->execute;
+    my($mrkr_abbrev);
+    $cur->bind_columns(\$mrkr_abbrev);
+    while ($cur->fetch)
+    {
+      print REPORT "$mrkr_abbrev\n";
     }
     print REPORT "\n";
     close(REPORT);

@@ -70,13 +70,30 @@ create temp table REF_SEQ_ACC
   )
 with no log;
 
-!echo 'load refseq_acc.unl'
-load from 'refseq_acc.unl' insert into ref_seq_acc;
+!echo 'load loc2ref.unl'
+load from 'loc2ref.unl' insert into ref_seq_acc;
 
 create index refseq_ll_index on ref_seq_acc
     (refseq_ll) using btree;
 create index refseq_acc_index on ref_seq_acc
     (refseq_acc) using btree;
+   
+
+--GENBANK ACCESSION NUM--
+create temp table GENBANK_ACC
+  (
+    gbacc_ll	varchar (50) not null,
+    gbacc_acc	varchar (50) not null
+  )
+with no log;
+
+!echo 'load loc2acc.unl'
+load from 'loc2acc.unl' insert into genbank_acc;
+
+create index genbank_ll_index on genbank_acc
+    (gbacc_ll) using btree;
+create index genbank_acc_index on genbank_acc
+    (gbacc_acc) using btree;
 
 --UNI_GENE
 create temp table uni_gene
@@ -116,6 +133,19 @@ insert into tmp_db_link
     get_id('DBLINK')
   from ref_seq_acc, ll_zdb, zdb_active_data
   where refseq_ll = llzdb_ll_id
+    and llzdb_zdb_id = zactvd_zdb_id
+;
+
+!echo 'insert GenBank into temp_db_link'
+insert into tmp_db_link
+  select
+    zactvd_zdb_id,
+    'Genbank',
+    gbacc_acc,
+    '',
+    get_id('DBLINK')
+  from genbank_acc, ll_zdb, zdb_active_data
+  where gbacc_ll = llzdb_ll_id
     and llzdb_zdb_id = zactvd_zdb_id
 ;
 
@@ -386,28 +416,26 @@ insert into record_attribution
 
 
 
--- ----------------------  REFSEQ  ------------------------ --
+-- ----------------------  DB_LINK  ------------------------ --
 
 -- ------------------  add new links  ---------------------- --
 !echo 'add active data'
-insert into zdb_active_data select dblink_zdb_id from tmp_db_link;
-
+insert into zdb_active_data select dblink_zdb_id from tmp_db_link where db_name = "RefSeq";
+insert into zdb_active_data select dblink_zdb_id from tmp_db_link where db_name = "LocusLink" and acc_num not in (select acc_num from db_link where db_name = "LocusLink");
+insert into zdb_active_data select dblink_zdb_id from tmp_db_link where db_name = "Genbank" and acc_num not in (select acc_num from db_link where db_name = "Genbank");
+ 
 !echo 'insert new db_links'
-insert into db_link select * from tmp_db_link; -- where db_name = "RefSeq";
---insert into db_link select * from tmp_db_link where db_name = "LocusLink" and acc_num not in (select acc_num from db_link where db_name = "LocusLink");
+insert into db_link select * from tmp_db_link where db_name = "RefSeq";
+insert into db_link select * from tmp_db_link where db_name = "LocusLink" and acc_num not in (select acc_num from db_link where db_name = "LocusLink");
+insert into db_link select * from tmp_db_link where db_name = "Genbank" and acc_num not in (select acc_num from db_link where db_name = "Genbank");
 
-!echo 'Attribute RefSeq links to an artificial pub record.'
-insert into record_attribution
-    select dblink_zdb_id, 'ZDB-PUB-020723-3'
-    from db_link
-    where db_name = "RefSeq";
 
 !echo 'Attribute ZFIN_LL links to an artificial pub record.'
 insert into record_attribution
     select a.dblink_zdb_id, 'ZDB-PUB-020723-3'
     from db_link a, tmp_db_link tmp
-    where a.db_name = "LocusLink"
-      and a.acc_num = tmp.acc_num
+    where a.db_name in ("Genbank","LocusLink","RefSeq")
+      and a.dblink_zdb_id = tmp.dblink_zdb_id
 ;
 
 
