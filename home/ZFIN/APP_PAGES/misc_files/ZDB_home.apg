@@ -447,18 +447,21 @@
 			<input type=submit 
 			       value="Regen Mutant (fishsearch) data">
 			<input type=hidden 
-			       name="stored_procedure" 
+			       name="run" 
 			       value="regen_fishsearch">
 		      </form>
-		      <form action='/<!--|CGI_BIN_DIR_NAME|-->/regen_genomics.cgi' 
+		      <form action='/<!--|CGI_BIN_DIR_NAME|-->/runSPL.cgi' 
 			    method="GET" >
+			<input type=hidden
+			       name="run"
+			       value="regen_genomics">
 			<input type=submit value="Regen Genomics data">
 		      </form>
 		      <form action='/<!--|CGI_BIN_DIR_NAME|-->/runSPL.cgi' 
 			    method="POST" >
 			<input type=submit value="Regen Orthologue Display data">
 			<input type=hidden 
-			       name="stored_procedure" 
+			       name="run" 
 			       value="regen_oevdisp">
 		      </form>
 
