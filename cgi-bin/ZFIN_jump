@@ -1,4 +1,4 @@
-#!/local/bin/perl 
+#!/private/bin/perl -wT 
 # ----------------------------------------------------------------------
 #  file name:  ZFIN_jump
 #
