@@ -115,7 +115,7 @@ if (! system ("/bin/mv $accfile nc_zf_acc.unl")) {
 
 sub downloadDailyUpdateFile() {
     my $file = $_[0];
-    print "download: $file\n";
+    #print "download: $file\n";
     system("/local/bin/wget -q ftp://ftp.ncbi.nih.gov/genbank/daily-nc/$newfile;");
 }
 

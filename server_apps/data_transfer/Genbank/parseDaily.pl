@@ -36,7 +36,7 @@ while (my $gbfile = shift @ARGV) {
 
     my @file =  split(/\./, $gbfile);
     my $prefix = shift (@file);
-    print "$prefix\n";
+    #print "$prefix\n";
  
     open ZF, ">$prefix"."_zf_all.fa" or die "Cannot open the file to write: $!.";
     open ZF_DNA, ">$prefix"."_zf_dna.fa" or die "Cannot open the file to write: $!.";
@@ -98,7 +98,7 @@ while (my $gbfile = shift @ARGV) {
 		print ZFACC substr($accession,0,index($accession, '.'))."|$bp|$d_type|Genbank|\n";
 	    }
 	    else {
-		print "seq $accession has type $type";
+		print "Attention: $accession has type $type";
 	    }	   
 
 	    if ($type eq 'DNA') {
