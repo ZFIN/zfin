@@ -146,8 +146,8 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
 
 <?MIBLOCK COND="$(EC,$line_type,mutant)">
 
-  <?MIVAR NAME=$order_by>order by name,allele,chrom_num<?/MIVAR>
-  <?MIVAR NAME=$order_by COND="$(AND,$(OR,$(XST,$fname),$(XST,$abbrev)),$(NXST,$allele))">order by name,allele,chrom_num<?/MIVAR>
+  <?MIVAR NAME=$order_by>order by fishsearch_name_order,fishsearch_allele_order,chrom_num<?/MIVAR>
+  <?MIVAR NAME=$order_by COND="$(AND,$(OR,$(XST,$fname),$(XST,$abbrev)),$(NXST,$allele))">order by fishsearch_name_order,fishsearch_allele_order,chrom_num<?/MIVAR>
 
   <?MIVAR>
     <form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
@@ -191,7 +191,7 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
     <!--- Query Database --->
     <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE
 
-    <?MISQL SQL="select distinct name, fish_id, abbrev, allele, chrom_change, chrom_num,locus,gene_abbrev,gene_id from $target_table where line_type='mutant' $mut_constraint $order_by;" MAXROWS=$limit>
+    <?MISQL SQL="select distinct name, fish_id, abbrev, allele, chrom_change, chrom_num,locus,gene_abbrev,gene_id, fishsearch_name_order, fishsearch_allele_order from $target_table where line_type='mutant' $mut_constraint $order_by;" MAXROWS=$limit>
     <?MIVAR NAME=$gene_id>$9<?/MIVAR>
     <?MIVAR NAME=$gene_abbrev>$8<?/MIVAR>
     <?MIVAR NAME=$name>$1<?/MIVAR>
