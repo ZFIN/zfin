@@ -1,10 +1,12 @@
-<!-- this app page is used to add members to a new linkage group. The page supports, search/selection of the markers/mutants.
+<?MICOMMENT>
+this app page is used to add members to a new linkage group. 
+The page supports, search/selection of the markers/mutants.
 
 Required vars:  link_id.
 
 Possible vars: update
 
--->
+<?/MICOMMENT>
 
 
 <HEAD>
@@ -141,7 +143,7 @@ Linkage Members:   (At least one member must be specified) <br>
       $(SETVAR,$num_members,$(+,$num_members,$MI_ROWCOUNT))
     <?/MIVAR>
 
-    Specify members of linkage: <?MIVAR>
+    Specify members of linkage:
 
     <?MIVAR>
       <select name=mtype>
@@ -159,7 +161,6 @@ Linkage Members:   (At least one member must be specified) <br>
       </SELECT>  and its abbrev contains:
       <input type=text name=member  size=8>  
       <input type=submit name=do_search value="Search">
-    <?/MIVAR>
 
    
        <!-- search for a marker member -->
@@ -167,13 +168,16 @@ Linkage Members:   (At least one member must be specified) <br>
 	 <hr>
 	 <TABLE cols=2>
 	 <TR><TH></TH><TH>Marker Name</TH><TH>Marker Type</TH></TR>
-	 <?MISQL SQL="select distinct mrkr_zdb_id,mrkr_name,mrkrtype_type_display,mrkr_abbrev 
-	   from marker a, all_map_names b, marker_types c
-	     where a.mrkr_type='$mtype' 
-	       and a.mrkr_zdb_id = b.allmapnm_zdb_id 
-	       and b.allmapnm_name_lower like '%$(LOWER,$member)%'
-	       and a.mrkr_type = c.marker_type 
-	       order by a.mrkr_abbrev;">
+	 <?MISQL SQL="
+           select distinct mrkr_zdb_id, mrkr_name, mrkrtype_type_display,
+                  mrkr_abbrev 
+	     from marker, all_map_names, all_name_ends, marker_types
+	     where mrkr_type = '$mtype' 
+	       and mrkr_zdb_id = allmapnm_zdb_id 
+               and allmapnm_serial_id = allnmend_allmapnm_serial_id
+	       and allnmend_name_end_lower like '$(LOWER,$member)%'
+	       and mrkr_type = marker_type 
+	     order by mrkr_abbrev;">
 	   <TR>
 	     <TD>
 	       <input type=button name=member_selected value="Select" onClick="pick_me('$link_id','$1','$source','$lg','$(URLENCODE,$usercomments)','$ZDB_ident');">
@@ -213,11 +217,11 @@ Linkage Members:   (At least one member must be specified) <br>
 	   </TR>
 	 <?/MISQL>
 	 </TABLE>
-       <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No mutant matches.<?/MIVAR> 
-       <p>
+         <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No mutant matches.<?/MIVAR> 
+         <p>
   
-  <?/MIBLOCK>
-
+       <?/MIBLOCK>
+    <?/MIVAR>
 
 <p>
   <?MIBLOCK COND="$(AND,$(NXST,$update),$(NXST,$member))">
