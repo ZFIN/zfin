@@ -322,7 +322,7 @@ EFFECTS
     <td>Env.</td>
     <td>Condition</td>
     <td>
-      <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&nMrkrSource=$OID&marker_type=MRPHLNO" target=ZFIN_morph>Morpholino</a><?/MIVAR>
+      <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&newmrkrSource=$OID&marker_type=MRPHLNO" target=ZFIN_morph>Morpholino</a><?/MIVAR>
     </td>
     <td>Value</td>
     <td>Units</td> 

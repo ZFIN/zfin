@@ -74,7 +74,7 @@ EFFECTS
     <td>&nbsp;</td>
     <td>Display Name</td>
     <td>
-      <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&nMrkrSource=$OID">Gene </a><?/MIVAR>
+      <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&newmrkrSource=$OID">Gene </a><?/MIVAR>
     </td>
     <td><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusselect.html&select_from=LOCI&frame_size=230&intro=/ZFIN/help_files/locus_intro.html">Fish</a></td>
 	<td>Env.</td>
