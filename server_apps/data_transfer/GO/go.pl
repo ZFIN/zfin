@@ -97,7 +97,7 @@ sendErrorReport ("gofile.sql failed") if
 sendErrorReport ("goparser.pl failed") if system ("goparser.pl");
 
 sendErrorReport ("check-gene-association.pl reports error") if 
-    system ("/local/bin/perl5 check-gene-association.pl -d gene_association.zfin");
+    system ("/local/bin/perl check-gene-association.pl -d gene_association.zfin");
 
 sendErrorReport ("gp2protein.pl failed") if
     system ("gp2protein.pl");

@@ -1,4 +1,4 @@
-#! /local/bin/perl5 -w 
+#! /local/bin/perl -w 
 
 ##
 # validatedata.pl
