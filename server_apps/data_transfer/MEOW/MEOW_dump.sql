@@ -21,7 +21,7 @@ create table meow_exp1 (
   zdb_id varchar(50),
   mname varchar(80),
   abbrev varchar(20),
-  OR_lg integer
+  OR_lg varchar(2)
 );
 
 -- get panel mappings
@@ -63,7 +63,7 @@ insert into meow_exp1 (zdb_id,mname,abbrev,OR_lg)
 
 --  Add in  unmapped genes
 insert into meow_exp1 (zdb_id,mname,abbrev,OR_lg) 
-  select zdb_id,gene_name,abbrev,0 
+  select zdb_id,gene_name,abbrev,'0' 
     from all_genes 
    where panel_id = 'na'
       and zdb_id like '%GENE%';
@@ -79,7 +79,8 @@ insert into meow_exp1 (zdb_id,mname,abbrev,OR_lg)
 -- he says the GAT result is the one to use. So I delete the wnt4,LG15 
 -- record from output file. In fact, since I know of this problem, I'll just
 -- build the delete into the script here!
--- removed 11/13/00  this mapping inconsistency has been resolved.  delete from meow_exp1 where abbrev='wnt4' and OR_lg='15';
+-- removed 11/13/00  this mapping inconsistency has been resolved.
+--  delete from meow_exp1 where abbrev='wnt4' and OR_lg='15';
 
 select count(*) 
   from meow_exp1;
@@ -100,7 +101,7 @@ create table meow_expll (
   zdb_id varchar(50),
   gene_name varchar(80),
   abbrev varchar(20),
-  OR_lg integer,
+  OR_lg varchar(2),
   location numeric(6,2),
   panel_id varchar(50),
   panel_abbrev varchar(10),
@@ -147,7 +148,7 @@ insert into meow_expll (zdb_id,gene_name,abbrev,OR_lg)
 
 --  Add in  unmapped genes
 insert into meow_expll (zdb_id,gene_name,abbrev,OR_lg) 
-  select zdb_id,gene_name,abbrev,0 
+  select zdb_id,gene_name,abbrev,'0'
     from all_genes 
    where panel_id = 'na'
       and zdb_id like '%GENE%';
@@ -163,7 +164,8 @@ insert into meow_expll (zdb_id,gene_name,abbrev,OR_lg)
 -- he says the GAT result is the one to use. So I delete the wnt4,LG15 
 -- record from output file. In fact, since I know of this problem, I'll just
 -- build the delete into the script here!
--- removed 11/13/00  this mapping inconsistency has been resolved.  delete from meow_exp1 where abbrev='wnt4' and OR_lg='15';
+-- removed 11/13/00  this mapping inconsistency has been resolved.
+--  delete from meow_exp1 where abbrev='wnt4' and OR_lg='15';
 
 select count(*) 
   from meow_expll;
