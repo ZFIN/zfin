@@ -27,8 +27,6 @@ public class mapimage {
 
 	public void init() {
 
-		System.setProperty("java.awt.headless","true");
-
 		MapViewer MV;
 
 //	MV = new MapViewer(getParameter("data"), getParameter("selected_marker"));
