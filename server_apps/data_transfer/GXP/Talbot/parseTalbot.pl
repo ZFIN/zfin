@@ -118,11 +118,11 @@ close (VIEW_IN);
 #      3  other_names              gb5p 
 #      4  long_name                gb3p 
 #      5  vector                   library 
-#      6  library         ==>      vector
-#      7  description              pcr amplification 
-#      8  human_protein            insert_kb 
-#      9  blastn_acc               cloning_site 
-#      0  vs_align_length          digest 
+#      6  library         ==>      digest 
+#      7  description              vector 
+#      8  human_protein            pcr amplification 
+#      9  blastn_acc               insert_kb 
+#      0  vs_align_length          cloning_site
 #      1  vs_match_pcnt            polymerase 
 #      2  digest                   comments 
 #      3  polymerase               modified_date
@@ -155,7 +155,7 @@ while (<PROBE_IN>) {
 	my $gene_sym = $othname_col ne '' ? $name_col : '' ;
 	$gene_sym =~ s/zgc\s/zgc:/;
        
-        my $vector      = $row[5]; $vector =~ s/^\s+//; $vector =~ s/\s+$//;
+    my $vector      = $row[5]; $vector =~ s/^\s+//; $vector =~ s/\s+$//;
 	my $library     = $row[6]; $library =~ s/^\s+//; $library =~ s/\s+$//;
 	my $digest      = $row[12];$digest =~ s/^\s+//; $digest =~ s/\s+$//;
 	my $polymerase  = $row[13];$polymerase =~ s/^\s+//; $polymerase =~ s/\s+$//;
@@ -186,7 +186,7 @@ while (<PROBE_IN>) {
 	    my ($gene_id, $zfin_sym) = @$row; 
 	    
 	    if ($zfin_sym eq $gene_sym || ! $gene_sym) {
-		print PROBE_OUT join("|",$row[0],$clone_name,$gene_id,"",$acc_col,$library,$vector,"","","",$digest,$polymerase,"","")."|\n";
+		print PROBE_OUT join("|",$row[0],$clone_name,$gene_id,"",$acc_col,$library,$digest,$vector,"","","",$polymerase,"","")."|\n";
 		print AUTHOR_OUT "$row[0]|$AUTHOR_1||\n";
 		print AUTHOR_OUT "$row[0]|$AUTHOR_2||\n";
 	    }else {
@@ -199,15 +199,15 @@ while (<PROBE_IN>) {
                                                      from marker
                                                     where mrkr_abbrev = '$gene_sym'");
 	    if ($gene_id) {
-		print PROBE_OUT join("|",$row[0],$clone_name,$gene_id,"",$acc_col,$library,$vector,"","","",$digest,$polymerase,"","")."|\n";
+		print PROBE_OUT join("|",$row[0],$clone_name,$gene_id,"",$acc_col,$library,$digest,$vector,"","","",$polymerase,"","")."|\n";
 		print AUTHOR_OUT "$row[0]|$AUTHOR_1||\n";
 		print AUTHOR_OUT "$row[0]|$AUTHOR_2||\n";
 	    }else {
 		print ERR join("    ", $acc_col, $clone_name, $gene_sym, "Gene sym not in ZFIN")."\n";
 	    }
 
-	}else {                             # gb acc has no zfin gene match, and no gene provided
-	    print PROBE_OUT join("|",$row[0],$clone_name,"","",$acc_col,$library,$vector,"","","",$digest,$polymerase,"","")."|\n";
+	}else {                      # gb acc has no zfin gene match, and no gene provided
+	    print PROBE_OUT join("|",$row[0],$clone_name,"","",$acc_col,$library,$digest,$vector,"","","",$polymerase,"","")."|\n";
 	    print AUTHOR_OUT "$row[0]|$AUTHOR_1||\n";
 	    print AUTHOR_OUT "$row[0]|$AUTHOR_2||\n";
 	    print PROBE_ACC "$acc_col\n";
