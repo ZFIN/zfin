@@ -127,9 +127,9 @@ $constraint $previous (a.zdb_id=b.pub_id and b.curation_action='$cur_status')<?/
 -->
 
 <TABLE WIDTH=100%>
-<TH> </TH> <TH>YEAR</TH> <TH>TITLE</TH> <TH>AUTHORS</TH>
+<TH> </TH> <TH>YEAR</TH> <TH>TITLE</TH> <TH>AUTHORS</TH><TH>SOURCE</TH>
 
-<?MISQL SQL="select title,authors,zdb_id,year(pub_date) as pyear from $target_tables $constraint $order_clause;">
+<?MISQL SQL="select title,authors,zdb_id,year(pub_date) as pyear, source from $target_tables $constraint $order_clause;">
 <TR> 
 <TD valign=top> 
 $(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_pub.apg&OID=$3" TARGET=content>EDIT</A> </FONT>")
@@ -138,7 +138,8 @@ $(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|
 </TD>
 <TD valign=top> <FONT SIZE=-1> $4 </FONT> </TD>
 <TD valign=top> <FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3" TARGET="content">$1</A> </FONT> </TD>  
-<TD valign=top> <FONT SIZE=-1> $2 </FONT> </TD>
+<TD valign=top> <FONT SIZE=-1> $2 </FONT> </TD> 
+<TD valign=top> <FONT SIZE=-1> $5 </FONT> </TD>
 </TR>
 <?/MISQL>
 </TABLE>
