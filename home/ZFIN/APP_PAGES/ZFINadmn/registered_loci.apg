@@ -101,7 +101,6 @@ registrations -- but not update of course.
 	<?/MISQL>
 	<?MIVAR NAME=$alt_id>$1<?/MIVAR>
 
-<?MIBLOCK COND=$(=,0,0)">
 	<?MISQL SQL="
 	  insert into zdb_active_data
 	      ( zactvd_zdb_id )
@@ -149,7 +148,6 @@ registrations -- but not update of course.
 		('$locus_id', '$locus_name', '$abbrev',
 		 'Provisional record for newly registered locus/allele','$owner');">
 	  <?/MISQL>
-<?/MIBLOCK>
 	<?/MIBLOCK>
 
       <?/MIBLOCK>
@@ -167,18 +165,23 @@ registrations -- but not update of course.
 
     <?/MIBLOCK> <!-- ends make_public actions -->
 
+    <?MICOMMENT>
+      The following code used to add 6 months to the expiration date.
+      This would abort if you were on the 31st of the month, and the month
+      6 months from now had less than 31 days.  Avoid the issue by adding
+      183 days instead.
+    <?/MICOMMENT>
     <?MISQL COND="$(EC,$action,approve)" SQL="
       update locus_registration 
 	set status = 'conditional', 
             locusreg_nomen_approved_date = current,
-            locusreg_expiration_deadline = current + '6'::interval month to month
+            locusreg_expiration_deadline = current + interval (183) day(3) to day
 	where zdb_id = '$update' and allele='$allele';">
     <?/MISQL>
 
     <?MISQL COND="$(EC,$action,extend)" SQL="
       update locus_registration 
-	set locusreg_expiration_deadline = 
-              TODAY + '6'::interval month to month
+	set locusreg_expiration_deadline = current + interval (183) day(3) to day
 	where zdb_id = '$update' and allele='$allele';">
         <?MIVAR>
  	<script>
