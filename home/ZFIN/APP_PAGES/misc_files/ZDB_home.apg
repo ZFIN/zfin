@@ -133,11 +133,11 @@
 	      <table border=0 cellpadding=3>
 		<tr>
 		  <td>
-		    <A HREF="/zf_info/stckctr/stckctr.html">Info</A>,
-		    <A HREF="/zf_info/stckctr/guide.html">Strains</A>, 
+		    <A HREF="/zirc/home/guide.php">Info</A>,
+		    <A HREF="/zirc/home/guide.php">Strains</A>, 
 		    <A HREF="/zf_info/zfprbs.html">Probes</A><br>
-		    <A HREF="/zf_info/stckctr/health.html">Pathology Services</A><BR>
-		    <A HREF="/zf_info/stckctr/dis_man/Fish_Diseases.html">Disease Manual</A><br>
+		    <A HREF="/zirc/documents/health.php">Pathology Services</A><BR>
+		    <A HREF="/zirc/disMan/diseaseManual.php">Disease Manual</A><br>
 		  </td>
 		</tr>
 	      </table>
