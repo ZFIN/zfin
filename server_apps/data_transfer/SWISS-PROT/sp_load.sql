@@ -176,8 +176,6 @@ begin work;
 --!echo 'Insert DALIAS into zdb_active_data'
         insert into zdb_active_data
                  select dalias_zdb_id from pre_gn_dalias;
-select * from pre_gn_dalias where dalias_data_zdb_id not in (
-	select zactvd_zdb_id from zdb_active_data);
 
 --!echo 'Insert GN into data_alias'
         insert into data_alias 
