@@ -22,13 +22,29 @@ geneid:fields associated with an xpat record to update.
 
 <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 <SCRIPT>
-function goeditevi(goevid,attr,oldevi,geneid,mrkrgoevid,goid){
+function goeditevi(goevid,attr,oldevi,geneid,mrkrgoevid,goid, infzdbid, pubid){
     var evind = document.newdata.evidence.selectedIndex;
     var value=document.newdata.evidence[evind].value;
-    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-goedit.apg&OID='+goevid+'&attr='+attr+'&geneid='+geneid+'&mrkrgoevid='+mrkrgoevid+'&evidence='+oldevi+'&goid='+goid+'&value='+value);
+    if (document.newdata.is_not.checked==true)
+     {
+         var isnot='t';
+     }
+    else
+     {
+         var isnot='f';
+     }
+    if (document.newdata.contribs.checked==true)
+     {
+         var contribs='t';
+     }
+    else
+     {
+         var contribs='f';
+     }
+    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-goedit.apg&OID='+goevid+'&attr='+attr+'&geneid='+geneid+'&mrkrgoevid='+mrkrgoevid+'&evidence='+oldevi+'&goid='+goid+'&contribs='+contribs+'&isnot='+isnot+'&infzdbid='+infzdbid+'&pubid='+pubid+'&value='+value);
 }
 
-function goeditnote(goevid,attr,geneid,mrkrgoevid,goid){
+function goeditnote(goevid,attr,mrkrgoevid,geneid,goid,pubid,infzdbid){
     var note = document.newdata.comments.value;
     var evind = document.newdata.evidence.selectedIndex;
     var value=document.newdata.evidence[evind].value;
@@ -40,18 +56,50 @@ function goeditnote(goevid,attr,geneid,mrkrgoevid,goid){
      {
          var isnot='f';
      }
-
-    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-goedit.apg&OID='+goevid+'&attr='+attr+'&geneid='+geneid+'&mrkrgoevid='+mrkrgoevid+'&isnot='+isnot+'&goid='+goid+'&evidence='+value+'&note='+note)
+    if (document.newdata.contribs.checked==true)
+     {
+         var contribs='t';
+     }
+    else
+     {
+         var contribs='f';
+     }
+    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-goedit.apg&OID='+goevid+'&attr='+attr+'&geneid='+geneid+'&mrkrgoevid='+mrkrgoevid+'&isnot='+isnot+'&contribs='+contribs+'&goid='+goid+'&evidence='+value+'&pubid='+pubid+'&infzdbid='+infzdbid+'&note='+note);
 }
 
-function goaddinf(goevid,attr,mrkrgoevid,geneid,goid){
+function goeditflag(goevid,attr,geneid,mrkrgoevid,goid,oldnot,oldcon){
+    var note = document.newdata.comments.value;
+    var evind = document.newdata.evidence.selectedIndex;
+    var value=document.newdata.evidence[evind].value;
+    if (document.newdata.is_not.checked==true)
+     {
+         var isnot='t';
+     }
+    else
+     {
+         var isnot='f';
+     }
+    if (document.newdata.contribs.checked==true)
+     {
+         var contribs='t';
+     }
+    else
+     {
+         var contribs='f';
+     }
+    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-goedit.apg&OID='+goevid+'&attr='+attr+'&geneid='+geneid+'&mrkrgoevid='+mrkrgoevid+'&oldisnot='+oldnot+'&oldcontribs='+oldcon+'&isnot='+isnot+'&contribs='+contribs+'&goid='+goid+'&evidence='+value+'&note='+note);
+}
+
+function goaddinf(goevid,attr,mrkrgoevid,geneid,goid,infzdbid,pubid){
     var infind = document.newdata.infdb.selectedIndex;
     var valuedb=document.newdata.infdb[infind].value;
     var value=document.newdata.inference.value;
-    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-goedit.apg&OID='+goevid+'&attr='+attr+'&geneid='+geneid+'&value='+value+'&valuedb='+valuedb+'&goid='+goid+'&mrkrgoevid='+mrkrgoevid)
+    var evind = document.newdata.evidence.selectedIndex;
+    var evidence=document.newdata.evidence[evind].value;
+    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-goedit.apg&OID='+goevid+'&attr='+attr+'&geneid='+geneid+'&value='+value+'&valuedb='+valuedb+'&goid='+goid+'&evidence='+evidence+'&infzdbid='+infzdbid+'&pubid='+pubid+'&mrkrgoevid='+mrkrgoevid)
 }
 
-function goaddpub(goevid,attr,mrkrgoevid,action,geneid,goid){
+function goaddpub(goevid,attr,mrkrgoevid,action,geneid,goid,pubid,infzdbid){
     var evind = document.newdata.evidence.selectedIndex;
     var evidence=document.newdata.evidence[evind].value;
     if (action=='add'){
@@ -60,13 +108,18 @@ function goaddpub(goevid,attr,mrkrgoevid,action,geneid,goid){
     else {
        var value='';
     }
-    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-goedit.apg&OID='+goevid+'&attr='+attr+'&value='+value+'&action='+action+'&evidence='+evidence+'&geneid='+geneid+'&goid='+goid+'&mrkrgoevid='+mrkrgoevid)
+    if (value.length==0){
+        window.alert("Publication cannot be null");
+    }
+    else {
+        window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-goedit.apg&OID='+goevid+'&attr='+attr+'&value='+value+'&action='+action+'&evidence='+evidence+'&geneid='+geneid+'&goid='+goid+'&pubid='+pubid+'&infzdbid='+infzdbid+'&mrkrgoevid='+mrkrgoevid);
+    }
 }
 
-function godelinf(goevid,pub,attr,mrkrgoevid,geneid,inf,goid){
+function godelinf(goevid,pub,attr,mrkrgoevid,geneid,inf,goid,infzdbid,infer){
     var evind = document.newdata.evidence.selectedIndex;
     var evidence=document.newdata.evidence[evind].value;
-    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-goedit.apg&OID='+goevid+'&attr='+attr+'&value='+pub+'&evidence='+evidence+'&geneid='+geneid+'&inf='+inf+'&goid='+goid+'&mrkrgoevid='+mrkrgoevid)
+    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-goedit.apg&OID='+goevid+'&attr='+attr+'&value='+pub+'&evidence='+evidence+'&geneid='+geneid+'&inf='+inf+'&goid='+goid+'&infzdbid='+infzdbid+'&infer='+infer+'&mrkrgoevid='+mrkrgoevid)
 }
 
 function call_valinf(goevid,mrkrgoevid,geneid,mod,goterm,evidence,pub) {
@@ -85,47 +138,68 @@ function call_done() {
 }
 
 </SCRIPT>
-
 <?MIBLOCK COND="$(NC,AUTHORIZED,false)">
     <?MIVAR COND="$(NXST,$goterm)" NAME=$goterm><?/MIVAR>
     <?MIVAR COND="$(NXST,$pub)" NAME=$pub><?/MIVAR>
     <?MIVAR COND="$(NXST,$inf)" NAME=$inf><?/MIVAR>
     <?MIVAR COND="$(NXST,$evidence)" NAME=$evidence><?/MIVAR>
-    <?MIVAR COND="$(NXST,$is_not)" NAME=$is_not><?/MIVAR> 
+    <?MIVAR COND="$(NXST,$is_not)" NAME=$is_not><?/MIVAR>
+    <?MIVAR COND="$(NXST,$contribs)" NAME=$contribs><?/MIVAR>
     <?MIVAR COND="$(NXST,$notes)" NAME=$notes><?/MIVAR> 
     <?MIVAR COND="$(NXST,$infdb)" NAME=$infdb><?/MIVAR> 
     <?MIVAR COND="$(NXST,$added)" NAME=$added><?/MIVAR> 
     <?MIVAR COND="$(NXST,$geneid)" NAME=$geneid><?/MIVAR> 
     <?MIVAR COND="$(NXST,$mrkrgoevid)" NAME=$mrkrgoevid><?/MIVAR> 
     <?MIVAR COND="$(NXST,$added)" NAME=$added>false<?/MIVAR> 
-
+    <?MIVAR COND="$(NXST,$goevid)" NAME=$goevid><?/MIVAR> 
+    <?MIVAR COND="$(NXST,$infzdbid)" NAME=$infzdbid><?/MIVAR> 
+    <?MIVAR COND="$(NXST,$old_is_not)" NAME=$old_is_not><?/MIVAR> 
+    <?MIVAR COND="$(NXST,$old_contribs)" NAME=$old_contribs><?/MIVAR> 
     <?MISQL SQL="select mrkr_abbrev from marker where mrkr_zdb_id='$geneid'">
     <?/MISQL>
     <?MIVAR NAME=$genename>$1<?/MIVAR>
-
+<?MIVAR>$inf<?/MIVAR>
 <!--getting form variables to build form-->
+
+    <?MIVAR NAME=SQL1>
+        select goterm_go_id,mrkrgoev_evidence_code,mrkrgoev_notes,mrkrgoev_source_zdb_id,mrkrgoev_zdb_id
+	from marker_go_term_evidence,go_term,marker_go_term 
+	where mrkrgo_zdb_id='$OID' and mrkrgoev_zdb_id='$goevid' and mrkrgoev_mrkrgo_zdb_id=mrkrgo_zdb_id  and mrkrgo_go_term_zdb_id=goterm_zdb_id and mrkrgoev_evidence_code='$evidence';"
+<?/MIVAR>
+
 
     <h1 align=center>GO Annotation Editor</h1>
     <?MISQL SQL="
-        select goterm_go_id,mrkrgoev_evidence_code,mrkrgoev_notes
+        select goterm_go_id,mrkrgoev_evidence_code,mrkrgoev_notes,mrkrgoev_source_zdb_id,mrkrgoev_zdb_id
 	from marker_go_term_evidence,go_term,marker_go_term 
-	where mrkrgo_zdb_id='$OID' and mrkrgoev_mrkrgo_zdb_id=mrkrgo_zdb_id  and mrkrgo_go_term_zdb_id=goterm_zdb_id and mrkrgoev_evidence_code='$evidence';">
+	where mrkrgo_zdb_id='$OID' and mrkrgoev_zdb_id='$goevid' and mrkrgoev_mrkrgo_zdb_id=mrkrgo_zdb_id  and mrkrgo_go_term_zdb_id=goterm_zdb_id and mrkrgoev_evidence_code='$evidence';">
 
       <?MIVAR NAME=$goterm>$1<?/MIVAR>  
       <?MIVAR NAME=$evidence>$(TRIM,$2)<?/MIVAR>
       <?MIVAR NAME=$notes>$3<?/MIVAR>
+      <?MIVAR NAME=$pubid>$4<?/MIVAR>   
+      <?MIVAR NAME=$mrkrgoevid>$5<?/MIVAR>   
    <?/MISQL>
-    
-   <?MISQL SQL="
-      select mrkrgo_is_false_ref
-      from marker_go_term where mrkrgo_zdb_id='$OID'">
-       <?MIVAR NAME=$is_not>$1<?/MIVAR>
-   <?/MISQL>
-   <?MIBLOCK COND="$(EQ,f,$is_not)">
-     <?MIVAR NAME=$is_not>no<?/MIVAR>
-   <?MIELSE>
-     <?MIVAR NAME=$is_not>yes<?/MIVAR>
-   <?/MIBLOCK>
+<!--flag logic here-->    
+  <?MISQL SQL="select goevflag_gflag_name from go_evidence_flag where goevflag_mrkrgoev_zdb_id='$mrkrgoevid'">
+  <?MIVAR NAME=$flag>$1<?/MIVAR>
+  <?MIBLOCK COND="$(NC,$flag,NOVALUE)">
+    <?MIBLOCK COND="$(EC,$flag,not)">
+      <?MIVAR NAME=$is_not>yes<?/MIVAR>
+      <?MIVAR NAME=$old_is_not>yes<?/MIVAR>
+    <?/MIBLOCK>
+    <?MIBLOCK COND="$(EC,$flag,contributes to)">
+      <?MIVAR NAME=$contribs>yes<?/MIVAR>
+      <?MIVAR NAME=$old_contribs>yes<?/MIVAR>
+    <?MIELSE>
+      <?MIVAR NAME=$contribs>no<?/MIVAR>
+      <?MIVAR NAME=$old_contribs>no<?/MIVAR>
+    <?/MIBLOCK>
+ 
+  <?/MIBLOCK>
+<?/MISQL>
+
+
    <?MISQL SQL="select goterm_name from go_term where goterm_go_id='$goterm'">
    <?/MISQL>
    <?MIVAR NAME=$gotermname>$1<?/MIVAR>
@@ -134,7 +208,7 @@ function call_done() {
 
    <form name=newdata method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
    <?MIVAR>
-	<input type=hidden name=MIval value=aa-gomodify.apg>
+	<input type=hidden name=MIval value=aa-do-goedit.apg>
 	<input type=hidden name=OID value=$OID>
 	<input type=hidden name=geneid value=$geneid>
 	<input type=hidden name=goevid value=$goevid>
@@ -166,123 +240,68 @@ function call_done() {
    <?/MISQL>
   </SELECT>
   <?MIVAR>
-    <input type=button name=editevidence value="Update" onClick=goeditevi('$OID','evidence','$evidence','$geneid','$goevid','$OID')><?/MIVAR>
+    <input type=button name=editevidence value="Update" onClick=goeditevi('$OID','evidence','$evidence','$geneid','$goevid','$OID','$infzdbid','$pubid')><?/MIVAR>
     <p>
     <hr>
 <!--end static part of form-->
 
-<!--depending on the data , the contents of teh form change-->  
+<!--depending on the data , the contents of the form change-->  
 
-    <?MISQL SQL="select distinct mrkrgoev_source_zdb_id from marker_go_term_evidence,marker_go_term where mrkrgoev_mrkrgo_zdb_id='$OID' and mrkrgoev_mrkrgo_zdb_id=mrkrgo_zdb_id and mrkrgoev_evidence_code='$evidence'"><?/MISQL>
-      <?MIVAR NAME=$rowcount>$MI_ROWCOUNT<?/MIVAR>
-      <?MISQL SQL="select mrkrgoev_infered_from from marker_go_term_evidence,marker_go_term where mrkrgoev_mrkrgo_zdb_id='$OID' and mrkrgoev_mrkrgo_zdb_id=mrkrgo_zdb_id and mrkrgoev_infered_from is not null and mrkrgoev_evidence_code='$evidence'"><?/MISQL>
-      <?MIVAR NAME=$infcount>$MI_ROWCOUNT<?/MIVAR>
-
-      <?MIVAR NAME=$var1>"select distinct mrkrgoev_source_zdb_id,mrkrgoev_infered_from,mrkrgoev_zdb_id from marker_go_term_evidence,marker_go_term where mrkrgoev_mrkrgo_zdb_id='$OID' and mrkrgoev_mrkrgo_zdb_id=mrkrgo_zdb_id and mrkrgoev_evidence_code='$evidence'"<?/MIVAR>
-
-    <?MISQL SQL="select distinct mrkrgoev_source_zdb_id,mrkrgoev_infered_from,mrkrgoev_zdb_id from marker_go_term_evidence,marker_go_term where mrkrgoev_mrkrgo_zdb_id='$OID' and mrkrgoev_mrkrgo_zdb_id=mrkrgo_zdb_id and mrkrgoev_evidence_code='$evidence'">
+    <?MISQL SQL="select distinct mrkrgoev_source_zdb_id from marker_go_term_evidence,marker_go_term where mrkrgoev_zdb_id='$goevid' and mrkrgoev_mrkrgo_zdb_id='$OID' and mrkrgoev_mrkrgo_zdb_id=mrkrgo_zdb_id and mrkrgoev_evidence_code='$evidence'">
     <?MIVAR NAME=$pub>$1<?/MIVAR>
-    <?MIVAR NAME=$inf>$2<?/MIVAR>
+   <?/MISQL> 
+<?MIBLOCK COND="$(EC,hh,yy)">
+<!--use this for later-->
+<?MIVAR NAME=$inf>$2<?/MIVAR>
     <?MIVAR NAME=$inflength>$(STRLEN,$inf)<?/MIVAR>
     <?MIBLOCK COND="$(>,$(POSITION,$inf,GO),0)">
         <?MIVAR NAME=$inf>$(SUBSTR,$inf,4,10)<?/MIVAR> 
     <?MIELSE>
         <?MIVAR NAME=$inf>$inf<?/MIVAR> 
     <?/MIBLOCK> 
-    <?MIVAR NAME=$mrkrgoevid>$3<?/MIVAR>
-    <?MIBLOCK COND="$(NC,$inf,NULL)">
-        <b>Reference</b>
-        <?MIVAR>$pub<?/MIVAR>
+<!--end this for later-->
+<?/MIBLOCK>
 
-<!--if inference is present and pubs > 1, allow users to only delete inferences-->
+        <b>Reference:</b>
 
-        <?MIBLOCK COND="$(OR,$(>,$infcount,1),$(>,$rowcount,1))">
-          <?MIBLOCK COND="$(NC,$rowcount,1)">
-           <?MIVAR><input type=button name=refdel value="Delete Reference" onClick=goaddpub('$OID','pub','$mrkrgoevid','delete','$geneid','$OID')><?/MIVAR>
-           <p>
-         <?/MIBLOCK>
-        <?/MIBLOCK> 
-        <?MIVAR>$inf<?/MIVAR>
-        <?MIVAR><input type=button name=infdel value="Delete Inference" onClick=godelinf('$OID','$pub','infupdate','$mrkrgoevid','$geneid','$inf','$OID')><?/MIVAR>
-        <p>
-    <?MIELSE>
+     <input type=text name=pub size=20 value=<?MIVAR>$pub<?/MIVAR>>
+     <?MIVAR><input type=button name=refadd align=center value="Update Reference" onClick=goaddpub('$OID','pub','$goevid','add','$geneid','$OID','$pubid','$infzdbid')><?/MIVAR>
+<hr>
+<!--This section only if there are inferences, add MIBLOCK COND here-->
+<b>Inferences:</b>
+<?MIVAR NAME=SQL1>"select infgrmem_inferred_from from inference_group_member, inference_group where infgrp_mrkrgoev_zdb_id='$goevid' and infgrp_zdb_id=infgrmem_infgrp_zdb_id and infgrp_zdb_id='$infzdbid'"<?/MIVAR>
+    <?MISQL SQL="select infgrmem_inferred_from from inference_group_member, inference_group where infgrp_mrkrgoev_zdb_id='$goevid' and infgrp_zdb_id=infgrmem_infgrp_zdb_id and infgrp_zdb_id='$infzdbid'">
+    <?MIVAR NAME=$infer>$1<?/MIVAR>
+    <p>
+    <?MIVAR>$infer<?/MIVAR>  
+        <?MIVAR><input type=button name=infdel value="Delete Inference" onClick=godelinf('$OID','$pub','infupdate','$mrkrgoevid','$geneid','$inf','$OID','$infzdbid','$infer')><?/MIVAR>
+<?/MISQL>
 
-<!--if no inference, but pubs > 1, only allow deletion of references-->
 
-       <?MIBLOCK COND="$(>,$rowcount,1)">
-           <b>Reference</b> 
-           <?MIVAR>$pub<?/MIVAR>
-           <?MIVAR><input type=button name=refdel value="Delete Reference" onClick=goaddpub('$OID','pub','$mrkrgoevid','delete','$geneid','$OID')><?/MIVAR>
-         <p>
-       <?/MIBLOCK>
-    <?/MIBLOCK>
-   <?/MISQL>
+         <p>            
+            <select name=infdb><option value=ZFIN>ZFIN<option value=GO>GO<?MISQL SQL="select distinct fdb_db_name from foreign_db where fdb_db_name in ('Genbank','RefSeq','SWISS-PROT','InterPro','GenPept')"><option value="$1">$1<?/MISQL></select>
 
-<!--if only one inference and one reference, allow addition of references and /or inference-->
-
-   <?MIBLOCK COND="$(AND,$(=,$rowcount,1),$(=,$infcount,1))">
-     <p>
-     <input type=text name=pub size=20>
-     <?MIVAR><input type=button name=refadd align=center value="Add Reference" onClick=goaddpub('$OID','pub','$mrkrgoevid','add','$geneid','$OID')><?/MIVAR>
-     <hr>
-     <?MIBLOCK COND="$(=,$(STRLEN,$infdb),0)">
-            <select name=infdb><option value=ZFIN>ZFIN<option value=GO>GO<?MISQL SQL="select distinct fdbcont_fdb_db_name from foreign_db_contains where fdbcont_fdb_db_name in ('Genbank','RefSeq','SWISS-PROT','InterPro','GenPept')"><option value="$1">$1<?/MISQL></select>
-     <?MIELSE>
-            <select name=infdb><option value=GO>GO<option value=ZFIN>ZFIN<?MISQL SQL="select distinct fdbcont_fdb_db_name from foreign_db_contains where fdbcont_fdb_db_name in ('Genbank','RefSeq','SWISS-PROT','InterPro','GenPept')"><option value="$1">$1<?/MISQL></select>
-     <?/MIBLOCK>
-     <?MIVAR><input type=text name=inference  size=20 onChange=call_valinf('$OID','$mrkrgoevid','$geneid','modify','GO:$goterm','$evidence','$pub') <?MIBLOCK COND="$(XST,$inference)">value=<?MIVAR>$inference<?/MIVAR>><?/MIBLOCK><?/MIVAR>
-     <?MIBLOCK COND="$(EC,$added,false)">
-        <?MIVAR><input type=button name=refadd align=center value="Add Inference" onclick=goaddinf('$OID','inference','$mrkrgoevid','$geneid','$OID')><?/MIVAR>
-     <?/MIBLOCK>
-   <?MIELSE>
-
-<!--if only 1 reference, allow addition of inference and pub-->
-     <p>
-     <?MIBLOCK COND="$(=,$rowcount,1)">
-       <?MIBLOCK COND="$(=,$infcount,0)">
-         <input type=text name=pub size=20>
-         <?MIVAR><input type=button name=refadd align=center value="Add Reference" onClick=goaddpub('$OID','pub','$mrkrgoevid','add','$geneid','$OID')><?/MIVAR>
-         <hr>
-         <p>
-         <?MIVAR>Add Inference for $pub<?/MIVAR>
-         <br>            
-         <?MIBLOCK COND="$(=,$(STRLEN,$infdb),0)">
-            <select name=infdb><option value=ZFIN>ZFIN<option value=GO>GO<?MISQL SQL="select distinct fdbcont_fdb_db_name from foreign_db_contains where fdbcont_fdb_db_name in ('Genbank','RefSeq','SWISS-PROT','InterPro','GenPept')"><option value="$1">$1<?/MISQL></select>
-         <?MIELSE>
-            <select name=infdb><option value=GO>GO<option value=ZFIN>ZFIN<?MISQL SQL="select distinct fdbcont_fdb_db_name from foreign_db_contains where fdbcont_fdb_db_name in ('Genbank','RefSeq','SWISS-PROT','InterPro','GenPept')"><option value="$1">$1<?/MISQL></select>
-         <?/MIBLOCK>
-
-        <?MIVAR><input type=text name=inference  size=20 onChange=call_valinf('$OID','$mrkrgoevid','$geneid','modify','GO:$goterm','$evidence','$pub') <?MIBLOCK COND="$(XST,$inference)">value=<?MIVAR>$inference<?/MIVAR>><?/MIBLOCK><?/MIVAR>
-        <?MIBLOCK COND="$(EC,$added,false)">
-           <?MIVAR><input type=button name=refadd align=center value="Add Inference" onclick=goaddinf('$OID','inference','$mrkrgoevid','$geneid','$OID')><?/MIVAR>
-        <?/MIBLOCK>
-      <?/MIBLOCK>
-    <?/MIBLOCK>
-  <?/MIBLOCK>
-<p>
-
-<!--if more than one pub but no inference, allow addition of pubs only-->
-
-  <?MIBLOCK COND="$(>,$rowcount,1)">
-     <?MIBLOCK COND="$(=,$infcount,0)">
-       <input type=text name=pub size=20>
-       <?MIVAR><input type=button name=refadd align=center value="Add Reference" onClick=goaddpub('$OID','pub','$mrkrgoevid','add','$geneid','$OID')><?/MIVAR>
-     <?/MIBLOCK>
-  <?/MIBLOCK>
+        <?MIVAR><input type=text name=inference  size=20  <?MIBLOCK COND="$(XST,$inference)">value=<?MIVAR>$inference<?/MIVAR><?/MIBLOCK><?/MIVAR>>
+           <?MIVAR><input type=button name=infadd align=center value="Add Inference" onclick=goaddinf('$OID','inference','$mrkrgoevid','$geneid','$OID','$infzdbid','$pubid')><?/MIVAR>
 <hr>
   <b>NOT </b>
   <input type="checkbox" name="is_not" value= "no" <?MIVAR COND="$(EQ,yes,$is_not)">CHECKED<?/MIVAR>>
   <p>
+  <b>Contributes to </b> 
+  <input type="checkbox" name="contribs" value= "no" <?MIVAR COND="$(EQ,yes,$contribs)">CHECKED<?/MIVAR>>(<i>For Mol. Func. ONLY </i>)
+<p>
+  <?MIVAR> <input type=button name=editflags value="Update Qualifiers" onClick=goeditflag('$OID','flag','$geneid','$mrkrgoevid','$OID','$old_is_not','$old_contribs')><?/MIVAR>
+  <p>
 <!--end dynamic part of form-->
 
 <!--begin static part again-->
+<hr>
 
   <b>Notes </b>
   <textarea rows=5 cols=50 name=comments><?MIVAR COND="$(NC,$notes,NULL)">$notes<?/MIVAR></textarea>
-  <?MIVAR> <input type=button name=editnotes value="Update IS NOT and Notes" onClick=goeditnote('$OID','note','$mrkrgoevid','$geneid','$OID')><?/MIVAR>
+  <?MIVAR> <input type=button name=editnotes value="Update Notes" onClick=goeditnote('$OID','note','$mrkrgoevid','$geneid','$OID','$pub','$infzdbid')><?/MIVAR>
 
 <!--end static part-->
-
   <hr>
   <input type=button name=done value="Done editing" onClick=call_done()>
 </form>
@@ -290,4 +309,6 @@ function call_done() {
 <!--end form-->
 
 <?/MIBLOCK>  <!-- ends authorized -->
-
+<?MICOMMENT>
+    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-goedit.apg&OID='+goevid+'&attr='+attr+'&geneid='+geneid+'&mrkrgoevid='+mrkrgoevid+'&pubid='+pubid+'&goid='+goid+'&evidence='+value+'&note='+note);
+<?/MICOMMENT>
