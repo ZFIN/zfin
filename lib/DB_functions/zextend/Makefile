@@ -59,6 +59,10 @@ CC= cc
 
 INCDIR = $(INFORMIXDIR)/incl/dmi
 LIBDIR = $(INFORMIXDIR)/lib 
+
+# Use xcode because we are creating an so.  See cc man page for details.
+
+CFLAGS = -xcode=pic32
 MICFLAGS = -DPLATFORM=solaris -g -DELF -v -DPOSIX_SIGNALS -DSOLARIS -I $(INCDIR)
 MILIBS = -lsocket -lnsl -L$(LIBDIR)
 
@@ -75,7 +79,7 @@ $(TARGETDIR) :
 	$(TARGET_MKDIR) $(TARGETDIR);
 
 $(TARGET) : $(OBJS)
-	$(CC) -G $(OBJS) -o zextend.so            # create local copy
+	$(CC) $(CFLAGS) -G $(OBJS) -o zextend.so            # create local copy
 	-$(DBACCESS) $(DBNAME) drop_functions.sql  # drop functions in DB
 	$(TARGET_CP) zextend.so $(TARGET)	  # where DB will find it
 	$(MAKESPECIFIC) create_functions.sql $(TRANSLATETABLE) cftemp.sql
@@ -83,7 +87,7 @@ $(TARGET) : $(OBJS)
 	rm -f cftemp.sql			  # prevent hanky panky
 
 $(OBJS) : %.o : %.c
-	$(CC) -I $(INCDIR) $(MICFLAGS) -c $<
+	$(CC) $(CFLAGS) -I $(INCDIR) $(MICFLAGS) -c $<
 
 
 
