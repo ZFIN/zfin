@@ -280,7 +280,7 @@ insert into tmp_obs_GO (name, id, def, is_obsolete, comment)
     from tmp_obs 
     where def like '%OBSOLETE%' or 
           def like '%obsolete%' or
-	  is_obsolete = 't' ;
+	  is_obsolete = 'true' ;
 
 create temp table tmp_obs_no_dups (
 			   name	    varchar(255),
