@@ -22,17 +22,19 @@ comments -- reasons for doing update
 <?MIVAR COND="$(NXST,$new_value)" NAME=$new_value>NULL<?/MIVAR>
 <?MIVAR COND="$(NXST,$old_value)" NAME=$old_value>NULL<?/MIVAR>
 <?MIVAR COND="$(NXST,$comments)" NAME=$comments>NULL<?/MIVAR>
+<?MIVAR COND="$(NXST,$abbrev)" NAME=$abbrev><?/MIVAR>
 
 <?MIVAR NAME=$new_value DELIMIT="'" REPLACE="''">$new_value<?/MIVAR>
 <?MIVAR NAME=$old_value DELIMIT="'" REPLACE="''">$old_value<?/MIVAR>
 <?MIVAR NAME=$comments DELIMIT="'" REPLACE="''">$comments<?/MIVAR>
 
-<!-- insert update record for the update! -->
 <?MISQL SQL="insert into updates (submitter_id,submitter_name, rec_id, field_name, old_value, comments, when) values ('$ZDB_ident', '$ZDB_name','$OID', '$attr',  '$old_value', '$comments', current);"><?/MISQL>
 
+<?MISQL COND="$(AND,$(NC,$attr,lcsali_locus_name_alias),$(OR,$(EC,$attr_type,text),$(EC,$attr_type,textarea)))" SQL="update locus set $attr='$new_value' where zdb_id='$OID';"><?/MISQL>
 
-<?MISQL COND="$(OR,$(EC,$attr_type,text),$(EC,$attr_type,textarea))" SQL="update locus set $attr='$new_value' where zdb_id='$OID';"><?/MISQL>
+<?MISQL COND=$(AND,$(EC,$attr,lcsali_locus_name_alias),$(EC,$attr_type,text))"" SQL="insert into locus_alias  (lcsali_locus_zdb_id, lcsali_locus_name_alias, lcsali_locus_abbrev_alias) values ('$OID', '$new_value', '$abbrev');"><?/MISQL>
 
+<!-- insert update record for the update! -->
 
 <!-- Special case for deleting one of the associated images/sources/pubs -->
 <?MIBLOCK COND="$(EC,$attr_type,special-listitem)">
@@ -42,7 +44,12 @@ comments -- reasons for doing update
 <?/MIBLOCK>  <!-- ends special listitem case -->
 
 
+<!-- Special case for deleting one of the aliases -->
+<?MIBLOCK COND="$(EC,$attr_type,Delete_listitem)">
+<?MISQL COND="$(EC,$attr,lcsali_locus_name_alias)" SQL="delete from locus_alias where lcsali_locus_zdb_id='$OID' and lcsali_locus_name_alias='$old_value';"><?/MISQL>
+<?MISQL COND="$(EC,$attr,fishali_fish_name_alias)" SQL="delete from fish_alias where fishali_fish_name_alias='$old_value' and exists (select 'x' from fish where fish.locus  = '$OID' and fish.zdb_id = fishali_fish_zdb_id) ;"><?/MISQL>
 
+<?/MIBLOCK>  <!-- ends delete listitem case -->
 
 <?/MIBLOCK> <!-- ends cond authorized -->
 
