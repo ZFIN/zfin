@@ -116,7 +116,7 @@
 		</tr>
 	    </table>
             <center>
-            <div class="category_header">Quick Search Results for '<%=queryTerm%>' (<%=totalResultsCount%> <%=resultsLabel%>)</div>
+            <div class="category_header">Search Results for '<%=queryTerm%>' (<%=totalResultsCount%> <%=resultsLabel%>)</div>
                            <% 
                 if (ignoredWords != null && ignoredWords.size() > 0)
                     {
@@ -231,70 +231,6 @@
                                 }
                              %>
                              </font>
-                        </td>
-                    </tr>
-                    <%
-                    }
-                %>
-                <% 
-                if (categoryDescription == "Expression")
-                    {
-                    %>
-                    <tr>
-                        <td colspan="2" align="left">
-                             <b>
-                               <font color="#000000">
-                                Please use the ZFIN <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg">Expression</a> search form for a highly customizable search. 
-                               </font>
-                             </b>
-                        </td>
-                    </tr>
-                    <%
-                    }
-                %>
-                <% 
-                if (categoryDescription == "Mutants/Transgenics")
-                    {
-                    %>
-                    <tr>
-                        <td colspan="2" align="left">
-                           <b>   
-                             <font color="#000000">
-                             Please use the ZFIN <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg">Mutants/Transgenics</a> search form for a highly customizable search. 
-                             </font>
-                           </b>
-                        </td>
-                    </tr>
-                    <%
-                    }
-                %>
-                <% 
-                if (categoryDescription == "Anatomy")
-                    {
-                    %>
-                    <tr>
-                        <td colspan="2" align="left">
-                           <b>
-                             <font color="#000000">
-                             Please use the ZFIN <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg">Anatomy</a> search form for a highly customizable search. 
-                           </b>
-                             </font>
-                        </td>
-                    </tr>
-                    <%
-                    }
-                %>
-                <% 
-                if (categoryDescription == "Genes/Markers/Clones")
-                    {
-                    %>
-                    <tr>
-                        <td colspan="2" align="left">
-                           <b>
-                             <font color="#000000">
-                             Please use the ZFIN <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-newmrkrselect.apg">Genes/Markers/Clones</a> search form for a highly customizable search. 
-                             </font>
-                           </b>
                         </td>
                     </tr>
                     <%
