@@ -228,14 +228,22 @@ optional:
   <?MICOMMENT>delete from zactive data, check if that deletes the last go unknown for 
               the gene, if so, clean out the curation pub on go unknown. 
   <?/MICOMMENT>
-  <?MISQL SQL="select mrkrgoev_mrkr_zdb_id
+  <?MISQL SQL="select mrkrgoev_mrkr_zdb_id, mrkrgoev_source_zdb_id
 		 from marker_go_term_evidence
 		where mrkrgoev_zdb_id = '$OID';">
 	<?MIVAR NAME=mrkrzdbid>$1<?/MIVAR>
+	<?MIVAR NAME=pubid>$2<?/MIVAR>
   <?/MISQL>
   <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id='$OID'; 
 	       execute procedure p_drop_go_unknown_attribution('$mrkrzdbid');">
   <?/MISQL>
+  <?MICOMMENT> call attrib_check.apg to check and pop-up alert in the case 
+	that the old pub now has no more specific referencial data.
+  <?/MICOMMENT>
+  <?MIVAR NAME=OID_save>$OID<?/MIVAR>
+  <?MISQL SQL="select WebExplode(object,'pubId=$pubid&OID=$mrkrzdbid') from webPages where ID='aa-attrib_check.apg';">$1<?/MISQL>
+  <?MIVAR NAME=OID>$OID_save<?/MIVAR>
+
 
   <?MISQL SQL="
       insert into updates (submitter_id,submitter_name, rec_id, old_value,field_name, comments,when)
