@@ -48,7 +48,7 @@ STAGE_STATS  = create_stg_name_ext.sql create_stg_name_long.sql \
 	       get_stg_name_html.sql get_stg_name_long_html.sql \
 	       stg_window_consistent.sql fimg_overlaps_stg_window.sql \
 	       anatitem_overlaps_stg_window.sql stg_windows_overlap.sql \
-	       p_stg_hours_consistent.sql
+	       p_stg_hours_consistent.sql p_fimg_overlaps_stg_window.sql
 
 # insert_clone and regen_anatomy.sql are special cases.  They contain 
 # multiple procedures/functions in a single file.  We thought about splitting 
