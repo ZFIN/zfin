@@ -25,7 +25,7 @@ SUBDIRS = UPDATING
 
 GENERICS = fishlister.apg fishselect.apg fishview.apg new-fish.apg \
 	process-fish-aux.apg process-fish.apg setup-new-fish.apg \
-	update-fish.apg
+	update-fish.apg zirclist.apg
 
 # Use default rules for app page directories.
 
