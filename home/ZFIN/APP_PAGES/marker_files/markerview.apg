@@ -537,7 +537,7 @@
 <br><form name=updater1>
 <b>Add link to Seq DB:</b> &nbsp;
 DBname:<SELECT name=seqdb>
-<?MISQL SQL="select distinct DB_name from foreign_DB where db_type like '%sequence' and db_name <> 'BLAST';">
+<?MISQL SQL="select distinct DB_name from foreign_DB where db_type='sequence' and db_name <> 'BLAST';">
 <option value="$1">$1
 <?/MISQL>
 </SELECT>
@@ -572,6 +572,7 @@ Accession:<input type=text size=15 name=seq_acc>
   $(IF,$(=,$MI_CURRENTROW,1),<TD align=left>)
   
   <!-- if more than five Genbank, Genbank info go to another page -->
+
   <?MIBLOCK COND="$(NC,$1,Genbank)">
 
     <li><?MIVAR>
@@ -603,24 +604,22 @@ Accession:<input type=text size=15 name=seq_acc>
 
   <li><?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genbank.apg&OID=$OID">other sequence info</A><?/MIVAR>
 
-<?MIELSE COND="$(>, $MI_ROWCOUNT,0)">
+<?MIELSE COND="$(>,$count,0)">
 
   <?MIVAR NAME=link><?/MIVAR>
   <?MIVAR NAME=n>1<?/MIVAR>
   <?MIBLOCK INDEX=$link FOREACH=$gblinks>
 	<li><?MIVAR>
-	$(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$gbaccs"')>")
+	$(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$gbaccs[$n]"')>")
 	<A HREF="$link">Genbank:$gbaccs[$n]</A>
         $(SETVAR,$n,$(+,$n,1))
         <?/MIVAR>
    <?/MIBLOCK>
 
-<?MIELSE>
-
-   None submitted.
-
 <?/MIBLOCK> 
-	
+
+<?MIVAR NAME=$noFirstClassSeq>$(IF,$(=,$MI_ROWCOUNT,0),1,0)<?/MIVAR>	
+
 <?MIVAR> $(IF,$(!=,$MI_CURRENTROW,0),</TD>) <?/MIVAR>
 
 <?MISQL SQL="
@@ -652,6 +651,9 @@ Accession:<input type=text size=15 name=seq_acc>
   <!--------- ---------------->
   $(SETVAR,$lastitem,$1)
 <?/MISQL>
+<?MIVAR>
+ $(IF,$(AND,$noFirstClassSeq,$(=,$MI_ROWCOUNT,0)),None submitted.)
+<?/MIVAR>
 </TD>
 </TR></TABLE>
 <?MISQL SQL="
