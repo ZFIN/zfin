@@ -59,7 +59,7 @@
 			images.unl 
 			authors.unl 
 			(is_gene.unl)
-			(blast2zfin.out)	
+			(blast2zfin.scnd)	
     $description$ :
 	This master script calls parseTalbot.pl first. The parser incorporate stage_codes.txt and view_codes.txt into expression, keyword, and image files, and generates unl files for loading. It also interact with database to query the accession number and check the consistency of Talbot naming with ZFIN naming.
 	Check accession number: 
@@ -99,20 +99,19 @@
 ---------------------
 
  Do a "ls -l *.err";
-    1) prb_already_has_xpat.err: this might be ok, exam the assay name, fish line and publication to see if that is a real duplication. Better to go over by curators. If that is fine, and no other errors, comment out the exit code from load_gxp.sh to ignore this report.   
-    2) unknown_probelib.err    : there might be an alias library name in zfin
-    #3) clone_data_conflict.err: vector conflict, or library conflict, or polymerase conflict if exist, or digest conflict if exist. Thisse has a lot vector conflict with ZGC, we stick with ZGC, which makes this check unnessicery. 
-    4) prb_without_xpat.err    : ask curator if we want to only load clone info or delete the entry.
-    5) dup_xpat.err : xpat data with same clone name, same start and end stage, delete one. 
-    6) xpat_stg_unknown.err: stage not in zfin stage table. (not for thisse but talbot)
-    7) keywords.undef.err: keywords not in anatomical dictionary.
-    8) keywords_stgerr.err: fail anatitem_overlaps_stg_window check
-    9) kwd_xpat_unconsistent.err: keyword's stage not in xpat file
-    10) fimg_preparation_unknown.err
-    11) fimg_view_unknow.err
-    12) img_xpat_unconsist.err: image stage not in xpat file
-    13) suthor_dup.err: duplicate entry in author file
-    14) non_zfin_author.err:  
+    1) exist_same_xpat_experiment_from_directsub.err: when there exists an expression experiment record using the same probe and is also from direct submission, it is highly possible to be from the same submission. Upon this error, check if the existing one has the same submission source, if yes, send to curator to contact the source for correction. Otherwise, ignore this error by commenting out the exit code from load_gxp.sh after all the other errors are fixed.   
+    2) unknown_probelib.err    : there might be an alias library name in zfin    
+    3) prb_without_xpat.err    : ask curator if we want to only load clone info or delete the entry.
+    4) dup_xpat.err : xpat data with same clone name, same start and end stage, delete one. 
+    5) xpat_stg_unknown.err: stage not in zfin stage table. (not for thisse but talbot)
+    6) keywords.undef.err: keywords not in anatomical dictionary.
+    7) keywords_stgerr.err: fail anatitem_overlaps_stg_window check
+    8) kwd_xpat_unconsistent.err: keyword's stage not in xpat file
+    9) fimg_preparation_unknown.err
+    10) fimg_view_unknow.err
+    11) img_xpat_unconsist.err: image stage not in xpat file
+    12) suthor_dup.err: duplicate entry in author file
+    13) non_zfin_author.err:  
 
-    *) xpatstg_withno_kwd_img.del: there are default stages in Thisse template. Identify them by exp_found "t", comments "No comments", no keywords and no images.  Should we also delete no annotation, no image data? we got some from Talbot lab. 
+    *) xpatstg_withno_kwd_img.del: There are default stages defined in Thisse template. Occasionally some are left in with no data added. The script identify them by exp_found as "t", comments as "No comments", no keywords and no images. Those are not loaded.  
 
