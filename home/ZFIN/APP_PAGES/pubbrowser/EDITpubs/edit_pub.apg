@@ -163,7 +163,7 @@ For instance, a paper by John Pat Dole, Richard M.Nixon and Newt Gingrinch would
 <?MIVAR COND="$(NXST,$anon1text)" NAME=$anon1text><?/MIVAR>
 <?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>abstract<?/MIVAR>
 <?MIVAR COND="$(NXST,$authtype)" NAME=$authtype>anyauth<?/MIVAR>
-<?MIVAR COND="$(NXST,$jtype)" NAME=$jtype>any<?/MIVAR>
+<?MIVAR COND="$(NXST,$search_jtype)" NAME=$search_jtype>any<?/MIVAR>
 <?MIVAR COND="$(NXST,$yr_cmpr)" NAME=$yr_cmpr>=<?/MIVAR>
 <?MIVAR COND="$(NXST,$century)" NAME=$century>19<?/MIVAR>
 <?MIVAR COND="$(NXST,$year)" NAME=$year><?/MIVAR>
