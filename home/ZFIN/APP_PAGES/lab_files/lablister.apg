@@ -81,46 +81,51 @@
 <!-- NOW do slightly different displays, depending on whether you are selecting a value, or merely browsing. -->
 
 <TABLE WIDTH=100%>
-<TH>&nbsp;</TH><TH>&nbsp;</TH><TH align=left>LAB</TH> <TH align=left>ADDRESS</TH>
+  <TH>&nbsp;</TH>
+  <TH align=left>LAB</TH>
+  <TH align=left>ADDRESS</TH>
 
 
-<!--- WALKING WINDOW --->
-<!--- Initialization --->
+  <!--- WALKING WINDOW --->
+  <!--- Initialization --->
 
-<?MIVAR NAME=WINSIZE DEFAULT=25>$WINSIZE<?/MIVAR>
-<?MIVAR NAME=BEGIN DEFAULT=1>$START<?/MIVAR>
-
-
-<!--- DEFINITION OF RANGES --->
-<?MIVAR NAME=BEGIN>$(IF,$(<,$BEGIN,1),1,$BEGIN)<?/MIVAR> 
-<?MIVAR NAME=END>$(+,$BEGIN,$WINSIZE)<?/MIVAR>
-<?MIVAR NAME=$rowNUM>$BEGIN<?/MIVAR>
+  <?MIVAR NAME=WINSIZE DEFAULT=25>$WINSIZE<?/MIVAR>
+  <?MIVAR NAME=BEGIN DEFAULT=1>$START<?/MIVAR>
 
 
-<!--- EXECUTION --->
-<!--- Query Database --->
-<?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE
-	SQL="select name,address,zdb_id from lab $constraint order by name;">
+  <!--- DEFINITION OF RANGES --->
+  <?MIVAR NAME=BEGIN>$(IF,$(<,$BEGIN,1),1,$BEGIN)<?/MIVAR> 
+  <?MIVAR NAME=END>$(+,$BEGIN,$WINSIZE)<?/MIVAR>
+  <?MIVAR NAME=$rowNUM>$BEGIN<?/MIVAR>
 
-	<TR> 
-<?MIVAR><TD valign=top>&nbsp;</TD><?/MIVAR>
-		<TD valign=top>
-			$(IF,$(XST,$return_rec),
-				<FONT SIZE=-1> 
-				<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3" TARGET=content>SELECT</A> 
-				</FONT>)
-		</TD>
-		<TD valign=top> 
-			<FONT SIZE=-1> 
-			<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$3" TARGET="content">$1</A>
-			</FONT> 
-		</TD>  
-		<TD> 
-			<FONT SIZE=-1> <pre>$2</pre> </FONT> 
-		</TD>  
-	</TR>
-		<?MIVAR name=$rowNUM>$(+,$rowNUM,1)<?/MIVAR>
-<?/MISQL>
+
+  <!--- EXECUTION --->
+  <!--- Query Database --->
+  <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
+    select name, address, zdb_id 
+      from lab 
+      $constraint 
+      order by name;">
+
+    <TR> 
+      <TD valign=top>
+	<?MIVAR COND=$(XST,$return_rec)>
+	  <FONT SIZE=-1> 
+	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3" TARGET=content>SELECT</A> 
+	  </FONT>
+	<?/MIVAR>
+      </TD>
+      <TD valign=top> 
+	<FONT SIZE=-1> 
+	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$3" TARGET="content">$1</A>
+	</FONT> 
+      </TD>  
+      <TD> 
+	<FONT SIZE=-1> <pre>$2</pre> </FONT> 
+      </TD>  
+    </TR>
+    <?MIVAR name=$rowNUM>$(+,$rowNUM,1)<?/MIVAR>
+  <?/MISQL>
 
 </TABLE>
 <BR>
