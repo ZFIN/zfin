@@ -187,12 +187,12 @@ where mrkrgoev_mrkrgo_zdb_id='$OID' and mrkrgoev_evidence_code='$evidence';"
   <?MIELSE>
    <?MISQL SQL="execute function get_id('MRKRGOEV')"><?/MISQL>
    <?MIVAR NAME=newgoevid>$1<?/MIVAR>
-   <?MISQL SQL="insert into zdb_active_data values('$newgoevid')"><?/MISQL>
-   <?MISQL SQL="insert into record_attribution values ('$newgoevid','$pub')"><?/MISQL>
+   <?MISQL SQL="insert into zdb_active_data (zactvd_zdb_id) values('$newgoevid')"><?/MISQL>
+   <?MISQL SQL="insert into record_attribution (recattrib_data_zdb_id,recattrib_source_zdb_id) values  ('$newgoevid','$pub')"><?/MISQL>
    <?MIVAR NAME=$valueinf>$valuedb:$value<?/MIVAR>
 <?MIVAR>$valueinf<?/MIVAR>
 <?MIVAR>$currinflink<?/MIVAR>
-   <?MISQL SQL="insert into marker_go_term_evidence values ('$newgoevid','$OID','$pub','$evidence','$currinflink','')"><?/MISQL>
+   <?MISQL SQL="insert into marker_go_term_evidence (mrkrgoev_zdb_id,mrkrgoev_mrkrgo_zdb_id, mrkrgoev_source_zdb_id, mrkrgoev_evidence_code, mrkrgoev_infered_from, mrkrgoev_notes) values ('$newgoevid','$OID','$pub','$evidence','$currinflink','')"><?/MISQL>
    <?MIVAR NAME=$added>false<?/MIVAR>
    <?MIVAR NAME=SQL5>"insert into zdb_active_data values('$newgoevid')"<?/MIVAR>
    <?MIVAR NAME=SQL6>"insert into marker_go_term_evidence values ('$newgoevid','$OID','$pub','$evidence','$valuedb:$value','')<?/MIVAR>
@@ -220,9 +220,9 @@ where mrkrgoev_mrkrgo_zdb_id='$OID' and mrkrgoev_evidence_code='$evidence';"
     <?MIELSE>
     <?MISQL SQL="execute function get_id('MRKRGOEV')"><?/MISQL>
     <?MIVAR NAME=$newgoevid>$1<?/MIVAR> 
-      <?MISQL SQL="insert into zdb_active_data values ('$newgoevid')"><?/MISQL>
+      <?MISQL SQL="insert into zdb_active_data (zactvd_zdb_id)  values ('$newgoevid')"><?/MISQL>
   
-      <?MISQL SQL="insert into record_attribution values ('$newgoevid','$value')"><?/MISQL>
+      <?MISQL SQL="insert into record_attribution (recattrib_data_zdb_id,recattrib_source_zdb_id) values ('$newgoevid','$value')"><?/MISQL>
       <?MISQL SQL="select mrkrgoev_infered_from from marker_go_term_evidence where mrkrgoev_mrkrgo_zdb_id='$OID' and mrkrgoev_evidence_code='$evidence'"><?/MISQL>
       <?MIVAR NAME=$infexist>$1<?/MIVAR>
       <?MIBLOCK COND="$(EC,$infexist,NULL)">
