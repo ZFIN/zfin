@@ -17,7 +17,7 @@ You may also optionally pass many other constraints on the upcoming selection th
 <?MIVAR COND="$(NXST,$constraint)" NAME=$constraint><?/MIVAR>
 
 <!-- special constraints to possibly pass -->
-<?MIVAR COND="$(EC,$select_from,gene)" NAME=$constraint>&marker_type=GENE<?/MIVAR>
+<?MIVAR COND="$(EC,$select_from,marker)" NAME=$constraint>&marker_type=GENE<?/MIVAR>
 <?MIVAR COND="$(EC,$select_from,fish)" NAME=$constraint>&update_lineage=true<?/MIVAR>
 <?MIVAR COND="$(XST,$return_rec)" NAME=$constraint>&return_rec=$return_rec$constraint<?/MIVAR>
 
