@@ -3,12 +3,14 @@
 Required vars:  link_id.
 
 Possible vars: update
+
 -->
-<HTML>
+
+
 <HEAD>
   <SCRIPT>
-     function pick_me(link_id,mark_id,source) {
-       window.location.href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-insert_linkage.apg&link_id="+link_id+"&calling_form=members&member="+mark_id+"&source="+source;
+     function pick_me(link_id,mark_id,source,lg,usercomments,ZDB_ident) {
+       window.location.href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-insert_linkage.apg&link_id="+link_id+"&calling_form=members&member="+mark_id+"&source="+source+"&lg="+lg+"&usercomments="+usercomments+"&ZDB_ident="+ZDB_ident;
      }
 
 
@@ -50,6 +52,10 @@ Possible vars: update
 <input type=hidden name=calling_form value="members">
 <?MIVAR>
   $(IF,$(XST,$update),"<input type=hidden name=update value="$update">")
+  $(IF,$(XST,$lg),"<input type=hidden name=lg value="$lg">")
+  $(IF,$(XST,$source),"<input type=hidden name=source value="$source">")
+  $(IF,$(XST,$usercomments),"<input type=hidden name=usercomments value="$(URLENCODE,$usercomments)">")
+
   <input type=hidden name=link_id value="$link_id">
 <?/MIVAR>
 
@@ -67,12 +73,30 @@ Possible vars: update
 <?MIVAR COND="$(NXST,$nsearch)" NAME=$nsearch><?/MIVAR>
 
 <p>
-<?MISQL SQL="select distinct recattrib_source_zdb_id, lnkg_or_lg, lnkg_comments 
-	from linkage , record_attribution 
-        where lnkg_zdb_id = '$link_id'
-	  and recattrib_data_zdb_id = lnkg_zdb_id;">
-  <?MIVAR NAME=$source>$1<?/MIVAR>
+
+<!-- check if linkage record has been created - one member has been specified -->
+
+<?MISQL SQL="select * from zdb_active_data
+		where zactvd_zdb_id  = '$link_id'
+		;">
+<?/MISQL>
+
+<?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+
+  <?MISQL SQL="select distinct recattrib_source_zdb_id, lnkg_or_lg, lnkg_comments 
+	  from linkage , record_attribution 
+	  where lnkg_zdb_id = '$link_id'
+	    and recattrib_data_zdb_id = lnkg_zdb_id;">
+    <?MIVAR NAME=$source>$1<?/MIVAR>
+    <?MIVAR NAME=$lg>$2<?/MIVAR>
+    <?MIVAR NAME=$usercomments>$3<?/MIVAR>
+  <?/MISQL>
+<?/MIBLOCK>
+
+<?MIVAR NAME=$usercomments>$(URLDECODE,$usercomments)<?/MIVAR>
+
   Source: 
+
   <?MIBLOCK COND="$(>,$(POSITION,$source,PUB),0)">
     <?MISQL SQL="select distinct title from publication  
         where zdb_id = '$source';">
@@ -85,12 +109,13 @@ Possible vars: update
     <?MIVAR NAME=$display_source>$1<?/MIVAR>
     <?/MISQL>
   <?/MIBLOCK>
-  $display_source
-  <br>
-  LG: $(IF,$(EC,$2,0),,$2)
-  <br>
-  Comments: $3
-<?/MISQL>
+  <?MIVAR>  
+    $display_source
+    <br>
+    LG: $(IF,$(EC,$lg,0),,$lg)
+    <br>
+    Comments: $usercomments
+  <?/MIVAR>
 
   <!-- output the current members of the linkage - if any exist -->
 <p>
@@ -146,7 +171,7 @@ Linkage Members:   (At least one member must be specified) <br>
 	       order by a.mrkr_abbrev;">
 	   <TR>
 	     <TD>
-	       <input type=button name=member_selected value="Select" onClick="pick_me('$link_id','$1','$source');">
+	       <input type=button name=member_selected value="Select" onClick="pick_me('$link_id','$1','$source','$lg','$(URLENCODE,$usercomments)','$ZDB_ident');">
 	     </TD>
 	     <TD>
 	       $2($4)
@@ -172,7 +197,7 @@ Linkage Members:   (At least one member must be specified) <br>
 	       order by b.abbrev;">
 	   <TR>
 	     <TD>
-	       <input type=button name=member_selected value="Select" onClick="pick_me('$link_id','$1','$source');">
+	       <input type=button name=member_selected value="Select" onClick="pick_me('$link_id','$1','$source','$lg','$(URLENCODE,$usercomments)','$ZDB_ident');">
 	     </TD>
 	     <TD>
 	       $2 
