@@ -6,8 +6,15 @@
    <title>ZIRC Request Form</title>
 <link rel="stylesheet" type="text/css" href="zirc.css" />
 <script type="text/javascript" language="JavaScript1.1" src="zirc.js"></script>
+<script type="text/javascript" language="javaScript">
+   function loadFormData() {
+      storedValues('zircESTRequestProfile');
+      storedMTAValues('zircMTAProfile');
+   }
+</script>
 </head>
-<BODY text="#000000" bgcolor="#FFFFFF" onLoad="storedValues('zircAntibodyProfile');">
+<BODY text="#000000" bgcolor="#FFFFFF" 
+      onLoad="loadFormData();">
 <center>
 	<p id=header>
 		Zebrafish International Resource Center<br>
@@ -55,22 +62,22 @@ Please set your preferences to allow Javascript and then Reload.</font>
       <tr> 
         <td colspan=2><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Your Contact Information</b></td>
       </tr>
-      <tr> 
-        <td align=right>Your Name <font color="#FF0000">*</font>&nbsp;</td>
-        <td width=300> 
-          <input type="text" name="required_requesterName" size="30">
+      <tr>
+        <td align=right>Your Individual (first) Name <font color="#FF0000">*</font>&nbsp;</td>
+        <td width=300>
+          <input type="text" name="nameInd" size="30">
         </td>
       </tr>
-      <tr> 
+      <tr>
+        <td align=right>Your Family (last) Name <font color="#FF0000">*</font>&nbsp;</td>
+        <td width=300>
+          <input type="text" name="nameFam" size="30">
+        </td>
+      </tr>
+      <tr>
         <td align=right>Your Email <font color="#FF0000">*</font>&nbsp;</td>
-        <td> 
-          <input type="text" name="required_requesterEMail" size="30">
-        </td>
-      </tr>
-      <tr> 
-        <td align=right>Your Telephone <font color="#FF0000">*</font>&nbsp;</td>
-        <td> 
-          <input type="text" name="required_requesterTelephone" size="30">
+        <td>
+          <input type="text" name="eMailAddr" size="30">
         </td>
       </tr>
       <tr> 
@@ -164,10 +171,16 @@ Please set your preferences to allow Javascript and then Reload.</font>
       <tr> 
         <td colspan=2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Billing Information</b></td>
       </tr>
-	  <tr> 
-        <td align=right>Name <font color="#FF0000">*</font>&nbsp;</td>
+      <tr>
+        <td align=right>Individual (first) Name <font color="#FF0000">*</font>&nbsp;</td>
         <td>
-          <input type="text" name="required_BillToName" size="30">
+          <input type="text" name="required_BillToNameInd" size="30">
+        </td>
+      </tr>
+      <tr>
+        <td align=right>Family (last) Name <font color="#FF0000">*</font>&nbsp;</td>
+        <td>
+          <input type="text" name="required_BillToNameFam" size="30">
         </td>
       </tr>
       <tr> 

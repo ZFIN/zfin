@@ -6,8 +6,15 @@
    <title>ZIRC Request Form</title>
 <link rel="stylesheet" type="text/css" href="zirc.css" />
 <script type="text/javascript" language="JavaScript1.1" src="zirc.js"></script>
+<script type="text/javascript" language="javaScript">
+   function loadFormData() {
+      storedValues('zircESTRequestProfile');
+      storedMTAValues('zircMTAProfile');
+   }
+</script>
 </head>
-<BODY text="#000000" bgcolor="#FFFFFF" onLoad="storedValues('zircESTRequestProfile');">
+<BODY text="#000000" bgcolor="#FFFFFF" 
+      onLoad="loadFormData();">
 <center>
 	<p id=header>
 		Zebrafish International Resource Center<br>
@@ -19,53 +26,60 @@
 Please set your preferences to allow Javascript and then Reload.</font>
 </noscript>
 <form NAME="theRequestForm" onSubmit="saveValues('zircESTRequestProfile','10',''); formValues('zircESTRequest');" METHOD="post" ACTION="http://<!--|DOMAIN_NAME|-->/<!--|CGI_BIN_DIR_NAME|-->/cgiemail.cgi">
+<!------background="bgimage.jpg"----------->
   <table border=0 width=585 cellpadding=0 cellspacing=0 background="bgimage.jpg" name="EST_Profile">
       <tr> 
         <td colspan=2 valign=top><img src="bgtop.jpg"></td>
-	  </tr>    
-	  <tr> 
+      </tr>    
+      <tr> 
         <td align=center colspan=2>
         	Please fill out this form if you want to request materials from the Resource Center.
         	<br>A <font color="#FF0000">*</font>&nbsp; indicates a required field.
         	<br><a href="javascript:popup('links.html')">Links</a> provide useful information in a new window without changing the form. 
-		</td>
-	  </tr>
-	  <tr>
-	  	<td colspan=2>
-	<input type="hidden" name="template" value="http://<!--|DOMAIN_NAME|-->/zf_info/stckctr/submission/requestESTs.txt">
-	<input type="hidden" name="success" value="http://<!--|DOMAIN_NAME|-->/zf_info/stckctr/submission/requestThankyou.html">
-	<input type="hidden" name="probe1ZFIN_ID">
-	<input type="hidden" name="probe1Name">
-	<input type="hidden" name="probe1otherDescription">
-	<input type="hidden" name="probe2ZFIN_ID">
-	<input type="hidden" name="probe2Name">
-	<input type="hidden" name="probe2otherDescription">
-	<input type="hidden" name="probe3ZFIN_ID">
-	<input type="hidden" name="probe3Name">
-	<input type="hidden" name="probe3otherDescription">
-	<input type="hidden" name="probe4ZFIN_ID">
-	<input type="hidden" name="probe4Name">
-	<input type="hidden" name="probe4otherDescription">
-	<input type="hidden" name="probe5ZFIN_ID">
-	<input type="hidden" name="probe5Name">
-	<input type="hidden" name="probe5otherDescription">
-	<input type="hidden" name="ESTsConsiderations">
-		</td>
-	</tr>
+	</td>
+      </tr>
+      <tr>
+  	<td colspan=2>
+          <input type="hidden" name="template" value="http://<!--|DOMAIN_NAME|-->/zf_info/stckctr/submission/requestESTs.txt">
+          <input type="hidden" name="success" value="http://<!--|DOMAIN_NAME|-->/zf_info/stckctr/submission/requestThankyou.html">
+          <input type="hidden" name="probe1ZFIN_ID">
+          <input type="hidden" name="probe1Name">
+          <input type="hidden" name="probe1otherDescription">
+          <input type="hidden" name="probe2ZFIN_ID">
+          <input type="hidden" name="probe2Name">
+          <input type="hidden" name="probe2otherDescription">
+          <input type="hidden" name="probe3ZFIN_ID">
+          <input type="hidden" name="probe3Name">
+          <input type="hidden" name="probe3otherDescription">
+          <input type="hidden" name="probe4ZFIN_ID">
+          <input type="hidden" name="probe4Name">
+          <input type="hidden" name="probe4otherDescription">
+          <input type="hidden" name="probe5ZFIN_ID">
+          <input type="hidden" name="probe5Name">
+          <input type="hidden" name="probe5otherDescription">
+          <input type="hidden" name="ESTsConsiderations">
+	</td>
+      </tr>
 <!-----customer contact information----->
       <tr> 
         <td colspan=2><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Your Contact Information</b></td>
       </tr>
       <tr> 
-        <td align=right>Your Name <font color="#FF0000">*</font>&nbsp;</td>
+        <td align=right>Your Individual (first) Name <font color="#FF0000">*</font>&nbsp;</td>
         <td width=300> 
-          <input type="text" name="required_requesterName" size="30">
+          <input type="text" name="nameInd" size="30">
+        </td>
+      </tr>
+      <tr> 
+        <td align=right>Your Family (last) Name <font color="#FF0000">*</font>&nbsp;</td>
+        <td width=300> 
+          <input type="text" name="nameFam" size="30">
         </td>
       </tr>
       <tr> 
         <td align=right>Your Email <font color="#FF0000">*</font>&nbsp;</td>
         <td> 
-          <input type="text" name="required_requesterEMail" size="30">
+          <input type="text" name="eMailAddr" size="30">
         </td>
       </tr>
       <tr> 
@@ -165,10 +179,16 @@ Please set your preferences to allow Javascript and then Reload.</font>
       <tr> 
         <td colspan=2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Billing Information</b></td>
       </tr>
-	  <tr> 
-        <td align=right>Name <font color="#FF0000">*</font>&nbsp;</td>
+      <tr> 
+        <td align=right>Individual (first) Name <font color="#FF0000">*</font>&nbsp;</td>
         <td>
-          <input type="text" name="required_BillToName" size="30">
+          <input type="text" name="required_BillToNameInd" size="30">
+        </td>
+      </tr>
+      <tr> 
+        <td align=right>Family (last) Name <font color="#FF0000">*</font>&nbsp;</td>
+        <td>
+          <input type="text" name="required_BillToNameFam" size="30">
         </td>
       </tr>
       <tr> 
