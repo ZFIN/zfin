@@ -94,16 +94,19 @@ chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/GO";
 sendErrorReport ("gofile.sql failed") if
     system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> gofile.sql");
 
-sendErrorReport ("goparser.pl failed") if system ("goparser.pl");
+sendErrorReport ("goparser.pl failed") if system ("./goparser.pl");
 
 sendErrorReport ("check-gene-association.pl reports error") if 
-    system ("check-gene-association.pl -d gene_association.zfin");
+    system ("./check-gene-association.pl -d gene_association.zfin");
 
-sendErrorReport ("gzip gene_association.zfin failed") if 
-    system ("gzip gene_association.zfin");
+sendErrorReport ("/bin/rm -f gene_association.zfin.gz") if 
+    system ("/bin/rm -f gene_association.zfin.gz");
+
+sendErrorReport ("/local/bin/gzip gene_association.zfin failed") if 
+    system ("/local/bin/gzip gene_association.zfin");
 
 sendErrorReport ("gp2protein.pl failed") if
-    system ("gp2protein.pl");
+    system ("./gp2protein.pl");
 
 sendResults();
 
