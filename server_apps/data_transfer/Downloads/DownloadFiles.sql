@@ -257,7 +257,7 @@ create table alleles_exp (
   fish_id varchar(50),
   allele varchar(20),
   abbrev varchar(20),
-  locus_name varchar(80),
+  locus_name varchar(120),
   locus_id varchar(50),
   pheno_keywords	lvarchar,
   gene_id varchar(50),
