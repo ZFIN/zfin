@@ -20,7 +20,22 @@ VARIABLES EXPECTED:
 <?MIVAR NAME=$fish_id>$1<?/MIVAR>
 <?/MIBLOCK>
 
-<?MISQL SQL="delete from $rtype where zdb_id='$OID';"><?/MISQL>
+<!-- If record type has been added to zdb_active_data then delete it from
+  -- there and have it cascade out.  If it has not been added yet, then
+  -- delete the record from the record type's base table.
+  -->
+
+<?MIBLOCK COND="$(EC,$rtype,gene)">
+  <?MISQL SQL="
+    delete from zdb_active_data
+      where zactvd_zdb_id = '$OID';">
+  <?/MISQL>
+<?MIELSE>
+  <?MISQL $SQL="
+    delete from $rtype 
+      where zdb_id='$OID';">
+  <?/MISQL>
+<?/MIBLOCK>
 
 <!-- Special case: if it's an IMAGE, update the image count in fish_search -->
 <?MISQL COND="$(EC,$rtype,image)" SQL="update fish_search set num_images=(select unique count(*)::integer from image where stock=fish_id) where fish_id='$fish_id';"><?/MISQL>
