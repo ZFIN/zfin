@@ -1036,7 +1036,7 @@ Gene/EST
 		    <?MISQL SQL="select stg_name, stg_hours_start, stg_hours_end, stg_zdb_id from stage where stg_name <> 'Any stage' order by stg_hours_start, stg_hours_end desc;"><OPTION VALUE="$4"$(IF,$(AND,$(XST,$stage_end),$(EC,$stage_end,$4)), SELECTED,$(IF,$(EC,$stage_end,$4), SELECTED))> $1 <?/MISQL>
 		  </SELECT>
                   <br>
-		  <a href="http://zfin.org/zf_info/zfbook/stages/index.html">Developmental Staging Series</a>
+		  <a href="/zf_info/zfbook/stages/index.html">Developmental Staging Series</a>
 <!--		  <br>
 		  Assay Type: <SELECT NAME="assay" SIZE=1>
 			       <OPTION selected VALUE = "ANY"> ANY

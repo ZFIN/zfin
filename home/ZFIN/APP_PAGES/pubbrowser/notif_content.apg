@@ -64,20 +64,20 @@ OUTPUT VARS:
 <?MICOMMENT>== prepare the variables that will be used in the letter ==<?/MICOMMENT>
 <?MISQL SQL="select title, source 
                from publication 
-              where zdb_id = '$OID'"; >
+              where zdb_id = '$OID';">
 	<?MIVAR NAME=pub_title>$1<?/MIVAR>
         <?MIVAR NAME=pub_source>$2<?/MIVAR>
 <?/MISQL>
 
 <?MISQL SQL="select name 
                from ZDB_submitters
-              where zdb_id = '$sender_id'"; >
+              where zdb_id = '$sender_id';">
 	<?MIVAR NAME=sender_name>$1<?/MIVAR>
 <?/MISQL>
 
 <?MISQL SQL="select email 
                from person 
-              where zdb_id = '$sender_id'"; >
+              where zdb_id = '$sender_id';">
        <?MIVAR NAME=sender_email>$1<?/MIVAR>
 <?/MISQL>
 
@@ -158,13 +158,13 @@ I am pleased to report that information about <?MIVAR>$(IF,$(EC,$status,preview)
        <INPUT TYPE=checkbox NAME=notif_item VALUE="$attrib_data_id" $(IF,$(AND,$(XST,$notif_items),$(>,$(POSITION,$notif_items,$attrib_data_id),0)), CHECKED)>
         $attrib_data_title: <i>$attrib_data_name</i> (<i>$attrib_data_abbrev</i>)
         <br>
-        <a href="http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id">http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id</a> 
+        <a href="/<!--|CGI_BIN_DIR_NAME|-->/ZFIN_jump?record=$attrib_data_id">http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id</a> 
         <br>
     <?/MIVAR>
     <?MIVAR COND="$(AND,$(EC,$status,preview),$(XST,$notif_items),$(>,$(POSITION,$notif_items,$attrib_data_id),0))">       
 	$attrib_data_title: <i>$attrib_data_name</i> (<i>$attrib_data_abbrev</i>)
         <br>
-  	<a href="http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id">http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id</a> 
+  	<a href="/<!--|CGI_BIN_DIR_NAME|-->/ZFIN_jump?record=$attrib_data_id">http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id</a> 
         <br>
      <?/MIVAR>
   <?/MIBLOCK>	

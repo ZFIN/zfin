@@ -1,6 +1,6 @@
-
-<!-- FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN records.
--->
+<?MICOMMENT>
+FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN records.
+<?/MICOMMENT>
 
 <HTML>
 <head>
@@ -256,7 +256,7 @@ ERROR -- something bad happened -- no OID passed in!
      <?MIBLOCK COND="$(NC,$3,)">
        <font size=-1>
           <?MIBLOCK COND="$(EC,$3,ZDB-LAB-991005-53)">
-            <A HREF="http://zfin.org/zirc/home/guide.php">(available from)</A>
+            <A HREF="/zirc/home/guide.php">(available from)</A>
           <?MIELSE>
             <?MIVAR>
               <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$3">(available from)</a>

@@ -778,7 +778,7 @@ Datablade documentation.
                   <?/MIVAR>
 		  <?MIBLOCK COND=$(EC,$supplier_zdb_id,ZDB-LAB-991005-53)>
                     <?MIVAR>
-		      <A HREF="http://zfin.org/zirc/home/guide.php">$supplier_name</A>
+		      <A HREF="/zirc/home/guide.php">$supplier_name</A>
 		    <?/MIVAR>
 		  <?MIELSE>
                     <?MIVAR>

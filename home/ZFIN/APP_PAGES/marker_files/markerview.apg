@@ -958,7 +958,7 @@ Datablade documentation.
         
         <?MIBLOCK COND="$(NC,$mrkrview_segment_supplier,)">
           <?MIBLOCK COND="$(EC,$mrkrview_segment_supplier,ZDB-LAB-991005-53)">
-            <A HREF="http://zfin.org/zirc/home/guide.php">(available from)</A>
+            <A HREF="/zirc/home/guide.php">(available from)</A>
           <?MIELSE>
 	    <?MIVAR>
               <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$mrkrview_segment_supplier">(available from)</A>
@@ -1028,7 +1028,7 @@ Datablade documentation.
 
         <?MIBLOCK COND="$(NC,$mrkrview_segment_supplier,)">
           <?MIBLOCK COND="$(EC,$mrkrview_segment_supplier,ZDB-LAB-991005-53)">
-            <A HREF="http://zfin.org/zirc/home/guide.php">(available from)</A>
+            <A HREF="/zirc/home/guide.php">(available from)</A>
           <?MIELSE>
             <?MIVAR>
               <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$mrkrview_segment_supplier">(available from)</A>

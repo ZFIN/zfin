@@ -15,7 +15,7 @@ Requires:  $CLONE_MARKER_ID, $highlight
       <?MIBLOCK COND=$(EC,$1,ZDB-LAB-991005-53)>
 	  <?MIVAR NAME=$SOURCE>
 
-	    <a href="http://zfin.org/zirc/home/guide.php">$2</a>
+	    <a href="/zirc/home/guide.php">$2</a>
 
 	  <?/MIVAR>
         <?MIELSE>
@@ -30,7 +30,7 @@ Requires:  $CLONE_MARKER_ID, $highlight
       <?MIBLOCK COND=$(EC,$1,ZDB-LAB-991005-53)>
 	  <?MIVAR NAME=$SOURCE>
 	    $SOURCE,
-	    <a href="http://zfin.org/zirc/home/guide.php">$2</a>
+	    <a href="/zirc/home/guide.php">$2</a>
 
 	  <?/MIVAR>
         <?MIELSE>
