@@ -49,6 +49,9 @@ openReport();
     $count = 0;
     while ($cur->fetch)
     {
+      $auth = cleanTail($auth);
+      $title = cleanTail($title);
+      $src = cleanTail($src);
       print REPORT "[$zdb]\n";
       print REPORT "$auth ($pyear) $title. $src.\n\n";
       $count++;
@@ -60,6 +63,21 @@ sendReport() if ($count != 0);
 
 
 exit;
+
+
+sub cleanTail () {
+  my $var;
+  my $length;
+
+  $var = $_;
+
+  if ($var !~ /\w$/) {
+    $length = length($_[0]);
+    $var = substr($_[0],0,$length-2);
+  }
+
+  return $var;
+}
 
 
 sub d8 {
