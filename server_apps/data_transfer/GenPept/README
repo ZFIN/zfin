@@ -43,21 +43,14 @@ these are loaded into ZFIN from the list in 'manual_curation.genpept'
 with the 'load_manual_genpept.sql' script. (called by 'fetch_load_GenPept.sh') 
 
 DOWNLOADING
-Using fetch-genpept.r , the most recent GenPept records are 
-dowloaded from NCBI's Entrez page and parsed / manupulated.
+Using fetch-genpept.pl , the most recent GenPept records are 
+dowloaded from NCBI's Entrez page. The fetch script is written
+to download the data in chunks, however the current implementation
+downloads all records in one request. 
 
-The ~20Meg http stream is parsed into a ~200k Informix load file.
+The ~20Meg http stream is parsed into a ~200k Informix load file
+by parse-genpept.r.
 
-the load file is inserted into the database with the 
-load_genpept.sql script  via dbaccess
-
-CLEAN & REPLACE
-To insert the data, we use a wipe and replace approach. All GenPept,
-that are soley attributed to the automated curation pub are removed. 
-(as well as any attributed to a EMBL load)
-But not attributes to manual curation.
-All relationships from the latest download are found. 
-Then the relationships that do not exist in ZFIN are inserted into 
-the database and they are attributed to the automtated curation pub.
-
-This process is automated to perform weekly in crontab.
+the genpept links are inserted into the database with the 
+load_refseq.sql script  via dbaccess. This process is automated to 
+perform weekly in crontab.
