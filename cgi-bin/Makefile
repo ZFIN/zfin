@@ -27,7 +27,7 @@ GENERICS = ZFIN_jump map-options.pl print_map.cgi runSPL.cgi cgiemail.cgi\
 	   mapper_select.cgi mapper_select.pl \
 	   view_mapplet.cgi view_zmapplet.cgi select_structures.cgi \
 	   input_welcome.cgi input_welcome_generic.cgi expired_locus.cgi \
-           publications_today.cgi send_notification.cgi 
+           publications_today.cgi send_notification.cgi usersurvey2005.cgi
 
 FXGENERICS = fxFigures.cgi fxSearchResults.cgi header.pl footer.pl pub.pl Tableview.pl \
 	   Figures.pl fxQuery.pl fxResults.pl fxView.cgi xpatview.pl results.dat epha4b.dat images.dat fig4.dat neurog1.dat pubs.dat \
