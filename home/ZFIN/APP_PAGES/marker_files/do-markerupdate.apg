@@ -76,8 +76,7 @@ COND="$(OR,$(EC,$attr,putgene_putative_gene_name),$(EC,$attr,putgene_comments),$
 the record $old_value from the list of $attr associated with this 
 marker.<?/MIVAR>
 
-  <?MIVAR COND="$(OR,$(EC,$attr_type,special-newseqnum),$(EC,$attr_type,special-check-newseqnum))" NAME=$comments>Created 
-new link $old_value:$new_value for this record.<?/MIVAR>
+  <?MIVAR COND="$(OR,$(EC,$attr_type,special-newseqnum),$(EC,$attr_type,special-check-newseqnum))" NAME=$comments>Created new link $old_value:$new_value for this record.<?/MIVAR>
 
   <?MIBLOCK COND="$(EC,$attr_type,special-updateseqnum)">
     <?MISQL SQL="select fdbcont_fdb_db_name, dblink_acc_num, dblink_length, fdbcont_fdbdt_data_type
@@ -286,37 +285,37 @@ comments,
 
   <!-- Special case for checking new sequence db link -->
   <?MIBLOCK COND="$(EC,$attr_type,special-check-newseqnum)">
-        <?MIVAR NAME=$MI_NOVALUE><?/MIVAR>  
+    <?MIVAR NAME=$MI_NOVALUE><?/MIVAR>  
 	<?MISQL SQL="
-	   select dblink_zdb_id
+	       select dblink_zdb_id
              from marker_relationship, db_link
-	    where mrel_mrkr_1_zdb_id ='$OID'
+	        where mrel_mrkr_1_zdb_id ='$OID'
               and mrel_mrkr_2_zdb_id = dblink_linked_recid
               and dblink_acc_num = '$new_value' 
 	  UNION
            select dblink_zdb_id
              from db_link
-	    where dblink_linked_recid = '$OID'
+	        where dblink_linked_recid = '$OID'
               and dblink_acc_num = '$new_value'; ">
        <?/MISQL>
        <?MIBLOCK COND="$(NC,$1,)">
            <SCRIPT>
- 		window.alert('The GenBank accession is already associated with the marker.');
-	   </SCRIPT>
+ 	   			window.alert('The GenBank accession is already associated with the marker.');
+	       </SCRIPT>
        <?MIELSE>  
 	
           <?MIVAR NAME=markerlist><?/MIVAR>
-	  <?MISQL SQL="
-	     select mrkr_abbrev
-	       from db_link, marker
-	      where dblink_acc_num = '$new_value'
-	        and dblink_linked_recid=mrkr_zdb_id; ">
+	      <?MISQL SQL="
+	         select mrkr_abbrev
+	           from db_link, marker
+	          where dblink_acc_num = '$new_value'
+	            and dblink_linked_recid=mrkr_zdb_id; ">
              <?MIBLOCK COND="$(EC,$MI_CURRENTROW,1)">
-	 	<?MIVAR>$(SETVAR,$markerlist[1],$1)<?/MIVAR>
-	     <?MIELSE>
+	 		    <?MIVAR>$(SETVAR,$markerlist[1],$1)<?/MIVAR>
+	     	 <?MIELSE>
                 <?MIVAR>$(VECAPPEND,$markerlist,$1)<?/MIVAR>
-	     <?/MIBLOCK>
-           <?/MISQL>
+	     	 <?/MIBLOCK>
+          <?/MISQL>
   
           <?MIBLOCK COND="$(NC,$markerlist,)">
              <?MIVAR>
@@ -325,90 +324,67 @@ comments,
               <SCRIPT>          
                 var msg="The GenBank accession is already associated with\n"+
                          "[$markerlist]. Are you sure to process?";
-	        if (confirm(msg))
-		   location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value=$old_value&new_value=$new_value&target_table=$target_table&fdbcont_super=$fdbcont_super&fdbcont_data=$fdbcont_data');
+	        	if (confirm(msg))
+		   			location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value=$old_value&new_value=$new_value&target_table=$target_table&fdbcont_super=$fdbcont_super&fdbcont_data=$fdbcont_data');
 		
-	      </SCRIPT>
-              <?/MIVAR> 
-	   <?MIELSE>
+	      	   </SCRIPT>
+             <?/MIVAR> 
+	  	  <?MIELSE>
              <?MIVAR NAME=$donecheck><?/MIVAR>
-	   <?/MIBLOCK>
-         <?/MIBLOCK>
+	      <?/MIBLOCK> <?MICOMMENT>end of if markerlist exists<?/MICOMMENT>
+      <?/MIBLOCK>  <?MICOMMENT>end of if dblink_zdb_id exists<?/MICOMMENT>
    <?/MIBLOCK>  
                           
 
   <!-- Special case for adding new sequence db link -->
   <?MIBLOCK COND="$(OR,$(EC,$attr_type,special-newseqnum),$(XST,$donecheck))">
-
     <?MISQL SQL="
       select fdbcont_zdb_id
-      from foreign_db_contains
-      where fdbcont_fdbdt_super_type = '$fdbcont_super'
-        and fdbcont_fdbdt_data_type = '$fdbcont_data'
-        and fdbcont_fdb_db_name = '$old_value';">
+        from foreign_db_contains
+       where fdbcont_fdbdt_super_type = '$fdbcont_super'
+         and fdbcont_fdbdt_data_type = '$fdbcont_data'
+         and fdbcont_fdb_db_name = '$old_value';">
         
         $(SETVAR,fdbcont_zdb_id,$1)
         
     <?/MISQL>
 
     <?MIBLOCK COND=$(NXST,$fdbcont_zdb_id)>
-     <?MISQL SQL="
-       execute function get_id('FDBCONT');">
-     <?/MISQL>
-     <?MIVAR NAME=$fdbcont_zdb_id>$1<?/MIVAR>
-     <?MISQL SQL="
-       insert into zdb_active_data
-           ( zactvd_zdb_id )
-         values
-          ( '$fdbcont_zdb_id' );">
-     <?/MISQL>
-     <?MISQL SQL="
-       insert into foreign_db_contains 
-          ( fdbcont_zdb_id, 
-            fdbcont_fdb_db_name, 
-            fdbcont_fdbdt_super_type, 
-            fdbcont_fdbdt_data_type, 
-            fdbcont_organism_common_name
-          ) 
-         values 
-	  ( '$fdbcont_zdb_id', 
-	    '$old_value', 
-	    '$fdbcont_super', 
-	    '$fdbcont_data', 
-	    'Zebrafish'
-	  )
-       ;">
-     <?/MISQL>
-    <?/MIBLOCK>
+	    <?MIVAR>
+		  <SCRIPT>
+   			  window.alert('$old_value of type $fdbcont_data is not valid.');
+	      </SCRIPT>
+        <?/MIVAR>
+    <?MIELSE>
 
-     <?MISQL SQL="
-       execute function get_id('DBLINK');">
-     <?/MISQL>
-     <?MIVAR NAME=$dblink_zdb_id>$1<?/MIVAR>
-     <?MISQL SQL="
-       insert into zdb_active_data
-           ( zactvd_zdb_id )
-         values
-          ( '$dblink_zdb_id' );">
-     <?/MISQL>
-     <?MISQL SQL="
-       insert into db_link 
-          ( dblink_linked_recid, 
+      <?MISQL SQL="
+         execute function get_id('DBLINK');">
+      <?/MISQL>
+      <?MIVAR NAME=$dblink_zdb_id>$1<?/MIVAR>
+      <?MISQL SQL="
+         insert into zdb_active_data
+             ( zactvd_zdb_id )
+           values
+            ( '$dblink_zdb_id' );">
+      <?/MISQL>
+      <?MISQL SQL="
+         insert into db_link 
+           (dblink_linked_recid, 
             dblink_acc_num, 
             dblink_zdb_id,
             dblink_info,
             dblink_fdbcont_zdb_id
-          ) 
-         values 
-	  ( '$OID', 
-	    '$new_value', 
-	    '$dblink_zdb_id', 
-	    '$ZDB_name'||' '||TODAY,
-	    '$fdbcont_zdb_id'
-	  );">
+           ) 
+          values 
+	       ('$OID', 
+	        '$new_value', 
+	    	'$dblink_zdb_id', 
+	    	'$ZDB_name'||' '||TODAY,
+	    	'$fdbcont_zdb_id'
+	      );">
 
-     <?/MISQL>
-     
+      <?/MISQL>
+    <?/MIBLOCK> 
    <?/MIBLOCK>  <!-- ends special seqdb case ---->
 
    
@@ -419,62 +395,39 @@ comments,
        set dblink_length = $new_value
        where dblink_zdb_id = '$dataOID';">
      <?/MISQL>
-
-    <?MISQL SQL="
-      select fdbcont_zdb_id
-      from foreign_db_contains
-      where fdbcont_fdbdt_super_type = 'sequence'
-        and fdbcont_fdbdt_data_type = '$xtra_param'
-        and fdbcont_fdb_db_name = 
-             (
-               select b.fdbcont_fdb_db_name 
-               from db_link, foreign_db_contains as b 
-               where dblink_zdb_id = '$dataOID'
-                 and dblink_fdbcont_zdb_id = b.fdbcont_zdb_id
-             );">
+	 <?MISQL SQL="
+ 			select fdbcont_fdb_db_name 
+              from db_link, foreign_db_contains
+             where dblink_zdb_id = '$dataOID'
+               and dblink_fdbcont_zdb_id = fdbcont_zdb_id;">
+     <?/MISQL>     
+     <?MIVAR NAME=$fdb_name>$1<?/MIVAR>
+     <?MISQL SQL="
+        select fdbcont_zdb_id
+         from foreign_db_contains
+        where fdbcont_fdbdt_super_type = 'sequence'
+          and fdbcont_fdbdt_data_type = '$xtra_param'
+          and fdbcont_fdb_db_name = '$fdb_name' ;">
         
         $(SETVAR,fdbcont_zdb_id,$1)
         
-    <?/MISQL>
+      <?/MISQL>
 
-    <?MIBLOCK COND=$(NXST,$fdbcont_zdb_id)>
-      <?MISQL SQL="
-        execute function get_id('FDBCONT');">
-      <?/MISQL>
-      <?MIVAR NAME=$fdbcont_zdb_id>$1<?/MIVAR>
-      <?MISQL SQL="
-        insert into zdb_active_data
-            ( zactvd_zdb_id )
-          values
-           ( '$fdbcont_zdb_id' );">
-      <?/MISQL>
-      <?MISQL SQL="
-        insert into foreign_db_contains 
-           ( fdbcont_zdb_id, 
-             fdbcont_fdb_db_name, 
-             fdbcont_fdbdt_super_type, 
-             fdbcont_fdbdt_data_type, 
-             fdbcont_organism_common_name
-           ) 
-        select 
-	   '$fdbcont_zdb_id', 
-	   fdbcont_fdb_db_name, 
-	   'sequence', 
-	   '$xtra_param', 
-	   'Zebrafish'
-	from foreign_db_contains, db_link
-	where dblink_zdb_id = '$dataOID'
-	  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-        ;">
-      <?/MISQL>
-    <?/MIBLOCK>
+      <?MIBLOCK COND=$(NXST,$fdbcont_zdb_id)>
+   	    <?MIVAR>
+		  <SCRIPT>
+   			  window.alert('$fdb_name of type $xtra_param is not valid.');
+	      </SCRIPT>
+        <?/MIVAR>
+      <?MIELSE>
     
-     <?MISQL SQL="
-       update db_link
-       set dblink_fdbcont_zdb_id = '$fdbcont_zdb_id'
-       where dblink_zdb_id = '$dataOID';">
-     <?/MISQL>
-   <?/MIBLOCK>  <!-- ends update seqdb case -->
+        <?MISQL SQL="
+         update db_link
+            set dblink_fdbcont_zdb_id = '$fdbcont_zdb_id'
+          where dblink_zdb_id = '$dataOID';">
+        <?/MISQL>
+      <?/MIBLOCK> <?MICOMMENT> ends if fdbcont_zdb_id exists <?/MICOMMENT>
+    <?/MIBLOCK>  <?MICOMMENT> ends update seqdb case <?/MICOMMENT>
 
 
   <!------ Special case for adding new attribution------->
@@ -1090,7 +1043,6 @@ colattrib_source_zdb_id)
 <?/MIBLOCK> <!-- ends cond authorized -->
 
 <!-- okay, now just bail back to the markerview to view results -->
-
 
 <?MIBLOCK COND="$(NXST,$species_update)">
 

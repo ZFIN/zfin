@@ -233,7 +233,6 @@ DBname:<SELECT name=seqdb>
     <option value="$1" $(IF,$(EC,$1,GenBank),SELECTED)>$1</option>
   <?/MISQL>
 </SELECT>
-Accession:<input type=text size=15 name=seq_acc> 
 Type:<SELECT name=seq_super>
   <?MISQL SQL="
     select distinct fdbdt_data_type, fdbdt_super_type 
@@ -243,6 +242,7 @@ Type:<SELECT name=seq_super>
     <option value="$2&fdbcont_data=$1" $(IF,$(EC,$1,cDNA),SELECTED)>$1</option>
   <?/MISQL>
 </SELECT>
+Accession:<input type=text size=15 name=seq_acc> 
 <input type=button value="Add it!" onClick=new_seqnum();>
 
 <br>
