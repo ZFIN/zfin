@@ -11,40 +11,35 @@
 
 
 <HTML>
-<?MIBLOCK COND="$(NXST,$OID)"> No OID Passed In! <?/MIBLOCK>  <!-- open OID check -->
+<?MIBLOCK COND="$(NXST,$OID)"> No OID Passed In! <?/MIBLOCK>  
 <?MIBLOCK COND="$(XST,$OID)">
-<?MISQL SQL="
+ 
+    <?MISQL SQL="
 	SELECT anatitem_name,
-	       s1.stg_name_long, s2.stg_name_long, s1.stg_comments_relative_url, 
-	       s2.stg_comments_relative_url, anatitem_abbrev, anatitem_definition,
+	       get_stg_name_long_html(s1.stg_zdb_id), 
+	       get_stg_name_long_html(s2.stg_zdb_id),
+               anatitem_abbrev, anatitem_definition,
 	       anatitem_description
 	FROM anatomy_item, stage s1, stage s2
 	WHERE anatitem_zdb_id = '$OID'
 	  and s1.stg_zdb_id = anatitem_start_stg_zdb_id
 	  and s2.stg_zdb_id = anatitem_end_stg_zdb_id
-;">
-<?MIVAR NAME="item_name">$1<?/MIVAR>
-<?MIVAR NAME="item_stg_start">$2<?/MIVAR>
-<?MIVAR NAME="item_stg_end">$3<?/MIVAR>
-<?MIVAR NAME="item_stg_start_url">$4<?/MIVAR>
-<?MIVAR NAME="item_stg_end_url">$5<?/MIVAR>
-<?MIVAR NAME="item_abbrev">$6<?/MIVAR>
-<?MIVAR NAME="item_definition">$7<?/MIVAR>
-<?MIVAR NAME="item_description">$8<?/MIVAR>
-<?/MISQL>
+      ;">
+      <?MIVAR NAME="item_name">$1<?/MIVAR>
+      <?MIVAR NAME="item_stg_start_html">$2<?/MIVAR>
+      <?MIVAR NAME="item_stg_end_html">$3<?/MIVAR>
+      <?MIVAR NAME="item_abbrev">$4<?/MIVAR>
+      <?MIVAR NAME="item_definition">$5<?/MIVAR>
+      <?MIVAR NAME="item_description">$6<?/MIVAR>
+    <?/MISQL>
 
-<?MIVAR NAME=$item_abbrev COND="$(EC,$item_abbrev,NULL)"><?/MIVAR>
-<?MIVAR NAME=$item_definition COND="$(EC,$item_definition,NULL)"><?/MIVAR>
-<?MIVAR NAME=$item_description COND="$(EC,$item_description,NULL)"><?/MIVAR>
+    <?MIVAR NAME=$item_abbrev COND="$(EC,$item_abbrev,NULL)"><?/MIVAR>
+    <?MIVAR NAME=$item_definition COND="$(EC,$item_definition,NULL)"><?/MIVAR>
+    <?MIVAR NAME=$item_description COND="$(EC,$item_description,NULL)"><?/MIVAR>
 
-<?MIVAR NAME=$item_name_safe DELIMIT="'" REPLACE="''">$item_name<?/MIVAR>
-<?MIVAR NAME=$item_name_url>$(URLENCODE,$item_name)<?/MIVAR>
-<?MIVAR NAME=$processed_item_name>$(REPLACE,$item_name,',','|')<?/MIVAR>
-
-
-
-
-<!-- user authorization check-------------------------------> 
+    <?MIVAR NAME=$item_name_safe DELIMIT="'" REPLACE="''">$item_name<?/MIVAR>
+    <?MIVAR NAME=$item_name_url>$(URLENCODE,$item_name)<?/MIVAR>
+    <?MIVAR NAME=$processed_item_name>$(REPLACE,$item_name,',','|')<?/MIVAR>
 
 
 	  <!-- title for webpage history ----------->	
@@ -313,10 +308,10 @@
 <?/MIBLOCK>
 <BR>
 <?MIVAR>
-  <FONT SIZE=+1><STRONG>Name: <I>$item_name</I> </STRONG><BR> </FONT>
+  <FONT SIZE=+1><STRONG>Name: <I>$item_name</I> </STRONG></FONT>
 <?/MIVAR>
 
-
+<P>
 <?MIBLOCK COND="$(AND,$(NE,$item_abbrev,NULL),$(NE,$item_abbrev,))">
    <STRONG>Abbreviation: </STRONG> <?MIVAR>$item_abbrev<?/MIVAR>
 
@@ -356,19 +351,6 @@
 
 
 
-<?MICOMMENT> ------------ miniature synonyms code from before I grabbed it from markerview  ---------------
-
-<?MISQL SQL="
-  select dalias_alias, dalias_zdb_id
-    from data_alias
-    where dalias_data_zdb_id = '$OID' and dalias_group = 'alias';">
-  <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)"><STRONG>Synonyms: </STRONG> <?/MIBLOCK>
-  $1   
-  <?MIBLOCK COND="$(<,$MI_CURRENTROW,$MI_ROWCOUNT)">,<?MIELSE><BR><?/MIBLOCK>
-<?/MISQL>
-
-<?/MICOMMENT>
-
 <?MISQL SQL="SELECT anatitem_definition from anatomy_item where anatitem_zdb_id = '$OID' and anatitem_definition is not null;">
 <STRONG>Definition:</STRONG> $1<BR>
 <?/MISQL>
@@ -382,32 +364,21 @@
 <TABLE width="90%">
   <TR>
     <TD bgcolor="#CCCCCC">
-      <STRONG>Appears at..</STRONG>
+      <STRONG>Appears at</STRONG>
     </TD>
     <TD bgcolor="#CCCCCC">
-      <STRONG>Until</STRONG>
+      <STRONG>Evident until</STRONG>
     </TD>
   </TR>
   <TR>
     <TD bgcolor="#EEEEEE">
-	  <?MICOMMENT> Most of the anatomy items that currently have start stage as Adult are faulty.
-                  Before the right stage is figured out, surpress the display for now. 
-      <?/MICOMMENT> 
-      <?MIBLOCK COND="$(NC,$(SUBSTR,$item_stg_start,1,5),Adult)"> 
-      	<?MIVAR>
-      	  <A HREF="$item_stg_start_url">
-     	   $item_stg_start </A>
-        <?/MIVAR>
-      <?MIELSE>
-           Unknown 
-      <?/MIBLOCK>
+          <?MIVAR>$item_stg_start_html<?/MIVAR>
     </TD>
     <TD bgcolor="#EEEEEE">
-      <?MIVAR>
-      <A HREF="$item_stg_end_url">
-      $item_stg_end<?/MIVAR>
-      </A>
+     
+          <?MIVAR>$item_stg_end_html<?/MIVAR>
     </TD>
+  </TR>
 </TABLE>
 
 
@@ -467,47 +438,6 @@ Genes
 
 <!-- start hierarchy relationships --->
 
-<?MICOMMENT> <!-- commented out complicated hierarchy thing -->
-
-<TABLE width=100%>
-<TR><TD bgcolor="#DDDDDD"><STRONG>Appears at this stage...</STRONG></TD>
-    <TD bgcolor="#DDDDDD"><STRONG>...until this stage...</STRONG></TD>
-    <TD bgcolor="#DDDDDD"><STRONG>...as a child of</STRONG></TD></TR>
-<?MISQL SQL="
-	SELECT start.stg_name, start.stg_zdb_id, end.stg_name, 
-	       end.stg_zdb_id, parent.anatitem_zdb_id, parent.anatitem_name,
-	       start.stg_hours_start, end.stg_hours_start
-	FROM all_anatomy_contains, stage as start, stage as end, anatomy_item parent
-	WHERE allanatcon_contained_zdb_id = '$OID'
-	  and allanatcon_container_zdb_id = parent.anatitem_zdb_id
-	  and start.stg_zdb_id = parent.anatitem_start_stg_zdb_id
-	  and end.stg_zdb_id = parent.anatitem_end_stg_zdb_id
-	  and allanatcon_min_contain_distance = '1'
-	ORDER BY 7,8
-;">
-<?MIVAR NAME="start_stg_name">$1<?/MIVAR>
-<?MIVAR NAME="start_stg_zdb_id">$2<?/MIVAR>
-<?MIVAR NAME="end_stg_name">$3<?/MIVAR>
-<?MIVAR NAME="end_stg_zdb_id">$4<?/MIVAR>
-<?MIVAR NAME="parent_zdb_id">$5<?/MIVAR>
-<?MIVAR NAME="parent_name">$6<?/MIVAR>
-<?MIVAR>
-<TR>
- <TD bgcolor="#EEEEEE">$start_stg_name</TD>
- <TD bgcolor="#EEEEEE">$end_stg_name</TD>
- <TD bgcolor="#EEEEEE">
-  <FONT style="font-family:arial; font-size:small; font-weight:bold">
-   <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$parent_zdb_id">  $parent_name
-  </FONT>
- </TD>
-</TR>
-<?/MIVAR>
-<?/MISQL>
-</TABLE>
-<?/MICOMMENT>
-
-<!-- new hierarchy relationship display -->
-
 <TABLE width="90%">
   <TR>
     <TD bgcolor="#CCCCCC" colspan=2>
@@ -529,7 +459,7 @@ Genes
 	  and start.stg_zdb_id = parent.anatitem_start_stg_zdb_id
 	  and end.stg_zdb_id = parent.anatitem_end_stg_zdb_id
 	  and allanatcon_min_contain_distance = '1'
-	ORDER BY 9
+	ORDER BY  parent.anatitem_name_order
 ;">
 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$5">$6</A> &nbsp; 
 <?/MISQL>
@@ -550,7 +480,7 @@ SELECT start.stg_name, start.stg_zdb_id, end.stg_name,
 	  and start.stg_zdb_id = child.anatitem_start_stg_zdb_id
 	  and end.stg_zdb_id = child.anatitem_end_stg_zdb_id
 	  and allanatcon_min_contain_distance = '1'
-	ORDER BY 9
+	ORDER BY child.anatitem_name_order
 ;">
 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$5">$6</A> &nbsp; 
 <?/MISQL>
@@ -559,32 +489,8 @@ SELECT start.stg_name, start.stg_zdb_id, end.stg_name,
   </TABLE>
 <!-- end hierarchy relationships -->
 
-<?MIBLOCK COND="$(EC,pigs,flying)">
-
-<BR>
-
-<STRONG>Definition: </STRONG>The auditory (hearing) and vestibular (balance) organ of the fish, equivalent 
-  to the inner ear of amniotes (fish do not have an outer or middle ear). Develops 
-  from a cranial ectodermal thickening, the otic placode, which arises on either 
-  side of the head midway between the eye and the first somite. This cavitates 
-  to form a simple vesicle, from which all structures of the inner ear (<a href="../semi_canal/semi.html">semicircular 
-  canals</a>,<a href="../sens/sens.html"> sensory patches</a> and neurons of the 
-  <a href="../stato/stato.html">statoacoustic (VIIIth) ganglion</a>) are thought 
-  to arise. Five sensory patches develop in the embryonic ear: three cristae (each 
-  associated with a <a href="../semi_canal/semi.html">semicircular canal</a>) 
-  and two maculae (each associated with an <a href="../oto/otolith.html">otolith</a>). 
-  Two further <a href="../sens/sens.html">sensory patches</a>, and one additional 
-  <a href="../oto/otolith.html">otolith</a>, are present in the adult ear. Neuroblasts 
-  delaminate from the epithelium of the ventral floor of the otic vesicle to form 
-  the <a href="../stato/stato.html">statoacoustic (VIIIth) ganglion</a> between 
-  22 and 42h. Epithelial projections forming the <a href="../semi_canal/semi.html">semicircular 
-  canal system</a> protrude into the vesicle and fuse between 44 and 72h. A dorsolateral 
-  septum, dividing the anterior and posterior <a href="../semi_canal/semi.html">canals</a>, 
-  grows into the ear during the same period. <!-- /DESC --></p> 
-
-<?/MIBLOCK>
-
-<?MIBLOCK COND="$(EC,pigs,flying)">
+<?MICOMMENT> The code below is a mockup of the homologue display that will 
+             replace it in the future
 
 <BR>
 
@@ -650,7 +556,7 @@ auditory (tympanal or flagellar) organs, which may be in a variety of anatomical
   </TR>
 </TABLE>
 
-<?/MIBLOCK>
+<?/MICOMMENT>
 
 <BR>
 
@@ -700,6 +606,5 @@ auditory (tympanal or flagellar) organs, which may be in a variety of anatomical
 <?/MISQL>
 <!---  end pub relationships -->
 
-
-<?/MIBLOCK> <!-- close OID check -->
+<?/MIBLOCK> <?MICOMMENT>-- close OID check -- <?/MICOMMENT> 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
