@@ -106,7 +106,14 @@ function start_help(anchor) {
 
 <?MIBLOCK COND="$(XST,$clear_all)">
   <?MIVAR NAME=constraint>status = 'active'<?/MIVAR>
+  
+<?MIELSE COND="$(XST,$pub_acc_constraint)">
+  <?MIVAR>
+    $(VECAPPEND,$constraint,$pub_acc_constraint)
+  <?/MIVAR>
+  
 <?MIELSE>
+
   <?MIBLOCK COND="$(XST,$authors)">
     <!-- First filter authors for apostrophes! -->
     <?MIVAR NAME=$authors DELIMIT="'" REPLACE="''">$authors<?/MIVAR>
@@ -761,6 +768,7 @@ $(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/
   <!-- Put the cursor in the AUTHORS criterion box -->
   <SCRIPT>document.critform.authors.focus();</SCRIPT>
 <?/MIBLOCK>
+
 
 <?MIBLOCK COND="$(NXST,$accession)">
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
