@@ -1,4 +1,5 @@
-#!/usr/bin/perl
+#!/private/bin/perl -w
+##/usr/bin/perl
 
 use DBI;
 
@@ -14,24 +15,24 @@ use DBI;
 
 
 #User must specify whether to update comments or keywords or both.
-(@ARGV[2] == 1 || @ARGV[2] == 2 || @ARGV[2] == 3) or die "command args needs arg[2] as int.\n\t(1) update comments\n\t(2) update keywords\n\t(3) update comments & keywords\n";
+($ARGV[2] == 1 || $ARGV[2] == 2 || $ARGV[2] == 3) or die "command args needs arg[2] as int.\n\t(1) update comments\n\t(2) update keywords\n\t(3) update comments & keywords\n";
 
 #Get database name or deny execution
-if(@ARGV[3]){
-  $db = @ARGV[3];
+if($ARGV[3]){
+  $db = $ARGV[3];
 }
 else {die "specify db at ARGV[3]";}
 
 #For each file, count the number of lines. 
-$oldRecordCount = &numDataRecords(@ARGV[0],"\t",6) 
+$oldRecordCount = &numDataRecords($ARGV[0],"\t",6) 
   or die "Cant open file at arg[0]";
-$newRecordCount = &numDataRecords(@ARGV[1],"\t",6) 
+$newRecordCount = &numDataRecords($ARGV[1],"\t",6) 
   or die "Cant open file at arg[1]";
 
 #Both counts should be the same.  Exit with warning if counts are different.
 if($newRecordCount != $oldRecordCount)
   {
-    &printLineDiff(@ARGV[0],@ARGV[1]);
+    &printLineDiff($ARGV[0],$ARGV[1]);
   }
 
 ($newRecordCount != 0) or die "No data records were found";
@@ -49,7 +50,7 @@ $comment_list = "comment_list$datetime";
 
 #Parse, Compare and store relevant data.
 #Parse:
-open(OLD, "@ARGV[0]") or die "Cant open OLD file at arg[0]"; 
+open(OLD, "$ARGV[0]") or die "Cant open OLD file at arg[0]"; 
 #Read old file
 $i = 0;
 while(<OLD>)  #for each line in the file
@@ -78,7 +79,7 @@ while(<OLD>)  #for each line in the file
 close(OLD); 
 
 
-open(NEW, "@ARGV[1]") or die "Cant open NEW file at arg[1]";
+open(NEW, "$ARGV[1]") or die "Cant open NEW file at arg[1]";
 #read new file
 $i = 0;
 while(<NEW>)  #for each line in the file
@@ -109,11 +110,11 @@ close(NEW);
 &dataFileRecordsMatch() || die "Unmatched Data records";
 
 
-if(@ARGV[2] == 1 || @ARGV[2] == 3){
+if($ARGV[2] == 1 || $ARGV[2] == 3){
 $addedKeywords[$newRecordCount-1] = 0;
 #compare keywordOld vs. keywordNew
 #Write all keywords in New to $addedKeywords if kword not in Old.
-for($i=0; $i<=scalar(@keywordsOld); $i++)
+for($i=0; $i<scalar(@keywordsOld); $i++)
 {
   @keyword = split /,/, $keywordsNew[$i];
   #print "$i keywords: @keyword";
@@ -152,8 +153,8 @@ for($i=0; $i<=scalar(@addedKeywords); $i++)
 	$start_stg_zdb_N = getStgZdbFromStgName($start_stg_name_N);
 	$end_stg_zdb_N = getStgZdbFromStgName($end_stg_name_N);
 	
-	$start_stg_zdb_O = getStgZdbFromStgName($start_stg_name_O);
-	$end_stg_zdb_O = getStgZdbFromStgName($end_stg_name_O);
+	#$start_stg_zdb_O = getStgZdbFromStgName($start_stg_name_O);
+	#$end_stg_zdb_O = getStgZdbFromStgName($end_stg_name_O);
 
 
 	@keywords = split /,/,$addedKeywords[$i];
@@ -174,18 +175,15 @@ for($i=0; $i<=scalar(@addedKeywords); $i++)
 	    #$anat_zdb =~ s/\s//; #remove all white space
 	    #print "$i $anat_zdb\n";
 
-	    $query = $dbh->prepare( "select anatitem_zdb_id 
+	    $queryDB = $dbh->prepare( "select anatitem_zdb_id 
                                    from anatomy_item 
                                    where anatitem_name = \"$keyword\";") 
               or die "Cannot prepare statement: $DBI::errstr\n";
-
-	    $query->execute;
-	      
-	    $anat_zdb = query->fetchrow();
+	    $queryDB->execute;
+	    $anat_zdb = $queryDB->fetchrow();
+	    $queryDB->finish;
 	    
-	    $query->finish;
-	    
-	    if ($anat_zdb =~ /ZDB/)
+	    if ($anat_zdb && $anat_zdb =~ /ZDB/)
 	      {
 		#2.check stage constraint for anatitems
 		#3.add keyword
@@ -204,7 +202,7 @@ for($i=0; $i<=scalar(@addedKeywords); $i++)
 		  }
 		elsif($queryResults !~ /0/)
 		  {
-		    print "$geneO - Could not insert - \"$anat_zdb\" into $xpatstgNew[$i]; it already exists\n\n";
+		    print "$geneO - Could not insert - \"$keyword\" with $xpatstgNew[$i]; it already exists\n\n";
 		  }
 	      }
 	    else
@@ -222,8 +220,9 @@ for($i=0; $i<=scalar(@addedKeywords); $i++)
   }
 }
 
+$dbh->disconnect;
 
-if(@ARGV[2] == 2 || @ARGV[2] == 3){
+if($ARGV[2] == 2 || $ARGV[2] == 3){
 #compare xpatstg_comments. remove NewComments that match OldComments
 for($i=0; $i <= scalar(@commentsOld); $i++)
   {
