@@ -31,6 +31,9 @@ STAGINGDIR = Staging
 STAGINGZMAPPER = $(STAGINGDIR)/zmapper
 IMAGES = mapkey.gif
 
+IMPORTPATH = $(TARGETROOT)/lib/Java
+IMPORTDIR = netscape
+
 # ---- Java source variables
 
 GENERICS = zmapper/SQLQuery.java
@@ -51,7 +54,7 @@ JAR = mapplet-1.0.jar
 
 # ---- Which variables are used by Makefile in Staging directory:
 
-export JAVAS JAR IMAGES
+export JAVAS JAR IMAGES IMPORTPATH IMPORTDIR
 
 
 
