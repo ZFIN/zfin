@@ -30,7 +30,7 @@ Variables expected:  OID  -- the OID of a publication to link
     <p>
 
 
-    <form  method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+    <FORM METHOD=post ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" ENCTYPE="multipart/form-data">
 
     <table border=2 width=100% cols=2>
 
@@ -182,20 +182,36 @@ Variables expected:  OID  -- the OID of a publication to link
     </TR>
     <TR>
       <TD colspan=2><font size=2><b>Comments:</b><br>
-    <TEXTAREA rows=5 cols=75 NAME="new_comments"></TEXTAREA>
+    <TEXTAREA rows=4 cols=75 NAME="new_comments"></TEXTAREA>
+      </TD>
+    </TR>
+    <?MISQL SQL="
+      select pub_file, title
+      from publication
+      where zdb_id = '$OID'
+        and pub_file is not null;">
+      <?MIVAR NAME=linkauth_pub_file>$1<?/MIVAR>
+    <?/MISQL>
+    <TR>
+      <TD colspan=2>
+       <?MIBLOCK COND="$(NXST,$linkauth_pub_file)">
+         <font size=2> <b>Upload PDF:</b> </font><input type=file name="linkauth_pub_file" size=50> 
+         <br><font size=-1>(The PDF field may be left blank.)</font>
+       <?MIELSE>
+         PDF file exists for this publication.
+       <?/MIBLOCK>
       </TD>
     </TR>
   </TABLE>
 
+  <P>
 
-    <hr width=80%>
 
     <!-- location.go(-1) does not seem to work consistently on all platforms - all browsers -->
     <?MIVAR>
     <input type=button value="CANCEL" onClick="window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$returnVariables')">
     <input type=submit value="SUBMIT">
 
-    <hr width=80%>
     <?/MIVAR>
     </form>
 
