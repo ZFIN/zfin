@@ -82,9 +82,10 @@ while (<>) {
   #CC   -!- SIMILARITY: CONTAINS 2 LIM DOMAINS. THE LIM DOMAIN BINDS 2 ZINC
   #CC       IONS.
   if (/^CC\s+-!-\s(.*)/) {
+      my $ccinfo = $1;  #$1 would lost if there is a match in the following if clause
       # put each item of the comments into array   
       push (@cc, $cc) if ($cc && $cc!~/CAUTION/ && $cc!~/ALTERNATIVE PRODUCTS/); 
-      $cc = $1;      
+      $cc = $ccinfo;      
       next;
   }
   if (/^CC\s+(.*)/) {   
