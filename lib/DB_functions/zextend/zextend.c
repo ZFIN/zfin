@@ -8,6 +8,8 @@
 	get_id		Generates a new ID by appending a number to a string
 	concat		Concatenates to strings, the Informix concat seems brokeen
 	html_breaks	Replaces newlines with "<P>" which formats it for html
+	now		returns current timestamp
+	expr		returns it's single argument to get the parser to eval it
 	get_random_cookie Generate a random string of printable characters
 
 	Notes: Could be a little more efficent. Add in meaningfull error returns
@@ -153,7 +155,7 @@ mi_lvarchar *sysexec(mi_lvarchar *cmd, mi_lvarchar *args) {
 	conn = mi_open(NULL, NULL, NULL);	/* Open connection */
 	if (conn == NULL) EXCEPTION("ERROR: conn is NULL\n");
 	
-if (0) {
+if (1) {
 	if (sizeof(SYSMSG) + mi_get_varlen(cmd) >= MAXLEN)	/* Check size */
 		EXCEPTION("Command ID is too long");
 	sprintf (cmdbuf, SYSMSG, mi_lvarchar_to_string(cmd));	/* Build it */
@@ -332,24 +334,14 @@ mi_lvarchar *html_breaks(mi_lvarchar *text) {
 	Illustra now.
 	Returns a datetime;
 */
-/*
 mi_datetime *now() {
-*/
-mi_lvarchar *now() {
 	time_t		seconds;
-	mi_lvarchar	*lv;
+	char		buf[25];
 	
 	time(&seconds);			/* What time is it Now? */
 
-	/* Get lvarchar to hold it */
-	if (!(lv = mi_new_var(25))) NO_MEMORY(now);
-
-	mi_set_varlen(lv, cftime((char *)mi_get_vardata(lv),
-		"%y-%m-%d %T.000", &seconds));
-/*
-	return mi_datetime_to_binary(lv);
-*/
-	return lv;
+	cftime(buf, "%Y-%m-%d %T.000", &seconds);
+	return mi_string_to_datetime(buf, "datetime year to fraction(3)");
 }
 
 
