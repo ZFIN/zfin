@@ -22,8 +22,8 @@ mhist_event( active_marker varchar(50),
 -- in Marker_History.
 
 
-  --define global variables
-  DEFINE marker_type  varchar(50);
+  --define global variables  
+  DEFINE marker_type varchar(50);	
   DEFINE nomen_zdb_id varchar(50);
   DEFINE data_zdb_id  varchar(50);
   DEFINE count	integer;
@@ -36,10 +36,13 @@ IF (new_value != old_value or event = "assigned") THEN
   SELECT mrkr_type 
   INTO marker_type
   FROM marker
-  WHERE mrkr_zdb_id = active_marker;
+  WHERE mrkr_zdb_id = active_marker
+    AND mrkr_type in (select mtgrpmem_mrkr_type from marker_type_group_member
+                       where mtgrpmem_mrkr_type_group = "GENEDOM");
 
 
-  IF (marker_type = "GENE") THEN  
+
+  IF (marker_type <> '') THEN  
   --------------------------------------------------------------------
       --Get MARKER_HISTORY zdb_id
       LET nomen_zdb_id = get_id('NOMEN');
@@ -135,7 +138,7 @@ IF (new_value != old_value or event = "assigned") THEN
       END IF  -------(event = renamed)--------
       ------------------------------------------------------------------
 
-  END IF  -------(marker type = GENE)--------
+  END IF  -------(marker type in group GENEDOM)--------
 
 END IF  -------(new != old or assigned)--------
 

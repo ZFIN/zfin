@@ -1,6 +1,10 @@
 --create marker relationship
 
 {
+01/2004, when this function is considered to be reused, mrkr_type might 
+need to be ajusted to include types like pseudogene.
+
+
 As of 2003/03, this function is not used anywhere.  However, from an 
 e-mail from Tom:
 

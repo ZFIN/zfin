@@ -125,7 +125,9 @@ create dba function "informix".regen_maps()
 		from mapped_marker mm
 		where mm.or_lg = m.or_lg
 	  	and mm.lg_location = m.lg_location
-	  	and mm.marker_type = "GENE")
+	  	and mm.marker_type in (select mtgrpmem_mrkr_type
+                                         from marker_type_group_member
+					where mtgrpmem_mrkr_type_group='GENEDOM'))
 	into temp tmp_gene_id with no log;
 
    -- do union to be distinct
@@ -260,7 +262,7 @@ create dba function "informix".regen_maps()
       set mghframework = 't'::boolean 
       where exists 
 	    ( select 'x' 
-		from mapped_marker b
+	from mapped_marker b
 		where paneled_m_new.zdb_id = b.marker_id  
 		  and b.refcross_id = 'ZDB-REFCROSS-980521-11'
 		  and b.marker_type = 'SSLP' );
@@ -286,7 +288,7 @@ create dba function "informix".regen_maps()
 		from mapped_marker m1, mapped_marker m2 
 		where m1.refcross_id = 'ZDB-REFCROSS-990426-6'
 		  and m2.refcross_id = 'ZDB-REFCROSS-990707-1'
-		  and m1.marker_type in  ('GENE','EST')
+		  and m1.marker_type in  ('GENE','EST','GENEP')
 		  and m1.marker_id = m2.marker_id );
 
 
