@@ -51,7 +51,7 @@ TARGETDIR = $(TARGETROOT)/server_apps/mapimage
 
 # Use the standard JAVAC_14, and JAVACFLAGS.  Still need to define classpath.
 
-CLASSPATH = .:$(TOP)/lib/Java
+CLASSPATH = .:$(TOP)/lib/Java:$(JDBCHOME)/lib/ifxjdbc.jar
 
 
 # ---- Java source and class file variables
