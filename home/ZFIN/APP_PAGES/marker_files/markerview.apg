@@ -200,8 +200,8 @@
 		}
 	}	
 	function new_attrib_seq() {
-		var seq_acc = document.updater.attrib_seq_acc.value;
-		var pub_id = document.updater.attrib_seq_pubid.value.toUpperCase();
+		var seq_acc = document.updateseq.attrib_seq_acc.value;
+		var pub_id = document.updateseq.attrib_seq_pubid.value.toUpperCase();
 		if((seq_acc != '')&&(pub_id != '')) {
 			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+seq_acc+'&new_value='+pub_id+'&target_table=$target_table&info=seqacc');
 		}
