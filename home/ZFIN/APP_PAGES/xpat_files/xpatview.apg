@@ -47,10 +47,6 @@
     window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatupdate.apg');
     }
 
-    function updateComments(xpat_zdb_id) {
-    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatupdate.apg');
-    }
-
     function updateStageWindow(xpatstg_xpat,xpatstg_start,xpatstg_end) {
     window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatupdate.apg');
     }
@@ -128,19 +124,17 @@ ERROR -- something bad happened -- no OID passed in!
 <?/MIVAR> 
 
 <?MIVAR NAME=$ASSAY_NAME><?/MIVAR>
-<?MIVAR NAME=$XPAT_COMMENTS><?/MIVAR>
 <?MIVAR NAME=$XPAT_RECEIVE_DATE><?/MIVAR>
 <?MIVAR NAME=$MARKER_ID> <?/MIVAR>
 <?MISQL SQL="
-     SELECT xpat_assay_name, xpat_comments, xpat_probe_zdb_id, xpat_direct_submission_date
+     SELECT xpat_assay_name, xpat_probe_zdb_id, xpat_direct_submission_date
      FROM expression_pattern, expression_pattern_assay
      WHERE xpat_zdb_id = '$OID' 
        AND xpat_assay_name = xpatassay_name;
      ">
 	<?MIVAR NAME=ASSAY_NAME>$1<?/MIVAR>
-	<?MIVAR NAME=XPAT_COMMENTS>$2<?/MIVAR>
-	<?MIVAR NAME=$MARKER_ID>$3<?/MIVAR>
-	<?MIVAR NAME=$XPAT_RECEIVE_DATE>$4<?/MIVAR>
+	<?MIVAR NAME=$MARKER_ID>$2<?/MIVAR>
+	<?MIVAR NAME=$XPAT_RECEIVE_DATE>$3<?/MIVAR>
 <?/MISQL>
 
 
@@ -725,27 +719,8 @@ ERROR -- something bad happened -- no OID passed in!
 
 <?MIVAR><b>Contact(s):&nbsp;</b>$CONTACT<?/MIVAR>
 
-<!-------------- Comments ------------------->
 
-<?MIVAR COND="$(XST,$XPAT_COMMENTS)"><br><br>
-    <?MIBLOCK COND="$(XST,$UPDATE)">
-    <?MIVAR>
-          <FORM NAME=updateComments method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatupdateComments.apg">
-          <INPUT TYPE="hidden" name="MIval" value="aa-xpatupdateComments.apg">
-          <INPUT TYPE="hidden" name="OID" value="$OID">
-          <INPUT TYPE="hidden" name="old_value" value="$XPAT_COMMENTS">
-          <INPUT TYPE="hidden" name="gene_name" value="$gene_name">
-          <INPUT TYPE="hidden" name="gene_abbrev" value="$gene_abbrev">
-          <INPUT TYPE="hidden" name="gene_id" value="$gene_id">
-          <INPUT TYPE="submit" value=Update>
-          </FORM>
-   <?/MIVAR>
-   <?/MIBLOCK>
-    <?MIVAR>   <b>Comments:&nbsp;</b>$XPAT_COMMENTS<?/MIVAR><p> 
-     
-<?/MIVAR>
-
-<?MIVAR COND="$(XST,$XPAT_RECEIVE_DATE)"><b>Submission Date:</b> &nbsp;$XPAT_RECEIVE_DATE<?/MIVAR>
+<?MIVAR COND="$(XST,$XPAT_RECEIVE_DATE)"><p><b>Submission Date:</b> &nbsp;$XPAT_RECEIVE_DATE<?/MIVAR>
 
 
 <!--------------------------- Pubs ---------------------------->
