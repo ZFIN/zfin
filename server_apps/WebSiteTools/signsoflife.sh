@@ -28,15 +28,3 @@ if ($modeon != "On") then
 #    cd /research/zfin/users/bionixprod/ZFIN_WWW/;onmode -ky;oninit;echo ""|/private/bin/onlog.pl	
 endif 
 
-############################################################################################################
-set ifx_ps="`ps -u informix -o args`"
-
-if("`ps -u informix -o args|cut -f2- -d ' '|grep ^Server\ <!--|DB_NAME|-->\ <!--|JAVA_SERVER_PORT|-->`" != "Server <!--|DB_NAME|--> <!--|JAVA_SERVER_PORT|-->") then
-	<!--|ROOT_PATH|-->/server_apps/javaserver stop >& /dev/null
-	<!--|ROOT_PATH|-->/server_apps/javaserver start >& /dev/null
-
-	echo $ifx_ps | /local/bin/mail -s "javaserver nonexistant on $HOST" tomc@cs.uoregon.edu 
-	echo $ifx_ps | /local/bin/mail -s "javaserver nonexistant on $HOST" judys@cs.uoregon.edu
-
-	#tail <!--|ROOT_PATH|-->/server_apps/javaserver/Server.out |\
-endif
