@@ -145,16 +145,16 @@ Linkage Members:   (At least one member must be specified) <br>
 
     <?MIVAR>
       <select name=mtype>
-	<option $(IF,$(EC,$mtype,MUTANT),SELECTED)>MUTANT
-	<option $(IF,$(EC,$mtype,GENE),SELECTED)>GENE
-	<option $(IF,$(EC,$mtype,EST),SELECTED)>EST
-	<option $(IF,$(EC,$mtype,RAPD),SELECTED)>RAPD
-	<option $(IF,$(EC,$mtype,SSLP),SELECTED)>SSLP
-	<option $(IF,$(EC,$mtype,STS),SELECTED)>STS
-	<option $(IF,$(EC,$mtype,BAC),SELECTED)>BAC
-	<option $(IF,$(EC,$mtype,PAC),SELECTED)>PAC
-	<option $(IF,$(EC,$mtype,BAC_END),SELECTED)>BAC_END
-	<option $(IF,$(EC,$mtype,PAC_END),SELECTED)>PAC_END
+	<option value=MUTANT $(IF,$(EC,$mtype,MUTANT),SELECTED)>Mutant
+	<?MISQL SQL="
+	      select marker_type, mrkrtype_type_display
+                from marker_types
+	       where marker_type in (select mtgrpmem_mrkr_type
+				       from marker_type_group_member
+				      where mtgrpmem_mrkr_type_group='SEARCH_MKSEG')
+		;">	
+	   <option value=$1 $(IF,$(EC,$mtype,$1),SELECTED)>$2
+        <?/MISQL>
       </SELECT>  and its abbrev contains:
       <input type=text name=member  size=8>  
       <input type=submit name=do_search value="Search">
@@ -166,11 +166,12 @@ Linkage Members:   (At least one member must be specified) <br>
 	 <hr>
 	 <TABLE cols=2>
 	 <TR><TH></TH><TH>Marker Name</TH><TH>Marker Type</TH></TR>
-	 <?MISQL SQL="select distinct mrkr_zdb_id,mrkr_name,mrkr_type,mrkr_abbrev 
-	   from marker a, all_map_names b
+	 <?MISQL SQL="select distinct mrkr_zdb_id,mrkr_name,mrkrtype_type_display,mrkr_abbrev 
+	   from marker a, all_map_names b, marker_types c
 	     where a.mrkr_type='$mtype' 
 	       and a.mrkr_zdb_id = b.allmapnm_zdb_id 
-	       and b.allmapnm_name_lower like '%$(LOWER,$member)%' 
+	       and b.allmapnm_name_lower like '%$(LOWER,$member)%'
+	       and a.mrkr_type = c.marker_type 
 	       order by a.mrkr_abbrev;">
 	   <TR>
 	     <TD>

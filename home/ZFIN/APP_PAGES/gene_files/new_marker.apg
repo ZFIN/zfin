@@ -56,12 +56,14 @@
 
       <b>Type of new marker to create:</b>
       <SELECT name=marker_type>
-	<option>GENE
-	<option>EST
-	<option>RAPD
-	<option>SSLP
-	<option>STS
-	<option>AFLP
+        <?MISQL SQL="
+	   select mrkrtype_type_display, marker_type
+	     from marker_types
+	    where marker_type in (select mtgrpmem_mrkr_type
+				  from marker_type_group_member
+			         where mtgrpmem_mrkr_type_group='SEARCH_MK'); ">
+	  <option value=$2>$1
+        <?/MISQL>	
       </SELECT>  
 
       <input type=submit value="create it">
@@ -69,9 +71,14 @@
   <?/MIBLOCK>
 
   <?MIBLOCK COND="$(AND,$(XST,$marker_type),$(NXST,$s_new))">
+     <?MISQL SQL=" select mrkrtype_type_display
+                    from marker_types
+                   where marker_type='$marker_type'";>
+      <?MIVAR NAME=marker_type_display>$1<?/MIVAR>
+    <?/MISQL>
 
     <?MIVAR>
-      <h1>Describe new $(UPPER,$marker_type)</h1>
+      <h1>Describe new $marker_type_display</h1>
     <?/MIVAR>
     <SCRIPT>
       // whitespace characters
@@ -155,8 +162,9 @@
       <form name=newdata onSubmit="return validate(this);" method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
         <input type=hidden name=MIval value=aa-new_marker.apg>
         <input type=hidden name=marker_type value="$marker_type">
+	<input type=hidden name=marker_type_display value="$marker_type_display">
 
-        <p><B>$(UPPER,$marker_type) name</b> (required):
+        <p><B>$marker_type_display name</b> (required):
         <input type=text name=mname size=80>
 
         <p><b>Abbreviation</b> (required):
@@ -166,14 +174,16 @@
         <b>Description:</b><br>
         <TEXTAREA rows=5 cols=50 name=comments></TEXTAREA>
 
-        <?MIBLOCK COND=$(EC,$(LOWER,$marker_type),gene)>
+        <?MIBLOCK COND="$(>,$(POSITION,$marker_type,GENE),0)">
         <p><b>Is this a reservation?</b>:
         Yes <input type=radio name=reserve value=yes> / No <input type=radio name=reserve value=no checked>
         <br>Comments: <input type=text name=rsrvComment size=50>
-        <?/MIBLOCK>
+        <?/MIELSE>
+	  <?MIVAR NAME=$reserve>no<?/MIVAR>
+	<?/MIBLOCK>
         <p>
 
-        <input type=submit name=s_new value="Submit new $(UPPER,$marker_type)">
+        <input type=submit name=s_new value="Submit new $marker_type_display">
       </form>
     <?/MIVAR>
 
@@ -233,10 +243,10 @@
     <?/MIBLOCK>
 
     <?MIVAR>
-      <h1>Confirmation: $(UPPER,$marker_type) record added</h1>
+      <h1>Confirmation: $marker_type_display record added</h1>
 
       Click <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$new_id">here</A>
-      to view the new $marker_type record.
+      to view the new $marker_type_display record.
       <p>
       Click <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg">here</A> 
       to return to the ZFIN home page.

@@ -168,7 +168,9 @@ function show_doc(title,docpath) {
   select distinct mrkr_name as name, mrkr_abbrev as trey 
     from marker
     where (lower(mrkr_name) = '$(LOWER,$fname)' 
-      and mrkr_type = 'GENE'
+      and mrkr_type in (select mtgrpmem_mrkr_type
+			  from marker_type_group_member
+			 where mtgrpmem_mrkr_type_group='GENEDOM')
       $locuslstr_gene_constraint
     order by name,trey;">
   $(IF,$(EC,$doAction,new_locus),Found cloned gene <b>$1</b> with abbreviation <b>$2</b><br>)
