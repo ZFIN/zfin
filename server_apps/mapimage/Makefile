@@ -30,7 +30,7 @@ TARGETIMAGES = $(foreach IMG, $(IMAGES), $(FINALTARGETDIR)/$(IMG))
 
 # ---- Misc Java varaibles
 
-# Use the standard JAVAC_11, and JAVACFLAGS.  Still need to define classpath.
+# Use the standard JAVAC_14, and JAVACFLAGS.  Still need to define classpath.
 
 CLASSPATH = $(STAGINGDIR):$(TOP)/lib/Java:$(JDBCHOME)/lib/ifxjdbc.jar
 
@@ -43,8 +43,8 @@ NETSCAPESYMLINK = $(STAGINGDIR)/netscape
 
 # Can't use just GENERICS and STATICS b/c of zmapper complications.
 
-STATICS    = mapimage.java cgi_lib.java
-ZMGENERICS = zmapper/SQLQuery.java zmapper/MarkerBuilder.java 
+STATICS    = mapimage.java cgi_lib.java SQLQuery.java
+ZMGENERICS = zmapper/MarkerBuilder.java 
 ZMSTATICS  = zmapper/BackBone.java zmapper/Bin.java zmapper/BinGroup.java \
 	     zmapper/LayoutManager.java zmapper/MapViewer.java zmapper/Marker.java
 ZMSTAGINGSPECIFICS = $(foreach ZMG, $(ZMGENERICS), $(STAGINGDIR)/$(ZMG))
@@ -92,7 +92,7 @@ $(ZMSTAGINGSTATICS) : $(STAGINGZMDIR)/% : $(ZMSRCDIR)/%
 # When any class file needs to be remade, remake all of them.
 
 $(STAGINGCLASSES) : $(STAGINGJAVAS)
-	$(JAVAC_11) $(JAVACFLAGS) -classpath $(CLASSPATH) $(STAGINGJAVAS)
+	$(JAVAC_14) $(JAVACFLAGS) -classpath $(CLASSPATH) $(STAGINGJAVAS)
 
 
 # ----- Rules for creating the JAR file.
@@ -101,6 +101,6 @@ $(NETSCAPESYMLINK) :
 	ln -s $(NETSCAPEPATH) $(NETSCAPESYMLINK)
 
 $(JAR) : $(STAGINGCLASSES) $(NETSCAPESYMLINK)
-	cd $(STAGINGDIR); $(JAVAHOME_11)/bin/jar -cvf $(JAR) $(CLASSES) netscape
+	cd $(STAGINGDIR); $(JAVAHOME_14)/bin/jar -cvf $(JAR) $(CLASSES) netscape
 	chmod o+r $@
 
