@@ -564,6 +564,17 @@ create dba function "informix".regen_genomics() returning integer
 	  and db_link.linked_recid = allmapnm_zdb_id
 	  and lower(acc_num) <> allmapnm_name;
 
+
+    insert into all_m_names_new 
+	(allmapnm_name, allmapnm_zdb_id, allmapnm_significance)
+      select distinct lower(acc_num), c_gene_id, 12
+	from db_link, all_m_names_new, orthologue
+	where acc_num <> "DUMMY" 
+	  and acc_num not like "%,%"
+	  and db_link.linked_recid = orthologue.zdb_id
+	  and orthologue.c_gene_id = allmapnm_zdb_id
+	  and lower(acc_num) <> allmapnm_name;
+
     -- Process comma separated accession numbers
 
     begin
