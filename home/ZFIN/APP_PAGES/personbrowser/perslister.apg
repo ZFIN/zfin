@@ -21,19 +21,6 @@
     where ID = 'aa-identify.apg';">
   $1
 <?/MISQL>
-<?MISQL SQL="
-  delete from int_person_places 
-    where pers_id = '$ZDB_ident'
-      and place_id='PERSON';">
-<?/MISQL>
-<?MISQL COND="$(NOT,$(EQ,$(SUBSTR,$ZDB_name,1,5),GUEST))" SQL="
-  insert into int_person_places 
-      (pers_id,place_id,last_visit)
-    values 
-      ('$ZDB_ident','PERSON',current);">
-<?/MISQL>
-
-
 
 <!-- This next part builds up a query piece by piece, based on which criteria 
   were passed in 
