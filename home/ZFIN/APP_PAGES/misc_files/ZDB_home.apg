@@ -204,12 +204,12 @@
 	<TR>
 	  <TD class="content_left">
 	    <DIV class="content">
-	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-geneselect.apg"><B>Genes</B></A> 
+	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-newmrkrselect.apg"><B>Genes / Markers / Clones </B></A> 
 	    </DIV>
 	  </TD>
 	  <TD class="content_right">
 	    <DIV class="content">
-	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-geneselect.apg">Search for genes by name or map location.</A><br>
+	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-newmrkrselect.apg">Search for genes, markers and clones by name, accession number, LG, vector type or sequence type.</A><br>
 	      <?MIVAR COND="$(EC,$AUTHORIZED,root)">
 		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=gene"><EM>Add new GENE</EM></A>
 		,  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-add_linkage.apg"><EM>Add new LINKAGES</EM></A>
@@ -229,33 +229,6 @@
 	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg">Search for gene expression patterns by gene name, 
 	      developmental stage, anatomical structure, developmental or 
 	      physiological process.</A>
-	    </DIV>
-	  </TD>
-	</TR>
-
-<!--	<TR>
-	  <TD class="content_left">
-	    <DIV class="content">
-	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-msegselect.apg"><B>Molecular Segments</B></A> 
-	    </DIV>
-	  </TD>
-	  <TD class="content_right">
-	    <DIV class="content">
-	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-msegselect.apg">Search for molecular segments.</A>
-	    </DIV>
-	  </TD>
-	</TR>
--->
-
-	<TR>
-	  <TD class="content_left">
-	    <DIV class="content">
-	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg"><B>Map Markers</B></A> 
-	    </DIV>
-	  </TD>
-	  <TD class="content_right">
-	    <DIV class="content">
-	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg">Search for mapped markers by marker type, marker name, map location or type of map.</A><br>
 	    </DIV>
 	  </TD>
 	</TR>
