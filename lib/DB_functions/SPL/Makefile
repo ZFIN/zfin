@@ -30,7 +30,7 @@ FISH_FUNCS  = get_fish_full_name.sql p_locus_name_abbrev_equal.sql
 IMAGE_FUNCS = get_image_stats.sql
 MRKR_FUNCS  = mhist_event.sql p_mrel_grpmem_correct.sql \
 		p_two_linkage_pairs.sql p_check_zdb_id_in_genedom.sql \
-		p_goterm_not_obsolete.sql
+		p_goterm_not_obsolete.sql p_marker_has_goterm.sql
 PUB_FUNCS   = get_pub_mini_ref.sql
 REGEN_FUNCS = regen_anatomy.sql regen_fishsearch.sql regen_genomics.sql \
 		regen_oevdisp.sql get_date_from_id.sql regen_panelcount.sql \
