@@ -1,4 +1,4 @@
-!/private/bin/perl -w
+#!/private/bin/perl -w
 
 # FILE: upload.cgi
 # PREFIX: made decision to not use prefix, as it makes this page
