@@ -357,12 +357,31 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/xpat.txt'
  DELIMITER "	"  select mrkr_zdb_id, xpat_zdb_id from marker, expression_pattern_assay, expression_pattern, marker_relationship where mrkr_zdb_id = mrel_mrkr_1_zdb_id and mrel_mrkr_2_zdb_id = xpat_probe_zdb_id and xpat_assay_name = xpatassay_name;
 
 --- generate mapping data for LocusLink
-
+ 
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/panels.txt' 
   DELIMITER "	" select zdb_id, abbrev, metric from panels; 
 
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/mappings.txt' 
-  DELIMITER "	" select distinct target_id, zdb_id, abbrev, OR_lg, lg_location from paneled_markers  where (zdb_id not like '%FISH%') and (zdb_id not like '%LOCUS%') order by 1;
+  DELIMITER "	" select distinct pm.target_id, pm.zdb_id, pm.abbrev, pm.OR_lg, pm.lg_location,
+        case
+            when target_id in('ZDB-REFCROSS-980521-11','ZDB-REFCROSS-000320-1')
+                then 1
+            when target_id = 'ZDB-REFCROSS-990426-6'
+                then 2
+            when target_id = 'ZDB-REFCROSS-990707-1' 
+                and owner in ('ZDB-PERS-971016-22','ZDB-PERS-971205-2')
+                then 2
+            else 3
+        end
+        from paneled_markers pm, outer mapped_marker mm  
+        where pm.zdb_id[1,8] not in ('ZDB-FISH', 'ZDB-LOCU') 
+        and mm.marker_id   == pm.zdb_id
+        and mm.refcross_id == pm.target_id
+        and mm.or_lg       == pm.or_lg
+        and mm.lg_location == pm.lg_location
+        and mm.map_name    == pm.map_name
+        and mm.metric      == pm.metric
+        order by 1;
 
 -- wait to see what to do with mutants  union select distinct a.target_id, b.locus, c.abbrev, a.OR_lg, a.lg_location from paneled_markers a, fish b, locus c where a.zdb_id like '%FISH%' and a.zdb_id = b.zdb_id and b.locus = c.zdb_id
 
