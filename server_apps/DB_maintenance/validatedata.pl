@@ -713,85 +713,6 @@ sub expressionPatternAnatomyStageWindowOverlapsAnatomyItem ($) {
   }
 }
 
-#-----------------------------------------------------------
-#Parameter
-# $      Email Address for recipients
-# 
-
-sub expressionPatternImageStageWindowOverlapsFishImage ($) {
-	
-  logHeader("Checking xpat image's stage window overlaps with that for fish image.");
-	
-  my $sql = '
-             select xpatfimg_fimg_zdb_id, 
-                    xpatfimg_xpat_start_stg_zdb_id,
-		    xpatfimg_xpat_end_stg_zdb_id
-	      from  expression_pattern_image 
-              where fimg_overlaps_stg_window (
-                                 xpatfimg_fimg_zdb_id,  
-                                 xpatfimg_xpat_start_stg_zdb_id, 
-                                 xpatfimg_xpat_end_stg_zdb_id
-                                 ) = "f" ';
-  my $nRecords = execSql ($sql); 
-  
-  if ( $nRecords > 0 ) {
-		    			  
-    my $sqlDtl='
-                select xpatfimg_fimg_zdb_id,
-                       fimgstg_start_stg_zdb_id,
-                       s1.stg_name_long,
-                       fimgstg_end_stg_zdb_id,
-                       s2.stg_name_long, 
-                       xpatfimg_xpat_start_stg_zdb_id,
-                       s3.stg_name_long,    
-                       xpatfimg_xpat_end_stg_zdb_id,
-                       s4.stg_name_long
-                  from expression_pattern_image,
-                       fish_image_stage,
-                       stage s1, stage s2, stage s3, stage s4
-                 where fimg_overlaps_stg_window (
-                                 xpatfimg_fimg_zdb_id,  
-                                 xpatfimg_xpat_start_stg_zdb_id, 
-                                 xpatfimg_xpat_end_stg_zdb_id
-                                 ) = "f" 
-                   and xpatfimg_fimg_zdb_id = fimgstg_fimg_zdb_id
-                   and fimgstg_start_stg_zdb_id = s1.stg_zdb_id
-                   and fimgstg_end_stg_zdb_id = s2.stg_zdb_id
-                   and xpatfimg_xpat_start_stg_zdb_id = s3.stg_zdb_id
-                   and xpatfimg_xpat_end_stg_zdb_id = s4.stg_zdb_id
-                  ';
-    
-    my @colDesc = ("Xpatfimg fimg ZDB ID           ",
-		   "Fimgstg start stg ZDB ID       ",
-		   "Start stg name & period        ",
-		   "Fimgstg end stg ZDB ID         ",
-		   "End stg name & period          ",
-		   "Xpatfimag xpat start stg ZDB ID",
-		   "Start stg name & period        ",
-		   "Xpatfimag xpat end stg ZDB ID  ",
-		   "End stg name & period          " );
-
-    my $nRecordsDtl = execSql ($sqlDtl, undef, @colDesc);
-
-    if ( $nRecords == $nRecordsDtl ) {
-     
-      my $sendToAddress = $_[0];
-      my $subject = "Stage window not overlap";
-      my $routineName = "expressionPatternImageStageWindowOverlapsFishImage";
-      my $errMsg = "In expression_pattern_image, $nRecords records' stage "
-    		   ."window don't overlap with the fish image's stage window.";
-      		       
-      logError ($errMsg);
-      &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql, $sqlDtl);
-      &recordResult($routineName, $nRecords); 
-    }else {
-      print "Two queries are not consistent.\n";
-    }
-  }
-  else {
-    print "Passed!\n";
-  }
-}	
 
 #======================== Fish Names, Abbrevs, Alleles =====================
 #
@@ -2399,7 +2320,6 @@ if($daily) {
 
   expressionPatternStageWindowConsistent($xpatEmail);
   expressionPatternAnatomyStageWindowOverlapsAnatomyItem($xpatEmail);
-  expressionPatternImageStageWindowOverlapsFishImage($xpatEmail);
 
   fishNameEqualLocusName($mutantEmail);
   fishAbbrevContainsFishAllele($mutantEmail);
