@@ -1,4 +1,4 @@
-#! /local/bin/perl5
+#! /local/bin/perl5 -w 
 
 ##
 # validatedata.pl
@@ -512,6 +512,12 @@ sub expressionPatternStageWindowConsistent($) {
                 and xpatstg_end_stg_zdb_id = s2.stg_zdb_id
               ';
   	
+  my @colDesc = ("Xpatstg ZDB ID     ",
+		 "Start Stage ZDB ID ",
+		 "Start Stage Name   ",
+		 "End Stage ZDB ID   ",
+		 "End Stage Name     ");
+
   my $nRecords = execSql ($sql, undef, @colDesc);
 
   if ( $nRecords > 0 ) {
@@ -765,27 +771,21 @@ sub fishAbbrevContainsFishAllele ($) {
 
   logHeader ("Checking fish.abbrev contains fish.allele");
 	
-  my $sql = 'select fish.abbrev, locus.abbrev, fish.zdb_id, locus.zdb_id, 
-                    get_fish_full_name(fish.zdb_id), locus_name
-		 from fish, locus
-		 where fish.locus = locus.zdb_id
-		   and line_type = "mutant"
-		   and fish.abbrev not like (locus.abbrev || "%")
-		   and locus.abbrev <> ""';
+  my $sql = 'select abbrev, allele, zdb_id
+		 from fish
+		 where line_type = "mutant"
+		   and fish.abbrev not like "%" || fish.allele || "%"';
 
   my @colDesc = ("Fish abbrev       ",
-		 "Locus abbrev      ",
-		 "Fish ZDB ID       ",
-		 "Locus ZDB ID      ",
-		 "Full fish name    ",
-		 "Locus name        ");
+		 "Fish allele       ",
+		 "Fish ZDB ID       ");
   
   my $nRecords = execSql ($sql, undef, @colDesc);
 	
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
-    my $subject = "Fish abbrev does not start with locus abbrev";
-    my $errMsg = "The abbrev field in $nRecords fish record(s) does not start with the locus's abbrev.\n ";
+    my $subject = "Fish abbrev does not contain fish allele";
+    my $errMsg = "The abbrev field in $nRecords fish record(s) does not contain fish allele.\n ";
     
     logError ($errMsg);
     &sendMail($sendToAddress, $subject, $errMsg, $sql); 
@@ -817,7 +817,9 @@ sub fishAbbrevStartsWithLocusAbbrev ($) {
 	       where fish.locus = locus.zdb_id
 		 and line_type = "mutant"
 		 and fish.abbrev not like (locus.abbrev || "%")
-		 and locus.abbrev <> ""';
+		 and locus.abbrev <> ""
+                 and (   substr(locus.abbrev,1,4) <> "unm "
+                      or substr(locus.abbrev,1,3) <> substr(fish.abbrev,1,3))';
 
   my @colDesc = ("Fish abbrev       ",
 		 "Locus abbrev      ",
@@ -876,7 +878,6 @@ sub locusAbbrevUnique ($) {
 			 where loc1.abbrev = loc2.abbrev
 			   and locus_name not like "Df%"
 			   and locus_name not like "T%"
-			   and locus_name <> "un-named"
 		       group by abbrev
 		       having count(*) > 1 )
                order by abbrev, locus_name, zdb_id';
@@ -920,7 +921,6 @@ sub locusNameUnique ($) {
 			 from locus 
 			 where locus_name not like "Df%"
 			   and locus_name not like "T%"
-			   and locus_name <> "un-named"
 			 group by locus_name 
 			 having count(*) > 1 )
 	       order by locus_name, abbrev, zdb_id';
@@ -963,7 +963,6 @@ sub locusAbbrevIsSet ($) {
                       or abbrev is NULL)
                  and locus_name not like "Df%"
 	         and locus_name not like "T%"
-		 and locus_name <> "un-named"
 	       order by abbrev, locus_name, zdb_id';
 
   my @colDesc = ("Locus abbrev      ",
@@ -976,6 +975,196 @@ sub locusAbbrevIsSet ($) {
     my $sendToAddress = $_[0];
     my $subject = "Locus abbrev not set";
     my $errMsg = "Locus abbrev not set in $nRecords locus record(s).\n ";
+
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+  }else {
+    print "Passed!\n";
+  }
+} 
+
+
+
+#======================== Gene - EST relationships =====================
+#
+# All ESTs in ZFIN are supposed to be associated with Genes.
+# These routines check that those relationships are correctly defined.
+
+#---------------------------------------------------------------
+# estsHave1Gene
+#
+# Each EST should be associated with 1 and only 1 gene
+# 
+#Parameter
+# $      Email Address for recipients
+# 
+sub estsHave1Gene ($) {
+
+  logHeader ("Checking each EST has 1 gene");
+
+  my $sql = 'select mrkr_zdb_id, mrkr_name, mrkr_abbrev
+               from marker m2
+               where mrkr_type = "EST"
+                 and 1 <> 
+                     ( select count(*) 
+                         from marker m1, marker_relationship
+                         where mrel_mrkr_1_zdb_id = m1.mrkr_zdb_id
+                           and mrel_mrkr_2_zdb_id = m2.mrkr_zdb_id
+                           and mrel_type = "gene contains small segment" )
+               order by mrkr_name';
+
+  my @colDesc = ("EST ZDB ID        ",
+		 "EST Name          ",
+		 "EST Abbrev        ");
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "ESTs have 0 or > 1 associated genes";
+    my $errMsg = "$nRecords ESTs had 0 or more than 1 associated genes.\n ";
+
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+  }else {
+    print "Passed!\n";
+  }
+} 
+
+
+#---------------------------------------------------------------
+# prefixedGenesHave1Est
+#
+# Genes that have a 2 character prefix, followed by a : should always have
+# a corresponding EST
+# 
+#Parameter
+# $      Email Address for recipients
+# 
+
+sub prefixedGenesHave1Est ($) {
+
+  logHeader ("Checking prefixed genes have 1 EST");
+
+  my $sql = 'select mrkr_zdb_id, mrkr_name, mrkr_abbrev
+               from marker m1
+               where mrkr_type = "GENE"
+                 and mrkr_name like "__:%"
+                 and 1 <> 
+                     ( select count(*) 
+                         from marker m2, marker_relationship
+                         where mrel_mrkr_1_zdb_id = m1.mrkr_zdb_id
+                           and mrel_mrkr_2_zdb_id = m2.mrkr_zdb_id
+                           and mrel_type = "gene contains small segment" )
+               order by mrkr_name';
+
+  my @colDesc = ("Gene ZDB ID       ",
+		 "Gene Name         ",
+		 "Gene Abbrev       ");
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Prefixed genes have 0 or > 1 associated ESTs";
+    my $errMsg = "$nRecords genes had 0 or more than 1 associated ESTs.\n ";
+
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+  }else {
+    print "Passed!\n";
+  }
+} 
+
+
+#---------------------------------------------------------------
+# estsWithoutClonesHaveXxGenes
+#
+# If an EST does not have a corresponding clone record, then its corresponding
+# gene record must begin with xx.
+# 
+#Parameter
+# $      Email Address for recipients
+# 
+sub estsWithoutClonesHaveXxGenes ($) {
+
+  logHeader ("Checking ESTs without clones have an XX gene");
+
+  my $sql = 'select mrkr_zdb_id, mrkr_name, mrkr_abbrev
+               from marker est
+               where mrkr_type = "EST"
+                 and not exists 
+                     ( select * 
+                         from clone
+                         where clone_mrkr_zdb_id = est.mrkr_zdb_id )
+                 and not exists
+                     ( select * 
+                         from marker m1, marker_relationship
+                         where mrel_mrkr_1_zdb_id = m1.mrkr_zdb_id
+                           and mrel_mrkr_2_zdb_id = est.mrkr_zdb_id
+                           and mrel_type = "gene contains small segment"
+                           and m1.mrkr_name like "xx:%" )
+               order by mrkr_name';
+
+  my @colDesc = ("EST ZDB ID        ",
+		 "EST Name          ",
+		 "EST Abbrev        ");
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "ESTs without clones missing corresponding xx: gene record";
+    my $errMsg = "$nRecords ESTs without clone records do not have corresponding xx: genes.\n ";
+
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+  }else {
+    print "Passed!\n";
+  }
+} 
+
+
+#---------------------------------------------------------------
+# xxGenesHaveNoClones
+#
+# Genes that are prefixed with xx: exist as placeholder genes for ESTs
+# for which we don't have clone information.
+# 
+#Parameter
+# $      Email Address for recipients
+# 
+
+sub xxGenesHaveNoClones ($) {
+
+  logHeader ("Checking xx: genes have no clones");
+
+  my $sql = 'select mrkr_zdb_id, mrkr_name, mrkr_abbrev
+               from marker m1
+               where mrkr_type = "GENE"
+                 and mrkr_name like "xx:%"
+                 and exists
+                     ( select * 
+                         from marker m2, marker_relationship
+                         where mrel_mrkr_1_zdb_id = m1.mrkr_zdb_id
+                           and mrel_mrkr_2_zdb_id = m2.mrkr_zdb_id
+                           and mrel_type = "gene contains small segment" 
+                           and exists
+                               ( select * 
+                                   from clone
+                                   where clone_mrkr_zdb_id = m2.mrkr_zdb_id ) )
+               order by mrkr_name';
+
+  my @colDesc = ("Gene ZDB ID       ",
+		 "Gene Name         ",
+		 "Gene Abbrev       ");
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "'xx:' genes had a corresponding clone record";
+    my $errMsg = "$nRecords xx: genes had a corresponding clone record\n";
 
     logError ($errMsg);
     &sendMail($sendToAddress, $subject, $errMsg, $sql); 
@@ -1044,7 +1233,7 @@ sub linkagePairHas2Members ($) {
   my @colDesc = ("Lpmem linkage pair ZDB ID",
 		 "Lpmem member ZDB ID      " );
   
-  my $nRecords = execSql ($sql, undef, @colDes);
+  my $nRecords = execSql ($sql, undef, @colDesc);
 
   if ( $nRecords > 0 ) {
 
@@ -1730,7 +1919,9 @@ my $adEmail      = "<!--|VALIDATION_EMAIL_AD|-->";
 my $xpatEmail    = "<!--|VALIDATION_EMAIL_XPAT|-->";
 my $linkageEmail = "<!--|VALIDATION_EMAIL_LINKAGE|-->";
 my $otherEmail   = "<!--|VALIDATION_EMAIL_OTHER|-->";
-my $curatorEmail = "<!--|VALIDATION_EMAIL_CURATOR|-->";
+my $estEmail     = "<!--|VALIDATION_EMAIL_EST|-->";
+my $geneEmail    = "<!--|VALIDATION_EMAIL_GENE|-->";
+my $mutantEmail  = "<!--|VALIDATION_EMAIL_MUTANT|-->";
 my $dbaEmail     = "<!--|VALIDATION_EMAIL_DBA|-->";
 
 if($daily) {
@@ -1748,17 +1939,17 @@ if($daily) {
   expressionPatternAnatomyStageWindowOverlapsAnatomyItem($xpatEmail);
   expressionPatternImageStageWindowOverlapsFishImage($xpatEmail);
 
-  fishNameEqualLocusName($curatorEmail);
-  fishAbbrevContainsFishAllele($curatorEmail);
-  fishAbbrevStartsWithLocusAbbrev($curatorEmail);
+  fishNameEqualLocusName($mutantEmail);
+  fishAbbrevContainsFishAllele($mutantEmail);
+  fishAbbrevStartsWithLocusAbbrev($mutantEmail);
 
-  locusAbbrevUnique($curatorEmail);
-  locusNameUnique($curatorEmail);
+  locusAbbrevUnique($mutantEmail);
+  locusNameUnique($mutantEmail);
 
   linkageHasMembers($linkageEmail);
   linkagePairHas2Members($linkageEmail);
 
-  dblinkRecidIsOrthoOrMarker($otherEmail);
+  dblinkRecidIsOrthoOrMarker($geneEmail);
 
   zdbObjectHomeTableColumnExist($dbaEmail);
   zdbObjectIsSourceDataCorrect($dbaEmail);
@@ -1766,7 +1957,7 @@ if($daily) {
 
   externNoteAssociationWithData($otherEmail);
   extinctFishHaveNoSuppliers($otherEmail);
-  putativeNonZfinGeneNotInZfin($otherEmail);
+  putativeNonZfinGeneNotInZfin($geneEmail);
   zdbReplacedDataIsReplaced($dbaEmail);
 }
 if($orphan) {
@@ -1776,11 +1967,18 @@ if($orphan) {
 }
 if($weekly) {
   print "run weekly check. \n";
+
+  # put these here until we get them down to 0 records.  Then move them to 
+  # daily.
+  estsHave1Gene($estEmail);
+  prefixedGenesHave1Est($estEmail);
+  estsWithoutClonesHaveXxGenes($estEmail);
+  xxGenesHaveNoClones($estEmail);
 }
 if($monthly) {
   print "run monthly check. \n";
-  orthologueHasDblink($curatorEmail);
-  locusAbbrevIsSet($curatorEmail);
+  orthologueHasDblink($geneEmail);
+  locusAbbrevIsSet($mutantEmail);
 }
 if($yearly) {
   print "run yearly check. \n";
