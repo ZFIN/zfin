@@ -1,0 +1,88 @@
+<!-- FILE: markergoinf.apg
+
+Very simple. Validates the inference if it is a GO ID
+
+EXPECTED VARS:
+OID -- the zdb_id of the rec to update
+gene_name -- the new value to stick in the column
+go_term -- the new value of locus.
+-->
+
+<!--This page validates inferences(only GO entries) entered in GO entry form-->
+
+<!-- First check security. Main purpose is just to get submitter id and name -->
+
+  <?MISQL SQL="
+    select WebExplode(object,'permission=root') 
+      from webPages 
+      where ID='aa-secure_navigation.apg';">
+    $1
+  <?/MISQL>
+<?MIVAR NAME=$inftermname><?/MIVAR>
+<?MIBLOCK COND="$(AND,$(XST,$AUTHORIZED),$(NC,$AUTHORIZED,false))">
+  <?MIVAR NAME=$gotermid>$(SUBSTR,$OID,4,10)<?/MIVAR>
+  <?MIVAR NAME=$goterm>$(SUBSTR,$goterm,4,10)<?/MIVAR>
+  <?MIVAR>$goterm<?/MIVAR>
+  <?MISQL SQL="select goterm_name from go_term where goterm_go_id='$goterm'"><?/MISQL>
+  <?MIVAR NAME=$gotermname>$1<?/MIVAR>
+<?MICOMMENT>
+  <?MIVAR>$gotermname<?/MIVAR>
+<?/MICOMMENT>
+  <?MISQL SQL="select goterm_name from go_term where goterm_go_id='$gotermid'">   <?/MISQL>
+  <?MIVAR NAME=$inftermname>$1<?/MIVAR>
+<?MICOMMENT>
+  <?MIVAR>$inftermname<?/MIVAR>
+<?/MICOMMENT>
+   <?MIBLOCK COND="$(EC,$inftermname,NOVALUE)">
+     <script>
+       window.alert("Please enter a valid GO ID");
+     </script> 
+     <?MIVAR NAME=$inf><?/MIVAR>
+
+<!--depending on the screen that calls this, return control to appropriate screen-->
+     <?MIBLOCK COND="$(NC,$mod,modify)">
+       <?MIVAR>
+       <SCRIPT>
+         location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoentry.apg&gotermname=$gotermname&goterm=$goterm&evidence=$evidence&pub=$pub&infdb=GO&inf=$OID&OID=$gene")
+       </SCRIPT>
+       <?/MIVAR>
+     <?MIELSE>
+      <?MIVAR NAME=$added>false<?/MIVAR>
+      <?MIVAR>
+      <SCRIPT>
+          location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-gomodify.apg&OID=$goevid&goevid=$mrkrgoevid&evidence=$evidence&geneid=$gene&added=$added")
+      </SCRIPT>
+      <?/MIVAR>
+     <?/MIBLOCK>
+   <?/MIBLOCK>
+
+<!--For inferences that are GO terms, only those GO terms that have already been annotated to the marker can be entered-->
+ 
+   <?MISQL SQL="select * from marker_go_term,go_term where mrkrgo_mrkr_zdb_id='$gene' and mrkrgo_go_term_zdb_id=goterm_zdb_id and goterm_go_id='$gotermid'">   <?/MISQL>
+
+  <?MIVAR NAME=$rowcount>$MI_ROWCOUNT<?/MIVAR>
+  <?MIBLOCK COND="$(=,$rowcount,0)">
+    <SCRIPT>
+     window.alert('Only GO terms that have been assigned to this gene can be used in the inferred from field. Please correct your entry and resubmit.');
+     <?MIVAR NAME=$inf><?/MIVAR>
+    </SCRIPT>
+  <?/MIBLOCK> 
+
+<!--depending on where this is called from, return control to appropriate page-->
+
+<?MIBLOCK COND="$(NC,$mod,modify)">
+<?MIVAR>
+<SCRIPT>
+              location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoentry.apg&gotermname=$gotermname&goterm=$goterm&evidence=$evidence&pub=$pub&infdb=GO&inf=$OID&OID=$gene")
+
+          </SCRIPT>
+          <?/MIVAR>
+<?MIELSE>
+<?MIVAR NAME=$added>false<?/MIVAR>
+<?MIVAR>
+<SCRIPT>
+              location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-gomodify.apg&OID=$goevid&goevid=$mrkrgoevid&evidence=$evidence&added=$added&infdb=GO&inference=$OID&geneid=$gene")
+          </SCRIPT>
+          <?/MIVAR>
+<?/MIBLOCK>
+<?/MIBLOCK>
