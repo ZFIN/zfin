@@ -26,7 +26,7 @@ VARIABLES EXPECTED:
       <?MISQL SQL="
 	update locus_registration
 	  set status = 'expired',
-	      expired_time = current,
+	      locusreg_expiration_deadline = current,
 	      fish_record = NULL
           where fish_record = '$OID';">
       <?/MISQL>
@@ -56,7 +56,7 @@ VARIABLES EXPECTED:
             <?MIVAR NAME=$old_name>$1<?/MIVAR>          
           <?MIELSE>
 	    <?MISQL SQL="
-	       select mrkr_name from marker where zdb_id = '$OID';">
+	       select mrkr_name from marker where mrkr_zdb_id = '$OID';">
 	    <?/MISQL>
             <?MIVAR NAME=$old_name>$1<?/MIVAR>
           <?/MIBLOCK>
@@ -84,16 +84,19 @@ VARIABLES EXPECTED:
 	    select mrkrgo_go_term_zdb_id 
 	      from marker_go_term
 	     where mrkrgo_mrkr_zdb_id = '$merge_oid'
-	      into temp tmp_marker_go_term; 
- 			
+	      into temp tmp_marker_go_term;">
+          <?/MISQL>
+          <?MISQL SQL="
             update marker_go_term set mrkrgo_mrkr_zdb_id = '$merge_oid' 
                                 where mrkrgo_mrkr_zdb_id = '$OID'
                                   and mrkrgo_go_term_zdb_id not in (
 					select *
-					  from tmp_marker_go_term
-					);
-	    drop table tmp_marker_go_term;	  
-                    ">
+					from tmp_marker_go_term
+					);">
+          <?/MISQL>
+          <?MISQL SQL="
+            insert into tmp_marker_go_term (mrkrgo_go_term_zdb_id) values(NULL);
+	    drop table tmp_marker_go_term;">
           <?/MISQL>
 
 	
@@ -133,7 +136,6 @@ VARIABLES EXPECTED:
             select locus_name from locus where zdb_id= '$OID';">
 	  <?/MISQL>
          <?MIVAR NAME=$old_name>$1<?/MIVAR>
-         <?/MISQL>
 	  <!-- update any existence of mapping data for id that is being replaced --> 
 	  <?MISQL SQL="
             update mapped_marker set marker_id = '$merge_oid' where marker_id = '$OID';">
@@ -149,7 +151,7 @@ VARIABLES EXPECTED:
 	  <!-- update locus name for any occurrences in locus registration -->
 	  <?MISQL SQL="
             update locus_registration set zdb_id = '$merge_oid', locus_name = '$old_name' where zdb_id = '$OID';">
-          <?/MISQL
+          <?/MISQL>
 	  <!-- update any occurrences in zdb replaced data -->
           <?MISQL SQL="
             update zdb_replaced_data set zrepld_new_zdb_id = '$merge_oid',  zrepld_old_name = '$old_name' where zrepld_new_zdb_id = '$OID';">
