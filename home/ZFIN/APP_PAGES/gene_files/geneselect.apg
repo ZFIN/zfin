@@ -708,7 +708,7 @@ document.critform.START.value = "";
 	    <option $(IF,$(EC,$searchtype,contains),SELECTED) value=contains>contains
 	  </select>:
 	  </b> 
-	  <input type=text name=name size=10 $(IF,$(XST,$gnslct_name), value=$gnslct_name) onChange='document.critform.START.value = ""' $(IF,$(XST,$name),value='$name')>
+	  <input type=text name=name size=25 $(IF,$(XST,$gnslct_name), value=$gnslct_name) onChange='document.critform.START.value = ""' $(IF,$(XST,$name),value='$name')>
 	  </font>
       </TD>
       <TD class="halfwidth">
