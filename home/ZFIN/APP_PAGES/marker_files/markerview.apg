@@ -638,7 +638,7 @@ Accession:<input type=text size=15 name=seq_acc> <input type=button value="Add i
     where a.DB_name = b.DB_name
       and a.linked_recid = '$OID' 
       and b.db_significance = 1
-    order by a.DB_name, acc_num;">
+    order by a.DB_name desc, acc_num;">
   $(IF,$(=,$MI_CURRENTROW,1),<TD align=center>)
   <li>
   $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$3"')>")
