@@ -107,14 +107,16 @@ Variables Expected:
 <?MIVAR NAME=$fimg_preparation>$10<?/MIVAR>
 <?MIVAR NAME=$full_fish_name>$11<?/MIVAR>
 
-<!--for the purpose of having consistant parameter names when pass to showpub.apg-->
+<?MICOMMENT>
+  for the purpose of having consistant parameter names when pass to showpub.apg
+<?/MICOMMENT>
 <?MIVAR NAME=$name>$full_fish_name<?/MIVAR>
 <?MIVAR NAME=$title>Stock<?/MIVAR>
 <?MIVAR NAME=$abbrev><?/MIVAR>
 
 <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
     
-  <!-- look to see if replaced zdb_id -->
+  <?MICOMMENT> look to see if replaced zdb_id <?/MICOMMENT>
 
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-zdb_history.apg';">$1<?/MISQL>
     
@@ -128,7 +130,7 @@ Variables Expected:
 
   <?MIVAR><TITLE> ZFIN View Image</TITLE><?/MIVAR>
 
-  <!-- tried MIBLOCK with COND here.  Didn't work.  -->
+  <?MICOMMENT> tried MIBLOCK with COND here.  Didn't work.  <?/MICOMMENT>
 
   <?MIVAR NAME=$imageToShow>$(IF,$(EQ,$fimg_image_with_annotation,"NULL"),$fimg_image,$fimg_image_with_annotation)<?/MIVAR>
 
@@ -138,7 +140,7 @@ Variables Expected:
 
   <?MIELSE>
 
-    <!-- if not updating -->
+    <?MICOMMENT> if not updating <?/MICOMMENT>
     <?MIBLOCK COND="$(NXST,$UPDATE)">
       <?MISQL SQL="
 	select WebExplode(object, 'page_title=View Image') 
@@ -146,7 +148,7 @@ Variables Expected:
 	  where ID='aa-secure_navigation.apg';">
 	$1
       <?/MISQL>
-    <?MIELSE>  <!-- If updating, only let owner update anything -->
+    <?MIELSE>  <?MICOMMENT> If updating, only let owner update anything <?/MICOMMENT>
       <?MISQL SQL="
 	select WebExplode(object, 
 			  'page_title=Update Image&permission=owns&rtype=fish_image')
@@ -158,11 +160,12 @@ Variables Expected:
 
     <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
-      <!-- if you're updating, set up some hidden submission forms to handle 
+      <?MICOMMENT>
+        -- if you're updating, set up some hidden submission forms to handle 
 	-- updating. They are submitted from javascript functions.  Need 
 	-- this because we need to use POST to send arbitrarily large 
 	-- annotations.
-	-->
+      <?/MICOMMENT>
       <?MIVAR COND="$(XST,$UPDATE)">
 	<form name=doUpdate 
 	      method=post 
@@ -182,7 +185,9 @@ Variables Expected:
 
       <?MIVAR NAME=$rec_title>IMAGE:$full_fish_name<?/MIVAR>
 
-      <!-- If not updating, THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
+      <?MICOMMENT>
+        If not updating, THROW UP THE ZDB DATA MANAGER FOR THE RECORD 
+      <?/MICOMMENT>
       <?MISQL COND="$(NXST,$UPDATE)" SQL="
 	select WebExplode(object, 'rtype=fish_image') 
 	  from webPages 
@@ -191,7 +196,7 @@ Variables Expected:
       <?/MISQL>
 
 
-      <!-- OKAY, NOW  THROW UP THE  IMAGE INFO -->
+      <?MICOMMENT> OKAY, NOW  THROW UP THE  IMAGE INFO <?/MICOMMENT>
       <P>
 
       <form name=updater>
@@ -211,10 +216,10 @@ Variables Expected:
 		  <script>
 		    var frameWidth;
 		    if (navigator.appName == "Microsoft Internet Explorer") {
-		      frameWidth = parent.document.body.clientWidth - 38;
+		      frameWidth = parent.document.body.clientWidth - 60;
 		    }
 		    else {
-		      frameWidth = parent.innerWidth - 38;
+		      frameWidth = parent.innerWidth - 80;
 		    }
 
 		    if ($fimg_width > frameWidth) {   
@@ -344,7 +349,7 @@ Variables Expected:
 	  <?/MIBLOCK>
 	  </b></center>
 
-	  <!-- Display anatomy associated with image -->
+	  <?MICOMMENT> Display anatomy associated with image <?/MICOMMENT>
 
 	  <TABLE border="0" WIDTH="100%" cellpadding="4">
 
@@ -389,9 +394,9 @@ Variables Expected:
 		  $anatItemList
 	    <?/MISQL>
 	  </TABLE>
-	<?/MISQL>  <!-- end developmental stages SQL -->
+	<?/MISQL>  <?MICOMMENT> end developmental stages SQL <?/MICOMMENT>
 
-        <!-- display stages for new images --> 
+        <?MICOMMENT> display stages for new images <?/MICOMMENT> 
         <?MIBLOCK COND="$(EC,$MI_ROWCOUNT,0)">
           <SELECT NAME=stage  onChange="dopopup(this.options[this.selectedIndex].value,'','fimgstg_start_stg_zdb_id','fish_image_stage','fimgstg_fimg_zdb_id')">
              <?MISQL SQL="
@@ -410,14 +415,14 @@ Variables Expected:
 		  <option value="$4">$1
 	      <?/MISQL>
 	    </SELECT>
- 	 <?/MIBLOCK>   <!-- end developmental stages -->
+ 	 <?/MIBLOCK>   <?MICOMMENT> end developmental stages <?/MICOMMENT>
 
 
 
 
 	<hr width=80%>
 
-	<!-- Show expression patterns if they exist -->
+	<?MICOMMENT> Show expression patterns if they exist <?/MICOMMENT>
 
 	<?MISQL SQL="
 	  select xpat_zdb_id, xpat_gene_zdb_id, xpat_assay_name
@@ -453,14 +458,15 @@ Variables Expected:
 	  of $labeledMarkerList 
 	  by $xpat_assay_name</a><br>
 
-	  <!-- Get the anatomy items labeled in the expression pattern -->
+	  <?MICOMMENT> 
+            Get the anatomy items labeled in the expression pattern 
 
-	    <!-- get the expression_pattern_image recs that overlap with
+	      -- get the expression_pattern_image recs that overlap with
 	      -- any of the image's fish_image_stage recs.  On the image
 	      -- page we don't break down expression pattern anatomy items by  
 	      -- stage.  We heap them all together in one list.  To see them
 	      -- by stage, go to the expression pattern page.
-	      -->
+	  <?/MICOMMENT>
 	    <?MIVAR NAME=$xpatanatStgCondition><?/MIVAR>
 	    <?MISQL SQL="
 	      select xpatfimg_xpat_start_stg_zdb_id, xpatfimg_xpat_end_stg_zdb_id
@@ -625,7 +631,9 @@ Variables Expected:
 	<hr width=80%>
 
 
-	<!-- Throw up the publication info, using the standard display format -->
+	<?MICOMMENT> 
+          Throw up the publication info, using the standard display format 
+        <?/MICOMMENT>
 
 	<?MISQL SQL="
   		select count(*)::integer 
@@ -645,9 +653,9 @@ Variables Expected:
 	<?MIVAR>&nbsp; ($1)<?/MIVAR>
  
       </form>
-    <?/MIBLOCK>  <!-- ends cond AUTHORIZED -->
+    <?/MIBLOCK>  <?MICOMMENT> ends cond AUTHORIZED <?/MICOMMENT>
 <?/MIBLOCK>
-<?/MIBLOCK>  <!-- ends cond OID exist -->
+<?/MIBLOCK>  <?MICOMMENT> ends cond OID exist <?/MICOMMENT>
 
 <?MIBLOCK COND="$(NXST,$accession)">
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
