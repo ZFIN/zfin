@@ -1,7 +1,13 @@
 #!/private/bin/perl -T
 
-# removed -w flag after debugging because it started causing many
-# uninitialized variable errors that were not worth fixing (all $question... vars)
+#############################################################
+# This CGI-script will process the usersurvey2005.html form
+# which is located in /home/zf_info/news.
+#
+# Removed -w flag after debugging because it started causing 
+# many uninitialized variable errors that were not worth  
+# fixing (all $question... vars).
+#############################################################
 
 use CGI;
 use MIME::Lite;
@@ -32,6 +38,8 @@ else { &dienice("Security violation: Data was not submitted via the POST method.
 
 ### END MAIN
 
+
+# writeData procedure gathers form data, formats it, and writes it to data files
 sub writeData {
 
   my $header  = "current use" . "\t";
@@ -89,13 +97,14 @@ sub writeData {
 
   $headerfile = "/private/ZfinLinks/Surveys/UserSurvey2005/header.txt";
 
+  # the header contains the natural-language names for the data points
   if (!(-e $headerfile )) {
-    open (LOG,">$headerfile") or &dienice("File IO: Could not open $headerfile for writing.\n");
-    print LOG $header, "\n";
-    close LOG;
+    open (HEADER,">$headerfile") or &dienice("File IO: Could not open $headerfile for writing.\n");
+    print HEADER $header, "\n";
+    close HEADER;
   }
 
-  # Survey Question Variables
+  # Survey Question Form Variables
   $question1 = $cgi->param('question1');
   $question2 = $cgi->param('question2');
   $question3a = $cgi->param('question3a');
@@ -143,7 +152,7 @@ sub writeData {
   $name = $cgi->param('name');
   $email = $cgi->param('email');
 
-  # General Environment Variables of User
+  # General Browser Environment Variables of User
   $referer = $cgi->referer();
   $remote_addr = $cgi->remote_addr();
   $remote_host = $cgi->remote_host();
@@ -153,7 +162,7 @@ sub writeData {
   $date = `date`;
   chomp($date);
 
-  # Translate etraneous whitespace to actual space
+  # Translate etraneous whitespace to actual space from textarea
   $question3comment =~ s/[\t\n\r\f]/ \\\\ /g;
   $question4comment =~ s/[\t\n\r\f]/ \\\\ /g;
   $question6comment =~ s/[\t\n\r\f]/ \\\\ /g;
@@ -163,6 +172,7 @@ sub writeData {
 
   my $data = '';
 
+  # generate the data point as a tab-delimited string 
   $data  = $question1 . "\t";
   $data .= $question2 . "\t";
   $data .= $question3a . "\t";
@@ -215,24 +225,42 @@ sub writeData {
   $data .= $user_agent . "\t";
   $data .= $date . "\t";
 
-  $processid = $$;  # special value for system process id
-  $tmpfilename = time . "-" . $processid . "-" . int(rand(89)+10);  # generates random name
+  # for concurrency, each data point is stored in a separate, unique file
+  # we need to generate a unique filename for each user-process
+  # combining system time, process id and a random number is sufficiently unique 
+  $processid = $$;  # special code for system process id
+  $tmpfilename = time . "-" . $processid . "-" . int(rand(89)+10);  
 
+  # various path/file names used
   $path = "/private/ZfinLinks/Surveys/UserSurvey2005";
   $filename = $path . "/$tmpfilename.txt";
+  $resultsfile = $path . "/results.txt";
+ 
+  # save data point to a unique file 
+  open (DATA,">$filename") or &dienice("File IO: Could not open $filename for writing.\n");
+  print DATA $data, "\n";
+  close DATA;
 
-  open (LOG,">$filename") or &dienice("File IO: Could not open $filename for writing.\n");
-  print LOG $data, "\n";
-  close LOG;
-
+  # for security/confidentiality, restrict permissions on data
   chmod (0600,"$filename") or &dienice("chmod Failed");
 
-  system "rm $path/results.txt";
-  system "cat $path/header.txt $path/1*.txt > $path/results.txt";
+  # insert header line into results file if not there already
+  if (!(-e $resultsfile )) {
+    open (RESULTS,">$resultsfile") or &dienice("File IO: Could not open $resultsfile for writing.\n");
+    print RESULTS $header, "\n";
+    close RESULTS;
+  }
 
-  $results = "$path/results.txt";
+  # append data point to results - concurrency is not crucial here (data is already saved safely)
+  # this extra results file is for convenience so it can be emailed as an attachment below
+  open (RESULTS,">>$resultsfile") or &dienice("File IO: Could not open $resultsfile for writing.\n");
+  print RESULTS $data, "\n";
+  close RESULTS;
 
-  &emailresults('judys@cs.uoregon.edu','usersurvey2005@zfin.org',"new result posted","$results");
+  # send results as an attachment using MIME-encoded message
+  # &emailresults('judys@cs.uoregon.edu','usersurvey2005@zfin.org',"new result posted","$resultsfile");
+
+  # system "rm $path/*.txt";
 
   return 1;
 }
@@ -263,7 +291,7 @@ sub emailresults() {
              Data     =>"Please find latest results attached."
              );
   $msg->attach(Type     =>'TEXT',
-             Path     =>$results,
+             Path     =>$resultsfile,
              Filename =>'results.txt',
              Disposition => 'attachment'
              );
@@ -273,10 +301,13 @@ sub emailresults() {
   return 1;
 }
 
-$import = '@import';
 
+# beginHTML generates HTML header 
 sub beginHTML
 {
+  # this string contains special characters so used a variable instead
+  $import = '@import';
+
   print "Content-type: text/html\n\n";
 
 print <<END;
@@ -336,12 +367,16 @@ END
 
 }
 
+
+# message simply generates a personalized HTML message body
 sub message {
   print '  <div style="padding:25px;"><h3>Thank you!</h3>', "\n";
   print '  <p>Your survey has been submitted to ZFIN.  We value your input.<br>', "\n";
   print '  Click <a href="/">here</a> to go to ZFIN.</p></div>', "\n";
 }
 
+
+# endHTML generates HTML footer
 sub endHTML
 {
   if ($debug_mode) {
