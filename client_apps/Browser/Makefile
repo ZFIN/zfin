@@ -29,6 +29,9 @@ include $(TOP)/make.include
 
 STAGINGDIR = Staging
 
+IMPORTPATH = $(TARGETROOT)/lib/Java
+IMPORTDIR = netscape
+
 # ---- Java source variables
 
 GENERICS = SQLQuery.java
@@ -42,11 +45,13 @@ STATICSTAGINGS = $(foreach STAT, $(STATICS), $(STAGINGDIR)/$(STAT))
 JAVAS   = $(GENERICS) $(STATICS)
 TARGETS = $(SPECIFICS) $(STATICSTAGINGS)
 
+# ---- Java destination variables
 
+JAR = browser.jar
 
 # ---- Which variables are used by Makefile in Staging directory:
 
-export JAVAS
+export JAVAS JAR IMPORTPATH IMPORTDIR
 
 
 

@@ -55,28 +55,32 @@ CLASSPATH = .:/private/apps/java/lib/classes.zip:$(TOP)/lib/Java
 # ---- Java source and class file variables
 
 # Java related Makefile variables inherited from parent:
-#  JAVAS
+#  JAVAS JAR IMPORTPATH IMPORTDIR
 
 CLASSES = $(foreach JVS, $(JAVAS), $(patsubst %.java,%.class,$(JVS)))
-TARGETS = $(foreach JVC, $(CLASSES), $(TARGETDIR)/$(JVC))
 
-
+TARGETJAR = $(TARGETDIR)/$(JAR)
 
 # ---------------  Production Rules  ------------------------------------
 
 .PHONY : all sanitycheck clean clobber
 
-all : $(TARGETDIR) $(TARGETS)
+all : $(TARGETDIR) $(TARGETJAR)
 
 $(TARGETDIR) :
 	$(TARGET_MKDIR) $@
 
+$(IMPORTDIR) :
+	ln -s $(IMPORTPATH)/$(IMPORTDIR)
 
 # ----  Rules for creating Java classes.
 
-$(TARGETS) : $(TARGETDIR)/%.class : %.class
-	$(TARGET_CP) $^ $@
-	chmod 444 $@
+$(TARGETJAR) : $(JAR)
+	$(TARGET_CP) $(JAR) $@
+	chmod o+r $@
+
+$(JAR) : $(CLASSES) $(IMPORTDIR)
+	/local/apps/jdk-1.1/bin/jar -cvf $(JAR) $(CLASSES) $(IMPORTDIR)
 
 # When any class file needs to be remade, remake all of them.
 
@@ -88,11 +92,11 @@ $(CLASSES) : $(JAVAS)
 # ---------------  Maintenance Rules  -----------------------------------
 
 clean :			# remove almost everything in the directory
-	rm -f $(JAVAS) $(CLASSES) 
+	rm -f $(JAVAS) $(CLASSES) $(JAR) $(IMPORTDIR)
 
 
 clobber :			# Remove targets, but not target dir.
-	rm -f $(TARGETS)
+	rm -f $(TARGETJAR)
 
 
 sanitycheck :		# nothing to do, all done by parent.

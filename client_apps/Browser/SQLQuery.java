@@ -79,7 +79,7 @@ public class SQLQuery
 			String line = sin.readLine();
 			while (line != null)
 			{
-			  //      System.out.println (line);
+//			  System.out.println (line);
 			  sTok = new StringTokenizer(line,SEPARATOR);
 			  result.addElement((String)sTok.nextElement());//name 
 			  if (numFields > 2) {

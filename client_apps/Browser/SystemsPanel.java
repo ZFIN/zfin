@@ -5,7 +5,7 @@ import java.io.*;
 import java.util.*;
 
 public class SystemsPanel extends Panel {
-  Applet pappy; //parent applet
+  Browser pappy; //parent applet
   
   public Label nameLabel; 
   public Label stageLabel1, stageLabel2;
@@ -23,7 +23,9 @@ public class SystemsPanel extends Panel {
   public String andString, orString;
   public  Label separatorLabel;
 
-  public SystemsPanel(Applet app) {
+	public Button submit;
+	
+  public SystemsPanel(Browser app) {
     pappy = app;
 
      nameLabel     = new Label("Name"); // Name label
@@ -48,10 +50,22 @@ public class SystemsPanel extends Panel {
 		
 			
     cbg = new CheckboxGroup();
-    and = new Checkbox(andString, cbg, true);
-    or = new Checkbox(orString, cbg, false);
-
-
+	and = new Checkbox(andString, cbg, true);
+	or = new Checkbox(orString, cbg, false);
+	
+	if (pappy.getParameter("selected_separator") != null) {
+		if (pappy.getParameter("selected_separator").equals("and")) {
+			and.setState(true);
+			or.setState(false);
+		} else if (pappy.getParameter("selected_separator").equals("or")) {
+			or.setState(true);
+			and.setState(false);
+		}
+	}
+	
+	
+	submit = new Button("Submit");
+	
     applyConstraints = new Button("Search"); 
 
   }
@@ -82,6 +96,8 @@ public class SystemsPanel extends Panel {
     add(and);
     add(or);
 
+	if (pappy.getParameter("submit") != null)
+		add(submit);
     /*    GridBagLayout gbl = new GridBagLayout();
     this.setLayout(gbl);
 
@@ -167,7 +183,9 @@ public class SystemsPanel extends Panel {
       apply();
     if (e.target == nameField) 
       apply();
-      
+	if (e.target == submit)
+		pappy.submit();
+	
     return false;
   } 
 

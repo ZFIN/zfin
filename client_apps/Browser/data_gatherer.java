@@ -198,7 +198,31 @@ public class data_gatherer {
 
     organs = Q.selectAll(4, "SELECT name, stage, level, seq_num FROM " + table + " ORDER BY seq_num;");
   }
+	
+	public void readAnatomyFromParams() {
+		String data = pappy.getParameter("data");
 
+		if (data.endsWith("|"))
+			data = data.substring(0,data.length()-1);
+	   
+		StringTokenizer sTok = new StringTokenizer(data, pappy.getParameter("data_delim"));
+		organs = new Vector();
+		String name;
+		while (sTok.hasMoreTokens()) {
+			name = sTok.nextToken();
+			if (name.startsWith("\n"))
+				name = name.substring(1,name.length()); //strip leading return
+
+			organs.addElement(name);//name
+			organs.addElement(new Integer((String)sTok.nextElement()));//stage
+			organs.addElement(new Integer((String)sTok.nextElement()));//level
+			organs.addElement(new Integer((String)sTok.nextElement()));//seq_num
+		}
+		
+	}
+	
+	
+	
   public Vector constraintQuery(String query) {
     return Q.selectConstrained(1, query);
   }

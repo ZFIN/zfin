@@ -64,69 +64,73 @@ public class SelectedPanel extends Panel {
     return minimumSize();
   }
   */
-  public String getList(String format_pre, String format_post, String separator, String recursive_select) {
-    Vector V = SelectedVector;
-    String S = new String();
-    
-    
-    //security check
-    
-    String test = separator + " " +	format_pre + " " + format_post;
-    
-    boolean clear = true;
-    StringTokenizer stok = new StringTokenizer(test);
-    String temp = new String();
-    while(stok.hasMoreTokens()) {
-      temp = stok.nextToken();
-      if ((temp.toLowerCase().equals("delete"))
-	  || (temp.toLowerCase().equals("update"))
-	  || (temp.toLowerCase().equals("insert"))) {
-	System.out.println("Bad keywords in params");
-	clear = false;
-      }
-      System.out.println("Token: '" + temp + "'");
-    }
-    // end secutiry check
-    if (clear) {
-      
-      int i = 0;
-      String results = "";
-      String tmpstr = new String();
 
-      System.out.println("Recrusive Select: " + recursive_select);
+	public String getList(String format_pre, String format_post, String separator, String recursive_select) {
+		Vector V = SelectedVector;
+		String S = new String();
+    
+    
+		//security check
+    
+		String test = separator + " " +	format_pre + " " + format_post;
+    
+		boolean clear = true;
+		StringTokenizer stok = new StringTokenizer(test);
+		String temp = new String();
+		while(stok.hasMoreTokens()) {
+			temp = stok.nextToken();
+			if ((temp.toLowerCase().equals("delete"))
+				|| (temp.toLowerCase().equals("update"))
+				|| (temp.toLowerCase().equals("insert"))) {
+				System.out.println("Bad keywords in params");
+				clear = false;
+			}
+			System.out.println("Token: '" + temp + "'");
+		}
+		// end secutiry check
+		if (clear) {
       
-      for(i=0 ; i < V.size() ; i++) {
-	tmpstr = new String();
-	if (  (!((Selectable)V.elementAt(i)).get_children().isEmpty()) && (recursive_select != null)) //if it's got children
-	  tmpstr =  ((Selectable)V.elementAt(i)).expand(tmpstr,format_pre,format_post, recursive_select); 
-	else
-	  tmpstr = format_pre + ((Selectable)V.elementAt(i)).get_data() + format_post;
+			int i = 0;
+			String results = "";
+			String tmpstr = new String();
+
+			System.out.println("Recrusive Select: " + recursive_select);
+      
+			for(i=0 ; i < V.size() ; i++) {
+				tmpstr = new String();
+				if (  (!((Selectable)V.elementAt(i)).get_children().isEmpty()) && (recursive_select != null)) //if it's got children
+					tmpstr =  ((Selectable)V.elementAt(i)).expand(tmpstr,format_pre,format_post, recursive_select); 
+				else
+					tmpstr = format_pre + ((Selectable)V.elementAt(i)).get_data() + format_post;
 	
-	if (!results.equals("")) 
-	  results = results + " " + separator + " ";
-	results = results + " (" + tmpstr + ") ";	      
-	
-      }
+				if (!results.equals("")) 
+					results = results + separator;
+
+				if (format_pre.length() > 0)
+					results = results + " (" + tmpstr + ") ";	      
+				else
+					results = results + tmpstr;
+			}
       
-      return results;
+			return results;
 
-	    /*	    if (results.length() > 1)
-	      results = " ( " + results + " ) ";
+			/*	    if (results.length() > 1)
+					results = " ( " + results + " ) ";
 
-	    System.out.println(results);
+					System.out.println(results);
 	   
-	    for (i=0 ; i < V.size() ; i++) {
-	      if (!S.equals(""))
-		S = S + separator;
-	      S = S + " " + format_pre + ((Selectable)V.elementAt(i)).get_data() 
-		+ format_post + " ";
-	    }
+					for (i=0 ; i < V.size() ; i++) {
+					if (!S.equals(""))
+					S = S + separator;
+					S = S + " " + format_pre + ((Selectable)V.elementAt(i)).get_data() 
+					+ format_post + " ";
+					}
 			
-	    if (results.equals(""))
-	      return S;
-	    else
-	      return S + " " + separator + " " + results; */
-    } else {
+					if (results.equals(""))
+					return S;
+					else
+					return S + " " + separator + " " + results; */
+		} else {
     	return "Securtity Violation";
     }
 	
