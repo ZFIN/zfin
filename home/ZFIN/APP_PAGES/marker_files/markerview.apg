@@ -554,8 +554,10 @@
  
   <?MIVAR NAME=$lastitem><?/MIVAR>
   <?MISQL SQL="
-    select a.db_name, b.db_query || a.acc_num || b.url_suffix, 
-         acc_num, b.db_significance, a.dblink_zdb_id
+    select a.db_name, 
+	   b.db_query || a.acc_num || 
+	     (case b.url_suffix when NULL then '' else b.url_suffix end),
+           acc_num, b.db_significance, a.dblink_zdb_id
       from db_link a, foreign_db b, foreign_db_contains 
       where a.db_name = b.db_name
         and a.linked_recid = '$OID' 
@@ -894,8 +896,10 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 <?MIVAR NAME=$empty>1<?/MIVAR>
 <?MIVAR NAME=$more>0<?/MIVAR>
 <?MISQL SQL="
-  select a.db_name, b.db_query || a.acc_num || b.url_suffix, acc_num, 
-	 dblink_zdb_id 
+  select a.db_name, 
+	 b.db_query || a.acc_num || 
+	   (case b.url_suffix when NULL then '' else b.url_suffix end),
+	 acc_num, dblink_zdb_id 
     from db_link a, foreign_db b, foreign_db_contains
     where a.db_name = b.db_name
       and b.db_name = fdbcont_db_name
@@ -903,8 +907,10 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
       and fdbcont_data_type = 'sequence'
       and b.db_significance = 1
   UNION
-  select a.db_name, b.db_query || a.acc_num || b.url_suffix, acc_num, 
-         dblink_zdb_id
+  select a.db_name, 
+	 b.db_query || a.acc_num || 
+	   (case b.url_suffix when NULL then '' else b.url_suffix end),
+         acc_num, dblink_zdb_id
     from db_link a, foreign_db b, foreign_db_contains, marker_relationship c
     where a.db_name = b.db_name
       and b.db_name = fdbcont_db_name
@@ -975,7 +981,9 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 <?MIVAR> $(IF,$(!=,$MI_CURRENTROW,0),</TD>) <?/MIVAR>
 
 <?MISQL SQL="
-  select a.db_name, b.db_query || a.acc_num || b.url_suffix,
+  select a.db_name, 
+	 b.db_query || a.acc_num || 
+	   (case b.url_suffix when NULL then '' else b.url_suffix end),
          acc_num, b.db_significance, a.dblink_zdb_id
     from db_link a, foreign_DB b, foreign_db_contains 
     where a.db_name = b.db_name
