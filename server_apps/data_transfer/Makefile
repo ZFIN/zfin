@@ -22,7 +22,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer
 
-SUBDIRS = MEOW
+SUBDIRS = MEOW JohnP
 
 
 # ---------------  Production Rules  ------------------------------------
