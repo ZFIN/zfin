@@ -120,7 +120,7 @@ window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerup
 }
 
 function Delete_alias(alias,marker_id) {
-  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=mrkrali_marker_name_alias&attr_type=delete-alias&old_value='+alias+'&new_value=deleted&target_table=$target_table');
+  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=dalias_alias&attr_type=delete-alias&old_value='+alias+'&new_value=deleted&target_table=$target_table');
 }
 
 function new_ortho() {
@@ -248,13 +248,13 @@ value=" DONE UPDATING. Back to Viewing! " onClick="document.location.replace('/<
 <?MIVAR COND="$(XST,$UPDATE)">
   <INPUT TYPE=button 
     value=Add
-    onClick="doit('mrkrali_marker_name_alias','text','Alias')">
+    onClick="doit('dalias_alias','text','Alias')">
 <?/MIVAR> 
 <b>Previous Names:</b> 
 <?MISQL SQL="
-  select mrkrali_marker_name_alias
-    from marker_alias
-    where mrkrali_marker_zdb_id = '$OID';">
+  select dalias_alias
+    from data_alias
+    where dalias_data_zdb_id = '$OID';">
   <?MIVAR NAME=$alias>$1<?/MIVAR>
   <?MIVAR COND="$(XST,$alias)" NAME=$alias_plus DELIMIT=" " REPLACE="+">$alias<?/MIVAR>
   <?MIVAR COND="$(XST,$UPDATE)">
