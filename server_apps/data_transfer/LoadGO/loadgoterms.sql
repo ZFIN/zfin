@@ -310,7 +310,6 @@ insert into tmp_new_obsoletes (counter,
 		use_term
   from go_term, marker_go_term_evidence, marker, tmp_obs_no_dups
   where goterm_go_id = id
-  and goterm_is_obsolete = 'f'
   and goterm_zdb_id = mrkrgoev_go_term_zdb_id
   and mrkr_zdb_id = mrkrgoev_mrkr_zdb_id 
    group by mrkr_name, goterm_name, use_term ;
