@@ -275,7 +275,7 @@ $(IF,$(>,$(POSITION,$rtype,go),0),
 
 
 <?MIVAR COND="$(>,$count_of_real_pub,0)">
-   <TR><TD><b>Publications  $(FIX,$count_of_real_pub): </b></TD></TR>
+   <TR><TD><b>Publications  ($(FIX,$count_of_real_pub)): </b></TD></TR>
 <?/MIVAR>
 
 <?MIBLOCK COND="$(NXST,$attribtype)">
