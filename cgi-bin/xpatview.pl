@@ -5,9 +5,7 @@ require "pub.pl";
 require "Figures.pl";
 
 sub xpatview {
-    $data_file="pubs.dat";
-
-
+  $data_file="pubs.dat";
   open(DAT, $data_file) || die("Could not open file!");
   @xpatview_raw_data=<DAT>;
   close(DAT);
@@ -21,19 +19,13 @@ sub xpatview {
       print "<tr>";
       print "<td><strong>Publication</strong></td>";
       print "<td><strong>Fish</strong></td>";
-      print "<td><strong>Assay</strong></td>";
+      print "<td><strong>Figures</strong></td>";
       print "<td><strong>Expression Summary</strong></td>";
       print "</tr>";
 
   foreach $xpatpub (@xpatview_raw_data) {
     chop($xpatpub);
-    ($pub,$fish,$assay,$details)=split(/\t/,$xpatpub);
-    if ($mycolor eq "white") {
-      $mycolor=EEEEEE;
-    } else {
-      $mycolor=white;
-    }
-
+    ($mycolor,$pub,$fish,$assay,$details)=split(/\t/,$xpatpub);
 
       print "<tr bgcolor=$mycolor><td><u>$pub</u></td>";
       print "<td><u>$fish</u></td>";
