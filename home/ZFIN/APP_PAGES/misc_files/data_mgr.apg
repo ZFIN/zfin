@@ -50,17 +50,16 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 <!-- all of the following options show up only if your registered ZFIN -->
 <?MIBLOCK COND="$(AND,$(XST,$AUTHORIZED),$(NC,$AUTHORIZED,GUEST))">
 
-
 <?MIBLOCK COND="$(NC,$rtype,publication)">  <!-- dont show second row for pubs -->
 
+  <?MIBLOCK COND="$(NC,$rtype,go)">  <!-- dont show second row for pubs -->
 <TD> 
-
 <!-- Only allow auth users to update. For non-person records, allow any registered submitter -->
 
-<?MIVAR COND="$(AND,$(NC,$rtype,person),$(NXST,$attribtype))">
+<?MIVAR COND="$(AND,$(NC,$rtype,person),$(NXST,$attribtype),$(NC,$rtype,go))">
   <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$MIval&UPDATE=1&orgOID=$orgOID&OID=$OID&rtype=$rtype&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev"><font size=-1 color=red> Add/Update this Record </font></A>
 <?/MIVAR>
-<?MIVAR COND="$(AND,$(NC,$rtype,person),$(XST,$attribtype))">
+<?MIVAR COND="$(AND,$(NC,$rtype,person),$(XST,$attribtype),$(NC,$rtype,go))">
   <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$MIval&UPDATE=1&orgOID=$orgOID&OID=$OID&rtype=$rtype&attribtype=$attribtype&info=$info"><font size=-1 color=red> Add/Update this Record </font></A>
 <?/MIVAR>
 
@@ -112,7 +111,12 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 </form>
 
 </TR>
+  <?MIELSE> <!--GO records-->
 
+<TD>
+    <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoentry.apg&OID=$OID"><font size=-1>Add/Update GO annotations</a><?/MIVAR>
+</TD>
+<?/MIBLOCK>
 <?MIELSE> <!-- pub records -->
 
   <TD>
@@ -123,7 +127,6 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
   </TD>
 
 <?/MIBLOCK> <!-- ends if not a pub record -->
-
 <?/MIBLOCK> <!-- ends if authorized and not guest -->
 
 
