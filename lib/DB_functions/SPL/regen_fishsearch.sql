@@ -56,7 +56,7 @@ create dba function "informix".regen_fishsearch()
     create table fishsearch_new 
       (
 	fish_id		varchar (50), 
-	name		varchar (120)
+	name		varchar (255)
 	  not null,
 	fishsearch_name_order	varchar(100)
 	  not null,
