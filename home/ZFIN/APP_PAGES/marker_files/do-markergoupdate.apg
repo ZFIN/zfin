@@ -22,6 +22,7 @@ Duplicate go annotations were getting added inspite of warning
 Added a flag called $annexist to check if annotation exists.
 Used this flag to determine whether to insert or not
 
+PREFIX: mkrgoupdate_
 <?/MICOMMENT>
 
 <?MIERROR>
@@ -57,7 +58,9 @@ Used this flag to determine whether to insert or not
    <?MIVAR NAME=inf_mem>$(TRIM,$inf_mem)<?/MIVAR>
    <?MIVAR NAME=go_id>$(TRIM,$go_id)<?/MIVAR>
    <?MIVAR NAME=go_num>$(SUBSTR,$go_id,4)<?/MIVAR>   
-   <?MIVAR NAME=annexist>f<?/MIVAR>
+
+   <?MIVAR NAME=mkrgoupdate_annexist>f<?/MIVAR>
+
    <?MISQL SQL="select goterm_zdb_id, goterm_name, goterm_ontology from go_term 
 				where goterm_go_id like '$go_num';">
    <?/MISQL>
@@ -86,9 +89,9 @@ Used this flag to determine whether to insert or not
   		 window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoentry.apg&OID=$OID&go_term=$go_term$return_info")
                <?/MIVAR>
     	    </SCRIPT>
-            <?MIVAR NAME=$annexist>t<?/MIVAR>
+            <?MIVAR NAME=$mkrgoupdate_annexist>t<?/MIVAR>
        <?MIELSE>
-            <?MIVAR NAME=$annexist>f<?/MIVAR>
+            <?MIVAR NAME=$mkrgoupdate_annexist>f<?/MIVAR>
   	<?/MIBLOCK>
 
    <?/MIBLOCK>
@@ -101,7 +104,7 @@ Used this flag to determine whether to insert or not
    <?MISQL COND="$(OR,$(NC,$inf_mem,),$(EC,$evidence_code,IC))" SQL="select WebExplode(object, 'attr=inference&value=$inf_mem&valuedb=$inf_db&evidence_code=$evidence_code&return_page=markergoentry.apg&return_id=$OID$return_info') from webPages where ID='aa-markergovalidate.apg';">$1<?/MISQL>
 
 <!--annotation existence check-->
-<?MIBLOCK COND="$(EC,$annexist,f)">
+<?MIBLOCK COND="$(EC,$mkrgoupdate_annexist,f)">
   <?MIBLOCK COND="$(EC,$isValid,t)"><!-- isValid is set in markergovalidate.apg -->
    <!-- start the insert change -->
    <?MIVAR NAME=$comments>create a new GO annotation from literature<?/MIVAR>
