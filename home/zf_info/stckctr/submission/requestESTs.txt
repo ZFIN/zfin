@@ -13,19 +13,19 @@ Email:
 [eMailAddr]
 ---
 Telephone:
-[required_requesterTelephone]
+[reqPhone]
 ---
 Fax:
-[required_requesterFax]
+[reqFax]
 ---
 Lab:
-[required_requesterLab]
+[reqLab]
 ---
 Position:
-[required_requesterPosition]
+[reqPos]
 ---
 Address:
-[required_requesterAddress]
+[reqAddr]
 ---
 ---
 PI Name:
@@ -35,7 +35,7 @@ PI Email:
 [PIEmail]
 ---
 PI Telephone:
-[PITelephone]
+[PIPhone]
 ---
 PI Fax:
 [PIFax]
@@ -44,39 +44,39 @@ PI Lab:
 [PILab]
 ---
 PI Address:
-[PIAddress]
+[PIAddr]
 ---
 ---
 Grant Number:
-[required_grantNumber]
+[reqGrantNo]
 ---
 Funding Organization:
-[required_grantOrganization]
+[reqGrantOrg]
 ---
 ---
 Bill To Name:
-[required_BillToNameInd] [required_BillToNameFam]
+[billNameInd] [billNameFam]
 ---
 Bill To Email:
-[required_BillToEmail]
+[billEmail]
 ---
 Bill To Telephone:
-[required_BillToTelephone]
+[billPhone]
 ---
 Bill To Fax:
-[required_BillToFax]
+[billFax]
 ---
 Bill To Lab:
-[required_BillToLab]
+[billLab]
 ---
 Bill To Address:
-[required_BillToAddress]
+[billAddr]
 ---
 Billing Preference:
-[billingPreference]
+[billPref]
 ---
 Bill To PO Number:
-[billToPONumber]
+[billPONo]
 ---
 ---
 EST/cDNA probe 1:
