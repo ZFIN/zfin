@@ -853,7 +853,7 @@
     if (! defined  $Q->param('OID')){$Q->param('OID', ''); } 	
     print   "<param name = \"marker_url\"\t value = \"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=\">\n".
       
-      "<param name = \"panel_url\"\t value = \"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg\">\n".
+      "<param name = \"panel_url\"\t value = \"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=\">\n".
 	
 	"<param name = \"target_frame\"\t value = \"$frame\">\n".
 	  "<param name = \"host\"\t\t value = \"<!--|DOMAIN_NAME|-->\">\n".

@@ -843,8 +843,8 @@
     " document.optform.submit();\">\n\n";
     
 	print "<br><font size=-1><b>&nbsp;&nbsp;".
-    "<a href=\"http://<!--|DOMAIN_NAME|-->/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&".
-    " OID=". $allpanels_id[$order_increment]."\"".
+    "<a href=\"http://<!--|DOMAIN_NAME|-->/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=". 
+    $allpanels_id[$order_increment]."\"".
     " target=\"content\">". $panel . "</a>".
     " panel, LG: ".$lg .", units: cM".
     "</b></font></td>"; 
@@ -882,7 +882,7 @@
     if (! defined  $Q->param('OID')){$Q->param('OID', ''); } 	
     print   "<param name = \"marker_url\"\t value = \"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=\">\n".
       
-      "<param name = \"panel_url\"\t value = \"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg\">\n".
+      "<param name = \"panel_url\"\t value = \"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=\">\n".
 	
 	"<param name = \"target_frame\"\t value = \"$frame\">\n".
 	  "<param name = \"host\"\t\t value = \"<!--|DOMAIN_NAME|-->\">\n".
