@@ -1,0 +1,88 @@
+To: aprilm@uoneuro.uoregon.edu, dlains@uoneuro.uoregon.edu, mason@uoneuro.uoregon.edu
+From: zirc@darkwing.uoregon.edu
+Subject: [required_requesterName]'s request for Zebrafish Books
+
+**************************************** 
+---
+---
+Name:
+[required_requesterName]
+---
+Email:
+[required_requesterEmail]
+---
+Telephone:
+[required_requesterTelephone]
+---
+Fax:
+[required_requesterFax]
+---
+Lab:
+[required_requesterLab]
+---
+Position:
+[required_requesterPosition]
+---
+Address:
+[required_requesterAddress]
+---
+---
+PI Name:
+[PIName]
+---
+PI Email:
+[PIEmail]
+---
+PI Fax:
+[PIFax]
+---
+PI Lab:
+[PILab]
+---
+PI Address:
+[PIAddress]
+---
+---
+Bill To Name:
+[required_BillToName]
+---
+Bill To Email:
+[required_BillToEmail]
+---
+Bill To Telephone:
+[required_BillToTelephone]
+---
+Bill To Fax:
+[required_BillToFax]
+---
+Bill To Lab:
+[required_BillToLab]
+---
+Bill To Address:
+[required_BillToAddress]
+---
+Bill To Grant Number:
+[required_grantNumber]
+---
+Bill To Funding Organization:
+[required_grantOrganization]
+---
+Billing Preference:
+[creditCard]
+[billMe]
+---
+Bill To PO Number:
+[billToPONumber]
+---
+---
+Zebrafish Books Quantity:
+[required_zfBooksQuantity]
+---
+---
+---
+End of Form
+
+
+
+
+

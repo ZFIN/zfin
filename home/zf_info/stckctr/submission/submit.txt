@@ -16,7 +16,7 @@ Submitter Telephone:
 [required_submitterTelephone]
 ---
 Submitter Fax:
-[submitterFax]
+[required_submitterFax]
 ---
 Submitter Institution/Lab:
 [required_submitterLab]
