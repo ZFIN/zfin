@@ -346,7 +346,8 @@ where anatitem_type_code = anathier_code
 
 unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/anatomy_ontology.txt'
 DELIMITER "	" 
-select * from anatomy_contains;
+select anatrel_anatitem_1_zdb_id, anatrel_anatitem_2_zdb_id 
+  from anatomy_relationship;
 
 --
 unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpat_stage_anatomy.txt'
