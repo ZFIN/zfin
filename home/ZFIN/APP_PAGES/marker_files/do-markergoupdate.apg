@@ -1,4 +1,5 @@
-<!-- FILE: do-markergoupdate.apg
+<?MICOMMENT>
+FILE: do-markergoupdate.apg
 
 Very simple. Just commits the updates requested in the forms tossed up by
 gomodify. Also files update record.
@@ -12,10 +13,21 @@ go_notes -- the new value of notes
 evidence_code -- the new value of evidence code
 inf_from -- the new value for inference
 is_not
--->
+<?/MICOMMENT>
 
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL
+  <?/MIVAR>
 
-<!-- First check security. Main purpose is just to get submitter id and name -->
+  <br>Code: $MI_ERRORCODE
+  <br>State: $MI_ERRORSTATE
+  <br>Message: $MI_ERRORMSG 
+<?/MIERROR>
+
+<?MICOMMENT>
+  First check security. Main purpose is just to get submitter id and name
+<?/MICOMMENT>
 
   <?MISQL SQL="
     select WebExplode(object,'permission=root') 
