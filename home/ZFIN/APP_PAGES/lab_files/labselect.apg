@@ -346,7 +346,7 @@ Lab Search Results
       </TD>
     </tr>
     <tr>
-      <TD class="submitbar">
+      <TD class="submitbar" align="right">
 	<input type=submit name=action value="SEARCH" onSubmit="document.critform.submit();"> 
 	<input type=button name=action value="RESET" onClick="call_reset()"> 
 	<input type=button name=clear_all value="List all labs" 
