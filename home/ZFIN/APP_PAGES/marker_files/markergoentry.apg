@@ -98,6 +98,7 @@ function call_reset() {
     var infdbase=document.newdata.infdb[0].value;
     document.newdata.infdb.value=infdbase;
     document.newdata.evidence.value=document.newdata.evidence[0].value;
+    document.newdata.goterm.focus();
  }
 
  function call_validate(geneid) {
@@ -125,6 +126,8 @@ function call_reset() {
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.godatabase.org/cgi-bin/go.cgi" target="_window"><b>AmiGO</b></a>
   &nbsp;&nbsp;&nbsp;
   <a href="http://www.ebi.ac.uk/ego/" target="_window"><b>QuickGO</b></a>
+  &nbsp;&nbsp;&nbsp;
+  <a href="http://www.informatics.jax.org/searches/GO_form.shtml" target="_window"><b>MGI GO</b></a>
   <p>
 
   <!--Creating the entry form-->
@@ -142,6 +145,15 @@ function call_reset() {
     <?MIVAR>     
        <td><input type = text NAME = "pub" tabindex = 2 size = "23" value=<?MIVAR>$pub_id<?/MIVAR>> </td>
     <?/MIVAR>
+    <?MIBLOCK COND="$(>,$(STRLEN,$go_term),0)">
+     <script>
+       document.newdata.pub.focus();
+     </script>
+   <?MIELSE>
+     <script>
+       document.newdata.goterm.focus();
+     </script>
+   <?/MIBLOCK>
    </tr>
    <tr> 
     <td align=right><b>Evidence Code </b></td> 
