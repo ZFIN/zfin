@@ -42,11 +42,11 @@ STAGE_FUNCS = \
 	stg_window_consistent.sql \
 	fimg_overlaps_stg_window.sql \
 	anatitem_overlaps_stg_window.sql \
-	stg_windows_overlap.sql
+	stg_windows_overlap.sql 
 
 GENERICS = $(REGEN_FUNCS)
 STATICS  = $(FISH_FUNCS) $(IMAGE_FUNCS) $(PUB_FUNCS) $(STAGE_FUNCS) $(ZDB_FUNCS) \
-	gene_contains_seg.sql
+	gene_contains_seg.sql 	insert_clone.sql
 
 SPECIFICTARGETS = $(foreach SPEC, $(GENERICS), $(TARGETDIR)/$(SPEC))
 STATICTARGETS = $(foreach STAT, $(STATICS), $(TARGETDIR)/$(STAT))
