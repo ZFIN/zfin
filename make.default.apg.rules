@@ -6,7 +6,7 @@
 # See make.default.rules for the include file to use with standard makefiles
 # that don't work with app pages.
 #
-# Note that not every makefile can include one of the defualt rule files.
+# Note that not every makefile can include one of the default rule files.
 # If there is anything non-standard about any of the rules in a makefile
 # then that makefile should not include either of the rules.
 #
@@ -22,11 +22,11 @@
 #
 # For the last 3, undefined, and defined and empty produce the same results.
 #
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
-# !! of the makefile hierarchy this makefile is a part of, and of the  !!
-# !! format and conventions used in this makefile.                     !!
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# !! See $(TOP)/Makefile and $(TOP)/make.include for a full explanation !!
+# !! of the makefile hierarchy this makefile is a part of, and of the   !!
+# !! format and conventions used in this makefile.                      !!
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
 #
 
