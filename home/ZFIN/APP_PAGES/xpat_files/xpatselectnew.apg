@@ -6,125 +6,38 @@
 
 <SCRIPT>
 
-   document.selected_structures = new Array();
-
-
-
 function start_help(anchor) {
    top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect_help.apg#"+anchor,"helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
 }
 
-function add_part(part) {
-        var found = 'false';
-       
-	//if the instruction bit is still there, nuke it
-
-	if (document.critform.structure_list.options[1] != null) 
-	   if (document.critform.structure_list.options[1].value == 'deleteme')
-	     document.critform.structure_list.options[1] = null;
-        if (document.critform.structure_list.options[2] != null) 
-	   if (document.critform.structure_list.options[2].value == 'deleteme')
-	     document.critform.structure_list.options[2] = null;
-        i = document.critform.structure_list.options.length - 1;
-
-	if ( selected(part) == 'true') { found = 'true'; }
-
-	if (found == 'false') {
-		document.critform.structure_list.options[document.critform.structure_list.options.length] = new Option(part,part);
-		document.selected_structures[part] = 'true';
-	}
-}
-
-function selected(part) {
-	return document.selected_structures[part];
-}
-
-function drop_part(part) {
-	i=0;
-	while (i < document.critform.structure_list.options.length) {
-  	   	if (document.critform.structure_list.options[i].value == part) {
-       	      		document.critform.structure_list.options[i] = null;       
-    		} else { i++; } 
-	}
-	document.selected_structures[part] = 'false';
-		
-	if (document.critform.structure_list.options[0] == null) {
-document.critform.structure_list.options[0] = new Option('----------------------------------------------','----------------------------------------------');
-document.critform.structure_list.options[1] = new Option('To select a structure, click the Add Structures button','deleteme');
-	}
-}
-
-function verify(part) {
-	var result = -1;
-        if (part !== ''){
-	for (i = 0 ; i < document.useful_structures.length ; i++) {
-		if (part == document.useful_structures[i]) {
-			result = 1;
-			break;
-		}
-	}
-	for (i = 0 ; i < document.useless_structures.length ; i ++) {
-	 	if (part == document.useless_structures[i]) {
-			result = 0;
-			break;
-		}
-	}
-        }
-	return result;
-}
 
 function call_reset() {
+  document.critform.gene_name.value = '';
+  document.critform.author.value = '';
+  document.critform.mutant.value = '';
+  document.critform.stage_start.selectedIndex = 0;
+  document.critform.stage_end.selectedIndex = document.critform.stage_end.options.length - 1;
+  document.critform.assay.value=document.critform.assay[0].value;
+  document.critform.TA_selected_structures.value = '';
+  document.critform.include_substructures.checked = 'true';
+  document.critform.structure_bool[0].checked = 'true';
+  document.critform.searchtype.selectedIndex = 1;
+  document.critform.mutsearchtype.selectedIndex = 1;
+  document.critform.authsearchtype.selectedIndex = 1;
 
-document.critform.gene_name.value = '';
-document.critform.stage_start.selectedIndex = 0;
-document.critform.author.value = '';
-document.critform.mutant.value = '';
-document.critform.stage_start.selectedIndex = 0;
-document.critform.stage_end.selectedIndex = document.critform.stage_end.options.length - 1;
-document.critform.gene_lg.selectedIndex = 0;
-document.critform.structure_list.options.length = 0;
-document.critform.structure_list.options[0] = new Option('----------------------------------------------','----------------------------------------------');
-document.critform.structure_list.options[1] = new Option('To select a structure, click the Add Structures button','deleteme');
-
-document.critform.assay.value=document.critform.assay[0].value;
 }
 
-count=0;
-document.useful_structures = new Array(<?MISQL SQL="select unique anatdisp_item_name, anatdisp_item_zdb_id, anatstgstat_anat_item_stg_count from anatomy_display, anatomy_stage_stats, stage where anatdisp_item_zdb_id = anatstgstat_anat_item_zdb_id and stg_zdb_id = anatstgstat_stg_zdb_id and stg_name = 'Any stage' and anatstgstat_anat_item_stg_count > 0 order by anatdisp_item_name;">
-"$1",<?/MISQL>"");
-document.useless_structures = new Array(<?MISQL SQL="select unique anatdisp_item_name, anatdisp_item_zdb_id, anatstgstat_anat_item_stg_count from anatomy_display, anatomy_stage_stats, stage where anatdisp_item_zdb_id = anatstgstat_anat_item_zdb_id and stg_zdb_id = anatstgstat_stg_zdb_id and stg_name = 'Any stage' and anatstgstat_anat_item_stg_count < 1 order by anatdisp_item_name;">
-"$1",<?/MISQL>"");
-
-for (i = 0 ; i < document.useful_structures.length ; i++) {
-	part = document.useful_structures[i];
-	document.selected_structures[part] = 'false';
+function popup_stage_comments(relative_url) {
+   open(relative_url,"StageDescription","toolbar=yes,scrollbars=yes,resizable=yes");
 }
 
 
-  function popup_stage_comments(relative_url) {
-    open(relative_url,"StageDescription","toolbar=yes,scrollbars=yes,resizable=yes");
-  }
+function call_verify() {
 
-
-  function call_verify() {
-
-     var result = verify(document.critform.user_entered.value);
-      if (result == 1) {
-        add_part(document.critform.user_entered.value); 
-        for (i=0 ; i < document.critform.structure_list.options.length ; i++) {
-	  document.critform.structure_list.options[i].selected=true;
-        }
-	document.critform.user_entered.value = '';
-        return true;
-       } else if (result == 0) {
-	 alert(document.critform.user_entered.value + ' is in the anatomical dictionary, but there are no expression assays for  this structure.');
-         return false;
-       } else { 
-	 alert(document.critform.user_entered.value + ' is not a valid structure name, check the anatomical dictionary by clicking on the `add structures` button above.');
-         return false;
-	 }
-
+  return true;
 }
+
+
 
 </SCRIPT>
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
@@ -275,7 +188,7 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 
      <?MIVAR>  $(VECAPPEND,$str_list,$str) <?/MIVAR>  <!-- regular vector of parts -->
      <?MIVAR NAME=$str DELIMIT="'" REPLACE="''">$str<?/MIVAR>
-     <?MIVAR> $(VECAPPEND,$str_dlmt_list,$str) <?/MIVAR>  <!-- 'delimited' vector of parts -->
+     <?MIVAR> $(VECAPPEND,$str_dlmt_list,$str) <?/MIVAR>  <!-- 'delimited' vector of parts, $(LOWER,x) ? -->
      <?MIVAR> $(SETVAR,str_count,$(+,$str_count,1)) <?/MIVAR>
      <?MIVAR NAME=$i>$(+,$i,1)<?/MIVAR> <!-- i++ -->
    <?/MIBLOCK>
@@ -409,16 +322,19 @@ select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_abbrev_order, mrkr_typ
   <?MIBLOCK INDEX="$part" FOREACH="$str_dlmt_list">
     <TR>
      <TD bgcolor="#EEEEEE"> 
-      <?MISQL SQL="
-	SELECT anatitem_name, anatitem_zdb_id,
-	       (select count(unique gene.mrkr_zdb_id)
+
+      <?MIVAR NAME="$selfcount_sql">
+       (select count(unique gene.mrkr_zdb_id)
 		from expression_pattern, expression_pattern_anatomy, 
 		     marker_relationship, marker as probe, marker as gene
 		where xpatanat_anat_item_zdb_id = anatitem_zdb_id
 		  and xpat_zdb_id = xpatanat_xpat_zdb_id
 		  and probe.mrkr_zdb_id = xpat_probe_zdb_id
 		  and mrel_mrkr_2_zdb_id = probe.mrkr_zdb_id
-		  and mrel_mrkr_1_zdb_id = gene.mrkr_zdb_id) selfcount,
+		  and mrel_mrkr_1_zdb_id = gene.mrkr_zdb_id) selfcount
+      <?/MIVAR>
+
+      <?MIVAR NAME="$childcount_sql">
 	       (select count(unique gene.mrkr_zdb_id)
 		from expression_pattern, expression_pattern_anatomy, 
 		     marker_relationship, marker as probe, marker as gene, all_anatomy_contains
@@ -427,35 +343,92 @@ select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_abbrev_order, mrkr_typ
 		  and xpat_zdb_id = xpatanat_xpat_zdb_id
 		  and probe.mrkr_zdb_id = xpat_probe_zdb_id
 		  and mrel_mrkr_2_zdb_id = probe.mrkr_zdb_id
-		  and mrel_mrkr_1_zdb_id = gene.mrkr_zdb_id) childcount	   
-	FROM anatomy_item
-	WHERE lower(anatitem_name) = lower('$part')
-	ORDER BY anatitem_name
+		  and mrel_mrkr_1_zdb_id = gene.mrkr_zdb_id) childcount	 
+      <?/MIVAR>
+
+      <?MIVAR NAME="totalcount_sql">
+      (select count(unique gene.mrkr_zdb_id)
+		from expression_pattern, expression_pattern_anatomy, 
+		     marker_relationship, marker as probe, marker as gene, all_anatomy_contains
+		where (xpatanat_anat_item_zdb_id = anatitem_zdb_id
+		  and xpat_zdb_id = xpatanat_xpat_zdb_id
+		  and probe.mrkr_zdb_id = xpat_probe_zdb_id
+		  and mrel_mrkr_2_zdb_id = probe.mrkr_zdb_id
+		  and mrel_mrkr_1_zdb_id = gene.mrkr_zdb_id)
+		OR (anatitem_zdb_id = allanatcon_container_zdb_id
+	 	  and xpatanat_anat_item_zdb_id = allanatcon_contained_zdb_id
+		  and xpat_zdb_id = xpatanat_xpat_zdb_id
+		  and probe.mrkr_zdb_id = xpat_probe_zdb_id
+		  and mrel_mrkr_2_zdb_id = probe.mrkr_zdb_id
+		  and mrel_mrkr_1_zdb_id = gene.mrkr_zdb_id) ) totalcount
+      <?/MIVAR>
+
+      <?MISQL SQL="
+	SELECT anatitem_name, anatitem_zdb_id, $selfcount_sql, $childcount_sql, ''
+  	FROM anatomy_item
+	WHERE anatitem_name = '$part'
+
+
+	UNION
+
+	SELECT anatitem_name, anatitem_zdb_id, $selfcount_sql, $childcount_sql, '<I>(abbrev match)</I> '
+  	FROM anatomy_item
+	WHERE anatitem_abbrev = '$part'
+
+	
+	UNION
+
+	SELECT anatitem_name, anatitem_zdb_id, $selfcount_sql, $childcount_sql, '<I>(synonym match)</I> '
+	FROM data_alias, anatomy_item 
+	WHERE dalias_data_zdb_id = anatitem_zdb_id
+  	  and dalias_alias = '$part'
+
+	ORDER BY 1
      ;">
       <?MICOMMENT> ----- exact match --- <?/MICOMMENT>
       <?MIVAR NAME="$item_name">$1<?/MIVAR>
       <?MIVAR NAME="$item_zdb_id">$2<?/MIVAR>
       <?MIVAR NAME="$selfcount">$3<?/MIVAR>
       <?MIVAR NAME="$childcount">$4<?/MIVAR>
+      <?MIVAR NAME="$matchingtext">$5<?/MIVAR>
       <?MIVAR>
         <font style="font-family:arial; font-size:small; font-weight:bold;">
+
+
+
 	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">
-        $item_name
-	</A>
-        </font> </TD>
+        $item_name</A>
+	</font> 
+
+
+</TD>
       <?/MIVAR>
       <TD bgcolor="#EEEEEE">
+
         <FONT style="font-family:arial; font-size:small;">
+
       <?MIBLOCK COND="$(>,$selfcount,0)">
         <?MIVAR> 
-        has <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselectnew.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name" target="_parent"><B>($selfcount)</B></A> total expression pattern(s) , childcount: $childcount
+        has <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselectnew.apg&query_results=true&START=0&WINSIZE=25&include_substructures=&TA_selected_structures=$item_name" target="_parent"><B>($selfcount)</B></A> expression pattern(s) in all stages 
         <?/MIVAR>
+	<?MIBLOCK COND="$(>,$childcount,0)">
+	  <?MIVAR>
+	  (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselectnew.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name" target="_parent"><B>$(+,$childcount)</B></A> including children)
+	  <?/MIVAR>
+	<?/MIBLOCK>
       <?MIELSE>
         <?MICOMMENT> ---- has no data ---- <?/MICOMMENT>
 	  has no expression data.
       <?/MIBLOCK>
+
         </FONT>
+     <FONT style="font-family:arial; font-size:small; font-weight:bold;  ">
+      <?MIVAR>$matchingtext<?/MIVAR>
+     </FONT>
+
      <?/MISQL>
+
+
 
       <?MIBLOCK COND="$(EQ,$MI_ROWCOUNT,0)">
       <?MICOMMENT> ---- not in dictionary --- <?/MICOMMENT>
@@ -466,7 +439,11 @@ select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_abbrev_order, mrkr_typ
       </TD>
       <TD bgcolor="#EEEEEE">
        <FONT style="font-family:arial; font-size:small;"> 
-        <B>is not in the dictionary</B>
+       <?MICOMMENT> ---- has no data ---- <?/MICOMMENT>
+	  <?MIVAR>
+          <B>is not an exact match, try searching the 
+	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatsel_anatdict.apg&mode=search&searchterm=$part">dictionary</A></B>
+       <?/MIVAR>
        </FONT>
      <?/MIBLOCK>
      </TD>
@@ -478,16 +455,20 @@ select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_abbrev_order, mrkr_typ
 
 <?MICOMMENT> <!--- end Anatomy Item Verification -->  <?/MICOMMENT>
 
+<BR>
+
 
 <?MIBLOCK COND="$(XST,$str_dlmt_list)">
 
   <?MIVAR NAME=$anatitem_constraint>$(SEPARATE,$str_dlmt_list,"','")<?/MIVAR>
+  <?MIVAR NAME=$item_count>$(VECSIZE,$str_dlmt_list)<?/MIVAR>
+
 
   <?MICOMMENT> ------ this is for the "or" search, or "any of the selected items", 
 	              it populates a temp table of anatitem_zdb_id's that are all ok
 		      for the anatomy part of the query -----       <?/MICOMMENT>
 
-  <?MIBLOCK COND="$(AND,$(XST,$structure_bool),$(EC,$structure_bool,or))"
+  <?MIBLOCK COND="$(AND,$(XST,$structure_bool),$(EC,$structure_bool,or))">
     <?MIVAR NAME="$child_sql"><?/MIVAR>
     <?MIVAR NAME="$child_sql" COND="$(AND,$(XST,$include_substructures),$(NE,$include_substructures,))">
    	  SELECT child.anatitem_zdb_id aisl_anatitem_zdb_id
@@ -497,16 +478,47 @@ select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_abbrev_order, mrkr_typ
              and parent_has_child.allanatcon_container_zdb_id = parent.anatitem_zdb_id
              and parent_has_child.allanatcon_contained_zdb_id = child.anatitem_zdb_id
 	  UNION
+   	  SELECT child.anatitem_zdb_id aisl_anatitem_zdb_id
+	   FROM all_anatomy_contains as parent_has_child, 
+		 anatomy_item as parent, anatomy_item as child
+	   WHERE parent.anatitem_abbrev in ('$anatitem_constraint')
+             and parent_has_child.allanatcon_container_zdb_id = parent.anatitem_zdb_id
+             and parent_has_child.allanatcon_contained_zdb_id = child.anatitem_zdb_id
+	  UNION
+   	  SELECT child.anatitem_zdb_id aisl_anatitem_zdb_id
+	   FROM all_anatomy_contains as parent_has_child, 
+		 anatomy_item as parent, anatomy_item as child, data_alias
+	   WHERE dalias_alias in ('$anatitem_constraint')
+	     and dalias_data_zdb_id = parent.anatitem_zdb_id
+             and parent_has_child.allanatcon_container_zdb_id = parent.anatitem_zdb_id
+             and parent_has_child.allanatcon_contained_zdb_id = child.anatitem_zdb_id
+	  UNION
     <?/MIVAR>
 
     <?MISQL SQL="
 	$child_sql
+	SELECT anatitem_zdb_id aisl_anatitem_zdb_id 
+	FROM anatomy_item, data_alias 
+	WHERE dalias_alias in ('$anatitem_constraint')
+  	  and dalias_data_zdb_id = anatitem_zdb_id
+	UNION
+	SELECT anatitem_zdb_id aisl_anatitem_zdb_id
+	  FROM anatomy_item
+	  WHERE anatitem_abbrev in ('$anatitem_constraint') 
+	UNION
 	SELECT anatitem_zdb_id aisl_anatitem_zdb_id
 	  FROM anatomy_item
 	  WHERE anatitem_name in ('$anatitem_constraint') 
 	INTO TEMP anatomy_item_search_list with no log
     ;">
     <?/MISQL>
+
+
+    <?MICOMMENT>
+    <HR> 
+    <?MIVAR>$MI_SQL<?/MIVAR>
+    <HR>
+    <?/MICOMMENT>
 
     <?MIVAR NAME="$anatitem_temp_table_created">true<?/MIVAR>
 
@@ -528,32 +540,43 @@ select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_abbrev_order, mrkr_typ
 	              but any more items that the expression record has are irrelevant, because they
 	 	      don't show up in the list.                                 ----       <?/MICOMMENT>
 
-  <?MIBLOCK COND="$(AND,$(XST,structure_bool),$(EC,structure_bool,and))">
+  <?MIBLOCK COND="$(AND,$(XST,$structure_bool),$(EC,$structure_bool,and))">
 
-    <?MISQL SQL="
+  <?MISQL SQL="
+
 	SELECT xpatanat_xpat_zdb_id xasl_xpat_zdb_id 
-	FROM expression_pattern_anatomy, anatomy_item
-	WHERE anatitem_name in ('EVL','margin') 
-	  and xpatanat_anat_item_zdb_id = anatitem_zdb_id
+	FROM expression_pattern_anatomy
+		INNER JOIN anatomy_item
+    	   	  ON xpatanat_anat_item_zdb_id = anatitem_zdb_id
+   	  	LEFT OUTER JOIN data_alias
+       		  ON dalias_data_zdb_id = anatitem_zdb_id
+	WHERE anatitem_name in ('$anatitem_constraint')
+      	   OR anatitem_abbrev in ('$anatitem_constraint')
+      	   OR dalias_alias in ('$anatitem_constraint')
+
 	GROUP BY 1
 	HAVING count(distinct anatitem_name) = $item_count
+
 	INTO TEMP xpat_anatomy_search_list with no log 
-    ;">
+	;">
+
+    <?/MISQL>
+
+
+    <?MICOMMENT>
+    <HR><?MIVAR>$MI_SQL<?/MIVAR><HR>
+    <?/MICOMMENT>
 
     <?MIVAR NAME="$xpatanat_temp_table_created">true<?/MIVAR>
 
     <?MIVAR NAME=$query_from>$query_from, xpat_anatomy_search_list<?/MIVAR>
    
     <?MIVAR NAME=$query_where>$query_where
-	  and xasl_anatitem_zdb_id = xpatanat_xpat_item_zdb_id
+	  and xasl_xpat_zdb_id = xpatanat_xpat_zdb_id
     <?/MIVAR>
 
   <?/MIBLOCK>
 
-  <?MIVAR><hr>$MI_SQL<hr><?/MIVAR>
-
-
- 
 
   <?MIVAR NAME=$query_from>$query_from, 
           expression_pattern_anatomy, anatomy_item  
@@ -567,31 +590,18 @@ select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_abbrev_order, mrkr_typ
   <?/MIVAR> 
 
 
-  <?MIVAR NAME=$item_count>$(VECSIZE,$str_dlmt_list)<?/MIVAR>
+ 
 
   <?MIBLOCK COND="$(XST,$user_stg_rng)">
-    <?MIBLOCK COND="$(EC,$structure_bool,and)">
-      <?MIVAR NAME=$query_from>$query_from, expression_pattern_stage<?/MIVAR>
-      <?MIVAR NAME=$query_where>$query_where
-              and xpatstg_start_stg_zdb_id = s1.stg_zdb_id
-              and xpatstg_end_stg_zdb_id = s2.stg_zdb_id
-              and xpatstg_start_stg_zdb_id = xpatanat_xpat_start_stg_zdb_id
-              and xpatstg_end_stg_zdb_id =  xpatanat_xpat_end_stg_zdb_id
-      <?/MIVAR>
-    <?MIELSE>
+
       <?MIVAR NAME=$query_where>$query_where
               and xpatanat_xpat_zdb_id = xp.xpat_zdb_id
               and xpatanat_xpat_start_stg_zdb_id = s1.stg_zdb_id
               and xpatanat_xpat_end_stg_zdb_id = s2.stg_zdb_id
       <?/MIVAR>
-    <?/MIBLOCK>
   <?/MIBLOCK>
 
-  <?MIBLOCK COND="$(EC,$structure_bool,and)">
-    <?MIVAR NAME=$query_grp_by>group by m.mrkr_zdb_id<?/MIVAR>
-    <?MIVAR NAME=$query_hvng>having count(distinct anatitem_name) = $item_count
-    <?/MIVAR>
-  <?/MIBLOCK>
+
 <?MIELSE>
   <?MIVAR>$(UNSETVAR,$structure_list)<?/MIVAR>
 
@@ -613,11 +623,11 @@ select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_abbrev_order, mrkr_typ
 <?MICOMMENT> <!-- start ASSAY --> <?/MICOMMENT>
 
 <?MIBLOCK COND="$(AND,$(XST,$assay),$(NC,$assay,NULL))">
+here!
     <?MIVAR NAME=$query_where>$query_where
     and xp.xpat_assay_name like '$assay%'
    <?/MIVAR>  
 <?/MIBLOCK>
-
 <?MICOMMENT> <!-- end ASSAY --> <?/MICOMMENT>
 
 
@@ -691,12 +701,11 @@ select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_abbrev_order, mrkr_typ
   from  expression_pattern xp,marker m$query_from_with_locus
 <?/MIVAR>
 <?/MIBLOCK>
-<?MIVAR NAME=$_query_where_with_mrel>
+<?MIVAR NAME=$query_where_with_mrel>
   where m.mrkr_zdb_id = mrel_mrkr_1_zdb_id 
     and mrel_mrkr_2_zdb_id = xp.xpat_probe_zdb_id
     $query_where
 <?/MIVAR>
-
 <?MIVAR NAME=$query_where_without_mrel>
   where m.mrkr_zdb_id = xp.xpat_probe_zdb_id
     $query_where
@@ -706,37 +715,32 @@ select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_abbrev_order, mrkr_typ
 
 <!-- RETRIEVE AND DISPLAY ALL MATCHING ENTRIES. -->
 <?MISQL SQL="
-      select count($(IF,$(NC,$structure_bool,and),distinct )m.mrkr_zdb_id)::integer
+      select count(distinct m.mrkr_zdb_id)::integer
       $query_from, marker_relationship
       $query_where_with_mrel and mrel_mrkr_1_zdb_id not like 'ZDB-PAC%' 
-      $(IF,$(XST,$query_grp_by),$query_grp_by $query_hvng)
+      $(IF,$(XST,$query_grp_by),$query_grp_by )
        ;">
 <?/MISQL>
 
-<?MIVAR>
-<hr>
-$MI_SQL
-<hr>
-<?/MIVAR>
 
 <?MIVAR NAME=count1>$1<?/MIVAR>
 <?MIVAR NAME=sqlcount2>
 
-      select count($(IF,$(NC,$structure_bool,and),distinct )m.mrkr_zdb_id)::integer
+      select count(m.mrkr_zdb_id)::integer
       $query_from
       $query_where_without_mrel
-      $(IF,$(XST,$query_grp_by),$query_grp_by $query_hvng)
+      $(IF,$(XST,$query_grp_by),$query_grp_by )
        ;"><?/MIVAR>
 
 <?MISQL SQL="
-      select count($(IF,$(NC,$structure_bool,and),distinct )m.mrkr_zdb_id)::integer
+      select count(m.mrkr_zdb_id)::integer
       $query_from
       $query_where_without_mrel and m.mrkr_type not like 'EST%'
   and m.mrkr_zdb_id not in (
-  select $(IF,$(EC,$structure_bool,or),distinct )m.mrkr_zdb_id
+  select distinct m.mrkr_zdb_id
   $query_from, marker_relationship
   $query_where_with_mrel and mrkr_zdb_id=m.mrkr_zdb_id)
-  $(IF,$(XST,$query_grp_by),$query_grp_by $query_hvng)
+  $(IF,$(XST,$query_grp_by),$query_grp_by )
        ;"><?/MISQL>
 <?MIVAR NAME=count2>$1<?/MIVAR>
 <!--count of records could be zero, because we entered an allele and not a locusin the query criteria-->
@@ -746,7 +750,7 @@ $MI_SQL
   <?MIBLOCK COND="$(NC,$mutsearchtype,equals)">
     <?MIVAR COND="$(EC,$mutsearchtype,contains)" NAME=$mut_wild_card>%<?/MIVAR>
     <?MIVAR NAME=$query_where_with_locus>$query_where_with_locus 
-      and ( lower(l.abbrev) like '$mut_wild_card$(LOWER,$mutant)%')
+       and ( lower(l.abbrev) like '$mut_wild_card$(LOWER,$mutant)%')
          and xp.xpat_stock_zdb_id=l.zdb_id 
     <?/MIVAR>
   <?MIELSE>
@@ -756,16 +760,16 @@ $MI_SQL
     <?/MIVAR>
   <?/MIBLOCK> 
   <?MIVAR NAME=$query_from_with_locus>$query_from_with_locus,locus l<?/MIVAR>
-  <?MISQL SQL="select count($(IF,$(NC,$structure_bool,and),distinct )mrkr_zdb_id)::integer
+  <?MISQL SQL="select count(distinct mrkr_zdb_id)::integer
       $query_from_with_locus
       where mrkr_zdb_id=xp.xpat_probe_zdb_id and  mrkr_type not like 'EST%' $query_where_with_locus
-  $(IF,$(XST,$query_grp_by),$query_grp_by $query_hvng)"><?/MISQL>
+  $(IF,$(XST,$query_grp_by),$query_grp_by )"><?/MISQL>
   <?MIVAR NAME=$count3>$1<?/MIVAR>
   <?MIBLOCK COND="$(>,$count3,0)">
      <?MIVAR NAME=$query_where>$query_where_with_locus<?/MIVAR>
      <?MIVAR NAME=$query_from>$query_from_with_locus<?/MIVAR>
      <?MIVAR NAME=$count2>$count3<?/MIVAR> 
-     <?MIVAR NAME=$_query_where_with_mrel>
+     <?MIVAR NAME=$query_where_with_mrel>
      where mrkr_zdb_id = mrel_mrkr_1_zdb_id 
      and mrel_mrkr_2_zdb_id = xp.xpat_probe_zdb_id
      $query_where
@@ -776,12 +780,18 @@ $MI_SQL
 
 <?MIVAR NAME=count>$(+,$count1,$count2)<?/MIVAR>
 
-<?MIVAR NAME=num_recs>$(IF,$(AND,$(XST,$str_dlmt_list),
-                               $(EC,$structure_bool,and)
-                              )
-                         ,$MI_CURRENTROW,$count)
-  <?/MIVAR>
-    
+<?MICOMMENT> here's how num_recs used to get filled:
+$(IF, $(AND, $(XST,$str_dlmt_list), $(EC,$structure_bool,and) ) ,$MI_CURRENTROW,$count)
+
+             ... I have NO IDEA what's going on here.. 
+<?/MICOMMENT>
+
+<?MIVAR NAME=num_recs>
+$count
+<?/MIVAR>
+
+
+
 <!--***-->
 <?MIBLOCK COND="$(XST,$pubId)">
  <?MISQL SQL="
@@ -904,31 +914,32 @@ and recattrib_data_zdb_id = b.xpat_zdb_id
 and xpat_probe_zdb_id=a.mrkr_zdb_id and mrkr_type not like "EST"	
   order by 2 desc, 3
 <?/MIVAR>
+
+<hr>
+
 <!--*** add time order -->
 <?MIVAR COND="$(NXST,$gene_name)">$(SETVAR,$name_sig_col,)<?/MIVAR>
 <?MIVAR COND="$(NXST,$gene_name)">$(SETVAR,$ordr_by,"order by 2,3")<?/MIVAR>
 <?MIVAR COND="$(XST,$gene_name)">$(SETVAR,$ordr_by,"order by 7,2,3")<?/MIVAR>
 <?MIVAR COND="$(AND,$(XST,$order),$(EC,$order,date))">
-  $(SETVAR,$ordr_by, "order by 8 desc,7,3")
+  $(SETVAR,$ordr_by, "order by 6 desc,3")
 <?/MIVAR>
-
 <?MIVAR COND="$(NXST,$pubId)" NAME=sql>
-  select $(IF,$(EC,$structure_bool,or),distinct )m.mrkr_zdb_id, m.mrkr_type, m.mrkr_abbrev_order, m.mrkr_name, m.mrkr_abbrev $name_sig_col,xpat_direct_submission_date
+  select distinct m.mrkr_zdb_id, m.mrkr_type, m.mrkr_abbrev_order, m.mrkr_name, m.mrkr_abbrev $name_sig_col,xpat_direct_submission_date
   $query_from, marker_relationship
   $query_where_with_mrel and m.mrkr_type not like "BAC" and m.mrkr_type not like "PAC" and m.mrkr_zdb_id=mrkr_zdb_id
   union
-  select $(IF,$(EC,$structure_bool,or),distinct )m.mrkr_zdb_id, m.mrkr_type, m.mrkr_abbrev_order, m.mrkr_name, m.mrkr_abbrev $name_sig_col, xpat_direct_submission_date
+  select distinct m.mrkr_zdb_id, m.mrkr_type, m.mrkr_abbrev_order, m.mrkr_name, m.mrkr_abbrev $name_sig_col, xpat_direct_submission_date
   $query_from
   where m.mrkr_zdb_id=xpat_probe_zdb_id and m.mrkr_type not like "EST" and m.mrkr_type not like "BAC" $query_where and m.mrkr_zdb_id=mrkr_zdb_id
   and m.mrkr_zdb_id not in (
-  select $(IF,$(EC,$structure_bool,or),distinct )m.mrkr_zdb_id
+  select distinct m.mrkr_zdb_id
   $query_from, marker_relationship
   $query_where_with_mrel)
-  $(IF,$(XST,$query_grp_by),$query_grp_by $query_hvng)
+  $(IF,$(XST,$query_grp_by),$query_grp_by )
   $ordr_by
 <?/MIVAR>
-
-<?MIVAR><hr>$sql<hr><?/MIVAR>
+<HR><?MIVAR>$sql<?/MIVAR><HR>
 
 <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
   $sql
@@ -1032,7 +1043,6 @@ where '$GENE_OID' = mrkr_zdb_id
 = mrel_mrkr_1_zdb_id and mrel_mrkr_2_zdb_id=xpat_probe_zdb_id)
 order by 2,6 asc
 ;">
-
 
 <?MIVAR NAME=$XPAT_X>$3<?/MIVAR>
 <?MIVAR NAME=$EST_ID>$4<?/MIVAR>
@@ -1192,6 +1202,7 @@ order by 2,6 asc
 	<?MIVAR name=$UserInput COND=$(XST,$structure_bool)>$UserInput&structure_bool=$structure_bool<?/MIVAR>
 	<?MIVAR name=$UserInput COND=$(XST,$query_results)>$UserInput&query_results=$query_results<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$user_entered)>$UserInput&user_entered=$(URLENCODE,$user_entered)<?/MIVAR>
+	<?MIVAR name=$UserInput COND=$(XST,$order)>$UserInput&order=$order<?/MIVAR>
        <?/MIBLOCK>
 
 <?MIBLOCK COND="$(XST,$structure_list)">
@@ -1364,7 +1375,7 @@ order by 2,6 asc
 
 <!-- gene name -->
 
-<FONT size=2><B><A HREF="javascript:start_help('gene');">Gene/EST</A></B></FONT>
+<FONT size=2><B>Gene/EST</B></FONT>
 
 <SELECT name=searchtype>
 	  <?MIVAR>
@@ -1377,7 +1388,7 @@ order by 2,6 asc
      </td>
      <td rowspan=2>
 <!-- stage -->
-<FONT size=2><B> <A HREF="javascript:start_help('stages');">Between stages:</A></B> <br>
+<FONT size=2><B> Between stages:</B> <br>
   <SELECT NAME="stage_start" SIZE=1>
     <?MISQL SQL="select stg_name, stg_hours_start, stg_hours_end, stg_zdb_id from stage where stg_name <> 'Any stage' order by stg_hours_start, stg_hours_end desc;"><OPTION $(IF,$(EC,$stage_start,$4),SELECTED) VALUE="$4"> $1 <?/MISQL>
   </SELECT>
@@ -1393,7 +1404,7 @@ order by 2,6 asc
    <tr>
      <td>
 <!-- begin mutant -->
-  <FONT size=2><B><A HREF="javascript:start_help('mutant');">Mutant Background</A></B></FONT>
+  <FONT size=2><B>Mutant Background</B></FONT>
   <SELECT name=mutsearchtype>
     <?MIVAR>
     <option value=begins $(IF,$(AND,$(XST,$mutsearchtype),$(EC,$mutsearchtype,begins)),SELECTED)>Name begins with
@@ -1408,7 +1419,7 @@ order by 2,6 asc
    <tr>
      <td>
 <!-- begin author -->
-<FONT size=2><B><A HREF="javascript:start_help('author');">Author</A></B></FONT>
+<FONT size=2><B>Author</B></FONT>
 <SELECT name=authsearchtype>
 	  <?MIVAR>
                   <option value=begins $(IF,$(AND,$(XST,$authsearchtype),$(EC,$authsearchtype,begins)),SELECTED)>Name begins with
@@ -1421,7 +1432,7 @@ order by 2,6 asc
      </td>
       <td>
 <!-- begin assay type -->
-  <FONT size=2><B><A HREF="javascript:start_help('assay');">Assay Type</A></B></FONT>
+  <FONT size=2><B>Assay Type</B></FONT>
   <SELECT NAME=assay>
     <option <?MIVAR COND="$(EC,$assay,NULL)">SELECTED<?/MIVAR> value=NULL>ANY
     <?MISQL SQL="select xpatassay_name, xpatassay_display_order from expression_pattern_assay order by xpatassay_display_order;"> <OPTION $(IF,$(EC,$assay,$1),SELECTED) value='$1'>$1<?/MISQL>
@@ -1449,7 +1460,7 @@ order by 2,6 asc
          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
          [<FONT size="-1"><I>example: "<FONT color="red">midbrain, hindbrain</FONT>"</I></FONT>]<br>
-         <TEXTAREA cols="50" rows="1" name="TA_selected_structures"><?MIVAR COND="$(XST,$TA_selected_structures)">$TA_selected_structures<?/MIVAR></TEXTAREA>
+         <TEXTAREA cols="50" rows="3" name="TA_selected_structures"><?MIVAR COND="$(XST,$TA_selected_structures)">$TA_selected_structures<?/MIVAR></TEXTAREA>
 	 <br>
 	 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatsel_anatdict.apg&mode=search"><B>Find</B> Anatomical Terms</A>
          &nbsp;
@@ -1458,12 +1469,31 @@ order by 2,6 asc
       </TD>
 <?MICOMMENT> <!--- end new selected structures textarea ---> <?/MICOMMENT>
       <TD bgcolor="#EEEEEE">
-        <input type=checkbox name="include_substructures"  $(IF,$(XST,$include_substructures),$(IF,$(EC,$include_substructures,or),checked), checked)>  <A HREF="javascript:start_help('substructures');"> Include substructures</A> <br>
+
+
+<?MICOMMENT> -- this bit is sneaky, basically, this means that if you're opening the page
+		for the first time and the variable is empty, then create it - but if
+		the page has been submitted and the variable is empty, then it's supposed
+		to be, and we wanna leave it that way.                                    -- <?/MICOMMENT>
+
+<?MIBLOCK COND="$(AND,$(NXST,$include_substructures),$(NXST,$query_results))"  >
+        <?MIVAR NAME="include_substructures">checked<?/MIVAR>
+<?/MIBLOCK>
+
+        <input type=checkbox name="include_substructures" value="checked" <?MIVAR> $(IF,$(AND,$(XST,$include_substructures),$(EC,$include_substructures,checked)),checked="checked") <?/MIVAR> >  <A HREF="javascript:start_help('substructures');"> Include substructures</A> <br>
+
+
+
+<?MIBLOCK COND="$(NXST,$structure_bool)">
+        <?MIVAR NAME="structure_bool">or<?/MIVAR>
+<?/MIBLOCK>
+
         <b><A HREF="javascript:start_help('return_for');">Return data for genes expressed in:</A></b> <br>
-        <input type="radio" name="structure_bool" value="or" $(IF,$(XST,$structure_bool),$(IF,$(EC,$structure_bool,or),checked), checked)> 
+        <input type="radio" name="structure_bool" value="or"  <?MIVAR>$(IF,$(EC,$structure_bool,or),checked="checked")<?/MIVAR>  > 
            <b>Any</b> of selected structures 
         <br>
-         <input type="radio" name="structure_bool" value="and" $(IF,$(AND,$(XST,$structure_bool),$(EC,$structure_bool,and)),checked)> 
+         <input type="radio" name="structure_bool" value="and" <?MIVAR>$(IF,$(EC,$structure_bool,and),checked="checked")<?/MIVAR>
+	    onChange="document.critform.include_substructures.checked=false;"> 
            <b>Every</b> selected structure <?/MIVAR>
       </TD>
    </TR>
@@ -1496,12 +1526,7 @@ order by 2,6 asc
 	    <td colspan=3 bgcolor=<!--|SIDEBAR_COLOR|--> align=right> 
 	<?/MIVAR>
 	
-	<input type=submit value=Search onclick="if ((document.critform.user_entered.value != '') && (document.critform.user_entered.value != null)){return call_verify();}
-for (i=0 ; i < document.critform.structure_list.options.length ; i++) {
-	  document.critform.structure_list.options[i].selected=true;
-      }
-if (!((document.anat_keywords == null) || (document.anat_keywords.closed == true)))
-{ document.anat_keywords.close();}">&nbsp;<input type=button value="Reset" onClick="call_reset();">
+	<input type=submit value=Search>
 		</td>
 	    </tr>
 	</table>
@@ -1544,7 +1569,7 @@ if (navigator.appName == "Netscape") document.captureEvents(Event.KEYDOWN|Event.
 
 <?MIBLOCK COND="$(XST,$xpatanat_temp_table_created)">
   <!--- delete temp table, with dummy insert because otherwise it's an illegal statement  --->
-  <?MISQL SQL="insert into xpat_anatomy_search_list (xasl_anatitem_zdb_id) values (NULL); 
+  <?MISQL SQL="insert into xpat_anatomy_search_list (xasl_xpat_zdb_id) values (NULL); 
                drop table xpat_anatomy_search_list;">
   <?/MISQL>
 <?/MIBLOCK>
