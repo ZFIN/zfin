@@ -462,7 +462,7 @@ public class Browser extends Applet {
 		System.out.println("QS: " + QS);
 			
 		URL U = null;
-		try { U = new URL("http", getDocumentBase().getHost(), "/cgi-bin/webdriver?" + QS); }
+		try { U = new URL("http", getDocumentBase().getHost(), "/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?" + QS); }
 		catch (MalformedURLException e) { System.err.println(e); }
 
 //		getAppletContext().showDocument(U, "criteria");
@@ -470,7 +470,7 @@ public class Browser extends Applet {
 /*		try {
 
 			// open the connection and prepare it to POST
-			URL u = new URL("http://" + "host" + "/cgi-bin/" + cgi);  //won't do nuffin 
+			URL u = new URL("http://" + "host" + "/<!--|CGI_BIN_DIR_NAME|-->/" + cgi);  //won't do nuffin 
 			URLConnection uc = u.openConnection();
 			uc.setDoOutput(true);
 			uc.setDoInput(true);
