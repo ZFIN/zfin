@@ -31,7 +31,7 @@ TARGETIMAGES = $(foreach IMG, $(IMAGES), $(FINALTARGETDIR)/$(IMG))
 
 # Use the standard JAVAC_11, and JAVACFLAGS.  Still need to define classpath.
 
-CLASSPATH = $(STAGINGDIR):$(JAVAHOME_11)/lib/classes.zip:$(TOP)/lib/Java:$(JDBCHOME)/lib/ifxjdbc.jar
+CLASSPATH = $(STAGINGDIR):$(JAVAHOME_11)/lib/classes.zip:$(TOP)/lib/Java
 
 IMPORTPATH = $(TARGETROOT)/lib/Java
 NETSCAPEPATH = $(IMPORTPATH)/netscape
@@ -40,7 +40,7 @@ NETSCAPESYMLINK = $(STAGINGDIR)/netscape
 
 # ---- Java source and destination variables
 
-GENERICS = zmapper/SQLQuery.java zmapper/MarkerBuilder.java
+GENERICS = zmapper/MarkerBuilder.java
 STATICS  = mapplet.java \
            zmapper/BackBone.java zmapper/Bin.java zmapper/BinGroup.java \
            zmapper/LayoutManager.java zmapper/MapViewer.java zmapper/Marker.java

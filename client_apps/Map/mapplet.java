@@ -235,11 +235,6 @@ public class mapplet extends Applet  {
 			repaint();
 		}
 
-		if (clickedPanel != null) {
-			viewPanel(clickedPanel);
-			clickedPanel = null;
-		}
-		
 		return true;
 	}
 
@@ -365,37 +360,8 @@ public class mapplet extends Applet  {
 		
 		
 		
-	}
-
-	public void viewPanel(String Abbrev) {
-
-		if (getParameter("panel_url") != null)
-		{
-			String panel_url = getParameter("panel_url");
-			String port = "port";
-			String host = "host";
-			SQLQuery Q = new SQLQuery(host,port);
-			String query = "select zdb_id from panels where abbrev = '" + Abbrev + "';";
-			Vector V = Q.selectAll(1, query);
-
-			if (V.size() == 1) {
-				String ZDB_ID = (String)V.elementAt(0);
-				getJS();
-				String target_frame;
-				if (getParameter("target_frame") != null)
-					target_frame = getParameter("target_frame");
-				else
-					target_frame = "content";
-					
-				if ((JS != null) && (ZDB_ID != null)) {
-					JS.eval("open(\"" + panel_url + ZDB_ID + "\",\"" + target_frame + "\");");	
-				}	
-			}
-		}
-	}
+	}	
 	
-	
-
 	
 	public void viewMarker(String ZDB_ID) {
 
