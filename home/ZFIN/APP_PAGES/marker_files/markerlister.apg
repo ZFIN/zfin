@@ -28,7 +28,7 @@ Startframes.apg will pass this variables on to the select form.  -->
 <basefont COLOR="#000000" size=2>
 
 <?MIVAR NAME=$MI_NULL><?/MIVAR>
-
+ <?MIVAR name=$TileInput>&navtile=true<?/MIVAR>
 
 <!-- THIS NEXT PART IS EXECUTED AFTER THE PERSON ENTERS SOME CRITERIA -->
 
@@ -448,13 +448,12 @@ Startframes.apg will pass this variables on to the select form.  -->
         <?MIVAR name=comment>  Build array of user data  <?/MIVAR>
 	<?MIVAR name=selector>MIval=aa-markerlister.apg&WINSIZE=$WINSIZE<?/MIVAR>
         <?MIVAR name=UserInput><?/MIVAR>
-        <?MIVAR name=TileInput><?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$lg)>$UserInput&lg=$lg<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$refcross)>$UserInput&refcross=$refcross<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$marker_type)>$UserInput&marker_type=$marker_type<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$plinks)>$UserInput&plinks=$plinks<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$compare)>$UserInput&compare=$compare<?/MIVAR>
-        <?MIVAR name=$TileInput>$UserInput<?/MIVAR>
+        <?MIVAR name=$TileInput>$TileInput$UserInput<?/MIVAR>
         <?MIVAR name=UserInput COND=$(XST,$name)>$UserInput&name=$(URLENCODE,$name)<?/MIVAR>  
 
 	<!--- Return to the previous set of Rows --->
@@ -559,13 +558,12 @@ Startframes.apg will pass this variables on to the select form.  -->
   -- don't want a tile if got here via the accessionlister  -->
 <!-- markerlister may also be called by mapperselect when the marker name is ambigious.  A variable ampper is passed only by  mapperselect.  Create navtile button for mapperselect.  Pass marker_name rather than name and pass map_type if this can from a merged map request -->
 
-<!-- URLENCODE calls retain value if variable in function had a value the foirst call and is null the second call-->
+<!-- URLENCODE calls retain value if variable in function had a value the first call and is null the second call-->
 <!--  be sure to force a reset of URLENCODE -->
 
 <?MIBLOCK COND="$(NXST,$accession)">
-  <?MIVAR name=$TileInput>$TileInput&navtile=true<?/MIVAR>
-  <?MIVAR name=$TileInput COND="$(XST,$BEGIN)">$TileInput&BEGIN=$BEGIN<?/MIVAR>
-  <?MIVAR name=$TileInput COND="$(XST,$WINSIZE)">$TileInput&WINSIZE=$WINSIZE<?/MIVAR>
+  <?MIVAR COND="$(XST,$BEGIN)" name=$TileInput>$TileInput&BEGIN=$BEGIN<?/MIVAR>
+  <?MIVAR COND="$(XST,$WINSIZE)" name=$TileInput>$TileInput&WINSIZE=$WINSIZE<?/MIVAR>
 
   <?MIVAR COND="$(NXST,$plinks)" NAME=$plinks>NULL<?/MIVAR>
   <?MIVAR NAME=$mlist DELIMIT="','" REPLACE="">$mlist<?/MIVAR>
