@@ -114,7 +114,7 @@
   <?/MIBLOCK>	
   <?MIBLOCK COND="$(AND,$(EC,$hide_empty,f),$(=,$MI_ROWCOUNT,0))">
     None submitted.
-    <?MIVAR COND="$(XST,$UPDATE)">
+    <?MIVAR COND="$(AND,$(XST,$UPDATE),$(>,$(POSITION,$oID,FISH),0))">
       <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mappingdetail.apg&OID=$oID&UPDATE=1">Update on Detail page</A>
     <?/MIVAR>
   <?/MIBLOCK>
