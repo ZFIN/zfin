@@ -588,11 +588,23 @@ $(SETVAR,$last,$3)
 
 <?/MIBLOCK> <!-- ends deficiency -->
 
-<?MISQL SQL="select cloned_gene, b.abbrev from locus a, gene b where a.locus_name='$name' and a.cloned_gene=b.zdb_id;">
-<p></font><font size=2 color="red"><b>Known correspondence!</b></font><font size=2> The <A HREF="/cgi-bin_B/webdriver?MIval=aa-locusview.apg&OID=$locus">$name</A> locus has been shown to correspond to GENE:  <A HREF="/cgi-bin_B/webdriver?MIval=aa-markerview.apg&OID=$1">$2</A>. Please refer to the locus and gene records for further mapping information.
-<?/MISQL>
-
 </TD></TR></TABLE>
+
+<?MISQL SQL="select cloned_gene, b.abbrev from locus a, gene b where a.locus_name='$name' and a.cloned_gene=b.zdb_id;">
+<?MIVAR NAME=$cloned_gene>$1<?/MIVAR>
+<p>
+<B>Affected Gene:</B> 
+<?MIVAR COND="$(EC,$cloned_gene,NULL)">Not yet established.<?/MIVAR>
+
+<?MISQL COND="$(NC,$cloned_gene,NULL)" SQL="select gene_name, abbrev from gene where zdb_id='$cloned_gene';">
+<TABLE width=100% cellpadding=5 border=4 bgcolor="#f8fabb" cols=2 rows=1>
+<TR><TD>
+<font color="red"><B>Cloned Gene:</b>  </font>
+<font size=2>The GENE <b><A HREf="/cgi-bin_A/webdriver?MIval=aa-markerview.apg&OID=$cloned_gene">$1 ($2) </A> </b> has been shown to correspond to the <b>$name</b> locus. Please consult the GENE record for further mapping information.
+</TD>
+</TR></TABLE>
+<?/MISQL>
+<?/MISQL>
 
 
 <?/MIBLOCK><!-- ends non-double mutant -->
