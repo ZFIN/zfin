@@ -650,7 +650,7 @@ Accession:<input type=text size=15 name=seq_acc>
 
 <?MIBLOCK COND="$(=,$more,1)">
 
-  <li><?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genbank.apg&OID=$OID">other sequence info</A><?/MIVAR>
+  <li><?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genbank.apg&OID=$OID">nucleotide sequence info</A><?/MIVAR>
 
 <?MIELSE COND="$(>,$count,0)">
 
