@@ -1,71 +1,87 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
-<!--App page to view marker GO summaries-->
-
 <html>
-
+  <head>
+  <title>ZFIN Gene Ontology</title>
+</head>
+<!--app page to enter gene ontology info-->
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+<body>
+<basefont size = 2>
+<?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
+<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
 <?MIBLOCK COND="$(NXST,$OID)">
-<p>
-ERROR -- something bad happened -- no OID passed in!
+  <p>
+  ERROR -- something bad happened -- no OID passed in!
 <?/MIBLOCK>
+<?MISQL SQL="select mrkr_zdb_id from marker where mrkr_zdb_id='$OID'"><?/MISQL>
+<?MIVAR NAME=$geneid>$1<?/MIVAR>
 <?mivar name=$caller>$(SUBSTR,$OID,5,3)<?/mivar>
-<?MISQL SQL="select mrkr_abbrev from marker where mrkr_zdb_id='$OID'"<?/MISQL>
+<?MISQL SQL="select mrkr_abbrev from marker where mrkr_zdb_id='$OID'"><?/MISQL>
 <?MIVAR NAME=$gene>$1<?/MIVAR>
 
 <head>
 <title>ZFIN Gene Ontology Report for<?MIVAR> $gene:<?/MIVAR></title>
 </head>
 
- 
+
 <?MIBLOCK COND="$(XST,$OID)">
-     <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
-  <?MIBLOCK COND="$(NC,PUB,$caller)">
-     <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=go') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
-     <p>
+ <?MIBLOCK COND="$(NC,PUB,$caller)">
+     <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=go') from webpages where ID='aa-data_mgr.apg';">$1<?/MISQL>
+<p>
+ <?MISQL SQL="select db_query from foreign_db where db_name='QuickGO'"><?/MISQL>
+   <?MIVAR NAME=$dbquery>$1<?/MIVAR>
 
-     <?MISQL SQL="
-        select db_query from foreign_db where db_name='QuickGO';">
-        <?MIVAR NAME=$dbquery>$1<?/MIVAR>
-     <?/MISQL>
-     <p>
-     <table border = 0 cellspacing = 0 border = 0 width = 100% cellpadding = 3>
-     <tr><td width = 15%><b>Category</b>
-     <td width = 35%><b>Term</b>
-     <td width = 10%><b>Evidence</td>
-     <td><b>Inferred from</b>
-     <td width=10%><b>Reference(s)</b></td></tr>
-     <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
-     <?MIVAR name=$row_color>$highlight<?/MIVAR>
-     <?MIVAR NAME=$lastonto><?/MIVAR>
-     <?MIVAR NAME=$lastgoterm><?/MIVAR>
-     <?MIVAR NAME=lastevidence><?/MIVAR>
-     <?MIVAR NAME=infvector><?/MIVAR>
-<?MIVAR NAME=SQL1>select distinct goterm_ontology,goterm_name,mrkrgoev_evidence_code,gont_order,mrkrgo_zdb_id,goterm_go_id,mrkrgoev_zdb_id,mrkrgoev_infered_from,mrkrgoev_source_zdb_id,mrkrgo_go_term_zdb_id,mrkrgo_is_false_ref from go_term g,marker_go_term_evidence e,marker_go_term m ,go_ontology o where m.mrkrgo_mrkr_zdb_id='$OID' and m.mrkrgo_go_term_zdb_id=g.goterm_zdb_id and m.mrkrgo_zdb_id=e.mrkrgoev_mrkrgo_zdb_id and g.goterm_ontology=o.gont_ontology_name order by gont_order,goterm_name<?/MIVAR>
- 
-      <?MISQL SQL="select distinct mrkrgoev_source_zdb_id from marker_go_term_evidence,go_term,marker_go_term where  mrkrgoev_mrkrgo_zdb_id=mrkrgo_zdb_id and mrkrgo_go_term_zdb_id=goterm_zdb_id and mrkrgo_mrkr_zdb_id='$OID' and goterm_ontology='Biological Process'"><?/MISQL>
+<!--creating table to display added GO annotations-->
+
+  <table border = 0 cellspacing = 0 width = 100% cellpadding = 3>
+  <tr><td width = 10%><b>Category</b>
+  <!--<td width=10%><b>Is NOT</b>-->
+  <td><b>GO Term</b>
+  <td width=10%><b>Evidence</b></td>
+  <td width=10%><b>Inferred From</b>
+  <td width=10%><b>Reference(s)</b>
+
+  <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
+  <?MIVAR name=$row_color>$highlight<?/MIVAR>
+
+  <?MIVAR NAME=$lastonto><?/MIVAR>
+  <?MIVAR NAME=$lastgoterm><?/MIVAR>
+  <?MIVAR NAME=lastevidence><?/MIVAR>
+  <?MIVAR NAME=$lastpub><?/MIVAR>
+  <?MIVAR NAME=lastinf><?/MIVAR>
+  <?MIVAR NAME=infvector><?/MIVAR>
+
+
+   <?MIVAR NAME=SQL>select  distinct goterm_ontology,goterm_name,mrkrgoev_evidence_code,gont_order,mrkrgo_zdb_id,goterm_go_id,mrkrgoev_zdb_id,mrkrgoev_infered_from,mrkrgoev_source_zdb_id,mrkrgo_go_term_zdb_id,mrkrgoev_notes,m.mrkrgo_is_false_ref from go_term g, marker_go_term_evidence e,marker_go_term m, go_ontology o where mrkrgo_mrkr_zdb_id='$OID' and m.mrkrgo_go_term_zdb_id=g.goterm_zdb_id and m.mrkrgo_zdb_id=e.mrkrgoev_mrkrgo_zdb_id and g.goterm_ontology=o.gont_ontology_name order by gont_order,goterm_name<?/MIVAR>
+
+<?MISQL SQL="select distinct mrkrgoev_source_zdb_id from marker_go_term_evidence,go_term,marker_go_term where mrkrgoev_mrkrgo_zdb_id=mrkrgo_zdb_id and mrkrgo_go_term_zdb_id=goterm_zdb_id and mrkrgo_mrkr_zdb_id='$OID' and goterm_ontology='Biological Process'"><?/MISQL>
       <?MIVAR NAME=$biocount>$MI_ROWCOUNT<?/MIVAR>
+   <?MISQL SQL="select  distinct goterm_ontology,goterm_name,mrkrgoev_evidence_code,gont_order,mrkrgo_zdb_id,goterm_go_id,mrkrgoev_zdb_id,mrkrgoev_infered_from,mrkrgoev_source_zdb_id,mrkrgo_go_term_zdb_id,mrkrgoev_notes,m.mrkrgo_is_false_ref from go_term g, marker_go_term_evidence e,marker_go_term m, go_ontology o where mrkrgo_mrkr_zdb_id='$OID' and m.mrkrgo_go_term_zdb_id=g.goterm_zdb_id and m.mrkrgo_zdb_id=e.mrkrgoev_mrkrgo_zdb_id and g.goterm_ontology=o.gont_ontology_name order by gont_order,goterm_name">
+   <?MIVAR>
+     <tr bgcolor=$row_color>
+   <?/MIVAR>
+   <?MIVAR NAME=$ontology>$1<?/MIVAR>
+   <?MIVAR NAME=$goterm>$2<?/MIVAR>
+   <?MIVAR NAME=$markergotermid>$5<?/MIVAR>
+   <?MIVAR NAME=$markergoevid>$7<?/MIVAR>
+   <?MIVAR NAME=$markergonotes>$11<?/MIVAR>
+   <?MIVAR NAME=$markergoisnot>$12<?/MIVAR>
+   <?MIVAR NAME=$evidence>$(TRIM,$3)<?/MIVAR>
+   <?MIVAR NAME=$sourcezdbid>$9<?/MIVAR>
 
-     <?MISQL SQL="select distinct goterm_ontology,goterm_name,mrkrgoev_evidence_code,gont_order,mrkrgo_zdb_id,goterm_go_id,mrkrgoev_zdb_id,mrkrgoev_infered_from,mrkrgoev_source_zdb_id,mrkrgo_go_term_zdb_id,mrkrgo_is_false_ref from go_term g,marker_go_term_evidence e,marker_go_term m ,go_ontology o where m.mrkrgo_mrkr_zdb_id='$OID' and m.mrkrgo_go_term_zdb_id=g.goterm_zdb_id and m.mrkrgo_zdb_id=e.mrkrgoev_mrkrgo_zdb_id and g.goterm_ontology=o.gont_ontology_name order by gont_order,goterm_name">
+<!--display changes depending whether it is a NOT annotation or not-->
+   <?MIBLOCK COND="$(EC,$markergoisnot,t)">
+      <?MIVAR NAME=$not><b>NOT</b><?/MIVAR>
+   <?MIELSE>
+      <?MIVAR NAME=$not> <?/MIVAR>
+   <?/MIBLOCK>
 
-<?MIVAR NAME=SQL4>"select mrkrgoev_infered_from from marker_go_term_evidence where mrkrgoev_mrkrgo_zdb_id='$5' and mrkrgoev_source_zdb_id='$9' and mrkrgoev_evidence_code='$3'"><?/MIVAR>
-
-<!--<tr bgcolor=<?MIVAR>$row_color<?/MIVAR>>-->
-
-
-      <?MIVAR NAME=$ontology>$1<?/MIVAR>
-      <?MIVAR NAME=$goterm>$2<?/MIVAR>
-      <?MIVAR NAME=$mrkrgoid>$5<?/MIVAR>
-      <?MIVAR NAME=$mrkrgoref>$9<?/MIVAR>
-      <?MIVAR NAME=$mrkrgoevidence>$3<?/MIVAR>
-      <?MIVAR NAME=$mrkrgoisnot>$11<?/MIVAR>
-      <?MIBLOCK COND="$(EC,$mrkrgoisnot,t)">
-         <?MIVAR NAME=$not><b>NOT</b><?/MIVAR>
-      <?MIELSE>
-         <?MIVAR NAME=$not> <?/MIVAR> 
-      <?/MIBLOCK>
-      <?MISQL SQL="select count(distinct mrkrgoev_source_zdb_id) from marker_go_term_evidence where  mrkrgoev_mrkrgo_zdb_id='$5' and mrkrgoev_evidence_code='$3'">
-         <?MIVAR NAME=$refcount>$(FIX,$1)<?/MIVAR>
-      <?/MISQL>
-      <?MIBLOCK COND="$(EC,$ontology,Molecular Function)">
+<!--getting count of pubs for a particular annotation-->
+   <?MISQL SQL="select count(distinct mrkrgoev_source_zdb_id) from marker_go_term_evidence where mrkrgoev_mrkrgo_zdb_id='$5' and mrkrgoev_evidence_code='$3'">
+     <?MIVAR NAME=$refcount>$(FIX,$1)<?/MIVAR>
+   <?/MISQL>
+ <?MIBLOCK COND="$(EC,$ontology,Molecular Function)">
          <?MIVAR name=$row_color>$highlight<?/MIVAR>
       <?/MIBLOCK>
 
@@ -75,82 +91,87 @@ ERROR -- something bad happened -- no OID passed in!
 
       <?MIBLOCK COND="$(EC,$ontology,Cellular Component)">
           <?MIVAR NAME=$row_color>$(IF,$(EC,$biocount,0),#FFFFFF,$highlight)<?/MIVAR>
-<?MIVAR name=$color>$highlight<?/MIVAR>
       <?/MIBLOCK>
-
       <tr bgcolor=<?MIVAR>$row_color<?/MIVAR>>
-      <?MIBLOCK COND="$(AND,$(EC,$1,$lastonto),$(EC,$lastgoterm,$2),$(EC,$lastevidence,$3))">
-      <?MIELSE>
-        <?MIVAR>
-        <td>$(IF,$(NC,$ontology,$lastonto),$ontology)</td>
-        <td>$not <A HREF=$dbquery$6>$2</A></TD>
-        <TD><A HREF="http://www.geneontology.org/doc/GO.evidence.html">$3</A></TD>
-        <?MIVAR NAME=$inf_from>$8<?/MIVAR>
-        <?MIVAR NAME=infvector> <?/MIVAR>
+<!--now displaying annotations-->
+    <?MIBLOCK COND="$(AND,$(EC,$1,$lastonto),$(EC,$lastgoterm,$2),$(EC,$lastevidence,$3))">
+   <?MIELSE>
+     <?MIVAR>
+     <td>$(IF,$(NC,$ontology,$lastonto),$ontology)</td>
+     <!-- <td>$markergoisnot</td>-->
+     <td>$not <A HREF=$dbquery$6>$2</A></TD>
+     <TD><A HREF="http://www.geneontology.org/doc/GO.evidence.html">$3</A></TD>
+     <?MIVAR NAME=$inf_from>$8<?/MIVAR>
+     <?MIVAR NAME=infvector> <?/MIVAR>
+     <?MIVAR NAME=currinfs> <?/MIVAR>
+
+     <!--getting inferences for a particular annotation-->
+     <?MISQL SQL="select distinct mrkrgoev_infered_from from marker_go_term_evidence where mrkrgoev_mrkrgo_zdb_id='$markergotermid' and mrkrgoev_evidence_code='$evidence'">
+      <?MIVAR NAME=currinf>$1<?/MIVAR>
+      <?MIVAR NAME=$ref>select distinct mrkrgoev_infered_from from marker_go_term_evidence where mrkrgoev_mrkrgo_zdb_id='$markergotermid' and mrkrgoev_evidence_code='$evidence'<?/MIVAR>
+      <?MIVAR NAME=$currinflength>$(STRLEN,$currinf)<?/MIVAR>
+      <?MIBLOCK COND="$(AND,$(NC,$currinf,NULL),$(>,$currinflength,0))">
+         <?MIVAR NAME=$colon>:<?/MIVAR>
+         <?MIVAR NAME=$pos>$(POSITION,$currinf,$colon)<?/MIVAR>
+         <?MIVAR NAME=$posn>$(-,$pos,1)<?/MIVAR>
+         <?MIVAR NAME=$dbase>$(SUBSTR,$currinf,1,$posn)<?/MIVAR>
+         <?MIVAR NAME=$currinflength>$(STRLEN,$currinf)<?/MIVAR>
+         <?MIVAR NAME=$position>$(+,$pos,1)<?/MIVAR>
+         <?MIVAR NAME=$accID>$(SUBSTR,$currinf,$position,$currinflength)<?/MIVAR>
+          <?MIBLOCK COND="$(EC,$dbase,ZFIN)">
+              <?MIVAR NAME=$encaccID>$(URLENCODE,$accID)<?/MIVAR>
+              <?MIVAR NAME=$currinflink><a href=http://zfin.org/cgi-bin/ZFIN_jump?record=$encaccID>$accID</a><?/MIVAR>
+          <?MIELSE>
+               <?MIBLOCK COND="$(EC,$dbase,GO)">
+                  <?MISQL SQL="select db_query from foreign_db  where db_name = 'QuickGO'"><?/MISQL>
+                  <?MIVAR NAME=query>$1<?/MIVAR>
+                  <?MIVAR NAME=$accID>$(SUBSTR,$accID,4,$(STRLEN,$accID))<?/MIVAR>
+                  <?MIVAR NAME=$link>$query$accID<?/MIVAR>
+                  <?MIVAR NAME=$currinflink><a href=$link>GO:$accID</a><?/MIVAR>
+               <?MIELSE> 
+                  <?MISQL SQL="select a.db_query from db_link b,foreign_db a where b.db_name = '$dbase' and a.db_name=b.db_name"><?/MISQL>
+                  <?MIVAR NAME=query>$1<?/MIVAR>
+                  <?MIVAR NAME=$link>$query$accID<?/MIVAR>
+                  <?MIVAR NAME=$currinflink><a href=$link>$dbase:$accID</a><?/MIVAR>
+               <?/MIBLOCK>
+           <?/MIBLOCK>
+       <?MIVAR NAME=currinfs>$(IF,$(=,$MI_CURRENTROW,1),$currinflink$currinfs,$currinfs<br>$currinflink)<?/MIVAR>
+       <?MIELSE>
         <?MIVAR NAME=currinfs> <?/MIVAR>
-        <?MISQL SQL="select distinct mrkrgoev_infered_from from marker_go_term_evidence where mrkrgoev_mrkrgo_zdb_id='$mrkrgoid' and mrkrgoev_evidence_code='$mrkrgoevidence'">
+       <?/MIBLOCK>
+     <?/MISQL>
+     <td><?MIVAR>$currinfs<?/MIVAR></td>
 
-    <?MIVAR NAME=SQL22>"select mrkrgoev_infered_from from marker_go_term_evidence where mrkrgoev_mrkrgo_zdb_id='$mrkrgoid' and mrkrgoev_source_zdb_id='$mrkrgoref' and mrkrgoev_evidence_code='$mrkrgoevidence'"><?/MIVAR>
-           <?MIVAR NAME=currinf>$1<?/MIVAR>
-           <?MIVAR NAME=$currinflength>$(STRLEN,$currinf)<?/MIVAR>
-           <?MIBLOCK COND="$(AND,$(NC,$currinf,NULL),$(>,$currinflength,0))">
-               <?MIVAR NAME=$colon>:<?/MIVAR>
-               <?MIVAR NAME=$pos>$(POSITION,$currinf,$colon)<?/MIVAR>
-               <?MIVAR NAME=$posn>$(-,$pos,1)<?/MIVAR>
-               <?MIVAR NAME=$dbase>$(SUBSTR,$currinf,1,$posn)<?/MIVAR>
-               <?MIVAR NAME=$currinflength>$(STRLEN,$currinf)<?/MIVAR>
-               <?MIVAR NAME=$position>$(+,$pos,1)<?/MIVAR>
-               <?MIVAR NAME=$accID>$(SUBSTR,$currinf,$position,$currinflength)<?/MIVAR>
-               <?MIBLOCK COND="$(EC,$dbase,ZFIN)">
-                   <?MIVAR NAME=$encaccID>$(URLENCODE,$accID)<?/MIVAR>
-                   <?MIVAR NAME=$currinflink><a href=http://zfin.org/cgi-bin/ZFIN_jump?record=$encaccID>$accID</a><?/MIVAR>
-               <?MIELSE>
-                   <?MIBLOCK COND="$(EC,$dbase,GO)">
-                      <?MISQL SQL="select db_query from foreign_db where db_name='QuickGO'"><?/MISQL>
-                      <?MIVAR NAME=query>$1<?/MIVAR>
-                      <?MIVAR NAME=$accID>$(SUBSTR,$accID,4,$(STRLEN,$accID))<?/MIVAR>
-                      <?MIVAR NAME=$link>$query$accID<?/MIVAR>
-                      <?MIVAR NAME=$currinflink><a href=$link>GO:$accID</a><?/MIVAR>
-                   <?MIELSE>   
-                      <?MISQL SQL="select a.db_query from db_link b, foreign_db a where b.db_name=a.db_name and b.db_name='$dbase'"><?/MISQL>
-                       <?MIVAR NAME=$link>$1$accID<?/MIVAR>
-                       <?MIVAR NAME=$currinflink><a href=$link>$dbase:$accID</a><?/MIVAR>
-                    <?/MIBLOCK>    
-                <?/MIBLOCK>
-               <?MIVAR NAME=currinfs>$(IF,$(=,$MI_CURRENTROW,1),$currinflink$currinfs,$currinfs<br>$currinflink)<?/MIVAR>
-             <?MIELSE>
-                <?MIVAR NAME=currinfs><?/MIVAR>
-             <?/MIBLOCK>
-   <?/MISQL>
+<!--depening on pub count, call pubview or showpubs-->
+ 
+     <?MIBLOCK COND="$(>,$refcount,1)">
+       <?MIVAR NAME=$titleexp>Gene Ontology Pubs<?/MIVAR>
+       <?MIVAR NAME=$name><?/MIVAR>
+       <?MIVAR>
+         <td align=center><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=<?MIVAR>$5<?/MIVAR>&rtype=go&title=$(URLENCODE,$titleexp)&name=$(URLENCODE,$name)&evidence=$evidence"><?MIVAR>$refcount<?/MIVAR></a></td></tr><?/MIVAR>
+     <?MIELSE>
+<?MISQL SQL="select mrkrgoev_source_zdb_id from marker_go_term_evidence,marker_go_term where mrkrgo_go_term_zdb_id='$10' and mrkrgoev_mrkrgo_zdb_id=mrkrgo_zdb_id and mrkrgoev_mrkrgo_zdb_id='$5' and mrkrgoev_evidence_code='$evidence'">
+       <?MIVAR NAME=$refid>$1<?/MIVAR>
+      <?/MISQL>
+      <td align=center><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=<?MIVAR>$refid<?/MIVAR>"><?MIVAR>$refcount<?/MIVAR></a></td></tr>
+     <?/MIBLOCK>
 
-              <td><?MIVAR>$currinfs<?/MIVAR></td>
-              <?MIBLOCK COND="$(>,$refcount,1)">
-                 <?MIVAR NAME=$titleexp>Gene Ontology Pubs<?/MIVAR>
-                 <?MIVAR NAME=$name><?/MIVAR>
-                 <?MIVAR>
-                 <td align=center><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=<?MIVAR>$5<?/MIVAR>&rtype=go&title=$(URLENCODE,$titleexp)&name=$(URLENCODE,$name)&evidence=$mrkrgoevidence"><?MIVAR>$refcount<?/MIVAR></a></td></tr>               <?/MIVAR>
-             <?MIELSE>
-                 <?MISQL SQL="select mrkrgoev_source_zdb_id from marker_go_term_evidence,marker_go_term where  mrkrgoev_mrkrgo_zdb_id='$5' and mrkrgoev_evidence_code='$mrkrgoevidence'">
-                 <?MIVAR NAME=$refid>$1<?/MIVAR>
-                 <?/MISQL>
-                 <td align=center><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=<?MIVAR>$refid<?/MIVAR>"><?MIVAR>$refcount<?/MIVAR></a></td></tr>
-             <?/MIBLOCK>
+<?MIVAR NAME=$row_color>$(IF,$(EC,$row_color,$highlight),#FFFFFF,$highlight)<?/MIVAR>
 <?/MIVAR>
-<?/MIVAR>
-<!--<?MIVAR NAME=$row_color>$(IF,$(EC,$row_color,$highlight),#FFFFFF,$highlight)<?/MIVAR>-->
-<!--rowcolor change code here-->
 <?/MIBLOCK>
 $(SETVAR,$lastonto,$1)
 $(SETVAR,$lastgoterm,$2)
 $(SETVAR,$lastevidence,$3)
+$(SETVAR,$lastpub,$9)
+$(SETVAR,$lastinf,$8)
 <?/MISQL>
+<?MISQL SQL="execute function get_time()"><?/MISQL>
 </table>
-<p>
-
-  <?MIELSE>
-<?/MIBLOCK>
 <hr>
 <p>
+<?MIELSE>
+<?/MIBLOCK>
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+
 
 <?/MIBLOCK>
