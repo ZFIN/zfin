@@ -19,6 +19,7 @@
 <?MIVAR COND="$(NXST,$curator)" NAME=$curator>Anyone<?/MIVAR>
 <?MIVAR COND="$(NXST,$cur_topic)" NAME=$cur_topic>Any<?/MIVAR>
 <?MIVAR COND="$(NXST,$pub_status)" NAME=$pub_status>Any<?/MIVAR>
+<?MIVAR COND="$(NXST,$cur_status)" NAME=$cur_status>Any<?/MIVAR>
 <?MIVAR COND="$(NXST,$topic_found)" NAME=$topic_found><?/MIVAR>
 
   </head>
@@ -147,7 +148,11 @@ function start_help(anchor) {
     <?/MIVAR>
     
     <?MIVAR COND="$(NC,$pub_status,Any)">
-      $(VECAPPEND,$constraint,pub_completion_date $pub_status NULL)
+      $(VECAPPEND,$constraint,status = '$pub_status')
+    <?/MIVAR>
+    
+    <?MIVAR COND="$(NC,$cur_status,Any)">
+      $(VECAPPEND,$constraint,pub_completion_date $cur_status NULL)
     <?/MIVAR>
   
     <?MIBLOCK COND="$(OR,$(NC,$curator,Anyone),
@@ -683,17 +688,23 @@ $(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/
       </td>
     -->
       <td>
-        <b>Status: </b>
-        <SELECT NAME=pub_status onChange='document.critform.START.value = "";'>
-          <OPTION VALUE="Any" $(IF,$(EC,$pub_status,Any),SELECTED)> Any
-          <OPTION VALUE="is not" $(IF,$(EC,$pub_status,"is not"),SELECTED)> Closed
-          <OPTION VALUE="is" $(IF,$(EC,$pub_status,is),SELECTED)> Open
+        <b>Curation Status: </b>
+        <SELECT NAME=cur_status onChange='document.critform.START.value = "";'>
+          <OPTION VALUE="Any" $(IF,$(EC,$cur_status,Any),SELECTED)> Any
+          <OPTION VALUE="is not" $(IF,$(EC,$cur_status,"is not"),SELECTED)> Closed
+          <OPTION VALUE="is" $(IF,$(EC,$cur_status,is),SELECTED)> Open
         </SELECT>  
       </td>
     </tr>
-    <tr>
-      <td class=fullwidth>
-	<input type=button onClick="window.open('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-classify_pubs.apg','editor','scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=500');" value="Classify Pubs">
+    <tr class=fullwidth>
+      <td>
+        <b>Publication Status: </b>
+        <SELECT NAME=pub_status onChange='document.critform.START.value = "";'>
+          <OPTION VALUE="Any" $(IF,$(EC,$pub_status,Any),SELECTED)> Any
+          <OPTION VALUE="active" $(IF,$(EC,$pub_status,"active"),SELECTED)> Active
+          <OPTION VALUE="inactive" $(IF,$(EC,$pub_status,inactive),SELECTED)> Inactive
+          <OPTION VALUE="temporary" $(IF,$(EC,$pub_status,temporary),SELECTED)> Temporary
+        </SELECT>  
       </td>
     </tr>
   <?/MIVAR>
