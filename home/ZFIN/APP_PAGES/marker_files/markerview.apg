@@ -265,11 +265,11 @@ Datablade documentation.
 	  <!-- title for webpage history ----------->	
           <?MIBLOCK COND="$(XST,$UPDATE)">
 		<?MIVAR>
- 			<TITLE>Update ZFIN Marker: $abbrev</title>
+ 			<TITLE>Update ZFIN: $abbrev</title>
 		<?/MIVAR>
 	  <?MIELSE>
 		<?MIVAR>
- 			<TITLE>View ZFIN Marker: $abbrev</title>
+ 			<TITLE>View ZFIN: $abbrev</title>
 		<?/MIVAR>
           <?/MIBLOCK>
           
