@@ -111,7 +111,7 @@
   <?/MIBLOCK>
 
   <?MIBLOCK COND="$(AND,$(EC,$pcount,0),$(EC,$mcount,0),$(EC,$gcount,0))">
-    <form><center><font size=4><?MIVAR><b>Requested acession number is available in ZFIN.</b> <?/MIVAR>
+    <form><center><font size=4><?MIVAR><b>Requested acession number is not available in ZFIN.</b> <?/MIVAR>
     </form>
   <?/MIBLOCK>
 
@@ -148,7 +148,7 @@
   <?/MIBLOCK>
 
   <?MIBLOCK COND="$(EC,$start_page,NULL)">
-    <form><center><font size=4><?MIVAR><b>Requested ID is not found in ZFIN.</b> <?/MIVAR>
+    <form><center><font size=4><?MIVAR><b>Requested ID is not available in ZFIN.</b> <?/MIVAR>
     </form>
   <?/MIBLOCK>  <!-- ends if start page is null -->
 
