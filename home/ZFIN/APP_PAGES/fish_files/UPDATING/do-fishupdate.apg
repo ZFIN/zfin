@@ -257,6 +257,19 @@ dataOID --zdb id of data item that attributed
 	<?/MIBLOCK>
    <?/MIBLOCK>
 
+   <?MICOMMENT>
+     ===========================================================================
+     ==========  DONE UPDATING INFORMATION
+     ===========================================================================
+     We are done updating base information.  Now update the names fast search 
+     tables for this fish.  This code could only do the names update if 
+     name related fields were updated.  However, that is a lot of conditions 
+     to check and it doesn't take that long to do the update, so just do it 
+     in all cases.
+  <?/MICOMMENT>
+  <?MISQL SQL="
+    execute procedure regen_names_fish('$OID');">
+  <?/MISQL>    
 
 <?/MIBLOCK> <!-- ends cond authorized -->
 
