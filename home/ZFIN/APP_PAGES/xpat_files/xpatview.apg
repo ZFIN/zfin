@@ -138,7 +138,7 @@ FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN record
   <tr>
      <td align=left colspan=2>
 
-       <font size=+1><b> Probe: 
+       <font size=+1><b> Probe Details: 
 
 <?MISQL SQL="
      SELECT mrkr_name, mrkr_zdb_id, idsup_supplier_zdb_id, srcurl_url, srcurl_display_text
@@ -150,11 +150,13 @@ FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN record
        AND srcurl_purpose = 'order';
      ">
        <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$1</a>
-       
+       <?MIVAR NAME=order_url>$(IF,$(>,$(POSITION,$4,rzpd),0),$4$1,$4)<?/MIVAR>
+    
      <?MIBLOCK COND="$(NC,$3,)">
        <font size=-1>
-       <?MIBLOCK COND="$(NC,$4,)">
-          <?MIVAR>&nbsp;&nbsp;&nbsp;(<A HREF="$4">$5</A>)<?/MIVAR>
+
+       <?MIBLOCK COND="$(NC,$order_url,)">
+          <?MIVAR>(<A HREF="$order_url">$5</A>)<?/MIVAR>
        <?MIELSE>
 	  <?MIVAR COND="$(>,$(POSITION,$3,LAB),0)" NAME=viewpage>labview.apg<?/MIVAR>
           <?MIVAR COND="$(>,$(POSITION,$3,COMPANY),0)" NAME=viewpage>companyview.apg<?/MIVAR>
