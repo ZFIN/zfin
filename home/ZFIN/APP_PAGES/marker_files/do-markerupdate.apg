@@ -333,9 +333,8 @@ comments,
              <?MIVAR NAME=$donecheck><?/MIVAR>
 	      <?/MIBLOCK> <?MICOMMENT>end of if markerlist exists<?/MICOMMENT>
       <?/MIBLOCK>  <?MICOMMENT>end of if dblink_zdb_id exists<?/MICOMMENT>
-   <?/MIBLOCK>  
-                          
-
+   <?/MIBLOCK>    
+  
   <!-- Special case for adding new sequence db link -->
   <?MIBLOCK COND="$(OR,$(EC,$attr_type,special-newseqnum),$(XST,$donecheck))">
     <?MISQL SQL="
@@ -387,6 +386,17 @@ comments,
     <?/MIBLOCK> 
    <?/MIBLOCK>  <!-- ends special seqdb case ---->
 
+
+   <?MICOMMENT> Special case for updating marker_sequence <?/MICOMMENT>   
+   <?MIBLOCK COND="$(EC,$attr,mrkrseq_sequence)">
+   
+     <?MISQL SQL="
+         update marker_sequence
+            set mrkrseq_sequence = '$new_value'
+          where mrkrseq_zdb_id = '$dataOID';">
+     <?/MISQL>   
+
+   <?/MIBLOCK>
    
 
    <?MIBLOCK COND="$(EC,$attr_type,special-updateseqnum)">
