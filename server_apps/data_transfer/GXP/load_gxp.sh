@@ -68,20 +68,23 @@ echo "execute function gxp_load_func('$labname', '$submitter','$pubId','$sourceI
 
 $INFORMIXDIR/bin/dbaccess $dbname gxp_load_quantity_check.sql >& postload_quantity.txt
 
-$INFORMIXDIR/bin/dbaccess $dbname get_fr_gene_list.sql
+if ($labname == "Thisse" AND $datatype == "fr") then
+	$INFORMIXDIR/bin/dbaccess $dbname get_fr_gene_list.sql
+    $INFORMIXDIR/bin/dbaccess $dbname getStat4Load.sql >& statistics.txt 
+endif
 
 echo "======================================================="
 echo "== Diff table counts before(<) and after(>) the load =="
 diff preload_quantity.txt postload_quantity.txt
 echo "======================================================="
 
-$INFORMIXDIR/bin/dbaccess $dbname getStat4Load.sql >& statistics.txt 
-
 echo "Ready to drop the temporary tables? (y or n)"
 set goahead = $< 
 if ($goahead == 'y') then
     $INFORMIXDIR/bin/dbaccess $dbname post_gxp_load.sql
-    echo "Please submit fr_gene.txt and statistics.txt to curator." 
+	if ($labname == "Thisse" AND $datatype == "fr") then
+		echo "Please submit fr_gene.txt and statistics.txt to curator." 
+	endif
 else 
     echo "Abort with the 15 temporary tables in db"
 endif
