@@ -137,6 +137,19 @@
 	  and o.oevdisp_organism_list = t.organism_list; ">
   <?/MISQL>
 
+  <?MICOMMENT>*** 08/22 pub also attributed to the gene<?/MICOMMENT>
+  <?MISQL SQL="
+	insert into record_attribution 
+	   select distinct gene_zdb_id, pub_zdb_id 
+	     from one_orthologue_evidence_display_temp
+	    where not exists 
+		(select *
+		   from record_attribution
+		  where gene_zdb_id = recattrib_data_zdb_id
+		    and pub_zdb_id = recattrib_source_zdb_id )
+	;">
+  <?/MISQL> 
+ 
 
   <?MISQL SQL="
     update statistics high for table one_orthologue_evidence_display_temp;
