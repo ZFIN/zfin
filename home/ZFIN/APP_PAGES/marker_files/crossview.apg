@@ -318,7 +318,7 @@ ERROR -- something bad happened -- no OID passed in!
       <!-- Throw up the publication info, using the standard display format -->
      
 	<?MIVAR>
-	<A HREF=" /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=panels"><b>Publications</b></A>
+	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=panels"><b>Publications</b></A>
   	<?MISQL SQL="
   		select count(*) 
   		from record_attribution
