@@ -42,6 +42,8 @@ if (version != "n3") {
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,PUB),0)">MIval=aa-pubview2.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,FISH),0)">MIval=aa-fishview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,GENE),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,GENEP),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,MRPHLNO),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,EST),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,XPAT),0)">MIval=aa-xpatview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,SSLP),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
@@ -54,7 +56,9 @@ if (version != "n3") {
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,LOCUS),0)">MIval=aa-locusview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,REFCROSS),0)">MIval=aa-crossview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,IMAGE),0)">MIval=aa-imageview.apg&OID=$record<?/MIVAR> 
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,COMPANY),0)">MIval=aa-companyview.apg&OID=$record<?/MIVAR> 
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,COMPANY),0)">MIval=aa-companyview.apg&OID=$record<?/MIVAR><?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,ANAT),0)">MIval=aa-anatomy_item.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,XPAT),0)">MIval=aa-xpatview.apg&OID=$record<?/MIVAR>
+
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOGENE),0)">MIval=aa-newmrkrselect.apg<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOLAB),0)">MIval=aa-labselect.apg<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOPERSON),0)">MIval=aa-quickfindpers.apg<?/MIVAR>
