@@ -1030,7 +1030,7 @@ where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
 	     <TD>
 	        <TEXTAREA cols="30" rows="5" name="TA_selected_structures" onChange="process_structures(document.critform.TA_selected_structures.value);"><?MIVAR COND="$(XST,$TA_selected_structures)">$TA_selected_structures<?/MIVAR></TEXTAREA>
 
-	        <input type="hidden" name="processed_selected_structures" <?MIVAR COND=$(XST,$processed_selected_structures)>value=$processed_selected_structures<?/MIVAR>">
+	        <input type="hidden" name="processed_selected_structures" <?MIVAR COND=$(XST,$processed_selected_structures)>value=$processed_selected_structures<?/MIVAR>>
 
 	 	<br>
 		<FONT SIZE=-1>
