@@ -422,8 +422,12 @@ Your Address <font color="#FF0000">*</font>&nbsp;
 </tr>
 <tr> <td colspan=2 ><img src="bgblank.gif"></td>
 </tr>
-<tr> <td align="center" colspan=2> <input type="submit" value="Submit to ZIRC" name="submit" class="buttons">
-</td>
+<tr> 
+	<td align="center" colspan=2> 
+		<script>
+		document.write('<input type="submit" value="Submit to ZIRC" name="submit" class="buttons">');
+		</script>
+	</td>
 </tr>
 <tr> <td align="center" colspan=2>
 <input type="button" value="Send us comments about this form" name="email" id=comments class="buttons" onClick="sendMail('ZIRC Submission Form')">
