@@ -1,5 +1,0 @@
-#!/bin/sh
-HOME=<!--|JAVASERVER_PATH|-->
-PWD=<!--|JAVASERVER_PATH|-->
-LD_LIBRARY_PATH=$1 $2 $3 &
-echo $! > javaServerPid
