@@ -22,9 +22,6 @@
 #
 # For the last 3, undefined, and defined and empty produce the same results.
 #
-# $Source$
-# $Id$
-#
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
 # !! of the makefile hierarchy this makefile is a part of, and of the  !!
@@ -58,6 +55,7 @@ $(SPECIFICTARGETS) : $(TARGETDIR)/% : %
 
 $(STATICTARGETS) : $(TARGETDIR)/% : %
 	$(TARGET_CP) $^ $@
+	$(TOUCH) $@
 
 $(SUBDIRS) :
 	$(MAKE) -C $@

@@ -55,7 +55,7 @@ $(TARGETDIR) :
 # The touch is needed because of timestamp problems.
 $(INTERNALFILETARGET) : $(INTERNALFILE)
 	$(TARGET_CP) $^ $@
-	touch $@
+	$(TOUCH) $@
 
 $(MISSINGLINKTARGETS) : $(INTERNALFILETARGET)
 	ln -s $^ $@

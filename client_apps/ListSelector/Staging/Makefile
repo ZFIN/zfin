@@ -76,6 +76,7 @@ $(TARGETDIR) :
 
 $(TARGETS) : $(TARGETDIR)/%.class : %.class
 	$(TARGET_CP) $^ $@
+	$(TOUCH) $@
 	chmod 444 $@
 
 

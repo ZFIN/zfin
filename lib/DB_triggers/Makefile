@@ -53,7 +53,7 @@ $(TARGETDIR) :
 
 $(STATICTARGETS) : $(TARGETDIR)/% : %
 	$(TARGET_CP) $^ $@
-	touch $@
+	$(TOUCH) $@
 	$(DBACCESS) $(DBNAME) $@
 
 

@@ -2,9 +2,6 @@
 #
 # Include file for ZFIN_WWW makefiles.
 #
-# $Source$
-# $Id$
-#
 # This file is included in every makefile in the ZFIN_WWW directory tree.
 # It dontains definitions that are common across all makefiles.
 # 
@@ -126,6 +123,13 @@ APGPREFIX = aa-
 
 TARGET_CP  = cp -fp
 STAGING_CP = cp -fp
+
+# Touch call needed after the _CP calls because _CP creates 
+# files with exactly the same timestamp as the source file, and that
+# confuses gmake into thinking it needs to remake the file the next
+# time around.
+
+TOUCH = touch
 
 # Any created dirs should be created with 775 perms.
 

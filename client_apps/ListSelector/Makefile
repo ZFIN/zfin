@@ -1,10 +1,7 @@
 #------------------------------------------------------------------------
 #
-# Makefile for ZFIN_WWW CVS Project, Anatomical disctionary browser
+# Makefile for ZFIN_WWW CVS Project, Linking Authors to Publications
 # Applet.
-#
-# $Source$
-
 #
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
@@ -69,7 +66,7 @@ $(SPECIFICS) : $(STAGINGDIR)/% : %
 
 $(STATICSTAGINGS) : $(STAGINGDIR)/% : %
 	$(STAGING_CP) $< $@
-
+	$(TOUCH) $@
 
 
 # ---------------  Maintenance Rules  -----------------------------------

@@ -2,9 +2,6 @@
 #
 # Makefile for ZFIN_WWW CVS Project, Java Server staging subdirectory
 #
-# $Source$
-# $Id$
-#
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
 # !! of the makefile hierarchy this makefile is a part of, and of the  !!
@@ -132,6 +129,7 @@ all : $(TARGETS)
 
 $(JAVATARGETS) : $(JAVACLASSES) 
 	$(TARGET_CP) *.class $(TARGETDIR)
+	$(TOUCH) $(JAVATARGETS)
 
 $(JAVACLASSES) : $(JAVASRCS)
 	$(JAVAC) $(JAVAFLAGS) $(JAVASRCS)

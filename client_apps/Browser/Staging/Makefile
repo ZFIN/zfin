@@ -3,9 +3,6 @@
 # Makefile for ZFIN_WWW CVS Project, Anatomical dictionary browser
 # applet staging subdirectory
 #
-# $Source$
-# $Id$
-#
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
 # !! of the makefile hierarchy this makefile is a part of, and of the  !!
@@ -77,6 +74,7 @@ $(IMPORTDIR) :
 
 $(TARGETJAR) : $(JAR)
 	$(TARGET_CP) $(JAR) $@
+	$(TOUCH) $@
 	chmod o+r $@
 
 $(JAR) : $(CLASSES) $(IMPORTDIR)

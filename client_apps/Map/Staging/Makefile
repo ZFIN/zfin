@@ -3,9 +3,6 @@
 # Makefile for ZFIN_WWW CVS Project, Genomic Map Viewer
 # applet staging subdirectory
 #
-# $Source$
-
-#
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
 # !! of the makefile hierarchy this makefile is a part of, and of the  !!
@@ -72,9 +69,11 @@ all : $(TARGETDIR) $(TARGETJAR) $(TARGETDIR)/$(IMAGES)
 $(TARGETDIR) :
 	$(TARGET_MKDIR) $@
 
+# Note: This target will break if IMAGES is ever more than one file.
 $(TARGETDIR)/$(IMAGES) : ../$(IMAGES)
 	$(TARGET_CP) $^ $(TARGETDIR)
- 
+	$(TOUCH) $(TARGETDIR)/$(IMAGES)
+
 $(IMPORTDIR) :
 	ln -s $(IMPORTPATH)/$(IMPORTDIR)
 
@@ -82,6 +81,7 @@ $(IMPORTDIR) :
 
 $(TARGETJAR) : $(JAR)
 	$(TARGET_CP) $(JAR) $@
+	$(TOUCH) $@
 	chmod o+r $@
 
 $(JAR) : $(CLASSES) $(IMPORTDIR)

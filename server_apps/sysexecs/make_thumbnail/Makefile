@@ -3,9 +3,6 @@
 # Makefile for ZFIN_WWW CVS Project, WWW Server Apps sysexecs make_thumbnail
 # directory
 #
-# $Source$
-# $Id$
-#
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
 # !! of the makefile hierarchy this makefile is a part of, and of the  !!
@@ -55,6 +52,7 @@ $(TARGETDIR) :
 
 $(STATICTARGETS) : $(TARGETDIR)/% : %
 	$(TARGET_CP) $< $@
+	$(TOUCH) $@
 	$(MAKE) reloadrow
 
 reloadrow : clobberrow

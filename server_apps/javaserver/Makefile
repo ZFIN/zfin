@@ -103,13 +103,14 @@ $(JAVASPECIFICS) : $(STAGINGDIR)/% : %
 
 $(JAVASTATICSTAGINGS) : $(STAGINGDIR)/% : %
 	$(STAGING_CP) $< $@
+	$(TOUCH) $@
 
 
 # ----  Rules for copying C files
 
 $(MICSTAGINGS) : $(STAGINGDIR)/%.c : %.c
 	$(STAGING_CP) $< $@
-
+	$(TOUCH) $@
 
 
 # ---------------  Start/Stop Rules  ------------------------------------

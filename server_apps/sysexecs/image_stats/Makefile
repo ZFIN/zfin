@@ -52,6 +52,7 @@ $(TARGETDIR) :
 
 $(STATICTARGETS) : $(TARGETDIR)/% : %
 	$(TARGET_CP) $< $@
+	$(TOUCH) $@
 	$(MAKE) reloadrow
 
 reloadrow : clobberrow

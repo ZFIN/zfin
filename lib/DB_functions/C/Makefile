@@ -79,6 +79,7 @@ $(OBJS) : %.so : %.c
 $(TARGETS) : $(TARGETDIR)/% : %
 	-$(DBACCESS) $(DBNAME) $(patsubst %.so,drop_%.sql,$^)  # drop function
 	$(TARGET_CP) $^ $@ 			 # put it where DB will find it
+	$(TOUCH) $@
 	$(MAKESPECIFIC) $(patsubst %.so,create_%.sql,$^) $(TRANSLATETABLE) tempcreate.sql
 	$(DBACCESS) $(DBNAME) tempcreate.sql  	  # create function in DB
 	rm -f tempcreate.sql			  # prevent hanky panky

@@ -72,6 +72,7 @@ $(JAR) : $(CLASSES)
 $(TARGETJAR) : $(JAR) drop_functions.sql create_functions.sql
 	-$(DBACCESS) $(DBNAME) drop_functions.sql # drop functions in DB
 	$(TARGET_CP) $< $@			  # put where DB will find it
+	$(TOUCH) $@
 	$(MAKESPECIFIC) create_functions.sql $(TRANSLATETABLE) cftemp.sql
 	$(DBACCESS) $(DBNAME) cftemp.sql	  # create functions in DB
 	rm -f cftemp.sql			  # prevent hanky panky

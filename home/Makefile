@@ -70,6 +70,7 @@ $(SPECIFICTARGETS) : $(TARGETDIR)/% : %
 
 $(STATICTARGETS) : $(TARGETDIR)/% : %
 	$(TARGET_CP) $^ $@
+	$(TOUCH) $@
 
 $(FTPTARGET) : 
 	rm -f $(FTPTARGET)
