@@ -19,26 +19,20 @@ begin work;
 -- PROBES --
 ------------
 create temp table probes_tmp (
-probe_index varchar(5) not null,
-probe_id varchar(10) not null,
-clone varchar(120) not null,
-isgene varchar(15) default null,
-genename varchar(120)default null,
-gb5p varchar (50),
-gb3p varchar (50),
-or_lg varchar(2),
-lg_loc decimal(8,2),
-metric varchar(5),
-library varchar(80),
-vector varchar(80),
-insert_kb float,
-cloning_site varchar(20),
-digest varchar(20),
-polymerase varchar(80),
-medline_id varchar(80),
-text_citation lvarchar, 
-comments lvarchar,
-modified DATETIME YEAR TO DAY
+   probe_id varchar(10) not null,
+   clone varchar(120) not null,
+   genename varchar(120)default null, -- 11/17 changed from abbrev to ZDB-id
+   gb5p varchar (50),
+   gb3p varchar (50),
+   pcr_amp varchar(200),
+   library varchar(80),
+   vector varchar(80),
+   insert_kb float,
+   cloning_site varchar(20),
+   digest varchar(20),
+   polymerase varchar(80),
+   comments lvarchar,
+   modified DATETIME YEAR TO DAY
 )with no log;
 
 load from './probes.unl' insert into probes_tmp;
@@ -46,7 +40,7 @@ load from './probes.unl' insert into probes_tmp;
 update probes_tmp set clone = lower(clone);
 update probes_tmp set gb5p = upper(gb5p[1,8]);
 update probes_tmp set gb3p = upper(gb3p[1,8]);
-update probes_tmp set isgene = 'off' where isgene is null;
+update probes_tmp set genename = upper(genename);
 
 
 ! echo "Duplicate clones?"
@@ -54,22 +48,15 @@ select clone, count(*) dups from  probes_tmp group by clone having count(*) > 1;
 
 select count(unique clone)clones from probes_tmp;
 ! echo "Called genes they are" 
-select clone[1,10],genename from probes_tmp where isgene = 'on'; 
+select clone[1,10],genename from probes_tmp where genename is not null; 
 
-unload to 'is_gene.txt' select gb5p, clone[1,10], genename from probes_tmp where isgene = 'on' order by 1;
+unload to 'is_gene.txt' select gb5p, clone[1,10], genename from probes_tmp where genename is not null order by 1;
 
-! echo "Called PUTATIVE they are" 
-select clone[1,10],genename
-from probes_tmp
-where genename is not null
-and isgene <> 'on'
-; 
 
 ! echo "Called IN ZFIN PUTATIVE they are" 
 select clone[1,10],genename
 from probes_tmp,marker 
 where genename is not null
-and isgene <> 'on'
 and mrkr_name = clone 
 ; 
 
@@ -84,6 +71,8 @@ create temp table expression_tmp(
   exp_sstart varchar (50),
   exp_sstop varchar (50),
   exp_description lvarchar,
+  exp_found boolean default 't' not null,
+  exp_keyword_list varchar(100),
   exp_modified DATETIME YEAR TO DAY
 )with no log;
 
@@ -267,6 +256,18 @@ update keywords_tmp set keywrd_sstart =
 update keywords_tmp set keywrd_sstop = 
     (select stg_zdb_id from stage where stg_name = keywrd_sstop);
 
+
+   unload to 'bad_keywords.unl' 
+   select keywrd_clone, s1.stg_name, s2.stg_name, keywrd_keyword 
+   from keywords_tmp, stage s1, stage s2
+   where keywrd_keyword not in (
+       select anatitem_name
+       from anatomy_item
+       )
+     and keywrd_sstart = s1.stg_zdb_id
+     and keywrd_sstop = s2.stg_zdb_id
+   ;
+
 ! echo "change anatomy item names to zdbids"
 update keywords_tmp set keywrd_keyword = 
     (select anatitem_zdb_id from anatomy_item where anatitem_name = keywrd_keyword);
@@ -284,8 +285,6 @@ create temp table images_tmp (
   orientation varchar(60),
   preparation varchar(15),
   comments lvarchar,
-  medline_ID varchar (50),
-  text_citation varchar (50) ,
   modified DATETIME YEAR TO DAY
 )with no log;
 
@@ -315,7 +314,9 @@ insert into expression_tmp
     select distinct i.img_clone, 
            i.sstart, 
            i.sstop,
-           "none given",
+           "No comments.",
+           't',
+           'blank set of keywords',
            TODAY
     from images_tmp i
     where not exists 
@@ -529,7 +530,8 @@ create temp table tmp_clone (
     cln_cloning_site varchar(20),
     cln_digest varchar(20),
     cln_probelib_zdb_id varchar(50),
-    cln_sequence_type varchar(20)
+    cln_sequence_type varchar(20),
+    cln_pcr_amplification varchar(200)
 ) with no log;
 
 
@@ -544,7 +546,8 @@ insert into tmp_clone
         cloning_site,
         digest,
         probelib_zdb_id,
-        'cDNA'
+        'cDNA',
+        pcr_amp
 	from probes_tmp, probe_library, tmp_mrkr
 	where library = probelib_name
           and clone = mrkr_abbrev
@@ -571,8 +574,8 @@ create temp table tmp_exp_pat (
 
 insert into tmp_exp_pat 
     select distinct 'x', 'ZDB-FISH-010924-10', 'RNA in situ', TODAY, mrkr_zdb_id
-    from tmp_mrkr
-    where mrkr_name in (select distinct exp_clone from expression_tmp)
+    from tmp_mrkr, expression_tmp
+    where mrkr_name = exp_clone
 ;
 
 --debugging
@@ -585,7 +588,20 @@ UPDATE tmp_exp_pat SET xpat_zdb_id = get_id('XPAT');
 
 insert into zdb_active_data select xpat_zdb_id from tmp_exp_pat;
 
-insert into expression_pattern select * from tmp_exp_pat;
+insert into expression_pattern (
+    xpat_zdb_id,
+    xpat_fish_zdb_id,
+    xpat_assay_name,
+    xpat_direct_submission_date,
+    xpat_probe_zdb_id
+    )
+select 
+    xpat_zdb_id,
+    xpat_fish_zdb_id,
+    xpat_assay_name,
+    xpat_direct_submission_date,
+    xpat_probe_zdb_id
+from tmp_exp_pat;
 
 ! echo "load pub & source for xpats"
 -- int_data_source --
@@ -597,25 +613,14 @@ insert into record_attribution select xpat_zdb_id, 'ZDB-PUB-010810-1' from tmp_e
 
 
 
-
-! echo "-- PUTATIVE_GENE --" 
---------------------------
-insert into putative_non_zfin_gene
-    select distinct mrkr_zdb_id, p.genename,'none','ZDB-PUB-010810-1'
-    from tmp_mrkr, probes_tmp p 
-    where p.clone = mrkr_abbrev
-    and p.isgene <> 'on'  
-    and p.genename is not NULL
-;
-
-
 ! echo "-- EXPRESSION_PATTERN_STAGE --" 
 ---------------------------------------
 create temp table tmp_exp_pat_stg(
     xpatstg_xpat_zdb_id varchar(50)not null,
     xpatstg_start_stg_zdb_id varchar(50)not null,
     xpatstg_end_stg_zdb_id varchar(50)not null,
-    xpatstg_comments lvarchar
+    xpatstg_comments lvarchar,
+    xpatstg_expression_found boolean
   ) with no log;
 
 -- stick it in a temp so this batch stays isolated from what is in zfin (for the rest of the load)
@@ -624,8 +629,8 @@ insert into tmp_exp_pat_stg
             xpat_zdb_id, 
             exp_sstart, 
             exp_sstop, 
-            exp_description
-
+            exp_description,
+            exp_found
     from tmp_mrkr,tmp_exp_pat,expression_tmp
     where mrkr_name = exp_clone
     and   mrkr_zdb_id = xpat_probe_zdb_id
@@ -651,8 +656,20 @@ having count(*) > 1
 order by mrkr_name, s1.stg_name;
 
 
-insert into expression_pattern_stage 
-    select * from tmp_exp_pat_stg;
+insert into expression_pattern_stage (
+    xpatstg_xpat_zdb_id,
+    xpatstg_start_stg_zdb_id,
+    xpatstg_end_stg_zdb_id,
+    xpatstg_comments,
+    xpatstg_expression_found
+    )
+select 
+    xpatstg_xpat_zdb_id,
+    xpatstg_start_stg_zdb_id,
+    xpatstg_end_stg_zdb_id,
+    xpatstg_comments,
+    xpatstg_expression_found    
+from tmp_exp_pat_stg;
 
 
 
