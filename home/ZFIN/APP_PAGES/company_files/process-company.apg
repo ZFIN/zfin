@@ -86,8 +86,11 @@ When filled, the ZDB_ID of the new return_rec is passed along into whatever brow
 <?/MISQL>
 
 <!-- LAUNCHES THE FRAMES FOR THE ANY SELECTION BROWSER.-->
-<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-startframes_select.apg';">$1<?/MISQL>
-
+  <?MIVAR>
+    <SCRIPT>
+     window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=$selector&select_from=$select_from&return_rec=$return_rec")
+    </SCRIPT>
+  <?/MIVAR>
 
 <?/MIBLOCK> <!-- end "other variables" submission handler" -->
 

@@ -105,7 +105,7 @@
     <?MIVAR NAME=$fill_table>lab<?/MIVAR>
     <?MIVAR NAME=$jump_to>contact-info<?/MIVAR>
     <?MIVAR NAME=$info>NULL<?/MIVAR>
-    <?MIVAR NAME=$selector>aa-persselect.apg<?/MIVAR>
+    <?MIVAR NAME=$selector>aa-quickfindpers.apg<?/MIVAR>
   <?/MIBLOCK>
 
 
@@ -120,7 +120,7 @@
     <?MIVAR NAME=$fill_table>int_person_lab<?/MIVAR>
     <?MIVAR NAME=$jump_to>member-info<?/MIVAR>
     <?MIVAR NAME=$info>$mem_status<?/MIVAR>
-    <?MIVAR NAME=$selector>aa-persselect.apg<?/MIVAR>
+    <?MIVAR NAME=$selector>aa-quickfindpers.apg<?/MIVAR>
   <?/MIBLOCK>
 
   <!-- NOW CREATE THE NEW RETURN RECORD -->
@@ -133,12 +133,11 @@
   <?/MISQL>
 
   <!-- LAUNCHES THE FRAMES FOR THE ANY SELECTION BROWSER.-->
-  <?MISQL SQL="
-    select WebExplode(object,'')
-      from webPages
-      where ID = 'aa-startframes_select.apg';">
-    $1
-  <?/MISQL>
+  <?MIVAR>
+    <SCRIPT>
+     window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=$selector&select_from=$select_from&return_rec=$return_rec")
+    </SCRIPT>
+  <?/MIVAR>
 
 
 <?/MIBLOCK> <!-- end "other variables" submission handler" -->
