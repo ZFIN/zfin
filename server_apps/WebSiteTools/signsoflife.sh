@@ -19,8 +19,8 @@ setenv INFORMIXSQLHOSTS ${INFORMIXDIR}/etc/<!--|SQLHOSTS_FILE|-->
 
 ############################################################################################################
 set modeon=`onstat -| tr -d '\12' | cut -f2- -d\-|cut -c3,4`
-set logon=`ps -ef | grep -c "/private/apps/Informix/informix_wildtype/bin/ontape"`
-set backupon=`ps -ef | grep -c "onback.pl"`
+#set logon=`ps -ef | grep -c "/private/apps/Informix/informix_wildtype/bin/ontape"`
+#set backupon=`ps -ef | grep -c "onback.pl"`
 
 if ($modeon != "On") then
     set mode="`onstat -` | $modeon"
@@ -33,19 +33,19 @@ endif
 #may disapear from process list--but if it disapears for longer
 #than 6 seconds (except when backing up the db) we want to know about it.
 
-if ($backupon != 2) then
+#if ($backupon != 2) then
 
-  if ($logon != 2) then
-      sleep 6
-     set logon=`ps -ef | grep -c "/private/apps/Informix/informix_wildtype/bin/ontape"`
-     if ($logon != 2) then
-         set logmode="check ontape"
-         echo $logmode | /bin/mailx -s "<!--|INFORMIX_SERVER|-->  ABNORMAL!" <!--|VALIDATION_EMAIL_OTHER|-->
-     endif 
+#  if ($logon != 2) then
+#      sleep 6
+#     set logon=`ps -ef | grep -c "/private/apps/Informix/informix_wildtype/bin/ontape"`
+#     if ($logon != 2) then
+#         set logmode="check ontape"
+#         echo $logmode | /bin/mailx -s "<!--|INFORMIX_SERVER|-->  ABNORMAL!" <!--|VALIDATION_EMAIL_OTHER|-->
+#     endif 
 
-  endif
+#  endif
 
-endif	
+#endif	
 #cd /research/zfin/users/bionixprod/ZFIN_WWW/;onmode -ky;oninit;echo ""|/private/bin/onlog.pl	
 
 
