@@ -58,7 +58,8 @@ insert into meow_exp1 (zdb_id,mname,abbrev,OR_lg)
        ( select 'x' 
 	   from all_genes b 
 	  where a.zdb_id = b.zdb_id 
-	    and panel_id  like '%REFCROSS%') ;
+	    and panel_id  like '%REFCROSS%'
+            and private = 'f') ;
 
 
 --  Add in  unmapped genes
