@@ -41,7 +41,7 @@ $constraint $previous (lower(email) like '%$(LOWER,$email)%')<?/MIVAR>
 <?MIVAR NAME=$previous COND="$(XST,$email)"> and <?/MIVAR>
 
 <?MIVAR NAME=$constraint COND="$(XST,$anon1text)">
-$constraint $previous (lower($anon1) like '%$(LOWER,$anon1text)%')<?/MIVAR>
+$constraint $previous (webhtml_like($anon1,'$anon1text'))<?/MIVAR>
 
 <?/MIBLOCK>
 
