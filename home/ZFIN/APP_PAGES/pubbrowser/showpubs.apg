@@ -221,7 +221,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 
 <?MIELSE>
   <?MIBLOCK COND="$(NXST,$attribtype)">
-    <?MIBLOCK COND=$(NE,$rtype,xpat)>
+    <?MIBLOCK COND="$(NE,$rtype,xpat)">
       <?MISQL SQL="
         select count(distinct recattrib_source_zdb_id)::integer 
           from record_attribution
@@ -282,7 +282,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 
 <?MICOMMENT>  ==================== hide "order by" button for rtype=xpat ============== <?/MICOMMENT>
 
-<?MIBLOCK COND=("$EC,pigs,flying")>
+<?MIBLOCK COND="$(EC,pigs,flying")>
 <?MIELSE>
 <?MIVAR>
   <?MIBLOCK COND="$(NXST,$total_count)">
@@ -296,7 +296,6 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 <?/MIBLOCK>
 <?/MIVAR>		
 <!--------------------------------------------------------------------------->
-
 
 <?MIVAR COND="$(XST,$UPDATE)">
   <INPUT TYPE=button value="Add Publication" onClick="doit('rel_pub','selection','Add')"> 
