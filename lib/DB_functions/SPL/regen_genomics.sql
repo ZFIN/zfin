@@ -124,7 +124,7 @@ create dba function "informix".regen_genomics() returning integer
 	-- constraints of production version of table.
       )
       in tbldbs2
-      PUT comments in (smartdbs1) (LOG)
+      PUT comments in (smartbs1) (LOG)
       extent size 8 next size 8 lock mode page;
     revoke all on panels_new from "public";
 
