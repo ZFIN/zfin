@@ -507,7 +507,7 @@ requested from publication page for related data list.
 	<TD valign=top>
 	  <?MIVAR>	
             $(IF,$(XST,$return_rec),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$OID>SELECT</A>)
-	    $(IF,$(XST,$accession),$mtype:)
+	    $(IF,$(OR,$(XST,$accession),$(AND,$(XST,$pubId),$(EC,$type,mapped))),$mtype:)
 	    $(IF,$(EC,$mtype,GENE),<i>)<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID">$marker_abbrev</A>$(IF,$(EC,$mtype,GENE),</i>)
 	    $(IF,$(=,$(POSITION,$OID,GENE),0),</TD>)
 	    $(IF,$(AND,$(=,$(POSITION,$OID,GENE),0),$(EC,$xpat_loci_cols,y)),<TD>&nbsp;</TD><TD>&nbsp;</TD>)
