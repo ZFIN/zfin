@@ -23,6 +23,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/lib/DB_functions/SPL
 
+DBLINK_FUNCS = get_dblink_acc_num_display.sql
 FISH_FUNCS  = get_fish_full_name.sql
 IMAGE_FUNCS = get_image_stats.sql
 PUB_FUNCS   = get_pub_mini_ref.sql
@@ -46,7 +47,8 @@ STAGE_FUNCS = \
 	stg_windows_overlap.sql 
 
 GENERICS = $(REGEN_FUNCS)
-STATICS  = $(FISH_FUNCS) $(IMAGE_FUNCS) $(PUB_FUNCS) $(STAGE_FUNCS) $(ZDB_FUNCS) \
+STATICS  = $(DBLINK_FUNCS) $(FISH_FUNCS) $(IMAGE_FUNCS) \
+	   $(PUB_FUNCS) $(STAGE_FUNCS) $(ZDB_FUNCS) \
 	gene_contains_seg.sql 	insert_clone.sql
 
 SPECIFICTARGETS = $(foreach SPEC, $(GENERICS), $(TARGETDIR)/$(SPEC))
