@@ -132,7 +132,7 @@ drop table tmp_fpc_alias;
 
 -- CV and XPAT associations for VEGA
 
-unload to 'vega_xpat_stage.unl'
+unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/vega_xpat_stage.unl'
 select distinct stg_zdb_id,
            stg_name,
            stg_hours_start,
@@ -144,7 +144,7 @@ where stg_zdb_id not in (
 order by 3
 ;
 
-unload to 'vega_xpat_anatomy_item.unl'
+unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/vega_xpat_anatomy_item.unl'
 select 
     anatitem_zdb_id,
     anatitem_name,
@@ -155,11 +155,11 @@ from anatomy_item, anatomy_hierarchy
 where anatitem_type_code = anathier_code
 ;
 
-unload to 'vega_xpat_anatomy_contains.unl'
+unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/vega_xpat_anatomy_contains.unl'
 select * from anatomy_contains;
 
 --
-unload to 'vega_xpat_probe_gene.unl'
+unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/vega_xpat_probe_gene.unl'
 select 
     xpat_zdb_id, 
     xpat_probe_zdb_id,
@@ -171,7 +171,7 @@ and mrel_type = 'gene encodes small segment'
 ;
 
 --
-unload to 'vega_xpat_stage_anatomy.unl'
+unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/vega_xpat_stage_anatomy.unl'
 select 
     xpatstg_xpat_zdb_id,
     xpatstg_start_stg_zdb_id,
