@@ -120,11 +120,16 @@ ENDJS
 
  print $Q->header();
 
- print $Q->start_html(-title=>'Part & System Select', -bgcolor=>'#FFFFFF',-style=>$CSS);
+ print $Q->start_html(-title=>'Part & System Select', -bgcolor=>'#FFFFFF');
 
  print "<SCRIPT LANGUAGE='javascript1.2'>";
  print $JS;
  print "</SCRIPT>";
+
+ print "<STYLE type='text/css'>";
+ print $CSS;
+ print "</STYLE>";
+
 
 # print "<form name=\"partselect\" method=get action=\"/cgi-bin/xpat_select_parts.cgi\">\n";
  print $Q->start_form(-name=>'partselect', -method=>'GET', -action=>'/cgi-bin/xpat_select_parts.cgi') . "\n";
