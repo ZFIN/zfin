@@ -481,7 +481,6 @@ colattrib_source_zdb_id)
     <?MIVAR NAME=SQL1>update $target_table set $info$attr = '$new_value' where $info<?/MIVAR>
     <?MIVAR NAME=SQL2>zdb_id = '$OID';<?/MIVAR>
     <?MISQL SQL="$SQL1$SQL2"><?/MISQL>
-    <?MIVAR NAME=$OID>$old_value<?/MIVAR> 
   <?/MIBLOCK>
    	
 
