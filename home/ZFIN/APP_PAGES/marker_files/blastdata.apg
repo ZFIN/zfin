@@ -55,6 +55,9 @@ ERROR -- something bad happened -- no OID passed in!
 <!------------------------------------------------->
 <!-- display blast info if exists -->
 
+<!-- do not display NULL for unknown date -->
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
+
   <?MISQL SQL="
     SELECT distinct blast_results, blast_date
     FROM blast
