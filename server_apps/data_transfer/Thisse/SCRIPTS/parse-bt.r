@@ -41,7 +41,7 @@ create temp table probes_tmp (
 )
 
 	}
-;	buffer: fix-date %probes.csv  if buffer [write %probes.csv buffer] 
+	buffer: fix-date %probes.csv  if buffer [write %probes.csv buffer] 
   
 	comment{
 		Arrrg! have to pull the blast result out into a file and load it as a clob
@@ -65,7 +65,7 @@ create temp table probes_tmp (
 	   replace/all line " |"   "|"
  
 		row: parse/all line {|}
-		replace row/9 "," "."     ; change decimal point in lg_location to dot
+		replace row/13 "," "."     ; change decimal point in lg_location to dot
 		buf:  copy row/5
 		insert (skip row 4)  rejoin [row/1 ".blast"]	
 		remove (skip row 5)
@@ -76,7 +76,8 @@ create temp table probes_tmp (
 		line: rejoin [row/1 "|" row/2 "|" row/3 "|" row/4 "|" row/5 "|" row/6 "|" row/7 "|" row/8 "|" row/9 "|" row/10 "|" row/11 "|" row/12 "|" row/13 "|" row/14 "|" row/15 "|" row/16 "|" row/17 "|" row/18 "|" row/19 "|" row/20 "|"]  	   replace/all line "<PIPE73>" "\|"
 		write/append %probes.unl rejoin [line newline]
   
-		replace/all buf "<PIPE73>" "|"	
+		replace/all buf "<PIPE73>" "|"
+		replace/all buf "\" "<br>"	
 		write to-file rejoin [row/1 ".blast"]	 rejoin ["<pre>" buf "</pre>"]
 		
 	]
@@ -109,7 +110,7 @@ create temp table probes_tmp (
 		Description
 		modified
 	}
-;	buffer: fix-date %expression.csv
+	buffer: fix-date %expression.csv
 	if buffer [write %expression.csv buffer]
 	buffer: csv2pipe %expression.csv
 	;;; trim extranous spaces
@@ -133,7 +134,7 @@ create temp table probes_tmp (
 		Keyword
 		modified
 	}
-;	buffer: fix-date %keywords.csv
+	buffer: fix-date %keywords.csv
 	if buffer [write %keywords.csv buffer]
 	buffer: csv2pipe %keywords.csv
 	;;; trim extranous spaces
@@ -169,7 +170,6 @@ create temp table probes_tmp (
 	changes: [
 		"| "   "|" 
 		" |"   "|" 
-		"Obrecht-Pflumio"	"Pflumio"  
 		"Fuerthauer"		"Fürthauer"
 	]
 
@@ -194,7 +194,7 @@ create temp table probes_tmp (
 		Primary publication - text citation (optional)
 		modified
 	}
-;	buffer: fix-date %images.csv
+	buffer: fix-date %images.csv
 	if buffer [write %images.csv buffer]
 	buffer: csv2pipe %images.csv
 	;;; trim extranous spaces
