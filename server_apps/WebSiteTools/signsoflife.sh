@@ -19,20 +19,22 @@ setenv INFORMIXSQLHOSTS ${INFORMIXDIR}/etc/<!--|SQLHOSTS_FILE|-->
 
 ############################################################################################################
 set modeon=`onstat -| tr -d '\12' | cut -f2- -d\-|cut -c3,4`
-#set logon=`ps -ef | grep [0-9] /private/apps/Informix/informix_wildtype/bin/ontape -c | cut -f5 -d' '`
+set logon=`ps -ef | grep -c "/private/apps/Informix/informix_wildtype/bin/ontape -c"`
 
 if ($modeon != "On") then
     set mode="`onstat -` | $modeon"
-    echo $mode | /local/bin/mail -s "<!--|INFORMIX_SERVER|-->  ABNORMAL!" tomc@cs.uoregon.edu
-    echo $mode | /local/bin/mail -s "<!--|INFORMIX_SERVER|-->  ABNORMAL!" staylor@cs.uoregon.edu
-#elif ($logon != "roots") then
-#    if ($logon != "informix") then
-#     set logmode="check ontape"
-#     echo $logmode | /local/bin/mail -s "<!--|INFORMIX_SERVER|-->  ABNORMAL!" tomc@cs.uoregon.edu
-#     echo $logmode | /local/bin/mail -s "<!--|INFORMIX_SERVER|-->  ABNORMAL!" staylor@cs.uoregon.edu
-#    endif
+    echo $mode | /bin/mailx -s "<!--|INFORMIX_SERVER|-->  ABNORMAL!" tomc@cs.uoregon.edu
+    echo $mode | /bin/mailx -s "<!--|INFORMIX_SERVER|-->  ABNORMAL!" staylor@cs.uoregon.edu
+endif 
+
+if ($logon != 2) then
+     set logmode="check ontape"
+     echo $logmode |  /bin/mailx -s "<!--|INFORMIX_SERVER|-->  ABNORMAL!" tomc@cs.uoregon.edu
+     echo $logmode | /bin/mailx -s "<!--|INFORMIX_SERVER|-->  ABNORMAL!" staylor@cs.uoregon.edu
+
 #    echo $mode | /local/bin/mail -s "<!--|INFORMIX_SERVER|-->  ABNORMAL!" judys@cs.uoregon.edu
 #    echo $mode | /local/bin/mail -s "<!--|INFORMIX_SERVER|-->  ABNORMAL!" clements@cs.uoregon.edu	
 #    cd /research/zfin/users/bionixprod/ZFIN_WWW/;onmode -ky;oninit;echo ""|/private/bin/onlog.pl	
+
 endif 
 
