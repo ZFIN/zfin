@@ -1,6 +1,6 @@
 To: aprilm@uoneuro.uoregon.edu, dlains@uoneuro.uoregon.edu, kelly@uoneuro.uoregon.edu, cjones@uoneuro.uoregon.edu, ngoebel@uoneuro.uoregon.edu, mason@uoneuro.uoregon.edu, rholland@uoneuro.uoregon.edu
 From: zirc@darkwing.uoregon.edu
-Subject: [required_requesterName]'s request for EST/cDNA probes
+Subject: [nameInd] [NameFam]'s request for EST/cDNA probes
 
 **************************************** 
 person: [nameInd] [nameFam] (PI=[PIName]) probe(s):[probe1Name] [probe2Name] [probe3Name] [probe4Name] [probe5Name]

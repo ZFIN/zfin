@@ -1,6 +1,6 @@
 To: aprilm@uoneuro.uoregon.edu, dlains@uoneuro.uoregon.edu, kelly@uoneuro.uoregon.edu, cjones@uoneuro.uoregon.edu, ngoebel@uoneuro.uoregon.edu, mason@uoneuro.uoregon.edu, rholland@uoneuro.uoregon.edu
 From: zirc@darkwing.uoregon.edu
-Subject: [required_requesterName]'s request for antibodies
+Subject: [nameInd] [nameFam]'s request for antibodies
 
 **************************************** 
 person:[nameInd] [nameFam] (PI=[PIName]) antibodies:[antibodyName1] [antibodyName2] [antibodyName3] [antibodyName4] SamplePack:[antibodySPname1][antibodySPname2][antibodySPname3][antibodySPname4][antibodySPname5][antibodySPname6]
