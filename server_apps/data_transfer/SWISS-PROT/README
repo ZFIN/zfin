@@ -6,7 +6,10 @@ report into ZFIN.   by Peiran Song,  Sep 2002.
 =================================================================
 by Peiran, Aug 2004
 
-To test run Swiss-Prot at test enviornment, at source dir
+To test run Swiss-Prot at test enviornment, get a fresh load with ACCESSION_BANK table. 
+    % loaddb.pl -e defline dbname inputdir
+
+at source dir
 
 	%gmake runpre
 
