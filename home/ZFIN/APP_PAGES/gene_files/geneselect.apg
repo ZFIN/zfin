@@ -35,7 +35,7 @@
 <b>Mapping panel:</b> 
 <SELECT NAME=refcross>
 <option <?MIVAR COND="$(EC,$refcross,NULL)">SELECTED<?/MIVAR> value=NULL>Any
-<?MISQL SQL="select zdb_id,abbrev,ptype from panels;">
+<?MISQL SQL="select zdb_id,abbrev,ptype from panels order by ptype, abbrev;">
 <option $(IF,$(EC,$refcross,$1),SELECTED) value=$1>$2($3)
 <?/MISQL>
 </SELECT></font>
