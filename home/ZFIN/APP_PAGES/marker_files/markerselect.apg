@@ -151,65 +151,30 @@ document.critform.START.value = "";
 <!--  Populate temp table based on user constraints.  -->
 <?MIBLOCK COND="$(NXST,$pubId)">
 
-  <?MIBLOCK COND="$(OR,$(>,$(POSITION,$mlist,MUTANT),0),$(>,$(POSITION,$mlist,any),0))">
-	
-  
-    <?MISQL SQL="
-
-	select distinct b.zdb_id as zdb_id,b.locus_name as name, b.abbrev as abbrev, locus_abbrev_order as abbrev_order, 'MUTANT' as mtype, b.cloned_gene as sec_zdb_id, a.zdb_id as trd_zdb_id
-	from fish a, locus b
-	$mutantnameConstraint
-	and a.locus = b.zdb_id
-	union
-	select distinct zdb_id, locus_name as name, abbrev, locus_abbrev_order as abbrev_order, 'MUTANT' as mtype, a.cloned_gene as sec_zdb_id, a.zdb_id as trd_zdb_id
-	from locus a
-	$mutantnameConstraint
-	into temp all_temp_markers with no log;">
-
-     <?/MISQL>
-     <?MIBLOCK COND="$(NC,$mlist,MUTANT)"> 
-     
-     <?MISQL SQL="
-      insert into all_temp_markers
-	select distinct mrkr_zdb_id as zdb_id, mrkr_name as name, mrkr_abbrev as abbrev, mrkr_abbrev_order as abbrev_order, mrkr_type as mtype, mrkr_zdb_id as sec_zdb_id, mrkr_zdb_id as trd_zdb_id
-	from marker a
-	$mrkrnameConstraint
-	$mlistConstraint; ">
-     <?/MISQL>
-     <?/MIBLOCK>
-
-  <?MIELSE>
-    
    <?MISQL SQL="    
-	select distinct mrkr_zdb_id as zdb_id, mrkr_name as name, mrkr_abbrev as abbrev, mrkr_abbrev_order as abbrev_order, mrkr_type as mtype,mrkr_zdb_id as sec_zdb_id,mrkr_zdb_id as trd_zdb_id
+	select distinct mrkr_zdb_id as zdb_id, mrkr_name as name, mrkr_abbrev as abbrev, mrkr_abbrev_order as abbrev_order, mrkr_type as mtype
 	from marker a
 	$mrkrnameConstraint
 	$mlistConstraint
 	into temp all_temp_markers with no log; ">
     <?/MISQL>
 
-  <?/MIBLOCK>
-
 
    <?MISQL SQL="
-	select m1.name as name, m1.abbrev as abbrev, m1.mtype as mtype, m1.zdb_id as zdb_id, m1.abbrev_order as abbrev_order
+	select m1.name as name, m1.abbrev as abbrev, m1.mtype as mtype, m1.zdb_id as zdb_id, m1.abbrev_order as abbrev_order, or_lg as or_lg
 	from all_temp_markers m1, mapped_marker mm
-	where (marker_id = m1.zdb_id
-	    or marker_id = sec_zdb_id
-	    or marker_id = trd_zdb_id)
+	where marker_id = m1.zdb_id
 	 and or_lg <> '0'
 	 $constraintm
 
 	UNION
 
-	select  m1.name as name, m1.abbrev as abbrev, m1.mtype as mtype, m1.zdb_id as zdb_id, m1.abbrev_order as abbrev_order
+	select  m1.name as name, m1.abbrev as abbrev, m1.mtype as mtype, m1.zdb_id as zdb_id, m1.abbrev_order as abbrev_order, lnkg_or_lg as or_lg
 	from all_temp_markers m1, linkage_member, linkage
-	where (lnkgmem_member_zdb_id = m1.zdb_id 
-	    or lnkgmem_member_zdb_id = sec_zdb_id
-	    or lnkgmem_member_zdb_id = trd_zdb_id)
-	and lnkgmem_linkage_zdb_id = lnkg_zdb_id
-	and lnkg_or_lg <> '0'
-	$constraintl
+	where lnkgmem_member_zdb_id = m1.zdb_id 
+	  and lnkgmem_linkage_zdb_id = lnkg_zdb_id
+	  and lnkg_or_lg <> '0'
+	 $constraintl
 
     	order by 4, 2
     	into temp markerlister_temp with no log;">
@@ -360,7 +325,7 @@ document.critform.START.value = "";
 
     <!--- Query Database --->
     <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
-      select distinct name, abbrev, mtype, abbrev_order, zdb_id
+      select distinct name, abbrev, mtype, abbrev_order, zdb_id, or_lg
 	from markerlister_temp
 	$order_clause;">
 
@@ -368,6 +333,7 @@ document.critform.START.value = "";
       <?MIVAR COND="$(EC,$2,)" NAME=$marker_abbrev>$1<?/MIVAR> 
       <?MIVAR name=$mtype>$3<?/MIVAR>
       <?MIVAR name=$OID>$5<?/MIVAR>
+      <?MIVAR name=$or_lg>$6<?/MIVAR>	 
 
       <!-- create form for each marker  -->
       <!-- get rid of dashes to avoid javascript error -->
@@ -412,7 +378,7 @@ document.critform.START.value = "";
 	  <?/MIBLOCK>
 
 	  <TD>
-	   <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini&oID=$OID') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+	   <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini&oID=$OID&or_lg=$or_lg') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
 	  </TD>
 
 	<!--    change row_color    -->
@@ -623,8 +589,7 @@ document.critform.START.value = "";
 	<td>
 	<select multiple size=5 name=marker_type onChange="check_syns(this)"> 
 	<option $(IF,$(EC,$marker_type,NULL),SELECTED) value="any">All types
-	<option $(IF,$(>,$(POSITION,$marker_type,GENE),0),SELECTED)>GENE
-	<option $(IF,$(>,$(POSITION,$marker_type,MUTANT),0),SELECTED)>MUTANT
+	<option $(IF,$(>,$(POSITION,$marker_type,GENE),0),SELECTED) >GENE
 	<option $(IF,$(>,$(POSITION,$marker_type,EST),0),SELECTED)>EST
 	<option $(IF,$(>,$(POSITION,$marker_type,SSLP),0),SELECTED)>SSLP
 	<option $(IF,$(>,$(POSITION,$marker_type,BAC),0),SELECTED)>BAC
