@@ -134,6 +134,11 @@ get_obj_name(zdbId varchar(50))
       into objName
       from primer_set
       where zdb_id = zdbId;
+  elif (objType = "PROBELIB") then
+    select probelib_name
+      into objName
+      from probe_library
+      where probelib_zdb_id = zdbId;
   elif (objType = "REFCROSS") then
     select name 
       into objName
