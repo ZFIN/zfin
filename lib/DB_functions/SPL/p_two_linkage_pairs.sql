@@ -29,7 +29,10 @@
 
   if vOk = 1 then
      raise exception -746,0,"FAIL!: This pair already has > 1 members!";
+     drop table tmp_lp1;
   end if;
+
+  drop table tmp_lp1;
 
   end procedure;
 
