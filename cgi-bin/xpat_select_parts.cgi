@@ -11,6 +11,9 @@
  my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->', '', '', {AutoCommit => 1, RaiseError => 1})
  || die "Failed while connecting to <!--|DB_NAME|--> "; #$DBI::errstr";
 
+ my $form_elements = 0; 
+ my $first_with_data_is_open = false;
+
  $CSS=<<ENDCSS;
 A  {  text-decoration: none; 
       font-family: "Right Hand of Colin Bold",sans-serif;
@@ -22,24 +25,69 @@ EM {  font-family: "Right Hand of Colin Bold",sans-serif;
       font-style: plain;
       font-weight: bold;
       line-height: 120%;}
+B {   font-family: "Right Hand of Colin Bold",sans-serif;
+      font-size: 10pt;
+      font-style: plain;
+      font-weight: bold;
+      line-height: 100%;}
+
 ENDCSS
 
  $JS=<<ENDJS;
 
+
+ var tabs = new Array();
+
+ function popup_url(url) {
+    open(url,'Description','toolbar=yes,scrollbars=yes,resizable=yes');
+ }
+
  function check(part) {
 
-   for(i = 0 ; i < document.partselect.elements.length ; i++ ) {
-     if (document.partselect.elements[i].name == part) {
-	 box = document.partselect.elements[i];
-	 break;
-       }
-   }
+//   for(i = 0 ; i < document.partselect.elements.length ; i++ ) {
+//    if (document.partselect.elements[i].name == part) {
+//	 box = document.partselect.elements[i];
+//	 break;
+//       }
+//   }
+
+   box = document.partselect.elements[part];
+   i = part;
    if (box.checked == true) { 
-     top.content.criteria.add_part(part);
+     self.opener.add_part(document.partselect.elements[part].name);
    } else {
-     top.content.criteria.drop_part(part);
+     self.opener.drop_part(document.partselect.elements[part].name);
    }
+   t = 99;
+   parent_tab = tabs[i];
+   i++;
+   while ((t > parent_tab) && (i < document.partselect.elements.length)) {
+     if (document.partselect.elements[i] == null) {
+         break;
+     }
+
+     childbox = document.partselect.elements[i];
+     t = tabs[i];
+     if (t > parent_tab) {
+        child_check(childbox, box.checked);
+     }
+
+     i++;
+   }
+
  } 
+
+ function child_check(box, bool) {
+
+   box.checked = bool;
+
+   if (box.checked == true) { 
+     self.opener.add_part(box.name);
+   } else {
+     self.opener.drop_part(box.name);
+   }
+ }
+
 
  function check_selected() {
    i = 0;
@@ -48,8 +96,8 @@ ENDCSS
      i++;
    }
    i = 0;
-   while (i < top.content.criteria.document.critform.structure_list.options.length) {
-     part = top.content.criteria.document.critform.structure_list.options[i].value;
+   while (i < self.opener.document.critform.structure_list.options.length) {
+     part = self.opener.document.critform.structure_list.options[i].value;
      j = 0;
      while (j < document.partselect.elements.length) {
        box = document.partselect.elements[j];
@@ -63,7 +111,7 @@ ENDCSS
  }
 
  function manual_add(part) {
-  top.content.criteria.add_part(part);
+  self.opener.add_part(part);
  }
 
 ENDJS
@@ -72,18 +120,21 @@ ENDJS
 
  print $Q->header();
 
- print $Q->start_html(-title=>'Part & System Select', -style=>$CSS, -script=>$JS, -onload=>'check_selected();');
+ print $Q->start_html(-title=>'Part & System Select', -bgcolor=>'#FFFFFF',-style=>$CSS, -script=>$JS);
 
 # print "<form name=\"partselect\" method=get action=\"/cgi-bin/xpat_select_parts.cgi\">\n";
  print $Q->start_form(-name=>'partselect', -method=>'GET', -action=>'/cgi-bin/xpat_select_parts.cgi') . "\n";
 
  print $Q->hidden(-name=>'mode') . $Q->hidden(-name=>'submode',-default=>'');
+ $form_elements++; $form_elements++;
+ print $Q->hidden(-name=>'lastclicked');
+ $form_elements++;
+ print "<font size=3><b><center>Add Structure or System to Search...</b></font></center><small><br></small>";
 
- print "<font size=3><b><center>Add Structure or System to Search...</center></b></font><br>";
-
- print "&nbsp;&nbsp;&nbsp;&nbsp;Add a keyword manually: &nbsp; " . $Q->textfield(-name=>'userentered',-value=>'') . "\n";  
- print "&nbsp;&nbsp;" . $Q->button(-name=>'add',-value=>'Add to search',-onClick=>'manual_add(document.partselect.userentered.value); document.partselect.userentered.value=""') . "<br>&nbsp;&nbsp;&nbsp;&nbsp;or select from the heirarchy below:<br>\n";
-
+# print "&nbsp;&nbsp;&nbsp;&nbsp;Add a keyword manually: &nbsp; " . $Q->textfield(-name=>'userentered',-value=>'') . "\n";  
+# $form_elements++;
+# print "&nbsp;&nbsp;" . $Q->button(-name=>'add',-value=>'Add to search',-onClick=>'manual_add(document.partselect.userentered.value); document.partselect.userentered.value=""') . "<br>&nbsp;&nbsp;&nbsp;&nbsp;or select from the heirarchy below:<br>\n";
+# $form_elements++;
 
  table_top();
 
@@ -92,289 +143,180 @@ ENDJS
 # } elsif ($Q->param('mode') eq "systems") {
 #   systems();
  } elsif ($Q->param('mode') eq "alpha") {
-   alpha();
+   $form_elements = alpha($form_elements);
  } else {
    instructions();
  }
 
  table_bottom();
-
- print "</form>\n">
+ print "<br>" . $Q->button(-name=>'Close',-value=>'Close',-onClick=>'window.close();');
+ print "</form>\n";
+ print "<script>check_selected();</script>\n";
+ if (defined $Q->param('lastclicked')) {
+   print "<script>document.location='#" . $Q->param('lastclicked') . "';</script>\n";
+ }
 
  print $Q->end_html();
 
  sub alpha() {
+   my ($form_elements) = @_;
    my ($name, $id);
-   my $cur = $dbh->prepare("select unique anatdisp_item_name, anatdisp_item_zdb_id from anatomy_display order by anatdisp_item_name;");
+   my $cur = $dbh->prepare("select unique anatdisp_item_name, anatdisp_item_zdb_id, anatstgstat_anat_item_stg_count, lower(anatdisp_item_name) from anatomy_display, anatomy_stage_stats, stage where anatdisp_item_zdb_id = anatstgstat_anat_item_zdb_id and stg_zdb_id = anatstgstat_stg_zdb_id and stg_name = 'Any stage' order by 4;");
    $cur->execute;
    $cur->bind_col(1, \$name);
    $cur->bind_col(2, \$id);
+   $cur->bind_col(3, \$count);
 
    while ($cur->fetch) {
-     if  (($name eq "Brachet's cleft") || ($name eq "Kupffer's vesicle")) {  
-       print "     BUG - part had apostrophy that I can't deal with\n";;
-     } else {  
-       print "     <input type=checkbox name=\"$name\" onClick=\"check('$name');\">$name\n";
-
+    if ($count < 1 ) {  
+      print "   <a href=\"javascript:alert('Currently there are no expression\n assays for this structure at this developmental stage.');\"><img src=\"/images/notbox.gif\" height=14 width=14 border=0></a>$name\n";
+    } else {  
+       print "   <input type=checkbox name=\"$name\" onClick=\"check($form_elements);\">$name\n";
+       $form_elements++;
      }
    }
 
    print "</pre>\n";
+   return $form_elements;
  }
 
  sub parts() {
+     my $open = false;
+     my $total = 0;
      my ($stg_name,$stg_zdb_id,$stg_hours_start,$stg_hours_end);    #temp vars
      my ($part_name, $seq_num, $tabs);
-     my $cur = $dbh->prepare("select stg_name_long, stg_zdb_id, stg_hours_start, stg_hours_end from stage where stg_name_long not like 'Any%' order by stg_hours_start;");
+#     my $cur = $dbh->prepare("select get_stg_name_long_html(stg_zdb_id, 'popup_url'), stg_zdb_id, stg_hours_start, stg_hours_end from stage where stg_name not like 'Any%' order by stg_hours_start;");
+     my $cur;
+     my $cur2;
+
+     $cur = $dbh->prepare("SELECT child.stg_name_long, \
+                                     child.stg_zdb_id, child.stg_hours_start, child.stg_hours_end, child.stg_comments_relative_url \
+                              FROM stage parent, stage child, stage_contains \
+                              WHERE parent.stg_name = 'Any stage' \
+                                    and parent.stg_zdb_id = stgcon_container_zdb_id \
+                                    and child.stg_zdb_id  = stgcon_contained_zdb_id \
+                              ORDER BY child.stg_hours_start; ");
+     $cur->execute;
+     while ($cur->fetch) {
+       $total++;
+     }
+
+     $cur = $dbh->prepare("SELECT child.stg_name_long, \
+                                     child.stg_zdb_id, child.stg_hours_start, child.stg_hours_end, child.stg_comments_relative_url \
+                              FROM stage parent, stage child, stage_contains \
+                              WHERE parent.stg_name = 'Any stage' \
+                                    and parent.stg_zdb_id = stgcon_container_zdb_id \
+                                    and child.stg_zdb_id  = stgcon_contained_zdb_id \
+                              ORDER BY child.stg_hours_start; ");
+
      $cur->execute;
      $cur->bind_col(1, \$stg_name);
      $cur->bind_col(2, \$stg_zdb_id);
      $cur->bind_col(3, \$stg_hours_start);
      $cur->bind_col(4, \$seq_hours_end);
+     $cur->bind_col(5, \$stg_url);
 
+    print "\n\n";
+#     print "</pre><center><small>(click the arrow to view contents of a stage, <br> click on the stage name for stage information, <br> and click on the checkbox to add a structure to the query)</small></center><pre>\n";
+
+#   print "   <img src=\"/images/star.gif\" height=12> - stage data    <input type=checkbox> - structure data     <img src=\"/images/notbox.gif\" height=14 width=14> - no structure data\n\n";
+     print "<table bgcolor=#EEEEEE align=center cellspacing=0 cellpadding=3> \
+<tr><td><b>Legend: </b> \
+<small>Gene expression data present...</small> <br>\
+&nbsp;&nbsp;<small><img src=\"/images/star.gif\" height=12> - for this stage</small>\
+&nbsp;&nbsp;<small><input type=checkbox> - for this structure</small> \
+&nbsp;&nbsp;<small><img src=\"/images/notbox.gif\" height=14 width=14> - none</small>&nbsp;&nbsp;</td></tr></table>";
+     $form_elements++;
      print "\n\n";
-     print "  <EM>Choose a stage below to select parts:</EM>\n\n";
+     print "  <EM>Expand a stage below to select structures:</EM>\n\n";
 
      my $i = 0;
      while ($cur->fetch) {
-       print "      ";
-       if ((defined $Q->param('s'.$i)) && ($Q->param('s'.$i) ne "0")) {
-	 print "[<a href=\"javascript:document.partselect.mode.value='parts'; document.partselect.s$i.value=\'0\'; document.partselect.submit();\">close</a>]";
-       } else { print "[<a href=\"javascript:document.partselect.mode.value='parts'; document.partselect.s$i.value=\'$stg_zdb_id\'; document.partselect.submit();\">open</a>]"; }
 
-       print "$stg_name" . $Q->hidden(-name=>'s'.$i,-default=>'0') . "\n";
-       if ((defined $Q->param('s'.$i)) && ($Q->param('s'.$i) ne "0")) {
-	 print_subtree($stg_zdb_id);
+#       $cur2 = $dbh->prepare("select count(stgcon_contained_zdb_id)::integer from stage, stage_contains where stgcon_container_zdb_id = '$stg_zdb_id' group by stgcon_container_zdb_id;");
+#       $cur2->execute;
+#       $cur2->bind_col(1,\$stg_child_count);
+#       $cur2->fetch;
+#     print "child stages: " . $stg_child_count;
+
+
+       if (!defined $Q->param('s'.$i)) {
+	 if (($cur->rows == 1) || ($cur->rows == $total)) {       
+	   $open = false;
+	   print $Q->hidden(-name=>'s'.$i,-default=>'0');
+	 } else {
+	   $open = true;
+	   print $Q->hidden(-name=>'s'.$i,-default=>"$stg_zdb_id");
+	 }
+       } else {
+	 if ($Q->param('s'.$i) eq '0') {
+	   print $Q->hidden(-name=>'s'.$i,-default=>'0');
+	   $open = false;
+	 } else {
+	   print $Q->hidden(-name=>'s'.$i,-default=>"$stg_zdb_id");
+	   $open = true;
+	 }
+       }
+
+#     if (defined $Q->param('s'.$i)) {
+#       if ($Q->param('s'.$i) == 0) {
+#	 $open = false;
+#       } else {
+#	 $open = true;
+#       }
+#     }
+
+       print "   "; print "<a name = \"$stg_zdb_id\">";
+
+       if ($open eq true) {
+	 print "<a href=\"javascript:document.partselect.mode.value='parts'; document.partselect.s$i.value=\'0\'; document.partselect.submit();\"><img src=\"/images/ARROWS/open.gif\" border=0 height=11>";
+      } else { print "<a href=\"javascript:document.partselect.mode.value='parts'; document.partselect.s$i.value=\'$stg_zdb_id\'; document.partselect.lastclicked.value='$stg_zdb_id'; document.partselect.submit();\"><img src=\"/images/ARROWS/closed.gif\" border=0 height=11>"; }
+
+      print "$stg_name" . "</a> [<a href=\"javascript: popup_url('$stg_url');\"><b>stage info</b></a>]\n";  $form_elements++; 
+
+       if ($open eq true) {
+#	 $form_elements = print_subtree($stg_zdb_id, $form_elements);
+	 $form_elements = print_substages($stg_zdb_id, $i, $form_elements);
        }
        $i++;
      }
      print "";
+     
+     return $form_elements;
 
  }  
 
  sub systems() {
-   if (!defined $Q->param('submode')) {
 
     print "<br>\n";
     print "&nbsp;&nbsp;<EM>Choose a system:</EM><br><br>\n";
-
-    print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"/cgi-bin/xpat_select_parts.cgi?mode=systems&submode=stg_zdb_id\">Skeletal System</a><br>\n";
-    print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"/cgi-bin/xpat_select_parts.cgi?mode=systems&submode=stg_zdb_id\">Suspensoria</a><br>\n";
-    print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"/cgi-bin/xpat_select_parts.cgi?mode=systems&submode=stg_zdb_id\">Opercular-branciostegal series</a><br>\n";
-    print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"/cgi-bin/xpat_select_parts.cgi?mode=systems&submode=stg_zdb_id\">Hyoid Bars</a><br>\n";
-    print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"/cgi-bin/xpat_select_parts.cgi?mode=systems&submode=stg_zdb_id\">Body</a><br>\n";
-    print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"/cgi-bin/xpat_select_parts.cgi?mode=systems&submode=stg_zdb_id\">Musculature System</a><br>\n";
-    print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"/cgi-bin/xpat_select_parts.cgi?mode=systems&submode=stg_zdb_id\">Digestive System</a><br>\n";
-    print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"/cgi-bin/xpat_select_parts.cgi?mode=systems&submode=stg_zdb_id\">Excretory System</a><br>\n";
-    print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"/cgi-bin/xpat_select_parts.cgi?mode=systems&submode=stg_zdb_id\">Reproductive System</a><br>\n";
-    print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"/cgi-bin/xpat_select_parts.cgi?mode=systems&submode=stg_zdb_id\">Cardiovascular System</a><br>\n";
-    print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"/cgi-bin/xpat_select_parts.cgi?mode=systems&submode=stg_zdb_id\">Respitory System</a><br>\n";
-    print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"/cgi-bin/xpat_select_parts.cgi?mode=systems&submode=stg_zdb_id\">Gas Bladder</a><br>\n";
-    print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"/cgi-bin/xpat_select_parts.cgi?mode=systems&submode=stg_zdb_id\">Lymphatic</a><br>\n";
-    print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"/cgi-bin/xpat_select_parts.cgi?mode=systems&submode=stg_zdb_id\">Nervous System</a><br>\n";
-    print "<br><br>\n";
-
-  } else {
-    print <<END;
-<h2>&nbsp;Nervous System</h2>
-<pre>
-     <input type=checkbox name="Inner ear (vestibular end-organ)" onClick="check('Inner ear (vestibular end-organ)')">Inner ear (vestibular end-organ)
-            <input type=checkbox name="Otolith organs" onClick="check('Otolith organs')">Otolith organs
-                  <input type=checkbox name="Utricle" onClick="check('Utricle')">Utricle
-                      <input type=checkbox name="Lapillus (otolith)" onClick="check('Lapillus (otolith)')">Lapillus (otolith)
-                  <input type=checkbox name="Saccule" onClick="check('Saccule')">Saccule
-                      <input type=checkbox name="Sagitta (otolith)" onClick="check('Sagitta (otolith)')">Sagitta (otolith)
-                  <input type=checkbox name="Lagena" onClick="check('Lagena')">Lagena
-                      <input type=checkbox name="Asteriscus (otolith)" onClick="check('Asteriscus (otolith)')">Asteriscus (otolith)
-                  <input type=checkbox name="Macula Neglecta" onClick="check('Macula Neglecta')">Macula Neglecta
-            <input type=checkbox name="Semicircular Canals" onClick="check('Semicircular Canals')">Semicircular Canals
-                  <input type=checkbox name="Horizontal" onClick="check('Horizontal')">Horizontal
-                  <input type=checkbox name="Rostral (anterior) Vertical" onClick="check('Rostral (anterior) Vertical')">Rostral (anterior) Vertical
-                  <input type=checkbox name="Caudal (posterior) Vertical" onClick="check('Caudal (posterior) Vertical')">Caudal (posterior) Vertical
-     <input type=checkbox name="Olfactory bulb" onClick="check('Olfactory bulb')">Olfactory bulb
-            <input type=checkbox name="external cellular layer" onClick="check('external cellular layer')">external cellular layer
-            <input type=checkbox name="glomerular layer" onClick="check('glomerular layer')">glomerular layer
-            <input type=checkbox name="primary olfactory fiber layer" onClick="check('primary olfactory fiber layer')">primary olfactory fiber layer
-                  <input type=checkbox name="internal cellular layer (with mitral cells)" onClick="check('internal cellular layer (with mitral cells)')">internal cellular layer (with mitral cells)
-            <input type=checkbox name="area dorsalis telencephali" onClick="check('area dorsalis telencephali')">area dorsalis telencephali
-            <input type=checkbox name="lateral olfactory tract" onClick="check('lateral olfactory tract')">lateral olfactory tract
-            <input type=checkbox name="medial olfactory tract" onClick="check('lateral olfactory tract')">medial olfactory tract
-            <input type=checkbox name="area ventralis telencephali" onClick="check('area ventralis telencephali')">area ventralis telencephali
-            <input type=checkbox name="dorsal zone of V" onClick="check('dorsal zone of V')">dorsal zone of V
-            <input type=checkbox name="central zone of V" onClick="check('central zone of V')">central zone of V
-            <input type=checkbox name="lateral zone of V" onClick="check('lateral zone of V')">lateral zone of V
-            <input type=checkbox name="ventral zone of V" onClick="check('ventral zone of V')">ventral zone of V
-            <input type=checkbox name="central zone of D" onClick="check('central zone of D')">central zone of D
-            <input type=checkbox name="lateral zone of D" onClick="check('lateral zone of D')">lateral zone of D
-            <input type=checkbox name="medial zone of D" onClick="check('medial zone of D')">medial zone of D
-            <input type=checkbox name="posterior zone of D" onClick="check('posterior zone of D')">posterior zone of D
-            <input type=checkbox name="nucleus commissuralis of V" onClick="check('nucleus commissuralis of V')">nucleus commissuralis of V
-            <input type=checkbox name="commissura anterior, pars dorsalis" onClick="check('commissura anterior, pars dorsalis')">commissura anterior, pars dorsalis
-            <input type=checkbox name="dorsal zone of D" onClick="check('dorsal zone of D')">dorsal zone of D
-            <input type=checkbox name="commissura anterior, pars ventralis" onClick="check('commissura anterior, pars ventralis')">commissura anterior, pars ventralis
-            <input type=checkbox name="lateral forebrain bundle" onClick="check('lateral forebrain bundle')">lateral forebrain bundle
-            nucleus entopeduncularis
-            nucleus preopticusparvocellularispars anterior
-            pars subcommissuralis of V
-            pars postcommissuralis of V
-            chiasma opticum
-            optic tract
-            medial forebrain bundle
-            pars lateralis posterior of D
-               nucleus preopticus magnocellularis pars magnocellularis
-            nucleus preopticus parvocellularis pars posterior
-            nucleus suprachiasmaticus
-            commissura horizontalis
-            commissura supraoptica
-            epiphysis
-            habenula
-            nucleus intermedius thalami
-               nucleus preopticus magnocellularis pars gigantocellularis
-            nucleus pretectalis superficialis parvocellularis
-            rostral nucleus of Saidel & Butler
-            nucleus Suprachiasmaticus
-            nucleus ventrolateralis thalami
-            nucleus ventromedialis thalami
-            ventral optic tract
-            dorsomedial optic tract
-            fasciculus retroflexus
-            periventricular zone of ventral hypothalamus
-            dorsal accessory optic nucleus
-            nucleus pretectalis superficialis magnocellularis
-            tectum opticum
-            nucleus anterior thalami
-            posterior pretectal nucleus
-            accessory pretectal nucleus
-            commmissura habenularis
-            central pretectal nucleus
-            ventral accessory optic nucleus
-            nucleus tuberis anterior
-            nucleus preglomerulosus pars anterior
-            nucleus preglomerulosus pars lateralis
-            posterior pretectal nucleus
-            perventricular nucleus of posterior tuberculum
-            commissura tecti
-            nucleus centralis posterior thalami
-            commissura posterior
-            nucleus dorsalis posterior thalami
-            dorsal periventricular hypothalamus
-            nucleus lateralis hypothalami
-            nucleus diffusus lobus inferior hypothalamus
-            nucleus paracommissuralis
-            nucleus preglomerulosus pars medialis
-            nucleus pretectalis periventricularis
-            recessus lateralis
-            torus longitudinalis
-            nucleus tuberis posterior
-            torus lateralis
-            tractus pretecto-mamillaris
-            mesencephalic nucleus of trigeminal nerve
-            nucleus posterior thalami
-            paraventricular organ
-            caudal periventricular hypothalamus
-            tertiary gustatory nucleus
-            torus semicircularis
-            fasciculus longitudinalis medialis
-            nucleus fasciculus longitudinalis medialis
-            nucleus tegmentalis rostralis
-            nucleus subglomerulosis
-            lateral division of valvula cerebelli
-            vascular laguna of area postrema
-            dorsal tegmental nucleus
-            nucleus Edinger-Westphal
-            fasciculus longitundinalis lateralis
-            granular layer of valvula cerebelli
-            molecular layer of valvula cerebelli
-            nucleus preglomerulosis pars caudalis
-            tractus tecto-bulbaris
-            valvula cerebelli lateral division
-            commissura ansulata
-            nervus oculomotorius
-            nucleus centralis of lobus inferior hypothalami
-            nucleus nervi oculomotorius
-            medial division of valvula cerebelli
-            brachium conjunctivium
-            corpus mamillare
-            nucleus interpeduncularis
-            nucleus lateralis valvulae
-            nervus trochlearis
-            nucleus nervi trochlearis
-            tractus mesencephalo-cerebellaris
-            tractus tecto-bulbaris cruciatus
-       tractus tecto-bulbaris rectus
-            nucleus raphe
-            corpus cerebelli
-            decussatio trochulearis
-            griseum centrale
-            nucleus isthmi
-            superior reticular formation
-            commissura interbulbularis
-            nucleus motorius nervi trigemini pars dorsalis
-            commissura cerebelli
-            commissura gustatoria
-            granular layer of corpus cerebelli
-            molecular layer of corpus cerebelli
-            secondary gustatory nucleus
-            nucleus motorius nervi trigemini pars ventralis
-            nervus trigeminus
-            anterior lateral line nerves
-            eminentia granularis
-            sensory trigeminal nucleus
-            secondary gustatory tract
-            nervus facialis
-            dorsal motor root of V
-            descending trigeminal root
-            posterior cerebellar tract
-            nucleus motorius nervi trigemini pars ventralis
-            rostral root of abducens nerve
-            anterior octaval nucleus
-            granular layer of lobus caudalis cerebelli
-            Mauthner cell
-            medial octavolateralis nucleus
-            medial reticular nucleus
-            nervus octavus
-            Mauthner axon
-            nucleus nervus abducens
-  
-            crista cerebellaris
-            descending octaval nucleus
-            nucleus motorius nervus facialis
-            posterior lateral line nerve
-            sensory root or nervus facialis
-            lobus caudalis cerebelli
-            lobus facialis
-            tractus bulbo-spinalis
-            decussation of the medial octavolateralis nucleus
-            oliva inferior
-            nervus glossopharyngeus
-            inferior reticular formation
-            lobus glossopharyngealeus
-            tractus vestibulo-spinalis
-            nucleus motorius of nervi vagi
-            lobus vagus
-            caudal octavolateralis nucleus
-            nervus vagus
-            nucleus motoris of nervi vagi
-            funiculus lateralis
-            decussation of nucleus funiculi medialis
-            nucleus funiculi medialis
-            cornu dorsale
-            cornu ventrale
-            funiculus lateralis
-            radix dorsalis
-</pre>
-END
-  }
 
  }
 
  sub instructions() {
    print <<END;
-                <br>
                 <center>
-                Click the 'Structures' or 'Systems' tabs above <br>
-                to navigate the anatomical hierarchy, <br>
-                click on a part's checkbox to add it to the query form above.
+<table width=500 cellpadding=5><tr><td bgcolor = #EEEEEE>
+
+
+<b>Hints:</b>
+<ul>
+<li>Clicking on a check box will add the structure
+    to the query in the main ZFIN window.
+<li>Within the <b>Structures List</b> section, 
+    clicking a checkbox will automatically add 
+    all of it's children to the query.  Children, or any check box, can be removed from the query by unchecking their check box.
+<li>Structures with check boxes have expression data currently in ZFIN, structures with grey boxes do not currently have any expression data.
+<li>The <img src="/images/star.gif" height=12> icon denotes stages for which ZFIN currently has expression data.
+<li>The query form searches the keyword field of expression assays.
+<li>Selecting a structure within this popup window
+    does not affect the developmental stage selection in the query form. 
+
+
+</ul>
+
+
+</td></tr></table>
                 </center>
                 <pre>
 
@@ -397,11 +339,109 @@ END
 # '
  }
 
+ sub print_substages() {
+   my ($zdb_id, $s, $form_lements) = @_;
+   my $cur;
+   my $query;
+   my $open = false;
+#   $query = "select stg_name_long, \
+#                       stg_zdb_id, stg_hours_start, stg_hours_end, stg_comments_relative_url \ 
+#                from stage, stage_contains \
+#                where stgcon_container_zdb_id = '$zdb_id' \
+#                      and stgcon_contained_zdb_id = stg_zdb_id \
+#                order by stg_hours_start;";
+
+   $query = "select stg_name_long, stg_zdb_id, stg_hours_start, stg_hours_end, \
+                    stg_comments_relative_url, sum(anatstgstat_total_count) \
+             from stage, stage_contains, anatomy_stage_stats \
+             where stgcon_container_zdb_id = '$zdb_id' \
+                   and stgcon_contained_zdb_id = stg_zdb_id \
+                   and stgcon_contained_zdb_id = anatstgstat_stg_zdb_id \
+             group by stg_name_long, stg_zdb_id, stg_hours_start, stg_hours_end, stg_comments_relative_url \
+             order by stg_hours_start;";
+
+
+   $cur = $dbh->prepare($query);
+   $cur->execute;
+   $cur->bind_col(1, \$stg_name);
+   $cur->bind_col(2, \$stg_zdb_id);
+   $cur->bind_col(3, \$stg_hours_start);
+   $cur->bind_col(4, \$seq_hours_end);
+   $cur->bind_col(5, \$stg_url);
+   $cur->bind_col(6, \$sum);
+
+        my $i = 0;
+    my $count_test = 0;
+     while ($cur->fetch) {
+       
+#       print "$sum";
+
+      if (!defined $Q->param('s'.$s.'s'.$i)) {
+	if (($first_with_data_is_open eq false) && ($sum > 0)) {
+	  print $Q->hidden(-name=>'s'.$s.'s'.$i,-default=>"$stg_zdb_id");
+	  $open = true;
+	} else {
+	  print $Q->hidden(-name=>'s'.$s.'s'.$i,-default=>'0');
+	  $open = false;
+	}
+       } else {
+	 if ($Q->param('s'.$s.'s'.$i) eq '0') {
+	   print $Q->hidden(-name=>'s'.$s.'s'.$i,-default=>'0');
+	   $open = false;
+	 } else {
+	   print $Q->hidden(-name=>'s'.$s.'s'.$i,-default=>"$stg_zdb_id");
+	   $open = true;
+	 }
+       }
+
+       if ($open eq true) { $first_with_data_is_open = true; }
+      
+      if ($sum > 0) {
+	$star = "<img src=\"/images/star.gif\" height=12>";
+      } else {
+	$star = "";
+      }
+
+
+       $count_test = 100;
+       print "   ";
+       print "   "; print "<a name = \"$stg_zdb_id\">";
+       if ($open eq true) {
+	 print "<a href=\"javascript:document.partselect.mode.value='parts'; document.partselect.s". $s . "s" . $i . ".value=\'0\'; document.partselect.submit();\"><img src=\"/images/ARROWS/open.gif\" border=0 height=11>";
+      } else { print "<a href=\"javascript:document.partselect.mode.value='parts'; document.partselect.s". $s . "s" . $i . ".value=\'$stg_zdb_id\'; document.partselect.lastclicked.value='$stg_zdb_id'; document.partselect.submit();\"><img src=\"/images/ARROWS/closed.gif\" border=0 height=11>"; }
+
+       print "$stg_name" . "</a> $star [<a href=\"javascript: popup_url('$stg_url');\"><b>stage info</b></a>]\n";  $form_elements++;
+       if ($open eq true) {
+	 $form_elements = print_subtree($stg_zdb_id, $form_elements);
+       }
+       $i++;
+     }
+   if ($count_test == 0) {
+     $form_elements = print_subtree($zdb_id, $form_elements);
+   }
+     
+     print "";
+   
+   return $form_elements;
+
+ }
+
  sub print_subtree() {
-  my ($zdbid) = @_;
+  my ($zdbid, $form_elements) = @_;
 
    my ($name, $id, $seq, $tabs);
-  my $query = "select anatdisp_item_name, anatdisp_item_zdb_id, anatdisp_seq_num, anatdisp_indent from anatomy_display where anatdisp_stg_zdb_id = '$zdbid' order by anatdisp_seq_num;";
+#   my $query = "select anatdisp_item_name, anatdisp_item_zdb_id, anatdisp_seq_num, anatdisp_indent, anatstgstat_total_count from anatomy_display, anatomy_stage_stats, stage where anatdisp_stg_zdb_id = '$zdbid' and anatstgstat_stg_zdb_id = stg_zdb_id and anatdisp_item_zdb_id = anatstgstat_anat_item_zdb_id and stg_name='Any stage' order by anatdisp_seq_num;";
+
+  my $query = "select anatdisp_item_name, anatdisp_item_zdb_id, anatdisp_seq_num, \
+       anatdisp_indent, anatstgstat_total_count \
+from   anatomy_display, anatomy_stage_stats \
+where  anatdisp_stg_zdb_id = '$zdbid' \
+       and anatdisp_item_zdb_id = anatstgstat_anat_item_zdb_id \
+       and anatstgstat_stg_zdb_id = anatdisp_stg_zdb_id
+order by anatdisp_seq_num;";
+
+
+#and anatdisp_stg_zdb_id = anatstgstat_stg_zdb_id
     #print $query;
   my $cur = $dbh->prepare($query);
    $cur->execute;
@@ -409,84 +449,32 @@ END
    $cur->bind_col(2, \$id);
    $cur->bind_col(3, \$seq);
    $cur->bind_col(4, \$tabs);
-
+   $cur->bind_col(5, \$count);
   my $i;
   while ($cur->fetch) {
-    print "    "; # default indent
+    print "   "; 
+    print "   "; # default indent
     $i = $tabs;
-    while ($i > 0) { print "    "; $i--; }
-    if (($name eq "Brachet's cleft") || ($name eq "Kupffer's vesicle")) {  
-      print "BUG - part had apostrophy that I can't deal with\n";;
+    while ($i > 0) { print "   "; $i--; }
+    if ($count < 1 ) {  
+      print "<a href=\"javascript:alert('Currently there are no expression\n assays for this structure at this developmental stage.');\"><img src=\"/images/notbox.gif\" height=14 width=14 border=0></a>$name\n";
     } else {  
-      print "<input type=checkbox name=\"$name\" onClick=\"check('$name');\">$name\n";
+      print "<input type=checkbox name=\"$name\" onClick=\"check($form_elements); check_selected();\" tabs=\"$tabs\">$name";
+      print "<SCRIPT>";
+      print "tabs[$form_elements] = $tabs;";
+      print "</SCRIPT>\n";
+      $form_elements++;
     }
   }
- }
-
-
-
- sub print_fake_subtree() {
-   my ($zdbid) = @_;
-     print <<END;
-<h2>&nbsp;segmentation 14 somite (16h)</h2>
-
-<pre>
-	<input type="checkbox" name="Embryo" onClick="check('Embryo');">Embryo 
-		<input type="checkbox" name="ectoderm" onClick="check('ectoderm');">ectoderm
-		<input type="checkbox" name="endoderm" onClick="check('endoderm');">endoderm
-		<input type="checkbox" name="mesoderm" onClick="check('mesoderm');">mesoderm
-			<input type="checkbox" name="axial chorda mesoderm" onClick="check('axial chorda mesoderm');">axial chorda mesoderm
-			<input type="checkbox" name="paraxial segmental plate" onClick="check('paraxial segmental plate');">paraxial segmental plate 
-				<input type="checkbox" name="somites 1-14" onClick="check('somites 1-14');">somites 1-14
-			<input type="checkbox" name="myotomes with epaxial & hypaxial regions" onClick="check('myotomes with epaxial & hypaxial regions');">myotomes with epaxial & hypaxial regions
-				<input type="checkbox" name="muscle pioneer cells" onClick="check('muscle pioneer cells');">muscle pioneer cells
-			<input type="checkbox" name="notochord" onClick="check('notochord');">notochord
-			<input type="checkbox" name="polster" onClick="check('polster');">polster
-			<input type="checkbox" name="prechordal plate" onClick="check('prechordal plate');">prechordal plate
-		<input type="checkbox" name="neural crest" onClick="check('neural crest');">neural crest 
-			<input type="checkbox" name="cephalic" onClick="check('cephalic');">cephalic
-			<input type="checkbox" name="trunk" onClick="check('trunk');">trunk
-		<input type="checkbox" name="organ system" onClick="check('organ system');">organ system
-			<input type="checkbox" name="nervous system" onClick="check('nervous system');">nervous system
-				<input type="checkbox" name="central nervous system" onClick="check('central nervous system');">central nervous system
-					<input type="checkbox" name="brain" onClick="check('brain');">brain
-						<input type="checkbox" name="forebrain" onClick="check('forebrain');">forebrain
-							<input type="checkbox" name="telencephalon (N1)" onClick="check('telencephalon (N1)');">telencephalon (N1)
-							<input type="checkbox" name="diencephalon (N2)" onClick="check('diencephalon (N2)');">diencephalon (N2)
-						<input type="checkbox" name="midbrain (N3)" onClick="check('midbrain (N3)');">midbrain (N3)
-						<input type="checkbox" name="hindbrain" onClick="check('hindbrain');">hindbrain
-							<input type="checkbox" name="rhombomeres r2-r6 (N4-8)" onClick="check('rhombomeres r2-r6 (N4-8)');">rhombomeres r2-r6 (N4-8)
-					<input type="checkbox" name="neural rod (future spinal cord)" onClick="check('neural rod (future spinal cord)');">neural rod (future spinal cord) 
-				<input type="checkbox" name="peripheral nervous system" onClick="check('peripheral nervous system');">peripheral nervous system
-					<input type="checkbox" name="peripheral sensory axons" onClick="check('peripheral sensory axons');">peripheral sensory axons
-					<input type="checkbox" name="trigeminal (V) placode" onClick="check('trigeminal (V) placode');">trigeminal (V) placode
-			<input type="checkbox" name="sensory system" onClick="check('sensory system');">sensory system 
-				<input type="checkbox" name="eye" onClick="check('eye');">eye
-					<input type="checkbox" name="lens primordium ??" onClick="check('lens primordium ??');">lens primordium ??
-					<input type="checkbox" name="optic primordium" onClick="check('optic primordium');">optic primordium 
-				<input type="checkbox" name=">otic placode" onClick="check('>otic placode');">otic placode
-			<input type="checkbox" name="urogenital system" onClick="check('urogenital system');">urogenital system 
-				<input type="checkbox" name="pronephric duct" onClick="check('pronephric duct');">pronephric duct
-		<input type="checkbox" name="tail bud" onClick="check('tail bud');">tail bud
-			<input type="checkbox" name="Kupffers vesicle (future mesoderm, notochord)" onClick="check('Kupffers vesicle (future mesoderm, notochord)');">Kupffers vesicle (future mesoderm, notochord)
-	<input type="checkbox" name="extraembryonic" onClick="check('extraembryonic');">extraembryonic
-		<input type="checkbox" name="yolk" onClick="check('yolk');">yolk
-			<input type="checkbox" name="ball" onClick="check('ball');">ball
-			<input type="checkbox" name="extension" onClick="check('extension');">extension
-		<input type="checkbox" name="EVL" onClick="check('EVL');">EVL
-		<input type="checkbox" name="I-ESL, E-YSL" onClick="check('I-ESL, E-YSL');">I-ESL, E-YSL
-</pre>
-END
-
-
+  return $form_elements;
  }
 
  sub table_top() {
    
-   my $alpha_bg = "#EEEEEE";
-   my $parts_bg = "#EEEEEE";
-   my $systems_bg = "#EEEEEE";
-   my $instructions_bg = "#EEEEEE";
+   my $alpha_bg = "#DDDDDD";
+   my $parts_bg = "#DDDDDD";
+   my $systems_bg = "#DDDDDD";
+   my $instructions_bg = "#DDDDDD";
 
     if ($Q->param('mode') eq "parts") {
       $parts_bg = "#88a6a6";
@@ -499,14 +487,15 @@ END
     }
    print "<table border = 0 cellpadding=0 cellspacing=0 width=100%>\n";
    print "	<tr>\n";
-   print "		<td colspan=1 bgcolor=$alpha_bg><h2><center><a href=\"/cgi-bin/xpat_select_parts.cgi?mode=alpha\">Alphabetical<br>List</a></center></h2></td>\n";
    print "		<td colspan=1 bgcolor=$parts_bg><h2><center><a href=\"/cgi-bin/xpat_select_parts.cgi?mode=parts\">Structures<br>List</a></center></h2></td>\n";
+   print "              <td colspan=1 bgcolor=#FFFFFF><pre></pre></td>";
+   print "		<td colspan=1 bgcolor=$alpha_bg><h2><center><a href=\"/cgi-bin/xpat_select_parts.cgi?mode=alpha\">Alphabetical<br>List</a></center></h2></td>\n";
 #   print "   		<td colspan=1 bgcolor=$systems_bg><h2><center><a href=\"/cgi-bin/xpat_select_parts.cgi?mode=systems\">Systems<br>List</a></center></h2></td>\n";
-   print "		<td colspan=1 bgcolor=$instructions_bg><h2><center><a href=\"/cgi-bin/xpat_select_parts.cgi?mode=instructions\">Instructions</a></h2></td>\n";
-   print "              <td colspan=1 bgcolor=EEEEEE><pre>    </pre></td>\n";
+   print "              <td colspan=1 bgcolor=#FFFFFF><pre></pre></td>";
+   print "		<td colspan=1 bgcolor=$instructions_bg><h2><center><a href=\"/cgi-bin/xpat_select_parts.cgi?mode=instructions\">Help</a></h2></td>\n";
    print "      </tr>\n";
    print "      <tr>\n";
-   print "              <td colspan=4 bgcolor=#88a6a6>\n<pre>";
+   print "              <td colspan=5 bgcolor=#88a6a6>\n<pre>";
 
  }
 

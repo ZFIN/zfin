@@ -32,3 +32,4 @@ STATICS = bkgrd.jpeg catch.gif fish.gif fish_bgd.gif fish_net.gif zfin.gif
 # Use default rules for directories without app pages in them.
 
 include $(TOP)/make.default.rules
+

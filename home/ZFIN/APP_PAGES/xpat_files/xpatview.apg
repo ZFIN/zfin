@@ -16,12 +16,48 @@
 <?MISQL SQL="select object from webPages where ID='aa-chromoscripts.apg';">$1<?/MISQL>
 
 <SCRIPT>
+
   function popup_anatitem_comments(relative_url) {
     open(relative_url,"AnatomyItem","toolbar=yes,scrollbars=yes,resizable=yes");
   }
   function popup_stage_comments(relative_url) {
     open(relative_url,"StageDescription","toolbar=yes,scrollbars=yes,resizable=yes");
   }
+
+  <?MIVAR COND="$(XST,$UPDATE)">
+    function doit(attr,attr_type,print_name) {
+    window.location.search='?MIval=aa-xpatupdatePubs.apg&OID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name+'&target_table=expression_pattern';
+    }
+
+    function Delete_listitem(item_name,item_id) {
+    window.location.search='?MIval=aa-do-xpatupdatePubs.apg&OID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted';
+    }
+
+    function updateAssay(xpat_zdb_id,assay,g_name,g_abbrev) {
+    window.location.search='?MIval=aa-xpatupdateAssay.apg&OID='+xpat_zdb_id+'&old_value='+assay+'&gene_name='+g_name+'&gene_abbrev='+g_abbrev;
+    }
+
+    function updateKeywords(xpatstg_xpat,xpatstg_start,xpatstg_end) {
+    window.location.search='?MIval=aa-xpatupdate.apg';
+    }
+
+    function updateDescription(xpatstg_xpat,xpatstg_start,xpatstg_end) {
+    window.location.search='?MIval=aa-xpatupdate.apg';
+    }
+
+    function updateComments(xpat_zdb_id) {
+    window.location.search='?MIval=aa-xpatupdate.apg';
+    }
+
+    function updateStageWindow(xpatstg_xpat,xpatstg_start,xpatstg_end) {
+    window.location.search='?MIval=aa-xpatupdate.apg';
+    }
+
+    function updateImage(xpatstg_xpat,xpatstg_start,xpatstg_end) {
+    window.location.search='?MIval=aa-xpatupdate.apg';
+    }
+
+  <?/MIVAR>
 </SCRIPT>
 
 <?MIVAR NAME=$target_table>anon_marker<?/MIVAR>
@@ -68,6 +104,23 @@ ERROR -- something bad happened -- no OID passed in!
 <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=gene') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
 
 
+<!-- If updating, only let owner update anything -->
+<?MISQL COND="$(XST,$UPDATE)" SQL="select WebExplode(object,'permission=root') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+
+<?MIVAR COND="$(XST,$UPDATE)">
+<center>
+  <form NAME=updater method=post action="/<!--|CGI_BIN_DIR_NAME|-->/>
+    <font size=5 color="#33ffCC">
+    <input type=button 
+           value=" DONE UPDATING. Back to Viewing! " 
+           onClick="document.location.search='?MIval=aa-xpatview.apg&OID=$OID'"> 
+  </font>
+  </form>
+</center>
+<?/MIVAR>
+
+
 <?MIVAR NAME=CODECOMMENTS> 
      RETRIEVE COMMON DATA TO THE EXPRESSION PATTERN
 <?/MIVAR> 
@@ -102,23 +155,48 @@ ERROR -- something bad happened -- no OID passed in!
      WHERE xpat_zdb_id = '$OID' 
        AND lbl_zdb_id = xpat_label_zdb_id
        AND mrkrlbl_label_zdb_id = lbl_zdb_id
-       AND mrkrlbl_marker_zdb_id = mrkr_zdb_id;
+       AND mrkrlbl_marker_zdb_id = mrkr_zdb_id
+     order by 4 desc;
      ">
      <?MIBLOCK COND=$(AND,$(=,$COUNT,0),$(EC,$4,GENE))>
        <?MIVAR>
-         <i><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$3($1)</a></i>
+         <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2"><i>$3($1)</i></a>
+       $(SETVAR,gene_name,$3)
+       $(SETVAR,gene_abbrev,$1)
+       $(SETVAR,gene_id,$2)
        <?/MIVAR> 
      <?/MIBLOCK>
 
      <?MIBLOCK COND=$(AND,$(=,$COUNT,0),$(NC,$4,GENE))>
        <?MIVAR>
-         <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$3($1)</a>
+         <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$3</a>
+       $(SETVAR,gene_name,$3)
+       $(SETVAR,gene_abbrev,$1)
+       $(SETVAR,gene_id,$2)
        <?/MIVAR> 
      <?/MIBLOCK>
 
-     <?MIBLOCK COND=$(=,$COUNT,1)>
+     <?MIBLOCK COND=$(AND,$(=,$COUNT,1),$(EC,$4,GENE))>
        <?MIVAR>
-         , <i><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$3($1)</i>
+         , <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2"><i>$3($1)</i></a>
+       $(SETVAR,gene_name,$3)
+       $(SETVAR,gene_abbrev,$1)
+       $(SETVAR,gene_id,$2)
+       <?/MIVAR> 
+     <?/MIBLOCK>
+
+     <?MIBLOCK COND=$(AND,$(=,$COUNT,1),$(NC,$4,GENE))>
+       <?MIVAR>
+         , <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$3</a>
+       $(SETVAR,gene_name,$3)
+       $(SETVAR,gene_abbrev,$1)
+       $(SETVAR,gene_id,$2)
+       <?/MIVAR> 
+     <?/MIBLOCK>
+
+     <?MIBLOCK COND=$(=,$COUNT,-1)>
+       <?MIVAR>
+         , <i><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$3($1)</a></i>
        <?/MIVAR> 
      <?/MIBLOCK>
 
@@ -127,9 +205,34 @@ ERROR -- something bad happened -- no OID passed in!
 
      </font></b>
 
-<?MIVAR COND="$(XST,$ASSAY_NAME)">
- <h2><b>Assay Type: &nbsp;</b>$ASSAY_NAME</h2>
-<?/MIVAR>
+<?MIBLOCK COND="$(XST,$ASSAY_NAME)">
+
+  <?MIBLOCK COND="$(XST,$UPDATE)">
+    <?MIVAR>
+    <table width=50%>
+      <tr>
+        <td>
+          <FORM NAME=updateAssay method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatupdateAssay.apg">
+             <INPUT TYPE="hidden" name="MIval" value="aa-xpatupdateAssay.apg">
+             <INPUT TYPE="hidden" name="OID" value="$OID">
+             <INPUT TYPE="hidden" name="old_value" value="$ASSAY_NAME">
+             <INPUT TYPE="hidden" name="gene_name" value="$3">
+             <INPUT TYPE="hidden" name="gene_abbrev" value="$1">
+             <INPUT TYPE="submit" value=Update>
+           </FORM>
+        </td>
+        <td>
+          <h2><b>Assay Type: &nbsp;</b>$ASSAY_NAME</h2>
+        </td>
+      </tr>
+    </table>
+    <?/MIVAR>
+  <?MIELSE>
+    <?MIVAR>
+          <h2><b>Assay Type: &nbsp;</b>$ASSAY_NAME</h2>
+    <?/MIVAR>
+  <?/MIBLOCK>  <!-- end xst update -->
+<?/MIBLOCK>  <!-- end xst assay_name -->
 
 	</center>
 
@@ -153,9 +256,16 @@ ERROR -- something bad happened -- no OID passed in!
 	<?MIVAR NAME=$XPATSTG_END_ID>$3<?/MIVAR>
 	<?MIVAR NAME=$XPATSTG_COMMENTS>$4<?/MIVAR>
 
-	<tr width="95%">
+        <tr width="95%">
 		<td>
-			<center><b>Stage(s):</b> 
+			<center>
+
+  <?MIVAR COND="$(XST,$UPDATE)">
+    <INPUT TYPE=button value=Update onClick="updateStageWindow('$XPATSTG_ID','$XPATSTG_START_ID','$XPATSTG_END_ID')"> 
+  <?/MIVAR> 
+
+        <?MIVAR><a name=$XPATSTG_START_ID>
+                          <b>Stage(s):</b> </a><?/MIVAR>
 
 <?MIVAR NAME=CODECOMMENTS> 
      GET THE START AND END STAGE, GET THE START AND END TIME.
@@ -168,12 +278,20 @@ ERROR -- something bad happened -- no OID passed in!
     WHERE '$XPATSTG_START_ID' = s1.stg_zdb_id
       AND '$XPATSTG_END_ID' = s2.stg_zdb_id
     ;">
+      $(SETVAR,start_stage_name,$1)
+      $(SETVAR,end_stage_name,$2)
       <a href="javascript:popup_stage_comments('$3')">$1</a> to
       <a href="javascript:popup_stage_comments('$4')">$2</a>
   <?/MISQL>
 
     </center><br>
-    <div align=left><b>Images:</b></div>
+    <div align=left>
+
+  <?MIVAR COND="$(XST,$UPDATE)">
+    <INPUT TYPE=button value=Update onClick="updateKeywords('$XPATSTG_ID','$XPATSTG_START_ID','$XPATSTG_END_ID')">
+  <?/MIVAR>
+ 
+      <b>Images:</b></div>
 
 
 <?MIVAR NAME=CODECOMMENTS> 
@@ -283,10 +401,15 @@ ERROR -- something bad happened -- no OID passed in!
 <?MIVAR NAME=$KEYWORDS>&nbsp;<?/MIVAR>
 <?MIVAR NAME=$TEMP_PART> <?/MIVAR>
 <?MIVAR NAME=$COUNT>0<?/MIVAR>
-      <b>Keywords:</b>
+      
+  <?MIVAR COND="$(XST,$UPDATE)">
+    <INPUT TYPE=button value=Update onClick="updateKeywords('$XPATSTG_ID','$XPATSTG_START_ID','$XPATSTG_END_ID')">
+  <?/MIVAR> 
 
-      <center>
-      <table border="2" width="90%">
+  <b>Keywords:</b>
+
+    <center>
+    <table border="2" width="90%">
 
   <?MIVAR NAME=$anatitem_list><?/MIVAR>
   <?MISQL SQL="
@@ -360,9 +483,38 @@ ERROR -- something bad happened -- no OID passed in!
       </table>
       </center>
 
-    <?MIVAR><p align=left><b>Description:&nbsp;</b><br>$XPATSTG_COMMENTS</p><?/MIVAR>
+      <p align=left>
 
-      
+    <?MIBLOCK COND="$(XST,$UPDATE)">
+    <?MIVAR>
+    <table>
+      <tr>
+        <td>
+          <FORM NAME=updateDescription method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatupdateDescription.apg">
+          <INPUT TYPE="hidden" name="MIval" value="aa-xpatupdateDescription.apg">
+          <INPUT TYPE="hidden" name="OID" value="$OID">
+          <INPUT TYPE="hidden" name="old_value" value="$XPATSTG_COMMENTS">
+          <INPUT TYPE="hidden" name="gene_name" value="$gene_name">
+          <INPUT TYPE="hidden" name="gene_abbrev" value="$gene_abbrev">
+          <INPUT TYPE="hidden" name="start_stage_id" value="$XPATSTG_START_ID">
+          <INPUT TYPE="hidden" name="start_stage_name" value="$start_stage_name">
+          <INPUT TYPE="hidden" name="end_stage_id" value="$XPATSTG_END_ID">
+          <INPUT TYPE="hidden" name="end_stage_name" value="$end_stage_name">
+          <INPUT TYPE="submit" value=Update>
+          </FORM>
+        </td>
+        <td>
+          <b>Description:&nbsp;</b><br> $XPATSTG_COMMENTS
+        </td>
+      </tr>
+    </table>
+    <?/MIVAR>
+  <?MIELSE>
+    <?MIVAR>
+          <b>Description:&nbsp;</b><br>$XPATSTG_COMMENTS
+    <?/MIVAR>
+  <?/MIBLOCK>  <!-- end xst update -->
+      </p>
     </td>
   </tr>
 
@@ -406,8 +558,35 @@ ERROR -- something bad happened -- no OID passed in!
 
 <?MIVAR><font size="+1"><br><b>Contact(s):&nbsp;</b>$CONTACT<?/MIVAR></font>
 
-<?MIVAR COND="$(XST,$XPAT_COMMENTS)"><br><br><b><font size="+1">Comments:</font>&nbsp;</b><br>$XPAT_COMMENTS</font><?/MIVAR>
 
+<?MIVAR COND="$(XST,$XPAT_COMMENTS)"><br><br>
+    <?MIBLOCK COND="$(XST,$UPDATE)">
+    <?MIVAR>
+    <table>
+      <tr>
+        <td>
+          <FORM NAME=updateComments method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatupdateComments.apg">
+          <INPUT TYPE="hidden" name="MIval" value="aa-xpatupdateComments.apg">
+          <INPUT TYPE="hidden" name="OID" value="$OID">
+          <INPUT TYPE="hidden" name="old_value" value="$XPAT_COMMENTS">
+          <INPUT TYPE="hidden" name="gene_name" value="$gene_name">
+          <INPUT TYPE="hidden" name="gene_abbrev" value="$gene_abbrev">
+          <INPUT TYPE="hidden" name="gene_id" value="$gene_id">
+          <INPUT TYPE="submit" value=Update>
+          </FORM>
+        </td>
+        <td>
+          <b>Comments:&nbsp;</b><br> $XPAT_COMMENTS
+        </td>
+      </tr>
+    </table>
+    <?/MIVAR>
+  <?MIELSE>
+    <?MIVAR>
+          <b>Comments:&nbsp;</b><br>$XPAT_COMMENTS
+    <?/MIVAR>
+  <?/MIBLOCK>  <!-- end xst update -->
+<?/MIVAR>
 
 <?MIVAR COND="$(XST,$XPAT_RECEIVE_DATE)"><br><font size="+1"><b>Submission Date:</b> &nbsp;$XPAT_RECEIVE_DATE</font><?/MIVAR>
 
@@ -494,12 +673,12 @@ ERROR -- something bad happened -- no OID passed in!
 <p align=left><font size="+1"><b>Comments:</b><br>&nbsp;$3</p>
 <?/MISQL>
 
-
+<form>
 
 <!-- Throw up the publication info, using the standard display format -->
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-showpubs.apg';">$1<?/MISQL>
 
-
+</form>
 <?/MIBLOCK> <!-- ends cond oid exists -->
 
 </HTML>

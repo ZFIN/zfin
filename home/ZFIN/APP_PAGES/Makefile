@@ -21,8 +21,8 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES
 
 SUBDIRS = \
 	ZFINadmn \
-	accession \
 	company_files \
+	accession \
 	fish_files \
 	gene_files \
 	groupware \

@@ -19,6 +19,9 @@ window.event.keyCode;
 if (k == 13) { eval('document.critform.submit()'); }
 }
 
+document.onkeydown = keyDown;
+if (navigator.appName == "Netscape")
+document.captureEvents(Event.KEYDOWN|Event.KEYUP|Event.KEYPRESS);
 </SCRIPT>
 
 
@@ -30,9 +33,6 @@ if (k == 13) { eval('document.critform.submit()'); }
 <form name=critform method=post TARGET="pbrowser" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 
 <SCRIPT>
-document.onkeydown = keyDown;
-if (navigator.appName == "Netscape")
-document.captureEvents(Event.KEYDOWN|Event.KEYUP|Event.KEYPRESS);
 </SCRIPT>
 
 <center>

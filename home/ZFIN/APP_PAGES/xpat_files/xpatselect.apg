@@ -1,0 +1,304 @@
+<!-- Modified to support I.E.  Naviagtor tile buttons must know all user input from the query screen.  These values are posted to the lister form.  The lister form creates the tile bar button with appropriate variables. Startframes.apg will pass this variables on to the select form.  -->
+
+
+<HTML>
+
+
+<SCRIPT>
+
+   document.selected_structures = new Array();
+
+function popup_anatomy_selector() {
+  if ((document.anat_keywords == null) || (document.anat_keywords.closed == true)) {
+    document.anat_keywords = window.open("/cgi-bin/xpat_select_parts.cgi?mode=parts","anat_keywords","toolbar=no,scrollbars=yes,resizable=yes,height=500,width=600");
+  } else {
+    document.anat_keywords.focus();
+ } 
+}
+
+
+
+function add_part(part) {
+        var found = 'false';
+	//if the instruction bit is still there, nuke it
+	if (document.critform.structure_list.options[1] != null) 
+	   if (document.critform.structure_list.options[1].value == 'deleteme')
+	     document.critform.structure_list.options[1] = null;
+        i = document.critform.structure_list.options.length - 1;
+
+	if ( selected(part) == 'true') { found = 'true'; }
+
+	if (found == 'false') {
+		document.critform.structure_list.options[document.critform.structure_list.options.length] = new Option(part,part);
+		document.selected_structures[part] = 'true';
+	}
+}
+
+function selected(part) {
+	return document.selected_structures[part];
+}
+
+function drop_part(part) {
+	i=0;
+	while (i < document.critform.structure_list.options.length) {
+  	   	if (document.critform.structure_list.options[i].value == part) {
+       	      		document.critform.structure_list.options[i] = null;       
+    		} else { i++; } 
+	}
+	document.selected_structures[part] = 'false';
+		
+	if (document.critform.structure_list.options[0] == null) {
+		document.critform.structure_list.options[0] = new Option('To select a structure click the Add Structures button','deleteme');
+	}
+}
+
+function verify(part) {
+	var result = -1;
+	for (i = 0 ; i < document.useful_structures.length ; i++) {
+		if (part == document.useful_structures[i]) {
+			result = 1;
+			break;
+		}
+	}
+	for (i = 0 ; i < document.useless_structures.length ; i ++) {
+	 	if (part == document.useless_structures[i]) {
+			result = 0;
+			break;
+		}
+	}
+	return result;
+}
+
+function call_reset() {
+
+document.critform.gene_name.value = "";
+document.critform.user_entered.value = "";
+document.critform.stage_start.selectedIndex = 0;
+document.critform.stage_end.selectedIndex = document.critform.stage_end.options.length - 1;
+document.critform.gene_lg.selectedIndex = 0;
+document.critform.structure_list.options.length = 0;
+document.critform.structure_list.options[0] = new Option('----------------------------------------------','----------------------------------------------');
+document.critform.structure_list.options[1] = new Option('To select a structure click the Add Structures button','deleteme');
+
+}
+
+count=0;
+document.useful_structures = new Array(<?MISQL SQL="select unique anatdisp_item_name, anatdisp_item_zdb_id, anatstgstat_anat_item_stg_count from anatomy_display, anatomy_stage_stats, stage where anatdisp_item_zdb_id = anatstgstat_anat_item_zdb_id and stg_zdb_id = anatstgstat_stg_zdb_id and stg_name = 'Any stage' and anatstgstat_anat_item_stg_count > 0 order by anatdisp_item_name;">
+"$1",<?/MISQL>"");
+document.useless_structures = new Array(<?MISQL SQL="select unique anatdisp_item_name, anatdisp_item_zdb_id, anatstgstat_anat_item_stg_count from anatomy_display, anatomy_stage_stats, stage where anatdisp_item_zdb_id = anatstgstat_anat_item_zdb_id and stg_zdb_id = anatstgstat_stg_zdb_id and stg_name = 'Any stage' and anatstgstat_anat_item_stg_count < 1 order by anatdisp_item_name;">
+"$1",<?/MISQL>"");
+
+for (i = 0 ; i < document.useful_structures.length ; i++) {
+	part = document.useful_structures[i];
+	document.selected_structures[part] = 'false';
+}
+
+
+</SCRIPT>
+<body bgcolor=#FFFFFF>
+
+<basefont size=2>
+
+<form name=critform method=post TARGET="content" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"  >
+
+<input type=hidden name=MIval value=aa-xpatlister_parts.apg>
+
+<?MIVAR COND="$(NXST,$stage_start)" NAME=$stage_start>NULL<?/MIVAR>
+<?MIVAR COND="$(NXST,$stage_end)" NAME=$stage_end>NULL<?/MIVAR>
+<?MIVAR COND="$(NXST,$gene_lg)" NAME=$gene_lg>0<?/MIVAR>
+
+<center><font size=4><b>Search for <font color=red>Gene</font> Expression Data </b></font></center>
+
+	<table border=0 bgcolor=FFFFFF width=100%>
+	<tr><td colspan=3 bgcolor=DDDDDD><b>Structures and Systems</b></td></tr>
+	  <tr>
+	     <td colspan=1> 
+		<a href="javascript:popup_anatomy_selector();">Select structures <br> from anatomical <br> dictionary</a>: <br><font color=red><small>(click add structures<br>to open dictionary)</small></font>
+     	     </td>
+	     <td colspan=2>
+<?MIBLOCK COND="$(AND,$(XST,$structure_list[1]))">
+                     <select multiple size=8 name="structure_list" > 
+		     <font size = -1><select multiple size=8 name="structure_list" > 
+		     <?MIBLOCK INDEX=$parti FOREACH=$structure_list >
+			<?MIVAR>
+			  <?MIVAR NAME=$parti DELIMIT="'" REPLACE="''">$parti<?/MIVAR>
+			    <SCRIPT>add_part("$parti")</SCRIPT>
+			<?/MIVAR>
+                     <?/MIBLOCK>
+                     </select>
+	          <?MIELSE>
+		    <select multiple size=8 name="structure_list" > 
+		    <font size = -1>
+		    <OPTION value = '----------------------------------------------'> ---------------------------------------------
+		    <OPTION value = 'deleteme'> To select a structure, click the Add Structures button
+    	            </select>
+                  <?/MIBLOCK>
+	     </td>
+	  </tr>
+	  <tr>
+	  <td>
+		<input type=button value="Add Structures" onClick="popup_anatomy_selector();">
+	  </td>
+	  <td>
+		    <input type=button value="Remove Selected Items" onClick="
+i=1;
+while (i < document.critform.structure_list.options.length) {
+    if (document.critform.structure_list.options[i].selected == true) {
+       document.critform.structure_list.options[i] = null;       
+    } else { i++; } 
+}
+if (!((document.anat_keywords == null) || (document.anat_keywords.closed == true))) {
+	document.anat_keywords.check_selected();
+}
+">
+<!--		</td>
+	       </tr>
+	       </table> -->
+	
+        </td>
+	</tr>
+	<tr>
+	<td><br>Manually add<br> structures from<br> anatomical dictionary:
+	</td>
+	<td colspan=2>
+		<input type="text" name="user_entered"> &nbsp;&nbsp;
+	        <input type="button" name="manual_add" value="Add Structure to List" onClick="
+	var result = verify(document.critform.user_entered.value);
+if (result == 1) {
+	add_part(document.critform.user_entered.value); 
+	document.critform.user_entered.value = '';
+} else if (result == 0) {
+	alert(document.critform.user_entered.value + ' is in the anatomical dictionary, but there are no expression assays for  this structure.');
+} else { 
+	alert(document.critform.user_entered.value + ' is not a valid structure name, check the anatomical dictionary by clicking on the `add structures` button above.');
+	}">
+	</td>
+	</tr>
+	<tr>
+	<td>
+	<br>Return expression data for: 
+	</td>
+	<td colspan=2>
+	<input type="radio" name="structure_bool" value="or" checked> <b>Any</b> selected structures <input type="radio" name="structure_bool" value="and"> <b>All</b> selected structures
+	</td>
+	</tr> 
+	<tr><td>&nbsp;</td></tr>
+	<tr><td colspan=3 bgcolor=DDDDDD><b>Stage Options</b></td></tr>
+	<tr>
+	     <td colspan=1> Between stages:
+	     </td>
+	     <td colspan=2> 
+                  <SELECT NAME="stage_start" SIZE=1>
+                    <?MISQL SQL="select stg_name, stg_hours_start, stg_hours_end, stg_zdb_id from stage where stg_name <> 'Any stage' order by stg_hours_start, stg_hours_end desc;"><OPTION $(IF,$(EC,$stage_start,$4),SELECTED) VALUE="$4"> $1 <?/MISQL>
+		  </SELECT>
+
+		 <b>&</b>
+		  <SELECT NAME="stage_end" SIZE=1>
+		    <?MISQL SQL="select stg_name, stg_hours_start, stg_hours_end, stg_zdb_id from stage where stg_name <> 'Any stage' order by stg_hours_start, stg_hours_end desc;"><OPTION VALUE="$4"$(IF,$(EC,$stage_end,$4),SELECTED) $(IF,$(EC,$1,Adult),SELECTED) > $1<?/MISQL>
+		  </SELECT>
+                  <br>
+		  <a href="http://zfin.org/zf_info/zfbook/stages/index.html">Developmental Staging Series</a>
+<!--		  <br>
+		  Assay Type: <SELECT NAME="assay" SIZE=1>
+			       <OPTION selected VALUE = "ANY"> ANY
+			       <OPTION VALUE = "RNA"> RNA in situ
+			       <OPTION VALUE = "NB"> Northern Blot
+			       <OPTION VALUE = "WB"> Western Blot
+
+			       </SELECT> -->
+		<br>
+		</td>
+	    </tr>
+	<tr><td>&nbsp;</td></tr>
+	<tr><td colspan=3 bgcolor=DDDDDD><b>Gene/EST Options</b></td></tr>
+	    <tr>
+	        <td>
+		   	Gene/EST
+		</td>
+		<td colspan=2>    <SELECT name=searchtype>
+			  	<option value=begins>Name begins with
+			      	<option SELECTED value=contains>Name contains
+			     </select>
+			     <input type=text name=gene_name size=10>
+		             <!--  assign navtile value to gene_name - can not do with a value="name" in input statement - reset will not work -->
+		             <?MIBLOCK COND="$(XST,$nav_gene_name)">
+                               <?MIVAR> 
+                                 <SCRIPT> document.critform.gene_name.value = "$nav_gene_name" 
+                                 </SCRIPT>
+                               <?/MIVAR> 
+                             <?/MIBLOCK>
+		</td>
+		</tr>
+		<tr>
+		<td>
+			     on Linkage Group: 
+		</td>
+		<td colspan=2>
+                           <?MIVAR>
+   			     <select NAME=gene_lg>
+                               <option  $(IF,$(EC,$gene_lg,0),SELECTED)  value=0>Any
+			       <option  $(IF,$(EC,$gene_lg,1),SELECTED)  value=1>1
+			       <option  $(IF,$(EC,$gene_lg,2),SELECTED)  value=2>2
+			       <option  $(IF,$(EC,$gene_lg,3),SELECTED)  value=3>3
+			       <option  $(IF,$(EC,$gene_lg,4),SELECTED)  value=4>4
+			       <option  $(IF,$(EC,$gene_lg,5),SELECTED)  value=5>5
+			       <option  $(IF,$(EC,$gene_lg,6),SELECTED)  value=6>6
+			       <option  $(IF,$(EC,$gene_lg,7),SELECTED)  value=7>7
+			       <option  $(IF,$(EC,$gene_lg,8),SELECTED)  value=8>8
+			       <option  $(IF,$(EC,$gene_lg,9),SELECTED)  value=9>9
+			       <option  $(IF,$(EC,$gene_lg,10),SELECTED)  value=10>10
+			       <option  $(IF,$(EC,$gene_lg,11),SELECTED)  value=11>11
+			       <option  $(IF,$(EC,$gene_lg,12),SELECTED)  value=12>12
+			       <option  $(IF,$(EC,$gene_lg,13),SELECTED)  value=13>13
+			       <option  $(IF,$(EC,$gene_lg,14),SELECTED)  value=14>14
+			       <option  $(IF,$(EC,$gene_lg,15),SELECTED)  value=15>15
+			       <option  $(IF,$(EC,$gene_lg,16),SELECTED)  value=16>16
+			       <option  $(IF,$(EC,$gene_lg,17),SELECTED)  value=17>17
+			       <option  $(IF,$(EC,$gene_lg,18),SELECTED)  value=18>18
+			       <option  $(IF,$(EC,$gene_lg,19),SELECTED)  value=19>19
+			       <option  $(IF,$(EC,$gene_lg,20),SELECTED)  value=20>20
+			       <option  $(IF,$(EC,$gene_lg,21),SELECTED)  value=21>21
+			       <option  $(IF,$(EC,$gene_lg,21),SELECTED)  value=22>22
+			       <option  $(IF,$(EC,$gene_lg,23),SELECTED)  value=23>23
+			       <option  $(IF,$(EC,$gene_lg,24),SELECTED)  value=24>24
+			       <option  $(IF,$(EC,$gene_lg,25),SELECTED)  value=25>25
+	        	       </SELECT>
+                             <?/MIVAR>
+
+		</td>
+	</tr>
+	<tr><td colspan=3>&nbsp;</td></tr>
+	<tr>
+	    <td colspan=3 bgcolor=DDDDDD> 
+	<center>
+				<input type=submit value=Search onclick="
+for (i=0 ; i < document.critform.structure_list.options.length ; i++) {
+    document.critform.structure_list.options[i].selected=true;
+} 
+if (!((document.anat_keywords == null) || (document.anat_keywords.closed == true)))
+{ document.anat_keywords.close();}">&nbsp;<input type=button value="Reset" onClick="call_reset();">
+		</center>
+		</td>
+	    </tr>
+	</table>
+</form>
+
+<SCRIPT LANGUAGE="JavaScript">
+function keyDown(DnEvents) { 
+  k = (navigator.appName == "Netscape") ? DnEvents.which : window.event.keyCode;
+  if (k == 13) { 
+if (verify(document.critform.user_entered.value) == 1) {
+	add_part(document.critform.user_entered.value); 
+	document.critform.user_entered.value = '';
+} else { 
+	alert(document.critform.user_entered.value + ' is not a valid structure name, check the anatomical dictionary.');
+	}
+  }
+}
+document.onkeydown = keyDown; 
+if (navigator.appName == "Netscape") document.captureEvents(Event.KEYDOWN|Event.KEYUP);
+</SCRIPT>
+
+</body>
+</HTML>
+

@@ -52,13 +52,13 @@ anatitem_overlaps_stg_window (
   if (anatStart is null) then
     raise exception -746, 0,			-- !!! ERROR EXIT
       'anatitem_overlaps: ' ||
-      'Invalid anatomy item (' || anatItemZdbId || ')';
+      'Start stage start hours is null (' || anatItemZdbId || ')';
   end if
 
   if (windowStartStart is null) then
     raise exception -746, 0,			-- !!! ERROR EXIT
       'anatitem_overlaps: ' ||
-      'Invalid start stage (' || startStageZdbId || ')';
+      'Invalid start stg (' || startStageZdbId || ')';
   end if
 
   if (windowEndEnd is null) then

@@ -11,7 +11,6 @@ Expects  login and, IFF this is present, it also needs password. If NXST login, 
 <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
 </HEAD>
 
-
 <!-- If no user login passed in, login as GUEST -->
 <?MIBLOCK COND="$(NXST,$login)">
 <?MISQL SQL="execute function conc('GUEST',get_random_cookie());"><?/MISQL>

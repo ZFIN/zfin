@@ -64,6 +64,13 @@ Variables Expected:
     window.location.search='?MIval=aa-do-imageupdate.apg&OID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted';
   }
 
+<?MIVAR>
+  <?MIVAR NAME=$window_name DELIMIT="-" REPLACE="d">$OID<?/MIVAR>
+  function popup_image(url) {
+    open(url,"$window_name","toolbar=yes,scrollbars=yes,resizable=yes");
+  }
+<?/MIVAR>
+
   function popup_url(url) {
     open(url,"Description","toolbar=yes,scrollbars=yes,resizable=yes");
   }
@@ -193,7 +200,7 @@ Variables Expected:
 		    document.write(
 			'<INPUT TYPE=button ' +
 		       	'  value="View image at high resolution"' +
-			'  onClick="popup_url(' + "'/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$imageToShow&MItypeObj=image/gif'" + ')">');
+			'  onClick="popup_image(' + "'/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$imageToShow&MItypeObj=image/gif'" + ')">');
 		  } 
 		  else {
 		    document.write('<IMG SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$imageToShow&MItypeObj=image/gif">');

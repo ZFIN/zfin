@@ -192,6 +192,8 @@ For security reasons, please <b>click "Goodbye" to LOG OUT</b> if you have finis
 <TD> <font size=-1>
 
 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-geneselect.apg&select_from=GENE&frame_size=130">SEARCH</A>
+<p>
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg">SEARCH gene expression</A><img src="/images/new1.gif">
 </TD> 
 <TD>
 <?MIVAR COND="$(EC,$AUTHORIZED,root)">

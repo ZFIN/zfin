@@ -20,7 +20,9 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/xpat_files
 
-GENERICS = xpatview.apg
+
+GENERICS = xpatview.apg xpatlister_parts.apg xpatselect.apg xpatupdateAssay.apg do-xpatupdateAssay.apg xpatupdatePubs.apg do-xpatupdatePubs.apg xpatupdateDescription.apg do-xpatupdateDescription.apg xpatupdateComments.apg do-xpatupdateComments.apg
+
 
 # Use default rules for app page directories.
 
