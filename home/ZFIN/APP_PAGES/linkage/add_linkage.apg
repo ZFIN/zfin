@@ -60,15 +60,18 @@ Expected vars:  None.
 </center>
 <p>
 
+   <?MIVAR COND="$(NXST,$link_source)" NAME=$link_source><?/MIVAR>
+   <?MIVAR COND="$(XST,$do_search)" NAME=$source_specified>false<?/MIVAR>
+   <?MIVAR COND="$(XST,$do_personsearch)" NAME=$source_specified>false<?/MIVAR>
+   <?MIVAR COND="$(XST,$do_pubsearch)" NAME=$source_specified>false<?/MIVAR>
+   
 
-<?MIVAR COND="$(NXST,$link_source)" NAME=$link_source>PUB<?/MIVAR>
-
-  <?MIBLOCK COND="$(AND,$(NXST,$pub_source),$(NXST,$person_source))">
+  <?MIBLOCK COND="$(NXST,$source_specified)">
     <font size=2><big>Specify source of linkage data:</big>
     <?MIVAR>
       <select name=link_source>
-	<option $(IF,$(EC,$link_source,PERSON),SELECTED)>PERSON
 	<option $(IF,$(EC,$link_source,PUB),SELECTED)>PUB
+	<option $(IF,$(EC,$link_source,PERSON),SELECTED)>PERSON
       </SELECT>  
     <?/MIVAR>
     <input type=submit name=do_search value="Search">
@@ -84,13 +87,14 @@ Expected vars:  None.
   <?MIVAR COND="$(NXST,$pub_source)" NAME=$pub_source><?/MIVAR>
   <?MIVAR COND="$(NXST,$person_pick)" NAME=$person_pick><?/MIVAR>
   <?MIVAR COND="$(NXST,$source)" NAME=source><?/MIVAR>
-  <?MIVAR COND="$(NXST,$comments)" NAME=$comments><?/MIVAR>
+  <?MIVAR COND="$(NXST,$usercomments)" NAME=$usercomments><?/MIVAR>
   <?MIVAR COND="$(NXST,$lg)" NAME=$lg>0<?/MIVAR>
 
 
   <?MIVAR>
     <input type=hidden name=pub_source value="$pub_source">
     <input type=hidden name=person_pick>
+    <input type=hidden name=link_source>
     <input type=hidden name=source_specified <?MIVAR COND="$(XST,$source_specified)">VALUE="$source_specified"<?/MIVAR>>
   <?/MIVAR>
 
@@ -99,12 +103,13 @@ Expected vars:  None.
 
   <?MIBLOCK COND="$(AND,$(EC,$link_source,PUB),$(XST,$do_search))">
     <TABLE>
-   <p> 
+   <p>
    <font size=2><big>Specify publication:</big>
      <SELECT name=authtype>
        <option value=firstauth>First AUTHOR begins with
        <option SELECTED value=anyauth>AUTHOR contains
     </select>:</b> <input type=text name=authors size=10 >
+   <SCRIPT>document.linkage.authors.focus();</SCRIPT>
      <br> 
     TITLE contains: <input type=text name=title size=10>
     <br>
@@ -177,9 +182,11 @@ Expected vars:  None.
     <p>
 	<font size=2><big>Specify person:</big>
 	Name contains:</b> <input type=text size=10 name=person_source  value="$person_source" > 
+        <SCRIPT>document.linkage.person_source.focus();</SCRIPT>
 	<input type=submit name=do_persearch value="Search...">
 	<br>
       <?/MIVAR>
+
     </TABLE>    
   <?/MIBLOCK>
 
@@ -249,15 +256,17 @@ Expected vars:  None.
 </form>
 
  
-<form name=linkage method="post" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" >
+<form name=linkage1 method="post" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" >
   <input type=hidden name=MIval value="aa-insert_linkage.apg">
   <input type=hidden name=calling_form value="linkage">
+ 
 
     <?MIVAR COND="$(>,$(POSITION,$pub_source,PUB),0)"> $(SETVAR,$source,$pub_source)<?/MIVAR>
     <?MIVAR COND="$(>,$(POSITION,$person_pick,PER),0)"> $(SETVAR,$source,$person_pick)<?/MIVAR>
 
     <?MIVAR>
       <input type=hidden name=source value="$source">
+
       <input type=hidden name=ZDB_ident value="$ZDB_ident">
       $(IF,$(XST,$update),"<input type=hidden name=update value="$update">")
       $(IF,$(XST,$link_id),"<input type=hidden name=link_id value="$link_id">")
@@ -269,7 +278,8 @@ Expected vars:  None.
 
     <?MIBLOCK COND="$(NXST,$update)">
     <!-- get LG  -->
-      <p>
+
+     <p>
       <?MIVAR>
 	<font size=2><big><b>LG: </b></big> 
 	<SELECT name=lg>
@@ -281,12 +291,17 @@ Expected vars:  None.
       <?/MIVAR>
       <p>
 
-      <B>Comments:</B>
+
+    <B>Comments:</B>
       <br>
       <?MIVAR>   
-	<textarea name=comments rows=12 cols=60 wrap=virtual>$comments</textarea>
+	<textarea name="usercomments" rows=12 cols=60 wrap=virtual>$usercomments</textarea>
+        <SCRIPT>document.linkage1.usercomments.focus();</SCRIPT>
       <?/MIVAR>
       </font>
+
+ 
+ 
    <?/MIBLOCK>  <!-- nxst updating -->
  
       <p>
