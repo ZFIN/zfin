@@ -56,6 +56,8 @@ function form_submit() {
 
 function call_reset() {
   i=0;
+  var found_it;
+  var pattern = /Click/;
 
 	document.BrowserForm.fname.value = "";
 	document.BrowserForm.allele.value = "";
@@ -66,14 +68,16 @@ function call_reset() {
 	document.BrowserForm.mutagen.selectedIndex = 0;
 	document.BrowserForm.anon1.selectedIndex = 0;
 	document.BrowserForm.knowngene.checked = false;
-  document.BrowserForm.WINSIZE.value = 20;
-  document.BrowserForm.START.value = "";  
-  document.BrowserForm.selected_separator.value = "and";
-	while (i < document.BrowserForm.structure_list.options.length) {
-				 document.BrowserForm.structure_list.options[i] = null;       
-			}
-	document.Browser.clear();
+        document.BrowserForm.WINSIZE.value = 20;
+        document.BrowserForm.START.value = "";  
+        document.BrowserForm.selected_separator.value = "and";
+        if ( found_it = pattern.exec(document.BrowserForm.structure_list.options[0].text) == null) {
+	  while (i < document.BrowserForm.structure_list.options.length ) {
+	    document.BrowserForm.structure_list.options[i] = null;       
+	  }
+        }
 }
+
 
 
 </SCRIPT>
