@@ -17,7 +17,7 @@ sub Figures {
   $mycolor=white;
 
   if ($_[0] eq "gene") {
-    #pub();
+#    pub();
 
   }
 
