@@ -68,9 +68,9 @@
     </form>
   <?/MIBLOCK>
 
- <!-- look if accession number links to gene -->
+ <!-- look if accession number links to gene , significance 11 and 12 signify orthologue or accession numbers -->
 
-  <?MISQL SQL="select count(*)::integer from all_map_names a  where allmapnm_name = lower('$aname') and allmapnm_zdb_id like '%GENE%';">
+  <?MISQL SQL="select count(*)::integer from all_map_names a  where allmapnm_name = lower('$aname') and allmapnm_zdb_id like '%GENE%' and allmapnm_significance in (11,12);">
     $(SETVAR,$gcount,$1)
   <?/MISQL>
   <?MIBLOCK COND="$(NC,$gcount,0)">
@@ -89,9 +89,9 @@
     </form>
   <?/MIBLOCK>
 
- <!-- look if accession number links to marker -->
+ <!-- look if accession number links to marker-->
 
-  <?MISQL SQL="select count(*)::integer from all_map_names a  where allmapnm_name = lower('$aname') and allmapnm_zdb_id not like '%GENE%';">
+  <?MISQL SQL="select count(*)::integer from all_map_names a  where allmapnm_name = lower('$aname') and allmapnm_zdb_id not like '%GENE%' and allmapnm_significance in (11,12);">
     $(SETVAR,$mcount,$1)
   <?/MISQL>
   <?MIBLOCK COND="$(NC,$mcount,0)">
