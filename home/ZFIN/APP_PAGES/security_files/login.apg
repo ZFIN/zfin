@@ -1,12 +1,15 @@
 <?MICOMMENT>
     <!-- This page is Webexploded onto the home page 
-    Put in empty Mivar so Clif's script knows it needs to load to webblade
-    <?MIVAR><?/MIVAR>
     requires chromoscripts.apg to be exploded for vet_pw()
     -->
 <?/MICOMMENT>
 
-<?MISQL SQL="select object from webPages where ID='aa-vet_input.apg';">$1<?/MISQL>
+<?MISQL SQL="
+  select WebExplode(object,'')
+    from webPages 
+    where ID='aa-vet_input.apg';">
+  $1
+<?/MISQL>
 
 <SCRIPT>
 function check_login(){
