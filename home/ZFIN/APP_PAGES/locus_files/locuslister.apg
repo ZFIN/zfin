@@ -131,13 +131,6 @@ $(SETVAR,$duplicate_allele,t)
 $(IF,$(EC,$doAction,new_locus),Found cloned gene <b>$1</b> with abbreviation <b>$2</b><br>)
 $(SETVAR,$duplicate_gene,t)
 <?/MISQL>
-
-
-
-<?MISQL SQL="select gene_name as name, abbrev as trey, allele from gene a where lower(allele) = '$(LOWER,$allele)' order by name,trey,allele;">
-Found allele <b>$3</b> for $1 ($2)<br>
-$(SETVAR,$duplicate_allele,t)
-<?/MISQL>
 </ul>
 
 
