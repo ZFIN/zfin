@@ -628,7 +628,7 @@ Variables Expected:
 		<TD><font size=-1>
 		  <?MIVAR COND="$(XST,$UPDATE)">
 		    <INPUT TYPE=button value=Add 
-		      	   onClick="doit('alleali_allele_name_alias','text','Alias')">
+		      	   onClick="doit('alt_alias','text','Alias')">
 		  <?/MIVAR> 
 		  <?MISQL SQL="
 		    select alteration.zdb_id 
@@ -640,13 +640,13 @@ Variables Expected:
 		  <?/MISQL>
 		  <b>Previous names: </b>
 		  <?MISQL SQL="
-		    select alleali_allele_name_alias 
-		      from allele_alias
-		      where alleali_alt_zdb_id = '$ALTOID';">
+		    select dalias_alias 
+		      from data_alias
+		      where dalias_data_zdb_id = '$ALTOID';">
 		    <?MIVAR NAME=$allele_alias>$1<?/MIVAR>
 		    <?MIVAR COND="$(XST,$allele_alias)" NAME=$allele_alias DELIMIT=" " REPLACE="+">$allele_alias<?/MIVAR>
 		    <?MIVAR COND="$(XST,$UPDATE)">
-		      <br> <INPUT TYPE=button value=Delete onClick="Delete_listitem_alias('alleali_allele_name_alias','$allele_alias','$OID','$ALTOID')">
+		      <br> <INPUT TYPE=button value=Delete onClick="Delete_listitem_alias('alt_alias','$allele_alias','$OID','$ALTOID')">
 	            <?/MIVAR>
 		    $(IF,$(AND,$(NXST,$UPDATE),$(>,$MI_CURRENTROW,1)),;) $1 
 		  <?/MISQL>

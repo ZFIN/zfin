@@ -360,9 +360,9 @@
 	        <?MIVAR NAME=$ALTOID>$1<?/MIVAR>
 	      <?/MISQL>
 	      <?MISQL SQL="
-		select alleali_allele_name_alias 
-		  from allele_alias 
-		  where alleali_alt_zdb_id = '$ALTOID'">
+		select dalias_alias 
+		  from data_alias 
+		  where dalias_data_zdb_id = '$ALTOID'">
 	        <?MIVAR NAME=$allele_alias>$1<?/MIVAR>
 	        $(IF,$(AND,$(=,$MI_CURRENTROW,1),$(XST,$allele_alias)), [<i>)
 	        $(IF,$(>,$MI_CURRENTROW,1),;) $allele_alias

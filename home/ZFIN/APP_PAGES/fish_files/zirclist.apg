@@ -77,7 +77,11 @@
 	    <?/MIBLOCK>
 
 	    <!-- allele_name contains all names pull aliases only -->
-	    <?MISQL SQL="select distinct alleali_allele_name_alias from allele_alias , fish_search where  fish_id = '$2' and alleali_alt_zdb_id = alt_zdb_id;">
+	    <?MISQL SQL="
+	      select distinct dalias_alias
+		from data_alias, fish_search
+		where fish_id = '$2' 
+		  and dalias_data_zdb_id = alt_zdb_id;">
 	      <?MIVAR COND="$(=,$MI_CURRENTROW,1)">&nbsp;[<?/MIVAR>
 	      <?MIVAR COND="$(>,$MI_CURRENTROW,1)">;<?/MIVAR>$1
 	    <?/MISQL>

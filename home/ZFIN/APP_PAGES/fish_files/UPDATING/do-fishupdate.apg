@@ -35,48 +35,48 @@ comments -- reasons for doing update
 
 <!-- NOW UPDATE THE  ACTUAL DATA RECORD. -->
 
-<?MISQL COND="$(AND,$(NC,$attr,dalias_alias),$(NC,$attr,alleali_allele_name_alias),$(OR,$(EC,$attr_type,text),$(EC,$attr_type,textarea)))" SQL="
+<?MISQL COND="$(AND,$(NC,$attr,dalias_alias),$(NC,$attr,alt_alias),$(OR,$(EC,$attr_type,text),$(EC,$attr_type,textarea)))" SQL="
   update fish 
     set $attr = '$new_value'
     where zdb_id = '$OID';">
 <?/MISQL>
 
-<?MIBLOCK COND="$(AND,$(EC,$attr,dalias_alias),$(EC,$attr_type,text))">
-  <?MISQL SQL="
-    execute function get_id('DALIAS');">
-  <?/MISQL>
-  <?MIVAR NAME=$dalias_zdb_id>$1<?/MIVAR>
-  <?MISQL SQL="
-    insert into zdb_active_data
-      values
-        ('$dalias_zdb_id');">
-  <?/MISQL>
-  <?MISQL SQL="
-    insert into data_alias
-        (dalias_zdb_id, dalias_data_zdb_id, dalias_alias)
-      values 
-        ('$dalias_zdb_id', '$OID', '$new_value');">
-  <?/MISQL>
-<?/MIBLOCK>
+<!-- Handle aliases -->
 
-<?MISQL COND="$(AND,$(EC,$attr,alleali_allele_name_alias),$(EC,$attr_type,text))" SQL="insert into allele_alias  (alleali_alt_zdb_id, alleali_allele_name_alias) values ('$ALTOID', '$new_value');"><?/MISQL>
+<?MIBLOCK COND="$(OR,$(EC,$attr,dalias_alias),
+		      $(EC,$attr,alt_alias))">
+  <?MIVAR NAME=$dalias_data_zdb_id>$(IF,$(EC,$attr,dalias_alias),$OID,$ALTOID)<?/MIVAR>
+  <?MIBLOCK COND="$(EC,$attr_type,text)">
+    <?MISQL SQL="
+      execute function get_id('DALIAS');">
+    <?/MISQL>
+    <?MIVAR NAME=$dalias_zdb_id>$1<?/MIVAR>
+    <?MISQL SQL="
+      insert into zdb_active_data
+	values
+	  ('$dalias_zdb_id');">
+    <?/MISQL>
+    <?MISQL SQL="
+      insert into data_alias
+	  (dalias_zdb_id, dalias_data_zdb_id, dalias_alias)
+	values 
+	  ('$dalias_zdb_id', '$dalias_data_zdb_id', '$new_value');">
+    <?/MISQL>
+  <?/MIBLOCK>
 
-<!-- Special case for deleting  fish alias -->
-<?MIBLOCK COND="$(EC,$attr_type,Delete_listitem_alias)">
-  <?MISQL COND="$(EC,$attr,dalias_alias)" SQL="
-    delete from zdb_active_data
-      where zactvd_zdb_id = 
-	    ( select dalias_zdb_id
-		from data_alias
-		where dalias_data_zdb_id = '$OID' 
-		  and dalias_alias = '$old_value' );">
-  <?/MISQL>
-<?/MIBLOCK>  <!-- ends delete listitem case -->
+  <!-- Special case for deleting fish or allele aliases -->
 
-<!-- Special case for deleting allele alias -->
-<?MIBLOCK COND="$(EC,$attr_type,Delete_listitem_alias)">
-<?MISQL COND="$(EC,$attr,alleali_allele_name_alias)" SQL="delete from allele_alias where alleali_alt_zdb_id='$ALTOID' and alleali_allele_name_alias ='$old_value';"><?/MISQL>
-<?/MIBLOCK>  <!-- ends delete listitem case -->
+  <?MIBLOCK COND="$(EC,$attr_type,Delete_listitem_alias)">
+    <?MISQL SQL="
+      delete from zdb_active_data
+	where zactvd_zdb_id = 
+	      ( select dalias_zdb_id
+		  from data_alias
+		  where dalias_data_zdb_id = '$dalias_data_zdb_id' 
+		    and dalias_alias = '$old_value' );">
+    <?/MISQL>
+  <?/MIBLOCK>  <!-- ends delete listitem case -->
+<?/MIBLOCK>  <!-- ends alias handling -->
 
 <!-- Special case for where we are deleting a marker from mapped_deletion -->
 <?MIBLOCK COND="$(EC,$attr_type,marker-delete)">
