@@ -27,7 +27,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/cron
 
-GENERICS = crontab crontab.development
+GENERICS = crontab crontab.development crontab.zfishweb crontab.root.helix
 
 
 # ---------------  Production Rules  ------------------------------------
