@@ -168,7 +168,7 @@ JAVACFLAGS =
 
 CONTEXT_DIR = /private/tomcat/conf/Catalina/$(DOMAIN_NAME)
 
-SET_CONTEXT_DESCRIPTOR = /research/zusers/clements/Zfin/Commons/bin/setContextDescriptor.pl
+SET_CONTEXT_DESCRIPTOR = /private/ZfinLinks/Commons/bin/setContextDescriptor.pl
 
 
 
