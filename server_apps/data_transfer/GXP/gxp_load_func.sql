@@ -363,7 +363,9 @@ insert into tmp_marker (t_mrkr_zdb_id, t_mrkr_name)
 let errorHint = "vector, clone";
    
 if (sbm_lab_name = "Thisse" AND sbm_release_type = "fr") then 
-	update probes_tmp set prb_pcr_amp = "Reaction denatured 4 min. followed by PCR cycling 95°C 30s, 55°C 30s, 72°C 3 min. (at least 1 min. per kb) followed by elongation at 72°C 7 min.<br>" || prb_pcr_amp;
+	update probes_tmp set prb_pcr_amp = "Reaction denatured 4 min. followed by PCR cycling 95&deg;C 30s, 55&deg;C 30s, 72&deg;C 
+3 min. (at 
+least 1 min. per kb) followed by elongation at 72&deg;C 7 min.<br>" || prb_pcr_amp;
 
 end if
 
@@ -374,7 +376,7 @@ end if
     t_cln_name		  varchar(80) not null,
     t_cln_polymerase_name varchar(80),
     t_cln_insert_size 	  integer,
-    t_cln_cloning_site    varchar(20),
+    t_cln_cloning_site    varchar(80),
     t_cln_digest 	  varchar(20),
     t_cln_probelib_zdb_id varchar(50),
     t_cln_sequence_type   varchar(20),
