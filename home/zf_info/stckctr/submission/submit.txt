@@ -1,6 +1,6 @@
 To: aprilm@uoneuro.uoregon.edu, jmatthews@uoneuro.uoregon.edu, cjones@uoneuro.uoregon.edu, ngoebel@uoneuro.uoregon.edu, monte@uoneuro.uoregon.edu, edwards@uoneuro.uoregon.edu, seger@uoneuro.uoregon.edu, ksf@cs.uoregon.edu, mason@uoneuro.uoregon.edu
 From: zirc@darkwing.uoregon.edu
-Subject: [lineName] [mutantAlleles] [transgeneName] for [required_submitterName]
+Subject: SUB: [lineName] [mutantAlleles] [transgeneName] for [required_submitterName]
 
 
 ***for PAT ************************************* 
