@@ -19,7 +19,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES
 
-SUBDIRS = SQL_docs \
+SUBDIRS = \
 	ZFINadmn \
 	accession \
 	company_files \
@@ -84,8 +84,7 @@ onetimeonly :
 
 # The postloaddb target is invoked after loading a database to clean out and
 # repopulate, among other things, the webpages table.  The postloaddb target
-# here takes care of the webpages table and the the SQL functions defined in
-# SQL_docs.
+# here takes care of the webpages table.
 
 postloaddb : clobber all
 
