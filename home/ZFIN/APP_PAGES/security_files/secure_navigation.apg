@@ -1,4 +1,5 @@
-<!-- FILE: secure_navigation
+<?MICOMMENT>
+FILE: secure_navigation
 
 This file should be webexploded at the top of every page in ZFIN. It serves 
  two purposes: First, it calls the navigation mechanism to have a tile for the
@@ -41,7 +42,7 @@ permission (optional) -- if present, should be either
 OID (optional) -- should be set to OID of the record being displayed, 
   if applicable. Only necessary if permission=owns.
 rtype (optional) -- Only necessary if permission=owns.
- -->
+<?/MICOMMENT>
 
 <?MIVAR NAME=$AUTHORIZED>false<?/MIVAR>
 <?MIVAR NAME=$ZDB_ident>UNKNOWN<?/MIVAR>
@@ -49,8 +50,10 @@ rtype (optional) -- Only necessary if permission=owns.
 <?MIVAR NAME=$DB_LOCK>f<?/MIVAR>
 
 
-<!-- If they pass in a GUEST cookie, set authorize to GUEST, and their name 
-to the guest cookie. This way logging will be to their unique cookie name  -->
+<?MICOMMENT>
+ If they pass in a GUEST cookie, set authorize to GUEST, and their name 
+to the guest cookie. This way logging will be to their unique cookie name  
+<?/MICOMMENT>
 <?MIBLOCK COND="$(AND,$(XST,$ZDB_authorize),$(EC,$(SUBSTR,$ZDB_authorize,1,5),GUEST))">
   <?MIVAR NAME=$ZDB_name>$ZDB_authorize<?/MIVAR>
   <?MIVAR NAME=$ZDB_authorize>GUEST<?/MIVAR>
@@ -58,8 +61,10 @@ to the guest cookie. This way logging will be to their unique cookie name  -->
 <?/MIBLOCK>
 
 
-<!-- If they didn't pass a cookie, just start by giving them a GUEST cookie 
-  -- and record their login as a GUEST-->
+<?MICOMMENT>
+ If they didn't pass a cookie, just start by giving them a GUEST cookie 
+  -- and record their login as a GUEST
+<?/MICOMMENT>
 <?MIBLOCK COND="$(NXST,$ZDB_authorize)">
   <?MISQL SQL="
     execute function conc('GUEST',get_random_cookie());">
@@ -74,7 +79,7 @@ to the guest cookie. This way logging will be to their unique cookie name  -->
 
 
 
-<!-- check if updates are disabled -->
+<?MICOMMENT> check if updates are disabled <?/MICOMMENT>
 <?MISQL SQL="
     select zflag_is_on
     from zdb_flag
@@ -87,10 +92,11 @@ to the guest cookie. This way logging will be to their unique cookie name  -->
 
 <?MIBLOCK COND=$(NC,$(SUBSTR,$ZDB_authorize,1,5),GUEST)>
   <?MIBLOCK COND=$(EC,$DB_LOCK,t)>
-  <!--  Updates are disabled. 
+  <?MICOMMENT>
+  Updates are disabled. 
     --  Display alert and set user level to Guest.
     --  User may be on a page which allows updates so set page to homepage.
-   -->
+  <?/MICOMMENT>
 
     <SCRIPT>
 	alert('The Database is currently locked for administrative operations and will not allow logins. Please try again later or contact <judys@cs.uoregon.edu> for further information.');
@@ -109,18 +115,19 @@ to the guest cookie. This way logging will be to their unique cookie name  -->
 	window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg")
     </SCRIPT>
 
-  <?MIELSE> <!-- allow updates -->
+  <?MIELSE> <?MICOMMENT> allow updates <?/MICOMMENT>
 
-    <!-- If authorize cookie passed in, pull out the info for it -->
+    <?MICOMMENT> If authorize cookie passed in, pull out the info for it <?/MICOMMENT>
     <?MISQL SQL="
       select zdb_id, access, name
 	from ZDB_submitters 
 	where cookie='$ZDB_authorize';">
     <?/MISQL>
 
-    <!-- If you got a single entry, provisionally set AUTHORIZED to whatever 
-      -- users ZDB_access level is.
-      -->
+    <?MICOMMENT>
+      If you got a single entry, provisionally set AUTHORIZED to whatever 
+      -- users ZDB_access level is. 
+    <?/MICOMMENT>
     <?MIBLOCK COND="$(=,$MI_ROWCOUNT,1)">
       <?MIVAR NAME=$AUTHORIZED>$2<?/MIVAR>
       <?MIVAR NAME=$ZDB_access>$2<?/MIVAR>
@@ -128,7 +135,7 @@ to the guest cookie. This way logging will be to their unique cookie name  -->
       <?MIVAR NAME=$ZDB_ident>$1<?/MIVAR>
     <?/MIBLOCK>
 
-    <!-- But now check permission level for the page, if specified  -->
+    <?MICOMMENT>But now check permission level for the page, if specified<?/MICOMMENT>
     <?MIBLOCK COND="$(AND,$(XST,$ZDB_access),$(XST,$permission))">
 
       <?MIVAR NAME=$AUTHORIZED>false<?/MIVAR>
@@ -138,7 +145,7 @@ to the guest cookie. This way logging will be to their unique cookie name  -->
 
       <?MIVAR COND="$(AND,$(EC,$permission,submit),$(EC,$ZDB_access,preview))" NAME=$AUTHORIZED>$ZDB_access<?/MIVAR>
 
-    <?/MIBLOCK>  <!--ends checks permissions -->
+    <?/MIBLOCK>  <?MICOMMENT>ends checks permissions <?/MICOMMENT>
 
     <?MICOMMENT>
       -- Last possibility to get permission is if you own the record. Get 
@@ -170,11 +177,11 @@ to the guest cookie. This way logging will be to their unique cookie name  -->
       <?MIVAR COND="$(OR,$(EC,$rtype,person),$(EC,$rtype,lab))" NAME=$AUTHORIZED>owner<?/MIVAR>
     <?/MIBLOCK>
 
-    <!-- Last chance to AUTHORIZE is if you're root -->
+    <?MICOMMENT> Last chance to AUTHORIZE is if you're root <?/MICOMMENT>
     <?MIVAR COND="$(AND,$(XST,$ZDB_access),$(EC,$ZDB_access,root))" NAME=$AUTHORIZED>root<?/MIVAR>
 
 
-    <!-- If authorization fails, let them know. -->
+    <?MICOMMENT> If authorization fails, let them know. <?/MICOMMENT>
     <?MIBLOCK COND="$(EC,$AUTHORIZED,false)">
 
       <?MISQL SQL="
@@ -184,8 +191,8 @@ to the guest cookie. This way logging will be to their unique cookie name  -->
 	$1
       <?/MISQL>
 
-    <?/MIBLOCK>  <!-- ends if no authorize cookie -->
+    <?/MIBLOCK>  <?MICOMMENT> ends if no authorize cookie <?/MICOMMENT>
 
-  <?/MIBLOCK> <!-- END check if updates are disabled -->
+  <?/MIBLOCK> <?MICOMMENT> END check if updates are disabled <?/MICOMMENT>
 
-<?/MIBLOCK> <!-- END NC GUEST  -->
+<?/MIBLOCK> <?MICOMMENT> END NC GUEST  <?/MICOMMENT>
