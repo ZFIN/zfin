@@ -1,5 +1,4 @@
 #!/private/bin/perl
-
 #
 #  goparser.pl
 #
