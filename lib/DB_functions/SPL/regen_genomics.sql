@@ -159,7 +159,7 @@ create dba function "informix".regen_genomics() returning integer
     create table paneled_m_new 
       (
 	zdb_id		varchar(50), 
-	mname		varchar(80),
+	mname		varchar(120),
 	abbrev			varchar(20)
 	  not null,
 	panldmrkr_abbrev_order	varchar(60)
@@ -374,8 +374,8 @@ create dba function "informix".regen_genomics() returning integer
 
     create table all_m_names_new 
       (
-	-- ortho_name is 120 characters long
-	-- mrkr_name, locus_name, db_link.acc_num, and all the abbrev 
+	-- ortho_name and mrkr_name are 120 characters long
+	-- locus_name, db_link.acc_num, and all the abbrev 
 	-- columns are all 80 characters or less
 	allmapnm_name		varchar (120) 
 	  check (allmapnm_name = lower(allmapnm_name)),
@@ -660,7 +660,7 @@ create dba function "informix".regen_genomics() returning integer
     create table all_m_new 
       (
 	zdb_id		varchar(50), 
-	mname		varchar (80),
+	mname		varchar(120),
 	mtype		varchar(10), 
 	abbrev		varchar(20),
 	allmrkr_abbrev_order	varchar(60)
@@ -726,7 +726,7 @@ create dba function "informix".regen_genomics() returning integer
       (
 	alnkgmem_linkage_zdb_id varchar(50),
 	alnkgmem_member_zdb_id  varchar(50),
-	alnkgmem_member_name    varchar(80),
+	alnkgmem_member_name    varchar(120),
 	alnkgmem_member_abbrev  varchar(20),
 	alnkgmem_member_abbrev_order  varchar(60),
 	alnkgmem_marker_type    varchar(10),
@@ -815,7 +815,7 @@ create dba function "informix".regen_genomics() returning integer
     create table all_m_m_new 
       (
 	zdb_id		varchar(50), 
-	mname		varchar(80),
+	mname		varchar(120),
 	abbrev		varchar(20),
 	allmapmrkr_abbrev_order	 varchar(60)
 	  not null,
@@ -868,7 +868,7 @@ create dba function "informix".regen_genomics() returning integer
 
     create table all_g_new
       (
-	gene_name	varchar (80), 
+	gene_name	varchar (120), 
 	lg_location	numeric(8,2), 
 	metric		varchar(5),
 	zdb_id		varchar(50), 
@@ -962,7 +962,7 @@ create dba function "informix".regen_genomics() returning integer
     create table mapped_g_new 
       (
 	zdb_id		varchar(50) not null,
-	gene_name	varchar(80),
+	gene_name	varchar(120),
 	abbrev		varchar(15),
 	mapgene_abbrev_order varchar(60)
 	  not null,
