@@ -87,9 +87,9 @@ annotations -- huge string of urlencoded changed annotations for the image.
   <?/MIBLOCK> <!-- ends if its an image -->
 
   <?MISQL COND="$(OR,$(EC,$attr_type,text),$(EC,$attr_type,textarea))" SQL="
-    update fish_image
+    update $table
       set $attr = '$new_value'
-      where fimg_zdb_id='$OID';">
+      where $zdb_id='$OID';">
   <?/MISQL>
 
   <?MIBLOCK COND="$(NC,$annotations,NULL)">
