@@ -33,7 +33,7 @@
 --	zfin id, symbol, accession number
 --	
 -- Alleles
---	zfin id, allele, locus, corresponding zfin gene id, gene symbol
+--	zfin id, allele, locus abbrev,locus name, locus id corresponding zfin gene id, gene symbol
 
 -- create genetic markers file
 
@@ -177,13 +177,14 @@ create table alleles_exp (
   fish_id varchar(50),
   allele varchar(20),
   abbrev varchar(20),
+  locus_name varchar(80),
   locus_id varchar(50),
   gene_id varchar(50),
   gene_abbrev varchar (20) 
 );
 
 insert into alleles_exp 
-  select f.zdb_id, allele, l.abbrev, l.zdb_id, NULL::varchar(50),NULL::varchar(20)
+  select f.zdb_id, allele, l.abbrev, l.locus_name, l.zdb_id, NULL::varchar(50),NULL::varchar(20)
     from fish f, locus l where line_type = 'mutant'
 	and f.locus = l.zdb_id;
 
@@ -201,7 +202,7 @@ update alleles_exp
 		    and locus.cloned_gene = gene.zdb_id );
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/alleles.txt'
- DELIMITER "	" select fish_id, allele, abbrev, locus_id, gene_abbrev, gene_id from alleles_exp order by 1;
+ DELIMITER "	" select fish_id, allele, abbrev, locus_name, locus_id, gene_abbrev, gene_id from alleles_exp order by 1;
 
 
 -- generate a file with zdb history data
