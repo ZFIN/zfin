@@ -4,12 +4,13 @@
 -- in the case that is either a "zgc:" or "im:" gene, three GO unknown terms would
 -- be attached to that gene through this procedure.
 ---------------------------------------------------------------------------------- 
-create procedure p_populate_go_unknowns (mrkrZdbId	varchar(50), 
-									     mrkrName  varchar(50),
-										 mrkrType  varchar(20))
+create procedure p_populate_go_unknowns (mrkrZdbId  varchar(50), 
+				          mrkrName  varchar(50),
+				 	  mrkrType  varchar(20))
 
 
-	if (mrkrType = "GENE" AND (mrkrName like "zgc:%" OR mrkrName like "im:%")) then 
+	if (mrkrType = "GENE" AND 
+	    (mrkrName like "zgc:%" OR mrkrName like "im:%")) then 
  
 		execute procedure p_insert_marker_go_ev(mrkrZdbId,"ZDB-GOTERM-031121-4","ZDB-PUB-031118-1","ND");
 
