@@ -458,7 +458,6 @@ create dba function "informix".regen_genomics() returning integer
 	abbrev		varchar(20),
 	allgene_abbrev_order varchar(60)
 	  not null,
-	private		boolean,
 	owner		varchar(50),
 	entry_date	datetime year to fraction, 
 	locus_zdb_id	varchar (50),
@@ -475,9 +474,9 @@ create dba function "informix".regen_genomics() returning integer
 
     insert into all_g_new 
 	(gene_name, lg_location, metric, zdb_id, OR_lg, panel_id, panel_abbrev,
-	 abbrev, allgene_abbrev_order, private, owner, entry_date, locus_zdb_id, locus_name ) 
+	 abbrev, allgene_abbrev_order, owner, entry_date, locus_zdb_id, locus_name ) 
       select mrkr_name, lg_location, mm.metric, mrkr_zdb_id, OR_lg, pn.zdb_id,
-	     pn.abbrev, mrkr_abbrev, mrkr_abbrev_order, mm.private, mm.owner, mm.entry_date,
+	     pn.abbrev, mrkr_abbrev, mrkr_abbrev_order, mm.owner, mm.entry_date,
 	     locus.zdb_id, locus.locus_name
 	from marker, mapped_marker mm, panels_new pn, OUTER locus
 	where mm.marker_id = mrkr_zdb_id 
@@ -488,7 +487,7 @@ create dba function "informix".regen_genomics() returning integer
     -- mapped by independent linkages
     insert into all_g_new
 	(gene_name,lg_location, metric, zdb_id, or_lg, panel_id, panel_abbrev,
-	 abbrev, allgene_abbrev_order, private, owner, entry_date, locus_zdb_id, locus_name)
+	 abbrev, allgene_abbrev_order, owner, entry_date, locus_zdb_id, locus_name)
       select x0.mrkr_name,
 	     NULL::numeric(8,2),
 	     'NULL'::varchar(5),
@@ -498,7 +497,6 @@ create dba function "informix".regen_genomics() returning integer
 	     'NULL'::varchar(10),
 	     x0.mrkr_abbrev,
 	     x0.mrkr_abbrev_order,
-	     x11.lnkg_private,
 	     'NULL'::varchar(50),
 	     NULL::datetime year to fraction,
 	     x2.zdb_id,
@@ -517,7 +515,7 @@ create dba function "informix".regen_genomics() returning integer
 
     insert into all_g_new
       select mrkr_name, 0, '', mrkr_zdb_id,0, 'na'::varchar(50),
-	     'na'::varchar(10), mrkr_abbrev, mrkr_abbrev_order, 'f'::boolean, 'na'::varchar(50),
+	     'na'::varchar(10), mrkr_abbrev, mrkr_abbrev_order, 'na'::varchar(50),
 	     NULL::datetime year to fraction, locus.zdb_id, locus.locus_name
 	from marker, OUTER locus
 	where not exists 
@@ -648,10 +646,10 @@ create dba function "informix".regen_genomics() returning integer
 
       create view mapped_anons
 	  (zdb_id, marker_name, abbrev, OR_lg, lg_location,
-	   panel_abbrev, panel_id, private, owner)
+	   panel_abbrev, panel_id, owner)
 	as 
 	select mrkr_zdb_id, mrkr_name, mrkr_abbrev, OR_lg, lg_location,
-	       p.abbrev, p.zdb_id, mm.private, mm.owner
+	       p.abbrev, p.zdb_id, mm.owner
 	  from marker, mapped_marker mm, panels p
 	  where mm.marker_id = mrkr_zdb_id 
 	    and mm.refcross_id = p.zdb_id
