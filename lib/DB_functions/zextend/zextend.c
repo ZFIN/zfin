@@ -177,8 +177,8 @@ static mi_lvarchar *upper(mi_lvarchar *lv) {
 */
 mi_lvarchar *sysexec(mi_lvarchar *cmd, mi_lvarchar *args) {
 	FILE		*outf;
-	char		cmdbuf[MAXLEN], *cmds, *p;
-	int		total = 0;
+	char		cmdbuf[MAXLEN], *cmds, *p, *a, *c, *ac; /* do not see where *cmds & *a are ever used */
+	int		    i,total = 0,valid = 0;
 	buflst		head, *buf= &head;
 	MI_CONNECTION	*conn;
 	MI_SAVE_SET	*ss;
@@ -186,34 +186,68 @@ mi_lvarchar *sysexec(mi_lvarchar *cmd, mi_lvarchar *args) {
 	MI_DATUM	colval;
 	mi_integer	collen, error;
 	mi_lvarchar	*lv;
-
+	
+	/*to only accept a finite number of known commands */
+	static int   ALLOW_COUNT = 2;	        
+	char* allowed_cmd[] = 
+		{"get_image_stats","encryptpass"}; /* keep longest command first */
+		/* ",make_thumbnail","ChromoUpdate","rm" */ 
+	
+	/* only allow "normal" characters as arguments and space,slash*/
+	static char allowed_char[] = {"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 !-._/#"};
+	
 	conn = mi_open(NULL, NULL, NULL);	/* Open connection */
 	if (conn == NULL) EXCEPTION("ERROR: conn is NULL\n");
 	
+	
 if (1) {
-	if (sizeof(SYSMSG) + mi_get_varlen(cmd) >= MAXLEN)	/* Check size */
+	if ( mi_get_varlen(cmd) > strlen(allowed_cmd[0]))	/* Check size */
 		EXCEPTION("Command ID is too long");
+
+	valid = 0;
+	for (i=0; i < ALLOW_COUNT; i++){
+		if(!strncmp(mi_lvarchar_to_string(cmd), allowed_cmd[i], strlen(allowed_cmd[i]))){
+			valid = 1; break;
+		}
+	}
+	if (!valid) EXCEPTION("Command is not known");
+
 	sprintf (cmdbuf, SYSMSG, mi_lvarchar_to_string(cmd));	/* Build it */
 	if (send_sql(conn, &ss, cmdbuf) != 1)			/* Send it */
 		EXCEPTION("Invalid sysexec command");
+    
 	row = mi_save_set_get_first(ss, &error);		/* Get it */
 	if (!row) EXCEPTION("Can't get row from save set!");
 	mi_value(row, 0, &colval, &collen);
 
-
 	/*	NOTE: There are some SECURITY CONCERNS here. For starters we
-		should remove all special chars from the args list. Also we might
+		should remove all special chars from the args list. 
+		Also we might
 		want to check the ownership and permissions of the command before
 		we execute it.
+		And make sure cmd is one of the known commands 
+		
 	*/
-
-	/* Build command and force stderr to stdout, and exit value of zero */
+	
+	
+	/* sanity check on the argument */
 	if (strlen(colval) + mi_get_varlen(args) + 15 >= MAXLEN)
 		EXCEPTION("Command and args are too long");
+	
+	for (c = mi_lvarchar_to_string(args); *c != '\0' ; c++){
+		for (ac = allowed_char; *ac != '\0' ; ac++){
+			if (*c == *ac) break;
+		}
+		if((*c != '\0') && (*ac == '\0')) EXCEPTION("Invalid character in argument");	
+	}
+
+
+	/* Build command and force stderr to stdout, and exit value of zero */
 	sprintf(cmdbuf, "%s %s 2>&1; exit 0", colval, mi_lvarchar_to_string(args));
 } else {	/* TEST */
 	sprintf(cmdbuf, "%s %s 2>&1; exit 0", mi_lvarchar_to_string(cmd), mi_lvarchar_to_string(args));
 }
+
 	/* Exec command */
  	if (!(outf = popen(cmdbuf, "r")))
  		EXCEPTION("Can't execute command");
@@ -225,8 +259,7 @@ if (1) {
 	}
 	
 	/* Get lvarchar to hold it */
-	if (	!(lv = mi_new_var(total)) ||
-		!(p = mi_get_vardata(lv)) ) NO_MEMORY(sysexec);
+	if (!(lv = mi_new_var(total)) || !(p = mi_get_vardata(lv)) ) NO_MEMORY(sysexec);
 		
 	/* Copy data */
 	for (buf = head.next; buf; buf = buf->next) {
