@@ -24,13 +24,15 @@ dataOID -- the zdbid of the attributed item
 <!-- If one of the values was an empty string, it won't get successfully
   -- passed to this page. 
   -->
+<?MIVAR COND="$(NXST,$attr)" NAME=$attr><?/MIVAR>
+<?MIVAR COND="$(NXST,$attr_type)" NAME=$attr_type><?/MIVAR>
 <?MIVAR COND="$(NXST,$old_value)" NAME=$old_value><?/MIVAR>
 <?MIVAR COND="$(NXST,$new_value)" NAME=$new_value><?/MIVAR>
 
 <?MIVAR COND="$(NXST,$xtra_param)" NAME=$xtra_param>alias<?/MIVAR>
 <?MIVAR COND="$(NXST,$dataOID)" NAME=$dataOID><?/MIVAR>
 <?MIVAR COND="$(NXST,$info)" NAME=$info><?/MIVAR>
-
+<?MIVAR COND="$(NXST,$anchor)" NAME=$anchor><?/MIVAR>
 
 <!-- First check security. Main purpose is just to get submitter id and 
 name -->
@@ -196,26 +198,6 @@ NAME=acc_num>$(SUBSTR,$old_value,$(+,$delimit,1),$acc_len)<?/MIVAR>
     <?/MISQL>
 
   <?/MIBLOCK>  <!-- ends special listitem case -->
-
-  <!-- Special case for adding new orthos -->
-  <?MIBLOCK COND="$(EC,$attr_type,special-newortho)">
-    <?MISQL SQL="
-      execute function get_id('ORTHO');">
-    <?/MISQL>
-    <?MIVAR NAME=$ortho_id>$1<?/MIVAR>
-    <?MISQL SQL="
-      insert into zdb_active_data (zactvd_zdb_id)
-	values ('$ortho_id');">
-    <?/MISQL>
-    <?MISQL SQL="
-      insert into orthologue 
-          (zdb_id, c_gene_id, ortho_name, ortho_abbrev, organism, 
-entry_time)
-        values 
-('$ortho_id','$OID','$new_value','$info','$old_value',current);">
-    <?/MISQL>
-  <?/MIBLOCK>  <!-- ends special add_ortho case -->
-
 
   <!-- Special case for adding new sequence db link -->
   <?MIBLOCK COND="$(EC,$attr_type,special-newseqnum)">
@@ -483,13 +465,247 @@ colattrib_source_zdb_id)
   <?/MIBLOCK>
    	
 
+    	
+
+  <!-- Special case for updating orthologues. This is invoked by form submission from orthoedit -->
+  <?MIBLOCK COND="$(XST,$UPDATEORTHO)">
+
+    <!------------ add new orthologue ---------------------------->
+    <?MIBLOCK COND="$(XST,$new_add)">
+      <?MIBLOCK COND="$(AND,$(XST,$oname),$(XST,$oabbrev))">
+        <?MISQL SQL="
+	  select zdb_id
+            from orthologue
+           where c_gene_id = '$OID'
+             and organism = '$species_newadd' ;">
+          <?MIVAR NAME=ortho_id>$1<?/MIVAR>      
+        <?/MISQL>
+        <?MISQL SQL="
+          execute function get_id('ORTHO');">
+        <?/MISQL>
+        <?MIVAR NAME=$ortho_id>$1<?/MIVAR>
+        <?MISQL SQL="
+          insert into zdb_active_data (zactvd_zdb_id)
+	    values ('$ortho_id');">
+        <?/MISQL>
+        <?MISQL SQL="
+          insert into orthologue 
+           (zdb_id, c_gene_id,ortho_name, ortho_abbrev, organism, entry_time)
+          values 
+           ('$ortho_id','$OID','$oname','$oabbrev','$species_newadd',current);">
+        <?/MISQL>
+        <?MIVAR>$(UNSETVAR,$new_add)<?/MIVAR>
+      <?MIELSE>
+        <?MIVAR>
+  	  <SCRIPT>
+	    window.alert('Could not add. Both Name and Symbol must be non-empty.');
+	  </SCRIPT>
+        <?/MIVAR>
+      <?/MIBLOCK> 
+    <?/MIBLOCK>
+    <!---------- end add new orthologue ---------------------------->
+
+
+
+    <!----------- do the update for selected species --------------> 
+    <?MIBLOCK COND="$(XST,$commit_update)" >
+
+      <?MISQL SQL="
+	select zdb_id
+          from orthologue
+         where c_gene_id = '$OID'
+           and organism = '$species_update' ;">
+       <?MIVAR NAME=ortho_id>$1<?/MIVAR>   
+      <?/MISQL>
+
+      <?MIBLOCK COND="$(AND,$(XST,$newabbrev),$(XST,$newname))">
+        <?MIVAR NAME=$newname>$(TRIM,$newname)<?/MIVAR>
+        <?MIVAR NAME=$newabbrev>$(TRIM,$newabbrev)<?/MIVAR>
+        <?MISQL COND="$(AND,$(NC,$newabbrev,),$(NC,$newname,))" SQL="
+	  update orthologue 
+	    set ortho_name='$newname', ortho_abbrev='$newabbrev'
+	    where zdb_id='$ortho_id';">
+        <?/MISQL>
+      <?MIELSE> 
+        <?MIVAR>
+	  <SCRIPT>
+	    window.alert('Both name and abbrev must be non-empty. Any other changes are committing.');
+	  </SCRIPT>
+        <?/MIVAR>
+      <?/MIBLOCK>
+
+
+      <?MIBLOCK COND="$(AND,$(XST,$newdb),$(XST,$newacc))">
+        
+        <?MIVAR NAME=$newacc>$(TRIM,$newacc)<?/MIVAR>
+        <?MISQL SQL="
+		select * 
+ 		  from db_link
+		 where linked_recid = '$ortho_id'
+		   and db_name = '$newdb'
+		   and acc_num = '$newacc'; ">
+	<?/MISQL>
+	<?MIBLOCK COND="$(<,$MI_ROWCOUNT,1)">
+          <?MIBLOCK COND="$(NC,$newacc,)">
+	    <?MISQL SQL="
+	      execute function get_id('DBLINK');">
+	    <?/MISQL>
+	    <?MIVAR NAME=$dblink_zdb_id>$1<?/MIVAR>
+	    <?MISQL SQL="
+	      insert into zdb_active_data
+	        ( zactvd_zdb_id )
+	        values
+	        ( '$dblink_zdb_id' );">
+	    <?/MISQL>
+	    <?MISQL SQL="
+	      insert into db_link 
+	         ( linked_recid, DB_name, acc_num, dblink_zdb_id )
+	       values
+	        ( '$ortho_id', '$newdb', '$newacc', '$dblink_zdb_id' );">
+            <?/MISQL>
+	
+          <?/MIBLOCK>
+        <?MIELSE>
+	  <SCRIPT>
+	    window.alert('The db link already exist. Please check, and resubmit.\n Any other changes are committing.');
+	  </SCRIPT>
+        <?/MIBLOCK>
+      <?/MIBLOCK>
+
+
+      <?MIBLOCK COND="$(AND,$(XST,$newevi),$(XST,$newpub))">	
+	<?MIBLOCK COND="$(NC,$newpub,)">
+	  <?MIVAR NAME=$newpub>$(UPPER,$(TRIM,$newpub))<?/MIVAR>
+          <?MISQL SQL="
+               select * 
+                 from publication
+                where zdb_id = '$newpub';">
+             
+          <?/MISQL>
+          <?MIBLOCK COND="$(<,$MI_ROWCOUNT,1)">
+            <SCRIPT>
+	      window.alert('The PUB ID does not exist. Please check, and resubmit.\n Any other changes are committing.');
+	    </SCRIPT>
+          <?MIELSE>
+	    <?MISQL SQL="
+               select * 
+                 from orthologue_evidence
+                where oev_ortho_zdb_id = '$ortho_id'
+		  and oev_evidence_code = '$newevi'
+		  and oev_pub_zdb_id = '$newpub' ;">
+  	    <?/MISQL>
+            <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+  	      <SCRIPT>
+	        window.alert('The evidence with the pub reference already exist. Please check, and resubmit.\n Any other changes are committing.');
+	      </SCRIPT>
+            <?MIELSE>
+              <?MISQL SQL="
+	        insert into orthologue_evidence
+	          values('$ortho_id', '$newevi','$newpub');">
+	      <?/MISQL>
+	      <?MISQL SQL="select WebExplode(object,'geneId=$OID') from webPages where ID='aa-do-oevdispupdate.apg';">$1<?/MISQL>
+            <?/MIBLOCK> <!-- end of evi & pub dup check --->
+          <?/MIBLOCK> <!-- end of pub exist check ----->  
+	<?MIELSE>
+	  <SCRIPT>
+	    window.alert('Publication is not provided. Please check, and resubmit.\n Any other changes are committing.');
+	  </SCRIPT>
+        <?/MIBLOCK><!-- end of pub id provided check-->
+      <?/MIBLOCK>	
+
+
+      <?MIBLOCK COND="$(XST,$delacc)">
+        <!-- deleting a link -->
+        <?MISQL SQL="
+   	  delete from zdb_active_data
+	    where zactvd_zdb_id = 
+		( select dblink_zdb_id 
+		    from db_link
+		    where linked_recid = '$ortho_id'
+		      and acc_num = '$delacc' ) ;">
+        <?/MISQL>     
+      <?/MIBLOCK>
+
+      <?MIBLOCK COND="$(AND,$(XST,$delevi),$(XST,$delpub))">
+	<?MIBLOCK COND="$(NC,$delpub,)">
+	  <?MIVAR NAME=$delpub>$(TRIM,$delpub)<?/MIVAR>
+	  <?MISQL SQL="
+               select * 
+                 from orthologue_evidence
+                where oev_ortho_zdb_id = '$ortho_id'
+		  and oev_evidence_code = '$delevi'
+		  and oev_pub_zdb_id = '$delpub' ;">
+  	  <?/MISQL>
+          <?MIBLOCK COND="$(<,$MI_ROWCOUNT,1)">
+  	      <SCRIPT>
+	        window.alert('The evidence with the pub reference donot exist. Please check, and resubmit.\n Any other changes are committing.');
+	      </SCRIPT>
+          <?MIELSE>
+	    <?MISQL SQL="
+	      delete from orthologue_evidence
+	          where oev_ortho_zdb_id = '$ortho_id'
+		    and	oev_evidence_code = '$delevi'
+		    and oev_pub_zdb_id = '$delpub';">
+	    <?/MISQL>  
+            <?MISQL SQL="select WebExplode(object,'geneId=$OID') from webPages where ID='aa-do-oevdispupdate.apg';">$1<?/MISQL>
+           <?/MIBLOCK><!-- end evi&pub exist check -->
+	<?MIELSE>
+	  <SCRIPT>
+	    window.alert('Publication is not provided. Please check, and resubmit.\n Any other changes are committing.');
+	  </SCRIPT>
+        <?/MIBLOCK>
+      <?/MIBLOCK>
+
+      <?MIVAR>$(UNSETVAR,$commit_update)<?/MIVAR>
+    <?/MIBLOCK> 
+    <!----------- end of update ---------------------------------->
+	
+
+
+    <!----------- delete entire orthologue -------------------------->
+    <?MIBLOCK COND="$(XST,$big_delete)">
+      <!-- Delete orthologue. First delete orthologue's db_link records
+	-- from zdb_active_source and zdb_active_data to prevent them
+	-- from being orphaned.  
+	-->
+  
+      <?MISQL SQL="
+	select zdb_id
+          from orthologue
+         where c_gene_id = '$OID'
+           and organism = '$species_bigdelete' ;">
+        <?MIVAR NAME=ortho_id>$1<?/MIVAR>      
+      <?/MISQL>
+
+      <?MISQL SQL="
+	delete from zdb_active_data
+	  where zactvd_zdb_id='$ortho_id';">
+      <?/MISQL>
+      <?MISQL SQL="select WebExplode(object,'geneId=$OID') from webPages where ID='aa-do-oevdispupdate.apg';">$1<?/MISQL>
+      
+      <?MIVAR>$(UNSETVAR,$big_delete)<?/MIVAR>     
+    <?/MIBLOCK>
+    <!------------- end delte entire orthologue ---------------------->
+   
+  <?/MIBLOCK> <!----- end UPDATEORTHO     ------------------------------->
+
+
 <?/MIBLOCK> <!-- ends cond authorized -->
 
 <!-- okay, now just bail back to the markerview to view results -->
-<?MIVAR>
-  <SCRIPT>
-  
-location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID&UPDATE=1")
-  </SCRIPT> 
-<?/MIVAR>
 
+<?MIBLOCK COND="$(NXST,$species_update)">
+
+  <SCRIPT><?MIVAR>
+     location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID&UPDATE=1#$anchor")
+          <?/MIVAR>
+  </SCRIPT> 
+
+<?MIELSE>
+
+  <SCRIPT><?MIVAR>
+     location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID&UPDATE=1&species_selected=$species_update#$anchor")
+          <?/MIVAR>
+  </SCRIPT> 
+
+<?/MIBLOCK>
