@@ -120,6 +120,7 @@ EFFECTS
         xpat_matching_significance 	integer,
         xpat_stock_zdb_id 		varchar(50),
 	xpat_assay_name 		varchar(40),
+	xpat_source_zdb_id		varchar(50),
         primary key (xpat_zdb_id)
       ) with NO LOG;">
     <?/MISQL>
@@ -143,7 +144,7 @@ EFFECTS
   <?MISQL SQL="
     select xpat_zdb_id, xpat_stock_zdb_id, xpat_assay_name, 
 	   allmapnm_name, allmapnm_precedence, allmapnm_significance,
-	   xpat_probe_zdb_id, allmapnm_zdb_id
+	   xpat_probe_zdb_id, allmapnm_zdb_id, xpat_source_zdb_id
       from $xpatselqry_matchTable, all_map_names, marker, marker_types
       where allmapnm_zdb_id in (xpat_gene_zdb_id, xpat_probe_zdb_id)
 	and allmapnm_name_lower like '$xpatselqry_likeString'
@@ -161,6 +162,7 @@ EFFECTS
       <?MIVAR NAME=$xpatselqry_allmapnm_significance>$6<?/MIVAR>
       <?MIVAR NAME=$xpatselqry_xpat_probe_zdb_id>$7<?/MIVAR>
       <?MIVAR NAME=$xpatselqry_allmapnm_zdb_id>$8<?/MIVAR>
+      <?MIVAR NAME=$xpatselqry_xpat_source_zdb_id>$9<?/MIVAR>
 
       <?MICOMMENT> bold the part of the name that matched <?/MICOMMENT>
       <?MIVAR NAME=$xpatselqry_startPos>$(POSITION,$(LOWER,$xpatselqry_allmapnm_name),$(LOWER,$xpatselqry_mrkrName))<?/MIVAR>
@@ -177,7 +179,8 @@ EFFECTS
 	  values (
 	    '$xpatselqry_xpat_zdb_id', '$xpatselqry_allmapnm_name',
 	    '$xpatselqry_allmapnm_precedence', $xpatselqry_allmapnm_significance,
-	    '$xpatselqry_xpat_stock_zdb_id', '$xpatselqry_xpat_assay_name' )">
+	    '$xpatselqry_xpat_stock_zdb_id', '$xpatselqry_xpat_assay_name',
+	    '$xpatselqry_xpat_source_zdb_id' )">
       <?/MISQL>
       <?MIVAR NAME=$xpatselqry_prevSavedXpat>$xpatselqry_xpat_zdb_id<?/MIVAR>
     <?/MIBLOCK>
@@ -211,6 +214,7 @@ EFFECTS
         xpat_matching_precedence	varchar(80),
         xpat_matching_significance 	integer,
 	xpat_assay_name 		varchar(40),
+	xpat_source_zdb_id		varchar(50),
         primary key (xpat_zdb_id)
       ) with NO LOG;">
     <?/MISQL>
@@ -231,7 +235,7 @@ EFFECTS
   <?MISQL SQL="
     select xpat_zdb_id, xpat_assay_name, 
 	   allmapnm_name, allmapnm_precedence, allmapnm_significance,
-	   $xpatselqry_matchingCols
+	   $xpatselqry_matchingCols, xpat_source_zdb_id
       from $xpatselqry_matchTable, fish, all_map_names
       where xpat_stock_zdb_id = zdb_id
 	and allmapnm_zdb_id = zdb_id
@@ -246,6 +250,7 @@ EFFECTS
       <?MIVAR NAME=$xpatselqry_matching_name>$6<?/MIVAR>
       <?MIVAR NAME=$xpatselqry_matching_precedence>$7<?/MIVAR>
       <?MIVAR NAME=$xpatselqry_matching_significance>$8<?/MIVAR>
+      <?MIVAR NAME=$xpatselqry_xpat_source_zdb_id>$9<?/MIVAR>
 
       <?MICOMMENT> 
 	If matching name was already set by a previous test, then do not record
@@ -266,7 +271,7 @@ EFFECTS
 	  values (
 	    '$xpatselqry_xpat_zdb_id', '$xpatselqry_allmapnm_name',
 	    '$xpatselqry_allmapnm_precedence', $xpatselqry_allmapnm_significance,
-	    '$xpatselqry_xpat_assay_name' )">
+	    '$xpatselqry_xpat_assay_name', '$xpatselqry_xpat_source_zdb_id' )">
       <?/MISQL>
       <?MIVAR NAME=$xpatselqry_prevSavedXpat>$xpatselqry_xpat_zdb_id<?/MIVAR>
     <?/MIBLOCK>
@@ -302,7 +307,7 @@ EFFECTS
 	xpat_matching_text		varchar(255),
         xpat_matching_precedence	varchar(80),
         xpat_matching_significance 	integer,
-	xpat_assay_name 	varchar(40),
+	xpat_assay_name 		varchar(40),
         primary key (xpat_zdb_id)
       ) with NO LOG;">
     <?/MISQL>
@@ -316,10 +321,10 @@ EFFECTS
 
   <?MISQL SQL="
     insert into $xpatselectquery_temp_author
-      select distinct xpat_zdb_id, $xpatselqry_matchingCols, xpat_assay_name
-	from $xpatselqry_matchTable, record_attribution, publication
-	where xpat_zdb_id = recattrib_data_zdb_id 
-	  and recattrib_source_zdb_id = zdb_id
+      select distinct xpat_zdb_id, $xpatselqry_matchingCols, 
+	     xpat_assay_name
+	from $xpatselqry_matchTable, publication
+	where xpat_source_zdb_id = zdb_id 
 	  and lower(authors) like '$xpatselqry_likeString'">
   <?/MISQL>
   <?MIVAR>$(VECAPPEND,$xpatselqry_testCountVec,$MI_ROWCOUNT)<?/MIVAR>
