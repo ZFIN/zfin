@@ -86,6 +86,12 @@ sub sendLoadReport ($) { # routine to send email to owner of db
 # so, we have to use the 'and' condition to determine if the system
 # call had an error.
 
+system("/bin/rm -f /tmp/filesystem_pdfs_not_in_database.unl") 
+    and die "can not remove /tmp/filesystem_pdfs_not_in_database.unl";
+
+system("/bin/rm -f /tmp/filesystem_images_not_in_database.unl") 
+    and die "can not remove /tmp/filesystem_images_not_in_database.unl";
+
 system("/bin/rm -f /tmp/orphan_file_report.txt") and die "can not rm orphan_file_report.txt";
 system("/bin/rm -f /tmp/file_list_image") and die "can not rm file_list_image";
 system("/bin/rm -f /tmp/file_list_pdf") and die "can not rm file_list_pdf";
@@ -188,6 +194,12 @@ print "loading...\n";
 
 system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/load_upload_file_list.sql >out 2> /tmp/orphan_file_report.txt");
 
+system ("/bin/chmod 644 /tmp/filesystem_images_not_in_database.unl") 
+    and die "Can not chmod the filesystem_images_not_in_database.unl";
+
+system ("/bin/chmod 644 /tmp/filesystem_pdfs_not_in_database.unl") 
+    and die "Can not chmod the filesystem_images_not_in_database.unl";
+
 close FL_PDF_MODIFIED;
 close FL_IMAGE_MODIFIED;
 close FILE_LIST_PDF;
@@ -237,8 +249,8 @@ foreach $remorph_orphan_image_line (@remorph_orphanImageLines) {
     # now $remorph_orphan_image_line is like a zdb_id, so we can move all
     # files beginning with that orphan_zdb_id to the bkup directory
 
-    system ("/bin/mv <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/$remorph_orphan_image_line* <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/bkup/" ) ;
-#and die "can not move image file";
+    system ("/bin/mv <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/$remorph_orphan_image_line* <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/bkup/" )
+and die "can not move image file";
 
     # print out the moved files to a report 
 
@@ -260,8 +272,7 @@ foreach $remorph_orphan_pdf_line (@remorph_pdfLines) {
     $remorph_orphan_pdf_line =~ s/$remorph_new_line//g ;
     $remorph_orphan_pdf_line =~ s/$remorph_pdf_extension//i;
 
-    system ("/bin/mv <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->/$remorph_orphan_pdf_line* <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->/bkup/") ; 
-#and die "can not mv pdfs";    
+    system ("/bin/mv <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->/$remorph_orphan_pdf_line* <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->/bkup/") and die "can not mv pdfs";    
 
      print MOVED_PDF_FILES "orphan_pdf_line\n";
 }
@@ -282,6 +293,50 @@ close ORPHAN_PDF_FILES;
 # print that there are no new images/pdfs in the cron output email.
 
 #----------------COUNT LINES FROM THE FILES-----------#
+
+#---------------EMAIL DATABSE IMAGES/PDFS WITH NO FILESYSTEM files-----#
+
+open(NO_FS_IMAGE, "< /tmp/filesystem_images_not_in_database.unl") or die "can't open $remorph_file";
+
+$remorph_count_images++ while <NO_FS_IMAGE>;
+
+# count_images now holds the number of lines read, want to do count
+# so that email does not get sent unless there is actual output
+
+  if ($remorph_count_images < 1) {
+      print "No new db images without files count: $remorph_count_images \n" ;
+  }
+else {
+      &sendLoadReport("No Filesystem Image",
+                      "<!--|DB_OWNER|-->\@cs.uoregon.edu", 
+		      "/tmp/filesystem_images_not_in_database.unl") ;
+  }
+
+close NO_FS_IMAGE;
+
+$remorph_count_images = 0;
+
+
+open(NO_FS_PDF, "< /tmp/filesystem_pdfs_not_in_database.unl") or die "can't open $remorph_file";
+
+$remorph_count_pdfs++ while <NO_FS_PDF>;
+
+# count_images now holds the number of lines read, want to do count
+# so that email does not get sent unless there is actual output
+
+  if ($remorph_count_pdfs < 1) {
+      print "No new db pdfs without files count: $remorph_count_images \n" ;
+  }
+else {
+      &sendLoadReport("No Filesystem PDF","<!--|DB_OWNER|-->\@cs.uoregon.edu", 
+		      "/tmp/filesystem_pdfs_not_in_database.unl") ;
+  }
+
+close NO_FS_PDF;
+
+$remorph_count_pdfs = 0;
+
+#----------------EMAIL IMAGES/PDFS NOT IN DATABASE--------------#
 
 open(ORPHAN_IMAGE_FILES, "< /tmp/orphan_image_files.unl") or die "can't open $remorph_file";
 
