@@ -6,6 +6,5 @@ drop function sysexec;
 drop function html_breaks (lvarchar);
 drop function html_breaks (html);
 drop function conc;
-drop function expr(date);
 drop function get_random_cookie;
 drop function position;
