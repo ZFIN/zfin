@@ -34,7 +34,7 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
 <tr><td><a HREF="#go"> Gene Ontology Data</a></tr></td>
 <tr><td><a HREF="#expression"> Gene Expression</a></tr></td>
 <tr><td><a HREF="#mutant"> Mutant Data</a></tr></td>
-<tr><td><a HREF="#ad"> Anatomical Dictionary</a></tr></td>
+<tr><td><a HREF="#ad"> Anatomical Ontologies</a></tr></td>
 </table>
 
 <!-- -->
@@ -89,20 +89,16 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
    <tr><td><table><br>
         <tr><td><b> ZFIN Markers associations to GenBank sequence information</b></td></tr>
         <tr><td>
-
         <table BORDER CELLPADDING=2><tr><td>ZFIN ID</td><td>Symbol</td><td>GenBank ID</td></tr></table>
         </td></tr>
-
         <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/genbank.txt">Download</a></td></tr>
     </table></td></tr>
 
    <tr><td><table><br>
         <tr><td><b> ZFIN Markers associations to RefSeq sequence information</b></td></tr>
         <tr><td>
-
         <table BORDER CELLPADDING=2><tr><td>ZFIN ID</td><td>Symbol</td><td>RefSeq ID</td></tr></table>
         </td></tr>
-
         <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/refseq.txt">Download</a></td></tr>
         </td></tr>
     </table></td></tr>
@@ -110,10 +106,8 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
    <tr><td><table>
         <tr><td><b> ZFIN Markers associations to LocusLink sequence information</b></td></tr>
         <tr><td>
-
         <table BORDER CELLPADDING=2><tr><td>ZFIN ID</td><td>Symbol</td><td>LocusLink ID</td></tr></table>
         </td></tr>
-
         <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/locuslink.txt">Download</a></td></tr><br>
         </td></tr>
     </table></td></tr> 
@@ -121,10 +115,8 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
    <tr><td><table>
         <tr><td><b> ZFIN Markers associations to UniGene sequence information</b></td></tr>
         <tr><td>
-
         <table BORDER CELLPADDING=2><tr><td>ZFIN ID</td><td>Symbol</td><td>UniGene ID</td></tr></table>
         </td></tr>
-
         <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/unigene.txt">Download</a></td></tr><br>
         </td></tr>
     </table></td></tr>
@@ -141,10 +133,8 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
     
     <tr><td><table>
         <tr><td><b> ZFIN Marker associations to InterPro protein IDs</b></td></tr>
-
         <tr><td>
-        <table BORDER CELLPADDING=2><tr><td>ZFIN ID</td><td>Symbol</td><td>InterPro ID</td></tr></table>
-
+        <table BORDER CELLPADDING=2><tr><td>ZFIN ID</td><td>Symbol</td><td>Name</td><td>InterPro ID</td></tr></table>
         </td></tr>
         <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/interpro.txt">Download</a></td></tr><br>
         </td></tr>
@@ -152,10 +142,8 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
 
     <tr><td><table>
         <tr><td><b> ZFIN Marker associations to GenPept protein IDs</b></td></tr>
-
         <tr><td>
-        <table BORDER CELLPADDING=2><tr><td>ZFIN ID</td><td>Symbol</td><td>GenPept ID</td></tr></table>
-
+        <table BORDER CELLPADDING=2><tr><td>ZFIN ID</td><td>Symbol</td><td>Name</td><td>GenPept ID</td></tr></table>
         </td></tr>
         <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/genpept.txt">Download</a></td></tr><br>
         </td></tr>
@@ -163,15 +151,22 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
     
         <tr><td><table>
         <tr><td><b> ZFIN Marker associations to Sanger Vega IDs</b></td></tr>
-
-        <tr><td>
-        <table BORDER CELLPADDING=2><tr><td>ZFIN ID</td><td>Symbol</td><td>Vega ID</td></tr></table>
-
+     <tr><td>
+        <table BORDER CELLPADDING=2><tr><td>ZFIN ID</td><td>Symbol</td><td>Name</td><td>Vega ID</td></tr></table>
         </td></tr>
         <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/vega.txt">Download</a></td></tr><br>
         </td></tr>
     </table></td></tr>
 
+
+        <tr><td><table>
+        <tr><td><b> ZFIN Gene IDs indirectly associated with Sequence Accessions via cDNA & EST</b></td></tr>
+     <tr><td>
+        <table BORDER CELLPADDING=2><tr><td>ZFIN Gene ID</td><td>ZFIN Gene Symbol</td><td>Sequence Accession</td></tr></table>
+        </td></tr>
+        <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/gene_seq.txt">Download</a></td></tr><br>
+        </td></tr>
+    </table></td></tr>
 
     
 </table>
@@ -244,11 +239,13 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
     <tr><td><table><br>
         <tr><td><b> ZFIN Genes with Expression Assay Records</b></td></tr>
         <tr><td>
-        <table BORDER CELLPADDING=2><tr><td>ZFIN ID</td><td>Gene Symbol</td><td>Expression Type</td><td>Expression ID</td></tr></table>
+        <table BORDER CELLPADDING=2><tr><td>Gene ID</td><td>Gene Symbol</td><td>EST ID</td><td>EST Symbol</td><td>Expression Type</td><td>Expression ID</td><td>Publication ID</td></tr></table>
         </td></tr>
+        
         <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/xpat.txt">Download</a><br>
-    </table></td></tr>       
-                
+        (*note: format changed August 18, 2004)
+    </table></td></tr>
+
 
 <!-- -->
 
@@ -268,10 +265,50 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
 
 
 <a NAME="ad"></a><br>
-<table BORDER CELLPADDING=2 BGCOLOR="<!--|HIGHLIGHT_COLOR|-->" WIDTH="100%"><tr><th>Anatomical Dictionary</th></tr></table>
+<table BORDER CELLPADDING=2 BGCOLOR="<!--|HIGHLIGHT_COLOR|-->" WIDTH="100%"><tr><th>Anatomical Ontologies</th></tr></table>
 
     <tr><td><table><br>
+        <tr><td><b>Anatomical Dictionary</b></td></tr>
+        <tr><td>
+        <table BORDER CELLPADDING=2><tr> <td>Entire Staged Anatomy (tab indented)</td></tr></table>
+        </td></tr>
         <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/ad.txt">Download</a></td></tr>
+        </td></tr><br>
+    </table></td></tr>
+    
+    <tr><td><table><br>
+        <tr><td><b> Anatomy Ontology</b></td></tr>
+        <tr><td>
+        <table BORDER CELLPADDING=2><tr> <td>Parent Item ID</td><td>Child Item ID</td><td>Begin Stage ID</td><td>End Stage ID</td></tr></table>
+        </td></tr>
+        <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/anatomy_ontology.txt">Download</a></td></tr>
+        </td></tr><br>
+    </table></td></tr>
+    
+    <tr><td><table><br>
+        <tr><td><b> Stage Ontology</b></td></tr>
+        <tr><td>
+        <table BORDER CELLPADDING=2><tr> <td>Stage ID</td><td>Stage Name</td><td>Begin Hours</td><td>End Hours</td></tr></table>
+        </td></tr>
+        <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/stage_ontology.txt">Download</a></td></tr>
+        </td></tr><br>
+    </table></td></tr>
+    
+    <tr><td><table><br>
+        <tr><td><b>Anatomy Item</b></td></tr>
+        <tr><td>
+        <table BORDER CELLPADDING=2><tr> <td>Anatomy Item ID</td><td>Anatomy Item Name</td><td>Ontology</td><td>Begin Stage ID</td><td>End Stage ID</td></tr></table>
+        </td></tr>
+        <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/anatomy_item.txt">Download</a></td></tr>
+        </td></tr><br>
+    </table></td></tr>
+    
+    <tr><td><table><br>
+        <tr><td><b>Expression Stage Anatomy </b></td></tr>
+        <tr><td>
+        <table BORDER CELLPADDING=2><tr> <td>Expression ID</td><td>Begin Stage ID</td><td>End Stage ID</td><td>Anatomy Item ID (optional)</td></tr></table>
+        </td></tr>
+        <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/xpat_stage_anatomy.txt">Download</a></td></tr>
         </td></tr><br>
     </table></td></tr>
 
