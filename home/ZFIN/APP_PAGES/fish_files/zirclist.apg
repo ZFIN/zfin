@@ -87,7 +87,10 @@
 	    <?MIVAR COND="$(>,$MI_CURRENTROW,1)">;<?/MIVAR>$1
 	    <?MIVAR COND="$(NC,$2,"")">($2)<?/MIVAR>
 	    <?/MISQL>
-	    <?MISQL SQL="select distinct fishali_fish_name_alias from fish_alias where fishali_fish_zdb_id = '$2';">
+	    <?MISQL SQL="
+	      select distinct dalias_alias 
+		from data_alias 
+		where dalias_data_zdb_id = '$2';">
 	    <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(NC,$found,true))">&nbsp;[<?/MIVAR>
 	    <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(EC,$found,true))">;<?/MIVAR>
 	    <?MIVAR COND="$(=,$MI_CURRENTROW,1)" NAME=$found>true<?/MIVAR>

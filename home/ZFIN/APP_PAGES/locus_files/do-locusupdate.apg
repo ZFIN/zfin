@@ -57,7 +57,15 @@ comments -- reasons for doing update
 <!-- Special case for deleting one of the aliases -->
 <?MIBLOCK COND="$(EC,$attr_type,Delete_listitem)">
 <?MISQL COND="$(EC,$attr,lcsali_locus_name_alias)" SQL="delete from locus_alias where lcsali_locus_zdb_id='$OID' and lcsali_locus_name_alias='$old_value';"><?/MISQL>
-<?MISQL COND="$(EC,$attr,fishali_fish_name_alias)" SQL="delete from fish_alias where fishali_fish_name_alias='$old_value' and exists (select 'x' from fish where fish.locus  = '$OID' and fish.zdb_id = fishali_fish_zdb_id) ;"><?/MISQL>
+<?MISQL COND="$(EC,$attr,dalias_alias)" SQL="
+  delete from data_alias
+    where dalias_alias = '$old_value' 
+      and exists 
+	  ( select 'x'
+	      from fish 
+	      where fish.locus = '$OID'
+		and fish.zdb_id = dalias_data_zdb_id ) ;">
+<?/MISQL>
 
 <?/MIBLOCK>  <!-- ends delete listitem case -->
 

@@ -64,7 +64,7 @@
     (lower(get_fish_full_name(fimg_fish_zdb_id)) like '%$(LOWER,$stock)%')
   <?/MIVAR>
   <?MIVAR NAME=$constraintAlias>$constraint
-    and (lower(fishali_fish_name_alias) like '%$(LOWER,$stock)%')
+    and (lower(dalias_alias) like '%$(LOWER,$stock)%')
   <?/MIVAR>
 <?/MIBLOCK>
 
@@ -102,9 +102,9 @@
     insert into temp_fish_image
     select fimg_zdb_id, get_fish_full_name(fimg_fish_zdb_id),
            MIN(lo.stg_hours_start), MAX(hi.stg_hours_end)
-      from fish_image, fish_alias, OUTER (fish_image_stage, stage lo, stage hi)
+      from fish_image, data_alias, OUTER (fish_image_stage, stage lo, stage hi)
       where $constraintAlias
-	and fimg_fish_zdb_id = fishali_fish_zdb_id
+	and fimg_fish_zdb_id = dalias_data_zdb_id
 	and fimg_zdb_id = fimgstg_fimg_zdb_id
       	and fimgstg_start_stg_zdb_id = lo.stg_zdb_id
       	and fimgstg_end_stg_zdb_id = hi.stg_zdb_id

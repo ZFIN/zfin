@@ -404,20 +404,20 @@ Variables Expected:
 	      <?MIVAR COND="$(XST,$UPDATE)">
 		<INPUT TYPE=button 
 		       value=Add 
-		       onClick="doit('fishali_fish_name_alias','text','Alias')">
+		       onClick="doit('dalias_alias','text','Alias')">
 	      <?/MIVAR> 
 	      <b>Previous names: </b>
 	      <?MISQL SQL="
-		select fishali_fish_name_alias 
-		  from fish_alias 
-		  where fishali_fish_zdb_id='$OID';">
+		select dalias_alias 
+		  from data_alias 
+		  where dalias_data_zdb_id = '$OID';">
 		<?MIVAR NAME=$alias>$1<?/MIVAR>
 		<?MIVAR COND="$(XST,$alias)" NAME=$alias DELIMIT=" " REPLACE="+">$alias<?/MIVAR>
 		<?MIVAR COND="$(XST,$UPDATE)">
 		  <br> 
 		  <INPUT TYPE=button 
 			 value=Delete 
-			 onClick="Delete_listitem_alias('fishali_fish_name_alias','$alias','$OID','$ALTOID')">
+			 onClick="Delete_listitem_alias('dalias_alias','$alias','$OID','$ALTOID')">
 		<?/MIVAR>
 		$(IF,$(AND,$(NXST,$UPDATE),$(>,$MI_CURRENTROW,1)),;) <i>$1</i>
 	      <?/MISQL>

@@ -498,13 +498,14 @@ create dba function "informix".regen_genomics() returning integer
 
     insert into all_m_names_new 
 	(allmapnm_name, allmapnm_zdb_id, allmapnm_significance)
-      select lower(fishali_fish_name_alias), fishali_fish_zdb_id, 8
-	from fish_alias
-	where not exists
+      select lower(dalias_alias), dalias_data_zdb_id, 8
+	from data_alias, fish
+	where dalias_data_zdb_id = zdb_id
+	  and not exists
 	      ( select * 
 		  from all_m_names_new an
-		  where lower(fishali_fish_name_alias) = an.allmapnm_name
-		    and fishali_fish_zdb_id = an.allmapnm_zdb_id );
+		  where lower(dalias_alias) = an.allmapnm_name
+		    and dalias_data_zdb_id = an.allmapnm_zdb_id );
 
 
     -- For genes that have known correspondences with loci, also include the

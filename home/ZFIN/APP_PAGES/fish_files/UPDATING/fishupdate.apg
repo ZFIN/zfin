@@ -26,13 +26,13 @@ print_name -- The human-understandable name (vs. the database column name) of
   <!-- If the attribute is something we can just specify locally, go ahead and throw up the right form to do it. -->
   <?MIBLOCK COND="$(NC,$attr_type,selection)">
 
-    <?MIBLOCK COND="$(AND,$(NC,$attr,fishali_fish_name_alias),$(NC,$attr,alleali_allele_name_alias))">
+    <?MIBLOCK COND="$(AND,$(NC,$attr,dalias_alias),$(NC,$attr,alleali_allele_name_alias))">
       <?MISQL SQL="select $attr,name from fish where zdb_id='$OID';"><?/MISQL>
       <?MIVAR NAME=$current_value>$1<?/MIVAR>
       <?MIVAR NAME=$update_target>$2<?/MIVAR>
     <?/MIBLOCK>
 
-    <?MIBLOCK COND="$(OR,$(EC,$attr,fishali_fish_name_alias),$(EC,$attr,alleali_allele_name_alias))">
+    <?MIBLOCK COND="$(OR,$(EC,$attr,dalias_alias),$(EC,$attr,alleali_allele_name_alias))">
       <?MISQL SQL="select alteration.zdb_id, alteration.allele  from alteration, fish  where fish.zdb_id='$OID'and fish.allele = alteration.allele;"><?/MISQL>
       <?MIVAR NAME=$update_target>$2<?/MIVAR>
       <?MIVAR NAME=$current_value><?/MIVAR>
