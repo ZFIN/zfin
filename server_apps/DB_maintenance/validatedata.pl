@@ -1984,31 +1984,42 @@ sub mrkrgoevInfgrpDuplicatesFound ($) {
 
   my $routineName = "mrkrgoevInfgrpDuplicatesFound";
 
-  my $sql = 'select count(*),  
-                    mrkrgoev_mrkr_zdb_id, 
-                    mrkrgoev_go_term_zdb_id, 
-                    mrkrgoev_source_zdb_id, 
-                    mrkrgoev_evidence_code, 
-                    infgrmem_inferred_from
-               from marker_go_term_evidence, inference_group_member
-               where not exists (select * 
-                                   from go_evidence_flag
-                                   where mrkrgoev_zdb_id = 
-                                            goevflag_mrkrgoev_zdb_id)
-               and mrkrgoev_zdb_id = infgrmem_mrkrgoev_zdb_id
-               group by mrkrgoev_mrkr_zdb_id, 
-                        mrkrgoev_go_term_zdb_id,
-                        mrkrgoev_source_zdb_id,
-                        mrkrgoev_evidence_code,
-                        infgrmem_inferred_from
-               having count(*) > 1 ';
+  my $sql = 'select I1.infgrmem_mrkrgoev_zdb_id, 
+                    "has", 
+                    S1.tally, 
+                    "group members just like",
+                    I2.infgrmem_mrkrgoev_zdb_id
+               from inference_group_member I1, 
+                    inference_group_member I2,
+	            vMrkrGoevSameSize S1
+               where S1.mrkrgoev1 = I1.infgrmem_mrkrgoev_zdb_id
+               and S1.mrkrgoev2 = I2.infgrmem_mrkrgoev_zdb_id
+               and I1.infgrmem_inferred_from = I2.infgrmem_inferred_from
+               and exists (select *
+		 	     from marker_go_term_evidence A,
+				  marker_Go_Term_Evidence B
+			     where a.mrkrgoeV_mrkr_zdb_id = 
+                                     b.mrkrgoev_mrkr_zdb_id
+			     and a.mrkrgoev_go_Term_zdb_id = 
+                                     b.mrkrgoev_go_term_zdb_id
+			     and a.mrkrgoev_source_zdb_id = 
+                                     b.mrkrgoev_sourcE_zdb_id
+			     and a.mrkrgoev_evidence_code = 
+                                     b.mrkrgoev_evidence_code
+			     and I1.infgrmem_mrkrgoev_zdb_id = 
+                                     a.mrkrgoev_zdb_id
+			     and I2.infgrmem_mrkrgoev_zdb_id = 
+                                     b.mrkrgoev_zdb_id)
+                group by I1.infgrmem_mrkrgoev_zdb_id, 
+                         I2.infgrmem_mrkrgoev_zdb_id,
+		         S1.tally
+                having count(*) = S1.tally ';
 
-  my @colDesc = ("count", 
-		 "mrkrgoev_mrkr_zdb_id" ,
-		 "mrkrgoev_go_Term_zdb_id",
-		 "mrkrgoev_source_zdb_id",
-		 "mrkrgoev_evidence_code",
-		 "infgrmem_inferred_from");
+  my @colDesc = ("mrkrgoev_zdb_id_1", 
+		 "has" ,
+		 "count",
+		 "group members alike",
+		 "mrkrgoev_zdb_id_2");
 
   my $nRecords = execSql ($sql, undef, @colDesc);
   if ( $nRecords > 0 ) {
@@ -2488,7 +2499,7 @@ if($daily) {
   zdbReplacedDataIsReplaced($dbaEmail);
 
   mrkrgoevDuplicatesFound($goEmail);
-  #mrkrgoevInfgrpDuplicatesFound($goEmail);
+  mrkrgoevInfgrpDuplicatesFound($goEmail);
   mrkrgoevGoevflagDuplicatesFound($goEmail);
   mrkrgoevObsoleteAnnotationsFound($goEmail);
   mrkrgoevSecondaryAnnotationsFound($goEmail);
