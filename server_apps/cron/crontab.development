@@ -10,23 +10,25 @@
 # See the "crontab" file (or cron man page) for an explanation of this file's
 # format.
 #
-# DAILY SCRIPTS
-# =============
-# Reload almdb, remake web site.  Job runs different on Saturday.
-0 3 * * 1,2,3,4,5 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/load_and_index_almost.pl
 #
-# WEEKLY SCRIPTS
-# ==============
-#
-# Saturday
-# --------
-# Reload almdb, remake web site, reindex it, and copy new index to production
-0 3 * * 6 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/load_and_index_almost.pl -i
+# cron.chart.fig
+# --------------
+# cron.chart.fig is a graphic depiction of cron at ZFIN.  Any time you
+# change this file, also change cron.chart.fig.
 #
 #
-# MONTHLY SCRIPTS
-# ===============
+#
+# ========================================================================
+# ====               DAILY / WEEKLY SCRIPTS                           ====
+# ========================================================================
+#
+# Nights   When      Comments
+# SMTWT    10:00pm   Reload almdb, remake web site.
+#
+00 10 * * 0-4 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/load_and_index_almost.pl
 #
 #
-# YEARLY SCRIPTS
-# ==============
+#      F     10:00pm   Reload almdb, remake web site, generate quick search
+#                      index, and copy it to production.
+00 10 * * 5 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/load_and_index_almost.pl -i
+#

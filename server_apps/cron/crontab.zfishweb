@@ -25,8 +25,20 @@
 #
 # NO BLANK LINES
 #
-# DAILY SCRIPTS
-# =============
-# clean up file system (images and pdfs), rsync the development and 
-# production file systems.
-05 06 * * 1,2,3,4,5 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/remove_orphan_files.pl
+#
+#
+# cron.chart.fig
+# --------------
+# cron.chart.fig is a graphic depiction of cron at ZFIN.  Any time you
+# change this file, also change cron.chart.fig.
+#
+#
+#
+# ========================================================================
+# ====               DAILY / WEEKLY SCRIPTS                           ====
+# ========================================================================
+#
+# Nights   When      Comments
+# SMTWT    6:05am    clean up file system (images and pdfs), rsync the 
+#                    development and production file systems.
+05 06 * * 1-5 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/remove_orphan_files.pl
