@@ -18,7 +18,7 @@ where zactvd_zdb_id in (
     and   gene = linked_recid
     and recattrib_source_zdb_id <> 'ZDB-PUB-020723-5'
     and recattrib_data_zdb_id = dblink_zdb_id
-	and   genpept = acc_num
+    and   genpept = acc_num
 ) and zactvd_zdb_id in (
     select dblink_zdb_id 
     from db_link,record_attribution
@@ -40,19 +40,23 @@ where exists (
 ) and gene in (
 	select linked_recid 
 	from db_link 
-	where db_name = 'GenPept' 
+	where db_name = 'GenPept'
 );
 
-! echo "did any symbols not get translated to ZDB IDs? indicating merge or nomenclature activity"
+! echo "did any symbols fail to translate to ZDB IDs? indicating merge or nomenclature activity"
 select * from manual_genpept where gene[1,9] <> 'ZDB-GENE-';
 
 ! echo "insert new manualy curated GenPept links"
-select distinct gene, genpept, '12345678901234567890' zad 
+select distinct gene, genpept, '123456789012345678901234567890' zad 
 from manual_genpept 
 where gene[1,9] == 'ZDB-GENE-' 
 into temp tmp_db_link with no log;
 
 update tmp_db_link set zad = get_id('DBLINK');
+
+!echo "sanity check"
+select * from tmp_db_link where zad[1,11] <> 'ZDB-DBLINK-';
+select zad,count(*) from tmp_db_link group by 1 having count(*) > 1;
 
 insert into zdb_active_data select zad from tmp_db_link;
 
