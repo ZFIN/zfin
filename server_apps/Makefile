@@ -21,7 +21,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps
 
-SUBDIRS = data_transfer javaserver sysexecs WebSiteTools
+SUBDIRS = data_transfer javaserver mapimage sysexecs WebSiteTools
 MIRROR_SUBDIRS = WebSiteTools
 
 
