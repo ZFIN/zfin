@@ -153,6 +153,7 @@ create dba function "informix".regen_genomics() returning integer
     --  10 putative gene assignments
     --  11 othologue name, orthologue abbrev
     --  12 accession numbers from other databases
+    --  13 sequence similarity
 
     if (exists (select * from systables where tabname = "all_m_names_new")) then
       drop table all_m_names_new;
@@ -256,6 +257,14 @@ create dba function "informix".regen_genomics() returning integer
     from db_link, all_marker_names_new
     where dblink_linked_recid = allmapnm_zdb_id
     and lower(dblink_acc_num) <> lower(allmapnm_name)	    
+    union
+    select dalias_alias as allmapnm_name, dblink_linked_recid as allmapnm_zdb_id, 12 as allmapnm_significance,
+	   "Accession number"::varchar(80) as allmapnm_precedence, 
+	   lower(dalias_alias) as allmapnm_name_lower
+     from db_link, data_alias, all_marker_names_new
+    where dalias_data_zdb_id = dblink_zdb_id 
+      and dblink_linked_recid = allmapnm_zdb_id
+      and lower(dalias_alias) <> lower(allmapnm_name)	    
     union
     select dblink_acc_num as allmapnm_name, c_gene_id as allmapnm_zdb_id, 12 as allmapnm_significance,
 	   "Accession number"::varchar(80) as allmapnm_precedence, 
