@@ -864,7 +864,7 @@
     print $g_data   . "<p>\n";
   }
 
-  print $note ."<P><P>\n" ;#if ($print_note == 1);
+  print $note ."<P><P>\n" if ($print_note == 1);
 
   ### if a first query or  option/edit put select map back
 #  if( defined $sm_refresh && $sm_refresh > 0 ) {
