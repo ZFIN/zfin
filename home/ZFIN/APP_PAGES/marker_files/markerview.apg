@@ -1196,7 +1196,16 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
   select count(distinct recattrib_source_zdb_id)
   from record_attribution
   where ($mtype_is_gene
-           recattrib_data_zdb_id = '$OID')
+           recattrib_data_zdb_id = '$OID'
+           or
+             recattrib_data_zdb_id in (select dalias_zdb_id from data_alias where dalias_data_zdb_id = '$OID')
+           or
+             recattrib_data_zdb_id in (select dblink_zdb_id from db_link where linked_recid = '$OID')
+           or
+             recattrib_data_zdb_id in (select zdb_id from locus where cloned_gene = '$OID')
+           or
+             recattrib_data_zdb_id in (select oevdisp_zdb_id from orthologue_evidence_display where oevdisp_gene_zdb_id = '$OID')
+        )
     and get_obj_type(recattrib_source_zdb_id) = 'PUB';
   ">
 <?/MISQL>
