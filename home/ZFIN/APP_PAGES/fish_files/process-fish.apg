@@ -111,13 +111,14 @@
         select  '$chromo_id' as a0, target_id, info 
           from int_data_pub
           where source_id='$temp_oid' 
-          into temp select_temp_1;">
+          into temp process_fish_temp;">
       <?/MISQL>
       <?MISQL SQL="
         insert into int_data_pub 
            (source_id, target_id, info) 
           select * 
-            from select_temp_1;">
+            from process_fish_temp;
+	drop table process_fish_temp;">
       <?/MISQL>
       <?MISQL SQL="
         select  '$alt_id' as a0, target_id, info 
