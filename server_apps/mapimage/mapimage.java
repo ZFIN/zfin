@@ -232,11 +232,9 @@ public class mapimage {
 
 		System.err.println("Headless: " + System.setProperty("java.awt.headless","true"));
 
-		
-
 		try {
 			Image img = MV.getImage(w,h);
-			javax.imageio.ImageIO.write((BufferedImage)img,"png",System.out);
+			javax.imageio.ImageIO.write((BufferedImage)img,"jpg",System.out);
 		} catch (Exception e) {
 			System.err.println(e);
 		}
@@ -248,7 +246,7 @@ public class mapimage {
 
 	public void printImageHeader()	{
 		
-		System.out.println("Content-type: image/png");
+		System.out.println("Content-type: image/jpg");
 		System.out.println("");
 
 	}	
