@@ -16,8 +16,10 @@
 
 <?MIVAR NAME=$previous> <?/MIVAR>
 <?MIVAR NAME=$constraint> where <?/MIVAR>
-<?MIVAR NAME=$constraint COND="$(XST,$authors)">
+<?MIVAR NAME=$constraint COND="$(AND,$(XST,$authors),$(EC,$authtype,anyauth))">
 $constraint (lower(authors) like '%$(LOWER,$authors)%')<?/MIVAR>
+<?MIVAR NAME=$constraint COND="$(AND,$(XST,$authors),$(EC,$authtype,firstauth))">
+$constraint (lower(authors) like '$(LOWER,$authors)%')<?/MIVAR>
 
 <?MIVAR NAME=$previous COND="$(XST,$authors)"> and <?/MIVAR>
 
@@ -33,7 +35,10 @@ $constraint $previous year(pub_date) $yr_cmpr conc('$century','$year')<?/MIVAR>
 <!-- NOW  DEAL WITH THE ADDITIONAL CRITERIA -->
 <?MIVAR NAME=$previous COND="$(XST,$year)"> and <?/MIVAR>
 
-<?MIVAR NAME=$constraint COND="$(XST,$anon1text)">
+<?MIVAR NAME=$constraint COND="$(AND,$(XST,$anon1text),$(EC,$anon1,abstract))">
+$constraint $previous (webhtml_like($anon1,'$anon1text'))<?/MIVAR>
+
+<?MIVAR NAME=$constraint COND="$(AND,$(XST,$anon1text),$(NC,$anon1,abstract))">
 $constraint $previous (lower($anon1) like '%$(LOWER,$anon1text)%')<?/MIVAR>
 
 <?MIVAR NAME=$previous COND="$(XST,$anon1text)"> and <?/MIVAR>
