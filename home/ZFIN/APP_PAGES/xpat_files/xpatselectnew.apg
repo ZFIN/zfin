@@ -1,15 +1,3 @@
-<?MICOMMENT>
-
-NOTE:
-Because this page drops temporary tables it cannot be webexploded from
-inside a select statement.  This page must first be retrieved with a 
-select statement and then passed to webexplode from an execute function 
-statement.  See discussion of the MIqry2pass variable in the Web
-Datablade documentation.
-
-<?/MICOMMENT>
-
-
 <HTML>
 
 <?MIVAR Name=page_name>$(IF,$(NXST,$query_results),ZFIN Search Expressions,ZFIN Expression Search Results)<?/MIVAR>
@@ -18,8 +6,8 @@ Datablade documentation.
 
 <SCRIPT>
 
-function start_help(anchor) {
-   top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect_help.apg#"+anchor,"helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
+function start_help() {
+   top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect_help.apg","helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=655,height=300");
 }
 
 
@@ -36,6 +24,7 @@ function call_reset() {
   document.critform.searchtype.selectedIndex = 1;
   document.critform.mutsearchtype.selectedIndex = 1;
   document.critform.authsearchtype.selectedIndex = 1;
+  document.critform.WINSIZE.value = 25;
 
 }
 
@@ -76,6 +65,7 @@ function call_verify() {
 <?MIVAR COND="$(OR,$(NC,$stage_start,$earliest_stage),$(NC,$stage_end,$latest_stage))" NAME=$user_stg_rng>exists<?/MIVAR>
 <?MIVAR COND="$(NXST,$gene_lg)" NAME=$gene_lg>0<?/MIVAR>
 
+<?MIVAR NAME=tablecreated>false<?/MIVAR>
 
 <!--*** $pubId is from the data link on publication page -->
 <?MIBLOCK COND="$(OR,$(XST,$query_results),$(XST,$pubId))">
@@ -119,6 +109,7 @@ function call_verify() {
 
 <?MIVAR NAME=$query_from><?/MIVAR>
 <?MIVAR NAME=$query_where><?/MIVAR>
+<?MIVAR NAME=$mutsearch><?/MIVAR>
 
 <?MIVAR NAME=$query_from_with_locus><?/MIVAR>
 <?MIVAR NAME=$query_where_with_locus><?/MIVAR>
@@ -285,35 +276,37 @@ select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_abbrev_order, mrkr_typ
     <?/MIVAR>
   <?/MIBLOCK> 
 <?/MIBLOCK> <!-- end gene constraint -->
-
 <?MIBLOCK COND="$(XST,$mutant)">	
   <?MIVAR NAME=$mutant DELIMIT="'" REPLACE="''">$mutant<?/MIVAR>	
   <?MIVAR NAME=$mut_wild_card><?/MIVAR>
   <?MIVAR NAME=$mutoperator>=<?/MIVAR>
   <?MIVAR NAME=$mutsearchtype DEFAULT=equals>$mutsearchtype<?/MIVAR>
 <!--here we have to handle two conditions, the mutant could be a locus or allele-->
+<?MIBLOCK COND="$(XST,$fish_table_created)">
+<?MISQL SQL="drop table fish_search_list"><?/MISQL>
+<?/MIBLOCK>
   <?MIBLOCK COND="$(NC,$mutsearchtype,equals)">
     <?MIVAR COND="$(EC,$mutsearchtype,contains)" NAME=$mut_wild_card>%<?/MIVAR>
 
-   <?MIVAR NAME=$query_where_with_locus>$query_where<?/MIVAR>
-    <?MIVAR NAME=$query_where>$query_where 
-      and ( lower(f.name) like '$mut_wild_card$(LOWER,$mutant)%'
-      or ( lower(f.allele) like '$mut_wild_card$(LOWER,$mutant)%'
-        )) and xp.xpat_stock_zdb_id=f.zdb_id 
-    <?/MIVAR>
+    <?MISQL SQL="select zdb_id as fsl_zdb_id from fish where  
+       ( lower(name) like '$mut_wild_card$(LOWER,$mutant)%'
+      or ( lower(allele) like '$mut_wild_card$(LOWER,$mutant)%'
+      or ( lower(abbrev) like '$mut_wild_card$(LOWER,$mutant)%'
+        ))) union select zdb_id as fsl_zdb_id from locus where (lower(abbrev) like '%$(LOWER,$mutant)%') into temp fish_search_list "><?/MISQL>
+    <?MIVAR NAME=$query_where>$query_where and (xpat_stock_zdb_id=fsl_zdb_id)<?/MIVAR>
+  <?MIVAR NAME=$query_from>$query_from,fish_search_list<?/MIVAR>
+  <?MIVAR NAME=$mutsearch>$mut_wild_card$(LOWER,$mutant)%<?/MIVAR>
   <?MIELSE>
-   <?MIVAR NAME=$query_where_with_locus>$query_where<?/MIVAR>
-    <?MIVAR NAME=$query_where>$query_where 
-      and ( lower(f.name) = '$(LOWER,$mutant)'
-      or ( lower(f.allele) = '$(LOWER,$mutant)'
-        )) and xp.xpat_stock_zdb_id=f.zdb_id       
-    <?/MIVAR>
+
+      or ( lower(allele) like '$(LOWER,$mutant)'
+        )) union select zdb_id as fsl_zdb_id from locus where (lower(abbrev) like '$(LOWER,$mutant)') into temp fish_search_list "><?/MISQL>
+    <?MIVAR NAME=$query_where>$query_where and (xpat_stock_zdb_id=fsl_zdb_id)<?/MIVAR>
+  <?MIVAR NAME=$query_from>$query_from,fish_search_list<?/MIVAR>
+  <?MIVAR NAME=$mutsearch>$(LOWER,$mutant)<?/MIVAR>
   <?/MIBLOCK> 
-  <?MIVAR NAME=$query_from_with_locus>$query_from<?/MIVAR>
-  <?MIVAR NAME=$query_from>$query_from,fish f<?/MIVAR>
+<?MIVAR NAME=fish_table_created>true<?/MIVAR>
+
 <?/MIBLOCK> <!-- end mutant constraint -->
-
-
 
 	<!-- structure_bool query alterations -->
 
@@ -325,10 +318,11 @@ select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_abbrev_order, mrkr_typ
 
 <?MIBLOCK COND="$(XST,$str_dlmt_list)">
 
+<br>
   <TABLE bgcolor="CCCCCC"> 
     <TR>
-     <TD colspan=2">
-     <B>Anatomy Items Searched...</B>
+     <TD colspan=2>
+     <B><font size=-1>Anatomy Items Searched...</font></B>
      </TD>
     <TR>
   <?MIBLOCK INDEX="$part" FOREACH="$str_dlmt_list">
@@ -421,11 +415,11 @@ select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_abbrev_order, mrkr_typ
 
       <?MIBLOCK COND="$(>,$selfcount,0)">
         <?MIVAR> 
-        has <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselectnew.apg&query_results=true&START=0&WINSIZE=25&include_substructures=&TA_selected_structures=$item_name" target="_parent"><B>($selfcount)</B></A> expression pattern(s) in all stages 
+        has <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselectnew.apg&query_results=true&START=0&WINSIZE=25&include_substructures=&TA_selected_structures=$item_name" target="_parent"><B>($selfcount)</B></A> gene(s) expressed in all stages 
         <?/MIVAR>
 	<?MIBLOCK COND="$(>,$childcount,0)">
 	  <?MIVAR>
-	  (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselectnew.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name" target="_parent"><B>$(+,$childcount)</B></A> including children)
+	  (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselectnew.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name" target="_parent"><B>$(+,$childcount)</B></A> in substructures)
 	  <?/MIVAR>
 	<?/MIBLOCK>
       <?MIELSE>
@@ -462,6 +456,8 @@ select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_abbrev_order, mrkr_typ
     </TR>
   <?/MIBLOCK>
   </TABLE>     
+
+
 
 <?/MIBLOCK>
 
@@ -635,7 +631,6 @@ select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_abbrev_order, mrkr_typ
 <?MICOMMENT> <!-- start ASSAY --> <?/MICOMMENT>
 
 <?MIBLOCK COND="$(AND,$(XST,$assay),$(NC,$assay,NULL))">
-here!
     <?MIVAR NAME=$query_where>$query_where
     and xp.xpat_assay_name like '$assay%'
    <?/MIVAR>  
@@ -724,7 +719,7 @@ here!
 <?/MIVAR>
 
 <?MICOMMENT> <!-- end GENE NAME --> <?/MICOMMENT>
-
+<?MICOMMENT>
 <!-- RETRIEVE AND DISPLAY ALL MATCHING ENTRIES. -->
 <?MISQL SQL="
       select count(distinct m.mrkr_zdb_id)::integer
@@ -755,8 +750,32 @@ here!
   $(IF,$(XST,$query_grp_by),$query_grp_by )
        ;"><?/MISQL>
 <?MIVAR NAME=count2>$1<?/MIVAR>
+<?MIVAR NAME=count>$(+,$count1,$count2)<?/MIVAR>
+<?/MICOMMENT>
 <!--count of records could be zero, because we entered an allele and not a locusin the query criteria-->
- 
+
+
+<?MIVAR COND="$(NXST,$gene_name)">$(SETVAR,$name_sig_col,)<?/MIVAR>
+<?MIVAR COND="$(NXST,$pubId)" NAME=sqlcount>
+  select distinct m.mrkr_zdb_id, m.mrkr_type, m.mrkr_abbrev_order, m.mrkr_name, m.mrkr_abbrev $name_sig_col,xpat_direct_submission_date
+  $query_from, marker_relationship
+  $query_where_with_mrel and m.mrkr_type not like "BAC" and m.mrkr_type not like "PAC" and m.mrkr_zdb_id=mrkr_zdb_id
+  union
+  select distinct m.mrkr_zdb_id, m.mrkr_type, m.mrkr_abbrev_order, m.mrkr_name, m.mrkr_abbrev $name_sig_col, xpat_direct_submission_date
+  $query_from
+  where m.mrkr_zdb_id=xpat_probe_zdb_id and m.mrkr_type not like "EST" and m.mrkr_type not like "BAC" $query_where and m.mrkr_zdb_id=mrkr_zdb_id
+  and m.mrkr_zdb_id not in (
+  select distinct m.mrkr_zdb_id
+  $query_from, marker_relationship
+  $query_where_with_mrel)
+  $(IF,$(XST,$query_grp_by),$query_grp_by )
+<?/MIVAR>
+
+<?MISQL SQL="$sqlcount"><?/MISQL>
+<?MIVAR name=$count>$MI_ROWCOUNT<?/MIVAR>
+
+
+<?MICOMMENT>This was done prior to Kevins temp table suggestion. 
 <?MIBLOCK COND="$(AND,$(=,$count2,0),$(XST,$mutant))">
  <?MIBLOCK COND="$(>,$(POSITION,$query_from,fish),0)">
   <?MIBLOCK COND="$(NC,$mutsearchtype,equals)">
@@ -788,10 +807,10 @@ here!
      <?/MIVAR>
   <?/MIBLOCK>  
  <?/MIBLOCK>
-<?/MIBLOCK>
 
 <?MIVAR NAME=count>$(+,$count1,$count2)<?/MIVAR>
-
+<?/MIBLOCK>
+<?/MICOMMENT>
 <?MICOMMENT> here's how num_recs used to get filled:
 $(IF, $(AND, $(XST,$str_dlmt_list), $(EC,$structure_bool,and) ) ,$MI_CURRENTROW,$count)
 
@@ -843,6 +862,7 @@ $count
         <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>
     </td>
   </tr>
+
 </table>
 <?/MIBLOCK>
 
@@ -936,6 +956,7 @@ and xpat_probe_zdb_id=a.mrkr_zdb_id and mrkr_type not like "EST"
 <?MIVAR COND="$(AND,$(XST,$order),$(EC,$order,date))">
   $(SETVAR,$ordr_by, "order by 6 desc,3")
 <?/MIVAR>
+
 <?MIVAR COND="$(NXST,$pubId)" NAME=sql>
   select distinct m.mrkr_zdb_id, m.mrkr_type, m.mrkr_abbrev_order, m.mrkr_name, m.mrkr_abbrev $name_sig_col,xpat_direct_submission_date
   $query_from, marker_relationship
@@ -951,8 +972,21 @@ and xpat_probe_zdb_id=a.mrkr_zdb_id and mrkr_type not like "EST"
   $(IF,$(XST,$query_grp_by),$query_grp_by )
   $ordr_by
 <?/MIVAR>
-<HR><?MIVAR>$sql<?/MIVAR><HR>
 
+<?MIVAR COND="$(NXST,$pubId)" NAME=sql1>
+  select distinct m.mrkr_zdb_id, m.mrkr_type, m.mrkr_abbrev_order, m.mrkr_name, m.mrkr_abbrev $name_sig_col, xpat_direct_submission_date
+  $query_from
+  where m.mrkr_zdb_id=xpat_probe_zdb_id and m.mrkr_type not like "EST" and m.mrkr_type not like "BAC" $query_where and m.mrkr_zdb_id=mrkr_zdb_id
+  and m.mrkr_zdb_id not in (
+  select distinct m.mrkr_zdb_id
+  $query_from, marker_relationship
+  $query_where_with_mrel)
+  $(IF,$(XST,$query_grp_by),$query_grp_by )
+  $ordr_by
+<?/MIVAR>
+<?MICOMMENT>
+<HR><?MIVAR>$sql<?/MIVAR><HR>
+<?/MICOMMENT>
 <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
   $sql
  ";>
@@ -1022,7 +1056,6 @@ and xpat_probe_zdb_id=a.mrkr_zdb_id and mrkr_type not like "EST"
                   <?/MIVAR>
 		<?/MIBLOCK>
 
-
 <?MIVAR NAME=$sqltest>select distinct xpatassay_name,xpatassay_display_order,xp.xpat_zdb_id,mrkr_zdb_id,mrkr_name,mrkr_abbrev_order
 from marker_relationship, expression_pattern xp, expression_pattern_assay,marker
         where '$GENE_OID' = mrel_mrkr_1_zdb_id
@@ -1041,41 +1074,100 @@ order by 2,6 asc
 <?MIVAR NAME=$expreccount>$MI_ROWCOUNT<?/MIVAR>
 <?MIVAR NAME=$expcount>0<?/MIVAR>
 
-<?MISQL SQL="select distinct xpatassay_name,xpatassay_display_order,xp.xpat_zdb_id,mrkr_zdb_id,mrkr_name,mrkr_abbrev_order
-from marker_relationship, expression_pattern xp, expression_pattern_assay,marker
+<?MICOMMENT>
+<?MIVAR NAME=SQL1>select distinct xpatassay_name,xpatassay_display_order,xp.xpat_zdb_id,mrkr_zdb_id,mrkr_name,mrkr_abbrev_order
+from expression_pattern xp,marker m, marker_relationship, expression_pattern_assay
 where '$GENE_OID' = mrel_mrkr_1_zdb_id
   and mrel_mrkr_2_zdb_id = xp.xpat_probe_zdb_id
-  and mrkr_zdb_id = mrel_mrkr_2_zdb_id and mrel_mrkr_1_zdb_id not like 'ZDB-PAC%' and mrel_mrkr_1_zdb_id not like 'ZDB-BAC%' and xp.xpat_assay_name=xpatassay_name 
+  and mrkr_zdb_id = mrel_mrkr_2_zdb_id and mrel_mrkr_1_zdb_id not like 'ZDB-PAC%' and mrel_mrkr_1_zdb_id not like 'ZDB-BAC%' and xp.xpat_assay_name=xpatassay_name
 union
 select distinct ' ' as xpatassay_name,0 as xpatassay_display_order,'' as xpat_zdb_id,mrkr_zdb_id,mrkr_name,mrkr_abbrev_order
-from expression_pattern xp, expression_pattern_assay,marker
+from expression_pattern xp, marker m, expression_pattern_assay
 where '$GENE_OID' = mrkr_zdb_id
-  and mrkr_zdb_id = xp.xpat_probe_zdb_id and '$GENE_OID' not in
-(select mrkr_zdb_id from marker_relationship , expression_pattern where '$GENE_OID'
-= mrel_mrkr_1_zdb_id and mrel_mrkr_2_zdb_id=xpat_probe_zdb_id)
+  and mrkr_zdb_id = xp.xpat_probe_zdb_id  
 order by 2,6 asc
-;">
+;<?/MIVAR>
+<?/MICOMMENT>
 
-<?MIVAR NAME=$XPAT_X>$3<?/MIVAR>
-<?MIVAR NAME=$EST_ID>$4<?/MIVAR>
-<?MIVAR NAME=$EST_NAME>$5<?/MIVAR>
-<?MIVAR NAME=$assay_name>$1<?/MIVAR>
-
-<?MISQL SQL="select count(distinct recattrib_source_zdb_id) from expression_pattern, record_attribution where '$GENE_OID'=xpat_probe_zdb_id and xpat_zdb_id=recattrib_data_zdb_id ">
-
-<?MIVAR NAME=$PUBCOUNT1>$1<?/MIVAR>
-<?MIVAR COND="$(>,$PUBCOUNT1,0)" NAME=$typeof>GENE<?/MIVAR>
-<?/MISQL>
-<?MIVAR NAME=$PUBCOUNT2>0<?/MIVAR>
-<?MIBLOCK COND="$(NC,$typeof,GENE)">
-<!--we do not want to include the Thisses pub for the count-->
-   <?MISQL SQL="select count(distinct recattrib_source_zdb_id) from expression_pattern, record_attribution where '$EST_ID'=xpat_probe_zdb_id and xpat_zdb_id=recattrib_data_zdb_id and recattrib_source_ZDB_id not like 'ZDB-PUB-010810-1' ">
-   <?MIVAR NAME=$PUBCOUNT2>$1<?/MIVAR>
-   <?MIVAR NAME=$typeof>EST<?/MIVAR> 
-  <?/MISQL>
+<?MIBLOCK COND="$(EC,$tablecreated,true)">
+  <!--- delete temp table, with dummy insert because otherwise it's an illegal statement  --->
+<?MISQL SQL="insert into t1 values (NULL,0,NULL,NULL,NULL,0,NULL,NULL)"><?/MISQL>
+<?MISQL SQL="drop table t1"><?/MISQL>
 <?/MIBLOCK>
 
+<?MIBLOCK COND="$(>,$(POSITION,$query_from,record),0)">
+<?MIVAR NAME=SQL20>select distinct xpatassay_name,xpatassay_display_order,xp.xpat_zdb_id,t.mrkr_zdb_id,t.mrkr_name,t.mrkr_abbrev_order,t.mrkr_type,recattrib_source_zdb_id
+$query_from, marker_relationship, expression_pattern_assay,marker t
+where '$GENE_OID' = mrel_mrkr_1_zdb_id
+  and mrel_mrkr_2_zdb_id = xp.xpat_probe_zdb_id
+  and t.mrkr_zdb_id = mrel_mrkr_2_zdb_id and mrel_mrkr_1_zdb_id not like 'ZDB-PAC%' and mrel_mrkr_1_zdb_id not like 'ZDB-BAC%' and xp.xpat_assay_name=xpatassay_name and recattrib_data_zdb_id=xpat_zdb_id $query_where 
+union
+select distinct ' ' as xpatassay_name,0 as xpatassay_display_order,'' as xpat_zdb_id,mrkr_zdb_id,mrkr_name,mrkr_abbrev_order,mrkr_type,recattrib_source_zdb_id
+$query_from, expression_pattern_assay
+where '$GENE_OID' = mrkr_zdb_id
+and mrkr_zdb_id = xp.xpat_probe_zdb_id and recattrib_data_zdb_id=xpat_zdb_id $query_where
+order by 2,6 asc into temp t1 <?/MIVAR>
+<?MIVAR NAME=tablecreated>true<?/MIVAR>
+<?MIELSE>
+<?MIVAR NAME=SQL20>select distinct xpatassay_name,xpatassay_display_order,xp.xpat_zdb_id,t.mrkr_zdb_id,t.mrkr_name,t.mrkr_abbrev_order,t.mrkr_type,recattrib_source_zdb_id
+$query_from, marker_relationship, expression_pattern_assay,marker t,record_attribution
+where '$GENE_OID' = mrel_mrkr_1_zdb_id
+  and mrel_mrkr_2_zdb_id = xp.xpat_probe_zdb_id
+  and t.mrkr_zdb_id = mrel_mrkr_2_zdb_id and mrel_mrkr_1_zdb_id not like 'ZDB-PAC%' and mrel_mrkr_1_zdb_id not like 'ZDB-BAC%' and xp.xpat_assay_name=xpatassay_name and recattrib_data_zdb_id=xpat_zdb_id $query_where 
+union
+select distinct ' ' as xpatassay_name,0 as xpatassay_display_order,'' as xpat_zdb_id,mrkr_zdb_id,mrkr_name,mrkr_abbrev_order,mrkr_type,recattrib_source_zdb_id
+$query_from, expression_pattern_assay,record_attribution
+where '$GENE_OID' = mrkr_zdb_id
+and mrkr_zdb_id = xp.xpat_probe_zdb_id and recattrib_data_zdb_id=xpat_zdb_id $query_where
+order by 2,6 asc into temp t1 <?/MIVAR>
+<?MIVAR NAME=tablecreated>true<?/MIVAR>
+<?/MIBLOCK>
+<?MISQL SQL="$SQL20"><?/MISQL>
+<?MISQL SQL="select count (distinct recattrib_source_zdb_id) from t1"><?/MISQL>
+<?MIVAR NAME=PUBCOUNT>$1<?/MIVAR>
+
+<?MISQL SQL="select count (distinct mrkr_type) from t1"><?/MISQL>
+<?MIVAR NAME=MKRCOUNT>$1<?/MIVAR>
+
+<?MIBLOCK COND="$(>,$MKRCOUNT,1)">
+    <?MIVAR NAME=SQL30>select distinct xpatassay_name,xpatassay_display_order,xpat_zdb_id,mrkr_zdb_id,mrkr_name,mrkr_abbrev_order from t1 where '$GENE_OID' not in (select mrkr_zdb_id from expression_pattern, marker_relationship where '$GENE_OID' = mrel_mrkr_1_zdb_id and mrel_mrkr_2_zdb_id=xpat_probe_zdb_id)<?/MIVAR>
+<?MIELSE>
+   <?MIVAR NAME=SQL30>select distinct xpatassay_name,xpatassay_display_order,xpat_zdb_id,mrkr_zdb_id,mrkr_name, mrkr_abbrev_order from t1 <?/MIVAR>
+<?/MIBLOCK>
+<?MISQL SQL="$SQL30;">
+<!--simple SQL30 here-->
+
+<!--misql=sql20 used to be here-->
+
+
+<?MIVAR NAME=$EST_ID>$4<?/MIVAR>
+<?MIVAR NAME=$XPAT_X>$3<?/MIVAR>
+<?MIVAR NAME=$EST_NAME>$5<?/MIVAR>
+<?MIVAR NAME=$assay_name>$1<?/MIVAR
+
+<!--misql=sql20 used to be here-->
+
+<?MICOMMENT>
+<?MIBLOCK COND="$(NXST,$author)">
+    <?MIVAR NAME=SQLPUB>select count(distinct recattrib_source_zdb_id) $query_from, record_attribution  where '$GENE_OID'=xpat_probe_zdb_id and xpat_zdb_id=recattrib_data_zdb_id $query_where<?/MIVAR>
+<?MIELSE>
+    <?MIVAR NAME=SQLPUB>select count(distinct recattrib_source_zdb_id) $query_from  where '$GENE_OID'=xpat_probe_zdb_id and xpat_zdb_id=recattrib_data_zdb_id $query_where<?/MIVAR>
+<?/MIBLOCK>
+<?MISQL SQL="$SQLPUB">
+<?MIVAR NAME=$PUBCOUNT1>$1<?/MIVAR>
+<!--end of mysql was here-->
+<?/MISQL>
+
+<?MIVAR NAME=$PUBCOUNT2>0<?/MIVAR>
+<!--we do not want to include the Thisses pub for the count-->
+<?MIBLOCK COND="$(>,$(POSITION,$EST_ID,EST),0)">
+   <?MISQL SQL="select count(distinct recattrib_source_zdb_id) from expression_pattern, record_attribution where '$EST_ID'=xpat_probe_zdb_id and xpat_zdb_id=recattrib_data_zdb_id">
+   <?MIVAR NAME=$PUBCOUNT2>$1<?/MIVAR>
+  <?/MISQL>
+<?/MIBLOCK>
 <?MIVAR NAME=PUBCOUNT>$(+, $PUBCOUNT1,$PUBCOUNT2)<?/MIVAR>
+<?/MICOMMENT>
+
 <?MIVAR NAME=$ROWCOUNT>1<?/MIVAR>
 <?MIVAR>
 <TR bgcolor=$row_color>
@@ -1106,7 +1198,6 @@ order by 2,6 asc
   $put_gene_name &nbsp;
   </TD>
 <?/MIBLOCK>
-
 <?MIBLOCK COND="$(>,$(POSITION,$EST_ID,EST),0)">
   <TD>
   <?MIVAR>
@@ -1120,17 +1211,34 @@ order by 2,6 asc
   <?MIVAR NAME=estexists>no<?/MIVAR> 
   <TD>
 <?/MIBLOCK>
+
 <?/MISQL>
 <?MIVAR NAME=$title>Expression of<?/MIVAR>
 <?MIVAR NAME=$heading>Publications reporting Expression <?/MIVAR>
 <?MIVAR NAME=name>$GENE_NAME<?/MIVAR>
+<?MICOMMENT>
 <?MIBLOCK COND="$(EC,$typeof,GENE)">
   <?MIVAR NAME=publink>
-  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$GENE_OID&rtype=xpat&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)$(IF,$(XST,$UPDATE),&UPDATE=1)">($(FIX,$PUBCOUNT))</a><?/MIVAR>
+  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$GENE_OID&rtype=xpat&title=$(URLENCODE,$title)&query_froEm=$query_from&query_where=$(URLENCODE,$query_where)$(IF,$(XST,$mutsearch),&mutsearch=$(URLENCODE,$mutsearch))&name=$(URLENCODE,$name)$(IF,$(XST,$UPDATE),&UPDATE=1)">($(FIX,$PUBCOUNT))</a><?/MIVAR>
 <?MIELSE>
   <?MIVAR NAME=publink>
-  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$EST_ID&rtype=xpat&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)$(IF,$(XST,$UPDATE),&UPDATE=1)">($(FIX,$PUBCOUNT))</a><?/MIVAR>
+  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$GENE_OID&rtype=xpat&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)$(IF,$(XST,$UPDATE),&UPDATE=1)">($(FIX,$PUBCOUNT))</a><?/MIVAR>
 <?/MIBLOCK>
+<?/MICOMMENT>
+
+<?MIBLOCK COND="$(=,$(POSITION,$query_from,mrkrselect),0)">
+  <?MIVAR NAME=publink>
+  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$GENE_OID&rtype=xpat&title=$(URLENCODE,$title)&pubcount=$PUBCOUNT&query_from=$query_from&query_where=$(URLENCODE,$query_where)$(IF,$(XST,$mutsearch),&mutsearch=$(URLENCODE,$mutsearch))&name=$(URLENCODE,$name)$(IF,$(XST,$UPDATE),&UPDATE=1)">($(FIX,$PUBCOUNT))</a><?/MIVAR>
+<?MIELSE> 
+<?MIVAR NAMe=comma>,<?/MIVAR>
+<?MIVAR NAME=$query_from>$(REPLACE,$query_from,mrkrselect_tmp_markers,marker)<?/MIVAR>
+  <?MIVAR NAME=publink>
+  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$GENE_OID&rtype=xpat&title=$(URLENCODE,$title)&pubcount=$PUBCOUNT&query_from=$query_from&query_where=$(URLENCODE,$query_where)$(IF,$(XST,$mutsearch),&mutsearch=$(URLENCODE,$mutsearch))&name=$(URLENCODE,$name)$(IF,$(XST,$UPDATE),&UPDATE=1)">($(FIX,$PUBCOUNT))</a><?/MIVAR>
+<?MICOMMENT>
+  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$GENE_OID&rtype=xpat&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)$(IF,$(XST,$UPDATE),&UPDATE=1)">($(FIX,$PUBCOUNT))</a><?/MIVAR>
+<?/MICOMMENT>
+<?/MIBLOCK>
+
 <?MIBLOCK COND="$(AND,$(EC,$estexists,yes),$(>,$PUBCOUNT,0))">
   <?MIVAR>
 
@@ -1179,7 +1287,6 @@ order by 2,6 asc
 <?/MIBLOCK>
 <?/MISQL><!--end main SQL-->
 
-
 </TABLE>
   <BR>
 
@@ -1205,6 +1312,9 @@ order by 2,6 asc
 	  <?MIVAR name=$UserInput>$UserInput&pubId=$pubId<?/MIVAR>
        <?MIELSE>
 	<?MIVAR name=$UserInput COND=$(XST,$gene_name)>$UserInput&gene_name=$(URLENCODE,$gene_name)<?/MIVAR>
+	<?MIVAR name=$UserInput COND=$(XST,$mutant)>$UserInput&mutant=$(URLENCODE,$mutant)<?/MIVAR>
+	<?MIVAR name=$UserInput COND=$(XST,$author)>$UserInput&mutant=$(URLENCODE,$author)<?/MIVAR>
+	<?MIVAR name=$UserInput COND=$(XST,$assay)>$UserInput&assay=$(URLENCODE,$assay)<?/MIVAR>
 	<?MIVAR name=$UserInput COND=$(XST,$gene_lg)>$UserInput&gene_lg=$gene_lg<?/MIVAR>
 	<?MIVAR name=$UserInput COND=$(XST,$searchtype)>$UserInput&searchtype=$searchtype<?/MIVAR>
   <?MIBLOCK COND=$(XST,$user_stg_rng)>
@@ -1231,8 +1341,8 @@ order by 2,6 asc
   <?MIVAR NAME=$num_structures>$(VECSIZE,$structure_list)<?/MIVAR>
 
   <?MIVAR NAME=UserInput>$UserInput&s_list=$s_list&num_structures=$num_structures<?/MIVAR>
+  <?MIVAR NAME=UserInput>$UserInput&TA_selected_structures=$TA_selected_structures<?/MIVAR>
 <?/MIBLOCK>
-
 
 	<!--- Return to the previous set of Rows --->
 	<?MIBLOCK COND="$(>,$BEGIN,1)">
@@ -1317,7 +1427,6 @@ order by 2,6 asc
     </tr>
   </Table>
   </Center>
-
 <!-- row count gt 0 -->
 <?MIELSE> <!-- Query suggestions -->
 <!-- Examine which fields were used by the user to determine the most appropriate help message. -->
@@ -1349,6 +1458,7 @@ order by 2,6 asc
 <?/MIBLOCK>
 
       </td>
+
       <td bgcolor="<!--|SIDEBAR_COLOR|-->" align=right>
 
       <!-- Insert a form with one button. Label button Your Input Welcome -->
@@ -1357,9 +1467,11 @@ order by 2,6 asc
       </td>
    </tr>
 <?MISQL COND="$(XST,$gene_name)" SQL="
+        set explain off;
         drop table mrkrselect_name_match; ">
   <?/MISQL>
 <?MISQL COND="$(XST,$gene_name)" SQL="
+        set explain off;
         drop table mrkrselect_tmp_markers;
  ">
 <?/MISQL>
@@ -1378,6 +1490,11 @@ order by 2,6 asc
 <?MIVAR COND="$(NXST,$stage_end)" NAME=$stage_end>NULL<?/MIVAR>
 <?MIVAR COND="$(NXST,$gene_lg)" NAME=$gene_lg>0<?/MIVAR>
 <?MIVAR NAME=$assay COND="$(NXST,$assay)">NULL<?/MIVAR>
+
+
+
+
+
 
 
    <tr>
@@ -1454,6 +1571,8 @@ order by 2,6 asc
 <?/MIVAR>
 
     <tr> <td colspan=2> &nbsp; </td> </tr>
+
+
     <tr>
 <?MICOMMENT>
 
@@ -1465,20 +1584,21 @@ order by 2,6 asc
 <?MICOMMENT> <!--- new selected structures textarea ---> <?/MICOMMENT>
 
       <TD colspan=1 bgcolor="#EEEEEE">
-	 <FONT size=2><B><A HREF="javascript:start_help('expressed_in');">Expressed In</A></B></FONT>
+	 <FONT size=2><B>Expressed In</B></FONT>
          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-         [<FONT size="-1"><I>example: "<FONT color="red">midbrain, hindbrain</FONT>"</I></FONT>]<br>
+         [<FONT size="-1"><I>example: "<FONT color="red">midbrain, hindbrain</FONT>", <A HREF="javascript:start_help();">more help</A></I></FONT>]<br>
          <TEXTAREA cols="50" rows="3" name="TA_selected_structures"><?MIVAR COND="$(XST,$TA_selected_structures)">$TA_selected_structures<?/MIVAR></TEXTAREA>
 	 <br>
 	 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatsel_anatdict.apg&mode=search"><B>Find</B> Anatomical Terms</A>
          &nbsp;
 	 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatsel_anatdict.apg&mode=stages"><B>Browse</B> Anatomical Terms</A>
 
+
       </TD>
 <?MICOMMENT> <!--- end new selected structures textarea ---> <?/MICOMMENT>
-      <TD bgcolor="#EEEEEE">
+      <TD bgcolor="#EEEEEE" valign=top>
 
 
 <?MICOMMENT> -- this bit is sneaky, basically, this means that if you're opening the page
@@ -1490,7 +1610,7 @@ order by 2,6 asc
         <?MIVAR NAME="include_substructures">checked<?/MIVAR>
 <?/MIBLOCK>
 
-        <input type=checkbox name="include_substructures" value="checked" <?MIVAR> $(IF,$(AND,$(XST,$include_substructures),$(EC,$include_substructures,checked)),checked="checked") <?/MIVAR> >  <A HREF="javascript:start_help('substructures');"> Include substructures</A> <br>
+        <input type=checkbox name="include_substructures" value="checked" <?MIVAR> $(IF,$(AND,$(XST,$include_substructures),$(EC,$include_substructures,checked)),checked="checked") <?/MIVAR> >  Include substructures <br>
 
 
 
@@ -1498,7 +1618,7 @@ order by 2,6 asc
         <?MIVAR NAME="structure_bool">or<?/MIVAR>
 <?/MIBLOCK>
 
-        <b><A HREF="javascript:start_help('return_for');">Return data for genes expressed in:</A></b> <br>
+        <b>Return data for genes expressed in:</b> <br>
         <input type="radio" name="structure_bool" value="or"  <?MIVAR>$(IF,$(EC,$structure_bool,or),checked="checked")<?/MIVAR>  > 
            <b>Any</b> of selected structures 
         <br>
@@ -1507,6 +1627,10 @@ order by 2,6 asc
            <b>Every</b> selected structure <?/MIVAR>
       </TD>
    </TR>
+
+
+         
+  
    <TR>
      <TD class="resultcount">
        Display results in groups of 
@@ -1535,6 +1659,8 @@ order by 2,6 asc
 	<?MIVAR>
 	    <td colspan=3 bgcolor=<!--|SIDEBAR_COLOR|--> align=right> 
 	<?/MIVAR>
+	
+	<input type=button value=Reset onClick="call_reset();">
 	
 	<input type=submit value=Search>
 		</td>
@@ -1567,17 +1693,37 @@ document.onkeydown = keyDown;
 if (navigator.appName == "Netscape") document.captureEvents(Event.KEYDOWN|Event.KEYUP);
 </SCRIPT>
 
+<font size=-2>Note: We currently provide links only to gene expression data directly submitted to ZFIN, but will include data from journal articles soon.</font> <br>
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 
 <?MIBLOCK COND="$(XST,$anatitem_temp_table_created)">
-  <?MISQL SQL="
+  <!--- delete temp table, with dummy insert because otherwise it's an illegal statement  --->
+  <?MISQL SQL="insert into anatomy_item_search_list (aisl_anatitem_zdb_id) values (NULL); 
                drop table anatomy_item_search_list;">
   <?/MISQL>
 <?/MIBLOCK>
 
 <?MIBLOCK COND="$(XST,$xpatanat_temp_table_created)">
-  <?MISQL SQL="
+  <!--- delete temp table, with dummy insert because otherwise it's an illegal statement  --->
+  <?MISQL SQL="insert into xpat_anatomy_search_list (xasl_xpat_zdb_id) values (NULL); 
                drop table xpat_anatomy_search_list;">
   <?/MISQL>
 <?/MIBLOCK>
+
+
+
+<?MIBLOCK COND="$(XST,$fish_table_created)">
+  <!--- delete temp table, with dummy insert because otherwise it's an illegal statement  --->
+
+  <?MISQL SQL="insert into fish_search_list (fsl_zdb_id) values (NULL); 
+drop table fish_search_list;">
+  <?/MISQL>
+<?/MIBLOCK>
+  <!--- delete temp table, with dummy insert because otherwise it's an illegal statement  --->
+<?MIBLOCK COND="$(EC,$tablecreated,true)">
+
+<?MISQL SQL="drop table t1;">
+  <?/MISQL>
+<?/MIBLOCK>
+
