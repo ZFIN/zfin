@@ -1,0 +1,120 @@
+
+==========================
+=== Thisse
+===========================
+
+--------------------
+-- File collection
+---------------------
+
+   * Export FMP files into .csv files. Open files with password "thisse", from File pulldown menu, choose Export, give names as defined below, use default .csv extension. Make sure "date last modified" is the last column, then export without changing any other settings.
+
+	rel_authors->authors.csv, 
+	rel_expression->expression.csv, 
+	rel_images->images.csv, 
+	DATA_FRX->probes.csv. 
+
+            
+   * Transfer all images and  probes.csv, images.csv, expression.csv, authors.csv files to one new directory, recommended name FR#_mmdd, # is the package number if given.
+
+   * Copy all the executables to the same dir
+
+-------------------
+-- Spellcheck 
+--------------------
+
+   * ISPELL check for each .csv files, expression.csv normally needs some correction. 
+   * In case of Thisse annotated (CB) loads, (otherwise, skip)
+       - Run
+		>/private/bin/rebol -sqw get_annotation_txt.r 
+
+    	 which generates "annotation.txt" file, and checks for bad 
+  	 apprearance of ":", and "null" in any annotation files. 
+
+       - Correct the .txt file(s) that has violation.
+       - ISPELL check the annotation.txt file and make corrections 
+            in the .txt file. 
+
+------------------------- 
+-- Image processing
+--------------------------
+
+    $executables$:  thumbnail.sh, processImage.sh      
+    $command$    :
+
+	  > processImage.sh labname [release_type]
+
+	  labname:                  Thisse / Talbot
+          release_type: 	    cb    with annotation
+          (in case of Thisse)       fr    without annotation
+    
+    $resulted files$:  images.dim	
+    $description$ :
+	It creates Imagesdir/ and move all .jpg a(nd corresponding .txt files) into it. It does image reality check with images.csv file, if no missed entries reported, answer "y" to continue when it prompts, otherwise, answer "n" and solve the inconsistency with Curator, and launch the process again. 
+	The second half of the program calls thumbnail.sh to generate thumbnail images, upon finish, it checks for completeness. Answer "y" to finish with cleanup if no missed images reported, otherwise, answer "n" to quit and investigate.
+
+
+--------------------------------------------------
+-- Preload processing: Parsing, Naming, Blasting
+--------------------------------------------------
+
+    $note$ : Update your test database and source the environment. The scripts would inherit environment from the running shell. 
+
+    $executables$:  parseThisse.pl  nameClone.pl blast2tab.pl 
+		    filterBlast.pl thisseData2Unl.sh
+
+    $command$    :
+
+	> thisseData2Unl.sh <your_db_name>
+
+    $resulted files$:   probes.unl
+			expression.unl 
+			keywords.unl 
+			images.unl 
+			authors.unl 
+			(acc_imClone.unl)
+			(is_gene.unl)
+			(blast2zfin.out)	
+    $description$ :
+	This master script calls parseThisse.pl and  nameClone.pl first, and generates a group of .unl file for loading. If there is unknown accession number, it will blast the accessions against ZFIN sequence database, use blast2tab.pl to convert the results to table format while filter out matches with <90% identity. Then it calls filterBlast.pl which exams the results and write high qualified match into is_gene.unl, and the rest to blast2zfin.out for manual curation. 
+
+----------------
+-- Loading
+----------------
+
+    $note$ : Test load on your database and almostdb before running on production. 
+    $executables$: pre_gxp_load.sql gxp_load_func.sql post_gxp_load.sql
+		   gxp_load_quantity_check.sql load_gxp.sh
+
+    $command$    :
+
+	> load_gxp.sh <db_name> <lab_name> [release_type]
+
+        lab_name   :     Thisse /Talbot
+        release_type:    fr/cb
+
+    $description$ :
+	This master script first calls pre_gxp_load.sql to load the files into a set of tables and conduct quality check with zfin db. Errors are written to separate .err file. The script would exit on any error with temp tables cleaned up. (Error file description is provided below, read first one at least!) Upon success, it executes the gxp_load_func.sql and then uses the SPL function with a set of predefined parameters to load the data into database. If the load fails with exit value "1", check /tmp/gxp_load_exception for reasons. If the load successes with "0", the gxp_load_quantity_check.sql would generate related table contents comparison report. Finally, you would choose to clean up all the temporary tables right away, or keep the table for diagnose and run post_gxp_load.sql later. 
+
+---------------------
+-- Appendix
+---------------------
+
+ Do a "ls -l *.err";
+    1) prb_already_has_xpat.err: this might be ok, exam the assay name, fish line and publication to see if that is a real duplication. Better to go over by curators. If that is fine, and no other errors, comment out the exit code from load_gxp.sh to ignore this report.   
+    2) unknown_probelib.err    : there might be an alias library name in zfin
+    #3) clone_data_conflict.err: vector conflict, or library conflict, or polymerase conflict if exist, or digest conflict if exist. Thisse has a lot vector conflict with ZGC, we stick with ZGC, which makes this check unnessicery. 
+    4) prb_without_xpat.err    : ask curator if we want to only load clone info or delete the entry.
+    5) dup_xpat.err : xpat data with same clone name, same start and end stage, delete one. 
+    6) xpat_stg_unknown.err: stage not in zfin stage table. (not for thisse but talbot)
+    7) keywords.undef.err: keywords not in anatomical dictionary.
+    8) keywords_stgerr.err: fail anatitem_overlaps_stg_window check
+    9) kwd_xpat_unconsistent.err: keyword's stage not in xpat file
+    10) fimg_preparation_unknown.err
+    11) fimg_view_unknow.err
+    12) img_xpat_unconsist.err: image stage not in xpat file
+    13) suthor_dup.err: duplicate entry in author file
+    14) non_zfin_author.err:  
+
+    *) xpatstg_withno_kwd_img.del: there are default stages in Thisse template. Identify them by exp_found "t", comments "No comments", no keywords and no images.  Should we also delete no annotation, no image data? we got some from Talbot lab. 
+
