@@ -15,6 +15,7 @@ Variables Expected:
 
 <?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
 <?MIVAR COND="$(NXST,$lg)" NAME=$lg>0<?/MIVAR>
+<?MIVAR COND="$(NXST,$ALTOID)" NAME=$ALTOID><?/MIVAR>
 
 <SCRIPT>
 function info() {
@@ -92,6 +93,10 @@ window.location.search='?MIval=aa-do-fishupdate.apg&OID=$OID&attr=reference&attr
 
 function Delete_listitem(item_name,item_id) {
 window.location.search='?MIval=aa-do-fishupdate.apg&OID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted'
+}
+
+function Delete_listitem_alias(item_name,item_id,oid,altoid) {
+window.location.search='?MIval=aa-do-fishupdate.apg&OID='+oid+'&ALTOID='+altoid+'&attr='+item_name+'&attr_type=Delete_listitem_alias&old_value='+item_id+'&new_value=deleted'
 }
 
 function Delete_marker(allele,marker_id) {
@@ -245,6 +250,24 @@ $(IF,$(XST,$UPDATE),"<TR><TD align=center colspan=2><font size=-1><input type=bu
 </TABLE>
 
 <?MIVAR COND="$(<,$MI_ROWCOUNT,1)"><center><TABLE cellpadding=4 border><TR><TD>No images of this line available.</TD></TR></TABLE></center><?/MIVAR>
+
+<p>
+<TABLE width=100%>
+<TR>
+<TD>
+<?MIVAR COND="$(XST,$UPDATE)">
+<INPUT TYPE=button value=Add onClick="doit('fishali_fish_name_alias','text','Alias')">
+<?/MIVAR> 
+<b>Previous names: </b>
+<?MISQL SQL="select fishali_fish_name_alias from fish_alias where fishali_fish_zdb_id='$OID';">
+<?MIVAR NAME=$alias>$1<?/MIVAR>
+<?MIVAR COND="$(XST,$alias)" NAME=$alias DELIMIT=" " REPLACE="+">$alias<?/MIVAR>
+<?MIVAR COND="$(XST,$UPDATE)"><br> <INPUT TYPE=button value=Delete onClick="Delete_listitem_alias('fishali_fish_name_alias','$alias','$OID','$ALTOID')">
+<?/MIVAR>$(IF,$(AND,$(NXST,$UPDATE),$(>,$MI_CURRENTROW,1)),;) $1 
+<?/MISQL>
+</TD></TR>
+</TABLE>
+
 
 <p>
 <TABLE width=100%>
@@ -411,8 +434,27 @@ $(IF,$(>,$MI_CURRENTROW,1),</TD></TR></TABLE><hr width=80%>)
 <TABLE width=100%>
 <TR>
 <TD bgcolor="#f8fabb" valign=middle align=center width=10%><font color="#ff0000"><b>$1</b></font></TD>
+<?MIVAR NAME=$allele_name>$1<?/MIVAR>
+
 
 <TD><font size=-1>
+<?MIVAR COND="$(XST,$UPDATE)">
+<INPUT TYPE=button value=Add onClick="doit('alleali_allele_name_alias','text','Alias')">
+<?/MIVAR> 
+<?MISQL SQL="select alteration.zdb_id from alteration, fish  where fish.zdb_id='$OID'and fish.allele ='$allele_name'
+and fish.allele= alteration.allele;">
+<?MIVAR NAME=$ALTOID>$1<?/MIVAR><?/MISQL>
+<b>Previous names: </b>
+<?MISQL SQL="select alleali_allele_name_alias from allele_alias where alleali_alt_zdb_id='$ALTOID';">
+<?MIVAR NAME=$allele_alias>$1<?/MIVAR>
+<?MIVAR COND="$(XST,$allele_alias)" NAME=$allele_alias DELIMIT=" " REPLACE="+">$allele_alias<?/MIVAR>
+<?MIVAR COND="$(XST,$UPDATE)"><br> <INPUT TYPE=button value=Delete onClick="Delete_listitem_alias('alleali_allele_name_alias','$allele_alias','$OID','$ALTOID')">
+<?/MIVAR>$(IF,$(AND,$(NXST,$UPDATE),$(>,$MI_CURRENTROW,1)),;) $1 
+<?/MISQL>
+
+
+<br>
+
 <b>Mutagenesis Protocol: </b> 
 $(IF,$(EC,$7,spontaneous),"None -- Spontaneous Mutation")
 $(IF,$(AND,$(NC,$7,spontaneous),$(OR,$(NXST,$UPDATE),$(NC,$10,original))),$8" treated with "$7)
