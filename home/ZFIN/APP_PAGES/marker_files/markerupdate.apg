@@ -132,7 +132,7 @@ function make_correction(mrkr_id,old_v,attr) {
 	           $(IF,$(NC,$current_value,NULL),VALUE='$current_value')>
 	  <?/MIVAR>
 	  </TD>
-          <?MIVAR COND="$(>,$(POSITION,$mrkr_type,GENE),0)">
+          <?MIVAR COND="$(AND,$(>,$(POSITION,$mrkr_type,GENE),0),$(OR,$(EC,$attr,mrkr_name),$(EC,$attr,mrkr_abbrev)))">
             </tr>
             <tr>
               <td>
