@@ -254,8 +254,12 @@ Datablade documentation.
     <!-------------------- end LG ----------------->
 
     <!--------------------search type ------->
+
     <?MIBLOCK COND="$(NC,$marker_type,all)">
-      <?MIVAR>$(VECAPPEND,$constraint," mrkr_type in ("'$mlist'")" )<?/MIVAR>
+      <?MIVAR>
+	$(VECAPPEND,$constraint," mrkr_type in ("'$mlist'")" )
+        $(SETVAR,$has_constraint,t)
+      <?/MIVAR>
     <?/MIBLOCK>	
 
     <!--------------------sequence type & vector type ------->
@@ -349,6 +353,7 @@ Datablade documentation.
 	  $(IF,$(NC,$lg,0),$(VECAPPEND,$critList,linkage group '$lg'))
 	  $(IF,$(NC,$sequence_type,any),$(VECAPPEND,$critList,sequence type '$sequence_type'))
 	  $(IF,$(NC,$vector_type,any),$(VECAPPEND,$critList,vector type '$vector_type'))
+	  $(IF,$(=,$(VECSIZE,$critList),0),$(VECAPPEND,$critList,All))
 	<?/MIVAR>
 
      <?MISQL SQL="
