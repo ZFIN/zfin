@@ -1,10 +1,11 @@
-<!-- This page regens the orthologue evidence display for one gene.
+<?MICOMMENT>
+ This page regens the orthologue evidence display for one gene.
     Called from orthoedit.apg when add or delete an orthologue evidence,
     or delete the whole orthologue.
 
     Parameter:  geneId
     07/29
--->
+<?/MICOMMENT>
 
 <?MISQL SQL="
 	select * 
@@ -27,22 +28,16 @@
 
 <?MIELSE> <?MICOMMENT>repopulate oev disp data<?/MICOMMENT>
 
-  <?MISQL SQL="
-   create temp table one_orthologue_evidence_display_temp
-      (
-        gene_zdb_id	varchar(50),
-     	pub_zdb_id	varchar(50),  
-    	evidence_code	char(2),
-    	organism_list	varchar(100)
-      	  not null		
-      ); ">
-  <?/MISQL> 
-
     <?MIVAR NAME=prePubZdbId><?/MIVAR>
     <?MIVAR NAME=preEvidenceCode><?/MIVAR>
     <?MIVAR NAME=organismList><?/MIVAR>
     
-   
+  <?MISQL SQL="
+    select dbinfo('sessionid')
+      from single;">
+    <?MIVAR NAME=doevu_session_id>$1<?/MIVAR>
+  <?/MISQL>
+
   <?MISQL SQL="
 	select oev_pub_zdb_id, oev_evidence_code, organism
           from orthologue, orthologue_evidence
@@ -60,9 +55,11 @@
 	<?/MIVAR>
     <?MIELSE>
         <?MISQL COND="$(NC,$organismList,)" SQL="
-	   insert into one_orthologue_evidence_display_temp
+	   insert into do_oevdispupdate_temp_first
+	       ( dout1_session_id, dout1_gene_zdb_id, dout1_pub_zdb_id,
+		 dout1_evidence_code, dout1_organism_list )
 	     values
-	       ('$geneId', '$prePubZdbId', 
+	       ($doevu_session_id, '$geneId', '$prePubZdbId', 
                 '$preEvidenceCode', '$organismList'); ">
 	<?/MISQL> 
         <?MIVAR>
@@ -75,38 +72,30 @@
   <?/MISQL>
 
   <?MISQL COND="$(NC,$organismList,)" SQL="
-	   insert into one_orthologue_evidence_display_temp
+	   insert into do_oevdispupdate_temp_first
+	       ( dout1_session_id, dout1_gene_zdb_id, dout1_pub_zdb_id,
+		 dout1_evidence_code, dout1_organism_list )
 	     values
-	       ('$geneId', '$prePubZdbId', 
+	       ($doevu_session_id, '$geneId', '$prePubZdbId', 
                 '$preEvidenceCode', '$organismList'); ">
   <?/MISQL>
 
   <?MISQL SQL="
-    create temp table pre_one_orthologue_evidence_display
-      (
-  	 oevdisp_zdb_id         varchar(50),
-	 oevdisp_gene_zdb_id	varchar(50),
-	 oevdisp_evidence_code	char(2),  
-	 oevdisp_organism_list	varchar(100)
-      ) ;">
-  <?/MISQL>
-  <?MICOMMENT>** 07/29/03 the SQL to create a temp table need to be in a separate execution from those querying it. <?/MICOMMENT>
+    insert into do_oevdispupdate_temp_second
+        ( dout2_session_id, dout2_gene_zdb_id, dout2_evidence_code, 
+	  dout2_organism_list ) 
+       select distinct $doevu_session_id, dout1_gene_zdb_id, dout1_evidence_code, 
+	     dout1_organism_list
+        from do_oevdispupdate_temp_first
+        where dout1_session_id = $doevu_session_id; 
 
-  <?MISQL SQL="
-
-    insert into pre_one_orthologue_evidence_display
-        (oevdisp_gene_zdb_id, oevdisp_evidence_code, 
-	  oevdisp_organism_list ) 
-       select distinct gene_zdb_id, evidence_code, 
-	     organism_list
-        from one_orthologue_evidence_display_temp;
- 
-    update pre_one_orthologue_evidence_display 
-		set oevdisp_zdb_id = get_id('OEVDISP');">
+    update do_oevdispupdate_temp_second
+      set dout2_oevdisp_zdb_id = get_id('OEVDISP')
+      where dout2_session_id = $doevu_session_id;">
   <?/MISQL>
 
   <?MISQL SQL="
- 
+
     delete from	zdb_active_data 
       where zactvd_zdb_id in (
 		select oevdisp_zdb_id 
@@ -117,49 +106,51 @@
   <?MISQL SQL="
 
     insert into zdb_active_data
-      select oevdisp_zdb_id
-   	from pre_one_orthologue_evidence_display;
+      select dout2_oevdisp_zdb_id
+        from do_oevdispupdate_temp_second
+        where dout2_session_id = $doevu_session_id;
 
     insert into orthologue_evidence_display 
 	(oevdisp_zdb_id, oevdisp_gene_zdb_id, oevdisp_evidence_code, 
 	  oevdisp_organism_list )
-       select oevdisp_zdb_id, oevdisp_gene_zdb_id, oevdisp_evidence_code, 
-	      oevdisp_organism_list 
-         from pre_one_orthologue_evidence_display; 
+       select dout2_oevdisp_zdb_id, dout2_gene_zdb_id, dout2_evidence_code, 
+	      dout2_organism_list 
+         from do_oevdispupdate_temp_second
+         where dout2_session_id = $doevu_session_id;
  
     insert into record_attribution
         ( recattrib_data_zdb_id, recattrib_source_zdb_id )
-      select oevdisp_zdb_id, pub_zdb_id
-	from orthologue_evidence_display o,
-	     one_orthologue_evidence_display_temp t
-	where o.oevdisp_gene_zdb_id = t.gene_zdb_id
-          and o.oevdisp_evidence_code = t.evidence_code
-	  and o.oevdisp_organism_list = t.organism_list; ">
+      select oevdisp_zdb_id, dout1_pub_zdb_id
+	from orthologue_evidence_display, do_oevdispupdate_temp_first
+	where oevdisp_gene_zdb_id   = dout1_gene_zdb_id
+          and oevdisp_evidence_code = dout1_evidence_code
+	  and oevdisp_organism_list = dout1_organism_list
+	  and dout1_session_id      = $doevu_session_id; ">
   <?/MISQL>
 
   <?MICOMMENT>*** 08/22 pub also attributed to the gene<?/MICOMMENT>
   <?MISQL SQL="
 	insert into record_attribution 
           ( recattrib_data_zdb_id, recattrib_source_zdb_id )
-	   select distinct gene_zdb_id, pub_zdb_id 
-	     from one_orthologue_evidence_display_temp
-	    where not exists 
+	   select distinct dout1_gene_zdb_id, dout1_pub_zdb_id 
+	     from do_oevdispupdate_temp_first
+	    where dout1_session_id = $doevu_session_id
+	      and not exists 
 		(select *
 		   from record_attribution
-		  where gene_zdb_id = recattrib_data_zdb_id
-		    and pub_zdb_id = recattrib_source_zdb_id )
+		  where dout1_gene_zdb_id = recattrib_data_zdb_id
+		    and dout1_pub_zdb_id = recattrib_source_zdb_id )
 	;">
   <?/MISQL> 
  
 
   <?MISQL SQL="
-    update statistics high for table one_orthologue_evidence_display_temp;
-    drop table one_orthologue_evidence_display_temp; ">
-
+    delete from do_oevdispupdate_temp_first
+      where dout1_session_id = $doevu_session_id;">
   <?/MISQL>
 
   <?MISQL SQL="
-    update statistics high for table pre_one_orthologue_evidence_display;
-    drop table pre_one_orthologue_evidence_display; ">
+    delete from do_oevdispupdate_temp_second
+      where dout2_session_id = $doevu_session_id;">
   <?/MISQL>
 <?/MIBLOCK>
