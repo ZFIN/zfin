@@ -1,4 +1,4 @@
-<!-- FILE: MAPPINGDETAIL.HTML. This file implements mapping details for MARKER records.
+!-- FILE: MAPPINGDETAIL.HTML. This file implements mapping details for MARKER records.
 -->
 <?MIVAR COND="$(NXST,$mapdetails_mode)" NAME=$mapdetails_mode>standalone<?/MIVAR>
 
@@ -423,7 +423,7 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),
 
     <?MIVAR NAME=$distance><?/MIVAR>
     <?MIVAR NAME=$lod><?/MIVAR>
-    <?MIVAR NAME=$distance><?/MIVAR>
+    <?MIVAR NAME=$metric><?/MIVAR>
     <?MIVAR NAME=$pair_id>null<?/MIVAR>
     <?MIVAR NAME=$member_zdb_id>$1<?/MIVAR>
     <?MIVAR NAME=$lg>$9<?/MIVAR>
