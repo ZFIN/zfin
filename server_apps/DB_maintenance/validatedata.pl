@@ -2033,10 +2033,10 @@ sub foreigndbNotInFdbcontains ($) {
 
   logHeader ("Checking each foreign db record has at least one record in foreign_db_contains");
 
-  my $sql = " select db_name
+  my $sql = " select fdb_db_name
                 from foreign_db
-               where db_name not in (
-                        select fdbcont_db_name from foreign_db_contains) ";
+               where fdb_db_name not in (
+                        select fdbcont_fdb_db_name from foreign_db_contains) ";
   my @colDesc = ("Db Name    " );
   my $nRecords = execSql ($sql, undef, @colDesc);
   if ( $nRecords > 0 ) {
