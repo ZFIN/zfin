@@ -1,3 +1,15 @@
+
+<?MIERROR>
+<?MIVAR COND=$(XST,$MI_SQL)>
+SQL: $MI_SQL
+
+<?/MIVAR>
+
+Code: $MI_ERRORCODE
+State: $MI_ERRORSTATE
+Message: $MI_ERRORMSG 
+<?/MIERROR>
+
 <!-- FILE: delete_record.html
 
 This page is used by root to delete some ZFIN record. The goal is to provide an intermediate step, warning of impending doom, so as to avoid accidental deletions.
