@@ -23,7 +23,7 @@ VARIABLES EXPECTED:
 <?MISQL SQL="delete from $rtype where zdb_id='$OID';"><?/MISQL>
 
 <!-- Special case: if it's an IMAGE, update the image count in fish_search -->
-<?MISQL COND="$(EC,$rtype,image)" SQL="update fish_search a set num_images=(select unique count(*)::integer from image where stock=a.fish_id) where a.fish_id='$fish_id';"><?/MISQL>
+<?MISQL COND="$(EC,$rtype,image)" SQL="update fish_search set num_images=(select unique count(*)::integer from image where stock=fish_id) where fish_id='$fish_id';"><?/MISQL>
 
 
 
