@@ -94,8 +94,8 @@
   my $print_type =0;            ### a code for types to print --1 gene, 2 est, 4 anon, 8 fish (0 == 15)
   my $g_height = 1;		### the maximum number of rows returned by any query --- anticipated heigth of the applet
   my $g_width =  0;		### the number of $panels $marker is found on * bbw ---  anticipated width of the applet
-  my $g_zdbid;
-  my $g_lg;
+  my $g_zdbid;		    # global ID
+  my $g_lg;			    # global LG
   my $zdbid = '';		### the zdbid comming in from a search marker page.
   
   my $or;			### is used to flag marker or lg options, 
@@ -111,11 +111,8 @@
   
   ### to supprt multiple java servers
   my $jport = "<!--|JAVA_SERVER_PORT|-->";
-  #if( defined $Q->param("port") ) {$jport= $Q->param("port");}
-  
   ### incase we want the mapplet to open somewhere particular some day
   my $frame = '_top';
-  #if( defined $Q->param("frame") ){$frame= $Q->param("frame");}
   
   ### holds the maximum number of markers that contain the given name on any panel.
   ### changing~ 
@@ -126,7 +123,6 @@
   my $g_opt= ''; # options form (global)
   
   ### used to pass scafolding notes to the web page
-
   my $note = "Begin Notes(I)<p>\n"; 
  
   ###
@@ -134,41 +130,14 @@
   ###
   if( ! $Q->param ) {
     print  $Q->header .  
-      $Q->start_html("This Page Is Intentionaly Left Blank... go figure").'Loading...' . 
-	$Q->end_html."\n"; exit;
+      $Q->start_html("This Page Is Intentionaly Left Blank... go figure").
+	  'This Page Is Intentionaly Left Blank' . 
+	  $Q->end_html."\n"; exit;
   }
   
-  ### if refresh_map is a given parameter then the frameset already exists.
-  ### otherwise we are comming from someware "outside the options/mapplet frameset
-  ### 
-#  if( ! defined $Q->param("refresh_map") )  {
-#    ### comming from outside frameset so build frameset and nav buttons
-#    ### or shunt off to a search results page  
-#    ###
-
-    
-#     if ( defined $Q->param('loc_panel') && $Q->param('loc_panel') ){
-#     my $qstring = '';#'view_mapplet.cgi?refresh_map=1&';
-#     $qstring = $qstring .$Q->param('loc_panel').'=1&';
-#    } 
-#    ############################################################################
-#    ###
-#    ### BUILD A FRAMESET
-#    ### beware very long gets
-#     my @keyval = split /\?/, $Q->self_url; 
-#     $qstring = $qstring . $keyval[1];   
-#     $note = $note . $qstring."\n\n";
-#      print $Q->header ."\n".
-#	      $Q->frameset({-rows=> '220,*'},
-#			   $Q->frame({-name=> 'criteria',-src=> 'view_mapplet.cgi?'}),
-#			   $Q->frame({-name=> 'pbrowser',-src=> $qstring })
-#			  );   
-#    exit 1;    
-#  }				# end coming from "outside" frameset
-  
   ################################################################################
   ################################################################################
-  ### Begin Frame_Set Exists
+  ### Begin Frame_Set Exists (which is the same as no frames at all)
   ###
   ### isolate panels of interest, (undefined is not false)
   ### and a panel to be edited (if one is available)
@@ -177,12 +146,12 @@
     $edit_panel = $Q->param('edit_panel'); 
   }else{ $edit_panel = '';}
 
-
   #$note = $note . "All Panels \n<p>";
   for $panel (@allpanels) {
      $note .= "$panel  \n <p>";
-  ### if loc_panel handles the crossview request for an entire LG for one panel, prior to frameless  
-  ### this was hanlded by setting the panel to 1 in qstring when building a new frameset
+  ### if loc_panel handles the crossview request for an entire LG for one panel, 
+  ### prior to frameless this was hanlded by setting the panel to 1 in qstring 
+  ### when building a new frameset
      if($panel eq $Q->param("loc_panel"))  {
         $Q->param($panel,1);
     }
@@ -240,13 +209,13 @@
 	$marker = lc($Q->param("marker"));
     undef $rowref;
 	$rowref = check_uniq($marker);
-	#$unique = (defined $$rowref[0][0])? @$rowref: 0; 
+	$unique = (defined $$rowref[0][0])? @$rowref: 0; 
      	
     #	$note = $note . "\trow ref length " . $unique . "\n";
 	###
 	### yow!  too many answers
 	###
-	if( defined @$rowref[1] ){ #$unique > 1) {	# not unique shunt off to search result page
+	if( $unique > 1) {	#defined @$rowref[1] ){ # # not unique shunt off to search result page
 	 ### $note = $note . $unique . " ->Too Many Choices  <p>\n";  
 	  my $bot = LWP::UserAgent->new(); 
 	  my $req = POST 'http://<!--|DOMAIN_NAME|-->/<!--|WEBDRIVER_PATH_FROM_ROOT|-->',
@@ -273,14 +242,16 @@
 	###
 	### huh? got nothing, advance to re-try do not pass map
 	###
-	elsif(! defined $rowref ){ #$unique < 1) {
+	elsif($unique < 1) { #! defined $rowref ){ #
 	  print $Q->header(). "\n".
-	    $Q->start_html(-TITLE => "ZFIN View Map", -bgcolor=> 'white', -link=> 'black', -vlink=>'black')."\n".
-
-	      "<p>The name: \"<font color=red><b>$marker</b></font>\" ". 
-		"is not found in any OFFICIAL abbreviation for any PUBLIC, MAPPED marker in the database.<p>\n".
-		  "You may submit a different name above\n".
-		    $Q->end_html();      
+		 $Q->start_html(-TITLE => "ZFIN View ZMAP", -bgcolor=> 'white')."\n".
+		 "<script language='JavaScript' src='http://<!--|DOMAIN_NAME|-->/header.js'></script>" ."\n";
+     	 mapper_select(Q);
+		 print
+	     "<p><p><p><p>\"<font color=red><i><b>$marker</b></i></font>\"". 
+		 " is not found in ZFIN.\n<p><p><p>".
+		 "<script language='JavaScript' src='http://<!--|DOMAIN_NAME|-->/footer.js'></script>";      
+	  exit 1;     
 	  exit 1;
 	}
 	###
@@ -359,7 +330,7 @@
       $sm_lg = $lg = $Q->param("loc_lg");
       $Q->param('lg',$lg);
       #$g_width = $g_height = 0;
-      $note = $note . "LG QUERY <p>\n";
+      #$note = $note . "LG QUERY <p>\n";
       foreach $panel (@panels) {
 	$Q->param($panel.'_ztotal',1);
     $note = $note . "being asked for all of $lg on $panel <p>\n";
@@ -1170,7 +1141,8 @@
       $dbh->commit;		#  so this will drop the temp(s) as well    
     }   
     $data;
-  }				# end sub uniquery
+  }				
+  # end sub uniquery
   
   ################################################################################
   ### input:  panel_abbrev, lg, lo & hi locations, and marker types
@@ -1254,7 +1226,7 @@
     my $ztotal = 1;
     $note = $note . "IN LG QUERY<p>\n";
     $sql =  
-      " SELECT zdb_id,abbrev,mtype,target_abbrev,lg_location,or_lg,mghframework,metric ". 
+    " SELECT zdb_id,abbrev,mtype,target_abbrev,lg_location,or_lg,mghframework,metric ". 
 	" FROM public_paneled_markers WHERE target_abbrev = ? ".
      " AND or_lg = ? ".
 	  "AND mtype in  ( \'$types\') ".

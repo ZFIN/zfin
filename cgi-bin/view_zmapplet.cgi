@@ -192,8 +192,8 @@
   }
   chop $panels_string; chop $panels_string; chop $panels_string;
   
-  $note = $note . "panel-string -is $panels_string \n <P>";  
-  $note = $note . "Using |@panels| and |$edit_panel| <P>\n"; 
+  #$note = $note . "panel-string -is $panels_string \n <P>";  
+  #$note = $note . "Using |@panels| and |$edit_panel| <P>\n"; 
   
   ###  Coming from a "external"  unisource  page,
   
@@ -227,12 +227,17 @@
 	$marker = lc($Q->param("marker"));
     undef $rowref;
 	$rowref = check_uniq($marker);
-	
+
+	$unique = (defined $$rowref[0][0])? @$rowref: 0;
+	#print "UNIQUE " . $unique; 
+
 	#$note = $note . "\trow ref length " . $unique . "\n";
+
 	###
 	### yow!  too many answers
 	###
-	if( defined @$rowref[1] ){ #$unique > 1) {	# not unique shunt off to search result page
+	if( $unique > 1) {	   #defined @$rowref[1] ){ #
+	  # not unique shunt off to search result page
 	  #$note = $note . $unique . " ->Too Many Choices  <p>\n";  
 	  my $bot = LWP::UserAgent->new(); 
 	  my $req = POST 'http://<!--|DOMAIN_NAME|-->/<!--|WEBDRIVER_PATH_FROM_ROOT|-->',
@@ -265,13 +270,15 @@
 	###
 	### huh? got nothing, advance to re-try do not pass map
 	###
-	elsif( ! defined $rowref ) { #$unique < 1) {
+	elsif(  $unique < 1) { #! defined $rowref ) {
 	  print $Q->header(). "\n".
-	    $Q->start_html(-TITLE => "ZFIN View ZMAP", -bgcolor=> 'white', -link=> 'black', -vlink=>'black')."\n".
-	      "<p>The name: \"<font color=red><b>$marker</b></font>\" ". 
-		"is not part of any name or 'previous name' for any marker in the database.<p>\n".
-		  "Please submit a different name above\n".
-		    $Q->end_html();      
+		 $Q->start_html(-TITLE => "ZFIN View ZMAP", -bgcolor=> 'white')."\n".
+		 "<script language='JavaScript' src='http://<!--|DOMAIN_NAME|-->/header.js'></script>" ."\n";
+     	 mapper_select(Q);
+		 print
+	     "<p><p><p><p>\"<font color=red><i><b>$marker</b></i></font>\"". 
+		 " is not found in ZFIN.\n<p><p><p>".
+		 "<script language='JavaScript' src='http://<!--|DOMAIN_NAME|-->/footer.js'></script>";      
 	  exit 1;
 	}
 	###
@@ -351,7 +358,7 @@
       $Q->param('lg',$lg);
       #$g_height = 0;     
       #$note = $note . "LG QUERY <p>\n";
-      $g_data =  $g_data . lg_query ( $panels_string ,$lg );
+      #$g_data =  $g_data . lg_query ( $panels_string ,$lg );
       foreach $panel (@panels) {
 	$Q->param($panel.'_ztotal',1);
     #$note = $note . "being asked for all of $lg on $panel <p>\n";
@@ -393,12 +400,12 @@
     if($Q->param($panel.'_bac')  && $Q->param($panel.'_bac')==1)    {$types = "$types\',\'$bac_type"; $print_type += 16; }
     if($print_type == 0) { $types = "SSLP\',\'RAPD\',\'RFLP\',\'SSR\',\'STS\',\'GENE\',\'EST\',\'BAC\',\'PAC\',\'FISH\',\'MUTANT\',\'LOCUS"; $print_type += 31;}
     
-    $note = $note . " will be finding  $types  markers on <br>\n|". $panels_string  ."|<br>\n";
+    #$note = $note . " will be finding  $types  markers on <br>\n|". $panels_string  ."|<br>\n";
     $Q->param($panel, 1);
     
     if( ! defined $Q->param($panel.'_zoom') && ! defined $Q->param($panel.'_or') ) {
       ### SEEK(un-hide)
-      $note = $note . " <br>SEEK! on |". $panels_string  ."|<p>\n";
+      #$note = $note . " <br>SEEK! on |". $panels_string  ."|<p>\n";
       
       $lines = '';
       if( $Q->param('OID')) {
@@ -591,7 +598,7 @@
 	$m_hi =   $Q->param($panel."_m_hi");
 		
 	if(! $zdbid ) {
-	  $note = $note . "checking $marker, $panel , $lg for uniqueness \n";
+	  #$note = $note . "checking $marker, $panel , $lg for uniqueness \n";
       undef $rowref;
 	  $rowref  = check_uniq($marker, $panels_string ); 
 	  if( (defined $rowref) && (! defined @$rowref[1])){ 
@@ -681,7 +688,7 @@
        #  $sm_m = get_OIDs_abbrev($Q->param("OID")); 
        #  $sm_refresh = 1;  
        #}
-       $note = $note . "HIDE! <br>\n"; 
+       #$note = $note . "HIDE! <br>\n"; 
        $lg_lo = $Q->param($panel.'_lg_lo') ;
        $lg_hi = $Q->param($panel.'_lg_hi') ;
        $lg =    $Q->param($panel.'_lg') ;
@@ -694,7 +701,7 @@
       
      if( (defined $edit_panel) && !($edit_panel =~'ZMAP') ){
         ### -- do un-hide this panel
-        $note = $note . "make that UN-HIDE! <br>\n"; 
+        #$note = $note . "make that UN-HIDE! <br>\n"; 
         $g_opt =  $g_opt .
 	    "<INPUT TYPE=\"hidden\" NAME=\"$edit_panel\" VALUE=\"1\">\n";        
      }       
@@ -741,7 +748,7 @@
   ################################################################################
   ################################################################################
   ### build up the "Mapplet" page
-  $note = $note . " <p> END NOTE <P>\n";
+  #$note = $note . " <p> END NOTE <P>\n";
   print $Q->header . "\n";   
   print $Q->start_html(-TITLE => "ZFIN View ZMAP", -bgcolor=> 'white')."\n";
   print "<script language='JavaScript' src='http://<!--|DOMAIN_NAME|-->/header.js'></script>";
@@ -905,7 +912,8 @@
 		    "<param name = \"data\"\t\t value = \"$g_data\">\n".
 		      "</APPLET><p>\n";
   }  else {			# mistakes were made...
-    ###     
+    ### 
+    mapper_select(Q);
     print "<P><H3><font color = red>No Map Data Returned </font></H3><p>\n";
     #print $g_error  . "<p>\n";
     #print $g_data   . "<p>\n";
@@ -1045,7 +1053,7 @@
       my $sth3 = $dbh->prepare($stmt3) or $note = $note . "SQL stmt 3 failed <b> " .$stmt3 ."\n<br>";      #or return undef ;
       
       $ztotal = $sth1->execute( $lg);    
-      $note = $note . "$pan has $ztotal rows for LG $lg<p>\n"; 
+      #$note = $note . "$pan has $ztotal rows for LG $lg<p>\n"; 
       
       # try having the default region returned be dependent on 
       # the number of markers available in the lg
@@ -1060,35 +1068,35 @@
 	$local_zoom = ($rc> 5)? $rc : 5;
       }
       
-      $note = $note . "Local Zoom ~ $local_zoom<p> \n";       
+      #$note = $note . "Local Zoom ~ $local_zoom<p> \n";       
       $panel ='ZMAP';
       
-      $note = $note . "probing for $zdbid 's location... \n";   
+      #$note = $note . "probing for $zdbid 's location... \n";   
       $rc  = $sth2->execute($zdbid); 
       @row = $sth2->fetchrow; 
       if( defined($row[4]) ){$note =  $note . "probe retuned with  $row[4] <p>\n";}
       else                  {$note =  $note . "probe retuned nothing <p> \n";} 
       if ( @row >= 4 ) {         
-	$note = $note .  "HIT  on $panel<p>\n";
+	#$note = $note .  "HIT  on $panel<p>\n";
 	$row[4] =  ($row[4] == 0)? 0 : $row[4]; # clean up 0.00000E+00               
 	$loc = $lo = $hi = $row[4];
 	
 	$rc = $sth3->execute($loc);        
-	$note =  $note .  "draping lg ".$lg ." about ". $loc ."<p>\n"; 
+	#$note =  $note .  "draping lg ".$lg ." about ". $loc ."<p>\n"; 
 	
 	$local_zoom = abs(($Q->param($panel.'_zoom'))? $Q->param($panel.'_zoom') : $local_zoom);
 	
-	$note = $note .  "seeking closest $local_zoom markers to $zdbid at $loc on $pan.<p>\n"; 
+	#$note = $note .  "seeking closest $local_zoom markers to $zdbid at $loc on $pan.<p>\n"; 
 	for ($zoom = 0; ( $zoom <= $local_zoom) && (@row = $sth3->fetchrow); $zoom ++){ 
 	  if   ($row[4] < $lo){ $lo = ($row[4] == 0)? 0 : $row[4]; }
 	  elsif($row[4] > $hi){ $hi = ($row[4] == 0)? 0 : $row[4]; }
 	}
 	
-	$note = $note . $lo . " -> " . $hi ."\n<br>";
+	#$note = $note . $lo . " -> " . $hi ."\n<br>";
     $rc  = $sth22->execute($zdbid); 
 	@row = $sth22->fetchrow;
 	$hi = ($hi < $row[4])?$row[4]:$hi;
-	$note = $note . $lo . " --> " . $hi ."\n<br>"; 
+	#$note = $note . $lo . " --> " . $hi ."\n<br>"; 
 	
 	$zoom = get_between($pan, $lg, $types, $lo, $hi);
     $junk =    get_bins($pan, $lg, $types, $lo, $hi);
@@ -1135,7 +1143,7 @@
       warn "Transaction aborted because $@";
       $dbh->commit;		#  so this will drop the temp(s) as well    
     }
-    $note = $note . "g_data is " . length($g_data) . " Long \n<br>"; 
+    #$note = $note . "g_data is " . length($g_data) . " Long \n<br>"; 
     $g_data;
   }				# end sub uniquery
   
@@ -1209,7 +1217,7 @@
     
     $junk = $row[0];
     
-    $note = $note ."\nfound $junk disinct bins". "<p>\n"; 
+    #$note = $note ."\nfound $junk disinct bins". "<p>\n"; 
     $junk;
   }
     
@@ -1256,12 +1264,12 @@
   ### output: entire linkage group in applet param format
   ### side effects: print_form and option_form updated, applet width and heigth adjusted
   sub lg_query  {
-    my ( $panel ,$lg ) =@_;
+    my ( $panel ,$lg ) = @_;
     my $data = '';
     my $ztotal = 1;
     #$note = $note . "IN LG QUERY<p>\n";
     $sql =  
-      " SELECT zdb_id,abbrev,mtype,target_abbrev,lg_location,or_lg,mghframework,metric,abbrevp ". 
+    " SELECT zdb_id,abbrev,mtype,target_abbrev,lg_location,or_lg,mghframework,metric,abbrevp ". 
 	" FROM zmap_pub_pan_mark WHERE panel_abbrev in (\'$panel\') ".
 	  "AND or_lg = ? ".
 	    "AND mtype in  ( \'$types\') ".
@@ -1411,17 +1419,17 @@ sub  get_OIDs_abbrev{
     ### then on the whole db.
     my $count = 0;  my $array_ref = '';
     if( (defined $lg) && $lg && ($lg ne "??") && ($lg > 0) && ($lg <= 25) ) {
-      $note = $note .  "Is |$marker| exactly unique on |$panel| |$lg| officially?<p>\n ";
+      #$note = $note .  "Is |$marker| exactly unique on |$panel| |$lg| officially?<p>\n ";
       $sql = "SELECT UNIQUE zdb_id, or_lg FROM  zmap_pub_pan_mark  ".      
 	  "WHERE mname  = \'$marker\' AND panel_abbrev in (\'$panel\') ".
       "AND mtype IN (\'$types\') AND or_lg =  \'$lg\'; ";
     } elsif( defined  $panel) {
-      $note = $note .  "Is |$marker| exactly unique on |$panel| offically?<p>\n ";
+      #$note = $note .  "Is |$marker| exactly unique on |$panel| offically?<p>\n ";
       $sql = "SELECT UNIQUE zdb_id, or_lg FROM zmap_pub_pan_mark ".
 	  "WHERE mname  = \'$marker\' AND panel_abbrev in (\'$panel\') ".
       "AND mtype IN ( \'$types\' ); ";
     } else  {
-      $note = $note . "Is |$marker| exactly unique in ZFIN officially?<p>\n ";
+      #$note = $note . "Is |$marker| exactly unique in ZFIN officially?<p>\n ";
       $sql = "SELECT UNIQUE zdb_id, or_lg FROM zmap_pub_pan_mark ".
 	  "WHERE mname  = \'$marker\' AND mtype IN ( \'$types\' ) ;";	        		
     }
@@ -1430,24 +1438,24 @@ sub  get_OIDs_abbrev{
     $array_ref = $cur->fetchall_arrayref();
     #$note = $note . @$array_ref . " " .$array_ref->[0][0]." ".$array_ref->[1][0]. "\n\n";
     $count = (defined @$array_ref)? @$array_ref : 0;
-    $note = $note . "found $count offically approved symbols that match<p>\n";
+    #$note = $note . "found $count offically approved symbols that match<p>\n";
     #--------------------------------------------------------------------------
     if(($count < 1) ) {
       ### did NOT find any exact match--
       ### first look for "contains" with the current constraints
-      $note = $note .  "\nLOOKING for CONTAINS \n";
+      #$note = $note .  "\nLOOKING for CONTAINS \n";
       if( (defined $lg) && $lg && ($lg ne "??") && ($lg > 0) && ($lg <= 25)) {
-	    $note = $note . "Is |$marker| similar & unique on |$panel|& |$lg| offically?<p>\n";
+	    #$note = $note . "Is |$marker| similar & unique on |$panel|& |$lg| offically?<p>\n";
 	    $sql = "SELECT UNIQUE zdb_id, or_lg FROM zmap_pub_pan_mark ".
 	    "WHERE mname  like \'\%$marker\%\' AND panel_abbrev = (\'$panel\') ".
 		"AND mtype IN ( \'$types\' ) AND or_lg = \'$lg\'; ";
       } elsif( defined  $panel ) {
-        $note = $note . "Is |$marker| similar & unique on |$panel| offically?<p>\n";
+        #$note = $note . "Is |$marker| similar & unique on |$panel| offically?<p>\n";
 	    $sql = "SELECT UNIQUE zdb_id, or_lg FROM zmap_pub_pan_mark ".
 	    "WHERE mname like \'\%$marker\%\' AND panel_abbrev = (\'$panel\') ".
 		"AND mtype IN ( \'$types\' ); ";
       } else  {
-	    $note = $note . "Is |$marker| similar & unique in ZFIN offically?<p>\n";
+	    #$note = $note . "Is |$marker| similar & unique in ZFIN offically?<p>\n";
 	    $sql = "SELECT UNIQUE zdb_id, or_lg FROM zmap_pub_pan_mark ".
 	    "WHERE mname  like \'\%$marker\%\' AND mtype IN ( \'$types\' ) ;"			
 	  }
@@ -1455,26 +1463,26 @@ sub  get_OIDs_abbrev{
       $array_ref = $cur->fetchall_arrayref();
       #$note = $note . @$array_ref . " " .$array_ref->[0][0]." ".$array_ref->[1][0]. "\n\n"; 
       $count = (defined @$array_ref)? @$array_ref : 0;
-      $note = $note . "found $count similar official symbols<p>\n";
+      #$note = $note . "found $count similar official symbols<p>\n";
     } 
     #-------------------------------------------------------------------------- 
     if(($count < 1) ) { ############ if still no hits try all_map_names
         if( (defined $lg) && $lg && ($lg ne "??") && ($lg > 0) && ($lg <= 25) ) {
-            $note = $note . "Is |$marker| exactly unique on |$panel| |$lg| unoffically?<p>\n ";
+            #$note = $note . "Is |$marker| exactly unique on |$panel| |$lg| unoffically?<p>\n ";
             $sql = "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ".
 	        "FROM all_map_names pmn, zmap_pub_pan_mark pm ".
 	        "WHERE allmapnm_zdb_id = pm.zdb_id ".
 	        "AND allmapnm_name  = \'$marker\' AND pm.panel_abbrev in (\'$panel\') ".
 		    "AND mtype IN (\'$types\') AND pm.or_lg =  \'$lg\'; ";
         } elsif( defined  $panel) {
-            $note = $note .  "|$marker| exactly unique on |$panel| unoffically?<p>\n ";
+            #$note = $note .  "|$marker| exactly unique on |$panel| unoffically?<p>\n ";
             $sql =
 	            "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ". 
 	            "FROM all_map_names pmn, zmap_pub_pan_mark pm ".
 	            "WHERE allmapnm_zdb_id = pm.zdb_id AND allmapnm_name  = \'$marker\' ".    
 		        "AND pm.panel_abbrev in (\'$panel\') AND mtype IN (\'$types\'); ";
         } else  {
-            $note = $note . "|$marker| exactly unique in ZFIN  unoffically?<p>\n ";
+            #$note = $note . "|$marker| exactly unique in ZFIN  unoffically?<p>\n ";
             $sql =
 	            "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ".
 	            "FROM all_map_names pmn, zmap_pub_pan_mark pm ".
@@ -1485,14 +1493,14 @@ sub  get_OIDs_abbrev{
         $array_ref = $cur->fetchall_arrayref();
         #$note = $note . @$array_ref . " " .$array_ref->[0][0]." ".$array_ref->[1][0]. "\n\n";
         $count = (defined @$array_ref)? @$array_ref : 0;
-        $note = $note . "found $count <p>\n";
+        #$note = $note . "found $count <p>\n";
     }    
     if(($count < 1) ) {
         ### did NOT find any exact match--
         ### first look for "contains" with the current constraints
         #$note = $note .  "\nLOOKING for CONTAINS \n";
         if( (defined $lg) && $lg && ($lg ne "??") && ($lg > 0) && ($lg <= 25)) {
-	        $note = $note . "|$marker| similar & unique on |$panel|& |$lg|?<p>\n";
+	        #$note = $note . "|$marker| similar & unique on |$panel|& |$lg|?<p>\n";
 	        $sql =
 	        "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ". 
 	        "FROM all_map_names pmn, zmap_pub_pan_mark pm ".
@@ -1501,7 +1509,7 @@ sub  get_OIDs_abbrev{
 		    "AND pm.panel_abbrev = (\'$panel\') ".
 		    "AND mtype IN ( \'$types\' ) AND pm.or_lg = \'$lg\'; ";
         } elsif( defined  $panel ) {
-	        $note = $note . "|$marker| similar & unique on |$panel|?<p>\n";
+	        #$note = $note . "|$marker| similar & unique on |$panel|?<p>\n";
 	        $sql =
 	        "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ".
 	        "FROM all_map_names pmn, zmap_pub_pan_mark pm ".
@@ -1509,7 +1517,7 @@ sub  get_OIDs_abbrev{
 		    "AND allmapnm_name like \'\%$marker\%\' ".    
 		    "AND pm.panel_abbrev = (\'$panel\') AND mtype IN (\'$types\'); ";
         } else  {
-	        $note = $note . "|$marker| similar & unique in ZFIN??<p>\n";
+	        #$note = $note . "|$marker| similar & unique in ZFIN??<p>\n";
 	        $sql =
 	        "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ".
 	        "FROM all_map_names pmn, zmap_pub_pan_mark pm ".
