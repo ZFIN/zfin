@@ -1,4 +1,30 @@
+<?MICOMMENT>
+
+FILE: xpatindexview.apg
+PREFIX: xiview_
+
+Shows assays for a publication.  Primarily GELI records, but any direct
+submission data without images or anatatomy will show up.
+
+INPUT VARS:
+  OID - publication ZDB_ID
+  GENEID - gene ZDB_ID, used as a filter to show only assays for that
+	   gene in this publication.  (optional)
+
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+
 <html>
 
 <?MIBLOCK COND="$(NXST,$OID)">
@@ -6,19 +32,30 @@
 ERROR -- something bad happened -- no OID passed in!
 <?/MIBLOCK>
 <?mivar name=$caller>$(SUBSTR,$OID,5,3)<?/mivar>
-  <head>
-  <title>ZFIN Gene Expression Literature Index Report for<?MIVAR> $OID<?/MIVAR></title>
+
+<script language="JavaScript" src="http://<!--|DOMAIN_NAME|-->/client_sniff.js"></script>
+
+<SCRIPT> 
+if (is_nav4) {
+document.write('<LINK rel=stylesheet type="text/css" href="/nn4_zfin_style.css">');
+} else {
+document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
+}
+</SCRIPT>
+
+<head>
+<title>ZFIN Gene Expression Literature Index Report for<?MIVAR> $OID<?/MIVAR></title>
+
+
   </head>
 
  
 <?MIBLOCK COND="$(XST,$OID)">
-     <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
-    
-  <?MIBLOCK COND="$(NC,GEN,$caller)">
+  <?MISQL SQL="select WebExplode(object,'rtype=geli') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
 
-     <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=geli') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
-     <?MISQL SQL="select title, authors, year(pub_date), source, keywords, accession_no, jtype,pub_abstract from publication where zdb_id='$OID';"><?/MISQL>
+    <?MISQL SQL="select title, authors, year(pub_date), source, keywords, accession_no, jtype,pub_abstract from publication where zdb_id='$OID';"><?/MISQL>
 
     <?MIVAR NAME=$title>$1<?/MIVAR>
     <?MIVAR NAME=$authors>$2<?/MIVAR>
@@ -84,20 +121,23 @@ ERROR -- something bad happened -- no OID passed in!
     </table>
 
     <table border = 0 cellspacing = 0 border = 0 width = 100% cellpadding = 3>
-      <tr><td width = 10%><b>Gene</size></b>
-      <td width = 10%><b>Fish</size></b>
-      <?MICOMMENT> <--- the dots have fallen out of favor, so goodbye dots --->
-      <td width = 10%><b>Expression<br><img src="/images/fill_green_ball.gif" border = 0 height = 10>  Detected</b> <br> <img src="/images/green_ball.gif" border = 0 height = 10><b>       Not Detected</b></size></td>
-      <?/MICOMMENT>
-      <td width = 10%><b>Stage</size></b>
-      <td width = 10%><b>Assay</size></b>
+      <tr>
+        <td width="10%"><b>Gene</size></b>
+        <td width="10%"><b>Fish</size></b>
+        <td width="30%"><b>Assay</size></b>
+        <td width="50%"><b>Stage(s)</size></b>
 
       <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
-      <?MIVAR name=$row_color>$highlight<?/MIVAR>
+      <?MIVAR name=$row_color>#FFFFFF<?/MIVAR>
+
+      <?MIVAR name=$prev_xpat_id><?/MIVAR>
+
+      <form>
+
       <?MISQL SQL="
 	select m.mrkr_abbrev, f.abbrev, xpat.xpat_assay_name, xpatstg.xpatstg_expression_found,
 	       stg.stg_name,xpat.xpat_zdb_id, xpat.xpat_direct_submission_date, lower(f.abbrev),
-	       stg.stg_hours_start, stg.stg_hours_end, m.mrkr_zdb_id, f.zdb_id,stg.stg_name_long  
+	       stg.stg_hours_start, stg.stg_hours_end, m.mrkr_zdb_id, f.zdb_id,stg.stg_name_long, 'aa-fishview.apg'
 
 	from marker m, record_attribution r, expression_pattern xpat, fish f, stage stg,
 	     expression_pattern_stage xpatstg 
@@ -113,7 +153,7 @@ ERROR -- something bad happened -- no OID passed in!
 
 	select mrkr_abbrev, abbrev, xpat_assay_name, xpatstg_expression_found,
 	       stg_name, xpat_zdb_id, xpat_direct_submission_date, lower(abbrev),
-	       stg_hours_start, stg_hours_end, mrkr_zdb_id, zdb_id, stg_name_long 
+	       stg_hours_start, stg_hours_end, mrkr_zdb_id, zdb_id, stg_name_long, 'aa-locusview.apg'
 
 	from marker, expression_pattern, expression_pattern_stage, locus, record_attribution, stage 
 
@@ -124,67 +164,47 @@ ERROR -- something bad happened -- no OID passed in!
 	  and xpat_gene_zdb_id = mrkr_zdb_id 
 	  and recattrib_data_zdb_id=xpat_zdb_id 
 
-	order by 1,9,10">
+	order by 1,2,3,9">
+        <?MIVAR name="$xiview_geneAbbrev">$1<?/MIVAR>
+	<?MIVAR name="$xiview_geneZdbId">$11<?/MIVAR>
+        <?MIVAR name="$xiview_stockAbbrev">$2<?/MIVAR>
+	<?MIVAR name="$xiview_stockZdbId">$12<?/MIVAR>
+	<?MIVAR name="$xiview_stockPage">$14<?/MIVAR>
+	<?MIVAR name="$xiview_assayName">$3<?/MIVAR>
+	<?MIVAR name="$xiview_stageName">$13<?/MIVAR>
+	<?MIVAR name="$xiview_xpatZdbId">$6<?/MIVAR>
 
+	<?MIVAR COND="$(NC,$xiview_xpatZdbId,$prev_xpat_id)" NAME=$row_color>$(IF,$(EC,$row_color,$highlight),#FFFFFF,$highlight)<?/MIVAR>
+        
 	<tr bgcolor=<?MIVAR>$row_color<?/MIVAR>>
+	  <?MIBLOCK COND="$(NC,$xiview_xpatZdbId,$prev_xpat_id)">
 	  <?MIVAR>
-	     <td><i><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$11">$1</i></a></td>
+	  <td>
+            <i><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$xiview_geneZdbId">$xiview_geneAbbrev</a></i>
+	  </td>
+	  <td>
+	    <i><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$xiview_stockPage&OID=$xiview_stockZdbId">$xiview_stockAbbrev</a></i>
+          </td>
+	  <td>
+	    $xiview_assayName
+	  </td>
 	  <?/MIVAR>
-	<?MIVAR NAME=$mutall>$2<?/MIVAR>
-	<?MIVAR NAME=$fishid>$12<?/MIVAR>
-	<?MIBLOCK COND="$(>,$(POSITION,$12,FISH),0)">
-	  <td><i><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=<?MIVAR>$fishid<?/MIVAR>"><?MIVAR>$mutall<?/MIVAR></i></a></td>
-	<?MIELSE>
-	  <td><i><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=<?MIVAR>$fishid<?/MIVAR>"><?MIVAR>$mutall<?/MIVAR></i></a></td>
-	<?/MIBLOCK>
-
-	<?MICOMMENT> <--- the green balls will bounce no more -->
-	<?MIVAR NAME=$detected>$4<?/MIVAR>
-	<?MIBLOCK COND="$(EQ,t,$detected)">
-	    <td>&nbsp;&nbsp;&nbsp;&nbsp;   <img src ="/images/fill_green_ball.gif" border = 0 height=10 align = "center"></td>
-	<?MIELSE>
-	    <td>&nbsp;&nbsp;&nbsp;&nbsp;   <img src ="/images/green_ball.gif" border = 0 height=10 align = "center"></td>
-	<?/MIBLOCK>
-	<?/MICOMMENT>
-
-	<td>$13</td>
-	<td>$3</td>
-	</TR>
-	<?MIVAR NAME=$row_color>$(IF,$(EC,$row_color,$highlight),#FFFFFF,$highlight)<?/MIVAR>
+          <?MIELSE>
+	    <td colspan="3"> &nbsp; <?/td>
+          <?/MIBLOCK>
+          <?MIVAR>
+	  <td>
+	    $xiview_stageName
+	  </td>
+          <?/MIVAR>
+	</tr>
+        <?MIVAR NAME=$prev_xpat_id>$xiview_xpatZdbId<?/MIVAR>
       <?/MISQL>
+      </form>
     </table>
     <p>
 
-  <?MIELSE>
-    <table border = 0 cellspacing = 5 width = 100% cellpadding = 0>
-    <TR><TD bgcolor=#ccccccc><b><center><font size=+1>Click on a Publication to view Gene Expression reported </font></center></b></td></tr></table>
-
-    <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
-    <?MIVAR name=$row_color>$highlight<?/MIVAR>
-
-    <table border = 0  width = 100% border = 0 cellspacing=0 cellpadding=3>
-    <td><b> Gene</b>
-    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Publication</b>
-    <?MISQL SQL="
-      select distinct p.pub_mini_ref, p.source, m.mrkr_abbrev, p.zdb_id 
-	from marker m, publication p, expression_pattern xpat, record_attribution r 
-	where xpat.xpat_gene_zdb_id = '$OID'
-	  and xpat.xpat_gene_zdb_id = m.mrkr_zdb_id 
-	  and xpat.xpat_zdb_id = r.recattrib_data_zdb_id 
-	  and r.recattrib_source_zdb_id = p.zdb_id">
-    <?MIVAR NAME=$pubid>$4<?/MIVAR>
-    <p>
-    <tr bgcolor=<?MIVAR>$row_color<?/MIVAR>>
-    <td>$3</td>
-    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatindexview.apg&OID=$pubid">$1 $2 </td>
-    <p><p>
-    </TR>
-    <?MIVAR NAME=$row_color>$(IF,$(EC,$row_color,$highlight),#FFFFFF,$highlight)<?/MIVAR>
-    <?/MISQL>
-    </table>
-  <?/MIBLOCK>
-
+ 
   <hr>
   <p>
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
