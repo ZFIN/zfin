@@ -1,6 +1,7 @@
 
 -- Drop all out-of-date functions.
 drop function regen_anatomy;
+drop function populate_all_anatomy_contains;
 drop procedure populate_anat_display_stage;
 drop function populate_anat_display_stage_children;
 drop procedure distinct_item_expression_count;
@@ -246,6 +247,88 @@ create procedure distinct_item_expression_count(aid varchar(50),
     values(aid,sid,oid,count,child_count,total_count);
 
 end procedure;
+
+
+
+
+create function populate_all_anatomy_contains()
+  returning integer
+
+  -- find the transitive closure of anatomy contains, 
+  -- keeping only the closest ancestor
+
+  -- called from regen_anatomy
+
+  define dist int;
+  define delta int;
+
+  let dist = 1;
+  let delta = -1;
+
+  -- the first level is a gimmie from anatomy_contains
+  -- also _all_ child nodes are explicitly listed
+  -- so we only need to find ancestors of these child nodes
+  insert into all_anatomy_contains_new
+    select anatcon_containeR_zdb_id ,
+	   anatcon_containeD_zdb_id, 
+	   dist
+      from anatomy_contains;
+
+  -- continue as long as progress is made 
+  -- there may be more elegant ways to do this so please do tell. 
+  while (delta  <  (select count(*) from all_anatomy_contains_new) )
+    let dist = dist + 1;
+    -- set the baseline for determining is progress is made
+    select count(*) 
+      into delta 
+      from all_anatomy_contains_new; 
+		
+    -- try adding new ancestors 
+    insert into all_anatomy_contains_new
+      select distinct a.anatcon_containeR_zdb_id,     -- A.ancestor
+		      b.allanatcon_containeD_zdb_id,  -- B.child
+		      dist                            -- min depth
+	from anatomy_contains a,            -- source of all ancestors
+             all_anatomy_contains_new b     -- source of all childs 
+
+	where b.allanatcon_min_contain_distance = (dist - 1) 
+	      -- limit the search to the previous level          
+          and b.allanatcon_containeR_zdb_id = a.anatcon_containeD_zdb_id
+	      -- B.ancestor == A.child
+	      -- checking for duplicates here is where the time gets absurd  
+	      -- (2:30 vs 0:06), so 
+	      --   "kill em all and let god sort them out later"
+	      ;
+
+  end while
+
+    
+  -- split out the keepers in one step usings the dbs strength with set 
+  -- operations instead of n-1 peicemeal steps 
+  select allanatcon_container_zdb_id,
+	 allanatcon_contained_zdb_id,
+	 min(allanatcon_min_contain_distance) as allanatcon_min_contain_distance
+    from all_anatomy_contains_new
+    group by allanatcon_container_zdb_id, allanatcon_contained_zdb_id
+    into temp all_anatomy_contains_new_tmp with no log
+    ;
+
+  -- move the keepers to where they will live
+  delete from all_anatomy_contains_new;
+  insert into all_anatomy_contains_new 
+    select distinct * 
+      from all_anatomy_contains_new_tmp
+      ;
+
+  -- return the number of rows kept as an hint of correctness
+  select count(*) 
+    into delta 
+    from all_anatomy_contains_new; 
+
+  return delta;				  
+
+end function;
+
 
 
 --------------------------------------------------------------------
@@ -661,6 +744,24 @@ create dba function regen_anatomy()
 	fragment by round robin in zfindbs_a , zfindbs_b , zfindbs_c
 	extent size 256 next size 256;
 
+
+      -- ---- ALL_ANATOMY_CONTAINS ----
+
+      if (exists (select *
+		   from systables
+		   where tabname = "all_anatomy_contains_new")) then
+        drop table all_anatomy_contains_new;
+      end if
+
+      create table all_anatomy_contains_new
+        (
+	  allanatcon_container_zdb_id		varchar(50),
+	  allanatcon_contained_zdb_id		varchar(50),
+	  allanatcon_min_contain_distance	integer not null 
+        )
+	fragment by round robin in zfindbs_a , zfindbs_b , zfindbs_c
+	extent size 512 next size 512;
+
     end
 
     -- For each anatomy_item_zdb_id, find all stages the item occurs in,
@@ -901,6 +1002,14 @@ create dba function regen_anatomy()
 
     end
 
+    -- populate all_anatomy_contains
+
+    begin
+      define nRows int;
+      execute function populate_all_anatomy_contains()
+        into nRows;
+    end;
+
 
     --RENAME the new tables to REPLACE the old
     begin work;
@@ -926,6 +1035,7 @@ create dba function regen_anatomy()
       drop table anatomy_stage_stats;
       drop table anatomy_display;
       drop table all_anatomy_stage;
+      drop table all_anatomy_contains;
 
     end -- local exception handler for dropping of original tables
 
@@ -961,6 +1071,7 @@ create dba function regen_anatomy()
       create unique index all_anatomy_stage_primary_key_index
         on all_anatomy_stage (allanatstg_anat_item_zdb_id,
 			      allanatstg_stg_zdb_id)
+	fillfactor 100
         in zfindbs_c;
 
       alter table all_anatomy_stage add constraint
@@ -971,6 +1082,7 @@ create dba function regen_anatomy()
 
       create index allanatstg_anat_item_zdb_id_index
         on all_anatomy_stage (allanatstg_anat_item_zdb_id)
+	fillfactor 100
 	in zfindbs_c;
 
       -- DO NOT include the foreign key clauses.  Allows us to
@@ -985,6 +1097,7 @@ create dba function regen_anatomy()
       drop index allanatstg_new_stg_zdb_id_index;
       create index allanatstg_stg_zdb_id_index
         on all_anatomy_stage (allanatstg_stg_zdb_id)
+	fillfactor 100
 	in zfindbs_c;
 
       { alter table all_anatomy_stage add constraint
@@ -1004,6 +1117,7 @@ create dba function regen_anatomy()
         on anatomy_display (anatdisp_hier_code,
 			    anatdisp_stg_zdb_id,
 			    anatdisp_seq_num)
+	fillfactor 100
 	in zfindbs_c;
       alter table anatomy_display add constraint 
         primary key (anatdisp_hier_code, anatdisp_stg_zdb_id, anatdisp_seq_num)
@@ -1013,6 +1127,7 @@ create dba function regen_anatomy()
 
       create index anatdisp_hier_code_index
         on anatomy_display (anatdisp_hier_code)
+	fillfactor 100
 	in zfindbs_c;
       { alter table anatomy_display add constraint
         foreign key (anatdisp_hier_code)
@@ -1023,6 +1138,7 @@ create dba function regen_anatomy()
       drop index anatdisp_new_stg_zdb_id_index;
       create index anatdisp_stg_zdb_id_index
         on anatomy_display (anatdisp_stg_zdb_id)
+	fillfactor 100
 	in zfindbs_c;
       { alter table anatomy_display add constraint
         foreign key (anatdisp_stg_zdb_id)
@@ -1032,6 +1148,7 @@ create dba function regen_anatomy()
       }
       create index anatdisp_item_zdb_id_index
         on anatomy_display (anatdisp_item_zdb_id)
+	fillfactor 100
 	in zfindbs_c;
       alter table anatomy_display add constraint
         foreign key (anatdisp_item_zdb_id)
@@ -1041,6 +1158,7 @@ create dba function regen_anatomy()
 
       create index anatdisp_item_name_index
         on anatomy_display (anatdisp_item_name)
+	fillfactor 100
 	in zfindbs_c;
       { alter table anatomy_display add constraint
         foreign key (anatdisp_item_name)
@@ -1070,6 +1188,7 @@ create dba function regen_anatomy()
 
       create index anatstgstat_anat_item_zdb_id_index
         on anatomy_stage_stats (anatstgstat_anat_item_zdb_id)
+	fillfactor 100
 	in zfindbs_c;
       { alter table anatomy_stage_stats add constraint
         foreign key (anatstgstat_anat_item_zdb_id)
@@ -1079,6 +1198,7 @@ create dba function regen_anatomy()
       }
       create index anatstgstat_stg_zdb_id_index
         on anatomy_stage_stats (anatstgstat_stg_zdb_id)
+	fillfactor 100
 	in zfindbs_c;
       { alter table anatomy_stage_stats add constraint
         foreign key (anatstgstat_stg_zdb_id)
@@ -1087,6 +1207,42 @@ create dba function regen_anatomy()
 	constraint anatstgstat_stg_zdb_id_foreign_key;
       }
 
+      -- ---- ALL_ANATOMY_CONTAINS ----
+
+      rename table all_anatomy_contains_new to all_anatomy_contains;
+
+      -- primary key
+
+      create unique index all_anatomy_contains_primary_key_index
+        on all_anatomy_contains (allanatcon_container_zdb_id,     
+				 allanatcon_contained_zdb_id)
+	fillfactor 100
+	in zfindbs_c;
+      alter table all_anatomy_contains add constraint
+        primary key (allanatcon_container_zdb_id,     
+		     allanatcon_contained_zdb_id)
+	constraint all_anatomy_contains_primary_key;
+
+      -- foreign keys
+
+      create index allanatcon_container_zdb_id_index
+        on all_anatomy_contains (allanatcon_container_zdb_id)
+	fillfactor 100
+	in zfindbs_c;
+      { alter table all_anatomy_contains add constraint
+        foreign key (allanatcon_container_zdb_id)
+	references anatomy_item
+	constraint allanatcon_container_zdb_id_foreign_key;
+      }
+      create index allanatcon_contained_zdb_id_index
+        on all_anatomy_contains (allanatcon_contained_zdb_id)
+	fillfactor 100
+	in zfindbs_c;
+      { alter table all_anatomy_contains add constraint
+        foreign key (allanatcon_contained_zdb_id)
+	references anatomy_item
+	constraint allanatcon_contained_zdb_id_foreign_key;      
+      }
     end -- Local exception handler
 
     commit work;
