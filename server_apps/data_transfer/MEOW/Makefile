@@ -2,9 +2,6 @@
 #
 # Makefile for ZFIN_WWW CVS Project, MEOW DB Data Unload directory
 #
-# $Source$
-# $Id$
-#
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
 # !! of the makefile hierarchy this makefile is a part of, and of the  !!
@@ -39,6 +36,6 @@ include $(TOP)/make.default.rules
 # Run the MEOW DB dump script.  Note that this may not produce the files
 # with world readable permissions (but when run from cron it does).
 
-run : $(TARGETDIR)/meow.pl
+run : $(TARGETS)
 	$(TARGETDIR)/meow.pl
 
