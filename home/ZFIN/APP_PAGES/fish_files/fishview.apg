@@ -825,6 +825,7 @@ Variables Expected:
 		  	<option $(IF,$(EC,$alt_mutagen,$1),SELECTED) value=$(URLENCODE,$1)>$1
 		    <?/MISQL>
 		  </SELECT>
+		  <?/MIBLOCK>
 		<?/MIBLOCK>
 	          		 
 		  <?MISQL SQL="select WebExplode(object,'dataId=$ALTOID&type=colattrib&info=mutagen') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
