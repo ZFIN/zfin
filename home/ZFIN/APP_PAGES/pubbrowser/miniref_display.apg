@@ -4,6 +4,7 @@ Variables Expected:
  -- type -- colattrib or recattrib
  -- info -- column name for column attribution
  -- orgOID --when call showpubs.apg, use it for page return
+
 --> 
 
 
