@@ -1,21 +1,22 @@
 #!/bin/csh
 
+#
 
 echo "BLAST againt Genbank human, mouse, and zebrafish..."
 
 
-nice +10 /research/zfin/users/tomc/blast/blastall -p blastn -d /research/zfin/blastdb/db/gb3 -e 1e-50 -o thisse2gb.out -m 8 -i $1
+nice +10 /research/zfin/users/tomc/blast/blastall -p blastn -d /research/zfin/blastdb/db/gb3 -e 1e-50 -o thisse2gb.out -m 8 -i $2
 
 
 echo "BLAST againt EST zebrafish..."
 
 
-/research/zfin/users/tomc/blast/blastall -p blastn -d /research/zfin/blastdb/db/est_zf -e 1e-100 -o thisse2est.out -m 8 -i $1
+/research/zfin/users/tomc/blast/blastall -p blastn -d /research/zfin/blastdb/db/est_zf -e 1e-100 -o thisse2est.out -m 8 -i $2
 
 
 echo "BLAST againt SwissProt/TrEMBL human, mouse, and zebrafish..."
 
-nice +10 /research/zfin/users/tomc/blast/blastall -p blastx -d /research/zfin/blastdb/db/sptr3 -e 1e-20 -o thisse2sp.out -m 8 -i $1
+nice +10 /research/zfin/users/tomc/blast/blastall -p blastx -d /research/zfin/blastdb/db/sptr3 -e 1e-20 -o thisse2sp.out -m 8 -i $2
 
 
 
@@ -30,7 +31,7 @@ blast2unl.pl -d sp thisse2sp.out
 
 echo "Find matching ZFIN markers..."
 
-/private/apps/Informix/informix_wavy/bin/dbaccess jrdb getMarker.sql
+/private/apps/Informix/informix_wavy/bin/dbaccess $1 getMarker.sql
 
 
 echo "Prepare .txt files for curation ... "
