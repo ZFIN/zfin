@@ -308,12 +308,24 @@ ERROR -- something bad happened -- no OID passed in!
   <!---------------Mapping detail title--------------------------------------->
 
   <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
-  <TABLE width="100%" cellpadding=5 border=0>
+  <TABLE width="100%" cellspacing=0 border=0>
   <?MIVAR>
-  <TR><TD bgcolor=#ccccccc colspan=2>
-  <FONT SIZE=+2>    <b>Mapping Details</b>      </FONT>
-  </TD></TR>
+       <form method=post 
+              action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
+              target=comments>
+           <input type=hidden name=subject value="$mrkr_abbrev">
+           <input type=hidden name=marker_id value="$OID">
+           <input type=hidden name=MIval value="aa-your_input_welcome.apg">
+           <input type=hidden name=page_id value="$OID">
   <?/MIVAR>
+  <TR bgcolor=#ccccccc>
+  <TD colspan=2>
+    <FONT SIZE=+2>    <b>Mapping Details</b>      </FONT>
+  </TD>
+
+  <TD align=right>     <input type=submit value="Your Input Welcome"></TD>         
+  </TR>
+      </form>
   <!-- wrap Mapping table in mapper form -->
   <!-- form tag brings in extra space line. For display sake, 
      it is put a bit in advance. -->
@@ -436,6 +448,7 @@ ERROR -- something bad happened -- no OID passed in!
       <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&detOID=$OID&abbrev=$mrkr_abbrev') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
       <?/MIVAR>
   <?/MIBLOCK>
+  </TD></TR>
   <!------------------------end of mapping info ----------------------->   
   
 
