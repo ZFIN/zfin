@@ -1,8 +1,9 @@
-To: aprilm@uoneuro.uoregon.edu, trevarro@uoneuro.uoregon.edu, dlains@uoneuro.uoregon.edu, mason@uoneuro.uoregon.edu
+To: aprilm@uoneuro.uoregon.edu, trevarro@uoneuro.uoregon.edu, dlains@uoneuro.uoregon.edu, cleeton@uoneuro.uoregon.edu, mason@uoneuro.uoregon.edu
 From: zirc@darkwing.uoregon.edu
-Subject: [required_requesterName]'s request for [lineName] [mutantAlleles]
+Subject: [required_requesterName]'s request for [lineName] [mutantAlleles] 
 
 **************************************** 
+[required_requesterName] [lineName] [mutantAlleles] [type][requestingOther] [quantity]
 ---
 ---
 Name:
@@ -85,28 +86,17 @@ Allele(s)
 [mutantAlleles]
 ---
 Type
-requesting embryos: [requestingEmbryos]
-requesting adults: [requestingAdults]
-requesting other: [requestingOther]
+[type]
+other: [requestingOther]
 ---
 Quantity
 [quantity]
 ---
 Do you currently have fish in your lab?
-[yesFishInLab]
+[fishExperience]
 ---
 Are you raising fish from eggs?
-[yesRaisingEggs]
----
----
-Requesting Other Materials
-ZFIN ID Number:
-[otherZFIN_ID]
-Name
-[otherName]
----
-Other Description
-[otherDescription]
+[raisingEggs]
 ---
 ---
 Considerations and Comments

@@ -1,8 +1,9 @@
-To: aprilm@uoneuro.uoregon.edu, trevarro@uoneuro.uoregon.edu, dlains@uoneuro.uoregon.edu, mason@uoneuro.uoregon.edu
+To: aprilm@uoneuro.uoregon.edu, trevarro@uoneuro.uoregon.edu, dlains@uoneuro.uoregon.edu, cleeton@uoneuro.uoregon.edu, mason@uoneuro.uoregon.edu
 From: zirc@darkwing.uoregon.edu
 Subject: [required_requesterName]'s request for EST/cDNA probes
 
 **************************************** 
+probe(s):[probe1Name] [probe2Name] [probe3Name] [probe4Name] [probe5Name]
 ---
 ---
 Name:

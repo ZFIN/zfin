@@ -1,8 +1,9 @@
-To: aprilm@uoneuro.uoregon.edu, trevarro@uoneuro.uoregon.edu, dlains@uoneuro.uoregon.edu, mason@uoneuro.uoregon.edu
+To: aprilm@uoneuro.uoregon.edu, trevarro@uoneuro.uoregon.edu, dlains@uoneuro.uoregon.edu, cleeton@uoneuro.uoregon.edu, mason@uoneuro.uoregon.edu
 From: zirc@darkwing.uoregon.edu
 Subject: [required_requesterName]'s request for antibodies
 
 **************************************** 
+person:[required_requesterName] antibodies:[antibodyName1] [antibodyName2] [antibodyName3] [antibodyName4] SamplePack:[antibodySPname1][antibodySPname2][antibodySPnam3][antibodySPname4][antibodySPname5][antibodySPname6]
 ---
 ---
 Name:
