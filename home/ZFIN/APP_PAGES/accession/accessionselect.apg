@@ -39,8 +39,9 @@ document.critform.aname.value = "";
 
 <TR> 
 <TD align=right WIDTH=30%>
-<input type=button value="RESET" onClick="call_reset()">  
-<input type=submit name=action value="SEARCH"></TD>
+<input type=submit name=action value="SEARCH">
+<input type=button value="RESET" onClick="call_reset()"> 
+</TD> 
 </TR>
 </TABLE>
 
