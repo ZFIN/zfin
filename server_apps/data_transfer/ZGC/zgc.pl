@@ -125,19 +125,23 @@ sub reportFile()
     $vTitle = $_[1];
     
     open (REPORT, ">>report") or die "can not open report";
-    open (FILE, "$vFile") or die "can not open $vFile";
     
     print REPORT "\n";
     print REPORT "$vTitle\n";
-
-    while($line = <FILE>)
+    
+    if (-e $vFile) 
     {
-      print REPORT $line;
+      open (FILE, "$vFile") or die "can not open $vFile";
+
+      while($line = <FILE>)
+      {
+        print REPORT $line;
+      }
+      close (FILE);
     }
 
     print REPORT "\n";
     
-    close (FILE);
     close (REPORT);
   }
 
