@@ -239,7 +239,7 @@ $(IF,$(AND,$(EC,$panel_abbrev,na),$(=,$OR_lg,0)),"Unmapped")
 
 
 
-$(IF,$(AND,$(>,$OR_lg,0),$(EC,$private,f)),"LG <b>"$OR_lg"</b>;<b> "$lg_loc"</b> "$metric""&nbsp;&nbsp;<A HREF="javascript:view_scores('"$panel_id"','"$panel_abbrev"','"$OID"','"$marker_name"')";>Scoring Data  <TD><font size=2> "<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$panel_id">"$panel_abbrev"</A>"</TD><TD><font size=2 COLOR=#A9A9A9> <input type=checkbox name=$panel_abbrev value=1  CHECKED ></TD><TD><font size=2>" "$upd_date""</TD>)
+$(IF,$(AND,$(>,$OR_lg,0),$(EC,$private,f)),"LG <b>"$OR_lg"</b>;<b> "$lg_loc"</b> "$metric""&nbsp;&nbsp;<A HREF="javascript:view_scores('"$panel_id"','"$OR_lg"','"$OID"','"$marker_name"')";>Scoring Data  <TD><font size=2> "<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$panel_id">"$panel_abbrev"</A>"</TD><TD><font size=2 COLOR=#A9A9A9> <input type=checkbox name=$panel_abbrev value=1  CHECKED ></TD><TD><font size=2>" "$upd_date""</TD>)
 <?MIBLOCK COND="$(AND,$(>,$OR_lg,0),$(EC,$private,f))">
 <?MIVAR name=$ok_view_map>1<?/MIVAR>
 
