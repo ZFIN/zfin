@@ -434,10 +434,6 @@ public class Spider implements Runnable
             {
             return SearchCategory.GENES_MAPPINGDETAIL;
             }
-        else if (url.indexOf("imageview.apg") != -1)
-            {
-            return SearchCategory.IMAGES;
-            }
         else if (url.indexOf("xpatview.apg") != -1)
             {
             return SearchCategory.EXPRESSION_XPATVIEW;
