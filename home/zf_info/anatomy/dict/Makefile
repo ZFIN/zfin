@@ -30,7 +30,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/anatomy/dict
 
-SUBDIRS = ear hair_cell lat_line oto semi_canal sens stato
+SUBDIRS = ear hair_cell lat_line oto semi_canal sens stato caud_fin
 
 GENERICS = atlas_info.html mem.html
 STATICS  = current.html meeting_sum.html sum.html zfish_stages.txt Trevarrow.html
