@@ -105,6 +105,17 @@ value=" DONE UPDATING. Back to Viewing! " onClick="document.location.search='?MI
 <?MIVAR COND="$(XST,$UPDATE)">
 <br><INPUT TYPE=button value=Update onClick="doit('abbrev','text','Abbreviation')">
 <?/MIVAR> 
+
+<!--    there are some abbrevs in the db as NULL - display as none -->
+<?MIBLOCK COND="$(EC,$abbrev,NULL)">
+<?MIVAR NAME=$abbrev>None<?/MIVAR>
+<?/MIBLOCK>
+
+<!--    there are some abbrevs in the db as xxx - display as none -->
+<?MIBLOCK COND="$(EC,$abbrev,xxx)">
+<?MIVAR NAME=$abbrev>None<?/MIVAR>
+<?/MIBLOCK>
+
 <?MIVAR>($abbrev)</FONT></b>
 <?/MIVAR>
 
