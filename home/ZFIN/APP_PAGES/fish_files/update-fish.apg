@@ -21,7 +21,6 @@ Note that, for now, this subroutine is tailored for TEMP_FISH records, but it co
 
 <?MISQL COND=$(XST,$name) SQL="update temp_fish set name='$name' where zdb_id='$temp_oid';"><?/MISQL>
 <?MISQL COND=$(XST,$abbrev) SQL="update temp_fish set abbrev='$abbrev' where zdb_id='$temp_oid';"><?/MISQL>
-<?MISQL COND=$(XST,$source) SQL="update temp_fish set source='$source' where zdb_id='$temp_oid';"><?/MISQL>
 <?MISQL COND=$(XST,$mother) SQL="update temp_fish set mother='$mother' where zdb_id='$temp_oid';"><?/MISQL>
 <?MISQL COND=$(XST,$father) SQL="update temp_fish set father='$father' where zdb_id='$temp_oid';"><?/MISQL>
 <?MISQL COND=$(XST,$discoverer) SQL="update temp_fish set discoverer='$discoverer' where zdb_id='$temp_oid';"><?/MISQL>
@@ -45,7 +44,11 @@ Note that, for now, this subroutine is tailored for TEMP_FISH records, but it co
 <?MISQL COND=$(XST,$flag) SQL="update temp_fish set flag='$flag' where zdb_id='$temp_oid';"><?/MISQL>
 <?MISQL COND="$(XST,$comments)" SQL="update temp_fish set comments='$comments' where zdb_id='$temp_oid';"><?/MISQL>
 
-<?MISQL COND="$(XST,$status)" SQL="update temp_fish set status='$status' where zdb_id='$temp_oid';"><?/MISQL>
+<?MISQL COND="$(XST,$fish_extinct)" SQL="
+  update temp_fish
+    set fish_extinct = '$fish_extinct' 
+    where zdb_id = '$temp_oid';">
+<?/MISQL>
 
 <?MISQL SQL="update temp_fish set entry_time=current where zdb_id='$temp_oid';"><?/MISQL>
 
