@@ -9,7 +9,8 @@
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
 # This directory contains tools for analyzing / checking the web site.
-# Initially it contains only a link checker.
+# This includes a web page link checker that is run weekly, and a 
+# signs of life script that is run every few minutes.
 
 
 # ---------------  Variable Definitions  --------------------------------
@@ -19,7 +20,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/WebSiteTools
 
-GENERICS = checklinks run.checklinks run.checklinks.mirror
+GENERICS = checklinks run.checklinks run.checklinks.mirror signsoflife.sh
 
 
 # ---------------  Production Rules  ------------------------------------
@@ -42,9 +43,13 @@ include $(TOP)/make.default.rules
 #		     2 minutes.
 #
 
-run : $(TARGETDIR)/checklinks $(TARGETDIR)/run.checklinks $(TARGETDIR)/run.checklinks.mirror
+runchecklinks : $(TARGETDIR)/checklinks $(TARGETDIR)/run.checklinks $(TARGETDIR)/run.checklinks.mirror
   ifneq ($(INFORMIXSERVER),bogus.informix.server.for.mirrors)
 	$(TARGETDIR)/run.checklinks 	
   else
 	$(TARGETDIR)/run.checklinks.mirror 
   endif
+
+
+runsignsoflife : $(TARGETDIR)/signsoflife.sh
+	$(TARGETDIR)/signsoflife.sh
