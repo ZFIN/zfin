@@ -109,7 +109,7 @@ window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerupdat
 }
 
 function Delete_listitem(item_name,item_id) {
-window.location.replace('?/<!--|WEBDRIVER_PATH_FROM_ROOT|-->MIval=aa-do-markerupdate.apg&OID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted&target_table=$target_table');
+window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted&target_table=$target_table');
 }
 
 function Delete_alias(alias,marker_id) {
@@ -177,7 +177,7 @@ if (seq_acc != '') {
 <P>
 
 <?MIVAR COND="$(XST,$UPDATE)">
-<form NAME=updater method=post action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi"  >
+<form >
 
 <center><font size=+2><input type=button 
 value=" DONE UPDATING. Back to Viewing! " onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID')"> </font></center>
@@ -557,7 +557,7 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),
 
 </form> <!-- end form for view maps. -->
 
-<form>
+<form name=updater>
 <hr width="80%">
 
 <b>PRIMER SETS:</b><p>
