@@ -1185,18 +1185,12 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 <HR width="80%" align=center>
 <?MIVAR NAME=$mtype_is_gene><?/MIVAR>
 <?MIVAR NAME=$mtype_is_gene COND="$(NE,$(POSITION,$OID,GENE),0)">
-     recattrib_data_zdb_id in 
-      (select mrel_mrkr_2_zdb_id 
-       from marker_relationship 
-       where mrel_mrkr_1_zdb_id = '$OID')
+     recattrib_data_zdb_id in (select mrel_mrkr_2_zdb_id from marker_relationship where mrel_mrkr_1_zdb_id = '$OID')
+  or
+     recattrib_data_zdb_id in (select mrel_mrkr_1_zdb_id from marker_relationship where mrel_mrkr_2_zdb_id = '$OID')
   or
 <?/MIVAR>
 <?MIVAR NAME=$mtype_is_gene COND="$(EC,$(POSITION,$OID,GENE),0)">
-     recattrib_data_zdb_id in 
-      (select mrel_mrkr_1_zdb_id 
-       from marker_relationship 
-       where mrel_mrkr_2_zdb_id = '$OID')
-  or
 <?/MIVAR>
 
 <?MISQL SQL="
@@ -1204,6 +1198,10 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
   from record_attribution
   where ($mtype_is_gene
            recattrib_data_zdb_id = '$OID'
+           or
+             recattrib_data_zdb_id in (select mrel_zdb_id from marker_relationship where mrel_mrkr_1_zdb_id = '$OID')
+           or
+             recattrib_data_zdb_id in (select mrel_zdb_id from marker_relationship where mrel_mrkr_2_zdb_id = '$OID')
            or
              recattrib_data_zdb_id in (select dalias_zdb_id from data_alias where dalias_data_zdb_id = '$OID')
            or

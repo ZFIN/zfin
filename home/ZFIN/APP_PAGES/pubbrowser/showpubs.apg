@@ -123,10 +123,10 @@ $(IF,$(>,$(POSITION,$rtype,locus),0),
        </form>
 <?/MIVAR>
 
-<?MIVAR NAME=OID_of_gene_or_related_data_has_recattrib>
-  (  recattrib_data_zdb_id = '$OID'
+<?MIVAR NAME=related_data_attrib_to_OID>
+     recattrib_data_zdb_id in (select mrel_zdb_id from marker_relationship where mrel_mrkr_2_zdb_id = '$OID')
    or
-     recattrib_data_zdb_id in (select mrel_mrkr_2_zdb_id from marker_relationship where mrel_mrkr_1_zdb_id = '$OID')
+     recattrib_data_zdb_id in (select mrel_zdb_id from marker_relationship where mrel_mrkr_1_zdb_id = '$OID')
    or
      recattrib_data_zdb_id in (select dalias_zdb_id from data_alias where dalias_data_zdb_id = '$OID')
    or
@@ -135,21 +135,25 @@ $(IF,$(>,$(POSITION,$rtype,locus),0),
      recattrib_data_zdb_id in (select zdb_id from locus where cloned_gene = '$OID')
    or
      recattrib_data_zdb_id in (select oevdisp_zdb_id from orthologue_evidence_display where oevdisp_gene_zdb_id = '$OID')
-  )
+
 <?/MIVAR>
 
 <?MIVAR NAME=OID_of_nongene_or_related_data_has_recattrib>
   (  recattrib_data_zdb_id = '$OID'
    or
+     $related_data_attrib_to_OID
+  )
+<?/MIVAR>
+
+
+<?MIVAR NAME=OID_of_gene_or_related_data_has_recattrib>
+  (  recattrib_data_zdb_id = '$OID'
+   or
+     recattrib_data_zdb_id in (select mrel_mrkr_2_zdb_id from marker_relationship where mrel_mrkr_1_zdb_id = '$OID')
+   or
      recattrib_data_zdb_id in (select mrel_mrkr_1_zdb_id from marker_relationship where mrel_mrkr_2_zdb_id = '$OID')
    or
-     recattrib_data_zdb_id in (select dalias_zdb_id from data_alias where dalias_data_zdb_id = '$OID')
-   or
-     recattrib_data_zdb_id in (select dblink_zdb_id from db_link where linked_recid = '$OID')
-   or
-     recattrib_data_zdb_id in (select zdb_id from locus where cloned_gene = '$OID')
-   or
-     recattrib_data_zdb_id in (select oevdisp_zdb_id from orthologue_evidence_display where oevdisp_gene_zdb_id = '$OID')
+     $related_data_attrib_to_OID
   )
 <?/MIVAR>
 
