@@ -1,12 +1,14 @@
-#!/private/bin/perl 
+#!/private/bin/perl -wT
 {
  use CGI;
+ # Jan. 22, 2001 tec commented out vars defines but not used
+ # put quotes around bare word  panel in line 110  
+ # began adding the 'my' qualified to var declorations  to help if we ever use mod-perl ... 
  
+ #tec my $yellow = "#FFFFDD";
+ #tec my $pink   = "#FFEEEE"; 
 
- $yellow = "#FFFFDD";
- $pink = "#FFEEEE"; 
-
- $query = new CGI();
+ my $query = new CGI();
  print $query->header();
  
  $JSCRIPT=<<ENDJS;
@@ -89,10 +91,11 @@ ENDCSS
  
  
  print $query->startform(-method=>'get',-action=>'/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi',-name=>'options',-target=>'pbrowser');
-
+my $edit = '';
+my $buf =''; 
 # $query->hidden(-name=>'edit_panel');
  if ($query->param('edit_panel') ne "") {
-   $edit = $query->param('edit_panel');
+    $edit = $query->param('edit_panel');
  }
  
  for ($query->param) {
@@ -106,8 +109,9 @@ ENDCSS
  }
  print $buf;
 
+ my $panel = '';
  $i = 1;
- while ($query->param(panel .$i) ne "") {
+ while ($query->param('panel' .$i) ne "") {
    $panel = $query->param('panel'.$i);
    if ($query->param($panel) eq "") {
      print $query->hidden(-name=>$panel,-value=>'0');
@@ -118,6 +122,8 @@ ENDCSS
  print "\n<center>";
 # print '<P align=right>' . $query->submit(-name=>'refresh_map',-value=>'View Map') . '</P>';
  
+ my $units;
+ my $notes;
  if ($query->param('edit_panel') ne "") {
    
   for ($query->param('edit_panel')) {
@@ -126,7 +132,7 @@ ENDCSS
 #   $panel = $query->param('panel'.$i);  
 
    print "<table name=" . $panel . "_table cellspacing=0 cellpadding=1 width = 100% border = 0 bgcolor=#FFFFFF> <tr><td bgcolor=#DDDDDD>\n";
-   
+  
    print $query->hidden(-name=>$panel.'_units');
    $units = $query->param($panel.'_units');
    
@@ -140,6 +146,11 @@ ENDCSS
 
    print "</td><td bgcolor=#DDDDDD> <P> <i><font color=red>" .  $notes  .  "</font></i></P></td><tr><td>";
 
+   my $onchange;
+   my $marker;
+   my $jsform;
+   my $loc_onchange;
+   my $lg;
    
  #  if ($query->param($panel) eq '1') {
 
@@ -186,12 +197,12 @@ ENDCSS
 #     @LG_OR = $query->radio_group(-name=>$panel.'_lg_or', -value=>['near', 'units'],-nolabels=>1, -default=>'units');
       print $query->hidden(-name=>$panel.'_lg_or',-default=>'units');
 
-     $NLlg = ' LG ' . $query->popup_menu(-name=>$panel.'_lg',-values=>[qw/?? 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25/], -default=>'??',-onChange=>$loc_onchange);
+#tec    $NLlg = ' LG ' . $query->popup_menu(-name=>$panel.'_lg',-values=>[qw/?? 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25/], -default=>'??',-onChange=>$loc_onchange);
      $NL_onchange = $loc_onchange . $jsform . "_lg_or.value=\'near\'; " . $jsform . "_lg_hi.value=\'\'; " . $jsform . "_lg_lo.value=\'\'; ";
      print $LG_OR[0] . 'near location: ' . $query->textfield(-name=>$panel.'_near_loc',-size=>'5',-onChange=>$NL_onchange) . ' ' . $units . '<br>'; 
 
      $BL_onchange = $loc_onchange . $jsform . "_lg_or.value=\'units\'; " . $jsform . "_near_loc.value=\'\'; ";
-     $BLlg = ' LG ' . $query->popup_menu(-name=>$panel.'_lg',-values=>[qw/?? 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25/], -default=>'??',-onChange=>$BL_onchange);
+#tec     $BLlg = ' LG ' . $query->popup_menu(-name=>$panel.'_lg',-values=>[qw/?? 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25/], -default=>'??',-onChange=>$BL_onchange);
      print $LG_OR[1] . ' &nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;  <font size=-1 color=red>or</font><br> between locations: ' . $query->textfield(-name=>$panel.'_lg_lo',-size=>'5',-onChange=>$BL_onchange) . ' ' . $units . ' and ' . $query->textfield(-name=>$panel.'_lg_hi',-size=>'5',-onChange=>$BL_onchange) . ' ' . $units . '<br>';
 
 #     $BM_onchange = $loc_onchange . "document.options." . $panel . "_lg_or[1].checked=true;";
