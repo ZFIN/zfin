@@ -256,7 +256,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/vega.txt'
 create table alleles_exp (
   fish_id varchar(50),
   allele varchar(20),
-  abbrev varchar(20),
+  abbrev varchar(30),
   locus_name varchar(120),
   locus_id varchar(50),
   pheno_keywords	lvarchar,
