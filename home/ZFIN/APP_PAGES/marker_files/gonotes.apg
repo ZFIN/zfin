@@ -29,7 +29,7 @@ goid: marker go zdb id.
     <?MISQL SQL="
       select mrkrgoev_notes
 	from marker_go_term_evidence 
-	where mrkrgoev_zdb_id='$OID' and mrkrgoev_mrkrgo_zdb_id='$goid';"><?/MISQL>
+	where mrkrgoev_zdb_id='$OID' and mrkrgoev_mrkrgo_zdb_id='$goid' and mrkrgoev_evidence_code='$evidence';"><?/MISQL>
 
     <?MIVAR NAME=$notes>$1<?/MIVAR>  
     <form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
