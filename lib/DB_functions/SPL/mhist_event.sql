@@ -29,9 +29,7 @@ mhist_event( active_marker varchar(50),
   DEFINE count	integer;
   DEFINE temp date;
 
-  IF (new_value = old_value and event != "assigned") THEN
-      RAISE EXCEPTION -9999;  -- -268; --integrity constraint violation
-  END IF
+IF (new_value != old_value or event = "assigned") THEN
 
 
   --Get the active_marker marker-type 
@@ -138,6 +136,8 @@ mhist_event( active_marker varchar(50),
       ------------------------------------------------------------------
 
   END IF  -------(marker type = GENE)--------
+
+END IF  -------(new != old or assigned)--------
 
 end procedure;
 
