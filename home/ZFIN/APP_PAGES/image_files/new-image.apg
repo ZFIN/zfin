@@ -37,7 +37,7 @@ present the stock of the image.
     -- along with the original in the following step. -->
   <?MIVAR NAME=$mythumb>/tmp/$OID.gif<?/MIVAR>
   <?MISQL SQL="
-    execute function syscall('make_thumbnail', '$upload_image $mythumb');">
+    execute function syscall('<!--|ROOT_PATH|-->/server_apps/sysexecs/make_thumbnail/make_thumbnail', '$upload_image $mythumb');">
   <?/MISQL>
 
   <!-- Get width and height of image -->
@@ -91,7 +91,7 @@ SUBMITTER COMMENTS:
 
 
   <?MISQL SQL="
-    execute function syscall('rm','$mythumb');">
+    execute function syscall('/bin/rm','$mythumb');">
   <?/MISQL>
   
   <SCRIPT>
