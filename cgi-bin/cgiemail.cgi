@@ -123,7 +123,7 @@ foreach ad parse addy "," [
     if not empty? ad: trim ad [
         ;;; build a mail header
         header: make system/standard/email [
-           To:     tad
+           To:     ad
            From:   frm
            Subject: sbj
        ]
