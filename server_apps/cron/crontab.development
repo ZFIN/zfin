@@ -2,9 +2,10 @@
 # DEVELOPMENT CRONTAB FILE
 # ===========================================================================
 # This is the crontab file for Informix on the ZFIN development machine.  When
-# production is running on chromix, this file is the crontab file for
-# the development machine.  When production is running on the development
-# machine, this file is appended to the end of the production crontab file.
+# zfin.org is running on the usual production machine, this file is the crontab 
+# file for the development machine.  When production is running on the 
+# development machine, this file is appended to the end of the production 
+# crontab file.
 #
 # See the "crontab" file (or cron man page) for an explanation of this file's
 # format.
