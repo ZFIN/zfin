@@ -33,7 +33,7 @@ ERROR -- something bad happened -- no OID passed in!
 <?MISQL SQL="select WebExplode(object,'page_title=View Pub') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
 
-<?MISQL SQL="select title, authors, year(pub_date), source, keywords, abstract, accession_no, errata_and_notes,jtype from publication where zdb_id='$OID';"><?/MISQL>
+<?MISQL SQL="select title, authors, year(pub_date), source, keywords, abstract, accession_no, errata_and_notes,jtype, pub_file, pub_completion_date from publication where zdb_id='$OID';"><?/MISQL>
 <?MIVAR NAME=$title>$1<?/MIVAR>
 <?MIVAR NAME=$authors>$2<?/MIVAR>
 <?MIVAR NAME=$year>$3<?/MIVAR>
@@ -43,6 +43,8 @@ ERROR -- something bad happened -- no OID passed in!
 <?MIVAR NAME=$accession_no>$7<?/MIVAR>
 <?MIVAR NAME=$errata_and_notes>$8<?/MIVAR>
 <?MIVAR NAME=$jtype>$9<?/MIVAR>
+<?MIVAR NAME=$pub_file>$10<?/MIVAR>
+<?MIVAR NAME=$pub_completion_date>$11<?/MIVAR>
 
 <?MIVAR NAME=$rec_title>PUB:$(SUBSTR,$title,1,10)...<?/MIVAR>
 
@@ -121,10 +123,15 @@ ERROR -- something bad happened -- no OID passed in!
 
 <?MIVAR COND="$(NC,$accession_no,NULL)">
 <b>MEDLINE:</B> <A HREF=http://www.ncbi.nlm.nih.gov:80/entrez/query.fcgi?cmd=search&db=PubMed&dopt=Abstract&term=$accession_no>$accession_no</A>
+<p>
 <?/MIVAR>
 
+<?MIVAR COND="$(AND,$(EC,$AUTHORIZED,root),$(NC,$pub_file,NULL))">
+  <B>FILE:</B>
+  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$pub_file&MItypeObj=application/pdf" target=$OID>PDF</A>
+  <P>
+<?/MIVAR>
 
-<p>
 <B>ABSTRACT:</B> 
 <?MIVAR COND="$(NC,$abstract,NULL)"><br>  $abstract  <?/MIVAR>
 
@@ -246,30 +253,7 @@ ERROR -- something bad happened -- no OID passed in!
 <p>
 <B>ERRATA and NOTES:</B> 
 <?MIVAR COND="$(NC,$errata_and_notes,NULL)"><br>  $errata_and_notes  <?/MIVAR>
-<p>
 
-
-<form>
-<p>
-<?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
-<b>Curation Status:</b>
-
-<input type=button value="Add to Curation Record" onClick="do_curation('new');">
-
-<ul>
-<table cellpadding=5 cols=4 border>
-<TH align=center>Action</TH><TH align=center>Date</TH><TH align=center>Curator</TH><TH align=center></TH>
-
-<?MISQL SQL="select curation_action, entry_time::date as done_date,curator from curation_status where pub_id='$OID' order by done_date;">
-<TR align=center>
-<TD>$1</TD><TD>$2</TD><TD>$3</TD>
-<TD><A HREF="javascript:do_curation('$(URLENCODE,$1)');">Details</A></TD>
-</TR>
-<?/MISQL>
-</TABLE>
-</ul>
-
-<?/MIBLOCK>  <!-- ends cond authorized -->
 
 <?/MIBLOCK>  <!-- ends cond oid xst -->
 <?/MIBLOCK>  <!-- ends rowcount gt 0 -->
