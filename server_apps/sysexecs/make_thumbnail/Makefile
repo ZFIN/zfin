@@ -58,7 +58,7 @@ $(STATICTARGETS) : $(TARGETDIR)/% : %
 	$(MAKE) reloadrow
 
 reloadrow : clobberrow
-	echo 'insert into execweb (execweb_id, execweb_executable) values("make_thumbnail","$(TARGETDIR)/makethumbnail.sh")' | $(DBACCESS) $(DBNAME)
+	echo 'insert into execweb (execweb_id, execweb_executable) values("make_thumbnail","$(TARGETDIR)/make_thumbnail.sh")' | $(DBACCESS) $(DBNAME)
 
 
 clobberrow :
