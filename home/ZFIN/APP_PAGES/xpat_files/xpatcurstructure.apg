@@ -375,8 +375,8 @@ EFFECTS
     <?MIVAR NAME=xpcurstr_sstage_abbrev>$8<?/MIVAR>
     <?MIVAR NAME=xpcurstr_estage_abbrev>$9<?/MIVAR>
 
-    <?MISQL SQL="select WebExplode(object,'xpatex_zdb_id=$xpcurstr_xpatex_zdb_id') from webPages where ID='aa-xpatexdisplayname.apg';"><?/MISQL>
-    <?MIVAR NAME=xpcurstr_xpatex_display_name>$xpatex_display_name<?/MIVAR>
+    <?MISQL SQL="select WebExplode(object,'xpcurexpssdisp_xpatex_zdb_id=$xpcurstr_xpatex_zdb_id') from webPages where ID='aa-xpatcurexpssdisplayname.apg';">$1<?/MISQL>
+    <?MIVAR NAME=xpcurstr_xpatex_display_name>$xpcurexpssdisp_xpatex_display_name<?/MIVAR>
     <?MIVAR NAME=xpcurstr_distinct_experiment>$xpcurstr_figure_zdb_id,$xpcurstr_xpatex_zdb_id,$xpcurstr_sstage_zdb_id,$xpcurstr_estage_zdb_id<?/MIVAR>
     
     <option value="$xpcurstr_distinct_experiment">$xpcurstr_figure_label - $xpcurstr_xpatex_display_name ($xpcurstr_sstage_abbrev to $xpcurstr_estage_abbrev)</option>
