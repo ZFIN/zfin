@@ -28,18 +28,41 @@
     function doit(attr,attr_type,print_name) {
       window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusupdate.apg&OID=$OID&UPDATE=1&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name+'');
     }
-  <?/MIVAR>
 
   function info() {
     window.alert('ANONYMOUS LINKAGE:\n This marker is a dummy placeholder for a marker that has been linked to this locus, \nbut has not been published yet. ZFIN supports anonymous linkages to promote scientific \collaboration; you should contact the submitter of this mapping data (just click the link) \nto negotiate access to this information.');
   }
 
-
-
   function Delete_listitem(item_name,item_id,oid) {
     window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-locusupdate.apg&UPDATE=1&OID='+oid+'&attr='+item_name+'&attr_type=Delete_listitem&old_value='+item_id+'&new_value=deleted');
   }
+  
+  function Delete_attrib(attr,data_zdbId,source_zdbId,info) {
+	window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-locusupdate.apg&OID=$OID&dataOID='+data_zdbId+'&attr='+attr+'&attr_type=special-listitem&old_value='+source_zdbId+'&new_value=deleted&info='+info);
+	}
 
+  function new_attrib_prevname() {
+	var prev_name=document.updater.attrib_prevname.value;
+	var pub_id=document.updater.attrib_prevname_pubid.value.toUpperCase();
+	if ((prev_name != '') && (pub_id != '')) {
+		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-locusupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+prev_name+'&new_value='+pub_id+'&info=namealias');
+  	}
+ }
+
+  function new_attrib_cloned() {
+	var pub_id = document.updater.attrib_cloned_pubid.value.toUpperCase();
+	if(pub_id != '') {
+		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-locusupdate.apg&OID=$OID&attr=colattrib&attr_type=special-newattrib&old_value=$OID&new_value='+pub_id+'&info=cloned_gene');
+	}
+ }
+
+  function new_attrib_commt() {
+	var pub_id = document.updater.attrib_commt_pubid.value.toUpperCase();
+	if(pub_id != '') {
+		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-locusupdate.apg&OID=$OID&attr=colattrib&attr_type=special-newattrib&old_value=$OID&new_value='+pub_id+'&info=comments');
+	}
+ }
+<?/MIVAR>
 
 </SCRIPT>
 
@@ -124,7 +147,8 @@
   <?/MIBLOCK>
 
   <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
-  
+  <?MIVAR name=$rtype>locus<?/MIVAR>
+  <?MIVAR name=$title>Locus<?/MIVAR>
 
       <!-- If viewing, THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
       <?MISQL COND="$(NXST,$UPDATE)" SQL="
@@ -220,31 +244,49 @@
 	<?MIVAR COND="$(XST,$UPDATE)">
  	  <INPUT TYPE=button 
             value=Add 
-	    onClick="doit('lcsali_locus_name_alias','text','Alias')">
+	    onClick="doit('locus_dalias_alias','text','Alias')">
 	<?/MIVAR> 
-	<b>Previous names: </b><i>
+	<b>Previous names: </b>
 	<?MISQL SQL="
-	  select lcsali_locus_name_alias, lcsali_locus_abbrev_alias  
-	    from locus_alias 
-	    where lcsali_locus_zdb_id = '$OID';">
+	  select dalias_alias, dalias_zdb_id  
+	    from data_alias 
+	    where dalias_data_zdb_id = '$OID';">
+
+	  <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(XST,$UPDATE))">
+	     <br>Add Reference:&nbsp; 
+   	     Previous name:<input type=text name=attrib_prevname>	
+    	     Reference:<input type=text name=attrib_prevname_pubid>
+    	     <input type=button value="Add" onClick=new_attrib_prevname();> 
+          <?/MIVAR>
+
 	  <?MIVAR NAME=$alias>$1<?/MIVAR>
+	  <?MIVAR NAME=$aliasId>$2<?/MIVAR>
 	  <?MIVAR COND="$(XST,$alias)" NAME=$alias DELIMIT=" " REPLACE="+">$alias<?/MIVAR>
-	  <?MIVAR COND="$(XST,$UPDATE)"><br> <INPUT TYPE=button value=Delete onClick="Delete_listitem('lcsali_locus_name_alias','$alias','$OID')"><?/MIVAR>
+	  <?MIVAR COND="$(XST,$UPDATE)"><br> <INPUT TYPE=button value=Delete onClick="Delete_listitem('locus_dalias_alias','$alias','$OID')"><?/MIVAR>
+          <i>   
 	  $(IF,$(AND,$(NXST,$UPDATE),$(>,$MI_CURRENTROW,1)),;) $1 
-	  <?MIVAR COND="$(NC,$2,"")">($2)<?/MIVAR>
+	  <!--?MIVAR COND="$(NC,$2,"")"($2)?/MIVAR-->
+          </i>
+           <?MISQL SQL="select WebExplode(object,'dataId=$aliasId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+	    
 	<?/MISQL>
 
 	<?MISQL SQL="
-	  select dalias_alias 
+	  select dalias_alias, dalias_zdb_id 
 	    from data_alias, fish 
 	    where dalias_data_zdb_id = fish.zdb_id
               and fish.locus = '$OID' ;">
 	  <?MIVAR NAME=$fish_alias>$1<?/MIVAR>
+	  <?MIVAR NAME=$fish_aliasId>$2<?/MIVAR>
 	  <?MIVAR COND="$(XST,$fish_alias)" NAME=$fish_alias DELIMIT=" " REPLACE="+">$fish_alias<?/MIVAR>
-	  <?MIVAR COND="$(XST,$UPDATE)"><br> <INPUT TYPE=button value=Delete onClick="Delete_listitem('dalias_alias','$fish_alias','$OID')"><?/MIVAR>
+	  <?MIVAR COND="$(XST,$UPDATE)"><br> <INPUT TYPE=button value=Delete onClick="Delete_listitem('fish_dalias_alias','$fish_alias','$OID')"><?/MIVAR>
+          <i>
 	  $(IF,$(AND,$(NXST,$UPDATE),$(OR,$(XST,$alias),$(>,$MI_CURRENTROW,1))),;) $1 
+         </i> 
+	<?MISQL SQL="select WebExplode(object,'dataId=$fish_aliasId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
 	<?/MISQL>
-	</i>
+
+	
 	<!------------- ends Previous Name  ------------------------>
 
 
@@ -262,6 +304,12 @@
 	<?/MIVAR>
 	<B>Affected Gene:</B> 
 	<?MIVAR COND="$(EC,$cloned_gene,NULL)">Not yet established.<?/MIVAR>
+	<?MIVAR COND="$(AND,$(NC,$cloned_gene,NULL),$(XST,$UPDATE))">
+	  Add Reference: &nbsp; Reference:
+	  <input type=text name=attrib_cloned_pubid>
+	  <input type=button value="Add" onClick=new_attrib_cloned();> 
+        <?/MIVAR> 
+
 
 	<?MISQL COND="$(NC,$cloned_gene,NULL)" SQL="
 	  select gene_name, abbrev 
@@ -271,7 +319,9 @@
 	    <TR><TD>
 	    <font color="red"><B>Cloned Gene:</b>  </font>
 	    <font size=2>The GENE <b><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$cloned_gene">$1 ($2) </A> </b> 
-	    has been shown to correspond to the <b><i>$name</i></b> locus. 
+	    has been shown to correspond to the <b><i>$name</i></b> locus.
+	    <?MISQL SQL="select WebExplode(object,'dataId=$OID&type=colattrib&info=cloned_gene') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+	 
 	    Please consult the GENE record for further mapping information.
 	   </TD>
 	   </TR>
@@ -288,7 +338,17 @@
               onClick="doit('comments','textarea','Locus+Description');"> 
 	  <?/MIBLOCK>
 
-	    <b>Locus Description:</b><?MIVAR>$(IF,$(NC,$comments,NULL),$comments,"No description available") <?/MIVAR>
+	    <b>Locus Description:</b>
+	    <?MIVAR COND="$(AND,$(NC,$comments,NULL),$(XST,$UPDATE))">
+	     <br>Add Reference: &nbsp; Reference:
+	     <input type=text name=attrib_commt_pubid>
+	     <input type=button value="Add" onClick=new_attrib_commt();>
+	     <br> 
+            <?/MIVAR>
+	    <?MIVAR>$(IF,$(NC,$comments,NULL),$comments,"No description available") <?/MIVAR>
+	
+           <?MISQL SQL="select WebExplode(object,'dataId=$OID&type=colattrib&info=comments') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+	    	
 	<!------------- Locus Description ------------------------>
 
      
@@ -401,6 +461,43 @@
 	    <?/MISQL>
 	</TABLE>
 	<!------------- ends Summary of alleles  ------------------------>
+
+	<!------------------ PUBLICATION ------------------------------------>
+	<HR width="80%" align=center>
+	<?MIVAR NAME=$sum>0<?/MIVAR>
+	<?MISQL SQL="
+		select f.zdb_id 
+	 	  from fish f, locus l
+	 	 where l.zdb_id = '$OID'
+		   and f.locus = l.zdb_id 
+		;">
+	   <?MIVAR NAME=$fishId>$1<?/MIVAR>
+	   <?MISQL SQL="
+ 	 	select count(*) 
+ 		 from record_attribution
+ 	 	where recattrib_data_zdb_id = '$fishId'
+   	 	  and get_obj_type(recattrib_source_zdb_id) = 'PUB';
+  		">
+		<?MIVAR NAME=$count>$1<?/MIVAR>		
+	    <?/MISQL>
+	    
+	    <?MIVAR>$(SETVAR,$sum,$(+,$sum,$count))<?/MIVAR>
+	   
+	<?/MISQL>
+	
+	<?MIBLOCK COND="$(>,$sum,0)">
+  	  <?MIVAR>
+  	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=$rtype&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev"><b>PUBLICATIONS</b></A>
+  	  <?/MIVAR>
+	<?MIELSE>
+  	  <b>PUBLICATIONS</b>
+	<?/MIBLOCK>
+	<?MIVAR>	
+ 	 &nbsp; ($(FIX,$sum))
+	<?/MIVAR>
+
+<!----------------- ends PUBLICATION ----------------->
+
 
 	
       </form>

@@ -10,9 +10,11 @@ attr_type -- textarea,text,or pic
 new_value -- the new value to stick in the column
 old_value -- the previous value
 comments -- reasons for doing update 
-
+dataOID  -- the zdb_id of the data been attributed
+info  -- the column name for the column attrib
 
 -->
+
 
 <!-- First check security. Main purpose is just to get submitter id and name -->
 <?MISQL SQL="select WebExplode(object,'permission=owns&rtype=locus') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
@@ -30,15 +32,43 @@ comments -- reasons for doing update
 
 <?MISQL SQL="insert into updates (submitter_id,submitter_name, rec_id, field_name, old_value, comments, when) values ('$ZDB_ident', '$ZDB_name','$OID', '$attr',  '$old_value', '$comments', current);"><?/MISQL>
 
-<?MISQL COND="$(AND,$(NC,$attr,lcsali_locus_name_alias),$(OR,$(EC,$attr_type,text),$(EC,$attr_type,textarea)))" SQL="update locus set $attr='$new_value' where zdb_id='$OID';"><?/MISQL>
+<?MISQL COND="$(AND,$(NC,$attr,locus_dalias_alias),$(OR,$(EC,$attr_type,text),$(EC,$attr_type,textarea)))" SQL="update locus set $attr='$new_value' where zdb_id='$OID';"><?/MISQL>
 
-<?MISQL COND="$(AND,$(EC,$attr,lcsali_locus_name_alias),$(EC,$attr_type,text))" SQL="
-  insert into locus_alias
-      ( lcsali_locus_zdb_id, lcsali_locus_name_alias, 
-	lcsali_locus_abbrev_alias )
-     values 
-      ( '$OID', '$new_value', '$abbrev' );">
-<?/MISQL>
+<?MIBLOCK COND="$(AND,$(EC,$attr,locus_dalias_alias),$(EC,$attr_type,text))">
+    <?MISQL SQL=" 
+      execute function get_id('DALIAS');">
+    <?/MISQL>
+    <?MIVAR NAME=$dalias_zdb_id>$1<?/MIVAR>
+    <?MISQL SQL="
+      insert into zdb_active_data
+	values
+	  ('$dalias_zdb_id');">
+    <?/MISQL>
+    <?MISQL SQL="
+      insert into data_alias
+	values 
+	  ('$dalias_zdb_id', '$OID', '$new_value', 'alias');">
+    <?/MISQL>
+ 
+    <?MIBLOCK COND="$(NC,$abbrev,)">
+	<?MISQL SQL=" 
+      	  execute function get_id('DALIAS');">
+    	<?/MISQL>
+    	<?MIVAR NAME=$dalias_zdb_id>$1<?/MIVAR>
+    	<?MISQL SQL="
+      	   insert into zdb_active_data
+		values
+	  	('$dalias_zdb_id');">
+    	<?/MISQL>
+    	<?MISQL SQL="
+      	  insert into data_alias
+	 	values 
+	  	('$dalias_zdb_id', '$OID', '$abbrev', 'alias');">
+    	<?/MISQL>		
+     <?/MIBLOCK>
+<?/MIBLOCk>
+
+
 
 <!-- insert update record for the update! -->
 
@@ -51,13 +81,35 @@ comments -- reasons for doing update
         and recattrib_source_zdb_id = '$old_value';">
   <?/MISQL>
 
+  <?MISQL COND="$(EC,$attr,recattrib)" SQL="
+      delete from record_attribution
+	where recattrib_data_zdb_id = '$dataOID'
+	  and recattrib_source_zdb_id = '$old_value';">
+   <?/MISQL>
+
+   <?MISQL COND="$(EC,$attr,colattrib)" SQL="
+      delete from column_attribution
+	where colattrib_data_zdb_id = '$dataOID'
+	  and colattrib_source_zdb_id = '$old_value'
+	  and colattrib_column_name = '$info';">
+   <?/MISQL>
+
 <?/MIBLOCK>  <!-- ends special listitem case -->
+
 
 
 <!-- Special case for deleting one of the aliases -->
 <?MIBLOCK COND="$(EC,$attr_type,Delete_listitem)">
-<?MISQL COND="$(EC,$attr,lcsali_locus_name_alias)" SQL="delete from locus_alias where lcsali_locus_zdb_id='$OID' and lcsali_locus_name_alias='$old_value';"><?/MISQL>
-<?MISQL COND="$(EC,$attr,dalias_alias)" SQL="
+<?MISQL COND="$(EC,$attr,locus_dalias_alias)" SQL="
+  delete from zdb_active_data 
+    where zactvd_zdb_id =
+	(select	dalias_zdb_id
+	   from data_alias
+          where dalias_data_zdb_id='$OID' 
+            and dalias_alias='$old_value');">
+<?/MISQL>
+
+<?MISQL COND="$(EC,$attr,fish_dalias_alias)" SQL="
   delete from data_alias
     where dalias_alias = '$old_value' 
       and exists 
@@ -68,6 +120,54 @@ comments -- reasons for doing update
 <?/MISQL>
 
 <?/MIBLOCK>  <!-- ends delete listitem case -->
+
+
+<!-- Special case for adding data attribution -->
+
+ <?MIBLOCK COND="$(EC,$attr_type,special-newattrib)">
+    <!-- check whether the pub zdb id is validate. -->
+    <?MISQL SQL="
+	   select * from publication
+             where zdb_id = '$new_value'	
+                ;">
+    <?/MISQL>	
+    <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+      <?MISQL COND="$(EC,$info,namealias)" SQL="
+	   select dalias_zdb_id 
+	     from data_alias
+	    where dalias_data_zdb_id = '$OID'
+	      and dalias_alias = '$old_value'
+	    ;">
+	<?MIVAR>$(SETVAR,$old_value,$1)<?/MIVAR>
+
+      <?/MISQL>
+
+
+      <?MIBLOCK COND="$(EC,$attr,recattrib)">
+         <?MISQL SQL="
+	    insert into record_attribution
+              values('$old_value', '$new_value')	
+                ;">
+         <?/MISQL>
+
+      <?MIELSE COND="$(EC,$attr,colattrib)">
+         <?MISQL SQL="
+	    insert into column_attribution
+              values('$old_value','$info', '$new_value')	
+                ;">
+         <?/MISQL>
+      <?/MIBLOCK>
+
+  
+    <?MIELSE> 
+ 	<script>
+	window.alert('ERROR: Pub ZdbId is not in ZFIN, please check.');
+	</script>
+   <?/MIBLOCK> 
+ <?/MIBLOCK> <!-- special-newattrib -->
+
+
+
 
 <?/MIBLOCK> <!-- ends cond authorized -->
 
