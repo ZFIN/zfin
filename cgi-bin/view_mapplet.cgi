@@ -35,17 +35,20 @@
   my @panels;                         ### panel this map actualy attempts to use
   my @allpanels_order;                ### an enumeration of all panels 
   my @allpanels_metric;               ### cM or cR  for each panel 
+  my @allpanels_id;                   ### zdb_id for each panel
   my $panel;                          ### current panel
   my ($sql,$junk,$tmp);		          ### throw away vars
-  my $cur = $dbh->prepare('select abbrev, disp_order, metric from panels');
+  my $cur = $dbh->prepare('select abbrev, disp_order, metric, zdb_id from panels order by disp_order asc');
   $cur->execute;
   $cur->bind_col(1, \$panel);
   $cur->bind_col(2, \$junk);
   $cur->bind_col(3, \$tmp);    
+  $cur->bind_col(4, \$tmp_id);
   while ($cur->fetch){
     push (@allpanels ,$panel );
     push (@allpanels_order ,$junk );
     push (@allpanels_metric ,$tmp );
+    push (@allpanels_id ,$tmp_id );
   } 
   
   ### the known marker types
@@ -66,7 +69,9 @@
   ### running out of linkage group or running into a bin will affect the number of mappings returned;
   my $g_zoom = 30;
   my $zoom  = 30;		### the target number of markers for any one backbone 
+  my %zooms;                    ### hash of zoom values
   my $lg;			### the linkgage group containing $marker 
+  my $lgs;                      ### hash of linkage groups
   my $loc;			### the location of $marker 
   my $lo;			### name above $loc on map
   my $hi;			### name below $loc on map
@@ -116,7 +121,7 @@
   
   ### used to pass scafolding notes to the web page
   my $note = ''; 
-  
+ 
   ###
   ### Emit a Blank Page if called with no paramerers
   ###
@@ -146,12 +151,7 @@
     $qstring = $qstring . $keyval[1];   
     
     print $Q->header ."\n".
-      '<SCRIPT>var page_id=window.location.href; '.
-	'top.ZDB.update(page_id,"View Map"); '.
-	  'top.controls.location.reload(true)</SCRIPT>'.
-	    "\n\n".
-	      
-	      $Q->frameset({-rows=> '220,0%'},
+	      $Q->frameset({-rows=> '220,*'},
 			   $Q->frame({-name=> 'criteria',-src=> 'view_mapplet.cgi?'}),
 			   $Q->frame({-name=> 'pbrowser',-src=> $qstring })
 			  );   
@@ -248,7 +248,7 @@
 	###
 	elsif( $unique < 1) {
 	  print $Q->header(). "\n".
-	    $Q->start_html(-TITLE => "View Marker", -bgcolor=> 'white')."\n".
+	    $Q->start_html(-TITLE => "View Marker", -bgcolor=> 'white', -link=> 'black', -vlink=>'black')."\n".
 	      "<p>The name: \"<font color=red><b>$marker</b></font>\" ". 
 		"is not found in any OFFICIAL abbreviation for any PUBLIC, MAPPED marker in the database.<p>\n".
 		  "You may submit a different name above\n".
@@ -333,6 +333,11 @@
 	$Q->param($panel.'_ztotal',1);
        	#$note = $note . "being asked for all of $lg on $panel <p>\n";
 	$g_data =  $g_data . lg_query ( $panel ,$lg );
+
+	$zooms{$panel} = $zoom; #zoom hash
+
+	$lgs{$panel} = $lg; #lg hash
+
 	#$note = $note ." ztotal for lg $lg on $panel  is ". $Q->param($panel.'_ztotal') . "<p>\n";
       }
     } 
@@ -374,8 +379,13 @@
 	$lg_lo = $Q->param($panel.'_lg_lo');
 	$lg_hi = $Q->param($panel.'_lg_hi');
 	$lg =    $Q->param($panel.'_lg');
-	$zoom = get_between( $panel, $lg, $types, $lg_lo, $lg_hi );
 	
+	$zoom = get_between( $panel, $lg, $types, $lg_lo, $lg_hi );
+
+	$zooms{$panel} = $zoom; #zoom hash
+
+	$lgs{$panel} = $lg; #lg hash
+
 	if ($zoom > 0) {	  
 	  #$curbetween->finish;
 	  $g_height = ($g_height < $zoom)? $zoom : $g_height;    
@@ -447,6 +457,10 @@
 	  $Q->param($panel.'_ztotal',1);
 	  #$note = $note . "Get all of LG |". $Q->param('lg') . "|\n";
 	  $g_data =  $g_data . lg_query( $panel, $Q->param('lg') );        
+
+	  $zooms{$panel} = $zoom; #zoom hash
+	  $lgs{$panel} = $lg; #lg hash
+
 	}else {
 	  $g_data = $g_data . $lines;	
 	  #$note = $note ."got some near ".$Q->param('OID')."<p>\n";
@@ -498,6 +512,11 @@
 	
 	
 	$zoom = get_between($panel, $lg, $types, $lg_lo, $lg_hi);
+
+	$zooms{$panel} = $zoom; #zoom hash
+
+	$lgs{$panel} = $lg; #lg hash
+
 	if ($zoom >= 0){
 	  
 	  #$curbetween->finish;
@@ -556,13 +575,17 @@
 	    $Q->param($panel.'_ztotal',1);
 	    #$note = $note . "Get all of LG |". $Q->param('lg') . "|\n";
 	    $g_data =  $g_data . lg_query( $panel, $lg ); #(types)    
+	    $zooms{$panel} = $zoom; #zoom hash
+	    $lgs{$panel} = $lg; #lg hash	    
 	  }	  
 	  elsif($lg_or_flag =~ /units/) {       
 	    #	    $note = $note . "\t\t\tOPTION FORM BETWEEN <p>\n";
 	    
 	    $zoom = get_between($panel, $lg, $types, $lg_lo, $lg_hi);
 
-	    
+	    $zooms{$panel} = $zoom; #zoom hash
+	    $lgs{$panel} = $lg; #lg hash
+
 	    if ($zoom > 0){
 	      $g_height = ($g_height < $zoom)? $zoom : $g_height;    
 	      ### add room in applet for another backbone
@@ -664,6 +687,11 @@
 	      $lg_lo = $loc - $m_lo;
 	      $lg_hi = $loc + $m_hi; 
 	      $zoom = get_between($panel, $lg, $types, $lg_lo, $lg_hi);
+
+	      $zooms{$panel} = $zoom; #zoom hash
+
+	      $lgs{$panel} = $lg; #lg hash
+
 	      if ($zoom > 0){
 		$g_height = ($g_height < $zoom)? $zoom : $g_height;    
 		### add room in applet for another backbone
@@ -719,7 +747,7 @@
   ################################################################################
   ### build up the "Mapplet" page
   print $Q->header . "\n";   
-  print $Q->start_html(-TITLE => "View Marker", -bgcolor=> 'white')."\n";
+  print $Q->start_html(-TITLE => "View Marker", -bgcolor=> 'white',-link=>'black',-vlink=>'black')."\n";
   ### based on error codes emit the dynamic part of the page
   if ($g_error == 0 && $g_data) {
     #if( ($g_error == 0) && $data ){# call_applet if the uniq flag gets through as 1
@@ -746,8 +774,11 @@
 				     ### emit the dynamic option page values collected from the various db queries
 				     $g_opt."\n".
 				       $Q->submit(-name=>"Hide / Show / Adjust a Panel",-align=>'right')."\n".
-					 $Q->end_form."\n</td>";
+					$Q->end_form."\n</td>";
     print '<td><img src=/client_apps/Map/mapkey.gif><p>'."\n";
+    
+    my $POprint;
+    for $panel (@allpanels) { $POprint = $POprint . $panel . "|"; }
     
     print "<td>". $Q->start_form (
 				  -method=>'GET',
@@ -761,12 +792,61 @@
 				       $Q->hidden("width" ,$g_width)."\n".
 					 $Q->hidden("host","<!--|DOMAIN_NAME|-->")."\n".
 					   $Q->hidden("port", $jport)."\n".
-					     $Q->hidden("data",$g_printdata )."\n".
-					       $Q->end_form."\n </td>\n"; 
+					     $Q->hidden("panel_order",$POprint)."\n".
+					       $Q->hidden("data",$g_printdata )."\n".
+						 $Q->end_form."\n </td>\n"; 
     
     
     print "</tr></table>";
     
+    ###
+    ### print zoom buttons and percentages
+    ###
+
+
+    my $ztot = 0;
+    my $z = 0;
+    my $newz = 0;
+    my $percent = 0;
+    my $order_increment=0;
+
+    print "<form name='foo' action='null' method='GET'>";
+    #print $Q->start_form (-method=>'GET',-action=>'null',-name=>'zoom');
+    #print $Q->submit();
+    print "\n\n<table width=$g_width border=0 cellpadding=0 cellspacing=0><tr>";
+
+    for $panel (@allpanels) {
+      if ((defined $Q->param($panel.'_ztotal')) && ($Q->param($panel) == '1')) {
+	$ztot = $Q->param($panel.'_ztotal');
+	$z = $zooms{$panel};
+	$lg = $lgs{$panel}; 
+
+	#zoom out
+	$newz = $z + 20;
+	if ($newz > $ztot) { $newz = $ztot; }
+	print "\n<td><input type=button value=\"Zoom Out\" onClick=\"document.optform.edit_panel.value='" . $panel . "'; document.optform." . $panel . "_zoom.value = '-" . $newz . "'; document.optform.refresh_map.value = 1; document.optform.target='pbrowser'; document.optform.action='view_mapplet.cgi'; document.optform.submit();\">";
+
+	#draw percentage
+
+	$percent = int $z * 100 / $ztot;
+	if ($percent < 1)
+	  { $percent = 1; }
+	if ($percent > 100)
+	  { $percent = 100; }
+	print "&nbsp;" . $percent . "% &nbsp;";
+
+	#zoom in
+	if ($z > 25) { $newz = $z - 20; } else { $newz = $z - 10; }
+	if ($newz < 5) {$newz = 5;}
+	print "<input type=button value=\"Zoom In\" onClick=\"document.optform.edit_panel.value='" . $panel . "'; document.optform." . $panel . "_zoom.value = '-" . $newz . "'; document.optform.refresh_map.value = 1; document.optform.target='pbrowser'; document.optform.action='view_mapplet.cgi'; document.optform.submit();\">";
+	print "<br><font size=-1><b>&nbsp;&nbsp;<a href=\"http://<!--|DOMAIN_NAME|-->/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=" . $allpanels_id[$order_increment] . "\" target=\"content\">". $panel . "</a> panel, LG: " . $lg . ", units: " . $allpanels_metric[$order_increment] . "</b></font></td>"; 
+	$order_increment++;
+      } else { $order_increment++; }
+
+    }
+    print "</tr>\n";
+    print "</table></form>"; # . $Q->end_form . "\n\n";
+
     ###    
     ### call the applet
     ###
@@ -778,7 +858,14 @@
 	      " height\t = \"$g_height\"\n".
 		" width\t  = \"$g_width\"\n".
 		  " mayscript>\n";
-       for $panel (@panels){
+
+
+    #passing panel order
+    print "<param name = \"panel_order\" value = \"";
+    for $panel (@allpanels) { print $panel . "|"; }
+    print "\">\n";
+
+      for $panel (@panels){
       if(defined $Q->param($panel.'_ztotal') ){ #&& $Q->param($panel.'_ztotal')>0){
 	print "<param name = \"" . $panel . "_ztotal\"\t value = ". $Q->param($panel.'_ztotal').">\n"; 
       }
@@ -833,7 +920,8 @@
 	  $Q->hidden('loc ', ($sm_refresh >= 1)? $sm_loc:$Q->param('loc')) . "\n".
 	    $Q->end_form . "\n";
     }
-    print "\n<SCRIPT> document.forms[2].submit()</SCRIPT>\n" . $Q->end_html."\n";
+    print "\n<SCRIPT> document.selectform.submit()</SCRIPT>\n";
+
     
     #print "<SCRIPT>eval(parent.criteria.document.location='/ZDBA/misc_html/saycomposing.html');</SCRIPT>\n";
   }
@@ -998,6 +1086,9 @@
 	  $Q->param($panel . '_lg_lo',  $lo);
 	  $Q->param($panel . '_lg_hi',  $hi);
 	  $Q->param($panel . '_ztotal', $ztotal);         	  
+	  $zooms{$panel} = $zoom; #zoom hash
+	  $lgs{$panel} = $lg; #lg hash
+
 	}
 	else{
 	  push (@dud, $panel);
@@ -1019,6 +1110,9 @@
 	  #	  $note = $note .  "lo $lo , hi $hi<p>\n";
 	  #	  $note = $note .  "the interval on LG $lg of $panel runs from $lo to $hi<p>\n";       
 	  $zoom = $sth6->execute($lo, $hi) || die $dbh->errstr;
+	  $zooms{$panel} = $zoom; #zoom hash
+	  $lgs{$panel} = $lg; #lg hash
+
 	  #	  $note = $note .  "$zoom rows added to the OTHER pool<p>\n";
 	  # if zoom is one it has been suggested we return  maybe the closest 5 markers (zoom out)
 	  
@@ -1111,6 +1205,7 @@
       }
     }
     #    $note = $note . "\n BETWEEN found |$zoom| markers between |$lg_lo|  and |$lg_hi| <p>\n ";
+
     $zoom;
   }
   
