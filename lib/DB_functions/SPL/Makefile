@@ -76,12 +76,12 @@ $(TARGETDIR) :
 
 $(SPECIFICTARGETS) : $(TARGETDIR)/% : %
 	$(MAKESPECIFIC) $< $(TRANSLATETABLE) $@
-	$(DBACCESS) $(DBNAME) $@
+	-$(DBACCESS) $(DBNAME) $@
 
 $(STATICTARGETS) : $(TARGETDIR)/% : %
 	$(TARGET_CP) $^ $@
 	$(TOUCH) $@
-	$(DBACCESS) $(DBNAME) $@
+	-$(DBACCESS) $(DBNAME) $@
 
 
 # ---------------  Maintenance Rules  -----------------------------------
