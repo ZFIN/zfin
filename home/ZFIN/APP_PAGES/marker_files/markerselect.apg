@@ -325,7 +325,7 @@ document.critform.START.value = "";
 
     <!--- Query Database --->
     <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
-      select distinct name, abbrev, mtype, abbrev_order, zdb_id, or_lg
+      select distinct name, abbrev, mtype, abbrev_order, zdb_id
 	from markerlister_temp
 	$order_clause;">
 
@@ -333,7 +333,6 @@ document.critform.START.value = "";
       <?MIVAR COND="$(EC,$2,)" NAME=$marker_abbrev>$1<?/MIVAR> 
       <?MIVAR name=$mtype>$3<?/MIVAR>
       <?MIVAR name=$OID>$5<?/MIVAR>
-      <?MIVAR name=$or_lg>$6<?/MIVAR>	 
 
       <!-- create form for each marker  -->
       <!-- get rid of dashes to avoid javascript error -->
@@ -378,7 +377,7 @@ document.critform.START.value = "";
 	  <?/MIBLOCK>
 
 	  <TD>
-	   <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini&oID=$OID&or_lg=$or_lg') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+	   <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini&oID=$OID') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
 	  </TD>
 
 	<!--    change row_color    -->
