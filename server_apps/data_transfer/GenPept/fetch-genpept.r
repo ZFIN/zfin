@@ -55,8 +55,8 @@ data: rejoin [
 "showndispmax=20&page=0&inputpage=&tool=ZFIN&email=tomc@cs.uoregon.edu"
 ]
 ; fetch the data
-;genpept: read/custom entrez reduce ['POST data]
-genpept: read %GenPept.records ;;; while debugging
+genpept: read/custom entrez reduce ['POST data]
+;genpept: read %GenPept.records ;;; while debugging
 
 ; so first record is same as the rest (to facilatate parsing)
 insert genpept newline 
