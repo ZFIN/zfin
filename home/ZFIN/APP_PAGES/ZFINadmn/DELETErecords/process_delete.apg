@@ -62,12 +62,13 @@ VARIABLES EXPECTED:
           <?/MIBLOCK>
 
 	  <!-- update any existence of zdb_replaced_id id that is being replaced --> 
-	  <?MISQL SQL="
+	  <?MISQL COND="$(=,1,1)" SQL="
             update zdb_replaced_data 
 	      set zrepld_new_zdb_id = '$merge_oid',
 		  zrepld_old_name = '$old_name'
 	      where zrepld_new_zdb_id = '$OID';">
           <?/MISQL>
+
 	  <!-- update any existence of mapping data for id that is being replaced --> 
 	  <?MISQL SQL="
             update mapped_marker
@@ -77,6 +78,7 @@ VARIABLES EXPECTED:
 	  <!-- update primer set for id that is being replaced --> 
 	  <?MISQL SQL="
             update primer_set set marker_id = '$merge_oid' where marker_id = '$OID';">
+
           <?/MISQL>
 
 	  <!-- update marker_go_term for id that is being replaced -->
@@ -99,7 +101,6 @@ VARIABLES EXPECTED:
 	    drop table tmp_marker_go_term;">
           <?/MISQL>
 
-	
 
 	  <!-- update independent linkage for id that is being replaced --> 
 	  <!-- The "set explain off" is required to avoid a bug with the -->
@@ -119,23 +120,97 @@ VARIABLES EXPECTED:
 	  <?MISQL SQL="
             update fish_image set fimg_fish_zdb_id = '$merge_oid' where fimg_fish_zdb_id = '$OID';">
           <?/MISQL>
+  <!-- -------------------------------------------------------------- -->
+  
+  <?MICOMMENT> Move all non-duplicate aliases from mergee to merger.
+               Record the mergee name as an alias. 
+  <?/MICOMMENT>
+        
+          <?MIBLOCK COND="$(EC,$rtype,gene)">
+            <?MIVAR NAME=mhist_id><?/MIVAR>
+            <?MIVAR NAME=dalias_id><?/MIVAR>
 
-          <?MISQL SQL="
+            <?MISQL SQL="EXECUTE FUNCTION get_id('NOMEN');">
+                <?MIVAR NAME=mhist_id>$1<?/MIVAR>
+            <?/MISQL>
+            <?MISQL SQL="EXECUTE FUNCTION get_id('DALIAS');">
+                <?MIVAR NAME=dalias_id>$1<?/MIVAR>
+            <?/MISQL>
+<?MIVAR>
+mhist = $mhist_id<br>
+dalias = $dalias_id<p>
+<?/MIVAR>
+            <?MISQL SQL="
+              INSERT INTO zdb_active_data VALUES('$mhist_id');">
+            <?/MISQL>
+            <?MISQL SQL="
+              INSERT INTO zdb_active_data VALUES('$dalias_id');">
+            <?/MISQL>
+            <?MISQL SQL="
+              UPDATE data_alias 
+                  SET dalias_data_zdb_id = '$merge_oid' 
+                  WHERE dalias_data_zdb_id = '$OID';">
+            <?/MISQL>
+            <?MISQL SQL="
+              UPDATE marker_history 
+                  SET mhist_mrkr_zdb_id = '$merge_oid' 
+                  WHERE mhist_mrkr_zdb_id = '$OID';">
+            <?/MISQL>
+            <?MISQL SQL="
+              INSERT INTO data_alias (  
+                     dalias_zdb_id,
+                     dalias_data_zdb_id,
+                     dalias_alias,
+                     dalias_group ) 
+                  SELECT '$dalias_id','$merge_oid',mrkr_abbrev,'alias'
+                  FROM marker
+                  WHERE mrkr_zdb_id = '$OID';">
+            <?/MISQL>
+            <?MISQL SQL="
+              INSERT INTO marker_history (  
+                     mhist_zdb_id, 
+                     mhist_mrkr_zdb_id, 
+                     mhist_event, mhist_reason, mhist_date,
+                     mhist_mrkr_name_on_mhist_date,
+                     mhist_mrkr_abbrev_on_mhist_date,
+                     mhist_comments,
+                     mhist_dalias_zdb_id )
+                  SELECT 
+                     '$mhist_id', 
+                     mrkr_zdb_id,
+                     'merged', 
+                     'same marker', 
+                     CURRENT, 
+                     mrkr_name, 
+                     mrkr_abbrev,
+                     'none',
+                     '$dalias_id'
+                  FROM marker
+                  WHERE mrkr_zdb_id = '$merge_oid';">
+            <?/MISQL>
+
+<?MISQL SQL="select * from marker_history where mhist_zdb_id = '$mhist_id';">
+$1, $2, $3, $4, $5, $6, $7, $8
+<?/MISQL>
+          <?/MIBLOCK> <!-- END ( RTYPE = GENE ) -->
+
+          <?MISQL COND="$(=,1,1)" SQL="
 	    delete from zdb_active_data
 	      where zactvd_zdb_id = '$OID';">
 	  <?/MISQL>
-	  <?MISQL SQL="
+	  <?MISQL COND="$(=,1,1)" SQL="
 	    insert into zdb_replaced_data 
 		(zrepld_old_zdb_id, zrepld_new_zdb_id, zrepld_old_name)
 	     values('$OID','$merge_oid','$old_name');">
 	  <?/MISQL>
-       <?/MIBLOCK>
+        <?/MIBLOCK>
 
-      <?MIBLOCK COND="$(EC,$rtype,locus)">
+        <?MIBLOCK COND="$(EC,$rtype,locus)">
 	  <?MISQL SQL="
-            select locus_name from locus where zdb_id= '$OID';">
+            select locus_name from locus where zdb_id = '$OID';">
 	  <?/MISQL>
-         <?MIVAR NAME=$old_name>$1<?/MIVAR>
+          <?MIVAR NAME=$old_name>$1<?/MIVAR>
+
 	  <!-- update any existence of mapping data for id that is being replaced --> 
 	  <?MISQL SQL="
             update mapped_marker set marker_id = '$merge_oid' where marker_id = '$OID';">
@@ -165,10 +240,10 @@ VARIABLES EXPECTED:
                (zrepld_old_zdb_id, zrepld_new_zdb_id, zrepld_old_name)
              values('$OID','$merge_oid','$old_name');">
 	  <?/MISQL>
-      <?/MIBLOCK>
+        <?/MIBLOCK>
 
-    <?MIELSE>
-          <!-- if not merging only deleting merge_oid is none>
+      <?MIELSE>
+          <!-- if not merging, only deleting, then merge_oid is none>
 	  <?MISQL SQL="
 	    delete from zdb_active_data
 	      where zactvd_zdb_id = '$OID';">
@@ -193,7 +268,7 @@ VARIABLES EXPECTED:
     <!-- Jump back to home -->
     <SCRIPT>
       window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg';
-    </SCRIPT>
+    </SCRIPT> 
 
   <?/MIBLOCK> <!-- ends cond oid and rtype exist -->
 
