@@ -7,8 +7,7 @@
   -->
 
   <?MISQL SQL="
-    select WebExplode(object,
-		      'permission=owns&rtype=gene') 
+    select WebExplode(object, 'permission=owns&rtype=marker') 
       from webPages 
      where ID='aa-secure_navigation.apg';">
     $1

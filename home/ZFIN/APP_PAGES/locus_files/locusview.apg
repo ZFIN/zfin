@@ -317,9 +317,9 @@
 
 
 	<?MISQL COND="$(NC,$cloned_gene,NULL)" SQL="
-	  select gene_name, abbrev 
-	    from gene 
-	    where zdb_id='$cloned_gene';">
+	  select mrkr_name, mrkr_abbrev 
+	    from marker
+	    where mrkr_zdb_id='$cloned_gene';">
 	  <?MIVAR NAME=$gene_abbrev>$2<?/MIVAR>
 	  <TABLE width=100% cellpadding=5 border=0 bgcolor="$highlight" cols=2 rows=1>
 	    <TR><TD>

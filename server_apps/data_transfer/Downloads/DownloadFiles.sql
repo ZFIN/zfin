@@ -196,15 +196,15 @@ insert into alleles_exp
 
 update alleles_exp
     set (gene_id, gene_abbrev) = 
-	    (( select g.zdb_id, g.abbrev 
-		 from gene g, locus l
+	    (( select mrkr_zdb_id, mrkr_abbrev 
+		 from marker, locus l
 		 where alleles_exp.locus_id=l.zdb_id 
-		   and l.cloned_gene=g.zdb_id ))
+		   and l.cloned_gene = mrkr_zdb_id ))
       where exists 
 	      ( select 'x' 
-		  from gene, locus 
+		  from marker, locus 
 		  where alleles_exp.locus_id = locus.zdb_id 
-		    and locus.cloned_gene = gene.zdb_id );
+		    and locus.cloned_gene = mrkr_zdb_id );
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/alleles.txt'
  DELIMITER "	" select fish_id, allele, abbrev, locus_name, locus_id, gene_abbrev, gene_id from alleles_exp order by 1;

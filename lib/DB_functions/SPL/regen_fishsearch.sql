@@ -100,21 +100,21 @@ create dba function "informix".regen_fishsearch()
 	  and a.locus = e.zdb_id;
 
     -- NULLs were put in place of the corresponding gene id and abbrev,
-    -- add them in from the locus & gene tables for mutants with corresponding 
+    -- add them in from the locus & marker tables for mutants with corresponding
     -- genes
     -- trace on;
 
     update fishsearch_new
       set (gene_id, gene_abbrev) = 
-	    (( select g.zdb_id, g.abbrev 
-		 from gene g, locus l
+	    (( select mrkr_zdb_id, mrkr_abbrev 
+		 from marker, locus l
 		 where fishsearch_new.locus=l.zdb_id 
-		   and l.cloned_gene=g.zdb_id ))
+		   and l.cloned_gene = mrkr_zdb_id ))
       where exists 
 	      ( select 'x' 
-		  from gene, locus 
+		  from marker, locus 
 		  where fishsearch_new.locus = locus.zdb_id 
-		    and locus.cloned_gene = gene.zdb_id );
+		    and locus.cloned_gene = mrkr_zdb_id );
 
 
     -- To this point, we haven't done anything visible to actual users.

@@ -169,7 +169,7 @@
 	(<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$1">$count</A>)
      <?/MISQL>
      <?MIVAR COND="$(>,$count,1)"> 
-        (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$oevdispId&rtype=gene&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev">$count</A>)<?/MIVAR>
+        (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$oevdispId&rtype=marker&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev">$count</A>)<?/MIVAR>
      </TD>
    <?/MISQL>
    </TR>

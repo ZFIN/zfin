@@ -24,7 +24,7 @@
 <!--
 EXPECTED VARS:
 OID -- the marker zdb_id
-attr -- the column to be updated {name,abbrev}
+attr -- the column to be updated {mrkr_name,mrkr_abbrev}
 new_value -- the replacement value
 old_value -- the value being replaced
 -->
@@ -46,8 +46,8 @@ old_value -- the value being replaced
 
 <?MIELSE 
     COND="$(AND,
-          $(NC,$attr,gene_name),
-          $(NC,$attr,abbrev))">
+          $(NC,$attr,mrkr_name),
+          $(NC,$attr,mrkr_abbrev))">
   <SCRIPT>
     window.alert('Error: Incorrect Value for attr. Please refresh the page and try again.');
     window.history.go(-1);
@@ -70,7 +70,7 @@ old_value -- the value being replaced
 
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
-  <?MIBLOCK COND="$(EC,$attr,gene_name)">
+  <?MIBLOCK COND="$(EC,$attr,mrkr_name)">
 
     <?MIVAR NAME=$mrkr_column>mrkr_name<?/MIVAR>
     <?MIVAR NAME=$event>renamed<?/MIVAR>
@@ -97,7 +97,7 @@ old_value -- the value being replaced
 
     <?MIVAR NAME=$mhist_where><?/MIVAR>
 
-  <?MIELSE COND="$(EC,$attr,abbrev)">
+  <?MIELSE COND="$(EC,$attr,mrkr_abbrev)">
     <?MIVAR NAME=$mrkr_column>mrkr_abbrev<?/MIVAR>
     <?MIVAR NAME=$event>reassigned<?/MIVAR>
 

@@ -155,7 +155,7 @@ When filled, the ZDB_ID of the new return_rec is passed along into whatever brow
 
 <!-- Want to specify associated gene -->
 <?MIBLOCK COND="$(EC,$attr,cloned_gene)">
-<?MIVAR NAME=$select_from>gene<?/MIVAR>
+<?MIVAR NAME=$select_from>marker<?/MIVAR>
 <?MIVAR NAME=$action>return_id<?/MIVAR>
 <?MIVAR NAME=$fill_field>cloned_gene<?/MIVAR>
 <?MIVAR NAME=$fill_table>locus<?/MIVAR>

@@ -61,7 +61,7 @@ ERROR -- something bad happened -- no OID passed in!
 
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
   
-  <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=gene') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
+  <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=marker') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
 
 <?MIVAR COND="$(XST,$UPDATE)">
        <form>
