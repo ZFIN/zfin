@@ -72,6 +72,11 @@ window.location.replace("/cgi-bin_B/webdriver?MIval=aa-ZDB_home.apg")
 $(HTTPHEADER,set-cookie,ZDB_authorize=$new_cookie;path=/cgi-bin_B)
 <?/MIVAR>
 
+<?MIBLOCK COND="$(NXST,$ZDB_authorize)">
+<SCRIPT>
+window.alert ("Cookies must be enabled to login.\n Please enable cookies in your browser and login again");
+</SCRIPT>
+<?/MIBLOCK>
 
 <SCRIPT>
 window.location.replace("/cgi-bin_B/webdriver?MIval=aa-ZDB_home.apg")
