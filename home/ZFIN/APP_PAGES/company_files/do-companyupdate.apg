@@ -24,9 +24,13 @@ pers_id -- only if attr_type=status, ie, you want to change status of member
 
 <!-- do some special prep if updating membership status. The INDEX statements are because Illustra handles spaces in variables so poorly; it's much easier to pass around integers. Arrgh! -->
 <?MIBLOCK COND="$(EC,$attr_type,special-status)">
-<?MIVAR NAME=$comments>Update status for person $pers_id<?/MIVAR>
-<?MIVAR NAME=$new_value>$(INDEX,$new_value,"0Unused,1Executive,2Unused,3Sales,4Technical,5Administrative,6other")<?/MIVAR>
-<?MIVAR NAME=$old_value>$(INDEX,$old_value,"0Unused,1Executive,2Unused,3Sales,4Technical,5Administrative,6other")<?/MIVAR>
+  <?MIVAR NAME=$comments>Update status for person $pers_id<?/MIVAR>
+  <?MISQL SQL="select compos_position from company_position where compos_order = '$new_value';"> 
+    <?MIVAR NAME=$new_value>$1<?/MIVAR>
+  <?/MISQL>
+  <?MISQL SQL="select compos_position from company_position where compos_order = '$old_value';"> 
+    <?MIVAR NAME=$old_value>$1<?/MIVAR>
+  <?/MISQL>
 <?/MIBLOCK>
 
 <!-- do some special prep if updating contact person. -->
@@ -59,7 +63,7 @@ pers_id -- only if attr_type=status, ie, you want to change status of member
 
 
 <!-- Special case for updating membership status -->
-<?MISQL COND="$(EC,$attr_type,special-status)" SQL="update int_person_company set info='$new_value' where source_id='$pers_id' and target_id='$OID';"><?/MISQL>
+<?MISQL COND="$(EC,$attr_type,special-status)" SQL="update int_person_company set position='$new_value' where source_id='$pers_id' and target_id='$OID';"><?/MISQL>
 
 <!-- Special case for where we are deleting a person from company membership -->
 <?MIBLOCK COND="$(EC,$attr_type,special-delete)">
