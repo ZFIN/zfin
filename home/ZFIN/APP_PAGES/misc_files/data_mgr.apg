@@ -74,10 +74,10 @@ Bookmark
 
 
 <!-- For PERSON records, allow only owner and root. Also allow root access to
-  tools for editting the person's ZFIN account. -->
+  tools for editting the person's ZFIN account.  7/12/00 added add/update access for administrative asst.  -->
 <?MIBLOCK COND="$(EC,$rtype,person)">
 
-<?MIVAR COND="$(OR,$(EC,$AUTHORIZED,owner),$(EC,$AUTHORIZED,root))">
+<?MIVAR COND="$(OR,$(EC,$AUTHORIZED,owner),$(EC,$AUTHORIZED,root),$(EC,$AUTHORIZED,adminasst))">
 <font size=-1> <A HREF="/cgi-bin_B/webdriver?MIval=$MIval&UPDATE=1&OID=$OID">Update this Record</A> </font>
 <?/MIVAR>
 </TD>
