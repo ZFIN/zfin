@@ -249,6 +249,7 @@ to the left of each item.
       <?MIVAR name=UserInput COND=$(XST,$email)>$UserInput&email=$(URLENCODE,$email)<?/MIVAR>
       <?MIVAR name=UserInput COND=$(XST,$anon1text)>$UserInput&anon1text=$(URLENCODE,$anon1text)<?/MIVAR>
       <?MIVAR name=UserInput COND=$(XST,$query_results)>$UserInput&query_results=$(URLENCODE,$query_results)<?/MIVAR>
+      <?MIVAR name=UserInput COND=$(XST,$quickform)>$UserInput&quickform=$(URLENCODE,$quickform)<?/MIVAR>
 
       <!--- Return to the previous set of Rows --->
       <?MIBLOCK COND="$(>,$BEGIN,1)">
@@ -340,6 +341,12 @@ to the left of each item.
 
 <?MIBLOCK COND="$(NXST,$accession)">  <!-- don't want modify search result if come from accessionalister -->
 
+<?MIBLOCK COND="$(XST,$quickform)">
+
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-quickPersForm.apg';">$1<?/MISQL>
+
+<?MIELSE>
+
   <form name=critform 
 	method=post  
 	action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
@@ -365,7 +372,7 @@ to the left of each item.
     <TD class="halfwidth">
      <?MIVAR COND="$(NXST,$searchtype)" NAME=$searchtype>contains<?/MIVAR>
      <?MIVAR>
-     <b>Last Name 
+     <b>Name 
      <SELECT name=searchtype 
 	    onChange='document.critform.START.value = "";'>
       <option $(IF,$(EC,$searchtype,begins),SELECTED) value=begins>begins with
@@ -465,6 +472,7 @@ to the left of each item.
     <?MIVAR><input type=hidden name=AUTHORIZED value=$AUTHORIZED><?/MIVAR>
 
   </form>
+<?/MIBLOCK> <!-- nst quickform -->
 <?/MIBLOCK> <!-- nxst accession -->
 
 
