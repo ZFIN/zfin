@@ -1,0 +1,355 @@
+<!-- FILE: MARKERVIEW.HTML. This file implements a viewer for MARKER records.
+-->
+
+<HTML>
+<head>
+<META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
+
+<?MIVAR NAME=$MI_NULL>NULL<?/MIVAR>
+<?MISQL SQL="select object from webPages where ID='aa-chromoscripts.apg';">$1<?/MISQL>
+
+<SCRIPT>
+function info() {
+  window.alert('ANONYMOUS LINKAGE:\n This linkage has not been published yet. ZFIN supports anonymous linkages to promote scientific \ncollaboration; you should contact the submitter of this mapping data (just click the link) \nto negotiate access to this information.');
+}
+</SCRIPT>
+</HEAD>
+
+
+<body bgcolor="#e5e5e5"  TEXT="black">
+<basefont COLOR="#000000" size=2>
+
+<?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
+
+<?MIBLOCK COND="$(NXST,$OID)">
+<p>
+ERROR -- something bad happened -- no OID passed in!
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(XST,$OID)">
+
+<!-- NOW a slight ugliness that would go away if/when we re-implement the MAP_MARKER stuff as hierarchical classes: we don't know what type up marker we are trying to view, and yet we need to know exactly that in order to know what table to select from. So we first look at ZFIN id to determine type, which determines table
+-->
+
+<?MIVAR NAME=$target_table>anon_marker<?/MIVAR>
+<?MIVAR NAME=$target_table COND="$(>,$(POSITION,$OID,GENE),0)">gene<?/MIVAR>
+
+<?MISQL COND="$(>,$(POSITION,$OID,GENE),0)" SQL="select gene_name, 'GENE', alt_names,abbrev,comments,allele from gene where zdb_id='$OID';">
+<?/MISQL>
+
+<?MISQL COND="$(=,$(POSITION,$OID,GENE),0)" SQL="select marker_name, marker_type, alt_names,abbrev,comments from anon_marker where zdb_id='$OID';">
+<?/MISQL>
+
+<?MIVAR NAME=$name>$1<?/MIVAR>
+<?MIVAR NAME=$marker_type>$2<?/MIVAR>
+<?MIVAR NAME=$alt_names>$3<?/MIVAR>
+<?MIVAR NAME=$abbrev>$4<?/MIVAR>
+<?MIVAR NAME=$comments>$5<?/MIVAR>
+
+<?MIVAR NAME=$rec_title>$marker_type: $name<?/MIVAR>
+
+<?MIVAR COND="$(EQ,$marker_type,GENE)" NAME=$allele>$6<?/MIVAR>
+
+<SCRIPT>
+<?MIVAR COND="$(XST,$UPDATE)">
+function doit(attr,attr_type,print_name) {
+window.location.search='?MIval=aa-markerupdate.apg&OID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name+'&target_table=$target_table';
+}
+
+function Delete_listitem(item_name,item_id) {
+window.location.search='?MIval=aa-do-markerupdate.apg&OID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted&target_table=$target_table';
+}
+
+function new_ortho() {
+var speciesind=document.updater.species.selectedIndex;
+var species=document.updater.species[speciesind].value;
+var oname=document.updater.oname.value;
+var oabbrev=document.updater.oabbrev.value;
+if ((oname != '') && (oabbrev != '')) {
+   window.location.search='?MIval=aa-do-markerupdate.apg&OID=$OID&attr=orthologue&attr_type=special-newortho&old_value='+species+'&new_value='+escape(oname)+'&target_table=$target_table&info='+oabbrev;
+  }
+}
+
+function edit_ortho(ortho_id) {
+   helpwin=open("/cgi-bin_B/webdriver?MIval=aa-orthoedit.apg&OID="+ortho_id,"helpwindow","scrollbars=yes,width=600,height=600");
+}
+
+function new_seqnum() {
+var dbind=document.updater.seqdb.selectedIndex;
+var dbname=document.updater.seqdb[dbind].value;
+var seq_acc=document.updater.seq_acc.value;
+if (seq_acc != '') {
+   window.location.search='?MIval=aa-do-markerupdate.apg&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value='+dbname+'&new_value='+seq_acc+'&target_table=$target_table';
+  }
+}
+<?/MIVAR> 
+</SCRIPT>
+
+<?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'page_title=View $marker_type') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+
+<!-- If updating, only let owner update anything -->
+<?MISQL COND="$(XST,$UPDATE)" SQL="select WebExplode(object,'page_title=Update Gene&permission=owns&rtype=$target_table') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+<?MIBLOCK COND="$(EC,$name,NOVALUE)">
+<form><center><font size=4>
+<?MIVAR> <b>Invalid ZFIN ID.<?/MIVAR>
+</form>
+<?/MIBLOCK>
+
+
+<?MIBLOCK COND="$(NC,$name,NOVALUE)">
+
+<?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
+
+
+<?MIVAR> <TITLE> VIEW MARKER: $name </TITLE> <?/MIVAR>
+
+<!-- NOW JUST TOSS OUT THE RETRIEVED DATA IN A TABLE -->
+
+<!-- FIRST THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
+<?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=$target_table') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
+
+
+
+<!-- OKAY, NOW  THROW UP THE  MARKER INFO -->
+<P>
+<form NAME=updater>
+<?MIVAR COND="$(XST,$UPDATE)">
+<center><font size=5 color="#00ff00"><input type=button 
+value=" DONE UPDATING. Back to Viewing! " onClick="document.location.search='?MIval=aa-markerview.apg&OID=$OID'"> </font></center>
+<?/MIVAR>
+
+<CENTER>
+<?MIVAR>
+<FONT SIZE=6> $(UPPER,$marker_type): <b> $name
+<?/MIVAR>
+<?MIVAR COND="$(XST,$UPDATE)">
+<INPUT TYPE=button value=Update onClick="doit('gene_name','text','Gene+Name')"> 
+<br><?/MIVAR> 
+<?MIVAR>
+$(IF,$(EC,$marker_type,GENE),"("$abbrev")")</B> </FONT>
+<?/MIVAR>
+<?MIVAR COND="$(XST,$UPDATE)">
+<INPUT TYPE=button value=Update onClick="doit('abbrev','text','Gene+Abbrev')"> 
+<?/MIVAR> 
+</CENTER>
+<p>
+<p>
+
+
+ 
+<TD colspan=2>
+<?MIVAR COND="$(XST,$UPDATE)">
+<INPUT TYPE=button value=Update onClick="doit('alt_names','text','Aliases')"> 
+<?/MIVAR> 
+<b>Aliases and previous names:</b> 
+<?MIVAR>$(IF,$(NC,$alt_names,NULL),$alt_names,None)<?/MIVAR>
+<p>
+<?MIVAR COND="$(XST,$UPDATE)">
+<INPUT TYPE=button value="Update" onClick="doit('comments','textarea','Description')"> 
+<?/MIVAR> 
+<b>Description:</b>
+<?MIVAR>$(IF,$(NC,$comments,NULL),$comments,None submitted.)<?/MIVAR>
+
+
+
+<hr width=90%>
+<b>MAPPING INFORMATION:</b><p>
+
+<TABLE width=100% cellpadding=5 border=4 bgcolor="#f8fabb" cols=2 rows=1>
+<TR>
+<TD valign=top>
+
+<?MIVAR NAME=$override>$(IF,$(OR,$(EC,$ZDB_access,root),$(EC,$ZDB_access,fishauth)),true,false)<?/MIVAR>
+
+<?MIVAR><b>Reference Panel Location(s): $abbrev</b>  <?/MIVAR>
+<TABLE cols=3 width=100%>
+<?MISQL SQL="select a.owner, lg_location, target_id as panel_id, OR_lg, target_abbrev as panel_abbrev,private,b.full_name,a.metric,day(a.entry_date::date),month(a.entry_date::date), year(a.entry_date::date) from paneled_markers a,person b where a.zdb_id='$OID' and OR_lg is not null and a.owner=b.zdb_id;">
+$(IF,$(>,$MI_CURRENTROW,1),<TR><td colspan=2><hr width=80%></TD></TR>)
+<TR>
+
+<?MIVAR NAME=$upd_day>$9<?/MIVAR>
+<?MIBLOCK COND="$(NC,$upd_day,NULL)">
+<?MIVAR NAME=$upd_date>$(INDEX,$(-,$10,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $9,$11 
+<?/MIVAR>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(EC,$upd_day,NULL)">
+<?MIVAR NAME=$upd_date> <?/MIVAR>
+<?/MIBLOCK>
+
+$(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),"<TD colspan=3><font size=2>LG <b>"$4"</b>;<b> "$2"</b> "$8" (<A target=content HREF=/cgi-bin_B/webdriver?MIval=aa-crossview.apg&OID="$3">"$5" Panel; updated "$upd_date"</A>)</TD>","<TD colspan=2><font size=2>Mapped on <A target=content HREF=/cgi-bin_B/webdriver?MIval=aa-crossview.apg&OID="$3">"$5" Panel; updated "$upd_date"</A>, but still confidential.")
+</TD>
+
+
+</TR><TR>
+<TD colspan=2><font size=2>&nbsp;&nbsp;&nbsp; mapped by <A HREF="/cgi-bin_B/webdriver?MIval=aa-persview.apg&OID=$1">$7</A></TD><TD><A HREF=javascript:view_map('$OID','$abbrev','$3"')>Show Map</A></TD>
+</TR>
+<?/MISQL>
+<?MIVAR COND="$(=,$MI_ROWCOUNT,0)"><p>Not mapped on any reference panel<?/MIVAR>
+</TABLE>
+
+</TD>
+<TD valign=top>
+
+
+<?MIVAR> <B>Independent linkages to $abbrev:</b><?/MIVAR>
+
+<TABLE cellpadding=1 cellspacing=0>
+<?MIVAR NAME=$curviewer>/cgi-bin_B/webdriver?MIval=aa-geneview.html&OID=<?/MIVAR>
+<?MISQL SQL="select m2_abbrev,LOD,dist,m2_type,m2_id,a.owner,private,b.full_name,a.metric from all_linked_markers a, person b where a.owner=b.zdb_id and m1_id='$OID' order by m2_type,dist;">
+
+$(IF,$(=,$MI_CURRENTROW,1),"<TR><TD></TD><TD><U>Distance</U></TD><TD><U>LOD</U></TD></TR>")
+
+$(IF,$(NC,$4,GENE),$(SETVAR,$curviewer,"/cgi-bin_B/webdriver?MIval=aa-fishview.apg&OID="))
+
+$(IF,$(AND,$(NC,$4,GENE),$(NC,$4,MUTANT)),$(SETVAR,$curviewer,"/cgi-bin_B/webdriver?MIval=aa-markerview.apg&OID="))
+
+<TR>
+
+$(IF,$(OR,$(EC,$override,true),$(EC,$7,f),$(EC,$ZDB_ident,$6)),"<TD><font size=-1><A HREF="$curviewer$5">"$1"</A> ("$4")</TD><TD align=center><font size=-1>"$3" "$9"</TD><TD align=center><font size=-1>"$2"</TD><TR><TD colspan=3><font size=-1>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;mapped by <A href=/cgi-bin_B/webdriver?MIval=aa-persview.apg&OID="$6">"$8"</a></TD>","<TD colspan=3><font size=-1><A href=javascript:info();>"$4$MI_CURRENTROW"</A>: Unpublished! <A href=/cgi-bin_B/webdriver?MIval=aa-persview.apg&OID="$6">Contact "$8"</a>.</TD>")
+</TR>
+<?/MISQL>
+</TABLE>
+<?MIVAR COND="$(=,$MI_ROWCOUNT,0)"><p>None submitted (yet).<?/MIVAR>
+
+</TD>
+</TR></TABLE>
+
+<?MISQL SQL="select zdb_id, locus_name, abbrev from locus where cloned_gene='$OID';"><?/MISQL>
+<?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+<p>
+<TABLE width=100% cellpadding=5 border=4 bgcolor="#f8fabb" cols=2 rows=1>
+<TR><TD><font size=2 color="red">
+<?MIVAR>
+<B>MUTANT LOCUS:</b>  </font><font size=2>The mutant locus <b><A HREf="/cgi-bin_B/webdriver?MIval=aa-locusview.apg&OID=$1">$2 ($3) </A> </b> has been shown to correspond to GENE <b>$abbrev</b>. Please consult the locus record for further mapping information.
+<?/MIVAR>
+</TD>
+</TR></TABLE>
+<?/MIBLOCK>
+
+<hr width=80%>
+
+<b>PRIMER SETS:</b><p>
+
+<!-- REALLY need an OUTER JOIN here so that I can join to table FISH to get the
+  strain name for the id.  I do this now, but it knocks out any primer for which the strain_id=NULL (Unknown).  Just have to avoid those NULLS!
+-->
+<?MISQL SQL="select a.zdb_id, band_size,restr_enzyme, fwd_primer, rev_primer, anneal_temp::numeric(6,2), a.comments,strain_id,b.name from primer_set a,fish b where marker_id='$OID' and b.zdb_id=a.strain_id;">
+
+<TABLE width=100% cellpadding=5>
+<TR>
+<TD><b>Strain:</b> <A HREF="/cgi-bin_B/webdriver?MIval=aa-fishview.apg&OID=$8">$9</A> </TD>
+<TD>
+
+<TABLE border cellpadding=3 bgcolor="#f8fabb">
+<TR>
+<TD><b>Band Size</b>: $(IF,$(EQ,$2,NULL),Unknown,$2)</TD>
+<TD><b>Restr. Enz.:</B> $(IF,$(EQ,$3,NULL),None,$3)</TD>
+<TD><b>Anneal. Temp(C):</b> $(IF,$(EQ,$6,NULL),Unknown,$6)</TD>
+</TR><TR>
+<TD colspan=3><font size=-1><b>F-PRIMER:</b> $(IF,$(EQ,$4,NULL),Unknown,$4)</font></TD>
+</TR><TR>
+<TD colspan=3><font size=-1><B>R-PRIMER: </b>$(IF,$(EC,$marker_type,RAPD),N/A,$(IF,$(EQ,$5,NULL),Unknown,$5))</font></TD>
+</TR>
+</TABLE>
+
+</TD>
+</TR></TABLE>
+
+<?/MISQL>
+<?MIVAR COND="$(=,$MI_ROWCOUNT,0)"><TR><TD colspan=2>None submitted.</TD></TR>
+<?/MIVAR>
+</TABLE>
+
+<HR width=80%>
+
+<b>SEQUENCE INFORMATION:</b>
+<?MIBLOCK COND="$(XST,$UPDATE)">
+<br>
+<b>Add link to Seq DB:</b> &nbsp;
+DBname:<SELECT name=seqdb>
+<?MISQL SQL="select distinct DB_name from foreign_DB where db_type='sequence';">
+<option value="$1">$1
+<?/MISQL>
+</SELECT>
+Accession:<input type=text size=15 name=seq_acc> <input type=button value="Add it!" onClick=new_seqnum();>
+<?/MIBLOCK>
+
+<?MIVAR NAME=$lastitem><?/MIVAR>
+<TABLE cellpadding=5 width=100% border bgcolor="#f8fabb">
+<TR>
+<?MISQL SQL="select a.DB_name,conc(conc(b.DB_query,a.acc_num),b.url_suffix),acc_num from db_link a,foreign_DB b where a.DB_name=b.DB_name and a.linked_recid='$OID' order by a.DB_name;">
+$(IF,$(AND,$(NC,$lastitem,$1),$(>,$MI_CURRENTROW,1)),</TD>)
+$(IF,$(NC,$lastitem,$1),<TD align=center><font size=2>)
+<li>
+$(IF,$(XST,$UPDATE),"</font><font size=1><input type=button value=delete onClick=Delete_listitem('db_link','"$3"')></font><font size=2>")
+<A HREF="$2">$1:$3</A>
+$(SETVAR,$lastitem,$1)
+<?/MISQL>
+</TD>
+</TR></TABLE>
+<?MIVAR COND="$(EC,$MI_ROWCOUNT,0)"> None.<?/MIVAR>
+
+
+<!-- Now, for cloned genes, do expression patterns and orthologues. -->
+<?MIBLOCK COND="$(EC,$marker_type,GENE)">
+<p>
+<HR width=80%>
+<p>
+<b>ORTHOLOGUES:</b>
+<?MIVAR COND="$(XST,$UPDATE)">
+<br><b>Add Orthologue:</b><SELECT name=species><option value=Mouse>Mouse<option value=Human>Human<option value=Yeast>Yeast<option value=Fly>Fly</select>
+Name:<input type=text size=15 name=oname> Abbrev:<input type=text size=5 name=oabbrev> <input type=button value="Add it!" onClick=new_ortho();>
+<br><?/MIVAR>
+
+<?MIVAR NAME=$lastitem><?/MIVAR>
+<TABLE width=100% border bgcolor="#f8fabb">
+<TR>
+<?MISQL SQL="select ortho_name, ortho_abbrev, organism, zdb_id, b.DB_name,conc(c.DB_query,b.acc_num),acc_num,a.zdb_id from orthologue a,db_link b, foreign_DB c where a.zdb_id=b.linked_recid and b.DB_name=c.DB_name and c_gene_id='$OID' order by organism;">
+$(IF,$(AND,$(NC,$lastitem,$3),$(>,$MI_CURRENTROW,1)),</TD></TR><TR>)
+$(IF,$(AND,$(NC,$lastitem,$3),$(XST,$UPDATE)),"<TD align=center><font size=1><input type=button value=EDIT onClick=edit_ortho('"$8"')></font></TD>")
+$(IF,$(NC,$3,$lastitem),"<TD><b>"$3"</b>: <font size=2>"$1"("$2") --> ")
+[
+$(IF,$(NC,$7,DUMMY),"<A HREF="$6">"$5":"$7"</a>")
+] 
+$(SETVAR,$lastitem,$3)
+<?/MISQL>
+</TD></TR></TABLE>
+
+<?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No information submitted (yet).<?/MIVAR>
+
+
+<p>
+<HR width=80%>
+<p>
+<b>GENE EXPRESSION</b>
+<ul>
+<?MISQL SQL="select name, st_stage, end_stage from expression_pat where fish_id='$OID';">
+<li> Expressed in the <b>$1</b> between the <b>$2</b> and the <b>$3</b> stage. 
+<?/MISQL>
+<?MIVAR COND=$(=,$MI_ROWCOUNT,0)>No information submitted (yet).<?/MIVAR>
+</ul>
+
+<?/MIBLOCK>   <!-- ends expats and orthos -->
+
+
+
+<HR width=80%>
+
+
+<!-- Throw up the publication info, using the standard display format -->
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-showpubs.apg';">$1<?/MISQL>
+
+
+<?/MIBLOCK> <!-- ends cond authorize exists -->
+
+<?/MIBLOCK> <!-- ends cond oid exists -->
+
+<?/MIBLOCK> <!-- name NC novalue --> 
+
+</HTML>
+
+
+

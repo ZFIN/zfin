@@ -1,0 +1,52 @@
+<?MIVAR><?/MIVAR> <!-- To force load to webPages -->
+<HTML>
+
+<basefont size=2>
+
+
+<form name=crit_form method=post TARGET="pbrowser" action="/cgi-bin_B/webdriver" 
+onSubmit="parent.pbrowser.document.location='/ZDBA/misc_html/saysearching.html'">
+
+
+<center>
+<U><B><FONT SIZE=5>Search for </font>
+<FONT SIZE=5 color="#ff0000" > ACCESSION Number</font></b></u>
+</center>
+
+<TABLE width=100%>
+<TR>
+<TD><font size=-1>
+<b>Accession Number:</b> <input type=text name=aname size=15 > </font>
+</TD>
+</TR>
+
+<TR> 
+<TD align=right WIDTH=30%>
+<input type=reset value="RESET">  
+<input type=submit name=action value="SEARCH"></TD>
+</TR>
+</TABLE>
+
+
+<input type=hidden name=MIval value=aa-accessionlister.apg>
+<input type=hidden name=aname value=$aname>
+
+
+<!-- This next little block executes only if we are using the browser as a
+selector. That is we want user to ultimately CHOOSE a browsed value. All
+we have to do at this point is pass the return record along to perslister.
+-->
+<?MIVAR COND="$(XST,$return_rec)">
+<input type=hidden NAME="return_rec" value=$return_rec>
+<?/MIVAR>
+
+</form>
+
+<!-- Put the cursor in the ACCESSION criterion box -->
+<SCRIPT>document.crit_form.pname.focus();</SCRIPT>
+</HTML>
+
+
+
+
+
