@@ -37,7 +37,6 @@ SPECIFICTARGETS = $(foreach SPEC, $(GENERICS), $(TARGETDIR)/$(SPEC))
 STATICTARGETS = $(foreach STAT, $(STATICS), $(TARGETDIR)/$(STAT))
 TARGETS = $(SPECIFICTARGETS) $(STATICTARGETS)
 
-
 # ---------------  Production Rules  ------------------------------------
 
 .PHONY : all sanitycheck clean clobber $(SUBDIRS)
@@ -50,6 +49,7 @@ $(TARGETDIR) :
 	$(TARGET_MKDIR) $(TARGETDIR);
 
 $(SPECIFICTARGETS) : $(TARGETDIR)/% : % $(TRANSLATETABLE)
+	-$(WEBLINTIFMX) $<
 	$(MAKESPECIFIC) $< $(TRANSLATETABLE) $@
 	$(LOADAPPPAGE) $(DBNAME) $@
 
@@ -80,7 +80,7 @@ clobber :			# Remove targets, but not target dir.
 
 sanitycheck :
     ifdef GENERICS
-	$(SPECIFICCHECK) $(GENERICS)
+	-$(SPECIFICCHECK)
     endif
 	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
 
