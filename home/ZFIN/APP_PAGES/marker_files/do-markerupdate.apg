@@ -213,9 +213,9 @@ entry_time)
     <?/MISQL>
     <?MISQL SQL="
       insert into db_link 
-          ( linked_recid, DB_name, acc_num, dblink_zdb_id ) 
+          ( linked_recid, DB_name, acc_num, dblink_zdb_id ,info) 
         values 
-	  ( '$OID', '$old_value', '$new_value', '$dblink_zdb_id' );">
+	  ( '$OID', '$old_value', '$new_value', '$dblink_zdb_id', '$ZDB_name'||' '||TODAY );">
     <?/MISQL>
   <?/MIBLOCK>  <!-- ends special seqdb case -->
 
