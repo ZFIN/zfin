@@ -225,8 +225,10 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
       <b>Add DB accession:</b> DB_name:
       <SELECT name=newdb>
 	<?MISQL SQL="
-	  select distinct DB_name 
-	    from foreign_DB where db_name <> 'BLAST';">
+	  select fdbcont_db_name 
+	    from foreign_db_contains
+	    where fdbcont_data_type = 'orthologue'
+	    order by fdbcont_db_name;">
 	  <option value="$1">$1
 	<?/MISQL>
       </SELECT> 
