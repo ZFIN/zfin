@@ -21,7 +21,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps
 
-SUBDIRS = data_transfer javaserver mapimage sysexecs WebSiteTools \
+SUBDIRS = cron data_transfer javaserver mapimage sysexecs WebSiteTools \
 	DB_maintenance
 
 MIRROR_SUBDIRS = WebSiteTools
@@ -37,6 +37,11 @@ include $(TOP)/make.default.rules
 # ---------------  Misc Targets  ----------------------------------------
 
 mirror: $(TARGETDIR) $(MIRROR_SUBDIRS)
+
+# Note that the cron directory is not affected by the start or stop
+# targets.  To start or stop cron you must go into the cron directory
+# and start or stop it there (something which should only be done for
+# the informix user, by the way).
 
 start stop :
 	$(MAKE) -C javaserver $@
