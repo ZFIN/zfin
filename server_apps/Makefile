@@ -11,7 +11,10 @@
 # !! format and conventions used in this makefile.                     !!
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
-# 
+# Targets made by this makefile are applications that run on the server
+# and that are not directly callable through HTTP.  Applications that
+# run on the server that are directly callable through HTTP are in the
+# cgi-bin directory.
 
 
 # ---------------  Variable Definitions  --------------------------------
@@ -21,7 +24,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps
 
-SUBDIRS = javaserver
+SUBDIRS = javaserver sysexecs
 
 
 # ---------------  Production Rules  ------------------------------------
@@ -34,3 +37,7 @@ include $(TOP)/make.default.rules
 
 start stop :
 	$(MAKE) -C javaserver $@
+
+postloaddb :
+	$(MAKE) -C sysexecs clobber
+	$(MAKE) -C sysexecs 
