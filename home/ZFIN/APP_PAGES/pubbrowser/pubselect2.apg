@@ -142,8 +142,12 @@ contains <input type=text name=anon1text size=10>
 
 <TABLE width=100%>
 <TR align=center>
-
-<TD><font size=-1>Order results by <SELECT NAME=order_pref> <option value=name>Author <option selected value=date>Pub Date </SELECT></font></TD>
+<?MIVAR>
+<TD><font size=-1>Order results by 
+<SELECT NAME=order_pref> 
+<option $(IF,$(EC,$order_pref,date),SELECTED) value=date>Pub Date 
+<option $(IF,$(EC,$order_pref,name),SELECTED) value=name>Author 
+</SELECT></font><?/MIVAR></TD>
 <TD><font size=-1>
 		Display results in groups of 
 		<input type="text" name="WINSIZE" size="3" value="10">. 
