@@ -25,8 +25,8 @@ $constraint and (field_name='$field')<?/MIVAR>
 <?MIVAR COND="$(NXST,$syear)" NAME=$syear>1900<?/MIVAR>
 <?MIVAR COND="$(NXST,$eyear)" NAME=$eyear>2000<?/MIVAR>
 
-<?MIVAR NAME=$sdate>$syear-$smonth-01<?/MIVAR>
-<?MIVAR NAME=$edate>$eyear-$emonth-01<?/MIVAR>
+<?MIVAR NAME=$sdate>$smonth/01/$syear<?/MIVAR>
+<?MIVAR NAME=$edate>$emonth/01/$eyear<?/MIVAR>
 
 <?MIVAR NAME=$constraint> $constraint and (when::date>'$sdate'::date AND when::date<'$edate'::date)<?/MIVAR>
 
@@ -69,11 +69,15 @@ $constraint and (field_name='$field')<?/MIVAR>
 
 <?MIVAR NAME=page_title>Examine Updates<?/MIVAR>
 <?MIVAR NAME=navtile>true<?/MIVAR>
-
-
+<?MIVAR COND="$(NXST,$emonth)" NAME=$emonth><?/MIVAR>
+<?MIVAR COND="$(NXST,$smonth)" NAME=$smonth><?/MIVAR>
+<?MIVAR COND="$(NXST,$eyear)" NAME=$eyear><?/MIVAR>
+<?MIVAR COND="$(NXST,$syear)" NAME=$syear><?/MIVAR>
+<?MIVAR COND="$(NXST,$period)" NAME=$period>open<?/MIVAR>
+<?MIVAR COND="$(NXST,$field)" NAME=$field>any<?/MIVAR>
 <?MIVAR>
 <SCRIPT>
-var page_id=top.content.location.href+'&navtile=$navtile&OID=$OID';
+var page_id=top.content.location.href+'&navtile=$navtile&field=$field&OID=$OID&emonth=$emonth&smonth=$smonth&period=$period&syear=$syear&eyear=$eyear&field=$field';
 top.update_hist(page_id,"$page_title");
 top.controls.location.reload(true);
 </SCRIPT>
