@@ -8,13 +8,13 @@ pub in question with any new values passed in.
 
 -->
 
-<!-- modified to support I.E.  could no longer user history.go(-2) in process-pub so need to pass variables around to recreate pub select list whn finished processing. in conjucntion with edit_pub -->
+<!-- modified to support I.E.  could no longer user history.go(-2) in process-pub so need to pass variables around to recreate pub select list when finished processing. in conjucntion with edit_pub -->
 
 
 <!-- First make sure the critical fields are there -->
-<?MIBLOCK COND="$(OR,$(NXST,$title),$(NXST,$authors),$(NXST,$pub_date),$(NXST,$source),$(NXST,$num_auths))"
+<?MIBLOCK COND="$(OR,$(NXST,$q_title),$(NXST,$q_authors),$(NXST,$q_pub_date),$(NXST,$q_source),$(NXST,$q_num_auths))"
 <center>
-<big> Insufficient information: Every publication is <b>REQUIRED</b> to have atleast a title,authors,date, and source specified to make an entry</big>. Please go back and try again.
+<big> Insufficient information: Every publication is <b>REQUIRED</b> to have at least a title,authors,date, and source specified to make an entry</big>. Please go back and try again.
 </center>
 <?/MIBLOCK>
 
@@ -61,7 +61,7 @@ pub in question with any new values passed in.
 <?MIVAR NAME=$returnVariables COND="$(XST,$BEGIN)">$returnVariables&BEGIN=$BEGIN<?/MIVAR>
 <?MIVAR NAME=$returnVariables COND="$(XST,$WINSIZE)">$returnVariables&WINSIZE=$WINSIZE<?/MIVAR>
 <!-- 
-     if editing an existing or creating a new record and passsing values,
+     if editing an existing or creating a new record and passing values,
      determine which variables exist, concatonate
 -->
   <?MIBLOCK COND="$(NXST,$new)">
