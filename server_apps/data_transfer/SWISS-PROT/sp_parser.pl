@@ -137,8 +137,8 @@ while (<>) {
 
   #KW   DNA-binding; Nuclear protein; Transcription regulation; Activator;
   #KW   Neurogenesis; Developmental protein; Differentiation.
-  if (/^KW\s+(.*)\./) {
-    $kw = $1;
+  if (/^KW\s+(.*)/) {
+    $kw = $1; chop($kw);
     @sp_kw = split(/; /, $kw);
     while ($sp_kw = shift @sp_kw) {
 	foreach $gene (@gene_array) {
