@@ -211,13 +211,13 @@ $(IF,$(>,$MI_CURRENTROW,1),"<TR><TD colspan=7> <HR width=80%> </TD> </TR>")
 $(IF,$(=,$MI_CURRENTROW,1),"<TR><TD colspan=7> <HR size=5> </TD> </TR>")
 
 
-<?MIVAR NAME=$abbrev>$3<?/MIVAR>
-<?MIBLOCK COND="$(EC,$abbrev,NULL)">
-<?MIVAR NAME=$abbrev>None<?/MIVAR>
+<?MIVAR NAME=$q_abbrev>$3<?/MIVAR>
+<?MIBLOCK COND="$(EC,$q_abbrev,NULL)">
+<?MIVAR NAME=$q_abbrev>None<?/MIVAR>
 <?/MIBLOCK>
 
-<?MIBLOCK COND="$(EC,$abbrev,xxx)">
-<?MIVAR NAME=$abbrev>None<?/MIVAR>
+<?MIBLOCK COND="$(EC,$q_abbrev,xxx)">
+<?MIVAR NAME=$q_abbrev>None<?/MIVAR>
 <?/MIBLOCK>
 
 
@@ -238,7 +238,7 @@ $(IF,$(XST,$return_rec),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do
 
 </TD> 
 
-<TD><font size=-1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$locus" TARGET=content>$name</A> ($abbrev)
+<TD><font size=-1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$locus" TARGET=content>$name</A> ($q_abbrev)
 <?MIVAR NAME=$found>false<?/MIVAR>
 <?MISQL SQL="select distinct lcsali_locus_name_alias, lcsali_locus_abbrev_alias from locus_alias where  lcsali_locus_zdb_id = '$9';">
 <?MIVAR COND="$(=,$MI_CURRENTROW,1)">&nbsp;[<?/MIVAR>
@@ -400,6 +400,9 @@ $(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|
 		<?/MIVAR>
 		<?MIVAR name=UserInput COND=$(XST,$fname)>
 			$UserInput&fname=$fname
+		<?/MIVAR>
+		<?MIVAR name=UserInput COND=$(XST,$abbrev)>
+			$UserInput&abbrev=$abbrev
 		<?/MIVAR>
 		<?MIVAR name=UserInput COND=$(NC,$chrom_change,UNKNOWN)>
 			$UserInput&chrom_change=$chrom_change
