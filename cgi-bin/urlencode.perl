@@ -1,4 +1,5 @@
-#!/private/bin/perl # -wT # changed tec 01-18-01
+#!/private/bin/perl 
+# -wT # changed tec 01-18-01
 #!/local/bin/perl 
 # ----------------------------------------------------------------------
 #  file name:  urlencode.perl
