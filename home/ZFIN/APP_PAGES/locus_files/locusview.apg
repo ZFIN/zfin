@@ -364,7 +364,7 @@
 
 
         <!------------- Summary of alleles  ------------------------>
-	<a>allele</a>
+	<a NAME="allele"></a>
 	<HR WIDTH=80%>
 	
 	<?MIVAR>
