@@ -30,6 +30,16 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 
 <?/MICOMMENT>
 
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
 <HTML>
 
 <head>
@@ -379,53 +389,7 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 	    <?/MIVAR>
 	  <?/MIBLOCK>
 	  </b></center>
-
-	  <?MICOMMENT> Display anatomy associated with image <?/MICOMMENT>
-
-	  <TABLE border="0" WIDTH="100%" cellpadding="4">
-
-	    <?MISQL SQL="
-	      select anathier_code, anathier_name 
-		from anatomy_hierarchy 
-		where exists
-		      ( select * 
-			  from anatomy_item, fish_image_anatomy
-			  where fimganat_fimg_zdb_id           = '$OID'
-			    and fimganat_fimg_start_stg_zdb_id = '$fimgview_start_stg_zdb_id'
-			    and fimganat_fimg_end_stg_zdb_id   = '$fimgview_end_stg_zdb_id'
-			    and fimganat_anat_item_zdb_id      = anatitem_zdb_id
-			    and anatitem_type_code             = anathier_code)
-		order by anathier_code;">
-
-	      <?MIVAR NAME=$fimgview_anathier_code>$1<?/MIVAR>
-	      <?MIVAR NAME=$fimgview_anathier_name>$2<?/MIVAR>
-
-	      <tr>
-		<td>
-		  <b>$fimgview_anathier_name shown</b>
-		<td>
-		  <?MIVAR NAME=$fimgview_anatItemList><?/MIVAR>
-		  <?MISQL SQL="
-		    select anatitem_name
-		      from fish_image_anatomy, anatomy_item
-		      where fimganat_fimg_zdb_id           = '$OID'
-			and fimganat_fimg_start_stg_zdb_id = '$fimgview_start_stg_zdb_id'
-			and fimganat_fimg_end_stg_zdb_id   = '$fimgview_end_stg_zdb_id'
-			and fimganat_anat_item_zdb_id      = anatitem_zdb_id
-			and anatitem_type_code             = '$fimgview_anathier_code'
-			order by anatitem_name;">
-
-		    <?MIVAR NAME=$fimgview_anatitem_name>$1<?/MIVAR>
-
-		    <?MIBLOCK COND=$(!=,$MI_CURRENTROW,1)>
-		      <?MIVAR NAME=$fimgview_anatItemList>$fimgview_anatItemList, <?/MIVAR>
-		    <?/MIBLOCK>
-		    <?MIVAR NAME=$fimgview_anatItemList>$fimgview_anatItemList $fimgview_anatitem_name<?/MIVAR>
-		  <?/MISQL>
-		  $fimgview_anatItemList
-	    <?/MISQL>
-	  </TABLE>
-	<?/MISQL>  <?MICOMMENT> end developmental stages SQL <?/MICOMMENT>
+        <?/MISQL> <?MICOMMENT> end developmental stages SQL <?/MICOMMENT>
 
         <?MICOMMENT> display stages for new images <?/MICOMMENT> 
         <?MIBLOCK COND="$(EC,$MI_ROWCOUNT,0)">
@@ -489,92 +453,15 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 	  of $fimgview_labeledMarkerList 
 	  by $fimgview_xpat_assay_name</a><br>
 
-	  <?MICOMMENT> 
-            Get the anatomy items labeled in the expression pattern 
 
-	      -- get the expression_pattern_image recs that overlap with
-	      -- any of the image's fish_image_stage recs.  On the image
-	      -- page we don't break down expression pattern anatomy items by  
-	      -- stage.  We heap them all together in one list.  To see them
-	      -- by stage, go to the expression pattern page.
-  <?/MICOMMENT>
-	    <?MIVAR NAME=$fimgview_xpatanatStgCondition><?/MIVAR>
-	    <?MISQL SQL="
-	      select xpatfimg_xpat_start_stg_zdb_id, xpatfimg_xpat_end_stg_zdb_id
-		from expression_pattern_image
-		where xpatfimg_fimg_zdb_id = '$OID'
-		  and fimg_overlaps_stg_window('$OID', 
-					       xpatfimg_xpat_start_stg_zdb_id,
-					       xpatfimg_xpat_end_stg_zdb_id);">
-
-	      <?MIVAR NAME=$fimgview_xpatfimg_xpat_start_stg_zdb_id>$1<?/MIVAR>
-	      <?MIVAR NAME=$fimgview_xpatfimg_xpat_end_stg_zdb_id>$1<?/MIVAR>
-
-	      <?MIBLOCK COND=$(!=,$MI_CURRENTROW,1)>
-		<?MIVAR NAME=$fimgview_xpatanatStgCondition>$fimgview_xpatanatStgCondition OR <?/MIVAR>
-	      <?/MIBLOCK>
-	      <?MIVAR NAME=$fimgview_xpatanatStgCondition>$fimgview_xpatanatStgCondition
-		(    xpatanat_xpat_start_stg_zdb_id = '$fimgview_xpatfimg_xpat_start_stg_zdb_id'
-		 AND xpatanat_xpat_end_stg_zdb_id   = '$fimgview_xpatfimg_xpat_end_stg_zdb_id')
-	      <?/MIVAR>
-	    <?/MISQL>
-
-	    <?MISQL SQL="
-	      select anathier_code, anathier_name 
-		from anatomy_hierarchy 
-		where exists
-		      ( select * 
-			  from anatomy_item, expression_pattern_anatomy
-			  where xpatanat_xpat_zdb_id      = '$fimgview_xpat_zdb_id'
-			    and ($fimgview_xpatanatStgCondition)
-			    and xpatanat_anat_item_zdb_id = anatitem_zdb_id
-			    and anatitem_type_code        = anathier_code)
-		order by anathier_code;">
-
-	      <?MIVAR NAME=$fimgview_anathier_code>$1<?/MIVAR>
-	      <?MIVAR NAME=$fimgview_anathier_name>$2<?/MIVAR>
-
-	      <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
-		<b>Keywords:</b>
-		<TABLE border="0" WIDTH="90%">
-		<center>
-	      <?/MIBLOCK>
-	      <tr>
-		<td width="15%">
-		  <b>$fimgview_anathier_name:</b>
-		<td width="85%">
-		  <?MIVAR NAME=$fimgview_anatItemList><?/MIVAR>
-		  <?MISQL SQL="
-		    select distinct anatitem_name, anatitem_zdb_id
-		      from anatomy_item, expression_pattern_anatomy
-		      where xpatanat_xpat_zdb_id      = '$fimgview_xpat_zdb_id'
-			and ($fimgview_xpatanatStgCondition)
-			and xpatanat_anat_item_zdb_id = anatitem_zdb_id
-			and anatitem_type_code        = '$fimgview_anathier_code'
-		      order by anatitem_name;">
-
-		    <?MIVAR NAME=$fimgview_anatitem_name>$1<?/MIVAR>
-		    <?MIVAR NAME=$fimgview_anatitem_zdb_id>$2<?/MIVAR>
-
-		    <?MIBLOCK COND=$(!=,$MI_CURRENTROW,1)>
-		      <?MIVAR NAME=$fimgview_anatItemList>$fimgview_anatItemList, <?/MIVAR>
-		    <?/MIBLOCK>
-		    <?MIVAR NAME=$fimgview_anatItemList>$fimgview_anatItemList 
-                      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$fimgview_anatitem_zdb_id">
-                         $fimgview_anatitem_name </A>
-                    <?/MIVAR>
-		  <?/MISQL>
-		  $fimgview_anatItemList
-	    <?/MISQL>
-            <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
-                      </tr>
-                    </center>
-                    </TABLE>
-            <?/MIBLOCK>
-        <?/MISQL>
+        <?/MISQL> <?MICOMMENT> end of expression pattern query <?/MICOMMENT>
         <br>
 
-	  <hr width=80%>
+
+
+
+
+	<hr width=80%>
 
 	<b>Image Preparation:</B> <p>
 	<TABLE border=0 WIDTH=100% cellpadding=4>
@@ -660,12 +547,6 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 	<p>
 
 	<hr width=80%>
-
-
-	<?MICOMMENT> 
-          Throw up the publication info, using the standard display format 
-        <?/MICOMMENT>
-
 	<?MISQL SQL="
   		select count(*)::integer 
   		from record_attribution
@@ -683,6 +564,12 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 	<?/MIBLOCK>
 	<?MIVAR>&nbsp; ($1)<?/MIVAR>
  
+
+	<?MICOMMENT> 
+          Throw up the publication info, using the standard display format 
+        <?/MICOMMENT>
+
+
       </form>
     <?/MIBLOCK>  <?MICOMMENT> ends cond AUTHORIZED <?/MICOMMENT>
 <?/MIBLOCK>
