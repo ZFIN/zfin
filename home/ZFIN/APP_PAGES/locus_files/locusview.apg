@@ -1,50 +1,55 @@
-<!-- FILE: locusview.apg. This file implements a viewer for LOCUS records. Mostly this means displaying the (minimal) description of locus history; the meat
-of it is the linkages, alleles, etc., all drawn from DB.
-
-Variables Expected: 
- -- OID -- the OID of the locus
- -- UPDATE -- a flag variable to indicate we're in update mode
- -- temp_oid -- could be passed instead of OID --
- -- lname -- locus_name; could be passed instead of OID;we look up OID first thing.
--->
+<!-- FILE: locusview.apg. This file implements a viewer for LOCUS records. 
+  -- Mostly this means displaying the (minimal) description of locus history; 
+  -- the meat of it is the linkages, alleles, etc., all drawn from DB.
+  --
+  -- Variables Expected: 
+  --  OID      -- the OID of the locus
+  --  UPDATE   -- a flag variable to indicate we're in update mode
+  --  temp_oid -- could be passed instead of OID --
+  --  lname    -- locus_name; could be passed instead of OID;we look up OID 
+  --              first thing.
+  -->
 
 <HTML>
 <head>
 <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
 
 <?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
-<?MISQL COND="$(AND,$(NXST,$OID),$(XST,$lname))" SQL="select unique zdb_id from locus where locus_name='$lname';">
-$(SETVAR,$OID,$1)
+<?MISQL COND="$(AND,$(NXST,$OID),$(XST,$lname))" SQL="
+  select unique zdb_id 
+    from locus 
+    where locus_name='$lname';">
+  $(SETVAR,$OID,$1)
 <?/MISQL>
 
 
 <SCRIPT>
-<?MIVAR>
-function doit(attr,attr_type,print_name) {
-window.location.search='?MIval=aa-locusupdate.apg&OID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name
-}
+  <?MIVAR>
+    function doit(attr,attr_type,print_name) {
+      window.location.search='?MIval=aa-locusupdate.apg&OID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name
+    }
 
-function add_linkage(lname) {
-   helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-linkagedit.apg&OID=$OID&lname="+escape(lname),"helpwindow","scrollbars=yes,width=550,height=300");
-}
+    function add_linkage(lname) {
+      helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-linkagedit.apg&OID=$OID&lname="+escape(lname),"helpwindow","scrollbars=yes,width=550,height=300");
+    }
 
-function edit_linkage(link_id,lname) {
-   helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-linkagedit.apg&OID=$OID&edit_link="+link_id+"&lname="+escape(lname),"helpwindow","scrollbars=yes,width=550,height=300");
-}
+    function edit_linkage(link_id,lname) {
+      helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-linkagedit.apg&OID=$OID&edit_link="+link_id+"&lname="+escape(lname),"helpwindow","scrollbars=yes,width=550,height=300");
+    }
 
-function deleteLinkage(mid,dist,lod) {
-window.location.search='?MIval=aa-do-fishupdate.apg&OID=$OID&attr=protocol&attr_type=special-alteration&old_value='+old_value+'&new_value='+new_value+'&alt_id='+alt_id
-}
+    function deleteLinkage(mid,dist,lod) {
+      window.location.search='?MIval=aa-do-fishupdate.apg&OID=$OID&attr=protocol&attr_type=special-alteration&old_value='+old_value+'&new_value='+new_value+'&alt_id='+alt_id
+    }
 
-<?/MIVAR>
+  <?/MIVAR>
 
-function info() {
-  window.alert('ANONYMOUS LINKAGE:\n This marker is a dummy placeholder for a marker that has been linked to this locus, \nbut has not been published yet. ZFIN supports anonymous linkages to promote scientific \ncollaboration; you should contact the submitter of this mapping data (just click the link) \nto negotiate access to this information.');
-}
+  function info() {
+    window.alert('ANONYMOUS LINKAGE:\n This marker is a dummy placeholder for a marker that has been linked to this locus, \nbut has not been published yet. ZFIN supports anonymous linkages to promote scientific \ncollaboration; you should contact the submitter of this mapping data (just click the link) \nto negotiate access to this information.');
+  }
 
-function Delete_listitem(item_name,item_id,oid) {
-window.location.search='?MIval=aa-do-locusupdate.apg&OID='+oid+'&attr='+item_name+'&attr_type=Delete_listitem&old_value='+item_id+'&new_value=deleted'
-}
+  function Delete_listitem(item_name,item_id,oid) {
+    window.location.search='?MIval=aa-do-locusupdate.apg&OID='+oid+'&attr='+item_name+'&attr_type=Delete_listitem&old_value='+item_id+'&new_value=deleted'
+  }
 
 
 </SCRIPT>
@@ -57,247 +62,299 @@ window.location.search='?MIval=aa-do-locusupdate.apg&OID='+oid+'&attr='+item_nam
 
 
 <?MIBLOCK COND="$(NXST,$OID)">
-<p>
-ERROR -- something bad happened -- no OID passed in!
+  <p>
+  ERROR -- something bad happened -- no OID passed in!
 <?/MIBLOCK>
 
 <?MIBLOCK COND="$(XST,$OID)">
 
-<!-- if not updating -->
-<?MIBLOCK COND="$(NXST,$UPDATE)">
-<?MISQL SQL="select WebExplode(object,'page_title=View Locus') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
-<?/MIBLOCK>
+  <!-- if not updating -->
+  <?MIBLOCK COND="$(NXST,$UPDATE)">
+    <?MISQL SQL="
+      select WebExplode(object,'page_title=View Locus') 
+        from webPages 
+        where ID='aa-secure_navigation.apg';">
+      $1
+    <?/MISQL>
+  <?/MIBLOCK>
 
-<!-- If updating, only let root update anything -->
-<?MIBLOCK COND="$(XST,$UPDATE)">
-<?MISQL SQL="select WebExplode(object,'page_title=Update Locus&permission=root') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
-<?/MIBLOCK>
+  <!-- If updating, only let root update anything -->
+  <?MIBLOCK COND="$(XST,$UPDATE)">
+    <?MISQL SQL="
+      select WebExplode(object,'page_title=Update Locus&permission=root') 
+	from webPages 
+	where ID='aa-secure_navigation.apg';">
+      $1
+    <?/MISQL>
+  <?/MIBLOCK>
 
-<?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
+  <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
-<?MISQL SQL="select locus_name, abbrev, comments,owner,cloned_gene from locus where zdb_id='$OID';"><?/MISQL>
+    <?MISQL SQL="
+      select locus_name, abbrev, comments, owner, cloned_gene 
+	from locus 
+	where zdb_id='$OID';">
+    <?/MISQL>
 
-<?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
-<form><center><font size=4>
-<?MIVAR> <b>Invalid ZFIN ID.<?/MIVAR>
-</form>
-<?/MIBLOCK>
-
-
-<?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
-<?MIVAR NAME=$name>$1<?/MIVAR>
-<?MIVAR NAME=$abbrev>$2<?/MIVAR>
-<?MIVAR NAME=$comments>$3<?/MIVAR>
-<?MIVAR NAME=$owner>$4<?/MIVAR>
-<?MIVAR NAME=$cloned_gene>$5<?/MIVAR>
-
-
-<?MIVAR NAME=$rec_title>Record for LOCUS $name<?/MIVAR>
-
-<!-- If viewing, THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
-<?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=locus') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
-
-<A NAME="top">
-
-<!-- OKAY, NOW  THROW UP THE  LOCUS INFO -->
-<form NAME=updater>
-<?MIVAR COND="$(XST,$UPDATE)">
-<center><font size=5 color="#00ff00"><input type=button 
-value=" DONE UPDATING. Back to Viewing! " onClick="document.location.search='?MIval=aa-locusview.apg&OID=$OID'"> </font></center>
-<?/MIVAR>
-
-<center>
-<?MIVAR COND="$(XST,$UPDATE)">
-<INPUT TYPE=button value=Update onClick="doit('locus_name','text','Locus+Name')">
-<?/MIVAR> 
-<?MIVAR>
-<B> <FONT SIZE=6>Locus:  $name 
-<?/MIVAR>
-
-<?MIVAR COND="$(XST,$UPDATE)">
-<br><INPUT TYPE=button value=Update onClick="doit('abbrev','text','Abbreviation')">
-<?/MIVAR> 
-
-<!--    there are some abbrevs in the db as NULL - display as none -->
-<?MIBLOCK COND="$(EC,$abbrev,NULL)">
-<?MIVAR NAME=$abbrev>None<?/MIVAR>
-<?/MIBLOCK>
-
-<!--    there are some abbrevs in the db as xxx - display as none -->
-<?MIBLOCK COND="$(EC,$abbrev,xxx)">
-<?MIVAR NAME=$abbrev>None<?/MIVAR>
-<?/MIBLOCK>
-
-<?MIVAR>($abbrev)</FONT></b>
-<?/MIVAR>
-
-<!-- I PURPOSEFULLY DO NOT ALLOW UPDATING OF NAME/ABBREV because this information is central to identity of the record-->
-
-<?MIBLOCK COND="$(OR,$(EC,$AUTHORIZED,root),$(EC,$AUTHORIZED,fishauth))">
-<br>
-<?MIVAR COND="$(XST,$UPDATE)">
-<INPUT TYPE=button value=Update onClick="doit('owner','selection','Owner')">
-<?/MIVAR> 
-<?MISQL SQL="select full_name from person where zdb_id='$owner';"><font color="#ff0000">(Record Owner is $1)<?/MISQL>
-</font><?/MIBLOCK> <!-- if root -->
-
-<p>
-</CENTER>
-
-<!-- move mivar cond from input type=button to miblock which includes entire locus description until curation on this item improves -->
-<?MIBLOCK COND="$(XST,$UPDATE)">
-<p>
-<table width=100%>
-<TR>
-<TD bgcolor="#ffffff">
-
-<INPUT TYPE=button value="Update" onClick="doit('comments','textarea','Locus+Description')"> 
- 
-
-<b>Locus Description:</b><?MIVAR>$(IF,$(NC,$comments,NULL),$comments,"No description available") <?/MIVAR>
-</TD>
-</TR></TABLE>
-<?/MIBLOCK>
-
-<p><font size=+1>
-<?MIVAR COND="$(XST,$UPDATE)">
-<INPUT TYPE=button value=Add onClick="doit('lcsali_locus_name_alias','text','Alias')">
-<?/MIVAR> 
-<b>Previous names: </b>
-<?MISQL SQL="select lcsali_locus_name_alias, lcsali_locus_abbrev_alias  from locus_alias where lcsali_locus_zdb_id = '$OID';">
-<?MIVAR NAME=$alias>$1<?/MIVAR>
-<?MIVAR COND="$(XST,$alias)" NAME=$alias DELIMIT=" " REPLACE="+">$alias<?/MIVAR>
-<?MIVAR COND="$(XST,$UPDATE)"><br> <INPUT TYPE=button value=Delete onClick="Delete_listitem('lcsali_locus_name_alias','$alias','$OID')">
-<?/MIVAR>$(IF,$(AND,$(NXST,$UPDATE),$(>,$MI_CURRENTROW,1)),;) $1 
-<?MIVAR COND="$(NC,$2,"")">($2)<?/MIVAR>
-<?/MISQL>
-
-<?MISQL SQL="select fishali_fish_name_alias from fish_alias,fish where fishali_fish_zdb_id = fish.zdb_id and fish.locus = '$OID' ;">
-<?MIVAR NAME=$fish_alias>$1<?/MIVAR>
-<?MIVAR COND="$(XST,$fish_alias)" NAME=$fish_alias DELIMIT=" " REPLACE="+">$fish_alias<?/MIVAR>
-<?MIVAR COND="$(XST,$UPDATE)"><br> <INPUT TYPE=button value=Delete onClick="Delete_listitem('fishali_fish_name_alias','$fish_alias','$OID')">
-<?/MIVAR>$(IF,$(AND,$(NXST,$UPDATE),$(OR,$(XST,$alias),$(>,$MI_CURRENTROW,1))),;) $1 
-<?/MISQL>
-
-<p>
-<?MISQL SQL="select distinct chrom_num from fish_search where locus ='$OID' and chrom_num <> 0 ;">
-$(IF,$(NC,$1,0),<font size=+1><b>"Linkage Group:" $1</b>)
-<?/MISQL>
-
-<HR WIDTH=80%>
-<p>
-<font size=+1><?MIVAR><b>Summary of <u>$name</u> alleles:</B><?/MIVAR></font> <font size=-1>(Click allele to see details)</font>
-<?MIVAR COND="$(XST,$UPDATE)"> <BR>CAN NOT UPDATE ALLELES: New alleles for a locus a created via the locus registration mechanism. When a proposed allele designation is accepted, a new fish record for the allele is created.<?/MIVAR>
-
-<ul>
-<TABLE border=0 cellspacing=3 cellpadding=4>
-<TH align=center>Allele [previous names]</TH><TH>Type</TH><TH>Avail. Map Info</TH><TH align=center>Brief Description</TH>
-<?MISQL SQL="select fish_id, abbrev,allele,phenotype,chrom_change,(select unique count(*)::integer from mapped_deletion where allele=a.allele) as del_markers,(select unique count(*)::integer from total_links where from_id=a.fish_id) as linkages from fish_search a where locus ='$OID' order by allele;">
-<?MIVAR NAME=$fish_id>$1<?/MIVAR>
-<?MIVAR NAME=$fish_abbrev>$2<?/MIVAR>
-<?MIVAR NAME=$allele>$3<?/MIVAR>
-<?MIVAR NAME=$phenotype>$4<?/MIVAR>
-<?MIVAR NAME=$chrom_change>$5<?/MIVAR>
-<?MIVAR NAME=$del_markers>$6<?/MIVAR>
-<?MIVAR NAME=$linkages>$7<?/MIVAR>
-
-$(SETVAR,$mindex,$(POSITION,$phenotype,"Details:"))
-<TR>
- 
-<TD valign=bottom><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$fish_id">$allele</A> 
-
-<!-- find any allele alias -->
-<?MISQL SQL="select alteration.zdb_id from alteration, fish  where fish.locus='$OID'and fish.allele ='$allele'
-and fish.allele= alteration.allele;">
-<?MIVAR NAME=$ALTOID>$1<?/MIVAR>
-<?/MISQL>
-<?MISQL SQL="select alleali_allele_name_alias from allele_alias where alleali_alt_zdb_id = '$ALTOID'">
-<?MIVAR NAME=$allele_alias>$1<?/MIVAR>
-$(IF,$(AND,$(=,$MI_CURRENTROW,1),$(XST,$allele_alias)), [)
-$(IF,$(>,$MI_CURRENTROW,1),;) $allele_alias
-<?/MISQL>
-$(IF,$(AND,$(>=,$MI_ROWCOUNT,1),$(XST,$allele_alias)),])
-</TD>
-
-<TD valign=bottom><font size=-1>$(IF,$(NC,$chrom_change,NULL),$chrom_change,"Unknown")</TD>
-<TD><font size=-1>
-$(IF,$(>,$del_markers,0),"+/- markers<br>")
-$(IF,$(>,$linkages,0),"Mapped linkages")
-$(IF,$(AND,$(=,$del_markers,0),$(=,$linkages,0)),"Unmapped")
-</td>
-<TD valign=bottom><font size=-1>
-$(IF,$(>,$mindex,0),$(SUBSTR,$phenotype,1,$(-,$mindex,1)),"")
-</TD>
-</TR>
-<?/MISQL>
-</TABLE>
-</ul>
-
-<HR WIDTH=80%>
-<p>
-<?MIVAR NAME=$override>$(IF,$(OR,$(EC,$ZDB_access,root),$(EC,$ZDB_access,fishauth)),true,false)<?/MIVAR>
-
-<!-- COmment all this out for now. Probably want to delete pronto -- but don't we do need
-access to updating linkages from somewhere -- should be in the FISH record 
-
-<B><font size=+1>Mapping Information:</font></B>
-<p>
-
-<?MIVAR> <b>Mapped linkages to $name locus:</b><?/MIVAR> 
-
-<?MIVAR COND=$(XST,$UPDATE)>
-<INPUT TYPE=button value="ADD new linkage to $name" onClick="add_linkage('$name');">
-<?/MIVAR>
-
-<?MIVAR NAME=$override>$(IF,$(OR,$(EC,$ZDB_access,root),$(EC,$ZDB_access,fishauth)),true,false)<?/MIVAR>
-
-<TABLE width=300 cellpadding=5 border=4 bgcolor="#f8fabb" cols=4 rows=1>
-<TR><TD>
-
-<TABLE border=0 cellpadding=1 cellspacing=0>
-<?MIVAR NAME=$curviewer>/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=<?/MIVAR>
-<?MISQL SQL="select m2_abbrev,LOD,dist,m2_type,m2_id,a.owner,private,b.full_name,a.link_id,a.metric from all_linked_markers a, person b where a.owner=b.zdb_id and m1_id='$OID' order by m2_type,dist;">
-
-$(IF,$(=,$MI_CURRENTROW,1),"<TR><TD></TD><TD></TD><TD><U>Distance</U></TD><TD><U>LOD</U></TD></TR>")
-
-$(IF,$(NC,$4,GENE),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID="))
-
-<TR>
-$(SETVAR,$LOD,$(IF,$(=,$2,0),Unknown,$2))
-$(IF,$(XST,$UPDATE),"<TD><font size=2><input type=button value=edit onClick=edit_linkage('$9','$name');></TD>","<TD></TD>")
-$(IF,$(OR,$(EC,$override,true),$(EC,$7,f),$(EC,$ZDB_ident,$6)),"<TD><font size=-1><A HREF=$curviewer$5>$1</A> ($4)</TD><TD align=center><font size=-1>$3 $10</TD><TD align=center><font size=-1>$LOD</TD><TR><TD colspan=3><font size=-1>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;mapped by <A href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.html&OID=$6>$8</a></TD>","<TD colspan=3><font size=-1><A href=javascript:info();>$4$MI_CURRENTROW</A>: Unpublished! <A href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.html&OID=$6>Contact $8</a>.</TD>")
-</TR>
-<?/MISQL>
-</TABLE>
-<?MIVAR COND=$(=,$MI_ROWCOUNT,0)>No linkages submitted (yet).<?/MIVAR>
-
-</TD></TR>
-</TABLE>
-<p>
-
-end comment out -->
+    <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
+      <form><center><font size=4>
+	<?MIVAR> <b>Invalid ZFIN ID.<?/MIVAR>
+      </form>
+    <?/MIBLOCK>
 
 
-<?MIVAR COND="$(XST,$UPDATE)">
-<INPUT TYPE=button value="Update" onClick="doit('cloned_gene','selection','Affected+Gene')">
-<?/MIVAR>
-<B>Affected Gene:</B> 
-<?MIVAR COND="$(EC,$cloned_gene,NULL)">Not yet established.<?/MIVAR>
+    <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+      <?MIVAR NAME=$name>$1<?/MIVAR>
+      <?MIVAR NAME=$abbrev>$2<?/MIVAR>
+      <?MIVAR NAME=$comments>$3<?/MIVAR>
+      <?MIVAR NAME=$owner>$4<?/MIVAR>
+      <?MIVAR NAME=$cloned_gene>$5<?/MIVAR>
 
-<?MISQL COND="$(NC,$cloned_gene,NULL)" SQL="select gene_name, abbrev from gene where zdb_id='$cloned_gene';">
-<TABLE width=100% cellpadding=5 border=4 bgcolor="#f8fabb" cols=2 rows=1>
-<TR><TD>
-<font color="red"><B>Cloned Gene:</b>  </font>
-<font size=2>The GENE <b><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$cloned_gene">$1 ($2) </A> </b> has been shown to correspond to the <b>$name</b> locus. Please consult the GENE record for further mapping information.
-</TD>
-</TR></TABLE>
-<?/MISQL>
 
-</form>
+      <?MIVAR NAME=$rec_title>Record for LOCUS $name<?/MIVAR>
 
-<?/MIBLOCK> <!-- Cond AUTHORIZED -->
+      <!-- If viewing, THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
+      <?MISQL COND="$(NXST,$UPDATE)" SQL="
+        select WebExplode(object,'rtype=locus') 
+          from webPages 
+          where ID='aa-data_mgr.apg';">
+        $1
+      <?/MISQL>
 
-<?/MIBLOCK> <!-- ends cond oid exists -->
+      <A NAME="top">
+
+      <!-- OKAY, NOW  THROW UP THE  LOCUS INFO -->
+      <form NAME=updater>
+	<?MIVAR COND="$(XST,$UPDATE)">
+ 	  <center><font size=5 color="#00ff00">
+	  <input type=button 
+	    value=" DONE UPDATING. Back to Viewing! " 
+	    onClick="document.location.search='?MIval=aa-locusview.apg&OID=$OID'"> 
+	  </font></center>
+	<?/MIVAR>
+
+	<center>
+	<?MIVAR COND="$(XST,$UPDATE)">
+	  <INPUT TYPE=button 
+	    value=Update 
+            onClick="doit('locus_name','text','Locus+Name')">
+	<?/MIVAR> 
+	<?MIVAR>
+	  <B> <FONT SIZE=6>Locus:  $name 
+	<?/MIVAR>
+
+	<?MIVAR COND="$(XST,$UPDATE)">
+	  <br>
+          <INPUT TYPE=button 
+            value=Update 
+            onClick="doit('abbrev','text','Abbreviation')">
+	<?/MIVAR> 
+
+	<!--    there are some abbrevs in the db as NULL - display as none -->
+	<?MIBLOCK COND="$(EC,$abbrev,NULL)">
+ 	  <?MIVAR NAME=$abbrev>None<?/MIVAR>
+	<?/MIBLOCK>
+
+	<!--    there are some abbrevs in the db as xxx - display as none -->
+	<?MIBLOCK COND="$(EC,$abbrev,xxx)">
+	  <?MIVAR NAME=$abbrev>None<?/MIVAR>
+	<?/MIBLOCK>
+
+	<?MIVAR>
+	  ($abbrev)</FONT></b>
+	<?/MIVAR>
+
+	<!-- I PURPOSEFULLY DO NOT ALLOW UPDATING OF NAME/ABBREV because 
+	  -- this information is central to identity of the record
+	  -->
+
+	<?MIBLOCK COND="$(OR,$(EC,$AUTHORIZED,root),$(EC,$AUTHORIZED,fishauth))">
+	  <br>
+	  <?MIVAR COND="$(XST,$UPDATE)">
+	    <INPUT TYPE=button 
+              value=Update 
+              onClick="doit('owner','selection','Owner')">
+	  <?/MIVAR> 
+	  <?MISQL SQL="
+            select full_name 
+              from person 
+              where zdb_id='$owner';">
+            <font color="#ff0000">(Record Owner is $1)
+	    </font>
+ 	  <?/MISQL>
+	<?/MIBLOCK> <!-- if root -->
+
+	<p>
+	</CENTER>
+
+	<!-- move mivar cond from input type=button to miblock which includes entire locus description until curation on this item improves -->
+	<?MIBLOCK COND="$(XST,$UPDATE)">
+	  <p>
+	  <table width=100%>
+	    <TR>
+	    <TD bgcolor="#ffffff">
+
+	    <INPUT TYPE=button 
+              value="Update" 
+              onClick="doit('comments','textarea','Locus+Description')"> 
+
+
+	    <b>Locus Description:</b><?MIVAR>$(IF,$(NC,$comments,NULL),$comments,"No description available") <?/MIVAR>
+	    </TD>
+	    </TR>
+	  </TABLE>
+	<?/MIBLOCK>
+
+	<p><font size=+1>
+	<?MIVAR COND="$(XST,$UPDATE)">
+ 	  <INPUT TYPE=button 
+            value=Add 
+	    onClick="doit('lcsali_locus_name_alias','text','Alias')">
+	<?/MIVAR> 
+	<b>Previous names: </b>
+	<?MISQL SQL="
+	  select lcsali_locus_name_alias, lcsali_locus_abbrev_alias  
+	    from locus_alias 
+	    where lcsali_locus_zdb_id = '$OID';">
+	  <?MIVAR NAME=$alias>$1<?/MIVAR>
+	  <?MIVAR COND="$(XST,$alias)" NAME=$alias DELIMIT=" " REPLACE="+">$alias<?/MIVAR>
+	  <?MIVAR COND="$(XST,$UPDATE)"><br> <INPUT TYPE=button value=Delete onClick="Delete_listitem('lcsali_locus_name_alias','$alias','$OID')"><?/MIVAR>
+	  $(IF,$(AND,$(NXST,$UPDATE),$(>,$MI_CURRENTROW,1)),;) $1 
+	  <?MIVAR COND="$(NC,$2,"")">($2)<?/MIVAR>
+	<?/MISQL>
+
+	<?MISQL SQL="
+	  select fishali_fish_name_alias 
+	    from fish_alias, fish 
+	    where fishali_fish_zdb_id = fish.zdb_id
+              and fish.locus = '$OID' ;">
+	  <?MIVAR NAME=$fish_alias>$1<?/MIVAR>
+	  <?MIVAR COND="$(XST,$fish_alias)" NAME=$fish_alias DELIMIT=" " REPLACE="+">$fish_alias<?/MIVAR>
+	  <?MIVAR COND="$(XST,$UPDATE)"><br> <INPUT TYPE=button value=Delete onClick="Delete_listitem('fishali_fish_name_alias','$fish_alias','$OID')"><?/MIVAR>
+	  $(IF,$(AND,$(NXST,$UPDATE),$(OR,$(XST,$alias),$(>,$MI_CURRENTROW,1))),;) $1 
+	<?/MISQL>
+
+	<p>
+	<?MISQL SQL="
+	  select distinct chrom_num 
+	    from fish_search 
+	    where locus ='$OID' 
+	      and chrom_num <> 0 ;">
+	  $(IF,$(NC,$1,0),<font size=+1><b>"Linkage Group:" $1</b>)
+	<?/MISQL>
+
+	<HR WIDTH=80%>
+	<p>
+	<font size=+1>
+	<?MIVAR>
+	  <b>Summary of <u>$name</u> alleles:</B>
+        <?/MIVAR>
+        </font> 
+        <font size=-1>(Click allele to see details)</font>
+	<?MIVAR COND="$(XST,$UPDATE)">
+	  <BR>CAN NOT UPDATE ALLELES: New alleles for a locus a created via 
+          the locus registration mechanism. When a proposed allele designation
+	  is accepted, a new fish record for the allele is created.
+	<?/MIVAR>
+
+	<ul>
+	  <TABLE border=0 cellspacing=3 cellpadding=4>
+	    <TH align=center>Allele [previous names]</TH>
+            <TH>Type</TH>
+            <TH>Avail. Map Info</TH>
+            <TH align=center>Brief Description</TH>
+	    <?MISQL SQL="
+	      select fish_id, abbrev, allele, phenotype, chrom_change,
+                     (select unique count(*)::integer 
+		        from mapped_deletion 
+		        where allele=a.allele) as del_markers,
+		     (select unique count(*)::integer 
+		        from total_links 
+			where from_id=a.fish_id) as linkages 
+	        from fish_search a 
+		where locus ='$OID' 
+		order by allele;">
+	      <?MIVAR NAME=$fish_id>$1<?/MIVAR>
+	      <?MIVAR NAME=$fish_abbrev>$2<?/MIVAR>
+	      <?MIVAR NAME=$allele>$3<?/MIVAR>
+	      <?MIVAR NAME=$phenotype>$4<?/MIVAR>
+	      <?MIVAR NAME=$chrom_change>$5<?/MIVAR>
+	      <?MIVAR NAME=$del_markers>$6<?/MIVAR>
+	      <?MIVAR NAME=$linkages>$7<?/MIVAR>
+
+	      $(SETVAR,$mindex,$(POSITION,$phenotype,"Details:"))
+	      <TR>
+
+	      <TD valign=bottom><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$fish_id">$allele</A> 
+
+	      <!-- find any allele alias -->
+	      <?MISQL SQL="
+		select alteration.zdb_id 
+		  from alteration, fish
+		  where fish.locus='$OID'
+		    and fish.allele ='$allele'
+	            and fish.allele= alteration.allele;">
+	        <?MIVAR NAME=$ALTOID>$1<?/MIVAR>
+	      <?/MISQL>
+	      <?MISQL SQL="
+		select alleali_allele_name_alias 
+		  from allele_alias 
+		  where alleali_alt_zdb_id = '$ALTOID'">
+	        <?MIVAR NAME=$allele_alias>$1<?/MIVAR>
+	        $(IF,$(AND,$(=,$MI_CURRENTROW,1),$(XST,$allele_alias)), [)
+	        $(IF,$(>,$MI_CURRENTROW,1),;) $allele_alias
+	      <?/MISQL>
+	      $(IF,$(AND,$(>=,$MI_ROWCOUNT,1),$(XST,$allele_alias)),])
+	      </TD>
+
+	      <TD valign=bottom><font size=-1>$(IF,$(NC,$chrom_change,NULL),$chrom_change,"Unknown")</TD>
+	      <TD><font size=-1>
+	      $(IF,$(>,$del_markers,0),"+/- markers<br>")
+	      $(IF,$(>,$linkages,0),"Mapped linkages")
+	      $(IF,$(AND,$(=,$del_markers,0),$(=,$linkages,0)),"Unmapped")
+	      </td>
+	      <TD valign=bottom><font size=-1>
+	      $(IF,$(>,$mindex,0),$(SUBSTR,$phenotype,1,$(-,$mindex,1)),"")
+	      </TD>
+	      </TR>
+	    <?/MISQL>
+	  </TABLE>
+	</ul>
+
+	<HR WIDTH=80%>
+	<p>
+	<?MIVAR NAME=$override>
+	  $(IF,$(OR,$(EC,$ZDB_access,root),$(EC,$ZDB_access,fishauth)),true,false)
+	<?/MIVAR>
+
+	<?MIVAR COND="$(XST,$UPDATE)">
+ 	  <INPUT TYPE=button 
+	    value="Update" 
+	    onClick="doit('cloned_gene','selection','Affected+Gene')">
+	<?/MIVAR>
+	<B>Affected Gene:</B> 
+	<?MIVAR COND="$(EC,$cloned_gene,NULL)">Not yet established.<?/MIVAR>
+
+	<?MISQL COND="$(NC,$cloned_gene,NULL)" SQL="
+	  select gene_name, abbrev 
+	    from gene 
+	    where zdb_id='$cloned_gene';">
+	  <TABLE width=100% cellpadding=5 border=4 bgcolor="#f8fabb" cols=2 rows=1>
+	    <TR><TD>
+	    <font color="red"><B>Cloned Gene:</b>  </font>
+	    <font size=2>The GENE <b><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$cloned_gene">$1 ($2) </A> </b> 
+	    has been shown to correspond to the <b>$name</b> locus. 
+	    Please consult the GENE record for further mapping information.
+	   </TD>
+	   </TR>
+	  </TABLE>
+	<?/MISQL>
+
+      </form>
+
+    <?/MIBLOCK> <!-- Cond AUTHORIZED -->
+
+  <?/MIBLOCK> <!-- ends cond oid exists -->
 
 <?/MIBLOCK> <!-- ends mirowcount gt 0 -->
 
