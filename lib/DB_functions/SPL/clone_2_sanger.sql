@@ -32,9 +32,10 @@ then have the external prefix XX- and a mixture of internal prefixes.
 
 drop function clone_2_sanger;
 
-create function clone_2_sanger(clone varchar(20)) returning varchar(20);
+create function clone_2_sanger(clone like marker.mrkr_abbrev) returning varchar(40);
+    -- return value should be same datatype as mrkr_abbrev.
 
-define sanger varchar(20);
+    define sanger like marker.mrkr_abbrev;
     let clone = lower(clone);
     if   clone[1,6] = 'dkeyp-' then let sanger = 'zKp' || clone[7,20];
     elif clone[1,6] = 'ch211-' then let sanger = 'zC'  || clone[7,20];
@@ -48,11 +49,17 @@ end function;
 
 update statistics for function clone_2_sanger;
 -------------------------------------------------------------------------------
+{
+  This routine was never used.  We don't know if it works and we don't know
+  if it will ever be useful.  Therefore we are comenting it out.
+  I sent this to Tom for code re
+
 drop function sanger_2_clone;
 
-create function sanger_2_clone(sanger varchar(20)) returning varchar(20);
+create function sanger_2_clone(sanger like marker.mrkr_abbrev) returning varchar(40);
+    -- return value should be same datatype as mrkr_abbrev.
 
-define clone varchar(20);
+        define clone like marker.mrkr_abbrev; 
 	let sanger = upper(sanger);
 	if   sanger[1,3] = 'ZKP' then let clone = 'DKEYP-' || sanger[4,20];
 	elif sanger[1,2] = 'ZC'  then let clone = 'CH211-' || sanger[3,20];
@@ -65,3 +72,4 @@ define clone varchar(20);
 end function;
 
 update statistics for function sanger_2_clone;
+}
