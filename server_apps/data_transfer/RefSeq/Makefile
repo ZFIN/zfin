@@ -37,3 +37,9 @@ include $(TOP)/make.default.rules
 
 # ---------------  Misc Targets  ----------------------------------------
 
+# Run the download script.  This extracts data from ZFIN and places it in 
+# the public ftp directory
+
+run : $(TARGETDIR)/refseq.pl 
+	$(TARGETDIR)/refseq.pl
+
