@@ -40,6 +40,8 @@ document.captureEvents(Event.KEYDOWN|Event.KEYUP|Event.KEYPRESS);
 <FONT SIZE=5 color="#ff0000" > PERSON</font></b></u>
 </center>
 
+<?MIVAR COND="$(NXST,$START)" NAME=$START>1<?/MIVAR>
+
 <?MIVAR COND="$(NXST,$searchtype)" NAME=$searchtype>contains<?/MIVAR>
 <TABLE width=100%>
 <TR>
@@ -87,7 +89,7 @@ document.captureEvents(Event.KEYDOWN|Event.KEYUP|Event.KEYPRESS);
 <input type=hidden name=MIval value=aa-perslister.apg>
 <input type=hidden name=searchtype value=begins>
 
-<?MIVAR COND="$(AND,$(NOT,$(ISNULL,$START)),$(XST,$START))">
+<?MIVAR>
   <input type=hidden NAME="START" value=$START>
 <?/MIVAR>
 
