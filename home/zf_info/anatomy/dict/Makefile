@@ -30,7 +30,7 @@ TARGETDIR = $(TARGETROOT)/home/zf_info/anatomy/dict
 SUBDIRS = ear hair_cell lat_line oto semi_canal sens stato caud_fin
 
 GENERICS = mem.html
-STATICS  = current.html meeting_sum.html sum.html zfish_stages.txt Trevarrow.html
+STATICS  = mtg2.html current.html meeting_sum.html sum.html zfish_stages.txt Trevarrow.html
 
 
 # ---------------  Production Rules  ------------------------------------
