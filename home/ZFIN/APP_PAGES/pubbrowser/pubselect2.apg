@@ -21,7 +21,7 @@ document.critform.jtype.selectedIndex = 0;
 document.critform.yr_cmpr.selectedIndex = 0;
 document.critform.century.selectedIndex = 0;
 document.critform.anon1.selectedIndex = 0;
-document.critform.order_pref.selectedIndex = 1;
+document.critform.order_pref.selectedIndex = 0;
 document.critform.authtype.selectedIndex = 0;
 document.critform.WINSIZE.value = 10;
 document.critform.START.value = "";
@@ -49,13 +49,7 @@ document.critform.START.value = "";
 <?MIVAR COND="$(NXST,$order_pref)" NAME=$order_pref>date<?/MIVAR>
 <?MIVAR COND="$(NXST,$cur_status)" NAME=$cur_status>any<?/MIVAR>
 <?MIVAR COND="$(NXST,$pub_status)" NAME=$pub_status>any<?/MIVAR>
-<?MIVAR COND="$(NXST,$yr_cmpr)" NAME=$yr_cmpr>equal<?/MIVAR>
-<?MIVAR COND="$(EC,$yr_cmpr,greater)">$(SETVAR,$yr_cmpr,>)<?/MIVAR>
-<?MIVAR COND="$(EC,$yr_cmpr,less)">$(SETVAR,$yr_cmpr,<)<?/MIVAR>
-<?MIVAR COND="$(XST,$cur_status)" NAME=$cur_status DELIMIT="|" REPLACE=" ">$cur_status<?/MIVAR>
-<?MIVAR COND="$(XST,$nav_authors)" NAME=$nav_authors DELIMIT="|" REPLACE=" ">$nav_authors<?/MIVAR>
-<?MIVAR COND="$(XST,$nav_title)" NAME=$nav_title DELIMIT="|" REPLACE=" ">$nav_title<?/MIVAR>
-<?MIVAR COND="$(XST,$nav_title)" NAME=$nav_title DELIMIT="38a" REPLACE=":">$nav_title<?/MIVAR>
+<?MIVAR COND="$(NXST,$yr_cmpr)" NAME=$yr_cmpr>=<?/MIVAR>
 <?MIVAR COND="$(NXST,$START)" NAME=$START>1<?/MIVAR>
 
 <TABLE width=100%>
@@ -159,7 +153,7 @@ contains <input type=text name=anon1text size=10 onChange='document.critform.STA
       <?/MIBLOCK>
 		<input type=submit name=action value="SEARCH" onSubmit="parent.pbrowser.document.location.href='/ZFIN/misc_html/saysearching.html';document.critform.submit();"></font></TD>
 <TD align=right><font size=-1><input type=button name=action value="Clear Settings" onClick="call_reset()"></font></TD>
-<TD align=center><font size=-1><input type=button name=clear_all value="List all publications" onClick="document.crit_form.reset();document.crit_form.submit()"></font></TD> </TR>
+<TD align=center><font size=-1><input type=button name=clear_all value="List all publications" onClick="document.critform.reset();document.critform.submit()"></font></TD> </TR>
 
 </TABLE>
 
