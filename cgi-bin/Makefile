@@ -64,8 +64,8 @@ TARGETDIR = $(TARGETROOT)/$(TARGETCGIBIN)
 #
 
 
-STATICS = dummy.gif webdriver write.cgi parse-form.perl urlencode.perl
-
+STATICS = dummy.gif webdriver write.cgi parse-form.perl urlencode.perl\
+	ncbi_blast_interface.cgi
 # send_request.perl can probably be converted to static.
 
 GENERICS = SuperWebdriver ZFIN_jump map-options.pl print_map.cgi \
