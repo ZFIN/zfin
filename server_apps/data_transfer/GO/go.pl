@@ -1,4 +1,4 @@
-#!/local/bin/perl 
+#!/private/bin/perl 
 #
 # have to use /local/bin/perl for MIME::Lite module
 #
