@@ -2,9 +2,6 @@
 #
 # Makefile for ZFIN_WWW CVS Project, WWW Server Apps directory
 #
-# $Source$
-# $Id$
-#
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
 # !! of the makefile hierarchy this makefile is a part of, and of the  !!
@@ -24,7 +21,9 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps
 
-SUBDIRS = data_transfer javaserver sysexecs
+SUBDIRS = data_transfer javaserver sysexecs WebSiteTools
+MIRROR_SUBDIRS = WebSiteTools
+
 
 
 # ---------------  Production Rules  ------------------------------------
@@ -34,6 +33,8 @@ SUBDIRS = data_transfer javaserver sysexecs
 include $(TOP)/make.default.rules
 
 # ---------------  Misc Targets  ----------------------------------------
+
+mirror: $(TARGETDIR) $(MIRROR_SUBDIRS)
 
 start stop :
 	$(MAKE) -C javaserver $@
