@@ -221,21 +221,21 @@ Options:
       and b.linked_recid = c.zdb_id
       and c.c_gene_id = a.zdb_id
   union
-  select a.abbrev, 'GENE', 0, a.zdb_id, '0', 'NULL'::varchar(50), 
+  select a.abbrev, 'GENE', 0, a.zdb_id, a.OR_lg, 'NULL'::varchar(50), 
          'NULL'::varchar(10), a.abbrev, 'f'::boolean, ''::varchar(50), 
 	 NULL::numeric(8,2), 'NULL'::varchar(10), 'NULL'::varchar(5),
 	 day(NULL::date), month(NULL::date), year(NULL::date)
     from all_genes a , db_link b
-    where a.OR_lg = 0
+    where a.OR_lg = '0'
       and lower(b.acc_num) like lower('%$aname%')
       and b.linked_recid = a.zdb_id
   union 
-  select a.abbrev, 'GENE', 0, a.zdb_id, '0', 'NULL'::varchar(50),
+  select a.abbrev, 'GENE', 0, a.zdb_id, a.OR_lg, 'NULL'::varchar(50),
 	 'NULL'::varchar(10), a.abbrev, 'f'::boolean, 'NULL'::varchar(50),
 	 NULL::numeric(8,2), 'NULL'::varchar(10), 'NULL'::varchar(5), 
 	 day(NULL::date), month(NULL::date), year(NULL::date)
     from all_genes a , db_link b, orthologue c
-    where a.OR_lg = 0 
+    where a.OR_lg = '0' 
       and lower(b.acc_num) like lower('%$aname%')
       and b.linked_recid = c.zdb_id
       and c.c_gene_id = a.zdb_id ;" MAXROWS=$limit>
@@ -280,17 +280,19 @@ $(SETVAR,$viewer,$(IF,$(EC,$2,MUTANT),aa-locusview.apg,aa-markerview.apg))
 $(IF,$(NC,$prev_name,$1),"<TD valign=top> <font size=2>"$2":<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$viewer&OID=$4" TARGET=content>"$1"</A></TD>","<TD>&nbsp;</TD>")
 
 <TD> <font size=2> 
-$(IF,$(EQ,$5,0),"Unmapped")
+$(IF,$(EQ,$5,"0"),"Unmapped")
 
-$(IF,$(AND,$(EC,$11,NULL),$(EC,$9,f),$(NE,$5,0)),"LG <b>"$5"</b>;<b> "$3"</b> "$13""<TD><font size=2> "<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$6">"$7"</A>"</TD>
+$(IF,$(AND,$(EC,$11,NULL),$(EC,$9,f),$(NE,$5,0),$(NE,$5,MT)),"LG <b>"$5"</b>;<b> "$3"</b> "$13""<TD><font size=2> "<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$6">"$7"</A>"</TD>
 <TD><font size=2 COLOR=#A9A9A9><input type=checkbox name=$target_abbrev  value=1  CHECKED ></TD>
 <TD><font size=2>" "$upd_date""</TD>)
 
-$(IF,$(AND,$(EC,$11,NULL),$(NC,$9,f),$(NE,$5,0)),"Mapped on <A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$6">"$7"  "$upd_date"</A>, but confidential.")
+$(IF,$(AND,$(EC,$11,NULL),$(NC,$9,f),$(NE,$5,"0"),$(NE,$5,MT)),"Mapped on <A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$6">"$7"  "$upd_date"</A>, but confidential.")
 
-$(IF,$(AND,$(NC,$11,NULL),$(EC,$9,f),$(NE,$5,0)),"Linked at "$11" "$13" to <A target=content HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$6">"$7"</A> ("$12")")
+$(IF,$(AND,$(NC,$11,NULL),$(EC,$9,f),$(NE,$5,"0"),$(NE,$5,MT)),"Linked at "$11" "$13" to <A target=content HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$6">"$7"</A> ("$12")")
 
-$(IF,$(AND,$(NC,$11,NULL),$(NC,$9,f),$(NE,$5,0)),"Linked to "$12", but confidential.")
+$(IF,$(AND,$(NC,$11,NULL),$(NC,$9,f),$(NE,$5,"0"),$(NE,$5,MT)),"Linked to "$12", but confidential.")
+
+$(IF,$(EQ,$5,MT),"LG <b>"$5"</b>")
 </TD>
 
 
