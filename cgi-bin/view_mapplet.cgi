@@ -28,12 +28,16 @@
   ### open a handle on the db
   my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->', '', '', {AutoCommit => 1, RaiseError => 1})
   || die "Failed while connecting to <!--|DB_NAME|--> "; #$DBI::errstr";
+ 
+  my @allpanels; 
+  my $panel; 
+  my $cur = $dbh->prepare('select abbrev from panels');
+  $cur->execute;
+  $cur->bind_col(1, \$panel);
+  while ($cur->fetch){push (@allpanels ,$panel);} 
   
-  ### hardcoded list of panels will need updating if new ones are made.
-  ### or we could 'select abbrev from panels'
-  my @allpanels = ("LN54","T51","MGH","HS","MOP","GAT","JPAD" ); 
+  #my @allpanels = ("LN54","T51","MGH","HS","MOP","GAT","JPAD" ); 
   my @panels;
-  my $panel;			### one of the above panels
   
   my $types = 'SSLP';
   my $anon_type = "RAPD\',\'RFLP\',\'SSR\',\'STS";
@@ -59,7 +63,7 @@
   my $m_hi;			### offset below $loc on map
   my $lg_lo;			### $loc - $m_lo;
   my $lg_hi;			### $loc + $m_hi;
-  my ($sql,$cur,$junk);		### throw away vars
+  my ($sql,$junk);		### throw away vars
   my @row;			### a row returned from a sql query
   my $g_OID ='';		### the zdb_id of marker we found -- for applet, and options to ID unique name
   my $lines ;			### all the rows returned from a paticular sql query with fields terminated with '|' 
@@ -899,9 +903,9 @@
     $dbh->{AutoCommit} = 0;	# enable transactions, if possible
     $dbh->{RaiseError} = 1;
     eval {			#                                zdb_id 1,          abbrev 2,          mtype 3,          target_abbrev 4,          lg_location 5,           or_lg 6,      mghframework 7,      metric 8
-      $dbh->do( "CREATE TEMP TABLE pool (zdb_id varchar(50),abbrev varchar(10),mtype varchar(10),target_abbrev varchar(10),lg_location decimal(8,2),or_lg integer,mghframework boolean,metric varchar(5))WITH NO LOG ;"); 
-      $dbh->do( "CREATE TEMP TABLE fool (zdb_id varchar(50),abbrev varchar(10),mtype varchar(10),target_abbrev varchar(10),lg_location decimal(8,2),or_lg integer,mghframework boolean,metric varchar(5))WITH NO LOG ;");
-      $dbh->do( "CREATE TEMP TABLE PANLG (zdb_id varchar(50),abbrev varchar(10),mtype varchar(10),target_abbrev varchar(10),lg_location decimal(8,2),or_lg integer,mghframework boolean,metric varchar(5)) WITH NO LOG ;"); # $dbh->do( "CREATE INDEX panlg_zdb_idx ON PANLG(zdb_id)");  # $dbh->do( "CREATE INDEX panlg_loc_idx ON PANLG(lg_location)");    
+      $dbh->do( "CREATE TEMP TABLE pool (zdb_id varchar(50),abbrev varchar(15),mtype varchar(10),target_abbrev varchar(10),lg_location decimal(8,2),or_lg integer,mghframework boolean,metric varchar(5))WITH NO LOG ;"); 
+      $dbh->do( "CREATE TEMP TABLE fool (zdb_id varchar(50),abbrev varchar(15),mtype varchar(10),target_abbrev varchar(10),lg_location decimal(8,2),or_lg integer,mghframework boolean,metric varchar(5))WITH NO LOG ;");
+      $dbh->do( "CREATE TEMP TABLE PANLG (zdb_id varchar(50),abbrev varchar(15),mtype varchar(10),target_abbrev varchar(10),lg_location decimal(8,2),or_lg integer,mghframework boolean,metric varchar(5)) WITH NO LOG ;"); # $dbh->do( "CREATE INDEX panlg_zdb_idx ON PANLG(zdb_id)");  # $dbh->do( "CREATE INDEX panlg_loc_idx ON PANLG(lg_location)");    
       #should we try bulding a tmp table for each panel & lg once and keeping it for the transaction .... maybe (24 * 6)  permenant tables i.e HS1,HS2,... 
       my $sth1 = $dbh->prepare($stmt1) or return undef ;
       my $sth2 = $dbh->prepare($stmt2) or return undef ;
