@@ -531,7 +531,7 @@ hatching - protruding mouth (72h)
 have sections
 Adult
 Terms of direction
-  Dorsal
+	Dorsal
 	Ventral
 	Rostral (anterior)
 	Caudal (posterior)
@@ -549,7 +549,7 @@ Surface Anatomy
 	Mouth (no teeth)
 		Premaxilla
 		Maxilla
-		Mandiblea
+		Mandible
 	Barble (2)
 	Gill
 		Opercle
@@ -603,7 +603,7 @@ Skeletal System
 		Opercles
 		Subopercles
 		Interopercles
-		Branchiostegal rays	
+		Branchiostegal rays
 	Hyoid Bars
 		Rostral (anterior) ceratohyal
 		Caudal (posterior) ceratohyal
@@ -705,7 +705,7 @@ Musculature System
 			caudal Oblique
 			dorsal transverse
 			dorsal retractor
-       			Adductor
+			Adductor
 			oesophagial sphincter
 			ventral oblique
 			ventral transverse
@@ -790,7 +790,7 @@ Excretory System
 Reproductive System
 	Ovaries
 		Mesovarium
-	Oviduct	
+	Oviduct
 	Testes
 
 Cardiovascular System
@@ -899,7 +899,6 @@ Gas Bladder
 
 Lymphatic
 	Head kidney (thymus?)
-
 Nervous system
 	Inner ear (vestibular end-organ)
 		Otolith organs
