@@ -186,7 +186,7 @@ $(IF,$(>,$(POSITION,$rtype,locus),0),
   
 <br>
 <?MIVAR COND="$(XST,$UPDATE)">
-<INPUT TYPE=button value="Add to" onClick="doit('rel_pub','selection','Add')"> 
+<INPUT TYPE=button value="Add Publication" onClick="doit('rel_pub','selection','Add')"> 
 <?/MIVAR> 
 
 
