@@ -141,10 +141,26 @@ Datablade documentation.
             <?MISQL SQL="EXECUTE FUNCTION get_id('DALIAS');">
                 <?MIVAR NAME=dalias_id>$1<?/MIVAR>
             <?/MISQL>
-<?MIVAR>
-mhist = $mhist_id<br>
-dalias = $dalias_id<p>
-<?/MIVAR>
+ 	    <?MIVAR>
+		mhist = $mhist_id
+		dalias = $dalias_id
+	    <?/MIVAR>
+	    <?MISQL SQL="SELECT dbinfo('sessionid') 
+        	           FROM single;">
+      	    <?MIVAR NAME=$dalias_session_id>$1<?/MIVAR>
+      	    <?MIVAR NAME=$tmp_delete_these_aliases>$(CONCAT,tmp_delete_these_aliases_,$dalias_session_id)<?/MIVAR>
+   	    <?/MISQL>
+            <?MISQL SQL="
+                execute function table_exists('$tmp_delete_these_aliases')">
+            <?MISQL COND=$(EC,$1,f) SQL="
+        	create temp table $tmp_delete_these_aliases (
+          	tmpdalias_zdb_id varchar(50),
+          	tmpdalias_alias_name varchar(100),
+          	tmpdalias_data_zdb_id varchar(50)
+                ) with NO LOG;">
+      	    <?/MISQL>
+            <?/MISQL>
+
             <?MISQL SQL="
               INSERT INTO zdb_active_data VALUES('$mhist_id');">
             <?/MISQL>
@@ -152,22 +168,45 @@ dalias = $dalias_id<p>
               INSERT INTO zdb_active_data VALUES('$dalias_id');">
             <?/MISQL>
             <?MISQL SQL="
-              UPDATE data_alias 
-                  SET dalias_data_zdb_id = '$merge_oid' 
-                  WHERE dalias_data_zdb_id = '$OID';">
-            <?/MISQL>
+		INSERT INTO $tmp_delete_these_aliases
+			(tmpdalias_zdb_id,
+			 tmpdalias_alias_name,
+			 tmpdalias_data_zdb_id)
+		SELECT dalias_zdb_id, dalias_alias, dalias_data_zdb_id
+		  FROM data_alias 
+		  WHERE dalias_data_zdb_id = '$merge_oid';">
+	    <?/MISQL>
+	    <?MISQL SQL="
+		DELETE from data_alias
+		    WHERE dalias_alias in (SELECT tmpdalias_alias_name
+					     FROM $tmp_delete_these_aliases)
+		    AND dalias_data_zdb_id = '$OID';">
+	    <?/MISQL>
+      
             <?MISQL SQL="
               UPDATE marker_history 
                   SET mhist_mrkr_zdb_id = '$merge_oid' 
                   WHERE mhist_mrkr_zdb_id = '$OID';">
-            <?/MISQL>
-            <?MISQL SQL="
-              INSERT INTO data_alias (  
+	    <?/MISQL>
+	    <?MISQL SQL="
+              UPDATE data_alias 
+                  SET dalias_data_zdb_id = '$merge_oid' 
+                  WHERE dalias_data_zdb_id = '$OID';">
+            <?/MISQL>    
+
+	    <?MISQL COND="$(OR,$(XST,$input_name),$(XST,$input_acc))" SQL="
+       			 DELETE from $tmp_delete_these_aliases;">
+   	    <?/MISQL>
+
+         <?MISQL SQL="
+              INSERT INTO data_alias (
                      dalias_zdb_id,
                      dalias_data_zdb_id,
                      dalias_alias,
-                     dalias_group ) 
-                  SELECT '$dalias_id','$merge_oid',mrkr_abbrev,'alias'
+                     dalias_group,
+		     dalias_alias_lower ) 
+                  SELECT '$dalias_id','$merge_oid',mrkr_abbrev,'alias',
+			lower(mrkr_abbrev)
                   FROM marker
                   WHERE mrkr_zdb_id = '$OID';">
             <?/MISQL>
@@ -193,7 +232,6 @@ dalias = $dalias_id<p>
                   FROM marker
                   WHERE mrkr_zdb_id = '$merge_oid';">
             <?/MISQL>
-
 <?MISQL SQL="select * from marker_history where mhist_zdb_id = '$mhist_id';">
 $1, $2, $3, $4, $5, $6, $7, $8
 <?/MISQL>
