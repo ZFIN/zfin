@@ -59,9 +59,9 @@
         <?MISQL SQL="
 	   select mrkrtype_type_display, marker_type
 	     from marker_types
-	    where marker_type in (select mtgrpmem_mrkr_type
-				  from marker_type_group_member
-			         where mtgrpmem_mrkr_type_group='SEARCH_MK'); ">
+	    where marker_type in (select distinct mtgrpmem_mrkr_type
+				  from marker_type_group_member)
+	   order by mrkrtype_type_display; ">
 	  <option value=$2>$1
         <?/MISQL>	
       </SELECT>  
@@ -159,7 +159,8 @@
     </SCRIPT>
 
     <?MIVAR>
-      <form name=newdata onSubmit="return validate(this);" method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+      <form name=newdata  method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"
+            <?MIVAR COND="$(>,$(POSITION,$marker_type,GENE),0)">onSubmit="return validate(this);"<?/MIVAR>>
         <input type=hidden name=MIval value=aa-new_marker.apg>
         <input type=hidden name=marker_type value="$marker_type">
 	<input type=hidden name=marker_type_display value="$marker_type_display">
@@ -178,8 +179,8 @@
         <p><b>Is this a reservation?</b>:
         Yes <input type=radio name=reserve value=yes> / No <input type=radio name=reserve value=no checked>
         <br>Comments: <input type=text name=rsrvComment size=50>
-        <?/MIELSE>
-	  <?MIVAR NAME=$reserve>no<?/MIVAR>
+        <?MIELSE>
+          <input type=hidden name=reserve value="no">
 	<?/MIBLOCK>
         <p>
 
