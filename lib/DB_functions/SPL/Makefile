@@ -24,7 +24,8 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/lib/DB_functions/SPL
 
 DATADICT_FUNCS = table_exists.sql
-DBLINK_FUNCS = get_dblink_acc_num_display.sql p_dblink_has_parent.sql
+DBLINK_FUNCS = get_dblink_acc_num_display.sql p_dblink_has_parent.sql \
+		p_check_caps_acc_num.sql p_one_ortho_per_db.sql
 FISH_FUNCS  = get_fish_full_name.sql p_locus_name_abbrev_equal.sql
 IMAGE_FUNCS = get_image_stats.sql
 MRKR_FUNCS  = mhist_event.sql p_mrel_grpmem_correct.sql \
