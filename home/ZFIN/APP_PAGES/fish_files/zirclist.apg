@@ -80,7 +80,7 @@
 	    <?MISQL SQL="
 	      select distinct dalias_alias
 		from data_alias, fish_search
-		where fish_id = '$2' 
+		where fish_id = '$zdb_id' 
 		  and dalias_data_zdb_id = alt_zdb_id;">
 	      <?MIVAR COND="$(=,$MI_CURRENTROW,1)">&nbsp;[<?/MIVAR>
 	      <?MIVAR COND="$(>,$MI_CURRENTROW,1)">;<?/MIVAR>$1
@@ -98,16 +98,20 @@
 	    <?/MIBLOCK>
 
 	    <?MIVAR NAME=$found>false<?/MIVAR>
-	    <?MISQL SQL="select distinct lcsali_locus_name_alias, lcsali_locus_abbrev_alias from locus_alias where  lcsali_locus_zdb_id = '$locus';">
-	    <?MIVAR COND="$(=,$MI_CURRENTROW,1)">&nbsp;[<?/MIVAR>
-	    <?MIVAR COND="$(=,$MI_CURRENTROW,1)" NAME=$found>true<?/MIVAR>
-	    <?MIVAR COND="$(>,$MI_CURRENTROW,1)">;<?/MIVAR>$1
-	    <?MIVAR COND="$(NC,$2,"")">($2)<?/MIVAR>
-	    <?/MISQL>
+		<?MISQL SQL="
+		select distinct dalias_alias
+		  from data_alias, fish
+		  where dalias_data_zdb_id = fish.locus
+		     and fish.zdb_id = '$zdb_id';">
+		<?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(NC,$found,true))">&nbsp;[<?/MIVAR>
+		<?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(EC,$found,true))">;<?/MIVAR>
+		<?MIVAR COND="$(=,$MI_CURRENTROW,1)" NAME=$found>true<?/MIVAR>
+		<?MIVAR COND="$(>,$MI_CURRENTROW,1)">;<?/MIVAR>$1
+	      <?/MISQL>
 	    <?MISQL SQL="
 	      select distinct dalias_alias 
 		from data_alias 
-		where dalias_data_zdb_id = '$2';">
+		where dalias_data_zdb_id = '$zdb_id';">
 	    <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(NC,$found,true))">&nbsp;[<?/MIVAR>
 	    <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(EC,$found,true))">;<?/MIVAR>
 	    <?MIVAR COND="$(=,$MI_CURRENTROW,1)" NAME=$found>true<?/MIVAR>
