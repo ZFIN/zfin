@@ -14,6 +14,10 @@
 
 <?MIBLOCK COND="$(OR,$(XST,$authors),$(XST,$title),$(XST,$year),$(XST,$anon1text),$(NC,$jtype,any),$(AND,$(XST,$pub_status),$(NC,$pub_status,any)),$(AND,$(XST,$cur_status),$(NC,$cur_status,any)))">
 
+<!-- First filter authors for apostrophes! -->
+<?MIVAR COND="$(XST,$authors)" NAME=$authors DELIMIT="'" REPLACE="''">$authors<?/MIVAR>
+
+
 <?MIVAR NAME=$previous> <?/MIVAR>
 <?MIVAR NAME=$constraint> where <?/MIVAR>
 <?MIVAR NAME=$constraint COND="$(AND,$(XST,$authors),$(EC,$authtype,anyauth))">
