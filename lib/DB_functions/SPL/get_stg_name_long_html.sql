@@ -7,11 +7,12 @@ get_stg_name_long_html(
 
   -- Creates the "long name" for a stage with embedded HREF tags in it.
   -- The long name includes the name of the stage, plus the hours it spans, 
-  -- and the contents of the stg_other_features column.
+  -- and the contents of the stg_other_features column. The Unknown stage 
+  -- has the same long name as the name. 
   -- 
   -- If the OPTIONAL javascriptFunc parameter is provided then the generated
-  -- HTML will invoke that javascript routine, passing the URL in 
-  -- stg_comments_relative_url as a parameter to the javascript function.
+  -- HTML will invoke that javascript routine, passing the URL of the stage 
+  -- index page with proper anchor as a parameter to the javascript function.
   --
   -- If a non-existent stage ZDB ID is passed in then
   --
@@ -27,7 +28,7 @@ get_stg_name_long_html(
   --   Large-stage : Sub-stage (60.00h - 72.00h, 3.0/4.0mm NL/SL)
   --   Larval : Middle to late (168.00h - 90d)
   --   Adult (90 d to 730 d)
-  --
+  --   Unknown
 
   define stgNameLongHtml	varchar(255);
   define stgName		like stage.stg_name;
@@ -40,6 +41,8 @@ get_stg_name_long_html(
 
   if (stgName is NULL) then
     let stgNameLongHtml = "UNKNOWN";
+  elif (stgName = "Unknown") then
+    let stgNameLongHtml = "Unknown";
   else
     let stgNameLongHtml = get_stg_name_html(stgZdbId, javascriptFunc) || 
 			  " " || stgNameExt;
