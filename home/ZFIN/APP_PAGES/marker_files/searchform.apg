@@ -71,12 +71,15 @@ Input:
 				     where mtgrpmem_mrkr_type_group = 'SEARCH_MKSEG')
 	      order by mrkrtype_significance;
 	   ">
-	  <?MIVAR COND="$(EC,$page,initial)">
-	    <option $(IF,$(>,$(POSITION,'$mlist','$1'),0),SELECTED) value="$1"> $2
-          <?/MIVAR>
-	  <?MIVAR COND="$(NC,$page,initial)">
-	    <option $(IF,$(>,$(POSITION,'$marker_type','$1'),0),SELECTED) value="$1"> $2
-	  <?/MIVAR>
+	  <?MIBLOCK COND="$(EC,$page,newmrkrselect)">
+            <?MIVAR>
+	     <option $(IF,$(>,$(POSITION,'$mlist','$1'),0),SELECTED) value="$1"> $2
+            <?/MIVAR>
+	  <?MIELSE>
+	    <?MIVAR>
+	     <option $(IF,$(>,$(POSITION,'$marker_type','$1'),0),SELECTED) value="$1"> $2
+	    <?/MIVAR>
+	  <?/MIBLOCK>
 	<?/MISQL>
         </select>
 	</td></tr></table>
