@@ -27,6 +27,7 @@ TRIGGERS = \
 	anatomy_contains_update_trigger.sql \
 	anatomy_items_insert_trigger.sql \
 	anatomy_items_update_trigger.sql \
+	column_attribution_insert_trigger.sql \
 	data_alias_insert_trigger.sql \
 	dalias_alias_update_trigger.sql \
 	db_link_insert_trigger.sql \
