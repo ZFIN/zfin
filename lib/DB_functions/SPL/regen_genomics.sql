@@ -60,12 +60,15 @@ create dba function "informix".regen_genomics() returning integer
 	-- Something terrible happened while creating the new tables
 	-- Get rid of them, and leave the original tables around
 
-	on exception in (-206, -255)
-	  -- OK to get "Table not found" (206) here, since we might
-	  -- not have created all tables at the time of the exception
-	  -- Also OK to get a "Not in transaction" (255) here, since
-	  -- we might not be in a transaction when the rollback work 
-	  -- below is performed.
+	on exception in (-206, -255, -668)
+	  --  206: OK to get "Table not found" here, since we might
+	  --       not have created all tables at the time of the exception
+	  --  255: OK to get a "Not in transaction" here, since
+	  --       we might not be in a transaction when the rollback work 
+	  --       below is performed.
+	  --  668: OK to get a "System command not executed" here.
+	  --       Is probably the result of the chmod failing because we
+	  --	   are not the owner.
 	end exception with resume;
 
         let exceptionMessage = 'echo "' || CURRENT ||
@@ -74,6 +77,13 @@ create dba function "informix".regen_genomics() returning integer
 			       ' ErrorText: ' || errorText ||
 			       '" >> /tmp/regen_genomics_exception';
 	system exceptionMessage;
+
+	-- Change the mode of the regen_genomics_exception file.  This is
+	-- only needed the first time it is created.  This allows us to 
+	-- rerun the function from either the web page (as zfishweb) or 
+	-- from dbaccess (as whoever).
+
+	system '/bin/chmod 666 /tmp/regen_genomics_exception';
 
 	-- If in a transaction, then roll it back.  Otherwise, by default
 	-- exiting this exception handler will commit the transaction.
