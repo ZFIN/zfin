@@ -333,7 +333,7 @@ END
 sub message {
   print '  <div style="padding:25px;"><h3>Thank you!</h3>', "\n";
   print '  <p>Your survey has been submitted to ZFIN.  We value your input.<br>', "\n";
-  print '  Click <a href="/', $domain, '">here</a> to go to ZFIN.</p></div>', "\n";
+  print '  Click <a href="/">here</a> to go to ZFIN.</p></div>', "\n";
 }
 
 sub endHTML
