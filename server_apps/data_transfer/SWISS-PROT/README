@@ -4,6 +4,34 @@ This readme is intended to explain the process of loading SWISS-PROT
 report into ZFIN.   by Peiran Song,  Sep 2002.
 
 =================================================================
+by Peiran, Aug 2004
+
+To test run Swiss-Prot at test enviornment, at source dir
+
+	%gmake runpre
+
+send allproblems.txt file to Ken and wait for a return of ok SP accession
+
+	% sp_match.pl <acc file name>
+
+send the ok2file to Ken for editing, mostly adding additional zfin lines. When ok2file is saved in the target dir, at source dir
+
+	% gmake run
+---------------------------------------
+ 
+To run Swiss-Prot at produciton, copy the ok2file from almost target dir to production target dir. At source dir
+
+	% gmake run
+
+---------------------------------------------------------------------
+
+A pre-process is added by pre_loadsp.pl. It is basically the quality check step of the loadsp.pl. A curator would review the check result and provide a list of Swiss-Prot accession numbers from the problem files to be added to okfile. Most of those records would be associated with more than one ZFIN gene. Run sp_match.pl with the accession file as the parameter. Send the output file "ok2file" to a curator to add in additional DR ZFIN lines if applicable.When the file is ready at the destination directory, run the whole load process, the ok2file would be appended to the okfile.   
+
+On production, to save the excution time, use the ok2file producted from almost run. 
+
+GN and DR EMBL lines are no longer loaded due to the fact that one SP record could validly associated with more than one ZFIN genes. 
+
+=================================================================
 by Peiran Song, Jun 2004
 
 The SP/GO load process has changes a lot in the GO project. The GO
