@@ -3,8 +3,8 @@
 # This script updates the mirror.zfin.org web site with the latest updates
 # from CVS.  It is meant to be run from cron.
 
-cd /research/zusers/mirror/ZFIN_WWW
-source /research/zcentral/Commons/env/mirror.env
+cd /private/ZfinLinks/mirror_src/ZFIN_WWW
+source /private/ZfinLinks/Commons/env/mirror.env
 
 # get updates from CVS. Send stdout to /dev/null. Only care about errors.
 /local/bin/cvs -q update -dP > /dev/null
