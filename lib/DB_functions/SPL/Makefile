@@ -44,7 +44,8 @@ REGEN_GNRCS  = regen_fishsearch.sql regen_genomics.sql regen_oevdisp.sql \
 ZDB_GNRCS    = table_exists.sql
 ZDB_STATS    = get_obj_name.sql zdb_date.sql get_date_from_id.sql \
 	       p_check_zdb_object_table.sql syscall.sql \
-	       p_check_figure_image_pair_exists.sql
+	       p_check_figure_image_pair_exists.sql \
+	       p_check_submitter_is_root.sql 
 
 # Some of the stage functions call other stage functions.  Therefore
 # the order they are listed matters.
