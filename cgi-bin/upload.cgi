@@ -304,7 +304,7 @@ sub getHeightWidth()
 	  }
       }
 
-system("/bin/rm -rf $tmpDir");
+system("/bin/rm -rf $tmpDir") and die "can't remove $tmpDir";
 
 } # end getHeightWidth
 
@@ -460,7 +460,7 @@ sub makeFiles () {# uploads the files, builds a thumbnail, gets the height
 
     &uploadFile($upload_dir, $filename);
 
-    system("/bin/chmod 775 $upload_dir/$filename*");
+    system("/bin/chmod 775 $upload_dir/$filename*") and die "can't change mod 775 $upload_dir/$filename" ;
 
     # build a thumbnail file name if its not a pdf
 
@@ -476,11 +476,11 @@ sub makeFiles () {# uploads the files, builds a thumbnail, gets the height
 
         # make a thumbnail
 
-        system("<!--|ROOT_PATH|-->/server_apps/sysexecs/make_thumbnail/make_thumbnail.sh $upload_dir/$filename $upload_dir/$newthumb");
+        system("<!--|ROOT_PATH|-->/server_apps/sysexecs/make_thumbnail/make_thumbnail.sh $upload_dir/$filename $upload_dir/$newthumb") and die "can't make thumbnail";
 
         # give web users read/execute permission
 		
-        system("/bin/chmod 755 $upload_dir/$OID*");
+        system("/bin/chmod 755 $upload_dir/$OID*") and die "can't chmod $upload_dir/$OID*" ;
 		
         # redirect to the correct apg page based on the passed-in redirect_url.
 
@@ -514,7 +514,7 @@ sub makeFiles () {# uploads the files, builds a thumbnail, gets the height
 
 		print $query->redirect ("$redirect_build");
 	    
-		system ("/bin/rm -f /tmp/upload_report");
+		system ("/bin/rm -f /tmp/upload_report") and die "can't rm /tmp/upload_report.txt";
 		exit;
 	    }
 
@@ -535,7 +535,7 @@ sub makeFiles () {# uploads the files, builds a thumbnail, gets the height
 	    }
 
 	    
-	    system ("/bin/rm -f /tmp/upload_report");
+	    system ("/bin/rm -f /tmp/upload_report") and die "can't /bin/rm -f /tmp/upload_report";
 	    print $query->redirect ("$redirect_build");
 	    exit;
 	}
@@ -550,7 +550,7 @@ sub makeFiles () {# uploads the files, builds a thumbnail, gets the height
 	    if ($redirect_build !~ m/.apg/) {
 		&access_error ($redirect_build.'redirect_build not ZFIN type!') ;
 	    }
-	    system ("/bin/rm -f /tmp/upload_report");
+	    system ("/bin/rm -f /tmp/upload_report") and die "can't /bin/rm -f /tmp/upload_report";
 	    print $query->redirect ("$redirect_build");
 	    exit;
     }
@@ -575,7 +575,7 @@ sub access_error () { # throws up an error message and sends email
     print "</body>";
     print "</html>";
     
-    system ("/bin/rm -f /tmp/upload_report");
+    system ("/bin/rm -f /tmp/upload_report") and die "can't /bin/rm -f /tmp/upload_report" ;
     exit;
 
 }
@@ -596,13 +596,13 @@ sub filename_error() { # standard error for file nomenclature problems
           please use the update pages.<br><br>"; 
     print "The maximum filesize accepted by this page is 1024K.
           <br><br>";
-    system ("/bin/rm /tmp/upload_report");
+    system ("/bin/rm /tmp/upload_report") and die "can't /bin/rm /tmp/upload_report"  ;
 
     &emailError ("File not uploaded: $person_id $vHint $filename <!--|DB_NAME|-->");
     print "</body>";
     print "</html>";
    
-    system ("/bin/rm -f /tmp/upload_report");
+    system ("/bin/rm -f /tmp/upload_report") and die "Cannot /bin/rm /tmp/upload_report";
     exit;
 
 } # end filename_error
@@ -669,7 +669,7 @@ if (!($filename) &&
    (substr($redirect_url, -21) ne $update_image_redirect) &&
     ($redirect_url ne "")) {   
 
-    system ("/bin/rm -f /tmp/upload_report");
+    system ("/bin/rm -f /tmp/upload_report") and die "can not /bin/rm /tmp/upload_report" ;
     print $query->redirect ($ENV{'HTTP_REFERER'});
     exit;
 }
@@ -753,7 +753,7 @@ elsif (!($filename) &&
 		&access_error ($redirect_build.'redirect_build not ZFIN type!') ;
 	    }
 
-	    system ("/bin/rm -f /tmp/upload_report");
+	    system ("/bin/rm -f /tmp/upload_report") and die "can not /bin/rm /tmp/upload_report";
 
 	    print $query->redirect ($redirect_build);
 
@@ -948,7 +948,7 @@ else { # filename isn't null or redirect isn't do-imageupdate.apg
 				    # OID in db and redirect != 
 				    # new_image.apg
 				   
-				    system("/bin/mv <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/$filename_no_suffix* <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/bkup/");
+				    system("/bin/mv <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/$filename_no_suffix* <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/bkup/") and die "can not mv <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/$filename_no_suffix ";
 				    $attr=$query->param("attr");
 				    $attr_type=$query->param("attr_type");
 				    $old_value=$query->param("old_value");
@@ -1075,6 +1075,6 @@ else { # filename isn't null or redirect isn't do-imageupdate.apg
 
 print "</body>";
 print "</html>";
-system ("/bin/rm -f /tmp/upload_report");
+system ("/bin/rm -f /tmp/upload_report") and die "can not /bin/rm -f /tmp/upload_report" ;
 exit;
 #-----------------END_MAIN---------------------------#
