@@ -50,30 +50,53 @@
 
     <!-- look if accession number links to publication -->
 
-    <?MISQL SQL="select count(*)::integer from publication  where lower(accession_no) like lower('%$aname%') and status ='active';"> 
+    <?MISQL SQL="select count(*)::integer from publication where lower(accession_no) like lower('%$aname%') and status ='active';"> 
       $(SETVAR,$pcount,$1)
     <?/MISQL>
     <?MIBLOCK COND="$(NC,$pcount,0)">
 	<?MIVAR NAME=$start_page>aa-pubselect2.apg<?/MIVAR>	
 	<?MIVAR NAME=$pub_acc_constraint> where accession_no = '$aname' <?/MIVAR> 
         <?MISQL SQL="select WebExplode(object,'') from webPages where ID='$start_page';">$1<?/MISQL>
-    <?/MIBLOCK>
+     <?/MIBLOCK>
 
-   <!-- look if accession number links to gene , significance 11 and 12 signify orthologue or accession numbers -->
 
-    <?MISQL SQL="select allmapnm_zdb_id from all_map_names a  where allmapnm_name = lower('$aname') and allmapnm_significance in (11,12) order by allmapnm_zdb_id;">
-      $(SETVAR,$gcount,1)
-      <?MIVAR NAME=$matchId>$1<?/MIVAR>
+   <!-- look if accession number links to any marker, significance 11 and 12 signify orthologue or accession numbers -->
+    <?MIVAR NAME=$done_mrkr>f<?/MIVAR>
+    <?MIVAR NAME=$done_mseg>f<?/MIVAR>
+    <?MIVAR NAME=$input_acc>$aname<?/MIVAR>
+    <?MISQL SQL="select distinct allmapnm_zdb_id from all_map_names where allmapnm_name_lower = lower('$aname') and allmapnm_precedence = 'Accession number' order by allmapnm_zdb_id;">
+        $(SETVAR,$gcount,1)
+        <?MIBLOCK COND="$(AND,$(EC,$done_mseg,f),$(>,$(POSITION,$1,BAC),0))">
+	  
+          <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-msegselect.apg';">$1<?/MISQL>
+	  <?MIVAR NAME=$done_mseg>t<?/MIVAR>
+        <?MIELSE COND="$(AND,$(EC,$done_mseg,f),$(>,$(POSITION,$1,EST),0))">
+	  <?MIVAR NAME=$todo_mseg>t<?/MIVAR>
+        <?MIELSE COND="$(AND,$(EC,$done_mrkr,f),
+			    $(=,$(POSITION,$1,EST),0),
+		            $(=,$(POSITION,$1,BAC),0),
+		   	    $(=,$(POSITION,$1,PAC),0))">
+	  
+          <?MIBLOCK COND="$(EC,$done_mseg,t)">
+            <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-markerselect.apg';">$1<?/MISQL>
+	    <?MIVAR NAME=$done_mrkr>t<?/MIVAR>
+          <?MIELSE>
+		<?MIVAR NAME=$todo_mrkr><?/MIVAR>
+	  <?/MIBLOCK> 
+        <?MIELSE COND="$(AND,$(EC,$done_mseg,f),$(>,$(POSITION,$1,PAC),0))">
+	  
+          <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-msegselect.apg';">$1<?/MISQL>
+	  <?MIVAR NAME=$done_mseg>t<?/MIVAR>
+	<?/MIBLOCK>     
+
     <?/MISQL>
-    <?MIBLOCK COND="$(NC,$gcount,0)">
-	<?MIBLOCK COND="$(>,$(POSITION,$matchId,GENE),0)">
-	  <?MIVAR NAME=$start_page>aa-geneselect.apg<?/MIVAR>	
-	<?MIELSE>
-	  <?MIVAR NAME=$start_page>aa-markerselect.apg<?/MIVAR>	
-	<?/MIBLOCK>
-        <?MIVAR NAME=$name>$aname<?/MIVAR>
-        <?MISQL SQL="select WebExplode(object,'') from webPages where ID='$start_page';">$1<?/MISQL>
-    <?/MIBLOCK>
+
+    <?MIVAR COND="$(XST,$todo_mrkr)">
+	<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-markerselect.apg';">$1<?/MISQL>
+    <?/MIVAR>
+    <?MIVAR COND="$(XST,$todo_mseg)">
+	<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-msegselect.apg';">$1<?/MISQL>
+    <?/MIVAR>
 
 
     <?MIBLOCK COND="$(AND,$(EC,$pcount,0),$(EC,$mcount,0),$(EC,$gcount,0))">
@@ -81,7 +104,7 @@
       </form>
     <?/MIBLOCK>
 
-  <?/MIBLOCK>
+  <?/MIBLOCK> <!-- no ZDB in the accession num -->
 
 
   <!--  THIS BLOCK HANDLES ZDB ID SEARCHES  -->
@@ -100,11 +123,13 @@
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,COMPANY),0)">aa-companyselect.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PUB),0)">aa-pubselect2.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,FISH),0)">aa-fishselect.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,GENE),0)">aa-geneselect.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,EST),0)">aa-markerselect.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,GENE),0)">aa-markerselect.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,SSLP),0)">aa-markerselect.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,BAC),0)">aa-markerselect.apg<?/MIVAR>
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PAC),0)">aa-markerselect.apg<?/MIVAR>
+
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,EST),0)">aa-msegselect.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,BAC),0)">aa-msegselect.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PAC),0)">aa-msegselect.apg<?/MIVAR>
+
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,BAC_END),0)">aa-markerselect.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PAC_END),0)">aa-markerselect.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,LOCUS),0)">aa-locusview.apg<?/MIVAR>
@@ -115,18 +140,20 @@
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,IMAGE),0)">aa-imageview.apg<?/MIVAR>
 
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,XPAT),0)">aa-xpatview.apg<?/MIVAR>
-    <?/MIBLOCK>
+    <?/MIBLOCK><!-- end XST aname -->
+
     <?MIBLOCK COND="$(EC,$start_page,NULL)">
       <form><center><font size=4><?MIVAR><b>Requested ID is not available in ZFIN.</b> </font></center><?/MIVAR>
       </form>
-     <!-- ends if start page is null -->
-      
     <?MIELSE>
+
       <?MIVAR COND="$(EC,$start_page,aa-pubselect2.apg)" NAME=pub_acc_constraint> where zdb_id = '$OID' <?/MIVAR>
       <?MIVAR COND="$(>,$(POSITION,$start_page,marker),0)" NAME=$constraint> where mrkr_zdb_id = '$OID' <?/MIVAR>    
 	
       <?MISQL SQL="select WebExplode(object,'') from webPages where ID='$start_page';">$1<?/MISQL>
+
     <?/MIBLOCK>  <!-- ends if valid start page, not null  -->
+
 
   <?/MIBLOCK>  <!-- ENDS IF SEARCHTYPE ZDB ID -->
 
