@@ -39,7 +39,7 @@ target_table -- either anon_marker or gene, depending on what you're updating
       <?MIVAR NAME=$name_col>marker_name<?/MIVAR>
       <?MIVAR COND="$(EC,$target_table,gene)" NAME=$name_col>gene_name<?/MIVAR>
 
-      <?MIBLOCK COND="$(NC,$attr,mrkrali_marker_name_alias)">
+      <?MIBLOCK COND="$(NC,$attr,dalias_alias)">
 	<?MISQL SQL="
 	  select $attr, $name_col 
 	    from $target_table 
