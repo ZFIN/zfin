@@ -52,7 +52,7 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
     <?/MIBLOCK>
 
     <?MIBLOCK COND="$(AND,$(XST,$newseq),$(XST,$newacc))">
-      <?MIVAR>$OID<?/MIVAR>
+     
       <?MIVAR NAME=$newacc>$(TRIM,$newacc)<?/MIVAR>
       <?MIBLOCK COND="$(NC,$newacc,)">
 	<?MISQL SQL="
