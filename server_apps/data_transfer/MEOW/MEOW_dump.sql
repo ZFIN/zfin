@@ -262,7 +262,7 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_dblinks.txt'
   select * 
     from meow_exp4;
 
--- And finally generate the ortho_links file with DB_links to other species DBs
+--  generate the ortho_links file with DB_links to other species DBs
 create table meow_exp5 (
   linked_recid varchar(50), 
   DB_name varchar(50), 
@@ -282,6 +282,12 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_ortholinks.txt'
   select * 
     from meow_exp5;
 
+
+-- generate a file of cDNAs and assoc GENBANK accession numbers
+
+UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/SC.txt'
+  DELIMITER "	" select distinct zdb_id, abbrev, acc_num  from all_markers, OUTER db_link  where (mtype = 'EST')  and linked_recid = zdb_id and db_name = 'Genbank' order by 1; 
+
 -- Clean up
 drop table meow_exp1;
 drop table meow_exp2;
@@ -291,7 +297,7 @@ drop table meow_exp5;
 drop table meow_expll;
 drop table meow_mutant;
 
-
+ 
 -- NOW just notify Don Gilbert that the updated files are there and he
 -- can download them!
 
