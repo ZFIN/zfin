@@ -394,20 +394,7 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 
 <!-- RETRIEVE AND DISPLAY ALL MATCHING ENTRIES. -->
 
-
-
-<!-- Count distinct mrkr_zdb_ids. UNION operation returns two seperate counts and isn't any easier to code than two seperate SQL statements.-->
-
-<?MISQL COND="$(=,1,0)" SQL="
-      select count($(IF,$(NC,$structure_bool,and),distinct )mrkr_zdb_id)::integer
-      $query_from
-      $query_where_without_mrel
-      $(IF,$(XST,$query_grp_by),$query_grp_by $query_hvng)
-       ;">
-<?/MISQL>
-
-
-<?MISQL COND="$(=,1,1)" SQL="
+<?MISQL SQL="
       select count($(IF,$(NC,$structure_bool,and),distinct )mrkr_zdb_id)::integer
       $query_from, marker_relationship
       $query_where_with_mrel
@@ -419,11 +406,6 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
                                $(EC,$structure_bool,and)
                               )
                          ,$MI_CURRENTROW,$1)
-  <?/MIVAR>
-  <?MIVAR COND="$(=,1,0)" NAME=num_recs>$(+,$num_recs,$(IF,$(AND,$(XST,$str_dlmt_list),
-                               $(EC,$structure_bool,and)
-                              )
-                         ,$MI_CURRENTROW,$1))
   <?/MIVAR>
 
 <!--***-->
@@ -469,7 +451,7 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 </table>
 <?/MIBLOCK>
 
-	<!-- do not display results -->
+	<!-- results toggle switch -->
 <?MIBLOCK COND="$(=,1,1)">
 
 <?MIBLOCK COND="$(>,$num_recs,0)">
@@ -524,8 +506,8 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 
 <!--   QUERY DATABASE FOR EXPRESSION PATTERN DATA ON GENE_X   -->
 <!--     EXECUTE A DOUBLE LOOP.   -->
-<!--       OUTER LOOP RETREIVES ASSAY_TYPES, CHANGES ROW COLOR, PRINTS ROWS   -->
-<!--       INNER LOOP CREATES A TABLE ROW FOR EACH ASSAY_TYPE   -->
+<!--       OUTER LOOP GROUPS BY ASSAY_TYPES, CHANGES ROW COLOR, PRINTS ROWS -->
+<!--       INNER LOOP CREATES A TABLE ROW FOR EACH PROBE  -->
 
 <?MIBLOCK COND="$(XST,$query_grp_by)">
   <?MIVAR NAME=$query_grp_by>$query_grp_by, mrkr_name, mrkr_abbrev, mrkr_type, mrkr_abbrev_order<?/MIVAR> 
@@ -543,14 +525,13 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 <?/MIVAR>
 
 <!--*** add time order -->
-<!-- can only use column number in ORDER BY with UNION--> 
 <?MIVAR NAME=ordr_by>order by 2 desc, 3<?/MIVAR>
 <?MIVAR COND="$(AND,$(XST,$order),$(EC,$order,date))">
-  $(SETVAR,$ordr_by, "order by 6 desc, 2 desc, 3")
+  $(SETVAR,$ordr_by, "order by xpat_direct_submission_date desc, 2 desc, 3")
 <?/MIVAR>
 
 <?MIVAR COND="$(NXST,$pubId)" NAME=sql>
-  select $(IF,$(EC,$structure_bool,or),distinct )mrkr_zdb_id, mrkr_type, mrkr_abbrev_order, mrkr_name, mrkr_abbrev, xpat_direct_submission_date
+  select $(IF,$(EC,$structure_bool,or),distinct )mrkr_zdb_id, mrkr_type, mrkr_abbrev_order, mrkr_name, mrkr_abbrev
   $query_from, marker_relationship
   $query_where_with_mrel
   $(IF,$(XST,$query_grp_by),$query_grp_by $query_hvng)
