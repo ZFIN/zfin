@@ -698,7 +698,7 @@ ERROR -- something bad happened -- no OID passed in!
 
 
 <?MISQL SQL="
-	SELECT mrkr_name, clone_vector_name, clone_comments, clone_polymerase_name, clone_cloning_site, clone_digest, clone_probelib_zdb_id, clone_insert_size
+	SELECT mrkr_name, clone_vector_name, clone_comments, clone_polymerase_name, clone_cloning_site, clone_digest, probelib_name, clone_insert_size
 	FROM clone, marker, probe_library
 	WHERE '$MARKER_ID' = clone_mrkr_zdb_id
           and clone_mrkr_zdb_id = mrkr_zdb_id
