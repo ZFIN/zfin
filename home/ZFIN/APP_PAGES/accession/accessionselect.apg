@@ -122,7 +122,9 @@
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,FISH),0)">aa-fishview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,GENE),0)">aa-markerview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,SSLP),0)">aa-markerview.apg<?/MIVAR>
-
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,CDNA),0)">aa-markerview.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,GENEP),0)">aa-markerview.apg<?/MIVAR>
+     
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,EST),0)">aa-markerview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,BAC),0)">aa-markerview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,PAC),0)">aa-markerview.apg<?/MIVAR>
@@ -137,6 +139,7 @@
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,IMAGE),0)">aa-imageview.apg<?/MIVAR>
 
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,XPAT),0)">aa-xpatview.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,ANAT),0)">aa-anatomy_item.apg<?/MIVAR>
    
 
     <?MIBLOCK COND="$(EC,$start_page,NULL)">
