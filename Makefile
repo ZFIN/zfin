@@ -2,9 +2,6 @@
 #
 # Makefile for ZFIN_WWW CVS Project
 #
-# $Source$
-# $Id$
-#
 # This is the top level makefile for the ZFIN_WWW CVS project of ZFIN.
 # The ZFIN_WWW project contains all files that are tied to a specific
 # web site instance.  Files that are tied to a specific Informix server,
@@ -215,7 +212,7 @@
 TOP = .
 include $(TOP)/make.include
 
-SUBDIRS = home server_apps cgi-bin momspider lib client_apps 
+SUBDIRS = home server_apps cgi-bin lib client_apps 
 POSTLOADDB_SUBDIRS = home server_apps lib
 
 
@@ -240,7 +237,7 @@ include $(TOP)/make.default.rules
 # Make the directories needed for the mirror
 
 mirror : 
-	$(MAKE) -C momspider
+	$(MAKE) -C server_apps $@
 	$(MAKE) -C home $@
 
 postloaddb :
