@@ -1,0 +1,55 @@
+<!-- FILE: startframes.html
+
+This file gets webexploded whenever we want to do a search, to set up the criteria and search panes. If the variable return_rec is passed in, it is passed on to the selector/lister subpages, which will allow the user to "select" an item for inclusion in a in-progress submission that he/she is involved in.
+
+Expects the variables:
+ select_from (specify the data type to select)
+ selector -- the name of the app page that does the selection -- may alternatively be called $browser
+ return_rec --- the return record that holds place to return to.
+ 
+You may also optionally pass many other constraints on the upcoming selection that should be passed on to the criteria frame of the new selector. Each of these has to be handled specifically, as below, under "sepcial constraints".
+-->
+
+
+<?MIBLOCK COND="$(XST,$select_from)">
+<!-- Throw up a navigator tile for the approppriate data type -->
+<?MIVAR NAME=$ptitle>Find $(UPPER,$select_from)<?/MIVAR>
+<?MIVAR COND="$(EC,$select_from,LOCI)" NAME=$ptitle>Register+Locus<?/MIVAR>
+<?MIVAR COND="$(EC,$select_from,LG)" NAME=$ptitle>Browse+LGs<?/MIVAR>
+
+<?MISQL SQL="select WebExplode(object,'page_title=$ptitle') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+<?/MIBLOCK>
+
+
+<!-- arrange for any constraints passed in to be passed on to criteria
+ frame -->
+<?MIVAR COND="$(NXST,$constraint)" NAME=$constraint><?/MIVAR>
+<?MIVAR COND="$(NXST,$frame_size)" NAME=$frame_size>185<?/MIVAR>
+<?MIVAR COND="$(NXST,$intro)" NAME=$intro>/ZDBB/misc_html/intro1.html<?/MIVAR>
+
+<!-- special constraints to possibly pass -->
+<?MIVAR COND="$(XST,$stock)" NAME=$constraint>&stock=$stock$constraint<?/MIVAR>
+<?MIVAR COND="$(XST,$panelid)" NAME=$constraint>&refcross=$panelid$constraint<?/MIVAR>
+<?MIVAR COND="$(XST,$marker_type)" NAME=$constraint>&marker_type=$marker_type$constraint<?/MIVAR>
+<?MIVAR COND="$(XST,$line_type)" NAME=$constraint>&line_type=$line_type$constraint<?/MIVAR>
+<?MIVAR COND="$(XST,$return_rec)" NAME=$constraint>&return_rec=$return_rec$constraint<?/MIVAR>
+
+
+<html>
+
+<?MIVAR>
+<FRAMESET rows="$frame_size,*">
+<?/MIVAR>
+
+<!-- Now just throw up the right selector, depending in what your data type you want to select from (as indicated in $selector) -->
+
+
+<?MIVAR>
+<FRAME NAME="criteria" SRC="/cgi-bin_B/webdriver?MIval=$selector$constraint">
+
+<FRAME NAME="pbrowser"  SRC="$intro">
+<?/MIVAR>
+
+</FRAMESET>
+
+</HTML>
