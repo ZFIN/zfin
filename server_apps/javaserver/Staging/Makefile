@@ -29,7 +29,8 @@
 # First check if we are being called recursively.
 
 ifeq (0, $(MAKELEVEL))
-$(error ERROR: THIS MAKEFILE CANNOT BE INVOKED DIRECTLY.  INVOKE IT FROM ITS PARENT MAKEFILE.)
+error:
+	ERROR: THIS MAKEFILE CANNOT BE INVOKED DIRECTLY.  INVOKE IT FROM ITS PARENT MAKEFILE.
 endif
 
 # If you got the above error. cd up a directory and remake from that 
@@ -90,6 +91,7 @@ MILIBS = -L$(MILIBDIR) -lifdmi
 #  JAVASRCS
 
 JAVACLASSES = $(foreach JVS, $(JAVASRCS), $(patsubst %.java,%.class,$(JVS)))
+
 JAVATARGETS = $(foreach JVC, $(JAVACLASSES), $(TARGETDIR)/$(JVC))
 
 
@@ -168,8 +170,11 @@ $(MICOBJS) : %.o : %.c
 
 # ---------------  Maintenance Rules  -----------------------------------
 
+# clean target orignally removed JAVACLASSES, but it was missing 2 subclasses
+# of DBConnection, so changed it to delete *.class instead.
+
 clean :			# remove almost everything in the directory
-	rm -f $(JAVACLASSES) $(JAVACSRCS) $(JAVACHDRS) $(OBJS)
+	rm -f *.class $(JAVACSRCS) $(JAVACHDRS) $(OBJS)
 
 
 clobber :			# Remove targets, but not target dir.
