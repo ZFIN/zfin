@@ -61,19 +61,19 @@
 	   OR marker_id = '$LID'
            OR marker_id = '$GNID'
          
-      UNION ALL
+      UNION 
 	SELECT or_lg
 	FROM mapped_marker, fish f
 	WHERE marker_id = f.zdb_id
 	  AND f.locus = '$LID'
          
-      UNION ALL
+      UNION 
 	SELECT or_lg
 	FROM mapped_marker, marker_relationship
 	WHERE marker_id = mrel_mrkr_2_zdb_id
 	  and mrel_mrkr_1_zdb_id = '$GNID'
 	  
-      UNION ALL
+      UNION
 	SELECT lnkg_or_lg
 	FROM linkage, linkage_member
 	WHERE (lnkgmem_member_zdb_id = '$oID'
@@ -81,14 +81,14 @@
            or lnkgmem_member_zdb_id = '$GNID')
 	  and lnkg_zdb_id = lnkgmem_linkage_zdb_id
 	  
-      UNION ALL
+      UNION 
 	SELECT lnkg_or_lg
 	FROM linkage, linkage_member, fish f
 	WHERE lnkgmem_member_zdb_id = f.zdb_id
           and f.locus = '$LID'
 	  and lnkg_zdb_id = lnkgmem_linkage_zdb_id
 	 
-      UNION ALL
+      UNION 
 	SELECT lnkg_or_lg
 	FROM linkage, linkage_member, marker_relationship
 	WHERE lnkgmem_member_zdb_id = mrel_mrkr_2_zdb_id
@@ -112,7 +112,12 @@
   <?MIBLOCK COND="$(AND,$(=,$MI_ROWCOUNT,1),$(NC,$1,MT),$(NC,$1,0))">
     <?MIVAR COND="$(<,$1,10)">&nbsp;<?/MIVAR>
   <?/MIBLOCK>	
-  <?MIVAR COND="$(AND,$(EC,$hide_empty,f),$(=,$MI_ROWCOUNT,0))">None submitted.<?/MIVAR>
+  <?MIBLOCK COND="$(AND,$(EC,$hide_empty,f),$(=,$MI_ROWCOUNT,0))">
+    None submitted.
+    <?MIVAR COND="$(XST,$UPDATE)">
+      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mappingdetail.apg&OID=$oID&UPDATE=1">Update on Detail page</A>
+    <?/MIVAR>
+  <?/MIBLOCK>
    
 <?MIELSE><?MICOMMENT>need modification here<?/MICOMMENT>
   <?MIVAR>LG:&nbsp;$lg_list<?/MIVAR>
@@ -356,6 +361,10 @@ ERROR -- something bad happened -- no OID passed in!
 	
      <?MISQL SQL=" 
                select zdb_id, allele
+                 from fish
+		where zdb_id = '$MID'
+            union
+               select zdb_id, allele
                  from fish 
                 where locus = '$OID'
                   and (zdb_id in 
@@ -374,6 +383,7 @@ ERROR -- something bad happened -- no OID passed in!
 	<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&detOID=$allele_id&abbrev=$allele') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
     
       <?/MISQL>
+       
   <?/MIBLOCK>
 
   
@@ -540,16 +550,16 @@ function Delete_marker(allele,marker_id) {
 	  <?/MISQL>
 
 	
-	  <?MIBLOCK COND="$(AND,$(XST,$UPDATE),$(EC,$marker_present,0))">
-	    </TD></TR><TR><TD align=left>
-	    <INPUT TYPE=button value="Add" onClick="doit_marker('marker','selection','present',0)"> 
-	    <b>Present:</b><br>
-	  <?/MIBLOCK>
-
 	  <?MIBLOCK COND="$(AND,$(XST,$UPDATE),$(EC,$marker_missing,0))">
 	    </TD></TR><TR><TD align=left>
 	    <INPUT TYPE=button value="Add" onClick="doit_marker('marker','selection','missing',0)"> 
 	    <b>Missing:</b><br>
+	  <?/MIBLOCK>
+
+	  <?MIBLOCK COND="$(AND,$(XST,$UPDATE),$(EC,$marker_present,0))">
+	    </TD></TR><TR><TD align=left>
+	    <INPUT TYPE=button value="Add" onClick="doit_marker('marker','selection','present',0)"> 
+	    <b>Present:</b><br>
 	  <?/MIBLOCK>
 
 	  <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
