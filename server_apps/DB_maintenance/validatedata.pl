@@ -446,86 +446,7 @@ sub anatomyContainsStageWindowInContainerStageWindow($){
   &recordResult($routineName, $nRecords);
 }
 
- 	    	          	 
-#-----------------------------------------------------------------
-#Parameter
-# $      Email Address for recipients
- 
 
-sub fishImageAnatomyStageWindowOverlapsAnatomyItem ($) {
-	
-  my $routineName = "fishImageAnatomyStageWindowOverlapsAnatomyItem";
-	
-  my $sql = '
-             select fimganat_anat_item_zdb_id, 
-                    fimganat_fimg_start_stg_zdb_id,
-		    fimganat_fimg_end_stg_zdb_id
-	       from fish_image_anatomy 
-              where anatitem_overlaps_stg_window (
-                                  fimganat_anat_item_zdb_id,
-                                  fimganat_fimg_start_stg_zdb_id,
-                                  fimganat_fimg_end_stg_zdb_id   
-                                  ) = "f" ';
-  my $nRecords = execSql ($sql);
-
-  if ( $nRecords > 0 ) {
-   
-    my $sqlDtl='
-                select fimganat_anat_item_zdb_id, 
-                       anatitem_name,
-                       anatitem_start_stg_zdb_id, 
-                       s1.stg_name_long, 
-                       anatitem_end_stg_zdb_id,
-                       s2.stg_name_long  
-                       fimganat_fimg_start_stg_zdb_id,
-                       s3.stg_name_long, 
-		       fimganat_fimg_end_stg_zdb_id,
-                       s4.stg_name_long
-
-	          from fish_image_anatomy,
-                       anatomy_item,
-                       stage s1, stage s2, stage s3, stage s4
- 
-                 where anatitem_overlaps_stg_window (
-                                  fimganat_anat_item_zdb_id,
-                                  fimganat_fimg_start_stg_zdb_id,
-                                  fimganat_fimg_end_stg_zdb_id   
-                                  ) = "f" 
-                   and fimganat_anat_item_zdb_id = anatitem_zdb_id
-                   and anatitem_start_stg_zdb_id = s1.stg_zdb_id
-                   and anatitem_end_stg_zdb_id = s2.stg_zdb_id
-                   and fimganat_fimg_start_stg_zdb_id = s3.stg_zdb_id
-                   and fimganat_fimg_end_stg_zdb_id = s4.stg_zdb_id
-                 ';
-    
-    my @colDesc = ("Fimganat anat item ZDB ID   ",
-		   "Anatitem name               ",
-		   "Anatitem start stg ZDB ID   ",
-		   "Start stg name & period     ",
-		   "Anatitem end stg ZDB ID     ",
-		   "End stg name & period       ",
-		   "Fimganat fimg start stg ZDB ID",
-		   "Start stg name & period     ",
-		   "Fimganat fimg end stg ZDB ID",
-		   "End stg name & period       " );
-
-    my $nRecordsDtl = execSql($sqlDtl, undef, @colDesc);
- 
-    if ( $nRecords == $nRecordsDtl ) {
-     
-      my $sendToAddress =$_[0];
-      my $subject = "Stage window not overlap";
-      my $errMsg = "In fish_image_anatomy table, $nRecords records' stage"
-    		     ." window overlap with anatomy items' stage window.";
-      		     
-      logError ($errMsg);
-      &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql, $sqlDtl); 
-    }else {
-      print "Two queries are not consistent.\n";
-    }
-  }
-  &recordResult($routineName, $nRecords);
-}
 
 #=================== Expression Pattern ==========================              
 #----------------------------------------------------------------
@@ -2367,7 +2288,7 @@ my $mutantEmail  = "<!--|VALIDATION_EMAIL_MUTANT|-->";
 my $dbaEmail     = "<!--|VALIDATION_EMAIL_DBA|-->";
 
 if($daily) {
-  print "run daily check. \n";
+  print "run daily check. \n\n";
 
   stageWindowConsistent ($adEmail);
   stageContainsStageWindowInContainerStageWindow($adEmail);
@@ -2375,19 +2296,16 @@ if($daily) {
   anatomyItemStageWindowConsistent($adEmail);
   anatomyContainsStageWindowConsistent($adEmail);
   anatomyContainsStageWindowInContainerStageWindow($adEmail);
-  fishImageAnatomyStageWindowOverlapsAnatomyItem ($adEmail);
 
   expressionPatternStageWindowConsistent($xpatEmail);
   expressionPatternAnatomyStageWindowOverlapsAnatomyItem($xpatEmail);
 
   fishNameEqualLocusName($mutantEmail);
   fishAbbrevContainsFishAllele($mutantEmail);
-  fishAbbrevStartsWithLocusAbbrev($mutantEmail);
 
   alterationHas1Fish($mutantEmail);
   mutantHas4TableBox($mutantEmail);
 
-  locusAbbrevUnique($mutantEmail);
   locusNameUnique($mutantEmail);
   locusAlleleHaveDupPub($mutantEmail);
 
@@ -2413,7 +2331,7 @@ if($orphan) {
   zdbActiveSourceStillActive($dbaEmail);
 }
 if($weekly) {
-  print "run weekly check. \n";
+  print "run weekly check. \n\n";
 
   # put these here until we get them down to 0 records.  Then move them to 
   # daily.
@@ -2421,17 +2339,19 @@ if($weekly) {
   prefixedGenesHave1Est($estEmail);
   estsWithoutClonesHaveXxGenes($estEmail);
   xxGenesHaveNoClones($estEmail);
+  fishAbbrevStartsWithLocusAbbrev($mutantEmail);
 }
 if($monthly) {
-  print "run monthly check. \n";
+  print "run monthly check. \n\n";
   orthologueHasDblink($geneEmail);
   orthologueNomenclatureValid($geneEmail);
   locusAbbrevIsSet($mutantEmail);
+  locusAbbrevUnique($mutantEmail);
   prefixedIbdGenesHave1Est($estEmail);
   genesWithCommonDblinks($geneEmail);
 }
 if($yearly) {
-  print "run yearly check. \n";
+  print "run yearly check. \n\n";
 }
 
 	   
