@@ -48,7 +48,9 @@ ZDB_STATS    = get_obj_name.sql zdb_date.sql get_date_from_id.sql \
 STAGE_STATS  = create_stg_name_ext.sql create_stg_name_long.sql \
 	       get_stg_name_html.sql get_stg_name_long_html.sql \
 	       stg_window_consistent.sql fimg_overlaps_stg_window.sql \
-	       anatitem_overlaps_stg_window.sql stg_windows_overlap.sql \
+	       anatitem_overlaps_stg_window.sql \
+	       p_check_anatitem_overlaps_stg_window.sql \
+	       stg_windows_overlap.sql \
 	       p_stg_hours_consistent.sql p_fimg_overlaps_stg_window.sql
 
 # insert_clone and regen_anatomy.sql are special cases.  They contain 
