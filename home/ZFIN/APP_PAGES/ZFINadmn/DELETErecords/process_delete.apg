@@ -19,13 +19,26 @@ VARIABLES EXPECTED:
 
   <?MIBLOCK COND="$(AND,$(XST,$OID),$(XST,$rtype))">
 
+    <!-- If a fish is being deleted, change the status of any 
+      -- records for it in locus_registration to expired
+      -->
+    <?MIBLOCK COND="$(EC,$rtype,fish)">
+      <?MISQL SQL="
+	update locus_registration
+	  set status = 'expired',
+	      expired_time = current,
+	      fish_record = NULL
+          where fish_record = '$OID';">
+      <?/MISQL>
+    <?/MIBLOCK>
+
     <!-- If record type has been added to zdb_active_data or zdb_active_source
       -- then delete it from
       -- there and have it cascade out.  If it has not been added yet, then
       -- delete the record from the record type's base table.
       -->
 
-    <?MIBLOCK COND="$(OR,$(EC,$rtype,anon_marker),$(EC,$rtype,gene),$(EC,$rtype,fish_image))">
+    <?MIBLOCK COND="$(OR,$(EC,$rtype,anon_marker),$(EC,$rtype,gene),$(EC,$rtype,fish_image),$(EC,$rtype,fish))">
       <?MISQL SQL="
 	delete from zdb_active_data
 	  where zactvd_zdb_id = '$OID';">
