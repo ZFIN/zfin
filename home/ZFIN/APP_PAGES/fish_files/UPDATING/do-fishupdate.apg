@@ -1,0 +1,97 @@
+<!-- FILE: do-fishupdate.html
+
+Very simple. Just commits the updates requested in the forms tossed up by
+fishupdate.html. Also files update record.
+
+EXPECTED VARS:
+OID -- the zdb_id of the rec to update
+attr -- the column to be updated
+attr_type -- textarea,text,or pic
+new_value -- the new value to stick in the column
+old_value -- the previous value
+comments -- reasons for doing update 
+
+
+-->
+
+<!-- First check security. Main purpose is just to get submitter id and name -->
+<?MISQL SQL="select WebExplode(object,'permission=owns&rtype=fish') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+<?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
+
+<?MIVAR COND="$(NXST,$new_value)" NAME=$new_value>NULL<?/MIVAR>
+<?MIVAR COND="$(NXST,$comments)" NAME=$comments>NULL<?/MIVAR>
+
+<?MIVAR COND="$(EC,$attr_type,special-delete)" NAME=$comments>Deleted $comments as the reference image for this line.<?/MIVAR>
+<?MIVAR COND="$(EC,$attr_type,special-listitem)" NAME=$comments>Deleted the record $old_value from the list of $attr associated with this line.<?/MIVAR>
+
+<?MIVAR COND="$(EC,$attr_type,special-chromnum)" NAME=$comments>Note: This change in the chromosome number will also be (automatically) reflected in all lines produced by cross-breeding with this one.<?/MIVAR>
+
+<?MIVAR NAME=$new_value DELIMIT="'" REPLACE="''">$new_value<?/MIVAR>
+<?MIVAR NAME=$old_value DELIMIT="'" REPLACE="''">$old_value<?/MIVAR>
+<?MIVAR NAME=$comments DELIMIT="'" REPLACE="''">$comments<?/MIVAR>
+
+<!-- insert update record for the update! -->
+<?MISQL SQL="insert into updates (submitter_id,submitter_name, rec_id, field_name, old_value, comments, when) values ('$ZDB_ident', '$ZDB_name','$OID', '$attr',  '$old_value', '$comments', current);"><?/MISQL>
+
+<!-- OK, NOW UPDATE THE  ACTUAL DATA RECORD. HAVE TO DO THINGS SLIGHTLY
+     DIFFERENT FOR IMAGES, SO FIRST FIND OUT WHETHER YOU'RE UPDATING AN
+     IMAGE FIELD, THEN ACT ACCORDINGLY -->
+
+<?MIBLOCK COND="$(EC,$attr_type,pic)">
+<?MISQL COND="$(NXST,$null_image)" SQL="update fish set $attr=FILETOBLOB('/export/chromix/www/httpd/cgi-bin_B/$new_value', 'client') where zdb_id='$OID';"><?/MISQL>
+
+<?MISQL COND="$(XST,$null_image)" SQL="update fish set $attr=NULL where zdb_id='$OID';"><?/MISQL>
+<?/MIBLOCK> <!-- ends if its an image -->
+
+<?MISQL COND="$(OR,$(EC,$attr_type,text),$(EC,$attr_type,textarea))" SQL="update fish set $attr='$new_value' where zdb_id='$OID';"><?/MISQL>
+
+
+
+<!-- Special case for blasting the representative image for the line  -->
+<?MIBLOCK COND="$(EC,$attr_type,special-delete)">
+<?MISQL SQL="update image set representative='f' where stock='$OID' and representative='t';"><?/MISQL>
+<?/MIBLOCK>  <!-- ends special delete representative image case -->
+
+<!-- Special case for updating the chromosome number for some line. Have to update the chromosome record, int_fish_chromo (where another copy of chronum is stored in info), and insert special update record for the CHROMO record.-->
+<?MIBLOCK COND="$(EC,$attr_type,special-chromnum)">
+<?MISQL SQL="update chromosome set chrom_num='$new_value' where zdb_id='$chrom_id';"><?/MISQL>
+<?MISQL SQL="update int_fish_chromo set info='$new_value' where target_id='$chrom_id';"><?/MISQL>
+<?MISQL SQL="update fish_search set chrom_num='$new_value' where fish_id='$OID';"><?/MISQL>
+<?MISQL SQL="insert into updates (submitter_id,submitter_name, rec_id, field_name, new_value, old_value, comments, when) values ('$ZDB_ident', '$ZDB_name','$chrom_id', '$attr', '$new_value', '$old_value', 'Updated chromosome number while updating $OID', current);"><?/MISQL>
+<?/MIBLOCK>  <!-- ends special chromnum case -->
+
+
+<!-- Special case for updating mutagen,protocol, or mutation type for some line. Have to update the alteration record, and the fish_search table (where another copy of alteration info is stored in info), and insert special update record for the ALT record.-->
+<?MIBLOCK COND="$(EC,$attr_type,special-alteration)">
+<?MISQL SQL="update alteration set $attr='$new_value' where zdb_id='$alt_id';"><?/MISQL>
+<?MISQL COND="$(OR,$(EC,$attr,mutagen),$(EC,$attr,chrom_change))" SQL="update fish_search set $attr='$new_value' where fish_id='$OID';"><?/MISQL>
+<?MISQL SQL="insert into updates (submitter_id,submitter_name, rec_id, field_name, new_value, old_value, comments, when) values ('$ZDB_ident', '$ZDB_name','$alt_id', '$attr', '$new_value', '$old_value', 'Updated $attr while updating $OID', current);"><?/MISQL>
+<?/MIBLOCK>  <!-- ends special alteration case -->
+
+
+
+
+<!-- Special case for deleting one of the associated images/sources/pubs -->
+<?MIBLOCK COND="$(EC,$attr_type,special-listitem)">
+<?MIBLOCK COND="$(EC,$attr,image)">
+<?MISQL SQL="delete from image where zdb_id='$old_value';"><?/MISQL>
+<?MISQL SQL="update fish_search set num_images=(select unique count(*)::integer from image where stock='$OID') where fish_id='$OID';"><?/MISQL>
+<?/MIBLOCK>
+
+<?MISQL COND="$(EC,$attr,publication)" SQL="delete from int_data_pub where source_id='$OID' and target_id='$old_value';"><?/MISQL>
+<?MISQL COND="$(EC,$attr,source)" SQL="delete from int_fish_source where source_id='$OID' and target_id='$old_value';"><?/MISQL>
+<?/MIBLOCK>  <!-- ends special listitem case -->
+
+
+
+
+<?/MIBLOCK> <!-- ends cond authorized -->
+
+<!-- okay, now just bail back to the fishupdate to view results -->
+<?MIVAR>
+<SCRIPT>
+location.replace("/cgi-bin_B/webdriver?MIval=aa-fishview.apg&OID=$OID&UPDATE=1")
+</SCRIPT>
+<?/MIVAR>
+
