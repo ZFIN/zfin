@@ -16,6 +16,9 @@
 
 use MIME::Lite;
 
+$dir = "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/";
+chdir "$dir";
+
 # set the environmental variables
 
 $ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
@@ -206,7 +209,7 @@ foreach $orphan_image_line (@orphanImageLines) {
 
     print MOVED_IMAGE_FILES "$orphan_image_line\n";
 }
-system ("/bin/chmod 755 /tmp/moved_image_files");
+system ("/bin/chmod 755 /tmp/moved_image_files.unl");
 
 # do the same thing with pdf files
 
@@ -222,7 +225,7 @@ foreach $orphan_pdf_line (@pdfLines) {
   
 }
 
-system ("/bin/chmod 755 /tmp/moved_pdf_files");
+system ("/bin/chmod 755 /tmp/moved_pdf_files.unl");
 
 print "closing files...\n" ;
 
@@ -234,10 +237,10 @@ close MOVED_IMAGE_FILES;
 
 close MOVED_PDF_FILES;
 
-&sendLoadReport("Image Files Moved","<!--|DB_OWNER|-->\@cs.uoregon.edu", 
+&sendLoadReport("Image Files Moved","staylor\@cs.uoregon.edu", 
 		"/tmp/orphan_image_files.unl") ;
-
-&sendLoadReport("PDF Files Moved","<!--|DB_OWNER|-->\@cs.uoregon.edu", 
+#<!--|DB_OWNER|-->
+&sendLoadReport("PDF Files Moved","staylor\@cs.uoregon.edu", 
 		"/tmp/orphan_pdf_files.unl") ;
 
 print "starting rsync...\n" ;
