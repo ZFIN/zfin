@@ -1,4 +1,4 @@
-#!/local/bin/perl 
+#!/local/bin/perl
 #  This script creates a file that ZFIN sends to Stanford. The file is tab 
 #  delimitted with 14 columns, each GO term/gene association on a seperate  
 #  line. 
@@ -84,6 +84,7 @@ sub GOReport()
     }
     print REPORT "\n";
     close(REPORT);
+    chmod(0644,"$outFile");
   }
 
 
