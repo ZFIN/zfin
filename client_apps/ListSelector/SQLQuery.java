@@ -1,4 +1,3 @@
-
 import java.io.*;
 import java.net.*;
 import java.applet.*;
@@ -17,7 +16,7 @@ import java.util.*;
  */
 public class SQLQuery
 {
-    private int PORT = <!--|JAVA_SERVER_PORT|-->;
+    private int PORT = -1;
 	private String host;
 	private static final String SEPARATOR = "|";	// The character which will separate fields in the result
 
