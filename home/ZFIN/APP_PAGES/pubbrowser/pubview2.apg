@@ -149,13 +149,110 @@ ERROR -- something bad happened -- no OID passed in!
 
 <?/MIBLOCK>
 
+<p>
 
+<B>ADDITIONAL INFORMATION: </B>
+<ul>
+<?MISQL SQL="
+      select recattrib_data_zdb_id as zdb_id
+	from  record_attribution
+	where recattrib_source_zdb_id = '$OID'
+	and  recattrib_data_zdb_id like 'ZDB-GENE%'
+	union 
+	select mrel_mrkr_2_zdb_id as zdb_id
+	from  record_attribution, marker_relationship
+	where recattrib_source_zdb_id = '$OID'
+	and  recattrib_data_zdb_id = mrel_mrkr_1_zdb_id
+	and mrel_mrkr_2_zdb_id like 'ZDB-GENE-%'		 
+	union 
+	select mrel_mrkr_1_zdb_id as zdb_id
+	from  record_attribution, marker_relationship
+	where recattrib_source_zdb_id = '$OID'
+	and  recattrib_data_zdb_id = mrel_mrkr_2_zdb_id
+	and mrel_mrkr_1_zdb_id like 'ZDB-GENE-%'; ">
+<?/MISQL> 
+<?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
+<li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-geneselect.apg&pubId=$OID&type=gene">Genes</a> &nbsp; ($MI_ROWCOUNT)
+<?/MIVAR> 
+
+<?MISQL SQL="
+	select count(recattrib_data_zdb_id)
+	 from  record_attribution
+	 where recattrib_source_zdb_id = '$OID'
+	  and  (recattrib_data_zdb_id like 'ZDB-EST-%'
+    	     or recattrib_data_zdb_id like 'ZDB-SSLP-%'
+     	     or recattrib_data_zdb_id like 'ZDB-RAPD-%'
+    	     or recattrib_data_zdb_id like 'ZDB-SSR-%'
+    	     or recattrib_data_zdb_id like 'ZDB-STS-%'
+    	     or recattrib_data_zdb_id like 'ZDB-BAC-%'
+    	     or recattrib_data_zdb_id like 'ZDB-PAC-%'
+    	     or recattrib_data_zdb_id like 'ZDB-SNP-%'
+               );
+	">
+<?/MISQL> 
+<?MIVAR COND="$(>,$1,0)">
+<li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-msegselect.apg&pubId=$OID">Molecular Segments</a> &nbsp; ($(FIX,$1))
+<?/MIVAR>
+
+
+<?MISQL SQL="
+	select count(recattrib_data_zdb_id)
+	 from  record_attribution
+	 where recattrib_source_zdb_id = '$OID'
+	  and  recattrib_data_zdb_id like 'ZDB-XPAT-%';
+	">
+<?/MISQL> 
+<?MIVAR COND="$(>,$1,0)">
+<li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&pubId=$OID">Gene Expression Data</a> &nbsp; ($(FIX,$1))
+<?/MIVAR>
+
+
+<?MISQL SQL="
+	select count(distinct lnkgmem_member_zdb_id)
+	  from record_attribution, linkage_member
+	 where recattrib_source_zdb_id = '$OID'
+	  and  recattrib_data_zdb_id like 'ZDB-LINK-%'
+	  and  recattrib_data_zdb_id = lnkgmem_linkage_zdb_id
+	  ;">
+<?/MISQL>
+
+<?MIVAR COND="$(>,$1,0)">
+<li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&pubId=$OID">Mapping Data</a> &nbsp; ($(FIX,$1))
+<?/MIVAR>
+
+
+<?MISQL SQL="
+	select count(recattrib_data_zdb_id)
+	 from  record_attribution
+	 where recattrib_source_zdb_id = '$OID'
+	  and  (recattrib_data_zdb_id like 'ZDB-FISH-%'
+	      or recattrib_data_zdb_id like 'ZDB-LOCUS-%');
+	">
+<?/MISQL> 
+<?MIVAR COND="$(>,$1,0)">
+<li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&pubId=$OID">Phenotype Alleles</a> &nbsp; ($(FIX,$1))
+<?/MIVAR>
+ 
+
+
+<?MISQL SQL="
+	select count(recattrib_data_zdb_id)
+	 from  record_attribution
+	 where recattrib_source_zdb_id = '$OID'
+	  and  recattrib_data_zdb_id like 'ZDB-OEVDISP-%';
+	">
+<?/MISQL> 
+<?MIVAR COND="$(>,$1,0)">
+<li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ortholist.apg&pubId=$OID">Orthology</a> &nbsp;
+<?/MIVAR>
+
+</ul>
 
 <p>
 <B>ERRATA and NOTES:</B> 
 <?MIVAR COND="$(NC,$errata_and_notes,NULL)"><br>  $errata_and_notes  <?/MIVAR>
 <p>
-</table>
+
 
 <form>
 <p>
