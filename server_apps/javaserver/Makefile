@@ -79,7 +79,7 @@ TARGETS = $(SCRIPTSPECIFICS) $(JAVASTAGINGS) $(MICSTAGINGS)
 
 # ---------------  Production Rules  ------------------------------------
 
-.PHONY : all start stop sanitycheck clean clobber depend $(STAGINGDIR)
+.PHONY : all start stop sanitycheck clean clobber depend onetimeonly $(STAGINGDIR)
 
 
 all : $(TARGETDIR) $(TARGETS) $(STAGINGDIR) 
@@ -151,8 +151,7 @@ depend :
 
 
 
-# define one time only target to make the specific files that were intially
-# checked in to CVS, make them generic, and then check them back in to CVS.
+# define one time only target
 
-cvsgeneric :
-	$(foreach GNRC,$(SCRIPTGENERICS) $(JAVAGENERICS), $(CVSGENERIC))
+onetimeonly :
+	$(ONETIMEONLY)

@@ -82,9 +82,8 @@ sanitycheck :
 	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
 
 
-# define one time only target to make the specific files that were intially
-# checked in to CVS, make them generic, and then check them back in to CVS.
+# define one time only target for special uses
 
-cvsgeneric :
-	$(foreach GNRC,$(GENERICS), $(CVSGENERIC))
+onetimeonly :
+	$(ONETIMEONLY)
 	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )

@@ -53,7 +53,7 @@ export JAVAS
 
 # ---------------  Production Rules  ------------------------------------
 
-.PHONY : all sanitycheck clean clobber $(STAGINGDIR)
+.PHONY : all sanitycheck clean clobber onetimeonly $(STAGINGDIR)
 
 
 all : $(TARGETS) $(STAGINGDIR) 
@@ -91,8 +91,7 @@ sanitycheck :
 	$(MAKE) -C $(STAGINGDIR) $@
 
 
-# define one time only target to make the specific files that were intially
-# checked in to CVS, make them generic, and then check them back in to CVS.
+# define one time only target
 
-cvsgeneric :
-	$(foreach GNRC,$(GENERICS), $(CVSGENERIC))
+onetimeonly :
+	$(ONETIMEONLY)

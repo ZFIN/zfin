@@ -44,10 +44,10 @@ TARGETS = $(ANATDICT_FTP_TARGET)
 
 # ---------------  Production Rules  ------------------------------------
 
-.PHONY : all sanitycheck clean clobber $(SUBDIRS)
+.PHONY : all sanitycheck clean clobber onetimeonly
 
 
-all : $(TARGETDIR) $(TARGETS) $(SUBDIRS)
+all : $(TARGETDIR) $(TARGETS)
 
 
 $(TARGETDIR) :
@@ -70,7 +70,7 @@ clobber :			# Remove targets, but not target dir.
 sanitycheck :
 
 
-# define one time only target to make the specific files that were intially
-# checked in to CVS, make them generic, and then check them back in to CVS.
+# define one time only target
 
-cvsgeneric :
+onetimeonly :
+	$(ONETIMEONLY)

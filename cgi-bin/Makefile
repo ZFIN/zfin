@@ -81,10 +81,10 @@ TARGETS = $(SPECIFICTARGETS) $(STATICTARGETS) $(TARGETDIR)/Webdriver
 
 # ---------------  Production Rules  ------------------------------------
 
-.PHONY : all sanitycheck clean clobber $(SUBDIRS)
+.PHONY : all sanitycheck clean clobber onetimeonly
 
 
-all : $(TARGETDIR) $(TARGETS) $(SUBDIRS) 
+all : $(TARGETDIR) $(TARGETS) 
 
 # Create target dir and then file-uploads directory.  It is used by
 # SuperWebdriver to store image files before they are loaded into the DB. 
@@ -103,8 +103,6 @@ $(STATICTARGETS) : $(TARGETDIR)/% : %
 $(TARGETDIR)/Webdriver : $(TARGETDIR)/webdriver
 	(cd $(TARGETDIR); ln -s webdriver Webdriver)
 
-$(SUBDIRS) :
-	$(MAKE) -C $@
 
 
 # ---------------  Maintenance Rules  -----------------------------------
@@ -120,8 +118,7 @@ sanitycheck :
 	$(SPECIFICCHECK) $(STATICS) $(GENERICS)
 
 
-# define one time only target to make the specific files that were intially
-# checked in to CVS, make them generic, and then check them back in to CVS.
+# define one time only target 
 
-cvsgeneric :
-	$(foreach GNRC,$(GENERICS), $(CVSGENERIC))
+onetimeonly :
+	$(ONETIMEONLY)
