@@ -109,7 +109,7 @@ For instance, a paper by John Pat Dole, Richard M.Nixon and Newt Gingrinch would
 <b>NUMBER of authors listed:</b> (must be a number!) 
 <INPUT TYPE=text name=num_auths size=2 maxlength=2 value=$num_auths>
 <p>
-<b>DATE:</b> (format: yyyy-mm-dd) 
+<b>DATE:</b> (format: mm/dd/yyyy) 
 <INPUT TYPE=text name=pub_date size=10 value="$pub_date">
 <p>
 <b>SOURCE:</b> The journal name, volume, number that article appeared in. <br>
