@@ -1,4 +1,4 @@
-#!/private/bin/perl
+#!/private/bin/perl -wT
 #------------------------------------------------------------------------
 #
 # Script to get stats of a file stored in an image.
@@ -26,8 +26,10 @@
 #
 
 use English;
+$ENV{PATH} = "/bin:/local/apps/netpbm/bin";
 
-my $imageFile = shift(@ARGV);
+$ARGV[0] =~  m/([A-Za-z\d\-\_\$\+\=\~\.\,\ \/]+)/;
+my $imageFile = $1;
 
 my $tmpDir     = "/tmp/get_image_stats.$PROCESS_ID";
 my $pnmFile    = "$tmpDir/pnmfile";
@@ -40,7 +42,7 @@ my $retVal = 0;
 my $dirPerms = oct(777);
 mkdir($tmpDir, $dirPerms);
 
-$ENV{PATH} = "/local/apps/netpbm/bin:$ENV{PATH}";
+
 
 system("/local/apps/netpbm/bin/anytopnm $imageFile > $pnmFile 2> /dev/null");
 system("/local/apps/netpbm/bin/pnmfile $pnmFile > $statsFile 2> $stderrFile");
@@ -58,7 +60,7 @@ else {
 
     my $line;
 
-    while (($line = <STATSFILE>) && ! $width) {
+    while ( defined(STATSFILE) && ($line = <STATSFILE>) && ! $width) {
 	if ($line =~ / by /) {
 	    my @tokens1 = split(/,/, $line);
 	    my @tokens2 = split(/\s+/, pop(@tokens1));
