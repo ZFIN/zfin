@@ -36,26 +36,28 @@ create dba function "informix".regen_fishsearch()
     -- Create a new fishsearch table under a temp name, loaded with results 
     -- of a huge join across the underlying tables.
 
-    create table fishsearch_new (
-      fish_id		varchar (50), 
-      name		varchar (80), 
-      line_type		varchar (30),
-      abbrev		varchar (20), 
-      phenotype		html, 
-      chrom_num		varchar(3),
-      chrom_change	varchar (30), 
-      comments		lvarchar, 
-      allele		varchar (20),
-      mutagen		varchar (20),
-      pheno_keywords	lvarchar, 
-      locus		varchar (50),
-      gene_id		varchar (50), 
-      gene_abbrev		varchar (15),
-      alt_zdb_id		varchar (50),
-
-      primary key (fish_id)
-    )
-    fragment by round robin in zfindbs_a, zfindbs_b, zfindbs_c;
+    create table fishsearch_new 
+      (
+	fish_id		varchar (50), 
+	name		varchar (80), 
+	line_type	varchar (30),
+	abbrev		varchar (20), 
+	phenotype	html, 
+	chrom_num	varchar(3),
+	chrom_change	varchar (30), 
+	comments	lvarchar, 
+	allele		varchar (20),
+	mutagen		varchar (20),
+	pheno_keywords	lvarchar, 
+	locus		varchar (50),
+	gene_id		varchar (50), 
+	gene_abbrev	varchar (15),
+	alt_zdb_id	varchar (50)
+      )
+      fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3  
+      PUT phenotype in (smartdbs1)
+      extent size 1024 next size 1024 lock mode page;
+    revoke all on fish_search from "public";
 
     -- This can take a few minutes, so be patient.
 
@@ -126,9 +128,35 @@ create dba function "informix".regen_fishsearch()
       end exception;
 
       rename table fishsearch_new to fish_search;
-      create index fish_search_locus_index on fish_search (locus);
-      create index fish_search_alt_zdb_id_index on fish_search (alt_zdb_id);
-      create index fish_search_abr on fish_search (abbrev);
+
+      -- primary key
+
+      create unique index fish_search_primary_key_index
+	on fish_search (fish_id)
+	fillfactor 100
+	in idxdbs3;
+      alter table fish_search add constraint
+	primary key (fish_id)
+	  constraint fish_search_primary_key;
+
+      -- other indexes
+
+      create index fish_search_abbrev_index
+	on fish_search (abbrev)
+	fillfactor 100
+	in idxdbs3;
+
+      create index fish_search_alt_zdb_id_index 
+	on fish_search (alt_zdb_id)
+	fillfactor 100
+	in idxdbs3;
+
+      create index fish_search_locus_index 
+	on fish_search (locus)
+	fillfactor 100
+	in idxdbs3;
+
+      grant select on fish_search to "public";
 
     end -- Local exception handler
 

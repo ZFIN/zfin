@@ -105,27 +105,34 @@ create dba function "informix".regen_genomics() returning integer
       drop table panels_new;
     end if
 
-    create table panels_new (
-      zdb_id		varchar(50), 
-      entry_time		datetime year to fraction,
-      name		varchar(50), 
-      abbrev		varchar(10), 
-      panel_date		date,
-      producer		varchar(50), 
-      owner		varchar(50), 
-      source		varchar(50),
-      comments		clob, 
-      ptype		varchar(50), 
-      status		varchar(10),
-      disp_order		integer,
-      metric		varchar(5),
-      -- can't name constraints because they'll conflict with 
-      -- constraints of production version of table.
-      primary key (zdb_id),
-      unique (name),
-      unique (abbrev)
-    )
-    fragment by round robin in zfindbs_a, zfindbs_b, zfindbs_c;
+    create table panels_new 
+      (
+	zdb_id		varchar(50), 
+	entry_time	datetime year to fraction,
+	name		varchar(50), 
+	abbrev		varchar(10), 
+	panel_date	date,
+	producer	varchar(50), 
+	owner		varchar(50), 
+	source		varchar(50),
+	comments	clob, 
+	ptype		varchar(50), 
+	status		varchar(10),
+	disp_order	integer,
+	metric		varchar(5)
+	-- can't name constraints (yet) because they'll conflict with 
+	-- constraints of production version of table.
+      )
+      in tbldbs2
+      PUT comments in (smartdbs1) (LOG)
+      extent size 8 next size 8 lock mode page;
+    revoke all on panels_new from "public";
+
+    -- create temporary index.
+
+    create unique index panels_new_primary_key_index
+      on panels_new (zdb_id)
+      in idxdbs3;
 
     insert into panels_new
       select zdb_id, entry_time, panel_name, panel_abbrev, panel_date,
@@ -149,26 +156,29 @@ create dba function "informix".regen_genomics() returning integer
       drop table paneled_m_new;
     end if
 
-    create table paneled_m_new (
-      zdb_id		varchar(50), 
-      mname		varchar(80),
-      abbrev		varchar(20), 
-      mtype		varchar(10), 
-      OR_lg		varchar(2),
-      lg_location		numeric(8,2), 
-      metric		varchar(5), 
-      target_abbrev	varchar(10),
-      target_id		varchar(50), 
-      private		boolean, 
-      owner		varchar(50),
-      scores		varchar(200), 
-      framework_t		boolean, 
-      entry_date		datetime year to fraction, 
-      map_name		varchar(30)
+    create table paneled_m_new 
+      (
+	zdb_id		varchar(50), 
+	mname		varchar(80),
+	abbrev		varchar(20), 
+	mtype		varchar(10), 
+	OR_lg		varchar(2),
+	lg_location	numeric(8,2), 
+	metric		varchar(5), 
+	target_abbrev	varchar(10),
+	target_id	varchar(50), 
+	private		boolean, 
+	owner		varchar(50),
+	scores		varchar(200), 
+	framework_t	boolean, 
+	entry_date	datetime year to fraction, 
+	map_name	varchar(30)
 
-      -- Paneled_markers does not have a primary key.
-    )
-    fragment by round robin in zfindbs_a, zfindbs_b, zfindbs_c;
+	-- Paneled_markers does not have a primary key.
+      )
+      fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
+      extent size 2048 next size 2048 lock mode page;
+    revoke all on paneled_m_new from "public";
 
     insert into paneled_m_new
       select mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_type, mm.OR_lg,
@@ -210,10 +220,6 @@ create dba function "informix".regen_genomics() returning integer
     --	      'NA', 'f'::boolean, entry_date 
     --     from zmap_pub_pan_mark;	
 
-
-    -- Create a temporary index
-    create index paneled_m_new_zdb_id_index 
-      on paneled_m_new (zdb_id);
     update paneled_m_new 
       set map_name = NULL 
       where map_name = abbrev;
@@ -227,20 +233,28 @@ create dba function "informix".regen_genomics() returning integer
       drop table public_paneled_m_new;
     end if
 
-    create table public_paneled_m_new (
-      zdb_id		varchar(50),
-      abbrev		varchar(20), 
-      mtype		varchar(10), 
-      OR_lg		varchar(2),
-      lg_location		numeric(8,2), 
-      metric		varchar(5), 
-      target_abbrev	varchar(10),
-      mghframework	boolean,
-      target_id		varchar(50)
+    create table public_paneled_m_new 
+      (
+	zdb_id		varchar(50),
+	abbrev		varchar(20), 
+	mtype		varchar(10), 
+	OR_lg		varchar(2),
+	lg_location		numeric(8,2), 
+	metric		varchar(5), 
+	target_abbrev	varchar(10),
+	mghframework	boolean,
+	target_id		varchar(50)
 
-      -- public_paneled_markers does not have a primary key.
-    )
-    fragment by round robin in zfindbs_a, zfindbs_b, zfindbs_c;
+	-- public_paneled_markers does not have a primary key.
+      )
+      fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3  
+      extent size 1024 next size 1024 lock mode page;
+    revoke all on public_paneled_m_new from "public";
+
+    -- Create a temporary index
+    create index public_paneled_m_new_zdb_id_index 
+      on public_paneled_m_new (zdb_id)
+      in idxdbs3;
 
     insert into public_paneled_m_new
       select mrkr_zdb_id, mrkr_abbrev, mrkr_type, mm.OR_lg, mm.lg_location,
@@ -318,11 +332,6 @@ create dba function "informix".regen_genomics() returning integer
 		  and m1.marker_id = m2.marker_id );
 
 
-    -- Create a temporary index
-    create index public_paneled_m_new_zdb_id_index 
-      on public_paneled_m_new (zdb_id);
-
-
 
 
     ----------------  all_map_names;
@@ -358,24 +367,29 @@ create dba function "informix".regen_genomics() returning integer
       drop table all_m_names_new;
     end if
 
-    create table all_m_names_new (
-      -- ortho_name is 120 characters long
-      -- mrkr_name, locus_name, db_link.acc_num, and all the abbrev 
-      -- columns are all 80 characters or less
-      allmapnm_name varchar (120) 
-	not null
-	check (allmapnm_name = lower(allmapnm_name)),
+    create table all_m_names_new 
+      (
+	-- ortho_name is 120 characters long
+	-- mrkr_name, locus_name, db_link.acc_num, and all the abbrev 
+	-- columns are all 80 characters or less
+	allmapnm_name		varchar (120) 
+	  check (allmapnm_name = lower(allmapnm_name)),
+	allmapnm_zdb_id		varchar(50),
+	allmapnm_significance	integer
+	  not null
+      )
+      fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3  
+      extent size 1024 next size 1024 lock mode page;
+    revoke all on all_m_names_new from "public";
 
-      allmapnm_zdb_id varchar(50)
-	not null,
+    -- create temporary indexes & primary key
 
-      allmapnm_significance		integer
-	not null,
-
+    create unique index all_m_names_new_primary_key_index
+      on all_m_names_new (allmapnm_name, allmapnm_zdb_id)
+      in idxdbs1;
+    alter table all_m_names_new add constraint
       primary key (allmapnm_name, allmapnm_zdb_id)
-    )
-    fragment by round robin in zfindbs_a, zfindbs_b, zfindbs_c;
-
+      constraint all_m_names_new_primary_key;
 
     -- Get name, abbrev, and aliases from marker, fish, and locus
     -- Finally get accession numbers from db_link
@@ -629,6 +643,7 @@ create dba function "informix".regen_genomics() returning integer
 
     --trace on;
 
+
     ----------------  all_markers;
 
     if (exists (select *
@@ -637,15 +652,16 @@ create dba function "informix".regen_genomics() returning integer
       drop table all_m_new;
     end if
 
-    create table all_m_new (
-      zdb_id		varchar(50), 
-      mname		varchar (80),
-      mtype		varchar(10), 
-      abbrev		varchar(20),
-
-      primary key (zdb_id)
-    )
-    fragment by round robin in zfindbs_a, zfindbs_b, zfindbs_c;
+    create table all_m_new 
+      (
+	zdb_id		varchar(50), 
+	mname		varchar (80),
+	mtype		varchar(10), 
+	abbrev		varchar(20)
+      )
+      fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3  
+      extent size 512 next size 512 lock mode page;
+    revoke all on all_m_new from "public";
 
     insert into all_m_new
 	(zdb_id, mname, mtype, abbrev)
@@ -669,17 +685,18 @@ create dba function "informix".regen_genomics() returning integer
       drop table total_l_new_copy;
     end if
 
-    create table total_l_new_copy (
-      from_id		varchar(50), 
-      to_id		varchar(50), 
-      dist		numeric(8,2),
-      LOD			numeric(8,2), 
-      owner		varchar(50), 
-      private		boolean,
-
-      primary key (from_id, to_id)
-    )
-    fragment by round robin in zfindbs_a, zfindbs_b, zfindbs_c;
+    create table total_l_new_copy 
+      (
+	from_id		varchar(50), 
+	to_id		varchar(50), 
+	dist		numeric(8,2),
+	LOD		numeric(8,2), 
+	owner		varchar(50), 
+	private		boolean
+      )
+      fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3  
+      extent size 32 next size 32 lock mode page;
+    revoke all on total_l_new_copy from "public";
 
     insert into total_l_new_copy
       select m1_id as from_id, m2_id as to_id, dist, LOD, owner, private
@@ -698,23 +715,30 @@ create dba function "informix".regen_genomics() returning integer
       drop table all_l_m_new;
     end if
 
-    create table all_l_m_new (
-      alnkgmem_linkage_zdb_id varchar(50),
-      alnkgmem_member_zdb_id  varchar(50),
-      alnkgmem_member_name    varchar(80),
-      alnkgmem_member_abbrev  varchar(10),
-      alnkgmem_marker_type    varchar(10),
-      alnkgmem_source_zdb_id  varchar(50),
-      alnkgmem_private	  boolean,
-      alnkgmem_comments	  lvarchar,
-      alnkgmem_num_auths      integer,
-      alnkgmem_source_name    varchar(40),
-      alnkgmem_or_lg	  varchar(2),
-      alnkgmem_num_members    integer,
+    create table all_l_m_new 
+      (
+	alnkgmem_linkage_zdb_id varchar(50),
+	alnkgmem_member_zdb_id  varchar(50),
+	alnkgmem_member_name    varchar(80),
+	alnkgmem_member_abbrev  varchar(10),
+	alnkgmem_marker_type    varchar(10),
+	alnkgmem_source_zdb_id  varchar(50),
+	alnkgmem_private	boolean,
+	alnkgmem_comments	lvarchar,
+	alnkgmem_num_auths      integer,
+	alnkgmem_source_name    varchar(40),
+	alnkgmem_or_lg		varchar(2),
+	alnkgmem_num_members    integer
+      )
+      fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3  
+      extent size 128 next size 128 lock mode page;
+    revoke all on all_l_m_new from "public";
 
-      primary key (alnkgmem_linkage_zdb_id, alnkgmem_member_zdb_id)
-    )
-    fragment by round robin in zfindbs_a , zfindbs_b , zfindbs_c;
+    -- create temporary index
+
+    create index all_l_m_new_member_zdb_id_index
+      on all_l_m_new (alnkgmem_member_zdb_id)
+      in idxdbs3;
 
     insert into all_l_m_new
       select lnkg_zdb_id, lnkgmem_member_zdb_id, mname, abbrev, mtype,
@@ -778,25 +802,29 @@ create dba function "informix".regen_genomics() returning integer
       drop table all_m_m_new;
     end if
 
-    create table all_m_m_new (
-      zdb_id varchar(50), 
-      mname varchar(80),
-      abbrev varchar(20), 
-      mtype varchar(10), 
-      OR_lg varchar(2),
-      lg_location numeric(8,2) ,
-      target_abbrev varchar(10),
-      target_id varchar(50), 
-      private boolean ,
-      owner varchar(50),
-      dist numeric(8,2), 
-      metric varchar(5), 
-      m2_type varchar(10),
-      entry_date datetime year to fraction
+    create table all_m_m_new 
+      (
+	zdb_id		varchar(50), 
+	mname		varchar(80),
+	abbrev		varchar(20), 
+	mtype		varchar(10), 
+	OR_lg		varchar(2),
+	lg_location	numeric(8,2) ,
+	target_abbrev	varchar(10),
+	target_id	varchar(50), 
+	private		boolean ,
+	owner		varchar(50),
+	dist		numeric(8,2), 
+	metric		varchar(5), 
+	m2_type		varchar(10),
+	entry_date	datetime year to fraction
 
       -- all_mapped_markers does not have a primary key.
-    )
-    fragment by round robin in zfindbs_a, zfindbs_b, zfindbs_c;
+      )
+      fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3  
+      extent size 2048 next size 2048 lock mode page;
+    revoke all on all_m_m_new from "public";
+
 
     insert into all_m_m_new
       select zdb_id, mname, abbrev, mtype, OR_lg, lg_location, target_abbrev,
@@ -824,24 +852,28 @@ create dba function "informix".regen_genomics() returning integer
       drop table all_g_new;
     end if
 
-    create table all_g_new (
-      gene_name		varchar (80), 
-      lg_location		numeric(8,2), 
-      metric		varchar(5),
-      zdb_id		varchar(50), 
-      OR_lg		varchar(2), 
-      panel_id		varchar(50),
-      panel_abbrev	varchar(10),
-      abbrev		varchar(20),
-      private		boolean,
-      owner		varchar(50),
-      entry_date		datetime year to fraction, 
-      locus_zdb_id	varchar (50),
-      locus_name		varchar (80)
+    create table all_g_new
+      (
+	gene_name	varchar (80), 
+	lg_location	numeric(8,2), 
+	metric		varchar(5),
+	zdb_id		varchar(50), 
+	OR_lg		varchar(2), 
+	panel_id	varchar(50),
+	panel_abbrev	varchar(10),
+	abbrev		varchar(20),
+	private		boolean,
+	owner		varchar(50),
+	entry_date	datetime year to fraction, 
+	locus_zdb_id	varchar (50),
+	locus_name	varchar (80)
 
-      -- all_genes does not have a primary key
-    )
-    fragment by round robin in zfindbs_a, zfindbs_b, zfindbs_c;
+	-- all_genes does not have a primary key
+      )
+      fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3  
+      extent size 256 next size 256 lock mode page;
+    revoke all on all_g_new from "public";
+
 
     -- get genes that are mapped
 
@@ -910,22 +942,25 @@ create dba function "informix".regen_genomics() returning integer
       drop table mapped_g_new;
     end if
 
-    create table mapped_g_new (
-      zdb_id		varchar(50) not null,
-      gene_name		varchar(80),
-      abbrev		varchar(15),
-      or_lg		varchar(2),
-      lg_location		decimal(8,2),
-      panel_abbrev	varchar(10),
-      panel_id		varchar(50),
-      private		boolean,
-      owner		varchar(50),
-      metric		varchar(5),
-      entry_date		datetime year to fraction(3),
-      locus_zdb_id	varchar(50),
-      locus_name		varchar(80)
-    )
-    fragment by round robin in zfindbs_a , zfindbs_b , zfindbs_c;
+    create table mapped_g_new 
+      (
+	zdb_id		varchar(50) not null,
+	gene_name	varchar(80),
+	abbrev		varchar(15),
+	or_lg		varchar(2),
+	lg_location	decimal(8,2),
+	panel_abbrev	varchar(10),
+	panel_id	varchar(50),
+	private		boolean,
+	owner		varchar(50),
+	metric		varchar(5),
+	entry_date	datetime year to fraction(3),
+	locus_zdb_id	varchar(50),
+	locus_name	varchar(80)
+      )
+      fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3  
+      extent size 128 next size 128 lock mode page;
+    revoke all on mapped_g_new from "public";
 
     insert into mapped_g_new
 	(zdb_id, gene_name, abbrev, or_lg, lg_location, panel_abbrev, panel_id,
@@ -989,14 +1024,15 @@ create dba function "informix".regen_genomics() returning integer
       drop table sources_new;
     end if
 
-    create table sources_new (
-      zdb_id		varchar(50), 
-      name		varchar(150), 
-      address		lvarchar,
-
-      primary key (zdb_id)
-    )
-    fragment by round robin in zfindbs_a, zfindbs_b, zfindbs_c;
+    create table sources_new 
+      (
+	zdb_id		varchar(50), 
+	name		varchar(150), 
+	address		lvarchar
+      )
+      fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3  
+      extent size 512 next size 512 lock mode page;
+    revoke all on sources_new from "public";
 
     insert into sources_new
       select zdb_id, full_name, address
@@ -1043,6 +1079,8 @@ create dba function "informix".regen_genomics() returning integer
     end -- local exception handler for dropping of original tables
 
     -- Now rename our new tables to have the permanent names.
+    -- Also define primary keys, alternate keys, and other indexes for newly
+    -- created tables.
 
     -- This also requires dropping and recreating any indexes that were created
     -- with the temporary names.  Informix does not support renaming existing 
@@ -1063,57 +1101,251 @@ create dba function "informix".regen_genomics() returning integer
 	raise exception esql, eisam;
       end exception;
 
+
+      -- ===== PANELS =====
+
       rename table panels_new to panels;
 
+      -- primary key
+
+      drop index panels_new_primary_key_index;
+      create unique index panels_primary_key_index
+	on panels (zdb_id)
+	fillfactor 100
+	in idxdbs3;
+      alter table panels add constraint
+	primary key (zdb_id)
+	  constraint panels_primary_key;
+
+      -- alternate keys
+
+      create unique index panels_name_index
+	on panels (name)
+	fillfactor 100
+	in idxdbs3;
+      alter table panels add constraint
+	unique (name)
+	  constraint panels_name_unique;
+      create unique index panels_abbrev_index
+	on panels (abbrev)
+	fillfactor 100
+	in idxdbs3;
+      alter table panels add constraint
+	unique (abbrev)
+	  constraint panels_abbrev_unique;
+
+      grant select on panels to "public";
+
+
+      -- ===== PANELED_MARKERS =====
+
       rename table paneled_m_new to paneled_markers;
-      drop index paneled_m_new_zdb_id_index;
+
+      -- other indexes
+
+      create index paneled_markers_mtype_index
+	on paneled_markers (mtype) 
+	fillfactor 100
+	in idxdbs3;
+
+      create index paneled_markers_mname_index 
+	on paneled_markers (mname)
+	fillfactor 100
+	in idxdbs3;
+
+      create index paneled_markers_target_id_index
+	on paneled_markers (target_id) 
+	fillfactor 100
+	in idxdbs3;
+
       create index paneled_markers_zdb_id_index 
-	on paneled_markers (zdb_id);
-      create index paneled_m_name_i 
-	on paneled_markers (mname);
-      create index paneled_m_mtype_i 
-	on paneled_markers (mtype);
-      create index paneled_m_tid_i 
-	on paneled_markers (target_id);
+	on paneled_markers (zdb_id)
+	fillfactor 100
+	in idxdbs3;
+
+      grant select on paneled_markers to "public";
+
+
+      -- ===== PUBLIC_PANELED_MARKERS =====
 
       rename table public_paneled_m_new to public_paneled_markers;
-      drop index public_paneled_m_new_zdb_id_index;
-      create index public_paneled_markers_zdb_id_index on 
-	public_paneled_markers (zdb_id);
-      create index public_paneled_m_mtype_i 
-	on public_paneled_markers (mtype);
-      -- to speed up map generation	
-      create index public_paneled_markers_target_abbrev_etc_index
-	on public_paneled_markers (target_abbrev, or_lg, mtype, zdb_id);
 
+      -- other indexes
+
+      create index public_paneled_markers_mtype_index 
+	on public_paneled_markers (mtype)
+	fillfactor 100
+	in idxdbs3;
+
+      -- to speed up map generation	
+      create index public_paneled_markers_target_abbrev_etc_index 
+	on public_paneled_markers (target_abbrev,or_lg,mtype,zdb_id)
+	fillfactor 100
+	in idxdbs3;
+
+      drop index public_paneled_m_new_zdb_id_index;
+      create index public_paneled_markers_zdb_id_index 
+	on public_paneled_markers (zdb_id)
+	fillfactor 100
+	in idxdbs3;
+
+      grant select on public_paneled_markers to "public";
+
+
+      -- ===== ALL_MAP_NAMES =====
 
       rename table all_m_names_new to all_map_names;
+
+      -- primary key
+
+      alter table all_map_names 
+        drop constraint all_m_names_new_primary_key;
+      drop index all_m_names_new_primary_key_index;
+      create unique index all_map_names_primary_key_index
+	on all_map_names (allmapnm_name, allmapnm_zdb_id)
+	fillfactor 100
+	in idxdbs1;
+      alter table all_map_names add constraint
+	primary key (allmapnm_name, allmapnm_zdb_id)
+	constraint all_map_names_primary_key;
+
+      -- other indexes
+
       create index allmapnm_zdb_id_index 
-	on all_map_names (allmapnm_zdb_id);
+        on all_map_names (allmapnm_zdb_id)
+	fillfactor 100
+	in idxdbs4;
+
+      grant select on all_map_names to "public";
+
+
+      -- ===== ALL_MARKERS =====
 
       rename table all_m_new to all_markers;
 
+      -- primary key
+
+      create unique index all_markers_primary_key_index
+	on all_markers (zdb_id)
+	fillfactor 100
+	in idxdbs3;
+      alter table all_markers add constraint
+	primary key (zdb_id)
+	  constraint all_markers_primary_key;
+
+      grant select on all_markers to "public";
+
+
+      -- ===== TOTAL_LINKS_COPY =====
+
       rename table total_l_new_copy to total_links_copy;
+
+      -- primary key
+
+      create unique index total_links_copy_primary_key_index
+	on total_links_copy (from_id,to_id)
+	fillfactor 100
+	in idxdbs3;
+      alter table total_links_copy add constraint
+	primary key (from_id,to_id)
+	  constraint total_links_copy_primary_key;
+
+      grant select on total_links_copy to "public";
+
+
+      -- ===== ALL_LINKED_MEMBERS =====
 
       rename table all_l_m_new to all_linked_members;
 
+      -- primary key
+
+      create unique index all_linked_members_primary_key_index
+	on all_linked_members (alnkgmem_linkage_zdb_id,alnkgmem_member_zdb_id)
+	fillfactor 100
+	in idxdbs3;
+      alter table all_linked_members add constraint
+	primary key (alnkgmem_linkage_zdb_id,alnkgmem_member_zdb_id)
+	  constraint all_linked_members_primary_key;
+
+      -- other indexes
+
+      drop index all_l_m_new_member_zdb_id_index;
+      create index alnkgmem_member_zdb_id_index
+	on all_linked_members (alnkgmem_member_zdb_id)
+	fillfactor 100
+	in idxdbs3;
+
+      grant select on all_linked_members to "public";
+
+
+      -- ===== ALL_MAPPED_MARKERS =====
+
       rename table all_m_m_new to all_mapped_markers;
+
+      -- other indexes
+
+      create index all_mapped_markers_mname_index
+	on all_mapped_markers (mname)
+	fillfactor 100
+	in idxdbs3;
+
+      create index all_mapped_markers_mtype_index
+	on all_mapped_markers (mtype)
+	fillfactor 100
+	in idxdbs3;
+
       create index all_mapped_markers_zdb_id_index 
-	on all_mapped_markers (zdb_id);
-      create index all_map_mark_n_i 
-	on all_mapped_markers (mname);
-      create index all_map_mark_t_i 
-	on all_mapped_markers (mtype);
+	on all_mapped_markers (zdb_id)
+	fillfactor 100
+	in idxdbs3;
+
+      grant select on all_mapped_markers to "public";
+
+
+      -- ===== ALL_GENES =====
 
       rename table all_g_new to all_genes;
+
+      -- other indexes
+
       create index all_genes_zdb_id_index 
-	on all_genes(zdb_id);
+	on all_genes (zdb_id)
+	fillfactor 100
+	in idxdbs3;
+
+      grant select on all_genes to "public";
+
+
+      -- ===== MAPPED_GENES =====
 
       rename table mapped_g_new to mapped_genes;
+
+      -- other indexes
+
       create index mapped_genes_zdb_id_index 
-	on mapped_genes (zdb_id);	       
+	on mapped_genes (zdb_id)
+	fillfactor 100
+	in idxdbs1;
+
+      grant select on mapped_genes to "public";
+
+
+      -- ===== SOURCES =====
 
       rename table sources_new to sources;
+
+      -- primary key
+
+      create unique index sources_primary_key_index
+	on sources (zdb_id)
+	fillfactor 100
+	in idxdbs1;
+      alter table sources add constraint
+	primary key (zdb_id)
+	  constraint sources_primary_key;
+
+      grant select on sources to "public";
+
 
       -- Last, create the view
 
