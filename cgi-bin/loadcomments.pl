@@ -261,7 +261,7 @@ for($i=0; $i <= scalar(@commentsOld); $i++)
                            and xpatstg_end_stg_zdb_id = \"$end_stg_zdb\";")
 	  or die "Cannot prepare statement: $DBI::errstr\n";
 	$queryDB->execute;
-	$query_results = $queryDB->fetchrow();
+	#$query_results = $queryDB->fetchrow();
 	$queryDB->finish;
 	
 	#output error message if Informix complains
