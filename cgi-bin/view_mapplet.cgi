@@ -955,7 +955,7 @@
     
     #table public_paneled_markers  (
     # 0         1) zdb_id varchar(50),
-    #### 1      2) mname varchar(80),
+    #### 1      2) mname varchar(120),
     # 2         3) abbrev varchar(10),
     # 3         4) mtype varchar(10),
     # 4         5) or_lg integer,
