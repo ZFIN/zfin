@@ -1,0 +1,27 @@
+#
+# Nightly backup. This won't work on bionix.  We don't care.
+25 23 * * * /private/bin/onback.pl >> /research/zfin/chromix/backup/onback.cronout 2>&1
+#
+#  weekly checklinks run, Sunday afternoon is least use time for ZFIN.
+13 15 * * 0 <!--|ROOT_PATH|-->/server_apps/WebSiteTools/run.checklinks
+#
+# weekly update of RefSeq and other links
+01 22 * * 6 <!--|ROOT_PATH|-->/server_apps/data_transfer/RefSeq/refseq.pl> <!--|ROOT_PATH|-->/server_apps/data_transfer/RefSeq/refseq.log 2>&1
+#
+# weekly dump for MEOW database
+15 23 * * 6 <!--|ROOT_PATH|-->/server_apps/data_transfer/MEOW/meow.pl
+#
+# weekly dump from John P. for Sanger Center data
+15 01 * * 5 <!--|ROOT_PATH|-->/server_apps/data_transfer/JohnP/johnp.pl
+#
+# unload production at 11:45 PM mon-fri
+45 23 * * 1,2,3,4,5 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/unload_production.sh
+#
+# check if production (and javaserver) is up tries to fix javaserver
+0,7,15,22,30,37,45,52 *  * * * <!--|ROOT_PATH|-->/server_apps/WebSiteTools/signsoflife.sh
+#
+# Run data validation script.  There are daily, weekly, monthly, yearly runs
+01 19 * * * <!--|ROOT_PATH|-->/server_apps/DB_maintenance/validatedata.pl -d -o <!--|DB_NAME|--> 
+01 20 * * 6 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/validatedata.pl -w <!--|DB_NAME|-->
+01 21 1 * * <!--|ROOT_PATH|-->/server_apps/DB_maintenance/validatedata.pl -m <!--|DB_NAME|-->
+01 22 1 1 * <!--|ROOT_PATH|-->/server_apps/DB_maintenance/validatedata.pl -y <!--|DB_NAME|-->
