@@ -105,16 +105,19 @@ Startframes.apg will pass this variables on to the select form.  -->
 
 <?/MIBLOCK> <!-- ends cond any constraints specified -->
 
-<?MIVAR NAME=$order_clause>order by abbrev,mtype<?/MIVAR>
+<?MIVAR NAME=$order_clause>order by abbrev_order ,mtype<?/MIVAR>
+
 
 <?MIBLOCK COND="$(NXST,$plinks)">
   <?MIVAR NAME=$target_table>paneled_markers a <?/MIVAR>
-  <?MIVAR NAME=$insert_ending><?/MIVAR>
-  <?MIVAR NAME=$select_ending>, NULL::numeric(6,2) as dist <?/MIVAR>
-<?MIELSE>
-  <?MIVAR NAME=$insert_ending>, dist<?/MIVAR>
-  <?MIVAR NAME=$select_ending>, dist<?/MIVAR>
+  <?MIVAR NAME=$insert_ending>, panldmrkr_abbrev_order as abbrev_order<?/MIVAR>
+  <?MIVAR NAME=$select_ending>, panldmrkr_abbrev_order as abbrev_order, NULL::numeric(6,2) as dist <?/MIVAR>
+  <?MIVAR NAME=$tmptable_select_ending>, abbrev_order, NULL::numeric(6,2) as dist  <?/MIVAR>	
+<?MIELSE>                      
+  <?MIVAR NAME=$insert_ending>, allmapmrkr_abbrev_order as abbrev_order, dist<?/MIVAR>
+  <?MIVAR NAME=$select_ending>, allmapmrkr_abbrev_order as abbrev_order, dist <?/MIVAR>
   <?MIVAR NAME=$target_table> all_mapped_markers a <?/MIVAR>
+  <?MIVAR NAME=$tmptable_select_ending>, abbrev_order, dist  <?/MIVAR>
 <?/MIBLOCK>
 
 <!-- NOW JUST RETRIEVE AND DISPLAY ALL MATCHING ENTRIES. -->
@@ -229,7 +232,7 @@ Startframes.apg will pass this variables on to the select form.  -->
 
     <!--- Query Database --->
     <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
-      select distinct abbrev, mtype
+      select distinct abbrev, mtype, abbrev_order
 	from markerlister_temp
 	$order_clause;">
 
@@ -254,7 +257,7 @@ Startframes.apg will pass this variables on to the select form.  -->
 	<?MISQL SQL="
 	  select abbrev, mtype, lg_location, zdb_id, OR_lg,
 	         target_id, target_abbrev, private, metric, 
-		 entry_day, entry_month, entry_year $select_ending
+		 entry_day, entry_month, entry_year $tmptable_select_ending
 	    from markerlister_temp
 	    where abbrev = '$marker_abbrev'
 	      and mtype = '$mtype'
@@ -270,8 +273,8 @@ Startframes.apg will pass this variables on to the select form.  -->
 	  <?MIVAR NAME=$entry_day>$10<?/MIVAR>
 	  <?MIVAR NAME=$entry_month>$11<?/MIVAR>
 	  <?MIVAR NAME=$entry_year>$12<?/MIVAR>
-	  <?MIVAR NAME=$dist>$13<?/MIVAR>
-
+	  <?MIVAR NAME=$dist>$14<?/MIVAR>
+	
 	  <?MIVAR NAME=$viewer>aa-markerview.apg<?/MIVAR>
 
 	  <?MIBLOCK COND="$(NC,$entry_month,"")">
