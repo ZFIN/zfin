@@ -904,7 +904,7 @@ create dba function "informix".regen_genomics() returning integer
 	where mm.marker_id = mrkr_zdb_id 
 	  and mm.refcross_id = pn.zdb_id 
 	  and mrkr_zdb_id = locus.cloned_gene
-	  and mrkr_type = 'GENE';
+	  and mrkr_type in ('GENE','EST');
 
     -- mapped by independent linkages
     insert into all_g_new
@@ -929,7 +929,7 @@ create dba function "informix".regen_genomics() returning integer
 	     outer locus x2 
 	where x1.alnkgmem_member_zdb_id = x0.mrkr_zdb_id
 	  AND x0.mrkr_zdb_id = x2.cloned_gene
-          and x0.mrkr_type = 'GENE';
+          and x0.mrkr_type in ('GENE','EST');
 
 
     -- get genes that aren't mapped
