@@ -951,45 +951,54 @@ Datablade documentation.
         <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
        
 	      <TR><TD><b>Gene expression patterns:</b></TD></TR>
-        <?/MIBLOCK>	
+        <?/MIBLOCK> 
+	<?MICOMMENT>  === get assay name === <?/MICOMMENT>	
 	<?MISQL SQL="
-	    SELECT distinct xpat_assay_name, stg_hours_start, stg_name, stg_zdb_id
-	      FROM expression_pattern, expression_pattern_stage, stage
-	      WHERE xpat_zdb_id = '$XPAT_ZDB_ID'
-	        AND xpat_zdb_id = xpatstg_xpat_zdb_id
-	        AND xpatstg_start_stg_zdb_id = stg_zdb_id
-	      ORDER by stg_hours_start
-	       ;">
-	    
-	    <?MIVAR NAME=$XPAT_ASSAY_NAME>$1<?/MIVAR>
-	    <?MIVAR NAME=$XPAT_start_time>$2<?/MIVAR>
-	    <?MIVAR NAME=$XPAT_STAGE1>$3<?/MIVAR>
-	    <?MIVAR NAME=$XPAT_STAGE1_ID>$4<?/MIVAR>
-	    <?MIVAR NAME=$XPAT_STAGE2><?/MIVAR>
-	    <?MIVAR NAME=$XPAT_end_time><?/MIVAR>
-          <?/MISQL>
-	  <?MISQL SQL="
-	      SELECT s2.stg_name, s2.stg_hours_end
-		FROM stage s1, stage s2, expression_pattern_stage
-		WHERE '$XPAT_ZDB_ID' = xpatstg_xpat_zdb_id
-		  AND '$XPAT_STAGE1_ID' = s1.stg_zdb_id
-		  AND xpatstg_end_stg_zdb_id = s2.stg_zdb_id
-		ORDER by s2.stg_hours_end
-	      ;">
+		SELECT xpat_assay_name
+		  FROM expression_pattern
+		 WHERE xpat_zdb_id = '$XPAT_ZDB_ID';">
+
+	   <?MIVAR NAME=$XPAT_ASSAY_NAME>$1<?/MIVAR>
+	<?/MISQL>
+
+	<?MICOMMENT>  === get xpat stage window === <?/MICOMMENT>
+	<?MISQL SQL="
+	     SELECT MIN(s1.stg_hours_start), MAX(s2.stg_hours_end)
+	       FROM expression_pattern_stage, stage s1, stage s2
+	      WHERE xpatstg_xpat_zdb_id = '$XPAT_ZDB_ID'
+	        AND xpatstg_start_stg_zdb_id = s1.stg_zdb_id
+	        AND xpatstg_end_stg_zdb_id = s2.stg_zdb_id; ">
+
+	    <?MIVAR NAME=$XPAT_start_time>$1<?/MIVAR>
+	    <?MIVAR NAME=$XPAT_end_time>$2<?/MIVAR>
+        <?/MISQL>
+
+	<?MICOMMENT>  === get stage names === <?/MICOMMENT>
+	<?MISQL SQL="
+	      SELECT stg_name
+		FROM stage 
+	       WHERE stg_hours_start = $XPAT_start_time;">
+
+	      <?MIVAR NAME=$XPAT_STAGE1>$1<?/MIVAR>
+	 <?/MISQL>
+	 <?MISQL SQL="
+	      SELECT stg_name
+		FROM stage 
+	       WHERE stg_hours_end = $XPAT_end_time;">
 
 	      <?MIVAR NAME=$XPAT_STAGE2>$1<?/MIVAR>
-	      <?MIVAR NAME=$XPAT_end_time>$2<?/MIVAR>
+	 <?/MISQL>
 
-	   <?/MISQL>
-
-	   <?MIVAR>
+	<?MICOMMENT>  === display xpat stage window === <?/MICOMMENT>
+	<?MIVAR>
 	      <TR><TD>
 	        &nbsp;&nbsp;<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatview.apg&OID=$XPAT_ZDB_ID>$XPAT_ASSAY_NAME</A>  -  $XPAT_STAGE1 to $XPAT_STAGE2  ($XPAT_start_time hr to $XPAT_end_time hr) 
 	        <?MISQL SQL="select WebExplode(object,'dataId=$XPAT_ZDB_ID&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
 	      </TD></TR>
-	    <?/MIVAR>	
+	<?/MIVAR>	
 
- 	<?/MISQL>
+
+        <?/MISQL>
         <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
            <TR><TD>&nbsp;</TD></TR>
 	<?/MIVAR>
