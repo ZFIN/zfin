@@ -30,6 +30,7 @@
 --
 -- Sequence data - separate files for Genbank, RefSeq, LocusLink, Unigene, 
 -- SWISS-PROT, Interpro, GenPept and Vega
+-- as well as sequences indirectly associated with genes
 --	zfin id, symbol, accession number
 --	
 -- Alleles
@@ -312,7 +313,6 @@ and est.mrkr_type  in ('EST','CDNA')
 and gene.mrkr_type = 'GENE'
 and dblink_fdbcont_zdb_id = fdbcont_zdb_id
 and fdbcont_fdb_db_name = 'Genbank'
-and gene.mrkr_abbrev[3,20] <> ':' || est.mrkr_abbrev --omit bonus genes
 into temp tmp_veg with no log;
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/gene_seq.txt'
