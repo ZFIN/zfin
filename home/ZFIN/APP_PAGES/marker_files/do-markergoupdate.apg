@@ -61,7 +61,6 @@ is_not
      <?MIVAR NAME=$evnew_id>$1<?/MIVAR>
      <?MISQL SQL="select mrkrgo_zdb_id from marker_go_term where mrkrgo_go_term_zdb_id='$goterm_id' and mrkrgo_mrkr_zdb_id='$OID'"><?/MISQL>
      <?MIVAR NAME=$mrkrgozdbid>$1<?/MIVAR>
-     <?MIVAR>$mrkrgozdbid<?/MIVAR>
      <?MIBLOCK COND="$(EC,$mrkrgozdbid,NOVALUE)">
          <?MISQL SQL="insert into zdb_active_data (zactvd_zdb_id) values('$new_id');"><?/MISQL>
          <?MIBLOCK COND="$(EC,$is_not,false)">
@@ -86,7 +85,6 @@ is_not
       <?MIVAR NAME=$inflength>$(VECSIZE,$infvec)<?/MIVAR>
       <?MIBLOCK INDEX=$i FROM=0 TO=10 STEP=1>
            <?MIVAR NAME=$inferred>$(INDEX,$i,$inf_from)<?/MIVAR>
-            <?MIVAR>$inferred<?/MIVAR>
            <?MIBLOCK COND="$(NC,$inferred,)">
              <?MISQL SQL="insert into zdb_active_data (zactvd_zdb_id) values('$evnew_id');">
              <?/MISQL>
@@ -118,7 +116,6 @@ is_not
              <?MIVAR NAME=SQL22>"insert into marker_go_term_evidence
               values ('$evnew_id','$new_id','$pub_id', '$evidence_code','$currinflink','$notes');"
              <?/MIVAR>
-             <?MIVAR>$SQL22<?/MIVAR>
              <?MISQL SQL="execute function get_id('MRKRGOEV');"><?/MISQL>
              <?MIVAR NAME=$evnew_id>$1<?/MIVAR>
           <?/MIBLOCK>
@@ -146,16 +143,13 @@ is_not
               <?MIVAR NAME=$evnew_id>$1<?/MIVAR>
               <?MIVAR NAME=SQL6>"insert into zdb_active_data values('$evnew_id');"
               <?/MIVAR>
-              <?MIVAR>$SQL6<?/MIVAR>
               <?MIVAR NAME=SQL7>"insert into record_attribution
      			(recattrib_data_zdb_id,recattrib_source_zdb_id)
               		 values ('$evnew_id','$pubs');"
               <?/MIVAR>
-              <?MIVAR>$SQL7<?/MIVAR>
               <?MIVAR NAME=SQL8>"insert into marker_go_term_evidence
               values ('$evnew_id','$new_id','$pubs', '$evidence_code','', '$notes');>
               <?/MIVAR>
-              <?MIVAR>$SQL8<?/MIVAR>
               <?MISQL SQL="execute function get_id('MRKRGOEV');"><?/MISQL>
               <?MIVAR NAME=$evnew_id>$1<?/MIVAR>
            <?/MIBLOCK>
@@ -184,23 +178,19 @@ is_not
               <?MISQL SQL="insert into marker_go_term_evidence (mrkrgoev_zdb_id,mrkrgoev_mrkrgo_zdb_id,mrkrgoev_source_zdb_id,mrkrgoev_evidence_code,mrkrgoev_infered_from,mrkrgoev_notes)
                values ('$evnew_id','$new_id','$pub_id', '$evidence_code','$infexist', '$notes');"><?/MISQL>
          <?/MIBLOCK>
-      <?MIVAR>$mrkrgoexist<?/MIVAR>
        <?MIBLOCK COND="$(EC,$mrkrgoexist,true)">
             <?MIVAR NAME=$new_id>$mrkrgozdbid<?/MIVAR>
        <?/MIBLOCK>
         <?MIVAR NAME=SQL1>"insert into zdb_active_data
          values ('$evnew_id');"
         <?/MIVAR>
-        <?MIVAR>$SQL1<?/MIVAR>
         <?MIVAR NAME=SQL2>"insert into record_attribution 
  			(recattrib_data_zdb_id,recattrib_source_zdb_id)
         		 values ('$evnew_id','$pub_id');"
         <?/MIVAR>
-        <?MIVAR>$SQL2<?/MIVAR>
         <?MIVAR NAME=SQL3>"insert into marker_go_term_evidence
          values ('$evnew_id','$new_id','$pub_id', '$evidence_code','', '$notes');"
         <?/MIVAR>
-        <?MIVAR>$SQL3<?/MIVAR>
       <?/MIBLOCK>
 
  <!--MIblock here-->
@@ -242,12 +232,10 @@ is_not
 <!--end unknown deletion logic-->
 
 <!-- okay, now just bail back to the markergoentry to view results -->
-<?MIBLOCK COND="$(EC,hh,yy)">
 <?MIVAR>
   <SCRIPT>
   location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoentry.apg&OID=$OID&goterm=$numID")
   </SCRIPT>
 <?/MIVAR>
-<?/MIBLOCK>
 <?/MIBLOCK>
 
