@@ -5,7 +5,9 @@
 	upper		Upper cases an lvarchar
 	sysexec		runs a system program and returns results from STDOUT
 	replace		replaces N occurrences of one substring with another
+	position	Find the position of a character in a string
 	get_id		Generates a new ID by appending a number to a string
+	get_id_test	Test function for get_id
 	concat		Concatenates to strings, the Informix concat seems brokeen
 	html_breaks	Replaces newlines with "<P>" which formats it for html
 	now		returns current timestamp
@@ -35,6 +37,7 @@
 
 #define		MAXREAD		2000
 #define		MAXLEN		200
+#define		SEQ_START	"1"
 #define		NO_MEMORY(fun)	mi_db_error_raise(NULL, MI_SQL,\
 				"UGEN2", "FUNCTION%s", #fun, NULL)
 #define		EXCEPTION(msg)	mi_db_error_raise (NULL, MI_EXCEPTION, msg)
@@ -146,7 +149,10 @@ mi_lvarchar *upper(mi_lvarchar *lv) {
 /*	sysexec		Executes a system program and returns output
 	Called with an lvarchar command line, and Returns STDOUT
 	from the program as an lvarchar.
-	Note: If the program generates an error the whole server exits! (FIXED)
+	Note:	to prevent the whole server from exiting if the called
+		program generates an error, the exit value must be forced
+		to zero, and as a convenence STDERR should be redirected
+		to STDOUT.
 */
 mi_lvarchar *sysexec(mi_lvarchar *cmd, mi_lvarchar *args) {
 	FILE		*outf;
@@ -294,32 +300,24 @@ mi_lvarchar *conc(mi_lvarchar *pre, mi_lvarchar *post, MI_FPARAM *fparam) {
 	char		*p;
 	mi_lvarchar	*lv;
 
-	if (mi_fp_argisnull (fparam, 0) == MI_TRUE)
-		n = 0;
-	else
-		n = mi_get_varlen(pre);
-
-	if (mi_fp_argisnull (fparam, 1) == MI_TRUE)
-		m = 0;
-	else
-		m = mi_get_varlen(post);
+	n = (mi_fp_argisnull(fparam, 0) == MI_TRUE) ? 0 : mi_get_varlen(pre);
+	m = (mi_fp_argisnull(fparam, 1) == MI_TRUE) ? 0 : mi_get_varlen(post);
 
 	/* Get lvarchar to hold it */
 	if (	!(lv = mi_new_var(n + m)) ||
 		!(p = mi_get_vardata(lv)) ) NO_MEMORY(concat);
 
 	/* Copy arguments to result */
-	if (n != 0)
-		memcpy(p, mi_get_vardata(pre), n);
-	if (m != 0)
-		memcpy(p + n, mi_get_vardata(post), m);
+	if (n != 0)	memcpy(p, mi_get_vardata(pre), n);
+	if (m != 0)	memcpy(p + n, mi_get_vardata(post), m);
 
 	/* Finish up */
 	mi_set_varlen(lv, n + m);
 	return lv;
 }
 
-/*	position		Find the position of a char in a string (lvarchar).
+
+/*	position	Find the position of a char in a string (lvarchar).
 	Illustra has this function but informix doesn't.
 	Returns an intiger.
 */
@@ -327,13 +325,9 @@ mi_integer position(mi_lvarchar *lchr, mi_lvarchar *lstr) {
 	char		chr, *str, *p;
 
 	if (	!(chr = *mi_get_vardata(lchr)) ||
-		!(str = mi_lvarchar_to_string(lstr)) )
-			NO_MEMORY(posistion);
-	if (p = strchr(str, chr)) {
-		return p - str + 1;
-	} else {
-		return 0;
-	}
+		!(str = mi_lvarchar_to_string(lstr)) ) NO_MEMORY(posistion);
+	if (p = strchr(str, chr))	return p - str + 1;
+	else				return 0;
 }
 
 
@@ -369,8 +363,8 @@ if (0) {
 		/* The row does not exist yet so we need to insert it */
 
 		sprintf (cmdbuf,
-			"insert into objid values (\'%s\',today, 0);",
-			name_s);
+			"insert into objid values (\'%s\',today, %s);",
+			name_s, SEQ_START);
 		if (send_sql(conn, &ss, cmdbuf) != 1)		/* Send it */
 			EXCEPTION("Cant insert row in get_id");
 	}
@@ -389,14 +383,14 @@ if (0) {
 
 	if (strcmp(daybuf, day)) {
 
-		/* last time this name was used was another day so start from zero */
+		/* last time this name was used was another day so start over */
 
 		sprintf (cmdbuf, 			/* Clear seq number */
-		"update objid set (day, seq) = (today, 0) where id = \'%s\';",
-		name_s);
+		"update objid set (day, seq) = (today, %s) where id = \'%s\';",
+		SEQ_START, name_s);
 		if (send_sql(conn, &ss, cmdbuf) != 1)			/* Send it */
 			EXCEPTION("Cant clear sequence count in get_id");
-		strcpy(day, daybuf); num = "0";
+		strcpy(day, daybuf); num = SEQ_START;
 	}
 
 if (0) {
@@ -441,7 +435,7 @@ mi_lvarchar *get_id_test(mi_lvarchar *name, mi_integer num) {
 }
 
 
-/*	html-breaks		Replaces newlines in text with <P>, This
+/*	html_breaks		Replaces newlines in text with <BR>, This
 	prepares it to be displayed in html. Called with an lvarchar.
 	Returns an lvarchar.
 */
