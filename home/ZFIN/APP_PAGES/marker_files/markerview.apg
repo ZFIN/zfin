@@ -1057,16 +1057,37 @@ Datablade documentation.
 <!------------- SEQUENCE INFOMATION ------------------------------->
 
 <?MISQL SQL="
-  select count(*)::integer 
-  from db_link,foreign_db_contains
-  where dblink_fdbcont_zdb_Id = fdbcont_zdb_id
+  select dblink_zdb_id
+  from db_link, foreign_db_contains
+  where dblink_linked_recid = '$OID'
+    and dblink_fdbcont_zdb_id = fdbcont_zdb_id
     and fdbcont_fdbdt_super_type = 'sequence'
-    and dblink_linked_recid = '$OID';">
+  UNION 
+  select dblink_zdb_id
+  from db_link, foreign_db_contains, marker_relationship
+  where mrel_mrkr_1_zdb_id = '$OID'
+    and dblink_linked_recid = mrel_mrkr_2_zdb_id
+    and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+    and fdbcont_fdbdt_super_type = 'sequence'
+    and mrel_type in ('gene contains small segment', 
+		      'clone contains small segment',
+		      'gene encodes small segment')
+    and mrel_mrkr_2_zdb_id not in ('$chimeric_clone_list')
+  UNION 
+  select dblink_zdb_id
+  from db_link, foreign_db_contains, marker_relationship
+  where mrel_mrkr_2_zdb_id = '$OID'
+    and dblink_linked_recid = mrel_mrkr_1_zdb_id
+    and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+    and fdbcont_fdbdt_super_type = 'sequence'
+    and mrel_type in ('clone contains gene') 
+    and mrel_mrkr_1_zdb_id not in ('$chimeric_clone_list')  
+  ;"> 
     
-  <?MIVAR NAME=vSequence_count>$1<?/MIVAR>
+  <?MIVAR NAME=vSequence_link>1<?/MIVAR>
 <?/MISQL>
 
-<?MIBLOCK COND="$(OR,$(!=,$vSequence_count,0),$(XST,$UPDATE))">
+<?MIBLOCK COND="$(OR,$(XST,$vSequence_link),$(XST,$UPDATE))">
 
 <?MICOMMENT> Select URL for blast buttons <?/MICOMMENT>    
   <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'BLAST';">
@@ -1166,7 +1187,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 <br><br>
 <?/MIBLOCK>
 
-<?MIBLOCK COND="$(!=,$vSequence_count,0)">
+<?MIBLOCK COND="$(XST,$vSequence_link)">
 
 <?MIVAR NAME=$lastitem><?/MIVAR>
 
