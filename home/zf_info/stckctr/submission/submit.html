@@ -5,11 +5,19 @@
 	<title>ZIRC Submitting Lines</title>
 	<link rel="stylesheet" type="text/css" href="zirc.css" />
 	<script type="text/javascript" language="JavaScript1.1" src="zirc.js"></script>
+	<script type="text/javascript" language="JavaScript1.1">
+	function checkRef() {
+			if (document.referrer.indexOf('<!--|DOMAIN_NAME|-->/zf_info/stckctr/submission/submitTerms2.html') == -1) {
+				window.location.href = 'submitTryAgain.html';
+			}
+		}
+	window.onload = checkRef();
+	</script>
 </head>
 <!----- this javascript code writes the body tag and zfin header ----->
 <script type="text/javascript" language="JavaScript" src="/header.js"></script>
 <!----- below zfin header page content begins here ----->
-<body onLoad="checkRef();storedValues('zircLineSubmissionProfile');">
+<body onload="storedValues('zircLineSubmissionProfile');">
 <center>
 	<p id=header>
 		Zebrafish International Resource Center<br/>
