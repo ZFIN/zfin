@@ -1133,7 +1133,7 @@ sub estsHave1Gene ($) {
                          from marker m1, marker_relationship
                          where mrel_mrkr_1_zdb_id = m1.mrkr_zdb_id
                            and mrel_mrkr_2_zdb_id = m2.mrkr_zdb_id
-                           and mrel_type = "gene contains small segment" )
+                           and m1.mrkr_type = "GENE" )
                order by mrkr_name';
 
   my @colDesc = ("EST ZDB ID        ",
@@ -1182,7 +1182,7 @@ sub prefixedGenesHave1Est ($) {
                          from marker m2, marker_relationship
                          where mrel_mrkr_1_zdb_id = m1.mrkr_zdb_id
                            and mrel_mrkr_2_zdb_id = m2.mrkr_zdb_id
-                           and mrel_type = "gene contains small segment" )
+                           and mrel_type = "gene encodes small segment" )
                order by mrkr_name';
 
   my @colDesc = ("Gene ZDB ID       ",
@@ -1235,7 +1235,7 @@ sub prefixedIbdGenesHave1Est ($) {
                          from marker m2, marker_relationship
                          where mrel_mrkr_1_zdb_id = m1.mrkr_zdb_id
                            and mrel_mrkr_2_zdb_id = m2.mrkr_zdb_id
-                           and mrel_type = "gene contains small segment" )
+                           and mrel_type = "gene encodes small segment" )
                order by mrkr_name';
 
   my @colDesc = ("Gene ZDB ID       ",
@@ -1262,7 +1262,7 @@ sub prefixedIbdGenesHave1Est ($) {
 # If an EST does not have a corresponding clone record, then its corresponding
 # gene record must begin with xx.
 # 
-# This test explicitly excludes 6 ESTs from France.  ZFIN has these 6 ESTs
+# This test explicitly excludes 6 ESTs from the Thisse's.  ZFIN has these 6 ESTs
 # beacuse ZIRC carries them.  However, we don't have any expression data
 # for them yet.
 #
@@ -1285,7 +1285,7 @@ sub estsWithoutClonesHaveXxGenes ($) {
                          from marker m1, marker_relationship
                          where mrel_mrkr_1_zdb_id = m1.mrkr_zdb_id
                            and mrel_mrkr_2_zdb_id = est.mrkr_zdb_id
-                           and mrel_type = "gene contains small segment"
+                           and mrel_type = "gene encodes small segment"
                            and m1.mrkr_name like "xx:%" )
                  and mrkr_name not in ("cb23", "cb42", "cb70", "cb104",
                                        "cb109", "cb114")
@@ -1333,7 +1333,7 @@ sub xxGenesHaveNoClones ($) {
                          from marker m2, marker_relationship
                          where mrel_mrkr_1_zdb_id = m1.mrkr_zdb_id
                            and mrel_mrkr_2_zdb_id = m2.mrkr_zdb_id
-                           and mrel_type = "gene contains small segment" 
+                           and mrel_type = "gene encodes small segment" 
                            and exists
                                ( select * 
                                    from clone
