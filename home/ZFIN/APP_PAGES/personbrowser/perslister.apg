@@ -208,6 +208,7 @@ to the left of each item.
       <?MIVAR name=$TileInput><?/MIVAR>
       <?MIVAR name=UserInput COND=$(XST,$searchtype)>$UserInput&searchtype=$searchtype<?/MIVAR>
       <?MIVAR name=UserInput COND=$(XST,$anon1)>$UserInput&anon1=$anon1<?/MIVAR>
+      <?MIVAR name=$UserInput COND=$(XST,$return_rec)>$UserInput&return_rec=$return_rec<?/MIVAR>
       <?MIVAR name=$TileInput>$UserInput<?/MIVAR>
       <?MIVAR name=UserInput COND=$(XST,$pname)>$UserInput&pname=$(URLENCODE,$pname)<?/MIVAR>
       <?MIVAR name=UserInput COND=$(XST,$address)>$UserInput&address=$(URLENCODE,$address)<?/MIVAR>

@@ -131,6 +131,7 @@
 <?MIVAR name=$UserInput COND=$(XST,$order_pref)>$UserInput&order_pref=$order_pref<?/MIVAR>
 <?MIVAR name=$UserInput COND=$(XST,$pub_status)>$UserInput&pub_status=$pub_status<?/MIVAR>
 <?MIVAR name=$UserInput COND=$(XST,$cur_status)>$UserInput&cur_status=$cur_status<?/MIVAR>
+<?MIVAR name=$UserInput COND=$(XST,$return_rec)>$UserInput&return_rec=$return_rec<?/MIVAR>
 <?MIVAR name=$TileInput>$UserInput<?/MIVAR>
 <?MIVAR name=$UserInput COND=$(XST,$authors)>$UserInput&authors=$(URLENCODE,$authors)<?/MIVAR>
 <?MIVAR name=$UserInput COND=$(XST,$title)>$UserInput&title=$(URLENCODE,$title)<?/MIVAR>

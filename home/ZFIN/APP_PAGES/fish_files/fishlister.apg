@@ -389,6 +389,7 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$anon1)>$UserInput&anon1=$anon1<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$structures)>$UserInput&structures=$structures<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$selected_separator)>$UserInput&selected_separator=$selected_separator<?/MIVAR>
+        <?MIVAR name=$UserInput COND=$(XST,$return_rec)>$UserInput&return_rec=$return_rec<?/MIVAR>
         <?MIVAR name=$TileInput>$UserInput<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$selected)>$UserInput&selected=$(URLENCODE,$selected)<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$fname)>$UserInput&fname=$(URLENCODE,$fname)<?/MIVAR>

@@ -492,12 +492,13 @@
 
 <?MIVAR name=selector>MIval=aa-genelister.apg&WINSIZE=$WINSIZE<?/MIVAR>
 <?MIVAR name=$UserInput><?/MIVAR>
-<?MIVAR name=UserInput COND=$(XST,$lg)>$UserInput&lg=$lg<?/MIVAR>
-<?MIVAR name=UserInput COND=$(XST,$refcross)>$UserInput&refcross=$refcross<?/MIVAR>
-<?MIVAR name=UserInput COND=$(XST,$order_pref)>$UserInput&order_pref=$order_pref<?/MIVAR>
-<?MIVAR name=UserInput COND=$(XST,$knownloci)>$UserInput&knownloci=$knownloci<?/MIVAR>
-<?MIVAR name=UserInput COND=$(XST,$searchtype)>$UserInput&searchtype=$searchtype<?/MIVAR>
-<?MIVAR name=UserInput COND=$(XST,$ismapped)>$UserInput&ismapped=$ismapped<?/MIVAR>
+<?MIVAR name=$UserInput COND=$(XST,$lg)>$UserInput&lg=$lg<?/MIVAR>
+<?MIVAR name=$UserInput COND=$(XST,$refcross)>$UserInput&refcross=$refcross<?/MIVAR>
+<?MIVAR name=$UserInput COND=$(XST,$order_pref)>$UserInput&order_pref=$order_pref<?/MIVAR>
+<?MIVAR name=$UserInput COND=$(XST,$knownloci)>$UserInput&knownloci=$knownloci<?/MIVAR>
+<?MIVAR name=$UserInput COND=$(XST,$searchtype)>$UserInput&searchtype=$searchtype<?/MIVAR>
+<?MIVAR name=$UserInput COND=$(XST,$ismapped)>$UserInput&ismapped=$ismapped<?/MIVAR>
+<?MIVAR name=$UserInput COND=$(XST,$return_rec)>$UserInput&return_rec=$return_rec<?/MIVAR>
 <?MIVAR name=$TileInput>$TileInput$UserInput<?/MIVAR>
 <?MIVAR name=UserInput COND=$(XST,$name)>$UserInput&name=$(URLENCODE,$name)<?/MIVAR>
 

@@ -298,6 +298,7 @@ Startframes.apg will pass this variables on to the select form.  -->
 
 		<?MIVAR>
 		  <TD valign=top> <font size=2>
+            $(IF,$(XST,$return_rec),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$OID TARGET=content>SELECT</A>)
 		    $mtype:<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$viewer&OID=$OID" TARGET=content>$marker_abbrev</A>
 		  </TD>
 		<?/MIVAR>
@@ -455,6 +456,7 @@ Startframes.apg will pass this variables on to the select form.  -->
 	<?MIVAR name=UserInput COND=$(XST,$marker_type)>$UserInput&marker_type=$marker_type<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$plinks)>$UserInput&plinks=$plinks<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$compare)>$UserInput&compare=$compare<?/MIVAR>
+        <?MIVAR name=$UserInput COND=$(XST,$return_rec)>$UserInput&return_rec=$return_rec<?/MIVAR>
         <?MIVAR name=$TileInput>$TileInput$UserInput<?/MIVAR>
         <?MIVAR name=UserInput COND=$(XST,$name)>$UserInput&name=$(URLENCODE,$name)<?/MIVAR>  
 
