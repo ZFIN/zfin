@@ -34,6 +34,14 @@ public class mapimage {
 
 	}
 
+	public String getMarkerData(String SQL) {
+        String data = new String();
+		
+		return data;
+	}
+	
+
+	
 	public void init() {
 
 		MapViewer MV;
@@ -197,6 +205,9 @@ public class mapimage {
 		String panel_order = (String)form.get("panel_order");
 
 		System.err.println("SQL: " + query_string);
+
+
+
 		
 		MV = new MapViewer(query_string, (String)form.get("host"), (String)form.get("port"), SM, panel_order);
 		//MV = new MapViewer(data,selected_marker);
