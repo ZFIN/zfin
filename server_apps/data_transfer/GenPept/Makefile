@@ -19,8 +19,8 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/GenPept
 
 GENERICS =  fetch_load_GenPept.sh 
 
-STATICS =   fetch-genpept.r load_prot_len_acc.sql README manual_curation.genpept\
-	load_manual_genpept.sql
+STATICS =   fetch-genpept.pl load_prot_len_acc.sql README manual_curation.genpept\
+	load_manual_genpept.sql parse-genpept.r
 
 # ---------------  Production Rules  ------------------------------------
 
