@@ -88,6 +88,29 @@ sub sendRunningResult {
   open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
   $msg3->print(\*SENDMAIL);
 
+ #----- Another mail send out problem files ----
+
+  my $SUBJECT="Auto: PubMed not in ZFIN";
+  my $MAILTO="<!--|SWISSPROT_EMAIL_REPORT|-->";     
+  my $ATTFILE = "pubmed_not_in_zfin";
+
+  # Create another new multipart message:
+  $msg4 = new MIME::Lite 
+    From    => "$ENV{LOGNAME}",
+    To      => "$MAILTO",
+    Subject => "$SUBJECT",
+    Type    => 'multipart/mixed';
+
+  attach $msg4 
+    Type     => 'application/octet-stream',
+    Encoding => 'base64',
+    Path     => "./$ATTFILE",
+    Filename => "$ATTFILE";
+
+  # Output the message to sendmail
+  open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
+  $msg4->print(\*SENDMAIL);
+
   close(SENDMAIL);
 }
 
@@ -116,6 +139,7 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/";
 
+print "WARNING!!! no ok2file provided. \n" if (!-e "ok2file");
 
 #remove old files
  
@@ -125,6 +149,7 @@ system("rm -f *.ontology");
 system("rm -f *2go");
 system("rm -f prob*");
 system("rm -f okfile");
+system("rm -f pubmed_not_in_zfin");
 system("rm -f *.unl");
 system("rm -f *.txt");
 system("rm -f *.dat");
@@ -175,7 +200,8 @@ while( !( -e "okfile" &&
 }
 
 # concatenate all the sub problem files
-system("cat prob1A prob1B prob2B prob3B prob4B prob5B prob6B prob7B prob8B > allproblems.txt");
+system("cat prob0 prob1 prob2 prob3 prob4 prob5 prob6 prob7 prob8> allproblems.txt");
+system("cat ok2file >> okfile");
 
 
 # ----------- Parse the SWISS-PROT file ----------------
@@ -187,7 +213,6 @@ $retry = 1;
 # wait till parsing is finished
 while( !( -e "dr_dblink.unl" && 
           -e "ac_dalias.unl" && 
-          -e "gn_dalias.unl" &&
           -e "cc_external.unl" &&
 	  -e "kd_spkeywd.unl" )) {
 
@@ -308,7 +333,7 @@ close F;
 &sendRunningResult();
 
 #----------- Match the obsolete/secondary go terms in the translation file -----
-print "\n deal with obsolete / secondary go terms ";
+print "\n deal with obsolete / secondary go terms \n";
 
 system ("sp_badgo_report.pl");
 
