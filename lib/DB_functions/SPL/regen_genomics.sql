@@ -487,26 +487,46 @@ create dba function "informix".regen_genomics() returning integer
       extent size 256 next size 256 lock mode page;
     revoke all on all_g_new from "public";
 
-
     -- get genes that are mapped
 
     insert into all_g_new 
 	(gene_name, lg_location, metric, zdb_id, OR_lg, panel_id, panel_abbrev,
 	 abbrev, allgene_abbrev_order, owner, entry_date, locus_zdb_id, locus_name ) 
-      select mrkr_name, lg_location, mm.metric, mrkr_zdb_id, OR_lg, pn.zdb_id,
+      select distinct mrkr_name, lg_location, mm.metric, mrkr_zdb_id, OR_lg, pn.zdb_id,
 	     pn.abbrev, mrkr_abbrev, mrkr_abbrev_order, mm.owner, mm.entry_date,
 	     locus.zdb_id, locus.locus_name
 	from marker, mapped_marker mm, panels_new pn, OUTER locus
 	where mm.marker_id = mrkr_zdb_id 
+	  and mm.marker_type <> 'SNP'
 	  and mm.refcross_id = pn.zdb_id 
 	  and mrkr_zdb_id = locus.cloned_gene
-	  and mrkr_type in ('GENE');
+	  and mrkr_type == 'GENE'
+	  ;
+	  
+	  -- get gene that are mapped via a marker_relationship
+
+	 insert into all_g_new 
+	(gene_name, lg_location, metric, zdb_id, OR_lg, panel_id, panel_abbrev,
+	 abbrev, allgene_abbrev_order, owner, entry_date, locus_zdb_id, locus_name ) 
+      select distinct a.mrkr_name, lg_location, mm.metric, a.mrkr_zdb_id, OR_lg, pn.zdb_id,
+	     pn.abbrev, a.mrkr_abbrev, a.mrkr_abbrev_order, mm.owner, mm.entry_date,
+	     locus.zdb_id, locus.locus_name
+	from marker a, marker b, marker_relationship, mapped_marker mm, panels_new pn, OUTER locus
+	where mrel_mrkr_1_zdb_id = a.mrkr_zdb_id
+	  and mrel_mrkr_2_zdb_id = b.mrkr_zdb_id
+	  and mm.marker_id = b.mrkr_zdb_id
+	  --and mm.marker_type <> 'SNP'
+	  and mm.refcross_id = pn.zdb_id 
+	  and a.mrkr_zdb_id = locus.cloned_gene
+	  and a.mrkr_type == 'GENE'
+	  ;
 
     -- mapped by independent linkages
+
     insert into all_g_new
 	(gene_name,lg_location, metric, zdb_id, or_lg, panel_id, panel_abbrev,
 	 abbrev, allgene_abbrev_order, owner, entry_date, locus_zdb_id, locus_name)
-      select x0.mrkr_name,
+      select distinct x0.mrkr_name,
 	     NULL::numeric(8,2),
 	     'NULL'::varchar(5),
 	     x0.mrkr_zdb_id,
@@ -526,31 +546,18 @@ create dba function "informix".regen_genomics() returning integer
 	where x1.lnkgmem_member_zdb_id = x0.mrkr_zdb_id
 	  and x1.lnkgmem_linkage_zdb_id = x11.lnkg_zdb_id
 	  AND x0.mrkr_zdb_id = x2.cloned_gene
-          and x0.mrkr_type in ('GENE');
-
+      and x0.mrkr_type == 'GENE'
+          ;
+-- make all_g_new distinct
+--select distinct * from all_g_new into temp tmp_all_g_new with no log;
+--delete from all_g_new;
+--insert into all_g_new select * from tmp_all_g_new;
+--drop table tmp_all_g_new;
 
     -- get genes that aren't mapped
+   -- create indexes; constraints that use them are added at the end.
 
-    insert into all_g_new
-      select mrkr_name, 0, '', mrkr_zdb_id,0, 'na'::varchar(50),
-	     'na'::varchar(10), mrkr_abbrev, mrkr_abbrev_order, 'na'::varchar(50),
-	     NULL::datetime year to fraction, locus.zdb_id, locus.locus_name
-	from marker, OUTER locus
-	where not exists 
-	      ( select * 
-		  from mapped_marker mm
-		  where mrkr_zdb_id = mm.marker_id )
-	  and mrkr_zdb_id = locus.cloned_gene
-	  and mrkr_type in ('GENE')
-	  and not exists
-	      ( select * 
-		  from linkage_member
-		  where mrkr_zdb_id = lnkgmem_member_zdb_id
-		);
-
-    -- create indexes; constraints that use them are added at the end.
-
-    if (exists (select *
+    if (exists (select 'x'
 	          from sysindexes
 		  where idxname = "all_genes_zdb_id_index_b")) then
       -- use the "a" set of names
@@ -567,6 +574,34 @@ create dba function "informix".regen_genomics() returning integer
 	in idxdbs3;
     end if
 
+    update statistics high for table all_g_new;
+
+	insert into all_g_new
+	select mrkr_name, 0, '', mrkr_zdb_id,0, 'na'::varchar(50),
+	'na'::varchar(10), mrkr_abbrev, mrkr_abbrev_order, 'na'::varchar(50),
+	NULL::datetime year to fraction, locus.zdb_id, locus.locus_name
+	from marker, OUTER locus
+	where not exists( 
+		select 'x' 
+		from mapped_marker mm
+		where mrkr_zdb_id = mm.marker_id 
+	)
+	and mrkr_zdb_id = locus.cloned_gene
+	and mrkr_type = 'GENE'
+	and not exists( 
+		select 'x' 
+		from linkage_member
+		where mrkr_zdb_id = lnkgmem_member_zdb_id
+	)
+	and not exists(
+		select 'x' 
+		from marker_relationship
+		where mrkr_zdb_id = mrel_mrkr_1_zdb_id
+		and mrel_type = 'gene encodes small segment'
+	)
+;
+
+    -- create indexes; constraints that use them are added at the end.
     update statistics high for table all_g_new;
 
 
