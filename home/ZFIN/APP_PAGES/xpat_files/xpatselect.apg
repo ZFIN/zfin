@@ -43,7 +43,7 @@ INPUT VARS:
     authsearchtype	Specifies if the author should 'begins' with or
 			'contains' the string in author.
     TA_selected_structures	  Exists if user entered any anatomical structures.
-    processed_selected_structures Exists if user entered any anatomical structres.
+    xpatsel_processed_selected_structures Exists if user entered any anatomical structres.
 
     include_substructures  	Possible values are 'checked' and '', I think.
     structure_bool	Possible values are 'and' (meaning every selected 
@@ -79,12 +79,6 @@ EFFECTS
   Message: $MI_ERRORMSG <br>
 <?/MIERROR>
 
-<?MICOMMENT> This variable gets set to 'true' if we want to force 0 results to show,
-             initially, the only place that it can be set to 'true' is when an anatomy
-	     item doesn't exist. <?/MICOMMENT>
-<?MIVAR NAME="$anatomy_error">false<?/MIVAR>
-
-
 <HTML>
 
 <?MIVAR Name=page_name>$(IF,$(NXST,$query_results),ZFIN Search Expressions,ZFIN Expression Search Results)<?/MIVAR>
@@ -117,7 +111,7 @@ function process_structures(list) {
   matchlastcomma = /,$/g;
   list = list.replace(matchlastcomma,"");
 
-  document.critform.processed_selected_structures.value = list;
+  document.critform.xpatsel_processed_selected_structures.value = list;
 }
 
 function call_submit() {
@@ -206,161 +200,42 @@ function call_reset() {
 <?/MICOMMENT>
 <?MIVAR COND=$(AND,$(XST,$gene_name),$(NXST,$searchtype)) NAME=$searchtype>equals<?/MIVAR>
 
+<?MICOMMENT> This variable gets set to 't' if we want to force 0 results to show,
+             initially, the only place that it can be set to 'true' is when an anatomy
+	     item doesn't exist. <?/MICOMMENT>
+<?MIVAR NAME="$xpatsel_anatomy_error_occured">f<?/MIVAR>
 
 
 <?MICOMMENT> 
   ============================================================================
   ==========  CONVERT STRUCTURE NAMES TO ZDB_IDs, DISPLAY FEEDBACK
   ============================================================================
+  If the user entered structures in the Anatomy text area, it will populate
+  two variables.  The direct variable (TA_selected_structures) and via 
+  javascript, xpatsel_processed_selected_structures, which has commas replaced with
+  pipes, so that it can be comma seperated (webblade likes comma seperation,
+  and not much else). 
+  
+  xpatselectanatverify.apg will handle this, xpatsel_processed_selected_structures
+  goes in, anatomy_zdb_id_list and xpatsel_anatomy_error_occured come out.
 
-  If a list of structures comes in, the first thing we need to do is convert
-  the anatomical terms to zdb_ids.   While that's happening, we can display
-  a table for the user explaining which terms had matches, what kind of matches
-  they are, and how many expression records there are for the structure.
-
-  A note on variables: There are two, in parallel, for the list of structures.
-  $TA_selected_structures is the return separated list from the textarea on the
-  form, $processed_selected_structures is what happens to $TA_s_s when it the
-  commas become pipes and the returns become commas.
-
-  the output of this section is $anatomy_zdb_id_list
+  the output of this section is $anatomy_zdb_id_list & $xpatsel_anatomy_error_occured may 
+  get set to 't'
 
 <?/MICOMMENT>
 
+<?MIBLOCK COND="$(AND,$(XST,$TA_selected_structures),$(XST,$xpatsel_processed_selected_structures))">
 
-<?MIBLOCK COND="$(AND,$(XST,$TA_selected_structures),$(XST,$processed_selected_structures))">
+    <?MICOMMENT> pass in $xpatsel_processed_selected_structures, retrieve xpanatv_anatomy_zdb_id_list, 
+                 xpanatv_anatomy_error_occured<?/MICOMMENT>
+    <?MISQL SQL="
+    select WebExplode(object, 'xpanatv_processed_selected_structures=$(URLENCODE,$xpatsel_processed_selected_structures)&xpanatv_anatomy_error_occured=$xpatsel_anatomy_error_occured')
+      from webpages 
+      where id = 'aa-xpatselectanatverify.apg';">
+    $1
+    <?/MISQL> <?MICOMMENT> returns xpanatv_anatomy_zdb_id_list & xpatanv_anatomy_error_occured <?/MICOMMENT>
 
-   <?MIVAR NAME=$i>0<?/MIVAR>
-   <?MIVAR NAME=str_count>1<?/MIVAR>
-
-   <?MICOMMENT> <---- iterates through each term ---> <?/MICOMMENT>
-   <?MIBLOCK WHILE=$(NE,$(INDEX,$i,$processed_selected_structures),)>     
-
-     <?MIVAR NAME=$str>$(TRIM,$(INDEX,$i,$processed_selected_structures))<?/MIVAR>
-     <?MIVAR NAME=$str>$(REPLACE,$str,"|",",")<?/MIVAR> <!-- replace pipe with a comma -->
-
-     <?MIVAR>  $(VECAPPEND,$str_list,$str) <?/MIVAR>  <!-- regular vector of parts -->
-     <?MIVAR NAME=$str DELIMIT="'" REPLACE="''">$str<?/MIVAR>
-     <?MIVAR> $(VECAPPEND,$str_dlmt_list,$str) <?/MIVAR>  <!-- 'delimited' vector of parts, $(LOWER,x) ? -->
-     <?MIVAR> $(SETVAR,str_count,$(+,$str_count,1)) <?/MIVAR>
-     <?MIVAR NAME=$i>$(+,$i,1)<?/MIVAR> <!-- i++ -->
-   <?/MIBLOCK>
-
-<?MICOMMENT> =========== DISPLAY ANAT ITEM VERIFICATION TABLE =========== <?/MICOMMENT> 
-
-  
-
-  <br>
-    <TABLE bgcolor="CCCCCC"> 
-      <TR>
-       <TD colspan=2>
-       <B><font size=-1>Anatomy Terms Searched...</font></B>
-       </TD>
-      </TR>
-      <?MIBLOCK INDEX=$part FOREACH=$str_dlmt_list>
-      <TR>
-       <TD bgcolor="#EEEEEE" valign=top> 
-        <?MISQL SQL="
-	  SELECT anatitem_name, anatitem_zdb_id,''
-  	  FROM anatomy_item
-	  WHERE anatitem_name_lower = lower('$part')
-
-  	  UNION
-
-	  SELECT anatitem_name, anatitem_zdb_id,'<I>(abbrev match)</I> '
-  	  FROM anatomy_item
-	  WHERE anatitem_abbrev_lower = lower('$part')
-	
-	  UNION
-
- 	  SELECT anatitem_name, anatitem_zdb_id,'<I>(synonym match)</I> '
-	  FROM data_alias, anatomy_item 
-	  WHERE dalias_data_zdb_id = anatitem_zdb_id
-  	    and dalias_alias_lower = lower('$part')
-
-	  ORDER BY 1
-     ;">
-
-      <?MICOMMENT> I only want the first result, incase the lowering causes it to match both a name and synonym  <?/MICOMMENT>
-
-      <?MIBLOCK COND="$(EC,$MI_CURRENTROW,1)">  
-
-        <?MICOMMENT> ----- exact match --- <?/MICOMMENT>
-        <?MIVAR NAME="$item_name">$1<?/MIVAR>
-        <?MIVAR NAME="$item_zdb_id">$2<?/MIVAR>
-        <?MIVAR NAME="$matchingtext">$3<?/MIVAR>
-
-        <?MIVAR>$(VECAPPEND,$anatomy_zdb_id_list,$item_zdb_id)<?/MIVAR>
-
-        <?MIVAR NAME=$item_name_safe DELIMIT="'" REPLACE="''">$item_name<?/MIVAR>
-        <?MIVAR NAME="$processed_item_name">$(REPLACE,$item_name,',','|')<?/MIVAR>
-
-        <?MIVAR>
-        <font size=-1 style="font-family:arial; font-weight:bold;">
-
-	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">$item_name</A></font> 
-      </TD>
-      <?/MIVAR>
-      <TD bgcolor="#EEEEEE">
-        <FONT size=-1 style="font-family:arial;">
-        <?MISQL SQL="select distinct xpat_gene_zdb_id
-from expression_pattern_anatomy, anatomy_item, expression_pattern
-where xpatanat_anat_item_zdb_id = anatitem_zdb_id 
-  and xpatanat_xpat_zdb_id = xpat_zdb_id
-  and anatitem_zdb_id = '$item_zdb_id' 
-UNION
-select distinct xpat_gene_zdb_id
-from expression_pattern_anatomy, all_anatomy_contains, anatomy_item, expression_pattern
-where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
-  and allanatcon_container_zdb_id = anatitem_zdb_id 
-  and xpatanat_xpat_zdb_id = xpat_zdb_id
-  and anatitem_zdb_id = '$item_zdb_id';">
-        <?/MISQL>
-        <?MIVAR name=$totalcount>$MI_ROWCOUNT<?/MIVAR>
-
-        <?MIBLOCK COND="$(>,$totalcount,0)">
-          <?MIVAR> 
-          has <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&include_substructures=checked&TA_selected_structures=$item_name&processed_selected_structures=$processed_item_name" target="_parent"><B>($totalcount)</B></A> gene(s), total, expressed in all stages 
-          <?/MIVAR>
-        <?MIELSE>
-          <?MICOMMENT> ---- has no data ---- <?/MICOMMENT>
-	    has no expression data.
-        <?/MIBLOCK>
-     </FONT>
-     <FONT size=-1 style="font-family:arial; font-weight:bold;  ">
-      <?MIVAR>$matchingtext<?/MIVAR>
-     </FONT>
-
-     <?/MIBLOCK>
-   <?/MISQL>
-
-   <?MIBLOCK COND="$(EQ,$MI_ROWCOUNT,0)">
-     <?MICOMMENT> ---- not in dictionary --- <?/MICOMMENT>
-     <?MICOMMENT> - set anatomy error to 'true' so we won't get any query results - <?/MICOMMENT>
-     <?MIVAR NAME="$anatomy_error">true<?/MIVAR>
-     <FONT size=-1 style="font-family:arial;"> 
-     <?MIVAR> "$part" <?/MIVAR>
-     <?MICOMMENT> ---- capturing failed searches for use as possible synonyms ---- <?/MICOMMENT>
-     <?MISQL SQL="insert into xpat_anatomy_capture values ('$part',current);"><?/MISQL>
-     </FONT>
-   </TD>
-   <TD bgcolor="#EEEEEE">
-     <FONT size=-1 style="font-family:arial;"> 
-     <?MICOMMENT> ---- not in dictionary ---- <?/MICOMMENT>
-     <?MIVAR>
-     <B>does not exactly match a dictionary term, abbreviation or synonym.<br>You can browse the dictionary
-     <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=stages">by stage</a> 
-     or see the 
-     <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=alpha">complete list</a>.
-     <?/MIVAR>
-     </FONT>
-   <?/MIBLOCK>
-   </TD>
-   </TR>
-  <?/MIBLOCK>
-  </TABLE>     
-  <BR>
-
+    <?MIVAR NAME="$xpatsel_anatomy_error_occured">$xpanatv_anatomy_error_occured<?/MIVAR>
 
 <?/MIBLOCK>
 
@@ -439,7 +314,7 @@ where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
 
 
 
-<?MIELSE COND="$(AND,$(XST,$query_results),$(EC,$anatomy_error,false))">
+<?MIELSE COND="$(AND,$(XST,$query_results),$(EC,$xpatsel_anatomy_error_occured,f))">
   <?MICOMMENT>
     Page Called from itself.  Pass any query form variables, if they exist,
     to the form handling page.
@@ -452,7 +327,7 @@ where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
     $(IF,$(XST,$mutsearchtype),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_fishSearchType=$mutsearchtype))
     $(IF,$(XST,$author),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_author=$(URLENCODE,$author)))
     $(IF,$(XST,$authsearchtype),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_authorSearchType=$authsearchtype))
-    <?MIBLOCK INDEX=$anat_id FOREACH=$anatomy_zdb_id_list>
+    <?MIBLOCK INDEX=$anat_id FOREACH=$xpanatv_anatomy_zdb_id_list>
       <?MIVAR> $(VECAPPEND,$xpatsel_queryVec,xpatselqry_anatomyZdbIdList=$anat_id) <?/MIVAR>
     <?/MIBLOCK>
     $(IF,$(XST,$include_substructures),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_includeSubstructures=$include_substructures))
@@ -798,7 +673,7 @@ where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
       <?MIVAR name=$UserInput COND=$(XST,$query_results)>$UserInput&query_results=$query_results<?/MIVAR>
       <?MIVAR name=$UserInput COND=$(XST,$include_substructures)>$UserInput&include_substructures=$include_substructures<?/MIVAR>
       <?MIVAR name=UserInput COND=$(XST,$TA_selected_structures)>$UserInput&TA_selected_structures=$(URLENCODE,$TA_selected_structures)<?/MIVAR>
-      <?MIVAR name=UserInput COND=$(XST,$processed_selected_structures)>$UserInput&processed_selected_structures=$(URLENCODE,$processed_selected_structures)<?/MIVAR>
+      <?MIVAR name=UserInput COND=$(XST,$xpatsel_processed_selected_structures)>$UserInput&xpatsel_processed_selected_structures=$(URLENCODE,$xpatsel_processed_selected_structures)<?/MIVAR>
       <?MIVAR name=$UserInput COND=$(XST,$xpatsel_sortByDate)>$UserInput&xpatsel_sortByDate=$xpatsel_sortByDate<?/MIVAR>
       
     <?/MIBLOCK>
@@ -1045,7 +920,7 @@ where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
 	     <TD>
 	        <TEXTAREA cols="30" rows="5" name="TA_selected_structures" onChange="process_structures(document.critform.TA_selected_structures.value);"><?MIVAR COND="$(XST,$TA_selected_structures)">$TA_selected_structures<?/MIVAR></TEXTAREA>
 
-	        <input type="hidden" name="processed_selected_structures" <?MIVAR COND=$(XST,$processed_selected_structures)>value=$processed_selected_structures<?/MIVAR>>
+	        <input type="hidden" name="xpatsel_processed_selected_structures" <?MIVAR COND=$(XST,$xpatsel_processed_selected_structures)>value=$xpatsel_processed_selected_structures<?/MIVAR>>
 
 	 	<br>
 		<FONT SIZE=-1>
