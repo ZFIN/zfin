@@ -1,9 +1,15 @@
 #
 #  The macros defining the paths and compiler options
 #
-BIN= /local/apps/jdk/bin
-CLASSLIB= /local/apps/jdk/lib/classes.zip
-JAVAHOME= /local/apps/jdk
+# NOTE:  The version of Java used in this Makefile must be the same
+#	as the version invoked in the shell script that starts the
+#	Java server.  This is because we are building C functions that
+#	link directly into the JVM, and so the version of the Java
+#	support libraries we compile with must match the version
+#	of the JVM this code will be linked into at runtime.
+JAVAHOME= /local/apps/jdk-1.1
+BIN= $(JAVAHOME)/bin
+CLASSLIB= $(JAVAHOME)/lib/classes.zip
 
 JAVAC = $(BIN)/javac
 JAVAH = $(BIN)/javah
@@ -17,14 +23,16 @@ JAVAFLAGS = -g -classpath .:$(CLASSLIB)
 .java.class:
 	$(JAVAC) $(JAVAFLAGS) $<
 
-MI_HOME= /export/fish/Illustra
-CC= /local/bin/cc
+#  Get INFORMIXDIR from environment 
+CC= cc
 
-INCDIR = $(MI_HOME)/h
-LIBDIR = $(MI_HOME)/lib 
+INCDIR = $(INFORMIXDIR)/incl/dmi
+MILIBDIR = $(INFORMIXDIR)/lib/dmi
 
 MICFLAGS = -DPLATFORM=solaris -g -DELF -v -DPOSIX_SIGNALS -DSOLARIS -I $(INCDIR)
-MILIBS = -ldl -lsocket -lnsl -L$(LIBDIR) -lmi
+
+#  esql doesn't add this library to the list, so specify it explicitly
+MILIBS = -L$(MILIBDIR) -lifdmi
 
 #
 #  The lists of files
@@ -60,8 +68,10 @@ checkin:
 #  The actual commands for creating the targets
 #
 
-libMISQL.so:	enddef $(OBJECTFILES)
-	$(CC) -G -M enddef $(OBJECTFILES) $(MILIBS) -o libMISQL.so
+libMISQL.so:	$(OBJECTFILES)
+#	$(CC) -G $(OBJECTFILES) $(MILIBS) -o libMISQL.so
+#	precc is a shell script that passes a -G option to cc (see precc for reason)
+	INFORMIXC=./precc esql -o libMISQL.so $(OBJECTFILES) $(MILIBS)
 
 MIConnection.h:	MIConnection.class
 	$(JAVAH) MIConnection
