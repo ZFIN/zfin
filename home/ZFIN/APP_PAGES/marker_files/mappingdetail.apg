@@ -320,7 +320,11 @@ ERROR -- something bad happened -- no OID passed in!
          <?MIVAR NAME=$locus_id>$1<?/MIVAR>
       <?/MISQL>
       
-      <?MISQL SQL=" 
+      <?MISQL SQL="
+	       select zdb_id, allele
+                 from fish
+		where zdb_id = '$MID'
+            union 
                select f.zdb_id, allele
                  from fish f, locus l
                 where l.cloned_gene = '$OID'
