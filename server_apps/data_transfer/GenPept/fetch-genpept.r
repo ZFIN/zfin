@@ -1,0 +1,90 @@
+rebol []
+comment {
+dbsource typically has  "DBSOURCE    accession <acc_num>"
+but there can be cruft before that on the line 
+ex:
+DBSOURCE    embl locus BRENG2, accession X68446.1
+
+There can be several valid lines with different valid <acc_num> on each line
+ex:
+DBSOURCE    embl locus BRWNT1G1, accession X58880.1
+            embl locus BRWNT1G2, accession X58881.1
+            embl locus BRWNT1G3, accession X58882.1
+            embl locus BRWNT1G4, accession X58883.1
+
+There can be valid lines followed by invalid lines.
+ex:
+DBSOURCE    swissprot: locus HS7C_BRARE, accession Q90473;
+            class: standard.
+            created: Nov 1, 1997.
+            sequence updated: Nov 1, 1997.
+            annotation updated: Jul 15, 1999.
+            xrefs: gi: 1408566, gi: 1235933
+            xrefs (non-sequence databases): HSSPP19120, ZFINZDB-GENE-990415-92,
+            PFAMPF00012, PROSITEPS00297, PROSITEPS00329, PROSITEPS01036
+            
+There can be single lines with no valid accession 
+exs:
+DBSOURCE    pir: locus WJZFX2;
+DBSOURCE    pdb: molecule 1KQX, chain 65, release Jan 8, 2002;
+DBSOURCE    pdb: molecule 1KQW, chain 65, release Jan 8, 2002;
+DBSOURCE    prf: locus 2124419A;
+
+}
+
+entrez: http://www.ncbi.nlm.nih.gov:80/entrez/query.fcgi?CMD=search&DB=protein
+
+;Entrez likes a valid cookie embedded in the post data instead of the header
+;you can get one by performing a search and snagging it as a hidden var in the return page
+
+webenv: copy "" ; the post_cookie
+parse read/custom entrez reduce['POST {CMD=search&db=protein&term=txid7955}][
+    thru {<input name="WebEnv" type="hidden" value="} copy webenv to {">}
+]
+
+; build the post_cookie into the main query      
+data: rejoin [
+"WebEnv="webenv"&"
+"cmd=Text&cmd_current=&db=protein&orig_db=protein&term=txid7955&"
+"query_key=1&dopt=GenPept&dispmax=5&SendTo=Text&textpage=1&CrntRpt=DocSum&"
+"showndispmax=20&page=0&inputpage=&tool=ZFIN&email=tomc@cs.uoregon.edu"
+]
+; fetch the data
+genpept: read/custom entrez reduce ['POST data]
+
+; so first record is same as the rest (to facilatate parsing)
+insert genpept newline 
+
+; the only chars found in accession numbers
+acc-char: charset "0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+token: copy ""   ; tmp var
+protein: copy "" ; tmp var
+buffer: make string! 800,000 ;room for 8,000 rows with 100 chars per row
+
+parse genpept [
+some [  (protein: copy "")
+        thru "^/LOCUS       "  
+        copy token to " " ; some acc-char 
+            (append protein join token  ["|"])          
+        copy token integer! "aa" ; the length
+            (append protein join token ["|"])      
+        thru "^/DBSOURCE    "
+        copy accessions to "^/KEYWORDS    "
+        (   parse accessions [
+                any [thru "accession " copy token some acc-char 
+                    (append buffer rejoin[protein token "|^/"])
+                ]
+            ]
+        )
+     ]
+]
+
+write %prot_len_acc.unl buffer            
+;halt 
+
+
+comment {
+
+
+}

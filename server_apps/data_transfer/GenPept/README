@@ -1,0 +1,44 @@
+##################################################################
+ 
+  README for fetch_load_GenPept.sh
+ 
+##################################################################
+
+------------------------------------------------------------------
+  ZFIN Objective:
+------------------------------------------------------------------
+
+To extract relationships from GenPept files that can be used to 
+create Protien sequence links for Zebrafish genes.
+  
+------------------------------------------------------------------
+  Data Files:
+------------------------------------------------------------------  
+
+Genbank hosts individual GenPept records on their Entrez Web site. 
+
+ZFIN is interested in:
+all zebrafish protien acessions and the acessions of neculotide
+sequences from which the protiens were derived.
+
+------------------------------------------------------------------
+  Procedure:
+------------------------------------------------------------------ 
+DOWNLOADING
+Using fetch-genpept.r , the most recent GenPept records are 
+dowloaded from NCBI's Entrez page.
+
+The ~20Meg http stream is parsed into a ~200k Informix load file.
+
+the load file is inserted into the database with the 
+load_genpept.sql script  via dbaccess
+
+CLEAN & REPLACE
+To insert the data, we use a wipe and replace approach. All GenPept,
+that are soley attributed to the automated curation pub are removed. 
+(as well as any attributed to a EMBL load)
+All relationships from the latest download are found. 
+Then the relationships that do not exist in ZFIN are inserted into 
+the database and they are attributed to the automtated curation pub.
+
+This process is automated to perform weekly in crontab.
