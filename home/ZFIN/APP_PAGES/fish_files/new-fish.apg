@@ -92,7 +92,7 @@ Fill in as many entries as you can and then click on the SUBMIT button.
 
 <!-- ask about mutagen only if it's not spontaneous! -->
 <TD colspan=2> 
-<A HREF="/ZDBB/help_files/help-fish.html#availability">MUTAGENIZING PROTOCOL:</A> 
+<A HREF="/ZDBB/help_files/help-fish.html#availability">MUTAGENESIS PROTOCOL:</A> 
 <?MIBLOCK COND="$(NC,$mutagen,spontaneous)">
 <br>
 <SELECT NAME=protocol>
