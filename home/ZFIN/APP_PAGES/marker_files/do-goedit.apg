@@ -12,8 +12,6 @@ new_value -- the new value to stick in the column
 old_value -- the previous value
 xtra_param -- to pass an extra parameter
 comments -- reasons for doing update 
-target_table -- either anon_marker or gene, depending on what you're 
-updating
 info -- optional value used to pass in additional info
 dataOID -- the zdbid of the attributed item
 
@@ -56,7 +54,11 @@ COND="$(OR,$(EC,$attr,putgene_putative_gene_name),$(EC,$attr,putgene_comments),$
   <!-- OK, NOW UPDATE THE  ACTUAL DATA RECORD. -->
 <!--This case will never arise, ie GO term itself shouldn't be updated-->
 <?MIBLOCK COND="$(EC,$attr,goterm)">
-  <?MISQL SQL="select goterm_zdb_id from go_term where goterm_go_id='$attr'"<?/MISQL>
+  <?MISQL SQL="
+    select goterm_zdb_id 
+      from go_term 
+      where goterm_go_id='$attr';">
+  <?/MISQL>
   <?MISQL SQL="
     update marker_go_term
       set mrkrgo_go_term_zdb_id='$1' 
