@@ -45,7 +45,7 @@ This file just does some important setup that needs to happen each time we enter
 <?MISQL SQL="
   select name, abbrev, mother, father, discoverer, lab, phenotype, 
          segregation, orig_crossnum, chrom_num, allele, mutagen, protocol, 
-	 chrom_change, locus, genetic_loc, cyto_loc, breakpoints, flag, 
+	 chrom_change, locus, flag, 
          comments, line_type, fish_extinct 
     from temp_fish 
     where zdb_id = '$temp_oid';">
@@ -65,13 +65,10 @@ This file just does some important setup that needs to happen each time we enter
 <?MIVAR NAME=$protocol>$13<?/MIVAR>
 <?MIVAR NAME=$chrom_change>$14<?/MIVAR>
 <?MIVAR NAME=$locus>$15<?/MIVAR>
-<?MIVAR NAME=$genetic_loc>$16<?/MIVAR>
-<?MIVAR NAME=$cyto_loc>$17<?/MIVAR>
-<?MIVAR NAME=$breakpoints>$18<?/MIVAR>
-<?MIVAR COND="$(NXST,$flag)" NAME=$flag>$19<?/MIVAR>
-<?MIVAR NAME=$comments>$20<?/MIVAR>
-<?MIVAR NAME=$line_type>$21<?/MIVAR>
-<?MIVAR NAME=$fish_extinct>$22<?/MIVAR>
+<?MIVAR COND="$(NXST,$flag)" NAME=$flag>$16<?/MIVAR>
+<?MIVAR NAME=$comments>$17<?/MIVAR>
+<?MIVAR NAME=$line_type>$18<?/MIVAR>
+<?MIVAR NAME=$fish_extinct>$19<?/MIVAR>
 
 
 <!-- Now just returns back to new-fish, which uses these values to display form

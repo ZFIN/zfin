@@ -37,10 +37,7 @@ Note that, for now, this subroutine is tailored for TEMP_FISH records, but it co
 
 <?MISQL COND=$(XST,$chrom_change) SQL="update temp_fish set chrom_change='$chrom_change' where zdb_id='$temp_oid';"><?/MISQL>
 <?MISQL COND=$(XST,$locus) SQL="update temp_fish set locus='$locus' where zdb_id='$temp_oid';"><?/MISQL>
-<?MISQL COND=$(XST,$genetic_loc) SQL="update temp_fish set genetic_loc='$genetic_loc' where zdb_id='$temp_oid';"><?/MISQL>
 
-<?MISQL COND=$(XST,$cyto_loc) SQL="update temp_fish set cyto_loc='$cyto_loc' where zdb_id='$temp_oid';"><?/MISQL>
-<?MISQL COND=$(XST,$breakpoints) SQL="update temp_fish set breakpoints='$breakpoints' where zdb_id='$temp_oid';"><?/MISQL>
 <?MISQL COND=$(XST,$flag) SQL="update temp_fish set flag='$flag' where zdb_id='$temp_oid';"><?/MISQL>
 <?MISQL COND="$(XST,$comments)" SQL="update temp_fish set comments='$comments' where zdb_id='$temp_oid';"><?/MISQL>
 

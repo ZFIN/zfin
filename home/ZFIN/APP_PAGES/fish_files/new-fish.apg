@@ -375,22 +375,6 @@ $1<?/MISQL>
           </SELECT>
 	</TD>
        </TR>
-       <TR>
-	<TD><A HREF="/ZFIN/help_files/help-chromo.html#gen_loc">MAP LOCATION:</A> <br>
-	  <INPUT TYPE=text 
-	  <?MIVAR COND=$(NC,$genetic_loc,NULL)> VALUE="$genetic_loc" <?/MIVAR> NAME="genetic_loc">
-	</TD>
-      </TR>
-      <TR>
-	<TD><A HREF="/ZFIN/help_files/help-chromo.html#cyto_loc">CYTOLOGICAL LOCATION: </A> <br>
-	  <INPUT TYPE=text 
-	  <?MIVAR COND=$(NC,$cyto_loc,NULL)> VALUE="$cyto_loc" <?/MIVAR> NAME="cyto_loc">
-	</TD>
-	<TD><A HREF="/ZFIN/help_files/help-chromo.html#breakpoints">BREAKPOINTS: </A> <br>
-	  <INPUT TYPE=text 
-	  <?MIVAR COND=$(NC,$breakpoints,NULL)> VALUE="$breakpoints" <?/MIVAR> NAME="breakpoints">
-	</TD>
-	</TR>
 	</TABLE>
 
       <?/MIBLOCK> <!-- Ends mutagenized case -->
@@ -403,12 +387,17 @@ $1<?/MISQL>
 
       <TABLE WIDTH=100% border>
         <TH>Allele</TH><TH>Mutation type</TH><TH>LG</TH><TH>Location</TH>
-        <?MISQL SQL="select c.allele, c.genetic_loc, c.chrom_change, b.chrom_num, c.zdb_id from int_fish_chromo a, chromosome b, alteration c where (a.source_id='$father' or a.source_id='$mother') and b.zdb_id=a.target_id and c.chrom_id=a.target_id;">
+        <?MISQL SQL="
+	  select c.allele, c.chrom_change, b.chrom_num, c.zdb_id 
+	    from int_fish_chromo a, chromosome b, alteration c 
+	    where (   a.source_id = '$father' 
+		   or a.source_id='$mother')
+	      and b.zdb_id = a.target_id
+	      and c.chrom_id = a.target_id;">
           <TR align=center>
             <TD> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-altview.html&OID=$5">$1</A>            </TD>
-            <TD>$3</TD>
-            <TD> $(IF,$(EC,$4,NULL),unknown,$4) </TD>
-            <TD> $(IF,$(EC,$2,NULL),unknown,$2) </TD>
+            <TD>$2</TD>
+            <TD> $(IF,$(EC,$3,NULL),unknown,$3) </TD>
           </TR>
         <?/MISQL>
 
