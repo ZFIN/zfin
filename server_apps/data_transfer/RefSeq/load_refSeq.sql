@@ -297,14 +297,14 @@ insert into db_link
 
 !echo 'Attribute human LL links to source LocusLink curation pub.'
 insert into record_attribution
-    select dblink_zdb_id, 'ZDB-PUB-020723-3', 'primary'
+    select dblink_zdb_id, 'ZDB-PUB-020723-3'
     from db_link
     where db_name = "LocusLink"
       and acc_num not in (select acc_num from omim_and_ll);
 
 !echo 'Attribute OMIM links to source LocusLink curation pub.'
 insert into record_attribution
-    select dblink_zdb_id, 'ZDB-PUB-020723-3', 'primary'
+    select dblink_zdb_id, 'ZDB-PUB-020723-3'
     from db_link
     where db_name = "OMIM"
       and acc_num not in (select acc_num from omim_and_ll);
@@ -377,7 +377,7 @@ insert into db_link
 
 !echo 'Attribute mouse LL links to source LocusLink curation pub.'
 insert into record_attribution
-    select dblink_zdb_id, 'ZDB-PUB-020723-3', 'primary'
+    select dblink_zdb_id, 'ZDB-PUB-020723-3'
     from db_link
     where db_name = "LocusLink"
       and acc_num not in (select acc_num from locuslink_link);
@@ -398,13 +398,13 @@ insert into db_link select * from tmp_db_link; -- where db_name = "RefSeq";
 
 !echo 'Attribute RefSeq links to an artificial pub record.'
 insert into record_attribution
-    select dblink_zdb_id, 'ZDB-PUB-020723-3', 'primary'
+    select dblink_zdb_id, 'ZDB-PUB-020723-3'
     from db_link
     where db_name = "RefSeq";
 
 !echo 'Attribute ZFIN_LL links to an artificial pub record.'
 insert into record_attribution
-    select a.dblink_zdb_id, 'ZDB-PUB-020723-3', 'primary'
+    select a.dblink_zdb_id, 'ZDB-PUB-020723-3'
     from db_link a, tmp_db_link tmp
     where a.db_name = "LocusLink"
       and a.acc_num = tmp.acc_num
@@ -449,7 +449,7 @@ insert into db_link select * from tmp_db_link
 
 !echo 'Attribute RefSeq links to an artificial pub record.'
 insert into record_attribution
-    select a.dblink_zdb_id, 'ZDB-PUB-020723-3', 'primary'
+    select a.dblink_zdb_id, 'ZDB-PUB-020723-3'
     from db_link a
     where a.db_name = "UniGene"
       and a.acc_num not in (select acc_num from unigene_link)
