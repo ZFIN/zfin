@@ -11,6 +11,8 @@ RETURN_FORM variable, the zdb_id of the temporary record (temp_oid) that we were
 When filled, the ZDB_ID of the new return_rec is passed along into whatever browser is invoked. It is eventually used by do-select to process the results of the digression, and send control back to where it came from.
 -->
 
+<META HTTP-EQUIV="EXPIRES" CONTENT="-2d"> 
+
 <?MISQL SQL="execute function get_id('sys');"><?/MISQL>
 <?MIVAR NAME=$return_rec>$1<?/MIVAR>
 <?MIVAR NAME=$return_form>aa-new-fish.apg<?/MIVAR>

@@ -19,6 +19,8 @@ target_table -- either anon_marker or gene, depending on what you're updating
 
 <!-- first double-check permissions.   -->
 
+<META HTTP-EQUIV="EXPIRES" CONTENT="-2d">
+
 
   <?MISQL SQL="
     select WebExplode(object,
@@ -33,6 +35,7 @@ target_table -- either anon_marker or gene, depending on what you're updating
 
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
   <!-- If the attribute is something we can just specify locally, go ahead and throw up the right form to do it. -->
+
 
   <?MIBLOCK COND="$(NC,$attr_type,selection)"> 
     <?MIBLOCK COND="$(AND,$(NC,$attr,putgene_putative_gene_name),$(NC,$attr,putgene_comments))">

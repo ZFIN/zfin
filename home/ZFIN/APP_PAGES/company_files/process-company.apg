@@ -3,6 +3,8 @@
 2) User can hit the "final" submit button, indicating he is done specifying new entry. This should result in creating a new COMPANY record.
 -->
 
+<META HTTP-EQUIV="EXPIRES" CONTENT="-2d"> 
+
 
 <!-- First thing to ALWAYS do is to store all available values in the temp_oid record in the COMPANY table under the temp_oid and status=temporary. This is how we maintain state.
 -->

@@ -18,6 +18,7 @@ print_name -- The human-understandable name (vs. the database column name) of
 target_table -- either anon_marker or gene, depending on what you're updating
 
 -->
+<META HTTP-EQUIV="EXPIRES" CONTENT="-2d"> 
 
 <!-- first update navigation and double-check permissions. Don't put up 
   -- navigator tile if you are doing selection since you are jumping 

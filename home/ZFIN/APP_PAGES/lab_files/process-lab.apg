@@ -13,6 +13,9 @@
      temp_oid record in the LAB table under the temp_oid and 
      status=temporary. This is how we maintain state.
 -->
+
+<META HTTP-EQUIV="EXPIRES" CONTENT="-2d"> 
+
 <?MISQL SQL="
   select WebExplode(object,'')
     from webPages
