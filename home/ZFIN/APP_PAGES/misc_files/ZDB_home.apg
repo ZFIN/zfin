@@ -185,7 +185,7 @@ developmental stage, anatomical structure, developmental or physiological proces
 <TR><TD class="content_left"><DIV class="content">
 <A HREF="/<!--|CGI_BIN_DIR_NAME|-->/mapper_select.cgi"><B>Genetic Maps</B></A> 
 </DIV></TD><TD class="content_right"><DIV class="content">
-<A HREF="/<!--|CGI_BIN_DIR_NAME|-->/mapper_select.cgi">Generate graphical views of genetic, radation hybrid of consolidated maps.</A><br>
+<A HREF="/<!--|CGI_BIN_DIR_NAME|-->/mapper_select.cgi">Generate graphical views of genetic, radiation hybrid or consolidated maps.</A><br>
 </DIV></TD></TR>
 
 <TR><TD class="content_left"><DIV class="content">
