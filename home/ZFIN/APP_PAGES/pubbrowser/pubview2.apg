@@ -122,8 +122,15 @@ ERROR -- something bad happened -- no OID passed in!
 
 
 <?MIVAR COND="$(NC,$accession_no,NULL)">
-<b>MEDLINE:</B> <A HREF=http://www.ncbi.nlm.nih.gov:80/entrez/query.fcgi?cmd=search&db=PubMed&dopt=Abstract&term=$accession_no>$accession_no</A>
-<p>
+  <b>MEDLINE:</B> 
+  <?MIBLOCK COND="$(ISINT,$accession_no)">
+    <?MIVAR>
+      <A HREF=http://www.ncbi.nlm.nih.gov:80/entrez/query.fcgi?cmd=search&db=PubMed&dopt=Abstract&term=$accession_no>$accession_no</A>
+    <?/MIVAR>
+  <?MIELSE>
+    <?MIVAR>$accession_no<?/MIVAR>
+  <?/MIBLOCK>
+  <p>
 <?/MIVAR>
 
 <?MIVAR COND="$(EC,$AUTHORIZED,root)">
