@@ -20,7 +20,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/anatomy
 
-SUBDIRS = 24hrs 48hrs 72hrs 120hrs Dictionary highres lowres stages
+SUBDIRS = 24hrs 48hrs 72hrs 120hrs dict highres lowres stages
 
 STATICS = 24hrs.gif 48hrs.gif 72hrs.gif 120hrs.gif fish_net.gif
 
