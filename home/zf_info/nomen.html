@@ -27,7 +27,7 @@ href="mailto:nomenclature@zfin.org">nomenclature@zfin.org</a> and registered ZFI
   <a href="http://www.gene.ucl.ac.uk/cgi-bin/nomenclature/searchgenes.pl">human</a>, 
   <a href="http://flybase.bio.indiana.edu/">fly (Drosophila)</a>, <a href="http://genome-www.stanford.edu/Saccharomyces/">yeast 
   (Saccharomyces</a>, <a href="http://www.informatics.jax.org/mgihome/nomen/genefamilies/index.shtml">gene 
-  famlies</a>
+  families</a> 
 <HR WIDTH=90%>
 <P><b>CONTENTS:</b>
 <blockquote> 
@@ -41,12 +41,12 @@ href="mailto:nomenclature@zfin.org">nomenclature@zfin.org</a> and registered ZFI
     <a href="#Chromosomes">Chromosomes and aberrations</a><br>
     &nbsp;&nbsp;&nbsp;&nbsp;<a href="#Deficiencies">Deficiencies</a> <br>
     &nbsp;&nbsp;&nbsp;&nbsp;<a href="#Translocations">Translocations</a><br>
-    &nbsp;&nbsp;&nbsp;&nbsp;<a href="#Transgenes">Trangenes</a><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<a href="#Transgenes">Strangeness</a><br>
     <a href="#Strains">Strains</a><br>
     <a href="#Priority">Priority in Names</a><br>
     <a href="#Website">Website</a><br>
     <a href="#Genome">Genome project</a> <br>
-    <a href="#Contributors">Contributors</a><br>
+    <a href="#Contributors">Contributors</a><sup></sup><br>
     <a href="#References">References</a><br>
 </blockquote>
 <hr width=90%>
@@ -68,6 +68,10 @@ mutant phenotype.
   name followed by consecutive numbers should not be used. This nomenclature makes 
   the field less accessible to the outsider. A mutation in a second gene resulting 
   in cyclopia could be called <i>fused eyes,</i> but should not be called <i>cyclops2.</i> 
+<p>4. If the mutated gene has not yet been named or described in a publication 
+  and is known to be the orthologue of a mammalian gene, the approved mammalian 
+  gene name and symbol should be used, following the guidelines described below 
+  for naming genes identified by cloning. 
 <P><b>Specific guidelines:</b>. Genes identified by mutation are typically named 
   to reflect the mutant phenotype. Full gene names are lowercase italic, no hyphens. 
   Gene symbols consist of three lowercase letters. The letters should be unique 
@@ -93,7 +97,7 @@ href="/">ZFIN</a> </p>
   case, italic. When orthologous relationships are unclear, lower case letters 
   may be appended. Different members of a gene family are sequentially numbered. 
   Gene symbols should be lower case italicized letters or lower case letters and 
-  an italicized number or letter (no hyphen). Genes identfied as homologues to 
+  an italicized number or letter (no hyphen). Genes identified as homologues to 
   human or mouse genes should use the same symbol, if possible, and thus are not 
   limited to 3 letters. 
 <blockquote> 
@@ -114,7 +118,7 @@ href="/">ZFIN</a> </p>
   For this reason, zebrafish often have two copies of a gene that is present as 
   a single copy in mammals. </p>
 <p>In these cases, symbols for the two zebrafish genes should be the same as the 
-  approved symbol of the human ortholog followed by "a" or "b" to indicate that 
+  approved symbol of the human orthologue followed by "a" or "b" to indicate that 
   they are duplicate copies. Before these symbols are assigned, it is important 
   to provide evidence by mapping that the two copies reside on duplicated chromosome 
   segments. It is preferable that all copies in one of the duplicate chromosome 
@@ -150,9 +154,8 @@ cyc<SUP>m101</SUP>
   chromosome, each allele should be separated by a slash &quot;/&quot;. 
 <blockquote>
    <p> <b>Examples:</b><br>
-     &nbsp;&nbsp;&nbsp;&nbsp;<I>msxb<SUP>b220</SUP>/ 
-msxb<SUP>+</SUP></I> (heterzygote, can be abbreviated 
-<I>msx<SUP>b220/+</SUP></I>)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<I>msxb<SUP>b220</SUP>/ msxb<SUP>+</SUP></I> (heterozygote, 
+    can be abbreviated <I>msx<SUP>b220/+</SUP></I>)<br>
      &nbsp;&nbsp;&nbsp;&nbsp;<I>msxb<SUP>b220</SUP>/ 
 msxb<SUP>b220</SUP></I> (homozygote, can be abbreviated 
 <I>msx<SUP>b220/b220</SUP></I> or <I>msx<SUP>b220</SUP></I>)<br>
@@ -177,15 +180,22 @@ and the first
   is listed in order according to Linkage Group number, from 1 to 25, with a semicolon 
   to separate loci on different chromosomes. 
 <blockquote>
-   <p> <B>Examples:</B> <I>rse<SUP>b140</SUP>; gol<SUP>b16</SUP></I></p>
+   
+  <p> <B>Examples:</B> <I>rse<SUP>b140</SUP></I>; <I>gol<SUP>b16</SUP></I></p>
 </blockquote>
 <P>
 
 For <B>heterozygous</B> genotypes, loci on homologous chromosomes are 
 separated by a slash.
+<blockquote> 
+  <p> <B>Examples:</B> <I>rse<SUP>b140</SUP>/rse<SUP>+</SUP></I>;<I> gol<SUP>b16</SUP>/gol<SUP>m592</SUP></I></p>
+</blockquote>
+<p>Another case is a new mutation induced in a line expressing a transgene as 
+  a marker, for example, using a GFP line to find interesting mutations that alter 
+  GFP expression. 
 <blockquote>
-   <p> <B>Examples:</B> <I>rse<SUP>b140</SUP>/rse<SUP>+</SUP>; 
-gol<SUP>b16</SUP>/gol<SUP>m592</SUP></I></p>
+  <p> <b>Example:</b> <i>TG(NBT:MAPT-GFP)<sup>zc1</sup></i>; <i>abc<sup>b000</sup></i> 
+  </p>
 </blockquote>
 <P>
 
@@ -194,10 +204,27 @@ sequence, with a space separating syntenic loci, and loci are placed
 in the order they appear on the Linkage Group, top to bottom. 
 Homologous chromosomes are separated by a slash, and non-homologous 
 chromosomes are separated by semicolons.
-<blockquote>
-   <p> <B>Examples:</B> <I>rse<SUP>b140</SUP> leo<SUP>t1</SUP>; 
-gol<SUP>b16</SUP></I>
-   </p>
+<blockquote> 
+  <p> <B>Examples:</B> <I>rse<SUP>b140</SUP> leo<SUP>t1</SUP></I>; <I>gol<SUP>b16</SUP></I> 
+  </p>
+</blockquote>
+<p><b>Unmapped loci -</b> genotypes of unmapped loci are listed alphabetically 
+  within braces following genotypes of mapped loci on different chromosomes </p>
+<blockquote> 
+  <p><b>Examples:</b><i> rse<sup>b140</sup></i>; {<i>edit<sup>z253</sup></i>;<i> 
+    esr<sup>tj236</sup></i>} (<i>edi</i> and <i>esr</i> are unmapped, all three 
+    loci are on different chromosomes)</p>
+</blockquote>
+<p><b>Poorly resolved loci on same chromosome -</b> genotypes of loci on the same 
+  chromosome at locations that are undetermined or poorly resolved are listed 
+  alphabetically within braces.</p>
+<blockquote> 
+  <p><b>Examples:</b><br>
+     &nbsp;&nbsp;&nbsp;&nbsp;{<i>abc<sup>b000</sup> def<sup>m000</sup></i>} (poorly resolved 
+    loci on same chromosome)<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;<i>rse<sup>b140</sup></i> {<i>abc<sup>b000</sup> def<sup>m000</sup></i>} 
+        <i>leo<sup>t1</sup></i> (poorly resolved loci in a known interval between 
+        mapped loci, all on same chromosome  
 </blockquote>
 <hr width=90%>
 <br>
@@ -274,27 +301,26 @@ moves a named
 the standard
      <a href="#Gene">symbol</a> for that gene. Alternatively, xxx could just be
      an experimental series number. </p>
-     <p>The <a href="#Alleles">allele name</a> should follow standard 
-nomenclature
-       conventions (laboratory designation followed by allele name, 
-superscripted).
-       After the allele name comes a comma, and then a phrase that indicates the
-       new order of the chromosome, starting from the top of the chromosome as
-       displayed by convention. The first number (##) is the LG number, followed
-       by upper case Uto indicate the upper arm of a chromosome or by upper case
-       L to indicate the lower arm of a chromosome. The location of 
-the centromere
-       is indicated by a period. No spaces. </p>
+     
+    <p>The <a href="#Alleles">allele name</a> should follow standard nomenclature 
+      conventions (laboratory designation followed by allele name, superscripted). 
+      After the allele name comes a comma, and then a phrase that indicates the 
+      new order of the chromosome, starting from the top of the chromosome as 
+      displayed by convention. The first number (##) is the LG number, followed 
+      by upper case Auto indicate the upper arm of a chromosome or by upper case 
+      L to indicate the lower arm of a chromosome. The location of the centromere 
+      is indicated by a period. No spaces. </p>
    <blockquote>
        <p><b>Example:</b><br>
         &nbsp;&nbsp;&nbsp;&nbsp;<i>T(LG02;LG12)cc<sup>b213</sup>,02U.12L02L</i> 
         and <i>T(LG02;LG12)cyc<sup>b213</sup>,12U.12L02L</i></p>
      <p>&nbsp;&nbsp;&nbsp;&nbsp;<img src="translocation.jpeg"></p>
    </blockquote>
-     <p>This example illustrates a reciprocal translocation where a portion of
-       the lower arm of LG12 was translocated interstitially into the proximal
-       lower arm of LG2 and a portion of tthe lower arm of LG2 was translocated
-       to the distal lower arm of LG12.</p>
+     
+    <p>This example illustrates a reciprocal translocation where a portion of 
+      the lower arm of LG12 was translocated interstitially into the proximal 
+      lower arm of LG2 and a portion of the lower arm of LG2 was translocated 
+      to the distal lower arm of LG12.</p>
      <p><b>Resolved translocations:</b></p>
    <p>In some cases, the two elements of the translocation can 
 separate, a mutant
@@ -313,9 +339,10 @@ remain the
    <br>
    <p><a name="Transgenes"><b>Transgenes</b></a>: The general format for naming
      a transgene is: </p>
-   <p><i>Tg(xxx)<sup>allele</sup></i></p>
    
-  <p><i>Tg</i> indicates transgene. The term xxx should describe the salient features 
+  <p><i>TG(xxx)<sup>allele</sup></i></p>
+   
+  <p><i>TG</i> indicates transgene. The term xxx should describe the salient features 
     of the transgene, as determined by the investigator. It is always contained 
     within parentheses. In cases where the insertion utilizes sequences from a 
     named gene, it should contain the standard symbol for that . The <a href="#Alleles">allele 
@@ -324,7 +351,8 @@ remain the
     of the promoter of one gene linked to the coding region of another, the insertion 
     may be designated using the symbol of the first, separated by a colon from 
     the symbol of the second: </p>
-   <p><i>Tg(promoter:gene<sup>)allele</sup></i></p>
+   
+  <p><i>TG(promoter:gene<sup>)allele</sup></i></p>
    <p>In cases where the map location is known and where this 
 information is useful
      (i.e., when the location of the transgene affects its expression 
@@ -332,17 +360,20 @@ or when the
      transgene is used as a map marker) the linkage group number (##) 
 should also
      be included: </p>
-   <p><i>Tg(Lg##,promoter:gene)<sup>allele</sup></i></p>
+   
+  <p><i>TG(Lg##,promoter:gene)<sup>allele</sup></i></p>
    <blockquote>
-     <p><b>Example:</b> <i>Tg(Lg03,ERE:nic1)<sup>b512</sup></i></p>
+     
+    <p><b>Example:</b> <i>TG(Lg03,ERE:nic1)<sup>b512</sup></i></p>
    </blockquote>
 </blockquote>
 <HR WIDTH=90%>
 <P> <STRONG><a name="Strains"></a>STRAINS</STRONG><BR>
-   Strain names are non-italic, uppercase.
-<blockquote>
-   
-  <p> <B>Examples:</B> AB WIK DAR</p>
+  Strain names are non-italic, first letter upper case. Abbreviations are non-italic, 
+  all uppercase.
+<P>
+<blockquote> 
+  <p> <B>Examples:</B> Darjeeling DAR Indonesia INDO</p>
 </blockquote>
 <HR WIDTH=90%>
 <p><STRONG><a name="Priority"></a>PRIORITY IN NAMES</Strong><BR>
