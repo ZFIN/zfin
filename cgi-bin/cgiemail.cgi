@@ -142,7 +142,12 @@ foreach ad parse addy "," [
            ]
                     
            if error? err: try [send/header to-email ad template header][
-               send tomc@cs.uoregon.edu  rejoin [probe disarm err "^/" ad "^/" template "^/" header]
+               send tomc@cs.uoregon.edu rejoin [
+                    probe disarm err "^/" ad "^/" template "^/" header
+               ]
+               send rholland@zfin.org rejoin [
+                    probe disarm err "^/" ad "^/" template "^/" header
+               ]
            ]
 ]   
 
