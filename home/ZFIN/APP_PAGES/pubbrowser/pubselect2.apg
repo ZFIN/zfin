@@ -64,23 +64,25 @@ document.critform.title.value = "";
 document.critform.year.value = "";
 document.critform.anon1text.value = "";
 document.critform.jtype.selectedIndex = 0;
-document.critform.pub_status.selectedIndex = 0;
-document.critform.cur_status.selectedIndex = 0;
-document.critform.curator.selectedIndex = 0;
-document.critform.Tday.value = "$(SUBSTR,$MAX_ARRIVAL,9,2)";
-document.critform.Tmonth.value = "$(SUBSTR,$MAX_ARRIVAL,6,2)";
-document.critform.Tyear.value = "$(SUBSTR,$MAX_ARRIVAL,1,4)";
-document.critform.Fday.value = "$(SUBSTR,$MIN_ARRIVAL,9,2)";
-document.critform.Fmonth.value = "$(SUBSTR,$MIN_ARRIVAL,6,2)";
-document.critform.Fyear.value = "$(SUBSTR,$MIN_ARRIVAL,1,4)";
 document.critform.yr_cmpr.selectedIndex = 0;
 document.critform.century.selectedIndex = 1;
-if (user_access != 'root') {document.critform.anon1.selectedIndex = 0;}
-if (user_access = 'root') {document.critform.anon1.selectedIndex = 5;}
 document.critform.order_pref.selectedIndex = 0;
 document.critform.authtype.selectedIndex = 0;
 document.critform.WINSIZE.value = 10;
 document.critform.START.value = "";
+if (user_access != 'root') {document.critform.anon1.selectedIndex = 0;}
+   else { 
+     document.critform.anon1.value = "zdb_id";
+     document.critform.curator.value = "anyone";
+     document.critform.cur_status.value = "Any";
+     document.critform.pub_status.value = "Any";
+     document.critform.Tday.value = "$(SUBSTR,$MAX_ARRIVAL,9,2)";
+     document.critform.Tmonth.value = "$(SUBSTR,$MAX_ARRIVAL,6,2)";
+     document.critform.Tyear.value = "$(SUBSTR,$MAX_ARRIVAL,1,4)";
+     document.critform.Fday.value = "$(SUBSTR,$MIN_ARRIVAL,9,2)";
+     document.critform.Fmonth.value = "$(SUBSTR,$MIN_ARRIVAL,6,2)";
+     document.critform.Fyear.value = "$(SUBSTR,$MIN_ARRIVAL,1,4)";
+ }
   <?/MIVAR>
 }
 
@@ -88,7 +90,7 @@ function start_help(anchor) {
    top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-helpframes.html&calling_page=international_characters.html&anchor="+anchor,"helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
 }
 
-function list_all() {
+function list_all(user_access) {
   call_reset(user_access);
   form_submit();
 }
@@ -759,8 +761,8 @@ $(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/
     <tr>
       <td class=submitbar colspan=2 align="right">
 	<input type=submit name=action value="SEARCH" onSubmit="document.critform.submit();"> 
-	<input type=button name=action value="RESET" onClick="call_reset('$ZDB_access')"> 
-	<input type=button name=clear_all value="List all publications" onClick="list_all();">
+	<input type=button name=action value="RESET" onClick="call_reset('$ZDB_access');"> 
+	<input type=button name=clear_all value="List all publications" onClick="list_all('$ZDB_access');">
       </td>
     </tr>
   </table>
