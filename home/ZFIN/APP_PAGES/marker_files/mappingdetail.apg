@@ -92,7 +92,7 @@
 	order by 2 desc, 1
       ;">
 
-      
+     
      <?MIVAR COND="$(EC,$MI_CURRENTROW,1)">
 	$(IF,$(EC,$2,p),$(SETVAR,$viewmap,t))
 	LG:&nbsp;$1
@@ -105,16 +105,18 @@
     <?MIVAR COND="$(<,$mapdetLG,10)">&nbsp;<?/MIVAR>
   <?/MIBLOCK>	
   <?MIVAR COND="$(AND,$(EC,$hide_empty,f),$(=,$MI_ROWCOUNT,0))">None submitted.<?/MIVAR>
-
+   
 <?MIELSE><MICOMMENT>need modification here<?/MICOMMENT>
   <?MIVAR>LG:&nbsp;$lg_list<?/MIVAR>
+   
 <?/MIBLOCK>
 
 <?MIBLOCK COND="$(OR,$(XST,$lg_list),$(>,$MI_ROWCOUNT,0))">
-
+ 
  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mappingdetail.apg&OID=$oID"> Details</A><?/MIVAR>
-
-  <?MIVAR COND="$(EC,$viewmap,t)">
+<!-- mini mode section is exploded from both mapping details page and geneselect page, the column open and close need to be handled differently, use the $split functionality to determine which was the calling routine and add appropriate td's -->
+    <?MIVAR COND="$(EC,$viewmap,t)">
+	$(IF,$(EC,$split,&nbsp;),</td><td>)
 	   $split View Map:
   	     &nbsp;
 	   	<?MIVAR NAME=$vmpanels><?/MIVAR>
@@ -124,7 +126,7 @@
 	      <A HREF="/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi?&userid=$userid&OID=$oID&view_map=view_map$vmpanels">Merged</A>&nbsp;&nbsp;
 	      <A HREF="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi?&userid=$userid&OID=$oID&view_map=view_map$vmpanels">Individual Panels</A>
 	  
-
+   	$(IF,$(EC,$split,&nbsp;),</td>)
   <?/MIVAR>
  
 <?/MIBLOCK>
@@ -808,23 +810,22 @@ function Delete_marker(allele,marker_id) {
   <?MIVAR COND="$(=,$MI_CURRENTROW,1)">
     
     <TR>
+
       <TD><p><b>Markers Encoded By $abbrev:</b></TD>
     </TR>
-    <TR><TD colspan=3>
-    <TABLE width=100%>
+    <TR><TD>
   <?/MIVAR>
   <?MISQL SQL="
-    select WebExplode(object, '&mapdetails_mode=mini&split=space&hide_empty=t&oID=$1')
+    select WebExplode(object, '&mapdetails_mode=mini&split=space&hide_empty=t&oID=$insideq_OID')
       from webPages 
       where ID = 'aa-mappingdetail.apg';">
     <TR>
       <TD>
         <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$insideq_OID"><b>$insideq_abbrev</b></A>
-      </TD>
-      <TD colspan=2>$1</TD>
+      $1
      </TR>
    <?/MISQL>
-    </TABLE></TD></TR>
+    </TD></TR>
      <?MIVAR NAME=$mapped>t<?/MIVAR>	
    <?/MISQL>
  
