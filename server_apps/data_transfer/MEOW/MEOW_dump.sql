@@ -299,7 +299,9 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/mappings.txt'
 
 -- wait to see what to do with mutants  union select distinct a.target_id, b.locus, c.abbrev, a.OR_lg, a.lg_location from paneled_markers a, fish b, locus c where a.zdb_id like '%FISH%' and a.zdb_id = b.zdb_id and b.locus = c.zdb_id
 
--- comment out selection of zmap makers temporarily   union select target_id, zdb_id, abbrev||'_'||panel_abbrev, OR_lg, lg_location from zmap_pub_pan_mark
+--- generate file with zmap mapping data
+UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zmap_mappings.txt' 
+ DELIMITER "	"  select zdb_id, abbrev, abbrevp, panel_id, or_lg, lg_location from zmap_pub_pan_mark;
 
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/markers.txt' 
   DELIMITER "	" select distinct zdb_id, abbrev from paneled_markers;
