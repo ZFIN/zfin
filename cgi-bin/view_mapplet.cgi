@@ -61,7 +61,7 @@
   my $types = 'SSLP';
   my $anon_type = "RAPD\',\'RFLP\',\'BAC_END\',\'PAC_END\',\'STS\',\'SNP";
   my $gene_type = "GENE\',\'GENEP";
-  my $est_type  = "EST";
+  my $est_type  = "EST\',\'CDNA";
   my $bac_type  = "BAC\',\'PAC";
   my $fish_type  = "FISH\',\'MUTANT\',\'LOCUS";
 
@@ -193,7 +193,7 @@
   if( (defined $Q->param("view_map")) && ($g_error == 0) ) { # view_map is defined and no error reported
 
     ### types is never defined by an external page so use them all.
-    $types = "SSLP\',\'RAPD\',\'RFLP\',\'STS\',\'SNP\',\'GENE\',\'GENEP\',\'BAC\',\'PAC'\,\'BAC_END\',\'PAC_END'\,\'EST\',\'FISH\',\'MUTANT\',\'LOCUS";
+    $types = "SSLP\',\'RAPD\',\'RFLP\',\'STS\',\'SNP\',\'GENE\',\'GENEP\',\'BAC\',\'PAC'\,\'BAC_END\',\'PAC_END'\,\'EST\',\'CDNA\',\'FISH\',\'MUTANT\',\'LOCUS";
     #$types =  $types . ",\'" . $anon_type  . ",\'" . $gene_type  . ",\'" . $est_type . ",\'" . $bac_type . ",\'" . $fish_type . "\'" ;
     #$note = $note . "\n" . $types .  "\n"; print note;
 
@@ -308,7 +308,7 @@
       else {			### need a linkage group
 	#get OID lg
 	$lg = get_OIDs_lg($zdbid) ;
-	$note = $note . "found $marker to be unique on LG $lg   \n";
+	$note = $note . "found $marker to be unique on LG $lg as $zdbid  \n";
       }
       $sm_lg = $lg;
             #$note = $note . "Arrived from somewhere that resolves to marker $zdbid on $lg <p>\n";
@@ -317,7 +317,7 @@
       ### find closest markers to zdbid on given panels
       ### expects globals  $types and  @panels to exist
 
-      $g_data = uni_query( $lg, $zdbid );
+      $g_data = uni_query($lg, $zdbid );
     }
 
     ###
@@ -364,7 +364,7 @@
       if($Q->param($panel.'_anon') && $Q->param($panel.'_anon')==1){$types = "$types\',\'$anon_type"; $print_type += 4;}
       if($Q->param($panel.'_fish') && $Q->param($panel.'_fish')==1){$types = "$types\',\'$fish_type"; $print_type += 8;}
       if($Q->param($panel.'_bac')  && $Q->param($panel.'_bac')==1)    {$types = "$types\',\'$bac_type"; $print_type += 16; }
-      if($print_type == 0){ $types = "SSLP\',\'RAPD\',\'RFLP\',\'STS\',\'GENE\',\'GENEP\',\'BAC\',\'PAC\',\'BAC_END\',\'PAC_END\',\'EST\',\'FISH\',\'MUTANT\',\'LOCUS"; $print_type += 31;}
+      if($print_type == 0){ $types = "SSLP\',\'RAPD\',\'RFLP\',\'STS\',\'GENE\',\'GENEP\',\'BAC\',\'PAC\',\'BAC_END\',\'PAC_END\',\'EST\',\'CDNA\'\'FISH\',\'MUTANT\',\'LOCUS"; $print_type += 31;}
 
       $note = $note . " will be finding  $types  markers on this refresh panel<p>\n";
       ### hidden panel, lg, lo,hi & zoom re-emited as hidden vars
@@ -430,7 +430,7 @@
       if($Q->param($panel.'_anon') && $Q->param($panel.'_anon')==1){$types = "$types\',\'$anon_type"; $print_type += 4; }
       if($Q->param($panel.'_fish') && $Q->param($panel.'_fish')==1){$types = "$types\',\'$fish_type"; $print_type += 8; }
       if($Q->param($panel.'_bac')  && $Q->param($panel.'_bac')==1)    {$types = "$types\',\'$bac_type"; $print_type += 16; }
-      if($print_type == 0){ $types = "SSLP\',\'RAPD\',\'RFLP\',\'STS\',\'GENE\',\'GENEP\',\'EST\',\'BAC\',\'PAC\',\'BAC_END\',\'PAC_END\',\'FISH\',\'MUTANT\',\'LOCUS"; $print_type += 31;}
+      if($print_type == 0){ $types = "SSLP\',\'RAPD\',\'RFLP\',\'STS\',\'GENE\',\'GENEP\',\'EST\',\'CDNA\'\'BAC\',\'PAC\',\'BAC_END\',\'PAC_END\',\'FISH\',\'MUTANT\',\'LOCUS"; $print_type += 31;}
 
       $note = $note . " will be finding  $types  markers on the edit panel\n";
       $Q->param($panel, 1);
@@ -864,7 +864,7 @@
     print $g_data   . "<p>\n";
   }
 
-  print $note ."<P><P>\n" if ($print_note == 1);
+  print $note ."<P><P>\n" ;#if ($print_note == 1);
 
   ### if a first query or  option/edit put select map back
 #  if( defined $sm_refresh && $sm_refresh > 0 ) {
@@ -1048,30 +1048,30 @@
 
 	#	$note = $note . "Local Zoom ~ $local_zoom<p> \n";
 	$rc  = $sth2->execute($zdbid);
-	#	$note = $note . "probing for $zdbid 's location... \n";
+		$note = $note . "probing for $zdbid 's location on $panel ... \n";
 	@row = $sth2->fetchrow;
-	#	if( defined($row[4]) ){$note =  $note . "probe retuned with  $row[4] <p>\n";}
-	#	else                  {$note =  $note . "probe retuned nothing <p> \n";}
+		if( defined($row[4]) ){$note =  $note . "probe retuned with  $row[4] <p>\n";}
+		else                  {$note =  $note . "probe retuned nothing <p> \n";}
 	if ( @row >= 4 ){
-	  #	  $note = $note .  "HIT  on $panel<p>\n";
+	  	  #$note = $note .  "HIT  on $panel<p>\n";
 	  $row[4] =  ($row[4] == 0)? 0 : $row[4]; # clean up 0.00000E+00
 	  $loc = $lo = $hi = $row[4];
 	  $rc = $sth3->execute($loc); #,$loc,$loc);
       
-	  #    $note =  $note .  "draping lg ".$lg ." about ". $loc ."<p>\n";
+	      $note =  $note .  "draping lg ".$lg ." about ". $loc ."<p>\n";
 	  $local_zoom = ($Q->param($panel.'_zoom'))? $Q->param($panel.'_zoom') : $local_zoom;
 
-	  #    $note = $note .  "seeking closest $local_zoom markers to $zdbid at $loc on $panel.<p>\n";
+	     $note = $note .  "seeking closest $local_zoom markers to $zdbid at $loc on $panel.<p>\n";
 
 	  for ($zoom = 0; ( $zoom <= $local_zoom) && (@row = $sth3->fetchrow); $zoom ++){
 	    if($row[4] < $lo){$lo = ($row[4] == 0)? 0 : $row[4];}
 	    if($row[4] > $hi){$hi = ($row[4] == 0)? 0 : $row[4];}
 	  }
 
-	  #    $note = $note . "the interval about $zdbid on lg $lg of $panel runs from $lo to $hi<p>\n";
+	     $note = $note . "the interval about $zdbid on lg $lg of $panel runs from $lo to $hi<p>\n";
 
 	  #insert all between and including $lo  $hi into pool of markers near chosen marker
-      if ($hi == $lo){$hi += .001; $lo -= .001;} # kludge because bug where (loc >= x AND loc <= x) not (loc == x)
+      $hi += .0001; $lo -= .0001; # kludge because bug where (loc >= x AND loc <= x) not (loc == x)
 	  $zoom = $sth4->execute($lo, $hi) || die $dbh->errstr;
     
 	  #	  $note = $note . "$zoom rows added to the pool<p>\n";
