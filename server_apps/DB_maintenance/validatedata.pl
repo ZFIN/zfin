@@ -92,7 +92,7 @@ sub execSql {
       print RESULT "\n";    
     }  
   } 
-  
+  close(RESULT);
   return ($nRecords);
 }
 
@@ -1174,6 +1174,7 @@ sub zdbActiveDataStillActive($) {
   
   logHeader ("Checking zdb_id in zdb_active_data still in use");
   
+  &oldOrphanDataCheck($_[0]);
   my $sql = "
              select zactvd_zdb_id, 
                     zobjtype_home_table,
@@ -1192,9 +1193,11 @@ sub zdbActiveDataStillActive($) {
   my $nRecords = execSql ($sql, $subSqlRef, @colDesc);
 
   if ( $nRecords > 0 ) {
+    
+    &storeOrphan();
     my $sendToAddress = $_[0];
     my $subject = "orphan in zdb active data";
-    my $errMsg = "In zdb_active_data, $nRecords ids are out of use.\n";
+    my $errMsg = "In zdb_active_data, $nRecords ids are out of use, and stored in zdb_orphan_data table.\n";
 
     logError ($errMsg); 
     &sendMail($sendToAddress, $subject, $errMsg, $sql); 
@@ -1210,6 +1213,7 @@ sub zdbActiveSourceStillActive($) {
   
   logHeader ("Checking zdb_id in zdb_active_source still in use");
   
+  &oldOrphanSourceCheck($_[0]);
   my $sql = "
              select zactvs_zdb_id, 
                     zobjtype_home_table,
@@ -1228,17 +1232,129 @@ sub zdbActiveSourceStillActive($) {
   my $nRecords = execSql ($sql, $subSqlRef, @colDesc);
 
   if ( $nRecords > 0 ) {
+
+    &storeOrphan();
     my $sendToAddress = $_[0];
     my $subject = "orphan in zdb active source";
-    my $errMsg = "In zdb_active_source, $nRecords ids are out of use.\n";
+    my $errMsg = "In zdb_active_source, $nRecords ids are out of use, and stored in zdb_orphan_source table.\n";
              
     logError ($errMsg); 
     &sendMail($sendToAddress, $subject, $errMsg, $sql); 
   }else {
     print "Passed!\n";
   } 
-}   
+}
+   
+#-------------------
+#Parameter
+# $      Email Address for recipients
+#
+sub oldOrphanDataCheck($) {
 
+  open ORPH, ">$globalResultFile" or die "Cannot open the result file to write.";
+
+  my $sql = "select * 
+               from zdb_orphan_data ";
+  my $sth = $dbh->prepare($sql) or die "Prepare fails";  
+  $sth -> execute();
+
+  while (my @row = $sth ->fetchrow_array()) {
+
+    my $filenotempt = 1;
+    my $orphan = subZdbActiveDataSourceStillInUse(@row);
+
+    if($orphan) {
+      my $sql = "delete from zdb_active_data
+                      where zactvd_zdb_id = '$row[0]'";
+      $dbh -> do($sql);
+      print ORPH "Delete $row[0] from zdb_active_data.\n";
+    }else {
+      my $sql = "delete from zdb_orphan_data
+                      where zorphand_zdb_id = '$row[0]'";
+      $dbh -> do($sql);
+      print ORPH "$row[0] is restored.\n";
+    }
+  }
+ 
+  close (ORPH);
+  
+  if($filenotempt) {
+    my $sentToAddress = $_[0];
+    my $subject = "about previous orphans.";
+    my $msg = "Actions on the orphans detected last time.\n";
+    &sendMail($sendToAddress, $subject, $msg, );
+  }
+}
+
+#-------------------
+#Parameter
+# $      Email Address for recipients
+# 
+sub oldOrphanSourceCheck($) {
+
+  open ORPH, ">$globalResultFile" or die "Cannot open the result file to write.";
+
+  my $sql = "select * 
+               from zdb_orphan_source ";
+  my $sth = $dbh->prepare($sql) or die "Prepare fails";  
+  $sth -> execute();
+
+  while (my @row = $sth ->fetchrow_array()) {
+   
+    my $fileNotEmpt = 1;
+    my $orphan = subZdbActiveDataSourceStillInUse(@row);
+    
+    if($orphan) {
+      my $sql = "delete from zdb_active_source
+                      where zactvs_zdb_id = '$row[0]'";
+      $dbh -> do($sql);
+      print ORPH "Delete $row[0] from zdb_active_source.\n";
+    }else {
+      my $sql = "delete from zdb_orphan_source
+                      where zorphans_zdb_id = '$row[0]'";
+      $dbh -> do($sql);
+      print ORPH "$row[0] is restored.\n";
+    }
+  }
+  close(ORPH);
+  if($fileNotEmpt) {
+    my $sentToAddress = $_[0];
+    my $subject = "about previous orphans.";
+    my $msg = "Actions on the orphans detected last time.\n";
+    &sendMail($sendToAddress, $subject, $msg, );
+  }
+}
+
+#-------------------
+# 
+sub storeOrphan {
+  
+ 
+  my ($table, $zdbid, $hometable, $homecolumn);
+  open F, "$globalResultFile" or die "Cannot open the $globalResultFile to read.\n";
+  
+  while (<F>) {
+    
+    if(/Zactvd ZDB ID\s+(\w.+)/) {
+      $zdbid = $1;
+      $table = "zdb_orphan_data";
+    }
+    if(/Zactvs ZDB ID\s+(\w.+)/) {
+      $zdbid = $1;
+      $table = "zdb_orphan_source";
+    }
+    if (/Zobjtype home table\s+(\w.+)/) {
+      $hometable = $1;
+    }
+    if (/Zobjtype home zdb id column\s+(\w.+)/) {
+      $homecolumn = $1;
+      my $sql = "insert into $table values('$zdbid', '$hometable', '$homecolumn')";
+      
+      $dbh->do($sql);
+    }
+  }
+  close (F);
+}
 #=======================================================================
 
 
