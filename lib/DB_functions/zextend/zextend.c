@@ -9,6 +9,7 @@
 	concat		Concatenates to strings, the Informix concat seems brokeen
 	html_breaks	Replaces newlines with "<P>" which formats it for html
 	now		returns current timestamp
+	todays_date	returns a todays date as an mi_date
 	expr		returns it's single argument to get the parser to eval it
 	get_random_cookie Generate a random string of printable characters
 
@@ -34,13 +35,20 @@
 
 #define		MAXREAD		2000
 #define		MAXLEN		200
-#define		SYSMSG	"select execweb_executable from execWeb where execweb_id = \'%s\';"
 #define		NO_MEMORY(fun)	mi_db_error_raise(NULL, MI_SQL,\
 				"UGEN2", "FUNCTION%s", #fun, NULL)
 #define		EXCEPTION(msg)	mi_db_error_raise (NULL, MI_EXCEPTION, msg)
 #define		CHECK(condition, string)\
 				if ( ! (condition)) mi_db_error_raise (NULL,\
 				MI_EXCEPTION, string)
+
+/*	SQL commands
+*/	
+#define		SYSMSG	"select execweb_executable from execWeb where execweb_id = \'%s\';"
+#define		BEGIN	"begin work; set isolation to repeatable read; set lock mode to wait 9999;"
+#define		COMMIT	"commit work;"
+
+
 /*
    Illustra's documentation alludes to this without explicitly saying it (but it's true):
    any error condition for an SQL command isn't raised until mi_query_finish () 
@@ -96,7 +104,7 @@ static buflst *appbuf(buflst *buf, char *data, unsigned len);
 static buflst *newbuf(mi_integer size);
 static void freebuf(buflst *cur);
 static mi_integer send_sql (MI_CONNECTION *conn, MI_SAVE_SET **ss, char *sql);
-static void get_results (MI_CONNECTION *conn, MI_SAVE_SET *ss);
+static int get_results (MI_CONNECTION *conn, MI_SAVE_SET *ss);
 
 /*
  *	*** Functions ***
@@ -301,55 +309,125 @@ mi_lvarchar *conc(mi_lvarchar *pre, mi_lvarchar *post) {
 	return lv;
 }
 
-
-/*	get_id		Generates a new unique ID by concatenateing
-	the argument to an interger, Called with string, returns string
-	NOTE: FAKED for now, will not guarentee uniqueness untill rewriten
+/*	position		Find the position of a char in a string (lvarchar).
+	Illustra has this function but informix doesn't.
+	Returns an intiger.
 */
-mi_lvarchar *get_id(mi_lvarchar *name) {
-	static int	id;
-	char		buf[25];
+mi_integer position(mi_lvarchar *lchr, mi_lvarchar *lstr) {
+	char		chr, *str, *p;
 
-	sprintf(buf, "%d", id++);
-
-	return conc(name, mi_string_to_lvarchar(buf));
+	if (	!(chr = *mi_get_vardata(lchr)) ||
+		!(str = mi_lvarchar_to_string(lstr)) )
+			NO_MEMORY(posistion);
+	if (p = strchr(str, chr)) {
+		return p - str + 1;
+	} else {
+		return 0;
+	}
 }
 
 
-/*	get_id_new	Generates a new unique ID by concatenateing
-	the argument to an interger, Called with string, returns string
-	Deffently not finished or even checked for syntax errors
+/*	get_id	Generates a new unique ID of the format:
+	ZDB-name-YYMMDD-seq, where name is the argument, date is the 
+	current date and seq is unique for that name and date. Seq starts
+	over when the date changes. Since you can't nest transactions and
+	get_id will always be called from within one, Right? We don't try
+	to start one here. Returns an lvarchar.
 */
-mi_lvarchar *get_id_new(mi_lvarchar *name) {
-	static int	id;
-	char		buf[25];
-	char		cmdbuf[MAXLEN], *cmds, *p;
-	int		total = 0;
-	buflst		head, *buf= &head;
+mi_lvarchar *get_id(mi_lvarchar *name) {
+	char		cmdbuf[MAXLEN], daybuf[11], buf[50], *name_s;
+	time_t		seconds;
 	MI_CONNECTION	*conn;
 	MI_SAVE_SET	*ss;
 	MI_ROW		*row;
-	MI_DATUM	colval;
-	mi_integer	collen, error;
+	MI_DATUM	day, num;
+	mi_integer	collen, error, daylen;
+
+	if (!(name_s = mi_lvarchar_to_string(name))) NO_MEMORY(get_id);
+		
+	conn = mi_open(NULL, NULL, NULL);	/* Open connection */
+	if (conn == NULL) EXCEPTION("ERROR: conn is NULL\n");
+if (0) {
+	if (send_sql(conn, &ss, BEGIN) == -1)		/* Begin transaction */
+		EXCEPTION("Cant start transaction in get_id");
+}
+	sprintf (cmdbuf, 				/* Update sequence */
+		"update objid set seq = seq+1 where id = \'%s\';",
+		name_s);
+	if (send_sql(conn, &ss, cmdbuf) != 1) {
+
+		/* The row does not exist yet so we need to insert it */
+
+		sprintf (cmdbuf,
+			"insert into objid values (\'%s\',today, 0);",
+			name_s);
+		if (send_sql(conn, &ss, cmdbuf) != 1)		/* Send it */
+			EXCEPTION("Cant insert row in get_id");
+	}
+		sprintf (cmdbuf, 			/* Get values */
+		"select day, seq from objid where id = \'%s\';",
+		name_s);
+	if (send_sql(conn, &ss, cmdbuf) != 1)
+		EXCEPTION("Cant select row in get_id");
+
+	row = mi_save_set_get_first(ss, &error);
+	if (!row) EXCEPTION("Can't get row from save set!");
+	mi_value(row, 0, &day, &daylen); mi_value(row, 1, &num, &collen);
+
+	time(&seconds);			/* What is today's date? */
+	cftime(daybuf, "%m/%d/%Y", &seconds);
+
+	if (strcmp(daybuf, day)) {
+
+		/* last time this name was used was another day so start from zero */
+
+		sprintf (cmdbuf, 			/* Clear seq number */
+		"update objid set (day, seq) = (today, 0) where id = \'%s\';",
+		name_s);
+		if (send_sql(conn, &ss, cmdbuf) != 1)			/* Send it */
+			EXCEPTION("Cant clear sequence count in get_id");
+		strcpy(day, daybuf); num = "0";
+	}
+
+if (0) {
+	if (send_sql(conn, &ss, COMMIT) == -1)		/* Commit transaction */
+		EXCEPTION("Cant commit transaction in get_id");
+}
+
+	/* Put date in YYMMDD format */
+
+	if(daylen != 10) EXCEPTION("Date returned is not correct length in get_id");
+	strncpy(daybuf, (char *)day+8, 2); strncpy(daybuf+2, day, 2);
+	strncpy(daybuf+4, (char *)day+3, 2); daybuf[6] = 0;
+
+	sprintf(buf, "ZDB-%s-%s-%s", name_s, daybuf, num);
+	return mi_string_to_lvarchar(buf);
+}
+
+
+/*	get_id_test
+*/
+mi_lvarchar *get_id_test(mi_lvarchar *name, mi_integer num) {
+	char		cmdbuf[MAXLEN], *name_s;
+	MI_CONNECTION	*conn;
+	MI_SAVE_SET	*ss;
+	MI_ROW		*row;
 	mi_lvarchar	*lv;
 
+	if (!(name_s = mi_lvarchar_to_string(name))) NO_MEMORY(get_id);
 
 	conn = mi_open(NULL, NULL, NULL);	/* Open connection */
 	if (conn == NULL) EXCEPTION("ERROR: conn is NULL\n");
-	
-	if (sizeof(SYSMSG) + mi_get_varlen(cmd) >= MAXLEN)	/* Check size */
-		EXCEPTION("Command ID is too long");
-	sprintf (cmdbuf, SYSMSG, mi_lvarchar_to_string(cmd));	/* Build it */
-	if (send_sql(conn, &ss, cmdbuf) != 1)			/* Send it */
-		EXCEPTION("Invalid sysexec command");
-	row = mi_save_set_get_first(ss, &error);		/* Get it */
-	if (!row) EXCEPTION("Can't get row from save set!");
-	mi_value(row, 0, &colval, &collen);
 
-
-	sprintf(buf, "%d", id++);
-
-	return conc(name, mi_string_to_lvarchar(buf));
+	while (num--) {
+		lv = get_id(mi_string_to_lvarchar("GENE"));
+		sprintf (cmdbuf, 			/* Get values */
+			"insert into %s values (\'%s\');",
+			name_s, mi_lvarchar_to_string(lv));
+		if (send_sql(conn, &ss, cmdbuf) != 1)
+			EXCEPTION("Cant insert row in get_id_test");
+	}
+	return lv;
 }
 
 
@@ -379,6 +457,20 @@ mi_datetime *now() {
 
 	cftime(buf, "%Y-%m-%d %T.000", &seconds);
 	return mi_string_to_datetime(buf, "datetime year to fraction(3)");
+}
+
+
+/*	todays_date	Returns the current date
+	Returns a date;
+*/
+mi_date todays_date() {
+	time_t		seconds;
+	char		buf[25];
+	
+	time(&seconds);			/* What time is it Now? */
+
+	cftime(buf, "%m/%d/%Y", &seconds);
+	return mi_string_to_date(buf);
 }
 
 
@@ -512,8 +604,8 @@ static mi_integer send_sql(MI_CONNECTION *conn, MI_SAVE_SET **ss, char *sql) {
 	if (MI_ERROR == mi_exec(conn, sql, 0))	/* Send SQL statemnet */
 		EXCEPTION("Can't send SQL in send_sql\n");
 
-	get_results(conn, *ss);			/* Get results */
-	count = mi_save_set_count(*ss);
+	count = get_results(conn, *ss);			/* Get results */
+	if (!count) count = mi_save_set_count(*ss);
 
 	if (count == MI_ERROR)
 		EXCEPTION("Can't get count of save set in send_sql\n");
@@ -527,18 +619,26 @@ static mi_integer send_sql(MI_CONNECTION *conn, MI_SAVE_SET **ss, char *sql) {
 
 /*
  *	Get results of SQL statement and insert into a save set
+ *	Returns number of rows affected or returned, and -1 for an error.
 */
-static void get_results (MI_CONNECTION *conn, MI_SAVE_SET *ss) {
-	mi_integer	result, error;
+static int get_results (MI_CONNECTION *conn, MI_SAVE_SET *ss) {
+	mi_integer	count, result, error;
 	MI_ROW		*row;
 	
 	while ((result = mi_get_result(conn)) != MI_NO_MORE_RESULTS) {
 		switch(result) {
 	case MI_ERROR:
 		EXCEPTION("could not get results (result MI_ERROR)");
-		break;
+		return -1;
+		/* break; */
 	case MI_DDL:
+		break;
 	case MI_DML:
+		count = mi_result_row_count(conn);
+		if (count == MI_ERROR) {
+			EXCEPTION("Can't get row count.\n");
+			return -1;
+		}
 		break;
 	case MI_ROWS:
 		row = mi_next_row (conn, &error);
@@ -548,6 +648,7 @@ static void get_results (MI_CONNECTION *conn, MI_SAVE_SET *ss) {
 		EXCEPTION("unknown result from mi_get_result");
 		break;
 	}}
+	return count;
 }
 
 /*
