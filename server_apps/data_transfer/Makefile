@@ -27,7 +27,7 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer
 
 SUBDIRS = MEOW JohnP RefSeq SWISS-PROT Thisse GO ZIRC Downloads GenPept ZGC \
-	  Sanger
+	  Sanger Genbank
 
 GENERICS =  pull.sh
 
