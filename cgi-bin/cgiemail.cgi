@@ -127,6 +127,8 @@ foreach ad parse addy "," [
            From:   frm
            Subject: sbj
        ]
+       send/header to-email ad template header     
+       comment{     
         if error? err: try[send/header to-email ad template header][                    
             send/header tomc@cs.uoregon.edu probe disarm err 
             make system/standard/email [
@@ -135,7 +137,8 @@ foreach ad parse addy "," [
                comment: ad
             ]          
         ];; not error
-    ];; ad not empty        
+    ];; ad not empty 
+        }       
 ]          
 
 ;;; append a copy of the email to a flatfile
