@@ -15,6 +15,13 @@ EXPECTED VARS:
  inf_mem -- the new value for inference
  is_not -- the new qualifier value
  contributes -- the new qualifier value
+
+**UPDATES**
+Last modified by Prita on 1/4/2005
+Duplicate go annotations were getting added inspite of warning
+Added a flag called $annexist to check if annotation exists.
+Used this flag to determine whether to insert or not
+
 <?/MICOMMENT>
 
 <?MIERROR>
@@ -50,12 +57,12 @@ EXPECTED VARS:
    <?MIVAR NAME=inf_mem>$(TRIM,$inf_mem)<?/MIVAR>
    <?MIVAR NAME=go_id>$(TRIM,$go_id)<?/MIVAR>
    <?MIVAR NAME=go_num>$(SUBSTR,$go_id,4)<?/MIVAR>   
-
+   <?MIVAR NAME=annexist>f<?/MIVAR>
    <?MISQL SQL="select goterm_zdb_id, goterm_name, goterm_ontology from go_term 
 				where goterm_go_id like '$go_num';">
    <?/MISQL>
    <?MIVAR NAME=$go_zdb_id>$1<?/MIVAR>
-   <?MIVAR NAME=$go_term>$2<?/MIVAR>
+   <?MIVAR NAME=$go_term>$(URLENCODE,$2)<?/MIVAR>
    <?MIVAR NAME=$go_ontology>$3<?/MIVAR>
 
    <?MIVAR NAME=return_info>&go_id=$go_id&evidence_code=$evidence_code&pub_id=$pub_id&inf_db=$inf_db&inf_mem=$inf_mem&notes=$notes&go_term=$go_term<?/MIVAR>
@@ -75,11 +82,13 @@ EXPECTED VARS:
         <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
    	    <SCRIPT>
     		 window.alert('This annotation already exists. Please enter another annotation.');
-           
                <?MIVAR>  
   		 window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoentry.apg&OID=$OID&go_term=$go_term$return_info")
                <?/MIVAR>
     	    </SCRIPT>
+            <?MIVAR NAME=$annexist>t<?/MIVAR>
+       <?MIELSE>
+            <?MIVAR NAME=$annexist>f<?/MIVAR>
   	<?/MIBLOCK>
 
    <?/MIBLOCK>
@@ -91,7 +100,8 @@ EXPECTED VARS:
    <!-- inference group member validation check --->
    <?MISQL COND="$(OR,$(NC,$inf_mem,),$(EC,$evidence_code,IC))" SQL="select WebExplode(object, 'attr=inference&value=$inf_mem&valuedb=$inf_db&evidence_code=$evidence_code&return_page=markergoentry.apg&return_id=$OID$return_info') from webPages where ID='aa-markergovalidate.apg';">$1<?/MISQL>
 
-
+<!--annotation existence check-->
+<?MIBLOCK COND="$(EC,$annexist,f)">
   <?MIBLOCK COND="$(EC,$isValid,t)"><!-- isValid is set in markergovalidate.apg -->
    <!-- start the insert change -->
    <?MIVAR NAME=$comments>create a new GO annotation from literature<?/MIVAR>
@@ -126,8 +136,7 @@ EXPECTED VARS:
      <?/MISQL>
    <?/MIBLOCK>
 
-
-   <?MISQL SQL="execute function get_id('MRKRGOEV');"><?/MISQL>
+<?MISQL SQL="execute function get_id('MRKRGOEV');"><?/MISQL>
    <?MIVAR NAME=$evnew_id>$1<?/MIVAR>
 
    <?MISQL SQL="insert into zdb_active_data (zactvd_zdb_id) values('$evnew_id');"><?/MISQL>
@@ -163,7 +172,6 @@ EXPECTED VARS:
         <?/MIBLOCK>
 
    <?/MIBLOCK>  <!--end if null inference-->  
-
    <!-- okay, now just bail back to the markergoentry to view results -->
    <?MIVAR>
       <SCRIPT>
@@ -171,4 +179,5 @@ EXPECTED VARS:
       </SCRIPT>
    <?/MIVAR>
   <?/MIBLOCK> <!-- end if valid --->
+<?/MIBLOCK> <!--end annotation existence check-->
 <?/MIBLOCK>
