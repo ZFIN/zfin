@@ -16,7 +16,11 @@
 <TABLE width=100%>
 <TR>
 <TD><font size=-1>
-<b>AUTHOR contains:</b> <input type=text name=authors size=10 >
+<b>
+<SELECT name=authtype>
+<option value=firstauth>First AUTHOR begins with
+<option SELECTED value=anyauth>AUTHOR contains
+</select>:</b> <input type=text name=authors size=10 >
 </font>
 </TD> 
 <TD><font size=-1>
@@ -55,7 +59,7 @@
 </font></TD> 
 <TD align=right><font size=-1>
 <SELECT NAME=anon1>
-<option selected value=abstract>Abstract
+<option selected value=abstract>Abstract 
 <option value=source>Source
 <option value=keywords>Keywords
 <option value=accession_no>Medline acc#
