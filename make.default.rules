@@ -52,7 +52,7 @@ TARGETS = $(SPECIFICTARGETS) $(STATICTARGETS)
 
 all : $(ENDEMICTARGETS_PRE) $(TARGETDIR) $(ENDEMICTARGETS_POSTTARGETDIR) \
       $(TARGETS) $(ENDEMICTARGETS_POSTTARGETS) \
-      $(SUBDIRS) $(ENDEMICTARGETS_POSTSUBDIRS)
+      $(SUBDIRS) $(ENDEMICTARGETS_POST)
 
 
 $(TARGETDIR) :
@@ -76,8 +76,8 @@ clean :				# No local intermediate files
 	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
 
 clobber :			# Remove targets, but not target dir.
-  ifneq ($(strip $(ENDEMICTARGETS_POSTSUBDIRS)),)
-	rm -rf $(ENDEMICTARGETS_POSTSUBDIRS)
+  ifneq ($(strip $(ENDEMICTARGETS_POST)),)
+	rm -rf $(ENDEMICTARGETS_POST)
   endif
 	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
   ifneq ($(strip $(ENDEMICTARGETS_POSTTARGETS) $(TARGETS) $(ENDEMICTARGETS_POSTTARGETDIR) $(ENDEMICTARGETS_PRE)),)
