@@ -22,11 +22,11 @@
 <?MIVAR NAME=$line_clr>#e5e5e5<?/MIVAR>
 <?MIVAR NAME=$lasttype><?/MIVAR>
 
-<?MISQL SQL="select a.zdb_id,name,panel_date,ptype,mtype,a.abbrev,count(*)::integer from panels a,paneled_markers b where a.zdb_id=b.target_id group by name,panel_date,ptype,a.zdb_id,mtype,a.abbrev order by ptype,name;">
+<?MISQL SQL="select a.zdb_id,name,panel_date,ptype,mtype,a.abbrev,count(*)::integer,day(panel_date), month(panel_date), year(panel_date) from panels a,paneled_markers b where a.zdb_id=b.target_id group by name,panel_date,ptype,a.zdb_id,mtype,a.abbrev order by ptype,name;">
 
 
 
-$(IF,$(AND,$(NC,$last,$1),$(NC,$last,NULL)),"</TD><TD><font size=2><b>Total markers on panel:</b> "$count"</TD></TR>")
+$(IF,$(AND,$(NC,$last,$1),$(NC,$last,NULL)),"</TD><TD>&nbsp;</TD><TD><font size=2><b>Total markers on panel:</b> "$count"</TD></TR>")
 
 $(IF,$(NC,$last,$1),$(SETVAR,$count,0))
 $(IF,$(NC,$last,$1),$(SETVAR,$clr_cnt,$(+,$clr_cnt,1)))
@@ -34,8 +34,11 @@ $(IF,$(NC,$last,$1),$(SETVAR,$clr_cnt,$(+,$clr_cnt,1)))
 $(SETVAR,$color,$(/,$clr_cnt,2))
 $(SETVAR,$line_clr,$(IF,$(!=,$color,$(FIX,$color)),#FCCE64,#e5e5e5))
 
+<?MIVAR NAME=$upd_date> $(INDEX,$(-,$9,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $8,$10 
+<?/MIVAR>
+
 $(IF,$(NC,$4,$lasttype),"<TR><TD><font size=2>&nbsp;</TD></TR><TR bgcolor="#c4c4c4"><td colspan=2><b>"$4" Panels</b></TD></TR>")
-$(IF,$(NC,$last,$1),"<TR bgcolor="$line_clr"><TD><font size=3><A HREF=/cgi-bin_B/webdriver?MIval=aa-crossview.apg&OID="$1">"$2" ("$6")</A></TD><TD><font size=2><b>Type:</B> "$4"</TD></TR><TR bgcolor="$line_clr"><TD><font size=2><b>Marker types on panel:</b> "$5)
+$(IF,$(NC,$last,$1),"<TR bgcolor="$line_clr"><TD><font size=3><A HREF=/cgi-bin_B/webdriver?MIval=aa-crossview.apg&OID="$1">"$2" ("$6")</A></TD><TD><font size=2><b>Updated;</B>"$upd_date"</TD><TD><font size=2><b>Type:</B> "$4"</TD></TR><TR bgcolor="$line_clr"><TD><font size=2><b>Marker types on panel:</b> "$5)
 
 $(SETVAR,$count,$(+,$count,$7))
 $(IF,$(EC,$last,$1),","$5)
@@ -44,7 +47,7 @@ $(SETVAR,$lasttype,$4)
 <?/MISQL>
 
 <?MIVAR>
-</TD><TD><font size=2><b>Total markers on panel:</b> $count</TD></TR>
+</TD><TD>&nbsp;</TD><TD><font size=2><b>Total markers on panel:</b> $count</TD></TR>
 <?/MIVAR>
 
 </TABLE>
