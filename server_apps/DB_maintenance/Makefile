@@ -18,9 +18,10 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/DB_maintenance
 
+SUBDIRS = loadUp/
+
 GENERICS = regen.sh scrubscan.pl unload_production.sh validatedata.pl \
 	   load_and_index_almost.pl dumpServer.pl dumpLogsContinuous.pl \
-	   rsync.pl remove_orphan_files.pl load_files.sql
 
 STATICS = postloaddb_almost.csh
 
