@@ -48,7 +48,7 @@
 #  $TAGETCGIBIN       Name of the cgi-bin directory to use.  This name
 #			is RELATIVE to $TARGETROOT.  It typically has the
 #			form cgi-bin_VirtualServerName.
-#			Example: setenv $TARGETCGIBIN cgi-bin_aquabat
+#			Example: setenv $TARGETCGIBIN cgi-bin_albino
 #  $TRANSLATETABLE    The file containing the translate table to use
 #                       when converting generic files into their specific
 #                       counterpart.  See the translate.table.template
@@ -109,7 +109,7 @@
 #			special handling in the local makefile.  These variables
 #			allow those makefiles to have special processing for
 #			these targets and still use the default rules for 
-#			other files.  Which of these varaibles a target goes
+#			other files.  Which of these variables a target goes
 #			into determines when that target will be made in 
 #			relation to the default targets.  See the default
 #			rules makefiles for more.
@@ -134,7 +134,7 @@
 # This model breaks down with C or Java files that contain generic tags.
 # The first step in this situation is to make a specific version of the 
 # generic source file.  However, the specific version of the source file
-# is not the final target.  It still needs to be comiled (and possibly 
+# is not the final target.  It still needs to be compiled (and possibly 
 # linked) before it can be used.  We can't put the specific source file
 # in the same directory as the generic source file because then it would
 # overwrite the generic version.  If we gave the specific version of the file
