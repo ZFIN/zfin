@@ -302,12 +302,12 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
 
   <?MIBLOCK COND="$(AND,$(NC,$line_type,mutant),$(NC,$line_type,accession))">
   <center>
-    <FONT SIZE=4>Search Wild Type Lines: Result Summary</font><br>
+    <FONT SIZE=4>Search Wild-Type Lines: Result Summary</font><br>
     (Click on individual stocks for more detail)
     </center> 
     <p>
     <TABLE width=100%>
-    <TH> </TH><TH align=left>Strain</TH> <TH align=left>Lab</TH>
+    <TH> </TH><TH align=left>Strain</TH> <TH align=left>Source</TH>
 
 
     <!-- <?MIVAR>where line_type='wild type' $constraint<?/MIVAR>  use for debugging -->
@@ -316,7 +316,7 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
     <!--- EXECUTION --->
     <!--- Query Database --->
     <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE
-	    SQL="select a.name, a.zdb_id, a.abbrev, b.name,b.zdb_id from fish a, lab b where line_type='wild type' and a.lab=b.zdb_id $constraint order by a.name;">
+	    SQL="select a.name, a.zdb_id, a.abbrev, b.name,b.zdb_id from fish a, OUTER lab b where line_type='wild type' and a.source=b.zdb_id $constraint order by a.name;">
 
     <TR valign=top> <TD> 
     $(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$2" TARGET=content>SELECT</A> </FONT>") 
