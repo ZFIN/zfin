@@ -122,7 +122,7 @@ sub sendLoadReport ($) {
 # ------------ Loading ---------------------
 print "loading...\n";
 
-system ("$ENV{'INFORMIXDIR'}/bin/dbaccess hoovdb loadgoterms.sql >out 2> report.txt");
+system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> loadgoterms.sql >out 2> report.txt");
 
 #wait for the files to be created by incrementing a counter
 #while we wait. first, reset the count variable.
