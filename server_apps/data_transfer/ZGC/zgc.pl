@@ -61,7 +61,7 @@ if ($vCloneDiff ne "")
   &zgcReport(); 
   &reportFile('zLib_not_found.unl','Non-ZFIN library'); 
   &reportFile('zName_mismatch.unl','Mismatched zgc genes'); 
-  &reportFile('refseq_relation.unl','Genbank number is on a gene in ZFIN but the clone is unassigned by ZGC.'); 
+  &reportFile('refseq_relation.unl','GenBank number is on a gene in ZFIN but the clone is unassigned by ZGC.'); 
   &reportFile('unNoDbLink.unl','Missing Db_link'); 
   &reportFile('unRefSeqAttrib.unl','Attributed to RefSeq'); 
   &sendReport();
@@ -102,7 +102,7 @@ sub zgcReport()
     my $cur = $dbh->prepare('select count(*), fdbcont_fdb_db_name AS BC_Links
                              from db_link, foreign_db_contains
                              where dblink_fdbcont_zdb_id = fdbcont_zdb_id
-                               and fdbcont_fdb_db_name = "Genbank"
+                               and fdbcont_fdb_db_name = "GenBank"
                                and dblink_acc_num[1,2] = "BC"
                              group by fdbcont_fdb_db_name;'
 			   );

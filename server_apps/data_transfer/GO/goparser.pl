@@ -90,7 +90,7 @@ sub goInf()
   {
     $inf =$_[0];
     # $inf = substr($inf,3,length($inf)) if (index($inf,'GO:')==0);
-    $inf =~ s/Genbank:/EMBL:/g;
+    $inf =~ s/GenBank:/EMBL:/g;
     if (index($inf,'SWISS-PROT:')==0) {
        $inf=~s/SWISS-PROT:/SPTR:/;
      }

@@ -10,8 +10,8 @@ I. Load zgc data
 II. Create new records
      A. Add zgc ESTs
         Create temp Marker EST records for each Zgc_tmp
-        Move BC Genbank links from GENE records to zgc EST (update Zgc_tmp.mrkr_name)
-        Create BC Genbank links for empty zgc ESTs
+        Move BC GenBank links from GENE records to zgc EST (update Zgc_tmp.mrkr_name)
+        Create BC GenBank links for empty zgc ESTs
         Create clone records for zgc ests
      B. Add zgc GENEs
         Upgrade bonus genes
@@ -433,7 +433,7 @@ SELECT get_id('CDNA'),
     'ZDB-PERS-010716-1'
 FROM tmp_Zgc;
     
---        Move BC Genbank links from GENE records to zgc EST (update Zgc_tmp.mrkr_name)
+-- Move BC GenBank links from GENE records to zgc EST (update Zgc_tmp.mrkr_name)
 INSERT into tmp_Zgc_Dblink_moved
   (
     zDblink_zdb_id,
@@ -477,7 +477,7 @@ set zgc_mrkr_abbrev =
 where zgc_acc_num in (select zDblink_acc_num from tmp_Zgc_Dblink_moved);
 
 
---        Create BC Genbank links for empty zgc ESTs
+--        Create BC GenBank links for empty zgc ESTs
 INSERT into tmp_Zgc_Dblink_new
   (
     zDblink_zdb_id,
@@ -498,7 +498,7 @@ FROM
     tmp_Zgc, foreign_db_contains, tmp_Zgc_EST
 WHERE
     zgc_acc_num NOT IN (select zDblink_acc_num from tmp_Zgc_Dblink_moved)
-    AND fdbcont_fdb_db_name = 'Genbank'
+    AND fdbcont_fdb_db_name = 'GenBank'
     AND fdbcont_fdbdt_data_type = 'cDNA'
     AND zgc_name = zEST_name;
 

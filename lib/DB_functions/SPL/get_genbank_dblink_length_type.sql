@@ -2,9 +2,9 @@
 --This function checks on insert or update of db_link, the length of the
 --sequence and the type (represented by the dblink_fdbcont_zdb_id) are 
 --consistant with those values in the table accession_bank (accession_bank
---holds sequence records updated daily from NCBI/Genbank).  In fact,
+--holds sequence records updated daily from NCBI/GenBank).  In fact,
 --it replaces dblink_fdbcont_zdb_id, and dblink_length if the accession_number
---is from Genbank.
+--is from GenBank.
 -------------------------------------------------------------------------
 
   create function get_genbank_dblink_length_type (vDblinkAccNum varchar(30),
@@ -20,7 +20,7 @@
       if exists (select * 
                    from accession_bank 
   		   where accbk_acc_num = vDblinkAccNum 
-                   and accbk_db_name = 'Genbank')
+                   and accbk_db_name = 'GenBank')
 
       then 
         
@@ -28,7 +28,7 @@
 	  into vAccbkLength, vAccbkType
     	  from accession_bank
      	  where accbk_acc_num = vDblinkAccNum 
-    	  and accbk_db_name = 'Genbank' ;
+    	  and accbk_db_name = 'GenBank' ;
 
 	if vAccbkType = 'mRNA'
       		then 
@@ -47,7 +47,7 @@
     	  where fdbcont_fdbdt_data_type = vAccbkType
       	  and fdbcont_fdbdt_super_type = 'sequence'
       	  and fdbcont_organism_common_name = 'Zebrafish'
-          and fdbcont_fdb_db_name =  'Genbank' ;
+          and fdbcont_fdb_db_name =  'GenBank' ;
 
           return vFdbcontZdbId, vAccbkLength ;
 

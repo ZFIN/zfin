@@ -285,7 +285,7 @@ INSERT INTO tmp_db_link
 INSERT INTO tmp_db_link
   SELECT distinct
     mrkr_zdb_id,
-    'Genbank',
+    'GenBank',
     gbacc_acc,
     'Uncurated: RefSeq load ' || TODAY,
     'x',
@@ -294,17 +294,17 @@ INSERT INTO tmp_db_link
   FROM genbank_acc, ll_zdb, marker, foreign_db_contains, accession_bank
   WHERE gbacc_ll = llzdb_ll_id
     AND llzdb_zdb_id = mrkr_zdb_id
-    AND fdbcont_fdb_db_name = 'Genbank'
+    AND fdbcont_fdb_db_name = 'GenBank'
     AND fdbcont_fdbdt_data_type = accbk_data_type
     AND gbacc_acc = accbk_acc_num
-    AND accbk_db_name = 'Genbank'
+    AND accbk_db_name = 'GenBank'
 ;
 
 select distinct gbacc_pept as pept_acc, dblink_linked_recid as seg_zdb
     from db_link, foreign_db_contains, genbank_acc 
     where gbacc_acc = dblink_acc_num
       and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-      and fdbcont_fdb_db_name = "Genbank"
+      and fdbcont_fdb_db_name = "GenBank"
       and fdbcont_fdbdt_data_type = "cDNA"
       and gbacc_pept != "-"
       and dblink_linked_recid not like "ZDB-GENE%"
@@ -858,20 +858,20 @@ SET dblink_length = (SELECT acclen_length FROM acc_length WHERE dblink_acc_num =
 WHERE dblink_acc_num IN (SELECT acclen_acc FROM acc_length);
 
 
--- Genbank Lengths
+-- GenBank Lengths
 UPDATE db_link
 SET dblink_length = 
   (
     SELECT accbk_length 
     FROM accession_bank 
     WHERE dblink_acc_num = accbk_acc_num 
-      AND accbk_db_name = 'Genbank'
+      AND accbk_db_name = 'GenBank'
   )
 WHERE dblink_acc_num IN 
   (
     SELECT tmp_acc_num 
     FROM tmp_db_link
-    WHERE tmp_db_name = 'Genbank'
+    WHERE tmp_db_name = 'GenBank'
   );
 
 
@@ -879,7 +879,7 @@ WHERE dblink_acc_num IN
 !echo 'add active data'
 INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link WHERE tmp_db_name = "RefSeq";
 INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link WHERE tmp_db_name = "LocusLink";
-INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link WHERE tmp_db_name = "Genbank";
+INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link WHERE tmp_db_name = "GenBank";
 INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link WHERE tmp_db_name = "GenPept";
  
 
@@ -940,7 +940,7 @@ INSERT INTO db_link
         UPPER(tmp_acc_num),
         tmp_length
   FROM tmp_db_link
-  WHERE tmp_db_name = "Genbank";
+  WHERE tmp_db_name = "GenBank";
     
 INSERT INTO db_link
         (dblink_linked_recid,

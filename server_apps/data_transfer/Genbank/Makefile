@@ -1,7 +1,7 @@
 #------------------------------------------------------------------------
 #
-# Makefile for ZFIN_WWW CVS Project, Genbank daily update file automated load,
-# ZFIN genbank accession information auto update
+# Makefile for ZFIN_WWW CVS Project, GenBank daily update file automated load,
+# ZFIN GenBank accession information auto update
 #
 #
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

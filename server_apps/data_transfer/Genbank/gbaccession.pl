@@ -1,6 +1,6 @@
 #!/private/bin/perl -w
 #
-# The script gets genbank daily update flat file, parses it,
+# The script gets GenBank daily update flat file, parses it,
 # and updates the acc information in accession_bank and db_link. 
 # In the case the script is run from zfin.org, the resulted FASTA 
 # files as well as the original flat file are moved to 
@@ -60,7 +60,7 @@ while( !(-e "$newfile") ){
 	  &downloadDailyUpdateFile();
       }
       else {  
-	  &emailError("Failed to download Genbank daily update file.") 
+	  &emailError("Failed to download GenBank daily update file.") 
 	  }
   }
 }
@@ -153,7 +153,7 @@ sub sendReport()
     open(REPORT, "$report") || die "cannot open report";
 
     print MAIL "To: peirans\@cs.uoregon.edu\n";
-    print MAIL "Subject: Genbank accession update report\n";
+    print MAIL "Subject: GenBank accession update report\n";
     while(my $line = <REPORT>)
     {
       print MAIL $line;

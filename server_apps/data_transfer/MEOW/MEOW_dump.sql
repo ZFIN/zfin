@@ -310,7 +310,7 @@ insert into meow_exp4
     from db_link , marker_relationship, foreign_db_contains
    where   mrel_mrkr_2_zdb_id = dblink_linked_recid
         and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-        and fdbcont_fdb_db_name = 'Genbank'
+        and fdbcont_fdb_db_name = 'GenBank'
 	and mrel_mrkr_1_zdb_id in 
        ( select zdb_id 
            from meow_exp1 );
@@ -341,14 +341,28 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_ortholinks.txt'
     from meow_exp5;
 
 
--- generate a file of cDNAs and assoc GENBANK accession numbers
+-- generate a file of cDNAs and assoc GenBank accession numbers
 
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/SC.txt'
-  DELIMITER "	" select distinct mrkr_zdb_id, mrkr_abbrev, dblink_acc_num  from marker, OUTER (db_link, foreign_db_contains)  where (mrkr_type = 'EST')  and dblink_linked_recid = mrkr_zdb_id and dblink_fdbcont_zdb_id = fdbcont_zdb_id and fdbcont_fdb_db_name = 'Genbank' order by 1; 
+  DELIMITER "	"
+  select distinct mrkr_zdb_id, mrkr_abbrev, dblink_acc_num
+    from marker, OUTER (db_link, foreign_db_contains)
+    where (mrkr_type = 'EST')
+      and dblink_linked_recid = mrkr_zdb_id
+      and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+      and fdbcont_fdb_db_name = 'GenBank'
+    order by mrkr_zdB_id; 
 
--- generate a file of anonymous markers  and assoc GENBANK accession numbers
+-- generate a file of anonymous markers  and assoc GenBank accession numbers
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/SC_sts.txt'
-  DELIMITER "	" select distinct mrkr_zdb_id, mrkr_abbrev, dblink_acc_num  from marker, db_link, foreign_db_contains  where mrkr_type in ('STS', 'SSLP','RAPD') and dblink_linked_recid = mrkr_zdb_id and dblink_fdbcont_zdb_id = fdbcont_zdb_id and fdbcont_fdb_db_name = 'Genbank' order by 1; 
+  DELIMITER "	"
+  select distinct mrkr_zdb_id, mrkr_abbrev, dblink_acc_num
+    from marker, db_link, foreign_db_contains
+    where mrkr_type in ('STS', 'SSLP','RAPD')
+      and dblink_linked_recid = mrkr_zdb_id
+      and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+      and fdbcont_fdb_db_name = 'GenBank'
+    order by mrkr_zdb_id; 
 
 -- generate a file with zdb history data
 

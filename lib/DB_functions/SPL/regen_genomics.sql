@@ -286,7 +286,7 @@ create dba function "informix".regen_genomics() returning integer
     -- table. Assume none of the accession numbers are already in
 
     -- The "distinct" below is needed because many acc_num/linked_recid
-    --   combinations have an entry for Genbank and an entry for BLAST.
+    --   combinations have an entry for GenBank and an entry for BLAST.
     -- The last <> condition is needed because somewhere in the database an
     --   accession number is already being defined as an alias.
 

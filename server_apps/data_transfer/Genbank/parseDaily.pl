@@ -1,6 +1,6 @@
 #!/private/bin/perl
 #
-# The script reads genbank daily update flat file, translate it 
+# The script reads GenBank daily update flat file, translate it 
 # into sets of fasta files, including gb set, mRNA set, DNA set,
 # EST zf, GSS zf, HTG zf. An zf accession unload file is also 
 # generated.
@@ -91,11 +91,11 @@ while (my $gbfile = shift @ARGV) {
 
 	    if ($type eq "mRNA") {
 		$d_type = "cDNA";
-		print ZFACC substr($accession,0,index($accession, '.'))."|$bp|$d_type|Genbank|\n";
+		print ZFACC substr($accession,0,index($accession, '.'))."|$bp|$d_type|GenBank|\n";
 	    }
 	    elsif ($type eq "DNA") {
 		$d_type = "Genomic";
-		print ZFACC substr($accession,0,index($accession, '.'))."|$bp|$d_type|Genbank|\n";
+		print ZFACC substr($accession,0,index($accession, '.'))."|$bp|$d_type|GenBank|\n";
 	    }
 	    else {
 		print "Attention: $accession has type $type";

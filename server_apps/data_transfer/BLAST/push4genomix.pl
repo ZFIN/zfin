@@ -30,7 +30,7 @@ $dbh = DBI->connect("DBI:Informix:$dbname", $username, $password)
 	or die "Cannot connect to Informix database: $DBI::errstr\n" ;
 
 # get acc and mrkr from db_link, restrict dbs to 
-# Sanger_FPC, VEGA, Genbank, RefSeq, Ensembl, Sanger clone, 
+# Sanger_FPC, VEGA, GenBank, RefSeq, Ensembl, Sanger clone, 
 # GenPept, SwissProt, RefSeq, VEGA_clone
 
 $sql = "select dblink_acc_num, mrkr_zdb_id, mrkr_abbrev

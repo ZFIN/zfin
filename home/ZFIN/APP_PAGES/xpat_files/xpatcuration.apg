@@ -50,7 +50,7 @@ OPTIONAL VARS:
       xpatex_fish :: fish_zdb_id
       xpatex_env :: environment zdb_id
       xpatex_assay :: assay name
-      xpatex_genbank :: genbank accession number
+      xpatex_genbank :: GenBank accession number
   
   Expression
       panel_add :: flag for new record
@@ -679,7 +679,7 @@ function URLDecode(str) {
       <?/MIBLOCK>
      
       <?MICOMMENT>  ===================================================
-                      Search for record attribution of genbank record
+                      Search for record attribution of GenBank record
                       and publication. If no record found, enter 
                       record attribution.
                     ===================================================
@@ -1666,7 +1666,7 @@ SUBMITTER COMMENTS:
         from db_link, foreign_db_contains
         where dblink_linked_recid in ('$gene_attrib_csv','$est_attrib_csv')
           and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-          and fdbcont_fdb_db_name = 'Genbank'
+          and fdbcont_fdb_db_name = 'GenBank'
         ;">
         <?MIVAR> $(VECAPPEND,$dblink_genbank,$1)<?/MIVAR>
     <?/MISQL>
@@ -2290,7 +2290,7 @@ SUBMITTER COMMENTS:
     <td><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusselect.html&select_from=LOCI&frame_size=230&intro=/ZFIN/help_files/locus_intro.html">Fish</a></td>
 	<td>Env.</td>
 	<td>Assay</td>
-	<td>Genbank</td>
+	<td>GenBank</td>
 	<td>Delete</td>
   </tr>  
 <?MISQL SQL="

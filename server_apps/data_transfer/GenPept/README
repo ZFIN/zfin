@@ -25,7 +25,7 @@ the GenPept record and using it to narrow the feild.
   Data Files:
 ------------------------------------------------------------------  
 
-Genbank hosts individual GenPept records on their Entrez Web site. 
+GenBank hosts individual GenPept records on their Entrez Web site. 
 
 ZFIN is interested in:
 all zebrafish protien acessions and the acessions of neculotide

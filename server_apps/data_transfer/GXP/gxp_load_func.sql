@@ -60,7 +60,7 @@ let errorHint = "foreign_db_contains";
     select fdbcont_zdb_id
       into fdbcontZdbId
       from foreign_db_contains
-     where fdbcont_fdb_db_name = "Genbank"
+     where fdbcont_fdb_db_name = "GenBank"
        and fdbcont_fdbdt_data_type = "cDNA";
 
 let assayName = "RNA in situ whole mount";

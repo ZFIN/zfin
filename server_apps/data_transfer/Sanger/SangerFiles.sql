@@ -26,7 +26,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/VegaXpat.txt'
  and probe.mrkr_zdb_id = xpat_probe_zdb_id
  and probe.mrkr_zdb_id = dblink_linked_recid
  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
- and fdbcont_fdb_db_name in ('Genbank','RefSeq')
+ and fdbcont_fdb_db_name in ('GenBank','RefSeq')
  and fdbcont_fdbdt_data_type = 'cDNA'
  union
   select gene.mrkr_zdb_id	gene_zdb,
@@ -46,7 +46,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/VegaXpat.txt'
  and gene.mrkr_zdb_id = xpat_gene_zdb_id
  and gene.mrkr_zdb_id = dblink_linked_recid
  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
- and fdbcont_fdb_db_name in ('Genbank','RefSeq')
+ and fdbcont_fdb_db_name in ('GenBank','RefSeq')
  and fdbcont_fdbdt_data_type = 'cDNA'
  order by 1,3,7;
 ----------------------------------------------------
@@ -76,7 +76,7 @@ and est.mrkr_zdb_id = dblink_linked_recid
 and est.mrkr_type  = 'EST'
 and gene.mrkr_type = 'GENE'
 and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-and fdbcont_fdb_db_name ='Genbank'
+and fdbcont_fdb_db_name ='GenBank'
 and gene.mrkr_abbrev[3] <> ':'
 and gene.mrkr_zdb_id not in(
 	select gene_zdb from tmp_veg

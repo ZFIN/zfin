@@ -7,7 +7,7 @@
 #
 # Options:
 #  -d   database used in the blast. 
-#         gb (default) = Genbank 
+#         gb (default) = GenBank 
 #         sp = SwissProt/TrEMBL
 #  -p   percentage threshold
 #  -b   bits threshold

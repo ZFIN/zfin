@@ -28,7 +28,7 @@
 -- Mapping data
 --	zfin id, symbol, panel symbol, LG, loc, metric
 --
--- Sequence data - separate files for Genbank, RefSeq, LocusLink, Unigene, 
+-- Sequence data - separate files for GenBank, RefSeq, LocusLink, Unigene, 
 -- SWISS-PROT, Interpro, GenPept and Vega
 -- as well as sequences indirectly associated with genes
 --	zfin id, symbol, accession number
@@ -162,7 +162,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpat.txt'
  and probe.mrkr_zdb_id = xpat_probe_zdb_id
  --and probe.mrkr_zdb_id = dblink_linked_recid
  --and dblink_fdbcont_zdb_id = fdbcont_zdb_id
- --and fdbcont_fdb_db_name in ('Genbank','RefSeq')
+ --and fdbcont_fdb_db_name in ('GenBank','RefSeq')
  --and fdbcont_fdbdt_data_type = 'cDNA'
  union
  select gene.mrkr_zdb_id gene_zdb,
@@ -181,7 +181,7 @@ from marker gene, marker probe,
  and probe.mrkr_zdb_id = xpat_probe_zdb_id
  --and gene.mrkr_zdb_id = dblink_linked_recid
  --and dblink_fdbcont_zdb_id = fdbcont_zdb_id
- --and fdbcont_fdb_db_name in ('Genbank','RefSeq')
+ --and fdbcont_fdb_db_name in ('GenBank','RefSeq')
  --and fdbcont_fdbdt_data_type = 'cDNA'
  order by 1,3,6;
 
@@ -194,13 +194,13 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/mappings.txt'
  where refcross_id = p.zdb_id and marker_id = mrkr_zdb_id 
  order by 1;
 
--- Generate sequence data files for Genbank, RefSeq, LocusLink, UniGene, SWISS-PROT, Interpro and GenPept
+-- Generate sequence data files for GenBank, RefSeq, LocusLink, UniGene, SWISS-PROT, Interpro and GenPept
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genbank.txt'
  DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev, dblink_acc_num from marker, db_link, foreign_db_contains
 	where mrkr_zdb_id = dblink_linked_recid
 	  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-	  and fdbcont_fdb_db_name = 'Genbank' order by 1;
+	  and fdbcont_fdb_db_name = 'GenBank' order by 1;
 
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/refseq.txt'
@@ -312,7 +312,7 @@ and est.mrkr_zdb_id = dblink_linked_recid
 and est.mrkr_type  in ('EST','CDNA')
 and gene.mrkr_type = 'GENE'
 and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-and fdbcont_fdb_db_name = 'Genbank'
+and fdbcont_fdb_db_name = 'GenBank'
 into temp tmp_veg with no log;
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/gene_seq.txt'

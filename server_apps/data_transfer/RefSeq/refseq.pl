@@ -163,7 +163,7 @@ sub dblinksReport()
     my $cur = $dbh->prepare('select count(*), fdbcont_fdb_db_name
                              from db_link, foreign_db_contains
                              where dblink_fdbcont_zdb_id = fdbcont_zdb_id
-                               and fdbcont_fdb_db_name in ("RefSeq","LocusLink","UniGene","OMIM","Genbank","GenPept")
+                               and fdbcont_fdb_db_name in ("RefSeq","LocusLink","UniGene","OMIM","GenBank","GenPept")
                              group by fdbcont_fdb_db_name;'
 			   );
     $cur->execute;

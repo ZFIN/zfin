@@ -51,7 +51,7 @@
 		var seq_acc=document.updater.seq_acc.value;
 		var dbind=document.updater.seq_super.selectedIndex;
 		var seq_type=document.updater.seq_super[dbind].value;
-		if ((seq_acc != '')&& (dbname == 'Genbank')) {
+		if ((seq_acc != '')&& (dbname == 'GenBank')) {
 		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=seqnum&attr_type=special-check-newseqnum&old_value='+dbname+'&new_value='+seq_acc+'&target_table=marker&fdbcont_super='+seq_type+'&caller=sequence.apg');
 		}
 		else if (seq_acc != '') {
@@ -230,7 +230,7 @@ DBname:<SELECT name=seqdb>
      where fdbcont_fdbdt_super_type = 'sequence' 
        and fdbcont_fdb_db_name <> 'BLAST'
      order by fdbcont_fdb_db_name;">
-    <option value="$1" $(IF,$(EC,$1,Genbank),SELECTED)>$1</option>
+    <option value="$1" $(IF,$(EC,$1,GenBank),SELECTED)>$1</option>
   <?/MISQL>
 </SELECT>
 Accession:<input type=text size=15 name=seq_acc> 
@@ -325,8 +325,11 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
         <?MIVAR NAME=dataId>$6<?/MIVAR> 
 
         <?MIVAR>
-        <?MICOMMENT>** 07/24/03 for some weird reasons, the column made up to distinguish the source of Genbank accession
-         has to be a one-character string to behave right in EC operation. <?/MICOMMENT>
+        <?MICOMMENT>
+	  ** 07/24/03 for some weird reasons, the column made up to distinguish 
+	  the source of GenBank accession has to be a one-character string 
+	  to behave right in EC operation. 
+	<?/MICOMMENT>
          
         <TR bgcolor=$row_color>
           

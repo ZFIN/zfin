@@ -30,7 +30,7 @@
 # Mapping data
 #	zfin id, symbol, panel symbol, LG, loc, metric
 #
-# Sequence data - separate files for Genbank, RefSeq, LocusLink, Unigene, 
+# Sequence data - separate files for GenBank, RefSeq, LocusLink, Unigene, 
 # SWISS-PROT, Interpro
 #	zfin id, symbol, accession number
 #	

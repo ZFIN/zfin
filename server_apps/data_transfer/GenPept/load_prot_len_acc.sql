@@ -326,7 +326,7 @@ select
     pla_acc coded_by
 from  db_link, tmp_Genomic_pla, marker, foreign_db_contains
 where dblink_fdbcont_zdb_id = fdbcont_zdb_id
-and   fdbcont_fdb_db_name in ('Genbank','SwissProt', 'RefSeq', 'LocusLink')
+and   fdbcont_fdb_db_name in ('GenBank','SwissProt', 'RefSeq', 'LocusLink')
 and   fdbcont_fdbdt_data_type = 'Polypeptide'
 and   dblink_acc_num = pla_acc
 and   pla_gene = mrkr_abbrev --- the ones with an exact name match 
@@ -409,7 +409,7 @@ select
      'ZDB-FDBCONT-040412-42' fdbcont_zdb_id
 from  db_link, tmp_Genomic_pla, marker, data_alias, foreign_db_contains
 where dblink_fdbcont_zdb_id = fdbcont_zdb_id
---and   fdbcont_fdb_db_name in ('Genbank','SwissProt', 'RefSeq', 'LocusLink')
+--and   fdbcont_fdb_db_name in ('GenBank','SwissProt', 'RefSeq', 'LocusLink')
 and   fdbcont_fdbdt_data_type in  ('cDNA','Genomic') -- Polypeptide'
 and   dblink_acc_num = pla_acc
 and   pla_gene = dalias_alias_lower --- the ones with an exact previous name match 
@@ -427,7 +427,7 @@ select
     pla_acc coded_by
 from  db_link, tmp_Genomic_pla, marker, data_alias, foreign_db_contains
 where dblink_fdbcont_zdb_id = fdbcont_zdb_id
-and   fdbcont_fdb_db_name in ('Genbank','SwissProt', 'RefSeq', 'LocusLink')
+and   fdbcont_fdb_db_name in ('GenBank','SwissProt', 'RefSeq', 'LocusLink')
 and   fdbcont_fdbdt_data_type = 'Polypeptide'
 and   dblink_acc_num = pla_acc
 and   pla_gene = dalias_alias_lower --- the ones with an exact name match 
@@ -491,7 +491,7 @@ select
     dblink_acc_num[1,10] coded_by
 from  db_link, tmp_Genomic_pla, marker, foreign_db_contains
 where dblink_fdbcont_zdb_id = fdbcont_zdb_id
-and   fdbcont_fdb_db_name in ('Genbank','SwissProt', 'RefSeq', 'LocusLink')
+and   fdbcont_fdb_db_name in ('GenBank','SwissProt', 'RefSeq', 'LocusLink')
 and   fdbcont_fdbdt_data_type = 'Polypeptide'
 and   dblink_acc_num = pla_acc
 and   mrkr_type = 'GENE'

@@ -40,7 +40,7 @@ update db_link set dblink_length =
 	where dblink_fdbcont_zdb_id in 
 		(select fdbcont_zdb_id
 		   from foreign_db_contains
-		  where fdbcont_fdb_db_name= "Genbank"
+		  where fdbcont_fdb_db_name= "GenBank"
 		)
 	 and  exists 
 		(select tp_length

@@ -49,7 +49,7 @@ update fpc_marker set fpm_mrkr = (
 ! echo "associate etids with zdbs via gb_acc"
 select distinct fpm_mrkr gb, fpm_acc acc, dblink_linked_recid zdb
 from fpc_marker, db_link
-where dblink_fdbcont_zdb_id ==  'ZDB-FDBCONT-040412-37' --'Genbank'
+where dblink_fdbcont_zdb_id ==  'ZDB-FDBCONT-040412-37' --'GenBank'
 and upper(fpm_mrkr)  ==  dblink_acc_num
 and fpm_mrkr[1] not in ('Z','1','2','4','5','6','7','8','9','z','s')
 order by 2,3,1

@@ -8,9 +8,9 @@ select distinct fdbcont_fdb_db_name
   from foreign_db_contains
   where fdbcont_zdb_id = vFDBcontZdbID ;
 
-if vDbName in ('BLAST', 'Genbank') then
+if vDbName in ('BLAST', 'GenBank') then
   if vDblinkAccNum <> upper(vDblinkAccNum) then
-    raise exception -746,0,'FAIL!!: Acc_num from Genbank,Blast must be uppercase' ;
+    raise exception -746,0,'FAIL!!: Acc_num from GenBank,Blast must be uppercase' ;
   end if ;
 
 end if ;

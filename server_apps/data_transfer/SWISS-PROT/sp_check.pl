@@ -7,7 +7,7 @@
 # and accordingly divides the records into several catagories. It checks 
 # the Database cross-references(DR) about whether ZFIN accession number is
 # provided, whether EMBL GenPept accession numbers are provided and associated 
-# with the same marker in ZFIN, it then checks EMBL Genbank accessions for those 
+# with the same marker in ZFIN, it then checks EMBL GenBank accessions for those
 # that couldn't be decided by GenPept matching. The scripts also
 # checks the Reference cross-reference(s)(RX) to see whether any PubMed 
 # number presents and whether they all in ZFIN database. Records with problems 
@@ -137,7 +137,7 @@ while (<>) {
 	}
 
 	# after the EMBL lines and ZFIN line, check the GenPept matching, 
-	# if GenPept matching is not sufficient, use Genbank to furthur sort 
+	# if GenPept matching is not sufficient, use GenBank to furthur sort 
 	# the records.
 	if ($after_embl && !$qual_check){
 	    ($no, $good) = Embl_Check(); 
@@ -148,11 +148,11 @@ while (<>) {
 	    }elsif (!$no && !$good) {
 		$fileno = "2" ;        #GenPept matching shows conflicts
 	    
-	    }else {                     #Genbank acc check
+	    }else {                     #GenBank acc check
 		@EMBL = ();
 		$count = 0;
 		foreach $embl_nt (@embl_nt) {
-		    @embl_match = Embl_Match($embl_nt, "Genbank");
+		    @embl_match = Embl_Match($embl_nt, "GenBank");
 		    $num_match = @embl_match;
 		    if (@embl_match) {
 			push @embl_nt_matched, $embl_nt;
@@ -272,7 +272,7 @@ sub Embl_Match ($$) {
                      and dblink_acc_num= ?";
 
   }
-  if ($dbname eq "Genbank" ) {
+  if ($dbname eq "GenBank" ) {
       $sql = "  select distinct dblink_linked_recid 
                   from db_link 
                   where dblink_fdbcont_zdb_id in ('ZDB-FDBCONT-040412-36',
@@ -306,7 +306,7 @@ sub Embl_Genomic_Check () {
 	($isGenomic) = $dbh->selectrow_array("select 1
                                          from accession_bank
                                         where accbk_acc_num = '$gb_acc'
-                                          and accbk_db_name = 'Genbank'
+                                          and accbk_db_name = 'GenBank'
                                           and accbk_data_type = 'Genomic'");
         if (!$isGenomic) {
 	    $all_genomic = 0;
@@ -436,7 +436,7 @@ ENDDOC
 #--------------------------------------------
 # SP records Problem 3
 #    
-#   at least one Genbank Acc# in ZFIN, but not consistent
+#   at least one GenBank Acc# in ZFIN, but not consistent
 #   
 ENDDOC
 
@@ -449,7 +449,7 @@ ENDDOC
 #--------------------------------------------
 # SP records Problem 4
 #    
-#   Genbank Acc# in ZFIN, consistent, but all genomic 
+#   GenBank Acc# in ZFIN, consistent, but all genomic 
 #
 ENDDOC
 
@@ -462,7 +462,7 @@ ENDDOC
 #--------------------------------------------
 # SP records Problem 5
 #    
-#   Genbank #s not in ZFIN
+#   GenBank #s not in ZFIN
 #   at least one PubMed # in ZFIN
 #
 ENDDOC
@@ -476,7 +476,7 @@ ENDDOC
 #--------------------------------------------
 # SP records Problem 6
 #    
-#   Genbank #s not in ZFIN
+#   GenBank #s not in ZFIN
 #   PubMed # not present, or not in ZFIN
 #
 ENDDOC

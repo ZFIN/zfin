@@ -11,12 +11,12 @@ tab separated file containing:
         zfin gene symbol
         zfin probe id              (Link to EST)
         zfin probe symbol
-        genbank probe accession    (link to sequence)
+        GenBank probe accession    (link to sequence)
         assay type
         zfin expression pattern id (link to expression)
         zfin publication id        (link to attribution)
 
-the probe is the EST used in the assay, genbank accession number(s) 
+the probe is the EST used in the assay, GenBank accession number(s) 
 are for the EST (not the GENE)
 
 currently there are only two expression pattern sources,
@@ -30,7 +30,7 @@ http://zfin.org/data_transfer/Sanger/VegaGeneSeq.txt
 tab separated file containing:
         zfin gene id          
         zfin gene symbol
-        Genbank accession          
+        GenBank accession          
 
 ###############################################################################
 http://zfin.org/data_transfer/Sanger/FPC_mapping.unl

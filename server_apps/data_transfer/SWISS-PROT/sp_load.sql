@@ -49,13 +49,13 @@ begin work;
 	       		select distinct *, today ||" Swiss-Prot",acc_num 
 			  from db_link_with_dups;
         
---!echo 'per curator's request, Genbank and GenPept accession are no longer loaded from SP file'
+--!echo 'per curator's request, GenBank and GenPept accession are no longer loaded from SP file'
 	update pre_db_link set dblink_fdbcont_zdb_id = 
 				(select fdbcont_zdb_id 
 				   from foreign_db_contains 
 				  where lower(db_name)=lower(fdbcont_fdb_db_name)); 
 
---!echo 'Genbank has to be treated differently here since the type is unknown'	
+--!echo 'GenBank has to be treated differently here since the type is unknown'	
 	delete from pre_db_link where exists (
 		select d.dblink_zdb_id
 		from db_link d

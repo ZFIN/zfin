@@ -301,7 +301,7 @@ comments,
        <?/MISQL>
        <?MIBLOCK COND="$(NC,$1,)">
            <SCRIPT>
- 		window.alert('The Genbank accession is already associated with the marker.');
+ 		window.alert('The GenBank accession is already associated with the marker.');
 	   </SCRIPT>
        <?MIELSE>  
 	
@@ -323,7 +323,7 @@ comments,
               $(SETVAR,$markerlist,$(SEPARATE,$markerlist,","))
    
               <SCRIPT>          
-                var msg="The Genbank accession is already associated with\n"+
+                var msg="The GenBank accession is already associated with\n"+
                          "[$markerlist]. Are you sure to process?";
 	        if (confirm(msg))
 		   location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value=$old_value&new_value=$new_value&target_table=$target_table&fdbcont_super=$fdbcont_super&fdbcont_data=$fdbcont_data');

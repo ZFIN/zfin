@@ -16,14 +16,14 @@
     CALLED FROM: markerview.apg and sequence.apg
 
 NCBI BLAST (25000 bp for BLAST)    PBLAST for SP
-UCSC BLAT  (25000 bp for BLAT)    Genbank SwissProt,RefProt, 
+UCSC BLAT  (25000 bp for BLAT)    GenBank SwissProt,RefProt, 
 
 ENSEMBL    50,000 bp for SSAHA ,200,000 bp for BLASTN & TBLASTX 
-           Genbank, SwissProt, RefSeq (set flag for protiens)
+           GenBank, SwissProt, RefSeq (set flag for protiens)
 
 
 
-SQL: select WebExplode(object,'seqt_acc=BM735913&seqt_acc_len=411&seqt_acc_type=cDNA&seqt_acc_db=Genbank') from webPages where ID='aa-sequence_tools.apg';
+SQL: select WebExplode(object,'seqt_acc=BM735913&seqt_acc_len=411&seqt_acc_type=cDNA&seqt_acc_db=GenBank') from webPages where ID='aa-sequence_tools.apg';
 ###############################################################################
 <?/MICOMMENT>
 
@@ -102,7 +102,7 @@ function jump(form_select){
        
     <?/MIBLOCK>
     
-<?MIELSE COND=$(AND,$(EQ,$seqt_acc_type,cDNA),$(OR,$(EQ,$seqt_acc_db,Genbank),$(EQ,$seqt_acc_db,RefSeq)))>
+<?MIELSE COND=$(AND,$(EQ,$seqt_acc_type,cDNA),$(OR,$(EQ,$seqt_acc_db,GenBank),$(EQ,$seqt_acc_db,RefSeq)))>
     <FORM NAME="cdna_seq_tool" ><DIV>
     <SELECT NAME="select_cdna" onChange="return jump(this);" >
         <OPTION VALUE="none" SELECTED>- Select Tool -</OPTION>
@@ -124,7 +124,7 @@ function jump(form_select){
     </SELECT><DIV>
     </FORM>
 
-<?MIELSE COND=$(AND,$(EC,$seqt_acc_type,Genomic),$(OR,$(EC,$seqt_acc_db,Genbank),$(EC,$seqt_acc_db,RefSeq)))>
+<?MIELSE COND=$(AND,$(EC,$seqt_acc_type,Genomic),$(OR,$(EC,$seqt_acc_db,GenBank),$(EC,$seqt_acc_db,RefSeq)))>
     <?MIBLOCK COND="$(>,$seqt_acc_len,200000)">
         <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'MEGA BLAST';"><?MIVAR NAME=fdb_url_blast>$1<?/MIVAR><?/MISQL>
         <?MIVAR><input type=button value="- MegaBLAST -" onClick="window.open('$(CONCAT,$fdb_url_blast,$seqt_acc)','SequenceTools');"><?/MIVAR>
