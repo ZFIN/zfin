@@ -350,7 +350,7 @@ end function;
 --------------------------------------------------------------------
 
 
-create dba function regen_anatomy()
+create dba function "informix".regen_anatomy()
   returning integer
 
   -- populates anatomy fast search tables.
@@ -1269,3 +1269,5 @@ create dba function regen_anatomy()
   return 0;
 end function;
 
+grant execute on function "informix".regen_anatomy () 
+  to "public" as "informix";
