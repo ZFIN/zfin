@@ -10,14 +10,14 @@ class MIConnection extends Object /* implements java.sql.Connection (in part) */
     
     public MIConnection () throws SQLException
     {
-	Object connection = openConnection ("template1");
+	Object connection = openConnection (null, null, null);
 	if (connection == null)
 	    throw new SQLException ("Connection failed");
     }
 
-    public MIConnection (String database) throws SQLException
+    public MIConnection (String database, String user, String password) throws SQLException
     {
-	Object connection = openConnection (database);
+	Object connection = openConnection (database, user, password);
 	if (connection == null)
 	    throw new SQLException ("Connection failed");
     }
@@ -37,7 +37,7 @@ class MIConnection extends Object /* implements java.sql.Connection (in part) */
 	return currentStatement;
     }
 
-    protected native Object openConnection (String database);
+    protected native Object openConnection (String database, String user, String password);
 
     public Object getConnection ()
     {
