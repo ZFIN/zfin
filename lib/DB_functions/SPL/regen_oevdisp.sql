@@ -20,7 +20,7 @@ create dba function "informix".regen_oevdisp()
   define preGeneZdbId		varchar(50);
   define prePubZdbId		varchar(50);
   define preEvidenceCode	char(2);
-  define oevdisp_temp		INT;  
+  define tempTableEmpty		integer;  
 
   begin	-- master exception handler
 
@@ -151,14 +151,14 @@ create dba function "informix".regen_oevdisp()
 	values
 	  ( preGeneZdbId, prePubZdbId, preEvidenceCode, organismList );
 
---return error message if orthologue_evidence_display_temp is empty. (ST, 07/23/03)
+     --return error message if orthologue_evidence_display_temp is empty.
 	
-	let oevdisp_temp = (select count(*) from orthologue_evidence_display_temp);
-		if oevdisp_temp == 0 then
-			let errorHint = "temp table empty";
-			raise exception -746,0, "temp table empty";
-		else let oevdisp_temp ="";
-		end if;  
+     let tempTableEmpty = (select count(*) 
+			     from orthologue_evidence_display_temp);
+     if tempTableEmpty == 0 then
+     	let errorHint = "temp table empty";
+	raise exception -746,0, "temp table empty";
+     end if;  
 
     let errorHint = "Creating pre_";	
     if (exists( select *
@@ -195,12 +195,14 @@ create dba function "informix".regen_oevdisp()
 	     organism_list
         from orthologue_evidence_display_temp;
 
-	let oevdisp_temp = (select count(*) from pre_orthologue_evidence_display);
-		if oevdisp_temp == 0 then
-			let errorHint = "pre-orthologue table empty";
-			raise exception -746,0, "temp table empty";
-		else let oevdisp_temp ="";
-		end if;
+    --return error message if pre_orthologue_evidence_display is empty.
+
+    let tempTableEmpty = (select count(*) 
+			    from pre_orthologue_evidence_display);
+    if tempTableEmpty == 0 then
+    	let errorHint = "pre-orthologue table empty";
+	raise exception -746,0, "temp table empty";
+    end if;
 
 
     update pre_orthologue_evidence_display 
@@ -216,13 +218,14 @@ create dba function "informix".regen_oevdisp()
       select oevdisp_zdb_id
    	from pre_orthologue_evidence_display;
 
+    --return error message if zdb_active_data is empty.
 
-	let oevdisp_temp = (select count(*) from zdb_active_data);
-		if oevdisp_temp == 0 then
-			let errorHint = "zdb_active_data table empty";
-			raise exception -746,0, "zdb_active_data table empty";
-		else let oevdisp_temp ="";
-		end if;
+    let tempTableEmpty = (select count(*) 
+			    from zdb_active_data);
+    if tempTableEmpty == 0 then
+    	let errorHint = "zdb_active_data table empty";
+	raise exception -746,0, "zdb_active_data table empty";
+    end if;
 
     let errorHint = "Populating oevd";	
 
@@ -232,12 +235,14 @@ create dba function "informix".regen_oevdisp()
       select * 
         from pre_orthologue_evidence_display;
 
-	let oevdisp_temp = (select count(*) from orthologue_evidence_display);
-		if oevdisp_temp == 0 then
-			let errorHint = "orthologue evidence display table empty";
-			raise exception -746,0, "orthologue evidence table empty";
-		else let oevdisp_temp ="";
-		end if;
+    --return error message if zdb_active_data is empty
+
+    let tempTableEmpty = (select count(*) 
+			    from orthologue_evidence_display);
+    if tempTableEmpty == 0 then
+    	let errorHint = "orthologue evidence display table empty";
+	raise exception -746,0, "orthologue evidence table empty";
+    end if;
 
     let errorHint = "Inserting record attributions";	
 
