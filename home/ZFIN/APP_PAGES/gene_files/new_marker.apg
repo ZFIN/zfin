@@ -89,7 +89,7 @@ Others -- if s_new exists, then name,abbrev,comments,alt_names should also exist
     <?MISQL SQL="execute function get_id('$(UPPER,$marker_type)');"><?/MISQL>
     <?MIVAR NAME=$new_id>$1<?/MIVAR>
 
-    <?MISQL COND="$(EC,$marker_type,gene)" SQL="
+    <?MISQL SQL="
       insert into zdb_active_data 
         (zactvd_zdb_id) 
         values ('$new_id');">
