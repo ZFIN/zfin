@@ -22,7 +22,7 @@
 <?MIVAR NAME=$line_clr>#e5e5e5<?/MIVAR>
 <?MIVAR NAME=$lasttype><?/MIVAR>
 
-<?MISQL SQL="select a.zdb_id,name,panel_date,ptype,mtype,a.abbrev,count(*)::integer,day(panel_date), month(panel_date), year(panel_date) from panels a,paneled_markers b where a.zdb_id=b.target_id group by name,panel_date,ptype,a.zdb_id,mtype,a.abbrev order by ptype,name;">
+<?MISQL SQL="select a.zdb_id,name,panel_date,ptype,mtype,a.abbrev,count(*)::integer,day(panel_date), month(panel_date), year(panel_date) from panels a, public_paneled_markers b where a.abbrev = b.target_abbrev group by name,panel_date,ptype,a.zdb_id,mtype,a.abbrev order by ptype,name;">
 
 
 
