@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
   <head>
-  <title>ZFIN Gene Ontology</title>
+  <title>ZFIN Gene Ontology for <?MIVAR>$OID<?/MIVAR></title>
 </head>
 <!--app page to enter gene ontology info-->
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
@@ -23,16 +23,34 @@
 <head>
 <title>ZFIN Gene Ontology Report for<?MIVAR> $gene:<?/MIVAR></title>
 </head>
+<table width="15%" align=right>
+   <tr>
+   <?MIVAR>
+        <form method=post
+              action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"
+              target=comments>
+           <input type=hidden name=subject value="$gene">
+           <input type=hidden name=marker_id value="$OID">
+           <input type=hidden name=MIval value="aa-your_input_welcome.apg">
+           <input type=hidden name=page_id value="$OID">
+           <td><input type=submit value="Your Input Welcome"></td>
+         </form>
+    <?/MIVAR>
+    </tr>
+</table>
 
 
 <?MIBLOCK COND="$(XST,$OID)">
  <?MIBLOCK COND="$(NC,PUB,$caller)">
      <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=go') from webpages where ID='aa-data_mgr.apg';">$1<?/MISQL>
+
+
 <p>
  <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name='QuickGO'"><?/MISQL>
    <?MIVAR NAME=$dbquery>$1<?/MIVAR>
 
 <!--creating table to display added GO annotations-->
+<p>
 
   <table border = 0 cellspacing = 0 width = 100% cellpadding = 3>
   <tr><td width = 10%><b>Category</b>
@@ -133,7 +151,7 @@
                   <?MIVAR NAME=$link>$query$accID<?/MIVAR>
                   <?MIVAR NAME=$currinflink><a href=$link>GO:$accID</a><?/MIVAR>
                <?MIELSE> 
-                  <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = '$dbase'><?/MISQL>
+                  <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = '$dbase'"><?/MISQL>
                   <?MIVAR NAME=query>$1<?/MIVAR>
                   <?MIVAR NAME=$link>$query$accID<?/MIVAR>
                   <?MIVAR NAME=$currinflink><a href=$link>$dbase:$accID</a><?/MIVAR>
