@@ -51,9 +51,9 @@ public class mapplet extends Applet  {
 			
 		} else if (getParameter("where") != null) 	{
 			String Q = "select zdb_id, abbrev, mtype, target_abbrev, lg_location::numeric(6,2), OR_lg, mghframework, metric from paneled_markers where " + getParameter("where") + " and private='f' order by 4,5 asc;";
-			MV = new MapViewer(Q,getParameter("host"), getParameter("port"), getParameter("selected_marker"), getParameter("panel_order"));
+			MV = new MapViewer(Q,"host", "port", getParameter("selected_marker"), getParameter("panel_order"));
 		} else if (getParameter("query") != null) 	{
-			 MV = new MapViewer(getParameter("query"),getParameter("host"), getParameter("port"), getParameter("selected_marker"), getParameter("panel_order"));
+			 MV = new MapViewer(getParameter("query"),"host", "port", getParameter("selected_marker"), getParameter("panel_order"));
 		} else {
 			System.err.println("mapplet.java couldn't start with any meaningful params");
 		}
@@ -369,11 +369,11 @@ public class mapplet extends Applet  {
 
 	public void viewPanel(String Abbrev) {
 
-		if ((getParameter("panel_url") != null) && (getParameter("port") != null) && (getParameter("host") != null))
+		if (getParameter("panel_url") != null)
 		{
 			String panel_url = getParameter("panel_url");
-			String port = getParameter("port");
-			String host = getParameter("host");
+			String port = "port";
+			String host = "host";
 			SQLQuery Q = new SQLQuery(host,port);
 			String query = "select zdb_id from panels where abbrev = '" + Abbrev + "';";
 			Vector V = Q.selectAll(1, query);
