@@ -11,10 +11,15 @@
 
 
 <HTML>
-<?MIBLOCK COND="$(NXST,$OID)"> No OID Passed In! <?/MIBLOCK>  
+<?MIBLOCK COND="$(NXST,$OID)"> 
+  <p>
+  ERROR -- something bad happened -- no OID passed in!
+<?/MIBLOCK>
 <?MIBLOCK COND="$(XST,$OID)">
- 
-    <?MISQL SQL="
+
+   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+
+   <?MISQL SQL="
 	SELECT anatitem_name,
 	       get_stg_name_long_html(s1.stg_zdb_id), 
 	       get_stg_name_long_html(s2.stg_zdb_id),
@@ -31,43 +36,36 @@
       <?MIVAR NAME="item_abbrev">$4<?/MIVAR>
       <?MIVAR NAME="item_definition">$5<?/MIVAR>
       <?MIVAR NAME="item_description">$6<?/MIVAR>
-    <?/MISQL>
+   <?/MISQL>
+ 
+   <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
+	<center><font size=4><b>Requested ID not found on ZFIN. </font>  
+   <?MIELSE> 
+      <?MIVAR NAME=$item_abbrev COND="$(EC,$item_abbrev,NULL)"><?/MIVAR>
+      <?MIVAR NAME=$item_definition COND="$(EC,$item_definition,NULL)"><?/MIVAR>
+      <?MIVAR NAME=$item_description COND="$(EC,$item_description,NULL)"><?/MIVAR>
 
-    <?MIVAR NAME=$item_abbrev COND="$(EC,$item_abbrev,NULL)"><?/MIVAR>
-    <?MIVAR NAME=$item_definition COND="$(EC,$item_definition,NULL)"><?/MIVAR>
-    <?MIVAR NAME=$item_description COND="$(EC,$item_description,NULL)"><?/MIVAR>
-
-    <?MIVAR NAME=$item_name_safe DELIMIT="'" REPLACE="''">$item_name<?/MIVAR>
-    <?MIVAR NAME=$item_name_url>$(URLENCODE,$item_name)<?/MIVAR>
-    <?MIVAR NAME=$processed_item_name>$(REPLACE,$item_name,',','|')<?/MIVAR>
-
-
-	  <!-- title for webpage history ----------->	
-          <?MIBLOCK COND="$(XST,$UPDATE)">
-		<?MIVAR>
- 			<TITLE>ZFIN Update Anatomy Item: $item_name</title>
-		<?/MIVAR>
-	  <?MIELSE>
-		<?MIVAR>
- 			<TITLE>ZFIN View Anatomy Item: $item_name</title>
-		<?/MIVAR>
-          <?/MIBLOCK>
+      <?MIVAR NAME=$item_name_safe DELIMIT="'" REPLACE="''">$item_name<?/MIVAR>
+      <?MIVAR NAME=$item_name_url>$(URLENCODE,$item_name)<?/MIVAR>
+      <?MIVAR NAME=$processed_item_name>$(REPLACE,$item_name,',','|')<?/MIVAR>
 
 
+      <!-- title for webpage history ----------->	
+      <?MIBLOCK COND="$(XST,$UPDATE)">
+	 <?MIVAR>
+ 		<TITLE>ZFIN Update Anatomy Item: $item_name</title>
+	 <?/MIVAR>
+      <?MIELSE>
+	 <?MIVAR>
+ 		<TITLE>ZFIN View Anatomy Item: $item_name</title>
+	 <?/MIVAR>
+      <?/MIBLOCK>
 
-	  <!-- page header display ----------------->
-  	  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
-	  <!-- NOW JUST TOSS OUT THE RETRIEVED DATA IN A TABLE -->
-	  <!-- FIRST THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
+      <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=anatomy_item') from webPages where ID='aa-data_mgr.apg';">$1
+      <?/MISQL>
 
-  	   <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=anatomy_item') from webPages where ID='aa-data_mgr.apg';">$1
-	   <?/MISQL>
-
-	  <!----- OKAY, NOW  THROW UP THE  MARKER INFO ------------------>
-
-
-<!---------------------------------------------------------->       
+      <?MICOMMENT>  =========  Starts Display  ============== <?/MICOMMENT>
 
 
 <?MIBLOCK COND="$(NXST,$UPDATE)"> <!---- define Input Welcome button---->     
@@ -606,5 +604,8 @@ auditory (tympanal or flagellar) organs, which may be in a variety of anatomical
 <?/MISQL>
 <!---  end pub relationships -->
 
-<?/MIBLOCK> <?MICOMMENT>-- close OID check -- <?/MICOMMENT> 
+<?/MIBLOCK> <?MICOMMENT>-- close OID valid -- <?/MICOMMENT> 
+
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+
+<?/MIBLOCK> <?MICOMMENT>-- close OID passed in -- <?/MICOMMENT> 
