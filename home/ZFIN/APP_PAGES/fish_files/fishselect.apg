@@ -264,16 +264,29 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
 
   </form>
 
+
+  <?MISQL SQL="select count(*)::integer from $target_table  where line_type='mutant' $mut_constraint;"> 
+    <?MIVAR name=$num_recs>$1<?/MIVAR>
+  <?/MISQL>
+
+
+<?MIBLOCK COND="$(=,$num_recs,0)">
+    
+  <!-- look to see if replaced zdb_id -->
+
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-zdb_history.apg';">$1<?/MISQL>
+
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(NXST,$new_oid)"> 
   <table width=100% cellpadding=0 cellspacing=0 border=0>
     <tr>
       <td width=20%>&nbsp;</td>
       <td width=60% align=center>
-        <font size="+1">Mutant Lines Search Results (
-
-  <?MISQL SQL="select count(*)::integer from $target_table  where line_type='mutant' $mut_constraint;"> <b>$1</b> records found.)
-    <?MIVAR name=$num_recs>$1<?/MIVAR>
-  <?/MISQL>
-        </font>
+        <?MIVAR>
+          <font size="+1">Mutant Lines Search Results (<b>$num_recs</b> records found.)
+          </font>
+        <?/MIVAR>
       </td>
       <td width=20% align=center>
         <a href=#modify>Modify Search</a>
@@ -283,6 +296,8 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
       </td>
     </tr>
   </table>
+
+<?/MIBLOCK>    
 
 
   <?MIBLOCK COND="$(>,$num_recs,0)">
@@ -460,9 +475,39 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
   <?/MIBLOCK>  <!-- ends the wild type case -->
 
   <!--  search for zdb id for accession lister  -->
+
   <?MIBLOCK COND="$(EC,$line_type,accession)">
+    <?MISQL SQL="select count(distinct a.zdb_id)::integer from fish a, lab b where  a.lab=b.zdb_id and a.zdb_id = '$OID';"><?/MISQL>
+    <?MIVAR NAME=$num_recs>$1<?/MIVAR>
+
+  <?MIBLOCK COND="$(=,$num_recs,0)">
+
+    <!-- look to see if replaced zdb_id -->
+
+    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-zdb_history.apg';">$1<?/MISQL>
+
+  <?/MIBLOCK>
+
+  <?MIBLOCK COND="$(NXST,$new_oid)"> 
+    <table width=100% cellpadding=0 cellspacing=0 border=0>
     <center>
-    Search Fish Lines: Result Summary<br>
+      <tr>
+	<td width=20%>&nbsp;</td>
+	<td width=60% align=center>
+	  <?MIVAR>
+	    <font size="+1">Fish Lines Search Results (<b>$num_recs</b> records found.)
+	    </font>
+	  <?/MIVAR>
+	</td>
+	<td width=20% align=center>
+	  <a href=#modify>Modify Search</a>
+
+	<!-- Insert a form with one button. Label button Your Input Welcome -->
+	  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>
+	</td>
+      </tr>
+    </table>
+
     (Click on individual stocks for more detail)
     </center> 
     <p>
@@ -485,7 +530,8 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
     </TR>
     <?/MISQL>
     </TABLE>
-    <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No matching records found<?/MIVAR>
+
+  <?/MIBLOCK>    
 
   <?/MIBLOCK>  <!-- ends the accession case -->
 

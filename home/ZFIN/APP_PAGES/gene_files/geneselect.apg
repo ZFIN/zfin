@@ -172,7 +172,15 @@ document.critform.START.value = "";
   <!-- QUERY: $MI_SQL -->
 <?/MIVAR>
 
+<?MIBLOCK COND="$(=,$num_recs,0)">
+    
+  <!-- look to see if replaced zdb_id -->
 
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-zdb_history.apg';">$1<?/MISQL>
+
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(NXST,$new_oid)">    
 <table width=100%>
   <tr>
     <td width=20%>&nbsp;</td>
@@ -188,7 +196,8 @@ document.critform.START.value = "";
       <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>
     </td>
   </tr>
-</table>    
+</table>
+<?/MIBLOCK>    
 
 <br>
 

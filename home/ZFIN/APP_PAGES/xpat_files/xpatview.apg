@@ -86,8 +86,9 @@
     <?/MIVAR>
   <?/MIBLOCK>
 
-<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
-
+<?MIBLOCK COND="$(NXST,$accession)">
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+<?/MIBLOCK>
 
 <?MIBLOCK COND="$(NXST,$OID)">
 <p>
@@ -215,6 +216,20 @@ ERROR -- something bad happened -- no OID passed in!
 
            </font></b>
          </td>
+
+   <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
+    
+    <!-- look to see if replaced zdb_id -->
+
+    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-zdb_history.apg';">$1<?/MISQL>
+    
+    <?MIBLOCK COND="$(NXST,$new_oid)">
+      <form><center><font size=+2>
+        <b>Requested ID not found on ZFIN.</b>
+      </form>
+    <?/MIBLOCK>
+
+  <?MIELSE>
          <?MIVAR>
            <form method=post 
                  action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
@@ -726,8 +741,12 @@ ERROR -- something bad happened -- no OID passed in!
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-showpubs.apg';">$1<?/MISQL>
 
 </form>
+<?/MIBLOCK> <!-- mielse of zdb_history -->
 <?/MIBLOCK> <!-- ends cond oid exists -->
 
-<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+<?MIBLOCK COND="$(NXST,$accession)">
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+<?/MIBLOCK>
+
 </HTML>
 

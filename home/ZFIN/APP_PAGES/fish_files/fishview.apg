@@ -157,18 +157,24 @@ Variables Expected:
 	<?/MIVAR>
       <?/MIBLOCK>
 
-      <?MIBLOCK COND="$(EC,$name,$MI_NOVALUE)">
-        <form>
-          <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
-          <center><font size=+2><b>Requested ID not found in ZFIN.</center>
-        </form>
-      <?/MIBLOCK>
-	<?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
-
-      <?MIBLOCK COND="$(NC,$name,$MI_NOVALUE)">
-
-
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+
+   <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
+
+
+      <?MIBLOCK COND="$(EC,$name,$MI_NOVALUE)">
+
+        <!-- look to see if replaced zdb_id -->
+
+        <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-zdb_history.apg';">$1<?/MISQL>
+    
+        <?MIBLOCK COND="$(NXST,$new_oid)">
+          <form><center><font size=+2>
+	  <b>Requested ID not found in ZFIN.</b>
+          </form>
+        <?/MIBLOCK>
+        
+      <?MIELSE>
 
 	<!-- If viewing, THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
 	<?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=fish') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>

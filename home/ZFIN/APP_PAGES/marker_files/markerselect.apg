@@ -1,4 +1,4 @@
-<!-- added onChange to each variable to reset START for walking windows - this is needed if users alter query after using the navtile button and without using the reset button. if the new query resul thas fewer than the first query and they had been on a page that would not exist with this new query the ww code breaks  -->
+<!-- added onChange to each variable to reset START for walking windows - this is needed if users alter query after using the navtile button and without using the reset button. if the new query result has fewer than the first query and they had been on a page that would not exist with this new query the ww code breaks  -->
 
 <HTML>
 <HEAD>
@@ -161,6 +161,15 @@ document.critform.START.value = "";
 
 <!-- NOW JUST RETRIEVE AND DISPLAY ALL MATCHING ENTRIES. -->
 
+<?MIBLOCK COND="$(=,$num_recs,0)">
+    
+  <!-- look to see if replaced zdb_id -->
+
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-zdb_history.apg';">$1<?/MISQL>
+
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(NXST,$new_oid)">
 <table width=100% border=0>
   <tr>
     <td width=20%>&nbsp;</td>
@@ -177,6 +186,7 @@ document.critform.START.value = "";
     </td>
   </tr>
 </table>
+<?/MIBLOCK>
       
 
 <?MIVAR COND="$(NC,$lg,0)">

@@ -91,11 +91,18 @@ ERROR -- something bad happened -- no OID passed in!
 <!-- debugging <?MIVAR> name = $name <?/MIVAR>  -->
 
 <?MIBLOCK COND="$(OR,$(EC,$name,$MI_NOVALUE),$(=,$MI_ROWCOUNT,0))">
-<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
-<form><center><font size=+2>
-<b>Requested ID not found on ZFIN.</b></center></font>
-</form>
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+  <!-- look to see if replaced zdb_id -->
+
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-zdb_history.apg';">$1<?/MISQL>
+    
+   <?MIBLOCK COND="$(NXST,$new_oid)">
+     <form><center><font size=4>
+        <?MIVAR> <b>Requested ID not found on ZFIN.<?/MIVAR>      
+     </form>
+   <?/MIBLOCK>
 <?/MIBLOCK>
+
 <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 <?MIBLOCK COND="$(AND,$(NC,$name,NOVALUE),$(>,$MI_ROWCOUNT,0))">
 

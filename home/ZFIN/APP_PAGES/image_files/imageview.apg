@@ -80,6 +80,11 @@ Variables Expected:
 
 <?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
 
+<?MIBLOCK COND="$(NXST,$accession)">
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+<?/MIBLOCK>
+
+
 <?MISQL SQL="
   select fimg_image, fimg_annotation, fimg_image_with_annotation, 
 	 fimg_width, fimg_fish_zdb_id, 
@@ -102,493 +107,504 @@ Variables Expected:
 <?MIVAR NAME=$full_fish_name>$11<?/MIVAR>
 
 
-<?MIBLOCK COND="$(NXST,$accession)">
-  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
-<?/MIBLOCK>
+<?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
+    
+  <!-- look to see if replaced zdb_id -->
 
-<?MIVAR><TITLE> ZFIN View Image</TITLE><?/MIVAR>
-
-<!-- tried MIBLOCK with COND here.  Didn't work.  -->
-
-<?MIVAR NAME=$imageToShow>$(IF,$(EQ,$fimg_image_with_annotation,"NULL"),$fimg_image,$fimg_image_with_annotation)<?/MIVAR>
-
-<?MIBLOCK COND="$(NXST,$OID)">
-  <p>
-  ERROR -- something bad happened -- no OID passed in!
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-zdb_history.apg';">$1<?/MISQL>
+    
+  <?MIBLOCK COND="$(NXST,$new_oid)">
+    <form><center><font size=+2>
+      <b>Requested ID not found on ZFIN.</b>
+    </form>
+  <?/MIBLOCK>
 
 <?MIELSE>
 
-  <!-- if not updating -->
-  <?MIBLOCK COND="$(NXST,$UPDATE)">
-    <?MISQL SQL="
-      select WebExplode(object, 'page_title=View Image&ownerColumn=fimg_owner_zdb_id&zdbidColumn=fimg_zdb_id') 
-        from webPages 
-        where ID='aa-secure_navigation.apg';">
-      $1
-    <?/MISQL>
-  <?MIELSE>  <!-- If updating, only let owner update anything -->
-    <?MISQL SQL="
-      select WebExplode(object, 
-	                'page_title=Update Image&permission=owns&rtype=fish_image&ownerColumn=fimg_owner_zdb_id&zdbIdColumn=fimg_zdb_id')
-        from webPages 
-        where ID='aa-secure_navigation.apg';">
-      $1
-    <?/MISQL>
-  <?/MIBLOCK>
+  <?MIVAR><TITLE> ZFIN View Image</TITLE><?/MIVAR>
 
-  <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
+  <!-- tried MIBLOCK with COND here.  Didn't work.  -->
 
-    <!-- if you're updating, set up some hidden submission forms to handle 
-      -- updating. They are submitted from javascript functions.  Need 
-      -- this because we need to use POST to send arbitrarily large 
-      -- annotations.
-      -->
-    <?MIVAR COND="$(XST,$UPDATE)">
-      <form name=doUpdate 
-	    method=post 
-	    action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
-	<input type=hidden name=MIval value="">
-	<input type=hidden name=OID value="$OID">
-	<input type=hidden name=attr value="">
-	<input type=hidden name=attr_type value="">
-	<input type=hidden name=old_value value="">
-	<input type=hidden name=table value="">
-        <input type=hidden name=zdb_id value="">
-	<input type=hidden name=new_value value="">
-	<input type=hidden name=print_name value="">
-	<input type=hidden name=annotations value="NULL">
-      </form>
-    <?/MIVAR>
+  <?MIVAR NAME=$imageToShow>$(IF,$(EQ,$fimg_image_with_annotation,"NULL"),$fimg_image,$fimg_image_with_annotation)<?/MIVAR>
 
-    <?MIVAR NAME=$rec_title>IMAGE:$full_fish_name<?/MIVAR>
+  <?MIBLOCK COND="$(NXST,$OID)">
+    <p>
+    ERROR -- something bad happened -- no OID passed in!
 
-    <!-- If not updating, THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
-    <?MISQL COND="$(NXST,$UPDATE)" SQL="
-      select WebExplode(object, 'rtype=fish_image&ownerColumn=fimg_owner_zdb_id&zdbIdColumn=fimg_zdb_id') 
-        from webPages 
-        where ID='aa-data_mgr.apg';">
-      $1
-    <?/MISQL>
+  <?MIELSE>
 
+    <!-- if not updating -->
+    <?MIBLOCK COND="$(NXST,$UPDATE)">
+      <?MISQL SQL="
+	select WebExplode(object, 'page_title=View Image&ownerColumn=fimg_owner_zdb_id&zdbidColumn=fimg_zdb_id') 
+	  from webPages 
+	  where ID='aa-secure_navigation.apg';">
+	$1
+      <?/MISQL>
+    <?MIELSE>  <!-- If updating, only let owner update anything -->
+      <?MISQL SQL="
+	select WebExplode(object, 
+			  'page_title=Update Image&permission=owns&rtype=fish_image&ownerColumn=fimg_owner_zdb_id&zdbIdColumn=fimg_zdb_id')
+	  from webPages 
+	  where ID='aa-secure_navigation.apg';">
+	$1
+      <?/MISQL>
+    <?/MIBLOCK>
 
-    <!-- OKAY, NOW  THROW UP THE  IMAGE INFO -->
-    <P>
+    <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
-    <form name=updater>
+      <!-- if you're updating, set up some hidden submission forms to handle 
+	-- updating. They are submitted from javascript functions.  Need 
+	-- this because we need to use POST to send arbitrarily large 
+	-- annotations.
+	-->
       <?MIVAR COND="$(XST,$UPDATE)">
-        <center><font size=5 color="#00ff00"><input type=button 
-        value=" DONE UPDATING. Back to Viewing! " onClick="all_done();">
-        </font></center>
+	<form name=doUpdate 
+	      method=post 
+	      action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+	  <input type=hidden name=MIval value="">
+	  <input type=hidden name=OID value="$OID">
+	  <input type=hidden name=attr value="">
+	  <input type=hidden name=attr_type value="">
+	  <input type=hidden name=old_value value="">
+	  <input type=hidden name=table value="">
+	  <input type=hidden name=zdb_id value="">
+	  <input type=hidden name=new_value value="">
+	  <input type=hidden name=print_name value="">
+	  <input type=hidden name=annotations value="NULL">
+	</form>
       <?/MIVAR>
 
-      <?MIBLOCK COND="$(NC,$fimg_form,movie)">
+      <?MIVAR NAME=$rec_title>IMAGE:$full_fish_name<?/MIVAR>
 
-	<center>
-	<TABLE border=0 cellpadding=20>
-	  <TR>
-	    <TD align=center bgcolor=#000000>
-	      <?MIVAR> 
-		<script>
-		  var frameWidth;
-		  if (navigator.appName == "Microsoft Internet Explorer") {
-		    frameWidth = parent.document.body.clientWidth - 38;
-		  }
-		  else {
-		    frameWidth = parent.innerWidth - 38;
-		  }
+      <!-- If not updating, THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
+      <?MISQL COND="$(NXST,$UPDATE)" SQL="
+	select WebExplode(object, 'rtype=fish_image&ownerColumn=fimg_owner_zdb_id&zdbIdColumn=fimg_zdb_id') 
+	  from webPages 
+	  where ID='aa-data_mgr.apg';">
+	$1
+      <?/MISQL>
 
-		  if ($fimg_width > frameWidth) {   
-		    document.write(
-			'<IMG width="' + frameWidth + '"' +
-		      	'  SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$imageToShow&MItypeObj=image/gif">' +
-		      	'<br>');
-		    document.write(
-			'<INPUT TYPE=button ' +
-		       	'  value="View image at high resolution"' +
-			'  onClick="popup_image(' + "'/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$imageToShow&MItypeObj=image/gif'" + ')">');
-		  } 
-		  else {
-		    document.write('<IMG SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$imageToShow&MItypeObj=image/gif">');
-		  }
-		</script>
-	      <?/MIVAR>
 
+      <!-- OKAY, NOW  THROW UP THE  IMAGE INFO -->
+      <P>
+
+      <form name=updater>
+	<?MIVAR COND="$(XST,$UPDATE)">
+	  <center><font size=5 color="#00ff00"><input type=button 
+	  value=" DONE UPDATING. Back to Viewing! " onClick="all_done();">
+	  </font></center>
+	<?/MIVAR>
+
+	<?MIBLOCK COND="$(NC,$fimg_form,movie)">
+
+	  <center>
+	  <TABLE border=0 cellpadding=20>
+	    <TR>
+	      <TD align=center bgcolor=#000000>
+		<?MIVAR> 
+		  <script>
+		    var frameWidth;
+		    if (navigator.appName == "Microsoft Internet Explorer") {
+		      frameWidth = parent.document.body.clientWidth - 38;
+		    }
+		    else {
+		      frameWidth = parent.innerWidth - 38;
+		    }
+
+		    if ($fimg_width > frameWidth) {   
+		      document.write(
+			  '<IMG width="' + frameWidth + '"' +
+			  '  SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$imageToShow&MItypeObj=image/gif">' +
+			  '<br>');
+		      document.write(
+			  '<INPUT TYPE=button ' +
+			  '  value="View image at high resolution"' +
+			  '  onClick="popup_image(' + "'/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$imageToShow&MItypeObj=image/gif'" + ')">');
+		    } 
+		    else {
+		      document.write('<IMG SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$imageToShow&MItypeObj=image/gif">');
+		    }
+		  </script>
+		<?/MIVAR>
+
+		<?MIVAR COND="$(XST,$UPDATE)">
+		  <br>
+		  <INPUT TYPE=button 
+			 value="Change Image file" 
+			 onClick="doit('fimg_image','pic','Image+file','fish_image','fimg_zdb_id')">
+		<?/MIVAR>
+	      </TD>
+	    </TR>
+	  </TABLE>
+	  </center>
+	<?/MIBLOCK>
+
+	<A NAME="image_info">
+	<p>
+	<TABLE border=0 width=100% cellpadding=3>
+	  <TR align=center>
+	    <?MIVAR><TD bgcolor="$highlight"><?/MIVAR>
 	      <?MIVAR COND="$(XST,$UPDATE)">
-	        <br>
-		<INPUT TYPE=button 
-		       value="Change Image file" 
-		       onClick="doit('fimg_image','pic','Image+file','fish_image','fimg_zdb_id')">
-              <?/MIVAR>
+		<INPUT TYPE=button value=Update onClick="doit('stock','selection','Depicted+Stock','fish_image','fimg_zdb_id')">
+	      <?/MIVAR>
+	      <big>Stock:</big> 
+	      <?MIBLOCK COND="$(NC,$full_fish_name,UNKNOWN)">
+		<?MIVAR>
+		  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$fimg_fish_zdb_id">$full_fish_name</A>
+		<?/MIVAR>
+	      <?MIELSE>
+		<?MIVAR>
+		  $full_fish_name
+		<?/MIVAR>
+	      <?/MIBLOCK>
+
 	    </TD>
-          </TR>
-        </TABLE>
-	</center>
-      <?/MIBLOCK>
+	  </TR>
+	  <TR>
+	    <TD bgcolor="white">
 
-      <A NAME="image_info">
-      <p>
-      <TABLE border=0 width=100% cellpadding=3>
-        <TR align=center>
-          <?MIVAR><TD bgcolor="$highlight"><?/MIVAR>
-            <?MIVAR COND="$(XST,$UPDATE)">
-              <INPUT TYPE=button value=Update onClick="doit('stock','selection','Depicted+Stock','fish_image','fimg_zdb_id')">
-            <?/MIVAR>
-	    <big>Stock:</big> 
-            <?MIBLOCK COND="$(NC,$full_fish_name,UNKNOWN)">
-              <?MIVAR>
-                <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$fimg_fish_zdb_id">$full_fish_name</A>
-              <?/MIVAR>
-            <?MIELSE>
-              <?MIVAR>
-                $full_fish_name
-              <?/MIVAR>
-            <?/MIBLOCK>
-
-          </TD>
-        </TR>
-        <TR>
-          <TD bgcolor="white">
-
-            <TABLE>
-	      <TR>
-                <TD>
-                  <B>Caption/Comments:</b>
-                </TD>
-              </TR>
-              <?MIVAR COND="$(XST,$UPDATE)">
-                <INPUT TYPE=button value=Update onClick="doit('fimg_comments','textarea','Image+Caption','fish_image','fimg_zdb_id')">
-              <?/MIVAR>
-              <?MIVAR>
-	        <TR>
+	      <TABLE>
+		<TR>
 		  <TD>
-		    $fimg_comments
+		    <B>Caption/Comments:</b>
 		  </TD>
 		</TR>
-      	      <?/MIVAR>
-            </TABLE>
+		<?MIVAR COND="$(XST,$UPDATE)">
+		  <INPUT TYPE=button value=Update onClick="doit('fimg_comments','textarea','Image+Caption','fish_image','fimg_zdb_id')">
+		<?/MIVAR>
+		<?MIVAR>
+		  <TR>
+		    <TD>
+		      $fimg_comments
+		    </TD>
+		  </TR>
+		<?/MIVAR>
+	      </TABLE>
 
-          </TD>
-        </TR>
-      </TABLE>
-
-      <p>
-      <b>Developmental Stage(s):</B> <br>
-
-      <?MISQL SQL="
-	select lo.stg_zdb_id,       	     hi.stg_zdb_id, 
-	       lo.stg_name,        	     hi.stg_name, 
-	       lo.stg_hours_start, 	     hi.stg_hours_end,
-	       get_stg_name_long_html(lo.stg_zdb_id,'popup_url'),
-	       get_stg_name_long_html(hi.stg_zdb_id,'popup_url')
-	  from fish_image_stage, stage lo, stage hi
-	  where fimgstg_fimg_zdb_id = '$OID'
-	    and lo.stg_zdb_id = fimgstg_start_stg_zdb_id
-	    and hi.stg_zdb_id = fimgstg_end_stg_zdb_id
-	  order by lo.stg_hours_start, hi.stg_hours_end desc;">
-
-        <?MIVAR NAME=$start_stg_zdb_id>$1<?/MIVAR>
-        <?MIVAR NAME=$end_stg_zdb_id>$2<?/MIVAR>
-        <?MIVAR NAME=$start_stg_name>$3<?/MIVAR>
-	<?MIVAR NAME=$end_stg_name>$4<?/MIVAR>
-	<?MIVAR NAME=$start_stg_name_long_html>$7<?/MIVAR>
-	<?MIVAR NAME=$end_stg_name_long_html>$8<?/MIVAR>
-
-	<center><b>
-	<?MIBLOCK COND=$(NXST,$UPDATE)>
-	  <?MIVAR>
-	    $start_stg_name_long_html
-	  <?/MIVAR>
-	  <?MIVAR COND=$(NE,$start_stg_name,$end_stg_name)>
-	    to $end_stg_name_long_html
-	  <?/MIVAR>
-        <?MIELSE>
-	  <?MIVAR>
-	    <SELECT NAME=stage  onChange="dopopup(this.options[this.selectedIndex].value,'$start_stg_zdb_id','fimgstg_start_stg_zdb_id','fish_image_stage','fimgstg_fimg_zdb_id')">
-	      <?MISQL SQL="
-	        select stg_name, stg_hours_start, stg_hours_end ,stg_zdb_id
-                  from stage 
-                  order by stg_hours_start, stg_hours_end desc;">
-	        <option $(IF,$(EC,$start_stg_name,$1),SELECTED) value="$4">$1
-	      <?/MISQL>
-	    </SELECT>
-	    to 
-	    <SELECT NAME=stage  onChange="dopopup(this.options[this.selectedIndex].value,'$end_stg_zdb_id','fimgstg_end_stg_zdb_id','fish_image_stage','fimgstg_fimg_zdb_id')">
-	      <?MISQL SQL="
-	        select stg_name, stg_hours_start, stg_hours_end, stg_zdb_id 
-                  from stage 
-                  order by stg_hours_start, stg_hours_end desc;">
-	        <option $(IF,$(EC,$end_stg_name,$1),SELECTED) value="$4">$1
-	      <?/MISQL>
-	    </SELECT>
-	  <?/MIVAR>
-	<?/MIBLOCK>
-	</b></center>
-	
-	<!-- Display anatomy associated with image -->
-
-	<TABLE border="0" WIDTH="100%" cellpadding="4">
-
-	  <?MISQL SQL="
-	    select anathier_code, anathier_name 
-	      from anatomy_hierarchy 
-	      where exists
-		    ( select * 
-			from anatomy_item, fish_image_anatomy
-			where fimganat_fimg_zdb_id           = '$OID'
-			  and fimganat_fimg_start_stg_zdb_id = '$start_stg_zdb_id'
-			  and fimganat_fimg_end_stg_zdb_id   = '$end_stg_zdb_id'
-			  and fimganat_anat_item_zdb_id      = anatitem_zdb_id
-			  and anatitem_type_code             = anathier_code)
-	      order by anathier_code;">
-
-	    <?MIVAR NAME=$anathier_code>$1<?/MIVAR>
-	    <?MIVAR NAME=$anathier_name>$2<?/MIVAR>
-
-	    <tr>
-	      <td>
-		<b>$anathier_name shown</b>
-	      <td>
-		<?MIVAR NAME=$anatItemList><?/MIVAR>
-		<?MISQL SQL="
-		  select anatitem_name, anatitem_comments_relative_url
-		    from fish_image_anatomy, anatomy_item
-		    where fimganat_fimg_zdb_id           = '$OID'
-		      and fimganat_fimg_start_stg_zdb_id = '$start_stg_zdb_id'
-		      and fimganat_fimg_end_stg_zdb_id   = '$end_stg_zdb_id'
-		      and fimganat_anat_item_zdb_id      = anatitem_zdb_id
-		      and anatitem_type_code             = '$anathier_code'
-		      order by anatitem_name;">
-
-		  <?MIVAR NAME=$anatitem_name>$1<?/MIVAR>
-		  <?MIVAR NAME=$anatitem_comments_relative_url>$2<?/MIVAR>
-
-		  <?MIBLOCK COND=$(!=,$MI_CURRENTROW,1)>
-		    <?MIVAR NAME=$anatItemList>$anatItemList, <?/MIVAR>
-		  <?/MIBLOCK>
-		  <?MIVAR NAME=$anatItemList>$anatItemList $anatitem_name<?/MIVAR>
-		<?/MISQL>
-		$anatItemList
-	  <?/MISQL>
+	    </TD>
+	  </TR>
 	</TABLE>
-      <?/MISQL>  <!-- end developmental stages -->
-
-      <hr width=80%>
-
-      <!-- Show expression patterns if they exist -->
-
-      <?MISQL SQL="
-	select xpat_zdb_id, xpat_label_zdb_id, xpat_comments, xpat_assay_name
-	  from expression_pattern
-	  where exists 
-	        ( select * 
-		    from expression_pattern_image
-		    where xpatfimg_fimg_zdb_id = '$OID'
-		      and xpatfimg_xpat_zdb_id = xpat_zdb_id);">
-	
-	<?MIVAR NAME=$xpat_zdb_id>$1<?/MIVAR>
-	<?MIVAR NAME=$xpat_label_zdb_id>$2<?/MIVAR>
-	<?MIVAR NAME=$xpat_comments>$3<?/MIVAR>
-	<?MIVAR NAME=$xpat_assay_name>$4<?/MIVAR>
-	
-	<?MIVAR NAME=$labeledMarkerList><?/MIVAR>
-	<?MISQL SQL="
-	  select mrkr_zdb_id, mrkr_abbrev
-	    from marker, marker_label
-	    where mrkr_zdb_id = mrkrlbl_marker_zdb_id
-	      and mrkrlbl_label_zdb_id = '$xpat_label_zdb_id'
-	    order by mrkr_abbrev;">
-
-	  <?MIVAR NAME=$mrkr_zdb_id>$1<?/MIVAR>
-	  <?MIVAR NAME=$mrkr_abbrev>$2<?/MIVAR>
-
-	  <?MIBLOCK COND=$(!=,$MI_CURRENTROW,1)>
-	    <?MIVAR NAME=$labeledMarkerList>$labeledMarkerList, <?/MIVAR>
-	  <?/MIBLOCK>
-	  <?MIVAR NAME=$labeledMarkerList>$labeledMarkerList<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkr_zdb_id">$mrkr_abbrev</a><?/MIVAR>
-	<?/MISQL>
 
 	<p>
-	<b>Shows part of <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatview.apg&OID=$xpat_zdb_id">expression pattern</a>
-	of $labeledMarkerList 
-	by $xpat_assay_name</a><br><br>
+	<b>Developmental Stage(s):</B> <br>
 
-	<!-- Get the anatomy items labeled in the expression pattern -->
+	<?MISQL SQL="
+	  select lo.stg_zdb_id,       	     hi.stg_zdb_id, 
+		 lo.stg_name,        	     hi.stg_name, 
+		 lo.stg_hours_start, 	     hi.stg_hours_end,
+		 get_stg_name_long_html(lo.stg_zdb_id,'popup_url'),
+		 get_stg_name_long_html(hi.stg_zdb_id,'popup_url')
+	    from fish_image_stage, stage lo, stage hi
+	    where fimgstg_fimg_zdb_id = '$OID'
+	      and lo.stg_zdb_id = fimgstg_start_stg_zdb_id
+	      and hi.stg_zdb_id = fimgstg_end_stg_zdb_id
+	    order by lo.stg_hours_start, hi.stg_hours_end desc;">
 
-	  <!-- get the expression_pattern_image recs that overlap with
-	    -- any of the image's fish_image_stage recs.  On the image
-	    -- page we don't break down expression pattern anatomy items by  
-	    -- stage.  We heap them all together in one list.  To see them
-	    -- by stage, go to the expression pattern page.
-	    -->
-	  <?MIVAR NAME=$xpatanatStgCondition><?/MIVAR>
+	  <?MIVAR NAME=$start_stg_zdb_id>$1<?/MIVAR>
+	  <?MIVAR NAME=$end_stg_zdb_id>$2<?/MIVAR>
+	  <?MIVAR NAME=$start_stg_name>$3<?/MIVAR>
+	  <?MIVAR NAME=$end_stg_name>$4<?/MIVAR>
+	  <?MIVAR NAME=$start_stg_name_long_html>$7<?/MIVAR>
+	  <?MIVAR NAME=$end_stg_name_long_html>$8<?/MIVAR>
+
+	  <center><b>
+	  <?MIBLOCK COND=$(NXST,$UPDATE)>
+	    <?MIVAR>
+	      $start_stg_name_long_html
+	    <?/MIVAR>
+	    <?MIVAR COND=$(NE,$start_stg_name,$end_stg_name)>
+	      to $end_stg_name_long_html
+	    <?/MIVAR>
+	  <?MIELSE>
+	    <?MIVAR>
+	      <SELECT NAME=stage  onChange="dopopup(this.options[this.selectedIndex].value,'$start_stg_zdb_id','fimgstg_start_stg_zdb_id','fish_image_stage','fimgstg_fimg_zdb_id')">
+		<?MISQL SQL="
+		  select stg_name, stg_hours_start, stg_hours_end ,stg_zdb_id
+		    from stage 
+		    order by stg_hours_start, stg_hours_end desc;">
+		  <option $(IF,$(EC,$start_stg_name,$1),SELECTED) value="$4">$1
+		<?/MISQL>
+	      </SELECT>
+	      to 
+	      <SELECT NAME=stage  onChange="dopopup(this.options[this.selectedIndex].value,'$end_stg_zdb_id','fimgstg_end_stg_zdb_id','fish_image_stage','fimgstg_fimg_zdb_id')">
+		<?MISQL SQL="
+		  select stg_name, stg_hours_start, stg_hours_end, stg_zdb_id 
+		    from stage 
+		    order by stg_hours_start, stg_hours_end desc;">
+		  <option $(IF,$(EC,$end_stg_name,$1),SELECTED) value="$4">$1
+		<?/MISQL>
+	      </SELECT>
+	    <?/MIVAR>
+	  <?/MIBLOCK>
+	  </b></center>
+
+	  <!-- Display anatomy associated with image -->
+
+	  <TABLE border="0" WIDTH="100%" cellpadding="4">
+
+	    <?MISQL SQL="
+	      select anathier_code, anathier_name 
+		from anatomy_hierarchy 
+		where exists
+		      ( select * 
+			  from anatomy_item, fish_image_anatomy
+			  where fimganat_fimg_zdb_id           = '$OID'
+			    and fimganat_fimg_start_stg_zdb_id = '$start_stg_zdb_id'
+			    and fimganat_fimg_end_stg_zdb_id   = '$end_stg_zdb_id'
+			    and fimganat_anat_item_zdb_id      = anatitem_zdb_id
+			    and anatitem_type_code             = anathier_code)
+		order by anathier_code;">
+
+	      <?MIVAR NAME=$anathier_code>$1<?/MIVAR>
+	      <?MIVAR NAME=$anathier_name>$2<?/MIVAR>
+
+	      <tr>
+		<td>
+		  <b>$anathier_name shown</b>
+		<td>
+		  <?MIVAR NAME=$anatItemList><?/MIVAR>
+		  <?MISQL SQL="
+		    select anatitem_name, anatitem_comments_relative_url
+		      from fish_image_anatomy, anatomy_item
+		      where fimganat_fimg_zdb_id           = '$OID'
+			and fimganat_fimg_start_stg_zdb_id = '$start_stg_zdb_id'
+			and fimganat_fimg_end_stg_zdb_id   = '$end_stg_zdb_id'
+			and fimganat_anat_item_zdb_id      = anatitem_zdb_id
+			and anatitem_type_code             = '$anathier_code'
+			order by anatitem_name;">
+
+		    <?MIVAR NAME=$anatitem_name>$1<?/MIVAR>
+		    <?MIVAR NAME=$anatitem_comments_relative_url>$2<?/MIVAR>
+
+		    <?MIBLOCK COND=$(!=,$MI_CURRENTROW,1)>
+		      <?MIVAR NAME=$anatItemList>$anatItemList, <?/MIVAR>
+		    <?/MIBLOCK>
+		    <?MIVAR NAME=$anatItemList>$anatItemList $anatitem_name<?/MIVAR>
+		  <?/MISQL>
+		  $anatItemList
+	    <?/MISQL>
+	  </TABLE>
+	<?/MISQL>  <!-- end developmental stages -->
+
+	<hr width=80%>
+
+	<!-- Show expression patterns if they exist -->
+
+	<?MISQL SQL="
+	  select xpat_zdb_id, xpat_label_zdb_id, xpat_comments, xpat_assay_name
+	    from expression_pattern
+	    where exists 
+		  ( select * 
+		      from expression_pattern_image
+		      where xpatfimg_fimg_zdb_id = '$OID'
+			and xpatfimg_xpat_zdb_id = xpat_zdb_id);">
+
+	  <?MIVAR NAME=$xpat_zdb_id>$1<?/MIVAR>
+	  <?MIVAR NAME=$xpat_label_zdb_id>$2<?/MIVAR>
+	  <?MIVAR NAME=$xpat_comments>$3<?/MIVAR>
+	  <?MIVAR NAME=$xpat_assay_name>$4<?/MIVAR>
+
+	  <?MIVAR NAME=$labeledMarkerList><?/MIVAR>
 	  <?MISQL SQL="
-	    select xpatfimg_xpat_start_stg_zdb_id, xpatfimg_xpat_end_stg_zdb_id
-	      from expression_pattern_image
-	      where xpatfimg_fimg_zdb_id = '$OID'
-		and fimg_overlaps_stg_window('$OID', 
-					     xpatfimg_xpat_start_stg_zdb_id,
-					     xpatfimg_xpat_end_stg_zdb_id);">
+	    select mrkr_zdb_id, mrkr_abbrev
+	      from marker, marker_label
+	      where mrkr_zdb_id = mrkrlbl_marker_zdb_id
+		and mrkrlbl_label_zdb_id = '$xpat_label_zdb_id'
+	      order by mrkr_abbrev;">
 
-	    <?MIVAR NAME=$xpatfimg_xpat_start_stg_zdb_id>$1<?/MIVAR>
-	    <?MIVAR NAME=$xpatfimg_xpat_end_stg_zdb_id>$1<?/MIVAR>
+	    <?MIVAR NAME=$mrkr_zdb_id>$1<?/MIVAR>
+	    <?MIVAR NAME=$mrkr_abbrev>$2<?/MIVAR>
 
 	    <?MIBLOCK COND=$(!=,$MI_CURRENTROW,1)>
-	      <?MIVAR NAME=$xpatanatStgCondition>$xpatanatStgCondition OR <?/MIVAR>
+	      <?MIVAR NAME=$labeledMarkerList>$labeledMarkerList, <?/MIVAR>
 	    <?/MIBLOCK>
-	    <?MIVAR NAME=$xpatanatStgCondition>$xpatanatStgCondition
-	      (    xpatanat_xpat_start_stg_zdb_id = '$xpatfimg_xpat_start_stg_zdb_id'
-	       AND xpatanat_xpat_end_stg_zdb_id   = '$xpatfimg_xpat_end_stg_zdb_id')
-	    <?/MIVAR>
+	    <?MIVAR NAME=$labeledMarkerList>$labeledMarkerList<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkr_zdb_id">$mrkr_abbrev</a><?/MIVAR>
 	  <?/MISQL>
 
-	  <?MISQL SQL="
-	    select anathier_code, anathier_name 
-	      from anatomy_hierarchy 
-	      where exists
-		    ( select * 
-			from anatomy_item, expression_pattern_anatomy
-			where xpatanat_xpat_zdb_id      = '$xpat_zdb_id'
-			  and ($xpatanatStgCondition)
-			  and xpatanat_anat_item_zdb_id = anatitem_zdb_id
-			  and anatitem_type_code        = anathier_code)
-	      order by anathier_code;">
+	  <p>
+	  <b>Shows part of <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatview.apg&OID=$xpat_zdb_id">expression pattern</a>
+	  of $labeledMarkerList 
+	  by $xpat_assay_name</a><br><br>
 
-	    <?MIVAR NAME=$anathier_code>$1<?/MIVAR>
-	    <?MIVAR NAME=$anathier_name>$2<?/MIVAR>
+	  <!-- Get the anatomy items labeled in the expression pattern -->
 
-            <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
-              <b>Keywords:</b>
-	      <TABLE border="0" WIDTH="90%">
-              <center>
-            <?/MIBLOCK>
-	    <tr>
-	      <td width="15%">
-		<b>$anathier_name:</b>
-	      <td width="85%">
-		<?MIVAR NAME=$anatItemList><?/MIVAR>
-		<?MISQL SQL="
-		  select distinct anatitem_name, anatitem_comments_relative_url
-		    from anatomy_item, expression_pattern_anatomy
-		    where xpatanat_xpat_zdb_id      = '$xpat_zdb_id'
-		      and ($xpatanatStgCondition)
-		      and xpatanat_anat_item_zdb_id = anatitem_zdb_id
-		      and anatitem_type_code        = '$anathier_code'
-		    order by anatitem_name;">
+	    <!-- get the expression_pattern_image recs that overlap with
+	      -- any of the image's fish_image_stage recs.  On the image
+	      -- page we don't break down expression pattern anatomy items by  
+	      -- stage.  We heap them all together in one list.  To see them
+	      -- by stage, go to the expression pattern page.
+	      -->
+	    <?MIVAR NAME=$xpatanatStgCondition><?/MIVAR>
+	    <?MISQL SQL="
+	      select xpatfimg_xpat_start_stg_zdb_id, xpatfimg_xpat_end_stg_zdb_id
+		from expression_pattern_image
+		where xpatfimg_fimg_zdb_id = '$OID'
+		  and fimg_overlaps_stg_window('$OID', 
+					       xpatfimg_xpat_start_stg_zdb_id,
+					       xpatfimg_xpat_end_stg_zdb_id);">
 
-		  <?MIVAR NAME=$anatitem_name>$1<?/MIVAR>
-		  <?MIVAR NAME=$anatitem_comments_relative_url>$2<?/MIVAR>
+	      <?MIVAR NAME=$xpatfimg_xpat_start_stg_zdb_id>$1<?/MIVAR>
+	      <?MIVAR NAME=$xpatfimg_xpat_end_stg_zdb_id>$1<?/MIVAR>
 
-		  <?MIBLOCK COND=$(!=,$MI_CURRENTROW,1)>
-		    <?MIVAR NAME=$anatItemList>$anatItemList, <?/MIVAR>
-		  <?/MIBLOCK>
-		  <?MIVAR NAME=$anatItemList>$anatItemList $anatitem_name<?/MIVAR>
-		<?/MISQL>
-		$anatItemList
-	  <?/MISQL>
-        </center>
+	      <?MIBLOCK COND=$(!=,$MI_CURRENTROW,1)>
+		<?MIVAR NAME=$xpatanatStgCondition>$xpatanatStgCondition OR <?/MIVAR>
+	      <?/MIBLOCK>
+	      <?MIVAR NAME=$xpatanatStgCondition>$xpatanatStgCondition
+		(    xpatanat_xpat_start_stg_zdb_id = '$xpatfimg_xpat_start_stg_zdb_id'
+		 AND xpatanat_xpat_end_stg_zdb_id   = '$xpatfimg_xpat_end_stg_zdb_id')
+	      <?/MIVAR>
+	    <?/MISQL>
+
+	    <?MISQL SQL="
+	      select anathier_code, anathier_name 
+		from anatomy_hierarchy 
+		where exists
+		      ( select * 
+			  from anatomy_item, expression_pattern_anatomy
+			  where xpatanat_xpat_zdb_id      = '$xpat_zdb_id'
+			    and ($xpatanatStgCondition)
+			    and xpatanat_anat_item_zdb_id = anatitem_zdb_id
+			    and anatitem_type_code        = anathier_code)
+		order by anathier_code;">
+
+	      <?MIVAR NAME=$anathier_code>$1<?/MIVAR>
+	      <?MIVAR NAME=$anathier_name>$2<?/MIVAR>
+
+	      <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
+		<b>Keywords:</b>
+		<TABLE border="0" WIDTH="90%">
+		<center>
+	      <?/MIBLOCK>
+	      <tr>
+		<td width="15%">
+		  <b>$anathier_name:</b>
+		<td width="85%">
+		  <?MIVAR NAME=$anatItemList><?/MIVAR>
+		  <?MISQL SQL="
+		    select distinct anatitem_name, anatitem_comments_relative_url
+		      from anatomy_item, expression_pattern_anatomy
+		      where xpatanat_xpat_zdb_id      = '$xpat_zdb_id'
+			and ($xpatanatStgCondition)
+			and xpatanat_anat_item_zdb_id = anatitem_zdb_id
+			and anatitem_type_code        = '$anathier_code'
+		      order by anatitem_name;">
+
+		    <?MIVAR NAME=$anatitem_name>$1<?/MIVAR>
+		    <?MIVAR NAME=$anatitem_comments_relative_url>$2<?/MIVAR>
+
+		    <?MIBLOCK COND=$(!=,$MI_CURRENTROW,1)>
+		      <?MIVAR NAME=$anatItemList>$anatItemList, <?/MIVAR>
+		    <?/MIBLOCK>
+		    <?MIVAR NAME=$anatItemList>$anatItemList $anatitem_name<?/MIVAR>
+		  <?/MISQL>
+		  $anatItemList
+	    <?/MISQL>
+	  </center>
+	  </TABLE>
+	  <br>
+	  <hr width=80%>
+	<?/MISQL>
+
+
+	<b>Image Preparation:</B> <p>
+	<TABLE border=0 WIDTH=100% cellpadding=4>
+	  <TH>Preparation</TH>
+	  <TH>Image Form</TH>
+	  <TH>View</TH>
+	  <TH>Direction</TH>
+	  <TR align=center>
+	    <TD>
+	      <?MIBLOCK COND="$(NXST,$UPDATE)">
+		<?MIVAR>
+		  $fimg_preparation
+		<?/MIVAR>
+	      <?MIELSE>
+		<?MIVAR>
+		  <SELECT name=preparation onChange="dopopup(this.options[this.selectedIndex].value,'$fimg_preparation','fimg_preparation','fish_image','fimg_zdb_id')">
+		    <?MISQL SQL="
+		      select fimgprep_name
+			from fish_image_preparation
+			order by fimgprep_name;">
+		      <option $(IF,$(EC,$fimg_preparation,$1),SELECTED) value="$1">$1
+		    <?/MISQL>
+		  </SELECT>
+		<?/MIVAR>
+	      <?/MIBLOCK>
+	    </TD>
+	    <TD> 
+	      <?MIBLOCK COND="$(NXST,$UPDATE)">
+		<?MIVAR>
+		  $fimg_form
+		<?/MIVAR>
+	      <?MIELSE>
+		<?MIVAR>
+		  <SELECT name=form onChange="dopopup(this.options[this.selectedIndex].value,'$fimg_form','fimg_form','fish_image','fimg_zdb_id')">
+		    <?MISQL SQL="
+		      select fimgform_name
+			from fish_image_form
+			order by fimgform_name;">
+		      <option $(IF,$(EC,$fimg_form,$1),SELECTED) value="$1">$1
+		    <?/MISQL>
+		  </SELECT>
+		<?/MIVAR>
+	      <?/MIBLOCK>
+	    </TD>
+	    <TD> 
+	      <?MIBLOCK COND="$(NXST,$UPDATE)">
+		<?MIVAR>
+		  $fimg_view
+		<?/MIVAR>
+	      <?MIELSE>
+		<?MIVAR>
+		  <SELECT name=view onChange="dopopup(this.options[this.selectedIndex].value,'$fimg_view','fimg_view','fish_image','fimg_zdb_id')">
+		    <?MISQL SQL="
+		      select fimgview_name
+			from fish_image_view
+			order by fimgview_name;">
+		      <option $(IF,$(EC,$fimg_view,$1),SELECTED) value="$1">$1
+		    <?/MISQL>
+		  </SELECT>
+		<?/MIVAR>
+	      <?/MIBLOCK>
+	    </TD>
+	    <TD> 
+	      <?MIBLOCK COND="$(NXST,$UPDATE)">
+		<?MIVAR>
+		  $fimg_direction
+		<?/MIVAR>
+	      <?MIELSE>
+		<?MIVAR>
+		  <SELECT name=direction onChange="dopopup(this.options[this.selectedIndex].value,'$fimg_direction','fimg_direction','fish_image','fimg_zdb_id')">
+		    <?MISQL SQL="
+		      select fimgdir_name
+			from fish_image_direction
+			order by fimgdir_name;">
+		      <option $(IF,$(EC,$fimg_direction,$1),SELECTED) value="$1">$1
+		    <?/MISQL>
+		  </SELECT>
+		<?/MIVAR>
+	      <?/MIBLOCK>
+	    </TD>
+	  </TR>
 	</TABLE>
-	<br>
-        <hr width=80%>
-      <?/MISQL>
+	<p>
 
-      
-      <b>Image Preparation:</B> <p>
-      <TABLE border=0 WIDTH=100% cellpadding=4>
-	<TH>Preparation</TH>
-        <TH>Image Form</TH>
-        <TH>View</TH>
-        <TH>Direction</TH>
-	<TR align=center>
-	  <TD>
-	    <?MIBLOCK COND="$(NXST,$UPDATE)">
-	      <?MIVAR>
-	        $fimg_preparation
-	      <?/MIVAR>
-	    <?MIELSE>
-	      <?MIVAR>
-		<SELECT name=preparation onChange="dopopup(this.options[this.selectedIndex].value,'$fimg_preparation','fimg_preparation','fish_image','fimg_zdb_id')">
-		  <?MISQL SQL="
-	            select fimgprep_name
-                      from fish_image_preparation
-                      order by fimgprep_name;">
-	            <option $(IF,$(EC,$fimg_preparation,$1),SELECTED) value="$1">$1
-	          <?/MISQL>
-		</SELECT>
-	      <?/MIVAR>
-	    <?/MIBLOCK>
-	  </TD>
-	  <TD> 
-	    <?MIBLOCK COND="$(NXST,$UPDATE)">
-	      <?MIVAR>
-	        $fimg_form
-	      <?/MIVAR>
-	    <?MIELSE>
-	      <?MIVAR>
-		<SELECT name=form onChange="dopopup(this.options[this.selectedIndex].value,'$fimg_form','fimg_form','fish_image','fimg_zdb_id')">
-		  <?MISQL SQL="
-	            select fimgform_name
-                      from fish_image_form
-                      order by fimgform_name;">
-	            <option $(IF,$(EC,$fimg_form,$1),SELECTED) value="$1">$1
-	          <?/MISQL>
-	        </SELECT>
-	      <?/MIVAR>
-	    <?/MIBLOCK>
-	  </TD>
-	  <TD> 
-	    <?MIBLOCK COND="$(NXST,$UPDATE)">
-	      <?MIVAR>
-	        $fimg_view
-	      <?/MIVAR>
-	    <?MIELSE>
-	      <?MIVAR>
-		<SELECT name=view onChange="dopopup(this.options[this.selectedIndex].value,'$fimg_view','fimg_view','fish_image','fimg_zdb_id')">
-		  <?MISQL SQL="
-	            select fimgview_name
-                      from fish_image_view
-                      order by fimgview_name;">
-	            <option $(IF,$(EC,$fimg_view,$1),SELECTED) value="$1">$1
-	          <?/MISQL>
-	        </SELECT>
-	      <?/MIVAR>
-	    <?/MIBLOCK>
-	  </TD>
-	  <TD> 
-	    <?MIBLOCK COND="$(NXST,$UPDATE)">
-	      <?MIVAR>
-	        $fimg_direction
-	      <?/MIVAR>
-	    <?MIELSE>
-	      <?MIVAR>
-		<SELECT name=direction onChange="dopopup(this.options[this.selectedIndex].value,'$fimg_direction','fimg_direction','fish_image','fimg_zdb_id')">
-		  <?MISQL SQL="
-	            select fimgdir_name
-                      from fish_image_direction
-                      order by fimgdir_name;">
-	            <option $(IF,$(EC,$fimg_direction,$1),SELECTED) value="$1">$1
-	          <?/MISQL>
-	        </SELECT>
-	      <?/MIVAR>
-	    <?/MIBLOCK>
-	  </TD>
-	</TR>
-      </TABLE>
-      <p>
-
-      <hr width=80%>
+	<hr width=80%>
 
 
-      <!-- Throw up the publication info, using the standard display format -->
-      <?MISQL SQL="
-        select WebExplode(object,'') 
-          from webPages 
-          where ID='aa-showpubs.apg';">
-        $1
-      <?/MISQL>
+	<!-- Throw up the publication info, using the standard display format -->
+	<?MISQL SQL="
+	  select WebExplode(object,'') 
+	    from webPages 
+	    where ID='aa-showpubs.apg';">
+	  $1
+	<?/MISQL>
 
-   
-    </form>
-  <?/MIBLOCK>  <!-- ends cond AUTHORIZED -->
+
+      </form>
+    <?/MIBLOCK>  <!-- ends cond AUTHORIZED -->
+<?/MIBLOCK>
 <?/MIBLOCK>  <!-- ends cond OID exist -->
 
 <?MIBLOCK COND="$(NXST,$accession)">
