@@ -37,13 +37,14 @@ MRKR_STATS   = gene_contains_seg.sql mhist_event.sql p_mrel_grpmem_correct.sql \
 	       p_goterm_not_obsolete.sql p_marker_has_goterm.sql \
 	       p_check_mrkr_abbrev.sql \
                p_insert_into_record_attribution_tablezdbids.sql \
-               p_insert_into_record_attribution_datazdbids.sql
+               p_insert_into_record_attribution_datazdbids.sql 
 PUB_STATS    = get_pub_mini_ref.sql
 REGEN_GNRCS  = regen_fishsearch.sql regen_genomics.sql regen_oevdisp.sql \
 	       regen_panelcount.sql regen_maps.sql
 ZDB_GNRCS    = table_exists.sql
 ZDB_STATS    = get_obj_name.sql zdb_date.sql get_date_from_id.sql \
-	       p_check_zdb_object_table.sql syscall.sql
+	       p_check_zdb_object_table.sql syscall.sql \
+	       p_check_figure_image_pair_exists.sql
 
 # Some of the stage functions call other stage functions.  Therefore
 # the order they are listed matters.
