@@ -19,14 +19,17 @@ TARGETDIR = $(TARGETROOT)/home/zf_info/stckctr/submission
 
 GENERICS = index.html\
 request.html\
+requestAnimals.html\
 requestAnimals2.html\
 requestAntibodies.html\
 requestAntibodies2.html\
+requestESTs.html\
+requestESTs2.html\
 requestBooks.html\
 requestParamecia.html\
-requestESTs2.html\
 submit.html\
 submitMTAform.html
+
 
 STATICS = background.html\
 bgblank.gif\
@@ -40,14 +43,11 @@ marker.html\
 provider.html\
 reasons.html\
 request.txt\
-requestAnimals.html\
 requestAnimals.txt\
 requestAntibodies.txt\
 requestBooks.txt\
 requestParamecia.txt\
-requestESTs.html\
 requestESTs.txt\
-requestThankyou.html\
 submit.txt\
 submitMTAdefined.html\
 submitSuccess.html\
