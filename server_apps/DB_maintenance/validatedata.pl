@@ -41,12 +41,32 @@ sub logHeader(@) {
 sub logError(@) {
 
     my $line;
-    print  "\nError: \n";
+    print "\nError: \n";
     foreach $line (@_) {
 	print "$line";
     }
     print "\n";
-    $globalErrorCount++;
+    return ();
+}
+
+
+#------------------------------------------------------------------------
+# Log a warning message.
+#
+# Params 
+#  @       List of lines to print out.  List is assumed to be all part of 
+#          the same error.
+#
+# Returns ()
+
+sub logWarning(@) {
+
+    my $line;
+    print "\nWarning: \n";
+    foreach $line (@_) {
+	print "$line";
+    }
+    print "\n";
     return ();
 }
 
@@ -54,13 +74,14 @@ sub logError(@) {
 # Execute SQL statement(s) and save its results in files.
 #  
 # Params 
-#   $     SQL statement to be executed.
-#   $     Reference of subroutine that does future query if any,
-#         or as 'undef'.
-#   @     Column description for query result.
+#   $               SQL statement to be executed.
+#   $(optional)     Reference of subroutine that does future query if any,
+#                   or as 'undef'.
+#   @(optional)     Column description for query result.
 #  
 # Returns 
-#   number of rows returned from the query.
+#   number of rows returned from the query. If column descriptions are defined,
+#   the records will be kept in a file. 
 
 sub execSql {
 
@@ -73,7 +94,8 @@ sub execSql {
   
   $sth -> execute();
   
-  open RESULT, ">$globalResultFile" or die "Cannot open the file to write check result."; 
+  open RESULT, ">$globalResultFile" or die "Cannot open the file to write check result."
+    if @colDesc; 
   
   while (my @row = $sth ->fetchrow_array()) {
 
@@ -84,15 +106,17 @@ sub execSql {
       my $i = 0;
       $nRecords ++;
 
-      foreach (@row) {
-	$_ = '' unless defined;
-	print RESULT "$colDesc[$i]\t $_\n";
-	$i ++;
-      }
+      if (@colDesc) {
+	foreach (@row) {
+	  $_ = '' unless defined;
+	  print RESULT "$colDesc[$i]\t $_\n";
+	  $i ++;
+	}
       print RESULT "\n";    
+      }
     }  
   } 
-  close(RESULT);
+  close(RESULT) if @colDesc;
   return ($nRecords);
 }
 
@@ -102,6 +126,7 @@ sub execSql {
 # Params
 #   $       Recipient addresses
 #   $       Email subject
+#   $       Subroutine title
 #   $       Error Message 
 #   @       Queries for the check
 #
@@ -111,6 +136,7 @@ sub sendMail(@) {
 
      my $sendToAddress = shift;
      my $subject = shift;
+     my $rtnName = shift;
      my $msg = shift;
      my @sql = @_; 
 
@@ -119,8 +145,21 @@ sub sendMail(@) {
      print MAIL "To: $sendToAddress\n";
      print MAIL "Subject: $subject\n";
 
-     print MAIL "$msg\n";
-     
+     print MAIL "$msg";
+
+     # get the checking result from last run
+     my $query = "select vldcheck_count, vldcheck_date
+                   from validate_check_history
+                  where vldcheck_name = '$rtnName' ";
+
+     my ($preNum,$preDate) = $dbh->selectrow_array($query);
+
+     if ($preNum) {
+       print MAIL "(Last run at $preDate got $preNum records.)";
+     }
+     print MAIL "\n\n";
+
+     # paste all the result records
      open RESULT, "$globalResultFile" or die "Cannot open the result file for read.\n";
      while (<RESULT>) {
        print MAIL;
@@ -137,6 +176,38 @@ sub sendMail(@) {
      
      return();
    }
+
+#------------------------------------------------------------------------
+# Record the checking result into validate_check_history
+#
+# Params
+#    $          Checking routine name
+#    $          Number of checkouts
+#
+# Returns ()
+
+sub recordResult(@) {
+
+  my $rtnName = shift;
+  my $rcdNum = shift;
+
+  my $sql = "select vldcheck_count
+               from validate_check_history
+              where vldcheck_name = '$rtnName' ";
+
+  my $exist = $dbh->selectrow_array($sql);
+  if ($exist){
+    my $sth = $dbh->do("update validate_check_history 
+                        set (vldcheck_count, vldcheck_date) = ('$rcdNum', CURRENT)
+                       where vldcheck_name = '$rtnName' " );
+  }
+  else {
+    my $sth = $dbh->do(" insert into validate_check_history
+                          (vldcheck_name, vldcheck_count, vldcheck_date) values
+                           ('$rtnName', '$rcdNum', CURRENT) ");
+    }
+  return ();
+}
 
 
 #######################  Checking  ##################################
@@ -169,10 +240,13 @@ sub stageWindowConsistent ($) {
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
     my $subject = "stage window inconsistence in stage";
+    my $routineName = "stageWindowConsistent";
     my $errMsg = "In stage table, $nRecords records' stage start hours are "
-                     ."greater than end hours. \n";
+                     ."greater than end hours. ";
     logError ($errMsg); 
-    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
+    &recordResult($routineName, $nRecords);
+
   }else {
     print "Passed!\n";
   }
@@ -209,11 +283,14 @@ sub stageContainsStageWindowInContainerStageWindow ($) {
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
     my $subject = "Stage window inconsistence in stage_contains";
+    my $routineName = "stageContainsStageWindowInContainerStageWindow";
     my $errMsg = "In stage_contains, $nRecords records' container's stage window" 
-                   ." doesn't fully contain contained 's.\n ";
+                   ." doesn't fully contain contained 's. ";
 
     logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
+    &recordResult($routineName, $nRecords);
+
   }else {
     print "Passed!\n";
   }
@@ -257,11 +334,14 @@ sub anatomyItemStageWindowConsistent ($) {
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
     my $subject = "Stage window inconsistence in anatomy_item";
+    my $routineName = "anatomyItemStageWindowConsistent";
     my $errMsg = "In anatomy_item, $nRecords records have inconsistent " 
-                   ."stage window.\n ";
+                   ."stage window. ";
 
     logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
+    &recordResult($routineName, $nRecords);
+
   }else {
     print "Passed!\n";
   }
@@ -327,13 +407,16 @@ sub anatomyContainsStageWindowConsistent ($) {
      
       my $sendToAddress = $_[0];
       my $subject = "Stage window inconsistence in anatomy_contains";
+      my $routineName = "anatomyContainsStageWindowConsistent";
       my $errMsg = "In anatomy_contain, $nRecords records have inconsistent " 
-                 ."stage window.\n";
+                 ."stage window.";
                 
       logError ($errMsg);
-      sendMail($sendToAddress, $subject, $errMsg, $sql, $sqlDtl); 
+      sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql, $sqlDtl);
+      &recordResult($routineName, $nRecords);
+
     }else {
-      print "Two queries are not consistent.\n";
+      print "Two queries are not consistent.";
     }
   }
 
@@ -391,11 +474,14 @@ sub anatomyContainsStageWindowInContainerStageWindow($){
 
     my $sendToAddress = $_[0];
     my $subject = "Stage window out of range";
+    my $routineName = "anatomyContainsStageWindowInContainerStageWindow";
     my $errMsg = "In anatomy_contains, $nRecords records have stage window " 
-                 ."out of the range of container's stage window.\n ";
+                 ."out of the range of container's stage window. ";
 
     logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
+    &recordResult($routineName, $nRecords);
+ 
   }else {
     print "Passed!\n";
   }
@@ -470,11 +556,14 @@ sub fishImageAnatomyStageWindowOverlapsAnatomyItem ($) {
      
       my $sendToAddress =$_[0];
       my $subject = "Stage window not overlap";
+      my $routineName = "fishImageAnatomyStageWindowOverlapsAnatomyItem";
       my $errMsg = "In fish_image_anatomy table, $nRecords records' stage"
-    		     ." window overlap with anatomy items' stage window.\n";
+    		     ." window overlap with anatomy items' stage window.";
       		     
       logError ($errMsg);
-      &sendMail($sendToAddress, $subject, $errMsg, $sql, $sqlDtl); 
+      &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql, $sqlDtl); 
+      &recordResult($routineName, $nRecords);
+
     }else {
       print "Two queries are not consistent.\n";
     }
@@ -524,11 +613,14 @@ sub expressionPatternStageWindowConsistent($) {
 
     my $sendToAddress = $_[0];
     my $subject = "Stage window inconsistence";
+    my $routineName = "expressionPatternStageWindowConsistent";
     my $errMsg = "In expression_pattern_stage, $nRecords records' stage"
-    		      ." windoware not consistent. \n";
+    		      ." windoware not consistent. ";
       		       
     logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
+    &recordResult($routineName, $nRecords);
+ 
   }else {
     print "Passed!\n";
   }
@@ -604,11 +696,14 @@ sub expressionPatternAnatomyStageWindowOverlapsAnatomyItem ($) {
      
       my $sendToAddress = $_[0];
       my $subject = "Xpat's stage window not overlaps with anatomy item's";
+      my $routineName = "expressionPatternAnatomyStageWindowOverlapsAnatomyItem";
       my $errMsg = "In expression_pattern_anatomy, $nRecords records' stage "
-	           ."window don't overlap with the anatomy item's stage window.\n";
+	           ."window don't overlap with the anatomy item's stage window.";
 		      
       logError ($errMsg);	
-      &sendMail($sendToAddress, $subject, $errMsg, $sql, $sqlDtl); 
+      &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql, $sqlDtl);
+      &recordResult($routineName, $nRecords);
+ 
     }else {
       print "Two queries are not consistent.\n";
     }
@@ -682,11 +777,13 @@ sub expressionPatternImageStageWindowOverlapsFishImage ($) {
      
       my $sendToAddress = $_[0];
       my $subject = "Stage window not overlap";
+      my $routineName = "expressionPatternImageStageWindowOverlapsFishImage";
       my $errMsg = "In expression_pattern_image, $nRecords records' stage "
-    		   ."window don't overlap with the fish image's stage window.\n";
+    		   ."window don't overlap with the fish image's stage window.";
       		       
       logError ($errMsg);
-      &sendMail($sendToAddress, $subject, $errMsg, $sql, $sqlDtl); 
+      &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql, $sqlDtl);
+      &recordResult($routineName, $nRecords); 
     }else {
       print "Two queries are not consistent.\n";
     }
@@ -741,10 +838,12 @@ sub fishNameEqualLocusName ($) {
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
     my $subject = "Fish name and locus name disagree";
-    my $errMsg = "The name field in $nRecords fish record(s) does not equal locus name.\n ";
+    my $routineName = "fishNameEqualLocusName";
+    my $errMsg = "The name field in $nRecords fish record(s) does not equal locus name. ";
     
     logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
+    &recordResult($routineName, $nRecords); 
   }else {
     print "Passed!\n";
   }
@@ -785,10 +884,12 @@ sub fishAbbrevContainsFishAllele ($) {
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
     my $subject = "Fish abbrev does not contain fish allele";
-    my $errMsg = "The abbrev field in $nRecords fish record(s) does not contain fish allele.\n ";
+    my $routineName = "fishAbbrevContainsFishAllele";
+    my $errMsg = "The abbrev field in $nRecords fish record(s) does not contain fish allele. ";
     
     logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
+    &recordResult($routineName, $nRecords);
   }else {
     print "Passed!\n";
   }
@@ -835,10 +936,12 @@ sub fishAbbrevStartsWithLocusAbbrev ($) {
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
     my $subject = "Fish abbrev does not start with locus abbrev";
-    my $errMsg = "The abbrev field in $nRecords fish record(s) does not start with locus abbrev.\n ";
+    my $routineName = "fishAbbrevStartsWithLocusAbbrev";
+    my $errMsg = "The abbrev field in $nRecords fish record(s) does not start with locus abbrev. ";
 
     logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
+    &recordResult($routineName, $nRecords); 
   }else {
     print "Passed!\n";
   }
@@ -905,10 +1008,12 @@ sub alterationHas1Fish($) {
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
     my $subject = "Alterations have 0 or > 1 associated fish";
-    my $errMsg = "$nRecords alterations had 0 or more than 1 associated fish.\n ";
+    my $routineName = "alterationHas1Fish";
+    my $errMsg = "$nRecords alterations had 0 or more than 1 associated fish. ";
 
     logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
+    &recordResult($routineName, $nRecords);
   }else {
     print "Passed!\n";
   }
@@ -958,10 +1063,12 @@ sub mutantHas4TableBox($) {
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
     my $subject = "Mutant FISH records missing records in other mutant tables ";
-    my $errMsg = "$nRecords mutant(s) had 0 or more than 1 records in associated tables.\n ";
+    my $routineName = "mutantHas4TableBox";
+    my $errMsg = "$nRecords mutant(s) had 0 or more than 1 records in associated tables. ";
 
     logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
+    &recordResult($routineName, $nRecords); 
   }else {
     print "Passed!\n";
   }
@@ -1014,10 +1121,12 @@ sub locusAbbrevUnique ($) {
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
     my $subject = "Locus record(s) with non-unique abbrevs";
-    my $errMsg = "$nRecords locus records have non-unique abbrevs.\n ";
+    my $routineName = "locusAbbrevUnique";
+    my $errMsg = "$nRecords locus records have non-unique abbrevs. ";
 
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+    logWarning ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
+    &recordResult($routineName, $nRecords); 
   }else {
     print "Passed!\n";
   }
@@ -1057,10 +1166,12 @@ sub locusNameUnique ($) {
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
     my $subject = "locus record(s) with non-unique names";
-    my $errMsg = "$nRecords locus records have non-unique names.\n ";
+    my $routineName = "locusNameUnique";
+    my $errMsg = "$nRecords locus records have non-unique names. ";
 
     logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
+    &recordResult($routineName, $nRecords);
   }else {
     print "Passed!\n";
   }
@@ -1097,10 +1208,12 @@ sub locusAbbrevIsSet ($) {
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
     my $subject = "Locus abbrev not set";
-    my $errMsg = "Locus abbrev not set in $nRecords locus record(s).\n ";
+    my $routineName = "locusAbbrevIsSet";
+    my $errMsg = "Locus abbrev not set in $nRecords locus record(s). ";
 
     logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
+    &recordResult($routineName, $nRecords);
   }else {
     print "Passed!\n";
   }
@@ -1145,10 +1258,12 @@ sub estsHave1Gene ($) {
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
     my $subject = "ESTs have 0 or > 1 associated genes";
-    my $errMsg = "$nRecords ESTs had 0 or more than 1 associated genes.\n ";
+    my $routineName = "estsHave1Gene";
+    my $errMsg = "$nRecords ESTs had 0 or more than 1 associated genes. ";
 
     logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);   
+    &recordResult($routineName, $nRecords);
   }else {
     print "Passed!\n";
   }
@@ -1194,10 +1309,12 @@ sub prefixedGenesHave1Est ($) {
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
     my $subject = "Prefixed genes have 0 or > 1 associated ESTs";
-    my $errMsg = "$nRecords prefixed genes had 0 or more than 1 associated ESTs.\n ";
+    my $routineName = "prefixedGenesHave1Est";
+    my $errMsg = "$nRecords prefixed genes had 0 or more than 1 associated ESTs. ";
 
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+    logWarning ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
+    &recordResult($routineName, $nRecords); 
   }else {
     print "Passed!\n";
   }
@@ -1247,10 +1364,12 @@ sub prefixedIbdGenesHave1Est ($) {
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
     my $subject = "id: genes that have 0 or > 1 associated ESTs";
-    my $errMsg = "$nRecords 'id:' genes had 0 or more than 1 associated ESTs.\n ";
+    my $routineName = "prefixedIbdGenesHave1Est";
+    my $errMsg = "$nRecords 'id:' genes had 0 or more than 1 associated ESTs. ";
 
     logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
+    &recordResult($routineName, $nRecords);
   }else {
     print "Passed!\n";
   }
@@ -1300,10 +1419,12 @@ sub estsWithoutClonesHaveXxGenes ($) {
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
     my $subject = "ESTs without clones missing corresponding xx: gene record";
-    my $errMsg = "$nRecords ESTs without clone records do not have corresponding xx: genes.\n ";
+    my $routineName = "estsWithoutClonesHaveXxGenes";
+    my $errMsg = "$nRecords ESTs without clone records do not have corresponding xx: genes. ";
 
     logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
+    &recordResult($routineName, $nRecords);
   }else {
     print "Passed!\n";
   }
@@ -1349,10 +1470,12 @@ sub xxGenesHaveNoClones ($) {
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
     my $subject = "'xx:' genes had a corresponding clone record";
+    my $routineName = "xxGenesHaveNoClones";
     my $errMsg = "$nRecords xx: genes had a corresponding clone record\n";
 
     logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
+    &recordResult($routineName, $nRecords); 
   }else {
     print "Passed!\n";
   }
@@ -1388,10 +1511,12 @@ sub linkageHasMembers ($) {
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
     my $subject = "linkage has no member(s)";
-    my $errMsg = "In linkage table, $nRecords records have no members in linkage_member.\n ";
+    my $routineName = "linkageHasMembers";
+    my $errMsg = "In linkage table, $nRecords records have no members in linkage_member. ";
     
     logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
+    &recordResult($routineName, $nRecords); 
   }else {
     print "Passed!\n";
   }
@@ -1426,10 +1551,12 @@ sub linkagePairHas2Members ($) {
 
     my $sendToAddress = $_[0];
     my $subject = "linkage pair has one or more than 2 members";
+    my $routineName = "linkagePairHas2Members";
     my $errMsg = "In linkage_pair table, $nRecords records have less than or"
-                   ." more than two members in linkage_pair_member. \n";
+                   ." more than two members in linkage_pair_member. ";
     logError ($errMsg); 
-    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
+    &recordResult($routineName, $nRecords); 
   }else {
     print "Passed!\n";
   }
@@ -1464,11 +1591,13 @@ sub dblinkRecidIsOrthoOrMarker ($) {
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
     my $subject = "Linked_recid in neither orthologue nor marker";
+    my $routineName = "dblinkRecidIsOrthoOrMarker";
     my $errMsg = "In db_link, $nRecords items' linked_recid doesn't exist in "
-                 . "either the orthologue table or the marker table.\n";
+                 . "either the orthologue table or the marker table.";
                 
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+    logWarning ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
+    &recordResult($routineName, $nRecords);
   }else {
     print "Passed!\n";
   }
@@ -1503,10 +1632,12 @@ sub orthologueHasDblink ($) {
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
     my $subject = "Orthologues not match any db link";
+    my $routineName = "orthologueHasDblink";
     my $errMsg = "In orthologue table, $nRecords records have no corresponding "
-    	                    ."gene record in db_link. \n";
+    	                    ."gene record in db_link. ";
     logError ($errMsg); 
-    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
+    &recordResult($routineName, $nRecords);
   }else {
     print "Passed!\n";
   }
@@ -1548,11 +1679,13 @@ sub zdbObjectHomeTableColumnExist ($) {
 
     my $sendToAddress = $_[0];
     my $subject = "Home table or home column not available";
+    my $routineName = "zdbObjectHomeTableColumnExist";
     my $errMsg = "In zdb_object_type, $nRecords records either has no home "
     	              ."table or has no home column\n";
       
     logError ($errMsg); 
-    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
+    &recordResult($routineName, $nRecords);
   }else {
     print "Passed!\n";
   }
@@ -1598,11 +1731,13 @@ sub zdbObjectIsSourceDataCorrect($) {
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
     my $subject = " ZDB Source and Data misdefined";
+    my $routineName = "zdbObjectIsSourceDataCorrect";
     my $errMsg = "In zdb_object_type, $nRecords records are not consistent "
     	          ."with records in zdb_active_data and zdb_active_source\n";
       	
     logError ($errMsg); 
-    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
+    &recordResult($routineName, $nRecords);
   }else {
     print "Passed!\n";
   }
@@ -1634,10 +1769,12 @@ sub zdbObjectHandledByGetObjName ($) {
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];   	  
     my $subject = "Object name not available";
+    my $routineName = "zdbObjectHandledByGetObjName";
     my $errMsg = "In zdb_object_type, $nRecords records are not properly "
-                  ."handled by the get_obj_name function.\n";
+                  ."handled by the get_obj_name function.";
     logError ($errMsg); 
-    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
+    &recordResult($routineName, $nRecords);
   }else {
     print "Passed!\n";
   }
@@ -1688,10 +1825,12 @@ sub locusAlleleHaveDupPub ($) {
   if ($nRecords > 0) {
      my $sendToAddress = $_[0];
      my $subject = "locus&allele attribute to the same source";
-     my $errMsg = "$nRecords pairs of locus and allele have the same attribution.\n";
+     my $routineName = "locusAlleleHaveDupPub";
+     my $errMsg = "$nRecords pairs of locus and allele have the same attribution.";
 
      logError ($errMsg);
-     &sendMail($sendToAddress, $subject, $errMsg, $sql);
+     &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
+     &recordResult($routineName, $nRecords);
    }else {
      print "Passed!\n";
    }
@@ -1765,9 +1904,11 @@ sub pubTitlesAreUnique($) {
 
     my $sendToAddress = $_[0];
     my $subject = "duplicate pub titles detected";
+    my $routineName = "pubTitlesAreUnique";
     my $errMsg = "$nRecords publications have duplicate titles\n";
     logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $errMsg, $sql1, $sql2); 
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql1, $sql2);  
+    &recordResult($routineName, $nRecords);
   }
   else {
     print "Passed!\n";
@@ -1814,11 +1955,13 @@ sub externNoteAssociationWithData($) {
       
       my $sendToAddress = $_[0];
       my $subject = "external note inconsistenct";
+      my $routineName = "externNoteAssociationWithData";
       my $errMsg = "In external_note, $nRecords records do not have "
-	."matching in data_external_note. \n";
+	."matching in data_external_note. ";
     
       logError ($errMsg);
-      &sendMail($sendToAddress, $subject, $errMsg, $sql, $sqlDtl); 
+      &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql, $sqlDtl);
+      &recordResult($routineName, $nRecords);
     }else {
       print "Two queries are not consistent.\n";
     }
@@ -1827,6 +1970,7 @@ sub externNoteAssociationWithData($) {
     print "Passed!\n";
   }
 } 
+
 
 #-------------------------------------------------------
 #Parameter
@@ -1857,11 +2001,13 @@ sub extinctFishHaveNoSuppliers ($) {
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
     my $subject = "Extinct fish has supplier";
+    my $routineName = "extinctFishHaveNoSuppliers";
     my $errMsg ="In fish table, $nRecords records have fish_extinct as"
-                    ." true, but have records in int_data_supplier table.\n";
+                    ." true, but have records in int_data_supplier table.";
       		        
     logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
+    &recordResult($routineName, $nRecords);
   }else {
     print "Passed!\n";
   }
@@ -1892,16 +2038,52 @@ sub putativeNonZfinGeneNotInZfin ($) {
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
     my $subject = "Putative gene name in ZFIN";
+    my $routineName = "putativeNonZfinGeneNotInZfin";
     my $errMsg = "In putative_non_zfin_gene table, $nRecords records' "
-    	              ."putative gene name is a gene name in ZFIN . \n";
+    	              ."putative gene name is a gene name in ZFIN .";
       	
     logError ($errMsg); 
-    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
+    &recordResult($routineName, $nRecords);
   }else {
     print "Passed!\n";
   }
 } 
- 
+
+#---------------------------------------------------------------
+# Each entry in foreign_db should have 1 or more entryies in
+# foreign_db_contains.  foreign_db_contains describes what type(s) of
+# data are available in the foreign DB.  If a foreign DB does not have
+# 1 or more entries in foreign_db_contains then several joins in the
+# web pages will fail, and the foreign DB will not show up.
+#
+# Parameter
+#  $     Email Address for recipient
+#
+sub foreigndbNotInFdbcontains ($) {
+
+  logHeader ("Checking each foreign db record has at least one record in foreign_db_contains");
+
+  my $sql = " select db_name
+                from foreign_db
+               where db_name not in (
+                        select fdbcont_db_name from foreign_db_contains) ";
+  my @colDesc = ("Db Name    " );
+  my $nRecords = execSql ($sql, undef, @colDesc);
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Foreign db name not in fdbcontains";
+    my $routineName = "foreigndbNotInFdbcontains";
+    my $errMsg = "$nRecords foreign db records have no entry in foreign_db_contains.";
+    logError($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
+    &recordResult($routineName, $nRecords);
+  }else {
+    print "Passed!\n";
+  }
+} 
+
+
 #---------------------------------------------------------
 #Parameter
 # $      Email Address for recipients
@@ -1928,10 +2110,12 @@ sub zdbReplacedDataIsReplaced ($) {
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
     my $subject = "Replaced data not replaced";
+    my $routineName = "zdbReplacedDataIsReplaced";
     my $errMsg = "In zdb_replaced_data, $nRecords replaced zdb ids are "
     	                    ."still in zdb_active_data\n";
     logError ($errMsg); 
-    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
+    &recordResult($routineName, $nRecords);
   }else {
     print "Passed!\n";
   }
@@ -1984,10 +2168,12 @@ sub zdbActiveDataStillActive($) {
     &storeOrphan();
     my $sendToAddress = $_[0];
     my $subject = "orphan in zdb active data";
-    my $errMsg = "In zdb_active_data, $nRecords ids are out of use, and stored in zdb_orphan_data table.\n";
+    my $routineName = "zdbActiveDataStillActive";
+    my $errMsg = "In zdb_active_data, $nRecords ids are out of use, and stored in zdb_orphan_data table.";
 
-    logError ($errMsg); 
-    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+    logWarning ($errMsg); 
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
+    &recordResult($routineName, $nRecords);
   }else {
     print "Passed!\n";
   } 
@@ -2023,10 +2209,12 @@ sub zdbActiveSourceStillActive($) {
     &storeOrphan();
     my $sendToAddress = $_[0];
     my $subject = "orphan in zdb active source";
-    my $errMsg = "In zdb_active_source, $nRecords ids are out of use, and stored in zdb_orphan_source table.\n";
+    my $routineName = "zdbActiveSourceStillActive";
+    my $errMsg = "In zdb_active_source, $nRecords ids are out of use, and stored in zdb_orphan_source table.";
              
-    logError ($errMsg); 
-    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+    logWarning ($errMsg); 
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
+    &recordResult($routineName, $nRecords);
   }else {
     print "Passed!\n";
   } 
@@ -2069,8 +2257,9 @@ sub oldOrphanDataCheck($) {
   if($fileNotEmpt) {
     my $sendToAddress = $_[0];
     my $subject = "about previous orphans.";
-    my $msg = "Actions on the orphans detected last time.\n";
-    &sendMail($sendToAddress, $subject, $msg, );
+    my $msg = "Actions on the orphans detected last time.";
+    &sendMail($sendToAddress, $subject,$msg, );     
+
   }
 }
 
@@ -2109,7 +2298,7 @@ sub oldOrphanSourceCheck($) {
   if($fileNotEmpt) {
     my $sendToAddress = $_[0];
     my $subject = "about previous orphans.";
-    my $msg = "Actions on the orphans detected last time.\n";
+    my $msg = "Actions on the orphans detected last time.";
     &sendMail($sendToAddress, $subject, $msg, );
   }
 }
@@ -2189,7 +2378,6 @@ $globalDbName = $ARGV[0]; #"<!--|DB_NAME|-->";
 $globalUsername = "";
 $globalPassword = "";
 
-$globalErrorCount = 0;
 $globalResultFile = "/tmp/<!--|DB_NAME|-->"."checkresult.txt";
 
 #set environment variables
@@ -2257,10 +2445,12 @@ if($daily) {
   linkagePairHas2Members($linkageEmail);
 
   dblinkRecidIsOrthoOrMarker($geneEmail);
+  foreigndbNotInFdbcontains($otherEmail);
 
   zdbObjectHomeTableColumnExist($dbaEmail);
   zdbObjectIsSourceDataCorrect($dbaEmail);
   zdbObjectHandledByGetObjName($dbaEmail);
+
 
   pubTitlesAreUnique($otherEmail);
   externNoteAssociationWithData($otherEmail);
@@ -2290,7 +2480,8 @@ if($monthly) {
   prefixedIbdGenesHave1Est($estEmail);
 }
 if($yearly) {
-  print "run yearly check. \n";linkageHasMembers($linkageEmail);
+  print "run yearly check. \n";
+  foreigndbNotInFdbcontains($otherEmail);
 }
 
 	   
