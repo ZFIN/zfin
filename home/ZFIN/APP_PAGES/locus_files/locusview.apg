@@ -269,8 +269,10 @@
 		        from mapped_deletion 
 		        where allele=a.allele) as del_markers,
 		     (select unique count(*)::integer 
-		        from total_links 
-			where from_id=a.fish_id) as linkages 
+		        from all_linked_members
+			where alnkgmem_member_zdb_id=a.fish_id) as linkages,
+		     (select unique count(*)::integer
+		        from paneled_markers where zdb_id = a.fish_id) as paneled 
 	        from fish_search a 
 		where locus ='$OID' 
 		order by allele;">
@@ -281,6 +283,7 @@
 	      <?MIVAR NAME=$chrom_change>$5<?/MIVAR>
 	      <?MIVAR NAME=$del_markers>$6<?/MIVAR>
 	      <?MIVAR NAME=$linkages>$7<?/MIVAR>
+              <?MIVAR NAME=$paneled>$8<?/MIVAR>
 
 	      $(SETVAR,$mindex,$(POSITION,$phenotype,"Details:"))
 	      <TR>
@@ -310,7 +313,7 @@
 	      <TD valign=bottom><font size=-1>$(IF,$(NC,$chrom_change,NULL),$chrom_change,"Unknown")</TD>
 	      <TD><font size=-1>
 	      $(IF,$(>,$del_markers,0),"+/- markers<br>")
-	      $(IF,$(>,$linkages,0),"Mapped linkages")
+	      $(IF,$(OR,$(>,$paneled,0),$(>,$linkages,0)),"Mapped linkages")
 	      $(IF,$(AND,$(=,$del_markers,0),$(=,$linkages,0)),"Unmapped")
 	      </td>
 	      <TD valign=bottom><font size=-1>
