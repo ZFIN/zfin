@@ -1,8 +1,14 @@
-select distinct mrkrgoev_zdb_id,mrkr_zdb_id,mrkr_abbrev,mrkr_name,goterm_go_id,mrkrgoev_source_zdb_id,accession_no,goev_code,goterm_ontology,infgrmem_inferred_from,trim(get_date_from_id(mrkrgo_zdb_id,"YYYYMMDD")) as moddate,mrkrgo_modified_by from marker , marker_go_term_evidence e,marker_go_term m, go_term, publication, go_evidence_code, inference_group,inference_group_member  where  m.mrkrgo_go_term_zdb_id=goterm_zdb_id and m.mrkrgo_zdb_id=e.mrkrgoev_mrkrgo_zdb_id and mrkr_zdb_id=mrkrgo_mrkr_zdb_id and  mrkrgoev_source_zdb_id=zdb_id and e.mrkrgoev_zdb_id=infgrp_mrkrgoev_zdb_id and infgrp_zdb_id=infgrmem_infgrp_zdb_id and mrkrgoev_evidence_code=goev_code
-union
-select distinct mrkrgoev_zdb_id,mrkr_zdb_id,mrkr_abbrev,mrkr_name,goterm_go_id,mrkrgoev_source_zdb_id,accession_no,goev_code,goterm_ontology,' ' as infgrmem_inferred_from,trim(get_date_from_id(mrkrgo_zdb_id,"YYYYMMDD")) as moddate,mrkrgo_modified_by from marker , marker_go_term_evidence e,marker_go_term m, go_term, publication, go_evidence_code where  m.mrkrgo_go_term_zdb_id=goterm_zdb_id and m.mrkrgo_zdb_id=e.mrkrgoev_mrkrgo_zdb_id and mrkr_zdb_id=mrkrgo_mrkr_zdb_id and  mrkrgoev_source_zdb_id=zdb_id and mrkrgoev_evidence_code=goev_code and mrkrgoev_zdb_id not in (select mrkrgoev_zdb_id from marker_go_term_evidence,marker_go_term,inference_group where mrkrgoev_evidence_code=goev_code and mrkrgo_zdb_id=mrkrgoev_mrkrgo_zdb_id and mrkrgoev_zdb_id=infgrp_mrkrgoev_zdb_id) into temp t1;
+		 
 
-unload to 'go.zfin' DELIMITER '	' select distinct trim(t.mrkr_zdb_id),trim(t.mrkr_abbrev),trim(t.mrkr_name),t.goterm_go_id,trim(t.mrkrgoev_source_zdb_id),trim(accession_no),trim(goev_code),trim(t.infgrmem_inferred_from),trim(goevflag_gflag_name),t.goterm_ontology[1],t.moddate,t.mrkrgo_modified_by from t1 t,go_evidence_flag where t.mrkrgoev_zdb_id=goevflag_mrkrgoev_zdb_id 
-union 
-select distinct trim(t.mrkr_zdb_id),trim(t.mrkr_abbrev),trim(t.mrkr_name),t.goterm_go_id,trim(t.mrkrgoev_source_zdb_id),trim(accession_no),trim(goev_code),trim(t.infgrmem_inferred_from),'' as goevflag_gflag_name,t.goterm_ontology[1],t.moddate,t.mrkrgo_modified_by from t1 t
-where  t.mrkrgoev_zdb_id not in (select mrkrgoev_zdb_id from marker_go_term_evidence,go_evidence_flag where mrkrgoev_zdb_id=goevflag_mrkrgoev_zdb_id);
+unload to 'go.zfin' delimiter '	' 
+			 select mrkrgoev_zdb_id,
+				mrkr_zdb_id, mrkr_abbrev, mrkr_name, goterm_go_id, mrkrgoev_source_zdb_id,
+				accession_no, mrkrgoev_evidence_code, infgrmem_inferred_from, goevflag_gflag_name,
+				goterm_ontology[1], mrkrgoev_date_modified, mrkrgoev_modified_by
+			   from marker_go_term_evidence, marker, go_term, publication, 
+					   outer inference_group_member, outer go_evidence_flag
+			  where mrkrgoev_mrkr_zdb_id = mrkr_zdb_id
+			    and mrkrgoev_go_term_zdb_id = goterm_zdb_id
+			    and mrkrgoev_source_zdb_id  = zdb_id
+			    and mrkrgoev_zdb_id = infgrmem_mrkrgoev_zdb_id 
+			    and mrkrgoev_zdb_id = goevflag_mrkrgoev_zdb_id;
