@@ -69,7 +69,9 @@
  FORK: {
    if ($pid = fork) {
 #parent
-     my $cur = $dbh->prepare($statement);
+     my $cur = $dbh->prepare("set lock mode to wait 5;");
+     $cur->execute;
+     $cur = $dbh->prepare($statement);
      $cur->execute;
      $cur->bind_col(1, \$result);
      $cur->fetchrow;
@@ -95,7 +97,7 @@
    } elsif (defined $pid) {
 #child
      $j=0;
-     while($j < 60 ) {
+     while($j < 30 ) { # wait for at most 30 minutes
        sleep(60);
        print ".<br>\n";
        $j++;
