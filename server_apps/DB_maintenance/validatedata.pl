@@ -1976,7 +1976,35 @@ sub mrkrgoevDuplicatesFound ($) {
  
 #---------------------------------------------------------------
 # check for duplicate marker_goterm_Evidence, inference_groups.
-
+#
+# This statement checks for duplicate marker_Go_term_evidence
+# records that have duplicate inference_group_members.
+# 
+# There are 2 parts to this query.  The inner subquery
+# uses 2 copies of the marker_go_term_evidence table to find
+# all the mrkrgoev records that have identical mrkr, go_term, source,
+# and evidence_code (we can't put an AK on this table and still avoid
+# a join table between inference_group_member and mrkrgoev--in May 2004 we
+# decided to remove the join table that did this--called inference_group).
+#
+# The outer query relies on 2 views that exist in the db: vMrkrGoevSameSize, 
+# and vGroupSize
+# 
+# vGroupSize gives us the number of inference_group_members for each
+# mrkrgoev_zdb_id.
+# 
+# vMrkrGoevSameSize holds pairs of mrkrgoev_zdb_ids who have same size
+# inference_groups.
+# 
+# We test for equality by doing a self-join on the inference_group_members
+# of mrkrgoev_zdb_ids with same size inference_groups.
+# If one set can be mapped onto another with no inference_group_members
+# left over,then the 2 sets are equal.
+# 
+# If a record exists both in the subquery--duplicates in 
+# marker_go_term_Evidence and in the outer query, duplicates in 
+# inference_group_members...then this query will return the duplicate
+# pairs of mrkrgoev_zdb_ids to Doug and Informix.
 # Parameter
 #  $     Email Address for recipient
 #
