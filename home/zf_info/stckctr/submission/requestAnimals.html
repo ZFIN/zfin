@@ -3,128 +3,142 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 		<title>ZIRC Requesting Animals</title>
-		<link rel="stylesheet" type="text/css" href="zirc.css" />
+                <link rel="stylesheet" type="text/css" href="http://<!--|DOMAIN_NAME|-->/zirc/scripts/zirc.css" />
 		<script type="text/javascript" language="JavaScript1.1" src="zirc.js"></script>
 	</head>
 <!----- this javascript code writes the body tag and zfin header ----->
 <script type="text/javascript" language="JavaScript" src="/header.js"></script>
 
-<!----- below zfin header page content begins here ----->
-<center>
 <noscript>
 <font color="#FF0000">Javascript and Cookies are required to use this page.<br>
 Please set your preferences to allow Javascript and then Reload.</font>
 </noscript>
+<body>
+<center>
+<font class="big">
+                Zebrafish International Resource Center<br>
+                <b>Order Live Animals<br/>
+</font>
+<font class="medium"> (page 1 of 2)</b>
+</font>
+<br/>
+  <font class="small">
+        <font color="#FF0000">*</font>&nbsp; indicates a required field
+  </font>
+<font class="medium">
 <form name="requestingAnimals">
 	<table border=0 width=585 align=center cellpadding=0 cellspacing=0 background="bgimage.jpg" name="liveAnimals">
 	  <tr>	
 		<td colspan=2 valign=top><img src="bgtop.jpg"></td>
       </tr>
 	  <tr>
-        <td colspan=2>
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To find fish lines and ZFIN ID numbers: <a href="/">http://zfin.org</a>
-		</td>
+        <td class="medium" colspan=2>
+	  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To find fish lines and ZFIN ID numbers: <a href="/">http://zfin.org</a>
+	</td>
       </tr>
-	  <tr>	
-		<td colspan=2><img src="bgblank.gif"></td>
+      <tr>	
+	<td colspan=2><img src="bgblank.gif"></td>
       </tr>
       <tr> 
-        <td colspan=2>
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Requesting Live Animals</b>
-		</td>
+        <td class="medium" colspan=2>
+	  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Requesting Live Animals</b>
+	</td>
       </tr>
-	  <tr>	
-		<td colspan=2><img src="bgblank.gif"></td>
+      <tr>	
+	<td colspan=2><img src="bgblank.gif"></td>
       </tr>	        
-	  <tr> 
-        <td colspan=2>
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Line / Mutant Information</b>
-		</td>
+      <tr> 
+        <td class="medium" colspan=2>
+	  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Line / Mutant Information</b>
+	</td>
       </tr>
-	  <tr> 
-        <td width=150 align=right><a href="javascript:popup('zdbId.html')">ZFIN ID Number</a>&nbsp;</td>
-        <td> 
+      <tr> 
+        <td class="medium" width=150 align=right>
+          <a href="javascript:popup('zdbId.html')">ZFIN ID Number</a>&nbsp;</td>
+        <td class="medium"> 
           <input type="text" name="lineZFIN_ID" size="40">
         </td>
       </tr>
       <tr> 
-        <td align=right>Line/Mutant Name&nbsp;</td>
-        <td> 
+        <td class="medium" align=right>Line/Mutant Name&nbsp;</td>
+        <td class="medium"> 
           <input type="text" name="lineName" size="40">
         </td>
       </tr>
       <tr> 
-        <td align=right>Allele(s)&nbsp;</td>
-        <td> 
-          <input type="text" name="mutantAlleles" size="30">
+        <td class="medium" align=right>Allele&nbsp;</td>
+        <td class="medium"> 
+          <input type="text" name="mutAllele" size="10" maxlength="10">
         </td>
       </tr>
       <tr> 
-        <td align=right>Type&nbsp;</td>
-        <td> 
-          	<input type="radio" name="type" value="Embryos">Embryos	
-			<input type="radio" name="type" value="Adults">Adults
-		</td>
-	  </tr>
-	  <tr>
-	  	<td>&nbsp;</td>
-	  	<td>
-		  &nbsp;Other type (please be specific):&nbsp;<input type="text" name="requestingOther" size="30">
-		</td>
+        <td class="medium" align=right>Type&nbsp;</td>
+        <td class="medium"> 
+          <input type="radio" name="type" value="Embryos">Embryos	
+          <input type="radio" name="type" value="Adults">Adults
+	</td>
       </tr>
-	  <tr> 
-        <td align=right>Quantity&nbsp;</td>
-        <td>
+      <tr>
+  	<td class="medium">&nbsp;</td>
+	<td class="medium">
+	  &nbsp;Other type (please be specific):&nbsp;<input type="text" name="reqOther" size="30">
+	</td>
+      </tr>
+      <tr> 
+        <td class="medium" align=right>Quantity&nbsp;</td>
+        <td class="medium">
           <input type="text" name="quantity" size="10" >
         </td>
       </tr>
-	  <tr>	
-		<td colspan=2><img src="bgblank.gif"></td>
+      <tr>	
+	<td colspan=2><img src="bgblank.gif"></td>
       </tr>
 	  <tr> 
-        <td>&nbsp;</td>
-        <td>
-		 &nbsp;Do you currently have fish in your lab?
-		 <br>
-          	<input type="radio" name="fishExperience" value="No">No	
-			<input type="radio" name="fishExperience" value="Yes">Yes
-        </td>
-	  </tr>
-	  <tr>
-		<td>&nbsp;</td>
-        <td>
-		 &nbsp;Are you raising fish from eggs?
-		 <br>
-          	<input type="radio" name="raisingEggs" value="No">No	
-			<input type="radio" name="raisingEggs" value="Yes">Yes
+        <td class="medium">&nbsp;</td>
+        <td class="medium">
+	  &nbsp;Do you currently have fish in your lab?
+	  <br>
+          <input type="radio" name="fishExp" value="No">No	
+	  <input type="radio" name="fishExp" value="Yes">Yes
         </td>
       </tr>
-	  <tr>	
-		<td colspan=2><img src="bgblank.gif"></td>
+      <tr>
+	<td class="medium">&nbsp;</td>
+        <td class="medium">
+	  &nbsp;Are you raising fish from eggs?
+	  <br>
+          <input type="radio" name="raisingEggs" value="No">No	
+	  <input type="radio" name="raisingEggs" value="Yes">Yes
+        </td>
+      </tr>
+      <tr>	
+ 	 <td colspan=2><img src="bgblank.gif"></td>
       </tr>
       <tr> 
-        <td colspan=2> 
+        <td class="medium" colspan=2> 
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Considerations and Comments:</b>
         </td>
       </tr>
-	  <tr> 
-        <td colspan=2 align=center> 
-          <textarea name="considerationsOther" cols=40 wrap="VIRTUAL" rows="3"></textarea>
+      <tr> 
+        <td class="medium" colspan=2 align=center> 
+          <textarea name="consOther" cols=40 wrap="VIRTUAL" rows="3"></textarea>
         </td>
       </tr>
-	  <tr>	
-		<td colspan=2><img src="bgblank.gif"></td>
+      <tr>	
+	<td colspan=2><img src="bgblank.gif"></td>
       </tr>
       <tr> 
-        <td align=center colspan=2>
-            <input type="button" value="continue" name="continue" class=buttons onClick="saveForm('zircAnimalRequest','requestAnimals2.html');">
+        <td class="medium" align=center colspan=2>
+            <input type="button" value="continue" name="continue" class=buttons 
+                   onClick="saveForm('zircAnimalRequest','requestAnimals2.html');">
         </td>
       </tr>
-	  <tr>	
-		<td colspan=2 valign=bottom><img src="bgbtm.jpg"></td>
+      <tr>	
+	<td colspan=2 valign=bottom><img src="bgbtm.jpg"></td>
       </tr>
     </table>
 </form>
+</font>
 </center>
 </body>
 <!----- this javascript code writes the zfin footer ----->

@@ -4,98 +4,145 @@
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
    <meta name="GENERATOR" content="Mozilla/4.74 [en] (Win98; U) [Netscape]">
    <title>ZIRC Request Form</title>
-<link rel="stylesheet" type="text/css" href="zirc.css" />
+<link rel="stylesheet" type="text/css" href="http://<!--|DOMAIN_NAME|-->/zirc/scripts/zirc.css" />
 <script type="text/javascript" language="JavaScript1.1" src="zirc.js"></script>
 <script type="text/javascript" language="javaScript">
    function loadFormData() {
       storedMTAValues('zircMTAProfile');
-      storedValues('zircAnimalRequest');
       storedValues('zircAnimalRequestProfile');
+      storedValues('zircAnimalRequest');
+   }
+   function setPIInfo() {
+      allPIValues = document.forms[0].PIName.value +
+                    document.forms[0].PIEmail.value +
+                    document.forms[0].PIPhone.value +
+                    document.forms[0].PIFax.value +
+                    document.forms[0].PILab.value +
+                    document.forms[0].PIAddr.value;
+      if ( document.forms[0].PIInfo.checked ||
+           ( allPIValues == "" &&
+             document.forms[0].reqPos.value == "PI / Director" ) ) {
+         fullName = document.forms[0].nameInd.value + " " + document.forms[0].nameFam.value;
+         document.forms[0].PIName.value         = fullName;
+         document.forms[0].PIEmail.value        = document.forms[0].eMailAddr.value;
+         document.forms[0].PIPhone.value        = document.forms[0].reqPhone.value;
+         document.forms[0].PIFax.value          = document.forms[0].reqFax.value;
+         document.forms[0].PILab.value          = document.forms[0].reqLab.value;
+         document.forms[0].PIAddr.value         = document.forms[0].reqAddr.value;
+      }
+   }
+   function resetPIInfo() {
+      document.forms[0].PIInfo.checked = false;
+   }
+   function setBillInfo() {
+      allBillValues = document.forms[0].billNameInd.value +
+                      document.forms[0].billNameFam.value +
+                      document.forms[0].billEmail.value +
+                      document.forms[0].billPhone.value +
+                      document.forms[0].billFax.value +
+                      document.forms[0].billLab.value +
+                      document.forms[0].billAddr.value;
+      if ( document.forms[0].billInfo.checked ) {
+         document.forms[0].billNameInd.value      = document.forms[0].nameInd.value;
+         document.forms[0].billNameFam.value      = document.forms[0].nameFam.value;
+         document.forms[0].billEmail.value        = document.forms[0].eMailAddr.value;
+         document.forms[0].billPhone.value        = document.forms[0].reqPhone.value;
+         document.forms[0].billFax.value          = document.forms[0].reqFax.value;
+         document.forms[0].billLab.value          = document.forms[0].reqLab.value;
+         document.forms[0].billAddr.value         = document.forms[0].reqAddr.value;
+      }
    }
 </script>
 </head>
-<BODY text="#000000" bgcolor="#FFFFFF" 
+<script type="text/javascript" language="JavaScript" src="/header.js"></script>
+<BODY text="#000000" 
       onLoad="loadFormData();">
 <center>
-	<p id=header>
+<font class="big">
 		Zebrafish International Resource Center<br>
-   		Request Form
-   </p>
+   		<b>Order Live Animals<br/>
+</font>
+<font class="medium">  (page 2 of 2)</b>
+</font>
+<br/>
+  <font class="small">
+     	<font color="#FF0000">*</font>&nbsp; indicates a required field
+  </font>
 <noscript> <font color="#FF0000">Javascript is required to use links on this page and to 
   save your contact information between sessions. <br>
 Please set your preferences to allow Javascript and then Reload.</font>
 </noscript>
 <form name="theRequestForm" onSubmit="saveValues('zircAnimalRequestProfile','10',''); formValues('zircAnimalRequest');" METHOD="post" ACTION="http://<!--|DOMAIN_NAME|-->/<!--|CGI_BIN_DIR_NAME|-->/cgiemail.cgi">
+<font class="medium">
   <table border=0 width=585 cellpadding=0 cellspacing=0 background="bgimage.jpg" name="liveAnimalsProfile">
       <tr> 
         <td colspan=2 valign=top><img src="bgtop.jpg"></td>
-	  </tr>    
+      </tr>    
 	  <tr> 
-        <td align=center colspan=2>
+        <td class="medium" align=center colspan=2>
         	Please fill out this form if you want to request materials from the Resource Center.
-        	<br>A <font color="#FF0000">*</font>&nbsp; indicates a required field.
         	<br><a href="javascript:popup('links.html')">Links</a> provide useful information in a new window without changing the form. 
 		</td>
 	  </tr>
 	  <tr>
-	  	<td colspan=2>
+	  	<td class="medium" colspan=2>
 	<input type="hidden" name="template" value="http://<!--|DOMAIN_NAME|-->/zf_info/stckctr/submission/requestAnimals.txt">
-	<input type="hidden" name="success" value="http://<!--|DOMAIN_NAME|-->/zf_info/stckctr/submission/requestThankyou.html">
+	<input type="hidden" name="success" value="http://<!--|DOMAIN_NAME|-->/zirc/orders/requestThankyou.php">
 	<input type="hidden" name="lineZFIN_ID">
 	<input type="hidden" name="lineName">
-	<input type="hidden" name="mutantAlleles">
+	<input type="hidden" name="mutAllele">
 	<input type="hidden" name="type">
-	<input type="hidden" name="requestingOther">
+	<input type="hidden" name="reqOther">
 	<input type="hidden" name="quantity">
-	<input type="hidden" name="fishExperience">
+	<input type="hidden" name="fishExp">
 	<input type="hidden" name="raisingEggs">
-	<input type="hidden" name="considerationsOther">
+	<input type="hidden" name="consOther">
 		</td>
 	</tr>
 <!-----customer contact information----->
       <tr> 
-        <td colspan=2><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Your Contact Information</b></td>
+        <td class="medium" colspan=2><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Your Contact Information</b></td>
       </tr>
       <tr>
-        <td align=right>Your Individual (first) Name <font color="#FF0000">*</font>&nbsp;</td>
-        <td width=300>
+        <td class="medium" align=right>Your Individual (first) Name <font color="#FF0000">*</font>&nbsp;</td>
+        <td class="medium" width=300>
           <input type="text" name="nameInd" size="30">
         </td>
       </tr>
       <tr>
-        <td align=right>Your Family (last) Name <font color="#FF0000">*</font>&nbsp;</td>
-        <td width=300>
+        <td class="medium" align=right>Your Family (last) Name <font color="#FF0000">*</font>&nbsp;</td>
+        <td class="medium" width=300>
           <input type="text" name="nameFam" size="30">
         </td>
       </tr>
       <tr>
-        <td align=right>Your Email <font color="#FF0000">*</font>&nbsp;</td>
-        <td>
+        <td class="medium" align=right>Your Email <font color="#FF0000">*</font>&nbsp;</td>
+        <td class="medium">
           <input type="text" name="eMailAddr" size="30">
         </td>
       </tr>
       <tr> 
-        <td align=right>Your Telephone <font color="#FF0000">*</font>&nbsp;</td>
-        <td> 
-          <input type="text" name="required_requesterTelephone" size="30">
+        <td class="medium" align=right>Your Telephone <font color="#FF0000">*</font>&nbsp;</td>
+        <td class="medium"> 
+          <input type="text" name="reqPhone" size="30">
         </td>
       </tr>
       <tr> 
-        <td align=right>Your Fax <font color="#FF0000">*</font>&nbsp;</td>
-        <td> 
-          <input type="text" name="required_requesterFax" size="30">
+        <td class="medium" align=right>Your Fax <font color="#FF0000">*</font>&nbsp;</td>
+        <td class="medium"> 
+          <input type="text" name="reqFax" size="30">
         </td>
       </tr>
       <tr> 
-        <td align=right>Your Institution / Lab <font color="#FF0000">*</font>&nbsp;</td>
-        <td>
-          <input type="text" name="required_requesterLab" size="30">
+        <td class="medium" align=right>Your Institution / Lab <font color="#FF0000">*</font>&nbsp;</td>
+        <td class="medium">
+          <input type="text" name="reqLab" size="30">
         </td>
       </tr>
       <tr> 
-        <td align=right>Your Position <font color="#FF0000">*</font>&nbsp;</td>
-        <td> 
-          <select name="required_requesterPosition" size="1">
+        <td class="medium" align=right>Your Position <font color="#FF0000">*</font>&nbsp;</td>
+        <td class="medium"> 
+          <select name="reqPos" size="1">
             <option value=""></option>
             <option value="PI / Director">PI / Director</option>
             <option value="Post-Doc">Post-Doc</option>
@@ -106,9 +153,9 @@ Please set your preferences to allow Javascript and then Reload.</font>
         </td>
       </tr>
       <tr> 
-        <td align=right valign=top>Your Address <font color="#FF0000">*</font>&nbsp;<br>(No PO Boxes-this is the "Ship To" address.)&nbsp;</td>
-        <td> 
-          <textarea name="required_requesterAddress" cols="30" wrap="VIRTUAL" rows="4"></textarea>
+        <td class="medium" align=right valign=center>Your Address <font color="#FF0000">*</font>&nbsp;<br>(No PO Boxes-this is the "Ship To" address.)&nbsp;</td>
+        <td class="medium"> 
+          <textarea name="reqAddr" cols="30" wrap="VIRTUAL" rows="4"></textarea>
         </td>
       </tr>
 	  <tr>	
@@ -116,101 +163,115 @@ Please set your preferences to allow Javascript and then Reload.</font>
       </tr>
 <!-----PI contact information----->
 		<tr>
-			<td colspan=2>
+			<td class="medium" colspan=2>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Principal Investigator Contact Information (if different)</b>
 			</td>
 		</tr>
+                <tr>
+                        <td class="medium" align=left colspan=2>
+                          &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                          <input type=checkbox name="PIInfo" onClick="setPIInfo();">
+                          Same as Your Contact Information
+                        </td>
+                </tr>
 		<tr>
-			<td align=right>PI Name&nbsp;</td>
-			<td><input type="text" name="PIName" size="30"></td>
+			<td class="medium" align=right>PI Name&nbsp;</td>
+			<td class="medium"><input type="text" name="PIName" size="30"></td>
 		</tr>
 		<tr>
-			<td align=right>PI Email&nbsp;</td>
-			<td><input type="text" name="PIEmail" size="30"></td>
+			<td class="medium" align=right>PI Email&nbsp;</td>
+			<td class="medium"><input type="text" name="PIEmail" size="30"></td>
 		</tr>
 		<tr>
-			<td align=right>PI Telephone&nbsp;</td>
-			<td><input type="text" name="PITelephone" size="30"></td>
+			<td class="medium" align=right>PI Telephone&nbsp;</td>
+			<td class="medium"><input type="text" name="PIPhone" size="30"></td>
 		</tr>
 		<tr>
-			<td align=right>PI Fax&nbsp;</td>
-			<td><input type="text" name="PIFax" size="30"></td>
+			<td class="medium" align=right>PI Fax&nbsp;</td>
+			<td class="medium"><input type="text" name="PIFax" size="30"></td>
 		</tr>
 		<tr>
-			<td align=right>PI Institution / Lab&nbsp;</td>
-			<td><input type="text" name="PILab" size="30"></td>
+			<td class="medium" align=right>PI Institution / Lab&nbsp;</td>
+			<td class="medium"><input type="text" name="PILab" size="30"></td>
 		</tr>
 		<tr>
-			<td align=right valign=top>PI Address&nbsp;</td>
-			<td><textarea name="PIAddress" cols="30" wrap="VIRTUAL" rows="4"></textarea></td>
+			<td class="medium" align=right valign=center>PI Address&nbsp;</td>
+			<td class="medium"><textarea name="PIAddr" cols="30" wrap="VIRTUAL" rows="4"></textarea></td>
 		</tr>
 	  <tr>	
 		<td colspan=2 ><img src="bgblank.gif"></td>
       </tr>		
  <!-----grant number information----->
 		<tr>
-			<td align=right nowrap>
+			<td class="medium" align=right nowrap>
           		Your NIH <a href="javascript:popup('grant.html')">grant number</a> or other grant number <font color="#FF0000">*</font>&nbsp;
 			</td>
-        	<td>
-          		<input type="text" name="required_grantNumber" size="30">
+        	<td class="medium">
+          		<input type="text" name="reqGrantNo" size="30">
         	</td>
 		</tr>
 		<tr>
-			<td align=right>
+			<td class="medium" align=right>
           		The organization responsible for funding <font color="#FF0000">*</font>&nbsp;
 			</td>
-        	<td>
-          		<input type="text" name="required_grantOrganization" size="30">
+        	<td class="medium">
+          		<input type="text" name="reqGrantOrg" size="30">
         	</td>
 		</tr>
 	  <tr>	
-		<td colspan=2 ><img src="bgblank.gif"></td>
+		<td class="medium" colspan=2 ><img src="bgblank.gif"></td>
       </tr>
  <!-----billing information----->
       <tr> 
-        <td colspan=2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Billing Information</b></td>
+        <td class="medium" colspan=2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Billing Information</b></td>
       </tr>
       <tr>
-        <td align=right>Individual (first) Name <font color="#FF0000">*</font>&nbsp;</td>
-        <td>
-          <input type="text" name="required_BillToNameInd" size="30">
+        <td class="medium" align=left colspan=2>
+          &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+          <input type=checkbox name="billInfo" onClick="setBillInfo();">
+          Same as Your Contact Information
         </td>
       </tr>
       <tr>
-        <td align=right>Family (last) Name <font color="#FF0000">*</font>&nbsp;</td>
-        <td>
-          <input type="text" name="required_BillToNameFam" size="30">
+        <td class="medium" align=right>Individual (first) Name <font color="#FF0000">*</font>&nbsp;</td>
+        <td class="medium">
+          <input type="text" name="billNameInd" size="30">
+        </td>
+      </tr>
+      <tr>
+        <td class="medium" align=right>Family (last) Name <font color="#FF0000">*</font>&nbsp;</td>
+        <td class="medium">
+          <input type="text" name="billNameFam" size="30">
         </td>
       </tr>
       <tr> 
-        <td align=right>Email <font color="#FF0000">*</font>&nbsp;</td>
-        <td>
-          <input type="text" name="required_BillToEmail" size="30">
+        <td class="medium" align=right>Email <font color="#FF0000">*</font>&nbsp;</td>
+        <td class="medium">
+          <input type="text" name="billEmail" size="30">
         </td>
       </tr>
       <tr> 
-        <td align=right>Telephone <font color="#FF0000">*</font>&nbsp;</td>
-        <td>
-          <input type="text" name="required_BillToTelephone" size="30">
+        <td class="medium" align=right>Telephone <font color="#FF0000">*</font>&nbsp;</td>
+        <td class="medium">
+          <input type="text" name="billPhone" size="30">
         </td>
       </tr>
       <tr> 
-        <td align=right>Fax <font color="#FF0000">*</font>&nbsp;</td>
-        <td>
-          <input type="text" name="required_BillToFax" size="30">
+        <td class="medium" align=right>Fax <font color="#FF0000">*</font>&nbsp;</td>
+        <td class="medium">
+          <input type="text" name="billFax" size="30">
         </td>
       </tr>
       <tr> 
-        <td align=right nowrap>Institution / Lab <font color="#FF0000">*</font>&nbsp;</td>
-        <td>
-          <input type="text" name="required_BillToLab" size="30">
+        <td class="medium" align=right nowrap>Institution / Lab <font color="#FF0000">*</font>&nbsp;</td>
+        <td class="medium">
+          <input type="text" name="billLab" size="30">
         </td>
       </tr>
       <tr> 
-        <td align=right valign=top>Address <font color="#FF0000">*</font>&nbsp;</td>
-        <td>
-          <textarea name="required_BillToAddress" cols="30" wrap="VIRTUAL" rows="4"></textarea>
+        <td class="medium" align=right valign=center>Address <font color="#FF0000">*</font>&nbsp;</td>
+        <td class="medium">
+          <textarea name="billAddr" cols="30" wrap="VIRTUAL" rows="4"></textarea>
         </td>
       </tr>
 	  <tr>	
@@ -218,19 +279,19 @@ Please set your preferences to allow Javascript and then Reload.</font>
       </tr>
  <!-----billing preference----->
       <tr> 
-        <td colspan=2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Billing Preference</b></td>
+        <td class="medium" colspan=2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Billing Preference</b></td>
       </tr>
       <tr> 
-        <td>&nbsp;</td>
-        <td>
-			<input type="radio" name="billingPreference" value="creditCard" onClick="popup('zircCC.html')">Visa / Mastercard<br>
-			<input type="radio" name="billingPreference" value="billMe">Bill Me
+        <td class="medium">&nbsp;</td>
+        <td class="medium">
+			<input type="radio" name="billPref" value="creditCard" onClick="popup('zircCC.html')">Visa / Mastercard<br>
+			<input type="radio" name="billPref" value="billMe">Bill Me
 		</td>
       </tr>
 	  <tr>		
-		<td align=right nowrap>Purchase Order Number&nbsp;</td>
-		<td>
-			<input type="text" name="billToPONumber" size="30">
+		<td class="medium" align=right nowrap>Purchase Order Number&nbsp;</td>
+		<td class="medium">
+			<input type="text" name="billPONo" size="30">
 		</td>
 	  </tr>
 	  <tr>	
@@ -238,15 +299,16 @@ Please set your preferences to allow Javascript and then Reload.</font>
       </tr>
 <!-----buttons----->
       <tr> 
-        <td colspan=2 align=center class=button>
-            <input type="submit" value="SEND to ZIRC" name="submitButton" class=buttons>
+        <td class="medium" colspan=2 align=center class=button>
+            <input type="submit" value="SEND to ZIRC" name="submitButton"
+                   class=buttons onClick="resetPIInfo(); setPIInfo();">
         </td>
       </tr>
 	  <tr>	
 		<td colspan=2 ><img src="bgblank.gif"></td>
       </tr>
       <tr> 
-        <td colspan=2 align=center class=button>
+        <td class="medium" colspan=2 align=center class=button>
             <input type="button" id="comments" value="make comments about this form" name="email" class=buttons onClick="sendMail('Animal Request Form')">
         </td>
       </tr>
@@ -254,8 +316,10 @@ Please set your preferences to allow Javascript and then Reload.</font>
         <td colspan=2 valign=bottom><img src="bgbtm.jpg"></td>
 	  </tr>
     </table>
+</font>
 </form>
 </center>
+<script type="text/javascript" language="JavaScript" src="/footer.js"></script>
 </body>
 </html>
 
