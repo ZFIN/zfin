@@ -6,6 +6,8 @@ create trigger mrkr_name_update_trigger
       (
 	execute function scrub_char ( newM.mrkr_name )
 		into marker.mrkr_name,
+	execute procedure p_check_mrkr_abbrev (newM.mrkr_name, newM.mrkr_abbrev,
+					       newM.mrkr_type),
         execute function zero_pad(newM.mrkr_name)
                 into marker.mrkr_name_order,
         execute procedure mhist_event (newM.mrkr_zdb_id,'renamed',

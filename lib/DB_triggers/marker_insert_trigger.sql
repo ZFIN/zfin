@@ -6,6 +6,9 @@ create trigger marker_insert_trigger insert on
 		into marker.mrkr_name,
 	execute function scrub_char ( new_marker.mrkr_abbrev )
 		into marker.mrkr_abbrev,
+ 	execute procedure p_check_mrkr_abbrev (new_marker.mrkr_name, 
+					       new_marker.mrkr_abbrev, 
+					       new_marker.mrkr_type),
         execute function zero_pad ( new_marker.mrkr_name )
                 into marker.mrkr_name_order,
         execute function zero_pad ( new_marker.mrkr_abbrev ) 
