@@ -29,12 +29,20 @@
 # we do not need to provide server names in this case because
 # our file systems are nfs mounted on each other.
 
-system ("cd <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->");
+#system ("cd <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->");
 
-system("/local/bin/rsync -upvab --backup-dir=/tmp --suffix=uploadbkup --delete --ignore-existing --copy-links <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/ /research/zcentral/loadUp/imageLoadUp/");
+chdir "<!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->";
 
-system ("cd <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|--> ");
+# --backup-dir=/tmp --suffix=uploadbkup --delete 
 
-system("/local/bin/rsync -upvab --backup-dir=/tmp --suffix=uploadbkup --delete --ignore-existing --copy-links <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->/ /research/zcentral/loadUp/PDFLoadUp/");
+system("/local/bin/rsync -nupvab --copy-links <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/ /research/zcentral/loadUp/imageLoadUp/");
+
+# system ("cd <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|--> ");
+
+chdir "<!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->";
+
+# --backup-dir=/tmp --suffix=uploadbkup --delete 
+
+system("/local/bin/rsync -nupvab  --copy-links <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->/ /research/zcentral/loadUp/PDFLoadUp/");
 
 exit;
