@@ -41,10 +41,6 @@ permission (optional) -- if present, should be either
 OID (optional) -- should be set to OID of the record being displayed, 
   if applicable. Only necessary if permission=owns.
 rtype (optional) -- Only necessary if permission=owns.
-ownerColumn (optional)	-- name of column containing the owner ZDB ID.
-  Only necessary if the column is not named "owner".
-zdbIdColumn (optional)  -- name of column containing the record's ZDB ID.
-  Only necessary if the column is not named "zdb_id".
  -->
 
 <?MIVAR NAME=$AUTHORIZED>false<?/MIVAR>
@@ -144,14 +140,28 @@ to the guest cookie. This way logging will be to their unique cookie name  -->
 
     <?/MIBLOCK>  <!--ends checks permissions -->
 
-    <!-- Last possibility to get permission is if you own the record. Get 
+    <?MICOMMENT>
+      -- Last possibility to get permission is if you own the record. Get 
       -- record owner and compare to ZDB_ident. If you own the record, you 
-      -- get 'owner' authorization -->
+      -- get 'owner' authorization 
+      -- Most tables have "owner" as the owner column and zdb_id as the ZDB
+      -- ID column.  There are a few exceptions, however.  Catch them.
+    <?/MICOMMENT>
+
     <?MIBLOCK COND="$(AND,$(XST,$OID),$(XST,$rtype))">
+      <?MIVAR NAME=$ownerColumn>owner<?/MIVAR>
+      <?MIVAR NAME=$zdbIdColumn>zdb_id<?/MIVAR>
+      <?MIBLOCK COND="$(EC,$rtype,marker)">
+	<?MIVAR NAME=$ownerColumn>mrkr_owner<?/MIVAR>
+	<?MIVAR NAME=$zdbIdColumn>mrkr_zdb_id<?/MIVAR>
+      <?MIELSE COND="$(EC,$rtype,fish_image)">
+	<?MIVAR NAME=$ownerColumn>fimg_owner_zdb_id<?/MIVAR>
+	<?MIVAR NAME=$zdbIdColumn>fimg_zdb_id<?/MIVAR>
+      <?/MIBLOCK>
       <?MISQL SQL="
-	select $(IF,$(XST,$ownerColumn),$ownerColumn,owner) 
+	select $ownerColumn
 	  from $rtype 
-	  where $(IF,$(XST,$zdbIdColumn),$zdbIdColumn,zdb_id) = '$OID';">
+	  where $zdbIdColumn = '$OID';">
       <?/MISQL>
       <?MIVAR COND="$(EC,$1,$ZDB_ident)" NAME=$AUTHORIZED>owner<?/MIVAR>
     <?/MIBLOCK>
