@@ -198,6 +198,11 @@ get_obj_name(zdbId varchar(50))
       into objName
       from url_ref
       where urlref_zdb_id = zdbId ;
+  elif (objType = "XPAT") then --don't have names, use ZDB ID
+    select xpat_zdb_id
+      into objName
+      from expression_pattern
+      where xpat_zdb_id = zdbId ;
   elif (objType = "XPATEX") then
     select xpatex_zdb_id		-- don't have names, use ZDB ID
       into objName
