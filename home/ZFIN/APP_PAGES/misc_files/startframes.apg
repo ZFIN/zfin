@@ -16,6 +16,7 @@ You may also optionally pass many other constraints on the upcoming selection th
 <?MIVAR NAME=$ptitle>Find $(UPPER,$select_from)<?/MIVAR>
 <?MIVAR COND="$(EC,$select_from,LOCI)" NAME=$ptitle>Register+Locus<?/MIVAR>
 <?MIVAR COND="$(EC,$select_from,LG)" NAME=$ptitle>Browse+LGs<?/MIVAR>
+<?MIVAR COND="$(EC,$select_from,MAPPER)" NAME=$ptitle>View Map<?/MIVAR>
 
 <?MISQL SQL="select WebExplode(object,'page_title=$ptitle') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 <?/MIBLOCK>
@@ -26,6 +27,7 @@ You may also optionally pass many other constraints on the upcoming selection th
 <?MIVAR COND="$(NXST,$constraint)" NAME=$constraint><?/MIVAR>
 <?MIVAR COND="$(NXST,$frame_size)" NAME=$frame_size>185<?/MIVAR>
 <?MIVAR COND="$(NXST,$intro)" NAME=$intro>/ZDBB/misc_html/intro1.html<?/MIVAR>
+<?MIVAR COND="$(EC,$selector,aa-mapperselect.apg)" NAME=$intro>/ZDBB/misc_html/intro_mapper.html<?/MIVAR>
 
 <!-- special constraints to possibly pass -->
 <?MIVAR COND="$(XST,$stock)" NAME=$constraint>&stock=$stock$constraint<?/MIVAR>
@@ -45,7 +47,7 @@ You may also optionally pass many other constraints on the upcoming selection th
 
 
 <?MIVAR>
-<FRAME NAME="criteria" SRC="/cgi-bin_B/webdriver?MIval=$selector$constraint">
+<FRAME NAME="criteria" SRC="http://zfin.org/cgi-bin_B/webdriver?MIval=$selector$constraint">
 
 <FRAME NAME="pbrowser"  SRC="$intro">
 <?/MIVAR>
