@@ -2,26 +2,22 @@
 #	Script to call ontape to start continuous log backups
 #
 #	Clif Cox	8/4/99
-#
-#	$Author$	$Date$	$Revision$
-#	$Source$
 
 # No command line args.
 
 umask(002);	# Set Umask
 
-$INFORMIXDIR      = "/private/apps/Informix/informix_wildtype";
-$INFORMIXSERVER   = "wildtype";
-$ONCONFIG         = "onconfig.wildtype";
-$INFORMIXSQLHOSTS = "$INFORMIXDIR/etc/sqlhosts.wildtype";
-
+$INFORMIXDIR      = "<!--|INFORMIX_DIR|-->";
+$INFORMIXSERVER   = "<!--|INFORMIX_SERVER|-->";
+$ONCONFIG         = "<!--|ONCONFIG_FILE|-->";
+$INFORMIXSQLHOSTS = "$INFORMIXDIR/etc/<!--|SQLHOSTS_FILE|-->";
 $ENV{"INFORMIXDIR"}      = $INFORMIXDIR;
 $ENV{"INFORMIXSERVER"}   = $INFORMIXSERVER;
 $ENV{"INFORMIXSQLHOSTS"} = $INFORMIXSQLHOSTS;
 $ENV{"ONCONFIG"}         = $ONCONFIG;
 $ENV{"LD_LIBRARY_PATH"}  = "$INFORMIXDIR/lib:$INFORMIXDIR/lib/esql";
 
-$BACKUP         =       "/export/chromix/backup";
+$BACKUP         =       "<!--|ROOT_PATH|-->/server_apps/DB_maintenance";
 $LOGLINK	=	"logs";
 
 $ONTAPE		=	"$INFORMIXDIR/bin/ontape";

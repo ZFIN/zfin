@@ -1,20 +1,21 @@
 #!/local/bin/perl -s
-#	Script to call ontape to do some simple backups
+#
+# Does an Informix dump of the database.  ZFIN typically runs this once a
+# night.  The dump produced by this script can be used in conjunction with
+# the logs to restore the database to a previous dump and then roll it
+# forward using the log.
 #
 #	Clif Cox	8/4/99
 #	Arthur Kirkpatrick 2000/03/10
-#
-#	$Author$	$Date$	$Revision$
-#	$Source$
 
 umask(002);	# Set Umask
 
 $| = 1;		# Flush after every write
 
-$INFORMIXDIR      = "/private/apps/Informix/informix_wildtype";
-$INFORMIXSERVER   = "wildtype";
-$ONCONFIG         = "onconfig.wildtype";
-$INFORMIXSQLHOSTS = "$INFORMIXDIR/etc/sqlhosts.wildtype";
+$INFORMIXDIR      = "<!--|INFORMIX_DIR|-->";
+$INFORMIXSERVER   = "<!--|INFORMIX_SERVER|-->";
+$ONCONFIG         = "<!--|ONCONFIG_FILE|-->";
+$INFORMIXSQLHOSTS = "$INFORMIXDIR/etc/<!--|SQLHOSTS_FILE|-->";
 
 $ENV{"INFORMIXDIR"}      = $INFORMIXDIR;
 $ENV{"INFORMIXSERVER"}   = $INFORMIXSERVER;
@@ -22,9 +23,7 @@ $ENV{"INFORMIXSQLHOSTS"} = $INFORMIXSQLHOSTS;
 $ENV{"ONCONFIG"}         = $ONCONFIG;
 $ENV{"LD_LIBRARY_PATH"}  = "$INFORMIXDIR/lib:$INFORMIXDIR/lib/esql";
 
-
-$LOG		=	"/research/zfin/chromix/backup/backup_log";
-$BACKUP		=	"/research/zfin/chromix/backup";
+$BACKUP		=	"<!--|ROOT_PATH|-->/server_apps/DB_maintenance";
 $DATALINK	=	"data";
 
 $ONTAPE		=	"$INFORMIXDIR/bin/ontape";
@@ -59,9 +58,9 @@ system("chown -h informix:informix $DATAFILE");
 unlink  $DATALINK;
 symlink $DATAFILE, $DATALINK;
 
-logit("Starting Informix backup of $INFORMIXSERVER\n");
+system("echo `/bin/date`: Starting Informix backup of $INFORMIXSERVER");
 system("echo | $ONTAPE -s -L 0");
-logit("Finished Informix backup of $INFORMIXSERVER\n");
+system("echo `/bin/date`: Finished Informix backup of $INFORMIXSERVER");
 
 exit;					# All done!
 
@@ -90,25 +89,6 @@ sub touch {
 #	print "/usr/local/bin/touch -t $date $file\n";
 	system("$TOUCH -m -t $date \'$file\'\n") &&
 		die "Couldnt touch file: $file $!";
-}
-
-
-#	Write message to log file if log_level is >= value, Called with
-#	logging level for this message, and the message
-sub logit {
-	local ($mes) = @_;
-	local ($sec,$min,$hour,$mday,$mon,$year) = localtime();
-	local ($_, $file, $line, $_) = caller 1;
-	local ($date);
-
-	$date = sprintf("%02d/%02d %02d:%02d:%02d",
-			$mon+1, $mday, $hour, $min, $sec);
-
-        open(LOG, ">>$LOG") || die "Can't open log file: $!";
-	$mes .= ", at $file line $line\n" if $mes !~ /\n$/;
-	print LOG "$date $mes";
-	print     "$date $mes";
-	close(LOG);
 }
 
 
