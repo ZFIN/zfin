@@ -27,7 +27,7 @@ navigator tile if you are doing selection since you are jumping directly
 to a browser -->
 <?MISQL SQL="
   select WebExplode(object, 
-                    'permission=owns&rtype=fish_image$(IF,$(NC,$attr_type,selection),&page_title=Update $print_name)&ownerColumn=fimg_owner_zdb_id&zdbIdColumn=fimg_zdb_id') 
+                    'permission=owns&rtype=fish_image$(IF,$(NC,$attr_type,selection),&page_title=Update $print_name)') 
     from webPages
     where ID = 'aa-secure_navigation.apg';">
   $1
@@ -246,11 +246,9 @@ to a browser -->
     <?MISQL SQL="
       insert into return_recs 
 	  (zdb_id, return_form, return_recid, fill_field, fill_table, info, 
-	   action, jump_to, rec_update, rtnrec_zdb_id_column_name,
-	   rtnrec_owner_column_name)
+	   action, jump_to, rec_update) 
 	values ('$return_rec', '$return_form', '$temp_oid', '$fill_field',
-		'$fill_table', '$info', '$action', '$jump_to', 't',
-		'fimg_zdb_id', 'fimg_owner_zdb_id');">
+		'$fill_table', '$info', '$action', '$jump_to', 't');">
     <?/MISQL>
 
     <!-- LAUNCHES THE FRAMES FOR THE ANY SELECTION BROWSER.-->
