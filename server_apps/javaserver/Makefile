@@ -134,6 +134,7 @@ clean :		# remove copied files from staging directory
 
 clobber :			# Remove targets, but not target dir.
 	rm -f $(TARGETS)
+	$(MAKE) -C $(STAGINGDIR) $@
 
 
 # check generics & possibly statics as well for values that should
