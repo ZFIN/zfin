@@ -1,0 +1,373 @@
+<HTML>
+
+<head>
+<META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
+<TITLE>New Zebrafish Homepage</TITLE>
+
+
+<SCRIPT>
+function open_Study() {
+  if (!top.zfinstudy || top.zfinstudy.closed) {
+    top.zfinstudy=window.open('/ZDBB/APP_PAGES/groupware/dataframes.html','persspace','scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=500');
+  } else {
+    top.zfinstudy.focus();
+  }
+  top.zfinstudy.ztarget=top.content;
+}
+
+</SCRIPT>
+</head>
+
+<BODY>
+
+
+<!-- Now check authorization -->
+<?MISQL SQL="select WebExplode(object,'page_title=ZFIN HOME') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+<!-- Allow access to following part only if authorized! -->
+<?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
+
+
+<TABLE WIDTH=100% cellpadding=4>
+<TR>
+<TD>
+<IMG SRC="/ZDBB/gifs/newlogosmall.gif">
+</TD>
+<TD>
+<A HREF="/zf_info/dbase/db.html">About the Zebrafish Database project</a>
+<p>
+<A HREF="/ZDBB/misc_html/tips.html">Helpful Hints</a>
+<p>
+<A HREF="/">The Zebrafish WWW homepage</a>
+<p>
+<!--font size=-1><A HREF="/cgi-bin/Webdriver?MIval=aa-ZFIN_stats.html">Current ZFIN stats</A></font-->
+</TD>
+</TR>
+</TABLE>
+
+<HR width=80%>
+
+<TABLE cellpadding=2 width=100%>
+<TR>
+<TD><font size=2>
+<?MISQL SQL="select a.zdb_id,a.group_name,GreaterThan(a.last_update,b.last_read) from workgroup a,int_pers_wkgroup b where a.zdb_id=b.target_id and b.source_id='$ZDB_ident';">
+$(IF,$(=,$MI_CURRENTROW,1),<b>WorkGroups:</b><br>)
+$(IF,$(EC,$3,t),"<img src=/ZDBB/icons/news.gif>") 
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-wgview.apg&OID=$1">$2</a>
+<?/MISQL>
+</TD>
+
+<?MIVAR COND="$(NC,$AUTHORIZED,GUEST)">
+<TD>
+<form><input type=button value="To $(SUBSTR,$ZDB_name,1,$(-,$(POSITION,$ZDB_name, ),1))'s private study" onClick="open_Study();">
+</form>
+</TD>
+<?/MIVAR>
+
+</TR>
+</TABLE>
+
+
+<?MISQL COND="$(EC,$AUTHORIZED,GUEST)" SQL="select WebExplode(object,'page_title=ZFIN Login') from webPages where ID='aa-login.apg';">$1<?/MISQL>
+
+<center>
+<table bgcolor="#88a6a6" border=4 width=95% cellpadding=4>
+
+<?MIBLOCK COND="$(NC,$AUTHORIZED,GUEST)">
+<tr><td  align=center>
+<b>Logged in to ZFIN as: <big>
+<?MIVAR COND="$(EC,$AUTHORIZED,submit)"><font color="#007300">$ZDB_name</font> <?/MIVAR>
+<?MIVAR COND="$(OR,$(EC,$AUTHORIZED,fishauth),$(EC,$AUTHORIZED,preview),$(EC,$AUTHORIZED,betatest))"><font color="#893286">$ZDB_name</font> <?/MIVAR>
+<?MIVAR COND="$(EC,$AUTHORIZED,root)"><font color="#ff0000">$ZDB_name</font> <?/MIVAR>
+</big></b>
+</TD>
+<TD valign=middle align=center rowspan=2><A HREF="/cgi-bin_B/webdriver?MIval=aa-process-login.apg"><IMG SRC="/ZDBB/icons/Byeby.gif" border=1></A>
+</TD>
+</TR>
+<TR>
+<TD> <FONT SIZE=-1>
+For security reasons, please <b>click "Goodbye" to LOG OUT</b> if you have finished with ZFIN or will be away from your terminal. </FONT>
+</TD>
+</TR>
+<?/MIBLOCK>  <!-- ends 'not a guest' -->
+
+<?MIVAR COND="$(EC,$AUTHORIZED,GUEST)">
+<tr><td  align=center>
+<b>Currently connected to ZFIN as a <big><font color="#ff0000">GUEST</font></big> user.</b>
+
+<br><font size=-1>As a GUEST, you have viewing access to all ZFIN data, but may not update records or submit new experimental data. You must log in as a registered submitter to modify data.</font>
+</TD></TR>
+<?/MIVAR>  <!-- ends 'is a guest' -->
+
+</TABLE>
+</center>
+
+
+
+
+
+
+<TABLE width=100% border>
+
+<TH width=20% bgcolor="#f8fabb">DATA</TH> 
+
+<TH> ACTIVITIES accessible to 
+<?MIVAR COND="$(EC,$AUTHORIZED,GUEST)">GUEST<?/MIVAR>
+<?MIVAR COND="$(EC,$AUTHORIZED,submit)"><font color="#007300">$ZDB_name</font> <?/MIVAR>
+<?MIVAR COND="$(OR,$(EC,$AUTHORIZED,fishauth),$(EC,$AUTHORIZED,preview),$(EC,$AUTHORIZED,betatest))"><font color="#893286">$ZDB_name</font> <?/MIVAR>
+<?MIVAR COND="$(EC,$AUTHORIZED,root)"><font color="#ff0000">$ZDB_name</font> <?/MIVAR>
+</TH>
+
+<TR align=center>
+<TD> <B>PEOPLE </B></TD> 
+<TD>
+
+<TABLE width=100%> 
+<TR align=center>
+<TD>
+<?MIVAR COND="$(NC,$AUTHORIZED,false)">
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-quickfindpers.apg&select_from=PERSON&frame_size=75">SEARCH</A> 
+<?/MIVAR>
+<?MIVAR COND="$(EC,$AUTHORIZED,root)">
+<p><A HREF="/cgi-bin_B/webdriver?MIval=aa-mkdist_list.apg" TARGET=NEW_WIN>Generate Dist. list</A>
+<?/MIVAR>
+</TD> 
+<TD>
+<?MIVAR COND="$(NC,$AUTHORIZED,GUEST)">
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-persview.apg&OID=$ZDB_ident">
+Jump to your personal ZFIN record</A>
+<?/MIVAR>
+<?MIVAR COND="$(EC,$AUTHORIZED,root)">
+<br><A HREF="/cgi-bin_B/webdriver?rtype=person&MIval=aa-new_person.apg">ADD NEW PERSON</A>
+<?/MIVAR>
+ </TD> </TR> </TABLE>
+
+
+</TD></TR>
+
+<TR align=center>
+<TD><B> LABS </B></TD> 
+<TD>
+
+<TABLE width=100%> <TR align=center> 
+<TD>
+<?MIVAR COND="$(NC,$AUTHORIZED,false)">
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-labselect.apg&select_from=LAB">SEARCH</A> 
+<?/MIVAR>
+</TD> 
+<TD>
+<?MIVAR COND="$(EC,$AUTHORIZED,root)">
+<A HREF="/cgi-bin_B/webdriver?rtype=lab&MIval=aa-new_lab.apg">ADD NEW LAB</A>
+<?/MIVAR>
+ </TD> </TR> </TABLE>
+
+</TD></TR>
+
+<TR align=center>
+<TD><B>COMPANIES</B><br>Biotech Companies and Suppliers</TD> 
+<TD>
+
+<TABLE width=100%> <TR align=center> 
+<TD>
+<?MIVAR COND="$(NC,$AUTHORIZED,false)">
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-companyselect.apg&select_from=COMPANY&frame_size=230">SEARCH</A> 
+<?/MIVAR>
+</TD> 
+<TD>
+<?MIVAR COND="$(EC,$AUTHORIZED,root)">
+<A HREF="/cgi-bin_B/webdriver?rtype=company&MIval=aa-new_company.apg">ADD NEW COMPANY</A>
+<?/MIVAR>
+ </TD> </TR> </TABLE>
+
+</TD></TR>
+
+
+<TR align=center>
+<TD><B>PUBLICATIONS</B> </TD>
+<TD>
+
+<TABLE width=100%> <TR align=center> 
+<TD>
+<?MIVAR COND="$(NC,$AUTHORIZED,false)">
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-pubselect2.apg&select_from=PUBLICATION">SEARCH</A>
+<?/MIVAR>
+</TD> 
+<TD>
+<font size=-1>
+<?MIVAR COND="$(EC,$AUTHORIZED,root)">
+<A HREF="/cgi-bin_B/webdriver?rtype=publication&MIval=aa-edit_pub.apg">NEW PUB</A>
+<?/MIVAR>
+</font>
+</TD>
+
+<TD>
+<font size=-1>
+<?MIVAR COND="$(EC,$AUTHORIZED,root)">
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-start_medline.apg">Inc. MEDLINE</A>
+<?/MIVAR>
+ </font></TD> 
+</TR> </TABLE>
+
+</TD> </TR>
+
+<TR align=center>
+<TD><B>FISH</B><p><font size=-1>Mutant<br>and<br>Wild Type<br>Lines</font>
+<?MIVAR COND="$(EC,$AUTHORIZED,root)">
+<form><input type=button onClick="location='/cgi-bin_B/run-regen-fish.pl';" value="Regen Mutant (fishsearch) data">
+</form>
+<?/MIVAR>
+</TD>
+<TD>
+<TABLE width=100%> <TR align=center> <TD> 
+
+<?MIVAR COND="$(NC,$AUTHORIZED,false)">
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-betainfo.html">Information</A>
+<p>
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-startframes.apg&frame_size=250&selector=aa-fishselect.apg&select_from=Mutants&line_type=mutant&intro=/ZDBB/help_files/mut_intro.html">SEARCH Mutants</A> <p>
+<p>
+
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-fishlister.apg&line_type=wild_type">Wild Type Lines</A> 
+<?/MIVAR>
+<p>
+<?MIVAR COND="$(NC,$AUTHORIZED,GUEST)">
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-locusselect.html&select_from=LOCI&frame_size=230&intro=/ZDBB/help_files/locus_intro.html">Register Locus/Allele Designation</A> <?/MIVAR>
+
+<?MIVAR COND="$(EC,$AUTHORIZED,root)">
+<p>
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-registered_loci.apg">Check locus registrations</A>
+<?/MIVAR>
+
+
+
+</TD> 
+<TD>
+
+<?MIBLOCK COND="$(EC,$AUTHORIZED,stub_fail)">
+<TABLE>
+<TR><TD><A HREF="/cgi-bin_B/webdriver?MIval=aa-new-fish.apg&line_type=mutant">ADD NEW MUTANT</A> <br><FONT SIZE=-1> derived from mutagenesis</FONT>
+</TD></TR>
+<TR><TD><A HREF="/cgi-bin_B/webdriver?MIval=aa-new-fish.apg&flag=by_breeding&line_type=mutant">ADD NEW MUTANT</A> <br> <FONT SIZE=-1> derived by cross-breeding</FONT>
+</TD></TR>
+<TR><TD><A HREF="/cgi-bin_B/webdriver?MIval=aa-new-fish.apg&mutagen=spontaneous&line_type=mutant">ADD NEW MUTANT</A> <br> <FONT SIZE=-1> generated spontaneously</FONT>
+</TD></TR>
+<?/MIBLOCK>
+
+<TABLE>
+<?MIVAR COND="$(EC,$AUTHORIZED,root)">
+<TR><TD><A HREF="/cgi-bin_B/webdriver?MIval=aa-new-fish.apg&line_type=wild+type">ADD NEW WILD TYPE</A>
+</TD></TR>
+<?/MIVAR>
+
+</TABLE>
+
+
+</TD> </TR> </TABLE>
+
+</TD> </TR>
+
+
+
+
+<TR align=center>
+<TD> <B>GENES</B><br> Zebrafish Genes</TD>
+<TD>
+<TABLE width=100%> <TR align=center> 
+<TD> <font size=-1>
+
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-geneselect.apg&select_from=GENE&frame_size=130">SEARCH</A>
+
+</TD> 
+<TD>
+<?MIVAR COND="$(EC,$AUTHORIZED,root)">
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-new_marker.apg&marker_type=gene">NEW Gene</A>
+<?/MIVAR>
+</TD>
+</TR> </TABLE>
+
+</TD></TR>
+
+
+<TR align=center>
+<TD> <B>GENOMICS</B><br> Mapping Panels,Markers,<br>and Primers
+<?MIVAR COND="$(EC,$AUTHORIZED,root)">
+<form><input type=button onClick="location='/cgi-bin_B/run-regen.pl';" value="Regen Genomics data">
+</form>
+<?/MIVAR>
+</TD>
+<TD>
+<TABLE width=100%> <TR align=center> 
+<TD> <font size=-1>
+
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-markerselect.apg&select_from=MARKER">SEARCH map markers</A> 
+<p>
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-refcrosslist.apg">Mapping Panels</A>
+
+<?MIVAR COND="$(EC,$AUTHORIZED,root)">
+<p><A HREF="/cgi-bin_B/webdriver?MIval=aa-haffter_linkages.apg">Haffter linkages</A>
+<?/MIVAR>
+
+</font></TD> 
+<TD>
+
+<?MIVAR COND="$(EC,$AUTHORIZED,root)">
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-new_marker.apg">NEW Marker</A>
+<?/MIVAR>
+
+
+</TD> </TR> 
+
+
+</TABLE>
+
+</TD> </TR>
+
+
+<?MIBLOCK COND="$(OR,$(EC,$AUTHORIZED,root),$(EC,$AUTHORIZED,preview))">
+
+<TR align=center>
+<TD>IMAGES</TD>
+<TD>
+
+<TABLE width=100%> <TR align=center> 
+<TD>
+<?MIVAR COND="$(OR,$(EC,$AUTHORIZED,root),$(EC,$AUTHORIZED,fishauth),$(EC,$AUTHORIZED,preview),$(EC,$AUTHORIZED,betatest))">
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-imageselect.apg&select_from=IMAGE">SEARCH</A>  
+<?/MIVAR>
+
+<?MIVAR COND="$(AND,$(NC,$AUTHORIZED,root),$(NC,$AUTHORIZED,fishauth),$(NC,$AUTHORIZED,preview),$(NC,$AUTHORIZED,betatest))">
+Under Construction!
+<?/MIVAR>
+</TD> 
+<TD>
+<?MIVAR COND="$(OR,$(EC,$AUTHORIZED,root),$(EC,$AUTHORIZED,fishauth),$(EC,$AUTHORIZED,preview))">
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-image-upload.apg">ADD NEW IMAGE</A>
+<?/MIVAR>
+</TD> </TR> </TABLE>
+
+</TD> </TR> 
+
+<?/MIBLOCK>
+</TABLE>
+
+<p>
+
+</TD></TR></TABLE>
+<HR size=4 width=90%>
+<TABLE border=3>
+<TR><TD  align=center bgcolor="#e5e5e5">
+
+<BIG><u> Acknowledgments</u></BIG>
+<TABLE width=100%>
+<TR>
+<TD><p>Development of the Zebrafish Database is generously supported by the W.M. Keck Foundation. Funds also provided by the NSF (BIR-9507401) and the NIH (RR/HD12546).</TD>
+<TD align=center width=30% rowspan=2><A HREF="www.informix.com"><IMG border=0 SRC="/ZDBB/gifs/PBI-Ovaltrans.gif"></A></TD>
+</TR>
+</TABLE>
+
+</TD>
+</TR>
+</TABLE>
+
+</HTML>
+
+<?/MIBLOCK> <!-- ends if AUTHORIZED -->
