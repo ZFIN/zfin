@@ -107,18 +107,18 @@
       <?/MISQL>
 
       <?MISQL SQL="
-        insert into alteration 
-           (zdb_id, allele, mutagen, protocol, chrom_change, locus, 
-            genetic_loc, cyto_loc, breakpoints) 
-          select '$alt_id', allele, mutagen, protocol, chrom_change, locus, 
-                 genetic_loc, cyto_loc, breakpoints 
-            from temp_fish 
-            where zdb_id='$temp_oid';">
+        insert into zdb_active_data
+            ( zactvd_zdb_id )
+          values 
+	    ( '$alt_id' );">
       <?/MISQL>
       <?MISQL SQL="
-        update alteration 
-          set chrom_id='$chromo_id'
-          where zdb_id='$alt_id';">
+        insert into alteration 
+           (zdb_id, allele, mutagen, protocol, chrom_change, locus, chrom_id )
+          select '$alt_id', allele, mutagen, protocol, chrom_change, locus,
+		 '$chromo_id'
+            from temp_fish 
+            where zdb_id='$temp_oid';">
       <?/MISQL>
 
       <!-- Associate all of temp_oid's pubs with new chromos and alts. 
