@@ -54,7 +54,7 @@ VERSION_MESSAGE= -m"Initial version"
 #VERSION_NAME=
 VERSION_NAME= -NInitial
 checkin:
-	ci -zLT -l -tinitial.text $(VERSION_MESSAGE) $(VERSION_NAME) $(CONTROLFILES) `$(TOSOURCE) $(CLASSFILES)` `$(TOSOURCE) $(OBJFILES)`
+	ci -zLT -l -tinitial.text $(VERSION_MESSAGE) $(VERSION_NAME) $(CONTROLFILES) `$(TOSOURCE) $(CLASSFILES)` `$(TOSOURCE) $(OBJECTFILES)`
 
 #
 #  The actual commands for creating the targets
