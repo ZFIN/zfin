@@ -24,7 +24,7 @@ TARGETDIR = $(TARGETROOT)/home/zf_info/news
 # announcements come and go.  Follow that list with files that will disappear
 # when the meetings or jobs they go with will disappear.
 
-VARIABLE_GENERICS = jobs.html mtgs.html curator.html ZFIN_jobs.html
+VARIABLE_GENERICS = jobs.html mtgs.html curator.html
 
 GENERICS = siteNews.html  $(VARIABLE_GENERICS)
 
