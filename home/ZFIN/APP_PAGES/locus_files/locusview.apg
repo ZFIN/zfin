@@ -154,11 +154,11 @@ Datablade documentation.
 
   <?MIBLOCK COND="$(XST,$UPDATE)">
     <?MIVAR>
-      <TITLE>ZFIN Update Locus:$name </TITLE>
+      <TITLE>ZFIN Update: $name </TITLE>
     <?/MIVAR>
   <?MIELSE>
     <?MIVAR>
-      <TITLE>ZFIN View Locus:$name </TITLE>
+      <TITLE>ZFIN View: $name </TITLE>
     <?/MIVAR>
   <?/MIBLOCK>
 

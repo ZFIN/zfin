@@ -287,11 +287,11 @@ Datablade documentation.
 
       <?MIBLOCK COND="$(XST,$UPDATE)">
 	<?MIVAR>
-	  <TITLE>ZFIN Update: $name </TITLE>
+	  <TITLE>ZFIN Update: $(IF,$(NC,$title,Wild type),$allele,$abbrev) </TITLE>
 	<?/MIVAR>
       <?MIELSE>
 	<?MIVAR>
-	  <TITLE>ZFIN View: $name </TITLE>
+	  <TITLE>ZFIN View: $(IF,$(NC,$title,Wild type),$allele,$abbrev) </TITLE>
 	<?/MIVAR>
       <?/MIBLOCK>
 

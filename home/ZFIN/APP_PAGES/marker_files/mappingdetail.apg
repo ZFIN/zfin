@@ -243,22 +243,11 @@ marker = '';
  <?/MISQL>
      
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
-   <?MIBLOCK COND="$(XST,$UPDATE)">
-        <?MIVAR>
-     		<TITLE>Update Mapping Detail</TITLE>
-       	<?/MIVAR>
-   <?MIELSE>    
-    	<?MIVAR>		
- 		<TITLE>Mapping Detail</TITLE>
-    	<?/MIVAR>
-   <?/MIBLOCK>
 
    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1
    <?/MISQL>
 
- 
-
- <!-- FIRST THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
+   <!-- FIRST THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
 
    <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=$target_table') from webPages where ID='aa-data_mgr.apg';">$1
    <?/MISQL>
@@ -310,10 +299,10 @@ marker = '';
   <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
   <TABLE width="100%" cellspacing=0 border=0>
   <?MISQL COND="$(>,$(POSITION,$MID,FISH),0)" SQL="
-		select name
+		select abbrev, line_type, allele
 		  from fish
 		where zdb_id = '$MID';">
-	<?MIVAR NAME=mrkr_abbrev>$1<?/MIVAR>
+	<?MIVAR NAME=mrkr_abbrev>$(IF,$(NC,$2,wild type),$3,$1)<?/MIVAR>
   <?/MISQL>
   <?MISQL COND="$(>,$(POSITION,$MID,LOCUS),0)" SQL="
 		select locus_name
@@ -321,6 +310,17 @@ marker = '';
 		where zdb_id = '$MID';">
 	<?MIVAR NAME=mrkr_abbrev>$1<?/MIVAR>
   <?/MISQL>
+  <?MIBLOCK COND="$(XST,$UPDATE)">
+        <?MIVAR>
+     		<TITLE>Update Mapping Detail: $mrkr_abbrev  </TITLE>
+       	<?/MIVAR>
+   <?MIELSE>    
+    	<?MIVAR>		
+ 		<TITLE>Mapping Detail: $mrkr_abbrev </TITLE>
+    	<?/MIVAR>
+   <?/MIBLOCK>
+
+
   <?MIVAR>
        <form method=post 
               action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
@@ -457,7 +457,9 @@ marker = '';
 	<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&orgOID=$MID&detOID=$OID&abbrev=$allele') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
    <?/MIBLOCK>	
 
+
   <?MIBLOCK COND="$(AND,$(=,$(POSITION,$OID,FISH),0), $(=,$(POSITION,$OID,LOCUS),0),$(=,$(POSITION,$OID,GENE),0))">
+
       <?MIVAR>
       <TR><TD><b>$marker_type_display: &nbsp; <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID">$mrkr_name</A> </b></TD></TR><br>
       <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&orgOID=$MID&detOID=$OID&abbrev=$mrkr_abbrev') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
