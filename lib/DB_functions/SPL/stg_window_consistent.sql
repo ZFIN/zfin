@@ -6,22 +6,23 @@ stg_window_consistent (
   returning boolean;
 
   -- A pair of stages are consistent if:
-  --   The start of the start stage must be <= the start of the end stage.  
-  --   The end of the end stage must be >= the end of the start stage. 
+  --  the same stages 
+  -- OR
+  --  The start of the end stage  > the start of the start stage.
+  -- OR 
+  --  The end of the end stage  > the end of the start stage.
+  -- 
+  -- We have got rid of superstages, but having an Unknown stage from 
+  -- 0.00 ~ 730d. Unkown to Zygote is not valid, while Zygote to Unkown is.  
   --   
   -- Returns 
   --   true:       the given stages are consistent as a stage window.
   --   false:      the given stages are NOT consistent as a stage window.
   --   -746 error: One or both of the stage ZDB IDs was invalid.
 
-  define startStart   decimal(7,2);
-  define startEnd     decimal(7,2);
-  define endStart     decimal(7,2);
-  define endEnd       decimal(7,2);
+  define startStart, startEnd   like stage.stg_hours_start;
+  define endStart, endEnd       like stage.stg_hours_start;
   define consistent   boolean;
-
-  -- set debug file to '/tmp/debug-stg_window_consistent';
-  -- trace on;
 
   -- Get start and stop times for the stages that are passed in
 
@@ -47,16 +48,15 @@ stg_window_consistent (
     raise exception -746, 0,		-- !!!! ERROR EXIT
       'stg_window_consistent: ' ||
       'Invalid end stage (' || endStgZdbId || ')';
-  end if
+  end if 
 
-  -- The start of the start stage must be <= the start of the end stage.
-  -- The end of the end stage must be >= the end of the start stage.
+  -- verify consistency  
+  let consistent = 'f';
 
-  let consistent = 't';
-
-  if (startStart > endStart or
-      endEnd < startEnd) then
-    let consistent = 'f';
+  if (startStgZdbId = endStgZdbId) then
+	let consistent = 't';
+  elif (endStart > startStart OR endEnd > startEnd) then
+        let consistent = 't';
   end if
 
   return consistent;
