@@ -76,7 +76,7 @@ $mut_constraint $previous (mutagen='$mutagen')<?/MIVAR>
 <?MIVAR NAME=$previous COND="$(NC,$mutagen,any)"> and <?/MIVAR>
 
 <?MIVAR NAME=$mut_constraint COND="$(XST,$allele)">
-$mut_constraint $previous ((lower(a.allele) like '$allele%') or exists (select 'x' from allele_alias where (a.fish_id = alleali_alt_zdb_id) and (lower(alleali_allele_name_alias) like '$allele%'))) 
+$mut_constraint $previous ((lower(a.allele) like '$allele%') or exists (select 'x' from allele_alias where (a.alt_zdb_id = alleali_alt_zdb_id) and (lower(alleali_allele_name_alias) like '$allele%'))) 
 <?/MIVAR>
 
 <?MIVAR NAME=$previous COND="$(XST,$allele)"> and <?/MIVAR>
