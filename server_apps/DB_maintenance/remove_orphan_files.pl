@@ -179,12 +179,9 @@ open (ORPHAN_PDF_FILES, "< /tmp/orphan_pdf_files.unl")
 open MOVED_IMAGE_FILES, "> /tmp/moved_image_files.unl"
     or die "Cannot open the moved_image_files.unl file:$!\n";
 
-system ("/bin/chmod 755 /tmp/moved_image_files");
-
 open MOVED_PDF_FILES, "> /tmp/moved_pdf_files.unl"
     or die "Cannot open the moved_pdf_files.unl file:$!\n";
 
-system ("/bin/chmod 755 /tmp/moved_pdf_files");
 
 print "moving orphan files.\n";
 
@@ -209,6 +206,7 @@ foreach $orphan_image_line (@orphanImageLines) {
 
     print MOVED_IMAGE_FILES "$orphan_image_line\n";
 }
+system ("/bin/chmod 755 /tmp/moved_image_files");
 
 # do the same thing with pdf files
 
@@ -223,6 +221,8 @@ foreach $orphan_pdf_line (@pdfLines) {
      print MOVED_PDF_FILES "orphan_pdf_line\n";
   
 }
+
+system ("/bin/chmod 755 /tmp/moved_pdf_files");
 
 print "closing files...\n" ;
 
