@@ -4,6 +4,15 @@ Parameters:
 rtype (required)	-- Name of the table the record is from.
 -->
 
+<?MICOMMENT>
+
+Last updated by Prita on 12/15/04
+Removed the "Add/Update Gene Expression Index" link
+
+<?/MICOMMENT>
+
+
+
 <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 
 <?MIVAR NAME=$MI_NOVALUE>NOVALUE<?/MIVAR>
@@ -143,7 +152,6 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
   </TD>
 <TD>
 <?MIVAR>
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatentry.apg&OID=$OID"><fontsize=-1 color=red> Add/Update Gene Expression Index</font></A>
 <?/MIVAR>
 </TD>
 <?/MIBLOCK> <!-- ends if not a pub record -->
