@@ -64,7 +64,7 @@ TARGETDIR = $(TARGETROOT)/$(TARGETCGIBIN)
 #
 
 
-STATICS = dummy.gif webdriver write.cgi parse-form.perl urlencode.perl lastpage
+STATICS = dummy.gif webdriver write.cgi parse-form.perl urlencode.perl
 
 # send_request.perl can probably be converted to static.
 
