@@ -32,29 +32,31 @@ set modeon=`onstat -| tr -d '\12' | cut -f2- -d\-|cut -c3,4`
 # as '1' so if the process is running just once, then the grep -c will return
 # '2'
 
-set logon=`ps -ef | grep -c "/private/apps/Informix/informix_wildtype/bin/ontape"`
+if ($HOST != "embryonix") then 
+
+  set logon=`ps -ef | grep -c "/private/apps/Informix/informix_wildtype/bin/ontape"`
 
 # find the process that signifies a backup is taking place
 
-set backupon=`ps -ef | grep -c "onback.pl"`
+  set backupon=`ps -ef | grep -c "onback.pl"`
 
-if ($modeon != "On") then
-    set mode="`onstat -` | $modeon"
+  if ($modeon != "On") then
+     set mode="`onstat -` | $modeon"
 
 # if the server is in a state other than Online ('On') then we should
 # be notified--send an email to informix@cs.uoregon.edu
 
-    echo $mode | /bin/mailx -s "<!--|INFORMIX_SERVER|-->  ABNORMAL!"  <!--|VALIDATION_EMAIL_OTHER|-->
+  echo $mode | /bin/mailx -s "<!--|INFORMIX_SERVER|-->  ABNORMAL!"  <!--|VALIDATION_EMAIL_OTHER|-->
 
-endif
+  endif
 
 # check first if the onback.pl script is running.
 
-if ($backupon < 2) then
+  if ($backupon < 2) then
 
 # if it is not running, then check if ontape is running.
 
-  if ($logon < 2) then
+    if ($logon < 2) then
 
 # if ontape is not in the process list, wait and check again. 
 
@@ -67,6 +69,8 @@ if ($backupon < 2) then
          set logmode="check ontape"
          echo $logmode | /bin/mailx -s "<!--|INFORMIX_SERVER|-->  ABNORMAL!" <!--|VALIDATION_EMAIL_OTHER|-->
      endif
+
+   endif
 
   endif
 
