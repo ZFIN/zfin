@@ -111,8 +111,10 @@ $(IF,$(XST,$plinks),"<input type=hidden name=plinks value=1>")
 <?MIVAR COND="$(XST,$getsome)"><font color="red"><b>Showing only first $limit </b></font> of <?/MIVAR>
 
 <?MIVAR NAME=$tcount>0<?/MIVAR>
-<?MISQL SQL="select count(*)::integer from $target_table $constraint;">
-$(SETVAR,$tcount,$(+,$tcount,$1))
+<?MISQL SQL="select count(distinct abbrev)::integer, count(*)::integer from $target_table $constraint;">
+<?MIVAR NAME=$tcount>$1<?/MIVAR>
+<?MIVAR NAME=$true_count>$2<?/MIVAR>
+
 <?/MISQL>
 <?MIVAR> <b>$tcount</b> matching records found.<?/MIVAR>
 <!-- QUERY: <?MIVAR>$MI_SQL<?/MIVAR> -->
@@ -145,7 +147,7 @@ Options:
 </form>
 
 <form method=post  action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi" target="content">
-<?MIVAR COND="$(OR,$(<=,$tcount,$maxreturn),$(XST,$getall))" NAME=$limit>$tcount<?/MIVAR>
+<?MIVAR COND="$(OR,$(<=,$tcount,$maxreturn),$(XST,$getall))" NAME=$limit>$true_count<?/MIVAR>
 
 <?MIBLOCK COND="$(XST,$limit)">
 (Note: cM distances are measured from most telomeric marker)
