@@ -1,3 +1,4 @@
+#!/private/bin/perl -wT # changed tec 01-18-01
 #!/usr/local/bin/perl5
 #
 # submit_problem.cgi

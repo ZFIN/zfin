@@ -1,3 +1,4 @@
+#!/private/bin/perl -wT # changed tec 01-18-01
 #! /local/bin/perl
 #  Call the regen_genomics () function and return its output to our caller.
 #  This program is required because the regen_genomics () function contains
