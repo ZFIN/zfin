@@ -1,0 +1,316 @@
+<!-- this app page is used to create a new linkage. The page supports, search/selection of the source(person or pub);  private field , lg well as comments may be entered.  Source is a required field.
+
+Expected vars:  None.
+
+-->
+
+<HTML>
+<HEAD>
+  <SCRIPT>
+
+     function pick_pub(pub_id) {
+       document.linkage.pub_source.value=pub_id;
+       document.linkage.source_specified.value='true';
+       document.linkage.submit();
+      }
+
+
+     function pick_person(pers_id) {
+       document.linkage.person_pick.value=pers_id;
+       document.linkage.source_specified.value='true';
+       document.linkage.submit();
+     }
+
+   </SCRIPT>
+</HEAD>
+
+<body bgcolor="#e5e5e5"  TEXT="black">
+<basefont COLOR="#000000" size=2>
+
+
+<form name=linkage method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+<input type=hidden name=MIval value=aa-add_linkage.apg>
+<?MIVAR>
+  $(IF,$(XST,$update),"<input type=hidden name=update value="$update">")
+  $(IF,$(XST,$link_id),"<input type=hidden name=link_id value="$link_id">")
+<?/MIVAR>
+
+
+<?MIBLOCK COND="$(NXST,$update)">
+  <center>
+    <B>
+      <font size=5> Add New Linkages  
+    </B>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(XST,$update)">
+  <center>
+  <B>
+    <font size=5> Update Source 
+  </B>
+<?/MIBLOCK>
+
+</center>
+<p>
+
+<basefont size=2>
+
+<?MISQL SQL="select WebExplode(object,'permission=root') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+<?MIVAR COND="$(NXST,$link_source)" NAME=$link_source>PUB<?/MIVAR>
+
+<?MIBLOCK COND="$(NC,AUTHORIZED,false)">
+
+  <?MIBLOCK COND="$(AND,$(NXST,$pub_source),$(NXST,$person_source))">
+    <font size=2><big>Specify source of linkage data:</big>
+    <?MIVAR>
+      <select name=link_source>
+	<option $(IF,$(EC,$link_source,PERSON),SELECTED)>PERSON
+	<option $(IF,$(EC,$link_source,PUB),SELECTED)>PUB
+      </SELECT>  
+    <?/MIVAR>
+    <input type=submit name=do_search value="Search">
+ <?/MIBLOCK>
+ 
+  <?MIVAR COND="$(NXST,$source_specified)" NAME=$source_specified><?/MIVAR>
+  <?MIVAR COND="$(NXST,$person_source)" NAME=$person_source><?/MIVAR>
+  <?MIVAR COND="$(NXST,$pub_source)" NAME=$pub_source><?/MIVAR>
+  <?MIVAR COND="$(NXST,$source)" NAME=source><?/MIVAR>
+  <?MIVAR COND="$(NXST,$comments)" NAME=$comments><?/MIVAR>
+  <?MIVAR COND="$(NXST,$lg)" NAME=$lg>0<?/MIVAR>
+
+  <?MIVAR>
+    <input type=hidden name=pub_source value="$pub_source">
+    <input type=hidden name=person_pick>
+    <input type=hidden name=source_specified <?MIVAR COND="$(XST,$source_specified)">VALUE="$source_specified"<?/MIVAR>>
+  <?/MIVAR>
+
+
+<!-- PUB was specified as source -->
+
+  <?MIBLOCK COND="$(AND,$(EC,$link_source,PUB),$(XST,$do_search))">
+    <TABLE>
+   <p> 
+   <font size=2><big>Specify publication:</big>
+     <SELECT name=authtype>
+       <option value=firstauth>First AUTHOR begins with
+       <option SELECTED value=anyauth>AUTHOR contains
+    </select>:</b> <input type=text name=authors size=10 >
+     <br> 
+    TITLE contains: <input type=text name=title size=10>
+    <br>
+    YEAR  
+    <SELECT NAME=yr_cmpr>
+      <option selected value="=">equals
+      <option value="<" >before
+      <option value=">" >after
+    </SELECT>
+    <SELECT name=century>
+      <option selected>19 <option>20 <option>18 </SELECT>
+      <input type=text name=year size=2 maxlength=2>
+    </TABLE>   
+ 
+    <input type=submit name=do_pubsearch value="Search">
+    <br>
+  <?/MIBLOCK>  <!-- end of XST do_search and link_source eq pub -->
+
+<!-- pub query specified, return matching pubs -->
+
+   <?MIBLOCK COND="$(XST,$do_pubsearch)">
+     <hr>
+     <TABLE cols=3>
+     <TR><TH></TH><TH>Author</TH><TH>Title</TH></TR>
+     <?MIVAR NAME=$previous> <?/MIVAR>
+     <?MIVAR NAME=$constraint> where <?/MIVAR>
+     <?MIVAR NAME=$constraint COND="$(AND,$(XST,$authors),$(EC,$authtype,anyauth))">
+     $constraint (lower(authors) like '%$(LOWER,$authors)%')<?/MIVAR>
+     <?MIVAR NAME=$constraint COND="$(AND,$(XST,$authors),$(EC,$authtype,firstauth))">
+     $constraint (lower(authors) like '$(LOWER,$authors)%')<?/MIVAR>
+     <?MIVAR NAME=$previous COND="$(XST,$authors)"> and <?/MIVAR>
+     <?MIVAR NAME=$constraint COND="$(XST,$title)">
+     $constraint $previous (lower(title) like '%$(LOWER,$title)%')<?/MIVAR>
+     <?MIVAR NAME=$previous COND="$(XST,$title)"> and <?/MIVAR>
+
+     <!-- glue together the year clause if specified -->
+     <?MIVAR COND="$(XST,$year)" NAME=$constraint>
+     $constraint $previous year(pub_date) $yr_cmpr conc('$century','$year')<?/MIVAR>
+
+     <?MISQL SQL="select distinct zdb_id,authors,title from publication $constraint ;">
+       <TR>
+       <TD>
+	   <input type=button  value="Select" onClick="pick_pub('$1');">
+	 </TD>
+	 <TD>
+	   $2
+	 </TD>
+	 <TD>
+	   $3
+	 </TD>
+       </TR>
+     <?/MISQL>
+     <br>
+     </TABLE>
+     <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No matches.<?/MIVAR>
+  <?/MIBLOCK>
+
+
+<!-- PERSON was specified as source -->
+
+  <?MIBLOCK COND="$(AND,$(EC,$link_source,PERSON),$(XST,$do_search))">
+    <TABLE>
+      <?MIVAR>
+    <p>
+	<font size=2><big>Specify person:</big>
+	Name contains:</b> <input type=text size=10 name=person_source  value="$person_source" > 
+	<input type=submit name=do_persearch value="Search...">
+	<br>
+      <?/MIVAR>
+    </TABLE>    
+  <?/MIBLOCK>
+
+
+<!-- person query was specified -return matching persons   -->
+
+  <?MIBLOCK COND="$(AND,$(XST,$person_source),$(>=,$(STRLEN,$person_source),1))">
+    <hr>
+    <TABLE cols=3>
+    <TR><TH></TH><TH>Name</TH><TH>Address</TH></TR>
+    <?MISQL SQL="select distinct zdb_id,full_name,HTML_breaks(address) 
+      from person 
+	where lower(full_name) like '%$(LOWER,$person_source)%' order by full_name;">
+    <TR>
+      <TD valign=top>
+	<?MIVAR>
+	  <input type=button value="Select" onClick="pick_person('$1');">
+	<?/MIVAR>
+      </TD>
+      <TD valign=top><font size=2>
+	$2
+      </TD>
+      <TD><font size=1>
+	$3
+      </TD>
+    </TR>
+    <?/MISQL>
+    </TABLE>
+
+    <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No matches.<?/MIVAR>
+  <?/MIBLOCK>
+
+  <!-- source has been selected display it then get private field, or_lg and comments -->
+
+  <?MIBLOCK COND="$(EC,$source_specified,true)">
+
+    <!-- output the source that has been specified -->
+
+    <?MIBLOCK COND="$(AND,$(NC,$person_pick,''),$(NXST,$update))">
+	<?MISQL SQL="select distinct full_name,HTML_breaks(address) 
+	  from person 
+	    where zdb_id = '$person_pick';">
+	<p>
+	Source:<br>
+	$1
+	<br>
+	$2
+	<?/MISQL>
+      <?/MIBLOCK>
+
+      <?MIBLOCK COND="$(AND,$(NC,$pub_source,''),$(NXST,$update))">
+	<?MISQL SQL="select distinct authors, title 
+	  from publication 
+	    where zdb_id = '$pub_source';">
+	 <p>
+	 Source:<br>
+	 $1
+	 <br>
+	 $2
+	<?/MISQL>
+      <?/MIBLOCK>
+  </form>
+
+
+    <form name=linkage method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" >
+
+    <?MIVAR COND="$(>,$(POSITION,$pub_source,PUB),0)"> $(SETVAR,$source,$pub_source)<?/MIVAR>
+    <?MIVAR COND="$(>,$(POSITION,$person_pick,PER),0)"> $(SETVAR,$source,$person_pick)<?/MIVAR>
+
+    <input type=hidden name=MIval value=aa-insert_linkage.apg>
+    <input type=hidden name=calling_form value="linkage">
+    <?MIVAR>
+      <input type=hidden name=source value="$source">
+      <input type=hidden name=ZDB_ident value="$ZDB_ident">
+      $(IF,$(XST,$update),"<input type=hidden name=update value="$update">")
+      $(IF,$(XST,$link_id),"<input type=hidden name=link_id value="$link_id">")
+    <?/MIVAR>
+
+ <!-  if we got here from edit page - updating source - do not get other data- submit form instead -->
+
+ 
+
+    <?MIBLOCK COND="$(NXST,$update)">
+    <!-- get LG  -->
+      <p>
+      <?MIVAR>
+	<font size=2><big><b>LG: </b></big> 
+	<SELECT name=lg>
+	  <option $(IF,$(=,$lg,0),SELECTED) value=0>UNKNOWN
+	  <option $(IF,$(=,$lg,1),SELECTED) value=1>1
+	  <option $(IF,$(=,$lg,2),SELECTED) value=2>2
+	  <option $(IF,$(=,$lg,3),SELECTED) value=3>3
+	  <option $(IF,$(=,$lg,4),SELECTED) value=4>4
+	  <option $(IF,$(=,$lg,5),SELECTED) value=5>5
+	  <option $(IF,$(=,$lg,6),SELECTED) value=6>6
+	  <option $(IF,$(=,$lg,7),SELECTED) value=7>7
+	  <option $(IF,$(=,$lg,8),SELECTED) value=8>8
+	  <option $(IF,$(=,$lg,9),SELECTED) value=9>9
+	  <option $(IF,$(=,$lg,10),SELECTED) value=10>10
+	  <option $(IF,$(=,$lg,11),SELECTED) value=11>11
+	  <option $(IF,$(=,$lg,12),SELECTED) value=12>12
+	  <option $(IF,$(=,$lg,13),SELECTED) value=13>13
+	  <option $(IF,$(=,$lg,14),SELECTED) value=14>14
+	  <option $(IF,$(=,$lg,15),SELECTED) value=15>15
+	  <option $(IF,$(=,$lg,16),SELECTED) value=16>16
+	  <option $(IF,$(=,$lg,17),SELECTED) value=17>17
+	  <option $(IF,$(=,$lg,18),SELECTED) value=18>18
+	  <option $(IF,$(=,$lg,19),SELECTED) value=19>19
+	  <option $(IF,$(=,$lg,20),SELECTED) value=20>20
+	  <option $(IF,$(=,$lg,21),SELECTED) value=21>21
+	  <option $(IF,$(=,$lg,22),SELECTED) value=22>22
+	  <option $(IF,$(=,$lg,23),SELECTED) value=23>23
+	  <option $(IF,$(=,$lg,24),SELECTED) value=24>24
+	  <option $(IF,$(=,$lg,25),SELECTED) value=25>25
+	</SELECT>
+      </font>
+      <?/MIVAR>
+      <p>
+
+      <font size=2>
+	<input type=checkbox name=private value="t"> <b>Private!</b> Keep specifics confidential.
+
+      <p>
+      <B>Comments:</B>
+      <br>
+      <?MIVAR>   
+	<textarea name=comments rows=12 cols=60 wrap=virtual>$comments</textarea>
+      <?/MIVAR>
+ 
+      <p>
+
+      <input type=submit value="Add markers" >  
+      <input type=button value="Cancel" onClick="window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg'"> 
+      </font>
+   <?/MIBLOCK>  <!-- nxst updating -->
+
+  <?MIBLOCK COND="$(XST,$update)">
+    <SCRIPT>
+      document.linkage.submit();
+    </SCRIPT>
+  <?/MIBLOCK>
+
+  </form>
+
+  <?/MIBLOCK>  <!-- source specified -->
+<?/MIBLOCK>  <!-- ends if authorized -->
+
+
+</HTML>
