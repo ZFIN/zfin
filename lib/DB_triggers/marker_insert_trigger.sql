@@ -1,5 +1,3 @@
-drop trigger marker_insert_trigger;
-
 create trigger marker_insert_trigger insert on 
     marker referencing new as new_marker
     for each row

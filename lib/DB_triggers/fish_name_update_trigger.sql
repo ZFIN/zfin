@@ -1,5 +1,3 @@
-drop trigger fish_name_update_trigger;
-
 create trigger fish_name_update_trigger 
   update of name on fish 
     referencing new as new_fish

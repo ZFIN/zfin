@@ -1,5 +1,3 @@
-drop trigger locus_insert_trigger;
-
 create trigger locus_insert_trigger 
   insert on locus 
     referencing new as new_locus

@@ -1,5 +1,3 @@
-drop trigger publication_update_trigger;
-
 create trigger publication_update_trigger 
   update on publication 
     referencing new as new_publication

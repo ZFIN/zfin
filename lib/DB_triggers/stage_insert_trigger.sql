@@ -1,5 +1,3 @@
-drop trigger stage_insert_trigger;
-
 create trigger stage_insert_trigger
   insert on stage 
     referencing new as new_stage

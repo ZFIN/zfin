@@ -1,5 +1,3 @@
-drop trigger alteration_insert_trigger;
-
 create trigger alteration_insert_trigger 
   insert on alteration 
     referencing new as new_alteration

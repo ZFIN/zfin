@@ -1,5 +1,3 @@
-drop trigger alteration_allele_update_trigger;
-
 create trigger alteration_allele_update_trigger 
   update of allele on alteration 
     referencing new as new_alteration

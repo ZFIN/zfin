@@ -1,5 +1,3 @@
-drop trigger fish_allele_update_trigger;
-
 create trigger fish_allele_update_trigger 
   update of allele on fish 
     referencing new as new_fish

@@ -1,5 +1,3 @@
-drop trigger dblink_acc_num_update_trigger;
-
 create trigger dblink_acc_num_update_trigger
   update of acc_num on db_link
   referencing new as new_db_link

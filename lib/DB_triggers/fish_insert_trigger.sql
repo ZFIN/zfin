@@ -1,5 +1,3 @@
-drop trigger fish_insert_trigger;
-
 create trigger fish_insert_trigger 
   insert on fish 
     referencing new as new_fish

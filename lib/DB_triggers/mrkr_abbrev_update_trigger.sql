@@ -1,5 +1,3 @@
-drop trigger mrkr_abbrev_update_trigger;
-
 create trigger mrkr_abbrev_update_trigger 
        update of mrkr_abbrev on marker 
        referencing old as oldM

@@ -1,5 +1,3 @@
-drop trigger mrkr_name_update_trigger;
-
 create trigger mrkr_name_update_trigger 
        update of mrkr_name on marker 
        referencing old as oldM
