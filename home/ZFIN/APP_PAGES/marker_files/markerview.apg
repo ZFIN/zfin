@@ -1063,26 +1063,7 @@ Datablade documentation.
  <!--<?MIVAR>$(IF,$MI_ROWCOUNT,</ul>)<?/MIVAR>-->
 
 <?/MIBLOCK> 
-<?MISQL SQL="select count(distinct recattrib_source_zdb_id) from expression_pattern,record_attribution where xpat_probe_zdb_id='$OID' and xpat_zdb_id=recattrib_data_zdb_id;"><?/MISQL>
-<?MIVAR NAME=count1>$1<?/MIVAR>
 
-<?MISQL SQL="select count(distinct recattrib_source_zdb_id) from expression_pattern,record_attribution,marker_relationship where mrel_mrkr_1_zdb_id='$OID' and mrel_mrkr_2_zdb_id=xpat_probe_zdb_id and xpat_zdb_id=recattrib_data_zdb_id;"><?/MISQL>
-<?MIVAR NAME=count2>$1<?/MIVAR>
-<?MIVAR NAME=count><?/MIVAR>
-
-<?MIVAR NAME=count>$(+,$count1,$count2)<?/MIVAR>
-
-<?MIVAR NAME=$titleexp>Expression of <?/MIVAR>
-<?MIBLOCK COND="$(OR,$(>,$count,0),$(XST,$UPDATE))">
-<?MIVAR><p>
-        <TABLE width="100%" border=0 bgcolor="$highlight">
-  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=xpat&caller=marker&pubcount=$count&title=$(URLENCODE,$titleexp)&name=$(URLENCODE,$name)$(IF,$(XST,$UPDATE),&UPDATE=1)"><b>Publications Reporting Expression</b></A>
-  <?/MIVAR>
-<?MIVAR>
-  &nbsp; ($count)
-<?/MIVAR>
-</table>
-<?/MIBLOCK>
 
 
 
