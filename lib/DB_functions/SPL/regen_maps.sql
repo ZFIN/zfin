@@ -102,7 +102,7 @@ create dba function "informix".regen_maps()
 	-- paneled_markers does not have a primary key.
       )
       fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3  
-      extent size 1024 next size 1024 
+      extent size 2048 next size 2048
       lock mode page;
     revoke all on paneled_m_new from "public";
 
