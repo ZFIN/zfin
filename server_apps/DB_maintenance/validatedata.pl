@@ -490,13 +490,57 @@ my $routineName = "checkOtherEnvironmentCondition";
   &recordResult($routineName, $nRecords);
 } 
 
+#----------------------------------------------------------------
+#Parameter
+# $      Email Address for recipients
+#
+# For fx interface, we store the source (pub) zdb_id in both the figure
+# table and in the expression_experiment table.
+# We then relate the two, figure and expression, in fx_expression_pattern_image
+# We want the two sources to match--otherwise, we'd have figures from 
+# one paper associated with expression_patterns from other papers.  This 
+# would be incorrect. 
+# These attributions are also stored in record_attribution, but that
+# table is not verified here.
+
+sub checkFigXpatexSourceConsistant ($) {
+	
+  my $routineName = "expressionPatternStageWindowConsistent";
+	
+  my $sql = 'select xpatfimg_fig_zdb_id, xpatfimg_xpatres_zdb_id
+               from fx_expression_pattern_image, fx_figure,
+               fx_expression_result, fx_expression_experiment
+               where xpatfimg_fig_zdb_id = fig_zdb_id
+               and xpatfimg_xpatres_zdb_id = xpatres_zdb_id
+               and xpatres_xpatex_zdb_id = xpatex_zdb_id
+               and xpatex_source_zdb_id != fig_source_zdb_id   
+              ';
+  	
+  my @colDesc = ("xpatfimg_fig_zdb_id ",
+		 "xpatfimg_xpatres_zdb_id "
+		);
+
+  my $nRecords = execSql ($sql, undef, @colDesc);
+
+  if ( $nRecords > 0 ) {
+
+    my $sendToAddress = $_[0];
+    my $subject = "FigXpatEx Source Inconsistant";
+    my $errMsg = "$nRecords records' use different sources for xpatex
+                   records and figure/image/xpatex records";
+      		       
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
+  }
+  &recordResult($routineName, $nRecords);
+} 
 
 
 
 #----------------------------------------------------------------
 #Parameter
 # $      Email Address for recipients
- 
+
 
 sub expressionPatternStageWindowConsistent($) {
 	
