@@ -20,6 +20,7 @@ TARGETDIR = $(TARGETROOT)/home/zf_info/stckctr/submission
 GENERICS = index.html\
 request.html\
 requestAnimals2.html\
+requestAntibodies.html\
 requestAntibodies2.html\
 requestBooks.html\
 requestParamecia.html\
@@ -41,7 +42,6 @@ reasons.html\
 request.txt\
 requestAnimals.html\
 requestAnimals.txt\
-requestAntibodies.html\
 requestAntibodies.txt\
 requestBooks.txt\
 requestParamecia.txt\
