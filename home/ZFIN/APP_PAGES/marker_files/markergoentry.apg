@@ -267,7 +267,7 @@ function new_go(mrkrid) {
                   <?MIVAR NAME=$link>$query$accID<?/MIVAR>
                   <?MIVAR NAME=$currinflink><a href=$link>GO:$accID</a><?/MIVAR>
                <?MIELSE> 
-                  <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = '$dbase'><?/MISQL>
+                  <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = '$dbase'"><?/MISQL>
                   <?MIVAR NAME=query>$1<?/MIVAR>
                   <?MIVAR NAME=$link>$query$accID<?/MIVAR>
                   <?MIVAR NAME=$currinflink><a href=$link>$dbase:$accID</a><?/MIVAR>
