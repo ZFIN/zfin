@@ -86,14 +86,14 @@ $pdf_extension = ".pdf";
 
 system ("ls -1 <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|--> > /tmp/file_list_image");
 
-system ("chmod 755 /tmp/file_list_image");
+system ("/bin/chmod 755 /tmp/file_list_image");
 
 # make a list of all the pdf files available for viewing in the fielsystem
 # loadup_full_path points to /research/zprod/loadUp (on production)
 # pdf_load points to /research/zcentral/loadUp/PDFLoadUp (on production)
 
 system ("ls -1 <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|--> > /tmp/file_list_pdf");
-system ("chmod 755 /tmp/file_list_pdf");
+system ("/bin/chmod 755 /tmp/file_list_pdf");
 
 # file_list_image is the file of all image files available on filesystem
 
@@ -106,7 +106,7 @@ open (FILE_LIST_IMAGE, "< /tmp/file_list_image")
 open FL_IMAGE_MODIFIED, ">fl_image_modified"
     or die "Cannot open the fl_image_modified file:$!\n";
 
-system ("chmod 755 /tmp/fl_image_modified");
+system ("/bin/chmod 755 /tmp/fl_image_modified");
 
 
 # same comments as above, except with PDFs.
@@ -117,7 +117,7 @@ open (FILE_LIST_PDF, "< /tmp/file_list_pdf")
 open FL_PDF_MODIFIED, ">fl_pdf_modified" 
     or die "Cannot open the fl_pdf_modified file:$!\n";
 
-system ("chmod 755 /tmp/fl_pdf_modified");
+system ("/bin/chmod 755 /tmp/fl_pdf_modified");
 
 print "compiling modified file lists\n";
 
@@ -179,12 +179,12 @@ open (ORPHAN_PDF_FILES, "< /tmp/orphan_pdf_files.unl")
 open MOVED_IMAGE_FILES, "> /tmp/moved_image_files.unl"
     or die "Cannot open the moved_image_files.unl file:$!\n";
 
-system ("chmod 755 /tmp/moved_image_files");
+system ("/bin/chmod 755 /tmp/moved_image_files");
 
 open MOVED_PDF_FILES, "> /tmp/moved_pdf_files.unl"
     or die "Cannot open the moved_pdf_files.unl file:$!\n";
 
-system ("chmod 755 /tmp/moved_pdf_files");
+system ("/bin/chmod 755 /tmp/moved_pdf_files");
 
 print "moving orphan files.\n";
 
