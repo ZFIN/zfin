@@ -1,11 +1,11 @@
-<!--
+<?MICOMMENT>
 Variables Expected: 
  -- dataId -- the OID of the data attributed
  -- type -- colattrib or recattrib
  -- info -- column name for column attribution
  -- orgOID --when call showpubs.apg, use it for page return
 
---> 
+<?/MICOMMENT>
 
 
 <?MIVAR COND="$(NXST,$info)" NAME=$info><?/MIVAR>
@@ -24,7 +24,7 @@ Variables Expected:
 		select pub_mini_ref, p.zdb_id
 		  from record_attribution a, publication p
 		 where a.recattrib_data_zdb_id = '$dataId'
- 		   and a.recattrib_source_zdb_id = p.zdb_id;" >
+ 		   and a.recattrib_source_zdb_id = p.zdb_id;">
 
   	      <?MIVAR>$(IF,$(=,$MI_CURRENTROW,1),"(","; ")<?/MIVAR>	
 	      <?MIBLOCK COND="$(AND,$(NC,$1,NULL),$(NC,$1,empty))">
@@ -57,7 +57,7 @@ Variables Expected:
 	        	select p.zdb_id
 		          from record_attribution a, publication p
 		 	 where a.recattrib_data_zdb_id = '$dataId'
-		  	   and a.recattrib_source_zdb_id = p.zdb_id;" >
+		  	   and a.recattrib_source_zdb_id = p.zdb_id;">
 			
 		  <?MIVAR COND="$(XST,$UPDATE)">  
 
@@ -70,7 +70,7 @@ Variables Expected:
 	      <?/MIBLOCK>		
        <?/MISQL>
 	
-   <?/MIBLOCK> <!-- tier 1 or tier 2 -->
+   <?/MIBLOCK> <?MICOMMENT> tier 1 or tier 2 <?/MICOMMENT>
 
 
 <?MIELSE COND="$(EC,$type,colattrib)">
@@ -88,7 +88,7 @@ Variables Expected:
 		  from column_attribution a, publication p
 		 where a.colattrib_data_zdb_id = '$dataId'
 		   and a.colattrib_column_name = '$info'
-		   and a.colattrib_source_zdb_id = p.zdb_id;" >
+		   and a.colattrib_source_zdb_id = p.zdb_id;">
 
   	      <?MIVAR>$(IF,$(=,$MI_CURRENTROW,1),"(",";")<?/MIVAR>	
 	     
@@ -125,7 +125,7 @@ Variables Expected:
 		          from column_attribution a, publication p
 		 	 where a.colattrib_data_zdb_id = '$dataId'
 		  	   and a.colattrib_column_name = '$info'
-		  	   and a.colattrib_source_zdb_id = p.zdb_id;" >
+		  	   and a.colattrib_source_zdb_id = p.zdb_id;">
 
 		<?MIVAR COND="$(XST,$UPDATE)">  
 	
@@ -138,6 +138,6 @@ Variables Expected:
 	      <?/MIBLOCK>		
        <?/MISQL>
 	
-   <?/MIBLOCK> <!-- tier 1 or tier 2 -->
+   <?/MIBLOCK> <?MICOMMENT> end tier 1 or tier 2 <?/MICOMMENT>
 
-<?/MIBLOCK> <!--recattrib or colattrib -->
+<?/MIBLOCK> <?MICOMMENT> recattrib or colattrib <?/MICOMMENT>
