@@ -623,6 +623,19 @@ EFFECTS
 <?/MISQL>
 <?MIVAR>$(VECAPPEND,$xpatselqry_testCountVec,$MI_ROWCOUNT)<?/MIVAR>
 <?MIVAR>$(VECAPPEND,$xpatselqry_testNameVec,Select only expression patterns with images)<?/MIVAR>
+<?MISQL SQL="
+	update $xpatselqry_resultTable set xpat_ann_exist = 't'
+			where xpat_zdb_id in (select xpatstg_xpat_zdb_id
+				 	from expression_pattern_stage
+			        	where xpatstg_comments is not null);">
+<?/MISQL>
+<?MISQL SQL="
+	update $xpatselqry_resultTable set xpat_ann_exist = 't'
+			where xpat_zdb_id in (select xpatanat_xpat_zdb_id
+				 	from expression_pattern_anatomy);">
+<?/MISQL>
+
+
 <?MISQL COND="$(NC,$xpatselqry_matchTable,expression_pattern)" SQL="
   delete from $xpatselqry_matchTable">
 <?/MISQL>
