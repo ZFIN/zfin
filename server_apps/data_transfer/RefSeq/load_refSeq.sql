@@ -201,7 +201,7 @@ create temp table gdb_ortho_link
   )
 with no log;
 
---insert into gdb_ortho_link
+--add ZDB ids
 insert into gdb_ortho_link
     select *, get_id('DBLINK')
     from gdb_ortho_link_tmp;
@@ -228,15 +228,17 @@ create index gdb_lnkortho_zdb_id_index on gdb_ortho_link
 
 begin work;
 
+create temp table dblinkid
+  (
+    link_id 	varchar(80)
+  )
+with no log;
 
-!echo 'remove human LocusLink db_links'
-delete from db_link
-       where db_name = "LocusLink" 
-         and acc_num in (
-                 select lnkortho_acc_num 
-                 from gdb_ortho_link 
-             )
-         and dblink_zdb_id in (
+!echo 'remove automated links'
+insert into dblinkid
+select dblink_zdb_id
+       from db_link
+       where dblink_zdb_id in (
                  select recattrib_data_zdb_id 
                  from record_attribution
                  where recattrib_source_zdb_id = "ZDB-PUB-020723-3"
@@ -247,27 +249,12 @@ delete from db_link
                  where a.recattrib_source_zdb_id = "ZDB-PUB-020723-3"
                    and b.recattrib_source_zdb_id != "ZDB-PUB-020723-3"
                    and a.recattrib_data_zdb_id = b.recattrib_data_zdb_id
-      );
+             )
+;
+create index link_id_index on dblinkid 
+    (link_id) using btree in tempdbs1 ;
 
-!echo 'remove human automated OMIM links'
-delete from db_link
-       where db_name = "OMIM" 
-         and acc_num in (
-                 select lnkortho_acc_num 
-                 from gdb_omim_tmp 
-             )
-         and dblink_zdb_id in (
-                 select recattrib_data_zdb_id 
-                 from record_attribution
-                 where recattrib_source_zdb_id = "ZDB-PUB-020723-3"
-             )
-         and dblink_zdb_id not in (
-                 select a.recattrib_data_zdb_id 
-                 from record_attribution a, record_attribution b
-                 where a.recattrib_source_zdb_id = "ZDB-PUB-020723-3"
-                   and b.recattrib_source_zdb_id != "ZDB-PUB-020723-3"
-                   and a.recattrib_data_zdb_id = b.recattrib_data_zdb_id
-      );
+delete from zdb_active_data where zactvd_zdb_id in (select link_id from dblinkid);
 
 !echo 'get all LocusLink and OMIM db_links that remain'
 select * 
@@ -324,7 +311,7 @@ insert into record_attribution
       
 
 
--- END MGD --
+-- ------------------- END MGD ------------------- --
 
 
 
@@ -364,28 +351,6 @@ create index mgi_lnkortho_zdb_id_index on mgi_ortho_link
     (lnkortho_zdb_id) using btree;
 
 
-
-!echo 'remove mouse LocusLink db_links'
-delete from db_link
-       where db_name = "LocusLink" 
-         and acc_num in (
-                 select lnkortho_acc_num
-                 from mgi_ortho_link 
-             )
-         and dblink_zdb_id in (
-                 select recattrib_data_zdb_id 
-                 from record_attribution
-                 where recattrib_source_zdb_id = "ZDB-PUB-020723-3"
-             )
-         and dblink_zdb_id not in (
-                 select a.recattrib_data_zdb_id 
-                 from record_attribution a, record_attribution b
-                 where a.recattrib_source_zdb_id = "ZDB-PUB-020723-3"
-                   and b.recattrib_source_zdb_id != "ZDB-PUB-020723-3"
-                   and a.recattrib_data_zdb_id = b.recattrib_data_zdb_id
-      );
-
-
 !echo 'get all LocusLink db_links that remain'
   select * 
   from db_link 
@@ -417,40 +382,13 @@ insert into record_attribution
     where db_name = "LocusLink"
       and acc_num not in (select acc_num from locuslink_link);
 
--- END MGI --
+-- ----------------------  END MGI  ----------------------- --
 
 
 
---INSERT NEW DATA
-!echo 'remove RefSeq records'
-delete from db_link 
-where db_name = 'RefSeq' 
-  and dblink_zdb_id in (
-          select recattrib_data_zdb_id 
-          from record_attribution
-          where recattrib_source_zdb_id = "ZDB-PUB-020723-3"
-      );
+-- ----------------------  REFSEQ  ------------------------ --
 
-delete from db_link 
-where db_name = 'LocusLink' 
-  and acc_num in (
-          select b.acc_num 
-          from tmp_db_link b
-          where b.db_name = 'LocusLink'
-      )
-  and dblink_zdb_id in (
-          select recattrib_data_zdb_id 
-          from record_attribution
-          where recattrib_source_zdb_id = "ZDB-PUB-020723-3"
-      )
-  and dblink_zdb_id not in (
-          select a.recattrib_data_zdb_id 
-          from record_attribution a, record_attribution b
-          where a.recattrib_source_zdb_id = "ZDB-PUB-020723-3"
-            and b.recattrib_source_zdb_id != "ZDB-PUB-020723-3"
-            and a.recattrib_data_zdb_id = b.recattrib_data_zdb_id
-      );
-
+-- ------------------  add new links  ---------------------- --
 !echo 'add active data'
 insert into zdb_active_data select dblink_zdb_id from tmp_db_link;
 
@@ -473,7 +411,7 @@ insert into record_attribution
 ;
 
 
---UNI_GENE
+-- ------------------  UNI_GENE  ------------------- --
 !echo 'remove existing temp_db_link records'
 delete from tmp_db_link;
 
@@ -490,27 +428,7 @@ insert into tmp_db_link
     and llzdb_zdb_id = zactvd_zdb_id
 ;
 
---INSERT NEW DATA
-!echo 'remove UniGene records'
-delete from db_link where db_name = 'UniGene'
-  and acc_num in (
-          select b.acc_num 
-          from tmp_db_link b
-          where b.db_name = 'UniGene'
-      )
-  and dblink_zdb_id in (
-          select recattrib_data_zdb_id 
-          from record_attribution
-          where recattrib_source_zdb_id = "ZDB-PUB-020723-3"
-      )
-  and dblink_zdb_id not in (
-          select a.recattrib_data_zdb_id 
-          from record_attribution a, record_attribution b
-          where a.recattrib_source_zdb_id = "ZDB-PUB-020723-3"
-            and b.recattrib_source_zdb_id != "ZDB-PUB-020723-3"
-            and a.recattrib_data_zdb_id = b.recattrib_data_zdb_id
-      );
-
+-- ------------------ add new records ------------------ --
 !echo 'get all UniGene db_links that remain'
   select * 
   from db_link 
