@@ -32,6 +32,7 @@ public class mapimage {
 		Hashtable form = cgi.ReadParse(System.in);
 
 		String data;
+		String zmap_panels;
 		String selected_marker;
 		int w = 100;
 		int h = 100;
@@ -41,6 +42,8 @@ public class mapimage {
 		data = (String)form.get("data");
 		data = data.substring(0, data.length()-2);
 
+		zmap_panels = (String)form.get("from_panels");
+		
 		String table = "";
 		if (data.indexOf("ZMAP") > -1)
 			table = "zmap_pub_pan_mark";
@@ -76,6 +79,21 @@ public class mapimage {
 		   query_string = "select zdb_id, abbrevp, mtype, target_abbrev, lg_location::numeric(6,2), OR_lg, mghframework, metric from " + table + " where ("; 
 		}
 
+		String zpan_where = "";
+	   
+		if (zmap_panels != null) {
+			System.err.println("panels? --- " + zmap_panels + " ---");
+			zmap_panels = zmap_panels.substring(0, zmap_panels.length()-1);
+			StringTokenizer zTok = new StringTokenizer(zmap_panels,"|");
+			while (zTok.hasMoreTokens()) {
+				zpan_where = zpan_where + " (abbrevp like '%_" + zTok.nextToken() + "') or ";
+			}
+			zpan_where = zpan_where.substring(0,zpan_where.length()-3); //chop off the trailing 'AND'
+			zpan_where = zpan_where + ") and (";
+			query_string = query_string + zpan_where;
+		}
+
+		
 		boolean first = true;
 		String or = "";
 		while(sTok.hasMoreTokens()) {
