@@ -1080,6 +1080,56 @@ sub prefixedGenesHave1Est ($) {
 
 
 #---------------------------------------------------------------
+# expressionPatternHasMismatchedMarkerRelationship
+#
+# Each probe is associated with at most 1 gene.  Sometimes for
+# a given probe, the associated gene is not yet known so one is guessed
+# and entered into expression_pattern.
+#
+# Later, the gene might be identified and the (probe,gene) pair is
+# updated in marker_relationship, but not in expression_pattern.
+#
+# This test identifies any expresssion_pattern (probe,gene) pairs
+# that need to be updated based on marker_relationship.
+# 
+# 
+#Parameter
+# $      Email Address for recipients
+# 
+
+sub expressionPatternHasMismatchedMarkerRelationship ($) {
+
+  my $routineName = "expressionPatternHasMismatchedMarkerRelationship";
+
+  my $sql = "select xpat_zdb_id, xpat_probe_zdb_id, xpat_gene_zdb_id, 
+                    mrel_mrkr_1_zdb_id, mrel_zdb_id
+               from expression_pattern e, marker_relationship m
+              where xpat_probe_zdb_id = mrel_mrkr_2_zdb_id
+                and xpat_gene_zdb_id <> mrel_mrkr_1_zdb_id";
+
+  my @colDesc = ("xpat ZDB ID       ",
+		 "probe ZDB ID      ",
+		 "xpat gene         ",
+		 "mrel gene         ",
+		 "mrel ZDB ID       ");
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "For a given probe, expression_pattern gene is out-of-sync.";
+    my $errMsg = "$nRecords genes in expression_pattern need to be synchronized "
+		. "with marker_relationship.";
+
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
+  }
+  &recordResult($routineName, $nRecords); 
+} 
+
+
+
+#---------------------------------------------------------------
 # prefixedIbdGenesHave1Est
 #
 # This test esists solely to report prefixed genes that start with "id:"
@@ -2501,6 +2551,7 @@ if($daily) {
 
   expressionPatternStageWindowConsistent($xpatEmail);
   expressionPatternAnatomyStageWindowOverlapsAnatomyItem($xpatEmail);
+  expressionPatternHasMismatchedMarkerRelationship($xpatEmail);
 
   fishNameEqualLocusName($mutantEmail);
   fishAbbrevContainsFishAllele($mutantEmail);
