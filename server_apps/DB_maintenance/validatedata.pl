@@ -1689,6 +1689,13 @@ sub zdbObjectIsSourceDataCorrect($) {
 }
 
 #------------------------------------------------------------
+#zdbObjectHandledByGetObjName
+#
+# This ensures that the get_obj_name function is handling each object type
+# defined in the zdb_object_type table.  get_obj_name returns null if it 
+# does not recognize an object type.  It also flags an error (albeit a 
+# misleading one) if there are no rows in existence for that object type.
+#
 #Parameter
 # $      Email Address for recipients
 # 
