@@ -374,10 +374,20 @@ $1
   <?/MISQL>
 
   <?MISQL SQL="
+    execute function get_id('MAPDEL');">
+  <?/MISQL>
+  <?MIVAR NAME=$doselect_mapdel_zdb_id>$1<?/MIVAR>
+  <?MISQL SQL="
+    insert into zdb_active_data (zactvd_zdb_id)
+      values
+        ('$doselect_mapdel_zdb_id');">
+    <?/MISQL>
+  <?MISQL SQL="
     insert into mapped_deletion 
-	(marker_id, present_t, submitter, owner, OR_lg, allele)
+	(marker_id, present_t, submitter, owner, OR_lg, allele, mapdel_zdb_id)
       values 
-	('$new_oid', '$info', '$ZDB_ident', '$owner', '$lg', '$allele');">
+	('$new_oid', '$info', '$ZDB_ident', '$owner', '$lg', '$allele',
+	 '$doselect_mapdel_zdb_id');">
   <?/MISQL>
 
 <?/MIBLOCK>  
