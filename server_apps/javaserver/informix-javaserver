@@ -3,17 +3,17 @@
 # ted Feb. 28, 1998.
 # Hacked on by clif 12/23/99
 
-MACHINE_DIR=/research/zfin/chromix
+MACHINE_DIR=/private/apps
 
 # Note: The version of Java we run the Java Server under
 #	must match the version we compiled the libMISQL.so library
 #       under.  See the Makefile for the Java Server for details.
 JDK_DIR=/local/apps/jdk-1.1
 
-SERVER_HOME=$MACHINE_DIR/www/java/javaserver
+SERVER_HOME=$MACHINE_DIR/javaserver
 cd $SERVER_HOME
 
-INFORMIXDIR=$MACHINE_DIR/private/apps/Informix_B
+INFORMIXDIR=$MACHINE_DIR/Informix_B
 INFORMIXSERVER=chrom_b
 INFORMIXSQLHOSTS=$INFORMIXDIR/etc/sqlhosts.chrom
 
