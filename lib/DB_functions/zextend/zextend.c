@@ -11,6 +11,9 @@
 
 	Notes: Could be a little more efficent. Add in meaningfull error returns
 		Change text errors to standard error codes
+
+	$Author$	$Date$	$Revision$
+	$Source$
 */
 
 #include <stdio.h>
@@ -142,7 +145,10 @@ mi_lvarchar *sysexec(mi_lvarchar *cmd, mi_lvarchar *args) {
 
 	conn = mi_open(NULL, NULL, NULL);	/* Open connection */
 	if (conn == NULL) EXCEPTION("ERROR: conn is NULL\n");
-
+	
+if (0) {
+	if (sizeof(SYSMSG) + mi_get_varlen(cmd) >= MAXLEN)	/* Check size */
+		EXCEPTION("Command ID is too long");
 	sprintf (cmdbuf, SYSMSG, mi_lvarchar_to_string(cmd));	/* Build it */
 	if (send_sql(conn, &ss, cmdbuf) != 1)			/* Send it */
 		EXCEPTION("Invalid sysexec command");
@@ -150,11 +156,20 @@ mi_lvarchar *sysexec(mi_lvarchar *cmd, mi_lvarchar *args) {
 	if (!row) EXCEPTION("Can't get row from save set!");
 	mi_value(row, 0, &colval, &collen);
 
-	/* Build command */ /* NOTE: we should remove all special chars! */
-	if (strlen(colval) + mi_get_varlen(args) >= MAXLEN)
-		EXCEPTION("Command and args are too long");
-	sprintf(cmdbuf, "%s %s", colval, mi_lvarchar_to_string(args));
 
+	/*	NOTE: There are some SECURITY CONCERNS here. For starters we
+		should remove all special chars from the args list. Also we might
+		want to check the ownership and permissions of the command before
+		we execute it.
+	*/
+
+	/* Build command and force stderr to stdout, and exit value of zero */
+	if (strlen(colval) + mi_get_varlen(args) + 15 >= MAXLEN)
+		EXCEPTION("Command and args are too long");
+	sprintf(cmdbuf, "%s %s 2>&1; exit 0", colval, mi_lvarchar_to_string(args));
+} else {	/* TEST */
+	sprintf(cmdbuf, "%s %s 2>&1; exit 0", mi_lvarchar_to_string(cmd), mi_lvarchar_to_string(args));
+}
 	/* Exec command */
  	if (!(outf = popen(cmdbuf, "r")))
  		EXCEPTION("Can't execute command");
