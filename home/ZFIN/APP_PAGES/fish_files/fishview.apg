@@ -40,12 +40,6 @@ document.updater.action='/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi';
 document.updater.submit();
 }
 
-<?MIVAR>
-
-function deleteLinkage(mid,dist,lod) {
-window.location.search='?MIval=aa-do-fishupdate.apg&OID=$OID&attr=protocol&attr_type=special-alteration&old_value='+old_value+'&new_value='+new_value+'&alt_id='+alt_id
-}
-<?/MIVAR>
 </SCRIPT>
 </HEAD>
 
