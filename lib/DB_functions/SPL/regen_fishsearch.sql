@@ -17,6 +17,8 @@ create dba function "informix".regen_fishsearch()
 
   begin	-- master exception handler
 
+    define nrows integer;
+    
     on exception
       begin
 	-- Something terrible happened while creating the new table
@@ -29,11 +31,27 @@ create dba function "informix".regen_fishsearch()
 
 	drop table fishsearch_new;
 
+	update zdb_flag set zflag_is_on = 'f'
+		where zflag_name = "regen_fishsearch" 
+	 	  and zflag_is_on = 't'; 
+
 	return -1;
       end
     end exception;
+	
+    update zdb_flag set zflag_is_on = 't'
+	where zflag_name = "regen_fishsearch" 
+	 and zflag_is_on = 'f';
 
-    insert into lock_func values("fishsearch");	
+    let nrows = DBINFO('sqlca.sqlerrd2');
+
+    if (nrows == 0)	then
+	return 1;
+    end if
+ 			
+    update zdb_flag set zflag_last_modified = CURRENT
+	where zflag_name = "regen_fishsearch";
+			
 
     -- Create a new fishsearch table under a temp name, loaded with results 
     -- of a huge join across the underlying tables.
@@ -164,8 +182,6 @@ create dba function "informix".regen_fishsearch()
 
       grant select on fish_search to "public";
 
-	delete from lock_func where func_name = "fishsearch";
-    
     end -- Local exception handler
 
     commit work;
@@ -179,6 +195,14 @@ create dba function "informix".regen_fishsearch()
   update statistics high for table fish_search;
 
   commit work;
+
+
+  update zdb_flag set zflag_is_on = "f"
+	where zflag_name = "regen_fishsearch";
+	  
+  update zdb_flag set zflag_last_modified = CURRENT
+	where zflag_name = "regen_fishsearch";
+
 
   return 0;
 
