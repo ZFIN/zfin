@@ -30,7 +30,7 @@ MILIBS = -ldl -lsocket -lnsl -L$(LIBDIR) -lmi
 #  The lists of files
 #
 
-CONTROLFILES = Makefile enddef /etc/rc3.d/S90javaserver
+CONTROLFILES = Makefile enddef S90javaserver
 CLASSFILES = Server.class MIConnection.class Statement.class ResultSet.class SQLException.class
 OBJECTFILES = MIConnection.o Statement.o ResultSet.o MIConnectionImp.o
 
