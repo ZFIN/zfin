@@ -566,7 +566,6 @@
   <?/MIVAR>	 
   The mutant locus <b><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$1">$2 ($3) </A> </b> has been shown to correspond to GENE <b>$abbrev</b>. 
   <?MISQL SQL="select WebExplode(object,'dataId=$1&type=colattrib&info=cloned_gene') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
-  Please consult the locus record for further mapping information.
   <?/MIVAR>
   </TD>
   </TR></TABLE>
@@ -1142,7 +1141,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 <TABLE width="100%" bgcolor=<?MIVAR>"$highlight"<?/MIVAR>>
 <TR>
 <TD>
-&nbsp;&nbsp;<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+&nbsp;&nbsp;<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini&oID=$OID') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
 </TD>
 </TR>
 </TABLE>
