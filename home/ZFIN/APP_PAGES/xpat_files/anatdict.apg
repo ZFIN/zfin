@@ -103,11 +103,14 @@ function do_submit() {
      <FONT size=2><B>Developmental Stage:</B></FONT><BR>
      <SELECT name="OID" onChange="document.dictform.mode.value='stages'; document.dictform.submit();">
        <?MISQL SQL="
-		select unique stg_name_long, stg_hours_start, stg_hours_end, stg_zdb_id
-		from stage, anatomy_display
-		where stg_zdb_id = anatdisp_stg_zdb_id
-		order by stg_hours_start, stg_hours_end desc
-  	;">
+		select unique stg_name_long, 
+			stg_hours_start, 
+			stg_hours_end, 
+			stg_zdb_id
+		from stage
+		where exists (select anatdisp_stg_zdb_id
+				from anatomy_display)
+		order by stg_hours_start, stg_hours_end desc;">
          <OPTION VALUE="$4"$(IF,$(AND,$(XST,$OID),$(EC,$OID,$4)),SELECTED)> $1 </OPTION>
        <?/MISQL>
      </select>
@@ -199,9 +202,9 @@ function do_submit() {
 	 	  from data_alias 
 	 	  where dalias_data_zdb_id = anatitem_zdb_id) synonymcount, anatitem_name_order
 	FROM anatomy_item LEFT OUTER JOIN data_alias ON dalias_data_zdb_id = anatitem_zdb_id 
-	WHERE lower(anatitem_name) like lower('%$searchterm%')
-	   OR lower(anatitem_abbrev) like lower('%$searchterm%')
-	   OR lower(dalias_alias) like lower ('%$searchterm%') 
+	WHERE anatitem_name_lower like lower('%$searchterm%')
+	   OR anatitem_abbrev_lower like lower('%$searchterm%')
+	   OR dalias_alias_lower like lower ('%$searchterm%') 
         ORDER BY anatitem_name_order
      ;">
 
