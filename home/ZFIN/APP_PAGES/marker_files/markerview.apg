@@ -179,13 +179,16 @@ value=" DONE UPDATING. Back to Viewing! " onClick="document.location.search='?MI
   <?/MIVAR>
 <?/MIBLOCK>
 
-<?MIVAR COND="$(XST,$UPDATE)">
+<?MIVAR COND="$(AND,$(XST,$UPDATE),$(EC,$marker_type,GENE))">
 <INPUT TYPE=button value=Update onClick="doit('gene_name','text','Gene+Name')"> 
+<br><?/MIVAR>
+<?MIVAR COND="$(AND,$(XST,$UPDATE),$(NC,$marker_type,GENE))">
+<INPUT TYPE=button value=Update onClick="doit('marker_name','text','Marker+Name')"> 
 <br><?/MIVAR> 
 <?MIVAR>
 $(IF,$(EC,$marker_type,GENE),"<i>("$abbrev")</i>")</B> </FONT>
 <?/MIVAR>
-<?MIVAR COND="$(XST,$UPDATE)">
+<?MIVAR COND="$(AND,$(EC,$marker_type,GENE),$(XST,$UPDATE))">
 <INPUT TYPE=button value=Update onClick="doit('abbrev','text','Gene+Abbrev')"> 
 <?/MIVAR> 
 </CENTER>
