@@ -42,7 +42,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/lib/DB_functions
 
-SRCS = get_id.c get_obj_type.c zero_pad.c get_time.c
+SRCS = get_id.c get_obj_type.c zero_pad.c get_time.c scrub_char.c
 OBJS = $(foreach SRC, $(SRCS), $(patsubst %.c,%.so,$(SRC)))
 TARGETS = $(foreach OBJ, $(OBJS), $(patsubst %,$(TARGETDIR)/%,$(OBJ)))
 
@@ -58,7 +58,7 @@ LIBDIR = $(INFORMIXDIR)/lib
 
 # Use xcode because we are creating an so.  See cc man page for details.
 
-CFLAGS = -xcode=pic32 -xtarget=ultra2 -xarch=v9a
+CFLAGS = -xfast -xcode=pic32 -xtarget=ultra2 -xarch=v9a
 MICFLAGS = -DPLATFORM=solaris -g -DELF -v -DPOSIX_SIGNALS -DSOLARIS -I $(INCDIR)
 MILIBS = -lsocket -lnsl -L$(LIBDIR)
 
