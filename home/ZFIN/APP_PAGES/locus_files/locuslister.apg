@@ -157,7 +157,7 @@ $(SETVAR,$lab_id,$2)
 <!-- Everything is kosher, start the registration form (finished later). -->
 <?MIBLOCK COND="$(AND,$(EC,$duplicate_locus,f),$(EC,$duplicate_allele,f),$(EC,$malformed,f),$(EC,$bad_prefix,f))">
 
-No conflicts found! <IMG align=absmiddle SRC="/images/FACES/smile.happy.gif"></H2>
+No conflicts found! </H2>
 
 <BIG><B>Ready to register new locus, abbreviation and allele!</B></BIG>
 You may request to register this locus name/abbreviation  and allele designation in your name if you like. Clicking the submit button below will send your registration request to ZFIN staff; you will receive confirmation of registration within about a week. <p>
@@ -167,7 +167,7 @@ You may request to register this locus name/abbreviation  and allele designation
 <?/MIBLOCK>  <!-- everything kosher, Register new locus -->
 
 <?MIVAR COND="$(OR,$(NC,$duplicate_locus,f),$(NC,$duplicate_allele,f),$(NC,$malformed,f),$(NC,$bad_prefix,f))">
-Conflicts were found! <IMG align=absmiddle SRC="/images/FACES/smile.yuk.gif"></H2>
+Conflicts were found! </H2>
 <big><b>Unable to proceed!!</b></BIG>.
 There are one or more problems with your proposed submission. You will need to alter your proposed name or allele designation before you can proceed:
 <p>
@@ -193,7 +193,7 @@ with abbreviation
 
 <!-- Everything is kosher, let em do it -->
 <?MIBLOCK COND="$(AND,$(EC,$duplicate_locus,t),$(EC,$duplicate_allele,f),$(EC,$malformed,f),$(EC,$bad_prefix,f))">
- No conflicts found! <IMG align=absmiddle SRC="/images/FACES/smile.happy.gif"></H2>
+ No conflicts found! </H2>
 
 <B>Ready to register new allele designation for <?MIVAR>$fname<?/MIVAR> locus.</B>
 You may request to register this allele designation in your name if you like. Clicking the submit button below will send your registration request to ZFIN staff; you will receive confirmation of registration within a week. <p>
@@ -203,7 +203,7 @@ You may request to register this allele designation in your name if you like. Cl
 <?/MIBLOCK> <!-- Ends everything kosher, let register allele -->
 
 <?MIVAR COND="$(OR,$(NC,$duplicate_locus,t),$(NC,$duplicate_allele,f),$(NC,$malformed,f),$(NC,$bad_prefix,f))">
-Conflicts were found! <IMG align=absmiddle SRC="/images/FACES/smile.yuk.gif"></H2>
+Conflicts were found! </H2>
 <big><b>Unable to proceed!!</b></BIG>.
 There are one or more problems with your proposed submission. You will need to alter your proposed name or allele designation before you can proceed:
 <p>
