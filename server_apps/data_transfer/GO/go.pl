@@ -18,7 +18,7 @@ my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
 		      )
   || emailError("Failed while connecting to <!--|DB_NAME|--> "); 
 
-chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/GO/";
+chdir "<!--|ROOT_PATH|-->/home/data_transfer/GO/";
 
 $outFile = "gene_association.zfin";
 
@@ -85,7 +85,7 @@ sub sendReport()
     print MAIL "To: judys\@cs.uoregon.edu\n";
     print MAIL "Subject: GO report\n";
 
-    print MAIL "Path to GO file:\n\n<!--|ROOT_PATH|-->/server_apps/data_transfer/GO/$outFile";
+    print MAIL "Path to GO file:\n\n<!--|ROOT_PATH|-->/home/data_transfer/GO/$outFile";
     close (MAIL);
     $dbh->disconnect();
   }
