@@ -1,0 +1,94 @@
+<HTML>
+
+<HEAD>
+<basefont size=2>
+
+<SCRIPT>
+
+function show_doc(title,docpath) {
+   top.zfinhelp=open("/cgi-bin_B/webdriver?MIval=aa-docframes.apg&title="+title+"&docpath="+docpath,"helpwindow","scrollbars=yes,width=600,height=600");
+  top.zfinhelp.focus();
+}
+
+function check_submission(doAction) {
+ var acceptable=1;
+ var myform=document.ldata;
+ if ((myform.fname.value == '') || (myform.allele.value == '') ||
+     (myform.abbrev.value == '' && myform.fname.value.substr (0,2) != "df"))
+ {
+      acceptable=0;
+      window.alert('Incomplete submission!\n You must specify all three values: Locus name, abbreviation and allele designation!');
+ }
+ var glob=myform.fname.value+myform.abbrev.value+myform.allele.value;
+ if(glob != glob.toLowerCase()) {
+  acceptable=0;
+  window.alert('Nomenclature violation: Capitalization.\n Locus Name, Abbreviation and allele may not contain any upper case letters! \n Please correct and try again.');
+ }
+ var allele=myform.allele.value;
+ var starter=0;
+ if (allele.charAt(0)=='d') {starter=1}
+ if (isNaN(parseInt(allele.charAt(starter+1)),10)) {   // a two letter prefix
+    prefix=allele.substring(starter,starter+2);
+    suffix=allele.substring(starter+2);
+ } else {  // its a single letter prefix.
+    prefix=allele.charAt(starter);
+    if(!isNaN(parseInt(prefix))) {prefix='d'};
+    suffix=allele.substring(starter+1);
+ }
+ if(isNaN(parseInt(suffix.charAt(0)),10)) {
+    acceptable=0;
+    window.alert('Nomenclature Violation: Malformed Allele '+allele+'. \nAllele designations must begin with 1-2 letters, followed by a number. \nIn addition leading "d" is allowed to denote dominant alleles. \n Please review nomenclature guidelines and retry your submission.');
+ }
+ if (acceptable) { 
+    myform.doAction.value=doAction;
+    myform.prefix.value=prefix;
+    myform.submit(); 
+ }
+}
+</SCRIPT>
+
+
+<form name=ldata onSubmit="parent.pbrowser.document.location='/ZDBB/misc_html/saysearching.html'"  method=post TARGET="pbrowser" action="/cgi-bin_B/webdriver">
+
+<center>
+<FONT SIZE=3 color="#ff0000" > <B>REGISTER Locus and/or Allele designations</B></font>
+</center>
+<p>
+<big><b>Thank you</b></big> for taking the time to register your locus and allele designation.  If you have not yet published information about this mutant, the name you request will be reserved in your name for 6 months; please <a href="javascript:show_doc('ZFIN+Locus+Registration+Policy','/ZDBB/help_files/Locus-policy.html')"> review the ZFIN locus registration policy</a> for details.
+<p>
+<big> Please enter information on the locus name, abbreviation and allele designation you would like to reserve:</big>
+<TABLE width=100%>
+<TR>
+<TD><font size=-1><b>Locus name:</b> <input type=text value="" name=fname size=30 ></font></TD> 
+<TD><font size=-1><b>Abbrev:</b> <input type=text maxlength=6 value="" name=abbrev size=6 ></font></TD>
+<TD><font size=-1><b>Allele:</b> <input type=text maxlength=6 value="" name=allele size=5 ></font></TD>
+</TR>
+</TABLE>
+
+
+
+<TABLE width=100%>
+<TR><TD colspan=2><font size=-1>Please <A HREF="javascript:show_doc('Nomenclature','/zf_info/zfbook/chapt7/7.1.html');">review nomenclature guidelines</A> carefully before submitting!</font></TD></TR>
+<TR>
+<TD><font size=-1>
+<input type=button name=new_locus onClick="check_submission('new_locus');" value="Submit as new locus and allele">
+</font></TD>
+<TD><font size=-1>
+<input type=button onClick="check_submission('new_allele');" name=new_allele value="Submit as new allele of existing locus"></font>
+</TD>
+<TD><font size=-1>
+<input type=button name=new_allele value="Help!" onClick="show_doc('Registration+Help','/ZDBB/help_files/locus_intro.html')"></font>
+</TD>
+</TR>
+</TABLE>
+
+<input type=hidden name=MIval value=aa-locuslister.apg>
+<input type=hidden name=doAction value="">
+<input type=hidden name=prefix value="">
+
+
+</form>
+
+
+</HTML>
+
