@@ -965,14 +965,14 @@ None submitted.
   <?MISQL SQL="
    select ortho_name, ortho_abbrev, organism, b.DB_name,
          c.DB_query || b.acc_num, acc_num, a.zdb_id, 
-         d.organism_order, c.db_significance
+         d.organism_display_order, c.db_significance
     from orthologue a, OUTER (db_link b, foreign_DB c), organism d 
     where a.zdb_id = b.linked_recid 
       and b.DB_name = c.DB_name 
       and c_gene_id = '$OID' 
       and c.db_significance < 10
-      and a.organism = d.organism_name	
-    order by d.organism_order, c.db_significance;">
+      and a.organism = d.organism_common_name	
+    order by d.organism_display_order, c.db_significance;">
 	
    <?MIVAR NAME=$ortho_name>$1<?/MIVAR>
    <?MIVAR NAME=$ortho_abbrev>$2<?/MIVAR>
@@ -1011,7 +1011,7 @@ None submitted.
           <?MIVAR>$(SETVAR,$hasEv,1)<?/MIVAR>
 	  <?MIBLOCK INDEX=$item FOREACH=$oevcode>
     	   <?MIVAR>
-	    <TD colspan=$oevcount[$idx]><b>$item</b></TD>
+	    <TD colspan=$oevcount[$idx]><b><a href="/zf_info/oev.html">$item</a></b></TD>
 	    $(SETVAR,$idx,$(+,$idx,1))
            <?/MIVAR>         
  	   <?/MIBLOCK>
