@@ -297,7 +297,7 @@ public class MapViewer extends Canvas {
 		i = i + FM.stringWidth("RAPD ");
 
 //		i = FM.stringWidth("KEY:  ");
-		i = 12;
+		i = 1;
 
 		g.setColor(Marker.BAC_c);
 		g.drawString("BAC ", X+i, Y+24);
@@ -306,6 +306,10 @@ public class MapViewer extends Canvas {
 		g.setColor(Marker.FISH_c);
 		g.drawString("MUTANT ", X+i, Y+24);
 		i = i + FM.stringWidth("MUTANT ");
+
+                g.setColor(Marker.SNP_c);
+                g.drawString("SNP ", X+i, Y+24);
+                i = i + FM.stringWidth("SNP ");
 
 		g.setColor(Marker.GENE_c);
 		g.drawString("GENE ", X+i, Y+24);

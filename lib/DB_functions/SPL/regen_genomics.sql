@@ -194,7 +194,8 @@ create dba function "informix".regen_genomics() returning integer
 	     mm.map_name
 	from marker, mapped_marker mm, panels_new pn
 	where mm.marker_id = mrkr_zdb_id 
-	  and mm.refcross_id = pn.zdb_id;
+	  and mm.refcross_id = pn.zdb_id
+	  and mm.marker_type <> 'SNP';
 
     -- display all Tuebingen mutants on map_marker search 
     --  these will eventually be going in using the linked marker approach 
@@ -204,7 +205,8 @@ create dba function "informix".regen_genomics() returning integer
 	     b.scoring_data, b.framework_t, b.entry_date, b.map_name
 	from fish a, mapped_marker b, panels_new c
 	where b.marker_id = a.zdb_id 
-	  and b.refcross_id = c.zdb_id;
+	  and b.refcross_id = c.zdb_id
+          and b.marker_type <> 'SNP';
 
     -- Temporary ?? adjustment to get locus records into paneled_markers
     -- as well.  Suggested by Tom, approved by Judy, and implemented by Dave
@@ -217,8 +219,10 @@ create dba function "informix".regen_genomics() returning integer
 	     b.scoring_data, b.framework_t, b.entry_date, b.map_name
 	from locus a, mapped_marker b, panels_new c
 	where b.marker_id = a.zdb_id
-	  and b.refcross_id = c.zdb_id;
+	  and b.refcross_id = c.zdb_id
+	  and b.marker_type <> 'SNP';
 	
+    --update paneled_m_new set map_name = (select mrkr_abbrev from marker where mrkr_zdb_id = zdb_id)where mtype = 'SNP'; 
 
     update paneled_m_new 
       set map_name = NULL 
@@ -244,7 +248,8 @@ create dba function "informix".regen_genomics() returning integer
 	metric		varchar(5), 
 	target_abbrev	varchar(20),
 	mghframework	boolean,
-	target_id		varchar(50)
+	target_id		varchar(50),
+        map_name        varchar(20)  
 
 	-- public_paneled_markers does not have a primary key.
       )
@@ -255,7 +260,7 @@ create dba function "informix".regen_genomics() returning integer
 
     insert into public_paneled_m_new
       select mrkr_zdb_id, mrkr_abbrev, mrkr_type, mm.OR_lg, mm.lg_location,
-	     mm.metric, pn.abbrev, 'f'::boolean, mm.refcross_id
+	     mm.metric, pn.abbrev, 'f'::boolean, mm.refcross_id, mm.map_name
 	from marker, mapped_marker mm, panels_new pn
 	where mm.marker_id = mrkr_zdb_id
 	  and mm.refcross_id = pn.zdb_id
@@ -285,7 +290,7 @@ create dba function "informix".regen_genomics() returning integer
     --  these will eventually be going in using the linked marker approach 
     insert into public_paneled_m_new
       select a.zdb_id, a.allele, 'MUTANT', b.OR_lg,
-	     b.lg_location, b.metric, c.abbrev, 'f'::boolean, b.refcross_id
+	     b.lg_location, b.metric, c.abbrev, 'f'::boolean, b.refcross_id,b.map_name
 	from fish a, mapped_marker b, panels_new c
 	where b.marker_id = a.zdb_id 
 	  and b.refcross_id = c.zdb_id
@@ -297,7 +302,7 @@ create dba function "informix".regen_genomics() returning integer
 
     insert into public_paneled_m_new
       select a.zdb_id, a.abbrev, 'MUTANT', b.or_lg, b.lg_location, b.metric,
-	     c.abbrev, 'f'::boolean, b.refcross_id 
+	     c.abbrev, 'f'::boolean, b.refcross_id , b.map_name
 	from locus a, mapped_marker b, panels_new c
 	where b.marker_id = a.zdb_id and b.refcross_id = c.zdb_id
 	  and b.private = 'f';
@@ -311,6 +316,18 @@ create dba function "informix".regen_genomics() returning integer
 		where public_paneled_m_new.zdb_id = b.marker_id  
 		  and b.refcross_id = 'ZDB-REFCROSS-980521-11'
 		  and b.marker_type = 'SSLP' );
+
+    -- get SNP names onto the map
+
+    insert into public_paneled_m_new
+      select mm.marker_id,mm.map_name, mm.marker_type, mm.OR_lg, mm.lg_location,
+             mm.metric, pn.abbrev, 'f'::boolean, mm.refcross_id, mrkr_abbrev
+        from marker, mapped_marker mm, panels_new pn
+        where mm.marker_type = 'SNP'
+          and mm.refcross_id = pn.zdb_id
+          and mm.private = 'f'
+	  and mrkr_zdb_id = mm.marker_id;
+
 
 
     -- to add connecting lines to the mapper between genes & ests commom 
@@ -420,6 +437,9 @@ create dba function "informix".regen_genomics() returning integer
     where dalias_data_zdb_id = zdb_id
     into temp amnn with no log;
     
+
+   let errorHint = "all_map_names-known_correspondance";
+
     create index amnn_tmp_index
         on amnn (allmapnm_name, allmapnm_zdb_id)
         in idxdbs1;
@@ -447,6 +467,9 @@ create dba function "informix".regen_genomics() returning integer
     -- For genes also include orthologue names and abbrevs as possible names.
     -- Ken says not to include the orthologue accession numbers in this table.
     -- Judy and Dave agree.
+
+    let errorHint = "all_map_names-orthologs";
+
     insert into amnn
     select distinct lower(ortho_name) allmapnm_name, c_gene_id allmapnm_zdb_id, 11 allmapnm_significance
     from orthologue
@@ -466,6 +489,7 @@ create dba function "informix".regen_genomics() returning integer
 
     drop table amnn;
     
+    let errorHint = "all_map_names-accession_numbers";
 
     -- Finally, extract out accession numbers for other databases from db_links
     -- for any ZDB object that has at least one record in the all_map_names 
