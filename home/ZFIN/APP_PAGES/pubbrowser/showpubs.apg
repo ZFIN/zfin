@@ -623,7 +623,13 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 		then fish.abbrev
 	     else
 		locus.abbrev
-	     end as stock_abbrev, xpat_stock_zdb_id
+	     end as stock_abbrev,
+	     case
+		when fish.abbrev is not null
+		then 'aa-fishview.apg'
+	    else
+		'aa-locusview.apg'
+	    end as stock_page, xpat_stock_zdb_id
 	from publication, record_attribution, expression_pattern
 	     left outer join fish on xpat_stock_zdb_id = fish.zdb_id
 	     left outer join locus on xpat_stock_zdb_id = locus.zdb_id 
@@ -631,7 +637,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 	  and recattrib_source_zdb_id = publication.zdb_id          
           and recattrib_data_zdb_id = xpat_zdb_id
           and xpat_gene_zdb_id = '$OID'
-        group by publication.zdb_id, 2, authors, source, 5, 6, 7, 8, 9
+        group by publication.zdb_id, 2, authors, source, 5, 6, 7, 8, 9, 10
 	order by authors_lower">
       <?MIVAR NAME=$showpubs_pub_zdb_id>$1<?/MIVAR>
       <?MIVAR NAME=$showpubs_pub_year>$2<?/MIVAR>
@@ -640,7 +646,8 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
       <?MIVAR NAME=$showpubs_xpat_zdb_id>$6<?/MIVAR>
       <?MIVAR NAME=$showpubs_xpat_assay_name>$7<?/MIVAR>
       <?MIVAR NAME=$showpubs_stock_abbrev>$8<?/MIVAR>
-      <?MIVAR NAME=$showpubs_stock_zdb_id>$9<?/MIVAR>
+      <?MIVAR NAME=$showpubs_stock_page>$9<?/MIVAR>
+      <?MIVAR NAME=$showpubs_stock_zdb_id>$10<?/MIVAR>
 
       <?MIBLOCK COND="$(AND,$(>,$MI_CURRENTROW,1),$(NE,$last_pub_id,$showpubs_pub_zdb_id))">
          <?MIVAR NAME=$rowcolor>$(IF,$(EC,$rowcolor,$highlight),#FFFFFF,$highlight)<?/MIVAR>
@@ -662,7 +669,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 
         <TD valign=top> 
 	  <?MIVAR>
-           <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$showpubs_stock_zdb_id">$showpubs_stock_abbrev</A>
+           <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$showpubs_stock_page&OID=$showpubs_stock_zdb_id">$showpubs_stock_abbrev</A>
           <?/MIVAR>         
         </TD> 
  
