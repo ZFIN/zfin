@@ -20,7 +20,8 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/GO
 
-GENERICS = go.pl check-gene-association.pl goparser.pl 
+GENERICS = go.pl check-gene-association.pl goparser.pl
+STATICS  = gofile.sql
 
 # Define targets that require special handling.  
 
@@ -45,5 +46,5 @@ $(HTTP_DATA_TRANSFER_DIR) :
 
 # Run the GO script.
 
-run : $(TARGETDIR)/go.pl 
-	$(TARGETDIR)/go.pl 
+run : all
+	cd $(TARGETDIR); ./go.pl 
