@@ -8,6 +8,9 @@
 # exist in the file system.  Moves orphaned files from main loadUp 
 # directories to bkup file.
 # calls rsync.pl to sync production and development
+# Script will check whichever db is named in the sourced .tt file of the 
+# calling environment.  When running daily on production, it will check 
+# zfindb.
 
 # INPUT VARS: none
 # OUTPUT VARS: email to informix telling of changes made.
@@ -285,9 +288,11 @@ $count_pdfs++ while <ORPHAN_PDF_FILES>;
 close ORPHAN_PDF_FILES;
 close ORPHAN_IMAGE_FILES;
 
+#----------------------END MAIN------------------------#
+
 #----------------------START RSYNC---------------------#
 
-print "starting rsync...\n" ;
+#print "starting rsync...\n" ;
 
 # call rsync to sync production filesystem (after the orphan files have been
 # moved) to the development filesystem.  This means removing files that aren't
@@ -295,6 +300,7 @@ print "starting rsync...\n" ;
 # that are on production but not on development.  Rsync.pl skips the bkup 
 # directory.
 
-system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/rsync.pl")  or die "can not call rsync.pl";
+#system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/rsync.pl")  or die "can not call rsync.pl";
+
 
 exit;
