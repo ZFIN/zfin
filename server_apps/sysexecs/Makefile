@@ -30,7 +30,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/sysexecs
 
-SUBDIRS = encryptpass
+SUBDIRS = encryptpass make_thumbnail
 
 # There are no local targets
 
