@@ -20,7 +20,8 @@
 
 	Notes: Could be a little more efficent. Add in meaningfull error returns
 		Change text errors to standard error codes
-
+    webhtml_like   converts an html datatype to lvarchar and looks for the occ		urence of a specified string within the retrieved value. Returns true or 	  false.  Mimics the sql "like".
+		
 	$Author$	$Date$	$Revision$
 	$Source$
 */
@@ -493,6 +494,10 @@ HTML *html_breaks_html (HTML *html) {
 	return html;
 }
 
+/*	html_compare Takes in an HTML data type and converts it to an LVARCHAR and then performs a string search for specified text.  The conversion to lvarchar datatype is as described in Chapter 14 of Web Datablade Module Application Developer's Guide 4.0. */
+
+
+
 
 /*	now		Returns the current datetime something like the
 	Illustra now.
@@ -595,7 +600,7 @@ mi_lvarchar *get_random_cookie () {
     }
 
 
-    /* Convert in_hash to printable characters
+    /* Converting_hash to printable characters
     */
     for (i = j = 0; j < COOKIE_LENGTH; i += 3)
     {
@@ -718,3 +723,46 @@ static int get_results (MI_CONNECTION *conn, MI_SAVE_SET *ss) {
 		EXCEPTION(buf);
 		EXCEPTION(mi_column_name(mi_get_row_desc(row), 0));
 */
+
+
+/*	webhtml_like   Converts webhtml datatype to lvarchar and then looks for the occurence of a string within the string.  Comparable to a sql like. HTML <-> lvarchar conversion is described in Chapter 14 of Web Datablade Module Application Developer's Guide 4.0.
+*/
+
+
+mi_boolean webhtml_like (HTML *html, mi_lvarchar *lstr ) {
+	mi_lvarchar	*text;
+	char	*db_str,  *like_str, *p;
+	MI_CONNECTION *conn;			/* The connection to the server */
+	MI_FUNC_DESC *htmlFuncDesc;	/* Descriptor for a WebBlade API function */
+	mi_integer error;			/* Error return from some MI_* calls */
+    mi_boolean found;
+	
+	conn = mi_open (NULL, NULL, NULL);
+	CHECK (conn != NULL, "Couldn't open connection");
+	
+	htmlFuncDesc = mi_routine_get (conn, 0, "function WebHtmlToBuf(html)");
+	CHECK (htmlFuncDesc != NULL, "Couldn't get descriptor for WebHtmlToBuf");
+	text = mi_routine_exec (conn, htmlFuncDesc, &error, html);
+	CHECK (error != MI_ERROR, "WebHtmlToBuf returned error");
+	mi_routine_end (conn, htmlFuncDesc);
+
+	mi_var_free (html);
+
+	if (	!(db_str = mi_lvarchar_to_string(lower(text))) ||
+		!(like_str =  mi_lvarchar_to_string(lower(lstr))) ) NO_MEMORY(webhmtl_like);
+	
+	if (p = strstr(db_str,like_str))	{
+		found = '\1';
+	}
+	else 
+	{
+	    found = '\0';
+	}
+	
+	mi_var_free(text);
+    mi_free (db_str);
+	mi_free (like_str);
+
+	mi_close (conn);
+	return found;
+}
