@@ -1,0 +1,155 @@
+<?MICOMMENT>
+
+FILE:     getPubStructureListItem.apg
+PREFIX:   gPSLitem
+
+Verify structure and stage range overlap. Return an xpatres_zdb_id if the stage range 
+is valid and the empty string if the range is invalid.
+
+GLOBAL:
+  $OID  publication zdb_id
+  
+INPUT VARS:
+  $gPSLitem_anatitem_zdb_id     stucture ZDB-ID
+  $gPSLitem_expressed           t or f
+  $gPSLitem_stg_start_zdb_id    stage ZDB
+  $gPSLitem_stg_end_zdb_id      stage ZDB
+  $gPSLitem_xpatex_zdb_id       experiment ZDB
+  $gPSLitem_comment             text (optional)
+
+OUTPUT VARS:
+  $gPSLitem_xpatres_zdb_id      xpatres_zdb_id
+
+OUTPUT:
+  None
+
+EFFECTS  
+  If the expression result record does not exist...
+  Insert a record into fx_expression_results and a record into expression_pattern_infrastructure.
+  
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
+<?MIVAR>$(UNSETVAR,$gPSLitem_xpatres_zdb_id)<?/MIVAR>
+<?MIVAR COND=$(NXST,$gPSLitem_comment) NAME=gPSLitem_comment><?/MIVAR>
+
+<?MISQL SQL="execute function anatitem_overlaps_stg_window('$gPSLitem_anatitem_zdb_id','$gPSLitem_stg_start_zdb_id','$gPSLitem_stg_end_zdb_id');"><?/MISQL>
+
+<?MIBLOCK COND=$(EC,$1,t)>
+
+  <?MICOMMENT> Is the item a TOD/GELI member. <?/MICOMMENT>
+  <?MISQL SQL="
+    select xpatres_zdb_id
+    from fx_expression_result, record_attribution
+    where xpatres_anat_item_zdb_id = '$gPSLitem_anatitem_zdb_id'
+      and xpatres_expression_found = '$gPSLitem_expressed'
+      and xpatres_start_stg_zdb_id = '$gPSLitem_stg_start_zdb_id'
+      and xpatres_end_stg_zdb_id = '$gPSLitem_stg_end_zdb_id'
+      and xpatres_zdb_id = recattrib_data_zdb_id
+      and recattrib_source_zdb_id = '$OID'
+    ;">
+    <?MIVAR NAME=gPSLitem_xpatres_zdb_id>$1<?/MIVAR>
+  <?/MISQL>
+
+  <?MIBLOCK COND=$(XST,$gPSLitem_xpatres_zdb_id)>
+    <?MICOMMENT>List item found. Remove the record_attribution. <?/MICOMMENT>
+    <?MISQL SQL="
+      delete from record_attribution where recattrib_data_zdb_id = '$gPSLitem_xpatres_zdb_id' and recattrib_source_zdb_id = '$OID';">
+    <?/MISQL>
+    
+  <?MIELSE>
+    <?MICOMMENT>Not a TOD/GELI item. <?/MICOMMENT>
+  
+    <?MICOMMENT>Does the item exist in expression result.<?/MICOMMENT>
+    <?MISQL SQL="
+      select xpatres_zdb_id
+      from fx_expression_result
+      where xpatres_xpatex_zdb_id = '$gPSLitem_xpatex_zdb_id'
+        and xpatres_anat_item_zdb_id = '$gPSLitem_anatitem_zdb_id'
+        and xpatres_start_stg_zdb_id = '$gPSLitem_stg_start_zdb_id'
+        and xpatres_end_stg_zdb_id = '$gPSLitem_stg_end_zdb_id'
+        and xpatres_expression_found = '$gPSLitem_expressed'
+      ;">
+      <?MIVAR NAME=gPSLitem_xpatres_zdb_id>$1<?/MIVAR>
+    <?/MISQL>
+ 
+    <?MIBLOCK COND=$(NXST,$gPSLitem_xpatres_zdb_id)>
+      <?MICOMMENT>Create a new record. Add the record to zdb_active_data. <?/MICOMMENT>
+      <?MICOMMENT> ==| Get next ZDB-ID |== <?/MICOMMENT>
+      <?MISQL SQL="execute function get_id('XPATRES');">$(SETVAR,$gPSLitem_xpatres_zdb_id,$1)<?/MISQL>
+    
+      <?MICOMMENT> ==| Add New ZDB-ID |== <?/MICOMMENT>  
+      <?MISQL SQL="INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES('$gPSLitem_xpatres_zdb_id');"><?/MISQL>
+
+      <?MISQL SQL="
+        INSERT into fx_expression_result(
+          xpatres_zdb_id,
+          xpatres_xpatex_zdb_id,
+          xpatres_anat_item_zdb_id,
+          xpatres_start_stg_zdb_id,
+          xpatres_end_stg_zdb_id,
+          xpatres_expression_found,
+          xpatres_comments)
+        VALUES ( 
+          '$gPSLitem_xpatres_zdb_id',
+          '$gPSLitem_xpatex_zdb_id',
+          '$gPSLitem_anatitem_zdb_id',
+          '$gPSLitem_stg_start_zdb_id',
+          '$gPSLitem_stg_end_zdb_id',
+          '$gPSLitem_expressed',
+          '$gPSLitem_comment ' || TODAY || ' xpatcuration')
+        ;">
+      <?/MISQL> 
+    <?/MIBLOCK>
+  <?/MIBLOCK>  
+
+  <?MISQL SQL="
+      select count(*) 
+      from expression_pattern_infrastructure 
+      where xpatinf_pub_zdb_id = '$OID'
+        and xpatinf_anatitem_zdb_id = '$gPSLitem_anatitem_zdb_id'
+        and xpatinf_expressed = '$gPSLitem_expressed';">
+  <?/MISQL>
+  
+  <?MIBLOCK COND=$(EC,$1,0)>
+
+    <?MICOMMENT> ==| Get next ZDB-ID |== <?/MICOMMENT>
+    <?MISQL SQL="execute function get_id('XPATINF');">$(SETVAR,$gPSLitem_xpatinf_zdb_id,$1)<?/MISQL>
+     
+    <?MICOMMENT> ==| Add New XPATINF |== <?/MICOMMENT>  
+    <?MISQL SQL="INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES('$gPSLitem_xpatinf_zdb_id');"><?/MISQL>   
+    <?MISQL SQL="
+      INSERT INTO expression_pattern_infrastructure (
+          xpatinf_zdb_id,
+          xpatinf_curator_zdb_id,
+          xpatinf_pub_zdb_id,
+          xpatinf_anatitem_zdb_id,
+          xpatinf_expressed,
+          xpatinf_date )
+      VALUES (
+          '$gPSLitem_xpatinf_zdb_id',
+          '$ZDB_ident', 
+          '$OID', 
+          '$gPSLitem_anatitem_zdb_id',
+          '$gPSLitem_expressed',
+          TODAY);">
+    <?/MISQL>
+  <?/MIBLOCK>
+
+<?MIELSE>
+  <?MISQL SQL="select anatitem_name from anatomy_item where anatitem_zdb_id = '$gPSLitem_anatitem_zdb_id';"><?/MISQL>
+  <SCRIPT>
+    alert("The stage range selected does not overlap with the defined range for item <?MIVAR>'$1'.<?/MIVAR>")
+  </SCRIPT>
+
+  <?MIVAR NAME=gPSLitem_xpatres_zdb_id><?/MIVAR>
+<?/MIBLOCK>
