@@ -22,13 +22,15 @@
                 name,
                 panel_date,
                 ptype,
-                b.mtype,
+                panelcnt_mrkr_type,
                 a.abbrev,
-                count(*)::integer,
+                SUM(panelcnt_count),
                 day(panel_date), month(panel_date), year(panel_date)
-        from panels a, public_paneled_markers b
-        where a.abbrev = b.target_abbrev
-        group by  name, panel_date, ptype, a.zdb_id, mtype,a.abbrev
+        from panels a, panel_count b
+        where a.zdb_id = b.panelcnt_panel_zdb_id
+          and panelcnt_mrkr_type <> 'SNP'
+        group by  name, panel_date, ptype, a.zdb_id, panelcnt_mrkr_type,a.abbrev
+
         union
         select target_id,
                 name,

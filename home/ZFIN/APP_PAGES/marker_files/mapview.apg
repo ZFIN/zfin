@@ -2,7 +2,13 @@
 
 <!-- if mapping specific marker -->
 <?MIBLOCK COND="$(NC,$marker,NULL)">
-<?MISQL SQL="select target_id,target_abbrev,OR_lg,mname,mtype,abbrev from paneled_markers where zdb_id='$marker' and target_id='$panel_id';"><?/MISQL>
+<?MISQL SQL="
+	select refcross_id, p.abbrev, or_lg, mrkr_name,mrkr_type,mrkr_abbrev 	
+	from mapped_marker, marker, panels p
+	where marker_id='$marker' 
+	and refcross_id='$panel_id'
+	and refcross_id = p.zdb_id
+	and marker_id = mrkr_zdb_id ;"><?/MISQL>
 
 <?MIVAR NAME=$mname>$4<?/MIVAR>
 <?MIVAR NAME=$panel_abbrev>$2<?/MIVAR>

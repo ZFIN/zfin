@@ -179,7 +179,13 @@ ERROR -- something bad happened -- no OID passed in!
       <TR>
       <TD><b>Current source of genetic material for mapping:</b> 
       <?MIBLOCK COND="$(NC,$source,NULL)">
-      <?MISQL SQL="select name from sources where zdb_id='$source';">
+      <?MISQL SQL="
+		   select full_name from person where zdb_id='$source'
+		union 
+		   select name from lab where zdb_id = '$source'
+		union 
+		   select name from company where zdb_id = '$source'
+		;">
       <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sourceview.apg&OID=$source">$1</A>
       <?/MISQL>
       <?/MIBLOCK>
@@ -209,13 +215,17 @@ ERROR -- something bad happened -- no OID passed in!
       <p>
       <b>Markers:</B>
       <ul>
-      <?MIVAR NAME=$mcount>0<?/MIVAR>
+      <?MIVAR NAME=$mcount>0<?/MIVAR>	
 
       <?MIBLOCK COND="$(NC,$abbrev,ZMAP)">
-	<?MISQL SQL="select mtype,count(*)::integer from public_paneled_markers a , panels b  where  a.target_abbrev = b.abbrev and b.zdb_id='$OID'  group by mtype;">
+	<?MISQL SQL="select panelcnt_mrkr_type, SUM(panelcnt_count)
+			from panel_count
+		       where panelcnt_panel_zdb_id = '$OID'
+		     group by panelcnt_mrkr_type	
+			;">
 	$(IF,$(NC,$MI_CURRENTROW,1),"<br>")
 	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&refcross=$OID&marker_type=$1">$1</A> (total of $2)
-	$(SETVAR,$mcount,$(+,$mcount,$2))
+        $(IF,$(NC,$1,SNP),$(SETVAR,$mcount,$(+,$mcount,$2)))
 	<?/MISQL>
 	</ul>
       <?/MIBLOCK>
@@ -261,7 +271,11 @@ ERROR -- something bad happened -- no OID passed in!
 
 
       <?MIBLOCK COND="$(NC,$abbrev,ZMAP)">
-	<?MISQL SQL="select OR_lg,mtype,count(*)::integer,lg_order from public_paneled_markers a , panels b, linkage_group c  where a.target_abbrev = b.abbrev and  b.zdb_id='$OID' and a.OR_lg = c.lg_name group by OR_lg,mtype,lg_order order by lg_order;">
+	<?MISQL SQL="select panelcnt_or_lg,panelcnt_mrkr_type,panelcnt_count,lg_order 
+		       from panel_count, linkage_group c  
+		      where panelcnt_panel_zdb_id='$OID'
+			and panelcnt_or_lg = c.lg_name 
+		   order by lg_order;">
 
 	  <?MIBLOCK COND="$(AND,$(>,$1,$last),$(>,$MI_CURRENTROW,1))">
 	    <?MIVAR>

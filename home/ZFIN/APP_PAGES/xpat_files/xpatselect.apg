@@ -153,11 +153,8 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 <?MIVAR COND="$(NXST,$gene_lg)" NAME=$gene_lg>0<?/MIVAR>
 
 
-
-
-
-
-<?MIBLOCK COND="$(XST,$query_results)">
+<!--*** $pubId is from the data link on publication page -->
+<?MIBLOCK COND="$(OR,$(XST,$query_results),$(XST,$pubId))">
 
 
 <?MISQL SQL="
@@ -272,14 +269,14 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 
 	<!-- query constraint for gene_name -->
 
-<?MIBLOCK COND="$(XST,$gene_name)">
-  <?MIVAR NAME=$gene_name DELIMIT="'" REPLACE="''">$gene_name<?/MIVAR>
+<?MIBLOCK COND="$(XST,$gene_name)">	
+  <?MIVAR NAME=$gene_name DELIMIT="'" REPLACE="''">$gene_name<?/MIVAR>	
   <?MIVAR NAME=$wild_card><?/MIVAR>
   <?MIVAR NAME=$operator>=<?/MIVAR>
   <?MIVAR NAME=$searchtype DEFAULT=equals>$searchtype<?/MIVAR>
 
   <?MIBLOCK COND="$(NC,$searchtype,equals)">
-    <?MIVAR COND"$(EC,$searchtype,contains) NAME=$wild_card>%<?/MIVAR>
+    <?MIVAR COND="$(EC,$searchtype,contains)" NAME=$wild_card>%<?/MIVAR>
 
     <?MIVAR NAME=$query_where>$query_where 
       and ( mrkr_name like '$wild_card$(LOWER,$gene_name)%'
@@ -366,9 +363,16 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 <?/MIBLOCK>
 
 <?MIBLOCK COND="$(NE,$gene_lg,0)">
-  <?MIVAR NAME=$query_from>$query_from, all_mapped_markers amm<?/MIVAR>
-  <?MIVAR NAME=$query_where>$query_where and mrkr_zdb_id = amm.zdb_id 
-                           and amm.OR_lg = '$gene_lg'<?/MIVAR>
+  
+  <?MIVAR NAME=$query_where>$query_where and 
+		(mrkr_zdb_id in (select lnkgmem_member_zdb_id
+				from linkage, linkage_member 
+                                where lnkg_or_lg = '$gene_lg'
+				  and lnkg_zdb_id = lnkgmem_member_zdb_id)
+		 or mrkr_zdb_id in (		
+				select marker_id
+				from mapped_marker
+				where or_lg = '$gene_lg')) <?/MIVAR>
 <?/MIBLOCK>
 
 
@@ -382,6 +386,12 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
     and mrel_mrkr_2_zdb_id = xp.xpat_probe_zdb_id
     $query_where
 <?/MIVAR>
+
+<?MIVAR NAME=$query_where_without_mrel>
+  where mrkr_zdb_id = xp.xpat_probe_zdb_id
+    $query_where
+<?/MIVAR>
+
 <!-- RETRIEVE AND DISPLAY ALL MATCHING ENTRIES. -->
 
 
@@ -416,6 +426,29 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
                          ,$MI_CURRENTROW,$1))
   <?/MIVAR>
 
+<!--***-->
+<?MIBLOCK COND="$(XST,$pubId)">
+ <?MISQL SQL="
+	select count(recattrib_data_zdb_id)::integer
+	 from  record_attribution
+	 where recattrib_source_zdb_id = '$pubId'
+	  and  get_obj_type(recattrib_data_zdb_id) = 'XPAT';
+	">
+ <?/MISQL> 
+ <?MIVAR NAME=num_recs>$1<?/MIVAR>
+ <table width=100% border=0>	
+  <tr>
+   <td align=center>
+      <font size="+1">Gene Expression Data List<br>
+      <?MIVAR> 
+	(<b>$num_recs</b> record(s) found.)</font>
+      <?/MIVAR>
+   </td>
+  </tr>
+ </table>
+
+<?MIELSE> 
+
 <table width=100% border=0>
   <tr>
     <td width=20%>&nbsp;</td>
@@ -434,7 +467,7 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
     </td>
   </tr>
 </table>
-
+<?/MIBLOCK>
 
 	<!-- do not display results -->
 <?MIBLOCK COND="$(=,1,1)">
@@ -498,19 +531,42 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
   <?MIVAR NAME=$query_grp_by>$query_grp_by, mrkr_name, mrkr_abbrev, mrkr_type, mrkr_abbrev_order<?/MIVAR> 
 <?/MIBLOCK>
 
-<?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
-  select $(IF,$(EC,$structure_bool,or),distinct )mrkr_zdb_id, mrkr_type, mrkr_abbrev_order, mrkr_name, mrkr_abbrev
+<!--***-->
+<?MIVAR COND="$(XST,$pubId)" NAME=sql>
+  select mrkr_zdb_id, mrkr_type, mrkr_abbrev_order, mrkr_name, mrkr_abbrev
+    from marker a, expression_pattern b, record_attribution,marker_relationship
+   where recattrib_source_zdb_id = '$pubId'
+     and recattrib_data_zdb_id = b.xpat_zdb_id
+     and xpat_probe_zdb_id = mrel_mrkr_2_zdb_id
+     and mrel_mrkr_1_zdb_id = a.mrkr_zdb_id	
+  order by 2 desc, 3
+<?/MIVAR>
+
+<!--*** add time order -->
+<!-- can only use column number in ORDER BY with UNION--> 
+<?MIVAR NAME=ordr_by>order by 2 desc, 3<?/MIVAR>
+<?MIVAR COND="$(AND,$(XST,$order),$(EC,$order,date))">
+  $(SETVAR,$ordr_by, "order by 6 desc, 2 desc, 3")
+<?/MIVAR>
+
+<?MIVAR COND="$(NXST,$pubId)" NAME=sql>
+  select $(IF,$(EC,$structure_bool,or),distinct )mrkr_zdb_id, mrkr_type, mrkr_abbrev_order, mrkr_name, mrkr_abbrev, xpat_direct_submission_date
   $query_from, marker_relationship
   $query_where_with_mrel
   $(IF,$(XST,$query_grp_by),$query_grp_by $query_hvng)
-  order by 2 desc, 3
-";>
+  $ordr_by
+<?/MIVAR>
+
+
+<?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
+  $sql
+ ";>
 
   <?MIVAR NAME=$GENE_OID>$1<?/MIVAR>
   <?MIVAR NAME=$GENE_NAME>$4<?/MIVAR>
   <?MIVAR NAME=$GENE_ABREV>$5<?/MIVAR>
   <?MIVAR NAME=$GENE_TYPE>$2<?/MIVAR>
-
+ 
 	        <?MIVAR>
 		  <?MIBLOCK COND="$(>,$(POSITION,$GENE_OID,GENE),0)">
                     <?MIVAR NAME=$GENE_LINK>
@@ -671,7 +727,6 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
       </TR>
      <?/MIVAR>
 
-  <?/MIVAR>
 
 <?MIVAR NAME=previous_gene>$GENE_OID<?/MIVAR>
 <?MIVAR>$(UNSETVAR,$ancor_stage_id)<?/MIVAR>
@@ -704,6 +759,10 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 
 	<?MIVAR name=selector>MIval=aa-xpatselect.apg&WINSIZE=$WINSIZE<?/MIVAR>
 	<?MIVAR name=$UserInput><?/MIVAR>
+<!--***-->
+        <?MIBLOCK COND="$(XST,$pubId)">
+	  <?MIVAR name=$UserInput>$UserInput&pubId=$pubId<?/MIVAR>
+       <?MIELSE>
 	<?MIVAR name=$UserInput COND=$(XST,$gene_name)>$UserInput&gene_name=$(URLENCODE,$gene_name)<?/MIVAR>
 	<?MIVAR name=$UserInput COND=$(XST,$gene_lg)>$UserInput&gene_lg=$gene_lg<?/MIVAR>
 	<?MIVAR name=$UserInput COND=$(XST,$searchtype)>$UserInput&searchtype=$searchtype<?/MIVAR>
@@ -714,7 +773,7 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 	<?MIVAR name=$UserInput COND=$(XST,$structure_bool)>$UserInput&structure_bool=$structure_bool<?/MIVAR>
 	<?MIVAR name=$UserInput COND=$(XST,$query_results)>$UserInput&query_results=$query_results<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$user_entered)>$UserInput&user_entered=$(URLENCODE,$user_entered)<?/MIVAR>
-
+       <?/MIBLOCK>
 
 <?MIBLOCK COND="$(XST,$structure_list)">
   <?MIVAR COND="$(XST,$s_list)">$(UNSETVAR,$s_list)<?/MIVAR>
@@ -843,6 +902,7 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 
 
 
+<?MIBLOCK COND="$(NXST,$pubId)">
 
   <table border=0 width=100% cellpadding=1 cellspacing=0>
     <tr>
@@ -977,9 +1037,6 @@ Gene/EST
    </tr> 
    <!-- <tr><td>&nbsp;</td></tr> -->
 
-<?MIVAR>
-
-<?/MIVAR>
 
    <tr>
      <td colspan=1> Between stages:
@@ -1007,7 +1064,7 @@ Gene/EST
 		</td>
 	    </tr>
    <TR>
-     <TD class="resultcount" colspan=2>
+     <TD class="resultcount">
        Display results in groups of 
        <?MIVAR><input type="text" name="WINSIZE" size="3" onChange='document.critform.START.value = "";' $(IF,$(XST,$WINSIZE),value='$WINSIZE',value="25")>.<?/MIVAR>
        <?MIBLOCK COND="$(AND,$(NOT,$(ISNULL,$WINSIZE)),$(XST,$WINSIZE))">
@@ -1018,13 +1075,24 @@ Gene/EST
          <?/MIVAR> 
        <?/MIBLOCK> 
      </TD>
-   </TR>
-	<tr>
+<!--***add order by-->
+     <TD>
+	Order by
 	<?MIVAR>
-	    <td colspan=3 bgcolor=<!--|SIDEBAR_COLOR|--> align="right"> 
+	<select name="order">
+	  <option value="name" $(IF,$(AND,$(XST,$order),$(EC,$order,name)),selected)> Name
+	  <option value="date" $(IF,$(AND,$(XST,$order),$(EC,$order,date)),selected)> Date
+	</select>
+	<?/MIVAR>
+     </TD>	
+
+   </TR>
+ 	<tr>
+	<?MIVAR>
+	    <td colspan=3 bgcolor=<!--|SIDEBAR_COLOR|--> align=right> 
 	<?/MIVAR>
 	
-				<input type=submit value=Search onclick="if ((document.critform.user_entered.value != '') && (document.critform.user_entered.value != null)){return call_verify();}
+	<input type=submit value=Search onclick="if ((document.critform.user_entered.value != '') && (document.critform.user_entered.value != null)){return call_verify();}
 for (i=0 ; i < document.critform.structure_list.options.length ; i++) {
 	  document.critform.structure_list.options[i].selected=true;
       }
@@ -1035,12 +1103,13 @@ if (!((document.anat_keywords == null) || (document.anat_keywords.closed == true
 	</table>
 
 <?MIBLOCK COND="$(XST,$query_results)">
-    </TD>
-  </TR>
-</TABLE>
-<?/MIBLOCK>
+     </TD>
+   </TR>
+ </TABLE>
+ <?/MIBLOCK>
 
 </form>
+<?/MIBLOCK> <!--*** end nxst pubId -->
 
 <SCRIPT LANGUAGE="JavaScript">
 function keyDown(DnEvents) { 

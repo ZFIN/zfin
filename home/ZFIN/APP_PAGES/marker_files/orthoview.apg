@@ -57,7 +57,7 @@
    <?MIVAR NAME=$zdb_id>$7<?/MIVAR>
    <?MIVAR NAME=$db_significance>$8<?/MIVAR>
 
-   <?MIVAR>$(SETVAR,$CURROW,$MI_CURRENTROW)<?/MIVAR> 
+   <?MIVAR>$(SETVAR,$CURROW,$(+,$CURROW,1))<?/MIVAR> 
    <?MIBLOCK COND="$(=,$CURROW,1)">
 	<?MIVAR>
         $(SETVAR,$EXIST,1)
