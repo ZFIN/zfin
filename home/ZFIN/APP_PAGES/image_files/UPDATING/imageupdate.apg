@@ -72,6 +72,8 @@ to a browser -->
 	<INPUT TYPE=hidden name=OID Value=$OID>
 	<INPUT TYPE=hidden name=old_value Value="$current_value">
 	<INPUT TYPE=hidden name=attr Value=$attr>
+        <INPUT TYPE=hidden name=table Value=$table>
+        <INPUT TYPE=hidden name=zdb_id Value=$zdb_id>
 	<INPUT TYPE=hidden name=attr_type Value=$attr_type>
       <?/MIVAR>
 
