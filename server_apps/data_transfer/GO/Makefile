@@ -20,7 +20,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/GO
 
-GENERICS = go.pl check-gene-association.pl goparser.pl
+GENERICS = go.pl check-gene-association.pl goparser.pl gp2protein.pl
 STATICS  = gofile.sql
 
 # Define targets that require special handling.  
