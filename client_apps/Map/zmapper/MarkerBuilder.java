@@ -52,8 +52,8 @@ public class MarkerBuilder {
 	}
 
 	public Vector getMarkers(String query_string) {
-		return getMarkersJDBC(query_string);
-		//return getMarkersJS(query_string);
+		//return getMarkersJDBC(query_string);
+		return getMarkersJS(query_string);
 	}
 	
 	
@@ -127,7 +127,7 @@ public class MarkerBuilder {
 	
 	
 	public Vector getMarkersJS(String query_string) 	{
-		Vector V = SQL.select(8, query_string);
+		Vector V = SQL.selectAll(8, query_string);
 		Vector results = new Vector();
 		Marker M;
 		
