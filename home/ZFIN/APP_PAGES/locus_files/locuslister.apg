@@ -7,6 +7,9 @@ It will also handle registration of the locus name and abbrev, checking first to
 
 <HTML>
 <HEAD>
+
+<TITLE>ZFIN Locus Registration Summary</TITLE>
+
 <SCRIPT>
 
 function show_doc(title,docpath) {
@@ -31,15 +34,17 @@ function show_doc(title,docpath) {
 
 <?MIVAR NAME=$constraint COND="$(NXST,$constraint)"> <?/MIVAR>
 
+<?MIVAR NAME=$prefix COND="$(NXST,$prefix)"> <?/MIVAR>
+
 <!-- Make sure they've even submitted something complete -->
 <?MIBLOCK COND="$(OR,$(NXST,$fname),$(NXST,$allele))">
-<h1 align=center>ERROR! Incomplete submission</h1>
-<BIG><B>You must specify all of the above fields in order to proceed. Please try again.</B></BIG>
+  <h1 align=center>ERROR! Incomplete submission</h1>
+  <BIG><B>You must specify all of the above fields in order to proceed. Please try again.</B></BIG>
 <?/MIBLOCK> <!-- ends if incomplete submission -->
 
 <?MIBLOCK COND="$(AND,$(NXST,$abbrev),$(NC,$(SUBSTR,$fname,1,2),Df),$(NC,$(SUBSTR,$fname,1,2),Cr),$(NC,$(SUBSTR,$fname,1,2),Dp),$(NC,$(SUBSTR,$fname,1,2),In),$(NC,$(SUBSTR,$fname,1,2),Is),$(NC,$(SUBSTR,$fname,1,2),Tg),$(NC,$(SUBSTR,$fname,1,1),T))">
-<h1 align=center>ERROR! Incomplete submission</h1>
-<BIG><B>You must specify all of the above fields in order to proceed. Please try again.</B></BIG>
+  <h1 align=center>ERROR! Incomplete submission</h1>
+  <BIG><B>You must specify all of the above fields in order to proceed. Please try again.</B></BIG>
 <?/MIBLOCK> <!-- ends if incomplete submission -->
 
 
@@ -66,16 +71,17 @@ function show_doc(title,docpath) {
 	constraint is used in SELECTs from tables that have "printable" abbrev columns
 	(i.e., FISH), while the second is used in SELECTs from
 	tables that only have 3-character abbrevs.  -->
+
 <?MIBLOCK COND="$(XST,$abbrev)">
-<?MIVAR NAME=$abbrev DELIMIT="'" REPLACE="">$abbrev<?/MIVAR>
-<?MIVAR NAME=$constraintSub>$(IF,$(EC,$doAction,new_locus),or,and) lower(abbrev[1,3])='$(LOWER,$abbrev)')<?/MIVAR>
-<?MIVAR NAME=$constraint>$(IF,$(EC,$doAction,new_locus),or,and) lower(abbrev)='$(LOWER,$abbrev)')<?/MIVAR>
+  <?MIVAR NAME=$abbrev DELIMIT="'" REPLACE="">$abbrev<?/MIVAR>
+  <?MIVAR NAME=$constraintSub>$(IF,$(EC,$doAction,new_locus),or,and) lower(abbrev[1,3])='$(LOWER,$abbrev)')<?/MIVAR>
+  <?MIVAR NAME=$constraint>$(IF,$(EC,$doAction,new_locus),or,and) lower(abbrev)='$(LOWER,$abbrev)')<?/MIVAR>
 <?/MIBLOCK>
 
 <?MIBLOCK COND="$(NXST,$abbrev)"> 
-<?MIVAR NAME=$constraint>)<?/MIVAR>
-<?MIVAR NAME=$constraintSub>)<?/MIVAR>
-<?MIVAR NAME=$abbrev> <?/MIVAR>
+  <?MIVAR NAME=$constraint>)<?/MIVAR>
+  <?MIVAR NAME=$constraintSub>)<?/MIVAR>
+  <?MIVAR NAME=$abbrev> <?/MIVAR>
 <?/MIBLOCK>
 
 <!-- NOW JUST RETRIEVE AND DISPLAY ALL MATCHING ENTRIES. -->
@@ -84,7 +90,8 @@ function show_doc(title,docpath) {
 <?MIVAR>Constraint is: $constraint<?/MIVAR>
 -->
 
-<center><FONT SIZE=4>Checking proposed name:</font>  
+<center>
+  <FONT SIZE=4>Checking proposed name:</font>  
 </center> 
 
 
@@ -103,8 +110,8 @@ function show_doc(title,docpath) {
 <?/MIBLOCK>
 
 <?MISQL SQL="select name, abbrev[1,3] as trey, allele from fish a where lower(allele) = '$(LOWER,$allele)' order by name,trey,allele;">
-Found allele <b>$3</b> for $1 ($2)<br>
-$(SETVAR,$duplicate_allele,t)
+  Found allele <b>$3</b> for $1 ($2)<br>
+  $(SETVAR,$duplicate_allele,t)
 <?/MISQL>
 </uL>
 
@@ -123,8 +130,8 @@ $(SETVAR,$duplicate_allele,t)
 
 
 <?MISQL SQL="select locus_name as name, abbrev as trey, allele from locus_registration  where lower(allele) = '$(LOWER,$allele)' order by name,trey,allele;">
-Found allele <b>$3</b> for $1 ($2)<br>
-$(SETVAR,$duplicate_allele,t)
+  Found allele <b>$3</b> for $1 ($2)<br>
+  $(SETVAR,$duplicate_allele,t)
 <?/MISQL>
 </ul>
 
@@ -133,8 +140,8 @@ $(SETVAR,$duplicate_allele,t)
 <b> Checking cloned genes </b>
 <ul>
 <?MISQL SQL="select distinct gene_name as name, abbrev as trey from gene where (lower(gene_name) = '$(LOWER,$fname)' $constraint  order by name,trey;">
-$(IF,$(EC,$doAction,new_locus),Found cloned gene <b>$1</b> with abbreviation <b>$2</b><br>)
-$(SETVAR,$duplicate_gene,t)
+  $(IF,$(EC,$doAction,new_locus),Found cloned gene <b>$1</b> with abbreviation <b>$2</b><br>)
+  $(SETVAR,$duplicate_gene,t)
 <?/MISQL>
 </ul>
 
@@ -146,13 +153,15 @@ $(SETVAR,$duplicate_gene,t)
 -->
 
 <!-- check that the allele prefix exists. prefix is computed by Javascript in
-locuslister and passed in as arg  -->
-<?MIVAR NAME=$lab_names><?/MIVAR>
-<?MISQL SQL="select name,zdb_id from lab where allele_prefix='$prefix';">
-$(SETVAR,$lab_names,$1","$lab_names)
-$(SETVAR,$lab_id,$2)
-<?/MISQL>
-<?MIVAR COND="$(NXST,$lab_id)" NAME=$bad_prefix>t<?/MIVAR>
+locuslister and passed in as arg  let curators do whatever they want -->
+<?MIBLOCK COND="$(NC,$AUTHORIZED,ROOT)">
+  <?MIVAR NAME=$lab_names><?/MIVAR>
+  <?MISQL SQL="select name,zdb_id from lab where allele_prefix='$prefix';">
+  $(SETVAR,$lab_names,$1","$lab_names)
+  $(SETVAR,$lab_id,$2)
+  <?/MISQL>
+  <?MIVAR COND="$(NXST,$lab_id)" NAME=$bad_prefix>t<?/MIVAR>
+<?/MIBLOCK>
 
 <p>
 <HR width=90% size=3>
@@ -245,14 +254,14 @@ with abbreviation
 <?/MIBLOCK>  <!-- ends there was a duplicate allele -->
 
 <!-- If they have malformed allele designation -->
-<?MIBLOCK COND="$(AND,$(EC,$malformed,t),$(NC,$AUTHORIZED,GUEST))">
+<?MIBLOCK COND="$(AND,$(EC,$malformed,t),$(NC,$AUTHORIZED,GUEST),$(NC,$AUTHORIZED,ROOT))">
 
 <b><FONT color="#ff0000">Problem:</font> Malformed allele designation. Cannot register the allele
 <?MIVAR><font color="#ff0000">$allele</font><?/MIVAR>!</B>  Allele designations <em>must</em> consist of a single lower case letter (assigned to to individual labs) followed by a numeric value. Additionally, the prefix letter may be preceeded by the letter 'd' to indicate dominant alleles.  Please repair your allele designation and try again.<p>
 <?/MIBLOCK> <!-- ends malformed -->
 
 <!-- If they have good form but bad prefix  -->
-<?MIBLOCK COND="$(AND,$(EC,$bad_prefix,t),$(NC,$AUTHORIZED,GUEST))">
+<?MIBLOCK COND="$(AND,$(EC,$bad_prefix,t),$(NC,$AUTHORIZED,GUEST),$(NC,$AUTHORIZED,ROOT))">
 
 <b><FONT color="#ff0000">Problem:</font> Unregistered allele prefix.</b> Cannot register the allele <?MIVAR> $allele with prefix 
 <font color="#ff0000">$prefix</font><?/MIVAR>!  
@@ -271,34 +280,34 @@ Legal allele prefixes are officially registered to individual labs. A listing of
 
 
 <!-- Issue warning if the allele prefix doesn't match the submitter's lab -->
-<?MIBLOCK COND="$(AND,$(NC,$malformed,t),$(NC,$bad_prefix,t))">
+<?MIBLOCK COND="$(AND,$(NC,$malformed,t),$(NC,$bad_prefix,t),$(NC,$AUTHORIZED,ROOT))">
 
-<?MISQL SQL="select count(*)::integer from int_person_lab a, lab b where source_id='$ZDB_ident' and target_id=b.zdb_id and b.allele_prefix='$prefix';">
-<?/MISQL>
-<?MIVAR COND="$(=,$1,0)" NAME=$warnings> -- Mismatched allele designation: the proposed allele prefix $prefix is registered to $lab_names, but the submitter ($ZDB_name) isn't a member of this lab.
-$warnings
-<?/MIVAR>
+  <?MISQL SQL="select count(*)::integer from int_person_lab a, lab b where source_id='$ZDB_ident' and target_id=b.zdb_id and b.allele_prefix='$prefix';">
+  <?/MISQL>
+  <?MIVAR COND="$(=,$1,0)" NAME=$warnings> -- Mismatched allele designation: the proposed allele prefix $prefix is registered to $lab_names, but the submitter ($ZDB_name) isn't a member of this lab.
+  $warnings
+  <?/MIVAR>
 
-<?MIVAR COND="$(=,$1,0)">
-<b><FONT color="#ff0000">Warning:</font> Possible wrong allele prefix.</B>  
-The allele prefix <b>$prefix</b> is registered to the following labs:<b>$lab_names</b>. ZFIN records do not show you ($ZDB_name) as affiliated with this lab. This is not necessarily a problem (maybe our records are out of date, or you've moved,etc.), but please double-check to be sure your allele prefix is correct.<p>
-<?/MIVAR>
+  <?MIVAR COND="$(=,$1,0)">
+  <b><FONT color="#ff0000">Warning:</font> Possible wrong allele prefix.</B>  
+  The allele prefix <b>$prefix</b> is registered to the following labs:<b>$lab_names</b>. ZFIN records do not show you ($ZDB_name) as affiliated with this lab. This is not necessarily a problem (maybe our records are out of date, or you've moved,etc.), but please double-check to be sure your allele prefix is correct.<p>
+  <?/MIVAR>
 <?/MIBLOCK>
 
 <!-- Issue warning if the locus name matched a cloned gene -->
 <?MIBLOCK COND="$(EC,$duplicate_gene,t)">
-<?MIVAR NAME=$warnings>-- Proposed locus ($fname) or abbreviation ($abbrev) matches existing cloned gene. This is not illegal, but should be questioned and strongly discouraged. Submitter was warned of this conflict.
-$warnings
-<?/MIVAR>
-<b><FONT color="#ff0000">Warning:</font> Locus name and/or abbreviation duplicates cloned gene.</B>  The locus name <FONT color="#ff0000"><?MIVAR>$fname<?/MIVAR></font> and/or the abbreviation <FONT color="#ff0000"><?MIVAR>$abbrev<?/MIVAR></font> is already used by a cloned gene (see above).  Using the same name/abbreviation for a new mutant locus does not violate nomenclature guidelines, but is probably not a good idea.  You may proceed if you insist, but ZFIN strongly recommends choosing another name and/or abrreviation .<p>
+  <?MIVAR NAME=$warnings>-- Proposed locus ($fname) or abbreviation ($abbrev) matches existing cloned gene. This is not illegal, but should be questioned and strongly discouraged. Submitter was warned of this conflict.
+  $warnings
+  <?/MIVAR>
+  <b><FONT color="#ff0000">Warning:</font> Locus name and/or abbreviation duplicates cloned gene.</B>  The locus name <FONT color="#ff0000"><?MIVAR>$fname<?/MIVAR></font> and/or the abbreviation <FONT color="#ff0000"><?MIVAR>$abbrev<?/MIVAR></font> is already used by a cloned gene (see above).  Using the same name/abbreviation for a new mutant locus does not violate nomenclature guidelines, but is probably not a good idea.  You may proceed if you insist, but ZFIN strongly recommends choosing another name and/or abrreviation .<p>
 <?/MIBLOCK>
 
 <!-- Issue warning if proposed abbreviation is longer than 3 chars -->
-<?MIBLOCK COND="$(>,$(STRLEN,$abbrev),3)">
-<?MIVAR NAME=$warnings>-- Proposed abbreviation ($abbrev) is longer than 3 characters. This can be allowed only in extraordinarily rare cases where mutation is in known gene that has an established abbreviation longer than three chars. Submitter was warned of this conflict.
-$warnings
-<?/MIVAR>
-<b><FONT color="#ff0000">Warning:</font> Abbreviation too long.</B>  Nomenclature guidelines restrict abbreviations to three characters. Longer abbreviations will be allowed only in exceptional cases, e.g., where the mutation is in a known gene with an abbreviation longer than three characters.  You may proceed if you insist, but you will be contacted for detailed justification.<p>
+<?MIBLOCK COND="$(>,$(STRLEN,$abbrev),3),$(NC,$AUTHORIZED,ROOT)">
+  <?MIVAR NAME=$warnings>-- Proposed abbreviation ($abbrev) is longer than 3 characters. This can be allowed only in extraordinarily rare cases where mutation is in known gene that has an established abbreviation longer than three chars. Submitter was warned of this conflict.
+  $warnings
+  <?/MIVAR>
+  <b><FONT color="#ff0000">Warning:</font> Abbreviation too long.</B>  Nomenclature guidelines restrict abbreviations to three characters. Longer abbreviations will be allowed only in exceptional cases, e.g., where the mutation is in a known gene with an abbreviation longer than three characters.  You may proceed if you insist, but you will be contacted for detailed justification.<p>
 <?/MIBLOCK>
 
 <!-- Include warning to reviewer (only) if name has space -->
@@ -311,55 +320,55 @@ $warnings
 <!-- Now, if you are clear to register, throw up the form -->
 <?MIBLOCK COND="$(XST,$action)">
 
-<form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
-<input type=hidden name=MIval value=aa-process_locus.apg>
+  <form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+  <input type=hidden name=MIval value=aa-process_locus.apg>
 
-<big><B>Summary of proposed registration:</B></big>
-<p>
+  <big><B>Summary of proposed registration:</B></big>
+  <p>
 
-<TABLE WIDTH=100% border cellpadding=3>
-<TR>
-<?MIVAR><TD>
-<b>LOCUS: <font color="#0000ff"><i>$fname</i> </font></B></TD>
-<TD><B>Abbreviation: <font color="#0000ff"><i>$(LOWER,$abbrev)<sup>$(LOWER,$allele)</sup></i></font></b>
-</TD>
-</TR>
-<?/MIVAR>
-<TR>
-<TD colspan=2 valign=top><font size=-1><b>Description</b>:<br>
-<TEXTAREA NAME=descrip rows=3 cols=60 wrap=virtual>Optional: please include a few lines briefly describing the phenotype of the new allele! </TEXTAREA>
-</font></TD></TR>
-<TR align=center>
-<?MIVAR><TD><b>Submitter Name: </b>$ZDB_name</TD><?/MIVAR>
-<TD><b>Contact Email:</b> 
-<?MISQL SQL="select email from person where zdb_id='$ZDB_ident';"><?/MISQL>
-<?MIVAR>
-<INPUT TYPE=text NAME=email $(IF,$(NC,$1,null),VALUE=$1)>
-<?/MIVAR>
-</TD>
-</TR>
-</TABLE>
+  <TABLE WIDTH=100% border cellpadding=3>
+    <TR>
+      <?MIVAR><TD>
+      <b>LOCUS: <font color="#0000ff"><i>$fname</i> </font></B></TD>
+      <TD><B>Abbreviation: <font color="#0000ff"><i>$(LOWER,$abbrev)<sup>$(LOWER,$allele)</sup></i></font></b>
+      </TD>
+      </TR>
+      <?/MIVAR>
+      <TR>
+      <TD colspan=2 valign=top><font size=-1><b>Description</b>:<br>
+      <TEXTAREA NAME=descrip rows=3 cols=60 wrap=virtual>Optional: please include a few lines briefly describing the phenotype of the new allele! </TEXTAREA>
+      </font></TD></TR>
+      <TR align=center>
+	<?MIVAR><TD><b>Submitter Name: </b>$ZDB_name</TD><?/MIVAR>
+	<TD><b>Contact Email:</b> 
+	<?MISQL SQL="select email from person where zdb_id='$ZDB_ident';"><?/MISQL>
+	<?MIVAR>
+	  <INPUT TYPE=text NAME=email $(IF,$(NC,$1,null),VALUE=$1)>
+	<?/MIVAR>
+	</TD>
+    </TR>
+  </TABLE>
 
 
-<TABLE width=100%>
-<TR>
-<TD> <input type=submit name=doit value="Send registration request!"> </TD>
-<TD align=right><font size=-1>
-<input type=button name=new_allele value="Help!" onClick="show_doc('Registration+Help','/ZFIN/fish_files/locus_intro.html')"></font>
-</TD>
-</TR>
-</TABLE>
+  <TABLE width=100%>
+    <TR>
+    <TD> <input type=submit name=doit value="Send registration request!"> </TD>
+      <TD align=right><font size=-1>
+      <input type=button name=new_allele value="Help!" onClick="show_doc('Registration+Help','/ZFIN/fish_files/locus_intro.html')"></font>
+      </TD>
+    </TR>
+  </TABLE>
 
-<?MIVAR>
-<input type=hidden name=sender value="$ZDB_name">
-<input type=hidden name=locus value="$fname">
-<input type=hidden name=action value="$doAction">
-<input type=hidden name=abbrev value="$(LOWER,$abbrev)">
-<input type=hidden name=allele value="$allele">
-<input type=hidden name=ZFIN_id value="$ZDB_ident">
-<input type=hidden name=warnings value="$warnings">
-<?/MIVAR>
-</form>
+  <?MIVAR>
+    <input type=hidden name=sender value="$ZDB_name">
+    <input type=hidden name=locus value="$fname">
+    <input type=hidden name=action value="$doAction">
+    <input type=hidden name=abbrev value="$(LOWER,$abbrev)">
+    <input type=hidden name=allele value="$allele">
+    <input type=hidden name=ZFIN_id value="$ZDB_ident">
+    <input type=hidden name=warnings value="$warnings">
+  <?/MIVAR>
+  </form>
 
 <?/MIBLOCK>  <!-- ends action was specified (submission form) -->
 
