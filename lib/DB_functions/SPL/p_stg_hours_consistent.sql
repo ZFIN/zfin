@@ -1,5 +1,3 @@
-begin work;
-
 ------------------------------------------------
 --procedure that calls the stg_window_consistant function.
 --if the end stage entered or updated in one of the tables that enters stages 
@@ -23,4 +21,3 @@ begin work;
 
   end procedure;
 
-commit work;
