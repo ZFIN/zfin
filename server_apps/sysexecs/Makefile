@@ -20,7 +20,11 @@
 # row.
 #
 # This makefile creates the executables that are called by sysexec and
-# populates the execweb table as well
+# populates the execweb table as well.  The unix_commands subdirectory 
+# handles the case where the executables are one line invocations of Unix 
+# commands and therefore there is no supporting script.
+#
+
 
 
 # ---------------  Variable Definitions  --------------------------------
@@ -30,7 +34,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/sysexecs
 
-SUBDIRS = encryptpass make_thumbnail
+SUBDIRS = encryptpass make_thumbnail unix_commands
 
 # There are no local targets
 
