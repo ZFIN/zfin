@@ -113,6 +113,12 @@
 
 <!-- this is all needed to support I.E., the history button and frames are not compatible so we must save variables and pass them around also history.go is not implemented the same in I.E. and Netscape  --> 
 
+<!--- WALKING WINDOW --->
+<!--- Initialization --->
+
+<?MIVAR NAME=WINSIZE DEFAULT=25>$WINSIZE<?/MIVAR>
+<?MIVAR NAME=BEGIN DEFAULT=1>$START<?/MIVAR>
+
 <?MIVAR name=comment>  Build array of user data  <?/MIVAR>
 <?MIVAR name=$selector>MIval=aa-publister2.apg&WINSIZE=$WINSIZE<?/MIVAR>
 <?MIVAR name=$UserInput><?/MIVAR>
@@ -193,11 +199,6 @@
 
 
 <!--- WALKING WINDOW --->
-<!--- Initialization --->
-
-<?MIVAR NAME=WINSIZE DEFAULT=25>$WINSIZE<?/MIVAR>
-<?MIVAR NAME=BEGIN DEFAULT=1>$START<?/MIVAR>
-
 
 <!--- DEFINITION OF RANGES --->
 <?MIVAR NAME=BEGIN>$(IF,$(<,$BEGIN,1),1,$BEGIN)<?/MIVAR> 
