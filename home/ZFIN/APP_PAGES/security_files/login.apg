@@ -1,38 +1,44 @@
-<!-- This page is Webexploded onto the home page 
-Put in empty Mivar so Clif's script knows it needs to load to webblade
-<?MIVAR><?/MIVAR>
+<?MICOMMENT>
+    <!-- This page is Webexploded onto the home page 
+    Put in empty Mivar so Clif's script knows it needs to load to webblade
+    <?MIVAR><?/MIVAR>
+    requires chromoscripts.apg to be exploded for vet_pw()
+    -->
+<?/MICOMMENT>
 
--->
-
+<?MISQL SQL="select object from webPages where ID='aa-vet_input.apg';">$1<?/MISQL>
 
 <SCRIPT>
-var readytologin = 0;
-
-function submit_complete () {
-  readytologin = 1;
-  if ((document.login_form.login.value !='')&&(document.login_form.password.value !='')&&(readytologin==1)) {
-     document.login_form.submit();
-
-  }
+function check_passw (){
+  document.login_form.password.value = vet_pw(document.login_form.password.value);
+  if (document.login_form.password.value !=''){
+    document.login_form.s_user.focus();
+  }  
 }
 
-function submit_login () {
-  if ((document.login_form.login.value !='')&&(document.login_form.password.value !='')&&(readytologin==0)) {
-     document.login_form.submit();
-  }
+function check_login(){
+  document.login_form.login.value = vet_pw(document.login_form.login.value);
+  if (document.login_form.login.value !=''){
+    document.login_form.password.focus();
+  } 
 }
 
+function submit_login(){
+  check_login();
+  check_passw();
+  if ((document.login_form.login.value !='')&&(document.login_form.password.value !='')) {
+      document.login_form.submit();
+  }
+}
 </SCRIPT>
+    
 	<!-- table class login req's zfin_style.css -->
-<form name=login_form method=post  action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
-<INPUT TYPE=hidden name=MIval value=aa-process-login.apg>
-<?MIVAR>
-
-<?/MIVAR>
-<b>Login:</b> <INPUT TYPE=text size=8 maxlength=12 name=login onChange="submit_complete();">
-<b>Password:</b> <input TYPE=password size=8 maxlength=8 name=password onChange="submit_complete();">
-&nbsp;&nbsp;<input type=submit name=s_user value="Log in" onSubmit="submit_login();">
-<br><font size=1>(Login required only to update personal records)</font>
+<FORM name=login_form method=post  action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+    <INPUT TYPE=hidden name=MIval value=aa-process-login.apg>
+    <b>Login:</b>   <input type=text     size=12 maxlength=12 name=login    onChange="check_login();">
+    <b>Password:</b><input type=password size=8  maxlength=12 name=password onChange="check_passw();">
+    &nbsp;&nbsp;    <input type=button                        name=s_user value="Log in" onClick="submit_login();">
+    <br><font size=1>(Login required only to update personal records)</font>
 </FORM>
 <!-- Put the cursor in the login name box -->
 <SCRIPT>document.login_form.login.focus();</SCRIPT>
