@@ -136,7 +136,7 @@ Variables Expected:
     <!-- if not updating -->
     <?MIBLOCK COND="$(NXST,$UPDATE)">
       <?MISQL SQL="
-	select WebExplode(object, 'page_title=View Image&ownerColumn=fimg_owner_zdb_id&zdbidColumn=fimg_zdb_id') 
+	select WebExplode(object, 'page_title=View Image&ownerColumn=fimg_owner_zdb_id&zdbIdColumn=fimg_zdb_id') 
 	  from webPages 
 	  where ID='aa-secure_navigation.apg';">
 	$1
@@ -618,12 +618,18 @@ Variables Expected:
 
 
 	<!-- Throw up the publication info, using the standard display format -->
+
+	<?MIVAR>
+	<A HREF=" /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=fish_image"><b>Publications</b></A>
 	<?MISQL SQL="
-	  select WebExplode(object,'') 
-	    from webPages 
-	    where ID='aa-showpubs.apg';">
-	  $1
+  		select count(*) 
+  		from record_attribution
+ 		 where recattrib_data_zdb_id = '$OID'
+   		 and get_obj_type(recattrib_source_zdb_id) = 'PUB';
+  	">
+	&nbsp; ($(FIX,$1)) 
 	<?/MISQL>
+	<?/MIVAR>
 
 
       </form>
