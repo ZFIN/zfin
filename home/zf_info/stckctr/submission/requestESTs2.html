@@ -1,0 +1,253 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.74 [en] (Win98; U) [Netscape]">
+   <title>ZIRC Request Form</title>
+   
+<link rel="stylesheet" type="text/css" href="zirc.css" />
+
+<script type="text/javascript" language="JavaScript1.1" src="zirc.js"></script>
+
+</head>
+
+<BODY text="#000000" bgcolor="#FFFFFF" onLoad="storedValues('zircESTRequestProfile');">
+<center>
+	<p id=header>
+		Zebrafish International Resource Center<br>
+   		Request Form
+   </p>
+<noscript>
+<font color="#FF0000">Javascript is required to use links on this page and to 
+  save your contact information between sessions. <br>
+Please set your preferences to allow Javascript and then Reload.</font>
+</noscript>
+<form NAME="theRequestForm" onSubmit="saveValues('zircESTRequestProfile','10',''); formValues('zircESTRequest');" METHOD="post" ACTION="http://<!--|DOMAIN_NAME|-->/<!--|CGI_BIN_DIR_NAME|-->/cgiemail.cgi">
+  <table border=0 width=585 cellpadding=0 cellspacing=0 background="bgimage.jpg" name="EST_Profile">
+      <tr> 
+        <td colspan=2 valign=top><img src="bgtop.jpg"></td>
+	  </tr>    
+	  <tr> 
+        <td align=center colspan=2>
+        	Please fill out this form if you want to request materials from the Resource Center.
+        	<br>A <font color="#FF0000">*</font>&nbsp; indicates a required field.
+        	<br><a href="javascript:popup('links.html')">Links</a> provide useful information in a new window without changing the form. 
+		</td>
+	  </tr>
+	  <tr>
+	  	<td colspan=2>
+	<input type="hidden" name="template" value="http://<!--|DOMAIN_NAME|-->/zf_info/stckctr/submission/requestESTs.txt">
+	<input type="hidden" name="success" value="http://<!--|DOMAIN_NAME|-->/zf_info/stckctr/submission/requestThankyou.html">
+	<input type="hidden" name="probe1ZFIN_ID">
+	<input type="hidden" name="probe1Name">
+	<input type="hidden" name="probe1otherDescription">
+	<input type="hidden" name="probe2ZFIN_ID">
+	<input type="hidden" name="probe2Name">
+	<input type="hidden" name="probe2otherDescription">
+	<input type="hidden" name="probe3ZFIN_ID">
+	<input type="hidden" name="probe3Name">
+	<input type="hidden" name="probe3otherDescription">
+	<input type="hidden" name="probe4ZFIN_ID">
+	<input type="hidden" name="probe4Name">
+	<input type="hidden" name="probe4otherDescription">
+	<input type="hidden" name="probe5ZFIN_ID">
+	<input type="hidden" name="probe5Name">
+	<input type="hidden" name="probe5otherDescription">
+	<input type="hidden" name="ESTsConsiderations">
+		</td>
+	</tr>
+<!-----customer contact information----->
+      <tr> 
+        <td colspan=2><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Your Contact Information</b></td>
+      </tr>
+      <tr> 
+        <td align=right>Your Name <font color="#FF0000">*</font>&nbsp;</td>
+        <td width=300> 
+          <input type="text" name="required_requesterName" size="30">
+        </td>
+      </tr>
+      <tr> 
+        <td align=right>Your Email <font color="#FF0000">*</font>&nbsp;</td>
+        <td> 
+          <input type="text" name="required_requesterEMail" size="30">
+        </td>
+      </tr>
+      <tr> 
+        <td align=right>Your Telephone <font color="#FF0000">*</font>&nbsp;</td>
+        <td> 
+          <input type="text" name="required_requesterTelephone" size="30">
+        </td>
+      </tr>
+      <tr> 
+        <td align=right>Your Fax <font color="#FF0000">*</font>&nbsp;</td>
+        <td> 
+          <input type="text" name="required_requesterFax" size="30">
+        </td>
+      </tr>
+      <tr> 
+        <td align=right>Your Institution / Lab <font color="#FF0000">*</font>&nbsp;</td>
+        <td>
+          <input type="text" name="required_requesterLab" size="30">
+        </td>
+      </tr>
+      <tr> 
+        <td align=right>Your Position <font color="#FF0000">*</font>&nbsp;</td>
+        <td> 
+          <select name="required_requesterPosition" size="1">
+            <option value=""></option>
+            <option value="PI / Director">PI / Director</option>
+            <option value="Post-Doc">Post-Doc</option>
+            <option value="Graduate Student">Graduate Student</option>
+            <option value="Research Staff">Research Staff</option>
+            <option value="Other">Other</option>
+          </select>
+        </td>
+      </tr>
+      <tr> 
+        <td align=right>Your Address <font color="#FF0000">*</font>&nbsp;<br>(No PO Boxes-this is the "Ship To" address.)&nbsp;</td>
+        <td> 
+          <textarea name="required_requesterAddress" cols="30" wrap="VIRTUAL" rows="4"></textarea>
+        </td>
+      </tr>
+	  <tr>	
+		<td colspan=2 ><img src="bgblank.gif"></td>
+      </tr>
+<!-----PI contact information----->
+		<tr>
+			<td colspan=2>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Principal Investigator Contact Information (if different)</b>
+			</td>
+		</tr>
+		<tr>
+			<td align=right>PI Name&nbsp;</td>
+			<td><input type="text" name="PIName" size="30"></td>
+		</tr>
+		<tr>
+			<td align=right>PI Email&nbsp;</td>
+			<td><input type="text" name="PIEmail" size="30"></td>
+		</tr>
+		<tr>
+			<td align=right>PI Telephone&nbsp;</td>
+			<td><input type="text" name="PITelephone" size="30"></td>
+		</tr>
+		<tr>
+			<td align=right>PI Fax&nbsp;</td>
+			<td><input type="text" name="PIFax" size="30"></td>
+		</tr>
+		<tr>
+			<td align=right>PI Institution / Lab&nbsp;</td>
+			<td><input type="text" name="PILab" size="30"></td>
+		</tr>
+		<tr>
+			<td align=right>PI Address&nbsp;</td>
+			<td><textarea name="PIAddress" cols="30" wrap="VIRTUAL" rows="4"></textarea></td>
+		</tr>
+	  <tr>	
+		<td colspan=2 ><img src="bgblank.gif"></td>
+      </tr>		
+ <!-----grant number information----->
+		<tr>
+			<td align=right nowrap>
+          		Your NIH <a href="javascript:popup('grant.html')">grant number</a> or other grant number <font color="#FF0000">*</font>&nbsp;
+			</td>
+        	<td>
+          		<input type="text" name="required_grantNumber" size="30">
+        	</td>
+		</tr>
+		<tr>
+			<td align=right>
+          		The organization responsible for funding <font color="#FF0000">*</font>&nbsp;
+			</td>
+        	<td>
+          		<input type="text" name="required_grantOrganization" size="30">
+        	</td>
+		</tr>
+	  <tr>	
+		<td colspan=2 ><img src="bgblank.gif"></td>
+      </tr>
+ <!-----billing information----->
+      <tr> 
+        <td colspan=2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Billing Information</b></td>
+      </tr>
+	  <tr> 
+        <td align=right>Name <font color="#FF0000">*</font>&nbsp;</td>
+        <td>
+          <input type="text" name="required_BillToName" size="30">
+        </td>
+      </tr>
+      <tr> 
+        <td align=right>Email <font color="#FF0000">*</font>&nbsp;</td>
+        <td>
+          <input type="text" name="required_BillToEmail" size="30">
+        </td>
+      </tr>
+      <tr> 
+        <td align=right>Telephone <font color="#FF0000">*</font>&nbsp;</td>
+        <td>
+          <input type="text" name="required_BillToTelephone" size="30">
+        </td>
+      </tr>
+      <tr> 
+        <td align=right>Fax <font color="#FF0000">*</font>&nbsp;</td>
+        <td>
+          <input type="text" name="required_BillToFax" size="30">
+        </td>
+      </tr>
+      <tr> 
+        <td align=right nowrap>Institution / Lab <font color="#FF0000">*</font>&nbsp;</td>
+        <td>
+          <input type="text" name="required_BillToLab" size="30">
+        </td>
+      </tr>
+      <tr> 
+        <td align=right>Address <font color="#FF0000">*</font>&nbsp;</td>
+        <td>
+          <textarea name="required_BillToAddress" cols="30" wrap="VIRTUAL" rows="4"></textarea>
+        </td>
+      </tr>
+	  <tr>	
+		<td colspan=2 ><img src="bgblank.gif"></td>
+      </tr>
+ <!-----billing preference----->
+      <tr> 
+        <td colspan=2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Billing Preference</b></td>
+      </tr>
+      <tr> 
+        <td>&nbsp;</td>
+        <td>
+			<input type="radio" name="billingPreference" value="creditCard" onClick="popup('zircCC.html')">Visa / Mastercard<br>
+			<input type="radio" name="billingPreference" value="billMe">Bill Me
+		</td>
+      </tr>
+	  <tr>		
+		<td align=right nowrap>Purchase Order Number </td>
+		<td>
+			<input type="text" name="billToPONumber" "size="30">
+		</td>
+	  </tr>
+	  <tr>	
+		<td colspan=2 ><img src="bgblank.gif"></td>
+      </tr>
+<!-----buttons----->
+      <tr> 
+        <td colspan=2 align=center class=button>
+            <input type="submit" value="SEND to ZIRC" name="submitButton" class=buttons>
+        </td>
+      </tr>
+	  <tr>	
+		<td colspan=2 ><img src="bgblank.gif"></td>
+      </tr>
+      <tr> 
+        <td colspan=2 align=center class=button>
+            <input type="button" id="comments" value="make comments about this form" name="email" class=buttons onClick="sendMail('EST Request Form')">
+        </td>
+      </tr>
+      <tr> 
+        <td colspan=2 valign=bottom><img src="bgbtm.jpg"></td>
+	  </tr>
+    </table>
+</form>
+</center>
+</body>
+</html>
+

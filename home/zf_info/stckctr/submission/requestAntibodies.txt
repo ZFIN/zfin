@@ -1,0 +1,128 @@
+To: aprilm@uoneuro.uoregon.edu, trevarro@uoneuro.uoregon.edu, dlains@uoneuro.uoregon.edu, mason@uoneuro.uoregon.edu
+From: zirc@darkwing.uoregon.edu
+Subject: [required_requesterName]'s request for antibodies
+
+**************************************** 
+---
+---
+Name:
+[required_requesterName]
+---
+Email:
+[required_requesterEmail]
+---
+Telephone:
+[required_requesterTelephone]
+---
+Fax:
+[required_requesterFax]
+---
+Lab:
+[required_requesterLab]
+---
+Position:
+[required_requesterPosition]
+---
+Address:
+[required_requesterAddress]
+---
+---
+PI Name:
+[PIName]
+---
+PI Email:
+[PIEmail]
+---
+PI Fax:
+[PIFax]
+---
+PI Lab:
+[PILab]
+---
+PI Address:
+[PIAddress]
+---
+---
+Bill To Name:
+[required_BillToName]
+---
+Bill To Email:
+[required_BillToEmail]
+---
+Bill To Telephone:
+[required_BillToTelephone]
+---
+Bill To Fax:
+[required_BillToFax]
+---
+Bill To Lab:
+[required_BillToLab]
+---
+Bill To Address:
+[required_BillToAddress]
+---
+Bill To Grant Number:
+[required_grantNumber]
+---
+Bill To Funding Organization:
+[required_grantOrganization]
+---
+Billing Preference:
+[creditCard]
+[billMe]
+---
+Bill To PO Number:
+[billToPONumber]
+---
+---
+Antibody 1:
+[antibodyName1]
+Quantity 1:
+[antibodyQuantity1]
+---
+Antibody 2:
+[antibodyName2]
+Quantity 2:
+[antibodyQuantity2]
+---
+Antibody 3:
+[antibodyName3]
+Quantity 3:
+[antibodyQuantity3]
+---
+Antibody 4:
+[antibodyName4]
+Quantity 4:
+[antibodyQuantity4]
+---
+---
+ANTIBODY SAMPLE PACK
+antibody 1:
+[antibodySPname1]
+
+antibody 2:
+[antibodySPname2]
+
+antibody 3:
+[antibodySPname3]
+
+antibody 4:
+[antibodySPname4]
+
+antibody 5:
+[antibodySPname5]
+
+antibody 6:
+[antibodySPname6]
+---
+---
+Considerations and Comments:
+[antibodyConsiderations]
+---
+---
+End of Form
+
+
+
+
+
