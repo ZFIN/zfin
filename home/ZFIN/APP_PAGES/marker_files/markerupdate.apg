@@ -158,7 +158,7 @@ function make_correction(mrkr_id,old_v,attr) {
       <TABLE width=100%>
         <TR align=center><TD>
         <INPUT TYPE=submit name=s_change value="SUBMIT this UPDATE">
-        <?MIVAR>
+        <?MIVAR COND=$(OR,$(EC,$attr,gene_name),$(EC,$attr,abbrev))>
         <INPUT TYPE=button name=s_correct value="Correct Most Recent Update" onClick="make_correction('$OID','$current_value','$attr');">
         <?/MIVAR>
         </TD><TD>
