@@ -1,0 +1,219 @@
+<!-- a simple app page used to create a new linkage between a marker and another. The page supports, search/selection of the second marker; this is the crux of this page.
+
+Expected vars:
+OID:  the zdb_id of the mutant fish being linked from
+edit_link: id of link to edit; passed in to indicate we're editing existing link
+
+-->
+
+<HTML>
+<HEAD>
+<?MIVAR>
+<SCRIPT>
+function pick_me(mark_id) {
+document.updater.linked_m.value=mark_id;
+document.updater.submit();
+}
+
+function pick_owner(pers_id) {
+document.updater.owner.value=pers_id;
+document.updater.submit();
+}
+</SCRIPT>
+<?/MIVAR>
+</HEAD>
+
+<basefont size=2>
+
+<?MISQL SQL="select abbrev from fish where zdb_id='$OID';"><?/MISQL>
+<?MIVAR NAME=$lname>$1<?/MIVAR>
+
+<TITLE>Add/Edit Linkage</TITLE>
+
+<?MISQL SQL="select WebExplode(object,'permission=root') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+<?MIBLOCK COND="$(NC,AUTHORIZED,false)">
+
+<?MIVAR>
+<h1>Add/edit mapped linkage to locus <u>$lname</u></h1>
+<?/MIVAR>
+
+<!-- If you're editing one, preload data -->
+<?MIBLOCK COND="$(XST,$edit_link)">
+<?MISQL SQL="select m1_id,m2_id,dist,LOD,private,owner,metric from linkages where zdb_id='$edit_link';"><?/MISQL>
+<?MIVAR NAME=$link_id>$edit_link<?/MIVAR>
+<?MIVAR NAME=$linked_m>$1<?/MIVAR>
+<?MIVAR COND="$(EC,$1,$OID)" NAME=$linked_m>$2<?/MIVAR>
+<?MIVAR NAME=$dist>$(TRIM,$3)<?/MIVAR>
+<?MIVAR NAME=$LOD>$(TRIM,$4)<?/MIVAR>
+<?MIVAR NAME=$private>$5<?/MIVAR>
+<?MIVAR NAME=$owner>$6<?/MIVAR>
+<?MIVAR NAME=$metric>$7<?/MIVAR>
+<?/MIBLOCK>
+
+<?MIVAR COND="$(NXST,$nsearch)" NAME=$nsearch><?/MIVAR>
+<?MIVAR COND="$(NXST,$mtype)" NAME=$mtype>gene<?/MIVAR>
+<?MIVAR COND="$(NXST,$linked_m)" NAME=$linked_m>NULL<?/MIVAR>
+<?MIVAR COND="$(NXST,$owner)" NAME=$owner>$ZDB_ident<?/MIVAR>
+<?MIVAR COND="$(NXST,$link_id)" NAME=$link_id>new<?/MIVAR>
+
+
+<form name=updater method=post action="/cgi-bin_B/webdriver">
+<input type=hidden name=MIval value=aa-linkagedit.apg>
+
+<?MIVAR>
+<input type=hidden name=linked_m value="$linked_m">
+<input type=hidden name=owner value="$owner">
+<input type=hidden name=lname value="$lname">
+<input type=hidden name=OID value="$OID">
+<input type=hidden name=link_id value="$link_id">
+<?/MIVAR>
+
+<?MIBLOCK COND="$(EC,$linked_m,NULL)">
+<big>Specify linked marker:</big>
+<p>
+Linked marker is a 
+
+<?MIVAR>
+<select name=mtype>
+<option $(IF,$(EC,$mtype,GENE),SELECTED)>GENE
+<option $(IF,$(EC,$mtype,EST),SELECTED)>EST
+<option $(IF,$(EC,$mtype,RAPD),SELECTED)>RAPD
+<option $(IF,$(EC,$mtype,SSLP),SELECTED)>SSLP
+<option $(IF,$(EC,$mtype,SSR),SELECTED)>SSR
+<option $(IF,$(EC,$mtype,STS),SELECTED)>STS
+<option $(IF,$(EC,$mtype,AFLP),SELECTED)>AFLP
+</SELECT> and its name contains:
+<input type=text name=nsearch value="$nsearch" size=8>  
+<input type=submit name=do_search value="Search">
+<?/MIVAR>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(AND,$(EC,$linked_m,NULL),$(XST,$do_search))">
+<hr>
+<TABLE cols=2>
+<TH></TH><TH>Marker Name</TH><TH>Marker Type</TH>
+<?MISQL SQL="select distinct zdb_id,mname,mtype,abbrev from all_mapped_markers where mtype='$mtype' and lower(conc(mname,abbrev)) like '%$(LOWER,$nsearch)%' order by abbrev;">
+<TR>
+<TD><input type=button value="Select" onClick="pick_me('$1');"></TD>
+<TD>$2 ($4)</TD>
+<TD>$3</TD>
+</TR>
+<?/MISQL>
+</TABLE>
+<?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No matches.<?/MIVAR>
+
+<?/MIBLOCK>
+
+<!-- If we have a marker to link to! -->
+<?MIBLOCK COND="$(NC,$linked_m,NULL)">
+
+<BIG><b>Linked Marker:</b> 
+<?MISQL SQL="select mname,abbrev from all_markers where zdb_id='$linked_m';"><u>$1</u> ($2)<?/MISQL>
+</BIG>
+
+<?MIVAR COND="$(NXST,$metric)" NAME=$metric>NULL<?/MIVAR>
+<TABLE width=100% cols=2 rows=2>
+<TR>
+<TD valign=top><font size=2>
+<B>Distance (cM):</b> <input type=text name=dist size=4 <?MIVAR COND="$(XST,$dist)">value="$dist"<?/MIVAR>  >
+<SELECT name="metric">
+<option value="cM" <?MIVAR COND="$(EC,$metric,cM)">SELECTED<?/MIVAR>  >cM
+<option value="cR" <?MIVAR COND="$(EC,$metric,cR)">SELECTED<?/MIVAR>  >cR
+</SELECT>
+</TD>
+<TD align=center valign=top><font size=2>
+<B>LOD score:</B> <input type=text name=LOD <?MIVAR COND="$(XST,$LOD)">value="$LOD"<?/MIVAR> size=4> (If LOD unknown, put 0)</font>
+</TD>
+</TR><TR>
+<TD valign=top><font size=2>
+<input type=checkbox name=private value="t" <?MIVAR COND="$(XST,$private)">CHECKED<?/MIVAR> > <b>Private!</b> Keep specifics confidential
+</TD>
+
+<?MIBLOCK COND="$(NXST,$s_owner)">
+<TD><font size=2 valign=top ><b>Mapped by:</b>
+<?MISQL SQL="select full_name from person where zdb_id='$owner';">$1<?/MISQL>
+ <input type=submit name=s_owner value="Change...">
+</TD>
+</TR>
+</TABLE>
+<input type=submit value="Submit linkage" name=exiter>  
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(XST,$s_owner)">
+<TD></TD></TR></TABLE>
+<p>
+<b><BIG>Search to specify researcher who mapped.</BIG><p>
+Name contains:</b> <input type=text size=10 name=s_string <?MIVAR COND="$(XST,$s_string)">VALUE="$s_string"<?/MIVAR>  > 
+<input type=submit name=s_owner value="Search...">
+<?/MIBLOCK>
+
+<?/MIBLOCK>
+
+<input type=button value="Cancel" onClick="window.close();">
+<?MIVAR COND="$(XST,$edit_link)">
+<input type=submit value="DELETE this linkage!" name="s_delete">
+<?/MIVAR>
+
+<?MIBLOCK COND="$(AND,$(XST,$s_string),$(XST,$s_owner))">
+<hr>
+<TABLE cols=2>
+<TH></TH><TH>Name</TH><TH>Address</TH>
+<?MISQL SQL="select distinct zdb_id,full_name,HTML_breaks(address) from person where lower(full_name) like '%$(LOWER,$s_string)%' order by full_name;">
+<TR>
+<TD valign=top><input type=button value="Select" onClick="pick_owner('$1');"></TD>
+<TD valign=top><font size=2>$2</TD>
+<TD><font size=1>$3</TD>
+</TR>
+<?/MISQL>
+</TABLE>
+<?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No matches.<?/MIVAR>
+
+<?/MIBLOCK>
+
+</form>
+
+
+<?MIBLOCK COND="$(XST,$exiter)">
+<?MIVAR COND="$(NXST,$dist)" NAME=$dist><?/MIVAR>
+<?MIVAR COND="$(NXST,$LOD)" NAME=$LOD><?/MIVAR>
+<?MIVAR COND="$(NXST,$private)" NAME=$private>f<?/MIVAR>
+
+<?MIVAR NAME=$exiter>false<?/MIVAR>
+<?MIVAR COND="$(AND,$(ISNUM,$dist),$(ISNUM,$LOD))" NAME=$exiter>true<?/MIVAR>
+<?MIVAR COND="$(EC,$exiter,false)">
+<script>
+window.alert('Distance and LOD must both be numerical values!');
+</SCRIPT>
+<?/MIVAR>
+
+<?MIBLOCK COND="$(EC,$exiter,true)">
+
+<?MIBLOCK COND="$(EC,$link_id,new)">
+<?MISQL SQL="execute function get_id('LINK');"><?/MISQL>
+<?MIVAR NAME=$link_id>$1<?/MIVAR>
+<?MISQL SQL="insert into linkages (zdb_id,m1_id,m2_id,submitter) values ('$link_id','$OID','$linked_m','$ZDB_ident');"><?/MISQL>
+<?/MIBLOCK>
+
+<?MISQL SQL="update linkages set dist='$dist',LOD='$LOD',private='$private',metric='$metric',owner='$owner' where zdb_id='$link_id';"><?/MISQL>
+<?/MIBLOCK>
+
+<?/MIBLOCK> <!-- ends exists exiter -->
+
+
+<?MISQL COND="$(XST,$s_delete)" SQL="delete from linkages where zdb_id='$link_id';"><?/MISQL>
+
+<?MIVAR COND="$(OR,$(XST,$exiter),$(XST,$s_delete))">
+<SCRIPT>
+window.confirm('LINKAGE INFO UPDATED!\n Returning to main window.\n Note that your updates WILL NOT BE REFLECTED in the interface until \nyou regenerate mapping information (see link on home page)!');
+window.close();
+</SCRIPT>
+<?/MIVAR>
+
+
+
+<?/MIBLOCK>  <!-- ends authorized -->
+
+
+
+
