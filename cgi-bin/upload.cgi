@@ -194,10 +194,10 @@ sub confirmLogin () {
 	# ZDB_authorize, and its value).
 
 	my $semicolon = ";";
-
-	$cookie = $cookie.$semicolon;
-
-	@pairs = split(/;/, $cookie);
+	my $space = " ";
+	$cookie = $cookie.$semicolon.$space;
+	
+	@pairs = split(/; /, $cookie);
 
         foreach $pair (@pairs) {
           ($name, $value) = split(/=/, $pair);
