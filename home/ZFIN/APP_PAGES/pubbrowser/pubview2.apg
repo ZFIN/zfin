@@ -178,26 +178,29 @@ ERROR -- something bad happened -- no OID passed in!
 <?MICOMMENT>*** 08/26 Curators decided to not include related markers' attribution.<?/MICOMMENT>
 <ul>
 <?MISQL SQL="
-      select recattrib_data_zdb_id as zdb_id
+      select count(recattrib_data_zdb_id)::integer
 	from  record_attribution
 	where recattrib_source_zdb_id = '$OID'
-	and  recattrib_data_zdb_id like 'ZDB-GENE%'
+	and  get_obj_type(recattrib_data_zdb_id) in 
+		(select mtgrpmem_mrkr_type from marker_type_group_member
+                 where mtgrpmem_mrkr_type_group = 'SEARCH_MK')
       ; ">
 <?/MISQL> 
-<?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
-<li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&pubId=$OID&type=gene">Genes</a> &nbsp; ($MI_ROWCOUNT)
+<?MIVAR COND="$(>,$1,0)">
+<li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&pubId=$OID&type=pub_mrkr">Genes / Markers</a> &nbsp; ($1)
 <?/MIVAR> 
 
 <?MISQL SQL="
-	select count(recattrib_data_zdb_id)
+	select count(recattrib_data_zdb_id)::integer
 	 from  record_attribution
 	 where recattrib_source_zdb_id = '$OID'
-	  and  recattrib_data_zdb_id[1,8] in ('ZDB-EST-','ZDB-SSLP','ZDB-RAPD','ZDB-STS-','ZDB-BAC-','ZDB-PAC-','ZDB-SNP-')
-          ;
+	  and  get_obj_type(recattrib_data_zdb_id) in 
+		  (select mtgrpmem_mrkr_type from marker_type_group_member
+                    where mtgrpmem_mrkr_type_group = 'SEARCH_SEG');
 	">
 <?/MISQL> 
 <?MIVAR COND="$(>,$1,0)">
-<li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-msegselect.apg&pubId=$OID">Molecular Segments</a> &nbsp; ($(FIX,$1))
+<li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-msegselect.apg&pubId=$OID">Clones and Probes</a> &nbsp; ($1)
 <?/MIVAR>
 
 
@@ -222,7 +225,7 @@ ERROR -- something bad happened -- no OID passed in!
 <?/MISQL>
 
 <?MIVAR COND="$(>,$1,0)">
-<li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&pubId=$OID&type=mapped">Mapping Data</a> &nbsp; ($(FIX,$1))
+<li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&pubId=$OID&type=pub_mapped">Mapping Data</a> &nbsp; ($(FIX,$1))
 <?/MIVAR>
 
 
