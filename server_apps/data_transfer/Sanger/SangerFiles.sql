@@ -31,7 +31,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/VegaXpat.txt'
  and probe.mrkr_zdb_id = xpat_probe_zdb_id
  and probe.mrkr_zdb_id = dblink_linked_recid
  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
- and fdbcont_fdb_db_name = 'Genbank'
+ and fdbcont_fdb_db_name in ('Genbank','RefSeq')
  and fdbcont_fdbdt_data_type = 'cDNA'
  and xpat_zdb_id = recattrib_data_zdb_id
  union
@@ -57,7 +57,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/VegaXpat.txt'
  and probe.mrkr_zdb_id = xpat_probe_zdb_id
  and gene.mrkr_zdb_id = dblink_linked_recid
  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
- and fdbcont_fdb_db_name = 'Genbank' --,'RefSeq'
+ and fdbcont_fdb_db_name in ('Genbank','RefSeq')
  and fdbcont_fdbdt_data_type = 'cDNA'
  and xpat_zdb_id = recattrib_data_zdb_id
  order by 1,3,7;
