@@ -32,7 +32,7 @@ Requires:  $CLONE_MARKER_ID, $highlight
 
 <?MISQL SQL="
 	SELECT  probelib_species,  probelib_name, probelib_non_zfin_strain_name, 
-		probelib_strain_zdb_id, fish.zdb_id, probelib_non_zfin_stg_name, stg_name_long, 
+		probelib_strain_zdb_id, fish.abbrev, probelib_non_zfin_stg_name, stg_name_long, 
 		probelib_sex, probelib_non_zfin_tissue_name, anatitem_name, 
 		clone_vector_name, vector_type_name, clone_cloning_site, clone_digest,
 		probelib_host, probelib_restriction_sites, clone_polymerase_name,
