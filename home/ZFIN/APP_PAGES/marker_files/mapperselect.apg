@@ -296,7 +296,7 @@ var LN54=0;
 	<?MIVAR>
         <SCRIPT>
 
-	var page_id='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-mapperselect.apg&select_from=MAPPER&frame_size=220&navtile=true&marker=$marker&loc=$loc&loc_panel=$loc_panel&loc_lg=$loc_lg&T51=$T51&LN54=$LN54&MGH=$MGH&HS=$HS&GAT=$GAT&MOP=$MOP&map_type=$map_type';
+	var page_id='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-mapperselect.apg&select_from=MAPPER&frame_size=220&navtile=true&marker=$(URLENCODE,$marker)&loc=$loc&loc_panel=$loc_panel&loc_lg=$loc_lg&T51=$T51&LN54=$LN54&MGH=$MGH&HS=$HS&GAT=$GAT&MOP=$MOP&map_type=$map_type';
 	top.update_hist(page_id,"$page_title");
 	top.controls.location.reload(true);
 	</SCRIPT>
