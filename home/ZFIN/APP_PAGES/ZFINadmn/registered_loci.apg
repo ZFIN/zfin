@@ -52,6 +52,18 @@ var theDescr=escape(selector.value);
     <?MISQL SQL="execute function get_id('ALT');"><?/MISQL>
     <?MIVAR NAME=$alt_id>$1<?/MIVAR>
     <?MISQL SQL="insert into temp_fish (comments,submitter_id,entry_time,zdb_id,locus,allele,chrom_num,phenotype,lab,discoverer,source,line_type,abbrev,name,chrom_change,mutagen,protocol) values ('Provisional record for newly registered locus/allele','$owner',current,'$fish_id','$locus_id','$allele','0','$descr','$lab','$owner','$owner','mutant','$abbrev','$locus_name','UNKNOWN','UNKNOWN','UNKNOWN');"><?/MISQL>
+    <?MIVAR NAME=$s_done>true<?/MIVAR>
+    <?MIVAR NAME=$temp_oid>$fish_id<?/MIVAR>
+    <?MIVAR NAME=$submitter_id>$owner<?/MIVAR>
+    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-process-fish.apg';"><?/MISQL>
+
+    <!-- make a locus record if it's new! -->
+    <?MISQL SQL="select count(*)::integer from locus where zdb_id='$locus_id';"><?/MISQL>
+    <?MIVAR NAME=$locus_cnt>$1<?/MIVAR>
+    <?MISQL COND="$(<,$locus_cnt,1)" SQL="insert into locus (zdb_id,locus_name,abbrev,comments,owner) values ('$locus_id','$locus_name','$abbrev','Provisional record for newly registered locus/allele','$owner');"><?/MISQL>
+
+    <?MISQL SQL="update locus_registration set status='conditional', approval_time=current,fish_record='$fish_id' where zdb_id='$update' and allele='$allele';"><?/MISQL>
+
   <?/MIBLOCK>
 <?/MIBLOCK> <!-- ends approve actions -->
 
