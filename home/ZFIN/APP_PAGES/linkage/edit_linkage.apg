@@ -204,7 +204,7 @@ Expected vars: link_id
     <TD align=center WIDTH=75%> 
       <b>
 	<?MIVAR>
-	  <input type=button value="Submit" onClick=modify_update('$link_id',document.edit_linkage.lg.options[document.edit_linkage.lg.selectedIndex].value,document.edit_linkage.comments.value) > &nbsp; &nbsp;
+	  <input type=button value="Entry Complete" onClick=modify_update('$link_id',document.edit_linkage.lg.options[document.edit_linkage.lg.selectedIndex].value,document.edit_linkage.comments.value) > &nbsp; &nbsp;
 
 	<input type=button value="Delete Linkage" onClick=modify_delete('delete_linkage','$link_id','','')>  &nbsp;  &nbsp; 
 	<input type=button value="Cancel" onClick="window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg'">
