@@ -137,19 +137,13 @@
             onClick="doit('abbrev','text','Abbreviation')">
 	<?/MIVAR> 
 
-	<!--    there are some abbrevs in the db as NULL - display as none -->
-	<?MIBLOCK COND="$(EC,$abbrev,NULL)">
- 	  <?MIVAR NAME=$abbrev>None<?/MIVAR>
-	<?/MIBLOCK>
 
-	<!--    there are some abbrevs in the db as xxx - display as none -->
-	<?MIBLOCK COND="$(EC,$abbrev,xxx)">
-	  <?MIVAR NAME=$abbrev>None<?/MIVAR>
-	<?/MIBLOCK>
 
-	<?MIVAR>
-	  <i>($abbrev)</i></FONT></b>
-	<?/MIVAR>
+        <?MIBLOCK COND="$(AND,$(NC,$abbrev,NULL),$(NC,$abbrev,xxx),$(NC,$abbrev,none))">
+	  <?MIVAR>
+	    <i>($abbrev)</i></FONT></b>
+	  <?/MIVAR>
+        <?/MIBLOCK>
 
 	<!-- I PURPOSEFULLY DO NOT ALLOW UPDATING OF NAME/ABBREV because 
 	  -- this information is central to identity of the record
