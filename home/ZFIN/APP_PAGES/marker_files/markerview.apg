@@ -585,6 +585,7 @@ Accession:<input type=text size=15 name=seq_acc>
 	<?MIVAR>$(SETVAR,$gblinks[1],$2)<?/MIVAR>
 	<?MIVAR>$(SETVAR,$gbaccs[1],$3)<?/MIVAR>	
         <?MIVAR>$(SETVAR,$empty,0)<?/MIVAR>
+        <?MIVAR>$(SETVAR,$count,1)<?/MIVAR>
      <?MIELSE>  
        <?MIBLOCK COND="$(<,$count,4)">
 	 <?MIVAR>$(VECAPPEND,$gblinks,$2)<?/MIVAR>
@@ -608,6 +609,8 @@ Accession:<input type=text size=15 name=seq_acc>
 
   <?MIVAR NAME=link><?/MIVAR>
   <?MIVAR NAME=n>1<?/MIVAR>
+
+
   <?MIBLOCK INDEX=$link FOREACH=$gblinks>
 	<li><?MIVAR>
 	$(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$gbaccs[$n]"')>")
