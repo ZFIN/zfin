@@ -1,4 +1,4 @@
-#!/private/bin/perl -w
+#!/private/bin/perl
 ##/usr/bin/perl
 
 use DBI;
@@ -143,7 +143,7 @@ for($i=0; $i<scalar(@keywordsOld); $i++)
 
 
 #insert new keywords
-for($i=0; $i<=1; $i++) #scalar(@addedKeywords); $i++)
+for($i=0; $i<=20; $i++) #scalar(@addedKeywords); $i++)
   {
     if($addedKeywords[$i])
       {
