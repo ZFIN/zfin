@@ -4,17 +4,33 @@ site:ftp-igbmc.u-strasbg.fr/pub/Thisse
 
 The Thisse combine their files for dowload using .sit compression. Unsit the file. StuffIt can be downloaded via the internet to unsit the file. 
 
-After unsitting you should find image folders and FileMaker Pro files. The files that need to be included are: "expression 1", "IMAGES 1", "keywords 1", "PROBES 1(or XPAT_START 1)".  Contact the Thisse if any of these files does not exist. For each probe a folder will exist with name CB###.jpeg+text. Scripts will be executed later to validate the contents of the image folders so they do not need to be checked at this time.
+After unsitting you should find image folders and FileMaker Pro files. 
+
+FILEMAKER PRO
+The files that need to be included are: 
+  DATA_CBX
+  rel_authors
+  rel_expression
+  rel_images
+  rel_val_lists
+  rel_values_key
+
+Contact the Thisse if any of these files does not exist. 
+
+IMAGE FOLDERS
+For each probe a folder will exist with name CB###.jpeg+text. Scripts will be executed later to validate the contents of the image folders so they do not need to be checked at this time.
 
 Translate FMP files into .csv files.
 1. Start FileMaker Pro (FMP)
-2. Select 'Open existing file'; open PROBES 1 -- password thisse (sometimes they might send an XPAT_START 1.fm file instead of a PROBES file; handle this file the same as you would the PROBES 1 file) 
-                               {edit template password cyclops}
-3. foreach table (PROBES 1, IMAGES 1, keywords 1, expression 1, authors)
+2. Select 'Open existing file'; 
+     --> open DATA_CBX (User password thisse; Admin password cyclops) 
+3. foreach window (DATA_CBX, rel_authors, rel_expression, rel_images)
      {
 	File -> Export Records...
-		File name: -> "Lowercase the tablename and leave off the 1."
-                	ex.: PROBES 1 -> probes
+		File name: DATA_CBX.      --> probes.csv
+                           rel_authors    --> authors.csv
+                           rel_expression --> expresion.csv
+                           rel_images     --> images.csv
 		Save as type: -> *.csv 
                 -> save 
 			Character set -> windows (ANSI)
@@ -25,7 +41,7 @@ Translate FMP files into .csv files.
      }
 
 These files should now exist. Check that they do exist.
-   probes.csv, images.csv, expression.csv, keywords.csv, authors.csv
+   probes.csv, images.csv, expression.csv, authors.csv
 
 UPLOAD FILES
   If this is your first time through the thisse load process...
@@ -41,7 +57,7 @@ UPLOAD FILES
 SPELLCHECK
 1. Run each .csv file through ispell. 
 For reference use Tom's word finder located at ~tomc/bin/dic This utility goes out and checks several online dictionaries to interpret the meaning of a word.
-The probes and images file have alot of kruft in them so hit spacebar when in doubt. Anything that shows up in the keyword file should be added to your spelling dictionary.
+The probes and images file have alot of kruft in them so hit 'a' for random sets of characters. New words should be added to your dictionary. 
 
 
 IMAGE PREPARATION
@@ -105,7 +121,7 @@ YES - Let's track down the problem. Leaving this uncorrected will cause a fatal 
    Likely: The image has no FMP record. Bernard may send images but not include
            a row in the images table and the ommission will pass silently.
       Open FMP. 
-      Select Window -> IMAGES 1. 
+      Select Window -> rel_images. 
       Search records for imagename.
       Found?
         no - email the thisses
@@ -146,13 +162,13 @@ which will
   
 move to main dir
 > cd ..
-the .csv files are manipulated by running 
-> /private/bin/rebol -sq parse-bt.r
-which does some massaging and translating of the four .csv files and 
-generates four .unl files which are informix unload files
-(Dec 2001 part of this now includes stripping out the Blast reports 
-so they can be loaded as CLOBS)
 
+Create Informix load files
+The .csv files are manipulated by running parse-bt.r. This does some 
+massaging and translating of the four .csv files and generates four .unl 
+files.
+
+> /private/bin/rebol -sq parse-bt.r
 
 Check for image name discrepancies and make corrections to images.unl as necessary.
 > check_new_images.pl
@@ -160,7 +176,8 @@ Check for image name discrepancies and make corrections to images.unl as necessa
 
 
 At this point you should be ready to start loading the data into a fresh 
-test_db once you have a fresh copy ...
+test_db... 
+
 
 open file ../load_gxp.sql and comment out the commit statement until the data loads cleanly.
 
@@ -175,7 +192,20 @@ Check unload files:
 	bad_exp_pat_anat.unl
 	bad_exp_pat_img.unl
 	foo_image_dump.unl
+	unknow_probelib.unl 
+	  -- The Thisse template has a somewhat constrained vocabulary for library names. It's more
+	  of a guide than a constraint. Existing ZFIN names prepopulate a list in hopes that similar
+	  names will be avoided. However new entries are permitted and these libraries must be added
+	  to ZFIN and to the template. 
+	  
+	  For each library in unknow_probelib.unl: First verify the name doesn't exist in ZFIN. This
+	  includes checking for similar names. Second update the appropriate data. Entries which are 
+	  varient names of existing ZFIN records should be renamed in probes.csv and probes.unl. New 
+	  entries are added to probe_library. Three fields will contain data: probelib_zdb_id, 
+	  probelib_name = "New Value", and probelib_species =  "Danio rerio".
+        
         bad_relationships.unl
+
 NOTE: If there are records in foo_image_dump.unl, it is ok..these are the images that loaded in the database
 The records in bad_exp_pat_anat.unl with ZDB id's assigned to anatomy items indicate that the anatomy items that the Thisse's sent did not map to our stage ranges and adjustments needed to be made.
 
@@ -215,7 +245,7 @@ Create file
 > touch is_gene.unl
 
 Write each relationship on a separte line using format:
-  cb_name|mrkr_name|
+  cb_name|mrkr_abbrev|
 
 
 
