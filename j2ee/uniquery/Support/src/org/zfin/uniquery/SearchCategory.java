@@ -10,8 +10,8 @@ import java.util.ArrayList;
 
 public class SearchCategory
     {
-    // IMPORTANT! any changes to these categories means that both the IndexApp 
-    // and the Spider.java must also change!
+    // IMPORTANT! any changes to these categories means that both Spider.java must also change!
+	// Tomcat needs to be bounced fo rthe chagnes to show.
     public static final String MUTANTS_FISHVIEW         = "MUTANTS_FISHVIEW";
     public static final String MUTANTS_LOCUSVIEW        = "MUTANTS_LOCUSVIEW";
     public static final String MUTANTS_MAPPINGDETAIL    = "MUTANTS_MAPPINGDETAIL";
@@ -68,7 +68,6 @@ public class SearchCategory
 
         String[] nomenclatureTypes = {NOMENCLATURE_LAB, NOMENCLATURE_NOMEN};
         categoryList.add(new SearchCategory("NOMENCLATURE", "Nomenclature", nomenclatureTypes));
-
         String[] meetingTypes = {MEETINGS, JOBS};
         categoryList.add(new SearchCategory("MEETINGS", "Jobs/Meetings", meetingTypes));
 
