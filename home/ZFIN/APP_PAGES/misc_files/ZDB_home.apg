@@ -487,7 +487,9 @@
 	      <br>the W.M. Keck Foundation. Funds also provided by the 
 	      NIH (RR/HD12546). 
 	      <br>
-	      Copyright <font color="#FFFFFF">&copy</font> <A HREF="http://www.uoregon.edu">University of Oregon</a>, 1994-2002,<A HREF="http://www.ci.eugene.or.us"> Eugene</a>, Oregon.  
+	      <A HREF="http://<!--|DOMAIN_NAME|-->/warranty.html"><font color="#FFFFFF">Copyright</a> &copy</font> <A HREF="http://www.uoregon.edu"> University of Oregon</font></a>, 1994-2002,<A HREF="http://www.ci.eugene.or.us"> Eugene</font></a>, Oregon. 
+              <br>
+ 	      <font size=-2>ZFIN logo design by Kari Pape, </font> <A HREF="http://www.uoregon.edu"><font size=-2> University of Oregon</font></a>
 	      </P>
 	    </DIV>
 	  </TD>

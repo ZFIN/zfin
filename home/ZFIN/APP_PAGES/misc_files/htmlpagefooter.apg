@@ -24,8 +24,8 @@
             <A HREF="/ZFIN/misc_html/tips.html">Helpful Hints</a>
 	   </DIV>
           </td>
-          <td align=center class="footer">
-	   <DIV class="header">
+          <td align=center >
+	   <DIV class="header" class="footer" >
             <A HREF="/zf_info/citation.html">Citing ZFIN</a>
 	   </DIV>
           </td>
@@ -34,11 +34,18 @@
     </td>
   </tr>
   <tr>
-    <td align=center >
-      <DIV class="header">
-      Copyright <font color="#000000">&copy</font> <A HREF="http://www.uoregon.edu"><font color="#000000">University of Oregon</font></a>, 1994-2002, <A HREF="http://www.ci.eugene.or.us/"><font color="#000000">Eugene</font></a>, Oregon. 
-      </DIV>
+    <DIV class="ack">
+    <td align=center  class="ack">
+      <A HREF="http://<!--|DOMAIN_NAME|-->/warranty.html">Copyright</a> &copy <A HREF="http://www.uoregon.edu">University of Oregon</a>, 1994-2002, <A HREF="http://www.ci.eugene.or.us/">Eugene</a>, Oregon.
     </td>
+    </DIV>
+  </tr>  
+  <tr>
+    <DIV class="ack">
+    <td align=center class="ack">
+      <font size="-2">ZFIN logo design by Kari Pape, </font><A HREF="http://www.uoregon.edu"><font size="-2">University of Oregon</font></a>
+    </td>
+    </DIV>
   </tr>  
 </table>
 </body>
