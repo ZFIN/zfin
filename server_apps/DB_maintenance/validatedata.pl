@@ -2118,6 +2118,65 @@ sub mrkrgoevGoevflagDuplicatesFound ($) {
   &recordResult($routineName, $nRecords);
 }
 
+#---------------------------------------------------------------
+# check for obsolete annotations
+
+# Parameter
+#  $     Email Address for recipient
+#
+sub mrkrgoevObsoleteAnnotationsFound ($) {
+
+  my $routineName = "mrkrgoevObsoleteAnnotationsFound";
+
+  my $sql = 'select mrkrgoev_zdb_id
+               from marker_go_term_evidence, go_term
+               where mrkrgoev_go_term_zdb_id = goterm_zdb_id
+               and goterm_is_obsolete = "t" '
+              ;
+
+  my @colDesc = ("mrkrgoev_zdb_id");
+
+  my $nRecords = execSql ($sql, undef, @colDesc);
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "obsolete go terms exist with annotations";
+    my $errMsg = "$nRecords annotations exist with obsolete go terms";
+    logError($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
+  }
+  &recordResult($routineName, $nRecords);
+}
+
+
+#---------------------------------------------------------------
+# check for secondary annotations
+
+# Parameter
+#  $     Email Address for recipient
+#
+sub mrkrgoevSecondaryAnnotationsFound ($) {
+
+  my $routineName = "mrkrgoevSecondaryAnnotationsFound";
+
+  my $sql = 'select mrkrgoev_zdb_id
+               from marker_go_term_evidence, go_term
+               where mrkrgoev_go_term_zdb_id = goterm_zdb_id
+               and goterm_is_secondary = "t"'
+              ;
+
+  my @colDesc = ("mrkrgoev_zdb_id");
+
+  my $nRecords = execSql ($sql, undef, @colDesc);
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "secondary go terms exist with annotations";
+    my $errMsg = "$nRecords annotations exist with secondary go terms";
+    logError($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
+  }
+  &recordResult($routineName, $nRecords);
+}
+
 #---------------------------------------------------------
 #Parameter
 # $      Email Address for recipients
@@ -2478,10 +2537,11 @@ if($daily) {
   putativeNonZfinGeneNotInZfin($geneEmail);
   zdbReplacedDataIsReplaced($dbaEmail);
 
-  mrkgoevDuplicatesFound($dbaEmail);
+  mrkrgoevDuplicatesFound($dbaEmail);
   mrkrgoevInfgrpDuplicatesFound($dbaEmail);
   mrkrgoevGoevflagDuplicatesFound($dbaEmail);
-
+  mrkrgoevObsoleteAnnotationsFound($dbaEmail);
+  mrkrgoevSecondaryAnnotationsFound($dbaEmail);
 }
 if($orphan) {
   
