@@ -1,0 +1,94 @@
+<!-- FILE: jump_to.  This file is an alternate START_ZFIN page that is used when people want to link directly into ZFIN record via an outside URL. They give a URL link that looks like zfin.org/cgi-bin/ZFIN_jump?record=<zfin id of record>
+This page starts ZFIN, examines the id, and jumps to that record. 
+
+Note that when they hit the ZFIN HOME button, they will jump to the standard page!
+-->
+
+<HTML>
+
+<head>
+<SCRIPT>
+
+function display_foo(mywindow,index) {
+  if (index==1) {
+  mywindow.document.writeln('<center><A HREF="mailto:zfinadmn@zfin.org"><img border=1 src="/ZDBB/icons/comments-small.gif"></A><p><hr><p><Font size=-1><b>ZFIN NAVIGATOR:</b></font></center><TABLE width=100% cellpadding=0 cellspacing=0>');
+  }
+  if (index>1) {
+    mywindow.document.writeln("<TR><TD align=center><img border=0 src='/ZDBB/icons/ARROWS/downarrow.gif'></TD></TR>")
+  }
+mywindow.document.writeln("<TR><TD><Font size=-2><INPUT TYPE=button NAME="+ this.id +" VALUE=\""+ this.title +"\" onClick=top.content.history.go(\""+ this.id +"\") ></font></TD></TR>");
+  if (this.end==false) {
+    this.next.display(mywindow,index+1)
+  } else {
+    mywindow.document.writeln("</TABLE><p><HR><p><font size=-1>Click on above tiles to move to corresponding screen.</font>") }
+}
+
+function update_hist(id,title) {
+  if (this.title==title) {
+    this.end=true;
+  } else {
+    if (this.end==true) {
+       this.end=false;
+       this.next= new top.page_rec(id,title)
+    } else {
+      this.next.update(id,title)
+    }
+  }
+}
+
+function page_rec(id,title) {
+  this.id=id;
+  this.title=title;
+  this.end=true;
+  this.display=display_foo;
+  this.update=update_hist;
+}
+
+browserName = navigator.appName;
+browserVer = parseInt(navigator.appVersion);
+
+if (browserName == "Netscape" && browserVer >= 3) version = "n3";
+else version = "n2";
+        
+if (version == "n3")         {
+   ZDB= new page_rec("aa-ZDB_home.apg","ZFIN HOME");
+} else {
+   window.location="/ZDBB/misc_html/wrong_browser.html"
+}
+
+top.name="ZFIN";
+
+</SCRIPT>
+  
+<TITLE>ZFIN</TITLE>
+</HEAD>
+
+<FRAMESET cols="90,*">
+
+<FRAME NAME="controls" scrolling=no SRC="/cgi-bin_B/webdriver?MIval=aa-navigator.html" MARGINWIDTH=1 MARGINHEIGHT=1>
+
+<?MIVAR NAME=$start_page>MIval=aa-ZDB_home.apg<?/MIVAR>
+
+<!-- now if a start page is passed in, set second frame to it! -->
+<?MIBLOCK COND="$(XST,$record)")>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,LAB),0)">MIval=aa-labview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,PERS),0)">MIval=aa-persview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,PUB),0)">MIval=aa-pubview2.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,FISH),0)">MIval=aa-fishview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,GENE),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,EST),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,SSLP),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,SSR),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,LOCUS),0)">MIval=aa-locusview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,REFCROSS),0)">MIval=aa-crossview.apg&OID=$record<?/MIVAR>
+<?/MIBLOCK>
+
+
+<?MIVAR>
+<FRAME NAME="content" SRC="/cgi-bin_B/webdriver?$start_page">
+<?/MIVAR>
+
+</FRAMESET>
+
+
+</HTML>
