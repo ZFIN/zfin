@@ -10,15 +10,25 @@ get_date_from_id(zdbId varchar(50))
   --   as the name.
   -- Returns NULL if ZDB ID does not point to a record.
 
-  define d		varchar(8);
+  define century	varchar(2);
+  define zdb_date	varchar(6);
+  define dateFromId	varchar(8);
   define offset		integer;
   define objType	varchar(20);
 
   let objType = get_obj_type (zdbId);
   let offset = length(objType) + 6;
-  let d = "20" || substr(zdbId,offset,6);
+  let zdb_date = substr(zdbId,offset,6);
+  
+  if (substr(zdb_date,0,1) = "9") then
+      let century = "19";
+  else
+      let century = "20";
+  end if
 
-  return d;
+  let dateFromId = century || zdb_date;
+
+  return dateFromId;
 
 end function;
 
