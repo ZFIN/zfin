@@ -45,6 +45,35 @@ pub in question with any new values passed in.
       <?MIVAR NAME=$OID>$1<?/MIVAR>
       <?MISQL SQL="insert into zdb_active_source (zactvs_zdb_id) values ('$OID');"><?/MISQL>
       <?MISQL SQL="insert into  publication (zdb_id,title,authors,medline_authors,source,pub_date,owner,entry_time,jtype) values ('$OID','temp','temp','Non-Medline entry','temp','01/01/1900'::date,'root',current,'Unknown');"><?/MISQL>
+    <?MIELSE>
+    
+      <?MICOMMENT>
+        If it's not new, this is an update. Updates to tables are kept track of in the updates table. 
+        Rather than individually check variables, use the system tables to generically check each column.
+      <?/MICOMMENT>
+      
+      <?MIVAR NAME=column_name><?/MIVAR>
+      <?MIVAR NAME=column_value><?/MIVAR>
+      
+      <?MISQL SQL="
+        select col.colno, col.colname
+        from syscolumns col, systables tab 
+        where tab.tabname = 'publication'
+          and tab.tabid = col.tabid;">
+      
+        <?MIVAR>$(SETVAR,$column_name[$1],$2)<?/MIVAR>
+      <?/MISQL>
+        
+      <?MIBLOCK INDEX=$i FROM=1 TO=$(-,$(VECSIZE,$column_name),1) STEP=1>
+        <?MISQL SQL="
+          select $column_name[$i]
+          from publication
+          where zdb_id = '$OID';">
+          
+          <?MIVAR>$(SETVAR,$column_value[$i],$1)<?/MIVAR>
+        <?/MISQL>
+      <?/MIBLOCK>
+      
     <?/MIBLOCK>
 
     <!-- Now update the record with new info. Try to do it all in one insert! -->
@@ -59,6 +88,26 @@ pub in question with any new values passed in.
     <!-- OKAY, now just do the update! -->
 
     <?MISQL SQL="update publication $setvalues where zdb_id='$OID';"><?/MISQL>
+
+    <?MIBLOCK COND="$(NXST,$new)">
+    <?MIBLOCK INDEX=$i FROM=1 TO=$(-,$(VECSIZE,$column_name),1) STEP=1>
+      <?MISQL SQL="
+        select $column_name[$i]
+        from publication
+        where zdb_id = '$OID';">
+              
+        <?MIVAR COND="$(NC,$column_value[$i],$1)">
+          <?MISQL SQL="
+            insert into updates
+                (submitter_id,submitter_name, rec_id, field_name, old_value, new_value, comments, when) 
+              values 
+                ('$ZDB_ident', '$ZDB_name', '$OID', '$column_name[$i]', 
+                '$column_value[$i]', '$1', 'process-pub.apg', current);">
+          <?/MISQL>
+        <?/MIVAR>
+      <?/MISQL>
+    <?/MIBLOCK>    
+    <?/MIBLOCK>
 
   <?/MIBLOCK>
 <?/MIBLOCK>
