@@ -307,4 +307,4 @@ document.write("<table width=100% cellspacing=0 border=0 cellpadding=0 class=\"h
     document.write("</td>");
   document.write("</tr>");
 document.write("</table>");
-document.write("<table cellpadding=5 bgcolor=#FFFFFF width=100%><tr><td>");
+document.write("<table cellpadding=5 bgcolor=<!--|BACKGROUND_COLOR|--> width=100%><tr><td>");
