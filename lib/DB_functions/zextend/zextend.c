@@ -287,22 +287,32 @@ static buflst *appbuf(buflst *buf, char *data, unsigned len) {
 
 /*	concat		Concatenates two strings (lvarchars)
 	The Informix concat function seems to be broken, oh well
-	Returns an lvarchar.
+	Returns an lvarchar.  NULL arguments are accepted and treated as empty strings.
 */
-mi_lvarchar *conc(mi_lvarchar *pre, mi_lvarchar *post) {
+mi_lvarchar *conc(mi_lvarchar *pre, mi_lvarchar *post, MI_FPARAM *fparam) {
 	int		n, m;
 	char		*p;
 	mi_lvarchar	*lv;
 
-	n = mi_get_varlen(pre); m = mi_get_varlen(post);
+	if (mi_fp_argisnull (fparam, 0) == MI_TRUE)
+		n = 0;
+	else
+		n = mi_get_varlen(pre);
+
+	if (mi_fp_argisnull (fparam, 1) == MI_TRUE)
+		m = 0;
+	else
+		m = mi_get_varlen(post);
 
 	/* Get lvarchar to hold it */
 	if (	!(lv = mi_new_var(n + m)) ||
 		!(p = mi_get_vardata(lv)) ) NO_MEMORY(concat);
 
 	/* Copy arguments to result */
-	memcpy(p, mi_get_vardata(pre), n);
-	memcpy(p + n, mi_get_vardata(post), m);
+	if (n != 0)
+		memcpy(p, mi_get_vardata(pre), n);
+	if (m != 0)
+		memcpy(p + n, mi_get_vardata(post), m);
 
 	/* Finish up */
 	mi_set_varlen(lv, n + m);
