@@ -46,7 +46,7 @@ Variables Expected:
  	        where recattrib_data_zdb_id = '$dataId'
     		  and get_obj_type(recattrib_source_zdb_id) = 'PUB';
   		">
-
+	     
 	      <?MIBLOCK COND="$(>,$1,1)">
 	       <?MIVAR>	
 	       (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&orgOID=$OID&OID=$dataId&rtype=$rtype">$(FIX,$1)</A>)
