@@ -77,7 +77,7 @@ $(SUBDIRS) :
 # After everuything to mirror has been mirrored, create a tar file containing
 # all of them.
 
-mirror : $(MIRROR_SUBDIRS) $(SPECIFICTARGETS) $(STATICTARGETS)
+mirror : $(TARGETDIR) $(MIRROR_SUBDIRS) $(SPECIFICTARGETS) $(STATICTARGETS)
 	(cd $(TARGETDIR); tar cvfp $(TARGETROOT)/mirror.tar $^)
 	gzip -f $(TARGETROOT)/mirror.tar
 
