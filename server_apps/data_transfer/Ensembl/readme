@@ -1,0 +1,17 @@
+To find Ensembl ENSDARG links for ZFIN, 
+we directly query the Ensembl mysql database in Sanger.
+
+the 'fetch_ensdarg.sh' script needs to be called 
+with the name of the current release, core zebrafish ensembl database.
+
+i.e. danio_rerio_core_18_2 or danio_rerio_core_19_2
+
+I currently have not attempted to finf an autometed way supplying 
+the correct argument because I expect the data will only change 
+when there is a new release several times a year. it will be faily
+easy to detect new release announcements and manually run the script.
+if the data changes within a release or the releases come often
+we can find an automated method of choosing correct argument.
+
+fetch_ensdarg.sh sends the query in 'fetch_ensdarg.sql' off to Sanger
+and  calls 'load_ensdarg.sql' to load the results into ZFIN.
