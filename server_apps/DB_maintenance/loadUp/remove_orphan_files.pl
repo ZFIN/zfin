@@ -171,9 +171,9 @@ system ("/bin/chmod 755 /tmp/fl_pdf_modified") or die "Cannot chmod the fl_pdf_m
 print "loading...\n";
 
 # load the files created by the above steps into the database using 
-# the load_files.sql script
+# the load_files.sql  script
 
-system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> load_files.sql >out 2> /tmp/orphan_file_report.txt") or die "can not execute dbacces :$!\n";
+system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> load_upload_file_list.sql >out 2> /tmp/orphan_file_report.txt") or die "can not execute dbacces :$!\n";
 
 close FL_PDF_MODIFIED;
 close FL_IMAGE_MODIFIED;
