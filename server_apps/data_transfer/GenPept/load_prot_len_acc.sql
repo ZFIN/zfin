@@ -9,7 +9,57 @@ update statistics for table prot_len_acc;
 !echo "make input unique"
 select distinct * from prot_len_acc into temp tmp_pla with no log;
 delete from prot_len_acc;
-insert into prot_len_acc select * from tmp_pla;
+insert into prot_len_acc select * from tmp_pla
+where pla_prot not in 
+(
+'NP_059341',--  78                
+'NP_059339',--  78                
+'NP_059335',--  78                
+'NP_059338',--  78                
+'NP_059342',--  78                
+'NP_059337',--  78                
+'NP_059332',--  78                
+'NP_059331',--  78                
+'NP_059340',--  78                
+'NP_059334',--  78                
+'NP_059343',--  78                
+'NP_059333',--  78                
+'NP_059336',--  78                
+'AAF27271',--   276               
+'AAF27263',--   276               
+'AAF27274',--   276               
+'AAF27265',--   276               
+'AAF27269',--   276               
+'AAF27275',--   276               
+'AAF27268',--   276               
+'AAF27259',--   276               
+'AAF27264',--   276               
+'AAF27266',--   276               
+'AAF27258',--   276               
+'AAF27260',--   276               
+'AAF27267',--   276               
+'AAF27272',--   276               
+'AAF27262',--   276               
+'AAF27261',--   276               
+'AAF27276',--   276               
+'AAF27277',--   276               
+'AAF27273',--   276               
+'AAF27270',--   276               
+'AAF74303',--   741               
+'AAF74299',--   741               
+'AAF74302',--   741               
+'AAF74301',--   741               
+'AAF74300',--   741               
+'AAF74305',--   741               
+'AAF74298',--   741               
+'AAF74308',--   741               
+'AAF74309',--   741               
+'AAF74297',--   741               
+'AAF74306',--   741               
+'AAF74304',--   741               
+'AAF74307' --   741 
+)
+;
 drop table tmp_pla;
 
 
@@ -52,6 +102,7 @@ delete from zdb_active_data where zactvd_zdb_id in (
     )
 );
 
+
 ! echo "find the new Genpept links to add"
 select 
     linked_recid, 
@@ -63,9 +114,11 @@ select
     'Zebrafish' organism,
     'protein sequence' type,
      max(pla_len) len
-from  db_link, prot_len_acc
+from  db_link, prot_len_acc, marker
 where db_name in ('Genbank','SwissProt', 'RefSeq', 'LocusLink')
 and   acc_num = pla_acc
+and   mrkr_type = 'GENE'
+and mrkr_zdb_id = linked_recid
 group by 1,3,6 
 into temp tmp_dblk with no log;
 
