@@ -27,7 +27,8 @@ FISH_FUNCS  = get_fish_full_name.sql
 IMAGE_FUNCS = get_image_stats.sql
 PUB_FUNCS   = get_pub_mini_ref.sql
 REGEN_FUNCS = regen_anatomy.sql regen_fishsearch.sql regen_genomics.sql \
-		regen_oevdisp.sql get_date_from_id.sql
+		regen_oevdisp.sql get_date_from_id.sql regen_panelcount.sql \
+		regen_maps.sql
 ZDB_FUNCS   = get_obj_name.sql zdb_date.sql
 
 
