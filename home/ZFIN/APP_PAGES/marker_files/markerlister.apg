@@ -442,23 +442,29 @@ Startframes.apg will pass this variables on to the select form.  -->
     <tr>
       <td width="45%" align=right valign=top>&nbsp;
 
-	<?MIVAR name=comment>  Build array of user data  <?/MIVAR>
-	<?MIVAR name=UserInput>MIval=aa-markerlister.apg&WINSIZE=$WINSIZE<?/MIVAR>
+	<!-- to be used by walking windows and nav tile page_id -->
+        <!-- javascript of nav tile logic can not deal with preformed string using urlencode so save non-urlencoded string for use by nav tile others will be appended -->
+        <!-- want GET string as short as possible - append only when variable exists, buffer overflow may cause segmentation fault -->
+        <?MIVAR name=comment>  Build array of user data  <?/MIVAR>
+	<?MIVAR name=selector>MIval=aa-markerlister.apg&WINSIZE=$WINSIZE<?/MIVAR>
+        <?MIVAR name=UserInput><?/MIVAR>
+        <?MIVAR name=TileInput><?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$lg)>$UserInput&lg=$lg<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$refcross)>$UserInput&refcross=$refcross<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$marker_type)>$UserInput&marker_type=$marker_type<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$plinks)>$UserInput&plinks=$plinks<?/MIVAR>
-	<?MIVAR name=UserInput COND=$(XST,$name)>$UserInput&name=$(URLENCODE,$name)<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$compare)>$UserInput&compare=$compare<?/MIVAR>
+        <?MIVAR name=$TileInput>$UserInput<?/MIVAR>
+        <?MIVAR name=UserInput COND=$(XST,$name)>$UserInput&name=$(URLENCODE,$name)<?/MIVAR>  
 
 	<!--- Return to the previous set of Rows --->
 	<?MIBLOCK COND="$(>,$BEGIN,1)">
 
 	  <?MIVAR>
-	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$(-,$BEGIN,$WINSIZE)&BEGIN=$BEGIN&$UserInput">Prev</A>&nbsp;&nbsp;&nbsp;&nbsp;<br>
+	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$(-,$BEGIN,$WINSIZE)&BEGIN=$BEGIN&$selector$UserInput">Prev</A>&nbsp;&nbsp;&nbsp;&nbsp;<br>
 
 	    <!-- If current not First Page, create link to first page. -->
-	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=1&BEGIN=1&$UserInput">First Page</A>
+	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=1&BEGIN=1&$selector$UserInput">First Page</A>
 
 	  <?/MIVAR>
 
@@ -473,19 +479,19 @@ Startframes.apg will pass this variables on to the select form.  -->
 
       <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,3)),0)">
 	<td valign=top>
-	  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,3))"> $(-,$CURRENT,3)</A> <?/MIVAR>
+	  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,3))"> $(-,$CURRENT,3)</A> <?/MIVAR>
 	</td>
       <?/MIBLOCK>
 
       <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,2)),0)">
 	<td valign=top>
-	  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,2))"> $(-,$CURRENT,2)</A><?/MIVAR>
+	  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,2))"> $(-,$CURRENT,2)</A><?/MIVAR>
 	</td>
       <?/MIBLOCK>
 
       <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,1)),0)">
 	<td valign=top>
-	  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,1))"> $(-,$CURRENT,1)</A><?/MIVAR>
+	  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,1))"> $(-,$CURRENT,1)</A><?/MIVAR>
 	</td>
       <?/MIBLOCK>
 
@@ -498,19 +504,19 @@ Startframes.apg will pass this variables on to the select form.  -->
 
       <?MIVAR COND=$(<=,$(+,$BEGIN,$(*,$WINSIZE,1)),$num_recs)>
 	<td valign=top>
-	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$END"> $(+,$CURRENT,1)</A>
+	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$END"> $(+,$CURRENT,1)</A>
 	</td>
       <?/MIVAR>
 
       <?MIVAR COND=$(<=,$(+,$BEGIN,$(*,$WINSIZE,2)),$num_recs)>
 	<td valign=top>
-	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,2))"> $(+,$CURRENT,2)</A>
+	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,2))"> $(+,$CURRENT,2)</A>
 	</td>
       <?/MIVAR>
 
       <?MIVAR COND=$(<=,$(+,$BEGIN,$(*,$WINSIZE,3)),$num_recs)>
 	<td valign=top>
-	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,3))"> $(+,$CURRENT,3)</A>
+	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,3))"> $(+,$CURRENT,3)</A>
 	</td>
       <?/MIVAR>
 
@@ -519,7 +525,7 @@ Startframes.apg will pass this variables on to the select form.  -->
 	<!--- Get the next set of Rows --->
 	<?MIBLOCK COND="$(<=,$(+,$BEGIN,$WINSIZE),$num_recs)">
 	  <?MIVAR>
-	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$END&BEGIN=$BEGIN&$UserInput">Next</A><br>
+	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$END&BEGIN=$BEGIN&$selector$UserInput">Next</A><br>
 	  <?/MIVAR>
 
 
@@ -529,7 +535,7 @@ Startframes.apg will pass this variables on to the select form.  -->
 	  <?MIVAR name=$START COND="$(!=,$(MOD,$num_recs,$WINSIZE),0)">$(+,$(*,$(FIX,$(/,$num_recs,$WINSIZE)),$WINSIZE),1)<?/MIVAR>
 
 	  <?MIVAR>
-	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$START&$UserInput">Last Page</A>
+	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$START&$selector$UserInput">Last Page</A>
 	  <?/MIVAR>
 	<?/MIBLOCK>
 
@@ -548,26 +554,30 @@ Startframes.apg will pass this variables on to the select form.  -->
 <?/MISQL>
 
 
-<!-- OKAY, now cause a tile for the new page to appear in the navigator frame
+<!-- create a tile for the new page to appear in the navigator frame
   -- startframes.apg will pass variables on to appropriate page
   -- don't want a tile if got here via the accessionlister  -->
 <!-- markerlister may also be called by mapperselect when the marker name is ambigious.  A variable ampper is passed only by  mapperselect.  Create navtile button for mapperselect.  Pass marker_name rather than name and pass map_type if this can from a merged map request -->
 
+<!-- URLENCODE calls retain value if variable in function had a value the foirst call and is null the second call-->
+<!--  be sure to force a reset of URLENCODE -->
+
 <?MIBLOCK COND="$(NXST,$accession)">
-  <?MIVAR NAME=navtile>true<?/MIVAR>
+  <?MIVAR name=$TileInput>$TileInput&navtile=true<?/MIVAR>
+  <?MIVAR name=$TileInput COND="$(XST,$BEGIN)">$TileInput&BEGIN=$BEGIN<?/MIVAR>
+  <?MIVAR name=$TileInput COND="$(XST,$WINSIZE)">$TileInput&WINSIZE=$WINSIZE<?/MIVAR>
+
   <?MIVAR COND="$(NXST,$plinks)" NAME=$plinks>NULL<?/MIVAR>
   <?MIVAR NAME=$mlist DELIMIT="','" REPLACE="">$mlist<?/MIVAR>
-  <?MIVAR COND="$(NXST,$BEGIN)" NAME=$BEGIN><?/MIVAR>
-  <?MIVAR COND="$(NXST,$WINSIZE)" NAME=$WINSIZE><?/MIVAR>
+  <?MIVAR COND="$(XST,$(URLENCODE,$name))" NAME=$(URLENCODE,$name)><?/MIVAR>
   <?MIVAR COND="$(NXST,$name)" NAME=$name><?/MIVAR>
-
 
   <!-- when called by markerselect -->
   <?MIBLOCK COND="$(NXST,$paged_by)">
     <?MIVAR NAME=page_title>Find MARKER<?/MIVAR>
     <?MIVAR>
       <SCRIPT>
-	var page_id=top.content.location.href+'&navtile=$navtile&name=$(URLENCODE,$name)&lg=$lg&refcross=$refcross&marker_type=$mlist&compare=$compare&plinks=$plinks&WINSIZE=$WINSIZE&BEGIN=$BEGIN';
+	var page_id='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-markerselect.apg&select_from=MARKER$TileInput&name=$(URLENCODE,$name)';
         top.update_hist(page_id,"$page_title");
         top.controls.location.reload(true);
       </SCRIPT>
@@ -579,7 +589,7 @@ Startframes.apg will pass this variables on to the select form.  -->
     <?MIVAR NAME=page_title>View Map<?/MIVAR>
     <?MIVAR>
       <SCRIPT>
-	var page_id=top.content.location.href+'&navtile=$navtile&marker=$(URLENCODE,$name)&map_type=$map_type';
+	var page_id='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-mapperselect.apg&select_from=MAPPER&frame_size=220&navtile=true&marker=$(URLENCODE,$name)&map_type=$map_type';
         top.update_hist(page_id,"$page_title");
         top.controls.location.reload(true);
       </SCRIPT>
