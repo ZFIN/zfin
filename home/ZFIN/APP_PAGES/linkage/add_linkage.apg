@@ -75,6 +75,7 @@ Expected vars:  None.
   <?MIVAR COND="$(NXST,$source_specified)" NAME=$source_specified><?/MIVAR>
   <?MIVAR COND="$(NXST,$person_source)" NAME=$person_source><?/MIVAR>
   <?MIVAR COND="$(NXST,$pub_source)" NAME=$pub_source><?/MIVAR>
+  <?MIVAR COND="$(NXST,$person_pick)" NAME=$person_pick><?/MIVAR>
   <?MIVAR COND="$(NXST,$source)" NAME=source><?/MIVAR>
   <?MIVAR COND="$(NXST,$comments)" NAME=$comments><?/MIVAR>
   <?MIVAR COND="$(NXST,$lg)" NAME=$lg>0<?/MIVAR>
