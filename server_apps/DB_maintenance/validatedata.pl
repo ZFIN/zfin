@@ -229,45 +229,6 @@ sub stageWindowConsistent ($) {
   &recordResult($routineName, $nRecords);
 }
  
-#-------------------------------------------------------
-#Parameter
-# $      Email Address for recipients
-
-sub stageContainsStageWindowInContainerStageWindow ($) {
-
-  my $routineName = "stageContainsStageWindowInContainerStageWindow";
-
-  my $sql = '
-              select stgcon_container_zdb_id,
-                     s1.stg_name_long,
-                     stgcon_contained_zdb_id,
-                     s2.stg_name_long
-  		from stage_contains, 
-                     stage s1, stage s2
-               where stgcon_container_zdb_id = s1.stg_zdb_id             
-                 and stgcon_contained_zdb_id = s2.stg_zdb_id
-                 and (s1.stg_hours_start > s2.stg_hours_start
-                      or s1.stg_hours_end < s2.stg_hours_end) 
-             ';
-
-  my @colDesc = ("Stgcon container ZDB ID    ",
-		 "Container stg name & period",
-		 "Stgcon contained ZDB ID    ",
-		 "Contained stg name & period" );
-
-  my $nRecords = execSql ($sql, undef, @colDesc);
-  
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Stage window inconsistence in stage_contains";
-    my $errMsg = "In stage_contains, $nRecords records' container's stage window" 
-                   ." doesn't fully contain contained 's. ";
-
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
-  }
-  &recordResult($routineName, $nRecords);
-}
 
 #=================== Anatomy Item  =================================
 #-----------------------------------------------------------
@@ -3194,7 +3155,6 @@ my $goEmail      = "<!--|GO_EMAIL_CURATOR|-->";
 
 if($daily) {
   stageWindowConsistent ($adEmail);
-  stageContainsStageWindowInContainerStageWindow($adEmail);
 
   anatomyItemStageWindowConsistent($adEmail);
   anatomyContainsStageWindowConsistent($adEmail);
