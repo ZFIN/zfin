@@ -10,7 +10,7 @@ use DBI;
 
   my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->', 
                          '', '', 
-                         {AutoCommit => 1, RaiseError => 1})
+                         {AutoCommit => 1, RaiseError => 0})
     or die "Failed while connecting to <!--|DB_NAME|--> ";
 
 
