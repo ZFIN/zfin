@@ -63,7 +63,8 @@ Possible vars: link_id, comments, lg, private, source , ZDB_ident, distance, LOd
 
 
 <?MIBLOCK COND="$(EC,$calling_form,update_linkage_with_distance)">
-
+   
+   <?MIVAR COND="$(NXST,$lod)" NAME=$lod><?/MIVAR>
   <?MISQL SQL="update linkage set lnkg_or_lg='$lg', lnkg_private='$private', lnkg_comments='$comments'
      where lnkg_zdb_id = '$link_id';"> 
   <?/MISQL>
