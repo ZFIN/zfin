@@ -35,6 +35,10 @@ public class Marker {
 				  String target_abbrev, String lg_location, String OR_lg, String framework_t, String metric)  {
 
 		this.zdb_id = zdb_id;
+
+		if (!this.zdb_id.startsWith("Z"))
+			this.zdb_id = this.zdb_id.substring(this.zdb_id.indexOf("Z"),this.zdb_id.length());
+
 		this.abbrev = abbrev;
 		this.mtype = mtype;
 		this.target_abbrev = target_abbrev;
