@@ -4,17 +4,6 @@ drop function regen_maps;
 create dba function "informix".regen_maps()
   returning integer
 
--- Creates the panel_count table, a fast search table used to quickly
--- get counts for each marker type on each linkage group or panel.
-
--- DEBUGGING:  Uncomment the next two statements to turn on a debugging trace.
---             (and change the first one to point to your OWN dang directory!)
--- set debug file to '/tmp/debug-regen-panelcnt';
--- trace on;
-
--- Create all the new tables and views.
--- If an exception occurs here, drop all the newly-created tables
-
   begin	-- master exception handler
         
     define exceptionMessage lvarchar;
@@ -65,11 +54,27 @@ create dba function "informix".regen_maps()
 	-- Don't drop the tables here.  Leave them around in an effort to
 	-- figure out what went wrong.
 
+	update zdb_flag set zflag_is_on = 'f'
+		where zflag_name = "regen_maps" 
+	 	  and zflag_is_on = 't'; 
+
 	return -1;
       end
     end exception;
 
+    update zdb_flag set zflag_is_on = 't'
+	where zflag_name = "regen_maps" 
+	 and zflag_is_on = 'f';
 
+    let nrows = DBINFO('sqlca.sqlerrd2');
+
+    if (nrows == 0)	then
+	return 1;
+    end if
+ 			
+    update zdb_flag set zflag_last_modified = CURRENT
+	where zflag_name = "regen_maps";
+			
 
 
     --------------- paneled_markers
@@ -100,13 +105,71 @@ create dba function "informix".regen_maps()
       extent size 1024 next size 1024 lock mode page;
     revoke all on paneled_m_new from "public";
 
-    insert into paneled_m_new
-      select mrkr_zdb_id, mrkr_abbrev, mrkr_type, mm.OR_lg, mm.lg_location,
-	     mm.metric, pn.abbrev, 'f'::boolean, mm.refcross_id, mm.map_name
-	from marker, mapped_marker mm, panels pn
-	where mm.marker_id = mrkr_zdb_id
-	  and mm.refcross_id = pn.zdb_id
-	  and mm.private = 'f';
+   -- faked mapping information for gene is
+   -- taken out of mapped_marker table, they should be 
+   -- regenerated into paneled_markers for panel display.
+   -- 03/05/08
+
+   -- prepare the genes whose encoded segments has mapping 
+   -- information that the gene hasn't got 
+
+   select mrel_mrkr_1_zdb_id as gene_zdb_id, 
+	  or_lg, lg_location,refcross_id, metric
+     from marker_relationship, mapped_marker m
+    where mrel_comments not like "Connects EST %" 
+      and mrel_mrkr_2_zdb_id =m.marker_id
+      and m.scoring_data is not null
+      and mrel_mrkr_1_zdb_id not in (
+		select marker_id 
+		from mapped_marker mm
+		where mm.or_lg = m.or_lg
+	  	and mm.lg_location = m.lg_location
+	  	and mm.marker_type = "GENE")
+	into temp tmp_gene_id with no log;
+
+   -- do union to be distinct
+   -- union gene self mapping info, and those from encoded segments
+   -- locus, and mutants.
+
+     select mrkr_zdb_id, mrkr_abbrev, mrkr_type, mm.OR_lg or_lg, 
+            mm.lg_location lg_location, mm.metric metric, pn.abbrev panel,
+            'f'::boolean frame, mm.refcross_id refcross_id, mm.map_name map_name
+       from marker, mapped_marker mm, panels pn
+      where mm.marker_id = mrkr_zdb_id
+        and mm.refcross_id = pn.zdb_id
+    UNION
+     select mrkr_zdb_id, mrkr_abbrev, mrkr_type, or_lg,
+            lg_location, t.metric as metric, p.abbrev as panel, 
+            'f'::boolean as frame, refcross_id, mrkr_abbrev map_name 		 
+       from  tmp_gene_id t, 
+	     marker m, panels p
+      where gene_zdb_id = m.mrkr_zdb_id
+        and refcross_id = p.zdb_id 
+    UNION
+     select mrkr_zdb_id, mrkr_abbrev, mrkr_type, mm.or_lg or_lg,
+	    mm.lg_location lg_location, mm.metric metric, p.abbrev panel, 
+	   'f'::boolean,mm.refcross_id refcross_id, mrkr_abbrev map_name
+       from mapped_marker mm, locus l, marker m, panels p
+      where l.zdb_id = mm.marker_id 
+	and l.cloned_gene = m.mrkr_zdb_id
+	and mm.refcross_id = p.zdb_id 
+    UNION
+     select mrkr_zdb_id, mrkr_abbrev, mrkr_type, mm.or_lg or_lg,
+	    mm.lg_location lg_location, mm.metric metric, p.abbrev panel, 
+	   'f'::boolean,mm.refcross_id refcross_id, mrkr_abbrev map_name
+      from mapped_marker mm, locus l, fish f, marker m, panels p
+     where f.zdb_id = mm.marker_id 
+       and f.locus = l.zdb_id 
+       and l.cloned_gene = m.mrkr_zdb_id
+       and mm.refcross_id = p.zdb_id
+    into temp tmp_paneled_markers;
+
+   insert into paneled_m_new
+	select * from tmp_paneled_markers;
+
+   drop table tmp_gene_id;
+   drop table tmp_paneled_markers;
+	  
     
     -- Create a temporary index
     create index paneled_m_new_zdb_id_index 
@@ -129,24 +192,59 @@ create dba function "informix".regen_maps()
 
     --  a temporary fix to display all Tuebingen mutants on map_marker search
     --  these will eventually be going in using the linked marker approach 
+
     insert into paneled_m_new
       select a.zdb_id, a.allele, 'MUTANT', b.OR_lg,
 	     b.lg_location, b.metric, c.abbrev, 'f'::boolean, b.refcross_id,b.map_name
 	from fish a, mapped_marker b, panels c
 	where b.marker_id = a.zdb_id 
 	  and b.refcross_id = c.zdb_id
-	  and b.private = 'f';
+	  ;
 
     -- Temporary ?? adjustment to get locus records into paneled_markers
     -- as well.  Suggested by Tom, approved by Judy, and implemented by Dave
     -- on 2000/11/10
 
-    insert into paneled_m_new
-      select a.zdb_id, a.abbrev, 'MUTANT', b.or_lg, b.lg_location, b.metric,
-	     c.abbrev, 'f'::boolean, b.refcross_id , b.map_name
+    -- faked mapping information for locus is
+    -- taken out of mapped_marker table, they should be 
+    -- regenerated into paneled_markers for panel display.
+    -- 03/05/08
+    -- union of mapping info from locus itself, as well as
+    -- cloned gene, gene encoded segments, and mutants
+
+      select a.zdb_id zdb_id, a.abbrev abbrev, 'MUTANT' mtype, b.or_lg or_lg, b.lg_location lg_location, b.metric metric,
+	     c.abbrev panel, 'f'::boolean frame, b.refcross_id refcross_id , b.map_name map_name
 	from locus a, mapped_marker b, panels c
 	where b.marker_id = a.zdb_id and b.refcross_id = c.zdb_id
-	  and b.private = 'f';
+     UNION
+     select l.zdb_id zdb_id, l.abbrev abbrev, 'MUTANT' mtype, mm.or_lg or_lg,  
+	    mm.lg_location lg_location, mm.metric metric, p.abbrev panel,
+	   'f'::boolean frame, mm.refcross_id refcross_id, l.abbrev map_name
+      from locus l, mapped_marker mm, panels p
+     where l.cloned_gene = mm.marker_id 
+       and mm.refcross_id = p.zdb_id 
+     UNION
+     select l.zdb_id zdb_id, l.abbrev abbrev, 'MUTANT' mtype, mm.or_lg or_lg,  
+	    mm.lg_location lg_location, mm.metric metric, p.abbrev panel,
+	    'f'::boolean frame, mm.refcross_id refcross_id, l.abbrev map_name
+       from locus l, mapped_marker mm, panels p, 
+	    marker_relationship
+      where l.cloned_gene = mrel_mrkr_1_zdb_id 
+        and mm.marker_id = mrel_mrkr_2_zdb_id	
+        and mm.refcross_id = p.zdb_id
+     UNION
+      select l.zdb_id zdb_id, l.abbrev abbrev, 'MUTANT' mtype, mm.or_lg or_lg,  
+	    mm.lg_location lg_location, mm.metric metric, p.abbrev panel,
+	    'f'::boolean frame, mm.refcross_id refcross_id, l.abbrev map_name
+       from locus l, fish f, mapped_marker mm, panels p
+      where f.locus = l.zdb_id
+	and f.zdb_id = mm.marker_id
+	and mm.refcross_id = p.zdb_id
+      into temp tmp_paneled_markers with no log;
+
+   insert into paneled_m_new
+	 select * from tmp_paneled_markers;
+   drop table tmp_paneled_markers;
 
     update paneled_m_new 
       set mghframework = 't'::boolean 
@@ -165,7 +263,6 @@ create dba function "informix".regen_maps()
         from marker, mapped_marker mm, panels pn
         where mm.marker_type = 'SNP'
           and mm.refcross_id = pn.zdb_id
-          and mm.private = 'f'
 	  and mrkr_zdb_id = mm.marker_id;
 
 
@@ -282,6 +379,10 @@ create dba function "informix".regen_maps()
 
     commit work;
 
+    update zdb_flag set zflag_is_on = "f",
+	               zflag_last_modified = CURRENT
+	where zflag_name = "regen_maps";
+	  
   end -- Global exception handler
 
   return 0;

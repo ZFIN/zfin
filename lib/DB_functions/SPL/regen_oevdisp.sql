@@ -29,6 +29,8 @@ create dba function "informix".regen_oevdisp()
     define errorText varchar(255);
     define errorHint varchar(255);
 
+    define nrows integer;
+
     on exception
       set sqlError, isamError, errorText
       begin
@@ -36,8 +38,7 @@ create dba function "informix".regen_oevdisp()
 	-- An error happened while function was running.
 
 	on exception in (-206, -255, -668)
-	  --  206: OK to get "Table not found" here, since we might
-	  --       not have created all tables at the time of the exception
+
 	  --  255: OK to get a "Not in transaction" here, since
 	  --       we might not be in a transaction when the rollback work 
 	  --       below is performed.
@@ -68,10 +69,28 @@ create dba function "informix".regen_oevdisp()
 
 	-- Don't drop the tables here.  Leave them around in an effort to
 	-- figure out what went wrong.
+	
+	update zdb_flag set zflag_is_on = 'f'
+		where zflag_name = "regen_oevdisp" 
+	 	  and zflag_is_on = 't'; 
 
 	return -1;
       end
     end exception;
+
+    update zdb_flag set zflag_is_on = 't'
+	where zflag_name = "regen_oevdisp" 
+	 and zflag_is_on = 'f';
+
+    let nrows = DBINFO('sqlca.sqlerrd2');
+
+    if (nrows == 0)	then
+	return 1;
+    end if
+ 			
+    update zdb_flag set zflag_last_modified = CURRENT
+	where zflag_name = "regen_oevdisp";
+			
 
     let preGeneZdbId = "";
     let prePubZdbId = "";
@@ -181,7 +200,9 @@ create dba function "informix".regen_oevdisp()
 
     let errorHint = "Populating oevd";	
 
-    insert into orthologue_evidence_display
+    insert into orthologue_evidence_display 
+	(oevdisp_zdb_id, oevdisp_gene_zdb_id, oevdisp_evidence_code, 
+	  oevdisp_organism_list )
       select * 
         from pre_orthologue_evidence_display;
 
@@ -213,6 +234,10 @@ create dba function "informix".regen_oevdisp()
   update statistics high for table record_attribution;
 
   commit work;
+ 
+  update zdb_flag set zflag_is_on = "f",
+	 	      zflag_last_modified = CURRENT
+        where zflag_name = "regen_oevdisp";
 
   return 0;
 
