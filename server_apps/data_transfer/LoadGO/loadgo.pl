@@ -54,7 +54,7 @@ while( !( -e "godefs_parsed.unl")) {
     }
     else
     {
-         &sendErrorReport("Failed to run parse_defs.r"); 
+         print ("Failed to run parse_defs.r"); 
       exit;
     }
   }  
