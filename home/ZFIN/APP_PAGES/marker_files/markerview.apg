@@ -1884,6 +1884,8 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
       recattrib_data_zdb_id in (select oevdisp_zdb_id from orthologue_evidence_display where oevdisp_gene_zdb_id = '$OID')
     or 
       recattrib_data_zdb_id = '$OID' 
+    or
+      recattrib_data_zdb_id in (select mrkrgoev_zdb_id from marker_go_term_evidence,marker_go_term where mrkrgo_mrkr_zdb_id='$OID' and mrkrgoev_mrkrgo_zdb_id=mrkrgo_zdb_id)
  
  <?/MIVAR>
 
