@@ -13,7 +13,7 @@
 <?MIVAR NAME=$CURROW>0<?/MIVAR>
 <?MIVAR NAME=$EXIST>0<?/MIVAR>
 <?MIVAR NAME=$hasEv>0<?/MIVAR>
-<?MIVAR NAME=$ball_img><img src="/images/green_ball.gif" border=0 height=10><?/MIVAR>
+<?MIVAR NAME=$ball_img><img src="/images/fill_green_ball.gif" border=0 height=10><?/MIVAR>
  <!-- Get number of orthologue organisms, so that know the number of rows-->
  <?MISQL SQL="
    select count(distinct organism)
