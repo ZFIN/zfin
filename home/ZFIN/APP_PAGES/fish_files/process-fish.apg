@@ -47,6 +47,15 @@
   <?MIVAR COND="$(NXST,$line_type)" NAME=$line_type>mutant<?/MIVAR>
   <?MIVAR COND="$(NXST,$flag)" NAME=$flag>NULL<?/MIVAR>
 
+  <!-- To create ID for new fish, just modify TEMP_OID, replacing 'TEMP' 
+    -- with 'FISH'. 
+    -->
+  <?MIVAR NAME=$fish_id>$(REPLACE,$temp_oid,TEMP,FISH)<?/MIVAR>
+  <?MISQL SQL="
+    insert into zdb_active_data
+      values ('$fish_id');">
+  <?/MISQL>
+
   <!-- First deal with mutants; wild type submission comes later -->
   <?MIBLOCK COND="$(EC,$line_type,mutant)">
 
@@ -56,16 +65,10 @@
       -->
     <?MIBLOCK COND="$(=,$(POSITION,$flag,by_breeding),0)">
 
-      <!-- To create ID for new fish, just modify TEMP_OID, replacing 'TEMP' 
-        -- with 'FISH'. This saves call to get_id and is important because 
-        -- we have used the adapted temp_oid to label the Filemaker file 
-	-- created for phenotypes during form submission. 
-        -->
       <?MISQL SQL="execute function get_id('CHROMO');"><?/MISQL>
-        <?MIVAR NAME=$chromo_id>$1<?/MIVAR>
+      <?MIVAR NAME=$chromo_id>$1<?/MIVAR>
       <?MISQL SQL="execute function get_id('ALT');"><?/MISQL>
-        <?MIVAR NAME=$alt_id>$1<?/MIVAR>
-      <?MIVAR NAME=$fish_id>$(REPLACE,$temp_oid,TEMP,FISH)<?/MIVAR>
+      <?MIVAR NAME=$alt_id>$1<?/MIVAR>
 
       <?MISQL SQL="
         insert into fish 
@@ -142,11 +145,8 @@
       -- lines. Here, you just get the CHROMO records from the parents and 
       -- attach them to the new FISH record. All the alterations in the 
       -- parents are thus automatically brought along. 
-      -- Note that new Fish id just created by altering the temp_oid 
       -->
     <?MIBLOCK COND="$(>,$(POSITION,$flag,by_breeding),0)">
-
-      <?MIVAR NAME=$fish_id>$(REPLACE,$temp_oid,TEMP,FISH)<?/MIVAR>
 
       <!-- Make the new FISH -->
       <?MISQL SQL="
@@ -228,11 +228,8 @@
 
   <!-- If it was a wild_type, do a much more limited insert, where you 
     -- just insewrt the  few relevant fields from the temp_fish record. 
-    -- Note that new Fish id just created by altering the temp_oid 
     -->
   <?MIBLOCK COND="$(NC,$line_type,mutant)">
-
-    <?MIVAR NAME=$fish_id>$(REPLACE,$temp_oid,TEMP,FISH)<?/MIVAR>
 
     <!-- Make the new FISH -->
     <?MISQL SQL="
