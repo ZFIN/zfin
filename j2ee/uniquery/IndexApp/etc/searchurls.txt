@@ -5,10 +5,10 @@
 #
 
 http://<!--|DOMAIN_NAME|-->/<!--|CGI_BIN_DIR_NAME|-->/webdriver?MIval=aa-ZDB_home.apg
-http://<!--|DOMAIN_NAME|-->/<!--|CGI_BIN_DIR_NAME|-->/webdriver?MIval=aa-fishselect.apg&START=1&query_results=exist&WINSIZE=50
-http://<!--|DOMAIN_NAME|-->/<!--|CGI_BIN_DIR_NAME|-->/webdriver?MIval=aa-newmrkrselect.apg&marker_type=all&START=1&query_results=exist&WINSIZE=50
-http://<!--|DOMAIN_NAME|-->/<!--|CGI_BIN_DIR_NAME|-->/webdriver?MIval=aa-xpatselect.apg&START=1&query_results=exist&WINSIZE=50
-http://<!--|DOMAIN_NAME|-->/<!--|CGI_BIN_DIR_NAME|-->/webdriver?MIval=aa-pubselect2.apg&START=1&query_results=exist&WINSIZE=50
-http://<!--|DOMAIN_NAME|-->/<!--|CGI_BIN_DIR_NAME|-->/webdriver?MIval=aa-persselect.apg&START=1&query_results=exist&WINSIZE=50
-http://<!--|DOMAIN_NAME|-->/<!--|CGI_BIN_DIR_NAME|-->/webdriver?MIval=aa-labselect.apg&START=1&query_results=exist&WINSIZE=50
-http://<!--|DOMAIN_NAME|-->/<!--|CGI_BIN_DIR_NAME|-->/webdriver?MIval=aa-companyselect.apg&START=1&query_results=exist&WINSIZE=50
+http://<!--|DOMAIN_NAME|-->/<!--|CGI_BIN_DIR_NAME|-->/webdriver?MIval=aa-fishselect.apg&START=1&query_results=exist&WINSIZE=1000
+http://<!--|DOMAIN_NAME|-->/<!--|CGI_BIN_DIR_NAME|-->/webdriver?MIval=aa-newmrkrselect.apg&marker_type=all&START=1&query_results=exist&WINSIZE=1000
+http://<!--|DOMAIN_NAME|-->/<!--|CGI_BIN_DIR_NAME|-->/webdriver?MIval=aa-xpatselect.apg&START=1&query_results=exist&WINSIZE=1000
+http://<!--|DOMAIN_NAME|-->/<!--|CGI_BIN_DIR_NAME|-->/webdriver?MIval=aa-pubselect2.apg&START=1&query_results=exist&WINSIZE=1000
+http://<!--|DOMAIN_NAME|-->/<!--|CGI_BIN_DIR_NAME|-->/webdriver?MIval=aa-persselect.apg&START=1&query_results=exist&WINSIZE=1000
+http://<!--|DOMAIN_NAME|-->/<!--|CGI_BIN_DIR_NAME|-->/webdriver?MIval=aa-labselect.apg&START=1&query_results=exist&WINSIZE=1000
+http://<!--|DOMAIN_NAME|-->/<!--|CGI_BIN_DIR_NAME|-->/webdriver?MIval=aa-companyselect.apg&START=1&query_results=exist&WINSIZE=1000
