@@ -154,9 +154,6 @@ FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN record
        <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$1</a>
      <?/MIVAR>       
 
-     <!-- if supplier is RZPD, we want to populate the order page with clone name -->
-     <?MIVAR NAME=order_url>$(IF,$(>,$(POSITION,$4,rzpd),0),$4$1,$4)<?/MIVAR>
-
      <?MIBLOCK COND="$(NC,$3,)">
        <font size=-1>
 
