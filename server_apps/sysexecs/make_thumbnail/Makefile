@@ -1,6 +1,6 @@
 #------------------------------------------------------------------------
 #
-# Makefile for ZFIN_WWW CVS Project, WWW Server Apps sysexecs make_thumnail
+# Makefile for ZFIN_WWW CVS Project, WWW Server Apps sysexecs make_thumbnail
 # directory
 #
 # $Source$
@@ -29,7 +29,7 @@
 TOP = ../../..
 include $(TOP)/make.include
 
-TARGETDIR = $(TARGETROOT)/server_apps/sysexecs/make_thumnail
+TARGETDIR = $(TARGETROOT)/server_apps/sysexecs/make_thumbnail
 
 # The script is static.  It is the only file in this directory.
 
