@@ -17,27 +17,29 @@ do %../Scripts/fix-date.r
 		-----------
 
 create temp table probes_tmp (
-1	label varchar (80) not null,
-2	isgene varchar(15),
-3	genename varchar(100),
-4	top_blast varchar(200),
-5	blast_result lvarchar, 
-6	gb5p varchar (50),
-7	gb3p varchar (50),
-8	or_lg integer,
-9	lg_loc decimal(8,2),
-0	metric varchar(5),
-1	library varchar(80),
-2	vector varchar(80),
-3	insert_kb float,
-4	cloning_site varchar(20),
-5	digest varchar(20),
-6	polymerase varchar(80),
-7	medline_id varchar(80),
-8	text_citation lvarchar, 
-9	comments lvarchar,
-0	expression lvarchar, 
-1	modified DATETIME YEAR TO DAY
+1       _KeyIndex (5) not null,
+1       _KeyValue (10) not null,
+2	label varchar (80) not null,
+3	isgene varchar(15),
+4	genename varchar(100),
+5	top_blast varchar(200),
+6	blast_result lvarchar, 
+7	gb5p varchar (50),
+8	gb3p varchar (50),
+9	or_lg integer,
+0	lg_loc decimal(8,2),
+1	metric varchar(5),
+2	library varchar(80),
+3	vector varchar(80),
+4	insert_kb float,
+5	cloning_site varchar(20),
+6	digest varchar(20),
+7	polymerase varchar(80),
+8	medline_id varchar(80),
+9	text_citation lvarchar, 
+0	comments lvarchar,
+1	expression lvarchar, 
+2	modified DATETIME YEAR TO DAY
 )
 
 	}
@@ -65,20 +67,20 @@ create temp table probes_tmp (
 	   replace/all line " |"   "|"
  
 		row: parse/all line {|}
-		replace row/13 "," "."     ; change decimal point in lg_location to dot
-		buf:  copy row/5
-		insert (skip row 4)  rejoin [row/1 ".blast"]	
-		remove (skip row 5)
+		replace row/15 "," "."     ; change decimal point in lg_location to dot
+		buf:  copy row/7
+		insert (skip row 6)  rejoin [row/3 ".blast"]	
+		remove (skip row 7)
 		;probe row
-		;print ["row 5" row/5 ]
+		;print ["row 7" row/7 ]
 		;foreach field row [append line (join field ["|"])] ;what the h_ll! puts the blast back in?
  	   ;hack 
-		line: rejoin [row/1 "|" row/2 "|" row/3 "|" row/4 "|" row/5 "|" row/6 "|" row/7 "|" row/8 "|" row/9 "|" row/10 "|" row/11 "|" row/12 "|" row/13 "|" row/14 "|" row/15 "|" row/16 "|" row/17 "|" row/18 "|" row/19 "|" row/20 "|"]  	   replace/all line "<PIPE73>" "\|"
+		line: rejoin [row/1 "|" row/2 "|" row/3 "|" row/4 "|" row/5 "|" row/6 "|" row/7 "|" row/8 "|" row/9 "|" row/10 "|" row/11 "|" row/12 "|" row/13 "|" row/14 "|" row/15 "|" row/16 "|" row/17 "|" row/18 "|" row/19 "|" row/20 "|" row/21 "|" row/22 "|"]  	   replace/all line "<PIPE73>" "\|"
 		write/append %probes.unl rejoin [line newline]
   
 		replace/all buf "<PIPE73>" "|"
 		replace/all buf "\" "<br>"	
-		write to-file rejoin [row/1 ".blast"]	 rejoin ["<pre>" buf "</pre>"]
+		write to-file rejoin [row/3 ".blast"]	 rejoin ["<pre>" buf "</pre>"]
 		
 	]
 	
@@ -86,13 +88,13 @@ create temp table probes_tmp (
 	map-stages: func[ buffer [string!] /local cut paste changes][
 		changes: [
 			"|<none>|" "|unknown|unknown|"                              
-			"|B|"      "|Blastula:Sphere|Blastula:30%-epiboly|"         
-			"|G|"      "|Gastrula:50%-epiboly|Gastrula:Bud|"            
-			"|ES|"     "|Segmentation:1-somite|Segmentation:5-somite|"  
-			"|MS|"     "|Segmentation:14-somite|Segmentation:14-somite|"
-			"|24 h|"   "|Segmentation:20-somite|Pharyngula:Prim-5|"     
-			"|36 h|"   "|Pharyngula:Prim-15|Pharyngula:Prim-25|"        
-			"|48 h|"   "|Pharyngula:High-pec|Hatching:Long-pec|"        		
+			"|1: B|"      "|Blastula:Sphere|Blastula:30%-epiboly|"         
+			"|2: G|"      "|Gastrula:50%-epiboly|Gastrula:Bud|"            
+			"|3: ES|"     "|Segmentation:1-somite|Segmentation:5-somite|"  
+			"|4: MS|"     "|Segmentation:14-somite|Segmentation:14-somite|"
+			"|5: 24 h|"   "|Segmentation:20-somite|Pharyngula:Prim-5|"     
+			"|6: 36 h|"   "|Pharyngula:Prim-15|Pharyngula:Prim-25|"        
+			"|7: 48 h|"   "|Pharyngula:High-pec|Hatching:Long-pec|"        		
 		]
 		foreach [cut paste] changes [replace/all buffer cut paste]
 	   buffer
