@@ -1,31 +1,31 @@
 To: aprilm@uoneuro.uoregon.edu, dlains@uoneuro.uoregon.edu, tomas@uoneuro.uoregon.edu, kelly@uoneuro.uoregon.edu, mason@uoneuro.uoregon.edu, rholland@uoneuro.uoregon.edu, bennettl@uoneuro.uoregon.edu
 From: zirc@darkwing.uoregon.edu
-Subject: [required_requesterName]'s request for Zebrafish Books
+Subject: [reqName]'s request for Zebrafish Books
 
 **************************************** 
-quantity:[required_zfBooksQuantity]
+quantity:[reqBookQty]
 ---
 ---
 Name:
-[required_requesterName]
+[reqName]
 ---
 Email:
-[required_requesterEmail]
+[reqEmail]
 ---
 Telephone:
-[required_requesterTelephone]
+[reqPhone]
 ---
 Fax:
-[required_requesterFax]
+[reqFax]
 ---
 Lab:
-[required_requesterLab]
+[reqLab]
 ---
 Position:
-[required_requesterPosition]
+[reqPos]
 ---
 Address:
-[required_requesterAddress]
+[reqAddr]
 ---
 ---
 PI Name:
@@ -35,7 +35,7 @@ PI Email:
 [PIEmail]
 ---
 PI Telephone:
-[PITelephone]
+[PIPhone]
 ---
 PI Fax:
 [PIFax]
@@ -44,43 +44,43 @@ PI Lab:
 [PILab]
 ---
 PI Address:
-[PIAddress]
+[PIAddr]
 ---
 ---
 Grant Number:
-[grantNumber]
+[grantNo]
 ---
 Funding Organization:
-[grantOrganization]
+[grantOrg]
 ---
 ---
 Bill To Name:
-[required_BillToName]
+[billName]
 ---
 Bill To Email:
-[required_BillToEmail]
+[billEmail]
 ---
 Bill To Telephone:
-[required_BillToTelephone]
+[billPhone]
 ---
 Bill To Fax:
-[required_BillToFax]
+[billFax]
 ---
 Bill To Lab:
-[required_BillToLab]
+[billLab]
 ---
 Bill To Address:
-[required_BillToAddress]
+[billAddr]
 ---
 Billing Preference:
-[billingPreference]
+[billPref]
 ---
 Bill To PO Number:
-[billToPONumber]
+[billPONo]
 ---
 ---
 Zebrafish Books Quantity:
-[required_zfBooksQuantity]
+[reqBookQty]
 ---
 ---
 ---
