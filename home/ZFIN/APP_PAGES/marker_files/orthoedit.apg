@@ -97,7 +97,7 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
 		 where c_gene_id = '$OID'
                    and organism = '$species_update';">
             <?MIVAR NAME=$ortho_id>$1<?/MIVAR>
-            <?MIVAR NAME=$oname>$2<?/MIVAR>
+            <?MIVAR NAME=$oname>$(URLDECODE,$2)<?/MIVAR>
             <?MIVAR NAME=$oabbrev>$3<?/MIVAR>
          <?/MISQL>
     
