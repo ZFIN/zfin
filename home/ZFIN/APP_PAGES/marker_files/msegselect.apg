@@ -1,0 +1,615 @@
+
+<!-- FILE: mseglister.apg -->
+
+<HTML>
+ <HEAD>
+  <?MIVAR Name=page_name>$(IF,$(XST,$query_results),ZFIN Molecular Segmet Search Results,ZFIN Search Molecular Segments)<?/MIVAR>
+  <?MIVAR><TITLE>$page_name</TITLE><?/MIVAR>
+
+ <?MIVAR NAME=$OID COND="$(NXST,$OID)">NULL<?/MIVAR>
+
+ <?MISQL SQL="
+  select object 
+    from webPages 
+    where ID = 'aa-chromoscripts.apg';">
+  $1
+ <?/MISQL>
+
+ </HEAD>
+ <BODY bgcolor="#000000">
+
+ <?MIBLOCK COND="$(NXST,$accession)">
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+ <?/MIBLOCK>
+ <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
+
+
+ <!------------------ Results ----------------->
+
+ <?MIBLOCK  COND="$(XST,$query_results)">  
+  <?MIVAR NAME=$OID COND="$(NXST,$OID)">NULL<?/MIVAR>
+  <?MIVAR NAME=$MI_NULL><?/MIVAR>
+
+  <!-- THIS NEXT PART IS EXECUTED AFTER THE PERSON ENTERS SOME CRITERIA -->
+
+  <!-- First note that they have searched persons-->
+  <?MISQL SQL="
+    select WebExplode(object,'') 
+     from webPages 
+     where ID = 'aa-identify.apg';">
+     $1
+  <?/MISQL>
+
+  <!-- set userid to ZDB_ID of user or GUEST to be used by the map viewer -->
+  <?MIVAR NAME=$userid>GUEST<?/MIVAR>
+
+  <!-- This next part builds up a query piece by piece, based on which criteria 
+    were passed in -->
+
+  <?MIVAR NAME=$constraint COND="$(NXST,$constraint)"> <?/MIVAR>
+  <?MIVAR NAME=$lg COND="$(NXST,$lg)">0<?/MIVAR>
+  <?MIVAR NAME=$segment_contains_type COND="$(NXST,$segment_contains_type)">any<?/MIVAR>
+  <?MIVAR COND="$(NXST,$sequence_type)" NAME=$sequence_type>NULL<?/MIVAR>
+  <?MIVAR COND="$(NXST,$compare)" NAME=$compare>contains<?/MIVAR>
+
+  <?MIVAR NAME=$mlist SEPARATE="','">$segment_contains_type<?/MIVAR>
+  <?MIVAR COND="$(>,$(POSITION,$mlist,any),0)" NAME=$segment_conains_type>any<?/MIVAR>
+
+  <?MIVAR NAME=$slist SEPARATE="','">$sequence_type<?/MIVAR>
+  <?MIVAR COND="$(>,$(POSITION,$slist,any),0)" NAME=$segment_conains_type>any<?/MIVAR>
+
+
+  <!-- First filter name for apostrophes! -->
+  <?MIVAR COND="$(XST,$name)" NAME=$name DELIMIT="'" REPLACE="''">$name<?/MIVAR>
+  <?MIVAR NAME=$wild_card><?/MIVAR>
+  <?MIVAR COND="$(NC,$compare,starts)" NAME=$wild_card>%<?/MIVAR>
+
+  <!-- NOW BUILD UP THE CONSTRAINT CLAUSE -->
+
+  <?MIVAR NAME=$previous> <?/MIVAR>
+  <?MIVAR NAME=$constraint> where <?/MIVAR>
+
+  <?MIBLOCK COND="$(XST,$name)">
+    <?MIVAR NAME=$constraint>$constraint 
+      exists 
+        ( select 'x' 
+          from all_map_names 
+          where a.zdb_id = allmapnm_zdb_id 
+            and allmapnm_name like '$wild_card$(LOWER,$name)%' ) 
+    <?/MIVAR>
+  <?/MIBLOCK> 
+
+  <?MIVAR NAME=$previous COND="$(XST,$name)"> and <?/MIVAR>
+
+  <?MIVAR NAME=$constraint COND="$(NC,$lg,0)">
+    $constraint $previous ((OR_lg='$lg' or OR_lg='0') and private='f')
+  <?/MIVAR>
+
+  <?MIVAR NAME=$previous COND="$(NC,$lg,0)"> and <?/MIVAR>
+
+  <?MIVAR NAME=$constraint COND="$(NC,$refcross,NULL)">
+    $constraint $previous (target_id='$refcross' OR dist is not null)
+  <?/MIVAR>
+
+  <?MIVAR NAME=$constraint COND="$(AND,$(XST,$segment_contains_type),$(NC,$segment_contains_type,any))">
+    $constraint $previous exists ( select from marker_relationship, marker where mrel_mrkr_1_zdb_id = '$OID' and (mtype in ('$mlist')) )
+  <?/MIVAR>
+
+  <?MIVAR NAME=$previous COND="$(AND,$(XST,$segment_contains_type),$(NC,$segment_contains_type,any))"> and <?/MIVAR>
+
+
+  <?MIVAR NAME=$constraint COND="$(AND,$(XST,$sequence_type),$(NC,$sequence_type,any))">
+    $constraint $previous (mtype in ('$slist'))
+  <?/MIVAR>
+
+  <?MIVAR NAME=$previous COND="$(AND,$(XST,$sequence_type),$(NC,$sequence_type,any))"> and <?/MIVAR>
+
+  <?MIVAR NAME=$constraint>
+    $constraint $previous clone_mrkr_zdb_id = zdb_id
+  <?/MIVAR>
+
+  <?MIVAR NAME=$previous> and <?/MIVAR>
+
+
+
+ <!-- ends cond any constraints specified -->
+
+
+<?MIVAR NAME=$order_clause>order by abbrev_order ,mtype<?/MIVAR>
+<?MIVAR NAME=$insert_ending>, allmapmrkr_abbrev_order as abbrev_order, dist<?/MIVAR>
+<?MIVAR NAME=$select_ending>, allmapmrkr_abbrev_order as abbrev_order, dist <?/MIVAR>
+<?MIVAR NAME=$target_table> all_mapped_markers a, outer clone <?/MIVAR>
+<?MIVAR NAME=$tmptable_select_ending>, abbrev_order, dist  <?/MIVAR>
+
+<!--  Populate temp table based on user constraints.  -->
+
+<?MISQL SQL="
+  select abbrev, mtype, lg_location, zdb_id, OR_lg,
+         target_id, target_abbrev, private, metric, clone_sequence_type
+	 $insert_ending
+    from $target_table 
+    $constraint 
+    $order_clause
+    into temp mseglister_temp with no log;">
+<?/MISQL>
+
+<?MISQL SQL="
+  create index mseglister_temp_index on mseglister_temp (abbrev, mtype);">
+<?/MISQL>
+
+<!--  Count the number of marker names that will be returned. -->
+<!--  query count(*) -->
+<?MISQL SQL="
+  select distinct abbrev, mtype
+    from mseglister_temp;">
+<?/MISQL>
+<?MIVAR NAME=$num_recs>$MI_ROWCOUNT<?/MIVAR>
+
+<!-- NOW JUST RETRIEVE AND DISPLAY ALL MATCHING ENTRIES. -->
+
+<?MIBLOCK COND="$(=,$num_recs,0)">
+    
+  <!-- look to see if replaced zdb_id -->
+
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-zdb_history.apg';">$1<?/MISQL>
+
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(NXST,$new_oid)">
+<table width=100% border=0>
+  <tr>
+    <td width=20%>&nbsp;</td>
+    <td width=60% align=center>
+      <?MIVAR><font size="+1">
+        Molecular Segment Search Results (<b>$num_recs</b> records found.)
+      </font><?/MIVAR>
+    </td>
+    <td width=20% align=center>
+      <a href=#modify>Modify Search</a>
+      
+      <!-- Insert a form with one button. Label button Your Input Welcome -->
+        <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>
+    </td>
+  </tr>
+</table>
+<?/MIBLOCK>
+
+<?MIVAR COND="$(NC,$lg,0)">
+  <br>
+  <font color="red">PLEASE NOTE:</font> 
+  <font size=2> 
+  Because you have constrained this search to a specific 
+  linkage group, the results shown below <b>do not</b> include 
+  confidential mapping results. This is to avoid tacitly giving away 
+  linkage group information for these markers.
+  </font>
+<?/MIVAR>
+
+<br>
+
+<!-- <?MIVAR>CONSTRAINT: $constraint<?/MIVAR> -->
+
+<!-- Stuff to control retrieval volume -->
+<form method=post 
+      name=mseglister 
+      action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+  <?MIVAR>
+    <input type=hidden name=MIval value=aa-msegselect.apg>
+    <input type=hidden name=constraint value="$constraint">
+    <input type=hidden name=userid value="$userid">
+    <input type=hidden name=compare value="$compare">
+
+  <?/MIVAR>
+</FORM>
+
+<?MIBLOCK COND="$(>,$num_recs,0)">
+  (Note: cM distances are measured from most telomeric marker)
+  <br>
+
+  <TABLE width=100% border=0 cellspacing=0 cellpadding=3 >
+    <TR>
+      <TH>&nbsp;</TH>
+      <TH align=left>Segment Name</TH> 
+      <TH align=left>Sequence Type</TH> 
+      <TH align=left>Map Location</TH> 
+      <TH align=left>Panel</TH> 
+    </TR>
+
+    <?MIVAR NAME=$ok_view_map>0<?/MIVAR>
+
+
+    <!--- WALKING WINDOW --->
+    <!--- Initialization --->
+    <?MIVAR NAME=WINSIZE DEFAULT=25>$WINSIZE<?/MIVAR>
+    <?MIVAR NAME=BEGIN DEFAULT=1>$START<?/MIVAR>
+
+
+    <!--- DEFINITION OF RANGES --->
+    <?MIVAR NAME=BEGIN>$(IF,$(<,$BEGIN,1),1,$BEGIN)<?/MIVAR> 
+    <?MIVAR NAME=END>$(+,$BEGIN,$WINSIZE)<?/MIVAR>
+
+
+    <!--- EXECUTION --->
+    <!--  Set outer loop variables, row_color and ok_view_map -->
+    <?MIVAR name=$row_color>$highlight<?/MIVAR>
+    <?MIVAR NAME=$ok_view_map>0<?/MIVAR>
+    <?MIVAR name=$first_row>1<?/MIVAR>
+    <?MIVAR NAME=$rowNUM>$BEGIN<?/MIVAR>
+
+    <!--- Query Database --->
+    <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
+      select distinct abbrev, mtype, abbrev_order
+	from mseglister_temp
+	$order_clause;">
+
+      <?MIVAR name=$marker_abbrev>$1<?/MIVAR>
+      <?MIVAR name=$mtype>$2<?/MIVAR>
+
+      <!-- create form for each marker  -->
+      <!-- get rid of dashes to avoid javascript error -->
+
+      <?MIVAR NAME=$form_name DELIMIT="-" REPLACE="">$OID<?/MIVAR>
+
+      <form method=post  
+	    action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi"
+	    name="$form_name">
+
+	<?MIVAR name=$first_row>1<?/MIVAR>
+	<?MIVAR NAME=$order_clause>$order_clause , target_id desc<?/MIVAR>
+
+
+	<!--  Run inner query for fields associated with current gene_name -->
+	<?MISQL SQL="
+	  select abbrev, mtype, lg_location, zdb_id, OR_lg,
+	         target_id, target_abbrev, private, metric, clone_sequence_type
+		 $tmptable_select_ending
+	    from mseglister_temp
+	    where abbrev = '$marker_abbrev'
+	      and mtype = '$mtype'
+	    $order_clause;">
+
+	  <?MIVAR NAME=$lg_location>$3<?/MIVAR>
+	  <?MIVAR NAME=$OID>$4<?/MIVAR>
+	  <?MIVAR NAME=$OR_lg>$5<?/MIVAR>
+	  <?MIVAR NAME=$target_id>$6<?/MIVAR>
+	  <?MIVAR NAME=$target_abbrev>$7<?/MIVAR>
+	  <?MIVAR NAME=$private>$8<?/MIVAR>
+	  <?MIVAR NAME=$metric>$9<?/MIVAR>
+	  <?MIVAR NAME=$dist>$11<?/MIVAR>
+	  <?MIVAR NAME=$sequence_type>$12<?/MIVAR>
+	
+	  <?MIVAR NAME=$viewer>aa-markerview.apg<?/MIVAR>
+
+	  $(IF,$(>,$(POSITION,$OID,LOCUS),0),
+	    $(SETVAR,$viewer,aa-locusview.apg))              
+
+	  $(IF,$(>,$(POSITION,$OID,FISH),0),
+	    $(SETVAR,$viewer,aa-fishview.apg))
+<!-- Column 1, Segment Name -->
+
+	  <?MIBLOCK COND="$(EC,$first_row,1)">
+	    <!-- start new row and column -->
+	    <TR bgcolor="<?MIVAR>$row_color<?/MIVAR>">
+	      <TD valign=top>&nbsp;</TD>
+
+		<?MIVAR name=$rowNUM>$(+,$rowNUM,1)<?/MIVAR>
+
+		<?MIVAR>
+		  <TD valign=top> <font size=2>
+            $(IF,$(XST,$return_rec),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$OID>SELECT</A>)
+		    $mtype:<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$viewer&OID=$OID">$marker_abbrev</A>
+		  </TD>
+		<?/MIVAR>
+	  <?/MIBLOCK>
+
+
+	  <?MIBLOCK COND="$(EC,$first_row,0)">
+	    <!--   start new row and column   -->
+	    <TR bgcolor="<?MIVAR>$row_color<?/MIVAR>">
+	      <TD><font size=1> &nbsp;</font></TD>
+	      <TD>&nbsp;</TD>
+	  <?/MIBLOCK>
+<!-- /Column 1, Segment Name -->
+
+<!-- Column 2, Sequence Type -->
+	<TD> 
+	 <?MIVAR>$sequence_type<?/MIVAR>
+        </TD> 
+<!-- /Column 2, Sequence Type -->
+
+	  <!-- Map Location    Panel    Map     Updated-->
+
+	  <?MIBLOCK COND="$(AND,$(>,$(POSITION,$target_id,REF),0),$(EC,$dist,""))">
+	    <?MIVAR COND=$(EC,$private,f)>
+	      <TD>	
+		LG <b>$OR_lg</b>;<b>$lg_location</b> $metric
+		<?MIBLOCK COND=$(NC,$mtype,mutant)>
+		  <?MIVAR>
+		    &nbsp;
+		    <A HREF="javascript:view_scores('$target_id','$OR_lg','$OID','$marker_abbrev')";>Scoring Data
+		  <?/MIVAR>
+		<?/MIBLOCK>
+	      </TD>
+	      <TD>
+		<A  HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=$target_id><b>$target_abbrev</b></A>
+	      </TD>
+
+	      <?MIVAR name=$ok_view_map>1<?/MIVAR>
+	    <?/MIVAR>
+
+	    <?MIBLOCK COND="$(AND,$(NC,$OR_lg,0),$(NC,$private,f))">
+	      <TD>
+                <?MIVAR>
+		  Mapped on <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=$target_id>$target_abbrev  </A>, but confidential.
+                <?/MIVAR>
+	      </TD>
+	      <TD>&nbsp;</TD>
+	    <?/MIBLOCK>
+
+
+	    <!-- end target id like refcross-->  
+	  <?MIELSE>
+	   <TD> &nbsp; 
+	   </TD>
+	   <TD> &nbsp;
+	   </TD>
+	  <?/MIBLOCK>  <!-- target id like link -->
+
+	  <?MIVAR name=$first_row>0<?/MIVAR>
+
+	<?/MISQL>
+
+	<!--    change row_color    -->
+	<?MIBLOCK>
+	  <?MIBLOCK COND="$(EC,$row_color,$highlight)">     
+	    <?MIVAR name=$row_color>#FFFFFF<?/MIVAR>
+	  <?MIELSE COND="$(EC,$row_color,#FFFFFF)">      
+	    <?MIVAR name=$row_color>$highlight<?/MIVAR>
+	  <?/MIBLOCK>
+	<?/MIBLOCK>
+
+	<!-- end form for map_marker -->         
+      </FORM>
+
+      <!-- end outer SQL -->
+    <?/MISQL>
+
+  </TABLE>
+
+  <BR>
+
+  <Center>
+  <Table width="70%" border="0">
+    <tr>
+      <td width="45%" align=right valign=top>&nbsp;
+
+	<!-- to be used by walking windows -->
+        <!-- want GET string as short as possible - append only when variable exists, buffer overflow may cause segmentation fault -->
+        <?MIVAR name=comment>  Build array of user data  <?/MIVAR>
+	<?MIVAR name=selector>MIval=aa-markerselect.apg&WINSIZE=$WINSIZE<?/MIVAR>
+        <?MIVAR name=UserInput><?/MIVAR>
+	<?MIVAR name=UserInput COND=$(XST,$lg)>$UserInput&lg=$lg<?/MIVAR>
+	<?MIVAR name=UserInput COND=$(XST,$refcross)>$UserInput&refcross=$refcross<?/MIVAR>
+	<?MIVAR name=UserInput COND=$(XST,$segment_contains_type)>$UserInput&segment_contains_type=$segment_contains_type<?/MIVAR>
+	<?MIVAR name=UserInput COND=$(XST,$compare)>$UserInput&compare=$compare<?/MIVAR>
+        <?MIVAR name=$UserInput COND=$(XST,$return_rec)>$UserInput&return_rec=$return_rec<?/MIVAR>
+        <?MIVAR name=UserInput COND=$(XST,$name)>$UserInput&name=$(URLENCODE,$name)<?/MIVAR>  
+        <?MIVAR name=UserInput COND=$(XST,$query_results)>$UserInput&query_results=$(URLENCODE,$query_results)<?/MIVAR>  
+
+	<!--- Return to the previous set of Rows --->
+	<?MIBLOCK COND="$(>,$BEGIN,1)">
+
+	  <?MIVAR>
+	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$(-,$BEGIN,$WINSIZE)&BEGIN=$BEGIN&$selector$UserInput">Prev</A>&nbsp;&nbsp;&nbsp;&nbsp;<br>
+
+	    <!-- If current not First Page, create link to first page. -->
+	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=1&BEGIN=1&$selector$UserInput">First Page</A>
+
+	  <?/MIVAR>
+
+	<?/MIBLOCK>
+
+      </td>
+
+
+      <!-- Calculate 3 pages before and 3 pages after current page. -->
+      <?MIVAR name=$CURRENT>$(FIX,$(+,$(/,$BEGIN,$WINSIZE),1))<?/MIVAR>
+
+
+      <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,3)),0)">
+	<td valign=top>
+	  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,3))"> $(-,$CURRENT,3)</A> <?/MIVAR>
+	</td>
+      <?/MIBLOCK>
+
+      <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,2)),0)">
+	<td valign=top>
+	  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,2))"> $(-,$CURRENT,2)</A><?/MIVAR>
+	</td>
+      <?/MIBLOCK>
+
+      <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,1)),0)">
+	<td valign=top>
+	  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,1))"> $(-,$CURRENT,1)</A><?/MIVAR>
+	</td>
+      <?/MIBLOCK>
+
+      <?MIBLOCK COND="$(>,$num_recs,$WINSIZE)">
+	<td align=center valign=top>
+	  <?MIVAR> $CURRENT <?/MIVAR>
+	</td>
+      <?/MIBLOCK>
+
+
+      <?MIVAR COND=$(<=,$(+,$BEGIN,$(*,$WINSIZE,1)),$num_recs)>
+	<td valign=top>
+	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$END"> $(+,$CURRENT,1)</A>
+	</td>
+      <?/MIVAR>
+
+      <?MIVAR COND=$(<=,$(+,$BEGIN,$(*,$WINSIZE,2)),$num_recs)>
+	<td valign=top>
+	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,2))"> $(+,$CURRENT,2)</A>
+	</td>
+      <?/MIVAR>
+
+      <?MIVAR COND=$(<=,$(+,$BEGIN,$(*,$WINSIZE,3)),$num_recs)>
+	<td valign=top>
+	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,3))"> $(+,$CURRENT,3)</A>
+	</td>
+      <?/MIVAR>
+
+      <td width="45%" align=left valign=top>&nbsp;
+
+	<!--- Get the next set of Rows --->
+	<?MIBLOCK COND="$(<=,$(+,$BEGIN,$WINSIZE),$num_recs)">
+	  <?MIVAR>
+	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$END&BEGIN=$BEGIN&$selector$UserInput">Next</A><br>
+	  <?/MIVAR>
+
+
+	  <!-- Calculate last page -->
+	  <?MIVAR name=$START COND="$(=,$(MOD,$num_recs,$WINSIZE),0)">$(+,$(*,$(-,$(/,$num_recs,$WINSIZE),1),$WINSIZE),1)<?/MIVAR>
+
+	  <?MIVAR name=$START COND="$(!=,$(MOD,$num_recs,$WINSIZE),0)">$(+,$(*,$(FIX,$(/,$num_recs,$WINSIZE)),$WINSIZE),1)<?/MIVAR>
+
+	  <?MIVAR>
+	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$START&$selector$UserInput">Last Page</A>
+	  <?/MIVAR>
+	<?/MIBLOCK>
+
+	&nbsp;
+
+      </td>
+    </tr>
+  </Table>
+  </Center>
+<?/MIBLOCK>  <!-- end # rows > 0 -->
+
+<?MISQL SQL="
+  -- insert (actually any statement will do) is necessary to avoid an error
+  insert into mseglister_temp (abbrev) values (NULL);
+  drop table mseglister_temp;">
+<?/MISQL>
+
+
+
+
+
+
+ <?/MIBLOCK>
+
+ <!----------------- /Results ------------------->
+
+
+ <!----------------- Query Form ----------------->  
+
+ <TABLE class="search" width=100% border=0 cellpadding=1 cellspacing=0>
+    <TR>
+      <TD colspan=2 class=titlebar>
+        &nbsp;&nbsp;
+
+        <?MIBLOCK COND="$(NXST,$query_results)">
+	 <b>Search for MOLECULAR SEGMENTS</b>
+        <?MIELSE>
+	 <a name="modify"></a><b>Modify your search.</b>
+        <?/MIBLOCK>
+      </TD>
+     </TR>
+     <FORM name="msegform" method="post" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" >
+      <?MIVAR COND="$(NXST,$compare)" NAME=$compare>contains<?/MIVAR>
+      <?MIVAR COND="$(NXST,$lg)" NAME=$lg>0<?/MIVAR>
+      <?MIVAR COND="$(NXST,$segment_contains_type)" NAME=$segment_contains_type>NULL<?/MIVAR>
+      <?MIVAR NAME=$refcross COND="$(NXST,$refcross)">NULL<?/MIVAR>
+      <?MIVAR COND="$(NXST,$sequence_type)" NAME=$sequence_type>NULL<?/MIVAR>
+      <?MIVAR>
+     <TR>
+      <TD class=halfwidth>
+       <b>Segment Name</b> <SELECT name="compare" onChange='document.msegform.START.value = "";'>
+	<option $(IF,$(EC,$compare,contains),SELECTED) value=contains>contains
+	<option $(IF,$(EC,$compare,starts),SELECTED) value=starts>begins with
+       </SELECT>
+       <input type=text name=name size=10 onChange='document.msegform.START.value = "";' $(IF,$(XST,$name),value='$name')>
+      </TD>
+      <TD class=halfwidth>
+       <B>LG:</B>
+       <SELECT NAME=lg onChange='document.msegform.START.value = "";'>
+	<?MISQL SQL="select distinct lg_name,lg_order from linkage_group order by lg_order"> 
+	 <option value="$1" $(IF,$(EC,$lg,$1),SELECTED) >$(IF,$(EC,$1,0),any,$1)
+	<?/MISQL>
+       </SELECT>
+       	&nbsp;<b>Panel:</b> 
+	<SELECT NAME=refcross onChange='document.critform.START.value = "";'>
+	  <option select value=NULL>ANY
+	  <?MISQL SQL="select zdb_id,abbrev,ptype from panels;">
+	    <option $(IF,$(EC,$refcross,$1),SELECTED) value=$1>$2($3 panel)
+	  <?/MISQL>
+	</SELECT>
+      </TD>
+     </TR>
+     <TR>
+      <TD class=halfwidth valign=top>
+	<table><tr><td align=top>
+	 <b>Segment Contains:</b>
+	</td>
+	<td>
+	 <SELECT multiple size=3 name=segment_contains_type onChange="check_syns(this)"> 
+	  <option $(IF,$(EC,$segment_contains_type,NULL),SELECTED) value="any">All types
+	  <option $(IF,$(>,$(POSITION,$segment_contains_type,GENE),0),SELECTED) >GENE
+	  <option $(IF,$(>,$(POSITION,$segment_contains_type,MUTANT),0),SELECTED) >MUTANT
+	  <option $(IF,$(>,$(POSITION,$segment_contains_type,EST),0),SELECTED)>EST
+	  <option $(IF,$(>,$(POSITION,$segment_contains_type,SSLP),0),SELECTED) >SSLP
+	  <option $(IF,$(>,$(POSITION,$segment_contains_type,RAPD),0),SELECTED)>RAPD
+	  <option $(IF,$(>,$(POSITION,$segment_contains_type,STS),0),SELECTED)>STS
+	  <option $(IF,$(>,$(POSITION,$segment_contains_type,SSR),0),SELECTED)>SSR
+	  <option value="SSLP">MicroSatellite
+	  <option value="SSLP">CA-repeat
+	 </SELECT>
+	<INPUT type=text name=segment_contains_text size=10>
+	</td>
+       </tr></table>
+      </TD>
+      <TD class=halfwidth>
+	<B>Sequence Type:</B>
+	<SELECT name=sequence_type>
+	  <OPTION SELECTED value="any">Any
+	 <?MISQL SQL="select seqtype_name from sequence_type;">
+          <OPTION value="$1">$1
+         <?/MISQL>
+        </SELECT>
+      </TD>
+     </TR>
+     <TR>
+    <?/MIVAR>
+     <TD class=resultcount colspan=2>
+	Display results in groups of 
+	<input type="text" name="WINSIZE" size="3" value="20" 
+	       onChange='document.msegform.START.value = "";' 
+	       $(IF,$(XST,$WINSIZE),value='$WINSIZE')>.
+
+	<?MIBLOCK COND="$(AND,$(NOT,$(ISNULL,$WINSIZE)),$(XST,$WINSIZE))">
+	  <?MIVAR> 
+	    <SCRIPT> 
+	      document.msegform.WINSIZE.value = "$WINSIZE" 
+	    </SCRIPT>
+	  <?/MIVAR> 
+	<?/MIBLOCK>
+      </TD>
+    </tr>
+    <tr>
+      <TD class=submitbar colspan=2 align="right">
+       <?MIVAR>
+
+        <input type=hidden name=MIval value=aa-msegselect.apg>
+        <input type=hidden name=query_results value="exist">
+       <?/MIVAR>
+	<input type=submit name=action value="SEARCH" 
+	       onSubmit="document.msegform.submit();">
+	<input type=button value="RESET" onClick="call_reset()";>  
+      </TD>
+    </TR>
+    </TABLE>
+    <?MIBLOCK COND="$(NXST,$accession)">
+    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+    <?/MIBLOCK>
+</HTML>
