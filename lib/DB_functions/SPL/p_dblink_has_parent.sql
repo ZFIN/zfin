@@ -17,17 +17,17 @@
 
   let vMyCount1 = (select count(*) 
 	  	   from orthologue
-		   where vLinkedRecid = orthologue.zdb_id);
-
-  if vMyCount1 == 0 then 
-    let vMyCount2 = (select count(*) 
+		   where orthologue.zdb_id = vLinkedRecid);
+  
+  let vMyCount2 = (select count(*) 
 		     from marker
-		     where vLinkedRecid = marker.mrkr_zdb_id);
-  end if;
+		     where marker.mrkr_zdb_id = vLinkedRecid);
+
+if vMyCount1 == 0 then
 
   if vMyCount2 == 0 then 
     raise exception -746,0,"FAIL!: dblink must have orth or marker parent";
   end if;
-
+end if ;
 
   end procedure;
