@@ -76,7 +76,7 @@ $(TARGETDIR)/$(IMAGES) : ../$(IMAGES)
 	$(TOUCH) $(TARGETDIR)/$(IMAGES)
 
 $(IMPORTDIR) :
-	ln -s $(IMPORTPATH)/$(IMPORTDIR)
+	ln -s $(IMPORTPATH)/$(IMPORTDIR) $(IMPORTDIR)
 
 # ----  Rules for creating Java classes.
 
