@@ -356,8 +356,8 @@ requested from publication page for related data list.
       create temp table $markerselect_temp_marker (
 	mstmrkr_zdb_id varchar(50),
 	mstmrkr_name varchar(255),
-	mstmrkr_abbrev varchar(20),
-	mstmrkr_abbrev_order varchar(60),
+	mstmrkr_abbrev varchar(40),
+	mstmrkr_abbrev_order varchar(80),
 	mstmrkr_type varchar(10),
 	mstmrkr_match_name varchar(255),
 	mstmrkr_significance integer,

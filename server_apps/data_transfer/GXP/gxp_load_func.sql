@@ -72,12 +72,12 @@ let errorHint = "marker";
 
 create table tmp_marker(
     t_mrkr_zdb_id  	varchar(50) not null primary key,
-    t_mrkr_name 	varchar(80) not null unique,
-    t_mrkr_abbrev 	varchar(20),
+    t_mrkr_name 	varchar(255) not null unique,
+    t_mrkr_abbrev 	varchar(40),
     t_mrkr_type 	varchar(10),
     t_mrkr_owner 	varchar(50),
     t_mrkr_name_order 	varchar(140),
-    t_mrkr_abbrev_order varchar(60),
+    t_mrkr_abbrev_order varchar(80),
     t_mrkr_comments 	lvarchar
 
   );  -- with no log;
@@ -187,12 +187,12 @@ let errorHint = "fake gene";
 -- new est that are not in is_gene.unl file gets a fake gene
 create table tmp_fake_gene (
 	t_mrkr_zdb_id 	varchar(50),
-	t_mrkr_name 	varchar(80) not null,
-    	t_mrkr_abbrev 	varchar(20) not null,
+	t_mrkr_name 	varchar(255) not null,
+    	t_mrkr_abbrev 	varchar(40) not null,
     	t_mrkr_type 	varchar(10),
     	t_mrkr_owner 	varchar(50),
     	t_mrkr_name_order 	varchar(140),
-    	t_mrkr_abbrev_order varchar(60) not null,
+    	t_mrkr_abbrev_order varchar(80) not null,
     	t_mrkr_comments 	lvarchar
   );  -- with no log;
 

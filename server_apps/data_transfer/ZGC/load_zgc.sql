@@ -56,7 +56,7 @@ with no log;
 
 CREATE TEMP TABLE tmp_Zgc
   (
-    zgc_mrkr_abbrev	varchar(50),
+    zgc_mrkr_abbrev	varchar(40),
     zgc_defline		varchar(100),
     zgc_ll_id		varchar(20),
     zgc_cluster		varchar(20),
@@ -66,7 +66,7 @@ CREATE TEMP TABLE tmp_Zgc
     zgc_lib_id		integer,
     zgc_lib		varchar(50),
     zgc_name		varchar(20),
-    zgc_abbrev		varchar(20)
+    zgc_abbrev		varchar(40)
   )
 with no log;
   
@@ -90,8 +90,8 @@ CREATE index zgc_lib_index
 CREATE TEMP TABLE tmp_Zgc_EST
   (
     zEST_zdb_id 	varchar(50),
-    zEST_name		varchar(50),
-    zEST_abbrev		varchar(50),
+    zEST_name		varchar(255),
+    zEST_abbrev		varchar(40),
     zEST_description	lvarchar,
     zEST_owner		varchar(50)
   )
@@ -105,8 +105,8 @@ CREATE index zEST_abbrev_index
 CREATE TEMP TABLE tmp_Zgc_GENE
   (
     zGENE_zdb_id 	varchar(50),
-    zGENE_name		varchar(50),
-    zGENE_abbrev	varchar(50),
+    zGENE_name		varchar(255),
+    zGENE_abbrev	varchar(40),
     zGENE_description	lvarchar,
     zGENE_owner		varchar(50)
   )
@@ -204,8 +204,8 @@ CREATE index zUp_zfin_zdb_id_index
 CREATE TEMP TABLE tmp_Zgc_Upgrade
   (
     zUpgrade_zdb_id	varchar(50),
-    zUpgrade_old_name	varchar(50),
-    zUpgrade_new_name	varchar(50),
+    zUpgrade_old_name	varchar(255),
+    zUpgrade_new_name	varchar(255),
     zUpgrade_length	integer
   )
 with no log;
