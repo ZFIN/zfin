@@ -20,8 +20,6 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/image_files
 
 SUBDIRS = UPDATING
 
-# imageselect.apg and imagelister.apg are no longer used.  not sure why
-
 GENERICS = image-upload.apg imageview.apg new-image.apg
 
 
