@@ -280,19 +280,259 @@ create dba function "informix".regen_fishsearch()
 
     end -- Local exception handler
 
-    commit work;
+    --commit work;
 
-  end -- Global exception handler
+  --end -- Global exception handler
 
   -- Update statistics on table that was just created.
 
-  begin work;
+ -- begin work;
 
   update statistics high for table fish_search;
 
+--Now that fish_search has been created, time for some updating
+
+--now update fish search and chromosome tables with appropriate chromosome(LG)
+--values.
+--For this, we perform joins on mapped marker and linkage member
+--on the following keys : gene_id,locus and then fish_id
+--Finally the chrom num is also updated if the associated est has been mapped.
+
+--we need to first obtain those fish that have multiple mappings and 
+--filter them out.
+
+   if (exists (select * from systables where tabname = "tmp_multimap")) then
+      drop table tmp_multimap;
+   end if
+   create temp table tmp_multimap (
+     gene_id varchar(50),
+     fish_id varchar(50),
+     chrom varchar(3)
+   ) with no log;
+
+   insert into tmp_multimap 
+   select distinct gene_id,fish_id,or_lg 
+   from fish_search,mapped_marker
+   where gene_id=marker_id and chrom_num ='0';
+   
+   if (exists (select * from systables where tabname = "tmp_bad_fish")) then
+      drop table tmp_bad_fish;
+   end if
+   create temp table tmp_bad_fish (
+     fish_id varchar(50)) with no log;
+
+   insert into tmp_bad_fish
+   select fish_id from tmp_multimap 
+   group by fish_id
+   having count(fish_id) > 1;
+
+--First update fish search doing a join with mapped marker on gene_id
+
+   update fish_search 
+   set chrom_num = 
+      (select distinct or_lg 
+        from mapped_marker 
+          where gene_id=marker_id) 
+   where gene_id in 
+   (select marker_id from mapped_marker) 
+   and (chrom_num like '0' or chrom_num is null) 
+   and fish_id not like 'ZDB-FISH-990427-3';
+
+--Then update fish search doing a join with mapped marker on locus
+   
+   update fish_search 
+   set chrom_num = 
+   (select or_lg 
+     from mapped_marker 
+      where locus =marker_id) 
+   where locus in 
+   (select marker_id from mapped_marker) 
+   and (chrom_num like '0' or chrom_num is null);
+
+--Then update fish search doing a join with mapped marker on fish
+   
+   update fish_search 
+   set chrom_num = 
+   (select or_lg 
+     from mapped_marker 
+      where fish_id =marker_id) 
+   where fish_id in 
+   (select marker_id from mapped_marker) 
+   and (chrom_num like '0' or chrom_num is null);
+
+--Now update fish search doing a join with linkage member on gene_id
+
+   update fish_search 
+   set chrom_num=
+   (select distinct lnkg_or_lg 
+     from linkage,linkage_member 
+      where gene_id =lnkgmem_member_zdb_id 
+      and  lnkgmem_linkage_zdb_id=lnkg_zdb_id) 
+   where gene_id in 
+   (select lnkgmem_member_zdb_id from linkage_member) 
+   and (chrom_num like '0' or chrom_num is null);
+
+--Then update fish search doing a join with linkage member on locus
+
+   update fish_search 
+   set chrom_num=
+   (select lnkg_or_lg 
+     from linkage,linkage_member 
+      where locus =lnkgmem_member_zdb_id 
+      and  lnkgmem_linkage_zdb_id=lnkg_zdb_id)
+   where locus in 
+   (select lnkgmem_member_zdb_id from linkage_member) 
+   and (chrom_num like '0' or chrom_num is null);
+
+--Now we need to check if an allele has been mapped, if it is all alleles on
+--that locus need to be assigned the same LG location.
+--so create a temp table and add an entry for the LOCUS instead.
+
+   if (exists (select * from systables where tabname = "tmp_link")) then
+      drop table tmp_link;
+   end if
+   create temp table tmp_link (
+     link varchar(50),
+     fish_member varchar(50)
+     ) with no log;
+
+   insert into tmp_link 
+   select * from linkage_member 
+   where lnkgmem_member_zdb_id   like 'ZDB-FISH%';
+
+   if (exists (select * from systables where tabname = "tmp_locus")) then
+      drop table tmp_locus;
+   end if
+   create temp table tmp_locus (
+    link varchar(50),
+    mem_locus varchar(50),
+    chrom varchar(3)
+    ) with no log;
+
+   insert into tmp_locus 
+   select distinct link,locus,lnkg_or_lg from tmp_link, fish,linkage 
+   where fish_member=zdb_id
+   and link=lnkg_zdb_id;
+
+   update fish_search 
+   set chrom_num=
+   (select lnkg_or_lg 
+    from linkage,tmp_locus 
+    where locus =mem_locus 
+      and  link=lnkg_zdb_id)
+   where locus in 
+   (select mem_locus from tmp_locus) 
+   and (chrom_num like '0' or chrom_num is null);
+
+--Then update fish search doing a join with linkage member on fish_id
+   
+   update fish_search 
+   set chrom_num=
+   (select distinct lnkg_or_lg 
+     from linkage,linkage_member 
+      where fish_id =lnkgmem_member_zdb_id 
+      and  lnkgmem_linkage_zdb_id=lnkg_zdb_id) 
+  where fish_id in 
+  (select lnkgmem_member_zdb_id from linkage_member) 
+  and (chrom_num like '0' or chrom_num is null);
+
+
+--put all ests that are mapped into one table(tmp_est)
+
+   if (exists (select * from systables where tabname = "est")) then
+      drop table est;
+   end if
+   create temp table est (
+     marker_id varchar(50),
+     geneid varchar(50),
+     chrom varchar(3)) with no log;
+
+   if (exists (select * from systables where tabname = "tmp_est")) then
+      drop table tmp_est;
+   end if
+   create temp table tmp_est (
+     marker_id varchar(50),
+     geneid varchar(50),
+     chrom varchar(3)) with no log;
+
+
+    insert into tmp_est (marker_id, geneid, chrom)
+    select distinct marker_id, gene_id, or_lg
+    from mapped_marker,marker_relationship,fish_search 
+    where gene_id =mrel_mrkr_1_zdb_id and mrel_mrkr_2_zdb_id=marker_id 
+    ;
+
+--pull out the ests that have more than one linkage location
+--there should be 4 rows.
+
+   if (exists (select * from systables where tabname = "tmp_bad_est")) then
+      drop table tmp_bad_est;
+   end if
+   create temp table tmp_bad_est (my_count integer, 
+			marker_id varchar(50),
+     			geneid varchar(50)) with no log;
+
+   insert into tmp_bad_est (my_count, marker_id, geneid)
+	select count(*), marker_id, geneid
+			   from tmp_est 
+			   group by marker_id, geneid
+			   having count(*) >1  ;
+
+
+--pull records that don't have ests mapped to multiple locations
+--into a table that can update fish_search--this assumes only 
+--one est per gene is mapped, which is not true in several cases.
+
+   insert into est (marker_id, geneid, chrom)
+   select marker_id, geneid, chrom
+   from tmp_est 
+   where geneid not in (select geneid from tmp_bad_est) ;
+
+   if (exists (select * from systables where tabname = "tmp_genes_only")) then
+      drop table tmp_genes_only;
+   end if
+
+   create temp table tmp_genes_only (geneid varchar(50), chrom integer,
+					my_count integer)
+   with no log ;
+
+   insert into tmp_genes_only (geneid, chrom, my_count)
+   select geneid, chrom, count(*) 
+     from est
+     group by geneid, chrom ;
+
+   if (exists (select * from systables where tabname = "tmp_genes_only_no_multp_ests")) then
+      drop table tmp_genes_only_no_multp_ests;
+   end if
+
+   create temp table tmp_genes_no_multp_ests (geneid varchar(50))
+   with no log ;
+
+   insert into tmp_genes_no_multp_ests (geneid)
+   select geneid from tmp_genes_only
+   group by geneid
+   having count(*) < 2 ;
+
+update fish_search 
+   set chrom_num= (select chrom
+    			from tmp_genes_only
+     			where gene_id = geneid
+			and geneid in (select geneid 
+					from tmp_genes_no_multp_ests
+			)) 
+   where (chrom_num like '0' or chrom_num is null) 
+;
+
+ update chromosome 
+   set chrom_num=
+   (select chrom_num 
+     from fish_search,int_fish_chromo  
+      where fish_id=source_id and zdb_id=target_id) 
+   where (chrom_num like '0' or chrom_num is null);
+
+--the fun ends here!
   commit work;
-
-
+end; --end global exception handler
   update zdb_flag set zflag_is_on = "f"
 	where zflag_name = "regen_fishsearch";
 	  
