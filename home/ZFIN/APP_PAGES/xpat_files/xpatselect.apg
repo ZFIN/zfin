@@ -1,6 +1,13 @@
 
 <HTML>
 
+<?MIERROR ERR=APG_ERROR_HANDLER>
+  An error has ocured while serving your request. Please contct system administrator and pass on the following details: <br>
+    Error Code: $MI_ERRORCODE <BR>
+    Error State: $MI_ERRORSTATE <BR>
+    Error Message: $MI_ERRORMSG <BR>
+<?/MIERROR>
+    
 
 <?MIVAR Name=page_name>$(IF,$(NXST,$query_results),ZFIN Search Expressions,ZFIN Expression Search Results)<?/MIVAR>
 
@@ -198,12 +205,35 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 
 <?MIVAR NAME=$structure_bool default=or>$structure_bool<?/MIVAR>
 
-<?MIBLOCK COND="$(XST,$structure_list)">
+<?MIBLOCK COND="$(AND,$(XST,$s_list),$(XST,$num_structures))">
+  <?MIVAR NAME=$s_list>----------------------------------------------<->$s_list<?/MIVAR>
+    <!-- in case of commas -->
+  <?MIVAR NAME=$s_delimit_list DELIMIT="," REPLACE=")%^%^#(">$s_list<?/MIVAR>
+    <!-- comma seperate values-->
+  <?MIVAR NAME=$s_comma_list DELIMIT="<->" REPLACE=",">$s_delimit_list<?/MIVAR>
+    <!-- quantity of values -->
+  <?MIVAR NAME=$num_structures>$num_structures<?/MIVAR>
+
+  <!-- webDriver INDEX function indexes from 0, 
+       all other webDriver indexes start at 1. 
+       Adjust accordingly to avoid errors. 
+    -->
+  <?MIBLOCK INDEX=$i FROM=0 TO=$(-,$num_structures,1) STEP=1>    
+      <!-- current item -->
+    <?MIVAR NAME=$TEMP>$(INDEX,$i,$s_comma_list)<?/MIVAR>
+      <!-- convert ')%^%^#(' to comma -->
+    <?MIVAR NAME=$TEMP DELIMIT=")%^%^#(" REPLACE=",">$TEMP<?/MIVAR>
+      <!-- add to structure list  -->
+    <?MIVAR> $(SETVAR,$structure_list[$(+,$i,1)],$TEMP) <?/MIVAR>
+  <?/MIBLOCK>
+<?/MIBLOCK>
+
+<?MIBLOCK ERR=APG_ERROR_HANDLER COND="$(XST,$structure_list)">
   <?MIVAR NAME=str_count>1<?/MIVAR>
   <?MIBLOCK INDEX=$parti FOREACH=$structure_list>
     <?MIVAR COND="$(AND,$(NC,$parti,deleteme),$(NC,$parti,----------------------------------------------))">
-      <?MIVAR NAME=$partii DELIMIT="'" REPLACE="''">$parti<?/MIVAR>
-      $(SETVAR,str_dlmt_list[$str_count],$partii)
+      <?MIVAR NAME=$partj DELIMIT="'" REPLACE="''">$parti<?/MIVAR>
+      $(SETVAR,str_dlmt_list[$str_count],$partj)
       $(SETVAR,str_list[$str_count],$parti)
       $(SETVAR,str_count,$(+,$str_count,1))
     <?/MIVAR>
@@ -704,21 +734,20 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 	<?MIVAR name=UserInput COND=$(XST,$user_entered)>$UserInput&user_entered=$(URLENCODE,$user_entered)<?/MIVAR>
 
 
-<?MIBLOCK COND="$(AND,$(XST,$structure_list),$(NE,$structure_list,-))">
-  <?MIVAR COND="$(NXST,$s_list)" NAME=$s_list><?/MIVAR>
+<?MIBLOCK COND="$(XST,$structure_list)">
+  <?MIVAR COND="$(XST,$s_list)">$(UNSETVAR,$s_list)<?/MIVAR>
 
   <?MIBLOCK INDEX=$parti FOREACH=$structure_list >
-
-      <?MIVAR>
-        <?MIVAR NAME=$parti DELIMIT="'" REPLACE="''">$parti<?/MIVAR>
-        $(SETVAR,gene_list[$gene_count],$parti)
-        <?MIVAR name=$s_list>$s_list&structure_list[$gene_count]=$(URLENCODE,$parti)<?/MIVAR>
-        $(SETVAR,gene_count,$(+,$gene_count,1))
-      <?/MIVAR>
-
+      <?MIBLOCK COND="$(NC,$parti,----------------------------------------------)">
+        <?MIVAR COND="$(XST,$s_list)" NAME=$s_list>$s_list<->$parti<?/MIVAR>
+	<?MIVAR COND="$(NXST,$s_list)" NAME=s_list>$parti<?/MIVAR>
+      <?/MIBLOCK>
   <?/MIBLOCK>
 
-  <?MIVAR NAME=UserInput>$UserInput&structure_list=$s_list<?/MIVAR>
+  <!-- Count the structure items -->
+  <?MIVAR NAME=$num_structures>$(VECSIZE,$structure_list)<?/MIVAR>
+
+  <?MIVAR NAME=UserInput>$UserInput&s_list=$s_list&num_structures=$num_structures<?/MIVAR>
 <?/MIBLOCK>
 
 
@@ -863,6 +892,7 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 
 <input type=hidden name=MIval value=aa-xpatselect.apg>
 <input type=hidden name=query_results value="exist">
+<input type=hidden name=START value="0">
 
 <?MIVAR COND="$(NXST,$stage_start)" NAME=$stage_start>NULL<?/MIVAR>
 <?MIVAR COND="$(NXST,$stage_end)" NAME=$stage_end>NULL<?/MIVAR>
@@ -982,7 +1012,7 @@ Gene/EST
 
 		 <b>&</b>
 		  <SELECT NAME="stage_end" SIZE=1>
-		    <?MISQL SQL="select stg_name, stg_hours_start, stg_hours_end, stg_zdb_id from stage where stg_name <> 'Any stage' order by stg_hours_start, stg_hours_end desc;"><OPTION VALUE="$4"$(IF,$(AND,$(XST,$stage_end),$(EC,$stage_end,$4)), SELECTED,$(IF,$(EC,$1,Adult), SELECTED))> $1<?/MISQL>
+		    <?MISQL SQL="select stg_name, stg_hours_start, stg_hours_end, stg_zdb_id from stage where stg_name <> 'Any stage' order by stg_hours_start, stg_hours_end desc;"><OPTION VALUE="$4"$(IF,$(AND,$(XST,$stage_end),$(EC,$stage_end,$4)), SELECTED,$(IF,$(EC,$stage_end,$4), SELECTED))> $1 <?/MISQL>
 		  </SELECT>
                   <br>
 		  <a href="http://zfin.org/zf_info/zfbook/stages/index.html">Developmental Staging Series</a>
