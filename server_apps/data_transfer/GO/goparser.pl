@@ -7,6 +7,11 @@
 open (INDEXFILE, "go.zfin") or die "open failed";
 open (UNL, ">gene_association.zfin") or die "Cannot open exppat.unl";
 
+print UNL "!Version: \$Revision$ \n";
+print UNL "!Date: \$Date$ \n";
+print UNL "!From: ZFIN (zfin.org) \n";
+print UNL "! \n";
+
 # set count to 0 before processing, increment it with each row processed.
 $lastmrkrgoev = '';
 @inf_array = ();

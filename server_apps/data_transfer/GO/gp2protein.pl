@@ -37,6 +37,11 @@ sub gp2proteinReport()
 {
     system("/bin/rm -f $outFile");
     open (REPORT, ">$outFile") or die "cannot open report";
+    print REPORT "!Version: \$Revision$ \n";
+    print REPORT "!Date: \$Date$ \n";
+    print REPORT "!From: ZFIN (zfin.org) \n";
+    print REPORT "! \n";
+
     my $cur = $dbh->prepare('select distinct mrkr_zdb_id,
                                     dblink_acc_num
                              from   marker,db_link, foreign_db_contains
