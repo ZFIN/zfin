@@ -275,12 +275,30 @@ create temp table tmp_obs_GO (
 ) with no log ;
 
 
+create temp table tmp_reinstate (
+			   name	    varchar(255),
+			   id	    varchar(30),
+			   def	lvarchar,
+			   is_obsolete boolean,
+			   comment lvarchar
+) with no log ;
+
+
 insert into tmp_obs_GO (name, id, def, is_obsolete, comment)
   select name, substr(id, -7), def, is_obsolete, comment
     from tmp_obs 
     where def like '%OBSOLETE%' or 
           def like '%obsolete%' or
 	  is_obsolete = 'true' ;
+
+
+insert into tmp_reinstate (name, id, def, is_obsolete, comment)
+  select name, substr(id, -7), def, is_obsolete, comment
+    from tmp_obs
+    where def not like '%OBSOLETE%' and 
+          def not like '%obsolete%' and
+	  is_obsolete = 'false' ;
+
 
 create temp table tmp_obs_no_dups (
 			   name	    varchar(255),
@@ -290,14 +308,50 @@ create temp table tmp_obs_no_dups (
 			   comment lvarchar
 ) with no log ;
 
+
+create temp table tmp_reinstate_no_dups (
+			   name	    varchar(255),
+			   id	    varchar(30),
+			   def	lvarchar,
+			   is_obsolete boolean,
+			   comment lvarchar
+) with no log ;
+
+
 insert into tmp_obs_no_dups 
   select distinct * from tmp_obs_GO ;
+
+insert into tmp_reinstate_no_dups
+  select distinct * from tmp_reinstate ;
+
 
 create temp table tmp_new_obsoletes (counter integer,
 				     mrkr_name varchar(255), 
 			             goterm_name varchar(255), 
 				     comment lvarchar
 ) with no log ;
+
+
+create temp table tmp_new_reinstates (counter integer,
+				     mrkr_name varchar(255), 
+			             goterm_name varchar(255), 
+				     comment lvarchar
+) with no log ;
+
+insert into tmp_new_reinstates (counter,
+				mrkr_name,
+				goterm_name,
+				comment)
+  select count(*), 
+		mrkr_name, 
+		goterm_name, 
+		comment
+  from go_term, marker_go_term_evidence, marker, tmp_reinstate_no_dups
+  where goterm_go_id = id
+  and goterm_zdb_id = mrkrgoev_go_term_zdb_id
+  and mrkr_zdb_id = mrkrgoev_mrkr_zdb_id 
+   group by mrkr_name, goterm_name, comment ;
+
 
 insert into tmp_new_obsoletes (counter,
 				mrkr_name,
@@ -320,16 +374,35 @@ unload to new_obsolete_terms.unl
 	 "Use Term Comments: "||comment
 	from tmp_new_obsoletes ;
 
+unload to new_reinstated_terms.unl 
+  select "Number annotations: "||counter,
+	 "Gene: "||mrkr_name,
+	 "Go Term: "||goterm_name,
+	 "Use Term Comments: "||comment
+	from tmp_new_reinstates ;
+
+update go_term
+  set goterm_is_obsolete = 'f'
+  where goterm_go_id in (select id 
+			  from tmp_reinstates_no_dups) 
+  and goterm_is_obsolete = 't' ;
+
+
 update go_term
   set goterm_is_obsolete = 't'
   where goterm_go_id in (select id 
 			  from tmp_obs_no_dups) 
   and goterm_is_obsolete = 'f' ;
 
+
 select count(*) 
   from go_term 
   where goterm_is_obsolete = 't' ;
 
+
+select count(*) 
+  from go_term 
+  where goterm_is_obsolete = 'f' ;
 
 
 --rollback work;
