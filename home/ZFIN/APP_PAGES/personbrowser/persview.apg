@@ -230,10 +230,9 @@ $(IF,$(=,$MI_CURRENTROW,2),<font size=-1>and also: )
 <?MIVAR NAME=$medline DELIMIT="'" REPLACE="''">$name<?/MIVAR>
 
 <TABLE WIDTH=100%>
-<?MISQL SQL="select a.title, year(pub_date) as pyear, a.zdb_id from publication a, int_person_pub b where b.target_id=a.zdb_id and b.source_id='$OID' order by pyear desc;">
+<?MISQL SQL="select a.title, year(pub_date) as pyear, a.zdb_id, a.authors, a.source from publication a, int_person_pub b where b.target_id=a.zdb_id and b.source_id='$OID' order by pyear desc;">
 <TR>
-<TD valign=top> <FONT SIZE=-1> $2 </FONT> </TD>
-<TD> <FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3" TARGET="content">$1</A> </FONT> <br></TD></TR>
+<TD> <FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3" TARGET="content">$4 ($2) $1 $5</A> </FONT> <br></TD></TR>
 <?/MISQL>
 </TABLE>
 
@@ -249,9 +248,6 @@ $(IF,$(=,$MI_CURRENTROW,2),<font size=-1>and also: )
 </form>
 
 <?/MIBLOCK> <!-- ends cond AUTHORIZED -->
-
-<!-- For Yolanda -->
-<?MIVAR><img src="/<!--|CGI_BIN_DIR_NAME|-->/write.cgi?OID=$OID"></img><?/MIVAR>
 
 <?/MIBLOCK> <!-- ends cond OID xst -->
 
