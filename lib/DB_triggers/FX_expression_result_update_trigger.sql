@@ -6,5 +6,7 @@ create trigger FX_expression_result_update_trigger update of
         (
 	execute procedure p_stg_hours_consistent(
 			new_xpatres.xpatres_start_stg_zdb_id,
-			new_xpatres.xpatres_end_stg_zdb_id )
+			new_xpatres.xpatres_end_stg_zdb_id ),
+	execute function scrub_char ( new_xpatres.xpatres_comments )
+		into xpatres_comments,
      ) ;
