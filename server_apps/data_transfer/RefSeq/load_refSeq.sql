@@ -256,6 +256,11 @@ create index gdb_lnkortho_zdb_id_index on gdb_ortho_link
     (lnkortho_zdb_id) using btree;
 
 
+-- Ban OMIM disease links (Hard code for now 06-02-03)
+delete from gdb_omim_tmp 
+where lnkortho_acc_num in ('193500','106210','168461','300401','601868')
+
+
 begin work;
 
 create temp table dblinkid
