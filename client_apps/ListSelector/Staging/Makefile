@@ -50,21 +50,7 @@ TARGETDIR = $(TARGETROOT)/client_apps/ListSelector
 
 # Use the standard JAVAC, and JAVACFLAGS.  Still need to define classpath.
 
-# We've also got issues as to what to include in the class path.
-# The Makefile does not provide a classpath.
-# The class path from the build script is:
-#
-#  -g -classpath 
-#      .:
-#      /export/develop/kschaper/Mapper:
-#      /export/develop/kschaper/java/lib/classes.zip:
-#      /export/fish/ted/javautils:
-#      /export/develop/kschaper/ifc111/classes
-#
-# How many of these are actually needed?  If we use any of those directories
-# we will need to move them.
-
-CLASSPATH = .:/usr/java/lib/classes.zip:$(TOP)/lib/Java
+CLASSPATH = .:/private/apps/java/lib/classes.zip:$(TOP)/lib/Java
 
 # ---- Java source and class file variables
 
