@@ -7,10 +7,6 @@ It is called via a link, visible to 'root' only, on the data_manager.html bar th
 Variables expected:  
   OID (REQUIRED) -- the zdb_id of the record to delete.
   rtype (REQUIRED) -- the data type of the record to delete.
-  ownerColumn (optional) -- Name of the column containing the record owner's
-    ZDB ID.  Needed only if the name of the column is not "owner"
-  zdbIdColumn (optional) -- Name of the column containing the record's 
-    ZDB ID.  Needed only if the name of the column is not "zdb_id".
 -->
 
 <HTML>
@@ -36,7 +32,7 @@ Variables expected:
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
 <?MISQL SQL="
-  select WebExplode(object,'permission=root&rtype=$rtype&page_title=DELETE $(UPPER,$rtype)$(XST,$ownerColumn,&ownerColumn=$ownerColumn)$(XST,$zdbIdColumn,&zdbIdColumn=$zdbIdColumn)') 
+  select WebExplode(object,'permission=root&rtype=$rtype&page_title=DELETE $(UPPER,$rtype)') 
     from webPages 
     where ID='aa-secure_navigation.apg';">
   $1
@@ -54,8 +50,6 @@ Variables expected:
        <input type=hidden name=OID value=$OID>
        <input type=hidden name=rtype value=$rtype>
        <input type=hidden name=merge_oid value='none'>
-       $(IF,$(XST,$ownerColumn),<input type=hidden name=ownerColumn value=$ownerColumn>)
-       $(IF,$(XST,$zdbIdColumn),<input type=hidden name=zdbIdColumn value=$zdbIdColumn>)
      <?/MIVAR>
 
    <?MIVAR COND="$(NXST,$merge_oid)" NAME=$merge_oid>none<?/MIVAR>

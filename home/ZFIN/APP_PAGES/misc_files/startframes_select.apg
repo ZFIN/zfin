@@ -6,10 +6,6 @@ Expects the variables:
  select_from (specify the data type to select) 
  selector -- the name of the app page that does the selection
  return_rec --- the return record that holds place to return to.
- ownerColumn (optional) -- name of column containing the record owner's ZDB ID.
-   Passed in only if the column is not named "owner".
- zdbIdColumn (optional) -- name of column containing the record's ZDB ID.
-   Passed in only if the column is not named "zdb_id".
 
 You may also optionally pass many other constraints on the upcoming selection that should be passed on to the criteria frame of the new selector. Each of these has to be handled specifically, as below.
 -->
@@ -17,7 +13,7 @@ You may also optionally pass many other constraints on the upcoming selection th
 
 <!-- Throw up a navigator tile for the approppriate data type -->
 <?MISQL SQL="
-  select WebExplode(object,'page_title=Find $(UPPER,$select_from)$(IF,$(XST,$ownerColumn),&ownerColumn=$ownerColumn)$(IF,$(XST,$zdbIdColumn),&zdbIdColumn=$zdbIdColumn)')
+  select WebExplode(object,'page_title=Find $(UPPER,$select_from)')
     from webPages 
     where ID='aa-secure_navigation.apg';">
   $1
