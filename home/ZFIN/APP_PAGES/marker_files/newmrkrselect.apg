@@ -300,19 +300,31 @@ Datablade documentation.
 
     <!-- when asked for the top hit, order the records in temp table, go to markerview page for the first hit -->
     <?MIBLOCK COND="$(XST,$getTop)">
+     <!--for best match, search exact mrkr_abbrev match first, then get the first of the temp table based on the order-->
+     <?MIVAR NAME=$input><?/MIVAR>
+     <?MIVAR NAME=$input>$(IF,$(XST,$input_name),$input_name, $input_acc)<?/MIVAR>
+ 
      <?MISQL SQL="
-  	select mrkr_zdb_id, mrkrtype_significance, mrkr_abbrev_order $name_sig_cols
-    	 from bigselect_temp_markers, marker_types
-	where mrkr_type = marker_type
-	order by $sig_order mrkrtype_significance, mrkr_abbrev_order;  ">
-	
-	<?MIVAR NAME=OID>$1<?/MIVAR>
-	<?MIVAR COND="$(=,$MI_CURRENTROW,1)">
-
-	  <SCRIPT>location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID")</SCRIPT>
-	<?/MIVAR>
+	 select mrkr_zdb_id
+	   from bigselect_temp_markers
+          where mrkr_abbrev = '$input' ;">
      <?/MISQL>
-     
+     <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+	<?MIVAR NAME=OID>$1<?/MIVAR>
+     <?MIELSE>
+       <?MISQL SQL="
+  	   select mrkr_zdb_id, mrkrtype_significance, mrkr_abbrev_order $name_sig_cols
+    	     from bigselect_temp_markers, marker_types
+	    where mrkr_type = marker_type
+   	   order by $sig_order mrkrtype_significance, mrkr_abbrev_order;  ">
+	
+	  <?MIVAR COND="$(=,$MI_CURRENTROW,1)" NAME=OID>$1<?/MIVAR>
+       <?/MISQL>
+     <?/MIBLOCK>
+     <?MIVAR>
+       <SCRIPT>location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID")</SCRIPT>
+     <?/MIVAR>
+
    <?MIELSE>
      <!--else keep going,  query count(*) -->
 
