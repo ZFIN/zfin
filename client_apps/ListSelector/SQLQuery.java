@@ -68,13 +68,20 @@ public class SQLQuery
     public int update(String query)  {
 		int result = -1;
 		Connection conn = connect();
+
+		if (conn != null) {
 		
-		try {
-			Statement update = conn.createStatement();
-			result = update.executeUpdate(query);
-		} catch (SQLException e) {
-			System.out.println("ERROR: Insert/Update/Delete statement failed: " + e.getMessage());
-		}
+			try {
+				Statement update = conn.createStatement();
+				result = update.executeUpdate(query);
+			} catch (SQLException e) {
+				System.out.println("ERROR: Insert/Update/Delete statement failed: " + e.getMessage());
+			}
+		} else {
+			selectAll_javaserver(1,query);
+	    }
+		
+		
 		return result;
 	}
 
@@ -84,27 +91,35 @@ public class SQLQuery
 		Vector results = new Vector();
 
 		Connection conn = connect();
-	
 
-		try {
-			Statement select = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-			select.setFetchSize(200);
-			select.setFetchDirection(ResultSet.FETCH_FORWARD);	
-			ResultSet r = select.executeQuery(request);
+		if (conn != null) 	{
+			
 
-			int i;
-			while(r.next()) {
-				for (i=1 ; i <= numFields ; i++) {
-					results.add(r.getString(i));
+			try {
+				Statement select = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+				select.setFetchSize(200);
+				select.setFetchDirection(ResultSet.FETCH_FORWARD);	
+				ResultSet r = select.executeQuery(request);
+
+				int i;
+				while(r.next()) {
+					for (i=1 ; i <= numFields ; i++) {
+						results.add(r.getString(i));
 					}
 			
 				}
-			r.close();
-			select.close();
-			} catch (SQLException e) {
-				System.out.println("ERROR: Fetch statement failed: " + e.getMessage());
+				r.close();
+				select.close();
+				} catch (SQLException e) {
+					System.out.println("ERROR: Fetch statement failed: " + e.getMessage());
 				}
-
+		} else {
+			results = selectAll_javaserver(numFields, request);
+			
+		}
+		
+		
+		
 		return results;
 		
 	}
