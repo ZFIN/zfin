@@ -11,7 +11,7 @@
 
 
 
-begin work;
+begin work;    
 
   --=======================--
   -- LOAD INTO TEMP TABLES --
@@ -238,7 +238,7 @@ INSERT INTO ortho_link
 CREATE INDEX lnkortho_dblink_zdb_id_index ON ortho_link
     (lnkortho_dblink_zdb_id) using btree;
     
-    
+
 ------------------------------------------------------
 --| RECORD THE AUTOMATED and NON-AUTOMATED DBLINKS |--
 ------------------------------------------------------
@@ -422,30 +422,83 @@ INSERT INTO record_attribution
 
 -- --------------  DELETE REDUNDANT DB_LINKS  ----------------- --
 UPDATE STATISTICS HIGH FOR TABLE tmp_db_link;
+UPDATE STATISTICS HIGH FOR TABLE db_link;
 
-DELETE FROM tmp_db_link
-WHERE 0 <  
-  (
-    SELECT count(*)
-    FROM db_link
+
+    SELECT linked_recid, db_name, acc_num
+    FROM db_link, tmp_db_link
     WHERE linked_recid = tmp_linked_recid
       AND db_name = tmp_db_name
       AND acc_num = tmp_acc_num
-  );
+    into temp tmp_redundant_db_link;
+    
+
+    DELETE FROM tmp_db_link
+    WHERE exists 
+      (
+        SELECT *
+        FROM tmp_redundant_db_link
+        WHERE db_name = tmp_db_name
+          AND acc_num = tmp_acc_num
+          AND linked_recid = tmp_linked_recid
+      );
+
+
+--Remove links that would be assigned to a gene and currently have an encodes relationship
+--with a segment.
+
+    SELECT *
+    FROM db_link
+    WHERE linked_recid not like "ZDB-GENE-%"
+    into temp tmp_est_db_link;
+    
+    DELETE FROM tmp_db_link
+    WHERE tmp_linked_recid like "ZDB-GENE-%"
+      and exists
+      (
+        SELECT *
+        FROM tmp_est_db_link, marker_relationship
+        WHERE db_name = tmp_db_name
+          and acc_num = tmp_acc_num
+          and linked_recid = mrel_mrkr_2_zdb_id
+          and tmp_linked_recid = mrel_mrkr_1_zdb_id
+          and mrel_type = 'gene encodes small segment'
+      );
+    
+
+--These records are not linked through marker relationship. However, they have the same
+--accession record. They will be unloaded for curatorial investigation.
+
+    UNLOAD to dblink_gene_marker_non_encodes_pairs.txt
+    SELECT tmp_linked_recid, linked_recid, tmp_acc_num, tmp_db_name
+    FROM tmp_est_db_link, tmp_db_link, marker_relationship
+    WHERE tmp_linked_recid like "ZDB-GENE-%"
+      and db_name = tmp_db_name
+      and acc_num = tmp_acc_num
+      and linked_recid = mrel_mrkr_2_zdb_id
+      and tmp_linked_recid = mrel_mrkr_1_zdb_id
+      and mrel_type != 'gene encodes small segment';
+     
+    
 
 -- --------------  DELETE MULTIPLES REFSEQ  ----------------- --
 -- Find all genes that have multiple RefSeq acc_nums.
 -- Unload the gene_abbrev/acc_num and delete the records.
 -- Failing to do this will result in a unique constraint violation.
 
-SELECT tmp_linked_recid as multref_linked_recid, 
-       count(tmp_linked_recid) as multref_count
+create temp table tmp_multiple_refseq
+  (
+    multref_linked_recid varchar(50),
+    multref_count integer  
+  )with no log;
+
+INSERT INTO tmp_multiple_refseq  
+SELECT tmp_linked_recid, count(tmp_linked_recid)
 FROM tmp_db_link
 WHERE tmp_db_name = "RefSeq"
 GROUP BY tmp_linked_recid
-HAVING count(tmp_linked_recid) > 1
-order by 1
-INTO temp tmp_multiple_refseq;
+HAVING count(tmp_linked_recid) > 1;
+
 
 UNLOAD to gene_with_multiple_linked_recid.unl
 SELECT mrkr_abbrev, tmp_acc_num

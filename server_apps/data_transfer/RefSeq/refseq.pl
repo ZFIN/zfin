@@ -131,6 +131,7 @@ system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> load_refSeq.sql");
 &reportOmimDups();
 &reportRefSeqDups();
 &reportOrthologueDups();
+&reportDbLinkGeneMarkerPairs() if (-e dblink_gene_marker_non_encodes_pairs.unl); 
 &sendReport();
 
 exit;
@@ -259,6 +260,27 @@ sub reportOrthologueDups()
     close (FILE);
     close (REPORT);
   }
+
+
+sub reportDbLinkGeneMarkerPairs()
+  {
+    open (REPORT, ">>report") or die "can not open report";
+    open (FILE, "dblink_gene_marker_non_encodes_pairs.unl") or die "can not open file";
+    
+    print REPORT "\n";
+    print REPORT "DB_LINK Gene-Marker non-encodes pairs\n";
+
+    while($line = <FILE>)
+    {
+      print REPORT $line;
+    }
+
+    print REPORT "\n";
+    
+    close (FILE);
+    close (REPORT);
+  }
+
 
 sub sendReport()
   {
