@@ -196,7 +196,7 @@ $(IF,$(EC,$marker_type,GENE),"("$abbrev")")</B> </FONT>
 <?MIVAR> <B>Reference Panel Location(s): $abbrev  </B><?/MIVAR> 
 <TABLE cols=3 width=100% colspan=2>
 
-<?MISQL SQL="select a.owner, lg_location, target_id as panel_id, OR_lg, target_abbrev as panel_abbrev,private,b.full_name,a.metric,day(a.entry_date::date),month(a.entry_date::date), year(a.entry_date::date) from paneled_markers a,person b where a.zdb_id='$OID' and OR_lg is not null and a.owner=b.zdb_id;">
+<?MISQL SQL="select a.owner, lg_location, target_id as panel_id, OR_lg, target_abbrev as panel_abbrev,private,b.full_name,a.metric,day(a.entry_date::date),month(a.entry_date::date), year(a.entry_date::date), map_name from paneled_markers a,person b where a.zdb_id='$OID' and OR_lg is not null and a.owner=b.zdb_id;">
 
 
 $(IF,$(>,$MI_CURRENTROW,1),<TR><td colspan=2><hr width=80%></TD></TR>)
@@ -213,8 +213,8 @@ $(IF,$(>,$MI_CURRENTROW,1),<TR><td colspan=2><hr width=80%></TD></TR>)
 <?/MIBLOCK>
 
 <?MIVAR NAME=$override>$(IF,$(OR,$(EC,$ZDB_access,root),$(EC,$ZDB_access,fishauth)),true,false)<?/MIVAR>
+$(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),"<TD colspan=3><font size=2>LG <b>"$4"</b>;<b> "$2"</b> "$8" (<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$3">"$5" Panel; updated "$upd_date"</A>) "$(IF,$(ISNULL,$12),,Mapped as $12)" </TD>","<TD colspan=2><font size=2>Mapped on <A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$3">"$5" Panel; updated "$upd_date"</A>, but still confidential.")
 
-$(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),"<TD colspan=3><font size=2>LG <b>"$4"</b>;<b> "$2"</b> "$8" (<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$3">"$5" Panel; updated "$upd_date"</A>)</TD>","<TD colspan=2><font size=2>Mapped on <A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$3">"$5" Panel; updated "$upd_date"</A>, but still confidential.")
 </TD>
 
 
@@ -237,7 +237,7 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),"<TD colspan=3><font size=2>LG <b>"$4
 
 <TABLE cellpadding=0 cellspacing=0 >
 
-<?MISQL SQL="select target_abbrev,private as panel_abbrev  from paneled_markers a,person b where a.zdb_id='$OID' and OR_lg is not null and a.owner=b.zdb_id;">
+<?MISQL SQL="select distinct target_abbrev, private as panel_abbrev  from paneled_markers a,person b where a.zdb_id='$OID' and OR_lg is not null and a.owner=b.zdb_id;">
 
 <?MIVAR NAME=$private>$2<?/MIVAR>
 
