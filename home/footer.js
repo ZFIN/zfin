@@ -36,7 +36,7 @@ document.write("  </tr>");
 document.write("  <tr>");
 document.write("    <td align=center>");
 document.write("      <DIV class=\"header\">");
-document.write("      Copyright<font color=\"#000000\"> &copy</font> <A HREF=\"http://www.uoregon.edu\"><font color=\"#000000\">University of Oregon</font></a>, 1994-2002, <A HREF=\"http://www.ci.eugene.or.us/\"><font color=\"#000000\">Eugene</font></a>, Oregon.");
+document.write("      Copyright<font color="#000000"> &copy</font> <A HREF="http://www.uoregon.edu"><font color="#000000">University of Oregon</font></a>, 1994-2002, <A HREF="http://www.ci.eugene.or.us/"><font color="#000000">Eugene</font></a>, Oregon.");
 document.write("      </DIV>");
 document.write("    </td>");
 document.write("  </tr>");
