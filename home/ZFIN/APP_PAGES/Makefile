@@ -25,7 +25,6 @@ SUBDIRS = \
 	accession \
 	fish_files \
 	gene_files \
-	groupware \
 	image_files \
 	lab_files \
 	linkage \
