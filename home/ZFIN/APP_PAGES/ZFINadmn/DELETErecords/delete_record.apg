@@ -30,15 +30,6 @@ Variables expected:
 
     }
 
-    function call_submit(oid,merge) { 
-
-    document.merge.MIval.value='aa-process_delete.apg';
-    document.merge.merge_oid.value=oid;
-    document.merge.merge.value=merge;
-    document.merge.submit();
-
-    }
-
     </SCRIPT>
   </HEAD>
 
@@ -201,7 +192,7 @@ Variables expected:
       <?/MIBLOCK>
 
     <?MIELSE>
-       Click "Delete or Merge" to delete or merge this record and return to the ZFIN home page.
+      	<input type=hidden name=merge value="" >  
     <?/MIBLOCK>
   <?/MIBLOCK>  
 
