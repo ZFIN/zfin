@@ -41,11 +41,15 @@ update probes_tmp set prb_clone_name = (select accl_image_clone
 		where prb_gb5p in (select accl_accession from acc_clone_tmp)
 		   or prb_gb3p in (select accl_accession from acc_clone_tmp); 
 
-UNLOAD TO 'prb_already_has_xpat.err'
+--when there exists an xpat using the same probe and is from direct submission, 
+--it is highly possible to be from the same submission, so flag it as a problem 
+--to be checked
+UNLOAD TO 'exist_same_xpat_experiment_from_directsub.err'
 	select prb_clone_name, xpat_zdb_id, xpat_stock_zdb_id, xpat_assay_name, xpat_source_zdb_id
 	  from probes_tmp, expression_pattern, marker
 	 where mrkr_zdb_id = xpat_probe_zdb_id
-	   and mrkr_name = prb_clone_name;
+	   and mrkr_name = prb_clone_name
+	   and xpat_source_zdb_id in ("ZDB-PUB-040907-1", "ZDB-PUB-010810-1", "ZDB-PUB-031103-24");
 
 -- use alias name in ZFIN 
 update probes_tmp set prb_library = "Zebrafish adult retina cDNA" 
