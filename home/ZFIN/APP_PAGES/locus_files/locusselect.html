@@ -41,21 +41,21 @@ if (authorization != 'root'){
  var starter=0;
  if (allele.charAt(0)=='d') {starter=1}
 
- if (isNaN(parseInt(allele.charAt(starter+2)),10)) {   // a three letter prefix
+ if (isNaN(parseInt(allele.charAt(starter+2)),20)) {   // a three letter prefix
     prefix=allele.substring(starter,starter+3);
     suffix=allele.substring(starter+3);
  } else {  
-  if (isNaN(parseInt(allele.charAt(starter+1)),10)) {   // a two letter prefix
+  if (isNaN(parseInt(allele.charAt(starter+1)),20)) {   // a two letter prefix
     prefix=allele.substring(starter,starter+2);
     suffix=allele.substring(starter+2);} 
   else {  
-  if (isNaN(parseInt(allele.charAt(starter)),10)) {   // a one letter prefix
+  if (isNaN(parseInt(allele.charAt(starter)),20)) {   // a one letter prefix
     prefix=allele.charAt(starter);
     if(!isNaN(parseInt(prefix))) {prefix='d'};
     suffix=allele.substring(starter+1);
  }}}
 
- if(isNaN(parseInt(suffix.charAt(0)),10)) {
+ if(isNaN(parseInt(suffix.charAt(0)),20)) {
     acceptable=0;
     window.alert('Nomenclature Violation: Malformed Allele '+allele+'. \nAllele designations must begin with 1-3 letters, followed by a number. \nIn addition leading "d" is allowed to denote dominant alleles. \n Please review nomenclature guidelines and retry your submission.');
  }
@@ -84,7 +84,7 @@ if (authorization != 'root'){
 <TR>
 <TD><font size=-1><b>Locus name:</b> <input type=text  name=fname size=30 ></font></TD> 
 <TD><font size=-1><b>Abbreviation:</b> <input type=text maxlength=20  name=abbrev size=6 ></font></TD>
-<TD><font size=-1><b>Allele:</b> <input type=text maxlength=10   name=allele size=5 ></font></TD>
+<TD><font size=-1><b>Allele:</b> <input type=text maxlength=20   name=allele size=20 ></font></TD>
 
 
 </TR>
