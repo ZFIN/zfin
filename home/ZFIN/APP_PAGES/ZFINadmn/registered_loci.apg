@@ -1,7 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 
-<!-- Used by root to police pending locus registrations. Root can change 
+<?MICOMMENT> 
+Used by root to police pending locus registrations. Root can change 
 the status of a registration.  
 So the possible status states are:   unreviewed, conditional, public
 PARAMS:
@@ -12,7 +13,7 @@ action == is either 'approve', 'make_public', or 'delete' depending on which
 
 UPDATE ECK 4/21/99.  Will modify to allow public to see pending 
 registrations -- but not update of course.
- -->
+<?/MICOMMENT> 
 
 <HEAD>
 
@@ -31,6 +32,8 @@ registrations -- but not update of course.
   }
 </SCRIPT>
 </HEAD>
+
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
 
 <?MISQL SQL="
   select WebExplode(object,'') 
@@ -115,7 +118,7 @@ registrations -- but not update of course.
 	    values 
 	      ('Provisional record for newly registered locus/allele',
 	       '$owner', current, '$temp_oid', '$locus_id', '$allele',
-	       '0', '$descr', '$lab', '$owner', 'mutant',
+	       '0', $(IF,$(EQ,$descr,),NULL,'$descr'), '$lab', '$owner', 'mutant',
 	       '$abbrev','$locus_name','unknown','not specified','not specified');">
 	<?/MISQL>
 	<?MIVAR NAME=$s_done>true<?/MIVAR>
