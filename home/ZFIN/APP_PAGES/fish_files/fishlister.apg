@@ -544,7 +544,7 @@ $(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|
   <SCRIPT>
     <?MIBLOCK COND="$(XST,$structures)">
       <?MIVAR>
-        var page_id=top.content.location.href+'&structures=$structures&navtile=$navtile&fname=$fname&chrom_change=$chrom_change&chrom_num=$chrom_num&mutagen=$mutagen&anon1=$anon1&anon1text=$anon1text&allele=$allele&abbrev=$nav_abbrev&line_type=$line_type&knowngene=$knowngene&selected_separator=$selected_separato&WINSIZE=$WINSIZE&BEGIN=$BEGINr';
+        var page_id=top.content.location.href+'&structures=$structures&navtile=$navtile&fname=$fname&chrom_change=$chrom_change&chrom_num=$chrom_num&mutagen=$mutagen&anon1=$anon1&anon1text=$anon1text&allele=$allele&abbrev=$nav_abbrev&line_type=$line_type&knowngene=$knowngene&selected_separator=$selected_separator&WINSIZE=$WINSIZE&BEGIN=$BEGINr';
       <?/MIVAR>
     <?/MIBLOCK>
 
