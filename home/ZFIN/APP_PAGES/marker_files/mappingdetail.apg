@@ -43,7 +43,6 @@
 	<?MIVAR>$(SETVAR,$GNID,$2)<?/MIVAR>
    <?/MISQL>
 
-  <font size=-1>
   <?MISQL SQL="
 	SELECT or_lg
 	FROM mapped_marker
@@ -109,7 +108,7 @@
 		<?/MISQL>
 	      <A HREF="/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi?&userid=$userid&OID=$oID&view_map=view_map$vmpanels">Merged</A>&nbsp;&nbsp;
 	      <A HREF="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi?&userid=$userid&OID=$oID&view_map=view_map$vmpanels">Individual Panels</A>
-	    </font>
+	  
 
   <?/MIVAR>
  <?/MIBLOCK>
