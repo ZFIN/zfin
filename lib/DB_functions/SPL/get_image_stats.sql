@@ -34,3 +34,5 @@ get_image_stats(
   return width, height;
 
 end function;
+
+update statistics for function get_image_stats;

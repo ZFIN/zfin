@@ -172,3 +172,5 @@ get_obj_name(zdbId varchar(50))
   return objName;
 
 end function;
+
+update statistics for function get_obj_name;

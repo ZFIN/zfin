@@ -47,3 +47,5 @@ get_fish_full_name(
   return fishFullName;
 
 end function;
+
+update statistics for function get_fish_full_name;

@@ -94,3 +94,5 @@ fimg_overlaps_stg_window (
   return overlaps;
 
 end function;
+
+update statistics for function fimg_overlaps_stg_window;

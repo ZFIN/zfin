@@ -38,4 +38,4 @@ create function detect_DAG_cycle()
   return i;-- _AT_LEAST_ the number of rows involved in cycle(s) 
 end function;
 
-
+update statistics for function detect_DAG_cycle;

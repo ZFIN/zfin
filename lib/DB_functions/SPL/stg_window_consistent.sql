@@ -64,3 +64,5 @@ stg_window_consistent (
   return consistent;
 
 end function;
+
+update statistics for function stg_window_consistent;

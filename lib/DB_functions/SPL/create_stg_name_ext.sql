@@ -53,3 +53,4 @@ create_stg_name_ext(
 
 end function;
 
+update statistics for function create_stg_name_ext;

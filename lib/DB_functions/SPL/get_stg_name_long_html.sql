@@ -50,3 +50,5 @@ get_stg_name_long_html(
   return stgNameLongHtml;
 
 end function;
+
+update statistics for function get_stg_name_long_html;

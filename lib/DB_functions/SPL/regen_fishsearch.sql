@@ -183,3 +183,4 @@ end function;
 grant execute on function "informix".regen_fishsearch () 
   to "public" as "informix";
 
+update statistics for function regen_fishsearch;

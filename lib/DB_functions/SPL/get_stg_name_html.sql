@@ -82,3 +82,5 @@ get_stg_name_html(
   return stgNameHtml;
 
 end function;
+
+update statistics for function get_stg_name_html;

@@ -94,3 +94,5 @@ anatitem_overlaps_stg_window (
   return overlaps;
 
 end function;
+
+update statistics for function anatitem_overlaps_stg_window;

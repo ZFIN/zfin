@@ -110,3 +110,5 @@ stg_windows_overlap(
   return overlaps;
 
 end function;
+
+update statistics for function stg_windows_overlap;

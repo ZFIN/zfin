@@ -1316,3 +1316,5 @@ end function;
 
 grant execute on function "informix".regen_genomics () 
   to "public" as "informix";
+  
+update statistics for function regen_genomics;

@@ -45,3 +45,5 @@ create_stg_name_long(
   return stgNameLong;
 
 end function;
+
+update statistics for function create_stg_name_long;

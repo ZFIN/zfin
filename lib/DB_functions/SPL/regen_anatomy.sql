@@ -90,7 +90,7 @@ create function populate_anat_display_stage_children(parent_id varchar(50),
   return seq_num;
 end function;
 
-
+update statistics for function populate_anat_display_stage_children;
 
 create procedure populate_anat_display_stage(stage_id varchar(50))
 
@@ -165,6 +165,7 @@ create procedure populate_anat_display_stage(stage_id varchar(50))
 
 end procedure;
 
+update statistics for procedure populate_anat_display_stage;
 
 
 create procedure distinct_item_expression_count(aid varchar(50),
@@ -265,7 +266,7 @@ create procedure distinct_item_expression_count(aid varchar(50),
 
 end procedure;
 
-
+update statistics for procedure distinct_item_expression_count;
 
 
 create function populate_all_anatomy_contains()
@@ -346,7 +347,7 @@ create function populate_all_anatomy_contains()
 
 end function;
 
-
+update statistics for function populate_all_anatomy_contains;
 
 --------------------------------------------------------------------
 
@@ -817,7 +818,8 @@ create dba function "informix".regen_anatomy()
       create index non_parent_stage_end_hour_index
         on non_parent_stage(end_hour)
 	in idxdbs3;
-
+	
+      update statistics high for table non_parent_stage; 	
 
       --for each anatitem find all stages it is contained in
 
@@ -1126,6 +1128,7 @@ create dba function "informix".regen_anatomy()
 	constraint allanatstg_stg_zdb_id_foreign_key;
       }
 
+       	
       -- ---- ANATOMY_DISPLAY ----
 
       rename table anatomy_display_new to anatomy_display;
@@ -1187,6 +1190,8 @@ create dba function "informix".regen_anatomy()
 	constraint anatdisp_item_name_foreign_key;
       }
 
+      
+      	
       -- ---- ANATOMY_STAGE_STATS ----
 
       rename table anatomy_stage_stats_new to anatomy_stage_stats;
@@ -1227,7 +1232,9 @@ create dba function "informix".regen_anatomy()
 	  on delete cascade
 	constraint anatstgstat_stg_zdb_id_foreign_key;
       }
-
+      
+      
+      
       -- ---- ALL_ANATOMY_CONTAINS ----
 
       rename table all_anatomy_contains_new to all_anatomy_contains;
@@ -1264,14 +1271,23 @@ create dba function "informix".regen_anatomy()
 	references anatomy_item
 	constraint allanatcon_contained_zdb_id_foreign_key;      
       }
+            
     end -- Local exception handler
-
     commit work;
-
   end -- Global exception handler
+  
+  -- Update statistics on tables that were just created.
 
+  begin work;
+  update statistics high for table all_anatomy_stage;
+  update statistics high for table anatomy_display;
+  update statistics high for table anatomy_stage_stats;
+  update statistics high for table all_anatomy_contains;
+  commit work;
   return 0;
 end function;
 
 grant execute on function "informix".regen_anatomy () 
   to "public" as "informix";
+  
+update statistics for function regen_anatomy;
