@@ -6,7 +6,7 @@ create dba function "informix".regen_oevdisp()
   -- DEBUGGING:
   -- There are several ways to debug this function.
   --
-  -- See the DEBUGGING section of regen_genomics for detailed 
+  -- See the DEBUGGING section of regen_names.sql for detailed 
   -- description.
 
   define geneZdbId		varchar(50);
@@ -27,8 +27,7 @@ create dba function "informix".regen_oevdisp()
     define isamError integer;
     define errorText varchar(255);
     define errorHint varchar(255);
-
-    define nrows integer;
+    define zdbFlagReturn integer;
 
     on exception
       set sqlError, isamError, errorText
@@ -69,29 +68,21 @@ create dba function "informix".regen_oevdisp()
 	-- Don't drop the tables here.  Leave them around in an effort to
 	-- figure out what went wrong.
 	
-	update zdb_flag set zflag_is_on = 'f'
-		where zflag_name = "regen_oevdisp" 
-	 	  and zflag_is_on = 't'; 
-
+        let zdbFlagReturn = release_zdb_flag("regen_oevdisp");
 	return -1;
       end
     end exception;
 
-    let errorHint = "set zdb flag";
 
-    update zdb_flag set zflag_is_on = 't'
-	where zflag_name = "regen_oevdisp" 
-	 and zflag_is_on = 'f';
+    -- -------------------------------------------------------------------
+    --   GRAB ZDB_FLAG
+    -- -------------------------------------------------------------------
 
-    let nrows = DBINFO('sqlca.sqlerrd2');
-
-    if (nrows == 0)	then
-	return 1;
+    let errorHint = "Grab zdb_flag";
+    if grab_zdb_flag("regen_oevdisp") <> 0 then
+      return 1;
     end if
- 			
-    update zdb_flag set zflag_last_modified = CURRENT
-	where zflag_name = "regen_oevdisp";
-			
+
 
     let preGeneZdbId = "";
     let prePubZdbId = "";
@@ -267,9 +258,13 @@ create dba function "informix".regen_oevdisp()
 
   commit work;
  
-  update zdb_flag set zflag_is_on = "f",
-	 	      zflag_last_modified = CURRENT
-        where zflag_name = "regen_oevdisp";
+  -- -------------------------------------------------------------------
+  --   RELEASE ZDB_FLAG
+  -- -------------------------------------------------------------------
+
+  if release_zdb_flag("regen_oevdisp") <> 0 then
+    return 1;
+  end if
 
   return 0;
 

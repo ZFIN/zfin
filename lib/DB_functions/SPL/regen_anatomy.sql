@@ -273,7 +273,7 @@ create dba function "informix".regen_anatomy()
 
   -- populates anatomy fast search tables.
 
-  -- see regen_genomics.sql for details on how to debug SPL routines.
+  -- see regen_names.sql for details on how to debug SPL routines.
 
   --set debug file to "/tmp/debug_regen_anatomy.<!--|DB_NAME|-->";
   --trace on;
@@ -285,6 +285,7 @@ create dba function "informix".regen_anatomy()
     define isamError integer;
     define errorText varchar(255);
     define errorHint varchar(255);
+    define zdbFlagReturn integer;
 
     on exception
       set sqlError, isamError, errorText
@@ -324,9 +325,7 @@ create dba function "informix".regen_anatomy()
         -- Don't drop the tables here.  Leave them around in an effort to
         -- figure out what went wrong.
 
-	update zdb_flag set zflag_is_on = 'f'
-		where zflag_name = "regen_anatomy" 
-	 	  and zflag_is_on = 't'; 
+        let zdbFlagReturn = release_zdb_flag("regen_anatomy");
 	return -1;
       end
     end exception;
@@ -335,25 +334,12 @@ create dba function "informix".regen_anatomy()
 
     begin
 
-      define nrows integer;
+      --   GRAB ZDB_FLAG
 
-      let errorHint = "zdb_flag";
-
-      -- zdb_flag
-
-      update zdb_flag set zflag_is_on = 't'
-	  where zflag_name = "regen_anatomy" 
-	    and zflag_is_on = 'f';
-
-      let nrows = DBINFO('sqlca.sqlerrd2');
-
-      if (nrows == 0)	then
-	  return 1;
+      let errorHint = "Grab zdb_flag";
+      if grab_zdb_flag("regen_anatomy") <> 0 then
+        return 1;
       end if
-
-      update zdb_flag set zflag_last_modified = CURRENT
-	  where zflag_name = "regen_anatomy";
-
 
       -- crank up the parallelism.
 
@@ -1136,11 +1122,11 @@ create dba function "informix".regen_anatomy()
   update statistics high for table all_anatomy_contains;
   commit work;
 
-  update zdb_flag set zflag_is_on = "f"
-	where zflag_name = "regen_anatomy";
-	  
-  update zdb_flag set zflag_last_modified = CURRENT
-	where zflag_name = "regen_anatomy";
+  --   RELEASE ZDB_FLAG
+
+  if release_zdb_flag("regen_anatomy") <> 0 then
+    return 1;
+  end if
 
   return 0;
 
