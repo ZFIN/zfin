@@ -168,24 +168,14 @@ ERROR -- something bad happened -- no OID passed in!
 <p>
 
 <B>ADDITIONAL INFORMATION: </B>
+<?MICOMMENT>*** 08/26 Curators decided to not include related markers' attribution.<?/MICOMMENT>
 <ul>
 <?MISQL SQL="
       select recattrib_data_zdb_id as zdb_id
 	from  record_attribution
 	where recattrib_source_zdb_id = '$OID'
 	and  recattrib_data_zdb_id like 'ZDB-GENE%'
-	union 
-	select mrel_mrkr_2_zdb_id as zdb_id
-	from  record_attribution, marker_relationship
-	where recattrib_source_zdb_id = '$OID'
-	and  recattrib_data_zdb_id = mrel_mrkr_1_zdb_id
-	and mrel_mrkr_2_zdb_id like 'ZDB-GENE-%'		 
-	union 
-	select mrel_mrkr_1_zdb_id as zdb_id
-	from  record_attribution, marker_relationship
-	where recattrib_source_zdb_id = '$OID'
-	and  recattrib_data_zdb_id = mrel_mrkr_2_zdb_id
-	and mrel_mrkr_1_zdb_id like 'ZDB-GENE-%'; ">
+      ; ">
 <?/MISQL> 
 <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
 <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-geneselect.apg&pubId=$OID&type=gene">Genes</a> &nbsp; ($MI_ROWCOUNT)
