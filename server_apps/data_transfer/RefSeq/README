@@ -1,23 +1,71 @@
-NCBI hosts an FTP server with LocusLink and RefSeq data files.  The
-files are unloads from their database, updated as often as the like.
+##################################################################
+ 
+  README for RefSeq.pl
+ 
+##################################################################
+
+------------------------------------------------------------------
+  ZFIN Objective:
+------------------------------------------------------------------
+
+To extract relationships from LocusLink files that can be used to 
+create orthologue and sequence links for Zebrafish genes.
+  
+
+------------------------------------------------------------------
+  Data Files:
+------------------------------------------------------------------  
+
+LocusLink hosts unload files on their ftp site. ZFIN is interested 
+in:
+LL_dr   --  summary information for each LocusID / Zfin pair
+LL_hs   --  summary information for each LocusID / Human pair
+LL_ms   --  summary information for each LocusID / Mouse pair
+loc2acc --  LocusID / GenBank #
+loc2ref --  LocusID / RefSeqID / Genome Identifier
+loc2UG  --  LocusID / UniGene cluster id
+
 Information pertaining to the structure of the files can be obtained
-from the README file on their FTP server.
+from the README file on their FTP server. 
+ftp://ftp.ncbi.nih.gov/refseq/README
 
-ZFIN's objective is to extract relationships from the files that can
-be used to create orthologue and sequence links for Zebrafish genes.
+------------------------------------------------------------------
+  Procedure:
+------------------------------------------------------------------ 
+DOWNLOADING
+Using wget, the most recent files are dowloaded from NCBI's ftp site.
+ftp://ftp.ncbi.nih.gov/refseq/LocusLink/
+Each file is uncompressed using gunzip then each file is parsed into
+Informix load files.
 
-The process starts by downloading the most recent files from 
-  ftp.ncbi.nih.gov/refseq/LocusLink/.
-Each file is uncompressed using gunzip then each file is parsed
-with a perl script; relevant fields are written to an Informix
-load file. When the load files are made it is time to submit the 
-data. 
+RELATIONSHIPS (RefSeq, GenBank, UniGene, Mouse_Ortho, and Human_Ortho)
 
+LocusLink (LL) IDs are the pivotal data that link other RefSeq files.
+Retrieve all records from ll_dr where ZDB is not null. This becomes
+the translation set for RefSeq, GenBank, and Unigene.
+
+Relationship  RefSeq File  Translation using LL_dr
+RefSeq:::ZDB  loc2ref      (RefSeq/LL  -> LL/ZDB -> GENE)
+GenBank:::ZDB loc2acc      (GenBank/LL -> LL/ZDB -> GENE)
+UniGene:::ZDB loc2UG       (UniGene/LL -> LL/ZDB -> GENE)
+
+Unlike the previous relationships, orthologues are not defined purely
+by RefSeq files. They require a RefSeq file and a ZFIN table.  The 
+RefSeq file links LL ids to human (MGD) and mouse (MGI) ids. The ZFIN  
+table (DB_link) links ZDBs to MGI and MGD. Only through a DB_Link record 
+that a ZFIN curator has created will an orthologue relationship be
+established.
+
+Relationship  RefSeq File  Translation using DB_Link table
+LL_GDB:::ZDB  LL_hs        (LL/GDB -> GDB/ZDB -> GENE)
+LL_MGI:::ZDB  LL_ms        (LL/MGI -> MGI/ZDB -> GENE)
+
+CLEAN & REPLACE
 To insert the data, we use a wipe and replace approach. All RefSeq,
-LocusLink, and UniGENE links that are only attributed to the 
-automated curation pub are removed. All relationships from the
-latest download are found. Then the relationships that do not 
-exist in ZFIN are inserted into the database and they are 
-attributed to the automtated curation pub.
+LocusLink, UniGene, and Orthologue links that are soley attributed to 
+the automated curation pub are removed. All relationships from the
+latest download are found. Then the relationships that do not exist in 
+ZFIN are inserted into the database and they are attributed to the 
+automtated curation pub.
 
-This process automated to perform weekly.
+This process is automated to perform weekly in crontab.
