@@ -48,9 +48,8 @@ TRIGGERS = \
 	lab_update_trigger.sql \
 	linkage_pair_member_insert_trigger.sql \
 	linkage_pair_member_update_trigger.sql \
-	locus_abbrev_update_trigger.sql \
+	locus_update_trigger.sql \
 	locus_insert_trigger.sql \
-	locus_name_update_trigger.sql \
 	locus_registration_insert_trigger.sql \
 	locusreg_abbrev_update_trigger.sql \
 	locusreg_name_update_trigger.sql \
