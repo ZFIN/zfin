@@ -1056,7 +1056,7 @@ create dba function "informix".regen_genomics() returning integer
 	where mm.marker_id = mrkr_zdb_id 
 	  and mm.refcross_id = pn.zdb_id 
 	  and mrkr_zdb_id = locus.cloned_gene
-	  and mrkr_type in ('GENE','EST');
+	  and mrkr_type in ('GENE');
 
     -- mapped by independent linkages
     insert into all_g_new
@@ -1081,7 +1081,7 @@ create dba function "informix".regen_genomics() returning integer
 	     outer locus x2 
 	where x1.alnkgmem_member_zdb_id = x0.mrkr_zdb_id
 	  AND x0.mrkr_zdb_id = x2.cloned_gene
-          and x0.mrkr_type in ('GENE','EST');
+          and x0.mrkr_type in ('GENE');
 
 
     -- get genes that aren't mapped
@@ -1096,12 +1096,12 @@ create dba function "informix".regen_genomics() returning integer
 		  from mapped_marker mm
 		  where mrkr_zdb_id = mm.marker_id )
 	  and mrkr_zdb_id = locus.cloned_gene
-	  and mrkr_type in ('GENE','EST')
+	  and mrkr_type in ('GENE')
 	  and not exists
 	      ( select * 
 		  from all_l_m_new
 		  where mrkr_zdb_id = alnkgmem_member_zdb_id
-		    and alnkgmem_marker_type in ('GENE','EST') );
+		    and alnkgmem_marker_type in ('GENE') );
 
     -- create indexes; constraints that use them are added at the end.
 
