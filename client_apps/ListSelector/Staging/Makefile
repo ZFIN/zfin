@@ -83,7 +83,7 @@ $(TARGETS) : $(TARGETDIR)/%.class : %.class
 # When any class file needs to be remade, remake all of them.
 
 $(CLASSES) : $(JAVAS)
-	$(JAVAC) $(JAVACFLAGS) -classpath $(CLASSPATH) $(JAVAS)
+	$(JAVAC_11) $(JAVACFLAGS) -classpath $(CLASSPATH) $(JAVAS)
 
 
 

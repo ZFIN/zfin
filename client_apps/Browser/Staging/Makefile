@@ -45,9 +45,9 @@ TARGETDIR = $(TARGETROOT)/client_apps/Browser
 
 # ---- Java variables
 
-# Use the standard JAVAC, and JAVACFLAGS.  Still need to define classpath.
+# Use the standard JAVAC_11, and JAVACFLAGS.  Still need to define classpath.
 
-CLASSPATH = .:$(JAVAHOME)/lib/classes.zip:$(TOP)/lib/Java
+CLASSPATH = .:$(JAVAHOME_11)/lib/classes.zip:$(TOP)/lib/Java
 
 # ---- Java source and class file variables
 
@@ -78,12 +78,12 @@ $(TARGETJAR) : $(JAR)
 	chmod o+r $@
 
 $(JAR) : $(CLASSES) $(IMPORTDIR)
-	$(JAVAHOME)/bin/jar -cvf $(JAR) $(CLASSES) $(IMPORTDIR)
+	$(JAVAHOME_11)/bin/jar -cvf $(JAR) $(CLASSES) $(IMPORTDIR)
 
 # When any class file needs to be remade, remake all of them.
 
 $(CLASSES) : $(JAVAS)
-	$(JAVAC) $(JAVACFLAGS) -classpath $(CLASSPATH) $(JAVAS)
+	$(JAVAC_11) $(JAVACFLAGS) -classpath $(CLASSPATH) $(JAVAS)
 
 
 
