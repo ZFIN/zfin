@@ -24,6 +24,7 @@
 
 <?MIVAR NAME=$private>NULL<?/MIVAR>
 <?MIVAR NAME=$navtile>NULL<?/MIVAR>
+<?MIVAR NAME=$MI_NULL><?/MIVAR
 
 
 <!-- THIS NEXT PART IS EXECUTED AFTER THE PERSON ENTERS SOME CRITERIA -->
@@ -109,8 +110,8 @@
 
 <?/MIBLOCK> <!-- ends cond any constraints specified -->
 
-<?MIVAR NAME=$order_clause COND="$(EC,$order_pref,name)">order by abbrev<?/MIVAR>
-<?MIVAR NAME=$order_clause COND="$(EC,$order_pref,location)">order by OR_lg,gene_name<?/MIVAR>
+<?MIVAR NAME=$order_clause COND="$(EC,$order_pref,name)">order by abbrev, panel_id desc <?/MIVAR>
+<?MIVAR NAME=$order_clause COND="$(EC,$order_pref,location)">order by OR_lg,gene_name, panel_id desc<?/MIVAR>
 
 <?MIVAR NAME=$target_table COND="$(XST,$ismapped)">mapped_genes a <?/MIVAR>
 <?MIVAR NAME=$target_table COND="$(NXST,$ismapped)">all_genes a <?/MIVAR>
@@ -321,29 +322,35 @@
         <TD><font size=-1> 
         $(IF,$(NC,$prev_name,$gene_name),
           $(IF,$(OR,$(ISNULL,$locus_zdb_id),
-                    $(EC,$locus_zdb_id,NULL)),
+                    $(EC,$locus_zdb_id,"")),
        	    Unknown,<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$locus_zdb_id TARGET=content>$locus_name</A>),
           &nbsp;)
         </font></TD>
 
-        $(IF,$(AND,$(EC,$panel_abbrev,na),
-                   $(=,$OR_lg,0)),
-          "<TD> <font size=2> Unmapped</TD>")
 
         <?MIVAR NAME=$upd_day>$month<?/MIVAR>
-        <?MIBLOCK COND="$(NC,$upd_day,NULL)">
+        <?MIBLOCK COND="$(NC,$upd_day,"")">
           <?MIVAR NAME=$upd_date> $(INDEX,$(-,$month,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $day,$year 
           <?/MIVAR>
         <?/MIBLOCK>
 
-        <?MIBLOCK COND="$(EC,$upd_day,NULL)">
+        <?MIBLOCK COND="$(EC,$upd_day,"")">
           <?MIVAR NAME=$upd_date> <?/MIVAR>
         <?/MIBLOCK>
 
+  <?MIBLOCK COND="$(AND,$(EC,$panel_abbrev,na),$(=,$(POSITION,$panel_id,LINK),0))">
+    <TD>  Unmapped</TD>
+    <TD> </TD><TD> </TD><TD> </TD>
+  <?/MIBLOCK>
+
+
+  <?MIBLOCK COND="$(>,$(POSITION,$panel_id,REF),0)">
+    <?MIVAR>  
         $(IF,$(AND,$(>,$OR_lg,0),
                    $(NC,$private,f)),
           "<TD> <font size=2>Mapped on <A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$panel_id">"$panel_abbrev" panel; updated "$upd_date"</A>, 
            but still confidential.</TD>")
+    <?/MIVAR>
 
         <?MIBLOCK COND="$(AND,$(>,$OR_lg,0),$(EC,$private,f))">
 
@@ -368,12 +375,46 @@
            <?MIVAR name=$ok_view_map>1<?/MIVAR>
          <?/MIBLOCK>
 
+    <?/MIBLOCK>  <!-- panel like ref -->
 
-        </TR>
-        $(SETVAR,$prev_gp,$OR_lg)
-        $(SETVAR,$prev_name,$gene_name)
-        $(SETVAR,$map_abbrev,$7)
+
+    <?MIBLOCK COND="$(>,$(POSITION,$panel_id,LINK),0)">  <!-- independent linkage -->
+
+
+      <?MISQL SQL="select alnkgmem_member_name, alnkgmem_comments, alnkgmem_or_lg,alnkgmem_private from all_linked_members where alnkgmem_member_zdb_id = '$OID' and alnkgmem_linkage_zdb_id = '$panel_id' order by alnkgmem_comments desc;">
+
+	<?MIVAR NAME=$map_name>$1<?/MIVAR>
+        <?MIVAR NAME=$map_comments>$2<?/MIVAR>
+        <?MIVAR NAME=$map_lg>$3<?/MIVAR>
+        <?MIVAR NAME=$map_private>$4<?/MIVAR>
+
+          <TD><font size=2>
+          $(IF,$(NC,$map_lg,0),LG <b>$map_lg</b>)
+
+	  <?MIBLOCK COND="$(NC,$map_comments,"")">
+	    <?MIVAR>
+	      <A HREF=javascript:show_detail('$panel_id','$OID','$marker_name','""');>Map Details</A>
+	    <?/MIVAR>
+	  <?/MIBLOCK>
+          </font>
+
+        <?MIBLOCK COND="$(AND,$(EC,$map_lg,0),$(EC,$map_comments,""))"> 
+          &nbsp;</TD>
+          <TD>&nbsp; </TD><TD>&nbsp; </TD><TD>&nbsp; </TD>
+        <?/MIBLOCK>
+
+	</TR>
       <?/MISQL>
+
+
+    <?/MIBLOCK>  <!-- panel id like link -->  
+
+    </TR>       
+    $(SETVAR,$prev_gp,$OR_lg)
+    $(SETVAR,$prev_name,$gene_name)
+    $(SETVAR,$map_abbrev,$7)
+
+     <?/MISQL>
 
       <!-- add view map buttons if the last record written had mapping data -->
       <?MIBLOCK COND="$(EC,$ok_view_map,1)">
@@ -396,6 +437,7 @@
 	$(IF,$(AND,$(EC,$private,f),$(>,$OR_lg,0)),"</form>")
       <?/MIVAR>
 
+ 
     </TABLE>
 
     <?MIVAR><!-- SQL: $MI_SQL <?/MIVAR>

@@ -18,7 +18,7 @@
 <body bgcolor="white" TEXT="black">
 <basefont COLOR="#000000" size=2>
 
-<?MIVAR NAME=$MI_NULL>NULL<?/MIVAR>
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
 
 
 <!-- THIS NEXT PART IS EXECUTED AFTER THE PERSON ENTERS SOME CRITERIA -->
@@ -90,8 +90,8 @@
 
 <?/MIBLOCK> <!-- ends cond any constraints specified -->
 
-<?MIVAR NAME=$order_clause COND="$(EC,$order_pref,name)">order by marker_name,mtype<?/MIVAR>
-<?MIVAR NAME=$order_clause COND="$(EC,$order_pref,location)">order by OR_lg,marker_name,mtype<?/MIVAR>
+<?MIVAR NAME=$order_clause COND="$(EC,$order_pref,name)">order by marker_name,mtype,target_id desc<?/MIVAR>
+<?MIVAR NAME=$order_clause COND="$(EC,$order_pref,location)">order by OR_lg,marker_name,mtype,target_id desc<?/MIVAR>
 
 <?MIVAR NAME=$ending>,dist,m2_type<?/MIVAR>
 <?MIVAR NAME=$target_table> all_mapped_markers a <?/MIVAR>
@@ -188,15 +188,16 @@ Options:
 <form>
 
 <?MIVAR NAME=$target_abbrev>$7<?/MIVAR>
+<?MIVAR NAME=$target_id>$6<?/MIVAR>
 <?MIVAR NAME=$OID>$4<?/MIVAR>
 <?MIVAR NAME=$marker_name>$1<?/MIVAR>
 <?MIVAR NAME=$upd_day>$15<?/MIVAR>
-<?MIBLOCK COND="$(NC,$upd_day,NULL)">
+<?MIBLOCK COND="$(NC,$upd_day,"")">
 <?MIVAR NAME=$upd_date> $(INDEX,$(-,$15,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $14,$16 
 <?/MIVAR>
 <?/MIBLOCK>
 
-<?MIBLOCK COND="$(EC,$upd_day,NULL)">
+<?MIBLOCK COND="$(EC,$upd_day,"")">
 <?MIVAR NAME=$upd_date> <?/MIVAR>
 <?/MIBLOCK>
 
@@ -247,73 +248,95 @@ $(IF,$(AND,$(EC,$prev_name,$1),$(OR,$(EC,$prev_mtype,$2),$(EC,$prev_mtype,0))),"
 <!-- we have mapping information -->
 <!-- if this is the first mapping record for the marker - close the open form and create a form of marker_name.  Each marker with mapping data will have it's own form.  -->
 
-<?MIBLOCK COND="$(AND,$(EC,$11,NULL),$(EC,$9,f))">
+<?MIBLOCK COND="$(AND,$(>,$(POSITION,$target_id,REF),0),$(EC,$11,""),$(EC,$9,f))">
 
-<?MIBLOCK COND="$(NC,$prev_name,$1)">
-</form>
-<?MIVAR><form method=post  name="$1" target="content" action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi"><?/MIVAR>
-<input type=hidden name=view_map value="view_map">
-<?MIVAR><input type=hidden name=userid value=$userid><?/MIVAR>
-<?MIVAR><input type=hidden name=OID value=$OID><?/MIVAR>
-<?/MIBLOCK>
+  <?MIBLOCK COND="$(NC,$prev_name,$1)">
+  </form>
+  <?MIVAR><form method=post  name="$1" target="content" action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi"><?/MIVAR>
+  <input type=hidden name=view_map value="view_map">
+  <?MIVAR><input type=hidden name=userid value=$userid><?/MIVAR>
+  <?MIVAR><input type=hidden name=OID value=$OID><?/MIVAR>
+  <?/MIBLOCK>
 
-<?MIBLOCK COND="$(NC,$2,mutant)">
-<?MIVAR><TD><font size=2>LG  <b>$5</b>;<b> $3</b> $13 &nbsp;&nbsp;<A HREF=javascript:view_scores('$6','$5','$4','$1');>Scoring Data  <TD><font size=2> <A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=$6>$7</A></TD>
-<TD><font size=2 COLOR=#A9A9A9><input type=checkbox name=$target_abbrev  value=1  CHECKED ></TD><TD><font size=2> $upd_date</TD><?/MIVAR>
-<?/MIBLOCK>
+     <TD> <font size=2> 
+     <?MIVAR>
+	$(IF,$(AND,$(EC,$11,""),$(EC,$9,f),$(NC,$2,mutant)),"LG  <b>"$5"</b>;<b> "$3"</b> "$13""&nbsp;&nbsp;<A HREF="javascript:view_scores('"$6"','"$5"','"$4"','"$1"')";>Scoring Data  <TD><font size=2> "<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$6">"$7"</A>"</TD>
+	<TD><font size=2 COLOR=#A9A9A9><input type=checkbox name=$target_abbrev  value=1  CHECKED ></TD><TD><font size=2>" "$upd_date""</TD>)
 
+	$(IF,$(AND,$(EC,$11,""),$(EC,$9,f),$(EC,$2,mutant)),"LG  <b>"$5"</b>;<b> "$3"</b> "$13""&nbsp;&nbsp;<A HREF="http://wwwmap.tuebingen.mpg.de/raw_data.html">Scoring Data   <TD><font size=2> "<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$6">"$7"</A>"</TD>
+	<TD><font size=2 COLOR=#A9A9A9><input type=checkbox name=$target_abbrev  value=1  CHECKED ></TD><TD><font size=2>" "$upd_date""</TD>)
 
-<?MIBLOCK COND="$(EC,$2,mutant)">
-<?MIVAR><TD><font size=2>LG  <b>$5</b>;<b> $3</b> $13 <TD><font size=2> <A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=$6>$7</A></TD>
-<TD><font size=2 COLOR=#A9A9A9><input type=checkbox name=$target_abbrev  value=1  CHECKED ></TD><TD><font size=2> $upd_date</TD><?/MIVAR>
-<?/MIBLOCK>
-
-<!-- a mapping record has been written - we will need a view map button -->
-<?MIVAR name=$ok_view_map>1<?/MIVAR>
-<?/MIBLOCK>
+	<?MIBLOCK COND="$(AND,$(EC,$11,""),$(EC,$9,f))">
+	<?MIVAR name=$ok_view_map>1<?/MIVAR>
+	<?/MIBLOCK>
 
 
-$(IF,$(AND,$(EC,$11,NULL),$(NC,$9,f)),"<TD>Mapped on <A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$6">"$7"  "$upd_date"</A>, but confidential.</TD>")
+	$(IF,$(AND,$(EC,$11,""),$(NC,$9,f)),"Mapped on <A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$6">"$7"  "$upd_date"</A>, but confidential.")
 
-$(IF,$(AND,$(NC,$11,NULL),$(EC,$9,f),$(>,$(POSITION,$6,FISH),0)),"<TD>Linked at "$11" "$13" to <A target=content HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$6">"$7"</A> ("$12")</TD>")
+	$(IF,$(AND,$(NC,$11,""),$(EC,$9,f),$(>,$(POSITION,$6,FISH),0)),"Linked at "$11" "$13" to <A target=content HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$6">"$7"</A> ("$12")")
 
-$(IF,$(AND,$(NC,$11,NULL),$(EC,$9,f),$(=,$(POSITION,$6,FISH),0)),<TD>"Linked at "$11" "$13" to <A target=content HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$6">"$7"</A> ("$12")</TD>")
+	$(IF,$(AND,$(NC,$11,""),$(EC,$9,f),$(=,$(POSITION,$6,FISH),0)),"Linked at "$11" "$13" to <A target=content HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$6">"$7"</A> ("$12")")
 
-$(IF,$(AND,$(NC,$11,NULL),$(NC,$9,f)),"<TD>Linked to "$12", but confidential.</TD>")
-</TD>
+	$(IF,$(AND,$(NC,$11,""),$(NC,$9,f)),"Linked to "$12", but confidential.")
+	</TD>
+	</TR>
+
+	</TD>
+      <?/MIVAR>
+  <?/MIBLOCK>  <!-- target id like refcross-->
 
 
+  <?MIBLOCK COND="$(>,$(POSITION,$target_id,LINK),0)">  <!-- independent linkage -->
 
-</TR>
+     <?MISQL SQL="select  distinct alnkgmem_member_name, alnkgmem_comments, alnkgmem_or_lg,alnkgmem_private from all_linked_members where alnkgmem_member_zdb_id = '$OID' and alnkgmem_linkage_zdb_id = '$target_id';">
+
+	<?MIVAR NAME=$map_name>$1<?/MIVAR>
+        <?MIVAR NAME=$map_comments>$2<?/MIVAR>
+        <?MIVAR NAME=$map_lg>$3<?/MIVAR>
+        <?MIVAR NAME=$map_private>$4<?/MIVAR>
+
+          <TD><font size=2>
+          $(IF,$(NC,$map_lg,0),LG <b>$map_lg</b>)
+  
+	  <?MIBLOCK COND="$(NC,$map_comments,"")">
+	    <?MIVAR>
+              <A HREF=javascript:show_detail('$target_id','$OID','$marker_name','""');>Map Details</A>
+	      <?/MIVAR>
+	  <?/MIBLOCK>
+          </font>
+
+	  <?MIBLOCK COND="$(AND,$(EC,$map_lg,0),$(EC,$map_comments,""))"> 
+	    &nbsp;</TD>
+	    <TD>&nbsp; </TD><TD>&nbsp; </TD><TD>&nbsp; </TD>
+	  <?/MIBLOCK>
+
+  <?/MISQL>
+  <?/MIBLOCK>  <!-- target id like link -->
+
 $(SETVAR,$prev_gp,$5)
 $(SETVAR,$prev_name,$1)
 $(SETVAR,$prev_mtype,$2)
 $(SETVAR,$map_abbrev,$1)
 
-</TD>
-
 <?/MISQL>
+
 <?MIVAR>
-
-
-<input type=hidden name=OID value=$OID>
-
-$(IF,$(XST,$plinks),<input type=hidden name=plinks value=1>)
-
+  <input type=hidden name=OID value=$OID>
+  $(IF,$(XST,$plinks),<input type=hidden name=plinks value=1>)
 <?/MIVAR>
 
 <!-- add view map buttons if the last record written had mapping data -->
 <?MIBLOCK COND="$(EC,$ok_view_map,1)">
-<?MIVAR>
-<input type=hidden name=userid value=$userid>
+  <?MIVAR>
+    <input type=hidden name=userid value=$userid>
 
-<input type=hidden name=OID value=$OID>
-$(SETVAR,$color,$(/,$clr_cnt,2))
-<TR valign=top $(IF,$(!=,$color,$(FIX,$color)),"bgcolor=#FCCE64")> 
-<TR valign=top $(IF,$(!=,$color,$(FIX,$color)),"bgcolor=#FCCE64")>
-<TD></TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD align=left><font size=1><input type=button value='VIEW MERGED MAP' name=view_merge_map onClick="document.$map_abbrev.action='/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi';document.$map_abbrev.submit();"></TD> <TD>&nbsp;</TD> <TD align=left><font size=1><input type=submit value='VIEW INDIVIDUAL MAPS' name=view_map>
-</TR>
-<?/MIVAR>
+    <input type=hidden name=OID value=$OID>
+    $(SETVAR,$color,$(/,$clr_cnt,2))
+    <TR valign=top $(IF,$(!=,$color,$(FIX,$color)),"bgcolor=#FCCE64")> 
+    <TR valign=top $(IF,$(!=,$color,$(FIX,$color)),"bgcolor=#FCCE64")>
+    <TD></TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD align=left><font size=1><input type=button value='VIEW MERGED MAP' name=view_merge_map onClick="document.$map_abbrev.action='/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi';document.$map_abbrev.submit();"></TD> <TD>&nbsp;</TD> <TD align=left><font size=1><input type=submit value='VIEW INDIVIDUAL MAPS' name=view_map>
+    </TR>
+  <?/MIVAR>
 </form>
 <?/MIBLOCK>
 
