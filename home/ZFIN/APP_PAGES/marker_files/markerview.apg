@@ -1,3 +1,4 @@
+
 <!-- FILE: MARKERVIEW.HTML. This file implements a viewer for MARKER records.
 -->
 
@@ -5,13 +6,40 @@
 <head>
 <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
 
-<?MIVAR NAME=$MI_NULL>NULL<?/MIVAR>
+<?MIVAR NAME=$MI_NOVALUE> <?/MIVAR>
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
+
+<?MIVAR NAME=$userid>GUEST<?/MIVAR>
+
 <?MISQL SQL="select object from webPages where ID='aa-chromoscripts.apg';">$1<?/MISQL>
 
 <SCRIPT>
 function info() {
   window.alert('ANONYMOUS LINKAGE:\n This linkage has not been published yet. ZFIN supports anonymous linkages to promote scientific \ncollaboration; you should contact the submitter of this mapping data (just click the link) \nto negotiate access to this information.');
 }
+
+
+<?MIVAR>
+function add_pub_linkage() {
+   helpwin=open("/cgi-bin_B/webdriver?MIval=aa-linkagedit.apg&OID=$OID&linktype=pub","helpwindow","scrollbars=yes,width=550,height=400");
+}
+
+function add_unpub_linkage() {
+   helpwin=open("/cgi-bin_B/webdriver?MIval=aa-linkagedit.apg&OID=$OID&linktype=unpub","helpwindow","scrollbars=yes,width=550,height=400");
+}
+
+function edit_linkage(link_id,lname) {
+   helpwin=open("/cgi-bin_B/webdriver?MIval=aa-linkagedit.apg&OID=$OID&edit_link="+link_id+"&lname="+escape(lname),"helpwindow","scrollbars=yes,width=550,height=300");
+}
+
+
+<?/MIVAR>
+
+//  initialize view_mapplet parameters   
+
+marker = '';
+
+
 </SCRIPT>
 </HEAD>
 
@@ -93,7 +121,7 @@ if (seq_acc != '') {
 
 <?MIBLOCK COND="$(EC,$name,NOVALUE)">
 <form><center><font size=4>
-<?MIVAR> <b>Invalid ZFIN ID.<?/MIVAR>
+<?MIVAR> <b>Requested ID not found on ZFIN.<?/MIVAR>
 </form>
 <?/MIBLOCK>
 
@@ -114,7 +142,7 @@ if (seq_acc != '') {
 
 <!-- OKAY, NOW  THROW UP THE  MARKER INFO -->
 <P>
-<form NAME=updater>
+<form NAME=updater  method=post action="/cgi-bin_B/view_mapplet.cgi" target="content" >
 <?MIVAR COND="$(XST,$UPDATE)">
 <center><font size=5 color="#00ff00"><input type=button 
 value=" DONE UPDATING. Back to Viewing! " onClick="document.location.search='?MIval=aa-markerview.apg&OID=$OID'"> </font></center>
@@ -159,13 +187,16 @@ $(IF,$(EC,$marker_type,GENE),"("$abbrev")")</B> </FONT>
 
 <TABLE width=100% cellpadding=5 border=4 bgcolor="#f8fabb" cols=2 rows=1>
 <TR>
-<TD valign=top>
+<TD valign=top colspan=2
 
 <?MIVAR NAME=$override>$(IF,$(OR,$(EC,$ZDB_access,root),$(EC,$ZDB_access,fishauth)),true,false)<?/MIVAR>
 
 <?MIVAR><b>Reference Panel Location(s): $abbrev</b>  <?/MIVAR>
-<TABLE cols=3 width=100%>
+<TABLE cols=3 width=100% colspan=2>
+
 <?MISQL SQL="select a.owner, lg_location, target_id as panel_id, OR_lg, target_abbrev as panel_abbrev,private,b.full_name,a.metric,day(a.entry_date::date),month(a.entry_date::date), year(a.entry_date::date) from paneled_markers a,person b where a.zdb_id='$OID' and OR_lg is not null and a.owner=b.zdb_id;">
+
+
 $(IF,$(>,$MI_CURRENTROW,1),<TR><td colspan=2><hr width=80%></TD></TR>)
 <TR>
 
@@ -184,27 +215,82 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),"<TD colspan=3><font size=2>LG <b>"$4
 
 
 </TR><TR>
-<TD colspan=2><font size=2>&nbsp;&nbsp;&nbsp; mapped by <A HREF="/cgi-bin_B/webdriver?MIval=aa-persview.apg&OID=$1">$7</A></TD><TD><A HREF=javascript:view_map('$OID','$abbrev','$3"')>Show Map</A></TD>
+<TD colspan=2><font size=2>&nbsp;&nbsp;&nbsp; mapped by <A HREF="/cgi-bin_B/webdriver?MIval=aa-persview.apg&OID=$1">$7</A></TD>
 </TR>
 <?/MISQL>
+
+
 <?MIVAR COND="$(=,$MI_ROWCOUNT,0)"><p>Not mapped on any reference panel<?/MIVAR>
 </TABLE>
 
 </TD>
+
+
 <TD valign=top>
 
+<?MIVAR><b>Draw Map for: $abbrev</b>  <?/MIVAR> 
 
+<TABLE cellpadding=0 cellspacing=0 >
+
+<?MISQL SQL="select target_abbrev,private as panel_abbrev  from paneled_markers a,person b where a.zdb_id='$OID' and OR_lg is not null and a.owner=b.zdb_id;">
+
+<?MIVAR NAME=$private>$2<?/MIVAR>
+
+<?MIVAR COND="$(EC,$private,f)">
+<TR>
+<TD colspan=1><font size=2 COLOR=#A9A9A9>
+
+<input type=checkbox name="$1" value=1 type=hidden CHECKED ><font size=2 COLOR=#000000> $1 </TD>
+</TR><?/MIVAR>
+<?/MISQL>
+
+<?MIVAR COND="$(=,$MI_ROWCOUNT,0)"><p>Not mapped on any reference panel<?/MIVAR>
+
+<?MIBLOCK COND="$(AND,$(>,$MI_ROWCOUNT,0),$(EC,$private,f))">
+
+
+<?MIBLOCK COND="$(NOT,$(EQ,$(SUBSTR,$ZDB_name,1,5),GUEST))">
+<?MIVAR NAME=$userid>$ZDB_ident<?/MIVAR>
+<?/MIBLOCK>
+
+<!-- set blade variables to javascript variables for passing to view_mapplet -->
+
+<?MIVAR>
+<INPUT TYPE=hidden name=OID value=$OID>
+<INPUT TYPE=hidden name=userid value=$userid>
+<INPUT TYPE=hidden name=marker value=$abbrev>
+<?/MIVAR>
+
+
+<TD align=right><font size=2>
+<input type=submit value='VIEW MAP' name=view_map >
+</TD>
+
+
+<?/MIBLOCK>
+
+
+</TABLE>
+
+</TD>
+</TABLE>
+
+<TABLE width=100% cellpadding=5 border=4 bgcolor="#f8fabb" cols=3 rows=1>
+<TR>
+<TD valign=top colspan=4>
 <?MIVAR> <B>Independent linkages to $abbrev:</b><?/MIVAR>
 
 <TABLE cellpadding=1 cellspacing=0>
 <?MIVAR NAME=$curviewer>/cgi-bin_B/webdriver?MIval=aa-markerview.apg&OID=<?/MIVAR>
 <?MISQL SQL="select m2_abbrev,LOD,dist,m2_type,m2_id,a.owner,private,b.full_name,a.metric from all_linked_markers a, person b where a.owner=b.zdb_id and m1_id='$OID' order by m2_type,dist;">
 
-$(IF,$(=,$MI_CURRENTROW,1),"<TR><TD></TD><TD><U>Distance</U></TD><TD><U>LOD</U></TD></TR>")
+
+$(IF,$(=,$MI_CURRENTROW,1),"<TR><TD colspan=4></TD><TD></TD><TD><U>Distance</U></TD><TD><U>LOD</U></TD></TR>")
 
 $(IF,$(NC,$4,GENE),$(SETVAR,$curviewer,"/cgi-bin_B/webdriver?MIval=aa-fishview.apg&OID="))
 
-$(IF,$(AND,$(NC,$4,GENE),$(NC,$4,MUTANT)),$(SETVAR,$curviewer,"/cgi-bin_B/webdriver?MIval=aa-markerview.apg&OID="))
+$(IF,$(AND,$(NC,$4,GENE),$(NC,$4,MUTANT)),$(SETVAR,$curviewer,"/cgi-bin_B/webdriver?MIval=aa- markerview.apg&OID="))
+
 
 <TR>
 
@@ -213,9 +299,10 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$7,f),$(EC,$ZDB_ident,$6)),"<TD><font size=-
 <?/MISQL>
 </TABLE>
 <?MIVAR COND="$(=,$MI_ROWCOUNT,0)"><p>None submitted (yet).<?/MIVAR>
-
 </TD>
 </TR></TABLE>
+
+
 
 <?MISQL SQL="select zdb_id, locus_name, abbrev from locus where cloned_gene='$OID';"><?/MISQL>
 <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
@@ -342,7 +429,7 @@ $(SETVAR,$lastitem,$3)
 <!-- Throw up the publication info, using the standard display format -->
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-showpubs.apg';">$1<?/MISQL>
 
-
+</form>
 <?/MIBLOCK> <!-- ends cond authorize exists -->
 
 <?/MIBLOCK> <!-- ends cond oid exists -->
