@@ -77,7 +77,7 @@ When filled, the ZDB_ID of the new return_rec is passed along into whatever brow
 <?MIVAR NAME=$select_from>PUBLICATION<?/MIVAR>
 <?MIVAR NAME=$action>intersect<?/MIVAR>
 <?MIVAR NAME=$fill_field>NULL<?/MIVAR>
-<?MIVAR NAME=$fill_table>int_data_pub<?/MIVAR>
+<?MIVAR NAME=$fill_table>record_attribution<?/MIVAR>
 <?MIVAR NAME=$jump_to>pub-info<?/MIVAR>
 <?MIVAR NAME=$info>primary<?/MIVAR>
 <?MIVAR NAME=$selector>aa-pubselect2.apg<?/MIVAR>
@@ -88,7 +88,7 @@ When filled, the ZDB_ID of the new return_rec is passed along into whatever brow
 <?MIVAR NAME=$select_from>PUBLICATION<?/MIVAR>
 <?MIVAR NAME=$action>intersect<?/MIVAR>
 <?MIVAR NAME=$fill_field>NULL<?/MIVAR>
-<?MIVAR NAME=$fill_table>int_data_pub<?/MIVAR>
+<?MIVAR NAME=$fill_table>record_attribution<?/MIVAR>
 <?MIVAR NAME=$jump_to>pub-info<?/MIVAR>
 <?MIVAR NAME=$info>related<?/MIVAR>
 <?MIVAR NAME=$selector>aa-pubselect2.apg<?/MIVAR>

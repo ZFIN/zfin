@@ -11,7 +11,13 @@
 <TR>
 <TD width=10%><input type=submit name="s_prim_pub" value="Specify"></TD> 
 <TD><b>Primary Publication:</b> 
-<?MISQL SQL="select b.title, b.zdb_id from int_data_pub a, publication b where source_id='$temp_oid' and target_id=b.zdb_id and info='primary';"><?/MISQL>
+<?MISQL SQL="
+  select title, zdb_id 
+    from record_attribution, publication
+    where recattrib_data_zdb_id = '$temp_oid'
+      and recattrib_source_zdb_id = zdb_id 
+      and recattrib_source_rank = 'primary';">
+<?/MISQL>
 <?MIVAR COND=$(EQ,$MI_ROWCOUNT,0)> <font color="#ff0000">UNPUBLISHED</font><?/MIVAR>
 </TD>
 </TR>
@@ -27,8 +33,13 @@
 </TR><TR>
 <TD colspan=2>
 <ul>
-<?MISQL SQL="select b.title, b.zdb_id from int_data_pub a, publication b where source_id='$temp_oid' and target_id=b.zdb_id and info='related';">
-<li> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$1</A><br>
-<?/MISQL>
+  <?MISQL SQL="
+    select title, zdb_id 
+      from record_attribution, publication
+      where recattrib_data_zdb_id = '$temp_oid'
+        and recattrib_source_zdb_id = zdb_id 
+        and recattrib_source_rank = 'related';">
+    <li> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$1</A><br>
+  <?/MISQL>
 </ul>
 </TD></TR></TABLE>

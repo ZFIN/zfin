@@ -212,11 +212,11 @@ create table meow_exp2 (
 );
 
 insert into meow_exp2 
-  select b.source_id, a.zdb_id, a.title, a.authors, a.pub_date, a.source,
-         a.accession_no 
-    from publication a, int_data_pub b 
-   where a.zdb_id=b.target_id 
-     and b.source_id in 
+  select recattrib_data_zdb_id, zdb_id, title, authors, pub_date, source,
+         accession_no 
+    from publication, record_attribution
+   where zdb_id = recattrib_source_zdb_id
+     and recattrib_data_zdb_id in
        ( select zdb_id 
            from meow_exp1 );
 

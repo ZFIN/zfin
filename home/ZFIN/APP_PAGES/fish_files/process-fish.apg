@@ -124,18 +124,20 @@
         -- The new fish is similarly dealt with below. 
 	-->
       <?MISQL SQL="
-	insert into int_data_pub
-            (source_id, target_id, info) 
-          select  '$chromo_id', target_id, info 
-	    from int_data_pub
-	    where source_id = '$temp_oid';">
+	insert into record_attribution
+            (recattrib_data_zdb_id, recattrib_source_zdb_id, 
+	     recattrib_source_rank)
+          select '$chromo_id', recattrib_source_zdb_id, recattrib_source_rank
+	    from record_attribution
+	    where recattrib_data_zdb_id = '$temp_oid';">
       <?/MISQL>
       <?MISQL SQL="
-	insert into int_data_pub
-	    (source_id, target_id, info) 
-          select  '$alt_id', target_id, info 
-	    from int_data_pub
-	    where source_id = '$temp_oid';">
+	insert into record_attribution
+	    (recattrib_data_zdb_id, recattrib_source_zdb_id, 
+	     recattrib_source_rank)
+	  select '$alt_id', recattrib_source_zdb_id, recattrib_source_rank
+	    from record_attribution
+	    where recattrib_data_zdb_id = '$temp_oid';">
       <?/MISQL>
     <?/MIBLOCK>  <!-- ends the mutagenesis case -->
 
@@ -251,9 +253,9 @@
     -->
 
   <?MISQL SQL="
-    update int_data_pub 
-      set source_id='$fish_id' 
-      where source_id='$temp_oid';">
+    update record_attribution
+      set recattrib_data_zdb_id = '$fish_id'
+      where recattrib_data_zdb_id = '$temp_oid';">
   <?/MISQL>
   <?MISQL COND="$(EC,$line_type,mutant)" SQL="
     update fish_image 

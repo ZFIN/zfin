@@ -194,7 +194,7 @@ target_table -- either anon_marker or gene, depending on what you're updating
       <?MIVAR NAME=$select_from>PUBLICATION<?/MIVAR>
       <?MIVAR NAME=$action>intersect<?/MIVAR>
       <?MIVAR NAME=$fill_field>NULL<?/MIVAR>
-      <?MIVAR NAME=$fill_table>int_data_pub<?/MIVAR>
+      <?MIVAR NAME=$fill_table>record_attribution<?/MIVAR>
       <?MIVAR NAME=$jump_to>pub-info<?/MIVAR>
       <?MIVAR NAME=$info>primary<?/MIVAR>
       <?MIVAR NAME=$selector>aa-pubselect2.apg<?/MIVAR>
@@ -204,7 +204,7 @@ target_table -- either anon_marker or gene, depending on what you're updating
       <?MIVAR NAME=$select_from>PUBLICATION<?/MIVAR>
       <?MIVAR NAME=$action>intersect<?/MIVAR>
       <?MIVAR NAME=$fill_field>NULL<?/MIVAR>
-      <?MIVAR NAME=$fill_table>int_data_pub<?/MIVAR>
+      <?MIVAR NAME=$fill_table>record_attribution<?/MIVAR>
       <?MIVAR NAME=$jump_to>pub-info<?/MIVAR>
       <?MIVAR NAME=$info>related<?/MIVAR>
       <?MIVAR NAME=$selector>aa-pubselect2.apg<?/MIVAR>

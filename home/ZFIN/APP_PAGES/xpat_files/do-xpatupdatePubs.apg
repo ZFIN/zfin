@@ -47,9 +47,9 @@ comments -- reasons for doing update
   <!-- OK, NOW UPDATE THE  ACTUAL DATA RECORD. -->
 
     <?MISQL COND="$(EC,$attr,publication)" SQL="
-      delete from int_data_pub 
-        where source_id='$OID'
-          and target_id='$old_value';">
+      delete from record_attribution
+	where recattrib_data_zdb_id = '$OID'
+	  and recattrib_source_zdb_id = '$old_value';">
     <?/MISQL>
 
 

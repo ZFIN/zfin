@@ -14,9 +14,21 @@ ECK 8/30/97. Added sensitivity to UPDATE flag: If UPDATE exists, it tosses up a 
 <INPUT TYPE=button value="Add/Change" onClick="doit('prim_pub','selection','Add/Change')"> 
 <?/MIVAR>
 <b>Primary Publication:</b><br>
-<?MISQL SQL="select b.title, b.zdb_id, year(b.pub_date) as pyear, b.authors, b.source, lower(b.authors)  from int_data_pub a, publication b where source_id='$OID' and target_id=b.zdb_id and info='primary' order by 6 asc;">
-<TR><TD align=left> <DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$4 ($3) $1. $5.</A></DIV>
-</TD></TR>
+<?MISQL SQL="
+  select title, zdb_id, year(pub_date) as pyear, authors, source, 
+	 lower(authors)  
+    from record_attribution, publication 
+    where recattrib_data_zdb_id = '$OID'
+      and recattrib_source_zdb_id = zdb_id 
+      and recattrib_source_rank = 'primary' 
+    order by 6 asc;">
+  <TR>
+    <TD align=left> 
+      <DIV class="show_pubs">
+        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$4 ($3) $1. $5.</A>
+      </DIV>
+    </TD>
+  </TR>
 <?/MISQL>
 <?MIVAR COND=$(EQ,$MI_ROWCOUNT,0)> <font color="#ff0000">UNPUBLISHED</font><?/MIVAR>
 
@@ -26,12 +38,23 @@ ECK 8/30/97. Added sensitivity to UPDATE flag: If UPDATE exists, it tosses up a 
 <INPUT TYPE=button value="Add to" onClick="doit('rel_pub','selection','Add')"> 
 <?/MIVAR> 
 <b>Related Publications:</b><br></TD></TR>
-<?MISQL SQL="select b.title, b.zdb_id, year(b.pub_date) as pyear,b.authors, b.source, lower(b.authors) from int_data_pub a, publication b where source_id='$OID' and target_id=b.zdb_id and info='related' order by 6 asc;">
-
-$(IF,$(XST,$UPDATE),"<TD><font size=-1><input type=button value=delete onClick=Delete_listitem('publication','"$2"')></font></TD>")
-<TR><TD align=left> <DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$4 ($3) $1. $5.</A></DIV>
-</TD></TR>
-<TR></TR><TR></TR>
+<?MISQL SQL="
+  select title, zdb_id, year(pub_date) as pyear, authors, source, 
+	 lower(authors)  
+    from record_attribution, publication 
+    where recattrib_data_zdb_id = '$OID'
+      and recattrib_source_zdb_id = zdb_id 
+      and recattrib_source_rank = 'related' 
+    order by 6 asc;">
+  $(IF,$(XST,$UPDATE),"<TD><font size=-1><input type=button value=delete onClick=Delete_listitem('publication','"$2"')></font></TD>")
+  <TR>
+    <TD align=left>
+      <DIV class="show_pubs">
+	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$4 ($3) $1. $5.</A>
+      </DIV>
+    </TD>
+  </TR>
+  <TR></TR><TR></TR>
 <?/MISQL>
 </table>
 </form>
