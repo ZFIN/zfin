@@ -471,12 +471,11 @@ Fly
 
 <?MISQL SQL="select count(*)::Integer
 	     from publication 
-             where webhtml_like(abstract,'$item_name') 
-;">
+             where pub_abstract like '%$item_name%';">
 <?MIVAR NAME="$pubcount">$1<?/MIVAR>
 <?MIBLOCK COND="$(>,$pubcount,0)">
 <?MIVAR>
-<STRONG>(<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubselect2.apg&anon1=abstract&anon1text=$item_name&query_results=exists">$1</A>) Publication(s)</STRONG> with "$item_name" occuring in the abstract.
+<STRONG>(<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubselect2.apg&anon1=pub_abstract&anon1text=$item_name&query_results=exists">$1</A>) Publication(s)</STRONG> with "$item_name" occuring in the abstract.
 <?/MIVAR>
 <?/MIBLOCK>
 <?/MISQL>

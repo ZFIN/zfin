@@ -31,8 +31,8 @@ Variables expected:  OID (optional) -- the OID of a publication to edit.
     <b>Make desired changes to the publication, then click on the "SUBMIT" button. Or you may click "CANCEL" to abort the update.</b>
 
     <?MISQL SQL="
-      select authors,pub_date,title,source,keywords,abstract,errata_and_notes,
-	     accession_no,num_auths,status,jtype
+      select authors, pub_date, title, source, keywords, pub_abstract, 
+	     pub_errata_and_notes, accession_no, num_auths, status, jtype
 	from publication 
 	where zdb_id='$OID';">
     <?/MISQL>
@@ -41,8 +41,8 @@ Variables expected:  OID (optional) -- the OID of a publication to edit.
     <?MIVAR NAME=$q_title>$3<?/MIVAR>
     <?MIVAR NAME=$q_source>$4<?/MIVAR>
     <?MIVAR NAME=$q_keywords>$5<?/MIVAR>
-    <?MIVAR NAME=$q_abstract>$6<?/MIVAR>
-    <?MIVAR NAME=$q_errata_and_notes>$7<?/MIVAR>
+    <?MIVAR NAME=$q_pub_abstract>$6<?/MIVAR>
+    <?MIVAR NAME=$q_pub_errata_and_notes>$7<?/MIVAR>
     <?MIVAR NAME=$q_accession_no>$8<?/MIVAR>
     <?MIVAR NAME=$q_num_auths>$9<?/MIVAR>
     <?MIVAR NAME=$q_status>$10<?/MIVAR>
@@ -63,8 +63,8 @@ Variables expected:  OID (optional) -- the OID of a publication to edit.
     <?MIVAR NAME=$q_title><?/MIVAR>
     <?MIVAR NAME=$q_source><?/MIVAR>
     <?MIVAR NAME=$q_keywords><?/MIVAR>
-    <?MIVAR NAME=$q_abstract><?/MIVAR>
-    <?MIVAR NAME=$q_errata_and_notes><?/MIVAR>
+    <?MIVAR NAME=$q_pub_abstract><?/MIVAR>
+    <?MIVAR NAME=$q_pub_errata_and_notes><?/MIVAR>
     <?MIVAR NAME=$q_accession_no><?/MIVAR>
     <?MIVAR NAME=$q_num_auths><?/MIVAR>
     <?MIVAR NAME=$q_status>temporary<?/MIVAR>
@@ -151,10 +151,10 @@ Variables expected:  OID (optional) -- the OID of a publication to edit.
     <TEXTAREA rows=2 cols=80 name="q_keywords" wrap=virtual>$q_keywords</TEXTAREA>
     <p>
     <b>ABSTRACT:</b><br>
-    <TEXTAREA rows=8 cols=80 name="q_abstract" wrap=virtual>$q_abstract</TEXTAREA>
+    <TEXTAREA rows=8 cols=80 name="q_pub_abstract" wrap=virtual>$q_pub_abstract</TEXTAREA>
     <p>
     <b>ERRATA and NOTES:</b><br>
-    <TEXTAREA rows=2 cols=80 name="q_errata_and_notes" wrap=virtual>$q_errata_and_notes</TEXTAREA>
+    <TEXTAREA rows=2 cols=80 name="q_pub_errata_and_notes" wrap=virtual>$q_pub_errata_and_notes</TEXTAREA>
 
     <?MIVAR COND="$(NXST,$inputs)" NAME=$inputs><?/MIVAR>
 

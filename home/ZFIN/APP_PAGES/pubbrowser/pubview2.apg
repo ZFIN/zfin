@@ -33,15 +33,19 @@ ERROR -- something bad happened -- no OID passed in!
 <?MISQL SQL="select WebExplode(object,'page_title=View Pub') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
 
-<?MISQL SQL="select title, authors, year(pub_date), source, keywords, abstract, accession_no, errata_and_notes,jtype, pub_file, pub_completion_date from publication where zdb_id='$OID';"><?/MISQL>
+<?MISQL SQL="
+  select title, authors, year(pub_date), source, keywords, pub_abstract, 
+         accession_no, pub_errata_and_notes, jtype, pub_file, pub_completion_date 
+    from publication where zdb_id='$OID';">
+<?/MISQL>
 <?MIVAR NAME=$title>$1<?/MIVAR>
 <?MIVAR NAME=$authors>$2<?/MIVAR>
 <?MIVAR NAME=$year>$3<?/MIVAR>
 <?MIVAR NAME=$source>$4<?/MIVAR>
 <?MIVAR NAME=$keywords>$5<?/MIVAR>
-<?MIVAR NAME=$abstract>$6<?/MIVAR>
+<?MIVAR NAME=$pub_abstract>$6<?/MIVAR>
 <?MIVAR NAME=$accession_no>$7<?/MIVAR>
-<?MIVAR NAME=$errata_and_notes>$8<?/MIVAR>
+<?MIVAR NAME=$pub_errata_and_notes>$8<?/MIVAR>
 <?MIVAR NAME=$jtype>$9<?/MIVAR>
 <?MIVAR NAME=$pub_file>$10<?/MIVAR>
 <?MIVAR NAME=$pub_completion_date>$11<?/MIVAR>
@@ -147,7 +151,7 @@ ERROR -- something bad happened -- no OID passed in!
 <?/MIVAR>
 
 <B>ABSTRACT:</B> 
-<?MIVAR COND="$(NC,$abstract,NULL)"><br>  $abstract  <?/MIVAR>
+<?MIVAR COND="$(NC,$pub_abstract,NULL)"><br>  $pub_abstract  <?/MIVAR>
 
 
 <?MIBLOCK COND="$(AND,$(NC,$abbrev,$MI_NOVALUE),$(NC,$fdbname,$MI_NOVALUE),$(NC,$geneid,$MI_NOVALUE))">
@@ -259,7 +263,7 @@ ERROR -- something bad happened -- no OID passed in!
 
 <p>
 <B>ERRATA and NOTES:</B> 
-<?MIVAR COND="$(NC,$errata_and_notes,NULL)"><br>  $errata_and_notes  <?/MIVAR>
+<?MIVAR COND="$(NC,$pub_errata_and_notes,NULL)"><br>  $pub_errata_and_notes  <?/MIVAR>
 
 
 <?/MIBLOCK>  <!-- ends cond oid xst -->

@@ -1,3 +1,12 @@
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
 <html>
   <head>
 
@@ -101,7 +110,7 @@ function list_all(user_access) {
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-identify.apg';">$1<?/MISQL>
 
 <?MIBLOCK COND="$(NC,$ZDB_access,root)"> 
-  <?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>abstract<?/MIVAR>
+  <?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>pub_abstract<?/MIVAR>
 <?MIELSE>
   <?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>zdb_id<?/MIVAR>
 <?/MIBLOCK>
@@ -182,10 +191,10 @@ function list_all(user_access) {
   <!-- NOW  DEAL WITH THE ADDITIONAL CRITERIA -->
   
   <?MIBLOCK COND="$(XST,$anon1text)">
-     <?MIBLOCK COND="$(OR,$(EC,$anon1,abstract), $(EC,$anon1,keywords))">	
+     <?MIBLOCK COND="$(OR,$(EC,$anon1,pub_abstract), $(EC,$anon1,keywords))">	
        <?MIVAR NAME=anon1text DELIMIT="'" REPLACE="''">$anon1text<?/MIVAR>
        <?MIVAR NAME=substranon1text>$(REPLACE,$anon1text," ",",")<?/MIVAR>
-       <?MIVAR NAME=anon1textcontraint>$(IF,$(EC,$anon1,abstract),"webhtml_like("$anon1",'"$(INDEX,0,$substranon1text)"')","lower("$anon1") like '%"$(LOWER,$(INDEX,0,$substranon1text))"%'")<?/MIVAR>
+       <?MIVAR NAME=anon1textcontraint>lower($anon1) like '%$(LOWER,$(INDEX,0,$substranon1text))%'<?/MIVAR>
 
        <?MIVAR>
           $(VECAPPEND,$constraint,$anon1textcontraint)
@@ -194,13 +203,13 @@ function list_all(user_access) {
        <?MIBLOCK WHILE=$commapos>
           <?MIVAR>$(SETVAR,$substranon1text,$(SUBSTR,$substranon1text,$(+,$commapos,1)))<?/MIVAR> 
 	  <?MIVAR COND="$(NC,$(INDEX,0,$substranon1text),)">
-	    $(SETVAR,$anon1textcontraint,$(IF,$(EC,$anon1,abstract),"webhtml_like("$anon1",'"$(INDEX,0,$substranon1text)"')","lower("$anon1") like '%"$(LOWER,$(INDEX,0,$substranon1text))"%'"))
+	    $(SETVAR,$anon1textcontraint,"lower("$anon1") like '%"$(LOWER,$(INDEX,0,$substranon1text))"%'")
 	    $(VECAPPEND,$constraint,$anon1textcontraint)
 	  <?/MIVAR> 
 	  <?MIVAR>$(SETVAR,$commapos,$(POSITION,$substranon1text,","))<?/MIVAR> 
         <?/MIBLOCK>
      <?MIELSE>
-	<?MIVAR>$(VECAPPEND,$constraint,"lower("$anon1") like '%"$(LOWER,$anon1text)"%'")<?/MIVAR>
+	<?MIVAR>$(VECAPPEND,$constraint,"lower($anon1) like '%"$(LOWER,$anon1text)"%'")<?/MIVAR>
      <?/MIBLOCK>
   <?/MIBLOCK>
 
@@ -596,7 +605,6 @@ $(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/
       </TD>
   <?/MIVAR> 
     </tr>
-  <?/MIVAR>
 
  <?MIVAR>
     <tr>
@@ -640,7 +648,7 @@ $(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/
     <tr>
       <TD class=halfwidth>
 	<SELECT NAME=anon1 onChange='document.critform.START.value = "";'>
-	<option $(IF,$(EC,$anon1,abstract),SELECTED) value=abstract>Abstract 
+	<option $(IF,$(EC,$anon1,pub_abstract),SELECTED) value=pub_abstract>Abstract 
 	<option $(IF,$(EC,$anon1,source),SELECTED) value=source>Source
 	<option $(IF,$(EC,$anon1,keywords),SELECTED) value=keywords>Keywords
 	<option $(IF,$(EC,$anon1,accession_no),SELECTED) value=accession_no>PubMed acc#

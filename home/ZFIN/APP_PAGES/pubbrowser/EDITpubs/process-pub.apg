@@ -1,4 +1,5 @@
-<!-- FILE: process-pub.html
+<?MICOMMENT>
+FILE: process-pub.html
 
 This file processes a publication that has been submitted from edit_pub.html.
 If it is a new pub, then OID should be set to "new", else it is set to the 
@@ -6,9 +7,12 @@ zdb_id of the pub to update. In the former case, we need to generate and
 insert a new pub record into PUBLICATION. Then (both cases) we just update the
 pub in question with any new values passed in.
 
--->
+modified to support I.E.  could no longer user history.go(-2) in process-pub 
+so need to pass variables around to recreate pub select list when finished 
+processing. in conjucntion with edit_pub
 
-<!-- modified to support I.E.  could no longer user history.go(-2) in process-pub so need to pass variables around to recreate pub select list when finished processing. in conjucntion with edit_pub -->
+<?/MICOMMENT>
+
 
 <!-- if calling page is edit_pub -->
 <!-- First make sure the critical fields are there -->
@@ -33,8 +37,8 @@ pub in question with any new values passed in.
     <?MIVAR NAME=$q_source DELIMIT="'" REPLACE="''">$q_source<?/MIVAR>
 
     <?MIVAR COND="$(XST,$q_keywords)" NAME=$q_keywords DELIMIT="'" REPLACE="''">$q_keywords<?/MIVAR>
-    <?MIVAR COND="$(XST,$q_abstract)" NAME=$q_abstract DELIMIT="'" REPLACE="''">$q_abstract<?/MIVAR>
-    <?MIVAR COND="$(XST,$q_errata_and_notes)" NAME=$q_errata_and_notes DELIMIT="'" REPLACE="''">$q_errata_and_notes<?/MIVAR>
+    <?MIVAR COND="$(XST,$q_pub_abstract)" NAME=$q_pub_abstract DELIMIT="'" REPLACE="''">$q_pub_abstract<?/MIVAR>
+    <?MIVAR COND="$(XST,$q_pub_errata_and_notes)" NAME=$q_pub_errata_and_notes DELIMIT="'" REPLACE="''">$q_pub_errata_and_notes<?/MIVAR>
 
 
     <!- If you're creating new PUB record,create and insert a blank record for it.
@@ -82,9 +86,9 @@ pub in question with any new values passed in.
 
     <?MIVAR NAME=$setvalues>set title='$q_title',jtype='$q_jtype',authors='$q_authors',source='$q_source',pub_date='$q_pub_date'::date,status='$q_status',num_auths='$q_num_auths'<?/MIVAR>
     <?MIVAR COND=$(XST,$q_keywords) NAME=$setvalues>$setvalues,keywords='$q_keywords'<?/MIVAR>
-    <?MIVAR COND=$(XST,$q_abstract) NAME=$setvalues>$setvalues,abstract='$q_abstract'<?/MIVAR>
+    <?MIVAR COND=$(XST,$q_pub_abstract) NAME=$setvalues>$setvalues,pub_abstract='$q_pub_abstract'<?/MIVAR>
     <?MIVAR COND=$(XST,$q_accession_no) NAME=$setvalues>$setvalues,accession_no='$q_accession_no'<?/MIVAR>
-    <?MIVAR COND=$(XST,$q_errata_and_notes) NAME=$setvalues>$setvalues,errata_and_notes='$q_errata_and_notes'<?/MIVAR>
+    <?MIVAR COND=$(XST,$q_pub_errata_and_notes) NAME=$setvalues>$setvalues,pub_errata_and_notes='$q_pub_errata_and_notes'<?/MIVAR>
 
     <!-- OKAY, now just do the update! -->
 
