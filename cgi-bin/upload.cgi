@@ -446,7 +446,7 @@ sub makeFiles () {# uploads the files, builds a thumbnail, gets the height
 
     &uploadFile($upload_dir, $filename);
 
-    system("/bin/chmod 755 $upload_dir/$filename*");
+    system("/bin/chmod 775 $upload_dir/$filename*");
 
     # build a thumbnail file name if its not a pdf
 
