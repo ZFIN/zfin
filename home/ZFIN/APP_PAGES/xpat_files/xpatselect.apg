@@ -425,11 +425,7 @@ where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
 		 where xpatfimg_xpat_zdb_id = xpat_zdb_id ),
 	     NULL::varchar(255), NULL::varchar(80), NULL::integer
 	from expression_pattern
-	where exists
-	      ( select 1 
-		  from record_attribution
-		  where recattrib_source_zdb_id = '$pubId'
-		    and recattrib_data_zdb_id = xpat_zdb_id )">
+	where xpat_source_zdb_id = '$pubId';">
   <?/MISQL>
   <?MISQL SQL="
 	update $xpatselect_temp_match set xpat_ann_exist = 't'
