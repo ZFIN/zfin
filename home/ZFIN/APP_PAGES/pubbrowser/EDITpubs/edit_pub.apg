@@ -123,7 +123,7 @@ For instance, a paper by John Pat Dole, Richard M.Nixon and Newt Gingrinch would
 <option $(IF,$(EC,$jtype,Abstract),SELECTED)>Abstract
 <option $(IF,$(EC,$jtype,Movie),SELECTED)>Movie
 <option $(IF,$(EC,$jtype,Book),SELECTED)>Book
-<option $(IF,$(EC,$jtype,Bookchapter),SELECTED)>Book Chapter
+<option $(IF,$(EC,$jtype,Chapter),SELECTED)>Chapter
 <option $(IF,$(EC,$jtype,Other),SELECTED)>Other
 </SELECT>
 </font>
