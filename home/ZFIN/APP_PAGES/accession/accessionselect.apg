@@ -5,7 +5,7 @@
 
 
 <form name=crit_form method=post TARGET="pbrowser" action="/cgi-bin_B/webdriver" 
-onSubmit="parent.pbrowser.document.location='/ZDBA/misc_html/saysearching.html'">
+onSubmit="parent.pbrowser.document.location='/ZDBB/misc_html/saysearching.html'">
 
 
 <center>
