@@ -46,4 +46,4 @@ $(HTTP_DATA_TRANSFER_DIR) :
 # Run the GO script.
 
 run : $(TARGETDIR)/go.pl 
-
+	$(TARGETDIR)/go.pl 
