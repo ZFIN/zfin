@@ -35,7 +35,7 @@ OPTIONAL VARS:
 
   <?MIBLOCK COND=$(XST,$pub_file)>
     <?MISQL SQL="UPDATE publication SET pub_file = NULL WHERE zdb_id = '$OID';"><?/MISQL>
-    <?MISQL SQL="UPDATE publication SET pub_file = FILETOBLOB('$pub_file', 'client') WHERE zdb_id = '$OID';"><?/MISQL>
+    <?MISQL SQL="UPDATE publication SET pub_file = '$pub_file' where zdb_id = '$OID';"><?/MISQL>
   <?/MIBLOCK>
 
   <?MIBLOCK COND=$(XST,$unclaim)>
@@ -240,9 +240,10 @@ OPTIONAL VARS:
   <?MIVAR NAME=$pub_completion_date>$1<?/MIVAR>
   
     
-  <FORM ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" METHOD=post NAME=upload  
+  <FORM ACTION="upload.cgi" METHOD=post NAME=upload  
         ENCTYPE="multipart/form-data">
     <?MIVAR>
+      <INPUT TYPE=HIDDEN NAME=redirect_url VALUE="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID">
       <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-pubcuration.apg">
       <INPUT TYPE=HIDDEN NAME=OID VALUE="$OID"> 
       <INPUT TYPE=HIDDEN NAME=calling_apg VALUE="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID">
@@ -282,13 +283,13 @@ OPTIONAL VARS:
           <b>File:</b>
          <?MIBLOCK COND="$(NC,$pub_file,NULL)">
            <?MIVAR>
-             <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$pub_file&MItypeObj=application/pdf" target=new>PDF</a>
+             <a href="<!--|PDF_LOAD|-->/$pub_file">PDF</a>
              Replace file:
            <?/MIVAR>
          <?MIELSE>
            Upload PDF: 
          <?/MIBLOCK>
-           <input type=file name="pub_file" size=50> 
+           <input type=file name="upload" size=50> 
            <input type=submit value=Upload>
       </td>
     </tr>
