@@ -1,6 +1,6 @@
 #!/private/bin/perl -wT
  {   ### mod it
-  #use strict; # taint
+  #use strict;
   use CGI  qw / :standard/;
   use CGI::Carp 'fatalsToBrowser';
   use DBI;
@@ -29,16 +29,24 @@
   my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->', '', '', {AutoCommit => 1, RaiseError => 1})
   || die "Failed while connecting to <!--|DB_NAME|--> "; #$DBI::errstr";
  
- # my @allpanels; 
-  my $panel; 
-  my $cur = $dbh->prepare('select abbrev from panels');
+  my @allpanels;                      ### the panels the db knows about
+  my @panels;                         ### panel this map actualy attempts to use
+  my @allpanels_order;                ### an enumeration of all panels 
+  my @allpanels_metric;               ### cM or cR  for each panel 
+  my $panel;                          ### current panel
+  my ($sql,$junk,$tmp);		          ### throw away vars
+  my $cur = $dbh->prepare('select abbrev, disp_order, metric from panels');
   $cur->execute;
   $cur->bind_col(1, \$panel);
-  while ($cur->fetch){push (@allpanels ,$panel);} 
+  $cur->bind_col(2, \$junk);
+  $cur->bind_col(3, \$tmp);    
+  while ($cur->fetch){
+    push (@allpanels ,$panel );
+    push (@allpanels_order ,$junk );
+    push (@allpanels_metric ,$tmp );
+  } 
   
-  #my @allpanels = ("LN54","T51","MGH","HS","MOP","GAT","JPAD" ); 
-  my @panels;
-  
+  ### the known marker types
   my $types = 'SSLP';
   my $anon_type = "RAPD\',\'RFLP\',\'SSR\',\'STS";
   my $gene_type = "GENE";
@@ -63,7 +71,7 @@
   my $m_hi;			### offset below $loc on map
   my $lg_lo;			### $loc - $m_lo;
   my $lg_hi;			### $loc + $m_hi;
-  my ($sql,$junk);		### throw away vars
+  
   my @row;			### a row returned from a sql query
   my $g_OID ='';		### the zdb_id of marker we found -- for applet, and options to ID unique name
   my $lines ;			### all the rows returned from a paticular sql query with fields terminated with '|' 
@@ -86,7 +94,7 @@
   
   my ($sm_m, $sm_lg, $sm_panel, $sm_loc, $sm_refresh); #values Which might be used to repopulate the select map form  
   
-  ### for when we get multiple java servers some day
+  ### to supprt multiple java servers
   my $jport = "<!--|JAVA_SERVER_PORT|-->";
   #if( defined $Q->param("port") ) {$jport= $Q->param("port");}
   
@@ -100,10 +108,10 @@
   
   ### the page that will be output, either mapplet or error message or 
   ### option help generation, ...
-  my $g_opt= '';
+  my $g_opt= ''; # options form (global)
   
   ### used to pass scafolding notes to the web page
-  my $note = '';
+  my $note = ''; 
   
   ###
   ### Emit a Blank Page if called with no paramerers
@@ -213,7 +221,7 @@
 	### yow!  too many answers
 	###
 	if( $unique > 1) {	# not unique shunt off to search result page
-	  	  $note = $note . $unique . " ->Too Many Choices  <p>\n";  
+	 ### $note = $note . $unique . " ->Too Many Choices  <p>\n";  
 	  my $bot = LWP::UserAgent->new(); 
 	  my $req = POST 'http://<!--|DOMAIN_NAME|-->/<!--|WEBDRIVER_PATH_FROM_ROOT|-->',
 	  [   compare=> '%',
@@ -300,9 +308,7 @@
       
       ### find closest markers to zdbid on given panels
       ### expects globals  $types and  @panels to exist
-     
 
-      
       $g_data = uni_query( $lg, $zdbid );
     }
     
@@ -810,14 +816,11 @@
 			  -name=>'selectform',
 			  -target=>'criteria'
 			 )
-      . $Q->hidden("MIval","aa-mapperselect.apg").
-	$Q->hidden('MGH', defined $Q->param('MGH')? $Q->param('MGH') :0) . "\n".
-	  $Q->hidden('GAT', defined $Q->param('GAT')? $Q->param('GAT') :0) . "\n".
-	    $Q->hidden('HS' , defined $Q->param('HS')?  $Q->param('HS')  :0) . "\n".
-	      $Q->hidden('T51', defined $Q->param('T51')? $Q->param('T51') :0) . "\n".
-                $Q->hidden('MOP', defined $Q->param('MOP')? $Q->param('MOP') :0) . "\n".
-				 $Q->hidden('JPAD', defined $Q->param('JPAD')? $Q->param('JPAD') :0) . "\n".
-		  $Q->hidden('LN54',defined $Q->param('LN54')?$Q->param('LN54'):0) . "\n";
+      . $Q->hidden("MIval","aa-mapperselect.apg");
+    for $tmp (@allpanels){
+        print $Q->hidden($tmp, defined $Q->param($tmp)? $Q->param($tmp) :0) . "\n";
+    }        
+          
     if ( $sm_m ||  $Q->param('name')) {
       print  $Q->hidden('marker', ($sm_refresh == 1)? $sm_m:  $Q->param('name')). "\n";
     }else {   
@@ -1360,21 +1363,16 @@
       $Q->param('lg',$Q->param('loc_lg'));
     }
     $Q->delete('edit_panel','');
-    my $buf =
-      $Q->hidden('panel3','MGH') . "\n".
-	$Q->hidden('panel6','GAT') . "\n".
-	  $Q->hidden('panel4','HS') . "\n".
-	    $Q->hidden('panel2','T51') . "\n".
-	      $Q->hidden('panel1','LN54') . "\n".
-		$Q->hidden('panel5','MOP') . "\n".
-		$Q->hidden('panel7','JPAD') . "\n".
-		  $Q->hidden('MGH_units','cM') . "\n".
-		    $Q->hidden('GAT_units','cM') . "\n".
-		      $Q->hidden('HS_units','cM')."\n".
-			$Q->hidden('MOP_units','cM')."\n".
-			  $Q->hidden('T51_units','cR')."\n".
-			    $Q->hidden('LN54_units','cR')."\n".
-				$Q->hidden('JPAD_units','cM')."\n".
+    
+    my $buf ="";
+    for (my $i=0; $i < length(@allpanels); $i++){
+        $buf = $buf . 
+        $Q->hidden('panel'.$allpanels_order[$i], $allpanels[$i] )."\n".
+        $Q->hidden($allpanels[$i].'_units',$allpanels_metric[$i] ) . "\n"; 
+        print $buf ."\n";     
+    }
+
+                $buf = $buf .
 			      $Q->hidden('OID',$Q->param('OID') )."\n".
 				$Q->hidden('lg',$Q->param('lg'))."\n".
 				  $Q->hidden('userid',$Q->param('userid'))."\n".
