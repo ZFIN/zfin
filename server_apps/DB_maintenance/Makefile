@@ -18,7 +18,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/DB_maintenance
 
-GENERICS = unload_production.sh validatedata.pl
+GENERICS = regen.sh unload_production.sh validatedata.pl
 
 
 # ---------------  Production Rules  ------------------------------------
@@ -30,6 +30,9 @@ include $(TOP)/make.default.rules
 
 
 # ---------------  Misc Targets  ----------------------------------------
+
+runregen :
+	$(TARGETDIR)/regen.sh
 
 runorphans :
 	$(TARGETDIR)/validatedata.pl $(DBNAME) -o
