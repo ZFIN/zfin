@@ -151,39 +151,79 @@ if (getCookie(cookieName)) {
 	if (cookieValue) {
 	var valueArray = cookieValue.split(escape('&')); //parsing name/value pairs
 	for (var x=0; x<valueArray.length; x++){
-		valueArray[x] = valueArray[x].split(escape('=')); //breaking pairs into an array
-		}
-  for (i=0;i<document.forms.length;i++) {
-	for (j=0;j<document.forms[i].elements.length;j++) { 
-			var elementName = valueArray[j].slice(0,1); //find the name in this pair
-			var elementValue = valueArray[j].slice(1,2); //find value in this pair
-			var elementValue = unescape(elementValue); //this makes it readable
-			if (document.forms[i].elements[j].name == elementName) {
-			  if ((document.forms[i].elements[j].type == "text") || 
-				    (document.forms[i].elements[j].type == "password") || 
-					(document.forms[i].elements[j].type == "textarea")) {
-      					document.forms[i].elements[j].value = elementValue; 
-				} else if (document.forms[i].elements[j].type.indexOf("select") != -1) {
-      				document.forms[i].elements[j].selectedIndex = -1;
-      					while (((ourPosition = elementValue.indexOf("|")) != -1) && (elementValue.length > 1)) {
-       						var ourSelection = parseInt(elementValue.substring(0,ourPosition));
-       						elementValue = elementValue.substring(ourPosition+1,elementValue.length);
-       						if (ourSelection < document.forms[i].elements[j].length) {
-        						document.forms[i].elements[j].options[ourSelection].selected = true;
-								}
-      					}//end of while (((ourPosition...
-     			} else if ((document.forms[i].elements[j].type == "checkbox")
-							||(document.forms[i].elements[j].type == "radio")) {
-								if (elementValue == "true") {					
-									document.forms[i].elements[j].checked = true;
-								}
-				}
-			}// end of if (document.forms[i].elements[j].name == elementName) {
-		}	//end of for (j=0;j<document.forms[i].elements.length;j++) {
+	   valueArray[x] = valueArray[x].split(escape('=')); //breaking pairs into an array
+	}
+        for (i=0;i<document.forms.length;i++) {
+           for (j=0;j<document.forms[i].elements.length;j++) { 
+              var elementName = valueArray[j].slice(0,1); //find the name in this pair
+              var elementValue = valueArray[j].slice(1,2); //find value in this pair
+              var elementValue = unescape(elementValue); //this makes it readable
+              if (document.forms[i].elements[j].name == elementName) {
+                 if ((document.forms[i].elements[j].type == "text") || 
+                     (document.forms[i].elements[j].type == "password") || 
+                     (document.forms[i].elements[j].type == "textarea")) {
+                    document.forms[i].elements[j].value = elementValue; 
+                 } else if (document.forms[i].elements[j].type.indexOf("select") != -1) {
+                    document.forms[i].elements[j].selectedIndex = -1;
+                    while (((ourPosition = elementValue.indexOf("|")) != -1) && (elementValue.length > 1)) {
+                       var ourSelection = parseInt(elementValue.substring(0,ourPosition));
+                       elementValue = elementValue.substring(ourPosition+1,elementValue.length);
+                       if (ourSelection < document.forms[i].elements[j].length) {
+                          document.forms[i].elements[j].options[ourSelection].selected = true;
+                       }
+                    }//end of while (((ourPosition...
+                 } else if ((document.forms[i].elements[j].type == "checkbox") ||
+                            (document.forms[i].elements[j].type == "radio")) {
+                    if (elementValue == "true") {					
+                       document.forms[i].elements[j].checked = true;
+                    }
+                 }
+              }// end of if (document.forms[i].elements[j].name == elementName) {
+           }	//end of for (j=0;j<document.forms[i].elements.length;j++) {
 	}   // end of for (i=0;i<document.forms.length;i++) { 
- }  // end of if (cookieValue) {
-}  //end of if(getCookie(cookieName))
+     }  // end of if (cookieValue) {
+   }  //end of if(getCookie(cookieName))
 }  //end of function storedValues() 
+
+function storedMTAValues(cookieName) {
+   if (getCookie(cookieName)) {
+     var cookieValue = getCookie(cookieName);
+     if (cookieValue) {
+	var valueArray = cookieValue.split(escape('&')); //parsing name/value pairs
+	for (var x=0; x<valueArray.length; x++){
+	   valueArray[x] = valueArray[x].split(escape('=')); //breaking pairs into an array
+           var elementName = valueArray[x].slice(0,1); 			//find the name in this pair
+           var elementValue = valueArray[x].slice(1,2); 		//find value in this pair
+           var elementValue = unescape(elementValue); 			//this makes it readable
+           for (i=0; i<document.forms.length;i++) {
+              for (j=0; j<document.forms[i].elements.length;j++) {
+                 if (document.forms[i].elements[j].name == elementName) {
+                    if ((document.forms[i].elements[j].type == "text") || 
+                        (document.forms[i].elements[j].type == "password") || 
+                        (document.forms[i].elements[j].type == "textarea")) {
+                       document.forms[i].elements[j].value = elementValue; 
+                    } else if (document.forms[i].elements[j].type.indexOf("select") != -1) {
+                       document.forms[i].elements[j].selectedIndex = -1;
+                       while (((ourPosition = elementValue.indexOf("|")) != -1) && (elementValue.length > 1)) {
+                          var ourSelection = parseInt(elementValue.substring(0,ourPosition));
+                          elementValue = elementValue.substring(ourPosition+1,elementValue.length);
+                          if (ourSelection < document.forms[i].elements[j].length) {
+                             document.forms[i].elements[j].options[ourSelection].selected = true;
+                          }
+                       }//end of while (((ourPosition...
+                    } else if ((document.forms[i].elements[j].type == "checkbox") ||
+                               (document.forms[i].elements[j].type == "radio")) {
+                       if (elementValue == "true") {					
+                          document.forms[i].elements[j].checked = true;
+                       }
+                    }
+                 }		// end of if (document.forms[i]... == elementName) {
+              }		     //end of for (j=0;j<document.forms[i]....) {
+	   }             // end of for (i=0;i<document.forms...) {
+	}	     // for (var x=0; x<valueArray.length; x++) {
+      }    	  // end of if (cookieValue) {
+   }  	      //end of if(getCookie(cookieName))
+}  	   //end of function storedValues() 
 
 function saveForm (cookieName, nextPage) {
 var zircCookie = "";
