@@ -34,7 +34,7 @@
 	     select allmapnm_name 
 	       from all_map_names
 	       where allmapnm_zdb_id ='$new_oid'
-               and allmapnm_significance in (1,3,7);">
+               and allmapnm_significance in (1,2,5);">
 	     <?MIVAR NAME=$new_name>$1<?/MIVAR>
 	       <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$new_oid">$new_name</a>
 	   <?/MISQL>
@@ -45,7 +45,7 @@
 	     select allmapnm_name 
 	       from all_map_names
 	       where allmapnm_zdb_id ='$new_oid'
-               and allmapnm_significance in (1,3,7);">
+               and allmapnm_significance in (7,8);">
 	   <?MIVAR NAME=$new_name>$1<?/MIVAR>
 	   <TR>
 	     <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$new_oid">$new_name</a>
@@ -58,7 +58,7 @@
 	     select allmapnm_name 
 	       from all_map_names
 	       where allmapnm_zdb_id ='$new_oid'
-               and allmapnm_significance in (1,3,7);">
+               and allmapnm_significance in (3,4,6);">
 	     <?MIVAR NAME=$new_name>$1<?/MIVAR>
 	     <TR>
 	       <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$new_oid">$new_name</a>
