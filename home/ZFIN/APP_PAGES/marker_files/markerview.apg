@@ -253,6 +253,13 @@ Datablade documentation.
 	}
 
 
+	function update_mrkrsequence(mrkrseq_zdb,old_seq,new_seq) {
+		if ((mrkrseq_zdb != '') && (new_seq != '')) {
+		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&dataOID='+mrkrseq_zdb+'&attr=mrkrseq_sequence&attr_type=special&old_value='+old_seq+'&new_value='+new_seq+'&target_table=marker_sequence');
+  		}
+	}
+
+
 	function new_attrib_nomen(nomen_zdb,pub_obj) {
         	var pub_id = escape(pub_obj.value);
 		if ((nomen_zdb != '') && (pub_id != '')) {
@@ -514,6 +521,47 @@ Datablade documentation.
 
 <br>
 <?/MIBLOCK> <?MICOMMENT> end display_sequence_similarity <?/MICOMMENT>
+
+
+
+<!--------- Display sequence  --------------------------------> 
+
+<?MIVAR NAME="display_sequence">false<?/MIVAR>
+<?MISQL SQL="select count(*)
+	     from marker_sequence
+	     where mrkrseq_mrkr_zdb_id = '$OID';">
+<?MIVAR COND="$(>,$1,0)" NAME="display_sequence">true<?/MIVAR>
+<?/MISQL>
+
+<?MIBLOCK COND="$(EQ,$display_sequence,true)">
+ 
+  <b>Sequence:</b>
+
+ <?MISQL SQL="
+   select mrkrseq_sequence, mrkrseq_left_end, mrkrseq_zdb_id
+     from marker_sequence
+    where mrkrseq_mrkr_zdb_id = '$OID';">
+
+    <?MIVAR NAME=$sequence>$1<?/MIVAR>
+    <?MIVAR NAME=$left_end>$2<?/MIVAR>
+    <?MIVAR NAME=$mrkrseq_zdb_id>$3<?/MIVAR>
+    <?MIVAR COND="$(XST,$UPDATE)">
+      </form>
+      <form name=markerSequence>
+      <br> 
+      <INPUT TYPE=button 
+        value=Update 
+        onClick="update_mrkrsequence('$mrkrseq_zdb_id','$sequence',document.markerSequence.sequence.value)";>
+    <?/MIVAR>
+    $left_end' - <?MIVAR COND="$(XST,$UPDATE)"><INPUT TYPE=text size=30 name=sequence value="<?/MIVAR>$sequence<?MIVAR COND="$(XST,$UPDATE)">"><?/MIVAR> - $(IF,$(EC,$left_end,5),3,5)'
+ 	
+    <?MISQL SQL="select WebExplode(object,'dataId=$mrkrseq_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>	
+   
+    <?MIVAR COND="$(XST,$UPDATE)"></form><?/MIVAR>
+  
+ <?/MISQL>
+
+<?/MIBLOCK> <?MICOMMENT> end display_sequence <?/MICOMMENT>
 
 <!--------------- Dispalay NOMENCLATURE HISTORY -------------------->
 
