@@ -21,7 +21,8 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Thisse/SCRIPTS
 SUBDIRS = Imagesdir
 
 SPECIFIC = check_image_table.sh csv2pipe.r fetch-thisse.r fix-date.r \
-	move_2Imagesdir.sh nametest.r parse-bt.r parse-bt_authors.r tab2csv.r
+	move_2Imagesdir.sh nametest.r parse-bt.r parse-bt_authors.r tab2csv.r \
+        check_new_images.pl
 
 
 # ---------------  Production Rules  ------------------------------------
