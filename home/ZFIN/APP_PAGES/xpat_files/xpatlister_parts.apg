@@ -604,7 +604,8 @@
     <?MIVAR name=$s_list>$s_list&gene_count=$gene_count<?/MIVAR>
 <?/MIBLOCK>
 
-
+<!-- create search expression button -->
+<?MIvar NAME=$page_title>Search Expression<?/MIvar>
 <?MIBLOCK COND="$(XST,$s_list)">
   <?MIVAR>
     <SCRIPT>
@@ -621,10 +622,12 @@
   <?/MIVAR>
 <?/MIBLOCK>
 
+<!-- create expression list button -->
+<?MIvar NAME=$page_title>Expression List<?/MIvar>
 <?MIBLOCK COND="$(XST,$s_list)">
   <?MIVAR>
     <SCRIPT>
-      var page_id='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatlister_parts.apg&nav_gene_name=$(URLENCODE,$gene_name)&gene_lg=$gene_lg&stage_start=$stage_start&stage_end=$stage_end$s_list';
+      var page_id='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatlister_parts.apg&gene_name=$(URLENCODE,$gene_name)&gene_lg=$gene_lg&stage_start=$stage_start&stage_end=$stage_end$s_list';
       top.update_hist(page_id,"$page_title");
       top.controls.location.reload(true);
     </SCRIPT>
@@ -632,7 +635,7 @@
 <?MIELSE>
   <?MIVAR>
     <SCRIPT>
-      var page_id='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatlister_parts.apg&nav_gene_name=$(URLENCODE,$gene_name)&gene_lg=$gene_lg&stage_start=$stage_start&stage_end=$stage_end';
+      var page_id='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatlister_parts.apg&gene_name=$(URLENCODE,$gene_name)&gene_lg=$gene_lg&stage_start=$stage_start&stage_end=$stage_end';
       top.update_hist(page_id,"$page_title");
       top.controls.location.reload(true);
     </SCRIPT>
