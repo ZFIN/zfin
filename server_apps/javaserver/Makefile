@@ -41,11 +41,11 @@ SCRIPTSPECIFICS = $(foreach SGEN, $(SCRIPTGENERICS), $(TARGETDIR)/$(SGEN))
 
 # ---- Java source variables
 
-JAVAGENERICS  = Server.java
+JAVAGENERICS  = Server.java DBConnection.java
 JAVASPECIFICS = $(foreach GNRC, $(JAVAGENERICS), $(STAGINGDIR)/$(GNRC))
 
 JAVASTATICS  = MIConnection.java Statement.java ResultSet.java \
-               SQLException.java DBConnection.java
+               SQLException.java 
 JAVASTATICSTAGINGS = $(foreach STAT, $(JAVASTATICS), $(STAGINGDIR)/$(STAT))
 
 JAVASRCS     = $(JAVAGENERICS) $(JAVASTATICS)
