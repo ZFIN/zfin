@@ -82,6 +82,11 @@ Lines </B></font>
 <input type=text name=anon1text size=12>
 </font></TD> 
 
+<TD colspan=2> 
+<font size=-1>
+<input type=checkbox name=knowngene> Show only mutants with known genes<br>
+</TD>
+
 <?/MIBLOCK> <!-- ends if line type not wildtype -->
 
 <TD  align=right><font size=-1>
