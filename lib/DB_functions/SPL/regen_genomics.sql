@@ -147,8 +147,9 @@ create dba function "informix".regen_genomics() returning integer
     --   4 locus name
     --   5 marker alias 
     --   6 locus alias
-    --   7 fish name, fish allele
-    --   8 fish alias
+    --   7 fish: allele name, locus name/wildtype name, locus abbrev, 
+    --           wildtype abbrev
+    --   8 fish: fish alias, locus alias, allele alias
     --   9 known correspondences for genes
     --  10 putative gene assignments
     --  11 othologue name, orthologue abbrev
@@ -184,7 +185,7 @@ create dba function "informix".regen_genomics() returning integer
 	   "Locus abbreviation"::varchar(80) allmapnm_precedence, 
 	   lower(abbrev) allmapnm_name_lower
     from locus
-    where abbrev is not NULL 
+    where length(abbrev) > 0  -- eliminates nulls and blanks
     union  
     select locus_name allmapnm_name, zdb_id allmapnm_zdb_id, 4 allmapnm_significance,
 	   "Locus name"::varchar(80) allmanpnm_precedence, 
@@ -199,22 +200,64 @@ create dba function "informix".regen_genomics() returning integer
     where dalias_data_zdb_id = zdb_id
     into temp all_locus_names_new with no log;	
     
+    -- Get all fish names.  Start with allele name
     select allele allmapnm_name, zdb_id allmapnm_zdb_id, 7 allmapnm_significance, 
 	   "Fish name/allele"::varchar(80) allmanpnm_precedence, 
 	   lower(allele) allmapnm_name_lower
     from fish
     where allele is not NULL
-    union    
+    union  -- get locus name or wildtype name
     select name allmapnm_name, zdb_id allmapnm_zdb_id, 7 allmapnm_significance,
-	   "Fish name/allele"::varchar(80) allmanpnm_precedence, 
+	   case
+	     when line_type = "mutant" then
+	       "Locus name"::varchar(80)
+	     else
+	       "Wildtype name"::varchar(80)
+	   end allmanpnm_precedence, 
 	   lower(name) allmapnm_name_lower	
     from fish
-    union
-    select dalias_alias allmapnm_name, dalias_data_zdb_id allmapnm_zdb_id, 8 allmapnm_significance,
-	   "Allele Previous name"::varchar(80) allmanpnm_precedence, 
+    union  -- get locus abbrev
+    select l.abbrev allmapnm_name, f.zdb_id allmapnm_zdb_id, 
+	   7 allmapnm_significance,
+	   "Locus abbreviation"::varchar(80) allmapnm_precedence,
+   	   lower(l.abbrev) allmapnm_name_lower
+      from fish f, locus l
+      where f.zdb_id = l.zdb_id
+	and f.name <> l.abbrev
+    union  -- get wildtype abbrev
+    select abbrev allmapnm_name, zdb_id allmapnm_zdb_id, 
+	   7 allmapnm_significance,
+	   "Wildtype abbreviation"::varchar(80) allmapnm_precedence,
+   	   lower(abbrev) allmapnm_name_lower
+      from fish
+      where line_type = "wild type"
+	and abbrev <> name
+    union  -- get fish aliases
+    select dalias_alias allmapnm_name, zdb_id allmapnm_zdb_id, 8 allmapnm_significance,
+	   "Fish Previous name"::varchar(80) allmanpnm_precedence, 
 	   lower(dalias_alias) allmapnm_name_lower
     from data_alias, fish
     where dalias_data_zdb_id = zdb_id
+    union  -- get locus aliases
+    select dalias_alias allmapnm_name, zdb_id allmapnm_zdb_id, 
+	   8 allmapnm_significance,
+	   "Locus Previous name"::varchar(80) allmanpnm_precedence, 
+	   lower(dalias_alias) allmapnm_name_lower
+      from data_alias, fish
+      where dalias_data_zdb_id = locus
+    union  -- get allele aliases
+    select dalias_alias allmapnm_name, f.zdb_id allmapnm_zdb_id, 
+	   8 allmapnm_significance,
+	   "Allele Previous name"::varchar(80) allmanpnm_precedence, 
+	   lower(dalias_alias) allmapnm_name_lower
+      from data_alias aalias, fish f, alteration a
+      where aalias.dalias_data_zdb_id = a.zdb_id
+	and a.allele = f.allele
+	and not exists
+	    ( select 1 
+		from data_alias falias
+		where falias.dalias_data_zdb_id = f.zdb_id
+		  and falias.dalias_alias = aalias.dalias_alias )
     into temp all_fish_names_new with no log;
 
     -- a smaller set of all_marker_names_new which is used for getting
