@@ -1,4 +1,3 @@
-
 <!-- This file is for orthologue and ortho evidence table display 
    Parameter:
    OID     the zdb id of a marker			
@@ -14,7 +13,7 @@
 <?MIVAR NAME=$CURROW>0<?/MIVAR>
 <?MIVAR NAME=$EXIST>0<?/MIVAR>
 <?MIVAR NAME=$hasEv>0<?/MIVAR>
-
+<?MIVAR NAME=$ball_img><img src="/images/green_ball.gif" border=0 height=10><?/MIVAR>
  <!-- Get number of orthologue organisms, so that know the number of rows-->
  <?MISQL SQL="
    select count(distinct organism)
@@ -94,7 +93,7 @@
         <?MIVAR><TD>$abbrev</TD><TD bgcolor=$highlight></TD><?/MIVAR>
   	<?MIBLOCK COND="$(AND,$(>,$MI_ROWCOUNT,0),$(>,$envNum,0))">	 
 	    <?MIBLOCK INDEX=$subitem TO=$envNum FROM=1 STEP=1>
-	      <TD align=center><b>*</b></TD>	   
+	      <TD align=center><b><?MIVAR>$ball_img<?/MIVAR></b></TD>	   
 	    <?/MIBLOCK>
 	<?/MIBLOCK>
 	</TR>
@@ -110,7 +109,7 @@
 	     order by oevcode_order, oevdisp_organism_list
 	     ;">
        <?MIVAR>
-       $(IF,$(>,$(POSITION,$1,$lastitem),0),"<TD align=center><b>*</b></TD>", "<TD></TD>")
+       $(IF,$(>,$(POSITION,$1,$lastitem),0),<TD align=center><b><?MIVAR>$ball_img<?/MIVAR></b></TD>, <TD></TD>)
        <?/MIVAR>
      <?/MISQL>
     </TR><TR>
@@ -139,7 +138,7 @@
 	     order by oevcode_order, oevdisp_organism_list
 	     ;">
        <?MIVAR>
-       $(IF,$(>,$(POSITION,$1,$lastitem),0),"<TD align=center><b>*</b></TD>", "<TD></TD>")
+       $(IF,$(>,$(POSITION,$1,$lastitem),0),<TD align=center><b>$ball_img</b></TD>, <TD></TD>)
        <?/MIVAR>
   <?/MISQL>
   </TR> 
