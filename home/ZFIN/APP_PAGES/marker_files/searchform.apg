@@ -1,0 +1,150 @@
+<!-- Display the form for Genes/Markers/Clones search page
+Input:
+   page:  either searchpage or resultpage
+-->
+
+  
+  <TABLE class="search" width=100% border=0 cellpadding=1 cellspacing=0>
+    <TR>
+      <?MIBLOCK COND="$(AND,$(NXST,$query_results),$(EC,$page,newmrkrselect))">
+        <TD class=titlebar>
+	  &nbsp;&nbsp;
+	  <font size=+1>
+	     <b>Search for Genes / Markers / Clones</b>
+	   </font>
+       </TD>
+       <TD class=titlebar align=right> 
+ 	 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>
+       </TD>
+     <?MIELSE> 	
+       <TD class=titlebar colspan=2>
+         &nbsp;&nbsp;
+         <font size=+1>	 
+	   <a name="modify"></a><b>Modify your search.</b>
+         </font>
+       </TD> 
+     <?/MIBLOCK>
+
+    </TR>
+     <FORM name="critform" method="post" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" >
+      <?MIVAR COND="$(NXST,$compare)" NAME=$compare>contains<?/MIVAR>
+      <?MIVAR COND="$(NXST,$lg)" NAME=$lg>0<?/MIVAR>
+      <?MIVAR NAME=$START>1<?/MIVAR>
+  
+      <TR>
+      <TD valign=top>
+	<table><tr><td align=top>
+	 <b>Name / Symbol:</b>
+	</td>
+	<td><?MIVAR>
+	  <SELECT name="compare" onChange='document.critform.START.value = "";'>
+	     <option $(IF,$(EC,$compare,contains),SELECTED) value=contains>contains
+	     <option $(IF,$(EC,$compare,starts),SELECTED) value=starts>begins with
+          </SELECT>
+	<INPUT type=text name=input_name size=30  $(IF,$(XST,$input_name),value='$input_name')  >
+	</td><?/MIVAR>
+       </tr></table>
+      </TD>
+      <TD> 
+      <?MIVAR>
+       <b>Accession Number:</b>
+       <input type=text name=input_acc size=25 onChange='document.critform.START.value = "";' $(IF,$(XST,$input_acc),value='$input_acc')>
+      </TD><?/MIVAR>
+     </TR>
+
+     <TR>
+     <TD valign=top>
+       	<table><tr><td valign=top>
+	<b>Type: &nbsp; &nbsp;&nbsp;&nbsp; &nbsp; &nbsp;&nbsp; &nbsp;</b>
+	</td>
+	<td>
+	<?MIVAR COND="$(NXST,$marker_type)" NAME=marker_type><?/MIVAR>
+	<?MIVAR COND="$(NXST,$mlist)" NAME=mlist><?/MIVAR>
+	<select multiple size=10 name=marker_type> 
+	  <?MIVAR>
+	  <option $(IF,$(OR,$(EC,$marker_type,),$(EC,$marker_type,all)),SELECTED) value="all">All 
+	  <?/MIVAR>
+ 	<?MISQL SQL="
+	     select marker_type, mrkrtype_significance
+	       from marker_types
+	      where marker_type in (select mtgrpmem_mrkr_type from marker_type_group_member 
+				     where mtgrpmem_mrkr_type_group = 'SEARCH_MKSEG')
+	      order by mrkrtype_significance;
+	   ">
+	  <?MIVAR COND="$(EC,$page,initial)">
+	    <option $(IF,$(>,$(POSITION,'$mlist','$1'),0),SELECTED) value="$1"> $1
+          <?/MIVAR>
+	  <?MIVAR COND="$(NC,$page,initial)">
+	    <option $(IF,$(>,$(POSITION,'$marker_type','$1'),0),SELECTED) value="$1"> $1
+	  <?/MIVAR>
+	<?/MISQL>
+        </select>
+	</td></tr></table>
+      </TD>
+
+      <TD>
+       <B>LG:</B>
+       <SELECT name=lg>
+	<?MISQL SQL="select distinct lg_name,lg_order from linkage_group order by lg_order"> 
+	  <option value="$1" $(IF,$(EC,$lg,$1),SELECTED) >$(IF,$(EC,$1,0),any,$1)
+	<?/MISQL>
+       </SELECT>    
+       <p>
+       <B>Sequence Type</B> (EST, BAC, PAC only)<B>:</B><br>
+	<SELECT name="sequence_type">
+	  <OPTION SELECTED value="any">Any
+	 <?MISQL SQL="select seqtype_name from sequence_type;">
+            <OPTION $(IF,$(AND,$(XST,$sequence_type),$(EC,$sequence_type,$1)),SELECTED) value="$1">$1
+         <?/MISQL>
+        </SELECT>
+        <P>
+
+<?MICOMMENT> Temporarily take out vector type
+     
+	<b>Vector Type:</b>&nbsp;
+	<SELECT name="vector_type">
+	  <OPTION SELECTED value="any">Any
+	 <?MISQL SQL="select vectype_name from vector_type
+		       where vectype_name not in ('Not specified','Not applicable');">
+            <OPTION $(IF,$(AND,$(XST,$vector_type),$(EC,$vector_type,$1)),SELECTED) value="$1">$1
+         <?/MISQL>
+        </SELECT>
+      </TD>
+<?/MICOMMENT>
+        &nbsp; <p>
+	Display results in groups of 
+	<input type="text" name="WINSIZE" size="3" value="20" 
+	       onChange='document.critform.START.value = "";' 
+	       $(IF,$(XST,$WINSIZE),value='$WINSIZE')>.
+
+	<?MIBLOCK COND="$(AND,$(NOT,$(ISNULL,$WINSIZE)),$(XST,$WINSIZE))">
+	  <?MIVAR> 
+	    <SCRIPT> 
+	      document.critform.WINSIZE.value = "$WINSIZE" 
+	    </SCRIPT>
+	  <?/MIVAR> 
+	<?/MIBLOCK>
+       </TD>
+     </TR>
+     <TR>
+       <TD class=submitbar colspan=2 align="right">
+       <?MIVAR>
+        <input type=hidden name=MIval value=aa-newmrkrselect.apg>
+        <input type=hidden name=query_results value="exist">
+	<input type=hidden NAME="START" value=1>
+       <?/MIVAR>
+
+  	<!-- This next little block executes only if we are using the browser as a
+  	selector. That is we want user to ultimately CHOOSE a browsed value. All
+  	we have to do at this point is pass the return record along to the markerlister.
+  	-->
+  	<?MIVAR COND=$(XST,$return_rec)>
+  	<input type=hidden NAME="return_rec" value=$return_rec>
+  	<?/MIVAR>
+
+	<input type=submit name=action value="SEARCH";">
+	<input type=submit name=getTop value="BEST MATCH";">
+	<input type=button value="RESET" onClick="call_reset()";>  
+      </TD></form>
+    </TR>
+ </TABLE>
