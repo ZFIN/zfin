@@ -10,16 +10,26 @@ create trigger anatomy_items_update_trigger
 		execute procedure p_stg_hours_consistent
   	  		(new_anatomy_item.anatitem_start_stg_zdb_id, 
            		 new_anatomy_item.anatitem_end_stg_zdb_id),
-
 		execute procedure p_check_anat_anatrel_stg_consistent
 			(new_anatomy_item.anatitem_zdb_id, 
 			 new_anatomy_item.anatitem_start_stg_zdb_id,
 			 new_anatomy_item.anatitem_end_stg_zdb_id),
-        
         	execute function 
-	  		zero_pad(new_anatomy_item.anatitem_name) into anatitem_name_order,
+	  		zero_pad(new_anatomy_item.anatitem_name) 
+			into anatitem_name_order,
+		execute function
+			scrub_char(new_anatomy_item.anatitem_name) 
+			into anatitem_name_order,
 		execute function 
-	  		lower(new_anatomy_item.anatitem_name) into anatitem_name_lower,
+	  		lower(new_anatomy_item.anatitem_name) 
+			into anatitem_name_lower,
+		execute function
+			scrub_char(new_anatomy_item.anatitem_name_lower)
+			into anatitem_name_lower,
         	execute function 
-	  		lower(new_anatomy_item.anatitem_abbrev) into anatitem_abbrev_lower
+	  		lower(new_anatomy_item.anatitem_abbrev) 
+			into anatitem_abbrev_lower,
+		execute function
+			scrub_char(new_anatomy_item.anatitem_name_order)
+			into anatitem_name_order
     );
