@@ -133,7 +133,7 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 
 <?MIVAR name=comments> 
   Set stage and lg variables if they don't exist. 
-  -this page is linked to from geneselect.apg which does not send stages.
+  -this page is linked to from markerselect.apg which does not send stages.
 <?/MIVAR>
 
 <?MISQL SQL="
@@ -867,7 +867,7 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
   <?MIVAR>
     <p>
       <b>To search gene records independent of expression data - 
-      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-geneselect.apg&searchtype=$searchtype&name=$(URLENCODE,$gene_name)&lg=$gene_lg&query_results=exist">Click here</a>.</b>
+      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&compare=$searchtype&input_name=$(URLENCODE,$gene_name)&lg=$gene_lg&marker_type=GENE&query_results=t">Click here</a>.</b>
     </p>
   <?/MIVAR>
 <?/MIBLOCK>
