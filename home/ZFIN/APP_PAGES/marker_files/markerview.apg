@@ -62,6 +62,7 @@
   <?MIVAR COND="$(NXST,$lod)" NAME=$lod><?/MIVAR>
   <?MIVAR COND="$(NXST,$metric)" NAME=$metric><?/MIVAR>
   <?MIVAR COND="$(NXST,$lg)" NAME=$lg><?/MIVAR>
+  <?MIVAR COND="$(NXST,$map_comments)" NAME=$map_comments><?/MIVAR>	
   <?MIVAR NAME=$ref_map><?/MIVAR>
 
   <!-- default user as GUEST---------------------->
@@ -773,7 +774,7 @@ $(IF,$(AND,$(NC,$4[2],NOVALUE),$(NC,$4[2],""),$(OR,$(EC,$override,true),$(EC,$6[
  
  <?MISQL SQL="select distinct target_abbrev, private as panel_abbrev, disp_order from paneled_markers a,person b ,panels c where a.zdb_id='$OID' and OR_lg is not null and a.owner=b.zdb_id and a.target_id = c.zdb_id order by disp_order;">
   <?MIVAR NAME=$private>$2<?/MIVAR>
-
+  
   <?MIBLOCK COND="$(EC,$private,f)">
     <?MIVAR>
          <input type=hidden name="$1" value=1>
@@ -807,7 +808,8 @@ $(IF,$(AND,$(NC,$4[2],NOVALUE),$(NC,$4[2],""),$(OR,$(EC,$override,true),$(EC,$6[
 <?MIELSE>
 
   <!-- get independent linkage info for other members of linkage or for marker itself if it is the only linkage member -->
-  <?MISQL SQL="select alnkgmem_member_zdb_id, alnkgmem_member_abbrev, alnkgmem_marker_type, alnkgmem_private, alnkgmem_comments, alnkgmem_source_zdb_id, alnkgmem_source_name,alnkgmem_linkage_zdb_id,alnkgmem_or_lg, alnkgmem_num_members from all_linked_members a
+  <?MISQL SQL="select alnkgmem_member_zdb_id, alnkgmem_member_abbrev, alnkgmem_marker_type, alnkgmem_private, alnkgmem_comments, alnkgmem_source_zdb_id, alnkgmem_source_name,alnkgmem_linkage_zdb_id,alnkgmem_or_lg, alnkgmem_num_members 
+     from all_linked_members a
     where (alnkgmem_linkage_zdb_id in 
       (select alnkgmem_linkage_zdb_id from all_linked_members b 
           where b.alnkgmem_linkage_zdb_id = a.alnkgmem_linkage_zdb_id
@@ -818,14 +820,17 @@ $(IF,$(AND,$(NC,$4[2],NOVALUE),$(NC,$4[2],""),$(OR,$(EC,$override,true),$(EC,$6[
 
     <?MIVAR NAME=$member_zdb_id>$1<?/MIVAR>
     <?MIVAR NAME=$lg>$9<?/MIVAR>
+    <?MIVAR NAME=$map_comments>$5<?/MIVAR>
    <?/MISQL>	
- <?MIBLOCK COND="$(AND,$(NC,$lg,""),$(NC,$lg,0))">
+ <?MIBLOCK COND="$(OR,$(AND,$(NC,$lg,""),$(NC,$lg,0)), $(NC,$map_comments,""))">
    <?MIVAR>
    $(IF,$(=,$getinfo,0),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mappingdetail.apg&OID=$OID&abbrev=$abbrev&marker_type=$marker_type"> Details</A>"$(SETVAR,$getinfo,1))
-  
-   <TABLE width="50%" bgcolor=<?MIVAR>"$highlight"<?/MIVAR>><TR align=left><TD>LG <b>$lg</b></TD></TR></TABLE>
+  <?/MIVAR>
+  <?MIVAR COND="$(AND,$(NC,$lg,""),$(NC,$lg,0))"> 
+   <TABLE width="50%" bgcolor="$highlight"> <TR align=left><TD>LG <b>$lg</b></TD></TR></TABLE>
    <?/MIVAR>
  <?/MIBLOCK> 
+
 <?/MIBLOCK>
 
 <?MIVAR COND="$(=,$getinfo,0)">
