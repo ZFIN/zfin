@@ -1,4 +1,4 @@
-create trigger locus_abbrev_insert_trigger 
+create trigger locus_abbrev_update_trigger 
   update of abbrev on locus 
     referencing new as new_locus
     for each row (
