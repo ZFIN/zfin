@@ -9,8 +9,10 @@ create trigger marker_go_term_evidence_insert_trigger insert on
    			new_mrkrgoev.mrkrgoev_go_term_zdb_id),
         execute function scrub_char (new_mrkrgoev.mrkrgoev_notes)
                 into mrkrgoev_notes,
-	execute procedure p_insert_into_record_attribution (
+	execute procedure p_insert_into_record_attribution_tablezdbids (
 			new_mrkrgoev.mrkrgoev_zdb_id,
-			new_mrkrgoev.mrkrgoev_source_zdb_id,
-			new_mrkrgoev.mrkrgoev_mrkr_zdb_id)
+			new_mrkrgoev.mrkrgoev_source_zdb_id),
+	execute procedure p_insert_into_record_attribution_datazdbids (
+			new_mrkrgoev.mrkrgoev_mrkr_zdb_id,
+			new_mrkrgoev.mrkrgoev_source_zdb_id)
      );		
