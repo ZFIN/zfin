@@ -22,7 +22,7 @@ SUBDIRS = EDITpubs
 
 GENERICS = REFERinfo.apg curatepub.apg enterpubs.apg link_authors.apg \
 	pubprintable.apg pubselect2.apg pubview2.apg \
-	showpubs.apg
+	showpubs.apg miniref_display.apg
 
 
 # use default rules for app page directories.
