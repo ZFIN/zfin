@@ -127,7 +127,7 @@ window.location.search='?MIval=aa-edit_linkage.apg&link_id='+link_id+'&OID='+oid
 
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
-<?MISQL SQL="select name, a.abbrev, upper(line_type), source, mother, father, discoverer, lab, HTML_breaks(phenotype), segregation, orig_crossnum, HTML_breaks(a.comments),status,a.owner,pheno_keywords,allele,locus, b.abbrev from fish a, locus b where a.zdb_id='$OID' and b.zdb_id = a.locus;"><?/MISQL>
+<?MISQL SQL="select name, a.abbrev, upper(line_type), source, mother, father, discoverer, lab, HTML_breaks(phenotype), segregation, orig_crossnum, HTML_breaks(a.comments),status,a.owner,pheno_keywords,allele,locus, b.abbrev from fish a, OUTER locus b where a.zdb_id='$OID' and b.zdb_id = a.locus;"><?/MISQL>
 
 
 <?MIVAR NAME=$name>$1<?/MIVAR>
