@@ -1,0 +1,119 @@
+<!-- A Subroutine that throws up a ZFIN data manager. Used in the VIEWERS for 
+each data type.
+-->
+
+<HEAD>
+<?MIVAR>
+<SCRIPT>
+function do_submit(object,who) {
+var the_title
+    the_title='$(IF,$(XST,$rec_title),$rec_title,Untitled:$OID)';
+
+  document.location="/cgi-bin_B/webdriver?MIval=aa-process_notification.apg&"+who+"="+object.checked+"&OID=$OID&ZDB_ident=$ZDB_ident&ZDB_name="+escape('$ZDB_name')+"&title="+escape(the_title)+"&record_MIval="+escape(document.location.search);
+}
+</SCRIPT>
+<?/MIVAR>
+</HEAD>
+
+<?MIVAR NAME=$MI_NOVALUE>NOVALUE<?/MIVAR>
+<?MIVAR NAME=$owner_name>Unknown<?/MIVAR>
+
+<!-- First find out the last modification date of the record in question. -->
+<?MISQL SQL="select when, day(when), comments, month(when), year(when) from updates where rec_id='$OID' order by when;">
+<?/MISQL>
+<?MIVAR NAME=$mod_date COND="$(OR,$(EC,$1,NOVALUE),$(EC,$3,*RECORD_CREATED*))">Never modified<?/MIVAR>
+<?MIVAR  NAME=$mod_date COND="$(AND,$(NC,$1,NOVALUE),$(NC,$3,*RECORD_CREATED*))">
+$(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5 
+<?/MIVAR>
+
+<?MISQL COND="$(XST,$owner)" SQL="select name from ZDB_submitters where zdb_id='$owner';">
+$(SETVAR,$owner_name,$1)<?/MISQL>
+
+
+<!-- OKAY NOW THROW UP THE DATA MANAGER -->
+
+<TABLE WIDTH=100% border=4 bgcolor="#C4C4C4">
+
+<?MIVAR COND="$(NXST,$MIval)" NAME=$MIval>aa-stub.html<?/MIVAR>
+<?MIVAR>
+<TR align=center>
+<TD><font size=-1> <b>ZFIN ID:</b> $OID </font>
+$(IF,$(XST,$owner),<BR><B>Owner:</b> <A HREF="/cgi-bin_B/webdriver?MIval=aa-persview.apg&OID="$owner TARGET=content>$owner_name</A>)</TD>
+<TD> <font size=-1>
+<A HREF="/cgi-bin_B/webdriver?MIval=aa-update-vframeset.apg&OID=$OID&rtype=$rtype">
+<b>Updated:</b> $mod_date </A> </font>
+</TD>
+<?/MIVAR>
+
+<!-- all of the following options show up only if your registered ZFIN -->
+<?MIBLOCK COND="$(AND,$(XST,$AUTHORIZED),$(NC,$AUTHORIZED,GUEST))">
+
+<TD> 
+<form>
+<font size=-1>
+
+<?MISQL SQL="select count(*)::integer from datawatch where pers_id='$ZDB_ident' and record_id='$OID' and flag_type='bookmark';"><?/MISQL>
+<?MIVAR>
+<INPUT TYPE=checkbox name=bookmark $(IF,$(>,$1,0),CHECKED) OnClick="do_submit(this,'bookmark');">
+Bookmark
+<?/MIVAR>
+
+</TR>
+
+<?MIBLOCK COND="$(NC,$rtype,publication)">  <!-- dont show second row for pubs -->
+<TR align=center>
+<TD> 
+
+<!-- Only allow auth users to update. For non-person records, allow any registered submitter -->
+<?MIVAR COND="$(EC,$AUTHORIZED,root)">
+<font size=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-delete_record.apg&OID=$OID&rtype=$rtype">Permanently delete this record</A> </font> <br>
+<?/MIVAR>
+<?MIVAR COND="$(NC,$rtype,person)">
+<font size=-1> <A HREF="/cgi-bin_B/webdriver?MIval=$MIval&UPDATE=1&OID=$OID">Add/Update data to this Record</A> </font>
+<?/MIVAR>
+
+
+<!-- For PERSON records, allow only owner and root. Also allow root access to
+  tools for editting the person's ZFIN account. -->
+<?MIBLOCK COND="$(EC,$rtype,person)">
+
+<?MIVAR COND="$(OR,$(EC,$AUTHORIZED,owner),$(EC,$AUTHORIZED,root))">
+<font size=-1> <A HREF="/cgi-bin_B/webdriver?MIval=$MIval&UPDATE=1&OID=$OID">Update this Record</A> </font>
+<?/MIVAR>
+</TD>
+
+<TD>
+<?MIVAR COND="$(EC,$AUTHORIZED,root)">
+<font size=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-edit_user.apg&OID=$OID">Add/Edit ZFIN Registration</A> </font>
+<?/MIVAR>
+<?MIVAR COND="$(EC,$AUTHORIZED,owner)">
+<font size=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-edit_user.apg&OID=$OID">Change ZFIN Password</A> </font>
+<?/MIVAR>
+
+<?/MIBLOCK>  <!-- ends cond PERSON and authorized -->
+</TD>
+
+
+<?MIBLOCK COND="$(OR,$(EC,$AUTHORIZED,root),$(EC,$AUTHORIZED,fishauth))">
+<TD>
+<form><font size=-1>
+<?MISQL SQL="select count(*)::integer from datawatch where pers_id='$ZDB_ident' and record_id='$OID' and flag_type='notify';"><?/MISQL>
+<?MIVAR>
+<INPUT TYPE=checkbox name=notify $(IF,$(>,$1,0),CHECKED) OnClick="do_submit(this,'notification');">
+Email notify
+<?/MIVAR>
+<?/MIBLOCK> <!--ends if fishauth -->
+
+</font>
+</form>
+</TD>
+</TR> 
+
+<?/MIBLOCK> <!-- ends if not a pub record -->
+
+<?/MIBLOCK> <!-- ends if authorized and not guest -->
+
+
+
+</TABLE>
+
