@@ -210,10 +210,10 @@ marker table.
           var compSeq;      
           
             compSeq = baseComplement(seq);
+            document.newdata.newmrkrDisplaySequence.value = compSeq;
             
             if (note != "")
             {
-              document.newdata.newmrkrDisplaySequence.value = compSeq;
               curatorNote(note);
             }
       }
@@ -224,10 +224,10 @@ marker table.
           var revSeq;      
            
             revSeq = reverseString(seq);
+            document.newdata.newmrkrDisplaySequence.value = revSeq;
             
             if (note != "")
             {
-              document.newdata.newmrkrDisplaySequence.value = revSeq;
               curatorNote(note);
             }
       }
