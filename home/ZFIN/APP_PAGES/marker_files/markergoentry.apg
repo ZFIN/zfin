@@ -217,7 +217,7 @@ function call_reset() {
 <!--creating table to display added GO annotations-->
 
   <table border = 0 cellspacing = 0 width = 100% cellpadding = 0>
-  <tr height=28><td><b>Ontology</b>
+  <tr bgcolor=#cccccc height=28><td><b>Ontology</b>
   <?MIBLOCK COND="$(EC,$qualifier,true)">
     <td><b>Qualifier</b>
   <?/MIBLOCK>
