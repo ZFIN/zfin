@@ -18,6 +18,7 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/home/zf_info/stckctr/submission
 
 GENERICS = index.html\
+request.html\
 requestAnimals2.html\
 requestAntibodies2.html\
 requestBooks.html\
@@ -36,7 +37,6 @@ links.html\
 marker.html\
 provider.html\
 reasons.html\
-request.html\
 request.txt\
 requestAnimals.html\
 requestAnimals.txt\
