@@ -74,8 +74,7 @@ contains <input type=text name=anon1text size=15  onChange='document.critform.ST
 <font>
 <b>Disclaimer:</b>  Companies are listed in ZFIN exclusively to provide
 information to the research community. Their listing is not in any way an endorsement.  Companies are included because they provide reagents or
-materials used in protocols described in "Fish Net" articles or ZFIN
-database entries.</font>
+materials used in protocols described in ZFIN.</font>
 
 
 <TABLE WIDTH=100%>
