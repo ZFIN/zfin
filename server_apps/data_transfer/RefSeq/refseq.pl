@@ -109,9 +109,11 @@ system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> load_refSeq.sql");
 
 &dblinksReport();
 &reportOmimDups();
-&reportRefSeqDups(); 
-&reportOrthologueDups(); 
-&reportDbLinkGeneMarkerPairs(); 
+
+&reportFile('gene_with_multiple_linked_recid.unl','RefSeq Multiples');
+&reportFile('ortho_with_multiple_acc_num.unl','Orthologue Multiples')
+&reportFile('conflict_dblink.unl','Marker/DbLink Conflicts');
+
 &sendReport();
 
 exit;
@@ -202,34 +204,16 @@ sub reportOmimDups()
     close(REPORT);
   }
 
-
-sub reportRefSeqDups()
+sub reportFile()
   {
+    $vFile = $_[0];
+    $vTitle = $_[1];
+    
     open (REPORT, ">>report") or die "can not open report";
-    open (FILE, "gene_with_multiple_linked_recid.unl") or die "can not open file";
+    open (FILE, "$vFile") or die "can not open $vFile";
     
     print REPORT "\n";
-    print REPORT "RefSeq Multiples\n";
-
-    while($line = <FILE>)
-    {
-      print REPORT $line;
-    }
-    
-    print REPORT "\n";
-
-    close (FILE);
-    close (REPORT);
-  }
-
-
-sub reportOrthologueDups()
-  {
-    open (REPORT, ">>report") or die "can not open report";
-    open (FILE, "ortho_with_multiple_acc_num.unl") or die "can not open file";
-    
-    print REPORT "\n";
-    print REPORT "Orthologue Multiples\n";
+    print REPORT "$vTitle\n";
 
     while($line = <FILE>)
     {
@@ -241,27 +225,7 @@ sub reportOrthologueDups()
     close (FILE);
     close (REPORT);
   }
-
-
-sub reportDbLinkGeneMarkerPairs()
-  {
-    open (REPORT, ">>report") or die "can not open report";
-    open (FILE, "dblink_gene_marker_non_encodes_pairs.unl") or die "can not open file";
-    
-    print REPORT "\n";
-    print REPORT "DB_LINK Gene-Marker non-encodes pairs\n";
-
-    while($line = <FILE>)
-    {
-      print REPORT $line;
-    }
-
-    print REPORT "\n";
-    
-    close (FILE);
-    close (REPORT);
-  }
-
+  
 
 sub sendReport()
   {

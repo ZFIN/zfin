@@ -228,7 +228,7 @@ INSERT INTO tmp_db_link
     mrkr_zdb_id,
     'RefSeq',
     refseq_nM_acc,
-    'Uncurrated: RefSeq load ' || TODAY,
+    'Uncurated: RefSeq load ' || TODAY,
     'x',
     fdbcont_zdb_id,
     acclen_length
@@ -237,7 +237,7 @@ INSERT INTO tmp_db_link
     AND llzdb_zdb_id = mrkr_zdb_id
     AND fdbcont_fdb_db_name = 'RefSeq'
     AND fdbcont_fdbdt_data_type = 'cDNA'
-    AND refseq_nM_acc != ''
+    AND refseq_nM_acc[1,2] = 'NM'
     AND acclen_acc = refseq_nM_acc
 ;
 INSERT INTO tmp_db_link
@@ -245,7 +245,7 @@ INSERT INTO tmp_db_link
     mrkr_zdb_id,
     'RefSeq',
     refseq_nP_acc,
-    'Uncurrated: RefSeq load ' || TODAY,
+    'Uncurated: RefSeq load ' || TODAY,
     'x',
     fdbcont_zdb_id,
     acclen_length
@@ -257,6 +257,23 @@ INSERT INTO tmp_db_link
     AND refseq_nP_acc != ''
     AND acclen_acc = refseq_nP_acc
 ;
+INSERT INTO tmp_db_link
+  SELECT
+    mrkr_zdb_id,
+    'RefSeq',
+    refseq_nM_acc,
+    'Uncurated: RefSeq load ' || TODAY,
+    'x',
+    fdbcont_zdb_id,
+    acclen_length
+  FROM ref_seq_acc, ll_zdb, marker, foreign_db_contains, OUTER(acc_length)
+  WHERE refseq_ll = llzdb_ll_id
+    AND llzdb_zdb_id = mrkr_zdb_id
+    AND fdbcont_fdb_db_name = 'RefSeq'
+    AND fdbcont_fdbdt_data_type = 'Genomic'
+    AND refseq_nM_acc[1,2] = 'NC'
+    AND acclen_acc = refseq_nM_acc
+;
 
 !echo 'insert GenBank INTO temp_db_link'
 INSERT INTO tmp_db_link
@@ -264,7 +281,7 @@ INSERT INTO tmp_db_link
     mrkr_zdb_id,
     'Genbank',
     gbacc_acc,
-    'Uncurrated: RefSeq load ' || TODAY,
+    'Uncurated: RefSeq load ' || TODAY,
     'x',
     fdbcont_zdb_id,
     accbk_length
@@ -283,7 +300,7 @@ INSERT INTO tmp_db_link
     mrkr_zdb_id,
     'GenPept',
     gbacc_pept,
-    'Uncurrated: RefSeq load ' || TODAY,
+    'Uncurated: RefSeq load ' || TODAY,
     'x',
     fdbcont_zdb_id,
     pla_len
@@ -302,7 +319,7 @@ INSERT INTO tmp_db_link
     mrkr_zdb_id,
     'LocusLink',
     llzdb_ll_id,
-    'uncurrated ' || TODAY || ' LocusLink load',
+    'uncurated ' || TODAY || ' LocusLink load',
     'x',
     'x',
     ''
@@ -430,6 +447,7 @@ CREATE INDEX link_id_index ON automated_dblink
 
 DELETE FROM zdb_active_data WHERE zactvd_zdb_id in (SELECT link_id FROM automated_dblink);
 
+
 !echo 'get all LocusLink AND OMIM db_links that remain'
   SELECT * 
   FROM db_link 
@@ -465,6 +483,25 @@ UPDATE STATISTICS HIGH FOR table ortho_link;
   UPDATE ortho_link
   SET lnkortho_dblink_zdb_id = get_id('DBLINK');
   
+-- Occassionally, curatorial data conflicts with LocusLink. Unload the LocusLink record for review and delete it.
+--Same DB and data type
+select lnkortho_dblink_zdb_id as conf_zdb_id, lnkortho_acc_num as conf_acc_num, lnkortho_linked_recid as conf_recid 
+from ortho_link
+where exists
+  (
+    select dblink_linked_recid
+    from db_link
+    where dblink_linked_recid = lnkortho_linked_recid
+      and dblink_fdbcont_zdb_Id = lnkortho_fdbcont_zdb_Id
+  )
+into temp tmp_ortho_conflict;
+
+
+unload to ortho_conflict.unl select * from tmp_ortho_conflict;
+
+delete from ortho_link where lnkortho_dblink_zdb_id in (select conf_zdb_id from tmp_ortho_conflict);
+  
+  
 !echo 'add LocusLink Orthologue active data'
   INSERT INTO zdb_active_data 
   SELECT lnkortho_dblink_zdb_id 
@@ -481,7 +518,8 @@ UPDATE STATISTICS HIGH FOR table ortho_link;
 --  WHERE lnkortho_db_name = 'OMIM'
 --    AND lnkortho_acc_num NOT IN 
 --        (SELECT acc_num FROM old_omim_and_ll WHERE db_name = 'OMIM');
-  
+
+
 !echo 'insert LocusLink Orthologue db_links.'
 INSERT INTO db_link
       (
@@ -496,11 +534,19 @@ INSERT INTO db_link
         lnkortho_linked_recid,
         lnkortho_fdbcont_zdb_id,
         lnkortho_acc_num,
-        'Uncurrated: RefSeq load ' || TODAY,
+        'Uncurated: RefSeq load ' || TODAY,
         lnkortho_dblink_zdb_id,
         lnkortho_acc_num
     FROM ortho_link;
 
+       select mrkr_abbrev, fdbcont_fdb_db_name, zdb_id
+       from marker, db_link, foreign_db_contains, orthologue
+       where mrkr_zdb_id = c_gene_id
+         and zdb_id = dblink_linked_recid
+         and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+       group by 1,2,3
+       having count(*) >1;
+       
 
 -- --------------  DELETE duplicate ORTHO  ----------------- --
 -- select the mrkr for LocusLink
@@ -599,6 +645,8 @@ UPDATE STATISTICS HIGH FOR TABLE tmp_db_link;
 UPDATE STATISTICS HIGH FOR TABLE db_link;
 
 
+--Redundant links. A record with Marker/Acc_num/DB exists in ZFIN. Delete the matching record in tmp_db_link.
+
     SELECT dblink_linked_recid, fdbcont_fdb_db_name, dblink_acc_num
     FROM db_link, tmp_db_link, foreign_db_contains
     WHERE dblink_linked_recid = tmp_linked_recid
@@ -625,30 +673,11 @@ UPDATE STATISTICS HIGH FOR TABLE db_link;
 
     SELECT *
     FROM db_link
-    WHERE dblink_linked_recid not like "ZDB-GENE-%"
+    WHERE dblink_linked_recid not like "ZDB-GENE%"
     into temp tmp_est_db_link;
     
     DELETE FROM tmp_db_link
-    WHERE tmp_linked_recid like "ZDB-GENE-%"
-      and exists
-      (
-        SELECT *
-        FROM tmp_est_db_link, marker_relationship, foreign_db_contains
-        WHERE dblink_fdbcont_zdb_id = fdbcont_zdb_id
-          and fdbcont_fdb_db_name = tmp_db_name
-          and dblink_acc_num = tmp_acc_num
-          and dblink_linked_recid = mrel_mrkr_2_zdb_id
-          and tmp_linked_recid = mrel_mrkr_1_zdb_id
-          and mrel_type IN ('gene encodes small segment',
-                            'gene contains small segment',
-                            'gene hybridized by small segment')
-      );
-
---Remove links that would be assigned to a gene and currently have a 'Containes' relationship
---with a marker. [BAC,PAC]
-
-    DELETE FROM tmp_db_link
-    WHERE tmp_linked_recid like "ZDB-GENE-%"
+    WHERE tmp_linked_recid like "ZDB-GENE%"
       and exists
       (
         SELECT *
@@ -658,15 +687,64 @@ UPDATE STATISTICS HIGH FOR TABLE db_link;
           and dblink_acc_num = tmp_acc_num
           and dblink_linked_recid = mrel_mrkr_1_zdb_id
           and tmp_linked_recid = mrel_mrkr_2_zdb_id
+          and mrel_type IN ('gene encodes small segment',
+                            'gene contains small segment',
+                            'gene hybridized by small segment')
       );
+
+--Remove links that would be assigned to a gene and currently have a 'Contains' relationship
+--with a marker. [BAC,PAC]
+
+    DELETE FROM tmp_db_link
+    WHERE tmp_linked_recid like "ZDB-GENE%"
+      and exists
+      (
+        SELECT *
+        FROM tmp_est_db_link, marker_relationship, foreign_db_contains
+        WHERE dblink_fdbcont_zdb_id = fdbcont_zdb_id
+          and fdbcont_fdb_db_name = tmp_db_name
+          and dblink_acc_num = tmp_acc_num
+          and dblink_linked_recid = mrel_mrkr_2_zdb_id
+          and tmp_linked_recid = mrel_mrkr_1_zdb_id
+      );
+
 
 --These records are not linked through marker relationship. However, they have the same
 --accession record. They will be unloaded for curatorial investigation.
 
+    SELECT distinct dblink_linked_recid, 
+           tmp_linked_recid as conf_linked_recid, 
+           dblink_acc_num, 
+           fdbcont_fdb_db_name,
+           fdbcont_fdbdt_data_type
+    FROM db_link, tmp_db_link, foreign_db_contains
+    WHERE dblink_linked_recid != tmp_linked_recid
+      AND dblink_fdbcont_zdb_id = fdbcont_zdb_id
+      AND fdbcont_zdb_id = tmp_fdbcont_zdb_id
+      AND fdbcont_fdbdt_data_type != 'Genomic'
+      AND dblink_acc_num = tmp_acc_num
+    into temp tmp_conflict_db_link;
+    
+
+    UNLOAD to conflict_dblink.unl
+    select * from tmp_conflict_db_link;
+
+    DELETE FROM tmp_db_link
+    WHERE exists 
+      (
+        SELECT *
+        FROM tmp_conflict_db_link
+        WHERE dblink_acc_num = tmp_acc_num
+          AND conf_linked_recid = tmp_linked_recid
+          --AND fdbcont_fdb_db_name = tmp_db_name
+      );
+
+--should be a closing brachet
+{
     UNLOAD to dblink_gene_marker_non_encodes_pairs.unl
     SELECT tmp_linked_recid, dblink_linked_recid, tmp_acc_num, tmp_db_name
     FROM tmp_est_db_link, tmp_db_link, marker_relationship, foreign_db_contains
-    WHERE tmp_linked_recid like "ZDB-GENE-%"
+    WHERE tmp_linked_recid like "ZDB-GENE%"
       and dblink_fdbcont_zdb_id = fdbcont_zdb_id
       and fdbcont_fdb_db_name = tmp_db_name
       and dblink_acc_num = tmp_acc_num
@@ -675,10 +753,13 @@ UPDATE STATISTICS HIGH FOR TABLE db_link;
       and mrel_type NOT IN ('gene encodes small segment',
                             'gene contains small segment',
                             'gene hybridized by small segment');
-     
+}
+
+
+
     
 
--- --------------  DELETE MULTIPLES REFSEQ  ----------------- --
+-- --------------  DELETE MULTIPLE REFSEQ  ----------------- --
 -- Find all genes that have multiple RefSeq acc_nums.
 -- Unload the gene_abbrev/acc_num and delete the records.
 -- Failing to do this will result in a unique constraint violation.
@@ -742,7 +823,8 @@ WHERE dblink_acc_num IN
     FROM tmp_db_link
     WHERE tmp_db_name = 'Genbank'
   );
-  
+
+
 -- ------------------  add new links  ---------------------- --
 !echo 'add active data'
 INSERT INTO zdb_active_data SELECT tmp_dblink_zdb_id FROM tmp_db_link WHERE tmp_db_name = "RefSeq";
@@ -868,7 +950,7 @@ INSERT INTO tmp_db_link
     llzdb_zdb_id,
     'UniGene',
     uni_cluster_id,
-    'Uncurrated: RefSeq load ' || TODAY,
+    'Uncurated: RefSeq load ' || TODAY,
     'x',
     fdbcont_zdb_id,
     ''
@@ -925,7 +1007,6 @@ INSERT INTO record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
     SELECT tmp_dblink_zdb_id, 'ZDB-PUB-020723-3'
     FROM tmp_db_link
 ;
-
 
 
 --rollback work;
