@@ -110,7 +110,7 @@ Expected vars:  None.
       <option value=">" >after
     </SELECT>
     <SELECT name=century>
-      <option selected>19 <option>20 <option>18 </SELECT>
+      <option>19 <option selected>20 <option>18 </SELECT>
       <input type=text name=year size=2 maxlength=2>
     </TABLE>   
  
