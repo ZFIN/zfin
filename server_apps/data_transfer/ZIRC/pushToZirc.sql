@@ -23,8 +23,9 @@ unload to '<!--|ROOT_PATH|-->/home/data_transfer/ZIRC/zfinWildtypeLineAliases'
 
 unload to '<!--|ROOT_PATH|-->/home/data_transfer/ZIRC/zfinAlterations'
   delimiter '	'
-  select zdb_id, allele, locus 
-    from alteration;
+  select alteration.zdb_id, alteration.allele, alteration.locus, fish.zdb_id
+    from alteration, fish
+    where alteration.allele = fish.allele;
 
 -- generate aliases for alterations / alleles
 
