@@ -1,4 +1,15 @@
+<?MICOMMENT>
+At least as of 2004/03/11 (and probably well before that), this file 
+is not used anywhere in the web site.
 
+NOTE:
+Because this page drops temporary tables it cannot be webexploded from
+inside a select statement.  This page must first be retrieved with a 
+select statement and then passed to webexplode from an execute function 
+statement.  See discussion of the MIqry2pass variable in the Web
+Datablade documentation.
+
+<?/MICOMMENT>
 
 <HTML>
 
@@ -215,8 +226,6 @@
 <?/MIBLOCK>
 
 <?MISQL SQL="
-  -- without the insert statement, informix rejects the drop statement.
-  insert into temp_fish_image values ('','',0,0);
   drop table temp_fish_image;">
 <?/MISQL>
 
