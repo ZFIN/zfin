@@ -1,13 +1,32 @@
+<!-- Modified to support I.E.  Naviagtor tile buttons must know all user input from the query screen.  These values are posted to the lister form.  The lister form creates the tile bar button with appropriate variables. Startframes.apg will pass this variables on to the select form.  -->
+
+
 <HTML>
 
 
-<?MIVAR COND="$(OR,$(XST,$refcross),$(XST,$marker_type))">
-<BODY onLoad="parent.pbrowser.document.location='/ZFIN/misc_html/saysearching.html'; document.critform.submit();">
-<?/MIVAR>
+<SCRIPT>
+
+function form_submit() {
+document.critform.submit();
+}
+
+function call_reset() {
+
+document.critform.name.value = "";
+document.critform.refcross.selectedIndex = 0;
+document.critform.lg.selectedIndex = 0;
+document.critform.searchtype.selectedIndex = 1;
+document.critform.ismapped.checked = false;
+document.critform.knownloci.checked = false;
+}
+
+</SCRIPT>
 
 <basefont size=2>
 
-<form name=critform method=post TARGET="pbrowser" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" onSubmit="parent.pbrowser.document.location='/ZFIN/misc_html/saysearching.html'">
+<form name=critform method=post TARGET="pbrowser" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"  >
+
+<input type=hidden name=MIval value=aa-genelister.apg>
 
 <center>
 <U><B><FONT SIZE=5>Search for </font>
@@ -16,20 +35,23 @@
 
 
 <?MIVAR COND="$(NXST,$refcross)" NAME=$refcross>NULL<?/MIVAR>
-<?MIVAR COND="$(NXST,$marker_type)" NAME=$marker_type>GENE<?/MIVAR>
+<?MIVAR COND="$(NXST,$searchtype)" NAME=$searchtype>contains<?/MIVAR>
+<?MIVAR COND="$(NXST,$lg)" NAME=$lg>0<?/MIVAR>
 
-
+<?MIVAR>
 <TABLE width=100%>
 <TR>
 
 <TD><font size=2>
 <b>
 <SELECT name=searchtype>
-<option value=begins>Name begins with
-<option SELECTED value=contains>Name contains
-</select>:</b> <input type=text name=name size=10 >
-</font></TD>
+<option $(IF,$(EC,$searchtype,begins),SELECTED) value=begins>Name begins with
+<option $(IF,$(EC,$searchtype,contains),SELECTED) value=contains>Name contains
+</select>:</b><input type=text name=name size=10 >
+</font></TD> 
 
+<!--  assign navtile value to name - can not do with a value="name" in input statement - reset will not work -->
+<?MIBLOCK COND="$(XST,$nav_name)"><?MIVAR> <SCRIPT> document.critform.name.value = "$nav_name" </SCRIPT><?/MIVAR> <?/MIBLOCK>
 
 <TD align=right><font size=-1>
 <b>Mapping panel:</b> 
@@ -42,20 +64,50 @@
 </TD> 
 </TR>
 </table>
+<?/MIVAR>
 
 <table width=100%>
 <TR>
 
-
-
+<?MIVAR>
 <TD><font size=-1><b>LG:</b> <select NAME=lg>
-<option selected value=0>??<option value=1>1<option value=2>2<option value=3>3<option value=4>4<option value=5>5<option value=6>6<option value=7>7<option value=8>8<option value=9>9<option value=10>10<option value=11>11<option value=12>12<option value=13>13<option value=14>14<option value=15>15<option value=16>16<option value=17>17<option value=18>18<option value=19>19<option value=20>20<option value=21>21<option value=22>22<option value=23>23<option value=24>24<option value=25>25
+<option $(IF,$(EC,$lg,0),SELECTED)  value=0>??
+<option  $(IF,$(EC,$lg,1),SELECTED)  value=1>1
+<option  $(IF,$(EC,$lg,2),SELECTED)  value=2>2
+<option  $(IF,$(EC,$lg,3),SELECTED)  value=3>3
+<option  $(IF,$(EC,$lg,4),SELECTED)  value=4>4
+<option  $(IF,$(EC,$lg,5),SELECTED)  value=5>5
+<option  $(IF,$(EC,$lg,6),SELECTED)  value=6>6
+<option  $(IF,$(EC,$lg,7),SELECTED)  value=7>7
+<option  $(IF,$(EC,$lg,8),SELECTED)  value=8>8
+<option  $(IF,$(EC,$lg,9),SELECTED)  value=9>9
+<option  $(IF,$(EC,$lg,10),SELECTED)  value=10>10
+<option  $(IF,$(EC,$lg,11),SELECTED)  value=11>11
+<option  $(IF,$(EC,$lg,12),SELECTED)  value=12>12
+<option  $(IF,$(EC,$lg,13),SELECTED)  value=13>13
+<option  $(IF,$(EC,$lg,14),SELECTED)  value=14>14
+<option  $(IF,$(EC,$lg,15),SELECTED)  value=15>15
+<option  $(IF,$(EC,$lg,16),SELECTED)  value=16>16
+<option  $(IF,$(EC,$lg,17),SELECTED)  value=17>17
+<option  $(IF,$(EC,$lg,18),SELECTED)  value=18>18
+<option  $(IF,$(EC,$lg,19),SELECTED)  value=19>19
+<option  $(IF,$(EC,$lg,20),SELECTED)  value=20>20
+<option  $(IF,$(EC,$lg,21),SELECTED)  value=21>21
+<option  $(IF,$(EC,$lg,21),SELECTED)  value=22>22
+<option  $(IF,$(EC,$lg,23),SELECTED)  value=23>23
+<option  $(IF,$(EC,$lg,24),SELECTED)  value=24>24
+<option  $(IF,$(EC,$lg,25),SELECTED)  value=25>25
 </SELECT>
+<?/MIVAR>
 </font></TD>
 
 <TD colspan=2> 
 <font size=-1>
-<input type=checkbox name=ismapped> Show only mapped genes<br>
+
+<input type=checkbox name=ismapped > Show only mapped genes<br>
+<!--  assign navtile value to ismapped  -->
+<?MIBLOCK COND="$(XST,$nav_ismapped)"><?MIVAR> <SCRIPT> document.critform.ismapped.checked = true </SCRIPT><?/MIVAR> <?/MIBLOCK>
+
 <!-- STUBBED out for now 
 
 <font size=-1><b>within</b> <INPUT type=text size=3 name=within_cm>cM of 
@@ -75,16 +127,20 @@
 
 </TD>
 
+
+<?MIVAR>
 <TD colspan=2> 
 <font size=-1>
 <input type=checkbox name=knownloci> Show only genes with known mutant loci<br>
 </TD>
+<!--  assign navtile value to knownloci  -->
+<?MIBLOCK COND="$(XST,$nav_knownloci)"><?MIVAR> <SCRIPT> document.critform.knownloci.checked = true </SCRIPT><?/MIVAR> <?/MIBLOCK>
 
 
 
 <TD align=right WIDTH=30%>
-<input type=reset value="RESET">  
-<input type=submit name=action value="SEARCH"></TD>
+<input type=button value="RESET"  onClick="call_reset();">  
+<input type=submit name=action value="SEARCH" onSubmit="parent.pbrowser.document.location.href='/ZFIN/misc_html/saysearching.html';document.critform.submit();"></TD><?/MIVAR>
 </TR>
 </TABLE>
 <p>
@@ -99,11 +155,18 @@ we have to do at this point is pass the return record along to the markerlister.
 <?/MIVAR>
 
 
-<input type=hidden name=MIval value=aa-genelister.apg>
 
+<!-- If we have gotten to this page from a nav bar tile - we need to autosubmit to get
+ pbrowser frame populated -->
+
+
+<?MIVAR COND="$(XST,$navtile)">
+<SCRIPT>
+form_submit();
+</SCRIPT>
+<?/MIVAR>
 
 </form>
-
 
 </HTML>
 
