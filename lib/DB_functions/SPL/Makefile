@@ -26,6 +26,7 @@ TARGETDIR = $(TARGETROOT)/lib/DB_functions/SPL
 DBLINK_FUNCS = get_dblink_acc_num_display.sql
 FISH_FUNCS  = get_fish_full_name.sql
 IMAGE_FUNCS = get_image_stats.sql
+MRKR_FUNCS  = mhist_event.sql
 PUB_FUNCS   = get_pub_mini_ref.sql
 REGEN_FUNCS = regen_anatomy.sql regen_fishsearch.sql regen_genomics.sql \
 		regen_oevdisp.sql get_date_from_id.sql regen_panelcount.sql \
@@ -47,7 +48,7 @@ STAGE_FUNCS = \
 	stg_windows_overlap.sql 
 
 GENERICS = $(REGEN_FUNCS)
-STATICS  = $(DBLINK_FUNCS) $(FISH_FUNCS) $(IMAGE_FUNCS) \
+STATICS  = $(DBLINK_FUNCS) $(FISH_FUNCS) $(IMAGE_FUNCS) $(MRKR_FUNCS) \
 	   $(PUB_FUNCS) $(STAGE_FUNCS) $(ZDB_FUNCS) \
 	gene_contains_seg.sql 	insert_clone.sql
 
