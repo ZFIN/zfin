@@ -131,9 +131,6 @@ ERROR -- something bad happened -- no OID passed in!
 </ul>
 
 <?/MIBLOCK>  <!-- ends cond authorized -->
-<!-- For Yolanda -->
-<?MIVAR><img src="/<!--|CGI_BIN_DIR_NAME|-->/write.cgi?OID=$OID"></img><?/MIVAR>
-
 
 <?/MIBLOCK>  <!-- ends cond oid xst -->
 <?/MIBLOCK>  <!-- ends rowcount gt 0 -->
