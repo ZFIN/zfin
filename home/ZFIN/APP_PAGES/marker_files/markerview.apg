@@ -449,7 +449,7 @@
 
 <?MISQL SQL="select * from marker_history where mhist_mrkr_zdb_id = '$OID'">
 <?/MISQL>
-<?MIVAR COND="$(AND,$(EC,$marker_type,GENE),$(>,$MI_ROWCOUNT,0))"><font size=-1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-nomenview.apg&OID=$OID$(IF,$(XST,$UPDATE),&UPDATE=1)">Nomenclature History</A></font><?/MIVAR>
+<?MIVAR COND="$(AND,$(EC,$marker_type,GENE),$(>,$MI_ROWCOUNT,0))"><font size=-1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-nomenview.apg&OID=$OID&abbrev=$abbrev$(IF,$(XST,$UPDATE),&UPDATE=1)">Nomenclature History</A></font><?/MIVAR>
 <br>
 <!---------------- end NOMENCLATURE HISTORY ------------------------> 
 
@@ -464,69 +464,6 @@
 
 <?MIVAR>$(IF,$(NC,$comments,NULL),$comments,None submitted.)<?/MIVAR>
 
-<!-- display any putative gene name assignments, or the putative genes of markers contained in this marker -->
-<?MIBLOCK COND="$(EC,'foo','foo')">
-
-<?MISQL SQL="
- SELECT  lower(putgene_putative_gene_name), putgene_comments,
-         blast_mrkr_zdb_id
-    FROM putative_non_zfin_gene, outer blast
-    WHERE putgene_mrkr_zdb_id = '$OID'
-      and blast_mrkr_zdb_id = putgene_mrkr_zdb_id
-  UNION
-  SELECT lower(putgene_putative_gene_name), putgene_comments,
-         blast_mrkr_zdb_id
-    FROM putative_non_zfin_gene, marker_relationship, outer blast
-    WHERE mrel_mrkr_1_zdb_id = '$OID'
-      and mrel_mrkr_2_zdb_id = putgene_mrkr_zdb_id
-      and mrel_type = 'gene contains small segment'
-      and blast_mrkr_zdb_id = putgene_mrkr_zdb_id
- ;">
-
-    <?MIVAR NAME=$putgene_name><i>$1</i><?/MIVAR>
-    <?MIVAR NAME=$putgene_comments>$2<?/MIVAR>
-    <?MIVAR NAME=$blast_mrkr_zdb_id>$3<?/MIVAR>
-<?/MISQL>
-
-<?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
-  <hr width="80%">
-  <?MIVAR COND="$(XST,$UPDATE)">
-    <INPUT TYPE=button 
-      value=Update
-      onClick="doit('putgene_putative_gene_name','text','Name')">
-  <?/MIVAR> 
-  <?MIBLOCK COND="$(NE,$blast_mrkr_zdb_id,)">
-     <b>Top Blast Hit: </b><?MIVAR> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-blastdata.apg&OID=$blast_mrkr_zdb_id">$putgene_name</A><?/MIVAR>
-  <?MIELSE>
-     <b>Top Blast Hit: </b><?MIVAR>$putgene_name<?/MIVAR>
-  <?/MIBLOCK>
-  <p>
-  <?MIVAR COND="$(XST,$UPDATE)">
-    <INPUT TYPE=button value="Update" onClick="doit('putgene_comments','textarea','Comments')"> 
-  <?/MIVAR> 
-  <b>Comments: </b><?MIVAR>$putgene_comments<?/MIVAR>
-  <br>
-<?MIELSE> <?MIVAR NAME=CODECOMMENTS> No putative genes, but we still wanna display a blast result <?/MIVAR>
-  <?MISQL SQL="
-      SELECT blast_mrkr_zdb_id
-        FROM blast
-        WHERE blast_mrkr_zdb_id = '$OID'
-      UNION
-       SELECT blast_mrkr_zdb_id
-        FROM blast, marker_relationship
-        WHERE '$OID' = mrel_mrkr_1_zdb_id
-          and blast_mrkr_zdb_id = mrel_mrkr_2_zdb_id
-          and mrel_type = 'gene contains small segment'
-    ;">
-	     <?MIVAR> <br> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-blastdata.apg&OID=$1">BLAST data</A><?/MIVAR>
-
-<?/MISQL>
-
-<?/MIBLOCK>    
-
-
-<?/MIBLOCK>
-<!--------- end putative gene ----------------------------------->
 
 <!-------- CLONE info ------------------------------------------->
 
@@ -542,6 +479,7 @@
 <?MISQL SQL="
    select zdb_id, locus_name, abbrev from locus where cloned_gene='$OID';">
 <?/MISQL>
+<?MIVAR NAME=$locus>$1<?/MIVAR>
 
 <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
   
@@ -639,10 +577,10 @@
 <?MIBLOCK COND="$(>,$anncount,1)">
    <?MIBLOCK COND="$(EC,$isnot,t)">
     <?MIVAR><TD align=left><b>NOT</b> <A HREF=$dbquery$1>$(TRIM,$term)</a>
-     <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoview.apg&OID=$OID"><i>(more)</i></a></TD><?/MIVAR>
+     (<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoview.apg&OID=$OID"><i>more</i></a>)</TD><?/MIVAR>
    <?MIELSE>
     <?MIVAR><TD align=left><A HREF=$dbquery$1>$(TRIM,$term)</a>
-     <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoview.apg&OID=$OID"><i>(more)</i></a></TD><?/MIVAR>
+     (<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoview.apg&OID=$OID"><i>more</i></a>)</TD><?/MIVAR>
    <?/MIBLOCK>
 <?/MIBLOCK>
 <?MIBLOCK COND="$(=,$anncount,1)">
@@ -1271,13 +1209,30 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 <?MICOMMENT> *** 08/25 curator's decision that we will not pull over publications from related markers, or the known locus. However, any attribution to data items automatically populated to the marker itself. <?/MICOMMENT>
 
 <?MISQL SQL="
-  select count(distinct recattrib_source_zdb_id)::integer
-    from record_attribution, publication
+  select recattrib_source_zdb_id as zdb_id
+    from record_attribution, publication p
    where recattrib_data_zdb_id = '$OID' 
-     and recattrib_source_zdb_id = zdb_id
-     and jtype not in ('Curation', 'Unpublished');
+     and recattrib_source_zdb_id = p.zdb_id
+     and jtype not in ('Curation', 'Unpublished')
+  UNION
+  select colattrib_source_zdb_id as zdb_id
+    from column_attribution,publication p,locus l
+     where l.cloned_gene = '$OID'
+       and colattrib_data_zdb_id = l.zdb_id
+       and colattrib_column_name = 'cloned_gene'
+       and colattrib_source_zdb_id = p.zdb_id
+       into temp all_real_pubs_temp with no log;
   ">
+<?/MISQL>
+
+<?MISQL SQL="select distinct count(*) from all_real_pubs_temp;">
   <?MIVAR NAME=$count_of_real_pub>$1<?/MIVAR>
+<?/MISQL>
+
+<?MISQL SQL="
+  -- insert (actually any statement will do) is necessary to avoid an error
+  insert into all_real_pubs_temp (zdb_id) values (NULL);
+  drop table all_real_pubs_temp;">
 <?/MISQL>
 
 <?MIVAR NAME=related_data_attrib_to_OID>
@@ -1304,12 +1259,13 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
      and recattrib_source_zdb_id = zdb_id 
      and jtype in ('Curation', 'Unpublished');
   ">
+
   <?MIVAR NAME=$count_of_curation_pub>$1<?/MIVAR>
 <?/MISQL>
 <?MIVAR NAME=$total_count>$(+,$count_of_real_pub,$count_of_curation_pub)<?/MIVAR>
 <?MIBLOCK COND="$(OR,$(>,$total_count,0),$(XST,$UPDATE))">
   <?MIVAR>
-  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=$target_table&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev$(IF,$(XST,$UPDATE),&UPDATE=1)&total_count=$total_count"><b>CITATIONS</b></A>
+  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=$target_table&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev$(IF,$(XST,$UPDATE),&UPDATE=1)&total_count=$total_count&count_of_real_pub=$count_of_real_pub"><b>CITATIONS</b></A>
   <?/MIVAR>
 <?MIELSE>
   <b>CITATIONS</b>
