@@ -1,9 +1,20 @@
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+
+<?/MIERROR>
+
 <?MIVAR COND="$(NXST,$order_clause)" NAME=$order_clause> <?/MIVAR>
 
 
 <?MIBLOCK COND="$(XST,$refer)">
 <?MIVAR>$(HTTPHEADER,content-type,application/rtf)<?/MIVAR>
-<?MISQL SQL="select title,authors,source,year(pub_date) as pyear from publication where $constraint $order_clause;">
+<?MISQL SQL="select title,authors,source,year(pub_date) as pyear from publication $constraint $order_clause;">
 %A $2 
 %D $4
 %T $1
