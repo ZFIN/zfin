@@ -200,7 +200,7 @@ access to updating linkages from somewhere -- should be in the FISH record
 <TR><TD>
 
 <TABLE border=0 cellpadding=1 cellspacing=0>
-<?MIVAR NAME=$curviewer>/cgi-bin/Webdriver?MIval=aa-geneview.html&OID=<?/MIVAR>
+<?MIVAR NAME=$curviewer>/cgi-bin/Webdriver?MIval=aa-markerview.apg&OID=<?/MIVAR>
 <?MISQL SQL="select m2_abbrev,LOD,dist,m2_type,m2_id,a.owner,private,b.full_name,a.link_id,a.metric from all_linked_markers a, person b where a.owner=b.zdb_id and m1_id='$OID' order by m2_type,dist;">
 
 $(IF,$(=,$MI_CURRENTROW,1),"<TR><TD></TD><TD></TD><TD><U>Distance</U></TD><TD><U>LOD</U></TD></TR>")
