@@ -292,8 +292,8 @@
 		select alteration.zdb_id 
 		  from alteration, fish
 		  where fish.locus='$OID'
-		    and fish.allele ='$allele'
-	            and fish.allele= alteration.allele;">
+		    and lower(fish.allele) ='$(LOWER,$allele)'
+	            and lower(fish.allele) = lower(alteration.allele);">
 	        <?MIVAR NAME=$ALTOID>$1<?/MIVAR>
 	      <?/MISQL>
 	      <?MISQL SQL="
