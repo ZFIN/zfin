@@ -763,33 +763,28 @@ marker = '';
   
 	
    <?MISQL SQL="
-	select a.lnkgmem_linkage_zdb_id as t_lnkg_zdb_id, a.lnkgmem_member_zdb_id as t_lnkgmem_zdb_id
-	from linkage_member a
-       where a.lnkgmem_linkage_zdb_id in 
-	 	(select lnkgmem_linkage_zdb_id from linkage_member b
-		  where a.lnkgmem_linkage_zdb_id = b.lnkgmem_linkage_zdb_id
-		    and b.lnkgmem_member_zdb_id = '$detOID')
-         and a.lnkgmem_member_zdb_id <>	'$detOID'
-	into temp temp_lnkgmem with no log;"> 
-
-   <?/MISQL>
-
-
-    <?MISQL SQL="
-	select mrkr_zdb_id, mrkr_abbrev, mrkr_type, mrkrtype_type_display, lnkg_comments, lnkg_zdb_id,lnkg_or_lg
-         from temp_lnkgmem , linkage, marker, marker_types 
-        where t_lnkgmem_zdb_id = mrkr_zdb_id	
-          and t_lnkg_zdb_id = lnkg_zdb_id
+      select mrkr_zdb_id, mrkr_abbrev, mrkr_type, mrkrtype_type_display,
+	     lnkg_comments, lnkg_zdb_id, lnkg_or_lg
+        from linkage_member lmthis, linkage_member lmother, linkage, marker,
+	     marker_types
+	where lmthis.lnkgmem_member_zdb_id = '$detOID' and
+	      lmthis.lnkgmem_linkage_zdb_id = lmother.lnkgmem_linkage_zdb_id
+	  and lmthis.lnkgmem_member_zdb_id <> lmother.lnkgmem_member_zdb_id
+	  and lmother.lnkgmem_linkage_zdb_id = lnkg_zdb_id
+	  and lmother.lnkgmem_member_zdb_id = mrkr_zdb_id
 	  and mrkr_type = marker_type
-	UNION
-	    select f.zdb_id, l.abbrev, 'MUTANT', 'Mutant', lnkg_comments, lnkg_zdb_id, lnkg_or_lg
-	    from temp_lnkgmem , linkage, fish f, locus l, marker_types  
-    	   where t_lnkgmem_zdb_id = f.zdb_id	
-            and t_lnkg_zdb_id = lnkg_zdb_id
-	    and f.locus = l.zdb_id
-       order by 6	    
-	;">
-   	
+      UNION
+      select f.zdb_id, l.abbrev, 'MUTANT', 'Mutant', 
+	     lnkg_comments, lnkg_zdb_id, lnkg_or_lg
+	from linkage_member lmthis, linkage_member lmother, linkage, fish f,
+	     locus l
+	where lmthis.lnkgmem_member_zdb_id = '$detOID' and
+	      lmthis.lnkgmem_linkage_zdb_id = lmother.lnkgmem_linkage_zdb_id
+	  and lmthis.lnkgmem_member_zdb_id <> lmother.lnkgmem_member_zdb_id
+	  and lmother.lnkgmem_linkage_zdb_id = lnkg_zdb_id
+	  and lmother.lnkgmem_member_zdb_id = f.zdb_id
+	  and f.locus = l.zdb_id
+      order by 6;">
    
     <?MIVAR NAME=$distance><?/MIVAR>
     <?MIVAR NAME=$lod><?/MIVAR>
@@ -877,11 +872,6 @@ marker = '';
   <?MIVAR NAME=$mapped>t<?/MIVAR>	
  <?/MISQL>
  
- <?MISQL SQL=" 
-  		insert into temp_lnkgmem (t_lnkg_zdb_id) values (NULL);
-		drop table temp_lnkgmem ; "> 
- <?/MISQL>
-
  <?MIBLOCK COND="$(AND,$(XST,$subtable),$(EC,$subtable,y))">
   </TABLE>
   </TD></TR>
