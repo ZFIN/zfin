@@ -3,14 +3,14 @@
 # Include file for ZFIN_WWW makefiles.
 #
 # This file is included in every makefile in the ZFIN_WWW directory tree.
-# It dontains definitions that are common across all makefiles.
+# It contains definitions that are common across all makefiles.
 # 
 #------------------------------------------------------------------------ 
 
 # ----------------  Sanity Checks  --------------------------------------
 
 # The following error checks will abort make and print a nice explanatory
-# message as long as it can't find an executable named 'ERROR:' anywhwere.
+# message.
 
 # Must be running GNU make.  The following line appears to be testing that,
 # but in actuallity, if you are not running GNU make then the make will
@@ -19,7 +19,7 @@
 ifneq (,$(findstring gmake,$(MAKE)))
  ifneq (,$(findstring gnumake,$(MAKE)))
 MakeVersionCheck:
-	ERROR: Makefiles only compatible with GNU make.  Use gmake or gnumake.
+	$(error Makefiles only compatible with GNU make.  Use gmake or gnumake.)
  endif
 endif
 
@@ -30,7 +30,7 @@ endif
 
 ifndef INFORMIXDIR
 InformixDirCheck:
-	ERROR: Infomrix environment variables not all set.
+	$(error Infomrix environment variables not all set.)
 endif
 
 
@@ -40,11 +40,11 @@ endif
 
 ifndef TARGETROOT
 TargetRootCheck:
-	ERROR: TARGETROOT environment variable not set.
+	$(error TARGETROOT environment variable not set.)
 endif
 ifneq ($(filter /%,$(TARGETROOT)),$(TARGETROOT))
 TargetRootNotAbsolute:
-	ERROR: TARGETROOT must be an absolute path.
+	$(error TARGETROOT must be an absolute path.)
 endif
 
 # if TARGETROOT ends in a slash, strip it, double slashes in filenames
@@ -58,11 +58,11 @@ endif
 
 ifndef TARGETROOT
 TargetFtpRootCheck:
-	ERROR: TARGETFTPROOT environment variable not set.
+	$(error TARGETFTPROOT environment variable not set.)
 endif
 ifneq ($(filter /%,$(TARGETFTPROOT)),$(TARGETFTPROOT))
 TargetFtpRootNotAbsolute:
-	ERROR: TARGETFTPROOT must be an absolute path.
+	$(error TARGETFTPROOT must be an absolute path.)
 endif
 
 # if TARGETFTPROOT ends in a slash, strip it, double slashes in filenames
@@ -78,18 +78,18 @@ endif
 
 ifndef TARGETCGIBIN
 TargetCgiDirNameCheck:
-	ERROR: TARGETCGIBIN environment variable not set.
+	$(error TARGETCGIBIN environment variable not set.)
 endif
 ifeq ($(filter /%,$(TARGETCGIBIN)),$(TARGETCGIBIN))
 TargetCgiBinNotRelative:
-	ERROR: TARGETCGIBIN must be relative to TARGETROOT
+	$(error TARGETCGIBIN must be relative to TARGETROOT.)
 endif
 
 
 
 ifndef DBNAME
 DbNameCheck:
-	ERROR: DBNAME Environment variable not set.
+	$(error DBNAME Environment variable not set.)
 endif
 
 
@@ -97,11 +97,11 @@ endif
 
 ifndef TRANSLATETABLE
 TranslateTableCheck:
-	ERROR: TRANSLATETABLE Environment variable not set.
+	$(error TRANSLATETABLE Environment variable not set.)
 endif
 ifneq ($(filter /%,$(TRANSLATETABLE)),$(TRANSLATETABLE))
 TranslateTableNotAbsolute:
-	ERROR: TRANSLATETABLE must be an absolute path.
+	$(error TRANSLATETABLE must be an absolute path.)
 endif
 
 
@@ -140,10 +140,10 @@ UNLOADAPPPAGE = /research/zcentral/Commons/bin/unloadapppage.pl
 
 MAKESPECIFIC = /research/zcentral/Commons/bin/makespecific.pl
 
-SPECIFICCHECK = echo specificcheck -t $(TRANSLATETALE)
+SPECIFICCHECK = $(foreach GNRC,$(GENERICS),echo 'Informix weblint $(GNRC)'; $(WEBLINTIFMX) $(GNRC);)
 
 DBACCESS = $(INFORMIXDIR)/bin/dbaccess
-
+WEBLINTIFMX = $(INFORMIXDIR)/extend/web.4.13.FC2/utils/weblint 2 <
 
 # --- Java
 
