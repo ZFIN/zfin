@@ -1100,14 +1100,13 @@ sub locusAbbrevUnique ($) {
 	
   my $sql = 'select abbrev, locus_name, zdb_id
                from locus loc1
-	       where (   abbrev <> "xxx"
-		      or abbrev is NULL)
+	       where abbrev <> "xxx"
 		 and exists
 		     ( select count(*), abbrev
 			 from locus loc2
 			 where loc1.abbrev = loc2.abbrev
-			   and locus_name not like "Df%"
-			   and locus_name not like "T%"
+			   and loc2.locus_name not like "Df%"
+			   and loc2.locus_name not like "T%"
 		       group by abbrev
 		       having count(*) > 1 )
                order by abbrev, locus_name, zdb_id';
@@ -1563,45 +1562,6 @@ sub linkagePairHas2Members ($) {
 } 
 
 #=========================== Dblink =====================================   	
-#--------------------------------------------------------------
-#Parameter
-# $      Email Address for recipients
-# 
-sub dblinkRecidIsOrthoOrMarker ($) {
-	
-  logHeader("Checking each linked_recid in db_link exists in the orthologue, " 
-             . "or the marker table.");
-
-  my $sql = ' 
-              select linked_recid,
-                     db_name, 
-                     acc_num
-   		from db_link
-   	       where linked_recid not in 
-   			 (select zdb_id from orthologue)
-        	 and linked_recid not in 	
-                         (select mrkr_zdb_id from marker) ';
-
-  my @colDesc = ("Linked recid",
-		 "Db name     ",
-		 "Acc num     " );
-
-  my $nRecords = execSql ($sql, undef, @colDesc);
-  
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Linked_recid in neither orthologue nor marker";
-    my $routineName = "dblinkRecidIsOrthoOrMarker";
-    my $errMsg = "In db_link, $nRecords items' linked_recid doesn't exist in "
-                 . "either the orthologue table or the marker table.";
-                
-    logWarning ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
-    &recordResult($routineName, $nRecords);
-  }else {
-    print "Passed!\n";
-  }
-}
 
 #-------------------------------------------------------------
 #Parameter
@@ -1609,7 +1569,7 @@ sub dblinkRecidIsOrthoOrMarker ($) {
 # 
 sub orthologueHasDblink ($) {
 
-  logHeader ("Checking orthologue records have corresponding db_link record");
+  logHeader ("Checking orthologue records have corresponding db_link records");
 
   my $sql = '
              select zdb_id,
@@ -1617,13 +1577,13 @@ sub orthologueHasDblink ($) {
                     ortho_name,
                     entry_time
                from orthologue
-              where c_gene_id not in (
+              where zdb_id not in (
                                 select linked_recid 
                                   from db_link) 
              ';
  
   my @colDesc = ("Ortho ZDB ID",
-		 "C gene ID   ",
+		 "Gene ID     ",
 		 "Ortho name  ",
 		 "Entry time  " );
 
@@ -1631,10 +1591,9 @@ sub orthologueHasDblink ($) {
 
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
-    my $subject = "Orthologues not match any db link";
+    my $subject = "Orthologue(s) without links to any other database";
     my $routineName = "orthologueHasDblink";
-    my $errMsg = "In orthologue table, $nRecords records have no corresponding "
-    	                    ."gene record in db_link. ";
+    my $errMsg = "$nRecords orthologue(s) have 0 links to other databases.  ";
     logError ($errMsg); 
     &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
     &recordResult($routineName, $nRecords);
@@ -2451,7 +2410,6 @@ if($daily) {
   linkageHasMembers($linkageEmail);
   linkagePairHas2Members($linkageEmail);
 
-  dblinkRecidIsOrthoOrMarker($geneEmail);
   foreigndbNotInFdbcontains($otherEmail);
 
   zdbObjectHomeTableColumnExist($dbaEmail);
