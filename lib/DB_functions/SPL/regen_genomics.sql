@@ -556,7 +556,8 @@ create dba function "informix".regen_genomics() returning integer
 	(allmapnm_name, allmapnm_zdb_id, allmapnm_significance)
       select distinct lower(ortho_abbrev), c_gene_id, 11
 	from orthologue
-	where not exists
+	where ortho_abbrev is not null
+	  and not exists
 	      ( select *
 		from all_m_names_new an
 		where c_gene_id = an.allmapnm_zdb_id
