@@ -43,7 +43,7 @@ sub logError(@) {
     my $line;
     print  "\nError: \n";
     foreach $line (@_) {
-	print "$line\n";
+	print "$line";
     }
     print "\n";
     $globalErrorCount++;
@@ -174,7 +174,7 @@ sub stageWindowConsistent ($) {
     logError ($errMsg); 
     &sendMail($sendToAddress, $subject, $errMsg, $sql); 
   }else {
-    print "Passed!\n\n";
+    print "Passed!\n";
   }
 }
  
@@ -215,7 +215,7 @@ sub stageContainsStageWindowInContainerStageWindow ($) {
     logError ($errMsg);
     &sendMail($sendToAddress, $subject, $errMsg, $sql); 
   }else {
-    print "Passed!\n\n";
+    print "Passed!\n";
   }
 }
 
@@ -263,7 +263,7 @@ sub anatomyItemStageWindowConsistent ($) {
     logError ($errMsg);
     &sendMail($sendToAddress, $subject, $errMsg, $sql); 
   }else {
-    print "Passed!\n\n";
+    print "Passed!\n";
   }
 }
   
@@ -338,7 +338,7 @@ sub anatomyContainsStageWindowConsistent ($) {
   }
 
  else {
-    print "Passed!\n\n";
+    print "Passed!\n";
   }
 }
 
@@ -397,7 +397,7 @@ sub anatomyContainsStageWindowInContainerStageWindow($){
     logError ($errMsg);
     &sendMail($sendToAddress, $subject, $errMsg, $sql); 
   }else {
-    print "Passed!\n\n";
+    print "Passed!\n";
   }
 }
 
@@ -480,7 +480,7 @@ sub fishImageAnatomyStageWindowOverlapsAnatomyItem ($) {
     }
   }
   else {
-    print "Passed!\n\n";
+    print "Passed!\n";
   }
 }
 
@@ -524,7 +524,7 @@ sub expressionPatternStageWindowConsistent($) {
     logError ($errMsg);
     &sendMail($sendToAddress, $subject, $errMsg, $sql); 
   }else {
-    print "Passed!\n\n";
+    print "Passed!\n";
   }
 } 
 
@@ -608,7 +608,7 @@ sub expressionPatternAnatomyStageWindowOverlapsAnatomyItem ($) {
     }
   }
   else {
-    print "Passed!\n\n";
+    print "Passed!\n";
   }
 }
 
@@ -686,7 +686,7 @@ sub expressionPatternImageStageWindowOverlapsFishImage ($) {
     }
   }
   else {
-    print "Passed!\n\n";
+    print "Passed!\n";
   }
 }	
 
@@ -722,7 +722,7 @@ sub linkageHasMembers ($) {
     logError ($errMsg);
     &sendMail($sendToAddress, $subject, $errMsg, $sql); 
   }else {
-    print "Passed!\n\n";
+    print "Passed!\n";
   }
 } 
 
@@ -760,7 +760,7 @@ sub linkagePairHas2Members ($) {
     logError ($errMsg); 
     &sendMail($sendToAddress, $subject, $errMsg, $sql); 
   }else {
-    print "Passed!\n\n";
+    print "Passed!\n";
   }
 } 
 
@@ -799,7 +799,7 @@ sub dblinkRecidIsOrthoOrMarker ($) {
     logError ($errMsg);
     &sendMail($sendToAddress, $subject, $errMsg, $sql); 
   }else {
-    print "Passed!\n\n";
+    print "Passed!\n";
   }
 }
 
@@ -837,7 +837,7 @@ sub orthologueHasDblink ($) {
     logError ($errMsg); 
     &sendMail($sendToAddress, $subject, $errMsg, $sql); 
   }else {
-    print "Passed!\n\n";
+    print "Passed!\n";
   }
 } 
    			
@@ -883,7 +883,7 @@ sub zdbObjectHomeTableColumnExist ($) {
     logError ($errMsg); 
     &sendMail($sendToAddress, $subject, $errMsg, $sql); 
   }else {
-    print "Passed!\n\n";
+    print "Passed!\n";
   }
 } 
 
@@ -933,7 +933,7 @@ sub zdbObjectIsSourceDataCorrect($) {
     logError ($errMsg); 
     &sendMail($sendToAddress, $subject, $errMsg, $sql); 
   }else {
-    print "Passed!\n\n";
+    print "Passed!\n";
   }
 }
 
@@ -968,7 +968,7 @@ sub zdbObjectHandledByGetObjName ($) {
     logError ($errMsg); 
     &sendMail($sendToAddress, $subject, $errMsg, $sql); 
   }else {
-    print "Passed!\n\n";
+    print "Passed!\n";
   }
 }
 #----------------
@@ -1037,7 +1037,7 @@ sub externNoteAssociationWithData($) {
     }
   }
   else {
-    print "Passed!\n\n";
+    print "Passed!\n";
   }
 } 
 
@@ -1076,7 +1076,7 @@ sub extinctFishHaveNoSuppliers ($) {
     logError ($errMsg);
     &sendMail($sendToAddress, $subject, $errMsg, $sql); 
   }else {
-    print "Passed!\n\n";
+    print "Passed!\n";
   }
 } 
 
@@ -1111,7 +1111,7 @@ sub putativeNonZfinGeneNotInZfin ($) {
     logError ($errMsg); 
     &sendMail($sendToAddress, $subject, $errMsg, $sql); 
   }else {
-    print "Passed!\n\n";
+    print "Passed!\n";
   }
 } 
  
@@ -1146,11 +1146,25 @@ sub zdbReplacedDataIsReplaced ($) {
     logError ($errMsg); 
     &sendMail($sendToAddress, $subject, $errMsg, $sql); 
   }else {
-    print "Passed!\n\n";
+    print "Passed!\n";
   }
 }
 
 #========================== Active data & Source ========================
+#-------------------
+#
+sub subZdbActiveDataSourceStillInUse {
+ 
+  my @row = @_;
+  my $sql = "select *
+               from $row[1]                
+              where $row[2] = '$row[0]'";
+  
+  my @result = $dbh->selectrow_array($sql);
+  return @result? 0:1 ;
+ 
+}
+
 #-------------------------------------------------------------
 #Parameter
 # $      Email Address for recipients
@@ -1185,7 +1199,7 @@ sub zdbActiveDataStillActive($) {
     logError ($errMsg); 
     &sendMail($sendToAddress, $subject, $errMsg, $sql); 
   }else {
-    print "Passed!\n\n";
+    print "Passed!\n";
   } 
 }           
 #---------------------------------------------------------
@@ -1194,7 +1208,7 @@ sub zdbActiveDataStillActive($) {
 #
 sub zdbActiveSourceStillActive($) {
   
-  logHeader ("Checking zdb_id in zdb_active_sourc still in use");
+  logHeader ("Checking zdb_id in zdb_active_source still in use");
   
   my $sql = "
              select zactvs_zdb_id, 
@@ -1221,23 +1235,10 @@ sub zdbActiveSourceStillActive($) {
     logError ($errMsg); 
     &sendMail($sendToAddress, $subject, $errMsg, $sql); 
   }else {
-    print "Passed!\n\n";
+    print "Passed!\n";
   } 
 }   
 
-#-------------------
-#
-sub subZdbActiveDataSourceStillInUse {
- 
-  my @row = @_;
-  my $sql = "select *
-               from $row[1]                
-              where $row[2] = '$row[0]'";
-  
-  my @result = $dbh->selectrow_array($sql);
-  return @result? 0:1 ;
- 
-}
 
 #=======================================================================
 
