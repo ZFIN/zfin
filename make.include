@@ -32,8 +32,16 @@ endif
 # Check one Informix variable.  Assumed if it is defined, the rest are too.
 
 ifndef INFORMIXDIR
-$InformixDirCheck:
+InformixDirCheck:
 	ERROR: Infomrix environment variables not all set.
+endif
+
+
+# If we are building a mirror then disable calling gmake with no target.
+
+ifeq ($(INFORMIXSERVER),bogus.informix.server.for.mirrors)
+InvokingMirrorWithoutTarget:
+	ERROR: Reinvoke gmake with a mirror target.
 endif
 
 
