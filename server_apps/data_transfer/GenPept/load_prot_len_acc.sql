@@ -12,7 +12,7 @@ delete from prot_len_acc;
 insert into prot_len_acc select * from tmp_pla;
 drop table tmp_pla;
 
-{
+
 -- first time only -------------------------------------------
 update db_link set dblink_length = (
     select distinct pla_len 
@@ -24,45 +24,22 @@ and acc_num in (
     select pla_prot from prot_len_acc
 );
 
--- adopt any unattributed Genpept links
-! echo "Attribute existing Genpept links to ZFIN citation -onetime"
+! echo "adopt existing Genpept links to with NO citation"
 
 insert into record_attribution (recattrib_data_zdb_id,recattrib_source_zdb_id)
 select dblink_zdb_id ,(
-            select zdb_id from publication 
-            where authors = 'ZFIN Staff'
-            and title = 'Curation of NCBI Protein Sequence Database Links'   
-            )
-from db_link where db_name = 'GenPept' and dblink_zdb_id not in (
-    select recattrib_data_zdb_id 
-    from record_attribution
-    where recattrib_source_zdb_id = (
-        select zdb_id from publication 
+	select zdb_id from publication 
         where authors = 'ZFIN Staff'
         and title = 'Curation of NCBI Protein Sequence Database Links'   
-    )
 )
-;           
-}
+from db_link 
+where db_name = 'GenPept' 
+and dblink_zdb_id not in (select recattrib_data_zdb_id from record_attribution)
+;
 
 ---------------------------------------------------------------
-{
-! echo "drop incomming links already in ZFIN which are unchanged"
-delete from prot_len_acc where exists ( 
-    select 1 from db_link, record_attribution -- 
-    where db_name = 'GenPept' 
-    and  pla_prot = acc_num
-    and  pla_len = dblink_length
-    and  recattrib_data_zdb_id = dblink_zdb_id
-    and  recattrib_source_zdb_id in ( 
-        select zdb_id from publication 
-        where authors = 'ZFIN Staff'
-        and title = 'Curation of NCBI Protein Sequence Database Links'   
-    )
-);
-}
 
-! echo "drop GenPepts existing ZFIN attributed to NCBI Protein"
+! echo "drop GenPepts with existing ZFIN attribution to NCBI Protein or EMBL"
 delete from zdb_active_data where zactvd_zdb_id in (
     select dblink_zdb_id 
     from db_link,record_attribution
@@ -109,7 +86,6 @@ insert into db_link(
 ) select * from tmp_dblk
 ;
 
-
 ! echo "Attribute Genpept links to ZFIN citation"
 insert into record_attribution (recattrib_data_zdb_id,recattrib_source_zdb_id)
 select zad ,(select zdb_id from publication 
@@ -125,9 +101,7 @@ where pla_prot not in (
     select acc from tmp_dblk
 );   
 
-
 drop table tmp_dblk;
 drop table prot_len_acc;
 
 commit work;
-
