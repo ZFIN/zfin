@@ -177,7 +177,8 @@ OPTIONAL VARS:
 	var valid     = false;
 	var contacts = new String();
  	var additional_eaddr = document.contact_author.additional_eaddr.value; 
-	if( contact_grp.length > 0) {
+	
+	if( contact_grp && contact_grp.length > 0) {
           for (i=0; i<contact_grp.length; i++) {
 	
 		if(contact_grp[i].checked) {
@@ -186,7 +187,7 @@ OPTIONAL VARS:
 		
 		}
 	   }
-	} else if (contact_grp.checked){
+	} else if (contact_grp && contact_grp.checked){
 		valid = true;
 		contacts = contact_grp.value;
 	}
