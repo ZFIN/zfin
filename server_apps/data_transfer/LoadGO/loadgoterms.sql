@@ -253,7 +253,7 @@ create temp table tmp_obs (id	varchar(30),
 			alt_id varchar(30),
 			xref_analog varchar(100),
 			relationship varchar(20),
-			comment varchar(255),
+			comment lvarchar,
 			is_obsolete boolean,
 			xref_unknown varchar(100),
 			subset varchar(100),
@@ -272,12 +272,12 @@ create temp table tmp_obs_GO (
 			   id	    varchar(30),
 			   def	lvarchar,
 			   is_obsolete boolean,
-			   use_term varchar(255)
+			   comment lvarchar
 ) with no log ;
 
 
-insert into tmp_obs_GO (name, id, def, is_obsolete, use_term)
-  select name, substr(id, -7), def, is_obsolete, use_term
+insert into tmp_obs_GO (name, id, def, is_obsolete, comment)
+  select name, substr(id, -7), def, is_obsolete, comment
     from tmp_obs 
     where def like '%OBSOLETE%' or 
           def like '%obsolete%' or
@@ -288,7 +288,7 @@ create temp table tmp_obs_no_dups (
 			   id	    varchar(30),
 			   def	lvarchar,
 			   is_obsolete boolean,
-			   use_term varchar(255)
+			   comment lvarchar
 ) with no log ;
 
 insert into tmp_obs_no_dups 
@@ -297,28 +297,28 @@ insert into tmp_obs_no_dups
 create temp table tmp_new_obsoletes (counter integer,
 				     mrkr_name varchar(255), 
 			             goterm_name varchar(255), 
-				     use_term varchar(255)
+				     comment lvarchar
 ) with no log ;
 
 insert into tmp_new_obsoletes (counter,
 				mrkr_name,
 				goterm_name,
-				use_term)
+				comment)
   select count(*), 
 		mrkr_name, 
 		goterm_name, 
-		use_term
+		comment
   from go_term, marker_go_term_evidence, marker, tmp_obs_no_dups
   where goterm_go_id = id
   and goterm_zdb_id = mrkrgoev_go_term_zdb_id
   and mrkr_zdb_id = mrkrgoev_mrkr_zdb_id 
-   group by mrkr_name, goterm_name, use_term ;
+   group by mrkr_name, goterm_name, comment ;
 
 unload to new_obsolete_terms.unl 
   select "Number annotations: "||counter,
 	 "Gene: "||mrkr_name,
 	 "Go Term: "||goterm_name,
-	 "Use Term: "||use_term
+	 "Use Term Comments: "||comment
 	from tmp_new_obsoletes ;
 
 update go_term
