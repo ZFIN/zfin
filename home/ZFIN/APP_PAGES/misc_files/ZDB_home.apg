@@ -1,10 +1,10 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <HTML>
 <HEAD>
 <META HTTP-EQUIV="EXPIRES" CONTENT="-2d">
 <TITLE>ZFIN Home</TITLE>
 
-<script language="JavaScript" src="/client_sniff.js"></script>
+<script language="JavaScript" src="/client_sniff.js" type="text/javascript"></script>
 
 <SCRIPT> 
   if (is_nav4) {
@@ -33,18 +33,18 @@
 
 <!-- Set colors --> 
 <!-- Begin heading box -->
-<TABLE class="header" bgcolor=<!--|LINKBAR_COLOR|--> cellpadding=0 cellspacing=0 width=100%>
-  <TR bgcolor=<!--|LINKBAR_COLOR|-->>
-    <TD rowspan=2 bgcolor=<!--|LINKBAR_COLOR|-->  width=80 align=left valign=bottom  >
+<TABLE class="header" bgcolor="<!--|LINKBAR_COLOR|-->" cellpadding="0" cellspacing="0" width="100%">
+  <TR bgcolor="<!--|LINKBAR_COLOR|-->">
+    <TD rowspan="2" bgcolor="<!--|LINKBAR_COLOR|-->" width="80" align="left" valign="bottom">
       <IMG src="/images/zfinlogo.gif" width=80 border=0> 
     </TD>
-    <TD bgcolor=#FFFFFF align="left" width="30%">
-      <IMG src="/images/zfintxt.gif" border=0>
+    <TD bgcolor="#FFFFFF" align="left" width="30%">
+      <IMG src="/images/zfintxt.gif" border="0">
     </TD>
     <TD bgcolor="#FFFFFF" width="70%" align="center">
        <img src="/images/new1.gif">
        <font size="-1" color="black">
-        <b>Help us build a better database for you!<b>
+        <b>Help us build a better database for you!</b>
        </font><br>
        <font size="-1" color="black">
          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Please complete the 
@@ -56,9 +56,9 @@
        </font></b></a>
     </TD>
   </TR>
-  <TR bgcolor=<!--|LINKBAR_COLOR|-->>
-    <TD class="login" bgcolor=<!--|LINKBAR_COLOR|--> colspan=3>
-      <TABLE border=0 height=20 cellspacing=0 cellpadding=0 width=100%>
+  <TR bgcolor="<!--|LINKBAR_COLOR|-->">
+    <TD class="login" bgcolor="<!--|LINKBAR_COLOR|-->" colspan="3">
+      <TABLE border="0" height="20" cellspacing="0" cellpadding="0" width="100%">
 	<TR>
 	  <TD>
 	    <DIV class="header">
@@ -451,15 +451,6 @@
 			       value="regen_fishsearch">
 		      </form>
 
-		      <form action='/<!--|CGI_BIN_DIR_NAME|-->/runSPL.cgi' method="GET" >
-
-			<input type=hidden
-			       name="run"
-			       value="regen_names">
-
-			<input type=submit value="Regen Marker Name data">
-		      </form>
-		      
 		      <form action='/<!--|CGI_BIN_DIR_NAME|-->/runSPL.cgi' method="GET" >
 
 			<input type=hidden
