@@ -47,6 +47,7 @@
    <?/MISQL>
 
   <?MIVAR NAME=viewmap>f<?/MIVAR>
+  <?MIVAR NAME=$mapdetLG>0<?/MIVAR>
   <?MISQL SQL="
 	SELECT or_lg, 'p'
 	FROM mapped_marker
@@ -88,15 +89,16 @@
 	  and mrel_mrkr_1_zdb_id = '$GNID'
 	  and lnkgmem_linkage_zdb_id = lnkg_zdb_id
 	  and lnkg_or_lg <> '0'
-	order by 2
+	order by 2 desc, 1
       ;">
 
       
      <?MIVAR COND="$(EC,$MI_CURRENTROW,1)">
 	$(IF,$(EC,$2,p),$(SETVAR,$viewmap,t))
-	LG:&nbsp;
+	LG:&nbsp;$1
      <?/MIVAR>
-     <?MIVAR COND="$(>,$MI_CURRENTROW,1)">,&nbsp;<?/MIVAR>$1
+     <?MIVAR COND="$(AND,$(>,$MI_CURRENTROW,1),$(NC,$1,$mapdetLG))">,&nbsp;$1
+     <?/MIVAR>
      <?MIVAR NAME=$mapdetLG>$1<?/MIVAR>
   <?/MISQL>
   <?MIBLOCK COND="$(=,$MI_ROWCOUNT,1)">
@@ -104,7 +106,7 @@
   <?/MIBLOCK>	
   <?MIVAR COND="$(AND, $(EC,$hide_empty,f), $(=,$MI_ROWCOUNT,0))">None submitted.<?/MIVAR>
 
-<?MIELSE>
+<?MIELSE><MICOMMENT>need modification here<?/MICOMMENT>
   <?MIVAR>LG:&nbsp;$lg_list<?/MIVAR>
 <?/MIBLOCK>
 
