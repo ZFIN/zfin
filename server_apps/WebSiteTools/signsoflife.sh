@@ -33,12 +33,11 @@ endif
 #may disapear from process list--but if it disapears for longer
 #than 10 tries, we want to know about it.
 
-if ($logon != 2) then
-    sleep 3
+if ($backupon != 2) then
+endif
 
-    if ($backupon != 1) then
-       sleep 3
-    endif
+if ($logon != 2) then
+    sleep 6
 
     if ($logon != 2) then
         set logmode="check ontape"
