@@ -25,8 +25,8 @@ The changes you have specified are effective immediately.</big>
 <p>
 Note that this doesn't mean you've deleted the person's ZFIN record, just their ability to log in as a registered user.
 <p>
-<form>
-<input type=button value="Back to viewing PERSON record" onClick="window.history.go(-2)">
+<form><?MIVAR>
+<input type=button value="Back to viewing PERSON record" onClick="window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$OID'"><?/MIVAR>
 </form>
 <?/MIBLOCK>
 
@@ -103,8 +103,8 @@ Note that this doesn't mean you've deleted the person's ZFIN record, just their 
 <big>Your update was successfully completed. The changes you have specified are effective immediately.</big>
 <p>
 <form>
-<input type=button value="Back to viewing PERSON record" onClick="window.history.go(-2)">
-</form>
+<?MIVAR>
+<input type=button value="Back to viewing PERSON record" onClick="window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$OID'"><?/MIVAR></form>
 
 <?/MIBLOCK> <!-- ends cond name,address,etc exists -->
 
