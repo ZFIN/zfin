@@ -3,7 +3,8 @@ From: zirc@zfin.org
 Subject: SUB: [lineName] [mutantAlleles] [transgeneName] for [required_submitterName]
 
 
-***for PAT ************************************* 
+
+***for SHERRY ************************************* 
 
 SUBMITTER CONTACT INFORMATION
 Submitter Name:
@@ -55,7 +56,7 @@ organization responsible for funding:
 ---
 
 
-***for KEN ************************************* 
+***for DAVE ************************************* 
 
 LINE/MUTANT INFORMATION
 Allele(s):
