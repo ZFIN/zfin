@@ -7,7 +7,7 @@ This page is only accessable as root.
 Expected Vars:
   $OID :: the ZDB of a Data for which a note is being added
 
-Optional Vars and/or Vars in this apg page: 
+Optional Vars: 
   $dnote :: a new data_note
   $delete_dnote :: set if delete button is clicked
   $calling_apg :: if this page is called from another location, this is
@@ -17,7 +17,6 @@ Optional Vars and/or Vars in this apg page:
   $dnote_text :: holds the text from the note box in the form
   $dnote_date :: date of annotation, set to current
   $dnote_zdb_id :: id of the existing dnotes for marker of interest.
-
 
 <?/MICOMMENT>
 
@@ -31,31 +30,8 @@ Optional Vars and/or Vars in this apg page:
   Message: $MI_ERRORMSG <br>
 
 <?/MIERROR>
-
-<?MIBLOCK COND="$(XST,$OID)">
-
-  <?MISQL SQL="select WebExplode(object,'permission=root&page_title=Curate Note') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
-
-<?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
-
-  <?MISQL SQL="SELECT mrkr_name FROM marker WHERE mrkr_zdb_id='$OID'">
-    <?MIVAR NAME=$mrkr_name>$1<?/MIVAR>
-  <?/MISQL>
-
-<?MIBLOCK COND="$(XST,$mrkr_name)">
-
- <?MIBLOCK COND=$(XST,$dnote)>
-    <?MIVAR NAME=encoded_note>$(URLENCODE,$dnote)<?/MIVAR>
-    <?MISQL SQL="select WebExplode(object,'dnotenew_DATA=$OID&dnotenew_CUR=$ZDB_ident&dnotenew_NOTE=$encoded_note') from webPages where ID='aa-dnote_new.apg';">$1<?/MISQL>
-  <?/MIBLOCK>
-
-  <?MIBLOCK COND=$(XST,$delete_dnote)>
-  <?MISQL SQL="DELETE FROM zdb_active_data WHERE zactvd_zdb_id = '$delete_dnote';"><?/MISQL>
-  <?/MIBLOCK>
-
 <SCRIPT>
-   
-      function replaceLocation(url) {
+         function replaceLocation(url) {
         if (navigator.userAgent.indexOf("Safari") >= 0) 
           location = url;        
         else 
@@ -95,43 +71,59 @@ Optional Vars and/or Vars in this apg page:
         return true;
       }
 
-
-    <?MIVAR COND=$(XST,$calling_apg)>
-      window.replaceLocation("$calling_apg");
-    <?/MIVAR>
-
+      <?MIVAR COND=$(XST,$calling_apg)>
+         window.replaceLocation("$calling_apg");
+      <?/MIVAR>
 
   </SCRIPT>
 
 <!-------------------------Curation Notes Header-------------->
  
- <?MIVAR>
-    <TITLE>ZFIN Curation Notes: $mrkr_name</TITLE>
- <?/MIVAR>
+<?MIBLOCK COND="$(XST,$OID)">
+
+    <?MISQL SQL="select WebExplode(object,'permission=root&page_title=Curate Note') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+  
+    <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
+
+    <?MISQL SQL="SELECT mrkr_name FROM marker WHERE mrkr_zdb_id='$OID'">
+      <?MIVAR NAME=$mrkr_name>$1<?/MIVAR>
+    <?/MISQL>
+
+      <?MIBLOCK COND="$(XST,$mrkr_name)">
+
+  <?MIVAR>
+     <TITLE>ZFIN Curation Notes: $mrkr_name</TITLE>
+  <?/MIVAR>
   
   <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
   
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
+  <table cellspacing=0 cellpadding=3 width=100%>
+     <tr bgcolor="<!--|SIDEBAR_COLOR|-->">
+       <td>
+         <FONT SIZE=+1><b> Curation </b></FONT> 
+       </td>
+     </tr>
+     <tr bgcolor="<!--|HIGHLIGHT_COLOR|-->">
+       <td>
+         <?MIVAR>
+           <b>Gene/Marker/Clone:</b>
+           <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID">$mrkr_name</a>
+         <?/MIVAR>
+       </td>
+     </tr>
+     <tr>
+       <td>
 
- <table cellspacing=0 cellpadding=3 width=100%>
-    <tr bgcolor="<!--|SIDEBAR_COLOR|-->">
-      <td>
-        <FONT SIZE=+1><b> Curation </b></FONT> 
-      </td>
-    </tr>
-    <tr bgcolor="<!--|HIGHLIGHT_COLOR|-->">
-      <td>
-        <?MIVAR>
-          <b>Gene/Marker/Clone:</b>
-          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID">$mrkr_name</a>
-        <?/MIVAR>
-      </td>
-    </tr>
-    <tr>
-      <td>
+      <?MIBLOCK COND=$(XST,$dnote)>
+         <?MIVAR NAME=encoded_note>$(URLENCODE,$dnote)<?/MIVAR>
+         <?MISQL SQL="select WebExplode(object,'dnotenew_DATA=$OID&dnotenew_CUR=$ZDB_ident&dnotenew_NOTE=$encoded_note') from webPages where ID='aa-dnote_new.apg';">$1<?/MISQL>
+      <?/MIBLOCK>
 
-<!-------------------------Notes Box------->
+      <?MIBLOCK COND=$(XST,$delete_dnote)>
+      <?MISQL SQL="DELETE FROM zdb_active_data WHERE zactvd_zdb_id = '$delete_dnote';"><?/MISQL>
+      <?/MIBLOCK>
 
 <P>
   <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method=post name=new_notes>
@@ -182,24 +174,21 @@ Optional Vars and/or Vars in this apg page:
     </tr>
   </table>
 
-<!----------------------Exceptions----------------->
+     <?MIELSE>
+        <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+        <b>Requested ID not found in ZFIN.</b>
+     <?/MIBLOCK> <!-- title is null -->
 
+   <?MIELSE>
+   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+   <p>Authorization for this page failed.
+   <p>A session error may have occurred. Try logging out and logging back in. If that does not work, contact your database administrator.
+   <?/MIBLOCK> <!-- not authorized -->
 
-<?MIELSE>
-  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
-  <b>Requested ID not found in ZFIN.</b>
-<?/MIBLOCK> <!-- title is null -->
-
-<?MIELSE>
-  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
-  <p>Authorization for this page failed.
-  <p>A session error may have occurred. Try logging out and logging back in. If that does not work, contact your database administrator.
-<?/MIBLOCK> <!-- not authorized -->
-
-<?MIELSE>
-  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
-  <P>
-  ERROR -- something bad happened -- no OID passed in!
-<?/MIBLOCK>
+ <?MIELSE>
+   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+   <P>
+   ERROR -- something bad happened -- no OID passed in!
+ <?/MIBLOCK>
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
