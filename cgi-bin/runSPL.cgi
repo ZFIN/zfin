@@ -57,6 +57,9 @@
   elsif ($Q->param('run') eq "regen_oevdisp")    
    {
     $statement = "execute function regen_oevdisp();";
+   }elsif ($Q->param('run') eq "regen_maps")    
+   {
+    $statement = "execute function regen_maps();";
    }
 
   my $result;
