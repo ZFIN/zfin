@@ -123,8 +123,8 @@ order by 3;">
   <?MISQL SQL="
       select count(*)::integer
       from blast b1, blast b2
-      where '$label_name' = b1.blast_mrkr_zdb_id
-        and b2.blast_mrkr_zdb_id = 'ZDB-EST-020730-3'
+      where '$label_id' = b1.blast_mrkr_zdb_id
+        and b2.blast_mrkr_zdb_id = 'ZDB-EST-010914-2'
         and b1.blast_results != b2.blast_results;">
     <td>
       $(IF,$(=,$1,0),no,yes)
