@@ -41,9 +41,9 @@ case "$1" in
 	#  variable LD_LIBRARY_PATH to be exported into its subprocess (a security restriction),
 	#  we must explicitly set the variable INSIDE the new subprocess.
 	if [ "${_INIT_RUN_LEVEL}" = "3" ] ; then 
-	    /bin/su <!--|APP_PAGE_USER|--> -c "$SERVER_HOME/runServer $LD_LIBRARY_PATH $JAVA_DIR/bin/java Server" >> Server.out 2>&1 &
+	    /bin/su <!--|APP_PAGE_USER|--> -c '$SERVER_HOME/runServer $LD_LIBRARY_PATH "$JAVA_DIR/bin/java Server <!--|DB_NAME|--> <!--|JAVA_SERVER_PORT|-->"' >> Server.out 2>&1 &
 	else 
-	    $SERVER_HOME/runServer $LD_LIBRARY_PATH $JAVA_DIR/bin/java Server >> Server.out 2>&1 &
+	    $SERVER_HOME/runServer $LD_LIBRARY_PATH "$JAVA_DIR/bin/java Server <!--|DB_NAME|--> <!--|JAVA_SERVER_PORT|-->" >> Server.out 2>&1 &
 	fi
 	;;
 

@@ -10,14 +10,14 @@ class MIConnection extends Object /* implements java.sql.Connection (in part) */
     
     public MIConnection () throws SQLException
     {
-	Object connection = openConnection (null, null, null);
+		Object connection = openConnection (null, null, null);
 	if (connection == null)
 	    throw new SQLException ("Connection failed");
     }
 
     public MIConnection (String database, String user, String password) throws SQLException
     {
-	Object connection = openConnection (database, user, password);
+		Object connection = openConnection (database, user, password);
 	if (connection == null)
 	    throw new SQLException ("Connection failed");
     }

@@ -44,6 +44,7 @@ class DBConnection extends Thread
 	protected static SyncCounter nextConnectNum = new SyncCounter (1);
 	protected int connectNum;
 	protected Server server;
+	protected String dbname;
 	protected String user;
 	protected String password;
 
@@ -76,9 +77,10 @@ class DBConnection extends Thread
 	}
 	
 
-    public DBConnection (Server serv, Socket client_socket, Object sem, String user, String password)
+    public DBConnection (Server serv, Socket client_socket, Object sem, String dbname, String user, String password)
 	{
 		server = serv;
+		this.dbname = dbname;
 		this.user = user;
 		this.password = password;
 		connectNum = nextConnectNum.next ();
@@ -119,7 +121,8 @@ class DBConnection extends Thread
 				System.out.println ("Just entered sync block for DBConnection " + connectNum);
 			try
 			{
-				MIConnection DB = new MIConnection ("<!--|DB_NAME|-->", user, password);
+				System.out.println ("Connecting to " + dbname);
+				MIConnection DB = new MIConnection (dbname, user, password);
 				Statement si = DB.createStatement ();
 		
 					/*

@@ -19,8 +19,9 @@ import java.util.Date;
 
 public class Server extends Thread
 {
-    public final static int DEFAULT_PORT = <!--|JAVA_SERVER_PORT|-->;
+    public final static int DEFAULT_PORT = 0;
 
+	protected String dbname;
     protected int port;
     protected ServerSocket listen_socket;
 	protected String user;
@@ -42,33 +43,40 @@ public class Server extends Thread
     // Start the server up, listening on an optionally specified port
     public static void main(String[] args)
 	{
-		if (args.length >3)
+		if (args.length >4)
 		{
-			System.err.println ("Usage:  java Server [portnum [username [password]]]\n");
+			System.err.println ("Usage:  java Server dbname portnum [username [password]]\n");
 			System.exit (1);
 		}
-        int port = 0;
+
+		String dbname = null;
 		if (args.length >= 1)
-            try { port = Integer.parseInt(args[0]);  }
+			dbname = args[0];
+
+		int port = 0;
+		if (args.length >= 2)
+            try { port = Integer.parseInt(args[1]);  }
             catch (NumberFormatException e) { port = 0; }
 
+
 		String user = null;
-		if (args.length >= 2)
-			user = args [1];
+		if (args.length >= 3)
+			user = args [2];
 		
 		String password = null;
-        if (args.length == 3)
-			password = args [2];
+        if (args.length == 4)
+			password = args [3];
 
-        new Server(port, user, password);
+        new Server(dbname, port, user, password);
     }
 
     // Create a ServerSocket on which to listen for connections;  start the thread.
-    public Server(int port, String user, String pass) {
+    public Server(String dbname, int port, String user, String pass) {
 		System.out.println ("\n\n\n------------------ Starting Java Illustra server -----------------");
 		System.out.println ("Started at " + new Date ());
 		activeConnection [0] = false;
         if (port == 0) port = DEFAULT_PORT;
+		this.dbname = dbname;
         this.port = port;
 		this.user = user;
 		this.password = pass;
@@ -87,7 +95,7 @@ public class Server extends Thread
             while(true)
 			{
                 Socket client_socket = listen_socket.accept();
-                DBConnection c = new DBConnection (this, client_socket, semaphore, user, password);
+                DBConnection c = new DBConnection (this, client_socket, semaphore, dbname, user, password);
             }
         }
         catch (IOException e) { 
