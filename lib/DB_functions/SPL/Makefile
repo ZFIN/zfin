@@ -38,8 +38,9 @@ MRKR_STATS   = gene_contains_seg.sql mhist_event.sql p_mrel_grpmem_correct.sql \
 	       p_check_mrkr_abbrev.sql \
                p_insert_into_record_attribution_tablezdbids.sql \
                p_insert_into_record_attribution_datazdbids.sql \
-	       p_insert_marker_go_ev.sql p_populate_go_unknowns.sql 	
-PUB_STATS    = get_pub_mini_ref.sql
+	       p_insert_marker_go_ev.sql p_populate_go_unknowns.sql \
+	       p_check_drop_go_unknown.sql				
+PUB_STATS    = get_pub_mini_ref.sql p_drop_go_unknown_attribution.sql
 REGEN_GNRCS  = regen_fishsearch.sql regen_genomics.sql regen_oevdisp.sql \
 	       regen_panelcount.sql regen_maps.sql
 ZDB_GNRCS    = table_exists.sql
