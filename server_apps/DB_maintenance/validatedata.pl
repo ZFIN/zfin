@@ -1873,15 +1873,15 @@ sub pubTitlesAreUnique($) {
 	"ZDB-PUB-010417-9",   { "ZDB-PUB-990414-35", }
 	"ZDB-PUB-010711-2",   { "ZDB-PUB-010814-8", }
 	"ZDB-PUB-000824-10",  { "ZDB-PUB-990824-40", }
-	"ZDB-PUB-010912-1",   { "ZDB-PUB-021017-13" }
-        "ZDB-PUB-980420-9",    { "ZDB-PUB-030425-13" }
+	"ZDB-PUB-010912-1",   { "ZDB-PUB-021017-13", }
+        "ZDB-PUB-980420-9",    { "ZDB-PUB-030425-13", }
         "ZDB-PUB-010718-13"   { "ZDB-PUB-020913-1"  }      
 
 )
       group by title 
       having count(*) > 1 
      into temp dup_titles with no log;';
-
+  
   # I tried running this through execSql, but if this query returned 0 rows
   # then the 2nd query would get a DBI error.
   my $sth = $dbh->prepare($sql1) or die "Prepare fails";
