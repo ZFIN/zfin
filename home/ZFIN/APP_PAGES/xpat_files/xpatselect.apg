@@ -170,7 +170,8 @@ function call_reset() {
     from stage
     where stg_hours_start = 
 	  ( select min(stg_hours_start) 
-	      from stage )">
+	      from stage )
+      and stg_name <> 'Unknown'; ">
   <?MIVAR NAME=$xpatsel_minStage>$1<?/MIVAR>
 <?/MISQL>
 <?MISQL SQL="
@@ -178,7 +179,8 @@ function call_reset() {
     from stage
     where stg_hours_start = 
 	  ( select max(stg_hours_start) 
-	      from stage )">
+	      from stage )
+      and stg_name <> 'Unknown'; ">
   <?MIVAR NAME=$xpatsel_maxStage>$1<?/MIVAR>
 <?/MISQL>
 
@@ -829,20 +831,23 @@ function call_reset() {
 	  <td rowspan=2>
 	    <!-- stage -->
 	    <FONT size=2><B> Between stages:</B> <br>
+              <?MICOMMENT>the Unknown stage will only be used in AO, thus that should not 
+                          be an option on xpatselect page.
+              <?/MICOMMENT>
 	      <SELECT NAME="stage_start" SIZE=1>
-		<?MISQL SQL="select unique stg_name, stg_hours_start, stg_hours_end, stg_zdb_id
-			     from stage, anatomy_display
-			     where stg_zdb_id = anatdisp_stg_zdb_id
-			     order by stg_hours_start, stg_hours_end desc;">
+		<?MISQL SQL="select stg_name, stg_hours_start, stg_hours_end, stg_zdb_id
+			       from stage
+			      where stg_name <> 'Unknown'	
+			      order by stg_hours_start, stg_hours_end desc;">
 		  <OPTION $(IF,$(EC,$stage_start,$4),SELECTED) VALUE="$4"> $1 
 		<?/MISQL>
 	      </SELECT>
 	      <b>&</b><br>
 	      <SELECT NAME="stage_end" SIZE=1>
 		<?MISQL SQL="
-		  	select unique stg_name, stg_hours_start, stg_hours_end, stg_zdb_id
-			from stage, anatomy_display
-			where stg_zdb_id = anatdisp_stg_zdb_id
+		  	select stg_name, stg_hours_start, stg_hours_end, stg_zdb_id
+			  from stage
+			 where stg_name <> 'Unknown'	
 			order by stg_hours_start, stg_hours_end desc">
 		  <OPTION $(IF,$(EC,$stage_end,$4), SELECTED) VALUE="$4")> $1 
 		<?/MISQL>
