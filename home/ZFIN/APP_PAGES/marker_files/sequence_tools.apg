@@ -41,7 +41,7 @@ SQL: select WebExplode(object,'seqt_acc=BM735913&seqt_acc_len=411&seqt_acc_type=
 <script type="text/javascript" language="JavaScript">
 function jump(form_select){
     if (0 != form_select.selectedIndex){
-        window.open(form_select.options[form_select.selectedIndex].value,'SequenceTools');
+        window.open(form_select.options[form_select.selectedIndex].value,'Math.random()*2000000000');
     }
     return true;
 }
