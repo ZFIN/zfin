@@ -9,7 +9,7 @@
 # Modified some code from Jeff Hobbs Jeffrey Hobbs 
 # Jan 15 1997
 
-# Just a silly little script that deals with forms that are to be mailed to locusreg. Locusreg is an alias which points to edwards@uoneuro.uoregon.edu and nomenclature@zfin.org.  It grabs
+# Script deals with forms that are to be mailed to locusreg. Locusreg is an alias which points to edwards@uoneuro.uoregon.edu and nomenclature@zfin.org.  It grabs
 # the relevant vars that are passed in, and composes into a nice email.
 # Required Variables:
 # Sender: The name of the person sending the request.
@@ -29,7 +29,7 @@ Content-type: text/HTML\n\n
 <BODY>
 <h1 align=center> Confirmation</h1>
 <b> Your request has been emailed to ZFIN nomenclature committee.</b> If you have given a contact email, you should receive a copy of this email.  <p>
-The nomenclature committee will review the proposed name.  Assuming there are no problems, you should receive confirmation of registration within the next week or two. If you do not receive a confirmation, please <A HREF="mailto:locusreg\@<!--|DOMAIN_NAME|-->">Contact the ZFIN staff</A>.
+The nomenclature committee will review the proposed name.  Assuming there are no problems, you should receive confirmation of registration within the next week or two. If you do not receive a confirmation, please <A HREF="mailto:<!--|LOCUS_REGISTRATION_EMAIL|-->">Contact the ZFIN staff</A>.
 <p>
 <form>
 <input type=button value="Go to ZDB HOME Page" onClick="top.content.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg')">
@@ -53,9 +53,9 @@ if ($email eq 'Unknown') {$email=''};
 
 open(MAIL, "| $mailprog") || die "Content-type: text/plain\n\nCan't open mailprog $mailprog, stopped";
 print MAIL <<"STOP";
-To: locusreg\@<!--|DOMAIN_NAME|-->
+To: <!--|LOCUS_REGISTRATION_EMAIL|-->
 Cc: $email
-From: locusreg\@<!--|DOMAIN_NAME|-->
+From: <!--|LOCUS_REGISTRATION_EMAIL|--> 
 Subject: Request to Register a new locus or Allele
 
 REQUEST TO REGISTER A NEW LOCUS AND/OR ALLELE.
