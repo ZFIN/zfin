@@ -32,6 +32,8 @@ TRIGGERS = \
 	dalias_alias_update_trigger.sql \
 	db_link_insert_trigger.sql \
 	db_link_update_trigger.sql \
+	expression_pattern_insert_trigger.sql \
+	expression_pattern_update_trigger.sql \
 	expression_pattern_anatomy_insert_trigger.sql \
 	expression_pattern_anatomy_update_trigger.sql \
 	expression_pattern_image_insert_trigger.sql \
