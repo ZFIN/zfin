@@ -97,8 +97,8 @@ Others -- if s_new exists, then name,abbrev,comments,alt_names should also exist
 
     <?MISQL COND="$(EC,$marker_type,gene)" SQL="
       insert into gene 
-        (zdb_id,gene_name,abbrev,comments,alt_names,mapped,owner) 
-        values ('$new_id','$mname','$abbrev','$comments','$alt_names','f',
+        (zdb_id, gene_name, abbrev, comments, alt_names, owner) 
+        values ('$new_id', '$mname', '$abbrev', '$comments', '$alt_names',
         '$ZDB_ident');"><?/MISQL>
 
     <?MISQL COND="$(NC,$marker_type,gene)" SQL="
