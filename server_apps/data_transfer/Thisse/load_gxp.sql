@@ -1149,7 +1149,8 @@ create temp table tmp_dalias
     tal_zdb_id	varchar(50),
     tal_data_zdb_id	varchar(50),
     tal_alias	varchar(80),
-    tal_group	varchar(50)
+    tal_group	varchar(50),
+    tal_alias_lower varchar(255)
   )
 with no log;
 
@@ -1183,7 +1184,8 @@ unload to 'bad_relationships.unl' select * from relationship_tmp;
 ------------------- previous names --------------------------------
 -- select clones that are genes
 insert into tmp_dalias
-select get_id('DALIAS'), gene.mrkr_zdb_id, est.mrkr_name, 'alias'
+select get_id('DALIAS'), gene.mrkr_zdb_id, est.mrkr_name, 'alias',
+		lower(est.mrkr_name)
 from mrel_tmp, marker est, marker gene
 where gene.mrkr_zdb_id = mrkr_1
   and est.mrkr_zdb_id = mrkr_2;
