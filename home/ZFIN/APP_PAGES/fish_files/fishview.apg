@@ -507,7 +507,7 @@ $(IF,$(AND,$(XST,$UPDATE),$(EC,$10,original)),"<SELECT name=chrom_number onChang
 <?MIVAR NAME=$override>$(IF,$(OR,$(EC,$ZDB_access,root),$(EC,$ZDB_access,fishauth)),true,false)<?/MIVAR>
 
 <TABLE cellpadding=2>
-<?MIVAR NAME=$curviewer>/cgi-bin_B/webdriver?MIval=aa-geneview.html&OID=<?/MIVAR>
+<?MIVAR NAME=$curviewer>/cgi-bin_B/webdriver?MIval=aa-markerview.apg&OID=<?/MIVAR>
 <?MISQL SQL="select m1_abbrev,LOD,dist,m1_type,m1_id,a.owner,private,b.full_name,a.link_id,a.metric  from all_linked_markers a,person b where m2_id='$OID' and a.owner=b.zdb_id order by m1_type,dist;">
 
 $(IF,$(=,$MI_CURRENTROW,1),"<TR><TD></TD><TD></TD><TD><U>Distance</U></TD><TD><U>LOD</U></TD><td></TD></TR>")
