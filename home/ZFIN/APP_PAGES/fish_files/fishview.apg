@@ -759,14 +759,15 @@ Variables Expected:
 
  		  $(IF,$(AND,$(EC,$alt_mutagen,Unknown),$(EC,$alt_protocol,Unknown)),"Unknown")
                   <?MIVAR COND="$(EC,$alt_protocol,Unknown)" NAME=$alt_protocol><?/MIVAR>
-		  $(IF,$(AND,$(NC,$alt_mutagen,spontaneous),$(NC,$alt_mutagen,Unknown),$(OR,$(NXST,$UPDATE),$(NC,$intfc_status,original))),$alt_protocol" treated with "$alt_mutagen)
-	 	   <?MISQL SQL="select WebExplode(object,'dataId=$ALTOID&type=colattrib&info=mutagen') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
- 		 
-		  <?/MIVAR>
-		  <?/MIBLOCK>	
-		
+		  <?MIBLOCK COND="$(AND,$(NC,$alt_mutagen,spontaneous),$(NC,$alt_mutagen,Unknown),$(OR,$(NXST,$UPDATE),$(NC,$intfc_status,original)))">
+		  <?MIVAR>$alt_protocol treated with $alt_mutagen<?/MIVAR>
+ 
+		  <?MISQL SQL="select WebExplode(object,'dataId=$ALTOID&type=colattrib&info=mutagen') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+		  <?/MIBLOCK>
 
-		  $(IF,$(AND,$(NC,$alt_mutagen,spontaneous),$(XST,$UPDATE),$(EC,$intfc_status,original)),"<SELECT name=protocol onChange=doProtocol(this.options[this.selectedIndex].value,'"$alt_protocol"','"$alt_zdb_id"')>
+ 	
+		  <?MIBLOCK COND="$(AND,$(NC,$alt_mutagen,spontaneous),$(XST,$UPDATE),$(EC,$intfc_status,original))">
+		  <SELECT name=protocol onChange=doProtocol(this.options[this.selectedIndex].value,'"$alt_protocol"','"$alt_zdb_id"')>
 		  <option "$(IF,$(EC,$alt_protocol,Unknown),SELECTED)" value=Unknown>Unknown
 		  <option "$(IF,$(EC,$alt_protocol,Adult_Males),SELECTED)" value="Adult_Males">Adult Males
 		  <option "$(IF,$(EC,$alt_protocol,Adult_Females),SELECTED)" value="Adult_Females">Adult Females
@@ -780,10 +781,11 @@ Variables Expected:
 		  <option "$(IF,$(EC,$alt_mutagen,g-rays),SELECTED)" value=g-rays>g-rays
 		  <option "$(IF,$(EC,$alt_mutagen,DNA),SELECTED)" value=DNA>DNA
 		  <option "$(IF,$(EC,$alt_mutagen,spontaneous),SELECTED)" value=spontaneous>spontaneous
-		  </SELECT>
-	          <?MISQL SQL='select WebExplode(object,'dataId=$ALTOID&type=colattrib&info=mutagen') from webPages where ID='aa-miniref_display.apg';'>$1<?/MISQL>		 		 
-		  ")
-		   <br>
+		  </SELECT>	          		 
+		  <?MISQL SQL="select WebExplode(object,'dataId=$ALTOID&type=colattrib&info=mutagen') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+		  <?/MIBLOCK>
+		 
+		  <br>
 
 		  <b>Mutation Type:</b> 
 		  $(IF,$(OR,$(NXST,$UPDATE),$(NC,$intfc_status,original)),$alt_chrom_change)
