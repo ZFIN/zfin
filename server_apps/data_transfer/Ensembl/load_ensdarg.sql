@@ -3,17 +3,34 @@ begin work;
 create table ensdarg (darg_zdb varchar(50), darg_ens varchar(50));
 load from 'ensdarg.unl' insert into ensdarg;
 
-! echo "update any zdbids from ensemble which have been changed"
-update ensdarg 
-set   darg_zdb = (
-    select zrepld_new_zdb_id from zdb_replaced_data 
-    where darg_zdb = zrepld_old_zdb_id
-)
+! echo "find & remove any zdb_ids from ensemble which have been SPLIT in ZFIN"
+select * from ensdarg where exists (
+    select 1
+    from zdb_replaced_data a,zdb_replaced_data b
+    where darg_zdb = a.zrepld_old_zdb_id
+    and   darg_zdb = b.zrepld_old_zdb_id
+    and  a.zrepld_new_zdb_id <> b.zrepld_new_zdb_id
+);
+
+delete from ensdarg where exists (
+    select 1
+    from zdb_replaced_data a,zdb_replaced_data b
+    where darg_zdb = a.zrepld_old_zdb_id
+    and   darg_zdb = b.zrepld_old_zdb_id
+    and  a.zrepld_new_zdb_id <> b.zrepld_new_zdb_id
+);
+
+! echo "update any zdb_ids from ensemble which have been REPLACED in ZFIN"
+update ensdarg set darg_zdb = replaced_zdb(darg_zdb)
 where darg_zdb in(select zrepld_old_zdb_id from zdb_replaced_data)
 ;
 
-! echo "sanity check"
+! echo "sanity check - do the remaining zdb's still exist in zfin"
 select * from ensdarg where darg_zdb not in (
+    select mrkr_zdb_id from marker where mrkr_type = 'GENE'
+);
+
+delete from ensdarg where darg_zdb not in (
     select mrkr_zdb_id from marker where mrkr_type = 'GENE'
 );
 
@@ -31,9 +48,12 @@ delete from ensdarg where exists (
 	and linked_recid = darg_zdb
 	and acc_num = darg_ens
 );
+
 ! echo "Add current ENSEMBL links and automated attribution"
-select *,get_id('DBLINK') zad 
+select distinct *, '012345678901234567890123456789' zad 
 from ensdarg into temp tmp_dblink with no log;
+
+update tmp_dblink set zad = get_id('DBLINK');
 insert into zdb_active_data select zad from tmp_dblink;
 insert into record_attribution select zad, 'ZDB-PUB-030703-1' from tmp_dblink;
 insert into db_link (linked_recid,db_name,acc_num,info,dblink_zdb_id,dblink_acc_num_display)
