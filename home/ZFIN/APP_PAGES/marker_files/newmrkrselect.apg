@@ -1,4 +1,8 @@
 <?MICOMMENT>
+
+FILE:   newmrkrselect.apg
+PREFIX: newmrkrsel_
+
  added onChange to each variable to reset START for walking windows - this 
 is needed if users alter query after using the navtile button and without 
 using the reset button. if the new query result has fewer than the first 
@@ -135,6 +139,14 @@ Datablade documentation.
 		mrkrmch_significance	integer ); ">
       <?/MISQL> 	 
 
+      <?MICOMMENT> get significance for clone contains gene names <?/MICOMMENT>
+      <?MISQL SQL="
+        select nmprec_significance 
+          from name_precedence
+          where nmprec_precedence = 'Clone contains gene'">
+	<?MIVAR NAME=$newmrkrsel_cloneContainsGeneSig>$1<?/MIVAR>
+      <?/MISQL>
+
       <?MIVAR NAME=mchIdLast><?/MIVAR>	
       <?MISQL SQL="
 	 select allmapnm_zdb_id, allmapnm_name, allmapnm_significance
@@ -142,7 +154,8 @@ Datablade documentation.
 	  where allmapnm_name_lower like '$wild_card$(LOWER,$input_name)%'
             and allmapnm_precedence <> 'Accession number'
 	UNION
-	 select mrel_mrkr_1_zdb_id as allmapnm_zdb_id, allmapnm_name, 15 as allmapnm_significance
+	 select mrel_mrkr_1_zdb_id as allmapnm_zdb_id, allmapnm_name, 
+                $newmrkrsel_cloneContainsGeneSig as allmapnm_significance
 	  from marker_relationship, all_map_names 
 	 where mrel_mrkr_2_zdb_id = allmapnm_zdb_id 
  	   and mrel_type = 'clone contains gene'
@@ -319,7 +332,7 @@ Datablade documentation.
 	   from bigselect_temp_markers
           where mrkr_abbrev = '$input' ;">
      <?/MISQL>
-     <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+     <?MIBLOCK COND="$(!=,$MI_ROWCOUNT,0)">
 	<?MIVAR NAME=OID>$1<?/MIVAR>
      <?MIELSE>
        <?MISQL SQL="
@@ -376,7 +389,7 @@ Datablade documentation.
      </TR>
      <TR><TD>&nbsp;</TD><TD>&nbsp;</TD></TR>
      <TR><TD width=80% align=center>
-        <?MIBLOCK COND="$(>,$type_count,0)"> 
+        <?MIBLOCK COND="$(!=,$type_count,0)"> 
         <table align=center>
         <ul>
         <?MISQL SQL="
@@ -390,7 +403,7 @@ Datablade documentation.
 	 <?MIVAR NAME=$search_count>$2<?/MIVAR>
 	 <?MIVAR NAME=$mtype_display>$3<?/MIVAR>
 
-	 <?MIBLOCK COND="$(>,$search_count,0)">  
+	 <?MIBLOCK COND="$(!=,$search_count,0)">  
 	   <?MISQL SQL="
 		select mtgrpmem_mrkr_type
 		 from  marker_type_group_member
@@ -399,7 +412,7 @@ Datablade documentation.
 	     ">
            <?/MISQL> 
 	  
-	   <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+	   <?MIBLOCK COND="$(!=,$MI_ROWCOUNT,0)">
 		<?MIVAR NAME=$linkto>msegselect.apg<?/MIVAR>
 		<?MIVAR NAME=$linkparam>$mseg_param_list<?/MIVAR>
 	   <?MIELSE>
@@ -411,16 +424,18 @@ Datablade documentation.
  		<SCRIPT>location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$linkto&marker_type=$mtype_in_db$linkparam")</SCRIPT>
 	   <?/MIVAR>
 
-	   <?MISQL COND="$(>,$(POSITION,$mtype_in_db,GENE),0)" SQL="
+	   <?MISQL COND="$(!=,$(POSITION,$mtype_in_db,GENE),0)" SQL="
 		select count(distinct mrkr_zdb_id)::integer
 		  from bigselect_temp_markers
 		 where mrkr_type = '$mtype_in_db'
  		   and mrkr_zdb_id in (select cloned_gene from locus) ;">
 		<?MIVAR NAME=knownloci_count>$1<?/MIVAR>
-		<?MIVAR COND="$(>,$knownloci_count,0)" NAME=gene_extra>(<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$linkto&marker_type=$mtype_in_db$linkparam&knownloci=t">$1 with known mutant loci</A>)<?/MIVAR>
+		<?MIVAR COND="$(!=,$knownloci_count,0)" NAME=gene_extra>(<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$linkto&marker_type=$mtype_in_db$linkparam&knownloci=t">$1 with known mutant loci</A>)<?/MIVAR>
 	   <?/MISQL> 	
            <?MIVAR>
-	     <TR><TD><b><li><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$linkto&marker_type=$mtype_in_db$linkparam">$search_count $mtype_display$(IF,$(>,$search_count,1),s) </A> $(IF,$(AND,$(>,$(POSITION,$mtype_in_db,GENE),0),$(>,$knownloci_count,0)),$gene_extra)</li></b></TD></TR><?/MIVAR>
+	     <TR><TD><b><li>
+               <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$linkto&marker_type=$mtype_in_db$linkparam">$search_count $mtype_display$(IF,$(!=,$search_count,1),s) </A> 
+               $(IF,$(AND,$(!=,$(POSITION,$mtype_in_db,GENE),0),$(!=,$knownloci_count,0)),$gene_extra)</li></b></TD></TR><?/MIVAR>
 
 	 <?MIELSE> <!-- when only one match for one type, link directly-->
 	   <?MISQL SQL="
