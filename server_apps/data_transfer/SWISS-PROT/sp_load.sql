@@ -49,18 +49,11 @@ begin work;
 	       		select distinct *, today ||" Swiss-Prot",acc_num 
 			  from db_link_with_dups;
         
-	update pre_db_link set dblink_fdbcont_zdb_id = 
-				(select fdbcont_zdb_id 
-			  	   from foreign_db_contains 
-				  where lower(trim(db_name))=lower(fdbcont_fdb_db_name) 
-				    and fdbcont_fdbdt_data_type like '%cDNA%')
-			where db_name = "Genbank"; 
-
+--!echo 'per curator's request, Genbank and GenPept accession are no longer loaded from SP file'
 	update pre_db_link set dblink_fdbcont_zdb_id = 
 				(select fdbcont_zdb_id 
 				   from foreign_db_contains 
-				  where lower(trim(db_name))=lower(fdbcont_fdb_db_name)) 
-			where db_name <> "Genbank"; 
+				  where lower(db_name)=lower(fdbcont_fdb_db_name)); 
 
 --!echo 'Genbank has to be treated differently here since the type is unknown'	
 	delete from pre_db_link where exists (
@@ -68,42 +61,8 @@ begin work;
 		from db_link d
 		where pre_db_link.linked_recid=d.dblink_linked_recid
                   and pre_db_link.acc_num=d.dblink_acc_num
-		  and pre_db_link.db_name <> "Genbank"
 		  and pre_db_link.dblink_fdbcont_zdb_id = d.dblink_fdbcont_zdb_id
 		);
-
-	delete from pre_db_link where exists (
-		select d.dblink_zdb_id
-		from db_link d
-		where pre_db_link.linked_recid=d.dblink_linked_recid
-                  and pre_db_link.acc_num = d.dblink_acc_num
-		  and pre_db_link.db_name = "Genbank"
-		  and d.dblink_fdbcont_zdb_id in ("ZDB-FDBCONT-040412-36","ZDB-FDBCONT-040412-37")
-		) ;
-
---!echo 'Delete if an encoded cDNA/EST has the cDNA type genbank accession'
-	delete from pre_db_link where exists (
-		select d.dblink_zdb_id
-		from db_link d, marker_relationship
-		where pre_db_link.linked_recid = mrel_mrkr_1_zdb_id
-		  and mrel_mrkr_2_zdb_id = d.dblink_linked_recid
-		  and mrel_type = "gene encodes small segment"
-                  and pre_db_link.acc_num = d.dblink_acc_num
-		  and pre_db_link.db_name = "Genbank"
-		  and d.dblink_fdbcont_zdb_id  = "ZDB-FDBCONT-040412-37"
-		) ;
-
---!echo 'Delete if a BAC/PAC the contains the gene has the genomic type genbank accession'
-	delete from pre_db_link where exists (
-		select d.dblink_zdb_id
-		from db_link d, marker_relationship
-		where pre_db_link.linked_recid = mrel_mrkr_2_zdb_id
-		  and mrel_mrkr_1_zdb_id = d.dblink_linked_recid
-		  and mrel_type = "clone contains gene"
-                  and pre_db_link.acc_num = d.dblink_acc_num
-		  and pre_db_link.db_name = "Genbank"
-		  and d.dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-36"
-		) ;
 
 	update pre_db_link set dblink_zdb_id = get_id("DBLINK"); 
 
@@ -171,55 +130,7 @@ begin work;
 	       from pre_ac_alias;
 
 
------------------------- loading gn alias --------------------
-       create temp table gn_dalias_with_dups (
-                  prm_acc             varchar(50),      
-                  gnalias_data_zdb_id varchar(50),
-                  gnalias_gname       varchar(120)
-                )with no log;
-
---!echo 'Load gn_dalias.unl'
-        load from gn_dalias.unl insert into gn_dalias_with_dups;
-        create temp table pre_gn_dalias (
-                  dalias_zdb_id varchar(50),
-                  dalias_data_zdb_id varchar(50),
-                  dalias_alias       varchar(120),
-                  dalias_group       varchar(30),
-		  dalias_alias_lower	varchar(255)
-                )with no log;                            
-        insert into pre_gn_dalias 
-                (dalias_data_zdb_id, dalias_alias, dalias_group, 
-			dalias_alias_lower)
-                 select distinct gnalias_data_zdb_id,
-                                 gnalias_gname, "alias",
-				 lower(gnalias_gname)
-                 from gn_dalias_with_dups;    
-
-	delete from pre_gn_dalias
-	       where exists 
-               	       ( select d.dalias_zdb_id
-                  	   from data_alias d
-                	  where d.dalias_data_zdb_id = pre_gn_dalias.dalias_data_zdb_id
-                  	    and d.dalias_alias = pre_gn_dalias.dalias_alias ); 
-
-        update pre_gn_dalias
-                set dalias_zdb_id = get_id("DALIAS");
-
---!echo 'Insert DALIAS into zdb_active_data'
-        insert into zdb_active_data
-                 select dalias_zdb_id from pre_gn_dalias;
-
---!echo 'Insert GN into data_alias'
-        insert into data_alias 
-                        select * from pre_gn_dalias;
-
---!echo 'Attribute GN to the internal pub record'
-        insert into record_attribution 
-                (recattrib_data_zdb_id, recattrib_source_zdb_id)
-                select gn.dalias_zdb_id,"ZDB-PUB-020723-2"
-                from pre_gn_dalias gn;
-
-
+--!echo 'per curator's request, no longer load gn alias -----------------
 
 ------------------------- loading marker go evidence  --------------------
 
@@ -391,59 +302,46 @@ begin work;
 --	  	               select mrkrgoev_zdb_id,mrkrgoev_source from pre_marker_go_evidence;
 
 
-	
-
 ---------------- loading cc field -----------------------------
 
 -- loading cc
         create temp table temp_mrkr_cc (
-                data_zdb_id      varchar(50),
-                cc_note          varchar(255)
+                gene_zdb_id      varchar(50),
+		sp_acc_num	 varchar(50),
+                cc_note          lvarchar(32613)
         )with no log;
 
 --!echo 'Load cc_external.unl'
         load from cc_external.unl insert into temp_mrkr_cc;
 
         create temp table pre_external_note(
-                extnote_zdb_id          varchar(50),
-                extnote_note_file       varchar(255), 
-                extnote_note            clob
+                p_extnote_zdb_id          varchar(50),
+                p_extnote_data_zdb_id     varchar(50), 
+                p_extnote_note            lvarchar(32613)
         )with no log;
-         insert into pre_external_note (extnote_note,extnote_note_file)
-                select FILETOCLOB(cc_note,'client','external_note','extnote_note'),cc_note from temp_mrkr_cc;
+         insert into pre_external_note (p_extnote_note,p_extnote_data_zdb_id)
+                select cc_note, dblink_zdb_id
+	          from temp_mrkr_cc, db_link
+		 where gene_zdb_id = dblink_linked_recid
+		   and sp_acc_num  = dblink_acc_num
+		   and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-47";
 
         update pre_external_note
-                        set extnote_zdb_id = get_id("EXTNOTE");
+                        set p_extnote_zdb_id = get_id("EXTNOTE");
 
 
 --!echo 'Insert EXTNOTE into zdb_active_data'
-        insert into zdb_active_data
-                select extnote_zdb_id from pre_external_note;
-
---!echo 'Insert into external_note'
-        insert into external_note
-                select extnote_zdb_id, extnote_note  from pre_external_note;
+        insert into zdb_active_data (zactvd_zdb_id)
+                select p_extnote_zdb_id from pre_external_note;
 
 --!echo 'Attribute EXTNOTE to the internal pub record'
-        insert into record_attribution
-                select extnote_zdb_id, "ZDB-PUB-020723-2",''
+        insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
+                select p_extnote_zdb_id, "ZDB-PUB-020723-2"
                 from pre_external_note;
 
-
-        create temp table data_external_note_with_dups(
-                dextnote_data_zdb_id    varchar(50),
-                dextnote_extnote_zdb_id varchar(50)
-         )with no log;
-
-
-        insert into data_external_note_with_dups
-                select data_zdb_id, extnote_zdb_id
-                from temp_mrkr_cc t, pre_external_note e
-                where t.cc_note = e.extnote_note_file;
-
---!echo 'Insert into data_external_note'
-        insert into data_external_note (dextnote_data_zdb_id, dextnote_extnote_zdb_id)
-                        select distinct * from data_external_note_with_dups;
+--!echo 'Insert into external_note'
+        insert into external_note (extnote_zdb_id, extnote_data_zdb_id, extnote_note)
+                   select * from pre_external_note;
 
 
 --rollback work;
