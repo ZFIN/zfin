@@ -31,6 +31,15 @@ else
     exit;
     
 endif
+#=========== Duplication check =================
+echo "== checking duplication ..."
+
+$INFORMIXDIR/bin/dbaccess $dbname checkDups.sql >& checkDups.out
+set $rs = `grep retrieved checkDups.out`
+if ( $?rs ) then
+	echo "Duplication detected in checkDups.out"
+	exit;
+endif
 
 #========= Naming Clone ================
 if (-e acc_imClone.unl) then
