@@ -4,6 +4,8 @@ create trigger mrkr_name_update_trigger
                    new as newM
     for each row
       (
+	execute function scrub_char ( newM.mrkr_name )
+		into marker.mrkr_name,
         execute function zero_pad(newM.mrkr_name)
                 into marker.mrkr_name_order,
         execute procedure mhist_event (newM.mrkr_zdb_id,'renamed',

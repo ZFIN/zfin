@@ -2,6 +2,10 @@ create trigger marker_insert_trigger insert on
     marker referencing new as new_marker
     for each row
         (
+	execute function scrub_char ( new_marker.mrkr_name )
+		into marker.mrkr_name,
+	execute function scrub_char ( new_marker.mrkr_abbrev )
+		into marker.mrkr_abbrev,
         execute function zero_pad ( new_marker.mrkr_name )
                 into marker.mrkr_name_order,
         execute function zero_pad ( new_marker.mrkr_abbrev ) 
