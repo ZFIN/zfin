@@ -1,0 +1,466 @@
+<!-- added onChange to each variable to reset START for walking windows - this is needed if users alter query after using the navtile button and without using the reset button. if the new query result has fewer than the first query and they had been on a page that would not exist with this new query the ww code breaks  -->
+
+<HTML>
+<HEAD> <?MIVAR Name=page_name>$(IF,$(XST,$query_results),ZFIN Marker Search Results,ZFIN Search Markers)<?/MIVAR>
+
+  <?MIVAR><TITLE>$page_name</TITLE><?/MIVAR>
+
+
+  <SCRIPT>
+
+    function call_reset() {
+
+	document.critform.input_name.value = "";
+	document.critform.input_acc.value = "";
+	document.critform.START.value = "";
+	document.critform.lg.selectedIndex = 0;
+	document.critform.compare.selectedIndex = 0;
+	document.critform.sequence_type.selectedIndex = 0;
+	document.critform.marker_type.selectedIndex = 0;
+	document.critform.vector_type.selectedIndex = 0;  
+	document.critform.WINSIZE.value = 20;
+
+     }
+   </SCRIPT>
+
+   <?MISQL SQL="
+      select object 
+        from webPages 
+       where ID = 'aa-chromoscripts.apg';">
+       $1
+   <?/MISQL>
+
+</HEAD>
+ 
+<BODY> <!-------------------------------------------------------------------------->
+
+<?MIVAR NAME=$OID COND="$(NXST,$OID)"><?/MIVAR>
+ 
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+
+<?MISQL SQL="
+    select WebExplode(object,'') 
+      from webPages 
+      where ID = 'aa-identify.apg';">
+    $1
+<?/MISQL>
+
+<?MICOMMENT> set userid to ZDB_ID of user or GUEST to be used by the map viewer<?/MICOMMENT>
+<?MIVAR NAME=$userid>GUEST<?/MIVAR>
+<?MIBLOCK COND="$(NC,$(SUBSTR,$ZDB_name,1,5),GUEST)">
+    <?MIVAR NAME=$userid>$ZDB_ident<?/MIVAR>
+<?/MIBLOCK>
+
+<?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
+<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
+
+<!---------------this part is executed after a search is submitted ---------------->
+
+<?MIBLOCK COND="$(XST,$query_results)">
+
+  <?MICOMMENT>forbidden simultanious name and acc search <?/MICOMMENT>
+  <?MIBLOCK COND="$(AND,$(XST,$input_acc),$(XST,$input_name))">
+     <script>
+       window.alert("Please search for either Name OR Accession Number.");
+     </script>
+     <?MIVAR NMAE=$exit><?/MIVAR>
+  <?MIELSE>
+
+   <?MIVAR COND="$(XST,$input_name)">$(SETVAR,$input_name,$(TRIM,$input_name))<?/MIVAR>
+   <?MIVAR COND="$(XST,$input_acc)">$(SETVAR,$input_acc,$(TRIM,$input_acc))<?/MIVAR>		
+   <?MIVAR NAME=$lg COND="$(NXST,$lg)">0<?/MIVAR>
+   <?MIVAR COND="$(NXST,$sequence_type)" NAME=$sequence_type>any<?/MIVAR>
+   <?MIVAR COND="$(NXST,$vector_type)" NAME=$vector_type>any<?/MIVAR>
+   <?MIVAR COND="$(NXST,$compare)" NAME=$compare>contains<?/MIVAR>
+
+   <!-- build up the parameter. the $return_rec is passed in from start_select.apg for update selecting --> 
+   <?MIVAR NAME=$mrkr_param_list>&query_results=t$(IF,$(XST,$input_name),&input_name=$input_name)$(IF,$(XST,$input_acc),&input_acc=$input_acc)$(IF,$(XST,$compare),&compare=$compare)$(IF,$(NC,$lg,0),&lg=$lg)$(IF,$(XST,$WINSIZE),&WINSIZE=$WINSIZE)$(IF,$(XST,$return_rec),&return_rec=$return_rec)<?/MIVAR>
+    <?MIVAR NAME=$mseg_param_list>$mrkr_param_list$(IF,$(XST,$sequence_type),&sequence_type=$sequence_type)$(IF,$(XST,$vector_type),&vector_type=$vector_type)$(IF,$(XST,$return_rec),&return_rec=$return_rec)<?/MIVAR>
+   
+
+  <?MIVAR COND="$(NC,$marker_type,all)" NAME=$mlist SEPARATE="','">$marker_type<?/MIVAR>
+
+  <?MIBLOCK COND="$(AND,$(XST,$mlist),$(EC,$marker_type,$mlist),$(NXST,$getTop))">
+	<?MIVAR NMAE=$exit><?/MIVAR>
+	<?MISQL SQL=" select mtgrpmem_mrkr_type
+			from marker_type_group_member
+		       where mtgrpmem_mrkr_type_group = 'SEARCH_SEG'
+			 and mtgrpmem_mrkr_type = '$marker_type'; ">
+	<?/MISQL>
+ 	<?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+		<SCRIPT><?MIVAR>location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-msegselect.apg&marker_type=$marker_type$mseg_param_list")<?/MIVAR></SCRIPT>
+	<?MIELSE>		
+		<SCRIPT><?MIVAR>location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&marker_type=$marker_type$mrkr_param_list")<?/MIVAR> </SCRIPT>
+        <?/MIBLOCK>
+
+   <?MIELSE>
+
+    <?MIVAR NAME=$wild_card><?/MIVAR>
+    <?MIVAR COND="$(NC,$compare,starts)" NAME=$wild_card>%<?/MIVAR>
+
+    <?MIVAR NAME=$constraint><?/MIVAR>
+    <?MIVAR NAME=$has_constraint>f<?/MIVAR>
+    
+    <?MIVAR NAME=$name_sig_cols><?/MIVAR>
+    <?MIVAR NAME=$opt_tables><?/MIVAR>
+    <?MIVAR NAME=$opt_constraint><?/MIVAR>
+    <?MIVAR NAME=$sig_order><?/MIVAR>
+
+    <!------------------ input name ----------------------------------->
+    <?MIBLOCK COND="$(XST,$input_name)">
+      <?MISQL SQL="
+	  create temp table bigselect_name_match(
+		mrkrmch_zdb_id	varchar(50),
+		mrkrmch_name	varchar(120),
+		mrkrmch_significance	integer ); ">
+      <?/MISQL> 	 
+
+      <?MIVAR NAME=mchIdLast><?/MIVAR>	
+      <?MISQL SQL="
+	 select allmapnm_zdb_id, allmapnm_name, allmapnm_significance
+           from all_map_names
+	  where allmapnm_name_lower like '$wild_card$(LOWER,$input_name)%'
+            and allmapnm_precedence <> 'Accession number'
+	UNION
+	 select mrel_mrkr_1_zdb_id as allmapnm_zdb_id, allmapnm_name, 15 as allmapnm_significance
+	  from marker_relationship, all_map_names 
+	 where mrel_mrkr_2_zdb_id = allmapnm_zdb_id 
+ 	   and mrel_type = 'clone contains gene'
+           and allmapnm_name_lower like '$wild_card$(LOWER,$input_name)%'
+           and allmapnm_precedence <> 'Accession number'
+         order by 1, 3, 2;">
+
+	<?MIVAR NAME=mchId>$1<?/MIVAR>
+        <?MISQL COND="$(NC,$mchId,$mchIdLast)" SQL="
+            insert into bigselect_name_match 
+		values('$1', '$(URLENCODE,$2)', '$3'); "> <!-- the URLENCODE encodes "'" which is problematic--> 
+ 		$(SETVAR,$mchIdLast,$mchId)          	
+        <?/MISQL>
+      <?/MISQL>
+    
+      <?MIVAR>
+        $(SETVAR,$name_sig_cols,", mrkrmch_name, mrkrmch_significance") 
+	$(SETVAR,$sig_order," mrkrmch_significance, ")
+	$(SETVAR,$opt_tables,",bigselect_name_match")
+	$(SETVAR,$opt_constraint, " mrkr_zdb_id = mrkrmch_zdb_id ")
+	$(VECAPPEND, $constraint, " mrkr_zdb_id = mrkrmch_zdb_id ")
+	$(SETVAR,$has_constraint,t)
+      <?/MIVAR>
+    <?/MIBLOCK><!----------- end input name ------------------------>
+
+
+    <!-------------- input access number ----------------------------->
+    <?MIBLOCK COND="$(XST,$input_acc)">
+       <?MISQL SQL="
+	select allmapnm_zdb_id, allmapnm_name, allmapnm_significance
+          from all_map_names
+	 where allmapnm_name_lower like '$(LOWER,$input_acc)%'
+           and allmapnm_precedence = 'Accession number'
+        UNION
+	select mrel_mrkr_1_zdb_id as allmapnm_zdb_id, allmapnm_name, allmapnm_significance
+          from all_map_names, marker_relationship
+	 where allmapnm_name_lower like '$(LOWER,$input_acc)%'
+           and allmapnm_precedence = 'Accession number'
+	   and mrel_mrkr_2_zdb_id = allmapnm_zdb_id
+	   and mrel_type in ('gene contains small segment',
+			     'gene encodes small segment',
+			     'clone contains small segment')
+	 UNION
+	select mrel_mrkr_2_zdb_id as allmapnm_zdb_id, allmapnm_name, allmapnm_significance
+          from all_map_names, marker_relationship
+	 where allmapnm_name_lower like '$(LOWER,$input_acc)%'
+           and allmapnm_precedence = 'Accession number'
+	   and mrel_mrkr_1_zdb_id = allmapnm_zdb_id
+	   and mrel_type = 'clone contains gene'
+	into temp bigselect_acc_match; ">
+      <?/MISQL>
+      <?MIVAR>
+        $(SETVAR,$opt_tables,",bigselect_acc_match")
+	$(SETVAR,$opt_constraint, " mrkr_zdb_id = allmapnm_zdb_id ")
+	$(VECAPPEND, $constraint," mrkr_zdb_id = allmapnm_zdb_id ")
+	$(SETVAR,$has_constraint,t)
+      <?/MIVAR>
+    <?/MIBLOCK><!-----------------end input access number ------------>
+
+  
+    <!------------------ if LG is selected ---------->
+    <?MIBLOCK COND="$(NC,$lg,0)">
+      <?MICOMMENT>we do mapping info pullover between clones and genes/small segs. <?/MICOMMENT>
+      <?MISQL  SQL="
+	select marker_id 
+          from mapped_marker
+	 where or_lg = '$lg'
+      UNION 
+	select mrel_mrkr_2_zdb_id as marker_id
+	  from mapped_marker, marker_relationship
+	 where mrel_mrkr_1_zdb_id = marker_id
+	   and or_lg = '$lg'
+	   and mrel_type in ('clone contains gene',
+			     'clone contains small segment')
+       UNION 
+	select mrel_mrkr_1_zdb_id as marker_id
+	  from mapped_marker, marker_relationship
+	 where mrel_mrkr_2_zdb_id = marker_id
+	   and or_lg = '$lg'
+	   and mrel_type in ('clone contains gene',
+			     'clone contains small segment',
+			     'gene encodes small segment')
+       UNION
+        select lnkgmem_member_zdb_id as marker_id
+	  from linkage, linkage_member
+	 where lnkg_or_lg = '$lg'
+  	   and lnkgmem_linkage_zdb_id = lnkg_zdb_id 
+       UNION	
+	select mrel_mrkr_2_zdb_id as marker_id
+	  from marker_relationship, linkage, linkage_member
+	 where mrel_mrkr_1_zdb_id = lnkgmem_member_zdb_id
+  	   and lnkgmem_linkage_zdb_id = lnkg_zdb_id 
+	   and lnkg_or_lg = '$lg'
+	   and mrel_type in ('clone contains gene',
+			     'clone contains small segment')
+       UNION 
+	select mrel_mrkr_1_zdb_id as marker_id
+	  from marker_relationship, linkage, linkage_member
+	 where mrel_mrkr_2_zdb_id = lnkgmem_member_zdb_id
+  	   and lnkgmem_linkage_zdb_id = lnkg_zdb_id 
+	   and lnkg_or_lg = '$lg'
+	   and mrel_type in ('clone contains gene',
+			     'clone contains small segment',
+			     'gene encodes small segment')
+
+	  into temp bigselect_on_lg with no log; ">
+       <?/MISQL> 
+    
+       <?MIVAR NAME=$lgConstraint> mrkr_zdb_id in (select marker_id from bigselect_on_lg)<?/MIVAR>
+       <?MIVAR>
+          $(VECAPPEND, $constraint, $lgConstraint )	
+	  $(SETVAR,$has_constraint,t)
+       <?/MIVAR>	
+    <?/MIBLOCK>
+    <!-------------------- end LG ----------------->
+
+    <!--------------------search type ------->
+    <?MIBLOCK COND="$(NC,$marker_type,all)">
+      <?MIVAR>$(VECAPPEND,$constraint," mrkr_type in ("'$mlist'")" )<?/MIVAR>
+    <?/MIBLOCK>	
+
+    <!--------------------sequence type & vector type ------->
+    <?MIVAR NAME=$clone_vec_cols><?/MIVAR>
+    <?MIBLOCK COND="$(OR,$(NC,$vector_type,any),$(NC,$sequence_type,any))">
+     
+      <?MIVAR NAME=$clone_vec_cols>,clone_sequence_type, vector_type_name<?/MIVAR>
+      <?MIVAR>
+	$(VECAPPEND, $constraint," mrkr_zdb_id = clone_mrkr_zdb_id ")
+	$(VECAPPEND, $constraint," clone_vector_name = vector_name ")
+	$(SETVAR,$has_constraint,t)
+      <?/MIVAR>
+
+
+      <!-- sequence and not vector -->
+      <?MIVAR NAME=$opt_tables COND="$(AND,$(EC,$vector_type,any),$(NC,$sequence_type,any))">
+	$opt_tables, clone, outer vector
+      <?/MIVAR>
+
+      <!-- vector and sequence --><!-- vector and not sequence -->
+      <?MIVAR NAME=$opt_tables COND="$(NC,$vector_type,any)">$opt_tables, clone, vector<?/MIVAR> 
+
+     <!---- sequence type --->
+     <?MIVAR COND="$(NC,$sequence_type,any)">
+       <?MIVAR NAME=$clnConstraint>clone_sequence_type = '$sequence_type'<?/MIVAR>
+       $(VECAPPEND, $constraint, $clnConstraint )
+	$(SETVAR,$has_constraint,t)
+     <?/MIVAR>
+     <!--- end sequence type --->
+
+     <!--- vector type -->
+     <?MIVAR COND="$(NC,$vector_type,any)">
+       <?MIVAR NAME=$vecConstraint>vector_type_name = '$vector_type'<?/MIVAR>
+        $(VECAPPEND, $constraint, $vecConstraint ) 
+ 	$(SETVAR,$has_constraint,t)
+     <?/MIVAR>
+     <!--- end vector type -->
+   <?/MIBLOCK> 
+   <!--------------- end sequence type & vector type ------->
+
+    <!-- split the constraints -->
+    <?MIVAR COND="$(EC,$has_constraint,t)" NAME=$constraint>
+         where $(SUBSTR,$(SEPARATE,$constraint,AND),4)
+    <?/MIVAR>
+
+    <!----------  Populate temp table based on user constraints. ---------->
+
+     <?MISQL SQL="	
+	select mrkr_abbrev, mrkr_type, mrkr_zdb_id, mrkr_abbrev_order $clone_vec_cols $name_sig_cols
+	  from marker $opt_tables
+	 $constraint
+	into temp bigselect_temp_markers with no log; ">
+     <?/MISQL>
+   
+     <?MISQL COND="$(NC,$lg,0)" SQL="
+	set explain off;
+	drop table bigselect_on_lg; ">
+    <?/MISQL>
+    <?MISQL COND="$(XST,$input_name)" SQL="
+	set explain off;
+	drop table bigselect_name_match; ">
+    <?/MISQL>
+    <?MISQL COND="$(XST,$input_acc)" SQL="
+	set explain off;
+	drop table bigselect_acc_match; ">
+    <?/MISQL>
+
+
+   <!------------------  Retreive and Display the data -------------------->
+
+    <!-- when asked for the top hit, order the records in temp table, go to markerview page for the first hit -->
+    <?MIBLOCK COND="$(XST,$getTop)">
+     <?MISQL SQL="
+  	select mrkr_zdb_id, mrkrtype_significance, mrkr_abbrev_order $name_sig_cols
+    	 from bigselect_temp_markers, marker_types
+	where mrkr_type = marker_type
+	order by $sig_order mrkrtype_significance, mrkr_abbrev_order;  ">
+	
+	<?MIVAR NAME=OID>$1<?/MIVAR>
+	<?MIVAR COND="$(=,$MI_CURRENTROW,1)">
+
+	  <SCRIPT>location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID")</SCRIPT>
+	<?/MIVAR>
+     <?/MISQL>
+     <?MIVAR NAME=$exit><?/MIVAR>
+   <?MIELSE>
+     <!--else keep going,  query count(*) -->
+
+        <?MIVAR NAME="critList"><?/MIVAR> 
+        <?MIVAR>
+ 	  $(IF,$(XST,$input_name),$(VECAPPEND,$critList,name $compare '$input_name'))
+	  $(IF,$(XST,$input_acc),$(VECAPPEND,$critList,accession number '$input_acc'))
+	  $(IF,$(NC,$marker_type,all),$(VECAPPEND,$critList,search type '$mlist'))
+	  $(IF,$(NC,$lg,0),$(VECAPPEND,$critList,linkage group '$lg'))
+	  $(IF,$(NC,$sequence_type,any),$(VECAPPEND,$critList,sequence type '$sequence_type'))
+	  $(IF,$(NC,$vector_type,any),$(VECAPPEND,$critList,vector type '$vector_type'))
+	<?/MIVAR>
+
+     <?MISQL SQL="
+  	select mrkr_type, count(mrkr_zdb_id)::integer
+    	 from bigselect_temp_markers
+	 group by mrkr_type;">
+     <?/MISQL>
+     <?MIVAR NAME=num_of_type>$MI_ROWCOUNT<?/MIVAR>
+     <?MIVAR NAME=$type_count>$2<?/MIVAR>
+     <?MIVAR COND="$(=,$num_of_type,0)">$(SETVAR, $type_count,0)<?/MIVAR> 
+  
+    <?MIBLOCK COND="$(AND,$(=,$num_of_type,1),$(=,$type_count,1))">
+	<?MISQL SQL="
+  		select mrkr_zdb_id
+    	 	from bigselect_temp_markers;">
+        <?/MISQL>
+	<?MIVAR NAME=$the_one>$1<?/MIVAR>
+        <?MIVAR>   <SCRIPT>location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$the_one")</SCRIPT>
+        <?/MIVAR>
+   <?MIELSE>
+     <TABLE>  
+     <TR><TD width=60% align=center><p>
+	<?MIVAR> <font size=+1>
+	  $(IF,$(=,$type_count,0),No Matching,Search) Results for: 
+	  $(SUBSTR,$(SEPARATE,$critList,; ),3)
+                 </font>
+	<?/MIVAR>
+       </TD>
+
+       <TD width=10% align=right>
+         <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>
+       </TD>
+     </TR>
+     <TR><TD>&nbsp;</TD></TR>
+     <TR><TD>
+        <?MIBLOCK COND="$(>,$type_count,0)"> 
+        <table width=50% align=center>
+        <ul>
+        <?MISQL SQL="
+	  select marker_type, count(mrkr_zdb_id)::integer, mrkrtype_significance
+    	    from bigselect_temp_markers, marker_types
+	   where mrkr_type = marker_type
+	   group by marker_type, mrkrtype_significance
+           order by mrkrtype_significance ;
+           ">
+	 <?MIVAR NAME=$mtype_in_db>$1<?/MIVAR>  
+	 <?MIVAR NAME=$search_count>$2<?/MIVAR>
+
+	 <?MIBLOCK COND="$(>,$search_count,1)">  
+	   <?MISQL SQL="
+		select mtgrpmem_mrkr_type
+		 from  marker_type_group_member
+		where  mtgrpmem_mrkr_type = '$mtype_in_db'
+		  and  mtgrpmem_mrkr_type_group = 'SEARCH_SEG' ;
+	     ">
+           <?/MISQL> 
+	  
+	   <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+		<?MIVAR NAME=$linkto>msegselect.apg<?/MIVAR>
+		<?MIVAR NAME=$linkparam>$mseg_param_list<?/MIVAR>
+	   <?MIELSE>
+		<?MIVAR NAME=$linkto>markerselect.apg<?/MIVAR>
+		<?MIVAR NAME=$linkparam>$mrkr_param_list<?/MIVAR> 
+	   <?/MIBLOCK>
+
+	   <?MIVAR COND="$(=,$num_of_type,1)"> 
+ 		<SCRIPT>location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$linkto&marker_type=$mtype_in_db$linkparam")</SCRIPT>
+	   <?/MIVAR>
+
+	   <?MISQL COND="$(EC,$mtype_in_db,GENE)" SQL="
+		select count(mrkr_zdb_id)::integer
+		  from bigselect_temp_markers
+		 where mrkr_type = 'GENE'
+ 		   and mrkr_zdb_id in (select cloned_gene from locus) ;">
+		<?MIVAR NAME=knownloci_count>$1<?/MIVAR>
+		<?MIVAR COND="$(>,$knownloci_count,0)" NAME=gene_extra>(<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$linkto&marker_type=GENE$linkparam&knownloci=t">$1 with known mutant loci</A>)<?/MIVAR>
+	   <?/MISQL> 	
+           <?MIVAR>
+	     <TR><TD><b><li><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$linkto&marker_type=$mtype_in_db$linkparam">$search_count $mtype_in_db$(IF,$(>,$search_count,1),s) </A> $(IF,$(AND,$(EC,$mtype_in_db,GENE),$(>,$knownloci_count,0)),$gene_extra)</li></b></TD></TR><?/MIVAR>
+
+	 <?MIELSE> <!-- when only one match for one type, link directly-->
+	   <?MISQL SQL="
+	       select mrkr_zdb_id
+    	        from bigselect_temp_markers
+	       where mrkr_type = '$mtype_in_db' ;
+	     ">
+              <?MIVAR>
+	      <TR><TD><b><li><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$1"> 1 $mtype_in_db </A></li></b></TD></TR><?/MIVAR>
+           <?/MISQL>
+	 <?/MIBLOCK>
+
+       <?/MISQL>
+
+       </ul></table>
+       <?/MIBLOCK>   
+       </TD></TR>
+       <TR><TD></TD></TR>
+       </TABLE>   
+     <?/MIBLOCK> <!-- end whether it is only one record returned --> 
+      
+      <?MISQL SQL="
+	 set explain off;
+	 drop table bigselect_temp_markers; ">
+      <?/MISQL>
+  
+    <?/MIBLOCK> <!--------- end get top one -------->
+
+
+   <?/MIBLOCK><!----------- end type specific ------->
+  <?/MIBLOCK> <!----------- end xst $input_name and $input_acc ------->
+
+
+<?/MIBLOCK><!------------- end xst $query_result---->
+
+
+<!----------------  Query Form -------------------------------------->
+
+<?MISQL SQL="select WebExplode(object,'page=newmrkrselect') from webPages where ID='aa-searchform.apg';">$1<?/MISQL>
+
+
+
+ <?MIBLOCK>
+    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+ <?/MIBLOCK>
+
