@@ -25,9 +25,9 @@ create procedure p_marker_has_goterm (vMrkrZdbId varchar(50),
  	   
 		then 
 		  let vCount = (select count(*) 
-				from marker_go_term, go_term
-				where mrkrgo_mrkr_zdb_id = vMrkrZdbId
-				and mrkrgo_go_term_zdb_id = goterm_zdb_id
+				from marker_go_term_evidence, go_term
+				where mrkrgoev_mrkr_zdb_id = vMrkrZdbId
+				and mrkrgoev_go_term_zdb_id = goterm_zdb_id
 				and goterm_ontology = vOntology
 				and goterm_go_id != '0005554' 
 				) ;
@@ -43,9 +43,9 @@ create procedure p_marker_has_goterm (vMrkrZdbId varchar(50),
 	   then
 	     
 	        let vCount = (select count(*)
-				from marker_go_term, go_term
-				where mrkrgo_mrkr_zdb_id = vMrkrZdbId
-				and mrkrgo_go_term_zdb_id = goterm_zdb_id
+				from marker_go_term_evidence, go_term
+				where mrkrgoev_mrkr_zdb_id = vMrkrZdbId
+				and mrkrgoev_go_term_zdb_id = goterm_zdb_id
 				and goterm_ontology = vOntology
 				and goterm_go_id != '0000004' 
 				) ;
@@ -59,9 +59,9 @@ create procedure p_marker_has_goterm (vMrkrZdbId varchar(50),
 	elif vOntology = 'Cellular Component' 
 	   then 	
 		let vCount = (select count(*) 
-				from marker_go_term, go_term
-				where mrkrgo_mrkr_zdb_id = vMrkrZdbId
-				and mrkrgo_go_term_zdb_id = goterm_zdb_id
+				from marker_go_term_evidence, go_term
+				where mrkrgoev_mrkr_zdb_id = vMrkrZdbId
+				and mrkrgoev_go_term_zdb_id = goterm_zdb_id
 				and goterm_ontology = vOntology
 				and goterm_go_id != '0008372' 
 				) ;
