@@ -64,12 +64,12 @@ TARGETDIR = $(TARGETROOT)/$(TARGETCGIBIN)
 #
 
 
-STATICS = dummy.gif webdriver write.cgi parse-form.perl urlencode.perl
+STATICS = dummy.gif webdriver write.cgi parse-form.perl urlencode.perl lastpage
 
-# SuperWebdriver, send_request.perl can probably be converted to static.
+# send_request.perl can probably be converted to static.
 
 GENERICS = SuperWebdriver ZFIN_jump map-options.pl print_map.cgi \
-           run-regen-fish.pl run-regen.pl \
+           run-regen-fish.pl run-regen.pl DebugWebdriver\
            searchwww.cgi web.cnf send_request.perl view_mapplet.cgi
 
 SPECIFICTARGETS = $(foreach SPEC, $(GENERICS), $(TARGETDIR)/$(SPEC))
