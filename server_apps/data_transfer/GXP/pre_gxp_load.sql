@@ -10,11 +10,11 @@ create table probes_tmp (
    prb_gb5p 		varchar (50),
    prb_gb3p 		varchar (50),
    prb_library 		varchar(80),
+   prb_digest 		varchar(20),
    prb_vector 		varchar(80),
    prb_pcr_amp 		lvarchar,
    prb_insert_kb 	float,
    prb_cloning_site 	varchar(20),
-   prb_digest 		varchar(20),
    prb_polymerase 	varchar(80),
    prb_comments 	lvarchar,               --> mrkr_comments
    prb_modified 	varchar(20)           -- not used  
