@@ -10,179 +10,170 @@ Variables expected:  OID  -- the OID of a publication to link
 
 <HTML>
 
-<!-- DEBUGGING <?MIVAR>  oid=$OID <?/MIVAR> -->
 
 
-<TITLE>Link Authors to a Publication</TITLE>
+  <TITLE>ZFIN Link Authors to a Publication</TITLE>
+
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+
+  <?MISQL COND="$(XST,$OID)" SQL="select WebExplode(object,'page_title=LINK Publication Authors&permission=root') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
 
-<?MISQL COND="$(XST,$OID)" SQL="select WebExplode(object,'page_title=LINK Publication Authors&permission=root') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+  <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
+ 
+    <?MISQL SQL="select authors from publication where zdb_id='$OID';"><?/MISQL>
+    <?MIVAR NAME=$q_authors>$1<?/MIVAR>
 
-
-<?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
-
-  <?MISQL SQL="select authors from publication where zdb_id='$OID';"><?/MISQL>
-  <?MIVAR NAME=$q_authors>$1<?/MIVAR>
-
-  <?MIVAR>
-  <b>AUTHORS:</b><br> $q_authors
-  <?/MIVAR>
-  <p>
-
-
-  <form  method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
-
-  <table border=2 width=100% cols=2>
-
-
-  <APPLET CODEBASE="/client_apps/ListSelector/" CODE="ListSelector.class" WIDTH=400 HEIGHT=170 NAME=phenoselect>
-    <param name="selectableLabel" value="Potential Authors">
-    <param name="selectedLabel" value="Linked Authors">
     <?MIVAR>
-      <param name="authorlist" value="$q_authors">
+    <b>AUTHORS:</b><br> $q_authors
     <?/MIVAR>
-    <param name="use_item_labels" value = "true">
-    <param name=format_pre value=" zdb_id like '%" >
-    <param name=format_post value="%'" >
-    <param name="separator" value = " or ">
+    <p>
+
+
+    <form  method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+
+    <table border=2 width=100% cols=2>
+
+
+    <APPLET CODEBASE="/client_apps/ListSelector/" CODE="ListSelector.class" WIDTH=400 HEIGHT=170 NAME=phenoselect>
+      <param name="selectableLabel" value="Potential Authors">
+      <param name="selectedLabel" value="Linked Authors">
+      <?MIVAR>
+	<param name="authorlist" value="$q_authors">
+      <?/MIVAR>
+      <param name="use_item_labels" value = "true">
+      <param name=format_pre value=" zdb_id like '%" >
+      <param name=format_post value="%'" >
+      <param name="separator" value = " or ">
+      <?MIVAR>
+	<param name="liveupdate" value="int_person_pub:source_id:target_id:$OID">
+	<param name="host" value="<!--|DOMAIN_NAME|-->">
+	<param name="port" value="<!--|JAVA_SERVER_PORT|-->">
+	<param name="pub_id" value="$OID">
+      <?/MIVAR>
+    </applet>
+
+    <?MIVAR COND="$(NXST,$BEGIN)" NAME=$BEGIN>1<?/MIVAR>
+    <?MIVAR COND="$(NXST,$WINSIZE)" NAME=$WINSIZE>10<?/MIVAR>
+    <!-- build return rec needed by cancel and hidden to  post original search criteria to process-pub -->
+    <?MIVAR NAME=$returnVariables>MIval=aa-pubselect2.apg&query_results=true<?/MIVAR>
+
+    <?MIBLOCK COND="$(XST,$anon1text)">
+      <?MIVAR NAME=$returnVariables>$returnVariables&anon1text=$(URLENCODE,$anon1text)<?/MIVAR>
+      <?MIVAR><input type=hidden name=anon1text value="$anon1text"><?/MIVAR>
+    <?/MIBLOCK>
+    <?MIBLOCK COND="$(XST,$authtype)">
+      <?MIVAR NAME=$returnVariables>$returnVariables&authtype=$authtype<?/MIVAR>
+      <?MIVAR><input type=hidden name=authtype value="$authtype"><?/MIVAR>
+    <?/MIBLOCK>
+    <?MIBLOCK  COND="$(XST,$anon1)">
+      <?MIVAR  NAME=$returnVariables>$returnVariables&anon1=$anon1<?/MIVAR>
+      <?MIVAR><input type=hidden name=anon1 value="$anon1"><?/MIVAR>
+    <?/MIBLOCK>
+    <?MIBLOCK COND="$(XST,$jtype)">
+      <?MIVAR NAME=$returnVariables>$returnVariables&jtype=$jtype<?/MIVAR>
+      <?MIVAR><input type=hidden name=jtype value="$jtype"><?/MIVAR>
+    <?/MIBLOCK>
+    <?MIBLOCK COND="$(XST,$yr_cmpr)">
+      <?MIVAR NAME=$returnVariables>$returnVariables&yr_cmpr=$(URLENCODE,$yr_cmpr)<?/MIVAR>
+       <?MIVAR><input type=hidden name=yr_cmpr value="$yr_cmpr"><?/MIVAR>
+    <?/MIBLOCK>
+    <?MIBLOCK COND="$(XST,$century)">
+      <?MIVAR NAME=$returnVariables>$returnVariables&century=$century<?/MIVAR>
+      <?MIVAR><input type=hidden name=century value="$century"><?/MIVAR>
+    <?/MIBLOCK>
+    <?MIBLOCK COND="$(XST,$year)">
+      <?MIVAR NAME=$returnVariables>$returnVariables&year=$year<?/MIVAR>
+      <?MIVAR><input type=hidden name=year value="$year"><?/MIVAR>
+    <?/MIBLOCK>
+    <?MIBLOCK COND="$(XST,$order_pref)">
+      <?MIVAR NAME=$returnVariables>$returnVariables&order_pref=$order_pref<?/MIVAR>
+      <?MIVAR><input type=hidden name=order_pref value="$order_pref"><?/MIVAR>
+    <?/MIBLOCK>
+    <?MIBLOCK COND="$(XST,$cur_status)">
+      <?MIVAR NAME=$returnVariables>$returnVariables&cur_status=$cur_status<?/MIVAR>
+      <?MIVAR><input type=hidden name=cur_status value="$cur_status"> <?/MIVAR>
+    <?/MIBLOCK>
+    <?MIBLOCK COND="$(XST,$pub_status)"> 
+      <?MIVAR NAME=$returnVariables>$returnVariables&pub_status=$pub_status<?/MIVAR>
+      <?MIVAR><input type=hidden name=pub_status value="$pub_status"> <?/MIVAR>
+    <?/MIBLOCK>
+    <?MIBLOCK COND="$(XST,$authors)">
+      <?MIVAR NAME=$returnVariables>$returnVariables&authors=$(URLENCODE,$authors)<?/MIVAR>
+      <?MIVAR><input type=hidden name=authors value="$authors"> <?/MIVAR>
+    <?/MIBLOCK>
+    <?MIBLOCK COND="$(XST,$title)">
+      <?MIVAR NAME=$returnVariables>$returnVariables&title=$(URLENCODE,$title)<?/MIVAR>
+      <?MIVAR><input type=hidden name=title value="$title"><?/MIVAR>
+    <?/MIBLOCK>
+    <?MIBLOCK COND="$(XST,$START)">
+      <?MIVAR NAME=$returnVariables>$returnVariables&START=$START<?/MIVAR>
+      <?MIVAR><input type=hidden name=START value="$START"><?/MIVAR>
+    <?/MIBLOCK>
+    <?MIBLOCK COND="$(XST,$WINSIZE)"> 
+      <?MIVAR NAME=$returnVariables>$returnVariables&WINSIZE=$WINSIZE<?/MIVAR>
+      <?MIVAR><input type=hidden name=WINSIZE value="$WINSIZE"><?/MIVAR>
+    <?/MIBLOCK>
+
+
     <?MIVAR>
-      <param name="liveupdate" value="int_person_pub:source_id:target_id:$OID">
-      <param name="host" value="<!--|DOMAIN_NAME|-->">
-      <param name="port" value="<!--|JAVA_SERVER_PORT|-->">
-      <param name="pub_id" value="$OID">
+      <input type=hidden name=ZDB_name value="$ZDB_name">
     <?/MIVAR>
-  </applet>
-
-  <?MIVAR COND="$(NXST,$BEGIN)" NAME=$BEGIN>1<?/MIVAR>
-  <?MIVAR COND="$(NXST,$WINSIZE)" NAME=$WINSIZE>10<?/MIVAR>
-  <!-- build return rec needed by cancel and hidden needed to  post origianl search criteria to process-pub -->
-  <?MIVAR NAME=$returnVariables>MIval=aa-startframes.apg&selector=aa-pubselect2.apg&select_from=PUBLICATION&navtile=true<?/MIVAR>
-
-  <?MIBLOCK COND="$(XST,$anon1text)">
-    <?MIVAR NAME=$returnVariables>$returnVariables&anon1text=$(URLENCODE,$anon1text)<?/MIVAR>
-    <?MIVAR><input type=hidden name=anon1text value="$anon1text"><?/MIVAR>
-  <?/MIBLOCK>
-  <?MIBLOCK COND="$(XST,$authtype)">
-    <?MIVAR NAME=$returnVariables>$returnVariables&authtype=$authtype<?/MIVAR>
-    <?MIVAR><input type=hidden name=authtype value="$authtype"><?/MIVAR>
-  <?/MIBLOCK>
-  <?MIBLOCK  COND="$(XST,$anon1)">
-    <?MIVAR  NAME=$returnVariables>$returnVariables&anon1=$anon1<?/MIVAR>
-    <?MIVAR><input type=hidden name=anon1 value="$anon1"><?/MIVAR>
-  <?/MIBLOCK>
-  <?MIBLOCK COND="$(XST,$jtype)">
-    <?MIVAR NAME=$returnVariables>$returnVariables&jtype=$jtype<?/MIVAR>
-    <?MIVAR><input type=hidden name=jtype value="$jtype"><?/MIVAR>
-  <?/MIBLOCK>
-  <?MIBLOCK COND="$(XST,$yr_cmpr)">
-    <?MIVAR NAME=$returnVariables>$returnVariables&yr_cmpr=$(URLENCODE,$yr_cmpr)<?/MIVAR>
-     <?MIVAR><input type=hidden name=yr_cmpr value="$yr_cmpr"><?/MIVAR>
-  <?/MIBLOCK>
-  <?MIBLOCK COND="$(XST,$century)">
-    <?MIVAR NAME=$returnVariables>$returnVariables&century=$century<?/MIVAR>
-    <?MIVAR><input type=hidden name=century value="$century"><?/MIVAR>
-  <?/MIBLOCK>
-  <?MIBLOCK COND="$(XST,$year)">
-    <?MIVAR NAME=$returnVariables>$returnVariables&year=$year<?/MIVAR>
-    <?MIVAR><input type=hidden name=year value="$year"><?/MIVAR>
-  <?/MIBLOCK>
-  <?MIBLOCK COND="$(XST,$order_pref)">
-    <?MIVAR NAME=$returnVariables>$returnVariables&order_pref=$order_pref<?/MIVAR>
-    <?MIVAR><input type=hidden name=order_pref value="$order_pref"><?/MIVAR>
-  <?/MIBLOCK>
-  <?MIBLOCK COND="$(XST,$cur_status)">
-    <?MIVAR NAME=$returnVariables>$returnVariables&cur_status=$cur_status<?/MIVAR>
-    <?MIVAR><input type=hidden name=cur_status value="$cur_status"> <?/MIVAR>
-  <?/MIBLOCK>
-  <?MIBLOCK COND="$(XST,$pub_status)"> 
-    <?MIVAR NAME=$returnVariables>$returnVariables&pub_status=$pub_status<?/MIVAR>
-    <?MIVAR><input type=hidden name=pub_status value="$pub_status"> <?/MIVAR>
-  <?/MIBLOCK>
-  <?MIBLOCK COND="$(XST,$authors)">
-    <?MIVAR NAME=$returnVariables>$returnVariables&authors=$(URLENCODE,$authors)<?/MIVAR>
-    <?MIVAR><input type=hidden name=authors value="$authors"> <?/MIVAR>
-  <?/MIBLOCK>
-  <?MIBLOCK COND="$(XST,$title)">
-    <?MIVAR NAME=$returnVariables>$returnVariables&title=$(URLENCODE,$title)<?/MIVAR>
-    <?MIVAR><input type=hidden name=title value="$title"><?/MIVAR>
-  <?/MIBLOCK>
-  <?MIBLOCK COND="$(XST,$BEGIN)">
-    <?MIVAR NAME=$returnVariables>$returnVariables&BEGIN=$BEGIN<?/MIVAR>
-    <?MIVAR><input type=hidden name=BEGIN value="$BEGIN"><?/MIVAR>
-  <?/MIBLOCK>
-  <?MIBLOCK COND="$(XST,$WINSIZE)"> 
-    <?MIVAR NAME=$returnVariables>$returnVariables&WINSIZE=$WINSIZE<?/MIVAR>
-    <?MIVAR><input type=hidden name=WINSIZE value="$WINSIZE"><?/MIVAR>
-  <?/MIBLOCK>
 
   <!-- Suppose you want to add one -->
-  <?MIBLOCK COND="$(AND,$(NXST,$curation),$(NXST,$new_action),$(EC,$AUTHORIZED,root))">
+    <?MIBLOCK COND="$(AND,$(NXST,$curation),$(NXST,$new_action),$(EC,$AUTHORIZED,root))">
 
 
-  <!--  to add curation action -->
-  <p>
-  <?MIVAR>
-    <b>Add curation record to ZDB pub: $OID</b>
-  <?/MIVAR>
-
-  <input type=hidden name=MIval value=aa-link_authors.apg>
-  <table border=2 width=100% cols=2>
-  <TR>
-  <?MIVAR>
-  <input type=hidden name=OID value="$OID">
-    <input type=hidden name=q_authors value="$q_authors">
-    <TD><font size=2><b>Curator:</b> $ZDB_name </td>
-  <?/MIVAR>
-  <td><font size=2><b>Action:</b>
-  <SELECT name=new_action>
-  <option value="Linked Authors">Linked Authors
-    <option value="Curated Genes">Curated Gene Info
-    <option value="Curated Expression data">Curated Expression Data
-    <option value="Curated Mutant data">Curated Mutant Data
-    <option value="Curated Markers/Mapping">Curated Mapping/Markers
-  </SELECT>
-  </TD>
-  </TR><TR>
-  <TD colspan=2><font size=2><b>Comments:</b><br>
-  <TEXTAREA rows=5 cols=75 NAME="new_comments"></TEXTAREA>
-  </td>
-  </TR></TABLE>
-
-
-  <hr width=80%>
-
-  <!-- location.go(-1) does not seem to work consistently on all platforms - all browsers -->
-  <?MIVAR>
-  <input type=button value="CANCEL" onClick="window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$returnVariables')">
-  <input type=submit value="SUBMIT">
-
-  <hr width=80%>
-  <?/MIVAR>
-  </form>
-
-
-<?/MIBLOCK> <!-- ends adding new one -->
-
-
-
-<!-- End of curation status addition -->
-
-
-  <!-- Now to process a submission -->
-  <?MIBLOCK COND="$(AND,$(EC,$AUTHORIZED,root),$(XST,$new_action))">
-
-    <?MIVAR COND="$(NXST,$new_comments)" NAME=$new_comments>NULL<?/MIVAR>
-
-    <?MISQL SQL="insert into curation_status (pub_id,curation_action,entry_time,curator,comments) values ('$OID','$new_action',current,'$ZDB_name','$new_comments');"><?/MISQL>
-
+    <!--  to add curation action -->
+    <p>
     <?MIVAR>
-      <SCRIPT>
-	window.location.href=('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$returnVariables');
-      </SCRIPT>
+      <b>Add curation record to ZDB pub: $OID</b>
     <?/MIVAR>
 
-  <?/MIBLOCK>
+    <input type=hidden name=MIval value=aa-process-pub.apg>
+    <input type=hidden name=link_authors value="true">
+    <table border=2 width=100% cols=2>
+    <TR>
+    <?MIVAR>
+      <input type=hidden name=OID value="$OID">
+      <input type=hidden name=q_authors value="$q_authors">
+      <TD><font size=2><b>Curator:</b> $ZDB_name </td>
+    <?/MIVAR>
+    <td><font size=2><b>Action:</b>
+    <SELECT name=new_action>
+    <option value="Linked Authors">Linked Authors
+      <option value="Curated Genes">Curated Gene Info
+      <option value="Curated Expression data">Curated Expression Data
+      <option value="Curated Mutant data">Curated Mutant Data
+      <option value="Curated Markers/Mapping">Curated Mapping/Markers
+    </SELECT>
+    </TD>
+    </TR><TR>
+    <TD colspan=2><font size=2><b>Comments:</b><br>
+    <TEXTAREA rows=5 cols=75 NAME="new_comments"></TEXTAREA>
+    </td>
+    </TR></TABLE>
 
- 
+
+    <hr width=80%>
+
+    <!-- location.go(-1) does not seem to work consistently on all platforms - all browsers -->
+    <?MIVAR>
+    <input type=button value="CANCEL" onClick="window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$returnVariables')">
+    <input type=submit value="SUBMIT">
+
+    <hr width=80%>
+    <?/MIVAR>
+    </form>
+
+
+  <?/MIBLOCK> <!-- ends adding new one -->
+
+  <!-- End of curation status addition -->
+
+
 <?/MIBLOCK>  <!-- ends cond authorization -->
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+
 </HTML>

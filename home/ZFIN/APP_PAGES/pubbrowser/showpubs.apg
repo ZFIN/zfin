@@ -4,31 +4,34 @@
 
 ECK 8/30/97. Added sensitivity to UPDATE flag: If UPDATE exists, it tosses up a "Delete" button next to each pub. And added a "Add pub" to both primary and secondary pubs. THESE ASSUME THE EXISTENCE OF "Delete-listitem"  and "doit" functions (see fishview for example) in the viewing page! Obviously these functions should be connected to the "do-<class>update" script.
 -->
+<form>
+<table>
 <basefont size= 3>
 
 <h3 align=center>PUBLICATIONS</h3>
+
 <?MIVAR COND="$(XST,$UPDATE)">
 <INPUT TYPE=button value="Add/Change" onClick="doit('prim_pub','selection','Add/Change')"> 
 <?/MIVAR>
 <b>Primary Publication:</b><br>
-<?MISQL SQL="select b.title, b.zdb_id, year(b.pub_date) as pyear,b.authors, b.source  from int_data_pub a, publication b where source_id='$OID' and target_id=b.zdb_id and info='primary' order by b.authors asc;">
-<TR><TD align=left> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$4 ($3) $1. $5.</A>
+<?MISQL SQL="select b.title, b.zdb_id, year(b.pub_date) as pyear, b.authors, b.source, lower(b.authors)  from int_data_pub a, publication b where source_id='$OID' and target_id=b.zdb_id and info='primary' order by 6 asc;">
+<TR><TD align=left> <DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$4 ($3) $1. $5.</A></DIV>
 </TD></TR>
-<p>
 <?/MISQL>
 <?MIVAR COND=$(EQ,$MI_ROWCOUNT,0)> <font color="#ff0000">UNPUBLISHED</font><?/MIVAR>
 
-<p>
-
+<br>
+<TR><TD>
 <?MIVAR COND="$(XST,$UPDATE)">
 <INPUT TYPE=button value="Add to" onClick="doit('rel_pub','selection','Add')"> 
 <?/MIVAR> 
-<b>Related Publications:</b><br>
-<?MISQL SQL="select b.title, b.zdb_id, year(b.pub_date) as pyear,b.authors, b.source from int_data_pub a, publication b where source_id='$OID' and target_id=b.zdb_id and info='related' order by b.authors asc;">
+<b>Related Publications:</b><br></TD></TR>
+<?MISQL SQL="select b.title, b.zdb_id, year(b.pub_date) as pyear,b.authors, b.source, lower(b.authors) from int_data_pub a, publication b where source_id='$OID' and target_id=b.zdb_id and info='related' order by 6 asc;">
 
 $(IF,$(XST,$UPDATE),"<TD><font size=-1><input type=button value=delete onClick=Delete_listitem('publication','"$2"')></font></TD>")
-<TR><TD align=left> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$4 ($3) $1. $5.</A>
+<TR><TD align=left> <DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$4 ($3) $1. $5.</A></DIV>
 </TD></TR>
-<p>
+<TR></TR><TR></TR>
 <?/MISQL>
-
+</table>
+</form>

@@ -24,25 +24,25 @@ ERROR -- something bad happened -- no OID passed in!
 <?/MIBLOCK>
 
 
-
 <?MIBLOCK COND="$(XST,$OID)">
 
+<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
 <?MIVAR>
 <SCRIPT>
 function doit(attr,attr_type,print_name) {
-window.location.search='?MIval=aa-labupdate.apg&OID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name
+window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labupdate.apg&OID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name)
 }
 
 function doStatus(pers_id,new_status,old_status) {
-window.location.search='?MIval=aa-do-labupdate.apg&OID=$OID&attr=status&attr_type=special-status&pers_id='+pers_id+'&old_value='+old_status+'&new_value='+new_status
+window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-labupdate.apg&OID=$OID&attr=status&attr_type=special-status&pers_id='+pers_id+'&old_value='+old_status+'&new_value='+new_status)
 }
 
 function doContact(new_contact_id,old_contact_id) {
-window.location.search='?MIval=aa-do-labupdate.apg&OID=$OID&attr=contact_person&attr_type=text&old_value='+old_contact_id+'&new_value='+new_contact_id
+window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-labupdate.apg&OID=$OID&attr=contact_person&attr_type=text&old_value='+old_contact_id+'&new_value='+new_contact_id)
 }
 
 function doDelete(pers_id) {
-window.location.search='?MIval=aa-do-labupdate.apg&OID=$OID&attr=membership&attr_type=special-delete&old_value=Lab_member&new_value=NON_member&pers_id='+pers_id
+window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-labupdate.apg&OID=$OID&attr=membership&attr_type=special-delete&old_value=Lab_member&new_value=NON_member&pers_id='+pers_id)
 }
 </SCRIPT>
 <?/MIVAR>
@@ -73,24 +73,36 @@ window.location.search='?MIval=aa-do-labupdate.apg&OID=$OID&attr=membership&attr
 <!-- First filter name for apostrophes! -->
 <?MIVAR COND="$(XST,$name)" NAME=$name DELIMIT="'" REPLACE="''">$name<?/MIVAR>
 
-<?MIVAR NAME=$rec_title>$name<?/MIVAR>
+<?MIBLOCK COND="$(NXST,$UPDATE)">
+  <?MIVAR NAME=$rec_title>$name<?/MIVAR>
+  <?MIVAR>
+    <TITLE>ZFIN View Lab:$name</TITLE>
+  <?/MIVAR>
+<?MIELSE>
+  <?MIVAR NAME=$rec_title>$name<?/MIVAR>
+  <?MIVAR>
+    <TITLE>ZFIN Update Lab:$name</TITLE>
+  <?/MIVAR>
+<?/MIBLOCK>
 
-<?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
-<form><center><font size=4>
-<?MIVAR> <b>Invalid ZFIN ID.<?/MIVAR>
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+
+<?MIBLOCK COND="$(EC,$name,$MI_NOVALUE)">
+<form><center><font size=+2>
+<b>Requested ID not found in ZFIN.</b></center>
 </form>
 <?/MIBLOCK>
 
 
-<?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+<?MIBLOCK COND="$(NC,$name,$MI_NOVALUE)">
 <!-- If VIEWING, THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
 <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=lab') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
 
 <!-- NOW THROW SHOW THE LABS DATA -->
 <form>
 <?MIVAR COND="$(XST,$UPDATE)">
-<center><font size=5 color="#00ff00"><input type=button 
-value=" DONE UPDATING. Back to Viewing! " onClick="document.location.search='?MIval=aa-labview.apg&OID=$OID'"> </font></center>
+<center><font size=+2 color="#00ff00"><input type=button 
+value=" DONE UPDATING. Back to Viewing! " onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$OID')"> </font></center>
 <?/MIVAR>
 
 
@@ -102,7 +114,7 @@ value=" DONE UPDATING. Back to Viewing! " onClick="document.location.search='?MI
 
 <TD valign=middle>
 <?MIVAR>
-<FONT SIZE=6> <B> $name </B> </FONT> 
+<FONT SIZE=+2> <B> $name </B> </FONT> 
 <?/MIVAR>
 
 <?MIVAR COND="$(AND,$(XST,$UPDATE),$(EC,$AUTHORIZED,root))">
@@ -138,7 +150,7 @@ value=" DONE UPDATING. Back to Viewing! " onClick="document.location.search='?MI
 
 <TABLE width=100% cellpadding=6>
 <TR> 
-<TD valign=top>
+<TD valign=to>
 <big><u>Contact Info:</u></big>
 
 <br>
@@ -156,7 +168,7 @@ value=" DONE UPDATING. Back to Viewing! " onClick="document.location.search='?MI
 <?/MIBLOCK>
 
 <?MISQL COND="$(AND,$(NC,$contact_person,NULL),$(OR,$(NXST,$UPDATE),$(NC,$AUTHORIZED,root)))" SQL="select full_name from person where zdb_id='$contact_person';">
-  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$contact_person" TARGET="content">
+  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$contact_person" >
 $1</A>
 <?/MISQL>
 
@@ -222,7 +234,7 @@ $1</A>
     $(IF,$(XST,$UPDATE),"<font size=-1><input type=button value=delete onClick=doDelete('"$persid"')></font>") 
 
      $(IF,$(>,$pos_order,1),<font size=-1>)
-     <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$persid" TARGET="content" > 
+     <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$persid" > 
        $(IF,$(<,$pos_order,3),"<b>"$1"</b>",$1) 
     </A>
 
@@ -260,7 +272,7 @@ $1</A>
     <?/MIBLOCK>
     $(IF,$(XST,$UPDATE),"<font size=-1><input type=button value=delete onClick=doDelete('"$persid"')></font>") 
     $(IF,$(>,$pos_order,1),<font size=-1>)
-    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$persid" TARGET="content" >
+    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$persid"  >
       $(IF,$(<,$pos_order,4),"<b>"$1"</b>",$1) 
     </A>
 
@@ -302,12 +314,10 @@ $1</A>
 <br>
 
 
-<?MISQL SQL="select distinct a.title, year(pub_date) as pyear, a.zdb_id, a.authors, a.source from publication a, int_person_pub b, int_person_lab c where b.target_id=a.zdb_id and b.source_id=c.source_id and c.target_id='$OID' order by pyear desc, a.authors asc;">
-  <TR><TD colspan=1 align=left><font size=3> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3">$4 ($2) $1. $5.</A></TD></TR>
-  <p>
+<?MISQL SQL="select distinct a.title, year(pub_date) as pyear, a.zdb_id, a.authors, a.source, lower(a.authors) from publication a, int_person_pub b, int_person_lab c where b.target_id=a.zdb_id and b.source_id=c.source_id and c.target_id='$OID' order by pyear desc, 6 asc;">
+  <TR><TD align=left><DIV class="show_pubs"> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3">$4 ($2) $1. $5.</A></DIV></TD></TR>
+
 <?/MISQL>
-
-
 
 
 </form>
@@ -317,6 +327,7 @@ $1</A>
 <?/MIBLOCK> <!-- ends cond OID xst -->
 <?/MIBLOCK>  <! rowcount  gt 0  -->
 
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 
 </HTML>
 

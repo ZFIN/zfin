@@ -6,6 +6,7 @@
 <head>
 <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
 
+<?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 
 <?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
 <?MIVAR NAME=$MI_NOVALUE> <?/MIVAR>
@@ -18,74 +19,74 @@
 <SCRIPT>
 
   function popup_anatitem_comments(relative_url) {
-    open(relative_url,"AnatomyItem","toolbar=yes,scrollbars=yes,resizable=yes");
+    open(relative_url,"popup","toolbar=yes,scrollbars=yes,resizable=yes");
   }
   function popup_stage_comments(relative_url) {
-    open(relative_url,"StageDescription","toolbar=yes,scrollbars=yes,resizable=yes");
+    open(relative_url,"popup","toolbar=yes,scrollbars=yes,resizable=yes");
   }
 
   <?MIVAR COND="$(XST,$UPDATE)">
     function doit(attr,attr_type,print_name) {
-    window.location.search='?MIval=aa-xpatupdatePubs.apg&OID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name+'&target_table=expression_pattern';
+    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatupdatePubs.apg&OID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name+'&target_table=expression_pattern');
     }
 
     function Delete_listitem(item_name,item_id) {
-    window.location.search='?MIval=aa-do-xpatupdatePubs.apg&OID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted';
+    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-xpatupdatePubs.apg&OID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted');
     }
 
     function updateAssay(xpat_zdb_id,assay,g_name,g_abbrev) {
-    window.location.search='?MIval=aa-xpatupdateAssay.apg&OID='+xpat_zdb_id+'&old_value='+assay+'&gene_name='+g_name+'&gene_abbrev='+g_abbrev;
+    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatupdateAssay.apg&OID='+xpat_zdb_id+'&old_value='+assay+'&gene_name='+g_name+'&gene_abbrev='+g_abbrev);
     }
 
     function updateKeywords(xpatstg_xpat,xpatstg_start,xpatstg_end) {
-    window.location.search='?MIval=aa-xpatupdate.apg';
+    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatupdate.apg');
     }
 
     function updateDescription(xpatstg_xpat,xpatstg_start,xpatstg_end) {
-    window.location.search='?MIval=aa-xpatupdate.apg';
+    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatupdate.apg');
     }
 
     function updateComments(xpat_zdb_id) {
-    window.location.search='?MIval=aa-xpatupdate.apg';
+    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatupdate.apg');
     }
 
     function updateStageWindow(xpatstg_xpat,xpatstg_start,xpatstg_end) {
-    window.location.search='?MIval=aa-xpatupdate.apg';
+    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatupdate.apg');
     }
 
     function updateImage(xpatstg_xpat,xpatstg_start,xpatstg_end) {
-    window.location.search='?MIval=aa-xpatupdate.apg';
+    window.location.replace('?MIval=aa-xpatupdate.apg');
     }
 
   <?/MIVAR>
 </SCRIPT>
-
-<?MIVAR NAME=$target_table>anon_marker<?/MIVAR>
-<?MIVAR NAME=$target_table COND="$(>,$(POSITION,$OID,GENE),0)">gene<?/MIVAR>
-<?MIVAR NAME=$ref_map><?/MIVAR>
-
-
-<?MISQL COND="$(>,$(POSITION,$OID,GENE),0)" SQL="
-  select gene_name, 'GENE', abbrev, comments 
-    from gene 
-    where zdb_id='$OID';">
-<?/MISQL>
-
-<?MISQL COND="$(=,$(POSITION,$OID,GENE),0)" SQL="
-  select marker_name, marker_type, abbrev, comments 
-    from anon_marker 
-    where zdb_id='$OID';">
-<?/MISQL>
-
-<?MIVAR NAME=$name>$1<?/MIVAR>
-<?MIVAR NAME=$marker_type>$2<?/MIVAR>
-<?MIVAR NAME=$abbrev>$3<?/MIVAR>
-<?MIVAR NAME=$comments>$4<?/MIVAR>
-
 </HEAD>
 
-<body bgcolor="#e5e5e5" text="#000000" link="#0000ff" vlink="#800080" alink="#ff0000">
-<basefont COLOR="#000000" size=2>
+
+<?MISQL SQL="
+     SELECT mrkr_abbrev, mrkr_zdb_id, mrkr_name, mrkr_type
+     FROM marker, marker_label, label, expression_pattern
+     WHERE xpat_zdb_id = '$OID' 
+       AND lbl_zdb_id = xpat_label_zdb_id
+       AND mrkrlbl_label_zdb_id = lbl_zdb_id
+       AND mrkrlbl_marker_zdb_id = mrkr_zdb_id
+     order by 4 desc";>
+<?/MISQL>
+
+<?MIVAR NAME=$abbrev>$1<?/MIVAR>
+
+
+  <?MIBLOCK COND="$(XST,$UPDATE)">
+    <?MIVAR>
+      <TITLE>ZFIN Update Expression Pattern: $abbrev </TITLE>
+    <?/MIVAR>
+  <?MIELSE>
+    <?MIVAR>
+      <TITLE>ZFIN View Expression Pattern: $abbrev </TITLE>
+    <?/MIVAR>
+  <?/MIBLOCK>
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
 
 <?MIBLOCK COND="$(NXST,$OID)">
@@ -111,10 +112,10 @@ ERROR -- something bad happened -- no OID passed in!
 <?MIVAR COND="$(XST,$UPDATE)">
 <center>
   <form NAME=updater method=post action="/<!--|CGI_BIN_DIR_NAME|-->/>
-    <font size=5 color="#33ffCC">
+    <font size=+2 color="#33ffCC">
     <input type=button 
            value=" DONE UPDATING. Back to Viewing! " 
-           onClick="document.location.search='?MIval=aa-xpatview.apg&OID=$OID'"> 
+           onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatview.apg&OID=$OID')"> 
   </font>
   </form>
 </center>
@@ -146,7 +147,12 @@ ERROR -- something bad happened -- no OID passed in!
      GET EACH MARKER'S NAME THAT MAPS TO THIS EXPRESSION PATTERN
 <?/MIVAR> 
 
-     <br><center><font size=6> Expression of : &nbsp;<b>
+     <br>
+     <table width=100% border=0>
+       <tr>
+         <td width=15%>&nbsp;</td>
+         <td width=70% align=center>
+           <font size=+2> Expression of : &nbsp;<b>
 
 <?MIVAR NAME=$COUNT>0<?/MIVAR>
 <?MISQL SQL="
@@ -164,6 +170,7 @@ ERROR -- something bad happened -- no OID passed in!
        $(SETVAR,gene_name,$3)
        $(SETVAR,gene_abbrev,$1)
        $(SETVAR,gene_id,$2)
+       <?MIVAR NAME=fullname>$gene_name($gene_abbrev)<?/MIVAR>
        <?/MIVAR> 
      <?/MIBLOCK>
 
@@ -173,6 +180,7 @@ ERROR -- something bad happened -- no OID passed in!
        $(SETVAR,gene_name,$3)
        $(SETVAR,gene_abbrev,$1)
        $(SETVAR,gene_id,$2)
+       <?MIVAR NAME=fullname>$gene_name<?/MIVAR>
        <?/MIVAR> 
      <?/MIBLOCK>
 
@@ -182,6 +190,7 @@ ERROR -- something bad happened -- no OID passed in!
        $(SETVAR,gene_name,$3)
        $(SETVAR,gene_abbrev,$1)
        $(SETVAR,gene_id,$2)
+       <?MIVAR NAME=fullname>$fullname, $gene_name($gene_abbrev)<?/MIVAR>
        <?/MIVAR> 
      <?/MIBLOCK>
 
@@ -191,6 +200,7 @@ ERROR -- something bad happened -- no OID passed in!
        $(SETVAR,gene_name,$3)
        $(SETVAR,gene_abbrev,$1)
        $(SETVAR,gene_id,$2)
+       <?MIVAR NAME=fullname>$fullname, $gene_name<?/MIVAR>
        <?/MIVAR> 
      <?/MIBLOCK>
 
@@ -203,7 +213,23 @@ ERROR -- something bad happened -- no OID passed in!
      <?MIVAR NAME=$COUNT>1<?/MIVAR>
 <?/MISQL>
 
-     </font></b>
+           </font></b>
+         </td>
+         <?MIVAR>
+           <form method=post 
+                 action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
+                 target=comments>
+           <input type=hidden name=subject value="$fullname">
+           <input type=hidden name=marker_id value="$gene_id">
+           <input type=hidden name=MIval value="aa-your_input_welcome.apg">
+           <input type=hidden name=page_id value="$OID">
+         <td width=15% align=center>
+           <input type=submit value="Your Input Welcome">
+         </td>
+           </form>
+         <?/MIVAR>
+       </tr>
+     </table>
 
 <?MIBLOCK COND="$(XST,$ASSAY_NAME)">
 
@@ -241,8 +267,9 @@ ERROR -- something bad happened -- no OID passed in!
      TO FISHIMAGE PAGES, RETRIEVE KEYWORDS FOR STRUCTURES, SYSTEMS, AND
      PROCESSES, THEN GIVE COMMENTS.
 <?/MIVAR>
-
- <table border="4" cellspacing="4" cellpadding="4" bgcolor="#f8fabb" align=center width=100%>
+<?MIVAR>
+ <table border="0" cellspacing="4" cellpadding="4" bgcolor="$highlight" align=center width=100%>
+<?/MIVAR>
 
 <?MISQL SQL="
 	SELECT xpatstg_xpat_zdb_id, xpatstg_start_stg_zdb_id, xpatstg_end_stg_zdb_id, xpatstg_comments, stg_hours_start
@@ -321,7 +348,7 @@ ERROR -- something bad happened -- no OID passed in!
     <?MIBLOCK COND="$(=,$COUNT,0)">
       <?MIVAR>
 
-        <table cellspacing=2 cellpadding=5 border=1 align=center width=90% bgcolor="#e5e5e5">
+        <table cellspacing=2 cellpadding=5 border=1 align=center width=90% bgcolor="#FFFFFF">
 
       <?/MIVAR>
       <?MIVAR NAME=$COUNT>1<?/MIVAR>
@@ -380,7 +407,7 @@ ERROR -- something bad happened -- no OID passed in!
 <?/MIVAR>
 
 <?MIVAR COND="$(EC,$MI_ROWCOUNT,0)">
-      <table cellspacing=2 cellpadding=5 border=1 align=center width=90% bgcolor="#e5e5e5">
+      <table cellspacing=2 cellpadding=5 border=1 align=center width=90% bgcolor="#FFFFFF">
         <tr>
           <td>
             No Images Submitted
@@ -681,5 +708,6 @@ ERROR -- something bad happened -- no OID passed in!
 </form>
 <?/MIBLOCK> <!-- ends cond oid exists -->
 
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 </HTML>
 

@@ -1,11 +1,13 @@
 <HTML>
 <head>
 <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
-<TITLE>Add a new COMPANY record</TITLE>
+<TITLE>ZFIN Add a new COMPANY record</TITLE>
 </head>
 
 
 <?MISQL SQL="select WebExplode(object,'page_title=New Company&permission=root') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
@@ -113,4 +115,4 @@
 
 <?/MIBLOCK>  <!-- ends cond authorize -->
 
-</HTML>
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>

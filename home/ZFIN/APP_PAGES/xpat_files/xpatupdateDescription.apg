@@ -23,6 +23,7 @@
 
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
+<?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 
 <HTML>
 <body bgcolor="#e5e5e5" text="#000000" link="#0000ff" vlink="#800080" alink="#ff0000">
@@ -54,7 +55,7 @@
         <INPUT TYPE="hidden" name="end_stage" value="$end_stage_id">
 	<INPUT TYPE=hidden name="old_value" Value="$old_value">
 
-      <TABLE border="4" cellspacing="4" cellpadding="4" bgcolor="#f8fabb" align=center width="80%">
+      <TABLE border="4" cellspacing="4" cellpadding="4" bgcolor="$highlight" align=center width="80%">
 	<TR>
           <TD align=center>
 

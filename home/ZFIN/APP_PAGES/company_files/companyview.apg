@@ -23,25 +23,24 @@ ahead and look for it -- convert to OID if necessary -->
 <?/MIBLOCK>
 
 
-
 <?MIBLOCK COND="$(XST,$OID)">
 
   <?MIVAR>
     <SCRIPT>
       function doit(attr,attr_type,print_name) {
-      window.location.search='?MIval=aa-companyupdate.apg&OID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name
+      window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-companyupdate.apg&OID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name)
       }
 
       function doStatus(pers_id,new_status,old_status) {
-      window.location.search='?MIval=aa-do-companyupdate.apg&OID=$OID&attr=status&attr_type=special-status&old_value='+old_status+'&new_value='+new_status+'&pers_id='+pers_id
+      window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-companyupdate.apg&OID=$OID&attr=status&attr_type=special-status&old_value='+old_status+'&new_value='+new_status+'&pers_id='+pers_id)
       }
 
       function doContact(new_contact_id,old_contact_id) {
-      window.location.search='?MIval=aa-do-companyupdate.apg&OID=$OID&attr=contact_person&attr_type=text&old_value='+old_contact_id+'&new_value='+new_contact_id
+      window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-companyupdate.apg&OID=$OID&attr=contact_person&attr_type=text&old_value='+old_contact_id+'&new_value='+new_contact_id)
       }
 
       function doDelete(pers_id) {
-      window.location.search='?MIval=aa-do-companyupdate.apg&OID=$OID&attr=membership&attr_type=special-delete&old_value=Company_representative&new_value=NON_representative&pers_id='+pers_id
+      window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-companyupdate.apg&OID=$OID&attr=membership&attr_type=special-delete&old_value=Company_representative&new_value=NON_representative&pers_id='+pers_id)
       }
     </SCRIPT>
   <?/MIVAR>
@@ -71,23 +70,34 @@ ahead and look for it -- convert to OID if necessary -->
 
   <?MIVAR NAME=$rec_title>COMPANY:$name<?/MIVAR>
 
-  <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
-    <form><center><font size=4>
-      <?MIVAR> <b>Invalid ZFIN ID.<?/MIVAR>
+
+  <?MIBLOCK COND="$(EC,$name,$MI_NOVALUE)">
+      <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>        <form><center><font size=+2>
+      <b>Requested ID not found in ZFIN.</b></center>
     </form>
   <?/MIBLOCK>
 
+  <?MIBLOCK COND="$(XST,$UPDATE)">
+    <?MIVAR>
+      <TITLE>ZFIN Update Company:$name </TITLE>
+    <?/MIVAR>
+  <?MIELSE>
+    <?MIVAR>
+      <TITLE>ZFIN View Company:$name </TITLE>
+    <?/MIVAR>
+  <?/MIBLOCK>
 
-  <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
 
+  <?MIBLOCK COND="$(NC,$name,$MI_NOVALUE)">
+    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
     <!-- If VIEWING, THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
     <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=company') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
 
     <!-- NOW THROW SHOW THE COMPANYS DATA -->
     <form>
     <?MIVAR COND="$(XST,$UPDATE)">
-      <center><font size=5 color="#00ff00"><input type=button 
-      value=" DONE UPDATING. Back to Viewing! " onClick="document.location.search='?MIval=aa-companyview.apg&OID=$OID'"> </font></center>
+      <center><font size=+2 color="#00ff00"><input type=button 
+      value=" DONE UPDATING. Back to Viewing! " onClick="window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-companyview.apg&OID=$OID')"> </font></center>
     <?/MIVAR>
 
 
@@ -97,7 +107,7 @@ ahead and look for it -- convert to OID if necessary -->
     <A NAME="member-info">
     <TD valign=middle>
     <?MIVAR>
-    <FONT SIZE=6> <B> $name </B> </FONT> 
+    <FONT SIZE=+2> <B> $name </B> </FONT> 
     <?/MIVAR>
 
     <?MIVAR COND="$(AND,$(XST,$UPDATE),$(EC,$AUTHORIZED,root))">
@@ -152,7 +162,7 @@ ahead and look for it -- convert to OID if necessary -->
     <?/MIBLOCK>
 
     <?MISQL COND="$(AND,$(NC,$contact_person,NULL),$(OR,$(NXST,$UPDATE),$(NC,$AUTHORIZED,root)))" SQL="select full_name from person where zdb_id='$contact_person';">
-    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$contact_person" TARGET="content">
+    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$contact_person" >
     $1</A>
     <?/MISQL>
 
@@ -218,7 +228,7 @@ ahead and look for it -- convert to OID if necessary -->
       <?MIVAR NAME=$pos_order>$4<?/MIVAR>
       $(IF,$(XST,$UPDATE),"<font size=-1><input type=button value=delete onClick=doDelete('"$persid"')></font>") 
       $(IF,$(>,$pos_order,1),<font size=-1>)
-      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$persid" TARGET="content" >
+      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$persid"  >
         $(IF,$(<,$pos_order,3),"<b>"$1"</b>",$1)
       </A>
 
@@ -263,9 +273,9 @@ ahead and look for it -- convert to OID if necessary -->
 
 
 
-    <?MISQL SQL="select distinct a.title, year(pub_date) as pyear, a.zdb_id, a.authors, a.source from publication a, int_person_pub b, int_person_company c where b.target_id=a.zdb_id and b.source_id=c.source_id and c.target_id='$OID' order by pyear desc, a.authors asc;">
+    <?MISQL SQL="select distinct a.title, year(pub_date) as pyear, a.zdb_id, a.authors, a.source, lower(a.authors) from publication a, int_person_pub b, int_person_company c where b.target_id=a.zdb_id and b.source_id=c.source_id and c.target_id='$OID' order by pyear desc, 6 asc;">
 
-      <TR><TD colspan=1 align=left><font size=3> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3">$4 ($2) $1. $5.</A></TD></TR>
+      <TR><TD colspan=1 align=left><font size=3><DIV class="show_pubs"> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3">$4 ($2) $1. $5.</A></DIV></TD></TR>
       <p>
     <?/MISQL>
     </form>
@@ -275,6 +285,9 @@ ahead and look for it -- convert to OID if necessary -->
 <?/MIBLOCK> <!-- ends cond OID xst -->
 
 <?/MIBLOCK> <!-- ends AUTHORIZED-->
+
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 
 </HTML>
 

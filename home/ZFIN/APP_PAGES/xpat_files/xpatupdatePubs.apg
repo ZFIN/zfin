@@ -109,7 +109,7 @@ target_table -- either anon_marker or gene, depending on what you're updating
     <?MISQL SQL="
       select WebExplode(object,'$constraint') 
 	from webPages 
-	where ID='aa-startframes_select.apg';">
+	where ID='aa-start_select.apg';">
       $1
     <?/MISQL>
 

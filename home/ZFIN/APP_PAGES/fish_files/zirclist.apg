@@ -2,24 +2,26 @@
 <TITLE>ZIRC Strains</TITLE>
 </HEAD>
 
-
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
  <body bgcolor="white"  TEXT="black">
+    <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
+    <?MIVAR name=$row_color>#FFFFFF<?/MIVAR>
+    <?MIVAR NAME=$MI_NULL><?/MIVAR>
+
+    <?MISQL SQL="
+        select count(*)::integer from fish a, int_fish_source b where a.zdb_id = b.source_id  and b.target_id = 'ZDB-LAB-991005-53';">
+    <?/MISQL>
+    <?MIVAR NAME=$num_recs>$1<?/MIVAR>
+
   <center>
-    <FONT SIZE=+2>Strains currently available at the ZIRC</font><br>
-  </center> </ul>
+    <font size=+2>
+      Strains currently available at the ZIRC (<?MIVAR><b>$num_recs</b><?/MIVAR>)   </font>
+  </center>
+
     <br>
     <p>
     <TABLE width="100%" border="0" cellspacing="0" cellpadding="3">
     <TH></TH><TH>Strain [previous names]</TH><TH>Locus (abbrev) [previous names]</TH> <TH>Gene</TH> <TH>Mut. Type</TH> <TH>LG</TH><TH>Location</TH> 
-
-    <?MIVAR name=$row_color>#FFFFFF<?/MIVAR>
-    <?MIVAR NAME=$MI_NULL><?/MIVAR>
-
-
-    <?MISQL SQL="
-        select count(*) from fish a, int_fish_source b where a.zdb_id = b.source_id  and b.target_id = 'ZDB-LAB-991005-53';">
-    <?/MISQL>
-    <?MIVAR NAME=$num_recs>$1<?/MIVAR>
 
     <!--- WALKING WINDOW --->
     <!--- Initialization --->
@@ -35,7 +37,7 @@
     <!--- EXECUTION --->
     <!--- Query Database --->
       <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
-        select distinct a.allele, a.zdb_id, c.abbrev, a.line_type, c.gene_id, c.chrom_change, c.chrom_num, a.name, a.abbrev, c.gene_abbrev, c.locus, d.locus_name from fish a, int_fish_source b, OUTER fish_search c, OUTER locus d where a.zdb_id = b.source_id  and b.target_id = 'ZDB-LAB-991005-53' and a.zdb_id = c.fish_id and a.locus = d.zdb_id order by a.allele, c.abbrev;">
+        select distinct a.allele, a.zdb_id, c.abbrev, a.line_type, c.gene_id, c.chrom_change, c.chrom_num, a.name, a.abbrev, c.gene_abbrev, c.locus, d.locus_name, lower(d.locus_name)  from fish a, int_fish_source b, OUTER fish_search c, OUTER locus d where a.zdb_id = b.source_id  and b.target_id = 'ZDB-LAB-991005-53' and a.zdb_id = c.fish_id and a.locus = d.zdb_id order by 13,a.allele, c.abbrev;">
     <?MIVAR NAME=$allele>$1<?/MIVAR>
     <?MIVAR NAME=$zdb_id>$2<?/MIVAR>
     <?MIVAR NAME=$abbrev>$3<?/MIVAR>
@@ -147,7 +149,7 @@
 	</TR>
 
 	<!--    change row_color    -->
-	<?MIVAR name=$row_color>$(IF,$(EC,$row_color,#FFFFFF),#EEEEEE,#FFFFFF)<?/MIVAR>
+	<?MIVAR name=$row_color>$(IF,$(EC,$row_color,#FFFFFF),$highlight,#FFFFFF)<?/MIVAR>
 
       <?/MISQL>
     </TABLE>
@@ -249,5 +251,8 @@
   </Table>
   </Center>
 
-</BODY>
+
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+
+
 

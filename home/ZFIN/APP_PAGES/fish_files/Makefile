@@ -23,9 +23,9 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/fish_files
 
 SUBDIRS = UPDATING
 
-GENERICS = fishlister.apg fishselect.apg fishview.apg new-fish.apg \
+GENERICS = fishselect.apg fishview.apg new-fish.apg \
 	process-fish-aux.apg process-fish.apg setup-new-fish.apg \
-	update-fish.apg zirclist.apg
+	update-fish.apg wtlist.apg zirclist.apg
 
 # Use default rules for app page directories.
 

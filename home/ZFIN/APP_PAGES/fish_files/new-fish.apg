@@ -1,3 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+
+<META HTTP-EQUIV="EXPIRES" CONTENT="-2d">
+
+<?MIVAR>  <TITLE>ZFIN Add $(IF,$(XST,$name),$name,$(IF,$(XST,$line_type),$line_type,wild type))</TITLE>  <?/MIVAR>
+
+<?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
+
+
+<?MISQL SQL="
+  select WebExplode(object,'') 
+    from webPages 
+    where ID='aa-chromoscripts.apg';">
+  $1
+<?/MISQL>
+
+  </head>
+
+
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+
+
 <!-- File: New-fish.html
 This  app page handles submission of new mutant and wild type lines. It allows digressions to select things like discoverer, parents, etc.  During submission, data for all fields is stored in the temp_fish table. When submitted, this data is used to populate new fish and (for mutants) new chromosome and alteration records.
 
@@ -9,11 +34,6 @@ line_type (optional) -- should be either 'mutant' or 'wild type'. If not exists,
 -->
 
 <?MIVAR COND="$(NXST,$line_type)" NAME=$line_type>wild type<?/MIVAR>
-
-<HTML>
-
-<head>
-  <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
 
   <?MIVAR>
     <SCRIPT>
@@ -28,7 +48,7 @@ line_type (optional) -- should be either 'mutant' or 'wild type'. If not exists,
       }
     </SCRIPT>
   <?/MIVAR>
-</head>
+
 
 <?MISQL SQL="select WebExplode(object,'permission=root&page_title=New $line_type') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
@@ -447,3 +467,4 @@ $1<?/MISQL>
 
 
 
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>

@@ -24,73 +24,53 @@ if (navigator.appName == "Netscape")
 document.captureEvents(Event.KEYDOWN|Event.KEYUP|Event.KEYPRESS);
 </SCRIPT>
 
+<title>ZFIN Person Quick Search</title>
 
-<basefont size=2>
-
-
-<?MIVAR COND="$(NXST,$searchtype)" NAME=$searchtype>contains<?/MIVAR>
-
-<form name=critform method=post TARGET="pbrowser" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
-
-<SCRIPT>
-</SCRIPT>
-
-<center>
-<U><B><FONT SIZE=5><I>QUICK</I></font><FONT SIZE=5>Search:</font>
-<FONT SIZE=5 color="#ff0000" > PERSON</font></b></u>
-</center>
-
-<?MIVAR COND="$(NXST,$START)" NAME=$START>1<?/MIVAR>
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
 <?MIVAR COND="$(NXST,$searchtype)" NAME=$searchtype>contains<?/MIVAR>
-<TABLE width=100%>
-<TR>
-<TD><font size=2>
-<b>
-<?MIVAR>
-<SELECT name=searchtype onChange='document.critform.START.value = "";' >
-<option $(IF,$(EC,$searchtype,begins),SELECTED) value=begins>Name begins with
-<option $(IF,$(EC,$searchtype,contains),SELECTED) value=contains>Name contains
-</select>:<?/MIVAR></b> <input type=text name=pname size=10 onChange='document.critform.START.value = "";' >
-</font></TD>
 
+<form name=critform 
+      method=post 
+      action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 
-<!--  assign navtile value to name - can not do with a value="pname" in input statement - reset will not work -->
-<?MIBLOCK COND="$(XST,$nav_name)">
-  <?MIVAR> 
-    <SCRIPT> 
-      document.critform.pname.value = "$nav_name" 
-    </SCRIPT>
-  <?/MIVAR> 
-<?/MIBLOCK>
-
-
-<TD align=center>
-		Display results in groups of 
-		<input type="text" name="WINSIZE" size="3" value="10">
-      <?MIBLOCK COND="$(AND,$(NOT,$(ISNULL,$WINSIZE)),$(XST,$WINSIZE))">
-        <?MIVAR> 
-          <SCRIPT> 
-            document.critform.WINSIZE.value = "$WINSIZE" 
-          </SCRIPT>
-        <?/MIVAR> 
-      <?/MIBLOCK>
+ <table class=search width=100%>
+    <tr>
+      <td class=titlebar colspan="2">
+       <B>Search for PERSON</b></u>
+      </td>
+    </TR>
+    <TR>
+     <TD class="halfwidth">
+      <?MIVAR COND="$(NXST,$START)" NAME=$START>1<?/MIVAR>
+      <?MIVAR COND="$(NXST,$searchtype)" NAME=$searchtype>contains<?/MIVAR>
+      <b>
+      <?MIVAR>
+      <SELECT name=searchtype onChange='document.critform.START.value = "";' >
+       <option $(IF,$(EC,$searchtype,begins),SELECTED) value=begins>Name begins with
+       <option $(IF,$(EC,$searchtype,contains),SELECTED) value=contains>Name contains
+      </select>:<?/MIVAR></b> <input type=text name=pname size=10 onChange='document.critform.START.value = "";' >
+     </font>
+    </TD>
+    <TD class="halfwidth">
+     <font size=2>
+     <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persselect.apg">Advanced Search</A>
+     </font>
+    </TD>
+   <TR>
+   <TD class="submitbar" align="right" colspan=2>
+		<input type="hidden" name="WINSIZE" value="10">
+		<input type="hidden" name="query_results" value="exist">
 		<input type=submit name=action value="SEARCH" onSubmit="parent.pbrowser.document.location='/ZFIN/misc_html/saysearching.html';document.critform.submit();">
-</TD> 
-
-<TD><font size=2>
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-persselect.apg&select_from=PERSON" TARGET=content>Advanced Search</A>
-</font>
-</TD>
-
-</TR>
+   </TD> 
+  </TR>
 </TABLE>
 
-<input type=hidden name=MIval value=aa-perslister.apg>
+<input type=hidden name=MIval value=aa-persselect.apg>
 <input type=hidden name=searchtype value=begins>
 
 <?MIVAR>
-  <input type=hidden NAME="START" value=$START>
+  <input type=hidden NAME="START" value=1>
 <?/MIVAR>
 
 
@@ -102,22 +82,14 @@ we have to do at this point is pass the return record along to perslister.
 <input type=hidden NAME="return_rec" value=$return_rec>
 <?/MIVAR>
 
-<!-- If we have gotten to this page from a nav bar tile - we need to autosubmit to get
- pbrowser frame populated -->
-
-
-<?MIVAR COND="$(XST,$navtile)">
-<SCRIPT>
-form_submit();
-</SCRIPT>
-<?/MIVAR>
 
 </form>
 
 <!-- Put the cursor in the NAME criterion box -->
 <SCRIPT>document.critform.pname.focus();</SCRIPT>
-</HTML>
 
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 
 
 

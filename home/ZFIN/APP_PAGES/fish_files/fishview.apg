@@ -1,7 +1,6 @@
 
 <!-- FILE: FISHVIEW.HTML. This file implements a viewer for FISH records. The goal is to display all of the information associated with, not only the FISH record, but also all mutant alleles (ie. CHROMOSOME and ALTERATION recs) associated with the FISH.
 
-
 Variables Expected: 
  -- OID -- the OID of the fish record to view
  -- UPDATE -- a flag variable to indicate we're in update mode
@@ -12,6 +11,7 @@ Variables Expected:
   <head>
     <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
 
+
     <?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
     <?MIVAR COND="$(NXST,$lg)" NAME=$lg>0<?/MIVAR>
     <?MIVAR COND="$(NXST,$ALTOID)" NAME=$ALTOID><?/MIVAR>
@@ -21,7 +21,6 @@ Variables Expected:
     <?MIVAR COND="$(NXST,$metric)" NAME=$metric><?/MIVAR>
   
     <?MIVAR NAME=$userid>GUEST<?/MIVAR>
-
     <?MISQL SQL="select object from webPages where ID='aa-chromoscripts.apg';">$1<?/MISQL>
 
 
@@ -32,12 +31,12 @@ Variables Expected:
 
       function call_mapplet() {
 
-        document.updater.submit();
+        document.mapper.submit();
       }
 
       function call_zmapplet() {
-        document.updater.action='/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi';
-        document.updater.submit();
+        document.mapper.action='/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi';
+        document.mapper.submit();
       }
 
       function popup_url(url) {
@@ -46,9 +45,6 @@ Variables Expected:
 
     </SCRIPT>
   </HEAD>
-
-  <body bgcolor="#e5e5e5"  TEXT="black">
-  <basefont COLOR="#000000" size=2>
 
   <?MIBLOCK COND="$(NXST,$OID)">
     <p>
@@ -60,11 +56,11 @@ Variables Expected:
     <?MIVAR>
       <SCRIPT>
 	function doit(attr,attr_type,print_name) {
-	  window.location.search='?MIval=aa-fishupdate.apg&OID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name
+        window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishupdate.apg&OID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name)
 	}
 
 	function doit_marker(attr,attr_type,print_name,lg) {
-	  window.location.search='?MIval=aa-fishupdate.apg&OID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name+'&lg='+lg
+	  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishupdate.apg&OID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name+'&lg='+lg)
 	}
 
 
@@ -72,44 +68,44 @@ Variables Expected:
 	  var selectedValue=selector[selector.selectedIndex].value;
 	  selector.selectedIndex=0;
 	  if (selectedValue != 'none') {
-	    window.location.search='?MIval=aa-fishupdate.apg&OID=$OID&attr=source&attr_type=selection&print_name=Add+source&source_type='+selectedValue;
+	    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishupdate.apg&OID=$OID&attr=source&attr_type=selection&print_name=Add+source&source_type='+selectedValue);
 	  }
 	}
 
 	function dopopup(new_value,old_value,field) {
-	  window.location.search='?MIval=aa-do-fishupdate.apg&OID=$OID&attr='+field+'&attr_type=text&old_value='+old_value+'&new_value='+new_value
+	  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr='+field+'&attr_type=text&old_value='+old_value+'&new_value='+new_value);
 	}
 
 	function doChromnum(new_value,old_value,chrom_id) {
-	  window.location.search='?MIval=aa-do-fishupdate.apg&OID=$OID&attr=chrom_num&attr_type=special-chromnum&old_value='+old_value+'&new_value='+new_value+'&chrom_id='+chrom_id
+	  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr=chrom_num&attr_type=special-chromnum&old_value='+old_value+'&new_value='+new_value+'&chrom_id='+chrom_id);
 	}
 
 	function doMutagen(new_value,old_value,alt_id) {
-	  window.location.search='?MIval=aa-do-fishupdate.apg&OID=$OID&attr=mutagen&attr_type=special-alteration&old_value='+old_value+'&new_value='+new_value+'&alt_id='+alt_id
+	  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr=mutagen&attr_type=special-alteration&old_value='+old_value+'&new_value='+new_value+'&alt_id='+alt_id);
 	}
 
 	function doProtocol(new_value,old_value,alt_id) {
-          window.location.search='?MIval=aa-do-fishupdate.apg&OID=$OID&attr=protocol&attr_type=special-alteration&old_value='+old_value+'&new_value='+new_value+'&alt_id='+alt_id
+          window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr=protocol&attr_type=special-alteration&old_value='+old_value+'&new_value='+new_value+'&alt_id='+alt_id);
 	}
 
 	function doChromChange(new_value,old_value,alt_id) {
-	  window.location.search='?MIval=aa-do-fishupdate.apg&OID=$OID&attr=chrom_change&attr_type=special-alteration&old_value='+old_value+'&new_value='+new_value+'&alt_id='+alt_id
+	  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr=chrom_change&attr_type=special-alteration&old_value='+old_value+'&new_value='+new_value+'&alt_id='+alt_id);
 	}
 
 	function Delete_listitem(item_name,item_id) {
-	  window.location.search='?MIval=aa-do-fishupdate.apg&OID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted'
+	  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted');
 	}
 
 	function Delete_listitem_alias(item_name,item_id,oid,altoid) {
-	  window.location.search='?MIval=aa-do-fishupdate.apg&OID='+oid+'&ALTOID='+altoid+'&attr='+item_name+'&attr_type=Delete_listitem_alias&old_value='+item_id+'&new_value=deleted'
+	  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID='+oid+'&ALTOID='+altoid+'&attr='+item_name+'&attr_type=Delete_listitem_alias&old_value='+item_id+'&new_value=deleted')
 	}
 
 	function Delete_marker(allele,marker_id) {
-	  window.location.search='?MIval=aa-do-fishupdate.apg&OID=$OID&attr='+allele+'&attr_type=marker-delete&old_value='+marker_id+'&new_value=deleted'
+	  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr='+allele+'&attr_type=marker-delete&old_value='+marker_id+'&new_value=deleted');
 	}
 
 	function edit_linkage(link_id,oid) {
-	  window.location.search='?MIval=aa-edit_linkage.apg&link_id='+link_id+'&OID='+oid
+	  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_linkage.apg&link_id='+link_id+'&OID='+oid);
 	}
       </SCRIPT>
     <?/MIVAR>
@@ -150,30 +146,51 @@ Variables Expected:
 
       <?MIVAR NAME=$rec_title>Record for $line_type $abbrev<?/MIVAR>
 
-      <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
-        <form><center><font size=4>
-          <?MIVAR> <b>ID not found in ZFIN.<?/MIVAR>
-        </form>
+
+      <?MIBLOCK COND="$(XST,$UPDATE)">
+	<?MIVAR>
+	  <TITLE>ZFIN Update Mutant: $name </TITLE>
+	<?/MIVAR>
+      <?MIELSE>
+	<?MIVAR>
+	  <TITLE>ZFIN View Mutant: $name </TITLE>
+	<?/MIVAR>
       <?/MIBLOCK>
 
+      <?MIBLOCK COND="$(EC,$name,$MI_NOVALUE)">
+        <form>
+          <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+          <center><font size=+2><b>Requested ID not found in ZFIN.</center>
+        </form>
+      <?/MIBLOCK>
+	<?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 
-      <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+      <?MIBLOCK COND="$(NC,$name,$MI_NOVALUE)">
+
+
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
 	<!-- If viewing, THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
 	<?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=fish') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
 
-	<A NAME="top">
+	<A NAME="top"></a>
 
 	<!-- OKAY, NOW  THROW UP THE  FISH INFO -->
-	<form NAME=updater method=post action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi" target="content" >
-	<?MIVAR COND="$(XST,$UPDATE)">
-  	  <center><font size=5 color="#00ff00"><input type=button 
-	  value=" DONE UPDATING. Back to Viewing! " onClick="document.location.search='?MIval=aa-fishview.apg&OID=$OID'"> </font></center>
+
+<?MIVAR COND="$(XST,$UPDATE)">
+	<form NAME=updater method=post action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi"  >
+  	  <center><font size=+2 color="#00ff00"><input type=button 
+	  value=" DONE UPDATING. Back to Viewing! " onClick="window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$OID')"> </font></center>
 	<?/MIVAR>
 
-	<center>
+        <TABLE width=100%>
+          <tr>
+            <td width=15%>
+              &nbsp;
+            </td>
+            <td width=70% align=center>
 	<?MIVAR>
-	  <B> <FONT SIZE=6>$line_type:  
+	  <B> <FONT SIZE=+2>$line_type:  
 	<?/MIVAR>
 
 	<?MIVAR COND="$(XST,$UPDATE)">
@@ -197,24 +214,43 @@ Variables Expected:
 	  <i>($abbrev)</i></FONT></b>
 	<?/MIVAR>
 
+	<br>
 	<?MIBLOCK COND="$(OR,$(EC,$AUTHORIZED,root),$(EC,$AUTHORIZED,fishauth))">
-	  <br>
 	  <?MIVAR COND="$(XST,$UPDATE)">
 	    <INPUT TYPE=button value=Update onClick="doit('owner','selection','Owner')">
 	  <?/MIVAR> 
 	  <?MISQL SQL="select full_name from person where zdb_id='$owner';"><font color="#ff0000">(Record Owner is $1)<?/MISQL>
 	  <br>
+	  </font>
+	<?/MIBLOCK> <!-- if root -->
 	  <?MIVAR COND="$(XST,$UPDATE)">
 	    <INPUT TYPE=button value=Update onClick="doit('pheno_keywords','textarea','Phenotype_Keywords')">
 	  <?/MIVAR> 
-	  <?MIVAR> 
-            (Search Keywords: $(IF,$(NC,$pheno_keywords,NULL),$pheno_keywords) )
+	  <?MIVAR>
+            (Keywords: $(IF,$(NC,$pheno_keywords,NULL),$pheno_keywords) )
 	  <?/MIVAR>
-	  </font>
-	<?/MIBLOCK> <!-- if root -->
+          </td>
+       <?MIBLOCK COND="$(NXST,$UPDATE)">
+         <?MIVAR>
+           <form method=post 
+                 action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
+                 target=comments>
+           <input type=hidden name=subject value="$name">
+           <input type=hidden name=marker_id value="$OID">
+           <input type=hidden name=MIval value="aa-your_input_welcome.apg">
+           <input type=hidden name=page_id value="$OID">
+         <td width=15% align=center>
+           <input type=submit value="Your Input Welcome">
+         </td>
+           </form>
+         <?/MIVAR>
+       <?MIELSE>
+         <td width=15%>&nbsp;</td>
+       <?/MIBLOCK>
 
+        </tr>
+      </table>
 	<p>
-	</CENTER>
 
 	<!-- Toss up images, if any, and description. -->
 
@@ -224,15 +260,21 @@ Variables Expected:
 	      <TD>
 		<B>Adding images:</B> To add new images of this line, return to the 
 		ZFIN home page and select "Submit new image".
+              </td>
+            </tr>
 	    <TR>
 	      <TD>
 		<B>Deleting images:</B> To delete an image, click on the thumbnail
 		and then select "Permanently delete this record" on the image page.
+              </td>
+            </tr>
 	    <TR>
 	      <TD>
 		<B>Reassigning images:</b> To reassign an image to another line,
 		click on the thumbnail and then update the stock associated with the
 		image.
+              </td>
+            </tr>
 	  </TABLE>
 	<?/MIVAR>
 
@@ -332,7 +374,7 @@ Variables Expected:
 	    </TABLE>
 	  <?MIELSE>
 	    <center>
-	    <TABLE cellpadding=4 border>
+	    <TABLE cellpadding=4 border=0>
 	      <TR>
 		<TD>No images of this line are available.</TD>
 	      </TR>
@@ -389,7 +431,7 @@ Variables Expected:
 
 
 	<p>
-	<A NAME="origins-info">
+	<A NAME="origins-info"></a>
 	<HR width=80%>
 
 	<h3>ORIGINS and AVAILABILITY</h3>
@@ -488,7 +530,7 @@ Variables Expected:
 		  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sourceview.apg&OID=$1">$2</A>
 		  </TD>
 		  <TD align=right>
-		    <FONT SIZE=-2>$3</FONT>
+		    <font size=-1>$3</font>
 		  </TD>
 		</TR>
 	      </TABLE>
@@ -511,7 +553,8 @@ Variables Expected:
 
 	  <HR width=80%>
 	  <p>
-	  <h3>ALLELE(s) carried in this mutant line:</h3>
+	  <h3>ALLELE(s) carried in this mutant line:</h3
+>
 
 	  <!-- If we're updating,its crucial to know whether this FISH "owns" the chromosome, ie, it is the original mutant on which that chromo was found, or if itinherited the chromosome from some parent. We only allow updating if the former is the case. We check this by looking at the "status" field of the intersection record: if it="original" then we allow updating, else not.-->
 
@@ -525,7 +568,7 @@ Variables Expected:
 
 	  <TABLE width=100%>
 	  <TR>
-	  <TD bgcolor="#f8fabb" valign=middle align=center width=10%><font color="#ff0000"><b>$1</b></font></TD>
+	  <TD bgcolor="$highlight" valign=middle align=center width=10%><font color="#ff0000"><b>$1</b></font></TD>
 	  <?MIVAR NAME=$allele_name>$1<?/MIVAR>
 
 
@@ -542,7 +585,7 @@ Variables Expected:
 	    <?MIVAR NAME=$allele_alias>$1<?/MIVAR>
 	    <?MIVAR COND="$(XST,$allele_alias)" NAME=$allele_alias DELIMIT=" " REPLACE="+">$allele_alias<?/MIVAR>
 	    <?MIVAR COND="$(XST,$UPDATE)"><br> <INPUT TYPE=button value=Delete onClick="Delete_listitem_alias('alleali_allele_name_alias','$allele_alias','$OID','$ALTOID')">
-	    <?/MIVAR>$(IF,$(AND,$(NXST,$UPDATE),$(>,$MI_CURRENTROW,1)),;) $1 
+    <?/MIVAR>$(IF,$(AND,$(NXST,$UPDATE),$(>,$MI_CURRENTROW,1)),;) $1 
 	  <?/MISQL>
 
 
@@ -624,15 +667,20 @@ Variables Expected:
 
 	  <?MIBLOCK COND="$(=,$MI_ROWCOUNT,1)">
 	  <hr width=90%>
-	  <font size=3><b>Mapping Information:</b><p>
 
+<!-- wrap Mapping table in mapper form -->
+<form NAME=mapper 
+      method=post 
+      action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi">
+
+	  <H3><b>Mapping Information:</b></H3><p>
 
 	  <!-- Now if it's a deletion, also show present/missing markers -->
 	  <?MISQL SQL="select chrom_change from fish_search where fish_id='$OID';"><?/MISQL>
 	  <?MIVAR NAME=$chrom_change>$1<?/MIVAR>
 
 	  <?MIBLOCK COND="$(OR,$(EC,$chrom_change,deficiency),$(EC,$chrom_change,translocation),$(EC,$chrom_change,unknown))">
-	  <A NAME="markers-missing">
+	  <A NAME="markers-missing"></a>
 
 	  <TABLE width=100%><TR><TD><font size=2>
 
@@ -682,26 +730,33 @@ Variables Expected:
 	  <b>Markers present:</b>
 	  <br>
 	  <?/MIVAR>
-
+	  </TD></TR></TABLE>
 
 	  <?/MIBLOCK> <!-- ends deficiency -->
 
-	  </TD></TR></TABLE>
 
-	  <TABLE width=100% cellpadding=5 border=4 bgcolor="#f8fabb" cols=2 rows=1>
+ 	  <?MIVAR>
+	    <TABLE width=100% cellpadding=5 border=0 bgcolor="$highlight">
+	  <?/MIVAR>
 	  <TR>
-	  <TD valign=top colspan=2>
+	  <TD valign=top>
+
 
 	  <?MIVAR> <B>Reference Panel Location(s): <i>$abbrev</i>  </B><?/MIVAR> 
-	  <TABLE cols=3 width=100% colspan=2>
+	  <TABLE width=100%>
 
 	  <?MIVAR NAME=$override>$(IF,$(OR,$(EC,$ZDB_access,root),$(EC,$ZDB_access,fishauth)),true,false)<?/MIVAR>
 
 	  <?MISQL SQL="select a.owner, lg_location, target_id as panel_id, OR_lg, target_abbrev as panel_abbrev,private,b.full_name,a.metric,day(a.entry_date::date),month(a.entry_date::date), year(a.entry_date::date), map_name, disp_order from paneled_markers a,person b, panels c  where a.zdb_id='$OID' and OR_lg is not null and a.owner=b.zdb_id and a.target_id = c.zdb_id order by c.disp_order;">
 
+	  $(IF,$(>,$MI_CURRENTROW,1),
+            <TR>
+              <td>
+                <hr width=80%>
+              </TD>
+            </TR>)
 
-	  $(IF,$(>,$MI_CURRENTROW,1),<TR><td colspan=2><hr width=80%></TD></TR>)
-	  <TR>
+	    <TR>
 
 	  <?MIVAR NAME=$upd_day>$9<?/MIVAR>
 	  <?MIBLOCK COND="$(NC,$upd_day,NULL)">
@@ -712,27 +767,47 @@ Variables Expected:
             <?MIVAR NAME=$upd_date> <?/MIVAR>
 	  <?/MIBLOCK>
 
-	  $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),"<TD colspan=3><font size=2>LG <b>"$4"</b>;<b> "$2"</b> "$8" (<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$3">"$5" Panel; updated "$upd_date"</A>) "$(IF,$(ISNULL,$12),,Mapped as $12)" </TD>","<TD colspan=2><font size=2>Mapped on <A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$3">"$5" Panel; updated "$upd_date"</A>, but still confidential.")
+	  $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),
+             "<TD>
+                <font size=2>LG <b>"$4"</b>;<b> "$2"</b> "$8" 
+                (<A  HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$3">
+                "$5" Panel; updated "$upd_date"</A>) "$(IF,$(ISNULL,$12),,Mapped as $12)" 
+              </TD>",
 
-	  </TD>
+          <!--else-->
+             "<TD>
+                <font size=2>Mapped on 
+                <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$3">
+                "$5" Panel; updated "$upd_date"</A>, but still confidential.
+              </TD>")
 
+	    </TR>
+            <TR>
+              <TD>
+                <font size=2>
+                &nbsp;&nbsp;&nbsp; mapped by 
+                <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$1">
+                   $7</A>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <A HREF="javascript:view_scores('$3','$4','$OID','$abbrev');">
+                   Scoring Data</A>
+              </TD> 
+	    </TR>
 
-	  </TR><TR>
-	  <TD colspan=2><font size=2>&nbsp;&nbsp;&nbsp; mapped by <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$1">$7</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="javascript:view_scores('$3','$4','$OID','$abbrev');">Scoring Data</A></TD> 
-	  </TR>
-
-	  <?/MISQL>
-
+          <?/MISQL>
 
 	  <?MIVAR COND="$(=,$MI_ROWCOUNT,0)"><p>Not mapped on any reference panel<?/MIVAR>
 	  </TABLE>
 
 	  </TD>
 	  <!-- ************************************** -->
+
+      <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
 	  <TD valign=top>
-	  <A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=ZDB-REFCROSS-010114-1>ZMAP</A> 
-	  <b>Location(s): <?MIVAR><i>$abbrev</i></b><?/MIVAR>
-	  <TABLE>
+  	    <A  HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=ZDB-REFCROSS-010114-1>ZMAP</A> 
+	    <b>Location(s): <?MIVAR><i>$abbrev</i></b><?/MIVAR>
+
+	    <TABLE>
 	  <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
 	    <!-- look for a match of the last two characters in the public_paneled_markers abbrev to match the last two characters in the panels abbrev for table join to find disp_order -->
 	    <!--  naming convention is xxx_ln54  -->
@@ -744,12 +819,16 @@ Variables Expected:
 		</TD>
 	      </TR>
 	    <?/MISQL>
-
-	    <TD align=right><font size=2>
-	    <input type=button value='VIEW MERGED MAP' name=view_map onClick="call_zmapplet()">
-	    </TD>
+ 
+              <tr>
+  	        <TD align=right>
+                  <font size=2>
+	          <input type=button value='VIEW MERGED MAP' 
+                         name=view_map onClick="call_zmapplet()">
+	        </TD>
+              </tr>
 	  <?/MIBLOCK>
-	  </TABLE>
+	    </TABLE>
 	  </TD>
 	  <!-- ************************************ -->
 
@@ -757,21 +836,21 @@ Variables Expected:
 
 	  <?MIVAR><b>View Map for: <i>$abbrev</i></b> <?/MIVAR> 
 
-	  <TABLE cellpadding=0 cellspacing=0 >
+	    <TABLE cellpadding=0 cellspacing=0 >
 
 	  <?MISQL SQL="select distinct target_abbrev, private as panel_abbrev, disp_order from paneled_markers a,person b ,panels c where a.zdb_id='$OID' and OR_lg is not null and a.owner=b.zdb_id and a.target_id = c.zdb_id order by disp_order;">
 
-	  <?MIVAR NAME=$private>$2<?/MIVAR>
+	    <?MIVAR NAME=$private>$2<?/MIVAR>
 
-	  <?MIVAR COND="$(EC,$private,f)">
-	  <TR>
-	  <TD colspan=1><font size=2 COLOR=#A9A9A9>
-
-	  <input type=checkbox name="$1" value=1 type=hidden CHECKED ><font size=2 COLOR=#000000> $1 </TD>
-	  </TR><?/MIVAR>
+	    <?MIVAR COND="$(EC,$private,f)">
+	      <TR>
+	        <TD>
+                  <font size=2 COLOR=#A9A9A9>
+ 	          <input type=checkbox name="$1" value=1 type=hidden CHECKED ><font size=2 COLOR=#000000> $1 
+                </TD>
+	      </TR>
+            <?/MIVAR>
 	  <?/MISQL>
-
-	  <?MIVAR COND="$(=,$MI_ROWCOUNT,0)"><p>Not mapped on any reference panel<?/MIVAR>
 
 	  <?MIBLOCK COND="$(NOT,$(EQ,$(SUBSTR,$ZDB_name,1,5),GUEST))">
 	    <?MIVAR NAME=$userid>$ZDB_ident<?/MIVAR>
@@ -789,19 +868,24 @@ Variables Expected:
 
 	    <INPUT TYPE=hidden name=view_map value="viewmap">
 
-	    <TD align=right><font size=2>
-	    <input type=button value='VIEW INDIVIDUAL MAPS' name=view_map onClick="call_mapplet()";>
-	    </TD>
+            <tr>
+ 	      <TD align=right><font size=2>
+	        <input type=button value='VIEW INDIVIDUAL MAPS' 
+                       name=view_map onClick="call_mapplet()";>
+	      </TD>
+            </tr>
 
 	    <?/MIBLOCK>
 
+	  </TABLE>
 
-	    </TABLE>
+	</TD>
+      <?/MIBLOCK>
+ 	</TABLE> <!-- end referenced panel locations table -->
 
-	    </TD>
-	    </TABLE>
-
-	    <TABLE width=100% cellpadding=5 border=4 bgcolor="#f8fabb" cols=3 rows=1>
+	    <?MIVAR>
+	      <TABLE width=100% cellpadding=5 border=0 bgcolor="$highlight" cols=3 rows=1>
+            <?/MIVAR>
 	    <TR>
 	    <TD valign=top colspan=4>
 	    <?MIVAR> <B>Other markers linked to <i>$abbrev</i>:</b><?/MIVAR>
@@ -878,23 +962,23 @@ Variables Expected:
 
 	  </TR>
 	  <?/MISQL>
-	  </TABLE>
-	  <?MIVAR COND="$(=,$MI_ROWCOUNT,0)"><p>None submitted (yet).<?/MIVAR>
+          </TABLE>
+	  <?MIVAR COND="$(=,$MI_ROWCOUNT,0)"><p>None submitted.<?/MIVAR>
 	  </TD>
 	  </TR></TABLE>
 
 	  <?/MIBLOCK>
-
+          </form> <!--end mapper form -->
 
 	  <hr width=90%>
 	  <?MISQL SQL="select cloned_gene, b.abbrev from locus a, gene b where a.locus_name='$name' and a.cloned_gene=b.zdb_id;">
 	    <?MIVAR NAME=$cloned_gene>$1<?/MIVAR>
 	    <p>
-	    <font size=3><B>Affected Gene:</B> 
+	    <H3><B>Affected Gene:</B></H3> 
 	    <?MIVAR COND="$(EC,$cloned_gene,NULL)">Not yet established.<?/MIVAR>
 
 	    <?MISQL COND="$(NC,$cloned_gene,NULL)" SQL="select gene_name, abbrev from gene where zdb_id='$cloned_gene';">
-	    <TABLE width=100% cellpadding=5 border=4 bgcolor="#f8fabb" cols=2 rows=1>
+	    <TABLE width=100% cellpadding=5 border=0 bgcolor="$highlight" cols=2 rows=1>
 	    <TR><TD>
 	    <font color="red"><B>Cloned Gene:</b>  </font>
 	    <font size=2>The gene <b><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$cloned_gene"><i>$1 ($2)</i></A> </b> 
@@ -910,7 +994,7 @@ Variables Expected:
 	  <HR width=80%>
 
 	  <p>
-	  <A NAME="breeding">
+	  <A NAME="breeding"></a>
 
 	  <h3>LINEAGE AND BREEDING</h3>
 	  <TABLE width=100% cellpadding=4>
@@ -944,14 +1028,14 @@ Variables Expected:
 	  </font></TD>
 	  </TR>
 
-	  <TR> <TD colspan=2 > <font size=-1>
+	  <TR> <TD colspan=2 >
 	  <?MIVAR COND="$(XST,$UPDATE)">
 	  <INPUT TYPE=button value="Update" onClick="doit('segregation','textarea','Segregation')"> 
 	  <?/MIVAR> 
 	  <b>Segregation: </b> 
 	  <?MIVAR COND="$(NC,$segregation,NULL)">$segregation <?/MIVAR>
 	  <?MIVAR COND="$(EC,$segregation,NULL)"> unknown <?/MIVAR> 
-	  </font></TD> </TR> </TABLE>
+	  </TD> </TR> </TABLE>
 
 
 	<?/MIBLOCK>  <!-- ends EC type mutant -->
@@ -976,6 +1060,8 @@ Variables Expected:
     <?/MIBLOCK> <!-- ends mirowcount gt 0 -->
 
   <?/MIBLOCK> <!-- ends cond oid exists -->
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 
 </HTML>
 

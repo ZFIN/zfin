@@ -24,7 +24,7 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/pubbrowser
 SUBDIRS = EDITpubs inc_MEDLINE
 
 GENERICS = REFERinfo.apg curatepub.apg enterpubs.apg link_authors.apg \
-	publister2.apg pubprintable.apg pubselect2.apg pubview2.apg \
+	pubprintable.apg pubselect2.apg pubview2.apg \
 	showpubs.apg
 
 

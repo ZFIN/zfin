@@ -2,15 +2,18 @@
 
 <!-- FIRST make sure the critical fields are there -->
 <?MIBLOCK COND=$(OR,$(NXST,$name),$(NXST,$full_name),$(NXST,$address))>
+<TITLE>Insufficient Information for ZFIN PERSON record</TITLE>
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 <center>
 <big> Insufficient information: You must specify at least name, full_name, and address to make an entry</big>. Please go back and try again.
 </center>
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 <?/MIBLOCK>
 
 <!-- Looking good. Now just fix up the entries and create the record -->
 <?MIBLOCK COND=$(AND,$(XST,$name),$(XST,$full_name),$(XST,$address))>
 
-<TITLE>Confirmation: Added PERSON record</TITLE>
+<TITLE>ZFIN Confirmation: Added PERSON record</TITLE>
 
 <!-- Double check input for apostrophes; fix em where found -->
 <?MIVAR NAME=$name DELIMIT="'" REPLACE="''">$name<?/MIVAR>
@@ -25,6 +28,8 @@
 <!-- Great, now insert the record -->
 <?MISQL SQL="insert into zdb_active_source (zactvs_zdb_id) values ('$new_id');"><?/MISQL>
 <?MISQL SQL="insert into person (zdb_id, name, full_name, address,owner,entry_time,on_dist_list) values ('$new_id','$name','$full_name','$address','$new_id',current,'f');"><?/MISQL>
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
 <h1 align=center>Confirmation</h1>
 
@@ -50,4 +55,4 @@ You may now want to <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persvie
 
 <?/MIBLOCK> <!-- ends cond name,address,etc exists -->
 
-</HTML>
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>

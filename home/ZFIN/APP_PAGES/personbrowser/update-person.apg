@@ -51,7 +51,7 @@ no_record -- optional. Passed when you don't want the update recorded
 <!-- okay, now just bail back to the persupdate to view results -->
 <?MIVAR>
 <SCRIPT>
-top.content.location.href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$OID&UPDATE=1"
+window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$OID&UPDATE=1")
 </SCRIPT>
 <?/MIVAR>
 

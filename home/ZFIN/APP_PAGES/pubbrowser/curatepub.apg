@@ -11,7 +11,7 @@ new_action,new_comments: Signal the processing phase for a new curation. A curat
 
 <basefont size=2>
 
-<TITLE>Curate Publication</TITLE>
+<TITLE>ZFIN Curate Publication</TITLE>
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 

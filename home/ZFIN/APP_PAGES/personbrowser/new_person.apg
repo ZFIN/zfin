@@ -1,11 +1,13 @@
 <HTML>
 
-<TITLE>Add a new PERSON record</TITLE>
+<TITLE>Add a new ZFIN PERSON record</TITLE>
 
 <?MISQL SQL="select WebExplode(object,'page_title=New Person&permission=root') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
 <h1 align=center> Add a new PERSON record</h1>
 
@@ -15,7 +17,7 @@ This page allows you to create a brand new PERSON record in the database.<p>
 <p>
 The following information is <B>REQUIRED</B> to create the new PERSON record. Please enter the requested information in the boxes below, and then  click on the "SUBMIT" button.
 
-<FORM METHOD=POST ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" TARGET=content>
+<FORM METHOD=POST ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" >
 <p>
 <b>Full Name:</b><br>
 This field should hold the full name of the person, with the last name first. For instance, John Pat Dole would be "Dole, John Pat". 
@@ -38,4 +40,4 @@ This field holds the PERSON's surface mail address. Be sure to include all neces
 
 <?/MIBLOCK>  <!-- ends cond authorize -->
 
-</HTML>
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>

@@ -21,7 +21,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/company_files
 
-GENERICS = companylister.apg companyprintable.apg companyselect.apg \
+GENERICS = companyprintable.apg companyselect.apg \
 	companyupdate.apg companyview.apg do-companyupdate.apg \
 	new_company.apg process-company.apg setup-new-company.apg \
 	update-company.apg
