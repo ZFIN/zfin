@@ -49,15 +49,19 @@ sub gp2proteinReport()
     my($mrkr_id, $acc_num);
     $cur->bind_columns(\$mrkr_id,\$acc_num);
     my $gene = '';
+    my $start = 1;
     while ($cur->fetch) {
 	if ($gene eq $mrkr_id) {
 	    print REPORT ";SPTR:$acc_num";
 	}
 	else {
-	    print REPORT "\nZFIN:$mrkr_id\tSPTR:$acc_num";
+	    print REPORT "\n" if !$start;
+	    print REPORT "ZFIN:$mrkr_id\tSPTR:$acc_num";
 	    $gene=$mrkr_id;
-	}	
+	}
+	$start = 0 if $start;
     }
+    print REPORT "\n";
     close(REPORT);
 }
 
