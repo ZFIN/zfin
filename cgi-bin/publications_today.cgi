@@ -34,7 +34,7 @@ openReport();
     $date = d8();
     $query = "select title, zdb_id, year(pub_date) as pyear, authors, source
               from publication
-              where get_date_from_id(zdb_id) = '$date'
+              where get_date_from_id(zdb_id,'YYYYMMDD') = '$date'
               order by zdb_id";
 
     open (REPORT, ">>report") or die "can not open report";
