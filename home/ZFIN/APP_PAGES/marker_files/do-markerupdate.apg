@@ -750,14 +750,16 @@ colattrib_source_zdb_id)
 
      <?MISQL COND="$(EC,$attr,marker_relationship)" SQL="
 	delete from zdb_active_data
-        where zactvd_zdb_id = 
-	     (select mrel_zdb_id
-                from marker_relationship
-	       where (mrel_mrkr_1_zdb_id = '$OID'
-                   and mrel_mrkr_2_zdb_id ='$old_value') 
-		 or  (mrel_mrkr_1_zdb_id ='$old_value'
-                   and  mrel_mrkr_2_zdb_id= '$OID')
-		 and mrel_type = '$info') ;">
+          where zactvd_zdb_id = 
+	      	(select mrel_zdb_id
+               from marker_relationship
+	          where ( (mrel_mrkr_1_zdb_id = '$OID'
+                      and mrel_mrkr_2_zdb_id ='$old_value') 
+		           or 
+					  (mrel_mrkr_1_zdb_id ='$old_value'
+                      and  mrel_mrkr_2_zdb_id= '$OID')
+					)
+		       and mrel_type = '$info') ;">
      <?/MISQL>
   <?/MIBLOCK>
   
