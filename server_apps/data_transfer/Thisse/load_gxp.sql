@@ -56,7 +56,7 @@ select count(unique clone)clones from probes_tmp;
 ! echo "Called genes they are" 
 select clone[1,10],genename from probes_tmp where isgene = 'on'; 
 
-unload to 'is_gene.txt' select clone[1,10],genename from probes_tmp where isgene = 'on' order by 1;
+unload to 'is_gene.txt' select gb5p, clone[1,10], genename from probes_tmp where isgene = 'on' order by 1;
 
 ! echo "Called PUTATIVE they are" 
 select clone[1,10],genename
