@@ -393,8 +393,8 @@ Datablade documentation.
 
 <?MIVAR COND="$(XST,$type_of_genedom)">
   <FONT size=+1><b>$marker_type_display Symbol:&nbsp;<i>$abbrev</i></b></FONT>
+  <br>
 <?/MIVAR>
-<br>
 
 <!---------------------------------------------------------------->  
 
@@ -526,7 +526,7 @@ Datablade documentation.
 <b>Description:</b>
 
 <?MIVAR>$(IF,$(NC,$comments,NULL),$comments,None submitted.)<?/MIVAR>
-<p>
+<br>
 
 <!-----------end Display description ------------------------------->
 
@@ -535,7 +535,7 @@ Datablade documentation.
 <!-------- CLONE info ------------------------------------------->
 <?MIVAR NAME="SOURCE"> <?/MIVAR>
 <?MISQL SQL="select WebExplode(object,'CLONE_MARKER_ID=$OID') from webPages where ID='aa-clonebox.apg' 
-	     and exists (select 'x' from clone where clone_mrkr_zdb_id = '$OID');"><br><hr width=80%><b>CLONE DATA: </b>$1<?/MISQL>
+	     and exists (select 'x' from clone where clone_mrkr_zdb_id = '$OID');"><hr width=80%><b>CLONE DATA: </b>$1<?/MISQL>
 
 <!-------- end CLONE -------------------------------------------->
 
@@ -1113,11 +1113,13 @@ Datablade documentation.
         <?MIBLOCK COND="$(NC,$mrkrview_segment_supplier,)">
           <?MIBLOCK COND="$(NC,$mrkrview_segment_supplier_display,)">
             <?MIVAR>
-              <A HREF="$mrkrview_segment_supplier_url">($mrkrview_segment_supplier_display)</A>
+              &nbsp;(<A HREF="$mrkrview_segment_supplier_url">$mrkrview_segment_supplier_display</A>)
             <?/MIVAR>
-          <?MIELSE>
+          <?MIELSE> 
+	    <?MIVAR COND="$(>,$(POSITION,$mrkrview_segment_supplier,LAB),0)" NAME=viewpage>labview.apg<?/MIVAR>
+            <?MIVAR COND="$(>,$(POSITION,$mrkrview_segment_supplier,COMPANY),0)" NAME=viewpage>companyview.apg<?/MIVAR>
             <?MIVAR>
-              <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$mrkrview_segment_supplier">(available from)</A>
+              &nbsp;(<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$viewpage&OID=$mrkrview_segment_supplier">Order This</A>)
             <?/MIVAR>
           <?/MIBLOCK>
         <?/MIBLOCK>
