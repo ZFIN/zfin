@@ -1,0 +1,40 @@
+<!-- This page is Webexploded onto the home page 
+Put in empty Mivar so Clif's script knows it needs to load to webblade
+<?MIVAR><?/MIVAR>
+
+-->
+
+
+<SCRIPT>
+function submit_complete () {
+  if ((document.login_form.login.value !='')&&(document.login_form.password.value !='')) {
+     document.login_form.submit();
+  }
+}
+</SCRIPT>
+
+<form name=login_form method=post  action="/cgi-bin_B/webdriver">
+<INPUT TYPE=hidden name=MIval value=aa-process-login.apg>
+
+<TABLE bgcolor="#f8fabb" border=1 width=100%>
+<TR align=center>
+<TD>
+
+<TABLE width=100%> <TR>
+<TD><b>Login:</b> <INPUT TYPE=text size=8 maxlength=12 name=login onChange="submit_complete();">
+</TD>
+<TD>
+<b>Password:</b> <input TYPE=password size=8 maxlength=8 name=password onChange="submit_complete();">
+</TD>
+<TD>
+<input type=submit name=s_user value="Log in">
+</TD></TR>
+<TR><TD colspan=4><font size=-1>Only registered users may submit or update data in ZFIN. Please <A HREF="mailto:zfinadmn@zfin.org">contact the database administrator</a> for information on how to become a registered user.</font>
+</TD></TR></TABLE>
+
+</TD></TR></TABLE>
+
+</FORM>
+
+<!-- Put the cursor in the login name box -->
+<SCRIPT>document.login_form.login.focus();</SCRIPT>
