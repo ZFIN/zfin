@@ -30,7 +30,6 @@ is_not
    <?MIVAR NAME=$goevid>$1<?/MIVAR>
    <?MIVAR NAME=$mrkrgoid>$2<?/MIVAR>
    <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id='$goevid'"><?/MISQL>
-   <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id='$mrkrgoid'"><?/MISQL>
 <?/MISQL>   
 
 <?/MIBLOCK> 
