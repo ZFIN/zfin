@@ -380,7 +380,6 @@
 <?MIVAR>$(IF,$(NC,$comments,NULL),$comments,None submitted.)<?/MIVAR>
 
 <!-- display any putative gene name assignments, or the putative genes of markers contained in this marker -->
-<?MIBLOCK COND="$(EC,'foo','foo')">
 
 <?MISQL SQL="
  SELECT  lower(putgene_putative_gene_name), putgene_comments,
@@ -391,11 +390,13 @@
   UNION
   SELECT lower(putgene_putative_gene_name), putgene_comments,
          blast_mrkr_zdb_id
-    FROM putative_non_zfin_gene, marker_relationship, outer blast
+    FROM putative_non_zfin_gene, marker_relationship, marker_relationship_type,
+	 outer blast
     WHERE mrel_mrkr_1_zdb_id = '$OID'
       and mrel_mrkr_2_zdb_id = putgene_mrkr_zdb_id
-      and mrel_type = 'gene contains small segment'
+      and mreltype_name = mrel_type
       and blast_mrkr_zdb_id = putgene_mrkr_zdb_id
+      and mreltype_mrkr_type_group_2 = 'SMALLSEG'
  ;">
 
     <?MIVAR NAME=$putgene_name><i>$1</i><?/MIVAR>
@@ -428,10 +429,11 @@
         WHERE blast_mrkr_zdb_id = '$OID'
       UNION
        SELECT blast_mrkr_zdb_id
-        FROM blast, marker_relationship
+        FROM blast, marker_relationship, marker_relationship_type
         WHERE '$OID' = mrel_mrkr_1_zdb_id
           and blast_mrkr_zdb_id = mrel_mrkr_2_zdb_id
-          and mrel_type = 'gene contains small segment'
+	  and mreltype_name = mrel_type
+          and mreltype_mrkr_type_group_2 = 'SMALLSEG'
     ;">
 	     <?MIVAR> <br> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-blastdata.apg&OID=$1">BLAST data</A><?/MIVAR>
 
@@ -440,7 +442,6 @@
 <?/MIBLOCK>    
 
 
-<?/MIBLOCK>
 <!--------- end putative gene ----------------------------------->
 
 <!-------- CLONE info ------------------------------------------->
@@ -724,7 +725,6 @@
 <!--------------- ends GENE EXPRESSION -------------------------->
 
 <!------------------ MARKER RELATIONSHIP ---------------------->
-<?MIBLOCK COND="$(EC,'foo','foo')">
 
 <?MIVAR NAME=$mrel_mtype><?/MIVAR>
 <?MIVAR NAME=$mrel_count><?/MIVAR>
@@ -735,10 +735,11 @@
 <?MIBLOCK COND="$(OR,$(NC,$mrel_count,0),$(XST,$UPDATE))"><br>
 <HR width="80%"><b>
   <?MIBLOCK COND="$(EC,$marker_type,GENE)">
-    SEGMENT (CLONE AND PROBE) RELATIONSHIPS
+    SEGMENT (CLONE AND PROBE) RELATIONSHIPS.
   <?MIELSE>
-    MARKER RELATIONSHIPS
+    MARKER RELATIONSHIPS.
   <?/MIBLOCK>
+  <?MIVAR>$abbrev:<?/MIVAR>
 </b>
 <?/MIBLOCK>
 <?/MISQL>
@@ -851,7 +852,6 @@
  <?/MISQL>
 </TABLE>
 </form>
-<?/MIBLOCK>
 
 <!------------------ end of MARKER RELATIONSHIP --------------->
 
