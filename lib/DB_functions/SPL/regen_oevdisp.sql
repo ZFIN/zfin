@@ -157,7 +157,6 @@ create dba function "informix".regen_oevdisp()
 		if oevdisp_temp == 0 then
 			let errorHint = "temp table empty";
 			raise exception -746,0, "temp table empty";
-		return -1;
 		else let oevdisp_temp ="";
 		end if;  
 
@@ -196,6 +195,14 @@ create dba function "informix".regen_oevdisp()
 	     organism_list
         from orthologue_evidence_display_temp;
 
+	let oevdisp_temp = (select count(*) from pre_orthologue_evidence_display);
+		if oevdisp_temp == 0 then
+			let errorHint = "pre-orthologue table empty";
+			raise exception -746,0, "temp table empty";
+		else let oevdisp_temp ="";
+		end if;
+
+
     update pre_orthologue_evidence_display 
 		set oevdisp_zdb_id = get_id("OEVDISP");
 
@@ -209,6 +216,14 @@ create dba function "informix".regen_oevdisp()
       select oevdisp_zdb_id
    	from pre_orthologue_evidence_display;
 
+
+	let oevdisp_temp = (select count(*) from zdb_active_data);
+		if oevdisp_temp == 0 then
+			let errorHint = "zdb_active_data table empty";
+			raise exception -746,0, "zdb_active_data table empty";
+		else let oevdisp_temp ="";
+		end if;
+
     let errorHint = "Populating oevd";	
 
     insert into orthologue_evidence_display 
@@ -216,6 +231,13 @@ create dba function "informix".regen_oevdisp()
 	  oevdisp_organism_list )
       select * 
         from pre_orthologue_evidence_display;
+
+	let oevdisp_temp = (select count(*) from orthologue_evidence_display);
+		if oevdisp_temp == 0 then
+			let errorHint = "orthologue evidence display table empty";
+			raise exception -746,0, "orthologue evidence table empty";
+		else let oevdisp_temp ="";
+		end if;
 
     let errorHint = "Inserting record attributions";	
 
