@@ -36,7 +36,7 @@
 <option value=Abstract>Abstract
 <option value=Movie>Movie
 <option value=Book>Book
-<option value=Bookchapter>Book Chapter
+<option value=Chapter>Chapter
 <option value=Other>Other
 <?MIVAR COND="$(EC,$ZDB_access,root)">
 <option value=Unknown>Unknown
