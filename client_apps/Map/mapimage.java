@@ -40,6 +40,13 @@ public class mapimage {
 
 		data = (String)form.get("data");
 		data = data.substring(0, data.length()-2);
+
+		String table = "";
+		if (data.indexOf("ZMAP") > -1)
+			table = "zmap_pub_pan_mark";
+		else
+			table = "public_paneled_markers";
+
 		System.err.println("data: " + data);
 		Hashtable SM = new Hashtable();
 
@@ -61,8 +68,10 @@ public class mapimage {
 		String anon = " mtype = 'SSLP' or mtype = 'STS' or mtype = 'RAPD' or mtype = 'RFLP' or mtype = 'SSR' ";
 		int A = 4;
 		String type_string = "";
+
+
 		
-		String query_string = "select zdb_id, abbrev, mtype, target_abbrev, lg_location::numeric(6,2), OR_lg, mghframework, metric from public_paneled_markers where (";
+		String query_string = "select zdb_id, abbrev, mtype, target_abbrev, lg_location::numeric(6,2), OR_lg, mghframework, metric from " + table + " where (";
 		boolean first = true;
 		String or = "";
 		while(sTok.hasMoreTokens()) {

@@ -95,9 +95,11 @@ public class mapplet extends Applet  {
 
 			this.setLayout(null);
 			
-//			this.add(zO);
-//			this.add(zI);
-
+			if (getParameter("panel_order") == null) { //if the panel order isn't sent in, there must not be zoom buttons in the html
+				this.add(zO);
+				this.add(zI);
+			}
+			
 			zO.reshape(i,0,70,22);
 
 
@@ -115,7 +117,8 @@ public class mapplet extends Applet  {
 					percent = 100;
 				//System.err.println("BB.getMc: " + BB.getMarker_count() + ", ztotal: " + ztotal);
 				PS = percent + "%";
-//				g.drawString(PS, i+zO.bounds().width+5, 16);
+				if (getParameter("panel_order") == null) //means we're drawing buttons and percentages in the applet
+					g.drawString(PS, i+zO.bounds().width+5, 16);
 				percent_width = PFM.stringWidth(PS);
 			}
 			
