@@ -143,6 +143,8 @@ $(IF,$(XST,$plinks),"<input type=hidden name=plinks value=1>")
 
 <?/MIVAR>
 
+</form>
+
 <!--  Query database and construct table based on user constraints.  -->
 
 <!--  Count the number of gene names that will be returned. -->
