@@ -77,7 +77,8 @@
 		    <A HREF="/zf_info/citation.html">Citing ZFIN</A><BR>
 		    <A HREF="/ZFIN/misc_html/tips.html">Helpful Hints</A><BR>
 		    <A HREF="/zf_info/contact_us.html">User Support</A><BR>
-		    <A HREF="/zf_info/news/siteNews.html">Site News</A>
+		    <A HREF="/zf_info/news/siteNews.html">Site News</A><BR>
+		    <A HREF="/zf_info/glossary.html">Glossary</A>
 		  </td>
 		</tr>
 	      </table>
@@ -436,12 +437,11 @@
 	<?MIVAR COND="$(EC,$AUTHORIZED,guest)">
 	  <TR>
 	    <TD>
-	      <br><br><br>
 	    </TD>
 	  </TR>
 	  <TR>
 	    <TD colspan=2 align=center valign=center>  
-	      <table border=0 cellpadding=15 bgcolor=#000000>
+	      <table border=0 cellpadding=6 bgcolor=#006666>
 		<tr>
 		  <td>
 		    <img src="/zf_info/fish.gif"  border=0>
