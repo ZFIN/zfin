@@ -20,7 +20,7 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Thisse
 
 SUBDIRS = SCRIPTS
 
-SPECIFIC = README load_gxp.sql
+STATICS = load_gxp.sql
 
 
 # ---------------  Production Rules  ------------------------------------
