@@ -180,7 +180,11 @@ value=" DONE UPDATING. Back to Viewing! " onClick="document.location.search='?MI
 <?MIVAR COND="$(XST,$UPDATE)">
 <br><INPUT TYPE=button value=Update onClick="doit('name','text','Name')">
 <?/MIVAR> 
+<?MIBLOCK COND="$(EC,$line_type,mutant)">
 <?MIVAR> <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$locus"> $name </A><?/MIVAR>
+<?MIELSE>
+<?MIVAR> $name <?/MIVAR>
+<?/MIBLOCK>
 <?MIVAR COND="$(XST,$UPDATE)">
 <br><INPUT TYPE=button value=Update onClick="doit('abbrev','text','Abbreviation')">
 <?/MIVAR> 
