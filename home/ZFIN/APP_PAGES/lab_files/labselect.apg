@@ -97,7 +97,7 @@ contains <input type=text name=anon1text size=15  onChange='document.critform.ST
 
 		<TD align=center><font size=-1>
 			<input type=button name=clear_all value="List all labs" 
-			onClick="document.crit_form.reset();document.crit_form.submit()">
+			onClick="document.critform.reset();document.critform.submit()">
 			</font>
 		</TD> 
 
