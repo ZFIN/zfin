@@ -24,6 +24,7 @@ create function populate_anat_display_stage_children(parent_id varchar(50),
 
   define child_indent int;
   define child_id varchar(50);
+  define lowercase_anatitem_name varchar(50);
   define distance int;
 
   -- insert record into anatomy_display from passed in values
@@ -42,14 +43,27 @@ create function populate_anat_display_stage_children(parent_id varchar(50),
   -- call function recursively for each anatitem that is contained by 
   -- the parent anatitem and 
   foreach
-    select anatcon_contained_zdb_id, anatitem_type_code, anatitem_name
-      into child_id, hier_code, anatomy_name
-      from anatomy_item, anatomy_contains, stage_items_contained
+    select anatcon_contained_zdb_id, anatitem_type_code, anatitem_name, LOWER(anatitem_name)
+      into child_id, hier_code, anatomy_name, lowercase_anatitem_name
+      from anatomy_item, anatomy_contains, stage_items_contained, stage s1, stage xstrt, stage xend
       where parent_id = anatcon_container_zdb_id
         and anatitem_zdb_id = anatcon_contained_zdb_id
         and anatitem_zdb_id = sic_anatitem_zdb_id
         and sic_stg_zdb_id = stage_id
-      order by anatitem_name
+        and stage_id = s1.stg_zdb_id
+	and anatcon_start_stg_zdb_id = xstrt.stg_zdb_id
+        and anatcon_end_stg_zdb_id = xend.stg_zdb_id
+	and (
+	       (    s1.stg_hours_start >= xstrt.stg_hours_start
+		and s1.stg_hours_start < xend.stg_hours_end)
+	   or
+	       (    s1.stg_hours_end > xstrt.stg_hours_start
+		and s1.stg_hours_end <= xend.stg_hours_end)
+	   or      
+	       (    s1.stg_hours_start <= xstrt.stg_hours_start
+		and s1.stg_hours_end >= xend.stg_hours_end)
+	   )
+      order by 4
 
     insert into stage_item_child_list 
       values(stage_id,parent_id,child_id,anatomy_name,hier_code);
@@ -59,11 +73,12 @@ create function populate_anat_display_stage_children(parent_id varchar(50),
   end foreach -- retrieval of children
 
   foreach
-    select stimchilis_child_zdb_id, stimchilis_anat_name, stimchilis_hier_code
-      into child_id, anatomy_name, hier_code
+    select stimchilis_child_zdb_id, stimchilis_anat_name, LOWER(stimchilis_anat_name), stimchilis_hier_code
+      into child_id, anatomy_name, lowercase_anatitem_name, hier_code
       from stage_item_child_list
       where stimchilis_stg_zdb_id = stage_id
         and stimchilis_item_zdb_id = parent_id
+      order by 3 --new
 
     execute function populate_anat_display_stage_children( 
         child_id,child_indent,seq_num,hier_code,stage_id,anatomy_name ) 
@@ -87,7 +102,7 @@ create procedure populate_anat_display_stage(stage_id varchar(50))
   define indent int;
   define distance int;
   define hierCode, prevCode char(2);
-  define anatomyId, anatomy_name varchar(50);
+  define anatomyId, anatomy_name, lowercase_anatitem_name varchar(50);
   define temp int;
 
   -- Start the seq_num at zero and indent at one.
@@ -113,8 +128,8 @@ create procedure populate_anat_display_stage(stage_id varchar(50))
 
 
   foreach
-    select anatitem_zdb_id, anathier_code, anatitem_name, s.stg_hours_start
-      into anatomyId, hierCode, anatomy_name, temp
+    select a1.anatitem_zdb_id, anathier_code, a1.anatitem_name, LOWER(a1.anatitem_name), s.stg_hours_start --new
+      into anatomyId, hierCode, anatomy_name, lowercase_anatitem_name, temp
       from stage s, stage_items_contained, anatomy_hierarchy, anatomy_item a1
       where sic_anatitem_zdb_id = a1.anatitem_zdb_id
         and anathier_code = a1.anatitem_type_code
@@ -127,7 +142,8 @@ create procedure populate_anat_display_stage(stage_id varchar(50))
 	    and a2.anatitem_zdb_id = anatcon_container_zdb_id 
 	    and sic_anatitem_zdb_id = anatcon_container_zdb_id
 	)
-      order by anathier_code, anatitem_name
+	--and anathier_code = 'ST' --new
+      order by 4 --new anathier_code, anatitem_name
 
     if hierCode = prevCode then
       execute function populate_anat_display_stage_children(
