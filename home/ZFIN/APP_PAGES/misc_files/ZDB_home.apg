@@ -439,8 +439,10 @@
 	    <TD>
 	    </TD>
 	  </TR>
-	  <TR>
-	    <TD colspan=2 align=center valign=center>  
+	  <TR>	 
+             <TD class="content_left">
+             </TD>
+	     <TD class="content_right">
 	      <table border=0 cellpadding=6 bgcolor=#006666>
 		<tr>
 		  <td>
