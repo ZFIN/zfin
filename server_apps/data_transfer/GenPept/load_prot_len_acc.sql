@@ -69,6 +69,12 @@ and   acc_num = pla_acc
 group by 1,3,6 
 into temp tmp_dblk with no log;
 
+! echo "drop NP_ GenPepts that are already in as RefSeq"
+delete from tmp_dblk where acc in (
+    select acc_num from db_link 
+    where db_name = 'Ref_seq' and acc_num[1,3] = 'NP_'
+);
+
 update tmp_dblk set zad = get_id('DBLINK');  
 
 insert into zdb_active_data select zad from tmp_dblk;
