@@ -402,7 +402,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 
 
       <?MISQL SQL="
-        select distinct mrel_mrkr_2_zdb_id, mrkr_abbrev, mrkr_type, mrkrtype_significance, mrel_zdb_id
+        select distinct mrel_mrkr_2_zdb_id, mrkr_abbrev, mrkrtype_type_display, mrkrtype_significance, mrel_zdb_id
         from marker_relationship, marker, foreign_db_contains, marker_types, db_link
         where mrel_mrkr_1_zdb_id = '$OID'
           and mrel_type in ('gene encodes small segment',
@@ -414,7 +414,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
           and dblink_fdbcont_zdb_id = fdbcont_zdb_id
           and fdbcont_fdbdt_super_type = 'sequence'
           and mrkr_zdb_id not in ('$chimeric_clone_list')
-        order by mrkrtype_significance, mrkr_abbrev
+        order by mrkrtype_significance, mrkrtype_type_display desc, mrkr_abbrev
       ;">
       
         <?MIVAR COND=$(NXST,$encodes_mrkr_abbrev)>
@@ -540,7 +540,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 <?MICOMMENT> -------- CONTAINS -------- <?/MICOMMENT>
 
       <?MISQL SQL="
-        select mrel_mrkr_1_zdb_id, mrkr_abbrev, mrkr_type, mrkrtype_significance, mrel_zdb_id
+        select mrel_mrkr_1_zdb_id, mrkr_abbrev, mrkrtype_type_display, mrkrtype_significance, mrel_zdb_id
         from marker_relationship, marker, foreign_db_contains, marker_types, db_link
         where mrel_mrkr_2_zdb_id = '$OID'
           and mrel_type = 'clone contains gene'
@@ -550,7 +550,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
           and dblink_fdbcont_zdb_id = fdbcont_zdb_id
           and fdbcont_fdbdt_super_type = 'sequence'
           and mrkr_zdb_id not in ('$chimeric_clone_list')
-        order by mrkrtype_significance, mrkr_abbrev
+        order by mrkrtype_significance, mrkrtype_type_display desc, mrkr_abbrev
       ;">
       
         <?MIVAR COND=$(NXST,$contains_mrkr_abbrev)>

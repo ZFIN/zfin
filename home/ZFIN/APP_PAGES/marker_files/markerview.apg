@@ -1146,15 +1146,16 @@ Datablade documentation.
       </TD>
       <TD align=left width=80% bgcolor=#EEEEEE>
 	<?MISQL SQL="
-	  select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrel_type, mreltype_name, mreltype_2_to_1_comments, mrkr_type, mrel_zdb_id, idsup_supplier_zdb_id
-	  from marker, marker_relationship, marker_relationship_type, outer(int_data_supplier)
+	  select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrel_type, mreltype_name, mreltype_2_to_1_comments, mrkrtype_type_display, mrel_zdb_id, idsup_supplier_zdb_id
+	  from marker, marker_relationship, marker_relationship_type, outer(int_data_supplier), marker_types
 	  where mrel_mrkr_2_zdb_id = '$OID' 
 	    and mrel_mrkr_1_zdb_id = mrkr_zdb_id 
 	    and mrel_type = mreltype_name 
 	    and mreltype_name = '$mrkrview_mrel_type'  
 	    and mrel_mrkr_1_zdb_id = idsup_data_zdb_id
-	  group by mrkr_type, mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrel_type, mreltype_name, mreltype_2_to_1_comments, mrel_zdb_id, idsup_supplier_zdb_id
-	  order by mrkr_type, mrkr_abbrev_order;">
+	    and mrkr_type = marker_type
+	  group by mrkrtype_type_display, mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrel_type, mreltype_name, mreltype_2_to_1_comments, mrel_zdb_id, idsup_supplier_zdb_id
+	  order by mrkrtype_type_display, mrkr_abbrev_order;">
 	  
 	  <?MIVAR NAME=mrkrview_segment_mrkr_zdb_id>$2<?/MIVAR> 
 	  <?MIVAR NAME=mrkrview_segment_mrel_type>$4<?/MIVAR> 
@@ -1216,15 +1217,16 @@ Datablade documentation.
       </TD>
       <TD align=left width=80% bgcolor=#EEEEEE>
 	<?MISQL SQL="
-	  select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrel_type,  mreltype_name, mreltype_1_to_2_comments, mrkr_type, mrel_zdb_id, idsup_supplier_zdb_id
-	  from marker, marker_relationship, marker_relationship_type, outer(int_data_supplier)
+	  select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrel_type,  mreltype_name, mreltype_1_to_2_comments, mrkrtype_type_display, mrel_zdb_id, idsup_supplier_zdb_id
+	  from marker, marker_relationship, marker_relationship_type, outer(int_data_supplier), marker_types
 	  where mrel_mrkr_1_zdb_id = '$OID' 
   	    and mrel_mrkr_2_zdb_id = mrkr_zdb_id 
 	    and mrel_type = mreltype_name 
 	    and mreltype_name = '$mrkrview_mrel_type'  
 	    and mrel_mrkr_2_zdb_id = idsup_data_zdb_id
-	  group by mrkr_type, mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrel_type, mreltype_name, mreltype_1_to_2_comments, mrel_zdb_id, idsup_supplier_zdb_id
-	  order by mrkr_type, mrkr_abbrev_order;">
+	    and mrkr_type = marker_type
+	  group by mrkrtype_type_display, mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrel_type, mreltype_name, mreltype_1_to_2_comments, mrel_zdb_id, idsup_supplier_zdb_id
+	  order by mrkrtype_type_display, mrkr_abbrev_order;">
 	  
 	  <?MIVAR NAME=mrkrview_segment_mrkr_zdb_id>$2<?/MIVAR> 
 	  <?MIVAR NAME=mrkrview_segment_mrel_type>$4<?/MIVAR> 
