@@ -48,8 +48,10 @@ Possible vars:  update-->
 <TITLE> Add ZFIN Linkage Distance </TITLE>
 
 <p>
-<?MISQL SQL="select distinct lnkg_source_zdb_id, lnkg_or_lg,lnkg_private, lnkg_comments from linkage  
-        where lnkg_zdb_id = '$link_id';">
+<?MISQL SQL="select distinct recattrib_source_zdb_id, lnkg_or_lg,lnkg_private, lnkg_comments 
+	from linkage , record_attribution 
+        where lnkg_zdb_id = '$link_id'
+	  and recattrib_data_zdb_id = lnkg_zdb_id;">
   <?MIVAR NAME=$source>$1<?/MIVAR>
   Source: 
 
@@ -77,9 +79,9 @@ Possible vars:  update-->
   <!-- output the current members of the linkage - if any exist -->
 <p>
 Linkage Members: <br>
-   <?MISQL SQL="select distinct abbrev, mtype from all_markers a , linkage_member b 
+   <?MISQL SQL="select distinct mrkr_abbrev, mrkr_type from marker a , linkage_member b 
         where b.lnkgmem_linkage_zdb_id = '$link_id'
-          and b.lnkgmem_member_zdb_id = a.zdb_id
+          and b.lnkgmem_member_zdb_id = a.mrkr_zdb_id
         union 
         select distinct allele, c.abbrev from fish a , linkage_member b, locus c 
           where b.lnkgmem_linkage_zdb_id = '$link_id'
@@ -88,6 +90,7 @@ Linkage Members: <br>
     $1 ($2)
     <br>
     <?/MISQL>
+
 <p>
 
  <!-- output the current linkage distance info - if any exists -->
@@ -97,11 +100,11 @@ Linkage Distance:&nbsp;&nbsp;  Select two markers for distance <br>
 <?MISQL SQL="select lnkgpair_zdb_id from linkage_pair where lnkgpair_linkage_zdb_id = '$link_id';">
   <?MIVAR NAME=$pair_id>$1<?/MIVAR> 
 
- <?MISQL SQL="select abbrev from all_markers a , linkage_pair b , linkage_pair_member c
+ <?MISQL SQL="select mrkr_abbrev from marker a , linkage_pair b , linkage_pair_member c
         where b.lnkgpair_linkage_zdb_id = '$link_id'
           and b.lnkgpair_zdb_id = '$pair_id'
           and c.lpmem_linkage_pair_zdb_id = b.lnkgpair_zdb_id
-          and c.lpmem_member_zdb_id = a.zdb_id
+          and c.lpmem_member_zdb_id = a.mrkr_zdb_id
         union 
         select allele from fish a , linkage_pair b, locus c , linkage_pair_member d
           where b.lnkgpair_zdb_id = '$pair_id'
@@ -124,14 +127,16 @@ Linkage Distance:&nbsp;&nbsp;  Select two markers for distance <br>
       <TD align=center>
 	<?MIVAR>
 	  <select name=marker1>
-            <?MISQL SQL="select distinct abbrev, a.zdb_id from all_markers a , linkage_member b 
+            <?MISQL SQL="
+	      select distinct mrkr_abbrev, mrkr_zdb_id from marker a , linkage_member b 
               where b.lnkgmem_linkage_zdb_id = '$link_id'
-	        and b.lnkgmem_member_zdb_id = a.zdb_id
+	        and b.lnkgmem_member_zdb_id = a.mrkr_zdb_id
 	      union 
 	      select distinct a.allele||'('||c.abbrev||')', a.zdb_id from fish a , linkage_member b , locus c
 	        where b.lnkgmem_linkage_zdb_id = '$link_id'
 	        and b.lnkgmem_member_zdb_id = a.zdb_id
-                and a.locus = c.zdb_id;"> 
+                and a.locus = c.zdb_id
+	      ;"> 
 	    <option SELECTED value="$2">$1
             <?/MISQL>
 	  </SELECT>  
@@ -140,14 +145,16 @@ Linkage Distance:&nbsp;&nbsp;  Select two markers for distance <br>
       <TD align=center>
 	<?MIVAR>
 	  <select name=marker2>
-            <?MISQL SQL="select distinct abbrev, a.zdb_id from all_markers a , linkage_member b 
+            <?MISQL SQL="
+	     select distinct mrkr_abbrev, mrkr_zdb_id from marker a , linkage_member b 
               where b.lnkgmem_linkage_zdb_id = '$link_id'
-	        and b.lnkgmem_member_zdb_id = a.zdb_id
+	        and b.lnkgmem_member_zdb_id = a.mrkr_zdb_id
 	      union 
 	      select distinct a.allele||'('||c.abbrev||')', a.zdb_id from fish a , linkage_member b , locus c
 	        where b.lnkgmem_linkage_zdb_id = '$link_id'
 	        and b.lnkgmem_member_zdb_id = a.zdb_id
-                and a.locus = c.zdb_id;"> 
+                and a.locus = c.zdb_id
+	;"> 
 	    <option value="$2">$1
             <?/MISQL>
 	  </SELECT>  

@@ -7,8 +7,8 @@ Possible vars: update
 <HTML>
 <HEAD>
   <SCRIPT>
-     function pick_me(link_id,mark_id) {
-       window.location.href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-insert_linkage.apg&link_id="+link_id+"&calling_form=members&member="+mark_id;
+     function pick_me(link_id,mark_id,source) {
+       window.location.href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-insert_linkage.apg&link_id="+link_id+"&calling_form=members&member="+mark_id+"&source="+source;
      }
 
 
@@ -67,8 +67,10 @@ Possible vars: update
 <?MIVAR COND="$(NXST,$nsearch)" NAME=$nsearch><?/MIVAR>
 
 <p>
-<?MISQL SQL="select distinct lnkg_source_zdb_id, lnkg_or_lg,lnkg_private, lnkg_comments from linkage  
-        where lnkg_zdb_id = '$link_id';">
+<?MISQL SQL="select distinct recattrib_source_zdb_id, lnkg_or_lg,lnkg_private, lnkg_comments 
+	from linkage , record_attribution 
+        where lnkg_zdb_id = '$link_id'
+	  and recattrib_data_zdb_id = lnkg_zdb_id;">
   <?MIVAR NAME=$source>$1<?/MIVAR>
   Source: 
   <?MIBLOCK COND="$(>,$(POSITION,$source,PUB),0)">
@@ -95,9 +97,9 @@ Possible vars: update
   <!-- output the current members of the linkage - if any exist -->
 <p>
 Linkage Members:   (At least one member must be specified) <br>
-   <?MISQL SQL="select distinct abbrev, mtype from all_markers a , linkage_member b 
+   <?MISQL SQL="select distinct mrkr_abbrev, mrkr_type from marker a , linkage_member b 
         where b.lnkgmem_linkage_zdb_id = '$link_id'
-          and b.lnkgmem_member_zdb_id = a.zdb_id;">
+          and b.lnkgmem_member_zdb_id = a.mrkr_zdb_id;">
     $1 ($2)
     <br>
     <?/MISQL>
@@ -136,15 +138,15 @@ Linkage Members:   (At least one member must be specified) <br>
 	 <hr>
 	 <TABLE cols=2>
 	 <TR><TH></TH><TH>Marker Name</TH><TH>Marker Type</TH></TR>
-	 <?MISQL SQL="select distinct zdb_id,mname,mtype,abbrev 
-	   from all_markers a, all_map_names b
-	     where a.mtype='$mtype' 
-	       and a.zdb_id = b.allmapnm_zdb_id 
+	 <?MISQL SQL="select distinct mrkr_zdb_id,mrkr_name,mrkr_type,mrkr_abbrev 
+	   from marker a, all_map_names b
+	     where a.mrkr_type='$mtype' 
+	       and a.mrkr_zdb_id = b.allmapnm_zdb_id 
 	       and b.allmapnm_name like '%$(LOWER,$member)%' 
-	       order by a.abbrev;">
+	       order by a.mrkr_abbrev;">
 	   <TR>
 	     <TD>
-	       <input type=button name=member_selected value="Select" onClick="pick_me('$link_id','$1');">
+	       <input type=button name=member_selected value="Select" onClick="pick_me('$link_id','$1','$source');">
 	     </TD>
 	     <TD>
 	       $2($4)

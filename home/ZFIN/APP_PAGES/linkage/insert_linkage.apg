@@ -1,4 +1,4 @@
-<!-- this app page is used to insert new linkage group info. The table that is where the record insertion occurs is dependent upon the calling form.  The page called by the insert_linkage form is also dependent upon the calling form
+<!-- this app page is used to insert new linkage group info. The table that is where the record insertion occurs is dependent upon the calling form.  The page called by the insert_linkage form is also dependesnt upon the calling form
 
 Expected vars:  calling_form
 Possible vars: link_id, comments, lg, private, source , ZDB_ident
@@ -12,8 +12,13 @@ Possible vars: link_id, comments, lg, private, source , ZDB_ident
   <?MISQL SQL="execute function get_id('LINK');"><?/MISQL>
   <?MIVAR NAME=$link_id>$1<?/MIVAR>
   <?MIVAR NAME=$comments DELIMIT="'" REPLACE="''">$comments<?/MIVAR>
-  <?MISQL SQL="insert into linkage (lnkg_zdb_id, lnkg_or_lg, lnkg_comments, lnkg_private, lnkg_submitter_zdb_id, lnkg_source_zdb_id) values ('$link_id','$lg','$comments','$private','$ZDB_ident','$source');">
+  <?MISQL SQL="insert into zdb_active_data values ('$link_id')"><?/MISQL>
+  <?MISQL SQL="insert into linkage (lnkg_zdb_id, lnkg_or_lg, lnkg_comments, lnkg_private, lnkg_submitter_zdb_id) values ('$link_id','$lg','$comments','$private','$ZDB_ident');">
   <?/MISQL>
+
+  <?MISQL SQL="insert into record_attribution values('$link_id', '$source');">
+  <?/MISQL>	
+
 
   <?MIVAR>
     <SCRIPT>
@@ -29,7 +34,7 @@ Possible vars: link_id, comments, lg, private, source , ZDB_ident
   <?MIVAR COND="$(XST,$pub_source)"> $(SETVAR,$source,$pub_source)<?/MIVAR>
   <?MIVAR COND="$(XST,$person_pick)"> $(SETVAR,$source,$person_pick)<?/MIVAR>
 
-  <?MISQL SQL="update linkage set lnkg_source_zdb_id = '$source' where lnkg_zdb_id = '$link_id';">
+  <?MISQL SQL="update record_attribution set recattrib_source_zdb_id = '$source' where recattrib_data_zdb_id = '$link_id';">
   <?/MISQL>
 
   <?MIVAR>
@@ -43,6 +48,14 @@ Possible vars: link_id, comments, lg, private, source , ZDB_ident
 
 <?MIBLOCK COND="$(EC,$calling_form,members)">
 
+  <!-- check whether the linkage member is already attributed to the source --> 
+  <?MISQL SQL="select * from record_attribution
+		where recattrib_data_zdb_id = '$member'
+		  and recattrib_source_zdb_id = '$source'
+		;">
+  <?/MISQL>
+  	
+  <?MISQL COND="$(=,$MI_ROWCOUNT,0)" SQL="insert into record_attribution values('$member','$source');"> <?/MISQL>
   <?MISQL SQL="insert into linkage_member (lnkgmem_linkage_zdb_id, lnkgmem_member_zdb_id) values ('$link_id','$member');">
   <?/MISQL>
   <?MIVAR>

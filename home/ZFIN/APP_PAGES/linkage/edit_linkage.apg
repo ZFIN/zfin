@@ -74,11 +74,16 @@ Expected vars: link_id
 
 <!-- retrieve and display linkage info -->
 
-<?MISQL SQL="select distinct lnkg_source_zdb_id, lnkg_or_lg,lnkg_private, lnkg_comments from linkage  
-        where lnkg_zdb_id = '$link_id';">
+<?MISQL SQL="
+        select distinct recattrib_source_zdb_id, lnkg_or_lg,
+               lnkg_private, lnkg_comments 
+	from linkage, record_attribution  
+        where lnkg_zdb_id = '$link_id'
+	  and recattrib_data_zdb_id = lnkg_zdb_id
+	;">
   <?MIVAR NAME=$source>$1<?/MIVAR> 
   <?MIVAR NAME=$lg>$2<?/MIVAR> 
-
+ 
   <?MIBLOCK COND="$(>,$(POSITION,$source,PUB),0)">
     <?MISQL SQL="select distinct title from publication  
         where zdb_id = '$source';">
@@ -90,9 +95,9 @@ Expected vars: link_id
         where zdb_id = '$source';">
     <?MIVAR NAME=$display_source>$1<?/MIVAR>
     <?/MISQL>
-  <?/MIBLOCK>
+   <?/MIBLOCK>
 
-  <TABLE width="100%">
+ <TABLE width="100%">
     <TR>
       <INPUT TYPE=button value=Update onClick="update_source('$link_id')"><b> Source: </b> $display_source
     </TR>
@@ -122,6 +127,7 @@ Expected vars: link_id
 
 <?/MISQL>
 </TABLE>
+
   <!-- output the current members of the linkage - if any exist -->
 <p>
   <TABLE>
@@ -131,14 +137,17 @@ Expected vars: link_id
      </TR>
       <br>
    <?/MIVAR>
-   <?MISQL SQL="select distinct abbrev, mtype, a.zdb_id from all_markers a , linkage_member b 
-        where b.lnkgmem_linkage_zdb_id = '$link_id'
-          and b.lnkgmem_member_zdb_id = a.zdb_id
-        union 
-        select distinct allele, c.abbrev, a.zdb_id from fish a , linkage_member b, locus c 
-          where b.lnkgmem_linkage_zdb_id = '$link_id'
-            and b.lnkgmem_member_zdb_id = a.zdb_id
-            and a.locus = c.zdb_id;">
+   <?MISQL SQL="select distinct mrkr_abbrev, mrkr_type, mrkr_zdb_id 
+		from linkage_member, marker
+        	where lnkgmem_linkage_zdb_id = '$link_id'
+		  and lnkgmem_member_zdb_id = mrkr_zdb_id
+		UNION
+		select distinct l.abbrev, 'MUTANT', f.zdb_id
+		  from linkage_member, fish f, locus l
+		 where lnkgmem_linkage_zdb_id = '$link_id'
+		  and  lnkgmem_member_zdb_id = f.zdb_id
+		  and  f.locus = l.zdb_id
+          	;">
       <TR>
         <input type=button value=Delete onClick=modify_delete('delete_member','$link_id','','$3')>  $1 ($2)
       </TR>
@@ -161,11 +170,13 @@ Expected vars: link_id
   <TR>
     <TD> <input type=button value=Delete onClick=modify_delete('delete_distance','$link_id','$pair_id','')></TD>&nbsp;
     <TD> <input type=button value=Update onClick=modify_distance('modify_distance','$link_id','$pair_id')></TD>&nbsp;
- <?MISQL SQL="select abbrev from all_markers a , linkage_pair b , linkage_pair_member c
+ <?MISQL SQL="
+	select mrkr_abbrev 
+	from marker a , linkage_pair b , linkage_pair_member c
         where b.lnkgpair_linkage_zdb_id = '$link_id'
           and b.lnkgpair_zdb_id = '$pair_id'
           and c.lpmem_linkage_pair_zdb_id = b.lnkgpair_zdb_id
-          and c.lpmem_member_zdb_id = a.zdb_id
+          and c.lpmem_member_zdb_id = a.mrkr_zdb_id
         union 
         select allele from fish a , linkage_pair b, locus c , linkage_pair_member d
           where b.lnkgpair_zdb_id = '$pair_id'
@@ -175,7 +186,6 @@ Expected vars: link_id
             and a.locus = c.zdb_id;">
     $1 &nbsp;
   <?/MISQL>
-
   <?MISQL SQL="select lnkgpair_distance, lnkgpair_lod, lnkgpair_metric from linkage_pair 
     where lnkgpair_zdb_id = '$pair_id';">
     <?MIVAR NAME=$distance>$1<?/MIVAR>
@@ -207,7 +217,6 @@ Expected vars: link_id
     </TD>
   </TR>
 </TABLE>
-
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 </HTML>

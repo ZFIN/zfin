@@ -6,7 +6,11 @@ marker_abbrev -- abbrev of marker
 -->
 
 
-<?MISQL SQL="select alnkgmem_comments from all_linked_members where alnkgmem_linkage_zdb_id='$link_id' and alnkgmem_member_zdb_id = '$marker_id';">
+<?MISQL SQL="select lnkg_comments 
+	       from linkage, linkage_member 
+	      where lnkgmem_linkage_zdb_id='$link_id' 
+		and lnkgmem_member_zdb_id = '$marker_id'
+		and lnkgmem_linkage_zdb_id = lnkg_zdb_id;">
 
 
 <table width=100% cellpadding=0><font size=4 face="Courier">

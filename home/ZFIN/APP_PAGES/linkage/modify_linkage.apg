@@ -8,9 +8,9 @@ Possible vars: link_id, comments, lg, private, source , ZDB_ident, distance, LOd
 <?MIVAR COND="$(NXST,$comments)" NAME=$comments><?/MIVAR>
 
 <!-- delete an entire linkage -->
-<?MIBLOCK COND="$(EC,$calling_form,delete_linkage)">
-
-  <?MISQL SQL="delete from linkage where lnkg_zdb_id = '$link_id';"> <?/MISQL>
+<?MIBLOCK COND="$(EC,$calling_form,delete_linkage)">	
+	
+  <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id = '$link_id';"> <?/MISQL>
 
   <?MIVAR>
     <SCRIPT>
