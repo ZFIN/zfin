@@ -959,7 +959,7 @@ Datablade documentation.
         <?MIBLOCK COND="$(OR,$(>,$count,0),$(XST,$UPDATE))">
 	 <?MIVAR><p>
 	  <TR><TD>
-	    <b>Publications reporting expression:</b> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=xpat&title=$(URLENCODE,$titleexp)&pubcount=$count&caller=marker&cellpad=0&name=$(URLENCODE,$name)&abbrev=$abbrev$(IF,$(XST,$UPDATE),&UPDATE=1)">($count)</A><img src="/images/new1.gif" border=0 height=15>
+	    <b>Publications reporting expression:</b> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=xpat&title=$(URLENCODE,$titleexp)&pubcount=$count&caller=marker&cellpad=0&name=$(URLENCODE,$name)&abbrev=$abbrev$(IF,$(XST,$UPDATE),&UPDATE=1)">($count)</A>
 	  </TD></TR>
 	 <?/MIVAR>
         <?/MIBLOCK>
@@ -1030,159 +1030,16 @@ Datablade documentation.
 
 
 <TABLE border=0 width=100%>
- <?MISQL SQL="select mreltype_name from marker_relationship_type;">
-   <?MIVAR NAME="$mrkrview_mrel_type">$1<?/MIVAR>
-   <?MIVAR NAME=$mrkrview_last_mrkr_type><?/MIVAR>
-
-    <?MISQL SQL="select mreltype_2_to_1_comments from marker_relationship_type where mreltype_name = '$mrkrview_mrel_type';">
-    <?MIVAR NAME="$mrel2to1comments">$1<?/MIVAR>
-     <?MISQL SQL="
-       select count(*)::Integer 
-       from marker_relationship 
-       where mrel_mrkr_2_zdb_id = '$OID' 
-       and mrel_type='$mrkrview_mrel_type';">
-    <?MIBLOCK COND="$(>,$1,0)">
-
-     <TR>
-      <TD bgcolor=#EEEEEE>
-       <?MIVAR>$(IF,$(>,$(POSITION,$OID,GENE),0),$abbrev,$name) $mrel2to1comments<?/MIVAR>
-      </TD>
-      <TD align=left width=80% bgcolor=#EEEEEE>
-	<?MISQL SQL="
-	  select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrel_type, mreltype_name, mreltype_2_to_1_comments, mrkrtype_type_display, mrel_zdb_id, idsup_supplier_zdb_id
-	  from marker, marker_relationship, marker_relationship_type, outer(int_data_supplier), marker_types
-	  where mrel_mrkr_2_zdb_id = '$OID' 
-	    and mrel_mrkr_1_zdb_id = mrkr_zdb_id 
-	    and mrel_type = mreltype_name 
-	    and mreltype_name = '$mrkrview_mrel_type'  
-	    and mrel_mrkr_1_zdb_id = idsup_data_zdb_id
-	    and mrkr_type = marker_type
-	  group by mrkrtype_type_display, mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrel_type, mreltype_name, mreltype_2_to_1_comments, mrel_zdb_id, idsup_supplier_zdb_id
-	  order by mrkrtype_type_display, mrkr_abbrev_order;">
-	  
-	  <?MIVAR NAME=mrkrview_segment_mrkr_zdb_id>$2<?/MIVAR> 
-	  <?MIVAR NAME=mrkrview_segment_mrel_type>$4<?/MIVAR> 
-	  <?MIVAR NAME=mrkrview_segment_mrkr_type>$7<?/MIVAR> 
-	  <?MIVAR NAME=mrkrview_segment_mrel_zdb_id>$8<?/MIVAR> 
-	  <?MIVAR NAME=mrkrview_segment_supplier>$9<?/MIVAR> 
-	
-	<?MIBLOCK COND="$(NE,$mrkrview_segment_mrkr_type,$mrkrview_last_mrkr_type)">
-	 <?MIBLOCK COND="$(NE,$MI_CURRENTROW,1)"><br><?/MIBLOCK>
- 	 <?MIVAR><font size=-1>[$mrkrview_segment_mrkr_type]</font><?/MIVAR>
-        <?MIELSE>,
-	<?/MIBLOCK>
-	<?MIVAR NAME=$mrkrview_last_mrkr_type>$mrkrview_segment_mrkr_type<?/MIVAR>	
-	
-        <?MIVAR COND="$(XST,$UPDATE)">
-         <INPUT TYPE=button 
-         value=Delete 
-         onClick="Delete_mrel('$mrkrview_segment_mrkr_zdb_id','$OID','$mrkrview_segment_mrel_type')">
-        <?/MIVAR>
-
-        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrview_segment_mrkr_zdb_id">$1</A>
-        
-        <?MIBLOCK COND="$(NC,$mrkrview_segment_supplier,)">
-        <font size=-1>
-          <?MIBLOCK COND="$(EC,$mrkrview_segment_supplier,ZDB-LAB-991005-53)">
-            <A HREF="/zirc/home/guide.php">(Order This)</A>
-          <?MIELSE>
-	    <?MIVAR>
-              <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$mrkrview_segment_supplier">(Order This)</A>
-            <?/MIVAR>
-          <?/MIBLOCK>
-        </font>
-        <?/MIBLOCK>
-        
-	<?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_segment_mrel_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
-        <?/MISQL>
-	</TD>
-     </TR>
-    <?/MIBLOCK>  <?MICOMMENT> end there are marker relationships with mrel_mrkr_2_zdb_id = '$OID' <?/MICOMMENT>
-
-   <?/MISQL>
-  <?/MISQL>
-
-  <?MIVAR>$(SETVAR,$mrkrview_last_mrkr_type,)<?/MIVAR>
-
-  <?MISQL SQL="select mreltype_1_to_2_comments from marker_relationship_type where mreltype_name = '$mrkrview_mrel_type';">
-     <?MIVAR NAME="$mrel1to2comments">$1<?/MIVAR>
-     <?MISQL SQL="
-       select count(*)::Integer 
-       from marker_relationship 
-       where mrel_mrkr_1_zdb_id = '$OID' 
-         and mrel_type='$mrkrview_mrel_type';">
-     <?MIBLOCK COND="$(>,$1,0)">
-     
-     <TR>
-      <TD bgcolor=#EEEEEE>
-
-       <?MIVAR>$(IF,$(POSITION,$OID,GENE),<i>$abbrev</i>,$name) $mrel1to2comments<?/MIVAR> 
-       <?MIVAR NAME=$mrel_mtype><?/MIVAR>
-
-      </TD>
-      <TD align=left width=80% bgcolor=#EEEEEE>
-	<?MISQL SQL="
-	  select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrel_type,  mreltype_name, mreltype_1_to_2_comments, mrkrtype_type_display, mrel_zdb_id, idsup_supplier_zdb_id, srcurl_display_text, srcurl_url 
-	  from marker, marker_relationship, marker_relationship_type, outer(int_data_supplier, source_url), marker_types
-	  where mrel_mrkr_1_zdb_id = '$OID' 
-  	    and mrel_mrkr_2_zdb_id = mrkr_zdb_id 
-	    and mrel_type = mreltype_name 
-	    and mreltype_name = '$mrkrview_mrel_type'  
-	    and mrel_mrkr_2_zdb_id = idsup_data_zdb_id
-	    and mrkr_type = marker_type
-	    and idsup_supplier_zdb_id = srcurl_source_zdb_id
-	    and srcurl_purpose = 'order'
-	  group by mrkrtype_type_display, mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrel_type, mreltype_name, mreltype_1_to_2_comments, mrel_zdb_id, idsup_supplier_zdb_id, srcurl_display_text, srcurl_url 
-	  order by mrkrtype_type_display, mrkr_abbrev_order;">
-	  
-	  <?MIVAR NAME=mrkrview_segment_mrkr_zdb_id>$2<?/MIVAR> 
-	  <?MIVAR NAME=mrkrview_segment_mrel_type>$4<?/MIVAR> 
-	  <?MIVAR NAME=mrkrview_segment_mrkr_type>$7<?/MIVAR> 
-	  <?MIVAR NAME=mrkrview_segment_mrel_zdb_id>$8<?/MIVAR> 
-	  <?MIVAR NAME=mrkrview_segment_supplier>$9<?/MIVAR> 
-	  <?MIVAR NAME=mrkrview_segment_supplier_display>$10<?/MIVAR> 
-	  <?MIVAR NAME=mrkrview_segment_supplier_url>$11<?/MIVAR> 
-	
-	<?MIBLOCK COND="$(NC,$mrkrview_segment_mrkr_type,$mrkrview_last_mrkr_type)">
-	  <?MIBLOCK COND="$(NE,$MI_CURRENTROW,1)"><br><?/MIBLOCK>
- 	  <?MIVAR><font size=-1>[$mrkrview_segment_mrkr_type]</font><?/MIVAR>
-
-        <?MIELSE>,
-	<?/MIBLOCK>
-	<?MIVAR NAME=$mrkrview_last_mrkr_type>$mrkrview_segment_mrkr_type<?/MIVAR>
-        <?MIVAR COND="$(XST,$UPDATE)">
-         <INPUT TYPE=button  
-          value=Delete 
-          onClick="Delete_mrel('$mrkrview_segment_mrkr_zdb_id','$OID','$mrkrview_segment_mrel_type')">
-        <?/MIVAR>	
-	 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrview_segment_mrkr_zdb_id">$1</A>
-         <font size=-1>
-
-        <?MIBLOCK COND="$(NC,$mrkrview_segment_supplier,)">
-          <?MIBLOCK COND="$(NC,$mrkrview_segment_supplier_display,)">
-            <?MIVAR>
-              &nbsp;(<A HREF="$mrkrview_segment_supplier_url">$mrkrview_segment_supplier_display</A>)
-            <?/MIVAR>
-          <?MIELSE> 
-	    <?MIVAR COND="$(>,$(POSITION,$mrkrview_segment_supplier,LAB),0)" NAME=viewpage>labview.apg<?/MIVAR>
-            <?MIVAR COND="$(>,$(POSITION,$mrkrview_segment_supplier,COMPANY),0)" NAME=viewpage>companyview.apg<?/MIVAR>
-            <?MIVAR>
-              &nbsp;(<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$viewpage&OID=$mrkrview_segment_supplier">Order This</A>)
-            <?/MIVAR>
-          <?/MIBLOCK>
-        <?/MIBLOCK>
-
-         </font>
-	<?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_segment_mrel_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
-       <?/MISQL> 
-       </TD>
-     </TR>
-    <?/MIBLOCK> <?MICOMMENT> end there are marker relationships with mrel_mrkr_1_zdb_id = '$OID' <?/MICOMMENT>
+	<?MISQL SQL="select WebExplode(object,'mrkrrel_mrkr_zdb_id=$OID&mrkrrel_rel_direction=2_to_1') from webPages where ID='aa-markerrelationship.apg' ;">
+       $1
     <?/MISQL>
+	<?MISQL SQL="select WebExplode(object,'mrkrrel_mrkr_zdb_id=$OID&mrkrrel_rel_direction=1_to_2')
+				   from webPages
+             	  where ID='aa-markerrelationship.apg' ;">
+       $1
     <?/MISQL>
-
- <?/MISQL>
 </TABLE>
+
 <?MIBLOCK COND="$(XST,$UPDATE)">
   </form> <?MICOMMENT> end form updaterrel <?/MICOMMENT>
 <?/MIBLOCK>
@@ -1320,7 +1177,7 @@ Datablade documentation.
       <TD width=30% bgcolor=#ccccccc><b>Type</b></TD>
       <TD width=40% bgcolor=#ccccccc><b>Accession #</b></TD>
       <TD align=right width=10% bgcolor=#ccccccc><b>Length</b></TD>
-      <TD align=center width=20% bgcolor=#ccccccc><A HREF="javascript:start_help()"><b>Analysis</b></A><img src="/images/new1.gif"></TD>
+      <TD align=center width=20% bgcolor=#ccccccc><A HREF="javascript:start_help()"><b>Analysis</b></A></TD>
     </TR>
     <?MIVAR NAME=$mrkrview_prevDataType><?/MIVAR>
     <?MIVAR NAME=$mrkrview_displayAllSequencesLink>0<?/MIVAR>
