@@ -54,7 +54,7 @@ ENDEMICTARGETS_CLEAN = $(OBJS)
 
 # ---- C compilation defines
 
-CC= cc
+CC= /local/apps/Lang/SUNWspro/bin/cc
 
 INCDIR = $(INFORMIXDIR)/incl/dmi
 LIBDIR = $(INFORMIXDIR)/lib 
@@ -79,5 +79,5 @@ $(TARGETDIR_OBJS) : $(TARGETDIR)/% : %
 	$(TOUCH) $@
 	$(MAKESPECIFIC) create_functions.sql $(TRANSLATETABLE) cftemp.sql
 	$(DBACCESS) $(DBNAME) cftemp.sql  	  # create functions in DB
-	rm -f cftemp.sql			  # prevent hanky panky
+	/bin/rm -f cftemp.sql			  # prevent hanky panky
 

@@ -3,9 +3,6 @@
 # Makefile for ZFIN_WWW CVS Project, WWW Server Apps sysexecs encryptpass
 # directory
 #
-# $Source$
-# $Id$
-#
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
 # !! of the makefile hierarchy this makefile is a part of, and of the  !!
@@ -62,7 +59,7 @@ $(TARGETDIR) :
 
 $(SPECIFICTARGETS) : $(TARGETDIR)/% : %
 	$(MAKESPECIFIC) $< $(TRANSLATETABLE) $@
-	chmod 751 $@
+	/bin/chmod 751 $@
 	$(MAKE) reloadrow
 
 reloadrow : clobberrow
@@ -74,8 +71,8 @@ clobberrow :
 
 
 $(ENCODETARGET) : $(CSRCS)
-	gcc $(CSRCS) -o $(ENCODETARGET)
-	chmod 751 $(ENCODETARGET)
+	/local/bin/gcc $(CSRCS) -o $(ENCODETARGET)
+	/bin/chmod 751 $(ENCODETARGET)
 
 # ---------------  Maintenance Rules  -----------------------------------
 
@@ -86,7 +83,7 @@ clean :				# No local intermediate files or subdirs
 # clobber also removes the row for encryptpass from the execweb table
 
 clobber : clobberrow		# Remove targets, but not target dir.
-	rm -f $(TARGETS)
+	/bin/rm -f $(TARGETS)
 
 sanitycheck :			# Maybe other stuff to do here as well.
 	$(SPECIFICCHECK) $(GENERICS)
