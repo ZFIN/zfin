@@ -3,7 +3,7 @@ From: zirc_order@zfin.org
 Subject: [nameInd] [NameFam]'s request for EST/cDNA probes
 
 **************************************** 
-person: [nameInd] [nameFam] (PI=[PIName]) probe(s):[probe1Name] [probe2Name] [probe3Name] [probe4Name] [probe5Name]
+person: [nameInd] [nameFam] (PI=[PIName]) probe(s): ([probe1EST],[probe1Gene]) ([probe2EST],[probe2Gene]) ([probe3EST],[probe3Gene]) ([probe4EST],[probe4Gene]) ([probe5EST],[probe5Gene])
 ---
 ---
 Name:
@@ -79,40 +79,44 @@ Bill To PO Number:
 [billPONo]
 ---
 ---
-EST/cDNA probe 1:
-[probe1ZFIN_ID]
-name:
-[probe1Name]
+EST/cDNA:
+[probe1EST]
+Gene Symbol:
+[probe1Gene]
 other description:
-[probe1otherDescription]
+[probe1othDescr]
 ---
 EST/cDNA probe 2:
-[probe2ZFIN_ID]
-name:
-[probe2Name]
+EST/cDNA:
+[probe2EST]
+Gene Symbol:
+[probe2Gene]
 other description:
-[probe2otherDescription]
+[probe2othDescr]
 ---
 EST/cDNA probe 3:
-[probe3ZFIN_ID]
-name:
-[probe3Name]
+EST/cDNA:
+[probe3EST]
+Gene Symbol:
+[probe3Gene]
 other description:
-[probe3otherDescription]
+[probe3othDescr]
 ---
 EST/cDNA probe 4:
-[probe4ZFIN_ID]
-name:
-[probe4Name]
+EST/cDNA:
+[probe4EST]
+Gene Symbol:
+[probe4Gene]
 other description:
-[probe4otherDescription]
+[probe4othDescr]
 ---
 EST/cDNA probe 5:
-[probe5ZFIN_ID]
-name:
-[probe5Name]
+EST/cDNA:
+[probe5EST]
+Gene Symbol:
+[probe5Gene]
 other description:
-[probe5otherDescription]
+[probe5othDescr]
 ---
 ---
 Considerations and Comments:
