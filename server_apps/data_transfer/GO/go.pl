@@ -31,9 +31,9 @@ sub sendResults {
 	
  #----- One mail send out the gene_association file----
 
-  my $SUBJECT="Auto: gene_association.zfin file";
+  my $SUBJECT="Auto: gene_association.zfin.gz file";
   my $MAILTO="<!--|GO_EMAIL_CURATOR|-->";
-  my $ATTFILE ="./gene_association.zfin";
+  my $ATTFILE ="./gene_association.zfin.gz";
  
   # Create a new multipart message:
   $msg1 = new MIME::Lite 
@@ -97,7 +97,10 @@ sendErrorReport ("gofile.sql failed") if
 sendErrorReport ("goparser.pl failed") if system ("goparser.pl");
 
 sendErrorReport ("check-gene-association.pl reports error") if 
-    system ("/local/bin/perl check-gene-association.pl -d gene_association.zfin");
+    system ("check-gene-association.pl -d gene_association.zfin");
+
+sendErrorReport ("gzip gene_association.zfin failed") if 
+    system ("gzip gene_association.zfin");
 
 sendErrorReport ("gp2protein.pl failed") if
     system ("gp2protein.pl");
