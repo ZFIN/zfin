@@ -583,7 +583,7 @@ Variables Expected:
 	  <option "$(IF,$(EC,$3,insertion),SELECTED)" value=insertion>insertion
 	  <option "$(IF,$(EC,$3,inversion),SELECTED)" value=inversion>inversion
 	  <option "$(IF,$(EC,$3,complex_rearrangement),SELECTED)" value=complex_rearrangement>complex rearrangement
-	  <option "$(IF,$(EC,$3,unknown),SELECTED)" value=Unknown>Unknown
+	  <option "$(IF,$(EC,$3,unknown),SELECTED)" value=unknown>Unknown
 	  </SELECT>")
 	  </font>
 
