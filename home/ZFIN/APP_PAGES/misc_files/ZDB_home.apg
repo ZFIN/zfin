@@ -457,6 +457,16 @@
 			<input type=submit value="Regen Genomics data">
 		      </form>
 		      
+		      <form action='/<!--|CGI_BIN_DIR_NAME|-->/runSPL.cgi' method="GET" >
+
+			<input type=hidden
+			       name="run"
+			       value="regen_maps">
+
+			<input type=submit value="Regen Mapping data">
+		      </form>
+
+
 		      <form action='/<!--|CGI_BIN_DIR_NAME|-->/runSPL.cgi' 
 			    method="POST" >
 			<input type=submit value="Regen Orthologue Display data">
