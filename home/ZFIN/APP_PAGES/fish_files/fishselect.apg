@@ -843,6 +843,7 @@ function call_reset() {
 		<option $(IF,$(EC,$mutagen,g-rays),SELECTED) value=g-rays>gamma rays
 		<option $(IF,$(EC,$mutagen,DNA),SELECTED) value=DNA>DNA
 		<option $(IF,$(EC,$mutagen,spontaneous),SELECTED) value=spontaneous>spontaneous
+		<option $(IF,$(EC,$mutagen,TMP),SELECTED) value=TMP>TMP
 	<?/MIVAR>
        </SELECT>
    </TD>
