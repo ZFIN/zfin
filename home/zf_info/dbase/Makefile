@@ -20,16 +20,12 @@ TARGETDIR = $(TARGETROOT)/home/zf_info/dbase
 
 SUBDIRS = PAPERS
 
-GENERICS = aim1.html aim2.html aims.html arch.html bib.html cont.html \
-	cost.html data.html db.html imp1.html imp2.html mtgprop.html \
-	mtgsum.html prob.html sig.html sum.html
+GENERICS = db.html
 
-STATICS = fig1.gif fig2.gif fig3.gif fig4.gif fig4a.gif fig4b.gif fig5.gif \
-	fig6.gif fig7.gif
 
 
 # ---------------  Production Rules  ------------------------------------
 
-# Use default rules for directories without app pages in them.
+# Use default rules
 
 include $(TOP)/make.default.rules
