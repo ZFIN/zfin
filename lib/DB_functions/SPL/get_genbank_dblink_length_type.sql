@@ -17,51 +17,49 @@
     define vFdbcontType 	varchar(20) ;
     define vFdbcontZdbID	varchar(50) ;
 
-      if vDblinkFdbcontZdbId is not null then
-
-        select fdbcont_fdbdt_data_type 
-	  into vFdbcontType
-          from foreign_db_contains
-          where fdbcont_zdb_id = vDblinkFdbcontZdbId ;
-
-	if vFdbcontType = 'other' then
-              
- 	 return vDblinkFdbcontZdbId, vDblinkLength ;
-
-	elif exists (select * 
+      if exists (select * 
         	       	from accession_bank 
   		       	where accbk_acc_num = vDblinkAccNum 
-                       	and accbk_db_name = 'GenBank')
+                       	and accbk_db_name = 'GenBank') 
 
-          then 
-        
-             select accbk_length, accbk_data_type
-	       into vAccbkLength, vAccbkType
-    	       from accession_bank
-     	       where accbk_acc_num = vDblinkAccNum 
-    	       and accbk_db_name = 'GenBank' ;
+	then
+		if vDblinkFdbcontZdbId is not null then
 
-	     if vAccbkType = 'mRNA'
-      		    then 
-		      let vAccbkType = 'cDNA' ;
-   	     end if ;
+        		select fdbcont_fdbdt_data_type 
+	  		  into vFdbcontType
+          		  from foreign_db_contains
+          		  where fdbcont_zdb_id = vDblinkFdbcontZdbId ;
+
+			if vFdbcontType = 'other' then
+              
+ 	 			return vDblinkFdbcontZdbId, vDblinkLength ;
+
+			end if ; 
+		end if ;        
+
+             	select accbk_length, accbk_data_type
+	       	  into vAccbkLength, vAccbkType
+    	       	  from accession_bank
+     	       	  where accbk_acc_num = vDblinkAccNum 
+    	       	  and accbk_db_name = 'GenBank' ;
+
+	     	if vAccbkType = 'mRNA' then 
+		     	let vAccbkType = 'cDNA' ;
+   	     	end if ;
    
-   	     if vAccbkType = 'DNA'
-      		  then 
-		    let vAccbkType = 'Genomic' ;
-
-             end if ;
+   	     	if vAccbkType = 'DNA' then 
+		    	let vAccbkType = 'Genomic' ;
+		end if ;
        
-             select fdbcont_zdb_id
-    	       into vFdbcontZdbId
-    	       from foreign_db_contains
-    	       where fdbcont_fdbdt_data_type = vAccbkType
-      	       and fdbcont_fdbdt_super_type = 'sequence'
-      	       and fdbcont_organism_common_name = 'Zebrafish'
-               and fdbcont_fdb_db_name =  'GenBank' ;
+             	select fdbcont_zdb_id
+    	       	  into vFdbcontZdbId
+    	       	  from foreign_db_contains
+    	       	  where fdbcont_fdbdt_data_type = vAccbkType
+      	       	  and fdbcont_fdbdt_super_type = 'sequence'
+      	       	  and fdbcont_organism_common_name = 'Zebrafish'
+               	  and fdbcont_fdb_db_name =  'GenBank' ;
 
-	end if ;
-            return vFdbcontZdbId, vAccbkLength ;
+	        return vFdbcontZdbId, vAccbkLength ;
 
       else  
           
