@@ -153,7 +153,7 @@ window.location.search='?MIval=aa-edit_linkage.apg&link_id='+link_id+'&OID='+oid
 
 <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
 <form><center><font size=4>
-<?MIVAR> <b>Invalid ZFIN ID.<?/MIVAR>
+<?MIVAR> <b>ID not found in ZFIN.<?/MIVAR>
 </form>
 <?/MIBLOCK>
 
@@ -180,7 +180,7 @@ value=" DONE UPDATING. Back to Viewing! " onClick="document.location.search='?MI
 <?MIVAR COND="$(XST,$UPDATE)">
 <br><INPUT TYPE=button value=Update onClick="doit('name','text','Name')">
 <?/MIVAR> 
-<?MIVAR> $name <?/MIVAR>
+<?MIVAR> <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$locus"> $name </A><?/MIVAR>
 <?MIVAR COND="$(XST,$UPDATE)">
 <br><INPUT TYPE=button value=Update onClick="doit('abbrev','text','Abbreviation')">
 <?/MIVAR> 
@@ -537,7 +537,8 @@ $(IF,$(AND,$(XST,$UPDATE),$(EC,$10,original)),"<SELECT name=chrom_number onChang
 <option "$(IF,$(EC,$2,25),SELECTED)" value=25>25</SELECT>")
 </font></TD>  
 
-<TD><font size=-1><b>Cytological position:</b> $(IF,$(NC,$5,NULL),$5,Unknown)</font></TD>
+<!-- comment out until data starts to come in -->
+<!-- <TD><font size=-1><b>Cytological position:</b> $(IF,$(NC,$5,NULL),$5,Unknown)</font></TD> -->
 </TR>
 </TABLE>
 
