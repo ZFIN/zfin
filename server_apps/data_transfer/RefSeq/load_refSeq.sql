@@ -403,12 +403,14 @@ WHERE zactvd_zdb_id IN
 
 !echo 'Attribute human LL links to source LocusLink curation pub.'
 INSERT INTO record_attribution
+           (recattrib_data_zdb_id, recattrib_source_zdb_id)
     SELECT dblink_zdb_id, 'ZDB-PUB-020723-3'
     FROM db_link, ortho_link
     WHERE dblink_zdb_id = lnkortho_dblink_zdb_id;
 {
 !echo 'Attribute OMIM links to source LocusLink curation pub.'
 INSERT INTO record_attribution
+        (recattrib_data_zdb_id, recattrib_source_zdb_id)
     SELECT dblink_zdb_id, 'ZDB-PUB-020723-3'
     FROM db_link
     WHERE db_name = "OMIM"
@@ -553,6 +555,7 @@ INSERT INTO db_link
 
 !echo 'Attribute ZFIN_LL links to an artificial pub record.'
 INSERT INTO record_attribution
+        (recattrib_data_zdb_id, recattrib_source_zdb_id)
     SELECT dblink_zdb_id, 'ZDB-PUB-020723-3'
     FROM db_link, tmp_db_link
     WHERE dblink_zdb_id = tmp_dblink_zdb_id
@@ -605,6 +608,7 @@ INSERT INTO db_link
 
 !echo 'Attribute RefSeq links to an artificial pub record.'
 INSERT INTO record_attribution
+	(recattrib_data_zdb_id, recattrib_source_zdb_id)
     SELECT a.dblink_zdb_id, 'ZDB-PUB-020723-3'
     FROM db_link a
     WHERE a.db_name = "UniGene"

@@ -78,6 +78,7 @@ begin work;
 
 --!echo 'Attribute db links to the internal pub record'
 	insert into record_attribution
+		(recattrib_data_zdb_id, recattrib_source_zdb_id)
 		select dblink_zdb_id, "ZDB-PUB-020723-2"
 		from pre_db_link;
 
@@ -124,6 +125,7 @@ begin work;
 
 --!echo 'Attribute second AC to the internal pub record'
 	insert into record_attribution 
+		(recattrib_data_zdb_id, recattrib_source_zdb_id)
                select dalias_zdb_id, "ZDB-PUB-020723-2"
 	       from pre_ac_alias;
 
@@ -173,6 +175,7 @@ begin work;
 
 --!echo 'Attribute GN to the internal pub record'
 	insert into record_attribution 
+		(recattrib_data_zdb_id, recattrib_source_zdb_id)
 		select gn.dalias_zdb_id,"ZDB-PUB-020723-2"
 		from pre_gn_dalias gn;
 
@@ -322,6 +325,7 @@ begin work;
 
 --!echo 'Attribute GOTERM to the internal pub record'
 	insert into record_attribution 
+		(recattrib_data_zdb_id, recattrib_source_zdb_id)
 		select goterm_zdb_id,"ZDB-PUB-020723-2"
 		from go_term;
  
@@ -384,6 +388,7 @@ begin work;
 	  
 --!echo 'Attribute MRKRGO to the internal pub record'
 	insert into record_attribution
+		(recattrib_data_zdb_id, recattrib_source_zdb_id)
 	  	select * from mrkrgo_source;
 
 --!echo 'Insert into marker_go_term_evidence'
@@ -423,7 +428,8 @@ begin work;
 
 	
 --!echo 'Attribute EXTNOTE to the internal pub record'
- 	insert into record_attribution 
+ 	insert into record_attribution  
+		(recattrib_data_zdb_id, recattrib_source_zdb_id)
 		select extnote_zdb_id, "ZDB-PUB-020723-2"
 		from pre_external_note;
 
@@ -441,8 +447,8 @@ begin work;
 	insert into data_external_note
 			select distinct * from data_external_note_with_dups;
 
-
-	insert into record_attribution
+	insert into record_attribution 
+		(recattrib_data_zdb_id, recattrib_source_zdb_id)	
 		select extrecd_zdb_id, "ZDB-PUB-020723-2"
 		  from exist_record;
 

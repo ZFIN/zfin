@@ -126,7 +126,8 @@ insert into db_link select * from tmp_db_link;
 
 !echo 'Attribute RefSeq links to an artificial pub record.'
 insert into record_attribution
-    select dblink_zdb_id, 'ZDB-PUB-020723-3', 'primary'
+      (recattrib_data_zdb_id, recattrib_source_zdb_id)
+    select dblink_zdb_id, 'ZDB-PUB-020723-3'
     from a.db_link, tmp_db_link tmp
     where a.db_name = "UniGENE"
       and a.acc_num = tmp.acc_num

@@ -82,7 +82,8 @@ insert into db_link(
 	from tmp_db_link
 ;
 
-insert into record_attribution 
+insert into record_attribution
+       (recattrib_data_zdb_id, recattrib_source_zdb_id)
 select zad, 'ZDB-PUB-020723-5'
 from tmp_db_link;
 

@@ -140,6 +140,7 @@
   <?MICOMMENT>*** 08/22 pub also attributed to the gene<?/MICOMMENT>
   <?MISQL SQL="
 	insert into record_attribution 
+          ( recattrib_data_zdb_id, recattrib_source_zdb_id )
 	   select distinct gene_zdb_id, pub_zdb_id 
 	     from one_orthologue_evidence_display_temp
 	    where not exists 

@@ -56,7 +56,7 @@ Possible vars: link_id, usercomments, lg, source , ZDB_ident
     <?MISQL SQL="insert into linkage (lnkg_zdb_id, lnkg_or_lg, lnkg_comments, lnkg_submitter_zdb_id) values ('$link_id','$lg','$(URLDECODE,$usercomments)','$ZDB_ident');">
     <?/MISQL>
 
-    <?MISQL SQL="insert into record_attribution values('$link_id', '$source');">
+    <?MISQL SQL="insert into record_attribution (recattrib_data_zdb_id,recattrib_source_zdb_id) values('$link_id', '$source');">
     <?/MISQL>
   <?/MIBLOCK>	
 
@@ -68,7 +68,7 @@ Possible vars: link_id, usercomments, lg, source , ZDB_ident
 		;">
   <?/MISQL>
   	
-  <?MISQL COND="$(=,$MI_ROWCOUNT,0)" SQL="insert into record_attribution values('$member','$source');"> <?/MISQL>
+  <?MISQL COND="$(=,$MI_ROWCOUNT,0)" SQL="insert into record_attribution  (recattrib_data_zdb_id,recattrib_source_zdb_id) values('$member','$source');"> <?/MISQL>
   <?MISQL SQL="insert into linkage_member (lnkgmem_linkage_zdb_id, lnkgmem_member_zdb_id) values ('$link_id','$member');">
   <?/MISQL>
   <?MIVAR>

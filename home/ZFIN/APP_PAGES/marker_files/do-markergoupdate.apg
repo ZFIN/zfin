@@ -147,7 +147,8 @@ is_not
               <?/MIVAR>
               <?MIVAR>$SQL6<?/MIVAR>
               <?MIVAR NAME=SQL7>"insert into record_attribution
-               values ('$evnew_id','$pubs');"
+     			(recattrib_data_zdb_id,recattrib_source_zdb_id)
+              		 values ('$evnew_id','$pubs');"
               <?/MIVAR>
               <?MIVAR>$SQL7<?/MIVAR>
               <?MIVAR NAME=SQL8>"insert into marker_go_term_evidence
@@ -169,7 +170,7 @@ is_not
         <?MISQL SQL="insert into zdb_active_data (zactvd_zdb_id)
          values ('$evnew_id');">
         <?/MISQL>
-        <?MISQL SQL="insert into record_attribution(recattrib_data_zdb_id,recattrib_source_zdb_id)
+        <?MISQL SQL="insert into record_attribution (recattrib_data_zdb_id,recattrib_source_zdb_id)
          values ('$evnew_id','$pub_id');">
         <?/MISQL>
         <?MISQL SQL="select mrkrgoev_infered_from from marker_go_term_evidence where mrkrgoev_mrkrgo_zdb_id='$mrkrgozdbid' and mrkrgoev_evidence_code='$evidence_code'"><?/MISQL>
@@ -190,8 +191,9 @@ is_not
          values ('$evnew_id');"
         <?/MIVAR>
         <?MIVAR>$SQL1<?/MIVAR>
-        <?MIVAR NAME=SQL2>"insert into record_attribution
-         values ('$evnew_id','$pub_id');"
+        <?MIVAR NAME=SQL2>"insert into record_attribution 
+ 			(recattrib_data_zdb_id,recattrib_source_zdb_id)
+        		 values ('$evnew_id','$pub_id');"
         <?/MIVAR>
         <?MIVAR>$SQL2<?/MIVAR>
         <?MIVAR NAME=SQL3>"insert into marker_go_term_evidence

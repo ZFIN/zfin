@@ -379,7 +379,8 @@ insert into marker select * from tmp_mrkr;
 
 
 !echo " load pubs for marker"
-insert into record_attribution 
+insert into record_attribution
+ (recattrib_data_zdb_id, recattrib_source_zdb_id)
 select mrkr_zdb_id, 'ZDB-PUB-010810-1' 
 from tmp_mrkr 
 where not exists 
@@ -608,7 +609,7 @@ from tmp_exp_pat;
 insert into int_data_source select xpat_zdb_id,'ZDB-LAB-980204-15' from tmp_exp_pat;
 
 -- record_attribution --
-insert into record_attribution select xpat_zdb_id, 'ZDB-PUB-010810-1' from tmp_exp_pat;
+insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id) select xpat_zdb_id, 'ZDB-PUB-010810-1' from tmp_exp_pat;
 
 
 
@@ -953,7 +954,7 @@ INSERT INTO fish_image(
 
 
 -- record_attribution --
-insert into record_attribution select fimg_zdb_id, 'ZDB-PUB-010810-1' from tmp_fish_image;
+insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id) select fimg_zdb_id, 'ZDB-PUB-010810-1' from tmp_fish_image;
 
 
 ! echo "-- FISH_IMAGE_STAGE --"
@@ -1157,7 +1158,7 @@ insert into data_alias select * from tmp_dalias;
 
 
 --attribute alias
-insert into record_attribution select tal_zdb_id, 'ZDB-PUB-010810-1' from tmp_dalias;
+insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id) select tal_zdb_id, 'ZDB-PUB-010810-1' from tmp_dalias;
 
 ---------- create fake genes --------------------------------------
 
@@ -1226,6 +1227,7 @@ insert into marker_relationship select * from mrel_tmp;
 
 -- attribute mrel records
 insert into record_attribution
+        (recattrib_data_zdb_id, recattrib_source_zdb_id)
 select zdb_id, 'ZDB-PUB-010810-1' from mrel_tmp;
 
 

@@ -47,6 +47,7 @@ delattrib,delpub -- to delete an attribution, delpub holds the accession of the 
 	<?MIBLOCK>               
 	  <?MISQL SQL="
 	    INSERT INTO record_attribution
+ 		(recattrib_data_zdb_id,recattrib_source_zdb_id)
 	          VALUES('$OID', '$newpub');">
 	  <?/MISQL>
           <?MIVAR>$(UNSETVAR,$exiter)<?/MIVAR>

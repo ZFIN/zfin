@@ -237,7 +237,7 @@ where mrkrgoev_mrkrgo_zdb_id='$OID' and mrkrgoev_evidence_code='$evidence';"
   <?/MIVAR>
    <?MIVAR NAME=$added>true<?/MIVAR> 
   <?MIVAR NAME=SQL9>
-    insert into record_attribution values ('$newgoevid','$value')
+    insert into record_attribution (recattrib_data_zdb_id,recattrib_source_zdb_id) values ('$newgoevid','$value')
   <?/MIVAR>
 
   <?MIVAR NAME=SQL10>
