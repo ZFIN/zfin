@@ -20,12 +20,12 @@ my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
 
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/GO/";
 
+$outFile = "gene_association.zfin";
 
 &GOReport();
 &sendReport();
 
 exit;
-
 
 
 sub emailError()
@@ -38,7 +38,7 @@ sub emailError()
 
 sub writeReport()
   {
-    open (REPORT, ">>report") or die "cannot open report";
+    open (REPORT, ">>$outFile") or die "cannot open report";
     print REPORT "$_[0] \n\n";
     close (REPORT);
   }
@@ -47,17 +47,15 @@ sub writeReport()
 
 sub GOReport()
   {
-    system("/bin/rm -f report");
-    open (REPORT, "report") or die "can not open report";
-
-    print REPORT "DBLINKS\n";
+    system("/bin/rm -f $outFile");
+    open (REPORT, ">>$outFile") or die "can not open report";
 
     my $cur = $dbh->prepare('select mrkr_zdb_id, 
                                     mrkr_abbrev,
                                     goterm_go_id,
                                     mrkrgoev_source_zdb_id,
-                                    goev_name,
-                                    get_date_from_id(mrkr_go_zdb_id)
+                                    goev_code,
+                                    get_date_from_id(mrkrgo_zdb_id)
                              from   marker,
                                     marker_go_term,
                                     go_term,
@@ -69,11 +67,11 @@ sub GOReport()
                                and  mrkrgoev_evidence_code = goev_code;'
 			   );
     $cur->execute;
-    my($mrkr_id, $mrkr_abbrev, $go_id, $source_id, $ev_name, $ev_date);
-    $cur->bind_columns(\$mrkr_id, \$mrkr_abbrev, \$go_id, \$source_id, \$ev_name, \$ev_date);
+    my($mrkr_id, $mrkr_abbrev, $go_id, $source_id, $ev_code, $ev_date);
+    $cur->bind_columns(\$mrkr_id,\$mrkr_abbrev,\$go_id,\$source_id,\$ev_code,\$ev_date);
     while ($cur->fetch)
     {
-      print REPORT "ZFIN\t$mrkr_id\t$mrkr_abbrev\t\t$go_id\t$source_id\t$ev_name\t\t\t\tgene\ttaxon:7955\t$ev_date\n";
+      print REPORT "ZFIN\t$mrkr_id\t$mrkr_abbrev\t\t$go_id\t$source_id\t$ev_code\t\t\t\tgene\ttaxon:7955\t$ev_date\n";
     }
     print REPORT "\n";
     close(REPORT);
@@ -83,15 +81,11 @@ sub GOReport()
 sub sendReport()
   {
     open(MAIL, "| $mailprog") || die "cannot open mailprog $mailprog, stopped";
-    open(REPORT, "report") || die "cannot open report";
 
-    print MAIL "To: bsprunge\@cs.uoregon.edu\n";
+    print MAIL "To: judys\@cs.uoregon.edu\n";
     print MAIL "Subject: GO report\n";
-    while($line = <REPORT>)
-    {
-      print MAIL $line;
-    }
-    close (REPORT);
+
+    print MAIL "Path to GO file:\n\n<!--|ROOT_PATH|-->/server_apps/data_transfer/GO/$outFile";
     close (MAIL);
     $dbh->disconnect();
   }
