@@ -1553,26 +1553,31 @@ sub  get_OIDs_abbrev{
 	        #$note = $note . "|$marker| similar & unique on |$panel|& |$lg|?<p>\n";
 	        $sql =
 	        "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ". 
-	        "FROM all_map_names pmn, zmap_pub_pan_mark pm ".
+	        "FROM all_name_ends, all_map_names pmn, zmap_pub_pan_mark pm ".
 	        "WHERE allmapnm_zdb_id = pm.zdb_id ".
-		    "AND allmapnm_name  like \'\%$marker\%\' ".    
-		    "AND pm.panel_abbrev = (\'$panel\') ".
+                    "AND allmapnm_serial_id = allnmend_allmapnm_serial_id ".
+		    "AND allnmend_name_end_lower like \'$marker\%\' ".    
+		    "AND pm.panel_abbrev = \'$panel\' ".
 		    "AND mtype IN ( \'$types\' ) AND pm.or_lg = \'$lg\'; ";
         } elsif( defined  $panel ) {
 	        #$note = $note . "|$marker| similar & unique on |$panel|?<p>\n";
 	        $sql =
 	        "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ".
-	        "FROM all_map_names pmn, zmap_pub_pan_mark pm ".
+	        "FROM all_name_ends, all_map_names pmn, zmap_pub_pan_mark pm ".
 	        "WHERE allmapnm_zdb_id = pm.zdb_id ".
-		    "AND allmapnm_name like \'\%$marker\%\' ".    
-		    "AND pm.panel_abbrev = (\'$panel\') AND mtype IN (\'$types\'); ";
+                    "AND allmapnm_serial_id = allnmend_allmapnm_serial_id ".
+		    "AND allnmend_name_end_lower like \'$marker\%\' ".    
+		    "AND pm.panel_abbrev = \'$panel\' ".
+                    "AND mtype IN (\'$types\'); ";
         } else  {
 	        #$note = $note . "|$marker| similar & unique in ZFIN??<p>\n";
 	        $sql =
 	        "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ".
-	        "FROM all_map_names pmn, zmap_pub_pan_mark pm ".
+	        "FROM all_name_ends, all_map_names pmn, zmap_pub_pan_mark pm ".
 	        "WHERE allmapnm_zdb_id = pm.zdb_id ".
-		    "AND allmapnm_name like \'\%$marker\%\' AND mtype IN (\'$types\') ;"			
+                    "AND allmapnm_serial_id = allnmend_allmapnm_serial_id ".
+		    "AND allnmend_name_end_lower like \'$marker\%\' ".
+                    "AND mtype IN (\'$types\') ;";
 	    }
         $cur = $dbh->prepare($sql);
         $cur->execute();
