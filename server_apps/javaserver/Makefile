@@ -50,9 +50,9 @@ clean:
 #   -tfile:  file contains initial text (if new file) -mstring:  message string, -nname:  name of version
 #   -zLT:  use the local time when substituting time for keywords
 #VERSION_MESSAGE=
-VERSION_MESSAGE= -m"Initial version"
+VERSION_MESSAGE= -m"Improved synchronization"
 #VERSION_NAME=
-VERSION_NAME= -NInitial
+VERSION_NAME= -NSynchronized
 checkin:
 	ci -zLT -l -tinitial.text $(VERSION_MESSAGE) $(VERSION_NAME) $(CONTROLFILES) `$(TOSOURCE) $(CLASSFILES)` `$(TOSOURCE) $(OBJECTFILES)`
 

@@ -81,11 +81,31 @@ public class Server extends Thread
 
 class DBConnection extends Thread
 {
+	/**
+	   A synchronized counter.  There is only one copy
+	   for the entire DBConnection class, and we synchronize
+	   the accesses to it.
+	*/
+	static class SyncCounter
+	{
+		public SyncCounter (int i)
+		{
+			counter = i;
+		}
+				
+		public synchronized int next ()
+		{
+			return counter ++;
+		}
+		
+		private int counter = 0;
+	};
+
     protected Socket client;
     protected DataInputStream in;
     protected PrintStream out;
 	protected Object semaphore;
-	protected static Integer nextConnectNum = new Integer (1);
+	protected static SyncCounter nextConnectNum = new SyncCounter (1);
 	protected int connectNum;
 	protected Server server;
 
@@ -121,16 +141,12 @@ class DBConnection extends Thread
     public DBConnection (Server serv, Socket client_socket, Object sem)
 	{
 		server = serv;
-		synchronized (nextConnectNum)
-		{
-			connectNum = nextConnectNum.intValue ();
-			if (server.outputLevel >= Server.CONNECTION_OUTPUT)
-				System.out.println ("\nDBConnection " + connectNum + " for host " +
-								client_socket.getInetAddress ().getHostName () +
-								" created at " + new Date ());
-			nextConnectNum = new Integer (nextConnectNum.intValue () + 1);
-		}
-		
+		connectNum = nextConnectNum.next ();
+		if (server.outputLevel >= Server.CONNECTION_OUTPUT)
+			System.out.println ("\nDBConnection " + connectNum + " for host " +
+							client_socket.getInetAddress ().getHostName () +
+							" created at " + new Date ());
+
 		semaphore = sem;
 		client = client_socket;
 		try
