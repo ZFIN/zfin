@@ -171,7 +171,7 @@ function call_reset() {
     <!-- first look for match in fish_search locus or
       -- for fish aliases in data_alias -->
     <?MIVAR NAME=$constraint COND="$(XST,$fname)">
-      $constraint ((lower(a.name) like '%$fname%') or exists (select 'x' from data_alias where (a.fish_id = dalias_data_zdb_id) and (lower(dalias_alias) like '%$fname%')))
+      $constraint ((lower(a.name) like '%$fname%') or exists (select 'x' from data_alias where (a.fish_id = dalias_data_zdb_id or a.locus = dalias_data_zdb_id) and (lower(dalias_alias) like '%$fname%')))
     <?/MIVAR>
 
     <?MIVAR NAME=$previous COND="$(XST,$fname)"> and<?/MIVAR>
