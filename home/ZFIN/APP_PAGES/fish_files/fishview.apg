@@ -390,7 +390,7 @@ $(IF,$(>,$MI_CURRENTROW,1),</TD></TR></TABLE><hr width=80%>)
 <TD bgcolor="#f8fabb" valign=middle align=center width=10%><font color="#ff0000"><b>$1</b></font></TD>
 
 <TD><font size=-1>
-<b>Mutagenizing Protocol: </b> 
+<b>Mutagenesis Protocol: </b> 
 $(IF,$(EC,$7,spontaneous),"None -- Spontaneous Mutation")
 $(IF,$(AND,$(NC,$7,spontaneous),$(OR,$(NXST,$UPDATE),$(NC,$10,original))),$8" treated with "$7)
 
