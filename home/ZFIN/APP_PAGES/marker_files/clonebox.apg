@@ -53,7 +53,7 @@ Requires:  $CLONE_MARKER_ID, $highlight
 	<?MIVAR COND="$(NC,$2,)">$(VECAPPEND,$fields,<b>Library:</b> $2)<?/MIVAR>
 	<?MIVAR COND="$(NC,$3,)">$(VECAPPEND,$fields,<b>Strain:</b> $3)<?/MIVAR>
 	<?MIVAR COND="$(NC,$4,)">$(VECAPPEND,$fields,<b>Strain:</b>
-		<A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?&MIval=aa-fishview.apg&OID=$4'>$5</A>)<?/MIVAR>
+		<A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?&MIval=aa-fishview.apg&OID=$4'>$6</A>)<?/MIVAR>
 	<?MIVAR COND="$(NC,$6,)">$(VECAPPEND,$fields,<b>Stage:</b> $6)<?/MIVAR>
 	<?MIVAR COND="$(NC,$7,)">$(VECAPPEND,$fields,<b>Stage:</b> $7)<?/MIVAR>
 	<?MIVAR COND="$(NC,$8,)">$(VECAPPEND,$fields,<b>Sex:</b> $8)<?/MIVAR>
