@@ -148,7 +148,7 @@ ERROR -- something bad happened -- no OID passed in!
      GET EACH MARKER'S NAME THAT MAPS TO THIS EXPRESSION PATTERN
 <?/MIVAR> 
 
-
+<?MIVAR NAME=$title>Expression of<?/MIVAR> 
 
 <!-------------- Name Title ----------------------------------->
 <!---------- Xpat Header Table ---------->
@@ -182,7 +182,7 @@ ERROR -- something bad happened -- no OID passed in!
        $(SETVAR,gene_name,$3)
        $(SETVAR,gene_abbrev,$1)
        $(SETVAR,gene_id,$2)
-       <?MIVAR NAME=fullname>$gene_name($gene_abbrev)<?/MIVAR>
+       <?MIVAR NAME=name>$gene_name($gene_abbrev)<?/MIVAR>
        <?/MIVAR> 
      <?/MIBLOCK>
 
@@ -192,7 +192,7 @@ ERROR -- something bad happened -- no OID passed in!
        $(SETVAR,gene_name,$3)
        $(SETVAR,gene_abbrev,$1)
        $(SETVAR,gene_id,$2)
-       <?MIVAR NAME=fullname>$gene_name<?/MIVAR>
+       <?MIVAR NAME=name>$gene_name<?/MIVAR>
        <?/MIVAR> 
      <?/MIBLOCK>
 
@@ -202,7 +202,7 @@ ERROR -- something bad happened -- no OID passed in!
        $(SETVAR,gene_name,$3)
        $(SETVAR,gene_abbrev,$1)
        $(SETVAR,gene_id,$2)
-       <?MIVAR NAME=fullname>$fullname, $gene_name($gene_abbrev)<?/MIVAR>
+       <?MIVAR NAME=name>$name, $gene_name($gene_abbrev)<?/MIVAR>
        <?/MIVAR> 
      <?/MIBLOCK>
 
@@ -212,7 +212,7 @@ ERROR -- something bad happened -- no OID passed in!
        $(SETVAR,gene_name,$3)
        $(SETVAR,gene_abbrev,$1)
        $(SETVAR,gene_id,$2)
-       <?MIVAR NAME=fullname>$fullname, $gene_name<?/MIVAR>
+       <?MIVAR NAME=name>$name, $gene_name<?/MIVAR>
        <?/MIVAR> 
      <?/MIBLOCK>
 
@@ -227,6 +227,8 @@ ERROR -- something bad happened -- no OID passed in!
 
        </b></font>
      </td>
+
+<?MIVAR NAME=$abbrev><?/MIVAR>
 
 <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
     
@@ -250,7 +252,7 @@ ERROR -- something bad happened -- no OID passed in!
          <form method=post 
                  action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
                  target=comments>
-           <input type=hidden name=subject value="$fullname">
+           <input type=hidden name=subject value="$name">
            <input type=hidden name=marker_id value="$gene_id">
            <input type=hidden name=MIval value="aa-your_input_welcome.apg">
            <input type=hidden name=page_id value="$OID">
@@ -826,18 +828,23 @@ ERROR -- something bad happened -- no OID passed in!
 
 <!-- Throw up the publication info, using the standard display format -->
 
-<?MIVAR>
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=gene"><b>PUBLICATIONS</b></A>
+
 <?MISQL SQL="
   select count(*) 
   from record_attribution
   where recattrib_data_zdb_id = '$OID'
     and get_obj_type(recattrib_source_zdb_id) = 'PUB';
   ">
-&nbsp; ($(FIX,$1)) 
-<?/MISQL>  	
-<?/MIVAR>
+<?/MISQL>
 
+<?MIBLOCK COND="$(>,$1,0)"> 
+ <?MIVAR>
+ <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=gene&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)"><b>PUBLICATIONS</b></A> 	
+ <?/MIVAR>
+<?MIELSE>
+ <b>PUBLICATIONS</b>
+<?/MIBLOCK>
+<?MIVAR>&nbsp; ($(FIX,$1))<?/MIVAR> 
 
 <?/MIBLOCK> <!-- mielse of zdb_history -->
 <?/MIBLOCK> <!-- ends cond oid exists -->
