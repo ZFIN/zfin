@@ -99,11 +99,15 @@ sub do_directory {
 
 #    print "$indent SEARCHING $directory\n";
 
-    chdir($directory)|| print "Chdir failed!";  # Get there first!
-    $wd=`pwd`;
-    chop($wd);
+    # This used to print an error if the chdir failed.
+    # Changed it to just ignore directories it can't cd into on the
+    # theory that if we make a directory inaccessible, then we don't
+    # want it searched.
+    if (chdir($directory)) {  # Get there first!
+      $wd=`pwd`;
+      chop($wd);
 
-    foreach $myfile (<*>) {
+      foreach $myfile (<*>) {
 	$full_pathname="$wd/$myfile";
 	if (($myfile =~ /.*\.html$/) && ($myfile=~/^[A-Za-z0-9]/)) {
 	    open(INFILE,"$myfile") || die "Can't open $myfile!\n";
@@ -129,6 +133,7 @@ sub do_directory {
 	    &do_directory($search_string_lc,$full_pathname,$indent);
 	    chdir($directory) || print "Return chdir to $directory failed!\n";  # restore current dir!
 	}
+      }
     }
 #    print "$indent DONE, returning to parent dir\n";    
 }
