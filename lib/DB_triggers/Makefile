@@ -10,7 +10,7 @@
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
 # Every trigger that is defined on ZFIN tables is defined in its own 
-# file in this directory.  
+# file in this directory, or its subdirectories.
 # Each file creates the trigger.  
 # Files *must* have the same name as the trigger they define.
 # ---------------  Variable Definitions  --------------------------------
@@ -20,75 +20,40 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/lib/DB_triggers
 
-DBLINK_TRIGGERS = dblink_insert_trigger.sql \
-		  dblink_acc_num_update_trigger.sql
+TRIGGERS = \
+	alteration_insert_trigger.sql \
+	alteration_allele_update_trigger.sql \
+	db_link_insert_trigger.sql \
+	dblink_acc_num_update_trigger.sql \
+	fish_insert_trigger.sql \
+	fish_allele_update_trigger.sql \
+	fish_name_update_trigger.sql \
+	locus_insert_trigger.sql \
+	locus_abbrev_update_trigger.sql \
+	marker_insert_trigger.sql \
+	mrkr_abbrev_update_trigger.sql \
+	mrkr_name_update_trigger.sql \
+	publication_insert_trigger.sql \
+	publication_update_trigger.sql \
+	stage_insert_trigger.sql \
+	stage_update_trigger.sql 
 
-PUB_TRIGGERS = publication_insert_trigger.sql \
-	       publication_update_trigger.sql
-
-STAGE_TRIGGERS = stage_insert_trigger.sql \
-		 stage_update_trigger.sql 
-
-ZERO_PAD_TRIGGERS = alteration_insert_trigger.sql \
-		    alteration_allele_update_trigger.sql \
-		    locus_insert_trigger.sql \
-		    locus_abbrev_update_trigger.sql \
-		    marker_insert_trigger.sql \
-		    mrkr_abbrev_update_trigger.sql \
-		    mrkr_name_update_trigger.sql \
-		    fish_insert_trigger.sql \
-		    fish_allele_update_trigger.sql \
-		    fish_name_update_trigger.sql
-
-STATICS = $(DBLINK_TRIGGERS) $(PUB_TRIGGERS) \
-          $(STAGE_TRIGGERS) $(ZERO_PAD_TRIGGERS)
-STATICTARGETS = $(foreach STAT, $(STATICS), $(TARGETDIR)/$(STAT))
+ENDEMICTARGETS_POSTTARGETDIR = $(foreach TRIG, $(TRIGGERS), $(TARGETDIR)/$(TRIG))
 
 SUBDIRS = ValidateTriggers
-
-TARGETS =  $(STATICTARGETS)
 
 
 # ---------------  Production Rules  ------------------------------------
 
-.PHONY : all sanitycheck clean clobber onetimeonly $(SUBDIRS)
+include ../../make.default.rules
 
-all : $(TARGETDIR) $(TARGETS) $(SUBDIRS)
-
-$(TARGETDIR) :
-	$(TARGET_MKDIR) $(TARGETDIR);
-
-$(STATICTARGETS) : $(TARGETDIR)/% : %
+$(ENDEMICTARGETS_POSTTARGETDIR) : $(TARGETDIR)/% : %
+	-echo "drop trigger $(patsubst %.sql,%,$^)" | $(DBACCESS) $(DBNAME) #drop trigger
 	$(TARGET_CP) $^ $@
 	$(TOUCH) $@
-	-$(DBACCESS) $(DBNAME) $@
-
-$(SUBDIRS) :
-	$(MAKE) -C $@
-
-# ---------------  Maintenance Rules  -----------------------------------
-
-clean :				# No local intermediate files
-	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
-
-clobber :			# Remove targets, but not target dir.
-	rm -f $(TARGETS)
-	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
-
-
-sanitycheck :
-	$(SPECIFICCHECK) $(TARGETS)
-	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
-
-# define one time only target
-
-onetimeonly :
-	$(ONETIMEONLY)
-	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
+	$(DBACCESS) $(DBNAME) $@
 
 
 # ---------------  Special Rules  ---------------------------------------
 
 postloaddb : clobber all
-
-
