@@ -82,8 +82,6 @@ begin work;
 		) ;
 
 	update pre_db_link set dblink_zdb_id = get_id("DBLINK"); 
-select * from pre_db_link
-	where linked_recid not in (select mrkr_zdb_id from marker);
 
 --!echo 'Insert into zdb_active_data'
 	insert into zdb_active_data 
