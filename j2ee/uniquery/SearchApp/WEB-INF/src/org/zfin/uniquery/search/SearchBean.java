@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Collections;
 import java.io.StringReader;
 import java.io.IOException;
-
+import java.util.regex.Pattern;
 
 
 public class SearchBean
@@ -79,7 +79,9 @@ public class SearchBean
             if (text != null)
                 {
                 TokenStream tokenStream = analyzer.tokenStream(BODY, new StringReader(text));
-                highlightedText = highlighter.getBestFragments(tokenStream, text, 3, "...");
+                highlightedText = highlighter.getBestFragments(tokenStream, text, 3, "<b> ... </b>");
+				highlightedText = highlightedText.replaceFirst("^[\\W]*","<b>... </b>");
+				highlightedText = highlightedText.concat("<b> ...</b>");
                 }
             resultsList.add(new Hit(hits.doc(i), hits.score(i), highlightedText));
             }
