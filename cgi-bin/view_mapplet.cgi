@@ -114,7 +114,7 @@
   #if( defined $Q->param("port") ) {$jport= $Q->param("port");}
   
   ### incase we want the mapplet to open somewhere particular some day
-  my $frame = 'content';
+  my $frame = '_top';
   #if( defined $Q->param("frame") ){$frame= $Q->param("frame");}
   
   ### holds the maximum number of markers that contain the given name on any panel.
@@ -876,7 +876,7 @@
       
       "<param name = \"panel_url\"\t value = \"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=\">\n".
 	
-
+        "<param name = \"target_frame\"\t value = \"$frame\">\n".
 	  "<param name = \"host\"\t\t value = \"<!--|DOMAIN_NAME|-->\">\n".
 	    "<param name = \"port\"\t\t value = \"$jport\">\n".
 	      "<param name = \"selected_marker\"\t value = \"". $Q->param('OID')."\">\n". 
