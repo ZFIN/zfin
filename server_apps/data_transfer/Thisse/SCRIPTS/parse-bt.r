@@ -173,6 +173,7 @@ create temp table probes_tmp (
 		"| "   "|" 
 		" |"   "|" 
 		"Fuerthauer"		"Fürthauer"
+		"Furthauer"		"Fürthauer"
 	]
 
 	foreach [cut paste] changes [replace/all buffer cut paste]
