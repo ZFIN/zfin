@@ -196,6 +196,7 @@ Datablade documentation.
 	   and mrel_type = 'clone contains gene'
 	into temp bigselect_acc_match; ">
       <?/MISQL>
+
       <?MIVAR>
         $(SETVAR,$opt_tables,",bigselect_acc_match")
 	$(SETVAR,$opt_constraint, " mrkr_zdb_id = allmapnm_zdb_id ")
@@ -325,7 +326,7 @@ Datablade documentation.
 	<?/MIVAR>
 
      <?MISQL SQL="
-  	select mrkr_type, count(mrkr_zdb_id)::integer
+  	select mrkr_type, count(distinct mrkr_zdb_id)::integer
     	 from bigselect_temp_markers
 	 group by mrkr_type;">
      <?/MISQL>
@@ -361,7 +362,7 @@ Datablade documentation.
         <table align=center>
         <ul>
         <?MISQL SQL="
-	  select marker_type, count(mrkr_zdb_id)::integer, mrkrtype_type_display, mrkrtype_significance
+	  select marker_type, count(distinct mrkr_zdb_id)::integer, mrkrtype_type_display, mrkrtype_significance
     	    from bigselect_temp_markers, marker_types
 	   where mrkr_type = marker_type
 	   group by marker_type, mrkrtype_significance, mrkrtype_type_display
@@ -393,7 +394,7 @@ Datablade documentation.
 	   <?/MIVAR>
 
 	   <?MISQL COND="$(>,$(POSITION,$mtype_in_db,GENE),0)" SQL="
-		select count(mrkr_zdb_id)::integer
+		select count(distinct mrkr_zdb_id)::integer
 		  from bigselect_temp_markers
 		 where mrkr_type = '$mtype_in_db'
  		   and mrkr_zdb_id in (select cloned_gene from locus) ;">
