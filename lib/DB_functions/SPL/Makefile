@@ -9,9 +9,9 @@
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
 # The routines defined in this directory are written in SPL, the Informix
-# Stored Procedure language.  Each file first deletes the routine, and
-# then defines it.  Files have the same name as the routine they define.
-# Each file defines only one routine.
+# Stored Procedure language.  Files must have the same name as the routine 
+# they define.  Each file defines only one routine (except for a few cases,
+# see below).
 #
 # See the routines themselves for comments on their parameters and what 
 # they do.
@@ -23,87 +23,68 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/lib/DB_functions/SPL
 
-DATADICT_FUNCS = table_exists.sql
-DBLINK_FUNCS = get_dblink_acc_num_display.sql p_dblink_has_parent.sql \
-		p_check_caps_acc_num.sql p_one_ortho_per_db.sql \
-		get_genbank_dblink_length_type.sql
-FISH_FUNCS  = get_fish_full_name.sql p_locus_name_abbrev_equal.sql
-IMAGE_FUNCS = get_image_stats.sql
-MRKR_FUNCS  = mhist_event.sql p_mrel_grpmem_correct.sql \
-		p_two_linkage_pairs.sql p_check_zdb_id_in_genedom.sql \
-		p_goterm_not_obsolete.sql p_marker_has_goterm.sql
-PUB_FUNCS   = get_pub_mini_ref.sql
-REGEN_FUNCS = regen_anatomy.sql regen_fishsearch.sql regen_genomics.sql \
-		regen_oevdisp.sql get_date_from_id.sql regen_panelcount.sql \
-		regen_maps.sql
-ZDB_FUNCS   = get_obj_name.sql zdb_date.sql p_check_zdb_object_table.sql
+# Group the SPLs according to these characteristcs
+# 1. General area the SPL is for.  This is basically a comment.
+# 2. Generic or static.  The makefile needs to know this.
 
+DBLINK_STATS = get_dblink_acc_num_display.sql p_dblink_has_parent.sql \
+	       p_check_caps_acc_num.sql p_one_ortho_per_db.sql \
+	       get_genbank_dblink_length_type.sql
+FISH_STATS   = get_fish_full_name.sql get_image_stats.sql \
+	       p_locus_name_abbrev_equal.sql
+MRKR_STATS   = gene_contains_seg.sql mhist_event.sql p_mrel_grpmem_correct.sql \
+	       p_2_linkage_pairs.sql p_check_zdb_id_in_genedom.sql \
+	       p_goterm_not_obsolete.sql p_marker_has_goterm.sql
+PUB_STATS    = get_pub_mini_ref.sql
+REGEN_GNRCS  = regen_fishsearch.sql regen_genomics.sql regen_oevdisp.sql \
+	       regen_panelcount.sql regen_maps.sql
+ZDB_GNRCS    = table_exists.sql
+ZDB_STATS    = get_obj_name.sql zdb_date.sql get_date_from_id.sql \
+	       p_check_zdb_object_table.sql syscall.sql
 
 # Some of the stage functions call other stage functions.  Therefore
 # the order they are listed matters.
+STAGE_STATS  = create_stg_name_ext.sql create_stg_name_long.sql \
+	       get_stg_name_html.sql get_stg_name_long_html.sql \
+	       stg_window_consistent.sql fimg_overlaps_stg_window.sql \
+	       anatitem_overlaps_stg_window.sql stg_windows_overlap.sql \
+	       p_stg_hours_consistent.sql
 
-STAGE_FUNCS = \
-	create_stg_name_ext.sql \
-	create_stg_name_long.sql \
-	get_stg_name_html.sql \
-	get_stg_name_long_html.sql \
-	stg_window_consistent.sql \
-	fimg_overlaps_stg_window.sql \
-	anatitem_overlaps_stg_window.sql \
-	stg_windows_overlap.sql p_stg_hours_consistent.sql
+# insert_clone and regen_anatomy.sql are special cases.  They contain 
+# multiple procedures/functions in a single file.  We thought about splitting 
+# these into a single file per function, but the functions are tightly
+# coupled with the function the file is name after.  There was more to gain by
+# leaving them all in one file, then by splitting them up.
+MULTIPLE_PROCS = insert_clone.sql regen_anatomy.sql
 
-GENERICS = $(REGEN_FUNCS) $(DATADICT_FUNCS)
-STATICS  = $(DBLINK_FUNCS) $(FISH_FUNCS) $(IMAGE_FUNCS) $(MRKR_FUNCS) \
-	   $(PUB_FUNCS) $(STAGE_FUNCS) $(ZDB_FUNCS) \
-	gene_contains_seg.sql 	insert_clone.sql syscall.sql
+GENERIC_PROCS = $(ZDB_GNRCS) $(REGEN_GNRCS)
+STATIC_PROCS  = $(DBLINK_STATS) $(FISH_STATS) $(MRKR_STATS) $(PUB_STATS) \
+		$(ZDB_STATS) $(STAGE_STATS)
 
-SPECIFICTARGETS = $(foreach SPEC, $(GENERICS), $(TARGETDIR)/$(SPEC))
-STATICTARGETS = $(foreach STAT, $(STATICS), $(TARGETDIR)/$(STAT))
+SPECIFIC_PROC_TARGETS = $(foreach SPEC, $(GENERIC_PROCS), $(TARGETDIR)/$(SPEC))
+STATIC_PROC_TARGETS   = $(foreach STAT, $(STATIC_PROCS),  $(TARGETDIR)/$(STAT))
+MULTIPLE_PROC_TARGETS = $(foreach SPEC, $(MULTIPLE_PROCS), $(TARGETDIR)/$(SPEC))
 
-
-TARGETS =  $(SPECIFICTARGETS) $(STATICTARGETS) 
-
+ENDEMICTARGETS_POSTTARGETS = $(SPECIFIC_PROC_TARGETS) $(STATIC_PROC_TARGETS) \
+			     $(MULTIPLE_PROC_TARGETS)
 
 # ---------------  Production Rules  ------------------------------------
 
-.PHONY : all sanitycheck clean clobber onetimeonly
+include $(TOP)/make.default.rules
 
-
-all : $(TARGETDIR) $(TARGETS)
-
-$(TARGETDIR) :
-	$(TARGET_MKDIR) $(TARGETDIR);
-
-
-# SPL procedures need to be loaded into the DB.
-# This makefile assumes that code to delete the old version of the function
-# is in the file.
-
-$(SPECIFICTARGETS) : $(TARGETDIR)/% : %
+$(SPECIFIC_PROC_TARGETS) : $(TARGETDIR)/% : %
 	$(MAKESPECIFIC) $< $(TRANSLATETABLE) $@
-	-$(DBACCESS) $(DBNAME) $@
+	-echo 'drop procedure $(patsubst %.sql,%,$^)' | $(DBACCESS) $(DBNAME) > /dev/null 2>&1
+	$(DBACCESS) $(DBNAME) $@
+	echo 'update statistics for procedure $(patsubst %.sql,%,$^)' | $(DBACCESS) $(DBNAME)
 
-$(STATICTARGETS) : $(TARGETDIR)/% : %
+$(STATIC_PROC_TARGETS) : $(TARGETDIR)/% : %
 	$(TARGET_CP) $^ $@
 	$(TOUCH) $@
+	-echo 'drop procedure $(patsubst %.sql,%,$^)' | $(DBACCESS) $(DBNAME) > /dev/null 2>&1
+	$(DBACCESS) $(DBNAME) $@
+	echo 'update statistics for procedure $(patsubst %.sql,%,$^)' | $(DBACCESS) $(DBNAME)
+
+$(MULTIPLE_PROC_TARGETS) : $(TARGETDIR)/% : %
+	$(MAKESPECIFIC) $< $(TRANSLATETABLE) $@
 	-$(DBACCESS) $(DBNAME) $@
-
-
-# ---------------  Maintenance Rules  -----------------------------------
-
-clean :				# No local intermediate files
-
-
-clobber :			# Remove targets, but not target dir.
-	rm -f $(TARGETS)
-
-
-
-sanitycheck :
-	$(SPECIFICCHECK) $(TARGETS)
-
-
-# define one time only target
-
-onetimeonly :
-	$(ONETIMEONLY)
