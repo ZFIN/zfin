@@ -114,9 +114,9 @@ comments -- reasons for doing update
 	and recattrib_source_zdb_id = '$old_value';">
   <?/MISQL>
   <?MISQL COND="$(EC,$attr,source)" SQL="
-    delete from int_fish_source
-      where source_id = '$OID' 
-        and target_id='$old_value';">
+    delete from int_data_supplier
+      where idsup_data_zdb_id = '$OID' 
+        and idsup_supplier_zdb_id = '$old_value';">
   <?/MISQL>
 <?/MIBLOCK>  <!-- ends special listitem case -->
 

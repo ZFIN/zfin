@@ -161,7 +161,7 @@ print_name -- The human-understandable name (vs. the database column name) of
       <?MIVAR NAME=$select_from>$(UPPER,$source_type)<?/MIVAR>
       <?MIVAR NAME=$action>intersect<?/MIVAR>
       <?MIVAR NAME=$fill_field>NULL<?/MIVAR>
-      <?MIVAR NAME=$fill_table>int_fish_source<?/MIVAR>
+      <?MIVAR NAME=$fill_table>int_data_supplier<?/MIVAR>
       <?MIVAR NAME=$jump_to>origins-info<?/MIVAR>
       <?MIVAR NAME=$info>NULL<?/MIVAR>
       <?MIVAR NAME=$selector COND="$(EC,$source_type,lab)">aa-labselect.apg<?/MIVAR>
