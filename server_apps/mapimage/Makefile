@@ -3,9 +3,6 @@
 # Makefile for ZFIN_WWW CVS Project, Genomic Map Viewer
 # Applet.
 #
-# $Source$
-
-#
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
 # !! of the makefile hierarchy this makefile is a part of, and of the  !!
@@ -34,6 +31,9 @@ IMAGES = mapkey.gif
 IMPORTPATH = $(TARGETROOT)/lib/Java
 IMPORTDIR = netscape
 
+SYMLINK = $(TOP)/client_apps/Map/zmapper
+SYMLINKTARGET = zmapper
+
 # ---- Java source variables
 
 GENERICS = zmapper/SQLQuery.java
@@ -46,7 +46,7 @@ SPECIFICS = $(foreach GNRC, $(GENERICS), $(STAGINGDIR)/$(GNRC))
 STATICSTAGINGS = $(foreach STAT, $(STATICS), $(STAGINGDIR)/$(STAT))
 
 JAVAS   = $(GENERICS) $(STATICS)
-TARGETS = $(SPECIFICS) $(STATICSTAGINGS)
+TARGETS = $(SYMLINKTARGET) $(SPECIFICS) $(STATICSTAGINGS)
 
 # ---- Java destination variables
 
@@ -71,6 +71,9 @@ $(STAGINGZMAPPER) :
 $(STAGINGDIR) :
 	(cd $(STAGINGDIR); $(MAKE))
 
+$(SYMLINKTARGET) :
+	rm -f $(SYMLINKTARGET)
+	ln -s $(SYMLINK) $(SYMLINKTARGET)
 
 # ----  Rules for moving Java sources to staging directory.
 
