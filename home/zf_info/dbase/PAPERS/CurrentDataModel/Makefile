@@ -28,7 +28,7 @@ DOCDIR = /research/zfin/central/Commons/doc
 # All of the local files are sym links that point at internal.html.
 
 INTERNALFILE = internal.html
-MISSINGLINKS = admin.html curation.html impl.html index.html
+MISSINGLINKS = admin.html curation.html impl.html index.html intro.html
 
 INTERNALFILETARGET = $(TARGETDIR)/$(INTERNALFILE)
 MISSINGLINKTARGETS = $(foreach LINK, $(MISSINGLINKS), $(TARGETDIR)/$(LINK))
