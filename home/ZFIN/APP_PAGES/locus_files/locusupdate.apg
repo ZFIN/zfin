@@ -35,8 +35,21 @@ print_name -- The human-understandable name (vs. the database column name) of
 
 
 <HTML>
+<HEAD>
 <?MIVAR>
 <TITLE>ZFIN Updating $print_name</TITLE>
+
+<SCRIPT>
+
+    function cancel_form () {
+      document.updater.MIval.value = 'aa-locusview.apg';
+      document.updater.UPDATE = '1';
+      document.updater.submit();
+    }
+
+</SCRIPT>
+</HEAD>
+
 
 <center><font size=6>Update <u>$print_name</u> for $update_target</font></center>
 <?/MIVAR>
@@ -44,7 +57,7 @@ print_name -- The human-understandable name (vs. the database column name) of
 
 
 
-<FORM ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" METHOD=post ENCTYPE="multipart/form-data">
+<FORM NAME="updater" ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" METHOD=post ENCTYPE="multipart/form-data">
 
 <?MIVAR>
 <INPUT TYPE=hidden name=MIval Value=aa-do-locusupdate.apg>
@@ -52,6 +65,7 @@ print_name -- The human-understandable name (vs. the database column name) of
 <INPUT TYPE=hidden name=old_value Value="$current_value">
 <INPUT TYPE=hidden name=attr Value=$attr>
 <INPUT TYPE=hidden name=attr_type Value=$attr_type>
+<INPUT TYPE=hidden name=UPDATE Value=0>
 <?/MIVAR>
 
 <TABLE width=100%>
@@ -100,7 +114,8 @@ $(IF,$(NC,$current_value,NULL),VALUE='$current_value') SIZE=70>
 <TR align=center><TD>
 <INPUT TYPE=submit name=s_change value="SUBMIT this new value">
 </TD><TD>
-<INPUT TYPE=button name=veto value="CANCEL" onClick="window.history.go(-1)">
+<INPUT TYPE=button name=veto value="CANCEL" onClick="cancel_form();">
+<!-- window.history.go(-1) -->
 </TD></TR></TABLE>
 
 </FORM>
