@@ -52,11 +52,11 @@ sub gp2proteinReport()
     my $start = 1;
     while ($cur->fetch) {
 	if ($gene eq $mrkr_id) {
-	    print REPORT ";SPTR:$acc_num";
+	    print REPORT ";UniProt:$acc_num";
 	}
 	else {
 	    print REPORT "\n" if !$start;
-	    print REPORT "ZFIN:$mrkr_id\tSPTR:$acc_num";
+	    print REPORT "ZFIN:$mrkr_id\tUniProt:$acc_num";
 	    $gene=$mrkr_id;
 	}
 	$start = 0 if $start;
