@@ -59,7 +59,9 @@ public class SQLQuery
         Socket s = null;
 		StringTokenizer sTok; 
 
-	Vector result = new Vector ();
+		System.err.println(host + ", " + port);
+		
+		Vector result = new Vector ();
         try {
             // Create a socket to communicate to the specified host and port
             s = new Socket(host, port);
