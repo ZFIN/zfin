@@ -173,8 +173,7 @@ function call_reset() {
 <?MISQL SQL="
   select stg_zdb_id
     from stage
-    where stg_name <> 'Any stage'
-      and stg_hours_start = 
+    where stg_hours_start = 
 	  ( select min(stg_hours_start) 
 	      from stage )">
   <?MIVAR NAME=$xpatsel_minStage>$1<?/MIVAR>
@@ -182,8 +181,7 @@ function call_reset() {
 <?MISQL SQL="
   select stg_zdb_id
     from stage
-    where stg_name <> 'Any stage'
-      and stg_hours_start = 
+    where stg_hours_start = 
 	  ( select max(stg_hours_start) 
 	      from stage )">
   <?MIVAR NAME=$xpatsel_maxStage>$1<?/MIVAR>
