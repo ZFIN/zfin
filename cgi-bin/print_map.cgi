@@ -5,7 +5,7 @@ cd <!--|ROOT_PATH|-->/server_apps/mapimage/
 #unset DISPLAY
 DISPLAY=localhost:1.0
 export DISPLAY
-set QUERY_STRING = `echo $QUERY_STRING | tr '%0D' '%0A'`
+#set QUERY_STRING = `echo $QUERY_STRING | tr '%0D' '%0A'`
 /private/apps/java1.4/bin/java \
     -mx200m \
     -Dcgi.content_type=$CONTENT_TYPE \
