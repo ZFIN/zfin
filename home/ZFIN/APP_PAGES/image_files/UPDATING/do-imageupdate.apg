@@ -61,9 +61,9 @@ annotations -- huge string of urlencoded changed annotations for the image.
     <!-- Create a thumbnail for the new image -->
     <?MIVAR NAME=$mythumb>/tmp/$OID.gif<?/MIVAR>
     <?MISQL SQL="
-      execute function sysexec('make_thumbnail', '$new_value $mythumb');">
+      execute function syscall('make_thumbnail', '$new_value $mythumb');">
     <?/MISQL>
-    <?MIVAR NAME=$void>$1<?/MIVAR>
+    
 
     <!-- Get width and height of new image -->
     <?MISQL SQL="
@@ -81,7 +81,7 @@ annotations -- huge string of urlencoded changed annotations for the image.
     <?/MISQL>
 
     <?MISQL SQL="
-      execute function sysexec('rm', '$mythumb');">
+      execute function syscall('rm', '$mythumb');">
     <?/MISQL>
 
   <?/MIBLOCK> <!-- ends if its an image -->
