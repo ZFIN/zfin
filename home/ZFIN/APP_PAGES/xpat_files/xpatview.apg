@@ -1,6 +1,16 @@
 <?MICOMMENT>
 FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN records.
 <?/MICOMMENT>
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+
+<?/MIERROR>
 
 <HTML>
 <head>
@@ -166,23 +176,25 @@ FILE: XPATVIEW.HTML. This file implements a viewer for EXPRESSION PATTERN record
        <font size=+1><b> Probe: 
 
 <?MISQL SQL="
-     SELECT mrkr_name, mrkr_zdb_id, idsup_supplier_zdb_id
-     FROM marker, expression_pattern, outer(int_data_supplier)
+     SELECT mrkr_name, mrkr_zdb_id, idsup_supplier_zdb_id, srcurl_url, srcurl_display_text
+     FROM marker, expression_pattern, outer(int_data_supplier, source_url)
      WHERE xpat_zdb_id = '$OID'
        AND xpat_probe_zdb_id = mrkr_zdb_id
-       AND xpat_probe_zdb_id = idsup_data_zdb_id;
+       AND xpat_probe_zdb_id = idsup_data_zdb_id
+       AND idsup_supplier_zdb_id = srcurl_source_zdb_id
+       AND srcurl_purpose = 'order';
      ">
        <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$1</a>
        
      <?MIBLOCK COND="$(NC,$3,)">
        <font size=-1>
-          <?MIBLOCK COND="$(EC,$3,ZDB-LAB-991005-53)">
-            <A HREF="/zirc/home/guide.php">(Order This)</A>
-          <?MIELSE>
-            <?MIVAR>
-              <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$3">(Order This)</a>
-            <?/MIVAR>
-          <?/MIBLOCK>
+       <?MIBLOCK COND="$(NC,$4,)">
+          <?MIVAR><A HREF="$4">($5)</A><?/MIVAR>
+       <?MIELSE>
+          <?MIVAR>
+            <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$3">(Order This)</a>
+          <?/MIVAR>
+       <?/MIBLOCK>
        </font>
      <?/MIBLOCK>
      
