@@ -48,24 +48,25 @@ Variables Expected:
   		">
 	     
 	      <?MIBLOCK COND="$(>,$1,1)">
-	       <?MIVAR>	
-	       (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&orgOID=$OID&OID=$dataId&rtype=$rtype">$(FIX,$1)</A>)
-	       <?/MIVAR>	 
+	        <?MIVAR>	
+	        (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&orgOID=$OID&OID=$dataId&rtype=$rtype">$(FIX,$1)</A>)
+	        <?/MIVAR>
+ 	        <?MIVAR COND="$(XST,$UPDATE)">(For any reference update, click into pub list page.) <?/MIVAR>	 
 	      <?MIELSE COND="$(=,$1,1)" >
 	        <?MISQL SQL="
 	        	select p.zdb_id
 		          from record_attribution a, publication p
 		 	 where a.recattrib_data_zdb_id = '$dataId'
 		  	   and a.recattrib_source_zdb_id = p.zdb_id;" >
+			
+		  <?MIVAR COND="$(XST,$UPDATE)">  
 
-		 <?MIVAR COND="$(XST,$UPDATE)">  
-
-    		  <INPUT TYPE=button 
+    		    <INPUT TYPE=button 
       			value=DeleteRef 
       	        	onClick="Delete_attrib('$type','$dataId','$1','')">
- 		 <?/MIVAR>
-		 (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$1">1</A>)
-	       <?/MISQL>
+ 		  <?/MIVAR>
+		  (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$1">1</A>)
+                <?/MISQL>
 	      <?/MIBLOCK>		
        <?/MISQL>
 	
