@@ -13,6 +13,8 @@
 # then defines it.  Files have the same name as the routine they define.
 # Each file defines only one routine.
 #
+# See the routines themselves for comments on their parameters and what 
+# they do.
 
 # ---------------  Variable Definitions  --------------------------------
 
@@ -21,7 +23,25 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/lib/DB_functions/SPL
 
-STATICS  = regen_genomics.sql regen_fishsearch.sql
+FISH_FUNCS  = get_fish_full_name.sql
+IMAGE_FUNCS = get_image_stats.sql
+REGEN_FUNCS = regen_genomics.sql regen_fishsearch.sql
+
+# Some of the stage functions call other stage functions.  Therefore
+# the order they are listed matters.
+
+STAGE_FUNCS = \
+	create_stg_name_ext.sql \
+	create_stg_name_long.sql \
+	get_stg_name_html.sql \
+	get_stg_name_long_html.sql \
+	stg_window_consistent.sql \
+	fimg_overlaps_stg_window.sql \
+	anatitem_overlaps_stg_window.sql \
+	stg_windows_overlap.sql
+
+
+STATICS  = $(FISH_FUNCS) $(IMAGE_FUNCS) $(REGEN_FUNCS) $(STAGE_FUNCS)
 
 STATICTARGETS = $(foreach STAT, $(STATICS), $(TARGETDIR)/$(STAT))
 TARGETS =  $(STATICTARGETS) 
