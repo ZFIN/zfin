@@ -172,7 +172,7 @@ sub dblinksReport()
                              from db_link
                              where db_name = "RefSeq"
                                 or db_name = "LocusLink"
-                                or db_name = "UniGENE"
+                                or db_name = "UniGene"
                                 or db_name = "OMIM"
                              group by db_name;'
 			   );

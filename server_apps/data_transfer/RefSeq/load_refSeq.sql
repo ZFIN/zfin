@@ -481,7 +481,7 @@ delete from tmp_db_link;
 insert into tmp_db_link
   select
     llzdb_zdb_id,
-    'UniGENE',
+    'UniGene',
     uni_cluster_id,
     '',
     get_id('DBLINK')
@@ -491,12 +491,12 @@ insert into tmp_db_link
 ;
 
 --INSERT NEW DATA
-!echo 'remove UniGENE records'
-delete from db_link where db_name = 'UniGENE'
+!echo 'remove UniGene records'
+delete from db_link where db_name = 'UniGene'
   and acc_num in (
           select b.acc_num 
           from tmp_db_link b
-          where b.db_name = 'UniGENE'
+          where b.db_name = 'UniGene'
       )
   and dblink_zdb_id in (
           select recattrib_data_zdb_id 
@@ -511,10 +511,10 @@ delete from db_link where db_name = 'UniGENE'
             and a.recattrib_data_zdb_id = b.recattrib_data_zdb_id
       );
 
-!echo 'get all UniGENE db_links that remain'
+!echo 'get all UniGene db_links that remain'
   select * 
   from db_link 
-  where db_name = "UniGENE"
+  where db_name = "UniGene"
   into temp unigene_link
   with no log;
 
@@ -533,7 +533,7 @@ insert into db_link select * from tmp_db_link
 insert into record_attribution
     select a.dblink_zdb_id, 'ZDB-PUB-020723-3', 'primary'
     from db_link a
-    where a.db_name = "UniGENE"
+    where a.db_name = "UniGene"
       and a.acc_num not in (select acc_num from unigene_link)
 ;
 

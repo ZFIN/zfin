@@ -8,6 +8,7 @@ while ($line = <CUT>) {
   chop $line;
   ($ll_id,$ll_acc) = split ' ',$line,2;
   if ($ll_id =~ /[0-9]*/ ) {
+    while($ll_acc =~ /\./){chop $ll_acc;}
     print UNL "$ll_id|$ll_acc|\n";
   }
 }

@@ -6,6 +6,7 @@ open (UNL, ">ll_id.unl") or die "cannot open ll_id.unl";
 
 while ($line = <CUT>) {
   chop $line;
+
   ($ll_id,$zdb_id) = split ' ',$line,2;
   if ($zdb_id ne "") {
     print UNL "$ll_id|$zdb_id|\n";
