@@ -1220,8 +1220,9 @@ Length: <input type=text size=10 name=upd_seq_length>
 Accession: <input type=text size=15 name=attrib_seq_acc>
 Reference: <input type=text size=15 name=attrib_seq_pubid> 
 <input type=button value="Add it!" onClick=new_attrib_seq();>
+<?MICOMMENT>Added CDNA for this condition (FogBugz 410) <?/MICOMMENT>
 
-<?MIBLOCK COND="$(EQ,$marker_type,EST)">
+<?MIBLOCK COND="$(OR,$(EQ,$marker_type,EST),$(EQ,$marker_type,CDNA))">
 
   <?MISQL SQL="
     SELECT clone_is_chimeric
