@@ -65,7 +65,7 @@ top.name="ZFIN";
 
 <FRAMESET cols="90,*">
 
-<FRAME NAME="controls" scrolling=no SRC="/cgi-bin_B/webdriver?MIval=aa-navigator.html" MARGINWIDTH=1 MARGINHEIGHT=1>
+<FRAME NAME="controls" scrolling=no SRC="http://zfin.org/cgi-bin_B/webdriver?MIval=aa-navigator.html" MARGINWIDTH=1 MARGINHEIGHT=1>
 
 <?MIVAR NAME=$start_page>MIval=aa-ZDB_home.apg<?/MIVAR>
 
