@@ -28,7 +28,27 @@ get_obj_name(zdbId varchar(50))
     select mrkrgoev_zdb_id
       into objName
       from marker_go_term_evidence
-      where mrkrgoev_zdb_id = zdbId;	
+      where mrkrgoev_zdb_id = zdbId;
+  elif (objType = "ENV") then
+    select env_name 
+      into objName
+      from environment
+      where env_zdb_id = zdbId ;
+  elif (objType = "FIG") then
+    select fig_zdb_id 
+      into objName
+      from fx_figure
+      where fig_zdb_id = zdbId ;
+  elif (objType = "XPATRES") then
+    select xpatres_zdb_id 
+      into objName
+      from fx_expression_result
+      where xpatres_zdb_id = zdbId ;
+  elif (objType = "XPATINF") then
+    select xpatinf_zdb_id
+      into objName
+      from expression_pattern_infrastructure
+      where xpatinf_zdb_id = zdbId ;	
   elif (objType = "LOCUS") then
     select locus_name 
       into objName
