@@ -105,9 +105,10 @@
 <?/MIBLOCK> <!-- ends cond any constraints specified -->
 
 <?MIVAR NAME=$order_col COND="$(XST,$ismapped)">mapgene_abbrev_order as abbrev_order<?/MIVAR>
+<?MIVAR NAME=$group_col COND="$(XST,$ismapped)">mapgene_abbrev_order<?/MIVAR>
 <?MIVAR NAME=$order_col COND="$(NXST,$ismapped)">allgene_abbrev_order as abbrev_order<?/MIVAR>
-
-<?MIVAR NAME=$order_clause>order by $allmapnm_significance_colno 5<?/MIVAR>
+<?MIVAR NAME=$group_col COND="$(NXST,$ismapped)">allgene_abbrev_order<?/MIVAR>
+<?MIVAR NAME=$order_clause>order by $allmapnm_significance_colno abbrev_order<?/MIVAR>
 
 <?MIVAR NAME=$target_table COND="$(XST,$ismapped)">mapped_genes a <?/MIVAR>
 <?MIVAR NAME=$target_table COND="$(NXST,$ismapped)">all_genes a <?/MIVAR>
@@ -221,7 +222,7 @@
       select gene_name, zdb_id, abbrev $allmapnm_significance , $order_col
     	FROM $target_table $all_map_names
     	$constraint 
-	group by gene_name, zdb_id, abbrev, 5
+	group by gene_name, zdb_id, abbrev, $group_col
     	$order_clause;">
 
       <?MIVAR NAME=$gene_name>$1<?/MIVAR>
