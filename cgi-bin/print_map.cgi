@@ -6,7 +6,7 @@ cd <!--|ROOT_PATH|-->/home/client_apps/Map/
 DISPLAY=<!--|DOMAIN_NAME|-->:1.0
 export DISPLAY
 java \
-    -mx100m \
+    -mx200m \
     -Dcgi.content_type=$CONTENT_TYPE \
     -Dcgi.content_length=$CONTENT_LENGTH \
     -Dcgi.request_method=$REQUEST_METHOD \
