@@ -1,4 +1,3 @@
-
 <!-- FILE: FISHVIEW.HTML. This file implements a viewer for FISH records. The goal is to display all of the information associated with, not only the FISH record, but also all mutant alleles (ie. CHROMOSOME and ALTERATION recs) associated with the FISH.
 
 Variables Expected: 
@@ -124,7 +123,7 @@ Variables Expected:
     <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
       <?MIVAR NAME=$cloned_gene>NULL<?/MIVAR>
       <?MISQL SQL="
-	select name, a.abbrev, upper(line_type), mother, father, 
+	select name, a.abbrev, initcap(line_type), mother, father, 
 	       discoverer, lab, HTML_breaks(phenotype), segregation, 
 	       orig_crossnum, HTML_breaks(a.comments), fish_extinct, a.owner, 
 	       pheno_keywords, allele, locus, b.abbrev, b.cloned_gene 
@@ -167,22 +166,23 @@ Variables Expected:
 
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
-   <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
+  <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 
 
-      <?MIBLOCK COND="$(EC,$name,$MI_NOVALUE)">
+    <?MIBLOCK COND="$(EC,$name,$MI_NOVALUE)">
 
-        <!-- look to see if replaced zdb_id -->
+       <!-- look to see if replaced zdb_id -->
 
-        <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-zdb_history.apg';">$1<?/MISQL>
+       <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-zdb_history.apg';">$1<?/MISQL>
     
         <?MIBLOCK COND="$(NXST,$new_oid)">
           <form><center><font size=+2>
 	  <b>Requested ID not found in ZFIN.</b>
-          </form>
+          </font></center>	
+	  </form>
         <?/MIBLOCK>
         
-      <?MIELSE>
+    <?MIELSE>
 
 	<!-- If viewing, THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
 	<?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=fish') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
@@ -191,42 +191,100 @@ Variables Expected:
 
 	<!-- OKAY, NOW  THROW UP THE  FISH INFO -->
 
-<?MIVAR COND="$(XST,$UPDATE)">
-	<form NAME=updater method=post action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi"  >
-  	  <center><font size=+2 color="#00ff00"><input type=button 
-	  value=" DONE UPDATING. Back to Viewing! " onClick="window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$OID')"> </font></center>
+      <!--------- BACK button ------------------>
+	<?MIVAR COND="$(XST,$UPDATE)">
+	<form>
+  	  <center><font size=+2> <!-- color="#00ff00" -->
+	  <input type=button 
+	  value=" DONE UPDATING. Back to Viewing! " onClick="window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$OID')"> 
+          </font></center>
 	<?/MIVAR>
+      <!---------------------------------------->
 
-        <TABLE width=100%>
-          <tr>
-            <td width=15%>
-              &nbsp;
-            </td>
-            <td width=70% align=center>
-	<?MIVAR>
-	  <B> <FONT SIZE=+2>$line_type:  
-	<?/MIVAR>
+      <!----------- Input welcome button --------->		
+       <?MIBLOCK COND="$(NXST,$UPDATE)">
+         <?MIVAR>
+	  <table width = 15% align=right><tr>	
+           <form method=post 
+                 action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
+                 target=comments>
+           <input type=hidden name=subject value="$name">
+           <input type=hidden name=marker_id value="$OID">
+           <input type=hidden name=MIval value="aa-your_input_welcome.apg">
+           <input type=hidden name=page_id value="$OID">
+          <td>
+           <input type=submit value="Your Input Welcome">
+          </td>
+           </form></tr></table>
+         <?/MIVAR>
+       <?/MIBLOCK>
+     <!---------------------------------------->
 
+     <!--------------- Name Title & Abbrev  ---------------->	
+	
 	<?MIVAR COND="$(XST,$UPDATE)">
 	  <br><INPUT TYPE=button value=Update onClick="doit('name','text','Name')">
 	<?/MIVAR> 
-	<i>
+	<?MIVAR>
+	  <B> <FONT SIZE=+1>$line_type: &nbsp;</FONT> </b>
+	<?/MIVAR>
+
+	<i><font size = +1>
 	<?MIBLOCK COND="$(EC,$line_type,mutant)">
-	  <?MIVAR> 
-	    <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$locus"> $name </A>
+	  <?MIVAR>
+	   <b> <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$locus"> $name </A></b>
 	  <?/MIVAR>
 	<?MIELSE>
 	  <?MIVAR> $name <?/MIVAR>
 	<?/MIBLOCK>
-	</i>
+	</font></i>
+	<br>
 	<?MIVAR COND="$(XST,$UPDATE)">
 	  <br><INPUT TYPE=button 
 		     value=Update 
 		     onClick="doit('abbrev','text','Abbreviation')">
 	<?/MIVAR> 
 	<?MIVAR> 
-	  <i>($abbrev)</i></FONT></b>
+	  <b><font size= +1>Abbreviation: &nbsp; <i>$abbrev</i></font></b>
 	<?/MIVAR>
+
+	<br>
+	<?MIBLOCK COND="$(OR,$(EC,$AUTHORIZED,root),$(EC,$AUTHORIZED,fishauth))">
+	  <?MIVAR COND="$(XST,$UPDATE)">
+	    <INPUT TYPE=button value=Update onClick="doit('owner','selection','Owner')">
+	  <?/MIVAR> 
+	  <?MISQL SQL="select full_name from person where zdb_id='$owner';"><font color="#ff0000">(Record Owner is $1)</font><?/MISQL>
+	  <br>
+	 
+	<?/MIBLOCK> <!-- if root -->
+      <!---------------- ends Name Title and Abbrevataion ----------->
+
+
+      <!------------------- Previous Name ------------------->
+
+	      <?MIVAR COND="$(XST,$UPDATE)">
+		<INPUT TYPE=button 
+		       value=Add 
+		       onClick="doit('dalias_alias','text','Alias')">
+	      <?/MIVAR> 
+	      <b>Previous names: </b>
+	      <?MISQL SQL="
+		select dalias_alias 
+		  from data_alias 
+		  where dalias_data_zdb_id = '$OID';">
+		<?MIVAR NAME=$alias>$1<?/MIVAR>
+		<?MIVAR COND="$(XST,$alias)" NAME=$alias DELIMIT=" " REPLACE="+">$alias<?/MIVAR>
+		<?MIVAR COND="$(XST,$UPDATE)">
+		  <br> 
+		  <INPUT TYPE=button 
+			 value=Delete 
+			 onClick="Delete_listitem_alias('dalias_alias','$alias','$OID','$ALTOID')">
+		<?/MIVAR>
+		$(IF,$(AND,$(NXST,$UPDATE),$(>,$MI_CURRENTROW,1)),;) <i>$1</i>
+	      <?/MISQL>
+	 
+	<!-------------- ends Previous Name -------------------->
+
 
         <!--  need to get cloned gene name for use with mapping data and for gene correspondence -->
         <?MIBLOCK COND="$(NC,$cloned_gene,NULL)">
@@ -235,48 +293,37 @@ Variables Expected:
               <?MIVAR NAME=$gene_abbrev>$2<?/MIVAR>
         <?/MIBLOCK>
 
-	<br>
-	<?MIBLOCK COND="$(OR,$(EC,$AUTHORIZED,root),$(EC,$AUTHORIZED,fishauth))">
-	  <?MIVAR COND="$(XST,$UPDATE)">
-	    <INPUT TYPE=button value=Update onClick="doit('owner','selection','Owner')">
-	  <?/MIVAR> 
-	  <?MISQL SQL="select full_name from person where zdb_id='$owner';"><font color="#ff0000">(Record Owner is $1)<?/MISQL>
-	  <br>
-	  </font>
-	<?/MIBLOCK> <!-- if root -->
-	  <?MIVAR COND="$(XST,$UPDATE)">
-	    <INPUT TYPE=button value=Update onClick="doit('pheno_keywords','textarea','Phenotype_Keywords')">
-	  <?/MIVAR> 
-	  <?MIVAR>
-            (Keywords: $(IF,$(NC,$pheno_keywords,NULL),$pheno_keywords) )
-	  <?/MIVAR>
-          </td>
-       <?MIBLOCK COND="$(NXST,$UPDATE)">
-         <?MIVAR>
-           <form method=post 
-                 action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
-                 target=comments>
-           <input type=hidden name=subject value="$name">
-           <input type=hidden name=marker_id value="$OID">
-           <input type=hidden name=MIval value="aa-your_input_welcome.apg">
-           <input type=hidden name=page_id value="$OID">
-         <td width=15% align=center>
-           <input type=submit value="Your Input Welcome">
-         </td>
-           </form>
-         <?/MIVAR>
-       <?MIELSE>
-         <td width=15%>&nbsp;</td>
-       <?/MIBLOCK>
+ 
+	<!------------------- Affected Gene ---------------------->
+	    <p>
+	    <B>Affected Gene: &nbsp;</B> 
+	    <?MIBLOCK COND="$(EC,$cloned_gene,NULL)">
+               Not yet established.
+            <?MIELSE>
+	      <?MIVAR>
+		<TABLE width=100% cellpadding=5 border=0 bgcolor="$highlight" cols=2 rows=1>
+		  <TR><TD>
+		  <font color="red"><B>Cloned Gene:</b>  </font>
+		  The gene <b><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$cloned_gene"><i>$gene_name ($gene_abbrev)</i></A></b>  
+		    has been shown to correspond to the <b><i>$name</b></i> locus. 
+		    Please consult the gene record for further mapping information.
+		   </TD>
+		   </TR>
+		 </TABLE>
+	       <?/MIVAR>
+             <?/MIBLOCK>
+	<!---------------- ends Affected Gene ---------------------->
 
-        </tr>
-      </table>
-	<p>
 
+
+       <!-------------------- Images  ----------------------------->
 	<!-- Toss up images, if any, and description. -->
 
+	<p>
+        <b>Images: </b>
+
 	<?MIVAR COND="$(XST,$UPDATE)">
-	  <TABLE width="100%">
+	  <i><TABLE width="100%">
 	    <TR>
 	      <TD>
 		<B>Adding images:</B> To add new images of this line, return to the 
@@ -296,7 +343,7 @@ Variables Expected:
 		image.
               </td>
             </tr>
-	  </TABLE>
+	  </TABLE></i>
 	<?/MIVAR>
 
 
@@ -309,6 +356,7 @@ Variables Expected:
 	  <?MIVAR NAME=$column>1<?/MIVAR>
 	  <?MIVAR NAME=$firstTime>T<?/MIVAR>
 
+	
 	  <?MISQL SQL="
 	    select fimg_zdb_id, fimg_thumbnail, fimg_preparation, fimg_view, 
 		   fimg_direction, 
@@ -394,73 +442,55 @@ Variables Expected:
 	  <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
 	    </TABLE>
 	  <?MIELSE>
-	    <center>
-	    <TABLE cellpadding=4 border=0>
-	      <TR>
-		<TD>No images of this line are available.</TD>
-	      </TR>
-	    </TABLE>
-	    </center>
+	   
+
+               &nbsp;No images submitted.
+        
+	 
 	  <?/MIBLOCK>
 	<?/MIBLOCK>
 
-	<p>
-	<TABLE width=100%>
-	  <TR>
-	    <TD>
-	      <?MIVAR COND="$(XST,$UPDATE)">
-		<INPUT TYPE=button 
-		       value=Add 
-		       onClick="doit('dalias_alias','text','Alias')">
-	      <?/MIVAR> 
-	      <b>Previous names: </b>
-	      <?MISQL SQL="
-		select dalias_alias 
-		  from data_alias 
-		  where dalias_data_zdb_id = '$OID';">
-		<?MIVAR NAME=$alias>$1<?/MIVAR>
-		<?MIVAR COND="$(XST,$alias)" NAME=$alias DELIMIT=" " REPLACE="+">$alias<?/MIVAR>
-		<?MIVAR COND="$(XST,$UPDATE)">
-		  <br> 
-		  <INPUT TYPE=button 
-			 value=Delete 
-			 onClick="Delete_listitem_alias('dalias_alias','$alias','$OID','$ALTOID')">
-		<?/MIVAR>
-		$(IF,$(AND,$(NXST,$UPDATE),$(>,$MI_CURRENTROW,1)),;) <i>$1</i>
-	      <?/MISQL>
-	    </TD>
-	  </TR>
-	</TABLE>
+	<!---------------- ends Mapping ----------------------------->
 
 
+
+ 	<!-------------------- Keywords  ----------------------------->
+	 <p>
+	  <?MIVAR COND="$(XST,$UPDATE)">
+	    <INPUT TYPE=button value=Update onClick="doit('pheno_keywords','textarea','Phenotype_Keywords')">
+	  <?/MIVAR> 
+	  <?MIVAR>
+            <b>Keywords:</b>&nbsp; $(IF,$(NC,$pheno_keywords,NULL),$pheno_keywords)
+	  <?/MIVAR>
+         
+  	<!------------------ ends Keywords  ----------------------------->
+
+
+
+	<!------------ Phenotype & Description ---------------->
 	<p>
-	<TABLE width=100%>
-	  <TR>
-	    <TD colspan=2 valign=top>
-	      <?MIVAR COND="$(XST,$UPDATE)">
+	<?MIVAR COND="$(XST,$UPDATE)">
 	        <INPUT TYPE=button value="Update" onClick="doit('phenotype','textarea','Phenotype+description')"> 
-	      <?/MIVAR> 
+	<?/MIVAR> 
 
-	      <b><?MIVAR>$(IF,$(EC,$line_type,mutant),Phenotype,Description)<?/MIVAR>
+	<b><?MIVAR>$(IF,$(EC,$line_type,mutant),Phenotype,Description)<?/MIVAR>
 	      :</b> <br>
-	      <?MIVAR COND=$(NE,$phenotype,NULL)> $phenotype <?/MIVAR>
-	      <?MIVAR COND=$(EC,$phenotype,NULL)>NONE GIVEN. <?/MIVAR>
-	      <p>
-            </TD>
-          </TR>
-	</TABLE>
+	<?MIVAR COND=$(NE,$phenotype,NULL)> $phenotype <?/MIVAR>
+	<?MIVAR COND=$(EC,$phenotype,NULL)>NONE GIVEN. <?/MIVAR>
 
+	<!------------ ends Phenotype & Description ---------------->
 
 	<p>
 	<A NAME="origins-info"></a>
-	<HR width=80%>
+	<HR width=85%>
 
-	<h3>ORIGINS and AVAILABILITY</h3>
+	<b>ORIGINS and AVAILABILITY</b>
 
-	<TABLE WIDTH=100% cellpadding=4>
+	<TABLE width=100% cellpadding=4 border=0><!-- bgcolor="$highlight"-->
 	  <TR>
 	    <TD> 
 	      <?MIVAR COND="$(XST,$UPDATE)">
+
 	        <INPUT TYPE=button value=Update onClick="doit('discoverer','selection','Discoverer')">
 	      <?/MIVAR> 
 	      <b>Discoverer: </b>
@@ -516,7 +546,7 @@ Variables Expected:
         </TABLE>
 
 
-	<TABLE cellpadding="4">
+	<TABLE cellpadding=4 > <!--bgcolor="$highlight"-->
 	  <TR>
 	    <TD valign="top"> 
 	      <b>Current Source(s): </b>
@@ -560,10 +590,10 @@ Variables Expected:
 	<!-- This next part only for mutants! -->
 	<?MIBLOCK COND="$(EC,$line_type,mutant)">
 
-	  <HR width=80%>
-	  <p>
-	  <h3>ALLELE(s) carried in this mutant line:</h3
->
+
+	  <HR width=85%>
+	  
+	  <b>ALLELE(s) carried in this mutant line:</b>
 
 	  <!-- If we're updating,its crucial to know whether this FISH "owns" the chromosome, ie, it is the original mutant on which that chromo was found, or if itinherited the chromosome from some parent. We only allow updating if the former is the case. We check this by looking at the "status" field of the intersection record: if it="original" then we allow updating, else not.-->
 
@@ -675,14 +705,14 @@ Variables Expected:
 
 
 	  <?MIBLOCK COND="$(=,$MI_ROWCOUNT,1)">
-	  <hr width=90%>
+	  <hr width=85%>
 
 <!-- wrap Mapping table in mapper form -->
+
+	  <b>MAPPING INFORMATION:</b>
 <form NAME=mapper 
       method=post 
       action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi">
-
-	  <H3><b>Mapping Information:</b></H3><p>
 
 	  <!-- Now if it's a deletion, also show present/missing markers -->
 	  <?MISQL SQL="select chrom_change from fish_search where fish_id='$OID';"><?/MISQL>
@@ -993,36 +1023,17 @@ Variables Expected:
 	  <?/MIBLOCK>
           </form> <!--end mapper form -->
 
-	  <hr width=90%>
-	    <p>
-	    <H3><B>Affected Gene:</B></H3> 
-	    <?MIBLOCK COND="$(EC,$cloned_gene,NULL)">
-               Not yet established.
-            <?MIELSE>
-	      <?MIVAR>
-		<TABLE width=100% cellpadding=5 border=0 bgcolor="$highlight" cols=2 rows=1>
-		  <TR><TD>
-		  <font color="red"><B>Cloned Gene:</b>  </font>
-		  <font size=2>The gene <b><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$cloned_gene"><i>$gene_name ($gene_abbrev)</i></A> </b> 
-		    has been shown to correspond to the <b><i>$name</b></i> locus. 
-		    Please consult the gene record for further mapping information.
-		   </TD>
-		   </TR>
-		 </TABLE>
-	       <?/MIVAR>
-             <?/MIBLOCK>
+	
 
-
-	  <p>
-	  <HR width=80%>
-
+	  <HR width=85%>
+	 
+	  <b>LINEAGE AND BREEDING</b>
 	  <form>
 	  <A NAME="breeding"></a>
 
-	  <h3>LINEAGE AND BREEDING</h3>
-	  <TABLE width=100% cellpadding=4>
+	  <!--<TABLE width=100% cellpadding=4>
 	  <TR align=center> 
-	  <TD> <font size=-1>
+	  <TD> <font size=-1>-->
 	  <b>Maternal:</b> 
 	  <?MIVAR COND="$(XST,$UPDATE)">
 	  <INPUT TYPE=button value="Update" onClick="doit('mother','selection','Maternal+Stock')"> 
@@ -1034,10 +1045,10 @@ Variables Expected:
 	    <?/MISQL>
 	  <?/MIBLOCK>
 	  <?MIVAR COND="$(EC,$mother,NULL)"> unknown. <?/MIVAR>
-	  </font></TD> 
+	  <!--</font></TD>>--> 
 
-	  <TD> <font size=-1>
-	  <b>Paternal: </b>
+	  <!--<TD> <font size=-1>-->
+	  <br><b>Paternal: </b>
 	  <?MIVAR COND="$(XST,$UPDATE)">
 	    <INPUT TYPE=button value="Update" onClick="doit('father','selection','Paternal+Stock')"> 
 	  <?/MIVAR>
@@ -1048,36 +1059,48 @@ Variables Expected:
 	    <?/MISQL>
 	  <?/MIBLOCK>
 	  <?MIVAR COND="$(EC,$father,NULL)"> unknown. <?/MIVAR>
-	  </font></TD>
-	  </TR>
+	  <!--</font></TD>
+	  </TR>-->
 
-	  <TR> <TD colspan=2 >
+	  <!--<TR> <TD colspan=2 >-->
+	  <br><b>Segregation: </b>
 	  <?MIVAR COND="$(XST,$UPDATE)">
 	  <INPUT TYPE=button value="Update" onClick="doit('segregation','textarea','Segregation')"> 
 	  <?/MIVAR> 
-	  <b>Segregation: </b> 
+	 
 	  <?MIVAR COND="$(NC,$segregation,NULL)">$segregation <?/MIVAR>
 	  <?MIVAR COND="$(EC,$segregation,NULL)"> unknown <?/MIVAR> 
-	  </TD> </TR> </TABLE>
-          </form>
+	  <!--</TD> </TR> </TABLE>-->
+          <p>
 
 	<?/MIBLOCK>  <!-- ends EC type mutant -->
 
 
 	<HR width=80%>
-	<form>
+
 	<?MIVAR COND="$(XST,$UPDATE)">
 	<INPUT TYPE=button value="Update" onClick="doit('comments','textarea','Submitter+comments')"> 
 	<?/MIVAR> 
 
-	<b>Submitter's Comments:</b><?MIVAR COND="$(NC,$comments,NULL)"> $comments <?/MIVAR>
+	<b>SUBMITTER'S COMMENTS:</b><?MIVAR COND="$(NC,$comments,NULL)"> $comments <?/MIVAR>
 
-        </form>
-	<HR WIDTH=80%>
-
-
+   
+	<HR WIDTH=85%>
 	<!-- Throw up the publication info, using the standard display format -->
-	<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-showpubs.apg';">$1<?/MISQL>
+
+	<?MIVAR>
+	<A HREF=" /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=fish"><b>PUBLICATIONS</b></A>
+	<?MISQL SQL="
+ 		 select count(*) 
+ 		   from record_attribution
+  		  where recattrib_data_zdb_id = '$OID'
+   		    and get_obj_type(recattrib_source_zdb_id) = 'PUB';
+  	">
+	&nbsp; ($(FIX,$1))
+	<?/MISQL>
+
+
+	<?/MIVAR>
 
       <?/MIBLOCK> <!-- Cond AUTHORIZED -->
 
