@@ -1,3 +1,4 @@
+
 ! echo "First make sure all the manualy curated GenPepts are in."
 
 begin work;
@@ -6,13 +7,13 @@ load from 'manual_curation.genpept' insert into manual_genpept;
 
 update manual_genpept set gene = (
 	select mrkr_zdb_id from marker where mrkr_abbrev = gene
-) 
+)
 where gene in (select mrkr_abbrev from marker where mrkr_type = 'GENE')
 ;
 !echo "drop db_links without manual curation that will conflict with these"
-delete from zdb_active_data 
+delete from zdb_active_data
 where zactvd_zdb_id in (
-    select dblink_zdb_id 
+    select dblink_zdb_id
     from db_link, manual_genpept,record_attribution
     where db_name = 'GenPept'
     and   gene = linked_recid
@@ -20,7 +21,7 @@ where zactvd_zdb_id in (
     and recattrib_data_zdb_id = dblink_zdb_id
     and   genpept = acc_num
 ) and zactvd_zdb_id in (
-    select dblink_zdb_id 
+    select dblink_zdb_id
     from db_link,record_attribution
     where db_name = 'GenPept'
     and recattrib_source_zdb_id <> 'ZDB-PUB-020723-5'
@@ -28,18 +29,18 @@ where zactvd_zdb_id in (
 );
 
 ! echo "drop from incomming the ones that are already in with manual attribution"
-delete from manual_genpept 
+delete from manual_genpept
 where exists (
-	select 1 
-	from db_link ,record_attribution 
-	where db_name = 'GenPept' 
+	select 1
+	from db_link ,record_attribution
+	where db_name = 'GenPept'
 	and   gene = linked_recid
 	and recattrib_source_zdb_id = 'ZDB-PUB-020723-5' --Scientific Curation
 	and recattrib_data_zdb_id = dblink_zdb_id
 	and   genpept = acc_num
 ) and gene in (
-	select linked_recid 
-	from db_link 
+	select linked_recid
+	from db_link
 	where db_name = 'GenPept'
 );
 
@@ -47,9 +48,9 @@ where exists (
 select * from manual_genpept where gene[1,9] <> 'ZDB-GENE-';
 
 ! echo "insert new manualy curated GenPept links"
-select distinct gene, genpept, '123456789012345678901234567890' zad 
-from manual_genpept 
-where gene[1,9] == 'ZDB-GENE-' 
+select distinct gene, genpept, '123456789012345678901234567890' zad
+from manual_genpept
+where gene[1,9] == 'ZDB-GENE-'
 into temp tmp_db_link with no log;
 
 update tmp_db_link set zad = get_id('DBLINK');
@@ -69,12 +70,12 @@ insert into db_link(
 	dblink_acc_num_display,
 	dblink_organism,
 	dblink_data_type,
-	dblink_length	
+	dblink_length
 ) select  distinct
-	gene, 
+	gene,
 	'GenPept',
-	genpept,'curated ' ||TODAY info, 
-	zad, 
+	genpept,'curated ' ||TODAY info,
+	zad,
 	genpept,
 	'Zebrafish',
 	'protein sequence',
@@ -92,6 +93,5 @@ drop table manual_genpept;
 
 -- rollback work;
 
--- 
+--
 commit work;
-
