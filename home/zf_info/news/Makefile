@@ -27,7 +27,7 @@ GENERICS = siteNews.html
 
 PERMANENT_STATICS = bluline.gif jobs.html mtgs.html
 
-STATICS = $(PERMANENT_STATICS) workshop.pdf
+STATICS = $(PERMANENT_STATICS) workshop.pdf zebrafish2.jpg
 
 
 
