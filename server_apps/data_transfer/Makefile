@@ -26,7 +26,8 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer
 
-SUBDIRS = MEOW JohnP RefSeq SWISS-PROT Thisse GO ZIRC Downloads GenPept ZGC
+SUBDIRS = MEOW JohnP RefSeq SWISS-PROT Thisse GO ZIRC Downloads GenPept ZGC \
+	  Sanger
 
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.
@@ -49,3 +50,15 @@ include $(TOP)/make.default.rules
 $(HTTP_DATA_TRANSFER_DIR) :
 	$(TARGET_MKDIR) $@
 
+
+# ---------------  Misc Targets  ----------------------------------------
+
+# The push target runs all of the push scripts in the data transfer directories.
+# It is useful whenever we move zfin.org from one machine to another and need
+# to populate all of the outgoing data transfer files.
+
+push : $(SUBDIRS)
+	$(MAKE) -C Downloads run
+	$(MAKE) -C GO run
+	$(MAKE) -C Sanger run
+	$(MAKE) -C ZIRC push
