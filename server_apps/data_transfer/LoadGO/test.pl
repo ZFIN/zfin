@@ -38,6 +38,7 @@ while (<>) {
     while ($goterm = shift @line) {
       @term_id = split(/; /, $goterm);
       $term = $term_id[0];
+      $term =~ s/\s+$//;      # get rid of trailing whitespace
       ($found) = $text =~/^%. + synonym:\s*(.+)\s%/; 
       print $1;
       chop($term_id[1]);         #get rid of extra space

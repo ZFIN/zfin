@@ -39,7 +39,7 @@ while (<>) {
     while ($goterm = shift @line) {
       @term_id = split(/; /, $goterm);
       $term = $term_id[0];
-      
+      $term =~ s/\s+$//;	# get rid of trailing whitespace
       chop($term_id[1]);         #get rid of extra space
       @goids = split(/,/, $term_id[1]);
       $prmgo = shift @goids;
