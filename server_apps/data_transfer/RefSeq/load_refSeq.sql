@@ -126,7 +126,7 @@ insert into tmp_db_link
     zactvd_zdb_id,
     'LocusLink',
     llzdb_ll_id,
-    '',
+    'uncurrated ' || TODAY || ' LocusLink load',
     get_id('DBLINK')
   from ll_zdb, zdb_active_data
   where llzdb_zdb_id = zactvd_zdb_id
@@ -370,7 +370,7 @@ insert into db_link
         lnkortho_zdb_id,
         "LocusLink",
         lnkortho_acc_num,
-        '',
+        'uncurrated ' || TODAY || ' LocusLink load',
         dblink_zdb_id
     from mgi_ortho_link
     where lnkortho_acc_num not in (select acc_num from locuslink_link);
@@ -421,7 +421,7 @@ insert into tmp_db_link
     llzdb_zdb_id,
     'UniGene',
     uni_cluster_id,
-    '',
+    'uncurrated ' || TODAY || ' LocusLink load',
     get_id('DBLINK')
   from uni_gene, ll_zdb, zdb_active_data
   where uni_ll_id = llzdb_ll_id
