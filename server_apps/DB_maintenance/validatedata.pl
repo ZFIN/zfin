@@ -448,7 +448,51 @@ sub anatomyContainsStageWindowInContainerStageWindow($){
 
 
 
-#=================== Expression Pattern ==========================              
+#===================Environment ==========================
+#----------------------------------------------------------------
+# Parameter
+# For the first release of FX curator interface, curators have the
+# ability to enter 'other' environment conditions.  This is unwise,
+# as it will be difficult to search for these 'other' conditions
+# in the future.  This routine, checks and reports 'others' and 
+# sends them in an email, weekly to informix.
+#
+# $      Email Address for recipients
+
+sub checkOtherEnvironmentCondition($) {
+my $routineName = "checkOtherEnvironmentCondition";
+	
+  my $sql = 'select envcond_condition_name,
+                    envcond_value,
+                    envcond_unit,
+                    envcond_comments
+               from environment_condition
+               where envcond_condition_name = "other"
+              ';
+  	
+  my @colDesc = ("envcond_condition_name     ",
+		 "envcond_value ",
+		 "envcond_unit   ",
+		 "envcond_comments   ");
+
+  my $nRecords = execSql ($sql, undef, @colDesc);
+
+  if ( $nRecords > 0 ) {
+
+    my $sendToAddress = $_[0];
+    my $subject = "new Other environment condition";
+    my $errMsg = "In environment_condition, $nRecords records'
+    		     have bad environment conditions";
+      		       
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
+  }
+  &recordResult($routineName, $nRecords);
+} 
+
+
+
+
 #----------------------------------------------------------------
 #Parameter
 # $      Email Address for recipients
@@ -2604,6 +2648,8 @@ if($weekly) {
   estsWithoutClonesHaveXxGenes($estEmail);
   xxGenesHaveNoClones($estEmail);
   fishAbbrevStartsWithLocusAbbrev($mutantEmail);
+  checkOtherEnvironmentCondition($dbaEmail);
+  
 }
 if($monthly) {
   orthologueHasDblink($geneEmail);
