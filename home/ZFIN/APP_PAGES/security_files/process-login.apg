@@ -15,9 +15,7 @@ Don't record this event as a 'login' in the login count!
     <head>
         <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
     </head>
-    
-    
-    
+   
 <!-- If no user login passed in, login as GUEST -->
 
 <?MIBLOCK COND="$(NXST,$login)">
@@ -42,15 +40,11 @@ Don't record this event as a 'login' in the login count!
     </SCRIPT>
 <?/MIBLOCK>  <!-- ends not exist login -->
 
-<!-- Check out an Auth Submitter
- 
- -->
+<!-- Check out an Auth Submitter -->
 <?MIBLOCK COND="$(XST,$login)">
    
     <?MIVAR COND="$(NXST,$login)" NAME=$login> <?/MIVAR>
     <?MIVAR COND="$(NXST,$password)" NAME=$password> <?/MIVAR>
-    <?MISQL SQL="select first 1 vet_password($password) from panels;"><?/MISQL>
-    <?MIVAR NAME=$password>$1<?/MIVAR>
     <?MISQL SQL="execute function sysexec('encryptpass', '$password');"><?/MISQL>
     <?MIVAR NAME=$encryptedpass>$1<?/MIVAR>
     <?MISQL SQL="select zdb_id,get_random_cookie(),access from ZDB_submitters where login='$login' and password='$encryptedpass';"><?/MISQL>
