@@ -218,9 +218,8 @@ ERROR -- something bad happened -- no OID passed in!
 
   <?MISQL SQL="
         select count(xpat_zdb_id)
-        from expression_pattern,record_attribution
-        where xpat_zdb_id=recattrib_data_zdb_id
-        and recattrib_source_zdb_id='$OID'
+        from expression_pattern
+        where xpat_source_zdb_id='$OID'
         and xpat_zdb_id in (select xpatanat_xpat_zdb_id from expression_pattern_anatomy)">
   <?/MISQL>
 
@@ -228,11 +227,10 @@ ERROR -- something bad happened -- no OID passed in!
 
     <?MISQL SQL="
 
-	select count(recattrib_data_zdb_id)
-	 from  record_attribution
-	 where recattrib_source_zdb_id = '$OID'
-	  and  recattrib_data_zdb_id like 'ZDB-XPAT-%';
-	">
+	select count(xpat_zdb_id)
+	 from  expression_pattern
+	 where xpat_source_zdb_id = '$OID'
+	;">
     <?/MISQL> 
     <?MIVAR COND="$(>,$1,0)">
      <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&pubId=$OID">Gene Expression Data</a> &nbsp; ($(FIX,$1))
@@ -241,11 +239,10 @@ ERROR -- something bad happened -- no OID passed in!
   <?/MIBLOCK>
 
   <?MISQL SQL="
-        select count(recattrib_data_zdb_id)
-         from  record_attribution,publication
-         where recattrib_source_zdb_id = '$OID'
-         and  recattrib_data_zdb_id like 'ZDB-XPAT-%' 
-         and recattrib_source_zdb_id=zdb_id 
+        select count(distinct xpat_gene_zdb_id)
+         from expression_pattern,publication
+         where xpat_source_zdb_id = '$OID'
+           and xpat_source_zdb_id = zdb_id 
          and jtype <>'Unpublished'">
   <?/MISQL>
   <?MIVAR COND="$(>,$1,0)">
