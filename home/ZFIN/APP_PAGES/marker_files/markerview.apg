@@ -74,6 +74,8 @@ ERROR -- something bad happened -- no OID passed in!
 
 <?MIVAR NAME=$target_table>anon_marker<?/MIVAR>
 <?MIVAR NAME=$target_table COND="$(>,$(POSITION,$OID,GENE),0)">gene<?/MIVAR>
+<?MIVAR NAME=$ref_map><?/MIVAR>
+
 
 <?MISQL COND="$(>,$(POSITION,$OID,GENE),0)" SQL="
   select gene_name, 'GENE', abbrev, comments 
@@ -269,6 +271,8 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),"<TD colspan=3><font size=2>LG <b>"$4
 <!-- ************************************** -->
 <TD valign=top>
 <A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=ZDB-REFCROSS-010114-1>ZMAP</A> Location(s): <?MIVAR>$abbrev<?/MIVAR>
+
+<?MIBLOCK COND="$(!=,$MI_ROWCOUNT,0)">
 <TABLE>
 <!-- look for a match of the last two characters in the public_paneled_markers abbrev to match the last two characters in the panels abbrev for table join to find disp_order -->
 <!--  naming convention is xxx_ln54  -->
@@ -285,6 +289,8 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),"<TD colspan=3><font size=2>LG <b>"$4
 </TD>
 </TABLE>
 </TD>
+<?/MIBLOCK>
+
 <!-- ************************************ -->
 
 <TD valign=top>
