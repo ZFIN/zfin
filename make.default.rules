@@ -24,9 +24,9 @@
 #  ENDEMICTARGETS_POSTTARGETDIR
 #  ENDEMICTARGETS_POSTTARGETS
 #  ENDEMICTARGETS_POST
-#             These 4 can be defined, undefined, or defined and empty.
-#
-# For the last 7, undefined, and defined and empty produce the same results.
+#  ENDEMICTARGETS_CLEAN
+#             These 5 can be defined, undefined, or defined and empty.
+# For the last 8, undefined, and defined and empty produce the same results.
 #
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
@@ -72,7 +72,10 @@ $(SUBDIRS) :
 
 # ---------------  Maintenance Rules  -----------------------------------
 
-clean :				# No local intermediate files
+clean :				# Clean out local intermediate files
+  ifdef ENDEMICTARGETS_CLEAN
+	rm -rf $(ENDEMICTARGETS_CLEAN)
+  endif
 	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
 
 clobber :			# Remove targets, but not target dir.
