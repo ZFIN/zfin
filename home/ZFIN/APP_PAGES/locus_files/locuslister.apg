@@ -30,14 +30,22 @@ function show_doc(title,docpath) {
 <?MIVAR NAME=$constraint COND="$(NXST,$constraint)"> <?/MIVAR>
 
 <!-- Make sure they've even submitted something complete -->
-<?MIBLOCK COND="$(OR,$(NXST,$fname),$(NXST,$abbrev),$(NXST,$allele))">
+<?MIBLOCK COND="$(OR,$(NXST,$fname),$(NXST,$allele))">
+<h1 align=center>ERROR! Incomplete submission</h1>
+<BIG><B>You must specify all of the above fields in order to proceed. Please try again.</B></BIG>
+<?/MIBLOCK> <!-- ends if incomplete submission -->
+
+<?MIBLOCK COND="$(AND,$(NXST,$abbrev),$(NC,$(SUBSTR,$fname,1,2),Df),$(NC,$(SUBSTR,$fname,1,2),Cr),$(NC,$(SUBSTR,$fname,1,2),Dp),$(NC,$(SUBSTR,$fname,1,2),In),$(NC,$(SUBSTR,$fname,1,2),Is),$(NC,$(SUBSTR,$fname,1,2),Tg),$(NC,$(SUBSTR,$fname,1,1),T))">
 <h1 align=center>ERROR! Incomplete submission</h1>
 <BIG><B>You must specify all of the above fields in order to proceed. Please try again.</B></BIG>
 <?/MIBLOCK> <!-- ends if incomplete submission -->
 
 
+
 <!-- If everything is there, proceed -->
-<?MIBLOCK COND="$(AND,$(XST,$fname),$(XST,$abbrev),$(XST,$allele))">
+<?MIBLOCK COND="$(AND,$(XST,$fname),$(XST,$allele))">
+
+<?MIBLOCK COND="$(OR,$(XST,$abbrev),$(OR,$(NXST,$abbrev),$(EC,$(SUBSTR,$fname,1,2),Df),$(EC,$(SUBSTR,$fname,1,2),Cr),$(EC,$(SUBSTR,$fname,1,2),Dp),$(EC,$(SUBSTR,$fname,1,2),In),$(EC,$(SUBSTR,$fname,1,2),Is),$(EC,$(SUBSTR,$fname,1,2),Tg),$(EC,$(SUBSTR,$fname,1,1),T)))">
 
 <?MIVAR NAME=$duplicate_allele>f<?/MIVAR>
 <?MIVAR NAME=$duplicate_locus>f<?/MIVAR>
@@ -49,7 +57,6 @@ function show_doc(title,docpath) {
 
 <!-- First filter for apostrophes - just take em out! -->
 <?MIVAR NAME=$fname DELIMIT="'" REPLACE="">$fname<?/MIVAR>
-<?MIVAR NAME=$abbrev DELIMIT="'" REPLACE="">$abbrev<?/MIVAR>
 <?MIVAR NAME=$allele DELIMIT="'" REPLACE="">$allele<?/MIVAR>
 
 <!-- We need two versions of this constraint, because Informix does not support
@@ -57,8 +64,17 @@ function show_doc(title,docpath) {
 	constraint is used in SELECTs from tables that have "printable" abbrev columns
 	(i.e., FISH), while the second is used in SELECTs from
 	tables that only have 3-character abbrevs.  -->
+<?MIBLOCK COND="$(XST,$abbrev)">
+<?MIVAR NAME=$abbrev DELIMIT="'" REPLACE="">$abbrev<?/MIVAR>
 <?MIVAR NAME=$constraintSub>$(IF,$(EC,$doAction,new_locus),or,and) lower(abbrev[1,3])='$(LOWER,$abbrev)')<?/MIVAR>
 <?MIVAR NAME=$constraint>$(IF,$(EC,$doAction,new_locus),or,and) lower(abbrev)='$(LOWER,$abbrev)')<?/MIVAR>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(NXST,$abbrev)"> 
+<?MIVAR NAME=$constraint>)<?/MIVAR>
+<?MIVAR NAME=$constraintSub>)<?/MIVAR>
+<?MIVAR NAME=$abbrev> <?/MIVAR>
+<?/MIBLOCK>
 
 <!-- NOW JUST RETRIEVE AND DISPLAY ALL MATCHING ENTRIES. -->
 
@@ -88,7 +104,6 @@ Found allele <b>$3</b> for $1 ($2)<br>
 $(SETVAR,$duplicate_allele,t)
 <?/MISQL>
 </uL>
-
 
 
 <p>
@@ -174,13 +189,13 @@ There are one or more problems with your proposed submission. You will need to a
 <?/MIVAR>
 
 
-
 <!-- There is a an existing locus/abbrev -->
 <?MIBLOCK COND="$(EC,$duplicate_locus,t)"> 
 
 <b><FONT color="#ff0000">Problem:</font> Cannot register the locus 
 <?MIVAR><font color="#ff0000">$fname</font> <?/MIVAR>
 with abbreviation 
+
 <?MIVAR><font color="#ff0000">$abbrev</font><?/MIVAR>  </b>  <br>The locus and/or abbreviation you have requested for your new locus is already taken (see above). Please choose a different locus and/or abbreviation and try again.<p>
 <?/MIBLOCK>  <!-- ends there is existing locus -->
 
@@ -350,6 +365,9 @@ $warnings
 
 <?/MIBLOCK>  <!-- ends action was specified (submission form) -->
 
+
+
+<?/MIBLOCK>  <!-- no abbrev specified but a mutant of deficiency class -->
 
 <?/MIBLOCK>  <!-- ends alls values specified -->
 
