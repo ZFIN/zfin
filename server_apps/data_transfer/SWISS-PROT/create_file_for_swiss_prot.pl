@@ -25,4 +25,5 @@ if (! -e "<!--|FTP_ROOT|-->/pub/transfer/Swiss-Prot") {
 
 system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> create_file_for_swiss_prot.sql");
 
+system("/bin/chmod 644 <!--|FTP_ROOT|-->/pub/transfer/Swiss-Prot/swiss_prot.txt");
 
