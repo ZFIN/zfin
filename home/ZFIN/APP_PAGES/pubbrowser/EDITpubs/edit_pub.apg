@@ -127,6 +127,7 @@ Variables expected:  OID (optional) -- the OID of a publication to edit.
     <option $(IF,$(EC,$q_jtype,Movie),SELECTED)>Movie
     <option $(IF,$(EC,$q_jtype,Book),SELECTED)>Book
     <option $(IF,$(EC,$q_jtype,Chapter),SELECTED)>Chapter
+    <option $(IF,$(EC,$q_jtype,Curation),SELECTED)>Curation
     <option $(IF,$(EC,$q_jtype,Other),SELECTED)>Other
     <option $(IF,$(EC,$q_jtype,Unpublished),SELECTED)>Unpublished
     </SELECT>
