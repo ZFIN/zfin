@@ -103,10 +103,8 @@ open (FILE_LIST_IMAGE, "< /tmp/file_list_image")
 # fl_image_modified is the file containing all image files with their 
 # executable * removed and a pipe seperator added.
 
-open FL_IMAGE_MODIFIED, ">fl_image_modified"
+open FL_IMAGE_MODIFIED, "> /tmp/fl_image_modified"
     or die "Cannot open the fl_image_modified file:$!\n";
-
-system ("/bin/chmod 755 /tmp/fl_image_modified");
 
 
 # same comments as above, except with PDFs.
@@ -114,10 +112,8 @@ system ("/bin/chmod 755 /tmp/fl_image_modified");
 open (FILE_LIST_PDF, "< /tmp/file_list_pdf")
     or die "Cannot open the file_list_pdf file:$!\n";
 
-open FL_PDF_MODIFIED, ">fl_pdf_modified" 
+open FL_PDF_MODIFIED, "> /tmp/fl_pdf_modified" 
     or die "Cannot open the fl_pdf_modified file:$!\n";
-
-system ("/bin/chmod 755 /tmp/fl_pdf_modified");
 
 print "compiling modified file lists\n";
 
@@ -140,6 +136,8 @@ foreach $image_line (@imageLines) {
     }
 }
 
+system ("/bin/chmod 755 /tmp/fl_image_modified");
+
 # same comments except for pdfs, and we don't have to worry about
 # thumbnail or annot files in the pdf directory.
 
@@ -157,6 +155,8 @@ foreach $pdf_line (@pdfLines) {
 	print FL_PDF_MODIFIED "$pdf_line\n";
     }
 }
+
+system ("/bin/chmod 755 /tmp/fl_pdf_modified");
 
 print "loading...\n";
 
