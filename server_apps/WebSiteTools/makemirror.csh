@@ -5,7 +5,7 @@
 
 cd /research/zusers/mirror/ZFIN_WWW
 source /research/zcentral/Commons/env/mirror.env
-cvs -q update -dP
+/local/bin/cvs -q update -dP
 
 # Push updates to web site.  Send stdout to dev/null.  Only care about errors
-gmake mirror > /dev/null
+/local/bin/gmake mirror > /dev/null
