@@ -454,34 +454,142 @@
 	<?MIVAR NAME=$sum>0<?/MIVAR>
 
 	<?MISQL SQL="
-		select count(distinct recattrib_source_zdb_id)::integer 
-	 	  from fish f, locus l, record_attribution
-	 	 where l.zdb_id = '$OID'
-		   and f.locus = l.zdb_id 
-		   and f.zdb_id = recattrib_data_zdb_id
-  		;">	
-	 <?/MISQL>
-	    
-	 <?MIVAR NAME=$sum>$1<?/MIVAR>	   
-
-      	 <?MISQL SQL="		 
-		select count(distinct recattrib_source_zdb_id)::integer 
-	 	  from locus l, record_attribution
-	 	 where l.zdb_id = '$OID'
-		   and l.zdb_id = recattrib_data_zdb_id
+		select distinct zdb_id
+	 	  from fish_search f, record_attribution,publication p
+	 	 where f.locus = '$OID' 
+		   and recattrib_data_zdb_id = f.locus	
+    		   and recattrib_source_zdb_id = p.zdb_id
+     		   and p.jtype not in ('Curation', 'Unpublished')
+	    UNION		 
+		select distinct zdb_id
+	 	  from fish_search f, record_attribution,publication p
+	 	 where f.locus = '$OID' 
+		   and recattrib_data_zdb_id = f.fish_id	
+    		   and recattrib_source_zdb_id = p.zdb_id
+     		   and p.jtype not in ('Curation', 'Unpublished')
+	    UNION		 
+		select distinct zdb_id
+	 	  from fish_search f, record_attribution,publication p
+	 	 where f.locus = '$OID' 
+		   and recattrib_data_zdb_id = f.alt_zdb_id	
+    		   and recattrib_source_zdb_id = p.zdb_id
+     		   and p.jtype not in ('Curation', 'Unpublished')
+ 	    UNION
+		select distinct zdb_id 
+	 	  from fish_search f, data_alias, record_attribution, publication p
+	 	 where f.locus = '$OID'
+		   and dalias_data_zdb_id = f.locus
+		   and dalias_zdb_id = recattrib_data_zdb_id
+    		   and recattrib_source_zdb_id = p.zdb_id
+     		   and p.jtype not in ('Curation', 'Unpublished')
+	     UNION
+		select distinct zdb_id 
+	 	  from fish_search f, data_alias, record_attribution, publication p
+	 	 where f.locus = '$OID'
+		   and dalias_data_zdb_id = f.fish_id
+		   and dalias_zdb_id = recattrib_data_zdb_id
+    		   and recattrib_source_zdb_id = p.zdb_id
+     		   and p.jtype not in ('Curation', 'Unpublished')
+	     UNION
+		select distinct zdb_id 
+	 	  from fish_search f, data_alias, record_attribution, publication p
+	 	 where f.locus = '$OID'
+		   and dalias_data_zdb_id = f.alt_zdb_id
+		   and dalias_zdb_id = recattrib_data_zdb_id
+    		   and recattrib_source_zdb_id = p.zdb_id
+     		   and p.jtype not in ('Curation', 'Unpublished')
+	   UNION
+		select distinct zdb_id 
+	 	  from fish_search f,column_attribution,publication p
+	 	 where f.locus = '$OID'
+		   and colattrib_data_zdb_id = f.locus	
+    		   and colattrib_source_zdb_id = p.zdb_id
+     		   and p.jtype not in ('Curation', 'Unpublished')
+	   UNION
+		select distinct zdb_id 
+	 	  from fish_search f,column_attribution,publication p
+	 	 where f.locus = '$OID'
+		   and colattrib_data_zdb_id = f.fish_id	
+    		   and colattrib_source_zdb_id = p.zdb_id
+     		   and p.jtype not in ('Curation', 'Unpublished')
+	   UNION
+		select distinct zdb_id 
+	 	  from fish_search f,column_attribution,publication p
+	 	 where f.locus = '$OID'
+		   and colattrib_data_zdb_id = f.alt_zdb_id	
+    		   and colattrib_source_zdb_id = p.zdb_id
+     		   and p.jtype not in ('Curation', 'Unpublished')
+ into temp all_real_pubs_temp with no log
 		;">	
         <?/MISQL>
-	<?MIVAR>$(SETVAR,$sum,$(+,$sum,$1))<?/MIVAR>	   	
+
+	<?MISQL SQL="select count(distinct zdb_id) from all_real_pubs_temp;">
+	  <?MIVAR NAME=$count_of_real_pub>$1<?/MIVAR>
+	<?/MISQL>
+
+	<?MISQL SQL="
+ 	   -- insert (actually any statement will do) is necessary to avoid an error
+  	    insert into all_real_pubs_temp (zdb_id) values (NULL);
+	    drop table all_real_pubs_temp;">
+	<?/MISQL>	  	
+
+
+	<?MISQL SQL="
+		select distinct zdb_id
+	 	  from fish_search f,  record_attribution,publication p
+	 	 where f.locus = '$OID'
+		   and recattrib_data_zdb_id = '$OID'
+    		   and recattrib_source_zdb_id = p.zdb_id
+     		   and p.jtype in ('Curation', 'Unpublished')
+	    UNION		 
+		select distinct zdb_id 
+	 	  from fish_search f, data_alias, record_attribution, publication p
+	 	 where f.locus = '$OID'
+		   and dalias_data_zdb_id = f.locus
+		   and dalias_zdb_id = recattrib_data_zdb_id
+    		   and recattrib_source_zdb_id = p.zdb_id
+     		   and p.jtype in ('Curation', 'Unpublished')
+	    UNION		 
+		select distinct zdb_id 
+	 	  from fish_search f, data_alias, record_attribution, publication p
+	 	 where f.locus = '$OID'
+		   and dalias_data_zdb_id = f.fish_id
+		   and dalias_zdb_id = recattrib_data_zdb_id
+    		   and recattrib_source_zdb_id = p.zdb_id
+     		   and p.jtype in ('Curation', 'Unpublished')
+	    UNION		 
+		select distinct zdb_id 
+	 	  from fish_search f, data_alias, record_attribution, publication p
+	 	 where f.locus = '$OID'
+		   and dalias_data_zdb_id = f.alt_zdb_id
+		   and dalias_zdb_id = recattrib_data_zdb_id
+    		   and recattrib_source_zdb_id = p.zdb_id
+     		   and p.jtype in ('Curation', 'Unpublished')
+	  into temp all_curation_pubs_temp with no log
+		;">	
+        <?/MISQL>
+
+	<?MISQL SQL="select count(distinct zdb_id) from all_curation_pubs_temp;">
+	  <?MIVAR NAME=$count_of_curation_pub>$1<?/MIVAR>
+	<?/MISQL>
+
+	<?MISQL SQL="
+ 	   -- insert (actually any statement will do) is necessary to avoid an error
+  	    insert into all_curation_pubs_temp (zdb_id) values (NULL);
+	    drop table all_curation_pubs_temp;">
+	<?/MISQL>	  	
+
+	<?MIVAR NAME=$total_count>$(+,$count_of_real_pub,$count_of_curation_pub)<?/MIVAR>
 	
-	<?MIBLOCK COND="$(OR,$(>,$sum,0),$(XST,$UPDATE))">
+	<?MIBLOCK COND="$(OR,$(>,$total_count,0),$(XST,$UPDATE))">
   	  <?MIVAR>
-  	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=$rtype&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev$(IF,$(XST,$UPDATE),&UPDATE=1)&total_count=$sum"><b>CITATIONS</b></A>
+  	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=$rtype&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev$(IF,$(XST,$UPDATE),&UPDATE=1)&total_count=$total_count&count_of_real_pub=$count_of_real_pub"><b>CITATIONS</b></A>
   	  <?/MIVAR>
 	<?MIELSE>
   	  <b>CITATIONS</b>
 	<?/MIBLOCK>
 	<?MIVAR>	
- 	 &nbsp; ($(FIX,$sum))
+ 	 &nbsp; ($(FIX,$total_count))
 	<?/MIVAR>
 
 <!----------------- ends PUBLICATION ----------------->
