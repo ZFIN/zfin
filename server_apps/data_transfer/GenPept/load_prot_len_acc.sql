@@ -30,15 +30,15 @@ and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-42' -- GenPept-pp
 -- delete all GenPept attributed links, only for purge.
 -- this should normally be commented out unless there is a specific reason to 
 -- clean out all GenPept links 
-! echo "delete ALL existing_GenPept-attributed links"                         
-delete from zdb_active_data
-where zactvd_zdb_id in(
-    select distinct a.dblink_zdb_id
-    from db_link a, record_attribution           
-    where a.dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-42' -- GenPept-pp
-    and recattrib_data_zdb_id = a.dblink_zdb_id
-    and recattrib_source_zdb_id = 'ZDB-PUB-030924-6' -- GenPept-Pub
-);
+--! echo "delete ALL existing_GenPept-attributed links"                         
+--delete from zdb_active_data
+--where zactvd_zdb_id in(
+--    select distinct a.dblink_zdb_id
+--    from db_link a, record_attribution           
+--    where a.dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-42' -- GenPept-pp
+--    and recattrib_data_zdb_id = a.dblink_zdb_id
+--    and recattrib_source_zdb_id = 'ZDB-PUB-030924-6' -- GenPept-Pub
+--);
  
 ! echo "Drop from consideration ALL incomming_GenPept with accessions associated with chimeric clones"
 delete from prot_len_acc
