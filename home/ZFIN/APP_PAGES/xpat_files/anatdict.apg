@@ -211,7 +211,7 @@ function updateParent(AOname, AOid) {
 	        <?/MIVAR>
 	        <?MIBLOCK COND="$(>,$totalcount,0)">
 	          <?MIVAR> 
-	            [<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name&processed_selected_structures=$processed_item_name&include_substructures=checked">$totalcount gene(s) expressed</A> in all stages]&nbsp;&nbsp;
+	            [<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name&xpatsel_processed_selected_structures=$processed_item_name&include_substructures=checked">$totalcount gene(s) expressed</A> in all stages]&nbsp;&nbsp;
 	          <?/MIVAR>
 	        <?/MIBLOCK>
 
@@ -368,7 +368,7 @@ function updateParent(AOname, AOid) {
 		      <?/MIVAR>
 		      <?MIBLOCK COND="$(>,$totalcount,0)">
 			<?MIVAR>
-			  [<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name&processed_selected_structures=$processed_item_name&include_substructures=checked&stage_start=$OID&stage_end=$OID" target="_parent">$totalcount gene(s) expressed at this stage</A>]
+			  [<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name&xpatsel_processed_selected_structures=$processed_item_name&include_substructures=checked&stage_start=$OID&stage_end=$OID" target="_parent">$totalcount gene(s) expressed at this stage</A>]
 			<?/MIVAR> 
 
 			<?MIBLOCK COND="$(NE,$item_abbrev,NULL)">
@@ -445,7 +445,7 @@ function updateParent(AOname, AOid) {
 
 	      <?MIBLOCK COND="$(>,$totalcount,0)">
 		<?MIVAR> 
-		  [<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name&processed_selected_structures=$processed_item_name&include_substructures=checked">$totalcount gene(s) expressed</A>]&nbsp;&nbsp;
+		  [<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name&xpatsel_processed_selected_structures=$processed_item_name&include_substructures=checked">$totalcount gene(s) expressed</A>]&nbsp;&nbsp;
 		<?/MIVAR>
 	      <?/MIBLOCK>
 

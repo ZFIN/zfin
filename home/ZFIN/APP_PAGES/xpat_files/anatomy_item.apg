@@ -437,7 +437,7 @@
      <TD bgcolor="#CCCCCC">
        <?MIVAR>
        <STRONG>Expresses
-       (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name_url&processed_selected_structures=$processed_item_name">$totalxpats</A>) 
+       (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name_url&xpatsel_processed_selected_structures=$processed_item_name">$totalxpats</A>) 
 Genes
         <?MIBLOCK COND="$(>,$totalxpats,10)">, first 10: <?/MIBLOCK>
        </STRONG>
@@ -464,7 +464,7 @@ Genes
 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$gene_zdb_id">$gene_abbrev</A>
 <?/MISQL>
 <?MIBLOCK COND="$(>,$totalxpats,10)">
-  <?MIVAR>, <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name_url&processed_selected_structures=$processed_item_name"><b>All ($totalxpats)</b></A> <?/MIVAR>
+  <?MIVAR>, <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name_url&xpatsel_processed_selected_structures=$processed_item_name"><b>All ($totalxpats)</b></A> <?/MIVAR>
 <?/MIBLOCK>
       </TD>
     </TR>
