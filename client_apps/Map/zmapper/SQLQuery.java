@@ -61,7 +61,7 @@ public class SQLQuery
 		catch (Exception e) { System.err.println("ERROR: failed to load Informix JDBC driver. - " + e);	}
 
 		try {  conn = DriverManager.getConnection(newUrl);  } 
-		catch (SQLException e) { System.out.println("ERROR: failed to connect! - " + e); } 
+		catch (SQLException e) { System.err.println("ERROR: failed to connect! - " + e); } 
 
 		return conn;
 	}
@@ -77,7 +77,7 @@ public class SQLQuery
 				Statement update = conn.createStatement();
 				result = update.executeUpdate(query);
 			} catch (SQLException e) {
-				System.out.println("ERROR: Insert/Update/Delete statement failed: " + e.getMessage());
+				System.err.println("ERROR: Insert/Update/Delete statement failed: " + e.getMessage());
 			}
 		} else {
 			selectAll_javaserver(1,query);
@@ -113,7 +113,7 @@ public class SQLQuery
 				r.close();
 				select.close();
 				} catch (SQLException e) {
-					System.out.println("ERROR: Fetch statement failed: " + e.getMessage());
+					System.err.println("ERROR: Fetch statement failed: " + e.getMessage());
 				}
 		} else {
 			results = selectAll_javaserver(numFields, request);
@@ -157,10 +157,10 @@ public class SQLQuery
             PrintStream sout = new PrintStream(s.getOutputStream());
 
 	    if ((sin == null) || (sout == null))
-	      System.out.println("no connection");
+	      System.err.println("no connection");
             
             // Tell the user that we've connected
-            System.out.println("Connected to " + s.getInetAddress()
+            System.err.println("Connected to " + s.getInetAddress()
 			  + ":"+ s.getPort());
 			// Send it to the server
 			sout.println(SEPARATOR + numFields + SEPARATOR + request);
@@ -168,7 +168,7 @@ public class SQLQuery
 			String line = sin.readLine();
 			while (line != null)
 			{
-//			  System.out.println (line);
+//			  System.err.println (line);
 			  sTok = new StringTokenizer(line,SEPARATOR);
 			  result.addElement((String)sTok.nextElement());//name 
 			  if (numFields > 2) {
@@ -192,7 +192,7 @@ public class SQLQuery
 
 	/*		int j = 0;
 	for (j = 0; j < result.size() ; j ++) 
-	System.out.println(j + " " + result.elementAt(j)); */
+	System.err.println(j + " " + result.elementAt(j)); */
 	return result; 
 
     }
@@ -226,10 +226,10 @@ public class SQLQuery
             PrintStream sout = new PrintStream(s.getOutputStream());
 
 	    if ((sin == null) || (sout == null))
-	      System.out.println("no connection");
+	      System.err.println("no connection");
             
             // Tell the user that we've connected
-/*            System.out.println("Connected to " + s.getInetAddress()
+/*            System.err.println("Connected to " + s.getInetAddress()
 			  + ":"+ s.getPort());*/
 			// Send it to the server
 			sout.println(SEPARATOR + numFields + SEPARATOR + request);
@@ -237,7 +237,7 @@ public class SQLQuery
 			String line = sin.readLine();
 			while (line != null)
 			{
-			  //      System.out.println (line);
+			  //      System.err.println (line);
 			  sTok = new StringTokenizer(line,SEPARATOR);
 			  result.addElement(new Integer((String)sTok.nextElement()));//seq_num
 			  line = sin.readLine ();
@@ -251,7 +251,7 @@ public class SQLQuery
 
 	/*		int j = 0;
 	for (j = 0; j < result.size() ; j ++) 
-	System.out.println(j + " " + result.elementAt(j)); */
+	System.err.println(j + " " + result.elementAt(j)); */
 	return result; 
 
     }
