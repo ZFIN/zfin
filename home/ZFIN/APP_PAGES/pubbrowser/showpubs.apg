@@ -131,7 +131,7 @@ $(IF,$(>,$(POSITION,$rtype,locus),0),
 
 <?MIELSE COND="$(AND,$(NXST,$attribtype),$(>,$(POSITION,$OID,GENE),0))">	
   <?MISQL SQL="
-    select count(*) 
+    select count(distinct recattrib_source_zdb_id) 
       from record_attribution
      where (  recattrib_data_zdb_id = '$OID'
            or

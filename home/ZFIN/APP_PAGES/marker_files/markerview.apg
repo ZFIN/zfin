@@ -1063,18 +1063,20 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 <HR width="80%" align=center>
 <?MIVAR NAME=$mtype_is_gene><?/MIVAR>
 <?MIVAR NAME=$mtype_is_gene COND="$(NE,$(POSITION,$OID,GENE),0)">
-     recattrib_data_zdb_id in (select mrel_mrkr_2_zdb_id from marker_relationship where mrel_mrkr_1_zdb_id = '$OID')
+     recattrib_data_zdb_id in 
+      (select mrel_mrkr_2_zdb_id 
+       from marker_relationship 
+       where mrel_mrkr_1_zdb_id = '$OID')
   or
 <?/MIVAR>
 
 <?MISQL SQL="
-  select count(*) 
+  select count(distinct recattrib_source_zdb_id)
   from record_attribution
-  where $mtype_is_gene
-           recattrib_data_zdb_id = '$OID'
+  where ($mtype_is_gene
+           recattrib_data_zdb_id = '$OID')
     and get_obj_type(recattrib_source_zdb_id) = 'PUB';
   ">
-
 <?/MISQL>
 
 <?MIBLOCK COND="$(OR,$(>,$1,0),$(XST,$UPDATE))">
