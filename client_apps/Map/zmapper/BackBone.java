@@ -54,6 +54,7 @@ public class BackBone {
 		this.marker_count = 0;
 		low_loc = new Float(99999);
 		high_loc = new Float(-99999);
+		setDisp_order(-1);
 		
 		LM = new LayoutManager(this);
 		BinTable = new Hashtable();
@@ -137,10 +138,13 @@ public class BackBone {
 		this.X = X;
 		this.MAX_WIDTH = MAX_WIDTH;
 
-		if (getPanel_name().equals(MERGEDPANEL)) 
+		if (getDisp_order() == -1)
+			TOP_SPACE = 60;
+		
+/*		if (getPanel_name().equals(MERGEDPANEL)) 
 		{
-			g.setColor(new Color(240,240,240));
-			g.fillRect(X, TOP_SPACE-35, MAX_WIDTH - DIAG_WIDTH - 3, HEIGHT); //the background
+//			g.setColor(new Color(240,240,240));
+//			g.fillRect(X, TOP_SPACE-35, MAX_WIDTH - DIAG_WIDTH - 3, HEIGHT); //the background
 			
 			g.setColor(Color.black);
 			g.fillRect(X+MAX_WIDTH-DIAG_WIDTH-40, TOP_SPACE-35, 39, 21); //the box
@@ -160,21 +164,21 @@ public class BackBone {
 			g.drawString("MERGED", X+MAX_WIDTH-DIAG_WIDTH-38, TOP_SPACE-26);
 			g.drawString("MAP", X+MAX_WIDTH-DIAG_WIDTH-28, TOP_SPACE-17);
 			
-		}
+			} */
 			
 		Bin B;
 
 		//draw the backbone label
 		g.setColor(Color.black);
 		g.setFont(BoldF);
-		if (watermark_t == false)
+		if ((watermark_t == false) || ( getDisp_order() == -1))
 			g.drawString(panel_name + " panel, LG: " + OR_lg + ", units: " + getMetric(), X + 5, TOP_SPACE - 15);
 //		if (watermark_t == true)
 //			g.fillRect(X + 5, TOP_SPACE - 13, BoldFM.stringWidth(panel_name), 2);
 
 		//draw watermarks
 
-		if (watermark_t == true) {
+		if ((watermark_t == true) || (getDisp_order() == -1)) {
 			
 			g.setFont(BBFont);
 			g.setColor(new Color(200,200,200));

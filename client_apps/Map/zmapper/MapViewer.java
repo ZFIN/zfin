@@ -188,8 +188,9 @@ public class MapViewer extends Canvas {
 			
 			if (BBTable.get(M.getTarget_abbrev()+M.getOR_lg()) == null) { //new BackBone
 				BB = new BackBone(M.getTarget_abbrev(), M.getOR_lg(), M.getMetric(), watermark_t);
-				if (PO.get(M.getTarget_abbrev()) != null)
-					BB.setDisp_order(((Integer)PO.get(M.getTarget_abbrev())).intValue());
+				if (PO != null)
+					if (PO.get(M.getTarget_abbrev()) != null)
+						BB.setDisp_order(((Integer)PO.get(M.getTarget_abbrev())).intValue());
 				BBTable.put(M.getTarget_abbrev() + M.getOR_lg(), BB);
 				BB.addMarker(M);
 			} else {
@@ -204,6 +205,7 @@ public class MapViewer extends Canvas {
 		 
 	public Image getImage(int w, int h)	{
 		
+
 		Frame f = new Frame(); 
 		//make sure the frame has a peer 
 		f.addNotify(); 
@@ -222,6 +224,7 @@ public class MapViewer extends Canvas {
 		if (watermark_t == false)
 			drawKey(g,10,0);
 
+
 		go();
 
 		BackBone BB = null;
@@ -236,6 +239,8 @@ public class MapViewer extends Canvas {
 
 		Vector V = this.getPanels(); //no attempt at ordering
 
+
+		
 		BackBone lastBB = null;
 		for (int j = 0 ; j < V.size() ; j++) {
 			BB = (BackBone)V.elementAt(j);
@@ -378,96 +383,105 @@ public class MapViewer extends Canvas {
 			} else { Results = this.Panels; }
 		
 		} else {
-			Vector M = new Vector();
-			Vector M_s = new Vector();
-			Vector Rh = new Vector();
-			Vector Rh_s = new Vector();
+//			System.err.println("panel_order == null");
+			if (Panels == null) {
+//				System.err.println("Panels == null");
+				Vector M = new Vector();
+				Vector M_s = new Vector();
+				Vector Rh = new Vector();
+				Vector Rh_s = new Vector();
 
 
-			BackBone ZMAP = null;
+				BackBone ZMAP = null;
 		
-			Enumeration E = BBTable.elements();
+				Enumeration E = BBTable.elements();
 
-			while( E.hasMoreElements()) {  //find the panels without markers selected
-				BB = ((BackBone)E.nextElement());
+				while( E.hasMoreElements()) {  //find the panels without markers selected
+					BB = ((BackBone)E.nextElement());
 
-				if (BB.getSelected() == null) 
-				{
-					if (BB.getPanel_name().equals(BackBone.MERGEDPANEL))
-						ZMAP = BB;
-					else if (BB.getMetric().equals("cM"))
-						M.addElement(BB);
-					else
-						Rh.addElement(BB);
-				}
+					if (BB.getSelected() == null) 
+					{
+						if (BB.getPanel_name().equals(BackBone.MERGEDPANEL))
+							ZMAP = BB;
+						else if (BB.getMetric().equals("cM"))
+							M.addElement(BB);
+						else
+							Rh.addElement(BB);
+					}
 			
-			}
-
-			E = BBTable.elements();
-			while( E.hasMoreElements()) {  //now find the panels with markers selected
-				BB = ((BackBone)E.nextElement());
-
-				if (BB.getSelected() != null) 
-				{
-					if (BB.getPanel_name().equals(BackBone.MERGEDPANEL))
-						ZMAP = BB;
-					else if (BB.getMetric().equals("cM"))
-						M_s.addElement(BB);
-					else
-						Rh_s.addElement(BB);
 				}
+
+				E = BBTable.elements();
+				while( E.hasMoreElements()) {  //now find the panels with markers selected
+					BB = ((BackBone)E.nextElement());
+
+					if (BB.getSelected() != null) 
+					{
+						if (BB.getPanel_name().equals(BackBone.MERGEDPANEL))
+							ZMAP = BB;
+						else if (BB.getMetric().equals("cM"))
+							M_s.addElement(BB);
+						else
+							Rh_s.addElement(BB);
+					}
 			
-			}
+				}
 
-			if (ZMAP != null)
-				Results.addElement(ZMAP);
-			int i;
+				if (ZMAP != null)
+					Results.addElement(ZMAP);
+				int i;
 
-			if ((Rh.size() > 1) && (BBTable.size() > 2))
-				Rh = BBSort(Rh);
+				if ((Rh.size() > 1) && (BBTable.size() > 2))
+					Rh = BBSort(Rh);
 //		E = Rh.elements();
 //		while(E.hasMoreElements())
 //			Results.addElement(E.nextElement());
 		
-			for (i = 0 ; i < Rh.size() ; i++) {
-				Results.addElement(Rh.elementAt(i));
-			}
+				for (i = 0 ; i < Rh.size() ; i++) {
+					Results.addElement(Rh.elementAt(i));
+				}
 
-			if ((Rh_s.size() > 1) && (BBTable.size() > 2))
-				Rh_s = BBSort(Rh_s);	
+				if ((Rh_s.size() > 1) && (BBTable.size() > 2))
+					Rh_s = BBSort(Rh_s);	
 //		E = Rh_s.elements();
 //		while(E.hasMoreElements())
 //			Results.addElement(E.nextElement());
 
-			for (i = 0 ; i < Rh_s.size() ; i++) {
-				Results.addElement(Rh_s.elementAt(i));
-			}
+				for (i = 0 ; i < Rh_s.size() ; i++) {
+					Results.addElement(Rh_s.elementAt(i));
+				}
 
-			if ((M_s.size() > 1) && (BBTable.size() > 2))
-				M_s = BBSort(M_s);
+				if ((M_s.size() > 1) && (BBTable.size() > 2))
+					M_s = BBSort(M_s);
 //		E = M_s.elements();
 //		while (E.hasMoreElements())
 //			Results.addElement(E.nextElement());
 
-			for (i = M_s.size()-1  ; i >= 0 ; i--) {
-				Results.addElement(M_s.elementAt(i));
-			}
+				for (i = M_s.size()-1  ; i >= 0 ; i--) {
+					Results.addElement(M_s.elementAt(i));
+				}
 		
 		
-			if ((M.size() > 1) && (BBTable.size() > 2))
-				M = BBSort(M);
+				if ((M.size() > 1) && (BBTable.size() > 2))
+					M = BBSort(M);
 //		E = M.elements();
 //		while (E.hasMoreElements())
 //			Results.addElement(E.nextElement());
 
-			for (i = M.size()-1  ; i >= 0 ; i--) {
-				Results.addElement(M.elementAt(i));
-			}
+				for (i = M.size()-1  ; i >= 0 ; i--) {
+					Results.addElement(M.elementAt(i));
+				}
 			
 /*		E = Results.elements();
 		while(E.hasMoreElements())
 		System.err.println("Ordering: " + E.nextElement());*/
-		
+				this.Panels = Results;
+			} else 	{ //Panels != null)	
+//				System.err.println("Panels != null");
+				Results = this.Panels;
+			}
+			
+			
 		}
 		
 		

@@ -43,7 +43,7 @@ public class MarkerBuilder {
 			}
 			catch (java.util.NoSuchElementException e) 
 			{
-				System.err.println(e);
+				System.err.println("MarkerBuilder.buildMarkers - " + e);
 			}
 			
 		}	
