@@ -24,12 +24,13 @@ public class Marker {
 	//public static Color SSLP_c = new Color(0,0,204); //med blue
 	public static Color SSLP_c = new Color(102,51,0); //brown
 	public static Color RAPD_c = new Color(153,102,204);  //purple
-	public static Color STS_c = new Color(151,102,51); //
+	public static Color STS_c = new Color(153,102,51); //
 	public static Color SSR_c = SSLP_c;
 //	public static Color SSR_c = new Color(255,102,0);  //orange
 //	public static Color FISH_c = new Color(102,51,0);
 	public static Color FISH_c = Color.red;
-
+	public static Color BAC_c = new Color(0,51,0);
+	
 	public Marker(String zdb_id, String abbrev,	String mtype,
 				  String target_abbrev, String lg_location, String OR_lg, String framework_t, String metric)  {
 
@@ -65,6 +66,7 @@ public class Marker {
 		else if (mtype.equals("STS")) { return STS_c; }
 		else if (mtype.equals("SSR")) { return SSR_c; }
 		else if (mtype.equals("MUTANT")) { return FISH_c;}
+		else if (mtype.equals("BAC")) { return BAC_c; }
 		else return Color.black;
 			
 	}

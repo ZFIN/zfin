@@ -22,7 +22,7 @@ public class BackBone {
 	public int X; //this is the offset in the X axis, updated within the draw method
 	public int MAX_WIDTH; //this is the width of the backbone object, also updated by draw
 	
-	public static final int TOP_SPACE = 65; //was 40 and 20 - k, 8/28/00
+	public static final int TOP_SPACE = 65;
 	public final int BOTTOM_SPACE = 20;
 	
 	public final int LOC_WIDTH = 40; //space to draw distance labels

@@ -189,7 +189,8 @@ public class MapViewer extends Canvas {
 
 		g.setColor(Color.red);
 
-//		drawKey(g,10,0);
+		if (watermark_t == false)
+			drawKey(g,10,0);
 
 		go();
 
@@ -256,8 +257,13 @@ public class MapViewer extends Canvas {
 		g.drawString("RAPD ", X+i, Y+12);	
 		i = i + FM.stringWidth("RAPD ");
 
-		i = FM.stringWidth("KEY:  ");
+//		i = FM.stringWidth("KEY:  ");
+		i = 12;
 
+		g.setColor(Marker.BAC_c);
+		g.drawString("BAC ", X+i, Y+24);
+		i = i + FM.stringWidth("BAC ");
+		
 		g.setColor(Marker.FISH_c);
 		g.drawString("MUTANT ", X+i, Y+24);
 		i = i + FM.stringWidth("MUTANT ");
