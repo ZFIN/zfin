@@ -75,11 +75,80 @@
       <h1>Describe new $(UPPER,$marker_type)</h1>
     <?/MIVAR>
     <SCRIPT>
-      function validate(theform) {
-        if(theform.mname.value=='' || theform.abbrev.value=='') {
+      // whitespace characters
+      var whitespace = " \t\n\r";
+    
+      // Check whether string s is empty.   
+      
+      function isEmpty(s)
+      {   return ((s == null) || (s.length == 0))
+      }
+      
+      
+      
+      // Returns true if string s is empty or 
+      // whitespace characters only.
+   
+      function isWhitespace (s)
+      
+      {   var i;
+      
+          // Is s empty?
+          if (isEmpty(s)) return true;
+      
+          // Search through string's characters one by one
+          // until we find a non-whitespace character.
+          // When we do, return false; if we don't, return true.
+      
+          for (i = 0; i < s.length; i++)
+          {   
+              // Check that current character isn't whitespace.
+              var c = s.charAt(i);
+      
+              if (whitespace.indexOf(c) == -1) return false;
+          }
+      
+          // All characters are whitespace.
+          return true;
+      }
+
+
+      //Radio Buttons are stored as an array
+      //Loop through the array
+      //Return the checked item
+      
+      function GetChecked(radioButton)
+      {
+        for ( var i=0; i<radioButton.length; i++ )
+        {
+           if ( radioButton[i].checked == true )
+           {
+              return( radioButton[i].value );
+           }
+        }
+      
+        return("");
+      }
+      
+      function validate(theform) 
+      {
+        var reserve = GetChecked(theform.reserve);
+        var rsrvComment = theform.rsrvComment.value;
+        
+        if (theform.mname.value=='' || theform.abbrev.value=='') 
+        {
 	  alert('You must supply both name and abbreviation');
 	  return false;
-        } else {return true;}
+        } 
+        
+        if (reserve=='yes' && isWhitespace(rsrvComment)) 
+        {
+          alert('Missing Input: Reservations require a comment.');
+          theform.rsrvComment.focus();
+          return false;
+        }
+        
+        return true;
       }
     </SCRIPT>
 
@@ -93,10 +162,16 @@
 
         <p><b>Abbreviation</b> (required):
         <input type=text name=abbrev size=15>
-
+        
         <p>
         <b>Description:</b><br>
         <TEXTAREA rows=5 cols=50 name=comments></TEXTAREA>
+
+        <?MIBLOCK COND=$(EC,$(LOWER,$marker_type),gene)>
+        <p><b>Is this a reservation?</b>:
+        Yes <input type=radio name=reserve value=yes> / No <input type=radio name=reserve value=no checked>
+        <br>Comments: <input type=text name=rsrvComment size=50>
+        <?/MIBLOCK>
         <p>
 
         <input type=submit name=s_new value="Submit new $(UPPER,$marker_type)">
@@ -134,6 +209,35 @@
         values ('$new_id', '$mname', '$abbrev', '$(UPPER,$marker_type)',
                 '$comments', '$ZDB_ident');">
     <?/MISQL>
+
+    <?MIBLOCK COND=$(EC,$reserve,yes)>
+      <?MISQL SQL="execute function get_id('NOMEN');"><?/MISQL>
+      <?MIVAR NAME=$mhist_id>$1<?/MIVAR>
+      <?MIVAR NAME=$rsrvComment COND=$(NXST,$rsrvComment)><?/MIVAR>
+    
+      <?MISQL SQL="
+        INSERT INTO zdb_active_data VALUES('$mhist_id');
+        insert into marker_history ( 
+                        mhist_zdb_id, 
+                        mhist_mrkr_zdb_id, 
+                        mhist_event, 
+                        mhist_reason, 
+                        mhist_date,
+                        mhist_mrkr_name_on_mhist_date,
+                        mhist_mrkr_abbrev_on_mhist_date,
+                        mhist_comments )
+               select '$mhist_id',
+                        mrkr_zdb_id,
+                        'reserved',
+                        'per personal communication with authors',
+                        CURRENT,
+                        mrkr_name,
+                        mrkr_abbrev,
+                        '$rsrvComment'
+               from marker
+               where mrkr_zdb_id = '$new_id';">
+      <?/MISQL>
+    <?/MIBLOCK>
 
     <?MIVAR>
       <h1>Confirmation: $(UPPER,$marker_type) record added</h1>
