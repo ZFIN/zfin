@@ -1051,8 +1051,8 @@ sub prefixedGenesHave1Est ($) {
   my $sql = 'select mrkr_zdb_id, mrkr_name, mrkr_abbrev
                from marker m1
                where mrkr_type = "GENE"
-                 and mrkr_name like "__:%"
-                 and mrkr_name not like "id:%"
+                 and mrkr_name[3]  == ":"
+                 and mrkr_name[1,2] not in ("id","si")
                  and 1 <> 
                      ( select count(*) 
                          from marker m2, marker_relationship
