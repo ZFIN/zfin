@@ -68,8 +68,7 @@ Bill To Funding Organization:
 [required_grantOrganization]
 ---
 Billing Preference:
-[creditCard]
-[billMe]
+[billingPreference]
 ---
 Bill To PO Number:
 [billToPONumber]

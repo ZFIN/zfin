@@ -1,6 +1,6 @@
 To: aprilm@uoneuro.uoregon.edu, trevarro@uoneuro.uoregon.edu, monte@uoneuro.uoregon.edu, edwards@uoneuro.uoregon.edu, seger@uoneuro.uoregon.edu, ksf@cs.uoregon.edu, mason@uoneuro.uoregon.edu
 From: zirc@darkwing.uoregon.edu
-Subject: [required_submitterName]'s ZIRC Submission for [mutantAlleles]
+Subject: [required_submitterName]'s ZIRC Submission for [lineName] [mutantAlleles]
 
 
 ***for PAT ************************************* 
