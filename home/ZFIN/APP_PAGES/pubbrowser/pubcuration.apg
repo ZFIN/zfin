@@ -223,6 +223,10 @@ OPTIONAL VARS:
         <?/MIVAR>
       </td>
     </tr>
+
+<!--  ALERT (2003-08-01) PDF's uploaded to chroix are not the same file size. 
+      Potential issues with Informix. Retest after Informix upgrade.
+
     <tr>
       <td>
           <b>File:</b>
@@ -245,6 +249,8 @@ OPTIONAL VARS:
            <input type=submit value=Upload>
       </td>
     </tr>
+-->
+
   </table>
   
   </form>
