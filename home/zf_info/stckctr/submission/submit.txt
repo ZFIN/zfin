@@ -1,4 +1,4 @@
-To: aprilm@uoneuro.uoregon.edu, monte@uoneuro.uoregon.edu, edwards@uoneuro.uoregon.edu, seger@uoneuro.uoregon.edu, ksf@cs.uoregon.edu, mason@uoneuro.uoregon.edu
+To: aprilm@uoneuro.uoregon.edu, jmatthews@uoneuro.uoregon.edu, cjones@uoneuro.uoregon.edu, ngoebel@uoneuro.uoregon.edu, monte@uoneuro.uoregon.edu, edwards@uoneuro.uoregon.edu, seger@uoneuro.uoregon.edu, ksf@cs.uoregon.edu, mason@uoneuro.uoregon.edu
 From: zirc@darkwing.uoregon.edu
 Subject: [lineName] [mutantAlleles] [transgeneName] for [required_submitterName]
 
@@ -175,9 +175,6 @@ Protocol:
 for visual technique:
 [mutantIDvisDesc]
 ---
-for PCR technique:
-[mutantIDpcrDesc] 
----
 for in situ technique:
 [mutantIDinsituDesc] 
 ---
@@ -188,14 +185,85 @@ ID at what stage?
 for visual technique:
 [mutantIDvisualStage]
 ---
-for PCR technique:
-[mutantIDPCRStage]
----
 for in situ technique:
 [mutantIDinsituStage] 
 ---
 for other technique:
 [mutantIDotherStage] 
+---
+PCR questionnaire
+summary:
+[protocolSummary]
+---
+forward primer sequence:
+[fprimerSequence]
+---
+forward primer exonic/intronic:
+[fprimerExIn]
+---
+reverse primer sequence:
+[rprimerSequence]
+---
+reverse primer exonic/intronic:
+[rprimerExIn]
+---
+reaction conditions pH:
+[reaction_pH]
+---
+reaction conditions mM MgCl2:
+[reaction_mMMgCl]
+---
+reaction conditions mM KCL:
+[reaction_mMKCL]
+---
+reaction conditions mM NaCl:
+[reaction_mMNaCl]
+---
+reaction conditions other:
+[reaction_other]
+---
+thermocycler program:
+[thermocycler]
+---
+product size (mutant):
+[productSizeMutant]
+---
+product size (wild-type):
+[productSizeWildtype]
+---
+product size difference (agarose):
+[productSizeDiffAgarose] %
+---
+product size difference (other):
+[productSizeDiffOther]
+---
+restriction enzyme(s):
+[resDigEnzymes]
+---
+restriction digestion fragments (mutant):
+mutant fragment1: [resDigMutFrag1]
+mutant fragment2: [resDigMutFrag2]
+mutant fragment3: [resDigMutFrag3]
+---
+restriction digestion fragments (wild-type):
+WT fragment1: [resDigWTFrag1]
+WT fragment2: [resDigWTFrag2]
+WT fragment3: [resDigWTFrag3]
+---
+restriction digestion difference visualized using agarose:
+[resDigVisAgarose] %
+---
+restriction digestion difference visualized using other:
+[resDigVisOther]
+---
+background AFLPs:
+[backgroundAFLPs]
+---
+background AFLPs described:
+[backgroundAFLPsDescription]
+---
+pcr protcol additional comments:
+[PCRadditionalComments]
 ---
 
 CONSIDERATIONS AND INFORMATION
