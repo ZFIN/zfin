@@ -33,9 +33,8 @@ GENERICS = index.html robots.txt
 
 STATICS  = fish_bgd.gif fish_net.gif
 
-# This also creates a symbolic link to to an ftp directory to provide an 
-# http interface to the FTP directory.  This is currently hardcoded to
-# point at chromix.
+# This also creates a symbolic link to to an FTP directory to provide an 
+# http interface to the FTP directory.
 
 FTPTARGET = $(TARGETDIR)/transfer
 
@@ -68,7 +67,7 @@ $(STATICTARGETS) : $(TARGETDIR)/% : %
 	$(TARGET_CP) $^ $@
 
 $(FTPTARGET) : 
-	ln -s /research/zfin/chromix/ftp/pub/transfer $(FTPTARGET)
+	ln -s $(TARGETFTPROOT)/pub/transfer $(FTPTARGET)
 
 $(CLIENTAPPSTARGET) : 
 	ln -s ../client_apps $(CLIENTAPPSTARGET)
