@@ -1,0 +1,903 @@
+<?MICOMMENT>
+
+FILE:     xpatcurupdate.apg
+PREFIX:   xpcurup_
+
+This file only performs the database updates/inserts for xpatcuration.apg. 
+
+    There is a distinct update section for each object in xpatcuration.apg.
+    A gateway condition is defined for each update or insert section. The
+    gateway is a variable or series of variables that are required to enter
+    data into the database.
+
+
+INPUT VARS:
+
+  REQUIRED:
+    $OID :: publication zdb-id for the experiment
+    $AUTHORIZED :: this is a subroutine. the authorization must occur in the calling page.
+
+  OPTIONAL:  
+  Environment
+      xpcur_G_exp_update :: exist/not-exists, indicates an environment update action
+      xpcur_G_exp_zdb_id :: environment ZDB-ID 
+      xpcur_G_exp_name :: non-null environment name specific to publication $OID
+      xpcur_G_environment_add :: flag for new environment
+      xpcur_G_exp_add_name :: new non-null environment name 
+  
+  Condition
+      xpcur_G_cond_add :: flag for a new condition
+      xpcur_G_cond_add_exp :: non-null experiment ZDB-ID
+      xpcur_G_cond_add_cond_type :: non-null condition data type ZDB 
+      xpcur_G_cond_add_value :: text
+      xpcur_G_cond_add_unit :: text - constrained vocabulary
+      xpcur_G_cond_add_comments :: text
+      
+  Figure
+      xpcur_G_fig_update :: flag for updating a figure
+      xpcur_G_fig_zdb_id :: figure ZDB-ID
+      xpcur_G_fig_label :: non-null text
+      xpcur_G_fig_caption :: text
+      xpcur_G_fig_comments :: optional text
+      xpcur_G_fig_add :: flag for updates
+      xpcur_G_fig_add_label :: non-null text
+      xpcur_G_fig_add_caption :: non-null text
+      xpcur_G_fig_add_comments :: optional text
+  
+  Image
+      xpcur_G_image_OID :: zdb-id
+      xpcur_G_image_fig :: figure zdb
+      xpcur_G_image_label :: optional text
+      xpcurup_width :: integer, value of thumbnail width (from upload.cgi)
+      xpcurup_height :: integer, value of thumbnail height (from upload.cgi)
+      xpcurup_suffix :: image suffix (from upload.cgi)
+  
+  Experiment
+      xpcur_G_xpatex :: update or add; switch to execute update code or add new record code.
+      xpcur_G_xpatex_zdb_id :: xpatex_zdb_id of record being updated
+      xpcur_G_xpatex_gene :: marker_zdb_id for a gene
+      xpcur_G_xpatex_fish :: fish_zdb_id
+      xpcur_G_xpatex_exp :: environment zdb_id
+      xpcur_G_xpatex_assay :: assay name
+      xpcur_G_xpatex_genbank :: genbank accession number
+  
+  Expression
+      xpcur_G_panel_add :: flag for new record
+      xpcur_G_panel_image :: image zdb
+      xpcur_G_panel_add_designation :: optional text
+      xpcur_G_panel_xpatex :: experiment zdb
+      xpcur_G_panel_add_start_stg :: stage zdb
+      xpcur_G_panel_add_end_stg :: stage zdb
+      xpcur_G_panel_add_anatitem :: anatomy zdb
+      xpcur_G_panel_add_expressed :: boolean (t/f)
+  
+  Structure
+      xpcur_G_fig_xpat_stg :: non-null, text, combines values (figure zdb, xpat zdb, sstage zdb, estage zdb)
+      "xpatres_zdb_id" radio (add/remove)
+      xpcur_G_structure_add :: flag for new record
+      xpcur_G_structure_add_id :: anatomy zdb
+      xpcur_G_structure_add_expressed :: boolean (t/f)
+      xpcur_G_structure_add_xpatex :: xpat zdb
+      xpcur_G_structure_add_start_stg :: stg zdb
+      xpcur_G_structure_add_end_stg :: stg zdb
+  
+
+COOKIES:
+  xpcur_c_xpatcuration_update :: gate variable; set to update for an update to occur.
+      
+
+OUTPUT VARS:
+  None.
+
+OUTPUT:
+  None
+
+EFFECTS  
+  Inserts records into any table associated with an expression_experiment. All data records
+  are attributed in record_attribution either via trigger or specifically in this page. 
+  
+  Set cookie xpatcuration_update to 'no'.
+  
+  Set figure_only when a new figure is inserted.
+
+
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
+<?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
+
+  <?MICOMMENT> ============================================================
+                 Form Variables that should be persistant after the form
+                 is submitted are added to xpatcurup_form_variables. 
+               ============================================================
+  <?/MICOMMENT>   
+  <script>
+    setCookie('xpcur_G_form_variables','');
+  </script>
+
+  <?MICOMMENT> ================| Experiment |================ <?/MICOMMENT>
+  <?MIBLOCK COND=$(XST,$xpcur_G_xpatex)>
+  
+    <?MICOMMENT>
+      required: xpcur_G_xpatex_add_gene, xpcur_G_xpatex_add_fish, xpcur_G_xpatex_add_assay, xpcur_G_xpatex_add_exp
+      optional: xpcur_G_xpatex_genbank
+      
+      unique constraint on {gene/fish/assay/exp}
+    <?/MICOMMENT>    
+    
+    <?MIBLOCK COND=$(AND,$(XST,$xpcur_G_xpatex_gene),$(XST,$xpcur_G_xpatex_fish),$(XST,$xpcur_G_xpatex_assay),$(XST,$xpcur_G_xpatex_exp))>
+      <?MIVAR COND=$(NXST,$xpcur_G_xpatex_genbank) NAME=xpcur_G_xpatex_genbank><?/MIVAR>
+    
+      <?MISQL SQL="
+        select count(*) 
+        from fx_expression_experiment, feature_experiment
+        where xpatex_gene_zdb_id = '$xpcur_G_xpatex_gene'
+          and xpatex_assay_name = '$xpcur_G_xpatex_assay'
+          and xpatex_featexp_zdb_id = featexp_zdb_id
+          and featexp_genome_feature_zdb_id = '$xpcur_G_xpatex_fish'
+          and featexp_exp_zdb_id = '$xpcur_G_xpatex_exp'
+          and xpatex_source_zdb_id = '$OID'
+          and xpatex_dblink_zdb_id = '$xpcur_G_xpatex_genbank'
+        ;">
+      <?/MISQL>
+    
+      <?MIBLOCK COND=$(EC,$1,0)>
+
+        <?MICOMMENT> 
+          The genbank number must be linked to the gene. The link can be direct
+          or inderect. A direct link is where the linked_recid = gene_zdb_id. 
+          An inderect link is when the linked_recid = probe_zdb_id and the 
+          probe_zdb_id is related to gene_zdb_id through marker relationship.
+        <?/MICOMMENT>
+  
+        <?MIBLOCK COND=$(EC,$xpcur_G_xpatex_genbank,)>
+          <?MIVAR NAME=xpcur_G_xpatex_genbank><?/MIVAR>
+          <?MIVAR NAME=xpcurup_xpatex_probe><?/MIVAR>
+        <?MIELSE>
+          <?MISQL SQL="select dblink_linked_recid from db_link where dblink_zdb_id = '$xpcur_G_xpatex_genbank';"><?/MISQL>
+
+          <?MIBLOCK COND=$(NC,$1,$xpcur_G_xpatex_gene)>        
+            <?MISQL SQL="
+                select dblink_linked_recid 
+                  from db_link, marker_relationship 
+                 where dblink_zdb_id = '$xpcur_G_xpatex_genbank'
+                   and dblink_linked_recid = mrel_mrkr_2_zdb_id
+                   and mrel_mrkr_1_zdb_id = '$xpcur_G_xpatex_gene';">
+               <?MIVAR NAME=xpcurup_xpatex_probe>$1<?/MIVAR>
+            <?/MISQL>   
+          <?MIELSE>
+            <?MIVAR NAME=xpcurup_xpatex_probe><?/MIVAR>
+          <?/MIBLOCK>
+        <?/MIBLOCK>
+    
+        <?MIBLOCK COND="$(XST,$xpcurup_xpatex_probe)">
+          <?MICOMMENT> Gene and Probe must be related through marker_relationship <?/MICOMMENT>
+          
+          <?MICOMMENT> ==| Check existence of Feature Environment |== <?/MICOMMENT>
+          <?MISQL SQL="
+            select featexp_zdb_id
+            from feature_experiment 
+            where featexp_genome_feature_zdb_id = '$xpcur_G_xpatex_fish'
+              and featexp_exp_zdb_id = '$xpcur_G_xpatex_exp';">
+            <?MIVAR NAME=xpcurup_featexp_zdb_id>$1<?/MIVAR>
+          <?/MISQL>
+    
+          <?MIBLOCK COND="$(NXST,$xpcurup_featexp_zdb_id)">  
+            <?MICOMMENT> ==| Get next ZDB-ID |== <?/MICOMMENT>
+            <?MISQL SQL="execute function get_id('FEATEXP');">$(SETVAR,$xpcurup_featexp_zdb_id,$1)<?/MISQL>
+      
+            <?MICOMMENT> ==| Add New FEATENV |== <?/MICOMMENT>  
+            <?MISQL SQL="INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES('$xpcurup_featexp_zdb_id');"><?/MISQL>    
+     
+            <?MICOMMENT> ==| CREATE FEATENV RECORD |== <?/MICOMMENT>  
+            <?MISQL SQL="
+                INSERT INTO feature_experiment(
+                   featexp_zdb_id,
+                   featexp_genome_feature_zdb_id,
+                   featexp_exp_zdb_id)
+                VALUES(
+                   '$xpcurup_featexp_zdb_id',
+                   '$xpcur_G_xpatex_fish',
+                   '$xpcur_G_xpatex_exp');">
+            <?/MISQL>
+    
+          <?/MIBLOCK>
+
+          <?MIBLOCK COND=$(EC,$xpcur_G_xpatex,add)>         
+            <?MICOMMENT> ==| Get next ZDB-ID |== <?/MICOMMENT>
+            <?MISQL SQL="execute function get_id('XPAT');">$(SETVAR,$xpcurup_xpat_zdb,$1)<?/MISQL>
+    
+            <?MICOMMENT> ==| Add New XPATEX |== <?/MICOMMENT>  
+            <?MISQL SQL="INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES('$xpcurup_xpat_zdb');"><?/MISQL>
+  
+            <?MIBLOCK COND="$(NC,$xpcurup_xpatex_probe,)">
+              <?MISQL SQL="
+                INSERT into fx_expression_experiment(
+                   xpatex_zdb_id,
+                   xpatex_source_zdb_id,
+                   xpatex_assay_name,
+                   xpatex_gene_zdb_id,
+                   xpatex_probe_feature_zdb_id,
+                   xpatex_featexp_zdb_id,
+                   xpatex_dblink_zdb_id,
+                   xpatex_direct_submission_date)
+                VALUES (
+                   '$xpcurup_xpat_zdb',
+                   '$OID',
+                   '$xpcur_G_xpatex_assay',
+                   '$xpcur_G_xpatex_gene',
+                   '$xpcurup_xpatex_probe',
+                   '$xpcurup_featexp_zdb_id',
+                   '$xpcur_G_xpatex_genbank',
+                   TODAY);">
+              <?/MISQL> 
+            <?MIELSE>
+              <?MISQL SQL="
+                INSERT into fx_expression_experiment(
+                   xpatex_zdb_id,
+                   xpatex_source_zdb_id,
+                   xpatex_assay_name,
+                   xpatex_gene_zdb_id,
+                   xpatex_featexp_zdb_id,
+                   xpatex_dblink_zdb_id,
+                   xpatex_direct_submission_date)
+                VALUES (
+                   '$xpcurup_xpat_zdb',
+                   '$OID',
+                   '$xpcur_G_xpatex_assay',
+                   '$xpcur_G_xpatex_gene',
+                   '$xpcurup_featexp_zdb_id',
+                   $(IF,$(EC,$xpcur_G_xpatex_genbank,),NULL,'$xpcur_G_xpatex_genbank') ,
+                   TODAY);">
+              <?/MISQL>       
+            <?/MIBLOCK>
+     
+            <?MICOMMENT>  
+                ===================================================
+                  Search for record attribution of genbank record
+                  and publication. If no record found, enter 
+                  record attribution.
+                ===================================================
+            <?/MICOMMENT>
+
+            <?MIBLOCK COND=$(NE,$xpcur_G_xpatex_genbank,)>      
+              <?MISQL SQL="
+                select count(*)::integer
+                from record_attribution 
+                where recattrib_data_zdb_id = '$xpcur_G_xpatex_genbank'
+                and recattrib_source_zdb_id = '$OID'
+                ;">
+              <?/MISQL>
+
+              <?MISQL COND=$(EC,$1,0) SQL="
+                insert into record_attribution(recattrib_data_zdb_id, recattrib_source_zdb_id)
+                values ('$xpcur_G_xpatex_genbank','$OID')
+                ;">
+              <?/MISQL>
+            <?/MIBLOCK>
+
+          <?MIELSE COND=$(EC,$xpcur_G_xpatex,update)>
+
+            <?MIVAR NAME=old_genbank><?/MIVAR>
+            <?MISQL SQL="
+              select dblink_zdb_id
+              from db_link, fx_expression_experiment, record_attribution
+              where xpatex_zdb_id = '$xpcur_G_xpatex_zdb_id'
+                and xpatex_probe_feature_zdb_id = dblink_linked_recid
+                and dblink_zdb_id = recattrib_data_zdb_id
+                and recattrib_source_zdb_id = '$OID'
+              ;">
+              <?MIVAR NAME=old_genbank>$1<?/MIVAR>
+            <?/MISQL>
+
+            <?MIBLOCK COND=$(NC,$old_genbank,$xpcur_G_xpatex_genbank)>
+              <?MISQL SQL="
+                delete from record_attribution 
+                where recattrib_data_zdb_id = '$old_genbank'
+                and recattrib_source_zdb_id = '$OID'
+                ;">
+              <?/MISQL>
+ 
+            <?/MIBLOCK>
+ 
+            <?MISQL SQL="
+              UPDATE fx_expression_experiment
+                 set xpatex_assay_name = '$xpcur_G_xpatex_assay',
+                     xpatex_gene_zdb_id = '$xpcur_G_xpatex_gene',
+                     xpatex_probe_feature_zdb_id = $(IF,$(EC,$xpcurup_xpatex_probe,),NULL,'$xpcurup_xpatex_probe'),
+                     xpatex_dblink_zdb_id = $(IF,$(EC,$xpcur_G_xpatex_genbank,),NULL,'$xpcur_G_xpatex_genbank'),
+                     xpatex_featexp_zdb_id = '$xpcurup_featexp_zdb_id'
+               where xpatex_zdb_id = '$xpcur_G_xpatex_zdb_id'
+               ;">
+            <?/MISQL> 
+
+          <?/MIBLOCK>  <?MICOMMENT> END $xpcur_G_xpatex = add <?/MICOMMENT>
+    
+        <?MIELSE> 
+          <?MICOMMENT> ============================================================
+                          Gene and Probe not related through marker relationship
+                       ============================================================
+          <?/MICOMMENT>
+          <?MISQL SQL="select gene.mrkr_abbrev, probe.mrkr_abbrev, dblink_acc_num
+                       from marker as gene, marker as probe, db_link
+                       where gene.mrkr_zdb_id = '$xpcur_G_xpatex_gene'
+                         and probe.mrkr_zdb_id = dblink_linked_recid
+                         and dblink_zdb_id = '$xpcur_G_xpatex_genbank';">
+               <?MIVAR NAME=upcurup_UP_gene_abbrev>$1<?/MIVAR>
+               <?MIVAR NAME=upcurup_UP_probe_abbrev>$2<?/MIVAR>
+              <?MIVAR NAME=upcurup_UP_probe_acc_num>$3<?/MIVAR>
+          <?/MISQL>
+          <?MIVAR>
+            <SCRIPT>
+              alert('Required: Gene linked to Accession number.\n\nAccession number $upcurup_UP_probe_acc_num is linked to marker $upcurup_UP_probe_abbrev. \n\n"$upcurup_UP_probe_abbrev" and "$upcurup_UP_gene_abbrev" do not have a relationship in the database. \n\n Create this relationship on the gene page.');
+            </SCRIPT>    
+          <?/MIVAR>
+        <?/MIBLOCK>   <?MICOMMENT> END $(XST,$xpcurup_xpatex_probe) <?/MICOMMENT>
+
+      <?MIELSE>
+        <SCRIPT>
+          alert('The combination of: Publication, Gene, Fish, Env, Assay duplicates a record in the database.\n\nPlease check your data and renter.');
+        </SCRIPT>  
+      <?/MIBLOCK>  <?MICOMMENT> end $1 = 0 <?/MICOMMENT>
+    
+    <?MIELSE>
+      <SCRIPT>
+        alert('One of these required data elements was missing: Gene, Fish, Env, Assay.\n\nPlease check your data and renter.');
+      </SCRIPT>        
+    <?/MIBLOCK> <?MICOMMENT> 
+                    END
+                         $(AND,$(XST,$xpcur_G_xpatex_gene),$(XST,$xpcur_G_xpatex_fish),
+                         $(XST,$xpcur_G_xpatex_assay),$(XST,$xpcur_G_xpatex_exp))
+                <?/MICOMMENT>
+            
+  <?/MIBLOCK> <?MICOMMENT> END COND=$(XST,$xpcur_G_xpatex)> <?/MICOMMENT>
+  
+
+
+  <?MICOMMENT> ================| Environment |================ <?/MICOMMENT>
+  <?MIBLOCK COND=$(XST,$xpcur_G_environment_add)>
+  
+  <?MISQL SQL="
+      select count(*) 
+      from experiment 
+      where exp_name = '$xpcur_G_exp_add_name'
+        and exp_source_zdb_id = '$OID';"><?/MISQL>
+  
+    <?MIBLOCK COND=$(=,$1,0)>
+      <?MICOMMENT> ==| Get next ZDB-ID |== <?/MICOMMENT>
+      <?MISQL SQL="execute function get_id('EXP');">$(SETVAR,$xpcurup_exp_zdb_id,$1)<?/MISQL>
+    
+      <?MICOMMENT> ==| Add New ZDB-ID |== <?/MICOMMENT>  
+      <?MISQL SQL="INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES('$xpcurup_exp_zdb_id');"><?/MISQL>
+    
+      <?MISQL SQL="
+          INSERT into experiment(exp_zdb_id, exp_name, exp_source_zdb_id)
+          VALUES ('$xpcurup_exp_zdb_id','$xpcur_G_exp_add_name','$OID');">
+      <?/MISQL> 
+    <?MIELSE>
+      <SCRIPT>
+        alert("Environment '<?MIVAR>$xpcur_G_exp_add_name<?/MIVAR>' exists for this publication.");      
+      </SCRIPT>
+    <?/MIBLOCK>             
+  <?/MIBLOCK>
+
+  <?MIBLOCK COND=$(AND,$(XST,$xpcur_G_update_exp_zdb_id),$(XST,$xpcur_G_exp_name))>
+  
+    <?MISQL SQL="
+        Update experiment
+        set exp_name = '$xpcur_G_exp_name'
+        where exp_zdb_id = '$xpcur_G_update_exp_zdb_id'
+        ;">
+    <?/MISQL> 
+    
+  <?/MIBLOCK>
+
+  
+
+  <?MICOMMENT> ================| Condition |================ <?/MICOMMENT>
+  <?MIBLOCK COND=$(XST,$xpcur_G_cond_add)>
+    <?MIVAR COND=$(NXST,$xpcur_G_cond_add_comments) NAME=xpcur_G_cond_add_comments><?/MIVAR>
+    <?MIVAR COND=$(NXST,$xpcur_G_cond_add_value) NAME=xpcur_G_cond_add_value><?/MIVAR>
+  
+    <?MICOMMENT> ==| Get next ZDB-ID |== <?/MICOMMENT>
+    <?MISQL SQL="execute function get_id('EXPCOND');">$(SETVAR,$xpcurup_expcond_zdb_id,$1)<?/MISQL>
+    
+    <?MICOMMENT> ==| Add New ZDB-ID |== <?/MICOMMENT>  
+    <?MISQL SQL="INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES('$xpcurup_expcond_zdb_id');"><?/MISQL>
+    
+    <?MIVAR NAME=xpcur_G_expcond_insert_columns>
+            expcond_zdb_id,
+            expcond_exp_zdb_id,
+            expcond_cdt_zdb_id,
+            expcond_value,
+            expcond_expunit_zdb_id,
+            expcond_comments
+    <?/MIVAR>
+    <?MIVAR NAME=xpcur_G_expcond_insert_values>
+            '$xpcurup_expcond_zdb_id',
+            '$xpcur_G_cond_add_exp',
+            '$xpcur_G_cond_add_cond_type',
+            '$xpcur_G_cond_add_value',
+            '$xpcur_G_cond_add_unit',
+            '$xpcur_G_cond_add_comments'
+    <?/MIVAR>
+    <?MIVAR COND=$(XST,$xpcur_G_cond_add_attribute)>
+        <?MIVAR NAME=xpcur_G_expcond_insert_columns>$xpcur_G_expcond_insert_columns, expcond_mrkr_zdb_id<?/MIVAR>
+        <?MIVAR NAME=xpcur_G_expcond_insert_values>$xpcur_G_expcond_insert_values, '$xpcur_G_cond_add_attribute'<?/MIVAR>
+    <?/MIVAR>
+    <?MISQL SQL="
+        INSERT into experiment_condition($xpcur_G_expcond_insert_columns)
+        VALUES ($xpcur_G_expcond_insert_values)
+        ;">
+    <?/MISQL> 
+    
+    <?MISQL SQL="insert into record_attribution(recattrib_data_zdb_id, recattrib_source_zdb_id)
+                 values('$xpcurup_expcond_zdb_id','$OID');">
+    <?/MISQL>
+    
+  <?/MIBLOCK>
+  
+  <?MICOMMENT> ================| Figure |================ <?/MICOMMENT>
+  <?MIBLOCK COND=$(XST,$xpcur_G_fig_add_label)>
+  
+    <?MIVAR COND=$(NXST,$xpcur_G_fig_add_comments) NAME=xpcur_G_fig_add_comments><?/MIVAR>
+    <?MIVAR NAME=xpcur_G_fig_add_caption COND=$(NXST,$xpcur_G_fig_add_caption)><?/MIVAR>
+    <?MIVAR NAME=xpcur_G_fig_add_caption DELIMIT="'" REPLACE="''">$xpcur_G_fig_add_caption<?/MIVAR>
+    
+    <?MICOMMENT> ==| Get next ZDB-ID |== <?/MICOMMENT>
+    <?MISQL SQL="execute function get_id('FIG');">$(SETVAR,$xpcurup_fig_zdb_id,$1)<?/MISQL>
+    
+    <?MICOMMENT> ==| Add New ZDB-ID |== <?/MICOMMENT>  
+    <?MISQL SQL="INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES('$xpcurup_fig_zdb_id');"><?/MISQL>
+    
+    <?MISQL SQL="
+        INSERT into fx_figure(
+            fig_zdb_id,
+            fig_caption,
+            fig_label,
+            fig_comments,
+            fig_source_zdb_id)
+        VALUES (
+            '$xpcurup_fig_zdb_id',
+            '$xpcur_G_fig_add_caption',
+            '$xpcur_G_fig_add_label',
+            '$xpcur_G_fig_add_comments',
+            '$OID');">
+    <?/MISQL> 
+    
+    <?MIVAR NAME=xpcur_c_figure_only>$xpcurup_fig_zdb_id<?/MIVAR>
+
+       
+    <SCRIPT>
+      <?MIVAR>setCookie('figure_only','$xpcurup_fig_zdb_id');<?/MIVAR>
+    </SCRIPT>
+    
+  <?/MIBLOCK>
+  
+  <?MIBLOCK COND=$(XST,$xpcur_G_fig_label)>
+  
+    <?MIVAR COND=$(NXST,$xpcur_G_fig_comments) NAME=xpcur_G_fig_comments><?/MIVAR>
+    <?MIVAR NAME=xpcur_G_fig_caption COND=$(NXST,$xpcur_G_fig_caption)><?/MIVAR>
+
+    <?MISQL SQL="
+        Update fx_figure
+        Set fig_caption = '$xpcur_G_fig_caption',
+            fig_comments = '$xpcur_G_fig_comments',
+            fig_label = '$xpcur_G_fig_label'
+        where fig_zdb_id = '$xpcur_G_fig_zdb_id'
+        ;">
+    <?/MISQL> 
+
+  <?/MIBLOCK>  
+
+
+
+  <?MICOMMENT> ================| Image |================ <?/MICOMMENT>
+
+  <?MIBLOCK COND=$(XST,$xpcur_G_image_OID)>
+    <?MIVAR NAME=xpcur_G_image_label COND=$(NXST,$xpcur_G_image_label)><?/MIVAR>
+    
+    <?MICOMMENT> Enforce Unique combination of Figure Label & Image Label <?/MICOMMENT>
+    <?MISQL SQL="
+        select count(*) 
+        from fx_fish_image_private 
+        where fimgp_label = '$xpcur_G_image_label'
+          and fimgp_fig_zdb_id = '$xpcur_G_image_fig';">
+    <?/MISQL>
+        
+    <?MIBLOCK COND=$(=,$1,0)>
+  
+      <?MIBLOCK COND=$(XST,$xpcurup_width)>
+      
+        <?MISQL SQL="insert into zdb_active_data (zactvd_zdb_id) values ('$xpcur_G_image_OID');"><?/MISQL>
+        <?MISQL SQL="
+          INSERT INTO fx_fish_image_private(
+              fimgp_zdb_id,
+              fimgp_image,
+              fimgp_label,
+              fimgp_fig_zdb_id,
+              fimgp_width,
+              fimgp_height,
+              fimgp_thumbnail,
+              fimgp_view,
+              fimgp_direction,
+              fimgp_form,
+              fimgp_preparation,
+              fimgp_owner_zdb_id)
+          VALUES (
+              '$xpcur_G_image_OID',
+              '$xpcur_G_image_OID$xpcurup_suffix',
+              '$xpcur_G_image_label',
+              '$xpcur_G_image_fig',
+              '$xpcurup_width',
+              '$xpcurup_height',
+              '$xpcur_G_image_OID' || '_thumb$xpcurup_suffix',
+              'not specified',
+              'not specified',
+              'not specified',
+              'not specified',
+              '$ZDB_ident'
+              );">
+        <?/MISQL>
+        <?MISQL SQL="insert INTO RECORD_ATTRIBUTION (recattrib_data_zdb_id, recattrib_source_zdb_id)
+                     VALUES ('$xpcur_G_image_OID','$OID');">
+        <?/MISQL>
+      
+      <?MIELSE>
+
+        <?MISQL SQL="
+          Update fx_fish_image_private
+          Set fimgp_label = '$xpcur_G_image_label',
+              fimgp_fig_zdb_id = '$xpcur_G_image_fig'
+          where fimgp_zdb_id = '$xpcur_G_image_OID'
+          ;">
+        <?/MISQL>  
+      <?/MIBLOCK>
+    <?MIELSE>
+      <?MISQL SQL="select fig_label from fx_figure where fig_zdb_id = '$xpcur_G_image_fig';"><?/MISQL>
+   
+      <SCRIPT>
+        <?MIVAR>
+        alert("Each image for a figure must have a unique name. Image name '$xpcur_G_image_label' exists for Figure '$1'. \n\n Please enter a unique name.")
+        <?/MIVAR>
+      </SCRIPT>
+
+    <?/MIBLOCK>
+  <?/MIBLOCK> <?MICOMMENT> end XST $xpcur_G_image_OID <?/MICOMMENT>
+
+
+
+  <?MICOMMENT> ================| Panel |================ <?/MICOMMENT>
+  <?MIBLOCK COND=$(XST,$xpcur_G_panel_add)>
+    
+      <?MICOMMENT> 
+        ================================================================
+        Connect Experiment and Panel - Create an expression_result 
+        record.
+        ================================================================
+      <?/MICOMMENT>
+      <?MISQL SQL="
+          select anatitem_zdb_id, 't'
+          from anatomy_item
+          where anatitem_name = 'Not Specified';">
+          <?MIVAR NAME=xpcurup_panel_add_anatitem>$1<?/MIVAR>
+         <?MIVAR NAME=xpcurup_panel_add_expressed>$2<?/MIVAR>
+      <?/MISQL>
+    
+      <?MISQL SQL="select WebExplode(object,'gPSLitem_xpatex_zdb_id=$xpcur_G_panel_add_xpatex&gPSLitem_anatitem_zdb_id=$xpcurup_panel_add_anatitem&gPSLitem_expressed=$xpcurup_panel_add_expressed&gPSLitem_stg_start_zdb_id=$xpcur_G_panel_add_start_stg&gPSLitem_stg_end_zdb_id=$xpcur_G_panel_add_end_stg') from webPages where ID='aa-getPubStructureListItem.apg';">$1<?/MISQL>
+
+      <?MISQL SQL="
+         SELECT count(*)
+           FROM fx_expression_pattern_figure
+          WHERE xpatfig_xpatres_zdb_id = '$gPSLitem_xpatres_zdb_id'
+            AND xpatfig_fig_zdb_id = '$xpcur_G_panel_fig_zdb_id';">
+      <?/MISQL>
+         
+      <?MIBLOCK COND=$(NC,$1,1)>     
+        <?MISQL SQL="
+          insert into fx_expression_pattern_figure
+            (
+              xpatfig_xpatres_zdb_id,
+              xpatfig_fig_zdb_id
+            )
+          values
+            (
+              '$gPSLitem_xpatres_zdb_id',
+              '$xpcur_G_panel_fig_zdb_id'
+            );">
+        <?/MISQL>
+      <?MIELSE>
+
+        <SCRIPT>
+          <?MIVAR>
+          alert("Warning:: Duplicate Record. \n\n Please enter a unique combination of Figure / Experiment / Stage .")
+          <?/MIVAR>
+        </SCRIPT>
+        
+      <?/MIBLOCK> 
+  
+  <?/MIBLOCK>  
+
+
+
+  <?MICOMMENT> ================| Panel_Structure |================ <?/MICOMMENT>
+  <?MIBLOCK COND=$(OR,$(AND,$(XST,$xpcur_G_structures_add),$(NE,$xpcur_G_structures_add,)),$(AND,$(XST,$xpcur_G_structures_remove),$(NE,$xpcur_G_structures_remove,)))>
+  
+    <?MICOMMENT>
+        Figures will often have panels with duplicate sets of Structures expressed. Duplicate
+        entry can be avoided if the structures are added to a panel as a set. 
+        
+        Selecting a set of structures requires a list and this is complicated. The list is 
+        specific to the publication and doesn't represent data for searching. To accomodate
+        the unusual nature of this data, it is put into a table and flagged. In this case 
+        the flag is not a field in the table, the flag is a record in record_attribution. 
+        
+        When the data is entered as a member of the list, the data is flagged. This can 
+        happen two ways:
+          1- The add structure form.
+          2- An orphanned structure - a structure which is associate with 0 panels. This may
+             happen via a curator update.
+        
+        Flagged data must be unflagged when the structure is associated with a panel.     
+    <?/MICOMMENT>
+    
+    <?MICOMMENT> ============================================================== 
+                  Extract figure_zdb_id, xpatex_zdb_id, sstage_zdb_id, and 
+                  estage_zdb_id from fig_xpat_stg.
+                ==============================================================
+    <?/MICOMMENT>        
+    <?MIVAR NAME=xpcurup_panel_fig_zdb_id>$(INDEX,0,$xpcur_G_fig_xpat_stg)<?/MIVAR>
+    <?MIVAR NAME=xpcurup_panel_xpatex_zdb_id>$(INDEX,1,$xpcur_G_fig_xpat_stg)<?/MIVAR>
+    <?MIVAR NAME=xpcurup_panel_sstage_zdb_id>$(INDEX,2,$xpcur_G_fig_xpat_stg)<?/MIVAR>
+    <?MIVAR NAME=xpcurup_panel_estage_zdb_id>$(INDEX,3,$xpcur_G_fig_xpat_stg)<?/MIVAR>
+    
+    <?MIVAR COND=$(EC,$debugg,true)>
+      <b>$xpcur_G_fig_xpat_stg</b><BR>
+      fig_zdb_id = $xpcurup_panel_fig_zdb_id<BR>
+      xpatex = $xpcurup_panel_xpatex_zdb_id<BR>
+      sstage = $xpcurup_panel_sstage_zdb_id<BR>
+      estage = $xpcurup_panel_estage_zdb_id<BR>
+    <?/MIVAR>
+
+
+    <?MICOMMENT> ============================================================== 
+                   Create lists of structures to add and remove from the 
+                   selected panel.
+                 ==============================================================
+    <?/MICOMMENT>    
+    
+    <?MIVAR NAME=xpcur_G_structures_add COND=$(NXST,$xpcur_G_structures_add)><?/MIVAR>
+    <?MIVAR NAME=xpcur_G_structures_remove COND=$(NXST,$xpcur_G_structures_remove)><?/MIVAR>
+    <?MIVAR NAME=xpcurup_anatitem_add><?/MIVAR>
+    <?MIVAR NAME=xpcurup_anatitem_remove><?/MIVAR>
+    
+    <?MIVAR NAME=xpcurup_xpatinf_add_csv DELIMIT="|" REPLACE="','">$xpcur_G_structures_add<?/MIVAR>
+    
+    <?MISQL SQL="
+      select xpatinf_anatitem_zdb_id, xpatinf_expressed
+      from expression_pattern_infrastructure
+      where xpatinf_zdb_id in ('$xpcurup_xpatinf_add_csv')
+      ;">
+      <?MIVAR NAME=item DELIMIT="'" REPLACE="''">$1<?/MIVAR>
+      <?MIVAR>$(VECAPPEND,$xpcurup_anatitem_add,$item$2)<?/MIVAR>
+    <?/MISQL>
+    <?MIVAR NAME=xpcurup_anatitem_add_csv SEPARATE="','">$xpcurup_anatitem_add<?/MIVAR>
+    <?MIVAR NAME=xpcur_c_anatitem_add_csv>$xpcurup_anatitem_add_csv<?/MIVAR>
+    <SCRIPT>
+      setCookie('anatitem_add_csv','<?MIVAR>$xpcur_c_anatitem_add_csv<?/MIVAR>')
+    </SCRIPT>
+
+
+    <?MIVAR NAME=xpcurup_xpatinf_remove_csv DELIMIT="|" REPLACE="','">$xpcur_G_structures_remove<?/MIVAR>
+    
+    <?MISQL SQL="
+      select xpatinf_anatitem_zdb_id, xpatinf_expressed
+      from expression_pattern_infrastructure
+      where xpatinf_zdb_id in ('$xpcurup_xpatinf_remove_csv')
+      ;">
+      <?MIVAR NAME=item DELIMIT="'" REPLACE="''">$1<?/MIVAR>
+      <?MIVAR>$(VECAPPEND,$xpcurup_anatitem_remove,$item$2)<?/MIVAR>
+    <?/MISQL>
+    <?MIVAR NAME=xpcurup_anatitem_remove_csv SEPARATE="','">$xpcurup_anatitem_remove<?/MIVAR>
+    <?MIVAR NAME=url_anatitem_remove_csv>$xpcurup_anatitem_remove_csv<?/MIVAR>
+    <?MIVAR NAME=url_anatitem_remove_csv DELIMIT="'" REPLACE="">$url_anatitem_remove_csv<?/MIVAR>  
+    <SCRIPT>
+      setCookie('anatitem_remove_csv','<?MIVAR>$(URLENCODE,$url_anatitem_remove_csv)<?/MIVAR>')
+    </SCRIPT>
+    
+    
+    <?MICOMMENT> =============================================================== 
+                   Create xpatres and xpatfig records  
+                 ===============================================================      
+    <?/MICOMMENT>  
+
+    <?MIVAR NAME=xpcurup_xpatfig_add_list><?/MIVAR>
+    <?MISQL SQL="
+      select xpatinf_anatitem_zdb_id, xpatinf_expressed
+      from expression_pattern_infrastructure
+      where xpatinf_zdb_id in ('$xpcurup_xpatinf_add_csv')
+      ;">
+      <?MISQL SQL="select WebExplode(object,'gPSLitem_anatitem_zdb_id=$1&gPSLitem_expressed=$2&gPSLitem_xpatex_zdb_id=$xpcurup_panel_xpatex_zdb_id&gPSLitem_stg_start_zdb_id=$xpcurup_panel_sstage_zdb_id&gPSLitem_stg_end_zdb_id=$xpcurup_panel_estage_zdb_id') from webPages where ID='aa-getPubStructureListItem.apg';">$1<?/MISQL>
+
+      <?MIVAR>$(VECAPPEND,$xpcurup_xpatfig_add_list,$gPSLitem_xpatres_zdb_id)<?/MIVAR>              
+    <?/MISQL>
+
+    <?MIVAR NAME=xpcurup_xpatfig_add_csv SEPARATE="','">$xpcurup_xpatfig_add_list<?/MIVAR>
+       
+    <?MISQL SQL="
+      select xpatres_zdb_id
+      from fx_expression_result 
+      where xpatres_zdb_id in ('$xpcurup_xpatfig_add_csv')
+        and xpatres_zdb_id not in
+            (
+              select xpatfig_xpatres_zdb_id
+              from fx_expression_pattern_figure
+              where xpatfig_fig_zdb_id = '$xpcurup_panel_fig_zdb_id'
+            );">
+
+        <?MIVAR NAME=xpcurup_panel_xpatres_zdb_id>$1<?/MIVAR>
+        <?MISQL SQL="
+          INSERT into fx_expression_pattern_figure (
+            xpatfig_fig_zdb_id,
+            xpatfig_xpatres_zdb_id)
+          VALUES (
+            '$xpcurup_panel_fig_zdb_id',
+            '$xpcurup_panel_xpatres_zdb_id');">
+        <?/MISQL>         
+        
+    <?/MISQL>
+
+    <?MICOMMENT> =============================================================== 
+                   Delete removed structures from fx_expression_pattern_image. 
+                 ===============================================================
+    <?/MICOMMENT>
+
+    <?MISQL SQL="
+        delete from fx_expression_pattern_figure
+        where xpatfig_fig_zdb_id = '$xpcurup_panel_fig_zdb_id'
+          and exists
+            (
+              select *
+              from fx_expression_result, expression_pattern_infrastructure
+              where xpatfig_xpatres_zdb_id = xpatres_zdb_id
+                and xpatres_anat_item_zdb_id = xpatinf_anatitem_zdb_id
+                and xpatres_expression_found = xpatinf_expressed
+                and xpatinf_zdb_id in ('$xpcurup_xpatinf_remove_csv')
+                and xpatres_xpatex_zdb_id = '$xpcurup_panel_xpatex_zdb_id'
+                and xpatres_start_stg_zdb_id = '$xpcurup_panel_sstage_zdb_id'
+                and xpatres_end_stg_zdb_id = '$xpcurup_panel_estage_zdb_id'
+            )
+        ;">
+    <?/MISQL>
+    
+    <?MIVAR COND=$(EC,$debugg,true)>
+      <br>Delete Panel Structures: $MI_SQL<br><br>
+    <?/MIVAR>
+
+    <?MICOMMENT> ============================================================== 
+                   Orphan records. Deleted these from fx_expression_result. 
+                 ==============================================================
+    <?/MICOMMENT>
+    
+    <?MIVAR NAME=xpcurup_xpatres_orphan><?/MIVAR>
+    <?MISQL SQL="
+      select orphan.xpatres_zdb_id
+      from fx_expression_result orphan, fx_expression_experiment
+      where xpatex_source_zdb_id = '$OID'
+        and xpatex_zdb_id = orphan.xpatres_xpatex_zdb_id
+        and xpatres_start_stg_zdb_id = '$xpcurup_panel_sstage_zdb_id'
+        and xpatres_end_stg_zdb_id = '$xpcurup_panel_estage_zdb_id'
+        and xpatres_xpatex_zdb_id = '$xpcurup_panel_xpatex_zdb_id'
+        and not exists
+            (
+              select * 
+              from fx_expression_pattern_figure
+              where orphan.xpatres_zdb_id = xpatfig_xpatres_zdb_id
+            )
+      ;">
+      <?MIVAR>$(VECAPPEND,$xpcurup_xpatres_orphan,$1)<?/MIVAR>
+    <?/MISQL>
+    <?MIVAR NAME=xpcurup_xpatres_orphan_csv SEPARATE="','">$xpcurup_xpatres_orphan<?/MIVAR>    
+    <?MISQL SQL="
+        delete from zdb_active_data
+        where zactvd_zdb_id in ('$xpcurup_xpatres_orphan_csv')
+        ;">
+    <?/MISQL>
+    
+    <?MIVAR COND=$(EC,$debugg,true)>
+      <br>Delete Results: $MI_SQL<br><br>
+    <?/MIVAR>
+
+  <?/MIBLOCK>  
+
+
+  <?MICOMMENT> ================| Structure |================ <?/MICOMMENT>
+  <?MIBLOCK COND=$(XST,$xpcur_G_structure_add_name)>
+  
+    <?MICOMMENTS>
+       ================================================          
+         Add a record to table expression_pattern_infrastructure
+       ================================================
+    <?/MICOMMENTS>
+
+    <?MICOMMENTS>
+       ================================================          
+         Allow the user to enter multiple structures, seperated by bars.
+         Bars is the delimiter instead of comma because commas are in
+         anatomy item names.
+         
+         Translate the commas into # and the delimiter to comma. Select
+         items useing the INDEX function. Back Translate # to comma.
+       ================================================
+    <?/MICOMMENTS>
+    
+
+    <?MIVAR NAME=i>0<?/MIVAR>
+    <?MIBLOCK WHILE=$(NE,$(INDEX,$i,$xpcur_G_structure_add),)>    	
+
+	    <?MIVAR NAME=xpcurup_structure_add_id>$(INDEX,$i,$xpcur_G_structure_add)<?/MIVAR>
+	    
+	    <?MISQL SQL="
+		select count(*)
+		from expression_pattern_infrastructure
+		where xpatinf_pub_zdb_id = '$OID'
+		  and xpatinf_anatitem_zdb_id = '$xpcurup_structure_add_id'
+		  and xpatinf_expressed = '$structure_expressed'
+		;">
+	    <?/MISQL>
+
+	    <?MIBLOCK COND="$(EC,$1,0)">  
+
+		<?MICOMMENT> ==| Get next ZDB-ID |== <?/MICOMMENT>
+		<?MISQL SQL="execute function get_id('XPATINF');">$(SETVAR,$xpcurup_xpatinf_zdb_id,$1)<?/MISQL>
+
+		<?MICOMMENT> ==| Add New XPATINF |== <?/MICOMMENT>  
+		<?MISQL SQL="INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES('$xpcurup_xpatinf_zdb_id');"><?/MISQL>   
+
+		<?MISQL SQL="    
+		    INSERT INTO expression_pattern_infrastructure (
+			xpatinf_zdb_id,
+			xpatinf_curator_zdb_id,
+			xpatinf_pub_zdb_id,
+			xpatinf_anatitem_zdb_id,
+			xpatinf_expressed,
+			xpatinf_date )
+		    VALUES (
+			'$xpcurup_xpatinf_zdb_id',
+			'$ZDB_ident', 
+			'$OID', 
+			'$xpcurup_structure_add_id',
+			'$structure_expressed',
+			TODAY);">
+		<?/MISQL>
+
+	    <?MIELSE>
+	      <?MISQL SQL="SELECT anatitem_name FROM anatomy_item WHERE anatitem_zdb_id = '$xpcurup_structure_add_id';"><?/MISQL>
+	      <SCRIPT>
+		alert("The structure  '<?MIVAR>$1<?/MIVAR>' - already exists for this publication.")
+	      </SCRIPT>
+	    <?/MIBLOCK> <?MICOMMENT> end xpatres count != 0 <?/MICOMMENT>  
+	    
+	    <?MIVAR NAME=i>$(+,$i,1)<?/MIVAR>
+    <?/MIBLOCK>
+
+    <script>
+      setCookie('xpcur_form_variables','<?MIVAR>$xpcur_G_structure_add<?/MIVAR>');
+    </script>    
+  <?/MIBLOCK> 
+
+  
+    <SCRIPT>
+      setCookie('xpatcuration_update','no')
+    </SCRIPT>   
+     
+<?/MIBLOCK>  <?MICOMMENT> authorize = root <?/MICOMMENT>
