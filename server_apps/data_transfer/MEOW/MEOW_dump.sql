@@ -361,7 +361,7 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/xpat.txt'
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/panels.txt' 
   DELIMITER "	" select zdb_id, abbrev, metric from panels; 
 
-UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/mappings.txt' 
+UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/sanger_mappings.txt' 
   DELIMITER "	" select distinct pm.target_id, pm.zdb_id, pm.abbrev, pm.OR_lg, pm.lg_location,
         case
             when target_id in('ZDB-REFCROSS-980521-11','ZDB-REFCROSS-000320-1')
@@ -382,6 +382,9 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/mappings.txt'
         and mm.map_name    == pm.map_name
         and mm.metric      == pm.metric
         order by 1;
+
+UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/mappings.txt' 
+  DELIMITER "	" select distinct target_id, zdb_id, abbrev, OR_lg, lg_location from paneled_markers  where (zdb_id not like '%FISH%') and (zdb_id not like '%LOCUS%') order by 1;
 
 -- wait to see what to do with mutants  union select distinct a.target_id, b.locus, c.abbrev, a.OR_lg, a.lg_location from paneled_markers a, fish b, locus c where a.zdb_id like '%FISH%' and a.zdb_id = b.zdb_id and b.locus = c.zdb_id
 
