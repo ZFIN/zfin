@@ -1,7 +1,17 @@
 <!-- FILE: MAPPINGDETAIL.HTML. This file implements mapping details for MARKER records.
 -->
-<?MIVAR COND="$(NXST,$mapdetails_mode)" NAME=$mapdetails_mode>standalone<?/MIVAR>
 
+<?MIVAR COND="$(NXST,$mapdetails_mode)" NAME=$mapdetails_mode>standalone<?/MIVAR>
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+
+<?/MIERROR>
 
 <!--------- start mini mode ------------------------>
 <!---- mini mode use $oID instead of $OID to avoid changing the value of
@@ -130,11 +140,29 @@
      <?/MIVAR>
      <?MIVAR NAME=$last>$1<?/MIVAR>
   <?/MISQL>
+  <?MIVAR NAME=$the_lg>$1<?/MIVAR>
+  <?MIVAR NAME=$map_count>$MI_ROWCOUNT<?/MIVAR>
+
+  <?MICOMMENT>check for mapped_deletion on deficiency allele<?/MICOMMENT>
+  <?MIVAR NAME=deficiency_info>f<?/MIVAR> 
+  <?MISQL COND="$(>,$(POSITION,$oID,FISH),0)" SQL="
+	select * from mapped_deletion m, fish f
+		where f.allele = m.allele
+                  and f.zdb_id = '$oID' ">
+  <?/MISQL>
+  <?MIVAR COND="$(>,$MI_ROWCOUNT,0)" NAME=deficiency_info>t<?/MIVAR> 
+  <?MISQL COND="$(>,$(POSITION,$oID,LOCUS),0)" SQL="
+	select * from mapped_deletion m, fish f
+		where f.allele = m.allele
+		  and f.locus  = '$oID' ">
+  <?/MISQL>
+  <?MIVAR COND="$(>,$MI_ROWCOUNT,0)" NAME=deficiency_info>t<?/MIVAR> 
+
   <?MIVAR COND="$(EC,$last,0)">&nbsp;<font size=-1>Unknown</font><?/MIVAR>
-  <?MIBLOCK COND="$(AND,$(=,$MI_ROWCOUNT,1),$(NC,$1,MT),$(NC,$1,0))">
-    <?MIVAR COND="$(<,$1,10)">&nbsp;<?/MIVAR>
+  <?MIBLOCK COND="$(AND,$(=,$map_count,1),$(NC,$the_lg,MT),$(NC,$the_lg,0))">
+    <?MIVAR COND="$(<,$the_lg,10)">&nbsp;<?/MIVAR>
   <?/MIBLOCK>	
-  <?MIBLOCK COND="$(AND,$(EC,$hide_empty,f),$(=,$MI_ROWCOUNT,0))">
+  <?MIBLOCK COND="$(AND,$(EC,$hide_empty,f),$(=,$map_count,0),$(EC,$deficiency_info,f))">
     None submitted.
     <?MIVAR COND="$(AND,$(XST,$UPDATE),$(>,$(POSITION,$oID,FISH),0))">
       <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mappingdetail.apg&OID=$oID&UPDATE=1">Update on Detail page</A>
@@ -146,9 +174,10 @@
    
 <?/MIBLOCK>
 
-<?MIBLOCK COND="$(OR,$(XST,$lg_list),$(>,$MI_ROWCOUNT,0))">
+<?MIBLOCK COND="$(OR,$(XST,$lg_list),$(>,$map_count,0),$(EC,$deficiency_info,t))">
  
  <?MIVAR>&nbsp;<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mappingdetail.apg&OID=$oID">Details</A><?/MIVAR>
+
 <!-- mini mode section is exploded from both mapping details page and geneselect page, the column open and close need to be handled differently, use the $split functionality to determine which was the calling routine and add appropriate td's -->
     <?MIVAR COND="$(EC,$viewmap,t)">
 	$(IF,$(EC,$split,&nbsp;),</td><td>)
@@ -359,14 +388,14 @@ marker = '';
      
       <?MIVAR NAME=$locus_id><?/MIVAR>
       <?MISQL SQL="
-		select zdb_id, abbrev
+		select zdb_id, abbrev, locus_name
                   from locus
                  where cloned_gene = '$OID'
                 ;">
   
-         <TR><TD><b>Locus <i><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$1">$2</A></i> corresponding to gene <i><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID">$mrkr_abbrev</A></i></b>
+         <TR><TD><b>Locus <i><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$1">$(IF,$(NC,$2,),$2,$3)</A></i> corresponding to gene <i><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID">$mrkr_abbrev</A></i></b>
          </TD></TR>
-         <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&orgOID=$MID&detOID=$1&abbrev=$2') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+         <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&orgOID=$MID&detOID=$1&abbrev=$(IF,$(NC,$2,),$2,null)') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
          <?MIVAR NAME=$locus_id>$1<?/MIVAR>
       <?/MISQL>
       
@@ -394,7 +423,7 @@ marker = '';
 	<TR><TD><b>Allele <i><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$1">$2</A></i> corresponding to gene <i><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID">$mrkr_abbrev</A></i> </b> 
         </TD></TR>
 
-	<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&orgOID=$MID&detOID=$allele_id&abbrev=$2') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+	<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&orgOID=$MID&detOID=$allele_id&abbrev=$allele') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
     
       <?/MISQL> 
 
