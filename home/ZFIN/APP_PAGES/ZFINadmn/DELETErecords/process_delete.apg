@@ -1,4 +1,4 @@
- <?MIERROR>
+<?MIERROR>
 <?MIVAR COND=$(XST,$MI_SQL)>
 SQL: $MI_SQL
 
@@ -66,7 +66,7 @@ Datablade documentation.
       <?MIBLOCK COND="$(NC,$merge_oid,none)">
 
 	<?MIBLOCK COND="$(OR,$(EC,$rtype,marker),$(EC,$rtype,fish))">
- 
+
           <?MIBLOCK COND="$(EC,$rtype,fish)">
 	    <?MISQL SQL="
 	       select allele from fish where zdb_id = '$OID';">
@@ -89,10 +89,16 @@ Datablade documentation.
 
 	  <!-- update any existence of mapping data for id that is being replaced --> 
 	  <?MISQL SQL="
-            update mapped_marker
+	      update mapped_marker
 	      set marker_id = '$merge_oid'
 	      where marker_id = '$OID';">
           <?/MISQL>
+
+	  <!---update any data_notes associated with id being old merging id->
+ 	  <?MISQL SQL="update data_note
+			set dnote_data_zdb_id = '$merge_oid'
+			where dnote_data_zdb_id = '$OID';">
+	  <?/MISQL>
 	  <!-- update primer set for id that is being replaced --> 
 	  <?MISQL SQL="
             update primer_set set marker_id = '$merge_oid' where marker_id = '$OID';">
