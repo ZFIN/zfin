@@ -121,15 +121,12 @@ drop table tmp_fpc_alias;
 -- CV and XPAT associations for VEGA
 
 unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/vega_xpat_stage.unl'
-select distinct stg_zdb_id,
+  select stg_zdb_id,
            stg_name,
            stg_hours_start,
            stg_hours_end
-from stage
-where stg_zdb_id not in (
-          select stgcon_containeR_zdb_id from stage_contains
-)  
-order by 3
+  from stage
+  order by stg_hours_start
 ;
 
 unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/vega_xpat_anatomy_item.unl'
