@@ -61,26 +61,20 @@
 
    <!-- look if accession number links to gene , significance 11 and 12 signify orthologue or accession numbers -->
 
-    <?MISQL SQL="select count(*)::integer from all_map_names a  where allmapnm_name = lower('$aname') and allmapnm_zdb_id like '%GENE%' and allmapnm_significance in (11,12);">
-      $(SETVAR,$gcount,$1)
+    <?MISQL SQL="select allmapnm_zdb_id from all_map_names a  where allmapnm_name = lower('$aname') and allmapnm_significance in (11,12) order by allmapnm_zdb_id;">
+      $(SETVAR,$gcount,1)
+      <?MIVAR NAME=$matchId>$1<?/MIVAR>
     <?/MISQL>
     <?MIBLOCK COND="$(NC,$gcount,0)">
-	<?MIVAR NAME=$start_page>aa-geneselect.apg<?/MIVAR>	
+	<?MIBLOCK COND="$(>,$(POSITION,$matchId,GENE),0)">
+	  <?MIVAR NAME=$start_page>aa-geneselect.apg<?/MIVAR>	
+	<?MIELSE>
+	  <?MIVAR NAME=$start_page>aa-markerselect.apg<?/MIVAR>	
+	<?/MIBLOCK>
         <?MIVAR NAME=$name>$aname<?/MIVAR>
         <?MISQL SQL="select WebExplode(object,'') from webPages where ID='$start_page';">$1<?/MISQL>
     <?/MIBLOCK>
 
-   <!-- look if accession number links to marker-->
-
-    <?MISQL SQL="select count(*)::integer from all_map_names a  where allmapnm_name = lower('$aname') and allmapnm_zdb_id not like '%GENE%' and allmapnm_significance in (11,12);">
-      $(SETVAR,$mcount,$1)
-    <?/MISQL>
-    <?MIBLOCK COND="$(NC,$mcount,0)">
-	<?MIVAR NAME=$start_page>aa-markerselect.apg<?/MIVAR>
-	<?MIVAR NAME=$constraint> where mrkr_zdb_id = '$OID' <?/MIVAR>
-        <?MIVAR NAME=$name>$aname<?/MIVAR>
-        <?MISQL SQL="select WebExplode(object,'') from webPages where ID='$start_page';">$1<?/MISQL>
-    <?/MIBLOCK>
 
     <?MIBLOCK COND="$(AND,$(EC,$pcount,0),$(EC,$mcount,0),$(EC,$gcount,0))">
       <form><center><font size=4><?MIVAR><b>Requested acession number is not available in ZFIN.</b></font></center> <?/MIVAR>
