@@ -166,7 +166,7 @@ dataOID -- the zdbid of the attributed item
     <?/MISQL>
     <?MIVAR NAME=$ortho_id>$1<?/MIVAR>
     <?MISQL SQL="
-      insert into zdb_active_data
+      insert into zdb_active_data (zactvd_zdb_id)
 	values ('$ortho_id');">
     <?/MISQL>
     <?MISQL SQL="
@@ -226,6 +226,7 @@ dataOID -- the zdbid of the attributed item
       <?MIBLOCK COND="$(EC,$attr,recattrib)">
          <?MISQL SQL="
 	    insert into record_attribution
+		(recattrib_data_zdb_id, recattrib_source_zdb_id) 
               values('$old_value', '$new_value')	
                 ;">
          <?/MISQL>
@@ -233,6 +234,7 @@ dataOID -- the zdbid of the attributed item
       <?MIELSE COND="$(EC,$attr,colattrib)">
          <?MISQL SQL="
 	    insert into column_attribution
+		(colattrib_data_zdb_id, colattrib_column_name, colattrib_source_zdb_id)
               values('$old_value','$info', '$new_value')	
                 ;">
          <?/MISQL>
