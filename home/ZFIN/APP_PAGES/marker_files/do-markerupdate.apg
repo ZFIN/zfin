@@ -719,6 +719,8 @@ colattrib_source_zdb_id)
 
 
       <?MIBLOCK COND="$(XST,$delacc)">
+	<?MIVAR NAME=deldb>$(SUBSTR,$delacc,1,$(-,$(POSITION,$delacc,":"),1))<?/MIVAR>
+        <?MIVAR NAME=delacc>$(SUBSTR,$delacc,$(+,$(POSITION,$delacc,":"),1),$(-,$(STRLEN,$delacc),$(POSITION,$delacc,":")))<?/MIVAR>
         <!-- deleting a link -->
         <?MISQL SQL="
    	  delete from zdb_active_data
@@ -726,6 +728,7 @@ colattrib_source_zdb_id)
 		( select dblink_zdb_id 
 		    from db_link
 		    where linked_recid = '$ortho_id'
+		      and db_name = '$deldb'
 		      and acc_num = '$delacc' ) ;">
         <?/MISQL>     
       <?/MIBLOCK>
