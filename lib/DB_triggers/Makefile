@@ -69,6 +69,7 @@ TRIGGERS = \
 	orthologue_evidence_display_insert_trigger.sql \
 	orthologue_evidence_display_update_trigger.sql \
 	orthologue_insert_trigger.sql \
+	orthologue_update_trigger.sql \
 	person_insert_trigger.sql \
 	person_update_trigger.sql \
 	publication_insert_trigger.sql \
