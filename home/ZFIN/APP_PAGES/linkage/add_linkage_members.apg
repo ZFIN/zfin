@@ -1,0 +1,192 @@
+<!-- this app page is used to add members to a new linkage group. The page supports, search/selection of the markers/mutants.
+
+Required vars:  link_id.
+
+Possible vars: update
+-->
+<HTML>
+<HEAD>
+  <SCRIPT>
+     function pick_me(link_id,mark_id) {
+       window.location.href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-insert_linkage.apg&link_id="+link_id+"&calling_form=members&member="+mark_id;
+     }
+
+
+     function call_distance(link_id,num_members) {
+	if (num_members < 2 ){
+	   window.alert("Two markers must be specified before a distance may be added.");
+	   return false;
+          } else {
+           window.location.href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-add_linkage_distance.apg&link_id="+link_id;
+           return true;
+          }
+	}
+
+
+   </SCRIPT>
+</HEAD>
+
+<body bgcolor="#e5e5e5"  TEXT="black">
+<basefont COLOR="#000000" size=2>
+
+<!-- new linkage has been inserted - begin getting linkage members -->
+
+<form name=linkage method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" >
+<input type=hidden name=MIval value=aa-add_linkage_members.apg>
+<input type=hidden name=calling_form value="members">
+<?MIVAR>
+  $(IF,$(XST,$update),"<input type=hidden name=update value="$update">")
+  <input type=hidden name=link_id value="$link_id">
+<?/MIVAR>
+
+<center>
+  <B>
+    <font size=5> Add Markers to Linkage: <?MIVAR> $link_id <?/MIVAR>  
+  </B>
+</center>
+<p>
+
+<basefont size=2>
+
+<?MISQL SQL="select WebExplode(object,'permission=root') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+<?MIVAR COND="$(NXST,$mtype)" NAME=$mtype>GENE<?/MIVAR>
+<?MIVAR COND="$(NXST,$nsearch)" NAME=$nsearch><?/MIVAR>
+
+<p>
+<?MISQL SQL="select distinct lnkg_source_zdb_id, lnkg_or_lg,lnkg_private, lnkg_comments from linkage  
+        where lnkg_zdb_id = '$link_id';">
+  <?MIVAR NAME=$source>$1<?/MIVAR>
+  Source: 
+  <?MIBLOCK COND="$(>,$(POSITION,$source,PUB),0)">
+    <?MISQL SQL="select distinct title from publication  
+        where zdb_id = '$source';">
+    <?MIVAR NAME=$display_source>$1<?/MIVAR>
+    <?/MISQL>
+  <?/MIBLOCK>
+  <?MIBLOCK COND="$(>,$(POSITION,$source,PER),0)">
+    <?MISQL SQL="select distinct full_name from person  
+        where zdb_id = '$source';">
+    <?MIVAR NAME=$display_source>$1<?/MIVAR>
+    <?/MISQL>
+  <?/MIBLOCK>
+  $display_source
+  <br>
+  LG: $(IF,$(EC,$2,0),,$2)
+  <br>
+  Private: $3
+  <br>
+  Comments: $4
+<?/MISQL>
+
+  <!-- output the current members of the linkage - if any exist -->
+<p>
+Linkage Members:<br>
+   <?MISQL SQL="select distinct abbrev, mtype from all_markers a , linkage_member b 
+        where b.lnkgmem_linkage_zdb_id = '$link_id'
+          and b.lnkgmem_member_zdb_id = a.zdb_id;">
+    $1 ($2)
+    <br>
+    <?/MISQL>
+    <?MIVAR NAME=$num_members>$MI_ROWCOUNT<?/MIVAR>
+  
+    <?MISQL SQL=" select distinct a.allele, c.abbrev from fish a , linkage_member b, locus c
+         where b.lnkgmem_linkage_zdb_id = '$link_id'
+           and b.lnkgmem_member_zdb_id = a.zdb_id
+           and a.locus = c.zdb_id;">
+    $1 ($2)
+    <br>
+    <?/MISQL>           
+    <?MIVAR>
+      $(SETVAR,$num_members,$(+,$num_members,$MI_ROWCOUNT))
+    <?/MIVAR>
+
+    <big>Specify members of linkage:</big><?MIVAR>
+
+    <?MIVAR>
+      <select name=mtype>
+	<option $(IF,$(EC,$mtype,MUTANT),SELECTED)>MUTANT
+	<option $(IF,$(EC,$mtype,GENE),SELECTED)>GENE
+	<option $(IF,$(EC,$mtype,EST),SELECTED)>EST
+	<option $(IF,$(EC,$mtype,RAPD),SELECTED)>RAPD
+	<option $(IF,$(EC,$mtype,SSLP),SELECTED)>SSLP
+	<option $(IF,$(EC,$mtype,SSR),SELECTED)>SSR
+	<option $(IF,$(EC,$mtype,STS),SELECTED)>STS
+	<option $(IF,$(EC,$mtype,BAC),SELECTED)>BAC
+      </SELECT>  and its abbrev contains:
+      <input type=text name=member value="$nsearch" size=8>  
+      <input type=submit name=do_search value="Search">
+    <?/MIVAR>
+
+       <!-- search for a marker member -->
+       <?MIBLOCK COND="$(AND,$(NC,$mtype,mutant),$(XST,$do_search))">
+	 <hr>
+	 <TABLE cols=2>
+	 <TR><TH></TH><TH>Marker Name</TH><TH>Marker Type</TH></TR>
+	 <?MISQL SQL="select distinct zdb_id,mname,mtype,abbrev 
+	   from all_markers a, all_map_names b
+	     where a.mtype='$mtype' 
+	       and a.zdb_id = b.allmapnm_zdb_id 
+	       and b.allmapnm_name like '%$(LOWER,$member)%' 
+	       order by a.abbrev;">
+	   <TR>
+	     <TD>
+	       <input type=button name=member_selected value="Select" onClick="pick_me('$link_id','$1');">
+	     </TD>
+	     <TD>
+	       $2($4)
+	     </TD>
+	     <TD>
+	       $3
+	     </TD>
+	   </TR>
+	 <?/MISQL>
+	 </TABLE>
+       <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No matches.<?/MIVAR>
+       <?/MIBLOCK>
+
+
+       <?MIBLOCK COND="$(AND,$(EC,$mtype,mutant),$(XST,$do_search))">
+	 <hr>
+	 <TABLE cols=2>
+	 <TR><TH></TH><TH>Allele</TH><TH>Locus</TH></TR>
+	 <?MISQL SQL="select distinct a.zdb_id,a.allele,b.abbrev 
+	   from fish a, locus b
+	     where  a.locus = b.zdb_id 
+               and b.abbrev like '%$(LOWER,$member)%' 
+	       order by b.abbrev;">
+	   <TR>
+	     <TD>
+	       <input type=button name=member_selected value="Select" onClick="pick_me('$link_id','$1');">
+	     </TD>
+	     <TD>
+	       $2 
+	     </TD>
+	     <TD>
+	       $3
+	     </TD>
+	   </TR>
+	 <?/MISQL>
+	 </TABLE>
+       <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No mutant matches.<?/MIVAR> 
+       <p>
+  
+  <?/MIBLOCK>
+
+
+<p>
+  <?MIBLOCK COND="$(NXST,$update)">
+    <?MIVAR>
+      <input type=button value="Add Distances" onClick="return call_distance('$link_id','$num_members');">   
+    <?/MIVAR>
+      <input type=button value="Submit" onClick="window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg'">
+  <?/MIBLOCK>
+
+    <?MIBLOCK COND="$(XST,$update)">
+      <?MIVAR>
+	<input type=button value="Cancel" onClick="window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_linkage.apg&link_id=$link_id&update=true'">   
+	<input type=button value="Submit" onClick="window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_linkage.apg&link_id=$link_id&update=true'">  
+      <?/MIVAR>
+    <?/MIBLOCK>
+
+</form>
