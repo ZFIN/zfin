@@ -24,7 +24,8 @@ GENERICS = REFERinfo.apg curatepub.apg enterpubs.apg link_authors.apg \
 	pubprintable.apg pubselect2.apg pubview2.apg \
 	showpubs.apg miniref_display.apg curate_ortho_select.apg pubcuration.apg \
 	pubtopic_close.apg pubtopic_open.apg pubtopic_unclaim.apg pubtopic_found.apg \
-	pubtopic_reassign.apg pnote_new.apg pnote_editor.apg 
+	pubtopic_reassign.apg pnote_new.apg pnote_editor.apg notif_frame.apg \
+	notif_content.apg
 
 
 # use default rules for app page directories.
