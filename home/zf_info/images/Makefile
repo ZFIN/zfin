@@ -22,7 +22,7 @@ TARGETDIR = $(TARGETROOT)/home/zf_info/images
 
 SUBDIRS = high_res_sketches staging_photos
 
-
+STATICS = high_res_zfish.tif
 
 # ---------------  Production Rules  ------------------------------------
 
