@@ -2,8 +2,6 @@
 #
 # Makefile for ZFIN_WWW CVS Project, Updating pages
 #
-# $Source$
-# $Id$
 #
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
@@ -21,7 +19,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/updating
 
-GENERICS = update-lister.apg update-select.apg update-vframeset.apg
+GENERICS = update-lister.apg update-select.apg update-vframeset.apg update-ids.apg remove-ids.apg
 
 
 # ---------------  Production Rules  ------------------------------------
