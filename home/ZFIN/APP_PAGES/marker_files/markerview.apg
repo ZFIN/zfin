@@ -831,37 +831,43 @@ Datablade documentation.
   <?MIBLOCK COND="$expexists">
     <HR width="80%">
     <b>GENE EXPRESSION: </b><font size=-1>(<a href="javascript:start_note();">current status</a></font>)
-    <?MISQL SQL="
-      select count(*)::integer
-	from expression_pattern, expression_pattern_image
-	where '$OID' in (xpat_gene_zdb_id, xpat_probe_zdb_id)
-	  and xpat_zdb_id = xpatfimg_xpat_zdb_id">
-    <?/MISQL>
-    <?MIVAR NAME=$expWithImagesExists>$1<?/MIVAR>
-
     <TABLE width="100%" border="0" <?MIVAR>bgcolor="$highlight"<?/MIVAR>>
-      <?MIBLOCK COND=$expWithImagesExists>
-	<TR><TD><b>Gene expression patterns (images):</b></TD></TR>
+       
+    <?MISQL SQL="
+      select distinct xpat_zdb_id
+	from expression_pattern
+	where '$OID' in (xpat_gene_zdb_id, xpat_probe_zdb_id)
+	  and (xpat_zdb_id in (select xpatfimg_xpat_zdb_id
+				from expression_pattern_image)
+	    or xpat_zdb_id in (select xpatstg_xpat_zdb_id
+				 from expression_pattern_stage
+			        where xpatstg_comments is not null)
+	    or xpat_zdb_id in (select xpatanat_xpat_zdb_id
+				 from expression_pattern_anatomy)
+	      )
+	order by xpat_zdb_id;">
+        <?MIVAR NAME=$XPAT_ZDB_ID>$1<?/MIVAR>
+        <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
+       
+	      <TR><TD><b>Gene expression patterns:</b></TD></TR>
+        <?/MIBLOCK>	
 	<?MISQL SQL="
-	  SELECT distinct xpat_zdb_id, xpat_assay_name, stg_hours_start, stg_name, stg_zdb_id
-	    FROM expression_pattern, expression_pattern_stage, stage, expression_pattern_image
-	    WHERE '$OID' in (xpat_gene_zdb_id, xpat_probe_zdb_id)
-	      AND xpat_zdb_id = xpatstg_xpat_zdb_id
-	      AND xpatstg_start_stg_zdb_id = stg_zdb_id
-	      AND xpat_zdb_id = xpatfimg_xpat_zdb_id
-	    ORDER by xpat_zdb_id, stg_hours_start
+	    SELECT distinct xpat_assay_name, stg_hours_start, stg_name, stg_zdb_id
+	      FROM expression_pattern, expression_pattern_stage, stage
+	      WHERE xpat_zdb_id = '$XPAT_ZDB_ID'
+	        AND xpat_zdb_id = xpatstg_xpat_zdb_id
+	        AND xpatstg_start_stg_zdb_id = stg_zdb_id
+	      ORDER by stg_hours_start
 	       ;">
-	  <?MIVAR NAME=currentrow>$MI_CURRENTROW<?/MIVAR>
-	  <?MIBLOCK COND=$(NC,$XPAT_ZDB_ID,$1)>
-	    <?MIVAR NAME=$XPAT_ZDB_ID>$1<?/MIVAR>
-	    <?MIVAR NAME=$XPAT_ASSAY_NAME>$2<?/MIVAR>
-	    <?MIVAR NAME=$XPAT_start_time>$3<?/MIVAR>
-	    <?MIVAR NAME=$XPAT_STAGE1>$4<?/MIVAR>
-	    <?MIVAR NAME=$XPAT_STAGE1_ID>$5<?/MIVAR>
+	    
+	    <?MIVAR NAME=$XPAT_ASSAY_NAME>$1<?/MIVAR>
+	    <?MIVAR NAME=$XPAT_start_time>$2<?/MIVAR>
+	    <?MIVAR NAME=$XPAT_STAGE1>$3<?/MIVAR>
+	    <?MIVAR NAME=$XPAT_STAGE1_ID>$4<?/MIVAR>
 	    <?MIVAR NAME=$XPAT_STAGE2><?/MIVAR>
 	    <?MIVAR NAME=$XPAT_end_time><?/MIVAR>
-
-	    <?MISQL SQL="
+          <?/MISQL>
+	  <?MISQL SQL="
 	      SELECT s2.stg_name, s2.stg_hours_end
 		FROM stage s1, stage s2, expression_pattern_stage
 		WHERE '$XPAT_ZDB_ID' = xpatstg_xpat_zdb_id
@@ -873,40 +879,49 @@ Datablade documentation.
 	      <?MIVAR NAME=$XPAT_STAGE2>$1<?/MIVAR>
 	      <?MIVAR NAME=$XPAT_end_time>$2<?/MIVAR>
 
-	    <?/MISQL>
+	   <?/MISQL>
 
-	    <?MIVAR>
+	   <?MIVAR>
 	      <TR><TD>
 	        &nbsp;&nbsp;<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatview.apg&OID=$XPAT_ZDB_ID>$XPAT_ASSAY_NAME</A>  -  $XPAT_STAGE1 to $XPAT_STAGE2  ($XPAT_start_time hr to $XPAT_end_time hr) 
 	        <?MISQL SQL="select WebExplode(object,'dataId=$XPAT_ZDB_ID&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
 	      </TD></TR>
 	    <?/MIVAR>	
-	  <?/MIBLOCK>
-	<?/MISQL>
-        <TR><TD>&nbsp;</TD></TR>
-      <?/MIBLOCK> <?MICOMMENT> end expression patterns with images exists <?/MICOMMENT>
 
-      <?MIVAR NAME=count>0<?/MIVAR>
-      <?MISQL SQL="
-	select count(distinct recattrib_source_zdb_id)::integer 
-	  from expression_pattern, record_attribution, publication 
-	  where '$OID' in (xpat_gene_zdb_id, xpat_probe_zdb_id)
-	    and xpat_zdb_id = recattrib_data_zdb_id
-	    and zdb_id = recattrib_source_zdb_id
-	    and jtype not in ('Curation', 'Unpublished')">
-      <?/MISQL>
-      <?MIVAR NAME=$count>$1<?/MIVAR>
+ 	<?/MISQL>
+        <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
+           <TR><TD>&nbsp;</TD></TR>
+	<?/MIVAR>
+	<?MICOMMENT> end expression patterns with images/annotation <?/MICOMMENT>
+   
 
-      <?MIVAR NAME=$titleexp>Expression of <?/MIVAR>
-      <?MIBLOCK COND="$(OR,$(>,$count,0),$(XST,$UPDATE))">
-	<?MIVAR><p>
+        <?MIVAR NAME=count>0<?/MIVAR>
+        <?MISQL SQL="
+	    select count(distinct recattrib_source_zdb_id)::integer 
+	      from expression_pattern, record_attribution 
+	     where '$OID' in (xpat_gene_zdb_id, xpat_probe_zdb_id)
+	       and xpat_zdb_id = recattrib_data_zdb_id
+	       and xpat_zdb_id not in (select xpatfimg_xpat_zdb_id
+					from expression_pattern_image)
+	       and xpat_zdb_id not in (select xpatstg_xpat_zdb_id
+				 	from expression_pattern_stage
+			        	where xpatstg_comments is not null)
+	       and xpat_zdb_id not in (select xpatanat_xpat_zdb_id
+				 	from expression_pattern_anatomy);">
+        <?/MISQL>
+        <?MIVAR NAME=$count>$1<?/MIVAR>
+
+        <?MIVAR NAME=$titleexp>Expression of <?/MIVAR>
+        <?MIBLOCK COND="$(OR,$(>,$count,0),$(XST,$UPDATE))">
+	 <?MIVAR><p>
 	  <TR><TD>
 	    <b>Publications reporting expression:</b> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=xpat&title=$(URLENCODE,$titleexp)&pubcount=$count&caller=marker&cellpad=0&name=$(URLENCODE,$name)&abbrev=$abbrev$(IF,$(XST,$UPDATE),&UPDATE=1)">($count)</A><img src="/images/new1.gif" border=0 height=15>
 	  </TD></TR>
-	<?/MIVAR>
-      <?/MIBLOCK>
-    </TABLE>
-  <?/MIBLOCK> <?MICOMMENT> end expression patterns exist <?/MICOMMENT>
+	 <?/MIVAR>
+        <?/MIBLOCK>
+	
+     </TABLE>
+   <?/MIBLOCK> <?MICOMMENT> end expression patterns exist <?/MICOMMENT>
 <?/MIBLOCK> <?MICOMMENT> end if marker is in GENEDOM or is EST <?/MICOMMENT>
 
 <!--------------- ends GENE EXPRESSION -------------------------->
