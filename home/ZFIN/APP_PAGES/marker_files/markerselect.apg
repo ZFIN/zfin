@@ -155,6 +155,8 @@ requested from publication page for related data list.
 
     <!---------------------------------------------------------------------->
     <?MIBLOCK COND="$(XST,$input_name)">
+
+      <?MIVAR NAME=$input_name DELIMIT="'" REPLACE="''">$input_name<?/MIVAR>
       <?MIVAR NAME=geneMchIdLast><?/MIVAR>	
       <?MISQL SQL="
 	 select allmapnm_zdb_id, allmapnm_name, 
@@ -180,8 +182,9 @@ requested from publication page for related data list.
 	$(SETVAR,$mrkrsel_optional_marker_cols,", mstmrkr_match_name, mstmrkr_significance, mstmrkr_precedence")
 	$(VECAPPEND, $constraint, mstmatch_session_id = $mrkrsel_session_id )
 	$(VECAPPEND, $constraint," mrkr_zdb_id = mstmatch_zdb_id ")
-
       <?/MIVAR>
+      <?MICOMMENT>restore the input string for display<?/MICOMMENT>
+      <?MIVAR COND="$(XST,$input_name)" NAME=input_name DELIMIT="''" REPLACE="'">$input_name<?/MIVAR>
     <?/MIBLOCK>  <!----------------------------------------------------->
 
 

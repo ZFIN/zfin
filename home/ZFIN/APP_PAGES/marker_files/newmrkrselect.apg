@@ -13,6 +13,16 @@ statement.  See discussion of the MIqry2pass variable in the Web
 Datablade documentation.
 <?/MICOMMENT>
 
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
 <HTML>
 <HEAD> <?MIVAR Name=page_name>$(IF,$(XST,$query_results),ZFIN Marker Search Results,ZFIN Search Markers)<?/MIVAR>
 
@@ -79,7 +89,6 @@ Datablade documentation.
      </script>
    
   <?MIELSE>
-
    <?MIVAR COND="$(XST,$input_name)">$(SETVAR,$input_name,$(TRIM,$input_name))<?/MIVAR>
    <?MIVAR COND="$(XST,$input_acc)">$(SETVAR,$input_acc,$(TRIM,$input_acc))<?/MIVAR>		
    <?MIVAR NAME=$lg COND="$(NXST,$lg)">0<?/MIVAR>
@@ -87,7 +96,7 @@ Datablade documentation.
    <?MIVAR COND="$(NXST,$vector_type)" NAME=$vector_type>any<?/MIVAR>
    <?MIVAR COND="$(NXST,$compare)" NAME=$compare>contains<?/MIVAR>
 
-   <!-- build up the parameter. the $return_rec is passed in from start_select.apg for update selecting --> 
+   <!-- build up the parameter. the $return_rec is passed in from start_select.apg for update selecting -->    
    <?MIVAR NAME=$mrkr_param_list>&query_results=t$(IF,$(XST,$input_name),&input_name=$input_name)$(IF,$(XST,$input_acc),&input_acc=$input_acc)$(IF,$(XST,$compare),&compare=$compare)$(IF,$(NC,$lg,0),&lg=$lg)$(IF,$(XST,$WINSIZE),&WINSIZE=$WINSIZE)$(IF,$(XST,$return_rec),&return_rec=$return_rec)<?/MIVAR>
     <?MIVAR NAME=$mseg_param_list>$mrkr_param_list$(IF,$(XST,$sequence_type),&sequence_type=$sequence_type)$(IF,$(XST,$vector_type),&vector_type=$vector_type)$(IF,$(XST,$return_rec),&return_rec=$return_rec)<?/MIVAR>
    
@@ -95,7 +104,7 @@ Datablade documentation.
   <?MIVAR COND="$(NC,$marker_type,all)" NAME=$mlist SEPARATE="','">$marker_type<?/MIVAR>
 
   <?MIBLOCK COND="$(AND,$(XST,$mlist),$(EC,$marker_type,$mlist),$(NXST,$getTop))">
-
+        
 	<?MISQL SQL=" select mtgrpmem_mrkr_type
 			from marker_type_group_member
 		       where mtgrpmem_mrkr_type_group = 'SEARCH_SEG'
@@ -122,6 +131,7 @@ Datablade documentation.
 
     <!------------------ input name ----------------------------------->
     <?MIBLOCK COND="$(XST,$input_name)">
+      <?MIVAR NAME=input_name DELIMIT="'" REPLACE="''">$input_name<?/MIVAR>
       <?MISQL SQL="
 	  create temp table bigselect_name_match(
 		mrkrmch_zdb_id	varchar(50),
@@ -160,6 +170,8 @@ Datablade documentation.
 	$(VECAPPEND, $constraint, " mrkr_zdb_id = mrkrmch_zdb_id ")
 	$(SETVAR,$has_constraint,t)
       <?/MIVAR>
+      <?MICOMMENT>restore the input string for display<?/MICOMMENT>
+      <?MIVAR COND="$(XST,$input_name)" NAME=input_name DELIMIT="''" REPLACE="'">$input_name<?/MIVAR>
     <?/MIBLOCK><!----------- end input name ------------------------>
 
 
@@ -323,7 +335,7 @@ Datablade documentation.
     <?MISQL COND="$(XST,$input_acc)" SQL="
 	drop table bigselect_acc_match; ">
     <?/MISQL>
-
+    
 
    <!------------------  Retreive and Display the data -------------------->
 

@@ -98,12 +98,8 @@
    <?MIVAR COND="$(NXST,$vector_type)" NAME=$vector_type>any<?/MIVAR>
    <?MIVAR COND="$(NXST,$compare)" NAME=$compare>contains<?/MIVAR>
 
-   <!-- First filter name for apostrophes! -->
-   <?MIVAR COND="$(XST,$input_name)" NAME=$input_name DELIMIT="'" REPLACE="''">$input_name<?/MIVAR>
-
    <?MIVAR NAME=$wild_card><?/MIVAR>
    <?MIVAR COND="$(NC,$compare,starts)" NAME=$wild_card>%<?/MIVAR>
-
 
    <!-- NOW BUILD UP THE CONSTRAINT CLAUSE -->
 
@@ -140,6 +136,8 @@
    <?/MISQL>
 
    <?MIBLOCK COND="$(XST,$input_name)">
+
+     <?MIVAR NAME=$input_name DELIMIT="'" REPLACE="''">$input_name<?/MIVAR>
      <?MIVAR NAME=mrkrMchIdLast><?/MIVAR>
      <?MIVAR NAME=mchGeneIdLast><?/MIVAR>
      <?MICOMMENT>*** 08/26 name search will not search for accession number<?/MICOMMENT>
@@ -224,7 +222,7 @@
 	$(VECAPPEND, $constraintList,$name_constraint)
         $(VECAPPEND, $constraintList, msegmatch_session_id = $msegsel_session_id )
     <?/MIVAR>
- 
+    <?MIVAR COND="$(XST,$input_name)" NAME=input_name DELIMIT="''" REPLACE="'">$input_name<?/MIVAR>
   <?/MIBLOCK><!-- end name is provided -->
 
    
