@@ -203,7 +203,7 @@ $(IF,$(NC,$num_meioses,NULL),$num_meioses,UNKNOWN)
 <?MIBLOCK COND="$(NC,$abbrev,ZMAP)">
   <?MISQL SQL="select mtype,count(*)::integer from public_paneled_markers a , panels b  where  a.target_abbrev = b.abbrev and b.zdb_id='$OID'  group by mtype;">
   $(IF,$(NC,$MI_CURRENTROW,1),"<br>")
-  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&panelid=$OID&marker_type=$1">$1</A> (total of $2)
+  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&refcross=$OID&marker_type=$1">$1</A> (total of $2)
   $(SETVAR,$mcount,$(+,$mcount,$2))
   <?/MISQL>
   </ul>
@@ -212,7 +212,7 @@ $(IF,$(NC,$num_meioses,NULL),$num_meioses,UNKNOWN)
 <?MIBLOCK COND="$(EC,$abbrev,ZMAP)">
   <?MISQL SQL="select mtype,count(*)::integer from zmap_pub_pan_mark a , panels b  where  a.target_abbrev = b.abbrev and b.zdb_id='$OID' and or_lg <> '0' group by mtype;">
   $(IF,$(NC,$MI_CURRENTROW,1),"<br>")
-  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&panelid=$OID&marker_type=$1">$1</A> (total of $2)
+  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&refcross=$OID&marker_type=$1">$1</A> (total of $2)
   $(SETVAR,$mcount,$(+,$mcount,$2))
   <?/MISQL>
   </ul>
@@ -227,7 +227,7 @@ Click "View Map" in table at right to see a graphical map of an individual linka
 OR
 </p>
 <?MIVAR>
-Search the <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&panelid=$OID">$abbrev Panel for particular mapped markers.</A>.
+Search the <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&refcross=$OID">$abbrev Panel for particular mapped markers.</A>.
 <?/MIVAR>
 <p align=center>
 OR
