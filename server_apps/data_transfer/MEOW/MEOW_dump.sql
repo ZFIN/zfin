@@ -329,8 +329,7 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/markers.txt'
   DELIMITER "	" select distinct zdb_id, abbrev from public_paneled_markers;
 
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/marker_alias.txt' 
-  DELIMITER "	" select distinct a.zdb_id, dalias_alias from public_paneled_markers a, data_alias where a.zdb_id = dalias_data_zdb_id union select b.zdb_id, a.map_name from mapped_marker a ,public_paneled_markers b where a.marker_id = b.zdb_id and a.map_name <> b.abbrev order by 1;
-
+  DELIMITER "	" select distinct mrkr_zdb_id, dalias_alias from marker , data_alias where mrkr_zdb_id = dalias_data_zdb_id order by 1;
 
 
 -- Clean up
