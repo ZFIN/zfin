@@ -44,6 +44,7 @@ INPUT VARS:
 			'contains' the string in author.
     TA_selected_structures	  Exists if user entered any anatomical structures.
     xpatsel_processed_selected_structures Exists if user entered any anatomical structres.
+					  Called from anatdict.apg & anatomy_item.apg
 
     include_substructures  	Possible values are 'checked' and '', I think.
     structure_bool	Possible values are 'and' (meaning every selected 
