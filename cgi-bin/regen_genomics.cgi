@@ -31,14 +31,18 @@
      $cur->execute;
      $cur->bind_col(1, \$result);
      $cur->fetch;
-     print "<br>result: $result<br>"; 
+     if ($result eq "1") {
+       print "<br><font color='#00FF00'>woohoo! regen genomics completed succussfully</font><br>";
+     } else {
+       print "<br><font color='#FF0000'>doh! regen genomics failed.</font><br>";
+     }
      kill 9, $pid;
    } elsif (defined $pid) {
 #child
      $j=0;
      while($j < 60 ) {
-       print ".<br>\n";
        sleep(60);
+       print ".<br>\n";
        $j++;
      }
 
