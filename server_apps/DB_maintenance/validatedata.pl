@@ -1933,7 +1933,7 @@ sub putativeNonZfinGeneNotInZfin ($) {
 } 
 
 #---------------------------------------------------------------
-# Each entry in foreign_db should have 1 or more entryies in
+# Each entry in foreign_db should have 1 or more entries in
 # foreign_db_contains.  foreign_db_contains describes what type(s) of
 # data are available in the foreign DB.  If a foreign DB does not have
 # 1 or more entries in foreign_db_contains then several joins in the
@@ -1950,7 +1950,7 @@ sub foreigndbNotInFdbcontains ($) {
                 from foreign_db
                where fdb_db_name not in (
                         select fdbcont_fdb_db_name from foreign_db_contains) ";
-  my @colDesc = ("Db Name    " );
+  my @colDesc = ("Db Name    ");
   my $nRecords = execSql ($sql, undef, @colDesc);
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
@@ -1962,6 +1962,161 @@ sub foreigndbNotInFdbcontains ($) {
   &recordResult($routineName, $nRecords);
 } 
 
+#---------------------------------------------------------------
+# An 'unique' annotation for go consists of a specific pub, evidence code,
+# marker/feature, go_term, any inference data and any evidence_flags such as 
+# 'not' or 'contributes to'.
+# The marker_go_term_evidence table keeps track of pub, evidence code, go_term,
+# and marker but does not enforce that the combination of these 4 is unique 
+# (no AK on the four columns).  Instead, duplicate values of these 4 colums
+# can exist in this table if and only if the 2 duplicate records also contain
+# references to a unique combination of inference data (in the table
+# inference_group_member) and go_evidence_flags (in the go_evidence_flag 
+# table).  However, we can not enforce this relationship via a 
+# table constraint as some marker, go_term, evidence_code, pub records will
+# have no inference data or flags.  Therefore, on entering data into 
+# the marker_go_term_evidence table, it is impossible to know if a user
+# is trying to add a duplicate record, or if they are trying to add either
+# and inference group or an evidence flag.  We need to check for duplicates
+# at the end of the process.
+
+# Parameter
+#  $     Email Address for recipient
+#
+sub mrkrgoevDuplicatesFound ($) {
+
+  my $routineName = "mrkrgoevDuplicatesFound";
+
+  my $sql = 'select count(*),  
+                    mrkrgoev_mrkr_zdb_id, 
+                    mrkrgoev_go_term_zdb_id, 
+                    mrkrgoev_source_zdb_id, 
+                    mrkrgoev_evidence_code
+               from marker_go_term_evidence
+               where not exists (select * 
+                                   from inference_group_member
+                                   where mrkrgoev_zdb_id = 
+                                            infgrmem_mrkrgoev_zdb_id)
+               and not exists (select * 
+                                   from go_evidence_flag
+                                   where mrkrgoev_zdb_id = 
+                                            goevflag_mrkrgoev_zdb_id)
+               group by mrkrgoev_mrkr_zdb_id, 
+                        mrkrgoev_go_term_zdb_id,
+                        mrkrgoev_source_zdb_id,
+                        mrkrgoev_evidence_code
+               having count(*) > 1 ';
+
+  my @colDesc = ("count", 
+		 "mrkrgoev_mrkr_zdb_id" ,
+		 "mrkrgoev_go_term_zdb_id",
+		 "mrkrgoev_source_zdb_id", 
+		 "mrkrgoev_evidence_code");
+
+  my $nRecords = execSql ($sql, undef, @colDesc);
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Possible duplicate records in marker_go_term_evidence";
+    my $errMsg = "$nRecords are possible duplicates in marker_go_term_evidence";
+    logError($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
+  }
+  &recordResult($routineName, $nRecords);
+} 
+ 
+#---------------------------------------------------------------
+# check for duplicate marker_goterm_Evidence, inference_groups.
+
+# Parameter
+#  $     Email Address for recipient
+#
+sub mrkrgoevInfgrpDuplicatesFound ($) {
+
+  my $routineName = "mrkrgoevInfgrpDuplicatesFound";
+
+  my $sql = 'select count(*),  
+                    mrkrgoev_mrkr_zdb_id, 
+                    mrkrgoev_go_term_zdb_id, 
+                    mrkrgoev_source_zdb_id, 
+                    mrkrgoev_evidence_code, 
+                    infgrmem_inferred_from
+               from marker_go_term_evidence, inference_group_member
+               where not exists (select * 
+                                   from go_evidence_flag
+                                   where mrkrgoev_zdb_id = 
+                                            goevflag_mrkrgoev_zdb_id)
+               and mrkrgoev_zdb_id = infgrmem_mrkrgoev_zdb_id
+               group by mrkrgoev_mrkr_zdb_id, 
+                        mrkrgoev_go_term_zdb_id,
+                        mrkrgoev_source_zdb_id,
+                        mrkrgoev_evidence_code,
+                        infgrmem_inferred_from
+               having count(*) > 1 ';
+
+  my @colDesc = ("count", 
+		 "mrkrgoev_mrkr_zdb_id" ,
+		 "mrkrgoev_go_Term_zdb_id",
+		 "mrkrgoev_source_zdb_id",
+		 "mrkrgoev_evidence_code",
+		 "infgrmem_inferred_from");
+
+  my $nRecords = execSql ($sql, undef, @colDesc);
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Possible duplicate records in marker_go_term_evidence, inference_group_member";
+    my $errMsg = "$nRecords are possible duplicates in marker_go_term_evidence, inference_group_member";
+    logError($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
+  }
+  &recordResult($routineName, $nRecords);
+} 
+
+#---------------------------------------------------------------
+# check for duplicate marker_goterm_Evidence, go_evidence_flag.
+
+# Parameter
+#  $     Email Address for recipient
+#
+sub mrkrgoevGoevflagDuplicatesFound ($) {
+
+  my $routineName = "mrkrgoevGoevidenceFlagDuplicatesFound";
+
+  my $sql = 'select count(*),  
+                    mrkrgoev_mrkr_zdb_id, 
+                    mrkrgoev_go_term_zdb_id, 
+                    mrkrgoev_source_zdb_id, 
+                    mrkrgoev_evidence_code, 
+                    goevflag_gflag_name
+               from marker_go_term_evidence, go_evidence_flag
+               where not exists (select * 
+                                   from inference_group_member
+                                   where mrkrgoev_zdb_id = 
+                                            infgrmem_mrkrgoev_zdb_id)
+               and mrkrgoev_zdb_id = goevflag_mrkrgoev_zdb_id
+               group by mrkrgoev_mrkr_zdb_id, 
+                        mrkrgoev_go_term_zdb_id,
+                        mrkrgoev_source_zdb_id,
+                        mrkrgoev_evidence_code,
+                        goevflag_gflag_name
+               having count(*) > 1 ';
+
+  my @colDesc = ("count", 
+		 "mrkrgoev_mrkr_zdb_id" ,
+		 "mrkrgoev_go_term_zdb_id",
+		 "mrkrgoev_source_zdb_id",
+		 "mrkrgoev_evidence_code",
+                 "goevflag_gflag_name");
+
+  my $nRecords = execSql ($sql, undef, @colDesc);
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Possible duplicate records in marker_go_term_evidence, go_evidence_flag";
+    my $errMsg = "$nRecords are possible duplicates in marker_go_term_evidence, go_evidence_flag";
+    logError($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
+  }
+  &recordResult($routineName, $nRecords);
+}
 
 #---------------------------------------------------------
 #Parameter
@@ -2322,6 +2477,11 @@ if($daily) {
   extinctFishHaveNoSuppliers($otherEmail);
   putativeNonZfinGeneNotInZfin($geneEmail);
   zdbReplacedDataIsReplaced($dbaEmail);
+
+  mrkgoevDuplicatesFound($dbaEmail);
+  mrkrgoevInfgrpDuplicatesFound($dbaEmail);
+  mrkrgoevGoevflagDuplicatesFound($dbaEmail);
+
 }
 if($orphan) {
   
