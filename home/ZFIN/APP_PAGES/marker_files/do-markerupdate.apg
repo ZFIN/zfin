@@ -3,6 +3,8 @@
 Commits the updates requested in the forms tossed up by
 markerupdate.html. Also files update record.
 
+
+<html>
 EXPECTED VARS:
 OID -- the zdb_id of the rec to update
 attr -- the column to be updated
@@ -11,7 +13,8 @@ new_value -- the new value to stick in the column
 old_value -- the previous value
 xtra_param -- to pass an extra parameter
 comments -- reasons for doing update 
-target_table -- either anon_marker or gene, depending on what you're updating
+target_table -- either anon_marker or gene, depending on what you're 
+updating
 info -- optional value used to pass in additional info
 dataOID -- the zdbid of the attributed item
 
@@ -29,9 +32,11 @@ dataOID -- the zdbid of the attributed item
 <?MIVAR COND="$(NXST,$info)" NAME=$info><?/MIVAR>
 
 
-<!-- First check security. Main purpose is just to get submitter id and name -->
+<!-- First check security. Main purpose is just to get submitter id and 
+name -->
 
-<?MIBLOCK COND="$(OR,$(EC,$attr,putgene_putative_gene_name),$(EC,$attr,putgene_comments))">
+<?MIBLOCK 
+COND="$(OR,$(EC,$attr,putgene_putative_gene_name),$(EC,$attr,putgene_comments))">
   <?MISQL SQL="
     select WebExplode(object,'permission=root') 
       from webPages 
@@ -52,33 +57,40 @@ dataOID -- the zdbid of the attributed item
   <?MIVAR COND="$(NXST,$new_value)" NAME=$new_value>NULL<?/MIVAR>
   <?MIVAR COND="$(NXST,$comments)" NAME=$comments>NULL<?/MIVAR>
 
-  <?MIVAR COND="$(EC,$attr_type,special-listitem)" NAME=$comments>Deleted the record $old_value from the list of $attr associated with this marker.<?/MIVAR>
+  <?MIVAR COND="$(EC,$attr_type,special-listitem)" NAME=$comments>Deleted 
+the record $old_value from the list of $attr associated with this 
+marker.<?/MIVAR>
 
-  <?MIVAR COND="$(EC,$attr_type,special-newortho)" NAME=$comments>Created a new orthologue record for species=$old_value for this record.<?/MIVAR>
+  <?MIVAR COND="$(EC,$attr_type,special-newortho)" NAME=$comments>Created 
+a new orthologue record for species=$old_value for this record.<?/MIVAR>
 
-  <?MIVAR COND="$(EC,$attr_type,special-newseqnum)" NAME=$comments>Created new link to sequence DB: $old_value for this record.<?/MIVAR>
+  <?MIVAR COND="$(EC,$attr_type,special-newseqnum)" NAME=$comments>Created 
+new link to sequence DB: $old_value for this record.<?/MIVAR>
 
 
-  <?MIVAR COND="$(EC,$attr_type,special-newmrkrrel)" NAME=$comments>Created new marker relationship of relationship: $old_value for this record.<?/MIVAR>
+  <?MIVAR COND="$(EC,$attr_type,special-newmrkrrel)" 
+NAME=$comments>Created new marker relationship of relationship: $old_value 
+for this record.<?/MIVAR>
 
-  <?MIVAR COND="$(EC,$attr_type,special-newattrib)" NAME=$comments>Add new data attribution: $old_value to $new_value for this record.<?/MIVAR>
+  <?MIVAR COND="$(EC,$attr_type,special-newattrib)" NAME=$comments>Add new 
+data attribution: $old_value to $new_value for this record.<?/MIVAR>
 
   <?MIVAR NAME=$new_value DELIMIT="'" REPLACE="''">$new_value<?/MIVAR>
   <?MIVAR NAME=$old_value DELIMIT="'" REPLACE="''">$old_value<?/MIVAR>
   <?MIVAR NAME=$comments DELIMIT="'" REPLACE="''">$comments<?/MIVAR>
-
   <!-- insert update record for the update! -->
   <?MISQL SQL="
     insert into updates 
-        (submitter_id,submitter_name, rec_id, field_name, old_value, comments,
+        (submitter_id,submitter_name, rec_id, field_name, old_value, 
+comments,
          when) 
       values ('$ZDB_ident', '$ZDB_name','$OID', '$attr',  '$old_value', 
               '$comments', current);">
   <?/MISQL>
 
   <!-- OK, NOW UPDATE THE  ACTUAL DATA RECORD. -->
-
-  <?MISQL COND="$(AND,$(NC,$attr,dalias_alias),$(NC,$attr,putgene_comments),
+  <?MISQL 
+COND="$(AND,$(NC,$attr,dalias_alias),$(NC,$attr,putgene_comments),
 		      $(NC,$attr,putgene_putative_gene_name),
 		      $(OR,$(EC,$attr_type,text),
 		           $(EC,$attr_type,textarea)))" SQL="
@@ -114,7 +126,8 @@ dataOID -- the zdbid of the attributed item
   <?/MISQL>
 
 
-  <!-- Special case for deleting one of the associated orthos/seqs/sources/pubs -->
+  <!-- Special case for deleting one of the associated 
+orthos/seqs/sources/pubs -->
   <?MIBLOCK COND="$(EC,$attr_type,special-listitem)">
 
     <?MISQL COND="$(EC,$attr,publication)" SQL="
@@ -128,8 +141,10 @@ dataOID -- the zdbid of the attributed item
       <!-- separate values -->
       <?MIVAR NAME=delimit>$(POSITION,$old_value,":")<?/MIVAR>
       <?MIVAR NAME=db_name>$(SUBSTR,$old_value,1,$(-,$delimit,1))<?/MIVAR>
-      <?MIVAR NAME=acc_len>$(-,$(STRLEN,$old_value),$(-,$delimit,1))<?/MIVAR>
-      <?MIVAR NAME=acc_num>$(SUBSTR,$old_value,$(+,$delimit,1),$acc_len)<?/MIVAR>
+      <?MIVAR 
+NAME=acc_len>$(-,$(STRLEN,$old_value),$(-,$delimit,1))<?/MIVAR>
+      <?MIVAR 
+NAME=acc_num>$(SUBSTR,$old_value,$(+,$delimit,1),$acc_len)<?/MIVAR>
 
       <?MIVAR COND=$(=,0,1)>
 	<b>
@@ -176,8 +191,10 @@ dataOID -- the zdbid of the attributed item
     <?/MISQL>
     <?MISQL SQL="
       insert into orthologue 
-          (zdb_id, c_gene_id, ortho_name, ortho_abbrev, organism, entry_time)
-        values ('$ortho_id','$OID','$new_value','$info','$old_value',current);">
+          (zdb_id, c_gene_id, ortho_name, ortho_abbrev, organism, 
+entry_time)
+        values 
+('$ortho_id','$OID','$new_value','$info','$old_value',current);">
     <?/MISQL>
   <?/MIBLOCK>  <!-- ends special add_ortho case -->
 
@@ -211,7 +228,7 @@ dataOID -- the zdbid of the attributed item
 
   <!-- Special case for adding new attribution-->
   <?MIBLOCK COND="$(EC,$attr_type,special-newattrib)">
-    <!-- check whether the pub zdb id is validate. -->
+    <!-- check whether the pub zdb id is valid. -->
     <?MISQL SQL="
 	   select * from publication
              where zdb_id = '$new_value'	
@@ -234,8 +251,98 @@ dataOID -- the zdbid of the attributed item
 	      and acc_num = '$old_value'
 	    ;">
 	<?MIVAR>$(SETVAR,$old_value,$1)<?/MIVAR>
-      <?/MISQL>			 		
-      <?MIBLOCK COND="$(EC,$attr,recattrib)">
+      <?/MISQL>	
+
+      <?MIBLOCK COND="$(EC,$info,mrel)">
+      <!-- check whether the mrkr abbrev is valid. -->
+      <?MISQL SQL="
+	   select * from marker
+             where mrkr_abbrev = '$old_value'	
+                ;">
+      <?/MISQL>	
+      
+      <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+      <!-- Attribution contains & contained in relationship --> 
+      <!--  :check for valid contain(ed) relationship: -->
+      <!--  :verify relationship is unattributted: -->
+      <!--  :insert attribution: -->
+      <?MISQL SQL="
+  	   select * from marker, marker_relationship
+           where mrkr_abbrev = '$old_value'	
+             and mrel_mrkr_1_zdb_id = mrkr_zdb_id
+                 ;">
+      <?/MISQL>	  
+        <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+
+      
+        <?MISQL SQL="
+	   select mrel_zdb_id 
+	     from marker_relationship, marker
+	    where mrel_mrkr_2_zdb_id = '$OID'
+	      and mrel_mrkr_1_zdb_id = mrkr_zdb_id
+	      and mrkr_abbrev = '$old_value'
+	    ;">
+	  <?MIVAR>$(SETVAR,$data_value,$1)<?/MIVAR>
+        <?/MISQL>
+	<?MIBLOCK COND="$(XST,$data_value)">
+          <?MISQL SQL="
+            select * from record_attribution
+            where recattrib_data_zdb_id = '$data_value'
+              and recattrib_source_zdb_id = '$new_value'">
+          <?/MISQL>
+          <?MISQL COND="$(=,$MI_ROWCOUNT,0)" SQL="
+	      insert into record_attribution
+		  (recattrib_data_zdb_id, recattrib_source_zdb_id) 
+                values('$data_value', '$new_value')
+                  ;">
+          <?/MISQL>
+          <?MIVAR>$(UNSETVAR,$data_value)<?/MIVAR>
+        <?/MIBLOCK> <!-- end xst $data_value -->
+        
+        <?/MIBLOCK> <!-- mrkr_abbrev is valid for mrel_mrkr_1 -->
+
+      <?MISQL SQL="
+  	   select * from marker, marker_relationship
+           where mrkr_abbrev = '$old_value'	
+             and mrel_mrkr_2_zdb_id = mrkr_zdb_id
+                 ;">
+      <?/MISQL>	  
+        <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">   
+
+        <?MISQL SQL="
+	   select mrel_zdb_id 
+	     from marker_relationship, marker
+	    where mrel_mrkr_1_zdb_id = '$OID'
+	      and mrel_mrkr_2_zdb_id = mrkr_zdb_id
+	      and mrkr_abbrev = '$old_value'
+	    ;">
+	  <?MIVAR>$(SETVAR,$data_value,$1)<?/MIVAR>
+        <?/MISQL>	
+        <?MIBLOCK COND=$(XST,$data_value)">
+          <?MISQL SQL="
+                  select * from record_attribution
+                  where recattrib_data_zdb_id = '$data_value'
+                    and recattrib_source_zdb_id = '$new_value'">
+          <?/MISQL>
+
+          <?MISQL COND="$(=,$MI_ROWCOUNT,0)" SQL="
+              insert into record_attribution
+                  (recattrib_data_zdb_id, recattrib_source_zdb_id) 
+                   values('$data_value', '$new_value')
+              ;">
+          <?/MISQL>
+        <?/MIBLOCK> <!-- end: xst data_value -->
+        <?/MIBLOCK> <!-- end: valid mrkr_abbrev for mrel_mrkr_2 -->
+      <?MIELSE>
+        <?MIVAR>
+ 	<script>
+	window.alert('ERROR: Reference not added. Marker abbrev "$old_value" was not found in ZFIN.');
+	</script>
+	<?/MIVAR>
+      <?/MIBLOCK> <!-- end: valid abbrev -->
+      <?/MIBLOCK> <!-- end: info=mrel -->
+      
+      <?MIBLOCK COND="$(AND,$(EC,$attr,recattrib),$(NE,$info,mrel))">
          <?MISQL SQL="
 	    insert into record_attribution
 		(recattrib_data_zdb_id, recattrib_source_zdb_id) 
@@ -246,7 +353,8 @@ dataOID -- the zdbid of the attributed item
       <?MIELSE COND="$(EC,$attr,colattrib)">
          <?MISQL SQL="
 	    insert into column_attribution
-		(colattrib_data_zdb_id, colattrib_column_name, colattrib_source_zdb_id)
+		(colattrib_data_zdb_id, colattrib_column_name, 
+colattrib_source_zdb_id)
               values('$old_value','$info', '$new_value')	
                 ;">
          <?/MISQL>
@@ -281,13 +389,15 @@ dataOID -- the zdbid of the attributed item
     <?MIBLOCK COND="$(AND,$(NC,$ptnerId,NULL),$(NC,$ptnerId,NOVALUE))">
       <?MISQL COND="$(>,$(POSITION,$old_value,1to2),0)" SQL="
        insert into marker_relationship 
-          ( mrel_zdb_id, mrel_type, mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id ) 
+          ( mrel_zdb_id, mrel_type, mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id 
+) 
         values 
 	  ( '$mrkrrel_zdb_id', '$reltype', '$OID','$ptnerId');">
       <?/MISQL>
       <?MISQL COND="$(>,$(POSITION,$old_value,2to1),0)" SQL="
         insert into marker_relationship 
-          ( mrel_zdb_id, mrel_type, mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id ) 
+          ( mrel_zdb_id, mrel_type, mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id 
+) 
         values 
 	  ( '$mrkrrel_zdb_id', '$reltype', '$ptnerId', '$OID');">
       <?/MISQL>
@@ -351,7 +461,9 @@ dataOID -- the zdbid of the attributed item
 <!-- okay, now just bail back to the markerview to view results -->
 <?MIVAR>
   <SCRIPT>
-  location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID&UPDATE=1")
+  
+location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID&UPDATE=1")
   </SCRIPT>
 <?/MIVAR>
+
 
