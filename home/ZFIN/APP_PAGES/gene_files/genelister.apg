@@ -21,6 +21,12 @@
   were passed in 
 -->
 
+<?MIVAR NAME=$alt_wild_card>%; <?/MIVAR>
+<?MIVAR NAME=$wild_card><?/MIVAR>
+<?MIVAR COND="$(NC,$searchtype,begins)" NAME=$wild_card>%<?/MIVAR>
+<?MIVAR COND="$(NC,$searchtype,begins)" NAME=$alt_wild_card>%<?/MIVAR>
+<!-- DEBUGGING <?MIVAR>  wildcard=$wild_card <?/MIVAR> -->
+
 <?MIVAR NAME=$constraint COND="$(NXST,$constraint)"> <?/MIVAR>
 <?MIVAR NAME=$lg COND="$(NXST,$lg)">0<?/MIVAR>
 <?MIVAR NAME=$refcross COND="$(NXST,$refcross)">NULL<?/MIVAR>
@@ -37,7 +43,13 @@
 
 <!-- NOW BUILD UP THE CONSTRAINT CLAUSE -->
 
-<?MIVAR NAME=$constraint COND="$(XST,$name)">$constraint (lower(conc(gene_name,abbrev)) like '%$(LOWER,$name)%') <?/MIVAR>
+<?MIVAR COND="$(AND,$(NC,$searchtype,begins),$(XST,$name))" NAME=$constraint>$constraint (lower(conc(conc(gene_name,abbrev),alt_names)) like '$wild_card$(LOWER,$name)%')<?/MIVAR>
+
+<?MIVAR COND="$(AND,$(EC,$searchtype,begins),$(XST,$name))" NAME=$constraint>$constraint (lower(gene_name) like '$(LOWER,$name)%') or (lower(abbrev) like '$(LOWER,$name)%') or 
+(lower(alt_names) like '%; $(LOWER,$name)%') or 
+(lower(alt_names) like '%;$(LOWER,$name)%') or 
+(lower(alt_names) like '$(LOWER,$name)%') <?/MIVAR>
+
 <?MIVAR NAME=$previous COND="$(XST,$name)"> and <?/MIVAR>
 
 <?MIVAR NAME=$constraint COND="$(NC,$lg,0)">$constraint $previous (OR_lg=$lg and private='f')<?/MIVAR>
@@ -77,6 +89,7 @@
 <form method=post action="/cgi-bin_B/webdriver">
 <input type=hidden name=MIval value=aa-genelister.apg>
 <input type=hidden name=constraint value="$constraint">
+<input type=hidden name=searchtype value="$searchtype">
 <input type=hidden name=order_pref value="$order_pref">
 <?/MIVAR>
 
@@ -118,12 +131,15 @@ Options:
 <?MIBLOCK COND="$(XST,$limit)">
 
 <TABLE width=100% border=0 cellspacing=0 cellpadding=3>
-<TH> </TH><TH align=left>Gene</TH> <TH align=left>Location</TH>
+<TH> </TH><TD align=left><B>Gene</b> symbol - name [other names]</TD> <TD align=left><B>Location</b></TD>
+
+<!-- DEBUGGING <?MIVAR>  constraint=$constraint <?/MIVAR> -->
+
 
 <?MIVAR NAME=$prev_name>0<?/MIVAR>
 <?MIVAR NAME=$prev_gp>0<?/MIVAR>
 <?MIVAR NAME=$clr_cnt>0<?/MIVAR>
-<?MISQL SQL="select gene_name, lg_location, zdb_id,OR_lg, panel_id, panel_abbrev,abbrev,private,owner,metric from $target_table $constraint $order_clause;" MAXROWS=$limit>
+<?MISQL SQL="select gene_name, lg_location, zdb_id,OR_lg, panel_id, panel_abbrev,abbrev,private,owner,metric,alt_names from $target_table $constraint $order_clause;" MAXROWS=$limit>
 
 $(IF,$(NC,$prev_name,$1),$(SETVAR,$clr_cnt,$(+,$clr_cnt,1)))
 
@@ -136,7 +152,7 @@ $(SETVAR,$color,$(/,$clr_cnt,2))
 $(IF,$(XST,$return_rec),<A HREF=/cgi-bin_B/webdriver?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3 TARGET=content>SELECT</A>) 
 </TD>
 
-$(IF,$(NC,$prev_name,$1),<TD valign=top> <font size=2><A HREF=/cgi-bin_B/webdriver?MIval=aa-markerview.apg&OID=$3 TARGET=content>$7</A>&nbsp;&nbsp; [ $1 ]</TD>,<TD>&nbsp;</TD>)
+$(IF,$(NC,$prev_name,$1),$(IF,$(ISNULL,$11),<TD valign=top> <font size=2><A HREF=/cgi-bin_B/webdriver?MIval=aa-markerview.apg&OID=$3 TARGET=content>$7</A>&nbsp;&nbsp; - $1 </TD>,<TD valign=top> <font size=2><A HREF=/cgi-bin_B/webdriver?MIval=aa-markerview.apg&OID=$3 TARGET=content>$7</A>&nbsp;&nbsp; - $1 &nbsp; [ $11 ]</TD>),<TD>&nbsp;</TD>)
 
 
 <TD> <font size=2> 
