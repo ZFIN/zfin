@@ -594,6 +594,8 @@ create dba function "informix".regen_anatomy()
 	(
 	  anatstat_anatitem_zdb_id          varchar(50),
 	  anatstat_object_type              char(32),
+	  anatstat_synonym_count	    integer
+	     not null,
 	  anatstat_anatitem_count           integer
 	     not null,
 	  anatstat_contains_count           integer
@@ -762,6 +764,7 @@ create dba function "informix".regen_anatomy()
 
       define anatid varchar(50);
       define stgid varchar(50);
+      define nSynonyms int;
       define nGenesForThisItem int;
       define nGenesForChildItems int;
       define nDistinctGenes int;
@@ -779,6 +782,13 @@ create dba function "informix".regen_anatomy()
 	select anatitem_zdb_id
 	  into anatid
 	  from anatomy_item
+
+	-- get # of synonyms the anatomy item has.
+
+	select count(*)
+	  into nSynonyms
+	  from data_alias
+	  where dalias_data_zdb_id = anatid;
 
 	-- get list of genes that have expression patterns for this
 	-- anatomy item
@@ -810,10 +820,11 @@ create dba function "informix".regen_anatomy()
 
 	insert into anatomy_stats_new
 	    ( anatstat_anatitem_zdb_id, anatstat_object_type, 
+	      anatstat_synonym_count,
 	      anatstat_anatitem_count, anatstat_contains_count, 
 	      anatstat_total_distinct_count )
 	  values 
-	    ( anatid, 'GENE', nGenesForThisItem,
+	    ( anatid, 'GENE', nSynonyms, nGenesForThisItem,
 	      nGenesForChildItems, nDistinctGenes ) ;
 
 	delete from genes_with_xpats;
