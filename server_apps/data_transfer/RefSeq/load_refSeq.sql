@@ -258,7 +258,7 @@ create index gdb_lnkortho_zdb_id_index on gdb_ortho_link
 
 -- Ban OMIM disease links (Hard code for now 06-02-03)
 delete from gdb_omim_tmp 
-where lnkortho_acc_num in ('193500','106210','168461','300401','601868')
+where lnkortho_acc_num in ('193500','106210','168461','300401','601868');
 
 
 begin work;
@@ -310,23 +310,37 @@ insert into zdb_active_data select lnkortho_link_zdb_id from gdb_omim_tmp
 
 !echo 'insert LocusLink db_links for GDB orthos'
 insert into db_link
+        (linked_recid,
+        db_name,
+        acc_num,
+        info,
+        dblink_zdb_id,
+        dblink_acc_num_display)
     select distinct
         lnkortho_zdb_id,
         "LocusLink",
         lnkortho_acc_num,
         '',
-        dblink_zdb_id
+        dblink_zdb_id,
+        'lnkortho_acc_num'
     from gdb_ortho_link
     where lnkortho_acc_num not in (select acc_num from omim_and_ll where db_name = 'LocusLink');
 
 !echo 'insert OMIM db_links for GDB orthos'
 insert into db_link
+        (linked_recid,
+        db_name,
+        acc_num,
+        info,
+        dblink_zdb_id,
+        dblink_acc_num_display)
     select distinct
         lnkortho_zdb_id,
         "OMIM",
         lnkortho_acc_num,
         '',
-        lnkortho_link_zdb_id
+        lnkortho_link_zdb_id,
+        lnkortho_acc_num
     from gdb_omim_tmp
     where lnkortho_acc_num not in (select acc_num from omim_and_ll where db_name = 'OMIM');
 
@@ -401,12 +415,19 @@ insert into zdb_active_data select dblink_zdb_id from mgi_ortho_link
 
 !echo 'insert LocusLink db_links for MGI orthos'
 insert into db_link
+        (linked_recid,
+        db_name,
+        acc_num,
+        info,
+        dblink_zdb_id,
+        dblink_acc_num_display)
     select distinct
         lnkortho_zdb_id,
         "LocusLink",
         lnkortho_acc_num,
         'uncurrated ' || TODAY || ' LocusLink load',
-        dblink_zdb_id
+        dblink_zdb_id,
+        lnkortho_acc_num
     from mgi_ortho_link
     where lnkortho_acc_num not in (select acc_num from locuslink_link);
 
@@ -430,9 +451,27 @@ insert into zdb_active_data select dblink_zdb_id from tmp_db_link where db_name 
 insert into zdb_active_data select dblink_zdb_id from tmp_db_link where db_name = "Genbank" and acc_num not in (select acc_num from db_link where db_name = "Genbank");
  
 !echo 'insert new db_links'
-insert into db_link select * from tmp_db_link where db_name = "RefSeq";
-insert into db_link select * from tmp_db_link where db_name = "LocusLink" and acc_num not in (select acc_num from db_link where db_name = "LocusLink");
-insert into db_link select * from tmp_db_link where db_name = "Genbank" and acc_num not in (select acc_num from db_link where db_name = "Genbank");
+insert into db_link
+        (linked_recid,
+        db_name,
+        acc_num,
+        info,
+        dblink_zdb_id,
+        dblink_acc_num_display) select *, 'acc_#' from tmp_db_link where db_name = "RefSeq";
+insert into db_link
+        (linked_recid,
+        db_name,
+        acc_num,
+        info,
+        dblink_zdb_id,
+        dblink_acc_num_display) select *, 'acc_#' from tmp_db_link where db_name = "LocusLink" and acc_num not in (select acc_num from db_link where db_name = "LocusLink");
+insert into db_link
+        (linked_recid,
+        db_name,
+        acc_num,
+        info,
+        dblink_zdb_id,
+        dblink_acc_num_display) select *, 'acc_#' from tmp_db_link where db_name = "Genbank" and acc_num not in (select acc_num from db_link where db_name = "Genbank");
 
 
 !echo 'Attribute ZFIN_LL links to an artificial pub record.'
@@ -476,8 +515,16 @@ insert into zdb_active_data select dblink_zdb_id from tmp_db_link
 
 
 !echo 'insert new db_links'
-insert into db_link select * from tmp_db_link
-       where acc_num not in (select acc_num from unigene_link);
+insert into db_link
+        (linked_recid,
+        db_name,
+        acc_num,
+        info,
+        dblink_zdb_id,
+        dblink_acc_num_display)
+    select *, 'acc_$'
+    from tmp_db_link
+    where acc_num not in (select acc_num from unigene_link);
 
 
 !echo 'Attribute RefSeq links to an artificial pub record.'
