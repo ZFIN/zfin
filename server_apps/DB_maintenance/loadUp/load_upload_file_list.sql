@@ -49,23 +49,65 @@ create temp table tmp_not_in_pub (
 	filename varchar(65)
 ) with no log ;
 
---do the inserts
+create temp table tmp_not_in_image_files (
+	filename varchar(65)
+) with no log ;
+
+create temp table tmp_not_in_pub_files (
+	filename varchar(65)
+) with no log ;
+
+
+--do the inserts, create temp tables full of images not in the database
+--from the list of images in the filesystem, and the inverse, images files
+--listed in the database that are not listed in the filesystem.  Images
+--not in the filesystem will just be sent to dba as an email, script that 
+--calls this sql script will not deal with these automatically as they 
+--indicate something very wrong with the upload world.
 
 insert into tmp_not_in_images
   select filename
 	from tmp_image_file_list
-	where filename not in (select fimg_image from fish_image)
-        and filename not in (select fimgp_image from fx_fish_image_private);
+	where not exists (select fimg_image 
+				from fish_image
+				where filename = fimg_image)
+        and not exists (select fimgp_image 
+				from fx_fish_image_private
+				where filename = fimgp_image);
+
+insert into tmp_not_in_image_files
+  select fimg_image 
+	from fish_image
+        where not exists (select filename from tmp_image_file_list);
+
+insert into tmp_not_in_image_files
+  select fimgp_image 
+	from fx_fish_image_private
+        where not exists (select filename from tmp_image_file_list);
+
+unload to /tmp/filesystem_images_not_in_database.unl
+  select * from tmp_not_in_image_files ;
 
 update statistics high for table tmp_pdf_file_list ;
-update statistics high for table publication ;
 
 insert into tmp_not_in_pub
   select filename
 	from tmp_pdf_file_list
 	where not exists (select 'x' from publication
 				where pub_file = filename);
---produce the files 
+
+insert into tmp_not_in_pub_files
+  select pub_file
+	from publication
+	where not exists (select 'x' from tmp_pdf_file_list
+				where pub_file = filename)
+	and pub_file is not null;
+
+unload to /tmp/filesystem_pdfs_not_in_database.unl
+  select * from tmp_not_in_pub_files ;
+
+
+--produce the files not in the database
 
 unload to /tmp/orphan_image_files.unl
   select * from tmp_not_in_images ;
