@@ -140,6 +140,13 @@ registrations -- but not update of course.
 	    where ID='aa-process-fish.apg';">
 	<?/MISQL>
 	<?MIVAR NAME=$fish_id>$(REPLACE,$temp_oid,TEMP,FISH)<?/MIVAR>
+        <?MICOMMENT>
+          Add new fish to names fast search tables.  Would like to do this
+          in process-fish.apg, but can't because that gets us a -675 error.
+        <?/MICOMMENT>
+        <?MISQL SQL="
+          execute procedure regen_names_fish('$fish_id');">
+        <?/MISQL>    
 
 	<!-- make a locus record if it's new! -->
 	<?MISQL SQL="
@@ -164,7 +171,7 @@ registrations -- but not update of course.
 	  <?/MISQL>
           <?MICOMMENT>Add new locus to names fast search tables.<?/MICOMMENT>
           <?MISQL SQL="
-            execute procedure regen_names_locus('$OID');">
+            execute procedure regen_names_locus('$locus_id');">
           <?/MISQL>    
 	<?/MIBLOCK>
 
