@@ -136,10 +136,10 @@ document.critform.START.value = "";
 
 
 <?MIVAR NAME=$order_clause COND="$(AND,$(XST,$order_pref),$(EC,$order_pref,name))">
-	order by 6,pyear desc
+	order by authors,pyear desc
 <?/MIVAR>
 <?MIVAR NAME=$order_clause COND="$(AND,$(XST,$order_pref),$(EC,$order_pref,date))">
-	order by pyear desc,6
+	order by pyear desc,authors
 <?/MIVAR>
 
 <?MIVAR NAME=$target_tables>publication<?/MIVAR>
