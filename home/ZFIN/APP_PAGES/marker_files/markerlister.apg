@@ -1,0 +1,205 @@
+<!-- FILE: markerlister.html -->
+
+<!-- This app-page handles the criteria collected by markerselect.html, and actually does the search, displaying the results. 
+-->
+<HTML>
+<HEAD>
+
+<?MISQL SQL="select object from webPages where ID='aa-chromoscripts.apg';">$1<?/MISQL>
+</HEAD>
+
+<body bgcolor="white" TEXT="black">
+<basefont COLOR="#0000
+00" size=2>
+
+<?MIVAR NAME=$MI_NULL>NULL<?/MIVAR>
+
+
+<!-- THIS NEXT PART IS EXECUTED AFTER THE PERSON ENTERS SOME CRITERIA -->
+
+<!-- First note that they have searched persons-->
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-identify.apg';">$1<?/MISQL>
+<?MISQL SQL="delete from int_person_places where pers_id='$ZDB_ident' and place_id='MARKER';"><?/MISQL>
+<?MISQL COND="$(NOT,$(EQ,$(SUBSTR,$ZDB_name,1,5),GUEST))" SQL="insert into int_person_places (pers_id,place_id,last_visit) values ('$ZDB_ident','MARKER',current);"><?/MISQL>
+
+<!-- This next part builds up a query piece by piece, based on which criteria 
+  were passed in 
+-->
+
+<?MIVAR NAME=$constraint COND="$(NXST,$constraint)"> <?/MIVAR>
+<?MIVAR NAME=$lg COND="$(NXST,$lg)">0<?/MIVAR>
+<?MIVAR NAME=$marker_type COND="$(NXST,$marker_type)">any<?/MIVAR>
+<?MIVAR NAME=$refcross COND="$(NXST,$refcross)">NULL<?/MIVAR>
+<?MIVAR NAME=$order_pref COND="$(NXST,$order_pref)">name<?/MIVAR>
+
+<?MIVAR NAME=$mlist SEPARATE="','">$marker_type<?/MIVAR>
+<?MIVAR COND="$(>,$(POSITION,$mlist,any),0)" NAME=$marker_type>any<?/MIVAR>
+
+<?MIBLOCK COND="$(OR,$(XST,$name),$(NC,$marker_type,any),$(NC,$lg,0),$(NC,$refcross,NULL),$(AND,$(XST,$within_cm),$(XST,$wm_name)))">
+
+<!-- First filter name for apostrophes! -->
+<?MIVAR COND="$(XST,$name)" NAME=$name DELIMIT="'" REPLACE="''">$name<?/MIVAR>
+<?MIVAR COND="$(NXST,$compare)" NAME=$compare><?/MIVAR>
+
+
+<?MIVAR NAME=$previous> <?/MIVAR>
+<?MIVAR NAME=$constraint> where <?/MIVAR>
+
+<!-- NOW BUILD UP THE CONSTRAINT CLAUSE -->
+
+<?MIVAR NAME=$constraint COND="$(XST,$name)">$constraint (lower(conc(mname,abbrev)) like '$compare$(LOWER,$name)%')<?/MIVAR>
+
+<?MIVAR NAME=$previous COND="$(XST,$name)"> and <?/MIVAR>
+
+<?MIVAR NAME=$constraint COND="$(AND,$(XST,$marker_type),$(NC,$marker_type,any))">$constraint $previous (mtype in ('$mlist'))<?/MIVAR>
+
+<?MIVAR NAME=$previous COND="$(AND,$(XST,$marker_type),$(NC,$marker_type,any))"> and <?/MIVAR>
+
+<?MIVAR NAME=$constraint COND="$(NC,$lg,0)">$constraint $previous ((OR_lg=$lg or OR_lg=0) and private='f')<?/MIVAR>
+
+<?MIVAR NAME=$previous COND="$(NC,$lg,0)"> and <?/MIVAR>
+
+<?MIVAR NAME=$constraint COND="$(NC,$refcross,NULL)">$constraint $previous (target_id='$refcross' $(IF,$(XST,$plinks),OR dist is not null))<?/MIVAR>
+
+<?/MIBLOCK> <!-- ends cond any constraints specified -->
+
+
+
+<?MIVAR NAME=$order_clause COND="$(EC,$order_pref,name)">order by marker_name<?/MIVAR>
+<?MIVAR NAME=$order_clause COND="$(EC,$order_pref,location)">order by OR_lg,marker_name<?/MIVAR>
+
+<?MIVAR NAME=$ending>,dist,m2_type<?/MIVAR>
+<?MIVAR NAME=$target_table> all_mapped_markers <?/MIVAR>
+<?MIBLOCK COND="$(NXST,$plinks)">
+   <?MIVAR NAME=$target_table>paneled_markers <?/MIVAR>
+   <?MIVAR NAME=$ending>,NULL::numeric(6,2) as dist,'NULL'<?/MIVAR>
+<?/MIBLOCK>
+
+<!-- NOW JUST RETRIEVE AND DISPLAY ALL MATCHING ENTRIES. -->
+
+
+<center>
+<font size=4>Search Markers: Result Summary</font>
+
+<?MIVAR COND="$(NC,$lg,0)">
+<p><font size=3 color="red">PLEASE NOTE:</font> <font size=2> Because you have constrained this search to a specific linkage group, the results shown below <b>DO NOT</b> include confidential mapping results. This is to avoid tacitly giving away linkage group information for these markers.</font>
+<?/MIVAR>
+<br>
+
+<!-- <?MIVAR>CONSTRAINT: $constraint<?/MIVAR> -->
+
+
+<!-- Stuff to control retrieval volume -->
+<?MIVAR>
+<form method=post action="/cgi-bin_B/webdriver">
+<input type=hidden name=MIval value=aa-markerlister.apg>
+<input type=hidden name=constraint value="$constraint">
+<input type=hidden name=order_pref value="$order_pref">
+$(IF,$(XST,$plinks),<input type=hidden name=plinks value=1)
+<?/MIVAR>
+
+<?MIVAR COND="$(XST,$getsome)"><font color="red"><b>Showing only first $limit </b></font> of <?/MIVAR>
+
+<?MIVAR NAME=$tcount>0<?/MIVAR>
+<?MISQL SQL="select count(*)::integer from $target_table $constraint;">
+$(SETVAR,$tcount,$(+,$tcount,$1))
+<?/MISQL>
+<?MIVAR> <b>$tcount</b> matching records found.<?/MIVAR>
+<!-- QUERY: <?MIVAR>$MI_SQL<?/MIVAR> -->
+
+<?MIVAR COND="$(XST,$getsome)">
+<input type=submit name=getall value="Get remaining $(-,$tcount,$limit) records">
+<input type=hidden name=limit value=99>
+<?MIVAR COND="$(XST,$return_rec)"><input type=hidden name=return_rec value=$return_rec><?/MIVAR>
+<?/MIVAR>
+<br>
+(Click on individual markers for details)
+</center>
+<p>
+
+<!-- Param to set maximum returned at once -->
+<?MIVAR NAME=$maxreturn>50<?/MIVAR>
+
+<?MIVAR COND="$(AND,$(NXST,$limit),$(>,$tcount,$maxreturn))">
+<BIG>The search based on the above criteria has retrieved <B>$tcount</b> records. This number of records may take some time to download, depending on the speed of your machine and connection.<br>
+Options:
+<ul>
+<li> Further constrain your criteria above and click "search" to re-do search.
+<li> Get only the first <input name=limit value=$maxreturn type=text maxlength=3 size=3> records. <input type=submit name=getsome value="Do this">
+<?MIVAR COND="$(XST,$return_rec)"><input type=hidden name=return_rec value=$return_rec><?/MIVAR>
+<li> Get all $tcount matching records. <input type=submit name=getall value="Do this">
+<?MIVAR COND="$(XST,$return_rec)"><input type=hidden name=return_rec value=$return_rec><?/MIVAR>
+</ul>
+<?/MIVAR>
+
+</form>
+<form>
+<?MIVAR COND="$(OR,$(<=,$tcount,$maxreturn),$(XST,$getall))" NAME=$limit>$tcount<?/MIVAR>
+
+<?MIBLOCK COND="$(XST,$limit)">
+(Note: cM distances are measured from most telomeric marker)
+<TABLE width=100% border=0 cellspacing=0 cellpadding=3 >
+<TH> </TH><TH align=left>MARKER</TH> <TH align=left>Map Location</TH> <TH align=left>Panel</TH> <TH align=left>Updated</TH>
+
+<?MIVAR NAME=$prev_name>0<?/MIVAR>
+<?MIVAR NAME=$prev_gp>0<?/MIVAR>
+<?MIVAR NAME=$clr_cnt>0<?/MIVAR>
+<?MISQL SQL="select abbrev as marker_name,mtype,lg_location,zdb_id,OR_lg,target_id,target_abbrev,abbrev,private,owner $ending, metric, day(entry_date::date),month(entry_date::date), year(entry_date::date) from $target_table $constraint $order_clause;" MAXROWS=$limit>
+
+<?MIBLOCK COND="$(NC,$15,NULL)">
+<?MIVAR NAME=$upd_date> $(INDEX,$(-,$15,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $14,$16 
+<?/MIVAR>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(EC,$15,NULL)">
+<?MIVAR NAME=$upd_date> <?/MIVAR>
+<?/MIBLOCK>
+
+$(IF,$(NC,$prev_name,$1),$(SETVAR,$clr_cnt,$(+,$clr_cnt,1)))
+
+$(IF,$(AND,$(EC,$order_pref,location),$(NC,$prev_gp,$5)),"<TR><TD colspan=3 align=center><HR size=4 width=80%></TD></TR>")
+
+$(SETVAR,$color,$(/,$clr_cnt,2))
+<TR valign=top $(IF,$(!=,$color,$(FIX,$color)),"bgcolor=#FCCE64")> 
+
+<TD><font size=2> 
+$(IF,$(AND,$(XST,$return_rec),$(NC,$prev_name,$1)),"<A HREF="/cgi-bin_B/webdriver?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$4" TARGET=content>SELECT</A>") 
+</TD>
+
+$(SETVAR,$viewer,$(IF,$(EC,$2,MUTANT),aa-locusview.apg,aa-markerview.apg))
+
+$(IF,$(NC,$prev_name,$1),"<TD valign=top> <font size=2>"$2":<A HREF="/cgi-bin_B/webdriver?MIval=$viewer&OID=$4" TARGET=content>"$1"</A></TD>","<TD>&nbsp;</TD>")
+
+<TD> <font size=2> 
+
+$(IF,$(AND,$(EC,$11,NULL),$(EC,$9,f)),"LG <b>"$5"</b>;<b> "$3"</b> "$13""<TD><font size=2> "<A target=content HREF=/cgi-bin_B/webdriver?MIval=aa-crossview.apg&OID="$6">"$7"</A>"</TD><TD><font size=2>" "$upd_date""</TD>)
+
+$(IF,$(AND,$(EC,$11,NULL),$(NC,$9,f)),"Mapped on <A target=content HREF=/cgi-bin_B/webdriver?MIval=aa-crossview.apg&OID="$6">"$7"  "$upd_date"</A>, but confidential.")
+
+$(IF,$(AND,$(NC,$11,NULL),$(EC,$9,f),$(=,$(POSITION,$6,FISH),0)),"Linked at "$11" "$13" to <A target=content HREF="/cgi-bin_B/webdriver?MIval=aa-markerview.apg&OID=$6">"$7"</A> ("$12")")
+
+$(IF,$(AND,$(NC,$11,NULL),$(EC,$9,f),$(>,$(POSITION,$6,FISH),0)),"Linked at "$11" "$13" to <A target=content HREF="/cgi-bin_B/webdriver?MIval=aa-fishview.apg&OID=$6">"$7"</A> ("$12")")
+
+
+$(IF,$(AND,$(NC,$11,NULL),$(NC,$9,f)),"Linked to "$12", but confidential.")
+</TD>
+
+<TD><font size=2><A HREF="javascript:view_map('$4','$8','$6')">
+$(IF,$(AND,$(EC,$11,NULL),$(EC,$9,f)),"Show Map")</A>&nbsp;
+$(IF,$(AND,$(EC,$AUTHORIZED,root),$(EC,$11,NULL),$(EC,$9,f)),<font size=-1><input type=button value='Show w/ zMapper' onClick="view_map_java('"$4"','"$7"','"$5"')"></font> )        </TD>
+
+</TR>
+$(SETVAR,$prev_gp,$5)
+$(SETVAR,$prev_name,$1)
+<?/MISQL>
+</TABLE>
+</form>
+
+<!-- QUERY: <?MIVAR>$MI_SQL<?/MIVAR> -->
+
+
+<?MIVAR COND="$(EQ,$MI_ROWCOUNT,0)">No matching records found<?/MIVAR>
+
+<?/MIBLOCK>  <!-- ends exists limit -->
+
+</HTML>
