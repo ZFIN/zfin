@@ -146,6 +146,7 @@ if (nextPage) {
 
 
 function storedValues(cookieName) {
+if (getCookie(cookieName)) {
   var cookieValue = getCookie(cookieName);
 	if (cookieValue) {
 	var valueArray = cookieValue.split(escape('&')); //parsing name/value pairs
@@ -181,6 +182,7 @@ function storedValues(cookieName) {
 		}	//end of for (j=0;j<document.forms[i].elements.length;j++) {
 	}   // end of for (i=0;i<document.forms.length;i++) { 
  }  // end of if (cookieValue) {
+}  //end of if(getCookie(cookieName))
 }  //end of function storedValues() 
 
 function saveForm (cookieName, nextPage) {
@@ -263,6 +265,44 @@ function formValues(formCookieName) {
 	}   //end of for (i=0; i<document.length; i++) {
   }   //end of function formValues() 
 /************************************************************/
+
+// this fills in the PI boxes with the contact person's info
+function copyContactInfo(ourForm, ourElement) {
+		for (n=0;n<ourForm.length;n++) {
+			if (ourForm.elements[n].name == 'required_submitterName') {
+					var x = n ;
+					}
+			} //end of for (n=0
+		for (n=0;n<ourForm.length;n++) {
+			if (ourForm.elements[n].name == 'PIName') {
+					var y = n ;
+					}
+			} //end of for (n=0
+		var z = y - x;
+		var f = 9; //number of elements to copy
+			
+		if (
+			(ourElement.type == "checkbox" && ourElement.checked == true) 
+			|| (ourElement.type.indexOf('select') != -1 && ourElement.value == "PI / Director")
+			) {
+				for (n=x;n<f;n++) {	
+					ourForm.elements[n+z].value = ourForm.elements[n].value;
+					ourForm.copyContact.checked = true;
+						} //for (n=x;n<8;n++)
+				 } else {
+				 	for (n=x;n<f;n++) {
+						ourForm.elements[n+z].value = "";
+						ourForm.copyContact.checked = false;
+						} //for (n=x;n<8;n++)
+				} // if (ourCheckbox.checked == true)
+}
+
+//this checkRef() function is for the fish line submission process
+function checkRef() {
+		if (document.referrer.indexOf('/zf_info/stckctr/submission/submitTerms2.html') == -1) {
+					window.location.href = 'submitTryAgain.html';
+				}	
+		}
 
 function sendMail(subjectTopic) {
 	window.location.href = ('mailto:form_comments@zfin.org?subject=' + subjectTopic);
