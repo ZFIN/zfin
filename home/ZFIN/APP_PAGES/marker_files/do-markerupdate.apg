@@ -25,6 +25,10 @@ comments -- reasons for doing update
 info -- optional value used to pass in additional info
 dataOID -- the zdbid of the attributed item
 caller -- the page the initiate the update function 
+
+05-13-04
+added constraint for mrkr_group ABBREV_EQ_NAME
+when name is modified for markers in this group, set abbrev = name.
 <?/MICOMMENTS>
 
 <META HTTP-EQUIV="EXPIRES" CONTENT="-2d">
@@ -118,10 +122,31 @@ comments,
 		      $(OR,$(EC,$attr_type,text),
 		           $(EC,$attr_type,textarea)))">
 
-    <?MISQL SQL="
+
+    <?MIVAR NAME=SQL_update>
       update marker
         set $attr='$new_value' 
-        where mrkr_zdb_id='$OID';">
+        where mrkr_zdb_id='$OID';
+    <?/MIVAR>
+
+    <?MISQL SQL="
+      SELECT * FROM marker, marker_types, marker_type_group_member
+      WHERE mrkr_zdb_id = '$OID'
+        AND mrkr_type = marker_type 
+        AND mtgrpmem_mrkr_type = marker_type
+        AND mtgrpmem_mrkr_type_group = 'ABBREV_EQ_NAME'
+        AND '$attr' = 'mrkr_name';">
+
+      <?MIVAR NAME=SQL_update>
+        update marker
+        set $attr = '$new_value', 
+            mrkr_abbrev = '$new_value' 
+        where mrkr_zdb_id='$OID';
+      <?/MIVAR>
+    <?/MISQL>
+  
+    <?MISQL SQL="$SQL_update">
+    
       <?MIBLOCK COND="$(EC,$info,nomenclature)">
         <?MIVAR NAME=comments COND="$(EC,$comments,NULL)">none<?/MIVAR>
         <?MISQL SQL="select max(mhist_date) from marker_history where mhist_mrkr_zdb_id = '$OID'">
