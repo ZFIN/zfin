@@ -1,4 +1,4 @@
-To: aprilm@uoneuro.uoregon.edu, dlains@uoneuro.uoregon.edu, cleeton@uoneuro.uoregon.edu, tomas@uoneuro.uoregon.edu, mason@uoneuro.uoregon.edu
+To: aprilm@uoneuro.uoregon.edu, dlains@uoneuro.uoregon.edu, cleeton@uoneuro.uoregon.edu, tomas@uoneuro.uoregon.edu, kelly@zfin.org, mason@uoneuro.uoregon.edu
 From: zirc@darkwing.uoregon.edu
 Subject: [required_requesterName]'s request for Zebrafish Books
 
