@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/private/bin/perl
 #
 # check gene_association file
 # version: $Revision$
