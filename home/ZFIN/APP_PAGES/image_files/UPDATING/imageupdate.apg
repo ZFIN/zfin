@@ -252,7 +252,7 @@ to a browser -->
 
     <?MISQL SQL="
       select WebExplode(object, '') 
-	from webPages where ID = 'aa-startframes_select.apg';">
+	from webPages where ID = 'aa-start_select.apg';">
       $1
     <?/MISQL>
 
