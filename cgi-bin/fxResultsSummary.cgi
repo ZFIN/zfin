@@ -1,9 +1,30 @@
 #!/usr/bin/perl
 require "header.pl";
 require "footer.pl";
+use CGI;
+
+my $Query = new CGI();
+
 print "Content-type: text/html\n\n";
 print "<html>\n\n";
 header();
+
+if ($Query->param('scenario') eq "2") {
+
+  $scenario = "2";
+  $gene = "<u>neurog1</u>";
+  $structures = "<u>spinal cord</u>";
+
+} else {
+
+  $scenario = "1";
+  $gene = "<u>epha4b</u>";
+  $structures = "<u>forebrain</u>, <u>rhombomere1</u>, <u>rhombomere3</u>, <u>rhombomere 5</u>";
+
+}
+
+
+
 print <<ENDHTML;
 <table cellpadding=5 width=100%>
 	<tr>
@@ -25,13 +46,13 @@ print <<ENDHTML;
           <td><strong>Results</strong></td>
           </tr>
         <tr bgcolor="#EEEEEE">
-          <td><em><u>epha4b</u></em></td>
+          <td><em>$gene</em></td>
           <td><u>WT</u>, <u>hdac1<sup> hi1618</sup></u> </td>
-          <td><u>forebrain</u>, <u>rhombomere1</u>, <u>rhombomere3</u>, <u>rhombomere 5</u></td>
+          <td>$structures</td>
           <td><a href="http://edison.zfin.org/cgi-bin_edison/webdriver?MIval=aa-pubvie
 w2.apg&OID=ZDB-PUB-040601-1">Cunliffe, V.T.</a> </td>
           <td>(2004)</td>
-         <td><a href="./fxView.cgi">(1 Figure)</a> </td>
+         <td><a href="./fxView.cgi?scenario=$scenario">(1 Figure)</a> </td>
           </tr>
       </table></td>
 	</tr></table>
