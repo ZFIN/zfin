@@ -1,5 +1,7 @@
 // Simple server for SQL statements from an Illustra database.
 // The server can only accept one connection at a time.
+//	Usage:	java Server [portnum [username [password]]]
+//		where username and password are a Unix id and password used to sign on to Informix
 //
 // Modified version of example 7-5 of _Java in a Nutshell_ by David Flanagan.
 // Written by David Flanagan.  Copyright (c) 1996 O'Reilly & Associates.
@@ -18,6 +20,8 @@ public class Server extends Thread
 
     protected int port;
     protected ServerSocket listen_socket;
+	protected String user;
+	protected String password;
 
 	// The amount of output to write to Server.out
 	// (in order of increasing amount of output)
@@ -25,6 +29,8 @@ public class Server extends Thread
 	public static final int CONNECTION_OUTPUT = 1;
 	public static final int QUERY_OUTPUT = 2;
 	public int outputLevel = CONNECTION_OUTPUT;
+	// Uncomment the following and comment the above to produce debugging output
+	//public int outputLevel = QUERY_OUTPUT;
 
 	// To ensure only 1 thread accesses milib at a time
 	Object semaphore = new Object ();
@@ -33,22 +39,36 @@ public class Server extends Thread
     // Start the server up, listening on an optionally specified port
     public static void main(String[] args)
 	{
-        int port = 0;
-        if (args.length == 1)
+		if (args.length >3)
 		{
+			System.err.println ("Usage:  java Server [portnum [username [password]]]\n");
+			System.exit (1);
+		}
+        int port = 0;
+		if (args.length >= 1)
             try { port = Integer.parseInt(args[0]);  }
             catch (NumberFormatException e) { port = 0; }
-        }
-        new Server(port);
+
+		String user = null;
+		if (args.length >= 2)
+			user = args [1];
+		
+		String password = null;
+        if (args.length == 3)
+			password = args [2];
+
+        new Server(port, user, password);
     }
 
     // Create a ServerSocket on which to listen for connections;  start the thread.
-    public Server(int port) {
+    public Server(int port, String user, String pass) {
 		System.out.println ("\n\n\n------------------ Starting Java Illustra server -----------------");
 		System.out.println ("Started at " + new Date ());
 		activeConnection [0] = false;
         if (port == 0) port = DEFAULT_PORT;
         this.port = port;
+		this.user = user;
+		this.password = pass;
         try { listen_socket = new ServerSocket(port); }
         catch (IOException e) { fail(e, "Exception creating server socket"); }
         System.out.println("Server: listening on port " + port);
@@ -64,7 +84,7 @@ public class Server extends Thread
             while(true)
 			{
                 Socket client_socket = listen_socket.accept();
-                DBConnection c = new DBConnection (this, client_socket, semaphore);
+                DBConnection c = new DBConnection (this, client_socket, semaphore, user, password);
             }
         }
         catch (IOException e) { 
@@ -108,6 +128,8 @@ class DBConnection extends Thread
 	protected static SyncCounter nextConnectNum = new SyncCounter (1);
 	protected int connectNum;
 	protected Server server;
+	protected String user;
+	protected String password;
 
 	private final static int WAIT_TIME = 60000;	// Time to wait for IO, in milliseconds
 
@@ -138,9 +160,11 @@ class DBConnection extends Thread
 	}
 	
 
-    public DBConnection (Server serv, Socket client_socket, Object sem)
+    public DBConnection (Server serv, Socket client_socket, Object sem, String user, String password)
 	{
 		server = serv;
+		this.user = user;
+		this.password = password;
 		connectNum = nextConnectNum.next ();
 		if (server.outputLevel >= Server.CONNECTION_OUTPUT)
 			System.out.println ("\nDBConnection " + connectNum + " for host " +
@@ -179,7 +203,7 @@ class DBConnection extends Thread
 				System.out.println ("Just entered sync block for DBConnection " + connectNum);
 			try
 			{
-				MIConnection DB = new MIConnection ("template1");
+				MIConnection DB = new MIConnection ("ztest", user, password);
 				Statement si = DB.createStatement ();
 		
 					/*
@@ -190,8 +214,13 @@ class DBConnection extends Thread
 					  fields expected.  The integer is followed by the separator character.
 					  The actual SQL line follows the separator.
 
-					  For now, as a security measure, I only permit SELECT statements.
-					  Any statement which does not begin with that word (possibly preceded
+					  For now, as a security measure, I only permit SELECT statements and
+					  the following restricted data-modification statements:
+					      UPDATE NOTIFICATIONS (which is only used for debugging)
+						  INSERT INTO INT_PERSON_PUB
+						  DELETE FROM INT_PERSON_PUB
+					  
+					  Any statement which does not begin with those words (possibly preceded
 					  by whitespace) will be rejected with an SQLException.  I also check
 					  to make sure that there is only a single statement in the line,
 					  and that the line ends with a ';'.
@@ -230,7 +259,11 @@ class DBConnection extends Thread
 					
 				// Check that the SQL statement is acceptable.
 				String update = "update notifications set last_notified";
-				if (! SQLstmt.regionMatches (true, 0, update, 0, update.length ()) && 
+				String insert = "insert into int_person_pub";
+				String delete = "delete from int_person_pub";
+				if (! SQLstmt.regionMatches (true, 0, update, 0, update.length ()) &&
+					! SQLstmt.regionMatches (true, 0, insert, 0, insert.length ()) &&
+					! SQLstmt.regionMatches (true, 0, delete, 0, delete.length ()) &&
 					! SQLstmt.regionMatches (true, 0, "select", 0, 6))
 					throw new SQLException ("*** Not an acceptable statement type ***");
 				if (SQLstmt.indexOf (';') != SQLstmt.length () - 1)
