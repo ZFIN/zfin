@@ -20,6 +20,8 @@ annotations -- big string of annotations for the image
 
 <META HTTP-EQUIV="EXPIRES" CONTENT="-2d"> 
 
+<?MIVAR COND=$(NXST,$annotations) NAME=$annotations>NULL<?/MIVAR>
+
 <!-- first update navigation and double-check permissions. Don't put up 
 navigator tile if you are doing selection since you are jumping directly 
 to a browser -->
@@ -30,6 +32,7 @@ to a browser -->
     where ID = 'aa-secure_navigation.apg';">
   $1
 <?/MISQL>
+
 
 
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">

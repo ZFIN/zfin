@@ -12,9 +12,9 @@ old_value -- the previous value
 comments -- reasons for doing update 
 annotations -- huge string of urlencoded changed annotations for the image. 
   Will be NULL if no changes to annotations were made;
-
-
 -->
+
+<?MIVAR COND=$(NXST,$annotations) NAME=$annotations>NULL<?/MIVAR>
 
 <!-- First check security. Main purpose is just to get submitter id and name -->
 <?MISQL SQL="
