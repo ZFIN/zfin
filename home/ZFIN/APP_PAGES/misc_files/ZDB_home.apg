@@ -450,12 +450,9 @@
 			       name="stored_procedure" 
 			       value="regen_fishsearch">
 		      </form>
-		      <form action='/<!--|CGI_BIN_DIR_NAME|-->/runSPL.cgi' 
-			    method="POST" >
+		      <form action='/<!--|CGI_BIN_DIR_NAME|-->/regen_genomics.cgi' 
+			    method="GET" >
 			<input type=submit value="Regen Genomics data">
-			<input type=hidden 
-			       name="stored_procedure" 
-			       value="regen_genomics">
 		      </form>
 		      <form action='/<!--|CGI_BIN_DIR_NAME|-->/runSPL.cgi' 
 			    method="POST" >
