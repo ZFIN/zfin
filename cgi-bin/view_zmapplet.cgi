@@ -11,14 +11,14 @@
   $CGI::DISABLE_UPLOADS = 1;    # no uploads 
   my $Q = new CGI();
   
-  use POSIX 'strftime';		# just for the debugging dump
-  open(IN, ">> /tmp/mapplet_beta.log") || die "input dump failed";
-  print IN  strftime('%r %A %B %d %Y', localtime) ."\t";
+  #use POSIX 'strftime';		# just for the debugging dump
+  #open(IN, ">> /tmp/mapplet_beta.log") || die "input dump failed";
+  #print IN  strftime('%r %A %B %d %Y', localtime) ."\t";
   ### capture where the call was made from
-  $_ = $Q->referer(); /MIval=aa-/; print IN $'."\t";
-  foreach $name ($Q->param()){print IN "$name=".$Q->param($name)."|"};
-  print IN "\n\n";
-  close IN;
+  #$_ = $Q->referer(); /MIval=aa-/; print IN $'."\t";
+  #foreach $name ($Q->param()){print IN "$name=".$Q->param($name)."|"};
+  #print IN "\n\n";
+  #close IN;
   
   
   ### the hard coded env paths need a better idea-[thanks Dave]
@@ -222,9 +222,8 @@
       
       if( (defined $Q->param("marker")) && ($Q->param("marker")) ) { 
 	$marker = lc($Q->param("marker"));
-    undef $roweref;
+    undef $rowref;
 	$rowref = check_uniq($marker);
-	#$unique = (defined $rowref)? @$rowref : 0; 
 	
 	#$note = $note . "\trow ref length " . $unique . "\n";
 	###
@@ -250,10 +249,10 @@
 	  if ($res->is_success) {print $res->content . "\n";} 
 	  else { print "Error: " . $res->status_line . "\n";}
       
-      open(IN, ">> /tmp/tomc_zmapplet.log") || die "input dump failed";
-      print IN "\n*****************************************************".
-            $note. "\nrowref\t@$rowref \n";
-      close IN;
+      #open(IN, ">> /tmp/tomc_zmapplet.log") || die "input dump failed";
+      #print IN "\n*****************************************************".
+      #      $note. "\nrowref\t@$rowref \n";
+      #close IN;
       
 	  exit 1;       
 	}            
@@ -589,12 +588,10 @@
 	  $note = $note . "checking $marker, $panel , $lg for uniqueness \n";
       undef $rowref;
 	  $rowref  = check_uniq($marker, $panels_string ); 
-	  #$unique  = (defined $$rowref[0])? @$rowref: 0;
 	  if( (defined $rowref) && (! defined @$rowref[1])){ 
         $unique = 1;
 	    $zdbid = $$rowref[0][0];
 	    $lg =    $$rowref[0][1]; 
-	    #$loc =   $$rowref[0][2];
 	    $ztotal =  get_total($panels_string, $lg, $types);
 	    $Q->param( $panel.'_lg_near', $loc);
 	    #$Q->param($panel."_lg", $lg); 
