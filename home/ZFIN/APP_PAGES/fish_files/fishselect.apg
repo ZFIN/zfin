@@ -144,7 +144,7 @@ function call_reset() {
 
 <?MIBLOCK COND="$(NC,$line_type,wild_type)">
 
-<TD><font size=-1><A HREF="javascript:start_help('abbrev')"><b>3-letter abbrev.:</b></A> <input type=text maxlength=3 name=abbrev size=3 onChange='document.BrowserForm.START.value = "";'></font></TD>
+<TD><font size=-1><A HREF="javascript:start_help('abbrev')"><b>Abbrev.:</b></A> <input type=text maxlength=20 name=abbrev size=10 onChange='document.BrowserForm.START.value = "";'></font></TD>
 <TD>
 	&nbsp;
 </TD>
