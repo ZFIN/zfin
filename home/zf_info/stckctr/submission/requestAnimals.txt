@@ -1,4 +1,4 @@
-To: aprilm@uoneuro.uoregon.edu, dlains@uoneuro.uoregon.edu, kelly@uoneuro.uoregon.edu, cjones@uoneuro.uoregon.edu, ngoebel@uoneuro.uoregon.edu, mason@uoneuro.uoregon.edu, rholland@uoneuro.uoregon.edu, equinn@uoneuro.uoregon.edu, norman@uoneuro.uoregon.edu
+To: aprilm@uoneuro.uoregon.edu, dlains@uoneuro.uoregon.edu, kelly@uoneuro.uoregon.edu, cjones@uoneuro.uoregon.edu, mason@uoneuro.uoregon.edu, rholland@uoneuro.uoregon.edu, equinn@uoneuro.uoregon.edu, norman@uoneuro.uoregon.edu
 From: zirc_order@zfin.org
 Subject: [nameInd] [nameFam]'s request for [lineName] [mutAllele] [quantity] [type] [homoEmbryo]
 
