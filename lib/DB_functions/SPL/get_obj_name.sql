@@ -1,0 +1,119 @@
+drop function get_obj_name;
+
+create function
+get_obj_name(zdbId varchar(50))
+
+  returning varchar(120);  -- longest name in DB is 120 characters long.
+
+  -- Given a ZDB ID, gets the name of the object associated with that ZDB ID.
+  -- Returns NULL if ZDB ID does not point to a record.
+
+  define objType	like zdb_object_type.zobjtype_name;
+  define objName	varchar(120);
+
+  let objName = NULL;
+  let objType = get_obj_type (zdbId);
+
+  -- list the most likely types first.
+
+  if (objType in ("GENE", "EST",  "BAC", "PAC", 
+		  "SSLP", "SSR", "RAPD", "STS")) then
+    select mrkr_name 
+      into objName
+      from marker
+      where mrkr_zdb_id = zdbId;
+  elif (objType = "FISH") then
+    let objName = get_fish_full_name(zdbId);
+  elif (objType = "LOCUS") then
+    select locus_name 
+      into objName
+      from locus
+      where zdb_id = zdbId;
+  elif (objType = "ALT") then
+    select allele
+      into objName
+      from alteration
+      where zdb_id = zdbId;
+  elif (objType = "LAB") then
+    select name 
+      into objName
+      from lab
+      where zdb_id = zdbId;
+  elif (objType = "PERS") then
+    select name 
+      into objName
+      from person
+      where zdb_id = zdbId;
+  elif (objType = "PUB") then
+    select title
+      into objName
+      from publication
+      where zdb_id = zdbId;
+  elif (objType = "IMAGE") then
+    select fimg_zdb_id		-- don't have names, return ZDB ID
+      into objName
+      from fish_image
+      where fimg_zdb_id = zdbId;
+
+  -- Now, list the less frequently hit types in alphabetical order
+
+  elif (objType = "ANAT") then
+    select anatitem_name 
+      into objName
+      from anatomy_item
+      where anatitem_zdb_id = zdbId;
+  elif (objType = "CHROMO") then
+    select print_name
+      into objName
+      from chromosome
+      where zdb_id = zdbId;
+  elif (objType = "COMPANY") then
+    select name 
+      into objName
+      from company
+      where zdb_id = zdbId;
+  elif (objType = "LABEL") then
+    select lbl_name 
+      into objName
+      from label
+      where lbl_zdb_id = zdbId;
+  elif (objType = "LINK") then
+    select lnkg_zdb_id		-- don't have names, return ZDB ID.
+      into objName
+      from linkage
+      where lnkg_zdb_id = zdbId;
+  elif (objType = "LNKGPAIR") then
+    select lnkgpair_zdb_id      -- don't have names, use ZDB ID 
+      into objName
+      from linkage_pair
+      where lnkgpair_zdb_id = zdbId;
+  elif (objType = "MM") then
+    select zdb_id		-- don't have names, use ZDB ID
+      into objName
+      from mapped_marker
+      where zdb_id = zdbId;
+  elif (objType = "ORTHO") then
+    select ortho_name 
+      into objName
+      from orthologue
+      where zdb_id = zdbId;
+  elif (objType = "PRIMER") then
+    select zdb_id		-- don't have names, use ZDB ID
+      into objName
+      from primer_set
+      where zdb_id = zdbId;
+  elif (objType = "REFCROSS") then
+    select name 
+      into objName
+      from panels		-- Note: this is a fast search table.
+      where zdb_id = zdbId;
+  elif (objType = "XPAT") then
+    select xpat_zdb_id		-- don't have names, use ZDB ID
+      into objName
+      from expression_pattern
+      where xpat_zdb_id = zdbId;
+  end if
+
+  return objName;
+
+end function;
