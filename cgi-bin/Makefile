@@ -27,11 +27,26 @@ GENERICS = ZFIN_jump map-options.pl print_map.cgi runSPL.cgi cgiemail.cgi\
 	   mapper_select.cgi mapper_select.pl \
 	   view_mapplet.cgi view_zmapplet.cgi select_structures.cgi \
 	   input_welcome.cgi input_welcome_generic.cgi expired_locus.cgi \
-           publications_today.cgi send_notification.cgi
+           publications_today.cgi send_notification.cgi 
 
+FXGENERICS = fxFigures.cgi fxSearchResults.cgi header.pl footer.pl pub.pl Tableview.pl \
+	   Figures.pl fxQuery.pl fxResults.pl fxView.cgi results.dat epha4b.dat images.dat fig4.dat \
+	   fxQuery.cgi fxResultsSummary.cgi fxViewAll.cgi
+
+SPECIFICFXTARGETS = $(foreach SPEC, $(FXGENERICS), $(TARGETDIR)/$(SPEC))
 
 # ---------------  Production Rules  ------------------------------------
 
 # Use default rules.
 
 include $(TOP)/make.default.rules
+
+
+# ---------------  Misc Rules  ------------------------------------
+
+# Rules for FX mockups
+
+$(SPECIFICFXTARGETS) : $(TARGETDIR)/% : % $(TRANSLATETABLE)
+	$(MAKESPECIFIC) $< $(TRANSLATETABLE) $@
+
+fx: $(SPECIFICFXTARGETS)
