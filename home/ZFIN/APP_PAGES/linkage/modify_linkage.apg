@@ -94,7 +94,7 @@ Possible vars: link_id, comments, lg, private, source , ZDB_ident, distance, LOd
 
   <?MIVAR>
     <SCRIPT>
-      window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_linkage.apg&link_id=$link_id';
+      window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg';
     </SCRIPT>
   <?/MIVAR> 
 
