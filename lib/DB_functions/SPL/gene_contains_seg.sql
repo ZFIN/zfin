@@ -1,5 +1,18 @@
 --create marker relationship
 
+{
+As of 2003/03, this function is not used anywhere.  However, from an 
+e-mail from Tom:
+
+  I made it & used it before the curators had an interface  to enter marker
+  relations, so its primary purpose is finished, however I expect that there may
+  still be batches of assignments made in which case the functionality would be
+  useful
+
+So, we will hang on to it.
+}
+
+
 drop function gene_contains_seg;
 
 create function 
@@ -40,7 +53,7 @@ create function
     insert into zdb_active_data values(mrel);
          
     insert into marker_relationship 
-    values ( mrel, 'gene contains small segment',gene,seg,comments);
+    values ( mrel, 'gene encodes small segment',gene,seg,comments);
 
     return 0;
 end function;
