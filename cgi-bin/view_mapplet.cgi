@@ -31,7 +31,7 @@
   
   ### hardcoded list of panels will need updating if new ones are made.
   ### or we could 'select abbrev from panels'
-  my @allpanels = ("LN54","T51","MGH","HS","MOP","GAT" ); 
+  my @allpanels = ("LN54","T51","MGH","HS","MOP","GAT","JPAD" ); 
   my @panels;
   my $panel;			### one of the above panels
   
