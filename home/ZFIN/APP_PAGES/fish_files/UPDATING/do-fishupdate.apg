@@ -46,6 +46,13 @@ comments -- reasons for doing update
 
 <?MISQL COND="$(OR,$(EC,$attr_type,text),$(EC,$attr_type,textarea))" SQL="update fish set $attr='$new_value' where zdb_id='$OID';"><?/MISQL>
 
+<!-- Special case for where we are deleting a marker from mapped_deletion -->
+<?MIBLOCK COND="$(EC,$attr_type,marker-delete)">
+<!-- DEBUGGING <?MIVAR>   old_value = $old_value  -->   <?/MIVAR>
+<!-- DEBUGGING <?MIVAR>   attr = $attr  -->  <?/MIVAR>
+<?MISQL SQL="delete from mapped_deletion  where marker_id='$old_value' and allele='$attr';"><?/MISQL>
+<?/MIBLOCK>  <!-- ends marker delete case -->
+
 
 
 <!-- Special case for blasting the representative image for the line  -->
