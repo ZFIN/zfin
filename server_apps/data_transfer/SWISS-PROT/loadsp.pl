@@ -91,7 +91,6 @@ sub sendRunningResult {
   close(SENDMAIL);
 }
 
-
 #------------------- Download -----------
 
 sub downloadGOtermFiles () {
@@ -307,6 +306,12 @@ close F;
 #create new go_association file
 
 &sendRunningResult();
+
+#----------- Match the obsolete/secondary go terms in the translation file -----
+print "\n deal with obsolete / secondary go terms ";
+
+system ("sp_badgo_report.pl");
+
 
 exit;
 
