@@ -244,13 +244,13 @@ Type:<SELECT name=seq_super>
 <b>Update Sequence:</b> &nbsp;
 AccNum:<SELECT name=upd_seq_zdb>
   <?MISQL SQL="
-    select distinct fdbcont_fdb_db_name, dblink_acc_num, dblink_zdb_id
+    select distinct fdbcont_fdb_db_name, dblink_acc_num_display, dblink_zdb_id
       from foreign_db_contains, db_link
      where fdbcont_fdbdt_super_type = 'sequence' 
        and fdbcont_fdb_db_name <> 'BLAST'
        and fdbcont_zdb_id = dblink_fdbcont_zdb_id
        and dblink_linked_recid = '$OID'
-     order by fdbcont_fdb_db_name, dblink_acc_num;">
+     order by fdbcont_fdb_db_name, dblink_acc_num_display;">
     <option value="$3">$1:$2</option>
   <?/MISQL>
 </SELECT>
@@ -298,8 +298,9 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
     </TR>
 
       <?MISQL SQL="
-        select dblink_length, fdbcont_fdbdt_data_type, fdb_db_name, conc(conc(fdb_DB_query,dblink_acc_num),fdb_url_suffix), 
-               dblink_acc_num, dblink_zdb_id, fdb_db_significance, fdbdt_display_order
+        select dblink_length, fdbcont_fdbdt_data_type, fdb_db_name, fdb_db_query || dblink_acc_num || 
+	     (case fdb_url_suffix when NULL then '' else fdb_url_suffix end), 
+               dblink_acc_num_display, dblink_zdb_id, fdb_db_significance, fdbdt_display_order
         from db_link, foreign_DB, foreign_db_contains, foreign_db_data_type
         where dblink_linked_recid = '$OID'
           and dblink_fdbcont_zdb_id = fdbcont_zdb_id
@@ -452,7 +453,8 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
       
       <?MISQL SQL="
         select fdbcont_fdbdt_data_type, dblink_length, fdbcont_fdb_db_name, 
-               conc(conc(fdb_db_query,dblink_acc_num),fdb_url_suffix), dblink_acc_num, dblink_zdb_id,
+               fdb_db_query || dblink_acc_num || (case fdb_url_suffix when NULL then '' else fdb_url_suffix end),
+               dblink_acc_num_display, dblink_zdb_id,
                fdb_db_significance, fdbdt_display_order
         from db_link, foreign_DB, foreign_db_contains, foreign_db_data_type
         where dblink_linked_recid = '$encodes_zdb_id'
@@ -588,7 +590,8 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
       
       <?MISQL SQL="
         select fdbcont_fdbdt_data_type, dblink_length, fdbcont_fdb_db_name, 
-               conc(conc(fdb_db_query,dblink_acc_num),fdb_url_suffix), dblink_acc_num, dblink_zdb_id,
+               fdb_db_query || dblink_acc_num || (case fdb_url_suffix when NULL then '' else fdb_url_suffix end), 
+               dblink_acc_num_display, dblink_zdb_id,
                fdb_db_significance, fdbdt_display_order
         from db_link, foreign_DB, foreign_db_contains, foreign_db_data_type
         where dblink_linked_recid = '$contains_zdb_id'
