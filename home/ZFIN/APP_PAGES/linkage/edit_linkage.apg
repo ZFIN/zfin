@@ -8,6 +8,7 @@ Expected vars: link_id
 <HEAD>
   <SCRIPT>
      var plus = '+';
+     var quotes = "''";
      var replaced_comments;
 
 
@@ -19,6 +20,7 @@ Expected vars: link_id
        }
        else {
          replaced_comments = comments.replace(/ /g,plus);
+	 replaced_comments = comments.replace(/'/g,quotes);
          window.location.href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-modify_linkage.apg&link_id="+link_id+"&calling_form=update_linkage&lg="+lg+"&private="+zfin_private+"&comments="+replaced_comments;
        }
      }
