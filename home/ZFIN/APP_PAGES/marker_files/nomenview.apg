@@ -1,0 +1,190 @@
+
+
+<!-- This file is for nomenclature history display.
+  
+   Get all the Marker_history records for the ZDB_ID passed in. 
+   Display events sorted by date.
+   
+   Parameter:
+   OID     the zdb id of a marker			
+-->
+<HTML>
+<HEAD>
+
+<?MIBLOCK COND="$(NXST,$OID)">
+<p>
+ERROR -- something bad happened -- no OID passed in!
+<?/MIBLOCK>
+
+<?MISQL SQL="
+  select WebExplode(object,'page_title=nomenview&permission=root') 
+    from webPages 
+    where ID='aa-secure_navigation.apg';">$1
+<?/MISQL>
+
+<?MIVAR NAME=$userid>GUEST<?/MIVAR>
+<?MIVAR NAME=rtype>marker<?/MIVAR>
+<?MIVAR NAME=chronology COND=$(NXST,$chronology)>desc<?/MIVAR>
+<?MIVAR NAME=highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
+<?MIVAR NAME=ROWCOUNT>0<?/MIVAR>
+
+<?MIVAR>
+<SCRIPT>
+  function edit_nomen(zdb_id) {
+    helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-nomeneditor.apg&OID="+zdb_id,"helpwindow","scrollbars=yes,width=600,height=500");
+  }
+  
+  function toggle_date(toggle)
+  {
+    var url = '/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-nomenview.apg&OID=$OID&chronology='+toggle;
+    $(IF,$(XST,$UPDATE),url += '&UPDATE=1';)
+    $(IF,$(XST,$naming_events),url += '&naming_events=$naming_events';)
+
+    location.replace(url);
+  }
+  
+  function toggle_naming_events()
+  {
+    var url = '/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-nomenview.apg&OID=$OID&chronology=$chronology';
+    $(IF,$(XST,$UPDATE),url += '&UPDATE=1';)
+    $(IF,$(NXST,$naming_events),url += '&naming_events=1';)
+    
+    location.replace(url);
+  }
+  
+</SCRIPT>
+<?/MIVAR>
+
+<!--------------------------------------------->
+
+    <TITLE>ZFIN Marker History </TITLE>
+
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+  
+  <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=gene') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
+
+<?MIVAR COND="$(XST,$UPDATE)">
+       <form>
+	<center><font size=+2><input type=button 
+	value=" DONE UPDATING. Back to Viewing! " onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-nomenview.apg&OID=$OID')"> </font></center>
+       </form>
+<?/MIVAR>
+<BR>
+<form name=updater method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+<TABLE WIDTH=100%><TR BGCOLOR=#CCCCCC><TD>
+  <font size=+2><b>NOMENCLATURE</b></font>
+  <?MIVAR COND="$(EC,$AUTHORIZED,root)">
+  <input type=button name=toggle_naming onClick="toggle_naming_events()"; 
+         value="$(IF,$(XST,$naming_events),Hide,Show) Naming Events">
+  <?/MIVAR>
+</TD></TR></TABLE>
+
+<TABLE width=100%>
+
+<!-- Query for History Events and order by date -->
+<?MISQL SQL="
+  SELECT mhist_date, 
+         mhist_event, 
+         mhist_reason, 
+         mhist_mrkr_name_on_mhist_date,
+         mhist_mrkr_abbrev_on_mhist_date,
+         dalias_alias,
+         mhist_mrkr_prev_name, 
+         mhist_comments,
+         mhist_zdb_id
+         
+  FROM   marker_history, 
+         OUTER data_alias
+         
+  WHERE  mhist_mrkr_zdb_id = '$OID'
+    AND  mhist_dalias_zdb_id = dalias_zdb_id
+    $(IF,$(NXST,$naming_events),AND mhist_event != 'renamed')
+    
+  ORDER BY mhist_date $chronology, mhist_event $chronology;">
+
+  <?MIVAR NAME=$Date>$(SUBSTR,$1,1,10)<?/MIVAR>
+  <?MIVAR NAME=$Event>$2<?/MIVAR>
+  <?MIVAR NAME=$Reason>$3<?/MIVAR>
+  <?MIVAR NAME=$MrkrName>$4<?/MIVAR>
+  <?MIVAR NAME=$MrkrAbbrev>$5<?/MIVAR>
+  <?MIVAR NAME=$Alias>$6<?/MIVAR>
+  <?MIVAR NAME=$MrkrPrevName>$7<?/MIVAR>
+  <?MIVAR NAME=$Comments>$8<?/MIVAR>
+  <?MIVAR NAME=$NomenId>$9<?/MIVAR>
+  
+  <?MIVAR NAME=ROWCOUNT>$(+,$ROWCOUNT,1)<?/MIVAR>
+  <?MIVAR NAME=bgcolor>$(IF,$(=,0,$(MOD,$ROWCOUNT,2)),bgcolor=$highlight,&nbsp;)<?/MIVAR>
+
+  <?MIBLOCK COND="$(EC,$ROWCOUNT,1)">  
+    <tr bgcolor=<?MIVAR>$highlight<?/MIVAR>>
+      <td><b>New Symbol<b></td>
+      <td><b>Event</b></td>
+      <td><b>Old Symbol<b></td>
+      <td><b>Date<b>  
+      <?MIVAR COND="$(NC,$AUTHORIZED,false)">
+        <input type=button name=switch_date onClick=toggle_date($(IF,$(EC,$chronology,desc),'asc','desc')) 
+               value="$(IF,$(EC,$chronology,desc),\/,/\)">
+      <?/MIVAR>
+      </td>
+      <td><b>Reason<b></td>
+      <td><b>Comments</b></td>
+    </tr>  
+  <?/MIBLOCK> <!-- end if (mi_currentrow == 1) -->
+    <tr $bgcolor>
+      <td>
+      <?MIVAR COND="$(XST,$UPDATE)">
+        <input type=button value="Edit/Delete" onClick=edit_nomen('$NomenId')>
+      <?/MIVAR>
+
+      <?MIBLOCK COND="$(EC,$Event,reassigned)"> 
+         <?MIVAR>
+         <b>$MrkrAbbrev</b></td> 
+         <td>renamed from</td>
+         <td><b>$Alias</b></td>
+         <?/MIVAR>
+      <?MIELSE COND=$(EC,$Event,assigned)>
+         <?MIVAR>
+         <b>$MrkrAbbrev</b></td> 
+         <td>$Event</td>
+         <td>&nbsp;</td>
+         <?/MIVAR>
+      <?MIELSE COND=$(EC,$Event,renamed)>
+         <?MIVAR>
+         <b>$MrkrName</b></td>
+         <td>$Event from</td>
+         <td><b>$MrkrPrevName</b></td>
+         <?/MIVAR>
+      <?MIELSE COND=$(EC,$Event,reserved)>
+         <?MIVAR>
+         <b>$MrkrAbbrev</b></td> 
+         <td>$Event</td>
+         <td>&nbsp;</td>
+         <?/MIVAR>
+      <?MIELSE COND=$(EC,$Event,merged)>
+         <?MIVAR>
+         <b>$MrkrAbbrev</b></td>
+         <td>$Event with</td>
+         <td><b>$Alias</b></td>
+         <?/MIVAR>
+      <?/MIBLOCK>
+      <td>$Date</td>
+      <?MIVAR>
+        <td>
+        $(IF,$(NE,$Reason,None Specified),$Reason,&nbsp;)
+        <?MISQL COND=$(NXST,$UPDATE) SQL="select WebExplode(object,'dataId=$NomenId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+        </td>
+      <?/MIVAR>
+
+    <td width=20%>
+      <?MIVAR>$Comments<?/MIVAR>
+    </td>
+  </tr>
+
+<?/MISQL> <!-- end Main query for history events -->
+</TABLE>
+<?MIVAR COND=$(=,$ROWCOUNT,0)>History Unavailable<?/MIVAR>
+</form>
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+
+</HTML>
