@@ -1231,7 +1231,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
   <?MIVAR NAME=$count_of_curation_pub>$1<?/MIVAR>
 <?/MISQL>
 <?MIVAR NAME=$total_count>$(+,$count_of_real_pub,$count_of_curation_pub)<?/MIVAR>
-<?MIBLOCK COND="$(>,$total_count,0)">
+<?MIBLOCK COND="$(OR,$(>,$total_count,0),$(XST,$UPDATE))">
   <?MIVAR>
   <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=$target_table&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev$(IF,$(XST,$UPDATE),&UPDATE=1)&total_count=$total_count"><b>CITATIONS</b></A>
   <?/MIVAR>
