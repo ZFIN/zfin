@@ -202,7 +202,7 @@ Started 2003/11/06, Thisse no longer makes gene assignments, only hundred percen
 
    Run the blast processing.. it will take about 5 hours at least !! I have added "nice +10" to the two demanding blast.  
 
-     > blastThisse.sh batchseq.fa
+     > blastThisse.sh <your_test_db> batchseq.fa
 
    The finally files to be sended to Ken and Sridhar are is_gene.txt, thisse2gb.txt, thisse2est.txt and thisse2sp.txt. (After another round, we could probably delete the intermediate files end with .unl, .fin as the last step in the script)
 
