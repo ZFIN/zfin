@@ -29,7 +29,7 @@ SHELL=/bin/sh
 RELEASE=1.6
 CC=gcc
 
-PROG=cgiemail.cgi
+PROG=cgiemail
 
 DISTFILES=README 
 DISTBASE=cgiemail-$(RELEASE)
@@ -40,9 +40,9 @@ EMAIL_OBJ=cgilib.o cgiemail.o
 LIBSRC=cgilib.c cgilibcso.c
 
 
-
 all: $(PROG)
-	cp -pf cgiemail.cgi $(TARGETDIR)
+	$(CC) $(LDFLAGS) -o $(PROG) $(EMAIL_OBJ)
+	cp -pf cgiemail $(TARGETS)
 	chmod 555 $(TARGETS)
 
 cgiemail: $(EMAIL_OBJ)
