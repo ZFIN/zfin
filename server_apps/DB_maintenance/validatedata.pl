@@ -590,7 +590,7 @@ sub expressionPatternAnatomyStageWindowOverlapsAnatomyItem ($) {
 # fishNameEqualLocusName
 #
 # The fish.name column should equal a locus.name column.
-# We can't enforce this with a foreign key because (as of 2003/01)
+# We cant enforce this with a foreign key because (as of 2003/01)
 # locus.name is not unique (more grumbling).
 # We can't enforce this with a check constraint beacuse the constraint
 # crosses 2 tables.
@@ -699,6 +699,8 @@ sub fishAbbrevStartsWithLocusAbbrev ($) {
 		 and line_type = "mutant"
 		 and fish.abbrev not like (locus.abbrev || "%")
 		 and locus.abbrev <> ""
+                 and locus.abbrev <> "NULL"
+                 and locus.abbrev is not null
                  and (   substr(locus.abbrev,1,4) <> "unm "
                       or substr(locus.abbrev,1,3) <> substr(fish.abbrev,1,3))';
 
