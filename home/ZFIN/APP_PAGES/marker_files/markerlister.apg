@@ -74,9 +74,7 @@
             and allmapnm_name like '$wild_card$(LOWER,$name)%' )
     <?/MIVAR>
   <?/MIBLOCK> 
-
-<?MIVAR NAME=$constraint COND="$(AND,$(EC,$compare,starts),$(XST,$name))">$constraint ((lower(mname) like '$wild_card$(LOWER,$name)%') or (lower(abbrev) like '$wild_card$(LOWER,$name)%' ))<?/MIVAR>
-
+ 
 
 <?MIVAR NAME=$previous COND="$(XST,$name)"> and <?/MIVAR>
 
@@ -332,6 +330,8 @@ $(IF,$(AND,$(EC,$ending,NULL),$(EC,$private,f)),"</form>")
 
 <?/MIBLOCK>  <!-- ends exists limit -->
 
+
+
 <!-- OKAY, now cause a tile for the new page to appear in the navigator frame -->
 <!-- startframes.apg will pass variables on to appropriate page -->
 <!-- don't want a tile if got here via the accessionlister  -->
@@ -341,6 +341,7 @@ $(IF,$(AND,$(EC,$ending,NULL),$(EC,$private,f)),"</form>")
 <?MIVAR COND="$(NXST,$name)" NAME=$name><?/MIVAR>
 <?MIVAR COND="$(NXST,$plinks)" NAME=$plinks>NULL<?/MIVAR>
 <?MIVAR NAME=$mlist DELIMIT="','" REPLACE="">$mlist<?/MIVAR>
+
 <?MIVAR>
 <SCRIPT>
 var page_id=top.content.location.href+'&navtile=$navtile&name=$name&lg=$lg&refcross=$refcross&marker_type=$mlist&compare=$compare&plinks=$plinks';
@@ -349,6 +350,7 @@ top.controls.location.reload(true);
 </SCRIPT>
 <?/MIVAR>
 <?/MIBLOCK>
-<?MIVAR>
-<SCRIPT>
+
+
+
 </HTML>
