@@ -1,6 +1,10 @@
 #!/bin/tcsh
 #
-#
+# this master script calls the pre_gxp_load.sql first to load data into
+# temp table and conduct quality check, it aborts on error detection. 
+# it pauses to get user input of whether to load real database. 
+# It gives table content comparison after the execution.
+# 
 
 if ($#argv < 2) then
     echo "Usage: load_gxp.sh  dbname  labname  <datatype>"
@@ -52,6 +56,13 @@ foreach file (*.err)
     endif
 end
 /bin/rm -f *.err
+
+echo "Ready to load database? (y or n)"
+set goahead = $< 
+if ($goahead == 'n') then
+    $INFORMIXDIR/bin/dbaccess $dbname post_gxp_load.sql
+    exit;
+endif
 
 $INFORMIXDIR/bin/dbaccess $dbname gxp_load_quantity_check.sql >& preload_quantity.txt
 
