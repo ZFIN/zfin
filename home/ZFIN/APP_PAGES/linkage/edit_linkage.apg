@@ -53,16 +53,17 @@ Expected vars: link_id
 <form name=edit_linkage method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 <input type=hidden name=MIval value=aa-modify_linkage.apg>
 
-<center>
-  <B>
-    <font size=5> Edit Linkage <?MIVAR>$link_id<?/MIVAR>  
-  </B>
-</center>
-<p>
-
-<basefont size=2>
-
-<?MISQL SQL="select WebExplode(object,'permission=root') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+<TABLE width="100%">
+  <TR>
+    <TD>
+      <center>
+        <B>
+	  <font size=+1> Edit Linkage <?MIVAR>$link_id<?/MIVAR>  
+        </B>
+      </center>
+    </TD>
+  </TR>
+</TABLE>
 
 <?MIVAR NAME=$MI_NULL><?/MIVAR>
 <?MIVAR COND="$(NXST,$distance)" NAME=$distance><?/MIVAR>
@@ -88,17 +89,24 @@ Expected vars: link_id
     <?MIVAR NAME=$display_source>$1<?/MIVAR>
     <?/MISQL>
   <?/MIBLOCK>
-  <TABLE width=100%>
-    <b><INPUT TYPE=button value=Update onClick="update_source('$link_id')"> Source: </b>  $display_source
-  <p>
-    <b>Linkage Group:</b>
-    <SELECT name=lg >
-      <?MISQL SQL="select distinct lg_name,lg_order from linkage_group order by lg_order"> 
-        <option value="$1" $(IF,$(EC,$lg,$1),SELECTED) >$(IF,$(EC,$1,0),unknown,$1)
-      <?/MISQL>
-    </SELECT>  
-  <p>
-      <input type=checkbox name=zfin_private value=0 $(IF,$(EC,$3,t),CHECKED)><b> Private!</b> Keep specifics confidential.
+
+  <TABLE width="100%">
+    <TR>
+      <INPUT TYPE=button value=Update onClick="update_source('$link_id')"><b> Source: </b> $display_source
+    </TR>
+    <p>
+    <TR>
+	<b>Linkage Group:</b>
+	<SELECT name=lg >
+	  <?MISQL SQL="select distinct lg_name,lg_order from linkage_group order by lg_order"> 
+	    <option value="$1" $(IF,$(EC,$lg,$1),SELECTED) >$(IF,$(EC,$1,0),unknown,$1)
+	  <?/MISQL>
+	</SELECT>
+    <TR>  
+    <p>
+    <TR>
+        <input type=checkbox name=zfin_private value=0 $(IF,$(EC,$3,t),CHECKED)><b> Private!</b> Keep specifics confidential.
+    </TR>
   <p>
   <TR>
     <TD valign=top>
@@ -114,8 +122,12 @@ Expected vars: link_id
 </TABLE>
   <!-- output the current members of the linkage - if any exist -->
 <p>
+  <TABLE>
    <?MIVAR>
-     <TD align=center><input type=button value=Add onClick=add_members('$link_id')></TD><b>Linkage Members:<br>
+     <TR>
+     <input type=button value=Add onClick=add_members('$link_id')><b>Linkage Members:</b>
+     </TR>
+      <br>
    <?/MIVAR>
    <?MISQL SQL="select distinct abbrev, mtype, a.zdb_id from all_markers a , linkage_member b 
         where b.lnkgmem_linkage_zdb_id = '$link_id'
@@ -125,17 +137,22 @@ Expected vars: link_id
           where b.lnkgmem_linkage_zdb_id = '$link_id'
             and b.lnkgmem_member_zdb_id = a.zdb_id
             and a.locus = c.zdb_id;">
-    <TD align=center><input type=button value=Delete onClick=modify_delete('delete_member','$link_id','','$3')></TD>  $1 ($2)
+      <TR>
+        <input type=button value=Delete onClick=modify_delete('delete_member','$link_id','','$3')>  $1 ($2)
+      </TR>
     <br>
     <?/MISQL>
-    </b>
-
+  </TABLE>
 
 
   <!-- output distances for the linkage - if any exist -->
 <p>
+ <TABLE>
    <?MIVAR>
-     <TD align=center><input type=button value=Add onClick=add_distance('$link_id')></TD><b>Linkage Distances:<br>
+     <TR>
+       <TD align=center><input type=button value=Add onClick=add_distance('$link_id')></TD><b>Linkage Distances:
+     </TR>
+     <br>
  
 <?MISQL SQL="select lnkgpair_zdb_id from linkage_pair where lnkgpair_linkage_zdb_id = '$link_id';">
   <?MIVAR NAME=$pair_id>$1<?/MIVAR> 
@@ -171,21 +188,24 @@ Expected vars: link_id
     <?/MISQL>
   <?/MISQL>
   </b>
-
+</TABLE>
 <p>
 
 <TABLE width=100% border=0>
-  <TD align=center WIDTH=75%> 
-    <b>
-      <?MIVAR>
-        <input type=button value="Submit" onClick=modify_update('$link_id',document.edit_linkage.lg.options[document.edit_linkage.lg.selectedIndex].value,document.edit_linkage.zfin_private.checked,document.edit_linkage.comments.value) > &nbsp; &nbsp;
+  <TR>
+    <TD align=center WIDTH=75%> 
+      <b>
+	<?MIVAR>
+	  <input type=button value="Submit" onClick=modify_update('$link_id',document.edit_linkage.lg.options[document.edit_linkage.lg.selectedIndex].value,document.edit_linkage.zfin_private.checked,document.edit_linkage.comments.value) > &nbsp; &nbsp;
 
-      <input type=button value="Delete Linkage" onClick=modify_delete('delete_linkage','$link_id','','')>  &nbsp;  &nbsp; 
-      <input type=button value="Cancel" onClick="window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg'">
-    <?/MIVAR>
-    </b>
-  </TD>
+	<input type=button value="Delete Linkage" onClick=modify_delete('delete_linkage','$link_id','','')>  &nbsp;  &nbsp; 
+	<input type=button value="Cancel" onClick="window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg'">
+      <?/MIVAR>
+      </b>
+    </TD>
+  </TR>
 </TABLE>
 
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+</HTML>
