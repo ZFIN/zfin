@@ -413,14 +413,14 @@ ERROR -- something bad happened -- no OID passed in!
 
   <?MIVAR NAME=$anatitem_list><?/MIVAR>
   <?MISQL SQL="
-    SELECT anatitem_type_code, anatitem_zdb_id, anatitem_name, anatitem_comments_relative_url, anathier_name
+    SELECT anatitem_type_code, anatitem_zdb_id, anatitem_name, anatitem_comments_relative_url, anathier_name, anatitem_name_order
     FROM expression_pattern_anatomy, anatomy_item, anatomy_hierarchy 
     WHERE '$XPATSTG_ID' = xpatanat_xpat_zdb_id
       AND '$XPATSTG_START_ID' = xpatanat_xpat_start_stg_zdb_id
       AND '$XPATSTG_END_ID' = xpatanat_xpat_end_stg_zdb_id 
       AND xpatanat_anat_item_zdb_id = anatitem_zdb_id
       AND anatitem_type_code = anathier_code
-    ORDER BY 1
+    ORDER BY 1, 6
   ;">
     <?MIBLOCK COND="$(=,$COUNT,0)">
       <?MIVAR>
