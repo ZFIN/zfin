@@ -48,8 +48,7 @@ we will want to write it to the update log
 <!-- Extract the goodies from the return rec -->
 <?MISQL SQL="
   select return_form, return_recid, fill_field, fill_table, info, action, 
-         jump_to, rec_update, rtnrec_zdb_id_column_name, 
-	 rtnrec_owner_column_name
+         jump_to, rec_update
     from return_recs 
     where zdb_id='$return_rec';">
 <?/MISQL>
@@ -61,8 +60,6 @@ we will want to write it to the update log
 <?MIVAR NAME=$action>$6<?/MIVAR>
 <?MIVAR NAME=$info>$5<?/MIVAR>
 <?MIVAR NAME=$rec_update>$8<?/MIVAR>
-<?MIVAR NAME=$rtnrec_zdb_id_column_name>$9<?/MIVAR>
-<?MIVAR NAME=$rtnrec_owner_column_name>$10<?/MIVAR>
 
 <!-- First call secure_navigate. Only reason is to set ZDB_ident and 
      ZDB_name to use in recording updates, so only call it if updating! -->
@@ -72,6 +69,20 @@ we will want to write it to the update log
     where ID='aa-secure_navigation.apg';">
 $1
 <?/MISQL>
+
+<?MICOMMENT>
+  For most tables, the owner and ZDB_ID columns are "owner" and "zdb_id".
+  However, there are exceptions.  Handle them.
+<?/MICOMMENT>
+<?MIVAR NAME=$ownerColumn>owner<?/MIVAR>
+<?MIVAR NAME=$zdbIdColumn>zdb_id<?/MIVAR>
+<?MIBLOCK COND="$(EC,$fill_table,marker)">
+  <?MIVAR NAME=$ownerColumn>mrkr_owner<?/MIVAR>
+  <?MIVAR NAME=$zdbIdColumn>mrkr_zdb_id<?/MIVAR>
+<?MIELSE COND="$(EC,$fill_table,fish_image)">
+  <?MIVAR NAME=$ownerColumn>fimg_owner_zdb_id<?/MIVAR>
+  <?MIVAR NAME=$zdbIdColumn>fimg_zdb_id<?/MIVAR>
+<?/MIBLOCK>
 
 <!-- If ACTION=intersect, then fill_table is intersection table. So put 
      new record into table with the recid passed in through return_recid. -->
@@ -204,7 +215,7 @@ $1
   <?MISQL SQL="
     update $fill_table 
       set $fill_field = '$new_oid' 
-      where $rtnrec_zdb_id_column_name ='$return_recid';">
+      where $zdbIdColumn ='$return_recid';">
   <?/MISQL>
 
   <!-- if a contact_person for a lab or company is specified - owner must 
@@ -212,8 +223,8 @@ $1
   <?MIBLOCK COND="$(AND,$(EQ,$action,return_id),$(EQ,$fill_field,contact_person))">
     <?MISQL SQL="
       update $fill_table 
-        set $rtnrec_owner_column_name = '$new_oid' 
-        where $rtnrec_zdb_id_column_name = '$return_recid';">
+        set $ownerColumn = '$new_oid' 
+        where $zdbIdColumn = '$return_recid';">
     <?/MISQL>
   <?/MIBLOCK>
 
@@ -239,7 +250,7 @@ $1
   <?MISQL SQL="
     update $fill_table 
       set $fill_field = '$return_recid' 
-      where $rtnrec_zdb_id_column_name = '$new_oid';">
+      where $zdbIdColumn = '$new_oid';">
   <?/MISQL>
 
   <!-- Record update is the rec_update flag is set -->
