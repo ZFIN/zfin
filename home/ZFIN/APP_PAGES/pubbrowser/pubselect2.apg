@@ -18,6 +18,7 @@ document.critform.title.value = "";
 document.critform.year.value = "";
 document.critform.anon1text.value = "";
 document.critform.jtype.selectedIndex = 0;
+document.critform.pub_status.selectedIndex = 0;
 document.critform.yr_cmpr.selectedIndex = 0;
 document.critform.century.selectedIndex = 0;
 document.critform.anon1.selectedIndex = 0;
