@@ -29,22 +29,22 @@ function open_Study() {
 
 
 <TABLE WIDTH=100% cellpadding=4>
-<TR>
-<TD>
-<IMG SRC="/images/LOCAL/newlogosmall.gif">
-</TD>
-<TD>
-<A HREF="/zf_info/dbase/db.html" >About the Zebrafish Database project</a>
-<p>
-<A HREF="/ZFIN/misc_html/tips.html">Helpful Hints</a>
-<p>
-<img src="/images/new1.gif"> <A HREF="/zf_info/citation.html">Citing ZFIN in publications</a>
-<p>
-<A HREF="/index.html" target="_top">The Zebrafish WWW homepage</a>
-<p>
-<!--font size=-1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZFIN_stats.html">Current ZFIN stats</A></font-->
-</TD>
-</TR>
+ <TR>
+  <TD>
+   <IMG SRC="/images/LOCAL/newlogosmall.gif">
+  </TD>
+  <TD>
+   <A HREF="/zf_info/dbase/db.html" >About the Zebrafish Database project</a>
+   <br>
+   <A HREF="/ZFIN/misc_html/tips.html">Helpful Hints</a>
+   <br>
+   <A HREF="/zf_info/citation.html">Citing ZFIN in publications</a>
+   <br>
+   <A HREF="/index.html" target="_top">The Zebrafish WWW homepage</a>
+   <br>
+   <!--font size=-1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZFIN_stats.html">Current ZFIN stats</A></font-->
+  </TD>
+ </TR>
 </TABLE>
 
 <HR width=80%>
