@@ -16,19 +16,16 @@
 TOP = ..
 include $(TOP)/make.include
 
-SUBDIRS = cgiemail-1.6
+#SUBDIRS = cgiemail-1.6
 
 TARGETDIR = $(TARGETROOT)/$(TARGETCGIBIN)
 
 
 STATICS = 
 
-GENERICS = ZFIN_jump map-options.pl print_map.cgi runSPL.cgi \
-	   DebugWebdriver searchwww.cgi send_request.perl mapper_select.cgi \
-	   mapper_select.pl view_mapplet.cgi view_zmapplet.cgi \
-	   select_structures.cgi xpat_select_parts.cgi input_welcome.cgi \
-	   input_welcome_generic.cgi
-
+GENERICS = ZFIN_jump map-options.pl print_map.cgi runSPL.cgi cgiemail.cgi\
+	   DebugWebdriver searchwww.cgi send_request.perl \
+	   view_mapplet.cgi view_zmapplet.cgi select_structures.cgi xpat_select_parts.cgi
 
 
 # ---------------  Production Rules  ------------------------------------
