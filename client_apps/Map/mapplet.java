@@ -376,7 +376,7 @@ public class mapplet extends Applet  {
 			String host = getParameter("host");
 			SQLQuery Q = new SQLQuery(host,port);
 			String query = "select zdb_id from panels where abbrev = '" + Abbrev + "';";
-			Vector V = Q.select(1, query);
+			Vector V = Q.selectAll(1, query);
 
 			if (V.size() == 1) {
 				String ZDB_ID = (String)V.elementAt(0);
