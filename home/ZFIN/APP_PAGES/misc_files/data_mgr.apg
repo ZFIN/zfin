@@ -38,6 +38,13 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 <TR align=center>
 <TD><font size=-1> <b>ZFIN ID:</b> $OID </font>
 </TD>
+<?MIBLOCK COND="$(EC,$rtype,go)">
+  <?MISQL SQL="select mrkr_abbrev from marker where mrkr_zdb_id='$OID'">
+
+  <?/MISQL>
+<TD><?MIVAR>$1<?/MIVAR></TD>
+<?/MIBLOCK>
+
 
 
 <?/MIVAR>
@@ -48,6 +55,10 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 <?MIBLOCK COND="$(NC,$rtype,publication)">  <!-- dont show second row for pubs -->
 
   <?MIBLOCK COND="$(NC,$rtype,go)">  <!-- dont show second row for pubs -->
+
+  <?MIBLOCK COND="$(NC,$rtype,geli)">  <!-- dont show second row for pubs -->
+
+  <?MIBLOCK COND="$(NC,$rtype,xpat)">  <!-- dont show second row for pubs -->
 <TD> 
 <!-- Only allow auth users to update. For non-person records, allow any registered submitter -->
 
@@ -82,6 +93,10 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 <?/MIBLOCK>  <!-- ends cond PERSON and authorized -->
 </TD>
 
+<TD>
+<!---For Publication Records, allow authorized users to edit gene expression index data-->
+
+
 <?MIBLOCK COND="$(EC,$AUTHORIZED,root)"> 
   <?MIBLOCK COND="$(OR,$(EC,$rtype,marker),$(EC,$rtype,locus),$(EC,$rtype,fish))">
     <TD>
@@ -108,6 +123,15 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 </form>
 
 </TR>
+<?MIELSE>
+<?/MIBLOCK>
+<?MIELSE>
+
+<TD>
+<?MIVAR>
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatentry.apg&OID=$OID"><fontsize=-1 color=red> Add/Update Gene Expression Index</font></A>
+<?/MIVAR>
+<?/MIBLOCK>
   <?MIELSE> <!--GO records-->
 
 <TD>
@@ -115,14 +139,17 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 </TD>
 <?/MIBLOCK>
 <?MIELSE> <!-- pub records -->
-
   <TD>
     <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID">Curate</a><?/MIVAR>
   </TD>
   <TD>
     Status: <?MIVAR>$(IF,$(EC,$pub_completion_date,NULL),Open,Closed $pub_completion_date)<?/MIVAR>
   </TD>
-
+<TD>
+<?MIVAR>
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatentry.apg&OID=$OID"><fontsize=-1 color=red> Add/Update Gene Expression Index</font></A>
+<?/MIVAR>
+</TD>
 <?/MIBLOCK> <!-- ends if not a pub record -->
 <?/MIBLOCK> <!-- ends if authorized and not guest -->
 
