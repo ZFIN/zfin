@@ -457,7 +457,7 @@ $1<?/MISQL>
 
     <?MIVAR NAME=$MI_NULL><?/MIVAR>
     <TABLE cellpadding=1 cellspacing=0 bgcolor=<?MIVAR>$highlight<?/MIVAR>>
-    <?MIVAR NAME=$curviewer>/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=
+    <?MIVAR>$(SETVAR,$curviewer, "/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=")
     <?/MIVAR>
 
    <!-- get independent linkage info for other members of linkage or for marker itself if it is the only linkage member -->
