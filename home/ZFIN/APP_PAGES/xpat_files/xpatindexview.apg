@@ -139,11 +139,10 @@ document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
 	       stg.stg_name,xpat.xpat_zdb_id, xpat.xpat_direct_submission_date, lower(f.abbrev),
 	       stg.stg_hours_start, stg.stg_hours_end, m.mrkr_zdb_id, f.zdb_id,stg.stg_name_long, 'aa-fishview.apg'
 
-	from marker m, record_attribution r, expression_pattern xpat, fish f, stage stg,
+	from marker m, expression_pattern xpat, fish f, stage stg,
 	     expression_pattern_stage xpatstg 
 
-	where r.recattrib_source_zdb_id= '$OID'
-	  and r.recattrib_data_zdb_id=xpat.xpat_zdb_id 
+	where xpat.xpat_source_zdb_id = '$OID'
 	  and xpat.xpat_gene_zdb_id=m.mrkr_zdb_id 
 	  and xpat.xpat_stock_zdb_id=f.zdb_id 
 	  and xpatstg.xpatstg_xpat_zdb_id=xpat.xpat_zdb_id 
@@ -155,14 +154,14 @@ document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
 	       stg_name, xpat_zdb_id, xpat_direct_submission_date, lower(abbrev),
 	       stg_hours_start, stg_hours_end, mrkr_zdb_id, zdb_id, stg_name_long, 'aa-locusview.apg'
 
-	from marker, expression_pattern, expression_pattern_stage, locus, record_attribution, stage 
+	from marker, expression_pattern, expression_pattern_stage, locus, stage 
 
-	where recattrib_source_zdb_id = '$OID' 
+	where xpat_source_zdb_id = '$OID' 
 	  and xpat_stock_zdb_id = zdb_id 
 	  and xpatstg_xpat_zdb_id = xpat_zdb_id 
 	  and xpatstg_start_stg_zdb_id = stg_zdb_id 
 	  and xpat_gene_zdb_id = mrkr_zdb_id 
-	  and recattrib_data_zdb_id=xpat_zdb_id 
+
 
 	order by 1,2,3,9">
         <?MIVAR name="$xiview_geneAbbrev">$1<?/MIVAR>
