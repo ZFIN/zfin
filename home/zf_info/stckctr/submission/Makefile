@@ -22,6 +22,7 @@ request.html\
 requestAnimals2.html\
 requestAntibodies2.html\
 requestBooks.html\
+requestParamecia.html\
 requestESTs2.html\
 submit.html\
 submitMTAform.html
@@ -43,6 +44,7 @@ requestAnimals.txt\
 requestAntibodies.html\
 requestAntibodies.txt\
 requestBooks.txt\
+requestParamecia.txt\
 requestESTs.html\
 requestESTs.txt\
 requestThankyou.html\
