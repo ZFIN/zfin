@@ -1,0 +1,14 @@
+# This file contains keywords indicating which urls to avoid crawling and indexing.
+# When the spider encounters a URL, it looks through this list of keys, if any of them
+# appear in anywhere in the URL it will be ignored.
+#
+view_mapplet
+view_zmapplet
+aa-showpubs
+ZFIN_jump
+ortholist.apg
+pdf
+images
+data_transfer
+sourceview
+nomenview
