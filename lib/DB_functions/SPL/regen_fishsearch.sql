@@ -416,7 +416,7 @@ create dba function "informix".regen_fishsearch()
 
    update fish_search 
    set chrom_num=
-   (select lnkg_or_lg 
+   (select distinct lnkg_or_lg 
     from linkage,tmp_locus 
     where locus =mem_locus 
       and  link=lnkg_zdb_id)
