@@ -49,8 +49,8 @@ document.critform.START.value = "";
 		<TD><font size=2>
 			<b>
 			<SELECT name=searchtype onChange='document.critform.START.value = "";'>
-				<option value=begins>Name begins with
-				<option SELECTED value=contains>Name contains
+			  <option $(IF,$(EC,$searchtype,begins),SELECTED) value=begins>Name begins with
+                           <option $(IF,$(EC,$searchtype,contains),SELECTED) value=contains>Name contains
 			</select>:
 			</b> 
 			<input type=text name=name size=10 onChange='document.critform.START.value = "";'>
