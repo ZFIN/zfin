@@ -437,7 +437,8 @@ create dba function "informix".regen_anatomy()
 	      constraint non_parent_stage_end_hour_not_null
 	)
 	in tbldbs3
-	extent size 8 next size 8;
+	extent size 8 next size 8
+	lock mode page;
 
 	-- primary key
 
@@ -464,7 +465,8 @@ create dba function "informix".regen_anatomy()
 	  sic_anatitem_zdb_id 	varchar(50)
 	)
 	in tbldbs3
-	extent size 64 next size 64;
+	extent size 64 next size 64
+	lock mode page;
 
       -- primary key
 
@@ -519,7 +521,8 @@ create dba function "informix".regen_anatomy()
 	      constraint stimchilis_anat_order_not_null
 	)
 	fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
-	extent size 128 next size 128;
+	extent size 512 next size 512
+	lock mode page;
 
       -- primary key
 
@@ -581,7 +584,8 @@ create dba function "informix".regen_anatomy()
 	  xpatstganat_anat_item_zdb_id		varchar(50)
 	)
 	fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
-	extent size 64 next size 64;
+	extent size 1024 next size 1024
+	lock mode page;
 
       -- other indexes
 
@@ -615,7 +619,8 @@ create dba function "informix".regen_anatomy()
 	  sxa_anat_item_zdb_id		varchar(50)
 	)
 	fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
-	extent size 64 next size 64;
+	extent size 1024 next size 1024
+	lock mode page;
 
       -- other indexes
 
@@ -647,8 +652,9 @@ create dba function "informix".regen_anatomy()
 	  aixp_seq_num integer,
 	  aixp_indent integer
 	)
-	in tbldbs2
-	extent size 32 next size 32;
+	fragment by round robin in tbldbs1, tbldbs2, tbldbs3
+	extent size 128 next size 128
+	lock mode page;
 
 
 
@@ -669,7 +675,8 @@ create dba function "informix".regen_anatomy()
 	  anatdispstg_indent integer
 	)
 	in tbldbs1
-	extent size 64 next size 64;
+	extent size 64 next size 64
+	lock mode page;
 
 
 
@@ -692,7 +699,8 @@ create dba function "informix".regen_anatomy()
 	  allanatstg_stg_zdb_id	      varchar(50)
 	)
 	fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
-	extent size 128 next size 128 lock mode row;
+	extent size 128 next size 128 
+	lock mode page;
 
       -- create temporary indexes, these are dropped when table is renamed.
 
@@ -727,7 +735,8 @@ create dba function "informix".regen_anatomy()
 	    not null
 	)
 	fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
-	extent size 256 next size 256 lock mode row;
+	extent size 256 next size 256 
+	lock mode page;
 
       -- create temporary indexes, these are dropped when table is renamed.
 
@@ -763,7 +772,8 @@ create dba function "informix".regen_anatomy()
 	     not null
         )
 	fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
-	extent size 256 next size 256 lock mode row;
+	extent size 256 next size 256 
+	lock mode page;
 
 
       -- ---- ALL_ANATOMY_CONTAINS ----
@@ -781,7 +791,8 @@ create dba function "informix".regen_anatomy()
 	  allanatcon_min_contain_distance	integer not null 
         )
 	fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
-	extent size 512 next size 512 lock mode row;
+	extent size 512 next size 512 
+	lock mode page;
 
     end
 
