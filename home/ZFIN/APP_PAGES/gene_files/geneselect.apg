@@ -472,7 +472,7 @@ document.critform.START.value = "";
 		    <?MIVAR>
 		      <A HREF=javascript:show_detail('$panel_id','$OID','$marker_name','""');>Map Details</A>
 		    <?/MIVAR>
-                    </TD><TD>&nbsp; </TD><TD>&nbsp; </TD> <TD>&nbsp;</TD>
+                    </TD><TD>&nbsp; </TD><TD>&nbsp; </TD> 
 	          <?/MIBLOCK>
 		  </font>
 
