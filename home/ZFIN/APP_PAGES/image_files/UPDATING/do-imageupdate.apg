@@ -18,7 +18,7 @@ annotations -- huge string of urlencoded changed annotations for the image.
 
 <!-- First check security. Main purpose is just to get submitter id and name -->
 <?MISQL SQL="
-  select WebExplode(object, 'permission=owns&rtype=fish_image&ownerColumn=fimg_owner_zdb_id&zdbIdColumn=fimg_zdb_id') 
+  select WebExplode(object, 'permission=owns&rtype=fish_image') 
     from webPages 
     where ID = 'aa-secure_navigation.apg';">
   $1

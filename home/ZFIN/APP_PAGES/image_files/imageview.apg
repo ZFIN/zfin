@@ -140,7 +140,7 @@ Variables Expected:
     <!-- if not updating -->
     <?MIBLOCK COND="$(NXST,$UPDATE)">
       <?MISQL SQL="
-	select WebExplode(object, 'page_title=View Image&ownerColumn=fimg_owner_zdb_id&zdbidColumn=fimg_zdb_id') 
+	select WebExplode(object, 'page_title=View Image') 
 	  from webPages 
 	  where ID='aa-secure_navigation.apg';">
 	$1
@@ -148,7 +148,7 @@ Variables Expected:
     <?MIELSE>  <!-- If updating, only let owner update anything -->
       <?MISQL SQL="
 	select WebExplode(object, 
-			  'page_title=Update Image&permission=owns&rtype=fish_image&ownerColumn=fimg_owner_zdb_id&zdbIdColumn=fimg_zdb_id')
+			  'page_title=Update Image&permission=owns&rtype=fish_image')
 	  from webPages 
 	  where ID='aa-secure_navigation.apg';">
 	$1
@@ -183,7 +183,7 @@ Variables Expected:
 
       <!-- If not updating, THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
       <?MISQL COND="$(NXST,$UPDATE)" SQL="
-	select WebExplode(object, 'rtype=fish_image&ownerColumn=fimg_owner_zdb_id&zdbIdColumn=fimg_zdb_id') 
+	select WebExplode(object, 'rtype=fish_image') 
 	  from webPages 
 	  where ID='aa-data_mgr.apg';">
 	$1
