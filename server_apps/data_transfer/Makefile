@@ -29,13 +29,14 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer
 SUBDIRS = MEOW JohnP RefSeq SWISS-PROT Thisse GO ZIRC Downloads GenPept ZGC \
 	  Sanger
 
+GENERICS =  pull.sh
+
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.
 
 HTTP_DATA_TRANSFER_DIR = $(TARGETROOT)/home/data_transfer
 
 ENDEMICTARGETS_PRE = $(HTTP_DATA_TRANSFER_DIR)
-
 
 
 # ---------------  Production Rules  ------------------------------------
