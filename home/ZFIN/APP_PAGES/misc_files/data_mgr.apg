@@ -126,9 +126,7 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 <?MIELSE>
 
 <TD>
-<?MIVAR>
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatentry.apg&OID=$OID"><fontsize=-1 color=red> Add/Update Gene Expression Index</font></A>
-<?/MIVAR>
+
 <?/MIBLOCK>
   <?MIELSE> <!--GO records-->
 
