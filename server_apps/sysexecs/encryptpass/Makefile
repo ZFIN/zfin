@@ -62,6 +62,7 @@ $(TARGETDIR) :
 
 $(SPECIFICTARGETS) : $(TARGETDIR)/% : %
 	$(MAKESPECIFIC) $< $(TRANSLATETABLE) $@
+	chmod 751 $@
 	$(MAKE) reloadrow
 
 reloadrow : clobberrow
@@ -74,7 +75,7 @@ clobberrow :
 
 $(ENCODETARGET) : $(CSRCS)
 	gcc $(CSRCS) -o $(ENCODETARGET)
-
+	chmod 751 $(ENCODETARGET)
 
 # ---------------  Maintenance Rules  -----------------------------------
 
