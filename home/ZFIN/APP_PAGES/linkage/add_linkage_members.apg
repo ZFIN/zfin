@@ -89,7 +89,7 @@ Possible vars: update
   <br>
   LG: $(IF,$(EC,$2,0),,$2)
   <br>
-  Comments: $4
+  Comments: $3
 <?/MISQL>
 
   <!-- output the current members of the linkage - if any exist -->
@@ -129,12 +129,12 @@ Linkage Members:   (At least one member must be specified) <br>
 	<option $(IF,$(EC,$mtype,BAC_END),SELECTED)>BAC_END
 	<option $(IF,$(EC,$mtype,PAC_END),SELECTED)>PAC_END
       </SELECT>  and its abbrev contains:
-      <input type=text name=member value="$nsearch" size=8>  
+      <input type=text name=member  size=8>  
       <input type=submit name=do_search value="Search">
     <?/MIVAR>
 
        <!-- search for a marker member -->
-       <?MIBLOCK COND="$(AND,$(NC,$mtype,mutant),$(XST,$do_search))">
+       <?MIBLOCK COND="$(AND,$(NC,$mtype,mutant),$(XST,$member))">
 	 <hr>
 	 <TABLE cols=2>
 	 <TR><TH></TH><TH>Marker Name</TH><TH>Marker Type</TH></TR>
@@ -161,7 +161,7 @@ Linkage Members:   (At least one member must be specified) <br>
        <?/MIBLOCK>
 
 
-       <?MIBLOCK COND="$(AND,$(EC,$mtype,mutant),$(XST,$do_search))">
+       <?MIBLOCK COND="$(AND,$(EC,$mtype,mutant),$(XST,$member))">
 	 <hr>
 	 <TABLE cols=2>
 	 <TR><TH></TH><TH>Allele</TH><TH>Locus</TH></TR>
@@ -190,7 +190,7 @@ Linkage Members:   (At least one member must be specified) <br>
 
 
 <p>
-  <?MIBLOCK COND="$(NXST,$update)">
+  <?MIBLOCK COND="$(AND,$(NXST,$update),$(NXST,$member))">
     <?MIVAR>
       <input type=button value="Add Distances" onClick="return call_distance('$link_id','$num_members');">   
       <input type=button value="Submit" onClick=" return call_submit('$num_members');">
