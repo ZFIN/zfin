@@ -9,7 +9,7 @@
  $CGI::DISABLE_UPLOADS = 1;    # no uploads
 
  print $Q->header();
- print $Q->start_html(-TITLE=>"Regen Genomics",-BGCOLOR=>'white')."\n";
+ print $Q->start_html(-TITLE=>"ZFIN Regen",-BGCOLOR=>'white')."\n";
  print "<script language='JavaScript' src='http://<!--|DOMAIN_NAME|-->/header.js'></script>";
   ### the hard coded env paths need a better idea
   $ENV{INFORMIXDIR}      = '<!--|INFORMIX_DIR|-->';
@@ -46,9 +46,9 @@
 
   #this is for security, we wouldn't want somebody to pass in arbitrary sql
 
-  if ($Q->param('run')  eq "regen_genomics") 
+  if ($Q->param('run')  eq "regen_names") 
    {
-    $statement = "execute function regen_genomics();";
+    $statement = "execute function regen_names();";
    } 
   elsif ($Q->param('run') eq "regen_fishsearch") 
    {
