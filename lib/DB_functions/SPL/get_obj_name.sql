@@ -26,6 +26,11 @@ get_obj_name(zdbId varchar(50))
       where mrkr_zdb_id = zdbId;
   elif (objType = "FISH") then
     let objName = get_fish_full_name(zdbId);
+  elif (objType = "MRKRGOEV") then
+    select mrkrgoev_zdb_id
+      into objName
+      from marker_go_term_evidence
+      where mrkrgoev_zdb_id = zdbId;	
   elif (objType = "LOCUS") then
     select locus_name 
       into objName
