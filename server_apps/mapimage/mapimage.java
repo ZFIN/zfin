@@ -3,6 +3,8 @@ import java.awt.*;
 import java.util.*;
 import cgi.*;
 
+import java.sql.*;
+
 import java.awt.image.*;
 import javax.imageio.*;
 
@@ -206,23 +208,25 @@ public class mapimage {
 			System.err.println("WIDTH IS NULL");
 		
 
-		
+		System.err.println("getImage");
+		Image img =  MV.getImage(w,h);
 
-			
-/*		try
+		
+		
+		try
 		{
-			//System.err.println("make encoder");
+			System.err.println("make encoder");
 			Acme.JPM.Encoders.GifEncoder ie = new Acme.JPM.Encoders.GifEncoder( img , System.out);
-			//System.err.println("start encoding");
+			System.err.println("start encoding");
 			ie.encode();	
-			//System.err.println("done encoding");
+			System.err.println("done encoding");
 			
 		}
         catch ( Exception e )
 		{
 			System.err.println("e: " + e);   
-		}
-*/
+			} 
+
 
 /*		ImageOutputStream ios = ImageIO.createImageOutputStream(System.out);
 		Iterator writers = ImageIO.getImageWritersByFormatName("png");
@@ -230,14 +234,15 @@ public class mapimage {
 		writer.setOutput(ios);
 		writer.write(img);*/
 
-		System.err.println("Headless: " + System.setProperty("java.awt.headless","true"));
+//		System.err.println("Headless: " + System.setProperty("java.awt.headless","true"));
 
-		try {
-			Image img = MV.getImage(w,h);
+/*		try {
+			System.err.println("IO.write..start");
 			javax.imageio.ImageIO.write((BufferedImage)img,"jpg",System.out);
-		} catch (Exception e) {
+			System.err.println("IO.write..end");
+			} catch (Exception e) {
 			System.err.println(e);
-		}
+			}*/
 		
 		 
 		System.err.println("cgi applet finished");
@@ -246,7 +251,7 @@ public class mapimage {
 
 	public void printImageHeader()	{
 		
-		System.out.println("Content-type: image/jpeg");
+		System.out.println("Content-type: image/gif");
 		System.out.println("");
 
 	}	
