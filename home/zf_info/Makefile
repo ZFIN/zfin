@@ -37,7 +37,7 @@ TARGETDIR = $(TARGETROOT)/home/zf_info
 SUBDIRS = SEARCH_SITE anatomy catch dbase images monitor movies news stckctr \
 	zfbook 
 
-GENERICS = defs.html genome.html infmtx.html nomen.html nomen_comm.html \
+GENERICS = defs.html genome.html nomen.html nomen_comm.html \
 	updates.html zfprbs.html
 
 STATICS = 227.gif anatomy.html fish.gif fish_bgd.gif fish_net.gif logo.jpeg \
@@ -50,3 +50,5 @@ STATICS = 227.gif anatomy.html fish.gif fish_bgd.gif fish_net.gif logo.jpeg \
 # Use default rules for directories without app pages in them.
 
 include $(TOP)/make.default.rules
+
+
