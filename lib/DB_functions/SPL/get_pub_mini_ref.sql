@@ -8,6 +8,7 @@ create function get_pub_mini_ref(pubZdbId varchar(50))
   define pubYear varchar(15);
   define miniRef varchar(60);
   define lname    varchar(60);
+  define srcType    varchar(30);
   define delim    char(1);
   define ch       char(1);
   define len      int;
@@ -18,13 +19,14 @@ create function get_pub_mini_ref(pubZdbId varchar(50))
   let pubYear = "";
   let miniRef = "";
   let lname = "";
+  let srcType = "";
   let ch = "";
         
   let delim = ",";
   let first = "t";
 
-  select authors, year(pub_date)
-    into authorList, pubYear
+  select authors,jtype, year(pub_date)
+    into authorList, srcType,pubYear
     from publication
     where zdb_id = pubZdbId;
 
@@ -42,8 +44,10 @@ create function get_pub_mini_ref(pubZdbId varchar(50))
 
   if lname != "" then   
     let miniRef = lname || ", " || pubYear;
-  else
-    let miniRef = NULL;
+  elif (srcType = "Curation") then
+    let miniRef = "Unpublished";
+  else	
+    let miniRef = authorList;	
   end if
 
   return miniRef;          
@@ -51,3 +55,4 @@ create function get_pub_mini_ref(pubZdbId varchar(50))
 end function;
 
 update statistics for function get_pub_mini_ref;
+
