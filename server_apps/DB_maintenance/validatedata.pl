@@ -2488,7 +2488,7 @@ if($daily) {
   zdbReplacedDataIsReplaced($dbaEmail);
 
   mrkrgoevDuplicatesFound($goEmail);
-  mrkrgoevInfgrpDuplicatesFound($goEmail);
+  #mrkrgoevInfgrpDuplicatesFound($goEmail);
   mrkrgoevGoevflagDuplicatesFound($goEmail);
   mrkrgoevObsoleteAnnotationsFound($goEmail);
   mrkrgoevSecondaryAnnotationsFound($goEmail);
