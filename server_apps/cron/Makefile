@@ -8,14 +8,14 @@
 # !! format and conventions used in this makefile.                     !!
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
-# This directory puts the contents of the informix crontab file under 
+# This directory puts the contents of ZFIN crontab files under 
 # CVS control.  We do this for a number of reasons:
 #
-# 1. It just seems like a good idea to have the crontab file under
+# 1. It just seems like a good idea to have the crontab files under
 #    source code control, just in case we inadvertently removed it.
 #
 # 2. We occassionally switch the web site from the production server
-#    to the backup/development server.  Switching the crontab file
+#    to the backup/development server.  Switching the crontab files
 #    from one machine to the other (and then back) has been problematic.
 #    Hopefully, this makefile will smooth that process.
 
@@ -27,7 +27,8 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/cron
 
-GENERICS = crontab crontab.development crontab.zfishweb crontab.root.helix
+GENERICS = crontab.production crontab.development crontab.zfishweb \
+           crontab.root.helix
 
 
 # ---------------  Production Rules  ------------------------------------
@@ -43,10 +44,11 @@ include $(TOP)/make.default.rules
 #   stop	Clears the CURRENT USER's crontab file on this machine
 #   start	Sets the CURRENT USER's crontab file on this machine.
 #               If not running on embryonix (i.e., you are running on the
-#               regular production machine) this uses just the file "crontab".
-#               If running on embryonix this uses the file "crontab" and
-#               the file "crontab.development" concatenated together.
-#   startdevl   Sets the CURRENT USER's crontable file on this machine
+#               regular production machine) this uses just the file 
+#               "crontab.production".
+#               If running on embryonix this uses the file "crontab.production"
+#               and the file "crontab.development" concatenated together.
+#   startdevl   Sets the CURRENT USER's crontab file on this machine
 #               to the contents of the "crontab.development machine.
 #
 # The start and startdevl targets are both needed because we have cron
@@ -63,9 +65,9 @@ include $(TOP)/make.default.rules
 
 start : $(TARGETS)
   ifneq ($(HOST),embryonix)
-	/bin/crontab $(TARGETDIR)/crontab
+	/bin/crontab $(TARGETDIR)/crontab.production
   else
-	/bin/cat $(TARGETDIR)/crontab $(TARGETDIR)/crontab.development | /bin/crontab
+	/bin/cat $(TARGETDIR)/crontab.production $(TARGETDIR)/crontab.development | /bin/crontab
   endif
 
 startdevl : $(TARGETS)
