@@ -609,6 +609,8 @@ DEBUGGING:
 
     <?MIVAR NAME=$rowNUM>$BEGIN<?/MIVAR>
 
+    <?MIVAR NAME=$curviewer><?/MIVAR>
+
     <?MICOMMENT> Query Database <?/MICOMMENT>
     <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
       select distinct mstmrkr_name, mstmrkr_abbrev, mstmrkr_type, 
@@ -628,6 +630,7 @@ DEBUGGING:
       <?MIVAR name=$match_name>$(URLDECODE,$7)<?/MIVAR>
       <?MIVAR name=$match_text>$9<?/MIVAR>
 
+       $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID="), $(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID="))
 
       <?MICOMMENT> start new row and column <?/MICOMMENT>
       <TR bgcolor="<?MIVAR>$row_color<?/MIVAR>">
@@ -637,7 +640,7 @@ DEBUGGING:
 	  <?MIVAR>	
             $(IF,$(XST,$return_rec),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$OID>SELECT</A>)
 	    $(IF,$(OR,$(XST,$accession),$(XST,$pubId)),$mtype_display:)
-            $(IF,$(!=,$(POSITION,$mtype,GENE),0),<i>)<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID">$marker_abbrev</A>$(IF,$(!=,$(POSITION,$mtype,GENE),0),</i>)
+            $(IF,$(!=,$(POSITION,$mtype,GENE),0),<i>)<A HREF="$curviewer$OID">$marker_abbrev</A>$(IF,$(!=,$(POSITION,$mtype,GENE),0),</i>)
 	    $(IF,$(=,$(POSITION,$OID,GENE),0),</TD>)
 	    $(IF,$(AND,$(=,$(POSITION,$OID,GENE),0),$(EC,$xpat_loci_cols,y)),<TD>&nbsp;</TD><TD>&nbsp;</TD>)
 	  <?/MIVAR>
