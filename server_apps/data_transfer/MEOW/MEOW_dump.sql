@@ -15,7 +15,34 @@
 --   zfin_ortholinks -- similar to zfin_dblinks but is links from ortho to
 --       their species DB files.
 
+-- In the population of meow_exp1, and meow_expll tables, the all_genes tables is replaced by base tables. The modification is based on the all_genes table generations and the old select SQLs used in this scripts. Two more temporary tables--meow_exp1_dup and meow_expll_dup are added. 
+ 
 -- Create the main zfin_genes file
+
+create table meow_exp1_dup (
+  zdb_id varchar(50),
+  mname varchar(120),
+  abbrev varchar(20),
+  OR_lg varchar(2)
+);
+
+-- get panel mappings
+insert into meow_exp1_dup 
+  select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, or_lg
+    from marker, mapped_marker, panels p
+   where mrkr_type = 'GENE'
+     and mrkr_zdb_id = marker_id
+     and marker_type <> 'SNP'
+     and refcross_id = p.zdb_id;
+
+insert into meow_exp1_dup 
+  select distinct a.mrkr_zdb_id, a.mrkr_name, a.mrkr_abbrev, or_lg
+    from marker a, marker b, mapped_marker, marker_relationship, panels p
+   where a.mrkr_type = 'GENE'
+     and b.mrkr_zdb_id = marker_id
+     and a.mrkr_zdb_id = mrel_mrkr_1_zdb_id
+     and b.mrkr_zdb_id = mrel_mrkr_2_zdb_id
+     and refcross_id = p.zdb_id;
 
 create table meow_exp1 (
   zdb_id varchar(50),
@@ -24,38 +51,41 @@ create table meow_exp1 (
   OR_lg varchar(2)
 );
 
--- get panel mappings
-
-insert into meow_exp1 
-  select distinct zdb_id,gene_name,abbrev,OR_lg
-    from all_genes
-   where 
-         exists (select 'x' from panels
-	 where panel_id = panels.zdb_id)
-     and zdb_id like '%GENE%';
+insert into  meow_exp1 
+  select distinct * 
+    from meow_exp1_dup;
 
 -- get independent linkages
 
 insert into meow_exp1 (zdb_id,mname,abbrev,OR_lg) 
-  select distinct zdb_id,gene_name,abbrev,OR_lg 
-    from all_genes a
-   where 
-         panel_id like '%LINK%'
-     and zdb_id like '%GENE%'
-      and not exists 
-       ( select 'x' 
-	   from all_genes b 
-	  where a.zdb_id = b.zdb_id 
-	    and panel_id  like '%REFCROSS%'
-         ) ;
-
+  select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, lnkg_or_lg
+    from marker, linkage_member, linkage
+   where mrkr_zdb_id = lnkgmem_member_zdb_id 
+     and lnkgmem_linkage_zdb_id = lnkg_zdb_id 
+     and mrkr_type = 'GENE'
+     and mrkr_zdb_id not in (
+	 	select zdb_id 
+		  from meow_exp1_dup
+		);
 
 --  Add in  unmapped genes
 insert into meow_exp1 (zdb_id,mname,abbrev,OR_lg) 
-  select zdb_id,gene_name,abbrev,'0' 
-    from all_genes 
-   where panel_id = 'na'
-      and zdb_id like '%GENE%';
+  select mrkr_zdb_id,mrkr_name,mrkr_abbrev,'0' 
+    from marker
+   where mrkr_type = 'GENE'
+     and mrkr_zdb_id not in (
+		select lnkgmem_member_zdb_id
+		  from linkage_member
+		 )
+     and mrkr_zdb_id not in (
+		select marker_id
+		  from mapped_marker
+		 )
+     and mrkr_zdb_id not in (
+		select mrel_mrkr_1_zdb_id
+                  from mapped_marker, marker_relationship	
+		 where mrel_mrkr_2_zdb_id = marker_id
+		);
 
 
 -- Sanity check to see that there are no anomalies. These two queries 
@@ -80,13 +110,13 @@ select count(distinct abbrev)
 --  Okay, now write it to a file
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_genes.txt' 
   DELIMITER "	" 
-  select * 
+  select distinct *
     from meow_exp1;
 
 
 -- Create the main zfin_genes file for Locus Link - they would like mapping info also
 
-create table meow_expll (
+create table meow_expll_dup (
   zdb_id varchar(50),
   gene_name varchar(120),
   abbrev varchar(20),
@@ -99,36 +129,70 @@ create table meow_expll (
 
 -- get panel mappings
 
-insert into meow_expll 
-  select distinct zdb_id,gene_name,abbrev,OR_lg,lg_location,panel_id,panel_abbrev,metric 
-    from all_genes
-   where 
-         exists (select 'x' from panels
-	 where panel_id = panels.zdb_id)
-     and zdb_id like '%GENE%';
+insert into meow_expll_dup 
+  select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, or_lg,lg_location,p.zdb_id,p.abbrev,mm.metric 
+    from marker, mapped_marker mm, panels p
+   where mrkr_type = 'GENE'
+     and mrkr_zdb_id = marker_id
+     and marker_type <> 'SNP'
+     and refcross_id = p.zdb_id;
 
+insert into meow_expll_dup
+  select distinct a.mrkr_zdb_id, a.mrkr_name, a.mrkr_abbrev, or_lg,lg_location,p.zdb_id,p.abbrev,mm.metric
+    from marker a, marker b, mapped_marker mm, marker_relationship, panels p
+   where a.mrkr_type = 'GENE'
+     and b.mrkr_zdb_id = marker_id
+     and a.mrkr_zdb_id = mrel_mrkr_1_zdb_id
+     and b.mrkr_zdb_id = mrel_mrkr_2_zdb_id
+     and refcross_id = p.zdb_id;
+
+create table meow_expll (
+  zdb_id varchar(50),
+  gene_name varchar(120),
+  abbrev varchar(20),
+  OR_lg varchar(2),
+  location numeric(6,2),
+  panel_id varchar(50),
+  panel_abbrev varchar(10),
+  metric varchar(5)
+);
+
+insert into meow_expll
+  select distinct * 
+    from meow_expll_dup;
 
 -- get independent linkages
 
 insert into meow_expll (zdb_id,gene_name,abbrev,OR_lg) 
-  select distinct zdb_id,gene_name,abbrev,OR_lg 
-    from all_genes a
-   where 
-         panel_id like '%LINK%'
-     and zdb_id like '%GENE%'
-      and not exists 
-       ( select 'x' 
-	   from all_genes b 
-	  where a.zdb_id = b.zdb_id 
-	    and panel_id  like '%REFCROSS%') ;
+  select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, lnkg_or_lg
+    from marker, linkage_member, linkage
+   where mrkr_zdb_id = lnkgmem_member_zdb_id 
+     and lnkgmem_linkage_zdb_id = lnkg_zdb_id 
+     and mrkr_type = 'GENE'
+     and mrkr_zdb_id not in (
+		select zdb_id
+		  from meow_expll_dup
+		);
 
 
 --  Add in  unmapped genes
 insert into meow_expll (zdb_id,gene_name,abbrev,OR_lg) 
-  select zdb_id,gene_name,abbrev,'0'
-    from all_genes 
-   where panel_id = 'na'
-      and zdb_id like '%GENE%';
+  select mrkr_zdb_id,mrkr_name,mrkr_abbrev,'0' 
+    from marker
+   where mrkr_type = 'GENE'
+     and mrkr_zdb_id not in (
+		select lnkgmem_member_zdb_id
+		  from linkage_member
+		  )
+     and mrkr_zdb_id not in (
+		select marker_id
+		  from mapped_marker
+		 )
+     and mrkr_zdb_id not in (
+		select mrel_mrkr_1_zdb_id
+                  from mapped_marker, marker_relationship	
+		 where mrel_mrkr_2_zdb_id = marker_id
+		);
 
 
 -- Sanity check to see that there are no anomalies. These two queries 
@@ -153,7 +217,7 @@ select count(distinct abbrev)
 --  Okay, now write it to a file
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_genes_locuslink.txt' 
   DELIMITER "	" 
-  select * 
+  select distinct *
     from meow_expll;
 
 
@@ -314,11 +378,13 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/marker_alias.txt'
 
 -- Clean up
 drop table meow_exp1;
+drop table meow_exp1_dup;
 drop table meow_exp2;
 drop table meow_exp3;
 drop table meow_exp4;
 drop table meow_exp5;
 drop table meow_expll;
+drop table meow_expll_dup;
 drop table meow_mutant;
 
  
