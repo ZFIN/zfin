@@ -37,8 +37,8 @@ NETSCAPESYMLINK = $(STAGINGDIR)/netscape
 
 # ---- Java source and destination variables
 
-GENERICS = SQLQuery.java
-STATICS  = Browser.java OrganTree.java Selectable.java \
+GENERICS = SQLQuery.java Browser.java
+STATICS  = OrganTree.java Selectable.java \
 	   SelectedPanel.java SystemsPanel.java TreeNode.java TreePanel.java \
 	   data_gatherer.java
 JAVAS    = $(STATICS) $(GENERICS)
