@@ -1617,40 +1617,55 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
       <?/MISQL>
   <?/MISQL>
   
-  
+  <?MICOMMENT> 
+    Count the number of links for each sequence type.
+    If the count for a data_type is greater than 1,
+    display the All Sequence link.
+  <?/MICOMMENT>
+
   <?MISQL SQL="
-    select count(*), fdbcont_fdbdt_data_type
-    from db_link, foreign_DB, foreign_db_contains
-    where dblink_linked_recid = '$OID'
-      and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-      and fdbcont_fdb_db_name = fdb_db_name
-      and fdbcont_fdbdt_super_type = 'sequence'
-    group by 2
-      UNION 
-        select count(*), fdbcont_fdbdt_data_type
-        from db_link, foreign_DB, foreign_db_contains, marker_relationship
-        where mrel_mrkr_1_zdb_id = '$OID'
-          and dblink_linked_recid = mrel_mrkr_2_zdb_id
-          and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-          and fdbcont_fdb_db_name = fdb_db_name
-          and fdbcont_fdbdt_super_type = 'sequence'
-          and mrel_type in ('gene contains small segment', 
-		              'clone contains small segment',
-			      'gene encodes small segment')
-        group by 2
-      UNION 
-        select count(*), fdbcont_fdbdt_data_type
-        from db_link, foreign_DB, foreign_db_contains, marker_relationship
-        where mrel_mrkr_2_zdb_id = '$OID'
-          and dblink_linked_recid = mrel_mrkr_1_zdb_id
-          and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-          and fdbcont_fdb_db_name = fdb_db_name
-          and fdbcont_fdbdt_super_type = 'sequence'
-          and mrel_type in ('clone contains gene')
-        group by 2
-      ;">
+    select fdbcont_fdbdt_data_type
+    from foreign_db_contains
+    where fdbcont_fdbdt_super_type = 'sequence'
+    ;">
+    <?MIVAR NAME=data_type>$1<?/MIVAR>
     
-      <?MIVAR COND="$(>,$1,1)" NAME=display_all_sequences>0<?/MIVAR>
+    <?MISQL SQL="
+      select count(*)::integer
+      from db_link, foreign_db_contains
+      where dblink_linked_recid = '$OID'
+        and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+        and fdbcont_fdbdt_data_type = '$data_type';">        
+      <?MIVAR NAME=vDatatypeLinkCount>$1<?/MIVAR>
+    <?/MISQL>
+    <?MISQL SQL="
+      select count(*)::integer
+      from db_link, foreign_db_contains, marker_relationship
+      where mrel_mrkr_1_zdb_id = '$OID'
+        and dblink_linked_recid = mrel_mrkr_2_zdb_id
+        and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+        and fdbcont_fdbdt_data_type = '$data_type'
+        and mrel_type in ('gene contains small segment', 
+                          'clone contains small segment',
+                          'gene encodes small segment')
+      ;">      
+        <?MIVAR NAME=vDatatypeLinkCount>$(+,$1,$vDatatypeLinkCount)<?/MIVAR>
+    <?/MISQL>
+    <?MISQL SQL="
+      select count(*)::integer
+      from db_link, foreign_db_contains, marker_relationship
+      where mrel_mrkr_2_zdb_id = '$OID'
+        and dblink_linked_recid = mrel_mrkr_1_zdb_id
+        and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+        and fdbcont_fdbdt_data_type = '$data_type'
+        and mrel_type in ('clone contains gene')
+      ;">
+      
+        <?MIVAR NAME=vDatatypeLinkCount>$(+,$1,$vDatatypeLinkCount)<?/MIVAR>
+    <?/MISQL>
+    
+    <?MIVAR COND="$(>,$vDatatypeLinkCount,1)" NAME=display_all_sequences>true<?/MIVAR>
+  
   <?/MISQL>
   
   <?MIBLOCK COND=$(XST,$display_all_sequences)>  
