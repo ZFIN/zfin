@@ -22,7 +22,7 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/security_files
 
 GENERICS = identify.apg login.apg process-login.apg secure_navigation.apg \
-	unauth.apg
+	unauth.apg vet_input.apg
 
 
 # ---------------  Production Rules  ------------------------------------
