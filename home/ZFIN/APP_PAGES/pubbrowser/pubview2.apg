@@ -39,6 +39,15 @@ ERROR -- something bad happened -- no OID passed in!
 
 <?MIVAR NAME=$rec_title>PUB:$(SUBSTR,$title,1,10)...<?/MIVAR>
 
+<?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
+<form><center><font size=4>
+<?MIVAR> <b>Invalid ZFIN ID.<?/MIVAR>
+</form>
+<?/MIBLOCK>
+
+
+<?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+
 
 <!-- If VIEWING, THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
 <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=publication') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
@@ -127,6 +136,7 @@ ERROR -- something bad happened -- no OID passed in!
 
 
 <?/MIBLOCK>  <!-- ends cond oid xst -->
+<?/MIBLOCK>  <!-- ends rowcount gt 0 -->
 
 </HTML>
 
