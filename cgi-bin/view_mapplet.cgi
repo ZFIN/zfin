@@ -141,29 +141,30 @@
   ### if refresh_map is a given parameter then the frameset already exists.
   ### otherwise we are comming from someware "outside the options/mapplet frameset
   ### 
-  if( ! defined $Q->param("refresh_map") )  {
+#  if( ! defined $Q->param("refresh_map") )  {
 #    ### comming from outside frameset so build frameset and nav buttons
 #    ### or shunt off to a search results page  
 #    ###
-    my $qstring = '';#'view_mapplet.cgi?refresh_map=1&';
+
     
-    if ( defined $Q->param('loc_panel') && $Q->param('loc_panel') ){
-      $qstring = $qstring .$Q->param('loc_panel').'=1&';
-    } 
+#     if ( defined $Q->param('loc_panel') && $Q->param('loc_panel') ){
+#     my $qstring = '';#'view_mapplet.cgi?refresh_map=1&';
+#     $qstring = $qstring .$Q->param('loc_panel').'=1&';
+#    } 
 #    ############################################################################
 #    ###
 #    ### BUILD A FRAMESET
 #    ### beware very long gets
-     my @keyval = split /\?/, $Q->self_url; 
-     $qstring = $qstring . $keyval[1];   
-     $note = $note . $qstring."\n\n";
+#     my @keyval = split /\?/, $Q->self_url; 
+#     $qstring = $qstring . $keyval[1];   
+#     $note = $note . $qstring."\n\n";
 #    print $Q->header ."\n".
 #	      $Q->frameset({-rows=> '220,*'},
 #			   $Q->frame({-name=> 'criteria',-src=> 'view_mapplet.cgi?'}),
 #			   $Q->frame({-name=> 'pbrowser',-src=> $qstring })
 #			  );   
 #    exit 1;    
-  }				# end coming from "outside" frameset
+#  }				# end coming from "outside" frameset
   
   ################################################################################
   ################################################################################
@@ -175,12 +176,12 @@
   if( defined $Q->param('edit_panel') and  $Q->param('edit_panel')) {
     $edit_panel = $Q->param('edit_panel'); 
   }else{ $edit_panel = '';}
-  $note .= "edit_panel = $edit_panel <br>";
 
-  $Q->param($panel,1);
+
   #$note = $note . "All Panels \n<p>";
   for $panel (@allpanels) {
-     $note .= "$panel \n <p>";
+     $note .= "$panel  \n <p>";
+
     if( (defined $Q->param($panel))
 	&& ($Q->param($panel) == 1)
 	&& ($panel ne $edit_panel )) {
