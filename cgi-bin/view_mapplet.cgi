@@ -950,7 +950,19 @@
 	      "AND mtype IN (\'$types\');";
     
     my $stmt2 = 'SELECT FIRST 1 * FROM PANLG WHERE zdb_id = ?;';
-    my $stmt3 = 'SELECT *, ABS(lg_location - ?) distance FROM PANLG ORDER BY distance;';
+
+    # Note that this query in its original format was deadly to the informix 
+    # server.  The original format used an ABS() function call instead of a
+    # case.  We aren't sure if the new format will fix the problem or not.
+
+    my $stmt3 = 
+      'SELECT zdb_id, abbrev, mtype, target_abbrev, lg_location, or_lg,' .
+      '       mghframework, metric, ' .
+      '       case when lg_location - ? >= 0 then lg_location - ? ' .
+      '            else ? - lg_location ' .
+      '       end distance ' .
+      '  FROM PANLG ' .
+      '  ORDER BY distance;';
     
     my $stmt4 = 'INSERT INTO pool SELECT * FROM PANLG WHERE lg_location >= ? AND lg_location <= ? ;'; 
     
@@ -975,9 +987,41 @@
     $dbh->{AutoCommit} = 0;	# enable transactions, if possible
     $dbh->{RaiseError} = 1;
     eval {			#                                zdb_id 1,          abbrev 2,          mtype 3,          target_abbrev 4,          lg_location 5,           or_lg 6,      mghframework 7,      metric 8
-      $dbh->do( "CREATE TEMP TABLE pool (zdb_id varchar(50),abbrev varchar(15),mtype varchar(10),target_abbrev varchar(10),lg_location decimal(8,2),or_lg integer,mghframework boolean,metric varchar(5))WITH NO LOG ;"); 
-      $dbh->do( "CREATE TEMP TABLE fool (zdb_id varchar(50),abbrev varchar(15),mtype varchar(10),target_abbrev varchar(10),lg_location decimal(8,2),or_lg integer,mghframework boolean,metric varchar(5))WITH NO LOG ;");
-      $dbh->do( "CREATE TEMP TABLE PANLG (zdb_id varchar(50),abbrev varchar(15),mtype varchar(10),target_abbrev varchar(10),lg_location decimal(8,2),or_lg integer,mghframework boolean,metric varchar(5)) WITH NO LOG ;"); # $dbh->do( "CREATE INDEX panlg_zdb_idx ON PANLG(zdb_id)");  # $dbh->do( "CREATE INDEX panlg_loc_idx ON PANLG(lg_location)");    
+      $dbh->do("CREATE TEMP TABLE pool " . 
+	       "  ( " .
+	       "    zdb_id varchar(50), " .
+	       "    abbrev varchar(15), " .
+	       "    mtype varchar(10), " .
+	       "    target_abbrev varchar(10), " .
+	       "    lg_location decimal(8,2), " .
+	       "    or_lg integer, " .
+	       "    mghframework boolean, " .
+	       "    metric varchar(5) " .
+	       "  ) WITH NO LOG ;"); 
+      $dbh->do("CREATE TEMP TABLE fool " . 
+	       "  ( " .
+	       "    zdb_id varchar(50), " .
+	       "    abbrev varchar(15), " .
+	       "    mtype varchar(10), " .
+	       "    target_abbrev varchar(10), " .
+	       "    lg_location decimal(8,2), " .
+	       "    or_lg integer, " .
+	       "    mghframework boolean, " .
+	       "    metric varchar(5) " .
+	       "  ) WITH NO LOG ;"); 
+      $dbh->do("CREATE TEMP TABLE PANLG " . 
+	       "  ( " .
+	       "    zdb_id varchar(50), " .
+	       "    abbrev varchar(15), " .
+	       "    mtype varchar(10), " .
+	       "    target_abbrev varchar(10), " .
+	       "    lg_location decimal(8,2), " .
+	       "    or_lg integer, " .
+	       "    mghframework boolean, " .
+	       "    metric varchar(5) " .
+	       "  ) WITH NO LOG ;"); 
+      # $dbh->do( "CREATE INDEX panlg_zdb_idx ON PANLG(zdb_id)");  
+      # $dbh->do( "CREATE INDEX panlg_loc_idx ON PANLG(lg_location)");    
       #should we try bulding a tmp table for each panel & lg once and keeping it for the transaction .... maybe (24 * 6)  permenant tables i.e HS1,HS2,... 
       my $sth1 = $dbh->prepare($stmt1) or return undef ;
       my $sth2 = $dbh->prepare($stmt2) or return undef ;
@@ -1011,7 +1055,7 @@
 	  #	  $note = $note .  "HIT  on $panel<p>\n";
 	  $row[4] =  ($row[4] == 0)? 0 : $row[4]; # clean up 0.00000E+00               
 	  $loc = $lo = $hi = $row[4];           
-	  $rc = $sth3->execute($loc);        
+	  $rc = $sth3->execute($loc,$loc,$loc);        
 	  #	  #$note =  $note .  "draping lg ".$lg ." about ". $loc ."<p>\n"; 
 	  $local_zoom = ($Q->param($panel.'_zoom'))? $Q->param($panel.'_zoom') : $local_zoom;
 	  
@@ -1196,12 +1240,20 @@
     $lg_lo = $loc;
     $lg_hi = $loc;   
     #    $note = $note . "get_ZOOM looking around $loc<p>\n";   
+
+    # Note: rewrote the following query to avoid an ABS() call.  We have reason to 
+    # suspect that ABS() calls might be causing the informix server to crash.
+
     $sql =  
-      " SELECT lg_location, ABS(lg_location - $loc ) distance " . 
-	" FROM public_paneled_markers ".
-     "WHERE target_abbrev = ? AND or_lg = ? ".
-	  " AND mtype in ( \'$types\') ".
-	    " ORDER BY distance;";
+      " SELECT lg_location, " .
+      "        case when lg_location - $loc >= 0 then lg_location - $loc " .
+      "             when lg_location - $loc <  0 then $loc - lg_location " .
+      "             else NULL " .
+      "        end distance " .
+      "   FROM public_paneled_markers ".
+      "   WHERE target_abbrev = ? AND or_lg = ? ".
+      "     AND mtype in ( \'$types\') ".
+      "   ORDER BY distance;";
     
     $cur = $dbh->prepare($sql);
     $rc = $cur->execute( $panel, $lg);
