@@ -551,24 +551,27 @@ Variables Expected:
 
 
 	<!------------ Phenotype & Description ---------------->
+	<!-- allow display of phenotype descriptions for curators only until they are more up to date 6/25/03--> 
+	<!-- br was moved to within MIBLOCK, MIVAR xst $update was changed to MIBLOCK -->
 	<br>
-	<?MIVAR COND="$(XST,$UPDATE)">
-	        <INPUT TYPE=button value="Update" onClick="doit('phenotype','textarea','Phenotype+description')"> 
-	<?/MIVAR> 
+	<?MIBLOCK COND="$(XST,$UPDATE)">
+	  <INPUT TYPE=button value="Update" onClick="doit('phenotype','textarea','Phenotype+description')"> 
+	 
 
-	<b><?MIVAR>$(IF,$(EC,$title,mutant),Phenotype,Description)<?/MIVAR>
+	  <b><?MIVAR>$(IF,$(EC,$title,mutant),Phenotype,Description)<?/MIVAR>
 	      :</b> 
 
-	<?MIVAR COND="$(XST,$UPDATE)">
+	  <?MIVAR COND="$(XST,$UPDATE)">
  	      Add reference:&nbsp;
   	      Reference:<input type=text name=attrib_phntype_pubid>
   	      <input type=button value="Add" onClick=new_attrib_phntype();><br> 
-  	<?/MIVAR>
+  	  <?/MIVAR>
 
-	<?MIBLOCK COND="$(AND,$(NC,$phenotype,),$(NC,$phenotype,NULL))"> 
-	  <?MIVAR><br>$phenotype<?/MIVAR>
-	  <?MISQL SQL="select WebExplode(object,'dataId=$OID&type=colattrib&info=phenotype') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>		 
-	<?/MIBLOCk>
+	  <?MIBLOCK COND="$(AND,$(NC,$phenotype,),$(NC,$phenotype,NULL))"> 
+	    <?MIVAR><br>$phenotype<?/MIVAR>
+	    <?MISQL SQL="select WebExplode(object,'dataId=$OID&type=colattrib&info=phenotype') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>		 
+	  <?/MIBLOCK>
+	<?/MIBLOCK>
 
 	<!------------ ends Phenotype & Description ---------------->
 

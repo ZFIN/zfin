@@ -335,12 +335,13 @@
 
 
        <!------------- Locus Description ------------------------>
+       <!-- comment out description to public until we decide how and if we can keep them current 6/26/03 -->
 	  <p>
           <?MIBLOCK COND="$(XST,$UPDATE)">
 	    <INPUT TYPE=button 
               value="Update" 
               onClick="doit('comments','textarea','Locus+Description');"> 
-	  <?/MIBLOCK>
+	  <!-- MIBLOCK had ended here before being commented out -->
 	    <b>Locus Description:</b>
 	    <?MIVAR COND="$(AND,$(NC,$comments,NULL),$(XST,$UPDATE))">
 	     <br>Add Reference: &nbsp; Reference:
@@ -351,7 +352,8 @@
 	    <?MIVAR>$(IF,$(NC,$comments,NULL),$comments,"No description available") <?/MIVAR>
 	
            <?MISQL SQL="select WebExplode(object,'dataId=$OID&type=colattrib&info=comments') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
-	    	
+	  <?/MIBLOCK>
+  	
 	<!------------- Locus Description ------------------------>
 
      
