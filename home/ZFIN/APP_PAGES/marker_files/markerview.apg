@@ -105,7 +105,7 @@
     
      <?MIBLOCK COND="$(NXST,$new_oid)">
        <form><center><font size=4>
-        <?MIVAR> <b>Requested ID not found on ZFIN.<?/MIVAR>      
+        <?MIVAR> <b>Requested ID not found on ZFIN.<?/MIVAR></font>      
        </form>
      <?/MIBLOCK>  
  
@@ -720,15 +720,19 @@
 	
 	<?/MISQL>
 
-       <?MIVAR>
-    	$(IF,$(AND, $(=,$currentrow,1), $(=,$titledisplay,0)),
+         <?MIBLOCK COND="$(AND,$(=,$currentrow,1),$(=,$titledisplay,0))">
 		<HR width="80%">
-		<b>GENE EXPRESSION: </b>
+		<b>GENE EXPRESSION: </b><br><font size=-2>Note: We currently provide links only to gene expression data directly submitted to ZFIN, but will include data from journal articles soon. </font>
 		<!--<ul>-->
-		$(SETVAR,$titledisplay,1))
+                <?MIVAR>
+		  $(SETVAR,$titledisplay,1)
+		<?/MIVAR>   
+	<?/MIBLOCK>
+
+       <?MIVAR>
     	<li><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatview.apg&OID=$XPAT_ZDB_ID>$XPAT_ASSAY_NAME</A>  -  $XPAT_STAGE1 to $XPAT_STAGE2  ($XPAT_start_time hr to $XPAT_end_time hr) <?MISQL SQL="select WebExplode(object,'dataId=$XPAT_ZDB_ID&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
-	<?/MIVAR>
-	
+
+       <?/MIVAR>	
     <?/MIBLOCK>
   <?/MISQL>
 
@@ -797,7 +801,7 @@
 <?MIBLOCK COND="$(OR,$(NC,$mrel_count,0),$(XST,$UPDATE))"><br>
 <HR width="80%"><b>
   <?MIBLOCK COND="$(XST,$type_of_genedom)">
-    SEGMENT (CLONE AND PROBE) RELATIONSHIPS
+    SEGMENT (CLONE AND PROBE) RELATIONSHIPS:
   <?MIELSE>
     MARKER RELATIONSHIPS
   <?/MIBLOCK>

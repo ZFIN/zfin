@@ -380,7 +380,6 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 <?MIVAR NAME=$query_from>
   from marker, expression_pattern xp$query_from
 <?/MIVAR>
-
 <?MIVAR NAME=$_query_where_with_mrel>
   where mrkr_zdb_id = mrel_mrkr_1_zdb_id 
     and mrel_mrkr_2_zdb_id = xp.xpat_probe_zdb_id
@@ -448,6 +447,7 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
         <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>
     </td>
   </tr>
+
 </table>
 <?/MIBLOCK>
 
@@ -898,6 +898,7 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 <?/MIBLOCK>
 
       </td>
+
       <td bgcolor="<!--|SIDEBAR_COLOR|-->" align=right>
 
       <!-- Insert a form with one button. Label button Your Input Welcome -->
@@ -905,6 +906,7 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 
       </td>
    </tr>
+
 
 <?MIVAR>
 <form name=critform 
@@ -918,6 +920,7 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 <?MIVAR COND="$(NXST,$stage_start)" NAME=$stage_start>NULL<?/MIVAR>
 <?MIVAR COND="$(NXST,$stage_end)" NAME=$stage_end>NULL<?/MIVAR>
 <?MIVAR COND="$(NXST,$gene_lg)" NAME=$gene_lg>0<?/MIVAR>
+
 
 
    <tr>
@@ -1110,6 +1113,7 @@ document.onkeydown = keyDown;
 if (navigator.appName == "Netscape") document.captureEvents(Event.KEYDOWN|Event.KEYUP);
 </SCRIPT>
 
+<font size=-2>Note: We currently provide links only to gene expression data directly submitted to ZFIN, but will include data from journal articles soon.</font> <br>
 
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
