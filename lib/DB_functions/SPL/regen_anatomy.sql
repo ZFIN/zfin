@@ -187,11 +187,6 @@ create procedure distinct_item_expression_count(aid varchar(50),
   let oid = "XPAT";
   let child = "null";
   let next_seq = seq +1;
-  let child_count = 0;
-  let total_count = 0;
-  let no_children = 0;
-
-  let count = 0;
 
   foreach
     --order the children of the current item by seq_num
@@ -213,42 +208,62 @@ create procedure distinct_item_expression_count(aid varchar(50),
       order by anatdisp_seq_num
 
     execute procedure distinct_item_expression_count(child,sid,next_ind,next_seq);
-
-    let no_children = 1;    
+  
   end foreach
     
-  --get all of the xpat_zdbs for the current item and 
-  --insert them into all_item_x_p
-  insert into all_item_expression_pattern
-    select aid, sxa_xpat_zdb_id, seq, ind
-    from stg_xpat_anat
-    where sxa_stg_zdb_id = sid
-      and sxa_anat_item_zdb_id = aid;
 
-
+  let child_count = 0;
+  let total_count = 0;
+  let count = 0;
+  
   select count(distinct sxa_xpat_zdb_id)
     into count
   from stg_xpat_anat
   where sxa_stg_zdb_id = sid
     and sxa_anat_item_zdb_id = aid;
       
-  if (no_children = 1) then
-        
-    select count(distinct aixp_xpatanat_xpat_zdb_id)
-        into total_count
-    from all_item_expression_pattern
-    where aixp_seq_num >= seq;
-        
-  end if -- (has children)
 
-  --the item didn't have any children
-  if (no_children = 0) then
-    let total_count = count;
-  end if --no children
+  insert into anatomy_stage_stats_new 
+    (
+      anatstgstat_anat_item_zdb_id,
+      anatstgstat_stg_zdb_id,
+      anatstgstat_object_type,
+      anatstgstat_anat_item_stg_count,
+      anatstgstat_contains_count,
+      anatstgstat_total_count
+    )
+    values(aid,sid,oid,count,child_count,total_count);
+    
+    select distinct anatdisp_seq_num 
+      into seq 
+    from anatomy_display_new 
+    where anatdisp_item_zdb_id = aid
+      and anatdisp_stg_zdb_id = sid;
+
+    select count(distinct sxa_xpat_zdb_id)
+        into total_count
+    from stg_xpat_anat, anatomy_stage_stats_new
+    where sxa_seq_num >= seq
+      and anatstgstat_anat_item_zdb_id = sxa_anat_item_zdb_id
+      and anatstgstat_stg_zdb_id = sid;
+
+
+--      and exists 
+--          (
+--            select * 
+--            from anatomy_stage_stats_new
+--            where anatstgstat_stg_zdb_id = sid
+--              and anatstgstat_anat_item_zdb_id = sxa_anat_item_zdb_id
+--              and anatstgstat_anat_item_stg_count > 0
+--          );        
 
   let child_count = total_count - count;
-  insert into anatomy_stage_stats_new 
-    values(aid,sid,oid,count,child_count,total_count);
+  
+  update anatomy_stage_stats_new 
+    set anatstgstat_contains_count = child_count,
+        anatstgstat_total_count = total_count
+    where anatstgstat_anat_item_zdb_id = aid
+      and anatstgstat_stg_zdb_id = sid;
 
 end procedure;
 
@@ -567,7 +582,8 @@ create dba function "informix".regen_anatomy()
 	(
 	  xpatstganat_xpat_zdb_id		varchar(50),
 	  xpatstganat_stg_zdb_id		varchar(50),
-	  xpatstganat_anat_item_zdb_id		varchar(50)
+	  xpatstganat_anat_item_zdb_id		varchar(50),
+	  xpatstganat_seq_num 			integer
 	)
 	fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
 	extent size 1024 next size 1024
@@ -602,7 +618,8 @@ create dba function "informix".regen_anatomy()
 	(
 	  sxa_xpat_zdb_id		varchar(50),
 	  sxa_stg_zdb_id		varchar(50),
-	  sxa_anat_item_zdb_id		varchar(50)
+	  sxa_anat_item_zdb_id		varchar(50),
+	  sxa_seq_num			integer
 	)
 	fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
 	extent size 1024 next size 1024
@@ -634,6 +651,7 @@ create dba function "informix".regen_anatomy()
       create table all_item_expression_pattern
 	(
 	  aixp_anatitem_zdb_id varchar(50),
+	  aixp_stg_zdb_id varchar(50),
 	  aixp_xpatanat_xpat_zdb_id varchar(50),
 	  aixp_seq_num integer,
 	  aixp_indent integer
@@ -815,7 +833,7 @@ create dba function "informix".regen_anatomy()
 
       --for each anatitem find all stages it is contained in
       insert into all_anatomy_stage_new
-	select anatitem_zdb_id, s1.zdb_id
+    	select anatitem_zdb_id, s1.zdb_id
 	  from non_parent_stage s1, anatomy_item a1
 	  where anatitem_name != 'structures'
 	    and exists 
@@ -885,25 +903,20 @@ create dba function "informix".regen_anatomy()
 
 	--retrieve stages contained in xpat stage range
 	insert into xpat_stg_anat
-	  select xpatanat_xpat_zdb_id, stgid, xpatanat_anat_item_zdb_id	    
+	  select xpatanat_xpat_zdb_id, stgid, xpatanat_anat_item_zdb_id, anatdisp_seq_num
 	    from non_parent_stage s1, non_parent_stage xstrt, non_parent_stage xend, 
-	         expression_pattern_anatomy
+	         expression_pattern_anatomy, anatomy_display_new
 	    where s1.zdb_id = stgid
+	      and anatdisp_stg_zdb_id = stgid
+	      and anatdisp_item_zdb_id = xpatanat_anat_item_zdb_id
 	      and xpatanat_xpat_start_stg_zdb_id = xstrt.zdb_id
 	      and xpatanat_xpat_end_stg_zdb_id = xend.zdb_id
-	      and (
-		       (    s1.start_hour >= xstrt.start_hour
-			and s1.start_hour < xend.end_hour)
-		   or
-		       (    s1.start_hour > xstrt.start_hour
-			and s1.end_hour <= xend.end_hour)
-		   or      
-		       (    s1.start_hour <= xstrt.start_hour
-			and s1.end_hour >= xend.end_hour)
-		   );
+	      and s1.start_hour >= xstrt.start_hour
+	      and s1.end_hour <= xend.end_hour;
 	
       end foreach;
 
+      update statistics high for table xpat_stg_anat;
 
       --trace on;
 
@@ -915,13 +928,19 @@ create dba function "informix".regen_anatomy()
 	  into stgid
 	  from anatomy_display_new
 
+        delete from stg_xpat_anat;
+        
 	--store the xpat_stg_anat records for this stage in a temp table
         insert into stg_xpat_anat
-	  select xpatstganat_xpat_zdb_id, stgid, xpatstganat_anat_item_zdb_id
+	  select xpatstganat_xpat_zdb_id, 
+	         stgid, 
+	         xpatstganat_anat_item_zdb_id,
+	         xpatstganat_seq_num
 	    from xpat_stg_anat
 	    where xpatstganat_stg_zdb_id = stgid;
 	    
 	update statistics high for table stg_xpat_anat;
+	update statistics high for table anatomy_stage_stats_new;
 
 	--retrieve all items with indent = 1 and order by seq_num
 	foreach
