@@ -2,14 +2,13 @@
 <html>
 
 <!-- Used by root to police pending locus registrations. Root can change 
-the status of a registration.  Note that a registration can never be 
-deleted, however, because the allele designation is permanently assigned. 
-So the possible status states are:
-   unreviewed, conditional, expired
+the status of a registration.  
+So the possible status states are:   unreviewed, conditional, public
 PARAMS:
 update == optional, if exists then it's the zdb_id of the locus_registration 
           to update.
-action == is either 'approve' or 'expire' depending on which action to do.
+action == is either 'approve', 'make_public', or 'delete' depending on which 
+          action to do.
 
 UPDATE ECK 4/21/99.  Will modify to allow public to see pending 
 registrations -- but not update of course.
@@ -18,6 +17,7 @@ registrations -- but not update of course.
 <HEAD>
 
 <title>ZFIN Registered Loci</title>
+<META HTTP-EQUIV="EXPIRES" CONTENT="-2d">
 
 <SCRIPT>
   function change_status(selector,locus_id,the_allele) {
@@ -29,8 +29,6 @@ registrations -- but not update of course.
     var theDescr=escape(selector.value);
     document.location='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-registered_loci.apg&update='+locus_id+'&allele='+the_allele+'&action=descr&description='+theDescr;
   }
-
- 
 </SCRIPT>
 </HEAD>
 
@@ -52,17 +50,19 @@ registrations -- but not update of course.
 
   <?MIBLOCK COND="$(XST,$update)"> 
     <!-- Approve it and insert rudimentary fish record -->
-    <?MIBLOCK COND="$(EC,$action,approve)">
+    
+    <?MIBLOCK COND="$(EC,$action,make_public)">
       <!-- inserts aren't done in right order.  Rather than take the time to
-	-- reorder them, just defer the constraints.
-	-- The "set explain off" is required to avoid a bug with the
-	-- "set constraints" statement below.  The "set explain" statement was
-	-- picked because it was the most innoccuous statement I could think of.
-	-->
+      -- reorder them, just defer the constraints.
+      -- The "set explain off" is required to avoid a bug with the
+      -- "set constraints" statement below.  The "set explain" statement was
+      -- picked because it was the most innoccuous statement I could think of.
+      -->
       <?MISQL SQL="
-	set explain off;
-	set constraints all deferred;">
+      set explain off;
+      set constraints all deferred;">
       <?/MISQL>
+
       <?MISQL SQL="
 	select zdb_id, locus_name, abbrev, allele, owner, pheno_descr,
 	       fish_record 
@@ -100,6 +100,8 @@ registrations -- but not update of course.
 	  execute function get_id('ALT');">
 	<?/MISQL>
 	<?MIVAR NAME=$alt_id>$1<?/MIVAR>
+
+<?MIBLOCK COND=$(=,0,0)">
 	<?MISQL SQL="
 	  insert into zdb_active_data
 	      ( zactvd_zdb_id )
@@ -147,23 +149,39 @@ registrations -- but not update of course.
 		('$locus_id', '$locus_name', '$abbrev',
 		 'Provisional record for newly registered locus/allele','$owner');">
 	  <?/MISQL>
+<?/MIBLOCK>
 	<?/MIBLOCK>
+
+      <?/MIBLOCK>
+
 	<?MISQL SQL="
 	  update locus_registration
-	    set status = 'conditional', locusreg_approved_date = current,
-	        fish_record = '$fish_id' 
+	    set status = 'public', locusreg_public_release_date = current
 	    where zdb_id = '$update' and allele='$allele';">
 	<?/MISQL>
 
-      <?/MIBLOCK>
-    <?/MIBLOCK> <!-- ends approve actions -->
+    <?/MIBLOCK> <!-- ends make_public actions -->
 
-    <?MISQL COND="$(EC,$action,expire)" SQL="
+    <?MISQL COND="$(EC,$action,approve)" SQL="
       update locus_registration 
-	set status = 'expired', locusreg_expired_date = current  
+	set status = 'conditional', 
+            locusreg_nomen_approved_date = current,
+            locusreg_expiration_deadline = current + '6'::interval month to month
 	where zdb_id = '$update' and allele='$allele';">
     <?/MISQL>
 
+    <?MISQL COND="$(EC,$action,extend)" SQL="
+      update locus_registration 
+	set locusreg_expiration_deadline = 
+              locusreg_expiration_deadline + '6'::interval month to month
+	where zdb_id = '$update' and allele='$allele';">
+    <?/MISQL>
+
+    <?MISQL COND="$(EC,$action,expire)" SQL="
+      delete from locus_registration 
+	where zdb_id = '$update' and allele='$allele';">
+    <?/MISQL>
+    
     <?MIBLOCK COND="$(EC,$action,descr)">
       <?MIVAR NAME=$description DELIMIT="'" REPLACE="''">$description<?/MIVAR>
       <?MISQL SQL="
@@ -189,14 +207,6 @@ registrations -- but not update of course.
       <?/MISQL>
     <?/MIBLOCK>
 
-    <?MISQL COND="$(EC,$action,extend)" SQL="
-	update locus_registration
-	   set expiration_deadline = 
-                 expiration_deadline + interval(6) month to month
-	 where zdb_id = '$update' and allele='$allele';">
-    <?/MISQL>
-    
-
   <?/MIBLOCK>
 
 
@@ -209,80 +219,100 @@ registrations -- but not update of course.
       <TH>LOCUS</TH> <TH>OWNER</TH>  <TH align=left>STATUS</TH>
       <?MISQL SQL="
 	select locus_name, abbrev, allele, b.full_name, a.entry_time::date,
-	       status, a.zdb_id, a.locusreg_approved_date::date,
-	       a.expiration_deadline::date, a.locusreg_expired_date::date, pheno_descr,
-	       fish_record, a.expiration_deadline::date-a.entry_time::date,
-	       current::date-a.entry_time::date  	 
+	       status, (current::date - a.entry_time::date) units day,
+	       a.zdb_id,
+	       a.locusreg_nomen_approved_date::date, 
+               a.locusreg_expiration_deadline::date, 
+               pheno_descr,
+	       fish_record,
+               a.locusreg_public_release_date
 	  from locus_registration a, person b
 	  where a.owner = b.zdb_id
-	    and (   a.locusreg_approved_date is null
-		 or not exists
-		      ( select *
-			  from record_attribution
-			  where recattrib_data_zdb_id = fish_record ) )
-	    and a.expiration_deadline > a.entry_time::date
-	    order by locus_name;">
+	    and a.locusreg_public_release_date is null
+	  order by locus_name;">
 	<?MIVAR NAME=$locus_name>$1<?/MIVAR>
 	<?MIVAR NAME=$abbrev>$2<?/MIVAR>
 	<?MIVAR NAME=$allele>$3<?/MIVAR>
 	<?MIVAR NAME=$person_full_name>$4<?/MIVAR>
 	<?MIVAR NAME=$entry_date>$5<?/MIVAR>
-	<?MIVAR NAME=$status>$6<?/MIVAR>	
-	<?MIVAR NAME=$locus_zdb_id>$7<?/MIVAR>
-	<?MIVAR NAME=$approval_date>$8<?/MIVAR>
-	<?MIVAR NAME=$deadline_date>$9<?/MIVAR>
+	<?MIVAR NAME=$status>$6<?/MIVAR>
+	<?MIVAR NAME=$registration_age_days>$7<?/MIVAR>
+	<?MIVAR NAME=$locus_zdb_id>$8<?/MIVAR>
+	<?MIVAR NAME=$approval_date>$9<?/MIVAR>
+	<?MIVAR NAME=$public_date>$13<?/MIVAR>
 	<?MIVAR NAME=$expired_date>$10<?/MIVAR>
 	<?MIVAR NAME=$pheno_descr>$11<?/MIVAR>
 	<?MIVAR NAME=$fish_zdb_id>$12<?/MIVAR>
-	<?MIVAR NAME=$valid_days>$13<?/MIVAR>
-	<?MIVAR NAME=$registered_days>$14<?/MIVAR>
 	<TR>
-	  <TD colspan=6>
+	  <TD colspan=3>
 	    <hr size=3>
 	  </TD>
 	</TR>
 
-	<TR valign=bottom>
+	<TR>
 	  <TD>
-	    $(IF,$(>,$registered_days,$valid_days),"<font color='#ff0000'>") 
+	    $(IF,$(>,$registration_age_days,183),"<font color='#ff0000'>") 
 	    <b>$locus_name</b> ($abbrev<sup>$allele</SUP>)
-	    $(IF,$(>,$registered_days,$valid_days),"</font>")
+	    $(IF,$(>,$registration_age_days,183),"</font>")
 	  </TD>
 	  <TD>
 	    $person_full_name
 	  </TD>
-	  <TD rowspan=4 align=left valign=top>
+	  <TD rowspan=3 align=left valign=top>
 	    <font size=2>
 	    <B>Registered:</b> $entry_date 
+
 	    <br>
-	    <B>Approved:</b> 
-	    $(IF,$(NC,$approval_date,$MI_NULL),$approval_date,"<input type=checkbox name=approve onClick=change_status(this,'"$locus_zdb_id"','"$allele"')>")
-	    <br>
-	    $(IF,$(EC,$expired_date,),"<input type=button name=extend value=Extend onClick=change_status(this,'"$locus_zdb_id"','"$allele"')">)<B>Deadline:</b> $deadline_date
+	<?MIBLOCK COND="$(NC,$approval_date,$MI_NULL)">
+	  <?MIVAR>
+	    <B>Nomenclature Approved:</b> $approval_date
+
 	    <BR>
-	    <B>Expired:</b> 
-	    $(IF,$(NC,$expired_date,$MI_NULL),$expired_date,"<input type=checkbox name=expire onClick=change_status(this,'"$locus_zdb_id"','"$allele"')>")
-	    
+	  <?MIBLOCK COND="$(NC,$public_date,$MI_NULL)">
+	    <?MIVAR>
+	    <B>Public:</b> $public_date
+	    <?/MIVAR>
+	  <?MIELSE>
+	    <?MIVAR>
+	    <B>Deadline:</b> $expired_date
+            <br>
+	    <B>Make Public:</b> 
+	      <input type=checkbox name="make_public" onClick=change_status(this,'$locus_zdb_id','$allele')>
+            <br>
+	    <B>Extend:</b> 
+	      <input type=checkbox name="extend" onClick=change_status(this,'$locus_zdb_id','$allele')>
+            <?/MIVAR>
+	  <?/MIBLOCK>
+
+          <?/MIVAR>
+
+	<?MIELSE>
+	  <?MIVAR>
+	    <B>Approve Nomenclature:</B>
+            <input type=checkbox name="approve" onClick=change_status(this,'$locus_zdb_id','$allele')>
+	  <?/MIVAR>
+	<?/MIBLOCK>
+
+	    <BR>
+	<?MIVAR COND="$(EC,$public_date,$MI_NULL)">
+	    <B>Delete:</b> 
+	      <input type=checkbox name=expire onClick=change_status(this,'$locus_zdb_id','$allele')>
+	<?/MIVAR>
+
 	    </font>
 	  </TD>
 	</TR>
 	<TR>
-	  <TD colspan=2>
-	    <font size=2>
-	    FISH record: 
-	    $(IF,$(NC,$fish_zdb_id,NULL),<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID="$fish_zdb_id>$fish_zdb_id</A>,"Not yet created")
-	    </font>
-	  </TD>
-	</TR>
-	<TR>
-	  <TD colspan=2>
+	  <TD colspan=2 valign=top>
 	    <font size=2>
 	    Description:
-<TEXTAREA NAME="SEL$MI_CURRENTROW" rows=5 cols=50 wrap=virtual>
+	    <br><input type=button name=descr value="Update" 
+	           onClick="change_descr(document.lociform.SEL$MI_CURRENTROW,'$locus_zdb_id','$allele');">
+	    
+<TEXTAREA NAME="SEL$MI_CURRENTROW" rows=3 cols=50 wrap=virtual>
 $pheno_descr
 </TEXTAREA>
-	    <input type=button name=descr value="Update" 
-	           onClick="change_descr(document.lociform.SEL$MI_CURRENTROW,'$locus_zdb_id','$allele');">
+	
 	    </font>
 	  </TD>
 	</TR>
