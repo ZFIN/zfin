@@ -1073,7 +1073,7 @@ None submitted.
   
   <!-- Query for references -->
   <?MIBLOCK COND="$(=,$hasEv,1)">
-   <TR><TD bgcolor=#ccccccc colspan=3 align=right>Number of Reference</TD>
+   <TR><TD bgcolor=#ccccccc colspan=3 align=right>Number of References</TD>
    <?MISQL SQL="
 	select count(*), recattrib_data_zdb_id,
                oevdisp_organism_list, oevcode_order  
