@@ -399,7 +399,7 @@ update clone set (clone_polymerase_name,
 		  ) 
         =((select prb_polymerase, 
 		  prb_digest, 
-		  prb_insert_kb*1000,
+		  prb_insert_kb,
 		  prb_cloning_site,
 		  prb_pcr_amp
 	     from probes_tmp, tmp_clone_data_exist_marker
@@ -409,16 +409,6 @@ update clone set (clone_polymerase_name,
    where clone_mrkr_zdb_id in (select tcl_mrkr_zdb_id
   			         from tmp_clone_data_exist_marker); 
 
-{commentted out
-  update clone set (clone_insert_size, clone_cloning_site, clone_pcr_amplification) = 
-				  ((select prb_insert_kb*1000, prb_cloning_site, prb_pcr_amp
-					    from probes_tmp, tmp_clone_data_exist_marker
-					   where prb_clone_name = mrkr_abbrev
-					     and mrkr_zdb_id = clone.clone_mrkr_zdb_id
-				   ))
-	    where clone_mrkr_zdb_id in (select mrkr_zdb_id
-					  from tmp_clone_data_exist_marker); 
-}
 
 insert into clone 
   (
@@ -438,7 +428,7 @@ insert into clone
 	 '',
 	prb_vector,
 	prb_polymerase,
-	prb_insert_kb * 1000,
+	prb_insert_kb,
 	prb_cloning_site,
 	prb_digest,
 	prb_library,
