@@ -10,9 +10,7 @@
 #
 # This makefile creates the subdirectory that holds the indexer logs.
 # It also contains scripts that analyze the logs.  The scripts are also
-# copied to the log directory.  The scripts do not contain any dynamic tags, 
-# so the copies in this directory or the copies in the destination directory
-# can be run.
+# copied to the log directory.
 
 # ---------------  Variable Definitions  --------------------------------
 
@@ -21,8 +19,16 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/j2ee/uniquery/IndexApp/logs
 
-# These two scripts can be run locally without ill consequences.
-# STATICS = check_for_duplicates.pl count_pages.pl
+# I orginally left these 2 scripts in the source directory (this directory)
+# because they can be run without ill effects from this directory.  Also, 
+# it made sense to me that the logs dir should only contain log files.
+# However, when I wrote the cron job to run these, I just assumed that the
+# scripts were in the target directory, causing the cron job to fail.  On
+# further thought, I decided it is bad practice to run scripts out of the
+# source tree, and we should copy everything and run everything out of the
+# target tree.  So, now we do.
+
+STATICS = check_for_duplicates.pl count_pages.pl
 
 
 # ---------------  Production Rules  ------------------------------------
@@ -32,22 +38,21 @@ TARGETDIR = $(TARGETROOT)/j2ee/uniquery/IndexApp/logs
 include $(TOP)/make.default.rules
 
 
-
 # ---------------  Misc Rules  ------------------------------------
 
 # Check crawled log for dups
-checkdupscrawl :
-	./check_for_duplicates.pl $(TARGETROOT)/j2ee/uniquery/IndexApp/logs/crawledUrls.log
+checkdupscrawl : $(TARGETDIR)/check_for_duplicates.pl
+	$(TARGETDIR)/check_for_duplicates.pl $(TARGETROOT)/j2ee/uniquery/IndexApp/logs/crawledUrls.log
 
 # Check indexed log for dups
-checkdupsindex :
-	./check_for_duplicates.pl $(TARGETROOT)/j2ee/uniquery/IndexApp/logs/indexedUrls.log
+checkdupsindex : $(TARGETDIR)/check_for_duplicates.pl
+	$(TARGETDIR)/check_for_duplicates.pl $(TARGETROOT)/j2ee/uniquery/IndexApp/logs/indexedUrls.log
 
 
 # Count crawled pages
-countcrawl :
-	./count_pages.pl $(TARGETROOT)/j2ee/uniquery/IndexApp/logs/crawledUrls.log
+countcrawl : $(TARGETDIR)/count_pages.pl
+	$(TARGETDIR)/count_pages.pl $(TARGETROOT)/j2ee/uniquery/IndexApp/logs/crawledUrls.log
 
 # Count indexed pages
-countindex :
-	./count_pages.pl $(TARGETROOT)/j2ee/uniquery/IndexApp/logs/indexedUrls.log
+countindex : $(TARGETDIR)/count_pages.pl
+	$(TARGETDIR)/count_pages.pl $(TARGETROOT)/j2ee/uniquery/IndexApp/logs/indexedUrls.log
