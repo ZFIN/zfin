@@ -72,6 +72,17 @@
 	FROM mapped_marker, marker_relationship
 	WHERE marker_id = mrel_mrkr_2_zdb_id
 	  and mrel_mrkr_1_zdb_id = '$GNID'
+          and mrel_type in ('clone contains gene',
+			    'clone contains small segment',
+			    'gene encodes small segment')
+          
+      UNION 
+	SELECT or_lg
+	FROM mapped_marker, marker_relationship
+	WHERE marker_id = mrel_mrkr_1_zdb_id
+	  and mrel_mrkr_2_zdb_id = '$GNID'
+          and mrel_type in ('clone contains gene',
+			    'clone contains small segment')
 	  
       UNION
 	SELECT lnkg_or_lg
@@ -93,8 +104,19 @@
 	FROM linkage, linkage_member, marker_relationship
 	WHERE lnkgmem_member_zdb_id = mrel_mrkr_2_zdb_id
 	  and mrel_mrkr_1_zdb_id = '$GNID'
+	  and mrel_type in ('gene encodes small segment',
+			    'clone contains gene',
+			    'clone contains small segment')
 	  and lnkgmem_linkage_zdb_id = lnkg_zdb_id
-	 
+
+      UNION 
+	SELECT lnkg_or_lg
+	FROM linkage, linkage_member, marker_relationship
+	WHERE lnkgmem_member_zdb_id = mrel_mrkr_1_zdb_id
+	  and mrel_mrkr_2_zdb_id = '$GNID'
+	  and mrel_type in ('clone contains gene',
+			    'clone contains small segment')
+	  and lnkgmem_linkage_zdb_id = lnkg_zdb_id 
 	order by 1
       ;">
      <?MICOMMENT>*** 07/28/03 we decided to show LG Unknown when LG is 0. If we have other evidence of LG not 0, only the non 0 will be shown in mini mode, but more in mapping detail page.<?/MICOMMENT>
@@ -131,12 +153,12 @@
     <?MIVAR COND="$(EC,$viewmap,t)">
 	$(IF,$(EC,$split,&nbsp;),</td><td>)
 	   $split View Map:
-  	     &nbsp;
+  	   
 	   	<?MIVAR NAME=$vmpanels><?/MIVAR>
 		<?MISQL SQL="select abbrev, disp_order from panels order by disp_order;">
 		 <?MIVAR NAME=$vmpanels>$vmpanels&$1=1<?/MIVAR>
 		<?/MISQL>
-	      <A HREF="/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi?&userid=$userid&OID=$oID&view_map=view_map$vmpanels">Merged</A>&nbsp;&nbsp;
+	      <A HREF="/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi?&userid=$userid&OID=$oID&view_map=view_map$vmpanels">Merged</A>&nbsp;
 	      <A HREF="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi?&userid=$userid&OID=$oID&view_map=view_map$vmpanels">Individual Panels</A>
 	  
    	$(IF,$(EC,$split,&nbsp;),</td>)
@@ -242,12 +264,13 @@ ERROR -- something bad happened -- no OID passed in!
    <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=$target_table') from webPages where ID='aa-data_mgr.apg';">$1
    <?/MISQL>
 
-<form>
  <?MIVAR COND="$(XST,$UPDATE)">
+   <form>
    <center><font size=+2><input type=button 
 	value=" DONE UPDATING. Back to Viewing! " onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mappingdetail.apg&OID=$OID')">         </font></center>
+   </form> 
  <?/MIVAR>
-</form>  
+  
    
   <!--------------Convert to gene Id, if exist ------------------------------>
  
@@ -605,10 +628,10 @@ ERROR -- something bad happened -- no OID passed in!
   <!----------------------------------------------------->
 
 
-  <!------------Reference Panel Mapping ------------------>
-
   <TR><TD valign=top colspan=3>
     <TABLE width="100%"  bgcolor=<?MIVAR>$highlight<?/MIVAR>>
+
+  <!------------Reference Panel Mapping ------------------>
 
   <?MIVAR NAME=$override>$(IF,$(OR,$(EC,$ZDB_access,root),$(EC,$ZDB_access,fishauth)),true,false)<?/MIVAR> 
    <?MISQL SQL="
@@ -653,7 +676,6 @@ ERROR -- something bad happened -- no OID passed in!
              </TD>
      </TR>	
     <?/MIBLOCK>
-
   <!------------ OID is the only member in a linkage ---------------->
    
    <?MISQL SQL="
@@ -830,14 +852,60 @@ ERROR -- something bad happened -- no OID passed in!
   <?MIVAR> $(SETVAR,$subtable,n)<?/MIVAR>
  <?/MIBLOCK> 
   
-  <!----------------- Markers contained in --------------->
+  <!----------------- Markers encoded by --------------->
   
   <?MISQL SQL="SELECT mrel_mrkr_2_zdb_id, mrkr_abbrev
              FROM marker_relationship,  marker
 	     WHERE mrel_mrkr_1_zdb_id = '$detOID'
-	      -- and mrel_type = mreltype_name
+	       and mrel_type = 'gene encodes small segment' 
 	       and mrel_mrkr_2_zdb_id = mrkr_zdb_id
-               --and mreltype_mrkr_type_group_2 = 'SMALLSEG'
+	       and (   exists
+		       ( SELECT 'x' 
+		           FROM mapped_marker
+		           WHERE mrel_mrkr_2_zdb_id = marker_id )
+		    or exists
+		       ( SELECT 'x' 
+		           FROM linkage_member
+		           WHERE mrel_mrkr_2_zdb_id = lnkgmem_member_zdb_id ) )
+      ;">
+    <?MIVAR NAME=$insideq_abbrev>$2<?/MIVAR>
+    <?MIVAR NAME=$insideq_OID>$1<?/MIVAR>
+
+    <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
+      <TR><?MIVAR>
+        <TD><p><b>Markers Encoded By $abbrev:</b></TD>
+      </TR><?/MIVAR>
+      <TR><TD><table cols=2>
+      <?MIVAR NAME=$table>y<?/MIVAR>
+    <?/MIBLOCK>
+
+     <tr><td>
+        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$insideq_OID"><b>$insideq_abbrev</b></A>
+         </td>
+    <?MISQL SQL="
+      select WebExplode(object, '&mapdetails_mode=mini&split=space&hide_empty=t&oID=$insideq_OID')
+      from webPages 
+      where ID = 'aa-mappingdetail.apg';">
+	<td> $1 </td>
+    </tr>
+    <?/MISQL>
+    <?MIVAR NAME=$mapped>t<?/MIVAR>	
+  <?/MISQL>
+  <?MIBLOCK COND="$(AND,$(XST,$table),$(EC,$table,y))">
+   <?MIVAR>$(SETVAR,$table,n)<?/MIVAR>
+   </table> 
+   </TD></TR>
+  <?/MIBLOCK>
+ <!------------------- end Marker encoded in ----------->
+
+ <!----------------- Markers contained by --------------->
+  
+  <?MISQL SQL="SELECT mrel_mrkr_2_zdb_id, mrkr_abbrev
+             FROM marker_relationship,  marker
+	     WHERE mrel_mrkr_1_zdb_id = '$detOID'
+	       and mrel_type in ('clone contains small segment',
+				 'clone contains gene') 
+	       and mrel_mrkr_2_zdb_id = mrkr_zdb_id
 	       and (   exists
 		       ( SELECT 'x' 
 		           FROM mapped_marker
@@ -849,27 +917,83 @@ ERROR -- something bad happened -- no OID passed in!
   ;">
   <?MIVAR NAME=$insideq_abbrev>$2<?/MIVAR>
   <?MIVAR NAME=$insideq_OID>$1<?/MIVAR>
-  <?MIVAR COND="$(=,$MI_CURRENTROW,1)">
-    
-    <TR>
 
-      <TD><p><b>Markers Encoded By $abbrev:</b></TD>
-    </TR>
-    <TR><TD>
-  <?/MIVAR>
+  <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
+    <TR><?MIVAR>
+      <TD><p><b>Markers Contained in $abbrev:</b></TD>
+    </TR><?/MIVAR>
+    <TR><TD><table cols=2> 
+    <?MIVAR NAME=$table>y<?/MIVAR>	
+  <?/MIBLOCK>
+
   <?MISQL SQL="
     select WebExplode(object, '&mapdetails_mode=mini&split=space&hide_empty=t&oID=$insideq_OID')
       from webPages 
       where ID = 'aa-mappingdetail.apg';">
-    <TR>
-      <TD>
+    <tr><td>
         <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$insideq_OID"><b>$insideq_abbrev</b></A>
-      $1
-     </TR>
+       </td>
+       <td> $1 </td>
+     </tr>
    <?/MISQL>
-    </TD></TR>
-     <?MIVAR NAME=$mapped>t<?/MIVAR>	
+
+  <?MIVAR NAME=$mapped>t<?/MIVAR>	
+  <?/MISQL>
+  <?MIBLOCK COND="$(AND,$(XST,$table),$(EC,$table,y))">
+  </table><?MIVAR>$(SETVAR,$table,n)<?/MIVAR>
+  </TD></TR>
+  <?/MIBLOCK>
+
+  <!------------------- end Marker contained in ----------->
+
+
+
+   <!---------------- Clone containing --------------------->
+   <?MISQL SQL="SELECT mrel_mrkr_1_zdb_id, mrkr_abbrev
+             FROM marker_relationship,  marker
+	     WHERE mrel_mrkr_2_zdb_id = '$detOID'
+	       and mrel_type in ('clone contains small segment',
+				 'clone contains gene') 
+	       and mrel_mrkr_1_zdb_id = mrkr_zdb_id
+	       and (   exists
+		       ( SELECT 'x' 
+		           FROM mapped_marker
+		           WHERE mrel_mrkr_1_zdb_id = marker_id )
+		    or exists
+		       ( SELECT 'x' 
+		           FROM linkage_member
+		           WHERE mrel_mrkr_1_zdb_id = lnkgmem_member_zdb_id ) )
+  ;">
+  <?MIVAR NAME=$clone_abbrev>$2<?/MIVAR>
+  <?MIVAR NAME=$clone_OID>$1<?/MIVAR>
+  <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">  
+    <TR><?MIVAR>
+      <TD><p><b>Mapped Clones Containing $abbrev:</b></TD>
+    </TR><?/MIVAR>
+    <TR><TD><table cols=2>
+    <?MIVAR NAME=$table>y<?/MIVAR>
+  <?/MIBLOCK>
+
+  <?MISQL SQL="
+    select WebExplode(object, '&mapdetails_mode=mini&split=space&hide_empty=t&oID=$clone_OID')
+      from webPages 
+      where ID = 'aa-mappingdetail.apg';">
+    <tr>
+      <td>
+        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$clone_OID"><b>$clone_abbrev</b></A>
+      </td>
+      <td> $1 </td>
+     </tr>
    <?/MISQL>
+   <?MIVAR NAME=$mapped>t<?/MIVAR>	
+  <?/MISQL>
+  <?MIBLOCK COND="$(AND,$(XST,$table),$(EC,$table,y))">
+  </table><?MIVAR>$(SETVAR,$table,n)<?/MIVAR>
+  </TD></TR>
+  <?/MIBLOCK>
+ <!------------------- end Clone containing ------------------->
+ 
+ </form> <!-- end form for view maps. -->
 
  </TABLE></TD></TR>
 <?MIBLOCK COND="$(EC,$mapped,t)"> <p><TR><TD> <hr width=80%></TD></TR> 
