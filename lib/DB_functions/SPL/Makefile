@@ -38,7 +38,7 @@ MRKR_STATS   = gene_contains_seg.sql mhist_event.sql p_mrel_grpmem_correct.sql \
 	       p_check_mrkr_abbrev.sql \
                p_insert_into_record_attribution_tablezdbids.sql \
                p_insert_into_record_attribution_datazdbids.sql \
-			   p_insert_marker_go_ev.sql p_populate_go_unknowns.sql 		
+	       p_insert_marker_go_ev.sql p_populate_go_unknowns.sql 	
 PUB_STATS    = get_pub_mini_ref.sql
 REGEN_GNRCS  = regen_fishsearch.sql regen_genomics.sql regen_oevdisp.sql \
 	       regen_panelcount.sql regen_maps.sql
@@ -46,7 +46,7 @@ ZDB_GNRCS    = table_exists.sql
 ZDB_STATS    = get_obj_name.sql zdb_date.sql get_date_from_id.sql \
 	       p_check_zdb_object_table.sql syscall.sql \
 	       p_check_figure_image_pair_exists.sql \
-	       p_check_submitter_is_root.sql 
+	       p_check_submitter_is_root.sql  	
 
 # Some of the stage functions call other stage functions.  Therefore
 # the order they are listed matters.
@@ -56,8 +56,9 @@ STAGE_STATS  = create_stg_name_ext.sql create_stg_name_long.sql \
 	       anatitem_overlaps_stg_window.sql \
 	       p_check_anatitem_overlaps_stg_window.sql \
 	       stg_windows_overlap.sql \
-	       p_stg_hours_consistent.sql p_fimg_overlaps_stg_window.sql
-
+	       p_stg_hours_consistent.sql p_fimg_overlaps_stg_window.sql \
+	       p_check_anatrel_stg_consistent.sql \
+	       p_check_anat_anatrel_stg_consistent.sql
 # insert_clone and regen_anatomy.sql are special cases.  They contain 
 # multiple procedures/functions in a single file.  We thought about splitting 
 # these into a single file per function, but the functions are tightly
