@@ -102,7 +102,7 @@ database entries.</font>
 
 		<TD align=center><font size=-1>
 			<input type=button name=clear_all value="List all companies" 
-			onClick="document.crit_form.reset();document.crit_form.submit()">
+			onClick="document.critform.reset();document.critform.submit()">
 			</font>
 		</TD> 
 
