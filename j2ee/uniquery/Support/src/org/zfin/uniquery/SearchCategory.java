@@ -42,10 +42,10 @@ public class SearchCategory
         HashMap categoryLookup = new HashMap();
         ArrayList categoryList = new ArrayList();
         
-        String[] mutantTypes = {MUTANTS_FISHVIEW, MUTANTS_LOCUSVIEW, MUTANTS_MAPPINGDETAIL};
+        String[] mutantTypes = {MUTANTS_FISHVIEW, MUTANTS_LOCUSVIEW};
         categoryList.add(new SearchCategory("MUTANTS", "Mutants/Transgenics", mutantTypes));
         
-        String[] geneTypes = {GENES_MARKERVIEW, GENES_SEQUENCE, GENES_GENEPRDDESCRIPTION, GENES_MARKERGOVIEW, GENES_MAPPINGDETAIL};
+        String[] geneTypes = {GENES_MARKERVIEW, GENES_SEQUENCE, GENES_GENEPRDDESCRIPTION, GENES_MARKERGOVIEW};
         categoryList.add(new SearchCategory("GENES", "Genes/Markers/Clones", geneTypes));
         
         String[] expressionTypes = {EXPRESSION_XPATVIEW, EXPRESSION_XPATINDEXVIEW};
@@ -54,6 +54,9 @@ public class SearchCategory
 		String[] anatomyTypes = {ANATOMY_ITEM, ANATOMY_ZFINFO};
         categoryList.add(new SearchCategory("ANATOMY", "Anatomy", anatomyTypes));
 
+        String[] mappingTypes = {GENES_MAPPINGDETAIL, MUTANTS_MAPPINGDETAIL};
+        categoryList.add(new SearchCategory("MAPPING", "Mapping Data", mappingTypes));
+		
 		String[] publicationTypes = {PUBLICATIONS};
         categoryList.add(new SearchCategory("PUBLICATIONS", "Publications", publicationTypes));
 		
