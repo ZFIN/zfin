@@ -76,7 +76,7 @@
 			(is_gene.unl)
 			(blast2zfin.out)	
     $description$ :
-	This master script calls parseThisse.pl and  nameClone.pl first, and generates a group of .unl file for loading. If there is unknown accession number, it will blast the accessions against ZFIN sequence database, use blast2tab.pl to convert the results to table format while filter out matches with <90% identity. Then it calls filterBlast.pl which exams the results and write high qualified match into is_gene.unl, and the rest to blast2zfin.out for manual curation. 
+	This master script calls parseThisse.pl and  nameClone.pl first, and generates a group of .unl file for loading. If there is unknown accession number, it will blast the accessions against ZFIN sequence database, use blast2tab.pl to convert the results to table format while filter out matches with <90% identity. The blast2zfin.fst file is then feeded into filterBlast.pl which exams the results and write qualified matches into is_gene.unl, and the rest to blast2zfin.scnd for manual curation. 
 
 ----------------
 -- Loading
