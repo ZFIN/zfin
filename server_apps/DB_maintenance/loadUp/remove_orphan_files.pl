@@ -173,7 +173,7 @@ print "loading...\n";
 # load the files created by the above steps into the database using 
 # the load_files.sql  script
 
-system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> load_upload_file_list.sql >out 2> /tmp/orphan_file_report.txt") or die "can not execute dbacces :$!\n";
+system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/load_upload_file_list.sql >out 2> /tmp/orphan_file_report.txt") or die "can not execute dbacces :$!\n";
 
 close FL_PDF_MODIFIED;
 close FL_IMAGE_MODIFIED;
@@ -300,7 +300,7 @@ close ORPHAN_IMAGE_FILES;
 # that are on production but not on development.  Rsync.pl skips the bkup 
 # directory.
 
-#system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/rsync.pl")  or die "can not call rsync.pl";
+#system("<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/rsync.pl")  or die "can not call rsync.pl";
 
 
 exit;
