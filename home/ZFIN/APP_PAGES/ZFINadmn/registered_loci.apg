@@ -39,10 +39,10 @@ var theDescr=escape(selector.value);
     <?MIVAR NAME=$allele>$4<?/MIVAR>
     <?MIVAR NAME=$owner>$5<?/MIVAR>
     <?MIVAR NAME=$descr>$6<?/MIVAR>
-    <?MISQL SQL="select target_id,info from int_person_lab where source_id='$owner' order by info;"><?/MISQL>
+    <?MISQL SQL="select target_id,position,labpos_order from int_person_lab, lab_position where source_id='$owner' and position=labpos_position order by labpos_order;"><?/MISQL>
     <?MIVAR NAME=$lab>$1<?/MIVAR>
     <!-- if owner is a member of ZFIN database team do not set ZFIN as lab, set lab to null -->
-    <?MIVAR COND="$(EC,$lab,ZDB-LAB-000914-1)" NAME=$lab><?/MIVAR>
+    <?MIVAR COND="$(OR,$(EC,$lab,ZDB-LAB-000914-1),$(EC,$lab,ZDB-LAB-991005-53))" NAME=$lab><?/MIVAR>
     <?MIVAR NAME=$full_abbrev>$abbrev<sup>$allele</sup><?/MIVAR>
 
     <?MISQL SQL="execute function get_id('FISH');"><?/MISQL>

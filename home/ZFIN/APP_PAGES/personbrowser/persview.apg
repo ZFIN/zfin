@@ -132,7 +132,7 @@ $(IF,$(EC,$on_dist_list,t),"Is on","Is <b>not</b> on") email distribution list<b
 
 
 <!-- List lab affiliation. Since might be affiliated with more than one, we use ORDER clause to list affiliation with the highest status, secondary ordering by flag, which is a special case mechanism to allow me to order lab affiliations where they have same status in two different labs (set flag=1 for higher priority) -->
-<?MISQL SQL="select b.name,b.zdb_id,a.info,a.flag from int_person_lab a,lab b where source_id='$OID' and target_id=b.zdb_id order by a.info,a.flag desc;">
+<?MISQL SQL="select b.name,b.zdb_id,a.position,a.flag,c.labpos_order from int_person_lab a,lab b, lab_position c where source_id='$OID' and target_id=b.zdb_id and a.position=c.labpos_position order by c.labpos_order,a.flag desc;">
 $(IF,$(=,$MI_CURRENTROW,2),<font size=-1>and also: )
 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$2" TARGET="content">$1</a><br>
 <?/MISQL>
@@ -140,10 +140,10 @@ $(IF,$(=,$MI_CURRENTROW,2),<font size=-1>and also: )
 
 
 <!-- List company affiliation (if any) . Since might be affiliated with more than one, we use ORDER clause to list affiliation with the highest status -->
-<?MISQL SQL="select b.name,b.zdb_id,a.info from int_person_company a,company b where source_id='$OID' and target_id=b.zdb_id order by a.info desc;">
+<?MISQL SQL="select b.name,b.zdb_id,a.position, c.compos_order from int_person_company a,company b, company_position c where source_id='$OID' and target_id=b.zdb_id and a.position=c.compos_position order by c.compos_order desc;">
 <?/MISQL>
 <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-companyview.apg&OID=$2" TARGET="content">$1</a> (<font size=-1> $(SUBSTR,$3,2) </font>)<br>
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-companyview.apg&OID=$2" TARGET="content">$1</a> (<font size=-1> $3 </font>)<br>
 <?/MIVAR>
 
 <?MIVAR>$address <?/MIVAR>
