@@ -61,10 +61,10 @@ insert into tmp_not_in_pub
 
 --produce the files 
 
-unload to orphan_image_files.unl
+unload to /tmp/orphan_image_files.unl
   select * from tmp_not_in_images ;
 
-unload to orphan_pdf_files.unl
+unload to /tmp/orphan_pdf_files.unl
   select * from tmp_not_in_pub ;
 
 commit work ;
