@@ -35,7 +35,7 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/home/zf_info
 
 SUBDIRS = SEARCH_SITE anatomy catch dbase images monitor movies news stckctr \
-	zfbook 
+	zfbook sequence
 
 GENERICS = defs.html genome.html nomen.html nomen_comm.html \
 	updates.html zfprbs.html
