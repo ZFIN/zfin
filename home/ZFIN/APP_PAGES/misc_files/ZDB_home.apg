@@ -13,15 +13,6 @@ document.write('<LINK rel=stylesheet type="text/css" href="/nn4_zfin_style.css">
 document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
 }
 
-function open_Study() {
-  if (!top.zfinstudy || top.zfinstudy.closed) {
-    top.zfinstudy=window.open('/ZFIN/APP_PAGES/groupware/dataframes.html','persspace','scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=500');
-  } else {
-    top.zfinstudy.focus();
-  }
-  top.zfinstudy.ztarget=top.content;
-}
-
 </SCRIPT>
 
 <!-- <STYLE type="text/css">
