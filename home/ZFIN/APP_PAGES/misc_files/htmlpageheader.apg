@@ -31,6 +31,7 @@ document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
        </td>
 	  <td align="center" valign="bottom" bgcolor="#FFFFFF">
 	   <DIV class="header">
+            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=search"><font color="<!--|LINKBAR_COLOR|-->">Anatomy</font></a>&nbsp;&nbsp;
             <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubselect2.apg"><font color="<!--|LINKBAR_COLOR|-->">Publications</font></a>&nbsp;&nbsp;
             <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-quickfindpers.apg"><font color="<!--|LINKBAR_COLOR|-->">People</font></a> &nbsp;&nbsp;
             <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labselect.apg"><font color="<!--|LINKBAR_COLOR|-->">Labs</font></a> &nbsp;&nbsp;
