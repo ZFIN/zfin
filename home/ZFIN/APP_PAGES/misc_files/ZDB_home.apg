@@ -134,8 +134,9 @@
 		  <td>
 		    <A HREF="/zf_info/stckctr/stckctr.html">Info</A>,
 		    <A HREF="/zf_info/stckctr/guide.html">Strains</A>, 
-		    <A HREF="/zf_info/zfprbs.html">Probes</A>, <br>
-		    <A HREF="/zf_info/stckctr/health.html">Pathology Services</A>.<BR>
+		    <A HREF="/zf_info/zfprbs.html">Probes</A><br>
+		    <A HREF="/zf_info/stckctr/health.html">Pathology Services</A><BR>
+		    <A HREF="/zf_info/stckctr/dis_man/Fish_Diseases.html">Disease Manual</A><br>
 		  </td>
 		</tr>
 	      </table>
