@@ -72,13 +72,14 @@
 
       <?MISQL SQL="
         insert into fish 
-           (zdb_id, name, abbrev, line_type, source, mother, father, 
+           (zdb_id, name, abbrev, line_type, mother, father, 
             discoverer, lab, phenotype, orig_crossnum, segregation,
-            submitter_id, owner, comments, status, entry_time, allele, locus) 
-          select '$fish_id', name, abbrev, line_type, source, mother, father, 
+            submitter_id, owner, comments, entry_time, allele, locus,
+	    fish_extinct) 
+          select '$fish_id', name, abbrev, line_type, mother, father, 
                  discoverer, lab, phenotype, orig_crossnum, segregation,
-                 '$submitter_id', '$submitter_id', comments, status, current,
-                 allele,locus 
+                 '$submitter_id', '$submitter_id', comments, current,
+                 allele, locus, fish_extinct 
             from temp_fish 
             where zdb_id='$temp_oid';">
       <?/MISQL>
@@ -153,12 +154,12 @@
       <!-- Make the new FISH -->
       <?MISQL SQL="
         insert into fish 
-           (zdb_id, name, abbrev, line_type, source, mother, father, 
+           (zdb_id, name, abbrev, line_type, mother, father, 
             discoverer, lab, phenotype, orig_crossnum, segregation,
-            submitter_id, owner, comments, status)
-          select '$fish_id', name, abbrev, line_type, source, mother, father, 
+            submitter_id, owner, comments, fish_extinct)
+          select '$fish_id', name, abbrev, line_type, mother, father, 
                  discoverer, lab, phenotype, orig_crossnum, segregation,
-                 '$submitter_id','$submitter_id',comments,status 
+                 '$submitter_id', '$submitter_id', comments, fish_extinct
             from temp_fish 
             where zdb_id='$temp_oid';">
       <?/MISQL>
@@ -236,11 +237,11 @@
     <!-- Make the new FISH -->
     <?MISQL SQL="
       insert into fish 
-         (zdb_id, name, abbrev, line_type, source, discoverer, lab, phenotype,
-          submitter_id, owner, comments, status,orig_crossnum) 
-        select '$fish_id', name, abbrev, line_type, source, discoverer, lab, 
-               phenotype, '$submitter_id', '$submitter_id', comments, status,
-               orig_crossnum 
+         (zdb_id, name, abbrev, line_type, discoverer, lab, phenotype,
+          submitter_id, owner, comments, orig_crossnum, fish_extinct) 
+        select '$fish_id', name, abbrev, line_type, discoverer, lab, phenotype,
+	       '$submitter_id', '$submitter_id', comments, orig_crossnum, 
+	       fish_extinct
           from temp_fish 
           where zdb_id='$temp_oid';">
     <?/MISQL>
@@ -263,9 +264,9 @@
       where fimg_fish_zdb_id = '$temp_oid';">
   <?/MISQL>
   <?MISQL SQL="
-    update int_fish_source 
-      set source_id='$fish_id'
-      where source_id='$temp_oid';">
+    update int_data_supplier
+      set idsup_data_zdb_id = '$fish_id'
+      where idsup_data_zdb_id ='$temp_oid';">
   <?/MISQL>
 
 
@@ -318,8 +319,8 @@
 
   <!-- FINALLY, delete the temp_fish record -->
   <?MISQL SQL="
-    delete from temp_fish 
-      where zdb_id='$temp_oid';">
+    delete from zdb_active_data
+      where zactvd_zdb_id = '$temp_oid';">
   <?/MISQL>
 
 
