@@ -124,15 +124,11 @@ COOKIES:
   <?/MISQL>
 <?MIBLOCK COND="$(XST,$title)">
 
-
-   <script type="text/javascript" language="javascript" src="<!--|DOMAIN_NAME|-->/stringTokenizer.js"></script>
-
-  <script type="text/javascript" language="javascript">
-
+<script>
     function replaceLocation(url) {
-        if (navigator.userAgent.indexOf("Safari") >= 0) 
-          location = url;        
-        else 
+//        if (navigator.userAgent.indexOf("Safari") >= 0) 
+//          location = url;        
+//        else 
           location.replace(url);        
     }
     
@@ -145,9 +141,22 @@ COOKIES:
     function urlSetCookie(name,value) {
       setCookie(name,value)
       <?MIVAR>
-    	replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID&cookie="+name+value+"#"+name);
+    	replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID&cookie="+name+value+"&randomNum="+Math.random()+"#"+name);
       <?/MIVAR>
     }
+</script>
+
+
+<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-STORE">
+<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="MUST-REVALIDATE">
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+<META HTTP-EQUIV="EXPIRES" CONTENT="01 Jan 2000 00:00:00 GMT">
+
+
+  <script type="text/javascript" language="javascript">
+
+
     
     <?MICOMMENT>
        Do housecleaning whenever the user visits a new pub.
@@ -173,7 +182,10 @@ COOKIES:
       replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID");
 
       <?MICOMMENT> Keep the table clean. Delete all entries for this pub that were not entered today. <?/MICOMMENT>
-      <?MISQL SQL="DELETE FROM expression_pattern_infrastructure WHERE xpatinf_curator_zdb_id = '$ZDB_ident' and xpatinf_date != TODAY;"><?/MISQL>
+      <?MISQL SQL="SELECT xpatinf_zdb_id FROM expression_pattern_infrastructure WHERE xpatinf_curator_zdb_id = '$ZDB_ident' and xpatinf_date != TODAY;">
+        <?MIVAR NAME=xpatinf_zdb_id>$1<?/MIVAR>
+        <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id = '$xpatinf_zdb_id';"><?/MISQL>
+      <?/MISQL>
 
       <?MISQL SQL="
           SELECT count(*)
@@ -265,9 +277,11 @@ COOKIES:
       if (structures_add != '') {
         panelIndex = document.panel_structures.panel_desig_and_xpatex_zdb_id.selectedIndex;
         fx_panel_desig_and_xpatex = document.panel_structures.panel_desig_and_xpatex_zdb_id.options[panelIndex].value;
-      
+        
+        //Refresh the page so changes are displayed on Firefox.
+//        setCookie('page_refresh','1');
         <?MIVAR>
-  	  replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID&structures_add="+structures_add+"&structures_remove="+structures_remove+"&panel_desig_and_xpatex_zdb_id="+fx_panel_desig_and_xpatex+"#structure");
+  	  replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID&structures_add="+structures_add+"&structures_remove="+structures_remove+"&c_xpatcuration_update=update&panel_desig_and_xpatex_zdb_id="+fx_panel_desig_and_xpatex+"#structure");
         <?/MIVAR>
       }
       else {
@@ -404,14 +418,15 @@ function URLDecode(str) {
 }
 
 
-
+<?MIBLOCK COND=$(AND,$(XST,$c_figure),$(NC,$c_figure,))>
     function uninterpretCaption() { 
         var figCap = window.document.figureUpdate.fig_caption.value;
         var amped = unescape(figCap.replace(/;;;/g, ";&"));
         amped = amped.replace(/;;/g, "&");
+        amped = amped.replace(/'/g, "&prime;");
         window.document.figureUpdate.fig_caption.value=amped;
     }
-
+<?/MIBLOCK>
     
     function setEndStage( form_name, start_stg, end_stg ) {
 
@@ -473,7 +488,7 @@ function URLDecode(str) {
     <?/MICOMMENT>
   
     <?MIBLOCK COND=$(EC,ZDB-,$(SUBSTR,$delete_item,1,4))>
-      <?MIBLOCK COND=$(EC,ZDB-XPAT-,$(SUBSTR,$delete_item,1,9))>
+      <?MIBLOCK COND=$(EC,ZDB-XPATINF-,$(SUBSTR,$delete_item,1,12))>
         <?MISQL SQL="
             SELECT xpatres_zdb_id 
             FROM fx_expression_result, expression_pattern_infrastructure
@@ -566,6 +581,7 @@ function URLDecode(str) {
           and xpatex_featenv_zdb_id = featenv_zdb_id
           and featenv_genome_feature_zdb_id = '$xpatex_fish'
           and featenv_env_zdb_id = '$xpatex_env'
+          and xpatex_source_zdb_id = '$OID'
         ;">
     <?/MISQL>
     
@@ -843,6 +859,8 @@ function URLDecode(str) {
   <?MIBLOCK COND=$(XST,$fig_add_label)>
   
     <?MIVAR COND=$(NXST,$fig_add_comments) NAME=fig_add_comments><?/MIVAR>
+    <?MIVAR NAME=fig_add_caption DELIMIT="'" REPLACE="''">$fig_add_caption<?/MIVAR>
+    
     <?MICOMMENT> ==| Get next ZDB-ID |== <?/MICOMMENT>
     <?MISQL SQL="execute function get_id('FIG');">$(SETVAR,$fig_zdb_id,$1)<?/MISQL>
     
@@ -1446,14 +1464,17 @@ SUBMITTER COMMENTS:
   
     <SCRIPT>
       setCookie('xpatcuration_update','no')
-    </SCRIPT>
+    </SCRIPT>   
+ 
+    
 <?/MIBLOCK>  
 
+
+     
   <?MIVAR>
     <TITLE>ZFIN Curate FX</TITLE>
   <?/MIVAR>
   
-  <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
 
 <SCRIPT>
 
