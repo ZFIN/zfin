@@ -115,7 +115,8 @@ create dba function "informix".regen_maps()
 	  or_lg, lg_location,refcross_id, metric
      from marker_relationship, mapped_marker m
     where mrel_comments not like "Connects EST %" 
-      and mrel_mrkr_2_zdb_id =m.marker_id
+      and mrel_mrkr_2_zdb_id = m.marker_id
+      and mrel_type = 'gene encodes small segment'
       and m.scoring_data is not null
       and mrel_mrkr_1_zdb_id not in (
 		select marker_id 
@@ -230,7 +231,8 @@ create dba function "informix".regen_maps()
        from locus l, mapped_marker mm, panels p, 
 	    marker_relationship
       where l.cloned_gene = mrel_mrkr_1_zdb_id 
-        and mm.marker_id = mrel_mrkr_2_zdb_id	
+        and mm.marker_id = mrel_mrkr_2_zdb_id
+	and mrel_type = 'gene encodes small segment'	
         and mm.refcross_id = p.zdb_id
      UNION
       select l.zdb_id mut_zdb_id, l.abbrev mut_abbrev, 'MUTANT' mtype, mm.or_lg or_lg,  
