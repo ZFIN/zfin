@@ -1,4 +1,4 @@
-create function get_id(src lvarchar)
+create function get_id(src varchar(50))
   returning varchar(50)
   with (variant)
   external name
