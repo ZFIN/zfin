@@ -70,6 +70,9 @@ window.location.search='?MIval=aa-do-labupdate.apg&OID=$OID&attr=membership&attr
 <?MIVAR NAME=$contact_person>$8<?/MIVAR>
 <?MIVAR NAME=$bio>$9<?/MIVAR>
 
+<!-- First filter name for apostrophes! -->
+<?MIVAR COND="$(XST,$name)" NAME=$name DELIMIT="'" REPLACE="''">$name<?/MIVAR>
+
 <?MIVAR NAME=$rec_title>$name<?/MIVAR>
 
 <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
@@ -93,6 +96,9 @@ value=" DONE UPDATING. Back to Viewing! " onClick="document.location.search='?MI
 
 <TABLE width=100%>
 <TR align=center>
+
+<!-- replace '' with  ' in name   -->
+<?MIVAR COND="$(XST,$name)" NAME=$name DELIMIT="''" REPLACE="'">$name<?/MIVAR>
 
 <TD valign=middle>
 <?MIVAR>
@@ -198,42 +204,73 @@ $fax<?/MIVAR>
 <?MIVAR COND="$(XST,$UPDATE)"> </TR><TR><TD> <HR width=80%> </TD></TR> <TR> <?/MIVAR>
 
 <A NAME="member-info">
-<TD width=50% valign=top align=left> 
+<TD valign=top align=left> 
 <big>
 <?MIVAR COND="$(XST,$UPDATE)">
-<INPUT TYPE=button value="Add" onClick="doit('member','selection','Add_member')"> 
+  <INPUT TYPE=button value="Add" onClick="doit('member','selection','Add_member')"> 
 <?/MIVAR>
 <u>Lab Members:</u></big> 
 <br>
-
 <?MIVAR COND="$(XST,$UPDATE)"><ul><?/MIVAR>
-
-<?MISQL SQL="select b.full_name, b.zdb_id, a.info from int_person_lab a, person b where source_id=b.zdb_id and target_id='$OID' order by a.info,b.full_name;">
-$(IF,$(XST,$UPDATE),"<font size=-1><input type=button value=delete onClick=doDelete('"$2"')></font>") 
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$2" TARGET="content" >
-$(SETVAR,$stat_level,$(SUBSTR,$3,1,1))
-$(IF,$(<,$stat_level,3),"<b>"$1"</b>",$1)
-</A>
-$(IF,$(AND,$(NXST,$UPDATE),$(NC,$3,6other)),", <font size=-1>"$(SUBSTR,$3,2)"</font>")
-$(IF,$(XST,$UPDATE),"<font size=-1> <SELECT name=mem_status onChange=doStatus('"$2"',this.options[this.selectedIndex].value,'"$stat_level"')>
-<option "$(IF,$(=,$stat_level,1),SELECTED)" value=1>PI/Director
-<option "$(IF,$(=,$stat_level,2),SELECTED)" value=2>Co-PI/Visiting Scientist
-<option "$(IF,$(=,$stat_level,3),SELECTED)" value=3>Post-Doc
-<option "$(IF,$(=,$stat_level,4),SELECTED)" value=4>Graduate Student
-<option "$(IF,$(=,$stat_level,5),SELECTED)" value=5>Research Staff
-<option "$(IF,$(=,$stat_level,6),SELECTED)" value=6>other</SELECT></font>")
-<br><?/MISQL>
+<?MIBLOCK COND="$(NC,$OID,ZDB-LAB-991005-53)">
+  <?MISQL SQL="select b.full_name, b.zdb_id, a.info from int_person_lab a, person b where source_id=b.zdb_id and target_id='$OID' order by a.info,b.full_name;">
+    $(IF,$(XST,$UPDATE),"<font size=-1><input type=button value=delete onClick=doDelete('"$2"')></font>") 
+    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$2" TARGET="content" >
+    $(SETVAR,$stat_level,$(SUBSTR,$3,1,1))
+    $(IF,$(<,$stat_level,3),"<b>"$1"</b>",$1)
+    </A>
+    $(IF,$(AND,$(NXST,$UPDATE),$(NC,$3,6other)),", <font size=-1>"$(SUBSTR,$3,2)"</font>")
+    $(IF,$(XST,$UPDATE),"<font size=-1> 
+      <SELECT name=mem_status onChange=doStatus('"$2"',this.options[this.selectedIndex].value,'"$stat_level"')>
+	<option "$(IF,$(=,$stat_level,1),SELECTED)" value=1>PI/Director
+	<option "$(IF,$(=,$stat_level,2),SELECTED)" value=2>Co-PI/Visiting Scientist
+	<option "$(IF,$(=,$stat_level,3),SELECTED)" value=3>Post-Doc
+	<option "$(IF,$(=,$stat_level,4),SELECTED)" value=4>Graduate Student
+	<option "$(IF,$(=,$stat_level,5),SELECTED)" value=5>Research Staff
+	<option "$(IF,$(=,$stat_level,6),SELECTED)" value=6>other
+      </SELECT></font>")
+  <br>
+  <?/MISQL>
+  </TD>
+<?MIELSE>  <!-- we want to divide the lab members list into two columns to save screen real estate -->
+  <?MISQL SQL="select count(*)::integer from int_person_lab where target_id='$OID';">
+    <?MIVAR NAME=$num_lab_members>$1<?/MIVAR>
+    <?MIVAR NAME=$column_length>$(/,$num_lab_members,2)<?/MIVAR>
+  <?/MISQL>
+  <?MISQL SQL="select b.full_name, b.zdb_id, a.info from int_person_lab a, person b where source_id=b.zdb_id and target_id='$OID' order by a.info,b.full_name;">
+    <?MIBLOCK COND="$(AND,$(>,$MI_CURRENTROW,$column_length),$(NXST,$second_col))">
+      </TD>
+      <TD>
+      <br>
+      <?MIVAR NAME=$second_col>true<?/MIVAR>
+    <?/MIBLOCK>
+    $(IF,$(XST,$UPDATE),"<font size=-1><input type=button value=delete onClick=doDelete('"$2"')></font>") 
+    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$2" TARGET="content" >
+    $(SETVAR,$stat_level,$(SUBSTR,$3,1,1))
+    $(IF,$(<,$stat_level,3),"<b>"$1"</b>",$1)
+    </A>
+    $(IF,$(AND,$(NXST,$UPDATE),$(NC,$3,6other)),", <font size=-1>"$(SUBSTR,$3,2)"</font>")
+    $(IF,$(XST,$UPDATE),"<font size=-1> 
+      <SELECT name=mem_status onChange=doStatus('"$2"',this.options[this.selectedIndex].value,'"$stat_level"')>
+	<option "$(IF,$(=,$stat_level,1),SELECTED)" value=1>PI/Director
+	<option "$(IF,$(=,$stat_level,2),SELECTED)" value=2>Co-PI/Visiting Scientist
+	<option "$(IF,$(=,$stat_level,3),SELECTED)" value=3>Post-Doc
+	<option "$(IF,$(=,$stat_level,4),SELECTED)" value=4>Graduate Student
+	<option "$(IF,$(=,$stat_level,5),SELECTED)" value=5>Research Staff
+	<option "$(IF,$(=,$stat_level,6),SELECTED)" value=6>other
+      </SELECT></font>")
+  <br>
+  <?/MISQL>
+  </TD>
+<?/MIBLOCK>
 <?MIVAR COND="$(XST,$UPDATE)"></ul><?/MIVAR>
-
-</TD>
-
 </TR>
 </TABLE>
 
 
 <HR width=80%>
 <?MIVAR COND="$(XST,$UPDATE)">
-<INPUT TYPE=button value=Update onClick="doit('bio','textarea','Research+Interests')">
+  <INPUT TYPE=button value=Update onClick="doit('bio','textarea','Research+Interests')">
 <?/MIVAR>
 <B>Statement of Research Interests:</B><p>
 <?MIVAR COND=$(NE,$bio,NULL)>$bio<?/MIVAR>
