@@ -10,8 +10,6 @@
 //
 // Modified by Ted Kirkpatrick for the ZFIN project.
 //
-// $Id$
-// $Source$
 
 import java.io.*;
 import java.net.*;
@@ -32,9 +30,8 @@ public class Server extends Thread
 	public static final int NO_OUTPUT = 0;
 	public static final int CONNECTION_OUTPUT = 1;
 	public static final int QUERY_OUTPUT = 2;
-	public int outputLevel = CONNECTION_OUTPUT;
-	// Uncomment the following and comment the above to produce debugging output
-	//public int outputLevel = QUERY_OUTPUT;
+        // public int outputLevel = CONNECTION_OUTPUT;
+	public int outputLevel = QUERY_OUTPUT;
 
 	// To ensure only 1 thread accesses milib at a time
 	Object semaphore = new Object ();
