@@ -128,6 +128,54 @@ public class SQLQuery
 
 
 
+	public Vector selectAll_javaserver(int numFields, String request)
+	{
+        int port = PORT;
+        Socket s = null;
+	StringTokenizer sTok; 
+	System.err.println("Query: " + request);
+
+	Vector result = new Vector ();
+        try {
+            // Create a socket to communicate to the specified host and port
+            s = new Socket(host, port);
+            // Create streams for reading and writing lines of text
+            // from and to this socket.
+            DataInputStream sin = new DataInputStream(s.getInputStream());
+            PrintStream sout = new PrintStream(s.getOutputStream());
+
+	    if ((sin == null) || (sout == null))
+	      System.err.println("no connection");
+            
+            // Tell the user that we've connected
+		//System.out.println("Connected to " + s.getInetAddress()  + ":"+ s.getPort());
+			// Send it to the server
+			sout.println(SEPARATOR + numFields + SEPARATOR + request);
+			// Read a line from the server.  
+			String line = sin.readLine();
+			while (line != null)
+			{
+			  //      System.out.println (line);
+			  sTok = new StringTokenizer(line,SEPARATOR);
+			  while (sTok.hasMoreElements())
+				  result.addElement((String)sTok.nextElement());
+
+			  line = sin.readLine ();
+			}
+        }
+        catch (IOException e) { System.err.println("Data read: " + e); }
+        // Always be sure to close the socket
+        finally {
+            try { if (s != null) s.close(); } catch (IOException e2) { ; }
+        }
+
+	/*		int j = 0;
+	for (j = 0; j < result.size() ; j ++) 
+	System.out.println(j + " " + result.elementAt(j)); */
+		System.err.println("result size: " + result.size()); 
+		return result; 
+
+    }
 
 	/**
 	   Execute a select statement.
@@ -141,7 +189,7 @@ public class SQLQuery
 	   @return A Vector of Objects, each Object representing a row returned by the
 	       Select statement.
 	*/
-	public Vector selectAll_javaserver (int numFields, String request)
+	public Vector xx_selectAll_javaserver (int numFields, String request)
 	{
         int port = PORT;
         Socket s = null;
