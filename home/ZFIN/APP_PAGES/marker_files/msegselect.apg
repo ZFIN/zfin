@@ -181,9 +181,9 @@ document.msegform.START.value = "";
   <?MIVAR NAME=$constraintl COND="$(NXST,$constraintl)"><?/MIVAR>
 
   <?MIVAR COND="$(NC,$lg,0)">
-     <?MIVAR NAME=$lgConstraintm>(or_lg='$lg' or or_lg='0') and private='f'
+     <?MIVAR NAME=$lgConstraintm>(or_lg='$lg' or or_lg='0') 
      <?/MIVAR>
-     <?MIVAR NAME=$lgConstraintl>(lnkg_or_lg='$lg' or lnkg_or_lg='0') and lnkg_private='f'
+     <?MIVAR NAME=$lgConstraintl>(lnkg_or_lg='$lg' or lnkg_or_lg='0')
      <?/MIVAR>
 	
      $(VECAPPEND, $constraintm, $lgConstraintm )
@@ -240,7 +240,7 @@ document.msegform.START.value = "";
 <?/MISQL>
 
 <?MISQL SQL="
-	select mrkr_abbrev, mrkr_type, lg_location, mrkr_zdb_id, or_lg as OR_lg, panels.zdb_id as target_id, panels.abbrev as target_abbrev, private, mm.metric as metric, clone_sequence_type, vector_type_name, mrkr_abbrev_order
+	select mrkr_abbrev, mrkr_type, lg_location, mrkr_zdb_id, or_lg as OR_lg, panels.zdb_id as target_id, panels.abbrev as target_abbrev, mm.metric as metric, clone_sequence_type, vector_type_name, mrkr_abbrev_order
 	from marker_temp, mapped_marker mm, panels
 	where mrkr_zdb_id = marker_id
 	  and refcross_id = panels.zdb_id 
@@ -248,12 +248,12 @@ document.msegform.START.value = "";
 
 	UNION
 
-	select mrkr_abbrev, mrkr_type, NULL::numeric(8,2) as lg_location, mrkr_zdb_id, lnkg_or_lg as OR_lg, lnkg_zdb_id as target_id, NULL::varchar(20) as target_abbrev, lnkg_private as private, NULL::varchar(5) as metric, clone_sequence_type, vector_type_name, mrkr_abbrev_order
+	select mrkr_abbrev, mrkr_type, NULL::numeric(8,2) as lg_location, mrkr_zdb_id, lnkg_or_lg as OR_lg, lnkg_zdb_id as target_id, NULL::varchar(20) as target_abbrev, NULL::varchar(5) as metric, clone_sequence_type, vector_type_name, mrkr_abbrev_order
 	from marker_temp m1, linkage, linkage_member
 	where m1.mrkr_zdb_id = lnkgmem_member_zdb_id 
 	  and lnkgmem_linkage_zdb_id = lnkg_zdb_id
 	  $constraintl
-	order by 12, 2
+	order by 11, 2
 	into temp msegtemp_temp with no log; ">
 
 <?/MISQL>
@@ -261,10 +261,10 @@ document.msegform.START.value = "";
 
 <?MIBLOCK COND="$(OR,$(AND,$(EC,$lg,0),$(EC,$refcross,NULL)), $(XST,$pubId))">
   <?MISQL SQL="
-	select a.mrkr_abbrev as mrkr_abbrev, a.mrkr_type as mrkr_type, lg_location, a.mrkr_zdb_id as mrkr_zdb_id, OR_lg, target_id, target_abbrev, private, metric, a.clone_sequence_type as clone_sequence_type, a.vector_type_name as vector_type_name, a.mrkr_abbrev_order as mrkr_abbrev_order
+	select a.mrkr_abbrev as mrkr_abbrev, a.mrkr_type as mrkr_type, lg_location, a.mrkr_zdb_id as mrkr_zdb_id, OR_lg, target_id, target_abbrev, metric, a.clone_sequence_type as clone_sequence_type, a.vector_type_name as vector_type_name, a.mrkr_abbrev_order as mrkr_abbrev_order
 	from marker_temp a, outer msegtemp_temp b
 	where a.mrkr_zdb_id = b.mrkr_zdb_id
-	order by 12, 2
+	order by 11, 2
 	into temp mseglister_temp with no log; ">
 
   <?/MISQL>
@@ -387,16 +387,15 @@ document.msegform.START.value = "";
 
     <!--- Query Database --->
     <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
-	  select distinct mrkr_abbrev, mrkr_type, mrkr_zdb_id, private
+	  select distinct mrkr_abbrev, mrkr_type, mrkr_zdb_id
 		 $tmptable_select_ending , clone_sequence_type, vector_type_name
 	    from $msegtable
 	    $order_clause;">
 	  <?MIVAR NAME=$abbrev>$1<?/MIVAR>
 	  <?MIVAR NAME=$marker_type>$2<?/MIVAR>
 	  <?MIVAR NAME=$OID>$3<?/MIVAR>
-	  <?MIVAR NAME=$private>$4<?/MIVAR>
-	  <?MIVAR NAME=$clone_sequence_type>$6<?/MIVAR>
-	  <?MIVAR NAME=$vector_type_name>$7<?/MIVAR>
+	  <?MIVAR NAME=$clone_sequence_type>$5<?/MIVAR>
+	  <?MIVAR NAME=$vector_type_name>$6<?/MIVAR>
 	
 	  <?MIVAR NAME=$viewer>aa-markerview.apg<?/MIVAR>
 
@@ -456,7 +455,7 @@ document.msegform.START.value = "";
 
 	<TD>
 <!-- also sends abbrev & marker_type -->
-<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini&oID=OID') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
 	</TD>
 
 

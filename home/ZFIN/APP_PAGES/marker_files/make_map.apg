@@ -19,7 +19,6 @@ showlist -- a parenthesized list of marker types that should be visible.
 	where refcross_id='$refcross' 
 	and or_lg='$OR_LG' 
 	and (marker_type in $showlist or marker_id='$marker') 
-	and private='f' 
 	and mm.marker_id = m.mrkr_zdb_id
 	order by lg_location;">
 <TR $(IF,$(EC,$1,$marker),"bgcolor=#F9A9BE")>

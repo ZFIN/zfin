@@ -118,9 +118,9 @@ document.critform.START.value = "";
   <?MIVAR NAME=$constraintl COND="$(NXST,$constraintl)"><?/MIVAR>
 
   <?MIVAR COND="$(NC,$lg,0)">
-     <?MIVAR NAME=$lgConstraintm>or_lg='$lg' and private='f'
+     <?MIVAR NAME=$lgConstraintm>or_lg='$lg'
      <?/MIVAR>
-     <?MIVAR NAME=$lgConstraintl>lnkg_or_lg='$lg' and lnkg_private='f'
+     <?MIVAR NAME=$lgConstraintl>lnkg_or_lg='$lg'
      <?/MIVAR>
 	
      $(VECAPPEND, $constraintm, $lgConstraintm )
@@ -128,7 +128,7 @@ document.critform.START.value = "";
   <?/MIVAR>
 
   <?MIVAR COND="$(NC,$refcross,NULL)">
-       $(VECAPPEND, $constraintm, panels.zdb_id='$refcross' )
+       $(VECAPPEND, $constraintm, mm.refcross_id='$refcross' )
        $(VECAPPEND, $constraintl, lnkg_zdb_id = '$refcross' ) 		
   <?/MIVAR>
 
@@ -152,21 +152,16 @@ document.critform.START.value = "";
 <?MIBLOCK COND="$(NXST,$pubId)">
 
   <?MIBLOCK COND="$(OR,$(>,$(POSITION,$mlist,MUTANT),0),$(>,$(POSITION,$mlist,any),0))">
-   
+	
+  
     <?MISQL SQL="
 
-	select distinct a.zdb_id as zdb_id, a.allele as abbrev, fish_allele_order as abbrev_order, 'MUTANT' as mtype
-	from fish a
-	$mutantnameConstraint
-	and a.zdb_id in (select marker_id from mapped_marker)
-	union
-	select distinct a.zdb_id as zdb_id, b.abbrev as abbrev, locus_abbrev_order as abbrev_order, 'MUTANT' as mtype
+	select distinct b.zdb_id as zdb_id,b.locus_name as name, b.abbrev as abbrev, locus_abbrev_order as abbrev_order, 'MUTANT' as mtype, b.cloned_gene as sec_zdb_id, a.zdb_id as trd_zdb_id
 	from fish a, locus b
 	$mutantnameConstraint
-	and a.zdb_id not in (select marker_id from mapped_marker)
 	and a.locus = b.zdb_id
 	union
-	select distinct zdb_id, abbrev, locus_abbrev_order as abbrev_order, 'MUTANT' as mtype
+	select distinct zdb_id, locus_name as name, abbrev, locus_abbrev_order as abbrev_order, 'MUTANT' as mtype, a.cloned_gene as sec_zdb_id, a.zdb_id as trd_zdb_id
 	from locus a
 	$mutantnameConstraint
 	into temp all_temp_markers with no log;">
@@ -176,7 +171,7 @@ document.critform.START.value = "";
      
      <?MISQL SQL="
       insert into all_temp_markers
-	select distinct mrkr_zdb_id as zdb_id, mrkr_abbrev as abbrev, mrkr_abbrev_order as abbrev_order, mrkr_type as mtype
+	select distinct mrkr_zdb_id as zdb_id, mrkr_name as name, mrkr_abbrev as abbrev, mrkr_abbrev_order as abbrev_order, mrkr_type as mtype, mrkr_zdb_id as sec_zdb_id, mrkr_zdb_id as trd_zdb_id
 	from marker a
 	$mrkrnameConstraint
 	$mlistConstraint; ">
@@ -186,7 +181,7 @@ document.critform.START.value = "";
   <?MIELSE>
     
    <?MISQL SQL="    
-	select distinct mrkr_zdb_id as zdb_id, mrkr_abbrev as abbrev, mrkr_abbrev_order as abbrev_order, mrkr_type as mtype
+	select distinct mrkr_zdb_id as zdb_id, mrkr_name as name, mrkr_abbrev as abbrev, mrkr_abbrev_order as abbrev_order, mrkr_type as mtype,mrkr_zdb_id as sec_zdb_id,mrkr_zdb_id as trd_zdb_id
 	from marker a
 	$mrkrnameConstraint
 	$mlistConstraint
@@ -197,30 +192,34 @@ document.critform.START.value = "";
 
 
    <?MISQL SQL="
-	select m1.abbrev as abbrev, m1.mtype as mtype, lg_location, m1.zdb_id as zdb_id, or_lg as OR_lg, panels.zdb_id as target_id, panels.abbrev as target_abbrev, private, mm.metric as metric, m1.abbrev_order as abbrev_order
-	from all_temp_markers m1, mapped_marker mm, panels
-	where m1.zdb_id = marker_id
- 	 and refcross_id = panels.zdb_id
+	select m1.name as name, m1.abbrev as abbrev, m1.mtype as mtype, m1.zdb_id as zdb_id, m1.abbrev_order as abbrev_order
+	from all_temp_markers m1, mapped_marker mm
+	where (marker_id = m1.zdb_id
+	    or marker_id = sec_zdb_id
+	    or marker_id = trd_zdb_id)
 	 and or_lg <> '0'
 	 $constraintm
 
 	UNION
 
-	select  m1.abbrev as abbrev, m1.mtype as mtype, NULL::numeric(8,2) as lg_location, m1.zdb_id as zdb_id, lnkg_or_lg as OR_lg, lnkg_zdb_id as target_id, NULL::varchar(20) as target_abbrev, lnkg_private as private, NULL::varchar(5) as metric, m1.abbrev_order as abbrev_order
+	select  m1.name as name, m1.abbrev as abbrev, m1.mtype as mtype, m1.zdb_id as zdb_id, m1.abbrev_order as abbrev_order
 	from all_temp_markers m1, linkage_member, linkage
-	where m1.zdb_id = lnkgmem_member_zdb_id 
+	where (lnkgmem_member_zdb_id = m1.zdb_id 
+	    or lnkgmem_member_zdb_id = sec_zdb_id
+	    or lnkgmem_member_zdb_id = trd_zdb_id)
 	and lnkgmem_linkage_zdb_id = lnkg_zdb_id
 	and lnkg_or_lg <> '0'
 	$constraintl
 
-    	order by 10, 2
+    	order by 4, 2
     	into temp markerlister_temp with no log;">
+	
   <?/MISQL>
 
 <?MIELSE>  <!-- if invoked by the mapping data link from a publication page -->
   <!-- get the mapping information of the linkage members only on the specific independent linkage that is sourced to that pubId. -->
   <?MISQL SQL="
-	select mrkr_abbrev as abbrev, mrkr_type as mtype, NULL::numeric(8,2) as lg_location, mrkr_zdb_id as zdb_id, lnkg_or_lg as OR_lg, lnkg_zdb_id as target_id, NULL::varchar(20) as target_abbrev, lnkg_private as private, NULL::varchar(5) as metric, mrkr_abbrev_order as abbrev_order
+	select mrkr_name as name, mrkr_abbrev as abbrev, mrkr_type as mtype, NULL::numeric(8,2) as lg_location, mrkr_zdb_id as zdb_id, lnkg_or_lg as OR_lg, lnkg_zdb_id as target_id, NULL::varchar(20) as target_abbrev,  NULL::varchar(5) as metric, mrkr_abbrev_order as abbrev_order
 
   	from record_attribution, linkage_member,linkage, marker
   	where recattrib_source_zdb_id = '$pubId'
@@ -231,7 +230,7 @@ document.critform.START.value = "";
 		
  	UNION
 
-  	select l.abbrev as abbrev, 'MUTANT', NULL::numeric(8,2) as lg_location, f.zdb_id as zdb_id, lnkg_or_lg as OR_lg, lnkg_zdb_id as target_id, NULL::varchar(20) as target_abbrev, lnkg_private as private, NULL::varchar(5) as metric, l.locus_abbrev_order as abbrev_order
+  	select l.locus_name as name, l.abbrev as abbrev, 'MUTANT', NULL::numeric(8,2) as lg_location, l.zdb_id as zdb_id, lnkg_or_lg as OR_lg, lnkg_zdb_id as target_id, NULL::varchar(20) as target_abbrev, NULL::varchar(5) as metric, l.locus_abbrev_order as abbrev_order
 
   	from record_attribution, linkage_member, linkage, fish f, locus l
   	where recattrib_source_zdb_id = '$pubId'
@@ -250,6 +249,7 @@ document.critform.START.value = "";
 <?MISQL SQL="
   select distinct abbrev, mtype, zdb_id
     from markerlister_temp;">
+
 <?/MISQL>
 <?MIVAR NAME=$num_recs>$MI_ROWCOUNT<?/MIVAR>
 
@@ -360,14 +360,14 @@ document.critform.START.value = "";
 
     <!--- Query Database --->
     <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
-      select distinct abbrev, mtype, abbrev_order, zdb_id, private
+      select distinct name, abbrev, mtype, abbrev_order, zdb_id
 	from markerlister_temp
 	$order_clause;">
 
-      <?MIVAR name=$marker_abbrev>$1<?/MIVAR>
-      <?MIVAR name=$mtype>$2<?/MIVAR>
-      <?MIVAR name=$OID>$4<?/MIVAR>
-      <?MIVAR name=$private>$5<?/MIVAR>
+      <?MIVAR name=$marker_abbrev>$2<?/MIVAR>
+      <?MIVAR COND="$(EC,$2,)" NAME=$marker_abbrev>$1<?/MIVAR> 
+      <?MIVAR name=$mtype>$3<?/MIVAR>
+      <?MIVAR name=$OID>$5<?/MIVAR>
 
       <!-- create form for each marker  -->
       <!-- get rid of dashes to avoid javascript error -->
@@ -412,7 +412,7 @@ document.critform.START.value = "";
 	  <?/MIBLOCK>
 
 	  <TD>
-	   <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+	   <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini&oID=$OID') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
 	  </TD>
 
 	<!--    change row_color    -->
