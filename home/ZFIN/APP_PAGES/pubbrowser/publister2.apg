@@ -80,6 +80,25 @@ $constraint $previous (a.zdb_id=b.pub_id and b.curation_action='$cur_status')<?/
 <?MIVAR NAME=$constraint> where status='active' <?/MIVAR>
 <?/MIBLOCK>
 
+
+<!-- constraint is needed to pass to edit_pub so that a submit from process_pub will return the user to a populated publister  other values are used in nav tile button creation-->
+
+<?MIVAR COND="$(NXST,$authors)" NAME=$authors><?/MIVAR>
+<?MIVAR COND="$(NXST,$title)" NAME=$title><?/MIVAR>
+<?MIVAR COND="$(NXST,$anon1text)" NAME=$anon1text><?/MIVAR>
+<?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>abstract<?/MIVAR>
+<?MIVAR COND="$(NXST,$authtype)" NAME=$authtype>anyauth<?/MIVAR>
+<?MIVAR COND="$(NXST,$jtype)" NAME=$jtype>any<?/MIVAR>
+<?MIVAR COND="$(NXST,$yr_cmpr)" NAME=$yr_cmpr>=<?/MIVAR>
+<?MIVAR COND="$(NXST,$century)" NAME=$century>19<?/MIVAR>
+<?MIVAR COND="$(NXST,$year)" NAME=$year><?/MIVAR>
+<?MIVAR COND="$(NXST,$order_pref)" NAME=$order_pref>date<?/MIVAR>
+<?MIVAR COND="$(NXST,$cur_status)" NAME=$cur_status>any<?/MIVAR>
+<?MIVAR COND="$(NXST,$pub_status)" NAME=$pub_status>any<?/MIVAR>
+<?MIVAR COND="$(EC,$yr_cmpr,>)" NAME=$yr_cmpr>greater<?/MIVAR>
+<?MIVAR COND="$(EC,$yr_cmpr,<)" NAME=$yr_cmpr>less<?/MIVAR>
+<?MIVAR COND="$(XST,$cur_status)" NAME=$cur_status DELIMIT=" " REPLACE="9">$cur_status<?/MIVAR>
+
 <form method=post target=content action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 <TABLE width=100%>
 <TR>
@@ -89,7 +108,7 @@ $constraint $previous (a.zdb_id=b.pub_id and b.curation_action='$cur_status')<?/
 <input type=submit name=refer value="Output as REFER format file">  
 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-REFERinfo.apg" TARGET=content><font size=-1>REFER&nbsp;Instructions</font></A>
 <?MIVAR COND="$(EC,$AUTHORIZED,root)">
-<input type=button name=printable value="Add new Pub" onClick="top.content.location='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?rtype=publication&MIval=aa-edit_pub.apg';">  
+<input type=button name=printable value="Add new Pub" onClick="top.content.location='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?rtype=publication&MIval=aa-edit_pub.apg&search_title=$title&cur_status=$cur_status&search_authors=$authors&anon1text=$anon1text&authtype=$authtype&anon1=$anon1&search_jtype=$jtype&yr_cmpr=$yr_cmpr&century=$century&year=$year&order_pref=$order_pref&pub_status=$pub_status';">  
 <?/MIVAR>
 </font>
 </TD> </TR>
@@ -111,7 +130,6 @@ $constraint $previous (a.zdb_id=b.pub_id and b.curation_action='$cur_status')<?/
 </TR>
 </TABLE>
 
-
 <input type=hidden name=MIval value=aa-pubprintable.apg>
 <?MIVAR COND="$(XST,$title)"> <input type=hidden name=title value="$title"><?/MIVAR>
 <?MIVAR COND="$(XST,$authors)"> <input type=hidden name=authors value="$authors"><?/MIVAR>
@@ -121,29 +139,12 @@ $constraint $previous (a.zdb_id=b.pub_id and b.curation_action='$cur_status')<?/
 <?MIVAR> <input type=hidden name=constraint value="$constraint"><?/MIVAR>
 <?MIVAR> <input type=hidden name=order_clause value="$order_clause"><?/MIVAR>
 
+
 </form>
 
 
 <!-- NOW do slightly different displays, depending on whether you are selecting a value, or merely browsing. 
 -->
-
-<!-- constraint is needed to pass to edit_pub so that a submit from process_pub will return the user to a populated publister  other values are used in nav tile button creation-->
-
-<?MIVAR COND="$(NXST,$authors)" NAME=$authors><?/MIVAR>
-<?MIVAR COND="$(NXST,$title)" NAME=$title><?/MIVAR>
-<?MIVAR COND="$(NXST,$anon1text)" NAME=$anon1text><?/MIVAR>
-<?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>abstract<?/MIVAR>
-<?MIVAR COND="$(NXST,$authtype)" NAME=$authtype>anyauth<?/MIVAR>
-<?MIVAR COND="$(NXST,$jtype)" NAME=$jtype>any<?/MIVAR>
-<?MIVAR COND="$(NXST,$yr_cmpr)" NAME=$yr_cmpr>=<?/MIVAR>
-<?MIVAR COND="$(NXST,$century)" NAME=$century>19<?/MIVAR>
-<?MIVAR COND="$(NXST,$year)" NAME=$year><?/MIVAR>
-<?MIVAR COND="$(NXST,$order_pref)" NAME=$order_pref>date<?/MIVAR>
-<?MIVAR COND="$(NXST,$cur_status)" NAME=$cur_status>any<?/MIVAR>
-<?MIVAR COND="$(NXST,$pub_status)" NAME=$pub_status>any<?/MIVAR>
-<?MIVAR COND="$(EC,$yr_cmpr,>)" NAME=$yr_cmpr>greater<?/MIVAR>
-<?MIVAR COND="$(EC,$yr_cmpr,<)" NAME=$yr_cmpr>less<?/MIVAR>
-<?MIVAR COND="$(XST,$cur_status)" NAME=$cur_status DELIMIT=" " REPLACE="9">$cur_status<?/MIVAR>
 
 <?MISQL SQL="select title,authors,zdb_id,year(pub_date) as pyear, source from $target_tables $constraint $order_clause;">
 <TR><TD valign=top>
