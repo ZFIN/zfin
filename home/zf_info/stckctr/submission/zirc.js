@@ -83,7 +83,7 @@ function emptyFormCheck() {
 
 }   //end of function emptyFormCheck
 
-function saveValues(cookieName, days) {
+function saveValues(cookieName, days, nextPage) {
 //checking for permission to use cookies...
  	if (cookieName.indexOf("Profile") != -1) {
   		var bakeOK = cookiesOK(cookieName);
@@ -108,34 +108,39 @@ var formCheck = emptyFormCheck();
   for (i=0;i<document.forms.length;i++) { 
    for (j=0;j<document.forms[i].elements.length; j++) { 
     var cookieElement = document.forms[i].elements[j].name; 
-  if ((document.forms[i].elements[j].type == "text")
+	if ((document.forms[i].elements[j].type == "text")
 		|| (document.forms[i].elements[j].type == "password")
-		|| (document.forms[i].elements[j].type == "textarea")){
+		|| (document.forms[i].elements[j].type == "textarea")
+		|| (document.forms[i].elements[j].type == "radio")) {
 	var elementValue = document.forms[i].elements[j].value;
   } else if (document.forms[i].elements[j].type.indexOf("select") != -1) {
-		var elementValue = "";
-		for(k=0;k<document.forms[i].elements[j].length;k++) {
-			if (document.forms[i].elements[j].options[k].selected) {
-     			   elementValue += k+"|";}
-		}//end of for(k= 
-  } else if ((document.forms[i].elements[j].type == "checkbox") || 
-			   (document.forms[i].elements[j].type == "radio")) {
-					var elementValue = document.forms[i].elements[j].checked;
-  } 
+   var elementValue = "";
+   for(k=0;k<document.forms[i].elements[j].length;k++)
+    if (document.forms[i].elements[j].options[k].selected)
+     elementValue += k+"|";
+  } else if (document.forms[i].elements[j].type == "checkbox") {
+   var elementValue = document.forms[i].elements[j].checked;
+  } else if (document.forms[i].elements[j].type == "radio") {
+      		var elementValue = document.forms[i].elements[j].value
+       		} 
   var elementPair = (cookieElement + "=" + elementValue);
 	// These next lines loop together the long string that makes the cookie (e[0]=v[0]&e[1]=v[1]&...)
 	if (zircCookie == "") {
-		zircCookie = elementPair;
+		zircCookie = elementPair
 		} 
 	else {
-		zircCookie = zircCookie + "&" + elementPair;
+		zircCookie = zircCookie + "&" + elementPair
 		} //end of if (zircCookie == "")
 	} //end of for (j=0;j<document.forms[i].elements.length; j++) { 	
    } //end of for (i=0;i<document.forms.length;i++)
    Set_Cookie(cookieName, zircCookie, expires); //set the cookie
  } //end of if (bakeOK == "yes")
+if (nextPage) {
+ window.location.href=nextPage;
+ }
  } // end of else emptyFormCheck
 }   //end of function saveValues() 
+
 
 function storedValues(cookieName) {
   var val = getCookie(cookieName);
@@ -221,11 +226,12 @@ if (nextPage) {
 }   //end of function saveForm() 
 
 function formValues(formCookieName) {
+	for (i=0; i<document.forms.length; i++) {
 	var cookieValue = getCookie(formCookieName);
 	if (cookieValue) {
 	var a = cookieValue.split(escape('&')); //parsing name/value pairs
 		for (x=0; x<a.length; x++) {
-			a[x] = a[x].split(escape('=')); //breaking pairs
+			a[x] = a[x].split(escape('=')); //breaking pairs into an array
 			if (a[x]) {
 				var cookieElementName = a[x].slice(0,1); //find the name in this value pair
 				var cookieElementValue = a[x].slice(1,2); //find the value in this value pair
@@ -233,13 +239,14 @@ function formValues(formCookieName) {
 				for (e=0; e<document.forms[i].elements.length; e++) {
 			      if ((document.forms[i].elements[e].type != "submit") &&
 				  	  (document.forms[i].elements[e].type != "button")) {
-					  	if (document.forms[i].elements[e].name == cookieElementName) {
-							document.forms[i].elements[e].value = unescape(cookieElementValue);}
+				  		if (cookieElementName == document.forms[i].elements[e].name){
+							document.forms[i].elements[e].value = unescape(cookieElementValue);
 						}
+					}
 				}  //end of for (e=0; e<document.forms[i].elements.length; e++) {
 	     } //end of for (x=0; x<a.length; x++) {
 	  }   //end of if (cookieValue) {
-	  else {alert('no cookie');}
+	}   //end of for (i=0; i<document.length; i++) {
   }   //end of function formValues() 
 /************************************************************/
 
