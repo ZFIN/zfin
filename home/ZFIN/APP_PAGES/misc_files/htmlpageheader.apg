@@ -34,10 +34,9 @@ document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
             <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubselect2.apg"><font color="<!--|LINKBAR_COLOR|-->">Publications</font></a>&nbsp;&nbsp;
             <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-quickfindpers.apg"><font color="<!--|LINKBAR_COLOR|-->">People</font></a> &nbsp;&nbsp;
             <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labselect.apg"><font color="<!--|LINKBAR_COLOR|-->">Labs</font></a> &nbsp;&nbsp;
-            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-companyselect.apg"><font color="<!--|LINKBAR_COLOR|-->">Companies </font></a> &nbsp; &nbsp;
-            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-accessionselect.apg"><font color="<!--|LINKBAR_COLOR|-->">Acc #</font></a>
-
-	   </DIV>
+            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-companyselect.apg"><font color="<!--|LINKBAR_COLOR|-->">Companies </font></a> &nbsp;&nbsp;
+            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-accessionselect.apg"><font color="<!--|LINKBAR_COLOR|-->">Acc # </font></a>	  
+            </DIV>
           </td>
     </tr>
   <tr bgcolor=<!--|LINKBAR_COLOR|-->>
@@ -51,7 +50,7 @@ document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
           </td>
 	  <td align=center>
 	   <DIV class="header">
-            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&line_type=mutant">Mutants</a>
+            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&line_type=mutant">Mutants / Trangenics</a>
 	   </DIV>
           </td>
           <td align=center>
@@ -80,13 +79,12 @@ document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
             <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg">Markers</a>
 	   </DIV>
           </td>
-          <td  align=center>
+<!--       <td  align=center>
 	   <DIV class="header">
             <A HREF="mapper_select.cgi">Maps</a>
 	   </DIV>
-          </td>
-
-<!--          <td  align=center>
+          </td>	   
+          <td  align=center>
 	   <DIV class="header">
             <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubselect2.apg">Publications</a>
 	   </DIV>

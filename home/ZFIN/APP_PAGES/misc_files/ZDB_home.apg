@@ -169,12 +169,12 @@
 	<TR>
 	  <TD class="content_left">
 	    <DIV class="content">
-	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&line_type=mutant"><B>Mutants</B></A> 
+	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&line_type=mutant"><B>Mutants / Trangenics</B></A> 
 	    </DIV>
 	  </TD>
 	  <TD class="content_right">
 	    <DIV class="content">
-	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&line_type=mutant">Search for mutations by gene name, map location or phenotype.</A><br>
+	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&line_type=mutant">Search for mutations / transgenic lines by gene name, map location or phenotype.</A><br>
 	      <?MIVAR COND="$(NC,$AUTHORIZED,GUEST)">
 		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusselect.html&select_from=LOCI&frame_size=230&intro=/ZFIN/help_files/locus_intro.html"><em>Register LOCUS/ALLELE Designation</em></A> 
 	      <?/MIVAR>

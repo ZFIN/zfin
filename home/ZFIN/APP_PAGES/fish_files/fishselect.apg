@@ -300,7 +300,7 @@ function call_reset() {
 	  <td width=20%>&nbsp;</td>
 	  <td width=60% align=center>
 	    <?MIVAR>
-	      <font size="+1">Mutant Lines Search Results (<b>$num_recs</b> records found.)
+	      <font size="+1">Mutant / Transgenic Lines Search Results (<b>$num_recs</b> records found.)
 	      </font>
 	    <?/MIVAR>
 	  </td>
@@ -826,7 +826,7 @@ function call_reset() {
     <table class=search width=100% border=0 cellspacing=0 cellpadding=1>
        <tr>
 	 <td class=titlebar valign=middle>
-	   <b>&nbsp;&nbsp;Search for MUTANT Lines</b>
+	   <b>&nbsp;&nbsp;Search for MUTANT / TRANSGENIC Lines</b>
 	 </td>
    <?MIELSE>
    <table class=search width=100% border=0 cellspacing=0 cellpadding=1>

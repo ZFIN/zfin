@@ -106,60 +106,6 @@ Variables Expected:
 	function edit_linkage(link_id,oid) {
 	  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_linkage.apg&link_id='+link_id+'&OID='+oid);
 	}
-
-	function Delete_attrib(subattr,data_zdbId,source_zdbId,info) {
-		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&dataOID='+data_zdbId+'&attr='+subattr+'&attr_type=special-listitem&old_value='+source_zdbId+'&new_value=deleted&info='+info);
-	}
-
-	function new_attrib_prevname() {
-		var prev_name=document.updater0.attrib_prevname.value;
-		var pub_id=document.updater0.attrib_prevname_pubid.value.toUpperCase();
-		if ((prev_name != '') && (pub_id != '')) {
-		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+prev_name+'&new_value='+pub_id+'&info=namealias');
-  		}
-	}
-
-	function new_attrib_affgene(dataid) {
-		var pub_id = document.updater0.attrib_affgene_pubid.value.toUpperCase();
-		if((dataid != '')&&(pub_id != '')) {
-			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr=colattrib&attr_type=special-newattrib&old_value='+dataid+'&new_value='+pub_id+'&info=cloned_gene');
-		}
-	}
-
-	function new_attrib_phntype() {
-		var pub_id = document.updater0.attrib_phntype_pubid.value.toUpperCase();
-		if(pub_id != '') {
-			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr=colattrib&attr_type=special-newattrib&old_value=$OID&new_value='+pub_id+'&info=phenotype');
-		}
-	}
-
-       	function new_attrib_segr() {
-		var pub_id = document.updater1.attrib_segr_pubid.value.toUpperCase();
-		if(pub_id != '') {
-			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr=colattrib&attr_type=special-newattrib&old_value=$OID&new_value='+pub_id+'&info=segregation');
-		}
-	}
-
-	function new_attrib_comm() {
-		var pub_id = document.updater1.attrib_comm_pubid.value.toUpperCase();
-		if(pub_id != '') {
-			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr=colattrib&attr_type=special-newattrib&old_value=$OID&new_value='+pub_id+'&info=comments');
-		}
-	}
-
-	function new_attrib_alle_prevname(altOID) {
-		var prev_name=document.updater0.attrib_alle_prevname.value;
-		var pub_id=document.updater0.attrib_alle_prevname_pubid.value.toUpperCase();
-		if ((prev_name != '') && (pub_id != '')) {
-		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&dataOID='+altOID+'&attr=recattrib&attr_type=special-newattrib&old_value='+prev_name+'&new_value='+pub_id+'&info=allelalias');
-  		}
-	}
-	function new_attrib_alle_mutagen(altOID) {
-		var pub_id=document.updater0.attrib_alle_muta_pubid.value.toUpperCase();
-		if (pub_id != '') {
-		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr=colattrib&attr_type=special-newattrib&old_value='+altOID+'&new_value='+pub_id+'&info=mutagen');
-  		}
-	}
       </SCRIPT>
     <?/MIVAR>
 
@@ -180,7 +126,7 @@ Variables Expected:
 	select name, a.abbrev, initcap(line_type), mother, father, 
 	       discoverer, lab, HTML_breaks(phenotype), segregation, 
 	       orig_crossnum, HTML_breaks(a.comments), fish_extinct, a.owner, 
-	       lower(pheno_keywords), allele, locus, b.abbrev, b.cloned_gene 
+	       pheno_keywords, allele, locus, b.abbrev, b.cloned_gene 
 	  from fish a, OUTER locus b
 	  where a.zdb_id = '$OID'
 	    and b.zdb_id = a.locus;">
@@ -188,7 +134,7 @@ Variables Expected:
 
       <?MIVAR NAME=$name>$1<?/MIVAR>
       <?MIVAR NAME=$abbrev>$2<?/MIVAR>
-      <?MIVAR NAME=$title>$3<?/MIVAR>
+      <?MIVAR NAME=$line_type>$3<?/MIVAR>
       <?MIVAR NAME=$mother>$4<?/MIVAR>
       <?MIVAR NAME=$father>$5<?/MIVAR>
       <?MIVAR NAME=$discoverer>$6<?/MIVAR>
@@ -205,16 +151,16 @@ Variables Expected:
       <?MIVAR NAME=$locus_abbrev>$17<?/MIVAR>
       <?MIVAR NAME=$cloned_gene>$18<?/MIVAR>
 
-     <?MIVAR NAME=$rec_title>Record for $title $abbrev<?/MIVAR>
+     <?MIVAR NAME=$rec_title>Record for $line_type $abbrev<?/MIVAR>
 
 
       <?MIBLOCK COND="$(XST,$UPDATE)">
 	<?MIVAR>
-	  <TITLE>ZFIN Update Mutant: $name </TITLE>
+	  <TITLE>ZFIN Update: $name </TITLE>
 	<?/MIVAR>
       <?MIELSE>
 	<?MIVAR>
-	  <TITLE>ZFIN View Mutant: $name </TITLE>
+	  <TITLE>ZFIN View: $name </TITLE>
 	<?/MIVAR>
       <?/MIBLOCK>
 
@@ -241,12 +187,13 @@ Variables Expected:
 	<!-- If viewing, THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
 	<?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=fish') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
 
- 	<p>
+	<A NAME="top"></a>
+
 	<!-- OKAY, NOW  THROW UP THE  FISH INFO -->
 
       <!--------- BACK button ------------------>
 	<?MIVAR COND="$(XST,$UPDATE)">
-	<form name=updater0>
+	<form>
   	  <center><font size=+2> <!-- color="#00ff00" -->
 	  <input type=button 
 	  value=" DONE UPDATING. Back to Viewing! " onClick="window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$OID')"> 
@@ -279,11 +226,11 @@ Variables Expected:
 	  <br><INPUT TYPE=button value=Update onClick="doit('name','text','Name')">
 	<?/MIVAR> 
 	<?MIVAR>
-	  <B> <FONT SIZE=+1>$title: &nbsp;</FONT> </b>
+	  <B> <FONT SIZE=+1>Name: &nbsp;</FONT> </b>
 	<?/MIVAR>
 
 	<i><font size = +1>
-	<?MIBLOCK COND="$(EC,$title,mutant)">
+	<?MIBLOCK COND="$(EC,$line_type,mutant)">
 	  <?MIVAR>
 	   <b> <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$locus"> $name </A></b>
 	  <?/MIVAR>
@@ -296,11 +243,11 @@ Variables Expected:
 	  <br><INPUT TYPE=button 
 		     value=Update 
 		     onClick="doit('abbrev','text','Abbreviation')">
-	<?/MIVAR>
- 
+	<?/MIVAR> 
 	<?MIVAR> 
 	  <b><font size= +1>Abbreviation: &nbsp; <i>$abbrev</i></font></b>
 	<?/MIVAR>
+
 	<br>
 	<?MIBLOCK COND="$(OR,$(EC,$AUTHORIZED,root),$(EC,$AUTHORIZED,fishauth))">
 	  <?MIVAR COND="$(XST,$UPDATE)">
@@ -321,20 +268,11 @@ Variables Expected:
 		       onClick="doit('dalias_alias','text','Alias')">
 	      <?/MIVAR> 
 	      <b>Previous names: </b>
-	      
 	      <?MISQL SQL="
-		select dalias_alias,dalias_zdb_id 
+		select dalias_alias 
 		  from data_alias 
 		  where dalias_data_zdb_id = '$OID';">
-		
-		<?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(XST,$UPDATE))">
-	         <br>Add Reference:&nbsp; 
-   	 	 Previous name:<input type=text name=attrib_prevname>	
-    		 Reference:<input type=text name=attrib_prevname_pubid>
-    		 <input type=button value="Add" onClick=new_attrib_prevname();> 
-                <?/MIVAR>
 		<?MIVAR NAME=$alias>$1<?/MIVAR>
-		<?MIVAR NAME=$daliasId>$2<?/MIVAR>
 		<?MIVAR COND="$(XST,$alias)" NAME=$alias DELIMIT=" " REPLACE="+">$alias<?/MIVAR>
 		<?MIVAR COND="$(XST,$UPDATE)">
 		  <br> 
@@ -343,12 +281,8 @@ Variables Expected:
 			 onClick="Delete_listitem_alias('dalias_alias','$alias','$OID','$ALTOID')">
 		<?/MIVAR>
 		$(IF,$(AND,$(NXST,$UPDATE),$(>,$MI_CURRENTROW,1)),;) <i>$1</i>
-		<?MIBLOCK COND="$(XST,$daliasId,)">	
-              	    <?MISQL SQL="select WebExplode(object,'dataId=$daliasId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
-	          <?/MIBLOCK>
 	      <?/MISQL>
-	     
-	
+	 
 	<!-------------- ends Previous Name -------------------->
 
 
@@ -361,14 +295,8 @@ Variables Expected:
 
  
 	<!------------------- Affected Gene ---------------------->
-	    <br>
+	    <p>
 	    <B>Affected Gene: &nbsp;</B> 
-	    <?MIVAR COND="$(XST,$UPDATE)">
- 	     <br>Add reference:&nbsp;
-  	      Reference:<input type=text name=attrib_affgene_pubid>
-  	      <input type=button value="Add" onClick=new_attrib_affgene("$locus");><br> 
-  	    <?/MIVAR>
-
 	    <?MIBLOCK COND="$(EC,$cloned_gene,NULL)">
                Not yet established.
             <?MIELSE>
@@ -377,8 +305,7 @@ Variables Expected:
 		  <TR><TD>
 		  <font color="red"><B>Cloned Gene:</b>  </font>
 		  The gene <b><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$cloned_gene"><i>$gene_name ($gene_abbrev)</i></A></b>  
-		    has been shown to correspond to the <b><i>$name</b></i> locus.
-	            <?MISQL SQL="select WebExplode(object,'dataId=$locus&type=colattrib&info=cloned_gene') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+		    has been shown to correspond to the <b><i>$name</b></i> locus. 
 		    Please consult the gene record for further mapping information.
 		   </TD>
 		   </TR>
@@ -392,7 +319,7 @@ Variables Expected:
        <!-------------------- Images  ----------------------------->
 	<!-- Toss up images, if any, and description. -->
 
-	<br>
+	<p>
         <b>Images: </b>
 
 	<?MIVAR COND="$(XST,$UPDATE)">
@@ -422,7 +349,7 @@ Variables Expected:
 
 	<!-- Suppress images if fish is wildtype and NOT doing an update -->
 
-	<?MIBLOCK COND=$(OR,$(EC,$title,mutant),$(XST,$UPDATE))>
+	<?MIBLOCK COND=$(OR,$(EC,$line_type,mutant),$(XST,$UPDATE))>
 	  <?MIVAR NAME=$MI_NOVALUE>empty<?/MIVAR>
 	  <?MIVAR NAME=$old_lo_stg_hours_start><?/MIVAR>
 	  <?MIVAR NAME=$old_hi_stg_hours_start><?/MIVAR>
@@ -528,12 +455,12 @@ Variables Expected:
 
 
  	<!-------------------- Keywords  ----------------------------->
-	 <br>
+	 <p>
 	  <?MIVAR COND="$(XST,$UPDATE)">
 	    <INPUT TYPE=button value=Update onClick="doit('pheno_keywords','textarea','Phenotype_Keywords')">
 	  <?/MIVAR> 
 	  <?MIVAR>
-            <b>Keywords:</b>&nbsp; $(IF,$(NC,$pheno_keywords,NULL),$(SUBSTR,$pheno_keywords,2))
+            <b>Keywords:</b>&nbsp; $(IF,$(NC,$pheno_keywords,NULL),$pheno_keywords)
 	  <?/MIVAR>
          
   	<!------------------ ends Keywords  ----------------------------->
@@ -541,29 +468,19 @@ Variables Expected:
 
 
 	<!------------ Phenotype & Description ---------------->
-	<br>
+	<p>
 	<?MIVAR COND="$(XST,$UPDATE)">
 	        <INPUT TYPE=button value="Update" onClick="doit('phenotype','textarea','Phenotype+description')"> 
 	<?/MIVAR> 
 
-	<b><?MIVAR>$(IF,$(EC,$title,mutant),Phenotype,Description)<?/MIVAR>
+	<b><?MIVAR>$(IF,$(EC,$line_type,mutant),Phenotype,Description)<?/MIVAR>
 	      :</b> <br>
-
-	<?MIVAR COND="$(XST,$UPDATE)">
- 	      Add reference:&nbsp;
-  	      Reference:<input type=text name=attrib_phntype_pubid>
-  	      <input type=button value="Add" onClick=new_attrib_phntype();><br> 
-  	<?/MIVAR>
-
-	<?MIBLOCK COND="$(NE,$phenotype,NULL)"> 
-	  <?MIVAR>$phenotype<?/MIVAR>
-	  <?MISQL SQL="select WebExplode(object,'dataId=$OID&type=colattrib&info=phenotype') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>		
-	<?MIELSE>NONE GIVEN. 
-	<?/MIBLOCk>
+	<?MIVAR COND=$(NE,$phenotype,NULL)> $phenotype <?/MIVAR>
+	<?MIVAR COND=$(EC,$phenotype,NULL)>NONE GIVEN. <?/MIVAR>
 
 	<!------------ ends Phenotype & Description ---------------->
 
-	<br>
+	<p>
 	<A NAME="origins-info"></a>
 	<HR width=85%>
 
@@ -671,7 +588,7 @@ Variables Expected:
 	</TABLE>
 
 	<!-- This next part only for mutants! -->
-	<?MIBLOCK COND="$(EC,$title,mutant)">
+	<?MIBLOCK COND="$(EC,$line_type,mutant)">
 
 
 	  <HR width=85%>
@@ -723,51 +640,27 @@ Variables Expected:
 		  <?/MISQL>
 		  <b>Previous names: </b>
 		  <?MISQL SQL="
-		    select dalias_alias, dalias_zdb_id 
+		    select dalias_alias 
 		      from data_alias
 		      where dalias_data_zdb_id = '$ALTOID';">
 		    <?MIVAR NAME=$allele_alias>$1<?/MIVAR>
-		    <?MIVAR NAME=$aliasId>$2<?/MIVAR>
 		    <?MIVAR COND="$(XST,$allele_alias)" NAME=$allele_alias DELIMIT=" " REPLACE="+">$allele_alias<?/MIVAR>
-                    <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(XST,$UPDATE))">	
-		      <br>Add Reference: &nbsp;
-		      Previous name:<input type=text name=attrib_alle_prevname>
-    		      Reference:<input type=text name=attrib_alle_prevname_pubid>
-    		      <input type=button value="Add" onClick=new_attrib_alle_prevname("$ALTOID");> <br>
-                    <?/MIVAR>	 
-		    	
-
 		    <?MIVAR COND="$(XST,$UPDATE)">
 		      <br> <INPUT TYPE=button value=Delete onClick="Delete_listitem_alias('alt_alias','$allele_alias','$OID','$ALTOID')">
 	            <?/MIVAR>
-		    $(IF,$(AND,$(NXST,$UPDATE),$(>,$MI_CURRENTROW,1)),;) $1
- 		    <?MISQL SQL="select WebExplode(object,'dataId=$aliasId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+		    $(IF,$(AND,$(NXST,$UPDATE),$(>,$MI_CURRENTROW,1)),;) $1 
 		  <?/MISQL>
+
+
 		  <br>
 
 		  <b>Mutagenesis Protocol: </b> 
-		  
-		  <?MIVAR COND="$(AND,$(XST,$UPDATE),$(NC,$alt_mutagen,unknown),$(NC,$alt_mutagen,spontaneous))">
-		   <BR>
-  	           Add Reference:&nbsp; Reference:
-                   <input type=text name=attrib_alle_muta_pubid>
-		   <input type=button value="Add" onClick=new_attrib_alle_mutagen("$ALTOID");> <br>
-                  <?/MIVAR>
-
-
 		  $(IF,$(EC,$alt_mutagen,spontaneous),"None -- Spontaneous Mutation")
-
- 		  $(IF,$(AND,$(EC,$alt_mutagen,Unknown),$(EC,$alt_protocol,Unknown)),"Unknown")
+		  $(IF,$(AND,$(EC,$alt_mutagen,Unknown),$(EC,$alt_protocol,Unknown)),"Unknown")
                   <?MIVAR COND="$(EC,$alt_protocol,Unknown)" NAME=$alt_protocol><?/MIVAR>
-		  <?MIBLOCK COND="$(AND,$(NC,$alt_mutagen,spontaneous),$(NC,$alt_mutagen,Unknown),$(OR,$(NXST,$UPDATE),$(NC,$intfc_status,original)))">
-		  <?MIVAR>$alt_protocol treated with $alt_mutagen<?/MIVAR>
- 
-		  <?MISQL SQL="select WebExplode(object,'dataId=$ALTOID&type=colattrib&info=mutagen') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
-		  <?/MIBLOCK>
+		  $(IF,$(AND,$(NC,$alt_mutagen,spontaneous),$(NC,$alt_mutagen,Unknown),$(OR,$(NXST,$UPDATE),$(NC,$intfc_status,original))),$alt_protocol" treated with "$alt_mutagen)
 
- 	
-		  <?MIBLOCK COND="$(AND,$(NC,$alt_mutagen,spontaneous),$(XST,$UPDATE),$(EC,$intfc_status,original))">
-		  <SELECT name=protocol onChange=doProtocol(this.options[this.selectedIndex].value,'"$alt_protocol"','"$alt_zdb_id"')>
+		  $(IF,$(AND,$(NC,$alt_mutagen,spontaneous),$(XST,$UPDATE),$(EC,$intfc_status,original)),"<SELECT name=protocol onChange=doProtocol(this.options[this.selectedIndex].value,'"$alt_protocol"','"$alt_zdb_id"')>
 		  <option "$(IF,$(EC,$alt_protocol,Unknown),SELECTED)" value=Unknown>Unknown
 		  <option "$(IF,$(EC,$alt_protocol,Adult_Males),SELECTED)" value="Adult_Males">Adult Males
 		  <option "$(IF,$(EC,$alt_protocol,Adult_Females),SELECTED)" value="Adult_Females">Adult Females
@@ -781,12 +674,9 @@ Variables Expected:
 		  <option "$(IF,$(EC,$alt_mutagen,g-rays),SELECTED)" value=g-rays>g-rays
 		  <option "$(IF,$(EC,$alt_mutagen,DNA),SELECTED)" value=DNA>DNA
 		  <option "$(IF,$(EC,$alt_mutagen,spontaneous),SELECTED)" value=spontaneous>spontaneous
-		  </SELECT>	          		 
-		  <?MISQL SQL="select WebExplode(object,'dataId=$ALTOID&type=colattrib&info=mutagen') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
-		  <?/MIBLOCK>
-		 
+		  </SELECT>
+		  ")
 		  <br>
-
 		  <b>Mutation Type:</b> 
 		  $(IF,$(OR,$(NXST,$UPDATE),$(NC,$intfc_status,original)),$alt_chrom_change)
 
@@ -834,8 +724,8 @@ Variables Expected:
 	  <?MIBLOCK COND="$(>,$MI_ROWCOUNT,1)">
 	    <b>Please refer to parental lineages (click links below) for detailed mapping information on the alleles carried by this double-mutant line.</b>
 	  <?/MIBLOCK>
-          
-          </form> <!--end the form named updater>  
+
+
 
 	  <?MIBLOCK COND="$(=,$MI_ROWCOUNT,1)">
 	  <hr width=85%>
@@ -1104,7 +994,7 @@ Variables Expected:
 		$(IF,$(AND,$(NC,$3,GENE),$(NC,$3,MUTANT)),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID="))
 
 		$(IF,$(>,$(POSITION,$6,PER),0),$(SETVAR,$sourceviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID="),$(SETVAR,$sourceviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID="))
-	
+
 
 		<?MISQL SQL="select lpmem_linkage_pair_zdb_id from linkage_pair_member a
 		  where lpmem_member_zdb_id = '$member_zdb_id' 
@@ -1135,7 +1025,7 @@ Variables Expected:
 		   $(IF,$(OR,$(EC,$override,true),$(EC,$is_private,f),$(EC,$ZDB_ident,$6)),"<TD></TD><TD><font size=-1><A HREF="$curviewer$1">"$2"</A> ("$3")</TD>
 		    <TD align=center><font size=-1>"$lg"</TD>
 		    <TD align=center><font size=-1>"$distance" "$metric"</TD>
-		    <TD align=center><font size=-1>"$lod"</TD><TD><font size=-1><A href="$sourceviewer$6">"$7"</a></TD><TD>&nbsp; &nbsp;</TD><TD><font size=-1><A HREF=javascript:show_detail('"$link_id"','"$1"','"$2"','"$locus_abbrev"');>Details</A></TD>","<TD colspan=4><font size=-1><A href=javascript:info();>"$4$MI_CURRENTROW"</A>: Unpublished <A href="$sourceviewer$6">Contact "$7"</a>.</TD>")
+		    <TD align=center><font size=-1>"$lod"</TD><TD><font size=-1><A href="$sourceviewer$6">"$7"</a></TD><TD><font size=-1><A HREF=javascript:show_detail('"$link_id"','"$1"','"$2"','"$locus_abbrev"');>Details</A></TD>","<TD colspan=4><font size=-1><A href=javascript:info();>"$4$MI_CURRENTROW"</A>: Unpublished <A href="$sourceviewer$6">Contact "$7"</a>.</TD>")
 		  <?/MIVAR>
 		<?MIELSE>
 		  <?MIVAR>
@@ -1157,57 +1047,53 @@ Variables Expected:
           </form> <!--end mapper form -->
 
 	
-          <form name=updater1>  
+
 	  <HR width=85%>
 	 
-	  <b>LINEAGE AND BREEDING</b><br>
-	 
+	  <b>LINEAGE AND BREEDING</b>
+	  <form>
 	  <A NAME="breeding"></a>
 
+	  <!--<TABLE width=100% cellpadding=4>
+	  <TR align=center> 
+	  <TD> <font size=-1>-->
+	  <b>Maternal:</b> 
 	  <?MIVAR COND="$(XST,$UPDATE)">
 	  <INPUT TYPE=button value="Update" onClick="doit('mother','selection','Maternal+Stock')"> 
 	  <?/MIVAR>
 
-	  <b>Maternal:</b> 
-	  
 	  <?MIBLOCK COND="$(NC,$mother,NULL)">
 	    <?MISQL SQL="select name,abbrev from fish where zdb_id='$mother';">
 	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$mother">$1($2)</A>
 	    <?/MISQL>
 	  <?/MIBLOCK>
 	  <?MIVAR COND="$(EC,$mother,NULL)"> unknown. <?/MIVAR>
-	  <br>
- 
+	  <!--</font></TD>>--> 
+
+	  <!--<TD> <font size=-1>-->
+	  <br><b>Paternal: </b>
 	  <?MIVAR COND="$(XST,$UPDATE)">
 	    <INPUT TYPE=button value="Update" onClick="doit('father','selection','Paternal+Stock')"> 
 	  <?/MIVAR>
 
-	  <b>Paternal: </b>
-	  
 	  <?MIBLOCK COND="$(NC,$father,NULL)">
 	    <?MISQL SQL="select name,abbrev from fish where zdb_id='$father';">
 	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$father">$1($2)</A>
 	    <?/MISQL>
 	  <?/MIBLOCK>
 	  <?MIVAR COND="$(EC,$father,NULL)"> unknown. <?/MIVAR>
-	  <br>
+	  <!--</font></TD>
+	  </TR>-->
 
+	  <!--<TR> <TD colspan=2 >-->
+	  <br><b>Segregation: </b>
 	  <?MIVAR COND="$(XST,$UPDATE)">
-	   <INPUT TYPE=button value="Update" onClick="doit('segregation','textarea','Segregation')"> 
+	  <INPUT TYPE=button value="Update" onClick="doit('segregation','textarea','Segregation')"> 
 	  <?/MIVAR> 
-	  <b>Segregation: </b>
-
-	  <?MIVAR COND="$(AND,$(XST,$UPDATE),$(NC,$segregation,NULL))">
-	      <br>Add reference:&nbsp;
-  	      Reference:<input type=text name=attrib_segr_pubid>
-  	      <input type=button value="Add" onClick=new_attrib_segr();><br> 
-  	  <?/MIVAR>	
-	  	 
+	 
 	  <?MIVAR COND="$(NC,$segregation,NULL)">$segregation <?/MIVAR>
- 	  <?MISQL SQL="select WebExplode(object,'dataId=$OID&type=colattrib&info=segregation') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
-
 	  <?MIVAR COND="$(EC,$segregation,NULL)"> unknown <?/MIVAR> 
-	  
+	  <!--</TD> </TR> </TABLE>-->
           <p>
 
 	<?/MIBLOCK>  <!-- ends EC type mutant -->
@@ -1219,14 +1105,7 @@ Variables Expected:
 	<INPUT TYPE=button value="Update" onClick="doit('comments','textarea','Submitter+comments')"> 
 	<?/MIVAR> 
 
-	<b>SUBMITTER'S COMMENTS:</b><br>
-	<?MIVAR COND="$(AND,$(XST,$UPDATE),$(NC,$comments,NULL))">
-              Add reference:&nbsp;
-  	      Reference:<input type=text name=attrib_comm_pubid>
-  	      <input type=button value="Add" onClick=new_attrib_comm();><br> 
-	<?/MIVAR> 
-        <?MIVAR COND="$(NC,$comments,NULL)"> $comments <?/MIVAR>
-	<?MISQL SQL="select WebExplode(object,'dataId=$OID&type=colattrib&info=comments') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+	<b>SUBMITTER'S COMMENTS:</b><?MIVAR COND="$(NC,$comments,NULL)"> $comments <?/MIVAR>
 
    
 	<HR WIDTH=85%>
