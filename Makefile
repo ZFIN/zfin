@@ -229,5 +229,5 @@ mirror : home
 postloaddb :
 	$(foreach PLDIR,$(POSTLOADDB_SUBDIRS), $(MAKE) -C $(PLDIR) $@; )
 
-start stop : server_apps
-	$(MAKE) -C $^ $@
+start stop :
+	$(MAKE) -C server_apps $@
