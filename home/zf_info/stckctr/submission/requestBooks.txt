@@ -1,5 +1,5 @@
 To: aprilm@uoneuro.uoregon.edu, dlains@uoneuro.uoregon.edu, kelly@uoneuro.uoregon.edu, mason@uoneuro.uoregon.edu, rholland@uoneuro.uoregon.edu, equinn@uoneuro.uoregon.edu
-From: zirc_order@zfin.org
+From: zirc@zfin.org
 Subject: [rqfName]'s request for Zebrafish Books
 
 **************************************** 
@@ -70,7 +70,7 @@ Bill To Lab:
 [rqfBillLab]
 ---
 Bill To Address:
-[required_BillAddr]
+[rqfBillAddr]
 ---
 Billing Preference:
 [billPref]
