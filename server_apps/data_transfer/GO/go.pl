@@ -23,10 +23,10 @@ my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
   || emailError("Failed while connecting to <!--|DB_NAME|--> "); 
 
 if ("<!--|INFORMIX_SERVER|-->" eq "wavy") {
-  $dir = "/research/zfin/central/www_homes/gorp/server_apps/data_transfer/GO/";
+  $dir = "<!--|ROOT_PATH|-->/server_apps/data_transfer/GO/";
 }
 else {
-  $dir = "/research/zfin/central/www_homes/gorp/home/data_transfer/GO/";
+  $dir = "<!--|ROOT_PATH|-->/home/data_transfer/GO/";
 }
 chdir "$dir";
 $outFile = "gene_association.zfin";
