@@ -27,7 +27,7 @@
   <?MIVAR NAME=$userid>$ZDB_ident<?/MIVAR>
 <?/MIBLOCK>
 
-<?MIVAR NAME=$MI_NULL><?/MIVAR>
+
 
 <!--- WALKING WINDOW --->
 <!--- Initialization --->
@@ -61,29 +61,32 @@
 
 <?MIBLOCK COND="$(OR,$(XST,$fname),$(XST,$anon1text),$(XST,$abbrev),$(NC,$knowngene,NULL))">
 
-<!-- First filter name for apostrophes! -->
-<?MIVAR COND="$(XST,$fname)" NAME=$fname DELIMIT="'" REPLACE="''">$fname<?/MIVAR>
-<?MIVAR COND="$(XST,$fname)" NAME=$fname>$(LOWER,$fname)<?/MIVAR>
-<?MIVAR NAME=$constraint> and <?/MIVAR>
+  <!-- First filter name for apostrophes! -->
+  <?MIVAR COND="$(XST,$fname)" NAME=$fname DELIMIT="'" REPLACE="''">$fname<?/MIVAR>
+  <?MIVAR COND="$(XST,$fname)" NAME=$fname>$(LOWER,$fname)<?/MIVAR>
+  <?MIVAR NAME=$constraint> and <?/MIVAR>
 
-<!-- first look for match in fish_search locus or locus_alias lcsali_locus_name or fish_alias fishali_fish_name_alias -->
-<?MIVAR NAME=$constraint COND="$(XST,$fname)">
-$constraint ((lower(a.name) like '%$fname%') or exists (select 'x' from locus_alias where (a.locus = lcsali_locus_zdb_id) and (lower(lcsali_locus_name_alias) like '%$fname%')) or exists (select 'x' from fish_alias where (a.fish_id = fishali_fish_zdb_id) and (lower(fishali_fish_name_alias) like '%$fname%')))
-<?/MIVAR>
+  <!-- first look for match in fish_search locus or locus_alias lcsali_locus_name or fish_alias fishali_fish_name_alias -->
+  <?MIVAR NAME=$constraint COND="$(XST,$fname)">
+    $constraint ((lower(a.name) like '%$fname%') or exists (select 'x' from locus_alias where (a.locus = lcsali_locus_zdb_id) and (lower(lcsali_locus_name_alias) like '%$fname%')) or exists (select 'x' from fish_alias where (a.fish_id = fishali_fish_zdb_id) and (lower(fishali_fish_name_alias) like '%$fname%')))
+  <?/MIVAR>
 
-<?MIVAR NAME=$previous COND="$(XST,$fname)"> and<?/MIVAR>
+  <?MIVAR NAME=$previous COND="$(XST,$fname)"> and<?/MIVAR>
 
-<!-- change to look for abbrev within () in name  Sept. 00  -->
-<?MIVAR NAME=$constraint COND="$(XST,$abbrev)">
-$constraint $previous ((lower(abbrev)='$(LOWER,$abbrev)') or (name like '(%$(LOWER,$abbrev)%)') or (exists (select 'x' from locus_alias where lcsali_locus_abbrev_alias like '%$(LOWER,$abbrev)%' and  (a.locus = lcsali_locus_zdb_id))))<?/MIVAR>
+  <!-- change to look for abbrev within () in name  Sept. 00  -->
+  <?MIVAR NAME=$constraint COND="$(XST,$abbrev)">
+    $constraint $previous ((lower(abbrev)='$(LOWER,$abbrev)') or (name like '(%$(LOWER,$abbrev)%)') or (exists (select 'x' from locus_alias where lcsali_locus_abbrev_alias like '%$(LOWER,$abbrev)%' and  (a.locus = lcsali_locus_zdb_id))))
+  <?/MIVAR>
 
-<?MIVAR NAME=$previous COND="$(XST,$abbrev)"> and <?/MIVAR>
+  <?MIVAR NAME=$previous COND="$(XST,$abbrev)"> and <?/MIVAR>
 
-<?MIVAR NAME=$constraint COND="$(AND,$(XST,$anon1text),$(EC,$anon1,phenotype))">
-$constraint $previous (webhtml_like($anon1,'$anon1text'))<?/MIVAR>
+  <?MIVAR NAME=$constraint COND="$(AND,$(XST,$anon1text),$(EC,$anon1,phenotype))">
+    $constraint $previous (webhtml_like($anon1,'$anon1text'))
+  <?/MIVAR>
 
-<?MIVAR NAME=$constraint COND="$(AND,$(XST,$anon1text),$(NC,$anon1,phenotype))">
-$constraint $previous (lower($anon1) like '%$(LOWER,$anon1text)%')<?/MIVAR>
+  <?MIVAR NAME=$constraint COND="$(AND,$(XST,$anon1text),$(NC,$anon1,phenotype))">
+    $constraint $previous (lower($anon1) like '%$(LOWER,$anon1text)%')
+  <?/MIVAR>
 
 <?/MIBLOCK> <!-- ends shared mutant/wild-type block -->
 
@@ -94,42 +97,42 @@ $constraint $previous (lower($anon1) like '%$(LOWER,$anon1text)%')<?/MIVAR>
 
 <?MIBLOCK COND="$(AND,$(NXST,$mut_constraint),$(EC,$line_type,mutant),$(OR,$(XST,$constraint),$(NC,$chrom_change,any),$(>,$chrom_num,0),$(XST,$allele),$(NC,$mutagen,any),$(XST,$selected)))">
 
-<?MIVAR COND="$(NXST,$constraint)" NAME=$constraint> and <?/MIVAR>
-<?MIVAR NAME=$mut_constraint>$constraint<?/MIVAR>
+  <?MIVAR COND="$(NXST,$constraint)" NAME=$constraint> and <?/MIVAR>
+  <?MIVAR NAME=$mut_constraint>$constraint<?/MIVAR>
 
-<?MIVAR NAME=$previous COND="$(XST,$anon1text)"> and <?/MIVAR>
+  <?MIVAR NAME=$previous COND="$(XST,$anon1text)"> and <?/MIVAR>
 
-<?MIVAR NAME=$mut_constraint COND="$(NC,$mutagen,any)">
-$mut_constraint $previous (mutagen='$mutagen')<?/MIVAR>
+  <?MIVAR NAME=$mut_constraint COND="$(NC,$mutagen,any)">
+  $mut_constraint $previous (mutagen='$mutagen')<?/MIVAR>
 
-<?MIVAR NAME=$previous COND="$(NC,$mutagen,any)"> and <?/MIVAR>
+  <?MIVAR NAME=$previous COND="$(NC,$mutagen,any)"> and <?/MIVAR>
 
-<?MIVAR NAME=$mut_constraint COND="$(XST,$allele)">
-$mut_constraint $previous ((lower(a.allele) like '$allele%') or exists (select 'x' from allele_alias where (a.alt_zdb_id = alleali_alt_zdb_id) and (lower(alleali_allele_name_alias) like '$allele%'))) 
-<?/MIVAR>
+  <?MIVAR NAME=$mut_constraint COND="$(XST,$allele)">
+  $mut_constraint $previous ((lower(a.allele) like '$allele%') or exists (select 'x' from allele_alias where (a.alt_zdb_id = alleali_alt_zdb_id) and (lower(alleali_allele_name_alias) like '$allele%'))) 
+  <?/MIVAR>
 
-<?MIVAR NAME=$previous COND="$(XST,$allele)"> and <?/MIVAR>
+  <?MIVAR NAME=$previous COND="$(XST,$allele)"> and <?/MIVAR>
 
-<!-- change to allow a query for deficiencies to look for deficiency, translocations, and complex_rearrangements  12/06/00-->
-<?MIVAR NAME=$mut_constraint COND="$(EC,$chrom_change,deficiency)">
-$mut_constraint $previous (chrom_change in ('deficiency','translocation','complex_rearrangement'))<?/MIVAR>
+  <!-- change to allow a query for deficiencies to look for deficiency, translocations, and complex_rearrangements  12/06/00-->
+  <?MIVAR NAME=$mut_constraint COND="$(EC,$chrom_change,deficiency)">
+  $mut_constraint $previous (chrom_change in ('deficiency','translocation','complex_rearrangement'))<?/MIVAR>
 
-<?MIVAR NAME=$mut_constraint COND="$(AND,$(NC,$chrom_change,any),$(NC,$chrom_change,deficiency))">
-$mut_constraint $previous (chrom_change='$chrom_change')<?/MIVAR>
+  <?MIVAR NAME=$mut_constraint COND="$(AND,$(NC,$chrom_change,any),$(NC,$chrom_change,deficiency))">
+  $mut_constraint $previous (chrom_change='$chrom_change')<?/MIVAR>
 
-<?MIVAR NAME=$previous COND="$(NC,$chrom_change,any)"> and <?/MIVAR>
+  <?MIVAR NAME=$previous COND="$(NC,$chrom_change,any)"> and <?/MIVAR>
 
-<?MIVAR NAME=$mut_constraint COND="$(>,$chrom_num,0)">
-$mut_constraint $previous (chrom_num='$chrom_num')<?/MIVAR>
+  <?MIVAR NAME=$mut_constraint COND="$(>,$chrom_num,0)">
+  $mut_constraint $previous (chrom_num='$chrom_num')<?/MIVAR>
 
-<?MIVAR NAME=$previous COND="$(>,$chrom_num,0)"> and <?/MIVAR>
+  <?MIVAR NAME=$previous COND="$(>,$chrom_num,0)"> and <?/MIVAR>
 
-<?MIVAR NAME=$mut_constraint COND="$(NC,$knowngene,NULL)">$mut_constraint $previous (gene_abbrev <> 'UNKNOWN')<?/MIVAR>
+  <?MIVAR NAME=$mut_constraint COND="$(NC,$knowngene,NULL)">$mut_constraint $previous (gene_abbrev <> 'unknown')<?/MIVAR>
 
-<?MIVAR NAME=$previous COND="$(NC,$knowngene,NULL)"> and <?/MIVAR>
+  <?MIVAR NAME=$previous COND="$(NC,$knowngene,NULL)"> and <?/MIVAR>
 
-<?MIVAR NAME=$mut_constraint COND="$(XST,$selected)">
-$mut_constraint $previous ($selected)<?/MIVAR>
+  <?MIVAR NAME=$mut_constraint COND="$(XST,$selected)">
+  $mut_constraint $previous ($selected)<?/MIVAR>
 
 <?/MIBLOCK> <!-- ends mutant case -->
 
@@ -146,156 +149,160 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
 
 <?MIBLOCK COND="$(EC,$line_type,mutant)">
 
-<?MIVAR NAME=$order_by>order by locus,allele,name,chrom_num<?/MIVAR>
-<?MIVAR NAME=$order_by COND="$(AND,$(OR,$(XST,$fname),$(XST,$abbrev)),$(NXST,$allele))">order by locus,name,allele,chrom_num<?/MIVAR>
+  <?MIVAR NAME=$order_by>order by name,allele,chrom_num<?/MIVAR>
+  <?MIVAR NAME=$order_by COND="$(AND,$(OR,$(XST,$fname),$(XST,$abbrev)),$(NXST,$allele))">order by name,allele,chrom_num<?/MIVAR>
 
-<?MIVAR>
-  <form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
-  <input type=hidden name=MIval value=aa-fishlister.apg>
-  <input type=hidden name=mut_constraint value="$mut_constraint">
-  <input type=hidden name=line_type value="$line_type">
-<?/MIVAR>
+  <?MIVAR>
+    <form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+    <input type=hidden name=MIval value=aa-fishlister.apg>
+    <input type=hidden name=mut_constraint value="$mut_constraint">
+    <input type=hidden name=line_type value="$line_type">
+  <?/MIVAR>
 
-<?MIVAR COND="$(XST,$fname)"><input type=hidden name=fname value="$fname"><?/MIVAR>
-<?MIVAR COND="$(XST,$allele)"><input type=hidden name=allele value="$allele"><?/MIVAR>
-<?MIVAR COND="$(XST,$knowngene)"> <input type=hidden name=knowngene value="$knowngene"><?/MIVAR>
-<?MIVAR COND="$(XST,$chrom_change)"><input type=hidden name=chrom_change value="$chrom_change"><?/MIVAR>
-<?MIVAR COND="$(XST,$chrom_num)"><input type=hidden name=chrom_num value="$chrom_num"><?/MIVAR>
-<?MIVAR COND="$(XST,$mutagen)"><input type=hidden name=mutagen value="$mutagen"><?/MIVAR>
-<?MIVAR COND="$(XST,$anon1)"><input type=hidden name=anon1 value="$anon1"><?/MIVAR>
-<?MIVAR COND="$(XST,$anon1text)"><input type=hidden name=anon1text value="$anon1text"><?/MIVAR>
-<?MIVAR COND="$(XST,$abbrev)"><input type=hidden name=abbrev value="$abbrev"><?/MIVAR>
-<?MIVAR COND="$(XST,$structures)"><input type=hidden name=structures value="$structures"><?/MIVAR>
-<?MIVAR COND="$(XST,$selected)"><input type=hidden name=selected value="$selected"><?/MIVAR>
-<?MIVAR COND="$(XST,$selected_separator)"><input type=hidden name=selected_separator value="$selected_separator"><?/MIVAR>
-
-
-<center>
-<FONT SIZE=4>Search Mutant Lines: Result Summary</font><br>
-
-<?MISQL SQL="select count(*)::integer from $target_table  where line_type='mutant' $mut_constraint;"> <b>$1</b> matching records found.
-  <?MIVAR name=$num_recs>$1<?/MIVAR>
-<?/MISQL>
-
-<?MIBLOCK COND="$(>,$num_recs,0)">
-  <br>
-  (Click on individual alleles for details)
-  </center> 
-  <p>
-
-  </form>
-
-  <TABLE width=100%
-
-  ><TH> </TH><TH>Allele [previous names]</TH> <TH>Locus (abbrev) [previous names]</TH> <TH>Gene</TH> <TH>Mut. Type</TH> <TH>LG</TH> <TH>Location</TH> <TH> </TH>
-
-  <!--- EXECUTION --->
-  <!--- Query Database --->
-  <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE
-
-  <?MISQL SQL="select distinct name, fish_id, abbrev, allele, chrom_change, chrom_num,locus,gene_abbrev,gene_id from $target_table where line_type='mutant' $mut_constraint $order_by;" MAXROWS=$limit>
-  <?MIVAR NAME=$gene_id>$9<?/MIVAR>
-  <?MIVAR NAME=$gene_abbrev>$8<?/MIVAR>
-  <?MIVAR NAME=$name>$1<?/MIVAR>
-  <?MIVAR NAME=$q_mutagen>$4<?/MIVAR>
-  <?MIVAR NAME=$q_chrom_change>$5<?/MIVAR>
-  <?MIVAR NAME=$q_chrom_num>$6<?/MIVAR>
-  <?MIVAR NAME=$locus>$7<?/MIVAR>
-  <?MIVAR NAME=$q_allele>$4<?/MIVAR>
-  <?MIVAR NAME=$fish_id>$2<?/MIVAR>
-
-  $(IF,$(>,$MI_CURRENTROW,1),"<TR><TD colspan=7> <HR width=80%> </TD> </TR>")
-
-  $(IF,$(=,$MI_CURRENTROW,1),"<TR><TD colspan=7> <HR size=5> </TD> </TR>")
+  <?MIVAR COND="$(XST,$fname)"><input type=hidden name=fname value="$fname"><?/MIVAR>
+  <?MIVAR COND="$(XST,$allele)"><input type=hidden name=allele value="$allele"><?/MIVAR>
+  <?MIVAR COND="$(XST,$knowngene)"> <input type=hidden name=knowngene value="$knowngene"><?/MIVAR>
+  <?MIVAR COND="$(XST,$chrom_change)"><input type=hidden name=chrom_change value="$chrom_change"><?/MIVAR>
+  <?MIVAR COND="$(XST,$chrom_num)"><input type=hidden name=chrom_num value="$chrom_num"><?/MIVAR>
+  <?MIVAR COND="$(XST,$mutagen)"><input type=hidden name=mutagen value="$mutagen"><?/MIVAR>
+  <?MIVAR COND="$(XST,$anon1)"><input type=hidden name=anon1 value="$anon1"><?/MIVAR>
+  <?MIVAR COND="$(XST,$anon1text)"><input type=hidden name=anon1text value="$anon1text"><?/MIVAR>
+  <?MIVAR COND="$(XST,$abbrev)"><input type=hidden name=abbrev value="$abbrev"><?/MIVAR>
+  <?MIVAR COND="$(XST,$structures)"><input type=hidden name=structures value="$structures"><?/MIVAR>
+  <?MIVAR COND="$(XST,$selected)"><input type=hidden name=selected value="$selected"><?/MIVAR>
+  <?MIVAR COND="$(XST,$selected_separator)"><input type=hidden name=selected_separator value="$selected_separator"><?/MIVAR>
 
 
-  <?MIVAR NAME=$q_abbrev>$3<?/MIVAR>
-  <?MIBLOCK COND="$(EC,$q_abbrev,NULL)">
-  <?MIVAR NAME=$q_abbrev>None<?/MIVAR>
-  <?/MIBLOCK>
+  <center>
+  <FONT SIZE=4>Search Mutant Lines: Result Summary</font><br>
 
-  <?MIBLOCK COND="$(EC,$q_abbrev,xxx)">
-  <?MIVAR NAME=$q_abbrev>None<?/MIVAR>
-  <?/MIBLOCK>
-
-
-  <TR align=center valign=top> 
-  <TD>$MI_CURRENTROW. 
-  $(IF,$(XST,$return_rec),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$fish_id" TARGET=content>SELECT</A>") 
-  </TD>
-  <TD valign=top> 
-  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$fish_id" TARGET=content>$q_allele</A>
-
-  <!-- allele_name contains all names pull aliases only -->
-  <?MISQL SQL="select distinct alleali_allele_name_alias from allele_alias , fish_search where  fish_id = '$2' and alleali_alt_zdb_id = alt_zdb_id;">
-    <?MIVAR COND="$(=,$MI_CURRENTROW,1)">&nbsp;[<?/MIVAR>
-    <?MIVAR COND="$(>,$MI_CURRENTROW,1)">;<?/MIVAR>$1
+  <?MISQL SQL="select count(*)::integer from $target_table  where line_type='mutant' $mut_constraint;"> <b>$1</b> matching records found.
+    <?MIVAR name=$num_recs>$1<?/MIVAR>
   <?/MISQL>
 
-  <?MIVAR COND="$(>=,$MI_CURRENTROW,1)">]<?/MIVAR>
+  <?MIBLOCK COND="$(>,$num_recs,0)">
+    <br>
+    (Click on individual alleles for details)
+    </center> 
+    <p>
 
-  </TD> 
+    </form>
 
-  <TD><font size=-1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$locus" TARGET=content>$name</A> ($q_abbrev)
-  <?MIVAR NAME=$found>false<?/MIVAR>
-  <?MISQL SQL="select distinct lcsali_locus_name_alias, lcsali_locus_abbrev_alias from locus_alias where  lcsali_locus_zdb_id = '$9';">
-  <?MIVAR COND="$(=,$MI_CURRENTROW,1)">&nbsp;[<?/MIVAR>
-  <?MIVAR COND="$(=,$MI_CURRENTROW,1)" NAME=$found>true<?/MIVAR>
-  <?MIVAR COND="$(>,$MI_CURRENTROW,1)">;<?/MIVAR>$1
-  <?MIVAR COND="$(NC,$2,"")">($2)<?/MIVAR>
-  <?/MISQL>
-  <?MISQL SQL="select distinct fishali_fish_name_alias from fish_alias where fishali_fish_zdb_id = '$2';">
-  <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(NC,$found,true))">&nbsp;[<?/MIVAR>
-  <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(EC,$found,true))">;<?/MIVAR>
-  <?MIVAR COND="$(=,$MI_CURRENTROW,1)" NAME=$found>true<?/MIVAR>
-  <?MIVAR COND="$(>,$MI_CURRENTROW,1)">;<?/MIVAR>$1
-  <?/MISQL>
-  <?MIVAR COND="$(EC,$found,true)">]<?/MIVAR>
+    <TABLE width=100%><TH> </TH><TH>Allele [previous names]</TH> <TH>Locus (abbrev) [previous names]</TH> <TH>Gene</TH> <TH>Mut. Type</TH> <TH>LG</TH> <TH>Location</TH> <TH> </TH>
 
-  </font></TD>
+    <!--- EXECUTION --->
+    <!--- Query Database --->
+    <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE
 
-  <TD><font size=-1> $(IF,$(NC,$gene_id,UNKNOWN),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$gene_id TARGET=content>$gene_abbrev</A>,UNKNOWN)
-  </font></TD>
+    <?MISQL SQL="select distinct name, fish_id, abbrev, allele, chrom_change, chrom_num,locus,gene_abbrev,gene_id from $target_table where line_type='mutant' $mut_constraint $order_by;" MAXROWS=$limit>
+    <?MIVAR NAME=$gene_id>$9<?/MIVAR>
+    <?MIVAR NAME=$gene_abbrev>$8<?/MIVAR>
+    <?MIVAR NAME=$name>$1<?/MIVAR>
+    <?MIVAR NAME=$q_mutagen>$4<?/MIVAR>
+    <?MIVAR NAME=$q_chrom_change>$5<?/MIVAR>
+    <?MIVAR NAME=$q_chrom_num>$6<?/MIVAR>
+    <?MIVAR NAME=$locus>$7<?/MIVAR>
+    <?MIVAR NAME=$q_allele>$4<?/MIVAR>
+    <?MIVAR NAME=$fish_id>$2<?/MIVAR>
+    <?MIVAR NAME=$q_abbrev>$3<?/MIVAR>
 
-  <TD><font size=-1> $(IF,$(EC,$q_chrom_change,NULL),UNKNOWN,$q_chrom_change)</font> </TD> 
-  <TD><font size=-1> $(IF,$(EC,$q_chrom_num,0),UNKNOWN,$q_chrom_num)</font> </TD> 
 
-    <?MISQL SQL="select lg_location,metric from public_paneled_markers where zdb_id = '$fish_id';">
+    $(IF,$(>,$MI_CURRENTROW,1),"<TR><TD colspan=7> <HR width=95%> </TD> </TR>")
 
-      <?MIVAR NAME=$lg_location>$1<?/MIVAR>
-      <?MIVAR NAME=$metric>$2<?/MIVAR>
+    $(IF,$(=,$MI_CURRENTROW,1),"<TR><TD colspan=7> <HR size=5> </TD> </TR>")
 
-      <?MIBLOCK COND="$(>,$MI_CURRENTROW,1)">
-	  <TR><TD> </TD><TD> </TD><TD> </TD><TD> </TD><TD> </TD><TD> </TD>
-      <?/MIBLOCK>
-
-      <TD align=center>
-	<font size=-1>
-	  $lg_location $metric
-	</font>
-      </TD></TR>
-
-      <!-- create view map buttons -->
+    <TR align=center valign=top> 
+    <TD>$MI_CURRENTROW. 
+    $(IF,$(XST,$return_rec),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$fish_id" TARGET=content>SELECT</A>") 
+    </TD>
+    <TD valign=top> 
+    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$fish_id" TARGET=content>$q_allele</A>
+    <?MIBLOCK COND="$(AND,$(NC,$q_abbrev,NULL),$(NC,$q_abbrev,xxx))">
       <?MIVAR>
-	<form method=post  name="$q_allele" target="content" action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi">
-	  <input type=hidden name=view_map value="view_map">
-	  <input type=hidden name=userid value=$userid>
-	  <input type=hidden name=OID value=$fish_id>
-	  <input type=hidden name=MGH value=1>  <!-- we currently display "mapped" mutants on MGH panel -->
-	  <TR><TD> </TD><TD> </TD><TD> </TD>
-	  <TD align=left><font size=1><input type=button value='VIEW MERGED MAP' name=view_merge_map onClick="document.$q_allele.action='/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi';document.$q_allele.submit();"></TD><TD>&nbsp;</TD><TD align=left><font size=1><input type=submit value='VIEW INDIVIDUAL MAPS' name=view_map ></TD></TR>
-	</form>
-      <?/MIVAR>   
+	<i>($q_abbrev)</i></FONT></b>
+      <?/MIVAR>
+    <?/MIBLOCK>
+
+
+    <!-- allele_name contains all names pull aliases only -->
+    <?MISQL SQL="select distinct alleali_allele_name_alias from allele_alias , fish_search where  fish_id = '$2' and alleali_alt_zdb_id = alt_zdb_id;">
+      <?MIVAR COND="$(=,$MI_CURRENTROW,1)">&nbsp;[<?/MIVAR>
+      <?MIVAR COND="$(>,$MI_CURRENTROW,1)">;<?/MIVAR>$1
     <?/MISQL>
 
-  <?/MISQL>
+    <?MIVAR COND="$(>=,$MI_CURRENTROW,1)">]<?/MIVAR>
 
-  </TABLE>
+    </TD> 
 
-  <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No matching records found<?/MIVAR>
+    <TD><font size=-1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$locus" TARGET=content>$name</A> 
+    <?MIBLOCK COND="$(AND,$(NC,$q_abbrev,NULL),$(NC,$q_abbrev,xxx),$(NC,$q_abbrev,none))">
+      <?MIVAR>
+	<i>($q_abbrev)</i></FONT></b>
+      <?/MIVAR>
+    <?/MIBLOCK>
+
+    <?MIVAR NAME=$found>false<?/MIVAR>
+    <?MISQL SQL="select distinct lcsali_locus_name_alias, lcsali_locus_abbrev_alias from locus_alias where  lcsali_locus_zdb_id = '$locus';">
+    <?MIVAR COND="$(=,$MI_CURRENTROW,1)">&nbsp;[<?/MIVAR>
+    <?MIVAR COND="$(=,$MI_CURRENTROW,1)" NAME=$found>true<?/MIVAR>
+    <?MIVAR COND="$(>,$MI_CURRENTROW,1)">;<?/MIVAR>$1
+    <?MIVAR COND="$(NC,$2,"")">($2)<?/MIVAR>
+    <?/MISQL>
+    <?MISQL SQL="select distinct fishali_fish_name_alias from fish_alias where fishali_fish_zdb_id = '$2';">
+    <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(NC,$found,true))">&nbsp;[<?/MIVAR>
+    <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(EC,$found,true))">;<?/MIVAR>
+    <?MIVAR COND="$(=,$MI_CURRENTROW,1)" NAME=$found>true<?/MIVAR>
+    <?MIVAR COND="$(>,$MI_CURRENTROW,1)">;<?/MIVAR>$1
+    <?/MISQL>
+    <?MIVAR COND="$(EC,$found,true)">]<?/MIVAR>
+
+    </font></TD>
+
+    <TD><font size=-1> $(IF,$(NC,$gene_id,unknown),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$gene_id TARGET=content>$gene_abbrev</A>,&nbsp;&nbsp;-&nbsp;&nbsp;)
+    </font></TD>
+
+    <TD><font size=-1> $(IF,$(OR,$(EC,$q_chrom_change,NULL),$(EC,$q_chrom_change,unknown)),&nbsp;&nbsp;-&nbsp;&nbsp;,$q_chrom_change)</font> </TD> 
+    <TD><font size=-1> $(IF,$(EC,$q_chrom_num,0),&nbsp;&nbsp;-&nbsp;&nbsp;,$q_chrom_num)</font> </TD> 
+
+      <?MISQL SQL="select lg_location,metric from public_paneled_markers where zdb_id = '$fish_id';">
+
+	<?MIVAR NAME=$lg_location>$1<?/MIVAR>      
+	<?MIVAR NAME=$metric>$2<?/MIVAR>
+
+	<?MIBLOCK COND="$(>,$MI_CURRENTROW,1)">
+	  <TR><TD> </TD><TD> </TD><TD> </TD><TD> </TD><TD> </TD><TD> </TD>
+	<?/MIBLOCK>
+
+	<TD align=center>
+	  <font size=-1>
+	    $lg_location $metric
+	  </font>
+	</TD></TR>
+
+	<!-- create view map buttons -->
+	<?MIVAR>
+	  <form method=post  name="$q_allele" target="content" action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi">
+	    <input type=hidden name=view_map value="view_map">
+	    <input type=hidden name=userid value=$userid>
+	    <input type=hidden name=OID value=$fish_id>
+	    <input type=hidden name=MGH value=1>  <!-- we currently display "mapped" mutants on MGH panel -->
+	    <TR><TD> </TD><TD> </TD><TD> </TD>
+	    <TD align=left><font size=1><input type=button value='VIEW MERGED MAP' name=view_merge_map onClick="document.$q_allele.action='/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi';document.$q_allele.submit();"></TD><TD>&nbsp;</TD><TD align=left><font size=1><input type=submit value='VIEW INDIVIDUAL MAPS' name=view_map ></TD></TR>
+	  </form>
+	<?/MIVAR>   
+      <?/MISQL>
+
+  <!-- location was not found, display a dash -->
+      <?MIVAR COND="$(=,$MI_ROWCOUNT,0)"><TD>&nbsp;&nbsp;-&nbsp;&nbsp;</TD><?/MIVAR>
+
+    <?/MISQL>
+
+    </TABLE>
+
+    <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No matching records found<?/MIVAR>
 
 
-    <!-- ends if no overflow -->
+      <!-- ends if no overflow -->
   <?/MIBLOCK>  <!-- ends the mutant case -->
 <?/MIBLOCK <!-- end of num_recs gt 0 -->
 
@@ -318,12 +325,15 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
     <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE
 	    SQL="select a.name, a.zdb_id, a.abbrev, b.name,b.zdb_id from fish a, OUTER lab b where line_type='wild type' and a.source=b.zdb_id $constraint order by a.name;">
 
-    <TR valign=top> <TD> 
-    $(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$2" TARGET=content>SELECT</A> </FONT>") 
-    </TD>
-    <TD valign=top> <FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$2" TARGET="content">$1</A> ($3) </FONT> </TD>  
-    <TD><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$5" TARGET="content">$4</TD>
-    </TR>
+      <TR valign=top> 
+        <TD> 
+          $(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$2" TARGET=content>SELECT</A> </FONT>") 
+        </TD>
+        <TD valign=top> <FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$2" TARGET="content">$1</A> ($3) </FONT> 
+        </TD>  
+        <TD><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$5" TARGET="content">$4
+        </TD>
+      </TR>
     <?/MISQL>
     </TABLE>
     <?MIVAR name=$num_recs>$MI_ROWCOUNT<?/MIVAR>
@@ -379,10 +389,10 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
         <?MIVAR name=$TileInput><?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$allele)>$UserInput&allele=$allele<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$abbrev)>$UserInput&abbrev=$abbrev<?/MIVAR>
-	<?MIVAR name=UserInput COND=$(NC,$chrom_change,UNKNOWN)>$UserInput&chrom_change=$chrom_change<?/MIVAR>
-	<?MIVAR name=UserInput COND=$(EC,$chrom_change,UNKNOWN)>$UserInput&chrom_change=any<?/MIVAR>
-	<?MIVAR name=UserInput COND=$(NC,$mutagen,UNKNOWN)>$UserInput&mutagen=$mutagen<?/MIVAR>
-	<?MIVAR name=UserInput COND=$(EC,$mutagen,UNKNOWN)>$UserInput&mutagen=any<?/MIVAR>
+	<?MIVAR name=UserInput COND=$(NC,$chrom_change,unknown)>$UserInput&chrom_change=$chrom_change<?/MIVAR>
+	<?MIVAR name=UserInput COND=$(EC,$chrom_change,unknown)>$UserInput&chrom_change=any<?/MIVAR>
+	<?MIVAR name=UserInput COND=$(NC,$mutagen,unknown)>$UserInput&mutagen=$mutagen<?/MIVAR>
+	<?MIVAR name=UserInput COND=$(EC,$mutagen,unknown)>$UserInput&mutagen=any<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$line_type)>$UserInput&line_type=$line_type<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$chrom_num)>$UserInput&chrom_num=$chrom_num<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$knowngene)>$UserInput&knowngene=$knowngene<?/MIVAR>
