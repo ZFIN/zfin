@@ -6,29 +6,29 @@ Requires:  $CLONE_MARKER_ID, $highlight
 <?MIVAR NAME=$SOURCE><?/MIVAR>
 <?MIVAR NAME=$COUNT>0<?/MIVAR>
 
-  <?MISQL SQL="
-    SELECT l.zdb_id, l.name, srcurl_url, srcurl_display_text
-    FROM lab l, int_data_supplier, OUTER(source_url)
-    WHERE '$OID' = idsup_data_zdb_id
-      AND idsup_supplier_zdb_id = l.zdb_id
-      AND idsup_supplier_zdb_id = srcurl_source_zdb_id
-  UNION
-     SELECT c.zdb_id, c.name, srcurl_url, srcurl_display_text
-    FROM company c, int_data_supplier, OUTER(source_url)
-    WHERE '$OID' = idsup_data_zdb_id
-      AND idsup_supplier_zdb_id = c.zdb_id
-      AND idsup_supplier_zdb_id = srcurl_source_zdb_id;
-  ">
-      <?MIVAR COND="$(>,$(POSITION,$1,LAB),0)" NAME=viewpage>labview.apg<?/MIVAR>
-      <?MIVAR COND="$(>,$(POSITION,$1,COMPANY),0)" NAME=viewpage>companyview.apg<?/MIVAR>
+<?MISQL SQL="
+  SELECT l.zdb_id, l.name, srcurl_url, srcurl_display_text,idsup_acc_num
+  FROM lab l, int_data_supplier, OUTER(source_url)
+  WHERE '$OID' = idsup_data_zdb_id
+    AND idsup_supplier_zdb_id = l.zdb_id
+    AND idsup_supplier_zdb_id = srcurl_source_zdb_id
+UNION
+   SELECT c.zdb_id, c.name, srcurl_url, srcurl_display_text,idsup_acc_num
+  FROM company c, int_data_supplier, OUTER(source_url)
+  WHERE '$OID' = idsup_data_zdb_id
+    AND idsup_supplier_zdb_id = c.zdb_id
+    AND idsup_supplier_zdb_id = srcurl_source_zdb_id;
+">
+    <?MIVAR COND="$(>,$(POSITION,$1,LAB),0)" NAME=viewpage>labview.apg<?/MIVAR>
+    <?MIVAR COND="$(>,$(POSITION,$1,COMPANY),0)" NAME=viewpage>companyview.apg<?/MIVAR>
 
-      <?MIVAR NAME=$SOURCE>
-	    <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$viewpage&OID=$1">$2</a>
-	    <?MIVAR COND="$(NE,$3,)">
-	      <font size=-1">&nbsp;&nbsp;&nbsp;(<a href="$3">$4</a>)</font><img src="/images/new1.gif">
-	    <?/MIVAR>
-      <?/MIVAR>
-  <?/MISQL>
+    <?MIVAR NAME=$SOURCE>
+    <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$viewpage&OID=$1">$2</a>
+    <?MIVAR COND="$(NE,$3,)">
+      <font size=-1">&nbsp;&nbsp;&nbsp;(<a href="$3$5">$4</a>)</font><img src="/images/new1.gif">
+    <?/MIVAR>
+    <?/MIVAR>
+<?/MISQL>
 
 <?MISQL SQL="
 	SELECT  
