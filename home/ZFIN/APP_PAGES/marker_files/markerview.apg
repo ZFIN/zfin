@@ -895,11 +895,13 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 <?MIVAR NAME=$count>0<?/MIVAR>
 <?MIVAR NAME=$empty>1<?/MIVAR>
 <?MIVAR NAME=$more>0<?/MIVAR>
+<?MIVAR NAME=$accnum><?/MIVAR>
+<?MIVAR NAME=$dbname><?/MIVAR>
 <?MISQL SQL="
   select a.db_name, 
 	 b.db_query || a.acc_num || 
 	   (case b.url_suffix when NULL then '' else b.url_suffix end),
-	 acc_num, dblink_zdb_id 
+	 acc_num
     from db_link a, foreign_db b, foreign_db_contains
     where a.db_name = b.db_name
       and b.db_name = fdbcont_db_name
@@ -910,7 +912,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
   select a.db_name, 
 	 b.db_query || a.acc_num || 
 	   (case b.url_suffix when NULL then '' else b.url_suffix end),
-         acc_num, dblink_zdb_id
+         acc_num
     from db_link a, foreign_db b, foreign_db_contains, marker_relationship c
     where a.db_name = b.db_name
       and b.db_name = fdbcont_db_name
@@ -919,29 +921,56 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
       and fdbcont_data_type = 'sequence'
       and b.db_significance = 1 
   order by 1 desc, 3;">
+
+  <?MIVAR NAME=$dbname>$1<?/MIVAR>
+  <?MIVAR NAME=$dbquery>$2<?/MIVAR>
+  <?MIVAR NAME=$accnum>$3<?/MIVAR>
+
+
   $(IF,$(=,$MI_CURRENTROW,1),<TD align=left>)
-  
+
+<!-- get link recid to use for data attribution, could not get in SQL union above, this genereated dups in the case where accnum is associated with both est and gene -->
+    <?MISQL SQL="
+      select dblink_zdb_id
+          from db_link
+      where db_name = '$dbname'
+        and acc_num = '$accnum'
+        and linked_recid = '$OID'
+      UNION
+	select dblink_zdb_id
+          from db_link, marker_relationship
+      where db_name = '$dbname'
+        and acc_num = '$accnum'
+        and mrel_mrkr_1_zdb_id = '$OID'
+        and mrel_mrkr_2_zdb_id = linked_recid;">
+ 
+    <?MIVAR NAME=$dataId>$1<?/MIVAR>
+   <?/MISQL>
+
+ 
   <!-- if more than five Genbank, Genbank info go to another page -->
 
-  <?MIBLOCK COND="$(NC,$1,Genbank)">
+  <?MIBLOCK COND="$(NC,$dbname,Genbank)">
 
     <li><?MIVAR>
-    $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$1:$3)"')>")
-    <A HREF="$2">$1:$3</A><?/MIVAR><?MISQL SQL="select WebExplode(object,'dataId=$4&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+    $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$dbname:$accnum)"')>")
+    <A HREF="$dbquery">$dbname:$accnum</A><?/MIVAR>
+
+   <?MISQL SQL="select WebExplode(object,'dataId=$dataId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL> 
 
   <?MIELSE>
 
      <?MIBLOCK COND="$(=,$empty,1)">
-	<?MIVAR>$(SETVAR,$gblinks[1],$2)<?/MIVAR>
-	<?MIVAR>$(SETVAR,$gbaccs[1],$3)<?/MIVAR>
-	<?MIVAR>$(SETVAR,$gblinkId[1],$4)<?/MIVAR>	
+	<?MIVAR>$(SETVAR,$gblinks[1],$dbquery)<?/MIVAR>
+	<?MIVAR>$(SETVAR,$gbaccs[1],$accnum)<?/MIVAR>
+	<?MIVAR>$(SETVAR,$gblinkId[1],$dataId)<?/MIVAR>	
         <?MIVAR>$(SETVAR,$empty,0)<?/MIVAR>
         <?MIVAR>$(SETVAR,$count,1)<?/MIVAR>
      <?MIELSE>  
        <?MIBLOCK COND="$(<,$count,4)">
-	 <?MIVAR>$(VECAPPEND,$gblinks,$2)<?/MIVAR>
-	 <?MIVAR>$(VECAPPEND,$gbaccs,$3)<?/MIVAR>
-	 <?MIVAR>$(VECAPPEND,$gblinkId,$4)<?/MIVAR>
+	 <?MIVAR>$(VECAPPEND,$gblinks,$dbquery)<?/MIVAR>
+	 <?MIVAR>$(VECAPPEND,$gbaccs,$accnum)<?/MIVAR>
+	 <?MIVAR>$(VECAPPEND,$gblinkId,$dataId)<?/MIVAR>
 	 <?MIVAR>$(SETVAR,$count,$(+,$count,1))<?/MIVAR>
        <?MIELSE>
          <?MIVAR>$(SETVAR,$more,1)<?/MIVAR>
@@ -950,7 +979,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 
   <?/MIBLOCK>
  
-  $(SETVAR,$lastitem,$1)
+  $(SETVAR,$lastitem,$dbname)
 <?/MISQL>
 
 <?MIBLOCK COND="$(=,$more,1)">
@@ -992,23 +1021,13 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
       and b.db_significance > 1
       and fdbcont_data_type = 'sequence'
      order by b.db_significance, a.DB_name,acc_num;">
+
   $(IF,$(AND,$(NC,$lastitem,$1),$(>,$MI_CURRENTROW,1)),</TD>)
   $(IF,$(NC,$lastitem,$1),<TD align=left>)
   <li>
   $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$1:$3)"')>")
   <A HREF="$2">$1:$3</A>
-  <!--------- ---------------->
-  <?MIBLOCK COND="$(EC,$1,SWISS-PROT)">		
-   <?MISQL SQL=" select conc(conc(c.DB_query,a.dalias_alias),c.url_suffix),a.dalias_alias
-		from data_alias a, db_link b, foreign_db c
-                where  b.linked_recid = '$OID' and
-                       b.dblink_zdb_id = a.dalias_data_zdb_id and
-		       b.db_name = c.db_name;">
-   $(IF,$(=,$MI_CURRENTROW,1),"(")
-   <A HREF="$1">$2</A>
-   <?/MISQL>
-   <?MIVAR>$(IF,$(>=,$MI_ROWCOUNT,1),")")<?/MIVAR>	
-  <?/MIBLOCK>
+
   <?MISQL SQL="select WebExplode(object,'dataId=$5&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
   <!--------- ---------------->
   $(SETVAR,$lastitem,$1)
