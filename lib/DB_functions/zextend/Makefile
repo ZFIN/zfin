@@ -76,7 +76,7 @@ $(TARGETDIR) :
 
 $(TARGET) : $(OBJS)
 	$(CC) -G $(OBJS) -o zextend.so            # create local copy
-	$(DBACCESS) $(DBNAME) drop_functions.sql  # drop functions in DB
+	-$(DBACCESS) $(DBNAME) drop_functions.sql  # drop functions in DB
 	$(TARGET_CP) zextend.so $(TARGET)	  # where DB will find it
 	$(MAKESPECIFIC) create_functions.sql $(TRANSLATETABLE) cftemp.sql
 	$(DBACCESS) $(DBNAME) cftemp.sql  	  # create functions in DB
@@ -94,13 +94,11 @@ clean :
 
 
 clobber :                       # Remove targets, but not target dir.
+	-$(DBACCESS) $(DBNAME) drop_functions.sql  # drop functions in DB
 	rm -f $(TARGET)
 
 
 sanitycheck :
-    ifdef GENERICS
-	$(SPECIFICCHECK) $(GENERICS)
-    endif
 
 
 # define one time only target
