@@ -296,29 +296,38 @@ public class MapViewer extends Canvas {
 		g.drawString("RAPD ", X+i, Y+12);	
 		i = i + FM.stringWidth("RAPD ");
 
+		g.setColor(Marker.GENE_c);
+		g.drawString("GENE ", X+i, Y+12);
+		i = i + FM.stringWidth("GENE ");
+		
+		g.setColor(Marker.GENEP_c);
+		g.drawString("Pseudogene ", X+i, Y+12);
+		i = i + FM.stringWidth("Pseudogene ");
+		
+		
 //		i = FM.stringWidth("KEY:  ");
 		i = 1;
 
 		g.setColor(Marker.BAC_c);
-		g.drawString("BAC ", X+i, Y+24);
-		i = i + FM.stringWidth("BAC ");
+		g.drawString("BACend ", X+i, Y+24);
+		i = i + FM.stringWidth("BACend ");
+
+		g.setColor(Marker.PAC_c);
+		g.drawString("PACend ", X+i, Y+24);
+		i = i + FM.stringWidth("PACend ");
 		
-		g.setColor(Marker.FISH_c);
-		g.drawString("MUTANT ", X+i, Y+24);
-		i = i + FM.stringWidth("MUTANT ");
-
-                g.setColor(Marker.SNP_c);
-                g.drawString("SNP ", X+i, Y+24);
-                i = i + FM.stringWidth("SNP ");
-
-		g.setColor(Marker.GENE_c);
-		g.drawString("GENE ", X+i, Y+24);
-		i = i + FM.stringWidth("GENE ");
 
 		g.setColor(Marker.EST_c);
 		g.drawString("EST ", X+i, Y+24);
 		i = i + FM.stringWidth("EST ");
 
+        g.setColor(Marker.SNP_c);
+        g.drawString("SNP ", X+i, Y+24);
+        i = i + FM.stringWidth("SNP ");
+
+		g.setColor(Marker.FISH_c);
+		g.drawString("MUTANT ", X+i, Y+24);
+		i = i + FM.stringWidth("MUTANT ");
 
 	}
 	

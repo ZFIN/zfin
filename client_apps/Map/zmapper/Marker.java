@@ -19,17 +19,20 @@ public class Marker {
 //	public static Color GENE_c = new Color(20 , 60 ,20); //darker green
 	public static Color GENE_c = new Color(0,0,204);//blue
 
+	public static Color GENEP_c = GENE_c; //lighter blue?
+
 	public static Color EST_c = new Color(0,153,0); //lighter green
 
 	//public static Color SSLP_c = new Color(0,0,204); //med blue
 	public static Color SSLP_c = new Color(102,51,0); //brown
-	public static Color RAPD_c = new Color(153,102,204);  //purple
-	public static Color STS_c = new Color(153,102,51); //
+	public static Color RAPD_c = new Color(102,51,0);  //brown
+	public static Color STS_c = new Color(102,51,0); //brown
 //	public static Color SSR_c = SSLP_c;
 	public static Color SNP_c = new Color(240,100,240);  //magenta light
 //	public static Color FISH_c = new Color(102,51,0);
 	public static Color FISH_c = Color.red;
 	public static Color BAC_c = new Color(0,51,0);
+	public static Color PAC_c = new Color(0,51,0);
 	
 	public Marker(String zdb_id, String abbrev,	String mtype,
 				  String target_abbrev, String lg_location, String OR_lg, String framework_t, String metric)  {
@@ -43,7 +46,10 @@ public class Marker {
 		this.mtype = mtype;
 		this.target_abbrev = target_abbrev;
 		this.lg_location = new Float(lg_location);
-		this.OR_lg = new Integer(OR_lg);
+		try { this.OR_lg = new Integer(OR_lg); }
+		catch (NumberFormatException e) { System.err.println("NumberFormatException: " + this.abbrev + " failed on '" + OR_lg + "'"); }
+									
+		
 		this.metric = metric;
 		
 		if ((framework_t.equals("t")) || (framework_t.equals("1"))) 
@@ -64,15 +70,16 @@ public class Marker {
 	
 	public Color getColor() {
 		if (mtype.equals("GENE")) { return GENE_c; }
-		else if (mtype.equals("EST")) { return EST_c; }
+		else if (mtype.equals("GENEP"))	{ return GENEP_c; }
+  		else if (mtype.equals("EST")) { return EST_c; }
 		else if (mtype.equals("SSLP")) { return SSLP_c; }
 		else if (mtype.equals("RAPD")) { return RAPD_c; }
 		else if (mtype.equals("STS")) { return STS_c; }
 //		else if (mtype.equals("SSR")) { return SSR_c; }
 		else if (mtype.equals("MUTANT")) { return FISH_c;}
 		else if (mtype.equals("BAC")) { return BAC_c; }
-		else if (mtype.equals("PAC")) { return BAC_c; }
-		else if (mtype.equals("SNP")) { return SNP_c; }
+		else if (mtype.equals("PAC")) { return PAC_c; }
+   		else if (mtype.equals("SNP")) { return SNP_c; }
 		else return Color.black;
 			
 	}
