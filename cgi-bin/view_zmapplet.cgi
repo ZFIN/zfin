@@ -239,6 +239,8 @@
 	      refcross=> 'NULL',
 	      plinks=> 'on',
 	      action=> 'SEARCH',
+              paged_by=> 'mapper',
+              map_type=> 'merged',
 	      MIval=> 'aa-markerlister.apg',
 	      name=> "$marker",
 	      ZDB_authorize=> $Q->cookie('ZDB_authorize')
@@ -911,7 +913,7 @@
 			  -name=>'selectform',
 			  -target=>'criteria'
 			 )
-      . $Q->hidden("MIval","aa-mapperselect.apg"). "\n";
+	. $Q->hidden("MIval","aa-mapperselect.apg"). "\n";
       
     for $tmp (@allpanels){
       print $Q->hidden($tmp, (defined $Q->param($tmp))? $Q->param($tmp) :0) . "\n";
@@ -929,8 +931,8 @@
 	  $Q->hidden('loc ', (defined $sm_loc)? $sm_loc : $Q->param('loc')) . "\n";
       
     }
-	print 
-    $Q->hidden('map_type','merged')."\n".
+    
+    print $Q->hidden('map_type','merged')."\n".
     #$Q->submit("continue...")."\n".
     $Q->end_form() . "\n";
     print "\n<SCRIPT> document.selectform.submit()</SCRIPT>\n";
