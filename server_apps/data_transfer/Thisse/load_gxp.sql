@@ -15,10 +15,13 @@
 -- load bernards probe table into temps
 begin work;
 
+
 -- PROBES --
 ------------
 create temp table probes_tmp (
-clone varchar (120) not null,
+probe_index varchar(5) not null,
+probe_id varchar(10) not null,
+clone varchar(120) not null,
 isgene varchar(15) default null,
 genename varchar(120)default null,
 top_blast varchar(200),
@@ -40,11 +43,11 @@ comments lvarchar,
 modified DATETIME YEAR TO DAY
 )with no log;
 
-load from 'probes.unl' insert into probes_tmp;
+load from './probes.unl' insert into probes_tmp;
 
 update probes_tmp set clone = lower(clone);
-update probes_tmp set gb5p = upper(gb5p);
-update probes_tmp set gb3p = upper(gb3p);
+update probes_tmp set gb5p = upper(gb5p[1,8]);
+update probes_tmp set gb3p = upper(gb3p[1,8]);
 update probes_tmp set isgene = 'off' where isgene is null;
 
 
@@ -55,7 +58,7 @@ select count(unique clone)clones from probes_tmp;
 ! echo "Called genes they are" 
 select clone[1,10],genename from probes_tmp where isgene = 'on'; 
 
-unload to 'is_gene.txt' select clone[1,10],genename from probes_tmp where isgene = 'on';
+unload to 'is_gene.txt' select clone[1,10],genename from probes_tmp where isgene = 'on' order by 1;
 
 ! echo "Called PUTATIVE they are" 
 select clone[1,10],genename
@@ -79,52 +82,58 @@ and mrkr_name = clone
 -- EXPRESSION_TXT --
 --------------------
 create temp table expression_tmp(
-clone varchar (80) not null,
-sstart varchar (50),
-sstop varchar (50),
-description lvarchar,
-modified DATETIME YEAR TO DAY
+  exp_clone varchar (80) not null,
+  exp_sstart varchar (50),
+  exp_sstop varchar (50),
+  exp_description lvarchar,
+  exp_modified DATETIME YEAR TO DAY
 )with no log;
 
 load from 'expression.unl' insert into expression_tmp;
-update expression_tmp set clone = lower(clone);
+
+update expression_tmp set exp_clone = 
+    (select p.clone from probes_tmp p where exp_clone = p.probe_id);
+
+
 !echo "expression not associated with clone in this load"  
-select clone from  expression_tmp where clone not in (select p.clone from probes_tmp p);
-delete from expression_tmp where clone not in (select p.clone from probes_tmp p);
+select exp_clone from  expression_tmp where exp_clone not in (select p.clone from probes_tmp p);
+delete from expression_tmp where exp_clone not in (select p.clone from probes_tmp p);
 
-update expression_tmp set sstart = 
-    (select stg_zdb_id from stage where stg_name = sstart);
-update expression_tmp set sstop = 
-    (select stg_zdb_id from stage where stg_name = sstop);
+update expression_tmp set exp_sstart = 
+    (select stg_zdb_id from stage where stg_name = exp_sstart);
+update expression_tmp set exp_sstop = 
+    (select stg_zdb_id from stage where stg_name = exp_sstop);
 
-select count(*) valid_exp  from probes_tmp p,expression_tmp e where p.clone = e.clone; 
+select count(*) valid_exp  from probes_tmp p,expression_tmp where p.clone = exp_clone; 
 
 
 -- KEYWORDS_TXT --
 ------------------
 create temp table keywords_tmp (
-clone varchar(80) not null,
-sstart varchar (50),
-sstop varchar (50),
-keyword varchar(50),
-modified DATETIME YEAR TO DAY  
+  keywrd_clone varchar(80) not null,
+  keywrd_sstart varchar (50),
+  keywrd_sstop varchar (50),
+  keywrd_keyword varchar(50),
+  keywrd_modified DATETIME YEAR TO DAY  
 )with no log;
 
 load from 'keywords.unl' insert into keywords_tmp;
 
 !echo "blank keywords in keyword table"    
-select * from keywords_tmp where keyword is NULL;
-delete   from keywords_tmp where keyword is NULL; 
+select * from keywords_tmp where keywrd_keyword is NULL;
+delete   from keywords_tmp where keywrd_keyword is NULL; 
 
---select keyword kw from keywords_tmp;
-update keywords_tmp set clone = lower(clone);
+--select keywrd_keyword kw from keywords_tmp;
+update keywords_tmp set keywrd_clone = 
+    (select p.clone from probes_tmp p where keywrd_clone = p.probe_id);
+
 !echo "keywords not associated with clone in this load"  
 
-select clone,keyword from  keywords_tmp k where k.clone not in ( select p.clone from probes_tmp p);
-delete from  keywords_tmp where clone not in ( select p.clone from probes_tmp p);
+select keywrd_clone,keywrd_keyword from  keywords_tmp where keywrd_clone not in ( select p.clone from probes_tmp p);
+delete from  keywords_tmp where keywrd_clone not in ( select p.clone from probes_tmp p);
 
 
-select count(*)valid_kw  from probes_tmp p, keywords_tmp k where p.clone = k.clone;
+select count(*)valid_kw  from probes_tmp p, keywords_tmp where p.clone = keywrd_clone;
 
 
 -- check for keywords that have been modified/deleted
@@ -143,155 +152,156 @@ select count(*)valid_kw  from probes_tmp p, keywords_tmp k where p.clone = k.clo
 
 ! echo "check for keywords that bave been deleted"
 
-select * from keywords_tmp where keyword = 'ectoderm' 
-    and sstart in ('Segmentation:20-somite','Pharyngula:Prim-15','Pharyngula:High-pec'); -- (24h, 36h, 48h)
-delete from keywords_tmp where keyword = 'ectoderm' 
-    and sstart in ('Segmentation:20-somite','Pharyngula:Prim-15','Pharyngula:High-pec'); -- (24h, 36h, 48h)
+select * from keywords_tmp where keywrd_keyword = 'ectoderm' 
+    and keywrd_sstart in ('Segmentation:20-somite','Pharyngula:Prim-15','Pharyngula:High-pec'); -- (24h, 36h, 48h)
+delete from keywords_tmp where keywrd_keyword = 'ectoderm' 
+    and keywrd_sstart in ('Segmentation:20-somite','Pharyngula:Prim-15','Pharyngula:High-pec'); -- (24h, 36h, 48h)
 
-select * from keywords_tmp where keyword = 'endoderm' 
-    and sstart in ('Pharyngula:Prim-15','Pharyngula:High-pec'); --(36h, 48h)
-delete from keywords_tmp where keyword = 'endoderm' 
-    and sstart in ('Pharyngula:Prim-15','Pharyngula:High-pec'); --(36h, 48h)
+select * from keywords_tmp where keywrd_keyword = 'endoderm' 
+    and keywrd_sstart in ('Pharyngula:Prim-15','Pharyngula:High-pec'); --(36h, 48h)
+delete from keywords_tmp where keywrd_keyword = 'endoderm' 
+    and keywrd_sstart in ('Pharyngula:Prim-15','Pharyngula:High-pec'); --(36h, 48h)
 
-select * from keywords_tmp where keyword = 'nasal pit' 
-    and sstart in ('Segmentation:20-somite','Pharyngula:Prim-15','Pharyngula:High-pec'); -- (24h, 36h, 48h)
-delete from keywords_tmp where keyword = 'nasal pit' 
-    and sstart in ('Segmentation:20-somite','Pharyngula:Prim-15','Pharyngula:High-pec'); -- (24h, 36h, 48h)
+select * from keywords_tmp where keywrd_keyword = 'nasal pit' 
+    and keywrd_sstart in ('Segmentation:20-somite','Pharyngula:Prim-15','Pharyngula:High-pec'); -- (24h, 36h, 48h)
+delete from keywords_tmp where keywrd_keyword = 'nasal pit' 
+    and keywrd_sstart in ('Segmentation:20-somite','Pharyngula:Prim-15','Pharyngula:High-pec'); -- (24h, 36h, 48h)
 
-select *  from keywords_tmp where keyword = 'neural crest' 
-    and sstart in ('Pharyngula:Prim-15','Pharyngula:High-pec'); -- (36h, 48h)
-delete from keywords_tmp where keyword = 'neural crest' 
-    and sstart in ('Pharyngula:Prim-15','Pharyngula:High-pec'); -- (36h, 48h)
+select *  from keywords_tmp where keywrd_keyword = 'neural crest' 
+    and keywrd_sstart in ('Pharyngula:Prim-15','Pharyngula:High-pec'); -- (36h, 48h)
+delete from keywords_tmp where keywrd_keyword = 'neural crest' 
+    and keywrd_sstart in ('Pharyngula:Prim-15','Pharyngula:High-pec'); -- (36h, 48h)
 
-select * from keywords_tmp where keyword = 'otic placode' 
-    and sstart in ('Segmentation:1-somite'); -- (ES) 
-delete from keywords_tmp where keyword = 'otic placode' 
-    and sstart in ('Segmentation:1-somite'); -- (ES)
+select * from keywords_tmp where keywrd_keyword = 'otic placode' 
+    and keywrd_sstart in ('Segmentation:1-somite'); -- (ES) 
+delete from keywords_tmp where keywrd_keyword = 'otic placode' 
+    and keywrd_sstart in ('Segmentation:1-somite'); -- (ES)
 
-select * from keywords_tmp where keyword = 'primary motorneurons' 
-    and sstart in ('Segmentation:14-somite'); -- (MS) 
-delete from keywords_tmp where keyword = 'primary motorneurons' 
-    and sstart in ('Segmentation:14-somite'); -- (MS)
+select * from keywords_tmp where keywrd_keyword = 'primary motorneurons' 
+    and keywrd_sstart in ('Segmentation:14-somite'); -- (MS) 
+delete from keywords_tmp where keywrd_keyword = 'primary motorneurons' 
+    and keywrd_sstart in ('Segmentation:14-somite'); -- (MS)
 
-select * from keywords_tmp where keyword = 'Rohon-Beard neurons' 
-    and sstart in ('Segmentation:14-somite'); -- (MS)
-delete from keywords_tmp where keyword = 'Rohon-Beard neurons' 
-    and sstart in ('Segmentation:14-somite'); -- (MS)
+select * from keywords_tmp where keywrd_keyword = 'Rohon-Beard neurons' 
+    and keywrd_sstart in ('Segmentation:14-somite'); -- (MS)
+delete from keywords_tmp where keywrd_keyword = 'Rohon-Beard neurons' 
+    and keywrd_sstart in ('Segmentation:14-somite'); -- (MS)
 
-select * from keywords_tmp where keyword = 'YSL' 
-    and sstart in ('Pharyngula:High-pec'); -- (48h)
-delete from keywords_tmp where keyword = 'YSL' 
-    and sstart in ('Pharyngula:High-pec'); -- (48h)
+select * from keywords_tmp where keywrd_keyword = 'YSL' 
+    and keywrd_sstart in ('Pharyngula:High-pec'); -- (48h)
+delete from keywords_tmp where keywrd_keyword = 'YSL' 
+    and keywrd_sstart in ('Pharyngula:High-pec'); -- (48h)
 
 --Keywords modified
-! echo "check for keywords that have been changed at particular stages"
+! echo "check for keywrd_keywords that have been changed at particular stages"
 
-update keywords_tmp set keyword = 'branchial arches' 
-    where keyword = 'pharyngeal arches' 
-    and sstart in ('Segmentation:20-somite','Pharyngula:Prim-15','Pharyngula:High-pec'); -- (24h, 36h, 48h)
-update keywords_tmp set keyword = 'presumptive central nervous system' 
-    where keyword = 'neurectoderm' 
-    and sstart in ('Segmentation:1-somite'); --  (ES);
-update keywords_tmp set keyword = 'central nervous system' 
-    where keyword = 'neurectoderm' 
-    and sstart in ('Segmentation:14-somite','Segmentation:20-somite','Pharyngula:Prim-15','Pharyngula:High-pec'); --  ( MS, 24h, 36h, 48h)
+update keywords_tmp set keywrd_keyword = 'branchial arches' 
+    where keywrd_keyword = 'pharyngeal arches' 
+    and keywrd_sstart in ('Segmentation:20-somite','Pharyngula:Prim-15','Pharyngula:High-pec'); -- (24h, 36h, 48h)
+update keywords_tmp set keywrd_keyword = 'presumptive central nervous system' 
+    where keywrd_keyword = 'neurectoderm' 
+    and keywrd_sstart in ('Segmentation:1-somite'); --  (ES);
+update keywords_tmp set keywrd_keyword = 'central nervous system' 
+    where keywrd_keyword = 'neurectoderm' 
+    and keywrd_sstart in ('Segmentation:14-somite','Segmentation:20-somite','Pharyngula:Prim-15','Pharyngula:High-pec'); --  ( MS, 24h, 36h, 48h)
 
--- These keywords have been changed at the indicated stages only. 
+-- These keywrd_keywords have been changed at the indicated stages only. 
 -- In some cases they have been left unchanged at other stages.
-update keywords_tmp set keyword = 'proctodeum' 
-    where keyword = 'anus' 
-    and sstart in ('Pharyngula:Prim-15','Pharyngula:High-pec'); --  (36h, 48h)
-update keywords_tmp set keyword = 'presumptive cephalic mesoderm'  
-    where keyword = 'cephalic mesoderm'
-    and sstart in ('Gastrula:50%-epiboly'); --  (G)
-update keywords_tmp set keyword = 'presumptive cranial ganglia'
-    where keyword = 'cranial ganglia' 
-    and sstart in ('Segmentation:1-somite'); -- (ES)
-update keywords_tmp set keyword = 'inner ear' 
-    where keyword = 'ear'
-    and sstart in ('Segmentation:14-somite','Segmentation:20-somite','Pharyngula:Prim-15','Pharyngula:High-pec'); -- (MS, 24h, 36h, 48h)
-update keywords_tmp set keyword = 'presumptive hindbrain' 
-    where keyword = 'hindbrain'
-   and sstart in ('Segmentation:1-somite'); -- (ES)
+update keywords_tmp set keywrd_keyword = 'proctodeum' 
+    where keywrd_keyword = 'anus' 
+    and keywrd_sstart in ('Pharyngula:Prim-15','Pharyngula:High-pec'); --  (36h, 48h)
+update keywords_tmp set keywrd_keyword = 'presumptive cephalic mesoderm'  
+    where keywrd_keyword = 'cephalic mesoderm'
+    and keywrd_sstart in ('Gastrula:50%-epiboly'); --  (G)
+update keywords_tmp set keywrd_keyword = 'presumptive cranial ganglia'
+    where keywrd_keyword = 'cranial ganglia' 
+    and keywrd_sstart in ('Segmentation:1-somite'); -- (ES)
+update keywords_tmp set keywrd_keyword = 'inner ear' 
+    where keywrd_keyword = 'ear'
+    and keywrd_sstart in ('Segmentation:14-somite','Segmentation:20-somite','Pharyngula:Prim-15','Pharyngula:High-pec'); -- (MS, 24h, 36h, 48h)
+update keywords_tmp set keywrd_keyword = 'presumptive hindbrain' 
+    where keywrd_keyword = 'hindbrain'
+   and keywrd_sstart in ('Segmentation:1-somite'); -- (ES)
 -- In the anatomical dictionary, primordia is shown as a sub-part of lateral line. 
--- The keyword primordia is available for 24h, 36h, and 48h
-update keywords_tmp set keyword = 'primordia' 
-    where keyword = 'lateral line primordium'
-    and sstart in ('Pharyngula:Prim-15','Pharyngula:High-pec'); -- (36h, 48h)
-update keywords_tmp set keyword = 'muscle pioneers' 
-    where keyword = 'muscle pioneer cells'
-    and sstart in ('Segmentation:14-somite'); -- (MS)
-update keywords_tmp set keyword = 'presumptive central nervous system'
-    where keyword = 'neurectoderm' 
-    and sstart in ('Segmentation:1-somite'); -- (ES)
-update keywords_tmp set keyword = 'neuromasts'  
-    where keyword = 'neuromast';
-update keywords_tmp set keyword = 'presumptive neurons' 
-    where keyword = 'neurons'
-    and sstart in ('Segmentation:14-somite'); -- (MS)
-update keywords_tmp set keyword = 'otic placode' 
-    where keyword = 'otic vesicle'
-    and sstart in ('Segmentation:14-somite'); -- (MS)
+-- The keywrd_keyword primordia is available for 24h, 36h, and 48h
+update keywords_tmp set keywrd_keyword = 'primordia' 
+    where keywrd_keyword = 'lateral line primordium'
+    and keywrd_sstart in ('Pharyngula:Prim-15','Pharyngula:High-pec'); -- (36h, 48h)
+update keywords_tmp set keywrd_keyword = 'muscle pioneers' 
+    where keywrd_keyword = 'muscle pioneer cells'
+    and keywrd_sstart in ('Segmentation:14-somite'); -- (MS)
+update keywords_tmp set keywrd_keyword = 'presumptive central nervous system'
+    where keywrd_keyword = 'neurectoderm' 
+    and keywrd_sstart in ('Segmentation:1-somite'); -- (ES)
+update keywords_tmp set keywrd_keyword = 'neuromasts'  
+    where keywrd_keyword = 'neuromast';
+update keywords_tmp set keywrd_keyword = 'presumptive neurons' 
+    where keywrd_keyword = 'neurons'
+    and keywrd_sstart in ('Segmentation:14-somite'); -- (MS)
+update keywords_tmp set keywrd_keyword = 'otic placode' 
+    where keywrd_keyword = 'otic vesicle'
+    and keywrd_sstart in ('Segmentation:14-somite'); -- (MS)
 --In the anatomical dictionary, segmental plate is a sub-part of paraxial mesoderm at these stages.
-update keywords_tmp set keyword = 'segmental plate' 
-    where keyword = 'paraxial segmental plate'
-    and sstart in ('Segmentation:1-somite','Segmentation:14-somite','Segmentation:14-somite'); -- (ES, MS, 24h)    
-update keywords_tmp set keyword = 'primary motoneurons' 
-    where keyword = 'primary motorneurons'; 
-update keywords_tmp set keyword = 'gut' 
-    where keyword = 'primitive gut'
-    and sstart in ('Segmentation:20-somite'); -- (24h)
-update keywords_tmp set keyword = 'primordia' 
-    where keyword = 'primordium'
-    and sstart in ('Segmentation:20-somite'); -- (24h)
-update keywords_tmp set keyword = 'rhombomeres r2-r6' 
-    where keyword = 'rhombomeres r2-r8'
-    and sstart in ('Segmentation:14-somite'); -- (MS)
-update keywords_tmp set keyword = 'presumptive spinal cord' 
-    where keyword = 'spinal cord'
-    and sstart in ('Segmentation:1-somite','Segmentation:14-somite'); -- (ES, MS)
-update keywords_tmp set keyword = 'trigeminal ganglions' 
-    where keyword = 'trigeminal ganglion';
+update keywords_tmp set keywrd_keyword = 'segmental plate' 
+    where keywrd_keyword = 'paraxial segmental plate'
+    and keywrd_sstart in ('Segmentation:1-somite','Segmentation:14-somite','Segmentation:14-somite'); -- (ES, MS, 24h)    
+update keywords_tmp set keywrd_keyword = 'primary motoneurons' 
+    where keywrd_keyword = 'primary motorneurons'; 
+update keywords_tmp set keywrd_keyword = 'gut' 
+    where keywrd_keyword = 'primitive gut'
+    and keywrd_sstart in ('Segmentation:20-somite'); -- (24h)
+update keywords_tmp set keywrd_keyword = 'primordia' 
+    where keywrd_keyword = 'primordium'
+    and keywrd_sstart in ('Segmentation:20-somite'); -- (24h)
+update keywords_tmp set keywrd_keyword = 'rhombomeres r2-r6' 
+    where keywrd_keyword = 'rhombomeres r2-r8'
+    and keywrd_sstart in ('Segmentation:14-somite'); -- (MS)
+update keywords_tmp set keywrd_keyword = 'presumptive spinal cord' 
+    where keywrd_keyword = 'spinal cord'
+    and keywrd_sstart in ('Segmentation:1-somite','Segmentation:14-somite'); -- (ES, MS)
+update keywords_tmp set keywrd_keyword = 'trigeminal ganglions' 
+    where keywrd_keyword = 'trigeminal ganglion';
 
 -------------------------------------------------------------
 ! echo "change start/stop stage names to zdbids"
-update keywords_tmp set sstart = 
-    (select stg_zdb_id from stage where stg_name = sstart);
-update keywords_tmp set sstop = 
-    (select stg_zdb_id from stage where stg_name = sstop);
+update keywords_tmp set keywrd_sstart = 
+    (select stg_zdb_id from stage where stg_name = keywrd_sstart);
+update keywords_tmp set keywrd_sstop = 
+    (select stg_zdb_id from stage where stg_name = keywrd_sstop);
 
 ! echo "change anatomy item names to zdbids"
-update keywords_tmp set keyword = 
-    (select anatitem_zdb_id from anatomy_item where anatitem_name = keyword);
+update keywords_tmp set keywrd_keyword = 
+    (select anatitem_zdb_id from anatomy_item where anatitem_name = keywrd_keyword);
 
 
 
 !echo "-- IMAGES_TXT --"
 ----------------
 create temp table images_tmp (
-imagename varchar (80) not null unique,
-clone varchar (80) not null,
-sstart varchar (50),
-sstop varchar (50),
-o_view varchar(20),
-orientation varchar(60),
-preparation varchar(15),
-comments lvarchar,
-medline_ID varchar (50),
-text_citation varchar (50) ,
-modified DATETIME YEAR TO DAY
+  img_clone varchar (80) not null,
+  imagename varchar (80) not null unique,
+  sstart varchar (50),
+  sstop varchar (50),
+  o_view varchar(20),
+  orientation varchar(60),
+  preparation varchar(15),
+  comments lvarchar,
+  medline_ID varchar (50),
+  text_citation varchar (50) ,
+  modified DATETIME YEAR TO DAY
 )with no log;
 
 load from 'images.unl' insert into images_tmp;
 --if unique constraint fails, 
---remove unique from imagename column and
---uncomment next line.
+--remove unique from imagename column and uncomment the next line.
 --select imagename from images_tmp group by 1 having count(*) > 1;
 
 !echo "images not associated with clone in this load"  
-update images_tmp set clone = lower(clone);
-select imagename,clone from  images_tmp where clone not in (select p.clone from probes_tmp p);
-delete from  images_tmp where clone not in (select p.clone from probes_tmp p);
+update images_tmp set img_clone = 
+    (select p.clone from probes_tmp p where img_clone = p.probe_id);
+
+select imagename,img_clone from  images_tmp where img_clone not in (select p.clone from probes_tmp p);
+delete from  images_tmp where img_clone not in (select p.clone from probes_tmp p);
 
 update images_tmp set sstart = 
     (select stg_zdb_id from stage where stg_name = sstart);
@@ -300,11 +310,11 @@ update images_tmp set sstop =
 
 update images_tmp set comments = "none given" where comments is NULL;  
 
---select imagename from  probes_tmp p,images_tmp i where p.clone = i.clone;
+--select imagename from  probes_tmp p,images_tmp  where p.clone = img_clone;
 
 ! echo "image's expression stage not found in expression_pattern_stage"
 insert into expression_tmp
-    select distinct i.clone, 
+    select distinct i.img_clone, 
            i.sstart, 
            i.sstop,
            "none given",
@@ -313,9 +323,9 @@ insert into expression_tmp
     where not exists 
       (  
          select *
-         from expression_tmp e
-         where i.clone = e.clone
-           and i.sstart = e.sstart
+         from expression_tmp
+         where i.img_clone = exp_clone
+           and i.sstart = exp_sstart
       );
 
 
@@ -381,11 +391,15 @@ where not exists
        and recattrib_data_zdb_id = mrkr_zdb_id
   );
 
+-- give each est a supplier
+INSERT INTO int_data_supplier(idsup_data_zdb_id,idsup_supplier_zdb_id) 
+SELECT mrkr_zdb_id, 'ZDB-LAB-991005-53'
+FROM tmp_mrkr;
 
-select mrkr_name new_ests  from  tmp_mrkr;
+
+--select mrkr_name new_ests  from  tmp_mrkr;
 
 
--- 
 
 -- these markers already exist in zfin so it is posible they are being updated
 create Temp table tmp_mrkr_update(
@@ -440,7 +454,7 @@ create temp table tmp_db_link
     linked_recid	varchar(50),
     db_name		varchar(50),
     acc_num		varchar(50),
-    into 		varchar(80),
+    info 		varchar(80),
     dblink_zdb_id	varchar(50)
   )with no log;
 
@@ -476,7 +490,8 @@ and gb3p is not NULL
 update tmp_db_link set dblink_zdb_id = get_id('DBLINK');
 
 insert into zdb_active_data select dblink_zdb_id from tmp_db_link;
-insert into db_link select * from tmp_db_link;
+insert into db_link(linked_recid,db_name, acc_num,info,dblink_zdb_id)
+       select * from tmp_db_link;
 
 
 delete from tmp_db_link;
@@ -517,7 +532,8 @@ and gb3p is not NULL
 update tmp_db_link set dblink_zdb_id = get_id('DBLINK');
 
 insert into zdb_active_data select dblink_zdb_id from tmp_db_link;
-insert into db_link select * from tmp_db_link;
+insert into db_link(linked_recid,db_name, acc_num,info,dblink_zdb_id)
+       select * from tmp_db_link;
 
 delete from tmp_db_link;
 drop table  linked_markers;
@@ -578,7 +594,7 @@ create temp table tmp_exp_pat (
 insert into tmp_exp_pat 
     select distinct 'x', 'ZDB-FISH-010924-10', 'RNA in situ', TODAY, mrkr_zdb_id
     from tmp_mrkr
-    where mrkr_name in (select distinct clone from expression_tmp)
+    where mrkr_name in (select distinct exp_clone from expression_tmp)
 ;
 
 --debugging
@@ -600,7 +616,6 @@ insert into int_data_source select xpat_zdb_id,'ZDB-LAB-980204-15' from tmp_exp_
 -- record_attribution --
 insert into record_attribution select xpat_zdb_id, 'ZDB-PUB-010810-1' from tmp_exp_pat;
 
---drop table tmp_exp_pat;
 
 
 ! echo "-- GENBANK --" 
@@ -629,15 +644,18 @@ drop table gb3p_tmp;
 
 select * from tmp_mrkr tm where tm.mrkr_zdb_id not in ( select m.mrkr_zdb_id from marker m); 
 
+--select blast_result from probes_tmp;
+
 insert into blast 
-    select distinct mrkr_zdb_id, gb5p, TODAY, 'none given', blast_result
+    select distinct mrkr_zdb_id, gb5p, TODAY, 'none given', locopy(blast_result,'blast','blast_results')
     from tmp_mrkr, probes_tmp p 
     where p.clone = mrkr_abbrev
     and  gb5p   is not null
     and p.blast_result is not null
 ;
+
 insert into blast 
-    select distinct mrkr_zdb_id, gb3p, TODAY, 'none given',blast_result
+    select distinct mrkr_zdb_id, gb3p, TODAY, 'none given', locopy(blast_result,'blast','blast_results')
     from tmp_mrkr, probes_tmp p 
     where p.clone = mrkr_abbrev
     and gb3p is not null
@@ -671,15 +689,15 @@ create temp table tmp_exp_pat_stg(
 insert into tmp_exp_pat_stg 
     select distinct
             xpat_zdb_id, 
-            ex.sstart, 
-            ex.sstop, 
-            ex.description
+            exp_sstart, 
+            exp_sstop, 
+            exp_description
 
-    from tmp_mrkr,tmp_exp_pat,expression_tmp ex
-    where mrkr_name = ex.clone
+    from tmp_mrkr,tmp_exp_pat,expression_tmp
+    where mrkr_name = exp_clone
     and   mrkr_zdb_id = xpat_probe_zdb_id
     and   mrkr_name is not null
-    and   ex.clone is not null
+    and   exp_clone is not null
     and   xpat_zdb_id is not null
 ;
 
@@ -720,10 +738,10 @@ select distinct xpatstg_xpat_zdb_id xpatstg_xpat_zdb
             tmp_mrkr,
             keywords_tmp
 
-    where mrkr_name = clone
+    where mrkr_name = keywrd_clone
     and xpat_probe_zdb_id = mrkr_zdb_id
     and xpatstg_xpat_zdb_id = xpat_zdb_id
-    and clone is not null
+    and keywrd_clone is not null
     and mrkr_name is not null
     and mrkr_zdb_id is not null
     and xpat_probe_zdb_id is not null
@@ -732,21 +750,21 @@ select distinct xpatstg_xpat_zdb_id xpatstg_xpat_zdb
 ;
 
 
-delete from keywords_tmp where clone not in (select mrkr_abbrev from tmp_mrkr);
+delete from keywords_tmp where keywrd_clone not in (select mrkr_abbrev from tmp_mrkr);
 select count(*) from keywords_tmp;
 
-select distinct clone, s1.stg_name, s2.stg_name 
+select distinct keywrd_clone, s1.stg_name, s2.stg_name 
 from keywords_tmp, stage s1, stage s2
-where clone not in (
+where keywrd_clone not in (
     select distinct mrkr_name 
     from    tmp_exp_pat_stg,
             tmp_exp_pat,
             tmp_mrkr
-    where mrkr_name = clone
+    where mrkr_name = keywrd_clone
     and xpat_probe_zdb_id = mrkr_zdb_id
     and xpatstg_xpat_zdb_id = xpat_zdb_id
 
-    and clone is not null
+    and keywrd_clone is not null
     and mrkr_name is not null
 
     and mrkr_zdb_id is not null
@@ -754,25 +772,25 @@ where clone not in (
 
     and xpat_zdb_id  is not null
     and xpatstg_xpat_zdb_id is not null)
-and sstart = s1.stg_zdb_id
-and sstop = s2.stg_zdb_id
---where clone in (select mrkr_name from tmp_mrkr where mrkr_name is not null)
---and clone is not null
+and keywrd_sstart = s1.stg_zdb_id
+and keywrd_sstop = s2.stg_zdb_id
+--where keywrd_clone in (select mrkr_name from tmp_mrkr where mrkr_name is not null)
+--and keywrd_clone is not null
 ;
 
 
-update keywords_tmp set clone = 
+update keywords_tmp set keywrd_clone = 
   (
      select distinct xpatstg_xpat_zdb_id 
      from    tmp_exp_pat_stg,
              tmp_exp_pat,
              tmp_mrkr
 --             keywords_tmp
-     where mrkr_name = clone
+     where mrkr_name = keywrd_clone
      and xpat_probe_zdb_id = mrkr_zdb_id
      and xpatstg_xpat_zdb_id = xpat_zdb_id
 
-     and clone is not null
+     and keywrd_clone is not null
      and mrkr_name is not null
  
      and mrkr_zdb_id is not null
@@ -781,8 +799,8 @@ update keywords_tmp set clone =
      and xpat_zdb_id  is not null
      and xpatstg_xpat_zdb_id is not null
   )
-where clone in (select mrkr_name from tmp_mrkr where mrkr_name is not null)
-and clone is not null
+where keywrd_clone in (select mrkr_name from tmp_mrkr where mrkr_name is not null)
+and keywrd_clone is not null
 ;
 
 
@@ -790,21 +808,21 @@ and clone is not null
 
 select count(*) all_anat_items from keywords_tmp; 
 
---select distinct clone,sstart,sstop from keywords_tmp;
+--select distinct keywrd_clone,keywrd_sstart,keywrd_sstop from keywords_tmp;
 ! echo "find keywords asigned to a expression stage that has not been defined"
 ! echo "Erik has added constraints to the template so this can not happen anymore" 
 
-select distinct clone nam,a.stg_name strt,b.stg_name stp 
+select distinct keywrd_clone nam,a.stg_name strt,b.stg_name stp 
 from keywords_tmp,stage a, stage b 
 where not exists (
     select 'foo' 
     from expression_pattern_stage -- tmp_exp_pat_stg
-    where xpatstg_xpat_zdb_id  = clone
-    and xpatstg_start_stg_zdb_id = sstart
-    and xpatstg_end_stg_zdb_id = sstop
+    where xpatstg_xpat_zdb_id  = keywrd_clone
+    and xpatstg_start_stg_zdb_id = keywrd_sstart
+    and xpatstg_end_stg_zdb_id = keywrd_sstop
     )
-and sstart = a.stg_zdb_id
-and sstop = b.stg_zdb_id 
+and keywrd_sstart = a.stg_zdb_id
+and keywrd_sstop = b.stg_zdb_id 
 into temp addto_expresion with no log;
 
 update addto_expresion set nam = 
@@ -819,52 +837,51 @@ drop table addto_expresion;
 
 select count(*) from keywords_tmp;
 
-select count(*) from keywords_tmp where keyword is null;
+select count(*) from keywords_tmp where keywrd_keyword is null;
 
 insert into expression_pattern_anatomy 
-    select distinct clone,sstart,sstop,keyword 
+    select distinct keywrd_clone,keywrd_sstart,keywrd_sstop,keywrd_keyword 
     from keywords_tmp, expression_pattern_stage
-    where keyword is not null 
-    and sstart = xpatstg_start_stg_zdb_id
-    and sstop = xpatstg_end_stg_zdb_id
-    and clone = xpatstg_xpat_zdb_id
+    where keywrd_keyword is not null 
+    and keywrd_sstart = xpatstg_start_stg_zdb_id
+    and keywrd_sstop = xpatstg_end_stg_zdb_id
+    and keywrd_clone = xpatstg_xpat_zdb_id
 --in (select xpatstg_xpat_zdb_id from expression_pattern_stage)
-    and anatitem_overlaps_stg_window(keyword,sstart,sstop)
+    and anatitem_overlaps_stg_window(keywrd_keyword,keywrd_sstart,keywrd_sstop)
 ;
 
 --! echo "good anat items"
 select count(*) good_anat_items 
 from keywords_tmp 
-where keyword is not null
-    and sstart is not null
-    and sstop is not null
-    and clone in (select xpatstg_xpat_zdb_id from expression_pattern_stage)
-    and anatitem_overlaps_stg_window(keyword,sstart,sstop);
+where keywrd_keyword is not null
+    and keywrd_sstart is not null
+    and keywrd_sstop is not null
+    and keywrd_clone in (select xpatstg_xpat_zdb_id from expression_pattern_stage)
+    and anatitem_overlaps_stg_window(keywrd_keyword,keywrd_sstart,keywrd_sstop);
 
 ! echo "BAD anat items"
-
-select distinct clone,sstart,sstop,keyword 
+select distinct keywrd_clone,keywrd_sstart,keywrd_sstop,keywrd_keyword 
 from keywords_tmp
 where  not exists (
     select * from expression_pattern_anatomy 
-        where clone =  xpatanat_xpat_zdb_id   
-        and keyword =  xpatanat_anat_item_zdb_id
-        and sstart =   xpatanat_xpat_start_stg_zdb_id
-        and sstop =    xpatanat_xpat_end_stg_zdb_id
+        where keywrd_clone =  xpatanat_xpat_zdb_id   
+        and keywrd_keyword =  xpatanat_anat_item_zdb_id
+        and keywrd_sstart =   xpatanat_xpat_start_stg_zdb_id
+        and keywrd_sstop =    xpatanat_xpat_end_stg_zdb_id
     )
 ;
 
 ! echo "BAD anat items again"
 
 unload to 'bad_exp_pat_anat.unl'
-select clone,sstart,sstop,keyword 
+select keywrd_clone,keywrd_sstart,keywrd_sstop,keywrd_keyword 
 from keywords_tmp
 where  not exists (
     select * from expression_pattern_anatomy 
-        where clone =  xpatanat_xpat_zdb_id   
-        and keyword =  xpatanat_anat_item_zdb_id
-        and sstart =   xpatanat_xpat_start_stg_zdb_id
-        and sstop =    xpatanat_xpat_end_stg_zdb_id
+        where keywrd_clone =  xpatanat_xpat_zdb_id   
+        and keywrd_keyword =  xpatanat_anat_item_zdb_id
+        and keywrd_sstart =   xpatanat_xpat_start_stg_zdb_id
+        and keywrd_sstop =    xpatanat_xpat_end_stg_zdb_id
     )
 ;
 
@@ -889,14 +906,14 @@ create temp table tmp_fish_image(
     fimg_owner_zdb_id varchar(50)not null,
     fimg_external_name varchar(50)not null
     
-) with no log in tempdbs2;
+)  PUT fimg_image_with_annotation in  (smartbs1)(log);
 
 insert into tmp_fish_image
     select get_ID('IMAGE'),
-    FILETOBLOB(im.imagename || '.jpg','client'),
+    FILETOBLOB(im.imagename || '.jpg','client','fish_image','fimg_image'),
     im.imagename ||'.txt',
     FILETOBLOB(im.imagename || '--C.jpg','client'),
-    FILETOBLOB(im.imagename || '--t.jpg','client'),
+    FILETOBLOB(im.imagename || '--t.jpg','client','fish_image','fimg_thumbnail'),
     0,
     0,
     'ZDB-FISH-010924-10',
@@ -908,8 +925,9 @@ insert into tmp_fish_image
     'ZDB-PERS-960805-556',
     im.imagename
     from images_tmp im, tmp_mrkr
-    where mrkr_name = im.clone
+    where mrkr_name = im.img_clone
 ;
+
 
 ! echo "add height and width to images"  
 create temp table imagedim (name varchar(50), width integer, height integer) with no log;
@@ -946,7 +964,43 @@ where fimg_preparation = "whole mount";
 
 select distinct fimg_preparation from tmp_fish_image where fimg_preparation not in (select fimgprep_name from fish_image_preparation);
 
-insert into fish_image select * from tmp_fish_image;
+select fimg_view, fimg_external_name from tmp_fish_image where fimg_view not in (select distinct fimg_view from fish_image);
+
+INSERT INTO fish_image(
+    fimg_zdb_id,
+    fimg_image,
+    fimg_annotation,
+    fimg_image_with_annotation,
+    fimg_thumbnail,
+    fimg_width,
+    fimg_height,
+    fimg_fish_zdb_id,
+    fimg_comments,
+    fimg_view,
+    fimg_direction,
+    fimg_form,
+    fimg_preparation,
+    fimg_owner_zdb_id,
+    fimg_external_name)
+ SELECT
+    fimg_zdb_id,
+    fimg_image,
+    fimg_annotation,
+    fimg_image_with_annotation,
+    fimg_thumbnail,
+    fimg_width,
+    fimg_height,
+    fimg_fish_zdb_id,
+    fimg_comments,
+    fimg_view,
+    fimg_direction,
+    fimg_form,
+    fimg_preparation,
+    fimg_owner_zdb_id,
+    fimg_external_name
+ FROM tmp_fish_image;
+
+
 
 -- record_attribution --
 insert into record_attribution select fimg_zdb_id, 'ZDB-PUB-010810-1' from tmp_fish_image;
@@ -968,7 +1022,7 @@ INSERT INTO fish_image_stage
         tmp_exp_pat,
         tmp_mrkr,
         images_tmp im
-    WHERE mrkr_name = im.clone
+    WHERE mrkr_name = im.img_clone
     and xpat_probe_zdb_id = mrkr_zdb_id
     and xpatstg_xpat_zdb_id = xpat_zdb_id
     and fimg_external_name = im.imagename
@@ -994,7 +1048,7 @@ INSERT INTO expression_pattern_image
            tmp_exp_pat_stg,
 	   images_tmp im
 	
-    WHERE  mrkr_name = im.clone
+    WHERE  mrkr_name = im.img_clone
        and xpat_probe_zdb_id = mrkr_zdb_id
        and xpatstg_xpat_zdb_id = xpat_zdb_id
        and im.sstart = xpatstg_start_stg_zdb_id
@@ -1026,7 +1080,7 @@ insert into bad_exp_pat_img
         tmp_exp_pat_stg,
 	images_tmp im
 	
-    WHERE mrkr_name = im.clone
+    WHERE mrkr_name = im.img_clone
 	and xpat_probe_zdb_id = mrkr_zdb_id
         and xpatstg_xpat_zdb_id = xpat_zdb_id
 	and im.sstart = xpatstg_start_stg_zdb_id
@@ -1050,6 +1104,8 @@ create temp table xpat_auth
 with no log;
 
 load from authors.unl insert into xpat_auth;
+update xpat_auth set xpatauth_est = 
+    (select p.clone from probes_tmp p where xpatauth_est = p.probe_id);
 
 ----------------- delete duplicates ----------------
 !echo 'duplicate authors'
@@ -1111,7 +1167,7 @@ insert
   into mrel_tmp
 select 
   get_id('MREL'),
-  'gene contains small segment', 
+  'gene encodes small segment', 
   m1.mrkr_zdb_id, 
   m2.mrkr_zdb_id, 
   'Thisse load ' || TODAY
@@ -1197,7 +1253,7 @@ insert
   into mrel_tmp
 select 
   get_id('MREL'),
-  'gene contains small segment', 
+  'gene encodes small segment', 
   gene.mrkr_zdb_id, 
   est.mrkr_zdb_id, 
   'Thisse load ' || TODAY
