@@ -496,7 +496,7 @@ Datablade documentation.
 <?/MISQL>
 
 <br>
-<?/MIBLOCK>
+<?/MIBLOCK> <?MICOMMENT> end display_sequence_similarity <?/MICOMMENT>
 
 
 <!---------------------------------------------------> 
@@ -591,8 +591,15 @@ Datablade documentation.
 	$(SETVAR,$ontologies[$MI_CURRENTROW],$1)
 <?/MISQL>
 <?MIBLOCK INDEX=$ontology FOREACH=$ontologies>
-
-    <?MISQL MAXROWS=1 SQL="select mrkrgoev_zdb_id from go_term,go_evidence_code,marker_go_term_evidence where mrkrgoev_mrkr_zdb_id='$OID' and mrkrgoev_go_term_zdb_id=goterm_zdb_id and mrkrgoev_evidence_code=goev_code and goterm_ontology='$ontology' order by goev_display_order"><?/MISQL>
+    <?MISQL SQL="
+      select first 1 mrkrgoev_zdb_id 
+        from go_term,go_evidence_code, marker_go_term_evidence
+        where mrkrgoev_mrkr_zdb_id = '$OID' 
+          and mrkrgoev_go_term_zdb_id = goterm_zdb_id
+          and mrkrgoev_evidence_code = goev_code
+          and goterm_ontology = '$ontology'
+        order by goev_display_order">
+    <?/MISQL>
    <?MIVAR NAME=$evid>$1<?/MIVAR>
    <?MISQL SQL="select count(*) from go_evidence_flag where goevflag_mrkrgoev_zdb_id='$evid'">
    <?MIBLOCK COND="$(>,$1,0)">
@@ -650,7 +657,15 @@ Datablade documentation.
     <?MIVAR NAME=isnot>f<?/MIVAR>
     <?MIVAR NAME=contribs>f<?/MIVAR>
 
-    <?MISQL MAXROWS=1 SQL="select goterm_go_id,goev_display_order,goterm_name,mrkrgoev_zdb_id from go_term,go_evidence_code,marker_go_term_evidence where mrkrgoev_mrkr_zdb_id='$OID' and mrkrgoev_go_term_zdb_id=goterm_zdb_id and mrkrgoev_evidence_code=goev_code and goterm_ontology='$ontology' order by goev_display_order, goterm_name"><?/MISQL>
+    <?MISQL SQL="
+      select first 1 goterm_go_id, goev_display_order, goterm_name, mrkrgoev_zdb_id
+        from go_term, go_evidence_code, marker_go_term_evidence
+        where mrkrgoev_mrkr_zdb_id = '$OID'
+          and mrkrgoev_go_term_zdb_id = goterm_zdb_id
+          and mrkrgoev_evidence_code = goev_code
+          and goterm_ontology = '$ontology'
+        order by goev_display_order, goterm_name">
+    <?/MISQL>
 
     <?MIVAR NAME=$molgoid>$1<?/MIVAR>
     <?MIVAR NAME=$moldisp>$2<?/MIVAR>
@@ -708,15 +723,15 @@ Datablade documentation.
      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoview.apg&OID=$OID"></a></TD><?/MIVAR>
    <?/MIBLOCK>
    </TR>
-<?/MIBLOCK>
-<?-- end three functions -->
+<?/MIBLOCK>  <?MICOMMENT> end for each ontoloty <?/MICOMMENT>
+
 </TABLE>
   <?MIBLOCK COND="$(>,$rowcount,0)">
     <?MIVAR><TABLE width =100% border=0 bgcolor=$highlight><?/MIVAR>
 	<?MIVAR><TR><TD><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoview.apg&OID=$OID">All GO Terms (<?MIVAR>$rowcount)</A><?/MIVAR><?/MIVAR></TD>
 </TR></TABLE>
   <?/MIBLOCK>
-<?/MIBLOCK>
+<?/MIBLOCK> <?MICOMMENT> end rowcount > 0 (found some go terms) <?/MICOMMENT>
   <!--------------- end of Gene Ontology --------------->
 
 
@@ -770,7 +785,7 @@ Datablade documentation.
 	<TABLE width = "100%" border = 0 bgcolor = "$highlight">
  	 <?/MIVAR>
         <TR> 
-    <?/MIBLOCK>
+    <?/MIBLOCK>  <?MICOMMENT> end of first row <?/MICOMMENT>
     $(IF,$(AND,$(NC,$lastitem,$1),$(>,$MI_CURRENTROW,1)),</TD>)
     $(IF,$(NC,$lastitem,$1),<TD align=left>)
     <li>
@@ -780,7 +795,9 @@ Datablade documentation.
 
     $(SETVAR,$lastitem,$1)
  <?/MISQL>
- <?MIVAR>$(IF,$(>,$MI_ROWCOUNT,0),</TD></TR></TABLE>)<?/MIVAR>
+ <?MIBLOCK COND=$MI_ROWCOUNT>
+   </TD></TR></TABLE>
+ <?/MIBLOCK>
 
   <!--------------end of Protein Sequences --------->
 
@@ -801,9 +818,10 @@ Datablade documentation.
   <?/MIBLOCK>
   <!-----------end of Gene Product Description ------->
 
-<?/MIBLOCK>
+<?/MIBLOCK> <?MICOMMENT> marker is a gene ($type_of_genedom exists) <?/MICOMMENT>
 <p>
 <!------------------ end of GENE PRODUCT ---------------------->
+
 
 <!--------------- GENE EXPRESSION  ---------------------------->
 <?MICOMMENT> ceate a list of chimeric clones <?/MICOMMENT>
@@ -931,7 +949,7 @@ Datablade documentation.
 
 
 <!------------------ MARKER RELATIONSHIP ---------------------->
-<?MIBLOCK COND="$(EC,'foo','foo')">
+
 
 <?MIVAR NAME=$mrel_mtype><?/MIVAR>
 <?MIVAR NAME=$mrel_count><?/MIVAR>
@@ -949,7 +967,9 @@ Datablade documentation.
 </b>
 <?/MIBLOCK>
 <?/MISQL>
-</form>
+<?MIBLOCK COND="$(XST,$UPDATE)">
+  </form>  <?MICOMMENT> End updater form <?/MICOMMENT>
+<?/MIBLOCK>
 
 <?MIBLOCK COND="$(XST,$UPDATE)">
  <br><form name=updaterrel>
@@ -983,7 +1003,7 @@ Datablade documentation.
      <input type=button value="Add" onClick=new_attrib_mrel();> 
    <?/MIVAR>
   
-<?/MIBLOCK>
+<?/MIBLOCK>  <?MICOMMENT> end if update <?/MICOMMENT>
 
 
 <TABLE border=0 width=100%>
@@ -1052,7 +1072,7 @@ Datablade documentation.
         <?/MISQL>
 	</TD>
      </TR>
-    <?/MIBLOCK>
+    <?/MIBLOCK>  <?MICOMMENT> end there are marker relationships with mrel_mrkr_2_zdb_id = '$OID' <?/MICOMMENT>
 
    <?/MISQL>
   <?/MISQL>
@@ -1071,7 +1091,7 @@ Datablade documentation.
      <TR>
       <TD bgcolor=#EEEEEE>
 
-       <?MIVAR>$(IF,$(>,$(POSITION,$OID,GENE),0),<i>$abbrev</i>,$name) $mrel1to2comments<?/MIVAR> 
+       <?MIVAR>$(IF,$(POSITION,$OID,GENE),<i>$abbrev</i>,$name) $mrel1to2comments<?/MIVAR> 
        <?MIVAR NAME=$mrel_mtype><?/MIVAR>
 
       </TD>
@@ -1132,29 +1152,33 @@ Datablade documentation.
        <?/MISQL> 
        </TD>
      </TR>
-    <?/MIBLOCK>
+    <?/MIBLOCK> <?MICOMMENT> end there are marker relationships with mrel_mrkr_1_zdb_id = '$OID' <?/MICOMMENT>
     <?/MISQL>
     <?/MISQL>
 
  <?/MISQL>
 </TABLE>
-</form>
+<?MIBLOCK COND="$(XST,$UPDATE)">
+  </form> <?MICOMMENT> end form updaterrel <?/MICOMMENT>
 <?/MIBLOCK>
 
 <!------------------ end of MARKER RELATIONSHIP --------------->
 
 
 
-<!------------- SEQUENCE INFOMATION ------------------------------->
+<?MICOMMENT>
+  ------------- SEQUENCE INFOMATION -------------------------------
+<?/MICOMMENT>
 
+<?MICOMMENT> Get count of # of sequence links.  Union gets rid of dups <?/MICOMMENT>
 <?MISQL SQL="
-  select dblink_zdb_id
+  select dblink_acc_num, fdbcont_fdb_db_name
   from db_link, foreign_db_contains
   where dblink_linked_recid = '$OID'
     and dblink_fdbcont_zdb_id = fdbcont_zdb_id
     and fdbcont_fdbdt_super_type = 'sequence'
   UNION 
-  select dblink_zdb_id
+  select dblink_acc_num, fdbcont_fdb_db_name
   from db_link, foreign_db_contains, marker_relationship
   where mrel_mrkr_1_zdb_id = '$OID'
     and dblink_linked_recid = mrel_mrkr_2_zdb_id
@@ -1165,7 +1189,7 @@ Datablade documentation.
 		      'gene encodes small segment')
     and mrel_mrkr_2_zdb_id not in ('$chimeric_clone_list')
   UNION 
-  select dblink_zdb_id
+  select dblink_acc_num, fdbcont_fdb_db_name
   from db_link, foreign_db_contains, marker_relationship
   where mrel_mrkr_2_zdb_id = '$OID'
     and dblink_linked_recid = mrel_mrkr_1_zdb_id
@@ -1174,23 +1198,22 @@ Datablade documentation.
     and mrel_type in ('clone contains gene') 
     and mrel_mrkr_1_zdb_id not in ('$chimeric_clone_list')  
   ;"> 
-    
-  <?MIVAR NAME=vSequence_link>1<?/MIVAR>
 <?/MISQL>
+<?MIVAR NAME=$mrkrview_nSequenceLinks>$MI_ROWCOUNT<?/MIVAR>
 
-<?MIBLOCK COND="$(OR,$(XST,$vSequence_link),$(XST,$UPDATE))">
 
-<form name=updateseq>
-<HR width="80%">
-<a name=sequence><b>SEQUENCE INFORMATION:</b></a>
+<?MIBLOCK COND="$(OR,$mrkrview_nSequenceLinks,$(XST,$UPDATE))">
+    <HR width="80%">
+    <a name=sequence><b>SEQUENCE INFORMATION:</b></a>
 <?/MIBLOCK>
 
 <?MIBLOCK COND="$(XST,$UPDATE)">
+  <form name=updateseq>
   <?MIVAR NAME=seq_tab>&nbsp;&nbsp;&nbsp;<?/MIVAR>
-<br><br>
-<?MIVAR>$seq_tab<?/MIVAR>
-<b>Link to Seq DB:</b> &nbsp;
-DBname:<SELECT name=seqdb>
+  <br><br>
+  <?MIVAR>$seq_tab<?/MIVAR>
+  <b>Link to Seq DB:</b> &nbsp;
+  DBname:<SELECT name=seqdb>
   <?MISQL SQL="
     select distinct fdbcont_fdb_db_name 
       from foreign_db_contains
@@ -1198,9 +1221,9 @@ DBname:<SELECT name=seqdb>
      order by fdbcont_fdb_db_name;">
     <option value="$1" $(IF,$(EC,$1,Genbank),SELECTED)>$1</option>
   <?/MISQL>
-</SELECT>
-Accession:<input type=text size=15 name=seq_acc> 
-Type:<SELECT name=seq_super>
+  </SELECT>
+  Accession:<input type=text size=15 name=seq_acc> 
+  Type:<SELECT name=seq_super>
   <?MISQL SQL="
     select distinct fdbdt_data_type, fdbdt_super_type 
       from foreign_db_data_type
@@ -1208,13 +1231,13 @@ Type:<SELECT name=seq_super>
      order by fdbdt_data_type;">
     <option value="$2&fdbcont_data=$1" $(IF,$(EC,$1,cDNA),SELECTED)>$1</option>
   <?/MISQL>
-</SELECT>
-<input type=button value="Add it!" onClick=new_seqnum();>
+  </SELECT>
+  <input type=button value="Add it!" onClick=new_seqnum();>
 
-<br>
-<?MIVAR>$seq_tab<?/MIVAR>
-<b>Update Sequence:</b> &nbsp;
-AccNum:<SELECT name=upd_seq_zdb>
+  <br>
+  <?MIVAR>$seq_tab<?/MIVAR>
+  <b>Update Sequence:</b> &nbsp;
+  AccNum:<SELECT name=upd_seq_zdb>
   <?MISQL SQL="
     select distinct fdbcont_fdb_db_name, dblink_acc_num_display, dblink_zdb_id
       from foreign_db_contains, db_link
@@ -1224,8 +1247,8 @@ AccNum:<SELECT name=upd_seq_zdb>
      order by fdbcont_fdb_db_name, dblink_acc_num_display;">
     <option value="$3">$1:$2</option>
   <?/MISQL>
-</SELECT>
-Type:<SELECT name=upd_seq_type>
+  </SELECT>
+  Type:<SELECT name=upd_seq_type>
   <?MISQL SQL="
     select distinct fdbdt_data_type
       from foreign_db_data_type
@@ -1233,334 +1256,186 @@ Type:<SELECT name=upd_seq_type>
      order by fdbdt_data_type;">
     <option value="$1"  $(IF,$(EC,$1,cDNA),SELECTED)>$1</option>
   <?/MISQL>
-</SELECT>
-Length: <input type=text size=10 name=upd_seq_length>
-<input type=button value="Update" onClick=update_seqnum();>
+  </SELECT>
+  Length: <input type=text size=10 name=upd_seq_length>
+  <input type=button value="Update" onClick=update_seqnum();>
 
-<br>
-<?MIVAR>$seq_tab<?/MIVAR>
-<b>Add reference:</b> &nbsp;
-Accession: <input type=text size=15 name=attrib_seq_acc>
-Reference: <input type=text size=15 name=attrib_seq_pubid> 
-<input type=button value="Add it!" onClick=new_attrib_seq();>
-<?MICOMMENT>Added CDNA for this condition (FogBugz 410) <?/MICOMMENT>
+  <br>
+  <?MIVAR>$seq_tab<?/MIVAR>
+  <b>Add reference:</b> &nbsp;
+  Accession: <input type=text size=15 name=attrib_seq_acc>
+  Reference: <input type=text size=15 name=attrib_seq_pubid> 
+  <input type=button value="Add it!" onClick=new_attrib_seq();>
+  <?MICOMMENT>Added CDNA for this condition (FogBugz 410) <?/MICOMMENT>
 
-<?MIBLOCK COND="$(OR,$(EQ,$marker_type,EST),$(EQ,$marker_type,CDNA))">
+  <?MIBLOCK COND="$(OR,$(EQ,$marker_type,EST),$(EQ,$marker_type,CDNA))">
 
-  <?MISQL SQL="
-    SELECT clone_is_chimeric
-    FROM clone
-    WHERE clone_mrkr_zdb_id = '$OID';">
+    <?MISQL SQL="
+      SELECT clone_is_chimeric
+      FROM clone
+      WHERE clone_mrkr_zdb_id = '$OID';">
 
-    <br>    
-    <?MIVAR>$seq_tab<?/MIVAR> 
-    <b>Chimeric:</b> 
+      <br>    
+      <?MIVAR>$seq_tab<?/MIVAR> 
+      <b>Chimeric:</b> 
         Yes:<input type=radio name=chimericism value=t $(IF,$(EC,$1,t),checked)>
         No:<input type=radio name=chimericism value=f $(IF,$(EC,$1,f),checked)> 
         <input type=button value="Update" onclick=setChimericism('$1')> 
-    (Chimeric links are not displayed on gene pages.)
+      (Chimeric links are not displayed on gene pages.)
 
-  <?/MISQL>
-<?/MIBLOCK>
-<br><br>
-<?/MIBLOCK>
-
-<?MIBLOCK COND="$(XST,$vSequence_link)">
-
-<?MIVAR NAME=$lastitem><?/MIVAR>
-
-    <?MISQL SQL="
-        select dblink_zdb_id
-        from db_link, foreign_db_contains
-        where dblink_linked_recid = '$OID'
-          and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-          and fdbcont_fdbdt_super_type = 'sequence'
-      UNION 
-        select dblink_zdb_id
-        from db_link, foreign_db_contains, marker_relationship
-        where mrel_mrkr_1_zdb_id = '$OID'
-          and dblink_linked_recid = mrel_mrkr_2_zdb_id
-          and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-          and fdbcont_fdbdt_super_type = 'sequence'
-          and mrel_type in ('gene contains small segment', 
-		              'clone contains small segment',
-			      'gene encodes small segment')
-          and mrel_mrkr_2_zdb_id not in ('$chimeric_clone_list')
-      UNION 
-        select dblink_zdb_id
-        from db_link, foreign_db_contains, marker_relationship
-        where mrel_mrkr_2_zdb_id = '$OID'
-          and dblink_linked_recid = mrel_mrkr_1_zdb_id
-          and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-          and fdbcont_fdbdt_super_type = 'sequence'
-          and mrel_type in ('clone contains gene') 
-          and mrel_mrkr_1_zdb_id not in ('$chimeric_clone_list')  
-      ;"> 
-        <?MIVAR NAME=seq_for_oid>$1<?/MIVAR>
     <?/MISQL>
-    
-<?MIBLOCK COND="$(XST,$seq_for_oid)">    
-<?MISQL SQL="select dblink_length, fdb_db_name, fdb_db_query || dblink_acc_num || 
-	     (case fdb_url_suffix when NULL then '' else fdb_url_suffix end), 
-             dblink_acc_num_display, dblink_zdb_id
-        from db_link, foreign_DB, foreign_db_contains
-        where dblink_linked_recid = '$OID'
-          and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-          and fdbcont_fdb_db_name = fdb_db_name
-          and fdbcont_fdbdt_super_type = 'sequence'
-          and fdbcont_fdb_db_name = 'RefSeq';">
+  <?/MIBLOCK>
+  <br><br>
+<?/MIBLOCK>  <?MICOMMENT> end update <?/MICOMMENT>
 
-        <?MIVAR NAME=refseq_dblink_length>$1<?/MIVAR>
-        <?MIVAR NAME=refseq_db_name>$2<?/MIVAR>
-        <?MIVAR NAME=refseq_link_url>$3<?/MIVAR>
-        <?MIVAR NAME=refseq_acc_num>$4<?/MIVAR>
-        <?MIVAR NAME=refseq_dataId>$5<?/MIVAR>
-        <?MIVAR NAME=refseq_attachto>s<?/MIVAR>
-        <?MIVAR NAME=refseq_related_zdb_id>placeholder<?/MIVAR>
-        <?MIVAR NAME=refseq_related_mrkr_abbrev>placeholder<?/MIVAR>
-        
-        <?MIVAR NAME=refseq_cdna>exists<?/MIVAR>
-        
-<?/MISQL>
-               
-<?MIVAR>
-<TABLE  width="100%" border=0 bgcolor="$highlight">
-  <TR>
-    <TD width=30% bgcolor=#ccccccc><b>Type</b></TD>
-    <TD width=40% bgcolor=#ccccccc><b>Accession #</b></TD>
-    <TD align=right width=10% bgcolor=#ccccccc><b>Length</b></TD>
-    <TD align=center width=20% bgcolor=#ccccccc><A HREF="javascript:start_help()"><b>Analysis</b></A><img src="/images/new1.gif"></TD>
-<?/MIVAR>
-<TR>
-<?MIVAR NAME=gblinks><?/MIVAR>
-<?MIVAR NAME=gbaccs><?/MIVAR>
-<?MIVAR NAME=gblinkId><?/MIVAR>
-<?MIVAR NAME=$count>0<?/MIVAR>
-<?MIVAR NAME=$empty>1<?/MIVAR>
-<?MIVAR NAME=$more>0<?/MIVAR>
-<?MIVAR NAME=$accnum><?/MIVAR>
-<?MIVAR NAME=$dbname><?/MIVAR>
-<?MISQL SQL="
-  select fdbdt_data_type, fdbdt_display_order
-  from foreign_db_data_type
-  where fdbdt_super_type = 'sequence'
-  order by 2
-  ;">
-  
-    <?MIVAR NAME=data_type>$1<?/MIVAR>
-    
-      <?MISQL SQL="
+
+<?MIBLOCK COND="$mrkrview_nSequenceLinks">    
+  <TABLE  width="100%" border="0" bgcolor=<?MIVAR>"$highlight"<?/MIVAR>>
+    <TR>
+      <TD width=30% bgcolor=#ccccccc><b>Type</b></TD>
+      <TD width=40% bgcolor=#ccccccc><b>Accession #</b></TD>
+      <TD align=right width=10% bgcolor=#ccccccc><b>Length</b></TD>
+      <TD align=center width=20% bgcolor=#ccccccc><A HREF="javascript:start_help()"><b>Analysis</b></A><img src="/images/new1.gif"></TD>
+    </TR>
+    <?MIVAR NAME=$mrkrview_prevDataType><?/MIVAR>
+    <?MIVAR NAME=$mrkrview_displayAllSequencesLink>0<?/MIVAR>
+    <?MISQL SQL="
         select dblink_length, fdb_db_name, fdb_db_query || dblink_acc_num || 
-	     (case fdb_url_suffix when NULL then '' else fdb_url_suffix end), 
-               dblink_acc_num_display, dblink_zdb_id, 's', 'placeholder', 'placeholder', fdb_db_significance
-        from db_link, foreign_DB, foreign_db_contains
+               (case fdb_url_suffix when NULL then '' else fdb_url_suffix end), 
+               dblink_acc_num_display, dblink_zdb_id, 's', 'placeholder', 
+               'placeholder', fdb_db_significance, fdbdt_data_type, 
+               fdbdt_display_order
+        from db_link, foreign_DB, foreign_db_contains, foreign_db_data_type
         where dblink_linked_recid = '$OID'
           and dblink_fdbcont_zdb_id = fdbcont_zdb_id
           and fdbcont_fdb_db_name = fdb_db_name
-          and fdbcont_fdbdt_super_type = 'sequence'
-          and fdbcont_fdbdt_data_type = '$data_type'
+          and fdbdt_super_type = 'sequence'
+          and fdbcont_fdbdt_super_type = fdbdt_super_type
+          and fdbcont_fdbdt_data_type = fdbdt_data_type
       UNION 
         select dblink_length, fdb_db_name, fdb_db_query || dblink_acc_num || 
-	     (case fdb_url_suffix when NULL then '' else fdb_url_suffix end), 
-               dblink_acc_num_display, dblink_zdb_id, 'r', mrel_mrkr_2_zdb_id, mrkr_abbrev, fdb_db_significance
-        from db_link, foreign_DB, foreign_db_contains, marker_relationship, marker
+               (case fdb_url_suffix when NULL then '' else fdb_url_suffix end), 
+               dblink_acc_num_display, dblink_zdb_id, 'r', mrel_mrkr_2_zdb_id, 
+               mrkr_abbrev, fdb_db_significance, fdbdt_data_type, 
+               fdbdt_display_order
+        from db_link, foreign_DB, foreign_db_contains, foreign_db_data_type,
+             marker_relationship, marker
         where mrel_mrkr_1_zdb_id = '$OID'
           and dblink_linked_recid = mrel_mrkr_2_zdb_id
           and dblink_fdbcont_zdb_id = fdbcont_zdb_id
           and fdbcont_fdb_db_name = fdb_db_name
-          and fdbcont_fdbdt_super_type = 'sequence'
-          and fdbcont_fdbdt_data_type = '$data_type'
+          and fdbdt_super_type = 'sequence'
+          and fdbcont_fdbdt_super_type = fdbdt_super_type
+          and fdbcont_fdbdt_data_type = fdbdt_data_type
           and mrel_type in ('gene contains small segment', 
-		              'clone contains small segment',
-			      'gene encodes small segment')
+                            'clone contains small segment',
+                            'gene encodes small segment')
           and mrel_mrkr_2_zdb_id = mrkr_zdb_id
           and mrel_mrkr_2_zdb_id not in ('$chimeric_clone_list')
       UNION 
         select dblink_length, fdb_db_name, fdb_db_query || dblink_acc_num || 
-	     (case fdb_url_suffix when NULL then '' else fdb_url_suffix end), 
-               dblink_acc_num_display, dblink_zdb_id, 'r', mrel_mrkr_1_zdb_id, mrkr_abbrev, fdb_db_significance
-        from db_link, foreign_DB, foreign_db_contains, marker_relationship, marker
+               (case fdb_url_suffix when NULL then '' else fdb_url_suffix end), 
+               dblink_acc_num_display, dblink_zdb_id, 'r', mrel_mrkr_1_zdb_id,
+               mrkr_abbrev, fdb_db_significance, fdbdt_data_type, 
+               fdbdt_display_order
+        from db_link, foreign_DB, foreign_db_contains, foreign_db_data_type,
+             marker_relationship, marker
         where mrel_mrkr_2_zdb_id = '$OID'
           and dblink_linked_recid = mrel_mrkr_1_zdb_id
           and dblink_fdbcont_zdb_id = fdbcont_zdb_id
           and fdbcont_fdb_db_name = fdb_db_name
-          and fdbcont_fdbdt_super_type = 'sequence'
-          and fdbcont_fdbdt_data_type = '$data_type'
+          and fdbdt_super_type = 'sequence'
+          and fdbcont_fdbdt_super_type = fdbdt_super_type
+          and fdbcont_fdbdt_data_type = fdbdt_data_type
           and mrel_type = 'clone contains gene' 
           and mrel_mrkr_1_zdb_id = mrkr_zdb_id
           and mrel_mrkr_1_zdb_id not in ('$chimeric_clone_list')
           
-        order by 9 asc,1 desc,4
+        order by 11 asc, 9 asc, 1 desc, 4 asc
       ;">   
 
-       
-      <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
-       
-        <?MIVAR NAME=dblink_length>$1<?/MIVAR>
-        <?MIVAR NAME=db_name>$2<?/MIVAR>
-        <?MIVAR NAME=link_url>$3<?/MIVAR>
-        <?MIVAR NAME=acc_num>$4<?/MIVAR>
-        <?MIVAR NAME=dataId>$5<?/MIVAR>
-        <?MIVAR NAME=attachto>$6<?/MIVAR>
-        <?MIVAR NAME=related_zdb_id>$7<?/MIVAR>
-        <?MIVAR NAME=related_mrkr_abbrev>$8<?/MIVAR>
+      <?MIVAR NAME=dblink_length>$1<?/MIVAR>
+      <?MIVAR NAME=db_name>$2<?/MIVAR>
+      <?MIVAR NAME=link_url>$3<?/MIVAR>
+      <?MIVAR NAME=acc_num>$4<?/MIVAR>
+      <?MIVAR NAME=dataId>$5<?/MIVAR>
+      <?MIVAR NAME=attachto>$6<?/MIVAR>
+      <?MIVAR NAME=related_zdb_id>$7<?/MIVAR>
+      <?MIVAR NAME=related_mrkr_abbrev>$8<?/MIVAR>
+      <?MIVAR NAME=data_type>$10<?/MIVAR>
         
-        <?MICOMMENT>** 07/24/03 for some weird reasons, the column made up to distinguish the source of Genbank accession
-         has to be a one-character string to behave right in EC operation. <?/MICOMMENT>
+      <?MIBLOCK COND="$(NE,$data_type,$mrkrview_prevDataType)">
+        <?MICOMMENT>
+          Data type changed.  Display first row for this data type.
+          ** 07/24/03 for some weird reasons, the column made up to distinguish the source of Genbank 
+          accession has to be a one-character string to behave right in EC operation. 
+        <?/MICOMMENT>
         <?MIVAR>
-        <TR>         
-          <TD>
-            $data_type: 
-          </TD>
-          <TD>
-            $(IF,$(AND,$(XST,$UPDATE),$(NE,$attachto,r)),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$db_name:$acc_num)"')>") 
-            <A HREF="$link_url">$db_name:$acc_num</A>
-       <?/MIVAR>
+          <TR>         
+            <TD>
+              $data_type: 
+            </TD>
+            <TD>
+              $(IF,$(AND,$(XST,$UPDATE),$(NE,$attachto,r)),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$db_name:$acc_num)"')>") 
+              <A HREF="$link_url">$db_name:$acc_num</A>
 
-   <?MIBLOCK COND="$(AND,$(XST,$UPDATE),$(EC,$attachto,r))">
-        <?MISQL SQL="
-            select mrkr_abbrev, mrkr_zdb_id
-              from marker
-             where mrkr_zdb_id = '$related_zdb_id'; ">
-            
-           ( <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$related_zdb_id">$related_mrkr_abbrev</A> )
-        <?/MISQL>
-        <?MIVAR>$(UNSETVAR,$UPDATE)<?/MIVAR>
-    <?MISQL SQL="select WebExplode(object,'dataId=$dataId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
-    <?MIVAR>$(SETVAR,$UPDATE,1)<?/MIVAR>
-   <?MIELSE>
-     <?MISQL SQL="select WebExplode(object,'dataId=$dataId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
-   <?/MIBLOCK>
-          </TD>
-          <TD align=right>
-            <nobr>
-            <?MIVAR>$dblink_length<?/MIVAR>
-            <?MIBLOCK COND=$(AND,$(XST,$dblink_length),$(EC,$data_type,Polypeptide))> aa
-            <?MIELSE COND=$(AND,$(XST,$dblink_length),$(OR,$(EC,$data_type,cDNA),$(EC,$data_type,Genomic)))> bp
-            <?/MIBLOCK>
-            </nobr>
-          </TD>
-          <TD align=center>
-             <?MISQL SQL="select WebExplode(object,'seqt_acc=$acc_num&seqt_acc_len=$dblink_length&seqt_acc_type=$data_type&seqt_acc_db=$db_name') from webPages where ID='aa-sequence_tools.apg';">$1<?/MISQL>
-          </TD>
-          
-        </TR>
-   <?/MIBLOCK>
-      <?/MISQL>
-  <?/MISQL>
-  
-  <?MICOMMENT> 
-    Count the number of links for each sequence type.
-    If the count for a data_type is greater than 1,
-    display the All Sequence link.
-  <?/MICOMMENT>
-
-  <?MISQL SQL="
-    select fdbcont_fdbdt_data_type
-    from foreign_db_contains
-    where fdbcont_fdbdt_super_type = 'sequence'
-    ;">
-    <?MIVAR NAME=data_type>$1<?/MIVAR>
-    
-    <?MISQL SQL="
-      select count(*)::integer
-      from db_link, foreign_db_contains
-      where dblink_linked_recid = '$OID'
-        and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-        and fdbcont_fdbdt_data_type = '$data_type';">        
-      <?MIVAR NAME=vDatatypeLinkCount>$1<?/MIVAR>
+              <?MIBLOCK COND="$(AND,$(XST,$UPDATE),$(EC,$attachto,r))">
+                <?MISQL SQL="
+                  select mrkr_abbrev, mrkr_zdb_id
+                    from marker
+                    where mrkr_zdb_id = '$related_zdb_id'; ">
+                  ( <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$related_zdb_id">$related_mrkr_abbrev</A> )
+                <?/MISQL>
+       
+                <?MIVAR>$(UNSETVAR,$UPDATE)<?/MIVAR>
+                <?MISQL SQL="select WebExplode(object,'dataId=$dataId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+                <?MIVAR>$(SETVAR,$UPDATE,1)<?/MIVAR>
+              <?MIELSE>
+                <?MISQL SQL="select WebExplode(object,'dataId=$dataId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+              <?/MIBLOCK>
+            </TD>
+            <TD align=right>
+              <nobr>
+                <?MIVAR>$dblink_length<?/MIVAR>
+                <?MIBLOCK COND=$(EC,$data_type,Polypeptide)> aa
+                <?MIELSE COND=$(OR,$(EC,$data_type,cDNA),$(EC,$data_type,Genomic))> bp
+                <?/MIBLOCK>
+              </nobr>
+            </TD>
+            <TD align=center>
+              <?MISQL SQL="select WebExplode(object,'seqt_acc=$acc_num&seqt_acc_len=$dblink_length&seqt_acc_type=$data_type&seqt_acc_db=$db_name') from webPages where ID='aa-sequence_tools.apg';">$1<?/MISQL>
+            </TD>
+          </TR>
+        <?/MIVAR>
+        <?MIVAR NAME=$mrkrview_prevDataType>$data_type<?/MIVAR>
+      <?MIELSE>
+        <?MICOMMENT>
+          Data type did not change.  Record that there is more than one record 
+          for at least one data type.
+        <?/MICOMMENT>
+        <?MIVAR NAME=$mrkrview_displayAllSequencesLink>1<?/MIVAR>
+      <?/MIBLOCK>  <?MICOMMENT> end data type did or did not change <?/MICOMMENT>
     <?/MISQL>
-    <?MISQL SQL="
-      select count(*)::integer
-      from db_link, foreign_db_contains, marker_relationship
-      where mrel_mrkr_1_zdb_id = '$OID'
-        and dblink_linked_recid = mrel_mrkr_2_zdb_id
-        and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-        and fdbcont_fdbdt_data_type = '$data_type'
-        and mrel_type in ('gene contains small segment', 
-                          'clone contains small segment',
-                          'gene encodes small segment')
-      ;">      
-        <?MIVAR NAME=vDatatypeLinkCount>$(+,$1,$vDatatypeLinkCount)<?/MIVAR>
-    <?/MISQL>
-    <?MISQL SQL="
-      select count(*)::integer
-      from db_link, foreign_db_contains, marker_relationship
-      where mrel_mrkr_2_zdb_id = '$OID'
-        and dblink_linked_recid = mrel_mrkr_1_zdb_id
-        and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-        and fdbcont_fdbdt_data_type = '$data_type'
-        and mrel_type in ('clone contains gene')
-      ;">
-      
-        <?MIVAR NAME=vDatatypeLinkCount>$(+,$1,$vDatatypeLinkCount)<?/MIVAR>
-    <?/MISQL>
-    
-    <?MIVAR COND="$(>,$vDatatypeLinkCount,1)" NAME=display_all_sequences>true<?/MIVAR>
-  
-  <?/MISQL>
-  
-  <?MIBLOCK COND=$(XST,$display_all_sequences)>  
 
-        <TR>
-          <TD colspan=4>
-            <?MISQL SQL="
-              select dblink_acc_num
-              from db_link, foreign_DB, foreign_db_contains
-              where dblink_linked_recid = '$OID'
-                and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-                and fdbcont_fdb_db_name = fdb_db_name
-                and fdbcont_fdbdt_super_type = 'sequence'
-              UNION
-              select dblink_acc_num
-              from db_link, foreign_DB, foreign_db_contains, marker_relationship
-              where mrel_mrkr_1_zdb_id = '$OID' 
-                and mrel_mrkr_2_zdb_id = dblink_linked_recid 
-                and mrel_type in ('gene contains small segment', 
-		                  'clone contains small segment',
-			          'gene encodes small segment')
-                and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-                and fdbcont_fdb_db_name = fdb_db_name
-                and fdbcont_fdbdt_super_type = 'sequence'
-                and mrel_mrkr_2_zdb_id not in ('$chimeric_clone_list')
-              UNION
-              select dblink_acc_num
-              from db_link, foreign_DB, foreign_db_contains, marker_relationship
-              where mrel_mrkr_2_zdb_id = '$OID' 
-                and mrel_mrkr_1_zdb_id = dblink_linked_recid 
-                and mrel_type = 'clone contains gene'
-                and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-                and fdbcont_fdb_db_name = fdb_db_name
-                and fdbcont_fdbdt_super_type = 'sequence'
-                and mrel_type in ('clone contains gene') 
-                and mrel_mrkr_1_zdb_id not in ('$chimeric_clone_list')
-              ;">
-            <?/MISQL>
-            
-            <?MIVAR>
-              <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sequence.apg&OID=$OID$(IF,$(XST,$UPDATE),&UPDATE=1)">All Sequence Information ($MI_ROWCOUNT)</a>
-            <?/MIVAR>
-          </TD>
-        </TR>
-  <?/MIBLOCK>    
-
-          
-
-        
-      </TABLE>
-      
-<?MIELSE>
-  
-  <TABLE border=0 bgcolor=<?MIVAR>$highlight<?/MIVAR> width=100%>
-    <TR><TD>None Submitted</TD></TR>
+    <?MIBLOCK COND=$mrkrview_displayAllSequencesLink>  
+      <TR>
+        <TD colspan=4>
+          <?MIVAR>
+            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sequence.apg&OID=$OID$(IF,$(XST,$UPDATE),&UPDATE=1)">All Sequence Information ($mrkrview_nSequenceLinks)</a>
+          <?/MIVAR>
+        </TD>
+      </TR>
+    <?/MIBLOCK>    
   </TABLE>
+<?/MIBLOCK> <?MICOMMENT> end there were sequence records <?/MICOMMENT>  
 
+<?MIBLOCK COND="$(XST,$UPDATE)">
+  </form>  <?MICOMMENT> end form updateseq <?/MICOMMENT>
 <?/MIBLOCK>
-</form>
 
-<?/MIBLOCK> <?MICOMMENT> Sequence count > 1 <?/MICOMMENT>
-
-<!---------------- ends of SEQUENCE INFORMATION --------------->
+<?MICOMMENT>
+  ---------------- ends of SEQUENCE INFORMATION ---------------
+<?/MICOMMENT>
 
 
 <!------------   OTHER MARKER PAGES   ------------------------------->
@@ -1761,7 +1636,8 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 <?MIVAR>	
   &nbsp; ($total_count)
 <?/MIVAR>
-</form>
+</form> <?MICOMMENT> end form updater1 <?/MICOMMENT>
+
 <!----------------- ends PUBLICATION ----------------->
 
 
