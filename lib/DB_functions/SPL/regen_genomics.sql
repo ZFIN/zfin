@@ -693,19 +693,10 @@ create dba function "informix".regen_genomics() returning integer
 
     update all_l_m_new 
       set alnkgmem_source_name = 
-	  ( select SUBSTR(authors,1,position(',',authors)) || ' et al' 
+	  ( select pub_mini_ref 
 	      from publication
 	      where alnkgmem_source_zdb_id = publication.zdb_id )
-      where alnkgmem_source_zdb_id[1,8] = 'ZDB-PUB-'
-	and alnkgmem_num_auths > 1;
-
-    update all_l_m_new 
-      set alnkgmem_source_name = 
-	  ( select authors 
-	      from publication
-	      where alnkgmem_source_zdb_id = publication.zdb_id )
-      where alnkgmem_source_zdb_id[1,8] = 'ZDB-PUB-'
-	and alnkgmem_num_auths = 1;
+      where alnkgmem_source_zdb_id[1,8] = 'ZDB-PUB-';
 
 
     update all_l_m_new 
