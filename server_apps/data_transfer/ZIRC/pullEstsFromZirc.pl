@@ -292,6 +292,8 @@ sub est_main($$) {
     my $zircZdbId = $_[1];
     my $zircEstFile = "zircESTs.tab"; # file to download
 
+    &writeReport("****** Pulling EST information from ZIRC.\n");
+
     system("rm -f $zircEstFile");    # remove old downloaded files
     &downloadFiles($zircEstFile);    # get new EST file
 
