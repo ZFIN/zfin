@@ -95,16 +95,29 @@
     </style>
 </head>
 <script language="JavaScript" src="/header.js"></script>
-    
-    
+
+<script>
+  function call_reset() {
+    document.uniquery_search.category.selectedIndex = 0;
+    document.uniquery_search.query.value = "";   
+   }
+</script>
+
     <% if (queryTerm.length() > 0)
         {
         if (results == null) // show all categories
             {
             %>
+            <table width="100%" border="0">
+                <tr>
+                    <td align="right" valign="top">
+	               <a href="syntax_help.jsp">Search Tips</a>
+                    </td>
+		</tr>
+	    </table>
             <center>
             <div class="category_header">Quick Search Results for '<%=queryTerm%>' (<%=totalResultsCount%> <%=resultsLabel%>)</div>
-                <% 
+                           <% 
                 if (ignoredWords != null && ignoredWords.size() > 0)
                     {
                     %>
@@ -333,7 +346,7 @@
     </TR>
     <TR>
         <TD colspan="2">
-            <form name="uniquery" action="/SearchApp/search" method="get">
+            <form name="uniquery_search" action="/SearchApp/search" method="get">
                 <p>
                     Search in Category
                     <select name="category">
@@ -353,15 +366,17 @@
                         }
                     %>
                     </select>
-                    for term <input type="text" name="query" value="<%= StringUtils.replace(queryTerm, "\"", "&quot;") %>" size="44"/> <input type="submit" value="Search"/>
+                    for term <input type="text" name="query" value="<%= StringUtils.replace(queryTerm, "\"", "&quot;") %>" size="44"/> 
                 </p>
+		<TR>
+		   <TD class="submitbar" colspan=2 align="right">
+		      <input type=submit name=search value="SEARCH"/>
+		      <input type=button onClick="call_reset();" value="RESET"/> 
+		   </TD>
+		 </TR>
             </form>    
-        </TD>
-    </TR>
-    <TR>
-        <TD colspan="2" class="titlebar">
-            <a href="syntax_help.jsp">Search Tips</a>
         </TD>
     </TR>
 </TABLE>
 <script language="JavaScript" src="/footer.js"></script>
+
