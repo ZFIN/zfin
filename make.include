@@ -135,10 +135,10 @@ TOUCH = touch
 
 TARGET_MKDIR = mkdir -pm 775
 
-LOADAPPPAGE = /research/zfin/central/Commons/bin/loadapppage.pl
-UNLOADAPPPAGE = /research/zfin/central/Commons/bin/unloadapppage.pl
+LOADAPPPAGE = /research/zcentral/Commons/bin/loadapppage.pl
+UNLOADAPPPAGE = /research/zcentral/Commons/bin/unloadapppage.pl
 
-MAKESPECIFIC = /research/zfin/central/Commons/bin/makespecific.pl
+MAKESPECIFIC = /research/zcentral/Commons/bin/makespecific.pl
 
 SPECIFICCHECK = echo specificcheck -t $(TRANSLATETALE)
 
