@@ -123,27 +123,34 @@ Variables Expected:
 
     <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
       <?MIVAR NAME=$cloned_gene>NULL<?/MIVAR>
-      <?MISQL SQL="select name, a.abbrev, upper(line_type), source, mother, father, discoverer, lab, HTML_breaks(phenotype), segregation, orig_crossnum, HTML_breaks(a.comments),status,a.owner,pheno_keywords,allele,locus, b.abbrev, b.cloned_gene from fish a, OUTER locus b where a.zdb_id='$OID' and b.zdb_id = a.locus;"><?/MISQL>
+      <?MISQL SQL="
+	select name, a.abbrev, upper(line_type), mother, father, 
+	       discoverer, lab, HTML_breaks(phenotype), segregation, 
+	       orig_crossnum, HTML_breaks(a.comments), fish_extinct, a.owner, 
+	       pheno_keywords, allele, locus, b.abbrev, b.cloned_gene 
+	  from fish a, OUTER locus b
+	  where a.zdb_id = '$OID'
+	    and b.zdb_id = a.locus;">
+      <?/MISQL>
 
       <?MIVAR NAME=$name>$1<?/MIVAR>
       <?MIVAR NAME=$abbrev>$2<?/MIVAR>
       <?MIVAR NAME=$line_type>$3<?/MIVAR>
-      <?MIVAR NAME=$source>$4<?/MIVAR>
-      <?MIVAR NAME=$mother>$5<?/MIVAR>
-      <?MIVAR NAME=$father>$6<?/MIVAR>
-      <?MIVAR NAME=$discoverer>$7<?/MIVAR>
-      <?MIVAR NAME=$lab>$8<?/MIVAR>
-      <?MIVAR NAME=$phenotype>$9<?/MIVAR>
-      <?MIVAR NAME=$segregation>$10<?/MIVAR>
-      <?MIVAR NAME=$orig_crossnum>$11<?/MIVAR>
-      <?MIVAR NAME=$comments>$12<?/MIVAR>
-      <?MIVAR NAME=$status>$13<?/MIVAR>
-      <?MIVAR NAME=$owner>$14<?/MIVAR>
-      <?MIVAR NAME=$pheno_keywords>$15<?/MIVAR>
-      <?MIVAR NAME=$allele>$16<?/MIVAR>
-      <?MIVAR NAME=$locus>$17<?/MIVAR>
-      <?MIVAR NAME=$locus_abbrev>$18<?/MIVAR>
-      <?MIVAR NAME=$cloned_gene>$19<?/MIVAR>
+      <?MIVAR NAME=$mother>$4<?/MIVAR>
+      <?MIVAR NAME=$father>$5<?/MIVAR>
+      <?MIVAR NAME=$discoverer>$6<?/MIVAR>
+      <?MIVAR NAME=$lab>$7<?/MIVAR>
+      <?MIVAR NAME=$phenotype>$8<?/MIVAR>
+      <?MIVAR NAME=$segregation>$9<?/MIVAR>
+      <?MIVAR NAME=$orig_crossnum>$10<?/MIVAR>
+      <?MIVAR NAME=$comments>$11<?/MIVAR>
+      <?MIVAR NAME=$fish_extinct>$12<?/MIVAR>
+      <?MIVAR NAME=$owner>$13<?/MIVAR>
+      <?MIVAR NAME=$pheno_keywords>$14<?/MIVAR>
+      <?MIVAR NAME=$allele>$15<?/MIVAR>
+      <?MIVAR NAME=$locus>$16<?/MIVAR>
+      <?MIVAR NAME=$locus_abbrev>$17<?/MIVAR>
+      <?MIVAR NAME=$cloned_gene>$18<?/MIVAR>
 
      <?MIVAR NAME=$rec_title>Record for $line_type $abbrev<?/MIVAR>
 
@@ -464,103 +471,91 @@ Variables Expected:
 	    </TD>
 
 	    <TD>
-	     <b> Lab:</b> 
+	      <b>Lab of Origin:</b> 
 
-	    <?MIBLOCK COND="$(XST,$UPDATE)">
-	      <?MIVAR>
-	        <SELECT NAME=lab_select onChange="dopopup(this.options[this.selectedIndex].value,'$lab','lab')">
-	      <?/MIVAR>
-		  <?MISQL SQL="select zdb_id,name from lab where allele_prefix is not null order by name;">
-		    <option $(IF,$(EC,$lab,$1),SELECTED) value="$1">$2
-		    $(IF,$(EC,$lab,$1),$(SETVAR,$foundlab,$1))
-		  <?/MISQL>
-		  <?MISQL COND="$(NXST,$foundlab)" SQL="select zdb_id,name from lab where zdb_id='$lab';">
-		    <option SELECTED value="$1">$2
-		  <?/MISQL>
+	      <?MIBLOCK COND="$(XST,$UPDATE)">
+	        <?MIVAR>
+	          <SELECT NAME=lab_select onChange="dopopup(this.options[this.selectedIndex].value,'$lab','lab')">
+	        <?/MIVAR>
+		<?MISQL SQL="
+		  select zdb_id, name 
+		    from lab 
+		    where allele_prefix is not null 
+		    order by name;">
+		  <option $(IF,$(EC,$lab,$1),SELECTED) value="$1">$2
+		  $(IF,$(EC,$lab,$1),$(SETVAR,$foundlab,$1))
+		<?/MISQL>
+		<?MISQL COND="$(NXST,$foundlab)" SQL="
+		  select zdb_id, name 
+		    from lab 
+		    where zdb_id = '$lab';">
+		  <option SELECTED value="$1">$2
+		<?/MISQL>
   	        </SELECT>
-	    <?/MIBLOCK>
+	      <?/MIBLOCK>
 
-	    <?MISQL COND="$(NXST,$UPDATE)" SQL="select name from lab where zdb_id='$lab';">
-	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$lab">$1</A>
-	    <?/MISQL>
+	      <?MISQL COND="$(NXST,$UPDATE)" SQL="
+		select name 
+		  from lab 
+		  where zdb_id = '$lab';">
+		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$lab">$1</A>
+	      <?/MISQL>
 
-	    <?MIBLOCK COND="$(NC,$orig_crossnum,NULL)"> 
-	      <?MIVAR COND="$(XST,$UPDATE)">
-		<br><INPUT TYPE=button value=Update onClick="doit('orig_crossnum','text','Original+Cross+Number')"> 
+	      <?MIBLOCK COND="$(NC,$orig_crossnum,NULL)"> 
+		<?MIVAR COND="$(XST,$UPDATE)">
+		  <br><INPUT TYPE=button value=Update onClick="doit('orig_crossnum','text','Original+Cross+Number')"> 
+	        <?/MIVAR>
+	        <?MIVAR><font size=-1>(<b>Stock#:</b> $orig_crossnum)</font> <?/MIVAR>
+	      <?/MIBLOCK>
+
+	      <?MIVAR COND="$(AND,$(EC,$orig_crossnum,NULL),$(XST,$UPDATE))">
+	        <br><INPUT TYPE=button value="Specify an original cross number" onClick="doit('orig_crossnum','text','Original+Cross+Number')"> 
 	      <?/MIVAR>
-	      <?MIVAR><font size=-1>(<b>Stock#:</b> $orig_crossnum)</font> <?/MIVAR>
-	    <?/MIBLOCK>
-
-	    <?MIVAR COND="$(AND,$(EC,$orig_crossnum,NULL),$(XST,$UPDATE))">
-	      <br><INPUT TYPE=button value="Specify an original cross number" onClick="doit('orig_crossnum','text','Original+Cross+Number')"> 
-	    <?/MIVAR>
 	    </TD>
 	  </TR>
         </TABLE>
 
 
-	<TABLE width=100% cellpadding=4>
+	<TABLE cellpadding="4">
 	  <TR>
-	  <TD valign=top> <b>Stock Status: </b> 
-	    <?MIVAR COND="$(NXST,$UPDATE)">$(IF,$(NC,$status,NULL),$status,unknown)<?/MIVAR>
-	    <?MIVAR COND="$(XST,$UPDATE)">
-	      <SELECT name=stock_status onChange=dopopup(this.options[this.selectedIndex].value,'$status','status')>
-		<option $(IF,$(EC,$status,unknown),SELECTED) value=unknown>unknown
-		<option $(IF,$(EC,$status,alive),SELECTED) value=alive>alive
-		<option $(IF,$(EC,$status,frozen),SELECTED) value=frozen>frozen
-		<option $(IF,$(EC,$status,extinct),SELECTED) value=extinct>extinct
-	      </SELECT>
-	    <?/MIVAR>
-	  </TD>
-
-
-	  <!-- Deal with current source. This is complex! -->
-	  <TD valign=top align=right>
-	    <?MIVAR COND="$(XST,$UPDATE)">
-	      <input type=hidden name=source_type value="lab">
-	      <input type=hidden name=s_source value="">
-	      <SELECT name=sub_source onChange="add_source(this);">
-		<option value="none" SELECTED>Select source to add
-		<option value="lab">Add a lab to source list
-		<option value="person">Add a person to source list
-		<option value="company">Add a company to source list
-	      </SELECT>
-	    <?/MIVAR>
-
-	    <b>Source(s): </b>
-	  </TD>
-
-	  <TD>
-	  <!--If it's a dead strain, don't bother with more! -->
-	  <?MIVAR COND="$(EC,$status,DEAD)"> Extinct! No longer available.<?/MIVAR>
-
-	  <?MIBLOCK COND="$(NC,$status,DEAD)">
-	    <?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
-	    <?MISQL SQL="select zdb_id,name,HTML_breaks(address) from sources a, int_fish_source b where (a.zdb_id=b.target_id OR b.target_id='DEAD') and b.source_id='$OID';">
-	      <TABLE>
-		<TR>
-		  <TD valign=top>
-		    $(IF,$(XST,$UPDATE),"<font size=-1><input type=button value=delete onClick=Delete_listitem('source','"$1"')></font>")
-		  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sourceview.apg&OID=$1">$2</A>
-		  </TD>
-		  <TD align=right>
-		    <font size=-1>$3</font>
-		  </TD>
-		</TR>
-	      </TABLE>
-	    <?/MISQL>
-
-	    <?MIVAR COND="$(=,$MI_ROWCOUNT,0)"> 
-	    Not Specified. Contact Lab.<?/MIVAR>
-
-	  <?/MIBLOCK>  <!-- NC status dead -->
-	  </TD></TR>
-        </TABLE>
-
-
-
-
-
+	    <TD valign="top"> 
+	      <b>Current Source(s): </b>
+	    </TD>
+	    <TD> 
+	      <?MIBLOCK COND="$(EC,$fish_extinct,f)">
+		<?MISQL SQL="
+		  select idsup_supplier_zdb_id, 
+			 get_obj_name(idsup_supplier_zdb_id)
+		    from int_data_supplier
+		    where idsup_data_zdb_id = '$OID';">
+		  <?MIVAR NAME=$supplier_zdb_id>$1<?/MIVAR>
+		  <?MIVAR NAME=$supplier_name>$2<?/MIVAR>
+		  <?MIVAR>
+		    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sourceview.apg&OID=$supplier_zdb_id">$supplier_name</A>
+		  <?/MIVAR>
+		  <?MIVAR>$(UNSETVAR,$status_list)<?/MIVAR>
+		  <?MISQL SQL="
+		    select fsupstat_fish_status
+		      from fish_supplier_status
+		      where fsupstat_fish_zdb_id = '$OID'
+			and fsupstat_supplier_zdb_id = '$supplier_zdb_id'
+		      order by fsupstat_fish_status;">
+		    <?MIVAR>$(VECAPPEND,$status_list,$1)<?/MIVAR>
+		  <?/MISQL>
+		  <?MIVAR COND="$(XST,$status_list)">
+		    ($(SEPARATE,$status_list,", "))
+		  <?/MIVAR>
+		  <br>
+		<?/MISQL>
+		<?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
+		  None specified; contact origin.
+		<?/MIBLOCK>
+	      <?MIELSE>
+		None (extinct)
+	      <?/MIBLOCK>
+	    </TD>
+	  </TR>
+	</TABLE>
 
 	<!-- This next part only for mutants! -->
 	<?MIBLOCK COND="$(EC,$line_type,mutant)">
