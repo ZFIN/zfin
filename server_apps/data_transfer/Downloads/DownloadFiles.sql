@@ -249,7 +249,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/vega.txt'
  DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains
 	where mrkr_zdb_id = dblink_linked_recid
 	  and fdbcont_zdb_id = dblink_fdbcont_zdb_id
-	  and fdbcont_fdb_db_name = 'VEGA' order by 1;      
+	  and fdbcont_fdb_db_name in ('VEGA','PREVEGA') order by 1;      
 
 -- Generate alleles file
 
