@@ -16,6 +16,63 @@ create temp table exist_record (
                 new_zdb_id      varchar(50)
                 );
 
+create temp table sec_dups 
+  (
+    sec_id varchar(50),
+    prim_id varchar(50),
+    term_name varchar(255),
+    onto varchar(30)
+  );
+load from ontsecgoid.unl insert into sec_dups ;
+
+create temp table sec_oks 
+  (
+    sec_id varchar(50),
+    prim_id varchar(50),
+    term_name varchar(255),
+    onto varchar(30)
+  );
+
+insert into sec_oks
+  select distinct * from sec_dups ;
+
+create temp table sec_unload 
+  (
+    sec_id varchar(50),
+    prim_id varchar(50),
+    term_name varchar(255),
+    onto varchar(30)
+  );
+
+insert into sec_unload
+  select sec_id, prim_id, term_name, onto
+    from sec_oks
+    where sec_id in (select goterm_go_id from go_Term) ;
+
+create temp table sec_unload_report 
+  (
+    sec_id varchar(50),
+    prim_id varchar(50),
+    term_name varchar(255),
+    onto varchar(30),
+    goterm_zdb_id   varchar(50),
+    go_concant	varchar(40),
+    go_marker	varchar(50),
+    go_mrkrgo_zdb_id  varchar(50),
+    mrkrgo_pub_zdb_id varchar(50)
+  );
+
+insert into sec_unload_report
+  select sec_id, prim_id, term_name, onto, goterm_zdb_id,
+     'GO:'||sec_id, mrkrgo_mrkr_zdb_id, mrkrgo_zdb_id, mrkrgoev_source_zdb_id
+    from sec_unload, go_term, marker_go_term, marker_go_term_Evidence
+    where sec_id = goterm_go_id
+    and mrkrgo_go_term_zdb_id = goterm_zdb_id 
+    and mrkrgoev_mrkrgo_zdb_id = mrkrgo_zdb_id ;
+
+unload to 'newannotsecterms.unl' select * from sec_unload_report ;
+unload to 'newsecterms.unl' select * from sec_unload ;
+
 --make a temp table that will contain records from ontology.unl 
 --(this table will contain
 --records that are already in zfindb.go_term at first load).
