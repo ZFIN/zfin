@@ -24,8 +24,10 @@ TARGETDIR = $(TARGETROOT)/home/zf_info/dbase/PAPERS
 
 SUBDIRS = WWW6 Web97 Webnet97 ZFIN_DataModel sdb
 
-# The only thing of value in this directory is the subdirectories.  The
-# chi97_nav_workshop.html file is historic and not linked by anyone.
+# The chi97_nav_workshop.html file is historic and not linked by anyone.
+
+STATICS = Doerry97a.pdf Doerry97b.pdf Doerry97c.pdf Sprague.pdf \
+          Westerfield97.pdf
 
 
 

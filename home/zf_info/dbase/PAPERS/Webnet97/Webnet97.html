@@ -1,14 +1,9 @@
 <HTML>
-<HEAD> <A NAME="top"></A>
-<TITLE>
-
-    Task-centered navigation
-
-</TITLE>
-</HEAD>
-<BODY BGCOLOR="#e5e5e5">
-
-
+<HEAD> </HEAD><BODY BGCOLOR="#e5e5e5">
+<A NAME="top"></A> 
+<TITLE> Task-centered navigation </TITLE>
+<a href="../Doerry97b.pdf"><img src="../../../../images/pdficon.gif" width="28" height="31" border="0"></a> 
+<TITLE> </TITLE>
 <H1><CENTER>
 
     Task-centered Navigation in Web-accessible Dataspaces
@@ -55,17 +50,17 @@ Browsing and Navigation Tools, Data and Link Management
 <p>
 We are concerned with "intra-site" navigation within a WWW-accessible database we are developing for zebrafish geneticists.  In this context, we have found that the most severe navigational difficulties experienced by users have to do with maintaining orientation within the data space as they engage in various search and data manipulation activities.  These difficulties arise from several domain characteristics:
 <ol>
-<B><li> Complex, multi-step activities.</b>  A central feature of our database is support for submission and updating of experimental data by users; this entails an open-ended sequence of nested form-filling, browsing, and selection tasks.  For example, to submit a new mutation to the database, a user must specify the lineage of the mutation, the lab at which it was discovered, the mutant's phenotypic (observable) characteristics and chromosomal abnormalities, and the publications in which it has been described. Each of these steps may involve one or more subsequences as the user searches the database to locate and select relevant information. Thus, movement through the dataspace involves intertwined sequences of searching and browsing, rather than a simple unidirectional progression from the database entry point to target data.
-<B><li> Dynamic, unbounded data space.</b>  In a database system, screens are dynamically generated based on user queries; the number of unique "places" within the data space is essentially infinite. Moreover, the information space is continually changing and growing as new data is added; the same sequence of navigational "moves" performed at different times may result in different displays, depending on what has changed in the interim. This makes it difficult to clearly define notions of "location" and "path" within the data space. 
-<B><li> Prevalence of similar displays.</b>  While screens vary in (potentially important) details, they are often similar in overall appearance.  For example, every screen that presents a search interface has similar provisions for specifying search criteria and displaying search results. While such interface consistency is highly desirable from the perspective of learnability, we have found it to be a confounding factor for navigation.
+<li><B> Complex, multi-step activities.</b>  A central feature of our database is support for submission and updating of experimental data by users; this entails an open-ended sequence of nested form-filling, browsing, and selection tasks.  For example, to submit a new mutation to the database, a user must specify the lineage of the mutation, the lab at which it was discovered, the mutant's phenotypic (observable) characteristics and chromosomal abnormalities, and the publications in which it has been described. Each of these steps may involve one or more subsequences as the user searches the database to locate and select relevant information. Thus, movement through the dataspace involves intertwined sequences of searching and browsing, rather than a simple unidirectional progression from the database entry point to target data.
+<li><B> Dynamic, unbounded data space.</b>  In a database system, screens are dynamically generated based on user queries; the number of unique "places" within the data space is essentially infinite. Moreover, the information space is continually changing and growing as new data is added; the same sequence of navigational "moves" performed at different times may result in different displays, depending on what has changed in the interim. This makes it difficult to clearly define notions of "location" and "path" within the data space. 
+<li><B> Prevalence of similar displays.</b>  While screens vary in (potentially important) details, they are often similar in overall appearance.  For example, every screen that presents a search interface has similar provisions for specifying search criteria and displaying search results. While such interface consistency is highly desirable from the perspective of learnability, we have found it to be a confounding factor for navigation.
 </ol>
 
     In this complex information space, we have found that users have little trouble determining what data and activities are available, but easily become disoriented once engaged in an activity. Specifically, they often become confused about where they are within a multi-step process, how their current activity relates to an overall goal, and how to return to previous steps in the process. 
 <p>
 Our initial efforts to provide navigational aids focused on simply making a record of previously traversed screens (pages) continually visible to the user; we found this approach to be completely inadequate because it does not make explicit the relationship of traversed pages to the user's domain level tasks. For example, the domain task of locating a certain set of mutations frequently entails iterative refinement of the search criteria; this leads to a lengthy sequence of pages (one for each refinement cycle), all related to the same overall domain task. Conversely, similar searches (e.g. searches for a publication) may occur at different times within an interaction, each associated with a different domain task. In both cases, a simple list of pages traversed does not reflect the conceptual structure of the domain level tasks the user was engaged in; this makes it difficult to determine current location within the dataspace, or where to "back up" to when attempting to undo (or re-do) some previous step. 
-<A NAME="fig1">
+<A NAME="fig1"></a>
 <p>
-<A NAME="#fig1">
+<A NAME="#fig1"></a>
 <center>
 <img src="nav.gif"><br>
 <font size=-1><b>Figure 1:</b> A (truncated) snapshot of a user submitting a new mutation to the database. The user is currently engaged in the subtask of searching for and specifying the primary publication in which the new mutation was described. The task-centered navigational aid appears at the top of the page and reflects the user's position within the task/subtask hierarchy.
@@ -94,5 +89,5 @@ The increasing popularity of complex, web-accessible dataspaces demands intra-da
 <BR>
 
 <HR>Return to <A HREF="#top">Top of Page</A> || <A HREF="#index">Index</A>.
-</BODY>
-</HTML>
+
+</BODY></HTML>
