@@ -105,11 +105,14 @@ Expected vars:  None.
     <TABLE>
    <p>
    <font size=2><big>Specify publication:</big>
+   <br> 
+     ZFIN ID: <input type=text name=zdb_id size=20>
+   <SCRIPT>document.linkage.zdb_id.focus();</SCRIPT>
+    <br>
      <SELECT name=authtype>
        <option value=firstauth>First AUTHOR begins with
        <option SELECTED value=anyauth>AUTHOR contains
     </select>:</b> <input type=text name=authors size=10 >
-   <SCRIPT>document.linkage.authors.focus();</SCRIPT>
      <br> 
     TITLE contains: <input type=text name=title size=10>
     <br>
@@ -150,7 +153,9 @@ Expected vars:  None.
      <?MIVAR NAME=$constraint COND="$(XST,$title)">
      $constraint $previous (lower(title) like '%$(LOWER,$title)%')<?/MIVAR>
      <?MIVAR NAME=$previous COND="$(XST,$title)"> and <?/MIVAR>
-
+     <?MIVAR NAME=$constraint COND="$(XST,$zdb_id)">
+     $constraint $previous (lower(zdb_id) like '%$(LOWER,$zdb_id)%')<?/MIVAR>
+     <?MIVAR NAME=$previous COND="$(XST,$zdb_id)"> and <?/MIVAR>
      <!-- glue together the year clause if specified -->
      <?MIVAR COND="$(XST,$year)" NAME=$constraint>
      $constraint $previous year(pub_date) $yr_cmpr conc('$century','$year')<?/MIVAR>
