@@ -1,8 +1,7 @@
-To: aprilm@uoneuro.uoregon.edu, trevarro@uoneuro.uoregon.edu, monte@uoneuro.uoregon.edu, edwards@uoneuro.uoregon.edu, seger@uoneuro.uoregon.edu, ksf@cs.uoregon.edu, mason@uoneuro.uoregon.edu
+To: april@zfin.org, trevarro@uoneuro.uoregon.edu, monte@uoneuro.uoregon.edu, edwards@uoneuro.uoregon.edu, seger@uoneuro.uoregon.edu, ksf@cs.uoregon.edu, mason@uoneuro.uoregon.edu
 From: zirc@darkwing.uoregon.edu
 Subject: [required_submitterName]'s ZIRC Submission Form 
 
-***for PAT ************************************* 
 
 SUBMITTER CONTACT INFORMATION
 Submitter Name: 
@@ -19,9 +18,6 @@ Submitter Fax:
 ---
 Submitter Institution/Lab: 
 [required_submitterLab]
----
-Submitter Position:
-[required_submitterPosition]
 ---
 Submitter Address: 
 [required_submitterAddress]
@@ -48,26 +44,17 @@ PI Address:
 ---
 NIH grant number or other grant number:
 [required_grantNumber]
----
-
-
-***for KEN ************************************* 
 
 LINE/MUTANT INFORMATION
-Allele(s): 
-[mutantAlleles]
+Line Discoverer:
+[lineDiscoverer]
 ---
-Line/Mutant Name: 
-[lineName]
+Type of Line: 
+[lineWildType] [lineMutant] [lineTransgenic]
 ---
-Previous/Other Names: 
-[lineNamePrevious]
+Proposing to send: 
+[statusAdults] [statusEmbryos] [statusFrozenSperm]
 ---
-
-
-***for ERIK ************************************* 
-
-LINE/MUTANT INFORMATION
 Line/Mutant Name: 
 [lineName]
 ---
@@ -83,6 +70,9 @@ Mutagenesis Protocol:
 Mutation Type: 
 [mutantTypePoint] [mutantTypeDf] [mutantTypeDp] [mutantTypeIn] [mutantTypeIs] [mutantTypeT] [mutantTypeTg] [mutantTypeUn] [mutantTypeOther] [mutantTypeCr]
 ---
+Allele(s): 
+[mutantAlleles]
+---
 Linkage Group: 
 [linkageGroup]
 ---
@@ -95,49 +85,27 @@ Transgene--Transgene Name:
 Transgene--Transgene Description: 
 [transgeneDescription]
 ---
-Line Discoverer:
-[lineDiscoverer]
+
+LINEAGE AND BREEDING
+Maternal Lineage: 
+[lineageMaternal]
 ---
+Paternal Lineage: 
+[lineagePaternal]
+---
+Segregation: 
+[breedingSegregation]
+---
+Submitter's Comments: 
+[breedingComments]
+---
+
 PUBLICATIONS
 Primary Publication: 
 [publications1]
 ---
 Secondary Publications: 
 [publications2]
----
-
-
-***for APRIL ************************************* 
-
-CONTACT INFO
-NIH grant number or other grant number:
-[required_grantNumber]
----
-Type of Line: 
-[lineWildType] [lineMutant] [lineTransgenic]
----
-Proposing to send: 
-[statusAdults] [statusEmbryos] [statusFrozenSperm]
----
-Phenotype: 
-[linePhenotype]
----
-
-GENETICS AND BACKGROUND
-Segregation: 
-[required_segregation]
----
-Segregation Mutant Percentage:
-[geneticsSegregationPercentage]
----
-Maternal Lineage: 
-[required_lineageMaternal]
----
-Paternal Lineage: 
-[required_lineagePaternal]
----
-Submitter's Comments: 
-[geneticsComments]
 ---
 
 HUSBANDRY
@@ -149,36 +117,30 @@ Describe in detail the technique you use to identify carriers.
 What kind of technique?: 
 [mutantIDvisual] [mutantIDPCR] [mutantIDinSitu] [mutantIDother]
 ---
+ID at what stage? 
+--for visual technique: 
+[mutantIDvisualStage]
+--for PCR technique: 
+[mutantIDPCRStage]
+--for in situ technique: 
+[mutantIDinsituStage] 
+--for other technique: 
+[mutantIDotherStage] 
+---
 Protocol: 
 for visual technique: 
-[mutantIDvisDesc]
----
+--[mutantIDvisDesc]
 for PCR technique: 
-[mutantIDpcrDesc] 
----
+--[mutantIDpcrDesc] 
 for in situ technique: 
-[mutantIDinsituDesc] 
----
+--[mutantIDinsituDesc] 
 for other technique: 
-[mutantIDotherDesc]
----
-ID at what stage? 
-for visual technique: 
-[mutantIDvisualStage]
----
-for PCR technique: 
-[mutantIDPCRStage]
----
-for in situ technique: 
-[mutantIDinsituStage] 
----
-for other technique: 
-[mutantIDotherStage] 
+--[mutantIDotherDesc]
 ---
 
 CONSIDERATIONS AND INFORMATION
 Why ZIRC should take the line: 
-[required_considerationsWhy]
+[considerationsReasons]
 ---
 Is there an MTA?: 
 [considerationsMTAyes] [considerationsMTAno]
