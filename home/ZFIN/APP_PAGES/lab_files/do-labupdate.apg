@@ -22,11 +22,15 @@ pers_id -- only if attr_type=status, ie, you want to change status of member
 <?MIVAR COND="$(NXST,$new_value)" NAME=$new_value>NULL<?/MIVAR>
 <?MIVAR COND="$(NXST,$comments)" NAME=$comments>NULL<?/MIVAR>
 
-<!-- do some special prep if updating membership status. The INDEX statements are because Illustra handles spaces in variables so poorly; it's much easier to pass around integers. Arrgh! -->
+<!-- do some special prep if updating membership status. The lab position order is passed rather than position to avoid spaces in variables.  -->
 <?MIBLOCK COND="$(EC,$attr_type,special-status)">
-<?MIVAR NAME=$comments>Update status for person $pers_id<?/MIVAR>
-<?MIVAR NAME=$new_value>$(INDEX,$new_value,"dummy,1PI/Director,2Co-PI/Visiting Scientist,3Post-Doc,4Graduate Student,5Research Staff,6other")<?/MIVAR>
-<?MIVAR NAME=$old_value>$(INDEX,$old_value,"dummy,1PI/Director,2Co-PI/Visiting Scientist,3Post-Doc,4Graduate Student,5Research Staff,6other")<?/MIVAR>
+  <?MIVAR NAME=$comments>Update status for person $pers_id<?/MIVAR>
+  <?MISQL SQL="select labpos_position from lab_position where labpos_order = '$new_value';"> 
+    <?MIVAR NAME=$new_value>$1<?/MIVAR>
+  <?/MISQL>
+  <?MISQL SQL="select labpos_position from lab_position where labpos_order = '$old_value';"> 
+    <?MIVAR NAME=$old_value>$1<?/MIVAR>
+  <?/MISQL>
 <?/MIBLOCK>
 
 <!-- do some special prep if updating contact person. -->
@@ -58,7 +62,7 @@ pers_id -- only if attr_type=status, ie, you want to change status of member
 <?MISQL COND="$(EC,$attr,contact_person)" SQL="update lab set owner = '$new_value' where zdb_id='$OID';"><?/MISQL>
 
 <!-- Special case for updating membership status -->
-<?MISQL COND="$(EC,$attr_type,special-status)" SQL="update int_person_lab set info='$new_value' where source_id='$pers_id' and target_id='$OID';"><?/MISQL>
+<?MISQL COND="$(EC,$attr_type,special-status)" SQL="update int_person_lab set position='$new_value' where source_id='$pers_id' and target_id='$OID';"><?/MISQL>
 
 <!-- Special case for where we are deleting a person from lab membership -->
 <?MIBLOCK COND="$(EC,$attr_type,special-delete)">

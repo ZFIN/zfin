@@ -139,12 +139,8 @@ USA
 	<TD><b>LAB MEMBERS:</b> </TD>
 	<TD><input type=submit name="s_member" value="Add"> a new 
 	  <SELECT name=mem_status>
-	    <option value="1PI/Director">PI/Director
-	    <option value="2Co-PI/Visiting Scientist">Co-PI/Visiting Scientist
-	    <option value="3Post-Doc">Post-Doc
-	    <option value="4Graduate Student">Graduate Student
-	    <option value="5Research Staff">Research Staff
-	    <option selected value="6other">other
+            <?MISQL SQL="select distinct labpos_position,labpos_order from lab_position order by labpos_order">          <option value="$1" >$1
+            <?/MISQL>
 	  </SELECT> to the lab. 
 	</TD>
       </TR>
@@ -152,13 +148,13 @@ USA
 	<TD colspan=2>
 	  <ul>
 	    <?MISQL SQL="
-	      select b.full_name, a.info 
-		from int_person_lab a, person b 
+	      select b.full_name, a.position, c.labpos_order 
+		from int_person_lab a, person b, lab_position c
 		where target_id = '$temp_oid' 
 		  and source_id = b.zdb_id 
-		order by a.info, b.full_name;">
-	      <b>$1</b>, 
-	      $(IF,$(NC,$2,6other),"<font size=-1>"$(SUBSTR,$2,2)"</font>")<br>
+                  and a.position = c.labpos_position
+		order by c.labpos_order, b.full_name;">
+	      <b>$1</b>,<font size=-1> $2 </font> <br>
 	    <?/MISQL>
 	  </ul>
 	</TD>

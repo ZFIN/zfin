@@ -138,7 +138,7 @@ print_name -- The human-understandable name (vs. the database column name) of
       <?MIVAR NAME=$fill_field>NULL<?/MIVAR>
       <?MIVAR NAME=$fill_table>int_person_lab<?/MIVAR>
       <?MIVAR NAME=$jump_to>member-info<?/MIVAR>
-      <?MIVAR NAME=$info>6other<?/MIVAR>
+      <?MIVAR NAME=$info>Other<?/MIVAR>
       <?MIVAR NAME=$selector>aa-quickfindpers.apg<?/MIVAR>
       <?MIVAR NAME=$frame_size>75<?/MIVAR>
     <?/MIBLOCK>
