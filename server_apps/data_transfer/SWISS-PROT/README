@@ -4,6 +4,12 @@ This readme is intended to explain the process of loading SWISS-PROT
 report into ZFIN.   by Peiran Song,  Sep 2002.
 
 =================================================================
+To create file for export to SWISS-PROT
+               % gmake 
+   
+---------------------------------------------------------------
+
+=================================================================
 To run the SWISS-PROT loading process:
 
                % gmake run

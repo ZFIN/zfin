@@ -20,10 +20,11 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/SWISS-PROT
 
-GENERICS = loadsp.pl sp_check.pl sp_parser.pl
+GENERICS = loadsp.pl sp_check.pl sp_parser.pl create_file_for_swiss_prot.pl create_file_for_swiss_prot.sql
 
 STATICS = sptogo.pl iptogo.pl ontology.pl sp_delete.sql sp_load.sql \
-	SPDoc README
+	SPDoc README 
+
 
 
 # ---------------  Production Rules  ------------------------------------
@@ -37,3 +38,6 @@ include $(TOP)/make.default.rules
 
 run :
 	$(TARGETDIR)/loadsp.pl
+
+create :
+	$(TARGETDIR)/create_file_for_swiss_prot.pl
