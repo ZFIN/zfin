@@ -710,8 +710,8 @@ Name:<input type=text size=15 name=oname> Abbrev:<input type=text size=5 name=oa
 <TR>
 <?MISQL SQL="
   select ortho_name, ortho_abbrev, organism, zdb_id, b.DB_name,
-	 conc(c.DB_query,b.acc_num), acc_num, a.zdb_id, c.db_significance
-    from orthologue a, OUTER (db_link b, OUTER foreign_DB c) 
+	 c.DB_query || b.acc_num, acc_num, a.zdb_id, c.db_significance
+    from orthologue a, OUTER (db_link b, foreign_DB c) 
     where a.zdb_id = b.linked_recid 
       and b.DB_name = c.DB_name 
       and c_gene_id = '$OID' 
