@@ -77,10 +77,6 @@ to the guest cookie. This way logging will be to their unique cookie name  -->
   <?MIVAR>
     $(HTTPHEADER,set-cookie,ZDB_authorize=$1;path=/<!--|CGI_BIN_DIR_NAME|-->)
   <?/MIVAR>
-  <?MISQL SQL="
-    insert into login_log 
-      values ('$ZDB_name','GUEST',current);">
-  <?/MISQL>
 <?/MIBLOCK>
 
 
