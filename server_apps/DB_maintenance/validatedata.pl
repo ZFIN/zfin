@@ -278,47 +278,6 @@ sub anatomyItemStageWindowConsistent ($) {
 }
 
 
-#===================Environment ==========================
-#----------------------------------------------------------------
-# Parameter
-# For the first release of FX curator interface, curators have the
-# ability to enter 'other' environment conditions.  This is unwise,
-# as it will be difficult to search for these 'other' conditions
-# in the future.  This routine, checks and reports 'others' and 
-# sends them in an email, weekly to informix.
-#
-# $      Email Address for recipients
-
-sub checkOtherEnvironmentCondition($) {
-my $routineName = "checkOtherEnvironmentCondition";
-	
-  my $sql = 'select envcond_condition_name,
-                    envcond_value,
-                    envcond_unit,
-                    envcond_comments
-               from environment_condition
-               where envcond_condition_name = "other"
-              ';
-  	
-  my @colDesc = ("envcond_condition_name     ",
-		 "envcond_value ",
-		 "envcond_unit   ",
-		 "envcond_comments   ");
-
-  my $nRecords = execSql ($sql, undef, @colDesc);
-
-  if ( $nRecords > 0 ) {
-
-    my $sendToAddress = $_[0];
-    my $subject = "new Other environment condition";
-    my $errMsg = "In environment_condition, $nRecords records'
-    		     have bad environment conditions";
-      		       
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
-  }
-  &recordResult($routineName, $nRecords);
-} 
 
 #----------------------------------------------------------------
 #Parameter
@@ -337,17 +296,17 @@ sub checkFigXpatexSourceConsistant ($) {
 	
   my $routineName = "expressionPatternStageWindowConsistent";
 	
-  my $sql = 'select xpatfimg_fig_zdb_id, xpatfimg_xpatres_zdb_id
-               from fx_expression_pattern_image, fx_figure,
+  my $sql = 'select xpatfig_fig_zdb_id, xpatfimg_xpatres_zdb_id
+               from fx_figure,
                fx_expression_result, fx_expression_experiment
-               where xpatfimg_fig_zdb_id = fig_zdb_id
-               and xpatfimg_xpatres_zdb_id = xpatres_zdb_id
+               where xpatfig_fig_zdb_id = fig_zdb_id
+               and xpatfig_xpatres_zdb_id = xpatres_zdb_id
                and xpatres_xpatex_zdb_id = xpatex_zdb_id
                and xpatex_source_zdb_id != fig_source_zdb_id   
               ';
   	
-  my @colDesc = ("xpatfimg_fig_zdb_id ",
-		 "xpatfimg_xpatres_zdb_id "
+  my @colDesc = ("xpatfig_fig_zdb_id ",
+		 "xpatfig_xpatres_zdb_id "
 		);
 
   my $nRecords = execSql ($sql, undef, @colDesc);
