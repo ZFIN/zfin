@@ -10,26 +10,10 @@
 
   drop procedure p_dblink_has_parent;
 
-  create procedure p_dblink_has_parent (vLinkedRecid varchar(55), 
-    vDBName varchar(55))
+  create procedure p_dblink_has_parent (vLinkedRecid varchar(55))
 
   define vMyCount1	 	integer;
   define vMyCount2		integer;
-  define vMyLinkedRecid		varchar(55);
-  define vMyLRidCount		integer;  
-  
-  if vLinkedRecid like '%ORTHO%' then
-
-    let vMyLRidCount = (select count(*) 
-	    		from db_link 
-			where db_link.linked_recid = vLinkedRecid 
-			and db_link.db_name = vDBName);
-
-    if vMyLRidCount > 0 then
-      raise exception -746,0,"FAIL!: dblink already has db_name,ortholg pair";
-    end if;
-
-  end if;
 
   let vMyCount1 = (select count(*) 
 	  	   from orthologue
