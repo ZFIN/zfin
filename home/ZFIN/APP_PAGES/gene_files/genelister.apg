@@ -1,14 +1,13 @@
 <!-- FILE: genelister.html -->
 
-<!-- This app-page handles the criteria collected by geneselect.html, and actually does the search, displaying the results. 
--->
+<!-- This app-page handles the criteria collected by geneselect.html, and actually does the search, displaying the results. -->
 <HTML>
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-chromoscripts.apg';">$1<?/MISQL>
 
 <body bgcolor="white" TEXT="black">
 <basefont COLOR="#000000" size=2>
-
+<?MIVAR NAME=$private>NULL<?/MIVAR>
 
 <!-- THIS NEXT PART IS EXECUTED AFTER THE PERSON ENTERS SOME CRITERIA -->
 
@@ -16,6 +15,15 @@
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-identify.apg';">$1<?/MISQL>
 <?MISQL SQL="delete from int_person_places where pers_id='$ZDB_ident' and place_id='MARKER';"><?/MISQL>
 <?MISQL COND="$(NOT,$(EQ,$(SUBSTR,$ZDB_name,1,5),GUEST))" SQL="insert into int_person_places (pers_id,place_id,last_visit) values ('$ZDB_ident','MARKER',current);"><?/MISQL>
+
+
+
+<!-- set userid to ZDB_ID of user or GUEST to be used by the map viewer -->
+<?MIVAR NAME=$userid>GUEST<?/MIVAR>
+<?MIBLOCK COND="$(NOT,$(EQ,$(SUBSTR,$ZDB_name,1,5),GUEST))">
+<?MIVAR NAME=$userid>$ZDB_ident<?/MIVAR>
+<?/MIBLOCK>
+
 
 <!-- This next part builds up a query piece by piece, based on which criteria 
   were passed in 
@@ -86,7 +94,7 @@
 
 <!-- Stuff to control retrieval volume -->
 <?MIVAR>
-<form method=post action="/cgi-bin_B/webdriver">
+<form method=post action="/cgi-bin_B/webdriver"  name=genelister>
 <input type=hidden name=MIval value=aa-genelister.apg>
 <input type=hidden name=constraint value="$constraint">
 <input type=hidden name=searchtype value="$searchtype">
@@ -126,24 +134,48 @@ Options:
 
 </form>
 
+<form method=post action="/cgi-bin_B/view_mapplet.cgi" target="content">	
 <?MIVAR COND="$(OR,$(<=,$tcount,$maxreturn),$(XST,$getall))" NAME=$limit>$true_count<?/MIVAR>
 
-<?MIBLOCK COND="$(XST,$limit)">
+<?MIBLOCK COND="$(AND,$(XST,$limit),$(NC,$limit,0))">
 
 <TABLE width=100% border=0 cellspacing=0 cellpadding=3>
-<TH> </TH><TD align=left><font size=2><B>Gene symbol </b>- name  &nbsp;[other names]</TD> <TD align=left><B>Location</b></TD> <TD align=left><font size=2><B>Panel</b></TD> <TD align=left><font size=2><B>Updated<b></TD>
+<TH> </TH><TD align=left><font size=2><B>Gene symbol </b>- name  &nbsp;[other names]</TD> <TD align=left><B>Location</b></TD> <TD align=left><font size=2><B>Panel</b></TD> <TD align=left><font size=2><B>Map<b></TD><TD align=left><font size=2><B>Updated<b></TD>
 
 <!-- DEBUGGING <?MIVAR>  constraint=$constraint <?/MIVAR> -->
-
 
 <?MIVAR NAME=$prev_name>0<?/MIVAR>
 <?MIVAR NAME=$prev_gp>0<?/MIVAR>
 <?MIVAR NAME=$clr_cnt>0<?/MIVAR>
+<?MIVAR NAME=$ok_view_map>0<?/MIVAR>
 <?MISQL SQL="select gene_name, lg_location, zdb_id,OR_lg, panel_id, panel_abbrev,abbrev,private,owner,metric,alt_names,day(entry_date::date), month(entry_date::date), year(entry_date::date) from $target_table $constraint $order_clause;" MAXROWS=$limit>
+
+<?MIBLOCK COND="$(AND,$(NC,$prev_name,$1),$(NC,$prev_gp,0),$(EC,$ok_view_map,1))">
+<?MIVAR>
+<input type=hidden name=userid value=$userid>
+<input type=hidden name=marker value=$marker_name>
+$(SETVAR,$color,$(/,$clr_cnt,2))
+<TR valign=top $(IF,$(!=,$color,$(FIX,$color)),"bgcolor=#FCCE64")> <TD></TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD align=left><font size=1><input type=submit value='VIEW MAP' name=view_map ><TD>&nbsp;</TD>
+<?/MIVAR>
+</form>
+<form method=post  action="/cgi-bin_B/view_mapplet.cgi" target="content">
+<?MIVAR NAME=$ok_view_map>0<?/MIVAR>
+</TR>
+<?/MIBLOCK>
+
+
+<?MIVAR NAME=$gene_name>$1<?/MIVAR>
+<?MIVAR NAME=$panel_id>$5<?/MIVAR>
+<?MIVAR NAME=$panel_abbrev>$6<?/MIVAR>
+<?MIVAR NAME=$marker_name>$7<?/MIVAR>
+<?MIVAR NAME=$OID>$3<?/MIVAR>
 
 $(IF,$(NC,$prev_name,$1),$(SETVAR,$clr_cnt,$(+,$clr_cnt,1)))
 
 $(IF,$(AND,$(EC,$order_pref,location),$(NC,$prev_gp,$4)),"<TR><TD colspan=3 align=center><HR size=4 width=80%></TD></TR>")
+
+<?MIVAR NAME=$private>$8<?/MIVAR>
+<?MIVAR NAME=$OR_lg>$4<?/MIVAR>
 
 $(SETVAR,$color,$(/,$clr_cnt,2))
 <TR valign=top $(IF,$(!=,$color,$(FIX,$color)),"bgcolor=#FCCE64")>
@@ -157,23 +189,53 @@ $(IF,$(NC,$prev_name,$1),$(IF,$(ISNULL,$11),<TD valign=top> <font size=2><A HREF
 
 <TD> <font size=2> 
 
-$(IF,$(=,$4,0),"Unmapped")
+$(IF,$(AND,$(EC,$panel_abbrev,na),$(=,$4,0)),"Unmapped")
 
-<?MIVAR NAME=$upd_date COND="$(>,$4,0)">$(INDEX,$(-,$13,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $12,$14 
+<?MIVAR NAME=$upd_day>$13<?/MIVAR>
+<?MIBLOCK COND="$(NC,$upd_day,NULL)">
+<?MIVAR NAME=$upd_date> $(INDEX,$(-,$13,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $12,$14 
 <?/MIVAR>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(EC,$upd_day,NULL)">
+<?MIVAR NAME=$upd_date> <?/MIVAR>
+<?/MIBLOCK>
 
 
-$(IF,$(AND,$(>,$4,0),$(EC,$8,f)),"LG <b>"$4"</b>;<b> "$2"</b> "$10""<TD><font size=2> "<A target=content HREF=/cgi-bin_B/webdriver?MIval=aa-crossview.apg&OID="$5">"$6"</A>"</TD><TD><font size=2>" "$upd_date""</TD>)
+
+$(IF,$(AND,$(>,$4,0),$(EC,$8,f)),"LG <b>"$4"</b>;<b> "$2"</b> "$10""<TD><font size=2> "<A target=content HREF=/cgi-bin_B/webdriver?MIval=aa-crossview.apg&OID="$5">"$6"</A>"</TD><TD><font size=2 COLOR=#A9A9A9> <input type=checkbox name=$6 value=1  CHECKED ></TD><TD><font size=2>" "$upd_date""</TD>)
+<?MIBLOCK COND="$(AND,$(>,$4,0),$(EC,$8,f))">
+<?MIVAR name=$ok_view_map>1<?/MIVAR>
+
+
+<?/MIBLOCK>
+
 
 $(IF,$(AND,$(>,$4,0),$(NC,$8,f)),"Mapped on <A target=content HREF=/cgi-bin_B/webdriver?MIval=aa-crossview.apg&OID="$5">"$6" panel; updated "$upd_date"</A>, but still confidential.")
 </TD>
 
-<TD><font size=2><A HREF="javascript:view_map('$3','$7','$5')">
-$(IF,$(AND,$(>,$4,0),$(EC,$8,f)),"Show Map")</A>&nbsp; </TD>
+
 </TR>
-$(SETVAR,$prev_gp,$4)
-$(SETVAR,$prev_name,$1)
+$(SETVAR,$prev_gp,$OR_lg)
+$(SETVAR,$prev_name,$gene_name)
 <?/MISQL>
+
+
+<?MIBLOCK COND="$(EC,$ok_view_map,1)">
+<?MIVAR>
+<input type=hidden name=userid value=$userid>
+<input type=hidden name=marker value=$marker_name>
+$(SETVAR,$color,$(/,$clr_cnt,2))
+<TR valign=top $(IF,$(!=,$color,$(FIX,$color)),"bgcolor=#FCCE64")>
+<TD></TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD align=left><font size=1 COLOR=#A9A9A9><input type=submit value='VIEW MAP' name=view_map > <TD>&nbsp;</TD>
+</TR>
+<?/MIVAR>
+<?/MIBLOCK>
+
+<?MIVAR>
+$(IF,$(AND,$(EC,$private,f),$(>,$OR_lg,0)),"</form>")
+<?/MIVAR>
+
 </TABLE>
 
 <?MIVAR><!-- SQL: $MI_SQL <?/MIVAR>
