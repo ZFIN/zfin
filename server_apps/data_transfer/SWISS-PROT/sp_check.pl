@@ -171,8 +171,8 @@ while (<>) {
 }
 print "Final report: \n";
 print "\t problem records(#) : $num_prob \n";
-print "\t new ok records(#)  : $num_ok \n";
-printf ("\t all ok records(%)  : %.3f\n", 1-"$num_prob"/1678);
+print "\t ok records(#)  : $num_ok \n";
+printf ("\t ok percentage   : %.3f\n", 1 - $num_prob/($num_prob+$num_ok));
   
 
 
