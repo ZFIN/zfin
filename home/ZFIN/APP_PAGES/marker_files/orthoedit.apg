@@ -179,7 +179,7 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
       <SELECT name=newdb>
 	<?MISQL SQL="
 	  select distinct DB_name 
-	    from foreign_DB;">
+	    from foreign_DB where db_name <> 'BLAST';">
 	  <option value="$1">$1
 	<?/MISQL>
       </SELECT> 
