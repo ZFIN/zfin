@@ -21,7 +21,7 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/SWISS-PROT
 
 GENERICS = loadsp.pl sp_check.pl sp_parser.pl  index.html \
-	create_file_for_swiss_prot.pl	
+	create_file_for_swiss_prot.pl sp_badgo_report.pl 	
 
 STATICS = sptogo.pl iptogo.pl ectogo.pl sp_delete.sql \
 	sp_load.sql create_file_for_swiss_prot.sql README  
