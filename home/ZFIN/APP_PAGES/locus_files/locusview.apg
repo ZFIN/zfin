@@ -28,19 +28,6 @@
     function doit(attr,attr_type,print_name) {
       window.location.search='?MIval=aa-locusupdate.apg&OID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name
     }
-
-    function add_linkage(lname) {
-      helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-linkagedit.apg&OID=$OID&lname="+escape(lname),"helpwindow","scrollbars=yes,width=550,height=300");
-    }
-
-    function edit_linkage(link_id,lname) {
-      helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-linkagedit.apg&OID=$OID&edit_link="+link_id+"&lname="+escape(lname),"helpwindow","scrollbars=yes,width=550,height=300");
-    }
-
-    function deleteLinkage(mid,dist,lod) {
-      window.location.search='?MIval=aa-do-fishupdate.apg&OID=$OID&attr=protocol&attr_type=special-alteration&old_value='+old_value+'&new_value='+new_value+'&alt_id='+alt_id
-    }
-
   <?/MIVAR>
 
   function info() {
