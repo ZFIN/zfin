@@ -1,4 +1,3 @@
-
 <?MIERROR>
   <?MIVAR COND=$(XST,$MI_SQL)>
     SQL: $MI_SQL<br><br>
@@ -101,19 +100,17 @@ function updateParent(AOname, AOid) {
       <TD>
         <?MIBLOCK COND="$(AND,$(XST,$mode),$(EC,$mode,stages))">
    
-          <FONT size=2><B>Developmental Stage:</B></FONT><BR>
+          <FONT size=2><B>
+	    <a href="/zf_info/zfbook/stages/index.html">Developmental Stage:</a>
+	  </B></FONT><BR>
           <SELECT name="OID" onChange="document.dictform.mode.value='stages'; document.dictform.submit();">
             <OPTION VALUE="">Select a stage</OPTION>
             <?MISQL SQL="
-		select stg_name_long, 
-			stg_hours_start, 
-			stg_hours_end, 
-			stg_zdb_id
-		from stage
-		where exists (select anatdisp_stg_zdb_id
-				from anatomy_display)
+		select stg_zdb_id, stg_name_long
+		  from stage
+		 where stg_name <> 'Unknown' 
 		order by stg_hours_start, stg_hours_end desc;">
-              <OPTION VALUE="$4"$(IF,$(AND,$(XST,$OID),$(EC,$OID,$4)),SELECTED)> $1 </OPTION>
+              <OPTION VALUE="$1"$(IF,$(AND,$(XST,$OID),$(EC,$OID,$1)),SELECTED)>$2</OPTION>
             <?/MISQL>
           </select>
         <?/MIBLOCK>
