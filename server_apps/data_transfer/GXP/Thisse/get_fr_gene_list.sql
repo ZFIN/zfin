@@ -25,7 +25,8 @@ insert into fr_gene_tmp
 		   expression_pattern
      where fracc_acc = dblink_acc_num
 	   and dblink_linked_recid = xpat_probe_zdb_id
-	   and dblink_info = 'gxp load' || TODAY
+	   and xpat_direct_submission_date = TODAY
+	   and xpat_source_zdb_id = "ZDB-PUB-040907-1"
 	   and xpat_probe_zdb_id = c.mrkr_zdb_id
 	   and xpat_gene_zdb_id = g.mrkr_zdb_id;
 
