@@ -265,25 +265,34 @@
 	  <TR <?MIVAR>bgcolor="$row_color"<?/MIVAR> >
 	    <TD>&nbsp;</TD>
 	    <?MIBLOCK COND="$(EC,$first_row,1)">
-	      <TD valign=top> <font size=2>
+	      
 	        <?MIVAR>
-	          $(IF,$(XST,$return_rec),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$OID TARGET=content>SELECT</A>)
-		  <i>
-	          <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID TARGET=content>$marker_name</A>
-		  &nbsp;&nbsp; - $gene_name</i>
-		  <?MIVAR name=$aliases><br>[<i><?/MIVAR>
+		  <?MIBLOCK COND="$(>,$(POSITION,$OID,GENE),0)">
+                    <?MIVAR NAME=$GENE_LINK>
+                     $(IF,$(XST,$return_rec),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$OID TARGET=content>SELECT</A>)
+                      <i><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID" target=content>$marker_name</a> &nbsp;&nbsp;- $gene_name</i>
+                    <?/MIVAR>
+                    <?MIVAR name=$GENE_TYPE>GENE<?/MIVAR>
+	            <?MIVAR name=$aliases> <?/MIVAR>
+		  <?MIELSE>
+                    <?MIVAR NAME=$GENE_LINK>
+                      $(IF,$(XST,$return_rec),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$OID TARGET=content>SELECT</A>)
+	              <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID" target=content>$marker_name</a> <!-- &nbsp;&nbsp; - $gene_name -->
+                    <?/MIVAR>
+                    <?MIVAR name=$GENE_TYPE>EST<?/MIVAR>
+		    <?MIVAR name=$aliases> <?/MIVAR>
+                  <?/MIBLOCK>
 	        <?/MIVAR>
-		<?MIVAR name=$rowNUM>$(+,$rowNUM,1)<?/MIVAR>
 
 		<?MISQL SQL="
-		  select mrkrali_marker_name_alias
+		  select mrkrali_marker_name_alias,mrkrali_marker_zdb_id
 		    from marker_alias 
 		    where mrkrali_marker_zdb_id = '$OID'
 		  union 
-		  select putgene_putative_gene_name
+		  select putgene_putative_gene_name,putgene_pub_zdb_id
 		    from putative_gene
 		    where putgene_mrkr_zdb_id = '$OID';">
-		  <?MIVAR NAME=$alias>$1<?/MIVAR>
+		  <?MIVAR NAME=$alias>$(IF,$(=,$(POSITION,$2,GENE),0),$1,<i>$1</i>)<?/MIVAR>
 		  <?MIVAR NAME=$aliases>$(IF,$(=,$MI_CURRENTROW,1),$aliases $alias,$aliases; $alias)<?/MIVAR>
 		<?/MISQL>
 
@@ -303,11 +312,29 @@
 		  <?/MIBLOCK>
 		  <?MIVAR NAME=$aliases>$aliases $ortho_name ($ortho_abbrev)<?/MIVAR>
 		<?/MISQL>
-		<?MIVAR COND="$(NC,$aliases,<br>[<i>)">
-		  $aliases </i>]
-		<?/MIVAR>
-	      </TD>
-	    <?/MIBLOCK>
+		<?MIBLOCK COND="$(NE,$aliases, )">
+		  <?MIBLOCK COND="$(>,$(POSITION,$OID,GENE),0)">
+		    <?MIVAR name=$aliases>
+		      [$aliases]
+		    <?/MIVAR>
+		  <?MIELSE>
+		    <?MIVAR name=$aliases>
+		      [$aliases]
+		    <?/MIVAR>
+		  <?/MIBLOCK>
+		<?MIELSE>
+		  <?MIVAR name=$aliases>
+                    []
+                  <?/MIVAR>
+		<?/MIBLOCK>
+
+              <?MIVAR>
+        <TD>
+          $GENE_TYPE:$GENE_LINK $aliases
+        </TD>
+              <?/MIVAR>
+
+            <?/MIBLOCK> <!-- first row -->
 
 	    <?MIBLOCK COND="$(EC,$first_row,0)">
               <TD>&nbsp;</TD>
