@@ -13,7 +13,8 @@
 #       under.  See the Makefile for the Java Server for details.
 # Use the /usr filesystem so that we are assured it is mounted when 
 # this script is run in rc3.d
-JAVA_DIR=/usr/java1.1
+
+JAVA_DIR=/private/apps/java
 
 SERVER_HOME=<!--|JAVASERVER_PATH|-->
 cd $SERVER_HOME
