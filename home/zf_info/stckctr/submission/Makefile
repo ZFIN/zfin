@@ -25,6 +25,8 @@ requestESTs2.html\
 requestThankyou.html\
 submit.html\
 submitSuccess.html\
+submitTerms.html\
+submitTryAgain.html\
 success.html\
 thankyou.html
 
