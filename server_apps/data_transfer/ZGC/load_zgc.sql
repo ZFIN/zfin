@@ -791,6 +791,45 @@ WHERE zUpgrade_zdb_id IN (Select g2.zGene_zdb_id From tmp_gene_duplicate AS g2)
 DELETE from tmp_Zgc_Upgrade
 WHERE zUpgrade_zdb_id IN (Select g2.zGene_zdb_id From tmp_gene_duplicate AS g2);
 
+-- zgc: Genes are created for CDNAs without a gene assignment. CDNA are identified
+-- by a BC accession number. If multiple dblinks are associated with the same CDNA
+-- then redundant zgc: Genes are generated.
+
+-- 1. Find duplicates. 
+-- 2. Delete marker_relationship records with duplicates. 
+-- 3. Delete duplicates gene records.
+
+SELECT zGENE_name AS zgene_unique_name, MAX(zGENE_zdb_id) AS zgene_unique_zdb_id
+FROM tmp_Zgc_Gene 
+GROUP BY 1 
+INTO temp tmp_gene_unique;
+
+SELECT zGENE_name AS zgene_dup_name, zGENE_zdb_id AS zgene_dup_zdb_id
+FROM tmp_ZGC_Gene
+WHERE NOT EXISTS 
+  (  
+    select * 
+    from tmp_gene_unique
+    where zGENE_name = zgene_unique_name
+      and zGENE_zdb_id = zgene_unique_zdb_id
+  )
+INTO temp tmp_gene_dup;
+
+DELETE FROM tmp_Zgc_Mrel
+WHERE EXISTS
+  (
+    select *
+    from tmp_gene_dup
+    where zgene_dup_zdb_id = zMREL_gene_zdb_id
+  );
+
+DELETE FROM tmp_Zgc_Gene
+WHERE EXISTS
+  (
+    select * 
+    from tmp_gene_dup
+    where zgene_dup_zdb_id = zGENE_zdb_id
+  );
 
 INSERT into zdb_active_data SELECT zGENE_zdb_id FROM tmp_Zgc_Gene;
 INSERT into marker
@@ -973,5 +1012,5 @@ where mrkr_type = 'CDNA'
   and mrkr_zdb_id not in (select clone_mrkr_zdb_id from clone);
 }
 
---rollback work;  
-commit work;
+rollback work;  
+--commit work;
