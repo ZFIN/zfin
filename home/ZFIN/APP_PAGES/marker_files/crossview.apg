@@ -25,7 +25,7 @@ document.mapview.submit();
 </HEAD>
 
 <body bgcolor="#e5e5e5"  TEXT="black">
-<basefont COLOR="#000000" size=2>
+<basefont COLOR="#000000" size=3>
 
 
 <?MIBLOCK COND="$(NXST,$OID)">
@@ -53,7 +53,7 @@ ERROR -- something bad happened -- no OID passed in!
 <?MISQL SQL="select name, panel_date,producer,source,comments,ptype,abbrev, day(panel_date),month(panel_date), year(panel_date) from panels where zdb_id='$OID';"><?/MISQL>
 
 <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
-<form><center><font size=4>
+<form><center><font size=+1>
 <b> ID not found in ZFIN </b> </center>
 </form>
 <?/MIBLOCK>
@@ -107,21 +107,20 @@ ID='aa-data_mgr.apg';">$1<?/MISQL>
 
 <CENTER>
 <?MIVAR>
-<FONT SIZE=4> <B> 
+<FONT SIZE=+1> <B> 
 $(IF,$(EC,$panel_type,Rad_Hybrid),Radiation Hybrid,Meiotic) Panel:  $panel_name ($abbrev)
 </B></FONT>
 <?/MIVAR>
 </CENTER>
 <p>
 
-<font size=2>
 <b>Description:</b> 
 <?MIVAR COND="$(NC,$comments,NULL)">$comments<?/MIVAR>
 <p>
 
 <TABLE WIDTH=100% cellpadding=4>
 <TR>
-<TD><font size=2><b>Panel Producer:</b>
+<TD><b>Panel Producer:</b>
 <?MIBLOCK COND="$(NC,$panel_producer,NULL)">
 <?MISQL SQL="select full_name from person where zdb_id='$panel_producer';">
 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$panel_producer">$1</A>
@@ -130,7 +129,7 @@ $(IF,$(EC,$panel_type,Rad_Hybrid),Radiation Hybrid,Meiotic) Panel:  $panel_name 
 <?MIVAR COND="$(EC,$panel_producer,NULL)"> UNKNOWN. <?/MIVAR>
 </TD>
 
-<TD><font size=2> 
+<TD> 
 <b>Most Recent Update:</b> 
 <?MIVAR>$(IF,$(NC,$panel_date,NULL),$upd_date,UNKNOWN)<?/MIVAR>
 </td>
@@ -140,15 +139,15 @@ $(IF,$(EC,$panel_type,Rad_Hybrid),Radiation Hybrid,Meiotic) Panel:  $panel_name 
 <TABLE width=100%>
 <TR>
 <?MIVAR COND="$(EC,$panel_type,meiotic)">
-<TD><font size=2> <b>Panel type:</b> Meiotic</td>
-<TD> <font size=2><b>Number of meioses:</b> 
+<TD> <b>Panel type:</b> Meiotic</td>
+<TD> <b>Number of meioses:</b> 
 $(IF,$(NC,$num_meioses,NULL),$num_meioses,UNKNOWN)
 </td>
 <?/MIVAR>
 
 <?MIVAR COND="$(EC,$panel_type,Rad_Hybrid)">
-<TD> <font size=2><b>Panel type:</b> Rad_Hybrid</td>
-<TD><font size=2><b>Radiation Dose:</b> $rad_dose</TD>
+<TD> <b>Panel type:</b> Rad_Hybrid</td>
+<TD><b>Radiation Dose:</b> $rad_dose</TD>
 <?/MIVAR>
 
 </TR>
@@ -156,7 +155,7 @@ $(IF,$(NC,$num_meioses,NULL),$num_meioses,UNKNOWN)
 
 <TABLE>
 <TR>
-<TD><font size=2><b>Current source of genetic material for mapping:</b> 
+<TD><b>Current source of genetic material for mapping:</b> 
 <?MIBLOCK COND="$(NC,$source,NULL)">
 <?MISQL SQL="select name from sources where zdb_id='$source';">
 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sourceview.apg&OID=$source">$1</A>
@@ -183,9 +182,9 @@ $(IF,$(NC,$num_meioses,NULL),$num_meioses,UNKNOWN)
 
 <TD valign=top>
 <center><?MIVAR>
-<font size=3><b>$abbrev panel: Statistics</b> </font>
+<b>$abbrev panel: Statistics</b> </font>
 <?/MIVAR></center>
-<p><font size=2>
+<p>
 <b>Markers:</B>
 <ul>
 <?MIVAR NAME=$mcount>0<?/MIVAR>
@@ -212,7 +211,7 @@ $(IF,$(NC,$num_meioses,NULL),$num_meioses,UNKNOWN)
 <?MIBLOCK COND="$(>,$mcount,0)">
 <?MIVAR>Total of <b>$mcount</b> markers on panel<?/MIVAR>
 <p>
-<font size=2>Click "View Map" in table at right to see a graphical map of an individual linkage group. 
+Click "View Map" in table at right to see a graphical map of an individual linkage group. 
 <p align=center>
 OR
 </p>
@@ -228,7 +227,7 @@ Click to <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-refcrosslist.apg">
 </TD>
 
 
-<TD><font size=2>
+<TD>
 <TABLE BORDER cellpadding=2 bgcolor="#f8fabb" cols=4>
 <TH>LG</TH><TH>Markers on LG</TH><TH></TH><TH></TH>
 <?MIVAR><INPUT TYPE=hidden name=loc_panel value=$abbrev><?/MIVAR>
