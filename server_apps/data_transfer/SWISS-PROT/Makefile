@@ -21,10 +21,11 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/SWISS-PROT
 
 GENERICS = pre_loadsp.pl loadsp.pl sp_check.pl sp_parser.pl  index.html \
-	create_file_for_swiss_prot.pl sp_badgo_report.pl 	
+	create_file_for_swiss_prot.pl create_file_for_swiss_prot.sql \
+	sp_badgo_report.pl 
 
 STATICS = sp_match.pl sptogo.pl iptogo.pl ectogo.pl sp_delete.sql \
-	sp_load.sql create_file_for_swiss_prot.sql README  
+	sp_load.sql README  
 
 # Define targets that require special handling.
 
