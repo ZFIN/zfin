@@ -701,7 +701,7 @@ ERROR -- something bad happened -- no OID passed in!
 	  AND lbl_zdb_id = lblrna_label_zdb_id;
 ">
 
-	<b>PROBE:</b>&nbsp; $1
+	<b>PROBE:&nbsp; $1</b>
 
 	<table width="100%" border=0 cellpadding=5 bgcolor="$highlight">
 		<tr>
@@ -723,7 +723,9 @@ ERROR -- something bad happened -- no OID passed in!
 				<b>Library:</b>&nbsp; $7
 			</td>
 			<td>
-				<b>Insert Size:</b>&nbsp; $8 bp
+                          <?MIVAR>
+				<b>Insert Size:</b>&nbsp; $8 $(IF,$(NE,$8,),bp,NA)
+                          <?/MIVAR>
 			</td>
 		</tr>
 		<tr>
