@@ -75,6 +75,13 @@
 
 </TD>
 
+<TD colspan=2> 
+<font size=-1>
+<input type=checkbox name=knownloci> Show only genes with known mutant loci<br>
+</TD>
+
+
+
 <TD align=right WIDTH=30%>
 <input type=reset value="RESET">  
 <input type=submit name=action value="SEARCH"></TD>
