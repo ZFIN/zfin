@@ -3,9 +3,6 @@
 # Makefile for ZFIN_WWW CVS Project, WWW Database functions library
 # directory
 #
-# $Source$
-# $Id$
-#
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
 # !! of the makefile hierarchy this makefile is a part of, and of the  !!
@@ -22,7 +19,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/lib/DB_functions
 
-SUBDIRS = zextend
+SUBDIRS = SPL zextend
 
 
 # ---------------  Production Rules  ------------------------------------
