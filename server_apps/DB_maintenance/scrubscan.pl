@@ -5,7 +5,7 @@
 # for condtions that we don't want to happen.  These conditions are those
 # that can be fixed by the scrub_char() function.  Any columns reported by
 # this script should be examined and either:
-#  1. Added to this scripts avoid list, in which case the script will no
+#  1. Added to this script's avoid list, in which case the script will no
 #     longer check or report that column.
 #  2. Identify how the bad data got in.
 #     A. If it got in through a script then modify the script to prevent it
@@ -14,7 +14,7 @@
 #        triggers on the column to always call scrub_char().
 #
 # Usage:
-#   scrubscan.pl "dbname"
+#   scrubscan.pl
 #
 # There are no arguments.
 #
@@ -77,7 +77,8 @@ my %avoids = (
     "probe_lib:pl_lib_name" => "avoid",	# Tom C says leave it be.
     "probe_lib:pl_develop_stage" => "avoid",	# Tom C says leave it be.
     "probe_library:probelib_name" => "avoid",	# Tom C says leave it be.
-    "probe_library:probelib_restriction_sites" => "avoid" # Tom C says leave it be.
+    "probe_library:probelib_restriction_sites" => "avoid", # Tom C says leave it be.
+    "xpat_anatomy_capture:xac_anatitem_name" => "avoid" # bad user input 
 );
 
 # get the names of all the tables in the database. Ignore views and
@@ -108,7 +109,7 @@ while (my $line = <TABLESFILE>) {
 	$sql = "select colname, coltype from syscolumns sc, systables st "
 	    . " where st.tabname = \"$tableName\" "
 	    . "   and st.tabid = sc.tabid "
-	    . "   and sc.coltype in (0, 13)";
+	    . "   and sc.coltype in (0, 13, 256, 269)";
 	my $columnsFile = "$columnsBase.$tableName";
 	system("echo '$sql' | $dbaccess $database - > $columnsFile 2>/dev/null");
 
@@ -125,7 +126,7 @@ while (my $line = <TABLESFILE>) {
 		if (! $avoids{"$tableName:$colName"}) {
 		    foreach $test (@tests) {
 			($testName,$applyToChar,$condition) = split(/:/,$test);
-			if ($applyToChar eq "Y" || $colType == 13){
+			if ($applyToChar eq "Y" || $colType == 13 || $colType == 269){
 			    $condition =~ s/column/$colName/g;
 			    $sql = "select $colName from $tableName where $condition";
 			    my $resultsFile = "$resultsBase.$tableName";
