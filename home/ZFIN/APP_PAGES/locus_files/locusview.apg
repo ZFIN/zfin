@@ -364,6 +364,7 @@
 
 
         <!------------- Summary of alleles  ------------------------>
+	<a>allele</a>
 	<HR WIDTH=80%>
 	
 	<?MIVAR>
@@ -467,6 +468,7 @@
 	<!------------------ PUBLICATION ------------------------------------>
 	<HR width="80%" align=center>
 	<?MIVAR NAME=$sum>0<?/MIVAR>
+
 	<?MISQL SQL="
 		select count(distinct recattrib_source_zdb_id) 
 	 	  from fish f, locus l, record_attribution
@@ -477,6 +479,15 @@
 	 <?/MISQL>
 	    
 	 <?MIVAR NAME=$sum>$1<?/MIVAR>	   
+
+      	 <?MISQL SQL="		 
+		select count(distinct recattrib_source_zdb_id) 
+	 	  from locus l, record_attribution
+	 	 where l.zdb_id = '$OID'
+		   and l.zdb_id = recattrib_data_zdb_id
+		;">	
+        <?/MISQL>
+	<?MIVAR>$(SETVAR,$sum,$(+,$sum,$1))<?/MIVAR>	   	
 	
 	<?MIBLOCK COND="$(OR,$(>,$sum,0),$(XST,$UPDATE))">
   	  <?MIVAR>
@@ -492,7 +503,7 @@
 <!----------------- ends PUBLICATION ----------------->
 
 
-	
+
       </form>
 
     <?/MIBLOCK> <!-- Cond AUTHORIZED -->

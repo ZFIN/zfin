@@ -116,6 +116,7 @@ $(IF,$(>,$(POSITION,$rtype,locus),0),
 <form>
 <TABLE width=100%><TR><TD bgcolor=#ccccccc>
 <font size=+2><b>PUBLICATIONS</b></font>
+<!-- want to include pubs associated with alleles of the locus and with locus itself -->
 <?MIBLOCK COND="$(AND,$(NXST,$attribtype),$(>,$(POSITION,$OID,LOCUS),0))">
       <?MISQL SQL="
 		select count(distinct recattrib_source_zdb_id) 
@@ -123,9 +124,17 @@ $(IF,$(>,$(POSITION,$rtype,locus),0),
 	 	 where l.zdb_id = '$OID'
 		   and f.locus = l.zdb_id 
 		   and f.zdb_id = recattrib_data_zdb_id
-		;">	
+		;">
+      <?/MISQL>	
 		<?MIVAR NAME=$sum>$1<?/MIVAR>
-	<?/MISQL>	   	
+      <?MISQL SQL="		 
+		select count(distinct recattrib_source_zdb_id) 
+	 	  from locus l, record_attribution
+	 	 where l.zdb_id = '$OID'
+		   and l.zdb_id = recattrib_data_zdb_id
+		;">	
+      <?/MISQL>	   	
+      <?MIVAR>$(SETVAR,$sum,$(+,$sum,$1))<?/MIVAR>
 	   
       <?MIVAR>($(FIX,$sum) total)<?/MIVAR>	
 
@@ -189,12 +198,17 @@ $(IF,$(>,$(POSITION,$rtype,locus),0),
 <br>
 <?MIVAR COND="$(XST,$UPDATE)">
 <INPUT TYPE=button value="Add Publication" onClick="doit('rel_pub','selection','Add')"> 
+<?MIBLOCK COND="$(AND,$(NXST,$attribtype),$(>,$(POSITION,$OID,LOCUS),0))">
+ <b> Please use the individual  <?MIVAR><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$OID#allele'>allele</A><?/MIVAR> record to enter allele-specific publications.</b>
+  <br>
+<?/MIBLOCK>
 <?/MIVAR> 
 
 
 <table>
 <?MIBLOCK COND="$(AND,$(NXST,$attribtype),$(>,$(POSITION,$OID,LOCUS),0))">
 
+<!-- want to include pubs for alleles associated with locus and locus itself -->
     <?MISQL SQL="
   	select distinct title, p.zdb_id, year(pub_date) as pyear, authors, source, 
 	 	lower(authors)  
@@ -202,6 +216,13 @@ $(IF,$(>,$(POSITION,$rtype,locus),0),
      	 where l.zdb_id = '$OID'
 	   and f.locus = l.zdb_id 
 	   and recattrib_data_zdb_id = f.zdb_id
+      	   and recattrib_source_zdb_id = p.zdb_id
+	UNION
+ 	select distinct title, p.zdb_id, year(pub_date) as pyear, authors, source, 
+	 	lower(authors)  
+   	  from record_attribution, publication p, locus l 
+     	 where l.zdb_id = '$OID'
+	   and recattrib_data_zdb_id = l.zdb_id
       	   and recattrib_source_zdb_id = p.zdb_id
     	order by 6 asc;">
   	$(IF,$(XST,$UPDATE),"<TD><font size=-1><input type=button value=delete onClick=Delete_listitem('publication','"$2"')></font></TD>")
