@@ -82,10 +82,9 @@ OPTIONAL VARS:
   <?MIBLOCK COND=$(XST,$delete_pnote)>
     <?MISQL SQL="DELETE FROM publication_note WHERE pnote_zdb_id = '$delete_pnote';"><?/MISQL>
   <?/MIBLOCK>
-  
-  
 
   <SCRIPT>
+   
       function replaceLocation(url) {
         if (navigator.userAgent.indexOf("Safari") >= 0) 
           location = url;        
@@ -172,7 +171,35 @@ OPTIONAL VARS:
         }
         return true;
       }
-      
+
+     function validateCheckbox() {
+	var contact_grp  = document.contact_author.contact;
+	var valid     = false;
+	var contacts = new String();
+	if( contact_grp.length > 0) {
+          for (i=0; i<contact_grp.length; i++) {
+	
+		if(contact_grp[i].checked) {
+			valid = true; 
+ 			contacts += contact_grp[i].value+",";
+		
+		}
+	   }
+	} else if (contact_grp.checked){
+		valid = true;
+		contacts = contact_grp.value;
+	}
+	if(!valid){
+		alert("Please select contacts first.");
+		return false;
+	}
+        <?MIVAR>
+	window.open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-notif_frame.apg&status=edit&OID=$OID&contacts_id="+contacts+"&sender_id=$ZDB_ident","editwindow","resizable=yes,toolbar=yes,scrollbars=yes,width=700,height=900");
+	<?/MIVAR>
+ 	return true;		       
+     }  	
+
+
     <?MIVAR COND=$(XST,$calling_apg)">
       window.replaceLocation("$calling_apg");
     <?/MIVAR>
@@ -180,8 +207,6 @@ OPTIONAL VARS:
   </SCRIPT>
 
 
-  
-  
   <?MIVAR>
     <TITLE>ZFIN Curate Pub: $title</TITLE>
   <?/MIVAR>
@@ -511,6 +536,54 @@ OPTIONAL VARS:
     </tr>
   </table>
   
+<?MICOMMENT> 
+  =======================
+  =  Contact Author(s)  =
+  =======================
+<?/MICOMMENT>
+
+<P>
+<?MIVAR COND="$(XST,$contact)" NAME=$contacts>
+  $(TRIM,$(SEPARATE,$contact,",")) 
+<?/MIVAR>
+
+<FORM ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" METHOD=post NAME=contact_author 
+      ONSUBMIT="return validateCheckbox()">
+
+    <?MIVAR>
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-pubcuration.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="$OID"> 
+
+    <?/MIVAR> 
+  <font color="black"><b> Contact Author(s) </b></font><a name=contact_author></a>  <br>
+  &nbsp;&nbsp;
+  <?MISQL SQL="SELECT a.full_name, a.zdb_id,  a.email 
+                 FROM person a, int_person_pub b 
+                WHERE source_id = a.zdb_id 
+                  AND target_id='$OID' 
+             ORDER BY a.full_name ; ">
+     <?MIVAR NAME=author_name>$1<?/MIVAR>
+     <?MIVAR NAME=author_id>$2<?/MIVAR>
+ 
+     <INPUT type=checkbox $(IF,$(AND,$(XST,$contact),$(>,$(POSITION,$contacts,$author_id),0)),CHECKED) name=contact value=$author_id> $author_name
+     
+  <?/MISQL>
+
+  <br>	
+  <INPUT type=submit value="Edit Notification">
+
+</form> 
+<?MICOMMENT>
+<?MIBLOCK COND="$(XST,$contact)">
+ <script> 
+  <?MIVAR>
+   window.open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-notif_frame.apg&status=edit&OID=$OID&contacts_id=$(URLENCODE,$contacts)&sender_id=$ZDB_ident","editwindow","resizable=yes,scrollbars=yes,width=700,height=900");
+  <?/MIVAR>
+ </script> 
+<?/MIBLOCK>
+<?/MICOMMENT>
+
+
 <?MICOMMENT> 
   ====================
   =  ERROR MESSAGES  =
