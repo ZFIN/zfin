@@ -29,7 +29,7 @@
   my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->', '', '', {AutoCommit => 1, RaiseError => 1})
   || die "Failed while connecting to <!--|DB_NAME|--> "; #$DBI::errstr";
  
-  my @allpanels; 
+ # my @allpanels; 
   my $panel; 
   my $cur = $dbh->prepare('select abbrev from panels');
   $cur->execute;
@@ -205,15 +205,17 @@
       if( (defined $Q->param("marker")) && ($Q->param("marker")) ) { 
 	$marker = lc($Q->param("marker"));
 	$rowref = check_uniq($marker);
-	$unique = (defined $$rowref[0][0])? length(@$rowref): 0;       
-	#	$note = $note . "\trow ref length " . $unique . "\n";
+	$unique = (defined $$rowref[0][0])? length(@$rowref): 0; 
+      
+	
+    #	$note = $note . "\trow ref length " . $unique . "\n";
 	###
 	### yow!  too many answers
 	###
 	if( $unique > 1) {	# not unique shunt off to search result page
-	  #	  $note = $note . $unique . " ->Too Many Choices  <p>\n";  
+	  	  $note = $note . $unique . " ->Too Many Choices  <p>\n";  
 	  my $bot = LWP::UserAgent->new(); 
-	  my $req = POST '/<!--|WEBDRIVER_PATH_FROM_ROOT|-->',
+	  my $req = POST 'http://<!--|DOMAIN_NAME|-->/<!--|WEBDRIVER_PATH_FROM_ROOT|-->',
 	  [   compare=> '%',
 	      marker_type=> 'any',
 	      lg=> 0,
@@ -224,8 +226,11 @@
 	      name=> "$marker",
 	      ZDB_authorize=> $Q->cookie('ZDB_authorize')
 	  ];
-	  print 'Content-Type: text/html; charset=ISO-8859-1\r\n\r\n'. 
-	    $bot->request($req)->content;
+	  print 'Content-Type: text/html; charset=ISO-8859-1\r\n\r\n'; 
+	  my $res = $bot->request($req);
+      # check the outcome
+      if ($res->is_success) {print $res->content . "\n";} 
+      else { print "Error: " . $res->status_line . "\n";}
 	  exit 1;       
 	}            
 	###
