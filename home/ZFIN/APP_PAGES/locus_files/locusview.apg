@@ -465,23 +465,16 @@
 	<!------------------ PUBLICATION ------------------------------------>
 	<HR width="80%" align=center>
 	<?MIVAR NAME=$sum>0<?/MIVAR>
-	<?MISQL SQL="
-		select f.zdb_id 
-	 	  from fish f, locus l
+	   <?MISQL SQL="
+		select count(distinct recattrib_source_zdb_id) 
+	 	  from fish f, locus l, record_attribution
 	 	 where l.zdb_id = '$OID'
 		   and f.locus = l.zdb_id 
-		;">
-	   <?MIVAR NAME=$fishId>$1<?/MIVAR>
-	   <?MISQL SQL="
- 	 	select count(*) 
- 		 from record_attribution
- 	 	where recattrib_data_zdb_id = '$fishId'
-   	 	  and get_obj_type(recattrib_source_zdb_id) = 'PUB';
-  		">
-		<?MIVAR NAME=$count>$1<?/MIVAR>		
-	    <?/MISQL>
+		   and f.zdb_id = recattrib_data_zdb_id
+  		;">	
+	   <?/MISQL>
 	    
-	    <?MIVAR>$(SETVAR,$sum,$(+,$sum,$count))<?/MIVAR>
+	   <?MIVAR NAME=$sum>$1<?/MIVAR>
 	   
 	<?/MISQL>
 	
