@@ -14,15 +14,41 @@
 <?MIVAR COND="$(NXST,$century)" NAME=$century>20<?/MIVAR>
 <?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>abstract<?/MIVAR>
 <?MIVAR COND="$(NXST,$order_pref)" NAME=$order_pref>date<?/MIVAR>
-<?MIVAR COND="$(NXST,$cur_status)" NAME=$cur_status>any<?/MIVAR>
-<?MIVAR COND="$(NXST,$pub_status)" NAME=$pub_status>any<?/MIVAR>
 <?MIVAR COND="$(NXST,$yr_cmpr)" NAME=$yr_cmpr>=<?/MIVAR>
 <?MIVAR COND="$(NXST,$START)" NAME=$START>1<?/MIVAR>
+<?MIVAR COND="$(NXST,$curator)" NAME=$curator>Anyone<?/MIVAR>
+<?MIVAR COND="$(NXST,$cur_topic)" NAME=$cur_topic>Any<?/MIVAR>
+<?MIVAR COND="$(NXST,$pub_status)" NAME=$pub_status>Any<?/MIVAR>
+<?MIVAR COND="$(NXST,$topic_found)" NAME=$topic_found><?/MIVAR>
 
   </head>
 
 <?MIBLOCK COND="$(NXST,$accession)">
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+<?/MIBLOCK>
+
+<?MICOMMENT>
+    =====================
+    =    DATE VALUES    =
+    =====================    
+<?/MICOMMENT>
+
+<?MISQL SQL="SELECT DISTINCT MIN(pub_arrival_date) FROM publication;"><?/MISQL>
+<?MIVAR NAME=MIN_ARRIVAL>$1<?/MIVAR>
+<?MIVAR NAME=MIN_PUB_YEAR>$(SUBSTR,$MIN_ARRIVAL,1,4)<?/MIVAR>
+
+<?MISQL SQL="SELECT DISTINCT MAX(pub_arrival_date) FROM publication;"><?/MISQL>
+<?MIVAR NAME=MAX_ARRIVAL>$1<?/MIVAR>
+<?MIVAR NAME=MAX_PUB_YEAR>$(SUBSTR,$MAX_ARRIVAL,1,4)<?/MIVAR>
+
+<?MIBLOCK COND="$(NXST,$Tday)">
+  <?MIVAR NAME=Tday>$(SUBSTR,$MAX_ARRIVAL,9,2)<?/MIVAR>
+  <?MIVAR NAME=Tmonth>$(SUBSTR,$MAX_ARRIVAL,6,2)<?/MIVAR>
+  <?MIVAR NAME=Tyear>$MAX_PUB_YEAR<?/MIVAR>
+
+  <?MIVAR NAME=Fday>$(SUBSTR,$MIN_ARRIVAL,9,2)<?/MIVAR>
+  <?MIVAR NAME=Fmonth>$(SUBSTR,$MIN_ARRIVAL,6,2)<?/MIVAR>
+  <?MIVAR NAME=Fyear>$MIN_PUB_YEAR<?/MIVAR>
 <?/MIBLOCK>
 
 <SCRIPT>
@@ -32,14 +58,22 @@ document.critform.submit();
 }
 
 function call_reset() {
-
+  <?MIVAR>
 document.critform.authors.value = "";
 document.critform.title.value = "";
 document.critform.year.value = "";
 document.critform.anon1text.value = "";
 document.critform.jtype.selectedIndex = 0;
 document.critform.pub_status.selectedIndex = 0;
-document.critform.cur_status.selectedIndex = 0;
+document.critform.curator.selectedIndex = 0;
+document.critform.cur_topic.selectedIndex = 0;
+document.critform.topic_found.selectedIndex = 0;
+document.critform.Tday.value = "$Tday";
+document.critform.Tmonth.value = "$Tmonth";
+document.critform.Tyear.value = "$Tyear";
+document.critform.Fday.value = "$Fday";
+document.critform.Fmonth.value = "$Fmonth";
+document.critform.Fyear.value = "$Fyear";
 document.critform.yr_cmpr.selectedIndex = 0;
 document.critform.century.selectedIndex = 1;
 document.critform.anon1.selectedIndex = 0;
@@ -47,7 +81,7 @@ document.critform.order_pref.selectedIndex = 0;
 document.critform.authtype.selectedIndex = 0;
 document.critform.WINSIZE.value = 10;
 document.critform.START.value = "";
-
+  <?/MIVAR>
 }
 
 function start_help(anchor) {
@@ -60,82 +94,103 @@ function start_help(anchor) {
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-identify.apg';">$1<?/MISQL>
 
 
-
-
-
-
-
 <?MIBLOCK COND="$(XST,$query_results)">
 
 
 <!-- THIS NEXT PART IS EXECUTED AFTER THE PERSON ENTERS SOME CRITERIA -->
-<?MIVAR NAME=$constraint COND="$(NXST,$constraint)"> <?/MIVAR>
+<?MIVAR NAME=$constraint COND="$(NXST,$constraint)"><?/MIVAR>
+<?MIVAR>$(UNSETVAR,$constraint)<?/MIVAR>
+<?MIVAR NAME=$curation_constraint COND="$(NXST,$in_curation)"><?/MIVAR>
+<?MIVAR>$(UNSETVAR,$curation_constraint)<?/MIVAR>
 
+<?MIBLOCK COND="$(XST,$clear_all)">
+  <?MIVAR NAME=constraint>status = 'active'<?/MIVAR>
+<?MIELSE>
+  <?MIBLOCK COND="$(XST,$authors)">
+    <!-- First filter authors for apostrophes! -->
+    <?MIVAR NAME=$authors DELIMIT="'" REPLACE="''">$authors<?/MIVAR>
+    <?MIVAR>
+      $(VECAPPEND,$constraint,"lower(authors) like '"$(IF,$(EC,$authtype,anyauth),%)$(LOWER,$authors)"%'")
+    <?/MIVAR>
+  <?/MIBLOCK>
+  
+  <?MIVAR COND="$(XST,$title)">
+    $(VECAPPEND,$constraint,"lower(title) like '%"$(LOWER,$title)"%'")
+  <?/MIVAR>
 
-<?MIBLOCK COND="$(OR,
-		$(XST,$authors),
-		$(XST,$title),
-		$(XST,$year),
-		$(XST,$anon1text),
-		$(AND,$(XST,$jtype),$(NC,$jtype,any)),
-		$(AND,$(XST,$pub_status),$(NC,$pub_status,any)),
-		$(AND,$(XST,$cur_status),$(NC,$cur_status,any)))">
+  <!-- glue together the year clause if specified -->
+  <?MIVAR COND="$(XST,$year)">
+    $(VECAPPEND,$constraint,"year(pub_date) "$yr_cmpr" conc('"$century"','"$year"')")
+  <?/MIVAR>
 
-	<!-- First filter authors for apostrophes! -->
-	<?MIVAR COND="$(XST,$authors)" NAME=$authors DELIMIT="'" REPLACE="''">$authors<?/MIVAR>
+  <!-- NOW  DEAL WITH THE ADDITIONAL CRITERIA -->
+  
+  <?MIBLOCK COND="$(XST,$anon1text)">
+    <?MIVAR COND="$(EC,$anon1,abstract)">
+      $(VECAPPEND,$constraint,"webhtml_like("$anon1",'"$anon1text"')")
+    <?/MIVAR>
+    
+    <?MIVAR COND="$(NC,$anon1,abstract)">
+      $(VECAPPEND,$constraint,"lower("$anon1") like '%"$(LOWER,$anon1text)"%'")
+    <?/MIVAR>
+  <?/MIBLOCK>
 
-	<?MIVAR NAME=$previous> <?/MIVAR>
-	<?MIVAR NAME=$constraint> where <?/MIVAR>
-	<?MIVAR NAME=$constraint COND="$(AND,$(XST,$authors),$(EC,$authtype,anyauth))">
-		$constraint (lower(authors) like '%$(LOWER,$authors)%')
-	<?/MIVAR>
-	<?MIVAR NAME=$constraint COND="$(AND,$(XST,$authors),$(EC,$authtype,firstauth))">
-		$constraint (lower(authors) like '$(LOWER,$authors)%')
-	<?/MIVAR>
+  <?MIVAR COND="$(NC,$jtype,any)">
+    $(VECAPPEND,$constraint,jtype='$jtype')
+  <?/MIVAR>
+  
+  <?MIBLOCK COND="$(EC,$ZDB_access,root)">
+  
+    <?MIVAR>
+      $(VECAPPEND,$constraint,"DATE('"$Fmonth"/"$Fday"/"$Fyear"') <= pub_arrival_date")
+      $(VECAPPEND,$constraint,"pub_arrival_date <= DATE('"$Tmonth/$Tday/$Tyear"')")
+    <?/MIVAR>
+    
+    <?MIVAR COND="$(NC,$pub_status,Any)">
+      $(VECAPPEND,$constraint,pub_completion_date $pub_status NULL)
+    <?/MIVAR>
+  
+    <?MIBLOCK COND="$(OR,$(NC,$curator,Anyone),
+                         $(NC,$cur_topic,Any),
+                         $(EC,$topic_found,t),
+                         $(AND,$(EC,$topic_found,f),
+                               $(NC,$cur_topic,Any)
+                          )
+                      )">
+      
+      <?MIVAR COND="$(NC,$curator,Anyone)">
+        $(VECAPPEND,$curation_constraint,"cur_curator_zdb_id ='"$curator"' 
+              and (cur_closed_date is not NULL or cur_data_found = 't')")
+      <?/MIVAR>
+      
+      <?MIVAR COND="$(NC,$cur_topic,Any)">
+        $(VECAPPEND,$curation_constraint,cur_topic = '$cur_topic')
+      <?/MIVAR>
+      
+      <?MIVAR COND="$(EC,$topic_found,t)">
+        $(VECAPPEND,$curation_constraint,cur_data_found = '$topic_found')
+      <?/MIVAR>
+      
+      <?MIVAR COND="$(AND,$(EC,$topic_found,f),$(NC,$cur_topic,Any))">
+        $(VECAPPEND,$curation_constraint,
+            "not exists (select * from curation where cur_pub_zdb_id = '$OID')")
+      <?/MIVAR>
+      
+      <?MIVAR>$(SETVAR,$curation_constraint,$(SEPARATE,$curation_constraint, AND ))<?/MIVAR>
+      <?MIVAR NAME=curation_constraint> 
+          zdb_id in
+            (SELECT cur_pub_zdb_id 
+             FROM curation
+             WHERE $curation_constraint)
+      <?/MIVAR>
+    
+      <?MIVAR>$(VECAPPEND,$constraint,$curation_constraint)<?/MIVAR>
+    <?/MIBLOCK>
+  <?/MIBLOCK>
+  
+  <?MIVAR>$(SETVAR,$constraint,$(SEPARATE,$constraint, AND ))<?/MIVAR>
 
-	<?MIVAR NAME=$previous COND="$(XST,$authors)"> and <?/MIVAR>
-
-	<?MIVAR NAME=$constraint COND="$(XST,$title)">
-		$constraint $previous (lower(title) like '%$(LOWER,$title)%')
-	<?/MIVAR>
-
-	<?MIVAR NAME=$previous COND="$(XST,$title)"> and <?/MIVAR>
-
-	<!-- glue together the year clause if specified -->
-	<?MIVAR COND="$(XST,$year)" NAME=$constraint>
-		$constraint $previous year(pub_date) $yr_cmpr conc('$century','$year')
-	<?/MIVAR>
-
-	<!-- NOW  DEAL WITH THE ADDITIONAL CRITERIA -->
-	<?MIVAR NAME=$previous COND="$(XST,$year)"> and <?/MIVAR>
-
-	<?MIVAR NAME=$constraint COND="$(AND,$(XST,$anon1text),$(EC,$anon1,abstract))">
-		$constraint $previous (webhtml_like($anon1,'$anon1text'))
-	<?/MIVAR>
-
-	<?MIVAR NAME=$constraint COND="$(AND,$(XST,$anon1text),$(NC,$anon1,abstract))">
-		$constraint $previous (lower($anon1) like '%$(LOWER,$anon1text)%')	
-	<?/MIVAR>
-
-	<?MIVAR NAME=$previous COND="$(XST,$anon1text)"> and <?/MIVAR>
-
-	<?MIVAR NAME=$constraint COND="$(NC,$jtype,any)">
-		$constraint $previous (jtype='$jtype')
-	<?/MIVAR>
-
-	<?MIVAR NAME=$previous COND="$(NC,$jtype,any)"> and <?/MIVAR>
-
-	<?MIVAR NAME=$constraint COND="$(AND,$(XST,$pub_status),$(NC,$pub_status,any))">
-		$constraint $previous (status ='$pub_status')
-	<?/MIVAR>
-
-	<?MIVAR NAME=$previous COND="$(AND,$(XST,$pub_status),$(NC,$pub_status,any))"> and <?/MIVAR>
-
-
-	<?MIVAR NAME=$constraint COND="$(AND,$(XST,$cur_status),$(NC,$cur_status,any))">
-		$constraint $previous (a.zdb_id=b.pub_id and b.curation_action='$cur_status')
-	<?/MIVAR>
-
+  
 <?/MIBLOCK>
 
 
@@ -147,15 +202,8 @@ function start_help(anchor) {
 <?/MIVAR>
 
 <?MIVAR NAME=$target_tables>publication<?/MIVAR>
-<?MIVAR COND="$(AND,$(XST,$cur_status),$(NC,$cur_status,any))" NAME=$target_tables>publication a,curation_status b<?/MIVAR>
 
 <!-- NOW JUST RETRIEVE AND DISPLAY ALL MATCHING ENTRIES -->
-<!-- Blast all constraints if they hit "LIST ALL" -->
-<?MIBLOCK COND="$(XST,$clear_all)">
-	<?MIVAR NAME=$constraint> 
-		where status='active' 
-	<?/MIVAR>
-<?/MIBLOCK>
 
 
 
@@ -184,13 +232,24 @@ function start_help(anchor) {
 <?MIVAR name=$UserInput COND=$(XST,$anon1)>$UserInput&anon1=$anon1<?/MIVAR>
 <?MIVAR name=$UserInput COND=$(XST,$order_pref)>$UserInput&order_pref=$order_pref<?/MIVAR>
 <?MIVAR name=$UserInput COND=$(XST,$pub_status)>$UserInput&pub_status=$pub_status<?/MIVAR>
-<?MIVAR name=$UserInput COND=$(XST,$cur_status)>$UserInput&cur_status=$cur_status<?/MIVAR>
 <?MIVAR name=$UserInput COND=$(XST,$return_rec)>$UserInput&return_rec=$return_rec<?/MIVAR>
 <?MIVAR name=$UserInput COND=$(XST,$authors)>$UserInput&authors=$(URLENCODE,$authors)<?/MIVAR>
 <?MIVAR name=$UserInput COND=$(XST,$title)>$UserInput&title=$(URLENCODE,$title)<?/MIVAR>
 <?MIVAR name=$UserInput COND=$(XST,$yr_cmpr)>$UserInput&yr_cmpr=$(URLENCODE,$yr_cmpr)<?/MIVAR>
 <?MIVAR name=$UserInput COND=$(XST,$anon1text)>$UserInput&anon1text=$(URLENCODE,$anon1text)<?/MIVAR>
 <?MIVAR name=$UserInput COND=$(XST,$query_results)>$UserInput&query_results=$(URLENCODE,$query_results)<?/MIVAR>
+<?MIBLOCK COND=$(EC,$ZDB_access,root)>
+  <?MIVAR name=$UserInput COND=$(XST,$curator)>$UserInput&curator=$curator<?/MIVAR>
+  <?MIVAR name=$UserInput COND=$(XST,$cur_topic)>$UserInput&cur_topic=$cur_topic<?/MIVAR>
+  <?MIVAR name=$UserInput COND=$(XST,$topic_found)>$UserInput&topic_found=$topic_found<?/MIVAR>
+  <?MIVAR name=$UserInput COND=$(XST,$cur_status)>$UserInput&cur_status=$cur_status<?/MIVAR>
+  <?MIVAR name=$UserInput COND=$(XST,$Fday)>$UserInput&Fday=$Fday<?/MIVAR>
+  <?MIVAR name=$UserInput COND=$(XST,$Fmonth)>$UserInput&Fmonth=$Fmonth<?/MIVAR>
+  <?MIVAR name=$UserInput COND=$(XST,$Fyear)>$UserInput&Fyear=$Fyear<?/MIVAR>
+  <?MIVAR name=$UserInput COND=$(XST,$Tday)>$UserInput&Tday=$Tday<?/MIVAR>
+  <?MIVAR name=$UserInput COND=$(XST,$Tmonth)>$UserInput&Tmonth=$Tmonth<?/MIVAR>
+  <?MIVAR name=$UserInput COND=$(XST,$Tyear)>$UserInput&Tyear=$Tyear<?/MIVAR>
+<?/MIBLOCK>
 
 </td></tr></table>  <!-- close table started in header to create a left margin, not allowing the buttons below to display properly -->
 
@@ -229,8 +288,10 @@ function start_help(anchor) {
       <font size="+1">Publication Search Results   
       <!-- DEBUGGING <?MIVAR> CONSTRAINT=$constraint <?/MIVAR> -->
       <?MISQL SQL="select count(distinct zdb_id)::integer 
-                   from $target_tables $constraint;">
+                   from $target_tables 
+                   where $constraint;">
       <?/MISQL> 
+
       <?MIVAR NAME=$num_recs>$1<?/MIVAR>
       <?MIVAR>
          (<b>$num_recs</b> records found) </b> 
@@ -269,17 +330,24 @@ function start_help(anchor) {
 <!--- EXECUTION --->
 <!--- Query Database --->
 <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE
-	SQL="select distinct title,authors,zdb_id,year(pub_date) as pyear, source, lower(authors) from $target_tables $constraint $order_clause;">
+	SQL="select distinct title,authors,zdb_id,year(pub_date) as pyear, source, lower(authors), pub_completion_date from $target_tables where $constraint $order_clause;">
+<?MIVAR NAME=PUB_COMPLETION>$7<?/MIVAR>
 <TR>
 <?MIVAR><TD valign=top>&nbsp;</TD><?/MIVAR>
 <TD valign=top> 
 
 $(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<FONT ><!--SIZE=-1--> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_pub.apg&OID=$3$UserInput&START=$START">EDIT</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT>")
-$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<FONT ><!--SIZE=-1--> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-link_authors.apg&OID=$3$UserInput&START=$START">LINK</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT>")
+$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<FONT ><!--SIZE=-1--> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-link_authors.apg&OID=$3$UserInput&START=$START"><br>LINK</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT>")
+$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<FONT ><!--SIZE=-1--> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$3"><br>CURATE</A>&nbsp;&nbsp;&nbsp; </FONT>")
 
 $(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3">SELECT</A>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;</FONT>")
 </TD></DIV>
-<TD colspan=1 align=left><font size=3><DIV class="show_pubs"> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3">$2 ($4) $1. $5.</A></DIV></TD></TR>
+<TD colspan=1 align=left><font size=3><DIV class="show_pubs"> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3">$2 ($4) $1. $5.</A></DIV>
+</TD>
+<?MIVAR COND="$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root))">
+  <TD>$(IF,$(NE,$PUB_COMPLETION,NULL),CLOSED&nbsp;&nbsp;,OPEN&nbsp;&nbsp;)</TD>
+<?/MIVAR>
+</TR>
 <p>
 		<?MIVAR name=$rowNUM>$(+,$rowNUM,1)<?/MIVAR>
 <?/MISQL>
@@ -505,27 +573,124 @@ $(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/
   <?MIVAR>
     <TR>
       <TD class=halfwidth>
-	<b>Curation Status:</b>
-	<SELECT name=cur_status onChange='document.critform.START.value = "";'>
-	<option $(IF,$(EC,$cur_status,any),SELECTED) value="any">Any
-	<option $(IF,$(EC,$cur_status,Linked Authors),SELECTED) value="Linked Authors">Linked Authors
-	<option $(IF,$(EC,$cur_status,Curated Genes),SELECTED) value="Curated Genes">Curated Gene Info
-	<option $(IF,$(EC,$cur_status,Curated Expression data),SELECTED) value="Curated Expression data">Curated Expression Data
-	<option $(IF,$(EC,$cur_status,Curated Mutant data),SELECTED) value="Curated Mutant data">Curated Mutant Data
-	<option $(IF,$(EC,$cur_status,Curated Markers/Mapping),SELECTED) value="Curated Markers/Mapping">Curated Mapping/Markers
+	<b>Curated by:</b>
+	<SELECT name=curator onChange='document.critform.START.value = "";'>
+	<option value="anyone" $(IF,$(EC,$1,$curator),SELECTED)> Anyone
+	<?MISQL SQL="SELECT p.name, p.zdb_id
+                     FROM person p, lab l, int_person_lab
+                     WHERE p.zdb_id = source_id 
+                       AND target_id = l.zdb_id 
+                       AND l.name like 'ZFIN%'
+                       AND (   position = 'Research Staff'
+                            or
+                               p.name like 'Sprunger%'
+                            or 
+                               position = 'Adminstrative Staff'
+                           )
+                     ORDER BY p.name;">
+            <OPTION VALUE="$2" $(IF,$(EC,$2,$curator),SELECTED)> $1
+        <?/MISQL>
 	</SELECT>  
       </TD>
-      <TD class=halfwidth>
-	<b>Publication Status:</b>
-	<SELECT name=pub_status onChange='document.critform.START.value = "";'>
-	<option $(IF,$(EC,$pub_status,any),SELECTED) value="any">Any
-	<option $(IF,$(EC,$pub_status,active),SELECTED) value="active">Active
-	<option $(IF,$(EC,$pub_status,inactive),SELECTED )value="inactive">Inactive
-	<option $(IF,$(EC,$pub_status,temporary),SELECTED) value="temporary">Temporary
-	<option $(IF,$(EC,$pub_status,uncurated),SELECTED) value="uncurated">Uncurated
-	</SELECT>  
+      <TD class=halfwidth rowspan=2>
+        <table border=0>
+          <tr>
+            <td>
+	<b><a href="" onClick="alert('P u b l i c a t i o n s  \nE n t e r e d  \nT o d a y'); return false;">PET</a> Date:</b> 
+	    </td>
+	    <td>
+	From:      
+	    </td>
+	    <td>
+        <SELECT NAME=Fmonth onChange='document.critform.START.value = "";'>
+        <?MIBLOCK INDEX=$i FROM=1 TO=9 STEP=1>
+          <?MIVAR><OPTION VALUE="0$i" $(IF,$(=,$Fmonth,$i),SELECTED)> 0$i<?/MIVAR>
+        <?/MIBLOCK>
+        <?MIBLOCK INDEX=$i FROM=10 TO=12 STEP=1>
+          <?MIVAR><OPTION VALUE="$i" $(IF,$(=,$Fmonth,$i),SELECTED)> $i<?/MIVAR>
+        <?/MIBLOCK>
+        </SELECT> /    
+        
+        <SELECT NAME=Fday onChange='document.critform.START.value = "";'>
+        <?MIBLOCK INDEX=$i FROM=1 TO=9 STEP=1>
+          <?MIVAR><OPTION VALUE="0$i" $(IF,$(=,$Fday,$i),SELECTED)> 0$i<?/MIVAR>
+        <?/MIBLOCK>
+        <?MIBLOCK INDEX=$i FROM=10 TO=31 STEP=1>
+          <?MIVAR><OPTION VALUE="$i" $(IF,$(=,$Fday,$i),SELECTED)> $i<?/MIVAR>
+        <?/MIBLOCK>
+        </SELECT> /    
+        
+        <SELECT NAME=Fyear onChange='document.critform.START.value = "";'>
+        <?MIBLOCK INDEX=$i FROM=$MIN_PUB_YEAR TO=$MAX_PUB_YEAR STEP=1>
+          <?MIVAR><OPTION VALUE="$i" $(IF,$(=,$Fyear,$i),SELECTED)> $i<?/MIVAR>
+        <?/MIBLOCK>
+        </SELECT> 
+            </td>
+          </tr>
+          <tr>
+            <td>
+        &nbsp;
+            </td>
+            <td>        
+        To:
+            </td>
+            <td>
+        <SELECT NAME=Tmonth onChange='document.critform.START.value = "";'>
+        <?MIBLOCK INDEX=$i FROM=1 TO=9 STEP=1>
+          <?MIVAR><OPTION VALUE="0$i" $(IF,$(=,$Tmonth,$i),SELECTED)> 0$i<?/MIVAR>
+        <?/MIBLOCK>
+        <?MIBLOCK INDEX=$i FROM=10 TO=12 STEP=1>
+          <?MIVAR><OPTION VALUE="$i" $(IF,$(=,$Tmonth,$i),SELECTED)> $i<?/MIVAR>
+        <?/MIBLOCK>
+        </SELECT> /    
+        
+        <SELECT NAME=Tday onChange='document.critform.START.value = "";'>
+        <?MIBLOCK INDEX=$i FROM=1 TO=9 STEP=1>
+          <?MIVAR><OPTION VALUE="0$i" $(IF,$(=,$Tday,$i),SELECTED)> 0$i<?/MIVAR>
+        <?/MIBLOCK>
+        <?MIBLOCK INDEX=$i FROM=10 TO=31 STEP=1>
+          <?MIVAR><OPTION VALUE="$i" $(IF,$(=,$Tday,$i),SELECTED)> $i<?/MIVAR>
+        <?/MIBLOCK>
+        </SELECT> /    
+        
+        <SELECT NAME=Tyear onChange='document.critform.START.value = "";'>
+        <?MIBLOCK INDEX=$i FROM=$MIN_PUB_YEAR TO=$MAX_PUB_YEAR STEP=1>
+          <?MIVAR><OPTION VALUE="$i" $(IF,$(=,$Tyear,$i),SELECTED)> $i<?/MIVAR>
+        <?/MIBLOCK>
+        </SELECT> 
+            </td>
+          </tr>
+        </table>
+      
       </TD>
     </TR>
+    
+    <tr class=fullwidth>
+    <!--
+      <td>
+        <b>Topic:</b>
+        <SELECT NAME=cur_topic onChange='document.critform.START.value = "";'>
+            <OPTION VALUE="Any" $(IF,$(EC,$cur_topic,Any),SELECTED)> Any
+          <?MISQL SQL="SELECT curtopic_name FROM curation_topic;">
+            <OPTION VALUE="$1" $(IF,$(EC,$1,$cur_topic),SELECTED)> $1
+          <?/MISQL>
+        </SELECT>
+        <SELECT NAME=topic_found onChange='document.critform.START.value = "";'>
+          <OPTION VALUE="" $(IF,$(EC,$topic_found,),SELECTED)> 
+          <OPTION VALUE="t" $(IF,$(EC,$topic_found,t),SELECTED)> curated
+          <OPTION VALUE="f" $(IF,$(EC,$topic_found,f),SELECTED)> not curated
+        </SELECT>        
+      </td>
+    -->
+      <td>
+        <b>Status: </b>
+        <SELECT NAME=pub_status onChange='document.critform.START.value = "";'>
+          <OPTION VALUE="Any" $(IF,$(EC,$pub_status,Any),SELECTED)> Any
+          <OPTION VALUE="is not" $(IF,$(EC,$pub_status,"is not"),SELECTED)> Closed
+          <OPTION VALUE="is" $(IF,$(EC,$pub_status,is),SELECTED)> Open
+        </SELECT>  
+      </td>
+    </tr>
     <tr>
       <td class=fullwidth>
 	<input type=button onClick="window.open('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-classify_pubs.apg','editor','scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=500');" value="Classify Pubs">
@@ -585,7 +750,6 @@ $(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/
   <!-- Put the cursor in the AUTHORS criterion box -->
   <SCRIPT>document.critform.authors.focus();</SCRIPT>
 <?/MIBLOCK>
-
 
 <?MIBLOCK COND="$(NXST,$accession)">
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
