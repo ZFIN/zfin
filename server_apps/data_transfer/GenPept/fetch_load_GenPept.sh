@@ -29,7 +29,12 @@ else
 	echo "Where the heck am I?"; exit(1);	
 endif
 
+
+cp -pf potential_problems.unl previous_potential_problems.unl
+
 setenv DBNAME $dbname
+
+dbaccess $dbname load_manual_genpept.sql
 
 dbaccess $dbname load_prot_len_acc.sql
 
@@ -39,5 +44,10 @@ echo "GenPept loaded `date`"
 echo "these are the new potential problems for the curators to resolve"
 
 diff previous_potential_problems.unl potential_problems.unl
-cp -pf potential_problems.unl previous_potential_problems.unl
+
+echo "If any suould be added as manual curation please return a list"
+echo "with a 'gene' and a 'genpept' per row.";
+
+# 
+chmod a+r potential_problems.unl  previous_potential_problems.unl
 
