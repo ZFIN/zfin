@@ -12,17 +12,25 @@ Requires:  $CLONE_MARKER_ID, $highlight
     WHERE '$OID' = idsup_data_zdb_id
       AND idsup_supplier_zdb_id = l.zdb_id
       AND idsup_supplier_zdb_id = srcurl_source_zdb_id
+  UNION
+     SELECT c.zdb_id, c.name, srcurl_url, srcurl_display_text
+    FROM company c, int_data_supplier, OUTER(source_url)
+    WHERE '$OID' = idsup_data_zdb_id
+      AND idsup_supplier_zdb_id = c.zdb_id
+      AND idsup_supplier_zdb_id = srcurl_source_zdb_id
 ;
   ">
+      <?MIVAR COND="$(>,$(POSITION,$1,LAB),0)" NAME=viewpage>labview.apg<?/MIVAR>
+      <?MIVAR COND="$(>,$(POSITION,$1,COMPANY),0)" NAME=viewpage>companyview.apg<?/MIVAR>
 
-	  <?MIVAR NAME=$SOURCE>
+      <?MIVAR NAME=$SOURCE>
 
-	    <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$1">$2</a>
+	    <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$viewpage&OID=$1">$2</a>
 	    <?MIVAR COND="$(NE,$3,)">
 	      <font size=-1">(<a href="$3">$4</a>)</font><img src="/images/new1.gif">
 	    <?/MIVAR>
 
-	  <?/MIVAR>
+      <?/MIVAR>
   <?/MISQL>
 
 
