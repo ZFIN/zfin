@@ -498,12 +498,6 @@ Datablade documentation.
 <br>
 <?/MIBLOCK> <?MICOMMENT> end display_sequence_similarity <?/MICOMMENT>
 
-
-<!---------------------------------------------------> 
-
-
-
-
 <!--------------- Dispalay NOMENCLATURE HISTORY -------------------->
 
 <?MISQL SQL="select * from marker_history where mhist_mrkr_zdb_id = '$OID'">
@@ -512,8 +506,22 @@ Datablade documentation.
 <br>
 <!---------------- end NOMENCLATURE HISTORY ------------------------> 
 
-
-
+<!---------------------Curator Note-------------->
+<?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
+  <B>Curator Notes:</B>
+  <?MISQL SQL="select count(*) 
+		from data_note
+		where dnote_data_zdb_id = '$OID' ;">
+  
+  <?MIVAR COND="$(NC,$1,0)">
+    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$OID">Notes</A>
+  <?/MIVAR>
+  <?MIVAR COND="$(EC,$1,0)">
+    <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$OID">Add Notes</a> 
+  <?/MIVAR>
+  <P>
+ <?/MISQL>
+<?/MIBLOCK>
 <!--------- Display description  ---------------------------------> 
 <?MIVAR COND="$(XST,$UPDATE)">
 <INPUT TYPE=button value="Update" onClick="doit('mrkr_comments','textarea','Description')"> 
@@ -527,8 +535,6 @@ Datablade documentation.
 <br>
 
 <!-----------end Display description ------------------------------->
-
-
 
 <!-------- CLONE info ------------------------------------------->
 <?MIVAR NAME="SOURCE"> <?/MIVAR>
@@ -1647,7 +1653,6 @@ Datablade documentation.
 <?/MIBLOCK> <!-- name NC novalue and romwcount > 0 -->
 
 <?/MIBLOCK> <!-- ends cond oid exists -->
-
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 
