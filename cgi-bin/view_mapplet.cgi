@@ -807,6 +807,7 @@
 	    $Q->hidden('HS' , defined $Q->param('HS')?  $Q->param('HS')  :0) . "\n".
 	      $Q->hidden('T51', defined $Q->param('T51')? $Q->param('T51') :0) . "\n".
                 $Q->hidden('MOP', defined $Q->param('MOP')? $Q->param('MOP') :0) . "\n".
+				 $Q->hidden('JPAD', defined $Q->param('JPAD')? $Q->param('JPAD') :0) . "\n".
 		  $Q->hidden('LN54',defined $Q->param('LN54')?$Q->param('LN54'):0) . "\n";
     if ( $sm_m ||  $Q->param('name')) {
       print  $Q->hidden('marker', ($sm_refresh == 1)? $sm_m:  $Q->param('name')). "\n";
@@ -1357,12 +1358,14 @@
 	    $Q->hidden('panel2','T51') . "\n".
 	      $Q->hidden('panel1','LN54') . "\n".
 		$Q->hidden('panel5','MOP') . "\n".
+		$Q->hidden('panel7','JPAD') . "\n".
 		  $Q->hidden('MGH_units','cM') . "\n".
 		    $Q->hidden('GAT_units','cM') . "\n".
 		      $Q->hidden('HS_units','cM')."\n".
 			$Q->hidden('MOP_units','cM')."\n".
 			  $Q->hidden('T51_units','cR')."\n".
 			    $Q->hidden('LN54_units','cR')."\n".
+				$Q->hidden('JPAD_units','cM')."\n".
 			      $Q->hidden('OID',$Q->param('OID') )."\n".
 				$Q->hidden('lg',$Q->param('lg'))."\n".
 				  $Q->hidden('userid',$Q->param('userid'))."\n".
