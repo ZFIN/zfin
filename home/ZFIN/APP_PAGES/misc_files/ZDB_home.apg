@@ -214,7 +214,7 @@ For security reasons, please <b>click "Goodbye" to LOG OUT</b> if you have finis
 <p>
 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-refcrosslist.apg">Mapping Panels</A>
 <p>
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-mapperselect.apg&select_from=MAPPER&frame_size=220"> VIEW MAP </A> <img src="/images/LOCAL/new1.gif"> 
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-mapperselect.apg&select_from=MAPPER&frame_size=220"> VIEW MAP </A> <img src="/images/new1.gif"> 
 
 
 <?MIVAR COND="$(EC,$AUTHORIZED,root)">
