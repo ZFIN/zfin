@@ -17,6 +17,9 @@
 	$Source$
 */
 
+#define		_REENTRANT
+/* #define		_POSIX_PTHREAD_SEMANTICS */
+
 #include <stdio.h>
 #include <string.h>
 #include <time.h>		/* For get_random_cookie */
@@ -77,13 +80,16 @@ static char charList[] =
 /* End of get_random_cookie stuff
 */
 
+
+/* char *ctime_r(const time_t *clock, char *buf); */
+
+
 typedef struct BUFLST buflst;
 struct BUFLST {
 	buflst *next; /* *prev; */
 	mi_integer max, len;
 	char data[1];
 };
-
 static buflst *appbuf(buflst *buf, char *data, unsigned len);
 static buflst *newbuf(mi_integer size);
 static void freebuf(buflst *cur);
@@ -319,6 +325,42 @@ mi_lvarchar *html_breaks(mi_lvarchar *text) {
 		new = mi_string_to_lvarchar("<P>"), text, 0);
 	mi_var_free(old); mi_var_free(new);
 	return res;
+}
+
+
+/*	now		Returns the current datetime something like the
+	Illustra now.
+	Returns a datetime;
+*/
+/*
+mi_datetime *now() {
+*/
+mi_lvarchar *now() {
+	time_t		seconds;
+	mi_lvarchar	*lv;
+	
+	time(&seconds);			/* What time is it Now? */
+
+	/* Get lvarchar to hold it */
+	if (!(lv = mi_new_var(25))) NO_MEMORY(now);
+
+	mi_set_varlen(lv, cftime((char *)mi_get_vardata(lv),
+		"%y-%m-%d %T.000", &seconds));
+/*
+	return mi_datetime_to_binary(lv);
+*/
+	return lv;
+}
+
+
+/*	expr	Does nothing except return it's argument. This allows you to
+		create a context in which to evaluate expressions in SQL as long
+		as the resulting type is refered to by a pointer rather than
+		passed as an actual value.
+		You can create lots of function signitures with this one routine.
+*/
+void *expr(void *arg) {
+	return arg;
 }
 
 
