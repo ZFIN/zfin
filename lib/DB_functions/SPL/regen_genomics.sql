@@ -177,32 +177,38 @@ create dba function "informix".regen_genomics() returning integer
 
  
     select abbrev allmapnm_name, zdb_id allmapnm_zdb_id, 3 allmapnm_significance,
-	   "Locus abbreviation" allmapnm_precedence, lower(abbrev) allmapnm_name_lower
+	   "Locus abbreviation"::varchar(80) allmapnm_precedence, 
+	   lower(abbrev) allmapnm_name_lower
     from locus
     where abbrev is not NULL 
     union  
     select locus_name allmapnm_name, zdb_id allmapnm_zdb_id, 4 allmapnm_significance,
-	   "Locus name" allmanpnm_precedence, lower(locus_name) allmapnm_name_lower
+	   "Locus name"::varchar(80) allmanpnm_precedence, 
+	   lower(locus_name) allmapnm_name_lower
     from locus
     union  
     select dalias_alias allmapnm_name,  dalias_data_zdb_id allmapnm_zdb_id,
-	    6 allmapnm_significance, "Locus Previous name" allmanpnm_precedence, 
+	    6 allmapnm_significance, 
+	    "Locus Previous name"::varchar(80) allmanpnm_precedence, 
 	    lower(dalias_alias) allmapnm_name_lower
     from data_alias, locus
     where dalias_data_zdb_id = zdb_id
     into temp all_locus_names_new with no log;	
     
     select allele allmapnm_name, zdb_id allmapnm_zdb_id, 7 allmapnm_significance, 
-	   "Fish name/allele" allmanpnm_precedence, lower(allele) allmapnm_name_lower
+	   "Fish name/allele"::varchar(80) allmanpnm_precedence, 
+	   lower(allele) allmapnm_name_lower
     from fish
     where allele is not NULL
     union    
     select name allmapnm_name, zdb_id allmapnm_zdb_id, 7 allmapnm_significance,
-	   "Fish name/allele" allmanpnm_precedence, lower(name) allmapnm_name_lower	
+	   "Fish name/allele"::varchar(80) allmanpnm_precedence, 
+	   lower(name) allmapnm_name_lower	
     from fish
     union
     select dalias_alias allmapnm_name, dalias_data_zdb_id allmapnm_zdb_id, 8 allmapnm_significance,
-	   "Allele Previous name" allmanpnm_precedence, lower(dalias_alias) allmapnm_name_lower
+	   "Allele Previous name"::varchar(80) allmanpnm_precedence, 
+	   lower(dalias_alias) allmapnm_name_lower
     from data_alias, fish
     where dalias_data_zdb_id = zdb_id
     into temp all_fish_names_new with no log;
@@ -210,16 +216,17 @@ create dba function "informix".regen_genomics() returning integer
     -- a smaller set of all_marker_names_new which is used for getting
     -- accession numbers and 	
     select mrkr_abbrev allmapnm_name, mrkr_zdb_id allmapnm_zdb_id, 1 allmapnm_significance,
-	   "Current symbol" allmanpnm_precedence, lower(mrkr_abbrev) allmapnm_name_lower 
+	   "Current symbol"::varchar(80) allmanpnm_precedence, 
+	   lower(mrkr_abbrev) allmapnm_name_lower 
     from marker
     union
     select mrkr_name allmapnm_name, mrkr_zdb_id allmapnm_zdb_id, 2 allmapnm_significance,
 	   case 
 	   when mrkr_type in (select mtgrpmem_mrkr_type from marker_type_group_member
 				where mtgrpmem_mrkr_type_group = "SEARCH_SEG")
-	        then "Clone name" 
+	        then "Clone name"::varchar(80) 
 	   else
-		"Current name" 
+		"Current name"::varchar(80) 
 	   end allmanpnm_precedence,  lower(mrkr_name) allmapnm_name_lower
     from marker
     where lower(mrkr_abbrev) <> lower(mrkr_name)	
@@ -241,13 +248,15 @@ create dba function "informix".regen_genomics() returning integer
    
 
     select dblink_acc_num as allmapnm_name, dblink_linked_recid as allmapnm_zdb_id, 12 as allmapnm_significance,
-	   "Accession number" as allmapnm_precedence, lower(dblink_acc_num) as allmapnm_name_lower
+	   "Accession number"::varchar(80) as allmapnm_precedence, 
+	   lower(dblink_acc_num) as allmapnm_name_lower
     from db_link, all_marker_names_new
     where dblink_linked_recid = allmapnm_zdb_id
     and lower(dblink_acc_num) <> lower(allmapnm_name)	    
     union
     select dblink_acc_num as allmapnm_name, c_gene_id as allmapnm_zdb_id, 12 as allmapnm_significance,
-	   "Accession number" as allmapnm_precedence, lower(dblink_acc_num) as allmapnm_name_lower
+	   "Accession number"::varchar(80) as allmapnm_precedence, 
+	   lower(dblink_acc_num) as allmapnm_name_lower
     from db_link,  orthologue
     where dblink_linked_recid = orthologue.zdb_id		
     into temp all_acc_names_new with no log;
@@ -256,13 +265,19 @@ create dba function "informix".regen_genomics() returning integer
     let errorHint = "all_map_names-orthologue-names";
 
  
-    select ortho_abbrev allmapnm_name, c_gene_id allmapnm_zdb_id, 11 allmapnm_significance, "Orthologue" allmapnm_precedence, lower(ortho_abbrev) allmapnm_name_lower
-   from orthologue	
-    where ortho_abbrev is not null
+    select ortho_abbrev allmapnm_name, c_gene_id allmapnm_zdb_id, 
+	   11 allmapnm_significance, 
+	   "Orthologue"::varchar(80) allmapnm_precedence, 
+	   lower(ortho_abbrev) allmapnm_name_lower
+      from orthologue	
+      where ortho_abbrev is not null
     UNION
-    select ortho_name allmapnm_name, c_gene_id allmapnm_zdb_id, 11 allmapnm_significance, "Orthologue" allmapnm_precedence, lower(ortho_name) allmapnm_name_lower
-    from orthologue
-    where ortho_name is not null
+    select ortho_name allmapnm_name, c_gene_id allmapnm_zdb_id, 
+	   11 allmapnm_significance, 
+	   "Orthologue"::varchar(80) allmapnm_precedence, 
+	   lower(ortho_name) allmapnm_name_lower
+      from orthologue
+      where ortho_name is not null
     into temp all_ortho_names_new with no log;
     
 
@@ -372,11 +387,11 @@ create dba function "informix".regen_genomics() returning integer
       create index allmapnm_zdb_id_index_a
         on all_m_names_new (allmapnm_zdb_id)
 	fillfactor 100
-	in idxdbs4;
+	in idxdbs3;
       create index allmapnm_name_lower_index_a
         on all_m_names_new (allmapnm_name_lower)
         fillfactor 100
-        in idxdbs4;
+        in idxdbs3;
 
     else
       -- primary key
@@ -388,11 +403,11 @@ create dba function "informix".regen_genomics() returning integer
       create index allmapnm_zdb_id_index_b
         on all_m_names_new (allmapnm_zdb_id)
 	fillfactor 100
-	in idxdbs4;
+	in idxdbs3;
       create index allmapnm_name_lower_index_b
         on all_m_names_new (allmapnm_name_lower)
         fillfactor 100
-        in idxdbs4;
+        in idxdbs3;
 
     end if
 
