@@ -478,22 +478,26 @@ sub makeFiles () {# uploads the files, builds a thumbnail, gets the height
 		
         # redirect to the correct apg page based on the passed-in redirect_url.
 
-	if ( (substr($redirect_url,0,-16)) eq $xpat_redirect) { # if the redirect_OID parameter is not null
-	    $redirect_OID = $query->param("redirect_OID");
-	   
-	    $redirect_build = $redirect_url.$redirect_OID_param.$redirect_OID.$redirect_new_OID_param.$OID.$redirect_suffix_param.$suffix.$redirect_height_param.$height.$redirect_width_param.$width.$redirect_attr_param.$attr.$redirect_attr_type_param.$attr_type.$redirect_old_value_param.$old_value.$redirect_comments_param.$attr_comments;
+    } #end if OID not pub
+    
+    else { # if OID is a pub zdb_id
 
+	if ( (substr($redirect_url,0,-19)) eq $xpat_redirect) { # if the redirect_OID parameter is not null
+	    $redirect_OID = $query->param("redirect_OID");
+	    
+	    $redirect_build = $redirect_url.$redirect_OID_param.$redirect_OID.$redirect_new_OID_param.$OID.$redirect_suffix_param.$suffix.$redirect_height_param.$height.$redirect_width_param.$width.$redirect_attr_param.$attr.$redirect_attr_type_param.$attr_type.$redirect_old_value_param.$old_value.$redirect_comments_param.$attr_comments;
+	    
 	    if ($attr_type ne "text" &&
 		$attr_type ne "textarea" &&
 		$attr_type ne "pic" &&
 		$attr_type ne "1") {
-
+		
 		&filename_error ($attr_type.'attr_type not ZFIN type!') ;
-
+		
 	    }
-
+	    
 	    print $query->redirect ("$redirect_build");
-
+	    
 	    exit;
 
 
@@ -515,9 +519,6 @@ sub makeFiles () {# uploads the files, builds a thumbnail, gets the height
 	    exit;
 	}
 
-    } #end if OID not pub
-    
-    else { # if OID is a pub zdb_id
 
 	$pub_file = $filename ;
 	$redirect_build = $redirect_url.$redirect_new_OID_param.$OID.$redirect_pub_file_param.$pub_file ;
