@@ -167,7 +167,8 @@ EFFECTS
         Start: <select name="xpcur_G_panel_add_start_stg" onChange="setEndStage('xpcur_G_panel_add','xpcur_G_panel_add_start_stg','xpcur_G_panel_add_end_stg');">
           <?MISQL SQL="
             select stg_zdb_id, stg_name_long, stg_hours_start
-	    from stage
+	      from stage
+	     where stg_name <> 'Unknown' 
             order by stg_hours_start;">
             <option value="$1">$2</option>
           <?/MISQL>
@@ -176,7 +177,8 @@ EFFECTS
       End: <select name="xpcur_G_panel_add_end_stg">
           <?MISQL SQL="
             select stg_zdb_id, stg_name_long, stg_hours_end
-	    from stage
+	      from stage
+	     where stg_name <> 'Unknown' 
             order by stg_hours_end;">
             <option value="$1">$2</option>
           <?/MISQL>
