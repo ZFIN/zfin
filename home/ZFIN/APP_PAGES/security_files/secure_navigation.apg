@@ -47,9 +47,9 @@ zdbIdColumn (optional)  -- name of column containing the record's ZDB ID.
   Only necessary if the column is not named "zdb_id".
  -->
 
-<?MIVAR NAME=$AUTHORIZED>GUEST<?/MIVAR>
+<?MIVAR NAME=$AUTHORIZED>false<?/MIVAR>
 <?MIVAR NAME=$ZDB_ident>UNKNOWN<?/MIVAR>
-<?MIVAR NAME=$ZDB_name>GUEST<?/MIVAR>
+<?MIVAR NAME=$ZDB_name>UNKNOWN<?/MIVAR>
 <?MIVAR NAME=$ZDB_access>GUEST<?/MIVAR>
 <?MIVAR NAME=$DB_LOCK>f<?/MIVAR>
 
