@@ -66,15 +66,14 @@ document.critform.year.value = "";
 document.critform.anon1text.value = "";
 document.critform.jtype.selectedIndex = 0;
 document.critform.pub_status.selectedIndex = 0;
+document.critform.cur_status.selectedIndex = 0;
 document.critform.curator.selectedIndex = 0;
-document.critform.cur_topic.selectedIndex = 0;
-document.critform.topic_found.selectedIndex = 0;
-document.critform.Tday.value = "$Tday";
-document.critform.Tmonth.value = "$Tmonth";
-document.critform.Tyear.value = "$Tyear";
-document.critform.Fday.value = "$Fday";
-document.critform.Fmonth.value = "$Fmonth";
-document.critform.Fyear.value = "$Fyear";
+document.critform.Tday.value = "$(SUBSTR,$MAX_ARRIVAL,9,2)";
+document.critform.Tmonth.value = "$(SUBSTR,$MAX_ARRIVAL,6,2)";
+document.critform.Tyear.value = "$(SUBSTR,$MAX_ARRIVAL,1,4)";
+document.critform.Fday.value = "$(SUBSTR,$MIN_ARRIVAL,9,2)";
+document.critform.Fmonth.value = "$(SUBSTR,$MIN_ARRIVAL,6,2)";
+document.critform.Fyear.value = "$(SUBSTR,$MIN_ARRIVAL,1,4)";
 document.critform.yr_cmpr.selectedIndex = 0;
 document.critform.century.selectedIndex = 1;
 document.critform.anon1.selectedIndex = 0;
@@ -89,6 +88,10 @@ function start_help(anchor) {
    top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-helpframes.html&calling_page=international_characters.html&anchor="+anchor,"helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
 }
 
+function list_all() {
+  call_reset();
+  form_submit();
+}
 
 </SCRIPT>
 
@@ -287,6 +290,7 @@ function start_help(anchor) {
 <?MIVAR COND="$(XST,$anon1text)"> <input type=hidden name=anon1 value="$anon1"><?/MIVAR>
 <?MIVAR COND="$(XST,$year)"> <input type=hidden name=year value="$year"><?/MIVAR>
 <?MIVAR> <input type=hidden name=constraint value="$constraint"><?/MIVAR>
+<?MIVAR> <input type=hidden name=target_tables value="$target_tables"><?/MIVAR>
 <?MIVAR COND="$(XST,$order_clause)"> <input type=hidden name=order_clause value="$order_clause"><?/MIVAR>
 
 </form>
@@ -736,7 +740,7 @@ $(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/
       <td class=submitbar colspan=2 align="right">
 	<input type=submit name=action value="SEARCH" onSubmit="document.critform.submit();"> 
 	<input type=button name=action value="RESET" onClick="call_reset()"> 
-	<input type=button name=clear_all value="List all publications" onClick="document.critform.reset();document.critform.submit()">
+	<input type=button name=clear_all value="List all publications" onClick="list_all();">
       </td>
     </tr>
   </table>
