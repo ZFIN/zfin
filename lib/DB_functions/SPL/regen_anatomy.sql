@@ -357,7 +357,7 @@ create dba function regen_anatomy()
 
   -- see regen_genomics.sql for details on how to debug SPL routines.
 
-  --set debug file to "/tmp/debug_regen_anatomy.<!--|DB_NAME|-->";
+  --set debug file to "/tmp/debug_regen_anatomy.luckdb";
   --trace on;
 
   begin	-- global exception handler
@@ -466,9 +466,9 @@ create dba function regen_anatomy()
 
       -- primary key
 
-      create unique index stage_items_contained_primary_key_index
-	on stage_items_contained (sic_stg_zdb_id,sic_anatitem_zdb_id)
-	in idxdb2;
+      create unique index stage_items_contained_primary_key_index 
+	on stage_items_contained (sic_stg_zdb_id,sic_anatitem_zdb_id) 
+	in idxdbs2;
       alter table stage_items_contained add constraint
 	primary key (sic_stg_zdb_id,sic_anatitem_zdb_id)
 	constraint stage_items_contained_primary_key;
