@@ -89,6 +89,7 @@ $(TARGETDIR) :
 # ----  Rules for creating Java classes.
 
 $(TARGETS) : $(TARGETDIR)/%.class : %.class
+	chmod 444 $^
 	$(TARGET_CP) $^ $@
 
 # When any class file needs to be remade, remake all of them.
