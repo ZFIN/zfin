@@ -64,8 +64,8 @@ ERROR -- something bad happened -- no OID passed in!
 
     <?MIBLOCK COND="$(!=,$MI_CURRENTROW,0)">
       <?MIVAR>
-
-	<b>Blast Date:</b> &nbsp;$BLAST_DATE
+	<b>Blast Date:</b> &nbsp;
+          $(IF,$(EC,$BLAST_DATE,NULL),Not Submitted.,$BLAST_DATE)
 	<br>
 	<b>Blast Result:</b> &nbsp;$BLAST_RESULT
 	<br>
