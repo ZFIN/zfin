@@ -1,0 +1,40 @@
+Data exchange files from ZFIN to Sanger.
+These files are rebuild each weekend.
+
+###############################################################################
+http://zfin.org/data_transfer/Sanger/VegaXpat.txt  
+
+tab separated file containing:
+        zfin gene id               (link to GENE)
+        zfin gene symbol
+        zfin probe id              (Link to EST)
+        zfin probe symbol
+        genbank probe accession    (link to sequence)
+        assay type
+        zfin expression pattern id (link to expression)
+        zfin publication id        (link to attribution)
+
+the probe is the EST used in the assay, genbank accession number(s) 
+are for the EST (not the GENE)
+
+currently there are only two expression pattern sources,
+one sends EST named CBxxx  (Christine & Benard Thiesse)
+the other EST named IBDxxx (Igor B. Dawid)
+this condition is not expected to hold.
+###############################################################################
+http://zfin.org/data_transfer/Sanger/FPC_mapping.unl
+
+pipe terminated file containing:
+	sanger marker id
+	zfin_name underscore panel
+	linkage group
+	location
+	metric
+
+###############################################################################
+http://zfin.org/data_transfer/Sanger/FPC_alias.unl
+
+pipe terminated file containing:
+	sanger marker id
+	zfin id
+	zfin name

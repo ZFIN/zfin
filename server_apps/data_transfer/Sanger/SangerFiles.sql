@@ -57,6 +57,48 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/VegaXpat.txt'
  and xpat_zdb_id = recattrib_data_zdb_id
  }
  order by 7,1,3;
+----------------------------------------------------
+-- sequence links for genes 
+-- chose RefSeqs if they exist
+select gene.mrkr_zdb_id[1,26]	gene_zdb,
+	   gene.mrkr_abbrev[1,20]	gene_sym,
+	   acc_num[1,10]			genbank_acc
+from marker gene, db_link
+where db_name = 'RefSeq'
+and gene.mrkr_zdb_id = linked_recid
+into temp tmp_veg with no log
+;
+
+-- try and find associated est accessions for
+-- genes with out refseq links
+
+select gene.mrkr_zdb_id[1,26]	gene_zdb,
+	   gene.mrkr_abbrev[1,20]	gene_sym,
+	   acc_num[1,10]			genbank_acc
+from marker gene, marker est, db_link, marker_relationship
+where gene.mrkr_zdb_id = mrel_mrkr_1_zdb_id 
+and   est.mrkr_zdb_id  = mrel_mrkr_2_zdb_id 
+and  mrel_type = 'gene encodes small segment'
+and est.mrkr_zdb_id = linked_recid
+and est.mrkr_type  = 'EST'
+and gene.mrkr_type = 'GENE'
+and db_name ='Genbank'
+and gene.mrkr_abbrev[3] <> ':'
+and gene.mrkr_zdb_id not in(
+	select gene_zdb from tmp_veg
+)
+into temp tmp_veg_est with no log;
+
+insert into tmp_veg select * from tmp_veg_est;
+drop table tmp_veg_est;
+
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/VegaGeneSeq.txt'
+DELIMITER "	"  
+select * from tmp_veg
+order by 3;
+
+drop table tmp_veg;
+
 
 -- FPC Alias and Mapping
 

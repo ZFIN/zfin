@@ -22,12 +22,16 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Sanger
 
 GENERICS = SangerFiles.pl SangerFiles.sql
 
+STATICS  = readme
+
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.
 
 HTTP_DATA_TRANSFER_DIR = $(TARGETROOT)/home/data_transfer/Sanger
 
 ENDEMICTARGETS_PRE = $(HTTP_DATA_TRANSFER_DIR)
+
+
 
 # ---------------  Production Rules  ------------------------------------
 
@@ -41,7 +45,11 @@ include $(TOP)/make.default.rules
 $(HTTP_DATA_TRANSFER_DIR) :
 	$(TARGET_MKDIR) $@
 
-
+$(STATICS) :
+	rm -f $(HTTP_DATA_TRANSFER_DIR)/readme
+	ln -s $(TARGETDIR)/readme $(HTTP_DATA_TRANSFER_DIR)/readme
+	rm -f $(HTTP_DATA_TRANSFER_DIR)/index.html
+	ln -s $(HTTP_DATA_TRANSFER_DIR)/readme $(HTTP_DATA_TRANSFER_DIR)/index.html
 # ---------------  Misc Targets  ----------------------------------------
 
 # Run the download script.  This extracts data from ZFIN and places it in 
