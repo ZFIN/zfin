@@ -17,7 +17,7 @@
 TOP = ../../../..
 include $(TOP)/make.include
 
-SUBDIRS = 
+SUBDIRS = Disease_images
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/stckctr/dis_man
 
