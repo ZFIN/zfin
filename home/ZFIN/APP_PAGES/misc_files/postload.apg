@@ -1,4 +1,7 @@
 
+<?MIVAR name="WARNING"> Blast results are stored as a CLOB data type. Entries with no blast are stored as 'no results'. CLOBs are not searchable so a know record with no results is used for comparison. If ZDB-IDs are changed and a new record is not used for comparison, the results will display all 'no'.<?/MIVAR>
+
+
 <html>
   <head>
 
@@ -78,13 +81,12 @@ document.critform.century.selectedIndex = 1;
 <table border=0 cellpadding=5 width=91% align=center>
 
 <?MISQL SQL="
-select count(distinct lbl_zdb_id) 
-from label, expression_pattern, int_data_source, marker
+select count(distinct mrkr_zdb_id) 
+from expression_pattern, int_data_source, marker
 where ids_source_zdb_id = 'ZDB-LAB-980204-15'
   and ids_data_zdb_id = xpat_zdb_id
-  and lbl_zdb_id = xpat_label_zdb_id
-  and xpat_direct_submission_date = DATE('$month/$day/$century$year')
-  and lbl_name = mrkr_name;">
+  and mrkr_zdb_id = xpat_probe_zdb_id 
+  and xpat_direct_submission_date = DATE('$month/$day/$century$year');">
   
 $(IF,$(>,$1,0),
   <tr>
@@ -100,13 +102,12 @@ $(IF,$(>,$1,0),
 <?/MISQL>
 
 <?MISQL SQL="
-select distinct lbl_zdb_id, lbl_name, mrkr_abbrev_order,mrkr_comments 
-from label, expression_pattern, int_data_source, marker
+select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev_order,mrkr_comments 
+from expression_pattern, int_data_source, marker
 where ids_source_zdb_id = 'ZDB-LAB-980204-15'
   and ids_data_zdb_id = xpat_zdb_id
-  and lbl_zdb_id = xpat_label_zdb_id
+  and mrkr_zdb_id = xpat_probe_zdb_id 
   and xpat_direct_submission_date = DATE('$month/$day/$century$year')
-  and lbl_name = mrkr_name
 order by 3;">
 
   <?MIVAR NAME=$label_id>$1<?/MIVAR>
@@ -121,9 +122,8 @@ order by 3;">
   <!-- PROBE STATS:image count, genbank, blast -->
   <?MISQL SQL="
       select count(*)::integer
-      from blast b1, blast b2, marker
-      where '$label_name' = mrkr_name
-        and mrkr_zdb_id = b1.blast_mrkr_zdb_id
+      from blast b1, blast b2
+      where '$label_name' = b1.blast_mrkr_zdb_id
         and b2.blast_mrkr_zdb_id = 'ZDB-EST-020730-3'
         and b1.blast_results != b2.blast_results;">
     <td>
@@ -134,9 +134,8 @@ order by 3;">
     <td>
   <?MISQL SQL="
       select acc_num
-      from db_link,marker
-      where '$label_name' = mrkr_name
-        and mrkr_zdb_id = linked_recid
+      from db_link
+      where '$label_id' = linked_recid
         and db_name = 'Genbank';">
     $(IF,$(>,$MI_CURRENTROW,1),", ")
       $1
@@ -146,7 +145,7 @@ order by 3;">
   <?MISQL SQL="
       select count(*)::integer
       from expression_pattern, expression_pattern_image
-      where '$label_id' = xpat_label_zdb_id
+      where '$label_id' = xpat_probe_zdb_id
         and xpat_zdb_id = xpatfimg_xpat_zdb_id;">
     <td>
       $1
@@ -156,7 +155,7 @@ order by 3;">
   <?MISQL SQL="
       select count(*)::integer
       from expression_pattern, expression_pattern_stage
-      where '$label_id' = xpat_label_zdb_id
+      where '$label_id' = xpat_probe_zdb_id
         and xpat_zdb_id = xpatstg_xpat_zdb_id
         and not exists 
             (
@@ -178,7 +177,7 @@ order by 3;">
   <?MISQL SQL="
       select count(*)::integer
       from expression_pattern, expression_pattern_stage
-      where '$label_id' = xpat_label_zdb_id
+      where '$label_id' = xpat_probe_zdb_id
         and xpat_zdb_id = xpatstg_xpat_zdb_id
         and not exists 
             (
@@ -216,13 +215,12 @@ order by 3;">
 <table border=0 cellpadding=2 width=91% align=center>
 
 <?MISQL SQL="
-select distinct lbl_zdb_id, lbl_name, mrkr_abbrev_order,mrkr_comments 
-from label, expression_pattern, int_data_source, marker
+select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev_order,mrkr_comments 
+from expression_pattern, int_data_source, marker
 where ids_source_zdb_id = 'ZDB-LAB-980204-15'
   and ids_data_zdb_id = xpat_zdb_id
-  and lbl_zdb_id = xpat_label_zdb_id
+  and mrkr_zdb_id = xpat_probe_zdb_id 
   and xpat_direct_submission_date = DATE('$month/$day/$century$year')
-  and lbl_name = mrkr_name
 order by 3;">
 
   <?MIVAR NAME=$label_id>$1<?/MIVAR>
@@ -245,7 +243,7 @@ order by 3;">
   <?MISQL SQL="
   select distinct xpatstg_start_stg_zdb_id, xpatstg_end_stg_zdb_id, s1.stg_name_long, s2.stg_name_long, s1.stg_hours_start, xpat_zdb_id
   from expression_pattern, expression_pattern_stage, stage s1, stage s2
-  where xpat_label_zdb_id = '$label_id'
+  where xpat_probe_zdb_id = '$label_id'
     and xpat_zdb_id = xpatstg_xpat_zdb_id
     and xpatstg_start_stg_zdb_id = s1.stg_zdb_id
     and xpatstg_end_stg_zdb_id = s2.stg_zdb_id

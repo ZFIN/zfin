@@ -1,5 +1,6 @@
 <!-- FILE: markerupdate.apg
 
+
 This is the handler that is called whenever a user clicks a button in the 
 "updating  mode" of the MARKER viewer. It should toss up the appropriate 
 form to get the update from the user. In most cases (text fields) this 

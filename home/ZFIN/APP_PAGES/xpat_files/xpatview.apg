@@ -66,11 +66,9 @@
 
 <?MISQL SQL="
      SELECT mrkr_abbrev, mrkr_zdb_id, mrkr_name, mrkr_type
-     FROM marker, marker_label, label, expression_pattern
+     FROM marker, expression_pattern
      WHERE xpat_zdb_id = '$OID' 
-       AND lbl_zdb_id = xpat_label_zdb_id
-       AND mrkrlbl_label_zdb_id = lbl_zdb_id
-       AND mrkrlbl_marker_zdb_id = mrkr_zdb_id
+       AND mrkr_zdb_id = xpat_probe_zdb_id
      order by 4 desc";>
 <?/MISQL>
 
@@ -132,16 +130,16 @@ ERROR -- something bad happened -- no OID passed in!
 <?MIVAR NAME=$ASSAY_NAME><?/MIVAR>
 <?MIVAR NAME=$XPAT_COMMENTS><?/MIVAR>
 <?MIVAR NAME=$XPAT_RECEIVE_DATE><?/MIVAR>
-<?MIVAR NAME=$LABEL_ID> <?/MIVAR>
+<?MIVAR NAME=$MARKER_ID> <?/MIVAR>
 <?MISQL SQL="
-     SELECT xpat_assay_name, xpat_comments, xpat_label_zdb_id, xpat_direct_submission_date
+     SELECT xpat_assay_name, xpat_comments, xpat_probe_zdb_id, xpat_direct_submission_date
      FROM expression_pattern, expression_pattern_assay
      WHERE xpat_zdb_id = '$OID' 
        AND xpat_assay_name = xpatassay_name;
      ">
 	<?MIVAR NAME=ASSAY_NAME>$1<?/MIVAR>
 	<?MIVAR NAME=XPAT_COMMENTS>$2<?/MIVAR>
-	<?MIVAR NAME=$LABEL_ID>$3<?/MIVAR>
+	<?MIVAR NAME=$MARKER_ID>$3<?/MIVAR>
 	<?MIVAR NAME=$XPAT_RECEIVE_DATE>$4<?/MIVAR>
 <?/MISQL>
 
@@ -161,11 +159,15 @@ ERROR -- something bad happened -- no OID passed in!
 <?MIVAR NAME=$COUNT>0<?/MIVAR>
 <?MISQL SQL="
      SELECT mrkr_abbrev, mrkr_zdb_id, mrkr_name, mrkr_type
-     FROM marker, marker_label, label, expression_pattern
+     FROM marker, expression_pattern
      WHERE xpat_zdb_id = '$OID' 
-       AND lbl_zdb_id = xpat_label_zdb_id
-       AND mrkrlbl_label_zdb_id = lbl_zdb_id
-       AND mrkrlbl_marker_zdb_id = mrkr_zdb_id
+       AND mrkr_zdb_id = xpat_probe_zdb_id
+  UNION
+     SELECT mrkr_abbrev, mrkr_zdb_id, mrkr_name, mrkr_type
+     FROM marker, expression_pattern, marker_relationship
+     WHERE xpat_zdb_id = '$OID' 
+       AND mrel_mrkr_2_zdb_id = xpat_probe_zdb_id
+       AND mrel_mrkr_1_zdb_id = mrkr_zdb_id
      order by 4 desc;
      ">
      <?MIVAR COND="$(=,$MI_CURRENTROW,1)">
@@ -630,6 +632,7 @@ ERROR -- something bad happened -- no OID passed in!
 
 <?MIVAR><b>Contact(s):&nbsp;</b>$CONTACT<?/MIVAR>
 
+<!-------------- Comments ------------------->
 
 <!-------------- Comments ------------------->
 
@@ -667,7 +670,7 @@ ERROR -- something bad happened -- no OID passed in!
     SELECT l.zdb_id, l.name 
     FROM lab l, int_data_supplier, expression_pattern
     WHERE '$XPATSTG_ID' = xpat_zdb_id
-      AND xpat_label_zdb_id = idsup_data_zdb_id
+      AND xpat_probe_zdb_id = idsup_data_zdb_id
       AND idsup_supplier_zdb_id = l.zdb_id;
   ">
     <?MIBLOCK COND="$(=,$COUNT,0)">
@@ -695,10 +698,12 @@ ERROR -- something bad happened -- no OID passed in!
 
 
 <?MISQL SQL="
-	SELECT lbl_name, lblrna_vector_name, lbl_comments, lblrna_polymerase_name, lblrna_cloning_site, lblrna_digest, lblrna_library, lblrna_insert_size
-	FROM label, label_rna 
-	WHERE '$LABEL_ID' = lbl_zdb_id 
-	  AND lbl_zdb_id = lblrna_label_zdb_id;
+	SELECT mrkr_name, clone_vector_name, clone_comments, clone_polymerase_name, clone_cloning_site, clone_digest, clone_probelib_zdb_id, clone_insert_size
+	FROM clone, marker, probe_library
+	WHERE '$MARKER_ID' = clone_mrkr_zdb_id
+          and clone_mrkr_zdb_id = mrkr_zdb_id
+          and clone_probelib_zdb_id = probelib_zdb_id;
+
 ">
 
 	<b>PROBE:&nbsp; $1</b>

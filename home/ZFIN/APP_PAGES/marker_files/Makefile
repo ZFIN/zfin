@@ -3,7 +3,6 @@
 # Makefile for ZFIN_WWW CVS Project, Marker app pages.
 #
 # $Source$
-# $Id$
 #
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!

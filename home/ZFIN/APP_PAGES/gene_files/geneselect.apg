@@ -260,16 +260,22 @@ document.critform.START.value = "";
       <?MIVAR NAME=$OID>$2<?/MIVAR>
       <?MIVAR name=$marker_name>$3<?/MIVAR>
       <?MIVAR name=$xpat> <?/MIVAR>
+      <?MIVAR NAME=$XPAT_COUNT>0<?/MIVAR>
 
       <!--  GENE EXPRESSION QUERY  -->
-      <?MISQL SQL="
-        select count(*)
-          from marker, marker_label, label, expression_pattern
-          where     '$OID' =  mrkr_zdb_id
-                and mrkr_zdb_id = mrkrlbl_marker_zdb_id
-                and mrkrlbl_label_zdb_id = lbl_zdb_id
-                and lbl_zdb_id = xpat_label_zdb_id 
-                ;">
+      <?MISQL COND="$(EC,$(SUBSTR,$OID,5,3),EST)" SQL="
+          select count(*)
+          from expression_pattern
+          where '$OID' = xpat_probe_zdb_id;">
+        <?MIVAR NAME=$XPAT_COUNT>$1<?/MIVAR>
+      <?/MISQL>
+
+      <?MISQL COND="$(EC,$(SUBSTR,$OID,5,4),GENE)" SQL="
+          select count(*)
+          from expression_pattern, marker_relationship
+          where '$OID' = mrel_mrkr_1_zdb_id
+            and mrel_mrkr_2_zdb_id = xpat_probe_zdb_id 
+          ;">
         <?MIVAR NAME=$XPAT_COUNT>$1<?/MIVAR>
       <?/MISQL>
 

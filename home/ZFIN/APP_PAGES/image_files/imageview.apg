@@ -136,7 +136,7 @@ Variables Expected:
     <!-- if not updating -->
     <?MIBLOCK COND="$(NXST,$UPDATE)">
       <?MISQL SQL="
-	select WebExplode(object, 'page_title=View Image&ownerColumn=fimg_owner_zdb_id&zdbIdColumn=fimg_zdb_id') 
+	select WebExplode(object, 'page_title=View Image&ownerColumn=fimg_owner_zdb_id&zdbidColumn=fimg_zdb_id') 
 	  from webPages 
 	  where ID='aa-secure_navigation.apg';">
 	$1
@@ -416,7 +416,7 @@ Variables Expected:
 	<!-- Show expression patterns if they exist -->
 
 	<?MISQL SQL="
-	  select xpat_zdb_id, xpat_label_zdb_id, xpat_comments, xpat_assay_name
+	  select xpat_zdb_id, xpat_probe_zdb_id, xpat_comments, xpat_assay_name
 	    from expression_pattern
 	    where exists 
 		  ( select * 
@@ -425,16 +425,15 @@ Variables Expected:
 			and xpatfimg_xpat_zdb_id = xpat_zdb_id);">
 
 	  <?MIVAR NAME=$xpat_zdb_id>$1<?/MIVAR>
-	  <?MIVAR NAME=$xpat_label_zdb_id>$2<?/MIVAR>
+	  <?MIVAR NAME=$xpat_probe_zdb_id>$2<?/MIVAR>
 	  <?MIVAR NAME=$xpat_comments>$3<?/MIVAR>
 	  <?MIVAR NAME=$xpat_assay_name>$4<?/MIVAR>
 
 	  <?MIVAR NAME=$labeledMarkerList><?/MIVAR>
 	  <?MISQL SQL="
 	    select mrkr_zdb_id, mrkr_abbrev
-	      from marker, marker_label
-	      where mrkr_zdb_id = mrkrlbl_marker_zdb_id
-		and mrkrlbl_label_zdb_id = '$xpat_label_zdb_id'
+	      from marker
+	      where mrkr_zdb_id = '$xpat_probe_zdb_id'
 	      order by mrkr_abbrev;">
 
 	    <?MIVAR NAME=$mrkr_zdb_id>$1<?/MIVAR>
@@ -449,7 +448,7 @@ Variables Expected:
 	  <p>
 	  <b>Shows part of <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatview.apg&OID=$xpat_zdb_id">expression pattern</a>
 	  of $labeledMarkerList 
-	  by $xpat_assay_name<br>
+	  by $xpat_assay_name</a><br>
 
 	  <!-- Get the anatomy items labeled in the expression pattern -->
 
@@ -526,13 +525,14 @@ Variables Expected:
 	    <?/MISQL>
             <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
                       </tr>
-	              </center>
-	              </TABLE>
+                    </center>
+                    </TABLE>
             <?/MIBLOCK>
         <?/MISQL>
-	 <br>
+        <br>
 
-	 <hr width=80%>
+	  <hr width=80%>
+
 	<b>Image Preparation:</B> <p>
 	<TABLE border=0 WIDTH=100% cellpadding=4>
 	  <TH>Preparation</TH>
@@ -632,7 +632,6 @@ Variables Expected:
 	&nbsp; ($(FIX,$1)) 
 	<?/MISQL>
 	<?/MIVAR>
-
 
       </form>
     <?/MIBLOCK>  <!-- ends cond AUTHORIZED -->

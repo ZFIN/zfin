@@ -131,10 +131,9 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 </SCRIPT>
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
-
 <?MIVAR name=comments> 
   Set stage and lg variables if they don't exist. 
-  -this page is linked to from geneselect.apg
+  -this page is linked to from geneselect.apg which does not send stages.
 <?/MIVAR>
 
 <?MISQL SQL="
@@ -197,7 +196,26 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 <?MIVAR NAME=$query_where><?/MIVAR>
 <?MIVAR>   $(SETVAR,gene_count,1)   <?/MIVAR>
 
-<?MIVAR NAME=$structure_bool default=or>$structure_bool<?/MIVAR>
+	<!-- query clause to constrain stage range -->
+
+<?MIBLOCK COND="$(XST,$user_stg_rng)">
+  <?MIVAR NAME=$query_from>$query_from, 
+          stage s1, stage s2, stage st, stage ed
+  <?/MIVAR>
+  <?MIVAR NAME=$query_where>$query_where
+             and st.stg_zdb_id = '$stage_start'
+             and ed.stg_zdb_id = '$stage_end'
+             and (       s2.stg_hours_end <= ed.stg_hours_end
+                     and s2.stg_hours_end > st.stg_hours_start
+                  or
+                         s1.stg_hours_start >= st.stg_hours_start
+                     and s1.stg_hours_start < ed.stg_hours_end
+                  or 
+                         s1.stg_hours_start <= st.stg_hours_start
+                     and s2.stg_hours_end   >= ed.stg_hours_end
+                   ) 
+  <?/MIVAR>
+<?/MIBLOCK>
 
 <?MIBLOCK COND="$(AND,$(XST,$s_list),$(XST,$num_structures))">
   <?MIVAR NAME=$s_list>----------------------------------------------<->$s_list<?/MIVAR>
@@ -221,6 +239,7 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
     <?MIVAR> $(SETVAR,$structure_list[$(+,$i,1)],$TEMP) <?/MIVAR>
   <?/MIBLOCK>
 <?/MIBLOCK>
+
 
 <?MIBLOCK COND="$(XST,$structure_list)">
   <?MIVAR NAME=str_count>1<?/MIVAR>
@@ -251,63 +270,18 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
   <?/MIBLOCK>
 <?/MIBLOCK>
 
-<?MIBLOCK COND="$(XST,$str_dlmt_list)">
-    <?MIVAR NAME=$anatitem_constraint>$(SEPARATE,$str_dlmt_list,"' 
-       )       
-     "$structure_bool" exists
-       (
-         select * 
-         from expression_pattern_anatomy, anatomy_item, stage s1, stage s2, stage st, stage ed
-         where xp.xpat_zdb_id = xpatanat_xpat_zdb_id
-           and xpatanat_anat_item_zdb_id = anatitem_zdb_id
-           and xpatanat_xpat_start_stg_zdb_id = s1.stg_zdb_id
-           and xpatanat_xpat_end_stg_zdb_id = s2.stg_zdb_id
-           and st.stg_zdb_id = '"$stage_start"'
-           and ed.stg_zdb_id = '"$stage_end"'
-           and (       s2.stg_hours_end <= ed.stg_hours_end
-                   and s2.stg_hours_end > st.stg_hours_start
-                or
-                       s1.stg_hours_start >= st.stg_hours_start
-                   and s1.stg_hours_start < ed.stg_hours_end
-                or 
-                       s1.stg_hours_start <= st.stg_hours_start
-                   and s2.stg_hours_end   >= ed.stg_hours_end
-                 ) 
-           and anatitem_name = '")<?/MIVAR>
-    <?MIVAR NAME=$anatitem_constraint> and (
-      exists
-       (
-         select * 
-         from expression_pattern_anatomy, anatomy_item, stage s1, stage s2, stage st, stage ed
-         where xp.xpat_zdb_id = xpatanat_xpat_zdb_id
-           and xpatanat_anat_item_zdb_id = anatitem_zdb_id
-           and xpatanat_xpat_start_stg_zdb_id = s1.stg_zdb_id
-           and xpatanat_xpat_end_stg_zdb_id = s2.stg_zdb_id
-           and st.stg_zdb_id = '$stage_start'
-           and ed.stg_zdb_id = '$stage_end'
-           and (       s2.stg_hours_end <= ed.stg_hours_end
-                   and s2.stg_hours_end > st.stg_hours_start
-                or
-                       s1.stg_hours_start >= st.stg_hours_start
-                   and s1.stg_hours_start < ed.stg_hours_end
-                or 
-                       s1.stg_hours_start <= st.stg_hours_start
-                   and s2.stg_hours_end   >= ed.stg_hours_end
-                 ) 
-           and anatitem_name = '$anatitem_constraint'
-        )
-      )
-     <?/MIVAR>
-<?MIELSE>
- <?MIVAR>$(UNSETVAR,$structure_list)<?/MIVAR>
-<?/MIBLOCK>
+	<!-- query constraint for gene_name -->
 
 <?MIBLOCK COND="$(XST,$gene_name)">
   <?MIVAR NAME=$gene_name DELIMIT="'" REPLACE="''">$gene_name<?/MIVAR>
   <?MIVAR NAME=$wild_card><?/MIVAR>
-  <?MIBLOCK COND="$(XST,$searchtype)">
-    <?MIVAR COND="$(NC,$searchtype,begins)" NAME=$wild_card>%<?/MIVAR>
-    <?MIVAR NAME=$gene_name_constraint> 
+  <?MIVAR NAME=$operator>=<?/MIVAR>
+  <?MIVAR NAME=$searchtype DEFAULT=equals>$searchtype<?/MIVAR>
+
+  <?MIBLOCK COND="$(NC,$searchtype,equals)">
+    <?MIVAR COND"$(EC,$searchtype,contains) NAME=$wild_card>%<?/MIVAR>
+
+    <?MIVAR NAME=$query_where>$query_where 
       and ( mrkr_name like '$wild_card$(LOWER,$gene_name)%'
       or
           exists 
@@ -319,8 +293,7 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
         )        
     <?/MIVAR>
   <?MIELSE>
-    <?MIVAR NAME=$searchtype>equals<?/MIVAR>
-    <?MIVAR NAME=$gene_name_constraint> 
+    <?MIVAR NAME=$query_where>$query_where 
       and ( mrkr_name = '$(LOWER,$gene_name)'
       or
           exists 
@@ -332,84 +305,64 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
         )        
     <?/MIVAR>
   <?/MIBLOCK> 
+<?/MIBLOCK> <!-- end gene constraint -->
 
- <?MIVAR cond=$(=,1,0)> $gene_count <br><br><!-- $MI_SQL <br><br> --> <?/MIVAR>
-<?/MIBLOCK>
+	<!-- structure_bool query alterations -->
 
+<?MIVAR NAME=$structure_bool default=or>$structure_bool<?/MIVAR>
 
-<!--   SET QUERY FROM / WHERE VARIABLES   -->
-<?MIBLOCK COND="$(OR,$(XST,$gene_name),$(XST,$str_dlmt_list))">
-  <?MIBLOCK COND="$(XST,$gene_name)">
-    <?MIBLOCK COND="$(XST,$str_dlmt_list)">
+	<!-- query clause for anatomy_items -->
 
-      <?MIVAR NAME=$query_where>where mrkr_zdb_id = mrkrlbl_marker_zdb_id
-             and mrkrlbl_label_zdb_id = lbl_zdb_id
-             and lbl_zdb_id = xp.xpat_label_zdb_id
-             $anatitem_constraint
-             $gene_name_constraint
+<?MIBLOCK COND="$(XST,$str_dlmt_list)">
+  <?MIVAR NAME=$anatitem_constraint>$(SEPARATE,$str_dlmt_list,"','")<?/MIVAR>
+
+  <?MIVAR NAME=$query_from>$query_from, 
+          expression_pattern_anatomy, anatomy_item  
+  <?/MIVAR>
+  <?MIVAR NAME=$query_where>$query_where
+          and xp.xpat_zdb_id = xpatanat_xpat_zdb_id
+          and xpatanat_anat_item_zdb_id = anatitem_zdb_id
+          and anatitem_name in ('$anatitem_constraint')
+  <?/MIVAR> 
+
+  <?MIVAR NAME=$item_count>$(VECSIZE,$str_dlmt_list)<?/MIVAR>
+
+  <?MIBLOCK COND="$(XST,$user_stg_rng)">
+    <?MIBLOCK COND="$(EC,$structure_bool,and)">
+      <?MIVAR NAME=$query_from>$query_from, expression_pattern_stage<?/MIVAR>
+      <?MIVAR NAME=$query_where>$query_where
+              and xpatstg_start_stg_zdb_id = s1.stg_zdb_id
+              and xpatstg_end_stg_zdb_id = s2.stg_zdb_id
+              and xpatstg_start_stg_zdb_id = xpatanat_xpat_start_stg_zdb_id
+              and xpatstg_end_stg_zdb_id =  xpatanat_xpat_end_stg_zdb_id
       <?/MIVAR>
-
     <?MIELSE>
-
-      <?MIVAR NAME=$query_where>where mrkr_zdb_id = mrkrlbl_marker_zdb_id
-             and mrkrlbl_label_zdb_id = lbl_zdb_id
-             and lbl_zdb_id = xp.xpat_label_zdb_id
-             and xp.xpat_zdb_id = xpatstg_xpat_zdb_id 
-             and xpatstg_start_stg_zdb_id = s1.stg_zdb_id
-             and xpatstg_end_stg_zdb_id = s2.stg_zdb_id
-             and st.stg_zdb_id = '$stage_start'
-             and ed.stg_zdb_id = '$stage_end'
-             and (       s2.stg_hours_end <= ed.stg_hours_end
-                     and s2.stg_hours_end > st.stg_hours_start
-                  or
-                         s1.stg_hours_start >= st.stg_hours_start
-                     and s1.stg_hours_start < ed.stg_hours_end
-                  or 
-                         s1.stg_hours_start <= st.stg_hours_start
-                     and s2.stg_hours_end   >= ed.stg_hours_end
-                   ) 
-             $gene_name_constraint
+      <?MIVAR NAME=$query_where>$query_where
+              and xpatanat_xpat_zdb_id = xp.xpat_zdb_id
+              and xpatanat_xpat_start_stg_zdb_id = s1.stg_zdb_id
+              and xpatanat_xpat_end_stg_zdb_id = s2.stg_zdb_id
       <?/MIVAR>
-      <?MIVAR NAME=$query_from>, expression_pattern_stage, stage s1, stage s2, stage st, stage ed<?/MIVAR>
-
     <?/MIBLOCK>
-  <?MIELSE> <!-- NXST gene_name -->
-
-      <?MIVAR NAME=$query_where>where mrkr_zdb_id = mrkrlbl_marker_zdb_id
-             and mrkrlbl_label_zdb_id = lbl_zdb_id
-             and lbl_zdb_id = xp.xpat_label_zdb_id
-             $anatitem_constraint
-      <?/MIVAR>
-
   <?/MIBLOCK>
 
-
-  <?MIVAR NAME=$query_from>from marker, marker_label, label, expression_pattern xp$query_from
-  <?/MIVAR>
-
+  <?MIBLOCK COND="$(EC,$structure_bool,and)">
+    <?MIVAR NAME=$query_grp_by>group by mrkr_zdb_id<?/MIVAR>
+    <?MIVAR NAME=$query_hvng>having count(distinct anatitem_name) = $item_count
+    <?/MIVAR>
+  <?/MIBLOCK>
 <?MIELSE>
+  <?MIVAR>$(UNSETVAR,$structure_list)<?/MIVAR>
 
-  <?MIVAR NAME=$query_where>where mrkr_zdb_id = mrkrlbl_marker_zdb_id
-             and mrkrlbl_label_zdb_id = lbl_zdb_id
-             and lbl_zdb_id = xp.xpat_label_zdb_id
-             and xp.xpat_zdb_id = xpatstg_xpat_zdb_id 
-             and xpatstg_start_stg_zdb_id = s1.stg_zdb_id
-             and xpatstg_end_stg_zdb_id = s2.stg_zdb_id
-             and st.stg_zdb_id = '$stage_start'
-             and ed.stg_zdb_id = '$stage_end'
-             and (       s2.stg_hours_end <= ed.stg_hours_end
-                     and s2.stg_hours_end > st.stg_hours_start
-                  or
-                         s1.stg_hours_start >= st.stg_hours_start
-                     and s1.stg_hours_start < ed.stg_hours_end
-                  or 
-                         s1.stg_hours_start <= st.stg_hours_start
-                     and s2.stg_hours_end   >= ed.stg_hours_end
-                   )             
-  <?/MIVAR>
-  <?MIVAR NAME=$query_from>from marker, marker_label, label, expression_pattern xp, expression_pattern_stage, stage s1, stage s2, stage st, stage ed$query_from
-  <?/MIVAR>
-
+  <?MIBLOCK COND="$(XST,$user_stg_rng)">
+    <?MIVAR NAME=$query_from>$query_from,
+            expression_pattern_stage
+    <?/MIVAR>
+    <?MIVAR NAME=$query_where>$query_where
+            and xp.xpat_zdb_id = xpatstg_xpat_zdb_id
+            and xpatstg_start_stg_zdb_id = s1.stg_zdb_id
+            and xpatstg_end_stg_zdb_id = s2.stg_zdb_id
+    <?/MIVAR> 
+  <?/MIBLOCK>
 <?/MIBLOCK>
 
 <?MIBLOCK COND="$(NE,$gene_lg,0)">
@@ -418,35 +371,69 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
                            and amm.OR_lg = '$gene_lg'<?/MIVAR>
 <?/MIBLOCK>
 
-<?MIVAR COND=$(=,0,1)>from: $query_from<br>where: $query_where <?/MIVAR>
 
 
+<?MIVAR NAME=$query_from>
+  from marker, expression_pattern xp$query_from
+<?/MIVAR>
+
+<?MIVAR NAME=$query_where_without_mrel>
+  where mrkr_zdb_id = xp.xpat_probe_zdb_id
+    $query_where
+<?/MIVAR>
+
+<?MIVAR NAME=$_query_where_with_mrel>
+  where mrkr_zdb_id = mrel_mrkr_1_zdb_id 
+    and mrel_mrkr_2_zdb_id = xp.xpat_probe_zdb_id
+    $query_where
+<?/MIVAR>
 <!-- RETRIEVE AND DISPLAY ALL MATCHING ENTRIES. -->
 
-<!-- Count the number of xpats that will be returned. -->
-<?MISQL SQL="
-      select count(distinct mrkr_zdb_id)::integer
+
+
+<!-- Count distinct mrkr_zdb_ids. UNION operation returns two seperate counts and isn't any easier to code than two seperate SQL statements.-->
+
+<?MISQL COND="$(=,1,1,)" SQL="
+      select count($(IF,$(NC,$structure_bool,and),distinct )mrkr_zdb_id)::integer
       $query_from
-      $query_where
-             ;">
+      $query_where_without_mrel
+      $(IF,$(XST,$query_grp_by),$query_grp_by $query_hvng)
+       ;">
 <?/MISQL>
 
+  <?MIVAR NAME=num_recs>$(IF,$(AND,$(XST,$str_dlmt_list),
+                               $(EC,$structure_bool,and)
+                              )
+                         ,$MI_CURRENTROW,$1)
+  <?/MIVAR>
 
-  <?MIVAR NAME=num_recs>$1<?/MIVAR>
+<?MISQL COND="$(=,1,1,)" SQL="
+      select count($(IF,$(NC,$structure_bool,and),distinct )mrkr_zdb_id)::integer
+      $query_from, marker_relationship
+      $query_where_with_mrel
+      $(IF,$(XST,$query_grp_by),$query_grp_by $query_hvng)
+       ;">
+<?/MISQL>
+
+  <?MIVAR NAME=num_recs>$(+,$num_recs,$(IF,$(AND,$(XST,$str_dlmt_list),
+                               $(EC,$structure_bool,and)
+                              )
+                         ,$MI_CURRENTROW,$1))
+  <?/MIVAR>
 
 <table width=100% border=0>
   <tr>
     <td width=20%>&nbsp;</td>
     <td width=60% align=center>
-      <font size="+1">Expression Pattern Search Results
+      <font size="+1">Expression Pattern Search Results<br>
       <?MIVAR> 
-	(<b>$num_recs</b> matching record found.)</font>
-	<!--  <br> QUERY: $MI_SQL  -->
+	(<b>$num_recs</b> matching record(s) found.)</font>
+<!--	   <br> QUERY: $query_from <BR> $query_where       -->
       <?/MIVAR>
     </td>
     <td width=20% align=center>
       <a href=#modify>Modify Search</a>
-
+ 
       <!-- Insert a form with one button. Label button Your Input Welcome -->
         <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>
     </td>
@@ -454,7 +441,7 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 </table>
 
 
-
+	<!-- do not display results -->
 <?MIBLOCK COND="$(=,1,1)">
 
 <?MIBLOCK COND="$(>,$num_recs,0)">
@@ -505,25 +492,47 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 <?MIVAR NAME=$lab_zdb><?/MIVAR>
 <?MIVAR NAME=$lab_name><?/MIVAR>
 <?MIVAR NAME=$inagural>1<?/MIVAR>
-
-<?MIVAR NAME=$query_from>$query_from, expression_pattern_assay<?/MIVAR>
-<?MIVAR NAME=$query_where>$query_where
-                          and xp.xpat_assay_name = xpatassay_name
-<?/MIVAR>       
+      
 
 <!--   QUERY DATABASE FOR EXPRESSION PATTERN DATA ON GENE_X   -->
 <!--     EXECUTE A DOUBLE LOOP.   -->
 <!--       OUTER LOOP RETREIVES ASSAY_TYPES, CHANGES ROW COLOR, PRINTS ROWS   -->
 <!--       INNER LOOP CREATES A TABLE ROW FOR EACH ASSAY_TYPE   -->
 
+<?MIBLOCK COND="$(XST,$query_grp_by)">
+  <?MIVAR NAME=$query_grp_by>$query_grp_by, mrkr_type, mrkr_abbrev_order<?/MIVAR> 
+<?/MIBLOCK>
 
 <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
-        select distinct xpatassay_name, xpatassay_display_order, xp.xpat_zdb_id, mrkr_name, mrkr_abbrev, mrkr_zdb_id, mrkr_type, mrkr_abbrev_order
-        $query_from
-        $query_where
-      order by mrkr_type desc, mrkr_abbrev_order 
-               ;">
-  <?MIVAR NAME=$GENE_OID>$6<?/MIVAR>
+  select $(IF,$(EC,$structure_bool,or),distinct )mrkr_zdb_id, mrkr_type, mrkr_abbrev_order
+  $query_from, marker_relationship
+  $query_where_with_mrel
+  $(IF,$(XST,$query_grp_by),$query_grp_by $query_hvng)
+UNION
+  select $(IF,$(EC,$structure_bool,or),distinct )mrkr_zdb_id, mrkr_type, mrkr_abbrev_order
+  $query_from
+  $query_where_without_mrel
+  $(IF,$(XST,$query_grp_by),$query_grp_by $query_hvng)
+  order by 2 desc, 3
+";>
+
+  <?MIVAR NAME=$GENE_OID>$1<?/MIVAR>
+
+<?MISQL SQL="
+        select xpatassay_name, xpatassay_display_order, xp.xpat_zdb_id, mrkr_name, mrkr_abbrev, mrkr_zdb_id, mrkr_type, mrkr_abbrev_order
+        from marker, expression_pattern xp, expression_pattern_assay
+        where mrkr_zdb_id = xp.xpat_probe_zdb_id
+          and xp.xpat_assay_name = xpatassay_name
+          and mrkr_zdb_id = '$GENE_OID'
+    UNION
+        select xpatassay_name, xpatassay_display_order, xp.xpat_zdb_id, mrkr_name, mrkr_abbrev, mrkr_zdb_id, mrkr_type, mrkr_abbrev_order
+        from marker, marker_relationship, expression_pattern xp, expression_pattern_assay
+        where mrkr_zdb_id = mrel_mrkr_1_zdb_id 
+          and mrel_mrkr_2_zdb_id = xp.xpat_probe_zdb_id
+          and xp.xpat_assay_name = xpatassay_name
+          and mrkr_zdb_id = '$GENE_OID'
+    ;">
+
   <?MIVAR NAME=$GENE_NAME>$4<?/MIVAR>
   <?MIVAR NAME=$GENE_ABREV>$5<?/MIVAR>
   <?MIVAR NAME=$GENE_TYPE>$7<?/MIVAR>
@@ -693,7 +702,7 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 
 <!-- end gene_X SQL -->
 <?/MISQL>
-
+<?/MISQL>
 </TABLE>
 
 
@@ -844,7 +853,6 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 <?/MIBLOCK>
 </center>
 <?/MIBLOCK>
-
 <?/MIBLOCK>
 
 
@@ -864,7 +872,6 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 
 <?MIBLOCK COND="$(NXST,$query_results)">
         <font size="+1"><b>Search for Gene Expression Data </b></font>
-
 <?MIELSE>
         <a name=modify></a><b>Modify your search.</b>
 <?/MIBLOCK>

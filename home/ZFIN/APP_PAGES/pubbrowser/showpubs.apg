@@ -173,11 +173,16 @@ $(IF,$(>,$(POSITION,$OID,IMAGE),0),
   <?MIVAR NAME=$COUNT>0<?/MIVAR>
   <?MISQL SQL="
      SELECT mrkr_abbrev, mrkr_zdb_id, mrkr_name, mrkr_type
-     FROM marker, marker_label, label, expression_pattern
+     FROM marker, expression_pattern
      WHERE xpat_zdb_id = '$OID' 
-       AND lbl_zdb_id = xpat_label_zdb_id
-       AND mrkrlbl_label_zdb_id = lbl_zdb_id
-       AND mrkrlbl_marker_zdb_id = mrkr_zdb_id
+       AND xpat_probe_zdb_id = mrkr_zdb_id
+  UNION
+     SELECT mrkr_abbrev, mrkr_zdb_id, mrkr_name, mrkr_type
+     FROM marker, expression_pattern, marker_relationship
+     WHERE xpat_zdb_id = '$OID' 
+       AND xpat_probe_zdb_id = mrel_mrkr_2_zdb_id 
+       AND mrkr_zdb_id = mrel_mrkr_1_zdb_id
+
      order by 4 desc;
      ">
      <?MIVAR COND="$(=,$MI_CURRENTROW,1)">
@@ -291,6 +296,7 @@ $(IF,$(>,$(POSITION,$OID,IMAGE),0),
 <?MIVAR COND="$(XST,$UPDATE)">
 <INPUT TYPE=button value="Add to" onClick="doit('rel_pub','selection','Add')"> 
 <?/MIVAR> 
+
 <b>Related Publications:</b>
 <table>
 <?MISQL SQL="
@@ -310,8 +316,10 @@ $(IF,$(>,$(POSITION,$OID,IMAGE),0),
     </TD>
   </TR>
   <TR></TR><TR></TR>
+
 <?/MISQL>
 </table>
+
 </form>
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>

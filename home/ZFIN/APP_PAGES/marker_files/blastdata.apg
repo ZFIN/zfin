@@ -53,25 +53,16 @@ ERROR -- something bad happened -- no OID passed in!
 <br>
 
 <!------------------------------------------------->
- <?MISQL SQL="
+<!-- display blast info if exists -->
+
+  <?MISQL SQL="
     SELECT distinct blast_results, blast_date
     FROM blast
     WHERE '$OID' = blast_mrkr_zdb_id
     ;">
-    
-    <?MIVAR NAME="$BLAST_DATE">$2<?/MIVAR>
-    <?MIVAR NAME="$BLAST_RESULT">$1<?/MIVAR>
-
-    <?MIBLOCK COND="$(!=,$MI_CURRENTROW,0)">
-      <?MIVAR>
-	<b>Blast Date:</b> &nbsp;
-          $(IF,$(EC,$BLAST_DATE,NULL),Not Submitted.,$BLAST_DATE)
-	<br>
-	<b>Blast Result:</b> &nbsp;$BLAST_RESULT
-	<br>
-
-      <?/MIVAR>
-    <?/MIBLOCK>
+    <b>Blast Date:</b> &nbsp; $2
+    <br>
+    <b>Blast Result:</b> &nbsp; $1
   <?/MISQL>
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
