@@ -746,7 +746,7 @@
 				   $Q->submit(-name=>"New Window with Printer Friendly  Map",-align=>'left') . "\n".
 				     $Q->hidden("height",$g_height)."\n".
 				       $Q->hidden("width" ,$g_width)."\n".
-					 $Q->hidden("host","zfin.org")."\n".
+					 $Q->hidden("host","<!--|DOMAIN_NAME|-->")."\n".
 					   $Q->hidden("port", $jport)."\n".
 					     $Q->hidden("data",$g_printdata )."\n".
 					       $Q->end_form."\n </td>\n"; 
@@ -782,7 +782,7 @@
       "<param name = \"panel_url\"\t value = \"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg\">\n".
 	
 	"<param name = \"target_frame\"\t value = \"$frame\">\n".
-	  "<param name = \"host\"\t\t value = \"zfin.org\">\n".
+	  "<param name = \"host\"\t\t value = \"<!--|DOMAIN_NAME|-->\">\n".
 	    "<param name = \"port\"\t\t value = \"$jport\">\n".
 	      "<param name = \"selected_marker\"\t value = \"". $Q->param('OID')."\">\n". 
 		"<param name = \"fish_url\" value = \"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=\">\n".
