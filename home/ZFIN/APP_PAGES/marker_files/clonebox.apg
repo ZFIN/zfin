@@ -17,30 +17,55 @@ Requires:  $CLONE_MARKER_ID, $highlight
     FROM company c, int_data_supplier, OUTER(source_url)
     WHERE '$OID' = idsup_data_zdb_id
       AND idsup_supplier_zdb_id = c.zdb_id
-      AND idsup_supplier_zdb_id = srcurl_source_zdb_id
-;
+      AND idsup_supplier_zdb_id = srcurl_source_zdb_id;
   ">
       <?MIVAR COND="$(>,$(POSITION,$1,LAB),0)" NAME=viewpage>labview.apg<?/MIVAR>
       <?MIVAR COND="$(>,$(POSITION,$1,COMPANY),0)" NAME=viewpage>companyview.apg<?/MIVAR>
 
       <?MIVAR NAME=$SOURCE>
-
 	    <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$viewpage&OID=$1">$2</a>
 	    <?MIVAR COND="$(NE,$3,)">
 	      <font size=-1">&nbsp;&nbsp;&nbsp;(<a href="$3">$4</a>)</font><img src="/images/new1.gif">
 	    <?/MIVAR>
-
       <?/MIVAR>
   <?/MISQL>
 
-
 <?MISQL SQL="
-	SELECT  probelib_species,  probelib_name, probelib_non_zfin_strain_name, 
-		probelib_strain_zdb_id, fish.abbrev,
-		probelib_sex, probelib_non_zfin_tissue_name, anatitem_name, 
-		clone_vector_name, vector_type_name, clone_cloning_site, clone_digest,
-		probelib_host, probelib_restriction_sites, clone_polymerase_name,
-		clone_insert_size, mrkr_name, clone_comments, clone_pcr_amplification, mrkr_type
+	SELECT  
+        probelib_species,  --1
+        probelib_name,     --2
+
+        case when probelib_strain_zdb_id is not null
+        then 
+            '<a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=' || probelib_strain_zdb_id ||'>' ||
+            (select fish.name from fish where fish.zdb_id = probelib_strain_zdb_id) || '</a>'
+        else
+            probelib_non_zfin_strain_name
+        end, --3
+
+        fish.abbrev,  --4
+        probelib_sex,  --5
+
+        case when probelib_tissue_zdb_id is not null
+        then 
+             '<a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=' || probelib_tissue_zdb_id ||'>' ||
+            (select anatitem_name from anatomy_item where anatitem_zdb_id = probelib_tissue_zdb_id) 
+        else
+            probelib_non_zfin_tissue_name
+        end, --6
+ 
+        clone_vector_name, --7
+        vector_type_name,  -- 8
+        clone_cloning_site, -- 9
+        clone_digest, -- 10
+        probelib_host,  -- 11
+        probelib_restriction_sites,  -- 12
+        clone_polymerase_name, -- 13
+        clone_insert_size,  -- 14
+        mrkr_name,  -- 15
+        clone_comments, -- 16
+        clone_pcr_amplification, -- 17
+        mrkr_type -- 18
 	FROM clone, marker, probe_library, vector, outer fish, outer anatomy_item
 	WHERE '$CLONE_MARKER_ID' = clone_mrkr_zdb_id
           and clone_mrkr_zdb_id = mrkr_zdb_id
@@ -51,82 +76,61 @@ Requires:  $CLONE_MARKER_ID, $highlight
 ;">
 
 <?MICOMMENT> As per discussion with Erik on 2003/11/21, probe_library stage is not displayed. <?/MICOMMENT>
-    
 
-<?MICOMMENT> 
-    Construct three different clone tables. Keep the table header and source the same. 
+<?MICOMMENT>
+    Construct three different clone tables. Keep the table header and source the same.
     Make the internals apply to EST, PAC, or BAC. Display nothing if the type does not
     match.
-    
-    EST/CDNA:				
-    
-    Species				
-    				
-    Library				
-    				
-    Cloning Site	Digest		Insert Size
-    				
-    Vector		Vector Type	Polymerase
-    				
-    PCR Amplification				
-    				
-    Source							
-    
-    
-    
-    BAC:				
-    
-    Species		Strain		Sex
-    				
-    Tissue				
-    				
-    Library		Host		
-    				
-    Vector		Vector Type		
-    				
-    Source				
 
-        
-    
-    PAC:				
-    				
-    Species		Strain		
-    				
-    Tissue				
-    				
-    Library		Host		
-    				
-    Vector		Vector Type		
-    				
-    Source	
-    
+    EST/CDNA:
+    Species
+    Library
+    Cloning Site    Digest         Insert Size
+    Vector          Vector Type    Polymerase
+    PCR Amplification
+    Source
+
+
+    BAC:
+    Species    Strain    Sex
+    Tissue
+    Library    Host
+    Vector     Vector Type
+    Source
+
+
+    PAC:
+    Species     Strain
+    Tissue
+    Library     Host
+    Vector      Vector Type
+    Source
+
 <?/MICOMMENT>
 
- 
-    
-    
+
+
+
     <?MIVAR NAME=probelib_species>$1<?/MIVAR>
     <?MIVAR NAME=probelib_name>$2<?/MIVAR>
     <?MIVAR NAME=probelib_strain>$3<?/MIVAR>
-    <?MIVAR NAME=probelib_strain_zdb>$4<?/MIVAR>
-    <?MIVAR NAME=fish_abbrev>$5<?/MIVAR>
-    <?MIVAR NAME=probelib_sex>$6<?/MIVAR>
-    <?MIVAR NAME=probelib_non_zfin_tissue_name>$7<?/MIVAR>
-    <?MIVAR NAME=anatitem_name>$8<?/MIVAR>
-    <?MIVAR NAME=clone_vector_name>$9<?/MIVAR>
-    <?MIVAR NAME=vector_type_name>$10<?/MIVAR>
-    <?MIVAR NAME=clone_cloning_site>$11<?/MIVAR>
-    <?MIVAR NAME=clone_digest>$12<?/MIVAR>
-    <?MIVAR NAME=probelib_host>$13<?/MIVAR>
-    <?MIVAR NAME=probelib_restriction_sites>$14<?/MIVAR>
-    <?MIVAR NAME=clone_polymerase_name>$15<?/MIVAR>
-    <?MIVAR NAME=clone_insert_size>$16<?/MIVAR>
-    <?MIVAR NAME=mrkr_name>$17<?/MIVAR>
-    <?MIVAR NAME=clone_comments>$18<?/MIVAR>
-    <?MIVAR NAME=clone_pcr_amplification><BR>$19<?/MIVAR>
-    <?MIVAR NAME=mrkr_type>$20<?/MIVAR>
+    <?MIVAR NAME=fish_abbrev>$4<?/MIVAR>
+    <?MIVAR NAME=probelib_sex>$5<?/MIVAR>
+    <?MIVAR NAME=anatitem_name>$6<?/MIVAR>
+    <?MIVAR NAME=clone_vector_name>$7<?/MIVAR>
+    <?MIVAR NAME=vector_type_name>$8<?/MIVAR>
+    <?MIVAR NAME=clone_cloning_site>$9<?/MIVAR>
+    <?MIVAR NAME=clone_digest>$10<?/MIVAR>
+    <?MIVAR NAME=probelib_host>$11<?/MIVAR>
+    <?MIVAR NAME=probelib_restriction_sites>$12<?/MIVAR>
+    <?MIVAR NAME=clone_polymerase_name>$13<?/MIVAR>
+    <?MIVAR NAME=clone_insert_size>$14<?/MIVAR>
+    <?MIVAR NAME=mrkr_name>$15<?/MIVAR>
+    <?MIVAR NAME=clone_comments>$16<?/MIVAR>
+    <?MIVAR NAME=clone_pcr_amplification><BR>$17<?/MIVAR>
+    <?MIVAR NAME=mrkr_type>$18<?/MIVAR>
     
-    <TABLE width="100%" border=0 cellpadding=5 bgcolor="$highlight">    
+    <TABLE width="100%" border=0 cellpadding=5 bgcolor="$highlight">
     
     <?MIBLOCK COND="$(OR,$(EC,$mrkr_type,EST),$(EC,$mrkr_type,cDNA))">
       <?MIVAR>
@@ -139,7 +143,7 @@ Requires:  $CLONE_MARKER_ID, $highlight
        <TR>
          <TD><b>Cloning Site:</b> $clone_cloning_site</TD>
          <TD><b>Digest:</b> $clone_digest</TD>
-         <TD><b>Insert Size: </b>$clone_insert_size</b><TD>
+         <TD><b>Insert Size: </b> $clone_insert_size</b><TD>
        </TR>
        <TR>
          <TD><b>Vector:</b> $clone_vector_name</TD>
@@ -163,7 +167,7 @@ Requires:  $CLONE_MARKER_ID, $highlight
          <TD width=33%><b>Sex:</b> $probelib_sex</TD>
        </TR>
        <TR>
-         <TD colspan=3><b>Tissue:</b> </TD>
+         <TD colspan=3><b>Tissue:</b> $anatitem_name </TD>
        <TR>
          <TD><b>Library:</b> $probelib_name</TD>
          <TD colspan=2><b>Host:</b> $probelib_host</TD>
@@ -185,7 +189,7 @@ Requires:  $CLONE_MARKER_ID, $highlight
          <TD><b>Strain:</b> $probelib_strain</TD>
        </TR>
        <TR>
-         <TD colspan=2><b>Tissue:</b> </TD>
+         <TD colspan=2><b>Tissue:</b>$anatitem_name </TD>
        <TR>
          <TD><b>Library:</b> $probelib_name</TD>
          <TD><b>Host:</b> $probelib_host</TD>
@@ -201,10 +205,8 @@ Requires:  $CLONE_MARKER_ID, $highlight
       </TR>
      <?/MIVAR>
     <?/MIBLOCK>
-    
     </TABLE>
-    
-    
+
 <?MIVAR NAME=comment>hard coded as "none given" for thisse load<?/MIVAR>
 <!-- <p align=left><b>Comments:</b><br>&nbsp;$3</p> -->
 <?/MISQL>
