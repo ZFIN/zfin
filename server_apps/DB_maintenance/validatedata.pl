@@ -1036,7 +1036,10 @@ sub estsHave1Gene ($) {
 # prefixedGenesHave1Est
 #
 # Genes that have a 2 character prefix, followed by a : should always have
-# a corresponding EST
+# a corresponding EST.
+#
+# This test excludes genes that start with "id:".  See the description of
+# the following test for more info.
 # 
 #Parameter
 # $      Email Address for recipients
@@ -1050,6 +1053,7 @@ sub prefixedGenesHave1Est ($) {
                from marker m1
                where mrkr_type = "GENE"
                  and mrkr_name like "__:%"
+                 and mrkr_name not like "id:%"
                  and 1 <> 
                      ( select count(*) 
                          from marker m2, marker_relationship
@@ -1067,7 +1071,7 @@ sub prefixedGenesHave1Est ($) {
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
     my $subject = "Prefixed genes have 0 or > 1 associated ESTs";
-    my $errMsg = "$nRecords genes had 0 or more than 1 associated ESTs.\n ";
+    my $errMsg = "$nRecords prefixed genes had 0 or more than 1 associated ESTs.\n ";
 
     logError ($errMsg);
     &sendMail($sendToAddress, $subject, $errMsg, $sql); 
@@ -1076,6 +1080,58 @@ sub prefixedGenesHave1Est ($) {
   }
 } 
 
+
+#---------------------------------------------------------------
+# prefixedIbdGenesHave1Est
+#
+# This test esists solely to report prefixed genes that start with "id:"
+# but done have a corresponding EST.  This data is treated differently
+# from all other prefixed genes (see previous test) because, unlike 
+# other prefixed genes, ZFIN is not going to create ESTs for the "id:"
+# genes.  The hope is that over time the biology community will determine
+# what genes these actually are, and then these records will slowly go away.
+#
+# Therefore, the output of this test should not be considered as stuff
+# that needs to be fixed this month, but rather as a report on the progress
+# towards the overall goal of making these genes disappear.
+# 
+#Parameter
+# $      Email Address for recipients
+# 
+
+sub prefixedIbdGenesHave1Est ($) {
+
+  logHeader ("Reporting prefixed id: genes that do not have an EST");
+
+  my $sql = 'select mrkr_zdb_id, mrkr_name, mrkr_abbrev
+               from marker m1
+               where mrkr_type = "GENE"
+                 and mrkr_name like "id:%"
+                 and 1 <> 
+                     ( select count(*) 
+                         from marker m2, marker_relationship
+                         where mrel_mrkr_1_zdb_id = m1.mrkr_zdb_id
+                           and mrel_mrkr_2_zdb_id = m2.mrkr_zdb_id
+                           and mrel_type = "gene contains small segment" )
+               order by mrkr_name';
+
+  my @colDesc = ("Gene ZDB ID       ",
+		 "Gene Name         ",
+		 "Gene Abbrev       ");
+  
+  my $nRecords = execSql ($sql, undef, @colDesc);
+	
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "id: genes that have 0 or > 1 associated ESTs";
+    my $errMsg = "$nRecords 'id:' genes had 0 or more than 1 associated ESTs.\n ";
+
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $errMsg, $sql); 
+  }else {
+    print "Passed!\n";
+  }
+} 
 
 #---------------------------------------------------------------
 # estsWithoutClonesHaveXxGenes
@@ -1979,6 +2035,7 @@ if($monthly) {
   print "run monthly check. \n";
   orthologueHasDblink($geneEmail);
   locusAbbrevIsSet($mutantEmail);
+  prefixedIbdGenesHave1Est($estEmail);
 }
 if($yearly) {
   print "run yearly check. \n";
