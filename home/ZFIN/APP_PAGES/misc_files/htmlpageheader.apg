@@ -8,7 +8,7 @@ document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
 }
 </SCRIPT>
 
-<BODY bgcolor="white" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<BODY bgcolor="<!--|BACKGROUND_COLOR|-->" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
 <basefont size=2>
 
 <!-- Now check authorization -->
@@ -109,4 +109,4 @@ document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
     </td>
   </tr>
 </table>
-<table cellpadding=5 bgcolor=#FFFFFF width=100%><tr><td>
+<table cellpadding=5 width=100%><tr><td>
