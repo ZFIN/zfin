@@ -3,9 +3,6 @@
 # Makefile for ZFIN_WWW CVS Project, Papers and other documents 
 # describing the ZFIN Database.
 #
-# $Source$
-# $Id$
-#
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
 # !! of the makefile hierarchy this makefile is a part of, and of the  !!
@@ -22,7 +19,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/dbase/PAPERS
 
-SUBDIRS = WWW6 Web97 Webnet97 ZFIN_DataModel sdb
+SUBDIRS = CurrentDataModel WWW6 Web97 Webnet97 ZFIN_DataModel sdb
 
 # The chi97_nav_workshop.html file is historic and not linked by anyone.
 
