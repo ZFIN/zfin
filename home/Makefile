@@ -85,6 +85,7 @@ $(CLIENTAPPSTARGET) :
 
 mirror : $(TARGETDIR) $(MIRROR_SUBDIRS) $(SPECIFICTARGETS) $(STATICTARGETS)
 	stripmicode.pl < ZFIN/APP_PAGES/misc_files/ZDB_home.apg > mirror_index.html
+	chmod 644 mirror_index.html
 	$(MAKESPECIFIC) mirror_index.html $(TRANSLATETABLE) $(TARGETDIR)/index.html
 	rm -f mirror_index.html
 
