@@ -126,7 +126,7 @@ unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/vega_xpat_stage.unl'
            stg_hours_start,
            stg_hours_end
   from stage
-  order by stg_hours_start
+  order by stg_hours_start, stg_hours_end desc
 ;
 
 unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/vega_xpat_anatomy_item.unl'
