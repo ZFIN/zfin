@@ -8,10 +8,10 @@
 # !! format and conventions used in this makefile.                     !!
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
-# This makefile produces the script that creates data files for public 
-# download.
-# The script is run by cron every week.  It invokes the sql script.
-# The dump uses the HTTP directory structure.
+# This makefile produces the script that creates zfin accession number
+# to zfin genes/clones translation file, and put the file to ftp site 
+# for Genomix to download from. 
+# The script is run by cron. 
 
 # ---------------  Variable Definitions  --------------------------------
 
