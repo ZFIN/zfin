@@ -1,16 +1,17 @@
 --CREATE FISH_IMAGE_ANATOMY TRIGGERS
 -------------------------------------------------
---check that the stage hours are logical: that the stage_start_hours are <
---the end_stage_hours.   
+-- Check that the stage window in the fish_image_anatomy record overlaps
+-- with the stage window for anatomy item in fish_image_anatomy.
 --REPLACES:
 --sub fishImageAnatomyStageWindowOverlapsAnatomyItem
 
 create trigger fish_image_anatomy_insert_trigger 
   insert on fish_image_anatomy
-  referencing new as new_stage
+  referencing new as new_fimganat
   for each row(
-      execute procedure p_stg_hours_consistent (
-        new_stage.fimganat_fimg_start_stg_zdb_id, 
-  	new_stage.fimganat_fimg_end_stg_zdb_id
+      execute procedure p_check_anatitem_overlaps_stg_window (
+        new_fimganat.fimganat_anat_item_zdb_id,
+        new_fimganat.fimganat_fimg_start_stg_zdb_id, 
+  	new_fimganat.fimganat_fimg_end_stg_zdb_id
       )
   );
