@@ -14,7 +14,7 @@
 -- they are in reload list, one more SWISS-PROT source will be recorded.
 
 begin work;
-!echo 'begin transaction'
+--!echo 'begin transaction'
 
 --the unloaded record if already in, only add zdb_id into record_attribution with SWISS_PROT source
 	create temp table exist_record (
@@ -47,25 +47,41 @@ begin work;
                info varchar(80),
 	       dblink_zdb_id varchar(50),
                acc_num_disp varchar(50),
+               dblink_fdbcont_zdb_id varchar(50),
                length integer
               ) with no log;
 	create index pre_db_link_acc_index
 			on pre_db_link (acc_num);
 	insert into pre_db_link 
                (linked_recid,db_name,acc_num,length,info,acc_num_disp)     
-	       		select distinct *, expr(today)||" Swiss-Prot",acc_num 
+	       		select distinct *, today ||" Swiss-Prot",acc_num 
 			from db_link_with_dups;
+        select linked_recid from pre_db_link where linked_recid not in (select mrkr_zdb_id from marker);
 	update pre_db_link 
 			set dblink_zdb_id = get_id("DBLINK"); 
-select db_name from pre_db_link where db_name not in (select db_name from foreign_db);
+	update pre_db_link 
+			set dblink_fdbcont_zdb_id = (select fdbcont_zdb_id from foreign_db_contains where lower(trim(db_name))=lower(trim(fdbcont_fdb_db_name)) and fdbcont_fdbdt_data_type like '%cDNA%'); 
 
+select count(*) from pre_db_link where dblink_fdbcont_zdb_id is null;
+
+	update pre_db_link 
+			set dblink_fdbcont_zdb_id = (select fdbcont_zdb_id from foreign_db_contains where lower(trim(db_name))=lower(trim(fdbcont_fdb_db_name)) and fdbcont_fdbdt_data_type like '%domain%' and dblink_fdbcont_zdb_id is null); 
+select count(*) from pre_db_link where dblink_fdbcont_zdb_id is null;
+
+
+	update pre_db_link 
+			set dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-47' where db_name like 'SWISS-PROT' ;
+
+	update pre_db_link 
+			set dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-36' where db_name like 'Genbank' ;
+select count(*) from pre_db_link where dblink_fdbcont_zdb_id is null;
+select db_name,acc_num from pre_db_link where dblink_fdbcont_zdb_id is null;
 !echo 'Detect exist unloads in db_link'	
 	insert into exist_record 
 		select d.dblink_zdb_id, p.dblink_zdb_id
 		from db_link d, pre_db_link p
-		where p.linked_recid=d.linked_recid
-                  and p.db_name=d.db_name
-                  and p.acc_num=d.acc_num;
+		where p.linked_recid=d.dblink_linked_recid
+                  and p.acc_num=d.dblink_acc_num;
 
 !echo 'Insert into zdb_active_data'
 	insert into zdb_active_data 
@@ -74,8 +90,8 @@ select db_name from pre_db_link where db_name not in (select db_name from foreig
 			(select new_zdb_id from exist_record);
 
 !echo 'Insert DBLINK into db_link'
-	insert into db_link (linked_recid,db_name,acc_num,info,dblink_zdb_id,dblink_acc_num_display,dblink_length)  
-		select * from pre_db_link p
+	insert into db_link (dblink_linked_recid,dblink_acc_num,dblink_info,dblink_zdb_id,dblink_acc_num_display,dblink_fdbcont_zdb_id,dblink_length)  
+		select linked_recid,acc_num,info,dblink_zdb_id,acc_num_disp,dblink_fdbcont_zdb_id,length from pre_db_link p
 		where dblink_zdb_id not in
 			(select new_zdb_id from exist_record);
 
@@ -210,7 +226,6 @@ select db_name from pre_db_link where db_name not in (select db_name from foreig
 		select db.linked_recid, ip.goterm_id
 		from pre_db_link db, ip_goterm_with_dups ip
 		where db.acc_num = ip.ip_acc;
-select * from marker_goid_with_dups;	
 	insert into marker_goid
 			select distinct *, "ZDB-PUB-020724-1"
 			from marker_goid_with_dups;	
@@ -237,7 +252,6 @@ select * from marker_goid_with_dups;
 		select m.mrkr_zdb_id, g.goterm_zdb_id, m.goterm_source
 		from marker_goid m, go_term g
 		where m.goterm_id = g.goterm_go_id;
-select * from marker_goterm_with_dups where mrkr_zdb_id='ZDB-GENE-030109-1';
 	
 	create temp table pre_marker_goterm (
 		mrkrgo_zdb_id	varchar(50),
@@ -247,7 +261,6 @@ select * from marker_goterm_with_dups where mrkr_zdb_id='ZDB-GENE-030109-1';
 	insert into pre_marker_goterm (mrkr_zdb_id, mrkr_goterm_zdb_id)
 		select distinct mrkr_zdb_id, mrkr_goterm_zdb_id 
 		from marker_goterm_with_dups;
-select * from pre_marker_goterm where mrkr_zdb_id='ZDB-GENE-030109-1';
   
 	update pre_marker_goterm set mrkrgo_zdb_id = get_id ("MRKRGO");
 
@@ -263,18 +276,17 @@ select * from pre_marker_goterm where mrkr_zdb_id='ZDB-GENE-030109-1';
 	delete from pre_marker_goterm
 		where mrkrgo_zdb_id in
 			(select new_zdb_id from exist_record); 
-
-select * from pre_marker_goterm where mrkr_zdb_id='ZDB-GENE-030109-1';
+        delete from pre_marker_goterm where mrkr_goterm_zdb_id in ('ZDB-GOTERM-031121-4568','ZDB-GOTERM-031121-4','ZDB-GOTERM-030325-144');
+ 
 !echo 'Insert MRKRGO into zdb_active_data'
 	insert into zdb_active_data
 		select mrkrgo_zdb_id from pre_marker_goterm;
 
 !echo 'Insert into marker_go_term'
 	insert into marker_go_term 
-		select mrkrgo_zdb_id, mrkr_zdb_id, mrkr_goterm_zdb_id,'f', CURRENT,CURRENT,'ZFIN Electronic Annotation'
+		select mrkrgo_zdb_id, mrkr_zdb_id, mrkr_goterm_zdb_id, CURRENT,CURRENT,'ZFIN Electronic Annotation','ZFIN Electronic Annotation'
 		from pre_marker_goterm;
 
-select * from marker_go_term where mrkrgo_mrkr_zdb_id='ZDB-GENE-030109-1';
 	create temp table mrkrgo_source (
                 mrkrgoev_zdb_id varchar(50), 
 		mrkrgo_zdb_id	varchar(50),
@@ -301,12 +313,8 @@ select * from marker_go_term where mrkrgo_mrkr_zdb_id='ZDB-GENE-030109-1';
 
 !echo 'Insert into marker_go_term_evidence'
 	insert into marker_go_term_evidence
-		select mrkrgoev_zdb_id,mrkrgo_zdb_id,mrkrgo_source, mrkrgo_evidence,mrkrgo_note,TODAY,TODAY,'ZFIN Electronic Annotation', 'ZFIN Electronic Annotation' from mrkrgo_source;
+		select mrkrgoev_zdb_id,mrkrgo_zdb_id,mrkrgo_source, mrkrgo_evidence,mrkrgo_note,CURRENT,CURRENT,'ZFIN Electronic Annotation', 'ZFIN Electronic Annotation' from mrkrgo_source;
 
-select count(*) from marker_go_term;
-select count(*) from marker_go_term_evidence where mrkrgoev_evidence_code<>'IEA'
-;
-select count(*) from marker_go_term_evidence where mrkrgoev_evidence_code ='IEA';
 ---------------- loading cc field -----------------------------
 
 -- loading cc
