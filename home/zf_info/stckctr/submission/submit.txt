@@ -70,6 +70,9 @@ Previous/Other Names:
 Mutated Gene:
 [mutatedGene]
 ---
+Transgene--Transgene Name:
+[transgeneName]
+---
 
 
 ***for ERIK ************************************* 
