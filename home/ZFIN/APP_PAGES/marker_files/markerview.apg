@@ -668,9 +668,6 @@ Accession:<input type=text size=15 name=seq_acc> <input type=button value="Add i
 
   <br>
 
-<?MIVAR><B>Mrkr_zdb_id: $OID</B><?/MIVAR>
-
-
   <?MISQL SQL="
     SELECT distinct blast_results, blast_date
     FROM blast
