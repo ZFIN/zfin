@@ -36,7 +36,7 @@ echo "== checking duplication ..."
 
 $INFORMIXDIR/bin/dbaccess $dbname checkDups.sql >& checkDups.out
 set rs = `grep retrieved checkDups.out`
-if ( $rs ) then
+if ( "$rs" ) then
 	echo "Duplication detected in checkDups.out"
 	exit;
 endif
@@ -72,17 +72,17 @@ else
     echo "== BLASTing and filter results ..."
     xdget -n -f -Tgb1 -e probe_fasta_retrieve.log gbk_zf_all acc4blast.txt > acc4blast.fa
 
-    nice +10 /private/apps/wublast/blastn zfin_seq acc4blast.fa -e 1e-20 | \
-    ./blast2tab.pl -p 90 > blast2zfin.fst
+    nice +10 /private/apps/wublast/blastn zfin_seq acc4blast.fa -e 1e-20  -o blast2zfin.out
 
-    ./filterBlast.pl $dbname < blast2zfin.fst
+    ./blast2tab.pl -p 90 -l 40 < blast2zfin.out | \
+    ./filterBlast.pl $dbname 
 
     echo ""
     if (! -z is_gene.unl) then
 	echo "auto gene assignments exist in is_gene.unl"
     endif 
 
-    echo "please send blast2zfin.scnd (and blast2zfin.fst) to curator "
+    echo "please send blast2zfin.scnd to curator "
     echo ""
 
 endif 
