@@ -22,10 +22,10 @@ echo "GenPept fetched `date`"
 set Prompt="%";
 
 if (`/local/bin/hostname` == "embryonix") then
-    source /research/zcentral/Commons/env/wanda
+    source /private/ZfinLinks/Commons/env/wanda
 else
     # assume production
-    source /research/zcentral/Commons/env/wildtype
+    source /private/ZfinLinks/Commons/env/wildtype
 endif
 
 
