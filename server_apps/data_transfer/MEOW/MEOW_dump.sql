@@ -134,7 +134,7 @@ create temp table meow_mutant (
   gene_abbrev varchar(40),
   locus_id varchar(50),
   locus_name   varchar(120),
-  locus_abbrev varchar(20)
+  locus_abbrev varchar(30)
 ) with no log;  
 
 
