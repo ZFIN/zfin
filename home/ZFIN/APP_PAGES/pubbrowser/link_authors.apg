@@ -47,8 +47,6 @@ Variables expected:  OID  -- the OID of a publication to link
       <param name="separator" value = " or ">
       <?MIVAR>
 	<param name="liveupdate" value="int_person_pub:source_id:target_id:$OID">
-	<param name="host" value="<!--|DOMAIN_NAME|-->">
-	<param name="port" value="<!--|JAVA_SERVER_PORT|-->">
 	<param name="pub_id" value="$OID">
       <?/MIVAR>
     </applet>
