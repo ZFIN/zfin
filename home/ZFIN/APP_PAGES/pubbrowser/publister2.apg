@@ -124,7 +124,7 @@ $constraint $previous (a.zdb_id=b.pub_id and b.curation_action='$cur_status')<?/
 <TR> 
 <TD valign=top> 
 $(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-edit_pub.apg&OID=$3" TARGET=content>EDIT</A> </FONT>")
-$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-link_authors.apg&OID=$3&authors=$2" TARGET=content>LINK</A> </FONT>")
+$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-link_authors.apg&OID=$3" TARGET=content>LINK</A> </FONT>")
 $(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3" TARGET=content>SELECT</A> </FONT>")
 </TD>
 <TD valign=top> <FONT SIZE=-1> $4 </FONT> </TD>
