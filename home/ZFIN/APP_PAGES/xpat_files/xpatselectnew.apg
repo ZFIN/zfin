@@ -1,4 +1,3 @@
-
 <HTML>
 
 <?MIVAR Name=page_name>$(IF,$(NXST,$query_results),ZFIN Search Expressions,ZFIN Expression Search Results)<?/MIVAR>
@@ -9,15 +8,11 @@
 
    document.selected_structures = new Array();
 
-function popup_anatomy_selector() {
-  if ((document.anat_keywords == null) || (document.anat_keywords.closed == true)) {
-    document.anat_keywords = window.open("/cgi-bin/xpat_select_parts.cgi?mode=parts","anat_keywords","toolbar=no,scrollbars=yes,resizable=yes,height=500,width=600");
-  } else {
-    document.anat_keywords.focus();
- } 
+
+
+function start_help(anchor) {
+   top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect_help.apg#"+anchor,"helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
 }
-
-
 
 function add_part(part) {
         var found = 'false';
@@ -134,6 +129,7 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 </SCRIPT>
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
+
 <?MIVAR name=comments> 
   Set stage and lg variables if they don't exist. 
   -this page is linked to from geneselect.apg which does not send stages.
@@ -189,6 +185,10 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 	-- the constraint isn't set, thus an error results when the inner query
 	-- attempts to append an additional constraint to a non-existant constraint. 
   -->
+
+
+
+
 <!-- Check for existance  of expected variables.  -->
 <?MIVAR name=comments> $stage_start <br> $stage_end <?/MIVAR>
 
@@ -255,6 +255,34 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
     <?/MIVAR>
   <?/MIBLOCK>
 <?/MIBLOCK>
+
+<?MICOMMENT> <--- new selected_structures code for the <textarea> version of the form --> <?/MICOMMENT>
+
+<?MIBLOCK COND="$(XST,$TA_selected_structures)">
+
+   <?MIVAR NAME=$i>0<?/MIVAR>
+   <?MIVAR NAME=str_count>1<?/MIVAR>
+
+   <?MICOMMENT> 
+      ---- this next line is fun to read, isn't it?  it replaces ", " with "," <?/MICOMMENT>
+   <?MIVAR NAME="$TA_selected_structures">$(REPLACE,$TA_selected_structures,", ",",")<?/MIVAR>
+
+   <?MIBLOCK WHILE="$(NE,$(INDEX,$i,$TA_selected_structures),)">
+     <?MIBLOCK COND="$(AND,$(XST,$debug),$(EC,$debug,true))">
+       <?MIVAR><SCRIPT>alert('$i is $(INDEX,$i,$TA_selected_structures)'); </SCRIPT><?/MIVAR>
+     <?/MIBLOCK>
+     <?MIVAR NAME=$str>$(TRIM,$(INDEX,$i,$TA_selected_structures))<?/MIVAR>
+
+     <?MIVAR>  $(VECAPPEND,$str_list,$str) <?/MIVAR>  <!-- regular vector of parts -->
+     <?MIVAR NAME=$str DELIMIT="'" REPLACE="''">$str<?/MIVAR>
+     <?MIVAR> $(VECAPPEND,$str_dlmt_list,$str) <?/MIVAR>  <!-- 'delimited' vector of parts -->
+     <?MIVAR> $(SETVAR,str_count,$(+,$str_count,1)) <?/MIVAR>
+     <?MIVAR NAME=$i>$(+,$i,1)<?/MIVAR> <!-- i++ -->
+   <?/MIBLOCK>
+
+<?/MIBLOCK>
+
+<?MICOMMENT> <---- end new selected structures code --> <?/MICOMMENT>
 
 <?MIBLOCK COND="$(XST,$user_entered)">
   <?MIVAR NAME=$user_dat DELIMIT="'" REPLACE="''">$user_entered<?/MIVAR>
@@ -368,17 +396,176 @@ select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_abbrev_order, mrkr_typ
 
 	<!-- query clause for anatomy_items -->
 
+<?MICOMMENT> <!--- Anatomy Item Verification -->  <?/MICOMMENT>
+
 <?MIBLOCK COND="$(XST,$str_dlmt_list)">
+
+  <TABLE bgcolor="CCCCCC"> 
+    <TR>
+     <TD colspan=2">
+     <B>Anatomy Items Searched...</B>
+     </TD>
+    <TR>
+  <?MIBLOCK INDEX="$part" FOREACH="$str_dlmt_list">
+    <TR>
+     <TD bgcolor="#EEEEEE"> 
+      <?MISQL SQL="
+	SELECT anatitem_name, anatitem_zdb_id,
+	       (select count(unique gene.mrkr_zdb_id)
+		from expression_pattern, expression_pattern_anatomy, 
+		     marker_relationship, marker as probe, marker as gene
+		where xpatanat_anat_item_zdb_id = anatitem_zdb_id
+		  and xpat_zdb_id = xpatanat_xpat_zdb_id
+		  and probe.mrkr_zdb_id = xpat_probe_zdb_id
+		  and mrel_mrkr_2_zdb_id = probe.mrkr_zdb_id
+		  and mrel_mrkr_1_zdb_id = gene.mrkr_zdb_id) selfcount,
+	       (select count(unique gene.mrkr_zdb_id)
+		from expression_pattern, expression_pattern_anatomy, 
+		     marker_relationship, marker as probe, marker as gene, all_anatomy_contains
+		where anatitem_zdb_id = allanatcon_container_zdb_id
+	 	  and xpatanat_anat_item_zdb_id = allanatcon_contained_zdb_id
+		  and xpat_zdb_id = xpatanat_xpat_zdb_id
+		  and probe.mrkr_zdb_id = xpat_probe_zdb_id
+		  and mrel_mrkr_2_zdb_id = probe.mrkr_zdb_id
+		  and mrel_mrkr_1_zdb_id = gene.mrkr_zdb_id) childcount	   
+	FROM anatomy_item
+	WHERE lower(anatitem_name) = lower('$part')
+	ORDER BY anatitem_name
+     ;">
+      <?MICOMMENT> ----- exact match --- <?/MICOMMENT>
+      <?MIVAR NAME="$item_name">$1<?/MIVAR>
+      <?MIVAR NAME="$item_zdb_id">$2<?/MIVAR>
+      <?MIVAR NAME="$selfcount">$3<?/MIVAR>
+      <?MIVAR NAME="$childcount">$4<?/MIVAR>
+      <?MIVAR>
+        <font style="font-family:arial; font-size:small; font-weight:bold;">
+	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">
+        $item_name
+	</A>
+        </font> </TD>
+      <?/MIVAR>
+      <TD bgcolor="#EEEEEE">
+        <FONT style="font-family:arial; font-size:small;">
+      <?MIBLOCK COND="$(>,$selfcount,0)">
+        <?MIVAR> 
+        has <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselectnew.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name" target="_parent"><B>($selfcount)</B></A> total expression pattern(s) , childcount: $childcount
+        <?/MIVAR>
+      <?MIELSE>
+        <?MICOMMENT> ---- has no data ---- <?/MICOMMENT>
+	  has no expression data.
+      <?/MIBLOCK>
+        </FONT>
+     <?/MISQL>
+
+      <?MIBLOCK COND="$(EQ,$MI_ROWCOUNT,0)">
+      <?MICOMMENT> ---- not in dictionary --- <?/MICOMMENT>
+       <FONT style="font-family:arial; font-size:small;"> 
+       <?MIVAR> "$part" <?/MIVAR>
+        
+       </FONT>
+      </TD>
+      <TD bgcolor="#EEEEEE">
+       <FONT style="font-family:arial; font-size:small;"> 
+        <B>is not in the dictionary</B>
+       </FONT>
+     <?/MIBLOCK>
+     </TD>
+    </TR>
+  <?/MIBLOCK>
+  </TABLE>     
+
+<?/MIBLOCK>
+
+<?MICOMMENT> <!--- end Anatomy Item Verification -->  <?/MICOMMENT>
+
+
+<?MIBLOCK COND="$(XST,$str_dlmt_list)">
+
   <?MIVAR NAME=$anatitem_constraint>$(SEPARATE,$str_dlmt_list,"','")<?/MIVAR>
+
+  <?MICOMMENT> ------ this is for the "or" search, or "any of the selected items", 
+	              it populates a temp table of anatitem_zdb_id's that are all ok
+		      for the anatomy part of the query -----       <?/MICOMMENT>
+
+  <?MIBLOCK COND="$(AND,$(XST,$structure_bool),$(EC,$structure_bool,or))"
+    <?MIVAR NAME="$child_sql"><?/MIVAR>
+    <?MIVAR NAME="$child_sql" COND="$(AND,$(XST,$include_substructures),$(NE,$include_substructures,))">
+   	  SELECT child.anatitem_zdb_id aisl_anatitem_zdb_id
+	   FROM all_anatomy_contains as parent_has_child, 
+		 anatomy_item as parent, anatomy_item as child
+	   WHERE parent.anatitem_name in ('$anatitem_constraint')
+             and parent_has_child.allanatcon_container_zdb_id = parent.anatitem_zdb_id
+             and parent_has_child.allanatcon_contained_zdb_id = child.anatitem_zdb_id
+	  UNION
+    <?/MIVAR>
+
+    <?MISQL SQL="
+	$child_sql
+	SELECT anatitem_zdb_id aisl_anatitem_zdb_id
+	  FROM anatomy_item
+	  WHERE anatitem_name in ('$anatitem_constraint') 
+	INTO TEMP anatomy_item_search_list with no log
+    ;">
+    <?/MISQL>
+
+    <?MIVAR NAME="$anatitem_temp_table_created">true<?/MIVAR>
+
+    <?MIVAR NAME=$query_from>$query_from, anatomy_item_search_list<?/MIVAR>
+   
+     <?MIVAR NAME=$query_where>$query_where
+	  and aisl_anatitem_zdb_id = xpatanat_anat_item_zdb_id
+     <?/MIVAR>
+
+  <?/MIBLOCK>
+
+  <?MICOMMENT> ------ this is for the "and" search, or "every selected structure", 
+		      it populates a different temp table than above, with all of the
+		      xpatanat_xpat_zdb_id's that are kosher with the anatomy part of the
+		      query.   This is Brock's SQL logic, and he's a smarty pants, 
+	              the combination of the GROUP BY and HAVING create an 'and' from 
+		      the anatomy list.  On first glance, I thought it would only return
+		      expression records with exactly those two items, because it's "= $item_count", 
+	              but any more items that the expression record has are irrelevant, because they
+	 	      don't show up in the list.                                 ----       <?/MICOMMENT>
+
+  <?MIBLOCK COND="$(AND,$(XST,structure_bool),$(EC,structure_bool,and))">
+
+    <?MISQL SQL="
+	SELECT xpatanat_xpat_zdb_id xasl_xpat_zdb_id 
+	FROM expression_pattern_anatomy, anatomy_item
+	WHERE anatitem_name in ('EVL','margin') 
+	  and xpatanat_anat_item_zdb_id = anatitem_zdb_id
+	GROUP BY 1
+	HAVING count(distinct anatitem_name) = $item_count
+	INTO TEMP xpat_anatomy_search_list with no log 
+    ;">
+
+    <?MIVAR NAME="$xpatanat_temp_table_created">true<?/MIVAR>
+
+    <?MIVAR NAME=$query_from>$query_from, xpat_anatomy_search_list<?/MIVAR>
+   
+    <?MIVAR NAME=$query_where>$query_where
+	  and xasl_anatitem_zdb_id = xpatanat_xpat_item_zdb_id
+    <?/MIVAR>
+
+  <?/MIBLOCK>
+
+  <?MIVAR><hr>$MI_SQL<hr><?/MIVAR>
+
+
+ 
 
   <?MIVAR NAME=$query_from>$query_from, 
           expression_pattern_anatomy, anatomy_item  
   <?/MIVAR>
+
+ 
+
   <?MIVAR NAME=$query_where>$query_where
           and xp.xpat_zdb_id = xpatanat_xpat_zdb_id
           and xpatanat_anat_item_zdb_id = anatitem_zdb_id
-          and anatitem_name in ('$anatitem_constraint')
   <?/MIVAR> 
+
 
   <?MIVAR NAME=$item_count>$(VECSIZE,$str_dlmt_list)<?/MIVAR>
 
@@ -416,15 +603,25 @@ select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_abbrev_order, mrkr_typ
             and xp.xpat_zdb_id = xpatstg_xpat_zdb_id
             and xpatstg_start_stg_zdb_id = s1.stg_zdb_id
             and xpatstg_end_stg_zdb_id = s2.stg_zdb_id
+
+
     <?/MIVAR> 
   <?/MIBLOCK>
 <?/MIBLOCK>
+
+
+<?MICOMMENT> <!-- start ASSAY --> <?/MICOMMENT>
 
 <?MIBLOCK COND="$(AND,$(XST,$assay),$(NC,$assay,NULL))">
     <?MIVAR NAME=$query_where>$query_where
     and xp.xpat_assay_name like '$assay%'
    <?/MIVAR>  
 <?/MIBLOCK>
+
+<?MICOMMENT> <!-- end ASSAY --> <?/MICOMMENT>
+
+
+<?MICOMMENT> <!-- start AUTHOR --> <?/MICOMMENT>
 
 <?MIBLOCK COND="$(XST,$author)">
   <?MIVAR NAME=$author DELIMIT="'" REPLACE="''">$author<?/MIVAR>	
@@ -449,9 +646,13 @@ select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_abbrev_order, mrkr_typ
   <?MIVAR NAME=$query_from>$query_from,publication,record_attribution<?/MIVAR>
 <?/MIBLOCK>
 
+<?MICOMENT> <!-- end Author --> <?/MICOMMENT>
+
+
+<?MICOMMENT> <!-- start Linkage Group --> <?/MICOMMENT>
+
 <?MIBLOCK COND="$(NE,$gene_lg,0)">
-  
-  <?MIVAR NAME=$query_where>$query_where and 
+   <?MIVAR NAME=$query_where>$query_where and 
 		(mrkr_zdb_id in (select lnkgmem_member_zdb_id
 				from linkage, linkage_member 
                                 where lnkg_or_lg = '$gene_lg'
@@ -461,8 +662,15 @@ select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_abbrev_order, mrkr_typ
 				from mapped_marker
 				where or_lg = '$gene_lg')) <?/MIVAR>
 <?/MIBLOCK>
+
+<?MICOMMENT> <!-- end Linkage Group --> <?/MICOMMENT>
+
+
+
 <?MIVAR NAME=$count1>0<?/MIVAR>
 <?MIVAR NAME=$count2>0<?/MIVAR>
+
+<?MICOMMENT> <!-- start GENE NAME --> <?/MICOMMENT>
 
 <?MIBLOCK COND="$(XST,$gene_name)">
 <?MIVAR NAME=$query_from>
@@ -494,6 +702,8 @@ select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_abbrev_order, mrkr_typ
     $query_where
 <?/MIVAR>
 
+<?MICOMMENT> <!-- end GENE NAME --> <?/MICOMMENT>
+
 <!-- RETRIEVE AND DISPLAY ALL MATCHING ENTRIES. -->
 <?MISQL SQL="
       select count($(IF,$(NC,$structure_bool,and),distinct )m.mrkr_zdb_id)::integer
@@ -502,6 +712,13 @@ select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_abbrev_order, mrkr_typ
       $(IF,$(XST,$query_grp_by),$query_grp_by $query_hvng)
        ;">
 <?/MISQL>
+
+<?MIVAR>
+<hr>
+$MI_SQL
+<hr>
+<?/MIVAR>
+
 <?MIVAR NAME=count1>$1<?/MIVAR>
 <?MIVAR NAME=sqlcount2>
 
@@ -710,6 +927,9 @@ and xpat_probe_zdb_id=a.mrkr_zdb_id and mrkr_type not like "EST"
   $(IF,$(XST,$query_grp_by),$query_grp_by $query_hvng)
   $ordr_by
 <?/MIVAR>
+
+<?MIVAR><hr>$sql<hr><?/MIVAR>
+
 <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
   $sql
  ";>
@@ -936,6 +1156,8 @@ order by 2,6 asc
 <?MIVAR NAME=$row_color>$(IF,$(EC,$row_color,$highlight),#FFFFFF,$highlight)<?/MIVAR>
 <?/MIBLOCK>
 <?/MISQL><!--end main SQL-->
+
+
 </TABLE>
   <BR>
 
@@ -1089,21 +1311,12 @@ order by 2,6 asc
 </center>
 <?/MIBLOCK>
 <?/MIBLOCK>
-
-
-
 <?/MIBLOCK> <!-- query results -->
 
-
-
-
-
-
 <?MIBLOCK COND="$(NXST,$pubId)">
-
   <table border=0 width=100% cellpadding=3 cellspacing=0>
     <tr>
-      <td bgcolor="<!--|SIDEBAR_COLOR|-->">
+      <td bgcolor="<!--|SIDEBAR_COLOR|-->" width=70%>
          &nbsp;&nbsp;
 
 <?MIBLOCK COND="$(NXST,$query_results)">
@@ -1133,7 +1346,7 @@ order by 2,6 asc
 
 <?MIVAR>
 <form name=critform 
-      method=post  
+      method=post
       action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 
 <input type=hidden name=MIval value=aa-xpatselectnew.apg>
@@ -1145,150 +1358,115 @@ order by 2,6 asc
 <?MIVAR COND="$(NXST,$gene_lg)" NAME=$gene_lg>0<?/MIVAR>
 <?MIVAR NAME=$assay COND="$(NXST,$assay)">NULL<?/MIVAR>
 
+
    <tr>
-   <td>
-Gene/EST
-</td>
-<td colspan=2>    <SELECT name=searchtype>
+     <td>
+
+<!-- gene name -->
+
+<FONT size=2><B><A HREF="javascript:start_help('gene');">Gene/EST</A></B></FONT>
+
+<SELECT name=searchtype>
 	  <?MIVAR>
                   <option value=begins $(IF,$(AND,$(XST,$searchtype),$(EC,$searchtype,begins)),SELECTED)>Name begins with
 			      	<option SELECTED value=contains $(IF,$(AND,$(XST,$searchtype),$(EC,$searchtype,contains)),SELECTED)>Name contains
 			     </select>
 	          <input type=text name=gene_name size=10 $(IF,$(XST,$gene_name),value='$gene_name')>
                   <?/MIVAR>
-		</td>
-		</tr>
-	<!-- <tr><td colspan=3>&nbsp;</td></tr> -->
-<?/MIVAR>
-    <tr>
-      <td colspan=1> 
-        <a href="javascript:popup_anatomy_selector();">Select structures <br> from anatomical <br> dictionary</a>: <br><font color=red><small>(click add structures<br>to open dictionary)</small></font>
-      </td>
-      <td colspan=2>
-        <font size=-1>
-
-
-<?MIBLOCK COND="$(AND,$(XST,$structure_list),$(XST,$structure_list[2]),$(NC,$structure_list[2],deleteme))">
-
-        <select multiple size=8 name="structure_list">
-           <SCRIPT>  <!-- weird - this line seems to need to be here twice to work in Netscape -->
-             if (navigator.appName == "Netscape")
-                document.write("<select multiple size=8 name=structure_list>");
-           </SCRIPT> 
-        <?MIBLOCK INDEX=$parti FOREACH=$structure_list >
-          <?MIVAR NAME=$parti DELIMIT="'" REPLACE="''">$parti<?/MIVAR>
-          <?MIVAR>
-            <SCRIPT>add_part("$parti")</SCRIPT>
-          <?/MIVAR>
-        <?/MIBLOCK>
-        </select>
-<?MIELSE>
-        <select multiple size=8 name="structure_list" > 
-	  <OPTION value = '----------------------------------------------'> ---------------------------------------------
-	  <OPTION value = 'deleteme'> To select a structure, click the Add Structures button
-    	</select>
-<?/MIBLOCK>
-
-        
+<!-- end gene name -->
+     </td>
+     <td rowspan=2>
+<!-- stage -->
+<FONT size=2><B> <A HREF="javascript:start_help('stages');">Between stages:</A></B> <br>
+  <SELECT NAME="stage_start" SIZE=1>
+    <?MISQL SQL="select stg_name, stg_hours_start, stg_hours_end, stg_zdb_id from stage where stg_name <> 'Any stage' order by stg_hours_start, stg_hours_end desc;"><OPTION $(IF,$(EC,$stage_start,$4),SELECTED) VALUE="$4"> $1 <?/MISQL>
+  </SELECT>
+  <b>&</b>
+  <SELECT NAME="stage_end" SIZE=1>
+    <?MISQL SQL="select stg_name, stg_hours_start, stg_hours_end, stg_zdb_id from stage where stg_name <> 'Any stage' order by stg_hours_start, stg_hours_end desc;"><OPTION VALUE="$4"$(IF,$(AND,$(XST,$stage_end),$(EC,$stage_end,$4)), SELECTED,$(IF,$(EC,$stage_end,$4), SELECTED))> $1 <?/MISQL>
+  </SELECT>
+  </FONT>
+  <br><a href="http://zfin.org/zf_info/zfbook/stages/index.html">Developmental Staging Series</a>
+<!-- end stage -->
      </td>
    </tr>
    <tr>
      <td>
-       <input type=button value="Add Structures" onClick="popup_anatomy_selector();">
-     </td>
-     <td>
-       <input type=button value="Remove Selected Items" onClick="
-         i=1;
-         while (i < document.critform.structure_list.options.length) {
-           if (document.critform.structure_list.options[i].selected == true) {
-             document.critform.structure_list.options[i] = null;       
-           } else { i++; } 
-         }
-         if (!((document.anat_keywords == null) || (document.anat_keywords.closed == true))) {
-         document.anat_keywords.check_selected();
-         }
-       ">
-<!--		</td>
-	       </tr>
-	       </table> -->
-	
-     </td>
-   </tr>
-   <tr>
-     <td><br>Manually add<br> structures from<br> anatomical dictionary:
-     </td>
-     <td colspan=2>
-       <input type="text" name="user_entered"> &nbsp;&nbsp;
-       <input type="button" name="manual_add" value="Add Structure to List" onClick="call_verify()">
+<!-- begin mutant -->
+  <FONT size=2><B><A HREF="javascript:start_help('mutant');">Mutant Background</A></B></FONT>
+  <SELECT name=mutsearchtype>
+    <?MIVAR>
+    <option value=begins $(IF,$(AND,$(XST,$mutsearchtype),$(EC,$mutsearchtype,begins)),SELECTED)>Name begins with
+    <option SELECTED value=contains $(IF,$(AND,$(XST,$mutsearchtype),$(EC,$mutsearchtype,contains)),SELECTED)>Name contains
+  </SELECT>
+  <INPUT type=text name=mutant size=10 $(IF,$(XST,$mutant),value='$mutant')>
+  <?/MIVAR>
+<!-- end mutant -->
+
      </td>
    </tr>
    <tr>
      <td>
-       <br>Return expression data for: 
-     </td>
-     <td colspan=2><?MIVAR>
-       <input type="radio" name="structure_bool" value="or" $(IF,$(XST,$structure_bool),$(IF,$(EC,$structure_bool,or),checked), checked)> 
-         <b>Any</b> selected structures 
-       <input type="radio" name="structure_bool" value="and" $(IF,$(AND,$(XST,$structure_bool),$(EC,$structure_bool,and)),checked)> 
-         <b>All</b> selected structures <?/MIVAR>
-     </td>
-   </tr> 
-   <!-- <tr><td>&nbsp;</td></tr> -->
-
-
-   <tr>
-     <td colspan=1> Between stages:
-     </td>
-     <td colspan=2> 
-       <SELECT NAME="stage_start" SIZE=1>
-       <?MISQL SQL="select stg_name, stg_hours_start, stg_hours_end, stg_zdb_id from stage where stg_name <> 'Any stage' order by stg_hours_start, stg_hours_end desc;"><OPTION $(IF,$(EC,$stage_start,$4),SELECTED) VALUE="$4"> $1 <?/MISQL>
-		  </SELECT>
-
-		 <b>&</b>
-		  <SELECT NAME="stage_end" SIZE=1>
-		    <?MISQL SQL="select stg_name, stg_hours_start, stg_hours_end, stg_zdb_id from stage where stg_name <> 'Any stage' order by stg_hours_start, stg_hours_end desc;"><OPTION VALUE="$4"$(IF,$(AND,$(XST,$stage_end),$(EC,$stage_end,$4)), SELECTED,$(IF,$(EC,$stage_end,$4), SELECTED))> $1 <?/MISQL>
-		  </SELECT>
-                  <br>
-		  <a href="http://zfin.org/zf_info/zfbook/stages/index.html">Developmental Staging Series</a>
-</tr>
-<tr><td colspan = 2><hr></td>
- <tr><td>Assay Type</td>
-<td><SELECT NAME=assay><option <?MIVAR COND="$(EC,$assay,NULL)">SELECTED<?/MIVAR> value=NULL>ANY
-<?MISQL SQL="select xpatassay_name, xpatassay_display_order from expression_pattern_assay order by xpatassay_display_order;"> <OPTION $(IF,$(EC,$assay,$1),SELECTED) value='$1'>$1<?/MISQL>
-			       </SELECT>
-		<br>
-		</td>
-	    </tr>
-<br>&nbsp;
-   <tr>
-   <td>
-Author
-</td>
-<td colspan=2>    <SELECT name=authsearchtype>
+<!-- begin author -->
+<FONT size=2><B><A HREF="javascript:start_help('author');">Author</A></B></FONT>
+<SELECT name=authsearchtype>
 	  <?MIVAR>
                   <option value=begins $(IF,$(AND,$(XST,$authsearchtype),$(EC,$authsearchtype,begins)),SELECTED)>Name begins with
 			      	<option SELECTED value=contains $(IF,$(AND,$(XST,$authsearchtype),$(EC,$authsearchtype,contains)),SELECTED)>Name contains
 			     </select>
 	          <input type=text name=author size=10 $(IF,$(XST,$author),value='$author')>
                   <?/MIVAR>
-</td>
-</tr>
+<!-- end author -->
 
-   <tr>
-   <td>
-Mutant Background
-</td>
-<td colspan=2>    <SELECT name=mutsearchtype>
-	  <?MIVAR>
-                  <option value=begins $(IF,$(AND,$(XST,$mutsearchtype),$(EC,$mutsearchtype,begins)),SELECTED)>Name begins with
-			      	<option SELECTED value=contains $(IF,$(AND,$(XST,$mutsearchtype),$(EC,$mutsearchtype,contains)),SELECTED)>Name contains
-			     </select>
-	          <input type=text name=mutant size=10 $(IF,$(XST,$mutant),value='$mutant')>
-                  <?/MIVAR>
-</td>
-</tr>
+     </td>
+      <td>
+<!-- begin assay type -->
+  <FONT size=2><B><A HREF="javascript:start_help('assay');">Assay Type</A></B></FONT>
+  <SELECT NAME=assay>
+    <option <?MIVAR COND="$(EC,$assay,NULL)">SELECTED<?/MIVAR> value=NULL>ANY
+    <?MISQL SQL="select xpatassay_name, xpatassay_display_order from expression_pattern_assay order by xpatassay_display_order;"> <OPTION $(IF,$(EC,$assay,$1),SELECTED) value='$1'>$1<?/MISQL>
+  </SELECT>
+<!-- end assay type -->
+
+      </td>
+    </tr>
+<?/MIVAR>
+
+    <tr> <td colspan=2> &nbsp; </td> </tr>
+    <tr>
+<?MICOMMENT>
 
 
+      <td colspan=1> 
+        <a href="javascript:popup_anatomy_selector();">Select structures <br> from anatomical <br> dictionary</a>: <br><font color=red><small>(click add structures<br>to open dictionary)</small></font>
+      </td>
+<?/MICOMMENT>
+<?MICOMMENT> <!--- new selected structures textarea ---> <?/MICOMMENT>
+
+      <TD colspan=1 bgcolor="#EEEEEE">
+	 <FONT size=2><B><A HREF="javascript:start_help('expressed_in');">Expressed In</A></B></FONT>
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+         [<FONT size="-1"><I>example: "<FONT color="red">midbrain, hindbrain</FONT>"</I></FONT>]<br>
+         <TEXTAREA cols="50" rows="1" name="TA_selected_structures"><?MIVAR COND="$(XST,$TA_selected_structures)">$TA_selected_structures<?/MIVAR></TEXTAREA>
+	 <br>
+	 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatsel_anatdict.apg&mode=search"><B>Find</B> Anatomical Terms</A>
+         &nbsp;
+	 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatsel_anatdict.apg&mode=stages"><B>Browse</B> Anatomical Terms</A>
+
+      </TD>
+<?MICOMMENT> <!--- end new selected structures textarea ---> <?/MICOMMENT>
+      <TD bgcolor="#EEEEEE">
+        <input type=checkbox name="include_substructures"  $(IF,$(XST,$include_substructures),$(IF,$(EC,$include_substructures,or),checked), checked)>  <A HREF="javascript:start_help('substructures');"> Include substructures</A> <br>
+        <b><A HREF="javascript:start_help('return_for');">Return data for genes expressed in:</A></b> <br>
+        <input type="radio" name="structure_bool" value="or" $(IF,$(XST,$structure_bool),$(IF,$(EC,$structure_bool,or),checked), checked)> 
+           <b>Any</b> of selected structures 
+        <br>
+         <input type="radio" name="structure_bool" value="and" $(IF,$(AND,$(XST,$structure_bool),$(EC,$structure_bool,and)),checked)> 
+           <b>Every</b> selected structure <?/MIVAR>
+      </TD>
+   </TR>
    <TR>
      <TD class="resultcount">
        Display results in groups of 
@@ -1355,6 +1533,18 @@ if (navigator.appName == "Netscape") document.captureEvents(Event.KEYDOWN|Event.
 </SCRIPT>
 
 
-
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 
+<?MIBLOCK COND="$(XST,$anatitem_temp_table_created)">
+  <!--- delete temp table, with dummy insert because otherwise it's an illegal statement  --->
+  <?MISQL SQL="insert into anatomy_item_search_list (aisl_anatitem_zdb_id) values (NULL); 
+               drop table anatomy_item_search_list;">
+  <?/MISQL>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(XST,$xpatanat_temp_table_created)">
+  <!--- delete temp table, with dummy insert because otherwise it's an illegal statement  --->
+  <?MISQL SQL="insert into xpat_anatomy_search_list (xasl_anatitem_zdb_id) values (NULL); 
+               drop table xpat_anatomy_search_list;">
+  <?/MISQL>
+<?/MIBLOCK>
