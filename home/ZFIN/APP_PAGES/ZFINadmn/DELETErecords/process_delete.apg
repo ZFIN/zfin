@@ -256,7 +256,22 @@ $1, $2, $3, $4, $5, $6, $7, $8
 		(zrepld_old_zdb_id, zrepld_new_zdb_id, zrepld_old_name)
 	     values('$OID','$merge_oid','$old_name');">
 	  <?/MISQL>
-        <?/MIBLOCK>
+
+          <?MICOMMENT>
+            done merging fish or marker data.  Now regenerate names in the
+            fast search tables for the fish or marker that the data was
+            merged into.
+          <?/MICOMMENT>
+          <?MIBLOCK COND="$(EC,$rtype,fish)">
+            <?MISQL SQL="
+              execute procedure regen_names_fish('$merge_oid');">
+            <?/MISQL>    
+          <?MIELSE>
+            <?MISQL SQL="
+              execute procedure regen_names_marker('$merge_oid');">
+            <?/MISQL>    
+          <?/MIBLOCK>
+        <?/MIBLOCK> <?MICOMMENT> end rtype is fish or marker <?/MICOMMENT>
 
         <?MIBLOCK COND="$(EC,$rtype,locus)">
 	  <?MISQL SQL="
@@ -293,7 +308,15 @@ $1, $2, $3, $4, $5, $6, $7, $8
                (zrepld_old_zdb_id, zrepld_new_zdb_id, zrepld_old_name)
              values('$OID','$merge_oid','$old_name');">
 	  <?/MISQL>
-        <?/MIBLOCK>
+          <?MICOMMENT>
+            done merging locus data.  Now regenerate names in the
+            fast search tables for the locus that the data was
+            merged into.
+          <?/MICOMMENT>
+          <?MISQL SQL="
+            execute procedure regen_names_locus('$merge_oid');">
+          <?/MISQL>    
+        <?/MIBLOCK> <?MICOMMENT> end rtype is locus <?/MICOMMENT>
 
       <?MIELSE>
           <!-- if not merging, only deleting, then merge_oid is none>
