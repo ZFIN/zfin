@@ -11,9 +11,9 @@
 --
 -- Orthology - separate files for: D	
 --   zebrafish - human
---	zfin id , zebrafish symbol, human symbol, OMIM id, LocusLink id
+--	zfin id , zebrafish symbol, human symbol, OMIM id, Entrez Gene id
 --   zebrafish - mouse
---	zfin id , zebrafish symbol, mouse symbol, MGI id, LocusLink id
+--	zfin id , zebrafish symbol, mouse symbol, MGI id, Entrez Gene id
 --   zebrafish - fly
 --	zfin id,  zebrafish symbol, fly symbol,  Flybase id
 --   zebrafish - yeast
@@ -28,7 +28,7 @@
 -- Mapping data
 --	zfin id, symbol, panel symbol, LG, loc, metric
 --
--- Sequence data - separate files for GenBank, RefSeq, LocusLink, Unigene, 
+-- Sequence data - separate files for GenBank, RefSeq, Entrez Gene, Unigene, 
 -- SWISS-PROT, Interpro, GenPept and Vega
 -- as well as sequences indirectly associated with genes
 --	zfin id, symbol, accession number
@@ -60,7 +60,7 @@ create table ortho_exp (
   ortho_name varchar(120),
   ortho_abbrev varchar(15), 
   flybase varchar(50),
-  locuslink varchar(50),
+  entrez varchar(50),
   mgi varchar(50),
   omim varchar(50),
   sgd varchar(50)   
@@ -86,9 +86,9 @@ update ortho_exp
 		and ortho_id = o.zdb_id);
 
 update ortho_exp
-	set locuslink = (select dblink_acc_num from db_link, orthologue o, foreign_db_contains
+	set Entrez = (select dblink_acc_num from db_link, orthologue o, foreign_db_contains
 	   where dblink_fdbcont_zdb_id = fdbcont_zdb_id
-	        and fdbcont_fdb_db_name = 'LocusLink'
+	        and fdbcont_fdb_db_name = 'Entrez Gene'
 	        and fdbcont_organism_common_name = o.organism
 		and o.zdb_id = dblink_linked_recid
 		and ortho_id = o.zdb_id);
@@ -129,12 +129,12 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/fly_orthos.txt'
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/human_orthos.txt' 
   DELIMITER "	" 
-  select gene_id, zfish_abbrev, zfish_name, ortho_abbrev, ortho_name, omim, locuslink
+  select gene_id, zfish_abbrev, zfish_name, ortho_abbrev, ortho_name, omim, entrez
     from ortho_exp where organism = 'Human' order by 1;
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/mouse_orthos.txt' 
   DELIMITER "	" 
-  select gene_id, zfish_abbrev, zfish_name, ortho_abbrev, ortho_name, mgi, locuslink  
+  select gene_id, zfish_abbrev, zfish_name, ortho_abbrev, ortho_name, mgi, entrez  
     from ortho_exp where organism = 'Mouse' order by 1;
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/yeast_orthos.txt' 
@@ -194,7 +194,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/mappings.txt'
  where refcross_id = p.zdb_id and marker_id = mrkr_zdb_id 
  order by 1;
 
--- Generate sequence data files for GenBank, RefSeq, LocusLink, UniGene, SWISS-PROT, Interpro and GenPept
+-- Generate sequence data files for GenBank, RefSeq, Entrez, UniGene, SWISS-PROT, Interpro and GenPept
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genbank.txt'
  DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev, dblink_acc_num from marker, db_link, foreign_db_contains
@@ -209,11 +209,11 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/refseq.txt'
 	  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
 	  and fdbcont_fdb_db_name = 'RefSeq' order by 1;
 
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/locuslink.txt'
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/entrezgene.txt'
  DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains
 	where mrkr_zdb_id = dblink_linked_recid
 	  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-	  and fdbcont_fdb_db_name = 'LocusLink' order by 1;
+	  and fdbcont_fdb_db_name = 'Entrez Gene' order by 1;
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/unigene.txt'
  DELIMITER "	" select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains
