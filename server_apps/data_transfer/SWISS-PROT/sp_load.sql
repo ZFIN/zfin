@@ -44,7 +44,7 @@ begin work;
 			on pre_db_link (acc_num);
 	insert into pre_db_link 
                (linked_recid,db_name,acc_num,info)     
-	       		select distinct *, expr(today)||" Swiss-Prot" 
+	       		select distinct *, today || " Swiss-Prot" 
 			from db_link_with_dups;
 	update pre_db_link 
 			set dblink_zdb_id = get_id("DBLINK"); 
