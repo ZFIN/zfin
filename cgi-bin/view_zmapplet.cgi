@@ -957,7 +957,7 @@
     #table zmap_pub_pan_mark  (
     # 0         1) zdb_id varchar(50),
     #### 1      2) mname varchar(80),
-    # 2         3) abbrev varchar(10),
+    # 2         3) abbrev varchar(40),
     # 3         4) mtype varchar(10),
     # 4         5) or_lg integer,
     # 5         6) lg_location decimal(8,2),
@@ -974,7 +974,7 @@
     #    table "tomc".zmap_pub_pan_mark
     #  (
     #    zdb_id varchar(50),                         ZDB-RAPD-980526-17       
-    #    abbrevp varchar(25),                        13y910_MOP               
+    #    abbrevp varchar(45),                        13y910_MOP               
     #    mtype varchar(10),                          RAPD                     
     #    or_lg integer,                              1                        
     #    lg_location decimal(8,2),                   32.83                    
@@ -984,7 +984,7 @@
     #    target_id varchar(50),                      ZDB-REFCROSS-010114-1    
     #    panel_id varchar(50),                       ZDB-REFCROSS-980526-5    
     #    mname varchar(80),                          13Y910                   
-    #    abbrev varchar(20),                         13y910                   
+    #    abbrev varchar(40),                         13y910                   
     #    entry_date datetime year to fraction(3)     2001-03-21 16:00:04.000  
     #  );
     
