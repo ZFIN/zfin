@@ -4,11 +4,16 @@ require "footer.pl";
 require "pub.pl";
 require "Figures.pl";
 sub Tableview {
-if ($_[0] eq "gene") {
+if ($_[0] eq "epha4b") {
 $data_file="epha4b.dat";
 }
 else {
+if ($_[0] eq "neurog1") {
+$data_file="neurog1.dat";
+}
+else {
 $data_file="results.dat";
+}
 }
 
 open(DAT, $data_file) || die("Could not open file!");
@@ -16,10 +21,12 @@ open(DAT, $data_file) || die("Could not open file!");
 close(DAT);
 
 $mycolor=white;
-print "Content-type: text/html\n\n";
 #print "<HTML><BODY>";
 header();
-if ($_[0] eq "gene") {
+if ($_[0] eq "epha4b") {
+  pub();
+}
+if ($_[0] eq "neurog1") {
   pub();
 }
 my $genesym='';
