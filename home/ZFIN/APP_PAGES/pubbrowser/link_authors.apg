@@ -35,7 +35,7 @@ Variables expected:  OID  -- the OID of a publication to link
     <table border=2 width=100% cols=2>
 
 
-    <APPLET ARCHIVE="ifxjdbc.jar, listselector.jar" codebase="/client_apps/ListSelector" CODE="ListSelector.class" WIDTH=400 HEIGHT=170 NAME="phenoselect">
+    <APPLET ARCHIVE="ifxlsupp.jar, ifxjdbc.jar, listselector.jar" codebase="/client_apps/ListSelector" CODE="ListSelector.class" WIDTH=400 HEIGHT=170 NAME="phenoselect">
       <param name="selectableLabel" value="Potential Authors">
       <param name="selectedLabel" value="Linked Authors">
       <?MIVAR>
