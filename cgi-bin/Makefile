@@ -88,10 +88,12 @@ all : $(TARGETDIR) $(TARGETS)
 
 # Create target dir and then file-uploads directory.  It is used by
 # SuperWebdriver to store image files before they are loaded into the DB. 
+# file-uploads must be world writeable.
 
 $(TARGETDIR) :
 	$(TARGET_MKDIR) $(TARGETDIR)
 	$(TARGET_MKDIR) $(TARGETDIR)/file-uploads
+	chmod 777 $(TARGETDIR)/file-uploads
 
 $(SPECIFICTARGETS) : $(TARGETDIR)/% : %
 	$(MAKESPECIFIC) $< $(TRANSLATETABLE) $@
