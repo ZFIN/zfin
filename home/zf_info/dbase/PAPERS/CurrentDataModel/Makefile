@@ -8,13 +8,9 @@
 # !! format and conventions used in this makefile.                     !!
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
-# All this makefile does is create symbolic links into the ZFIN Commons
-# directory.  Note that it makes links into the ZFIN Commons directory
-# on embryonix, rather than to the backup copy on the production server.
-# This means that if embryonix is down then these documents won't be available.
-# On the other hand, when embryonix is up, the latest and greatest copies of 
-# these documents will be available.
-# 
+# This makefile creates symbolic links into the ZFIN Commons Doc directory 
+# so that the database documentation can be available to the public
+# through the web site.
 
 
 # ---------------  Variable Definitions  --------------------------------
@@ -23,7 +19,7 @@ TOP = ../../../../..
 include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/dbase/PAPERS/CurrentDataModel
-DOCDIR = /research/zcentral/Commons/doc
+DOCDIR = /private/ZfinLinks/Commons/doc
 
 # All of the local files are sym links that point at internal.html.
 
@@ -37,7 +33,7 @@ MISSINGLINKTARGETS = $(foreach LINK, $(MISSINGLINKS), $(TARGETDIR)/$(LINK))
 REMOTEFILES = db.html Database
 REMOTELINKS = $(foreach FILE, $(REMOTEFILES), $(TARGETDIR)/$(FILE))
 
-TARGETS     = $(INTERNALFILETARGET) $(MISSINGLINKTARGETS) $(REMOTELINKS)
+ENDEMICTARGETS_POSTTARGETDIR = $(INTERNALFILETARGET) $(MISSINGLINKTARGETS) $(REMOTELINKS)
 
 
 # ---------------  Production Rules  ------------------------------------
@@ -48,10 +44,9 @@ TARGETS     = $(INTERNALFILETARGET) $(MISSINGLINKTARGETS) $(REMOTELINKS)
 # 3. sym links from the missing files to internal.html
 # 4. sym links to the real db.html and database directories.
 
-all : $(TARGETDIR) $(TARGETS)
+# use the default set of rules
 
-$(TARGETDIR) :
-	$(TARGET_MKDIR) $(TARGETDIR);
+include $(TOP)/make.default.rules
 
 # The touch is needed because of timestamp problems.
 $(INTERNALFILETARGET) : $(INTERNALFILE)
@@ -64,26 +59,3 @@ $(MISSINGLINKTARGETS) : $(INTERNALFILETARGET)
 $(REMOTELINKS) : $(TARGETDIR)/% : $(DOCDIR)/%
 	ln -s $< $@
 
-# ---------------  Maintenance Rules  -----------------------------------
-
-clean :			 # No local intermediate files
-	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
-
-clobber :		       # Remove targets, but not target dir.
-  ifdef TARGETS
-	rm -f $(TARGETS)
-  endif
-	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
-
-sanitycheck :
-    ifdef GENERICS
-	$(SPECIFICCHECK) $(GENERICS)
-    endif
-	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
-
-
-# define one time only target for special uses
-
-onetimeonly :
-	$(ONETIMEONLY)
-	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
