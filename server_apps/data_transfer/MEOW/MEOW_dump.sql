@@ -403,6 +403,18 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/marker_alias.txt'
 
   DELIMITER "	" select distinct mrkr_zdb_id, dalias_alias from marker , data_alias where mrkr_zdb_id = dalias_data_zdb_id order by 1;
 
+--- generate alias file for Sanger
+
+UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/sanger_alias.txt' 
+DELIMITER "	" select dblink_acc_num[1,20]ottdarg,mrkr_zdb_id[1,25] zdbid ,mrkr_abbrev symbol,
+dalias_alias alias
+ from db_link,marker, outer data_alias
+ where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-14'
+ and dblink_linked_recid = mrkr_zdb_id
+ and dblink_linked_recid = dalias_data_zdb_id
+order by 1
+;
+
 --- generate gene marker relationship data for LocusLink
 
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/gene_relationships.txt'
