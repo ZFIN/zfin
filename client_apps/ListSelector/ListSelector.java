@@ -51,8 +51,7 @@ public class ListSelector extends Applet {
     }
 
     if (getParameter("pub_id") != null) {
-		System.err.println("Params: " + getParameter("host") + ", " + getParameter("port"));
-		SQLQuery Q = new SQLQuery(this.getParameter("host"),this.getParameter("port"));
+		SQLQuery Q = new SQLQuery("host","port");
 
       String query = "select full_name, zdb_id from person, int_person_pub where zdb_id = source_id and target_id = '" + getParameter("pub_id") + "' order by full_name;";
 

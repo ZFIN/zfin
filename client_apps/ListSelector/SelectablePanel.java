@@ -59,7 +59,7 @@ public class SelectablePanel extends Panel {
   }
   
   public void retrieveList(String query) {
-	  SQLQuery Q = new SQLQuery(pappy.getParameter("host"), pappy.getParameter("port"));
+	  SQLQuery Q = new SQLQuery("host", "port");
 
     
     if ((pappy.getParameter("use_item_labels") != null) && (pappy.getParameter("use_item_labels").equals("true"))) {
@@ -108,7 +108,7 @@ public class SelectablePanel extends Panel {
 
   public void moveSelected(SelectedPanel SP) {
     
-	  SQLQuery Q = new SQLQuery(pappy.getParameter("host"), pappy.getParameter("port"));
+	  SQLQuery Q = new SQLQuery("host", "port");
  
     if (pappy.liveupdate == true) {
       String query = "insert into " + pappy.LUtable + " (" + pappy.LUcol1 + "," + pappy.LUcol2 + ") values ('" + ((ListItem)selectHash.get(selectables.getSelectedItem())).get_data() + "','" + pappy.LUcol2val + "');";

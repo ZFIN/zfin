@@ -39,7 +39,7 @@ public class SQLQuery
 	{
 
 	  this.host = host;
-	  this.PORT = (new Integer(port)).intValue();
+//	  this.PORT = (new Integer(port)).intValue();
 
 	}
 
