@@ -16,7 +16,7 @@ document.critform.refcross.selectedIndex = 0;
 document.critform.lg.selectedIndex = 0;
 document.critform.compare.selectedIndex = 0;
 document.critform.marker_type.selectedIndex = 0;
-document.critform.plinks.checked = false;
+document.critform.plinks.checked = true;
 
 }
 
@@ -132,7 +132,7 @@ function check_syns(item) {
 
 <TR>
 <TD colspan=2><font size=2>
-<input type=checkbox name=plinks > Include markers (e.g. mutants) independently linked to selected markers
+<input type=checkbox name=plinks value=1 CHECKED> Include markers (e.g. mutants) independently linked to selected markers
 </TD>
 
 <?MIBLOCK COND="$(AND,$(NXST,$navtile),$(NXST,$refcross),$(NXST,$marker_type))"><?MIVAR> <SCRIPT> document.critform.plinks.checked = true </SCRIPT><?/MIVAR> <?/MIBLOCK>
