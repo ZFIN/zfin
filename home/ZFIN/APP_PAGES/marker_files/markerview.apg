@@ -885,13 +885,13 @@ Datablade documentation.
     select fdb_db_name, 
 	   fdb_db_query || dblink_acc_num || 
 	     (case fdb_url_suffix when NULL then '' else fdb_url_suffix end),
-           dblink_acc_num, fdb_db_significance, dblink_zdb_id
+           dblink_acc_num_display, fdb_db_significance, dblink_zdb_id
       from db_link, foreign_db, foreign_db_contains 
       where dblink_linked_recid = '$OID' 
         and dblink_fdbcont_zdb_id = fdbcont_zdb_id
         and fdbcont_fdb_db_name = fdb_db_name
         and fdbcont_fdbdt_super_type = 'protein'
-      order by fdb_db_significance, fdb_db_name, dblink_acc_num;">
+      order by fdb_db_significance, fdb_db_name, dblink_acc_num_display;">
 
     <?MIVAR NAME=$dblinkZdbId>$5<?/MIVAR>
     
@@ -1361,13 +1361,13 @@ Type:<SELECT name=seq_super>
 <b>Update Sequence:</b> &nbsp;
 AccNum:<SELECT name=upd_seq_zdb>
   <?MISQL SQL="
-    select distinct fdbcont_fdb_db_name, dblink_acc_num, dblink_zdb_id
+    select distinct fdbcont_fdb_db_name, dblink_acc_num_display, dblink_zdb_id
       from foreign_db_contains, db_link
      where fdbcont_fdbdt_super_type = 'sequence' 
        and fdbcont_fdb_db_name <> 'BLAST'
        and fdbcont_zdb_id = dblink_fdbcont_zdb_id
        and dblink_linked_recid = '$OID'
-     order by fdbcont_fdb_db_name, dblink_acc_num;">
+     order by fdbcont_fdb_db_name, dblink_acc_num_display;">
     <option value="$3">$1:$2</option>
   <?/MISQL>
 </SELECT>
@@ -1448,8 +1448,9 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
     <?/MISQL>
     
 <?MIBLOCK COND="$(XST,$seq_for_oid)">    
-<?MISQL SQL="select dblink_length, fdb_db_name, conc(conc(fdb_DB_query,dblink_acc_num),fdb_url_suffix), 
-               dblink_acc_num, dblink_zdb_id
+<?MISQL SQL="select dblink_length, fdb_db_name, fdb_db_query || dblink_acc_num || 
+	     (case fdb_url_suffix when NULL then '' else fdb_url_suffix end), 
+             dblink_acc_num_display, dblink_zdb_id
         from db_link, foreign_DB, foreign_db_contains
         where dblink_linked_recid = '$OID'
           and dblink_fdbcont_zdb_id = fdbcont_zdb_id
@@ -1497,8 +1498,9 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
     <?MIVAR NAME=data_type>$1<?/MIVAR>
     
       <?MISQL SQL="
-        select dblink_length, fdb_db_name, conc(conc(fdb_DB_query,dblink_acc_num),fdb_url_suffix), 
-               dblink_acc_num, dblink_zdb_id, 's', 'placeholder', 'placeholder', fdb_db_significance
+        select dblink_length, fdb_db_name, fdb_db_query || dblink_acc_num || 
+	     (case fdb_url_suffix when NULL then '' else fdb_url_suffix end), 
+               dblink_acc_num_display, dblink_zdb_id, 's', 'placeholder', 'placeholder', fdb_db_significance
         from db_link, foreign_DB, foreign_db_contains
         where dblink_linked_recid = '$OID'
           and dblink_fdbcont_zdb_id = fdbcont_zdb_id
@@ -1506,8 +1508,9 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
           and fdbcont_fdbdt_super_type = 'sequence'
           and fdbcont_fdbdt_data_type = '$data_type'
       UNION 
-        select dblink_length, fdb_db_name, conc(conc(fdb_db_query,dblink_acc_num),fdb_url_suffix), 
-               dblink_acc_num, dblink_zdb_id, 'r', mrel_mrkr_2_zdb_id, mrkr_abbrev, fdb_db_significance
+        select dblink_length, fdb_db_name, fdb_db_query || dblink_acc_num || 
+	     (case fdb_url_suffix when NULL then '' else fdb_url_suffix end), 
+               dblink_acc_num_display, dblink_zdb_id, 'r', mrel_mrkr_2_zdb_id, mrkr_abbrev, fdb_db_significance
         from db_link, foreign_DB, foreign_db_contains, marker_relationship, marker
         where mrel_mrkr_1_zdb_id = '$OID'
           and dblink_linked_recid = mrel_mrkr_2_zdb_id
@@ -1521,8 +1524,9 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
           and mrel_mrkr_2_zdb_id = mrkr_zdb_id
           and mrel_mrkr_2_zdb_id not in ('$chimeric_clone_list')
       UNION 
-        select dblink_length, fdb_db_name, conc(conc(fdb_db_query,dblink_acc_num),fdb_url_suffix), 
-               dblink_acc_num, dblink_zdb_id, 'r', mrel_mrkr_1_zdb_id, mrkr_abbrev, fdb_db_significance
+        select dblink_length, fdb_db_name, fdb_db_query || dblink_acc_num || 
+	     (case fdb_url_suffix when NULL then '' else fdb_url_suffix end), 
+               dblink_acc_num_display, dblink_zdb_id, 'r', mrel_mrkr_1_zdb_id, mrkr_abbrev, fdb_db_significance
         from db_link, foreign_DB, foreign_db_contains, marker_relationship, marker
         where mrel_mrkr_2_zdb_id = '$OID'
           and dblink_linked_recid = mrel_mrkr_1_zdb_id
@@ -1736,7 +1740,8 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
   <?MIVAR>$(UNSETVAR,dblink_other)<?/MIVAR>  
 
   <?MISQL SQL="
-    select fdb_db_name, conc(conc(fdb_DB_query,dblink_acc_num),fdb_url_suffix), 
+    select fdb_db_name, fdb_db_query || dblink_acc_num || 
+	     (case fdb_url_suffix when NULL then '' else fdb_url_suffix end), 
            dblink_acc_num, dblink_zdb_id, dblink_acc_num_display, fdb_db_significance
     from db_link, foreign_DB, foreign_db_contains
     where dblink_linked_recid = '$OID'
