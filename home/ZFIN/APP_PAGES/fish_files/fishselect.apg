@@ -165,18 +165,17 @@ function call_reset() {
     <?MIVAR COND="$(XST,$fname)" NAME=$fname>$(LOWER,$fname)<?/MIVAR>
     <?MIVAR NAME=$constraint> and <?/MIVAR>
 
-    <!-- first look for match in fish_search locus or 
-      -- locus_alias lcsali_locus_name or 
+    <!-- first look for match in fish_search locus or
       -- for fish aliases in data_alias -->
     <?MIVAR NAME=$constraint COND="$(XST,$fname)">
-      $constraint ((lower(a.name) like '%$fname%') or exists (select 'x' from locus_alias where (a.locus = lcsali_locus_zdb_id) and (lower(lcsali_locus_name_alias) like '%$fname%')) or exists (select 'x' from data_alias where (a.fish_id = dalias_data_zdb_id) and (lower(dalias_alias) like '%$fname%')))
+      $constraint ((lower(a.name) like '%$fname%') or exists (select 'x' from data_alias where (a.fish_id = dalias_data_zdb_id) and (lower(dalias_alias) like '%$fname%')))
     <?/MIVAR>
 
     <?MIVAR NAME=$previous COND="$(XST,$fname)"> and<?/MIVAR>
 
     <!-- change to look for abbrev within () in name  Sept. 00  -->
     <?MIVAR NAME=$constraint COND="$(XST,$abbrev)">
-      $constraint $previous ((lower(abbrev)='$(LOWER,$abbrev)') or (name like '(%$(LOWER,$abbrev)%)') or (exists (select 'x' from locus_alias where lcsali_locus_abbrev_alias like '%$(LOWER,$abbrev)%' and  (a.locus = lcsali_locus_zdb_id))))
+      $constraint $previous ((lower(abbrev)='$(LOWER,$abbrev)') or (name like '(%$(LOWER,$abbrev)%)') )
     <?/MIVAR>
 
     <?MIVAR NAME=$previous COND="$(XST,$abbrev)"> and <?/MIVAR>
@@ -368,8 +367,12 @@ function call_reset() {
 	      <?MISQL SQL="
 		select distinct dalias_alias 
 		  from data_alias, fish_search 
-		  where fish_id = '$2' 
-		    and dalias_data_zdb_id = alt_zdb_id;">
+		  where fish_id = '$fish_id' 
+		    and dalias_data_zdb_id = alt_zdb_id
+		UNION 
+		 select dalias_alias
+		  from data_alias 
+		  where dalias_data_zdb_id = '$fish_id';">
 		<?MIVAR COND="$(=,$MI_CURRENTROW,1)">&nbsp;[<?/MIVAR>
 		<?MIVAR COND="$(>,$MI_CURRENTROW,1)">;<?/MIVAR>$1
 	      <?/MISQL>
@@ -388,18 +391,20 @@ function call_reset() {
 
 	      <?MIVAR NAME=$found>false<?/MIVAR>
 	      <?MISQL SQL="
-		select distinct lcsali_locus_name_alias, lcsali_locus_abbrev_alias
-		  from locus_alias 
-		  where lcsali_locus_zdb_id = '$locus';">
-		<?MIVAR COND="$(=,$MI_CURRENTROW,1)">&nbsp;[<?/MIVAR>
-		<?MIVAR COND="$(=,$MI_CURRENTROW,1)" NAME=$found>true<?/MIVAR>
-		<?MIVAR COND="$(>,$MI_CURRENTROW,1)">;<?/MIVAR>$1
-		<?MIVAR COND="$(NC,$2,"")">($2)<?/MIVAR>
-	      <?/MISQL>
-	      <?MISQL SQL="
 		select distinct dalias_alias
 		  from data_alias 
-		  where dalias_data_zdb_id = '$2';">
+		  where dalias_data_zdb_id = '$fish_id';">
+		<?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(NC,$found,true))">&nbsp;[<?/MIVAR>
+		<?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(EC,$found,true))">;<?/MIVAR>
+		<?MIVAR COND="$(=,$MI_CURRENTROW,1)" NAME=$found>true<?/MIVAR>
+		<?MIVAR COND="$(>,$MI_CURRENTROW,1)">;<?/MIVAR>$1
+	      <?/MISQL>
+
+	      <?MISQL SQL="
+		select distinct dalias_alias
+		  from data_alias, fish
+		  where dalias_data_zdb_id = fish.locus
+		     and fish.zdb_id = '$fish_id';">
 		<?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(NC,$found,true))">&nbsp;[<?/MIVAR>
 		<?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(EC,$found,true))">;<?/MIVAR>
 		<?MIVAR COND="$(=,$MI_CURRENTROW,1)" NAME=$found>true<?/MIVAR>
