@@ -9,14 +9,33 @@
 #include "Statement.h"
 #include "ResultSet.h"
 
-struct Hjava_lang_Object* MIConnection_openConnection (struct HMIConnection *this, Hjava_lang_String* database)
+struct Hjava_lang_Object* MIConnection_openConnection (struct HMIConnection *this, Hjava_lang_String* database, Hjava_lang_String* user, Hjava_lang_String* password)
 {
-    char* db;
+    char *db, *us, *pass;
     MI_CONNECTION* conn;
 
-    db = allocCString (database);
-    conn = mi_open (db, NULL, NULL);
-    free (db);
+	if (database != NULL)
+		db = allocCString (database);
+	else
+		db = NULL;
+	if (user != NULL)
+		us = allocCString (user);
+	else
+		us = NULL;
+	if (password != NULL)
+		pass = allocCString (password);
+	else
+		pass = NULL;
+	
+    conn = mi_open (db, us, pass);
+	
+	if (pass != NULL)
+		free (pass);
+	if (us != NULL)
+		free (us);
+	if (db != NULL)
+		free (db);
+	
     if (conn == NULL)
     {
 	return NULL;
