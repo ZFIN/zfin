@@ -52,11 +52,11 @@
 		var dbind=document.updater.seq_super.selectedIndex;
 		var seq_type=document.updater.seq_super[dbind].value;
 		if ((seq_acc != '')&& (dbname == 'Genbank')) {
-  		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=seqnum&attr_type=special-check-newseqnum&old_value='+dbname+'&new_value='+seq_acc+'&target_table=marker&fdbcont_super='+seq_type+'&caller=sequence.apg');
-  		}
+		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=seqnum&attr_type=special-check-newseqnum&old_value='+dbname+'&new_value='+seq_acc+'&target_table=marker&fdbcont_super='+seq_type+'&caller=sequence.apg');
+		}
 		else if (seq_acc != '') {
 		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value='+dbname+'&new_value='+seq_acc+'&target_table=marker&fdbcont_super='+seq_type+'&caller=sequence.apg');
-  		}
+		}
 	}
 
 	function update_seqnum() {
@@ -66,13 +66,14 @@
 		var dbind=document.updater.upd_seq_type.selectedIndex;
 		var seq_type=document.updater.upd_seq_type[dbind].value;
 		if (seq_zdb != '') {
-  		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&caller=sequence.apg&attr=seqnum&attr_type=special-updateseqnum&old_value=dblink_length&new_value='+seq_len+'&target_table=marker&dataOID='+seq_zdb+'&xtra_param='+seq_type+'&caller=sequence.apg');
-  		}
+		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&caller=sequence.apg&attr=seqnum&attr_type=special-updateseqnum&old_value=dblink_length&new_value='+seq_len+'&target_table=marker&dataOID='+seq_zdb+'&xtra_param='+seq_type+'&caller=sequence.apg');
+		}
 	}
   <?/MIVAR>
-	function Blast(acc_num,blast_url) {
-	    helpwin=open(blast_url+acc_num);
-	}
+
+    function start_help() {
+     top.zfinhelp=open('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-helpframes.html&calling_page=sequence_tools_help.html',"helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=800,height=600");
+    }
 </SCRIPT>
 
     <?MISQL SQL="
@@ -153,6 +154,10 @@
    
     <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'PBLAST';">
       <?MIVAR NAME=fdb_url_pblast>$1<?/MIVAR>
+    <?/MISQL> 
+    
+    <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'BLAT';">
+      <?MIVAR NAME=fdb_url_blat>$1<?/MIVAR>
     <?/MISQL> 
     
     <?MIVAR name=left_tab>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?/MIVAR>
@@ -293,13 +298,13 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
     <TR bgcolor=#ccccccc>
       <TD width=30%><b>Type</b></TD>
       <TD width=40%><b>Accession #</b></TD>
-      <TD width=10%><b>Length</b></TD>
-      <TD width=20%>&nbsp;</TD>
+      <TD align=right width=10%><b>Length</b></TD>
+      <TD align=center width=20%><A HREF="javascript:start_help()"><b>Analysis</b></A><img src="/images/new1.gif"></img></TD>
     </TR>
 
       <?MISQL SQL="
         select dblink_length, fdbcont_fdbdt_data_type, fdb_db_name, fdb_db_query || dblink_acc_num || 
-	     (case fdb_url_suffix when NULL then '' else fdb_url_suffix end), 
+       (case fdb_url_suffix when NULL then '' else fdb_url_suffix end), 
                dblink_acc_num_display, dblink_zdb_id, fdb_db_significance, fdbdt_display_order
         from db_link, foreign_DB, foreign_db_contains, foreign_db_data_type
         where dblink_linked_recid = '$OID'
@@ -318,37 +323,6 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
         <?MIVAR NAME=link_url>$4<?/MIVAR>
         <?MIVAR NAME=acc_num>$5<?/MIVAR>
         <?MIVAR NAME=dataId>$6<?/MIVAR> 
-        
-        <?MIBLOCK COND="$(EC,$data_type,Polypeptide)">
-          <?MIVAR NAME=blast_display COND="$(EC,$db_name,SWISS-PROT)">
-              <input type=button value="BLAST IT!" onClick="Blast('$acc_num','$fdb_url_pblast');">
-          <?/MIVAR>
-          <?MIVAR NAME=blast_display COND="$(NC,$db_name,SWISS-PROT)">&nbsp;<?/MIVAR>  
-        <?MIELSE COND="$(OR,$(EC,$db_name,RefSeq),
-				 $(AND,$(EC,$db_name,Genbank),
-				      $(OR,$(EC,$dblink_length,),
-					   $(<,$dblink_length,20000)
-				       )
-				 )
-			    )">
-	  <?MIVAR NAME=blast_display>
-		<input type=button value="BLAST IT!" onClick="Blast('$acc_num','$fdb_url_blast');">
-	  <?/MIVAR>
-	<?MIELSE COND="$(AND,$(EC,$db_name,Genbank),$(AND,$(NC,$dblink_length,),$(>,$dblink_length,19999)))">	  
-	  <?MIVAR NAME=blast_display>
-            <input type=button value="Mega BLAST IT!" onClick="Blast('$acc_num','$fdb_url_mega_blast');">
-	  <?/MIVAR>
-	<?MIELSE>
-	  <?MIVAR NAME=blast_display>&nbsp;<?/MIVAR>
-        <?/MIBLOCK> 
-        
-
-        <?MIBLOCK COND="$(NE,$dblink_length,)">
-          <?MIVAR COND=$(EC,$data_type,cDNA) NAME=dblink_length>$dblink_length bp<?/MIVAR>
-          <?MIVAR COND=$(EC,$data_type,Genomic) NAME=dblink_length>$dblink_length bp<?/MIVAR>
-          <?MIVAR COND=$(EC,$data_type,Polypeptide) NAME=dblink_length>$dblink_length aa<?/MIVAR>
-        <?/MIBLOCK>
-
 
         <?MIVAR>
         <?MICOMMENT>** 07/24/03 for some weird reasons, the column made up to distinguish the source of Genbank accession
@@ -365,11 +339,16 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
             <?MISQL SQL="select WebExplode(object,'dataId=$dataId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
           </TD>
           <TD align=right>
-            $dblink_length
+            <nobr>
+            <?MIVAR>$dblink_length<?/MIVAR>
+            <?MIBLOCK COND=$(AND,$(NC,$dblink_length,),$(EC,$data_type,Polypeptide))> aa
+            <?MIELSE  COND=$(AND,$(NC,$dblink_length,),$(OR,$(EC,$data_type,cDNA),$(EC,$data_type,Genomic)))> bp
+            <?/MIBLOCK>
+            </nobr>
           </TD>
           <TD align=center>
-            <?MIVAR>$blast_display<?/MIVAR>
-          </TD>          
+             <?MISQL SQL="select WebExplode(object,'seqt_acc=$acc_num&seqt_acc_len=$dblink_length&seqt_acc_type=$data_type&seqt_acc_db=$db_name') from webPages where ID='aa-sequence_tools.apg';">$1<?/MISQL>
+          </TD>
         </TR>
         
         <?MIVAR NAME=pre_data_type>$data_type<?/MIVAR>  
@@ -426,8 +405,8 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
               <TD width=20%><B>Marker</B></TD>
               <TD width=10%><B>Type</B></TD>
               <TD width=40%><B>Accession #</B></TD>
-              <TD width=10%><B>Length</B></TD>
-              <TD width=20%>&nbsp;</TD>
+              <TD align=right width=10%><B>Length</B></TD>
+              <TD align=center width=20%><A HREF="javascript:start_help()"><b>Analysis</b></A></TD>
             </TR>
         <?/MIVAR>
         
@@ -473,35 +452,6 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
         <?MIVAR NAME=link_url>$4<?/MIVAR>
         <?MIVAR NAME=acc_num>$5<?/MIVAR>
         <?MIVAR NAME=dataId>$6<?/MIVAR> 
-        
-        <?MIBLOCK COND="$(EC,$data_type,Polypeptide)">
-          <?MIVAR NAME=blast_display COND="$(EC,$db_name,SWISS-PROT)">
-              <input type=button value="BLAST IT!" onClick="Blast('$acc_num','$fdb_url_pblast');">
-          <?/MIVAR>
-          <?MIVAR NAME=blast_display COND="$(NC,$db_name,SWISS-PROT)">&nbsp;<?/MIVAR>  
-        <?MIELSE COND="$(OR,$(EC,$db_name,RefSeq),
-				 $(AND,$(EC,$db_name,Genbank),
-				      $(OR,$(EC,$dblink_length,),
-					   $(<,$dblink_length,20000)
-				       )
-				 )
-			    )">
-	  <?MIVAR NAME=blast_display>
-		<input type=button value="BLAST IT!" onClick="Blast('$acc_num','$fdb_url_blast');">
-	  <?/MIVAR>
-	<?MIELSE COND="$(AND,$(EC,$db_name,Genbank),$(AND,$(NC,$dblink_length,),$(>,$dblink_length,19999)))">	  
-	  <?MIVAR NAME=blast_display>
-            <input type=button value="Mega BLAST IT!" onClick="Blast('$acc_num','$fdb_url_mega_blast');">
-	  <?/MIVAR>
-	<?MIELSE>
-	  <?MIVAR NAME=blast_display>&nbsp;<?/MIVAR>
-        <?/MIBLOCK> 
-        
-        <?MIBLOCK COND="$(NE,$dblink_length,)">
-          <?MIVAR COND=$(EC,$data_type,cDNA) NAME=dblink_length>$dblink_length bp<?/MIVAR>
-          <?MIVAR COND=$(EC,$data_type,Genomic) NAME=dblink_length>$dblink_length bp<?/MIVAR>
-          <?MIVAR COND=$(EC,$data_type,Polypeptide) NAME=dblink_length>$dblink_length aa<?/MIVAR>
-        <?/MIBLOCK>
 
           <?MIBLOCK COND=$(XST,$encodes_data_type)>
             <TR><TD>&nbsp;</TD>
@@ -520,11 +470,18 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
             <?/MISQL>
           </TD>
           <TD align=right>
-            $dblink_length
+            <nobr>
+            <?MIVAR>$dblink_length<?/MIVAR>
+            <?MIBLOCK COND=$(AND,$(NC,$dblink_length,),$(EC,$data_type,Polypeptide))> aa
+            <?MIELSE  COND=$(AND,$(NC,$dblink_length,),$(OR,$(EC,$data_type,cDNA),$(EC,$data_type,Genomic)))> bp
+            <?/MIBLOCK>
+            </nobr>
           </TD>
           <TD align=center>
-            <?MIVAR>$blast_display<?/MIVAR>
-          </TD>  
+            <?MICOMMENT>bizzare kludge to prevent seqt_acc_len from being undefined after the first webexplode &seqt_acc_len=$dblink_length<?/MICOMMENT>
+            <?MIVAR NAME=seqt_acc_len>$dblink_length<?/MIVAR>
+             <?MISQL SQL="select WebExplode(object,'seqt_acc=$acc_num&seqt_acc_type=$data_type&seqt_acc_db=$db_name') from webPages where ID='aa-sequence_tools.apg';">$1<?/MISQL>
+          </TD>
         </TR>
         
         <?MIVAR NAME=encodes_data_type>$data_type<?/MIVAR>
@@ -563,14 +520,14 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
               <TD width=20%><B>Marker</B></TD>
               <TD width=10%><B>Type</B></TD>
               <TD width=40%><B>Accession #</B></TD>
-              <TD width=10%><B>Length</B></TD>
-              <TD width=20%>&nbsp;</TD>
+              <TD align=right width=10%><B>Length</B></TD>
+              <TD align=center width=20%><A HREF="javascript:start_help()"><b>Analysis</b></A></TD>
             </TR>
         <?/MIVAR>
         
-        <?MIVAR NAME=contains_zdb_id>$1<?/MIVAR>     
-        <?MIVAR NAME=contains_mrkr_abbrev>$2<?/MIVAR> 
-        <?MIVAR NAME=contains_mrkr_type>$3<?/MIVAR>   
+        <?MIVAR NAME=contains_zdb_id>$1<?/MIVAR>
+        <?MIVAR NAME=contains_mrkr_abbrev>$2<?/MIVAR>
+        <?MIVAR NAME=contains_mrkr_type>$3<?/MIVAR>
         <?MIVAR NAME=contains_mrel_zdb_id>$5<?/MIVAR>
         
         <TR>
@@ -586,7 +543,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
             <?/MISQL>        
           </TD>
           
-          <?MIVAR NAME=previous_data_type><?/MIVAR>      
+          <?MIVAR NAME=previous_data_type><?/MIVAR>
       
       <?MISQL SQL="
         select fdbcont_fdbdt_data_type, dblink_length, fdbcont_fdb_db_name, 
@@ -610,42 +567,13 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
         <?MIVAR NAME=link_url>$4<?/MIVAR>
         <?MIVAR NAME=acc_num>$5<?/MIVAR>
         <?MIVAR NAME=dataId>$6<?/MIVAR> 
-        <?MIBLOCK COND="$(EC,$data_type,Polypeptide)">
-          <?MIVAR NAME=blast_display COND="$(EC,$db_name,SWISS-PROT)">
-              <input type=button value="BLAST IT!" onClick="Blast('$acc_num','$fdb_url_pblast');">
-          <?/MIVAR>
-          <?MIVAR NAME=blast_display COND="$(NC,$db_name,SWISS-PROT)">&nbsp;<?/MIVAR>  
-        <?MIELSE COND="$(OR,$(EC,$db_name,RefSeq),
-				 $(AND,$(EC,$db_name,Genbank),
-				      $(OR,$(EC,$dblink_length,),
-					   $(<,$dblink_length,20000)
-				       )
-				 )
-			    )">
-	  <?MIVAR NAME=blast_display>
-		<input type=button value="BLAST IT!" onClick="Blast('$acc_num','$fdb_url_blast');">
-	  <?/MIVAR>
-	<?MIELSE COND="$(AND,$(EC,$db_name,Genbank),$(AND,$(NC,$dblink_length,),$(>,$dblink_length,19999)))">	  
-	  <?MIVAR NAME=blast_display>
-            <input type=button value="Mega BLAST IT!" onClick="Blast('$acc_num','$fdb_url_mega_blast');">
-	  <?/MIVAR>
-	<?MIELSE>
-	  <?MIVAR NAME=blast_display>&nbsp;<?/MIVAR>
-        <?/MIBLOCK> 
-        
-        <?MIBLOCK COND="$(NE,$dblink_length,)">
-          <?MIVAR COND=$(EC,$data_type,cDNA) NAME=dblink_length>$dblink_length bp<?/MIVAR>
-          <?MIVAR COND=$(EC,$data_type,Genomic) NAME=dblink_length>$dblink_length bp<?/MIVAR>
-          <?MIVAR COND=$(EC,$data_type,Polypeptide) NAME=dblink_length>$dblink_length aa<?/MIVAR>
-        <?/MIBLOCK>
-        
-          
+
           <?MIBLOCK COND=$(XST,$contains_data_type)>
             <TR><TD>&nbsp;</TD>
           <?/MIBLOCK>
 
           <TD>
-            $(IF,$(AND,$(XST,$contains_data_type),$(EC,$data_type,$contains_data_type)),&nbsp;,$data_type)            
+            $(IF,$(AND,$(XST,$contains_data_type),$(EC,$data_type,$contains_data_type)),&nbsp;,$data_type)
           </TD>
           <TD>
             <A HREF="$link_url">$db_name:$acc_num</A>
@@ -657,17 +585,23 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
             <?/MISQL>
           </TD>
           <TD align=right>
-            $dblink_length
+            <nobr>
+            <?MIVAR>$dblink_length<?/MIVAR>
+            <?MIBLOCK COND=$(AND,$(NC,$dblink_length,),$(EC,$data_type,Polypeptide))> aa
+            <?MIELSE  COND=$(AND,$(NC,$dblink_length,),$(OR,$(EC,$data_type,cDNA),$(EC,$data_type,Genomic)))> bp
+            <?/MIBLOCK>
+            </nobr>
           </TD>
           <TD align=center>
-            <MIVAR>$blast_display<?/MIVAR>
-          </TD>  
+            <?MICOMMENT>bizzare kludge to prevent seqt_acc_len from being undefined after the first webexplode &seqt_acc_len=$dblink_length<?/MICOMMENT>
+            <?MIVAR NAME=seqt_acc_len>$dblink_length<?/MIVAR>
+             <?MISQL SQL="select WebExplode(object,'seqt_acc=$acc_num&seqt_acc_type=$data_type&seqt_acc_db=$db_name') from webPages where ID='aa-sequence_tools.apg';">$1<?/MISQL>
+          </TD>
         </TR>
-        
         <?MIVAR NAME=contains_data_type>$data_type<?/MIVAR>
 
       <?/MISQL>
-            
+
         $(UNSETVAR,$contains_data_type)
 
       <?/MISQL>

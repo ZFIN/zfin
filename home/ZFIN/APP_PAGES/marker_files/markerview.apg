@@ -53,6 +53,9 @@ Datablade documentation.
   function get_spdesc(oid) {
 	window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerspcomments.apg&OID='+oid)
   }
+  function start_help() {
+   top.zfinhelp=open('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-helpframes.html&calling_page=sequence_tools_help.html',"helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=800,height=600");
+  }
   </SCRIPT>
 
   <?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
@@ -66,11 +69,6 @@ Datablade documentation.
    }
   //  initialize view_mapplet parameters   
    marker = '';
-
-
-    function Blast(acc_num,blast_url) {
-        helpwin=open(blast_url+acc_num);
-    }
 
   </SCRIPT>
 </HEAD>
@@ -1182,19 +1180,6 @@ Datablade documentation.
 
 <?MIBLOCK COND="$(OR,$(XST,$vSequence_link),$(XST,$UPDATE))">
 
-<?MICOMMENT> Select URL for blast buttons <?/MICOMMENT>    
-  <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'BLAST';">
-    <?MIVAR NAME=fdb_url_blast>$1<?/MIVAR>
-  <?/MISQL>
-   
-  <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'MEGA BLAST';">
-    <?MIVAR NAME=fdb_url_mega_blast>$1<?/MIVAR>
-  <?/MISQL>  
-   
-  <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'PBLAST';">
-    <?MIVAR NAME=fdb_url_pblast>$1<?/MIVAR>
-  <?/MISQL> 
-
 <form name=updateseq>
 <HR width="80%">
 <a name=sequence><b>SEQUENCE INFORMATION:</b></a>
@@ -1233,8 +1218,7 @@ AccNum:<SELECT name=upd_seq_zdb>
   <?MISQL SQL="
     select distinct fdbcont_fdb_db_name, dblink_acc_num_display, dblink_zdb_id
       from foreign_db_contains, db_link
-     where fdbcont_fdbdt_super_type = 'sequence' 
-       and fdbcont_fdb_db_name <> 'BLAST'
+     where fdbcont_fdbdt_super_type = 'sequence'
        and fdbcont_zdb_id = dblink_fdbcont_zdb_id
        and dblink_linked_recid = '$OID'
      order by fdbcont_fdb_db_name, dblink_acc_num_display;">
@@ -1291,7 +1275,6 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
         where dblink_linked_recid = '$OID'
           and dblink_fdbcont_zdb_id = fdbcont_zdb_id
           and fdbcont_fdbdt_super_type = 'sequence'
-          and fdbcont_fdb_db_name != 'BLAST'
       UNION 
         select dblink_zdb_id
         from db_link, foreign_db_contains, marker_relationship
@@ -1303,7 +1286,6 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 		              'clone contains small segment',
 			      'gene encodes small segment')
           and mrel_mrkr_2_zdb_id not in ('$chimeric_clone_list')
-          and fdbcont_fdb_db_name != 'BLAST'
       UNION 
         select dblink_zdb_id
         from db_link, foreign_db_contains, marker_relationship
@@ -1313,7 +1295,6 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
           and fdbcont_fdbdt_super_type = 'sequence'
           and mrel_type in ('clone contains gene') 
           and mrel_mrkr_1_zdb_id not in ('$chimeric_clone_list')  
-          and fdbcont_fdb_db_name != 'BLAST'        
       ;"> 
         <?MIVAR NAME=seq_for_oid>$1<?/MIVAR>
     <?/MISQL>
@@ -1329,7 +1310,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
           and fdbcont_fdbdt_super_type = 'sequence'
           and fdbcont_fdb_db_name = 'RefSeq';">
 
-        <?MIVAR NAME=refseq_dblink_length>$(IF,$(EC,$1,),,$1 bp)<?/MIVAR>
+        <?MIVAR NAME=refseq_dblink_length>$1<?/MIVAR>
         <?MIVAR NAME=refseq_db_name>$2<?/MIVAR>
         <?MIVAR NAME=refseq_link_url>$3<?/MIVAR>
         <?MIVAR NAME=refseq_acc_num>$4<?/MIVAR>
@@ -1347,8 +1328,8 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
   <TR>
     <TD width=30% bgcolor=#ccccccc><b>Type</b></TD>
     <TD width=40% bgcolor=#ccccccc><b>Accession #</b></TD>
-    <TD width=10% bgcolor=#ccccccc><b>Length</b></TD>
-    <TD width=20% bgcolor=#ccccccc>&nbsp;</TD>
+    <TD align=right width=10% bgcolor=#ccccccc><b>Length</b></TD>
+    <TD align=center width=20% bgcolor=#ccccccc><A HREF="javascript:start_help()"><b>Analysis</b></A><img src="/images/new1.gif"></TD>
 <?/MIVAR>
 <TR>
 <?MIVAR NAME=gblinks><?/MIVAR>
@@ -1414,81 +1395,57 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 
        
       <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
-        <?MIBLOCK >        
-          <?MIVAR NAME=dblink_length>$1<?/MIVAR>
-          <?MIVAR NAME=db_name>$2<?/MIVAR>
-          <?MIVAR NAME=link_url>$3<?/MIVAR>
-          <?MIVAR NAME=acc_num>$4<?/MIVAR>
-          <?MIVAR NAME=dataId>$5<?/MIVAR>
-          <?MIVAR NAME=attachto>$6<?/MIVAR>
-          <?MIVAR NAME=related_zdb_id>$7<?/MIVAR>
-          <?MIVAR NAME=related_mrkr_abbrev>$8<?/MIVAR>
-        <?/MIBLOCK>
-      
-        <?MIBLOCK COND="$(EC,$data_type,Polypeptide)">
-          <?MIVAR NAME=blast_display COND="$(EC,$db_name,SWISS-PROT)">
-              <input type=button value="BLAST IT!" onClick="Blast('$acc_num','$fdb_url_pblast');">
-          <?/MIVAR>
-          <?MIVAR NAME=blast_display COND="$(NC,$db_name,SWISS-PROT)">&nbsp;<?/MIVAR>  
-        <?MIELSE COND="$(OR,$(EC,$db_name,RefSeq),
-				 $(AND,$(EC,$db_name,Genbank),
-				      $(OR,$(EC,$dblink_length,),
-					   $(<,$dblink_length,20000)
-				       )
-				 )
-			    )">
-	  <?MIVAR NAME=blast_display>
-		<input type=button value="BLAST IT!" onClick="Blast('$acc_num','$fdb_url_blast');">
-	  <?/MIVAR>
-	<?MIELSE COND="$(AND,$(EC,$db_name,Genbank),$(AND,$(NC,$dblink_length,),$(>,$dblink_length,19999)))">	  
-	  <?MIVAR NAME=blast_display>
-            <input type=button value="Mega BLAST IT!" onClick="Blast('$acc_num','$fdb_url_mega_blast');">
-	  <?/MIVAR>
-	<?MIELSE>
-	  <?MIVAR NAME=blast_display>&nbsp;<?/MIVAR>
-        <?/MIBLOCK> 
+       
+        <?MIVAR NAME=dblink_length>$1<?/MIVAR>
+        <?MIVAR NAME=db_name>$2<?/MIVAR>
+        <?MIVAR NAME=link_url>$3<?/MIVAR>
+        <?MIVAR NAME=acc_num>$4<?/MIVAR>
+        <?MIVAR NAME=dataId>$5<?/MIVAR>
+        <?MIVAR NAME=attachto>$6<?/MIVAR>
+        <?MIVAR NAME=related_zdb_id>$7<?/MIVAR>
+        <?MIVAR NAME=related_mrkr_abbrev>$8<?/MIVAR>
         
-          <?MIVAR COND=$(EC,$data_type,cDNA) NAME=dblink_length>$(IF,$(EC,$1,),,$1 bp)<?/MIVAR>
-          <?MIVAR COND=$(EC,$data_type,Genomic) NAME=dblink_length>$(IF,$(EC,$1,),,$1 bp)<?/MIVAR>
-          <?MIVAR COND=$(EC,$data_type,Polypeptide) NAME=dblink_length>$(IF,$(EC,$1,),,$1 aa)<?/MIVAR>
-        
-        
-        <?MIVAR>
         <?MICOMMENT>** 07/24/03 for some weird reasons, the column made up to distinguish the source of Genbank accession
          has to be a one-character string to behave right in EC operation. <?/MICOMMENT>
-         
-        <TR>
-          
+        <?MIVAR>
+        <TR>         
           <TD>
             $data_type: 
           </TD>
           <TD>
             $(IF,$(AND,$(XST,$UPDATE),$(NE,$attachto,r)),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$db_name:$acc_num)"')>") 
-            <A HREF="$link_url">$db_name:$acc_num</A><?/MIVAR>
+            <A HREF="$link_url">$db_name:$acc_num</A>
+       <?/MIVAR>
 
    <?MIBLOCK COND="$(AND,$(XST,$UPDATE),$(EC,$attachto,r))">
         <?MISQL SQL="
-	    select mrkr_abbrev, mrkr_zdb_id
+            select mrkr_abbrev, mrkr_zdb_id
               from marker
              where mrkr_zdb_id = '$related_zdb_id'; ">
             
            ( <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$related_zdb_id">$related_mrkr_abbrev</A> )
         <?/MISQL>
         <?MIVAR>$(UNSETVAR,$UPDATE)<?/MIVAR>
- 	<?MISQL SQL="select WebExplode(object,'dataId=$dataId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
- 	<?MIVAR>$(SETVAR,$UPDATE,1)<?/MIVAR>
+    <?MISQL SQL="select WebExplode(object,'dataId=$dataId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+    <?MIVAR>$(SETVAR,$UPDATE,1)<?/MIVAR>
    <?MIELSE>
      <?MISQL SQL="select WebExplode(object,'dataId=$dataId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
-   <?/MIBLOCK>	
+   <?/MIBLOCK>
           </TD>
           <TD align=right>
+            <nobr>
             <?MIVAR>$dblink_length<?/MIVAR>
+            <?MIBLOCK COND=$(AND,$(XST,$dblink_length),$(EC,$data_type,Polypeptide))> aa
+            <?MIELSE COND=$(AND,$(XST,$dblink_length),$(OR,$(EC,$data_type,cDNA),$(EC,$data_type,Genomic)))> bp
+            <?/MIBLOCK>
+            </nobr>
           </TD>
           <TD align=center>
-            <?MIVAR>$blast_display<?/MIVAR>
-          </TD>          
+             <?MISQL SQL="select WebExplode(object,'seqt_acc=$acc_num&seqt_acc_len=$dblink_length&seqt_acc_type=$data_type&seqt_acc_db=$db_name') from webPages where ID='aa-sequence_tools.apg';">$1<?/MISQL>
+          </TD>
+          
         </TR>
-   <?/MIBLOCK>     
+   <?/MIBLOCK>
       <?/MISQL>
   <?/MISQL>
   
