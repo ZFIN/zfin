@@ -1,0 +1,111 @@
+<script language="JavaScript" src="http://<!--|DOMAIN_NAME|-->/client_sniff.js"></script>
+
+<SCRIPT> 
+if (is_nav4) {
+document.write('<LINK rel=stylesheet type="text/css" href="/nn4_zfin_style.css">');
+} else {
+document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
+}
+</SCRIPT>
+
+<BODY bgcolor="white" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<basefont size=2>
+
+<!-- Now check authorization -->
+<?MISQL SQL="select WebExplode(object,'') 
+             from webPages 
+             where ID='aa-identify.apg';
+            ">$1
+<?/MISQL>
+
+
+<table width=100% cellspacing=0 border=0 cellpadding=0 class="header">
+  <tr>
+     <td rowspan=2  bgcolor="<!--|LINKBAR_COLOR|-->" width=80 align=left valign=bottom>
+	    <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg"> 
+	     <IMG src="/images/zfinlogo.gif" border=0>   
+	    </a>
+     </td>
+     <td>
+	    <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg"> <IMG src="/images/zfintxt.gif" border=0></a>
+       </td>
+	  <td align="center" valign="bottom" bgcolor="#FFFFFF">
+	   <DIV class="header">
+            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubselect2.apg"><font color="<!--|LINKBAR_COLOR|-->">Publications</font></a>&nbsp;&nbsp;
+            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-quickfindpers.apg"><font color="<!--|LINKBAR_COLOR|-->">People</font></a> &nbsp;&nbsp;
+            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labselect.apg"><font color="<!--|LINKBAR_COLOR|-->">Labs</font></a> &nbsp;&nbsp;
+            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-companyselect.apg"><font color="<!--|LINKBAR_COLOR|-->">Companies </font></a>
+	   </DIV>
+          </td>
+	
+    </tr>
+  <tr bgcolor=<!--|LINKBAR_COLOR|-->>
+    <td colspan=2 width=100%>
+      <table width=100% border=0 height=20 cellspacing=0 cellpadding=0>
+        <tr>
+	  <td align=center>
+	   <DIV class="header">
+            <A HREF="/index.html">Home</a>
+	   </DIV>
+          </td>
+	  <td align=center>
+	   <DIV class="header">
+            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&line_type=mutant">Mutant</a>
+	   </DIV>
+          </td>
+          <td align=center>
+	   <DIV class="header">
+            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-wtlist.apg">Wild-Types</a>
+	   </DIV>
+          </td>
+          <td align=center>
+	   <DIV class="header">
+            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-geneselect.apg">Genes</a>
+	   </DIV>
+          </td>
+          <td align=center>
+	   <DIV class="header">
+            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg">Expression</a>
+	   </DIV>
+          </td>
+          <td  align=center>
+	   <DIV class="header">
+            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg">Markers</a>
+	   </DIV>
+          </td>
+          <td  align=center>
+	   <DIV class="header">
+            <A HREF="mapper_select.cgi">Maps</a>
+	   </DIV>
+          </td>
+          <td  align=center>
+	   <DIV class="header">
+            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-accessionselect.apg">Acc #</a>
+	   </DIV>
+          </td>
+<!--          <td  align=center>
+	   <DIV class="header">
+            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubselect2.apg">Publications</a>
+	   </DIV>
+          </td>
+          <td  align=center>
+	   <DIV class="header">
+            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-quickfindpers.apg">People</a>
+	   </DIV>
+          </td>
+          <td  align=center>
+	   <DIV class="header">
+            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labselect.apg">Labs</a>
+	   </DIV>
+          </td>
+          <td  align=center>
+	   <DIV class="header">
+            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-companyselect.apg">Companies</a>
+	   </DIV>
+          </td> -->
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellpadding=5 bgcolor=#FFFFFF width=100%><tr><td>

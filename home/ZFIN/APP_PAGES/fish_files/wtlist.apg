@@ -1,0 +1,50 @@
+<HTML>
+<HEAD>
+<?MIVAR Name=page_name>ZFIN Wild-Type Lines<?/MIVAR>
+
+<?MIVAR><TITLE>$page_name</TITLE><?/MIVAR>
+</HEAD>
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+
+  <table width=100% border=0 cellspacing=0 cellpadding=1>
+    <tr>
+      <td width=20%>&nbsp;</td>
+      <td witdh=60% align=center>
+        <FONT SIZE=+1>Wild-Type Lines</font>
+      </td>
+      <td width=20% align=center>
+        <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>
+      </td>
+    </tr>
+  </table>
+
+    <p>
+    <TABLE width=100%>
+    <TH> </TH><TH align=left>Strain</TH> <TH align=left>Source</TH>
+
+    <?MIVAR NAME=$MI_NULL><?/MIVAR>
+
+    <!--- EXECUTION --->
+    <!--- Query Database --->
+    <?MISQL 
+	    SQL="select a.name, a.zdb_id, a.abbrev, b.name,b.zdb_id from fish a, OUTER lab b where line_type='wild type' and a.source=b.zdb_id  order by a.name;">
+
+      <TR valign=top> 
+        <TD> 
+          $(IF,$(XST,$return_rec),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$2" >SELECT</A>") 
+        </TD>
+        <TD valign=top> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$2">$1</A> ($3) 
+        </TD>  
+        <TD><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$5">$4
+        </TD>
+      </TR>
+    <?/MISQL>
+    </TABLE>
+    <?MIVAR name=$num_recs>$MI_ROWCOUNT<?/MIVAR>
+    <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No matching records found<?/MIVAR>
+
+</form>
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+</HTML>

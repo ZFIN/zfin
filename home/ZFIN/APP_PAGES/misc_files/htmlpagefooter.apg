@@ -1,0 +1,38 @@
+</td></tr></table>
+<table width=100% class="header">
+  <tr>
+    <td class="footer">
+      <table valign=center width=100%>
+        <tr>
+          <td align=center class="footer">
+	   <DIV class="header">
+            <A HREF="/index.html">Home</a>
+	   </DIV>
+          </td>
+          <td align=center class="footer">
+	   <DIV class="header">
+	     <a href="mailto:fishadmn@zfin.org">Email ZFIN</a>
+	   </DIV>
+          </td>
+          <td align=center class="footer">
+	   <DIV class="header">
+            <A HREF="/zf_info/dbase/db.html">About ZFIN</a>
+	   </DIV>
+          </td>
+          <td align=center class="footer">
+	   <DIV class="header">
+            <A HREF="/ZFIN/misc_html/tips.html">Helpful Hints</a>
+	   </DIV>
+          </td>
+          <td align=center class="footer">
+	   <DIV class="header">
+            <A HREF="/zf_info/citation.html">Citing ZFIN</a>
+	   </DIV>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>
