@@ -10,9 +10,17 @@ create trigger marker_go_term_evidence_update_trigger
         execute function scrub_char ( 
 			new_mrkrgoev.mrkrgoev_notes )
                 into mrkrgoev_notes,
+	-- insure 'unknown' not be added to marker with known term.
 	execute procedure p_marker_has_goterm (
 			new_mrkrgoev.mrkrgoev_mrkr_zdb_id,
    			new_mrkrgoev.mrkrgoev_go_term_zdb_id),
+
+	-- when known go term is added, 'unknown' should be deleted
+	-- if no 'unknown's, the pub on unknown annotation should be deleted
+	execute procedure p_check_drop_go_unknown (
+			new_mrkrgoev.mrkrgoev_mrkr_zdb_id,
+			new_mrkrgoev.mrkrgoev_go_term_zdb_id),
+
 	execute procedure p_insert_into_record_attribution_tablezdbids (
 			new_mrkrgoev.mrkrgoev_zdb_id,
 			new_mrkrgoev.mrkrgoev_source_zdb_id),
