@@ -1,0 +1,80 @@
+<HTML> 
+
+<?MIBLOCK COND="$(NXST,$OID)">
+<p>
+ERROR -- something bad happened -- no OID passed in!
+<?/MIBLOCK>
+
+<?MIVAR><TITLE>View Blast Data </TITLE><?/MIVAR>
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1
+<?/MISQL>
+
+<?MIVAR NAME=$target_table>anon_marker<?/MIVAR>
+<?MIVAR NAME=$target_table COND="$(>,$(POSITION,$OID,GENE),0)">gene<?/MIVAR>
+
+  <?MISQL COND="$(>,$(POSITION,$OID,GENE),0)" SQL="
+     select gene_name, 'GENE', abbrev, comments 
+     from gene 
+     where zdb_id='$OID';">
+  <?/MISQL>
+
+  <?MISQL COND="$(=,$(POSITION,$OID,GENE),0)" SQL="
+    select marker_name, marker_type, abbrev, comments 
+    from anon_marker 
+    where zdb_id='$OID';">
+  <?/MISQL>
+
+  <?MIVAR NAME=$name>$1<?/MIVAR>
+  <?MIVAR NAME=$marker_type>$2<?/MIVAR>
+  <?MIVAR NAME=$abbrev>$3<?/MIVAR>
+
+<TABLE width=100%><TR><TD bgcolor=#ccccccc>
+<font size=+2><b>Blast Data</b></font>
+</TD></TR></TABLE>
+<p>
+
+<!--------------- Gene name ---------------------->
+<FONT size=+1>
+<?MIBLOCK COND="$(EC,$marker_type,GENE)">
+    	<?MIVAR>
+      		<b>Gene Name: <i>&nbsp;$name</i> </b>
+    	<?/MIVAR>
+<?MIELSE>
+    	<?MIVAR>
+      		<b>$(UPPER,$marker_type): &nbsp; $name </b>
+    	<?/MIVAR>
+<?/MIBLOCK>
+<?MIVAR>
+    	$(IF,$(EC,$marker_type,GENE),"<br><b>Gene Symbol:&nbsp;<i>"$abbrev"</i></b>")
+<?/MIVAR>
+
+</FONT>
+<br>
+
+<!------------------------------------------------->
+ <?MISQL SQL="
+    SELECT distinct blast_results, blast_date
+    FROM blast
+    WHERE '$OID' = blast_mrkr_zdb_id
+    ;">
+    
+    <?MIVAR NAME="$BLAST_DATE">$2<?/MIVAR>
+    <?MIVAR NAME="$BLAST_RESULT">$1<?/MIVAR>
+
+    <?MIBLOCK COND="$(!=,$MI_CURRENTROW,0)">
+      <?MIVAR>
+
+	<b>Blast Date:</b> &nbsp;$BLAST_DATE
+	<br>
+	<b>Blast Result:</b> &nbsp;$BLAST_RESULT
+	<br>
+
+      <?/MIVAR>
+    <?/MIBLOCK>
+  <?/MISQL>
+
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+
+</HTML>

@@ -1,0 +1,126 @@
+<HTML>
+
+<?MIBLOCK COND="$(NXST,$OID)">
+  <p>
+  ERROR -- something bad happened -- no OID passed in!
+<?/MIBLOCK> 
+
+<?MIVAR NAME=$target_table>anon_marker<?/MIVAR>
+<?MIVAR NAME=$target_table COND="$(>,$(POSITION,$OID,GENE),0)">gene<?/MIVAR>
+
+<SCRIPT> <!-- functions for undate--------------------->
+   <?MIVAR COND="$(XST,$UPDATE)">
+	function doit(attr,attr_type,print_name) {
+		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerupdate.apg&OID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name+'&target_table=$target_table');
+	}
+
+	function Delete_listitem(item_name,item_id) {
+		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted&target_table=$target_table');
+	}
+	function new_seqnum() {
+		var dbind=document.updater.seqdb.selectedIndex;
+		var dbname=document.updater.seqdb[dbind].value;
+		var seq_acc=document.updater.seq_acc.value;
+		if (seq_acc != '') {
+  		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value='+dbname+'&new_value='+seq_acc+'&target_table=$target_table');
+  		}
+	}
+  <?/MIVAR>
+</SCRIPT>
+
+
+  <?MISQL COND="$(>,$(POSITION,$OID,GENE),0)" SQL="
+     select gene_name, 'GENE', abbrev, comments 
+     from gene 
+     where zdb_id='$OID';">
+  <?/MISQL>
+
+  <?MISQL COND="$(=,$(POSITION,$OID,GENE),0)" SQL="
+    select marker_name, marker_type, abbrev, comments 
+    from anon_marker 
+    where zdb_id='$OID';">
+  <?/MISQL>
+
+  <?MIVAR NAME=$name>$1<?/MIVAR>
+  <?MIVAR NAME=$marker_type>$2<?/MIVAR>
+  <?MIVAR NAME=$abbrev>$3<?/MIVAR>
+  <?MIVAR NAME=$comments>$4<?/MIVAR>
+
+
+  <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'page_title=View $marker_type') from webPages where ID='aa-secure_navigation.apg';">$1
+  <?/MISQL>
+
+  <!-- If updating, only let owner update anything -->
+  <?MISQL COND="$(XST,$UPDATE)" SQL="select WebExplode(object,'page_title=Update Gene&permission=owns&rtype=$target_table') from webPages where ID='aa-secure_navigation.apg';">$1
+  <?/MISQL>
+
+
+  <?MIBLOCK COND="$(NC,$AUTHORIZED,false)"> <!-- if authorized---------->
+
+	  <!-- title for webpage history ----------->	
+          <?MIBLOCK COND="$(XST,$UPDATE)">
+		<?MIVAR>
+ 			<TITLE>Update Genbank info: $abbrev</title>
+		<?/MIVAR>
+	  <?MIELSE>
+		<?MIVAR>
+ 			<TITLE>View Genebank info: $abbrev</title>
+		<?/MIVAR>
+          <?/MIBLOCK>
+          
+	  <!-- page header display ----------------->
+  	  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+
+
+
+  	   <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=$target_table') from webPages where ID='aa-data_mgr.apg';">$1
+	   <?/MISQL>
+
+           <!------- Main page information ---------------->
+<!------------------------------------------>
+
+<?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
+<TABLE width=100%><TR><TD bgcolor=#ccccccc>
+<FONT SIZE=+2><b>More Seqence Information</b></FONT>
+</TD></TR></TABLE>
+
+<?MIBLOCK COND="$(XST,$UPDATE)">
+<br><form name=updater>
+<b>Add link to Seq DB:</b> &nbsp;
+DBname: Genbank &nbsp;
+Accession:<input type=text size=15 name=seq_acc> 
+<input type=button value="Add it!" onClick=new_seqnum();>
+</form>
+<form>
+<?/MIBLOCK>
+
+<?MIVAR>
+<TABLE width="50%" border=0 bgcolor="$highlight">
+<?/MIVAR>
+<TR>
+<?MISQL SQL="
+  select a.DB_name, conc(conc(b.DB_query,a.acc_num),b.url_suffix), acc_num 
+    from db_link a, foreign_DB b 
+    where a.DB_name = b.DB_name
+      and a.linked_recid = '$OID' 
+      and b.db_name = 'Genbank'
+    order by a.DB_name desc, acc_num;"> 
+
+  <li><?MIVAR>
+   $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$3"')>")<A HREF="$2">$1:$3</A><?/MIVAR>
+
+<?/MISQL>
+
+<?MIBLOCK COND="$(XST,$UPDATE)">
+</form>
+<?/MIBLOCK>
+
+</TR></TABLE><p>
+
+<?/MIBLOCK>
+
+
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+
+</HTML>

@@ -16,6 +16,8 @@ info -- optional value used to pass in additional info
 
 -->
 
+<META HTTP-EQUIV="EXPIRES" CONTENT="-2d">
+
 <!-- If one of the values was an empty string, it won't get successfully
   -- passed to this page. 
   -->

@@ -316,8 +316,21 @@ ERROR -- something bad happened -- no OID passed in!
       </form>
 
       <!-- Throw up the publication info, using the standard display format -->
-      <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-showpubs.apg';">$1<?/MISQL>
+     
+	<?MIVAR>
+	<A HREF=" /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=panels"><b>Publications</b></A>
+  	<?MISQL SQL="
+  		select count(*) 
+  		from record_attribution
+  		where recattrib_data_zdb_id = '$OID'
+    		and get_obj_type(recattrib_source_zdb_id) = 'PUB';
+  		">
+	&nbsp; ($(FIX,$1))
+	<?/MISQL>
 
+
+
+	<?/MIVAR>
 
 
       <?/MIBLOCK> <!-- ends mirowcount = 0 mielse -->
