@@ -28,7 +28,7 @@ FINALTARGETDIR = $(TARGETROOT)/client_apps/Browser
 
 # Use the standard JAVAC_11, and JAVACFLAGS.  Still need to define classpath.
 
-CLASSPATH = $(STAGINGDIR):$(JAVAHOME_11)/lib/classes.zip:$(TOP)/lib/Java:$(JDBCHOME)/lib/ifxjdbc.jar
+CLASSPATH = $(STAGINGDIR):$(JAVAHOME_11)/lib/classes.zip:$(TOP)/lib/Java
 
 IMPORTPATH = $(TARGETROOT)/lib/Java
 NETSCAPEPATH = $(IMPORTPATH)/netscape
