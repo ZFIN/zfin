@@ -1,19 +1,302 @@
 <!-- FILE: SHOWPUBS.HTML -->
 
-<!-- Within the viewers for all of the data types, you always want to do the same thing when it comes to pubs. This file factors out the commonality; everything just webexplodes this file. It assumes the existence of OID, which should be the zdb_id of the data record that you want the pubs for.
-
-ECK 8/30/97. Added sensitivity to UPDATE flag: If UPDATE exists, it tosses up a "Delete" button next to each pub. And added a "Add pub" to both primary and secondary pubs. THESE ASSUME THE EXISTENCE OF "Delete-listitem"  and "doit" functions (see fishview for example) in the viewing page! Obviously these functions should be connected to the "do-<class>update" script.
+<!-- Within the viewers for all of the data types, you always want to do the same thing when it comes to pubs. This file factors out the commonality; everything just webexplodes this file. It assumes the existence of OID, which should be the zdb_id of the data record that you want the pubs for.ECK 8/30/97. Added sensitivity to UPDATE flag: If UPDATE exists, it tosses up a "Delete" button next to each pub. And added a "Add pub" to both primary and secondary pubs. THESE ASSUME THE EXISTENCE OF "Delete-listitem"  and "doit" functions (see fishview for example) in the viewing page! Obviously these functions should be connected to the "do-<class>update" script.
 -->
-<form>
-<table>
-<basefont size= 3>
 
-<h3 align=center>PUBLICATIONS</h3>
+<HTML>
+<HEAD>
+
+<?MIBLOCK COND="$(NXST,$OID)">
+<p>
+ERROR -- something bad happened -- no OID passed in!
+<?/MIBLOCK>
+	
+<?MIVAR COND="$(NXST,$rtype)" NAME=$rtype><?/MIVAR>
+<?MIVAR NAME=$return_page1>aa-markerupdate.apg<?/MIVAR>
+<?MIVAR NAME=$return_page2>aa-do-markerupdate.apg<?/MIVAR>
+<?MIVAR NAME=$target_table>anon_marker<?/MIVAR>
+
+
+
+<?MIVAR>
+$(IF,$(>,$(POSITION,$OID,GENE),0),
+      $(SETVAR,$return_page1,aa-markerupdate.apg)
+      $(SETVAR,$return_page2,aa-do-markerupdate.apg)
+      $(SETVAR,$target_table,gene)
+      )
+
+$(IF,$(>,$(POSITION,$OID,FISH),0),
+      $(SETVAR,$return_page1,aa-fishupdate.apg)
+      $(SETVAR,$return_page2,aa-do-fishupdate.apg)
+      $(SETVAR,$target_table,"")
+      )
+
+$(IF,$(>,$(POSITION,$OID,XPAT),0),
+      $(SETVAR,$return_page1,aa-xpatupdatePubs.apg)
+      $(SETVAR,$return_page2,aa-do-xpatupdatePubs.apg)
+      $(SETVAR,$target_table,expression_pattern)
+      )
+
+$(IF,$(>,$(POSITION,$OID,IMAGE),0),
+       $(SETVAR,$return_page1,aa-imageupdate.apg)
+       $(SETVAR,$return_page2,aa-do-imageupdate.apg)
+       $(SETVAR,$target_table,"")
+       )
+
+<?/MIVAR>
+
+
+ <SCRIPT>
+      <?MIVAR COND="$(XST,$UPDATE)">
+	function doit(attr,attr_type,print_name) {
+		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$return_page1&OID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name+'&target_table=$target_table');
+	}
+
+	function Delete_listitem(item_name,item_id) {
+		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$return_page2&OID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted&target_table=$target_table');
+	}
+
+       <?/MIVAR> 
+ </SCRIPT>
+</HEAD>
+
+<basefont size=2>
+
+<?MIVAR NAME=$userid>GUEST<?/MIVAR>
+<?MIBLOCK COND="$(>,$(POSITION,$OID,IMAGE),0)">
+    <?MIBLOCK COND="$(NXST,$UPDATE)">
+      <?MISQL SQL="
+	select WebExplode(object, 'ownerColumn=fimg_owner_zdb_id&zdbIdColumn=fimg_zdb_id') 
+	  from webPages 
+	  where ID='aa-secure_navigation.apg';">
+	$1
+      <?/MISQL>
+    <?MIELSE>  <!-- If updating, only let owner update anything -->
+      <?MISQL SQL="
+	select WebExplode(object, 
+			  'rtype=fish_image&ownerColumn=fimg_owner_zdb_id&zdbIdColumn=fimg_zdb_id')
+	  from webPages 
+	  where ID='aa-secure_navigation.apg';">
+	$1
+      <?/MISQL>
+    <?/MIBLOCK>
+   
+<?MIELSE>
+      <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'') from webPages where ID='aa-secure_navigation.apg';">$1
+      <?/MISQL>
+
+      <!-- If updating, only let owner update anything -->
+      <?MISQL COND="$(XST,$UPDATE)" SQL="select WebExplode(object,'permission=owns&rtype=$rtype') from webPages where ID='aa-secure_navigation.apg';">$1
+      <?/MISQL>
+<?/MIBLOCK>
+
+
+<!--------------------------------------------->
+
+  <?MIBLOCK COND="$(XST,$UPDATE)">
+        <?MIVAR>
+       		<TITLE>Update Publication list </TITLE>
+       	<?/MIVAR>
+  <?MIELSE>
+        <?MIVAR>
+      		<TITLE>ZFIN Publication list </TITLE>
+    	<?/MIVAR>
+  <?/MIBLOCK>
+
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+  
+  <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=$rtype') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
+
+
+<?MIVAR COND="$(XST,$UPDATE)">
+       <form>
+	<center><font size=+2><input type=button 
+	value=" DONE UPDATING. Back to Viewing! " onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=$rtype')"> </font></center>
+       </form>
+<?/MIVAR>
+
+<form>
+<TABLE width=100%><TR><TD bgcolor=#ccccccc>
+<font size=+2><b>PUBLICATIONS</b></font>
+<?MISQL SQL="
+  select count(*) 
+  from record_attribution
+  where recattrib_data_zdb_id = '$OID'
+    and get_obj_type(recattrib_source_zdb_id) = 'PUB';
+  ">
+($(FIX,$1) total) 
+<?/MISQL>
+</TD></TR></TABLE>
+<p>
+
+<!--------------------------->
+<FONT size=+1>
+<?MIBLOCK COND="$(>,$(POSITION,$return_page1,marker),0)">
+  <?MIVAR NAME=$target_table>anon_marker<?/MIVAR>
+  <?MIVAR NAME=$target_table COND="$(>,$(POSITION,$OID,GENE),0)">gene<?/MIVAR>
+
+  <?MISQL COND="$(>,$(POSITION,$OID,GENE),0)" SQL="
+     select gene_name, 'GENE', abbrev, comments 
+     from gene 
+     where zdb_id='$OID';">
+  <?/MISQL>
+
+  <?MISQL COND="$(=,$(POSITION,$OID,GENE),0)" SQL="
+    select marker_name, marker_type, abbrev, comments 
+    from anon_marker 
+    where zdb_id='$OID';">
+  <?/MISQL>
+
+  <?MIVAR NAME=$name>$1<?/MIVAR>
+  <?MIVAR NAME=$marker_type>$2<?/MIVAR>
+  <?MIVAR NAME=$abbrev>$3<?/MIVAR>
+
+  <?MIBLOCK COND="$(EC,$marker_type,GENE)">
+    	<?MIVAR>
+      		<b>Gene Name: <i>&nbsp;$name</i> </b>
+    	<?/MIVAR>
+  <?MIELSE>
+    	<?MIVAR>
+      		<b>$(UPPER,$marker_type): &nbsp; $name </b>
+    	<?/MIVAR>
+  <?/MIBLOCK>
+  <?MIVAR>
+    	$(IF,$(EC,$marker_type,GENE),"<br><b>Gene Symbol:&nbsp;<i>"$abbrev"</i></b>")
+  <?/MIVAR>
+ 
+<?/MIBLOCK>
+
+
+<?MIBLOCK COND="$(>,$(POSITION,$OID,FISH),0)">
+      <?MISQL SQL="
+	select name, a.abbrev, initcap(line_type), locus
+	  from fish a, OUTER locus b
+	  where a.zdb_id = '$OID'
+	    and b.zdb_id = a.locus;">
+      <?/MISQL>
+
+      <?MIVAR NAME=$name>$1<?/MIVAR>
+      <?MIVAR NAME=$abbrev>$2<?/MIVAR>
+      <?MIVAR NAME=$line_type>$3<?/MIVAR>
+      <?MIVAR NAME=$locus>$4<?/MIVAR>
+      <?MIVAR>
+	  <B> $line_type: &nbsp; </b>
+      <?/MIVAR>
+      <i>
+      <?MIBLOCK COND="$(EC,$line_type,mutant)">
+	  <?MIVAR>
+	   <b> <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$locus"> $name </A></b>
+	  <?/MIVAR>
+      <?MIELSE>
+	  <?MIVAR> $name <?/MIVAR>
+      <?/MIBLOCK>
+	</i>
+	<br>
+      <?MIVAR> 
+	  <b>Abbreviation: &nbsp; <i>$abbrev</i></b>
+      <?/MIVAR>
+
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(>,$(POSITION,$OID,XPAT),0)">
+  <?MIVAR NAME=$COUNT>0<?/MIVAR>
+  <?MISQL SQL="
+     SELECT mrkr_abbrev, mrkr_zdb_id, mrkr_name, mrkr_type
+     FROM marker, marker_label, label, expression_pattern
+     WHERE xpat_zdb_id = '$OID' 
+       AND lbl_zdb_id = xpat_label_zdb_id
+       AND mrkrlbl_label_zdb_id = lbl_zdb_id
+       AND mrkrlbl_marker_zdb_id = mrkr_zdb_id
+     order by 4 desc;
+     ">
+     <?MIVAR COND="$(=,$MI_CURRENTROW,1)">
+     <b> Expression of : &nbsp;
+     <?/MIVAR>
+ 
+     <?MIBLOCK COND=$(AND,$(=,$COUNT,0),$(EC,$4,GENE))>
+       <?MIVAR>
+         <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2"><i>$3($1)</i></a>
+       $(SETVAR,gene_name,$3)
+       $(SETVAR,gene_abbrev,$1)
+       $(SETVAR,gene_id,$2)
+       <?MIVAR NAME=fullname>$gene_name($gene_abbrev)<?/MIVAR>
+       <?/MIVAR> 
+     <?/MIBLOCK>
+
+     <?MIBLOCK COND=$(AND,$(=,$COUNT,0),$(NC,$4,GENE))>
+       <?MIVAR>
+         <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$3</a>
+       $(SETVAR,gene_name,$3)
+       $(SETVAR,gene_abbrev,$1)
+       $(SETVAR,gene_id,$2)
+       <?MIVAR NAME=fullname>$gene_name<?/MIVAR>
+       <?/MIVAR> 
+     <?/MIBLOCK>
+
+     <?MIBLOCK COND=$(AND,$(=,$COUNT,1),$(EC,$4,GENE))>
+       <?MIVAR>
+         , <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2"><i>$3($1)</i></a>
+       $(SETVAR,gene_name,$3)
+       $(SETVAR,gene_abbrev,$1)
+       $(SETVAR,gene_id,$2)
+       <?MIVAR NAME=fullname>$fullname, $gene_name($gene_abbrev)<?/MIVAR>
+       <?/MIVAR> 
+     <?/MIBLOCK>
+
+     <?MIBLOCK COND=$(AND,$(=,$COUNT,1),$(NC,$4,GENE))>
+       <?MIVAR>
+         , <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$3</a>
+       $(SETVAR,gene_name,$3)
+       $(SETVAR,gene_abbrev,$1)
+       $(SETVAR,gene_id,$2)
+       <?MIVAR NAME=fullname>$fullname, $gene_name<?/MIVAR>
+       <?/MIVAR> 
+     <?/MIBLOCK>
+
+     <?MIBLOCK COND=$(=,$COUNT,-1)>
+       <?MIVAR>
+         , <i><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$3($1)</a></i>
+       <?/MIVAR> 
+     <?/MIBLOCK>
+
+     <?MIVAR NAME=$COUNT>1<?/MIVAR>
+  <?/MISQL>
+  </b>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(>,$(POSITION,$OID,IMAGE),0)">
+    <?MISQL SQL="
+       select fimg_fish_zdb_id, get_fish_full_name(fimg_fish_zdb_id)
+         from fish_image 
+        where fimg_zdb_id='$OID';">
+   <?/MISQL>
+   <?MIVAR NAME=$fimg_fish_zdb_id>$1<?/MIVAR>
+   <?MIVAR NAME=$full_fish_name>$2<?/MIVAR>
+
+     <b>Stock:</b> 
+      <?MIBLOCK COND="$(NC,$full_fish_name,UNKNOWN)">
+	<?MIVAR>
+	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$fimg_fish_zdb_id">$full_fish_name</A>
+	<?/MIVAR>	
+      <?MIELSE>
+	<?MIVAR>
+	  $full_fish_name
+	<?/MIVAR>
+      <?/MIBLOCK>
+
+<?/MIBLOCK>
+
+</font>
+
+<!--------------------------------------------------------------------------------------->
+<br>
 
 <?MIVAR COND="$(XST,$UPDATE)">
 <INPUT TYPE=button value="Add/Change" onClick="doit('prim_pub','selection','Add/Change')"> 
 <?/MIVAR>
-<b>Primary Publication:</b><br>
+
+<b>Primary Publication:</b>
+<table>
 <?MISQL SQL="
   select title, zdb_id, year(pub_date) as pyear, authors, source, 
 	 lower(authors)  
@@ -30,14 +313,15 @@ ECK 8/30/97. Added sensitivity to UPDATE flag: If UPDATE exists, it tosses up a 
     </TD>
   </TR>
 <?/MISQL>
-<?MIVAR COND=$(EQ,$MI_ROWCOUNT,0)> <font color="#ff0000">UNPUBLISHED</font><?/MIVAR>
+</table>
+<?MIVAR COND=$(EQ,$MI_ROWCOUNT,0)> <font color="#ff0000">UNPUBLISHED<br></font><?/MIVAR>
 
-<br>
-<TR><TD>
+
 <?MIVAR COND="$(XST,$UPDATE)">
 <INPUT TYPE=button value="Add to" onClick="doit('rel_pub','selection','Add')"> 
 <?/MIVAR> 
-<b>Related Publications:</b><br></TD></TR>
+<b>Related Publications:</b>
+<table>
 <?MISQL SQL="
   select title, zdb_id, year(pub_date) as pyear, authors, source, 
 	 lower(authors)  
@@ -58,3 +342,8 @@ ECK 8/30/97. Added sensitivity to UPDATE flag: If UPDATE exists, it tosses up a 
 <?/MISQL>
 </table>
 </form>
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+
+</HTML>
+

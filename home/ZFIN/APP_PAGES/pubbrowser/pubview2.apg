@@ -13,6 +13,15 @@ function do_curation(act) {
 <?/MIVAR>
 </SCRIPT>
 
+<?MIBLOCK COND="$(NXST,$abbrev)">
+<?MIVAR NAME=$abbrev><?/MIVAR>
+<?/MIBLOCK>
+<?MIBLOCK COND="$(NXST,$fdbname)">
+<?MIVAR NAME=$fdbname><?/MIVAR>
+<?/MIBLOCK>
+<?MIBLOCK COND="$(NXST,$geneid)">
+<?MIVAR NAME=$geneid><?/MIVAR>
+<?/MIBLOCK>
 <?MIBLOCK COND="$(NXST,$OID)">
 <p>
 ERROR -- something bad happened -- no OID passed in!
@@ -65,7 +74,7 @@ ERROR -- something bad happened -- no OID passed in!
 <?MIVAR>
 
 <center> <p>  <FONT SIZE=+2> $title </FONT> <P>
-<B>$authors</B> </font><P>
+<B>$authors</B> <P>
 </center>
 <P>
 
@@ -81,9 +90,18 @@ ERROR -- something bad happened -- no OID passed in!
 <TR>
 <TD>
 <B>CONTACTS:</B>
+<?MIBLOCK COND="$(EC,$authors,ZFIN Staff)">
+<?MISQL SQL=" select name, zdb_id from lab where name = 'ZFIN Database Team'">
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$2">$1</A>
+<?/MISQL>
+
+<?MIELSE>
 <?MISQL SQL="select a.full_name,a.zdb_id from person a, int_person_pub b where source_id=a.zdb_id and target_id='$OID' order by a.full_name;">
+
  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$2">$1</A>,  
 <?/MISQL>
+
+<?/MIBLOCK>
 </TD>
 
 <?MIVAR>
@@ -107,6 +125,31 @@ ERROR -- something bad happened -- no OID passed in!
 <p>
 <B>ABSTRACT:</B> 
 <?MIVAR COND="$(NC,$abstract,NULL)"><br>  $abstract  <?/MIVAR>
+
+
+<?MIBLOCK COND="$(AND,$(NC,$abbrev,$MI_NOVALUE),$(NC,$fdbname,$MI_NOVALUE),$(NC,$geneid,$MI_NOVALUE))">
+  <p>
+  <b>DETAILS:</b>
+  <p>
+  <?MIVAR NAME=first>1<?/MIVAR>	
+  <?MISQL SQL="select goterm_name from go_term
+	       where goterm_go_id = '$goid';">		
+  The GO term <?MIVAR><i><b>$1</b></i><?/MIVAR> associated with <?MIVAR><i><b>$abbrev</b></i><?/MIVAR> was derived from <?MIVAR>$fdbname<?/MIVAR> record (
+  <?/MISQL>
+  <?MISQL SQL="select conc(conc(b.DB_query,a.acc_num),b.url_suffix),a.acc_num 
+                from db_link a, foreign_db b
+	        where linked_recid='$geneid' and a.db_name='$fdbname'
+                      and a.db_name=b.db_name;
+	        ">	
+  <?MIVAR>
+  $(IF,$first,$(SETVAR,$first,0),",")<?/MIVAR>	
+  <?MIVAR><A HREF="$1"> $2</A> <?/MIVAR>
+  <?/MISQl>
+  ).	
+
+<?/MIBLOCK>
+
+
 
 <p>
 <B>ERRATA and NOTES:</B> 
