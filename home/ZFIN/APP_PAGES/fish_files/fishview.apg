@@ -1016,7 +1016,7 @@ Variables Expected:
 	  <p>
 	  <HR width=80%>
 
-	  <p>
+	  <form>
 	  <A NAME="breeding"></a>
 
 	  <h3>LINEAGE AND BREEDING</h3>
@@ -1059,19 +1059,20 @@ Variables Expected:
 	  <?MIVAR COND="$(NC,$segregation,NULL)">$segregation <?/MIVAR>
 	  <?MIVAR COND="$(EC,$segregation,NULL)"> unknown <?/MIVAR> 
 	  </TD> </TR> </TABLE>
-
+          </form>
 
 	<?/MIBLOCK>  <!-- ends EC type mutant -->
 
 
 	<HR width=80%>
-	<p>
+	<form>
 	<?MIVAR COND="$(XST,$UPDATE)">
 	<INPUT TYPE=button value="Update" onClick="doit('comments','textarea','Submitter+comments')"> 
 	<?/MIVAR> 
 
 	<b>Submitter's Comments:</b><?MIVAR COND="$(NC,$comments,NULL)"> $comments <?/MIVAR>
 
+        </form>
 	<HR WIDTH=80%>
 
 
