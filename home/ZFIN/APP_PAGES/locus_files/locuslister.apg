@@ -46,8 +46,8 @@ function show_doc(title,docpath) {
 <basefont size=2>
 </HEAD>
 
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
-
 
 <!-- Main reason for following is to get user info -->
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
@@ -95,7 +95,7 @@ function show_doc(title,docpath) {
   <?MIVAR NAME=$constraintSub>$(IF,$(EC,$doAction,new_locus),or,and) lower(abbrev[1,3])='$(LOWER,$abbrev)')<?/MIVAR>
   <?MIVAR NAME=$locuslstr_locus_constraint>$(IF,$(EC,$doAction,new_locus),or,and) lower(abbrev)='$(LOWER,$abbrev)')<?/MIVAR>
   <?MIVAR NAME=$locuslstr_gene_constraint>$(IF,$(EC,$doAction,new_locus),or,and) mrkr_abbrev = '$(LOWER,$abbrev)')<?/MIVAR>
-<?/MIELSE>
+<?MIELSE>
   <?MIVAR NAME=$locuslstr_locus_constraint>)<?/MIVAR>
   <?MIVAR NAME=$locuslstr_gene_constraint>)<?/MIVAR>
   <?MIVAR NAME=$constraintSub>)<?/MIVAR>
@@ -115,8 +115,6 @@ function show_doc(title,docpath) {
 <center>
   <FONT SIZE=4>Checking proposed name:</font>  
 </center> 
-
-
 
 <b>Checking existing mutations...</b>
 
@@ -368,15 +366,17 @@ $warnings
       </TR>
       <?/MIVAR>
       <TR>
-      <TD colspan=2 valign=top><font size=-1><b>Description</b>:<br>
-      <TEXTAREA NAME=descrip rows=3 cols=60 wrap=virtual>Optional: please include a few lines briefly describing the phenotype of the new allele! </TEXTAREA>
+      <TD colspan=2 valign=top><font size=-1>
+        <b>Description.</b> 
+        Please include a few lines briefly describing the phenotype of the new allele:<br>
+      <TEXTAREA NAME=descrip rows=3 cols=60 wrap=virtual></TEXTAREA>
       </font></TD></TR>
       <TR align=center>
 	<?MIVAR><TD><b>Submitter Name: </b>$ZDB_name</TD><?/MIVAR>
 	<TD><b>Contact Email:</b> 
 	<?MISQL SQL="select email from person where zdb_id='$ZDB_ident';"><?/MISQL>
 	<?MIVAR>
-	  <INPUT TYPE=text NAME=email $(IF,$(NC,$1,null),VALUE=$1)>
+	  <INPUT TYPE=text NAME=email $(IF,$(NE,$1,),VALUE=$1)>
 	<?/MIVAR>
 	</TD>
     </TR>
