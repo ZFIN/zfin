@@ -662,7 +662,7 @@
 
        <?MIVAR>
      	
-    	$(IF,$(AND, $(>,$MI_CURRENTROW,1), $(=,$titledisplay,0)),
+    	$(IF,$(AND, $(>=,$MI_CURRENTROW,1), $(=,$titledisplay,0)),
 		<HR width="80%">
 		<b>GENE EXPRESSION: </b>
 		<!--<ul>-->
@@ -707,7 +707,7 @@
 	<?/MISQL>
 
        <?MIVAR>
-     	
+  	
     	$(IF,$(AND, $(>,$MI_CURRENTROW,1), $(=,$titledisplay,0)),
 		<HR width="80%">
 		<b>GENE EXPRESSION: </b>
