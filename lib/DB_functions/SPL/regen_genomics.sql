@@ -120,6 +120,9 @@ create dba function "informix".regen_genomics() returning integer
     update zdb_flag set zflag_last_modified = CURRENT
 	where zflag_name = "regen_genomics";
 
+    -- crank up the parallelism.
+
+    set pdqpriority high;
 
     ----------------  all_map_names;
 
