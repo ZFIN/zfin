@@ -69,13 +69,15 @@
 
   <!-- NOW BUILD UP THE CONSTRAINT CLAUSE -->
 
-  <?MIVAR NAME=$constraint>$constraint 
-    exists 
-      ( select 'x' 
-          from all_map_names 
-          where a.zdb_id = allmapnm_zdb_id 
-            and allmapnm_name like '$lead_wildcard$(LOWER,$name)%' )
-  <?/MIVAR>
+  <?MIBLOCK COND="$(XST,$name)">
+    <?MIVAR NAME=$constraint>$constraint 
+      exists 
+	( select 'x' 
+	    from all_map_names 
+	    where a.zdb_id = allmapnm_zdb_id 
+	      and allmapnm_name like '$lead_wildcard$(LOWER,$name)%' )
+    <?/MIVAR>
+  <?/MIBLOCK>
 
   <?MIVAR NAME=$previous COND="$(XST,$name)"> and <?/MIVAR>
 
