@@ -30,7 +30,7 @@ begin work;
                length integer
               ) with no log;
 
-!echo 'Load dr_dblink.unl'
+--!echo 'Load dr_dblink.unl'
 	load from dr_dblink.unl insert into db_link_with_dups;
 
 	create temp table pre_db_link (
@@ -62,7 +62,7 @@ begin work;
 				  where lower(trim(db_name))=lower(fdbcont_fdb_db_name)) 
 			where db_name <> "Genbank"; 
 
-!echo 'Genbank has to be treated differently here since the type is unknown'	
+--!echo 'Genbank has to be treated differently here since the type is unknown'	
 	delete from pre_db_link where exists (
 		select d.dblink_zdb_id
 		from db_link d
@@ -85,18 +85,18 @@ begin work;
 select * from pre_db_link
 	where linked_recid not in (select mrkr_zdb_id from marker);
 
-!echo 'Insert into zdb_active_data'
+--!echo 'Insert into zdb_active_data'
 	insert into zdb_active_data 
                   select dblink_zdb_id from pre_db_link p;
 
-!echo 'Insert DBLINK into db_link'
+--!echo 'Insert DBLINK into db_link'
 	insert into db_link (dblink_linked_recid,dblink_acc_num,dblink_info,dblink_zdb_id,
 			     dblink_acc_num_display,dblink_fdbcont_zdb_id,dblink_length)  
 		select linked_recid,acc_num,info,dblink_zdb_id,
 			acc_num_disp,dblink_fdbcont_zdb_id,length 
 		  from pre_db_link p;
 
-!echo 'Attribute db links to the internal pub record'
+--!echo 'Attribute db links to the internal pub record'
 	insert into record_attribution
 		select dblink_zdb_id, "ZDB-PUB-020723-2",''
 		from pre_db_link;
@@ -108,7 +108,7 @@ select * from pre_db_link
 		alias_acc_num varchar(50)
 		) with no log; 
 
-!echo 'Load ac_dalias.unl'
+--!echo 'Load ac_dalias.unl'
 	load from ac_dalias.unl insert into temp_ac_alias;
 	create temp table pre_ac_alias(
 		dalias_zdb_id		varchar(50),
@@ -131,14 +131,14 @@ select * from pre_db_link
         update pre_ac_alias
                 set dalias_zdb_id = get_id("DALIAS");
 
-!echo 'Insert DALIAS into zdb_active_data'
+--!echo 'Insert DALIAS into zdb_active_data'
 	insert into zdb_active_data 
                     select dalias_zdb_id from pre_ac_alias;
 
-!echo 'Insert second AC into data_alias'
+--!echo 'Insert second AC into data_alias'
 	insert into data_alias select * from pre_ac_alias;
 
-!echo 'Attribute second AC to the internal pub record'
+--!echo 'Attribute second AC to the internal pub record'
 	insert into record_attribution 
                select dalias_zdb_id, "ZDB-PUB-020723-2",''
 	       from pre_ac_alias;
@@ -151,7 +151,7 @@ select * from pre_db_link
                   gnalias_gname       varchar(120)
                 )with no log;
 
-!echo 'Load gn_dalias.unl'
+--!echo 'Load gn_dalias.unl'
         load from gn_dalias.unl insert into gn_dalias_with_dups;
         create temp table pre_gn_dalias (
                   dalias_zdb_id varchar(50),
@@ -175,17 +175,17 @@ select * from pre_db_link
         update pre_gn_dalias
                 set dalias_zdb_id = get_id("DALIAS");
 
-!echo 'Insert DALIAS into zdb_active_data'
+--!echo 'Insert DALIAS into zdb_active_data'
         insert into zdb_active_data
                  select dalias_zdb_id from pre_gn_dalias;
 select * from pre_gn_dalias where dalias_data_zdb_id not in (
 	select zactvd_zdb_id from zdb_active_data);
 
-!echo 'Insert GN into data_alias'
+--!echo 'Insert GN into data_alias'
         insert into data_alias 
                         select * from pre_gn_dalias;
 
-!echo 'Attribute GN to the internal pub record'
+--!echo 'Attribute GN to the internal pub record'
         insert into record_attribution 
                 (recattrib_data_zdb_id, recattrib_source_zdb_id)
                 select gn.dalias_zdb_id,"ZDB-PUB-020723-2"
@@ -209,7 +209,7 @@ select * from pre_gn_dalias where dalias_data_zdb_id not in (
 		goterm_id  varchar(10)
 	)with no log;
 
-!echo 'Load sp_mrkrgoterm.unl: spkwtogo translation table'
+--!echo 'Load sp_mrkrgoterm.unl: spkwtogo translation table'
 	load from sp_mrkrgoterm.unl insert into spkw_goterm_with_dups;
 	create index spkw_goterm_with_dups_keyword_index
 		on spkw_goterm_with_dups (sp_kwd);
@@ -220,10 +220,10 @@ select * from pre_gn_dalias where dalias_data_zdb_id not in (
 		goterm_id  varchar(10)
 		)with no log;
 
-!echo 'Load ip_mrkrgoterm.unl: iptogo translation table'
+--!echo 'Load ip_mrkrgoterm.unl: iptogo translation table'
 	load from ip_mrkrgoterm.unl insert into ip_goterm_with_dups;
 
-!echo 'Load ec_mrkrgoterm.unl: ectogo translation table'
+--!echo 'Load ec_mrkrgoterm.unl: ectogo translation table'
 
 	create temp table ec_goterm_with_dups (
 		ec_acc  varchar(20),
@@ -233,13 +233,13 @@ select * from pre_gn_dalias where dalias_data_zdb_id not in (
 
 	load from ec_mrkrgoterm.unl insert into ec_goterm_with_dups;
 
-!echo ' load in information of keywords with specific S-P record'
+--!echo ' load in information of keywords with specific S-P record'
 	create temp table sp_kwd (
 		mrkr_zdb_id varchar(50),
 		sp_kwd      varchar(80)
 		)with no log;
 
-!echo 'Load kd_spkeywd.unl'
+--!echo 'Load kd_spkeywd.unl'
 	load from kd_spkeywd.unl insert into sp_kwd;
 
 
@@ -253,21 +253,21 @@ select * from pre_gn_dalias where dalias_data_zdb_id not in (
 		mrkrgoev_ref		varchar(80)	 
 	)with no log;
 
-!echo 'Load spkw'
+--!echo 'Load spkw'
 	insert into pre_marker_go_evidence (mrkr_zdb_id, go_zdb_id, mrkrgoev_source, mrkrgoev_ref)
 		select distinct sk.mrkr_zdb_id, goterm_zdb_id, "ZDB-PUB-020723-1", "ZFIN SP keyword 2 GO"
 		  from sp_kwd sk,  spkw_goterm_with_dups sg, go_term
 		 where sk.sp_kwd = sg.sp_kwd
 		   and goterm_go_id = sg.goterm_id;
 
-!echo 'Load intepro'
+--!echo 'Load intepro'
 	insert into pre_marker_go_evidence (mrkr_zdb_id, go_zdb_id, mrkrgoev_source, mrkrgoev_ref)
 		select distinct db.linked_recid, goterm_zdb_id, "ZDB-PUB-020724-1", "ZFIN InterPro 2 GO"
 		  from pre_db_link db, ip_goterm_with_dups ip, go_term
 	 	 where db.acc_num = ip.ip_acc
 		   and goterm_go_id = ip.goterm_id;
 	
-!echo 'Load ec'
+--!echo 'Load ec'
         insert into pre_marker_go_evidence (mrkr_zdb_id, go_zdb_id, mrkrgoev_source, mrkrgoev_ref)
 		select distinct db.linked_recid, goterm_zdb_id, "ZDB-PUB-031118-3", "ZFIN EC acc 2 GO"
 		from pre_db_link db, ec_goterm_with_dups ec, go_term
@@ -278,11 +278,11 @@ select * from pre_gn_dalias where dalias_data_zdb_id not in (
 	update pre_marker_go_evidence set mrkrgoev_zdb_id = get_id ("MRKRGOEV");
 	update pre_marker_go_evidence set mrkrgoev_evidence_code = "IEA";
 
-!echo 'these 3 have term name "* unknown", we donot want to include'
+--!echo 'these 3 have term name "* unknown", we donot want to include'
         delete from pre_marker_go_evidence where go_zdb_id in 
 		(select goterm_zdb_id from go_term where goterm_name like "% unknown");
 
-!echo 'if a known go term is assigned to the same marker that has an unknown go term, delete the unknown one'
+--!echo 'if a known go term is assigned to the same marker that has an unknown go term, delete the unknown one'
 	delete from zdb_active_data where zactvd_zdb_id in 
 				      (	select m.mrkrgoev_zdb_id 
 					  from marker_go_term_evidence m, go_term u,
@@ -297,11 +297,11 @@ select * from pre_gn_dalias where dalias_data_zdb_id not in (
 
 
 
-!echo 'Insert MRKRGOEV into zdb_active_data'
+--!echo 'Insert MRKRGOEV into zdb_active_data'
 	insert into zdb_active_data
 		select mrkrgoev_zdb_id from pre_marker_go_evidence;
 
-!echo 'Insert into marker_go_term_evidence'
+--!echo 'Insert into marker_go_term_evidence'
 	insert into marker_go_term_evidence(mrkrgoev_zdb_id,mrkrgoev_mrkr_zdb_id, mrkrgoev_go_term_zdb_id,
 				mrkrgoev_source_zdb_id, mrkrgoev_evidence_code,mrkrgoev_notes,
 				mrkrgoev_date_entered,mrkrgoev_date_modified,mrkrgoev_contributed_by,
@@ -327,7 +327,7 @@ select * from pre_gn_dalias where dalias_data_zdb_id not in (
                 cc_note          varchar(255)
         )with no log;
 
-!echo 'Load cc_external.unl'
+--!echo 'Load cc_external.unl'
         load from cc_external.unl insert into temp_mrkr_cc;
 
         create temp table pre_external_note(
@@ -342,15 +342,15 @@ select * from pre_gn_dalias where dalias_data_zdb_id not in (
                         set extnote_zdb_id = get_id("EXTNOTE");
 
 
-!echo 'Insert EXTNOTE into zdb_active_data'
+--!echo 'Insert EXTNOTE into zdb_active_data'
         insert into zdb_active_data
                 select extnote_zdb_id from pre_external_note;
 
-!echo 'Insert into external_note'
+--!echo 'Insert into external_note'
         insert into external_note
                 select extnote_zdb_id, extnote_note  from pre_external_note;
 
-!echo 'Attribute EXTNOTE to the internal pub record'
+--!echo 'Attribute EXTNOTE to the internal pub record'
         insert into record_attribution
                 select extnote_zdb_id, "ZDB-PUB-020723-2",''
                 from pre_external_note;
@@ -367,7 +367,7 @@ select * from pre_gn_dalias where dalias_data_zdb_id not in (
                 from temp_mrkr_cc t, pre_external_note e
                 where t.cc_note = e.extnote_note_file;
 
-!echo 'Insert into data_external_note'
+--!echo 'Insert into data_external_note'
         insert into data_external_note (dextnote_data_zdb_id, dextnote_extnote_zdb_id)
                         select distinct * from data_external_note_with_dups;
 
