@@ -88,6 +88,12 @@ requested from publication page for related data list.
 
   <?MIELSE>
  
+   <?MISQL SQL="
+      select dbinfo('sessionid') 
+        from single;">
+      <?MIVAR NAME=$mrkrsel_session_id>$1<?/MIVAR>
+   <?/MISQL>
+
    <?MIVAR COND="$(NXST,$lg)" NAME=$lg>0<?/MIVAR>
 
    <?MICOMMENT>when called from publication page, $type is passes in 
@@ -146,12 +152,6 @@ requested from publication page for related data list.
     <?MIELSE>
 	<?MIVAR NAME=$constraint> mrkr_type not in (select mtgrpmem_mrkr_type from marker_type_group_member where mtgrpmem_mrkr_type_group ='SEARCH_SEG')<?/MIVAR>
     <?/MIBLOCK>
-
-    <?MISQL SQL="
-      select dbinfo('sessionid') 
-        from single;">
-      <?MIVAR NAME=$mrkrsel_session_id>$1<?/MIVAR>
-    <?/MISQL>
 
     <!---------------------------------------------------------------------->
     <?MIBLOCK COND="$(XST,$input_name)">
