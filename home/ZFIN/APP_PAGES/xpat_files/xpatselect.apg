@@ -510,7 +510,7 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 <!--       INNER LOOP CREATES A TABLE ROW FOR EACH PROBE  -->
 
 <?MIBLOCK COND="$(XST,$query_grp_by)">
-  <?MIVAR NAME=$query_grp_by>$query_grp_by, mrkr_name, mrkr_abbrev, mrkr_type, mrkr_abbrev_order<?/MIVAR> 
+  <?MIVAR NAME=$query_grp_by>$query_grp_by, mrkr_name, mrkr_abbrev, mrkr_type, mrkr_abbrev_order, xpat_direct_submission_date<?/MIVAR> 
 <?/MIBLOCK>
 
 <!--***-->
