@@ -24,7 +24,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps
 
-SUBDIRS = javaserver sysexecs
+SUBDIRS = data_transfer javaserver sysexecs
 
 
 # ---------------  Production Rules  ------------------------------------
