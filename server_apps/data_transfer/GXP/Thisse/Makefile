@@ -19,7 +19,7 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/GXP/Thisse
 
 STATICS = README thisseData2Unl.sh parseThisse.pl nameClone.pl \
-	get_annotation_txt.r
+	get_annotation_txt.r getStat4Load.sql
  
 
 
