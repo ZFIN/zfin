@@ -1,8 +1,9 @@
-To: aprilm@uoneuro.uoregon.edu, dlains@uoneuro.uoregon.edu, becky@uoneuro.uoregon.edu, mason@uoneuro.uoregon.edu
+To: aprilm@uoneuro.uoregon.edu, dlains@uoneuro.uoregon.edu, becky@uoneuro.uoregon.edu, cleeton@uoneuro.uoregon.edu, mason@uoneuro.uoregon.edu
 From: zirc@darkwing.uoregon.edu
 Subject: [required_requesterName]'s request for Zebrafish Books
 
 **************************************** 
+quantity:[required_zfBooksQuantity]
 ---
 ---
 Name:
@@ -62,10 +63,10 @@ Bill To Address:
 [required_BillToAddress]
 ---
 Bill To Grant Number:
-[required_grantNumber]
+[grantNumber]
 ---
 Bill To Funding Organization:
-[required_grantOrganization]
+[grantOrganization]
 ---
 Billing Preference:
 [billingPreference]
