@@ -20,8 +20,8 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/news
 
-STATICS = bluline.gif icon.jpg jobs.html mtgs.html poster.jpg siteNews.html
-
+STATICS = bluline.gif icon.jpg jobs.html mtgs.html poster.jpg siteNews.html \
+	  Texas.doc Texas.pdf
 
 
 # ---------------  Production Rules  ------------------------------------
