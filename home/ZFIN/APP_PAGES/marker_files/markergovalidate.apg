@@ -60,16 +60,37 @@ EXPECTED VARS:
       <?/MIBLOCK>
 	
       <?MIBLOCK COND="$(OR,$(EC,$goterm_id,0005554),$(EC,$goterm_id,0000004),$(EC,$goterm_id,0008372))">
-	<script><?MIVAR>
-	   window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$return_page&OID=$return_id&go_id=$value&go_term=$goterm_name&evidence_code=ND&pub_id=ZDB-PUB-031118-1'); <?/MIVAR>
-        </script>	
+
+        <?MICOMMENT> marker_go_term_evidence table has insert trigger check and make sure that no "unknown" go term is to be assigned to the same marker which already have a known term in the same ontology category. But we still want to add it to the webpage so that to get a nice alert message.<?/MICOMMENT> 
+        <?MIVAR COND="$(EC,$goterm_id,0005554)" NAME=$ontology>Molecular Function<?/MIVAR>
+        <?MIVAR COND="$(EC,$goterm_id,0000004)" NAME=$ontology>Biological Process<?/MIVAR>
+        <?MIVAR COND="$(EC,$goterm_id,0008372)" NAME=$ontology>Cellular Component<?/MIVAR>
+     
+        <?MISQL SQL="
+		select mrkrgoev_zdb_id
+                  from marker_go_term_evidence, go_term
+                 where mrkrgoev_mrkr_zdb_id = '$return_id'
+                   and mrkrgoev_go_term_zdb_id = goterm_zdb_id
+		   and goterm_go_id <>'$goterm_id'
+ 		   and goterm_ontology = '$ontology' ;">
+        <?/MISQL>
+        <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+	    <script>
+	 	window.alert("There is already a known GO term in the same ontology for the gene.")
+	        <?MIVAR>window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$return_page&OID=$return_id&go_id=$value'); <?/MIVAR>
+            </script>
+        <?MIELSE>
+	    <script><?MIVAR>
+	        window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$return_page&OID=$return_id&go_id=$value&go_term=$goterm_name&evidence_code=ND&pub_id=ZDB-PUB-031118-1'); <?/MIVAR>
+            </script>
+         <?/MIBLOCK>  
+	
       <?MIELSE>
         <script><?MIVAR>
 	   window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$return_page&OID=$return_id&go_id=$value&go_term=$goterm_name'); <?/MIVAR>
         </script>
       <?/MIBLOCK>	
 
-      <?MICOMMENT> marker_go_term_evidence table has insert trigger check and make sure that no "unknown" go term is to be assigned to the same marker which already have a known term in the same ontology category.<?/MICOMMENT> 
 
    <?/MIBLOCK>  <!-- end of goid validataion -->
 
