@@ -28,7 +28,7 @@ IMAGE_FUNCS = get_image_stats.sql
 PUB_FUNCS   = get_pub_mini_ref.sql
 REGEN_FUNCS = regen_anatomy.sql regen_fishsearch.sql regen_genomics.sql \
 		regen_oevdisp.sql get_date_from_id.sql
-ZDB_FUNCS   = get_obj_name.sql
+ZDB_FUNCS   = get_obj_name.sql zdb_date.sql
 
 
 # Some of the stage functions call other stage functions.  Therefore
