@@ -454,18 +454,19 @@ create dba function "informix".regen_genomics() returning integer
 
 
 
-    -- Get the aliases for marker, fish and locus.
+    -- Get the first class aliases for marker
 
     insert into all_m_names_new 
 	(allmapnm_name, allmapnm_zdb_id, allmapnm_significance)
-      select distinct lower(mrkrali_marker_name_alias), 
-	     mrkrali_marker_zdb_id, 5
-	from marker_alias
-	where not exists
+      select distinct lower(dalias_alias), dalias_data_zdb_id, 5
+	from data_alias, marker
+	where mrkr_zdb_id = dalias_data_zdb_id
+	  and dalias_significance = 1
+	  and not exists
 	      ( select * 
 		  from all_m_names_new an
-		  where lower(mrkrali_marker_name_alias) = an.allmapnm_name
-		    and mrkrali_marker_zdb_id = an.allmapnm_zdb_id );
+		  where lower(dalias_alias) = an.allmapnm_name
+		    and dalias_data_zdb_id = an.allmapnm_zdb_id );
 
 
 
