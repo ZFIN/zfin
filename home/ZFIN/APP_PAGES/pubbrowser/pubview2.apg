@@ -120,7 +120,6 @@ ERROR -- something bad happened -- no OID passed in!
 
 <?MIVAR COND="$(NC,$keywords,NULL)"><B>KEYWORDS:</B> $keywords <p><?/MIVAR>
 
-
 <?MIVAR COND="$(NC,$accession_no,NULL)">
   <b>PubMed:</B> 
   <?MIBLOCK COND="$(ISINT,$accession_no)">
@@ -132,6 +131,7 @@ ERROR -- something bad happened -- no OID passed in!
   <?/MIBLOCK>
   <p>
 <?/MIVAR>
+
 
 <?MIVAR COND="$(EC,$AUTHORIZED,root)">
   <B>FILE:</B>
@@ -167,7 +167,7 @@ ERROR -- something bad happened -- no OID passed in!
   <?MIVAR>
   $(IF,$first,$(SETVAR,$first,0),",")<?/MIVAR>	
   <?MIVAR><A HREF="$1"> $2</A> <?/MIVAR>
-  <?/MISQl>
+  <?/MISQL>
   ).	
 
 <?/MIBLOCK>
@@ -185,7 +185,7 @@ ERROR -- something bad happened -- no OID passed in!
       ; ">
 <?/MISQL> 
 <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
-<li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-geneselect.apg&pubId=$OID&type=gene">Genes</a> &nbsp; ($MI_ROWCOUNT)
+<li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&pubId=$OID&type=gene">Genes</a> &nbsp; ($MI_ROWCOUNT)
 <?/MIVAR> 
 
 <?MISQL SQL="
@@ -217,13 +217,12 @@ ERROR -- something bad happened -- no OID passed in!
 	select count(distinct lnkgmem_member_zdb_id)
 	  from record_attribution, linkage_member
 	 where recattrib_source_zdb_id = '$OID'
-	  and  recattrib_data_zdb_id like 'ZDB-LINK-%'
 	  and  recattrib_data_zdb_id = lnkgmem_linkage_zdb_id
 	  ;">
 <?/MISQL>
 
 <?MIVAR COND="$(>,$1,0)">
-<li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&pubId=$OID">Mapping Data</a> &nbsp; ($(FIX,$1))
+<li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&pubId=$OID&type=mapped">Mapping Data</a> &nbsp; ($(FIX,$1))
 <?/MIVAR>
 
 
