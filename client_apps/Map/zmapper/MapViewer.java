@@ -17,7 +17,7 @@ import java.lang.*;
 public class MapViewer extends Canvas {
 
 	MarkerBuilder MB; //fetches and builds Marker objects
-	Hashtable BBTable; //Maps panel_name -> BackBone object
+	Hashtable BBTable; //Maps panel_name + OR_lg -> BackBone object
 
 	//String query_string;
 	Vector QueryStrings;
@@ -186,15 +186,15 @@ public class MapViewer extends Canvas {
 				
 			}
 			
-			if (BBTable.get(M.getTarget_abbrev()) == null) { //new BackBone
+			if (BBTable.get(M.getTarget_abbrev()+M.getOR_lg()) == null) { //new BackBone
 				BB = new BackBone(M.getTarget_abbrev(), M.getOR_lg(), M.getMetric(), watermark_t);
 				if (PO != null)
 					if (PO.get(M.getTarget_abbrev()) != null)
 						BB.setDisp_order(((Integer)PO.get(M.getTarget_abbrev())).intValue());
-				BBTable.put(M.getTarget_abbrev(), BB);
+				BBTable.put(M.getTarget_abbrev() + M.getOR_lg(), BB);
 				BB.addMarker(M);
 			} else {
-				BB = (BackBone) BBTable.get(M.getTarget_abbrev());
+				BB = (BackBone) BBTable.get(M.getTarget_abbrev()+M.getOR_lg());
 				BB.addMarker(M);
 			}
 		}
@@ -366,29 +366,19 @@ public class MapViewer extends Canvas {
 	
 
 	public Enumeration elements() 	{
-		Vector Results = new Vector(BBTable.size());
-		BackBone BB, rBB;
-		
+		Vector Results = new Vector(PO.size() );
+		BackBone BB;
 		BackBone EmptyBB = new BackBone();
-		rBB = EmptyBB;
 		if (panel_order != null) {
 			if (Panels == null) {
-				Enumeration POE;
-				int j;
-				for (int i = 0 ; i < BBTable.size() ; i++) {
-					j = 100;
-					POE = BBTable.elements();
-					while (POE.hasMoreElements()) {
-						BB = (BackBone)POE.nextElement();
-						if ((BB.getDisp_order() >= i) && (BB.getDisp_order() <= j)) {
-							j = BB.getDisp_order();
-							rBB = BB;
-							//System.out.println("i: " + i + ", j: " + j + ", rBB: " + rBB);
-						}
-					}	
-					Results.addElement(rBB);
+				for (int i = (PO.size()-1) ; i >= 0 ; i--)
+					Results.addElement(EmptyBB);
+
+				Enumeration POE = BBTable.elements();
+				while (POE.hasMoreElements()) {
+					BB = (BackBone)POE.nextElement();
+					Results.setElementAt(BB,BB.getDisp_order()-1);
 				}
-				
 				this.Panels = Results;
 			} else { Results = this.Panels; }
 		
