@@ -39,7 +39,6 @@
 <?MIVAR COND="$(NXST,$chrom_num)" NAME=$chrom_num>0<?/MIVAR>
 <?MIVAR COND="$(NXST,$mutagen)" NAME=$mutagen>any<?/MIVAR>
 <?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>phenotype<?/MIVAR>
-<?MIVAR COND="$(NXST,$preselected)" NAME=$preselected><?/MIVAR>
 <?MIVAR COND="$(NXST,$selected_separator)" NAME=$selected_separator>and<?/MIVAR>
 
 <?MIVAR NAME=$target_table>fish_search a <?/MIVAR>
@@ -157,8 +156,9 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
 <?MIVAR COND="$(XST,$anon1)"><input type=hidden name=anon1 value="$anon1"><?/MIVAR>
 <?MIVAR COND="$(XST,$anon1text)"><input type=hidden name=anon1text value="$anon1text"><?/MIVAR>
 <?MIVAR COND="$(XST,$nav_abbrev)"><input type=hidden name=nav_abbrev value="$nav_abbrev"><?/MIVAR>
-<?MIVAR COND="$(XST,$preselected)"><input type=hidden name=preselected value="$preselected"><?/MIVAR>
+<?MIVAR COND="$(XST,$structures)"><input type=hidden name=structures value="$structures"><?/MIVAR>
 <?MIVAR COND="$(XST,$selected_separator)"><input type=hidden name=selected_separator value="$selected_separator"><?/MIVAR>
+
 
 <center>
 <FONT SIZE=4>Search Mutant Lines: Result Summary</font><br>
@@ -201,6 +201,7 @@ Options:
 
 <TH> </TH><TH>Allele [previous names]</TH> <TH>Locus (abbrev) [previous names]</TH> <TH>Gene</TH> <TH>Mut. Type</TH> <TH>LG</TH> <TH>Location</TH> <TH> </TH>
 
+
 <?MISQL SQL="select distinct name, fish_id, abbrev, allele, chrom_change, chrom_num,locus,gene_abbrev,gene_id from $target_table where line_type='mutant' $mut_constraint $order_by;" MAXROWS=$limit>
 <?MIVAR NAME=$gene_id>$9<?/MIVAR>
 <?MIVAR NAME=$gene_abbrev>$8<?/MIVAR>
@@ -208,7 +209,7 @@ Options:
 <?MIVAR NAME=$chromchange>$5<?/MIVAR>
 <?MIVAR NAME=$chromnum>$6<?/MIVAR>
 <?MIVAR NAME=$locus>$7<?/MIVAR>
-<?MIVAR NAME=$allele>$4<?/MIVAR>
+<?MIVAR NAME=$q_allele>$4<?/MIVAR>
 <?MIVAR NAME=$fish_id>$2<?/MIVAR>
 
 
@@ -231,7 +232,7 @@ $(IF,$(=,$MI_CURRENTROW,1),"<TR><TD colspan=8> <HR size=5> </TD> </TR>")
 $(IF,$(XST,$return_rec),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$fish_id" TARGET=content>SELECT</A>") 
 </TD>
 <TD valign=top> 
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$fish_id" TARGET=content>$allele</A>
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$fish_id" TARGET=content>$q_allele</A>
 
 <!-- allele_name contains all names pull aliases only -->
 <?MISQL SQL="select distinct alleali_allele_name_alias from allele_alias , fish_search where  fish_id = '$2' and alleali_alt_zdb_id = alt_zdb_id;">
@@ -292,13 +293,13 @@ $(IF,$(XST,$return_rec),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do
 
     <!-- create view map buttons -->
     <?MIVAR>
-      <form method=post  name="$allele" target="content" action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi">
+      <form method=post  name="$q_allele" target="content" action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi">
         <input type=hidden name=view_map value="view_map">
         <input type=hidden name=userid value=$userid>
         <input type=hidden name=OID value=$fish_id>
         <input type=hidden name=MGH value=1>  <!-- we currently display "mapped" mutants on MGH panel -->
         <TR><TD> </TD><TD> </TD><TD> </TD>
-        <TD align=left><font size=1><input type=button value='VIEW MERGED MAP' name=view_merge_map onClick="document.$allele.action='/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi';document.$allele.submit();"></TD><TD>&nbsp;</TD><TD align=left><font size=1><input type=submit value='VIEW INDIVIDUAL MAPS' name=view_map ></TD></TR>
+        <TD align=left><font size=1><input type=button value='VIEW MERGED MAP' name=view_merge_map onClick="document.$q_allele.action='/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi';document.$q_allele.submit();"></TD><TD>&nbsp;</TD><TD align=left><font size=1><input type=submit value='VIEW INDIVIDUAL MAPS' name=view_map ></TD></TR>
       </form>
     <?/MIVAR>   
 
@@ -364,21 +365,34 @@ $(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|
 <!-- startframes.apg will pass variables on to appropriate page -->
 <!-- don't want a tile if got here via the accessionlister  -->
 <?MIBLOCK COND="$(AND,$(NXST,$accession),$(NC,$line_type,wild_type))">
-<?MIVAR NAME=page_title>Find MUTANT<?/MIVAR>
-<?MIVAR NAME=navtile>true<?/MIVAR>
-<?MIVAR COND="$(NXST,$fname)" NAME=$fname><?/MIVAR>
-<?MIVAR COND="$(NXST,$allele)" NAME=$allele><?/MIVAR>
-<?MIVAR COND="$(NXST,$nav_abbrev)" NAME=$nav_abbrev><?/MIVAR>
-<?MIVAR COND="$(NXST,$anon1text)" NAME=$anon1text><?/MIVAR>
-<?MIVAR COND="$(NXST,$knowngene)" NAME=$knowngene><?/MIVAR>
-<?MIVAR COND="$(XST,$preselected)" NAME=$preselected DELIMIT=" " REPLACE="8">$preselected<?/MIVAR>
-<?MIVAR>
-<SCRIPT>
-var page_id=top.content.location.href+'&navtile=$navtile&fname=$fname&chrom_change=$chrom_change&chrom_num=$chrom_num&mutagen=$mutagen&anon1=$anon1&anon1text=$anon1text&allele=$allele&abbrev=$nav_abbrev&line_type=$line_type&knowngene=$knowngene&preselected=$preselected&selected_separator=$selected_separator';
-top.update_hist(page_id,"$page_title");
-top.controls.location.reload(true);
-</SCRIPT>
-<?/MIVAR>
+  <?MIVAR NAME=page_title>Find MUTANT<?/MIVAR>
+  <?MIVAR NAME=navtile>true<?/MIVAR>
+  <?MIVAR COND="$(NXST,$fname)" NAME=$fname><?/MIVAR>
+  <?MIVAR COND="$(NXST,$allele)" NAME=$allele><?/MIVAR>
+  <?MIVAR COND="$(NXST,$nav_abbrev)" NAME=$nav_abbrev><?/MIVAR>
+  <?MIVAR COND="$(NXST,$anon1text)" NAME=$anon1text><?/MIVAR>
+  <?MIVAR COND="$(NXST,$knowngene)" NAME=$knowngene><?/MIVAR>
+
+  <SCRIPT>
+    <?MIBLOCK COND="$(XST,$structures)">
+      <?MIVAR>
+        var page_id=top.content.location.href+'&structures=$structures&navtile=$navtile&fname=$fname&chrom_change=$chrom_change&chrom_num=$chrom_num&mutagen=$mutagen&anon1=$anon1&anon1text=$anon1text&allele=$allele&abbrev=$nav_abbrev&line_type=$line_type&knowngene=$knowngene&selected_separator=$selected_separator';
+      <?/MIVAR>
+    <?/MIBLOCK>
+
+    <?MIBLOCK COND="$(NXST,$structures)">
+      <?MIVAR>
+        var page_id=top.content.location.href+'&navtile=$navtile&fname=$fname&chrom_change=$chrom_change&chrom_num=$chrom_num&mutagen=$mutagen&anon1=$anon1&anon1text=$anon1text&allele=$allele&abbrev=$nav_abbrev&line_type=$line_type&knowngene=$knowngene';
+      <?/MIVAR>
+    <?/MIBLOCK>
+
+    <?MIVAR>
+      top.update_hist(page_id,"$page_title");
+      top.controls.location.reload(true);
+    <?/MIVAR>
+
+  </SCRIPT>
+
 <?/MIBLOCK>
 
 </HTML>

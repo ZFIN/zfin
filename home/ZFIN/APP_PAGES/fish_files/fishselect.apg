@@ -7,10 +7,38 @@
 
 function updateList() {
 
-      document.BrowserForm.selected.value=document.Browser.getList();
-      document.BrowserForm.preselected.value=document.Browser.getList('9');
-      document.BrowserForm.selected_separator.value=document.Browser.getSelectedSeparator();
+      document.BrowserForm.selected.value=getList();
+      document.BrowserForm.selected_separator.value=getSelectedSeparator();
 }
+
+function getSelectedSeparator() {
+	
+	if (document.BrowserForm.selected_sep_box[0].checked) {
+		return document.BrowserForm.selected_sep_box[0].value;
+	} else if (document.BrowserForm.selected_sep_box[1].checked) {
+		return document.BrowserForm.selected_sep_box[1].value;
+	}
+}
+
+function getList() {
+var found_it;
+var pattern = /Click/;
+
+          results = '';
+          if ( found_it = pattern.exec(document.BrowserForm.structure_list.options[0].text) == null) {
+            pre = " (a.pheno_keywords like '%;";
+	    post = ";%')";
+	    i = document.BrowserForm.structure_list.options.length - 1;
+	    while (i >= 0 ) {
+		  results = results + pre + document.BrowserForm.structure_list.options[i].text + post;
+		  if (i != 0) { results = results + " " + getSelectedSeparator() + " "; }
+
+		  i--;
+          }
+	}
+	return results;
+}
+
 
 <?MIVAR>
 function start_help(anchor) {
@@ -34,7 +62,7 @@ function call_reset() {
 	document.BrowserForm.mutagen.selectedIndex = 0;
 	document.BrowserForm.anon1.selectedIndex = 0;
 	document.BrowserForm.knowngene.checked = false;
-	document.BrowserForm.preselected.value = "";
+	document.BrowserForm.structures.value = "";
         document.BrowserForm.selected_separator.value = "and";
 	document.Browser.clear();
 }
@@ -46,14 +74,12 @@ function call_reset() {
 <basefont size=2>
 
 <form name="BrowserForm" method=post TARGET="pbrowser" 
-onSubmit="<?MIVAR COND="$(NOT,$(AND,$(>,$(POSITION,$HTTP_USER_AGENT,Mac),0),$(>,$(POSITION,$HTTP_USER_AGENT,MSIE),0),$(NC,$line_type,wild_type)))">updateList();<?/MIVAR>"
- action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+  onSubmit="updateList();"
+  action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 
 
 <?MIVAR COND="$(NXST,$line_type)" NAME=$line_type>NULL<?/MIVAR>
 <?MIVAR COND="$(NXST,$selected_separator)" NAME=$selected_separator>and<?/MIVAR>
-<?MIVAR COND="$(NXST,$preselected)" NAME=$preselected><?/MIVAR>
-<?MIVAR COND="$(XST,$preselected)" NAME=$preselected DELIMIT="8" REPLACE=" ">$preselected<?/MIVAR>
 <?MIVAR COND="$(NXST,$chrom_num)" NAME=$chrom_num>0<?/MIVAR>
 <?MIVAR COND="$(NXST,$mutagen)" NAME=$mutagen>any<?/MIVAR>
 <?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>phenotype<?/MIVAR>
@@ -75,6 +101,8 @@ onSubmit="<?MIVAR COND="$(NOT,$(AND,$(>,$(POSITION,$HTTP_USER_AGENT,Mac),0),$(>,
 	<A HREF="javascript:start_help('allele')"><b>Allele:</b> </A>
 	<input type=text name=allele size=5 ></font></TD>
 <?/MIVAR>
+
+
 <!--  assign navtile value to allele - can not do with a value="allele" in input statement - reset will not work -->
 <?MIBLOCK COND="$(XST,$allele)">
 	<?MIVAR> 
@@ -229,7 +257,7 @@ onSubmit="<?MIVAR COND="$(NOT,$(AND,$(>,$(POSITION,$HTTP_USER_AGENT,Mac),0),$(>,
 <?/MIBLOCK> <!-- ends if line type not wildtype -->
 
 <TD  align=right><font size=-1>
-<input type=submit name=action value="SEARCH" ></font>
+<input type=submit name=search value="SEARCH" ></font>
 <input type=button 
 <?MIVAR COND="$(NC,$line_type,wild_type)"> 
 	onClick="call_reset(); "
@@ -253,13 +281,14 @@ we have to do at this point is pass the return record along to the fishlister.
 
 <input type=hidden name=MIval value=aa-fishlister.apg>
 
-<?MIVAR>
-	<input type=hidden name=preselected>
-<?/MIVAR>
+<?MIBLOCK COND="$(XST,$structures)">
+  <?MIVAR>
+    <input type=hidden name=structures value="$structures">
+  <?/MIVAR>
+<?/MIBLOCK>
 
-<?MIVAR>
-	<input type=hidden name=selected_separator>
-<?/MIVAR>
+<input type=hidden name=selected_separator>
+
 
 <?MIVAR COND="$(NC,$line_type,NULL)">
 	<input type=hidden name=line_type value=$line_type>
@@ -269,52 +298,68 @@ we have to do at this point is pass the return record along to the fishlister.
 <?MIBLOCK COND="$(NC,$line_type,wild_type)">
   	<INPUT type="hidden" name="selected"  value="'t'::boolean">
 
-	<!-- mac I.E. java - jscript doesn't support applet -->
-	<?MIBLOCK COND="$(AND,$(>,$(POSITION,$HTTP_USER_AGENT,Mac),0),$(>,$(POSITION,$HTTP_USER_AGENT,MSIE),0))">
-		<P><b><A HREF="javascript:start_help('phenokeywords')"><b>Affected Structures or defects</A> feature is not currently supported by Macintosh Internet Explorer.<br>You may access this feature with Macintosh Netscape or PC Internet Explorer.</b>
-	<?/MIBLOCK>
-
-	<?MIBLOCK COND="$(NOT,$(AND,$(>,$(POSITION,$HTTP_USER_AGENT,Mac),0),$(>,$(POSITION,$HTTP_USER_AGENT,MSIE),0)))">
-		<A HREF="javascript:start_help('phenokeywords')"><b>Affected Structures or defects</A> include:</b> (select with list tool below)
+<A HREF="javascript:start_help('phenokeywords')"><b>Affected Structures or defects</A> include:</b> (select with list tool below)
 	<br>
 
-		<APPLET MAYSCRIPT 
-		archive = "browser.jar"
-		codebase = "/client_apps/Browser"
-		CODE="Browser.class" NAME ="Browser" WIDTH=470 HEIGHT=120>
+<!-- applet replacement -->
 
-		<param name=format_pre value=" a.pheno_keywords like '%;" >
-		<param name=format_post value=";%'" >
-		<param name=list_label value="Keyword Dictionary">
-		<param name=selected_label value="Selected Keywords">
-		<?MIVAR>
-	  		<param name = "preselected"   value="$preselected">
-		<?/MIVAR>
-		<?MIVAR COND="$(EC,$selected_separator,and)">
-	  		<param name = "selected_separator"   value="and">
-		<?/MIVAR>
-		<?MIVAR COND="$(EC,$selected_separator,or)">
-	  		<param name = "selected_separator"   value="or">
-		<?/MIVAR>
-		<param name = "preselected_delim"  value="9">
-		<param name = "host"             value = "<!--|DOMAIN_NAME|-->">
-		<param name = "port"             value = "<!--|JAVA_SERVER_PORT|-->">
-		<param name = "data" value="<?MISQL SQL="SELECT name, stage, level, seq_num FROM anatomical_parts ORDER BY seq_num;">
-$1|$2|$3|$4|<?/MISQL>">
-		<param name = "data_delim"       value = "|">
-		<!-- If we have gotten to this page from a nav bar tile - must autosubmit to get pbrowser frame populated -->
-		<?MIVAR COND="$(XST,$navtile)">
-  	           <param name = "autosubmit"   value="document.BrowserForm.selected.value=document.Browser.getList();document.BrowserForm.submit();document.BrowserForm.selected_separator.value=document.Browser.getSelectedSeparator();document.BrowserForm.preselected.value=document.Browser.getList('9');">
-		<?/MIVAR>
-		</APPLET>
-	<?/MIBLOCK>
+<table width=360 height=100 border=0 cellpadding=3 cellspacing=0 bgcolor="#88a6a6">
+<tr>
+<td><center>
+<input type=button value="Add" onClick="
+
+document.BrowserForm.target = 'criteria'; 
+document.BrowserForm.method = 'get'; 
+for (i=0 ; i < document.BrowserForm.structure_list.options.length ; i++) {
+    document.BrowserForm.structure_list.options[i].selected=true;
+} 
+document.BrowserForm.action = 'select_structures.cgi'; 
+document.BrowserForm.submit();">
+<br><br>
+<input type=button value="Remove" onClick="
+i=0;
+while (i < document.BrowserForm.structure_list.options.length) {
+    if (document.BrowserForm.structure_list.options[i].selected == true) {
+       document.BrowserForm.structure_list.options[i] = null;       
+    } else { i++; } 
+}
+">
+</center></td>
+<td width=70%><select multiple size=5 name="structure_list"> 
+  <font size = -1>
+  <?MIBLOCK COND="$(XST,$structures)">
+      <?MIVAR NAME=$structure_clause  DELIMIT="," REPLACE="','">$structures<?/MIVAR> 
+      <?MIVAR>
+	<?MISQL SQL="select name, seq_num from anatomical_parts where seq_num in ('$structure_clause');">
+	  <OPTION> $1 
+	<?/MISQL>
+      <?/MIVAR>
+    <?/MIBLOCK>
+
+    <?MIBLOCK COND="$(NXST,$structures)">
+      <OPTION> Click the 'Add' button to add structures 
+    <?/MIBLOCK>
+    </select>
+  </font>
+</td></tr>
+<tr><td colspan=2>
+<font size = -1>
+<center>
+<input type=radio name="selected_sep_box" value="and" <?MIVAR COND="$(EC,$selected_separator,and)">CHECKED<?/MIVAR>> ALL Listed Defects
+&nbsp; &nbsp;
+<input type=radio name="selected_sep_box" value="or" <?MIVAR COND="$(EC,$selected_separator,or)">CHECKED<?/MIVAR>> ANY Listed Defects
+</center>
+</font>
+</td></tr></table>
+
+<!-- applet replacement -->
 
 <?/MIBLOCK>
 
-
-<?MIVAR COND="$(AND,$(>,$(POSITION,$HTTP_USER_AGENT,Mac),0),$(>,$(POSITION,$HTTP_USER_AGENT,MSIE),0),$(XST,$navtile))">
+<?MIVAR COND="$(XST,$navtile)">
   <SCRIPT>
-    form_submit();
+    updateList()
+    document.BrowserForm.submit();
   </SCRIPT>
 <?/MIVAR>
 
