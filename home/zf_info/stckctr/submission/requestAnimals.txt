@@ -1,0 +1,122 @@
+To: mason@uoneuro.uoregon.edu
+From: zirc@darkwing.uoregon.edu
+Subject: [required_requesterName]'s request for [lineName] [mutantAlleles]
+
+**************************************** 
+---
+---
+Name:
+[required_requesterName]
+---
+Email:
+[required_requesterEmail]
+---
+Telephone:
+[required_requesterTelephone]
+---
+Fax:
+[required_requesterFax]
+---
+Lab:
+[required_requesterLab]
+---
+Position:
+[required_requesterPosition]
+---
+Address:
+[required_requesterAddress]
+---
+---
+PI Name:
+[PIName]
+---
+PI Email:
+[PIEmail]
+---
+PI Fax:
+[PIFax]
+---
+PI Lab:
+[PILab]
+---
+PI Address:
+[PIAddress]
+---
+---
+Bill To Name:
+[required_BillToName]
+---
+Bill To Email:
+[required_BillToEmail]
+---
+Bill To Telephone:
+[required_BillToTelephone]
+---
+Bill To Fax:
+[required_BillToFax]
+---
+Bill To Lab:
+[required_BillToLab]
+---
+Bill To Address:
+[required_BillToAddress]
+---
+Bill To Grant Number:
+[required_grantNumber]
+---
+Bill To Funding Organization:
+[required_grantOrganization]
+---
+Billing Preference:
+[creditCard]
+[billMe]
+---
+Bill To PO Number:
+[billToPONumber]
+---
+---
+Line / Mutant Information
+ZFIN ID Number:
+[lineZFIN_ID]
+---
+Line / Mutant Name
+[lineName]
+---
+Allele(s)
+[mutantAlleles]
+---
+Type
+requesting embryos: [requestingEmbryos]
+requesting adults: [requestingAdults]
+requesting other: [requestingOther]
+---
+Quantity
+[quantity]
+---
+Do you currently have fish in your lab?
+[yesFishInLab]
+---
+Are you raising fish from eggs?
+[yesRaisingEggs]
+---
+---
+Requesting Other Materials
+ZFIN ID Number:
+[otherZFIN_ID]
+Name
+[otherName]
+---
+Other Description
+[otherDescription]
+---
+---
+Considerations and Comments
+[considerationsOther]
+---
+---
+End of Form
+
+
+
+
+
