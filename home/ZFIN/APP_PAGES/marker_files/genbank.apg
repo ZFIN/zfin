@@ -81,7 +81,7 @@
 
 <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 <TABLE width=100%><TR><TD bgcolor=#ccccccc>
-<FONT SIZE=+2><b>More Seqence Information</b></FONT>
+<FONT SIZE=+2><b>More Sequence Information</b></FONT>
 </TD></TR></TABLE>
 
 <?MIBLOCK COND="$(XST,$UPDATE)">
