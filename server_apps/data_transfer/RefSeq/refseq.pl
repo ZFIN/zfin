@@ -79,7 +79,7 @@ while( !(
     {
       $count = 0;
       $retry = 0;
-      print "retry gunzip\n";
+#      print "retry gunzip\n";
       system("/local/bin/gunzip -f *.gz");
     }
     else
@@ -111,7 +111,7 @@ while( !(
     {
       $count = 0;
       $retry = 0;
-      print "retry parseRefSeq.pl\n";
+#      print "retry parseRefSeq.pl\n";
       system("parseRefSeq.pl");
     }
     else
