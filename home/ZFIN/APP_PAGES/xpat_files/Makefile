@@ -23,7 +23,7 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/xpat_files
 GENERICS = xpatview.apg xpatselect.apg anatdict.apg anatomy_item.apg xpatindexview.apg anatomy_captures.apg xpatselect_note.apg xpatselectquery.apg xpatselectrowdisplay.apg
 
 
-# Use default rules for app page directories.
+# Use default rules for app page directories. 
 
 include $(TOP)/make.default.apg.rules
 
