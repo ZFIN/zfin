@@ -557,8 +557,24 @@ create dba function "informix".regen_genomics() returning integer
     -- get genes that aren't mapped
    -- create indexes; constraints that use them are added at the end.
 
-    if (exists (select 'x'
-	          from sysindexes
+	select distinct zdb_id mpd from all_g_new into temp tmp_agn with no log;
+	create index agn_zdb_id_ndx on tmp_agn(mpd);
+    update statistics high for table tmp_agn;
+
+	insert into all_g_new
+	select mrkr_name, 0, '', mrkr_zdb_id,0, 'na'::varchar(50),
+	'na'::varchar(10), mrkr_abbrev, mrkr_abbrev_order, 'na'::varchar(50),
+	NULL::datetime year to fraction, locus.zdb_id, locus.locus_name
+	from marker, OUTER locus
+	where mrkr_zdb_id = locus.cloned_gene
+	and   mrkr_type = 'GENE'
+	and not exists(select 'x' from tmp_agn where mpd = zdb_id);
+	
+	drop table tmp_agn;
+	
+    -- create indexes; constraints that use them are added at the end.
+        if (exists (select 'x'
+	      from sysindexes
 		  where idxname = "all_genes_zdb_id_index_b")) then
       -- use the "a" set of names
       -- other indexes
@@ -574,37 +590,8 @@ create dba function "informix".regen_genomics() returning integer
 	in idxdbs3;
     end if
 
+    
     update statistics high for table all_g_new;
-
-	insert into all_g_new
-	select mrkr_name, 0, '', mrkr_zdb_id,0, 'na'::varchar(50),
-	'na'::varchar(10), mrkr_abbrev, mrkr_abbrev_order, 'na'::varchar(50),
-	NULL::datetime year to fraction, locus.zdb_id, locus.locus_name
-	from marker, OUTER locus
-	where not exists( 
-		select 'x' 
-		from mapped_marker mm
-		where mrkr_zdb_id = mm.marker_id 
-	)
-	and mrkr_zdb_id = locus.cloned_gene
-	and mrkr_type = 'GENE'
-	and not exists( 
-		select 'x' 
-		from linkage_member
-		where mrkr_zdb_id = lnkgmem_member_zdb_id
-	)
-	and not exists(
-		select 'x' 
-		from marker_relationship
-		where mrkr_zdb_id = mrel_mrkr_1_zdb_id
-		and mrel_type = 'gene encodes small segment'
-	)
-;
-
-    -- create indexes; constraints that use them are added at the end.
-    update statistics high for table all_g_new;
-
-
 
     -- --------------------------------------------------------------------
 
@@ -642,7 +629,7 @@ create dba function "informix".regen_genomics() returning integer
       -- Note that the exception-handler at the top of this file is still active
 
       -- ===== PANELS =====
-      let errorHint = "rename  PANELS ";    
+      let errorHint = "rename  PANELS ";
  
       -- The following statement also drops the view mapped_anons,
       -- because it depends upon panels.
