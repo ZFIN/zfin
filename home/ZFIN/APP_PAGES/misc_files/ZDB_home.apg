@@ -298,6 +298,24 @@
 	<TR>
 	  <TD class="content_left">
 	    <DIV class="content">
+	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=search"><B>Anatomy</B></A> 
+	    </DIV>
+	  </TD>
+	  <TD class="content_right">
+	    <DIV class="content">
+	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=search">Search  
+              the zebrafish anatomical ontology.</A><br>
+	      <?MIVAR COND="$(EC,$AUTHORIZED,root)">
+
+	      <?/MIVAR>
+	    </DIV>
+	  </TD>
+	</TR>
+
+
+	<TR>
+	  <TD class="content_left">
+	    <DIV class="content">
 	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-quickfindpers.apg&select_from=PERSON&frame_size=75"><B>People</B></A> 
 	    </DIV>
 	  </TD>
