@@ -1371,11 +1371,13 @@ sub linkageHasMembers ($) {
   my $sql = '
              select lnkg_zdb_id,
                     lnkg_or_lg,
-                    lnkg_source_zdb_id 	
-               from linkage
+                    recattrib_source_zdb_id
+               from linkage, record_attribution
 	      where lnkg_zdb_id not in (
 	            	      select lnkgmem_linkage_zdb_id 
-                                from linkage_member)';
+                                from linkage_member)
+                and lnkg_zdb_id = recattrib_data_zdb_id
+             ';
 
   my @colDesc = ("Lnkg ZDB ID       ",
 		 "Lnkg or lg        ",
@@ -2287,7 +2289,7 @@ if($monthly) {
   prefixedIbdGenesHave1Est($estEmail);
 }
 if($yearly) {
-  print "run yearly check. \n";
+  print "run yearly check. \n";linkageHasMembers($linkageEmail);
 }
 
 	   
