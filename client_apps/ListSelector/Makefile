@@ -1,7 +1,6 @@
 #------------------------------------------------------------------------
 #
-# Makefile for ZFIN_WWW CVS Project, Linking Authors to Publications
-# Applet.
+# Makefile for ZFIN_WWW CVS Project, Linking Authors to Publications Applet.
 #
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
@@ -9,84 +8,81 @@
 # !! format and conventions used in this makefile.                     !!
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
-# This makefile uses a staging directory to produce its targets.
-# This makefile populates the staging directory with source files and
-# then calls the makefile in the staging directory to produce the 
-# targets.  The staging makefile makes use of makefile variables 
-# inherited from this file.
-# 
-
+# This makefile has two target dirs.  The first is actually a staging dir
+# where the work is done.  The second is the final target dir where the
+# JAR gets put.
 
 # ---------------  Variable Definitions  --------------------------------
 
 TOP = ../..
 include $(TOP)/make.include
 
-# TARGETDIR is handled by Staging directory
+# This makefile lies about what the target dir is.  TARGETDIR is actually a
+# staging dir.  FINALTARGETDIR is the real target.
 
-STAGINGDIR = Staging
+TARGETDIR = $(TARGETROOT)/Staging/client_apps/ListSelector
+STAGINGDIR = $(TARGETDIR)
+FINALTARGETDIR = $(TARGETROOT)/client_apps/ListSelector
 
-# ---- Java source variables
+# ---- Misc Java variables
+
+# Use the standard JAVAC_11, and JAVACFLAGS.  Still need to define classpath.
+
+CLASSPATH = $(STAGINGDIR):$(JAVAHOME_11)/lib/classes.zip:$(TOP)/lib/Java:$(JDBCHOME)/lib/ifxjdbc.jar
+
+
+# ---- Java source and destination variables
 
 GENERICS = SQLQuery.java
 STATICS  = ListItem.java ListSelector.java Selectable.java \
-	SelectedPanel.java SystemsPanel.java SelectablePanel.java
+           SelectedPanel.java SystemsPanel.java SelectablePanel.java
+JAVAS    = $(STATICS) $(GENERICS)
+CLASSES  = $(foreach JAVA, $(JAVAS), $(patsubst %.java,%.class,$(JAVA)))
 
-
-SPECIFICS = $(foreach GNRC, $(GENERICS), $(STAGINGDIR)/$(GNRC))
-STATICSTAGINGS = $(foreach STAT, $(STATICS), $(STAGINGDIR)/$(STAT))
+STAGINGJAVAS   = $(foreach JAVA, $(JAVAS), $(STAGINGDIR)/$(JAVA))
+STAGINGCLASSES = $(foreach CLASS, $(CLASSES), $(STAGINGDIR)/$(CLASS))
 
 JAVAS   = $(GENERICS) $(STATICS)
 TARGETS = $(SPECIFICS) $(STATICSTAGINGS)
 
-# ---- Which variables are used by Makefile in Staging directory:
+JAR = $(FINALTARGETDIR)/listselector.jar
 
-export JAVAS
+IMPORTPATH = $(JDBCHOME)/lib
+IMPORTJARS     = ifxjdbc.jar ifxlsupp.jar
+IMPORTJARPATHS = $(foreach IJAR,$(IMPORTJARS),$(IMPORTPATH)/$(IJAR))
+IMPORTTARGETJARPATHS = $(foreach TJAR,$(IMPORTJARS),$(FINALTARGETDIR)/$(TJAR))
 
+
+# ---- Define endemic targets so we can use make.default.rules.
+
+ENDEMICTARGETS_POSTTARGETDIR = $(FINALTARGETDIR)
+ENDEMICTARGETS_POSTTARGETS = $(JAR) $(IMPORTTARGETJARPATHS)
+ENDEMICTARGETS_CLEAN = $(STAGINGJAVAS) $(STAGINGCLASSES)
 
 
 # ---------------  Production Rules  ------------------------------------
 
-.PHONY : all sanitycheck clean clobber onetimeonly $(STAGINGDIR)
+# Use default rules for most of the work
+
+include $(TOP)/make.default.rules
+
+$(FINALTARGETDIR) :
+	$(TARGET_MKDIR) $@
 
 
-all : $(TARGETS) $(STAGINGDIR) 
+# ----- Rules for compiling Java sources to class files
 
-$(STAGINGDIR) :
-	(cd $(STAGINGDIR); $(MAKE))
+# When any class file needs to be remade, remake all of them.
 
-
-# ----  Rules for moving Java sources to staging directory.
-
-$(SPECIFICS) : $(STAGINGDIR)/% : %
-	$(MAKESPECIFIC) $< $(TRANSLATETABLE) $@
-
-$(STATICSTAGINGS) : $(STAGINGDIR)/% : %
-	$(STAGING_CP) $< $@
-	$(TOUCH) $@
+$(STAGINGCLASSES) : $(STAGINGJAVAS)
+	$(JAVAC_11) $(JAVACFLAGS) -classpath $(CLASSPATH) $(STAGINGJAVAS)
 
 
-# ---------------  Maintenance Rules  -----------------------------------
+# ----- Rules for creating the JAR files.
 
-clean :		# remove copied files from staging directory
-	rm -rf $(JAVASTAGINGS)
-	$(MAKE) -C $(STAGINGDIR) $@
+$(JAR) : $(STAGINGCLASSES) $(NETSCAPESYMLINK)
+	cd $(STAGINGDIR); $(JAVAHOME_11)/bin/jar -cvf $(JAR) $(CLASSES)
+	chmod o+r $@
 
-
-clobber :			# Remove targets, but not target dir.
-	rm -f $(TARGETS)
-	$(MAKE) -C $(STAGINGDIR) $@
-
-
-# check generics & possibly statics as well for values that should
-# be represented with tags instead of hard coded values
-
-sanitycheck : 
-	$(SPECIFICCHECK) $(JAVAS)
-	$(MAKE) -C $(STAGINGDIR) $@
-
-
-# define one time only target
-
-onetimeonly :
-	$(ONETIMEONLY)
+$(IMPORTTARGETJARPATHS) : $(FINALTARGETDIR)/% : $(IMPORTPATH)/%
+	$(TARGET_CP) $^ $@
