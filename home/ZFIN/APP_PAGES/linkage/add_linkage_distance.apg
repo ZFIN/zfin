@@ -71,7 +71,7 @@ Possible vars:  update-->
   <br>
   LG: $(IF,$(EC,$2,0),,$2)
   <br>
-  Comments: $4
+  Comments: $3
 <?/MISQL>
 
   <!-- output the current members of the linkage - if any exist -->
@@ -117,7 +117,7 @@ Linkage Distance:&nbsp;&nbsp;  Select two markers for distance <br>
     where lnkgpair_zdb_id = '$pair_id';">
     Distance: $1 &nbsp; LOD: $2 &nbsp; Metric: $3
   <?/MISQL>
-
+ <br>
 <?/MISQL>
 <br>
   <TABLE cols=2>
@@ -192,19 +192,9 @@ Linkage Distance:&nbsp;&nbsp;  Select two markers for distance <br>
 
 
   
-  <?MIBLOCK COND="$(NXST,$update)">
 
     <input type=submit value="Add Distance" >
-    <input type=button value="Return" onClick="window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg'">
-  <?/MIBLOCK>
-
-
-    <?MIBLOCK COND="$(XST,$update)">
-      <?MIVAR>
-	<input type=button value="Cancel" onClick="window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_linkage.apg&link_id=$link_id&update=true'">   
-	<input type=button value="Submit" onClick="window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_linkage.apg&link_id=$link_id&update=true'">  
-      <?/MIVAR>
-    <?/MIBLOCK>
+    <input type=button value="Entry Complete" onClick="window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg'">
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 
