@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/private/bin/perl -wT
 
 sub footer {
 print <<ENDHTML ;
@@ -40,7 +40,7 @@ print <<ENDHTML ;
   <tr>
     <td align=center class=ack>
       <DIV class=ack>
-      Copyright University of Oregon, 1994-2003, Eugene , Oregon.
+      Copyright University of Oregon, 1994-2005, Eugene , Oregon.
       </DIV>
     </td>
   </tr>
