@@ -30,6 +30,8 @@ Variables Expected:
 
 <head>
 <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
+
+<?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
 <?MIVAR>
 <SCRIPT>
 
@@ -41,6 +43,11 @@ document.doUpdate.MIval.value='aa-imageupdate.apg';
  check_annotations();
  document.doUpdate.submit();
 }
+
+function Delete_listitem(item_name,item_id) {
+window.location.search='?MIval=aa-do-imageupdate.apg&OID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted';
+}
+
 
 // COmment out call to annotator applet until it's installed!
 // Basically disables this function.
@@ -76,7 +83,6 @@ document.doUpdate.MIval.value='aa-do-imageupdate.apg';
 </HEAD>
 
 
-<?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
 <?MIBLOCK COND="$(NXST,$OID)">
 <p>
 ERROR -- something bad happened -- no OID passed in!
