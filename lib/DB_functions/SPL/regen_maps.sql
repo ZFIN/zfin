@@ -108,25 +108,76 @@ create dba function "informix".regen_maps()
    -- regenerated into paneled_markers for panel display.
    -- 03/05/08
 
-   -- prepare the genes whose encoded segments has mapping 
-   -- information that the gene hasn't got 
 
-   select mrel_mrkr_1_zdb_id as gene_zdb_id, 
-	  or_lg, lg_location,refcross_id, metric
+   -- check if any bonus-genes have been promoted to real genes 
+   -- and if so allow them to be mapped in the next step
+   -- first the named genes
+    update marker_relationship 
+    set mrel_comments = 'bonus gene promoted ' || TODAY
+    where mrel_type == 'gene encodes small segment'
+    and mrel_comments == "Connects EST to gene that was created for it" 
+    and exists (
+      select 1 from  marker g, marker e
+      where mrel_mrkr_1_zdb_id = g.mrkr_zdb_id
+      and mrel_mrkr_2_zdb_id = e.mrkr_zdb_id
+      and g.mrkr_abbrev not like '%:%'
+    );
+    -- and the the si: and zgc: genes
+    update marker_relationship 
+    set mrel_comments = 'bonus gene promoted ' || TODAY
+    where mrel_type == 'gene encodes small segment'
+    and mrel_comments == "Connects EST to gene that was created for it"
+    and exists (
+    select 1 from  marker g, marker e  
+    where mrel_mrkr_1_zdb_id = g.mrkr_zdb_id
+    and mrel_mrkr_2_zdb_id = e.mrkr_zdb_id
+    and g.mrkr_abbrev like '%:%'
+    and g.mrkr_abbrev not like "%:"|| e.mrkr_abbrev
+    and g.mrkr_abbrev[1,3] in ('zgc', 'si:')
+    );
+    
+   -- prepare the genes whose encoded segments has mapping 
+   -- information that the gene hasn't got.
+   select distinct mrel_mrkr_1_zdb_id as gene_zdb_id, 
+          or_lg, lg_location,refcross_id, metric
      from marker_relationship, mapped_marker m
-    where mrel_comments not like "Connects EST %" 
+    where 
+      mrel_comments <> "Connects EST to gene that was created for it"
       and mrel_mrkr_2_zdb_id = m.marker_id
       and mrel_type = 'gene encodes small segment'
       and m.scoring_data is not null
       and mrel_mrkr_1_zdb_id not in (
-		select marker_id 
-		from mapped_marker mm
-		where mm.or_lg = m.or_lg
-	  	and mm.lg_location = m.lg_location
-	  	and mm.marker_type in (select mtgrpmem_mrkr_type
-                                         from marker_type_group_member
-					where mtgrpmem_mrkr_type_group='GENEDOM'))
-	into temp tmp_gene_id with no log;
+        select marker_id 
+        from mapped_marker mm
+        where mm.or_lg = m.or_lg
+        and mm.lg_location = m.lg_location
+        and mm.marker_type in (
+            select mtgrpmem_mrkr_type
+            from marker_type_group_member
+            where mtgrpmem_mrkr_type_group='GENEDOM'
+        )
+    )
+    union 
+    select mrel_mrkr_1_zdb_id as gene_zdb_id, 
+          or_lg, lg_location,refcross_id, metric
+     from marker_relationship, mapped_marker m
+    where 
+      mrel_comments is NULL
+      and mrel_mrkr_2_zdb_id = m.marker_id
+      and mrel_type = 'gene encodes small segment'
+      and m.scoring_data is not null
+      and mrel_mrkr_1_zdb_id not in (
+        select marker_id 
+        from mapped_marker mm
+        where mm.or_lg = m.or_lg
+        and mm.lg_location = m.lg_location
+        and mm.marker_type in (
+            select mtgrpmem_mrkr_type
+            from marker_type_group_member
+            where mtgrpmem_mrkr_type_group='GENEDOM'
+        )
+    )
+    into temp tmp_gene_id with no log;
 
    -- do union to be distinct
    -- union gene self mapping info, and those from encoded segments
