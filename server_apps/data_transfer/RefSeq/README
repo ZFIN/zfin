@@ -1,0 +1,23 @@
+NCBI hosts an FTP server with LocusLink and RefSeq data files.  The
+files are unloads from their database, updated as often as the like.
+Information pertaining to the structure of the files can be obtained
+from the README file on their FTP server.
+
+ZFIN's objective is to extract relationships from the files that can
+be used to create orthologue and sequence links for Zebrafish genes.
+
+The process starts by downloading the most recent files from 
+  ftp.ncbi.nih.gov/refseq/LocusLink/.
+Each file is uncompressed using gunzip then each file is parsed
+with a perl script; relevant fields are written to an Informix
+load file. When the load files are made it is time to submit the 
+data. 
+
+To insert the data, we use a wipe and replace approach. All RefSeq,
+LocusLink, and UniGENE links that are only attributed to the 
+automated curation pub are removed. All relationships from the
+latest download are found. Then the relationships that do not 
+exist in ZFIN are inserted into the database and they are 
+attributed to the automtated curation pub.
+
+This process automated to perform weekly.
