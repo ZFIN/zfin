@@ -21,11 +21,12 @@
   were passed in 
 -->
 
+<?MIVAR NAME=$knowngene COND="$(NXST,$knowngene)">NULL<?/MIVAR>
 <?MIVAR NAME=$previous> <?/MIVAR>
 
 <!-- First build CONSTRAINT CLAUSE common to both wild type and mutant line, ie., those constraints related only to fish. -->
 
-<?MIBLOCK COND="$(OR,$(XST,$fname),$(XST,$anon1text),$(XST,$abbrev))">
+<?MIBLOCK COND="$(OR,$(XST,$fname),$(XST,$anon1text),$(XST,$abbrev),$(NC,$knowngene,NULL))">
 
 
 <!-- First filter name for apostrophes! -->
@@ -87,6 +88,10 @@ $mut_constraint $previous (chrom_num='$chrom_num')<?/MIVAR>
 
 <?MIVAR NAME=$previous COND="$(>,$chrom_num,0)"> and <?/MIVAR>
 
+<?MIVAR NAME=$mut_constraint COND="$(NC,$knowngene,NULL)">$mut_constraint $previous (gene_abbrev <> 'UNKNOWN')<?/MIVAR>
+
+<?MIVAR NAME=$previous COND="$(NC,$knowngene,NULL)"> and <?/MIVAR>
+
 <?MIVAR NAME=$mut_constraint COND="$(XST,$selected)">
 $mut_constraint $previous ($selected)<?/MIVAR>
 
@@ -143,6 +148,7 @@ Options:
 </ul>
 <?/MIVAR>
 
+
 </form>
 
 <?MIVAR COND="$(OR,$(<=,$num_recs,25),$(XST,$getall))" NAME=$limit>$num_recs<?/MIVAR>
@@ -150,9 +156,9 @@ Options:
 
 <?MIBLOCK COND="$(XST,$limit)">
 <TABLE width=100%>
-<TH> </TH><TH>Allele</TH> <TH>Locus (abbrev)</TH> <TH>Mut. Type</TH> <TH>Mutagen</TH> <TH>LG</TH> <TH>Images</TH>
-<?MISQL SQL="select distinct name, fish_id, abbrev, mutagen, allele, chrom_change, chrom_num,num_images,locus from fish_search a  where line_type='mutant' $mut_constraint $order_by;" MAXROWS=$limit>
-$(IF,$(>,$MI_CURRENTROW,1),"<TR><TD colspan=7> <HR width=80%> </TD> </TR>")
+<TH> </TH><TH>Allele</TH> <TH>Locus (abbrev)</TH> <TH>Gene</TH> <TH>Mut. Type</TH> <TH>Mutagen</TH> <TH>LG</TH> <TH>Images</TH>
+<?MISQL SQL="select distinct name, fish_id, abbrev, mutagen, allele, chrom_change, chrom_num,num_images,locus,gene_abbrev,gene_id from fish_search a  where line_type='mutant' $mut_constraint $order_by;" MAXROWS=$limit>
+$(IF,$(>,$MI_CURRENTROW,1),"<TR><TD colspan=7> <HR width=99%> </TD> </TR>")
 $(IF,$(=,$MI_CURRENTROW,1),"<TR><TD colspan=7> <HR size=5> </TD> </TR>")
 
 <?MIVAR NAME=$abbrev>$3<?/MIVAR>
@@ -173,6 +179,8 @@ $(IF,$(XST,$return_rec),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do
 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$2" TARGET=content>$5</A>
 </TD> 
 <TD><font size=-1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$9" TARGET=content>$1</A> ($abbrev)</font></TD>
+<TD><font size=-1> $(IF,$(NC,$11,UNKNOWN),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$11 TARGET=content>$10</A>,UNKNOWN)
+</font></TD>
 <TD><font size=-1> $(IF,$(EC,$6,NULL),UNKNOWN,$6)</font> </TD> 
 <TD><font size=-1> $(IF,$(EC,$4,NULL),UNKNOWN,$4)</font> </TD> 
 <TD><font size=-1> $(IF,$(EC,$7,0),UNKNOWN,$7)</font> </TD> 
