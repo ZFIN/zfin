@@ -50,6 +50,9 @@ PI Address:
 NIH grant number or other grant number:
 [required_grantNumber]
 ---
+organization responsible for funding:
+[required_grantOrganization]
+---
 
 
 ***for KEN ************************************* 
@@ -85,7 +88,7 @@ Mutagenesis Protocol:
 [mutagenProtocol]
 ---
 Mutation Type:
-[mutantTypePoint] [mutantTypeDf] [mutantTypeDp] [mutantTypeIn] [mutantTypeIs] [mutantTypeT] [mutantTypeTg] [mutantTypeUn] [mutantTypeOther] [mutantTypeCr]
+[mutationType] [mutationTypeOther]
 ---
 Mutated Gene:
 [mutatedGene]
@@ -120,8 +123,11 @@ CONTACT INFO
 NIH grant number or other grant number:
 [required_grantNumber]
 ---
+organization responsible for funding:
+[required_grantOrganization]
+------
 Type of Line:
-[lineWildType] [lineMutant] [lineTransgenic]
+[lineType]
 ---
 Proposing to send:
 [statusAdults] [statusEmbryos] [statusFrozenSperm]
@@ -188,7 +194,7 @@ Why ZIRC should take the line:
 [required_considerationsWhy]
 ---
 Is there an MTA?:
-[considerationsMTAyes] [considerationsMTAno]
+[considerationsMTA]
 ---
 Other considerations or information:
 [considerationsOther]

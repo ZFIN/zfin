@@ -168,12 +168,10 @@
       <tr> 
         <td align=right>Line Type&nbsp;</td>
         <td class=types>  
-          <input type="checkbox" name="lineMutant" value="mutant">
-          mutant 
-          <input type="checkbox" name="lineTransgenic" value="transgenic">
-          transgenic 
-          <input type="checkbox" name="lineWildType" value="wild type">
-          wild-type</td>
+          <input type="radio" name="lineType" value="mutant">mutant 
+          <input type="radio" name="lineType" value="transgenic">transgenic 
+          <input type="radio" name="lineType" value="wild type">wild-type
+		</td>
       </tr>
       <tr> 
         <td align=right>Current Status&nbsp;</td>
@@ -182,12 +180,10 @@
 	  <tr>
 	  	<td align=right>&nbsp;</td>
         <td class=types> 
-          <input type="checkbox" name="statusAdults" value="adults">
-          adults 
-          <input type="checkbox" name="statusEmbryos" value="embryos">
-          embryos 
-          <input type="checkbox" name="statusFrozenSperm" value="frozen sperm">
-          frozen sperm</td>
+          <input type="checkbox" name="statusAdults" value="adults">adults 
+          <input type="checkbox" name="statusEmbryos" value="embryos">embryos 
+          <input type="checkbox" name="statusFrozenSperm" value="frozen sperm">frozen sperm
+		</td>
 	  </tr>
       <tr> 
         <td align=right>Line / Mutant Name&nbsp;</td>
@@ -225,42 +221,42 @@
           <table BORDER=0 cellpadding=0 cellspacing=0 >
             <tr> 
               <td class=types> 
-                <input type="checkbox" name="mutantTypePoint" value="point mutation">
-                point mutation </td>
+                <input type="radio" name="mutationType" value="point mutation">point mutation 
+			</td>
               <td class=types> 
-                <input type="checkbox" name="mutantTypeDf" value="Df, deficiency">
-                Df, deficiency</td>
+                <input type="radio" name="mutationType" value="Df, deficiency">Df, deficiency
+			</td>
             </tr>
             <tr> 
               <td class=types> 
-                <input type="checkbox" name="mutantTypeDp" value="Dp, duplication">
-                Dp, duplication</td>
+                <input type="radio" name="mutationType" value="Dp, duplication">Dp, duplication
+			</td>
               <td class=types> 
-                <input type="checkbox" name="mutantTypeIn" value="In, inversion">
-                In, inversion</td>
+                <input type="radio" name="mutationType" value="In, inversion">In, inversion
+			 </td>
             </tr>
             <tr> 
               <td class=types> 
-                <input type="checkbox" name="mutantTypeIs" value="Is, insertion">
-                Is, insertion</td>
+                <input type="radio" name="mutationType" value="Is, insertion">Is, insertion
+			</td>
               <td class=types> 
-                <input type="checkbox" name="mutantTypeT" value="T, translocation">
-                T, translocation</td>
+                <input type="radio" name="mutationType" value="T, translocation">T, translocation
+			</td>
             </tr>
             <tr> 
               <td class=types> 
-                <input type="checkbox" name="mutantTypeTg" value="Tg, transgene">
-                Tg, transgene</td>
+                <input type="radio" name="mutationType" value="Tg, transgene">Tg, transgene
+			</td>
               <td class=types> 
-                <input type="checkbox" name="mutantTypeCr" value="Cr, complex rearrangement">
-                Cr, complex rearrangement </td>
+                <input type="radio" name="mutationType" value="Cr, complex rearrangement">Cr, complex rearrangement 
+			</td>
             </tr>
             <tr> 
               <td class=types> 
-                <input type="checkbox" name="mutantTypeUn" value="unknown">
-                unknown </td>
+                <input type="radio" name="mutationType" value="unknown">unknown 
+			 </td>
               <td class=types>other 
-                <input type="text" name="mutantTypeOther" size="20">
+                <input type="text" name="mutationTypeOther" size="20">
               </td>
             </tr>
           </table>
@@ -508,7 +504,7 @@
 	</tr>
 	<tr>
 		<td>&nbsp;</td>
-		<td><input type="checkbox" name="considerationsMTAyes" value="yes MTA">Yes&nbsp;<input type="checkbox" name="considerationsMTAno" value="no MTA">No</td>
+		<td><input type="radio" name="considerationsMTA" value="yes MTA">Yes&nbsp;<input type="radio" name="considerationsMTA" value="no MTA">No</td>
 	</tr>
 	<tr>
 		<td colspan=2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Other Considerations or Information</td>
