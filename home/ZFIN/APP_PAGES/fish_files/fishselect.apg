@@ -162,7 +162,7 @@ onSubmit="<?MIVAR COND="$(NOT,$(AND,$(>,$(POSITION,$HTTP_USER_AGENT,Mac),0),$(>,
 	<TD><font size=-1><A HREF="javascript:start_help('mtype')"><b>Mut. Type:</b> </A>
 	<select NAME=chrom_change>
 		<option  $(IF,$(EC,$chrom_change,any),SELECTED) value=any>Any
-		<option  $(IF,$(EC,$chrom_change,point_mutation),SELECTED) value=point_mutation>point_mutation
+		<option  $(IF,$(EC,$chrom_change,point),SELECTED) value=point>point
 		<option  $(IF,$(EC,$chrom_change,deficiency),SELECTED) value=deficiency >deficiency
 		<option  $(IF,$(EC,$chrom_change,insertion),SELECTED) value=insertion>insertion
 		<option  $(IF,$(EC,$chrom_change,translocation),SELECTED) value=translocation>translocation
