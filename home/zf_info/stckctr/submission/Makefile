@@ -25,10 +25,9 @@ requestESTs2.html\
 requestThankyou.html\
 submit.html\
 submitSuccess.html\
-submitTerms.html\
-submitTryAgain.html\
 success.html\
-thankyou.html
+thankyou.html\
+zirc.js
 
 
 
@@ -51,12 +50,13 @@ requestBooks.txt\
 requestESTs.html\
 requestESTs.txt\
 submit.txt\
+submitTerms.html\
+submitTryAgain.html\
 zdbGeneId.html\
 zdbId.html\
 zfinGene.jpg\
 zfinId.jpg\
 zirc.css\
-zirc.js\
 zircCC.html\
 zircCC.pdf
 
