@@ -148,7 +148,7 @@ create dba function "informix".regen_panelcount()
 
       -- primary key
 
-      create unique index mhist_zdb_id_index
+      create unique index panel_count_primary_key_index
   	on panel_count (panelcnt_panel_zdb_id, panelcnt_mrkr_type,
 	panelcnt_or_lg)
   	in idxdbs2;
