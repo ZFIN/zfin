@@ -32,7 +32,7 @@ system("/bin/mv -f StaticCloneList StaticCloneList.previous");
 
 
 #download the new version
-system("/local/bin/wget 'http://zgc.nci.nih.gov/Reagents/StaticCloneList?PAGE=0&ORG=Dr&STATUS=Confirmed' -O StaticCloneList");
+system("/local/bin/wget -q 'http://zgc.nci.nih.gov/Reagents/StaticCloneList?PAGE=0&ORG=Dr&STATUS=Confirmed' -O StaticCloneList");
 
 
 #Compare new vs. old... load changes
@@ -51,7 +51,8 @@ if ($vCloneDiff ne "")
   system("sed -f zgc.sed StaticCloneList > StaticCloneList.unl");
 
   #delete blank lines
-  system("sed -e '/^$/d' StaticCloneList.unl > StaticCloneList.unl.copy");
+  $system_command = 'sed -e ' ."'". '/^$/d' ."'". ' StaticCloneList.unl > StaticCloneList.unl.copy';
+  system($system_command);
   system("/bin/mv -f StaticCloneList.unl.copy  StaticCloneList.unl");
   
   #load links
@@ -60,6 +61,7 @@ if ($vCloneDiff ne "")
   &zgcReport(); 
   &reportFile('zLib_not_found.unl','Non-ZFIN library'); 
   &reportFile('zName_mismatch.unl','Mismatched zgc genes'); 
+  &reportFile('refseq_relation.unl','Genbank number is on a gene in ZFIN but the clone is unassigned by ZGC.'); 
   &reportFile('unNoDbLink.unl','Missing Db_link'); 
   &reportFile('unRefSeqAttrib.unl','Attributed to RefSeq'); 
   &sendReport();
@@ -145,7 +147,7 @@ sub sendReport()
     open(MAIL, "| $mailprog") || die "cannot open mailprog $mailprog, stopped";
     open(REPORT, "report") || die "cannot open report";
 
-    print MAIL "To: <!--|DB_OWNER|-->\@cs.uoregon.edu\n";
+    print MAIL "To: <!--|DB_OWNER|-->\@cs.uoregon.edu, bsprunge\@cs.uoregon.edu\n";
     print MAIL "Subject: ZGC Report\n";
     while($line = <REPORT>)
     {
@@ -155,3 +157,4 @@ sub sendReport()
     close (MAIL);
     $dbh->disconnect();
   }
+
