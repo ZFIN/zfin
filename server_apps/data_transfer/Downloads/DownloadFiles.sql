@@ -55,7 +55,7 @@ create table ortho_exp (
   gene_id varchar(50),
   ortho_id varchar(50),
   zfish_name varchar(120),
-  zfish_abbrev varchar(20),
+  zfish_abbrev varchar(40),
   organism varchar(30),
   ortho_name varchar(120),
   ortho_abbrev varchar(15), 
@@ -261,7 +261,7 @@ create table alleles_exp (
   locus_id varchar(50),
   pheno_keywords	lvarchar,
   gene_id varchar(50),
-  gene_abbrev varchar (20) 
+  gene_abbrev varchar (40) 
 );
 
 insert into alleles_exp
