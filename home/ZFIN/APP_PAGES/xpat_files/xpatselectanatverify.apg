@@ -1,0 +1,164 @@
+<?MICOMMENT>
+
+FILE: xpatselectanatverify.apg
+PREFIX: xpanatv_
+
+Handles Anatomy text area for xpatselect, 
+converting anatomical terms to a zdb_id list
+and display information about the expression
+patterns related to the anatomy items.
+
+This file is only called from xpatselect.apg
+
+INPUT VARS:
+  xpanatv_processed_selected_structures		pipe seperated list of user entered terms
+  xpanatv_anatomy_error_occured			this should come in as f, but could leave as t
+
+OUTPUT VARS:
+  xpanatv_anatomy_zdb_id_list	anatitem_zdb_id vector of anatomy items that match the terms entered.
+  xpanatv_anatomy_error_occured	set to 't' if a structure name isn't in the database
+
+OUTPUT:
+  An html table giving feedback about anatomical terms entered.
+
+<?/MICOMMENT>
+
+
+<?MICOMMENT> *** Process variables ***   <?/MICOMMENT>
+
+
+<?MIVAR NAME=xpanatv_index>0<?/MIVAR>
+<?MIVAR NAME=xpanatv_strCount>1<?/MIVAR>
+
+<?MICOMMENT> *** iterates through each term *** <?/MICOMMENT>
+<?MIBLOCK WHILE=$(NE,$(INDEX,$xpanatv_index,$xpanatv_processed_selected_structures),)>     
+
+  <?MIVAR NAME=$xpanatv_str>$(TRIM,$(INDEX,$xpanatv_index,$xpanatv_processed_selected_structures))<?/MIVAR>
+
+  <?MICOMMENT> *** replace pipe with a comma *** <?/MICOMMENT>
+  <?MIVAR NAME=$xpanatv_str>$(REPLACE,$xpanatv_str,"|",",")<?/MIVAR> 
+
+  <?MICOMMENT> *** regular vector of parts *** <?/MICOMMENT>
+  <?MIVAR>  $(VECAPPEND,$xpanatv_str_list,$xpanatv_str) <?/MIVAR>
+  <?MIVAR NAME=$xpanatv_str DELIMIT="'" REPLACE="''">$xpanatv_str<?/MIVAR>
+
+  <?MICOMMENT> *** 'delimited' vector of parts *** <?/MICOMMENT>
+  <?MIVAR> $(VECAPPEND,$xpanatv_str_dlmt_list,$xpanatv_str) <?/MIVAR>  
+
+  <?MIVAR> $(SETVAR,xpanatv_strCount,$(+,$xpanatv_strCount,1)) <?/MIVAR>
+
+  <?MICOMMENT> *** xpanatv_index++ *** <?/MICOMMENT>
+  <?MIVAR NAME=$xpanatv_index>$(+,$xpanatv_index,1)<?/MIVAR> 
+<?/MIBLOCK>
+  
+<?MICOMMENT> ==== Display table, fill xpanatv_anatomy_zdb_id_list === <?/MICOMMENT> 
+
+<br>
+<table bgcolor="#CCCCCC"> 
+  <tr>
+    <td colspan="2">
+      <B><font size=-1>Anatomy Terms Searched...</font></B>
+    </td>
+  </tr>
+  <?MIBLOCK INDEX=$xpanatv_part FOREACH=$xpanatv_str_dlmt_list>  <?MICOMMENT> *** open foreach anatitem *** <?/MICOMMENT>
+    <?MISQL SQL="
+SELECT anatitem_name, anatitem_zdb_id,''
+FROM anatomy_item
+WHERE anatitem_name_lower = lower('$xpanatv_part')
+
+UNION
+
+SELECT anatitem_name, anatitem_zdb_id,'<I>(abbrev match)</I> '
+FROM anatomy_item
+WHERE anatitem_abbrev_lower = lower('$xpanatv_part')
+
+UNION
+
+SELECT anatitem_name, anatitem_zdb_id,'<I>(synonym match)</I> '
+FROM data_alias, anatomy_item 
+WHERE dalias_data_zdb_id = anatitem_zdb_id
+  and dalias_alias_lower = lower('$xpanatv_part')
+
+ORDER BY 1
+    ;">
+
+      <?MICOMMENT> I only want the first result, incase the lowering causes it to match both a name and synonym  <?/MICOMMENT>
+      <?MIBLOCK COND="$(EC,$MI_CURRENTROW,1)">  <?MICOMMENT> *** open 'first row only' miblock *** <?/MICOMMENT> 
+        <tr>
+          <td bgcolor="#EEEEEE" valign=top> 
+            <?MICOMMENT> ----- exact match --- <?/MICOMMENT>
+            <?MIVAR NAME="$xpanatv_item_name">$1<?/MIVAR>
+            <?MIVAR NAME="$xpanatv_item_zdb_id">$2<?/MIVAR>
+            <?MIVAR NAME="$xpanatv_matchingText">$3<?/MIVAR>
+
+            <?MIVAR>$(VECAPPEND,$xpanatv_anatomy_zdb_id_list,$xpanatv_item_zdb_id)<?/MIVAR>
+            <?MIVAR NAME="$xpanatv_item_name_safe">$(REPLACE,$xpanatv_item_name,"'","''")<?/MIVAR>
+            <?MIVAR NAME="$xpanatv_processed_item_name">$(REPLACE,$xpanatv_item_name,",","|")<?/MIVAR>
+
+            <?MIVAR>
+              <font size=-1 style="font-family:arial; font-weight:bold;">
+                <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$xpanatv_item_zdb_id">$xpanatv_item_name</A>
+              </font> 
+            <?/MIVAR>
+          </td>
+          <td bgcolor="#EEEEEE">
+            <FONT size=-1 style="font-family:arial;">
+              <?MISQL SQL="
+select distinct xpat_gene_zdb_id
+from expression_pattern_anatomy, expression_pattern
+where xpatanat_anat_item_zdb_id = '$xpanatv_item_zdb_id'
+  and xpatanat_xpat_zdb_id = xpat_zdb_id
+UNION
+select distinct xpat_gene_zdb_id
+from expression_pattern_anatomy, all_anatomy_contains, expression_pattern
+where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
+  and xpatanat_xpat_zdb_id = xpat_zdb_id
+  and allanatcon_container_zdb_id = '$xpanatv_item_zdb_id'
+              ;">
+              <?/MISQL>
+              <?MIVAR name=$xpanatv_totalcount>$MI_ROWCOUNT<?/MIVAR>
+
+              <?MIBLOCK COND="$(>,$xpanatv_totalcount,0)"> 
+                <?MIVAR>has <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&include_substructures=checked&TA_selected_structures=$xpanatv_item_name&processed_selected_structures=$xpanatv_processed_item_name" target="_parent"><B>($xpanatv_totalcount)</B></A> gene(s), total, expressed in all stages <?/MIVAR>
+              <?MIELSE>
+	        has no expression data.
+              <?/MIBLOCK>
+
+            </FONT>
+            <FONT size=-1 style="font-family:arial; font-weight:bold;  ">
+              <?MIVAR>$xpanatv_matchingText<?/MIVAR>
+            </FONT>
+          </td>
+        </tr>
+      <?/MIBLOCK> <?MICOMMENT> *** close 'first row only' miblock *** <?/MICOMMENT> 
+    <?/MISQL>
+
+
+    <?MIBLOCK COND="$(EQ,$MI_ROWCOUNT,0)">  <?MICOMMENT> *** open 'nothing returned' miblock *** <?/MICOMMENT>
+      <tr>
+        <td bgcolor="#EEEEEE" valign=top> 
+          <?MICOMMENT> *** not in dictionary *** <?/MICOMMENT>
+          <?MICOMMENT> - set anatomy error to 't' so we won't get any query results - <?/MICOMMENT>
+          <?MIVAR NAME="$xpanatv_anatomy_error_occured">t<?/MIVAR>
+          <FONT size=-1 style="font-family:arial;"> 
+            <?MIVAR> "$xpanatv_part" <?/MIVAR>
+            <?MICOMMENT> ---- capturing failed searches for use as possible synonyms ---- <?/MICOMMENT>
+            <?MISQL SQL="insert into xpat_anatomy_capture values ('$xpanatv_part',current);"><?/MISQL>
+          </FONT>
+        </td>
+        <td bgcolor="#EEEEEE">
+          <FONT size=-1 style="font-family:arial;"> 
+            <?MICOMMENT> ---- not in dictionary ---- <?/MICOMMENT>
+            <?MIVAR>
+              <B>does not exactly match a dictionary term, abbreviation or synonym.<br>You can browse the dictionary
+              <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=stages">by stage</a> 
+              or see the 
+              <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=alpha">complete list</a>.
+            <?/MIVAR>
+          </FONT>
+        </td>
+      </tr>
+    <?/MIBLOCK> <?MICOMMENT> *** close 'nothing returned' miblock *** <?/MICOMMENT> 
+  <?/MIBLOCK> <?MICOMMENT> *** close 'foreach anatitem' miblock *** <?/MICOMMENT>
+</table>     
+<br>
