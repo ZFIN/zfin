@@ -103,7 +103,7 @@
 
   <?MIVAR NAME=$previous COND="$(XST,$name)"> and <?/MIVAR>
 
-  <?MIVAR NAME=$constraint COND="$(NC,$lg,0)">$constraint $previous (OR_lg=$lg and private='f')<?/MIVAR>
+  <?MIVAR NAME=$constraint COND="$(NC,$lg,0)">$constraint $previous (OR_lg='$lg' and private='f')<?/MIVAR>
 
   <?MIVAR NAME=$previous COND="$(NC,$lg,0)"> and <?/MIVAR>
 
@@ -350,7 +350,7 @@
 
 	    <?MIBLOCK COND="$(>,$(POSITION,$panel_id,REF),0)">
 	      <?MIVAR>  
-	        $(IF,$(AND,$(>,$OR_lg,0),$(EC,$private,f)),
+	        $(IF,$(AND,$(NC,$OR_lg,0),$(EC,$private,f)),
 		  "LG <b>"$OR_lg"</b>;
 		  <b> "$lg_loc"</b> "$metric""&nbsp;&nbsp;
 		  <A HREF="javascript:view_scores('"$panel_id"','"$OR_lg"','"$OID"','"$marker_name"')";>Scoring Data</A>
@@ -375,11 +375,11 @@
 	  	  <TD><font size=2>" "$upd_date" ")
 	        <!--   end if   -->
 
-	        <?MIBLOCK COND="$(AND,$(>,$OR_lg,0),$(EC,$private,f))">
+	        <?MIBLOCK COND="$(AND,$(NC,$OR_lg,0),$(EC,$private,f))">
 		  <?MIVAR name=$ok_view_map>1<?/MIVAR>
 	        <?/MIBLOCK>
 
-	        $(IF,$(AND,$(>,$OR_lg,0),$(NC,$private,f)),
+	        $(IF,$(AND,$(NC,$OR_lg,0),$(NC,$private,f)),
 		  "Mapped on <A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$panel_id">"$panel_abbrev" panel</A>, but still confidential.
 		  </TD>
 		  <TD>&nbsp;</TD>

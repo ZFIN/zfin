@@ -154,7 +154,7 @@ create dba function "informix".regen_genomics() returning integer
       mname		varchar(80),
       abbrev		varchar(20), 
       mtype		varchar(10), 
-      OR_lg		integer,
+      OR_lg		varchar(2),
       lg_location		numeric(8,2), 
       metric		varchar(5), 
       target_abbrev	varchar(10),
@@ -231,7 +231,7 @@ create dba function "informix".regen_genomics() returning integer
       zdb_id		varchar(50),
       abbrev		varchar(20), 
       mtype		varchar(10), 
-      OR_lg		integer,
+      OR_lg		varchar(2),
       lg_location		numeric(8,2), 
       metric		varchar(5), 
       target_abbrev	varchar(10),
@@ -698,7 +698,7 @@ create dba function "informix".regen_genomics() returning integer
       alnkgmem_comments	  lvarchar,
       alnkgmem_num_auths      integer,
       alnkgmem_source_name    varchar(40),
-      alnkgmem_or_lg	  integer,
+      alnkgmem_or_lg	  varchar(2),
       alnkgmem_num_members    integer,
 
       primary key (alnkgmem_linkage_zdb_id, alnkgmem_member_zdb_id)
@@ -772,7 +772,7 @@ create dba function "informix".regen_genomics() returning integer
       mname varchar(80),
       abbrev varchar(20), 
       mtype varchar(10), 
-      OR_lg integer,
+      OR_lg varchar(2),
       lg_location numeric(8,2) ,
       target_abbrev varchar(10),
       target_id varchar(50), 
@@ -803,7 +803,7 @@ create dba function "informix".regen_genomics() returning integer
 	     NULL::numeric(8,2), 'NULL'::varchar(5), 'NULL'::varchar(10),
 	     NULL::datetime year to fraction
 	from all_l_m_new
-	where alnkgmem_or_lg <> 0;
+	where alnkgmem_or_lg <> '0';
 
     ----------------- all_genes
 
@@ -818,7 +818,7 @@ create dba function "informix".regen_genomics() returning integer
       lg_location		numeric(8,2), 
       metric		varchar(5),
       zdb_id		varchar(50), 
-      OR_lg		integer, 
+      OR_lg		varchar(2), 
       panel_id		varchar(50),
       panel_abbrev	varchar(10),
       abbrev		varchar(20),
@@ -902,7 +902,7 @@ create dba function "informix".regen_genomics() returning integer
       zdb_id		varchar(50) not null,
       gene_name		varchar(80),
       abbrev		varchar(15),
-      or_lg		integer,
+      or_lg		varchar(2),
       lg_location		decimal(8,2),
       panel_abbrev	varchar(10),
       panel_id		varchar(50),

@@ -95,7 +95,7 @@
 
 <?MIVAR COND="$(XST,$allele)" NAME=$allele>$(LOWER,$allele)<?/MIVAR>
 
-<?MIBLOCK COND="$(AND,$(NXST,$mut_constraint),$(EC,$line_type,mutant),$(OR,$(XST,$constraint),$(NC,$chrom_change,any),$(>,$chrom_num,0),$(XST,$allele),$(NC,$mutagen,any),$(XST,$selected)))">
+<?MIBLOCK COND="$(AND,$(NXST,$mut_constraint),$(EC,$line_type,mutant),$(OR,$(XST,$constraint),$(NC,$chrom_change,any),$(NC,$chrom_num,0),$(XST,$allele),$(NC,$mutagen,any),$(XST,$selected)))">
 
   <?MIVAR COND="$(NXST,$constraint)" NAME=$constraint> and <?/MIVAR>
   <?MIVAR NAME=$mut_constraint>$constraint<?/MIVAR>
@@ -122,10 +122,10 @@
 
   <?MIVAR NAME=$previous COND="$(NC,$chrom_change,any)"> and <?/MIVAR>
 
-  <?MIVAR NAME=$mut_constraint COND="$(>,$chrom_num,0)">
+  <?MIVAR NAME=$mut_constraint COND="$(NC,$chrom_num,0)">
   $mut_constraint $previous (chrom_num='$chrom_num')<?/MIVAR>
 
-  <?MIVAR NAME=$previous COND="$(>,$chrom_num,0)"> and <?/MIVAR>
+  <?MIVAR NAME=$previous COND="$(NC,$chrom_num,0)"> and <?/MIVAR>
 
   <?MIVAR NAME=$mut_constraint COND="$(NC,$knowngene,NULL)">$mut_constraint $previous (gene_abbrev <> 'unknown')<?/MIVAR>
 

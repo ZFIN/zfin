@@ -591,35 +591,20 @@ Variables Expected:
 	  <TR>
 	  <TD> <font size=-1><b>Linkage Group:</b> 
 	  <?MIVAR NAME=$lg>$2<?/MIVAR>
+          <?MIVAR NAME=$chrom_id>$9<?/MIVAR>
+
+<!-- Special case for update  -->
 	  $(IF,$(OR,$(NXST,$UPDATE),$(NC,$10,original)),$(IF,$(EC,$2,0),unknown,$2))
 
-	  $(IF,$(AND,$(XST,$UPDATE),$(EC,$10,original)),"<SELECT name=chrom_number onChange=doChromnum(this.options[this.selectedIndex].value,'"$2"','"$9"')>
-	  <option "$(IF,$(EC,$2,0),SELECTED)" value=0>unknown
-	  <option "$(IF,$(EC,$2,1),SELECTED)" value=1>1
-	  <option "$(IF,$(EC,$2,2),SELECTED)" value=2>2
-	  <option "$(IF,$(EC,$2,3),SELECTED)" value=3>3
-	  <option "$(IF,$(EC,$2,4),SELECTED)" value=4>4
-	  <option "$(IF,$(EC,$2,5),SELECTED)" value=5>5
-	  <option "$(IF,$(EC,$2,6),SELECTED)" value=6>6
-	  <option "$(IF,$(EC,$2,7),SELECTED)" value=7>7
-	  <option "$(IF,$(EC,$2,8),SELECTED)" value=8>8
-	  <option "$(IF,$(EC,$2,9),SELECTED)" value=9>9
-	  <option "$(IF,$(EC,$2,10),SELECTED)" value=10>10
-	  <option "$(IF,$(EC,$2,11),SELECTED)" value=11>11
-	  <option "$(IF,$(EC,$2,12),SELECTED)" value=12>12
-	  <option "$(IF,$(EC,$2,13),SELECTED)" value=13>13
-	  <option "$(IF,$(EC,$2,14),SELECTED)" value=14>14
-	  <option "$(IF,$(EC,$2,15),SELECTED)" value=15>15
-	  <option "$(IF,$(EC,$2,16),SELECTED)" value=16>16
-	  <option "$(IF,$(EC,$2,17),SELECTED)" value=17>17
-	  <option "$(IF,$(EC,$2,18),SELECTED)" value=18>18
-	  <option "$(IF,$(EC,$2,19),SELECTED)" value=19>19
-	  <option "$(IF,$(EC,$2,20),SELECTED)" value=20>20
-	  <option "$(IF,$(EC,$2,21),SELECTED)" value=21>21
-	  <option "$(IF,$(EC,$2,22),SELECTED)" value=22>22
-	  <option "$(IF,$(EC,$2,23),SELECTED)" value=23>23
-	  <option "$(IF,$(EC,$2,24),SELECTED)" value=24>24
-	  <option "$(IF,$(EC,$2,25),SELECTED)" value=25>25</SELECT>")
+	  <?MIBLOCK COND="$(AND,$(XST,$UPDATE),$(EC,$10,original))">
+            <?MIVAR>
+              <SELECT name=chrom_number onChange=doChromnum(this.options[this.selectedIndex].value,'$lg','$chrom_id')>
+                <?MISQL SQL="select distinct lg_name,lg_order from linkage_group order by lg_order">
+	          <option value="$1" $(IF,$(EC,$lg,$1),SELECTED) >$(IF,$(EC,$1,0),any,$1)
+                <?/MISQL>
+              </SELECT>
+            <?/MIVAR>
+          <?/MIBLOCK>
 	  </font></TD>  
 
 	  <!-- comment out until data starts to come in -->
@@ -873,7 +858,7 @@ Variables Expected:
 		<TR>
 		$(IF,$(XST,$UPDATE),"<TD><INPUT TYPE=button value=Update onClick=edit_linkage('"$link_id"','"$1"')></TD>","<TD> &nbsp;</TD>")
 
-		<?MIVAR NAME=$lg COND="$(AND,$(NC,$lg,""),$(=,$lg,0))"><?/MIVAR>
+		<?MIVAR NAME=$lg COND="$(AND,$(NC,$lg,""),$(EC,$lg,0))"><?/MIVAR>
 
 		<?MIBLOCK COND="$(AND,$(NC,$map_comments,NULL),$(NC,$map_comments,""))">
 		  <?MIVAR>

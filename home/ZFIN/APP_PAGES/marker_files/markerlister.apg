@@ -94,7 +94,7 @@ Startframes.apg will pass this variables on to the select form.  -->
   <?MIVAR NAME=$previous COND="$(AND,$(XST,$marker_type),$(NC,$marker_type,any))"> and <?/MIVAR>
 
   <?MIVAR NAME=$constraint COND="$(NC,$lg,0)">
-    $constraint $previous ((OR_lg=$lg or OR_lg=0) and private='f')
+    $constraint $previous ((OR_lg='$lg' or OR_lg='0') and private='f')
   <?/MIVAR>
 
   <?MIVAR NAME=$previous COND="$(NC,$lg,0)"> and <?/MIVAR>
@@ -339,7 +339,7 @@ Startframes.apg will pass this variables on to the select form.  -->
 	      <?MIVAR name=$ok_view_map>1<?/MIVAR>
 	    <?/MIVAR>
 
-	    <?MIBLOCK COND="$(AND,$(>,$OR_lg,0),$(NC,$private,f))">
+	    <?MIBLOCK COND="$(AND,$(NC,$OR_lg,0),$(NC,$private,f))">
 	      <TD>
                 <?MIVAR>
 		  Mapped on <A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=$target_id>$target_abbrev  $upd_date</A>, but confidential.

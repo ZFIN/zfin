@@ -80,33 +80,10 @@ document.critform.START.value = "";
 <?MIVAR>
 	<TD><font size=-1><b>LG:</b> 
   <select NAME=lg onChange='document.critform.START.value = "";'>
-	<option $(IF,$(EC,$lg,0),SELECTED)  value=0>??
-		<option  $(IF,$(EC,$lg,1),SELECTED)  value=1>1
-		<option  $(IF,$(EC,$lg,2),SELECTED)  value=2>2
-		<option  $(IF,$(EC,$lg,3),SELECTED)  value=3>3
-		<option  $(IF,$(EC,$lg,4),SELECTED)  value=4>4
-		<option  $(IF,$(EC,$lg,5),SELECTED)  value=5>5
-		<option  $(IF,$(EC,$lg,6),SELECTED)  value=6>6
-		<option  $(IF,$(EC,$lg,7),SELECTED)  value=7>7
-		<option  $(IF,$(EC,$lg,8),SELECTED)  value=8>8
-		<option  $(IF,$(EC,$lg,9),SELECTED)  value=9>9
-		<option  $(IF,$(EC,$lg,10),SELECTED)  value=10>10
-		<option  $(IF,$(EC,$lg,11),SELECTED)  value=11>11
-		<option  $(IF,$(EC,$lg,12),SELECTED)  value=12>12
-		<option  $(IF,$(EC,$lg,13),SELECTED)  value=13>13
-		<option  $(IF,$(EC,$lg,14),SELECTED)  value=14>14
-		<option  $(IF,$(EC,$lg,15),SELECTED)  value=15>15
-		<option  $(IF,$(EC,$lg,16),SELECTED)  value=16>16
-		<option  $(IF,$(EC,$lg,17),SELECTED)  value=17>17
-		<option  $(IF,$(EC,$lg,18),SELECTED)  value=18>18
-		<option  $(IF,$(EC,$lg,19),SELECTED)  value=19>19
-		<option  $(IF,$(EC,$lg,20),SELECTED)  value=20>20
-		<option  $(IF,$(EC,$lg,21),SELECTED)  value=21>21
-		<option  $(IF,$(EC,$lg,21),SELECTED)  value=22>22
-		<option  $(IF,$(EC,$lg,23),SELECTED)  value=23>23
-		<option  $(IF,$(EC,$lg,24),SELECTED)  value=24>24
-		<option  $(IF,$(EC,$lg,25),SELECTED)  value=25>25
-	</SELECT>
+    <?MISQL SQL="select distinct lg_name,lg_order from linkage_group order by lg_order"> 
+      <option value="$1" $(IF,$(EC,$lg,$1),SELECTED) >$(IF,$(EC,$1,0),any,$1)
+    <?/MISQL>
+  </SELECT>
 <?/MIVAR>
 </font></TD>
 

@@ -428,7 +428,7 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),"<TD colspan=3><font size=2>LG <b>"$4
     <TR>
     $(IF,$(XST,$UPDATE),"<TD><INPUT TYPE=button value=Update onClick=edit_linkage('"$link_id"','"$1"')></TD>","<TD> &nbsp;</TD>")
 
-    <?MIVAR NAME=$lg COND="$(AND,$(NC,$lg,""),$(=,$lg,0))"><?/MIVAR>
+    <?MIVAR NAME=$lg COND="$(AND,$(NC,$lg,""),$(EC,$lg,0))"><?/MIVAR>
 
     <?MIBLOCK COND="$(AND,$(NC,$map_comments,NULL),$(NC,$map_comments,""))">
       <?MIVAR>

@@ -254,32 +254,9 @@ Expected vars:  None.
       <?MIVAR>
 	<font size=2><big><b>LG: </b></big> 
 	<SELECT name=lg>
-	  <option $(IF,$(=,$lg,0),SELECTED) value=0>UNKNOWN
-	  <option $(IF,$(=,$lg,1),SELECTED) value=1>1
-	  <option $(IF,$(=,$lg,2),SELECTED) value=2>2
-	  <option $(IF,$(=,$lg,3),SELECTED) value=3>3
-	  <option $(IF,$(=,$lg,4),SELECTED) value=4>4
-	  <option $(IF,$(=,$lg,5),SELECTED) value=5>5
-	  <option $(IF,$(=,$lg,6),SELECTED) value=6>6
-	  <option $(IF,$(=,$lg,7),SELECTED) value=7>7
-	  <option $(IF,$(=,$lg,8),SELECTED) value=8>8
-	  <option $(IF,$(=,$lg,9),SELECTED) value=9>9
-	  <option $(IF,$(=,$lg,10),SELECTED) value=10>10
-	  <option $(IF,$(=,$lg,11),SELECTED) value=11>11
-	  <option $(IF,$(=,$lg,12),SELECTED) value=12>12
-	  <option $(IF,$(=,$lg,13),SELECTED) value=13>13
-	  <option $(IF,$(=,$lg,14),SELECTED) value=14>14
-	  <option $(IF,$(=,$lg,15),SELECTED) value=15>15
-	  <option $(IF,$(=,$lg,16),SELECTED) value=16>16
-	  <option $(IF,$(=,$lg,17),SELECTED) value=17>17
-	  <option $(IF,$(=,$lg,18),SELECTED) value=18>18
-	  <option $(IF,$(=,$lg,19),SELECTED) value=19>19
-	  <option $(IF,$(=,$lg,20),SELECTED) value=20>20
-	  <option $(IF,$(=,$lg,21),SELECTED) value=21>21
-	  <option $(IF,$(=,$lg,22),SELECTED) value=22>22
-	  <option $(IF,$(=,$lg,23),SELECTED) value=23>23
-	  <option $(IF,$(=,$lg,24),SELECTED) value=24>24
-	  <option $(IF,$(=,$lg,25),SELECTED) value=25>25
+          <?MISQL SQL="select distinct lg_name,lg_order from linkage_group order by lg_order"> 
+            <option value="$1" $(IF,$(EC,$lg,$1),SELECTED) >$(IF,$(EC,$1,0),unknown,$1)
+          <?/MISQL>
 	</SELECT>
       </font>
       <?/MIVAR>

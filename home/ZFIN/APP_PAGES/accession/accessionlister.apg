@@ -229,15 +229,15 @@ $(IF,$(NC,$prev_name,$1),"<TD valign=top> <font size=2>"$2":<A HREF="/<!--|WEBDR
 <TD> <font size=2> 
 $(IF,$(=,$5,0),"Unmapped")
 
-$(IF,$(AND,$(EC,$11,NULL),$(EC,$9,f),$(>,$5,0)),"LG <b>"$5"</b>;<b> "$3"</b> "$13""<TD><font size=2> "<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$6">"$7"</A>"</TD>
+$(IF,$(AND,$(EC,$11,NULL),$(EC,$9,f),$(NC,$5,0)),"LG <b>"$5"</b>;<b> "$3"</b> "$13""<TD><font size=2> "<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$6">"$7"</A>"</TD>
 <TD><font size=2 COLOR=#A9A9A9><input type=checkbox name=$target_abbrev  value=1  CHECKED ></TD>
 <TD><font size=2>" "$upd_date""</TD>)
 
-$(IF,$(AND,$(EC,$11,NULL),$(NC,$9,f),$(>,$5,0)),"Mapped on <A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$6">"$7"  "$upd_date"</A>, but confidential.")
+$(IF,$(AND,$(EC,$11,NULL),$(NC,$9,f),$(NC,$5,0)),"Mapped on <A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$6">"$7"  "$upd_date"</A>, but confidential.")
 
-$(IF,$(AND,$(NC,$11,NULL),$(EC,$9,f),$(>,$5,0)),"Linked at "$11" "$13" to <A target=content HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$6">"$7"</A> ("$12")")
+$(IF,$(AND,$(NC,$11,NULL),$(EC,$9,f),$(NC,$5,0)),"Linked at "$11" "$13" to <A target=content HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$6">"$7"</A> ("$12")")
 
-$(IF,$(AND,$(NC,$11,NULL),$(NC,$9,f),$(>,$5,0)),"Linked to "$12", but confidential.")
+$(IF,$(AND,$(NC,$11,NULL),$(NC,$9,f),$(NC,$5,0)),"Linked to "$12", but confidential.")
 </TD>
 
 
