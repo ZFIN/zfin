@@ -88,15 +88,10 @@ $(SUBDIRS) :
 
 # Special target to create only the directories and files used in mirror sites.
 # In this case, that's all the files in this directory, plus a subset of the
-# subdirectories.  Note that this is the last "mirror" target in the hierarchy.
-# Below here, the regular targets are used.
-# After everuything to mirror has been mirrored, create a tar file containing
-# all of them.
+# subdirectories.  Note that this is the lowest level "mirror" target in the 
+# hierarchy.  Below here, the regular targets are used.
 
 mirror : $(TARGETDIR) $(MIRROR_SUBDIRS) $(SPECIFICTARGETS) $(STATICTARGETS)
-	(cd $(TARGETDIR); tar cvfp $(TARGETROOT)/mirror.tar $^)
-	gzip -f $(TARGETROOT)/mirror.tar
-
 
 postloaddb :
 	$(foreach PLDIR,$(POSTLOADDB_SUBDIRS), $(MAKE) -C $(PLDIR) $@)

@@ -17,7 +17,7 @@
 # references to specific databases, directories, Informix servers, and 
 # machines replaced with equivalent generic tags.
 #
-# The specific/target directory approximately mirrors the generic/source
+# The specific/target directory approximately parallels the generic/source
 # directory, but it contains specific versions of the files in the generic 
 # tree, where the tags have been replaced with references to actual databases, 
 # directories, Informix servers, and machines.
@@ -237,8 +237,7 @@ include $(TOP)/make.default.rules
 # ---------------  Misc Targets  ----------------------------------------
 
 
-# Make the directories needed for the mirror, TAR file created by home
-# directory Makefile.
+# Make the directories needed for the mirror
 
 mirror : 
 	$(MAKE) -C momspider
