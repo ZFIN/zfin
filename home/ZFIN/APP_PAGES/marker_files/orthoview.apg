@@ -38,7 +38,7 @@
   <!-- Main Query to get orthologue -->
   <?MISQL SQL="
    select ortho_name, ortho_abbrev, organism, b.DB_name,
-         c.DB_query || b.acc_num, acc_num, a.zdb_id, 
+         c.DB_query || b.acc_num, dblink_acc_num_display, a.zdb_id, 
          d.organism_display_order, c.db_significance
     from orthologue a, OUTER (db_link b, foreign_DB c), organism d 
     where a.zdb_id = b.linked_recid 
@@ -53,7 +53,7 @@
    <?MIVAR NAME=$organism>$3<?/MIVAR>
    <?MIVAR NAME=$DB_name>$4<?/MIVAR>
    <?MIVAR NAME=$hyperlink>$5<?/MIVAR>
-   <?MIVAR NAME=$acc_num>$6<?/MIVAR>	
+   <?MIVAR NAME=$dblink_acc_num_display>$6<?/MIVAR>	
    <?MIVAR NAME=$zdb_id>$7<?/MIVAR>
    <?MIVAR NAME=$db_significance>$8<?/MIVAR>
 
@@ -126,7 +126,7 @@
   <?/MIBLOCK>
 
   <?MIVAR>
-  $(IF,$(NOT,$(ISNULL,$acc_num)),"<li><A HREF="$hyperlink">"$DB_name":"$acc_num"</a>") 
+  $(IF,$(NOT,$(ISNULL,$dblink_acc_num_display)),"<li><A HREF="$hyperlink">"$DB_name":"$dblink_acc_num_display"</a>") 
   $(SETVAR,$lastitem,$organism)
   <?/MIVAR>
  <?/MISQL>
