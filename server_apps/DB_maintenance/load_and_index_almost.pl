@@ -56,7 +56,8 @@ sub abort(@) {
     }
     print (STDERR "\n");
     print (STDERR "$PROGRAM_NAME aborted.\n");
-    print (STDERR "See $logFile for details.\n");
+    system("/bin/mv $logFile $logFile.$PROCESS_ID");
+    print (STDERR "See $logFile.$PROCESS_ID for details.\n");
     exit (-1);
 }
 
