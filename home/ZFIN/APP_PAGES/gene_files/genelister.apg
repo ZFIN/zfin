@@ -131,7 +131,7 @@ Options:
 <?MIBLOCK COND="$(XST,$limit)">
 
 <TABLE width=100% border=0 cellspacing=0 cellpadding=3>
-<TH> </TH><TD align=left><B>Gene</b> symbol - name [other names]</TD> <TD align=left><B>Location</b></TD>
+<TH> </TH><TD align=left><B>Gene symbol</b> - name &nbsp; [other names]</TD> <TD align=left><B>Location</b></TD>
 
 <!-- DEBUGGING <?MIVAR>  constraint=$constraint <?/MIVAR> -->
 
