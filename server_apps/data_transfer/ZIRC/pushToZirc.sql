@@ -23,7 +23,8 @@ unload to '<!--|ROOT_PATH|-->/home/data_transfer/ZIRC/zfinWildtypeLineAliases'
 
 unload to '<!--|ROOT_PATH|-->/home/data_transfer/ZIRC/zfinAlterations'
   delimiter '	'
-  select alteration.zdb_id, alteration.allele, alteration.locus, fish.zdb_id
+  select alteration.zdb_id, alteration.allele, alteration.locus, fish.zdb_id,
+         alteration.chrom_change
     from alteration, fish
     where alteration.allele = fish.allele;
 
