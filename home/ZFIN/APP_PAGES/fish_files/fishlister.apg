@@ -38,8 +38,9 @@ $constraint (lower(a.name) like '%$(LOWER,$fname)%')<?/MIVAR>
 
 <?MIVAR NAME=$previous COND="$(XST,$fname)"> and <?/MIVAR>
 
+<!-- change to look for abbrev within () in name  Sept. 00  -->
 <?MIVAR NAME=$constraint COND="$(XST,$abbrev)">
-$constraint $previous (lower(abbrev)='$(LOWER,$abbrev)')<?/MIVAR>
+$constraint $previous (lower(abbrev)='$(LOWER,$abbrev)' or name like '%$(LOWER,($abbrev)%')<?/MIVAR>
 
 <?MIVAR NAME=$previous COND="$(XST,$abbrev)"> and <?/MIVAR>
 
