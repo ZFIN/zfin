@@ -613,19 +613,24 @@ requested from publication page for related data list.
 
 
     <?MICOMMENT>Build the bar for walk window<?/MICOMMENT>
-    <?MIVAR name=selector>MIval=aa-markerselect.apg&WINSIZE=$WINSIZE<?/MIVAR>
-    <?MIVAR name=UserInput><?/MIVAR>
-    <?MIBLOCK COND="$(NXST,$pubId)">
-	<?MIVAR name=UserInput COND=$(XST,$input_name)>$UserInput&input_name=$(URLENCODE,$input_name)<?/MIVAR> 
+    <?MIBLOCK COND="$(XST,$accession)">
+      <?MIVAR name=selector>MIval=aa-accessionselect.apg&WINSIZE=$WINSIZE<?/MIVAR>
+      <?MIVAR name=$UserInput>&query_results=$query_results&aname=$input_acc<?/MIVAR>
+    <?MIELSE COND="$(XST,$pubId)">
+      <?MIVAR name=selector>MIval=aa-markerselect.apg&WINSIZE=$WINSIZE<?/MIVAR>
+      <?MIVAR name=$UserInput>&pubId=$pubId&type=$type<?/MIVAR>
+    <?MIELSE>
+      <?MIVAR name=selector>MIval=aa-markerselect.apg&WINSIZE=$WINSIZE<?/MIVAR>
+      <?MIVAR name=UserInput><?/MIVAR>
+      <?MIVAR name=UserInput COND=$(XST,$input_name)>$UserInput&input_name=$(URLENCODE,$input_name)<?/MIVAR> 
         <?MIVAR name=UserInput COND=$(XST,$input_acc)>$UserInput&input_acc=$input_acc<?/MIVAR> 
 	<?MIVAR name=UserInput COND=$(XST,$compare)>$UserInput&compare=$compare<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$marker_type)>$UserInput&marker_type=$marker_type<?/MIVAR>
         <?MIVAR name=$UserInput COND=$(XST,$knownloci)>$UserInput&knownloci=$knownloci<?/MIVAR>
         <?MIVAR name=UserInput COND=$(XST,$lg)>	$UserInput&lg=$lg<?/MIVAR>
         <?MIVAR name=$UserInput COND=$(XST,$return_rec)>$UserInput&return_rec=$return_rec<?/MIVAR> 
-        <?MIVAR name=UserInput COND=$(XST,$query_results)>$UserInput&query_results=$(URLENCODE,$query_results)<?/MIVAR>  
-    <?MIELSE>
-	<?MIVAR name=$UserInput>$UserInput&pubId=$pubId&type=$type<?/MIVAR>
+        <?MIVAR name=UserInput COND=$(XST,$query_results)>$UserInput&query_results=$query_results<?/MIVAR> 
+
     <?/MIBLOCK> 
     
     <Center>
