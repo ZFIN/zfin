@@ -24,31 +24,49 @@ create table meow_exp1 (
   OR_lg integer
 );
 
-insert into meow_exp1 
-  select distinct zdb_id,mname,abbrev,OR_lg 
-    from paneled_markers 
-   where mtype='GENE'
-     and private = 'f';
+-- get panel mappings
 
 insert into meow_exp1 
-  select distinct zdb_id,mname,abbrev,0 
-    from paneled_markers a 
-   where mtype='GENE'
-     and private = 't' 
+  select distinct zdb_id,gene_name,abbrev,OR_lg
+    from all_genes
+   where private = 'f'
+     and exists (select 'x' from panels
+	 where panel_id = panels.zdb_id)
+     and zdb_id like '%GENE%';
+
+-- include gene names from private mappings when gene does not have any public mappings
+insert into meow_exp1 
+  select distinct zdb_id,gene_name,abbrev,0
+    from all_genes a 
+   where private = 't' 
      and not exists 
        ( select 'x' 
-	   from paneled_markers b 
+	   from all_genes b 
 	  where a.zdb_id = b.zdb_id 
-	    and private = 'f') ;
+	    and private = 'f') 
+     and zdb_id like '%GENE%';
+
+-- get independent linkages
+
+insert into meow_exp1 (zdb_id,mname,abbrev,OR_lg) 
+  select distinct zdb_id,gene_name,abbrev,OR_lg 
+    from all_genes a
+   where private = 'f'
+     and panel_id like '%LINK%'
+     and zdb_id like '%GENE%'
+      and not exists 
+       ( select 'x' 
+	   from all_genes b 
+	  where a.zdb_id = b.zdb_id 
+	    and panel_id  like '%REFCROSS%') ;
+
 
 --  Add in  unmapped genes
 insert into meow_exp1 (zdb_id,mname,abbrev,OR_lg) 
   select zdb_id,gene_name,abbrev,0 
-    from gene 
-   where not exists 
-                 (select * 
-                    from mapped_marker mm
-                    where gene.zdb_id = mm.marker_id);
+    from all_genes 
+   where panel_id = 'na'
+      and zdb_id like '%GENE%';
 
 
 -- Sanity check to see that there are no anomalies. These two queries 
@@ -80,7 +98,7 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_genes.txt'
 
 create table meow_expll (
   zdb_id varchar(50),
-  mname varchar(80),
+  gene_name varchar(80),
   abbrev varchar(20),
   OR_lg integer,
   location numeric(6,2),
@@ -89,31 +107,50 @@ create table meow_expll (
   metric varchar(5)
 );
 
-insert into meow_expll 
-  select distinct zdb_id,mname,abbrev,OR_lg,lg_location,target_id,target_abbrev,metric 
-    from paneled_markers 
-   where mtype='GENE'
-     and private = 'f';
+-- get panel mappings
 
 insert into meow_expll 
-  select distinct zdb_id,mname,abbrev,0,0,null::varchar(50),null::varchar(10),null::varchar(5) 
-    from paneled_markers a 
-   where mtype='GENE'
-     and private = 't' 
+  select distinct zdb_id,gene_name,abbrev,OR_lg,lg_location,panel_id,panel_abbrev,metric 
+    from all_genes
+   where private = 'f'
+     and exists (select 'x' from panels
+	 where panel_id = panels.zdb_id)
+     and zdb_id like '%GENE%';
+
+-- include gene names from private mappings when gene does not have any public mappings
+insert into meow_expll 
+  select distinct zdb_id,gene_name,abbrev,0,0,null::varchar(50),null::varchar(10),null::varchar(5) 
+    from all_genes a 
+   where private = 't' 
      and not exists 
        ( select 'x' 
-	   from paneled_markers b 
+	   from all_genes b 
 	  where a.zdb_id = b.zdb_id 
-	    and private = 'f') ;
+	    and private = 'f') 
+     and zdb_id like '%GENE%';
+
+
+-- get independent linkages
+
+insert into meow_expll (zdb_id,gene_name,abbrev,OR_lg) 
+  select distinct zdb_id,gene_name,abbrev,OR_lg 
+    from all_genes a
+   where private = 'f'
+     and panel_id like '%LINK%'
+     and zdb_id like '%GENE%'
+      and not exists 
+       ( select 'x' 
+	   from all_genes b 
+	  where a.zdb_id = b.zdb_id 
+	    and panel_id  like '%REFCROSS%') ;
+
 
 --  Add in  unmapped genes
-insert into meow_expll (zdb_id,mname,abbrev,OR_lg) 
+insert into meow_expll (zdb_id,gene_name,abbrev,OR_lg) 
   select zdb_id,gene_name,abbrev,0 
-    from gene 
-   where not exists 
-                 (select * 
-                    from mapped_marker mm
-                    where gene.zdb_id = mm.marker_id);
+    from all_genes 
+   where panel_id = 'na'
+      and zdb_id like '%GENE%';
 
 
 -- Sanity check to see that there are no anomalies. These two queries 
