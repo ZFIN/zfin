@@ -545,6 +545,6 @@ where pla_prot not in (
 );   
 
 drop table prot_len_acc;
--- 
-rollback work;
---commit work;
+-- rollback work;
+--
+commit work;

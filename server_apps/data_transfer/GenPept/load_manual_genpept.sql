@@ -100,8 +100,8 @@ from tmp_db_link;
 drop table tmp_db_link;
 drop table manual_genpept;
 
--- 
-rollback work;
+-- rollback work;
 
--- commit work;
+-- 
+commit work;
 
