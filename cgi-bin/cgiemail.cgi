@@ -1,4 +1,4 @@
-#! /home/users/tomc/bin/rebol -csq
+#! /private/bin/rebol -csq
 rebol[
         Author: "Tom Conlin"
         Date: 2001-Jul-19
@@ -78,14 +78,14 @@ either system/options/cgi/request-method = "POST"[
         ;;; replace the place holders in the template with the values from the cgi
         foreach [k v] keyval [
                 k: rejoin[ "[" :k "]" ]
-                if all[ (equal? v "") (equal? copy/part k 10  "[required_") ][
+                if all[ (equal? v "") (equal? copy/part k 10  "[rqf") ][
                         v: rejoin[ {<font color="red">**} :k {</font>} ]
                 ]
                 replace/all template k v
         ]
 
         ;;; balk if a required field is missing
-        if find template {<font color="red">**[required_}[
+        if find template {<font color="red">**[rqf}[
                 template: copy next find template "^/^/"
                 print 
 {<html>
