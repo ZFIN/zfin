@@ -769,7 +769,10 @@
     print '<td><img src=/client_apps/Map/mapkey.gif><p>'."\n";
     
     my $POprint = 'ZMAP|';
-    #for $panel (@allpanels) { $POprint = $POprint . $panel . "|"; }### kevin's code
+    #for $panel (@panels) { $POprint = $POprint . $panel . "|"; }### kevin's code
+    
+    my $from_panels = "";
+    for $panel (@panels) { $from_panels = $from_panels . $panel . "|"; }### kevin's code
     
     print "<td>". $Q->start_form (
 				  -method=>'GET',
@@ -783,9 +786,10 @@
 				       $Q->hidden("width" ,$g_width)."\n".
 					 $Q->hidden("host","<!--|DOMAIN_NAME|-->")."\n".
 					   $Q->hidden("port", $jport)."\n".
-                        $Q->hidden("panel_order",$POprint)."\n".
-					     $Q->hidden("data",$g_printdata )."\n".
-					       $Q->end_form."\n </td>\n"; 
+					     $Q->hidden("panel_order",$POprint)."\n".
+					       $Q->hidden("from_panels",$from_panels)."\n".
+						 $Q->hidden("data",$g_printdata )."\n".
+						   $Q->end_form."\n </td>\n"; 
     
     print "</tr></table>";
 
