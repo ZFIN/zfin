@@ -13,6 +13,7 @@ delete from prot_len_acc;
 insert into prot_len_acc select * from tmp_pla;
 drop table tmp_pla;
 
+{
 -- first time only -------------------------------------------
 update db_link set dblink_length = (
     select distinct pla_len 
@@ -43,7 +44,7 @@ from db_link where db_name = 'GenPept' and dblink_zdb_id not in (
     )
 )
 ;           
-
+}
 
 ---------------------------------------------------------------
 {
@@ -94,7 +95,7 @@ into temp tmp_dblk with no log;
 update tmp_dblk set zad = get_id('DBLINK');  
 
 insert into zdb_active_data select zad from tmp_dblk;
-insert into record_attribution select zad,'ZDB-PUB-020723-4' from tmp_dblk; -- Curation of NCBI Nucleotide Sequence Database Links
+
 insert into db_link(
     linked_recid,
     db_name,
@@ -109,7 +110,6 @@ insert into db_link(
 ;
 
 ! echo "Attribute Genpept links to ZFIN citation"
-
 insert into record_attribution (recattrib_data_zdb_id,recattrib_source_zdb_id)
 select zad ,(select zdb_id from publication 
             where authors = 'ZFIN Staff'
@@ -117,6 +117,13 @@ select zad ,(select zdb_id from publication
             )
 from tmp_dblk
 ;           
+
+unload to 'unused_protiens.unl' 
+select * from prot_len_acc
+where pla_prot not in (
+    select acc from tmp_dblk
+);   
+
 
 drop table tmp_dblk;
 drop table prot_len_acc;

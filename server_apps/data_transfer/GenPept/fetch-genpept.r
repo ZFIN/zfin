@@ -1,4 +1,9 @@
-rebol []
+#! /private/bin/rebol -sqw
+rebol [
+	Author: "Tom Conlin" 
+	Date: 2003-Sept-20
+]
+
 comment {
 dbsource typically has  "DBSOURCE    accession <acc_num>"
 but there can be cruft before that on the line 
