@@ -1,0 +1,165 @@
+<!-- FILE: genelister.html -->
+
+<!-- This app-page handles the criteria collected by geneselect.html, and actually does the search, displaying the results. 
+-->
+<HTML>
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-chromoscripts.apg';">$1<?/MISQL>
+
+<body bgcolor="white" TEXT="black">
+<basefont COLOR="#000000" size=2>
+
+
+<!-- THIS NEXT PART IS EXECUTED AFTER THE PERSON ENTERS SOME CRITERIA -->
+
+<!-- First note that they have searched persons-->
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-identify.apg';">$1<?/MISQL>
+<?MISQL SQL="delete from int_person_places where pers_id='$ZDB_ident' and place_id='MARKER';"><?/MISQL>
+<?MISQL COND="$(NOT,$(EQ,$(SUBSTR,$ZDB_name,1,5),GUEST))" SQL="insert into int_person_places (pers_id,place_id,last_visit) values ('$ZDB_ident','MARKER',current);"><?/MISQL>
+
+<!-- This next part builds up a query piece by piece, based on which criteria 
+  were passed in 
+-->
+
+<?MIVAR NAME=$constraint COND="$(NXST,$constraint)"> <?/MIVAR>
+<?MIVAR NAME=$lg COND="$(NXST,$lg)">0<?/MIVAR>
+<?MIVAR NAME=$refcross COND="$(NXST,$refcross)">NULL<?/MIVAR>
+<?MIVAR NAME=$order_pref COND="$(NXST,$order_pref)">name<?/MIVAR>
+
+<?MIBLOCK COND="$(OR,$(XST,$name),$(NC,$lg,0),$(NC,$refcross,NULL),$(AND,$(XST,$within_cm),$(XST,$wm_name)))">
+
+<!-- First filter name for apostrophes! -->
+<?MIVAR COND="$(XST,$name)" NAME=$name DELIMIT="'" REPLACE="''">$name<?/MIVAR>
+
+
+<?MIVAR NAME=$previous> <?/MIVAR>
+<?MIVAR NAME=$constraint> where (<?/MIVAR>
+
+<!-- NOW BUILD UP THE CONSTRAINT CLAUSE -->
+
+<?MIVAR NAME=$constraint COND="$(XST,$name)">$constraint (lower(conc(gene_name,abbrev)) like '%$(LOWER,$name)%') <?/MIVAR>
+<?MIVAR NAME=$previous COND="$(XST,$name)"> and <?/MIVAR>
+
+<?MIVAR NAME=$constraint COND="$(NC,$lg,0)">$constraint $previous (OR_lg=$lg and private='f')<?/MIVAR>
+
+<?MIVAR NAME=$previous COND="$(NC,$lg,0)"> and <?/MIVAR>
+
+<?MIVAR NAME=$constraint COND="$(NC,$refcross,NULL)">$constraint $previous (panel_id='$refcross')<?/MIVAR>
+
+<?MIVAR NAME=$previous COND="$(NC,$refcross,NULL)"> and <?/MIVAR>
+
+<?MIVAR NAME=$constraint>$constraint ) <?/MIVAR>
+
+<?/MIBLOCK> <!-- ends cond any constraints specified -->
+
+
+
+<?MIVAR NAME=$order_clause COND="$(EC,$order_pref,name)">order by abbrev<?/MIVAR>
+<?MIVAR NAME=$order_clause COND="$(EC,$order_pref,location)">order by OR_lg,gene_name<?/MIVAR>
+
+<?MIVAR NAME=$target_table COND="$(XST,$ismapped)">mapped_genes<?/MIVAR>
+<?MIVAR NAME=$target_table COND="$(NXST,$ismapped)">all_genes<?/MIVAR>
+
+
+<!-- NOW JUST RETRIEVE AND DISPLAY ALL MATCHING ENTRIES. -->
+
+
+<center>
+<font size=4>Search Genes: Result Summary</font>
+
+<?MIVAR COND="$(NC,$lg,0)">
+<p><font size=3 color="red">PLEASE NOTE:</font> <font size=2> Because you have constrained this search to a specific linkage group, the results shown below <b>DO NOT</b> include confidential mapping results. This is to avoid tacitly giving away linkage group information for these markers.</font>
+<?/MIVAR>
+<br>
+
+<!-- Stuff to control retrieval volume -->
+<?MIVAR>
+<form method=post action="/cgi-bin_B/webdriver">
+<input type=hidden name=MIval value=aa-genelister.apg>
+<input type=hidden name=constraint value="$constraint">
+<input type=hidden name=order_pref value="$order_pref">
+<?/MIVAR>
+
+<?MIVAR COND="$(XST,$getsome)"><font color="red"><b>Showing only first $limit </b></font> of <?/MIVAR>
+
+<?MISQL SQL="select count(distinct gene_name)::integer,count(*)::integer from $target_table $constraint;"><?/MISQL>
+<?MIVAR NAME=$tcount>$1<?/MIVAR>
+<?MIVAR NAME=$true_count>$2<?/MIVAR>
+<?MIVAR> <b>$tcount</b> matching records found.
+<!-- QUERY: $MI_SQL -->
+<?/MIVAR>
+
+<?MIVAR COND="$(XST,$getsome)">
+<input type=submit name=getall value="Get remaining $(-,$tcount,$limit) records">
+<input type=hidden name=limit value=99>
+<?/MIVAR>
+<br>
+(Click on individual markers for details)
+</center>
+<p>
+
+<!-- Param to set maximum returned at once -->
+<?MIVAR NAME=$maxreturn>50<?/MIVAR>
+
+<?MIVAR COND="$(AND,$(NXST,$limit),$(>,$tcount,$maxreturn))">
+<BIG>The search based on the above criteria has retrieved <B>$tcount</b> records. This number of records may take some time to download, depending on the speed of your machine and connection.<br>
+Options:
+<ul>
+<li> Further constrain your criteria above and click "search" to re-do search.
+<li> Get only the first <input name=limit value=$maxreturn type=text maxlength=3 size=3> records. <input type=submit name=getsome value="Do this">
+<li> Get all $tcount matching records. <input type=submit name=getall value="Do this">
+</ul>
+<?/MIVAR>
+
+</form>
+
+<?MIVAR COND="$(OR,$(<=,$tcount,$maxreturn),$(XST,$getall))" NAME=$limit>$true_count<?/MIVAR>
+
+<?MIBLOCK COND="$(XST,$limit)">
+
+<TABLE width=100% border=0 cellspacing=0 cellpadding=3>
+<TH> </TH><TH align=left>Gene</TH> <TH align=left>Location</TH>
+
+<?MIVAR NAME=$prev_name>0<?/MIVAR>
+<?MIVAR NAME=$prev_gp>0<?/MIVAR>
+<?MIVAR NAME=$clr_cnt>0<?/MIVAR>
+<?MISQL SQL="select gene_name, lg_location, zdb_id,OR_lg, panel_id, panel_abbrev,abbrev,private,owner from $target_table $constraint $order_clause;" MAXROWS=$limit>
+
+$(IF,$(NC,$prev_name,$1),$(SETVAR,$clr_cnt,$(+,$clr_cnt,1)))
+
+$(IF,$(AND,$(EC,$order_pref,location),$(NC,$prev_gp,$4)),"<TR><TD colspan=3 align=center><HR size=4 width=80%></TD></TR>")
+
+$(SETVAR,$color,$(/,$clr_cnt,2))
+<TR valign=top $(IF,$(!=,$color,$(FIX,$color)),"bgcolor=#FCCE64")>
+
+<TD><font size=2> 
+$(IF,$(XST,$return_rec),<A HREF=/cgi-bin_B/webdriver?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3 TARGET=content>SELECT</A>) 
+</TD>
+
+$(IF,$(NC,$prev_name,$1),<TD valign=top> <font size=2><A HREF=/cgi-bin_B/webdriver?MIval=aa-markerview.apg&OID=$3 TARGET=content>$7</A>&nbsp;&nbsp; [ $1 ]</TD>,<TD>&nbsp;</TD>)
+
+
+<TD> <font size=2> 
+
+$(IF,$(=,$4,0),"Unmapped")
+
+$(IF,$(AND,$(>,$4,0),$(EC,$8,f)),"LG <b>"$4"</b>;<b> "$2"</b> cM (<A target=content HREF=/cgi-bin_B/webdriver?MIval=aa-crossview.apg&OID="$5">"$6" Panel</A>)")
+
+$(IF,$(AND,$(>,$4,0),$(NC,$8,f)),"Mapped on <A target=content HREF=/cgi-bin_B/webdriver?MIval=aa-crossview.apg&OID="$5">"$6" panel</A>, but still confidential.")
+</TD>
+
+<TD><font size=2><A HREF="javascript:view_map('$3','$7','$5')">
+$(IF,$(AND,$(>,$4,0),$(EC,$8,f)),"Show Map")</A>&nbsp; </TD>
+</TR>
+$(SETVAR,$prev_gp,$4)
+$(SETVAR,$prev_name,$1)
+<?/MISQL>
+</TABLE>
+
+<?MIVAR><!-- SQL: $MI_SQL <?/MIVAR>
+
+<?MIVAR COND=$(EQ,$MI_ROWCOUNT,0)>No matching records found<?/MIVAR>
+
+<?/MIBLOCK>  <!-- ends exists limit -->
+
+</HTML>
