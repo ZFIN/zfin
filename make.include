@@ -147,8 +147,13 @@ DBACCESS = dbaccess
 
 # --- Java
 
-JAVAHOME   = /private/apps/java
-JAVAC      = $(JAVAHOME)/bin/javac
+JAVAHOME_11   = /private/apps/java1.1
+JAVAC_11      = $(JAVAHOME)/bin/javac
+
+JAVAHOME_14  = /private/apps/java1.4
+JAVAC_14      = $(JAVAHOME_14)/bin/javac
+
+
 JAVACFLAGS = -g
 
 
