@@ -41,7 +41,7 @@ GENERICS = defs.html genome.html infmtx.html nomen.html nomen_comm.html \
 	updates.html zfprbs.html
 
 STATICS = 227.gif anatomy.html fish.gif fish_bgd.gif fish_net.gif logo.jpeg \
-	translocation.jpeg zfin.gif
+	siteNews.html translocation.jpeg zfin.gif
 
 
 
