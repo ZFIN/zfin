@@ -29,6 +29,9 @@ newindex=homewin.lgindex;
 
 function show_detail(link_id,marker_id,marker_abbrev,marker2_abbrev) {
 
+if (marker2_abbrev == "") {
+	marker2_abbrev = null;
+}
 if (!top.lglist) {
   top.lglist=new Array(25);
   top.lgindex=1;

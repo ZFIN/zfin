@@ -17,16 +17,17 @@ as of $3<?/MIVAR>
 
 <?MIVAR NAME=$previous> <?/MIVAR>
 <?MIVAR NAME=$constraint COND="$(NXST,$constraint)"> <?/MIVAR>
-<?MIVAR NAME=$constraint> where (( refcross_id='$panel') and (private = 'f') and <?/MIVAR>
+<?MIVAR NAME=$constraint> where (( refcross_id='$panel') and <?/MIVAR>
 <?MIVAR NAME=$constraint COND="$(NC,$lg,NULL)">$constraint (or_lg= '$lg')<?/MIVAR>
 <?MIVAR NAME=$previous COND="$(NC,$lg,NULL)"> and <?/MIVAR>
 <?MIVAR NAME=$constraint COND="$(AND,$(NC,$marker_id,undefined),$(NC,$marker_id,None))">$constraint $previous (marker_id= '$marker_id')<?/MIVAR>
 <?MIVAR NAME=$constraint>$constraint )<?/MIVAR>
+
 <?MISQL SQL="select scoring_data,lg_location,metric from mapped_marker $constraint order by lg_location;">
 <TR>
 <TD width=10%><font size=2 face="Courier">$marker_abbrev</TD>
-<TD width=10%><font size=2 face="Courier">$3$4</TD>
-<TD width=80%><font size=2 face="Courier"><nobr>$2</nobr></TD>
+<TD width=10%><font size=2 face="Courier">$2$3</TD>
+<TD width=80%><font size=2 face="Courier"><nobr>$1</nobr></TD>
 </TR>
 <?/MISQL>
 
