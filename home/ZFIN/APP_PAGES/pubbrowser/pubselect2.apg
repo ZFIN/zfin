@@ -122,6 +122,7 @@ function list_all() {
   
 <?MIELSE>
  
+
   <?MIBLOCK COND="$(XST,$authors)">
     <!-- First filter authors for apostrophes! -->
     <?MIVAR NAME=$authors DELIMIT="'" REPLACE="''">$authors<?/MIVAR>
@@ -129,11 +130,15 @@ function list_all() {
       $(VECAPPEND,$constraint,"lower(authors) like '"$(IF,$(EC,$authtype,anyauth),%)$(LOWER,$authors)"%'")
     <?/MIVAR>
   <?/MIBLOCK>
-  
-  <?MIVAR COND="$(XST,$title)">
-    $(VECAPPEND,$constraint,"lower(title) like '%"$(LOWER,$title)"%'")
-  <?/MIVAR>
 
+  <?MIBLOCK COND="$(XST,$title)">
+    <!-- First filter title for apostrophes! -->
+    <?MIVAR NAME=$title DELIMIT="'" REPLACE="''">$title<?/MIVAR>
+    <?MIVAR>
+      $(VECAPPEND,$constraint,"lower(title) like '%"$(LOWER,$title)"%'")
+    <?/MIVAR>
+  <?/MIBLOCK>
+  
   <!-- glue together the year clause if specified -->
   <?MIVAR COND="$(XST,$year)">
     $(VECAPPEND,$constraint,"year(pub_date) "$yr_cmpr" conc('"$century"','"$year"')")
