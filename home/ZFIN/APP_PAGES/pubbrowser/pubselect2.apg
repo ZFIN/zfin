@@ -1,3 +1,25 @@
+<?MICOMMENT>
+
+FILE:   pubselect2.apg
+PREFIX:
+
+INPUT VARS:
+  $anon1    :    the database column name
+  $anon1text:    the search text
+  $anon1testAllOneWord:  0 or 1
+  ...
+
+OUTPUT VARS:
+  ...
+
+OUTPUT:
+  list of matching publications
+
+INCOMPLETE ...
+
+<?/MICOMMENT> 
+
+
 <?MIERROR>
   <?MIVAR COND=$(XST,$MI_SQL)>
     SQL: $MI_SQL<br><br>
@@ -114,6 +136,8 @@ function list_all(user_access) {
 <?MIELSE>
   <?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>zdb_id<?/MIVAR>
 <?/MIBLOCK>
+<?MIVAR COND="$(NXST,$anon1textAllOneWord)" NAME=$anon1textAllOneWord>0<?/MIVAR>
+
 
 <?MIBLOCK COND="$(XST,$query_results)">
 
@@ -191,7 +215,8 @@ function list_all(user_access) {
   <!-- NOW  DEAL WITH THE ADDITIONAL CRITERIA -->
   
   <?MIBLOCK COND="$(XST,$anon1text)">
-     <?MIBLOCK COND="$(OR,$(EC,$anon1,pub_abstract), $(EC,$anon1,keywords))">	
+     <?MICOMMENT>in case $anon1text is not explicitly set to be all one word and $anon1 is either pub_abstract or keywords, split out each word and implement an AND search. <?/MICOMMENT> 
+     <?MIBLOCK COND="$(AND,$(NOT,$anon1textAllOneWord),$(OR,$(EC,$anon1,pub_abstract), $(EC,$anon1,keywords)))">	
        <?MIVAR NAME=anon1text DELIMIT="'" REPLACE="''">$anon1text<?/MIVAR>
        <?MIVAR NAME=substranon1text>$(REPLACE,$anon1text," ",",")<?/MIVAR>
        <?MIVAR NAME=anon1textcontraint>lower($anon1) like '%$(LOWER,$(INDEX,0,$substranon1text))%'<?/MIVAR>
@@ -202,15 +227,15 @@ function list_all(user_access) {
        <?MIVAR NAME=$commapos>$(POSITION,$substranon1text,",")<?/MIVAR>
        <?MIBLOCK WHILE=$commapos>
           <?MIVAR>$(SETVAR,$substranon1text,$(SUBSTR,$substranon1text,$(+,$commapos,1)))<?/MIVAR> 
-	  <?MIVAR COND="$(NC,$(INDEX,0,$substranon1text),)">
-	    $(SETVAR,$anon1textcontraint,"lower("$anon1") like '%"$(LOWER,$(INDEX,0,$substranon1text))"%'")
-	    $(VECAPPEND,$constraint,$anon1textcontraint)
-	  <?/MIVAR> 
-	  <?MIVAR>$(SETVAR,$commapos,$(POSITION,$substranon1text,","))<?/MIVAR> 
-        <?/MIBLOCK>
+	      <?MIVAR COND="$(NC,$(INDEX,0,$substranon1text),)">
+	      $(SETVAR,$anon1textcontraint,"lower("$anon1") like '%"$(LOWER,$(INDEX,0,$substranon1text))"%'")
+	      $(VECAPPEND,$constraint,$anon1textcontraint)
+	      <?/MIVAR> 
+	      <?MIVAR>$(SETVAR,$commapos,$(POSITION,$substranon1text,","))<?/MIVAR> 
+       <?/MIBLOCK>
      <?MIELSE>
-	<?MIVAR>$(VECAPPEND,$constraint,"lower("$anon1") like '%"$(LOWER,$anon1text)"%'")<?/MIVAR>
-     <?/MIBLOCK>
+	    <?MIVAR>$(VECAPPEND,$constraint,"lower("$anon1") like '%"$(LOWER,$anon1text)"%'")<?/MIVAR>
+     <?/MIBLOCK> <?MICOMMENT> end whether to split out each word <?/MICOMMENT>
   <?/MIBLOCK>
 
   <?MIVAR COND="$(NC,$jtype,any)">
@@ -326,6 +351,7 @@ function list_all(user_access) {
 <?MIVAR name=$UserInput COND=$(XST,$title)>$UserInput&title=$(URLENCODE,$title)<?/MIVAR>
 <?MIVAR name=$UserInput COND=$(XST,$yr_cmpr)>$UserInput&yr_cmpr=$(URLENCODE,$yr_cmpr)<?/MIVAR>
 <?MIVAR name=$UserInput COND=$(XST,$anon1text)>$UserInput&anon1text=$(URLENCODE,$anon1text)<?/MIVAR>
+<?MIVAR name=$UserInput COND=$(XST,$anon1textAllOneWord)>$UserInput&anon1textAllOneWord=$anon1textAllOneWord<?/MIVAR>
 <?MIVAR name=$UserInput COND=$(XST,$query_results)>$UserInput&query_results=$query_results<?/MIVAR>
 <?MIBLOCK COND=$(EC,$ZDB_access,root)>
   <?MIVAR name=$UserInput COND=$(XST,$curator)>$UserInput&curator=$curator<?/MIVAR>
@@ -361,7 +387,7 @@ function list_all(user_access) {
 <?MIVAR COND="$(XST,$title)"> <input type=hidden name=title value="$title"><?/MIVAR>
 <?MIVAR COND="$(XST,$authors)"> <input type=hidden name=authors value="$authors"><?/MIVAR>
 <?MIVAR COND="$(XST,$anon1text)"> <input type=hidden name=anon1text value="$anon1text"><?/MIVAR>
-<?MIVAR COND="$(XST,$anon1text)"> <input type=hidden name=anon1 value="$anon1"><?/MIVAR>
+<?MIVAR COND="$(XST,$anon1)"> <input type=hidden name=anon1 value="$anon1"><?/MIVAR>
 <?MIVAR COND="$(XST,$year)"> <input type=hidden name=year value="$year"><?/MIVAR>
 <?MIVAR> <input type=hidden name=constraint value="$constraint"><?/MIVAR>
 <?MIVAR> <input type=hidden name=target_tables value="$target_tables"><?/MIVAR>
@@ -378,7 +404,6 @@ function list_all(user_access) {
       <font size="+1">Publication Search Results   
       <!--DEBUGGING <?MIVAR> CONSTRAINT=$constraint <?/MIVAR>-->
       <br>
-
       <?MISQL SQL="select count(distinct zdb_id)::integer 
                    from $target_tables 
                    $constraint;">
