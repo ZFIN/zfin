@@ -2,7 +2,7 @@
 
 #if ("`ls -d Imagesdir`" != "Imagesdir/") mkdir  Imagesdir
 
-foreach d ( CB* )
+foreach d ( [cb,CB]* )
 echo $d:q
 #	cp -p $d:r*/* Imagesdir/	#fails when they omit a dot
 	cp -p $d:q/* Imagesdir/
