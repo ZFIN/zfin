@@ -495,7 +495,7 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 <!--       INNER LOOP CREATES A TABLE ROW FOR EACH ASSAY_TYPE   -->
 
 <?MIBLOCK COND="$(XST,$query_grp_by)">
-  <?MIVAR NAME=$query_grp_by>$query_grp_by, mrkr_type, mrkr_abbrev_order<?/MIVAR> 
+  <?MIVAR NAME=$query_grp_by>$query_grp_by, mrkr_name, mrkr_abbrev, mrkr_type, mrkr_abbrev_order<?/MIVAR> 
 <?/MIBLOCK>
 
 <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
