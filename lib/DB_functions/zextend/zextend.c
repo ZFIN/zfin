@@ -439,7 +439,7 @@ mi_lvarchar *html_breaks(mi_lvarchar *text) {
 	mi_lvarchar	*old, *new, *res;
 	
 	res = replace(old = mi_string_to_lvarchar("\n"),
-		new = mi_string_to_lvarchar("<P>"), text, 0);
+		new = mi_string_to_lvarchar("<BR>"), text, 0);
 	mi_var_free(old); mi_var_free(new);
 	return res;
 }
