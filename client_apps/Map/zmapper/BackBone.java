@@ -324,9 +324,15 @@ public class BackBone {
 		int totalpixels = hp - lp;
 		
 		//y = (int) (totalpixels * ((yl/totaldist) - ll));
-
+		if (totaldist == 0)
+			totaldist = 1;
+//		if (yl == 0)
+//			yl = 1;
+		
 		y = (int) ((yl/totaldist) * (float)totalpixels);
-			
+
+//		System.err.println("yl: " + yl + " / totaldist: " + totaldist + " * totalpixels: " + totalpixels);
+		
 		
 		y = y + TOP_SPACE;
 

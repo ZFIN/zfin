@@ -22,7 +22,7 @@ public class mapplet extends Applet  {
 	}
 
 	public void init() {
-		System.err.println("updated......");
+		System.err.println("updated - bin top trouble");
 		if (getParameter("data") != null) {
 			if (getParameter("selected_marker") != null) {
 				System.err.println("Starting with single selected marker...");

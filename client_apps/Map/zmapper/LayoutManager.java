@@ -38,6 +38,10 @@ public class LayoutManager {
 			BinH = B.getBinHeight(MAX_WIDTH,BIN_INDENT, DIAG_WIDTH);
 			y = BB.getBackBoneY(B,HEIGHT) - (BinH/2); 
 
+//			System.err.println("HEIGHT: " + HEIGHT);
+			//System.err.println("BinH: " + BinH);
+			//System.err.println("y: " + y);
+			
 			if (y < BB.TOP_SPACE - 6) 
 			{
 				//System.err.println(BB + " - " + B + "--- Bin higher than top");
