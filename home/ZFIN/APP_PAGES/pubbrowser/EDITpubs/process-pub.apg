@@ -21,6 +21,8 @@ pub in question with any new values passed in.
 <!-- Looking good. Now just fix up the entries and create the record -->
 <?MIBLOCK COND="$(AND,$(XST,$title),$(XST,$authors),$(XST,$pub_date),$(XST,$source),$(XST,$num_auths))">
 
+<!-- do a search when returing to publication page -->
+
 <!-- Double check input for apostrophes; fix em where found -->
 <?MIVAR NAME=$title DELIMIT="'" REPLACE="''">$title<?/MIVAR>
 <?MIVAR NAME=$authors DELIMIT="'" REPLACE="''">$authors<?/MIVAR>
@@ -33,7 +35,8 @@ pub in question with any new values passed in.
 
 
 
-<!- If you're creating new PUB record,create and insert a blank record for it.-->
+<!- If you're creating new PUB record,create and insert a blank record for it.
+    Stop search on return becuase values are empty. -->
 <?MIBLOCK COND="$(EC,$OID,new)">
 <?MISQL SQL="execute function get_id('PUB');"><?/MISQL>
 <?MIVAR NAME=$new>true<?/MIVAR>
@@ -42,7 +45,7 @@ pub in question with any new values passed in.
 <?MISQL SQL="insert into  publication (zdb_id,title,authors,medline_authors,source,pub_date,owner,entry_time) values ('$OID','temp','temp','Non-Medline entry','temp','01/01/1900'::date,'root',current);"><?/MISQL>
 <?/MIBLOCK>
 
-<!-- Now update the record with new info. Try to do it all in one insert! -->
+<!-- Now update the record with new info. Try to do it all in one insert! 
 <?MIVAR NAME=$setvalues>set title='$title',jtype='$jtype',authors='$authors',source='$source',pub_date='$pub_date'::date,status='$status',num_auths='$num_auths'<?/MIVAR>
 <?MIVAR COND=$(XST,$keywords) NAME=$setvalues>$setvalues,keywords='$keywords'<?/MIVAR>
 <?MIVAR COND=$(XST,$abstract) NAME=$setvalues>$setvalues,abstract='$abstract'<?/MIVAR>
@@ -53,20 +56,31 @@ pub in question with any new values passed in.
 <!-- OKAY, now just do the update! -->
 
 <?MISQL SQL="update publication $setvalues where zdb_id='$OID';"><?/MISQL>
+<?MIVAR NAME=$returnVariables>MIval=aa-startframes.apg&selector=aa-pubselect2.apg&select_from=PUBLICATION<?/MIVAR>
 
+<!-- 
+     if editing an existing or creating a new record and passsing values,
+     determine which variables exist, concatonate
+-->
+<?MIBLOCK COND="$(NXST,$new)">
+  <?MIVAR NAME=$returnVariables>$returnVariables&navtile=true<?/MIVAR>
+  <?MIVAR NAME=$returnVariables COND="$(XST,$search_authors)">$returnVariables&authors=$search_authors<?/MIVAR>
+  <?MIVAR NAME=$returnVariables COND="$(XST,$search_title)">$returnVariables&title=$search_title<?/MIVAR>
+  <?MIVAR NAME=$returnVariables COND="$(XST,$anon1text)">$returnVariables&anon1text=$anon1text<?/MIVAR>
+  <?MIVAR NAME=$returnVariables COND="$(XST,$year)">$returnVariables&year=$year<?/MIVAR>
+  <?MIVAR NAME=$returnVariables COND="$(XST,$yr_cmpr)">$returnVariables&yr_cmpr=$yr_cmpr<?/MIVAR>
+  <?MIVAR NAME=$returnVariables COND="$(XST,$century)">$returnVariables&century=$century<?/MIVAR>
+  <?MIVAR NAME=$returnVariables COND="$(XST,$search_jtype)">$returnVariables&jtype=$search_jtype<?/MIVAR>
+  <?MIVAR NAME=$returnVariables COND="$(XST,$order_pref)">$returnVariables&order_pref=$order_pref<?/MIVAR>
+  <?MIVAR NAME=$returnVariables COND="$(XST,$cur_status)">$returnVariables&cur_status=$cur_status<?/MIVAR>
+  <?MIVAR NAME=$returnVariables COND="$(XST,$pub_status)">$returnVariables&pub_status=$pub_status<?/MIVAR>
+<?/MIBLOCK>
 
-<!-- if editing an existing or creating a new record -->
 <!-- jump back to the previous window -->
-
-<?MIVAR COND="$(NXST,$search_authors)" NAME=$search_authors><?/MIVAR>
-<?MIVAR COND="$(NXST,$search_title)" NAME=$search_title><?/MIVAR>
-<?MIVAR COND="$(NXST,$anon1text)" NAME=$anon1text><?/MIVAR>
-<?MIVAR COND="$(NXST,$year)" NAME=$year><?/MIVAR>
-<?MIVAR COND="$(NXST,$search_jtype)" NAME=$search_jtypejtype>any<?/MIVAR>
 
 <SCRIPT>
 <?MIVAR>
-window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-pubselect2.apg&select_from=PUBLICATION&navtile=true&authors=$search_authors&anon1text=$anon1text&authtype=$authtype&anon1=$anon1&title=$search_title&jtype=$search_jtype&yr_cmpr=$yr_cmpr&century=$century&year=$year&order_pref=$order_pref&cur_status=$cur_status&pub_status=$pub_status');
+window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$returnVariables');
 <?/MIVAR>
 </SCRIPT>
 
