@@ -5,12 +5,13 @@
 */
 
 
-.sidebar, .content, .header {
+.sidebar, .content, .header .acknowledgement{
 	font-family:arial, sans-serif;
 }
       
 body {
-	background: #FFFFFF
+	background: #FFFFFF;
+	font-size:9pt;
       }
 
 body { 
@@ -20,6 +21,14 @@ a {
       font-weight:bold;
       color:#0000CC;
       }
+
+.header  {
+	font-family: arial, sans-serif;
+	text-decoration:none;
+	color:#FFFFFF;
+	font-size:9pt;
+}
+
 
 .header a {
 	font-family: arial, sans-serif;
@@ -38,7 +47,9 @@ a {
 
 .header p {
 	color:#FFFFFF;
+	font-size:9pt;
 }
+
 
 .sidebar a {
 	font-family:arial, sans-serif;
@@ -47,6 +58,14 @@ a {
 	color:#0000CC;
 	text-decoration:none;
       }
+
+.ack {
+	font-family: arial, sans-serif;
+	text-decoration:none;
+	color:#000000;
+	font-size:9pt;
+}
+
 
 .sidebar b {
  	font-family:arial, sans-serif;
@@ -110,7 +129,6 @@ td.header {
 	background-color:#FFFFFF;
 	vertical-align:top;
 	align:left;
-
 }
 
 td.footer {
@@ -193,5 +211,13 @@ td.submitbar {
 	align:right;
 	background-color:#CCCCCC;
 	colSpan:2;
+}
+
+td.ack a {
+	font-family: arial, sans-serif;
+	text-decoration:none;
+	font-weight:bold;
+	color:#000000;
+	font-size:9pt;
 }
 
