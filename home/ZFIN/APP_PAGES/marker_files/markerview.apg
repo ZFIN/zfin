@@ -475,12 +475,58 @@
   <?MIVAR NAME=$XPAT_ZDB_ID> <?/MIVAR>
 
   <?MIVAR NAME=$titledisplay>0<?/MIVAR>
-  <?MISQL SQL="
+
+  <?MISQL COND="$(EC,$marker_type,GENE)" SQL="
      SELECT distinct xpat_zdb_id, xpat_assay_name, stg_hours_start, stg_name, stg_zdb_id
-     FROM marker_label, label, expression_pattern, expression_pattern_stage, stage
-     WHERE mrkrlbl_marker_zdb_id ='$OID' 
-          AND mrkrlbl_label_zdb_id = lbl_zdb_id
-          AND lbl_zdb_id = xpat_label_zdb_id
+     FROM marker_relationship, expression_pattern, expression_pattern_stage, stage
+     WHERE mrel_mrkr_1_zdb_id = '$OID' 
+          AND mrel_mrkr_2_zdb_id = xpat_probe_zdb_id
+	  AND xpat_zdb_id = xpatstg_xpat_zdb_id
+	  AND xpatstg_start_stg_zdb_id = stg_zdb_id
+     ORDER by 1, 3
+          ;">
+
+     <?MIBLOCK COND=$(NC,$XPAT_ZDB_ID,$1)>
+	<?MIVAR NAME=$XPAT_ZDB_ID>$1<?/MIVAR>
+	<?MIVAR NAME=$XPAT_ASSAY_NAME>$2<?/MIVAR>
+	<?MIVAR NAME=$XPAT_start_time>$3<?/MIVAR>
+	<?MIVAR NAME=$XPAT_STAGE1>$4<?/MIVAR>
+	<?MIVAR NAME=$XPAT_STAGE1_ID>$5<?/MIVAR>
+	<?MIVAR NAME=$XPAT_STAGE2><?/MIVAR>
+	<?MIVAR NAME=$XPAT_end_time><?/MIVAR>
+
+
+	<?MISQL SQL="
+	  SELECT s2.stg_name, s2.stg_hours_end
+	  FROM stage s1, stage s2, expression_pattern_stage
+	  WHERE '$XPAT_ZDB_ID' = xpatstg_xpat_zdb_id
+	    AND '$XPAT_STAGE1_ID' = s1.stg_zdb_id
+	    AND xpatstg_end_stg_zdb_id = s2.stg_zdb_id
+	  ORDER by 2
+	;">
+	  
+	  <?MIVAR NAME=$XPAT_STAGE2>$1<?/MIVAR>
+	  <?MIVAR NAME=$XPAT_end_time>$2<?/MIVAR>
+	
+	<?/MISQL>
+
+       <?MIVAR>
+     	
+    	$(IF,$(AND, $(>,$MI_CURRENTROW,1), $(=,$titledisplay,0)),
+		<HR width="80%">
+		<b>GENE EXPRESSION: </b>
+		<!--<ul>-->
+		$(SETVAR,$titledisplay,1))
+    	<li><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatview.apg&OID=$XPAT_ZDB_ID>$XPAT_ASSAY_NAME</A>  -  $XPAT_STAGE1 to $XPAT_STAGE2  ($XPAT_start_time hr to $XPAT_end_time hr) 
+	<?/MIVAR>
+	
+    <?/MIBLOCK>
+ <?/MISQL>
+
+  <?MISQL COND="$(EC,$marker_type,EST)" SQL="
+     SELECT distinct xpat_zdb_id, xpat_assay_name, stg_hours_start, stg_name, stg_zdb_id
+     FROM expression_pattern, expression_pattern_stage, stage
+     WHERE '$OID' = xpat_probe_zdb_id
 	  AND xpat_zdb_id = xpatstg_xpat_zdb_id
 	  AND xpatstg_start_stg_zdb_id = stg_zdb_id
      ORDER by 1, 3
