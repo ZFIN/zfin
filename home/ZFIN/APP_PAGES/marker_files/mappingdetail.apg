@@ -254,8 +254,8 @@ Eek! No detOID passed into details mode
      <TD colspan=3><b>MAPPING INFORMATION:</b>
      </TD>
     </TR>
-    <TR>
-      <TD bgcolor=<?MIVAR>$highlight<?/MIVAR> valign=top colspan=3>
+    <TR bgcolor=<?MIVAR>$highlight<?/MIVAR>>
+      <TD valign=top colspan=3>
 
 
 
@@ -307,7 +307,7 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),
 
       </TD>
       </TR>
-      <TR>	   
+      <TR bgcolor=<?MIVAR>$highlight<?/MIVAR>>	   
 <!-- ************************************** -->
 
 <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
@@ -400,15 +400,16 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),
      </TR>
 <?/MIBLOCK>
 
-<?MIVAR>
      <TR>
-       <TD valign=top colspan=4 bgcolor=<?MIVAR>$highlight<?/MIVAR>>
-         <B>Markers linked to $abbrev:</b>
-<?/MIVAR>
-
+      <TD valign=top colspan=4>
+	<br><b>NON-REFERENCE PANEL MAPPING INFORMATION:</b>
+      </TD>
+     </TR>
+     <TR bgcolor=<?MIVAR>$highlight<?/MIVAR>>
+      <TD colspan=2>
 
 <?MIVAR NAME=$MI_NULL><?/MIVAR>
-<TABLE cellpadding=1 cellspacing=0>
+<TABLE cellpadding=1 cellspacing=0 bgcolor=<?MIVAR>$highlight<?/MIVAR>>
 <?MIVAR NAME=$curviewer>/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=<?/MIVAR>
 
 <!-- get independent linkage info for other members of linkage or for marker itself if it is the only linkage member -->
@@ -430,8 +431,23 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),
     <?MIVAR NAME=$map_comments>$5<?/MIVAR>
     <?MIVAR NAME=$link_id>$8<?/MIVAR>
 
-    $(IF,$(=,$MI_CURRENTROW,1),"<TR><TD colspan=2></TD><TD></TD><TD><U>LG</U></TD><TD><U>Distance</U></TD><TD><U>LOD</U></TD><TD><U>Source</U></TD><TD></TD></TR>")
-
+    <?MIVAR COND="$(=,$MI_CURRENTROW,1)"
+      <TR>
+        <TD colspan=8>
+	  <b>Markers linked to <?MIVAR>$abbrev<?/MIVAR>:</b>
+	</TD>
+      </TR>
+      <TR>
+	<TD colspan=2></TD>
+	<TD></TD>
+	<TD><U>LG</U></TD>
+	<TD><U>Distance</U></TD>
+	<TD><U>LOD</U></TD>
+	<TD><U>Source</U></TD>
+	<TD></TD>
+      </TR>
+    <?/MIVAR>
+ 
     $(IF,$(NC,$3,GENE),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID="))
 
     $(IF,$(AND,$(NC,$3,GENE),$(NC,$3,MUTANT)),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID="))
@@ -481,28 +497,54 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),
 </TR>
 <?/MISQL>
 </TABLE>
-<?MIVAR COND="$(=,$MI_ROWCOUNT,0)"><p>None submitted.<?/MIVAR>
-<br><br>
-<?MIVAR>
-<b>Markers contained in $abbrev:</b><br>
-<br>
 
-<?MISQL SQL="SELECT mrel_mrkr_2_zdb_id, mrkr_abbrev
-             FROM marker_relationship, marker
-	     WHERE mrel_mrkr_1_zdb_id = '$OID'
-               and mrel_type = 'gene contains small segment'
-	       and mrel_mrkr_2_zdb_id = mrkr_zdb_id
-;">
-<?MIVAR NAME=$insideq_abbrev>$2<?/MIVAR>
-<?MIVAR NAME=$insideq_OID>$1<?/MIVAR>
- <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini&split=space&OID=$1') from webPages where ID='aa-mappingdetail.apg';">
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$insideq_OID"><b>$insideq_abbrev</b></A> &nbsp; $1<br>
- <?/MISQL>
-<?/MISQL>
-<?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
-Does not contain any markers.
-<?/MIBLOCK>
+
+<?MIVAR NAME=$linked_rowcount>$MI_ROWCOUNT<?/MIVAR>
+<?MIVAR COND="$(>,$linked_rowcount,0)">
+  <br>
 <?/MIVAR>
+
+<TABLE cellpadding=1 cellspacing=0 bgcolor=<?MIVAR>$highlight<?/MIVAR>>
+<?MISQL SQL="SELECT mrel_mrkr_2_zdb_id, mrkr_abbrev
+             FROM marker_relationship, marker_relationship_type, marker
+	     WHERE mrel_mrkr_1_zdb_id = '$OID'
+	       and mrel_type = mreltype_name
+	       and mrel_mrkr_2_zdb_id = mrkr_zdb_id
+               and mreltype_mrkr_type_group_2 = 'SMALLSEG'
+	       and (   exists
+		       ( SELECT 'x' 
+		           FROM mapped_marker
+		           WHERE mrel_mrkr_2_zdb_id = marker_id )
+		    or exists
+		       ( SELECT 'x' 
+		           FROM linkage_member
+		           WHERE mrel_mrkr_2_zdb_id = lnkgmem_member_zdb_id ) )
+  ;">
+  <?MIVAR NAME=$insideq_abbrev>$2<?/MIVAR>
+  <?MIVAR NAME=$insideq_OID>$1<?/MIVAR>
+  <?MIVAR COND="$(=,$MI_CURRENTROW,1)">
+    <TR>
+      <TD><b>Markers contained in $abbrev:</b></TD>
+    </TR>
+  <?/MIVAR>
+  <?MISQL SQL="
+    select WebExplode(object, '&mapdetails_mode=mini&split=space&hide_empty=t&OID=$1')
+      from webPages 
+      where ID = 'aa-mappingdetail.apg';">
+    <TR>
+      <TD>
+        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$insideq_OID"><b>$insideq_abbrev</b></A> &nbsp; $1
+      </TD>
+    </TR>
+  <?/MISQL>
+<?/MISQL>
+
+<?MIVAR COND="$(AND,$(=,$MI_ROWCOUNT,0),$(=,$linked_rowcount,0))">
+  <TR bgcolor=<?MIVAR>$highlight<?/MIVAR>>
+    <TD>None submitted.</TD>
+  </TR>
+<?/MIVAR>
+</TABLE>
 
 </form> <!-- end form for view maps. -->
 
@@ -510,7 +552,7 @@ Does not contain any markers.
 
 <TR>
  <TD>
-  <b>PRIMER SETS:</b><p>
+  <br><b>PRIMER SETS:</b>
  </TD>
 </TR>
 
@@ -542,7 +584,11 @@ Does not contain any markers.
   </TR>
 
 <?/MISQL>
-<?MIVAR COND="$(=,$MI_ROWCOUNT,0)"><TR><TD colspan=2>None submitted.</TD></TR><?/MIVAR>
+<?MIVAR COND="$(=,$MI_ROWCOUNT,0)">
+  <TR bgcolor="$highlight">
+    <TD colspan=2>None submitted.</TD>
+  </TR>
+<?/MIVAR>
 </TABLE>
 
 <p>
