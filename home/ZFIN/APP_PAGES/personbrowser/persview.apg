@@ -67,11 +67,11 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-update-pers
 
   <?MIBLOCK COND="$(XST,$UPDATE)">
     <?MIVAR>
-      <TITLE>ZFIN Update Person: $name </TITLE>
+      <TITLE>ZFIN Update Person: $full_name </TITLE>
     <?/MIVAR>
   <?MIELSE>
     <?MIVAR>
-      <TITLE>ZFIN View Person: $name </TITLE>
+      <TITLE>ZFIN View Person: $full_name </TITLE>
     <?/MIVAR>
   <?/MIBLOCK>
 
