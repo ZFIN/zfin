@@ -7,10 +7,10 @@ setenv INFORMIXSQLHOSTS ${INFORMIXDIR}/etc/<!--|SQLHOSTS_FILE|-->
 setenv LD_LIBRARY_PATH ${INFORMIXDIR}/lib:${INFORMIXDIR}/lib/esql
 setenv PATH <!--|INFORMIX_DIR|-->/bin:/research/zfin/central/Commons/bin:$PATH
 
-set pth=/research/zfin/central/data/unloads/<!--|MACHINE_NAME|-->
+set pth=/research/zfin/unloads/databases/<!--|DB_NAME|-->
 set dirname=`date +"%Y.%m.%d.1"`
 
-# increment untill we get name which has not been taken
+# increment until we get name which has not been taken
 while ( -d $pth/$dirname )
 	set z=$dirname:e
 	set y=$dirname:r
