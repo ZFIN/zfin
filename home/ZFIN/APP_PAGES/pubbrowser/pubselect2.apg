@@ -105,23 +105,23 @@ function list_all() {
 
 <?MIBLOCK COND="$(XST,$query_results)">
 
-
 <!-- THIS NEXT PART IS EXECUTED AFTER THE PERSON ENTERS SOME CRITERIA -->
-<?MIVAR NAME=$constraint COND="$(NXST,$constraint)"><?/MIVAR>
-<?MIVAR>$(UNSETVAR,$constraint)<?/MIVAR>
+
+<?MIVAR>$(UNSETVAR,$constraint)<?/MIVAR><!--won't complain if $constraint is not exist. UNSETVAR turns $constraint to be not exist, but later VECAPPEND defines the varible and set the first element. In case $constraint does exist, VECAPPEND treast empty as the first element and appends the second element.-->
 <?MIVAR NAME=$curation_constraint COND="$(NXST,$in_curation)"><?/MIVAR>
 <?MIVAR>$(UNSETVAR,$curation_constraint)<?/MIVAR>
 
 <?MIBLOCK COND="$(XST,$clear_all)">
-  <?MIVAR NAME=constraint>status = 'active'<?/MIVAR>
+  <?MIVAR  NAME=constraint COND="$(NXST,$constraint)"><?/MIVAR>
+  <?MIVAR NAME=constraint>status = 'active'<?/MIVAR> 
   
 <?MIELSE COND="$(XST,$pub_acc_constraint)">
-  <?MIVAR>
+  <?MIVAR>  
     $(VECAPPEND,$constraint,$pub_acc_constraint)
   <?/MIVAR>
   
 <?MIELSE>
-
+ 
   <?MIBLOCK COND="$(XST,$authors)">
     <!-- First filter authors for apostrophes! -->
     <?MIVAR NAME=$authors DELIMIT="'" REPLACE="''">$authors<?/MIVAR>
@@ -207,9 +207,14 @@ function list_all() {
       <?MIVAR>$(VECAPPEND,$constraint,$curation_constraint)<?/MIVAR>
     <?/MIBLOCK>
   <?/MIBLOCK>
-  
-  <?MIVAR>$(SETVAR,$constraint,$(SEPARATE,$constraint, AND ))<?/MIVAR>
-
+  <?MIBLOCK COND="$(NXST,$constraint)">
+	<?MIVAR NAME=constraint><?/MIVAR>     
+  <?MIELSE>
+    <?MIVAR>
+	$(SETVAR,$constraint,$(SEPARATE,$constraint, AND ))
+	$(SETVAR,$constraint, where $constraint)
+   <?/MIVAR>
+  <?/MIBLOCK>
   
 <?/MIBLOCK>
 
@@ -224,6 +229,7 @@ function list_all() {
 <?MIVAR NAME=$target_tables>publication<?/MIVAR>
 
 <!-- NOW JUST RETRIEVE AND DISPLAY ALL MATCHING ENTRIES -->
+
 
 
 
@@ -310,7 +316,7 @@ function list_all() {
       <!-- DEBUGGING <?MIVAR> CONSTRAINT=$constraint <?/MIVAR> -->
       <?MISQL SQL="select count(distinct zdb_id)::integer 
                    from $target_tables 
-                   where $constraint;">
+                   $constraint;">
       <?/MISQL> 
 
       <?MIVAR NAME=$num_recs>$1<?/MIVAR>
@@ -351,7 +357,7 @@ function list_all() {
 <!--- EXECUTION --->
 <!--- Query Database --->
 <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE
-	SQL="select distinct title,authors,zdb_id,year(pub_date) as pyear, source, lower(authors), pub_completion_date from $target_tables where $constraint $order_clause;">
+	SQL="select distinct title,authors,zdb_id,year(pub_date) as pyear, source, lower(authors), pub_completion_date from $target_tables $constraint $order_clause;">
 <?MIVAR NAME=PUB_COMPLETION>$7<?/MIVAR>
 <TR>
 <?MIVAR><TD valign=top>&nbsp;</TD><?/MIVAR>
@@ -469,6 +475,8 @@ $(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/
 	</tr>
 </Table>
 </Center>
+
+
 
 <?/MIBLOCK> <!-- xst query_results -->
 
