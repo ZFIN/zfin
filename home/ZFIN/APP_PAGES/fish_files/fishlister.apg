@@ -68,7 +68,7 @@ $mut_constraint $previous (mutagen='$mutagen')<?/MIVAR>
 <?MIVAR NAME=$previous COND="$(NC,$mutagen,any)"> and <?/MIVAR>
 
 <?MIVAR NAME=$mut_constraint COND="$(XST,$allele)">
-$mut_constraint $previous (allele like '$allele%')<?/MIVAR>
+$mut_constraint $previous (lower(allele) like LOWER('$allele%'))<?/MIVAR>
 
 <?MIVAR NAME=$previous COND="$(XST,$allele)"> and <?/MIVAR>
 
