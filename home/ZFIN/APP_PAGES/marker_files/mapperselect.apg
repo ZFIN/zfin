@@ -1,13 +1,14 @@
 <!-- FILE: MAPPERSELECT.HTML. This file gets user input for displaying a default map. -->
 
+<!-- Modified to support I.E.  Naviagtor tile buttons must know all user input from the query screen. This file creates the nav tile bar when it is called by veiw_mapplet.  Startframes.apg, called by the tile bar buttons, will pass this variables on to the select form.  -->
+
+
 
 <HTML>
 
 <?MIVAR NAME=$userid COND="$(NXST,$userid)">GUEST<?/MIVAR>
 <?MIVAR NAME=$loc_lg COND="$(NXST,$loc_lg)">0<?/MIVAR>
-<?MIVAR NAME=$loc_panel COND="$(NXST,$loc_panel)"><?/MIVAR>
-<?MIVAR NAME=$loc COND="$(NXST,$loc)"><?/MIVAR>
-<?MIVAR NAME=$marker COND="$(NXST,$marker)"><?/MIVAR>
+<?MIVAR NAME=$loc_panel COND="$(NXST,$loc_panel)">any<?/MIVAR>
 <?MIVAR NAME=$LN54 COND="$(NXST,$LN54)">1<?/MIVAR>
 <?MIVAR NAME=$T51 COND="$(NXST,$T51)">1<?/MIVAR>
 <?MIVAR NAME=$HS COND="$(NXST,$HS)">1<?/MIVAR>
@@ -15,7 +16,14 @@
 <?MIVAR NAME=$MOP COND="$(NXST,$MOP)">1<?/MIVAR>
 <?MIVAR NAME=$GAT COND="$(NXST,$GAT)">1<?/MIVAR>
 
+
 <SCRIPT>
+
+
+function form_submit() {
+document.mapplet.submit();
+}
+
 
 function call_mapplet() {
 
@@ -23,7 +31,7 @@ function call_mapplet() {
 
 if ((document.mapplet.MGH.checked == 0)&&(document.mapplet.GAT.checked == 0)&&(document.mapplet.MOP.checked ==0)&&(document.mapplet.LN54.checked == 0)&&(document.mapplet.T51.checked == 0)&&(document.mapplet.HS.checked == 0)) {
 	 alert ('Please check at least one panel');
-  	 return;
+  	 return false;
 	}
 
 <!-- if loc_panel is selected make sure panel variable is checked -->
@@ -40,18 +48,18 @@ if (document.mapplet.loc_panel.selectedIndex !=0) {
   
 if (document.mapplet.marker.value !== ''){
    if ((document.mapplet.loc.value== '')&&(document.mapplet.loc_panel.selectedIndex==0)&&(document.mapplet.loc_lg.selectedIndex==0)) { 
-	document.mapplet.submit();
+	return true;
 	}
   else  {
 	alert(" Please specify either marker OR specify location, LG, and panel. ");
-	return;
+	return false;
 	}
 }
 
 
 if ((document.mapplet.loc != null) && (document.mapplet.loc.value.search(/[^0-9\.]/) != -1 )) {
 	alert('Locations must be specified as numeric values without units.');
-	return;
+	return false;
 }
  
 
@@ -62,21 +70,22 @@ if (document.mapplet.marker.value == '') {
 		if ((document.mapplet.loc_panel.selectedIndex != 0) && (document.mapplet.loc.value != '')) {
 			document.mapplet.submit(); 
 		} else if ((document.mapplet.loc_panel.selectedIndex == 0) && (document.mapplet.loc.value == '')) {
-			alert(' Please specify a location and panel for the selected linkage group '); 
+			alert(' Please specify a location and panel for the selected linkage group '); return false;
+		
 		} else if ((document.mapplet.loc_panel.selectedIndex != 0) && (document.mapplet.loc.value == '')){
-			alert(' A panel but no location was specified.\n' + ' Please include a location for this panel.');
+			alert(' A panel but no location was specified.\n' + ' Please include a location for this panel.');return false;
 		} else if ((document.mapplet.loc_panel.selectedIndex == 0) && (document.mapplet.loc.value != '')){
-			alert(' A location but no panel was specified.\n' + ' Please select a panel for this location. ');
+			alert(' A location but no panel was specified.\n' + ' Please select a panel for this location. ');return false;
 		}
 	}
  else {
 	alert(' Please specify either marker OR specify location, LG, and panel. ');
-	return;
+	return false;
 	}
 }
 
-
 }
+
 
 function call_reset() {
 
@@ -91,10 +100,10 @@ document.mapplet.MOP.checked = true;
 document.mapplet.T51.checked = true;
 document.mapplet.LN54.checked = true;
 
-
 }
 
 <?MIVAR>
+
 function start_help(anchor) {
    top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-helpframes.html&calling_page=mapperselecthelp.html&anchor="+anchor,"helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
 }
@@ -105,7 +114,7 @@ function start_help(anchor) {
 
 <basefont size=2>
 
-<form name=mapplet action = '/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi' method = 'post' target = 'pbrowser'  >
+<form name=mapplet action = '/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi' method = 'post' target = 'pbrowser' onSubmit="return call_mapplet();" >
 
 
 <!-- Get user identity -->
@@ -144,13 +153,24 @@ var LN54=0;
 
 </SCRIPT>
 
+<?MIVAR COND="$(NXST,$loc_lg)" NAME=$loc_lg>0<?/MIVAR>
+<?MIVAR COND="$(NXST,$loc_panel)" NAME=$loc_panel>any<?/MIVAR>
+
 <TR><TD>
 <font size=2><A HREF="javascript:start_help('marker')"><b>Marker Symbol:</font> </b></A>
 <?MIVAR>
-<input type=text type=hidden name=marker  size=12 value="$marker" onChange='document.mapplet.loc.value = ""; document.mapplet.loc_lg.selectedIndex = 0; document.mapplet.loc_panel.selectedIndex = 0;    '>
+<input type=text type=hidden name=marker  size=12  onChange='document.mapplet.loc.value = ""; document.mapplet.loc_lg.selectedIndex = 0; document.mapplet.loc_panel.selectedIndex = 0;    '>
 </TD><TD><b> <font size=2>OR</font> &nbsp;&nbsp;&nbsp; </b></TD>
+
+<!--  assign navtile value to marker - can not do with a value="marker" in input statement - reset will not work -->
+<?MIBLOCK COND="$(XST,$marker)"> <SCRIPT><?MIVAR> document.mapplet.marker.value = "$marker"<?/MIVAR> </SCRIPT> <?/MIBLOCK>
+
+
 <TD colspan=2>
-<font size=2><A HREF="javascript:start_help('position')"><b>Position:</font> </b></A> <input type=text type=hidden name=loc  size=5 value="$loc" onChange='document.mapplet.marker.value="";'> <font size=2><A HREF="javascript:start_help('lg')"><b> LG:</font></B></A><select NAME=loc_lg type=hidden onChange='document.mapplet.marker.value="";'>
+<font size=2><A HREF="javascript:start_help('position')"><b>Position:</font> </b></A> <input type=text type=hidden name=loc  size=5  onChange='document.mapplet.marker.value="";'> <font size=2><A HREF="javascript:start_help('lg')"><b> LG:</font></B></A><select NAME=loc_lg type=hidden onChange='document.mapplet.marker.value="";'>
+<!--  assign navtile value to name - can not do with a value="name" in input statement - reset will not work -->
+<?MIBLOCK COND="$(XST,$loc)"> <SCRIPT><?MIVAR> document.mapplet.loc.value = "$loc"<?/MIVAR> </SCRIPT> <?/MIBLOCK>
+
 
 <option $(IF,$(EC,$loc_lg,0),SELECTED)  value=0>??
 <option  $(IF,$(EC,$loc_lg,1),SELECTED)  value=1>1
@@ -181,9 +201,10 @@ var LN54=0;
 </SELECT>
 <?/MIVAR>
 <br>
+
 <font size=2><A HREF="javascript:start_help('panel')"><B>Panel:</B></A></font>
 <SELECT NAME=loc_panel onChange='document.mapplet.marker.value="";'>
-<option select value=0>???
+<option $(IF,$(EC,$loc_panel,any),SELECTED) value=0>???
 <option $(IF,$(EC,$loc_panel,LN54),SELECTED) value=LN54>LN54(Rad_Hybrid panel)
 <option $(IF,$(EC,$loc_panel,T51),SELECTED) value=T51>T51(Rad_Hybrid panel)
 <option $(IF,$(EC,$loc_panel,HS),SELECTED) value=HS>HS(Meiotic panel)
@@ -227,7 +248,7 @@ var LN54=0;
 <TR>
 <TD align=center>
 <input type=hidden name=refresh_map value=1>
-<input  type=button  value='VIEW MAP' name=view_map onCLICK=call_mapplet() >
+<input  type=submit  value='VIEW MAP' name=view_map >
 <TD align=left><input type=button name=action value="Reset" onClick=call_reset()></font></TD>
 </TD>
 </TR>
@@ -238,9 +259,37 @@ var LN54=0;
 <TD align=left>NOTE: Large maps may take a few moments to load.  </TD> <TD></TD>
 <TD align=right> * indicates markers that map to different linkage groups on different panels.  </TD>
 </TR></TABLE>
+
+
 </form>
 
 
+<!-- create this tile only when mapperselect has been called from view_mapplet , variable startframe will not exist -->
+<!-- cause a tile for the new page to appear in the navigator frame -->
+<!-- startframes.apg will pass variables on to appropriate page -->
+<!-- do this only when we have been called from view_mapplet -->
+
+<?MIBLOCK COND="$(AND,$(NXST,$startframes),$(OR,$(XST,$marker),$(XST,$loc),$(NC,$loc_lg,0)))">
+ 	<?MIVAR NAME=page_title>View Map<?/MIVAR>
+	<?MIVAR COND="$(NXST,$marker)" NAME=$marker><?/MIVAR>
+	<?MIVAR COND="$(NXST,$loc)" NAME=$loc><?/MIVAR>
+	<?MIVAR>
+	<SCRIPT>
+		var page_id='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-mapperselect.apg&select_from=MAPPER&frame_size=220&navtile=true&marker=$marker&loc=$loc&loc_panel=$loc_panel&loc_lg=$loc_lg&T51=$T51&LN54=$LN54&MGH=$MGH&HS=$HS&GAT=$GAT&MOP=$MOP';
+	top.update_hist(page_id,"$page_title");
+	top.controls.location.reload(true);
+	</SCRIPT>
+	<?/MIVAR>
+<?/MIBLOCK>
+
+<!-- If we have gotten to this page from a nav bar tile - we need to autosubmit to get
+ pbrowser frame populated -->
+
+<?MIVAR COND="$(XST,$navtile)">
+	<SCRIPT>
+	form_submit();
+	</SCRIPT>
+<?/MIVAR>
 
 </HTML>	
 
