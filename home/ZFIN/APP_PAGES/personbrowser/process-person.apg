@@ -23,7 +23,7 @@
 <?MIVAR NAME=$new_id>$1<?/MIVAR>
 
 <!-- Great, now insert the record -->
-<?MISQL SQL="insert into person (zdb_id, name, full_name, address,owner,entry_time) values ('$new_id','$name','$full_name','$address','$new_id',current);"><?/MISQL>
+<?MISQL SQL="insert into person (zdb_id, name, full_name, address,owner,entry_time,on_dist_list) values ('$new_id','$name','$full_name','$address','$new_id',current,'f');"><?/MISQL>
 
 <h1 align=center>Confirmation</h1>
 
