@@ -44,7 +44,7 @@ sub getImageCloneName ($) {
 	or die "Error executing xdget in nameClone.pl .";
     
     while (<DEFLINE>) {
-	print ACC_IMCLONE "$1|$2|\n" if (/^>.*gb\|(\w+)\..+IMAGE:(\d+)/);
+	print ACC_IMCLONE "$1|$2|\n" if (/^>.*gb\|(\w+)\..+(IMAGE:\d+)/);
     }
 
     close (ACC_IMCLONE);
@@ -74,7 +74,7 @@ open ACC4IMNAME, ">$acc4imname" or die "Cannot open $acc4imname to write";
 my $getImNameNeeded = 0;
 
 while (<PROBE_IN>) {
-    my $im_clone_name = $1 if (/IMAGE:(\d+)/); 
+    my $im_clone_name = $1 if (/(IMAGE:\d+)/); 
     my @row = split (/\|/);
     my $clone_col   = $row[1];
     my $gene_id_col = $row[2];
