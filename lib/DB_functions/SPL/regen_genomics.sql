@@ -30,7 +30,7 @@ create dba function "informix".regen_genomics() returning integer
   --
   --    To turn tracing on uncomment the next statement
 
-  -- set debug file to '/tmp/debug-regen_<!--|DB_NAME|-->';
+  -- set debug file to 'debug-regen';
 
   --    This enables tracing, but doesn't turn it on.  To turn on tracing,
   --    add a "trace on;" before the first piece of code that you suspect
@@ -51,7 +51,13 @@ create dba function "informix".regen_genomics() returning integer
     define isamError integer;
     define errorText varchar(255);
     define errorHint varchar(255);
+   
+    define nrows integer;	
 
+    -- for the purpose of time testing	
+    define timeMsg varchar(50);
+
+	
     on exception
       set sqlError, isamError, errorText
       begin
@@ -92,14 +98,35 @@ create dba function "informix".regen_genomics() returning integer
 	-- Don't drop the tables here.  Leave them around in an effort to
 	-- figure out what went wrong.
 
-	return 0;
+	update zdb_flag set zflag_is_on = 'f'
+		where zflag_name = "regen_genomics" 
+	 	  and zflag_is_on = 't'; 
+	return -1;
       end
     end exception;
 
 
-    ---------------- panels
-    let errorHint = "panels";
+    -- zdb_flag
+    let errorHint = "zdb_flag";
+	
+    update zdb_flag set zflag_is_on = 't'
+	where zflag_name = "regen_genomics" 
+	 and zflag_is_on = 'f';
 
+    let nrows = DBINFO('sqlca.sqlerrd2');
+
+    if (nrows == 0)	then
+	return 1;
+    end if
+ 			
+    update zdb_flag set zflag_last_modified = CURRENT
+	where zflag_name = "regen_genomics";
+			
+
+
+    ---------------- panels
+    let errorHint = "panels";	
+	
     if (exists (select *
 	          from systables
 		  where tabname = "panels_new")) then
@@ -185,290 +212,11 @@ create dba function "informix".regen_genomics() returning integer
  
 
 
-    ---------------- paneled_markers
-    let errorHint = "paneled_markers";
-
-    if (exists (select *
-	          from systables
-		  where tabname = "paneled_m_new")) then
-      drop table paneled_m_new;
-    end if
-
-    create table paneled_m_new 
-      (
-	zdb_id		varchar(50), 
-	mname		varchar(120),
-	abbrev			varchar(20)
-	  not null,
-	panldmrkr_abbrev_order	varchar(60)
-	  not null,
-	mtype		varchar(10), 
-	OR_lg		varchar(2),
-	lg_location	numeric(8,2), 
-	metric		varchar(5), 
-	target_abbrev	varchar(20),
-	target_id	varchar(50), 
-	private		boolean, 
-	owner		varchar(50),
-	scores		varchar(200), 
-	framework_t	boolean, 
-	entry_date	datetime year to fraction, 
-	map_name	varchar(30)
-
-	-- Paneled_markers does not have a primary key.
-      )
-      fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
-      extent size 2048 next size 2048 lock mode page;
-    revoke all on paneled_m_new from "public";
-
-    insert into paneled_m_new
-      select mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_abbrev_order, 
-	     mrkr_type, mm.OR_lg,
-	     mm.lg_location, mm.metric, pn.abbrev, pn.zdb_id, mm.private, 
-	     mm.owner, mm.scoring_data, mm.framework_t, mm.entry_date, 
-	     mm.map_name
-	from marker, mapped_marker mm, panels_new pn
-	where mm.marker_id = mrkr_zdb_id 
-	  and mm.refcross_id = pn.zdb_id
-	  and mm.marker_type <> 'SNP';
-
-    -- display all Tuebingen mutants on map_marker search 
-    --  these will eventually be going in using the linked marker approach 
-    insert into paneled_m_new
-      select a.zdb_id, a.name, a.allele, fish_allele_order, 'MUTANT', b.OR_lg,
-	     b.lg_location, b.metric, c.abbrev, c.zdb_id, b.private, b.owner,
-	     b.scoring_data, b.framework_t, b.entry_date, b.map_name
-	from fish a, mapped_marker b, panels_new c
-	where b.marker_id = a.zdb_id 
-	  and b.refcross_id = c.zdb_id
-          and b.marker_type <> 'SNP';
-
-    -- Temporary ?? adjustment to get locus records into paneled_markers
-    -- as well.  Suggested by Tom, approved by Judy, and implemented by Dave
-    -- on 2000/11/10
-
-    insert into paneled_m_new
-      select a.zdb_id, a.locus_name, a.abbrev, locus_abbrev_order, 
-	     'MUTANT', b.OR_lg,
-	     b.lg_location, b.metric, c.abbrev, c.zdb_id, b.private, b.owner,
-	     b.scoring_data, b.framework_t, b.entry_date, b.map_name
-	from locus a, mapped_marker b, panels_new c
-	where b.marker_id = a.zdb_id
-	  and b.refcross_id = c.zdb_id
-	  and b.marker_type <> 'SNP';
-	
-    --update paneled_m_new set map_name = (select mrkr_abbrev from marker where mrkr_zdb_id = zdb_id)where mtype = 'SNP'; 
-
-    update paneled_m_new 
-      set map_name = NULL 
-      where map_name = abbrev;
-
-    -- create indexes; constraints that use them are added at the end.
-
-    if (exists (select *
-	          from sysindexes
-		  where idxname = "paneled_markers_mtype_index_b")) then
-      -- use the "a" set of names
-      -- other indexes
-      create index paneled_markers_mtype_index_a
-	on paneled_m_new (mtype) 
-	fillfactor 100
-	in idxdbs3;
-      create index paneled_markers_mname_index_a 
-	on paneled_m_new (mname)
-	fillfactor 100
-	in idxdbs3;
-      create index paneled_markers_target_id_index_a
-	on paneled_m_new (target_id) 
-	fillfactor 100
-	in idxdbs3;
-      create index paneled_markers_zdb_id_index_a 
-	on paneled_m_new (zdb_id)
-	fillfactor 100
-	in idxdbs3;
-    else
-      -- other indexes
-      create index paneled_markers_mtype_index_b
-	on paneled_m_new (mtype) 
-	fillfactor 100
-	in idxdbs3;
-      create index paneled_markers_mname_index_b 
-	on paneled_m_new (mname)
-	fillfactor 100
-	in idxdbs3;
-      create index paneled_markers_target_id_index_b
-	on paneled_m_new (target_id) 
-	fillfactor 100
-	in idxdbs3;
-      create index paneled_markers_zdb_id_index_b
-	on paneled_m_new (zdb_id)
-	fillfactor 100
-	in idxdbs3;
-    end if
-
-    update statistics high for table paneled_m_new;
-
-
-    --------------- public_paneled_markers
-    let errorHint = "public_paneled_markers";
-
-    if (exists (select *
-	          from systables
-		  where tabname = "public_paneled_m_new")) then
-      drop table public_paneled_m_new;
-    end if
-
-    create table public_paneled_m_new 
-      (
-	zdb_id		varchar(50),
-	abbrev		varchar(20), 
-	mtype		varchar(10), 
-	OR_lg		varchar(2),
-	lg_location		numeric(8,2), 
-	metric		varchar(5), 
-	target_abbrev	varchar(20),
-	mghframework	boolean,
-	target_id		varchar(50),
-        map_name        varchar(20)  
-
-	-- public_paneled_markers does not have a primary key.
-      )
-      fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3  
-      extent size 1024 next size 1024 lock mode page;
-    revoke all on public_paneled_m_new from "public";
-
-
-    insert into public_paneled_m_new
-      select mrkr_zdb_id, mrkr_abbrev, mrkr_type, mm.OR_lg, mm.lg_location,
-	     mm.metric, pn.abbrev, 'f'::boolean, mm.refcross_id, mm.map_name
-	from marker, mapped_marker mm, panels_new pn
-	where mm.marker_id = mrkr_zdb_id
-	  and mm.refcross_id = pn.zdb_id
-	  and mm.private = 'f';
-    
-    -- Create a temporary index
-    create index public_paneled_m_new_zdb_id_index 
-      on public_paneled_m_new (zdb_id)
-      in idxdbs3;	  
-
-
-    -- to flag markers that are (publicly) mapped on more than one lg
-
-    select distinct a.zdb_id 
-      from public_paneled_m_new a, public_paneled_m_new b
-      where a.zdb_id = b.zdb_id 
-	and a.or_lg <> b.or_lg 
-      into temp dup_tmp with no log;
-
-    update public_paneled_m_new set abbrev = conc(abbrev,'*')
-      where zdb_id in ( select * from dup_tmp);
-
-    drop table dup_tmp;
-
-
-    --  a temporary fix to display all Tuebingen mutants on map_marker search
-    --  these will eventually be going in using the linked marker approach 
-    insert into public_paneled_m_new
-      select a.zdb_id, a.allele, 'MUTANT', b.OR_lg,
-	     b.lg_location, b.metric, c.abbrev, 'f'::boolean, b.refcross_id,b.map_name
-	from fish a, mapped_marker b, panels_new c
-	where b.marker_id = a.zdb_id 
-	  and b.refcross_id = c.zdb_id
-	  and b.private = 'f';
-
-    -- Temporary ?? adjustment to get locus records into public_paneled_markers
-    -- as well.  Suggested by Tom, approved by Judy, and implemented by Dave
-    -- on 2000/11/10
-
-    insert into public_paneled_m_new
-      select a.zdb_id, a.abbrev, 'MUTANT', b.or_lg, b.lg_location, b.metric,
-	     c.abbrev, 'f'::boolean, b.refcross_id , b.map_name
-	from locus a, mapped_marker b, panels_new c
-	where b.marker_id = a.zdb_id and b.refcross_id = c.zdb_id
-	  and b.private = 'f';
-
-
-    update public_paneled_m_new 
-      set mghframework = 't'::boolean 
-      where exists 
-	    ( select 'x' 
-		from mapped_marker b
-		where public_paneled_m_new.zdb_id = b.marker_id  
-		  and b.refcross_id = 'ZDB-REFCROSS-980521-11'
-		  and b.marker_type = 'SSLP' );
-
-    -- get SNP names onto the map
-
-    insert into public_paneled_m_new
-      select mm.marker_id,mm.map_name, mm.marker_type, mm.OR_lg, mm.lg_location,
-             mm.metric, pn.abbrev, 'f'::boolean, mm.refcross_id, mrkr_abbrev
-        from marker, mapped_marker mm, panels_new pn
-        where mm.marker_type = 'SNP'
-          and mm.refcross_id = pn.zdb_id
-          and mm.private = 'f'
-	  and mrkr_zdb_id = mm.marker_id;
-
-
-
-    -- to add connecting lines to the mapper between genes & ests commom 
-    -- to ln54 & t51. 
-    update public_paneled_m_new 
-      set mghframework = 't'::boolean 
-      where zdb_id in 
-	    ( select m1.marker_id 
-		from mapped_marker m1, mapped_marker m2 
-		where m1.refcross_id = 'ZDB-REFCROSS-990426-6'
-		  and m2.refcross_id = 'ZDB-REFCROSS-990707-1'
-		  and m1.marker_type in  ('GENE','EST')
-		  and m1.marker_id = m2.marker_id );
-
-
-    -- drop temporary index from above
-    drop index public_paneled_m_new_zdb_id_index;
-
-    -- create indexes; constraints that use them are added at the end.
-
-    if (exists (select *
-	          from sysindexes
-		  where idxname = "public_paneled_markers_mtype_index_b")) then
-      -- use the "a" set of names
-      -- other indexes
-      create index public_paneled_markers_mtype_index_a
-	on public_paneled_m_new (mtype)
-	fillfactor 100
-	in idxdbs3;
-      -- to speed up map generation	
-      create index public_paneled_markers_target_abbrev_etc_index_a
-	on public_paneled_m_new (target_abbrev,or_lg,mtype,zdb_id)
-	fillfactor 100
-	in idxdbs3;
-      create index public_paneled_markers_zdb_id_index_a
-	on public_paneled_m_new (zdb_id)
-	fillfactor 100
-	in idxdbs3;
-    else
-      -- other indexes
-      create index public_paneled_markers_mtype_index_b
-	on public_paneled_m_new (mtype)
-	fillfactor 100
-	in idxdbs3;
-      -- to speed up map generation	
-      create index public_paneled_markers_target_abbrev_etc_index_b
-	on public_paneled_m_new (target_abbrev,or_lg,mtype,zdb_id)
-	fillfactor 100
-	in idxdbs3;
-      create index public_paneled_markers_zdb_id_index_b
-	on public_paneled_m_new (zdb_id)
-	fillfactor 100
-	in idxdbs3;
-    end if
-
-    update statistics high for table public_paneled_m_new;
-
 
     ----------------  all_map_names;
 
     let errorHint = "all_map_names";
+   
 
     -- Contains all the possible names and abbreviations of markers and fish,
     -- which coincidentally are all the names that can occur in maps.
@@ -515,35 +263,25 @@ create dba function "informix".regen_genomics() returning integer
     revoke all on all_m_names_new from "public";
 
     
-
     -- Get name, abbrev, and aliases from marker, fish, and locus
     -- Finally get accession numbers from db_link
 
     --insert into all_m_names_new (allmapnm_name, allmapnm_zdb_id, allmapnm_significance)
-    select lower(mrkr_abbrev)allmapnm_name, mrkr_zdb_id allmapnm_zdb_id, 1 allmapnm_significance
-    from marker
-    union all
-    select lower(mrkr_name) allmapnm_name, mrkr_zdb_id allmapnm_zdb_id, 2 allmapnm_significance
-    from marker
-    union all
+
+   
     select lower(abbrev) allmapnm_name, zdb_id allmapnm_zdb_id, 3 allmapnm_significance
     from locus
     where abbrev is not NULL 
     union all
     select lower(locus_name) allmapnm_name, zdb_id allmapnm_zdb_id, 4 allmapnm_significance
     from locus
-    union all
-    select distinct lower(dalias_alias) allmapnm_name, dalias_data_zdb_id allmapnm_zdb_id, 5 allmapnm_significance
-    from data_alias, alias_group, marker
-    where mrkr_zdb_id = dalias_data_zdb_id
-    and dalias_group = aliasgrp_name
-    and aliasgrp_significance = 1
     union all 
-      select lower(dalias_alias) allmapnm_name, 
-	     dalias_data_zdb_id allmapnm_zdb_id, 6 allmapnm_significance
-        from data_alias, locus
-        where dalias_data_zdb_id = zdb_id
-    union all 
+    select lower(dalias_alias) allmapnm_name, 
+	   dalias_data_zdb_id allmapnm_zdb_id, 6 allmapnm_significance
+    from data_alias, locus
+    where dalias_data_zdb_id = zdb_id
+    into temp all_locus_names_new with no log;	
+    
     select lower(allele) allmapnm_name, zdb_id allmapnm_zdb_id, 7 allmapnm_significance
     from fish
     where allele is not NULL
@@ -554,61 +292,18 @@ create dba function "informix".regen_genomics() returning integer
     select lower(dalias_alias) allmapnm_name, dalias_data_zdb_id allmapnm_zdb_id, 8 allmapnm_significance
     from data_alias, fish
     where dalias_data_zdb_id = zdb_id
-    into temp amnn with no log;
-    
+    into temp all_fish_names_new with no log;
 
-   let errorHint = "all_map_names-known_correspondance";
+    -- a smaller set of all_marker_names_new which is used for getting
+    -- accession numbers and 	
+    select lower(mrkr_abbrev)allmapnm_name, mrkr_zdb_id allmapnm_zdb_id, 1 allmapnm_significance
+    from marker
+    union all
+    select lower(mrkr_name) allmapnm_name, mrkr_zdb_id allmapnm_zdb_id, 2 allmapnm_significance
+    from marker
+    into temp all_marker_names_temp with no log;
 
-    create index amnn_tmp_index
-        on amnn (allmapnm_name, allmapnm_zdb_id)
-        in idxdbs1;
-
-    -- For genes that have known correspondences with loci, also include the
-    -- locus's possible names as possible names for the gene.
-    insert into amnn 
-    select distinct amn2.allmapnm_name, cloned_gene allmapnm_zdb_id, 9 allmapnm_significance
-    from amnn amn2, locus
-    where amn2.allmapnm_zdb_id = locus.zdb_id
-    and cloned_gene is not null
-    and not exists (
-        select 0 
-        from amnn an3 
-        where an3.allmapnm_name   = amn2.allmapnm_name 
-        and   an3.allmapnm_zdb_id = locus.cloned_gene
-    );
-    drop index 	amnn_tmp_index;
-
-    insert into amnn
-    -- Include putative gene assignments 
-    select lower(putgene_putative_gene_name) allmapnm_name, putgene_mrkr_zdb_id allmapnm_zdb_id, 10 allmapnm_significance
-    from putative_non_zfin_gene
-    ;
-    -- For genes also include orthologue names and abbrevs as possible names.
-    -- Ken says not to include the orthologue accession numbers in this table.
-    -- Judy and Dave agree.
-
-    let errorHint = "all_map_names-orthologs";
-
-    insert into amnn
-    select distinct lower(ortho_name) allmapnm_name, c_gene_id allmapnm_zdb_id, 11 allmapnm_significance
-    from orthologue
-    ;
-    insert into amnn
-    select distinct lower(ortho_abbrev) allmapnm_name, c_gene_id allmapnm_zdb_id, 11 allmapnm_significance
-    from orthologue
-    where ortho_abbrev is not null 
-    ;
-  
-    insert into all_m_names_new (allmapnm_name, allmapnm_zdb_id, allmapnm_significance)
-        select allmapnm_name, allmapnm_zdb_id, min(allmapnm_significance)  
-        from amnn
-        where allmapnm_name <> ''
-        and  allmapnm_name is not NULL
-        group by 1,2;
-
-    drop table amnn;
-    
-    let errorHint = "all_map_names-accession_numbers";
+ 
 
     -- Finally, extract out accession numbers for other databases from db_links
     -- for any ZDB object that has at least one record in the all_map_names 
@@ -625,41 +320,90 @@ create dba function "informix".regen_genomics() returning integer
     -- rows in the blast one contaning each of the acc on either side of the comma
     -- so just skip the commas and be done.
 
-    create unique index all_m_names_new_primary_key_index
-    on all_m_names_new (allmapnm_name, allmapnm_zdb_id) in idxdbs1;
 
+    let errorHint = "all_map_names-accession_numbers";
+   
+
+    select allmapnm_name allmapnm_name, allmapnm_zdb_id allmapnm_zdb_id, min(allmapnm_significance)  allmapnm_significance 
+     from all_marker_names_temp
+     where allmapnm_name <> ''
+     and  allmapnm_name is not NULL
+     group by 1,2
+     into temp all_marker_names_new with no log;		
+ 	
     select lower(acc_num) allmapnm_name, linked_recid allmapnm_zdb_id, 12 allmapnm_significance
-    from db_link, all_m_names_new
+    from db_link, all_marker_names_new
     where acc_num[9] <> ',' 
     and db_link.linked_recid = allmapnm_zdb_id
-    and lower(acc_num) <> allmapnm_name 
-    union 
+    and lower(acc_num) <> allmapnm_name	    
+    union
     select  lower(acc_num) allmapnm_name, c_gene_id allmapnm_zdb_id, 12 allmapnm_significance
-    from db_link, all_m_names_new, orthologue
+    from db_link,  orthologue
     where acc_num[9] <> ','
     and db_link.linked_recid = orthologue.zdb_id
-    and orthologue.c_gene_id = allmapnm_zdb_id
-    and lower(acc_num) <> allmapnm_name
-    into temp amnn with no log
-    ;
+    into temp all_acc_names_new with no log;
 
-    create unique index amnn_primary_key_index
-        on amnn (allmapnm_name, allmapnm_zdb_id)
-        in idxdbs1;
-        
-   delete from amnn where exists( 
-        select *
-        from all_m_names_new an
-        where an.allmapnm_zdb_id = amnn.allmapnm_zdb_id
-        and   an.allmapnm_name   = amnn.allmapnm_name
-    );
 
-    drop index all_m_names_new_primary_key_index;
 
-    insert into all_m_names_new select * from amnn;
+    let errorHint = "all_map_names-get-marker-names";
 
-    drop table amnn;
 
+    insert into all_marker_names_new
+    select distinct lower(dalias_alias) allmapnm_name, dalias_data_zdb_id allmapnm_zdb_id, 5 allmapnm_significance
+    from data_alias, alias_group, marker
+    where mrkr_zdb_id = dalias_data_zdb_id
+    and dalias_group = aliasgrp_name
+    and aliasgrp_significance = 1;
+
+    insert into all_marker_names_new
+    select lower(putgene_putative_gene_name) allmapnm_name, putgene_mrkr_zdb_id allmapnm_zdb_id, 10 allmapnm_significance
+    from putative_non_zfin_gene; 
+
+    insert into all_marker_names_new 
+    select distinct a.allmapnm_name, cloned_gene allmapnm_zdb_id, 9 allmapnm_significance
+    from all_locus_names_new a, locus
+    where a.allmapnm_zdb_id = locus.zdb_id
+    and cloned_gene is not null;
+
+    insert into all_marker_names_new 
+    select distinct lower(ortho_name) allmapnm_name, c_gene_id allmapnm_zdb_id, 11 allmapnm_significance
+    from orthologue;
+    
+    insert into all_marker_names_new 
+    select distinct lower(ortho_abbrev) allmapnm_name, c_gene_id allmapnm_zdb_id, 11 allmapnm_significance
+    from orthologue
+    where ortho_abbrev is not null
+    ;	
+
+ 
+    let errorHint = "all_map_names-mini-significance";
+
+	insert into all_m_names_new 
+		select allmapnm_name, allmapnm_zdb_id, min(allmapnm_significance)  
+        	from all_fish_names_new
+        	where allmapnm_name <> ''
+        	and  allmapnm_name is not NULL
+        	group by 2,1;
+		
+	insert into all_m_names_new
+		select allmapnm_name allmapnm_name, allmapnm_zdb_id allmapnm_zdb_id, min(allmapnm_significance)  allmapnm_significance 
+        	from all_marker_names_new
+        	where allmapnm_name <> ''
+        	and  allmapnm_name is not NULL
+        	group by 1,2;
+
+	insert into all_m_names_new
+		select *
+		from  all_acc_names_new;
+
+	insert into all_m_names_new
+		select allmapnm_name, allmapnm_zdb_id, min(allmapnm_significance)  
+		from all_locus_names_new
+        	where allmapnm_name <> ''
+        	and  allmapnm_name is not NULL
+        	group by 2,1;
+
+    let errorHint = "all_map_names-create_indexes";
 
     -- create indexes; constraints that use them are added at the end.
 
@@ -693,323 +437,9 @@ create dba function "informix".regen_genomics() returning integer
     update statistics high for table all_m_names_new;
 
 
-    --trace on;
-
-
-    ----------------  all_markers;
-    let errorHint = "all_markers";
-
-    if (exists (select *
-        from systables
-        where tabname = "all_m_new")) then
-        drop table all_m_new;
-    end if
-
-    create table all_m_new 
-      (
-	zdb_id		varchar(50), 
-	mname		varchar(120),
-	mtype		varchar(10), 
-	abbrev		varchar(20),
-	allmrkr_abbrev_order	varchar(60)
-      )
-      fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3  
-      extent size 512 next size 512 lock mode page;
-    revoke all on all_m_new from "public";
-
-    insert into all_m_new
-	(zdb_id, mname, mtype, abbrev, allmrkr_abbrev_order)
-      select mrkr_zdb_id, mrkr_name, mrkr_type, mrkr_abbrev, mrkr_abbrev_order
-	from marker;
-
-    insert into all_m_new
-      select zdb_id, locus_name, 'MUTANT'::varchar(10), 
-             abbrev, locus_abbrev_order
-	from locus;
-    -- no zmap
-
-    -- create indexes; constraints that use them are added at the end.
-    if (exists (select *
-	          from sysindexes
-		  where idxname = "all_markers_primary_key_index_b")) then
-      -- use the "a" set of names
-      -- primary key  
-      create unique index all_markers_primary_key_index_a
-	on all_m_new (zdb_id)
-	fillfactor 100
-	in idxdbs3;
-    else
-      -- primary key  
-      create unique index all_markers_primary_key_index_b
-	on all_m_new (zdb_id)
-	fillfactor 100
-	in idxdbs3;
-    end if
-
-    update statistics high for table all_m_new;
-
-
-
-    -------------- total_links_copy
-    let errorHint = "total_links_copy";
-
-    -- table total_links_copy is used to display Haffter linkages only
-
-    if (exists (select *
-	          from systables
-		  where tabname = "total_l_new_copy")) then
-      drop table total_l_new_copy;
-    end if
-
-    create table total_l_new_copy 
-      (
-	from_id		varchar(50), 
-	to_id		varchar(50), 
-	dist		numeric(8,2),
-	LOD		numeric(8,2), 
-	owner		varchar(50), 
-	private		boolean
-      )
-      fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3  
-      extent size 32 next size 32 lock mode page;
-    revoke all on total_l_new_copy from "public";
-
-    insert into total_l_new_copy
-      select m1_id as from_id, m2_id as to_id, dist, LOD, owner, private
-	from linkages_COPY;
-    insert into total_l_new_copy
-      select m2_id as from_id, m1_id as to_id, dist, LOD, owner, private
-	from linkages_COPY;
-
-    -- create indexes; constraints that use them are added at the end.
-
-    if (exists (select *
-	          from sysindexes
-		  where idxname = "total_links_copy_primary_key_index_b")) then
-      -- use the "a" set of names
-      -- primary key
-      create unique index total_links_copy_primary_key_index_a
-	on total_l_new_copy (from_id,to_id)
-	fillfactor 100
-	in idxdbs3;
-    else
-      -- primary key
-      create unique index total_links_copy_primary_key_index_b
-	on total_l_new_copy (from_id,to_id)
-	fillfactor 100
-	in idxdbs3;
-    end if
-
-    update statistics high for table total_l_new_copy;
-
-
-    ------------- all_linked_members;
-    let errorHint = "all_linked_members";
-
-    if (exists (select *
-	          from systables
-		  where tabname = "all_l_m_new")) then
-      drop table all_l_m_new;
-    end if
-
-    create table all_l_m_new 
-      (
-	alnkgmem_linkage_zdb_id varchar(50),
-	alnkgmem_member_zdb_id  varchar(50),
-	alnkgmem_member_name    varchar(120),
-	alnkgmem_member_abbrev  varchar(20),
-	alnkgmem_member_abbrev_order  varchar(60),
-	alnkgmem_marker_type    varchar(10),
-	alnkgmem_source_zdb_id  varchar(50),
-	alnkgmem_private	boolean,
-	alnkgmem_comments	lvarchar,
-	alnkgmem_num_auths      integer,
-	alnkgmem_source_name    varchar(40),
-	alnkgmem_or_lg		varchar(2),
-	alnkgmem_num_members    integer
-      )
-      fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3  
-      extent size 128 next size 128 lock mode page;
-    revoke all on all_l_m_new from "public";
-
-    
-    insert into all_l_m_new
-      select lnkg_zdb_id, lnkgmem_member_zdb_id, mname, 
-	     abbrev, allmrkr_abbrev_order, mtype,
-	     lnkg_source_zdb_id, lnkg_private, lnkg_comments, '',
-	     'NULL'::varchar(40), lnkg_or_lg,''
-	from linkage, linkage_member, all_m_new
-	  where lnkg_zdb_id = lnkgmem_linkage_zdb_id 
-	    and lnkgmem_member_zdb_id = all_m_new.zdb_id ;
-
-    insert into all_l_m_new
-      select lnkg_zdb_id, lnkgmem_member_zdb_id, name, 
-	     locus.abbrev, locus_abbrev_order, 'MUTANT',
-	     lnkg_source_zdb_id, lnkg_private, lnkg_comments, '',
-	     'NULL'::varchar(40), lnkg_or_lg, ''
-	from linkage, linkage_member, fish, locus 
-	where lnkg_zdb_id = lnkgmem_linkage_zdb_id 
-	  and lnkgmem_member_zdb_id = fish.zdb_id 
-	  and fish.locus = locus.zdb_id
-	  and fish.line_type = 'mutant';
-    
-    update all_l_m_new 
-      set alnkgmem_source_name =
-	  ( select full_name 
-	      from person 
-	      where alnkgmem_source_zdb_id = person.zdb_id )
-      where alnkgmem_source_zdb_id[1,9] = 'ZDB-PERS-';
-
-    update all_l_m_new 
-      set alnkgmem_num_auths = 
-	  ( select num_auths 
-	      from publication
-	      where alnkgmem_source_zdb_id = publication.zdb_id );
-
-    update all_l_m_new 
-      set alnkgmem_source_name = 
-	  ( select pub_mini_ref 
-	      from publication
-	      where alnkgmem_source_zdb_id = publication.zdb_id )
-      where alnkgmem_source_zdb_id[1,8] = 'ZDB-PUB-';
-
-
-    update all_l_m_new 
-      set alnkgmem_num_members = 
-	  ( select count(*) 
-	      from linkage_member
-	      where lnkgmem_linkage_zdb_id = alnkgmem_linkage_zdb_id );
-
-
-    -- create indexes; constraints that use them are added at the end.
-    if (exists (select *
-	          from sysindexes
-		  where idxname = "all_linked_members_primary_key_index_b")) then
-      -- use the "a" set of names
-      -- primary key
-      create unique index all_linked_members_primary_key_index_a
-	on all_l_m_new (alnkgmem_linkage_zdb_id,alnkgmem_member_zdb_id)
-	fillfactor 100
-	in idxdbs3;
-      -- other indexes
-      create index alnkgmem_member_zdb_id_index_a
-	on all_l_m_new (alnkgmem_member_zdb_id)
-	fillfactor 100
-	in idxdbs3;
-    else
-      -- primary key
-      create unique index all_linked_members_primary_key_index_b
-	on all_l_m_new (alnkgmem_linkage_zdb_id,alnkgmem_member_zdb_id)
-	fillfactor 100
-	in idxdbs3;
-      -- other indexes
-      create index alnkgmem_member_zdb_id_index_b
-	on all_l_m_new (alnkgmem_member_zdb_id)
-	fillfactor 100
-	in idxdbs3;
-    end if;
-
-    update statistics high for table all_l_m_new;
-
-
-
-    ------------- all_mapped_markers;
-    let errorHint = "all_mapped_markers";
-
-    if (exists (select *
-	          from systables
-		  where tabname = "all_m_m_new")) then
-      drop table all_m_m_new;
-    end if
-
-    create table all_m_m_new 
-      (
-	zdb_id		varchar(50), 
-	mname		varchar(120),
-	abbrev		varchar(20),
-	allmapmrkr_abbrev_order	 varchar(60)
-	  not null,
-	mtype		varchar(10), 
-	OR_lg		varchar(2),
-	lg_location	numeric(8,2) ,
-	target_abbrev	varchar(20),
-	target_id	varchar(50), 
-	private		boolean ,
-	owner		varchar(50),
-	dist		numeric(8,2), 
-	metric		varchar(5), 
-	m2_type		varchar(10),
-	entry_date	datetime year to fraction
-
-      -- all_mapped_markers does not have a primary key.
-      )
-      fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3  
-      extent size 2048 next size 2048 lock mode page;
-    revoke all on all_m_m_new from "public";
-
-
-    insert into all_m_m_new
-      select zdb_id, mname, abbrev, panldmrkr_abbrev_order,
-	     mtype, OR_lg, lg_location, target_abbrev,
-	     target_id, private, owner, NULL::numeric(8,2), metric,
-	     'NULL'::varchar(10), entry_date
-      from paneled_m_new;
-    -- paneled_m_new already had the zmap data
-
-
-    insert into all_m_m_new
-      select alnkgmem_member_zdb_id, alnkgmem_member_name, 
-	     alnkgmem_member_abbrev, alnkgmem_member_abbrev_order,
-	     alnkgmem_marker_type, alnkgmem_or_lg,
-	     NULL::numeric(8,2), 'NULL'::varchar(20),
-	     alnkgmem_linkage_zdb_id, alnkgmem_private, alnkgmem_source_zdb_id,
-	     NULL::numeric(8,2), 'NULL'::varchar(5), 'NULL'::varchar(10),
-	     NULL::datetime year to fraction
-	from all_l_m_new
-	where alnkgmem_or_lg <> '0';
-
-    -- create indexes; constraints that use them are added at the end.
-
-    if (exists (select *
-	          from sysindexes
-		  where idxname = "all_mapped_markers_mname_index_b")) then
-      -- use the "a" set of names
-      -- other indexes
-      create index all_mapped_markers_mname_index_a
-	on all_m_m_new (mname)
-	fillfactor 100
-	in idxdbs3;
-      create index all_mapped_markers_mtype_index_a
-	on all_m_m_new (mtype)
-	fillfactor 100
-	in idxdbs3;
-      create index all_mapped_markers_zdb_id_index_a
-	on all_m_m_new (zdb_id)
-	fillfactor 100
-	in idxdbs3;
-    else
-      -- other indexes
-      create index all_mapped_markers_mname_index_b
-	on all_m_m_new (mname)
-	fillfactor 100
-	in idxdbs3;
-      create index all_mapped_markers_mtype_index_b
-	on all_m_m_new (mtype)
-	fillfactor 100
-	in idxdbs3;
-      create index all_mapped_markers_zdb_id_index_b
-	on all_m_m_new (zdb_id)
-	fillfactor 100
-	in idxdbs3;
-    end if
-
-    update statistics high for table all_m_m_new;
-
-
-
     ----------------- all_genes
     let errorHint = "all_genes";
-
+  
     if (exists (select *
 	          from systables
 		  where tabname = "all_g_new")) then
@@ -1063,20 +493,22 @@ create dba function "informix".regen_genomics() returning integer
 	     NULL::numeric(8,2),
 	     'NULL'::varchar(5),
 	     x0.mrkr_zdb_id,
-	     x1.alnkgmem_or_lg,
-	     x1.alnkgmem_linkage_zdb_id,
+	     x11.lnkg_or_lg,
+	     x11.lnkg_zdb_id,
 	     'NULL'::varchar(10),
 	     x0.mrkr_abbrev,
 	     x0.mrkr_abbrev_order,
-	     x1.alnkgmem_private,
+	     x11.lnkg_private,
 	     'NULL'::varchar(50),
 	     NULL::datetime year to fraction,
 	     x2.zdb_id,
 	     x2.locus_name 
 	from marker x0,
-	     all_l_m_new x1 ,
+	     linkage_member x1,
+	     linkage x11,	
 	     outer locus x2 
-	where x1.alnkgmem_member_zdb_id = x0.mrkr_zdb_id
+	where x1.lnkgmem_member_zdb_id = x0.mrkr_zdb_id
+	  and x1.lnkgmem_linkage_zdb_id = x11.lnkg_zdb_id
 	  AND x0.mrkr_zdb_id = x2.cloned_gene
           and x0.mrkr_type in ('GENE');
 
@@ -1096,9 +528,9 @@ create dba function "informix".regen_genomics() returning integer
 	  and mrkr_type in ('GENE')
 	  and not exists
 	      ( select * 
-		  from all_l_m_new
-		  where mrkr_zdb_id = alnkgmem_member_zdb_id
-		    and alnkgmem_marker_type in ('GENE') );
+		  from linkage_member
+		  where mrkr_zdb_id = lnkgmem_member_zdb_id
+		);
 
     -- create indexes; constraints that use them are added at the end.
 
@@ -1123,166 +555,6 @@ create dba function "informix".regen_genomics() returning integer
 
 
 
-    ------------------ mapped_genes
-    let errorHint = "mapped_genes";
-
-    if (exists (select *
-	          from systables
-		  where tabname = "mapped_g_new")) then
-      drop table mapped_g_new;
-    end if
-
-    create table mapped_g_new 
-      (
-	zdb_id		varchar(50) not null,
-	gene_name	varchar(120),
-	abbrev		varchar(15),
-	mapgene_abbrev_order varchar(60)
-	  not null,
-	or_lg		varchar(2),
-	lg_location	decimal(8,2),
-	panel_abbrev	varchar(20),
-	panel_id	varchar(50),
-	private		boolean,
-	owner		varchar(50),
-	metric		varchar(5),
-	entry_date	datetime year to fraction(3),
-	locus_zdb_id	varchar(50),
-	locus_name	varchar(80)
-      )
-      fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3  
-      extent size 128 next size 128 lock mode page;
-    revoke all on mapped_g_new from "public";
-
-    insert into mapped_g_new
-	(zdb_id, gene_name, abbrev, mapgene_abbrev_order, or_lg, lg_location, panel_abbrev, panel_id,
-	 private, owner, metric, entry_date, locus_zdb_id, locus_name)
-      select 
-	  mrkr_zdb_id,
-	  mrkr_name,
-	  mrkr_abbrev,
-	  mrkr_abbrev_order,
-	  x1.or_lg,
-	  x1.lg_location, 
-	  x2.abbrev,
-	  x2.zdb_id,
-	  x1.private,
-	  x1.owner,
-	  x1.metric,
-	  x1.entry_date,
-	  x3.zdb_id,
-	  x3.locus_name 
-	from marker,
-	     mapped_marker x1 ,
-	     panels x2,
-	     outer locus x3 
-	where x1.marker_id = mrkr_zdb_id
-	  AND x1.refcross_id = x2.zdb_id
-	  AND mrkr_zdb_id = x3.cloned_gene
-	  AND mrkr_type = 'GENE';
-
-    -- mapped by independent linkages
-    insert into mapped_g_new
-	(zdb_id, gene_name, abbrev, mapgene_abbrev_order, or_lg, lg_location, panel_abbrev, panel_id,
-	 private, owner, metric, entry_date, locus_zdb_id, locus_name)
-      select 
-	  x0.mrkr_zdb_id,
-	  x0.mrkr_name,
-	  x0.mrkr_abbrev,
-	  x0.mrkr_abbrev_order,
-	  x1.alnkgmem_or_lg,
-	  NULL::numeric(8,2),
-	  'NULL'::varchar(5),
-	  x1.alnkgmem_linkage_zdb_id,
-	  x1.alnkgmem_private,
-	  'NULL'::varchar(50),
-	  'NULL'::varchar(5),
-	  NULL::datetime year to fraction,
-	  x2.zdb_id,
-	  x2.locus_name 
-	from marker x0,
-	     all_l_m_new x1 ,
-	     outer locus x2 
-	where x1.alnkgmem_member_zdb_id = x0.mrkr_zdb_id
-	  AND x0.mrkr_zdb_id = x2.cloned_gene
-	  AND mrkr_type = 'GENE';
-
-    -- create indexes; constraints that use them are added at the end.
-
-    if (exists (select *
-	          from sysindexes
-		  where idxname = "mapped_genes_zdb_id_index_b")) then
-      -- use the "a" set of names
-      -- other indexes
-      create index mapped_genes_zdb_id_index_a
-	on mapped_g_new (zdb_id)
-	fillfactor 100
-	in idxdbs1;
-    else
-      -- other indexes
-      create index mapped_genes_zdb_id_index_b
-	on mapped_g_new (zdb_id)
-	fillfactor 100
-	in idxdbs1;
-    end if
-
-    update statistics high for table mapped_g_new;
-
-
-
-    ------------------ sources
-    let errorHint = "sources";
-
-    if (exists (select *
-	          from systables
-		  where tabname = "sources_new")) then
-      drop table sources_new;
-    end if
-
-    create table sources_new 
-      (
-	zdb_id		varchar(50), 
-	name		varchar(150), 
-	address		lvarchar
-      )
-      fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3  
-      extent size 512 next size 512 lock mode page;
-    revoke all on sources_new from "public";
-
-    insert into sources_new
-      select zdb_id, full_name, address
-	from person;
-
-    insert into sources_new
-      select zdb_id, name, address
-	from lab;
-
-    insert into sources_new
-      select zdb_id, name, address
-	from company;
-
-    -- create indexes; constraints that use them are added at the end.
-
-    if (exists (select *
-	          from sysindexes
-		  where idxname = "sources_primary_key_index_b")) then
-      -- use the "a" set of names
-      -- primary key
-      create unique index sources_primary_key_index_a
-	on sources_new (zdb_id)
-	fillfactor 100
-	in idxdbs1;
-    else
-      -- primary key
-      create unique index sources_primary_key_index_b
-	on sources_new (zdb_id)
-	fillfactor 100
-	in idxdbs1;
-    end if
-
-    update statistics high for table sources_new;
-
-
     -- --------------------------------------------------------------------
 
     -- To this point, we haven't done anything visible to actual users.
@@ -1293,7 +565,7 @@ create dba function "informix".regen_genomics() returning integer
     begin work;
 
     let errorHint = "dropping & renaming old tables";
-
+ 
     begin -- local exception handler dropping, renaming, and constraints
 
       define esql, eisam int;
@@ -1319,14 +591,14 @@ create dba function "informix".regen_genomics() returning integer
       -- Note that the exception-handler at the top of this file is still active
 
       -- ===== PANELS =====
-      let errorHint = "rename  PANELS ";
-
+      let errorHint = "rename  PANELS ";    
+ 
       -- The following statement also drops the view mapped_anons,
       -- because it depends upon panels.
 
       drop table panels;
       rename table panels_new to panels;
-
+ 
       -- define constraints.  indexes for them are defined earlier.
       -- primary key
       alter table panels add constraint
@@ -1342,32 +614,6 @@ create dba function "informix".regen_genomics() returning integer
 	  constraint panels_abbrev_unique;
 
       grant select on panels to "public";
-
-
-
-      -- ===== PANELED_MARKERS =====
-      let errorHint = "rename PANELED_MARKERS ";
-
-      drop table paneled_markers;
-      rename table paneled_m_new to paneled_markers;
-
-      -- define constraints, indexes are defined earlier.
-      -- however, there are no constraints on this table.
-
-      grant select on paneled_markers to "public";
-
-
-
-      -- ===== PUBLIC_PANELED_MARKERS =====
-      let errorHint = "rename PUBLIC_PANELED_MARKERS ";
-
-      drop table public_paneled_markers;
-      rename table public_paneled_m_new to public_paneled_markers;
-
-      -- define constraints, indexes are defined earlier.
-      -- however, there are no constraints on this table.
-
-      grant select on public_paneled_markers to "public";
 
 
 
@@ -1387,63 +633,6 @@ create dba function "informix".regen_genomics() returning integer
 
 
 
-      -- ===== ALL_MARKERS =====
-      let errorHint = "rename ALL_MARKERS";
-
-      drop table all_markers;
-      rename table all_m_new to all_markers;
-
-      -- define constraints.  indexes for them are defined earlier.
-      -- primary key
-      alter table all_markers add constraint
-	primary key (zdb_id)
-	  constraint all_markers_primary_key;
-
-      grant select on all_markers to "public";
-
-
-
-      -- ===== TOTAL_LINKS_COPY =====
-
-      drop table total_links_copy;
-      rename table total_l_new_copy to total_links_copy;
-
-      -- define constraints.  indexes for them are defined earlier.
-      -- primary key
-      alter table total_links_copy add constraint
-	primary key (from_id,to_id)
-	  constraint total_links_copy_primary_key;
-
-      grant select on total_links_copy to "public";
-
-
-
-      -- ===== ALL_LINKED_MEMBERS =====
-
-      drop table all_linked_members;
-      rename table all_l_m_new to all_linked_members;
-
-      -- define constraints.  indexes for them are defined earlier.
-      -- primary key
-      alter table all_linked_members add constraint
-	primary key (alnkgmem_linkage_zdb_id,alnkgmem_member_zdb_id)
-	  constraint all_linked_members_primary_key;
-
-      grant select on all_linked_members to "public";
-
-
-
-      -- ===== ALL_MAPPED_MARKERS =====
-
-      drop table all_mapped_markers;
-      rename table all_m_m_new to all_mapped_markers;
-
-      -- no constraints
-
-      grant select on all_mapped_markers to "public";
-
-
-
       -- ===== ALL_GENES =====
 
       drop table all_genes;
@@ -1453,34 +642,6 @@ create dba function "informix".regen_genomics() returning integer
 
       grant select on all_genes to "public";
 
-
-
-      -- ===== MAPPED_GENES =====
-
-      drop table mapped_genes;
-      rename table mapped_g_new to mapped_genes;
-
-      -- no constraints
-
-      grant select on mapped_genes to "public";
-
-
-
-      -- ===== SOURCES =====
-
-      drop table sources;
-      rename table sources_new to sources;
-
-      -- define constraints.  indexes for them are defined earlier.
-      -- primary key
-      alter table sources add constraint
-	primary key (zdb_id)
-	  constraint sources_primary_key;
-
-      grant select on sources to "public";
-
-
-      -- Last, create the view
 
 
       ---------------- mapped_anons
@@ -1497,6 +658,17 @@ create dba function "informix".regen_genomics() returning integer
 	    and mrkr_type <> 'GENE';
 
       grant select on mapped_anons to public;
+	
+ 
+ 
+     -- delete from lock_func where func_name = "genomics";	
+
+
+      update zdb_flag set zflag_is_on = "f"
+	where zflag_name = "regen_genomics";
+	  
+      update zdb_flag set zflag_last_modified = CURRENT
+	where zflag_name = "regen_genomics";
 
       --trace off;
     end -- Local exception handler
@@ -1505,7 +677,7 @@ create dba function "informix".regen_genomics() returning integer
 
   end -- Global exception handler
 
-  return 1;
+  return 0;
 
 end function;
 
