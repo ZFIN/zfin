@@ -1,4 +1,4 @@
--- pre-process the .csv files from Bernard
+ -- pre-process the .csv files from Bernard
 -- to create informix loadable .unl files with 
 -- the data somewhat closer to it's final form.
 ! echo "parsing Bernard's data" 
@@ -6,7 +6,6 @@
 --! echo "Bernard's data parsed"
 
 --       Constants that may be useful
-
 -- ZDB-LAB-980204-15     Thisse Lab
 -- ZDB-LAB-991005-53     ZIRC
 -- ZDB-PERS-960805-556   Thisse, Bernard
@@ -38,13 +37,14 @@ polymerase varchar(80),
 medline_id varchar(80),
 text_citation lvarchar, 
 comments lvarchar,
-expression lvarchar, 
 modified DATETIME YEAR TO DAY
 )with no log;
 
 load from 'probes.unl' insert into probes_tmp;
 
 update probes_tmp set clone = lower(clone);
+update probes_tmp set gb5p = upper(gb5p);
+update probes_tmp set gb3p = upper(gb3p);
 update probes_tmp set isgene = 'off' where isgene is null;
 
 
@@ -274,7 +274,6 @@ clone varchar (80) not null,
 sstart varchar (50),
 sstop varchar (50),
 o_view varchar(20),
-o_direction varchar(30),
 orientation varchar(60),
 preparation varchar(15),
 comments lvarchar,
@@ -284,7 +283,10 @@ modified DATETIME YEAR TO DAY
 )with no log;
 
 load from 'images.unl' insert into images_tmp;
-
+--if unique constraint fails, 
+--remove unique from imagename column and
+--uncomment next line.
+--select imagename from images_tmp group by 1 having count(*) > 1;
 
 !echo "images not associated with clone in this load"  
 update images_tmp set clone = lower(clone);
@@ -369,7 +371,15 @@ insert into marker select * from tmp_mrkr;
 
 !echo " load pubs for marker"
 insert into record_attribution 
-select mrkr_zdb_id, 'ZDB-PUB-010810-1','primary' from tmp_mrkr where mrkr_zdb_id not in (select recattrib_data_zdb_id from record_attribution where recattrib_data_zdb_id = mrkr_zdb_id and recattrib_source_zdb_id = "ZDB-PUB-010810-1");
+select mrkr_zdb_id, 'ZDB-PUB-010810-1' 
+from tmp_mrkr 
+where not exists 
+  (
+     select *
+     from record_attribution 
+     where recattrib_source_zdb_id = "ZDB-PUB-010810-1"
+       and recattrib_data_zdb_id = mrkr_zdb_id
+  );
 
 
 select mrkr_name new_ests  from  tmp_mrkr;
@@ -514,38 +524,6 @@ drop table  linked_markers;
 drop table  link_db;
 
 
-
-
-
-! echo "-- PROBE_LIBRARY --"
-----------------------------
-create temp table tmp_probe_library
-  (
-    pl_zdb_id varchar(50),
-    pl_name varchar(80),
-    pl_url varchar(100)
-  )
-with no log;
-
-insert into tmp_probe_library
-  select distinct  
-    'x',
-    library,
-    ''
-  from
-    probes_tmp
-  where
-    library not in (select probelib_name from probe_library)
-;
-
-update tmp_probe_library
-set pl_zdb_id = get_id('PROBELIB');
-
-! echo 'insert probe libraries'
-insert into zdb_active_data select pl_zdb_id from tmp_probe_library;
-insert into probe_library select * from tmp_probe_library;
-
-
 ! echo "-- CLONE --"
 -----------------------------
 create temp table tmp_clone (
@@ -557,8 +535,7 @@ create temp table tmp_clone (
     cln_cloning_site varchar(20),
     cln_digest varchar(20),
     cln_probelib_zdb_id varchar(50),
-    cln_sequence_type varchar(20),
-    cln_type_name varchar(20)
+    cln_sequence_type varchar(20)
 ) with no log;
 
 
@@ -573,16 +550,19 @@ insert into tmp_clone
         cloning_site,
         digest,
         probelib_zdb_id,
-        'cDNA',
-        'Plasmid'
+        'cDNA'
 	from probes_tmp, probe_library, tmp_mrkr
 	where library = probelib_name
           and clone = mrkr_name
 ;
 
+select distinct library from probes_tmp where library not in (select probelib_name from probe_library);
+
+insert into vector
+select distinct vector, 'Plasmid' from probes_tmp where vector not in (select vector_name from vector);
 
 ! echo "load clones"
-insert into clone select * from tmp_clone tl;
+insert into clone select * from tmp_clone;
 
 
 ! echo "-- EXPRESSION PATTERN --"
@@ -619,7 +599,7 @@ insert into expression_pattern select * from tmp_exp_pat;
 insert into int_data_source select xpat_zdb_id,'ZDB-LAB-980204-15' from tmp_exp_pat;
 
 -- record_attribution --
-insert into record_attribution select xpat_zdb_id, 'ZDB-PUB-010810-1','primary' from tmp_exp_pat;
+insert into record_attribution select xpat_zdb_id, 'ZDB-PUB-010810-1' from tmp_exp_pat;
 
 --drop table tmp_exp_pat;
 
@@ -628,11 +608,16 @@ insert into record_attribution select xpat_zdb_id, 'ZDB-PUB-010810-1','primary' 
 -- make sure the genbank numbers exist --
 select gb5p from probes_tmp where gb5p is not null into temp gb5p_tmp with no log;
 delete from gb5p_tmp where gb5p in (select genbank_acc_num from genbank);
+-- check for duplicates
+select gb5p from gb5p_tmp group by 1 having count(*) > 1;
+
 insert into genbank select gb5p,"5'" from gb5p_tmp;
 drop table gb5p_tmp;
 
 select gb3p from probes_tmp where gb3p is not null into temp gb3p_tmp with no log;
 delete from gb3p_tmp where gb3p in (select genbank_acc_num from genbank);
+-- check for duplicates
+select * from gb3p_tmp group by 1 having count(*) > 1;
 insert into genbank select gb3p,"3'" from gb3p_tmp;
 drop table gb3p_tmp;
 
@@ -701,6 +686,7 @@ insert into tmp_exp_pat_stg
 
 
 --debugg violation of informix.expression_pattern_stage_primary_key
+
 select 
   mrkr_name,
   s1.stg_name,
@@ -777,22 +763,25 @@ and sstop = s2.stg_zdb_id
 
 
 update keywords_tmp set clone = 
-    (select distinct xpatstg_xpat_zdb_id 
-    from    tmp_exp_pat_stg,
-            tmp_exp_pat,
-            tmp_mrkr
-    where mrkr_name = clone
-    and xpat_probe_zdb_id = mrkr_zdb_id
-    and xpatstg_xpat_zdb_id = xpat_zdb_id
+  (
+     select distinct xpatstg_xpat_zdb_id 
+     from    tmp_exp_pat_stg,
+             tmp_exp_pat,
+             tmp_mrkr
+--             keywords_tmp
+     where mrkr_name = clone
+     and xpat_probe_zdb_id = mrkr_zdb_id
+     and xpatstg_xpat_zdb_id = xpat_zdb_id
 
-    and clone is not null
-    and mrkr_name is not null
-
-    and mrkr_zdb_id is not null
-    and xpat_probe_zdb_id is not null
-
-    and xpat_zdb_id  is not null
-    and xpatstg_xpat_zdb_id is not null)
+     and clone is not null
+     and mrkr_name is not null
+ 
+     and mrkr_zdb_id is not null
+     and xpat_probe_zdb_id is not null
+ 
+     and xpat_zdb_id  is not null
+     and xpatstg_xpat_zdb_id is not null
+  )
 where clone in (select mrkr_name from tmp_mrkr where mrkr_name is not null)
 and clone is not null
 ;
@@ -901,7 +890,7 @@ create temp table tmp_fish_image(
     fimg_owner_zdb_id varchar(50)not null,
     fimg_external_name varchar(50)not null
     
-) with no log in tempdbs1;
+) with no log in tempdbs2;
 
 insert into tmp_fish_image
     select get_ID('IMAGE'),
@@ -909,12 +898,12 @@ insert into tmp_fish_image
     im.imagename ||'.txt',
     FILETOBLOB(im.imagename || '--C.jpg','client'),
     FILETOBLOB(im.imagename || '--t.jpg','client'),
-    0, 
+    0,
     0,
     'ZDB-FISH-010924-10',
     im.comments, -- null not allowed
     im.o_view,
-    im.o_direction,
+    im.orientation,
     'still',
     im.preparation,
     'ZDB-PERS-960805-556',
@@ -949,17 +938,25 @@ drop table imagedim;
 insert into zdb_active_data select fimg_zdb_id from tmp_fish_image;
 unload to 'foo_image_dump.unl' select fimg_view,fimg_direction,fimg_preparation,fimg_external_name from tmp_fish_image;
 
+
+--find any invalid prepartions
+--correct know tendencies. exp. whole mount -> whole-mount
+update tmp_fish_image
+set fimg_preparation = "whole-mount"
+where fimg_preparation = "whole mount";
+
+select distinct fimg_preparation from tmp_fish_image where fimg_preparation not in (select fimgprep_name from fish_image_preparation);
+
 insert into fish_image select * from tmp_fish_image;
 
 -- record_attribution --
-insert into record_attribution select fimg_zdb_id, 'ZDB-PUB-010810-1','primary' from tmp_fish_image;
+insert into record_attribution select fimg_zdb_id, 'ZDB-PUB-010810-1' from tmp_fish_image;
 
 
 ! echo "-- FISH_IMAGE_STAGE --"
 ------------------------------
 -- getting an  error in this next sql
 -- fimgstg_fimg_zdb_id_foregin_key
-
 
 INSERT INTO fish_image_stage 
     SELECT distinct 
@@ -1043,11 +1040,49 @@ insert into bad_exp_pat_img
 unload to 'bad_exp_pat_img.unl' select * from bad_exp_pat_img;
 
 
+----------------- EXPRESSION AUTHORS ----------------
+!echo 'EXPRESSION_AUTHORS'
+create temp table xpat_auth
+  (
+    xpatauth_est	varchar(50),
+    xpatauth_auth	varchar(100),
+    xpatauth_info	varchar(50)
+  )
+with no log;
+
+load from authors.unl insert into xpat_auth;
+
+----------------- delete duplicates ----------------
+!echo 'duplicate authors'
+    select xpatauth_est, xpatauth_auth
+    from xpat_auth
+    group by 1,2
+    having count(*) > 1;
+
+----------------- report non-zfin authors ----------------
+!echo 'non-zfin authors'
+select distinct xpatauth_auth 
+from xpat_auth
+where xpatauth_auth not in (select full_name from person)
+;
+
+----------------- load authors ----------------
+!echo 'insert authors'
+insert into int_data_source
+select distinct xpat_zdb_id, zdb_id
+from tmp_mrkr, person, xpat_auth, expression_pattern
+where mrkr_abbrev = LOWER(xpatauth_est)
+  and full_name = xpatauth_auth
+  and xpat_probe_zdb_id = mrkr_zdb_id
+;
+
+
 ----------------- Gene Relationships ----------------
+!echo 'RELATIONSHIPS'
 create temp table relationship_tmp
   (
-    cb_name	varchar(80),
-    gene_abbrev	varchar(80)
+    tmprel_cb_name	varchar(80),
+    tmprel_gene_abbrev	varchar(80)
   )
 with no log;
 
@@ -1061,6 +1096,15 @@ create temp table mrel_tmp
   )
 with no log;
 
+create temp table tmp_dalias
+  (
+    tal_zdb_id	varchar(50),
+    tal_data_zdb_id	varchar(50),
+    tal_alias	varchar(80),
+    tal_group	varchar(50)
+  )
+with no log;
+
 load from is_gene.unl insert into relationship_tmp;
 
 ---------- load marker relationship -------------
@@ -1068,45 +1112,117 @@ insert
   into mrel_tmp
 select 
   get_id('MREL'),
-  'gene encodes small segment', 
+  'gene contains small segment', 
   m1.mrkr_zdb_id, 
   m2.mrkr_zdb_id, 
   'Thisse load ' || TODAY
 from
   relationship_tmp,
   marker m1,
-  marker m2
+  tmp_mrkr m2
 where
-  gene_abbrev = m1.mrkr_abbrev
-  and cb_name = m2.mrkr_name;
+  tmprel_gene_abbrev = m1.mrkr_abbrev
+  and tmprel_cb_name = m2.mrkr_name;
   
 
----------- data validation ----------
-delete from relationship_tmp where cb_name in (select mrkr_name from marker, mrel_tmp where mrkr_2 = mrkr_zdb_id);
+---------- data validation ----------------------------------------
+delete from relationship_tmp where tmprel_cb_name in (select mrkr_name from marker, mrel_tmp where mrkr_2 = mrkr_zdb_id);
 
+!echo 'not loaded'
 select * from relationship_tmp;
 
----------- insert marker relationship -----------------
-insert 
-  into zdb_active_data
-select
-  zdb_id
-from 
-  mrel_tmp;
 
+------------------- previous names --------------------------------
+-- select clones that are genes
+insert into tmp_dalias
+select get_id('DALIAS'), gene.mrkr_zdb_id, est.mrkr_name, 'alias'
+from mrel_tmp, marker est, marker gene
+where gene.mrkr_zdb_id = mrkr_1
+  and est.mrkr_zdb_id = mrkr_2;
+
+--create zdb records
+insert into zdb_active_data select tal_zdb_id from tmp_dalias;
+
+--add clones as previous names
+delete from data_alias where 
+dalias_alias in (select tal_alias from tmp_dalias);
+
+insert into data_alias select * from tmp_dalias;
+--select mrkr_name, tal_alias from tmp_dalias, marker where mrkr_zdb_id = tal_data_zdb_id;
+
+
+--attribute alias
+insert into record_attribution select tal_zdb_id, 'ZDB-PUB-010810-1' from tmp_dalias;
+
+---------- create fake genes --------------------------------------
+
+delete from zdb_active_data where zactvd_zdb_id in (select mrkr_zdb_id from marker, probes_tmp pt where 'sb:'||pt.clone = mrkr_abbrev
+and mrkr_type = 'GENE');
+
+!echo 'fake genes'
+--create fake genes
+insert into tmp_mrkr 
+    select 
+        get_id('GENE'),
+        'sb:' || pt.clone,
+        "This gene is characterized solely by an EST or collection of ESTs. When more is known about the gene, the current gene nomenclature based on the EST name will be replaced with more traditional zebrafish gene nomenclature. The prefix 'sb:' indicates this gene is represented by an EST generated at the Thisse's Lab.",
+        'sb:' || pt.clone,
+        'GENE',
+        'ZDB-PERS-960805-556',
+        zero_pad('sb:'||pt.clone),
+        zero_pad('sb:'||pt.clone)
+    from probes_tmp pt 
+    where 'sb:'||pt.clone not in (
+        select mrkr_abbrev from marker
+        where mrkr_abbrev[1,3] = 'sb:'
+        and mrkr_type = 'GENE'
+    )
+      and pt.clone not in (
+        select tmprel_cb_name
+        from relationship_tmp
+    )
+;
+
+--remove real genes
+delete from tmp_mrkr 
+where mrkr_name in(select "sb:"||tal_alias from tmp_dalias);
+
+---------- add the new active data zdbids -------------
+
+insert into zdb_active_data select mrkr_zdb_id from tmp_mrkr where mrkr_type = 'GENE';
+insert into marker select * from tmp_mrkr where mrkr_type = 'GENE';
+
+
+---------- load marker relationships -------------
 insert 
-  into marker_relationship
-select
-  *
+  into mrel_tmp
+select 
+  get_id('MREL'),
+  'gene contains small segment', 
+  gene.mrkr_zdb_id, 
+  est.mrkr_zdb_id, 
+  'Thisse load ' || TODAY
 from
-  mrel_tmp;
+  tmp_mrkr gene,
+  tmp_mrkr est
+where
+  gene.mrkr_name = 'sb:'||est.mrkr_name;
 
-insert 
-  into record_attribution
-select
-  zdb_id, 'ZDB-PUB-010810-1', 'related'
-from
-  mrel_tmp;
+select est.mrkr_name, gene.mrkr_name from mrel_tmp, marker est, marker gene
+where gene.mrkr_zdb_id = mrkr_1 and est.mrkr_zdb_id = mrkr_2
+order by 1;
 
 
---commit work;
+-- create zdb records
+insert into zdb_active_data select zdb_id from mrel_tmp;
+
+-- add mrel records
+insert into marker_relationship select * from mrel_tmp;
+
+-- attribute mrel records
+insert into record_attribution
+select zdb_id, 'ZDB-PUB-010810-1' from mrel_tmp;
+
+
+--rollback work;
+commit work;
