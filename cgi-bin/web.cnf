@@ -11,9 +11,12 @@
 # 2000/08/15 Tried to entirely comment out the debug_file entry, but the 
 # server then complains that the entry is mandatory, in contradiction to
 # the documentation.  So, just redirect the trace info to /dev/null.
-debug_file /dev/null
-# debug_file /tmp/driver.log
-# debug_level 0x5006
+# debug_file /dev/null
+# debug_level 0x0000
+debug_file /tmp/webdriver.cgi.log.<!--|DOMAIN_NAME|-->
+debug_level 0xFFFF
+
+
 #anchorvar (global name) available to all app pages dynamically generated
 #          by the webdriver.
 #          typical values:
@@ -22,8 +25,6 @@ debug_file /dev/null
 # anchorvar WEB_HOME/webdriver     # CGI
 # anchorvar WEB_HOME/drvisapi.dll  # ISAPI
 anchorvar WEB_HOME/webdriver
-config_user	admin
-config_password 382b61594a9f39784e26a79f71b6a1dbe22fce5c
 </global>
 
 
@@ -34,9 +35,9 @@ config_password 382b61594a9f39784e26a79f71b6a1dbe22fce5c
 #
 <setvar>
 INFORMIXDIR		<!--|INFORMIX_DIR|-->
-INFORMIXSQLHOSTS	<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->
-INFORMIXSERVER		<!--|INFORMIX_SERVER|-->
-DBDATE			Y4MD-
+INFORMIXSERVER 		<!--|INFORMIX_SERVER|--> 
+INFORMIXSQLHOSTS 	<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->
+DBDATE      		Y4MD-
 </setvar>
 
 
@@ -46,24 +47,6 @@ DBDATE			Y4MD-
 #  (optional)        server, password, password_key
 #
 
-<map path=/<!--|DB_NAME|-->/admin>
-database <!--|DB_NAME|-->
-user <!--|APP_PAGE_USER|-->
-password <!--|APP_PAGE_USER_PASSWORD|-->
-password_key <!--|APP_PAGE_USER_PASSWORD_KEY|-->
-config_name admin
-config_security on
-</map>
-
-<map path=/<!--|DB_NAME|-->/admin>
-database <!--|DB_NAME|-->
-user <!--|APP_PAGE_USER|-->
-password <!--|APP_PAGE_USER_PASSWORD|-->
-password_key <!--|APP_PAGE_USER_PASSWORD_KEY|-->
-config_name admin
-config_security on
-</map>
-
 <map path=/<!--|CGI_BIN_DIR_NAME|-->>
 database <!--|DB_NAME|-->
 user <!--|APP_PAGE_USER|-->
@@ -71,3 +54,4 @@ password <!--|APP_PAGE_USER_PASSWORD|-->
 password_key <!--|APP_PAGE_USER_PASSWORD_KEY|-->
 config_name zfin
 </map>
+
