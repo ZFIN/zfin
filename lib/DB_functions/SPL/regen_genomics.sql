@@ -3,9 +3,6 @@ drop function regen_genomics;
 
 create dba function "informix".regen_genomics() returning integer
 
-  -- returns 0 on ERROR
-  -- returns 1 on SUCESS
-	
   -- regen_genomics creates the bulk of the fast search tables in ZFIN.
   -- Fast search tables are used to speed query access from web pages.
 
@@ -525,12 +522,12 @@ create dba function "informix".regen_genomics() returning integer
 		    and cloned_gene = an3.allmapnm_zdb_id );
 
 
-    -- Include putative gene assignments to genes not in zfin
+    -- Include putative gene assignments 
 
     insert into all_m_names_new 
 	(allmapnm_name, allmapnm_zdb_id, allmapnm_significance)
       select lower(putgene_putative_gene_name), putgene_mrkr_zdb_id, 10
-	from putative_non_zfin_gene
+	from putative_gene
 	where not exists		-- avoid duplicates
 	      ( select * 
 		  from all_m_names_new an
