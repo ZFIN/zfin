@@ -40,6 +40,7 @@ document.critform.START.value = "";
 <?MIVAR COND="$(NXST,$refcross)" NAME=$refcross>NULL<?/MIVAR>
 <?MIVAR COND="$(NXST,$searchtype)" NAME=$searchtype>contains<?/MIVAR>
 <?MIVAR COND="$(NXST,$lg)" NAME=$lg>0<?/MIVAR>
+<?MIVAR COND="$(NXST,$START)" NAME=$START>1<?/MIVAR>
 
 <?MIVAR>
 <TABLE width=100%>
@@ -164,7 +165,7 @@ document.critform.START.value = "";
 </TABLE>
 <p>
 
-<?MIVAR COND="$(AND,$(NOT,$(ISNULL,$START)),$(XST,$START))">
+<?MIVAR>
   <input type=hidden NAME="START" value=$START>
 <?/MIVAR>
 

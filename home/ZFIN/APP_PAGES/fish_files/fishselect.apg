@@ -92,6 +92,7 @@ function call_reset() {
 <?MIVAR COND="$(NXST,$mutagen)" NAME=$mutagen>any<?/MIVAR>
 <?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>phenotype<?/MIVAR>
 <?MIVAR COND="$(NXST,$chrom_change)" NAME=$chrom_change>any<?/MIVAR>
+<?MIVAR COND="$(NXST,$START)" NAME=$START>1<?/MIVAR>
 
 
 <center>
@@ -289,8 +290,7 @@ value="Clear Settings">
 
 </TABLE>
 
-
-<?MIVAR COND="$(AND,$(NOT,$(ISNULL,$START)),$(XST,$START))">
+<?MIVAR>
   <input type=hidden NAME="START" value=$START>
 <?/MIVAR>
 
