@@ -336,9 +336,9 @@ document.critform.START.value = "";
 	        <?/MIVAR>
 
 		<?MISQL SQL="
-		  select mrkrali_marker_name_alias,mrkrali_marker_zdb_id
-		    from marker_alias 
-		    where mrkrali_marker_zdb_id = '$OID'
+		  select dalias_alias, dalias_data_zdb_id
+		    from data_alias 
+		    where dalias_data_zdb_id = '$OID'
 		  union 
 		  select putgene_putative_gene_name,putgene_pub_zdb_id
 		    from putative_gene

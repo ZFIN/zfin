@@ -275,9 +275,9 @@
 		<?MIVAR name=$rowNUM>$(+,$rowNUM,1)<?/MIVAR>
 
 		<?MISQL SQL="
-		  select mrkrali_marker_name_alias
-		    from marker_alias 
-		    where mrkrali_marker_zdb_id = '$OID'
+		  select dalias_alias
+		    from data_alias 
+		    where dalias_data_zdb_id = '$OID'
 		  union 
 		  select putgene_putative_gene_name
 		    from putative_gene
