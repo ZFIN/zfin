@@ -175,6 +175,21 @@
 	}
 
 
+	function update_nomen_comments(nomen_zdb,comments_obj) {
+        	var new_comments = escape(comments_obj.value);
+		if ((nomen_zdb != '') && (new_comments != '')) {
+		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID='+nomen_zdb+'&attr=comments&attr_type=textarea&old_value=$OID&new_value='+new_comments+'&target_table=marker_history&info=mhist_');
+  		}
+	}
+
+
+	function new_attrib_nomen(nomen_zdb,pub_obj) {
+        	var pub_id = escape(pub_obj.value);
+		if ((nomen_zdb != '') && (pub_id != '')) {
+		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+nomen_zdb+'&new_value='+pub_id+'&target_table=$target_table&info=nomen');
+  		}
+	}
+
 	function new_attrib_mrel() {
 		var mrkr_abbrev=document.updaterrel.attrib_mrkr_abbrev.value;
 		var pub_id=document.updaterrel.attrib_mrel_pubid.value.toUpperCase();
@@ -316,12 +331,15 @@
      	<INPUT TYPE=button value=Update onClick="doit('abbrev','text','Gene+Abbrev')"> 
 <?/MIVAR>
 
-<FONT size=+1>
-<?MIVAR>
-    	$(IF,$(EC,$marker_type,GENE),"<b>Gene Symbol:&nbsp;<i>"$abbrev"</i></b><br>")
+
+<?MIVAR COND="$(EC,$marker_type,GENE)">
+  <FONT size=+1><b>Gene Symbol:&nbsp;<i>$abbrev</i></b></FONT>
 <?/MIVAR>
-</FONT>
-<!---------------------------------------------------------------->     
+<br>
+
+<!---------------------------------------------------------------->  
+
+  
 
 
 <!--------- Display previous names --------------------------------> 
@@ -428,7 +446,21 @@
 <br>
 <?/MIBLOCK>
 
-<!----------------------------------------------------------------> 
+
+<!---------------------------------------------------> 
+
+
+
+
+<!--------------- Dispalay NOMENCLATURE HISTORY -------------------->
+
+<?MISQL SQL="select * from marker_history where mhist_mrkr_zdb_id = '$OID'">
+<?/MISQL>
+<?MIVAR COND="$(AND,$(EC,$marker_type,GENE),$(>,$MI_ROWCOUNT,0))"><font size=-1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-nomenview.apg&OID=$OID$(IF,$(XST,$UPDATE),&UPDATE=1)">Nomenclature History</A></font><?/MIVAR>
+<br>
+<!---------------- end NOMENCLATURE HISTORY ------------------------> 
+
+
 
 <!--------- Display description  ---------------------------------> 
 <?MIVAR COND="$(XST,$UPDATE)">
@@ -440,6 +472,7 @@
 <?MIVAR>$(IF,$(NC,$comments,NULL),$comments,None submitted.)<?/MIVAR>
 
 <!-- display any putative gene name assignments, or the putative genes of markers contained in this marker -->
+<?MIBLOCK COND="$(EC,'foo','foo')">
 
 <?MISQL SQL="
  SELECT  lower(putgene_putative_gene_name), putgene_comments,
@@ -450,13 +483,11 @@
   UNION
   SELECT lower(putgene_putative_gene_name), putgene_comments,
          blast_mrkr_zdb_id
-    FROM putative_non_zfin_gene, marker_relationship, marker_relationship_type,
-	 outer blast
+    FROM putative_non_zfin_gene, marker_relationship, outer blast
     WHERE mrel_mrkr_1_zdb_id = '$OID'
       and mrel_mrkr_2_zdb_id = putgene_mrkr_zdb_id
-      and mreltype_name = mrel_type
+      and mrel_type = 'gene contains small segment'
       and blast_mrkr_zdb_id = putgene_mrkr_zdb_id
-      and mreltype_mrkr_type_group_2 = 'SMALLSEG'
  ;">
 
     <?MIVAR NAME=$putgene_name><i>$1</i><?/MIVAR>
@@ -489,11 +520,10 @@
         WHERE blast_mrkr_zdb_id = '$OID'
       UNION
        SELECT blast_mrkr_zdb_id
-        FROM blast, marker_relationship, marker_relationship_type
+        FROM blast, marker_relationship
         WHERE '$OID' = mrel_mrkr_1_zdb_id
           and blast_mrkr_zdb_id = mrel_mrkr_2_zdb_id
-	  and mreltype_name = mrel_type
-          and mreltype_mrkr_type_group_2 = 'SMALLSEG'
+          and mrel_type = 'gene contains small segment'
     ;">
 	     <?MIVAR> <br> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-blastdata.apg&OID=$1">BLAST data</A><?/MIVAR>
 
@@ -502,6 +532,7 @@
 <?/MIBLOCK>    
 
 
+<?/MIBLOCK>
 <!--------- end putative gene ----------------------------------->
 
 <!-------- CLONE info ------------------------------------------->
@@ -785,6 +816,7 @@
 <!--------------- ends GENE EXPRESSION -------------------------->
 
 <!------------------ MARKER RELATIONSHIP ---------------------->
+<?MIBLOCK COND="$(EC,'foo','foo')">
 
 <?MIVAR NAME=$mrel_mtype><?/MIVAR>
 <?MIVAR NAME=$mrel_count><?/MIVAR>
@@ -795,11 +827,10 @@
 <?MIBLOCK COND="$(OR,$(NC,$mrel_count,0),$(XST,$UPDATE))"><br>
 <HR width="80%"><b>
   <?MIBLOCK COND="$(EC,$marker_type,GENE)">
-    SEGMENT (CLONE AND PROBE) RELATIONSHIPS.
+    SEGMENT (CLONE AND PROBE) RELATIONSHIPS
   <?MIELSE>
-    MARKER RELATIONSHIPS.
+    MARKER RELATIONSHIPS
   <?/MIBLOCK>
-  <?MIVAR>$abbrev:<?/MIVAR>
 </b>
 <?/MIBLOCK>
 <?/MISQL>
@@ -912,6 +943,7 @@
  <?/MISQL>
 </TABLE>
 </form>
+<?/MIBLOCK>
 
 <!------------------ end of MARKER RELATIONSHIP --------------->
 

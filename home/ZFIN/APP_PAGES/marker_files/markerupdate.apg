@@ -19,10 +19,16 @@ target_table -- either anon_marker or gene, depending on what you're updating
 -->
 
 <!-- first double-check permissions.   -->
-
+<HTML>
+<HEAD>
 <META HTTP-EQUIV="EXPIRES" CONTENT="-2d">
 
-
+<SCRIPT>
+function make_correction(mrkr_id,old_v,attr) {
+  var new_v = document.updater.new_value.value;
+  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-marker_history_correction.apg&OID='+mrkr_id+'&new_value='+new_v+'&old_value='+old_v+'&attr='+attr)
+}
+</SCRIPT>
   <?MISQL SQL="
     select WebExplode(object,
 		      'permission=owns&rtype=$target_table$(IF,$(NC,$attr_type,selection),&page_title=Update $print_name)') 
@@ -30,6 +36,8 @@ target_table -- either anon_marker or gene, depending on what you're updating
       where ID='aa-secure_navigation.apg';">
     $1
   <?/MISQL>
+<?MIVAR>     <TITLE>ZFIN Updating $print_name</TITLE>    <?/MIVAR>
+</HEAD>
 
 <?MIVAR COND="$(NXST,$xtra_param)" NAME=$xtra_param><?/MIVAR>
 
@@ -76,9 +84,7 @@ target_table -- either anon_marker or gene, depending on what you're updating
         <?MIVAR NAME=$target_table>putative_non_zfin_gene<?/MIVAR>
     <?/MIBLOCK>
 
-    <HTML>
     <?MIVAR>
-      <TITLE>ZFIN Updating $print_name</TITLE>
 
       <center><font size=6>
       Update <u>$print_name</u> for $(UPPER,$target_table):$update_target
@@ -86,7 +92,7 @@ target_table -- either anon_marker or gene, depending on what you're updating
     <?/MIVAR>
     <p>
 
-    <FORM ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" METHOD=post ENCTYPE="multipart/form-data">
+    <FORM NAME="updater" ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" METHOD="post">
       <?MIVAR>
 	<INPUT TYPE=hidden name=MIval Value=aa-do-markerupdate.apg>
 	<INPUT TYPE=hidden name=OID Value=$OID>
@@ -116,11 +122,28 @@ target_table -- either anon_marker or gene, depending on what you're updating
 	<?MIBLOCK COND="$(EC,$attr_type,text)">
 	  <?MIVAR>
 	    <TD><b>$(UPPER,$print_name)</b>:</TD>
-	    <TD>
-	    <INPUT TYPE=text name=new_value 
-	    $(IF,$(NC,$current_value,NULL),VALUE='$current_value') SIZE=50>
-	  </TD>
+	    <TD width=80%>
+	    <INPUT TYPE=text name=new_value SIZE=50
+                   onChange='document.updater.START.value = "";'
+	           $(IF,$(NC,$current_value,NULL),VALUE='$current_value')>
 	  <?/MIVAR>
+	  </TD>
+          <?MIVAR COND="$(OR,$(EC,$(UPPER,$print_name),GENE NAME),$(EC,$(UPPER,$print_name),GENE ABBREV))">
+            </tr>
+            <tr>
+              <td>
+              <b>Nomenclature:</b>
+              </td>
+              <td>
+              <input type=hidden name=info value=nomenclature>
+              Reason 
+              <SELECT name=xtra_param>
+              <?MISQL SQL="select mhistrsn_name from marker_history_reason order by mhistrsn_name">
+                <option value="$1">$1
+              <?/MISQL>
+              </SELECT>
+              </td>
+          <?/MIVAR>
 	<?/MIBLOCK>
 
 	</TR>
@@ -135,7 +158,10 @@ target_table -- either anon_marker or gene, depending on what you're updating
       <!-- Toss up action buttons -->
       <TABLE width=100%>
         <TR align=center><TD>
-        <INPUT TYPE=submit name=s_change value="SUBMIT this new value">
+        <INPUT TYPE=submit name=s_change value="SUBMIT this UPDATE">
+        <?MIVAR>
+        <INPUT TYPE=button name=s_correct value="Correct Most Recent Update" onClick="make_correction('$OID','$current_value','$attr');">
+        <?/MIVAR>
         </TD><TD>
         <INPUT TYPE=button 
           name=veto 
@@ -234,9 +260,7 @@ target_table -- either anon_marker or gene, depending on what you're updating
   <?/MIBLOCK>  <!-- ends cond attr_type=selection -->
 
 
-  </HTML>
 <?/MIBLOCK> <!-- ends if authorized not false -->
-
 
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
