@@ -118,7 +118,7 @@ COOKIES:
 
   <?MISQL SQL="select WebExplode(object,'permission=root&page_title=Curate Pub') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
-<?MIBLOCK COND="$(NC,$AUTHORIZED,false)"> <!--,$(EC,$ZDB_ident,ZDB-PERS-010716-1))">  -->
+<?MIBLOCK COND="$(EC,$AUTHORIZED,root)"> <!--,$(EC,$ZDB_ident,ZDB-PERS-010716-1))">  -->
   <?MISQL SQL="SELECT title FROM publication WHERE zdb_id='$OID'">
     <?MIVAR NAME=$title>$1<?/MIVAR>
   <?/MISQL>
@@ -217,7 +217,7 @@ COOKIES:
     
     <?/MIVAR>
 
-    <?MIVAR COND=$(AND,$(XST,$c_show_all),$(EC,$c_show_all,true))>
+    <?MIVAR COND=$(AND,$(XST,$c_show_all),$(EC,$c_show_all,t))>
       setCookie('environment','show')
       setCookie('condition','show')
       setCookie('experiment','show')
@@ -230,6 +230,18 @@ COOKIES:
       replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID");          
     <?/MIVAR>    
 
+    <?MIVAR COND=$(AND,$(XST,$c_show_all),$(EC,$c_show_all,f))>
+      setCookie('environment','')
+      setCookie('condition','')
+      setCookie('experiment','')
+      setCookie('figure','')
+      setCookie('image','')
+      setCookie('panel','')
+      setCookie('structure','')
+      setCookie('tod','')
+      setCookie('show_all','false')
+      replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID");          
+    <?/MIVAR> 
 
     //structures are a dynamic set
     function dynamic_set_value_selection(dynamic_field,offset,span) {
@@ -859,7 +871,7 @@ function URLDecode(str) {
     
   <?/MIBLOCK>
   
-  <?MIBLOCK COND=$(XST,$fig_zdb_id)>
+  <?MIBLOCK COND=$(XST,$fig_label)>
   
     <?MIVAR COND=$(NXST,$fig_comments) NAME=fig_comments><?/MIVAR>
     <?MICOMMENT>
@@ -1723,11 +1735,17 @@ SUBMITTER COMMENTS:
 <?MIVAR NAME=year>$3<?/MIVAR>
 <?MIVAR NAME=source>$4<?/MIVAR>
 
-
   <table cellspacing=0 cellpadding=3 width=100%>
     <tr>
       <td>
-        <FONT SIZE=+1><u> Publication </u></FONT> <?MIVAR>&nbsp;(<a href="javascript:onClick=urlSetCookie('show_all','true')">Show All</a>)<?/MIVAR>
+        <FONT SIZE=+1><u>Publication</u></FONT> 
+        <font size=-1>       
+        <?MIBLOCK COND=$(AND,$(XST,$c_show_all),$(EC,$c_show_all,false))>
+          <?MIVAR><a href="javascript:onClick=urlSetCookie('show_all','t')"><b>show all</b></a><?/MIVAR>
+        <?MIELSE>
+          <?MIVAR><a href="javascript:onClick=urlSetCookie('show_all','f')"><b>hide all</b></a><?/MIVAR>
+        <?/MIBLOCK>
+        </font>
         <br>
         <?MIVAR>
           <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$OID">$authors ($year)
