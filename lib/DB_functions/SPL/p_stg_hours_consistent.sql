@@ -16,7 +16,7 @@
   let vOk = stg_window_consistent(vStartZDB, vEndZDB);
 
   if not vOk then
-    raise exception -746, 0, "FAIL!: start hours < end hours!!";
+    raise exception -746, 0, "FAIL!: start hours > end hours!!";
   end if;
 
   end procedure;
