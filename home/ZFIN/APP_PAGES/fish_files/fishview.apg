@@ -1,6 +1,5 @@
 
 
-
 <!-- FILE: FISHVIEW.HTML. This file implements a viewer for FISH records. The goal is to display all of the information associated with, not only the FISH record, but also all mutant alleles (ie. CHROMOSOME and ALTERATION recs) associated with the FISH.
 
 
@@ -670,6 +669,7 @@ $(SETVAR,$last,$3)
 <?/MIBLOCK> <!-- ends mirowcount gt 0 -->
 
 </HTML>
+
 
 
 
