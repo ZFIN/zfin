@@ -1,4 +1,4 @@
-!-- FILE: MAPPINGDETAIL.HTML. This file implements mapping details for MARKER records.
+<!-- FILE: MAPPINGDETAIL.HTML. This file implements mapping details for MARKER records.
 -->
 <?MIVAR COND="$(NXST,$mapdetails_mode)" NAME=$mapdetails_mode>standalone<?/MIVAR>
 
