@@ -22,8 +22,6 @@ TARGETDIR = $(TARGETROOT)/home/zf_info/news
 
 # Subdirectories come and go as meetings come and go.
 
-SUBDIRS = Texas_meeting_files
-
 GENERICS = siteNews.html
 
 # List permanent files first -- files that will stay around no matter what
@@ -32,8 +30,8 @@ GENERICS = siteNews.html
 
 PERMANENT_STATICS = bluline.gif jobs.html mtgs.html
 
-STATICS = $(PERMANENT_STATICS) \
-          Texas_meeting.htm Texas.doc Texas.pdf
+STATICS = $(PERMANENT_STATICS) 
+
 
 
 
