@@ -93,8 +93,9 @@ $(SETVAR,$print_name,$1" "$print_name)
 <?MISQL SQL="update fish set abbrev='$print_name' where zdb_id='$fish_id';"><?/MISQL>
 
 <!-- Now make any pubs (primary or related) associated with the parents into related pubs for the new fish. -->
-<?MISQL SQL="select  distinct '$fish_id' as a0, target_id, 'related'  as a2 from int_data_pub  where (source_id='$mother' or source_id='$father') into temp select_temp_4;"><?/MISQL>
-<?MISQL SQL="insert into int_data_pub (source_id, target_id, info) select * from select_temp_4;"><?/MISQL>
+<!--   It has been requested by Marnie Halpern and agreed that a mutant fish will not inherit it's parents pubs. comment out the section below.   12/5/00  J. Sprague -->
+<!--  SQL="select  distinct '$fish_id' as a0, target_id, 'related'  as a2 from int_data_pub  where (source_id='$mother' or source_id='$father') into temp select_temp_4;"
+ SQL="insert into int_data_pub (source_id, target_id, info) select * from select_temp_4;" -->
 
 
 <!-- NOW deal with the weird case where you have two mutant alleles that fall
