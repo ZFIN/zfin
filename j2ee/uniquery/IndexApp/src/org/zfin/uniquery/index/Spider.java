@@ -70,11 +70,21 @@ public class Spider implements Runnable
     private PrintWriter ignoredUrlLog = null;
     private PrintWriter malformedUrlLog = null;
     
+    private static int errorCount = 0;
+
 
     public static void main(String argv[]) throws Exception
         {
         Spider s = new Spider(argv);
         s.go();
+        if (errorCount > 100)
+            {
+            System.exit(-1);
+            }
+        else
+            {
+            System.exit(0);
+            }
         }
 
 
@@ -224,6 +234,16 @@ public class Spider implements Runnable
 
     public synchronized void enqueueURL(String url)
         {
+        if (url.indexOf("cgi-bin_") != -1)
+            {
+            String hostName = StringUtils.substringBetween(url, "cgi-bin_", "/");
+            int index = url.indexOf("cgi-bin_" + hostName);
+            // should assert that index != -1
+            String firstPart = url.substring(0, index+7);
+            String secondPart = url.substring(index+8+hostName.length());
+            url = firstPart + secondPart;
+            }
+
         if (!indexedURLs.contains(url))
             {
             urls.add(url);
@@ -244,6 +264,10 @@ public class Spider implements Runnable
 
             if (summary != null && summary.body != null)
                 {
+                if (summary.body.startsWith("Dynamic Page Generation Error"))
+                    {
+                    throw new Exception("Encountered dynamic page generation error for url: " + url);
+                    }
                 long parsingStartTime = System.currentTimeMillis();
                 String urls[] = parseURLs(summary);
                 timeSpentParsing += (System.currentTimeMillis() - parsingStartTime);
@@ -283,10 +307,14 @@ public class Spider implements Runnable
     
                     if (summary.title != null && summary.title.length() > 0)
                         {
-                        String str = summary.title;
-                        if (str.startsWith("ZFIN "))
+                        String str = summary.title.trim();
+                        if (str.startsWith("ZFIN"))
                             {
-                            str = str.substring(5);
+                            str = str.substring(4).trim();
+                            }
+                        if (str.startsWith(":"))
+                            {
+                            str = str.substring(1);
                             }
                         doc.add(Field.Text("title", str));
                         }
@@ -352,6 +380,7 @@ public class Spider implements Runnable
                     malformedUrlLog.println("    contains the following malformed urls");
                     for (int i=0; i<malformedUrls.size(); i++)
                         {
+                        errorCount++;
                         malformedUrlLog.println("    " + malformedUrls.get(i));
                         }
                     malformedUrlLog.println("\n\n");
@@ -362,6 +391,7 @@ public class Spider implements Runnable
             }
         catch (Throwable e)
             {
+            errorCount++;
             log.println(Thread.currentThread().getName() + ": encountered error while parsing URL: " + url);
             e.printStackTrace(log);
             }
@@ -654,17 +684,20 @@ public class Spider implements Runnable
                     }
                 else
                     {
+                    errorCount++;
                     log.println("Unsupported MIME type (" + ct + ") type so ignoring: " + url);
                     }
                 }
             else
                 {
+                errorCount++;
                 log.println("Unexpected response code: " + uc.getResponseCode() + " for URL: " + url);
                 }
             }
         catch (FileNotFoundException e)
             {
             // 404
+            errorCount++;
             log.println("No content found for URL: " + url);
             }
             
