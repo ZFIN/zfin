@@ -68,8 +68,16 @@ Some browsers can be configured to be extremely conservative with respect to sec
 
 <li><A NAME="links">
 <big> Linking directly to a ZFIN record.</big> <br>
-It is often desirable to link directly to a ZFIN record from an outside WWW page; clicking the link will jump directly to that record within ZFIN.<P>  Because ZFIN is a complex site, just setting a bookmark using your browser won't work; such a bookmark will merely take you to the ZFIN home page. However, we have devised a mechanism that allows such linking:  All ZFIN records have a ZFIN id number, which is visible in the header of the record when you view it.  To link to a record, simply note down its ZFIN_id, then append it to the URL:
-<pre>http://zfin.org/<!--|CGI_BIN_DIR_NAME|-->/ZFIN_jump?record=</pre>
+It is often desirable to link directly to a ZFIN record from an outside 
+WWW page; clicking the link will jump directly to that record within ZFIN.
+
+<P>  Because ZFIN uses frames, just setting a bookmark using your 
+browser won't work; such a bookmark will merely take you to the ZFIN home 
+page.  However, there is a mechanism that allows such linking:  All ZFIN 
+records have a ZFIN id number, which is visible in the header of the record 
+when you view it.  To link to a record, note its ZFIN id, and then append it 
+to the URL:
+<pre>http://zfin.org/cgi-bin/ZFIN_jump?record=</pre>
 Loading this URL will start ZFIN and display the target record.
 
 </ul>
