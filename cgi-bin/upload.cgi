@@ -66,8 +66,6 @@ $mailprog = '/usr/lib/sendmail -t -oi -oem';
 
 # remove any existing error reports 
 
-system ("/bin/rm -f /tmp/upload_report");
-
 #-----------------Begin_Variables------------------#
 
 # set database environment variables
@@ -458,7 +456,8 @@ sub getSuffix() { # gets the last 4 or 5 digits from the filename to determine
 sub makeFiles () {# uploads the files, builds a thumbnail, gets the height 
 		  # and width of the file, redirects the user to the 
 		  # appropriate apg or static page.
-
+		  
+    $suffix = lc($suffix) ;
     $filename = $OID.$suffix;
 
     &uploadFile($upload_dir, $filename);
@@ -492,7 +491,14 @@ sub makeFiles () {# uploads the files, builds a thumbnail, gets the height
 	    $redirect_OID = $query->param("redirect_OID");
 	    $xpcur_fig = $query->param("xpcur_image_fig");
 	    $xpcur_image_label = $query->param("xpcur_image_label");
-	    
+
+	    $xpat_fig =~ s/\s/\_/g;
+	    $xpat_image_label =~ s/\s/\_/g;
+
+	    if ($redirect_OID !~ m/ZDB\-\D{1,10}\-\d{1,6}\-\d{1,5}/) {
+		&access_error("redirect_OID not a ZDB_id");
+	    }
+
 	    $redirect_new_OID_param = $xpcur_image_OID_param ;
 
 	    $redirect_build = $redirect_url.$redirect_OID_param.$redirect_OID.$redirect_new_OID_param.$OID.$redirect_xpcur_suffix_param.$suffix.$redirect_xpcur_height_param.$height.$redirect_xpcur_width_param.$width.$xpcur_fig_param.$xpcur_fig.$xpcur_image_label_param.$xpcur_image_label;
@@ -500,7 +506,8 @@ sub makeFiles () {# uploads the files, builds a thumbnail, gets the height
 	    if ($attr_type ne "text" &&
 		$attr_type ne "textarea" &&
 		$attr_type ne "pic" &&
-		$attr_type ne "1") {
+		$attr_type ne "1" &&
+		$redirect_build !~ m/.apg/) {
 		
 		&filename_error ($attr_type.'attr_type not ZFIN type!') ;
 		
@@ -509,6 +516,7 @@ sub makeFiles () {# uploads the files, builds a thumbnail, gets the height
 
 		print $query->redirect ("$redirect_build");
 	    
+		system ("/bin/rm -f /tmp/upload_report");
 		exit;
 	    }
 
@@ -521,12 +529,15 @@ sub makeFiles () {# uploads the files, builds a thumbnail, gets the height
 	    if ($attr_type ne "text" &&
 		$attr_type ne "textarea" &&
 		$attr_type ne "pic" &&
-		$attr_type ne "1") {
+		$attr_type ne "1" &&
+		$redirect_build !~ m/.apg/) {
 		
-		&filename_error ($attr_type.'attr_type not ZFIN type!') ;
+		&filename_error ($attr_type.$redirect_build.'attr_type, redirect not ZFIN type!') ;
 
 	    }
 
+	    
+	    system ("/bin/rm -f /tmp/upload_report");
 	    print $query->redirect ("$redirect_build");
 	    exit;
 	}
@@ -538,7 +549,10 @@ sub makeFiles () {# uploads the files, builds a thumbnail, gets the height
 	      
 	    $pub_file = $filename ;
 	    $redirect_build = $redirect_url.$redirect_OID_param.$OID.$redirect_pub_file_param.$pub_file ;
-
+	    if ($redirect_build !~ m/.apg/) {
+		&access_error ($redirect_build.'redirect_build not ZFIN type!') ;
+	    }
+	    system ("/bin/rm -f /tmp/upload_report");
 	    print $query->redirect ("$redirect_build");
 	    exit;
     }
@@ -562,6 +576,8 @@ sub access_error () { # throws up an error message and sends email
     &emailError ("login confirmation failed: $vHint $ENV{'HTTP_COOKIE'} $person_id $filename <!--|DB_NAME|-->");
     print "</body>";
     print "</html>";
+    
+    system ("/bin/rm -f /tmp/upload_report");
     exit;
 
 }
@@ -588,6 +604,7 @@ sub filename_error() { # standard error for file nomenclature problems
     print "</body>";
     print "</html>";
    
+    system ("/bin/rm -f /tmp/upload_report");
     exit;
 
 } # end filename_error
@@ -653,6 +670,8 @@ $filename = $query->param("upload");
 if (!($filename) && 
    (substr($redirect_url, -21) ne $update_image_redirect) &&
     ($redirect_url ne "")) {   
+
+    system ("/bin/rm -f /tmp/upload_report");
     print $query->redirect ($ENV{'HTTP_REFERER'});
     exit;
 }
@@ -669,6 +688,17 @@ elsif (!($filename) &&
     $attr_comments = $query->param("comments");
     $new_value = $query->param("new_value");
     $table = $query->param("table");
+    
+    	    
+    if ($attr_type ne "text" &&
+	$attr_type ne "textarea" &&
+	$attr_type ne "pic" &&
+	$attr_type ne "1") {
+	
+	&filename_error ($attr_type.'attr_type not ZFIN type!') ;
+	
+    }
+
 
     # make sure the table variable is one specified by the calling
     # apg page. 
@@ -676,7 +706,16 @@ elsif (!($filename) &&
     if ($table eq "fx_fish_image_private" || $table eq "fish_image") {
     
 	$zdb_id = $query->param("zdb_id");
+	
+	if ($zdb_id !~ m/fimg_zdb_id|fimgp_zdb_id/){
+	    &filename_error($zdb_id.'zdb_id is not ZFIN pattern') ;
+	}
+
 	$OID_from_apg_page = $query->param("OID");
+
+	if ($OID_from_apg_page !~ m/ZDB\-\D{1,10}\-\d{1,6}\-\d{1,5}/){
+	    &filename_error($OID_from_apg_page.'tableOID is not ZFIN pattern') ;
+	}
 
 	# make sure we're passing an image, don't want to grab params from
 	# non-image apg pages.
@@ -709,11 +748,14 @@ elsif (!($filename) &&
 	    }
 
 	    # the redirect if no image to upload, just hold and pass params
-
+	    
 	    $redirect_build = $redirect_url.$redirect_OID_param.$OID.$redirect_attr_param.$attr.$redirect_attr_type_param.$attr_type.$redirect_table_param.$table.$redirect_zdb_id_param.$zdb_id.$redirect_comments_param.$attr_comments.$redirect_old_value_param.$old_value.$redirect_new_value_param.$new_value; 
+	    
+	    if ($redirect_build !~ m/.apg/) {
+		&access_error ($redirect_build.'redirect_build not ZFIN type!') ;
+	    }
 
-	    &emailError($redirect_build) ;
-
+	    system ("/bin/rm -f /tmp/upload_report");
 
 	    print $query->redirect ($redirect_build);
 
@@ -1045,5 +1087,6 @@ else { # filename isn't null or redirect isn't do-imageupdate.apg
 
 print "</body>";
 print "</html>";
+system ("/bin/rm -f /tmp/upload_report");
 exit;
 #-----------------END_MAIN---------------------------#
