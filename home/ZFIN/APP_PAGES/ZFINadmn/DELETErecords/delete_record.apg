@@ -91,9 +91,10 @@ Variables expected:
 	 <TABLE width="100%">
 	   <TR>
 	      <select name=mtype>
-		<option $(IF,$(EC,$mtype,MUTANT),SELECTED)>MUTANT
+		<option value=MUTANT $(IF,$(EC,$mtype,MUTANT),SELECTED)>Mutant
 		<option $(IF,$(EC,$mtype,LOCUS),SELECTED)>LOCUS
-		<option $(IF,$(EC,$mtype,GENE),SELECTED)>GENE
+		<option value=GENE $(IF,$(EC,$mtype,GENE),SELECTED)>Gene
+		<option value=GENEP $(IF,$(EC,$mtype,GENEP),SELECTED)>Pseudogene
 		<option $(IF,$(EC,$mtype,EST),SELECTED)>EST
 		<option $(IF,$(EC,$mtype,RAPD),SELECTED)>RAPD
 		<option $(IF,$(EC,$mtype,SSLP),SELECTED)>SSLP
