@@ -48,6 +48,7 @@ chdir "<!--|ROOT_PATH|-->/server_apps/Reports/ZGC";
 system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> zgcCount.sql > zgcStatistics 2> err");
 
 &sendResult("Monthly ZGC statistics", "sramacha\@uoneuro.uoregon.edu, van_slyke\@uoneuro.uoregon.edu", "./zgcStatistics");
+
 &sendResult("Monthly ZGC statistics Err", "peirans\@cs.uoregon.edu", "./err");
 
 exit;
