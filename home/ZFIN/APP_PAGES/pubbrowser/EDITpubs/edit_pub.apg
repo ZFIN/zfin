@@ -101,8 +101,8 @@ Variables expected:  OID (optional) -- the OID of a publication to edit.
     <b>TITLE:</b><br>
     <TEXTAREA rows=4 cols=70 name="q_title" wrap=virtual>$q_title</TEXTAREA>
     <p>
-    <b>Medline ID:</B>
-    <br>Enter "none" if this publication does not exist in Medline.  
+    <b>PubMed ID:</B>
+    <br>Enter "none" if this publication does not exist in PubMed.  
     Leave it blank if you don't know.
     <input type=text name="q_accession_no" $(IF,$(NC,$q_accession_no,NULL),"value="$q_accession_no) > 
     <p>

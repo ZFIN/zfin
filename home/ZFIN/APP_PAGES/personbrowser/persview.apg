@@ -127,7 +127,7 @@ value=" DONE UPDATING. Back to Viewing! " onClick="document.location.replace('/<
 <?MIVAR COND="$(AND,$(XST,$UPDATE),$(EC,$AUTHORIZED,root))">
  <INPUT TYPE=button value=Update onClick="doit('full_name','text')">
 <br>
-<b>MEDLINE NAME:</b> $name
+<b>PubMed NAME:</b> $name
 <INPUT TYPE=button value=Update onClick="doit('name','text')">
 <br>
 <?/MIVAR>

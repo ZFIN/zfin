@@ -313,7 +313,11 @@ function list_all() {
     <TD width=20%>&nbsp;</TD>
     <TD align=center width=60%>
       <font size="+1">Publication Search Results   
-      <!-- DEBUGGING <?MIVAR> CONSTRAINT=$constraint <?/MIVAR> -->
+      <!--DEBUGGING <?MIVAR> CONSTRAINT=$constraint <?/MIVAR>-->
+
+      <?MIVAR NAME=SQL1>"select count(distinct zdb_id)::integer 
+                   from $target_tables 
+                   $constraint;<?/MIVAR>
       <?MISQL SQL="select count(distinct zdb_id)::integer 
                    from $target_tables 
                    $constraint;">
@@ -482,7 +486,6 @@ $(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/
 
 
 
-
 <?MIBLOCK COND="$(NXST,$accession)">  <!-- don't want modify search result if come from accession search-->
 
 
@@ -580,7 +583,7 @@ $(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/
 	<option $(IF,$(EC,$anon1,abstract),SELECTED) value=abstract>Abstract 
 	<option $(IF,$(EC,$anon1,source),SELECTED) value=source>Source
 	<option $(IF,$(EC,$anon1,keywords),SELECTED) value=keywords>Keywords
-	<option $(IF,$(EC,$anon1,accession_no),SELECTED) value=accession_no>Medline acc#
+	<option $(IF,$(EC,$anon1,accession_no),SELECTED) value=accession_no>PubMed acc#
 	<option $(IF,$(EC,$anon1,zdb_id),SELECTED) value=zdb_id>ZFIN ID
 	</SELECT>
 	<b>contains:</b> <input type=text name=anon1text size=10 onChange='document.critform.START.value = "";' $(IF,$(XST,$anon1text),value='$anon1text')>

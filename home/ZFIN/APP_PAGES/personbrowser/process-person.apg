@@ -40,7 +40,7 @@ Inserted one new person record with the following attributes:<br>
 <DL>
 <DT> <b>Full name:</b>
 <DD> $full_name
-<DT> <b>MEDLINE name:</b>
+<DT> <b>PubMed name:</b>
 <DD> $name
 <DT> <b>Address:</b>
 <DD> $address

@@ -11,7 +11,7 @@ Documentation for the REFER format export capability.
 
 <b>Purpose:</b>  These instructions give details on how to export selected references from ZFIN in REFER format, to be subsequently imported into your favorite bibliographic utility.
 <p>
-<B>Disclaimer:</b> ZFIN is not and was never meant to be a bibliographic database (e.g., like Medline). The primary purpose of having publications in ZFIN is so that these records can be linked to the various experimental data we will be supporting. However,  we do recognize that many users will want to move pubications found in ZFIN to their personal bibliographic utilities; the "export REFER format" link is our response to this need. 
+<B>Disclaimer:</b> ZFIN is not and was never meant to be a bibliographic database (e.g., like PubMed). The primary purpose of having publications in ZFIN is so that these records can be linked to the various experimental data we will be supporting. However,  we do recognize that many users will want to move pubications found in ZFIN to their personal bibliographic utilities; the "export REFER format" link is our response to this need. 
 <p>
 Because ZFIN is not a true bibliographic facility, it can not export completely polished REFER files. You will almost certainly have to edit the references individually after you have imported them into your bibliographic utility. The editing may include:
 <ul>
