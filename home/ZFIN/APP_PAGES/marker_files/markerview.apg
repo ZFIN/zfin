@@ -1572,14 +1572,15 @@ Datablade documentation.
   <br><br>
 <?/MIBLOCK>  <?MICOMMENT> end update OTHER GENE / MARKER PAGES:<?/MICOMMENT>
 
-    <?MIVAR NAME=dblink_other_table_row><TR><TD>$(SEPARATE,$dblink_other,</TD><TD>)</TD></TR><?/MIVAR>
+    <?MIBLOCK COND="$(XST,$dblink_other)">
+        <?MIVAR NAME=dblink_other_table_row><TR><TD>$(SEPARATE,$dblink_other,</TD><TD>)</TD></TR><?/MIVAR>
+        <?MIVAR>
+            <TABLE  width="100%" border=0 bgcolor="$highlight"
+                $dblink_other_table_row
+            </TABLE>
+        <?/MIVAR>
+    <?/MIBLOCK>
 
-    <?MIVAR>
-    <TABLE  width="100%" border=0 bgcolor="$highlight"
-      $dblink_other_table_row
-    </TABLE>
-    <?/MIVAR>
-    
   <?/MIBLOCK> 
 <?MIBLOCK COND="$(XST,$UPDATE)">
   </form>  <?MICOMMENT> end form updateother <?/MICOMMENT>
