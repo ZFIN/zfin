@@ -138,10 +138,13 @@ begin work;
 		dalias_zdb_id		varchar(50),
     		dalias_data_zdb_id	varchar(50),
     		dalias_alias		varchar(120),
-   	 	dalias_group		varchar(30)
+   	 	dalias_group		varchar(30),
+		dalias_alias_lower	varchar(255)
               ) with no log;
-	insert into pre_ac_alias (dalias_data_zdb_id, dalias_alias, dalias_group)
-	    select distinct dblink_zdb_id, alias_acc_num, "alias"
+	insert into pre_ac_alias (dalias_data_zdb_id, dalias_alias, 
+		dalias_group, dalias_alias_lower)
+	    select distinct dblink_zdb_id, alias_acc_num, "alias", 
+		lower(alias_acc_num)
 	    from pre_db_link db, temp_ac_alias al
  	    where db.acc_num = al.prm_acc_num;
 
