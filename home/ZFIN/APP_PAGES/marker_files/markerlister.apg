@@ -224,8 +224,12 @@ $(IF,$(AND,$(EC,$prev_name,$1),$(OR,$(EC,$prev_mtype,$2),$(EC,$prev_mtype,0))),"
 <TD> <font size=2> 
 
 
-$(IF,$(AND,$(EC,$11,NULL),$(EC,$9,f)),"LG  <b>"$5"</b>;<b> "$3"</b> "$13""<TD><font size=2> "<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$6">"$7"</A>"</TD>
+$(IF,$(AND,$(EC,$11,NULL),$(EC,$9,f),$(NC,$2,mutant)),"LG  <b>"$5"</b>;<b> "$3"</b> "$13""&nbsp;&nbsp;<A HREF="javascript:view_scores('"$6"','"$5"','"$4"','"$1"')";>Scoring Data  <TD><font size=2> "<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$6">"$7"</A>"</TD>
 <TD><font size=2 COLOR=#A9A9A9><input type=checkbox name=$target_abbrev  value=1  CHECKED ></TD><TD><font size=2>" "$upd_date""</TD>)
+
+$(IF,$(AND,$(EC,$11,NULL),$(EC,$9,f),$(EC,$2,mutant)),"LG  <b>"$5"</b>;<b> "$3"</b> "$13"" <TD><font size=2> "<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$6">"$7"</A>"</TD>
+<TD><font size=2 COLOR=#A9A9A9><input type=checkbox name=$target_abbrev  value=1  CHECKED ></TD><TD><font size=2>" "$upd_date""</TD>)
+
 <?MIBLOCK COND="$(AND,$(EC,$11,NULL),$(EC,$9,f))">
 <?MIVAR name=$ok_view_map>1<?/MIVAR>
 <?/MIBLOCK>
