@@ -117,7 +117,7 @@ registrations -- but not update of course.
 	      ('Provisional record for newly registered locus/allele',
 	       '$owner', current, '$temp_oid', '$locus_id', '$allele',
 	       '0', '$descr', '$lab', '$owner', 'mutant',
-	       '$abbrev','$locus_name','UNKNOWN','UNKNOWN','UNKNOWN');">
+	       '$abbrev','$locus_name','unknown','not specified','not specified');">
 	<?/MISQL>
 	<?MIVAR NAME=$s_done>true<?/MIVAR>
 	<?MIVAR NAME=$submitter_id>$owner<?/MIVAR>
