@@ -7,9 +7,8 @@
 <FRAMESET rows="50,*">
 <?MIVAR NAME=$title>$(URLENCODE,$title)<?/MIVAR>
 <?MIVAR>
-<FRAME NAME="label" scrolling=no
-SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-doc_title.apg&title=$title"
-MARGINWIDTH=1 MARGINHEIGHT=1>
+
+<FRAME NAME="label" scrolling=no SRC="/ZFIN/help_files/label.html" MARGINWIDTH=1 MARGINHEIGHT=1>
 
 <FRAME NAME="helpcontent" SRC="$docpath">
 <?/MIVAR>
