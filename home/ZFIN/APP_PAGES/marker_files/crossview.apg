@@ -224,7 +224,7 @@ ERROR -- something bad happened -- no OID passed in!
 		     group by panelcnt_mrkr_type	
 			;">
 	$(IF,$(NC,$MI_CURRENTROW,1),"<br>")
-	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&refcross=$OID&marker_type=$1">$1</A> (total of $2)
+	$1 (total of $2)
         $(IF,$(NC,$1,SNP),$(SETVAR,$mcount,$(+,$mcount,$2)))
 	<?/MISQL>
 	</ul>
@@ -233,7 +233,7 @@ ERROR -- something bad happened -- no OID passed in!
       <?MIBLOCK COND="$(EC,$abbrev,ZMAP)">
 	<?MISQL SQL="select mtype,count(*)::integer from zmap_pub_pan_mark a , panels b  where  a.target_abbrev = b.abbrev and b.zdb_id='$OID' and or_lg <> '0' group by mtype;">
 	$(IF,$(NC,$MI_CURRENTROW,1),"<br>")
-	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&refcross=$OID&marker_type=$1">$1</A> (total of $2)
+	$1 (total of $2)
 	$(SETVAR,$mcount,$(+,$mcount,$2))
 	<?/MISQL>
 	</ul>
@@ -245,13 +245,7 @@ ERROR -- something bad happened -- no OID passed in!
       <p>
       Click "View Map" in table at right to see a graphical map of an individual linkage group. 
       <p align=center>
-      OR
-      </p>
-      <?MIVAR>
-      Search the <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&refcross=$OID">$abbrev Panel for particular mapped markers.</A>.
-      <?/MIVAR>
-      <p align=center>
-      OR
+         OR
       </p>
       <?MIVAR>
       Click to <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-refcrosslist.apg">see a list of all mapping panels.</A>
@@ -310,7 +304,7 @@ ERROR -- something bad happened -- no OID passed in!
 	  $(SETVAR,$last,$1)
 	<?/MISQL>
 	    <?MIVAR>
-	      </TD><TD bgcolor="$highlight"><font size=1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mapperselect.apg">View Map</A></TD><TDbgcolor="$highlight" ></TD></TR>
+	      </TD><TD bgcolor="$highlight"><font size=1><A HREF="/<!--|CGI_BIN_DIR_NAME|-->/mapper_select.cgi">View Map</A></TD><TDbgcolor="$highlight" ></TD></TR>
 	    <?/MIVAR>
       <?/MIBLOCK>
 
