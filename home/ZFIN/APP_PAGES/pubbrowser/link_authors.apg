@@ -112,7 +112,42 @@ Variables expected:  OID  -- the OID of a publication to link
       <?MIVAR NAME=$returnVariables>$returnVariables&WINSIZE=$WINSIZE<?/MIVAR>
       <?MIVAR><input type=hidden name=WINSIZE value="$WINSIZE"><?/MIVAR>
     <?/MIBLOCK>
-
+    <?MIBLOCK COND="$(XST,$curator)"> 
+      <?MIVAR NAME=$returnVariables>$returnVariables&curator=$curator<?/MIVAR>
+      <?MIVAR><input type=hidden name=curator value="$curator"><?/MIVAR>
+    <?/MIBLOCK>
+    <?MIBLOCK COND="$(XST,$cur_topic)"> 
+      <?MIVAR NAME=$returnVariables>$returnVariables&cur_topic=$cur_topic<?/MIVAR>
+      <?MIVAR><input type=hidden name=cur_topic value="$cur_topic"><?/MIVAR>
+    <?/MIBLOCK>
+    <?MIBLOCK COND="$(XST,$topic_found)"> 
+      <?MIVAR NAME=$returnVariables>$returnVariables&topic_found=$topic_found<?/MIVAR>
+      <?MIVAR><input type=hidden name=topic_found value="$topic_found"><?/MIVAR>
+    <?/MIBLOCK>
+    <?MIBLOCK COND="$(XST,$Fday)"> 
+      <?MIVAR NAME=$returnVariables>$returnVariables&Fday=$Fday<?/MIVAR>
+      <?MIVAR><input type=hidden name=Fday value="$Fday"><?/MIVAR>
+    <?/MIBLOCK>
+    <?MIBLOCK COND="$(XST,$Fmonth)"> 
+      <?MIVAR NAME=$returnVariables>$returnVariables&Fmonth=$Fmonth<?/MIVAR>
+      <?MIVAR><input type=hidden name=Fmonth value="$Fmonth"><?/MIVAR>
+    <?/MIBLOCK>
+    <?MIBLOCK COND="$(XST,$Fyear)"> 
+      <?MIVAR NAME=$returnVariables>$returnVariables&Fyear=$Fyear<?/MIVAR>
+      <?MIVAR><input type=hidden name=Fyear value="$Fyear"><?/MIVAR>
+    <?/MIBLOCK>
+    <?MIBLOCK COND="$(XST,$Tday)"> 
+      <?MIVAR NAME=$returnVariables>$returnVariables&Tday=$Tday<?/MIVAR>
+      <?MIVAR><input type=hidden name=Tday value="$Tday"><?/MIVAR>
+    <?/MIBLOCK>
+    <?MIBLOCK COND="$(XST,$Tmonth)"> 
+      <?MIVAR NAME=$returnVariables>$returnVariables&Tmonth=$Tmonth<?/MIVAR>
+      <?MIVAR><input type=hidden name=Tmonth value="$Tmonth"><?/MIVAR>
+    <?/MIBLOCK>
+    <?MIBLOCK COND="$(XST,$Tyear)"> 
+      <?MIVAR NAME=$returnVariables>$returnVariables&Tyear=$Tyear<?/MIVAR>
+      <?MIVAR><input type=hidden name=Tyear value="$Tyear"><?/MIVAR>
+    <?/MIBLOCK>
 
     <?MIVAR>
       <input type=hidden name=ZDB_name value="$ZDB_name">
@@ -135,22 +170,22 @@ Variables expected:  OID  -- the OID of a publication to link
     <?MIVAR>
       <input type=hidden name=OID value="$OID">
       <input type=hidden name=q_authors value="$q_authors">
-      <TD><font size=2><b>Curator:</b> $ZDB_name </td>
+      <input type=hidden name=new_action value="Linked Authors">
+      
+      <TD>
+        <font size=2><b>Curator:</b> $ZDB_name 
+      </TD>
     <?/MIVAR>
-    <td><font size=2><b>Action:</b>
-    <SELECT name=new_action>
-    <option value="Linked Authors">Linked Authors
-      <option value="Curated Genes">Curated Gene Info
-      <option value="Curated Expression data">Curated Expression Data
-      <option value="Curated Mutant data">Curated Mutant Data
-      <option value="Curated Markers/Mapping">Curated Mapping/Markers
-    </SELECT>
-    </TD>
-    </TR><TR>
-    <TD colspan=2><font size=2><b>Comments:</b><br>
+      <TD>
+        <font size=2><b>Action:</b> Link Authors
+      </TD>
+    </TR>
+    <TR>
+      <TD colspan=2><font size=2><b>Comments:</b><br>
     <TEXTAREA rows=5 cols=75 NAME="new_comments"></TEXTAREA>
-    </td>
-    </TR></TABLE>
+      </TD>
+    </TR>
+  </TABLE>
 
 
     <hr width=80%>
