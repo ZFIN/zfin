@@ -50,15 +50,16 @@ TARGETDIR = $(TARGETROOT)/client_apps/ListSelector
 
 # Use the standard JAVAC, and JAVACFLAGS.  Still need to define classpath.
 
-CLASSPATH = .:$(JAVAHOME)/lib/classes.zip:$(TOP)/lib/Java
+CLASSPATH = .:$(JAVAHOME_14)/lib/classes.zip:$(TOP)/lib/Java:$(JDBCHOME)/lib/ifxjdbc.jar
 
 # ---- Java source and class file variables
 
 # Java related Makefile variables inherited from parent:
-#  JAVAS
+#  JAVAS JAR IMPORTJAR IMPORTPATH
 
 CLASSES = $(foreach JVS, $(JAVAS), $(patsubst %.java,%.class,$(JVS)))
-TARGETS = $(foreach JVC, $(CLASSES), $(TARGETDIR)/$(JVC))
+TARGETJAR = $(TARGETDIR)/$(JAR)
+#TARGETS = $(foreach JVC, $(CLASSES), $(TARGETDIR)/$(JVC))
 
 
 
@@ -66,35 +67,45 @@ TARGETS = $(foreach JVC, $(CLASSES), $(TARGETDIR)/$(JVC))
 
 .PHONY : all sanitycheck clean clobber
 
-all : $(TARGETDIR) $(TARGETS)
+all : $(TARGETDIR) $(TARGETJAR)
 
 $(TARGETDIR) :
 	$(TARGET_MKDIR) $@
 
+$(IMPORTJAR) :
+	ln -s $(IMPORTPATH)/$(IMPORTJAR) $(TARGETDIR)
 
 # ----  Rules for creating Java classes.
 
-$(TARGETS) : $(TARGETDIR)/%.class : %.class
-	$(TARGET_CP) $^ $@
+$(TARGETJAR) : $(JAR)
+	$(TARGET_CP) $(JAR) $@
 	$(TOUCH) $@
-	chmod 444 $@
+	chmod o+r $@
+
+$(JAR) : $(CLASSES) $(IMPORTJAR)
+	$(JAVAHOME_14)/bin/jar -cvf $(JAR) $(CLASSES)
+
+#$(TARGETS) : $(TARGETDIR)/%.class : %.class
+#	$(TARGET_CP) $^ $@
+#	$(TOUCH) $@
+#	chmod 444 $@
 
 
 # When any class file needs to be remade, remake all of them.
 
 $(CLASSES) : $(JAVAS)
-	$(JAVAC_11) $(JAVACFLAGS) -classpath $(CLASSPATH) $(JAVAS)
+	$(JAVAC_14) $(JAVACFLAGS) -classpath $(CLASSPATH) $(JAVAS)
 
 
 
 # ---------------  Maintenance Rules  -----------------------------------
 
 clean :			# remove almost everything in the directory
-	rm -f $(JAVAS) $(CLASSES) 
+	rm -f $(JAVAS) $(CLASSES) $(JAR)
 
 
 clobber :			# Remove targets, but not target dir.
-	rm -f $(TARGETS)
+	rm -f $(TARGETJAR)
 
 
 sanitycheck :		# nothing to do, all done by parent.

@@ -26,6 +26,8 @@ include $(TOP)/make.include
 
 STAGINGDIR = Staging
 
+IMPORTPATH = $(JDBCHOME)/lib
+IMPORTJAR = ifxjdbc.jar
 
 # ---- Java source variables
 
@@ -40,11 +42,13 @@ STATICSTAGINGS = $(foreach STAT, $(STATICS), $(STAGINGDIR)/$(STAT))
 JAVAS   = $(GENERICS) $(STATICS)
 TARGETS = $(SPECIFICS) $(STATICSTAGINGS)
 
+# ---- Java destination variables
 
+JAR = listselector.jar
 
 # ---- Which variables are used by Makefile in Staging directory:
 
-export JAVAS
+export JAVAS JAR IMPORTPATH IMPORTJAR
 
 
 
