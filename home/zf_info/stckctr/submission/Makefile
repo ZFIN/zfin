@@ -23,8 +23,7 @@ TARGETDIR = $(TARGETROOT)/home/zf_info/stckctr/submission
 
 GENERICS = submit.html success.html
 
-STATICS = index.html reasons.html submit.txt husbandry.html marker.html \
-
+STATICS = index.html reasons.html submit.txt husbandry.html marker.html links.html
 # ---------------  Production Rules  ------------------------------------
 
 # Use default rules for directories without app pages in them.
