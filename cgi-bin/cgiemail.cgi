@@ -119,33 +119,24 @@ template: copy next find template "^/"
 while [(pick template 1) = "^/" ][remove template]
 
 
-header-obj: context [
-    To: none
-    CC: none
-    BCC: none
-    From: none
-    Reply-To: none
-    Date: none
-    Subject: none
-    Message-Id: none
-    MIME-Version: 1.0
-    Content-Type: "TEXT/plain; charset=us-ascii"
-    Content: none    
-]    
-
-foreach ad parse addy "," [
-                ;;; build a mail header
-                header: make header-obj[
-                        To:     ad
-                        From:   frm
-                        Subject: sbj
-                ]
-    if error? try [send/header to-email ad template header][
-        send tomc@cs.uoregon.edu join "cgiemail error^/" probe disarm err            
-    ]
-]        
-       
-]   
+foreach ad parse addy "," [ 
+    if not empty? ad: trim ad [
+        ;;; build a mail header
+        header: make system/standard/email [
+           To:     tad
+           From:   frm
+           Subject: sbj
+       ]
+        if error? err: try[send/header to-email ad template header][                    
+            send/header tomc@cs.uoregon.edu probe disarm err 
+            make system/standard/email [
+               To:    tomc@cs.uoregon.edu
+               Subject: "cgiemail error" 
+               comment: ad
+            ]          
+        ];; not error
+    ];; ad not empty        
+]          
 
 ;;; append a copy of the email to a flatfile
 
