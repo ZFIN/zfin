@@ -393,8 +393,10 @@
 	      <?MIVAR NAME=$map_private>$4<?/MIVAR>
 
               <?MIBLOCK COND="$(NC,$map_private,t)">
-	        <TD><font size=2>
-	        $(IF,$(NC,$map_lg,0),LG <b>$map_lg</b>)
+	        <font size=2>
+                <?MIVAR>
+	          $(IF,$(NC,$map_lg,0),LG <b>$map_lg</b>)
+		<?/MIVAR>
 
 	        <?MIBLOCK COND="$(NC,$map_comments,"")">
 		  <?MIVAR>
