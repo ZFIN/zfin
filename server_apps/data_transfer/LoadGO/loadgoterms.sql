@@ -68,12 +68,11 @@ insert into sec_unload_report
 	'Now Primary: GO:'||prim_id, 
 	'Name: '||term_name, 
 	'Ontology: '||onto,
- 	'Gene: '||mrkrgo_mrkr_zdb_id, 
+ 	'Gene: '||mrkrgoev_mrkr_zdb_id, 
 	'Pub: '||mrkrgoev_source_zdb_id
-    from sec_unload, go_term, marker_go_term, marker_go_term_Evidence
+    from sec_unload, go_term, marker_go_term_Evidence
     where sec_id = goterm_go_id
-    and mrkrgo_go_term_zdb_id = goterm_zdb_id 
-    and mrkrgoev_mrkrgo_zdb_id = mrkrgo_zdb_id 
+    and mrkrgoev_go_term_zdb_id = goterm_zdb_id  
     and mrkrgoev_evidence_code != 'IEA' ;
 
 unload to 'newannotsecterms.unl' select * from sec_unload_report ;
@@ -240,6 +239,100 @@ unload to 'newterms.unl'
         )with no log;
 
 load from newterms.unl insert into go_term ;
+
+---------------------------------------------
+--check obsoleteness and update
+---------------------------------------------
+
+create temp table tmp_obs (id	varchar(30),
+			name	varchar(255),
+			namespace varchar(40),
+			def lvarchar,
+			is_a varchar(255),
+			exact_synonym varchar(255),
+			alt_id varchar(30),
+			xref_analog varchar(100),
+			relationship varchar(20),
+			comment varchar(255),
+			is_obsolete boolean,
+			xref_unknown varchar(100),
+			subset varchar(100),
+			synonym varchar(255),
+			related_synonym varchar(255),
+			narrow_synonym varchar(255),
+			broad_synonym varchar(255),
+			use_term varchar(255)	
+			  
+) with no log ;
+
+load from godefs_parsed.unl insert into tmp_obs ;
+
+create temp table tmp_obs_GO (
+			   name	    varchar(255),
+			   id	    varchar(30),
+			   def	lvarchar,
+			   is_obsolete boolean,
+			   use_term varchar(255)
+) with no log ;
+
+
+insert into tmp_obs_GO (name, id, def, is_obsolete, use_term)
+  select name, substr(id, -7), def, is_obsolete, use_term
+    from tmp_obs 
+    where def like '%OBSOLETE%' or 
+          def like '%obsolete%' or
+	  is_obsolete = 't' ;
+
+create temp table tmp_obs_no_dups (
+			   name	    varchar(255),
+			   id	    varchar(30),
+			   def	lvarchar,
+			   is_obsolete boolean,
+			   use_term varchar(255)
+) with no log ;
+
+insert into tmp_obs_no_dups 
+  select distinct * from tmp_obs_GO ;
+
+create temp table tmp_new_obsoletes (counter integer,
+				     mrkr_name varchar(255), 
+			             goterm_name varchar(255), 
+				     use_term varchar(255)
+) with no log ;
+
+insert into tmp_new_obsoletes (counter,
+				mrkr_name,
+				goterm_name,
+				use_term)
+  select count(*), 
+		mrkr_name, 
+		goterm_name, 
+		use_term
+  from go_term, marker_go_term_evidence, marker, tmp_obs_no_dups
+  where goterm_go_id = id
+  and goterm_is_obsolete = 'f'
+  and goterm_zdb_id = mrkrgoev_go_term_zdb_id
+  and mrkr_zdb_id = mrkrgoev_mrkr_zdb_id 
+   group by mrkr_name, goterm_name, use_term ;
+
+unload to new_obsolete_terms.unl 
+  select "Number annotations: "||counter,
+	 "Gene: "||mrkr_name,
+	 "Go Term: "||goterm_name,
+	 "Use Term: "||use_term
+	from tmp_new_obsoletes ;
+
+update go_term
+  set goterm_is_obsolete = 't'
+  where goterm_go_id in (select id 
+			  from tmp_obs_no_dups) 
+  and goterm_is_obsolete = 'f' ;
+
+select count(*) 
+  from go_term 
+  where goterm_is_obsolete = 't' ;
+
+
 
 --rollback work;
 commit work;
