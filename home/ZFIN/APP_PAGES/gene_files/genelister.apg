@@ -277,6 +277,7 @@
 		  <?MIVAR>
 		    <TD>&nbsp;</TD>
 		    <TD valign=top> <font size=2>
+	            $(IF,$(XST,$return_rec),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$OID TARGET=content>SELECT</A>)
 		    <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID TARGET=content>$marker_name</A>
 		    &nbsp;&nbsp; - $gene_name &nbsp; [
 		<?/MIVAR>
