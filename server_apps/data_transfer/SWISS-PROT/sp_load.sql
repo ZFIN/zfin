@@ -184,12 +184,15 @@ begin work;
                   dalias_zdb_id varchar(50),
                   dalias_data_zdb_id varchar(50),
                   dalias_alias       varchar(120),
-                  dalias_group       varchar(30)
+                  dalias_group       varchar(30),
+		  dalias_alias_lower	varchar(255)
                 )with no log;                            
         insert into pre_gn_dalias 
-                (dalias_data_zdb_id, dalias_alias, dalias_group)
+                (dalias_data_zdb_id, dalias_alias, dalias_group, 
+			dalias_alias_lower)
                  select distinct gnalias_data_zdb_id,
-                                 gnalias_gname, "alias"
+                                 gnalias_gname, "alias",
+				 lower(gnalias_gname)
                  from gn_dalias_with_dups;    
 
 	delete from pre_gn_dalias
