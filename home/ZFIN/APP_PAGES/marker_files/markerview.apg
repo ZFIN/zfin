@@ -157,6 +157,7 @@ Datablade documentation.
 	}
 
 	function Delete_alias(alias,marker_id) {
+		alias = escape(alias);
  		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=dalias_alias&attr_type=delete-alias&old_value='+alias+'&new_value=deleted&target_table=marker');
 	}
 	
@@ -237,7 +238,7 @@ Datablade documentation.
 	function new_mrkrrel() {
 		var mrkrrelind = document.updaterrel.relship.selectedIndex;
 		var mrkrrel_name = document.updaterrel.relship[mrkrrelind].value;
-		var mrkr_abbrev = document.updaterrel.mrkr_abbrev.value;
+		var mrkr_abbrev = escape(document.updaterrel.mrkr_abbrev.value);
 		mrkrrel_name.replace(/ /,"%20");
 		if (mrkr_abbrev != '') {
 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=mrkrrel&attr_type=special-newmrkrrel&old_value='+mrkrrel_name+'&new_value='+mrkr_abbrev+'&target_table=marker');
@@ -268,7 +269,7 @@ Datablade documentation.
 	}
 
 	function new_attrib_mrel() {
-		var mrkr_abbrev=document.updaterrel.attrib_mrkr_abbrev.value;
+		var mrkr_abbrev=escape(document.updaterrel.attrib_mrkr_abbrev.value);
 		var pub_id=document.updaterrel.attrib_mrel_pubid.value.toUpperCase();
 		if ((mrkr_abbrev != '') && (pub_id != '')) {
 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+mrkr_abbrev+'&new_value='+pub_id+'&target_table=marker&info=mrel');
@@ -276,7 +277,7 @@ Datablade documentation.
 	}
 	
 	function new_attrib_ssprevname() {
-		var prev_name=document.updater.attrib_ssprevname.value;
+		var prev_name=escape(document.updater.attrib_ssprevname.value);
 		var pub_id=document.updater.attrib_ssprevname_pubid.value.toUpperCase();
 		if ((prev_name != '') && (pub_id != '')) {
 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+prev_name+'&new_value='+pub_id+'&target_table=marker&info=namealias');
@@ -284,8 +285,9 @@ Datablade documentation.
 	}
 
 	function new_attrib_prevname() {
-		var prev_name=document.updater.attrib_prevname.value;
+		var prev_name=escape(document.updater.attrib_prevname.value);
 		var pub_id=document.updater.attrib_prevname_pubid.value.toUpperCase();
+		
 		if ((prev_name != '') && (pub_id != '')) {
 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+prev_name+'&new_value='+pub_id+'&target_table=marker&info=namealias');
   		}
