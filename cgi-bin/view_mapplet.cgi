@@ -95,7 +95,8 @@
   
   my $edit_panel;		### if given, the panel that is being changed
   
-  my ($sm_m, $sm_lg, $sm_panel, $sm_loc, $sm_refresh); #values Which might be used to repopulate the select map form  
+  my ($sm_m, $sm_lg, $sm_panel, $sm_loc, $sm_refresh); #values Which might be used to repopulate the select map form 
+ 
   
   ### to supprt multiple java servers
   my $jport = "<!--|JAVA_SERVER_PORT|-->";
@@ -193,7 +194,7 @@
   ###  mapperselect -- view_map, 
   ###                            markername 
   ###                        OR  
-  ###                            panel, lg
+  ###                            panel, lg (depreciated)
   ###                        OR
   ###                            panel, lg, location  
   
@@ -283,10 +284,12 @@
 	
 	if(defined $zdbid) { $Q->param("OID",$zdbid);}
 	if(defined $marker) { $Q->param('marker=',$marker);}
-	$Q->param("lg", $Q->param("loc_lg")); 
+	$Q->param("lg", $Q->param("loc_lg"));
+	#selectmap gets re-populated with a  map location
+	$sm_refresh = 2;
       }
       $g_zdbid =  $Q->param("OID");
-      $sm_refresh = 1;
+      #$sm_refresh = 1;
     }
     #$note =  $note ."@panels and ". $Q->param("loc_lg")." <p>\n";
     
@@ -298,7 +301,7 @@
     if( (defined $Q->param("OID")) && ($Q->param("OID")) )  {
       $g_OID = $zdbid  =  $Q->param("OID"); 
       $sm_m = get_OIDs_abbrev($zdbid);
-      $sm_refresh = 1;
+      if ($sm_refresh != 2) { $sm_refresh = 1;}
         
       if( defined $Q->param("lg") && $Q->param("lg") ) {$lg =  $Q->param("lg");} 
       else {			### need a linkage group
@@ -337,7 +340,7 @@
       #      $note = $note . "\tNo markers found on @panels  <p>\n";
       if ($g_error < 1){$g_error = 0;}
     } 
-    $sm_refresh = 1;
+    if ($sm_refresh != 2) { $sm_refresh = 1;}
   }
   ### end coming from a "view_map" source 
   ###############################################################################
@@ -775,10 +778,7 @@
 	      " height\t = \"$g_height\"\n".
 		" width\t  = \"$g_width\"\n".
 		  " mayscript>\n";
-   # if( defined $sm_refresh && $sm_refresh ) {
-   #   print  " <param name = \"onload\"           value = \"document.selectform.submit();\">\n";
-   # }
-    for $panel (@panels){
+       for $panel (@panels){
       if(defined $Q->param($panel.'_ztotal') ){ #&& $Q->param($panel.'_ztotal')>0){
 	print "<param name = \"" . $panel . "_ztotal\"\t value = ". $Q->param($panel.'_ztotal').">\n"; 
       }
@@ -811,7 +811,7 @@
   #print $note ."\n";
   
   ### if a first query or  option/edit put select map back
-  if( defined $sm_refresh && $sm_refresh ) {
+  if( defined $sm_refresh && $sm_refresh > 0 ) {
  
     print $Q->start_form (
 			  -method=>'POST',
@@ -825,7 +825,7 @@
         print $Q->hidden($tmp, defined $Q->param($tmp)? $Q->param($tmp) :0) . "\n";
     }        
           
-    if ( $sm_m ||  $Q->param('name')) {
+    if ( ($sm_m ||  $Q->param('name')) && ($sm_refresh == 1) ) {
       print  $Q->hidden('marker', ($sm_refresh == 1)? $sm_m:  $Q->param('name')). "\n";
     }else {   
       print  $Q->hidden('loc_lg', ($sm_refresh >= 1)? $sm_lg: $Q->param('lg')) . "\n".
