@@ -23,10 +23,10 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/lib/DB_functions/SPL
 
-DBLINK_FUNCS = get_dblink_acc_num_display.sql
+DBLINK_FUNCS = get_dblink_acc_num_display.sql p_dblink_has_parent.sql
 FISH_FUNCS  = get_fish_full_name.sql
 IMAGE_FUNCS = get_image_stats.sql
-MRKR_FUNCS  = mhist_event.sql
+MRKR_FUNCS  = mhist_event.sql p_mrel_grpmem_correct.sql p_two_linkage_pairs.sql
 PUB_FUNCS   = get_pub_mini_ref.sql
 REGEN_FUNCS = regen_anatomy.sql regen_fishsearch.sql regen_genomics.sql \
 		regen_oevdisp.sql get_date_from_id.sql regen_panelcount.sql \
@@ -45,8 +45,7 @@ STAGE_FUNCS = \
 	stg_window_consistent.sql \
 	fimg_overlaps_stg_window.sql \
 	anatitem_overlaps_stg_window.sql \
-	stg_windows_overlap.sql 
-
+	stg_windows_overlap.sql p_stg_hours_consistent.sql
 GENERICS = $(REGEN_FUNCS)
 STATICS  = $(DBLINK_FUNCS) $(FISH_FUNCS) $(IMAGE_FUNCS) $(MRKR_FUNCS) \
 	   $(PUB_FUNCS) $(STAGE_FUNCS) $(ZDB_FUNCS) \
