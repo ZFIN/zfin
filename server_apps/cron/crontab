@@ -14,6 +14,12 @@
 # weekly dump from John P. for Sanger Center data
 15 01 * * 5 <!--|ROOT_PATH|-->/server_apps/data_transfer/JohnP/johnp.pl
 #
+# Weekly dump of data for ZIRC to pick up
+15 01 * * 3 <!--|ROOT_PATH|-->/server_apps/data_transfer/ZIRC/pushToZirc.pl
+#
+# Weekly load of data from ZIRC
+15 01 * * 4 <!--|ROOT_PATH|-->/server_apps/data_transfer/ZIRC/pullFromZirc.pl
+#
 # unload production at 11:45 PM mon-fri
 45 23 * * 1,2,3,4,5 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/unload_production.sh
 #
