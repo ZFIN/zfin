@@ -1,6 +1,6 @@
 #------------------------------------------------------------------------
 #
-# Makefile for ZFIN_WWW CVS Project, Mutant/Fish related pages.
+# Makefile for ZFIN_WWW CVS Project, Expression pattern files
 #
 #
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -21,7 +21,7 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/xpat_files
 
 
-GENERICS = xpatview.apg xpatselect.apg xpatupdateAssay.apg do-xpatupdateAssay.apg xpatupdatePubs.apg do-xpatupdatePubs.apg xpatupdateDescription.apg do-xpatupdateDescription.apg xpatupdateComments.apg do-xpatupdateComments.apg
+GENERICS = xpatview.apg xpatselect.apg xpatupdateAssay.apg do-xpatupdateAssay.apg xpatupdatePubs.apg do-xpatupdatePubs.apg xpatupdateDescription.apg do-xpatupdateDescription.apg 
 
 
 # Use default rules for app page directories.
