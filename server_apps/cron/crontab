@@ -63,7 +63,7 @@
 #  weekly download data run, Sunday morning, pull.sh also unload production as the last step.
 0 20 * * 0 <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/DownloadFiles.pl
 9 20 * * 0 <!--|ROOT_PATH|-->/server_apps/data_transfer/Sanger/SangerFiles.pl
-#0 20 * * 0 <!--|ROOT_PATH|-->/server_apps/data_transfer/pull.sh
+0 20 * * 0 <!--|ROOT_PATH|-->/server_apps/data_transfer/pull.sh
 #
 # weekly checklinks run, Sunday afternoon is least use time for ZFIN.
 # Turn off checklinks until
