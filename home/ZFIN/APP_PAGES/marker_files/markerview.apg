@@ -1,7 +1,15 @@
 <?MICOMMENT>
-MARKERVIEW.HTML
 
+FILE: markerview.apg
+PREFIX: mrkrview_ (but none replaced as of Feb. 2005)
+
+DESCRIPTION:
 This file implements a viewer for MARKER records.
+
+INPUT VARS:
+OUTPUT VARS:
+
+EFFECTS:
 
 NOTE:
 Because this page drops temporary tables it cannot be webexploded from
@@ -591,24 +599,40 @@ Datablade documentation.
  <?/MISQL>
 <?/MIBLOCK>
 <!--------- Display description  ---------------------------------> 
-<?MIVAR COND="$(XST,$UPDATE)">
-<INPUT TYPE=button value="Update" onClick="doit('mrkr_comments','textarea','Description')"> 
-<?/MIVAR> 
+
+
 <?MIVAR COND="$(OR,$(>,$(POSITION,$OID,BAC),0),$(>,$(POSITION,$OID,PAC),0))">
 <b>EMBL </b>
 <?/MIVAR>
+
+<?MIBLOCK>
+
 <?MISQL SQL="
    select mrkr_comments 
 	from marker 
 	where mrkr_Zdb_id='$OID'
-	and mrkr_comments is not null;">
+	and mrkr_comments is not null
+        and mrkr_comments != '';">
 <?/MISQL>
-<?MIVAR NAME=$mrkr_comments>$1<?/MIVAR>
+
+<?MIVAR NAME=$mrkrview_mrkr_comments>$1<?/MIVAR>
 
 <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
-   <b>Note:</b>$mrkr_comments
+   <b>Note:</b>$mrkrview_mrkr_comments
+	<?MIVAR COND="$(XST,$UPDATE)">
+	<INPUT TYPE=button value="Update Note" onClick="doit('mrkr_comments','textarea','Note')"> 
+	<?/MIVAR> 
 <br>
 <?/MIVAR>
+
+<?MIVAR COND="$(<=,$MI_ROWCOUNT,0)">
+	<?MIVAR COND="$(XST,$UPDATE)">
+	<INPUT TYPE=button value="Add New Marker Note" onClick="doit('mrkr_comments','textarea','Note')"> 
+	<?/MIVAR> 
+<br>
+<?/MIVAR>
+
+<?/MIBLOCK>
 
 <!-----------end Display description ------------------------------->
 
