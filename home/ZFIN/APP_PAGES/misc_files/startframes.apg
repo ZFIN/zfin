@@ -147,6 +147,7 @@ You may also optionally pass many other constraints on the upcoming selection th
 <?MIBLOCK COND="$(AND,$(XST,$navtile),$(EC,$selector,aa-fishselect.apg))">
 <?MIVAR COND="$(XST,$navtile)" NAME=$constraint>&navtile=$navtile$constraint<?/MIVAR>
 <?MIVAR COND="$(XST,$fname)" NAME=$constraint>&fname=$fname$constraint<?/MIVAR>
+<?MIVAR COND="$(XST,$structures)" NAME=$constraint>&structures=$structures$constraint<?/MIVAR>
 <?MIVAR COND="$(XST,$allele)" NAME=$constraint>&allele=$allele$constraint<?/MIVAR>
 <?MIVAR COND="$(XST,$abbrev)" NAME=$constraint>&abbrev=$abbrev$constraint<?/MIVAR>
 <?MIVAR COND="$(XST,$anon1text)" NAME=$constraint>&nav_text=$anon1text$constraint<?/MIVAR>
@@ -154,7 +155,6 @@ You may also optionally pass many other constraints on the upcoming selection th
 <?MIVAR COND="$(XST,$mutagen)" NAME=$constraint>&mutagen=$mutagen$constraint<?/MIVAR>
 <?MIVAR COND="$(XST,$chrom_num)" NAME=$constraint>&chrom_num=$chrom_num$constraint<?/MIVAR>
 <?MIVAR COND="$(XST,$chrom_change)" NAME=$constraint>&chrom_change=$chrom_change$constraint<?/MIVAR>
-<?MIVAR COND="$(XST,$preselected)" NAME=$constraint>&preselected=$preselected$constraint<?/MIVAR>
 <?MIVAR COND="$(XST,$selected_separator)" NAME=$constraint>&selected_separator=$selected_separator$constraint<?/MIVAR>
 <?MIVAR COND="$(NC,$knowngene,NULL)" NAME=$constraint>&nav_knowngene=$knowngene$constraint<?/MIVAR>
 <?/MIBLOCK>
