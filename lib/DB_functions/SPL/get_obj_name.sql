@@ -93,6 +93,16 @@ get_obj_name(zdbId varchar(50))
       from db_link, foreign_db_contains
       where dblink_zdb_id = zdbId
         and dblink_fdbcont_zdb_id = fdbcont_zdb_id;
+   elif (objType = "ENVCOND") then    --no name so return zdb_id
+    select envcond_zdb_id
+      into objName
+      from environment_condition
+      where envcond_zdb_id = zdbId;
+  elif (objType = "FEATENV") then     --no name so return zdb_id
+    select featenv_zdb_id
+      into objName
+      from feature_environment
+      where featenv_zdb_id = zdbId;
   elif (objType = "EXTNOTE") then
     select extnote_zdb_id
       into objName
@@ -108,11 +118,6 @@ get_obj_name(zdbId varchar(50))
       into objName
       from go_term
       where goterm_zdb_id = zdbId;
-  elif (objType = "INFGRP") then
-    select infgrp_zdb_id
-      into objName
-      from inference_group
-      where infgrp_zdb_id = zdbId;  --don't have names, return ZDB ID.
   elif (objType = "LABEL") then
     select lbl_name 
       into objName
@@ -193,11 +198,17 @@ get_obj_name(zdbId varchar(50))
       into objName
       from url_ref
       where urlref_zdb_id = zdbId ;
-  elif (objType = "XPAT") then
-    select xpat_zdb_id		-- don't have names, use ZDB ID
+  elif (objType = "XPATEX") then
+    select xpatex_zdb_id		-- don't have names, use ZDB ID
       into objName
-      from expression_pattern
-      where xpat_zdb_id = zdbId;
+      from expression_experiment
+      where xpatex_zdb_id = zdbId;
+  elif (objType = "XPATRES") then
+    select xpatres_zdb_id		-- don't have names, use ZDB ID
+      into objName
+      from expression_results
+      where xpatres_zdb_id = zdbId;
+
 
   -- and finally 2 oddball cases
 
