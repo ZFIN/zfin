@@ -28,7 +28,15 @@ FINALTARGETDIR = $(TARGETROOT)/client_apps/ListSelector
 
 # Use the standard JAVAC_11, and JAVACFLAGS.  Still need to define classpath.
 
-CLASSPATH = $(STAGINGDIR):$(JAVAHOME_11)/lib/classes.zip:$(TOP)/lib/Java:$(JDBCHOME)/lib/ifxjdbc.jar
+SRCIFMXPATH   = $(JDBCHOME)/lib
+IFMXJARS      = ifxjdbc.jar ifxlsupp.jar
+SRCIFMXJARS   = $(foreach SJAR,$(IFMXJARS),$(SRCIFMXPATH)/$(SJAR))
+DESTIFMXJARS  = $(foreach DJAR,$(IFMXJARS),$(FINALTARGETDIR)/$(DJAR))
+EMPTY         =
+SPACE         = $(EMPTY) $(EMPTY)
+IFMXCLASSPATH = $(subst $(SPACE),:,$(DESTIFMXJARS))
+
+CLASSPATH = $(STAGINGDIR):$(JAVAHOME_11)/lib/classes.zip:$(TOP)/lib/Java:$(IFMXCLASSPATH)
 
 
 # ---- Java source and destination variables
@@ -42,21 +50,13 @@ CLASSES  = $(foreach JAVA, $(JAVAS), $(patsubst %.java,%.class,$(JAVA)))
 STAGINGJAVAS   = $(foreach JAVA, $(JAVAS), $(STAGINGDIR)/$(JAVA))
 STAGINGCLASSES = $(foreach CLASS, $(CLASSES), $(STAGINGDIR)/$(CLASS))
 
-JAVAS   = $(GENERICS) $(STATICS)
-TARGETS = $(SPECIFICS) $(STATICSTAGINGS)
-
 JAR = $(FINALTARGETDIR)/listselector.jar
-
-IMPORTPATH = $(JDBCHOME)/lib
-IMPORTJARS     = ifxjdbc.jar ifxlsupp.jar
-IMPORTJARPATHS = $(foreach IJAR,$(IMPORTJARS),$(IMPORTPATH)/$(IJAR))
-IMPORTTARGETJARPATHS = $(foreach TJAR,$(IMPORTJARS),$(FINALTARGETDIR)/$(TJAR))
 
 
 # ---- Define endemic targets so we can use make.default.rules.
 
 ENDEMICTARGETS_POSTTARGETDIR = $(FINALTARGETDIR)
-ENDEMICTARGETS_POSTTARGETS = $(JAR) $(IMPORTTARGETJARPATHS)
+ENDEMICTARGETS_POSTTARGETS = $(DESTIFMXJARS) $(JAR)
 ENDEMICTARGETS_CLEAN = $(STAGINGJAVAS) $(STAGINGCLASSES)
 
 
@@ -80,9 +80,9 @@ $(STAGINGCLASSES) : $(STAGINGJAVAS)
 
 # ----- Rules for creating the JAR files.
 
-$(JAR) : $(STAGINGCLASSES) $(NETSCAPESYMLINK)
+$(JAR) : $(STAGINGCLASSES)
 	cd $(STAGINGDIR); $(JAVAHOME_11)/bin/jar -cvf $(JAR) $(CLASSES)
 	chmod o+r $@
 
-$(IMPORTTARGETJARPATHS) : $(FINALTARGETDIR)/% : $(IMPORTPATH)/%
+$(DESTIFMXJARS) : $(FINALTARGETDIR)/% : $(SRCIFMXPATH)/%
 	$(TARGET_CP) $^ $@
