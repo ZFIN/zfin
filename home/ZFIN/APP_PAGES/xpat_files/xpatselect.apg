@@ -61,6 +61,7 @@ document.critform.structure_list.options[1] = new Option('To select a structure,
 
 function verify(part) {
 	var result = -1;
+        if (part !== ''){
 	for (i = 0 ; i < document.useful_structures.length ; i++) {
 		if (part == document.useful_structures[i]) {
 			result = 1;
@@ -73,6 +74,7 @@ function verify(part) {
 			break;
 		}
 	}
+        }
 	return result;
 }
 
@@ -1061,10 +1063,11 @@ function keyDown(DnEvents) {
 if (verify(document.critform.user_entered.value) == 1) {
 	add_part(document.critform.user_entered.value); 
 	document.critform.user_entered.value = '';
-} else { 
+}
+if (verify(document.critform.user_entered.value) == 0) { 
 	alert(document.critform.user_entered.value + ' is not a valid structure name, check the anatomical dictionary.');
-	}
-  }
+}
+}
 }
 document.onkeydown = keyDown; 
 if (navigator.appName == "Netscape") document.captureEvents(Event.KEYDOWN|Event.KEYUP);
