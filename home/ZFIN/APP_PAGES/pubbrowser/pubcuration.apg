@@ -62,7 +62,7 @@ OPTIONAL VARS:
   <?/MIBLOCK>
 
   <?MIBLOCK COND=$(AND,$(XST,$paper_status),$(EC,$paper_status,close))>
-    <?MISQL SQL="select curtopic_name from curation_topic where curtopic_name != 'Linked Authors';">
+    <?MISQL SQL="select curtopic_name from curation_topic, curation where curtopic_name != 'Linked Authors' and curtopic_name = cur_topic and cur_pub_zdb_id = '$OID' and cur_closed_date is null;">
       <?MIVAR NAME=topic>$1<?/MIVAR>
       <?MISQL SQL="select WebExplode(object,'pubtopclose_PUB=$OID&pubtopclose_CUR=$ZDB_ident&pubtopclose_TOP=$topic') from webPages where ID='aa-pubtopic_close.apg';">$1<?/MISQL>
     <?/MISQL>
