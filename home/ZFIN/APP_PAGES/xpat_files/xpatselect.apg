@@ -862,10 +862,10 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 
 <?MIBLOCK COND="$(NXST,$query_results)">
         <font size="+1"><b>Search for Gene Expression Data </b></font>
-<!--
+
         <br>
         &nbsp;&nbsp;(<a href="http://zf.nichd.nih.gov/pubzf/" target="_top">Link to Dawid lab expression data</a>)
--->
+
 <?MIELSE>
         <a name=modify></a><b>Modify your search.</b>
 <?/MIBLOCK>
