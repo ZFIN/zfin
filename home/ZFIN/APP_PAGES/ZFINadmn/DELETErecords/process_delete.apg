@@ -193,7 +193,11 @@ Datablade documentation.
                   SET dalias_data_zdb_id = '$merge_oid' 
                   WHERE dalias_data_zdb_id = '$OID';">
             <?/MISQL>    
-
+	    <?MISQL SQL="
+              UPDATE expression_pattern 
+                  SET xpat_gene_zdb_id = '$merge_oid' 
+                  WHERE xpat_gene_zdb_id = '$OID';">
+            <?/MISQL>  
 	    <?MISQL COND="$(OR,$(XST,$input_name),$(XST,$input_acc))" SQL="
        			 DELETE from $tmp_delete_these_aliases;">
    	    <?/MISQL>
