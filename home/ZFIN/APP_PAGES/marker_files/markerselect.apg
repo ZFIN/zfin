@@ -7,7 +7,7 @@
   State:   $MI_ERRORSTATE <br>
   Message: $MI_ERRORMSG <br>
 <?/MIERROR>
-<!-- search form for genes and markers -->
+<?MICOMMENT> search form for genes and markers <?/MICOMMENT>
 <?MIBLOCK COND="$(NXST,$accession)">
  <HTML>
  <HEAD>
@@ -42,8 +42,7 @@
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
 
-<?/MIBLOCK><!-- end XST accession which means it is called by Accession Search --> 
-
+<?/MIBLOCK><?MICOMMENT> end XST accession which means it is called by Accession Search <?/MICOMMENT>
 
 
   <?MISQL SQL="
@@ -52,7 +51,9 @@
       where ID = 'aa-identify.apg';">
     $1
   <?/MISQL>
-  <?MICOMMENT> set userid to ZDB_ID of user or GUEST to be used by the map viewer<?/MICOMMENT>
+  <?MICOMMENT>
+    set userid to ZDB_ID of user or GUEST to be used by the map viewer
+  <?/MICOMMENT>
   <?MIVAR NAME=$userid>GUEST<?/MIVAR>
   <?MIBLOCK COND="$(NC,$(SUBSTR,$ZDB_name,1,5),GUEST)">
     <?MIVAR NAME=$userid>$ZDB_ident<?/MIVAR>
@@ -63,20 +64,24 @@
 <?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
 <?MIVAR NAME=$OID COND="$(NXST,$OID)"><?/MIVAR>
 <?MIVAR COND="$(AND,$(XST,$accession),$(XST,$input_acc))">
-  <?MICOMMENT>*** when called by accession search and the input is an dblink accession, need to unset $constraint to avoid trouble when webexplode both markerselect and msegselect<?/MICOMMENT>
+  <?MICOMMENT>
+    *** when called by accession search and the input is an dblink accession, 
+    need to unset $constraint to avoid trouble when webexplode both 
+    markerselect and msegselect
+  <?/MICOMMENT>
   $(UNSETVAR,$constraint)
   $(UNSETVAR,$marker_type)
 <?/MIVAR> 
 
 
-<?MICOMMENT>this part is executed after a search is submitted for
-gene/marker search or accession search, or when
-requested from publication page for related data list.
+<?MICOMMENT>
+  this part is executed after a search is submitted for
+  gene/marker search or accession search, or when
+  requested from publication page for related data list.
 <?/MICOMMENT>
 
 <?MIBLOCK COND="$(OR,$(XST,$query_results),$(XST,$pubId))">
 
- 
   <?MICOMMENT>forbidden simultanious name and acc search <?/MICOMMENT>
   <?MIBLOCK COND="$(AND,$(XST,$input_acc),$(XST,$input_name))">
    <script>
@@ -84,7 +89,7 @@ requested from publication page for related data list.
    </script>
 
   <?MIELSE>
- 
+
    <?MISQL SQL="
       select dbinfo('sessionid') 
         from single;">
@@ -93,23 +98,26 @@ requested from publication page for related data list.
       <?MIVAR NAME=$markerselect_temp_on_lg>$(CONCAT,markerselect_temp_on_lg_,$mrkrsel_session_id)<?/MIVAR>
       <?MIVAR NAME=$markerselect_temp_marker>$(CONCAT,markerselect_temp_marker_,$mrkrsel_session_id)<?/MIVAR>
    <?/MISQL>
- 
+
    <?MIVAR COND="$(NXST,$lg)" NAME=$lg>0<?/MIVAR>
 
-   <?MICOMMENT>when called from publication page, $type is passes in 
+   <?MICOMMENT>
+        when called from publication page, $type is passes in 
 	indictating for gene list or mapped data list. 
    <?/MICOMMENT>
    <?MIVAR COND="$(NXST,$type)" NAME=$type>marker<?/MIVAR>	
 
-   <?MICOMMENT>Format of result page:
+   <?MICOMMENT>
+    Format of result page:
     when gene is not involved, columns of symbol-name, and map. 
     when gene is involved, two more columns expression, and mutant locus
-   <?/MICOMMENT> 
+   <?/MICOMMENT>
    <?MIVAR NAME=$xpat_loci_cols>y<?/MIVAR>
 
-   <?MICOMMENT>when called from accessionselect, constraint is passes in,
+   <?MICOMMENT>
+    when called from accessionselect, constraint is passes in,
     check the OID to decided the format of result list
-   <?/MICOMMENT> 
+   <?/MICOMMENT>
    <?MIBLOCK COND="$(XST,$constraint)">
     <?MIVAR COND="$(=,$(POSITION,$OID,GENE),0)" NAME=$xpat_loci_cols>n
     <?/MIVAR>
@@ -119,15 +127,19 @@ requested from publication page for related data list.
    <?MIVAR NAME=$mrkrsel_optional_match_cols><?/MIVAR>
    <?MIVAR NAME=$mrkrsel_optional_marker_cols><?/MIVAR>
 
-   <?MICOMMENT>Build up the constraint clause for gene/marker search,
+   <?MICOMMENT>
+        Build up the constraint clause for gene/marker search,
 	constraint for calls from pubview is build next. 
-   <?/MICOMMENT> 
+   <?/MICOMMENT>
 
    <?MIBLOCK COND="$(AND,$(NXST,$constraint),$(NXST,$pubId))">
 
     <?MIVAR NAME=$constraint><?/MIVAR>
 
-    <?MICOMMENT>This next part builds up a query piece by piece, based on which criteria were passed in<?/MICOMMENT>
+    <?MICOMMENT>
+      This next part builds up a query piece by piece, based on which 
+      criteria were passed in
+    <?/MICOMMENT>
     <?MIVAR COND="$(NXST,$compare)" NAME=$compare>contains<?/MIVAR>
     <?MIVAR NAME=$wild_card><?/MIVAR>
     <?MIVAR COND="$(NC,$compare,starts)" NAME=$wild_card>%<?/MIVAR>
@@ -185,7 +197,7 @@ requested from publication page for related data list.
 	       ( mstmatch_zdb_id, mstmatch_name, 
 		 mstmatch_significance, mstmatch_precedence )
 	     values('$1', '$(URLENCODE,$2)', '$3', '$4'); ">
-	   <!-- the URLENCODE encodes "'" which is problematic--> 
+	   <?MICOMMENT> the URLENCODE encodes "'" which is problematic<?/MICOMMENT>
  	   $(SETVAR,$geneMchIdLast,$geneMchId)          	
          <?/MISQL>
       <?/MISQL>
@@ -198,12 +210,13 @@ requested from publication page for related data list.
       <?/MIVAR>
       <?MICOMMENT>restore the input string for display<?/MICOMMENT>
       <?MIVAR COND="$(XST,$input_name)" NAME=input_name DELIMIT="''" REPLACE="'">$input_name<?/MIVAR>
-    <?/MIBLOCK>  <!----------------------------------------------------->
+    <?/MIBLOCK>  <?MICOMMENT>-------------------------------------<?/MICOMMENT>
 
 
 
-    <!----------------------------------------------------------------------------->
-    <?MICOMMENT>** 08/27 separate accession search from name search<?/MICOMMENT>
+    <?MICOMMENT>---------------------------------------------------
+      ** 08/27 separate accession search from name search
+    <?/MICOMMENT>
     <?MIBLOCK COND="$(XST,$input_acc)">
        <?MISQL SQL="
 	insert into $markerselect_temp_match
@@ -246,12 +259,13 @@ requested from publication page for related data list.
       <?MIVAR>
 	$(VECAPPEND, $constraint," mrkr_zdb_id = mstmatch_zdb_id ")
       <?/MIVAR>
-    <?/MIBLOCK> <!-------------------------------------------------------->
+    <?/MIBLOCK> <?MICOMMENT>---------------------------------------<?/MICOMMENT>
 
 
-    <!--------------------- if LG is selected -------------------->
+    <?MICOMMENT>--------------- if LG is selected -----------------<?/MICOMMENT>
     <?MIBLOCK COND="$(NC,$lg,0)">
-      <?MICOMMENT>we do mapping info pullover between clones and genes/small segs. 
+      <?MICOMMENT>
+        we do mapping info pullover between clones and genes/small segs. 
 	Create markerselect_temp_on_lg temp table if it does not already exist.
       <?/MICOMMENT>
       <?MISQL SQL="
@@ -322,13 +336,13 @@ requested from publication page for related data list.
 			     'clone contains small segment',
 			     'gene encodes small segment');">
        <?/MISQL> 
-    
+
        <?MIVAR NAME=$lgConstraint> mrkr_zdb_id in (select mstlg_mrkr_zdb_id from $markerselect_temp_on_lg)<?/MIVAR>
        <?MIVAR>
-          $(VECAPPEND, $constraint, $lgConstraint )		 
+          $(VECAPPEND, $constraint, $lgConstraint )
        <?/MIVAR>	
     <?/MIBLOCK>
-    <!-------------------- end LG ----------------->
+    <?MICOMMENT>------------------ end LG ---------------<?/MICOMMENT>
 
 
     <?MIVAR COND="$(XST,$knownloci)"> 
@@ -340,12 +354,16 @@ requested from publication page for related data list.
 
     <?MIVAR NAME=constraint SEPARATE=" AND ">$constraint<?/MIVAR>
 
-  <?/MIBLOCK> <!-- end build constraint for gene/marker search -->
+  <?/MIBLOCK> <?MICOMMENT> end build constraint for gene/marker search <?/MICOMMENT>
 
-  
 
-  <?MICOMMENT>main execution of data collection<?/MICOMMENT>
-  <?MICOMMENT>the first block select markers match the constraint and furthur filter out the mapped ones if needed, the second part deals with the mapped data links from publication page which only collect linkage group mapping, and not only for marker but also mutant
+
+  <?MICOMMENT>
+    main execution of data collection
+    the first block select markers match the constraint and furthur 
+    filter out the mapped ones if needed, the second part deals with 
+    the mapped data links from publication page which only collect 
+    linkage group mapping, and not only for marker but also mutant
 
     First create markerselect_temp_marker temp table if it does not already exist
   <?/MICOMMENT>
@@ -410,7 +428,7 @@ requested from publication page for related data list.
 	and lnkg_or_lg <> '0';">
      <?/MISQL>
      <?MIVAR NAME=$xpat_loci_cols>n<?/MIVAR>
-  
+
   <?MIELSE>
 
     <?MISQL SQL="
@@ -422,7 +440,7 @@ requested from publication page for related data list.
 	   from marker $mrkrsel_optional_match_table
 	  where $constraint
 	;">
-	 
+
     <?/MISQL>
 
     <?MICOMMENT>
@@ -431,7 +449,7 @@ requested from publication page for related data list.
     <?MISQL COND="$(OR,$(XST,$input_name),$(XST,$input_acc))" SQL="
  	delete from $markerselect_temp_match;">
     <?/MISQL>
-  
+
     <?MISQL COND="$(NC,$lg,0)" SQL="
 	delete from $markerselect_temp_on_lg;">
     <?/MISQL>
@@ -467,7 +485,8 @@ requested from publication page for related data list.
       </TD>
      <?MIBLOCK COND="$(NXST,$accession)">
        <TD width=10%>
-     	 <?MICOMMENT>Insert a form with one button. 
+     	 <?MICOMMENT>
+            Insert a form with one button. 
 	    label button Your Input Welcome
 	 <?/MICOMMENT>
          <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>
@@ -477,7 +496,7 @@ requested from publication page for related data list.
     <?MIBLOCK COND="$(AND,$(XST,$marker_type),$(XST,$type_of_genedom))">
       <TR><TD>
 	<?MIVAR NAME=$mrkr_param_list>&query_results=t$(IF,$(XST,$input_name),&input_name=$input_name)$(IF,$(XST,$input_acc),&input_acc=$input_acc)$(IF,$(XST,$compare),&compare=$compare)$(IF,$(NC,$lg,0),&lg=$lg)<?/MIVAR>
-        
+
         <?MIBLOCK COND="$(NXST,$knownloci)"> 
 	  <?MIVAR><input type=button 
             value="Show genes with known mutant loci" onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&marker_type=GENE&knownloci=t$mrkr_param_list')">
@@ -489,10 +508,10 @@ requested from publication page for related data list.
 	   <?/MIVAR>
         <?/MIBLOCK>
       </TD></TR>
-    <?/MIBLOCK>		 
+    <?/MIBLOCK>
    </TABLE>
 
-   <!-- Stuff to control retrieval volume -->
+   <?MICOMMENT> Stuff to control retrieval volume <?/MICOMMENT>
     <FORM method=post 
           name=markerlister 
           action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
@@ -526,23 +545,25 @@ requested from publication page for related data list.
 
     <?MIVAR NAME=$ok_view_map>0<?/MIVAR>
 
-    <!--- WALKING WINDOW --->
-    <!--- Initialization --->
+    <?MICOMMENT> WALKING WINDOW 
+      Initialization 
+    <?/MICOMMENT>
     <?MIVAR NAME=WINSIZE DEFAULT=20>$WINSIZE<?/MIVAR>
     <?MIVAR NAME=BEGIN DEFAULT=1>$START<?/MIVAR>
 
-    <!--- DEFINITION OF RANGES --->
+    <?MICOMMENT> DEFINITION OF RANGES <?/MICOMMENT>
     <?MIVAR NAME=BEGIN>$(IF,$(<,$BEGIN,1),1,$BEGIN)<?/MIVAR> 
     <?MIVAR NAME=END>$(+,$BEGIN,$WINSIZE)<?/MIVAR>
 
-    <!--- EXECUTION --->
-    <!--  Set outer loop variables, row_color and ok_view_map -->
+    <?MICOMMENT> EXECUTION
+      Set outer loop variables, row_color and ok_view_map 
+    <?/MICOMMENT>
     <?MIVAR name=$row_color>$highlight<?/MIVAR>
     <?MIVAR NAME=$ok_view_map>0<?/MIVAR>
-    
+
     <?MIVAR NAME=$rowNUM>$BEGIN<?/MIVAR>
-  
-    <!--- Query Database --->
+
+    <?MICOMMENT> Query Database <?/MICOMMENT>
     <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
       select distinct mstmrkr_name, mstmrkr_abbrev, mstmrkr_type, 
 		      mrkrtype_type_display, mstmrkr_zdb_id, 
@@ -559,11 +580,10 @@ requested from publication page for related data list.
       <?MIVAR name=$mtype_display>$4<?/MIVAR>
       <?MIVAR name=$OID>$5<?/MIVAR>
       <?MIVAR name=$match_name>$(URLDECODE,$7)<?/MIVAR>
-      <?MIVAR name=$match_sig>$8<?/MIVAR>
       <?MIVAR name=$match_text>$9<?/MIVAR>
 
 
-      <!-- start new row and column -->
+      <?MICOMMENT> start new row and column <?/MICOMMENT>
       <TR bgcolor="<?MIVAR>$row_color<?/MIVAR>">
         <TD valign=top>&nbsp;</TD>
         <?MIVAR name=$rowNUM>$(+,$rowNUM,1)<?/MIVAR>
@@ -571,17 +591,19 @@ requested from publication page for related data list.
 	  <?MIVAR>	
             $(IF,$(XST,$return_rec),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$OID>SELECT</A>)
 	    $(IF,$(OR,$(XST,$accession),$(XST,$pubId)),$mtype_display:)
-	    $(IF,$(>,$(POSITION,$OID,GENE),0),<i>)<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID">$marker_abbrev</A>$(IF,$(>,$(POSITION,$OID,GENE),0),</i>)
+            $(IF,$(!=,$(POSITION,$mtype,GENE),0),<i>)<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID">$marker_abbrev</A>$(IF,$(!=,$(POSITION,$mtype,GENE),0),</i>)
 	    $(IF,$(=,$(POSITION,$OID,GENE),0),</TD>)
 	    $(IF,$(AND,$(=,$(POSITION,$OID,GENE),0),$(EC,$xpat_loci_cols,y)),<TD>&nbsp;</TD><TD>&nbsp;</TD>)
-	  <?/MIVAR> 
-        
+	  <?/MIVAR>
+
 	  <?MIBLOCK COND="$(>,$(POSITION,$OID,GENE),0)">
 
-	    <?MICOMMENT>08/26/03 take out previous name and orthologues for genes<?/MICOMMENT>
+	    <?MICOMMENT>
+              08/26/03 take out previous name and orthologues for genes
+            <?/MICOMMENT>
 	    <?MIVAR>-$marker_name<?/MIVAR>
 	    </TD>
-	   
+
 	    <?MIBLOCK COND="$(EC,$xpat_loci_cols,y)"> 
  	      <?MICOMMENT>gene expression<?/MICOMMENT>
 	      <?MISQL SQL="
@@ -616,19 +638,18 @@ requested from publication page for related data list.
 		  <font size=-1>Unknown</font>
 	      <?/MIBLOCK>
 	      </TD>	
-            <?/MIBLOCK> <!-- $xpat_loci_cols = y -->
-  	  <?/MIBLOCK><!-- addition for genes-->
+            <?/MIBLOCK> <?MICOMMENT> $xpat_loci_cols = y <?/MICOMMENT>
+  	  <?/MIBLOCK><?MICOMMENT> addition for genes<?/MICOMMENT>
 	
 	  <?MICOMMENT>Map info<?/MICOMMENT>
 	  <TD>
-	 
+
           <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini&split=break&hide_empty=t&oID=$OID') from webPages where ID='aa-mappingdetail.apg';">
 	    $1<?/MISQL>
-	  
+
 	  </TD>
             <?MIBLOCK COND="$(XST,$input_name)">
 	  <TD>
-	      <?MICOMMENT>$match_text: $(REPLACE,$match_name,$input_name,<b>$input_name</b>)-- Due to the upper case and lower case mix in the name, replace by the following<?/MICOMMENT>
 	      <?MIVAR NAME=start_pos>$(POSITION,$(LOWER,$match_name),$(LOWER,$input_name))<?/MIVAR>
 	      <?MIVAR NAME=str_length>$(STRLEN,$input_name)<?/MIVAR>
 	      <?MIVAR>$match_text: $(SUBSTR,$match_name,1,$(-,$start_pos,1))<b>$(SUBSTR,$match_name,$start_pos,$str_length)</b>$(SUBSTR,$match_name,$(+,$start_pos,$str_length))	
@@ -637,7 +658,7 @@ requested from publication page for related data list.
             <?/MIBLOCK>
  	  </TR>
 
-	  <!--    change row_color    -->
+	  <?MICOMMENT>    change row_color    <?/MICOMMENT>
 	  <?MIBLOCK>
 	    <?MIBLOCK COND="$(EC,$row_color,$highlight)">     
 	      <?MIVAR name=$row_color>#FFFFFF<?/MIVAR>
@@ -646,7 +667,7 @@ requested from publication page for related data list.
 	    <?/MIBLOCK>
 	  <?/MIBLOCK>
 
-    <?/MISQL>	 <!-- for each search result --> 
+    <?/MISQL>	 <?MICOMMENT> for each search result <?/MICOMMENT>
     </TABLE>
 
 
@@ -671,23 +692,25 @@ requested from publication page for related data list.
         <?MIVAR name=UserInput COND=$(XST,$query_results)>$UserInput&query_results=$query_results<?/MIVAR> 
 
     <?/MIBLOCK> 
-    
+
     <Center>
     <TABLE width="70%" border="0">
       <TR>
         <TD width="45%" align=right valign=top>&nbsp;
-          <!--- Return to the previous set of Rows --->
+          <?MICOMMENT> Return to the previous set of Rows <?/MICOMMENT>
 	  <?MIBLOCK COND="$(>,$BEGIN,1)">
 	    <?MIVAR>
 	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$(-,$BEGIN,$WINSIZE)&BEGIN=$BEGIN&$selector$UserInput">Prev</A>&nbsp;&nbsp;&nbsp;&nbsp;<br>
-	      <!-- If current not First Page, create link to first page. -->
+	      <?MICOMMENT>
+                If current not First Page, create link to first page. 
+              <?/MICOMMENT>
 	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=1&BEGIN=1&$selector$UserInput">First Page</A>
 
 	    <?/MIVAR>
 	  <?/MIBLOCK>
         </TD>
 
-      <!-- Calculate 3 pages before and 3 pages after current page. -->
+      <?MICOMMENT> Calculate 3 pages before and 3 pages after current page. <?/MICOMMENT>
       <?MIVAR name=$CURRENT>$(FIX,$(+,$(/,$BEGIN,$WINSIZE),1))<?/MIVAR>
       <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,3)),0)">
 	<TD valign=top>
@@ -730,16 +753,16 @@ requested from publication page for related data list.
 	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,3))"> $(+,$CURRENT,3)</A>
 	</TD>
       <?/MIVAR>
-      
+
         <TD width="45%" align=left valign=top>&nbsp;
 
-	<!--- Get the next set of Rows --->
+	<?MICOMMENT> Get the next set of Rows <?/MICOMMENT>
 	<?MIBLOCK COND="$(<=,$(+,$BEGIN,$WINSIZE),$num_recs)">
 	  <?MIVAR>
 	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$END&BEGIN=$BEGIN&$selector$UserInput">Next</A><br>
 	  <?/MIVAR>
 
-	  <!-- Calculate last page -->
+	  <?MICOMMENT> Calculate last page <?/MICOMMENT>
 	  <?MIVAR name=$START COND="$(=,$(MOD,$num_recs,$WINSIZE),0)">$(+,$(*,$(-,$(/,$num_recs,$WINSIZE),1),$WINSIZE),1)<?/MIVAR>
 
 	  <?MIVAR name=$START COND="$(!=,$(MOD,$num_recs,$WINSIZE),0)">$(+,$(*,$(FIX,$(/,$num_recs,$WINSIZE)),$WINSIZE),1)<?/MIVAR>
@@ -753,7 +776,7 @@ requested from publication page for related data list.
     </Table>
     </Center>
 
-  <?/MIBLOCK> <!-- if not redirect to markerview -->
+  <?/MIBLOCK> <?MICOMMENT> if not redirect to markerview <?/MICOMMENT>
 
   <?MICOMMENT>
     If you get to this point, then the code at least tried to insert records
@@ -762,18 +785,14 @@ requested from publication page for related data list.
   <?MISQL SQL="
     delete from $markerselect_temp_marker;">
   <?/MISQL>
- 
-  <?/MIBLOCK> <!-- no simultanious name and acc search -->
+
+  <?/MIBLOCK> <?MICOMMENT> no simultanious name and acc search <?/MICOMMENT>
+
+<?/MIBLOCK> <?MICOMMENT> query results <?/MICOMMENT>
 
 
 
-
-
-<?/MIBLOCK> <!-- query results -->
-
- 
-
-<!----------------  Query Form -------------------------------------->
+<?MICOMMENT>--------------  Query Form ----------------------------<?/MICOMMENT>
 <?MIBLOCK COND="$(AND,$(NXST,$accession),$(NXST,$pubId))">  
 
   <?MISQL SQL="select WebExplode(object,'page=markerselect') from webPages where ID='aa-searchform.apg';">$1<?/MISQL>
