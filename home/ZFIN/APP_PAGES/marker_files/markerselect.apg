@@ -1,3 +1,24 @@
+<?MICOMMENT>
+FILE:   markerselect.apg
+PREFIX: mrkrsel_
+
+search form for genes and markers 
+
+INPUT VARS:  not fully documented
+  input_name      Name/symbol specified in search.  This does not exist if
+                  no string was entered by the user.
+
+OUTPUT VARS: not fully documented
+
+OUTPUT:      not fully documented
+
+EFFECTS:     not fully documented
+
+DEBUGGING:
+  $debug_timing is in this page, but only before results are displayed
+
+<?/MICOMMENT>
+
 <?MIERROR>
   <?MIVAR COND=$(XST,$MI_SQL)>
     SQL: $MI_SQL<br><br>
@@ -7,7 +28,7 @@
   State:   $MI_ERRORSTATE <br>
   Message: $MI_ERRORMSG <br>
 <?/MIERROR>
-<?MICOMMENT> search form for genes and markers <?/MICOMMENT>
+
 <?MIBLOCK COND="$(NXST,$accession)">
  <HTML>
  <HEAD>
@@ -141,8 +162,6 @@
       criteria were passed in
     <?/MICOMMENT>
     <?MIVAR COND="$(NXST,$compare)" NAME=$compare>contains<?/MIVAR>
-    <?MIVAR NAME=$wild_card><?/MIVAR>
-    <?MIVAR COND="$(NC,$compare,starts)" NAME=$wild_card>%<?/MIVAR>
     <?MIBLOCK COND="$(XST,$marker_type)">
 	<?MIVAR NAME=$constraint> mrkr_type = '$marker_type'<?/MIVAR>
 	<?MISQL SQL="
@@ -181,16 +200,31 @@
     <?/MISQL>
 
     <?MIBLOCK COND="$(XST,$input_name)">
-
+      <?MISQL COND=$(XST,$debug_timing) SQL="
+        execute function get_time()">
+        <br>$1 Starting name query
+      <?/MISQL>
+      <?MIBLOCK COND="$(EC,$compare,starts)">
+	<?MIVAR NAME=$mrkrsel_nameTable><?/MIVAR>
+	<?MIVAR NAME=$mrkrsel_nameTest>
+	  and allmapnm_name_lower like '$(LOWER,$input_name)%'
+	<?/MIVAR>
+      <?MIELSE>
+	<?MIVAR NAME=$mrkrsel_nameTable>, all_name_ends<?/MIVAR>
+	<?MIVAR NAME=$mrkrsel_nameTest>
+	  and allmapnm_serial_id = allnmend_allmapnm_serial_id
+	  and allnmend_name_end_lower like '$(LOWER,$input_name)%' 
+	<?/MIVAR>
+      <?/MIBLOCK>
       <?MIVAR NAME=$input_name DELIMIT="'" REPLACE="''">$input_name<?/MIVAR>
       <?MIVAR NAME=geneMchIdLast><?/MIVAR>	
       <?MISQL SQL="
 	 select allmapnm_zdb_id, allmapnm_name, 
 		allmapnm_significance, allmapnm_precedence 
-           from all_map_names
-	  where allmapnm_name_lower like '$wild_card$(LOWER,$input_name)%'
-            and allmapnm_precedence <> 'Accession number'
-         order by allmapnm_zdb_id, allmapnm_significance, allmapnm_name;">
+           from all_map_names $mrkrsel_nameTable
+	  where allmapnm_precedence <> 'Accession number'
+            $mrkrsel_nameTest
+          order by allmapnm_zdb_id, allmapnm_significance, allmapnm_name;">
 	 <?MIVAR NAME=geneMchId>$1<?/MIVAR>
          <?MISQL COND="$(NC,$geneMchId,$geneMchIdLast)" SQL="
            insert into $markerselect_temp_match
@@ -218,6 +252,10 @@
       ** 08/27 separate accession search from name search
     <?/MICOMMENT>
     <?MIBLOCK COND="$(XST,$input_acc)">
+       <?MISQL COND=$(XST,$debug_timing) SQL="
+         execute function get_time()">
+         <br>$1 Starting accession queries
+       <?/MISQL>
        <?MISQL SQL="
 	insert into $markerselect_temp_match
 	    ( mstmatch_zdb_id, mstmatch_name, 
@@ -268,6 +306,10 @@
         we do mapping info pullover between clones and genes/small segs. 
 	Create markerselect_temp_on_lg temp table if it does not already exist.
       <?/MICOMMENT>
+      <?MISQL COND=$(XST,$debug_timing) SQL="
+        execute function get_time()">
+        <br>$1 Starting LG queries
+      <?/MISQL>
       <?MISQL SQL="
         execute function table_exists('$markerselect_temp_on_lg')">
         <?MISQL COND=$(EC,$1,f) SQL="
@@ -356,6 +398,10 @@
 
   <?/MIBLOCK> <?MICOMMENT> end build constraint for gene/marker search <?/MICOMMENT>
 
+  <?MISQL COND=$(XST,$debug_timing) SQL="
+    execute function get_time()">
+    <br>$1 Done building constraint
+  <?/MISQL>
 
 
   <?MICOMMENT>
