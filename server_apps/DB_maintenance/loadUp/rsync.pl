@@ -35,7 +35,7 @@ chdir "<!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->";
 
 # --backup-dir=/tmp --suffix=uploadbkup --delete 
 
-system("/local/bin/rsync -nupvab --copy-links --ignore-existing <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/ /research/zcentral/loadUp/imageLoadUp/");
+system("/local/bin/rsync -upvab --copy-links --ignore-existing <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/ /research/zcentral/loadUp/imageLoadUp/");
 
 # system ("cd <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|--> ");
 
@@ -43,6 +43,6 @@ chdir "<!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->";
 
 # --backup-dir=/tmp --suffix=uploadbkup --delete 
 
-system("/local/bin/rsync -nupvab  --copy-links --ignore-existing <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->/ /research/zcentral/loadUp/PDFLoadUp/");
+system("/local/bin/rsync -upvab  --copy-links --ignore-existing <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->/ /research/zcentral/loadUp/PDFLoadUp/");
 
 exit;
