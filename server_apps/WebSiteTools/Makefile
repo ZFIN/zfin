@@ -21,7 +21,7 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/server_apps/WebSiteTools
 
 GENERICS = checklinks run.checklinks run.checklinks.mirror signsoflife.sh
-
+STATICS = makemirror.csh
 
 # ---------------  Production Rules  ------------------------------------
 
@@ -50,6 +50,11 @@ runchecklinks : $(TARGETDIR)/checklinks $(TARGETDIR)/run.checklinks $(TARGETDIR)
 	$(TARGETDIR)/run.checklinks.mirror 
   endif
 
+
+# Run the script that updates the mirror.zfin.org web site.
+
+runmakemirror: $(TARGETDIR)/makemirror.csh
+	$(TARGETDIR)/makemirror.csh
 
 runsignsoflife : $(TARGETDIR)/signsoflife.sh
 	$(TARGETDIR)/signsoflife.sh
