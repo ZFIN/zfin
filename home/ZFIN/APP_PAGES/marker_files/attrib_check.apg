@@ -1,0 +1,35 @@
+<!--
+  
+
+-->
+ <?MIVAR COND="$(NXST,$dataId)" NAME=dataId><?/MIVAR>  
+ 
+  <?MIVAR NAME=related_data_attrib_to_OID>
+      recattrib_data_zdb_id in (select mrel_zdb_id from marker_relationship where mrel_mrkr_2_zdb_id = '$OID')
+    or
+      recattrib_data_zdb_id in (select mrel_zdb_id from marker_relationship where mrel_mrkr_1_zdb_id = '$OID')
+    or
+      recattrib_data_zdb_id in (select dalias_zdb_id from data_alias where dalias_data_zdb_id = '$OID')
+    or
+      recattrib_data_zdb_id in (select dblink_zdb_id from db_link where linked_recid = '$OID')
+    or
+      recattrib_data_zdb_id in (select oevdisp_zdb_id from orthologue_evidence_display where oevdisp_gene_zdb_id = '$OID')
+  <?/MIVAR>
+
+
+  <?MISQL SQL="
+      select distinct recattrib_data_zdb_id
+        from record_attribution
+       where ($related_data_attrib_to_OID)
+         and recattrib_source_zdb_id = '$pubId'
+	 and recattrib_data_zdb_id <> '$dataId';
+      ">
+
+   <?/MISQL>
+ 
+   <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">
+      <script>
+        window.alert("Note: This is the last attribution of $pubId to the gene. You should consider deleting this reference from the CITATIONS section if appropriate.");
+      </script>
+   <?/MIVAR>
+
