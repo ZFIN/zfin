@@ -293,13 +293,13 @@ marker = '';
      <?MIVAR NAME=marker_type_display>$4<?/MIVAR>
    <?/MISQL>
 
- 
   <!---------------Mapping detail title--------------------------------------->
 
   <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
   <TABLE width="100%" cellspacing=0 border=0>
 
-  <?MIVAR NAME=$reserved_mrkr_abbrev>$mrkr_abbrev<?/MIVAR>
+  <?MICOMMENT>get the original abbreviation or name for the title display<?/MICOMMENT>
+  <?MIVAR COND="$(XST,$mrkr_abbrev)" NAME=$reserved_mrkr_abbrev>$mrkr_abbrev<?/MIVAR>
   <?MISQL COND="$(>,$(POSITION,$MID,FISH),0)" SQL="
 		select abbrev, line_type, allele
 		  from fish
@@ -312,6 +312,7 @@ marker = '';
 		where zdb_id = '$MID';">
 	<?MIVAR NAME=mrkr_abbrev>$1<?/MIVAR>
   <?/MISQL>
+
   <?MIBLOCK COND="$(XST,$UPDATE)">
         <?MIVAR>
      		<TITLE>Update Mapping Detail: $mrkr_abbrev  </TITLE>
@@ -321,8 +322,7 @@ marker = '';
  		<TITLE>Mapping Detail: $mrkr_abbrev </TITLE>
     	<?/MIVAR>
    <?/MIBLOCK>
-   <?MIVAR>$(SETVAR,$mrkr_abbrev,$reserved_mrkr_abbrev)<?/MIVAR>	
-
+ 	
   <?MIVAR>
        <form method=post 
               action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
@@ -343,6 +343,8 @@ marker = '';
   <!-- wrap Mapping table in mapper form -->
   <!-- form tag brings in extra space line. For display sake, 
      it is put a bit in advance. -->
+
+  <?MIVAR COND="$(XST,$reserved_mrkr_abbrev)">$(SETVAR,$mrkr_abbrev,$reserved_mrkr_abbrev)<?/MIVAR>
 
 
   <!-------------- Name titles --------------------------------------->
