@@ -22,8 +22,8 @@
 
 create temp table meow_exp1_dup (
   zdb_id varchar(50),
-  mname varchar(120),
-  abbrev varchar(20),
+  mname varchar(255),
+  abbrev varchar(40),
   OR_lg varchar(2)
 ) with no log;
 
@@ -47,8 +47,8 @@ insert into meow_exp1_dup
 
 create temp table meow_exp1 (
   zdb_id varchar(50),
-  mname varchar(120),
-  abbrev varchar(20),
+  mname varchar(255),
+  abbrev varchar(40),
   OR_lg varchar(2)
 ) with no log;
 
@@ -119,12 +119,12 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_genes.txt'
 
 create temp table meow_expll_dup (
   zdb_id varchar(50),
-  gene_name varchar(120),
-  abbrev varchar(20),
+  gene_name varchar(255),
+  abbrev varchar(40),
   OR_lg varchar(2),
-  location numeric(6,2),
+  location numeric(8,2),
   panel_id varchar(50),
-  panel_abbrev varchar(10),
+  panel_abbrev varchar(20),
   metric varchar(5)
 ) with no log;
 
@@ -149,12 +149,12 @@ insert into meow_expll_dup
 
 create temp table meow_expll (
   zdb_id varchar(50),
-  gene_name varchar(120),
-  abbrev varchar(20),
+  gene_name varchar(255),
+  abbrev varchar(40),
   OR_lg varchar(2),
-  location numeric(6,2),
+  location numeric(8,2),
   panel_id varchar(50),
-  panel_abbrev varchar(10),
+  panel_abbrev varchar(20),
   metric varchar(5)
 ) with no log;
 
@@ -225,10 +225,10 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_genes_locuslink.txt'
 -- Create the file of known correspondences
 create temp table meow_mutant (
   gene_id varchar(50),
-  gene_abbrev varchar(20),
+  gene_abbrev varchar(40),
   locus_id varchar(50),
-  locus_name   varchar(50),
-  locus_abbrev varchar(10)
+  locus_name   varchar(120),
+  locus_abbrev varchar(20)
 ) with no log;  
 
 
@@ -273,7 +273,7 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_pubs.txt'
 create temp table meow_exp3 (
   gene_id varchar(50),
   organism varchar(30),
-  ortho_name varchar(120),
+  ortho_name varchar(255),
   ortho_abbrev varchar(15), 
   ortho_id varchar(50)
 ) with no log;
