@@ -307,7 +307,7 @@
     if( (defined $Q->param("OID")) && ($Q->param("OID")) )  {
       $g_OID = $zdbid  =  $Q->param("OID");
       $sm_m = get_OIDs_abbrev($zdbid);        
-      if ($sm_refresh != 2) { $sm_refresh = 1;} 
+      if (! $sm_refresh || $sm_refresh != 2) { $sm_refresh = 1;} 
            
       if( defined $Q->param("lg") && $Q->param("lg") ) {$lg =  $Q->param("lg");} 
       else {			### need a linkage group
