@@ -108,6 +108,7 @@ $(IF,$(EC,$AUTHORIZED,root),
 <option "$(IF,$(EC,$access,betatest),SELECTED)">betatest
 <option "$(IF,$(EC,$access,preview),SELECTED)">preview
 <option "$(IF,$(EC,$access,fishauth),SELECTED)">fishauth
+<option "$(IF,$(EC,$access,adminasst),SELECTED)">adminasst
 "$(IF,$(EC,$access,root),<option SELECTED>root)"
 </SELECT>",$access)
 </TD>
