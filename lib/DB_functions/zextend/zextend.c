@@ -188,10 +188,10 @@ mi_lvarchar *sysexec(mi_lvarchar *cmd, mi_lvarchar *args) {
 	mi_lvarchar	*lv;
 	
 	/*to only accept a finite number of known commands */
-	static int   ALLOW_COUNT = 2;	        
+	static int   ALLOW_COUNT = 4;	        
 	char* allowed_cmd[] = 
-		{"get_image_stats","encryptpass"}; /* keep longest command first */
-		/* ",make_thumbnail","ChromoUpdate","rm" */ 
+		{"get_image_stats","encryptpass","make_thumbnail","rm"}; /* keep longest command first */
+		/*   "ChromoUpdate",*/ 
 	
 	/* only allow "normal" characters as arguments and space,slash*/
 	static char allowed_char[] = {"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 !-._/#"};
