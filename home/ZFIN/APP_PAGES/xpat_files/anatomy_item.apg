@@ -1,3 +1,15 @@
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
+
 <HTML>
 <?MIBLOCK COND="$(NXST,$OID)"> No OID Passed In! <?/MIBLOCK>  <!-- open OID check -->
 <?MIBLOCK COND="$(XST,$OID)">
@@ -29,7 +41,7 @@
 
 <?MIVAR NAME=$item_name_safe DELIMIT="'" REPLACE="''">$item_name<?/MIVAR>
 <?MIVAR NAME=$item_name_url>$(URLENCODE,$item_name)<?/MIVAR>
-<?MIVAR NAME="$processed_item_name">$(REPLACE,$item_name,',','|')<?/MIVAR>
+<?MIVAR NAME=$processed_item_name>$(REPLACE,$item_name,',','|')<?/MIVAR>
 
 
 
@@ -208,7 +220,7 @@
       <TD>
  <?MIVAR>
 
-  <?MIVAR $NAME="alias_number">$(+,$alias_number,1)<?/MIVAR>
+  <?MIVAR NAME="alias_number">$(+,$alias_number,1)<?/MIVAR>
 
   <FORM action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" name="update_synonym_$alias_number" method="get">
 
@@ -385,10 +397,17 @@
   </TR>
   <TR>
     <TD bgcolor="#EEEEEE">
-      <?MIVAR>
-      <A HREF="$item_stg_start_url">
-      $item_stg_start<?/MIVAR>
-      </A>
+	  <?MICOMMENT> Most of the anatomy items that currently have start stage as Adult are faulty.
+                  Before the right stage is figured out, surpress the display for now. 
+      <?/MICOMMENT> 
+      <?MIBLOCK COND="$(NC,$(SUBSTR,$item_stg_start,1,5),Adult)"> 
+      	<?MIVAR>
+      	  <A HREF="$item_stg_start_url">
+     	   $item_stg_start </A>
+        <?/MIVAR>
+      <?MIELSE>
+           Unknown
+      <?/MIBLOCK>
     </TD>
     <TD bgcolor="#EEEEEE">
       <?MIVAR>
@@ -675,14 +694,13 @@ Fly
 
 
 <!-- start pub relationships -->
-
 <?MISQL SQL="select count(*)::Integer
-	     from publication 
-             where pub_abstract like '%$item_name_safe%';">
+	           from publication 
+              where lower(pub_abstract) like '%$item_name_safe%';">
 <?MIVAR NAME="$pubcount">$1<?/MIVAR>
 <?MIBLOCK COND="$(>,$pubcount,0)">
 <?MIVAR>
-<STRONG>(<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubselect2.apg&anon1=pub_abstract&anon1text=$item_name&query_results=exists">$1</A>) Publication(s)</STRONG> with "$item_name" occuring in the abstract.
+<STRONG>(<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubselect2.apg&anon1=pub_abstract&anon1text=$item_name&anon1textAllOneWord=1&query_results=exists">$1</A>) Publication(s)</STRONG> with "$item_name" occuring in the abstract.
 <?/MIVAR>
 <?/MIBLOCK>
 <?/MISQL>
