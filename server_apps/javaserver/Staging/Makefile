@@ -54,15 +54,15 @@ include $(TOP)/make.include
 #	support libraries we compile with must match the version
 #	of the JVM this code will be linked into at runtime.
 
-CLASSLIB  = $(JAVAHOME)/lib/classes.zip
-JAVAH     = $(JAVAHOME)/bin/javah
+CLASSLIB  = $(JAVAHOME_11)/lib/classes.zip
+JAVAH     = $(JAVAHOME_11)/bin/javah
 JAVAFLAGS = -g -classpath .:$(CLASSLIB)
 
 
 # ---- C Variables
 
 CC = cc
-CINCLUDES = -I $(JAVAHOME)/include -I $(JAVAHOME)/include/solaris
+CINCLUDES = -I $(JAVAHOME_11)/include -I $(JAVAHOME_11)/include/solaris
 
 
 
@@ -132,7 +132,7 @@ $(JAVATARGETS) : $(JAVACLASSES)
 	$(TOUCH) $(JAVATARGETS)
 
 $(JAVACLASSES) : $(JAVASRCS)
-	$(JAVAC) $(JAVAFLAGS) $(JAVASRCS)
+	$(JAVAC_11) $(JAVAFLAGS) $(JAVASRCS)
 
 
 
