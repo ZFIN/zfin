@@ -30,9 +30,20 @@ is_not
 <?MIBLOCK COND="$(EC,$infzdbid,)">
 <?MISQL SQL="select mrkrgoev_zdb_id,mrkrgoev_mrkrgo_zdb_id from marker_go_term_evidence where mrkrgoev_mrkrgo_zdb_id='$markergoid' and mrkrgoev_evidence_code='$goev' and mrkrgoev_source_zdb_id='$sourcezdbid'">
    <?MIVAR NAME=$goevid>$1<?/MIVAR>
+   <?MIVAR NAME=$mrkrgo>$2<?/MIVAR>
    <?MIVAR NAME=SQL1>"delete from zdb_active_data where zactvd_zdb_id='$goevid'"<?/MIVAR>
    <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id='$goevid'"><?/MISQL>
 <?/MISQL>   
+   <?MISQL SQL="select goterm_name,goterm_go_id from marker_go_term,go_term  where mrkrgo_zdb_id='$mrkrgo' and mrkrgo_go_term_zdb_id=goterm_zdb_id"><?/MISQL>
+   <?MIVAR NAME=SQ1>"select goterm_name from marker_go_term,go_term  where mrkrgo_zdb_id='$mrkrgo' and mrkrgo_zdb_id=goterm_zdb_id"<?/MIVAR>
+    <?MIVAR NAME=goname>$1<?/MIVAR>
+    <?MIVAR NAME=goid>$2<?/MIVAR>
+
+    <?MIBLOCK COND="$(>,$(POSITION,$goname,unknown),0)"> 
+     <?MIBLOCK COND="$(NC,$goid,0016526)"> 
+    <?MISQL SQL="delete from marker_go_term where mrkrgo_zdb_id='$mrkrgo'"><?/MISQL>
+    <?/MIBLOCK>
+   <?/MIBLOCK> 
 <?MIELSE>
 <?MISQL SQL="select mrkrgoev_zdb_id,mrkrgoev_mrkrgo_zdb_id from marker_go_term_evidence where mrkrgoev_mrkrgo_zdb_id='$markergoid' and mrkrgoev_evidence_code='$goev' and mrkrgoev_source_zdb_id='$sourcezdbid'"><?/MISQL>
 <?MIVAR NAME=$goevid>$1<?/MIVAR>
@@ -71,7 +82,6 @@ is_not
 
 
 <?/MIBLOCK> 
-
 <?MIVAR>
 <SCRIPT>
   location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoentry.apg&OID=$geneid")
