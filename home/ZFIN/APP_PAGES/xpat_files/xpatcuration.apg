@@ -278,11 +278,14 @@ COOKIES:
         panelIndex = document.panel_structures.panel_desig_and_xpatex_zdb_id.selectedIndex;
         fx_panel_desig_and_xpatex = document.panel_structures.panel_desig_and_xpatex_zdb_id.options[panelIndex].value;
         
-        //Refresh the page so changes are displayed on Firefox.
-//        setCookie('page_refresh','1');
-        <?MIVAR>
-  	  replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID&structures_add="+structures_add+"&structures_remove="+structures_remove+"&c_xpatcuration_update=update&panel_desig_and_xpatex_zdb_id="+fx_panel_desig_and_xpatex+"#structure");
-        <?/MIVAR>
+        window.document.hidden_panel.structures_add.value = structures_add;
+        window.document.hidden_panel.structures_remove.value = structures_remove;
+        window.document.hidden_panel.panel_desig_and_xpatex_zdb_id.value = fx_panel_desig_and_xpatex;
+        setCookie('xpatcuration_update','update');
+        setCookie('anchor','structure');
+
+        window.document.hidden_panel.submit();
+
       }
       else {
         alert('At least one item must be associated with a panel. Use the Delete button to remove a panel.')
@@ -2664,9 +2667,20 @@ SUBMITTER COMMENTS:
 <?MIELSE>
   <?MIVAR><a href="javascript:onClick=urlSetCookie('structure','hide')">$hide</a><?/MIVAR>
     
+<form name=hidden_panel action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=<?MIVAR>$OID<?/MIVAR>#structure" method=post>
+  <input type=hidden name=structures_add value="">
+  <input type=hidden name=structures_remove value="">   
+  <input type=hidden name=panel_desig_and_xpatex_zdb_id value=""> 
+  <input type=hidden name=MIval value="aa-xpatcuration.apg">
+  <input type=hidden name=OID value="<?MIVAR>$OID<?/MIVAR>">
+</form>
 
 <form name=panel_structures>
-<input type=button value="Update Structures for Experiment" onClick="if (document.panel_structures.panel_desig_and_xpatex_zdb_id.value != '---'){dynamic_set_value_selection(document.panel_structures.elements,'2',document.panel_structures.field_count.value);setCookie('xpatcuration_update','update');setCookie('anchor','structure');}">
+
+<table width=100% border=0 bgcolor="<!--|HIGHLIGHT_COLOR|-->">
+  <tr>
+    <td colspan=4>
+<input type=button value="Update Structures for Experiment" onClick="if (document.panel_structures.panel_desig_and_xpatex_zdb_id.value != '---'){dynamic_set_value_selection(document.panel_structures.elements,'2',document.panel_structures.field_count.value);}">
 <select name=panel_desig_and_xpatex_zdb_id onChange="reset_structures_for_panel(this.value);">
   <option value="---">---------------------------------</option>
   <?MISQL SQL="
@@ -2694,8 +2708,8 @@ SUBMITTER COMMENTS:
     
   <?/MISQL>
 </select>
-
-<table width=100% border=0 bgcolor="<!--|HIGHLIGHT_COLOR|-->">
+    </td>
+  </tr>
   <tr bgcolor=#CCCCCC>
     <td>Add/Remove</td>
     <td>Structure</td>
@@ -2746,9 +2760,13 @@ SUBMITTER COMMENTS:
     <?/MIVAR>
     <?MIVAR NAME=field_count>$(+,$field_count,1)<?/MIVAR>
   <?/MISQL>    
-<?MIVAR><input type=hidden name=field_count value=$field_count><?/MIVAR>
+
+  <?MIVAR><input type=hidden name=field_count value=$field_count><?/MIVAR>
+
+</table>
 </form>
 
+<table width=100% border=0 bgcolor="<!--|HIGHLIGHT_COLOR|-->">
   <tr>
     <td colspan=4><HR></td>
   </tr>
