@@ -188,7 +188,7 @@ $(IF,$(NC,$num_meioses,NULL),$num_meioses,UNKNOWN)
 <b>Markers:</B>
 <ul>
 <?MIVAR NAME=$mcount>0<?/MIVAR>
-<?MISQL SQL="select mtype,count(*)::integer from public_paneled_markers where target_id='$OID'  group by mtype;">
+<?MISQL SQL="select mtype,count(*)::integer from public_paneled_markers a , panels b  where  a.target_abbrev = b.abbrev and b.target_id='$OID'  group by mtype;">
 $(IF,$(NC,$MI_CURRENTROW,1),"<br>")
 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-markerselect.apg&select_from=MARKER&panelid=$OID&marker_type=$1">$1</A> (total of $2)
 $(SETVAR,$mcount,$(+,$mcount,$2))
@@ -214,7 +214,7 @@ Click to <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&se
 <?MIVAR><INPUT TYPE=hidden name=loc_panel value=$abbrev><?/MIVAR>
 <?MIVAR NAME=$last>0<?/MIVAR>
 
-<?MISQL SQL="select OR_lg,mtype,count(*)::integer from public_paneled_markers where target_id='$OID'  group by OR_lg,mtype order by OR_lg;">
+<?MISQL SQL="select OR_lg,mtype,count(*)::integer from public_paneled_markers a , panels b  where a.target_abbrev = b.abbrev and  b.target_id='$OID'  group by OR_lg,mtype order by OR_lg;">
 
 <?MIVAR>
 $(IF,$(AND,$(>,$1,$last),$(>,$MI_CURRENTROW,1)),"</TD><TD><font size=1><input type=submit name=view_map value='View Map' onClick='call_mapplet("$(-,$1,1)")'></TD><TD><font size=1><A HREF=javascript:view_scores('"$OID"','"$(-,$1,1)"');>Scoring Data</A></TD></TR>")
