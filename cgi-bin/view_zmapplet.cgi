@@ -775,12 +775,10 @@
 				   $Q->submit(-name=>"New Window with Printer Friendly  Map") . "\n".
 				     $Q->hidden("height",$g_height)."\n".
 				       $Q->hidden("width" ,$g_width)."\n".
-					 $Q->hidden("host","<!--|DOMAIN_NAME|-->")."\n".
-					   $Q->hidden("port", $jport)."\n".
-					     $Q->hidden("panel_order",$POprint)."\n".
-					       $Q->hidden("from_panels",$from_panels)."\n".
-						 $Q->hidden("data",$g_printdata )."\n".
-						   $Q->end_form."\n </td>\n"; 
+  				         $Q->hidden("panel_order",$POprint)."\n".
+					   $Q->hidden("from_panels",$from_panels)."\n".
+					     $Q->hidden("data",$g_printdata )."\n".
+					       $Q->end_form."\n </td>\n"; 
     
     print "</tr></table>";
 
@@ -880,9 +878,7 @@
       "<param name = \"panel_url\"\t value = \"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=\">\n".
 	
       "<param name = \"target_frame\"\t value = \"$frame\">\n".
- 	"<param name = \"host\"\t\t value = \"<!--|DOMAIN_NAME|-->\">\n".
-	  "<param name = \"port\"\t\t value = \"$jport\">\n".
-	    "<param name = \"selected_marker\"\t value = \"". $Q->param('OID')."\">\n". 
+	 "<param name = \"selected_marker\"\t value = \"". $Q->param('OID')."\">\n". 
 	      "<param name = \"fish_url\" value = \"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=\">\n".
 		"<param name = \"locus_url\" value = \"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=\">\n".
 		  "<param name = \"zoom_url\" value = \"/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi\">\n".	      
