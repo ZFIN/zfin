@@ -1532,7 +1532,7 @@ Datablade documentation.
     <?/MIBLOCK>
     <?/MIBLOCK> 
   
-  <?MIBLOCK COND=$(XST,$dblink_other)>
+  <?MIBLOCK COND=$(OR,$(XST,$dblink_other),$(XST,$UPDATE))>
     <HR width="80%">
     <?MIVAR><b>OTHER &nbsp;<i>$abbrev</i>&nbsp; GENE / MARKER PAGES:</b><?/MIVAR>
 
