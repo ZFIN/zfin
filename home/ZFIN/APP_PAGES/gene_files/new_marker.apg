@@ -51,29 +51,14 @@ if(theform.mname.value=='' || theform.abbrev.value=='') {
 <input type=hidden name=MIval value=aa-new_marker.apg>
 <input type=hidden name=marker_type value="$marker_type">
 
-<TABLE width=100% cols=2>
-<TR>
-<TD colspan=2>
-<B>$(UPPER,$marker_type) name</b> (required):
+<p><B>$(UPPER,$marker_type) name</b> (required):
 <input type=text name=mname size=80>
-</TD>
-</TR>
-<TR>
-<TD>
-<b>Abbreviation</b> (required):
-<input type=text name=abbrev size=15>
-</TD>
-<TD>
-<?/MIVAR>
-<?MIVAR COND="$(EC,$marker_type,GENE)">
-<b>Allele<b> (if known): 
-<input type=text name=allele size=10>
-<?/MIVAR>
-</TD>
-</TR>
-</TABLE>
 
-<b>Alternate Names/Synonyms</b> (separate with semicolons):
+<p><b>Abbreviation</b> (required):
+<input type=text name=abbrev size=15>
+<?/MIVAR>
+
+<p><b>Alternate Names/Synonyms</b> (separate with semicolons):
 <input type=text size=25 name=alt_names>
 <p>
 <b>Description:</b><br>
@@ -92,7 +77,6 @@ if(theform.mname.value=='' || theform.abbrev.value=='') {
 <?MIBLOCK COND="$(XST,$s_new)">
 <?MIVAR COND="$(NXST,$alt_names)" NAME=$alt_names><?/MIVAR>
 <?MIVAR COND="$(NXST,$comments)" NAME=$comments><?/MIVAR>
-<?MIVAR COND="$(NXST,$allele)" NAME=$allele><?/MIVAR>
 
 <?MIVAR NAME=$mname DELIMIT="'" REPLACE="''">$mname<?/MIVAR>
 <?MIVAR NAME=$abbrev DELIMIT="'" REPLACE="''">$abbrev<?/MIVAR>
@@ -102,7 +86,7 @@ if(theform.mname.value=='' || theform.abbrev.value=='') {
 <?MISQL SQL="execute function get_id('$(UPPER,$marker_type)');"><?/MISQL>
 <?MIVAR NAME=$new_id>$1<?/MIVAR>
 
-<?MISQL COND="$(EC,$marker_type,gene)" SQL="insert into gene (zdb_id,gene_name,abbrev,comments,allele,alt_names,mapped,owner) values ('$new_id','$mname','$abbrev','$comments','$allele','$alt_names','f','$ZDB_ident');"><?/MISQL>
+<?MISQL COND="$(EC,$marker_type,gene)" SQL="insert into gene (zdb_id,gene_name,abbrev,comments,alt_names,mapped,owner) values ('$new_id','$mname','$abbrev','$comments','$alt_names','f','$ZDB_ident');"><?/MISQL>
 
 <?MISQL COND="$(NC,$marker_type,gene)" SQL="insert into anon_marker (zdb_id,marker_name,abbrev,marker_type,comments,alt_names,owner) values ('$new_id','$mname','$abbrev','$(UPPER,$marker_type)','$comments','$alt_names','$ZDB_ident');"><?/MISQL>
 
