@@ -35,6 +35,9 @@ dbaccess $dbname load_prot_len_acc.sql
 
 echo "GenPept loaded `date`"
 
+
+echo "these are the new potential problems for the curators to resolve"
+
 diff previous_potential_problems.unl potential_problems.unl
 cp -pf potential_problems.unl previous_potential_problems.unl
 

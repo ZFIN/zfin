@@ -187,7 +187,7 @@ group by 1,2
 into temp tmp_dblk
  with no log;
  
-select * from tmp_dblk;
+
 
 ! echo "drop NP_ GenPepts that are already in as RefSeq"
 delete from tmp_dblk where acc in (
@@ -195,8 +195,10 @@ delete from tmp_dblk where acc in (
     where db_name = 'Ref_seq' and acc_num[1,3] = 'NP_'
 );
 
-! echo "oddities"
-update tmp_dblk set zad = get_id('DBLINK');  
+
+update tmp_dblk set zad = get_id('DBLINK');
+! echo "ODDITIES"  
+select * from tmp_dblk;
 
 insert into zdb_active_data select zad from tmp_dblk;
 
@@ -452,27 +454,6 @@ where pla_prot not in (
 );   
 
 drop table prot_len_acc;
-
---commit work;
-rollback work;
-
-
-
------------------------------------------------
-{
-
-and   not exists ( -- the gene accociated with the EST already has a GenPept
-    select 1 
-    from db_link gene, marker_relationship
-    where mrel_type = 'gene contains small segment'
-    and est.linked_recid = mrel_mrkr_2_zdb_id
-    and gene.linked_recid = mrel_mrkr_1_zdb_id
-    and gene.db_name = 'GenPept'
-)
-   
-group by 1,2,3
-order by 2,1,3
-;
-
-
-}
+-- rollback work;
+--
+commit work;
