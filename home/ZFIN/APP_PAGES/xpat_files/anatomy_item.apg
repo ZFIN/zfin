@@ -14,25 +14,23 @@
 <?MIBLOCK COND="$(NXST,$OID)"> No OID Passed In! <?/MIBLOCK>  <!-- open OID check -->
 <?MIBLOCK COND="$(XST,$OID)">
 <?MISQL SQL="
-	SELECT anatitem_name, anathier_name,
+	SELECT anatitem_name,
 	       s1.stg_name_long, s2.stg_name_long, s1.stg_comments_relative_url, 
 	       s2.stg_comments_relative_url, anatitem_abbrev, anatitem_definition,
 	       anatitem_description
-	FROM anatomy_item, anatomy_hierarchy, stage s1, stage s2
+	FROM anatomy_item, stage s1, stage s2
 	WHERE anatitem_zdb_id = '$OID'
-	  and anatitem_type_code = anathier_code
 	  and s1.stg_zdb_id = anatitem_start_stg_zdb_id
 	  and s2.stg_zdb_id = anatitem_end_stg_zdb_id
 ;">
 <?MIVAR NAME="item_name">$1<?/MIVAR>
-<?MIVAR NAME="item_type_code">$2<?/MIVAR>
-<?MIVAR NAME="item_stg_start">$3<?/MIVAR>
-<?MIVAR NAME="item_stg_end">$4<?/MIVAR>
-<?MIVAR NAME="item_stg_start_url">$5<?/MIVAR>
-<?MIVAR NAME="item_stg_end_url">$6<?/MIVAR>
-<?MIVAR NAME="item_abbrev">$7<?/MIVAR>
-<?MIVAR NAME="item_definition">$8<?/MIVAR>
-<?MIVAR NAME="item_description">$9<?/MIVAR>
+<?MIVAR NAME="item_stg_start">$2<?/MIVAR>
+<?MIVAR NAME="item_stg_end">$3<?/MIVAR>
+<?MIVAR NAME="item_stg_start_url">$4<?/MIVAR>
+<?MIVAR NAME="item_stg_end_url">$5<?/MIVAR>
+<?MIVAR NAME="item_abbrev">$6<?/MIVAR>
+<?MIVAR NAME="item_definition">$7<?/MIVAR>
+<?MIVAR NAME="item_description">$8<?/MIVAR>
 <?/MISQL>
 
 <?MIVAR NAME=$item_abbrev COND="$(EC,$item_abbrev,NULL)"><?/MIVAR>
@@ -370,11 +368,6 @@
 <?/MISQL>
 
 <?/MICOMMENT>
-
-<?MICOMMENT> <!-- I'm not sure that this is meaningful to the users.. -->
-    <?MIVAR><STRONG>Type: </STRONG> $item_type_code <BR><?/MIVAR> 
-<?/MICOMMENT>
-
 
 <?MISQL SQL="SELECT anatitem_definition from anatomy_item where anatitem_zdb_id = '$OID' and anatitem_definition is not null;">
 <STRONG>Definition:</STRONG> $1<BR>
