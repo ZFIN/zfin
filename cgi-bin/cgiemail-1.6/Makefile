@@ -18,7 +18,7 @@ TOP = ../..
 include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/$(TARGETCGIBIN)
-TARGETS = $(TARGETDIR)/cgiemail
+TARGETS = $(TARGETDIR)/cgiemail.cgi
 
 ################################################################################
 
@@ -29,7 +29,7 @@ SHELL=/bin/sh
 RELEASE=1.6
 CC=gcc
 
-PROG=cgiemail
+PROG=cgiemail.cgi
 
 DISTFILES=README 
 DISTBASE=cgiemail-$(RELEASE)
@@ -39,12 +39,14 @@ EMAIL_OBJ=cgilib.o cgiemail.o
 
 LIBSRC=cgilib.c cgilibcso.c
 
+
+
 all: $(PROG)
-	cp -pf cgiemail $(TARGETDIR)
+	cp -pf cgiemail.cgi $(TARGETDIR)
 	chmod 555 $(TARGETS)
 
 cgiemail: $(EMAIL_OBJ)
-	$(CC) $(LDFLAGS) -o $@ $(EMAIL_OBJ)
+	$(CC) $(LDFLAGS) -o $(PROG) $(EMAIL_OBJ)
 
 
 dist:
