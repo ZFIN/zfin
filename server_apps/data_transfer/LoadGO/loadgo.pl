@@ -1,4 +1,4 @@
-#!/private/bin/perl 
+#!/local/bin/perl 
 
 #
 # loadsp.pl
