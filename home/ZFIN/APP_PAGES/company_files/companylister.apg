@@ -131,11 +131,11 @@ $(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|
 <?MIVAR name=$UserInput><?/MIVAR>
 <?MIVAR name=$TileInput><?/MIVAR>
 <?MIVAR name=UserInput COND=$(XST,$anon1)>$UserInput&anon1=$anon1<?/MIVAR>
+<?MIVAR name=$UserInput COND=$(XST,$return_rec)>$UserInput&return_rec=$return_rec<?/MIVAR>
 <?MIVAR name=$TileInput>$UserInput<?/MIVAR>
 <?MIVAR name=UserInput COND=$(XST,$pname)>$UserInput&pname=$(URLENCODE,$pname)<?/MIVAR>
 <?MIVAR name=UserInput COND=$(XST,$anon1text)>$UserInput&anon1text=$(URLENCODE,$anon1text)<?/MIVAR>
 <?MIVAR name=UserInput COND=$(XST,$address)>$UserInput&address=$(URLENCODE,$address)<?/MIVAR>
-<?MIVAR name=$UserInput COND=$(XST,$return_rec)>$UserInput&return_rec=$return_rec<?/MIVAR>
 
 <!--- Return to the previous set of Rows --->
 <?MIBLOCK COND="$(>,$BEGIN,1)">
