@@ -1,3 +1,14 @@
+<?MIERROR>
+<?MIVAR COND=$(XST,$MI_SQL)>
+SQL: $MI_SQL
+
+<?/MIVAR>
+
+Code: $MI_ERRORCODE
+State: $MI_ERRORSTATE
+Message: $MI_ERRORMSG 
+<?/MIERROR>
+
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
   <head>
@@ -190,7 +201,12 @@ Startframes.apg will pass this variables on to the select form.
     <!-- first look for match in fish_search locus or
       -- for fish aliases in data_alias -->
     <?MIVAR NAME=$constraint COND="$(XST,$fname)">
-      $constraint ((lower(a.name) like '%$fname%') or exists (select 'x' from data_alias where (a.fish_id = dalias_data_zdb_id or a.locus = dalias_data_zdb_id) and (dalias_alias_lower like '%$fname%')))
+      $constraint (   (lower(a.name) like '%$fname%') 
+                   or exists (select 'x' 
+			        from data_alias 
+			        where (   a.fish_id = dalias_data_zdb_id 
+				       or a.locus = dalias_data_zdb_id) 
+				  and (dalias_alias_lower like '%$fname%')))
     <?/MIVAR>
 
     <?MIVAR NAME=$previous COND="$(XST,$fname)"> and<?/MIVAR>
@@ -226,7 +242,12 @@ Startframes.apg will pass this variables on to the select form.
     <?MIVAR NAME=$previous COND="$(NC,$mutagen,any)"> and <?/MIVAR>
 
     <?MIVAR NAME=$mut_constraint COND="$(XST,$allele)">
-    $mut_constraint $previous ((lower(a.allele) like '%$allele%') or exists (select 'x' from data_alias where (a.alt_zdb_id = dalias_data_zdb_id) and (lower(dalias_alias) like '%$allele%'))) 
+      $mut_constraint 
+      $previous (   (lower(a.allele) like '%$allele%') 
+                 or exists (select 'x' 
+                              from data_alias 
+			      where (a.alt_zdb_id = dalias_data_zdb_id) 
+                                and dalias_alias_lower like '%$allele%') )
     <?/MIVAR>
 
     <?MIVAR NAME=$previous COND="$(XST,$allele)"> and <?/MIVAR>
@@ -394,7 +415,7 @@ Startframes.apg will pass this variables on to the select form.
 	    from $target_table 
 	    where line_type = 'mutant' 
 		  $mut_constraint 
-	    $order_by;" MAXROWS=$limit>
+	    $order_by;">
 	  <?MIVAR NAME=$gene_id>$9<?/MIVAR>
 	  <?MIVAR NAME=$gene_abbrev>$8<?/MIVAR>
 	  <?MIVAR NAME=$name>$1<?/MIVAR>
@@ -505,8 +526,6 @@ Startframes.apg will pass this variables on to the select form.
       <TH align=left>Strain</TH>
       <TH align=left>Current Source(s)</TH>
 
-
-      <!-- < ?MIVAR>where line_type='wild type' $constraint< ?/MIVAR>  use for debugging -->
 
       <?MIVAR NAME=$MI_NULL><?/MIVAR>
       <!--- EXECUTION --->
