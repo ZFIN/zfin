@@ -1966,6 +1966,7 @@ SUBMITTER COMMENTS:
           <option value="mg/ml">mg/ml</option>
           <option value="mM">mM</option>
           <option value="micro molar">micro molar</option>
+	  <option value="N/A">N/A</option>
         </select>
     </td>
     <td>
