@@ -3,7 +3,7 @@
 
 <?MIBLOCK COND="$(XST,$refer)">
 <?MIVAR>$(HTTPHEADER,content-type,application/rtf)<?/MIVAR>
-<?MISQL SQL="select title,authors,source,year(pub_date) as pyear from $target_tables where $constraint $order_clause;">
+<?MISQL SQL="select title,authors,source,year(pub_date) as pyear from publication where $constraint $order_clause;">
 %A $2 
 %D $4
 %T $1
@@ -43,7 +43,7 @@ This page simply generates a REFER format file for the selected pubs. Since we d
 <p>
 
 
-<?MISQL SQL="select count(*)::integer from $target_tables where $constraint;"><?/MISQL>
+<?MISQL SQL="select count(*)::integer from publication $constraint;"><?/MISQL>
 
 <?MIBLOCK COND="$(OR,$(XST,$title),$(XST,$authors),$(XST,$anon1text),$(XST,$year))">
 <big>Criteria used to generate this listing:</big><br>
@@ -63,7 +63,7 @@ This page simply generates a REFER format file for the selected pubs. Since we d
 <p>
 
 
-<?MISQL SQL="select title,authors,source,year(pub_date) as pyear from $target_tables where $constraint $order_clause;">
+<?MISQL SQL="select title,authors,source,year(pub_date) as pyear from publication $constraint $order_clause;">
 $2 ($4) $1. $3.
 <hr width=80%>
 
