@@ -31,8 +31,7 @@ end procedure;
 
 create function populate_anat_display_stage_children(parent_id varchar(50), 
 						     indent int, 
-						     seq_num int, 
-						     hier_code varchar(50), 
+						     seq_num int,
 						     stage_id varchar(80), 
 						     anatomy_name varchar(50))
   returning int;
@@ -48,7 +47,7 @@ create function populate_anat_display_stage_children(parent_id varchar(50),
 
   -- insert record into anatomy_display from passed in values
   insert into anatomy_display_new 
-    values(hier_code,stage_id,seq_num,parent_id,anatomy_name,indent);
+    values(stage_id,seq_num,parent_id,anatomy_name,indent);
 
   if (indent = 1) then
     -- this is a root item for the stage, it needs to be deleted from sic.
@@ -62,8 +61,8 @@ create function populate_anat_display_stage_children(parent_id varchar(50),
   -- call function recursively for each anatitem that is contained by 
   -- the parent anatitem and 
   foreach
-     select anatrel_anatitem_2_zdb_id, anatitem_type_code, anatitem_name, anatitem_name_order
-       into child_id, hier_code, anatomy_name, anatomy_order
+     select anatrel_anatitem_2_zdb_id, anatitem_name, anatitem_name_order
+       into child_id, anatomy_name, anatomy_order
        from anatomy_item, anatomy_relationship, stage_items_contained
       where parent_id = anatrel_anatitem_1_zdb_id
         and anatitem_zdb_id = anatrel_anatitem_2_zdb_id
@@ -72,22 +71,22 @@ create function populate_anat_display_stage_children(parent_id varchar(50),
    order by anatitem_name_order
 
     insert into stage_item_child_list 
-      values(stage_id,parent_id,child_id,anatomy_name,hier_code,anatomy_order);
+      values(stage_id,parent_id,child_id,anatomy_name,anatomy_order);
 
     delete from stage_items_contained where sic_anatitem_zdb_id = child_id;
 
   end foreach -- retrieval of children
 
   foreach
-    select stimchilis_child_zdb_id, stimchilis_anat_name, stimchilis_anat_order, stimchilis_hier_code
-      into child_id, anatomy_name, anatomy_order, hier_code
+    select stimchilis_child_zdb_id, stimchilis_anat_name, stimchilis_anat_order
+      into child_id, anatomy_name, anatomy_order
       from stage_item_child_list
      where stimchilis_stg_zdb_id = stage_id
        and stimchilis_item_zdb_id = parent_id
   order by stimchilis_anat_order --new
 
     execute function populate_anat_display_stage_children( 
-        child_id,child_indent,seq_num,hier_code,stage_id,anatomy_name ) 
+        child_id,child_indent,seq_num,stage_id,anatomy_name ) 
       into seq_num;	
 
   end foreach
@@ -112,7 +111,6 @@ create procedure populate_anat_display_stage(stage_id varchar(50))
   define seqNum int;
   define indent int;
   define distance int;
-  define hierCode, prevCode like anatomy_hierarchy.anathier_code;
   define anatomyId like anatomy_item.anatitem_zdb_id;
   define anatomy_name, lowercase_anatitem_name like anatomy_item.anatitem_name;
   define temp int;
@@ -120,7 +118,6 @@ create procedure populate_anat_display_stage(stage_id varchar(50))
   -- Start the seq_num at zero and indent at one.
   let seqNum = 0;
   let indent = 1;
-  let prevCode = '  ';
   let distance = 0;
   let temp = 0;
 
@@ -140,11 +137,10 @@ create procedure populate_anat_display_stage(stage_id varchar(50))
 
 
   foreach
-    select a1.anatitem_zdb_id, anathier_code, a1.anatitem_name, a1.anatitem_name_lower, s.stg_hours_start --new
-      into anatomyId, hierCode, anatomy_name, lowercase_anatitem_name, temp
-      from stage s, stage_items_contained, anatomy_hierarchy, anatomy_item a1
+    select a1.anatitem_zdb_id, a1.anatitem_name, a1.anatitem_name_lower, s.stg_hours_start --new
+      into anatomyId, anatomy_name, lowercase_anatitem_name, temp
+      from stage s, stage_items_contained, anatomy_item a1
       where sic_anatitem_zdb_id = a1.anatitem_zdb_id
-        and anathier_code = a1.anatitem_type_code
 	and a1.anatitem_start_stg_zdb_id = s.stg_zdb_id
 	and not exists
 	(
@@ -154,24 +150,16 @@ create procedure populate_anat_display_stage(stage_id varchar(50))
 	    and a2.anatitem_zdb_id = anatrel_anatitem_1_zdb_id 
 	    and sic_anatitem_zdb_id = anatrel_anatitem_1_zdb_id
 	)
-	--and anathier_code = 'ST' --new
-      order by s.stg_hours_start --new anathier_code, anatitem_name
+      order by s.stg_hours_start 
 
-    if hierCode = prevCode then
       execute function populate_anat_display_stage_children(
-        anatomyId, indent, seqNum, hierCode, stage_id, anatomy_name ) 
+        anatomyId, indent, seqNum, stage_id, anatomy_name ) 
         into seqNum;
-    else 
-      execute function populate_anat_display_stage_children(
-        anatomyId, 1, seqNum, hierCode, stage_id, anatomy_name ) 
-      into seqNum;
-    end if
 
     delete from stage_item_child_list 
       where stimchilis_stg_zdb_id = stage_id 
         and stimchilis_item_zdb_id = anatomyId; 
-    let prevCode = hierCode;
-
+ 
   end foreach
 
 end procedure;
@@ -409,9 +397,6 @@ create dba function "informix".regen_anatomy()
 	  stimchilis_anat_name		varchar(80)
 	    not null
 	      constraint stimchilis_anat_name_not_null,
-	  stimchilis_hier_code		char(5)
-	    not null
-	      constraint stimchilis_hier_code_not_null,
 	  stimchilis_anat_order		varchar(100)
 	    not null
 	      constraint stimchilis_anat_order_not_null
@@ -505,7 +490,6 @@ create dba function "informix".regen_anatomy()
 
       create table anatomy_display_new
 	(
-	  anatdisp_hier_code		char(2),
 	  anatdisp_stg_zdb_id		varchar(50),
 	  anatdisp_seq_num		integer,
 	  anatdisp_item_zdb_id		varchar(50) 
@@ -626,7 +610,7 @@ create dba function "informix".regen_anatomy()
       insert into all_anatomy_stage_new
     	select anatitem_zdb_id, s1.stg_zdb_id
 	  from stage s1, anatomy_item a1
-	  where anatitem_name_lower not in ('structures', 'not specified')
+	  where anatitem_name_lower <> 'not specified'
 	    and exists 
 		(
 		  select *
@@ -934,27 +918,15 @@ create dba function "informix".regen_anatomy()
       -- primary key
 
       create unique index anatomy_display_primary_key_index
-        on anatomy_display (anatdisp_hier_code,
-			    anatdisp_stg_zdb_id,
+        on anatomy_display (anatdisp_stg_zdb_id,
 			    anatdisp_seq_num)
 	fillfactor 100
 	in idxdbs1;
       alter table anatomy_display add constraint 
-        primary key (anatdisp_hier_code, anatdisp_stg_zdb_id, anatdisp_seq_num)
+        primary key (anatdisp_stg_zdb_id, anatdisp_seq_num)
 	constraint anatomy_display_primary_key;
 
       -- foreign keys
-
-      let errorHint = "anatdisp_hier_code_index";
-      create index anatdisp_hier_code_index
-        on anatomy_display (anatdisp_hier_code)
-	fillfactor 100
-	in idxdbs1;
-      alter table anatomy_display add constraint
-        foreign key (anatdisp_hier_code)
-	references anatomy_hierarchy
-	  on delete cascade
-	constraint anatdisp_hier_code_foreign_key;
 
       let errorHint = "anatdisp_stg_zdb_id_index";
       create index anatdisp_stg_zdb_id_index
