@@ -113,9 +113,8 @@
 	function doit(attr,attr_type,print_name) {
 		doit(attr,attr_type,print_name,'');
 	}
-
 	function doit(attr,attr_type,print_name,xtra_param) {
-		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerupdate.apg&OID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name+'&target_table=$target_table');
+		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerupdate.apg&OID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name+'&xtra_param='+xtra_param+'&target_table=$target_table');
 	}
 
 	function Delete_listitem(item_name,item_id) {
@@ -373,7 +372,7 @@
   <?/MIVAR>
   $(IF,$(AND,$(NXST,$UPDATE),$(>,$MI_CURRENTROW,1)),;) $alias
 
-  <?MIBLOCK COND="$(XST,$aliasId,)">	
+  <?MIBLOCK COND="$(XST,$aliasId)">	
       <?MISQL SQL="select WebExplode(object,'dataId=$aliasId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
   <?/MIBLOCK>
 	
@@ -397,27 +396,22 @@
 
 <?MIBLOCK COND="$(EQ,$display_sequence_similarity,true)">
 
-  <?MIBLOCK COND="$(EQ,pigs,fly)">
-    <!-- add doesn't work for these, because the update code further down the chain
-         only knows to create a data_alias, it isn't smart enough to populate it's
-         dalias_group field correctly  -->
-    <?MIVAR COND="$(XST,$UPDATE)">
+  <?MIVAR COND="$(XST,$UPDATE)">
       <INPUT TYPE=button 
         value=Add
-        onClick="doit('dalias_alias','text','Alias','sequence_similarity')">
-    <?/MIVAR> 
-  <?/MIBLOCK>
+        onClick="doit('dalias_alias','text','Alias','sequence+similarity')">
+  <?/MIVAR> 
+ 
+  <b>Sequence Similarities:</b>
 
-<b>Sequence Similarities:</b>
-
-<?MISQL SQL="
+ <?MISQL SQL="
   select dalias_alias, dalias_zdb_id
     from data_alias
     where dalias_data_zdb_id = '$OID' and dalias_group = 'sequence similarity';">
 
   <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(XST,$UPDATE))">
     <br><b>Add Reference:</b> 
-    Previous name:<input type=text name=attrib_ssprevname>	
+    Sequence similarity:<input type=text name=attrib_ssprevname>	
     Reference:<input type=text name=attrib_ssprevname_pubid>
     <input type=button value="Add" onClick=new_attrib_ssprevname();> 
   <?/MIVAR>

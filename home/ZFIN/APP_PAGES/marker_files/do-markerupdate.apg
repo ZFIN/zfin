@@ -129,12 +129,11 @@ COND="$(AND,$(NC,$attr,dalias_alias),$(NC,$attr,putgene_comments),
         values 
 	  ('$dalias_zdb_id');">
     <?/MISQL>
-
     <?MISQL SQL="
       insert into data_alias  
 	  (dalias_zdb_id, dalias_data_zdb_id, dalias_alias, dalias_group)
         values 
-	  ('$dalias_zdb_id', '$OID', '$new_value', '$xtra_param');">
+	  ('$dalias_zdb_id', '$OID', '$new_value', '$(URLDECODE,$xtra_param)');">
     <?/MISQL>
   <?/MIBLOCK>
   <?MISQL COND="$(OR,$(EC,$attr,putgene_comments),
@@ -320,24 +319,24 @@ entry_time)
         
         <?/MIBLOCK> <!-- mrkr_abbrev is valid for mrel_mrkr_1 -->
 
-      <?MISQL SQL="
+      <?MISQL SQL=" 
   	   select * from marker, marker_relationship
            where mrkr_abbrev = '$old_value'	
              and mrel_mrkr_2_zdb_id = mrkr_zdb_id
                  ;">
-      <?/MISQL>	  
-        <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">   
+      <?/MISQL>	   
+        <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">    
 
-        <?MISQL SQL="
+        <?MISQL SQL=" 
 	   select mrel_zdb_id 
 	     from marker_relationship, marker
 	    where mrel_mrkr_1_zdb_id = '$OID'
 	      and mrel_mrkr_2_zdb_id = mrkr_zdb_id
 	      and mrkr_abbrev = '$old_value'
 	    ;">
-	  <?MIVAR>$(SETVAR,$data_value,$1)<?/MIVAR>
+	  <?MIVAR>$(SETVAR,$data_value,$1)<?/MIVAR> 
         <?/MISQL>	
-        <?MIBLOCK COND=$(XST,$data_value)">
+        <?MIBLOCK COND="$(XST,$data_value)">
           <?MISQL SQL="
                   select * from record_attribution
                   where recattrib_data_zdb_id = '$data_value'

@@ -91,7 +91,6 @@ function make_correction(mrkr_id,old_v,attr) {
       </font></center>
     <?/MIVAR>
     <p>
-
     <FORM NAME="updater" ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" METHOD="post">
       <?MIVAR>
 	<INPUT TYPE=hidden name=MIval Value=aa-do-markerupdate.apg>
@@ -100,12 +99,11 @@ function make_correction(mrkr_id,old_v,attr) {
 	<INPUT TYPE=hidden name=attr Value=$attr>
 	<INPUT TYPE=hidden name=attr_type Value=$attr_type>
 	<INPUT TYPE=hidden name=target_table Value=$target_table>
-	<INPUT TYPE=hidden name=xtra_param Value=$xtra_param>
+	<INPUT TYPE=hidden name=xtra_param Value=$(URLENCODE,$xtra_param)>
       <?/MIVAR>
 
       <TABLE width=100%>
 	<TR>
-
 	<!-- If you are replacing a TEXTAREA field -->
 	<?MIBLOCK COND="$(EC,$attr_type,textarea)">
 	  <?MIVAR>
