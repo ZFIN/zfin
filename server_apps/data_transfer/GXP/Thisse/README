@@ -78,7 +78,7 @@
 
 	   > thisseData2Unl.sh <your_db_name>
 
-    $resulted files$:   
+    $result files$:   
 			probes.unl
 			expression.unl 
 			keywords.unl 
@@ -86,7 +86,7 @@
 			authors.unl 
 			(acc_imClone.unl)
 			(is_gene.unl)
-			(blast2zfin.out)
+			(blast2zfin.scnd)
 	
     $description$ :
 	    This master script calls parseThisse.pl and  nameClone.pl first, and generates a group of .unl file for loading. If there is unknown accession number, it will blast the accessions against ZFIN sequence database, use blast2tab.pl to convert the results to table format while filter out matches with <90% identity. The blast2zfin.fst file is then feeded into filterBlast.pl which exams the results and write qualified matches into is_gene.unl, and the rest to blast2zfin.scnd for manual curation. 
@@ -100,35 +100,73 @@
 		   gxp_load_quantity_check.sql load_gxp.sh get_fr_gene_list.sql
 		   getStat4Load.sql
 
-    $command$    :
+    $command$ :
 
 	  > load_gxp.sh <db_name> <lab_name> [release_type]
 
           lab_name   :     Thisse /Talbot
           release_type:    fr/cb
 
+	$result files$  :  (FR only)
+		  fr_gene.txt     FR# to ZFIN gene, cDNA translation table
+		  statistics.txt  
+       Send the two files to Ceri. 
+
     $description$ :
 	  This master script first calls pre_gxp_load.sql to load the files into a set of tables and conduct quality check with zfin db. Errors are written to separate .err file. The script would exit on any error with temp tables cleaned up. (Error file description is provided below, read first one at least!) Upon success, it executes the gxp_load_func.sql and then uses the SPL function with a set of predefined parameters to load the data into database. If the load fails with exit value "1", check /tmp/gxp_load_exception for reasons. If the load successes with "0", the gxp_load_quantity_check.sql would generate related table contents comparison report. Please go over the report. If everything looks good, answer yes to the prompt to clean up all the temporary tables, otherwise, keep the table for diagnose and run post_gxp_load.sql later.
+
+
+----------------
+-- Post load
+----------------
+
+    $note$ : Thisse FR ZGC only 
+    $executables$: /research/zusers/peirans/GXP/Thisse/redundance_check.sh
+		copy it to your execution directory where probes.unl, blast2tab.unl and filterBlast.pl reside.
+    $command$ :
+
+		> redundance_check.sh <dbname>
+
+	$result files$  : 	
+			is_gene.unl
+			blast2zfin.scnd
+	 
+    $description$ :
+		Start from FR5, we run BLAST for redundant check after Thisse FR ZGC data is loaded. This effort is expected to be replaced by ZFIN redundance pipeline in Feb/2005, so it is not committed into CVS. Please send is_gene.unl and blast2zfin.scnd to Ceri after the execution. 
+
 
 ---------------------
 -- Appendix
 ---------------------
 
  Do a "ls -l *.err";
-    1) prb_already_has_xpat.err: this might be ok, exam the assay name, fish line and publication to see if that is a real duplication. Better to go over by curators. If that is fine, and no other errors, comment out the exit code from load_gxp.sh to ignore this report.   
-    2) unknown_probelib.err    : there might be an alias library name in zfin
-    #3) clone_data_conflict.err: vector conflict, or library conflict, or polymerase conflict if exist, or digest conflict if exist. Thisse has a lot vector conflict with ZGC, we stick with ZGC, which makes this check unnessicery. 
-    4) prb_without_xpat.err    : ask curator if we want to only load clone info or delete the entry.
-    5) dup_xpat.err : xpat data with same clone name, same start and end stage, delete one. 
-    6) xpat_stg_unknown.err: stage not in zfin stage table. (not for thisse but talbot)
-    7) keywords.undef.err: keywords not in anatomical dictionary.
-    8) keywords_stgerr.err: fail anatitem_overlaps_stg_window check
-    9) kwd_xpat_unconsistent.err: keyword's stage not in xpat file
-    10) fimg_preparation_unknown.err
-    11) fimg_view_unknow.err
-    12) img_xpat_unconsist.err: image stage not in xpat file
-    13) suthor_dup.err: duplicate entry in author file
-    14) non_zfin_author.err:  
+    1) exist_same_xpat_experiment_from_directsub.err: 
+		When there exists an expression experiment record using the same probe and is also from direct submission, it is highly possible to be from the same submission. Upon this error, check if the existing one has the same submission source, if yes, send to curator to contact the source for correction. Otherwise, ignore this error by commenting out the exit code from load_gxp.sh after all the other errors are fixed. 
+		We have seen this error a couple times, it either requires a deletion of misplaced expression data or a switch of the expression data from one clone to another. Peiran has a small SQL file to deal with this, and will create a SPL routine into CVS.
+ 
+    2) unknown_probelib.err  : there might be an alias library name in zfin    
 
-    *) xpatstg_withno_kwd_img.del: there are default stages in Thisse template. Identify them by exp_found "t", comments "No comments", no keywords and no images.  Should we also delete no annotation, no image data? we got some from Talbot lab. 
+    3) prb_without_xpat.err  : ask curator if we want to only load clone info or delete the entry.
+
+    4) dup_xpat.err : xpat data with same clone name, same start and end stage, delete one. 
+
+    5) xpat_stg_unknown.err: stage not in zfin stage table. (not for thisse but talbot)
+
+    6) keywords.undef.err: keywords not in anatomical dictionary.
+
+    7) keywords_stgerr.err: fail anatitem_overlaps_stg_window check
+
+    8) kwd_xpat_unconsistent.err: keyword's stage not in xpat file
+
+    9) fimg_preparation_unknown.err
+
+    10) fimg_view_unknow.err
+
+    11) img_xpat_unconsist.err: image stage not in xpat file
+
+    12) suthor_dup.err: duplicate entry in author file
+
+    13) non_zfin_author.err: the author doesn't have an existing ZFIN person record
+
+    *) xpatstg_withno_kwd_img.del: There are default stages defined in Thisse template. Occasionally some are left in with no data added. The script identify them by exp_found as "t", comments as "No comments", no keywords and no images. Those are not loaded.  
 
