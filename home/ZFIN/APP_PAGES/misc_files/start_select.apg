@@ -21,7 +21,7 @@ You may also optionally pass many other constraints on the upcoming selection th
 <?MIVAR COND="$(NXST,$constraint)" NAME=$constraint><?/MIVAR>
 
 <!-- special constraints to possibly pass -->
-<?MIVAR COND="$(XST,$stock)" NAME=$constraint>&stock=$stock<?/MIVAR>
+<?MIVAR COND="$(EC,$select_from,fish)" NAME=$constraint>&line_type=mutant<?/MIVAR>
 <?MIVAR COND="$(XST,$return_rec)" NAME=$constraint>&return_rec=$return_rec$constraint<?/MIVAR>
 
 <html>
