@@ -138,7 +138,7 @@ $(IF,$(>,$(POSITION,$rtype,locus),0),
 		<?MIVAR>$(SETVAR,$sum,$(+,$sum,$count))<?/MIVAR>
 	    <?/MIBLOCK>
 	<?/MISQL>
-	($(FIX,$sum) total)	
+	<?MIVAR>($(FIX,$sum) total)<?/MIVAR>	
 <?MIELSE COND="$(AND,$(NXST,$attribtype),$(=,$(POSITION,$OID,LOCUS),0))">
 	
   <?MISQL SQL="
