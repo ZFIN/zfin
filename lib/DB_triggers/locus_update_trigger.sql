@@ -7,9 +7,6 @@ create trigger locus_update_trigger
 	execute function scrub_char(new_locus.locus_name)
 	  into locus_name,
         execute function zero_pad(new_locus.abbrev) 
-	  into locus.locus_abbrev_order,
-	execute procedure p_locus_name_abbrev_equal (new_locus.locus_name,
-							new_locus.abbrev,
-							new_locus.zdb_id)
+	  into locus.locus_abbrev_order
     );
 
