@@ -34,7 +34,6 @@ grant.html\
 husbandry.html\
 links.html\
 marker.html\
-pcr.js\
 provider.html\
 reasons.html\
 request.html\
@@ -49,8 +48,6 @@ requestESTs.txt\
 requestThankyou.html\
 submit.txt\
 submitMTAdefined.html\
-submitMTApdf.html\
-submitPCR.html\
 submitSuccess.html\
 submitTerms.html\
 submitTerms2.html\
