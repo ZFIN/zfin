@@ -17,6 +17,7 @@ OPTIONAL VARS:
   $delete_note :: the zdb_id of a publication note
   $reassignTopic :: topic name
   $reassignCurator :: curator ZDB-ID to assign $reassignTopic
+  $calling_apg :: url to recreate the state of the calling page
 
 <?/MICOMMENT>
 
@@ -82,9 +83,7 @@ OPTIONAL VARS:
     <?MISQL SQL="DELETE FROM publication_note WHERE pnote_zdb_id = '$delete_pnote';"><?/MISQL>
   <?/MIBLOCK>
   
-  <?MIVAR>
-    <TITLE>ZFIN Curate Pub: $title</TITLE>
-  <?/MIVAR>
+  
 
   <SCRIPT>
       function replaceLocation(url) {
@@ -173,8 +172,20 @@ OPTIONAL VARS:
         }
         return true;
       }
+      
+    <?MIVAR COND=$(XST,$calling_apg)">
+      window.replaceLocation("$calling_apg");
+    <?/MIVAR>
+  
   </SCRIPT>
 
+
+  
+  
+  <?MIVAR>
+    <TITLE>ZFIN Curate Pub: $title</TITLE>
+  <?/MIVAR>
+  
   <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
   
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
@@ -196,8 +207,11 @@ OPTIONAL VARS:
     
   <FORM ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" METHOD=post NAME=upload  
         ENCTYPE="multipart/form-data">
-    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-pubcuration.apg">
-    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+    <?MIVAR>
+      <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-pubcuration.apg">
+      <INPUT TYPE=HIDDEN NAME=OID VALUE="$OID"> 
+      <INPUT TYPE=HIDDEN NAME=calling_apg VALUE="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID">
+    <?/MIVAR>
  
   
 <?MICOMMENT> 
@@ -226,17 +240,11 @@ OPTIONAL VARS:
 
 <!--  ALERT (2003-08-01) PDF's uploaded to chroix are not the same file size. 
       Potential issues with Informix. Retest after Informix upgrade.
+-->
 
     <tr>
       <td>
           <b>File:</b>
-          <?MIVAR COND="$(=,0,1)">
-          <?MISQL SQL="SELECT LOTOFILE(pub_file,'<!--|ROOT_PATH|-->/home/$ZDB_ident.pdf!','server')
-                       FROM publication
-                       WHERE zdb_id = '$OID'">
-            <a href="/$ZDB_ident.pdf">(PDF)</a>
-          <?/MISQL>
-          <?/MIVAR>
          <?MIBLOCK COND="$(NC,$pub_file,NULL)">
            <?MIVAR>
              <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$pub_file&MItypeObj=application/pdf" target=new>PDF</a>
@@ -249,7 +257,6 @@ OPTIONAL VARS:
            <input type=submit value=Upload>
       </td>
     </tr>
--->
 
   </table>
   
@@ -457,14 +464,17 @@ OPTIONAL VARS:
 
 <P>
   <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method=post name=new_notes>
+    <?MIVAR>
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-pubcuration.apg">
-    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
-        
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="$OID"> 
+    <INPUT TYPE=HIDDEN NAME=calling_apg VALUE="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID">
+    <?/MIVAR>
+    
   <font color="black"><b> Notes </b></font><a name=notes></a>  
 
 
-  <br><TEXTAREA NAME="pnote" rows=4 cols=70 wrap=off></TEXTAREA> 
-  <br><input type=submit value="New Note" onClick="return isValidTextArea(window.new_notes.pnote)";> 
+  <br><TEXTAREA NAME="pnote" rows="4" cols="70" wrap="virtual"></TEXTAREA> 
+  <br><input type="submit" value="New Note" onClick="return isValidTextArea(window.new_notes.pnote)";> 
   
   </form>
   

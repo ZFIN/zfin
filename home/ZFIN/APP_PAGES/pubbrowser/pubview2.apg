@@ -126,9 +126,16 @@ ERROR -- something bad happened -- no OID passed in!
 <p>
 <?/MIVAR>
 
-<?MIVAR COND="$(AND,$(EC,$AUTHORIZED,root),$(NC,$pub_file,NULL))">
+<?MIVAR COND="$(EC,$AUTHORIZED,root)">
   <B>FILE:</B>
-  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$pub_file&MItypeObj=application/pdf" target=$OID>PDF</A>
+  <?MIVAR COND="$(NC,$pub_file,NULL)">
+    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$pub_file&MItypeObj=application/pdf" target=$OID>PDF</A>
+  <?/MIVAR>
+  <?MIVAR COND="$(EC,$pub_file,NULL)">
+    Upload a PDF from the 
+    <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID">Curation</a> 
+    page.
+  <?/MIVAR>
   <P>
 <?/MIVAR>
 
