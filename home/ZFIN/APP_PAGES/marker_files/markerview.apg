@@ -1021,7 +1021,7 @@ None submitted.
         <?MIVAR><TD>$abbrev</TD><TD bgcolor=$highlight></TD><?/MIVAR>
   	<?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
 	  <?MIBLOCK INDEX=$item FOREACH=$oevcount>
-	    <TD align=center><b>*</b></TD>
+	    <TD><b>*</b></TD>
 	  <?/MIBLOCK>
 	<?/MIBLOCK>
 	</TR>
@@ -1037,7 +1037,7 @@ None submitted.
 	     order by oevcode_order
 	     ;">
        <?MIVAR>
-       $(IF,$(>,$(POSITION,$1,$lastitem),0),"<TD align=center><b>*</b></TD>", "<TD></TD>")
+       $(IF,$(>,$(POSITION,$1,$lastitem),0),"<TD><b>*</b></TD>", "<TD></TD>")
        <?/MIVAR>
      <?/MISQL>
     </TR><TR>
@@ -1066,10 +1066,10 @@ None submitted.
 	     order by oevcode_order
 	     ;">
        <?MIVAR>
-       $(IF,$(>,$(POSITION,$1,$lastitem),0),"<TD align=center><b>*</b></TD>", "<TD></TD>")
+       $(IF,$(>,$(POSITION,$1,$lastitem),0),"<TD><b>*</b></TD>", "<TD></TD>")
        <?/MIVAR>
   <?/MISQL>
-  </TR>
+  </TR> 
   
   <!-- Query for references -->
   <?MIBLOCK COND="$(=,$hasEv,1)">
@@ -1086,7 +1086,7 @@ None submitted.
 		oevdisp_organism_list, oevcode_order 
 	order by oevcode_order,oevdisp_organism_list
 	;">
-    <?MIVAR><TD align=center><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$2&rtype=gene&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev">$1</A></TD><?/MIVAR>
+    <?MIVAR><TD><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$2&rtype=gene&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev">$1</A></TD><?/MIVAR>
    <?/MISQL>
    </TR>
   <?/MIBLOCK>
