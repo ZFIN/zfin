@@ -118,27 +118,16 @@ $(IF,$(>,$(POSITION,$rtype,locus),0),
 <font size=+2><b>PUBLICATIONS</b></font>
 <?MIBLOCK COND="$(AND,$(NXST,$attribtype),$(>,$(POSITION,$OID,LOCUS),0))">
       <?MISQL SQL="
-		select f.zdb_id 
-	 	  from fish f, locus l
+		select count(distinct recattrib_source_zdb_id) 
+	 	  from fish f, locus l, record_attribution
 	 	 where l.zdb_id = '$OID'
 		   and f.locus = l.zdb_id 
-		;">
-	   <?MIVAR NAME=$fishId>$1<?/MIVAR>
-	   <?MISQL SQL="
- 	 	select count(*) 
- 		 from record_attribution
- 	 	where recattrib_data_zdb_id = '$fishId'
-   	 	  and get_obj_type(recattrib_source_zdb_id) = 'PUB';
-  		">		
-		<?MIVAR NAME=$count>$1<?/MIVAR>
-	    <?/MISQL>	   	
-	    <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
-		<?MIVAR NAME=$sum>$count<?/MIVAR>
-	    <?MIELSE>
-		<?MIVAR>$(SETVAR,$sum,$(+,$sum,$count))<?/MIVAR>
-	    <?/MIBLOCK>
-	<?/MISQL>
-	<?MIVAR>($(FIX,$sum) total)<?/MIVAR>	
+		   and f.zdb_id = recattrib_data_zdb_id
+		;">	
+		<?MIVAR NAME=$sum>$1<?/MIVAR>
+	<?/MISQL>	   	
+	   
+      <?MIVAR>($(FIX,$sum) total)<?/MIVAR>	
 <?MIELSE COND="$(AND,$(NXST,$attribtype),$(=,$(POSITION,$OID,LOCUS),0))">
 	
   <?MISQL SQL="
@@ -193,19 +182,14 @@ $(IF,$(>,$(POSITION,$rtype,locus),0),
 <table>
 <?MIBLOCK COND="$(AND,$(NXST,$attribtype),$(>,$(POSITION,$OID,LOCUS),0))">
 
-  <?MISQL SQL="
-	select f.zdb_id 
- 	  from fish f, locus l	
- 	 where l.zdb_id = '$OID'
-	   and f.locus = l.zdb_id 
-	;">
-    <?MIVAR NAME=$fishId>$1<?/MIVAR>
     <?MISQL SQL="
-  	select title, zdb_id, year(pub_date) as pyear, authors, source, 
+  	select distinct title, p.zdb_id, year(pub_date) as pyear, authors, source, 
 	 	lower(authors)  
-   	 from record_attribution, publication 
-    	where recattrib_data_zdb_id = '$fishId'
-      	and recattrib_source_zdb_id = zdb_id 
+   	  from record_attribution, publication p, fish f, locus l 
+     	 where l.zdb_id = '$OID'
+	   and f.locus = l.zdb_id 
+	   and recattrib_data_zdb_id = f.zdb_id
+      	   and recattrib_source_zdb_id = p.zdb_id
     	order by 6 asc;">
   	$(IF,$(XST,$UPDATE),"<TD><font size=-1><input type=button value=delete onClick=Delete_listitem('publication','"$2"')></font></TD>")
   	<TR>
@@ -218,7 +202,6 @@ $(IF,$(>,$(POSITION,$rtype,locus),0),
   	<TR></TR><TR></TR>
 
       <?/MISQL>
- <?/MISQL>
 
 <?MIELSE COND="$(AND,$(NXST,$attribtype),$(=,$(POSITION,$OID,LOCUS),0))">	
 <?MISQL SQL="
