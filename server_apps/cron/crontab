@@ -71,6 +71,11 @@
 #  2. We actually start looking at the output.
 #13 15 * * 0 <!--|ROOT_PATH|-->/server_apps/WebSiteTools/run.checklinks
 #
+# Monday
+# --------
+# weely run of accession2gene/clone file generation
+15 01 * * 1 <!--|ROOT_PATH|-->/server_apps/data_transfer/BLAST/push4genomix.pl
+#
 # Tuesday
 # --------
 # weely run of GO file generation
