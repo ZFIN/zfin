@@ -19,7 +19,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/lib/DB_functions
 
-SUBDIRS = Java SPL zextend
+SUBDIRS = C Java SPL zextend
 
 
 # ---------------  Production Rules  ------------------------------------
