@@ -94,7 +94,7 @@ insert into meow_exp1
 
 --  Add in  unmapped genes
 insert into meow_exp1 
-  select mrkr_zdb_id,mrkr_name,mrkr_abbrev,'0','' 
+  select mrkr_zdb_id,mrkr_name,mrkr_abbrev,'0','0'
     from marker
    where mrkr_type like 'GENE%'
      and mrkr_zdb_id not in (
@@ -117,6 +117,9 @@ insert into meow_exp1
                  and mrel_type = 'clone contains gene'
 		);
 
+update meow_exp1
+	set source_zdb_id = null
+	where source_zdb_id = '0';
 
 --  Okay, now write it to a file
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_genes.txt' 
@@ -276,6 +279,61 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zdb_history.txt'
 
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/xpat.txt'
  DELIMITER "	"  select xpat_gene_zdb_id, xpat_zdb_id from expression_pattern;
+
+--- generate mapping data for NCBI
+ 
+UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/panels.txt' 
+  DELIMITER "	" select zdb_id, abbrev, metric from panels; 
+
+UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/sanger_mappings.txt' 
+  DELIMITER "	" select distinct pm.target_id, pm.zdb_id, pm.abbrev, pm.OR_lg, pm.lg_location,
+        case
+            when target_id in('ZDB-REFCROSS-980521-11','ZDB-REFCROSS-000320-1')
+                then 1
+            when target_id = 'ZDB-REFCROSS-990426-6'
+                then 2
+            when target_id = 'ZDB-REFCROSS-990707-1' 
+                and owner in ('ZDB-PERS-971016-22','ZDB-PERS-971205-2')
+                then 2
+            else 3
+        end
+        from paneled_markers pm, outer mapped_marker mm  
+        where pm.zdb_id[1,8] not in ('ZDB-FISH', 'ZDB-LOCU') 
+        and mm.marker_id   == pm.zdb_id
+        and mm.refcross_id == pm.target_id
+        and mm.or_lg       == pm.or_lg
+        and mm.lg_location == pm.lg_location
+        and mm.map_name    == pm.map_name
+        and mm.metric      == pm.metric
+        order by 1;
+
+UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/mappings.txt' 
+  DELIMITER "	" select distinct target_id, zdb_id, abbrev, OR_lg, lg_location from paneled_markers  where (zdb_id not like '%FISH%') and (zdb_id not like '%LOCUS%') order by 1;
+
+-- wait to see what to do with mutants  union select distinct a.target_id, b.locus, c.abbrev, a.OR_lg, a.lg_location from paneled_markers a, fish b, locus c where a.zdb_id like '%FISH%' and a.zdb_id = b.zdb_id and b.locus = c.zdb_id
+
+--- generate file with zmap mapping data
+UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zmap_mappings.txt' 
+ DELIMITER "	"  select zdb_id, abbrev, abbrevp, panel_id, or_lg, lg_location from zmap_pub_pan_mark;
+
+UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/markers.txt' 
+  DELIMITER "	" select distinct zdb_id, abbrev from paneled_markers;
+
+UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/marker_alias.txt' 
+
+  DELIMITER "	" select distinct mrkr_zdb_id, dalias_alias from marker , data_alias where mrkr_zdb_id = dalias_data_zdb_id order by 1;
+
+--- generate alias file for Sanger
+
+UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/sanger_alias.txt' 
+DELIMITER "	" select dblink_acc_num[1,20]ottdarg,mrkr_zdb_id[1,25] zdbid ,mrkr_abbrev symbol,
+dalias_alias alias
+ from db_link,marker, outer data_alias
+ where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-14'
+ and dblink_linked_recid = mrkr_zdb_id
+ and dblink_linked_recid = dalias_data_zdb_id
+order by 1
+;
 
 --- generate marker relationship file
 
