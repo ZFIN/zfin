@@ -13,8 +13,6 @@ new_value -- the new value to stick in the column
 old_value -- the previous value
 xtra_param -- to pass an extra parameter
 comments -- reasons for doing update 
-target_table -- either anon_marker or gene, depending on what you're 
-updating
 info -- optional value used to pass in additional info
 dataOID -- the zdbid of the attributed item
 caller -- the page the initiate the update function 
@@ -49,7 +47,7 @@ COND="$(OR,$(EC,$attr,putgene_putative_gene_name),$(EC,$attr,putgene_comments),$
   <?/MISQL>
 <?MIELSE>
   <?MISQL SQL="
-    select WebExplode(object,'permission=owns&rtype=$target_table') 
+    select WebExplode(object,'permission=owns&rtype=marker') 
       from webPages 
       where ID='aa-secure_navigation.apg';">
     $1
@@ -93,14 +91,14 @@ comments,
   <?MIBLOCK COND="$(AND,$(NC,$attr,dalias_alias),
                       $(NC,$attr,putgene_comments),
 		      $(NC,$attr,putgene_putative_gene_name),
-                      $(NC,$attr,comments),
+                      $(NC,$attr,mrkr_comments),
 		      $(OR,$(EC,$attr_type,text),
 		           $(EC,$attr_type,textarea)))">
 
     <?MISQL SQL="
-      update $target_table 
+      update marker
         set $attr='$new_value' 
-        where zdb_id='$OID';">
+        where mrkr_zdb_id='$OID';">
       <?MIBLOCK COND="$(EC,$info,nomenclature)">
         <?MIVAR NAME=comments COND="$(EC,$comments,NULL)">none<?/MIVAR>
         <?MISQL SQL="select max(mhist_date) from marker_history where mhist_mrkr_zdb_id = '$OID'">
@@ -575,6 +573,14 @@ colattrib_source_zdb_id)
      <?/MISQL>
   <?/MIBLOCK>
   
+  <?MIBLOCK COND="$(EC,$attr,mrkr_comments)">
+    <?MISQL SQL="
+      update marker
+        set mrkr_comments = '$new_value'
+        where mrkr_zdb_id = '$OID';">
+    <?/MISQL>
+  <?/MIBLOCK>
+
   <!-- Special case for updating Nomenclature Comments -->
   <?MIBLOCK COND="$(EC,$attr,comments)">
     <?MIVAR NAME=SQL1>update $target_table set $info$attr = '$new_value' where $info<?/MIVAR>
@@ -630,7 +636,7 @@ colattrib_source_zdb_id)
 
 
     <!----------- do the update for selected species --------------> 
-    <?MIBLOCK COND="$(XST,$commit_update)" >
+    <?MIBLOCK COND="$(XST,$commit_update)">
 
       <?MISQL SQL="
 	select zdb_id
