@@ -52,6 +52,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/marker_alias.txt'
 
 create table ortho_exp (
   gene_id varchar(50),
+  ortho_id varchar(50),
   zfish_name varchar(120),
   zfish_abbrev varchar(20),
   organism varchar(30),
@@ -65,7 +66,9 @@ create table ortho_exp (
 );
 
 insert into ortho_exp 
-  select c_gene_id, mrkr_name, mrkr_abbrev, organism, ortho_name, ortho_abbrev,NULL::varchar(50),NULL::varchar(50),NULL::varchar(50),NULL::varchar(50),NULL::varchar(50)
+  select c_gene_id, zdb_id, mrkr_name, mrkr_abbrev, organism, ortho_name, 
+         ortho_abbrev, NULL::varchar(50), NULL::varchar(50), NULL::varchar(50),
+         NULL::varchar(50),NULL::varchar(50)
     from orthologue,marker
 	where c_gene_id = mrkr_zdb_id;
 
@@ -73,32 +76,34 @@ update ortho_exp
 	set flybase = (select acc_num from db_link, orthologue o
 	   where db_name = 'FLYBASE'
 		and o.zdb_id = linked_recid
-		and gene_id = c_gene_id);
+		and ortho_id = o.zdb_id);
 
 update ortho_exp
-	set locuslink = (select acc_num from db_link
+	set locuslink = (select acc_num from db_link, orthologue o
 	   where db_name = 'LocusLink'
-		and gene_id = linked_recid);
+		and o.zdb_id = linked_recid
+		and ortho_id = o.zdb_id);
 		
 
 update ortho_exp
 	set mgi = (select acc_num from db_link , orthologue o
 	   where db_name = 'MGI'
 		and o.zdb_id = linked_recid
-		and gene_id = c_gene_id);	
+		and ortho_id = o.zdb_id);	
 		
 	
 update ortho_exp
 	set omim = (select acc_num from db_link, orthologue o
 	   where db_name = 'OMIM'
-		and gene_id = linked_recid);
+		and o.zdb_id = linked_recid
+		and ortho_id = o.zdb_id);
 
  
 update ortho_exp
 	set sgd = (select acc_num from db_link, orthologue o 
 	   where db_name = 'SGD'
 		and o.zdb_id = linked_recid
-		and gene_id = c_gene_id);	
+		and ortho_id = o.zdb_id);	
 
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/fly_orthos.txt' 
