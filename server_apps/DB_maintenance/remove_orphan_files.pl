@@ -16,9 +16,6 @@
 
 use MIME::Lite;
 
-$dir = "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/";
-chdir "$dir";
-
 # set the environmental variables
 
 $ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
