@@ -271,14 +271,14 @@ function call_reset() {
 
 	  SELECT anatitem_name, anatitem_zdb_id,'<I>(abbrev match)</I> '
   	  FROM anatomy_item
-	  WHERE lower(anatitem_abbrev) = lower('$part')
+	  WHERE anatitem_abbrev_lower = lower('$part')
 	
 	  UNION
 
  	  SELECT anatitem_name, anatitem_zdb_id,'<I>(synonym match)</I> '
 	  FROM data_alias, anatomy_item 
 	  WHERE dalias_data_zdb_id = anatitem_zdb_id
-  	    and lower(dalias_alias) = lower('$part')
+  	    and dalias_alias_lower = lower('$part')
 
 	  ORDER BY 1
      ;">
