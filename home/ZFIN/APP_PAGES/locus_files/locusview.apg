@@ -85,7 +85,7 @@
 
     <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
       <form><center><font size=4>
-	<?MIVAR> <b>Invalid ZFIN ID.<?/MIVAR>
+	<?MIVAR> <b>Invalid ZFIN ID.</b><?/MIVAR>
       </form>
     <?/MIBLOCK>
 
@@ -127,7 +127,7 @@
             onClick="doit('locus_name','text','Locus+Name')">
 	<?/MIVAR> 
 	<?MIVAR>
-	  <B> <FONT SIZE=6>Locus: <i>$name</i>
+	  <B> <FONT SIZE=6>Locus: <i>$name</i></B>
 	<?/MIVAR>
 
 	<?MIVAR COND="$(XST,$UPDATE)">
@@ -141,9 +141,11 @@
 
         <?MIBLOCK COND="$(AND,$(NC,$abbrev,NULL),$(NC,$abbrev,xxx),$(NC,$abbrev,none))">
 	  <?MIVAR>
-	    <i>($abbrev)</i></FONT></b>
+	    <b><i>($abbrev)</i></b>
 	  <?/MIVAR>
         <?/MIBLOCK>
+
+        </FONT>
 
 	<!-- I PURPOSEFULLY DO NOT ALLOW UPDATING OF NAME/ABBREV because 
 	  -- this information is central to identity of the record
@@ -220,7 +222,7 @@
 	<p>
 	<font size=+1>
 	<?MIVAR>
-	  <b>Summary of <i>$name</i> alleles:</B>
+	  <b>Summary of <i>$name</i> alleles:</b>
         <?/MIVAR>
         </font> 
         <font size=-1>(Click allele to see details)</font>
