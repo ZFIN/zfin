@@ -120,7 +120,7 @@
   <?MIBLOCK COND="$(NC,$organism,$lastitem)">
 	<TD>
         <?MIVAR>  
-        $(IF,$(AND,$(NC,$lastitem,$organism),$(XST,$UPDATE)),"<input type=button value=edit onClick=edit_ortho('"$zdb_id"')>",)
+        
         <b>$organism</b></TD><TD>$ortho_abbrev</TD><TD>
         <?/MIVAR>
   <?/MIBLOCK>
