@@ -1,9 +1,10 @@
-<!--do it all in the gomodify file 
+<?MICOMMENT>
+do it all in the gomodify file 
 
 Expected vars:
 OID:  		the marker go evidence zdb id
 
--->
+<?/MICOMMENT>
 
 <HTML>
 <HEAD>
@@ -192,15 +193,13 @@ function call_done() {
 
 
    <p>            
-   <select name=infdb>
-	<option value=ZFIN $(IF,$(AND,$(XST,$inf_db),(EC,$inf_db,ZFIN)),SELECTED)>ZFIN
-	<option value=GO $(IF,$(AND,$(XST,$inf_db),$(EC,$inf_db,GO)),SELECTED)>GO
-	<?MISQL SQL="select distinct fdb_db_name from foreign_db where fdb_db_name in ('Genbank','RefSeq','SWISS-PROT','InterPro','GenPept')">
-	   <option value="$1" $(IF,$(AND,$(XST,$inf_db),$(EC,$inf_db,$1)),SELECTED)>$1
-	<?/MISQL>
-   </select>
+   <?MISQL SQL="
+     select WebExplode(object,'goinfent_formDbName=infdb&goinfent_formSelectDb=$(IF,$(XST,$inf_db),$inf_db)&goinfent_formAccName=inference&$(IF,$(XST,$inf_mem),&goinfent_formSelectAcc=$inf_mem)') 
+       from webPages 
+       where ID='aa-goinferenceentry.apg';">
+     $1
+   <?/MISQL>
 
-    <?MIVAR><input type=text name=inference  size=30 <?MIBLOCK COND="$(XST,$inf_mem)">value=<?MIVAR>$inf_mem<?/MIVAR><?/MIBLOCK><?/MIVAR>>
            <?MIVAR><input type=button name=infadd align=center value="Add Inference" onclick=goaddinf('$OID','inference')><?/MIVAR>
 <hr>
   <b>NOT </b>

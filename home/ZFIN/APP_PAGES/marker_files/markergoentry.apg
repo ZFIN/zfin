@@ -164,16 +164,14 @@ function call_reset() {
         <?/MISQL>
         </select>
     </td>
-    <td><b>Inferred from</b>&nbsp;&nbsp;
-     <select name=infdb>
-	  <option value="ZFIN" $(IF,$(EC,$inf_db,ZFIN),SELECTED)>ZFIN
-	  <option value="GO" $(IF,$(EC,$inf_db,GO),SELECTED)>GO
-	  <?MISQL SQL="select distinct fdb_db_name from foreign_db where fdb_db_name in ('Genbank','RefSeq','SWISS-PROT','InterPro','GenPept')">
-		<option value="$1" $(IF,$(EC,$inf_db,$1),SELECTED)>$1
-	  <?/MISQL>
-     </select>&nbsp;&nbsp;
-    <input type = text NAME="inf" size="40"
-    <?MIBLOCK COND="$(XST,$inf_mem)">value=<?MIVAR>$inf_mem<?/MIVAR>><?/MIBLOCK>
+    <td>
+      <b>Inferred from</b>&nbsp;&nbsp;
+      <?MISQL SQL="
+        select WebExplode(object,'goinfent_formDbName=infdb&goinfent_formSelectDb=$inf_db&goinfent_formAccName=inf&$(IF,$(XST,$inf_mem),&goinfent_formSelectAcc=$inf_mem)') 
+          from webPages 
+          where ID='aa-goinferenceentry.apg';">
+        $1
+      <?/MISQL>
     </td>
   </tr>
 
@@ -258,8 +256,7 @@ function call_reset() {
 	where mrkrgoev_mrkr_zdb_id='$OID' 
 	  and mrkrgoev_go_term_zdb_id=goterm_zdb_id 
 	  and g.goterm_ontology=o.gont_ontology_name 
-        order by 4,2,3 " 
->
+        order by 4,2,3 ">
 
    <?MIVAR NAME=$ontology>$1<?/MIVAR>
    <?MIVAR NAME=$goterm>$2<?/MIVAR>
