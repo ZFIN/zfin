@@ -25,11 +25,7 @@ die "Usage: filterBlast.pl zfindbname < tableformatblastresultdata.\n" if (@ARGV
 #=====================================================
 # Main
 #
-# inherit the environment from shell
-#$ENV{INFORMIXDIR}      = "/private/apps/Informix/informix_wanda";
-#$ENV{INFORMIXSERVER}   = "wanda";
-#$ENV{INFORMIXSQLHOSTS} = "$ENV{INFORMIXDIR}/etc/sqlhosts.wanda";
-#$ENV{ONCONFIG}         = "onconfig.wanda";
+# inherit the Informix environment from shell
 
 my $dbname = shift @ARGV;
 my $dbh = DBI->connect("DBI:Informix:$dbname", "", "", 

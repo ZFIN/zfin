@@ -28,11 +28,7 @@ use DBI;
 #============================================
 #  Main
 #
-# inherit environment variable from the shell
-#$ENV{INFORMIXDIR}      = "/private/apps/Informix/informix_wanda";
-#$ENV{INFORMIXSERVER}   = "wanda";
-#$ENV{INFORMIXSQLHOSTS} = "$ENV{INFORMIXDIR}/etc/sqlhosts.wanda";
-#$ENV{ONCONFIG}         = "onconfig.wanda";
+# inherit Informix environment variable from the shell
 
 die "Db name is required.\n" if (@ARGV < 1);
 

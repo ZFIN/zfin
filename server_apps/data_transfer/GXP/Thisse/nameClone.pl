@@ -55,11 +55,7 @@ sub getImageCloneName ($) {
 
 die "Db name is required.\n" if (@ARGV < 1);
 
-# inherit environment variable from the shell
-#$ENV{INFORMIXDIR}      = "/private/apps/Informix/informix_wanda";
-#$ENV{INFORMIXSERVER}   = "wanda";
-#$ENV{INFORMIXSQLHOSTS} = "$ENV{INFORMIXDIR}/etc/sqlhosts.wanda";
-#$ENV{ONCONFIG}         = "onconfig.wanda";
+# inherit Infomrix environment variables from the shell
 
 my $dbname = $ARGV[0];
 my $username = "";

@@ -12,11 +12,7 @@ if ($#argv < 2) then
     exit
 endif
 
-# inherit environment variable from the shell
-#setenv INFORMIXDIR       /private/apps/Informix/informix_wanda
-#setenv INFORMIXSERVER    wanda
-#setenv INFORMIXSQLHOSTS  $INFORMIXDIR/etc/sqlhosts.wanda
-#setenv ONCONFIG          onconfig.wanda
+# inherit Informix environment variables from the shell
 
 set dbname = $1
 set labname = $2    
