@@ -28,15 +28,8 @@ if(top.lglist){
 top.lgindex=1;
 };
 
-if(top.zfinstudy) {
-   if(top.zfinstudy.zfinreviewer) {
-       top.zfinstudy.zfinreviewer.close();
-   };
-   if (!top.zfinstudy.closed) {top.zfinstudy.close();}
-};
-
 if(top.zfinhelp){
-if(!top.zfinhelp.closed) {top.zfinhelp.close();};
+  if(!top.zfinhelp.closed) {top.zfinhelp.close();};
 };
 
 </SCRIPT>
