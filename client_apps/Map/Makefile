@@ -34,7 +34,7 @@ IMPORTDIR = netscape
 # ---- Java source variables
 
 GENERICS = zmapper/SQLQuery.java
-STATICS  = mapplet.java mapimage.java cgi_lib.java \
+STATICS  = mapplet.java \
 	zmapper/BackBone.java zmapper/Bin.java zmapper/BinGroup.java \
 	zmapper/LayoutManager.java zmapper/MapViewer.java zmapper/Marker.java \
 	zmapper/MarkerBuilder.java 
