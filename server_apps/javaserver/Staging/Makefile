@@ -133,8 +133,8 @@ all : $(TARGETS)
 
 # When any class file needs to be remade, remake all of them.
 
-$(JAVATARGETS) : $(TARGETDIR)/%.class : %.class
-	$(TARGET_CP) $^ $@
+$(JAVATARGETS) : $(JAVACLASSES) 
+	$(TARGET_CP) *.class $(TARGETDIR)
 
 $(JAVACLASSES) : $(JAVASRCS)
 	$(JAVAC) $(JAVAFLAGS) $(JAVASRCS)
@@ -145,7 +145,7 @@ $(JAVACLASSES) : $(JAVASRCS)
 
 $(LIBTARGET) : $(JAVACHDRS) $(OBJS)
 #	precc is a shell script that passes a -G option to cc (see precc for reason)
-	INFORMIXC=../precc esql -o $(LIBTARGET) $(OBJECS) $(MILIBS)
+	INFORMIXC=../precc esql -o $(LIBTARGET) $(OBJS) $(MILIBS)
 
 
 # Make the .h files from the class files
