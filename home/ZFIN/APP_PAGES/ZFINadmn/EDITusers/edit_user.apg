@@ -70,9 +70,9 @@ function check_passw2(src) {
 }
 
 function submit_complete (src) {
-  if (! src & 1 ){check_login(src + 8);}
-  if (! src & 2 ){check_passw(src + 8);}
-  if (! src & 4 ){check_passw2(src + 8);}
+  if (! src & 1 ){check_login(src);}
+  if (! src & 2 ){check_passw(src);}
+  if (! src & 4 ){check_passw2(src);}
   if (  (document.login_form.login.value !='')&&
         (document.login_form.password.value !='')&&
         (document.login_form.password.value == document.login_form.password2.value)
