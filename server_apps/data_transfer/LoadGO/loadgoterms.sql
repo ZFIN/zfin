@@ -44,6 +44,10 @@ create temp table sec_unload
     onto varchar(30)
   );
 
+update go_term
+  set goterm_is_secondary = 't'
+  where goterm_go_id in (select sec_id from sec_unload) ;
+
 insert into sec_unload
   select sec_id, prim_id, term_name, onto
     from sec_oks
