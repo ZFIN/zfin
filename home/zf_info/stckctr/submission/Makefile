@@ -26,7 +26,8 @@ submit.html\
 zirc.js
 
 
-STATICS = bgblank.gif\
+STATICS = background.html\
+bgblank.gif\
 bgbtm.jpg\
 bgimage.jpg\
 bgtop.jpg\
@@ -34,6 +35,7 @@ grant.html\
 husbandry.html\
 links.html\
 marker.html\
+provider.html\
 reasons.html\
 request.html\
 requestAnimals.html\
