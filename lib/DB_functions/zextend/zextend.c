@@ -9,7 +9,10 @@
 	get_id		Generates a new ID by appending a number to a string
 	get_id_test	Test function for get_id
 	concat		Concatenates to strings, the Informix concat seems brokeen
-	html_breaks	Replaces newlines with "<P>" which formats it for html
+	html_breaks	Replaces newlines with "<BR>" which formats it for html
+	html_breaks_html	Replaces newlines with "<BR>" which formats it for html
+	            This version accepts an HTML object as argument and produces one
+				as a result.
 	now		returns current timestamp
 	todays_date	returns a todays date as an mi_date
 	expr		returns it's single argument to get the parser to eval it
@@ -449,6 +452,48 @@ mi_lvarchar *html_breaks(mi_lvarchar *text) {
 }
 
 
+/*	html_breaks_HTML	Replaces newlines in text with <BR>, This
+	prepares it to be displayed in html. Called with an html.
+	Returns an html. HTML <-> lvarchar conversion is described in
+	Chapter 14 of Web Datablade Module Application Developer's Guide 4.0.
+*/
+
+typedef mi_lvarchar HTML;	/* Opaque pointer to WebBlade HTML type */
+
+HTML *html_breaks_html (HTML *html) {
+	mi_lvarchar	*old, *new, *text, *res;
+	MI_CONNECTION *conn;			/* The connection to the server */
+	MI_FUNC_DESC *htmlFuncDesc;	/* Descriptor for a WebBlade API function */
+	mi_integer error;			/* Error return from some MI_* calls */
+
+	conn = mi_open (NULL, NULL, NULL);
+	CHECK (conn != NULL, "Couldn't open connection");
+	
+	htmlFuncDesc = mi_routine_get (conn, 0, "function WebHtmlToBuf(html)");
+	CHECK (htmlFuncDesc != NULL, "Couldn't get descriptor for WebHtmlToBuf");
+	text = mi_routine_exec (conn, htmlFuncDesc, &error, html);
+	CHECK (error != MI_ERROR, "WebHtmlToBuf returned error");
+	mi_routine_end (conn, htmlFuncDesc);
+
+	mi_var_free (html);
+
+	res = replace(old = mi_string_to_lvarchar("\n"),
+				  new = mi_string_to_lvarchar("<BR>"), text, 0);
+	mi_var_free (text);	mi_var_free(old); mi_var_free(new);
+
+	htmlFuncDesc = mi_routine_get (conn, 0, "function WebBufToHtml(html)");
+	CHECK (htmlFuncDesc != NULL, "Couldn't get descriptor for WebBufToHtml");
+	html = mi_routine_exec (conn, htmlFuncDesc, &error, res);
+	CHECK (error != MI_ERROR, "WebBufToHtml returned an error");
+	mi_routine_end (conn, htmlFuncDesc);
+	
+	mi_var_free (res);
+	mi_close (conn);
+
+	return html;
+}
+
+
 /*	now		Returns the current datetime something like the
 	Illustra now.
 	Returns a datetime;
@@ -478,11 +523,11 @@ mi_date todays_date() {
 }
 
 
-/*	expr	Does nothing except return it's argument. This allows you to
+/*	expr	Does nothing except return its argument. This allows you to
 		create a context in which to evaluate expressions in SQL as long
-		as the resulting type is refered to by a pointer rather than
+		as the resulting type is referred to by a pointer rather than
 		passed as an actual value.
-		You can create lots of function signitures with this one routine.
+		You can create lots of function signatures with this one routine.
 */
 void *expr(void *arg) {
 	return arg;
