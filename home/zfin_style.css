@@ -21,6 +21,10 @@ a {
       font-weight:bold;
       color:#0000CC;
       }
+a:visited {
+      font-weight:bold;
+      color:#551a8b;
+      }
 
 .header  {
 	font-family: arial, sans-serif;
@@ -85,6 +89,13 @@ a {
       color:#0F4351;
       text-decoration:none;
       }
+
+.content a:visited {
+      font-weight:normal;
+      color:#551a8b;
+      text-decoration:none;
+      }
+
 
 .content b {
       font-weight:bold;
