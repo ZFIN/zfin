@@ -17,8 +17,11 @@
 <?MIVAR COND="$(EC,$split,break)" NAME=$split><br><?/MIVAR>
 
 <?MIVAR COND="$(NXST,$oID)">No ZDB-ID Passed In!<?/MIVAR>
-<?MIVAR NAME=$GNID>$oID<?/MIVAR> 
-<?MIVAR NAME=$LID>$oID<?/MIVAR> 
+
+<?MICOMMENT>when lg information is not yet known<?/MICOMMENT>
+<?MIBLOCK COND="$(NXST,$lg_list)">
+ <?MIVAR NAME=$GNID>$oID<?/MIVAR> 
+ <?MIVAR NAME=$LID>$oID<?/MIVAR> 
    <?MISQL COND="$(>,$(POSITION,$oID,GENE),0)" SQL="
 	select zdb_id
 	  from locus
@@ -43,63 +46,73 @@
 	<?MIVAR>$(SETVAR,$GNID,$2)<?/MIVAR>
    <?/MISQL>
 
+  <?MIVAR NAME=viewmap>f<?/MIVAR>
   <?MISQL SQL="
-	SELECT or_lg
+	SELECT or_lg, 'p'
 	FROM mapped_marker
 	WHERE (marker_id = '$oID'
 	   OR marker_id = '$LID'
            OR marker_id = '$GNID')
           and or_lg <> '0'
       UNION
-	SELECT or_lg
+	SELECT or_lg, 'p'
 	FROM mapped_marker, fish f
 	WHERE marker_id = f.zdb_id
 	  AND f.locus = '$LID'
           and or_lg <> '0'
       UNION
-	SELECT or_lg
+	SELECT or_lg, 'p'
 	FROM mapped_marker, marker_relationship
 	WHERE marker_id = mrel_mrkr_2_zdb_id
 	  and mrel_mrkr_1_zdb_id = '$GNID'
 	  and or_lg <> '0'
       UNION
-	SELECT lnkg_or_lg
+	SELECT lnkg_or_lg, 'l'
 	FROM linkage, linkage_member
 	WHERE (lnkgmem_member_zdb_id = '$oID'
+	   or lnkgmem_member_zdb_id = '$LID'
            or lnkgmem_member_zdb_id = '$GNID')
 	  and lnkg_zdb_id = lnkgmem_linkage_zdb_id
 	  and lnkg_or_lg <> '0'
       UNION 
-	SELECT lnkg_or_lg
+	SELECT lnkg_or_lg, 'l'
 	FROM linkage, linkage_member, fish f
 	WHERE lnkgmem_member_zdb_id = f.zdb_id
           and f.locus = '$LID'
 	  and lnkg_zdb_id = lnkgmem_linkage_zdb_id
 	  and lnkg_or_lg <> '0'
       UNION
-	SELECT lnkg_or_lg
+	SELECT lnkg_or_lg, 'l'
 	FROM linkage, linkage_member, marker_relationship
 	WHERE lnkgmem_member_zdb_id = mrel_mrkr_2_zdb_id
 	  and mrel_mrkr_1_zdb_id = '$GNID'
 	  and lnkgmem_linkage_zdb_id = lnkg_zdb_id
 	  and lnkg_or_lg <> '0'
-;"> <?MIBLOCK COND="$(EC,$MI_CURRENTROW,1)">LG:&nbsp;<?/MIBLOCK><?MIBLOCK COND="$(>,$MI_CURRENTROW,1)">,&nbsp;<?/MIBLOCK>$1<?MIVAR NAME=$mapdetLG>$1<?/MIVAR>
-    <?MIVAR NAME=$mapped>t<?/MIVAR>
-  <?/MISQL> 
+	order by 2
+      ;">
 
-<?MIBLOCK COND="$(AND, $(EC,$hide_empty,f) , $(EC,$MI_ROWCOUNT,0))">None submitted.<?/MIBLOCK>
+      
+     <?MIVAR COND="$(EC,$MI_CURRENTROW,1)">
+	$(IF,$(EC,$2,p),$(SETVAR,$viewmap,t))
+	LG:&nbsp;
+     <?/MIVAR>
+     <?MIVAR COND="$(>,$MI_CURRENTROW,1)">,&nbsp;<?/MIVAR>$1
+     <?MIVAR NAME=$mapdetLG>$1<?/MIVAR>
+  <?/MISQL>
+  <?MIBLOCK COND="$(=,$MI_ROWCOUNT,1)">
+    <?MIVAR COND="$(<,$mapdetLG,10)">&nbsp;<?/MIVAR>
+  <?/MIBLOCK>	
+  <?MIVAR COND="$(AND, $(EC,$hide_empty,f), $(=,$MI_ROWCOUNT,0))">None submitted.<?/MIVAR>
 
-<?MIBLOCK COND="$(AND,$(XST,$MI_ROWCOUNT),$(>,$MI_ROWCOUNT,0))">
+<?MIELSE>
+  <?MIVAR>LG:&nbsp;$lg_list<?/MIVAR>
+<?/MIBLOCK>
 
-<!-- only do this check when LG is a number, MT does not need a space  -->
- <?MIBLOCK COND="$(NE,$mapdetLG,MT)">
-   <?MIBLOCK COND="$(AND,$(<,$mapdetLG,10),$(=,1,$MI_ROWCOUNT))  ">&nbsp;<?/MIBLOCK> 
- <?/MIBLOCK>
+<?MIBLOCK COND="$(OR,$(XST,$lg_list),$(>,$MI_ROWCOUNT,0))">
 
  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mappingdetail.apg&OID=$oID"> Details</A><?/MIVAR>
 
-  <?MIBLOCK COND="$(XST,$mapped)">
-  <?MIVAR>
+  <?MIVAR COND="$(EC,$viewmap,t)">
 	   $split View Map:
   	     &nbsp;
 	   	<?MIVAR NAME=$vmpanels><?/MIVAR>
@@ -111,7 +124,7 @@
 	  
 
   <?/MIVAR>
- <?/MIBLOCK>
+ 
 <?/MIBLOCK>
 
 <!-------------- end mini mode --------------->
@@ -313,9 +326,9 @@ ERROR -- something bad happened -- no OID passed in!
     
       <?/MISQL> 
 
- <?/MIBLOCK>
+  <?/MIBLOCK>
 
- <?MIBLOCK COND="$(>,$(POSITION,$OID,LOCUS),0)">
+  <?MIBLOCK COND="$(>,$(POSITION,$OID,LOCUS),0)">
      <?MISQL SQL="
 		select locus_name, abbrev
 		  from locus
@@ -339,6 +352,8 @@ ERROR -- something bad happened -- no OID passed in!
 			  (select marker_id from mapped_marker)
                     or zdb_id in 
 			  (select lnkgmem_member_zdb_id from linkage_member)
+		    or allele in 
+			  (select allele from mapped_deletion)
                        ) ;">
         <?MIVAR NAME=$allele_id>$1<?/MIVAR>
         <?MIVAR NAME=$allele>$2<?/MIVAR>
@@ -351,6 +366,7 @@ ERROR -- something bad happened -- no OID passed in!
       <?/MISQL>
   <?/MIBLOCK>
 
+  
   <?MIBLOCK COND="$(>,$(POSITION,$OID,FISH),0)">
 	<?MISQL SQL="
 		select name, abbrev, allele, locus
@@ -366,8 +382,7 @@ ERROR -- something bad happened -- no OID passed in!
 	  <b> Allele Name: &nbsp; <b> <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$locus"> $name </A></b><br>
           <b> Abbreviation: &nbsp; <i>$abbrev</i></b><br>
 	<?/MIVAR>
-   <?MIVAR>select WebExplode(object,'&mapdetails_mode=details&detOID=$OID&abbrev=$allele') from webPages where ID='aa-mappingdetail.apg';<?/MIVAR>
-
+  
 	<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&detOID=$OID&abbrev=$allele') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
    <?/MIBLOCK>	
 
@@ -497,18 +512,19 @@ function Delete_marker(allele,marker_id) {
 
 	   <?MIBLOCK COND="$(AND,$(NC,$last,$3),$(EC,$3,t))">
 	     <?MIVAR name=marker_present>1<?/MIVAR>
-	     </td></tr><tr><td align=left>
-
+	     </td></tr>
+             <tr><td align=left>
+             <?MIVAR>$(SETVAR,$last,)<?/MIVAR><?MICOMMENT>reset $last to control ";" display<?/MICOMMENT>    
 	     <?MIVAR COND="$(XST,$UPDATE)">	    
 	       <INPUT TYPE=button value="Add" onClick="doit_marker('marker','selection','present',0)"> 
 	     <?/MIVAR>	
 	     <b>Present:</b>
-	    <?/MIBLOCK>
+	   <?/MIBLOCK>
 	  
 	  $(IF,$(XST,$UPDATE),"<font size=-1><input type=button value=delete onClick=Delete_marker('"$allele"','"$2"')>")
 
+	  $(IF, $(AND,$(NXST,$UPDATE),$(NE,$last,)),;)
 	  <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$1</A>
-	  $(IF,$(NXST,$UPDATE),";")
 	  
 	  $(SETVAR,$last,$3)
 	  <?/MISQL>
@@ -771,11 +787,11 @@ function Delete_marker(allele,marker_id) {
   <!----------------- Markers contained in --------------->
   
   <?MISQL SQL="SELECT mrel_mrkr_2_zdb_id, mrkr_abbrev
-             FROM marker_relationship, marker_relationship_type, marker
+             FROM marker_relationship,  marker
 	     WHERE mrel_mrkr_1_zdb_id = '$detOID'
-	       and mrel_type = mreltype_name
+	      -- and mrel_type = mreltype_name
 	       and mrel_mrkr_2_zdb_id = mrkr_zdb_id
-               and mreltype_mrkr_type_group_2 = 'SMALLSEG'
+               --and mreltype_mrkr_type_group_2 = 'SMALLSEG'
 	       and (   exists
 		       ( SELECT 'x' 
 		           FROM mapped_marker
