@@ -1,9 +1,8 @@
 <?MICOMMENT>
 FILE: secure_navigation
 
-This file should be webexploded at the top of every page in ZFIN. It serves 
- two purposes: First, it calls the navigation mechanism to have a tile for the
- current page appear at the top of the page. Second, it figures out the 
+This file should be webexploded at the top of every page in ZFIN. 
+ It figures out the 
  real name of the requesting user (will be GUEST if not logged in) and 
  checks any security constraints posted for the page. If security check fails,
  the AUTHORIZE variable is set to false, which should be checked for in the 
@@ -34,9 +33,6 @@ Else
   set AUTHORIZE to false, and return.
 
 VARIABLES EXPECTED:
-page_title  (optional) -- the title of the new page. If you leave this
-  variable out, security is checked, but no navigation tile will be 
-  posted for the page.
 permission (optional) -- if present, should be either 
   root,owns,submit,fishauth,preview,betatest
 OID (optional) -- should be set to OID of the record being displayed, 
@@ -122,18 +118,11 @@ to the guest cookie. This way logging will be to their unique cookie name
       select zdb_id, access, name
 	from ZDB_submitters 
 	where cookie='$ZDB_authorize';">
-    <?/MISQL>
-
-    <?MICOMMENT>
-      If you got a single entry, provisionally set AUTHORIZED to whatever 
-      -- users ZDB_access level is. 
-    <?/MICOMMENT>
-    <?MIBLOCK COND="$(=,$MI_ROWCOUNT,1)">
       <?MIVAR NAME=$AUTHORIZED>$2<?/MIVAR>
       <?MIVAR NAME=$ZDB_access>$2<?/MIVAR>
       <?MIVAR COND="$(EC,$ZDB_name,UNKNOWN)" NAME=$ZDB_name>$3<?/MIVAR>
       <?MIVAR NAME=$ZDB_ident>$1<?/MIVAR>
-    <?/MIBLOCK>
+    <?/MISQL>
 
     <?MICOMMENT>But now check permission level for the page, if specified<?/MICOMMENT>
     <?MIBLOCK COND="$(AND,$(XST,$ZDB_access),$(XST,$permission))">
