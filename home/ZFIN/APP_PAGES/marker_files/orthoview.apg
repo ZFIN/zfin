@@ -126,7 +126,7 @@
   <?/MIBLOCK>
 
   <?MIVAR>
-  $(IF,$(NOT,$(ISNULL,$dblink_acc_num_display)),"<li><A HREF="$hyperlink">"$DB_name":"$dblink_acc_num_display"</a>") 
+  $(IF,$(NC,$dblink_acc_num_display,),"<li><A HREF="$hyperlink">"$DB_name":"$dblink_acc_num_display"</a>") 
   $(SETVAR,$lastitem,$organism)
   <?/MIVAR>
  <?/MISQL>
