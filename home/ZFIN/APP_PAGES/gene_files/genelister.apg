@@ -270,116 +270,114 @@
 		<?MIVAR NAME=$locus_zdb_id>$14<?/MIVAR>
 
 		<?MIBLOCK COND="$(EC,$first_row,1)">
-			<!-- start new row and column -->
-			<?MIVAR><TR bgcolor="$row_color"><?/MIVAR>
+		  <!-- start new row and column -->
+		  <?MIVAR><TR bgcolor="$row_color"><?/MIVAR>
 
-				<?MIVAR>
-				<TD>&nbsp;</TD>
-				<TD valign=top> <font size=2>
-					<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID TARGET=content>$marker_name</A>
-					&nbsp;&nbsp; - $gene_name &nbsp; [
-				<?/MIVAR>
+		  <?MIVAR>
+		    <TD>&nbsp;</TD>
+		    <TD valign=top> <font size=2>
+		    <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID TARGET=content>$marker_name</A>
+		    &nbsp;&nbsp; - $gene_name &nbsp; [
+		<?/MIVAR>
 		<?MIVAR name=$rowNUM>$(+,$rowNUM,1)<?/MIVAR>
 
-	   <?MISQL SQL="
-	      select mrkrali_marker_name_alias
-		from marker_alias 
-		where mrkrali_marker_zdb_id = '$ZID';">
-	      <?MIVAR NAME=$alias>$1<?/MIVAR>
-              $(IF,$(AND,$(XST,$alias),$(=,$MI_CURRENTROW,1)), $alias , ; $alias )
-	    <?/MISQL>
+		 <?MISQL SQL="
+		   select mrkrali_marker_name_alias
+		     from marker_alias 
+		     where mrkrali_marker_zdb_id = '$ZID';">
+		   <?MIVAR NAME=$alias>$1<?/MIVAR>
+		   $(IF,$(AND,$(XST,$alias),$(=,$MI_CURRENTROW,1)), $alias , ; $alias )
+		 <?/MISQL>
 
+		 <?MISQL SQL="
+		   select distinct ortho_name, ortho_abbrev 
+		     from orthologue 
+		       where c_gene_id = '$ZID' 
+			 and ((lower(ortho_name) <> '$(LOWER,$gene_name')) 
+			 or (lower(ortho_abbrev) <> '$(LOWER,$marker_name')));">
 
-			<?MISQL SQL="
-					select distinct ortho_name, ortho_abbrev 
-					from orthologue 
-					where c_gene_id = '$ZID' 
-						and ((lower(ortho_name) <> '$(LOWER,$gene_name')) 
-						or (lower(ortho_abbrev) <> '$(LOWER,$marker_name')));">
+		   <?MIVAR NAME=$ortho_name>$1<?/MIVAR>
+		   <?MIVAR NAME=$ortho_abbrev>$2<?/MIVAR>
+		   $(IF,$(AND,$(=,$MI_CURRENTROW,1),$(XST,$ortho_name)), /)
+		   $(IF,$(>,$MI_CURRENTROW,1),;) $ortho_name ($ortho_abbrev)
 
-						<?MIVAR NAME=$ortho_name>$1<?/MIVAR>
-						<?MIVAR NAME=$ortho_abbrev>$2<?/MIVAR>
-						$(IF,$(AND,$(=,$MI_CURRENTROW,1),$(XST,$ortho_name)), /)
-						$(IF,$(>,$MI_CURRENTROW,1),;) $ortho_name ($ortho_abbrev)
-
-				<?/MISQL>
-				]</TD>
+		  <?/MISQL>
+		  ]</TD>
 		<?/MIBLOCK>
 
 	<?MIBLOCK COND="$(EC,$first_row,0)">
-		<!--   start new row and column   -->
-		<?MIVAR><TR bgcolor="$row_color"><?/MIVAR>
-			<TD>&nbsp;</TD>
-      <TD><font size=1> &nbsp;</font></TD>
+	  <!--   start new row and column   -->
+	  <?MIVAR><TR bgcolor="$row_color"><?/MIVAR>
+	  <TD>&nbsp;</TD>
+          <TD><font size=1> &nbsp;</font></TD>
 	<?/MIBLOCK>
 
-			<TD><FONT SIZE=2>
-			$(IF,$(OR,$(ISNULL,$locus_zdb_id),$(EC,$locus_zdb_id,"")),
-       	    "Unknown",
-            "<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID="$locus_zdb_id" TARGET=content>"$locus_name"</A>")
-			</TD>
+	<TD><FONT SIZE=2>
+	  $(IF,$(OR,$(ISNULL,$locus_zdb_id),$(EC,$locus_zdb_id,"")),
+	      "Unknown",
+	      "<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID="$locus_zdb_id" TARGET=content>"$locus_name"</A>")
+	</TD>
 
 			<!-- Location --> 
       <TD> <font size=2> 
 
       <?MIBLOCK COND="$(AND,$(EC,$panel_abbrev,na),$(=,$(POSITION,$panel_id,LINK),0))">
-				Unmapped</TD>
-				<TD>&nbsp; </TD><TD>&nbsp; </TD><TD>&nbsp; </TD>
-			<?/MIBLOCK>
+	Unmapped</TD>
+	<TD>&nbsp; </TD><TD>&nbsp; </TD><TD>&nbsp; </TD>
+      <?/MIBLOCK>
 
-			<?MIVAR NAME=$upd_day>$month<?/MIVAR>
-			<?MIBLOCK COND="$(NC,$upd_day,"")">
-				<?MIVAR NAME=$upd_date> $(INDEX,$(-,$month,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $day,$year 
-				<?/MIVAR>
-			<?/MIBLOCK>
+      <?MIVAR NAME=$upd_day>$month<?/MIVAR>
+      <?MIBLOCK COND="$(NC,$upd_day,"")">
+	<?MIVAR NAME=$upd_date> $(INDEX,$(-,$month,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $day,$year 
+	<?/MIVAR>
+      <?/MIBLOCK>
 
-			<?MIBLOCK COND="$(EC,$upd_day,"")">
-				<?MIVAR NAME=$upd_date> <?/MIVAR>
-			<?/MIBLOCK>
-
-
-	   <?MIBLOCK COND="$(>,$(POSITION,$panel_id,REF),0)">
-       <?MIVAR>  
-			   $(IF,$(AND,$(>,$OR_lg,0),$(EC,$private,f)),
-						"LG <b>"$OR_lg"</b>;
-						<b> "$lg_loc"</b> "$metric""&nbsp;&nbsp;
-						<A HREF="javascript:view_scores('"$panel_id"','"$OR_lg"','"$ZID"','"$marker_name"')";>Scoring Data</A>
-
-				</TD>
+      <?MIBLOCK COND="$(EC,$upd_day,"")">
+	<?MIVAR NAME=$upd_date> <?/MIVAR>
+      <?/MIBLOCK>
 
 
-						<!-- Panel --> 
-				<TD><font size=2> 
-					"<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$panel_id">"$panel_abbrev"</A>"
-					</font>
-				</TD>
+      <?MIBLOCK COND="$(>,$(POSITION,$panel_id,REF),0)">
+        <?MIVAR>  
+	   $(IF,$(AND,$(>,$OR_lg,0),$(EC,$private,f)),
+	   "LG <b>"$OR_lg"</b>;
+	    <b> "$lg_loc"</b> "$metric""&nbsp;&nbsp;
+	    <A HREF="javascript:view_scores('"$panel_id"','"$OR_lg"','"$ZID"','"$marker_name"')";>Scoring Data</A>
+
+	  </TD>
 
 
-						<!-- MAP Checkbox --> 
-				<TD><font size=2 COLOR=#A9A9A9> 
-					<input type=checkbox name=$panel_abbrev value=1 CHECKED >
-					</font>
-				</TD>
+	  <!-- Panel --> 
+	  <TD><font size=2> 
+	    "<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$panel_id">"$panel_abbrev"</A>"
+	    </font>
+	  </TD>
 
 
-						<!-- Updated Date -->
-				<TD><font size=2>" "$upd_date" ")
-				<!--   end if   -->
+	  <!-- MAP Checkbox --> 
+	  <TD><font size=2 COLOR=#A9A9A9> 
+	    <input type=checkbox name=$panel_abbrev value=1 CHECKED >
+	    </font>
+	  </TD>
 
-					<?MIBLOCK COND="$(AND,$(>,$OR_lg,0),$(EC,$private,f))">
-						<?MIVAR name=$ok_view_map>1<?/MIVAR>
-					<?/MIBLOCK>
+	  <!-- Updated Date -->
+	  <TD><font size=2>" "$upd_date" ")
+	  <!--   end if   -->
 
-					$(IF,$(AND,$(>,$OR_lg,0),$(NC,$private,f)),
-						"Mapped on <A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$panel_id">"$panel_abbrev" panel</A>, but still confidential.
-					</TD>
-					<TD>&nbsp;</TD>
-					<TD>&nbsp;</TD>
-					<TD ALIGN=left><FONT SIZE=2>"$upd_date""
-					)
+	<?MIBLOCK COND="$(AND,$(>,$OR_lg,0),$(EC,$private,f))">
+	  <?MIVAR name=$ok_view_map>1<?/MIVAR>
+	<?/MIBLOCK>
 
-				</TD>
-			</TR>
+	$(IF,$(AND,$(>,$OR_lg,0),$(NC,$private,f)),
+	  "Mapped on <A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$panel_id">"$panel_abbrev" panel</A>, but still confidential.
+	  </TD>
+	  <TD>&nbsp;</TD>
+	  <TD>&nbsp;</TD>
+	  <TD ALIGN=left><FONT SIZE=2>"$upd_date""
+	 )
+
+	</TD>
+      </TR>
      <?/MIVAR>
    <?/MIBLOCK>  <!-- panel like ref -->
 
@@ -390,31 +388,36 @@
       <?MISQL SQL="select alnkgmem_member_name, alnkgmem_comments, alnkgmem_or_lg,alnkgmem_private from all_linked_members where alnkgmem_member_zdb_id = '$OID' and alnkgmem_linkage_zdb_id = '$panel_id' order by alnkgmem_comments desc;">
 
 	      <?MIVAR NAME=$map_name>$1<?/MIVAR>
-				<?MIVAR NAME=$map_comments>$2<?/MIVAR>
-				<?MIVAR NAME=$map_lg>$3<?/MIVAR>
-				<?MIVAR NAME=$map_private>$4<?/MIVAR>
+	      <?MIVAR NAME=$map_comments>$2<?/MIVAR>
+	      <?MIVAR NAME=$map_lg>$3<?/MIVAR>
+	      <?MIVAR NAME=$map_private>$4<?/MIVAR>
 
-				<TD><font size=2>
-				$(IF,$(NC,$map_lg,0),LG <b>$map_lg</b>)
+              <?MIBLOCK COND="$(NC,$map_private,t)">
+	        <TD><font size=2>
+	        $(IF,$(NC,$map_lg,0),LG <b>$map_lg</b>)
 
-			  <?MIBLOCK COND="$(NC,$map_comments,"")">
-				  <?MIVAR>
-					  <A HREF=javascript:show_detail('$panel_id','$OID','$marker_name','""');>Map Details</A>
-				  <?/MIVAR>
-          </TD><TD>&nbsp; </TD><TD>&nbsp; </TD><TD>&nbsp; </TD>
-			  <?/MIBLOCK>
-						 </font>
+	        <?MIBLOCK COND="$(NC,$map_comments,"")">
+		  <?MIVAR>
+		     <A HREF=javascript:show_detail('$panel_id','$OID','$marker_name','""');>Map Details</A>
+		  <?/MIVAR>
+                  </TD><TD>&nbsp; </TD><TD>&nbsp; </TD><TD>&nbsp; </TD>
+	        <?/MIBLOCK>
+	 </font>
 
-        <?MIBLOCK COND="$(AND,$(NC,$map_lg,0),$(EC,$map_comments,""))"> 
-          &nbsp;</TD>
-          <TD>&nbsp; </TD><TD>&nbsp; </TD><TD>&nbsp; </TD>
-        <?/MIBLOCK>
+                <?MIBLOCK COND="$(AND,$(NC,$map_lg,0),$(EC,$map_comments,""))"> 
+		  &nbsp;</TD>
+		  <TD>&nbsp; </TD><TD>&nbsp; </TD><TD>&nbsp; </TD>
+	        <?/MIBLOCK>
+              <?/MIBLOCK>
 
+              <?MIBLOCK COND="$(EC,$map_private,t)">
+                Linked but still confidential. </TD> </TD><TD>&nbsp; </TD><TD>&nbsp; </TD><TD>&nbsp; </TD>
+              <?/MIBLOCK>
 	</TR>
       <?/MISQL>
 
 
-    <?/MIBLOCK>  <!-- panel id like link -->  
+    <?/MIBLOCK>  <!-- end of panel id like link -->  
 
 	 <?MIVAR name=$first_row>0<?/MIVAR>
 
@@ -445,13 +448,13 @@
 <!--    change row_color    -->
 <?MIBLOCK>
   <?MIBLOCK COND="$(EC,$row_color,#FCCE64)">     
-		<?MIVAR name=$row_color>#FFFFFF<?/MIVAR>
-		<?MIVAR>$(EXIT,3)<?/MIVAR>
-	<?/MIBLOCK>
+    <?MIVAR name=$row_color>#FFFFFF<?/MIVAR>
+    <?MIVAR>$(EXIT,3)<?/MIVAR>
+  <?/MIBLOCK>
 
   <?MIVAR COND="$(EC,$row_color,#FFFFFF)">      
-		<?MIVAR name=$row_color>#FCCE64<?/MIVAR>
-	<?/MIVAR>
+    <?MIVAR name=$row_color>#FCCE64<?/MIVAR>
+  <?/MIVAR>
 <?/MIBLOCK>    
 
 	<!-- end form for map_marker -->         
