@@ -1,3 +1,19 @@
+2004 June 18
+
+this code never made it into Production.
+Although it seemed in theory, a very good idea to the curators,
+In practice the automated Ensembl builds at Sanger are not yet ready
+ready for prime time. maybe when the assembley gets better 
+Sanger (and our curators) will feel more comfortable adding these links.
+
+
+there are also issues of how to commumicate to users 
+that this is a strictily mechanical prediction 
+that no human has checked. 
+ 
+
+############################################################
+
 To find Ensembl ENSDARG links for ZFIN, 
 we directly query the Ensembl mysql database in Sanger.
 
@@ -6,7 +22,7 @@ with the name of the current release, core zebrafish ensembl database.
 
 i.e. danio_rerio_core_18_2 or danio_rerio_core_19_2
 
-I currently have not attempted to finf an autometed way supplying 
+I currently have not attempted to find an automated way supplying 
 the correct argument because I expect the data will only change 
 when there is a new release several times a year. it will be faily
 easy to detect new release announcements and manually run the script.
