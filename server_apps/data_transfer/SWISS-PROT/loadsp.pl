@@ -296,7 +296,7 @@ while( !( -e "ec_mrkrgoterm.unl")) {
 
 # ------------ Loading ---------------------
 print "\nloading...\n";
-system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> sploaddblink.sql >out 2> report.txt");
+system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> sploaddbnew.sql >out 2> report.txt");
 
 #open F, "out" or die "Cannot open out";
 #if (<F>) {
