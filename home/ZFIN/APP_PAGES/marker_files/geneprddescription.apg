@@ -45,7 +45,7 @@
 <?MIVAR NAME=mrkr_name>$1<?/MIVAR>
 <?MIVAR NAME=mrkr_abbrev>$2<?/MIVAR>
 
-<TITLE>ZFIN Gene Product Description for<?MIVAR> $mrkr_abbrev:<?/MIVAR> </TITLE>
+<TITLE>ZFIN Gene Product Description for<?MIVAR> $mrkr_abbrev<?/MIVAR> </TITLE>
 
 <TABLE width=100%>
    <TR bgcolor=#cccccc>
