@@ -22,18 +22,15 @@ my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
 		      )
   || emailError("Failed while connecting to <!--|DB_NAME|--> "); 
 
-if ("<!--|INFORMIX_SERVER|-->" eq "wavy") {
-  $dir = "<!--|ROOT_PATH|-->/server_apps/data_transfer/GO/";
-}
-else {
-  $dir = "<!--|ROOT_PATH|-->/home/data_transfer/GO/";
-}
+$dir = "<!--|ROOT_PATH|-->/home/data_transfer/GO/";
 chdir "$dir";
 $outFile = "gene_association.zfin";
 
 
 &GOReport();
 &sendReport();
+
+$dbh->disconnect();
 
 exit;
 
@@ -99,7 +96,6 @@ sub sendReport()
 
     print MAIL "A new GO file has been created. Before submitting the new file, verify ZFIN's file format is up-to-date by comparing it against the posted version. The posted version can be found here: \nhttp://www.geneontology.org/doc/GO.annotation.html#file \n\nIf the formats are the same -> submit the updated GO file:\n$dir$outFile. \nElse -> modify /server_apps/data_transfer/GO/go.pl. \n\nZFIN's format: \n1. DB \n2. DB_Object_ID \n3. DB_Object_Symbol \n4. [NOT] \n5. GOid \n6. DB:Reference(|DB:Reference) \n7. Evidence \n8. With \n9. Aspect \n10. DB_Object_Name(|Name) \n11. DB_Object_Synonym(|Synonym) \n12. DB_Object_Type \n13. taxon(|taxon) \n14. Date \n15. Assigned ";
     close (MAIL);
-    $dbh->disconnect();
   }
 
 
