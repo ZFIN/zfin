@@ -1,32 +1,97 @@
 create dba function "informix".regen_fishsearch()
   returning integer
 
--- Creates the fish_search table, a fast search table used to quickly
--- search mutant/fish data from the web pages.
+  -- Creates the fish_search table, a fast search table used to quickly
+  -- search mutant/fish data from the web pages.
 
--- DEBUGGING:  Uncomment the next two statements to turn on a debugging trace.
---             (and change the first one to point to your OWN dang directory!)
--- set debug file to '/tmp/debug-regen-fish';
--- trace on;
+  -- DEBUGGING:
+  -- There are several ways to debug this function.
+  --
+  -- 1. If this function encounters  an exception it writes the exception
+  --    number and associated text out to the file 
+  --
+  --      /tmp/regen_fishsearch_exception_<!--|DB_NAME|-->.
+  --
+  --    This is a great place to start.  The associated text is often the
+  --    name of a violated constraint, for example "u279_351".  The first
+  --    number in the contraint name (in this case "279") is the table ID
+  --    of the table with the violated constraint.  You can find the table
+  --    name by looking in the systables table.
+  --
+  -- 2. Display additional messages to the /tmp/regen_fishsearch_exception
+  --    file.  See the master exception handler code below for how this
+  --    is done.  You might want to add a display message between the
+  --    code for each table that is created.
+  --
+  -- 3. If the previous 2 approaches aren't enough then you can also turn
+  --    on tracing.  Tracing produces a large volume of information and
+  --    tends to run mind-numbingly slow.
+  --
+  --    To turn tracing on uncomment the next statement
 
--- Create all the new tables and views.
--- If an exception occurs here, drop all the newly-created tables
+  -- set debug file to '/tmp/debug-regen-fish';
+  -- trace on;
+
+  --    This enables tracing, but doesn't turn it on.  To turn on tracing,
+  --    add a "trace on;" before the first piece of code that you suspect
+  --    is causing problems.  Add a "trace off;" after the last piece of
+  --    code you suspect.
+  --
+  --    At this point it becomes a narrowing process to figure out exactly
+  --    where the problem is.  Let the function run for a while, kill it,
+  --    and then look at the trace file.  If things appear OK in the 
+  --    trace, move the "trace on;" to be later in the file and then rerun.
+
+  -- Create all the new tables and views.
+  -- If an exception occurs here, drop all the newly-created tables
 
   begin	-- master exception handler
 
+    define exceptionMessage lvarchar;
+    define sqlError integer;
+    define isamError integer;
+    define errorText varchar(255);
+    define errorHint varchar(255);
     define nrows integer;
     
     on exception
+      set sqlError, isamError, errorText
       begin
 	-- Something terrible happened while creating the new table
 	-- Get rid of it, and leave the original table around.
 
-	on exception in (-206)
-	  -- OK to get "Table not found" here, since we might
-	  -- not have created all tables at the time of the exception
+        on exception in (-206, -255, -668)
+          --  206: OK to get "Table not found" here, since we might
+          --       not have created all tables at the time of the exception
+          --  255: OK to get a "Not in transaction" here, since
+          --       we might not be in a transaction when the rollback work 
+          --       below is performed.
+          --  668: OK to get a "System command not executed" here.
+          --       Is probably the result of the chmod failing because we
+          --       are not the owner.
 	end exception with resume;
 
-	drop table fishsearch_new;
+        let exceptionMessage = 'echo "' || CURRENT ||
+                               ' SQL Error: '  || sqlError::varchar(200) || 
+                               ' ISAM Error: ' || isamError::varchar(200) ||
+                               ' ErrorText: '  || errorText || 
+                               ' ErrorHint: '  || errorHint ||
+                               '" >> /tmp/regen_fishsearch_exception_<!--|DB_NAME|-->';
+        system exceptionMessage;
+
+        -- Change the mode of the regen_fishsearch_exception file.  This is
+        -- only needed the first time it is created.  This allows us to 
+        -- rerun the function from either the web page (as zfishweb) or 
+        -- from dbaccess (as whoever).
+
+        system '/bin/chmod 666 /tmp/regen_fishsearch_exception_<!--|DB_NAME|-->';
+
+        -- If in a transaction, then roll it back.  Otherwise, by default
+        -- exiting this exception handler will commit the transaction.
+        rollback work;
+
+        -- Don't drop the table here.  Leave it around in an effort to
+        -- figure out what went wrong.
 
 	update zdb_flag set zflag_is_on = 'f'
 		where zflag_name = "regen_fishsearch" 
@@ -49,9 +114,20 @@ create dba function "informix".regen_fishsearch()
     update zdb_flag set zflag_last_modified = CURRENT
 	where zflag_name = "regen_fishsearch";
 			
+    -- crank up the parallelism.
+
+    set pdqpriority high;
 
     -- Create a new fishsearch table under a temp name, loaded with results 
     -- of a huge join across the underlying tables.
+
+    let errorHint = "dropping fishsearch_new";
+
+    if (exists (select * from systables where tabname = "fishsearch_new")) then
+      drop table fishsearch_new;
+    end if
+
+    let errorHint = "creating fishsearch_new";
 
     create table fishsearch_new 
       (
@@ -80,8 +156,7 @@ create dba function "informix".regen_fishsearch()
       extent size 1024 next size 1024 lock mode row;
     revoke all on fish_search from "public";
 
-    -- This can take a few minutes, so be patient.
-
+    let errorHint = "inserting into fishsearch_new";
 
     insert into fishsearch_new 
       select a.zdb_id, a.name, fish_name_order, a.line_type, e.abbrev,
@@ -99,6 +174,8 @@ create dba function "informix".regen_fishsearch()
     -- add them in from the locus & marker tables for mutants with corresponding
     -- genes
     -- trace on;
+
+    let errorHint = "setting gene id and abbrev in fishsearch_new";
 
     update fishsearch_new
       set (gene_id, gene_abbrev) = 
@@ -122,6 +199,8 @@ create dba function "informix".regen_fishsearch()
 
     -- Delete the old table.  It may not exist (if the DB has just
     -- been created), so ignore errors from the drop.
+
+    let errorHint = "dropping fishsearch";
 
     begin -- local exception handler for dropping of original table
 
@@ -147,9 +226,13 @@ create dba function "informix".regen_fishsearch()
 	raise exception esql, eisam;
       end exception;
 
+      let errorHint = "renaming fishsearch_new";
+
       rename table fishsearch_new to fish_search;
 
       -- primary key
+
+      let errorHint = "creating PK";
 
       create unique index fish_search_primary_key_index
 	on fish_search (fish_id)
@@ -160,6 +243,8 @@ create dba function "informix".regen_fishsearch()
 	  constraint fish_search_primary_key;
 
       -- other indexes
+
+      let errorHint = "creating other indexes";
 
       create index fish_search_abbrev_index
 	on fish_search (abbrev)
@@ -173,6 +258,21 @@ create dba function "informix".regen_fishsearch()
 
       create index fish_search_locus_index 
 	on fish_search (locus)
+	fillfactor 100
+	in idxdbs3;
+
+      create index fish_search_allele_index 
+	on fish_search (allele)
+	fillfactor 100
+	in idxdbs3;
+
+      create index fish_search_gene_id_index 
+	on fish_search (gene_id)
+	fillfactor 100
+	in idxdbs3;
+
+      create index fish_search_gene_abbrev_index 
+	on fish_search (gene_abbrev)
 	fillfactor 100
 	in idxdbs3;
 
@@ -198,7 +298,6 @@ create dba function "informix".regen_fishsearch()
 	  
   update zdb_flag set zflag_last_modified = CURRENT
 	where zflag_name = "regen_fishsearch";
-
 
   return 0;
 
