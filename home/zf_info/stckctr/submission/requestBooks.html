@@ -38,14 +38,14 @@
                       document.forms[0].rqfBillPhone.value +
                       document.forms[0].rqfBillFax.value +
                       document.forms[0].rqfBillLab.value +
-                      document.forms[0].required__BillAddr.value;
+                      document.forms[0].rqfBillAddr.value;
       if ( document.forms[0].billInfo.checked ) {
          document.forms[0].rqfBillName.value         = document.forms[0].rqfName.value;
          document.forms[0].rqfBillEmail.value        = document.forms[0].rqfEmail.value;
          document.forms[0].rqfBillPhone.value        = document.forms[0].rqfPhone.value;
          document.forms[0].rqfBillFax.value          = document.forms[0].rqfFax.value;
          document.forms[0].rqfBillLab.value          = document.forms[0].rqfLab.value;
-         document.forms[0].required_BillAddr.value         = document.forms[0].rqfAddr.value;
+         document.forms[0].rqfBillAddr.value         = document.forms[0].rqfAddr.value;
       }
    }
 </script>
@@ -260,7 +260,7 @@ Please set your preferences to allow Javascript and then Reload.</font>
       <tr> 
         <td class="medium" align=right>Address <font color="#FF0000">*</font>&nbsp;</td>
         <td class="medium">
-          <textarea name="required_BillAddr" cols="30" wrap="VIRTUAL" rows="4"></textarea>
+          <textarea name="rqfBillAddr" cols="30" wrap="VIRTUAL" rows="4"></textarea>
         </td>
       </tr>
 	  <tr>	
