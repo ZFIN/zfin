@@ -337,7 +337,9 @@ Startframes.apg will pass this variables on to the select form.  -->
 
 	    <?MIBLOCK COND="$(AND,$(>,$OR_lg,0),$(NC,$private,f))">
 	      <TD>
-		Mapped on <A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=$target_id>$target_abbrev  $upd_date</A>, but confidential.
+                <?MIVAR>
+		  Mapped on <A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=$target_id>$target_abbrev  $upd_date</A>, but confidential.
+                <?/MIVAR>
 	      </TD>
 	      <TD>&nbsp;</TD>
 	      <TD>&nbsp;</TD>
@@ -567,23 +569,24 @@ Startframes.apg will pass this variables on to the select form.  -->
     <?MIVAR>
       <SCRIPT>
 	var page_id=top.content.location.href+'&navtile=$navtile&name=$(URLENCODE,$name)&lg=$lg&refcross=$refcross&marker_type=$mlist&compare=$compare&plinks=$plinks&WINSIZE=$WINSIZE&BEGIN=$BEGIN';
-      </SCRIPT>
-    <?/MIVAR>
-  <?MIELSE>  <!-- when called by mapperselect -->
-    <?MIVAR NAME=page_title>View Map<?/MIVAR>
-    <?MIVAR>
-      <SCRIPT>
-	var page_id=top.content.location.href+'&navtile=$navtile&marker=$(URLENCODE,$name)&lg=$lg&refcross=$refcross&marker_type=$mlist&compare=$compare&plinks=$plinks&WINSIZE=$WINSIZE&BEGIN=$BEGIN&map_type=$map_type';
+        top.update_hist(page_id,"$page_title");
+        top.controls.location.reload(true);
       </SCRIPT>
     <?/MIVAR>
   <?/MIBLOCK>
-  <!-- for all cases -->
-  <?MIVAR>
-    <SCRIPT>
-      top.update_hist(page_id,"$page_title");
-      top.controls.location.reload(true);
-    </SCRIPT>
-  <?/MIVAR>
+
+  <?MIBLOCK COND="$(XST,$paged_by)">
+    <!-- when called by mapperselect -->
+    <?MIVAR NAME=page_title>View Map<?/MIVAR>
+    <?MIVAR>
+      <SCRIPT>
+	var page_id=top.content.location.href+'&navtile=$navtile&marker=$(URLENCODE,$name)&map_type=$map_type';
+        top.update_hist(page_id,"$page_title");
+        top.controls.location.reload(true);
+      </SCRIPT>
+    <?/MIVAR>
+  <?/MIBLOCK>
+
 <?/MIBLOCK>
 
 </HTML>
