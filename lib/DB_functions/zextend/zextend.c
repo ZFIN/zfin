@@ -6,6 +6,7 @@
 	sysexec		runs a system program and returns results from STDOUT
 	replace		replaces N occurrences of one substring with another
 	genid		Generates a new ID by appending a number to a string
+	concat		Concatenates to strings, the Informix concat seems brokeen
 	html_breaks	Replaces newlines with "<P>" which formats it for html
 	get_random_cookie Generate a random string of printable characters
 
@@ -129,7 +130,7 @@ mi_lvarchar *upper(mi_lvarchar *lv) {
 /*	sysexec		Executes a system program and returns output
 	Called with an lvarchar command line, and Returns STDOUT
 	from the program as an lvarchar.
-	Note: If the program generates an error the whole server exits! :-(
+	Note: If the program generates an error the whole server exits! (FIXED)
 */
 mi_lvarchar *sysexec(mi_lvarchar *cmd, mi_lvarchar *args) {
 	FILE		*outf;
@@ -265,6 +266,31 @@ static buflst *appbuf(buflst *buf, char *data, unsigned len) {
 		if (buf->len == buf->max) buf = buf->next = newbuf(MAXREAD);
 	}
 	return buf;
+}
+
+
+/*	concat		Concatenates two strings (lvarchars)
+	The Informix concat function seems to be broken, oh well
+	Returns an lvarchar.
+*/
+mi_lvarchar *concat(mi_lvarchar *pre, mi_lvarchar *post) {
+	int		n, m;
+	char		*p;
+	mi_lvarchar	*lv;
+
+	n = mi_get_varlen(pre); m = mi_get_varlen(post);
+
+	/* Get lvarchar to hold it */
+	if (	!(lv = mi_new_var(n + m)) ||
+		!(p = mi_get_vardata(lv)) ) NO_MEMORY(concat);
+
+	/* Copy arguments to result */
+	memcpy(p, mi_get_vardata(pre), n);
+	memcpy(p + n, mi_get_vardata(post), m);
+
+	/* Finish up */
+	mi_set_varlen(lv, n + m);
+	return lv;
 }
 
 
