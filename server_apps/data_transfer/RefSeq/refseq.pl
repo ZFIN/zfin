@@ -1,5 +1,5 @@
 #!/local/bin/perl 
-#  Script to create RefSeq/LocusLink links in the database
+#  Script to create RefSeq/Entrez links in the database
 #  This script assumes directory GenPept exists in the 
 #  same folder, and file fetch-genpept.r exist in ../GenPept/.
 
@@ -27,14 +27,14 @@ chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/RefSeq/";
 &openReport();
 
 #remove old RefSeq files
-system("rm -f LL*");
+system("rm -f gene*");
 system("rm -f *.unl");
 system("rm -f loc2*");
 system("rm -f zebrafish*");
 system("rm -f gene_with_multiple_linked_recid.unl");
 
 #get new RefSeq files
-&downloadLocusLinkFiles();
+&downloadRefSeqFiles();
 
 
 system("/local/bin/gunzip -f *.gz");
@@ -45,9 +45,9 @@ $count = 0;
 $retry = 1;
 #wait until the files are decompressed
 while( !(
-          (-e "LL.out_dr") &&
-          (-e "LL.out_hs") && 
-          (-e "LL.out_mm") &&
+          (-e "gene_info") &&
+          (-e "loc2ref") &&
+          (-e "loc2acc") &&
           (-e "zebrafish.gnp") &&
           (-e "zebrafish.gbff") 
         ) 
@@ -106,13 +106,16 @@ while( !(
 }
 
 #load RefSeq links
-system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> load_refSeq.sql");
+#$sys_status = system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> load_refSeq.sql");
+#if ($sys_status > 0)
+#{
+    &emailError("Failure in load_refseq.pl", "<!--|VALIDATION_EMAIL_AD|-->");
+#}
 
 &dblinksReport();
 &reportOmimDups();
 
 &reportFile('gene_with_multiple_linked_recid.unl','RefSeq Multiples');
-&reportFile('ortho_with_multiple_acc_num.unl','Orthologue Multiples')
 &reportFile('conflict_dblink.unl','Marker/DbLink Conflicts');
 
 &sendReport();
@@ -124,20 +127,21 @@ exit;
 sub emailError()
   {
     &writeReport($_[0]);
-    &sendReport();
+    
+    if ($_[1]) {  &sendReport($_[1]); }
+    else {  &sendReport(); }
+    
     exit;
   }
 
-sub downloadLocusLinkFiles()
+sub downloadRefSeqFiles()
   {
-    system("/local/bin/wget -q ftp://ftp.ncbi.nih.gov/refseq/LocusLink/loc2ref -O loc2ref");
-    system("/local/bin/wget -q ftp://ftp.ncbi.nih.gov/refseq/LocusLink/loc2acc -O loc2acc");
-    system("/local/bin/wget -q ftp://ftp.ncbi.nih.gov/refseq/LocusLink/loc2UG -O loc2UG");
+    system("/local/bin/wget -q ftp://ftp.ncbi.nih.gov/gene/DATA/gene2refseq.gz -O loc2ref.gz");
+    system("/local/bin/wget -q ftp://ftp.ncbi.nih.gov/gene/DATA/gene2accession.gz -O loc2acc.gz");
+    system("/local/bin/wget -q ftp://ftp.ncbi.nih.gov/gene/DATA/gene2unigene -O loc2UG");
     system("/local/bin/wget -q ftp://ftp.ncbi.nih.gov/refseq/D_rerio/mRNA_Prot/zebrafish.rna.gbff.gz -O zebrafish.gbff.gz");
     system("/local/bin/wget -q ftp://ftp.ncbi.nih.gov/refseq/D_rerio/mRNA_Prot/zebrafish.protein.gpff.gz -O zebrafish.gnp.gz");
-    system("/local/bin/wget -q ftp://ftp.ncbi.nih.gov/refseq/LocusLink/LL.out_dr.gz");
-    system("/local/bin/wget -q ftp://ftp.ncbi.nih.gov/refseq/LocusLink/LL.out_hs.gz");
-    system("/local/bin/wget -q ftp://ftp.ncbi.nih.gov/refseq/LocusLink/LL.out_mm.gz");
+    system("/local/bin/wget -q ftp://ftp.ncbi.nih.gov/gene/DATA/gene_info.gz");
   }
 
 sub writeReport()
@@ -164,7 +168,7 @@ sub dblinksReport()
     my $cur = $dbh->prepare('select count(*), fdbcont_fdb_db_name
                              from db_link, foreign_db_contains
                              where dblink_fdbcont_zdb_id = fdbcont_zdb_id
-                               and fdbcont_fdb_db_name in ("RefSeq","LocusLink","UniGene","OMIM","GenBank","GenPept")
+                               and fdbcont_fdb_db_name in ("RefSeq","Entrez Gene","UniGene","Genbank","GenPept")
                              group by fdbcont_fdb_db_name;'
 			   );
     $cur->execute;
@@ -233,7 +237,13 @@ sub sendReport()
     open(MAIL, "| $mailprog") || die "cannot open mailprog $mailprog, stopped";
     open(REPORT, "report") || die "cannot open report";
 
-    print MAIL "To: bsprunge\@cs.uoregon.edu\n";
+    if ($_[0]) {
+      print MAIL "To: $_[0]\n";
+    }
+    else {
+      print MAIL "To: bsprunge\@cs.uoregon.edu\n";
+    }
+    
     print MAIL "Subject: (refseq) report\n";
     while($line = <REPORT>)
     {
