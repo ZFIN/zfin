@@ -6,24 +6,55 @@ create dba function "informix".regen_genomics() returning integer
   -- regen_genomics creates the bulk of the fast search tables in ZFIN.
   -- Fast search tables are used to speed query access from web pages.
 
-
-  -- DEBUGGING:  Uncomment the next two statements to turn on a debugging 
-  --             trace (and change the first one to point to your OWN dang 
-  --		 directory!)
+  -- DEBUGGING:
+  -- There are several ways to debug this function.
+  --
+  -- 1. If this function encounters  an exception it writes the exception
+  --    number and associated text out to the file 
+  --
+  --      /tmp/regen_genomics_exception.
+  --
+  --    This is a great place to start.  The associated text is often the
+  --    name of a violated constraint, for example "u279_351".  The first
+  --    number in the contraint name (in this case "279") is the table ID
+  --    of the table with the violated constraint.  You can find the table
+  --    name by looking in the systables table.
+  --
+  -- 2. Display additional messages to the /tmp/regen_genomics_exception
+  --    file.  See the master exception handler code below for how this
+  --    is done.  You might want to add a display message between the
+  --    code for each table that is created.
+  --
+  -- 3. If the previous 2 approaches aren't enough then you can also turn
+  --    on tracing.  Tracing produces a large volume of information and
+  --    tends to run mind-numbingly slow.
+  --
+  --    To turn tracing on uncomment the next statement (and change the
+  --    the filename to be unique to your database!).
 
   -- set debug file to '/tmp/debug-regen';
 
-  -- If you turn trace on be sure it is off in the code that populates the
-  -- all_map_names/all_m_names_new table.  If trace is on when this code
-  -- is executed, it will grind *very* slowly.
-
+  --    This enables tracing, but doesn't turn it on.  To turn on tracing,
+  --    add a "trace on;" before the first piece of code that you suspect
+  --    is causing problems.  Add a "trace off;" after the last piece of
+  --    code you suspect.
+  --
+  --    At this point it becomes a narrowing process to figure out exactly
+  --    where the problem is.  Let the function run for a while, kill it,
+  --    and then look at the trace file.  If things appear OK in the 
+  --    trace, move the "trace on;" to be later in the file and then rerun.
 
   -- Create all the new tables and views.
-  -- If an exception occurs here, drop all the newly-created tables
 
   begin	-- master exception handler
 
+    define exceptionMessage lvarchar;
+    define sqlError integer;
+    define isamError integer;
+    define errorText varchar(255);
+
     on exception
+      set sqlError, isamError, errorText
       begin
 
 	-- Something terrible happened while creating the new tables
@@ -37,24 +68,19 @@ create dba function "informix".regen_genomics() returning integer
 	  -- below is performed.
 	end exception with resume;
 
+        let exceptionMessage = 'echo "' || CURRENT ||
+			       ' SQL Error: ' || sqlError::varchar(200) || 
+			       ' ISAM Error: ' || isamError::varchar(200) ||
+			       ' ErrorText: ' || errorText ||
+			       '" >> /tmp/regen_genomics_exception';
+	system exceptionMessage;
+
 	-- If in a transaction, then roll it back.  Otherwise, by default
 	-- exiting this exception handler will commit the transaction.
 	rollback work;
 
-	-- Following also drops the view mapped_a_new,
-	-- since they depend upon table panels_new.
-	drop table panels_new;
-	drop table paneled_m_new;
-	drop table public_paneled_m_new;
-	drop table all_m_names_new;
-	drop table all_m_new;
-	drop table total_l_new;
-	drop table total_l_new_copy;
-	drop table all_l_m_new;
-	drop table all_m_m_new;
-	drop table all_g_new;
-	drop table mapped_g_new;
-	drop table sources_new;
+	-- Don't drop the tables here.  Leave them around in an effort to
+	-- figure out what went wrong.
 
 	return 0;
       end
@@ -62,6 +88,12 @@ create dba function "informix".regen_genomics() returning integer
 
 
     ---------------- panels
+
+    if (exists (select *
+	          from systables
+		  where tabname = "panels_new")) then
+      drop table panels_new;
+    end if
 
     create table panels_new (
       zdb_id		varchar(50), 
@@ -100,6 +132,12 @@ create dba function "informix".regen_genomics() returning integer
 
 
     ---------------- paneled_markers
+
+    if (exists (select *
+	          from systables
+		  where tabname = "paneled_m_new")) then
+      drop table paneled_m_new;
+    end if
 
     create table paneled_m_new (
       zdb_id		varchar(50), 
@@ -172,6 +210,12 @@ create dba function "informix".regen_genomics() returning integer
 
 
     --------------- public_paneled_markers
+
+    if (exists (select *
+	          from systables
+		  where tabname = "public_paneled_m_new")) then
+      drop table public_paneled_m_new;
+    end if
 
     create table public_paneled_m_new (
       zdb_id		varchar(50),
@@ -295,6 +339,12 @@ create dba function "informix".regen_genomics() returning integer
     --   8 putative gene assignments
     --   9 othologue name, orthologue abbrev
     --  10 accession numbers from other databases
+
+    if (exists (select *
+	          from systables
+		  where tabname = "all_m_names_new")) then
+      drop table all_m_names_new;
+    end if
 
     create table all_m_names_new (
       -- ortho_name is 120 characters long
@@ -556,6 +606,12 @@ create dba function "informix".regen_genomics() returning integer
 
     ----------------  all_markers;
 
+    if (exists (select *
+	          from systables
+		  where tabname = "all_m_new")) then
+      drop table all_m_new;
+    end if
+
     create table all_m_new (
       zdb_id		varchar(50), 
       mname		varchar (80),
@@ -582,6 +638,12 @@ create dba function "informix".regen_genomics() returning integer
 
     -- table total_links_copy is used to display Haffter linkages only
 
+    if (exists (select *
+	          from systables
+		  where tabname = "total_l_new_copy")) then
+      drop table total_l_new_copy;
+    end if
+
     create table total_l_new_copy (
       from_id		varchar(50), 
       to_id		varchar(50), 
@@ -605,6 +667,11 @@ create dba function "informix".regen_genomics() returning integer
 
     ------------- all_linked_members;  
 
+    if (exists (select *
+	          from systables
+		  where tabname = "all_l_m_new")) then
+      drop table all_l_m_new;
+    end if
 
     create table all_l_m_new (
       alnkgmem_linkage_zdb_id varchar(50),
@@ -680,6 +747,12 @@ create dba function "informix".regen_genomics() returning integer
 
     ------------- all_mapped_markers; 
 
+    if (exists (select *
+	          from systables
+		  where tabname = "all_m_m_new")) then
+      drop table all_m_m_new;
+    end if
+
     create table all_m_m_new (
       zdb_id varchar(50), 
       mname varchar(80),
@@ -719,6 +792,12 @@ create dba function "informix".regen_genomics() returning integer
 	where alnkgmem_or_lg <> 0;
 
     ----------------- all_genes
+
+    if (exists (select *
+	          from systables
+		  where tabname = "all_g_new")) then
+      drop table all_g_new;
+    end if
 
     create table all_g_new (
       gene_name		varchar (80), 
@@ -799,6 +878,12 @@ create dba function "informix".regen_genomics() returning integer
 
     ------------------ mapped_genes
 
+    if (exists (select *
+	          from systables
+		  where tabname = "mapped_g_new")) then
+      drop table mapped_g_new;
+    end if
+
     create table mapped_g_new (
       zdb_id		varchar(50) not null,
       gene_name		varchar(80),
@@ -872,6 +957,12 @@ create dba function "informix".regen_genomics() returning integer
 
     ------------------ sources
 
+    if (exists (select *
+	          from systables
+		  where tabname = "sources_new")) then
+      drop table sources_new;
+    end if
+
     create table sources_new (
       zdb_id		varchar(50), 
       name		varchar(150), 
@@ -910,7 +1001,7 @@ create dba function "informix".regen_genomics() returning integer
       end exception with resume;
 
       -- The following statement also drops the view mapped_anons,
-      -- because they depend upon panels.
+      -- because it depends upon panels.
       drop table panels;
       drop table paneled_markers;
       drop table public_paneled_markers;
