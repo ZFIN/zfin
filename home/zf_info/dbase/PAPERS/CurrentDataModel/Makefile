@@ -23,7 +23,7 @@ TOP = ../../../../..
 include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/dbase/PAPERS/CurrentDataModel
-DOCDIR = /research/zfin/central/Commons/doc
+DOCDIR = /research/zcentral/Commons/doc
 
 # All of the local files are sym links that point at internal.html.
 
