@@ -756,7 +756,7 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),"<TD colspan=3><font size=2>LG <b>"$4
     <?MIVAR NAME=$lg>$9<?/MIVAR>
     <?MIVAR NAME=$map_comments>$5<?/MIVAR>
     <?MIVAR NAME=$link_id>$8<?/MIVAR>
-    <?MIVAR NAME=$private>$4<?/MIVAR>
+    <?MIVAR NAME=$is_private>$4<?/MIVAR>
 
     $(IF,$(=,$MI_CURRENTROW,1),"<TR><TD colspan=2></TD><TD></TD><TD><U>LG</U></TD><TD><U>Distance</U></TD><TD><U>LOD</U></TD><TD><U>Source</U></TD><TD></TD></TR>")
 
@@ -791,21 +791,16 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),"<TD colspan=3><font size=2>LG <b>"$4
 
     <?MIVAR NAME=$lg COND="$(AND,$(NC,$lg,""),$(=,$lg,0))"><?/MIVAR>
 
-    <?MIBLOCK COND="$(AND,$(NC,$comments,NULL),$(NC,$map_comments,""))">
+    <?MIBLOCK COND="$(AND,$(NC,$map_comments,NULL),$(NC,$map_comments,""))">
       <?MIVAR>
-       $(IF,$(OR,$(EC,$override,true),$(EC,$private,f),$(EC,$ZDB_ident,$6)),"<TD></TD><TD><font size=-1><A HREF="$curviewer$1">"$2"</A> ("$3")</TD>
+       $(IF,$(OR,$(EC,$override,true),$(EC,$is_private,f),$(EC,$ZDB_ident,$6)),"<TD></TD><TD><font size=-1><A HREF="$curviewer$1">"$2"</A> ("$3")</TD>
         <TD align=center><font size=-1>"$lg"</TD>
 	<TD align=center><font size=-1>"$distance" "$metric"</TD>
 	<TD align=center><font size=-1>"$lod"</TD><TD><font size=-1><A href="$sourceviewer$6">"$7"</a></TD><TD><font size=-1><A HREF=javascript:show_detail('"$link_id"','"$1"','"$2"','"$locus_abbrev"');>Details</A></TD>","<TD colspan=4><font size=-1><A href=javascript:info();>"$4$MI_CURRENTROW"</A>: Unpublished! <A href="sourceviewer$6">Contact "$7"</a>.</TD>")
       <?/MIVAR>
-    <?/MIBLOCK>
-
-
-
- 
-    <?MIBLOCK COND="$(NOT,$(NC,$map_comments,""))">
+    <?MIELSE>
       <?MIVAR>
-	$(IF,$(OR,$(EC,$override,true),$(EC,$4,f),$(EC,$ZDB_ident,$6)),"<TD></TD><TD><font size=-1><A HREF="$curviewer$1">"$2"</A> ("$3")</TD>
+	$(IF,$(OR,$(EC,$override,true),$(EC,$is_private,f),$(EC,$ZDB_ident,$6)),"<TD></TD><TD><font size=-1><A HREF="$curviewer$1">"$2"</A> ("$3")</TD>
         <TD align=center><font size=-1>"$lg"</TD>
 	<TD align=center><font size=-1>"$distance" "$metric"</TD>
 	<TD align=center><font size=-1>"$lod"</TD><TD><font size=-1><A href="$sourceviewer$6">"$7"</a></TD><TD></TD>","<TD colspan=4><font size=-1><A href=javascript:info();>"$4$MI_CURRENTROW"</A>: Unpublished! <A href="sourceviewer$6">Contact "$7"</a>.</TD>")
