@@ -29,11 +29,12 @@ mkdir Imagesdir
 
 if ($1 == "Thisse")  then
   foreach item (*)
-    if (-d $item && $item != "Imagesdir") then
+    # directory item happened to have space in name, quotes help.
+    if (-d "$item" && "$item" != "Imagesdir") then 
 
-        cp $item/*.jpg Imagesdir/
+        cp "$item"/*.jpg Imagesdir/
 	if ($2 == "cb") then
-	    cp $item/*.txt Imagesdir/
+	    cp "$item"/*.txt Imagesdir/
 	endif 
 
     else if (-f $item && $item:e == "jpg") then
@@ -46,8 +47,8 @@ else if ($1 == "Talbot")  then
 
   foreach jpg (images/*/large/*)
      set new_name = `echo "$jpg" | cut -d\/ -f4 | sed 's/ /__/g' | sed 's/JPG/jpg/' `;
-     set old_name = `echo "$jpg" | sed 's/ /\\ /g'`;
-     cp "$jpg" Imagesdir/$new_name;
+     #set old_name = `echo "$jpg" | sed 's/ /\\ /g'`;
+     cp "$jpg" Imagesdir/$new_name;         #quote helps to preserve the name which has space in it
   end
 
 endif
