@@ -1101,4 +1101,12 @@ select
 from
   mrel_tmp;
 
+insert 
+  into record_attribution
+select
+  zdb_id, 'ZDB-PUB-010810-1', 'related'
+from
+  mrel_tmp;
+
+
 --commit work;
