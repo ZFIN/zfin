@@ -383,6 +383,7 @@ order by 3;">
 	<option  $(IF,$(EQ,$year,00),SELECTED) value=00>00 
 	<option  $(IF,$(EQ,$year,01),SELECTED) value=01>01
 	<option  $(IF,$(EQ,$year,02),SELECTED) value=02>02 
+	<option  $(IF,$(EQ,$year,03),SELECTED) value=03>03 
 	</SELECT> Month:
 	<SELECT name=month>
 	<option  $(IF,$(=,$month,1),SELECTED) value=01>01 
