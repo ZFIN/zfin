@@ -14,6 +14,7 @@
 --   zfin_dblinks -- all links from genes to sequence DBs.
 --   zfin_ortholinks -- similar to zfin_dblinks but is links from ortho to
 --       their species DB files.
+--   zfin_genes_relationships.txt - this file lists genes and 'related' markers
 
 -- In the population of meow_exp1, and meow_expll tables, the all_genes tables is replaced by base tables. The modification is based on the all_genes table generations and the old select SQLs used in this scripts. Two more temporary tables--meow_exp1_dup and meow_expll_dup are added. 
  
@@ -401,6 +402,13 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/markers.txt'
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/marker_alias.txt' 
 
   DELIMITER "	" select distinct mrkr_zdb_id, dalias_alias from marker , data_alias where mrkr_zdb_id = dalias_data_zdb_id order by 1;
+
+--- generate gene marker relationship data for LocusLink
+
+UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/gene_relationships.txt'
+ 
+  DELIMITER "	" select distinct mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id from marker_relationship, meow_exp1 where mrel_type like 'gene%' and mrel_mrkr_1_zdb_id = meow_exp1.zdb_id order by 1;
+
 
 -- NOW just notify Don Gilbert that the updated files are there and he
 -- can download them!
