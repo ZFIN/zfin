@@ -12,6 +12,11 @@ EXPECTED VARS:
 
 
 -->
+<?MICOMMENT>
+Last updated on 1/4/2005 by Prita
+Added code to recognize characters like ' and " in go term names
+used URLENCODE
+<?/MICOMENT>
 
 <?MIERROR>
   <?MIVAR COND=$(XST,$MI_SQL)>
@@ -86,11 +91,11 @@ EXPECTED VARS:
          <?/MIBLOCK>  
 	
       <?MIELSE>
+      <?MIVAR NAME=$goterm_name>$(URLENCODE,$goterm_name)<?/MIVAR>
         <script><?MIVAR>
 	   window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$return_page&OID=$return_id&go_id=$value&go_term=$goterm_name'); <?/MIVAR>
         </script>
       <?/MIBLOCK>	
-
 
    <?/MIBLOCK>  <!-- end of goid validataion -->
 
