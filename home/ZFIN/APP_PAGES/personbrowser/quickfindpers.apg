@@ -8,6 +8,11 @@
 function form_submit() {
 document.critform.submit();
 }
+
+function start_help(anchor) {
+   top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-helpframes.html&calling_page=international_characters.html&anchor="+anchor,"helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
+}
+
 </SCRIPT>
 
 
@@ -57,6 +62,11 @@ document.captureEvents(Event.KEYDOWN|Event.KEYUP|Event.KEYPRESS);
      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persselect.apg">Advanced Search</A>
      </font>
     </TD>
+    <tr>
+      <TD>Help with <A HREF="javascript:start_help('name')"><b>non-English Characters</b> </A>
+      </TD>
+    </tr>  
+
    <TR>
    <TD class="submitbar" align="right" colspan=2>
 		<input type="hidden" name="WINSIZE" value="10">

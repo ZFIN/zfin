@@ -18,6 +18,10 @@ document.critform.WINSIZE.value = 10;
 document.critform.START.value = "";
 }
 
+function start_help(anchor) {
+   top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-helpframes.html&calling_page=international_characters.html&anchor="+anchor,"helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
+}
+
 </SCRIPT>
 
 <?MIVAR> 
@@ -309,6 +313,10 @@ Lab Search Results
   <?/MIVAR>
 
   <?MIVAR>
+    <tr>
+      <TD>Help with <A HREF="javascript:start_help('name')"><b>non-English Characters</b> </A>
+      </TD>
+    </tr>    
     <tr>
       <TD class="fullwidth" colspan="2">
 	<b>Lab Address contains:</b>

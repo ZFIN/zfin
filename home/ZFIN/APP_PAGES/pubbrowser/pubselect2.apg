@@ -48,8 +48,12 @@ document.critform.authtype.selectedIndex = 0;
 document.critform.WINSIZE.value = 10;
 document.critform.START.value = "";
 
-
 }
+
+function start_help(anchor) {
+   top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-helpframes.html&calling_page=international_characters.html&anchor="+anchor,"helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
+}
+
 
 </SCRIPT>
 
@@ -418,6 +422,7 @@ $(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/
 	<option $(IF,$(EC,$authtype,firstauth),SELECTED) value=firstauth>First Author begins with
 	</select>:</b> <input type=text name=authors size=10 onChange='document.critform.START.value = "";' $(IF,$(XST,$authors),value='$authors')>
       </TD> 
+
   <?MIVAR>
       <TD class=halfwidth>
 	<b>Year: </b> 
@@ -438,6 +443,10 @@ $(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/
   <?/MIVAR>
 
  <?MIVAR>
+    <tr>
+      <TD>Help with <A HREF="javascript:start_help('name')"><b>non-English Characters</b> </A>
+      </TD>
+    </tr>
     <tr>
       <TD class=halfwidth>
 	<b>Title contains:</b> 

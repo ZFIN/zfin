@@ -40,6 +40,10 @@
 
   }
 
+function start_help(anchor) {
+   top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-helpframes.html&calling_page=international_characters.html&anchor="+anchor,"helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
+}
+
 </SCRIPT>
 
 <basefont size=2>
@@ -377,6 +381,10 @@ to the left of each item.
      <?MIVAR><input type=text size=10 name=address $(IF,$(XST,$address),value='$address')> <?/MIVAR>
     </TD>
    </TR>
+   <tr>
+      <TD>Help with <A HREF="javascript:start_help('name')"><b>non-English Characters</b> </A>
+      </TD>
+   </tr> 
    <TR>
     <TD class="halfwidth"> 
       <b>Email contains: </b> 
