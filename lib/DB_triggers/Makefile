@@ -83,7 +83,7 @@ ENDEMICTARGETS_POSTTARGETDIR = $(foreach TRIG, $(TRIGGERS), $(TARGETDIR)/$(TRIG)
 include ../../make.default.rules
 
 $(ENDEMICTARGETS_POSTTARGETDIR) : $(TARGETDIR)/% : %
-	-echo "drop trigger $(patsubst %.sql,%,$^)" | $(DBACCESS) $(DBNAME) #drop trigger
+	-echo "drop trigger $(patsubst %.sql,%,$^)" | $(DBACCESS) $(DBNAME) #drop trigger > /dev/null 2>&1
 	$(TARGET_CP) $^ $@
 	$(TOUCH) $@
 	$(DBACCESS) $(DBNAME) $@
