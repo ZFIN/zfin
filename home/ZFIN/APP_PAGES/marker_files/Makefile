@@ -21,14 +21,13 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/marker_files
 
 GENERICS = chromoscripts.apg crossview.apg clonebox.apg do-markerupdate.apg \
-	make_map.apg mapframe.apg \
-	markerselect.apg markerupdate.apg \
+	make_map.apg mapframe.apg markerselect.apg markerupdate.apg \
 	markerview.apg orthoedit.apg ortholist.apg refcrosslist.apg \
 	scoresframe.apg scoresview.apg showscores.apg \
 	mappingdetail.apg genbank.apg msegselect.apg \
-	markergoview.apg markergoentry.apg gomodify.apg markergoterm.apg \
-        do-markergoupdate.apg markergodelete.apg do-goedit.apg gonotes.apg \
-        markergoinf.apg nomenview.apg nomeneditor.apg orthoview.apg \
+	markergoview.apg markergoentry.apg gomodify.apg markergovalidate.apg \
+        do-markergoupdate.apg do-goedit.apg gonotes.apg \
+        nomenview.apg nomeneditor.apg orthoview.apg \
 	marker_history_correction.apg do-oevdispupdate.apg attrib_check.apg \
 	newmrkrselect.apg searchform.apg sequence.apg
 
