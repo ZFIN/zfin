@@ -1,5 +1,5 @@
-create trigger expression_pattern_infrastructure_insert_trigger 
-   insert on expression_pattern_infrastructure referencing 
+create trigger expression_pattern_infrastructure_update_trigger 
+   update on expression_pattern_infrastructure referencing 
     new as new_xpatinf
     for each row
         (
