@@ -1,104 +1,173 @@
+
+<!-- Modified to support I.E.  Naviagtor tile buttons must know all user input from the query screen.  These values are posted to the lister form.  The lister form creates the tile bar button with appropriate variables. Startframes.apg, which is called by the nav tile bar button,  will pass this variables on to the select form.  -->
+
+
 <HTML>
+
+
+<SCRIPT>
+
+function form_submit() {
+document.critform.submit();
+}
+
+function call_reset() {
+
+document.critform.authors.value = "";
+document.critform.title.value = "";
+document.critform.year.value = "";
+document.critform.anon1text.value = "";
+document.critform.jtype.selectedIndex = 0;
+document.critform.yr_cmpr.selectedIndex = 0;
+document.critform.century.selectedIndex = 0;
+document.critform.anon1.selectedIndex = 0;
+document.critform.order_pref.selectedIndex = 0;
+document.critform.cur_status.selectedIndex = 0;
+document.critform.pub_status.selectedIndex = 0;
+document.critform.authtype.selectedInidex = 0;
+
+}
+
+</SCRIPT>
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-identify.apg';">$1<?/MISQL>
 
 <basefont size=2>
-
+<form name=critform method=post TARGET="pbrowser" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 
 <center>
 <U><B><FONT SIZE=4>Search for </font>
 <FONT SIZE=4 color="#ff0000" > PUBLICATION</font></b></u>
 </center>
 
+<input type=hidden name=authortype>
 
-<form name=crit_form method=post TARGET="pbrowser" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" onSubmit="parent.pbrowser.document.location='/ZFIN/misc_html/saysearching.html'">
+<?MIVAR COND="$(NXST,$authtype)" NAME=$authtype>anyauth<?/MIVAR>
+<?MIVAR COND="$(NXST,$jtype)" NAME=$jtype>any<?/MIVAR>
+<?MIVAR COND="$(NXST,$century)" NAME=$century>19<?/MIVAR>
+<?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>abstract<?/MIVAR>
+<?MIVAR COND="$(NXST,$order_pref)" NAME=$order_pref>date<?/MIVAR>
+<?MIVAR COND="$(NXST,$cur_status)" NAME=$cur_status>any<?/MIVAR>
+<?MIVAR COND="$(NXST,$pub_status)" NAME=$pub_status>any<?/MIVAR>
+<?MIVAR COND="$(NXST,$yr_cmpr)" NAME=$yr_cmpr>equal<?/MIVAR>
+<?MIVAR COND="$(EC,$yr_cmpr,greater)">$(SETVAR,$yr_cmpr,>)<?/MIVAR>
+<?MIVAR COND="$(EC,$yr_cmpr,less)">$(SETVAR,$yr_cmpr,<)<?/MIVAR>
+<?MIVAR COND="$(XST,$cur_status)" NAME=$cur_status DELIMIT="9" REPLACE=" ">$cur_status<?/MIVAR>
 
 <TABLE width=100%>
 <TR>
 <TD><font size=-1>
 <b>
+<?MIVAR>
 <SELECT name=authtype>
-<option value=firstauth>First AUTHOR begins with
-<option SELECTED value=anyauth>AUTHOR contains
+<option $(IF,$(EC,$authtype, anyauth),SELECTED) value=anyauth>AUTHOR contains
+<option $(IF,$(EC,$authtype,firstauth),SELECTED) value=firstauth>First AUTHOR begins with
 </select>:</b> <input type=text name=authors size=10 >
 </font>
 </TD> 
+
+<?/MIVAR>
+<!--  assign navtile value to authors - can not do with a value="authors" in input statement - reset will not work -->
+<?MIBLOCK COND="$(XST,$nav_authors)"><?MIVAR> <SCRIPT> document.critform.authors.value = "$nav_authors" </SCRIPT><?/MIVAR> <?/MIBLOCK>
+
 <TD><font size=-1>
 <b>TITLE contains:</b> <input type=text name=title size=10>
 </font>
 </TD>
+<!--  assign navtile value to title - can not do with a value="title" in input statement - reset will not work -->
+<?MIBLOCK COND="$(XST,$nav_title)"><?MIVAR> <SCRIPT> document.critform.title.value = "$nav_title" </SCRIPT><?/MIVAR> <?/MIBLOCK>
+
+<?MIVAR>
 <TD align=right><font size=-1>
 <b>TYPE:</b>
 <SELECT NAME=jtype>
-<option SELECTED value=any>ALL
-<option value=Journal>Journal
-<option value=Review>Review
-<option value=Abstract>Abstract
-<option value=Movie>Movie
-<option value=Book>Book
-<option value=Chapter>Chapter
-<option value=Other>Other
-<?MIVAR COND="$(EC,$ZDB_access,root)">
-<option value=Unknown>Unknown
-<?/MIVAR>
-
+<option $(IF,$(EC,$jtype,any),SELECTED) value=any>ALL
+<option $(IF,$(EC,$jtype,Journal),SELECTED) value=Journal>Journal
+<option $(IF,$(EC,$jtype,Review),SELECTED) value=Review>Review
+<option $(IF,$(EC,$jtype,Abstract),SELECTED) value=Abstract>Abstract
+<option $(IF,$(EC,$jtype,Movie),SELECTED) value=Movie>Movie
+<option $(IF,$(EC,$jtype,Book),SELECTED) value=Book>Book
+<option $(IF,$(EC,$jtype,Chapter),SELECTED) value=Chapter>Chapter
+<option $(IF,$(EC,$jtype,Other),SELECTED) value=Other>Other
+<?MIVAR COND="$(EC,$ZDB_access,root)"><option value=Unknown>Unknown<?/MIVAR>
 </SELECT>
 </font></TD> 
 </TR>
+
+
 
 </TABLE>
 
 <TABLE width=100%>
 <TR>
+<?MIVAR>
 <TD><font size=-1><b>YEAR </b> 
 <SELECT NAME=yr_cmpr>
-<option selected value="=">equals
-<option value="<" >before
-<option value=">" >after
+<option  $(IF,$(EC,$yr_cmpr,=),SELECTED) value="=">equals
+<option  $(IF,$(EC,$yr_cmpr,<),SELECTED) value="<" >before
+<option  $(IF,$(EC,$yr_cmpr,>),SELECTED) value=">" >after
 </SELECT>
 <SELECT name=century>
-<option selected>19 <option>20 <option>18 </SELECT>
+<option  $(IF,$(EC,$century,19),SELECTED) value=19>19 
+<option  $(IF,$(EC,$century,20),SELECTED) value=20>20
+<option  $(IF,$(EC,$century,18),SELECTED) value=18>18 
+</SELECT>
 <input type=text name=year size=2 maxlength=2>
-</font></TD> 
+</font></TD><?/MIVAR> 
+<!--  assign navtile value to year - can not do with a value="year" in input statement - reset will not work -->
+<?MIBLOCK COND="$(XST,$nav_year)"><?MIVAR> <SCRIPT> document.critform.year.value = "$nav_year" </SCRIPT><?/MIVAR> <?/MIBLOCK>
+
+<?MIVAR>
 <TD align=right><font size=-1>
 <SELECT NAME=anon1>
-<option selected value=abstract>Abstract 
-<option value=source>Source
-<option value=keywords>Keywords
-<option value=accession_no>Medline acc#
-<option value=zdb_id>ZFIN ID
+<option $(IF,$(EC,$anon1,abstract),SELECTED) value=abstract>Abstract 
+<option $(IF,$(EC,$anon1,source),SELECTED) value=source>Source
+<option $(IF,$(EC,$anon1,keywords),SELECTED) value=keywords>Keywords
+<option $(IF,$(EC,$anon1,accession_no),SELECTED) value=accession_no>Medline acc#
+<option $(IF,$(EC,$anon1,zdb_id),SELECTED) value=zdb_id>ZFIN ID
 </SELECT>
 contains <input type=text name=anon1text size=10>
 </font></TD>
+<?/MIVAR>
+<!--  assign navtile value to anon1text - can not do with a value="anon1text" in input statement - reset will not work -->
+<?MIBLOCK COND="$(XST,$nav_text)"><?MIVAR> <SCRIPT> document.critform.anon1text.value = "$nav_text" </SCRIPT><?/MIVAR> <?/MIBLOCK>
+<?/MIVAR>
 </TR>
 </TABLE>
 
 <TABLE width=100%>
 <TR align=center>
-<TD><font size=-1>Order results by <SELECT NAME=order_pref> <option value=name>Author <option selected value=date>Pub Date </SELECT></font></TD>
-<TD><font size=-1><input type=submit name=action value="SEARCH"></font></TD>
-<TD align=right><font size=-1><input type=reset name=action value="Clear Settings"></font></TD>
-<TD align=center><font size=-1><input type=button name=clear_all value="List all publications" onClick="document.crit_form.reset();document.crit_form.submit()"></font></TD> </TR>
+<?MIVAR>
+<TD><font size=-1>Order results by 
+<SELECT NAME=order_pref> 
+<option $(IF,$(EC,$order_pref,date),SELECTED) value=date>Pub Date 
+<option $(IF,$(EC,$order_pref,name),SELECTED) value=name>Author 
+</SELECT></font><?/MIVAR></TD>
+<TD><font size=-1><input type=submit name=action value="SEARCH" onSubmit="parent.pbrowser.document.location.href='/ZFIN/misc_html/saysearching.html';document.critform.submit();"></font></TD>
+<TD align=right><font size=-1><input type=button name=action value="Clear Settings" onClick="call_reset()"></font></TD>
+<TD align=center><font size=-1><input type=button name=clear_all value="List all publications" onClick="document.critform.reset();document.critform.submit()"></font></TD> </TR>
 </TABLE>
 
 <!-- Let root curators search based on curation status -->
 <?MIBLOCK COND="$(EC,$ZDB_access,root)">
 <TABLE width=100%>
 <TR>
+<?MIVAR>
 <TD> <font size=2>
 <b>Curation Status:</b>
 <SELECT name=cur_status>
-<option SELECTED value="any">Any
-<option value="Linked Authors">Linked Authors
-<option value="Curated Genes">Curated Gene Info
-<option value="Curated Expression data">Curated Expression Data
-<option value="Curated Mutant data">Curated Mutant Data
-<option value="Curated Markers/Mapping">Curated Mapping/Markers
+<option $(IF,$(EC,$cur_status,any),SELECTED) value="any">Any
+<option $(IF,$(EC,$cur_status,Linked Authors),SELECTED) value="Linked Authors">Linked Authors
+<option $(IF,$(EC,$cur_status,Curated Genes),SELECTED) value="Curated Genes">Curated Gene Info
+<option $(IF,$(EC,$cur_status,Curated Expression data),SELECTED) value="Curated Expression data">Curated Expression Data
+<option $(IF,$(EC,$cur_status,Curated Mutant data),SELECTED) value="Curated Mutant data">Curated Mutant Data
+<option $(IF,$(EC,$cur_status,Curated Markers/Mapping),SELECTED) value="Curated Markers/Mapping">Curated Mapping/Markers
 </SELECT>  
 </TD>
 <TD> <font size=2>
 <input type=button onClick="window.open('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-classify_pubs.apg','editor','scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=500');" value="Classify Pubs">
 </TD>
+<?/MIVAR>
 </TR></TABLE>
 <?/MIBLOCK>
 
@@ -108,16 +177,18 @@ contains <input type=text name=anon1text size=10>
 <?MIBLOCK COND="$(EC,$ZDB_access,root)">
 <TABLE width=100%>
 <TR>
+<?MIVAR>
 <TD> <font size=2>
 <b>Publication Status:</b>
 <SELECT name=pub_status>
-<option SELECTED value="any">Any
-<option value="active">Active
-<option value="inactive">Inactive
-<option value="temporary">Temporary
-<option value="uncurated">Uncurated
+<option $(IF,$(EC,$pub_status,any),SELECTED)SELECTED value="any">Any
+<option $(IF,$(EC,$pub_status,active),SELECTED) value="active">Active
+<option $(IF,$(EC,$pub_status,inactive),SELECTED )value="inactive">Inactive
+<option $(IF,$(EC,$pub_status,temporary),SELECTED) value="temporary">Temporary
+<option $(IF,$(EC,$pub_status,uncurated),SELECTED) value="uncurated">Uncurated
 </SELECT>  
 </TD>
+<?/MIVAR>
 </TR></TABLE>
 
 <?/MIBLOCK>
@@ -141,8 +212,21 @@ we have to do at this point is pass the return record along to the publister.
 
 <?/MIVAR>
 
+<!-- If we have gotten to this page from a nav bar tile - we need to autosubmit to get
+ pbrowser frame populated -->
+
+
+<?MIVAR COND="$(XST,$navtile)">
+<SCRIPT>
+form_submit();
+</SCRIPT>
+<?/MIVAR>
+
+</form>
+
 
 <!-- Put the cursor in the AUTHORS criterion box -->
-<SCRIPT>document.crit_form.authors.focus();</SCRIPT>
+<SCRIPT>document.critform.authors.focus();</SCRIPT>
+
 </HTML>
 
