@@ -23,8 +23,7 @@ requestAntibodies2.html\
 requestBooks.html\
 requestESTs2.html\
 submit.html\
-zirc.js
-
+submitMTAform.html
 
 STATICS = background.html\
 bgblank.gif\
@@ -35,9 +34,11 @@ grant.html\
 husbandry.html\
 links.html\
 marker.html\
+pcr.js\
 provider.html\
 reasons.html\
 request.html\
+request.txt\
 requestAnimals.html\
 requestAnimals.txt\
 requestAntibodies.html\
@@ -47,8 +48,12 @@ requestESTs.html\
 requestESTs.txt\
 requestThankyou.html\
 submit.txt\
+submitMTAdefined.html\
+submitMTApdf.html\
+submitPCR.html\
 submitSuccess.html\
 submitTerms.html\
+submitTerms2.html\
 submitTryAgain.html\
 zdb-est-id.jpg\
 zdb-fish-id.jpg\
@@ -57,6 +62,7 @@ zdbId.html\
 zfinGene.jpg\
 zfinId.jpg\
 zirc.css\
+zirc.js\
 zircCC.html\
 zircCC.pdf
 
