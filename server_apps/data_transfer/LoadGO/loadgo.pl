@@ -189,9 +189,7 @@ $count++ while <FILE1>;
       print "No new secondary terms\n" ;
   }
   else {
-    &sendLoadReport("Terms now secondary","doughowe\@uoregon.edu", 
-		"./newannotsecterms.unl") ;
-    &sendLoadReport("Terms now secondary","staylor\@cs.uoregon.edu", 
+    &sendLoadReport("Terms now secondary","<!--|GO_EMAIL_CURATOR|-->", 
 		"./newannotsecterms.unl") ;
   }
 
@@ -210,10 +208,9 @@ $count++ while <FILE2>;
   }
   else {
     
-      &sendLoadReport("Terms now obsolete","staylor\@cs.uoregon.edu",
+      &sendLoadReport("Terms now obsolete","<!--|GO_EMAIL_CURATOR|-->",
 		      "./new_obsolete_terms.unl");
-       &sendLoadReport("Terms now obsolete","doughowe\@uoregon.edu",
-		      "./new_obsolete_terms.unl");
+
   }
 
 exit;

@@ -2502,6 +2502,7 @@ my $estEmail     = "<!--|VALIDATION_EMAIL_EST|-->";
 my $geneEmail    = "<!--|VALIDATION_EMAIL_GENE|-->";
 my $mutantEmail  = "<!--|VALIDATION_EMAIL_MUTANT|-->";
 my $dbaEmail     = "<!--|VALIDATION_EMAIL_DBA|-->";
+my $goEmail      = "<!--|GO_EMAIL_ERR|-->";
 
 if($daily) {
   stageWindowConsistent ($adEmail);
