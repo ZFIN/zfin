@@ -18,13 +18,12 @@ sub downloadGOtermFiles () {
 
 
 #set environment variables
-$ENV{"INFORMIXDIR"}="/private/apps/Informix/informix_wanda";
-$ENV{"INFORMIXSERVER"}="wanda";
-$ENV{"ONCONFIG"}="onconfig.wanda";
-$ENV{"INFORMIXSQLHOSTS"}="/private/apps/Informix/informix_wanda/etc/sqlhosts.wanda";
+$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
+$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
+$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
+$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
-chdir "/research/zcentral/www_homes/hoover/server_apps/data_transfer/LoadGO/";
-
+#chdir "/research/zcentral/www_homes/hoover/server_apps/data_transfer/LoadGO/";
 
 #remove old files
  
