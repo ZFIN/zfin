@@ -1,4 +1,5 @@
-<!-- FILE: markerupdate.apg
+<?MICOMMENT>
+FILE: xpatupdatePubs.apg
 
 
 This is the handler that is called whenever a user clicks a button in the 
@@ -16,17 +17,17 @@ attr_type -- the type of attr being updated. Either 'text','textarea',
 print_name -- The human-understandable name (vs. the database column name) of
   the attribute to be updated. So for ex, the print name for 'phone' 
   would be 'phone number'
-target_table -- either anon_marker or gene, depending on what you're updating
+target_table -- expression_pattern.  This variable is not used in this page,
+  but may be used in called pages.
 
--->
+<?/MICOMMENT>
+
 <META HTTP-EQUIV="EXPIRES" CONTENT="-2d"> 
 
 <!-- first update navigation and double-check permissions. Don't put up 
   -- navigator tile if you are doing selection since you are jumping 
   -- directly to a browser 
   -->
-
-<?MIVAR NAME=$target_table COND="$(NXST,$target_table)"><?/MIVAR>
 
   <?MISQL SQL="
     select WebExplode(object,
