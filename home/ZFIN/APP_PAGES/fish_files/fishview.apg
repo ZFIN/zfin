@@ -879,6 +879,7 @@ Variables Expected:
 	  
 	   <?MIVAR NAME=$last><?/MIVAR>
 	   <?MIVAR name=marker_present>0<?/MIVAR>
+	   <?MIVAR name=marker_missing>0<?/MIVAR>
 	   
 	   <?MISQL SQL="
 		select b.mrkr_abbrev,a.marker_id,a.present_t,b.mrkr_type
@@ -897,16 +898,16 @@ Variables Expected:
 	      <TR><TD><b>Deletion Markers: 
 	      <table>
 	      <tr><td>
-	      <?MIVAR COND="$(XST,$UPDATE)">
-	       <INPUT TYPE=button value="Add" onClick="doit_marker('marker','selection','missing',$lg)"> 	   
-	      <?/MIVAR>
-
             <?/MIVAR>
 	
 
-	   <?MIBLOCK COND="$(AND,$(NC,$last,$3),$(EC,$3,F))">	    	    
+	   <?MIBLOCK COND="$(AND,$(NC,$last,$3),$(EC,$3,F))">
+	      <?MIVAR COND="$(XST,$UPDATE)">
+	       <INPUT TYPE=button value="Add" onClick="doit_marker('marker','selection','missing',$lg)"> 	   
+	      <?/MIVAR>
+	    	    
 	       <b>Missing:</b>
-
+	       <?MIVAR name=marker_missing>1<?/MIVAR>
 	    <?/MIBLOCK>
 
 	  $(IF,$(AND,$(NC,$last,$3),$(EC,$3,t),$(NXST,$UPDATE)),"</TD></TR><TR><TD><b>Present:</b> ")
@@ -928,12 +929,18 @@ Variables Expected:
 	  <?/MISQL>
 
 	
-	  <?MIVAR COND="$(AND,$(XST,$UPDATE),$(EC,$marker_present,0))">
+	  <?MIBLOCK COND="$(AND,$(XST,$UPDATE),$(EC,$marker_present,0))">
 	    </TD></TR><TR><TD align=left>
-	    <INPUT TYPE=button value="Add" onClick="doit_marker('marker','selection','present',$lg)"> 
-	    <b>Present:</b>
-	  
-	  <?/MIVAR>
+	    <INPUT TYPE=button value="Add" onClick="doit_marker('marker','selection','present',0)"> 
+	    <b>Present:</b><br>
+	  <?/MIBLOCK>
+
+	  <?MIBLOCK COND="$(AND,$(XST,$UPDATE),$(EC,$marker_missing,0))">
+	    </TD></TR><TR><TD align=left>
+	    <INPUT TYPE=button value="Add" onClick="doit_marker('marker','selection','missing',0)"> 
+	    <b>Missing:</b><br>
+	  <?/MIBLOCK>
+
 	  <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
 	    </td></tr></table>
  	   </TD></TR></TABLE>
