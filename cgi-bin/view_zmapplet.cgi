@@ -55,7 +55,7 @@
   
   ### the known marker types
   my $types = 'SSLP';
-  my $anon_type = "RAPD\',\'RFLP\',\'BAC\',\'SSR\',\'STS";
+  my $anon_type = "RAPD\',\'RFLP\',\'BAC\',\'SSR\',\'STS\',\'SNP";
   my $gene_type = "GENE";
   my $est_type  = "EST";
   my $bac_type  = "BAC\',\'PAC";
@@ -188,8 +188,8 @@
   if( (defined $Q->param("view_map")) && ($g_error == 0) )  { 
     ### view_map is defined and no error reported
     ### types is never defined by an external page so use them all.
-    $types = "SSLP\',\'RAPD\',\'RFLP\',\'SSR\',\'STS\',\'GENE\',\'BAC\',\'PAC'\,'EST\',\'FISH\',\'MUTANT\',\'LOCUS";
-    
+    $types = "SSLP\',\'RAPD\',\'RFLP\',\'SSR\',\'STS\',\'SNP\',\'GENE\',\'BAC\',\'PAC'\,'EST\',\'FISH\',\'MUTANT\',\'LOCUS";
+    # $types =  $types.",\'".$anon_type.",\'".$gene_type .",\'".$est_type.",\'".$bac_type.",\'".$fish_type."\'";
     if( ( !(defined $Q->param("OID")) ) || ($Q->param("OID") eq '') ) { 
         ### should I parse it as  ZDB-type-date-number  ???
         ### coming from some single source search 

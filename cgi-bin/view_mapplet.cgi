@@ -59,7 +59,7 @@
   
   ### the known marker types
   my $types = 'SSLP';
-  my $anon_type = "RAPD\',\'RFLP\',\'BAC\',\'SSR\',\'STS";
+  my $anon_type = "RAPD\',\'RFLP\',\'BAC\',\'SSR\',\'STS\',\'SNP";
   my $gene_type = "GENE";
   my $est_type  = "EST";
   my $bac_type  = "BAC\',\'PAC";
@@ -195,8 +195,10 @@
   if( (defined $Q->param("view_map")) && ($g_error == 0) ) { # view_map is defined and no error reported
     
     ### types is never defined by an external page so use them all.
-    $types = "SSLP\',\'RAPD\',\'RFLP\',\'SSR\',\'STS\',\'GENE\',\'BAC\',\'PAC'\,\'EST\',\'FISH\',\'MUTANT\',\'LOCUS";
-    
+    $types = "SSLP\',\'RAPD\',\'RFLP\',\'SSR\',\'STS\',\'SNP\',\'GENE\',\'BAC\',\'PAC'\,\'EST\',\'FISH\',\'MUTANT\',\'LOCUS";
+    #$types =  $types . ",\'" . $anon_type  . ",\'" . $gene_type  . ",\'" . $est_type . ",\'" . $bac_type . ",\'" . $fish_type . "\'" ;   
+    #$note = $note . "\n" . $types .  "\n"; print note;
+
     if( ( !(defined $Q->param("OID")) ) || ($Q->param("OID") =~ '') ) { # parse it as  ZDB-type-date-nunber  ?
       ### coming from some single source search 
       ### (mapperselect name or near or lg ...) 
@@ -1356,17 +1358,21 @@
     if( (defined $lg) && $lg && ($lg ne "??") && ($lg > 0) && ($lg <= 25) ) {
       $note = $note .  "Is |$marker| exactly unique on |$panel| |$lg| officially?<p>\n ";
       $sql = "SELECT UNIQUE zdb_id, or_lg FROM  public_paneled_markers  ".      
-	  "WHERE abbrev  = \'$marker\' AND target_abbrev in (\'$panel\') ".
-      "AND mtype IN (\'$types\') AND or_lg =  \'$lg\'; ";
+	"WHERE abbrev  = \'$marker\' AND target_abbrev in (\'$panel\') ".
+	  "AND mtype IN (\'$types\')  " .
+	    "AND or_lg =  \'$lg\'; ";
+	      
     } elsif( defined  $panel) {
       $note = $note .  "Is |$marker| exactly unique on |$panel| offically?<p>\n ";
       $sql = "SELECT UNIQUE zdb_id, or_lg FROM public_paneled_markers ".
-	  "WHERE abbrev  = \'$marker\' AND target_abbrev in (\'$panel\') ".
-      "AND mtype IN ( \'$types\' ); ";
+	"WHERE abbrev  = \'$marker\' AND target_abbrev in (\'$panel\') " .
+	  "AND mtype IN ( \'$types\' ); ";
+	   
     } else  {
       $note = $note . "Is |$marker| exactly unique in ZFIN officially?<p>\n ";
       $sql = "SELECT UNIQUE zdb_id, or_lg FROM public_paneled_markers ".
-	  "WHERE abbrev  = \'$marker\' AND mtype IN ( \'$types\' ) ;";	        		
+	  "WHERE abbrev  = \'$marker\' AND mtype IN ( \'$types\' ) ;";  
+	  
     }
     $cur = $dbh->prepare($sql);
     $rc = $cur->execute();   
@@ -1383,16 +1389,20 @@
 	    $note = $note . "Is |$marker| similar & unique on |$panel|& |$lg| offically?<p>\n";
 	    $sql = "SELECT UNIQUE zdb_id, or_lg FROM public_paneled_markers ".
 	    "WHERE abbrev  like \'\%$marker\%\' AND target_abbrev = (\'$panel\') ".
-		"AND mtype IN ( \'$types\' ) AND or_lg = \'$lg\'; ";
+		"AND mtype IN ( \'$types\' ) AND or_lg = \'$lg\';  ";
+		
+
       } elsif( defined  $panel ) {
         $note = $note . "Is |$marker| similar & unique on |$panel| offically?<p>\n";
 	    $sql = "SELECT UNIQUE zdb_id, or_lg FROM public_paneled_markers ".
 	    "WHERE abbrev like \'\%$marker\%\' AND target_abbrev = (\'$panel\') ".
-		"AND mtype IN ( \'$types\' ); ";
+		"AND mtype IN ( \'$types\' ) ; " ;
+		
       } else  {
 	    $note = $note . "Is |$marker| similar & unique in ZFIN offically?<p>\n";
 	    $sql = "SELECT UNIQUE zdb_id, or_lg FROM public_paneled_markers ".
-	    "WHERE abbrev  like \'\%$marker\%\' AND mtype IN ( \'$types\' ) ;"			
+	    "WHERE abbrev  like \'\%$marker\%\' AND mtype IN ( \'$types\' )  ;";
+	   
 	  }
       $cur = $dbh->prepare($sql);$cur->execute();
       $array_ref = $cur->fetchall_arrayref();
@@ -1403,26 +1413,29 @@
     #-------------------------------------------------------------------------- 
     if(($count < 1) ) { ############ if still no hits try all_map_names
         if( (defined $lg) && $lg && ($lg ne "??") && ($lg > 0) && ($lg <= 25) ) {
-            $note = $note . "Is |$marker| exactly unique on |$panel| |$lg| unoffically?<p>\n ";
-            $sql = "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ".
-	        "FROM all_map_names pmn, public_paneled_markers pm ".
-	        "WHERE allmapnm_zdb_id = pm.zdb_id ".
+	  $note = $note . "Is |$marker| exactly unique on |$panel| |$lg| unoffically?<p>\n ";
+	  $sql = "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ".
+	    "FROM all_map_names pmn, public_paneled_markers pm ".
+	      "WHERE allmapnm_zdb_id = pm.zdb_id ".
 	        "AND allmapnm_name  = \'$marker\' AND pm.target_abbrev in (\'$panel\') ".
-		    "AND mtype IN (\'$types\') AND pm.or_lg =  \'$lg\'; ";
+		  "AND mtype IN (\'$types\') AND pm.or_lg =  \'$lg\' ; " ;
+		  
         } elsif( defined  $panel) {
-            $note = $note .  "|$marker| exactly unique on |$panel| unoffically?<p>\n ";
-            $sql =
-	            "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ". 
-	            "FROM all_map_names pmn, public_paneled_markers pm ".
-	            "WHERE allmapnm_zdb_id = pm.zdb_id AND allmapnm_name  = \'$marker\' ".    
-		        "AND pm.target_abbrev in (\'$panel\') AND mtype IN (\'$types\'); ";
+	  $note = $note .  "|$marker| exactly unique on |$panel| unoffically?<p>\n ";
+	  $sql =
+	    "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ". 
+	      "FROM all_map_names pmn, public_paneled_markers pm ".
+		"WHERE allmapnm_zdb_id = pm.zdb_id AND allmapnm_name  = \'$marker\' ".    
+		  "AND pm.target_abbrev in (\'$panel\') AND mtype IN (\'$types\') ; " ;
+		    
         } else  {
-            $note = $note . "|$marker| exactly unique in ZFIN  unoffically?<p>\n ";
-            $sql =
-	            "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ".
-	            "FROM all_map_names pmn, public_paneled_markers pm ".
-	            "WHERE allmapnm_zdb_id = pm.zdb_id ".
-	            "AND allmapnm_name = \'$marker\' AND mtype IN (\'$types\') ;";	
+	  $note = $note . "|$marker| exactly unique in ZFIN  unoffically?<p>\n ";
+	  $sql =
+	    "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ".
+	      "FROM all_map_names pmn, public_paneled_markers pm ".
+		"WHERE allmapnm_zdb_id = pm.zdb_id ".
+		  "AND allmapnm_name = \'$marker\' AND mtype IN (\'$types\') ; " ;
+		  
         }
         $cur = $dbh->prepare($sql);$rc = $cur->execute();   
         $array_ref = $cur->fetchall_arrayref();
@@ -1435,30 +1448,33 @@
         ### first look for "contains" with the current constraints
         #$note = $note .  "\nLOOKING for CONTAINS \n";
         if( (defined $lg) && $lg && ($lg ne "??") && ($lg > 0) && ($lg <= 25)) {
-	        $note = $note . "|$marker| similar & unique on |$panel|& |$lg|?<p>\n";
-	        $sql =
-	        "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ". 
-	        "FROM all_map_names pmn, public_paneled_markers pm ".
+	  $note = $note . "|$marker| similar & unique on |$panel|& |$lg|?<p>\n";
+	  $sql =
+	    "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ". 
+	      "FROM all_map_names pmn, public_paneled_markers pm ".
 	        "WHERE allmapnm_zdb_id = pm.zdb_id ".
-		    "AND allmapnm_name  like \'\%$marker\%\' ".    
-		    "AND pm.target_abbrev = (\'$panel\') ".
-		    "AND mtype IN ( \'$types\' ) AND pm.or_lg = \'$lg\'; ";
+		  "AND allmapnm_name  like \'\%$marker\%\' ".    
+		    "AND pm.target_abbrev = (\'$panel\') ;";
+		      "AND mtype IN ( \'$types\' ) AND pm.or_lg = \'$lg\' ; " ;
+		
         } elsif( defined  $panel ) {
-	        $note = $note . "|$marker| similar & unique on |$panel|?<p>\n";
-	        $sql =
-	        "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ".
-	        "FROM all_map_names pmn, public_paneled_markers pm ".
+	  $note = $note . "|$marker| similar & unique on |$panel|?<p>\n";
+	  $sql =
+	    "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ".
+	      "FROM all_map_names pmn, public_paneled_markers pm ".
 	        "WHERE allmapnm_zdb_id = pm.zdb_id ".
-		    "AND allmapnm_name like \'\%$marker\%\' ".    
-		    "AND pm.target_abbrev = (\'$panel\') AND mtype IN (\'$types\'); ";
+		  "AND allmapnm_name like \'\%$marker\%\' ".    
+		    "AND pm.target_abbrev = (\'$panel\') AND mtype IN (\'$types\') ; " ;
+		     
         } else  {
-	        $note = $note . "|$marker| similar & unique in ZFIN??<p>\n";
-	        $sql =
-	        "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ".
-	        "FROM all_map_names pmn, public_paneled_markers pm ".
+	  $note = $note . "|$marker| similar & unique in ZFIN??<p>\n";
+	  $sql =
+	    "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ".
+	      "FROM all_map_names pmn, public_paneled_markers pm ".
 	        "WHERE allmapnm_zdb_id = pm.zdb_id ".
-		    "AND allmapnm_name like \'\%$marker\%\' AND mtype IN (\'$types\') ;"			
-	    }
+		  "AND allmapnm_name like \'\%$marker\%\' AND mtype IN (\'$types\')  ;" ;
+		  
+	}
         $cur = $dbh->prepare($sql);
         $cur->execute();
         $array_ref = $cur->fetchall_arrayref();
