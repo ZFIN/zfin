@@ -65,7 +65,7 @@ sub GOReport()
                                     goterm_go_id,
                                     mrkrgoev_source_zdb_id,
                                     goev_code,
-                                    get_date_from_id(mrkrgo_zdb_id),
+                                    get_date_from_id(mrkrgo_zdb_id,"YYYYMMDD"),
                                     goterm_ontology[1]
                              from   marker,
                                     marker_go_term,
