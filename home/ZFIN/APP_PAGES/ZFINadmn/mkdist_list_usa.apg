@@ -3,6 +3,6 @@
 -->
 
 <PRE>
-<?MISQL SQL="select email from person where on_dist_list='t' and upper(address) like '%USA%';">$1
+<?MISQL SQL="select email from person where on_dist_list='t' and upper(address) like '%USA%' and email is not null;">$1
 <?/MISQL>
 </PRE>
