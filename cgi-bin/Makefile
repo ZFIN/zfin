@@ -30,7 +30,7 @@ GENERICS = ZFIN_jump map-options.pl print_map.cgi runSPL.cgi cgiemail.cgi\
            publications_today.cgi send_notification.cgi 
 
 FXGENERICS = fxFigures.cgi fxSearchResults.cgi header.pl footer.pl pub.pl Tableview.pl \
-	   Figures.pl fxQuery.pl fxResults.pl fxView.cgi results.dat epha4b.dat images.dat fig4.dat \
+	   Figures.pl fxQuery.pl fxResults.pl fxView.cgi results.dat epha4b.dat images.dat fig4.dat neurog1.dat \
 	   fxQuery.cgi fxResultsSummary.cgi fxViewAll.cgi
 
 SPECIFICFXTARGETS = $(foreach SPEC, $(FXGENERICS), $(TARGETDIR)/$(SPEC))
