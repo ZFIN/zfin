@@ -16,7 +16,7 @@ import java.util.Date;
 
 public class Server extends Thread
 {
-    public final static int DEFAULT_PORT = 7365;
+    public final static int DEFAULT_PORT = <!--|JAVA_SERVER_PORT|-->;
 
     protected int port;
     protected ServerSocket listen_socket;
@@ -203,7 +203,7 @@ class DBConnection extends Thread
 				System.out.println ("Just entered sync block for DBConnection " + connectNum);
 			try
 			{
-				MIConnection DB = new MIConnection ("ztest", user, password);
+				MIConnection DB = new MIConnection ("<!--|DB_NAME|-->", user, password);
 				Statement si = DB.createStatement ();
 		
 					/*

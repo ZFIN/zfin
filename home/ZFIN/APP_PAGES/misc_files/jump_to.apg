@@ -1,4 +1,4 @@
-<!-- FILE: jump_to.  This file is an alternate START_ZFIN page that is used when people want to link directly into ZFIN record via an outside URL. They give a URL link that looks like zfin.org/cgi-bin/ZFIN_jump?record=<zfin id of record>
+<!-- FILE: jump_to.  This file is an alternate START_ZFIN page that is used when people want to link directly into ZFIN record via an outside URL. They give a URL link that looks like zfin.org/<!--|CGI_BIN_DIR_NAME|-->/ZFIN_jump?record=<zfin id of record>
 This page starts ZFIN, examines the id, and jumps to that record. 
 
 Note that when they hit the ZFIN HOME button, they will jump to the standard page!
@@ -11,10 +11,10 @@ Note that when they hit the ZFIN HOME button, they will jump to the standard pag
 
 function display_foo(mywindow,index) {
   if (index==1) {
-  mywindow.document.writeln('<center><A HREF="mailto:zfinadmn@zfin.org"><img border=1 src="/ZDBB/icons/comments-small.gif"></A><p><hr><p><Font size=-1><b>ZFIN NAVIGATOR:</b></font></center><TABLE width=100% cellpadding=0 cellspacing=0>');
+  mywindow.document.writeln('<center><A HREF="mailto:zfinadmn@zfin.org"><img border=1 src="/images/comments-small.gif"></A><p><hr><p><Font size=-1><b>ZFIN NAVIGATOR:</b></font></center><TABLE width=100% cellpadding=0 cellspacing=0>');
   }
   if (index>1) {
-    mywindow.document.writeln("<TR><TD align=center><img border=0 src='/ZDBB/icons/ARROWS/downarrow.gif'></TD></TR>")
+    mywindow.document.writeln("<TR><TD align=center><img border=0 src='/images/ARROWS/downarrow.gif'></TD></TR>")
   }
 
 if (this.title=="ZFIN HOME"){
@@ -24,7 +24,7 @@ else {
   if (this.end==false) {
     this.next.display(mywindow,index+1)
   } else {
-    mywindow.document.writeln("</TABLE><p><font size=-1>Click on above tiles to move to corresponding screen.</font><p><HR><p><br><font size=-1><center><b>SEARCH <br> FOR:</b></font><br><font size=2><A HREF='/cgi-bin_B/webdriver?MIval=aa-startframes.apg&frame_size=250&selector=aa-fishselect.apg&select_from=Mutants&line_type=mutant&intro=/ZDBB/help_files/mut_intro.html' target='content'>MUTANTS</A><br><A HREF='/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-geneselect.apg&select_from=GENE&frame_size=130' target='content'>GENES</A><br><A HREF='/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-markerselect.apg&select_from=MARKER' target='content'>MAP_MARKERS</A><br><A HREF='/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-mapperselect.apg&select_from=MAPPER&frame_size=220' target='content'>VIEW MAP</A><br><A HREF='/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-pubselect2.apg&select_from=PUBLICATION' target='content'>PUBLICATIONS</A><br><A HREF='/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-quickfindpers.apg&select_from=PERSON&frame_size=75' target='content'>PEOPLE</A><br><A HREF='/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-labselect.apg&select_from=LAB' target='content'>LABS</A><br><A HREF='/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-companyselect.apg&select_from=COMPANY&frame_size=230' target='content'>COMPANIES</A><br><A HREF='/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-accessionselect.apg&select_from=ACCESSION' target='content'>ACCESSION_#</A>")
+    mywindow.document.writeln("</TABLE><p><font size=-1>Click on above tiles to move to corresponding screen.</font><p><HR><p><br><font size=-1><center><b>SEARCH <br> FOR:</b></font><br><font size=2><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&frame_size=250&selector=aa-fishselect.apg&select_from=Mutants&line_type=mutant&intro=/ZFIN/help_files/mut_intro.html' target='content'>MUTANTS</A><br><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-geneselect.apg&select_from=GENE&frame_size=130' target='content'>GENES</A><br><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-markerselect.apg&select_from=MARKER' target='content'>MAP_MARKERS</A><br><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-mapperselect.apg&select_from=MAPPER&frame_size=220' target='content'>VIEW MAP</A><br><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-pubselect2.apg&select_from=PUBLICATION' target='content'>PUBLICATIONS</A><br><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-quickfindpers.apg&select_from=PERSON&frame_size=75' target='content'>PEOPLE</A><br><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-labselect.apg&select_from=LAB' target='content'>LABS</A><br><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-companyselect.apg&select_from=COMPANY&frame_size=230' target='content'>COMPANIES</A><br><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-accessionselect.apg&select_from=ACCESSION' target='content'>ACCESSION_#</A>")
  }
 }
 
@@ -58,9 +58,9 @@ if (browserName == "Netscape" && browserVer >= 3) version = "n3";
 else version = "n2";
         
 if (version == "n3")         {
-   ZDB= new page_rec("http://zfin.org/cgi-bin_B/webdriver?MIval=aa-ZDB_home.apg","ZFIN HOME");
+   ZDB= new page_rec("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg","ZFIN HOME");
 } else {
-   window.location="/ZDBB/misc_html/wrong_browser.html"
+   window.location="/ZFIN/misc_html/wrong_browser.html"
 }
 
 top.name="ZFIN";
@@ -72,7 +72,7 @@ top.name="ZFIN";
 
 <FRAMESET cols="90,*">
 
-<FRAME NAME="controls" scrolling=no SRC="http://zfin.org/cgi-bin_B/webdriver?MIval=aa-navigator.html" MARGINWIDTH=1 MARGINHEIGHT=1>
+<FRAME NAME="controls" scrolling=no SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-navigator.html" MARGINWIDTH=1 MARGINHEIGHT=1>
 
 <?MIVAR NAME=$start_page>MIval=aa-ZDB_home.apg<?/MIVAR>
 
@@ -92,14 +92,14 @@ top.name="ZFIN";
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOLAB),0)">MIval=aa-startframes.apg&selector=aa-labselect.apg&select_from=LAB<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOPERSON),0)">MIval=aa-startframes.apg&selector=aa-quickfindpers.apg&select_from=PERSON&frame_size=75<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOPUB),0)">MIval=aa-startframes.apg&selector=aa-pubselect2.apg&select_from=PUBLICATION<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOMUTANT),0)">MIval=aa-startframes.apg&selector=aa-fishselect.apg&select_from=Mutants&line_type=mutant&intro=/ZDBB/help_files/mut_intro.html&frame_size=250<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOMUTANT),0)">MIval=aa-startframes.apg&selector=aa-fishselect.apg&select_from=Mutants&line_type=mutant&intro=/ZFIN/help_files/mut_intro.html&frame_size=250<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOWILD),0)">MIval=aa-fishlister.apg&line_type=wild_type<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOREFCROSS),0)">MIval=aa-startframes.apg&selector=aa-mapperselect.apg&select_from=MAPPER&frame_size=220<?/MIVAR>
 <?/MIBLOCK>
 
 
 <?MIVAR>
-<FRAME NAME="content" SRC="http://zfin.org/cgi-bin_B/webdriver?$start_page">
+<FRAME NAME="content" SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$start_page">
 <?/MIVAR>
 
 </FRAMESET>

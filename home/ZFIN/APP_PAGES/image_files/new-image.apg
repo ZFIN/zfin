@@ -55,7 +55,7 @@ $1<?/MISQL>
 <!-- NOW THROW UP THE FORM. All the variables were set by setup-new-image -->
 
 <?MIVAR>
-<FORM name=getparams METHOD=POST ACTION="/cgi-bin_B/webdriver">
+<FORM name=getparams METHOD=POST ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 
 <INPUT type=hidden NAME=temp_oid VALUE=$temp_oid>
 <INPUT type=hidden NAME=MIval VALUE="aa-process-image.apg">
@@ -73,7 +73,7 @@ $1<?/MISQL>
 <applet codebase="/ted" code="ImageAnnotator.class" width=604 height=568>
 <PARAM name="imageZDB" value="$temp_oid">
 <PARAM name="type" value="annotator">
-<IMG SRC="/cgi-bin/Webdriver?LO=$image&MItypeObj=image/gif">
+<IMG SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$image&MItypeObj=image/gif">
 </APPLET>
 </TD></TR></TABLE>
 <?/MIVAR>
@@ -81,7 +81,7 @@ $1<?/MISQL>
 
 <!-- For NOW, just display the image! -->
 <center><table border><tr><td>
-<?MIVAR><IMG SRC="/cgi-bin_B/webdriver?LO=$image&MItypeObj=image/gif"><?/MIVAR>
+<?MIVAR><IMG SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$image&MItypeObj=image/gif"><?/MIVAR>
 </TD></TR></TABLE></CENTER>
 
 <center>
@@ -91,7 +91,7 @@ Please fill in the following information to describe this image, then click the 
 <p>
 <hr width=80%>
 <p>
-<A HREF="/ZDBB/help_files/help-chromo.html#name">ABOUT THE ANIMAL:</A>
+<A HREF="/ZFIN/help_files/help-chromo.html#name">ABOUT THE ANIMAL:</A>
 <p>
 
 
@@ -190,7 +190,7 @@ $(IF,$(NC,$resolution,dev_stage),value=$stage_pct) >
 <TR><TD colspan=2>
 <hr width=80%>
 <p>
-<A HREF="/ZDBB/help_files/help-chromo.html#chrom_num">IMAGE PREPARATION:</A>
+<A HREF="/ZFIN/help_files/help-chromo.html#chrom_num">IMAGE PREPARATION:</A>
 <p>
 </TD></TR>
 
@@ -244,7 +244,7 @@ names and OIDs of all labels for the image. But have to wait for LABELS to get p
 <TR>
 <TD><b>LABELING: </B>
 <?MISQL SQL="select b.title, b.zdb_id from int_data_pub a, publication b where source_id='$temp_oid' and target_id=b.zdb_id and info='related';">
-<br><A HREF="/cgi-bin_B/webdriver?MIval=aa-pubview2.apg&OID=$2">$1</A>
+<br><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$1</A>
 <?/MISQL>
 <?MIVAR COND="$(<,$MI_ROWCOUNT,1)">None specified.<?/MIVAR>
 </TD>
@@ -272,7 +272,7 @@ SUBMITTER COMMENTS:",$comments)<?/MIVAR></TEXTAREA>
 <HR width=80%>
 <p>
 
-<A HREF="/ZDBB/help_files/help-fish.html#publications">PUBLICATIONS: </A>
+<A HREF="/ZFIN/help_files/help-fish.html#publications">PUBLICATIONS: </A>
 <p>
 <TABLE width=100%>
 <TR>
@@ -283,7 +283,7 @@ SUBMITTER COMMENTS:",$comments)<?/MIVAR></TEXTAREA>
 </TD>
 </TR>
 <TR> <TD colspan=2>
-<?MIVAR COND=$(<,0,$MI_ROWCOUNT)> <A HREF="/cgi-bin_B/webdriver?MIval=aa-pubview2.apg&OID=$2">$1</A>  <?/MIVAR>
+<?MIVAR COND=$(<,0,$MI_ROWCOUNT)> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$1</A>  <?/MIVAR>
 </TD></TR>
 
 <TR><TD colspan=2> <HR width=50%></TD></TR>
@@ -295,7 +295,7 @@ SUBMITTER COMMENTS:",$comments)<?/MIVAR></TEXTAREA>
 <TD colspan=2>
 <ul>
 <?MISQL SQL="select b.title, b.zdb_id from int_data_pub a, publication b where source_id='$temp_oid' and target_id=b.zdb_id and info='related';">
-<li> <A HREF="/cgi-bin_B/webdriver?MIval=aa-pubview2.apg&OID=$2">$1</A><br>
+<li> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$1</A><br>
 <?/MISQL>
 </ul>
 </TD></TR></TABLE>

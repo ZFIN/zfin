@@ -46,7 +46,7 @@ function validate(field) {
 <?MIVAR COND="$(NXST,$anon1text)" NAME=$anon1text><?/MIVAR>
 
 
-<form name=getcrits method=post TARGET="pbrowser" action="/cgi-bin_B/webdriver">
+<form name=getcrits method=post TARGET="pbrowser" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 
 <center>
 <U><B><FONT SIZE=5>Search for </font>

@@ -64,7 +64,7 @@ Variables expected:  OID (optional) -- the OID of a publication to edit.
 <big>The following five pieces of information are <B>REQUIRED</B> to create the a new PUBLICATION record:</big>
 <?/MIBLOCK>
 
-<FORM METHOD=POST ACTION="/cgi-bin_B/webdriver" TARGET=content>
+<FORM METHOD=POST ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" TARGET=content>
 <p>
 <?MIVAR>
 <TABLE border=4  width=100%>
@@ -82,7 +82,7 @@ Variables expected:  OID (optional) -- the OID of a publication to edit.
 <?/MIVAR>
 <TD colspan=2 align=center>
 <?MIVAR COND="$(EC,$AUTHORIZED,root)">
-<font size=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-delete_record.apg&OID=$OID&rtype=publication">Permanently delete this publication</A> </font> <br>
+<font size=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-delete_record.apg&OID=$OID&rtype=publication">Permanently delete this publication</A> </font> <br>
 <?/MIVAR>
 </TD></TR>
 </TABLE>

@@ -13,9 +13,9 @@
 
 <?MIVAR>
 
-<FRAME NAME="label" scrolling=no SRC="/cgi-bin_B/webdriver?MIval=aa-scoresview.apg&panel_id=$panel&OR_LG=$lg" MARGINWIDTH=1 MARGINHEIGHT=1>
+<FRAME NAME="label" scrolling=no SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-scoresview.apg&panel_id=$panel&OR_LG=$lg" MARGINWIDTH=1 MARGINHEIGHT=1>
 
-<FRAME NAME="helpcontent" SRC="/ZDBB/misc_html/saycomposing.html">
+<FRAME NAME="helpcontent" SRC="/ZFIN/misc_html/saycomposing.html">
 <?/MIVAR>
 
 </FRAMESET>

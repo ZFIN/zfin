@@ -49,7 +49,7 @@ no_record -- optional. Passed when you don't want the update recorded
 <!-- okay, now just bail back to the persupdate to view results -->
 <?MIVAR>
 <SCRIPT>
-location.replace("/cgi-bin_B/webdriver?MIval=aa-persview.apg&OID=$OID&UPDATE=1")
+location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$OID&UPDATE=1")
 </SCRIPT>
 <?/MIVAR>
 

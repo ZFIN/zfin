@@ -96,7 +96,7 @@ ID='aa-data_mgr.apg';">$1<?/MISQL>
 
 
 <!-- OKAY, NOW  THROW UP THE  PANEL INFO -->
-<form method=post name=mapview  action="/cgi-bin_B/view_mapplet.cgi" target="content">
+<form method=post name=mapview  action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi" target="content">
 
 <INPUT TYPE=hidden name=loc_lg value=0 >  
 <?MIVAR><input type=hidden name=userid value="$userid"><?/MIVAR>
@@ -123,7 +123,7 @@ $(IF,$(EC,$panel_type,Rad_Hybrid),Radiation Hybrid,Meiotic) Panel:  $panel_name 
 <TD><font size=2><b>Panel Producer:</b>
 <?MIBLOCK COND="$(NC,$panel_producer,NULL)">
 <?MISQL SQL="select full_name from person where zdb_id='$panel_producer';">
-<A HREF="/cgi-bin_B/webdriver?MIval=aa-persview.apg&OID=$panel_producer">$1</A>
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$panel_producer">$1</A>
 <?/MISQL>
 <?/MIBLOCK>
 <?MIVAR COND="$(EC,$panel_producer,NULL)"> UNKNOWN. <?/MIVAR>
@@ -158,7 +158,7 @@ $(IF,$(NC,$num_meioses,NULL),$num_meioses,UNKNOWN)
 <TD><font size=2><b>Current source of genetic material for mapping:</b> 
 <?MIBLOCK COND="$(NC,$source,NULL)">
 <?MISQL SQL="select name from sources where zdb_id='$source';">
-<A HREF="/cgi-bin_B/webdriver?MIval=aa-sourceview.apg&OID=$source">$1</A>
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sourceview.apg&OID=$source">$1</A>
 <?/MISQL>
 <?/MIBLOCK>
 <?MIVAR COND="$(EC,$source,NULL)"> UNKNOWN. <?/MIVAR>
@@ -190,7 +190,7 @@ $(IF,$(NC,$num_meioses,NULL),$num_meioses,UNKNOWN)
 <?MIVAR NAME=$mcount>0<?/MIVAR>
 <?MISQL SQL="select mtype,count(*)::integer from paneled_markers where target_id='$OID'  group by mtype;">
 $(IF,$(NC,$MI_CURRENTROW,1),"<br>")
-<A HREF="/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-markerselect.apg&select_from=MARKER&panelid=$OID&marker_type=$1">$1</A> (total of $2)
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-markerselect.apg&select_from=MARKER&panelid=$OID&marker_type=$1">$1</A> (total of $2)
 $(SETVAR,$mcount,$(+,$mcount,$2))
 <?/MISQL>
 </ul>
@@ -203,7 +203,7 @@ $(SETVAR,$mcount,$(+,$mcount,$2))
 OR
 </p>
 <?MIVAR>
-Click to <A HREF="/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-markerselect.apg&select_from=MARKER&panelid=$OID">search the $abbrev Panel by marker attributes</A>.
+Click to <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-markerselect.apg&select_from=MARKER&panelid=$OID">search the $abbrev Panel by marker attributes</A>.
 <?/MIVAR>
 </TD>
 

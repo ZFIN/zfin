@@ -52,7 +52,7 @@ $constraint $previous (webhtml_like($anon1,'$anon1text'))<?/MIVAR>
 
 <!-- NOW JUST RETRIEVE AND DISPLAY ALL MATCHING ENTRIES -->
 
-<form method=post target=content action="/cgi-bin_B/webdriver">
+<form method=post target=content action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 <TABLE width=100%>
 <TR>
 <td width=90% align=center>
@@ -84,9 +84,9 @@ $constraint $previous (webhtml_like($anon1,'$anon1text'))<?/MIVAR>
 <?MISQL SQL="select name,address,zdb_id from company $constraint order by name;">
 <TR> 
 <TD valign=top>
-$(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3" TARGET=content>SELECT</A> </FONT>")
+$(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3" TARGET=content>SELECT</A> </FONT>")
 </TD>
-<TD valign=top> <FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-companyview.apg&OID=$3" TARGET="content">$1</A> </FONT> </TD>  
+<TD valign=top> <FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-companyview.apg&OID=$3" TARGET="content">$1</A> </FONT> </TD>  
 <TD> <FONT SIZE=-1> <pre>$2</pre> </FONT> </TD>  </TR>
 <?/MISQL>
 </TABLE>

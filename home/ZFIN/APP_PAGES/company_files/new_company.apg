@@ -24,7 +24,7 @@ SIZE MANAGEABLE-->
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-setup-new-company.apg';">$1<?/MISQL>
 
 <?MIVAR>
-<FORM METHOD=POST ACTION="/cgi-bin_B/webdriver">
+<FORM METHOD=POST ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 
 <INPUT type=hidden NAME=temp_oid VALUE=$temp_oid>
 <INPUT type=hidden NAME=MIval VALUE="aa-process-company.apg">

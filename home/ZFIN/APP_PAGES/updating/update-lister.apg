@@ -42,7 +42,7 @@ $constraint and (field_name='$field')<?/MIVAR>
 	<TABLE cellpadding=3 width=100% border=2>
 	<tr>
 	<td width=30%> <b>Submitter:</b> 
-<A TARGET="content" HREF="/cgi-bin_B/webdriver?MIval=aa-persview.apg&OID=$1">$8</A></td>
+<A TARGET="content" HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$1">$8</A></td>
 	<td> <b>Changed field:</b> $4 </td> 
 	<td> <b>Date:</b> $2 </td> 
 	</tr></TABLE>

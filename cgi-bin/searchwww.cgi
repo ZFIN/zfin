@@ -137,7 +137,7 @@ sub do_directory {
 #  BEGIN MAIN PROGRAM 
 
 # Change this to your HTTP root
-$HTTP_root="/research/zfin/chromix/www/home";
+$HTTP_root="<!--|ROOT_PATH|-->/home";
 
 # Change this to whatever directory within HTTP server you want it to start
 # searching in.

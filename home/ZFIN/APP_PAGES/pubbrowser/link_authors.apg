@@ -29,12 +29,12 @@ Variables expected:  OID  -- the OID of a publication to link
 <p>
 
 
-<form  method=post action="/cgi-bin_B/webdriver">
+<form  method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 
 <table border=2 width=100% cols=2>
 
 
-<APPLET CODEBASE="/ZFIN_software/ListSelector/" CODE="ListSelector.class" WIDTH=400 HEIGHT=170 NAME=phenoselect>
+<APPLET CODEBASE="/client_apps/ListSelector/" CODE="ListSelector.class" WIDTH=400 HEIGHT=170 NAME=phenoselect>
 <param name="selectableLabel" value="Potential Authors">
 <param name="selectedLabel" value="Linked Authors">
 <?MIVAR>

@@ -96,7 +96,7 @@ document.mapplet.LN54.checked = true;
 
 <?MIVAR>
 function start_help(anchor) {
-   top.zfinhelp=open("/cgi-bin_B/webdriver?MIval=aa-helpframes.html&calling_page=mapperselecthelp.html&anchor="+anchor,"helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
+   top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-helpframes.html&calling_page=mapperselecthelp.html&anchor="+anchor,"helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
 }
 <?/MIVAR>
 
@@ -105,7 +105,7 @@ function start_help(anchor) {
 
 <basefont size=2>
 
-<form name=mapplet action = '/cgi-bin_B/view_mapplet.cgi' method = 'post' target = 'pbrowser'  >
+<form name=mapplet action = '/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi' method = 'post' target = 'pbrowser'  >
 
 
 <!-- Get user identity -->
@@ -234,7 +234,7 @@ var LN54=0;
 </TD>
 </TR>
 </TABLE>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <!-- <IMG SRC="/ZFIN/icons/ANIMATED/perlorangeblink.gif"> -->
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <!-- <IMG SRC="/images/ANIMATED/perlorangeblink.gif"> -->
 NOTE: Large maps may take a few moments to load.
 
 </form>

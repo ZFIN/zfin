@@ -50,7 +50,7 @@ rtype (optional) -- Only necessary if permission=owns.
 <?MISQL SQL="execute function conc('GUEST',get_random_cookie());"><?/MISQL>
 <?MIVAR NAME=$ZDB_authorize>GUEST<?/MIVAR>
 <?MIVAR NAME=$ZDB_name>$1<?/MIVAR>
-<?MIVAR>$(HTTPHEADER,set-cookie,ZDB_authorize=$1;path=/cgi-bin_B)<?/MIVAR>
+<?MIVAR>$(HTTPHEADER,set-cookie,ZDB_authorize=$1;path=/<!--|CGI_BIN_DIR_NAME|-->)<?/MIVAR>
 <?MISQL SQL="insert into login_log values ('$ZDB_name','GUEST',current);"><?/MISQL>
 <?/MIBLOCK>
 

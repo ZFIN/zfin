@@ -36,13 +36,13 @@ annotations -- big string of annotations for the image
 <TITLE>Updating $print_name</TITLE>
 
 <center>
-<IMG ALIGN=center SRC="/cgi-bin_B/webdriver?LO=$target_image&MItypeObj=image/gif">
+<IMG ALIGN=center SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$target_image&MItypeObj=image/gif">
 <font size=6>Update <u>$print_name</u> for this image</font></center>
 <?/MIVAR>
 <p>
 
 
-<FORM ACTION="/cgi-bin_B/SuperWebdriver" METHOD=post ENCTYPE="multipart/form-data">
+<FORM ACTION="/<!--|CGI_BIN_DIR_NAME|-->/SuperWebdriver" METHOD=post ENCTYPE="multipart/form-data">
 <?MIVAR>
 <INPUT TYPE=hidden name=MIval Value=aa-do-imageupdate.apg>
 <INPUT TYPE=hidden name=OID Value=$OID>
@@ -59,7 +59,7 @@ annotations -- big string of annotations for the image
 <TD valign=middle><b>Current Image (in reduced format):</B></TD>
 <TD>
 <?MIVAR COND="$(NC,$current_value,NULL)">
-<IMG ALIGN=center SRC="/cgi-bin_B/webdriver?LO=$target_image&MItypeObj=image/gif">
+<IMG ALIGN=center SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$target_image&MItypeObj=image/gif">
 <?/MIVAR>
 <?MIVAR COND="$(EC,$current_value,NULL)">
 No image currently specified.

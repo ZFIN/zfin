@@ -91,7 +91,7 @@ info -- optional value used to pass in additional info
 <!-- okay, now just bail back to the markerview to view results -->
 <?MIVAR>
 <SCRIPT>
-location.replace("/cgi-bin_B/webdriver?MIval=aa-markerview.apg&OID=$OID&UPDATE=1")
+location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID&UPDATE=1")
 </SCRIPT>
 <?/MIVAR>
 

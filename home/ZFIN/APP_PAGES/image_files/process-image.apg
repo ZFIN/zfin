@@ -28,7 +28,7 @@ them back to form if not! -->
 If you have tried to specify the mutant line, but are unable to find the appropriate mutation in ZFIN, it may be that the mutant line has not yet been added to the database. This is particularly likely if the line has only recently been developed. If this is the case, you will need to return to the ZFIN home page, then request to "add new mutant" to generate a record for the line. After defining the new line, you should try again to submit your image. Click on the "questions and comments" button at the top of the page to contact the database adminstrator if you have any questions.
 <p>
 <?MIVAR>
-Click to <A HREF="/cgi-bin_B/webdriver?MIval=aa-new-image.apg&temp_oid=$temp_oid">return to the your in-progress submission</A> to fill in the STOCK.
+Click to <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new-image.apg&temp_oid=$temp_oid">return to the your in-progress submission</A> to fill in the STOCK.
 <?/MIVAR>
 </HTML>
 <?/MIBLOCK> <!-- ends done but STOCK is NULL -->
@@ -63,14 +63,14 @@ Click to <A HREF="/cgi-bin_B/webdriver?MIval=aa-new-image.apg&temp_oid=$temp_oid
 <?MIVAR COND=$(NC,$return_rec,NULL)>
 <p>
 <BIG><FONT COLOR="#ff0000">PLEASE RECALL</FONT></BIG> that you were in the middle of creating or modifying some other record when you took time out to enter this new IMAGE record.<br>
-Click <A HREF="/cgi-bin_B/webdriver?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$temp_oid">here</A> to return to your work in progress!
+Click <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$temp_oid">here</A> to return to your work in progress!
 <?/MIVAR>
 <p>
 <?MIVAR>
-Click <A HREF="/cgi-bin_B/webdriver?MIval=aa-imageview.apg&OID=$temp_oid">here</A> to view the new IMAGE record.
+Click <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$temp_oid">here</A> to view the new IMAGE record.
 <?/MIVAR>
 <p>
-OR click <A TARGET=content HREF="/cgi-bin_B/webdriver?MIval=aa-ZDB_home.apg">here</A> to return to the ZDB home page.
+OR click <A TARGET=content HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg">here</A> to return to the ZDB home page.
 
 </HTML>
 
@@ -81,7 +81,7 @@ OR click <A TARGET=content HREF="/cgi-bin_B/webdriver?MIval=aa-ZDB_home.apg">her
 <!-- OKAY, now handle the cases where user wants to specify some value -->
 <?MIBLOCK COND="$(OR,$(XST,$s_related_pub),$(XST,$s_prim_pub),$(XST,$s_strain))">
 
-<?MIVAR NAME=$file_name>/ZDBB/misc_html/error.html<?/MIVAR>
+<?MIVAR NAME=$file_name>/ZFIN/misc_html/error.html<?/MIVAR>
 
 <!-- VARIABLES DESCRIPTIONS for following. 
 Selection requests are handled using the standard return_rec processing mechanism used whenever we need to bail temporarily out of one form to do something else. Specifically, a new return_rec is created in the return_recs tables. The name of the form I'm coming from goes in the

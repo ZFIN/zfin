@@ -42,8 +42,8 @@ if (counter!=null) {
 
 <?MIVAR>
 function redisplay () {     
-top.helpcontent.location="/ZDBB/misc_html/saycomposing.html";
-top.helpcontent.location="/cgi-bin_B/webdriver?MIval=aa-make_map.apg&marker=$marker&showlist="+makelist()+"&refcross=$panel_id&OR_LG=$OR_LG";
+top.helpcontent.location="/ZFIN/misc_html/saycomposing.html";
+top.helpcontent.location="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-make_map.apg&marker=$marker&showlist="+makelist()+"&refcross=$panel_id&OR_LG=$OR_LG";
 
 }
 <?/MIVAR>
@@ -59,7 +59,7 @@ top.helpcontent.location="/cgi-bin_B/webdriver?MIval=aa-make_map.apg&marker=$mar
 <?MIVAR>
 <TABLE width=100%>
 <TR>
-<TD><font size=3><b><a href="javascript:top.lghomewin.content.location='/cgi-bin_B/webdriver?MIval=aa-crossview.apg&OID=$panel_id';top.lghomewin.content.focus();">$panel_abbrev Panel</A>; LG $OR_LG </B>
+<TD><font size=3><b><a href="javascript:top.lghomewin.content.location='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=$panel_id';top.lghomewin.content.focus();">$panel_abbrev Panel</A>; LG $OR_LG </B>
 </TD>
 <TD align=right><font size=2><input type=button value="Close" onClick="parent.close();"> </TD>
 </TR>

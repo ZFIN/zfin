@@ -23,7 +23,7 @@ function submit_login () {
 
 </SCRIPT>
 
-<form name=login_form method=post  action="/cgi-bin_B/webdriver">
+<form name=login_form method=post  action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 <INPUT TYPE=hidden name=MIval value=aa-process-login.apg>
 
 <TABLE bgcolor="#f8fabb" border=1 width=100%>

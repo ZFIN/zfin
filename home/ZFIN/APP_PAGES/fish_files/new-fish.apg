@@ -56,7 +56,7 @@ $1<?/MISQL>
 
 <!-- NOW JUST THROW UP THE FORM FOR ENTERING A NEW MUTANT LINE -->
 <?MIVAR>
-<FORM NAME=fishdata METHOD=POST ACTION="/cgi-bin_B/webdriver">
+<FORM NAME=fishdata METHOD=POST ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 
 <INPUT type=hidden NAME=temp_oid VALUE=$temp_oid>
 <INPUT type=hidden NAME=MIval VALUE="aa-process-fish.apg">
@@ -73,18 +73,18 @@ Fill in as many entries as you can and then click on the SUBMIT button.
 <TABLE cellpadding=6 width=100%>
 <TR> 
 <TD>
-<A HREF="/ZDBB/help_files/help-fish.html#name">NAME: </A> <br> 
+<A HREF="/ZFIN/help_files/help-fish.html#name">NAME: </A> <br> 
 <INPUT TYPE=text <?MIVAR COND="$(NC,$name,NULL)">value="$name" <?/MIVAR> NAME="name"> 
 </TD>
 <TD>
-<A HREF="/ZDBB/help_files/help-fish.html#type">ABBREVIATION:</A> <br>
+<A HREF="/ZFIN/help_files/help-fish.html#type">ABBREVIATION:</A> <br>
 <INPUT TYPE=text SIZE=10 <?MIVAR COND="$(NC,$abbrev,NULL)">value="$abbrev" <?/MIVAR> NAME="abbrev"> 
 </TD>
 
 <!-- Now if its a mutagenized line, ask for new allele name, mutagen, etc -->
 <?MIBLOCK COND="$(AND,$(EC,$line_type,mutant),$(=,$(POSITION,$flag,by_breeding),0))">
 <TD>
-<A HREF="/ZDBB/help_files/help-fish.html#type">ALLELE:</A> <br>
+<A HREF="/ZFIN/help_files/help-fish.html#type">ALLELE:</A> <br>
 <INPUT TYPE=text SIZE=10 <?MIVAR COND="$(NC,$allele,NULL)">value=$allele <?/MIVAR> NAME="allele"> 
 </TD></TR>
 
@@ -92,7 +92,7 @@ Fill in as many entries as you can and then click on the SUBMIT button.
 
 <!-- ask about mutagen only if it's not spontaneous! -->
 <TD colspan=2> 
-<A HREF="/ZDBB/help_files/help-fish.html#availability">MUTAGENIZING PROTOCOL:</A> 
+<A HREF="/ZFIN/help_files/help-fish.html#availability">MUTAGENIZING PROTOCOL:</A> 
 <?MIBLOCK COND="$(NC,$mutagen,spontaneous)">
 <br>
 <SELECT NAME=protocol>
@@ -129,7 +129,7 @@ Fill in as many entries as you can and then click on the SUBMIT button.
 
 <TABLE cellpadding=6 width=100%>
 <TR> 
-<TD><A HREF="/ZDBB/help_files/help-fish.html#availability">DISCOVERER:</A> 
+<TD><A HREF="/ZFIN/help_files/help-fish.html#availability">DISCOVERER:</A> 
 <?MIVAR COND="$(EC,$discoverer,NULL)">UNKNOWN.<?/MIVAR>
 <?MIBLOCK COND="$(NC,$discoverer,NULL)">
 <?MISQL SQL="select full_name from person where zdb_id='$discoverer';"><b>$1</b><?/MISQL>
@@ -137,7 +137,7 @@ Fill in as many entries as you can and then click on the SUBMIT button.
 </TD><TD>
 <input type=submit name="s_discover" value="Specify Discoverer">
 </TD>
-<TD size=50% align=right><A HREF="/ZDBB/help_files/help-chromo.html#lab">LAB:</A>
+<TD size=50% align=right><A HREF="/ZFIN/help_files/help-chromo.html#lab">LAB:</A>
 
 <?MIBLOCK COND="$(EC,$line_type,mutant)">
 <SELECT NAME="lab">
@@ -159,7 +159,7 @@ Fill in as many entries as you can and then click on the SUBMIT button.
 
 <TABLE cellpadding=6 width=100%>
 <TR> 
-<TD><A HREF="/ZDBB/help_files/help-chromo.html#lab">STATUS of this line:</A>
+<TD><A HREF="/ZFIN/help_files/help-chromo.html#lab">STATUS of this line:</A>
 <SELECT NAME=status>
 <option value="Dead" <?MIVAR COND="$(EC,$status,Dead)"> SELECTED <?/MIVAR> >Extinct
 
@@ -181,7 +181,7 @@ NAME="orig_crossnum">
 
 <TABLE cellpadding=6 width=100%>
 <TR>
-<TD><A HREF="/ZDBB/help_files/help-fish.html#availability"> CURRENT SOURCE(s):</A>
+<TD><A HREF="/ZFIN/help_files/help-fish.html#availability"> CURRENT SOURCE(s):</A>
 <?MIVAR COND="$(EC,$status,Dead)"> Not Applicable; Dead strain.<?/MIVAR>
 <?MIBLOCK COND="$(NC,$status,Dead)">
 </TD>
@@ -215,7 +215,7 @@ NAME="orig_crossnum">
 
 <h3 align=center>PHENOTYPE INFORMATION</h3>
 
-<A HREF="/ZDBB/help_files/help-fish.html#phenotype">DESCRIPTION of phenotype:</A> <br>
+<A HREF="/ZFIN/help_files/help-fish.html#phenotype">DESCRIPTION of phenotype:</A> <br>
 <TEXTAREA NAME=phenotype WRAP=virtual rows=5 cols=75><?MIVAR COND=$(NC,$phenotype,NULL)>$phenotype<?/MIVAR></TEXTAREA>
 <p>
 
@@ -226,7 +226,7 @@ NAME="orig_crossnum">
 
 <TABLE cellpadding=6 width=100%>
 <TR>
-<TD width=50%><A HREF="/ZDBB/help_files/help-fish.html#phenotype">ANATOMICAL PARTS AFFECTED:</A>
+<TD width=50%><A HREF="/ZFIN/help_files/help-fish.html#phenotype">ANATOMICAL PARTS AFFECTED:</A>
 </TD>
 <TD>
 
@@ -308,7 +308,7 @@ NAME="segregation">
 <TR>
 
 <?MIVAR>
-<TD> <A HREF="/ZDBB/help_files/help-chromo.html#chrom_num">CHROM# (1-25):</A>
+<TD> <A HREF="/ZFIN/help_files/help-chromo.html#chrom_num">CHROM# (1-25):</A>
 <SELECT name="chrom_num">
 <option $(IF,$(EC,$chrom_num,0),SELECTED) value=0>UNKNOWN
 <option $(IF,$(EC,$chrom_num,1),SELECTED) value=1>1
@@ -340,7 +340,7 @@ NAME="segregation">
 <?/MIVAR>
 
 <TD>
-<A HREF="/ZDBB/help_files/help-chromo.html#chrom_change">CHROMOSOME CHANGE:</A>
+<A HREF="/ZFIN/help_files/help-chromo.html#chrom_change">CHROMOSOME CHANGE:</A>
 <SELECT NAME="chrom_change">
 <option <?MIVAR COND="$(EC,$chrom_change,point_mutation)"> SELECTED <?/MIVAR> >point_mutation
 <option <?MIVAR COND="$(EC,$chrom_change,duplication)"> SELECTED<?/MIVAR> >duplication
@@ -354,17 +354,17 @@ SELECTED <?/MIVAR> >UNKNOWN</SELECT>
 </TD>
 </TR>
 <TR>
-<TD><A HREF="/ZDBB/help_files/help-chromo.html#gen_loc">MAP LOCATION:</A> <br>
+<TD><A HREF="/ZFIN/help_files/help-chromo.html#gen_loc">MAP LOCATION:</A> <br>
 <INPUT TYPE=text 
 <?MIVAR COND=$(NC,$genetic_loc,NULL)> VALUE="$genetic_loc" <?/MIVAR> NAME="genetic_loc">
 </TD>
 </TR>
 <TR>
-<TD><A HREF="/ZDBB/help_files/help-chromo.html#cyto_loc">CYTOLOGICAL LOCATION: </A> <br>
+<TD><A HREF="/ZFIN/help_files/help-chromo.html#cyto_loc">CYTOLOGICAL LOCATION: </A> <br>
 <INPUT TYPE=text 
 <?MIVAR COND=$(NC,$cyto_loc,NULL)> VALUE="$cyto_loc" <?/MIVAR> NAME="cyto_loc">
 </TD>
-<TD><A HREF="/ZDBB/help_files/help-chromo.html#breakpoints">BREAKPOINTS: </A> <br>
+<TD><A HREF="/ZFIN/help_files/help-chromo.html#breakpoints">BREAKPOINTS: </A> <br>
 <INPUT TYPE=text 
 <?MIVAR COND=$(NC,$breakpoints,NULL)> VALUE="$breakpoints" <?/MIVAR> NAME="breakpoints">
 </TD>
@@ -383,7 +383,7 @@ parents are usually (but not always) wild-type. Should certainly *not* be none i
 <TH>Allele</TH><TH>Mutation type</TH><TH>LG</TH><TH>Location</TH>
 <?MISQL SQL="select c.allele, c.genetic_loc, c.chrom_change, b.chrom_num, c.zdb_id from int_fish_chromo a, chromosome b, alteration c where (a.source_id='$father' or a.source_id='$mother') and b.zdb_id=a.target_id and c.chrom_id=a.target_id;">
 <TR align=center>
-<TD> <A HREF="/cgi-bin_B/webdriver?MIval=aa-altview.html&OID=$5">$1</A> </TD>
+<TD> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-altview.html&OID=$5">$1</A> </TD>
 <TD>$3</TD>
 <TD> $(IF,$(EC,$4,NULL),UNKNOWN,$4) </TD>
 <TD> $(IF,$(EC,$2,NULL),UNKNOWN,$2) </TD>
@@ -408,7 +408,7 @@ parents are usually (but not always) wild-type. Should certainly *not* be none i
 
 <HR WIDTH=80% size=4>
 
-<A HREF="/ZDBB/help_files/help-fish.html#phenotype">Submitter COMMENTS:</A> <br>
+<A HREF="/ZFIN/help_files/help-fish.html#phenotype">Submitter COMMENTS:</A> <br>
 <TEXTAREA NAME=comments WRAP=virtual rows=5 cols=75>
 <?MIVAR COND="$(NC,$comments,NULL)">$comments<?/MIVAR></TEXTAREA>
 

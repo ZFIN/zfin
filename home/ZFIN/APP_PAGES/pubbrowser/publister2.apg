@@ -77,16 +77,16 @@ $constraint $previous (a.zdb_id=b.pub_id and b.curation_action='$cur_status')<?/
 <?MIVAR NAME=$constraint> where status='active' <?/MIVAR>
 <?/MIBLOCK>
 
-<form method=post target=content action="/cgi-bin_B/webdriver">
+<form method=post target=content action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 <TABLE width=100%>
 <TR>
 <TD align=center>
 <font size=-1>
 <input type=submit name=printable value="Format into a printable listing">  
 <input type=submit name=refer value="Output as REFER format file">  
-<A HREF="/cgi-bin_B/webdriver?MIval=aa-REFERinfo.apg" TARGET=content><font size=-1>REFER&nbsp;Instructions</font></A>
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-REFERinfo.apg" TARGET=content><font size=-1>REFER&nbsp;Instructions</font></A>
 <?MIVAR COND="$(EC,$AUTHORIZED,root)">
-<input type=button name=printable value="Add new Pub" onClick="top.content.location='/cgi-bin_B/webdriver?rtype=publication&MIval=aa-edit_pub.apg';">  
+<input type=button name=printable value="Add new Pub" onClick="top.content.location='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?rtype=publication&MIval=aa-edit_pub.apg';">  
 <?/MIVAR>
 </font>
 </TD> </TR>
@@ -132,12 +132,12 @@ $constraint $previous (a.zdb_id=b.pub_id and b.curation_action='$cur_status')<?/
 <?MISQL SQL="select title,authors,zdb_id,year(pub_date) as pyear from $target_tables $constraint $order_clause;">
 <TR> 
 <TD valign=top> 
-$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-edit_pub.apg&OID=$3" TARGET=content>EDIT</A> </FONT>")
-$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-link_authors.apg&OID=$3" TARGET=content>LINK</A> </FONT>")
-$(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3" TARGET=content>SELECT</A> </FONT>")
+$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_pub.apg&OID=$3" TARGET=content>EDIT</A> </FONT>")
+$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-link_authors.apg&OID=$3" TARGET=content>LINK</A> </FONT>")
+$(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3" TARGET=content>SELECT</A> </FONT>")
 </TD>
 <TD valign=top> <FONT SIZE=-1> $4 </FONT> </TD>
-<TD valign=top> <FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-pubview2.apg&OID=$3" TARGET="content">$1</A> </FONT> </TD>  
+<TD valign=top> <FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3" TARGET="content">$1</A> </FONT> </TD>  
 <TD valign=top> <FONT SIZE=-1> $2 </FONT> </TD>
 </TR>
 <?/MISQL>

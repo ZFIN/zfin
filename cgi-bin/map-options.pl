@@ -12,7 +12,7 @@
  $JSCRIPT=<<ENDJS;
 
 function do_reload() {
-  document.forms[0].action="/cgi-bin_B/map-options.pl";
+  document.forms[0].action="/<!--|CGI_BIN_DIR_NAME|-->/map-options.pl";
   document.forms[0].target="";
   document.forms[0].submit();
 }
@@ -20,7 +20,7 @@ function do_reload() {
 function edit(panel) {
   document.options.edit_panel=panel; 
   document.options.target=""; 
-  document.options.action="/cgi-bin_B/map-options.pl"; 
+  document.options.action="/<!--|CGI_BIN_DIR_NAME|-->/map-options.pl"; 
   document.options.submit();
 }
 
@@ -88,7 +88,7 @@ ENDCSS
  
  
  
- print $query->startform(-method=>'get',-action=>'/cgi-bin_B/view_mapplet.cgi',-name=>'options',-target=>'pbrowser');
+ print $query->startform(-method=>'get',-action=>'/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi',-name=>'options',-target=>'pbrowser');
 
 # $query->hidden(-name=>'edit_panel');
  if ($query->param('edit_panel') ne "") {
@@ -210,7 +210,7 @@ ENDCSS
 
      print $query->button(-name=>'refresh_map',-value=>'Submit Changes', -onClick=>'call_mapplet();') . ' ';
      print $query->button(-name=>'cancel', -value=>'Cancel', -onClick=>'parent.pbrowser.document.selectform.submit();');
-#"self.location='http://zfin.org/cgi-bin_B/webdriver?MIval=aa-mapperselect.apg';") . ' ';
+#"self.location='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mapperselect.apg';") . ' ';
 
    #}
    print "</td></tr></table><br>";
@@ -230,7 +230,7 @@ ENDCSS
    	   print $query->button(-name=>$panel . '_vis',-value=>'Show ' . $panel, -onClick=>"document.options.edit_panel.value='" . $panel . "'; document.options." . $panel . ".value = 1; document.options.submit();") . "\n";
 	 }
 	 print "<br>";
-	 print $query->button(-name=>$panel . '_opts', -value=>'Adjust ' . $panel, -onClick=>"document.options.edit_panel.value='" . $panel . "'; document.options.target=''; document.options.action='/cgi-bin_B/map-options.pl'; document.options.submit();   ");
+	 print $query->button(-name=>$panel . '_opts', -value=>'Adjust ' . $panel, -onClick=>"document.options.edit_panel.value='" . $panel . "'; document.options.target=''; document.options.action='/<!--|CGI_BIN_DIR_NAME|-->/map-options.pl'; document.options.submit();   ");
 	 print "</td>";
        }
     print "</tr></table>";

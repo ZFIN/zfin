@@ -16,7 +16,7 @@ Others -- if s_new exists, then name,abbrev,comments,alt_names should also exist
 <?MIBLOCK COND="$(NXST,$marker_type)">
 <h1>Create new marker</h1>
 
-<form name=newdata method=post action="/cgi-bin_B/webdriver">
+<form name=newdata method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 <input type=hidden name=MIval value=aa-new_marker.apg>
 
 <b>Type of new marker to create:</b>
@@ -47,7 +47,7 @@ if(theform.mname.value=='' || theform.abbrev.value=='') {
 }
 </SCRIPT>
 
-<form name=newdata onSubmit="return validate(this);" method=post action="/cgi-bin_B/webdriver">
+<form name=newdata onSubmit="return validate(this);" method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 <input type=hidden name=MIval value=aa-new_marker.apg>
 <input type=hidden name=marker_type value="$marker_type">
 
@@ -109,9 +109,9 @@ if(theform.mname.value=='' || theform.abbrev.value=='') {
 <?MIVAR>
 <h1>Confirmation: $(UPPER,$marker_type) record added</h1>
 
-Click <A href="/cgi-bin_B/webdriver?MIval=aa-markerview.apg&OID=$new_id">here</A> to view the new $marker_type record.
+Click <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$new_id">here</A> to view the new $marker_type record.
 <p>
-Click <A href="/cgi-bin_B/webdriver?MIval=aa-ZDB_home.apg">here</A> to return to the ZFIN home page.
+Click <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg">here</A> to return to the ZFIN home page.
 <?/MIVAR>
 
 

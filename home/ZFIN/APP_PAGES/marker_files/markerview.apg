@@ -21,15 +21,15 @@ function info() {
 
 <?MIVAR>
 function add_pub_linkage() {
-   helpwin=open("/cgi-bin_B/webdriver?MIval=aa-linkagedit.apg&OID=$OID&linktype=pub","helpwindow","scrollbars=yes,width=550,height=400");
+   helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-linkagedit.apg&OID=$OID&linktype=pub","helpwindow","scrollbars=yes,width=550,height=400");
 }
 
 function add_unpub_linkage() {
-   helpwin=open("/cgi-bin_B/webdriver?MIval=aa-linkagedit.apg&OID=$OID&linktype=unpub","helpwindow","scrollbars=yes,width=550,height=400");
+   helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-linkagedit.apg&OID=$OID&linktype=unpub","helpwindow","scrollbars=yes,width=550,height=400");
 }
 
 function edit_linkage(link_id,lname) {
-   helpwin=open("/cgi-bin_B/webdriver?MIval=aa-linkagedit.apg&OID=$OID&edit_link="+link_id+"&lname="+escape(lname),"helpwindow","scrollbars=yes,width=550,height=300");
+   helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-linkagedit.apg&OID=$OID&edit_link="+link_id+"&lname="+escape(lname),"helpwindow","scrollbars=yes,width=550,height=300");
 }
 
 
@@ -99,7 +99,7 @@ if ((oname != '') && (oabbrev != '')) {
 }
 
 function edit_ortho(ortho_id) {
-   helpwin=open("/cgi-bin_B/webdriver?MIval=aa-orthoedit.apg&OID="+ortho_id,"helpwindow","scrollbars=yes,width=600,height=600");
+   helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-orthoedit.apg&OID="+ortho_id,"helpwindow","scrollbars=yes,width=600,height=600");
 }
 
 function new_seqnum() {
@@ -142,7 +142,7 @@ if (seq_acc != '') {
 
 <!-- OKAY, NOW  THROW UP THE  MARKER INFO -->
 <P>
-<form NAME=updater  method=post action="/cgi-bin_B/view_mapplet.cgi" target="content" >
+<form NAME=updater  method=post action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi" target="content" >
 <?MIVAR COND="$(XST,$UPDATE)">
 <center><font size=5 color="#00ff00"><input type=button 
 value=" DONE UPDATING. Back to Viewing! " onClick="document.location.search='?MIval=aa-markerview.apg&OID=$OID'"> </font></center>
@@ -210,12 +210,12 @@ $(IF,$(>,$MI_CURRENTROW,1),<TR><td colspan=2><hr width=80%></TD></TR>)
 <?MIVAR NAME=$upd_date> <?/MIVAR>
 <?/MIBLOCK>
 
-$(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),"<TD colspan=3><font size=2>LG <b>"$4"</b>;<b> "$2"</b> "$8" (<A target=content HREF=/cgi-bin_B/webdriver?MIval=aa-crossview.apg&OID="$3">"$5" Panel; updated "$upd_date"</A>)</TD>","<TD colspan=2><font size=2>Mapped on <A target=content HREF=/cgi-bin_B/webdriver?MIval=aa-crossview.apg&OID="$3">"$5" Panel; updated "$upd_date"</A>, but still confidential.")
+$(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),"<TD colspan=3><font size=2>LG <b>"$4"</b>;<b> "$2"</b> "$8" (<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$3">"$5" Panel; updated "$upd_date"</A>)</TD>","<TD colspan=2><font size=2>Mapped on <A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$3">"$5" Panel; updated "$upd_date"</A>, but still confidential.")
 </TD>
 
 
 </TR><TR>
-<TD colspan=2><font size=2>&nbsp;&nbsp;&nbsp; mapped by <A HREF="/cgi-bin_B/webdriver?MIval=aa-persview.apg&OID=$1">$7</A></TD>
+<TD colspan=2><font size=2>&nbsp;&nbsp;&nbsp; mapped by <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$1">$7</A></TD>
 </TR>
 <?/MISQL>
 
@@ -281,20 +281,20 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$6,f)),"<TD colspan=3><font size=2>LG <b>"$4
 <?MIVAR> <B>Independent linkages to $abbrev:</b><?/MIVAR>
 
 <TABLE cellpadding=1 cellspacing=0>
-<?MIVAR NAME=$curviewer>/cgi-bin_B/webdriver?MIval=aa-markerview.apg&OID=<?/MIVAR>
+<?MIVAR NAME=$curviewer>/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=<?/MIVAR>
 <?MISQL SQL="select m2_abbrev,LOD,dist,m2_type,m2_id,a.owner,private,b.full_name,a.metric from all_linked_markers a, person b where a.owner=b.zdb_id and m1_id='$OID' order by m2_type,dist;">
 
 
 $(IF,$(=,$MI_CURRENTROW,1),"<TR><TD colspan=4></TD><TD></TD><TD><U>Distance</U></TD><TD><U>LOD</U></TD></TR>")
 
-$(IF,$(NC,$4,GENE),$(SETVAR,$curviewer,"/cgi-bin_B/webdriver?MIval=aa-fishview.apg&OID="))
+$(IF,$(NC,$4,GENE),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID="))
 
-$(IF,$(AND,$(NC,$4,GENE),$(NC,$4,MUTANT)),$(SETVAR,$curviewer,"/cgi-bin_B/webdriver?MIval=aa- markerview.apg&OID="))
+$(IF,$(AND,$(NC,$4,GENE),$(NC,$4,MUTANT)),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa- markerview.apg&OID="))
 
 
 <TR>
 
-$(IF,$(OR,$(EC,$override,true),$(EC,$7,f),$(EC,$ZDB_ident,$6)),"<TD><font size=-1><A HREF="$curviewer$5">"$1"</A> ("$4")</TD><TD align=center><font size=-1>"$3" "$9"</TD><TD align=center><font size=-1>"$2"</TD><TR><TD colspan=3><font size=-1>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;mapped by <A href=/cgi-bin_B/webdriver?MIval=aa-persview.apg&OID="$6">"$8"</a></TD>","<TD colspan=3><font size=-1><A href=javascript:info();>"$4$MI_CURRENTROW"</A>: Unpublished! <A href=/cgi-bin_B/webdriver?MIval=aa-persview.apg&OID="$6">Contact "$8"</a>.</TD>")
+$(IF,$(OR,$(EC,$override,true),$(EC,$7,f),$(EC,$ZDB_ident,$6)),"<TD><font size=-1><A HREF="$curviewer$5">"$1"</A> ("$4")</TD><TD align=center><font size=-1>"$3" "$9"</TD><TD align=center><font size=-1>"$2"</TD><TR><TD colspan=3><font size=-1>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;mapped by <A href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID="$6">"$8"</a></TD>","<TD colspan=3><font size=-1><A href=javascript:info();>"$4$MI_CURRENTROW"</A>: Unpublished! <A href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID="$6">Contact "$8"</a>.</TD>")
 </TR>
 <?/MISQL>
 </TABLE>
@@ -310,7 +310,7 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$7,f),$(EC,$ZDB_ident,$6)),"<TD><font size=-
 <TABLE width=100% cellpadding=5 border=4 bgcolor="#f8fabb" cols=2 rows=1>
 <TR><TD><font size=2 color="red">
 <?MIVAR>
-<B>MUTANT LOCUS:</b>  </font><font size=2>The mutant locus <b><A HREf="/cgi-bin_B/webdriver?MIval=aa-locusview.apg&OID=$1">$2 ($3) </A> </b> has been shown to correspond to GENE <b>$abbrev</b>. Please consult the locus record for further mapping information.
+<B>MUTANT LOCUS:</b>  </font><font size=2>The mutant locus <b><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$1">$2 ($3) </A> </b> has been shown to correspond to GENE <b>$abbrev</b>. Please consult the locus record for further mapping information.
 <?/MIVAR>
 </TD>
 </TR></TABLE>
@@ -327,7 +327,7 @@ $(IF,$(OR,$(EC,$override,true),$(EC,$7,f),$(EC,$ZDB_ident,$6)),"<TD><font size=-
 
 <TABLE width=100% cellpadding=5>
 <TR>
-<TD><b>Strain:</b> <A HREF="/cgi-bin_B/webdriver?MIval=aa-fishview.apg&OID=$8">$9</A> </TD>
+<TD><b>Strain:</b> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$8">$9</A> </TD>
 <TD>
 
 <TABLE border cellpadding=3 bgcolor="#f8fabb">

@@ -26,8 +26,8 @@ You may also optionally pass many other constraints on the upcoming selection th
  frame -->
 <?MIVAR COND="$(NXST,$constraint)" NAME=$constraint><?/MIVAR>
 <?MIVAR COND="$(NXST,$frame_size)" NAME=$frame_size>185<?/MIVAR>
-<?MIVAR COND="$(NXST,$intro)" NAME=$intro>/ZDBB/misc_html/intro1.html<?/MIVAR>
-<?MIVAR COND="$(EC,$selector,aa-mapperselect.apg)" NAME=$intro>/ZDBB/misc_html/intro_mapper.html<?/MIVAR>
+<?MIVAR COND="$(NXST,$intro)" NAME=$intro>/ZFIN/misc_html/intro1.html<?/MIVAR>
+<?MIVAR COND="$(EC,$selector,aa-mapperselect.apg)" NAME=$intro>/ZFIN/misc_html/intro_mapper.html<?/MIVAR>
 
 <!-- special constraints to possibly pass -->
 <?MIVAR COND="$(XST,$stock)" NAME=$constraint>&stock=$stock$constraint<?/MIVAR>
@@ -47,7 +47,7 @@ You may also optionally pass many other constraints on the upcoming selection th
 
 
 <?MIVAR>
-<FRAME NAME="criteria" SRC="http://zfin.org/cgi-bin_B/webdriver?MIval=$selector$constraint">
+<FRAME NAME="criteria" SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$selector$constraint">
 
 <FRAME NAME="pbrowser"  SRC="$intro">
 <?/MIVAR>

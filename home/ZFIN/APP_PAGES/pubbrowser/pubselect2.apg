@@ -11,7 +11,7 @@
 </center>
 
 
-<form name=crit_form method=post TARGET="pbrowser" action="/cgi-bin_B/webdriver" onSubmit="parent.pbrowser.document.location='/ZDBB/misc_html/saysearching.html'">
+<form name=crit_form method=post TARGET="pbrowser" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" onSubmit="parent.pbrowser.document.location='/ZFIN/misc_html/saysearching.html'">
 
 <TABLE width=100%>
 <TR>
@@ -94,7 +94,7 @@ contains <input type=text name=anon1text size=10>
 </SELECT>  
 </TD>
 <TD> <font size=2>
-<input type=button onClick="window.open('/cgi-bin_B/webdriver?MIval=aa-classify_pubs.apg','editor','scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=500');" value="Classify Pubs">
+<input type=button onClick="window.open('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-classify_pubs.apg','editor','scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=500');" value="Classify Pubs">
 </TD>
 </TR></TABLE>
 <?/MIBLOCK>

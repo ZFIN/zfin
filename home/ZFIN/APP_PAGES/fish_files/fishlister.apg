@@ -110,7 +110,7 @@ Mut constraint is:$mut_constraint<p><?/MIVAR>
 <?MIVAR NAME=$order_by COND="$(AND,$(OR,$(XST,$fname),$(XST,$abbrev)),$(NXST,$allele))">order by name,allele,chrom_num<?/MIVAR>
 
 <?MIVAR>
-<form method=post action="/cgi-bin_B/webdriver">
+<form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 <input type=hidden name=MIval value=aa-fishlister.apg>
 <input type=hidden name=mut_constraint value="$mut_constraint">
 <input type=hidden name=line_type value="$line_type">
@@ -167,12 +167,12 @@ $(IF,$(=,$MI_CURRENTROW,1),"<TR><TD colspan=7> <HR size=5> </TD> </TR>")
 
 <TR align=center valign=top> 
 <TD>$MI_CURRENTROW. 
-$(IF,$(XST,$return_rec),"<A HREF="/cgi-bin_B/webdriver?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$2" TARGET=content>SELECT</A>") 
+$(IF,$(XST,$return_rec),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$2" TARGET=content>SELECT</A>") 
 </TD>
 <TD valign=top> 
-<A HREF="/cgi-bin_B/webdriver?MIval=aa-fishview.apg&OID=$2" TARGET=content>$5</A>
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$2" TARGET=content>$5</A>
 </TD> 
-<TD><font size=-1><A HREF="/cgi-bin_B/webdriver?MIval=aa-locusview.apg&OID=$9" TARGET=content>$1</A> ($abbrev)</font></TD>
+<TD><font size=-1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$9" TARGET=content>$1</A> ($abbrev)</font></TD>
 <TD><font size=-1> $(IF,$(EC,$6,NULL),UNKNOWN,$6)</font> </TD> 
 <TD><font size=-1> $(IF,$(EC,$4,NULL),UNKNOWN,$4)</font> </TD> 
 <TD><font size=-1> $(IF,$(EC,$7,0),UNKNOWN,$7)</font> </TD> 
@@ -197,10 +197,10 @@ $(IF,$(XST,$return_rec),"<A HREF="/cgi-bin_B/webdriver?MIval=aa-do-select.apg&re
 <TH> </TH><TH align=left>Strain</TH> <TH align=left>Lab</TH>
 <?MISQL SQL="select a.name, a.zdb_id, a.abbrev, b.name,b.zdb_id from fish a, lab b where line_type='wild type' and a.lab=b.zdb_id $constraint order by a.name;">
 <TR valign=top> <TD> 
-$(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$2" TARGET=content>SELECT</A> </FONT>") 
+$(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$2" TARGET=content>SELECT</A> </FONT>") 
 </TD>
-<TD valign=top> <FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-fishview.apg&OID=$2" TARGET="content">$1</A> ($3) </FONT> </TD>  
-<TD><A HREF="/cgi-bin_B/webdriver?MIval=aa-labview.apg&OID=$5" TARGET="content">$4</TD>
+<TD valign=top> <FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$2" TARGET="content">$1</A> ($3) </FONT> </TD>  
+<TD><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$5" TARGET="content">$4</TD>
 </TR>
 <?/MISQL>
 </TABLE>
@@ -219,10 +219,10 @@ $(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-d
 <TH> </TH><TH align=left>Strain</TH> <TH align=left>Lab</TH>
 <?MISQL SQL="select a.name, a.zdb_id, a.abbrev, b.name,b.zdb_id from fish a, lab b where  a.lab=b.zdb_id and a.zdb_id = '$OID' order by a.name;">
 <TR valign=top> <TD> 
-$(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$2" TARGET=content>SELECT</A> </FONT>") 
+$(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$2" TARGET=content>SELECT</A> </FONT>") 
 </TD>
-<TD valign=top> <FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-fishview.apg&OID=$2" TARGET="content">$1</A> ($3) </FONT> </TD>  
-<TD><A HREF="/cgi-bin_B/webdriver?MIval=aa-labview.apg&OID=$5" TARGET="content">$4</TD>
+<TD valign=top> <FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$2" TARGET="content">$1</A> ($3) </FONT> </TD>  
+<TD><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$5" TARGET="content">$4</TD>
 </TR>
 <?/MISQL>
 </TABLE>

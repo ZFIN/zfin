@@ -33,9 +33,9 @@ config_password 382b61594a9f39784e26a79f71b6a1dbe22fce5c
 #         the appropriate webserver
 #
 <setvar>
-INFORMIXDIR		/export/chromix/private/apps/Informix_B
-INFORMIXSQLHOSTS	/export/chromix/private/apps/Informix_B/etc/sqlhosts.chrom
-INFORMIXSERVER		chrom_b
+INFORMIXDIR		<!--|INFORMIX_DIR|-->
+INFORMIXSQLHOSTS	<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->
+INFORMIXSERVER		<!--|INFORMIX_SERVER|-->
 DBDATE			Y4MD-
 </setvar>
 
@@ -46,28 +46,28 @@ DBDATE			Y4MD-
 #  (optional)        server, password, password_key
 #
 
-<map path=/ztest/admin>
-database ztest
-user zfinner
-password 5988dfc53be04b956a2f3a9f98d5478a
-password_key 382b680c
+<map path=/<!--|DB_NAME|-->/admin>
+database <!--|DB_NAME|-->
+user <!--|APP_PAGE_USER|-->
+password <!--|APP_PAGE_USER_PASSWORD|-->
+password_key <!--|APP_PAGE_USER_PASSWORD_KEY|-->
 config_name admin
 config_security on
 </map>
 
-<map path=/ztestb/admin>
-database ztest
-user zfinner
-password 5988dfc53be04b956a2f3a9f98d5478a
-password_key 382b680c
+<map path=/<!--|DB_NAME|-->/admin>
+database <!--|DB_NAME|-->
+user <!--|APP_PAGE_USER|-->
+password <!--|APP_PAGE_USER_PASSWORD|-->
+password_key <!--|APP_PAGE_USER_PASSWORD_KEY|-->
 config_name admin
 config_security on
 </map>
 
-<map path=/cgi-bin_B>
-database ztest
-user zfinner
-password 5988dfc53be04b956a2f3a9f98d5478a
-password_key 382b680c
+<map path=/<!--|CGI_BIN_DIR_NAME|-->>
+database <!--|DB_NAME|-->
+user <!--|APP_PAGE_USER|-->
+password <!--|APP_PAGE_USER_PASSWORD|-->
+password_key <!--|APP_PAGE_USER_PASSWORD_KEY|-->
 config_name zfin
 </map>

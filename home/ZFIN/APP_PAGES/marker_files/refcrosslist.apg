@@ -38,7 +38,7 @@ $(SETVAR,$line_clr,$(IF,$(!=,$color,$(FIX,$color)),#FCCE64,#e5e5e5))
 <?/MIVAR>
 
 $(IF,$(NC,$4,$lasttype),"<TR><TD><font size=2>&nbsp;</TD></TR><TR bgcolor="#c4c4c4"><td colspan=2><b>"$4" Panels</b></TD></TR>")
-$(IF,$(NC,$last,$1),"<TR bgcolor="$line_clr"><TD><font size=3><A HREF=/cgi-bin_B/webdriver?MIval=aa-crossview.apg&OID="$1">"$2" ("$6")</A></TD><TD><font size=2><b>Updated;</B>"$upd_date"</TD><TD><font size=2><b>Type:</B> "$4"</TD></TR><TR bgcolor="$line_clr"><TD><font size=2><b>Marker types on panel:</b> "$5)
+$(IF,$(NC,$last,$1),"<TR bgcolor="$line_clr"><TD><font size=3><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$1">"$2" ("$6")</A></TD><TD><font size=2><b>Updated;</B>"$upd_date"</TD><TD><font size=2><b>Type:</B> "$4"</TD></TR><TR bgcolor="$line_clr"><TD><font size=2><b>Marker types on panel:</b> "$5)
 
 $(SETVAR,$count,$(+,$count,$7))
 $(IF,$(EC,$last,$1),","$5)
@@ -74,7 +74,7 @@ $(SETVAR,$clr_cnt,$(+,$clr_cnt,1))
 $(SETVAR,$color,$(/,$clr_cnt,2))
 $(SETVAR,$line_clr,$(IF,$(!=,$color,$(FIX,$color)),#FCCE64,#e5e5e5))
 
-<TR bgcolor=$line_clr><TD><font size=3><A HREF=/cgi-bin_B/webdriver?MIval=aa-crossview.apg&OID=$1>$2 ($5)</A></TD><TD><font size=2><b>Type:</B> $4</TD></TR>
+<TR bgcolor=$line_clr><TD><font size=3><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=$1>$2 ($5)</A></TD><TD><font size=2><b>Type:</B> $4</TD></TR>
 
 <?/MISQL>
 

@@ -32,10 +32,10 @@ You may also optionally pass many other constraints on the upcoming selection th
 
 
 <?MIVAR>
-<FRAME NAME="criteria" SRC="/cgi-bin_B/webdriver?MIval=$selector$constraint">
+<FRAME NAME="criteria" SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$selector$constraint">
 <?/MIVAR>
 
-<FRAME NAME="pbrowser"  SRC="/ZDBB/misc_html/intro1.html">
+<FRAME NAME="pbrowser"  SRC="/ZFIN/misc_html/intro1.html">
 
 </FRAMESET>
 

@@ -101,7 +101,7 @@ $(SETVAR,$pcount,$1)
 
 <!-- Stuff to control retrieval volume -->
 <?MIVAR>
-<form method=post action="/cgi-bin_B/webdriver">
+<form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 <input type=hidden name=MIval value=aa-accessionlister.apg>
 <input type=hidden name=aname value=$aname>
 <?/MIVAR>
@@ -182,21 +182,21 @@ $(SETVAR,$color,$(/,$clr_cnt,2))
 <TR valign=top $(IF,$(!=,$color,$(FIX,$color)),"bgcolor=#FCCE64")> 
 
 <TD><font size=2> 
-$(IF,$(XST,$return_rec),"<A HREF="/cgi-bin_B/webdriver?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$4" TARGET=content>SELECT</A>") 
+$(IF,$(XST,$return_rec),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$4" TARGET=content>SELECT</A>") 
 </TD>
 
 $(SETVAR,$viewer,$(IF,$(EC,$2,MUTANT),aa-locusview.apg,aa-markerview.apg))
 
-$(IF,$(NC,$prev_name,$1),"<TD valign=top> <font size=2>"$2":<A HREF="/cgi-bin_B/webdriver?MIval=$viewer&OID=$4" TARGET=content>"$1"</A></TD>","<TD>&nbsp;</TD>")
+$(IF,$(NC,$prev_name,$1),"<TD valign=top> <font size=2>"$2":<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$viewer&OID=$4" TARGET=content>"$1"</A></TD>","<TD>&nbsp;</TD>")
 
 <TD> <font size=2> 
 $(IF,$(=,$5,0),"Unmapped")
 
-$(IF,$(AND,$(EC,$11,NULL),$(EC,$9,f),$(>,$5,0)),"LG <b>"$5"</b>;<b> "$3"</b> "$13""<TD><font size=2> "<A target=content HREF=/cgi-bin_B/webdriver?MIval=aa-crossview.apg&OID="$6">"$7"</A>"</TD><TD><font size=2>" "$upd_date""</TD>)
+$(IF,$(AND,$(EC,$11,NULL),$(EC,$9,f),$(>,$5,0)),"LG <b>"$5"</b>;<b> "$3"</b> "$13""<TD><font size=2> "<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$6">"$7"</A>"</TD><TD><font size=2>" "$upd_date""</TD>)
 
-$(IF,$(AND,$(EC,$11,NULL),$(NC,$9,f),$(>,$5,0)),"Mapped on <A target=content HREF=/cgi-bin_B/webdriver?MIval=aa-crossview.apg&OID="$6">"$7"  "$upd_date"</A>, but confidential.")
+$(IF,$(AND,$(EC,$11,NULL),$(NC,$9,f),$(>,$5,0)),"Mapped on <A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$6">"$7"  "$upd_date"</A>, but confidential.")
 
-$(IF,$(AND,$(NC,$11,NULL),$(EC,$9,f),$(>,$5,0)),"Linked at "$11" "$13" to <A target=content HREF="/cgi-bin_B/webdriver?MIval=aa-markerview.apg&OID=$6">"$7"</A> ("$12")")
+$(IF,$(AND,$(NC,$11,NULL),$(EC,$9,f),$(>,$5,0)),"Linked at "$11" "$13" to <A target=content HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$6">"$7"</A> ("$12")")
 
 $(IF,$(AND,$(NC,$11,NULL),$(NC,$9,f),$(>,$5,0)),"Linked to "$12", but confidential.")
 </TD>
@@ -235,12 +235,12 @@ $(SETVAR,$prev_name,$1)
 <?MISQL SQL="select title,authors,zdb_id,year(pub_date) as pyear from publication where lower(accession_no) like lower('%$aname%') and status = 'active';">
 <TR> 
 <TD valign=top> 
-$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-edit_pub.apg&OID=$3" TARGET=content>EDIT</A> </FONT>")
-$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-link_authors.apg&OID=$3" TARGET=content>LINK</A> </FONT>")
-$(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3" TARGET=content>SELECT</A> </FONT>")
+$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_pub.apg&OID=$3" TARGET=content>EDIT</A> </FONT>")
+$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-link_authors.apg&OID=$3" TARGET=content>LINK</A> </FONT>")
+$(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3" TARGET=content>SELECT</A> </FONT>")
 </TD>
 <TD valign=top> <FONT SIZE=-1> $4 </FONT> </TD>
-<TD valign=top> <FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-pubview2.apg&OID=$3" TARGET="content">$1</A> </FONT> </TD>  
+<TD valign=top> <FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3" TARGET="content">$1</A> </FONT> </TD>  
 <TD valign=top> <FONT SIZE=-1> $2 </FONT> </TD>
 </TR>
 <?/MISQL>
@@ -300,7 +300,7 @@ $(IF,$(XST,$return_rec),"<FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-d
 
 <?MIBLOCK COND="$(NC,$start_page,NULL)">
 <?MIVAR>
-<form name=zdb_search method=post action="/cgi-bin_B/webdriver?MIval=$start_page&OID=$aname">
+<form name=zdb_search method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$start_page&OID=$aname">
  
 
 <input type=hidden name=MIval value=$start_page>

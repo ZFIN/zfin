@@ -102,7 +102,7 @@ ERROR -- something bad happened -- no OID passed in!
 <!-- if you're updating, set up some hidden submission forms to handle updating. They are submitted from javascript functions.  Need this because we need to use POST to send arbitrarily large annotations.
 -->
 <?MIVAR COND="$(XST,$UPDATE)">
-<form name=doUpdate method=post action="/cgi-bin_B/webdriver">
+<form name=doUpdate method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 <input type=hidden name=MIval value="">
 <input type=hidden name=OID value="$OID">
 <input type=hidden name=attr value="">
@@ -142,13 +142,13 @@ value=" DONE UPDATING. Back to Viewing! " onClick="all_done();"> </font></center
 
 <!-- Only Fishauth user gets to see applet for now -->
 <?MIBLOCK COND="$(EC,$ZDB_ident,ZDB-PERS-970827-9)">
-<applet code="Annotator.class" archive="/ZFIN_software/Annotator/AppletClasses.jar" width=500 height=425 name=annotator>
+<applet code="Annotator.class" archive="/client_apps/Annotator/AppletClasses.jar" width=500 height=425 name=annotator>
 <param name=annotations value="One: yadda~~~yadda~~~Two: I wonder ~~~about this..```One```red```100```100```100```200```Two```yellow```300```300```350```375">
 <?MIVAR COND="$(NC,$annotations,NULL)">
 <param name=annotations value="$annotations">
 <?/MIVAR>
 <?MIVAR>
-<PARAM name=image value="/cgi-bin_B/webdriver?LO=$image&MItypeObj=image/gif">
+<PARAM name=image value="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$image&MItypeObj=image/gif">
 <PARAM name=mode value="$(IF,$(XST,$UPDATE),EDIT,VIEW)">
 <param name=delim value="```">
 <param name=rdelim value="~~~">
@@ -157,7 +157,7 @@ value=" DONE UPDATING. Back to Viewing! " onClick="all_done();"> </font></center
 <?/MIBLOCK>
 
 <?MIVAR COND="$(NC,$ZDB_ident,ZDB-PERS-970827-9)">
-<IMG SRC="/cgi-bin_B/webdriver?LO=$image&MItypeObj=image/gif">
+<IMG SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$image&MItypeObj=image/gif">
 <?/MIVAR>
 
 <?MIVAR COND="$(XST,$UPDATE)">
@@ -175,7 +175,7 @@ value=" DONE UPDATING. Back to Viewing! " onClick="all_done();"> </font></center
 <INPUT TYPE=button value=Update onClick="doit('stock','selection','Depicted+Stock')">
 <?/MIVAR>
 <?MISQL SQL="select name,abbrev from fish where zdb_id='$stock';">
-<big>Depicted Animal:</big> <A HREF="/cgi-bin_B/webdriver?MIval=aa-fishview.apg&OID=$stock">$1</A> ( $2 ) <?/MISQL>
+<big>Depicted Animal:</big> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$stock">$1</A> ( $2 ) <?/MISQL>
 </TD></TR>
 <TR><TD bgcolor="white">
 

@@ -47,7 +47,7 @@ new_action,new_comments: Signal the processing phase for a new curation. A curat
 <?MIVAR>
 <h1>Add curation record to ZDB pub: $OID</h1>
 <?/MIVAR>
-<form method=post action="/cgi-bin_B/webdriver">
+<form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 <input type=hidden name=MIval value=aa-curatepub.apg>
 <table border=2 width=100% cols=2>
 <TR>

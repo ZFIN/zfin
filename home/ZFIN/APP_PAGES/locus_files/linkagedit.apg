@@ -58,7 +58,7 @@ document.updater.submit();
 <?MIVAR COND="$(NXST,$link_id)" NAME=$link_id>new<?/MIVAR>
 
 
-<form name=updater method=post action="/cgi-bin_B/webdriver">
+<form name=updater method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 <input type=hidden name=MIval value=aa-linkagedit.apg>
 
 <?MIVAR>

@@ -25,7 +25,7 @@ Variables expected:  OID (REQUIRED) -- the zdb_id of the user to edit.
 
 <!-- FIRST fill variables with user's data. IF new user, fill with nothing.-->
 
-<FORM METHOD=POST ACTION="/cgi-bin_B/webdriver" TARGET=content>
+<FORM METHOD=POST ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" TARGET=content>
 
 <?MISQL SQL="select login, issue_time, access, name, log_access from ZDB_submitters  where zdb_id='$OID';"><?/MISQL>
 

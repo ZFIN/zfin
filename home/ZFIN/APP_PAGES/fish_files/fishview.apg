@@ -23,11 +23,11 @@ function info() {
 
 <?MIVAR>
 function add_linkage() {
-   helpwin=open("/cgi-bin_B/webdriver?MIval=aa-linkagedit.apg&OID=$OID","helpwindow","scrollbars=yes,width=550,height=300");
+   helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-linkagedit.apg&OID=$OID","helpwindow","scrollbars=yes,width=550,height=300");
 }
 
 function edit_linkage(link_id) {
-   helpwin=open("/cgi-bin_B/webdriver?MIval=aa-linkagedit.apg&OID=$OID&edit_link="+link_id,"helpwindow","scrollbars=yes,width=550,height=300");
+   helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-linkagedit.apg&OID=$OID&edit_link="+link_id,"helpwindow","scrollbars=yes,width=550,height=300");
 }
 
 function deleteLinkage(mid,dist,lod) {
@@ -209,8 +209,8 @@ value=" DONE UPDATING. Back to Viewing! " onClick="document.location.search='?MI
 <TD>
 <TABLE><TR>
 <TD align=center>
-<A HREF="/cgi-bin_B/webdriver?MIval=aa-imageview.apg&OID=$3">
-<IMG SRC="/cgi-bin_B/webdriver?LO=$5&MItypeObj=image/jpg"></A>
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$3">
+<IMG SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$5&MItypeObj=image/jpg"></A>
 </TD><TD><font size=-1>
 <b>Image type:</b> $(IF,$(EC,$2,Unknown),Unknown,$2) <br>
 <b>Dev. Stage:</b>
@@ -226,8 +226,8 @@ $(IF,$(NC,$1[2],empty),
 <TD>
 <TABLE><TR>
 <TD align=center>
-<A HREF="/cgi-bin_B/webdriver?MIval=aa-imageview.apg&OID="$3[2]>
-<IMG SRC="/cgi-bin_B/webdriver?LO="$5[2]"&MItypeObj=image/jpg"></A>
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID="$3[2]>
+<IMG SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO="$5[2]"&MItypeObj=image/jpg"></A>
 </TD><TD><font size=-1>
 <b>Image type:</b> $(IF,$(EC,$2[2],Unknown),Unknown,$2[2]) <br>
 <b>Dev. Stage:</b>$1[2] 
@@ -294,7 +294,7 @@ $(IF,$(XST,$UPDATE),"<TR><TD align=center colspan=2><font size=-1><input type=bu
 <?/MIVAR> 
 <b>Discoverer: </b>
 <?MISQL COND="$(NC,$discoverer,NULL)" SQL="select full_name from person where zdb_id='$discoverer';">
-<A HREF="/cgi-bin_B/webdriver?MIval=aa-persview.apg&OID=$discoverer">$1</A>
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$discoverer">$1</A>
 <?/MISQL>
 <?MIVAR COND="$(EC,$discoverer,NULL)"> UNKNOWN. <?/MIVAR>
 </TD>
@@ -317,7 +317,7 @@ $(IF,$(EC,$lab,$1),$(SETVAR,$foundlab,$1))
 <?/MIBLOCK>
 
 <?MISQL COND="$(NXST,$UPDATE)" SQL="select name from lab where zdb_id='$lab';">
-<A HREF="/cgi-bin_B/webdriver?MIval=aa-labview.apg&OID=$lab">$1</A>
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$lab">$1</A>
 <?/MISQL>
 
 <?MIBLOCK COND="$(NC,$orig_crossnum,NULL)"> 
@@ -374,7 +374,7 @@ $(IF,$(EC,$lab,$1),$(SETVAR,$foundlab,$1))
 <?MISQL SQL="select zdb_id,name,HTML_breaks(address) from sources a, int_fish_source b where (a.zdb_id=b.target_id OR b.target_id='DEAD') and b.source_id='$OID';">
 <TABLE><TR><TD valign=top>
 $(IF,$(XST,$UPDATE),"<font size=-1><input type=button value=delete onClick=Delete_listitem('source','"$1"')></font>")
-<A HREF="/cgi-bin_B/webdriver?MIval=aa-sourceview.apg&OID=$1">$2</A>
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sourceview.apg&OID=$1">$2</A>
 </TD><TD align=right>
 <FONT SIZE=-2>$3</FONT>
 </TD></TR></TABLE>
@@ -510,18 +510,18 @@ $(IF,$(AND,$(XST,$UPDATE),$(EC,$10,original)),"<SELECT name=chrom_number onChang
 <?MIVAR NAME=$override>$(IF,$(OR,$(EC,$ZDB_access,root),$(EC,$ZDB_access,fishauth)),true,false)<?/MIVAR>
 
 <TABLE cellpadding=2>
-<?MIVAR NAME=$curviewer>/cgi-bin_B/webdriver?MIval=aa-markerview.apg&OID=<?/MIVAR>
+<?MIVAR NAME=$curviewer>/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=<?/MIVAR>
 <?MISQL SQL="select m1_abbrev,LOD,dist,m1_type,m1_id,a.owner,private,b.full_name,a.link_id,a.metric  from all_linked_markers a,person b where m2_id='$OID' and a.owner=b.zdb_id order by m1_type,dist;">
 
 $(IF,$(=,$MI_CURRENTROW,1),"<TR><TD></TD><TD></TD><TD><U>Distance</U></TD><TD><U>LOD</U></TD><td></TD></TR>")
 
-$(IF,$(NC,$4,GENE),$(SETVAR,$curviewer,"/cgi-bin_B/webdriver?MIval=aa-markerview.apg&OID="))
+$(IF,$(NC,$4,GENE),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID="))
 
 <TR>
 $(IF,$(XST,$UPDATE),"<TD><font size=2><input type=button value=edit onClick=edit_linkage('"$9"');></TD>","<TD></TD>")
 $(IF,$(OR,$(EC,$override,true),$(EC,$7,f),$(EC,$ZDB_ident,$6)),"<TD><font size=-1><A HREF="$curviewer$5">"$1"</A> ("$4")</TD>
 <TD align=center><font size=-1>"$3" "$10"</TD>
-<TD align=center><font size=-1>"$2"</TD><TD><font size=-1>mapped by <A href=/cgi-bin_B/webdriver?MIval=aa-persview.apg&OID="$6">"$8"</a></TD>","<TD colspan=4><font size=-1><A href=javascript:info();>"$4$MI_CURRENTROW"</A>: Unpublished! <A href=/cgi-bin_B/webdriver?MIval=aa-persview.apg&OID="$6">Contact "$8"</a>.</TD>")
+<TD align=center><font size=-1>"$2"</TD><TD><font size=-1>mapped by <A href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID="$6">"$8"</a></TD>","<TD colspan=4><font size=-1><A href=javascript:info();>"$4$MI_CURRENTROW"</A>: Unpublished! <A href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID="$6">Contact "$8"</a>.</TD>")
 </TR>
 <?/MISQL>
 </TABLE>
@@ -571,7 +571,7 @@ $(IF,$(AND,$(NC,$last,$3),$(EC,$3,t),$(NXST,$UPDATE)),"</TD></TR></TABLE><TABLE>
 
 $(IF,$(XST,$UPDATE),"<font size=-1><input type=button value=delete onClick=Delete_marker('"$allele"','"$2"')></font>")
 
-<A href="/cgi-bin_B/webdriver?MIval=aa-markerview.apg&OID=$2">$1</A>
+<A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2">$1</A>
 $(IF,$(NXST,$UPDATE),";")
 $(IF,$(XST,$UPDATE),"<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
 $(SETVAR,$last,$3)
@@ -603,7 +603,7 @@ $(SETVAR,$last,$3)
 <TABLE width=100% cellpadding=5 border=4 bgcolor="#f8fabb" cols=2 rows=1>
 <TR><TD>
 <font color="red"><B>Cloned Gene:</b>  </font>
-<font size=2>The GENE <b><A HREf="/cgi-bin_B/webdriver?MIval=aa-markerview.apg&OID=$cloned_gene">$1 ($2) </A> </b> has been shown to correspond to the <b>$name</b> locus. Please consult the GENE record for further mapping information.
+<font size=2>The GENE <b><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$cloned_gene">$1 ($2) </A> </b> has been shown to correspond to the <b>$name</b> locus. Please consult the GENE record for further mapping information.
 </TD>
 </TR></TABLE>
 <?/MISQL>
@@ -632,7 +632,7 @@ $(SETVAR,$last,$3)
 
 <?MIBLOCK COND="$(NC,$mother,NULL)">
 <?MISQL SQL="select name,abbrev from fish where zdb_id='$mother';">
-<A HREF="/cgi-bin_B/webdriver?MIval=aa-fishview.apg&OID=$mother">$1($2)</A>
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$mother">$1($2)</A>
 <?/MISQL>
 <?/MIBLOCK>
 <?MIVAR COND="$(EC,$mother,NULL)"> UNKNOWN. <?/MIVAR>
@@ -646,7 +646,7 @@ $(SETVAR,$last,$3)
 
 <?MIBLOCK COND="$(NC,$father,NULL)">
 <?MISQL SQL="select name,abbrev from fish where zdb_id='$father';">
-<A HREF="/cgi-bin_B/webdriver?MIval=aa-fishview.apg&OID=$father">$1($2)</A>
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$father">$1($2)</A>
 <?/MISQL>
 <?/MIBLOCK>
 <?MIVAR COND="$(EC,$father,NULL)"> UNKNOWN. <?/MIVAR>

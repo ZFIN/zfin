@@ -11,15 +11,15 @@
 #  2000/10/05 DPC: This file was reworked in preparation for genericizing it.
 #
 
-$ENV{"INFORMIXDIR"}      = "/research/zfin/chromix/private/apps/Informix_B";
-$ENV{"INFORMIXSQLHOSTS"} = "$ENV{INFORMIXDIR}/etc/sqlhosts.chrom_b";
-$ENV{"ONCONFIG"}         = "onconfig.chrom_b";
-$ENV{"INFORMIXSERVER"}   = "chrom_b";
+$ENV{"INFORMIXDIR"}      = "<!--|INFORMIX_DIR|-->";
+$ENV{"INFORMIXSQLHOSTS"} = "$ENV{INFORMIXDIR}/etc/<!--|SQLHOSTS_FILE|-->";
+$ENV{"ONCONFIG"}         = "<!--|ONCONFIG_FILE|-->";
+$ENV{"INFORMIXSERVER"}   = "<!--|INFORMIX_SERVER|-->";
 $dbaccess                = "$ENV{INFORMIXDIR}/bin/dbaccess";
 
 $TEMP_IN    = "temp_in.sql";
 $TEMP_DIR   = "/tmp";
-$INFILE_DIR = "/research/zfin/chromix/www/home/ZFIN/APP_PAGES/SQL_docs";
+$INFILE_DIR = "<!--|ROOT_PATH|-->/home/ZFIN/APP_PAGES/SQL_docs";
 
 local ($result, $rows)= (0, 0);
 
@@ -30,7 +30,7 @@ local ($result, $rows)= (0, 0);
 	@dbout = ("run-regen-fish.pl:  Can't open temp file to pass to dbaccess:", "$!");
 	last DO_DBACCESS;
     };
-    print SQL "connect to 'ztest';";
+    print SQL "connect to '<!--|DB_NAME|-->';";
     if ( ! open (SQLIN, "$INFILE_DIR/regen-fishsearch-call.sql"))
     {
 	@dbout = ("run-regen-fish.pl:  Couldn't open input script:", "$!");
@@ -82,7 +82,7 @@ else
 }
 
 print <<"End2";
-<form method=post action="/cgi-bin/webdriver">
+<form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 <input type=submit name=action value="Return to ZFIN home page">
 <input type=hidden name=MIval value=aa-ZDB_home.apg>
 </form>

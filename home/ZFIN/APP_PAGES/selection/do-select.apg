@@ -179,7 +179,7 @@ Note that the opening conditional also ensures that you don't specify a fish as 
 
 <?MIVAR>
 <SCRIPT>
-location.replace('/cgi-bin_B/webdriver?MIval=$return_form&temp_oid=$return_recid#$jump_to')
+location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$return_form&temp_oid=$return_recid#$jump_to')
 </SCRIPT>
 <?/MIVAR>
 

@@ -6,7 +6,7 @@
 <SCRIPT>
 
 function show_doc(title,docpath) {
-   top.zfinhelp=open("/cgi-bin_B/webdriver?MIval=aa-docframes.apg&title="+title+"&docpath="+docpath,"helpwindow","scrollbars=yes,width=600,height=600");
+   top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-docframes.apg&title="+title+"&docpath="+docpath,"helpwindow","scrollbars=yes,width=600,height=600");
   top.zfinhelp.focus();
 }
 
@@ -48,13 +48,13 @@ function check_submission(doAction) {
 </SCRIPT>
 
 
-<form name=ldata onSubmit="parent.pbrowser.document.location='/ZDBB/misc_html/saysearching.html'"  method=post TARGET="pbrowser" action="/cgi-bin_B/webdriver">
+<form name=ldata onSubmit="parent.pbrowser.document.location='/ZFIN/misc_html/saysearching.html'"  method=post TARGET="pbrowser" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 
 <center>
 <FONT SIZE=3 color="#ff0000" > <B>REGISTER Locus and/or Allele designations</B></font>
 </center>
 <p>
-<big><b>Thank you</b></big> for taking the time to register your locus and allele designation.  If you have not yet published information about this mutant, the name you request will be reserved in your name for 6 months; please <a href="javascript:show_doc('ZFIN+Locus+Registration+Policy','/ZDBB/help_files/Locus-policy.html')"> review the ZFIN locus registration policy</a> for details.
+<big><b>Thank you</b></big> for taking the time to register your locus and allele designation.  If you have not yet published information about this mutant, the name you request will be reserved in your name for 6 months; please <a href="javascript:show_doc('ZFIN+Locus+Registration+Policy','/ZFIN/help_files/Locus-policy.html')"> review the ZFIN locus registration policy</a> for details.
 <p>
 <big> Please enter information on the locus name, abbreviation and allele designation you would like to reserve:</big>
 <TABLE width=100%>
@@ -77,7 +77,7 @@ function check_submission(doAction) {
 <input type=button onClick="check_submission('new_allele');" name=new_allele value="Submit as new allele of existing locus"></font>
 </TD>
 <TD><font size=-1>
-<input type=button name=new_allele value="Help!" onClick="show_doc('Registration+Help','/ZDBB/help_files/locus_intro.html')"></font>
+<input type=button name=new_allele value="Help!" onClick="show_doc('Registration+Help','/ZFIN/help_files/locus_intro.html')"></font>
 </TD>
 </TR>
 </TABLE>

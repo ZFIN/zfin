@@ -25,11 +25,11 @@ window.location.search='?MIval=aa-locusupdate.apg&OID=$OID&attr='+attr+'&attr_ty
 }
 
 function add_linkage(lname) {
-   helpwin=open("/cgi-bin_B/webdriver?MIval=aa-linkagedit.apg&OID=$OID&lname="+escape(lname),"helpwindow","scrollbars=yes,width=550,height=300");
+   helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-linkagedit.apg&OID=$OID&lname="+escape(lname),"helpwindow","scrollbars=yes,width=550,height=300");
 }
 
 function edit_linkage(link_id,lname) {
-   helpwin=open("/cgi-bin_B/webdriver?MIval=aa-linkagedit.apg&OID=$OID&edit_link="+link_id+"&lname="+escape(lname),"helpwindow","scrollbars=yes,width=550,height=300");
+   helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-linkagedit.apg&OID=$OID&edit_link="+link_id+"&lname="+escape(lname),"helpwindow","scrollbars=yes,width=550,height=300");
 }
 
 function deleteLinkage(mid,dist,lod) {
@@ -170,7 +170,7 @@ $(IF,$(NC,$1,0),<font size=+1><b>"Linkage Group:" $1</b>)
 <?MISQL SQL="select fish_id, abbrev,allele,phenotype,chrom_change,(select unique count(*)::integer from mapped_deletion where allele=a.allele) as del_markers,(select unique count(*)::integer from total_links where from_id=a.fish_id) as linkages from fish_search a where locus ='$OID' order by allele;">
 $(SETVAR,$mindex,$(POSITION,$4,"Details:"))
 <TR>
-<TD valign=bottom><a href="/cgi-bin_B/webdriver?MIval=aa-fishview.apg&OID=$1">$3</A> </TD>
+<TD valign=bottom><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$1">$3</A> </TD>
 <TD valign=bottom><font size=-1>$(IF,$(NC,$5,NULL),$5,"Unknown")</TD>
 <TD><font size=-1>
 $(IF,$(>,$6,0),"+/- markers<br>")
@@ -207,17 +207,17 @@ access to updating linkages from somewhere -- should be in the FISH record
 <TR><TD>
 
 <TABLE border=0 cellpadding=1 cellspacing=0>
-<?MIVAR NAME=$curviewer>/cgi-bin/Webdriver?MIval=aa-markerview.apg&OID=<?/MIVAR>
+<?MIVAR NAME=$curviewer>/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=<?/MIVAR>
 <?MISQL SQL="select m2_abbrev,LOD,dist,m2_type,m2_id,a.owner,private,b.full_name,a.link_id,a.metric from all_linked_markers a, person b where a.owner=b.zdb_id and m1_id='$OID' order by m2_type,dist;">
 
 $(IF,$(=,$MI_CURRENTROW,1),"<TR><TD></TD><TD></TD><TD><U>Distance</U></TD><TD><U>LOD</U></TD></TR>")
 
-$(IF,$(NC,$4,GENE),$(SETVAR,$curviewer,"/cgi-bin/Webdriver?MIval=aa-locusview.apg&OID="))
+$(IF,$(NC,$4,GENE),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID="))
 
 <TR>
 $(SETVAR,$LOD,$(IF,$(=,$2,0),Unknown,$2))
 $(IF,$(XST,$UPDATE),"<TD><font size=2><input type=button value=edit onClick=edit_linkage('$9','$name');></TD>","<TD></TD>")
-$(IF,$(OR,$(EC,$override,true),$(EC,$7,f),$(EC,$ZDB_ident,$6)),"<TD><font size=-1><A HREF=$curviewer$5>$1</A> ($4)</TD><TD align=center><font size=-1>$3 $10</TD><TD align=center><font size=-1>$LOD</TD><TR><TD colspan=3><font size=-1>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;mapped by <A href=/cgi-bin/Webdriver?MIval=aa-persview.html&OID=$6>$8</a></TD>","<TD colspan=3><font size=-1><A href=javascript:info();>$4$MI_CURRENTROW</A>: Unpublished! <A href=/cgi-bin/Webdriver?MIval=aa-persview.html&OID=$6>Contact $8</a>.</TD>")
+$(IF,$(OR,$(EC,$override,true),$(EC,$7,f),$(EC,$ZDB_ident,$6)),"<TD><font size=-1><A HREF=$curviewer$5>$1</A> ($4)</TD><TD align=center><font size=-1>$3 $10</TD><TD align=center><font size=-1>$LOD</TD><TR><TD colspan=3><font size=-1>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;mapped by <A href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.html&OID=$6>$8</a></TD>","<TD colspan=3><font size=-1><A href=javascript:info();>$4$MI_CURRENTROW</A>: Unpublished! <A href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.html&OID=$6>Contact $8</a>.</TD>")
 </TR>
 <?/MISQL>
 </TABLE>
@@ -240,7 +240,7 @@ end comment out -->
 <TABLE width=100% cellpadding=5 border=4 bgcolor="#f8fabb" cols=2 rows=1>
 <TR><TD>
 <font color="red"><B>Cloned Gene:</b>  </font>
-<font size=2>The GENE <b><A HREf="/cgi-bin_B/webdriver?MIval=aa-markerview.apg&OID=$cloned_gene">$1 ($2) </A> </b> has been shown to correspond to the <b>$name</b> locus. Please consult the GENE record for further mapping information.
+<font size=2>The GENE <b><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$cloned_gene">$1 ($2) </A> </b> has been shown to correspond to the <b>$name</b> locus. Please consult the GENE record for further mapping information.
 </TD>
 </TR></TABLE>
 <?/MISQL>

@@ -31,7 +31,7 @@ $1<?/MISQL>
 
 <!-- NOW JUST THROW UP THE FORM FOR ENTERING A NEW MUTANT LINE -->
 <?MIVAR>
-<FORM METHOD=POST ACTION="/cgi-bin_B/webdriver">
+<FORM METHOD=POST ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 
 <INPUT type=hidden NAME=temp_oid VALUE=$temp_oid>
 <INPUT type=hidden NAME=MIval VALUE="aa-process-marker.apg">
@@ -48,17 +48,17 @@ Fill in as many entries as you can and then click on the SUBMIT button.
 <table width=100%>
 <TR> 
 <TD>
-<?MIVAR><A HREF="/ZDBB/help_files/help-marker.html#name">$(UPPER,$marker_type) NAME: </A> <?/MIVAR> 
+<?MIVAR><A HREF="/ZFIN/help_files/help-marker.html#name">$(UPPER,$marker_type) NAME: </A> <?/MIVAR> 
 <INPUT TYPE=text <?MIVAR COND=$(NC,$name,NULL)>value=$name <?/MIVAR> NAME="name"> 
 </TD>
 <TD>
 <?MIBLOCK COND="$(EQ,$marker_type,GENE)">
-<A HREF="/ZDBB/help_files/help-marker.html#type">ABBREVIATION:</A>
+<A HREF="/ZFIN/help_files/help-marker.html#type">ABBREVIATION:</A>
 <INPUT TYPE=text SIZE=6 <?MIVAR COND=$(NC,$abbrev,NULL)>value=$abbrev <?/MIVAR> NAME="abbrev"> 
 </TD></TR>
 <TR>
 <TD colspan=2>
-<A HREF="/ZDBB/help_files/help-marker.html#type">ALLELE (if mutant gene):</A>
+<A HREF="/ZFIN/help_files/help-marker.html#type">ALLELE (if mutant gene):</A>
 <INPUT TYPE=text SIZE=6 <?MIVAR COND=$(NC,$allele,NULL)>value=$allele <?/MIVAR> NAME="allele"> 
 <?/MIBLOCK>
 </TD>
@@ -67,7 +67,7 @@ Fill in as many entries as you can and then click on the SUBMIT button.
 
 <TABLE width=100%>
 <TR> 
-<TD><A HREF="/ZDBB/help_files/help-marker.html#availability">DISCOVERER:</A> 
+<TD><A HREF="/ZFIN/help_files/help-marker.html#availability">DISCOVERER:</A> 
 <?MIVAR COND=$(EC,$discoverer,NULL)>UNKNOWN.<?/MIVAR>
 <?MIBLOCK COND=$(NC,$discoverer,NULL)>
 <?MISQL SQL="select full_name from person where zdb_id='$discoverer';"><b>$1</b><?/MISQL>
@@ -78,7 +78,7 @@ Fill in as many entries as you can and then click on the SUBMIT button.
 
 <?MIBLOCK COND="$(OR,$(EQ,$marker_type,GENE),$(EQ,$marker_type,EST))">
 <TR> 
-<TD><A HREF="/ZDBB/help_files/help-marker.html#availability"> CURRENT SOURCE:</A>
+<TD><A HREF="/ZFIN/help_files/help-marker.html#availability"> CURRENT SOURCE:</A>
 <?MIVAR COND=$(EC,$source,NULL)> UNKNOWN.<?/MIVAR>
 <?MIBLOCK COND=$(NC,$source,NULL)> 
 <?MISQL SQL="select full_name from person where zdb_id='$source';"><b>$1</b><?/MISQL>
@@ -138,7 +138,7 @@ Fill in as many entries as you can and then click on the SUBMIT button.
 
 <TABLE width=100%>
 <TR>
-<TD width=50%><A HREF="/ZDBB/help_files/help-marker.html#phenotype">EXPRESSED IN:</A>
+<TD width=50%><A HREF="/ZFIN/help_files/help-marker.html#phenotype">EXPRESSED IN:</A>
 </TD><TD>
 <input type=submit name="s_expat" value="Add to list">
 </TD></TR>
@@ -162,7 +162,7 @@ Fill in as many entries as you can and then click on the SUBMIT button.
 <TABLE width=100%>
 <TR>
 
-<TD width=50%><A HREF="/ZDBB/help_files/help-marker.html#phenotype">Gene is ORTHOLOGOUS TO:</A>
+<TD width=50%><A HREF="/ZFIN/help_files/help-marker.html#phenotype">Gene is ORTHOLOGOUS TO:</A>
 </TD><TD>
 <input type=submit name="s_ortho" value="Add to list">
 </TD></TR>
@@ -194,7 +194,7 @@ $(IF,$(EC,$marker_type,RFLP),RESTRICTION ENZYMES)
 
 <TABLE WIDTH=100%>
 <TR>
-<TD colspan=2><A HREF="/ZDBB/help_files/help-marker.html#type">MAP LOCATION:</A>
+<TD colspan=2><A HREF="/ZFIN/help_files/help-marker.html#type">MAP LOCATION:</A>
  <INPUT TYPE=text SIZE=10 <?MIVAR COND=$(NC,$lg_location,NULL)>value=$lg_location <?/MIVAR> NAME="lg_location"> </TD>
 </TR>
 <TR>
@@ -217,7 +217,7 @@ $(IF,$(AND,$(>,$MI_CURRENTROW,1),$(NOT,$(EQ,$1,$last))),
 <TD>BAND SIZE: $(IF,$(EQ,$band,NULL),Unspecified,$band)</TD></TR>
 </TABLE><p><TABLE width=100% border cellpadding=5><TR>)
 
-$(IF,$(NC,$4,NULL),"<TD width=50%>PRIMER: <A HREF="/cgi-bin_B/webdriver?MIval=aa-primerview.html&OID=$5">"$4"</A></TD>")
+$(IF,$(NC,$4,NULL),"<TD width=50%>PRIMER: <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-primerview.html&OID=$5">"$4"</A></TD>")
 
 $(SETVAR,$band,$2)
 $(SETVAR,$enzym,$3)
@@ -245,7 +245,7 @@ $(SETVAR,$last,$1)
 </TD>
 </TR>
 <TR> <TD colspan=2>
-<?MIVAR COND="$(>,$MI_ROWCOUNT,0)"> <A HREF="/cgi-bin_B/webdriver?MIval=aa-pubview2.apg&OID=$2">$1</A>  <?/MIVAR>
+<?MIVAR COND="$(>,$MI_ROWCOUNT,0)"> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$1</A>  <?/MIVAR>
 </TD></TR>
 
 <TR><TD colspan=2> <HR width=50%></TD></TR>
@@ -257,7 +257,7 @@ $(SETVAR,$last,$1)
 <TD colspan=2>
 <ul>
 <?MISQL SQL="select b.title, b.zdb_id from int_data_pub a, publication b where source_id='$temp_oid' and target_id=b.zdb_id and info='related';">
-<li> <A HREF="/cgi-bin_B/webdriver?MIval=aa-pubview2.apg&OID=$2">$1</A><br>
+<li> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$1</A><br>
 <?/MISQL>
 </ul>
 </TD></TR></TABLE>

@@ -7,14 +7,14 @@
 # 2000/10/05 DPC: This file was reworked in preparation for genericizing it.
 #
 
-$ENV{"INFORMIXDIR"}      = "/research/zfin/chromix/private/apps/Informix_B";
-$ENV{"INFORMIXSQLHOSTS"} = "$ENV{INFORMIXDIR}/etc/sqlhosts.chrom_b";
-$ENV{"ONCONFIG"}         = "onconfig.chrom_b";
-$ENV{"INFORMIXSERVER"}   = "chrom_b";
+$ENV{"INFORMIXDIR"}      = "<!--|INFORMIX_DIR|-->";
+$ENV{"INFORMIXSQLHOSTS"} = "$ENV{INFORMIXDIR}/etc/<!--|SQLHOSTS_FILE|-->";
+$ENV{"ONCONFIG"}         = "<!--|ONCONFIG_FILE|-->";
+$ENV{"INFORMIXSERVER"}   = "<!--|INFORMIX_SERVER|-->";
 
 $dbaccess = "$ENV{INFORMIXDIR}/bin/dbaccess";
 
-@dbout = `$dbaccess - /research/zfin/chromix/www/home/ZFIN/APP_PAGES/SQL_docs/regen-genomics-call.sql 2>&1`;
+@dbout = `$dbaccess - <!--|ROOT_PATH|-->/home/ZFIN/APP_PAGES/SQL_docs/regen-genomics-call.sql 2>&1`;
 
 # Use the following statement (and comment out the one above) for a quick 
 # test of code that executes when the SQL script succeeds.
@@ -53,7 +53,7 @@ else
     print join ("<BR>\n",@dbout);
 }
 print <<"End2";
-<form method=post action="/cgi-bin/webdriver">
+<form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 <input type=submit name=action value="Return to ZFIN home page">
 <input type=hidden name=MIval value=aa-ZDB_home.apg>
 </form>

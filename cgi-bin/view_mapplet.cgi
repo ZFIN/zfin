@@ -22,12 +22,12 @@
   
 
   ### the hard coded env paths need a better idea
-  $ENV{INFORMIXDIR}      = '/research/zfin/chromix/private/apps/Informix_B';
-  $ENV{INFORMIXSERVER}   = 'chrom_b';
-  $ENV{INFORMIXSQLHOSTS} = '/research/zfin/chromix/private/apps/Informix_B/etc/sqlhosts.chrom';
+  $ENV{INFORMIXDIR}      = '<!--|INFORMIX_DIR|-->';
+  $ENV{INFORMIXSERVER}   = '<!--|INFORMIX_SERVER|-->';
+  $ENV{INFORMIXSQLHOSTS} = '<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->';
   ### open a handle on the db
-  my $dbh = DBI->connect('DBI:Informix:ztest', '', '', {AutoCommit => 1, RaiseError => 1})
-  || die "Failed while connecting to ztest "; #$DBI::errstr";
+  my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->', '', '', {AutoCommit => 1, RaiseError => 1})
+  || die "Failed while connecting to <!--|DB_NAME|--> "; #$DBI::errstr";
   
   ### hardcoded list of panels will need updating if new ones are made.
   ### or we could 'select abbrev from panels'
@@ -83,7 +83,7 @@
   my ($sm_m, $sm_lg, $sm_panel, $sm_loc, $sm_refresh); #values Which might be used to repopulate the select map form  
   
   ### for when we get multiple java servers some day
-  my $jport = "7365";
+  my $jport = "<!--|JAVA_SERVER_PORT|-->";
   #if( defined $Q->param("port") ) {$jport= $Q->param("port");}
   
   ### incase we want the mapplet to open somewhere particular some day
@@ -209,7 +209,7 @@
 	if( $unique > 1) {	# not unique shunt off to search result page
 	  #	  $note = $note . $unique . " ->Too Many Choices  <p>\n";  
 	  my $bot = LWP::UserAgent->new(); 
-	  my $req = POST 'http://zfin.org/cgi-bin_B/webdriver',
+	  my $req = POST '/<!--|WEBDRIVER_PATH_FROM_ROOT|-->',
 	  [   compare=> '%',
 	      marker_type=> 'any',
 	      lg=> 0,
@@ -714,7 +714,7 @@
     ### emit an options button 
     print "<td> ".$Q->start_form (
 				  -method=>'POST',
-				  -action=>'/cgi-bin_B/map-options.pl',
+				  -action=>'/<!--|CGI_BIN_DIR_NAME|-->/map-options.pl',
 				  -encoding=>'application/x-www-form-urlencoded',
 				  -name=>'optform',
 				  -target=>'criteria'
@@ -725,11 +725,11 @@
 				     $g_opt."\n".
 				       $Q->submit(-name=>"Hide / Show / Adjust a Panel",-align=>'right')."\n".
 					 $Q->end_form."\n</td>";
-    print '<td><img src=http://zfin.org/ZFIN_software/mapkey.gif><p>'."\n";
+    print '<td><img src=http://zfin.org/client_apps/mapkey.gif><p>'."\n";
     
     print "<td>". $Q->start_form (
 				  -method=>'GET',
-				  -action=>'/cgi-bin_B/print_map.cgi',
+				  -action=>'/<!--|CGI_BIN_DIR_NAME|-->/print_map.cgi',
 				  -encoding=>'application/x-www-form-urlencoded',
 				  -name=>'print_map',
 				  -target=>'print'
@@ -752,7 +752,7 @@
       "<APPLET \n".
 	" code\t   = \"mapplet.class\"\n".
 	  " archive  = \"mapplet-1.0.jar\"\n".
-	    " codebase = \"/ZFIN_software/mapplet/release/\"\n".
+	    " codebase = \"/client_apps/mapplet/release/\"\n".
 	      " height\t = \"$g_height\"\n".
 		" width\t  = \"$g_width\"\n".
 		  " mayscript>\n";
@@ -768,17 +768,17 @@
       print "<param name = \"" . $edit_panel . "_ztotal\"\t value = ". $Q->param($edit_panel.'_ztotal').">\n"; 
     }
     if (! defined  $Q->param('OID')){$Q->param('OID', ''); } 	
-    print   "<param name = \"marker_url\"\t value = \"/cgi-bin_B/webdriver?MIval=aa-markerview.apg&OID=\">\n".
+    print   "<param name = \"marker_url\"\t value = \"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=\">\n".
       
-      "<param name = \"panel_url\"\t value = \"/cgi-bin_B/webdriver?MIval=aa-crossview.apg\">\n".
+      "<param name = \"panel_url\"\t value = \"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg\">\n".
 	
 	"<param name = \"target_frame\"\t value = \"$frame\">\n".
 	  "<param name = \"host\"\t\t value = \"zfin.org\">\n".
 	    "<param name = \"port\"\t\t value = \"$jport\">\n".
 	      "<param name = \"selected_marker\"\t value = \"". $Q->param('OID')."\">\n". 
-		"<param name = \"fish_url\" value = \"/cgi-bin_B/webdriver?MIval=aa-fishview.apg&OID=\">\n".
-		  "<param name = \"locus_url\" value = \"/cgi-bin_B/webdriver?MIval=aa-locusview.apg&OID=\">\n".
-		     "<param name = \"zoom_url\" value = \"/cgi-bin_B/view_mapplet.cgi\">\n".
+		"<param name = \"fish_url\" value = \"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=\">\n".
+		  "<param name = \"locus_url\" value = \"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=\">\n".
+		     "<param name = \"zoom_url\" value = \"/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi\">\n".
 		    
 		    "<param name = \"data\"\t\t value = \"$g_data\">\n".
 		      
@@ -796,7 +796,7 @@
  
     print $Q->start_form (
 			  -method=>'POST',
-			  -action=>'/cgi-bin_B/webdriver',
+			  -action=>'/<!--|WEBDRIVER_PATH_FROM_ROOT|-->',
 			  -encoding=>'application/x-www-form-urlencoded',
 			  -name=>'selectform',
 			  -target=>'criteria'

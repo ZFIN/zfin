@@ -15,12 +15,12 @@
 # this script is run in rc3.d
 JAVA_DIR=/usr/java1.1
 
-SERVER_HOME=/research/zfin/chromix/private/apps/javaserver
+SERVER_HOME=<!--|JAVASERVER_PATH|-->
 cd $SERVER_HOME
 
-INFORMIXDIR=/research/zfin/chromix/private/apps/Informix_B
-INFORMIXSERVER=chrom_b
-INFORMIXSQLHOSTS=$INFORMIXDIR/etc/sqlhosts.chrom_b
+INFORMIXDIR=<!--|INFORMIX_DIR|-->
+INFORMIXSERVER=<!--|INFORMIX_SERVER|-->
+INFORMIXSQLHOSTS=$INFORMIXDIR/etc/<!--|SQLHOSTS_FILE|-->
 
 export INFORMIXDIR INFORMIXSERVER INFORMIXSQLHOSTS
 
@@ -37,11 +37,11 @@ case "$1" in
 	#  called outside of startup.
 
 	#  Informix apparently won't allow root to connect as a client (strange, but apparently so).
-	#  So we have to SU as zfinner to run the server.  And since SU won't allow the environment
+	#  So we have to SU as <!--|APP_PAGE_USER|--> to run the server.  And since SU won't allow the environment
 	#  variable LD_LIBRARY_PATH to be exported into its subprocess (a security restriction),
 	#  we must explicitly set the variable INSIDE the new subprocess.
 	if [ "${_INIT_RUN_LEVEL}" = "3" ] ; then 
-	    /bin/su zfinner -c "$SERVER_HOME/runServer $LD_LIBRARY_PATH $JAVA_DIR/bin/java Server" >> Server.out 2>&1 &
+	    /bin/su <!--|APP_PAGE_USER|--> -c "$SERVER_HOME/runServer $LD_LIBRARY_PATH $JAVA_DIR/bin/java Server" >> Server.out 2>&1 &
 	else 
 	    $SERVER_HOME/runServer $LD_LIBRARY_PATH $JAVA_DIR/bin/java Server >> Server.out 2>&1 &
 	fi
@@ -52,6 +52,6 @@ case "$1" in
 	;;
 
     *)
-	echo "usage: $0 {start|stop}" >> /research/zfin/chromix/private/apps/javaserver/Server.out
+	echo "usage: $0 {start|stop}" >> <!--|JAVASERVER_PATH|-->/Server.out
  	;;
 esac

@@ -25,7 +25,7 @@ You have requested to upload image data to ZDB. As a first step, fill out the fo
 client file upload. If not, we can always go back to using Superwebdriver, which I wrote to unpack uploaded files. 
 -->
 
-<form METHOD=post ENCTYPE="multipart/form-data" ACTION="/cgi-bin_B/webdriver">
+<form METHOD=post ENCTYPE="multipart/form-data" ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 
 <TABLE border=4 width=100%>
 <TR align=center>

@@ -1,9 +1,9 @@
 #!/bin/sh
-cd /research/zfin/chromix/www/home/ZFIN_software/mapplet/release
+cd <!--|ROOT_PATH|-->/home/client_apps/mapplet/release
 
-#setenv DISPLAY="chromix.cs.uoregon.edu:1"
+#setenv DISPLAY="<!--|DOMAIN_NAME|-->:1"
 #unset DISPLAY
-DISPLAY=chromix.cs.uoregon.edu:1.0
+DISPLAY=<!--|DOMAIN_NAME|-->:1.0
 export DISPLAY
 java \
     -mx50m \
@@ -15,5 +15,5 @@ java \
     -Dcgi.server_port=$SERVER_PORT \
     -Dcgi.script_name=$SCRIPT_NAME \
     -Dcgi.path_info=$PATH_INFO \
-    -classpath .:/research/zfin/chromix/www/home/ZFIN_software/mapplet/release/mapplet.jar  \
+    -classpath .:<!--|ROOT_PATH|-->/home/client_apps/mapplet/release/mapplet.jar  \
     mapimage 

@@ -12,13 +12,13 @@
 #    
 # -----------------------------------------------------------------------
 
-require '/research/zfin/chromix/www/httpd/cgi-bin_B/eck/parse-form.perl';
-require '/research/zfin/chromix/www/httpd/cgi-bin_B/eck/urlencode.perl';
+require '<!--|ROOT_PATH|-->/<!--|CGI_BIN_DIR_NAME|-->/parse-form.perl';
+require '<!--|ROOT_PATH|-->/<!--|CGI_BIN_DIR_NAME|-->/urlencode.perl';
 
 #First call the PARSE_FORM routine to extract all the data into the associative
 # array FORM-DATA. Any uploaded files will be stored in FILE-UPLOADS directory.
 
-&parse_form(*form_data, "/export/fish/www/httpd/cgi-bin/file-uploads");
+&parse_form(*form_data, "<!--|ROOT_PATH|-->/<!--|CGI_BIN_DIR_NAME|-->/file-uploads");
 
 
 #Now build a FORM style parameter string to pass to WEBDRIVER

@@ -39,7 +39,7 @@ comments -- reasons for doing update
      IMAGE FIELD, THEN ACT ACCORDINGLY -->
 
 <?MIBLOCK COND="$(EC,$attr_type,pic)">
-<?MISQL COND="$(NXST,$null_image)" SQL="update fish set $attr=FILETOBLOB('/export/chromix/www/httpd/cgi-bin_B/$new_value', 'client') where zdb_id='$OID';"><?/MISQL>
+<?MISQL COND="$(NXST,$null_image)" SQL="update fish set $attr=FILETOBLOB('<!--|ROOT_PATH|-->/<!--|CGI_BIN_DIR_NAME|-->/$new_value', 'client') where zdb_id='$OID';"><?/MISQL>
 
 <?MISQL COND="$(XST,$null_image)" SQL="update fish set $attr=NULL where zdb_id='$OID';"><?/MISQL>
 <?/MIBLOCK> <!-- ends if its an image -->
@@ -98,7 +98,7 @@ comments -- reasons for doing update
 <!-- okay, now just bail back to the fishupdate to view results -->
 <?MIVAR>
 <SCRIPT>
-location.replace("/cgi-bin_B/webdriver?MIval=aa-fishview.apg&OID=$OID&UPDATE=1")
+location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$OID&UPDATE=1")
 </SCRIPT>
 <?/MIVAR>
 

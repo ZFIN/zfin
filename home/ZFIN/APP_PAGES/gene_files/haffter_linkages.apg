@@ -9,7 +9,7 @@
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
 <?MIVAR COND="$(NXST,$mtype)" NAME=$mtype>all<?/MIVAR>
-<form name=inputer method=post action="/cgi-bin_B/webdriver">
+<form name=inputer method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 <input type=hidden name=MIval value=aa-haffter_linkages.apg>
 <b>Marker name contains:</b>
 <?MIVAR>

@@ -4,8 +4,8 @@
 <SCRIPT>
 <?MIVAR>
 function redisplay () {     
-top.helpcontent.location="/ZDBB/misc_html/saycomposing.html";
-top.helpcontent.location="/cgi-bin_B/webdriver?MIval=aa-showscores.apg&panel=$panel_id&lg=$OR_LG";
+top.helpcontent.location="/ZFIN/misc_html/saycomposing.html";
+top.helpcontent.location="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showscores.apg&panel=$panel_id&lg=$OR_LG";
 
 }
 <?/MIVAR>

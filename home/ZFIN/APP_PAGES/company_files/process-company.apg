@@ -28,10 +28,10 @@
 <p>
 
 <?MIVAR>
-Click <A HREF="/cgi-bin_B/webdriver?MIval=aa-companyview.apg&OID=$temp_oid">here</A> to view the new COMPANY record.
+Click <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-companyview.apg&OID=$temp_oid">here</A> to view the new COMPANY record.
 <?/MIVAR>
 <p>
-OR click <A TARGET=content HREF="/cgi-bin_B/webdriver?MIval=aa-ZDB_home.apg">here</A> to return to the ZDB home page.
+OR click <A TARGET=content HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg">here</A> to return to the ZDB home page.
 
 </HTML>
 
@@ -44,7 +44,7 @@ OR click <A TARGET=content HREF="/cgi-bin_B/webdriver?MIval=aa-ZDB_home.apg">her
 <!-- OKAY, now handle the cases where user wants to specify some value -->
 <?MIBLOCK COND="$(NXST,$s_done)">
 
-<?MIVAR NAME=$file_name>/ZDBB/misc_html/error.html<?/MIVAR>
+<?MIVAR NAME=$file_name>/ZFIN/misc_html/error.html<?/MIVAR>
 
 
 <!-- VARIABLES DESCRIPTIONS for following. 

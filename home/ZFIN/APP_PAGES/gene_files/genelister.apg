@@ -94,7 +94,7 @@
 
 <!-- Stuff to control retrieval volume -->
 <?MIVAR>
-<form method=post action="/cgi-bin_B/webdriver"  name=genelister>
+<form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"  name=genelister>
 <input type=hidden name=MIval value=aa-genelister.apg>
 <input type=hidden name=constraint value="$constraint">
 <input type=hidden name=searchtype value="$searchtype">
@@ -134,7 +134,7 @@ Options:
 
 </form>
 
-<form method=post action="/cgi-bin_B/view_mapplet.cgi" target="content">	
+<form method=post action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi" target="content">	
 <?MIVAR COND="$(OR,$(<=,$tcount,$maxreturn),$(XST,$getall))" NAME=$limit>$true_count<?/MIVAR>
 
 <?MIBLOCK COND="$(AND,$(XST,$limit),$(NC,$limit,0))">
@@ -158,7 +158,7 @@ $(SETVAR,$color,$(/,$clr_cnt,2))
 <TR valign=top $(IF,$(!=,$color,$(FIX,$color)),"bgcolor=#FCCE64")> <TD></TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD>&nbsp;</TD><TD align=left><font size=1><input type=submit value='VIEW MAP' name=view_map ><TD>&nbsp;</TD>
 <?/MIVAR>
 </form>
-<form method=post  action="/cgi-bin_B/view_mapplet.cgi" target="content">
+<form method=post  action="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi" target="content">
 <?MIVAR NAME=$ok_view_map>0<?/MIVAR>
 </TR>
 <?/MIBLOCK>
@@ -181,10 +181,10 @@ $(SETVAR,$color,$(/,$clr_cnt,2))
 <TR valign=top $(IF,$(!=,$color,$(FIX,$color)),"bgcolor=#FCCE64")>
 
 <TD><font size=1> 
-$(IF,$(XST,$return_rec),<A HREF=/cgi-bin_B/webdriver?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3 TARGET=content>SELECT</A>) 
+$(IF,$(XST,$return_rec),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3 TARGET=content>SELECT</A>) 
 </TD>
 
-$(IF,$(NC,$prev_name,$1),$(IF,$(ISNULL,$11),<TD valign=top> <font size=2><A HREF=/cgi-bin_B/webdriver?MIval=aa-markerview.apg&OID=$3 TARGET=content>$7</A>&nbsp;&nbsp; - $1 </TD>,<TD valign=top> <font size=2><A HREF=/cgi-bin_B/webdriver?MIval=aa-markerview.apg&OID=$3 TARGET=content>$7</A>&nbsp;&nbsp; - $1 &nbsp; [ $11 ]</TD>),<TD>&nbsp;</TD>)
+$(IF,$(NC,$prev_name,$1),$(IF,$(ISNULL,$11),<TD valign=top> <font size=2><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$3 TARGET=content>$7</A>&nbsp;&nbsp; - $1 </TD>,<TD valign=top> <font size=2><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$3 TARGET=content>$7</A>&nbsp;&nbsp; - $1 &nbsp; [ $11 ]</TD>),<TD>&nbsp;</TD>)
 
 
 <TD> <font size=2> 
@@ -203,7 +203,7 @@ $(IF,$(AND,$(EC,$panel_abbrev,na),$(=,$4,0)),"Unmapped")
 
 
 
-$(IF,$(AND,$(>,$4,0),$(EC,$8,f)),"LG <b>"$4"</b>;<b> "$2"</b> "$10""<TD><font size=2> "<A target=content HREF=/cgi-bin_B/webdriver?MIval=aa-crossview.apg&OID="$5">"$6"</A>"</TD><TD><font size=2 COLOR=#A9A9A9> <input type=checkbox name=$6 value=1  CHECKED ></TD><TD><font size=2>" "$upd_date""</TD>)
+$(IF,$(AND,$(>,$4,0),$(EC,$8,f)),"LG <b>"$4"</b>;<b> "$2"</b> "$10""<TD><font size=2> "<A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$5">"$6"</A>"</TD><TD><font size=2 COLOR=#A9A9A9> <input type=checkbox name=$6 value=1  CHECKED ></TD><TD><font size=2>" "$upd_date""</TD>)
 <?MIBLOCK COND="$(AND,$(>,$4,0),$(EC,$8,f))">
 <?MIVAR name=$ok_view_map>1<?/MIVAR>
 
@@ -211,7 +211,7 @@ $(IF,$(AND,$(>,$4,0),$(EC,$8,f)),"LG <b>"$4"</b>;<b> "$2"</b> "$10""<TD><font si
 <?/MIBLOCK>
 
 
-$(IF,$(AND,$(>,$4,0),$(NC,$8,f)),"Mapped on <A target=content HREF=/cgi-bin_B/webdriver?MIval=aa-crossview.apg&OID="$5">"$6" panel; updated "$upd_date"</A>, but still confidential.")
+$(IF,$(AND,$(>,$4,0),$(NC,$8,f)),"Mapped on <A target=content HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$5">"$6" panel; updated "$upd_date"</A>, but still confidential.")
 </TD>
 
 

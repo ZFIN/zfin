@@ -8,9 +8,9 @@
 function do_curation(act) {
    if (top.curator && !top.curator.closed) {top.curator.focus()};
    if(act=='new') {
-     top.curator=open("/cgi-bin_B/webdriver?MIval=aa-curatepub.apg&OID=$OID","helpwindow","scrollbars=no,width=550,height=300");
+     top.curator=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatepub.apg&OID=$OID","helpwindow","scrollbars=no,width=550,height=300");
    } else {
-     top.curator=open("/cgi-bin_B/webdriver?MIval=aa-curatepub.apg&OID=$OID&curation="+act,"helpwindow","scrollbars=no,width=550,height=300");
+     top.curator=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatepub.apg&OID=$OID&curation="+act,"helpwindow","scrollbars=no,width=550,height=300");
    }
 }
 <?/MIVAR>
@@ -78,13 +78,13 @@ ERROR -- something bad happened -- no OID passed in!
 <TD>
 <B>CONTACTS:</B>
 <?MISQL SQL="select a.full_name,a.zdb_id from person a, int_person_pub b where source_id=a.zdb_id and target_id='$OID' order by a.full_name;">
- <A HREF="/cgi-bin_B/webdriver?MIval=aa-persview.apg&OID=$2">$1</A>,  
+ <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$2">$1</A>,  
 <?/MISQL>
 </TD>
 
 <?MIVAR>
 <TD align=right>
-<form method=post target=content action="/cgi-bin_B/webdriver">
+<form method=post target=content action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 <input type=hidden name=MIval value=aa-pubprintable.apg>
 <input type=hidden name=constraint value="where zdb_id='$OID'">
 <input type=submit name=printable value="Generate reference">
@@ -132,7 +132,7 @@ ERROR -- something bad happened -- no OID passed in!
 
 <?/MIBLOCK>  <!-- ends cond authorized -->
 <!-- For Yolanda -->
-<?MIVAR><img src="/cgi-bin_B/write.cgi?OID=$OID"></img><?/MIVAR>
+<?MIVAR><img src="/<!--|CGI_BIN_DIR_NAME|-->/write.cgi?OID=$OID"></img><?/MIVAR>
 
 
 <?/MIBLOCK>  <!-- ends cond oid xst -->

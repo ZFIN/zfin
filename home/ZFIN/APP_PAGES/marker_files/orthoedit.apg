@@ -14,7 +14,7 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
 <?MIVAR>
 <SCRIPT>
 function delete_link(acc_num) {
-  document.location='/cgi-bin_B/webdriver?MIval=aa-orthoedit.apg&UPDATE=1&OID=$OID&delacc='+acc_num;
+  document.location='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-orthoedit.apg&UPDATE=1&OID=$OID&delacc='+acc_num;
 }
 </SCRIPT>
 <?/MIVAR>
@@ -83,7 +83,7 @@ function delete_link(acc_num) {
 <?MIVAR NAME=$gabbrev>$1<?/MIVAR>
 
 <?MIVAR>
-<form method=post action="/cgi-bin_B/webdriver">
+<form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 <input type=hidden name=MIval value=aa-orthoedit.apg>
 <input type=hidden name=OID value=$OID>
 <input type=hidden name=UPDATE value=1>

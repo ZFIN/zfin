@@ -19,10 +19,10 @@ ERROR -- something bad happened -- no OID passed in!
 <FRAMESET ROWS="30%,*">
 
 <?MIVAR>
-<FRAME SRC="/cgi-bin_B/webdriver?MIval=aa-update-select.apg&rtype=$rtype&OID=$OID" name=vcontrols>
+<FRAME SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-update-select.apg&rtype=$rtype&OID=$OID" name=vcontrols>
 
 
-<FRAME SRC="/cgi-bin_B/webdriver?MIval=aa-update-lister.apg&rtype=$rtype&OID=$OID" NAME=updates>
+<FRAME SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-update-lister.apg&rtype=$rtype&OID=$OID" NAME=updates>
 <?/MIVAR>
 
 </FRAMESET>

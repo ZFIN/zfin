@@ -34,7 +34,7 @@ $(UPPER,$rtype) record with ZFIN id: <b>$OID</b>
 If you have <b>ANY</b> doubt that this is the correct thing to do, click "Cancel" below to go back to viewing the record. <p>
 Otherwise, click "Trash it" to delete the record and return to the ZFIN home page.
 
-<form method=post action="/cgi-bin_B/webdriver">
+<form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 <input type=hidden name=MIval value=aa-process_delete.apg>
 <input type=hidden name=OID value=$OID>
 <input type=hidden name=rtype value=$rtype>

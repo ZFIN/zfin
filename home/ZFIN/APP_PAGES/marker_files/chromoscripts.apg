@@ -14,7 +14,7 @@ if (!top.lglist) {
 homewin=top;
 newindex=homewin.lgindex;
 
-    top.lgwin=open("/cgi-bin_B/webdriver?MIval=aa-scoresframe.apg&panel="+refcross+"&lg="+lg,"scoreswindow"+newindex,"scrollbars=yes,resizable=yes,width=400,height=550");
+    top.lgwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-scoresframe.apg&panel="+refcross+"&lg="+lg,"scoreswindow"+newindex,"scrollbars=yes,resizable=yes,width=400,height=550");
 
      top.lgwin.ztarget=window;
      top.lgwin.lghomewin=homewin;
@@ -35,7 +35,7 @@ if (!top.lglist) {
 homewin=top;
 newindex=homewin.lgindex;
 
-    top.lgwin=open("/cgi-bin_B/webdriver?MIval=aa-lgframe.apg&panel="+refcross+"&lg="+lg,"mapwindow"+newindex,"scrollbars=yes,resizable=yes,width=200,height=550");
+    top.lgwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-lgframe.apg&panel="+refcross+"&lg="+lg,"mapwindow"+newindex,"scrollbars=yes,resizable=yes,width=200,height=550");
 
      top.lgwin.ztarget=window;
      top.lgwin.lghomewin=homewin;
@@ -56,7 +56,7 @@ if (!top.lglist) {
 homewin=top;
 newindex=homewin.lgindex;
 
-    top.lgwin=open("/cgi-bin_B/webdriver?MIval=aa-lgframe.apg&marker="+marker+"&panel="+panel+"&mname="+escape(mname),"mapwindow"+newindex,"scrollbars=yes,resizable=yes,width=200,height=550");
+    top.lgwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-lgframe.apg&marker="+marker+"&panel="+panel+"&mname="+escape(mname),"mapwindow"+newindex,"scrollbars=yes,resizable=yes,width=200,height=550");
 
      top.lgwin.ztarget=window;
      top.lgwin.lghomewin=homewin;
@@ -79,7 +79,7 @@ if (!top.lglist) {
 homewin=top;
 newindex=homewin.lgindex;
  
-      top.lgwin=open("/cgi-bin_B/webdriver?MIval=aa-mapframe.apg&selected_marker=" + escape(selected_marker) + "&map_panel=" + map_panel + "&lg=" + lg + "&version=release" ,"mapwindow"+newindex,"scrollbars=no,resizable=no,width=610,height=435");
+      top.lgwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mapframe.apg&selected_marker=" + escape(selected_marker) + "&map_panel=" + map_panel + "&lg=" + lg + "&version=release" ,"mapwindow"+newindex,"scrollbars=no,resizable=no,width=610,height=435");
  
      top.lgwin.ztarget=window;
      top.lgwin.lghomewin=homewin;

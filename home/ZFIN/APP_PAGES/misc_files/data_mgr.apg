@@ -9,7 +9,7 @@ function do_submit(object,who) {
 var the_title
     the_title='$(IF,$(XST,$rec_title),$rec_title,Untitled:$OID)';
 
-  document.location="/cgi-bin_B/webdriver?MIval=aa-process_notification.apg&"+who+"="+object.checked+"&OID=$OID&ZDB_ident=$ZDB_ident&ZDB_name="+escape('$ZDB_name')+"&title="+escape(the_title)+"&record_MIval="+escape(document.location.search);
+  document.location="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-process_notification.apg&"+who+"="+object.checked+"&OID=$OID&ZDB_ident=$ZDB_ident&ZDB_name="+escape('$ZDB_name')+"&title="+escape(the_title)+"&record_MIval="+escape(document.location.search);
 }
 </SCRIPT>
 <?/MIVAR>
@@ -38,7 +38,7 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 
 </TD>
 <TD> <font size=-1>
-<A HREF="/cgi-bin_B/webdriver?MIval=aa-update-vframeset.apg&OID=$OID&rtype=$rtype">
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-update-vframeset.apg&OID=$OID&rtype=$rtype">
 <b>Updated:</b> $mod_date </A> </font>
 </TD>
 <?/MIVAR>
@@ -64,10 +64,10 @@ Bookmark
 
 <!-- Only allow auth users to update. For non-person records, allow any registered submitter -->
 <?MIVAR COND="$(EC,$AUTHORIZED,root)">
-<font size=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-delete_record.apg&OID=$OID&rtype=$rtype">Permanently delete this record</A> </font> <br>
+<font size=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-delete_record.apg&OID=$OID&rtype=$rtype">Permanently delete this record</A> </font> <br>
 <?/MIVAR>
 <?MIVAR COND="$(NC,$rtype,person)">
-<font size=-1> <A HREF="/cgi-bin_B/webdriver?MIval=$MIval&UPDATE=1&OID=$OID">Add/Update data to this Record</A> </font>
+<font size=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$MIval&UPDATE=1&OID=$OID">Add/Update data to this Record</A> </font>
 <?/MIVAR>
 
 
@@ -76,16 +76,16 @@ Bookmark
 <?MIBLOCK COND="$(EC,$rtype,person)">
 
 <?MIVAR COND="$(OR,$(EC,$AUTHORIZED,owner),$(EC,$AUTHORIZED,root),$(EC,$AUTHORIZED,adminasst))">
-<font size=-1> <A HREF="/cgi-bin_B/webdriver?MIval=$MIval&UPDATE=1&OID=$OID">Update this Record</A> </font>
+<font size=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$MIval&UPDATE=1&OID=$OID">Update this Record</A> </font>
 <?/MIVAR>
 </TD>
 
 <TD>
 <?MIVAR COND="$(EC,$AUTHORIZED,root)">
-<font size=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-edit_user.apg&OID=$OID">Add/Edit ZFIN Registration</A> </font>
+<font size=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_user.apg&OID=$OID">Add/Edit ZFIN Registration</A> </font>
 <?/MIVAR>
 <?MIVAR COND="$(EC,$AUTHORIZED,owner)">
-<font size=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-edit_user.apg&OID=$OID">Change ZFIN Password</A> </font>
+<font size=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_user.apg&OID=$OID">Change ZFIN Password</A> </font>
 <?/MIVAR>
 
 <?/MIBLOCK>  <!-- ends cond PERSON and authorized -->

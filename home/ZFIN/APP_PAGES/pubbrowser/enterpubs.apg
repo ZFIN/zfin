@@ -16,7 +16,7 @@
 </TD>
 </TR>
 <TR> <TD colspan=2>
-<?MIVAR COND="$(>,$MI_ROWCOUNT,0)"> <A HREF="/cgi-bin_B/webdriver?MIval=aa-pubview2.apg&OID=$2">$1</A>  <?/MIVAR>
+<?MIVAR COND="$(>,$MI_ROWCOUNT,0)"> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$1</A>  <?/MIVAR>
 </TD></TR>
 
 <TR><TD colspan=2> <HR width=50%></TD></TR>
@@ -28,7 +28,7 @@
 <TD colspan=2>
 <ul>
 <?MISQL SQL="select b.title, b.zdb_id from int_data_pub a, publication b where source_id='$temp_oid' and target_id=b.zdb_id and info='related';">
-<li> <A HREF="/cgi-bin_B/webdriver?MIval=aa-pubview2.apg&OID=$2">$1</A><br>
+<li> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$1</A><br>
 <?/MISQL>
 </ul>
 </TD></TR></TABLE>

@@ -4,8 +4,8 @@
 <basefont size=2>
 
 
-<form name=crit_form method=post TARGET="pbrowser" action="/cgi-bin_B/webdriver" 
-onSubmit="parent.pbrowser.document.location='/ZDBB/misc_html/saysearching.html'">
+<form name=crit_form method=post TARGET="pbrowser" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
+onSubmit="parent.pbrowser.document.location='/ZFIN/misc_html/saysearching.html'">
 
 <center>
 <U><B><FONT SIZE=5><I>QUICK</I></font><FONT SIZE=5>Search:</font>
@@ -24,7 +24,7 @@ onSubmit="parent.pbrowser.document.location='/ZDBB/misc_html/saysearching.html'"
 <TD align=center><input type=submit name=action value="SEARCH"></TD> 
 
 <TD><font size=2>
-<A HREF="/cgi-bin_B/webdriver?MIval=aa-startframes.apg&selector=aa-persselect.apg&select_from=PERSON" TARGET=content>Advanced Search</A>
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-startframes.apg&selector=aa-persselect.apg&select_from=PERSON" TARGET=content>Advanced Search</A>
 </font>
 </TD>
 

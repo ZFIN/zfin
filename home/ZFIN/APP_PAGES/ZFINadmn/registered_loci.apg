@@ -12,12 +12,12 @@ UPDATE ECK 4/21/99.  Will modify to allow public to see pending registrations --
 <SCRIPT>
 function change_status(selector,locus_id,the_allele) {
 var theAction=selector.name;
-  document.location='/cgi-bin_B/webdriver?MIval=aa-registered_loci.apg&update='+locus_id+'&allele='+the_allele+'&action='+theAction;
+  document.location='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-registered_loci.apg&update='+locus_id+'&allele='+the_allele+'&action='+theAction;
 }
 
 function change_descr(selector,locus_id,the_allele) {
 var theDescr=escape(selector.value);
-  document.location='/cgi-bin_B/webdriver?MIval=aa-registered_loci.apg&update='+locus_id+'&allele='+the_allele+'&action=descr&description='+theDescr;
+  document.location='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-registered_loci.apg&update='+locus_id+'&allele='+the_allele+'&action=descr&description='+theDescr;
 }
 </SCRIPT>
 </HEAD>
@@ -108,7 +108,7 @@ $(IF,$(NC,$10,$MI_NULL),$10,"<input type=checkbox name=expire onClick=change_sta
 
 </TD>
 </TR>
-<TR><TD colspan=2><font size=2>FISH record: $(IF,$(NC,$12,NULL),<A HREF="/cgi-bin_B/webdriver?MIval=aa-fishview.apg&OID="$12>$12</A>,"Not yet created")</TD>
+<TR><TD colspan=2><font size=2>FISH record: $(IF,$(NC,$12,NULL),<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID="$12>$12</A>,"Not yet created")</TD>
 </TR>
 <TR>
 <TD colspan=2><font size=2>

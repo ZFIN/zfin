@@ -113,10 +113,10 @@ value=" DONE UPDATING. Back to Viewing! " onClick="document.location.search='?MI
 <TABLE border=6 cellpadding=0 cellspacing=0>
 <TR>
 <?MIVAR COND="$(NC,$snapshot,NULL)">
-<TD><IMG align=center SRC="/cgi-bin_B/webdriver?LO=$snapshot&type=image/gif"></TD>
+<TD><IMG align=center SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$snapshot&type=image/gif"></TD>
 <?/MIVAR>
 <?MIVAR COND="$(EC,$snapshot,NULL)">
-<TD><IMG align=center SRC="/ZDBB/gifs/smallogo.gif"></TD>
+<TD><IMG align=center SRC="/images/LOCAL/smallogo.gif"></TD>
 <?/MIVAR>
 </TR></TABLE>
 
@@ -150,7 +150,7 @@ value=" DONE UPDATING. Back to Viewing! " onClick="document.location.search='?MI
 <?/MIBLOCK>
 
 <?MISQL COND="$(AND,$(NC,$contact_person,NULL),$(OR,$(NXST,$UPDATE),$(NC,$AUTHORIZED,root)))" SQL="select full_name from person where zdb_id='$contact_person';">
-<A HREF="/cgi-bin_B/webdriver?MIval=aa-persview.apg&OID=$contact_person" TARGET="content">
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$contact_person" TARGET="content">
 $1</A>
 <?/MISQL>
 
@@ -212,7 +212,7 @@ $fax<?/MIVAR>
 $(IF,$(XST,$UPDATE),"<font size=-1><input type=button value=delete onClick=doDelete('"$2"')></font>") 
 $(SETVAR,$stat_level,$(SUBSTR,$3,1,1))
 $(IF,$(>,$stat_level,1),<font size=-1>)
-<A HREF="/cgi-bin_B/webdriver?MIval=aa-persview.apg&OID=$2" TARGET="content" >
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$2" TARGET="content" >
 
 $(IF,$(<,$stat_level,3),"<b>"$1"</b>",$1)
 </A>
@@ -251,7 +251,7 @@ $(IF,$(XST,$UPDATE),"<font size=-1> <SELECT name=mem_status onChange=doStatus('"
 <TABLE WIDTH=100%>
 <?MISQL SQL="select distinct a.title, year(pub_date) as pyear, a.zdb_id, a.authors from publication a, int_person_pub b, int_person_company c where b.target_id=a.zdb_id and b.source_id=c.source_id and c.target_id='$OID' order by pyear desc;">
 <TR><TD valign=top> <FONT SIZE=-1> $2 </FONT> </TD>
-<TD> <FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-pubview2.apg&OID=$3" TARGET="content">$1</A> </FONT> </TD>
+<TD> <FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3" TARGET="content">$1</A> </FONT> </TD>
 <TD><FONT SIZE=-1> $4 </FONT></TD>
 </TR>
 <?/MISQL>

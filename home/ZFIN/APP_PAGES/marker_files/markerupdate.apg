@@ -38,7 +38,7 @@ target_table -- either anon_marker or gene, depending on what you're updating
 <p>
 
 
-<FORM ACTION="/cgi-bin_B/SuperWebdriver" METHOD=post ENCTYPE="multipart/form-data">
+<FORM ACTION="/<!--|CGI_BIN_DIR_NAME|-->/SuperWebdriver" METHOD=post ENCTYPE="multipart/form-data">
 <?MIVAR>
 <INPUT TYPE=hidden name=MIval Value=aa-do-markerupdate.apg>
 <INPUT TYPE=hidden name=OID Value=$OID>

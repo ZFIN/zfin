@@ -20,14 +20,14 @@ $ENV{MIval}="aa-jump_to.apg";
 # If the SCRIPT_NAME variable is not set to the exact directory
 # and file name that webdriver lives in, webdriver will simply
 # return a 500 code and terminate.  We want the users to
-# consistently use /cgi-bin/ZFIN_jump, regardless of the actual
+# consistently use /<!--|CGI_BIN_DIR_NAME|-->/ZFIN_jump, regardless of the actual
 # directory this function and webdriver are stored in.  Apache
-# will put the name the USER used (cgi-bin) in its copy of
+# will put the name the USER used (<!--|CGI_BIN_DIR_NAME|-->) in its copy of
 # SCRIPT_NAME before calling this script.  If we just pass
 # Apache's value on to webdriver, webdriver will give us the
 # old "500" error.  So force the SCRIPT_NAME variable to
 # have the value webdriver expects.
-$ENV{SCRIPT_NAME}="/cgi-bin_B/webdriver";
+$ENV{SCRIPT_NAME}="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->";
 
 # pass control to Webdriver
 

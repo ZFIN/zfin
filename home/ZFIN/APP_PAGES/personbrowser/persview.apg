@@ -134,7 +134,7 @@ $(IF,$(EC,$on_dist_list,t),"Is on","Is <b>not</b> on") email distribution list<b
 <!-- List lab affiliation. Since might be affiliated with more than one, we use ORDER clause to list affiliation with the highest status, secondary ordering by flag, which is a special case mechanism to allow me to order lab affiliations where they have same status in two different labs (set flag=1 for higher priority) -->
 <?MISQL SQL="select b.name,b.zdb_id,a.info,a.flag from int_person_lab a,lab b where source_id='$OID' and target_id=b.zdb_id order by a.info,a.flag desc;">
 $(IF,$(=,$MI_CURRENTROW,2),<font size=-1>and also: )
-<A HREF="/cgi-bin_B/webdriver?MIval=aa-labview.apg&OID=$2" TARGET="content">$1</a><br>
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$2" TARGET="content">$1</a><br>
 <?/MISQL>
 </font>
 
@@ -143,7 +143,7 @@ $(IF,$(=,$MI_CURRENTROW,2),<font size=-1>and also: )
 <?MISQL SQL="select b.name,b.zdb_id,a.info from int_person_company a,company b where source_id='$OID' and target_id=b.zdb_id order by a.info desc;">
 <?/MISQL>
 <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
-<A HREF="/cgi-bin_B/webdriver?MIval=aa-companyview.apg&OID=$2" TARGET="content">$1</a> (<font size=-1> $(SUBSTR,$3,2) </font>)<br>
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-companyview.apg&OID=$2" TARGET="content">$1</a> (<font size=-1> $(SUBSTR,$3,2) </font>)<br>
 <?/MIVAR>
 
 <?MIVAR>$address <?/MIVAR>
@@ -155,10 +155,10 @@ $(IF,$(=,$MI_CURRENTROW,2),<font size=-1>and also: )
 
 <TD>
 <?MIVAR COND="$(NC,$snapshot,NULL)">
-<IMG SRC="/cgi-bin_B/webdriver?LO=$snapshot&type=image/gif">
+<IMG SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?LO=$snapshot&type=image/gif">
 <?/MIVAR>
 <?MIVAR COND="$(EC,$snapshot,NULL)">
-<IMG SRC="/ZDBB/gifs/smallogo.gif">
+<IMG SRC="/images/LOCAL/smallogo.gif">
 <?/MIVAR>
 <?MIVAR COND="$(XST,$UPDATE)">
 <br><INPUT TYPE=button value=Update onClick="doit('snapshot','pic')">
@@ -233,7 +233,7 @@ $(IF,$(=,$MI_CURRENTROW,2),<font size=-1>and also: )
 <?MISQL SQL="select a.title, year(pub_date) as pyear, a.zdb_id from publication a, int_person_pub b where b.target_id=a.zdb_id and b.source_id='$OID' order by pyear desc;">
 <TR>
 <TD valign=top> <FONT SIZE=-1> $2 </FONT> </TD>
-<TD> <FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-pubview2.apg&OID=$3" TARGET="content">$1</A> </FONT> <br></TD></TR>
+<TD> <FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3" TARGET="content">$1</A> </FONT> <br></TD></TR>
 <?/MISQL>
 </TABLE>
 
@@ -251,7 +251,7 @@ $(IF,$(=,$MI_CURRENTROW,2),<font size=-1>and also: )
 <?/MIBLOCK> <!-- ends cond AUTHORIZED -->
 
 <!-- For Yolanda -->
-<?MIVAR><img src="/cgi-bin_B/write.cgi?OID=$OID"></img><?/MIVAR>
+<?MIVAR><img src="/<!--|CGI_BIN_DIR_NAME|-->/write.cgi?OID=$OID"></img><?/MIVAR>
 
 <?/MIBLOCK> <!-- ends cond OID xst -->
 

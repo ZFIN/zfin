@@ -1,5 +1,5 @@
 #!/bin/sh
-HOME=/export/chromix/www/java/javaserver
-PWD=/export/chromix/www/java/javaserver
+HOME=<!--|JAVASERVER_PATH|-->
+PWD=<!--|JAVASERVER_PATH|-->
 LD_LIBRARY_PATH=$1 $2 $3 &
 echo $! > javaServerPid

@@ -8,7 +8,7 @@
 <?MIVAR NAME=$title>$(URLENCODE,$title)<?/MIVAR>
 <?MIVAR>
 <FRAME NAME="label" scrolling=no
-SRC="/cgi-bin_B/webdriver?MIval=aa-doc_title.apg&title=$title"
+SRC="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-doc_title.apg&title=$title"
 MARGINWIDTH=1 MARGINHEIGHT=1>
 
 <FRAME NAME="helpcontent" SRC="$docpath">

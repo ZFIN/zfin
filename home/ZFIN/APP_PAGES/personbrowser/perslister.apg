@@ -60,7 +60,7 @@ $constraint $previous (webhtml_like($anon1,'$anon1text'))<?/MIVAR>
 
 <!-- NOW JUST RETRIEVE AND DISPLAY ALL MATCHING ENTRIES -->
 
-<form method=post target=content action="/cgi-bin_B/webdriver">
+<form method=post target=content action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 <TABLE width=100%>
 <TR>
 <td width=90% align=center>
@@ -73,7 +73,7 @@ $constraint $previous (webhtml_like($anon1,'$anon1text'))<?/MIVAR>
 
 <!-- Provide a way to crack out a mail merge list for DBadmin only-->
 <?MIVAR COND="$(EC,$AUTHORIZED,root)">
-<input type=button name=mailmerge value="Create Mail merge file" onClick="parent.location='/cgi-bin_B/webdriver?MIval=aa-mkmailmerge.apg&constraint=$(URLENCODE,$constraint)'">
+<input type=button name=mailmerge value="Create Mail merge file" onClick="parent.location='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mkmailmerge.apg&constraint=$(URLENCODE,$constraint)'">
 <?/MIVAR>
 </TD> </TR>
 </TABLE>
@@ -100,8 +100,8 @@ to the left of each item.
 <TH align=left>CONTACT INFO</TH>
 <?MISQL SQL="select full_name,address,zdb_id,email,phone,fax from person $constraint order by full_name;">
 <TR> 
-$(IF,$(XST,$return_rec),"<TD valign=top><FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3" TARGET=content>SELECT</A> </FONT> </TD>")
-<TD valign=top> <FONT SIZE=-1> <A HREF="/cgi-bin_B/webdriver?MIval=aa-persview.apg&OID=$3" TARGET="content">$1</A> </FONT> </TD>  
+$(IF,$(XST,$return_rec),"<TD valign=top><FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3" TARGET=content>SELECT</A> </FONT> </TD>")
+<TD valign=top> <FONT SIZE=-1> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$3" TARGET="content">$1</A> </FONT> </TD>  
 <TD> <FONT SIZE=-1> <pre>$2</pre> </FONT> </TD>
 <TD valign=top> <FONT SIZE=-1>
 $(IF,$(NC,$4,NULL),"<A HREF="mailto:$4">"$4"</A><br>")

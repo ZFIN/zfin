@@ -146,15 +146,15 @@ just return the return record and the OID of the newly created record to do-sele
 
 <?MIVAR COND=$(NC,$return_rec,NULL)>
 <BIG><FONT COLOR="#ff0000">PLEASE RECALL</FONT></BIG> that you were in the middle of creating or modifying some other record when you took time out to enter this new FISH record.<br>
-Click <A HREF="/cgi-bin_B/webdriver?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$fish_id">here</A> to return to your work in progress!
+Click <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$fish_id">here</A> to return to your work in progress!
 <p>
 <?/MIVAR>
 
 <?MIVAR>
-Click <A HREF="/cgi-bin_B/webdriver?MIval=aa-fishview.apg&OID=$fish_id">here</A> to view the new FISH record.
+Click <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$fish_id">here</A> to view the new FISH record.
 <?/MIVAR>
 <p>
-Click <A TARGET=content HREF="/cgi-bin_B/webdriver?MIval=aa-ZDB_home.apg">here</A> to return to the ZDB home page.
+Click <A TARGET=content HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg">here</A> to return to the ZDB home page.
 
 </HTML>
 
@@ -172,7 +172,7 @@ Click <A TARGET=content HREF="/cgi-bin_B/webdriver?MIval=aa-ZDB_home.apg">here</
 <!-- OKAY, now handle the cases where user wants to specify some value -->
 <?MIBLOCK COND="$(NXST,$s_done)">
 
-<?MIVAR NAME=$file_name>/ZDBB/ZDBB/misc_html/error.html<?/MIVAR>
+<?MIVAR NAME=$file_name>/ZFIN/ZDBB/misc_html/error.html<?/MIVAR>
 
 
 <!-- ALL the work of setting up the return_rec for transfer of control to a record selector or new record creator is handled by PROCESS-FISH-AUX.html -->
