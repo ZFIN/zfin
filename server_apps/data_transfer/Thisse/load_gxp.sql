@@ -1117,7 +1117,7 @@ where
 delete from relationship_tmp where tmprel_cb_name in (select mrkr_name from marker, mrel_tmp where mrkr_2 = mrkr_zdb_id);
 
 !echo 'not loaded'
-select * from relationship_tmp;
+unload to 'bad_relationships.unl' select * from relationship_tmp;
 
 
 ------------------- previous names --------------------------------
