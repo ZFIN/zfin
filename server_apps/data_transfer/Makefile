@@ -20,7 +20,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer
 
-SUBDIRS = MEOW JohnP RefSeq
+SUBDIRS = MEOW JohnP RefSeq SWISS-PROT
 
 
 # ---------------  Production Rules  ------------------------------------
