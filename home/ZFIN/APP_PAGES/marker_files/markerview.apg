@@ -546,8 +546,7 @@ Datablade documentation.
 <?/MISQL>
 
 <?MIBLOCK COND="$(EQ,$display_sequence,true)">
- 
-  <b>Sequence:</b>
+        <b>Sequence:</b>
 
  <?MISQL SQL="
    select mrkrseq_sequence, mrkrseq_left_end, mrkrseq_zdb_id
@@ -569,6 +568,14 @@ Datablade documentation.
     <br>
     <?MIVAR COND="$(XST,$UPDATE)"></form><?/MIVAR>
  <?/MISQL>
+
+      
+ <?MIBLOCK COND=$(EC,$marker_type,MRPHLNO)>
+   <br>
+   ZFIN makes every effort to verify reagent sequence data.  Nevertheless, we
+   suggest that you consult the original literature and conduct independent
+   sequence analysis before using this reagent in your research.
+ <?/MIBLOCK>
 <?/MIBLOCK> <?MICOMMENT> end display_sequence <?/MICOMMENT>
 
 <!--------------- Dispalay NOMENCLATURE HISTORY -------------------->
