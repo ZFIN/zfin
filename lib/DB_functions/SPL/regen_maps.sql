@@ -212,19 +212,19 @@ create dba function "informix".regen_maps()
     -- union of mapping info from locus itself, as well as
     -- cloned gene, gene encoded segments, and mutants
 
-      select a.zdb_id zdb_id, a.abbrev abbrev, 'MUTANT' mtype, b.or_lg or_lg, b.lg_location lg_location, b.metric metric,
+      select a.zdb_id mut_zdb_id, a.abbrev mut_abbrev, 'MUTANT' mtype, b.or_lg or_lg, b.lg_location lg_location, b.metric metric,
 	     c.abbrev panel, 'f'::boolean frame, b.refcross_id refcross_id , b.map_name map_name
 	from locus a, mapped_marker b, panels c
 	where b.marker_id = a.zdb_id and b.refcross_id = c.zdb_id
      UNION
-     select l.zdb_id zdb_id, l.abbrev abbrev, 'MUTANT' mtype, mm.or_lg or_lg,  
+     select l.zdb_id mut_zdb_id, l.abbrev mut_abbrev, 'MUTANT' mtype, mm.or_lg or_lg,  
 	    mm.lg_location lg_location, mm.metric metric, p.abbrev panel,
 	   'f'::boolean frame, mm.refcross_id refcross_id, l.abbrev map_name
       from locus l, mapped_marker mm, panels p
      where l.cloned_gene = mm.marker_id 
        and mm.refcross_id = p.zdb_id 
      UNION
-     select l.zdb_id zdb_id, l.abbrev abbrev, 'MUTANT' mtype, mm.or_lg or_lg,  
+     select l.zdb_id mut_zdb_id, l.abbrev mut_abbrev, 'MUTANT' mtype, mm.or_lg or_lg,  
 	    mm.lg_location lg_location, mm.metric metric, p.abbrev panel,
 	    'f'::boolean frame, mm.refcross_id refcross_id, l.abbrev map_name
        from locus l, mapped_marker mm, panels p, 
@@ -233,7 +233,7 @@ create dba function "informix".regen_maps()
         and mm.marker_id = mrel_mrkr_2_zdb_id	
         and mm.refcross_id = p.zdb_id
      UNION
-      select l.zdb_id zdb_id, l.abbrev abbrev, 'MUTANT' mtype, mm.or_lg or_lg,  
+      select l.zdb_id mut_zdb_id, l.abbrev mut_abbrev, 'MUTANT' mtype, mm.or_lg or_lg,  
 	    mm.lg_location lg_location, mm.metric metric, p.abbrev panel,
 	    'f'::boolean frame, mm.refcross_id refcross_id, l.abbrev map_name
        from locus l, fish f, mapped_marker mm, panels p
@@ -241,6 +241,15 @@ create dba function "informix".regen_maps()
 	and f.zdb_id = mm.marker_id
 	and mm.refcross_id = p.zdb_id
       into temp tmp_paneled_markers with no log;
+
+ 	let errorHint = "set locus names where no abbrev";
+   update tmp_paneled_markers set mut_abbrev = (
+        select locus_name from locus
+        where mut_zdb_id = locus.zdb_id 
+   )
+   where mut_zdb_id[1,10] = 'ZDB-LOCUS-' 
+   and   mut_abbrev = '';  -- OR mut_abbrev is null ?
+
 
    insert into paneled_m_new
 	 select * from tmp_paneled_markers;
