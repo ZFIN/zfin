@@ -40,6 +40,8 @@ TRIGGERS = \
 	expression_pattern_anatomy_update_trigger.sql \
 	expression_pattern_image_insert_trigger.sql \
 	expression_pattern_image_update_trigger.sql \
+	expression_pattern_infrastructure_insert_trigger.sql \
+	expression_pattern_infrastructure_update_trigger.sql \
 	expression_pattern_stage_insert_trigger.sql \
 	expression_pattern_stage_update_trigger.sql \
 	fish_allele_update_trigger.sql \
