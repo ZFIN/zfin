@@ -124,13 +124,14 @@ public class MapViewer extends Canvas {
 			results = MB.buildMarkers(data);
 //			watermark_t = true;
 		} else {
-			Enumeration E = QueryStrings.elements();
+/***			Enumeration E = QueryStrings.elements();
 			Vector V;
 			while(E.hasMoreElements() )	{
 				V = MB.getMarkers((String)E.nextElement());
 				results = merge(results,V);
 			}
-//			watermark_t = false;
+***/
+			System.err.println("no sql from inside");
 		}
 		
 		if (panel_order != null) {
