@@ -107,7 +107,9 @@ for (i = 0 ; i < document.useful_structures.length ; i++) {
 <?MIVAR COND="$(NXST,$stage_end)" NAME=$stage_end>NULL<?/MIVAR>
 <?MIVAR COND="$(NXST,$gene_lg)" NAME=$gene_lg>0<?/MIVAR>
 
-<center><font size=4><b>Search for <font color=red>Gene</font> Expression Data </b></font></center>
+<center><font size=4><b>Search for <font color=red>Gene</font> Expression Data </b></font></center> 
+
+<center> <a href="http://zf.nichd.nih.gov/pubzf/" target="_top">Link to Dawid lab expression data</</center>
 
 	<table border=0 bgcolor=FFFFFF width=100%>
 	<tr><td colspan=3 bgcolor=DDDDDD><b>Structures and Systems</b></td></tr>
