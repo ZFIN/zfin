@@ -1,4 +1,4 @@
-<?MICOMMENTS>
+<?MICOMMENT>
 FILE: SHOWPUBS.HTML
 
 Within the viewers for all of the data types, you always want to do the same 
@@ -31,7 +31,7 @@ orgOID -- OID for a gene, or fish or locus... record when
 info  -- column name for colattrib itme.
 pubOrder -- the column # to order results by (must be a number because of 'union')
         
-<?/MICOMMENTS>
+<?/MICOMMENT>
 
 <HTML>
 <HEAD>
@@ -67,7 +67,32 @@ ERROR -- something bad happened -- no OID passed in!
 <?MIVAR COND="$(NXST,$return_page2)" NAME=$return_page2><?/MIVAR>
 <?MIVAR COND="$(NXST,$target_table)" NAME=$target_table><?/MIVAR>
 
+<?MIVAR COND="$(NXST,$query_from)" NAME=$query_from><?/MIVAR>
+<?MIVAR COND="$(NXST,$query_where)" NAME=$query_where><?/MIVAR>
+<?MIVAR COND="$(NXST,$mutsearch)" NAME=$mutsearch><?/MIVAR>
+<?MIVAR COND="$(NXST,$pubcount)" NAME=$pubcount><?/MIVAR>
+<?MIVAR COND="$(NXST,$caller)" NAME=$caller><?/MIVAR>
+<?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
+<?MIVAR name=$rowcolor>$highlight<?/MIVAR>
+<?MIBLOCK COND="$(EC,$rtype,xpat)">
+  <?MIBLOCK COND="$(NXST,$total_count)">
+   <?MIVAR NAME=$total_count>$pubcount<?/MIVAR>
+  <?/MIBLOCK>
+<?/MIBLOCK>
 <?MIVAR COND="$(NXST,$related_data_attrib_to_OID)" NAME=$related_data_attrib_to_OID><?/MIVAR>
+
+<?MIBLOCK COND="$(XST,$fish_table_created)">
+<?MISQL SQL="drop table fish_search_list"><?/MISQL>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(NC,$mutsearch,)">
+<?MISQL SQL="select zdb_id as fsl_zdb_id from fish where
+       ( lower(name) like '$mutsearch'
+      or  lower(allele) like '$mutsearch'  or lower(abbrev) like '$mutsearch'
+        ) union select zdb_id as fsl_zdb_id from locus where (lower(abbrev) like '$mutsearch') into temp fish_search_list"><?/MISQL>
+<?MIVAR NAME=fish_table_created>true<?/MIVAR>
+<?/MIBLOCK>
+
 
 <?MIVAR>
 $(IF,$(>,$(POSITION,$rtype,marker),0),
@@ -129,9 +154,23 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
         location.replace(url);
       }  
 
+      function xpatresult(pubOrder,total_count,count_of_real_pub,evidence)
+      {
+        var url = '/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=$rtype&name=$(URLENCODE,$name)&title=$(URLENCODE,$title)&query_from=$query_from&query_where=$(URLENCODE,$query_where)$(IF,$(XST,$mutsearch),&mutsearch=$(URLENCODE,$mutsearch))&caller=$caller&total_count='+total_count+'&count_of_real_pub='+count_of_real_pub+'&pubOrder='+pubOrder+'&evidence='+evidence;
+        $(IF,$(XST,$UPDATE),url += '&UPDATE=1';)
+    
+        location.replace(url);
+      }
+  
    <?/MIVAR> 
  </SCRIPT>
 </HEAD>
+<?MICOMMENT>
+        var url = '/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=$rtype&name=$(URLENCODE,$name)&query_from=$query_from&query_where=$(URLENCODE,$query_where)$(IF,$(XST,$mutsearch),&mutsearch=$(URLENCODE,$mutsearch))&caller=$caller&total_count='+total_count+'&count_of_real_pub='+count_of_real_pub+'&pubOrder='+pubOrder+'&evidence='+evidence;
+        $(IF,$(XST,$UPDATE),url += '&UPDATE=1';)
+    
+        location.replace(url);
+<?/MICOMMENT>
 
 <?MIVAR NAME=$userid>GUEST<?/MIVAR>
 
@@ -159,26 +198,6 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
        </form>
 <?/MIVAR>
 
-
-
-<?MIVAR NAME=OID_of_nongene_or_related_data_has_recattrib>
-  (  recattrib_data_zdb_id = '$OID'
-   or
-     $related_data_attrib_to_OID
-  )
-<?/MIVAR>
-
-
-<?MIVAR NAME=OID_of_gene_or_related_data_has_recattrib>
-  (  recattrib_data_zdb_id = '$OID'
-   or
-     recattrib_data_zdb_id in (select mrel_mrkr_2_zdb_id from marker_relationship where mrel_mrkr_1_zdb_id = '$OID')
-   or
-     recattrib_data_zdb_id in (select mrel_mrkr_1_zdb_id from marker_relationship where mrel_mrkr_2_zdb_id = '$OID')
-   or
-     $related_data_attrib_to_OID
-  )
-<?/MIVAR>
   <?MIVAR NAME=related_data_attrib_to_OID>
       recattrib_data_zdb_id in (select mrel_zdb_id from marker_relationship where mrel_mrkr_2_zdb_id = '$OID')
     or
@@ -202,26 +221,29 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 
 <?MIELSE>
   <?MIBLOCK COND="$(NXST,$attribtype)">
-	
-    <?MISQL SQL="
-      select count(distinct recattrib_source_zdb_id) 
-        from record_attribution
-       where (recattrib_data_zdb_id = '$OID'
-          or $related_data_attrib_to_OID)
-         and get_obj_type(recattrib_source_zdb_id) = 'PUB';
-      ">
-     ($(FIX,$1) total) 
-    <?/MISQL>	
-
+    <?MIBLOCK COND=$(NE,$rtype,xpat)>
+      <?MISQL SQL="
+        select count(distinct recattrib_source_zdb_id)::integer 
+          from record_attribution
+         where (recattrib_data_zdb_id = '$OID'
+            or $related_data_attrib_to_OID)
+           and get_obj_type(recattrib_source_zdb_id) = 'PUB';
+       ">
+       ($1 total) 
+      <?/MISQL>	
+    <?MIELSE>
+      <br>
+      <i>Click on a publication to view summary of gene expression reported.</i>
+    <?/MIBLOCK>      
   <?MIELSE COND="$(EC,$attribtype,colattrib)">
     <?MISQL SQL="
-      select count(*) 
+      select count(*)::integer
         from column_attribution
        where colattrib_data_zdb_id = '$OID'
          and colattrib_column_name = '$info'	
          and get_obj_type(colattrib_source_zdb_id) = 'PUB';
        ">
-      ($(FIX,$1) total) 
+      ($1  total) 
    <?/MISQL>
   <?/MIBLOCK>
 <?/MIBLOCK>
@@ -252,9 +274,26 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
     <?MIVAR COND="$(NXST,$total_count)" NAME=$total_count><?/MIVAR>
     <?MIVAR COND="$(NXST,$count_of_real_pub)" NAME=$count_of_real_pub>-9<?/MIVAR>
     <?MIVAR COND="$(NXST,$evidence)" NAME=$evidence><?/MIVAR>
-
+<?MIBLOCK COND="$(NC,$rtype,xpat)">
+<?MIVAR>
     <input type=button name=resultOrder onClick="result_order($(IF,$(EC,$pubOrder,6),'7 desc','6'),'$total_count','$count_of_real_pub','$evidence')"
            value="$(IF,$(EC,$pubOrder,6),Order By Date,Order By Author)"> 
+<?/MIVAR>
+
+<?MICOMMENT>  ==================== hide "order by" button for rtype=xpat ============== <?/MICOMMENT>
+
+<?MIBLOCK COND=("$EC,pigs,flying")>
+<?MIELSE>
+<?MIVAR>
+  <?MIBLOCK COND="$(NXST,$total_count)">
+   <?MIVAR NAME=$total_count>$pubcount<?/MIVAR>
+  <?/MIBLOCK>
+    <input type=button name=resultOrderxpat onClick="xpatresult($(IF,$(EC,$pubOrder,6),'7 desc','6'),'$total_count','','')"
+           value="$(IF,$(EC,$pubOrder,6),Order By Date,Order By Author)"> 
+<?/MIVAR>   
+<?/MIBLOCK>
+
+<?/MIBLOCK>
 <?/MIVAR>		
 <!--------------------------------------------------------------------------->
 
@@ -267,8 +306,15 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
   <?/MIBLOCK>
 <?/MIVAR> 
 
+<?MIBLOCK COND=$(XST,$cellpad)>
+  <?MIVAR NAME=$showpubs_cellPadding>cellpadding="2"<?/MIVAR>
+<?MIELSE>
+  <?MIVAR NAME=$showpubs_cellPadding><?/MIVAR>
+<?/MIBLOCK>
 
-<TABLE>
+<TABLE cellspacing = 0 <?MIVAR>$showpubs_cellPadding<?/MIVAR>>
+
+
 <?MIBLOCK COND="$(NC,$rtype,goview)"> <!-- for GO annotation reference, deal separate --> 
 
  <?MIBLOCK COND="$(=,$count_of_real_pub,-9)">
@@ -296,10 +342,11 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
   <?/MISQL>
 <?/MIBLOCK>
 
-
+<?MIBLOCK COND="$(=,$(POSITION,$rtype,xpat),0)">
 <?MIVAR COND="$(>,$count_of_real_pub,0)">
    <TR><TD><b>Publications  ($(FIX,$count_of_real_pub)): </b></TD></TR>
 <?/MIVAR>
+<?/MIBLOCK>
 
 <?MIBLOCK COND="$(NXST,$attribtype)">
 	
@@ -414,7 +461,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
       <?/MISQL> 
      <?/MIBLOCK>
 
-   <?MIBLOCK COND="$(AND,$(=,$(POSITION,$OID,LOCUS),0),$(=,$(POSITION,$OID,FISH),0))">
+   <?MIBLOCK COND="$(AND,$(=,$(POSITION,$OID,LOCUS),0),$(=,$(POSITION,$OID,FISH),0),$(=,$(POSITION,$rtype,xpat),0))">
     <?MISQL SQL="
       select distinct title, p.zdb_id, year(pub_date) as pyear, authors, source, 
 	 lower(authors), pub_date  
@@ -544,6 +591,201 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 
   <TR><TD>&nbsp;</TD><TR>
 
+  <?MIBLOCK COND=$(XST,$showpubs_xpatPubList)>
+    <?MICOMMENT>
+      ============================================================================
+      ==========  display pubs related to a list of XPAT IDs
+      ============================================================================
+    <?/MICOMMENT>
+    <TR>
+      <?MIBLOCK COND="$(EC,$justpubs,false)">
+        <TD valign=bottom> <b>Publication</b></TD>
+        <TD valign=bottom> <b>Fish</b></TD>
+        <TD valign=bottom> <b>Assay</b></TD>
+        <TD valign=bottom> <b>Expression<br>Summary</b></TD>
+      <?MIELSE>
+        <TD valign=bottom colspan=4> <b>Publications</b></TD>
+      <?/MIBLOCK>
+    </TR>
+    <TR>
+      <TD colspan=4>
+      </TD>
+    </TR>
+
+    <?MIVAR NAME="$showpubs_inXpatList">$(SEPARATE,$showpubs_xpatPubList,"','")<?/MIVAR>
+
+    <?MIVAR NAME="$last_pub_id"><?/MIVAR>
+
+    <?MISQL SQL="
+      select publication.zdb_id, year(pub_date), authors, source, 
+	     lower(authors) as authors_lower, xpat_zdb_id, xpat_assay_name,
+  	     case
+		when fish.abbrev is not null
+		then fish.abbrev
+	     else
+		locus.abbrev
+	     end as stock_abbrev, xpat_stock_zdb_id
+	from publication, record_attribution, expression_pattern
+	     left outer join fish on xpat_stock_zdb_id = fish.zdb_id
+	     left outer join locus on xpat_stock_zdb_id = locus.zdb_id 
+	where recattrib_data_zdb_id in ('$showpubs_inXpatList')
+	  and recattrib_source_zdb_id = publication.zdb_id          
+          and recattrib_data_zdb_id = xpat_zdb_id
+          and xpat_gene_zdb_id = '$OID'
+        group by publication.zdb_id, 2, authors, source, 5, 6, 7, 8, 9
+	order by authors_lower">
+      <?MIVAR NAME=$showpubs_pub_zdb_id>$1<?/MIVAR>
+      <?MIVAR NAME=$showpubs_pub_year>$2<?/MIVAR>
+      <?MIVAR NAME=$showpubs_pub_authors>$3<?/MIVAR>
+      <?MIVAR NAME=$showpubs_pub_source>$4<?/MIVAR>
+      <?MIVAR NAME=$showpubs_xpat_zdb_id>$6<?/MIVAR>
+      <?MIVAR NAME=$showpubs_xpat_assay_name>$7<?/MIVAR>
+      <?MIVAR NAME=$showpubs_stock_abbrev>$8<?/MIVAR>
+      <?MIVAR NAME=$showpubs_stock_zdb_id>$9<?/MIVAR>
+
+      <?MIBLOCK COND="$(AND,$(>,$MI_CURRENTROW,1),$(NE,$last_pub_id,$showpubs_pub_zdb_id))">
+         <?MIVAR NAME=$rowcolor>$(IF,$(EC,$rowcolor,$highlight),#FFFFFF,$highlight)<?/MIVAR>
+      <?/MIBLOCK>
+
+      <TR bgcolor="$rowcolor">
+
+	<TD width = 50% <?MIBLOCK COND="$(EC,$justpubs,true)">colspan=4<?/MIBLOCK> >
+	  <DIV class="show_pubs">
+            <?MIBLOCK COND="$(NE,$last_pub_id,$showpubs_pub_zdb_id)">
+            <?MIVAR>
+	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$showpubs_pub_zdb_id">$showpubs_pub_authors ($showpubs_pub_year) $showpubs_pub_source.</A>
+            <?/MIVAR>
+            <?/MIBLOCK>
+	  </DIV>
+	</TD> 
+
+        <?MIBLOCK COND="$(EC,$justpubs,false)">
+
+        <TD valign=top> 
+	  <?MIVAR>
+           <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$showpubs_stock_zdb_id">$showpubs_stock_abbrev</A>
+          <?/MIVAR>         
+        </TD> 
+ 
+        <TD valign=top> 
+          <?MIVAR>
+          $showpubs_xpat_assay_name     
+          <?/MIVAR>  
+        </TD>
+
+	<TD valign="top" align="left">         
+	  <DIV class="show_pubs">
+  	  <?MIBLOCK COND="$(NE,$last_pub_id,$showpubs_pub_zdb_id)">
+          <?MIVAR>
+	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatindexview.apg&OID=$showpubs_pub_zdb_id">Details</A>
+          <?/MIVAR>
+          <?/MIBLOCK>
+
+	  </DIV>
+	</TD>
+        <?/MIBLOCK>
+      </TR>
+        <?MIVAR NAME="$last_pub_id">$showpubs_pub_zdb_id<?/MIVAR>
+    <?/MISQL>
+
+  <?/MIBLOCK>  <?MICOMMENT> end display pubs related to list of XPAT IDs <?/MICOMMENT>
+
+  <?MICOMMENT> ====== the MIBLOCK above and MIBLOCK below display the same thing with only
+                      slightly different SQL - the next time somebody touches this
+		      code, it'd be good to think about how to slim this down.  ====   <?/MICOMMENT>
+
+  
+
+  <?MIBLOCK COND="$(AND,$(EC,$rtype,xpat),$(EC,$caller,marker))">
+
+    <TR>
+      <TD valign=bottom> <b>Publication</b></TD>
+      <TD valign=bottom> <b>Fish</b></TD>
+      <TD valign=bottom> <b>Assay</b></TD>
+      <TD valign=bottom> <b>Expression<br>Summary</b></TD>
+    </TR>
+    <TR>
+      <TD colspan=4>
+      </TD>
+    </TR>
+
+    <?MIVAR NAME="$last_pub_id"><?/MIVAR>
+
+    <?MISQL SQL="
+      select publication.zdb_id, year(pub_date) as pyear, authors, 
+	     source, lower(authors) as authors_lower, xpat_zdb_id, xpat_assay_name,
+  	     case
+		when fish.abbrev is not null
+		then fish.abbrev
+	     else
+		locus.abbrev
+	     end as stock_abbrev, xpat_stock_zdb_id
+        from publication, record_attribution, expression_pattern
+	     left outer join fish on xpat_stock_zdb_id = fish.zdb_id
+	     left outer join locus on xpat_stock_zdb_id = locus.zdb_id 
+        where xpat_gene_zdb_id = '$OID'
+          and xpat_zdb_id = recattrib_data_zdb_id
+          and recattrib_source_zdb_id = publication.zdb_id and jtype <> 'Unpublished'
+        group by publication.zdb_id, 2, authors, source, 5, 6, 7, 8, 9
+        order by authors_lower;">
+      <?MIVAR NAME=$showpubs_pub_zdb_id>$1<?/MIVAR>
+      <?MIVAR NAME=$showpubs_pub_year>$2<?/MIVAR>
+      <?MIVAR NAME=$showpubs_pub_authors>$3<?/MIVAR>
+      <?MIVAR NAME=$showpubs_pub_source>$4<?/MIVAR>
+      <?MIVAR NAME=$showpubs_xpat_zdb_id>$6<?/MIVAR>
+      <?MIVAR NAME=$showpubs_xpat_assay_name>$7<?/MIVAR>
+      <?MIVAR NAME=$showpubs_stock_abbrev>$8<?/MIVAR>
+      <?MIVAR NAME=$showpubs_stock_zdb_id>$9<?/MIVAR>
+
+
+      <?MIBLOCK COND="$(AND,$(>,$MI_CURRENTROW,1),$(NE,$last_pub_id,$showpubs_pub_zdb_id))">
+         <?MIVAR NAME=$rowcolor>$(IF,$(EC,$rowcolor,$highlight),#FFFFFF,$highlight)<?/MIVAR>
+      <?/MIBLOCK>
+
+      <TR bgcolor="$rowcolor">
+	<TD width = 50%>
+	  <DIV class="show_pubs">
+            <?MIBLOCK COND="$(NE,$last_pub_id,$showpubs_pub_zdb_id)">
+            <?MIVAR>
+	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$showpubs_pub_zdb_id">$showpubs_pub_authors ($showpubs_pub_year) $showpubs_pub_source.</A>
+            <?/MIVAR>
+            <?/MIBLOCK>
+	  </DIV>
+	</TD> 
+
+
+        <TD valign=top> 
+	  <?MIVAR>
+           <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$showpubs_stock_zdb_id">$showpubs_stock_abbrev</A>
+          <?/MIVAR>         
+        </TD> 
+ 
+        <TD valign=top> 
+          <?MIVAR>
+          $showpubs_xpat_assay_name     
+          <?/MIVAR>  
+        </TD>
+
+	<TD valign="top" align="left">         
+	  <DIV class="show_pubs">
+  	  <?MIBLOCK COND="$(NE,$last_pub_id,$showpubs_pub_zdb_id)">
+          <?MIVAR>
+	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatindexview.apg&OID=$showpubs_pub_zdb_id">Details</A>
+          <?/MIVAR>
+          <?/MIBLOCK>
+
+	  </DIV>
+	</TD>
+      </TR>
+        <?MIVAR NAME="$last_pub_id">$showpubs_pub_zdb_id<?/MIVAR>
+    <?/MISQL>
+
+
+
+
+  <?/MIBLOCK>
+
+
   <?MIVAR COND="$(AND,$(=,$(POSITION,$OID,LOCUS),0),$(=,$(POSITION,$OID,FISH),0))">
     <?MISQL SQL="
       select distinct p.zdb_id from 
@@ -592,6 +834,8 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
   <?/MISQL>
 
 
+    <?MIBLOCK COND="$(=,$(POSITION,$rtype,xpat),0)">
+    <?MIBLOCK COND="$(=,$(POSITION,$OID,MRKRGO),0)">
   <?MIBLOCK COND="$(>,$add_cit_count,0)">
    
    <?MIVAR COND="$(>,$count_of_real_pub,0)">
@@ -681,7 +925,8 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
   <?/MIVAR>
 
   <?/MIBLOCK> <!-- add_cit_count > 0 -->
-
+<?/MIBLOCK>
+<?/MIBLOCK>
 
 <?MIELSE COND="$(EC,$attribtype,colattrib)">
   <?MISQL SQL="
@@ -754,6 +999,13 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 </form>
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+<?MIBLOCK COND="$(XST,$fish_table_created)">
+  <!--- delete temp table, with dummy insert because otherwise it's an illegal statement  --->
+
+  <?MISQL SQL="insert into fish_search_list (fsl_zdb_id) values (NULL);
+drop table fish_search_list;">
+  <?/MISQL>
+<?/MIBLOCK>
 
 </HTML>
 
