@@ -1191,6 +1191,13 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
        where mrel_mrkr_1_zdb_id = '$OID')
   or
 <?/MIVAR>
+<?MIVAR NAME=$mtype_is_gene COND="$(EC,$(POSITION,$OID,GENE),0)">
+     recattrib_data_zdb_id in 
+      (select mrel_mrkr_1_zdb_id 
+       from marker_relationship 
+       where mrel_mrkr_2_zdb_id = '$OID')
+  or
+<?/MIVAR>
 
 <?MISQL SQL="
   select count(distinct recattrib_source_zdb_id)
