@@ -61,7 +61,7 @@ ERROR -- something bad happened -- no OID passed in!
 <?MIVAR NAME=$target_table>anon_marker<?/MIVAR>
 <?MIVAR NAME=$target_table COND="$(>,$(POSITION,$OID,GENE),0)">gene<?/MIVAR>
 
-<?MISQL COND="$(>,$(POSITION,$OID,GENE),0)" SQL="select gene_name, 'GENE', alt_names,abbrev,comments,allele from gene where zdb_id='$OID';">
+<?MISQL COND="$(>,$(POSITION,$OID,GENE),0)" SQL="select gene_name, 'GENE', alt_names,abbrev,comments from gene where zdb_id='$OID';">
 <?/MISQL>
 
 <?MISQL COND="$(=,$(POSITION,$OID,GENE),0)" SQL="select marker_name, marker_type, alt_names,abbrev,comments from anon_marker where zdb_id='$OID';">
@@ -84,8 +84,6 @@ ERROR -- something bad happened -- no OID passed in!
 <?MIBLOCK COND="$(AND,$(NC,$name,NOVALUE),$(>,$MI_ROWCOUNT,0))">
 
 <?MIVAR NAME=$rec_title>$marker_type: $name<?/MIVAR>
-
-<?MIVAR COND="$(EQ,$marker_type,GENE)" NAME=$allele>$6<?/MIVAR>
 
 <SCRIPT>
 <?MIVAR COND="$(XST,$UPDATE)">
