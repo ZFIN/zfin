@@ -31,7 +31,7 @@ while (<>) {
   my $ontolgname = $ontology{ $argfile[0] };
 
 #  %nicotinic acetylcholine-activated cation-selective channel ; GO:0004889, GO:0016904 ; TC:1.A.9.1.- ; synonym:nicotinic acetylcholine receptor % cation channel ; GO:0005261 % excitatory extracellular ligand-gated ion channel ; GO:0005231
-  if ( /<|%/ ) {
+  if ( /^\s*</ || /^\s*%/ ) {
    
     @line = split(/% |< |<|%/, $_);
     $space = shift @line;
