@@ -138,11 +138,9 @@ I am pleased to report that information about <?MIVAR>$(IF,$(EC,$status,preview)
     <?MIVAR NAME=attrib_data_title>Gene Expression<?/MIVAR>
     <?MIVAR NAME=query_attrib_data>
 		select mrkr_name, mrkr_abbrev
-                 from marker, expression_pattern, marker_relationship
+                 from marker, expression_pattern
                 where xpat_zdb_id ='$attrib_data_id'    
-		  AND mrel_mrkr_2_zdb_id = xpat_probe_zdb_id
-                  AND mrel_mrkr_1_zdb_id = mrkr_zdb_id
-    	     
+		  AND xpat_gene_zdb_id = mrkr_zdb_id
     <?/MIVAR> 
   <?/MIBLOCK>
 	
