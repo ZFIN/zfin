@@ -93,7 +93,7 @@ function start_help(anchor) {
 
 	<!-- NOW  DEAL WITH THE ADDITIONAL CRITERIA -->
 	<?MIVAR NAME=$constraint COND="$(XST,$anon1text)">
-		$constraint $previous (webhtml_like($anon1,'$anon1text'))
+		$constraint $previous lower($anon1) like lower('%$anon1text%')
 	<?/MIVAR>
 
  	<?MICOMMENT>restore the inputs<?/MICOMMENT>
@@ -322,7 +322,7 @@ Lab Search Results
     </TR>
   <?/MIBLOCK>
 
-  <?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>bio<?/MIVAR>
+  <?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>lab_bio<?/MIVAR>
 
   <?MIVAR>
     <TR>
@@ -356,7 +356,7 @@ Lab Search Results
 	<option $(IF,$(EC,$anon1,phone),SELECTED) value="phone">Phone
 	<option $(IF,$(EC,$anon1,fax),SELECTED) value="fax">Fax
 	<option $(IF,$(EC,$anon1,zdb_id),SELECTED) value="zdb_id">ZFIN record ID
-	<option $(IF,$(EC,$anon1,bio),SELECTED) value="bio">Research Interests
+	<option $(IF,$(EC,$anon1,lab_bio),SELECTED) value="lab_bio">Research Interests
 	</SELECT>
 	contains <input type=text name=anon1text size=15  onChange='document.critform.START.value = "";' $(IF,$(XST,$anon1text),value='$anon1text')>
 	</b>
