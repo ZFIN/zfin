@@ -110,6 +110,13 @@ USA
            name="url" size="80">
     <p>
 
+    <b>Allele Designation:</b><br>
+    <INPUT type=text 
+	   <?MIVAR COND=$(NC,$allele_prefix,NULL)>value="$allele_prefix" <?/MIVAR>
+           name="allele_prefix" size="20">
+    <p>
+
+
     <A NAME="pub-info">
     <HR width=100% size=3>
     <p>

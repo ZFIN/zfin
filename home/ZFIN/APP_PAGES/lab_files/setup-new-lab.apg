@@ -30,7 +30,7 @@
 -->
 
 <?MISQL SQL="
-  select name, address, phone, fax, email, url, contact_person 
+  select name, address, phone, fax, email, url, contact_person,allele_prefix 
     from lab 
     where zdb_id = '$temp_oid';">
 <?/MISQL>
@@ -41,6 +41,7 @@
 <?MIVAR NAME=$email>$5<?/MIVAR>
 <?MIVAR NAME=$url>$6<?/MIVAR>
 <?MIVAR NAME=$contact_person>$7<?/MIVAR>
+<?MIVAR NAME=$allele_prefix>$8<?/MIVAR>
 
 <!-- Now just returns back to new-lab, which uses these values to display form.
 -->
