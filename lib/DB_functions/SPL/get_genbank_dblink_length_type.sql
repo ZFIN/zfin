@@ -8,8 +8,8 @@
 -------------------------------------------------------------------------
 
   create function get_genbank_dblink_length_type (vDblinkAccNum varchar(30),
-						vDblinkLength integer,
-						vDblinkFdbcontZdbId varchar(50))
+						  vDblinkLength integer,
+					 	  vDblinkFdbcontZdbId varchar(50))
   returning varchar(50), integer ;
 
     define vAccbkLength 	integer ;
@@ -17,9 +17,18 @@
     define vFdbcontType 	varchar(20) ;
     define vFdbcontZdbID	varchar(50) ;
 
-      if vDblinkFdbcontZdbID is not null then
-     	
-          if exists (select * 
+      if vDblinkFdbcontZdbId is not null then
+
+        select fdbcont_fdbdt_data_type 
+	  into vFdbcontType
+          from foreign_db_contains
+          where fdbcont_zdb_id = vDblinkFdbcontZdbId ;
+
+	if vFdbcontType = 'other' then
+              
+ 	 return vDblinkFdbcontZdbId, vDblinkLength ;
+
+	elif exists (select * 
         	       	from accession_bank 
   		       	where accbk_acc_num = vDblinkAccNum 
                        	and accbk_db_name = 'GenBank')
