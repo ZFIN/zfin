@@ -277,8 +277,7 @@ insert into meow_exp5
     from db_link
    where linked_recid in 
        ( select ortho_id 
-         from meow_exp3 )
-     and acc_num <> 'DUMMY';
+         from meow_exp3 );
 
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_ortholinks.txt' 
   DELIMITER "	" 
