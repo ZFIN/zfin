@@ -13,14 +13,14 @@
   $CGI::DISABLE_UPLOADS = 1;    # no uploads 
   my $Q = new CGI();
   
- # use POSIX 'strftime';		# just for the debugging dump
- #open(IN, ">> mapplet_beta.log") || die "input dump failed";
- # print IN  strftime('%r %A %B %d %Y', localtime) ."\t";
- ### capture where the call was made from
- # $_ = $Q->referer(); /MIval=aa-/; print IN $'."\t";
- #foreach $name ($Q->param()){print IN "$name=".$Q->param($name)."|"};
- # print IN "\n\n";
- # close IN;
+  #use POSIX 'strftime';		# just for the debugging dump
+  #open(IN, ">> mapplet_beta.log") || die "input dump failed";
+  #print IN  strftime('%r %A %B %d %Y', localtime) ."\t";
+  ### capture where the call was made from
+  #$_ = $Q->referer(); /MIval=aa-/; print IN $'."\t";
+  #foreach $name ($Q->param()){print IN "$name=".$Q->param($name)."|"};
+  #print IN "\n\n";
+  #close IN;
   
 
   ### the hard coded env paths need a better idea
@@ -238,6 +238,8 @@
 	      refcross=> 'NULL',
 	      plinks=> 'on',
 	      action=> 'SEARCH',
+              paged_by=> 'mapper',
+              map_type=> 'individual',
 	      MIval=> 'aa-markerlister.apg',
 	      name=> "$marker",
 	      ZDB_authorize=> $Q->cookie('ZDB_authorize')
@@ -899,6 +901,8 @@
 	$Q->end_form . "\n";
     print "\n<SCRIPT> document.selectform.submit()</SCRIPT>\n";
   }
+
+  
   print  $Q->end_html."\n";
   $dbh->disconnect;
  
