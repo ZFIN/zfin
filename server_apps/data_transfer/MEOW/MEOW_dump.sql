@@ -297,11 +297,11 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_ortholinks.txt'
 -- generate a file of cDNAs and assoc GENBANK accession numbers
 
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/SC.txt'
-  DELIMITER "	" select distinct zdb_id, abbrev, acc_num  from all_markers, OUTER db_link  where (mtype = 'EST')  and linked_recid = zdb_id and db_name = 'Genbank' order by 1; 
+  DELIMITER "	" select distinct zdb_id, abbrev, acc_num  from marker, OUTER db_link  where (mrkr_type = 'EST')  and linked_recid = zdb_id and db_name = 'Genbank' order by 1; 
 
 -- generate a file of anonymous markers  and assoc GENBANK accession numbers
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/SC_sts.txt'
-  DELIMITER "	" select distinct zdb_id, abbrev, acc_num  from all_markers, db_link  where mtype in ('STS', 'SSLP','RAPD', 'SSR') and linked_recid = zdb_id and db_name = 'Genbank' order by 1; 
+  DELIMITER "	" select distinct zdb_id, abbrev, acc_num  from marker, db_link  where mrkr_type in ('STS', 'SSLP','RAPD', 'SSR') and linked_recid = zdb_id and db_name = 'Genbank' order by 1; 
 
 -- generate a file with zdb history data
 
@@ -319,17 +319,19 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/panels.txt'
   DELIMITER "	" select zdb_id, abbrev, metric from panels; 
 
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/mappings.txt' 
-  DELIMITER "	" select distinct target_id, zdb_id, abbrev, OR_lg, lg_location from public_paneled_markers  where (zdb_id not like '%FISH%') and (zdb_id not like '%LOCUS%') order by 1;
+  DELIMITER "	" select distinct target_id, zdb_id, abbrev, OR_lg, lg_location from paneled_markers  where (zdb_id not like '%FISH%') and (zdb_id not like '%LOCUS%') order by 1;
 
--- wait to see what to do with mutants  union select distinct a.target_id, b.locus, c.abbrev, a.OR_lg, a.lg_location from public_paneled_markers a, fish b, locus c where a.zdb_id like '%FISH%' and a.zdb_id = b.zdb_id and b.locus = c.zdb_id
+-- wait to see what to do with mutants  union select distinct a.target_id, b.locus, c.abbrev, a.OR_lg, a.lg_location from paneled_markers a, fish b, locus c where a.zdb_id like '%FISH%' and a.zdb_id = b.zdb_id and b.locus = c.zdb_id
 
 -- comment out selection of zmap makers temporarily   union select target_id, zdb_id, abbrev||'_'||panel_abbrev, OR_lg, lg_location from zmap_pub_pan_mark
 
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/markers.txt' 
-  DELIMITER "	" select distinct zdb_id, abbrev from public_paneled_markers;
+  DELIMITER "	" select distinct zdb_id, abbrev from paneled_markers;
 
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/marker_alias.txt' 
+
   DELIMITER "	" select distinct mrkr_zdb_id, dalias_alias from marker , data_alias where mrkr_zdb_id = dalias_data_zdb_id order by 1;
+
 
 
 -- Clean up

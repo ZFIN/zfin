@@ -1,6 +1,6 @@
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/JohnP/accession.txt'
-  DELIMITER "	" select distinct zdb_id, abbrev, acc_num  from all_markers, OUTER db_link  where ((mtype = 'EST') or (mtype = 'GENE'))  and linked_recid = zdb_id and db_name = 'Genbank' order by 1;
+  DELIMITER "	" select distinct zdb_id, abbrev, acc_num  from marker, OUTER db_link  where ((mrkr_type = 'EST') or (mrkr_type = 'GENE'))  and linked_recid = zdb_id and db_name = 'Genbank' order by 1;
 
 
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/JohnP/mappings.txt' 
-  DELIMITER "	" select distinct  zdb_id, target_abbrev, OR_lg, lg_location, metric from public_paneled_markers  where ((zdb_id like '%EST%') or (zdb_id like '%GENE%')) order by 1;
+  DELIMITER "	" select distinct  marker_id, p.abbrev, or_lg, lg_location, metric from mapped_marker mm, panels p where mm.refcross_id = p.zdb_id and ((marker_id like '%EST%') or (marker_id like '%GENE%')) order by 1;
