@@ -523,13 +523,9 @@ Startframes.apg will pass this variables on to the select form.  -->
 
 
 	  <!-- Calculate last page -->
-	  <?MIVAR name=$START COND="$(=,$(MOD,$num_recs,$WINSIZE),0)">
-	    $(+,$(*,$(-,$(/,$num_recs,$WINSIZE),1),$WINSIZE),1)
-	  <?/MIVAR>
+	  <?MIVAR name=$START COND="$(=,$(MOD,$num_recs,$WINSIZE),0)">$(+,$(*,$(-,$(/,$num_recs,$WINSIZE),1),$WINSIZE),1)<?/MIVAR>
 
-	  <?MIVAR name=$START COND="$(!=,$(MOD,$num_recs,$WINSIZE),0)">
-	    $(+,$(*,$(FIX,$(/,$num_recs,$WINSIZE)),$WINSIZE),1)
-	  <?/MIVAR>
+	  <?MIVAR name=$START COND="$(!=,$(MOD,$num_recs,$WINSIZE),0)">$(+,$(*,$(FIX,$(/,$num_recs,$WINSIZE)),$WINSIZE),1)<?/MIVAR>
 
 	  <?MIVAR>
 	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$START&$UserInput">Last Page</A>
@@ -564,7 +560,7 @@ Startframes.apg will pass this variables on to the select form.  -->
   <?MIVAR COND="$(NXST,$WINSIZE)" NAME=$WINSIZE><?/MIVAR>
   <?MIVAR>
     <SCRIPT>
-      var page_id=top.content.location.href+'&navtile=$navtile&name=$name&lg=$lg&refcross=$refcross&marker_type=$mlist&compare=$compare&plinks=$plinks&WINSIZE=$WINSIZE&BEGIN=$BEGIN';
+      var page_id=top.content.location.href+'&navtile=$navtile&name=$(URLENCODE,$name)&lg=$lg&refcross=$refcross&marker_type=$mlist&compare=$compare&plinks=$plinks&WINSIZE=$WINSIZE&BEGIN=$BEGIN';
       top.update_hist(page_id,"$page_title");
       top.controls.location.reload(true);
     </SCRIPT>

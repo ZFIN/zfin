@@ -608,7 +608,7 @@
 
   <?MIVAR>
     <SCRIPT>
-    var page_id=top.content.location.href+'&ismapped=$ismapped&navtile=$navtile&name=$name&searchtype=$searchtype&lg=$lg&refcross=$refcross&knownloci=$knownloci&WINSIZE=$WINSIZE&BEGIN=$BEGIN';
+    var page_id=top.content.location.href+'&ismapped=$ismapped&navtile=$navtile&name=$(URLENCODE,$name)&searchtype=$searchtype&lg=$lg&refcross=$refcross&knownloci=$knownloci&WINSIZE=$WINSIZE&BEGIN=$BEGIN';
     top.update_hist(page_id,"$page_title");
     top.controls.location.reload(true);
     </SCRIPT>
