@@ -80,11 +80,12 @@ while (<>) {
   
   #CC   -!- SUBCELLULAR LOCATION: Nuclear (By similarity).
   #CC   -!- SIMILARITY: CONTAINS 2 LIM DOMAINS. THE LIM DOMAIN BINDS 2 ZINC
-  #CC       IONS.
+  #CC       IONS. 
   if (/^CC\s+-!-\s(.*)/) {
       my $ccinfo = $1;  #$1 would lost if there is a match in the following if clause
-      # put each item of the comments into array   
+      # put each item of the comments into array    
       push (@cc, $cc) if ($cc && $cc!~/CAUTION/ && $cc!~/ALTERNATIVE PRODUCTS/); 
+      
       $cc = $ccinfo;      
       next;
   }
@@ -162,8 +163,8 @@ while (<>) {
     if (@cc) {
 
       foreach $gene (@gene_array) {
-	  # join with \\n to enable the load.
-	  print COMMT "$gene|$prm_ac|".join("<br>",@cc)."|\n";  
+	  # '|' is in use in the comments field, thus use '$' to be delimiter 
+	  print COMMT "$gene\$$prm_ac\$".join("<br>",@cc)."\$\n";  
       }
     }
 

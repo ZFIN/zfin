@@ -308,7 +308,7 @@ begin work;
         )with no log;
 
 --!echo 'Load cc_external.unl'
-        load from cc_external.unl insert into temp_mrkr_cc;
+        load from cc_external.unl delimiter '$' insert into temp_mrkr_cc;
 
         create temp table pre_external_note(
                 p_extnote_zdb_id          varchar(50),
