@@ -129,9 +129,9 @@ STAGING_CP = cp -fp
 
 # Any created dirs should be created with 775 perms.
 
-TARGET_MKDIR = mkdir -m 775
+TARGET_MKDIR = mkdir -pm 775
 
-LOADAPPPAGE = /research/zfin/central/Commons/bin//loadapppage.pl
+LOADAPPPAGE = /research/zfin/central/Commons/bin/loadapppage.pl
 UNLOADAPPPAGE = /research/zfin/central/Commons/bin/unloadapppage.pl
 
 MAKESPECIFIC = /research/zfin/central/Commons/bin/makespecific.pl
