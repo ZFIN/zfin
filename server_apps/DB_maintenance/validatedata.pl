@@ -3213,13 +3213,6 @@ if($daily) {
   linkageHasMembers($linkageEmail);
   linkagePairHas2Members($linkageEmail);
 
-  orthologyHasEvidence($geneEmail);
-  mouseOrthologyHasMGIAccession($geneEmail);
-  mouseOrthologyHasLocusLinkAccession($geneEmail);
-  humanOrthologyHasLocusLinkAccession($geneEmail);
-  containedInRelationshipsInEST($geneEmail);
-  encodesRelationshipsInBACorPAC($geneEmail);
-
   foreigndbNotInFdbcontains($otherEmail);
 
   zdbObjectHomeTableColumnExist($dbaEmail);
@@ -3270,6 +3263,12 @@ if($monthly) {
   locusAbbrevUnique($mutantEmail);
   prefixedIbdGenesHave1Est($estEmail);
   genesWithCommonDblinks($geneEmail);
+  orthologyHasEvidence($geneEmail);
+  mouseOrthologyHasMGIAccession($geneEmail);
+  mouseOrthologyHasLocusLinkAccession($geneEmail);
+  humanOrthologyHasLocusLinkAccession($geneEmail);
+  containedInRelationshipsInEST($geneEmail);
+  encodesRelationshipsInBACorPAC($geneEmail);
 }
 if($yearly) {
   print "run yearly check. \n\n";
