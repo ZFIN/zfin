@@ -13,6 +13,7 @@ public class mapplet extends Applet  {
 	Vector Buttons;
 	
 	Marker clickedMarker; //defined globally to be used by both mousedown and mouse up
+	Vector clickedMarkers;
 	String clickedPanel; //ditto
 
 	public mapplet() {
@@ -51,43 +52,10 @@ public class mapplet extends Applet  {
 			MV = new MapViewer(Q,getParameter("host"), getParameter("port"), getParameter("selected_marker"));
 		} else if (getParameter("query") != null) 	{
 			 MV = new MapViewer(getParameter("query"),getParameter("host"), getParameter("port"), getParameter("selected_marker"));
-		} else if (getParameter("magic_marker") != null) { //this means we're taking a marker name and a list of panels
-			Vector V = new Vector();
-			int i=1;
-			String panel_name;
-			String zdb_id = getParameter("magic_marker");
-
-			String host = getParameter("host");
-			String port = getParameter("port");
-			
-			while(getParameter("panel"+i) != null) {
-				panel_name=getParameter("panel"+i);
-
-				V.addElement("select first 10  zdb_id, abbrev, mtype, target_abbrev, lg_location::numeric(6,2), OR_lg, mghframework, metric  from paneled_markers where OR_lg="
-							 + " (select OR_lg from paneled_markers where zdb_id='" + zdb_id
-							 + "' and target_abbrev='" + panel_name + "') and target_abbrev = '" + panel_name
-							 + "' and lg_location::numeric(6,2) < (select lg_location::numeric(6,2) from paneled_markers where zdb_id = '"
-							 + zdb_id + "' and target_abbrev='" + panel_name + "') and private='f' order by 5 desc;");
-
-				V.addElement("select first 10  zdb_id, abbrev, mtype, target_abbrev, lg_location::numeric(6,2), OR_lg, mghframework, metric  from paneled_markers where OR_lg="
-							 + " (select OR_lg from paneled_markers where zdb_id='" + zdb_id
-							 + "' and target_abbrev='" + panel_name + "') and target_abbrev = '" + panel_name
-							 + "' and lg_location::numeric(6,2) >= (select lg_location::numeric(6,2) from paneled_markers where zdb_id = '"
-							 + zdb_id + "' and target_abbrev='" + panel_name + "') and private='f' order by 5 asc;");
-				
-				i++;	
-			}
-			MV = new MapViewer(V, host, port, getParameter("magic_marker"));
 		} else {
-			MV = new MapViewer("select zdb_id, abbrev, mtype, target_abbrev, lg_location::numeric(6,2), OR_lg, framework_t, metric from paneled_markers " 
-							   + " where OR_lg = '7'"
-							   + " and ((target_abbrev = 'LN54' and lg_location > -1 and lg_location < 100) "
-							   + " or (target_abbrev = 'GAT' and lg_location > -1 and lg_location < 100) "
-							   + " or (target_abbrev = 'JPAD and lg_location > -1 and lg_location < 100) "
-							   + " or (target_abbrev = 'MOP' and lg_location > -1 and lg_location < 100) "
-							   + " or (target_abbrev = 'MGH' and lg_location > 10 and lg_location < 70)) "
-							   + " and private = 'f' order by 4, 5;", "zfin.org","7365", "ZDB123-1231312"); 
-		} 
+			System.err.println("mapplet.java couldn't start with any meaningful params");
+		}
+		
 
 
 		img = MV.getImage(this.bounds().width,this.bounds().height);
@@ -197,11 +165,20 @@ public class mapplet extends Applet  {
 	
 	public void paint(Graphics g) {    	
 		g.drawImage(img, 0,0,this.bounds().width,this.bounds().height, this);
-
+		Marker M;
+		
 		if (clickedMarker != null) {
 			g.setColor(Color.blue);
 			g.drawRect(clickedMarker.bounds.x, clickedMarker.bounds.y, clickedMarker.bounds.width, clickedMarker.bounds.height);
 			//g.drawString("Viewing Marker in ZFIN Window...", clickedMarker.bounds.x + clickedMarker.bounds.width, clickedMarker.bounds.y -2);
+		}
+		if (clickedMarkers != null) { //a vector
+			Enumeration E = clickedMarkers.elements();
+			while(E.hasMoreElements()) {
+				M = (Marker)E.nextElement();
+				g.setColor(Color.blue);
+				g.drawRect(M.bounds.x, M.bounds.y, M.bounds.width, M.bounds.height);
+			}
 		}
 		
 	}
@@ -209,18 +186,37 @@ public class mapplet extends Applet  {
 
 	public boolean mouseDown(Event evt, int x, int y)  {
 
-		if ((y < BackBone.TOP_SPACE -10) && (y > BackBone.TOP_SPACE-30)) { //clicking on a panel
-			clickedPanel = null;
-			clickedPanel = MV.panelClick(x,y);
+		if (evt.shiftDown() == false) {
+		   
+			if ((y < BackBone.TOP_SPACE -10) && (y > BackBone.TOP_SPACE-30)) { //clicking on a panel
+				clickedPanel = null;
+				clickedPanel = MV.panelClick(x,y);
 
-		} else 	{ //clicking on a marker
-			clickedMarker = null;
-			clickedMarker = MV.click(x, y);
+			} else 	{ //clicking on a marker
+				clickedMarker = null;
+				clickedMarker = MV.click(x, y);
 
-			if (clickedMarker != null) 	{
-				repaint();
+				if (clickedMarker != null) 	{
+					repaint();
+				}
 			}
+		} else 	{
+			Marker M;
+			BackBone BB;
+
+			M = MV.click(x, y);
+			if (M != null) {
+				String Z = M.getZdb_id();
+				clickedMarkers = new Vector();
+				Enumeration E = MV.elements();
+				while (E.hasMoreElements()) {
+					BB = (BackBone)E.nextElement();
+					clickedMarkers = BB.highlightID(Z, clickedMarkers);
+				}
+				repaint();
+			} else { clickedMarkers = null;	}			
 		}
+		
 		
 		return true;
 		
@@ -242,7 +238,32 @@ public class mapplet extends Applet  {
 		return true;
 	}
 
+// 	public boolean mouseMove(Event evt, int x, int y) {
+// //		System.out.println("Mousemove: " + x + ", " + y);
+		
+// 		Marker M;
+// 		BackBone BB;
+
+// 		M = MV.click(x, y);
+// 		if (M != null) {
+// 			String Z = M.getZdb_id();
+// 			clickedMarkers = new Vector();
+// 			Enumeration E = MV.elements();
+// 			while (E.hasMoreElements()) {
+// 				BB = (BackBone)E.nextElement();
+// 				clickedMarkers = BB.highlightID(Z, clickedMarkers);
+// 			}
+// 			repaint();
+// 		} else { clickedMarkers = null;	}
+		
+		
+// 		return true;
+// 	}
+	
+			
+	
 	public boolean action (Event evt, Object obj) {
+
 		Enumeration E = MV.elements();
 		Vector V = new Vector();
 		while(E.hasMoreElements())
@@ -273,15 +294,40 @@ public class mapplet extends Applet  {
 
 	public void zoom(String panel_name, String button)  {
 
-		getJS();
-
+		JSObject doc = null;
+		JSObject optform = null;
+		JSObject zoom = null;
+		int z = 0;
+		int oldz = 0;
 		
+		getJS();
+		if (JS == null)
+			System.err.println("Couldn't get javascript object");
+		
+		doc = (JSObject) JS.getMember("document");
+
+		if (doc == null)
+			System.err.println("document is null");
+		else
+			optform = (JSObject) doc.getMember("optform");
+
+		if (optform == null)
+			System.err.println("optform is null");
+		else
+			zoom = (JSObject) optform.getMember(panel_name + "_zoom");
+
+		if (zoom == null)
+			System.err.println("zoom is null");
+		else
+			z = (new Integer((String)zoom.getMember("value"))).intValue();
 		
 		String command = "document.optform.edit_panel.value=\"" + panel_name + "\"; ";
 		command = command + " document.optform." + panel_name + "_zoom.value = ";
 
-		int oldz;
-		int z = (new Integer((String)JS.eval("document.optform." + panel_name + "_zoom.value"))).intValue();
+
+//		System.err.println((String)JS.getMember("window.optform." + panel_name + "_zoom.value"));
+//		int z = (new Integer((String)JS.eval("document.optform." + panel_name + "_zoom.value"))).intValue();
+		
 		int ztotal = (new Integer(getParameter(panel_name + "_ztotal"))).intValue();
 		oldz = z;
 		if (button.equals("Zoom Out")) 
