@@ -99,7 +99,8 @@ EFFECTS
       <?MIBLOCK COND=$(XST,$xpatselrow_showXpat)>
 	<?MIVAR>
 	  <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatview.apg&OID=$xpatselrow_xpatZdbId">$xpatselrow_xpatLinkText</a>
-	  <?MIVAR COND=$(!=,$xpatselrow_imageCount,0)> <font size="-1">($xpatselrow_imageCount&nbsp;images)</font><?/MIVAR>
+	  <?MIVAR COND="$(<,$xpatselrow_imageCount,2)"> <font size="-1">($xpatselrow_imageCount&nbsp;image)</font><?/MIVAR>
+	  <?MIVAR COND="$(>,$xpatselrow_imageCount,2)"> <font size="-1">($xpatselrow_imageCount&nbsp;images)</font><?/MIVAR>
 	<?/MIVAR>
       <?MIELSE>
 	&nbsp;
