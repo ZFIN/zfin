@@ -57,7 +57,24 @@ function do_submit() {
   }
 }
 
+    
+function updateParent(AOname, AOid) {
+  if (opener == null) opener = self;
+  var terms = opener.document.structure2.xpcur_G_structure_add_name.value;
+  var ids = opener.document.structure2.xpcur_G_structure_add.value;
+  if (terms == "") {
+    opener.document.structure2.xpcur_G_structure_add_name.value = AOname;
+    opener.document.structure2.xpcur_G_structure_add.value = AOid;
+  }
+  else {
+    opener.document.structure2.xpcur_G_structure_add_name.value = terms+"|"+AOname;
+    opener.document.structure2.xpcur_G_structure_add.value = ids+","+AOid;
+  }
+}
+    
 </SCRIPT>
+
+<?MISQL SQL="select WebExplode(object,'permission=root') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
 <FORM name="dictform" method="GET" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
   <INPUT type="hidden" name="MIval" value="aa-anatdict.apg">
@@ -341,6 +358,7 @@ function do_submit() {
 		      <?/MIBLOCK>
 
 		      <?MIVAR>
+		        <?MIVAR COND=$(EC,$AUTHORIZED,root)><a href="javascript:updateParent('$item_name','$item_zdb_id');">select</a><?/MIVAR>
 			<font style="font-family:arial; font-size:small; font-weight:bold;  margin-left:$indent; $(IF,$(EQ,$highlight,true),background-color:#ffff99)">
 			  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">
 			    $item_name
