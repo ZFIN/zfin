@@ -3,20 +3,24 @@
 # Read table format blast result from STANDIN.
 # For each subject sequence which is in zfin, query out gene
 # zdb id or BAC/PAC zdb id, and added that into the result file.
-# For each match, in case only one match has >=98% identity, over
-# 80% of the query sequence length and subject is cDNA sequence, 
-# while  no  other matches have >=96% identity, directly write the
-# clone gene assoication into is_gene.unl file. Otherwise, output
-# to blast2zfin.out for manual curation.  
+# For each query, if a hit has >=98% identity, alignment(match)  
+# lenth is over 80% of either the query sequence or subject, 
+# and the subject is cDNA sequence, that is a strong candidate.
+# If all the other hits that has >=97% identity are all of the same
+# gene, and no other hits on the same gene has a <97% identity and 
+# no other hits on different genes/BACs/PACs has a >96% identity. then 
+# output the clone gene assoication into is_gene.unl file. Otherwise, 
+# output to blast2zfin.scnd for manual curation.  
 #
 # parameter: zfin test/production dbname
+#            standin
 #
 # output: is_gene.unl
-#         blast2zfin.out
+#         blast2zfin.scnd
 #
 use DBI;
 
-die "Usage: filterBlast.pl zfindbname <tableformatblastresultdata>.\n" if (@ARGV < 1);
+die "Usage: filterBlast.pl zfindbname < tableformatblastresultdata.\n" if (@ARGV < 1);
 
 #=====================================================
 # Main
@@ -33,36 +37,45 @@ my $dbh = DBI->connect("DBI:Informix:$dbname", "", "",
     or die "Failed while connecting to $dbname: $DBI::errstr";
 
 open ISGENE, ">is_gene.unl" or die "Cannot open is_gene.unl file for write.";
-open OUT, ">blast2zfin.out" or die "Cannot open blast2zfin.out file for write.";
+open OUT, ">blast2zfin.scnd" or die "Cannot open blast2zfin.scnd file for write.";
  
 my $lastQuery = '';
-my $numBest   = 0;
-my $numGood   = 0;
-my (@rowArray, $isGene);
+my $numSuspects = 0;
+my $hasGreatMatch = 0;
+my (@rowArray, $isGene, $matchGeneZdbId, @matchGeneZdbIdArray);
 
 print OUT "QUERY|SBJCT|ZFIN|IDENTITY|LENTH|MISMCH|QSTART|QEND|SSTART|SEND|EXPECT|SCORE \n";
 while (<>) {
     s/\|$//;                 # clean ending
     my ($query, $subject, $percent,$mchLength,$qryLength,
-	$mismatch, $gap,@restOneRow)= split /\|/;
+	    $sbjLength, $mismatch, $gap,@restOneRow)= split /\|/;
     my $sbjType = pop @restOneRow;
     chomp $sbjType;
-    my $gene_zdb_id = queryAccession($subject);
+    my $mrkr_zdb_id = queryAccession($subject);
 
     output () if ($query ne $lastQuery && $lastQuery);
 
-    if ($percent >= 98 && 
-	$mchLength/$qryLength > 0.8 && 
-	$sbjType eq "cdna") {
+    if ($percent >= 97) {
 	
-	$numBest++;
-	$isGene = "$query|$gene_zdb_id|";
+		push @matchGeneZdbIdArray, $mrkr_zdb_id;
+		
+		my $shrtLength = ($qryLength > $sbjLength) ? $sbjLength : $qryLength;
+		if ($percent >= 98 && $sbjType eq "cdna" && $mchLength/$shrtLength > 0.8 ) {
+			
+			$hasGreatMatch = 1;
+			$matchGeneZdbId = $mrkr_zdb_id;
+			$isGene = "$query|$mrkr_zdb_id|";
+		}
     }
-
-    $numGood++ if ($percent >= 96);
+    elsif ($percent >= 96) {
+		$numSuspects ++;
+	}
+	elsif ($hasGreatMatch && $mrkr_zdb_id ne $matchGeneZdbId) {
+		$numSuspects ++;
+	}
 
     $lastQuery = $query;
-    push @rowArray, join("|",$query, $subject,$gene_zdb_id,$percent,$mchLength,$mismatch,@restOneRow);
+    push @rowArray, join("|",$query, $subject,$mrkr_zdb_id,$percent,$mchLength,$mismatch,@restOneRow);
 }
 output ();
 
@@ -113,15 +126,22 @@ sub queryAccession ($) {
 #
 sub output () {
 
-    if ($numBest == 1 && $numGood ==1) {
-	print ISGENE "$isGene\n";
+    my $matchGeneUniq = 1;
+    foreach my $item (@matchGeneZdbIdArray) {
+		$matchGeneUniq = 0 if $item ne $matchGeneZdbId;
+    }
+
+    if ($hasGreatMatch && $matchGeneUniq && !$numSuspects) {
+		print ISGENE "$isGene\n";
     }
     else {
-	print OUT join ("\n", @rowArray)."\n";
+		print OUT join ("\n", @rowArray)."\n";
     }
  
-    $numBest = 0;
-    $numGood = 0;
+    $numSuspects = 0;
+    $hasGreatMatch = 0;
+    $matchGeneZdbId = "";
+    @matchGeneZdbIdArray = ();
     $isGene = "";
     @rowArray = ();
 }
