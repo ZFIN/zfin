@@ -101,10 +101,10 @@
      <?/MIVAR>
      <?MIVAR NAME=$mapdetLG>$1<?/MIVAR>
   <?/MISQL>
-  <?MIBLOCK COND="$(=,$MI_ROWCOUNT,1)">
+  <?MIBLOCK COND="$(AND,$(=,$MI_ROWCOUNT,1),$(NC,$mapdetLG,MT))">
     <?MIVAR COND="$(<,$mapdetLG,10)">&nbsp;<?/MIVAR>
   <?/MIBLOCK>	
-  <?MIVAR COND="$(AND, $(EC,$hide_empty,f), $(=,$MI_ROWCOUNT,0))">None submitted.<?/MIVAR>
+  <?MIVAR COND="$(AND,$(EC,$hide_empty,f),$(=,$MI_ROWCOUNT,0))">None submitted.<?/MIVAR>
 
 <?MIELSE><MICOMMENT>need modification here<?/MICOMMENT>
   <?MIVAR>LG:&nbsp;$lg_list<?/MIVAR>
