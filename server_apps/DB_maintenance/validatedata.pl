@@ -1245,7 +1245,9 @@ sub estsHave1Gene ($) {
                          from marker m1, marker_relationship
                          where mrel_mrkr_1_zdb_id = m1.mrkr_zdb_id
                            and mrel_mrkr_2_zdb_id = m2.mrkr_zdb_id
-                           and m1.mrkr_type = "GENE" )
+                           and m1.mrkr_type in (select mtgrpmem_mrkr_type
+				                  from marker_type_group_member
+						 where mtgrpmem_mrkr_type_group="GENEDOM"))
                order by mrkr_name';
 
   my @colDesc = ("EST ZDB ID        ",
@@ -1993,7 +1995,9 @@ sub putativeNonZfinGeneNotInZfin ($) {
                from putative_non_zfin_gene, 
                     marker  
               where putgene_putative_gene_name = mrkr_name
-                and mrkr_type = "GENE"
+                and mrkr_type in (select mtgrpmem_mrkr_type
+                                    from marker_type_group_member
+                                   where mtgrpmem_mrkr_type_group="GENEDOM")
             ';
   
   my @colDesc = ("Putgene mrkr ZDB ID       ",
