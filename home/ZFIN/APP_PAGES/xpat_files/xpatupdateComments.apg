@@ -14,6 +14,7 @@
     $1
   <?/MISQL>
 
+<?MIVAR NAME=old_value Default="">$old_value<?/MIVAR>
 
 <?MIBLOCK COND="$(AND,$(XST,$AUTHORIZED),$(NC,$AUTHORIZED,false))">
 
@@ -52,13 +53,13 @@
           <table width=100%>
           <tr>
           <td>
-          <b>Change Comments:</b><br>
+          <b>Change Expression Pattern Comments:</b><br>
           <TEXTAREA name="new_value" rows=10 cols=70 wrap=virtual>$old_value</TEXTAREA>
           </td>
           </tr>
           <tr>
           <td>
-          <b>Comments:</b>
+          <b>Reason or Comments:</b>
           <br>
           <TEXTAREA name="comments" rows=10 cols=70 wrap=virtual></TEXTAREA>
           </td>

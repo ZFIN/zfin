@@ -15,7 +15,7 @@ comments -- reasons for doing update
 
 <!-- First check security. Main purpose is just to get submitter id and name -->
 
-<?MIBLOCK COND="$(AND,$(XST,$OID),$(XST,$new_value),$(XST,$old_value))">
+<?MIBLOCK COND="$(XST,$OID)">
   <?MISQL SQL="
     select WebExplode(object,'permission=root') 
       from webPages 
@@ -26,6 +26,8 @@ comments -- reasons for doing update
 
 <?MIBLOCK COND="$(AND,$(XST,$AUTHORIZED),$(NC,$AUTHORIZED,false))">
 
+  <?MIVAR COND="$(NXST,$new_value)" NAME=$new_value><?/MIVAR>
+  <?MIVAR COND="$(NXST,$old_value)" NAME=$old_value><?/MIVAR>
   <?MIVAR COND="$(NXST,$comments)" NAME=$comments>NULL<?/MIVAR>
   <?MIVAR NAME=$comments>Change Assay Type: $comments<?/MIVAR>
   <?MIVAR NAME=$comments DELIMIT="'" REPLACE="''">$comments<?/MIVAR>
