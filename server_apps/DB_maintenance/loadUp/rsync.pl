@@ -11,8 +11,15 @@
 
 # see man rsync for additional details!
 #
+# --backup-dir=/tmp : if rsync deletes, it'll put a copy of the deleted file
+#   in /tmp
+# -b : backup, preexisting destination files are renamed with specified suffix
+#   in specified backup directory
+# --suffix=uploadbkup : suffix appended to backup files in /tmp
+# -a : archive, go through directories recursively
 # -u : update only (don't overwrite newer files)
 # -p : preserve permissions on files that get copied
+# -copy-links: means rsync can go between symlink directories
 # --delete: delete files that don't exist on sender.
 # --ignore-existing: ignore files that already exist on receiver
 #
@@ -24,10 +31,10 @@
 
 system ("cd <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->");
 
-system("/local/bin/rsync -upvvvn --copy-unsafe-links --delete --ignore-existing <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|--> /research/zcentral/loadUp/imageLoadUp");
+system("/local/bin/rsync -upvvnab --backup-dir=/tmp --suffix=uploadbkup --delete --ignore-existing --copy-links <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/ /research/zcentral/loadUp/imageLoadUp/");
 
 system ("cd <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|--> ");
 
-system("/local/bin/rsync -upvvvn --copy-unsafe-links --delete --ignore-existing <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|--> /research/zcentral/loadUp/PDFLoadUp");
+system("/local/bin/rsync -upvvnab --backup-dir=/tmp --suffix=uploadbkup --delete --ignore-existing --copy-links <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->/ /research/zcentral/loadUp/PDFLoadUp/");
 
 exit;
