@@ -1004,8 +1004,20 @@
     
     my $stmt2  = 'SELECT FIRST 1 * FROM PANLG WHERE zdb_id = ? order by lg_location asc;';
     my $stmt22 = 'SELECT FIRST 1 * FROM PANLG WHERE zdb_id = ? order by lg_location desc;';
-    my $stmt3  = 'SELECT *, ABS(lg_location - ?) distance FROM PANLG ORDER BY distance;';
-    
+ 
+    # Note that this query in its original format was deadly to the informix 
+    # server.  The original format used an ABS() function call instead of a
+    # case.  We aren't sure if the new format will fix the problem or not.
+ 
+    my $stmt3 = 
+      'SELECT zdb_id, abbrev, mtype, target_abbrev, lg_location, or_lg,' .
+      '       mghframework, metric, map_name, ' .
+      '       case when lg_location - ? >= 0 then lg_location - ? ' .
+      '            else ? - lg_location ' .
+      '       end distance ' .
+      '  FROM PANLG ' .
+      '  ORDER BY distance;';
+   
     #zdb_id,abbrev,mtype,target_abbrev,lg_location,or_lg,mghframework,metric,map_name
     # 1      2       3     4            5            6      7          8     9
     
@@ -1058,7 +1070,7 @@
 	$row[4] =  ($row[4] == 0)? 0 : $row[4]; # clean up 0.00000E+00               
 	$loc = $lo = $hi = $row[4];
 	
-	$rc = $sth3->execute($loc);        
+	$rc = $sth3->execute($loc,$loc,$loc);        
 	#$note =  $note .  "draping lg ".$lg ." about ". $loc ."<p>\n"; 
 	
 	$local_zoom = abs(($Q->param($panel.'_zoom'))? $Q->param($panel.'_zoom') : $local_zoom);
@@ -1216,12 +1228,15 @@
     $lg_hi = $loc;
     #$note = $note . "get_ZOOM looking around $loc<p>\n";   
     $sql =  
-      " SELECT lg_location, ABS( lg_location - $loc ) distance " . 
-	" FROM zmap_pub_pan_mark " .
-	  " WHERE panel_abbrev in ( \'$panel\' ) AND or_lg = ? ".
-	    " AND mtype in ( \'$types\' ) ".
-	      " ORDER BY distance;";  
-       
+      " SELECT lg_location, " .
+      "        case when lg_location - $loc >= 0 then lg_location - $loc " .
+      "             else $loc - lg_location " .
+      "        end distance " .
+      "   FROM zmap_pub_pan_mark " .
+      "   WHERE panel_abbrev in ( \'$panel\' ) AND or_lg = ? ".
+      "     AND mtype in ( \'$types\' ) ".
+      "   ORDER BY distance;";  
+    
     $cur = $dbh->prepare($sql); 
     $rc = $cur->execute ($lg);
     
