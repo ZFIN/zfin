@@ -26,7 +26,8 @@ GENERICS = chromoscripts.apg crossview.apg clonebox.apg do-markerupdate.apg \
         do-markergoupdate.apg do-goedit.apg gonotes.apg goinferenceentry.apg \
         nomenview.apg nomeneditor.apg orthoview.apg marker_history_correction.apg \
 	newmrkrselect.apg searchform.apg sequence.apg geneprddescription.apg \
-	attrib_check.apg do-oevdispupdate.apg showscores.apg sequence_tools.apg
+	attrib_check.apg do-oevdispupdate.apg showscores.apg sequence_tools.apg \
+	markerrelationship.apg cloneorderlink.apg 
 
 #STATICS = attrib_check.apg do-oevdispupdate.apg showscores.apg sequence_tools.apg\
 
