@@ -124,6 +124,7 @@
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,SSLP),0)">aa-markerview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,CDNA),0)">aa-markerview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,GENEP),0)">aa-markerview.apg<?/MIVAR>
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,MRPHLNO),0)">aa-markerview.apg<?/MIVAR>
      
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,EST),0)">aa-markerview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,BAC),0)">aa-markerview.apg<?/MIVAR>
