@@ -117,6 +117,8 @@ optional:
 
 <?MIBLOCK COND="$(EC,$attr,note)">
 
+  <?MIVAR NAME=$new_value>$(REPLACE,$new_value,','')<?/MIVAR> 
+
   <?MISQL SQL="
     update marker_go_term_evidence set mrkrgoev_notes         = '$new_value', 
 				       mrkrgoev_date_modified = CURRENT,

@@ -59,7 +59,9 @@ PREFIX: mkrgoupdate_
    <?MIVAR NAME=go_id>$(TRIM,$go_id)<?/MIVAR>
    <?MIVAR NAME=go_num>$(SUBSTR,$go_id,4)<?/MIVAR>   
 
-   <?MIVAR NAME=mkrgoupdate_annexist>f<?/MIVAR>
+   <?MIVAR NAME=$notes>$(REPLACE,$notes,','')<?/MIVAR> 
+
+  <?MIVAR NAME=mkrgoupdate_annexist>f<?/MIVAR>
 
    <?MISQL SQL="select goterm_zdb_id, goterm_name, goterm_ontology from go_term 
 				where goterm_go_id like '$go_num';">
@@ -121,6 +123,7 @@ PREFIX: mkrgoupdate_
 
    <?MISQL SQL="insert into zdb_active_data (zactvd_zdb_id) values('$evnew_id');"><?/MISQL>
    <?MICOMMENT>GO attribution in record_attribution is added by the db trigger. <?/MICOMMENT>
+   <?MIVAR NAME=$notes>$(REPLACE,$notes,','')<?/MIVAR>
    <?MISQL SQL="
 	insert into marker_go_term_evidence (mrkrgoev_zdb_id,mrkrgoev_mrkr_zdb_id,mrkrgoev_go_term_zdb_id, mrkrgoev_source_zdb_id,mrkrgoev_evidence_code, mrkrgoev_notes, mrkrgoev_date_entered, mrkrgoev_date_modified, mrkrgoev_contributed_by, mrkrgoev_modified_by)
         		values ('$evnew_id','$OID','$go_zdb_id','$pub_id', '$evidence_code', '$notes', CURRENT, CURRENT, '$ZDB_name', '$ZDB_name');">
