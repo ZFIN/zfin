@@ -1531,10 +1531,13 @@ sub orthologueHasDblink ($) {
 # orthologueNomenclatureValid 
 # 
 # Do minimal nomenclature rule checking on orthologue names and symbols.
-# This routine checks rules that are easy to check (such as "must be all caps"),
-# and excludes common exceptions to those rules (such as Riken at Mouse).
-# However, it still reports a small number of valid names and abbrevs.  
-# In other words, names and abbrevs reported by this check are not necessarily 
+# This routine checks rules that are easy to check (such as "must be all caps").
+# The first version of this routine also excluded common exceptions to the
+# rules such as "C%orf%" orthologues in humans and Riken orthologues in Mouse.
+# However, Ken requested that the report include these, as most/all of them
+# will change over time.  
+#
+# Names and abbrevs reported by this check are not necessarily 
 # in error -- they might be errors, or they just might be exceptions to 
 # the standard nomenclature.  These exceptions are why this check is not
 # done with a trigger.  See case 314 for more details.
@@ -1562,14 +1565,10 @@ sub orthologueNomenclatureValid ($) {
       from orthologue 
       where ortho_abbrev like "% %" 
          or (    organism = "Human" 
-             and ortho_abbrev <> upper(ortho_abbrev)
-             and ortho_abbrev not like "C%orf%"
-             and ortho_abbrev not like "DKFZp%")
+             and ortho_abbrev <> upper(ortho_abbrev))
          or (    organism = "Mouse"
              and (   ortho_abbrev[1,1] <> upper(ortho_abbrev[1,1])
-                  or (    substr(ortho_abbrev,2) <> lower(substr(ortho_abbrev,2)) 
-                      and ortho_abbrev not like "%Rik"
-                      and ortho_abbrev not like "LOC%")))
+                  or substr(ortho_abbrev,2) <> lower(substr(ortho_abbrev,2))))
          or (    organism = "Yeast"
              and (   ortho_abbrev <> upper(ortho_abbrev)
 	          or ortho_name <> upper(ortho_name)
