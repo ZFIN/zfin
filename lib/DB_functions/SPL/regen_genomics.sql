@@ -287,7 +287,7 @@ create dba function "informix".regen_genomics() returning integer
 	  allmapnm_precedence, allmapnm_name_lower )
       select l.abbrev, f.zdb_id, 7, "Locus abbreviation", lower(l.abbrev)
         from fish f, locus l
-        where f.zdb_id = l.zdb_id
+        where f.locus = l.zdb_id
 	  and f.name <> l.abbrev;
 
     let errorHint = "Fish locus aliases";
@@ -335,8 +335,14 @@ create dba function "informix".regen_genomics() returning integer
         ( allmapnm_name, allmapnm_zdb_id, allmapnm_significance,
 	  allmapnm_precedence, allmapnm_name_lower )
       select dalias_alias, zdb_id, 8, "Fish Previous name", dalias_alias_lower
-        from data_alias, fish
-        where dalias_data_zdb_id = zdb_id;
+        from data_alias fishalias, fish
+        where dalias_data_zdb_id = zdb_id
+          and not exists 
+                ( select 'x'
+                    from data_alias localias, locus
+                    where localias.dalias_data_zdb_id = locus.zdb_id
+                      and locus.zdb_id = fish.zdb_id
+                      and fishalias.dalias_alias_lower = localias.dalias_alias_lower );
 
     let errorHint = "Fish allele aliases";
     insert into all_m_names_new 
