@@ -129,16 +129,11 @@
     <!-- get independent linkage info for other members of linkage or for allele itself if it is the only linkage member -->
 
       <?MIVAR NAME=$independ_lg>null<?/MIVAR>
-      <?MISQL SQL="select alnkgmem_or_lg, alnkgmem_num_members from all_linked_members a
-		where (alnkgmem_linkage_zdb_id in 
-		  (select alnkgmem_linkage_zdb_id from all_linked_members b 
-		      where b.alnkgmem_linkage_zdb_id = a.alnkgmem_linkage_zdb_id
-		      and b.alnkgmem_member_zdb_id = '$zdb_id')
-		      and a.alnkgmem_member_zdb_id <> '$zdb_id'
-                      and a.alnkgmem_private='f')
-		  or (a.alnkgmem_member_zdb_id = '$zdb_id'   
-		      and a.alnkgmem_num_members = 1
-                      and a.alnkgmem_private='f') ;">
+      <?MISQL SQL="select lnkg_or_lg
+		     from linkage, linkage_member
+		    where lnkgmem_member_zdb_id = '$zdb_id'
+		      and lnkgmem_linkage_zdb_id = lnkg_zdb_id		
+		;">
         <?MIVAR NAME=$independ_lg>$1<?/MIVAR>
         <?MIBLOCK COND="$(>,$MI_CURRENTROW,1)">
           <?MIVAR>
@@ -159,7 +154,9 @@
 
               <!-- ref panel data -->
               <?MIVAR NAME=$lg>null<?/MIVAR>
-       	      <?MISQL SQL="select or_lg,lg_location,metric from public_paneled_markers where zdb_id = '$locus';">
+       	      <?MISQL SQL="select or_lg,lg_location,metric 
+			     from mapped_marker 
+			    where marker_id = '$locus';">
 		<?MIVAR NAME=$lg>$1<?/MIVAR>
 		<?MIVAR NAME=$lg_location>$2<?/MIVAR>      
 		<?MIVAR NAME=$metric>$3<?/MIVAR>
