@@ -81,7 +81,6 @@ document.critform.START.value = "";
 <?MIVAR NAME=$refcross COND="$(NXST,$refcross)">NULL<?/MIVAR>
 <?MIVAR COND="$(NXST,$compare)" NAME=$compare>contains<?/MIVAR>
 
-
 <?MIVAR NAME=$mlist SEPARATE="','">$marker_type<?/MIVAR>
 <?MIVAR COND="$(>,$(POSITION,$mlist,any),0)" NAME=$marker_type>any<?/MIVAR>
 
@@ -93,11 +92,17 @@ document.critform.START.value = "";
 <!-- NOW BUILD UP THE CONSTRAINT CLAUSE -->
 <?MIBLOCK COND="$(OR,$(XST,$name),$(NC,$marker_type,any),$(NC,$lg,0),$(NC,$refcross,NULL),$(AND,$(XST,$within_cm),$(XST,$wm_name)))">
 
-  <?MIVAR  COND="$(XST,$name)" NAME=$mrkrnameConstraint>
+  <?MIVAR COND="$(XST,$name)" NAME=$mrkrnameConstraint>
 	where exists (select 'x' from all_map_names where a.mrkr_zdb_id = allmapnm_zdb_id and allmapnm_name like '$wild_card$(LOWER,$name)%' )
   <?/MIVAR>
 
-  <?MIVAR  COND="$(XST,$name)" NAME=$mutantnameConstraint>
+  <!--when this page is invoked by accession select, $constraint gets passes in. --> 
+  <?MIBLOCK COND="$(XST,$constraint)">
+    <?MIVAR NAME=$mrkrnameConstraint>$constraint<?/MIVAR>
+    <?MIVAR NAME=$mlist>marker<?/MIVAR>
+  <?/MIBLOCK>
+
+  <?MIVAR COND="$(XST,$name)" NAME=$mutantnameConstraint>
 	where exists (select 'x' from all_map_names where a.zdb_id = allmapnm_zdb_id and allmapnm_name like '$wild_card$(LOWER,$name)%' )
   <?/MIVAR>
 
@@ -152,12 +157,12 @@ document.critform.START.value = "";
 
 	select distinct a.zdb_id as zdb_id, a.allele as abbrev, fish_allele_order as abbrev_order, 'MUTANT' as mtype
 	from fish a
-	$mutantnameConstraint 
+	$mutantnameConstraint
 	and a.zdb_id in (select marker_id from mapped_marker)
 	union
 	select distinct a.zdb_id as zdb_id, b.abbrev as abbrev, locus_abbrev_order as abbrev_order, 'MUTANT' as mtype
 	from fish a, locus b
-	$mutantnameConstraint 
+	$mutantnameConstraint
 	and a.zdb_id not in (select marker_id from mapped_marker)
 	and a.locus = b.zdb_id
 	union
@@ -168,6 +173,7 @@ document.critform.START.value = "";
 
      <?/MISQL>
      <?MIBLOCK COND="$(NC,$mlist,MUTANT)"> 
+     
      <?MISQL SQL="
       insert into all_temp_markers
 	select distinct mrkr_zdb_id as zdb_id, mrkr_abbrev as abbrev, mrkr_abbrev_order as abbrev_order, mrkr_type as mtype
@@ -178,8 +184,8 @@ document.critform.START.value = "";
      <?/MIBLOCK>
 
   <?MIELSE>
-  
-    <?MISQL SQL="    
+    
+   <?MISQL SQL="    
 	select distinct mrkr_zdb_id as zdb_id, mrkr_abbrev as abbrev, mrkr_abbrev_order as abbrev_order, mrkr_type as mtype
 	from marker a
 	$mrkrnameConstraint
@@ -190,7 +196,7 @@ document.critform.START.value = "";
   <?/MIBLOCK>
 
 
-  <?MISQL SQL="
+   <?MISQL SQL="
 	select m1.abbrev as abbrev, m1.mtype as mtype, lg_location, m1.zdb_id as zdb_id, or_lg as OR_lg, panels.zdb_id as target_id, panels.abbrev as target_abbrev, private, mm.metric as metric, m1.abbrev_order as abbrev_order
 	from all_temp_markers m1, mapped_marker mm, panels
 	where m1.zdb_id = marker_id
