@@ -28,10 +28,10 @@ STATICS  = readme
 # home directory being made before the server_apps directory.
 
 HTTP_DATA_TRANSFER_DIR = $(TARGETROOT)/home/data_transfer/Sanger
+README_TARGET = $(HTTP_DATA_TRANSFER_DIR)/index.html
 
-ENDEMICTARGETS_PRE = $(HTTP_DATA_TRANSFER_DIR)
-
-
+ENDEMICTARGETS_PRE =  $(HTTP_DATA_TRANSFER_DIR)
+ENDEMICTARGETS_POST = $(README_TARGET)
 
 # ---------------  Production Rules  ------------------------------------
 
@@ -39,17 +39,15 @@ ENDEMICTARGETS_PRE = $(HTTP_DATA_TRANSFER_DIR)
 
 include $(TOP)/make.default.rules
 
-
 # ---------------  Endemic Targets  -------------------------------------
 
 $(HTTP_DATA_TRANSFER_DIR) :
 	$(TARGET_MKDIR) $@
 
-$(STATICS) :
-	rm -f $(HTTP_DATA_TRANSFER_DIR)/readme
-	ln -s $(TARGETDIR)/readme $(HTTP_DATA_TRANSFER_DIR)/readme
-	rm -f $(HTTP_DATA_TRANSFER_DIR)/index.html
-	ln -s $(HTTP_DATA_TRANSFER_DIR)/readme $(HTTP_DATA_TRANSFER_DIR)/index.html
+$(README_TARGET) : $(TARGETDIR)/readme
+	cp -fp $(TARGETDIR)/readme  $(HTTP_DATA_TRANSFER_DIR)/index.html
+
+
 # ---------------  Misc Targets  ----------------------------------------
 
 # Run the download script.  This extracts data from ZFIN and places it in 
