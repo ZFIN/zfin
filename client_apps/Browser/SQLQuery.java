@@ -3,7 +3,7 @@ import java.net.*;
 import java.applet.*;
 import java.util.*;
 import java.sql.*;
-import com.informix.jdbc.*;
+
 
 /**
    Issue an SQL query to the database server.  The calling class
@@ -51,7 +51,7 @@ public class SQLQuery
 
 		Connection conn = null;
 		
-		try { Class.forName("com.informix.jdbc.IfxDriver"); } 
+/***		try { Class.forName("com.informix.jdbc.IfxDriver"); } 
 		catch (Exception e) { System.err.println("ERROR: failed to load Informix JDBC driver. - " + e);	}
 
 		try {  conn = DriverManager.getConnection(newUrl);  } 
@@ -77,7 +77,7 @@ public class SQLQuery
 			} catch (SQLException e) {
 				System.out.println("ERROR: Fetch statement failed: " + e.getMessage());
 				}
-
+*****/
 		return results;
 	
 }
