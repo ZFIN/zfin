@@ -1,0 +1,31 @@
+# ===========================================================================
+# DEVELOPMENT CRONTAB FILE
+# ===========================================================================
+# This is the crontab file for Informix on the ZFIN development machine.  When
+# production is running on chromix, this file is the crontab file for
+# the development machine.  When production is running on the development
+# machine, this file is appended to the end of the production crontab file.
+#
+# See the "crontab" file (or cron man page) for an explanation of this file's
+# format.
+#
+# DAILY SCRIPTS
+# =============
+# Reload almdb, remake web site.  Job runs different on Saturday.
+0 3 * * 1,2,3,4,5 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/load_and_index_almost.pl
+#
+# WEEKLY SCRIPTS
+# ==============
+#
+# Saturday
+# --------
+# Reload almdb, remake web site, reindex it, and copy new index to production
+0 3 * * 6 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/load_and_index_almost.pl -i
+#
+#
+# MONTHLY SCRIPTS
+# ===============
+#
+#
+# YEARLY SCRIPTS
+# ==============
