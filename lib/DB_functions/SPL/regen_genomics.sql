@@ -235,21 +235,21 @@ create dba function "informix".regen_genomics() returning integer
     union  -- get fish aliases
     select dalias_alias allmapnm_name, zdb_id allmapnm_zdb_id, 8 allmapnm_significance,
 	   "Fish Previous name"::varchar(80) allmanpnm_precedence, 
-	   lower(dalias_alias) allmapnm_name_lower
+	   dalias_alias_lower allmapnm_name_lower
     from data_alias, fish
     where dalias_data_zdb_id = zdb_id
     union  -- get locus aliases
     select dalias_alias allmapnm_name, zdb_id allmapnm_zdb_id, 
 	   8 allmapnm_significance,
 	   "Locus Previous name"::varchar(80) allmanpnm_precedence, 
-	   lower(dalias_alias) allmapnm_name_lower
+	   dalias_alias_lower allmapnm_name_lower
       from data_alias, fish
       where dalias_data_zdb_id = locus
     union  -- get allele aliases
     select dalias_alias allmapnm_name, f.zdb_id allmapnm_zdb_id, 
 	   8 allmapnm_significance,
 	   "Allele Previous name"::varchar(80) allmanpnm_precedence, 
-	   lower(dalias_alias) allmapnm_name_lower
+	   dalias_alias_lower allmapnm_name_lower
       from data_alias aalias, fish f, alteration a
       where aalias.dalias_data_zdb_id = a.zdb_id
 	and a.allele = f.allele
@@ -299,15 +299,15 @@ create dba function "informix".regen_genomics() returning integer
 	   lower(dblink_acc_num) as allmapnm_name_lower
     from db_link, all_marker_names_new
     where dblink_linked_recid = allmapnm_zdb_id
-    and lower(dblink_acc_num) <> lower(allmapnm_name)	    
+    and lower(dblink_acc_num) <> allmapnm_name_lower
     union
     select dalias_alias as allmapnm_name, dblink_linked_recid as allmapnm_zdb_id, 12 as allmapnm_significance,
 	   "Accession number"::varchar(80) as allmapnm_precedence, 
-	   lower(dalias_alias) as allmapnm_name_lower
+	   dalias_alias_lower as allmapnm_name_lower
      from db_link, data_alias, all_marker_names_new
     where dalias_data_zdb_id = dblink_zdb_id 
       and dblink_linked_recid = allmapnm_zdb_id
-      and lower(dalias_alias) <> lower(allmapnm_name)	    
+      and dalias_alias_lower <> allmapnm_name_lower
     union
     select dblink_acc_num as allmapnm_name, c_gene_id as allmapnm_zdb_id, 12 as allmapnm_significance,
 	   "Accession number"::varchar(80) as allmapnm_precedence, 
@@ -349,7 +349,7 @@ create dba function "informix".regen_genomics() returning integer
 
     insert into all_m_names_new
    	 select distinct dalias_alias, dalias_data_zdb_id , 
-	    5 , "Previous name", lower(dalias_alias)
+	    5 , "Previous name", dalias_alias_lower
     	from data_alias, alias_group, marker
     	where mrkr_zdb_id = dalias_data_zdb_id
     	and dalias_group = aliasgrp_name
@@ -358,7 +358,8 @@ create dba function "informix".regen_genomics() returning integer
     -- sequence simalarities
     insert into all_m_names_new
     	select distinct dalias_alias, dalias_data_zdb_id, 
-		13 allmapnm_significance, "Sequence similarity", lower(dalias_alias)
+		13 allmapnm_significance, "Sequence similarity", 
+		dalias_alias_lower
     	from data_alias, alias_group, marker
    	 where mrkr_zdb_id = dalias_data_zdb_id
    	 and dalias_group = aliasgrp_name
@@ -370,10 +371,10 @@ create dba function "informix".regen_genomics() returning integer
     	from putative_non_zfin_gene; 
 
     insert into all_m_names_new 
-    	select distinct a.allmapnm_name, cloned_gene , 9 ,
-	    "Locus", lower(a.allmapnm_name)
-    	from all_locus_names_new a, locus
-    	where a.allmapnm_zdb_id = locus.zdb_id
+    	select distinct allmapnm_name, cloned_gene , 9 ,
+	    "Locus", allmapnm_name_lower
+    	from all_locus_names_new, locus
+    	where allmapnm_zdb_id = locus.zdb_id
     	and cloned_gene is not null;
 
  	
