@@ -24,7 +24,8 @@ TARGETDIR = $(TARGETROOT)/home/zf_info/dbase/PAPERS/ZFIN_DataModel
 # data_model.html_complete and data_model_word are worth hanging onto, but
 # are not part of the public web pages.  Don't copy them.
 
-GENERICS = data_model.html overview_1.html  overview_2.html overview_3.html \
+# There are no generic files in this directory.
+STATICS = data_model.html overview_1.html  overview_2.html overview_3.html \
 	overview_4.html sectioni.html sectioni_1.html sectioni_2.html \
 	sectioni_3.html sectioni_4.html sectioni_5.html sectionii.html \
 	sectionii_1.html sectionii_10.html sectionii_11.html \
@@ -34,56 +35,14 @@ GENERICS = data_model.html overview_1.html  overview_2.html overview_3.html \
 	sectionii_5.html sectionii_6.html sectionii_7.html sectionii_8.html \
 	sectionii_9.html sectioniii.html sectioniii_1.html sectioniii_2.html \
 	sectioniv.html sectioniv_1.html sectioniv_2.html sectioniv_3.html \
-	sectioniv_4.html sectionv.html
-
-STATICS = Fish_Net.GIF fig1.gif fig2.gif fig3.gif fig4.gif fig5.gif fig6.gif \
+	sectioniv_4.html sectionv.html \
+	Fish_Net.GIF fig1.gif fig2.gif fig3.gif fig4.gif fig5.gif fig6.gif \
 	fig7.gif fig8.gif fig9.gif
 
-SPECIFICTARGETS = $(foreach SPEC, $(GENERICS), $(TARGETDIR)/$(SPEC))
-
-STATICTARGETS = $(foreach STAT, $(STATICS), $(TARGETDIR)/$(STAT))
-
-# index.html is a sym link to data_model.html.
-
-INDEXHTMLTARGET = $(TARGETDIR)/index.html
-
-TARGETS = $(SPECIFICTARGETS) $(STATICTARGETS) $(INDEXHTMLTARGET)
 
 
 # ---------------  Production Rules  ------------------------------------
 
-.PHONY : all sanitycheck clean clobber onetimeonly
+# use default rules
 
-
-all : $(TARGETDIR) $(TARGETS)
-
-
-$(TARGETDIR) :
-	$(TARGET_MKDIR) $(TARGETDIR);
-
-$(SPECIFICTARGETS) : $(TARGETDIR)/% : %
-	$(MAKESPECIFIC) $< $(TRANSLATETABLE) $@
-
-$(STATICTARGETS) : $(TARGETDIR)/% : %
-	$(TARGET_CP) $^ $@
-
-$(INDEXHTMLTARGET) : $(TARGETDIR)/data_model.html
-	ln -s $^ $@
-
-
-# ---------------  Maintenance Rules  -----------------------------------
-
-clean :				# No intermediate files in this dir
-
-
-clobber :			# Remove targets, but not target dir.
-	rm -f $(TARGETS)
-
-
-sanitycheck :
-	$(SPECIFICCHECK) $(GENERICS) $(STATICS)
-
-# define one time only target
-
-onetimeonly :
-	$(ONETIMEONLY)
+include $(TOP)/make.default.rules
