@@ -30,6 +30,8 @@ HTTP_DATA_TRANSFER_DIR = $(TARGETROOT)/home/data_transfer/Downloads
 
 ENDEMICTARGETS_PRE = $(HTTP_DATA_TRANSFER_DIR)
 
+AD = /research/zfin/users/tomc/ANATOMY/anatomy_dictionary_current/ad.txt
+
 # ---------------  Production Rules  ------------------------------------
 
 # use default rules for directories without app pages in them
@@ -49,4 +51,5 @@ $(HTTP_DATA_TRANSFER_DIR) :
 # the public http directory
 
 run : $(TARGETDIR)/DownloadFiles.pl 
-	$(TARGETDIR)/DownloadFiles.pl 
+	$(TARGETDIR)/DownloadFiles.pl
+	cp  $(AD) $(HTTP_DATA_TRANSFER_DIR)/ad.txt  
