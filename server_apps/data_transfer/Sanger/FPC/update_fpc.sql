@@ -1,6 +1,6 @@
 set pdqpriority high;
+
 ! echo "load marker - name"
---drop table fpc_marker;
 create table fpc_marker(fpm_mrkr varchar(25),fpm_acc varchar(25))
 fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3  
 ; 
@@ -11,7 +11,6 @@ create index fpm_mrkr_ndx on fpc_marker(fpm_mrkr)in idxdbs3;
 update statistics medium for table fpc_marker;
 ---------------------------------------------------
 ! echo "load clone - marker"
---drop table fpc_clone;
 create table fpc_clone (fpcl_cln varchar(20), fpcl_acc varchar(20), fpcl_junk integer)
 fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3 
 ;
@@ -22,7 +21,6 @@ alter table fpc_clone drop fpcl_junk;
 update statistics medium for table fpc_clone;
 ---------------------------------------------------
 ! echo "load contig - clone"
---drop table fpc_contig;
 create table fpc_contig(fpct_ctg varchar(20), fpct_cln varchar(20), fpct_junk varchar(20))
 fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3 
 extent size 4096 next size 4096
@@ -220,9 +218,5 @@ and acc_num = fpcl_acc
 but same info is 1 click away by clicking on marker's Sanger_FPS link
 
 }
-
-
 drop table tmp_dblk;
-drop table fpc_marker;
-drop table fpc_clone;
-drop table fpc_contig;
+
