@@ -18,7 +18,7 @@ setenv INFORMIXSQLHOSTS ${INFORMIXDIR}/etc/<!--|SQLHOSTS_FILE|-->
 # 6 Abort
 
 ############################################################################################################
-set modeon=`onstat -| tr -d '\10' | cut -f2- -d\-|cut -c3,4`
+set modeon=`onstat -| tr -d '\12' | cut -f2- -d\-|cut -c3,4`
 
 if ($modeon != "On") then
     set mode="`onstat -` | $modeon"
