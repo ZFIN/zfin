@@ -13,7 +13,7 @@ function call_mapplet() {
 
 <!-- make sure at least one panel is specified -->
 
-if ((document.mapplet.MGH.checked == 0)&&(document.mapplet.GAT.checked == 0)&&(document.mapplet.MOP.checked ==0)&&(document.mapplet.LN54.checked == 0)&&(document.mapplet.T51.checked == 0)&&(document.mapplet.ZMAP.checked == 0)&&(document.mapplet.HS.checked == 0)) {
+if ((document.mapplet.MGH.checked == 0)&&(document.mapplet.GAT.checked == 0)&&(document.mapplet.MOP.checked ==0)&&(document.mapplet.LN54.checked == 0)&&(document.mapplet.T51.checked == 0)&&(document.mapplet.HS.checked == 0)) {
 
 	 alert ('Please check at least one panel');
   	 return false;
