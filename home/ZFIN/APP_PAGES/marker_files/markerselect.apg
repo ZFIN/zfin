@@ -292,7 +292,8 @@ requested from publication page for related data list.
 		 mrkr_type $name_sig_col 
 	  from marker $allname_table
 	  where $constraint
-	  into temp mrkrselect_tmp_markers with no log; ">
+	  into temp mrkrselect_tmp_markers with no log
+	;">
 	 
     <?/MISQL>
 
@@ -335,13 +336,13 @@ requested from publication page for related data list.
   	into temp mrkrselect_tmp_pub_mapped_markers with no log;  ">
     <?/MISQL><?MICOMMENT><?MIVAR> $MI_SQL $(SETVAR,$MI_SQL,)<?/MIVAR><br><?/MICOMMENT>
     <?MIVAR NAME=$xpat_loci_cols>n<?/MIVAR>
+
   <?/MIBLOCK>
    
   <?MISQL COND="$(AND,$(XST,$pubId),$(NC,$type,mapped))" SQL="
 	insert into attrib_data_temp(data_zdb_id) values ('x');
 	drop table attrib_data_temp; ">
   <?/MISQL>
-
 
   <?MIVAR NAME=$target_table>	
      $(IF,$(AND,$(XST,$pubId),$(EC,$type,mapped)),mrkrselect_tmp_pub_mapped_markers,mrkrselect_tmp_markers)
@@ -403,18 +404,18 @@ requested from publication page for related data list.
 
 
 
-  <!-- Stuff to control retrieval volume -->
-  <FORM method=post 
-      name=markerlister 
-      action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
-    <?MIVAR>
-      <input type=hidden name=MIval value=aa-markerselect.apg> 
-      <input type=hidden name=userid value="$userid">
-
-    <?/MIVAR>
-  </FORM>
-
   <?MIBLOCK COND="$(>,$num_recs,0)">
+
+    <!-- Stuff to control retrieval volume -->
+    <FORM method=post 
+          name=markerlister 
+          action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+      <?MIVAR>
+        <input type=hidden name=MIval value=aa-markerselect.apg> 
+        <input type=hidden name=userid value="$userid">
+
+      <?/MIVAR>
+    </FORM>
 
     <TABLE width=100% border=0 cellspacing=0>
       <TR align=left>
@@ -425,10 +426,10 @@ requested from publication page for related data list.
 	    $(IF,$(EC,$xpat_loci_cols,y), - name)
 	  <?/MIVAR>
         </TD>
-	  <?MIBLOCK COND="$(EC,$xpat_loci_cols,y)">
+	 <?MIVAR COND="$(EC,$xpat_loci_cols,y)"> 
         <TD align=left width=12%><B>Expression</B></TD>
         <TD align=left width=12%><B>Mutant Locus</b></TD>
-	  <?/MIBLOCK>
+	  <?/MIVAR>
         <TD align=left><b>Map<b></TD>
 
           <?MIBLOCK COND="$(XST,$input_name)">
@@ -525,8 +526,8 @@ requested from publication page for related data list.
 		  <font size=-1>Unknown</font>
 	      <?/MIBLOCK>
 	      </TD>	
-            <?/MIBLOCK> <!-- $xpat_loci_cols = y -->			
-	  <?/MIBLOCK><!-- addition for genes-->
+            <?/MIBLOCK> <!-- $xpat_loci_cols = y -->
+  	  <?/MIBLOCK><!-- addition for genes-->
 	
 	  <?MICOMMENT>Map info<?/MICOMMENT>
 	  <TD>
@@ -557,7 +558,9 @@ requested from publication page for related data list.
 
     <?/MISQL>	 <!-- for each search result --> 
     </TABLE>
- 
+
+
+
     <?MICOMMENT>Build the bar for walk window<?/MICOMMENT>
     <?MIVAR name=selector>MIval=aa-markerselect.apg&WINSIZE=$WINSIZE<?/MIVAR>
     <?MIVAR name=UserInput><?/MIVAR>
@@ -657,29 +660,27 @@ requested from publication page for related data list.
 
   <?/MIBLOCK> <!-- if $num_recs greater than 0 -->
 
-
-
-
-    <?MISQL COND="$(NC,$type,mapped)" SQL="
+  <?MISQL COND="$(NC,$type,mapped)" SQL="
 	set explain off;
 	drop table mrkrselect_tmp_markers;
       ">
-    <?/MISQL>
-    <?MISQL COND="$(EC,$type,mapped)" SQL="
+  <?/MISQL>
+
+
+  <?MISQL COND="$(EC,$type,mapped)" SQL="
 	set explain off;
 	drop table mrkrselect_tmp_pub_mapped_markers; ">
-    <?/MISQL>
+  <?/MISQL>
 
-    <!--a place holder sql, give time for the previous drop statement to finish completely-->
-    <?MISQL SQL="
-	select count(*) from systables ;">
-    <?/MISQL>
-
+ 
   <?/MIBLOCK> <!-- no simultanious name and acc search -->
+
+
+
+
+
 <?/MIBLOCK> <!-- query results -->
 
-
-<?MICOMMENT><?MISQL SQL="execute function get_time();">After display: $1<br><?/MISQL><?/MICOMMENT>
  
 
 <!----------------  Query Form -------------------------------------->
