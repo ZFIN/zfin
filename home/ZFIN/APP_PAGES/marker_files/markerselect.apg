@@ -173,13 +173,22 @@ DEBUGGING:
 	<?/MISQL>
 	
 	<?MISQL SQL="
-		select *
+		select 't'
 		  from marker_type_group_member
 		where mtgrpmem_mrkr_type_group = 'GENEDOM'
 		  and mtgrpmem_mrkr_type = '$marker_type'
 		;">
 	<?/MISQL>
-	<?MIVAR COND="$(>,$MI_ROWCOUNT,0)" NAME=type_of_genedom>t<?/MIVAR>
+	<?MIVAR COND="$(!=,$MI_ROWCOUNT,0)" NAME=type_of_genedom>t<?/MIVAR>
+
+	<?MISQL SQL="
+		select 't'
+		  from marker_type_group_member
+		where mtgrpmem_mrkr_type_group = 'KNOCKDOWN_REAGENT'
+		  and mtgrpmem_mrkr_type = '$marker_type'
+		;">
+	<?/MISQL>
+	<?MIVAR COND="$(!=,$MI_ROWCOUNT,0)" NAME=type_of_knockdown_reagent>t<?/MIVAR>
     <?MIELSE>
 	<?MIVAR NAME=$constraint> mrkr_type not in (select mtgrpmem_mrkr_type from marker_type_group_member where mtgrpmem_mrkr_type_group ='SEARCH_SEG')<?/MIVAR>
     <?/MIBLOCK>
@@ -539,23 +548,7 @@ DEBUGGING:
         </TD>
      <?/MIBLOCK>
     </TR>
-    <?MIBLOCK COND="$(AND,$(XST,$marker_type),$(XST,$type_of_genedom))">
-      <TR><TD>
-	<?MIVAR NAME=$mrkr_param_list>&query_results=t$(IF,$(XST,$input_name),&input_name=$input_name)$(IF,$(XST,$input_acc),&input_acc=$input_acc)$(IF,$(XST,$compare),&compare=$compare)$(IF,$(NC,$lg,0),&lg=$lg)<?/MIVAR>
-
-        <?MIBLOCK COND="$(NXST,$knownloci)"> 
-	  <?MIVAR><input type=button 
-            value="Show genes with known mutant loci" onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&marker_type=GENE&knownloci=t$mrkr_param_list')">
-	   <?/MIVAR>
-	<?MIELSE>
-
-	   <?MIVAR><input type=button 
-            value="Show all matching genes" onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&marker_type=GENE$mrkr_param_list')">
-	   <?/MIVAR>
-        <?/MIBLOCK>
-      </TD></TR>
-    <?/MIBLOCK>
-   </TABLE>
+    </TABLE>
 
    <?MICOMMENT> Stuff to control retrieval volume <?/MICOMMENT>
     <FORM method=post 
@@ -568,26 +561,6 @@ DEBUGGING:
       <?/MIVAR>
     </FORM>
 
-    <TABLE width=100% border=0 cellspacing=0>
-      <TR align=left>
-        <TD></TD>
-        <TD align=left width=25%>
-	  <b>Symbol </b>
-	  <?MIVAR>
-	    $(IF,$(EC,$xpat_loci_cols,y), - name)
-	  <?/MIVAR>
-        </TD>
-	 <?MIVAR COND="$(EC,$xpat_loci_cols,y)"> 
-        <TD align=left width=12%><B>Expression</B></TD>
-        <TD align=left width=12%><B>Mutant Locus</b></TD>
-	  <?/MIVAR>
-        <TD align=left><b>Map<b></TD>
-
-          <?MIBLOCK COND="$(XST,$input_name)">
-	<TD align=left><b>Matching Text</b></TD>
-          <?/MIBLOCK>
-
-      </TR>
 
     <?MIVAR NAME=$ok_view_map>0<?/MIVAR>
 
@@ -630,11 +603,53 @@ DEBUGGING:
       <?MIVAR name=$match_name>$(URLDECODE,$7)<?/MIVAR>
       <?MIVAR name=$match_text>$9<?/MIVAR>
 
+      <?MIBLOCK COND="$(EC,$MI_CURRENTROW,1)"> 
+        <?MICOMMENT> == display the "Show genes with known loci" button ==
+        <?/MICOMMENT>
+        <?MIBLOCK COND="$(AND,$(XST,$marker_type),$(XST,$type_of_genedom))">
+	  <?MIVAR NAME=$mrkr_param_list>&query_results=t$(IF,$(XST,$input_name),&input_name=$input_name)$(IF,$(XST,$input_acc),&input_acc=$input_acc)$(IF,$(XST,$compare),&compare=$compare)$(IF,$(NC,$lg,0),&lg=$lg)<?/MIVAR>
+
+          <?MIBLOCK COND="$(NXST,$knownloci)"> 
+	    <?MIVAR><input type=button 
+            value="Show genes with known mutant loci" onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&marker_type=GENE&knownloci=t$mrkr_param_list')">
+	     <?/MIVAR>
+	  <?MIELSE>
+
+	    <?MIVAR><input type=button 
+            value="Show all matching genes" onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&marker_type=GENE$mrkr_param_list')">
+	    <?/MIVAR>
+          <?/MIBLOCK>   
+        <?/MIBLOCK>
+        
+        <?MICOMMENT> == display title line ==
+        <?/MICOMMENT>          
+        <TABLE width=100% border=0 cellspacing=0>
+          <TR align=left>       
+           <TD align=left width=25%>
+	     <b>Symbol </b>
+	     <?MIVAR>
+	   	 $(IF,$(EC,$xpat_loci_cols,y), - name)
+	     <?/MIVAR>
+           </TD>
+	   <?MIVAR COND="$(EC,$xpat_loci_cols,y)"> 
+             <TD align=left width=12%><B>Expression</B></TD>
+             <TD align=left width=12%><B>Mutant Locus</b></TD>
+	   <?/MIVAR>
+           <?MIVAR COND="$(NXST,$type_of_knockdown_reagent)"> 
+       	     <TD align=left><b>Map<b></TD>
+           <?/MIVAR>
+           <?MIBLOCK COND="$(XST,$input_name)">
+	     <TD align=left><b>Matching Text</b></TD>
+           <?/MIBLOCK>
+         </TR>
+      <?/MIBLOCK><?MICOMMENT> end of first row display <?/MICOMMENT>	
+
+
        $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID="), $(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID="))
 
       <?MICOMMENT> start new row and column <?/MICOMMENT>
       <TR bgcolor="<?MIVAR>$row_color<?/MIVAR>">
-        <TD valign=top>&nbsp;</TD>
+        
         <?MIVAR name=$rowNUM>$(+,$rowNUM,1)<?/MIVAR>
 	<TD valign=top>
 	  <?MIVAR>	
@@ -691,12 +706,13 @@ DEBUGGING:
   	  <?/MIBLOCK><?MICOMMENT> addition for genes<?/MICOMMENT>
 	
 	  <?MICOMMENT>Map info<?/MICOMMENT>
+	    <?MIBLOCK COND="$(NXST,$type_of_knockdown_reagent)">	
 	  <TD>
-
           <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini&split=break&hide_empty=t&oID=$OID') from webPages where ID='aa-mappingdetail.apg';">
 	    $1<?/MISQL>
-
 	  </TD>
+            <?/MIBLOCK>
+  
             <?MIBLOCK COND="$(XST,$input_name)">
 	  <TD>
 	      <?MIVAR NAME=start_pos>$(POSITION,$(LOWER,$match_name),$(LOWER,$input_name))<?/MIVAR>
