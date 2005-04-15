@@ -134,7 +134,15 @@ Datablade documentation.
 	">
   <?/MISQL>
   <?MIVAR COND="$(>,$MI_ROWCOUNT,0)" NAME=type_of_genedom>t<?/MIVAR>
-   
+
+  <?MISQL SQL="
+	select 't'
+          from marker_type_group_member
+	 where mtgrpmem_mrkr_type_group='KNOCKDOWN_REAGENT'
+	   and mtgrpmem_mrkr_type = '$marker_type'; ">
+     <?MIVAR NAME=type_of_knockdown_reagent>t<?/MIVAR>
+  <?/MISQL>
+  
   <!-- if no match for the entered ID, display not found msg ------>
   <?MIBLOCK COND="$(OR,$(EC,$name,$MI_NOVALUE),$(NXST,$id_exist))">
      <!-- page header display ----------------->
@@ -173,8 +181,8 @@ Datablade documentation.
 		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&dataOID='+data_zdbId+'&attr='+subattr+'&attr_type=special-listitem&old_value='+source_zdbId+'&new_value=deleted&target_table=marker&info='+info);
 	}
 
-	function Delete_mrel(mrel_id, marker_id, type) {
- 		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=marker_relationship&attr_type=delete-mrkrrelation&old_value='+mrel_id+'&new_value=deleted&target_table=marker&info='+type);
+	function Delete_mrel(mrel_partner_id, type) {
+ 		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=marker_relationship&attr_type=delete-mrkrrelation&old_value='+mrel_partner_id+'&new_value=deleted&target_table=marker&info='+type);
 	}
 
 	function new_ortho() {
@@ -236,20 +244,18 @@ Datablade documentation.
   		}
 	}
 	function new_proseqnum() {
-		var dbind=document.updater.prt_seqdb.selectedIndex;
-		var dbname=document.updater.prt_seqdb[dbind].value;
-		var seq_acc=document.updater.prt_seq_acc.value;
+		var dbind=document.updateps.prt_seqdb.selectedIndex;
+		var dbname=document.updateps.prt_seqdb[dbind].value;
+		var seq_acc=document.updateps.prt_seq_acc.value;
 		if (seq_acc != ''){
 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value='+dbname+'&new_value='+seq_acc+'&target_table=marker&fdbcont_super=protein&fdbcont_data=domain');
   		}
 	}	
-	function new_mrkrrel() {
-		var mrkrrelind = document.updaterrel.relship.selectedIndex;
-		var mrkrrel_name = document.updaterrel.relship[mrkrrelind].value;
-		var mrkr_abbrev = escape(document.updaterrel.mrkr_abbrev.value);
-		mrkrrel_name.replace(/ /,"%20");
+	function new_mrkrrel(mrkrrel_type, mrkr_abbrev_value) {
+		var mrkr_abbrev = escape(mrkr_abbrev_value);
+		mrkrrel_type.replace(/ /,"%20");
 		if (mrkr_abbrev != '') {
-		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=mrkrrel&attr_type=special-newmrkrrel&old_value='+mrkrrel_name+'&new_value='+mrkr_abbrev+'&target_table=marker');
+		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=mrkrrel&attr_type=special-newmrkrrel&old_value='+mrkrrel_type+'&new_value='+mrkr_abbrev+'&target_table=marker');
   		}
 	}
 
@@ -276,25 +282,25 @@ Datablade documentation.
   		}
 	}
 
-	function new_attrib_mrel() {
-		var mrkr_abbrev=escape(document.updaterrel.attrib_mrkr_abbrev.value);
-		var pub_id=document.updaterrel.attrib_mrel_pubid.value.toUpperCase();
+	function new_attrib_mrel(attrmrelform) {
+		var mrkr_abbrev=escape(attrmrelform.attrib_mrkr_abbrev.value);
+		var pub_id=attrmrelform.attrib_mrel_pubid.value.toUpperCase();
 		if ((mrkr_abbrev != '') && (pub_id != '')) {
 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+mrkr_abbrev+'&new_value='+pub_id+'&target_table=marker&info=mrel');
   		}
 	}
 	
-	function new_attrib_ssprevname() {
-		var prev_name=escape(document.updater.attrib_ssprevname.value);
-		var pub_id=document.updater.attrib_ssprevname_pubid.value.toUpperCase();
+	function new_attrib_ssprevname(objform) {
+		var prev_name=escape(objform.attrib_ssprevname.value);
+		var pub_id=objform.attrib_ssprevname_pubid.value.toUpperCase();
 		if ((prev_name != '') && (pub_id != '')) {
 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+prev_name+'&new_value='+pub_id+'&target_table=marker&info=namealias');
   		}
 	}
 
-	function new_attrib_prevname() {
-		var prev_name=escape(document.updater.attrib_prevname.value);
-		var pub_id=document.updater.attrib_prevname_pubid.value.toUpperCase();
+	function new_attrib_prevname(objform) {
+		var prev_name=escape(objform.attrib_prevname.value);
+		var pub_id=objform.attrib_prevname_pubid.value.toUpperCase();
 		
 		if ((prev_name != '') && (pub_id != '')) {
 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+prev_name+'&new_value='+pub_id+'&target_table=marker&info=namealias');
@@ -302,8 +308,8 @@ Datablade documentation.
 	}
 
 	function new_attrib_prtnseq() {
-		var seq_acc = document.updater.attrib_prtn_seqacc.value;
-		var pub_id = document.updater.attrib_prtn_pubid.value.toUpperCase();
+		var seq_acc = document.updateps.attrib_prtn_seqacc.value;
+		var pub_id = document.updateps.attrib_prtn_pubid.value.toUpperCase();
 		if((seq_acc != '')&&(pub_id != '')) {
 			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+seq_acc+'&new_value='+pub_id+'&target_table=marker&info=seqacc');
 		}
@@ -323,8 +329,8 @@ Datablade documentation.
 		}
 	}
 
-	function new_attrib_mutant(dataid) {
-		var pub_id = document.updater.attrib_mutant_pubid.value.toUpperCase();
+	function new_attrib_mutant(dataid, objform) {
+		var pub_id = objform.attrib_mutant_pubid.value.toUpperCase();
 		if((dataid != '')&&(pub_id != '')) {
 			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=colattrib&attr_type=special-newattrib&old_value='+dataid+'&new_value='+pub_id+'&target_table=marker&info=cloned_gene');
 		}
@@ -373,19 +379,36 @@ Datablade documentation.
 
 <?MIVAR COND="$(XST,$UPDATE)"> <!---- define button to go back------>
  
-   <form name=updater><!-- for buttons for update purpose----------->
-   <center><font size=+2>
-   <input type=button 
+   <form>
+     <center><font size=+2>
+     <input type=button 
           value=" DONE UPDATING. Back to Viewing! " onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID')"> 
-   </font></center>
-   
+     </font></center>
+   </form> 
 <?/MIVAR>
 
+<?MICOMMENT>=========================================================
+            ==     Name    &   Input Welcome button
+            ==     Symbol (if genedom)
+	    =========================================================
+<?/MICOMMENT> 
+<?MICOMMENT> use table to line up title and your input welcome button
+<?/MICOMMENT> 
+<table width=100%>
+  <tr>
+   <td width=85%>
+    <?MIVAR COND="$(XST,$UPDATE)">
+    	<INPUT TYPE=button value=Update onClick="doit('mrkr_name','text','$marker_type_display+Name')">
+    <?/MIVAR>
 
-<?MIBLOCK COND="$(NXST,$UPDATE)"> <!---- define Input Welcome button---->     
-  <table width="15%" align=right>
-   <tr> 
-   <?MIVAR>
+    <?MIVAR NAME=$title>$marker_type_display Name<?/MIVAR>
+    <FONT size=+1><b>
+      <?MIVAR>$title: $(IF,$(XST,$type_of_genedom),<i>$name</i>,$name)<?/MIVAR>
+    </b></FONT>
+   </td>
+   <?MIBLOCK COND="$(NXST,$UPDATE)"> 
+    <td width=15% align=right>
+     <?MIVAR>
         <form method=post 
               action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
               target=comments>
@@ -395,45 +418,27 @@ Datablade documentation.
            <input type=hidden name=page_id value="$OID">
            <td><input type=submit value="Your Input Welcome"></td>         
          </form>
-    <?/MIVAR>
-    </tr>
-   </table>
-<?/MIBLOCK> 
-
-<!-------- Display marker name. When update, add button in front--------->   
-
-<?MIVAR COND="$(XST,$UPDATE)">
-    	<INPUT TYPE=button value=Update onClick="doit('mrkr_name','text','$marker_type_display+Name')">
-<?/MIVAR>
-
-<FONT size=+1>
-<?MIBLOCK COND="$(XST,$type_of_genedom)">
-    	<?MIVAR NAME=$title>$marker_type_display Name<?/MIVAR>
-	<?MIVAR><b>$title: &nbsp;<i>$name</i></b><?/MIVAR><br>
-<?MIELSE>
-    	<?MIVAR NAME=$title>$marker_type_display<?/MIVAR>
-	<?MIVAR><b>$title: &nbsp;$name </b><?/MIVAR><br>
-<?/MIBLOCK>
-</FONT>
-
-
-<!-- If gene, Display gene symbol. When update, add button in front.----->     
-<?MIVAR COND="$(AND,$(XST,$type_of_genedom),$(XST,$UPDATE))">
-     	<INPUT TYPE=button value=Update onClick="doit('mrkr_abbrev','text','$marker_type_display+Abbrev')"> 
-<?/MIVAR>
-
-
-<?MIVAR COND="$(XST,$type_of_genedom)">
-  <FONT size=+1><b>$marker_type_display Symbol:&nbsp;<i>$abbrev</i></b></FONT>
-  <br>
-<?/MIVAR>
-
-<!---------------------------------------------------------------->  
+      <?/MIVAR>
+    </td>
+   <?/MIBLOCK>
+  </tr>
+  <?MIVAR COND="$(XST,$type_of_genedom)">
+    <tr><td colspan=2>
+      <?MIVAR COND="$(XST,$UPDATE)">
+        <INPUT TYPE=button value=Update onClick="doit('mrkr_abbrev','text','$marker_type_display+Abbrev')">
+      <?/MIVAR>
+      <FONT size=+1><b>
+	$marker_type_display Symbol:&nbsp;<i>$abbrev</i>
+      </b></FONT>
+    </td></tr>
+  <?/MIVAR>
+</table>
 
   
-
-
-<!--------- Display previous names --------------------------------> 
+<?MICOMMENT>=========================================================
+            ==     Previous Names
+	    =========================================================
+<?/MICOMMENT> 
 <?MIVAR COND="$(XST,$UPDATE)">
   <INPUT TYPE=button 
     value=Add
@@ -451,10 +456,12 @@ Datablade documentation.
   <?/MIVAR>
 
   <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(XST,$UPDATE))">
+    <form>
     <br><b>Add Reference:</b> 
     Previous name:<input type=text name=attrib_prevname>	
     Reference:<input type=text name=attrib_prevname_pubid>
-    <input type=button value="Add" onClick=new_attrib_prevname();> 
+    <input type=button value="Add" onClick=new_attrib_prevname(this.form);> 
+    </form>
   <?/MIVAR>
 
   <?MIVAR NAME=$alias>$1<?/MIVAR>
@@ -476,18 +483,19 @@ Datablade documentation.
 <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
     <br>
 <?/MIVAR>
-<!----------------------------------------------------------------> 
 
 
-
-<!--------- Display sequence similarities --------------------------------> 
-
+<?MICOMMENT>=========================================================
+            ==     Sequence Similarities
+	    =========================================================
+<?/MICOMMENT> 
 <?MIVAR NAME="display_sequence_similarity">false<?/MIVAR>
+
 <?MISQL SQL="select count(*) 
 	     from data_alias 
 	     where dalias_data_zdb_id = '$OID' 
 	       and dalias_group = 'sequence similarity';">
-<?MIVAR COND="$(>,$1,0)" NAME="display_sequence_similarity">true<?/MIVAR>
+  <?MIVAR COND="$(>,$1,0)" NAME="display_sequence_similarity">true<?/MIVAR>
 <?/MISQL>
 
 <?MIBLOCK COND="$(EQ,$display_sequence_similarity,true)">
@@ -506,10 +514,12 @@ Datablade documentation.
     where dalias_data_zdb_id = '$OID' and dalias_group = 'sequence similarity';">
 
   <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(XST,$UPDATE))">
+    <form>
     <br><b>Add Reference:</b> 
     Sequence similarity:<input type=text name=attrib_ssprevname>	
     Reference:<input type=text name=attrib_ssprevname_pubid>
-    <input type=button value="Add" onClick=new_attrib_ssprevname();> 
+    <input type=button value="Add" onClick=new_attrib_ssprevname(this.form);> 
+    </form>
   <?/MIVAR>
 
 
@@ -535,60 +545,147 @@ Datablade documentation.
 <?/MIBLOCK> <?MICOMMENT> end display_sequence_similarity <?/MICOMMENT>
 
 
-
-<!--------- Display sequence  --------------------------------> 
-
-<?MIVAR NAME="display_sequence">false<?/MIVAR>
-<?MISQL SQL="select count(*)
+<?MICOMMENT>=========================================================
+            ==     Sequence 
+	    =========================================================
+<?/MICOMMENT>
+<?MISQL SQL="select count(*)::integer
 	     from marker_sequence
 	     where mrkrseq_mrkr_zdb_id = '$OID';">
-<?MIVAR COND="$(>,$1,0)" NAME="display_sequence">true<?/MIVAR>
 <?/MISQL>
+<?MIVAR NAME=mrkrview_num_of_seq>$1<?/MIVAR>
 
-<?MIBLOCK COND="$(EQ,$display_sequence,true)">
-        <b>Sequence:</b>
+<?MICOMMENT> get blast linkout url <?/MICOMMENT>
+<?MISQL SQL="select fdb_db_query 
+	      from foreign_db 
+	     where fdb_db_name ='BLAST';">
+    <?MIVAR NAME=fdb_url_blast>$1<?/MIVAR>
+<?/MISQL>
+<?MIVAR NAME=blast_option>&EXPECT=1000&WORD_SIZE=7&ENTREZ_QUERY=Danio rerio [ORGN]&FORMAT_ENTREZ_QUERY=All organisms<?/MIVAR>
 
- <?MISQL SQL="
-   select mrkrseq_sequence, mrkrseq_left_end, mrkrseq_zdb_id
-     from marker_sequence
-    where mrkrseq_mrkr_zdb_id = '$OID';">
-    <?MIVAR NAME=$sequence>$1<?/MIVAR>
-    <?MIVAR NAME=$left_end>$2<?/MIVAR>
-    <?MIVAR NAME=$mrkrseq_zdb_id>$3<?/MIVAR>
+<?MIBLOCK COND="$(!=,$mrkrview_num_of_seq,0)">
+  <?MIVAR COND="$(XST,$UPDATE)">
+      <form>
+  <?/MIVAR>
+  <br> <?MICOMMENT> for display purpose <?/MICOMMENT>
+  <?MICOMMENT>use table to align sequence and disclaimer<?/MICOMMENT>
+  <table width=100% cellpadding=0 cellspacing=0> 
+   <tr> <?MIVAR>
+    <td width=7%>
+        <?/MIVAR>
+  	<b>Sequence:</b>
+    </td>
+   
+    <?MISQL SQL="
+       select mrkrseq_sequence, mrkrseq_left_end, mrkrseq_zdb_id
+         from marker_sequence
+        where mrkrseq_mrkr_zdb_id = '$OID';">
+
+      <?MIVAR NAME=$sequence>$1<?/MIVAR>
+      <?MIVAR NAME=$left_end>$2<?/MIVAR>
+      <?MIVAR NAME=$mrkrseq_zdb_id>$3<?/MIVAR>
+    <?/MISQL> <?MICOMMENT>curator confirmed only one sequence<?/MICOMMENT>
+    <?MIVAR NAME=$right_end>$(IF,$(EC,$left_end,5'),3',5')<?/MIVAR>
+    <td>	
+      <?MIVAR COND="$(XST,$UPDATE)">
+        <INPUT TYPE=button value=Update 
+           onClick="update_mrkrsequence('$mrkrseq_zdb_id','$sequence',this.form.sequence.value)";>
+      <?/MIVAR>
+      <?MIVAR>
+      &nbsp;$left_end - <?MIVAR COND="$(XST,$UPDATE)"><INPUT TYPE=text size=30 name=sequence value="<?/MIVAR>$sequence<?MIVAR COND="$(XST,$UPDATE)">"><?/MIVAR> - $right_end
+      <?/MIVAR>
+      <?MISQL SQL="select WebExplode(object,'dataId=$mrkrseq_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+
+       <?MIVAR>
+	 &nbsp;  <input type=button value="BLAST IT" onClick="window.open('$(CONCAT,$fdb_url_blast,$sequence,$blast_option)');">
+       <?/MIVAR>
+     </td>
+   </tr>
+   <tr>
+     <td> &nbsp; </td>
+     <td>
+      <?MICOMMENT>in checkedout branch, a sequence_disclaimer.apg page is added.
+            we are hardcoding now, and will update when merge.
+      <?/MICOMMENT> 
+      <font size=-1>
+	&nbsp;(Although ZFIN verifies reagent sequence data, we recommend that you conduct independent sequence analysis before ordering any reagent.)
+      </font>
+     </td>
+   </tr>
+  </table>
+
+  <?MIVAR COND="$(XST,$UPDATE)"></form><?/MIVAR>
+  <br> <?MICOMMENT> for display purpose <?/MICOMMENT>
+<?/MIBLOCK> <?MICOMMENT> end of exist sequence  <?/MICOMMENT>
+
+
+<?MICOMMENT>=========================================================
+            ==     Target Gene
+	    =========================================================
+<?/MICOMMENT>
+<?MIBLOCK COND="$(XST,$type_of_knockdown_reagent)">
+  <?MIBLOCK COND="$(XST,$UPDATE)">
+     <form>
+     Add Target Gene:
+     Symbol: <input type=text size=15 name=mrkr_abbrev>
+     <input type=button value="Add it!" onClick="new_mrkrrel('1to2-knockdown reagent targets gene',this.form.mrkr_abbrev.value)">
+     <br>
+     Add Reference:
+     Gene symbol:<input type=text name=attrib_mrkr_abbrev>	
+     Reference:<input type=text name=attrib_mrel_pubid>
+     <input type=button value="Add" onClick=new_attrib_mrel(this.form);> 
+     </form>
+  <?/MIBLOCK>
+
+  <?MISQL SQL="select mrkr_zdb_id, mrkr_abbrev, mrel_zdb_id
+	       from marker_relationship
+		    join marker on mrel_mrkr_2_zdb_id = mrkr_zdb_id
+	      where mrel_mrkr_1_zdb_id = '$OID'
+		and mrel_type = 'knockdown reagent targets gene';">
+
+    <?MIVAR NAME=mrkrview_trg_gene_zdb_id>$1<?/MIVAR>
+    <?MIVAR NAME=mrkrview_trg_gene_sym>$2<?/MIVAR>
+    <?MIVAR NAME=mrkrview_trg_mrel_zdb_id>$3<?/MIVAR>
+    <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
+	<b> Target Gene: </b>
+    <?MIELSE>
+	, &nbsp;
+    <?/MIBLOCK>
+
     <?MIVAR COND="$(XST,$UPDATE)">
-      </form>
-      <form name=markerSequence>
-      <br> 
-      <INPUT TYPE=button 
-        value=Update 
-        onClick="update_mrkrsequence('$mrkrseq_zdb_id','$sequence',document.markerSequence.sequence.value)";>
+       <input type=button value=Delete
+         onClick="Delete_mrel('$mrkrview_trg_gene_zdb_id','knockdown reagent targets gene')">
     <?/MIVAR>
-    $left_end - <?MIVAR COND="$(XST,$UPDATE)"><INPUT TYPE=text size=30 name=sequence value="<?/MIVAR>$sequence<?MIVAR COND="$(XST,$UPDATE)">"><?/MIVAR> - $(IF,$(EC,$left_end,5'),3,5)'
-    <?MISQL SQL="select WebExplode(object,'dataId=$mrkrseq_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
-    <br>
-    <?MIVAR COND="$(XST,$UPDATE)"></form><?/MIVAR>
- <?/MISQL>
 
-      
- <?MIBLOCK COND=$(EC,$marker_type,MRPHLNO)>
-   <br>
-   ZFIN makes every effort to verify reagent sequence data.  Nevertheless, we
-   suggest that you consult the original literature and conduct independent
-   sequence analysis before using this reagent in your research.
- <?/MIBLOCK>
-<?/MIBLOCK> <?MICOMMENT> end display_sequence <?/MICOMMENT>
+    <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrview_trg_gene_zdb_id">$mrkrview_trg_gene_sym</a>
+    <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_trg_mrel_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>	
+  <?/MISQL>
+  <?MIBLOCK COND="$(!=,$MI_ROWCOUNT,0)">
+    <p> <?MICOMMENT> for display purpose <?/MICOMMENT>
+  <?/MIBLOCK>
+<?/MIBLOCK> <?MICOMMENT> end of type_of_knockdown_reagent<?/MICOMMENT>
 
-<!--------------- Dispalay NOMENCLATURE HISTORY -------------------->
+
+<?MICOMMENT>=========================================================
+            ==     Nomenclature History
+	    =========================================================
+<?/MICOMMENT>
 
 <?MISQL SQL="select * from marker_history where mhist_mrkr_zdb_id = '$OID'">
 <?/MISQL>
-<?MIVAR COND="$(AND,$(XST,$type_of_genedom),$(>,$MI_ROWCOUNT,0))"><font size=-1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-nomenview.apg&OID=$OID&abbrev=$abbrev$(IF,$(XST,$UPDATE),&UPDATE=1)">Nomenclature History</A></font><br><?/MIVAR>
+<?MIVAR COND="$(AND,$(XST,$type_of_genedom),$(>,$MI_ROWCOUNT,0))">
+    <font size=-1><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-nomenview.apg&OID=$OID&abbrev=$abbrev$(IF,$(XST,$UPDATE),&UPDATE=1)">Nomenclature History</A>
+    </font>
+    <br>
+<?/MIVAR>
 
-<!---------------- end NOMENCLATURE HISTORY ------------------------> 
 
-<!---------------------Curator Note-------------->
+<?MICOMMENT>=========================================================
+            ==    Curator Note
+	    =========================================================
+<?/MICOMMENT>
+
 <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
-  <br>
   <B>Curator Notes:</B>
   <?MISQL SQL="select count(*) 
 		from data_note
@@ -600,87 +697,189 @@ Datablade documentation.
   <?MIVAR COND="$(EC,$1,0)">
     <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$OID">Add Notes</a> 
   <?/MIVAR>
-  <P>
  <?/MISQL>
+ <br>
 <?/MIBLOCK>
-<!--------- Display description  ---------------------------------> 
 
-<?MIBLOCK>
 
-  <?MISQL SQL="
+<?MICOMMENT>=========================================================
+            ==    Note
+	    =========================================================
+<?/MICOMMENT>
+
+<?MISQL SQL="
      select mrkr_comments 
-	  from marker 
-	  where mrkr_Zdb_id='$OID'
-	  and mrkr_comments is not null
-	  and mrkr_comments != '';">
+       from marker 
+      where mrkr_Zdb_id='$OID'
+        and mrkr_comments is not null
+        and mrkr_comments != '';">
 
   <?MIVAR NAME=$mrkrview_mrkr_comments>$1<?/MIVAR>
 
   <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(OR,$(>,$(POSITION,$OID,BAC),0),$(>,$(POSITION,$OID,PAC),0)))">
-    <br>
     <b>EMBL:</b>
   <?/MIVAR>
 
   <?MIVAR COND="$(>,$MI_CURRENTROW,0)">
-     <b>Note:</b>$mrkrview_mrkr_comments
-	  <?MIVAR COND="$(XST,$UPDATE)">
+     <b>Note:</b>
+     &nbsp;$mrkrview_mrkr_comments
+     <?MIVAR COND="$(XST,$UPDATE)">
 	  <INPUT TYPE=button value="Update Note" onClick="doit('mrkr_comments','textarea','Note')"> 
-	  <?/MIVAR> 
+     <?/MIVAR> 
+     <br>
   <?/MIVAR>
+<?/MISQL>
 
-  <?/MISQL>
+<?MIVAR COND="$(=,$MI_ROWCOUNT,0)">
+   <?MIVAR COND="$(XST,$UPDATE)">
+      <INPUT TYPE=button value="Add New Marker Note" onClick="doit('mrkr_comments','textarea','Note')"> 
+      <br>
+   <?/MIVAR> 
+<?/MIVAR>
 
- <?MIVAR COND="$(<=,$MI_ROWCOUNT,0)">
-	  <?MIVAR COND="$(XST,$UPDATE)">
-	  <INPUT TYPE=button value="Add New Marker Note" onClick="doit('mrkr_comments','textarea','Note')"> 
-	  <?/MIVAR> 
-  <?/MIVAR>
 
-<?/MIBLOCK>
-
-<!-----------end Display description ------------------------------->
-
-<!-------- CLONE info ------------------------------------------->
+<?MICOMMENT>=========================================================
+            ==    Clone box
+	    =========================================================
+<?/MICOMMENT>
 <?MIVAR NAME="SOURCE"> <?/MIVAR>
 <?MISQL SQL="select WebExplode(object,'CLONE_MARKER_ID=$OID') from webPages where ID='aa-clonebox.apg' 
-	     and exists (select 'x' from clone where clone_mrkr_zdb_id = '$OID');"><hr width=80%><b>CLONE DATA: </b>$1<?/MISQL>
+	     and exists (select 'x' from clone where clone_mrkr_zdb_id = '$OID');">
+	<hr width=80%>
+        <b>CLONE DATA: </b> $1
+<?/MISQL>
 
-<!-------- end CLONE -------------------------------------------->
 
+<?MICOMMENT>=========================================================
+            ==    MUTANTS AND TARGETED KNOCKDOWNS
+	    =========================================================
+<?/MICOMMENT>
+<?MIVAR NAME=display_mut_trg_title>f<?/MIVAR>
+<?MIBLOCK COND="$(AND,$(XST,$type_of_genedom),$(XST,$UPDATE))">
+     <?MIVAR COND="$(EC,$display_mut_trg_title,f)">
+         <hr width=80%>
+	 <b>
+		MUTANTS AND TARGETED KNOCKDOWNS: 
+         </b> <br>
+         $(SETVAR,$display_mut_trg_title,t)
+     <?/MIVAR>
+     <form>
+     <b> Add Knockdown Reagent: </b>
+     Name: <input type=text size=15 name=mrkr_abbrev>
+     <input type=button value="Add it!" onClick="new_mrkrrel('2to1-knockdown reagent targets gene',this.form.mrkr_abbrev.value)">
+     <br>
+     <b>Add Reference:</b> 
+     Reagent name:<input type=text name=attrib_mrkr_abbrev>	
+     Reference:<input type=text name=attrib_mrel_pubid>
+     <input type=button value="Add" onClick=new_attrib_mrel(this.form);> 
+     </form>
+<?/MIBLOCK>
 
-<!-------- MUTANT LOCUS ------------------------------------------>
+   <?MICOMMENT>==============================
+               ==    Mutant Locus
+	       ==============================
+   <?/MICOMMENT>
 
 <?MISQL SQL="
-   select zdb_id, locus_name, abbrev from locus where cloned_gene='$OID';">
+   select zdb_id, locus_name, abbrev 
+     from locus 
+    where cloned_gene='$OID';">
 <?/MISQL>
-<?MIVAR NAME=$locus>$1<?/MIVAR>
+<?MIVAR NAME=$mrkrview_locus_zdb_id>$1<?/MIVAR>
+<?MIVAR NAME=$mrkrview_locus_name>$2<?/MIVAR>
+<?MIVAR NAME=$mrkrview_locus_abbrev>$3<?/MIVAR>
 
-<?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
-  
-  <hr width = "80%">
-  <?MIVAR>
-     <TABLE width="100%" cellpadding=3 border=0 bgcolor="$highlight" cols=2 rows=1>
+<?MIBLOCK COND="$(!=,$MI_ROWCOUNT,0)">
+  <?MIVAR COND="$(EC,$display_mut_trg_title,f)">
+      <hr width=80%>
+      <b>
+	MUTANTS AND TARGETED KNOCKDOWNS: 
+      </b> <br>
+      $(SETVAR,$display_mut_trg_title,t)
+  <?/MIVAR> 
+  <?MIVAR><?MICOMMENT>to have backgroup color<?/MICOMMENT>
+    <table width =100% border=0 bgcolor=$highlight>
   <?/MIVAR>
-  <TR><TD><font color="red">
-  <?MIVAR>
-  <b>Mutant Locus:</b></font>
-  <?MIVAR COND="$(XST,$UPDATE)">
-  <br><b>Add reference:</b>
-  Reference:<input type=text name=attrib_mutant_pubid>
-  <input type=button value="Add" onClick=new_attrib_mutant("$1");><br> 
-  <?/MIVAR>	 
-  The mutant locus <b><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$1">$2 ($3) </A> </b> has been shown to correspond to Gene <b>$abbrev</b>. 
-  <?MISQL SQL="select WebExplode(object,'dataId=$1&type=colattrib&info=cloned_gene') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
-  <?/MIVAR>
-  </TD>
-  </TR></TABLE>
+  <tr>
+    <td>
+      <b>Mutant locus: </b>
+ 
+    <?MIVAR COND="$(XST,$UPDATE)">
+      <form>
+      <br><b>Add reference:</b>
+      Reference:<input type=text name=attrib_mutant_pubid>
+      <input type=button value="Add" onClick=new_attrib_mutant("$1", this.form);><br>
+      </form> 
+    <?/MIVAR>
+	 
+    <?MIVAR> 
+      <A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$1">
+   	   $mrkrview_locus_name ($3) 
+      </A> has been shown to correspond to gene <i>$abbrev</i>. 
+    <?/MIVAR>
+
+    <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_locus_zdb_id&type=colattrib&info=cloned_gene') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+  </td></tr>
+  </table>
 <?/MIBLOCK>
-<!--------------------------------------------------------------->
+
+    <?MICOMMENT>================================
+                ==    Knockdown Reagent
+	        =================================
+    <?/MICOMMENT>
+<?MIBLOCK COND="$(XST,$type_of_genedom)">
+  <?MISQL SQL="select count(*)::integer
+	       from marker_relationship
+	      where mrel_mrkr_2_zdb_id = '$OID'
+		and mrel_type = 'knockdown reagent targets gene';">
+
+     <?MIVAR NAME=$mrkrview_agt_plural>$(IF,$(>,$1,1),<b>s</b>,)<?/MIVAR>
+  <?/MISQL>
+
+  <?MISQL SQL="select mrkr_zdb_id, mrkr_abbrev, mrel_zdb_id
+	       from marker_relationship
+		    join marker on mrel_mrkr_1_zdb_id = mrkr_zdb_id
+	      where mrel_mrkr_2_zdb_id = '$OID'
+		and mrel_type = 'knockdown reagent targets gene'
+	      order by mrkr_abbrev_order;">
+
+    <?MIVAR NAME=mrkrview_agt_zdb_id>$1<?/MIVAR>
+    <?MIVAR NAME=mrkrview_agt_name>$2<?/MIVAR>
+    <?MIVAR NAME=mrkrview_agt_mrel_zdb_id>$3<?/MIVAR>
+    <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
+        <?MIVAR COND="$(EC,$display_mut_trg_title,f)">
+	   <hr width=80%>
+	   <b>MUTANTS AND TARGETED KNOCKDOWNS: </b> <br>         
+        <?/MIVAR> 
+	<?MIVAR> 
+	  <table width=100% border=0 bgcolor=$highlight>
+           <tr><td>
+  	     <b> Knockdown reagent$mrkrview_agt_plural: </b>
+	<?/MIVAR>
+    <?MIELSE>	
+	, &nbsp;
+    <?/MIBLOCK>
+
+    <?MIVAR COND="$(XST,$UPDATE)">
+       <input type=button value=Delete
+         onClick="Delete_mrel('$mrkrview_agt_zdb_id','knockdown reagent targets gene')">
+    <?/MIVAR>
+
+    <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrview_agt_zdb_id">
+	$mrkrview_agt_name
+    </a>
+    <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_agt_mrel_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>	
+  <?/MISQL>
+  <?MIBLOCK COND="$(!=,$MI_ROWCOUNT,0)">
+    </td></tr></table>
+  <?/MIBLOCK>
+<?/MIBLOCK><?MICOMMENT>end of type_of_genedom<?/MICOMMENT>
 
 
-<!-------------- GENE PRODUCT ---------------------------------->
-<!-- only for genes, and only display when there is information---->
-
+<?MICOMMENT>=========================================================
+            ==    GENE PRODUCT
+	    =========================================================
+<?/MICOMMENT>
 <?MIBLOCK COND="$(XST,$type_of_genedom)">
 
     <?MIVAR NAME=qualifier>false<?/MIVAR>
@@ -728,7 +927,7 @@ Datablade documentation.
  <?MIVAR NAME=$rowcount>$1<?/MIVAR> 
  <?MIBLOCK COND="$(>,$rowcount,0)">  
 	<hr width = "80%"> 
-  	<b>GENE PRODUCTS: </b><br> 
+  	<b>GENE PRODUCTS: </b> 
         <?MIVAR>$(SETVAR,$titledisplay,1)<?/MIVAR>
     <?MIVAR>
 	<p><b>Gene Ontology</b><?/MIVAR>
@@ -740,9 +939,9 @@ Datablade documentation.
       <?MIBLOCK COND="$(XST,$UPDATE)">
 
 	<hr width = "80%"> 
-  	<b>GENE PRODUCTS: </b><br> 
+  	<b>GENE PRODUCTS: </b> 
         <?MIVAR>$(SETVAR,$titledisplay,1)<?/MIVAR>
-	<b>Gene Ontology</b>
+	<p><b>Gene Ontology</b>
       <?MIVAR>
       <INPUT TYPE=button value="Update" onClick="edit_go('$OID')"><?/MIVAR> 
      <?/MIBLOCK>
@@ -871,6 +1070,7 @@ Datablade documentation.
 	<p><b>Protein Families, Domains and Sites: </b>
   	<?MIVAR>
 	 <?MIBLOCK COND="$(XST,$UPDATE)">
+          <form name=updateps>
           <br>
   	  <b>Add link to Protein Seq DB:</b> &nbsp;
   	  DBname:<SELECT name=prt_seqdb>
@@ -891,7 +1091,8 @@ Datablade documentation.
  	   Reference: <input type=text size=15 name=attrib_prtn_pubid> 
   	   <input type=button value="Add it!" onClick=new_attrib_prtnseq();>
            <?/MIVAR>
- 	 <?/MIBLOCK>
+           </form>
+ 	 <?/MIBLOCK> <?MICOMMENT>end of update <?/MICOMMENT>
 	<TABLE width = "100%" border = 0 bgcolor = "$highlight">
  	 <?/MIVAR>
         <TR> 
@@ -941,10 +1142,8 @@ Datablade documentation.
 <?/MISQL>
 <?MIVAR NAME=chimeric_clone_list>$(SEPARATE,$chimeric_clone_list,"','")<?/MIVAR>  
 
-<!-------  only for cloned genes or ests. ---------->
 <?MIBLOCK COND="$(OR,$(XST,$type_of_genedom),$(EC,$marker_type,EST),$(EC,$marker_type,CDNA))">
 
-  <?MICOMMENT>******* GENE or EST **********<?/MICOMMENT>
   <?MIVAR NAME=$XPAT_ZDB_ID><?/MIVAR>
 
   <?MISQL SQL="
@@ -955,7 +1154,7 @@ Datablade documentation.
   <?MIVAR NAME=$expexists>$1<?/MIVAR>
 
   <?MIBLOCK COND="$expexists">
-    <HR width="80%">
+    <hr width="80%">
     <b>GENE EXPRESSION: </b><font size=-1>(<a href="javascript:start_note();">current status</a></font>)
     <TABLE width="100%" border="0" <?MIVAR>bgcolor="$highlight"<?/MIVAR>>
        
@@ -1069,27 +1268,33 @@ Datablade documentation.
 <!--------------- ends GENE EXPRESSION -------------------------->
 
 
-<!------------------ MARKER RELATIONSHIP ---------------------->
+ 
+<?MICOMMENT>=========================================================
+            ==    MARKER RELATIONSHIP
+	    =========================================================
+<?/MICOMMENT>
 
-
+<?MIBLOCK COND="$(NXST,$type_of_knockdown_reagent)">
 <?MIVAR NAME=$mrel_mtype><?/MIVAR>
 <?MIVAR NAME=$mrel_count><?/MIVAR>
 
+<?MISQL SQL="select count(*)::Integer 
+               from marker_relationship 
+              where (mrel_mrkr_1_zdb_id = '$OID' 
+                     or mrel_mrkr_2_zdb_id = '$OID')
+                and mrel_type <> 'knockdown reagent targets gene';">
+     <?MIVAR NAME=$mrel_count>$1<?/MIVAR>
+<?/MISQL>
 
-<?MISQL SQL="select count(*)::Integer from marker_relationship where mrel_mrkr_1_zdb_id = '$OID' or mrel_mrkr_2_zdb_id = '$OID';">
-  <?MIVAR NAME=$mrel_count>$1<?/MIVAR>
 <?MIBLOCK COND="$(OR,$(NC,$mrel_count,0),$(XST,$UPDATE))">
-<HR width="80%"><b>
+  <HR width="80%">
+  <b>
   <?MIBLOCK COND="$(XST,$type_of_genedom)">
     SEGMENT (CLONE AND PROBE) RELATIONSHIPS:
   <?MIELSE>
     MARKER RELATIONSHIPS
   <?/MIBLOCK>
-</b>
-<?/MIBLOCK>
-<?/MISQL>
-<?MIBLOCK COND="$(XST,$UPDATE)">
-  </form>  <?MICOMMENT> End updater form <?/MICOMMENT>
+  </b>
 <?/MIBLOCK>
 
 <?MIBLOCK COND="$(XST,$UPDATE)">
@@ -1097,32 +1302,37 @@ Datablade documentation.
  <b>Add relationship:</b> &nbsp;
  Relationship:<SELECT name=relship>
  <?MISQL SQL="select unique mreltype_name, mreltype_1_to_2_comments 
-	       from marker_relationship_type,
-	            marker_type_group_member, marker
-	      where mreltype_mrkr_type_group_1 = mtgrpmem_mrkr_type_group
-	        and mrkr_type = mtgrpmem_mrkr_type
-                and mrkr_zdb_id = '$OID'   ">
- <option value="1to2-$1">$1-$2
+	       from marker_relationship_type
+	            join marker_type_group_member
+		      on mreltype_mrkr_type_group_1 = mtgrpmem_mrkr_type_group
+	      where get_obj_type('$OID') = mtgrpmem_mrkr_type
+		and mreltype_name <> 'knockdown reagent targets gene' ">
+   <option value="1to2-$1">$1-$2
  <?/MISQL>
   
  <?MISQL SQL="select unique mreltype_name, mreltype_2_to_1_comments 
-	       from marker_relationship_type,
-	            marker_type_group_member, marker
-	      where mreltype_mrkr_type_group_2 = mtgrpmem_mrkr_type_group
-	        and mrkr_type = mtgrpmem_mrkr_type
-                and mrkr_zdb_id = '$OID'   ">
- <option value="2to1-$1">$1-$2
+	       from marker_relationship_type
+	            join marker_type_group_member
+	              on mreltype_mrkr_type_group_2 = mtgrpmem_mrkr_type_group
+	      where get_obj_type('$OID') = mtgrpmem_mrkr_type
+                and mreltype_name <> 'knockdown reagent targets gene'  ">
+   <option value="2to1-$1">$1-$2
  <?/MISQL>
  </SELECT>
  partner Symbol:<input type=text size=15 name=mrkr_abbrev> 
- <input type=button value="Add it!" onClick=new_mrkrrel();>
+ <?MICOMMENT>new_mrkrrel() function is also used by target gene and 
+             knockdown reagent section. That is the reason why we 
+             need to send values as parameters. There possibly is nicer
+             solution...
+ <?/MICOMMENT> 
+ <input type=button value="Add it!" onClick=new_mrkrrel(this.form.relship.options[this.form.relship.selectedIndex].value,this.form.mrkr_abbrev.value);>
  
-   <?MIVAR COND="$(AND,$(>,$mrel_count,0),$(XST,$UPDATE))">
+  <?MIVAR COND="$(AND,$(>,$mrel_count,0),$(XST,$UPDATE))">
      <br><b>Add Reference:</b> 
      Marker abbrev:<input type=text name=attrib_mrkr_abbrev>	
      Reference:<input type=text name=attrib_mrel_pubid>
-     <input type=button value="Add" onClick=new_attrib_mrel();> 
-   <?/MIVAR>
+     <input type=button value="Add" onClick=new_attrib_mrel(this.form);> 
+  <?/MIVAR>
   
 <?/MIBLOCK>  <?MICOMMENT> end if update <?/MICOMMENT>
 
@@ -1141,6 +1351,8 @@ Datablade documentation.
 <?MIBLOCK COND="$(XST,$UPDATE)">
   </form> <?MICOMMENT> end form updaterrel <?/MICOMMENT>
 <?/MIBLOCK>
+
+<?/MIBLOCK> <?MICOMMENT>end of not type_of_knockdown_reagent<?/MICOMMENT>
 
 <!------------------ end of MARKER RELATIONSHIP --------------->
 
@@ -1547,27 +1759,30 @@ Datablade documentation.
 <!------------   ends   OTHER MARKER PAGES   ------------------------>
 
 
-<!---------------- MAPPING INFORMATION   ---------------------->
 
+<?MICOMMENT>=========================================================
+            ==    MAPPING INFORMATION
+	    =========================================================
+<?/MICOMMENT>
 
-<hr width="80%" align = center>
-<b>MAPPING INFORMATION:  </b>
-<!-- also sends abbrev & marker_type -->
-<TABLE width="100%" bgcolor=<?MIVAR>"$highlight"<?/MIVAR>>
-<TR>
-<TD>
-&nbsp;&nbsp;<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini&oID=$OID') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
-</TD>
-</TR>
-</TABLE>
+<?MIBLOCK COND="$(NXST,$type_of_knockdown_reagent)">
+  <hr width="80%" align = center>
+  <b>MAPPING INFORMATION:  </b>
 
-<!------------- ends MAPPING INFORMATION --------------->
+  <TABLE width="100%" bgcolor=<?MIVAR>"$highlight"<?/MIVAR>>
+   <TR>
+    <TD>
+       &nbsp;&nbsp;<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini&oID=$OID') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+    </TD>
+   </TR>
+  </TABLE>
+<?/MIBLOCK>
+
 
 <form name=updater1>
 
-
 <!------------ ORTHOLOGUES ------------------------------------>
-<!------ only for cloned genes.------------------- -->
+
 <?MIBLOCK COND="$(XST,$type_of_genedom)">
  <HR width="80%">
  <a name=orthologue><b>ORTHOLOGUES:</b></a>
