@@ -322,6 +322,11 @@ create dba function "informix".regen_anatomy()
 
     begin
 
+      -- set standard set of session params
+      let errorHint = "Setting session parameters";
+      execute procedure set_session_params();
+      
+
       --   GRAB ZDB_FLAG
 
       let errorHint = "Grab zdb_flag";
@@ -329,14 +334,12 @@ create dba function "informix".regen_anatomy()
         return 1;
       end if
 
-      -- crank up the parallelism.
-
-      set pdqpriority high;
 
       -- ======  CREATE TABLES THAT ONLY EXIST IN THIS FUNCTION  ======
 
       -- ---- STAGE_ITEMS_CONTAINED ----
 
+      let errorHint = "Creating stage_items_contained";
       if (exists (select *
 	           from systables
 		   where tabname = "stage_items_contained")) then
@@ -383,6 +386,7 @@ create dba function "informix".regen_anatomy()
 
       -- ---- STAGE_ITEM_CHILD_LIST ----
 
+      let errorHint = "Creating stage_item_child_list";
       if (exists (select *
 	           from systables
 		   where tabname = "stage_item_child_list")) then
@@ -453,6 +457,7 @@ create dba function "informix".regen_anatomy()
       --use a new table to collect data in case of an error; drop the old table
       --and rename the new table before returning.
 
+      let errorHint = "Creating all_anatomy_stage_new";
       if (exists (select *
 	           from systables
 		   where tabname = "all_anatomy_stage_new")) then
@@ -482,6 +487,7 @@ create dba function "informix".regen_anatomy()
 
       -- ---- ANATOMY_DISPLAY ----
 
+      let errorHint = "Creating anatomy_display_new";
       if (exists (select *
 	           from systables
 		   where tabname = "anatomy_display_new")) then
@@ -507,6 +513,7 @@ create dba function "informix".regen_anatomy()
 
       -- ---- ANATOMY_STATS ----
 
+      let errorHint = "Creating anatomy_stats_new";
       if (exists (select *
 	           from systables
 		   where tabname = "anatomy_stats_new")) then
@@ -533,6 +540,7 @@ create dba function "informix".regen_anatomy()
 
       -- ---- ANATOMY_STAGE_STATS ----
 
+      let errorHint = "Creating anatomy_stage_stats_new";
       if (exists (select *
 	           from systables
 		   where tabname = "anatomy_stage_stats_new")) then
@@ -558,6 +566,7 @@ create dba function "informix".regen_anatomy()
 
       -- ---- ALL_ANATOMY_CONTAINS ----
 
+      let errorHint = "Creating all_anatomy_contains_new";
       if (exists (select *
 		   from systables
 		   where tabname = "all_anatomy_contains_new")) then
@@ -594,9 +603,9 @@ create dba function "informix".regen_anatomy()
 }
 
     begin
-      -- ----------------------------------------------------------------------------
+      -- -----------------------------------------------------------------------
       -- begin populating ALL_ANATOMY_STAGE_NEW
-      -- ----------------------------------------------------------------------------
+      -- -----------------------------------------------------------------------
 
       -- For each anatomy_item_zdb_id, find all stages the item occurs in,
       -- then insert the item and stage zdb_id's into all_anatomy stage.
@@ -606,6 +615,8 @@ create dba function "informix".regen_anatomy()
       define item_start_stg like stage.stg_zdb_id;
       define item_end_stg like stage.stg_zdb_id;
 	
+      let errorHint = "Populating all_anatomy_stage_new";
+
       -- if the start stage of an anatomy item is Unknown, only 
       -- insert then end stage, and vice verse.
       insert into all_anatomy_stage_new
@@ -647,14 +658,16 @@ create dba function "informix".regen_anatomy()
     
     begin
 
-      -- ----------------------------------------------------------------------------
+      -- -----------------------------------------------------------------------
       -- begin populating ANATOMY_DISPLAY_NEW
-      -- ----------------------------------------------------------------------------
+      -- -----------------------------------------------------------------------
 
       -- Anatomy_display has variables that are stage based, so use each
       -- stage_id to insert associated anatomy_items. 
 
       define stage_ID like stage.stg_zdb_id;
+
+      let errorHint = "Populating anatomy_display_new";
 
       foreach
 	select s1.stg_zdb_id 
@@ -669,11 +682,14 @@ create dba function "informix".regen_anatomy()
     end
 
     begin
-      -- ----------------------------------------------------------------------------
+      -- -----------------------------------------------------------------------
       -- begin populating ALL_ANATOMY_CONTAINS_NEW
-      -- ----------------------------------------------------------------------------
+      -- -----------------------------------------------------------------------
 
       define nRows int;
+
+      let errorHint = "Populating all_anatomy_contains_new";
+
       execute function populate_all_anatomy_contains()
         into nRows;
 
@@ -696,9 +712,11 @@ create dba function "informix".regen_anatomy()
 	  gene_zdb_id	varchar(50)
 	);
 
-      -- ----------------------------------------------------------------------------
+      -- -----------------------------------------------------------------------
       -- begin populating ANATOMY_STATS_NEW
-      -- ----------------------------------------------------------------------------
+      -- -----------------------------------------------------------------------
+
+      let errorHint = "Populating anatomy_statsnew";
 
       foreach
 	select anatitem_zdb_id
@@ -755,9 +773,11 @@ create dba function "informix".regen_anatomy()
 
       -- done populating ANATOMY_STATS_NEW
 
-      -- ----------------------------------------------------------------------------
+      -- -----------------------------------------------------------------------
       -- begin populating ANATOMY_STAGE_STATS_NEW
-      -- ----------------------------------------------------------------------------
+      -- -----------------------------------------------------------------------
+
+      let errorHint = "Populating anatomy_stage_stats_new";
 
       foreach
 	select allanatstg_anat_item_zdb_id, allanatstg_stg_zdb_id
@@ -823,9 +843,11 @@ create dba function "informix".regen_anatomy()
     end
 
 
-    -- ----------------------------------------------------------------------------
+    -- -------------------------------------------------------------------------
     -- RENAME the new tables to REPLACE the old
-    -- ----------------------------------------------------------------------------
+    -- -------------------------------------------------------------------------
+
+    let errorHint = "Renaming tables";
 
     begin work;
 
