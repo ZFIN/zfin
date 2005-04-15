@@ -239,10 +239,9 @@ EFFECTS
       <?MICOMMENT> Generate the list <?/MICOMMENT>
       <?MISQL SQL="  
           SELECT distinct xpatres_anat_item_zdb_id, xpatres_expression_found
-          FROM fx_expression_experiment, fx_expression_result, fx_expression_pattern_figure
+          FROM fx_expression_experiment, fx_expression_result
           WHERE xpatex_source_zdb_id = '$OID'
             AND xpatex_zdb_id = xpatres_xpatex_zdb_id
-            AND xpatres_zdb_id = xpatfig_xpatres_zdb_id
             AND NOT EXISTS
                (
                  select *
