@@ -334,9 +334,9 @@ Datablade documentation.
 	  <?MIVAR NAME=$gene_abbrev>$2<?/MIVAR>
 	  <TABLE width=100% cellpadding=5 border=0 bgcolor="$highlight" cols=2 rows=1>
 	    <TR><TD>
-	    <font color="red"><B>Cloned Gene:</b>  </font>
+	    <B>Cloned Gene:</b> 
 	    <b><i><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$cloned_gene">$1 ($2) </A> </i></b> 
-	    has been shown to correspond to the <b><i>$name</i></b> locus.
+	    has been shown to correspond to locus <i>$name</i>.
 	    <?MISQL SQL="select WebExplode(object,'dataId=$OID&type=colattrib&info=cloned_gene') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
 	   </TD>
 	   </TR>
