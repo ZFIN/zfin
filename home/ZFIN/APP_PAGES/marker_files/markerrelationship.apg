@@ -40,30 +40,34 @@ OUTPUT:
 <?/MIVAR>
 
 <?MIBLOCK COND="$(EC,$mrkrrel_rel_direction,2_to_1)">
-	<?MIVAR NAME=mrkrrel_sql>
-		select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrkrtype_type_display, 
-			   mrel_zdb_id, mrel_type, mreltype_2_to_1_comments
- 		  from marker_relationship inner join marker_relationship_type
-            on mrel_type = mreltype_name
+    <?MIVAR NAME=mrkrrel_sql>
+	select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrkrtype_type_display, 
+	       mrel_zdb_id, mrel_type, mreltype_2_to_1_comments
+ 	  from marker_relationship
+	       inner join marker_relationship_type
+             	  on mrel_type = mreltype_name
                inner join marker
-            on mrel_mrkr_1_zdb_id = mrkr_zdb_id 
-			   inner join marker_types
-            on mrkr_type = marker_type
-		 where mrel_mrkr_2_zdb_id = '$mrkrrel_mrkr_zdb_id' 
-	  order by mrel_type, mrkrtype_type_display, mrkr_abbrev_order;
+                  on mrel_mrkr_1_zdb_id = mrkr_zdb_id 
+	       inner join marker_types
+            	  on mrkr_type = marker_type
+	 where mrel_mrkr_2_zdb_id = '$mrkrrel_mrkr_zdb_id' 
+	   and mrel_type <> 'knockdown reagent targets gene'
+      order by mrel_type, mrkrtype_type_display, mrkr_abbrev_order;
     <?/MIVAR>
 <?MIELSE>
-	<?MIVAR NAME=mrkrrel_sql>
-		select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrkrtype_type_display, 
-			   mrel_zdb_id, mrel_type, mreltype_1_to_2_comments
- 		  from marker_relationship inner join marker_relationship_type
-            on mrel_type = mreltype_name
+    <?MIVAR NAME=mrkrrel_sql>
+	select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrkrtype_type_display, 
+	       mrel_zdb_id, mrel_type, mreltype_1_to_2_comments
+ 	  from marker_relationship 
+	       inner join marker_relationship_type
+                 on mrel_type = mreltype_name
                inner join marker
-            on mrel_mrkr_2_zdb_id = mrkr_zdb_id 
-			   inner join marker_types
-            on mrkr_type = marker_type
-		 where mrel_mrkr_1_zdb_id = '$mrkrrel_mrkr_zdb_id' 
-	  order by mrel_type, mrkrtype_type_display, mrkr_abbrev_order;
+                 on mrel_mrkr_2_zdb_id = mrkr_zdb_id 
+	       inner join marker_types
+                 on mrkr_type = marker_type
+	 where mrel_mrkr_1_zdb_id = '$mrkrrel_mrkr_zdb_id' 
+	   and mrel_type <> 'knockdown reagent targets gene'
+      order by mrel_type, mrkrtype_type_display, mrkr_abbrev_order;
     <?/MIVAR>
 <?/MIBLOCK>	  	  
 
@@ -108,7 +112,7 @@ OUTPUT:
   
     <?MIVAR COND="$(XST,$UPDATE)">
        <INPUT TYPE=button value=Delete 
-         	  onClick="Delete_mrel('$mrkrrel_seg_mrkr_zdb_id','$OID','$mrkrrel_mrel_type')">
+         	  onClick="Delete_mrel('$mrkrrel_seg_mrkr_zdb_id','$mrkrrel_mrel_type')">
     <?/MIVAR>
 
 	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrrel_seg_mrkr_zdb_id">
