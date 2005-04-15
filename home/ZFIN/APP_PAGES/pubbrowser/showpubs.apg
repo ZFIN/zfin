@@ -253,20 +253,23 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 <form>
 <!------------- Title display------------>
 <font size=+1><b>
-  <?MIVAR COND="$(NC,$title,)">$title: &nbsp;<?/MIVAR>
+  <?MIVAR COND="$(NC,$title,)">$title: <?/MIVAR>
   <?MIVAR COND="$(NC,$name,)">
-  $(IF,$(OR,$(>,$(POSITION,$OID,OEVDISP),0),$(>,$(POSITION,$OID,GENE),0)),<i>$name</i>,$name)
-   <br>
+    $(IF,$(OR,$(>,$(POSITION,$OID,OEVDISP),0),$(>,$(POSITION,$OID,GENE),0)),<i>$name</i>,$name)
+    <br>
   <?/MIVAR>
 
   <?MICOMMENT>previously I made a bad decision of passing $title to CITATION page, $marker_type_display would be a better choice. But to avoid changing all the view pages, stay on it for a bit longer<?/MICOMMENT>
   <?MIVAR NAME=$marker_type_display>$(SUBSTR,$title,1,$(-,$(POSITION,$title,Name),2))<?/MIVAR>
 
+  <?MICOMMENT>we need a grace solution, not now, when feature redo comes.
+       The full title'd better be a submodule. 
+  <?/MICOMMENT>
   <?MIBLOCK COND="$(AND,$(NC,$abbrev,),$(NC,$abbrev,''))">
-	<?MIVAR>
-	$(IF,$(OR,$(>,$(POSITION,$OID,GENE),0),$(>,$(POSITION,$OID,OEVDISP),0)),$marker_type_display Symbol:&nbsp;,"Abbreviation:&nbsp;")
-	$(IF,$(OR,$(>,$(POSITION,$OID,GENE),0),$(>,$(POSITION,$OID,OEVDISP),0)),<i>$abbrev</i>,$abbrev)	
-	<?/MIVAR><br>
+     <?MIVAR>
+	$(IF,$(OR,$(>,$(POSITION,$OID,GENE),0),$(>,$(POSITION,$OID,OEVDISP),0)),$marker_type_display Symbol:&nbsp;<i>$abbrev</i>)
+	$(IF,$(OR,$(>,$(POSITION,$OID,FISH),0),$(>,$(POSITION,$OID,LOCUS),0)),Abbreviation:&nbsp;$abbrev)
+     <?/MIVAR><br>
   <?/MIBLOCK>
 </b></font>	
 
