@@ -35,7 +35,7 @@ create function get_pub_mini_ref(pubZdbId varchar(50))
       let lname = substr(authorList,1,(index-1));
       let first = "f";
     elif (ch = delim) and (not first) then    
-      let lname = lname || " <i>et al</i>"; 
+      let lname = lname || " <i>et al.</i>"; 
       exit for;
     end if    
   end for
