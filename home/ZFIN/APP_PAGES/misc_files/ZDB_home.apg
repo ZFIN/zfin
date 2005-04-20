@@ -41,20 +41,7 @@
     <TD bgcolor="#FFFFFF" align="left" width="30%">
       <IMG src="/images/zfintxt.gif" border="0">
     </TD>
-    <TD bgcolor="#FFFFFF" width="70%" align="center">
-      
-       <font size="-1" color="black">
-        <b>Help us build a better database for you!</b>
-       </font><br>
-       <font size="-1" color="black">
-         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Please complete the 
-       </font> 
-       <a href="/zf_info/news/usersurvey2005.html">
-       <b>
-       <font color="blue" size="-1"> 
-        <u>ZFIN User Survey</u>
-       </font></b></a>
-    </TD>
+   
   </TR>
   <TR bgcolor="<!--|LINKBAR_COLOR|-->">
     <TD class="login" bgcolor="<!--|LINKBAR_COLOR|-->" colspan="3">
@@ -93,7 +80,7 @@
 		    <A HREF="/zf_info/citation.html">Citing ZFIN</A><BR>
 		    <A HREF="/ZFIN/misc_html/tips.html">Help Resources</A><BR>
 		    <A HREF="/zf_info/contact_us.html">Contact Us</A><BR>
-		    <A HREF="/zf_info/news/siteNews.html">Site News</A> <img src="/images/new1.gif"><BR>
+		    <A HREF="/zf_info/news/siteNews.html">Site News</A><BR>
 		    <A HREF="/zf_info/glossary.html">Glossary</A><BR>
 	            <A HREF="/zf_info/downloads.html">Download Data</A><BR>
 		  </td>
