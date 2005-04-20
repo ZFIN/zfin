@@ -38,13 +38,13 @@
     <TD rowspan="2" bgcolor="<!--|LINKBAR_COLOR|-->" width="80" align="left" valign="bottom">
       <IMG src="/images/zfinlogo.gif" width=80 border=0> 
     </TD>
-    <TD bgcolor="#FFFFFF" align="left" width="30%">
+    <TD bgcolor="<!--|BACKGROUND_COLOR|-->" align="left" width="100%">
       <IMG src="/images/zfintxt.gif" border="0">
     </TD>
    
   </TR>
   <TR bgcolor="<!--|LINKBAR_COLOR|-->">
-    <TD class="login" bgcolor="<!--|LINKBAR_COLOR|-->" colspan="3">
+    <TD class="login" bgcolor="<!--|LINKBAR_COLOR|-->" colspan="2">
       <TABLE border="0" height="20" cellspacing="0" cellpadding="0" width="100%">
 	<TR>
 	  <TD>
