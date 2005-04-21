@@ -434,9 +434,14 @@ Genes
 <BR>
 <?/MIBLOCK>
 
-<!-- start hierarchy relationships --->
-
-<TABLE width="90%">
+<?MICOMMENT>========================================================
+            == RELATIONSHIP
+	    ========================================================
+<?/MICOMMENT>
+<?MICOMMENT> exclude term 'unspecified'. not good to hardcode, but...
+<?/MICOMMENT>
+<?MIBLOCK COND="$(NC,$item_name,unspecified)">
+ <TABLE width="90%">
   <TR>
     <TD bgcolor="#CCCCCC" colspan=2>
       <STRONG>Relationships</STRONG>
@@ -447,7 +452,7 @@ Genes
       Contained by: 
     </TD>
     <TD bgcolor="#EEEEEE">
-<?MISQL SQL="
+ <?MISQL SQL="
 	SELECT start.stg_name, start.stg_zdb_id, end.stg_name, 
 	       end.stg_zdb_id, parent.anatitem_zdb_id, parent.anatitem_name,
 	       start.stg_hours_start, end.stg_hours_start, parent.anatitem_name_order
@@ -458,9 +463,9 @@ Genes
 	  and end.stg_zdb_id = parent.anatitem_end_stg_zdb_id
 	  and allanatcon_min_contain_distance = '1'
 	ORDER BY  parent.anatitem_name_order
-;">
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$5">$6</A> &nbsp; 
-<?/MISQL>
+ ;">
+    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$5">$6</A> &nbsp; 
+ <?/MISQL>
       </TD>
     </TR>
     <TR>
@@ -468,8 +473,8 @@ Genes
         Contains: 
       </TD>
       <TD bgcolor="#EEEEEE">
-<?MISQL SQL="
-SELECT start.stg_name, start.stg_zdb_id, end.stg_name, 
+ <?MISQL SQL="
+       SELECT start.stg_name, start.stg_zdb_id, end.stg_name, 
 	       end.stg_zdb_id, child.anatitem_zdb_id, child.anatitem_name,
 	       start.stg_hours_start, end.stg_hours_start, child.anatitem_name_order
 	FROM all_anatomy_contains, stage as start, stage as end, anatomy_item child
@@ -479,15 +484,18 @@ SELECT start.stg_name, start.stg_zdb_id, end.stg_name,
 	  and end.stg_zdb_id = child.anatitem_end_stg_zdb_id
 	  and allanatcon_min_contain_distance = '1'
 	ORDER BY child.anatitem_name_order
-;">
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$5">$6</A> &nbsp; 
-<?/MISQL>
+  ;">
+     <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$5">$6</A> &nbsp; 
+ <?/MISQL>
       </TD>
     </TR>
   </TABLE>
-<!-- end hierarchy relationships -->
+<?/MIBLOCK> <?MICOMMENT> if not term 'unspecified' <?/MICOMMENT>
 
-<?MICOMMENT> The code below is a mockup of the homologue display that will 
+
+
+<?MICOMMENT> =========================================================
+     The code below is a mockup of the homologue display that will 
              replace it in the future
 
 <BR>
@@ -553,15 +561,13 @@ auditory (tympanal or flagellar) organs, which may be in a variety of anatomical
     </TD>
   </TR>
 </TABLE>
-
+      ===================================================================
 <?/MICOMMENT>
 
-<BR>
 
-<!-- start gene expression relationships -->
-
-<!-- end gene expression relationships -->
-
+<?MICOMMENT>================================================================
+    This code below doesn't have effect since fish_image_anatomy table 
+    is empty.
 
 <!-- start image relationships -->
 
@@ -586,21 +592,27 @@ auditory (tympanal or flagellar) organs, which may be in a variety of anatomical
 </A>
 <?/MISQL>
 <BR>
+     ===================================================================
+<?/MICOMMENT>
 
 
-<!-- end image relatiohsips -->
-
-
-<!-- start pub relationships -->
-<?MISQL SQL="select count(*)::Integer
-	           from publication 
+<br>
+<?MICOMMENT>========================================================
+            == PUBLICATION
+	    ========================================================
+<?/MICOMMENT>
+<?MICOMMENT> exclude term 'unspecified'. not good to hardcode, but...
+<?/MICOMMENT>
+<?MISQL COND="$(NC,$item_name,unspecified)" SQL="
+	     select count(*)::Integer
+	       from publication 
               where lower(pub_abstract) like '%$item_name_safe%';">
-<?MIVAR NAME="$pubcount">$1<?/MIVAR>
-<?MIBLOCK COND="$(>,$pubcount,0)">
-<?MIVAR>
-<STRONG>(<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubselect2.apg&anon1=pub_abstract&anon1text=$item_name&anon1textAllOneWord=1&query_results=exists">$1</A>) Publication(s)</STRONG> with "$item_name" occuring in the abstract.
-<?/MIVAR>
-<?/MIBLOCK>
+  <?MIVAR NAME="$pubcount">$1<?/MIVAR>
+  <?MIBLOCK COND="$(>,$pubcount,0)">
+    <?MIVAR>
+       <STRONG>(<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubselect2.apg&anon1=pub_abstract&anon1text=$item_name&anon1textAllOneWord=1&query_results=exists">$1</A>) Publication(s)</STRONG> with "$item_name" occuring in the abstract.
+    <?/MIVAR>
+  <?/MIBLOCK>
 <?/MISQL>
 <!---  end pub relationships -->
 
