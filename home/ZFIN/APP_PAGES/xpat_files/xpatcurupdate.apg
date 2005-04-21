@@ -588,7 +588,7 @@ EFFECTS
       <?MISQL SQL="
           select anatitem_zdb_id, 't'
           from anatomy_item
-          where anatitem_name = 'Not Specified';">
+          where anatitem_name = 'unspecified';">
           <?MIVAR NAME=xpcurup_panel_add_anatitem>$1<?/MIVAR>
          <?MIVAR NAME=xpcurup_panel_add_expressed>$2<?/MIVAR>
       <?/MISQL>
