@@ -48,6 +48,9 @@ function updateParent(AOname, AOid) {
   if (opener == null) opener = self;
   var terms = opener.document.structure2.xpcur_G_structure_add_name.value;
   var ids = opener.document.structure2.xpcur_G_structure_add.value;
+  
+  terms = terms.replace("'", "");
+  
   if (terms == "") {
     opener.document.structure2.xpcur_G_structure_add_name.value = AOname;
     opener.document.structure2.xpcur_G_structure_add.value = AOid;
@@ -187,7 +190,7 @@ function updateParent(AOname, AOid) {
 	        <?/MIBLOCK>
 	
 	        <?MIVAR>
-		  <?MIVAR COND=$(EC,$AUTHORIZED,root)><a href="javascript:updateParent('$item_name','$item_zdb_id');">select</a><?/MIVAR>
+		  <?MIVAR COND=$(EC,$AUTHORIZED,root)><a href="javascript:updateParent('$(REPLACE,$item_name,"'","\'")','$item_zdb_id');">select</a><?/MIVAR>
 	          <font style="font-family:arial; font-size:small; font-weight:bold;  $(IF,$(EQ,$highlight,true),background-color:#ffff99)">
 	          <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">
 	          $item_name<?MIBLOCK COND="$(NE,$item_abbrev,NULL)"><?/MIBLOCK></A></font> &nbsp;
@@ -331,7 +334,7 @@ function updateParent(AOname, AOid) {
 		      <?/MIBLOCK>
 
 		      <?MIVAR>
-		        <?MIVAR COND=$(EC,$AUTHORIZED,root)><a href="javascript:updateParent('$item_name','$item_zdb_id');">select</a><?/MIVAR>
+		        <?MIVAR COND=$(EC,$AUTHORIZED,root)><a href="javascript:updateParent('$(REPLACE,$item_name,"'","\'")','$item_zdb_id');">select</a><?/MIVAR>
 			<font style="font-family:arial; font-size:small; font-weight:bold;  margin-left:$indent; $(IF,$(EQ,$highlight,true),background-color:#ffff99)">
 			  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">
 			    $item_name
@@ -407,7 +410,7 @@ function updateParent(AOname, AOid) {
 	      <?/MIBLOCK>
 
 	      <?MIVAR>
-		<?MIVAR COND=$(EC,$AUTHORIZED,root)><a href="javascript:updateParent('$item_name','$item_zdb_id');">select</a><?/MIVAR>
+		<?MIVAR COND=$(EC,$AUTHORIZED,root)><a href="javascript:updateParent('$(REPLACE,$item_name,"'","\'")','$item_zdb_id');">select</a><?/MIVAR>
 		<font style="font-family:arial; font-size:small; font-weight:bold;  $(IF,$(EQ,$highlight,true),background-color:#ffff99)">
 		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">
 		  $item_name<?MIBLOCK COND="$(NE,$item_abbrev,NULL)"><?/MIBLOCK></A></font> &nbsp;
