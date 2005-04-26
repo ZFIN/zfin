@@ -342,9 +342,9 @@ select
 from anatomy_item
 ;
 
-unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/anatomy_ontology.txt'
+unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/anatomy_relationship.txt'
 DELIMITER "	" 
-select anatrel_anatitem_1_zdb_id, anatrel_anatitem_2_zdb_id 
+select anatrel_anatitem_1_zdb_id, anatrel_anatitem_2_zdb_id, anatrel_dagedit_id
   from anatomy_relationship;
 
 --
