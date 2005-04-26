@@ -20,7 +20,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Downloads
 
-GENERICS = DownloadFiles.pl DownloadFiles.sql
+GENERICS = generateStagedAnatomy.pl DownloadFiles.pl DownloadFiles.sql
 
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.
@@ -28,8 +28,6 @@ GENERICS = DownloadFiles.pl DownloadFiles.sql
 HTTP_DATA_TRANSFER_DIR = $(TARGETROOT)/home/data_transfer/Downloads
 
 ENDEMICTARGETS_PRE = $(HTTP_DATA_TRANSFER_DIR)
-
-AD = /research/zusers/tomc/ANATOMY/anatomy_dictionary_previous/ad.txt
 
 
 # ---------------  Production Rules  ------------------------------------
@@ -49,7 +47,6 @@ $(HTTP_DATA_TRANSFER_DIR) :
 # Run the download script.  This extracts data from ZFIN and places it in 
 # the public http directory
 
-run : $(TARGETDIR)/DownloadFiles.pl $(AD) 
+run : $(TARGETDIR)/DownloadFiles.pl
 	$(TARGETDIR)/DownloadFiles.pl
-	cp  $(AD) $(HTTP_DATA_TRANSFER_DIR)/ad.txt
 	chmod a+r $(HTTP_DATA_TRANSFER_DIR)/*
