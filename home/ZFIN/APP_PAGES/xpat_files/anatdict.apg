@@ -294,13 +294,16 @@ function updateParent(AOname, AOid) {
 	      <TABLE BORDER=0 WIDTH=100%>
 		<TR>
 		  <TD nowrap>
-
+                    <?MICOMMENT> unspecified and cell division/proliferation are excluded on 
+                                 purpose. Hardcode now till there is better solution
+                    <?/MICOMMENT>
 		    <?MISQL SQL="
 		      select anatdisp_item_name, anatdisp_item_zdb_id, anatdisp_seq_num,
 			     anatdisp_indent, anatitem_abbrev, anatstat_synonym_count
 		        from anatomy_display, anatomy_item, anatomy_stats
 		       where anatitem_zdb_id = anatdisp_item_zdb_id
 			 and anatitem_zdb_id = anatstat_anatitem_zdb_id
+			 and anatitem_zdb_id not in ('ZDB-ANAT-041102-1', 'ZDB-ANAT-010921-520')
 			 and anatstat_object_type = 'GENE'
 		         and anatdisp_indent <= '$resolution'
 		         and anatdisp_stg_zdb_id = '$OID' 
