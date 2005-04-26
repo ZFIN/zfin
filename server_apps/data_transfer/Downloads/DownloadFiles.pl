@@ -57,3 +57,4 @@ chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads";
 
 system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> DownloadFiles.sql");
 
+system("./generateStagedAnatomy.pl");
