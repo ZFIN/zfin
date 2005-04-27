@@ -1,0 +1,208 @@
+<?MICOMMENT>
+
+FILE:     sequence_data_entry.apg
+PREFIX:   seqdata_
+
+Generate a form that submits sequence data for entry into the database.
+Perform client side checks on entry fields but do not generate a submit
+button. The calling page can add additional fields and the submit
+button.
+
+When javascript actions are performed on the Sequence, write an 
+automated comment into a Note field. The note contains the sequence 
+before it is modified and the action performed.
+
+Three actions are contained in the drop down list.
+1 - Reverse
+2 - Complement
+3 - cDNA to Morpholino
+  
+INPUT VARS:
+  OPTIONAL:
+    seqdata_sequence  ::  default value for 'Original' Sequence
+     
+OUTPUT VARS: 
+
+
+OUTPUT:
+A data entry form that manipulates sequence.
+  
+EFFECTS  
+  
+<?/MICOMMENT>  
+
+    
+  <SCRIPT>
+      function validSequence(s)
+      {
+          if ( s.length > 100 )
+          {
+              alert('Sequence Validation Error:\n\n Sequence length restricted to 100 characters or less.');
+              return false;
+          }
+      
+          var reg = new RegExp("^(A|T|C|G)*$");
+          
+          if ( ! reg.test(s) )
+          {
+              return confirm('Sequence Validation:\n\n Continuing may delete Non "ATCG" letters. \n\n  Continue?') 
+          }
+          return true;
+      }
+      
+      
+      function baseComplement (s)
+      
+      {   var i;
+          var complement = "";
+            
+          // Search through string's characters one by one
+          // For each base, return the complementary base.
+      
+          for (i = 0; i < s.length; i++)
+          {   
+              if (s.charAt(i) == 'A') {
+                complement = complement + "T";
+              }
+              else if (s.charAt(i) == 'T') {
+                complement = complement + "A";
+              }
+              else if (s.charAt(i) == 'C') {
+                complement = complement + "G";
+              }
+              else if (s.charAt(i) == 'G') {
+                complement = complement + "C";
+              }
+          }
+      
+          return complement;
+      }
+      
+      // Returns the characters of string (s) in reverse order
+   
+      function reverseString (s)
+      
+      {   
+          var i;
+          var reverse = "";
+      
+          // Walk the input string backwards
+      
+          for (i = s.length-1; i >= 0; i--)
+          {   
+              // Append the character at position i to the reverse string;
+              reverse = reverse + s.charAt(i);      
+          }
+      
+          return reverse;
+      }
+
+      function complementSequence (seq, note)      
+      {   
+          var compSeq;      
+          
+            compSeq = baseComplement(seq);
+            document.newdata.seqdata_DisplaySequence.value = compSeq;
+            
+            if (note != "")
+            {
+              curatorNote(note);
+            }
+      }
+
+
+      function reverseSequence (seq, note)
+      {   
+          var revSeq;      
+           
+            revSeq = reverseString(seq);
+            document.newdata.seqdata_DisplaySequence.value = revSeq;
+            
+            if (note != "")
+            {
+              curatorNote(note);
+            }
+      }
+
+
+      function reverseComplementSequence ()
+      
+      {   
+          complementSequence(document.newdata.seqdata_ReportedSequence.value, "");
+          reverseSequence(document.newdata.seqdata_DisplaySequence.value, "reversed and complemented");
+      }
+      
+      function actionSequence (action)      
+      {
+          if (action == 1)
+          {
+              reverseSequence(document.newdata.seqdata_ReportedSequence.value, 'reversed');
+          }
+          else if (action == 2)
+          {
+              complementSequence(document.newdata.seqdata_ReportedSequence.value, 'complemented');
+          }
+          else if (action == 3)
+          {
+              reverseComplementSequence();
+          }
+      }
+      
+      function curatorNote (action)
+      
+      {
+          var note = document.newdata.seqdata_CuratorNote.value;
+          document.newdata.seqdata_CuratorNote.value = "Reported Sequence: '"+ document.newdata.seqdata_ReportedSequence.value + "' was " + action +".\n\n" + note;           
+      }
+  </SCRIPT>
+    
+    
+        <table border=0 bgcolor=<!--|HIGHLIGHT_COLOR|-->>
+          
+          <?MICOMMENT> ====== Table Headers ====== <?/MICOMMENT>
+          <tr>
+            <td>  
+                <b>Original:</b> 
+            </td>
+            <td> 
+                <b>Action</b>
+            </td>
+            <td>
+                <b>Modified:</b>
+            </td>
+          </tr>
+          
+          <?MICOMMENT> ====== Sequence Fields ====== <?/MICOMMENT>
+          <tr>
+            <td valign=top> 5'  <input type=text name=seqdata_ReportedSequence size=40 
+                               <?MIVAR COND=$(XST,$seqdata_sequence)>value=$seqdata_sequence<?/MIVAR>
+                               onChange="this.value = this.value.toUpperCase();document.newdata.seqdata_DisplaySequence.value = this.value;"> 
+            </td>
+            <td> 
+              <select name=seqdata_action onChange="if ( validSequence(document.newdata.seqdata_ReportedSequence.value) ){actionSequence(this.selectedIndex);}">
+                <option>----------</option>
+                <option>Reverse</option>
+                <option>Complement</option>
+                <option>mRNA --> MO</option>
+              </select>
+            </td>
+            <td valign=top> 5'  <input type=text name=seqdata_DisplaySequence size=40>
+            </td>
+          </tr>
+          
+          <?MICOMMENT> ====== Curator Notes ====== <?/MICOMMENT>
+          <tr>
+            <td colspan=3>
+              <br><b>Note:</b> 
+              <font size=-1>(Will appear in the Curator Note section.)</font>
+            </td>
+          </tr>
+          
+          <tr>
+            <td valign=top colspan=3>
+              <textarea name=seqdata_CuratorNote rows=4 cols=80></textarea>
+            </td>
+          </tr>
+          
+        </table>
+
