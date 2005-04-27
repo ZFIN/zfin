@@ -387,15 +387,58 @@ comments,
    <?/MIBLOCK>  <!-- ends special seqdb case ---->
 
 
-   <?MICOMMENT> Special case for updating marker_sequence <?/MICOMMENT>   
-   <?MIBLOCK COND="$(EC,$attr,mrkrseq_sequence)">
-   
-     <?MISQL SQL="
-         update marker_sequence
-            set mrkrseq_sequence = '$new_value'
-          where mrkrseq_zdb_id = '$dataOID';">
-     <?/MISQL>   
+     <?MICOMMENT> 
+        =============================================
+          Special case for updating marker sequence 
+        =============================================
+      <?/MICOMMENT>
 
+     <?MIBLOCK COND="$(EC,$attr,mrkrseq_sequence)">
+
+       <?MICOMMENT> 
+          ==========================================
+            Update existing marker_sequence record 
+          ==========================================
+        <?/MICOMMENT>   
+        
+     <?MIBLOCK COND=$(AND,$(XST,$dataOID),$(NC,$dataOID,))>
+       <?MISQL SQL="
+           update marker_sequence
+              set mrkrseq_sequence = '$new_value'
+            where mrkrseq_zdb_id = '$dataOID';">
+       <?/MISQL>   
+     <?MIELSE>
+    
+       <?MICOMMENT> 
+          ===================================
+            Create a marker_sequence record 
+          ===================================
+        <?/MICOMMENT>
+            
+      <?MISQL SQL="execute function get_id('MRKRSEQ')">
+        <?MIVAR NAME=$domrkr_MrkrSeqId>$1<?/MIVAR>
+      <?/MISQL>
+      <?MISQL SQL="insert into zdb_active_data (zactvd_zdb_id) values ('$domrkr_MrkrSeqId');"><?/MISQL>
+      <?MISQL SQL="
+        insert into marker_sequence (
+          mrkrseq_zdb_id,
+          mrkrseq_mrkr_zdb_id,
+          mrkrseq_sequence,
+          mrkrseq_left_end)
+        values (
+          '$domrkr_MrkrSeqId',
+          '$OID',
+          '$new_value',
+          '5''');">
+      <?/MISQL>       
+    
+     <?/MIBLOCK>            
+
+      <?MIBLOCK COND=$(XST,$xtra_param)>
+        <?MIVAR NAME=domrkr_encoded_note>$(URLENCODE,$xtra_param)<?/MIVAR>
+        <?MISQL SQL="select WebExplode(object,'dnotenew_DATA=$OID&dnotenew_CUR=$ZDB_ident&dnotenew_NOTE=$domrkr_encoded_note') from webPages where ID='aa-dnote_new.apg';">$1<?/MISQL>
+      <?/MIBLOCK> 
+    
    <?/MIBLOCK>
    
 
@@ -1071,18 +1114,19 @@ colattrib_source_zdb_id)
 
 <!-- okay, now just bail back to the markerview to view results -->
 
+
 <?MIBLOCK COND="$(NXST,$species_update)">
 
-  <SCRIPT><?MIVAR>
-     location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$caller&OID=$OID&UPDATE=1#$anchor")
-          <?/MIVAR>
-  </SCRIPT> 
-
-<?MIELSE>
-
-  <SCRIPT><?MIVAR>
-     location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$caller&OID=$OID&UPDATE=1&species_selected=$species_update#$anchor")
-          <?/MIVAR>
-  </SCRIPT> 
+   <SCRIPT><?MIVAR>
+      location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$caller&OID=$OID&UPDATE=1#$anchor")
+           <?/MIVAR>
+   </SCRIPT> 
+ 
+ <?MIELSE>
+ 
+   <SCRIPT><?MIVAR>
+      location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$caller&OID=$OID&UPDATE=1&species_selected=$species_update#$anchor")
+           <?/MIVAR>
+   </SCRIPT> 
 
 <?/MIBLOCK>
