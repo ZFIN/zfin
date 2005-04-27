@@ -268,11 +268,17 @@ Datablade documentation.
 	}
 
 
-	function update_mrkrsequence(mrkrseq_zdb,old_seq,new_seq) {
-		if ((mrkrseq_zdb != '') && (new_seq != '')) {
-		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&dataOID='+mrkrseq_zdb+'&attr=mrkrseq_sequence&attr_type=special&old_value='+old_seq+'&new_value='+new_seq+'&target_table=marker_sequence');
-  		}
-	}
+        <?MICOMMENT> Note Can Be Blank. However, the xtra_param variable is set to alias 
+          by the updating page when xtra_param is null. An edit has occured, so set 
+          note = 'sequence modified'.
+        <?/MICOMMENT>
+ 	function update_mrkrsequence(mrkrseq_zdb,old_seq,new_seq,note) {
+ 	        if (note == '') {note = 'Sequence Modified';}
+ 	        note = escape(note.replace(/\n/g, "<br>"));
+ 		if ((new_seq != '')) {
+ 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&dataOID='+mrkrseq_zdb+'&attr=mrkrseq_sequence&attr_type=special&old_value='+old_seq+'&new_value='+new_seq+'&target_table=marker_sequence&xtra_param='+note);
+ 		}
+        }
 
 
 	function new_attrib_nomen(nomen_zdb,pub_obj) {
@@ -336,6 +342,12 @@ Datablade documentation.
 		}
 	}
 
+ 	function new_attrib_mrkrseq(dataid) {
+ 		var pub_id = document.newdata.mrkrview_seq_pubid.value.toUpperCase();
+ 		if((dataid != '')&&(pub_id != '')) {
+ 			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+dataid+'&new_value='+pub_id+'&target_table=marker&info=marker_sequence');
+ 		}
+ 	}
 
         <?/MIVAR> 
       </SCRIPT>
@@ -378,7 +390,7 @@ Datablade documentation.
 <p>
 
 <?MIVAR COND="$(XST,$UPDATE)"> <!---- define button to go back------>
- 
+  
    <form>
      <center><font size=+2>
      <input type=button 
@@ -394,7 +406,7 @@ Datablade documentation.
 <?/MICOMMENT> 
 <?MICOMMENT> use table to line up title and your input welcome button
 <?/MICOMMENT> 
-<table width=100%>
+<table width=100% cellspacing=0>
   <tr>
    <td width=85%>
     <?MIVAR COND="$(XST,$UPDATE)">
@@ -545,78 +557,94 @@ Datablade documentation.
 <?/MIBLOCK> <?MICOMMENT> end display_sequence_similarity <?/MICOMMENT>
 
 
-<?MICOMMENT>=========================================================
-            ==     Sequence 
-	    =========================================================
-<?/MICOMMENT>
-<?MISQL SQL="select count(*)::integer
-	     from marker_sequence
-	     where mrkrseq_mrkr_zdb_id = '$OID';">
-<?/MISQL>
-<?MIVAR NAME=mrkrview_num_of_seq>$1<?/MIVAR>
+ <?MICOMMENT> 
+              ===================
+                Marker Sequence  
+              ===================
+ <?/MICOMMENT>
+        
+ <?MIVAR NAME=$mrkrview_sequence><?/MIVAR>
+ <?MIVAR NAME=$mrkrview_mrkrseq_zdb_id><?/MIVAR>  
 
-<?MICOMMENT> get blast linkout url <?/MICOMMENT>
-<?MISQL SQL="select fdb_db_query 
+ <?MISQL SQL="
+   select mrkrseq_sequence, mrkrseq_zdb_id
+     from marker_sequence
+    where mrkrseq_mrkr_zdb_id = '$OID';">
+    <?MIVAR NAME=$mrkrview_sequence>$1<?/MIVAR>
+    <?MIVAR NAME=$mrkrview_mrkrseq_zdb_id>$2<?/MIVAR>        
+ <?/MISQL>
+ 
+ <?MICOMMENT> get blast linkout url <?/MICOMMENT>
+ <?MISQL SQL="select fdb_db_query 
 	      from foreign_db 
 	     where fdb_db_name ='BLAST';">
     <?MIVAR NAME=fdb_url_blast>$1<?/MIVAR>
-<?/MISQL>
-<?MIVAR NAME=blast_option>&EXPECT=1000&WORD_SIZE=7&ENTREZ_QUERY=Danio rerio [ORGN]&FORMAT_ENTREZ_QUERY=All organisms<?/MIVAR>
+ <?/MISQL>
+ <?MIVAR NAME=blast_option>&EXPECT=1000&WORD_SIZE=7&ENTREZ_QUERY=Danio rerio [ORGN]&FORMAT_ENTREZ_QUERY=All organisms<?/MIVAR>
+ 
+  <?MIBLOCK COND="$(XST,$UPDATE)">
+      </form>
+      <form name=newdata>
 
-<?MIBLOCK COND="$(!=,$mrkrview_num_of_seq,0)">
-  <?MIVAR COND="$(XST,$UPDATE)">
-      <form>
-  <?/MIVAR>
-  <br> <?MICOMMENT> for display purpose <?/MICOMMENT>
-  <?MICOMMENT>use table to align sequence and disclaimer<?/MICOMMENT>
-  <table width=100% cellpadding=0 cellspacing=0> 
-   <tr> <?MIVAR>
-    <td width=7%>
-        <?/MIVAR>
-  	<b>Sequence:</b>
-    </td>
+      <br>
+        <b>Sequence:</b>
    
-    <?MISQL SQL="
-       select mrkrseq_sequence, mrkrseq_left_end, mrkrseq_zdb_id
-         from marker_sequence
-        where mrkrseq_mrkr_zdb_id = '$OID';">
+      <table border=0 bgcolor="<!--|HIGHLIGHT_COLOR|-->">
+        <tr><td> 
+        <?MISQL SQL="select WebExplode(object,'seqdata_sequence=$mrkrview_sequence') from webPages where ID='aa-sequence_data_entry.apg';">$1<?/MISQL>        
 
-      <?MIVAR NAME=$sequence>$1<?/MIVAR>
-      <?MIVAR NAME=$left_end>$2<?/MIVAR>
-      <?MIVAR NAME=$mrkrseq_zdb_id>$3<?/MIVAR>
-    <?/MISQL> <?MICOMMENT>curator confirmed only one sequence<?/MICOMMENT>
-    <?MIVAR NAME=$right_end>$(IF,$(EC,$left_end,5'),3',5')<?/MIVAR>
-    <td>	
-      <?MIVAR COND="$(XST,$UPDATE)">
-        <INPUT TYPE=button value=Update 
-           onClick="update_mrkrsequence('$mrkrseq_zdb_id','$sequence',this.form.sequence.value)";>
+      <INPUT TYPE=button 
+        value="Update Sequence"
+        <?MIVAR>
+        onClick="if (validSequence(document.newdata.seqdata_DisplaySequence.value) ){update_mrkrsequence('$mrkrview_mrkrseq_zdb_id','$mrkrview_sequence',document.newdata.seqdata_DisplaySequence.value,document.newdata.seqdata_CuratorNote.value)}">
+        <?/MIVAR>
+        <br>
+        </td></tr>
+      </table>
+        
+      <?MIVAR COND="$(NC,$mrkrview_mrkrseq_zdb_id,)">
+         <br>Add Sequence Reference:	
+         <input type=text name=mrkrview_seq_pubid>
+         <input type=button value="Add" onClick=new_attrib_mrkrseq('$mrkrview_mrkrseq_zdb_id');> 
+        <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_mrkrseq_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+        <p>
       <?/MIVAR>
-      <?MIVAR>
-      &nbsp;$left_end - <?MIVAR COND="$(XST,$UPDATE)"><INPUT TYPE=text size=30 name=sequence value="<?/MIVAR>$sequence<?MIVAR COND="$(XST,$UPDATE)">"><?/MIVAR> - $right_end
-      <?/MIVAR>
-      <?MISQL SQL="select WebExplode(object,'dataId=$mrkrseq_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+      </form>
+      
+  <?MIELSE COND="$(NC,$mrkrview_mrkrseq_zdb_id,)">
 
-       <?MIVAR>
-	 &nbsp;  <input type=button value="BLAST IT" onClick="window.open('$(CONCAT,$fdb_url_blast,$sequence,$blast_option)');">
-       <?/MIVAR>
-     </td>
-   </tr>
-   <tr>
-     <td> &nbsp; </td>
-     <td>
-      <?MICOMMENT>in checkedout branch, a sequence_disclaimer.apg page is added.
-            we are hardcoding now, and will update when merge.
-      <?/MICOMMENT> 
-      <font size=-1>
-	&nbsp;(Although ZFIN verifies reagent sequence data, we recommend that you conduct independent sequence analysis before ordering any reagent.)
-      </font>
-     </td>
-   </tr>
-  </table>
+      <br> <?MICOMMENT> for display purpose <?/MICOMMENT>
+      <?MICOMMENT>use table to align sequence and disclaimer<?/MICOMMENT>
+      <table width=100% cellspacing=0> 
+ 
+       <tr>
+        <td width=7%>
+          <b>Sequence:</b>
+        </td>
+        <td>
+          <?MIVAR>&nbsp;5' - $mrkrview_sequence - 3'<?/MIVAR>
+          <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_mrkrseq_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+        
+          <?MIVAR>
+            &nbsp;  <input type=button value="BLAST IT" onClick="window.open('$(CONCAT,$fdb_url_blast,$mrkrview_sequence,$blast_option)');">
+          <?/MIVAR>
+        </td>
+      </tr>
+      <tr>
+        <td> &nbsp; </td>
+        <td>
+         <?MICOMMENT>in checkedout branch, a sequence_disclaimer.apg page is added.
+               we are hardcoding now, and will update when merge.
+         <?/MICOMMENT> 
+         <font size=-1>
+           &nbsp;(Although ZFIN verifies reagent sequence data, we recommend that you conduct independent sequence analysis before ordering any reagent.)
+         </font>
+        </td> 
+      </tr>
+     </table>
 
-  <?MIVAR COND="$(XST,$UPDATE)"></form><?/MIVAR>
-  <br> <?MICOMMENT> for display purpose <?/MICOMMENT>
-<?/MIBLOCK> <?MICOMMENT> end of exist sequence  <?/MICOMMENT>
+     <br>
+  <?/MIBLOCK>      
 
 
 <?MICOMMENT>=========================================================
@@ -666,10 +694,12 @@ Datablade documentation.
 <?/MIBLOCK> <?MICOMMENT> end of type_of_knockdown_reagent<?/MICOMMENT>
 
 
+
 <?MICOMMENT>=========================================================
             ==     Nomenclature History
 	    =========================================================
 <?/MICOMMENT>
+
 
 <?MISQL SQL="select * from marker_history where mhist_mrkr_zdb_id = '$OID'">
 <?/MISQL>
@@ -874,6 +904,7 @@ Datablade documentation.
     </td></tr></table>
   <?/MIBLOCK>
 <?/MIBLOCK><?MICOMMENT>end of type_of_genedom<?/MICOMMENT>
+
 
 
 <?MICOMMENT>=========================================================
