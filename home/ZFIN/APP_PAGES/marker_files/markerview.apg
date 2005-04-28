@@ -582,7 +582,7 @@ Datablade documentation.
  <?/MISQL>
  <?MIVAR NAME=blast_option>&EXPECT=1000&WORD_SIZE=7&ENTREZ_QUERY=Danio rerio [ORGN]&FORMAT_ENTREZ_QUERY=All organisms<?/MIVAR>
  
-  <?MIBLOCK COND="$(XST,$UPDATE)">
+  <?MIBLOCK COND="$(AND,$(XST,$UPDATE),$(XST,$type_of_knockdown_reagent))">
       </form>
       <form name=newdata>
 
