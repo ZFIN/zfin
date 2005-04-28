@@ -1870,19 +1870,19 @@ sub mouseOrthologyHasMGIAccession ($) {
 
 
 #---------------------------------------------------------------
-# mouseOrthologyHasLocusLinkAccession
+# mouseOrthologyHasEntrezAccession
 #
 # This test identifies any mouse orthology records without any
-# LocusLink accession ID.
+# Entrez accession ID.
 # 
 # 
 #Parameter
 # $      Email Address for recipients
 # 
 
-sub mouseOrthologyHasLocusLinkAccession ($) {
+sub mouseOrthologyHasEntrezAccession ($) {
 
-  my $routineName = "mouseOrthologyHasLocusLinkAccession";
+  my $routineName = "mouseOrthologyHasEntrezAccession";
 
   my $sql = "select zdb_id, c_gene_id, organism
              from   orthologue
@@ -1892,7 +1892,7 @@ sub mouseOrthologyHasLocusLinkAccession ($) {
                        from   db_link, foreign_db_contains
                        where  dblink_fdbcont_zdb_id = fdbcont_zdb_id
                        and    fdbcont_organism_common_name = 'Mouse'
-                       and    fdbcont_fdb_db_name = 'LocusLink'
+                       and    fdbcont_fdb_db_name = 'Entrez Gene'
                        and    zdb_id = dblink_linked_recid
                     )";
 
@@ -1904,8 +1904,8 @@ sub mouseOrthologyHasLocusLinkAccession ($) {
 	
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
-    my $subject = "Mouse Orthology is missing LocusLink accession ID.";
-    my $errMsg = "$nRecords mouse orthology records require a LocusLink accession ID";
+    my $subject = "Mouse Orthology is missing Entrez Gene accession ID.";
+    my $errMsg = "$nRecords mouse orthology records require a Entrez Gene accession ID";
 
     logError ($errMsg);
     &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
@@ -1916,19 +1916,19 @@ sub mouseOrthologyHasLocusLinkAccession ($) {
 
 
 #---------------------------------------------------------------
-# humanOrthologyHasLocusLinkAccession
+# humanOrthologyHasEntrezAccession
 #
 # This test identifies any human orthology records without any
-# LocusLink accession ID.
+# Entrez accession ID.
 # 
 # 
 #Parameter
 # $      Email Address for recipients
 # 
 
-sub humanOrthologyHasLocusLinkAccession ($) {
+sub humanOrthologyHasEntrezAccession ($) {
 
-  my $routineName = "humanOrthologyHasLocusLinkAccession";
+  my $routineName = "humanOrthologyHasEntrezAccession";
 
   my $sql = "select zdb_id, c_gene_id, organism
              from   orthologue o1
@@ -1938,7 +1938,7 @@ sub humanOrthologyHasLocusLinkAccession ($) {
                        from   db_link, foreign_db_contains
                        where  dblink_fdbcont_zdb_id = fdbcont_zdb_id
                        and    fdbcont_organism_common_name = 'Human'
-                       and    fdbcont_fdb_db_name = 'LocusLink'
+                       and    fdbcont_fdb_db_name = 'Entrez Gene'
                        and    o1.zdb_id = dblink_linked_recid
                     )
              -- exclude organism type mismatch errors
@@ -1960,8 +1960,8 @@ sub humanOrthologyHasLocusLinkAccession ($) {
 	
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
-    my $subject = "Human Orthology is missing LocusLink accession ID.";
-    my $errMsg = "$nRecords human orthology records require a LocusLink accession ID.";
+    my $subject = "Human Orthology is missing Entrez Gene accession ID.";
+    my $errMsg = "$nRecords human orthology records require a Entrez Gene accession ID.";
 
     logError ($errMsg);
     &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
@@ -1975,7 +1975,7 @@ sub humanOrthologyHasLocusLinkAccession ($) {
 # orthologyOrganismMatchesForeignDBContains
 #
 # This test identifies any human orthology records without any
-# LocusLink accession ID.
+# Entrez accession ID.
 # 
 # 
 #Parameter
@@ -3055,8 +3055,8 @@ if($monthly) {
   genesWithCommonDblinks($geneEmail);
   orthologyHasEvidence($geneEmail);
   mouseOrthologyHasMGIAccession($geneEmail);
-  mouseOrthologyHasLocusLinkAccession($geneEmail);
-  humanOrthologyHasLocusLinkAccession($geneEmail);
+  mouseOrthologyHasEntrezAccession($geneEmail);
+  humanOrthologyHasEntrezAccession($geneEmail);
   containedInRelationshipsInEST($geneEmail);
   encodesRelationshipsInBACorPAC($geneEmail);
 }
