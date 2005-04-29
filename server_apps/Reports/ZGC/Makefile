@@ -18,7 +18,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/Reports/ZGC
 
-GENERICS = zgcCount.pl
+GENERICS =
 STATICS = zgcCount.sql
 
 # ---------------  Production Rules  ------------------------------------
@@ -29,5 +29,5 @@ include $(TOP)/make.default.rules
 
 # ---------------  Misc Targets  ----------------------------------------
 
-run : $(TARGETDIR)/zgcCount.pl
-	$(TARGETDIR)/zgcCount.pl
+run : $(TARGETDIR)/../Count.pl
+	$(TARGETDIR)/..Count.pl
