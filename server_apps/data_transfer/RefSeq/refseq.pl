@@ -1,4 +1,4 @@
-#!/local/bin/perl 
+#!/private/bin/perl 
 #  Script to create RefSeq/Entrez links in the database
 #  This script assumes directory GenPept exists in the 
 #  same folder, and file fetch-genpept.r exist in ../GenPept/.
@@ -112,13 +112,19 @@ if ($sys_status > 0)
     &emailError("Failure in load_refseq.pl", "<!--|VALIDATION_EMAIL_AD|-->");
 }
 
+
 &dblinksReport();
 &reportOmimDups();
 
-&reportFile('gene_with_multiple_linked_recid.unl','RefSeq Multiples');
-&reportFile('conflict_dblink.unl','Marker/DbLink Conflicts');
+&reportFile('gene_with_multiple_linked_recid.unl','RefSeq Multiples', 'tech');
+&reportFile('conflict_dblink.unl','Marker/DbLink Conflicts', 'tech');
+&reportFile('hs_ortho_abbrev_conflict.unl','Human Ortho Conflicts','bio');
+&reportFile('mm_ortho_abbrev_conflict.unl','Mouse Ortho Conflicts','bio');
 
-&sendReport();
+&sendReport('tech');
+&sendReport('bio','<!--|VALIDATION_EMAIL_GENE|-->');
+
+$dbh->disconnect();
 
 exit;
 
@@ -126,7 +132,7 @@ exit;
 
 sub emailError()
   {
-    &writeReport($_[0]);
+    &writeReport("tech", $_[0]);
     
     if ($_[1]) {  &sendReport($_[1]); }
     else {  &sendReport(); }
@@ -146,15 +152,19 @@ sub downloadRefSeqFiles()
 
 sub writeReport()
   {
-    open (REPORT, ">>report") or die "cannot open report";
-    print REPORT "$_[0] \n\n";
+    $file = &getReportName($_[0]);
+    
+    open (REPORT, ">>$file") or die "cannot open $file";
+    flock(REPORT,2);
+    print REPORT "$_[1] \n\n";
     close (REPORT);
   }
 
 sub openReport()
   {
-    system("/bin/rm -f report");
+    system("/bin/rm -f report*");
     system("touch report");
+    system("touch report_ortho");
     dblinksReport();
   }
 
@@ -213,43 +223,62 @@ sub reportFile()
   {
     $vFile = $_[0];
     $vTitle = $_[1];
+    $vReport = $_[2];
+    my $vText = "";
     
-    open (REPORT, ">>report") or die "can not open report";
-    open (FILE, "$vFile") or die "can not open $vFile";
-    
-    print REPORT "\n";
-    print REPORT "$vTitle\n";
-
-    while($line = <FILE>)
+    if (-e $vFile)
     {
-      print REPORT $line;
-    }
-
-    print REPORT "\n";
+        open (FILE, "$vFile");
     
-    close (FILE);
-    close (REPORT);
+        $vText .= "\n";
+        $vText .= "$vTitle\n";
+
+        while($line = <FILE>)
+        {
+          $vText .= $line;
+        }
+
+        $vText .= "\n";
+    
+        close (FILE);
+        &writeReport($vReport,$vText);
+    }
+    else
+    {
+        &writeReport($vReport,"\nCannot open $vFile\n");
+    }    
   }
   
 
 sub sendReport()
   {
+    $file = &getReportName($_[0]);
+    
     open(MAIL, "| $mailprog") || die "cannot open mailprog $mailprog, stopped";
-    open(REPORT, "report") || die "cannot open report";
+    open(REPORT, $file) || die "cannot open report $file";
 
-    if ($_[0]) {
-      print MAIL "To: $_[0]\n";
+    if ($_[1]) {
+      $email = $_[1];
+      $email =~ s/\\@/@/;
+      print MAIL "To: $email\n";
     }
     else {
       print MAIL "To: bsprunge\@cs.uoregon.edu\n";
     }
     
-    print MAIL "Subject: (refseq) report\n";
+    print MAIL "Subject: refseq/ortho report\n";
     while($line = <REPORT>)
     {
       print MAIL $line;
     }
     close (REPORT);
     close (MAIL);
-    $dbh->disconnect();
+  }
+
+sub getReportName ()
+  {
+    if ($_[0] eq "tech") {  return "report";}
+    elsif ($_[0] eq "bio") { return "report_ortho";}
+    
+    die "unknown report";      
   }
