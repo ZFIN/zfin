@@ -15,11 +15,79 @@ begin work;
 lock table db_link in share mode;
 
 
+  --=================================--
+  -- Find Orthologue Name Mismatches --
+  --=================================--
+  
+--HUMAN 
+CREATE TEMP TABLE LL_HUMAN
+  (
+    llhs_ll_id		varchar (50) not null,
+    llhs_hs_abbrev	varchar (20),
+    llhs_hs_id		varchar (50) not null
+  )
+with no log;
+
+!echo 'LOAD ll_hs_id.unl'
+LOAD FROM 'll_hs_id.unl' INSERT INTO ll_human;
+
+CREATE INDEX llhs_ll_id_index ON ll_human
+    (llhs_ll_id) using btree;
+CREATE INDEX llhs_abbrev_index ON ll_human
+    (llhs_hs_abbrev) using btree;
+    
+UNLOAD to hs_ortho_abbrev_conflict.unl
+SELECT mrkr_abbrev, ortho_abbrev, llhs_hs_abbrev
+FROM ll_human, db_link, orthologue, marker, foreign_db_contains
+WHERE llhs_ll_id = dblink_acc_num
+  and llhs_hs_abbrev != ortho_abbrev
+
+  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+  and fdbcont_organism_common_name = "Human"
+  and fdbcont_fdbdt_data_type = "orthologue"
+  and fdbcont_fdb_db_name = "Entrez Gene"
+  and dblink_linked_recid = zdb_id
+  and c_gene_id = mrkr_zdb_id
+ORDER BY mrkr_abbrev;
+  
+--MOUSE
+CREATE TEMP TABLE LL_MOUSE
+  (
+    llmm_ll_id		varchar (50) not null,
+    llmm_mm_abbrev	varchar (50),
+    llmm_mm_id		varchar (50) not null
+  )
+with no log;
+
+!echo 'LOAD ll_mm_id.unl'
+LOAD FROM 'll_mm_id.unl' INSERT INTO ll_mouse;
+
+CREATE INDEX llmm_ll_id_index ON ll_mouse
+    (llmm_ll_id) using btree;
+CREATE INDEX llmm_abbrev_index ON ll_mouse
+    (llmm_mm_abbrev) using btree;
+    
+UNLOAD to mm_ortho_abbrev_conflict.unl
+SELECT mrkr_abbrev, ortho_abbrev, llmm_mm_abbrev
+FROM ll_mouse, db_link, orthologue, marker, foreign_db_contains
+WHERE llmm_ll_id = dblink_acc_num
+  and llmm_mm_abbrev != ortho_abbrev
+
+  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+  and fdbcont_organism_common_name = "Mouse"
+  and fdbcont_fdbdt_data_type = "orthologue"
+  and fdbcont_fdb_db_name = "Entrez Gene"
+  and dblink_linked_recid = zdb_id
+  and c_gene_id = mrkr_zdb_id
+ORDER BY mrkr_abbrev;
+
+
+
   --=======================--
   -- LOAD INTO TEMP TABLES --
   --=======================--
 
---ZEBRAFISH locus_link
+--ZEBRAFISH 
 CREATE TEMP TABLE LL_ZDB
   (
     llzdb_ll_id		varchar (50) not null,
@@ -35,7 +103,7 @@ CREATE INDEX llzdb_ll_id_index ON ll_zdb
 CREATE INDEX llzdb_zdb_id_index ON ll_zdb
     (llzdb_zdb_id) using btree;
 
-  
+    
 
 --REFSEQ ACCESSION NUM--
 CREATE TEMP TABLE REF_SEQ_ACC
