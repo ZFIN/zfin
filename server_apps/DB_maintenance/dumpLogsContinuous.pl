@@ -1,4 +1,4 @@
-#!/local/bin/perl -s
+#!/private/bin/perl -s
 #	Script to call ontape to start continuous log backups
 #
 #	Clif Cox	8/4/99
