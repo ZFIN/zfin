@@ -44,8 +44,8 @@ parse file: read ftp://ftp.geneontology.org/go/ontology/gene_ontology.obo
 	opt ["saved-by:" thru newline]
 	opt ["auto-generated-by:" thru newline]
 	opt ["default-namespace:" thru newline]
-	some ["subsetdef:" thru newline]
 	opt ["remark:" thru newline]
+	some ["subsetdef:" thru newline]
 	;;some ["subsetdef:" thru newline]
 
 	;;each some is a new rule, parser goes through rules 1 at a time
