@@ -42,10 +42,19 @@ modified to support I.E.  call to location.replace replaced with location.href
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
   <?MIVAR COND="$(NXST,$new_value)" NAME=$new_value>NULL<?/MIVAR>
-  <?MIVAR COND="$(NXST,$comments)" NAME=$comments>NULL<?/MIVAR>
 
   <?MIVAR NAME=$new_value DELIMIT="'" REPLACE="''">$new_value<?/MIVAR>
-  <?MIVAR NAME=$comments DELIMIT="'" REPLACE="''">$comments<?/MIVAR>
+  <?MIBLOCK COND="$(NXST,$comments)">
+    <?MIVAR NAME=$comments>NULL<?/MIVAR>
+  <?MIELSE>
+    <?MIVAR NAME=$comments DELIMIT="'" REPLACE="''">'$comments'<?/MIVAR>
+  <?/MIBLOCK>
+  <?MICOMMENT>
+    *** :PRODUCT_BUG:  If the old value contains just a newline then it appears
+    *** that old_value does not end up getting passed to the page, and this
+    *** page gets an undefined variable when it tries to use it.
+  <?/MICOMMENT>
+  <?MIVAR COND=$(NXST,$old_value) NAME=$old_value><?/MIVAR>
   <?MIVAR NAME=$old_value DELIMIT="'" REPLACE="''">$old_value<?/MIVAR>
 
   <?MICOMMENT> *** insert update record for the update! *** <?/MICOMMENT>
@@ -55,7 +64,7 @@ modified to support I.E.  call to location.replace replaced with location.href
           comments, when )
       values 
         ( '$ZDB_ident', '$ZDB_name','$OID', '$attr',  '$old_value', 
-          '$comments', current );">
+          $comments, current );">
   <?/MISQL>
 
   <?MICOMMENT>
