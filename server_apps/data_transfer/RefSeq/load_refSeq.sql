@@ -441,6 +441,54 @@ SELECT dblink_zdb_id
 CREATE INDEX link_id_index ON automated_dblink 
     (link_id) using btree in tempdbs1 ;
 
+
+        --------------------------
+        --|  Expression Links  |--
+        --------------------------
+
+-- Specially treated because the db_link is not an on-delete-cascade.
+-- If the dblink is out of date, the link record must be updated
+-- without deleting. Redundency checks later on will determine if 
+-- the link needs updating. 
+
+--TMP_XPAT_DBLINK
+CREATE TEMP TABLE tmp_xpat_dblink
+  (
+    tmpfx_linked_recid 	varchar(50),
+    tmpfx_db_name 	varchar(50),
+    tmpfx_acc_num 	varchar(50),
+    tmpfx_info 		varchar(80),
+    tmpfx_dblink_zdb_id	varchar(50),
+    tmpfx_fdbcont_zdb_id	varchar(50),
+    tmpfx_length 		integer
+  )
+with no log;
+
+INSERT INTO tmp_xpat_dblink
+  (
+    tmpfx_linked_recid,
+    tmpfx_acc_num,
+    tmpfx_info,
+    tmpfx_dblink_zdb_id,
+    tmpfx_fdbcont_zdb_id,
+    tmpfx_length
+  )
+SELECT 
+    dblink_linked_recid,
+    dblink_acc_num,
+    dblink_info,
+    dblink_zdb_id,
+    dblink_fdbcont_zdb_id,
+    dblink_length
+FROM db_link, automated_dblink, fx_expression_experiment
+WHERE dblink_zdb_id = link_id
+  AND xpatex_dblink_zdb_id = link_id;
+
+DELETE FROM automated_dblink 
+WHERE EXISTS (SELECT * FROM tmp_xpat_dblink WHERE link_id = tmpfx_dblink_zdb_id);
+
+Unload to "xpat_dblink.unl" Select tmpfx_dblink_zdb_id from tmp_xpat_dblink;
+
 DELETE FROM zdb_active_data WHERE zactvd_zdb_id in (SELECT link_id FROM automated_dblink);
 
       
