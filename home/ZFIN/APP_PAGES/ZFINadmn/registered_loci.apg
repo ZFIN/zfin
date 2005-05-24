@@ -99,8 +99,14 @@ registrations -- but not update of course.
 	    order by labpos_order;">
 	<?/MISQL>
 	<?MIVAR NAME=$lab>$1<?/MIVAR>
-	<!-- if owner is a member of ZFIN database team do not set ZFIN as lab, set lab to null -->
-	<?MIVAR COND="$(OR,$(EC,$lab,ZDB-LAB-000914-1),$(EC,$lab,ZDB-LAB-991005-53))" NAME=$lab><?/MIVAR>
+	<?MIVAR NAME=$submitter_id>$owner<?/MIVAR>
+
+	<?MICOMMENT> if owner is a member of ZFIN or ZIRC, set lab to null, set owner to null which will be displayed as "unknown". <?/MICOMMENT>
+	<?MIBLOCK COND="$(OR,$(EC,$lab,ZDB-LAB-000914-1),$(EC,$lab,ZDB-LAB-991005-53))">
+	  <?MIVAR NAME=$lab><?/MIVAR>
+	  <?MIVAR NAME=$owner><?/MIVAR>
+        <?/MIBLOCK>
+
 	<?MIVAR NAME=$full_abbrev>$abbrev<sup>$allele</sup><?/MIVAR>
 	<?MISQL SQL="
 	  execute function get_id('TEMP');">
@@ -133,7 +139,6 @@ registrations -- but not update of course.
 	       '$abbrev','$locus_name','unknown','not specified','not specified');">
 	<?/MISQL>
 	<?MIVAR NAME=$s_done>true<?/MIVAR>
-	<?MIVAR NAME=$submitter_id>$owner<?/MIVAR>
 	<?MISQL SQL="
 	  select WebExplode(object,'') 
 	    from webPages 
