@@ -101,11 +101,12 @@ registrations -- but not update of course.
 	<?MIVAR NAME=$lab>$1<?/MIVAR>
 	<?MIVAR NAME=$submitter_id>$owner<?/MIVAR>
 
-	<?MICOMMENT> if owner is a member of ZFIN or ZIRC, set lab to null, set owner to null which will be displayed as "unknown". <?/MICOMMENT>
-	<?MIBLOCK COND="$(OR,$(EC,$lab,ZDB-LAB-000914-1),$(EC,$lab,ZDB-LAB-991005-53))">
-	  <?MIVAR NAME=$lab><?/MIVAR>
-	  <?MIVAR NAME=$owner><?/MIVAR>
-        <?/MIBLOCK>
+	<?MICOMMENT>if owner is a member of ZFIN or ZIRC, set lab to null<?/MICOMMENT>
+	<?MIVAR COND="$(OR,$(EC,$lab,ZDB-LAB-000914-1),$(EC,$lab,ZDB-LAB-991005-53))" NAME=lab><?/MIVAR>
+
+	<?MICOMMENT>if owner is a member of ZFIN or ZIRC, but not Monte or Zoltan, set owner to null which will be displayed as discoverer "unknown". <?/MICOMMENT>
+	<?MIVAR COND="$(AND,$(EC,$lab,ZDB-LAB-000914-1),$(NC,$submitter_id,ZDB-PERS-960805-676))" NAME=owner><?/MIVAR>
+	<?MIVAR COND="$(AND,$(EC,$lab,ZDB-LAB-991005-53),$(NC,$submitter_id,ZDB-PERS-970217-6))" NAME=owner><?/MIVAR>
 
 	<?MIVAR NAME=$full_abbrev>$abbrev<sup>$allele</sup><?/MIVAR>
 	<?MISQL SQL="
