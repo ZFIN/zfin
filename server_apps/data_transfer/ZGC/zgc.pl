@@ -24,6 +24,7 @@ chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/ZGC/";
 system("/bin/rm -f zLib_not_found");
 system("/bin/rm -f *.previous");
 system("/bin/rm -f *.copy");
+system("/bin/rm -f gene*");
 
 
 #make room for the new version 
@@ -48,7 +49,7 @@ if ($vCloneDiff ne "")
   &openReport();
 
   #parse files
-  system("sed -f zgc.sed StaticCloneList > StaticCloneList.unl");
+  system("parse_clones.pl");
 
   #delete blank lines
   $system_command = 'sed -e ' ."'". '/^$/d' ."'". ' StaticCloneList.unl > StaticCloneList.unl.copy';
@@ -61,6 +62,7 @@ if ($vCloneDiff ne "")
   &zgcReport(); 
   &reportFile('zLib_not_found.unl','Non-ZFIN library'); 
   &reportFile('zName_mismatch.unl','Mismatched zgc genes'); 
+  &reportFile('gene_candidates.unl','Feed clones into BLAST'); 
   &reportFile('refseq_relation.unl','GenBank number is on a gene in ZFIN but the clone is unassigned by ZGC.'); 
   &reportFile('unNoDbLink.unl','Missing Db_link'); 
   &reportFile('unRefSeqAttrib.unl','Attributed to RefSeq'); 
@@ -151,7 +153,7 @@ sub sendReport()
     open(MAIL, "| $mailprog") || die "cannot open mailprog $mailprog, stopped";
     open(REPORT, "report") || die "cannot open report";
 
-    print MAIL "To: <!--|DB_OWNER|-->\@cs.uoregon.edu, bsprunge\@cs.uoregon.edu\n";
+    print MAIL "To: tomc\@cs.uoregon.edu, bsprunge\@cs.uoregon.edu\n";
     print MAIL "Subject: ZGC Report\n";
     while($line = <REPORT>)
     {
