@@ -24,7 +24,6 @@ chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/ZGC/";
 system("/bin/rm -f zLib_not_found");
 system("/bin/rm -f *.previous");
 system("/bin/rm -f *.copy");
-system("/bin/rm -f gene*");
 
 
 #make room for the new version 
@@ -54,7 +53,8 @@ if ($vCloneDiff ne "")
   #delete blank lines
   $system_command = 'sed -e ' ."'". '/^$/d' ."'". ' StaticCloneList.unl > StaticCloneList.unl.copy';
   system($system_command);
-  system("/bin/mv -f StaticCloneList.unl.copy  StaticCloneList.unl");
+  system("sed -n -f zgc.sed StaticCloneList > StaticCloneList.unl");
+
   
   #load links
   system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> load_zgc.sql");
