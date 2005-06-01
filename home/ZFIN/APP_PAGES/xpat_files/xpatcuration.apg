@@ -326,18 +326,19 @@ EFFECTS
       
       ZDB-IDs are deleted from zdb_active_data.
     <?/MICOMMENT>
-  
     <?MIBLOCK COND=$(EC,ZDB-,$(SUBSTR,$delete_item,1,4))>
       <?MIBLOCK COND=$(EC,ZDB-XPATINF-,$(SUBSTR,$delete_item,1,12))>
         <?MISQL SQL="
             SELECT xpatres_zdb_id 
-            FROM fx_expression_result, expression_pattern_infrastructure
+            FROM fx_expression_result, expression_pattern_infrastructure, fx_expression_experiment
             WHERE xpatres_anat_item_zdb_id = xpatinf_anatitem_zdb_id
               AND xpatres_expression_found = xpatinf_expressed
-              AND xpatinf_zdb_id = '$delete_item';">
+              AND xpatinf_zdb_id = '$delete_item'
+	      AND xpatinf_pub_zdb_id = xpatex_source_zdb_id
+              AND xpatres_xpatex_zdb_id = xpatex_zdb_id ;">
             
-            <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id = '$1';"><?/MISQL>
-     
+           <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id = '$1';"><?/MISQL>
+         
         <?/MISQL>
         <?MISQL SQL="delete from expression_pattern_infrastructure where xpatinf_zdb_id = '$delete_item';"><?/MISQL>
       <?MIELSE>  
