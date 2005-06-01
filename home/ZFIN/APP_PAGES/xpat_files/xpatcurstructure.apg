@@ -77,7 +77,7 @@ EFFECTS
     function dynamic_set_value_selection(dynamic_field,offset,span) {
       var structures_add = '';
       var structures_remove = '';
-      var end = parseInt(offset)+parseInt(span)*3;
+      var end = parseInt(offset)+parseInt(span)*2;
       //alert("(offset,span) = ("+offset+","+span+")");
       for (i=offset; i<end; i++) {
         if (dynamic_field[i].checked) {
@@ -348,7 +348,7 @@ EFFECTS
 <table width=100% border=0 bgcolor="<!--|HIGHLIGHT_COLOR|-->">
 <form name=panel_structures>
   <tr>
-    <td colspan=4>
+    <td colspan=3>
 <input type=button value="Update Structures for Experiment" onClick="if (document.panel_structures.xpcurstr_fig_xpat_stg.value != '---'){dynamic_set_value_selection(document.panel_structures.elements,'2',document.panel_structures.xpcurstr_field_count.value);}">
 <select name=xpcurstr_fig_xpat_stg onChange="reset_structures_for_panel(this.value);">
   <option value="---">---------------------------------</option>
@@ -389,7 +389,9 @@ EFFECTS
     <td>Add/Remove</td>
     <td>Structure</td>
     <td>Expressed</td>
-    <td>Delete all expression of this structure for this publication.</td>
+    <?MICOMMENT> drop this dangerous delete
+       <td>Delete all expression of this structure for this publication.</td>
+    <?/MICOMMENT>
   </tr>  
 <?MIVAR NAME=xpcurstr_previous_anatitem><?/MIVAR>  
 <?MIVAR NAME=xpcurstr_field_count>0<?/MIVAR>  
@@ -434,9 +436,11 @@ EFFECTS
         <?/MIBLOCK>
       </td>
       <td> $(IF,$(EC,$xpcurstr_expression_found,t),YES,NO) </td>
-      <td colspan=3 align=left>
-        <?MIVAR><input name="delete" type=button value=" X " onClick="deleteZDB('$xpcurstr_xpatinf_zdb_id','anatitem')"><?/MIVAR>
-      </td> 
+      <?MICOMMENT> drop the dangerous delete
+        <td colspan=3 align=left>
+          <?MIVAR><input name="delete" type=button value=" X " onClick="deleteZDB('$xpcurstr_xpatinf_zdb_id','anatitem')"><?/MIVAR>
+        </td> 
+      <?/MICOMMENT>
     </tr>
     <?/MIVAR>
     <?MIVAR NAME=xpcurstr_field_count>$(+,$xpcurstr_field_count,1)<?/MIVAR>
@@ -449,7 +453,7 @@ EFFECTS
 
 
   <tr>
-    <td colspan=4><HR></td>
+    <td colspan=3><HR></td>
   </tr>
 <?MICOMMENT> ==| Enter a New Structure |== <?/MICOMMENT>
 <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#structure" method=post name=structure2 onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','structure');">
