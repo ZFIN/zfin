@@ -294,7 +294,7 @@ INSERT INTO tmp_db_link
     AND llzdb_zdb_id = mrkr_zdb_id
     AND fdbcont_fdb_db_name = 'RefSeq'
     AND fdbcont_fdbdt_data_type = 'Polypeptide'
-    AND refseq_nP_acc != ''
+    AND refseq_nP_acc != '-'
     AND acclen_acc = refseq_nP_acc
 ;
 
@@ -333,6 +333,7 @@ INSERT INTO tmp_db_link
     AND fdbcont_fdbdt_data_type = accbk_data_type
     AND gbacc_acc = accbk_acc_num
     AND accbk_db_name = 'GenBank'
+    AND gbacc_acc != "-"
 ;
 
 select distinct gbacc_pept as pept_acc, dblink_linked_recid as seg_zdb
