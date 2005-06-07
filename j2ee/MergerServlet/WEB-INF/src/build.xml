@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<project name="Merger" default="compile">
+
+    <!-- directories, webinf.dir is passed in as a parameter -->
+    <property name="src.dir" value="." />
+    <property name="lib.dir" value="${webinf.dir}/lib" />
+    <property name="build.dir" value="${webinf.dir}/classes" />
+
+    <!-- classpaths -->
+    <path id="default_classpath">
+        <pathelement location="${build.dir}" />
+        <pathelement location="/private/tomcat/common/lib/ifxjdbc.jar" />
+        <pathelement location="/private/tomcat/common/lib/servlet-api.jar" />
+    </path>
+
+    <target name="init">
+	<tstamp />
+    </target>
+
+    <target name="clobber" depends="init" description="deletes generated files">
+	<delete dir="${build.dir}" />
+    </target>
+
+    <target name="compile" depends="init" description="compiles code">
+	<mkdir dir="${build.dir}" />
+	<javac destdir="${build.dir}" debug="off" deprecation="off" optimize="on">
+	    <src path="${src.dir}" />
+	    <classpath refid="default_classpath" />
+	</javac>
+    </target>
+
+</project>
