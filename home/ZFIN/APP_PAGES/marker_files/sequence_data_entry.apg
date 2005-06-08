@@ -41,11 +41,12 @@ EFFECTS
               return false;
           }
       
-          var reg = new RegExp("^(A|T|C|G)*$");
+          var reg = new RegExp("^(A|T|C|G|B|D|H|K|M|N|R|S|V|W|Y|U)*$");
           
           if ( ! reg.test(s) )
           {
-              return confirm('Sequence Validation:\n\n Continuing may delete Non "ATCG" letters. \n\n  Continue?') 
+              alert('Sequence Validation:\n\n An invalid character was detected in the sequence field. Please remove non A|T|C|G|B|D|H|K|M|N|R|S|U|V|W|Y letters.');
+              return false;
           }
           return true;
       }
@@ -72,6 +73,45 @@ EFFECTS
               }
               else if (s.charAt(i) == 'G') {
                 complement = complement + "C";
+              }
+              else if (s.charAt(i) == 'U') {
+                complement = complement + "A";
+              }
+              else if (s.charAt(i) == 'B') {
+                complement = complement + "V";
+              }
+              else if (s.charAt(i) == 'D') {
+                complement = complement + "H";
+              }
+              else if (s.charAt(i) == 'H') {
+                complement = complement + "D";
+              }
+              else if (s.charAt(i) == 'K') {
+                complement = complement + "M";
+              }
+              else if (s.charAt(i) == 'M') {
+                complement = complement + "K";
+              }
+              else if (s.charAt(i) == 'N') {
+                complement = complement + "N";
+              }
+              else if (s.charAt(i) == 'R') {
+                complement = complement + "Y";
+              }
+              else if (s.charAt(i) == 'S') {
+                complement = complement + "S";
+              }
+              else if (s.charAt(i) == 'V') {
+                complement = complement + "B";
+              }
+              else if (s.charAt(i) == 'U') {
+                complement = complement + "A";
+              }
+              else if (s.charAt(i) == 'W') {
+                complement = complement + "W";
+              }
+              else if (s.charAt(i) == 'Y') {
+                complement = complement + "R";
               }
           }
       
@@ -154,6 +194,7 @@ EFFECTS
           var note = document.newdata.seqdata_CuratorNote.value;
           document.newdata.seqdata_CuratorNote.value = "Reported Sequence: '"+ document.newdata.seqdata_ReportedSequence.value + "' was " + action +".\n\n" + note;           
       }
+
   </SCRIPT>
     
     
@@ -173,10 +214,17 @@ EFFECTS
           </tr>
           
           <?MICOMMENT> ====== Sequence Fields ====== <?/MICOMMENT>
+          
+          <?MICOMMENT> The user is responsible for modifying the data when an error
+                       is reported. It is not possible to return the user to the 
+                       field when an error is detected because this.focus() is not 
+                       callable via onChange().
+          <?/MICOMMENT>
+          
           <tr>
             <td valign=top> 5'  <input type=text name=seqdata_ReportedSequence size=40 
                                <?MIVAR COND=$(XST,$seqdata_sequence)>value=$seqdata_sequence<?/MIVAR>
-                               onChange="this.value = this.value.toUpperCase();document.newdata.seqdata_DisplaySequence.value = this.value;"> 
+                               onChange="this.value = this.value.toUpperCase();var text=''; if(validSequence(this.value)){text = this.value} document.newdata.seqdata_DisplaySequence.value = text;}"> 
             </td>
             <td> 
               <select name=seqdata_action onChange="if ( validSequence(document.newdata.seqdata_ReportedSequence.value) ){actionSequence(this.selectedIndex);}">
@@ -186,7 +234,8 @@ EFFECTS
                 <option>mRNA --> MO</option>
               </select>
             </td>
-            <td valign=top> 5'  <input type=text name=seqdata_DisplaySequence size=40>
+            <td valign=top> 5'  <input type=text name=seqdata_DisplaySequence size=40
+                                  onFocus="alert('Modify the sequence in the Original Sequence field');this.blur();">
             </td>
           </tr>
           
