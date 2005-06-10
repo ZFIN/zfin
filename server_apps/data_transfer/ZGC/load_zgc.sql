@@ -13,10 +13,7 @@ II. Create new records
         Move BC GenBank links from GENE records to zgc EST (update Zgc_tmp.mrkr_name)
         Create BC GenBank links for empty zgc ESTs
         Create clone records for zgc ests
-     B. 
-        *** NOTE 2005-05-25 ***
-        zgc genes are unloaded to gene_candidates.unl for BLAST analysis.
-        
+     B. Add zgc GENEs
         Upgrade bonus genes
         Create temp GENE records
      C. Add temp marker_relationships
@@ -651,23 +648,22 @@ WHERE
     AND zgc_mrkr_abbrev = mrkr_abbrev;
 
 
-	------------------------------------------
-	--| Unload zgc: genes.                 |--
-	--| Run them through the data pipeline |--
-	------------------------------------------
-	
-UNLOAD TO 'gene_candidates.unl'
-SELECT distinct
-    zEST_abbrev,
-    zDblink_acc_num
+INSERT into tmp_Zgc_Mrel
+  (
+    zMrel_zdb_id,
+    zMrel_gene_zdb_id,
+    zMrel_est_zdb_id  
+  )
+SELECT
+    get_id('MREL'),
+    zGENE_zdb_id,
+    zEST_zdb_id
 FROM 
-    tmp_Zgc, tmp_Zgc_EST, tmp_Zgc_GENE, tmp_Zgc_Dblink_new
+    tmp_Zgc, tmp_Zgc_EST, tmp_Zgc_GENE
 WHERE
     zgc_abbrev = zEST_abbrev
-    AND 'zgc'||zgc_name[4,20] = zGENE_abbrev
-    AND zDblink_linked_recid = zEST_zdb_id;
+    AND 'zgc'||zgc_name[4,20] = zGENE_abbrev;
 
-DELETE FROM tmp_Zgc_GENE;
 
 	-----------------------------------------
 	--| Move temp records into production |--
@@ -769,6 +765,98 @@ WHERE recattrib_data_zdb_id IN (select zDblink_zdb_id from tmp_Zgc_Dblink_moved)
   AND recattrib_source_zdb_id = 'ZDB-PUB-020723-3'
 ;
 
+
+!echo 'GENE'
+SELECT *
+FROM tmp_Zgc_Gene
+WHERE zGENE_abbrev IN (Select mrkr_abbrev From marker)
+INTO temp tmp_gene_duplicate;
+
+UNLOAD to duplicate_gene.unl
+SELECT * FROM tmp_gene_duplicate;
+
+DELETE from tmp_Zgc_Gene
+WHERE zGENE_zdb_id IN (Select g2.zGene_zdb_id From tmp_gene_duplicate AS g2);
+
+DELETE from tmp_Zgc_MREL
+WHERE zMREL_gene_zdb_id IN (Select g2.zGene_zdb_id From tmp_gene_duplicate AS g2);
+
+!echo 'Remove upgrade duplicates'
+
+UNLOAD to 'merge_candidates.unl'
+SELECT * from tmp_Zgc_Upgrade
+WHERE zUpgrade_zdb_id IN (Select g2.zGene_zdb_id From tmp_gene_duplicate AS g2)
+;
+
+DELETE from tmp_Zgc_Upgrade
+WHERE zUpgrade_zdb_id IN (Select g2.zGene_zdb_id From tmp_gene_duplicate AS g2);
+
+-- zgc: Genes are created for CDNAs without a gene assignment. CDNA are identified
+-- by a BC accession number. If multiple dblinks are associated with the same CDNA
+-- then redundant zgc: Genes are generated.
+
+-- 1. Find duplicates. 
+-- 2. Delete marker_relationship records with duplicates. 
+-- 3. Delete duplicates gene records.
+
+SELECT zGENE_name AS zgene_unique_name, MAX(zGENE_zdb_id) AS zgene_unique_zdb_id
+FROM tmp_Zgc_Gene 
+GROUP BY 1 
+INTO temp tmp_gene_unique;
+
+SELECT zGENE_name AS zgene_dup_name, zGENE_zdb_id AS zgene_dup_zdb_id
+FROM tmp_ZGC_Gene
+WHERE NOT EXISTS 
+  (  
+    select * 
+    from tmp_gene_unique
+    where zGENE_name = zgene_unique_name
+      and zGENE_zdb_id = zgene_unique_zdb_id
+  )
+INTO temp tmp_gene_dup;
+
+DELETE FROM tmp_Zgc_Mrel
+WHERE EXISTS
+  (
+    select *
+    from tmp_gene_dup
+    where zgene_dup_zdb_id = zMREL_gene_zdb_id
+  );
+
+DELETE FROM tmp_Zgc_Gene
+WHERE EXISTS
+  (
+    select * 
+    from tmp_gene_dup
+    where zgene_dup_zdb_id = zGENE_zdb_id
+  );
+
+INSERT into zdb_active_data SELECT zGENE_zdb_id FROM tmp_Zgc_Gene;
+INSERT into marker
+  (
+    mrkr_zdb_id,
+    mrkr_name,
+    mrkr_abbrev,
+    mrkr_type,
+    mrkr_comments,
+    mrkr_owner
+  )
+SELECT 
+    zGENE_zdb_id,
+    zGENE_name,
+    zGENE_abbrev,
+    'GENE',
+    zGENE_description,
+    zGENE_owner
+FROM tmp_Zgc_GENE;
+
+INSERT into record_attribution
+  (
+    recattrib_data_zdb_id,
+    recattrib_source_zdb_id
+  )
+SELECT zGENE_zdb_id, 'ZDB-PUB-040217-2'
+FROM tmp_Zgc_GENE;
 
 
 -- Mrel
