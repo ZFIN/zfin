@@ -186,6 +186,11 @@ EFFECTS
           {
               reverseComplementSequence();
           }
+          else if (action == 4)
+          {
+              document.newdata.seqdata_DisplaySequence.value = document.newdata.seqdata_ReportedSequence.value;
+              curatorNote('Restored');
+          }
       }
       
       function curatorNote (action)
@@ -232,6 +237,7 @@ EFFECTS
                 <option>Reverse</option>
                 <option>Complement</option>
                 <option>mRNA --> MO</option>
+                <option>Original</option>
               </select>
             </td>
             <td valign=top> 5'  <input type=text name=seqdata_DisplaySequence size=40
