@@ -227,9 +227,9 @@ sub est_addNewlySuppliedEsts($$) {
 
     my $insertCur = $dbh->prepare("
            insert into int_data_supplier
-               ( idsup_data_zdb_id, idsup_supplier_zdb_id )
+               ( idsup_data_zdb_id, idsup_supplier_zdb_id, idsup_acc_num )
              values
-               ( ? , '$zircZdbId' );");
+               ( ? , '$zircZdbId', ? );");
 
     $cur->execute;
 
@@ -238,7 +238,9 @@ sub est_addNewlySuppliedEsts($$) {
 
     while ($cur->fetch) {
 	writeReport($estZdbId);
+	# ZIRC uses same accession numbers as ZFIN.
 	$insertCur->bind_param(1, $estZdbId);
+	$insertCur->bind_param(2, $estZdbId);
 	$insertCur->execute();
 	$rowCount++;
     }
