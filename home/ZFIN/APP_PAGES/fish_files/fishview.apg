@@ -650,7 +650,9 @@ Datablade documentation.
 	  <?/MIBLOCK>
 	<?/MIBLOCK>
 	
-	<!-- allow zirc to read comments that are not available to the public -->
+	<?MICOMMENT>
+	 ***  allow zirc to read comments that are not available to the public
+        <?/MICOMMENT>
 
 	<?MIBLOCK COND="$(EC,$AUTHORIZED,zirc)">
 	  <?MIBLOCK COND="$(AND,$(NC,$phenotype,),$(NC,$phenotype,NULL))"> 
@@ -781,7 +783,7 @@ Datablade documentation.
                   <?/MIVAR>
 		  <?MIBLOCK COND=$(EC,$supplier_zdb_id,ZDB-LAB-991005-53)>
                     <?MIVAR>
-		      <A HREF="/zirc/home/guide.php">$supplier_name</A>
+		      <A HREF="/zirc/home/guide.php?OID=$OID">$supplier_name</A>
 		    <?/MIVAR>
 		  <?MIELSE>
                     <?MIVAR>
