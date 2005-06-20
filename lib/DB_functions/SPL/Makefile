@@ -46,8 +46,8 @@ REGEN_GNRCS  = regen_fishsearch.sql regen_oevdisp.sql \
 	       regen_panelcount.sql regen_maps.sql
 REGEN_STATS  = grab_zdb_flag.sql release_zdb_flag.sql
 ZDB_GNRCS    = table_exists.sql
-ZDB_STATS    = get_obj_name.sql zdb_date.sql get_date_from_id.sql \
-	       p_check_zdb_object_table.sql syscall.sql \
+ZDB_STATS    = get_obj_name.sql get_obj_abbrev.sql get_date_from_id.sql \
+	       p_check_zdb_object_table.sql syscall.sql zdb_date.sql \
 	       p_check_figure_image_pair_exists.sql \
 	       p_check_submitter_is_root.sql set_session_params.sql
 
