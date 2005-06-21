@@ -157,15 +157,16 @@ create temp table meow_exp2 (
   title lvarchar,
   authors lvarchar ,
   pub_date date ,
-  source_zdb_id lvarchar ,
+  source lvarchar ,
   accession_no varchar(80)
 ) with no log;
 
 insert into meow_exp2 
-  select recattrib_data_zdb_id, zdb_id, title, authors, pub_date, source,
-         accession_no 
-    from publication, record_attribution
+  select recattrib_data_zdb_id, zdb_id, title, authors, pub_date, jrnl_abbrev||pub_volume||':'||pub_pages as source, 
+	accession_no 
+    from publication, record_attribution, journal
    where zdb_id = recattrib_source_zdb_id
+     and jrnl_zdb_id= pub_jrnl_zdb_id
      and recattrib_data_zdb_id in
        ( select zdb_id 
            from meow_exp1 ) ;
