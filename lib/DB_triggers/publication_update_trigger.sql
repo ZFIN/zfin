@@ -8,6 +8,8 @@ create trigger publication_update_trigger
         into accession_no,
       execute function scrub_char(new_publication.pubmed_authors)
         into pubmed_authors,
+      execute function lower(new_publication.authors)
+         into pub_authors_lower,
       execute function scrub_char(new_publication.jtype)
         into jtype,
       execute function get_pub_mini_ref(new_publication.zdb_id) 
