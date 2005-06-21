@@ -40,14 +40,16 @@ openReport();
 
     $eight_digit_date = d8();
 
-    $query = "select title, zdb_id, year(pub_date) as pyear, authors, source
-              from publication
+    $query = "select title, zdb_id, year(pub_date) as pyear, authors, jrnl_abbrev, pub_volume, pub_pages
+              from publication, journal
               where get_date_from_id(zdb_id,'YYYYMMDD') = '$eight_digit_date'
                 and status = 'active'
+                and jrnl_zdb_id = pub_jrnl_zdb_id
               UNION
-              select title, zdb_id, year(pub_date) as pyear, authors, source
-              from publication, updates
+              select title, zdb_id, year(pub_date) as pyear, authors, jrnl_abbrev, pub_volume, pub_pages
+              from publication, updates, journal
               where zdb_id = rec_id
+                and jrnl_zdb_id = pub_jrnl_zdb_id
                 and field_name = 'status'
                 and new_value = 'active'
                 and when::date = TODAY
@@ -60,17 +62,19 @@ openReport();
     my $cur = $dbh->prepare($query);
 
     $cur->execute;
-    my($title, $zdb, $pyear, $auth, $src);
-    $cur->bind_columns(\$title,\$zdb,\$pyear,\$auth,\$src);
+    my($title, $zdb, $pyear, $auth, $jrnl_abbrev, $vol, $pages);
+    $cur->bind_columns(\$title,\$zdb,\$pyear,\$auth,\$jrnl_abbrev,\$vol,\$pages);
 
     $count = 0;
     while ($cur->fetch)
     {
       $auth = cleanTail($auth);
       $title = cleanTail($title);
-      $src = cleanTail($src);
+      $jrnl_abbrev = cleanTail($jrnl_abbrev);
+      $vol = cleanTail($vol);
+      $pages = cleanTail($pages);
       print REPORT "[$zdb]\n";
-      print REPORT "$auth ($pyear) $title. $src.\n\n";
+      print REPORT "$auth ($pyear) $title. $jrnl_abbrev. $vol:$pages\n\n";
       $count++;
     }
     print REPORT "\n";
