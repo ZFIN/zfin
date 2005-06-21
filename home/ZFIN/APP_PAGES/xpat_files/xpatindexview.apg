@@ -55,17 +55,19 @@ document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
 
   <?MISQL SQL="select WebExplode(object,'rtype=geli') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
 
-    <?MISQL SQL="select title, authors, year(pub_date), source, keywords, accession_no, jtype,pub_abstract from publication where zdb_id='$OID';"><?/MISQL>
+    <?MISQL SQL="select title, authors, year(pub_date), jrnl_abbrev, pub_volume, pub_pages, keywords,jtype, accession_no, pub_abstract, status from publication, journal where zdb_id='$OID' and jrnl_zdb_id = pub_jrnl_zdb_id;"><?/MISQL>
 
     <?MIVAR NAME=$title>$1<?/MIVAR>
     <?MIVAR NAME=$authors>$2<?/MIVAR>
     <?MIVAR NAME=$year>$3<?/MIVAR>
-    <?MIVAR NAME=$source>$4<?/MIVAR>
-    <?MIVAR NAME=$keywords>$5<?/MIVAR>
-    <?MIVAR NAME=$jtype>$7<?/MIVAR>
-    <?MIVAR NAME=$accession_no>$6<?/MIVAR>
-    <?MIVAR NAME=$abstract>$8<?/MIVAR>
-    
+    <?MIVAR NAME=$jrnl_abbrev>$4<?/MIVAR>
+    <?MIVAR NAME=$pub_volume>$5<?/MIVAR>
+    <?MIVAR NAME=$pub_pages>$6<?/MIVAR>
+    <?MIVAR NAME=$keywords>$7<?/MIVAR>
+    <?MIVAR NAME=$jtype>$8<?/MIVAR>
+    <?MIVAR NAME=$accession_no>$9<?/MIVAR>
+    <?MIVAR NAME=$abstract>$10<?/MIVAR>
+    <?MIVAR NAME=$pub_status>$11<?/MIVAR>    
     <?MIVAR>
 
       <center> <p>  <FONT SIZE=+2> $title </FONT> <P>
@@ -76,7 +78,7 @@ document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
       <TABLE width=100%>
       <TR>
       <TD><B>DATE:</B> $year  </TD>
-      <TD><B>SOURCE:</B> $source ($jtype)</TD>
+      <TD><B>SOURCE:</B> $jrnl_abbrev <?MIVAR COND="$(NC,$pub_volume,)">$pub_volume<?/MIVAR> <?MIVAR COND="$(NC,$pub_pages,)">:$pub_pages<?/MIVAR><?MIVAR COND="$(OR,$(EC,$pub_status,Epub ahead of print),$(EC,$pub_status,in press))">$pub_status<?/MIVAR> ($jtype)</TD>
       </TR>
       </TABLE>
     <?/MIVAR>
