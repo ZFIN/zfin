@@ -2265,9 +2265,10 @@ sub pubTitlesAreUnique($) {
   $sth -> execute();
 
   my $sql2 = '
-      select p.title, p.accession_no, p.zdb_id, p.authors, p.pub_date, p.source 
-        from publication p, dup_titles d 
+      select p.title, p.accession_no, p.zdb_id, p.authors, p.pub_date, jrnl_abbrev, p.pub_volume, p.pub_pages 
+        from publication p, dup_titles d, journal
         where p.title = d.title 
+        and jrnl_zdb_id = pub_jrnl_zdb_id
         order by p.title, p.zdb_id;';
   
   my @colDesc =  ("Title            ",
@@ -2275,7 +2276,9 @@ sub pubTitlesAreUnique($) {
 		  "Pub ZDB ID       ",
 		  "Authors          ",
 		  "Pub Date         ",
-		  "Source           " );
+		  "Jrnl_abbrev      ",
+		  "Pub Volume       ",
+		  "Pub Pages        ");
 
   my $nRecords = execSql ($sql2, undef, @colDesc);
 
