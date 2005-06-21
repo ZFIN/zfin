@@ -2,7 +2,6 @@
 #
 # Makefile for ZFIN_WWW CVS Project, Publication editing APP pages.
 #
-# $Source$
 # $Id$
 #
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -21,7 +20,8 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/pubbrowser/EDITpubs
 
-GENERICS = edit_pub.apg process-pub.apg
+GENERICS = edit_pub.apg process-pub.apg new_journal.apg process-journal.apg \
+	   do-jrnlupdate.apg
 
 
 # use default rules for app page directories
