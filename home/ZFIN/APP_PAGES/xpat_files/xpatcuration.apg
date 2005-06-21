@@ -571,14 +571,15 @@ EFFECTS
 <?/MICOMMENT>
 
 <?MISQL SQL="
-  select title, authors, year(pub_date) as pyear, source 
-  from publication
-  where zdb_id = '$OID';">
+  select title, authors, year(pub_date) as pyear, jrnl_abbrev 
+  from publication, journal
+  where zdb_id = '$OID'
+  and jrnl_zdb_id = pub_jrnl_zdb_id;">
 <?/MISQL>
 <?MIVAR NAME=xpcur_title>$1<?/MIVAR>
 <?MIVAR NAME=xpcur_authors>$2<?/MIVAR>
 <?MIVAR NAME=xpcur_year>$3<?/MIVAR>
-<?MIVAR NAME=xpcur_source>$4<?/MIVAR>
+<?MIVAR NAME=xpcur_jrnl_abbrev>$4<?/MIVAR>
 
   <table cellspacing=0 cellpadding=3 width=100%>
     <tr>
@@ -594,7 +595,7 @@ EFFECTS
         <br>
         <?MIVAR>
           <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$OID">$xpcur_authors ($xpcur_year)
-          $xpcur_title $xpcur_source</a>
+          $xpcur_title $xpcur_jrnl_abbrev</a>
           
         <?/MIVAR>
       </td>
