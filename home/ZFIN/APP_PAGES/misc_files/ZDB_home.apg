@@ -285,8 +285,13 @@
 	      zebrafish research publications by author, title or 
 	      citation.</A><br>
 	      <?MIVAR COND="$(EC,$AUTHORIZED,root)">
-		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?rtype=publication&MIval=aa-edit_pub.apg"><EM>Add new PUB</EM></A>
+		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?rtype=publication&MIval=aa-edit_pub.apg"><EM>Add new PUB</EM></A>,
+		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_journal.apg"><EM>Add new JOURNAL</EM></A>,
+		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-journalselect.apg"><EM>Find Existing Journal</EM></A>
+
+
 	      <?/MIVAR>
+
 	    </DIV>
 	  </TD>
 	</TR>
