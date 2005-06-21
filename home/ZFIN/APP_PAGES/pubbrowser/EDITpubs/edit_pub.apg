@@ -301,9 +301,8 @@ a new or updated existing pub
 
     <?MICOMMENT> *** location.go(-1) does not seem to work consistently on all platforms - all browsers *** <?/MICOMMENT>
 
-
     <input type=button value="CANCEL" onClick="window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$returnVariables')">
-    <input type=submit value="SUBMIT" onClick=return validate(this)>
+    <input type=submit value="SUBMIT">
     
 <?/MIBLOCK>  <?MICOMMENT> *** ends cond authorization *** <?/MICOMMENT>
 
