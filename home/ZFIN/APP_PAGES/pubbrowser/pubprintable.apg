@@ -1,3 +1,32 @@
+<?MICOMMENT>
+***
+FILE: pubprintable.apg
+PREFIX: pubprint_
+
+INPUT VARS: 
+OID - the zdb_id of the pub(s)
+constraint (optional)
+order_clause (optional)
+refer (optional)
+printable (optional)
+
+OUTPUT VARS:
+
+OUTPUT: 
+a printable listing of publications
+
+Mainly, (if variable 'printable' exists)
+This page simply generates a pretty listing of all of the publications
+currently selected and being displayed in the publister pane. This way, a user
+can search for a set of pubs, then generate and print out a list of them for his own personal use.
+
+Alternatively, (if variable 'refer' exists)
+This page simply generates a REFER format file for the selected pubs. Since we do not separate out Volume, Pages, Issue number and things like that in ZFIN, these things are not properly placed in the REFER file -- so some editting will be required by user. But this should give a good start.
+
+
+***
+<?/MICOMMENT>
+
 <?MIERROR>
   <?MIVAR COND=$(XST,$MI_SQL)>
     SQL: $MI_SQL<br><br>
@@ -9,46 +38,40 @@
 
 <?/MIERROR>
 
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
+<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
+
+<?MIVAR NAME=$pubprint_pubJrnlJoin> and pub_jrnl_zdb_id = jrnl_zdb_id<?/MIVAR>
+
 <?MIVAR NAME=$pubprint_orderClause>$(IF,$(XST,$order_clause),$order_clause,)<?/MIVAR>
+
 <?MIVAR NAME=$pubprint_constraint>$(IF,$(XST,$constraint),$constraint,)<?/MIVAR>
 
-
 <?MIBLOCK COND="$(XST,$refer)">
-<?MIVAR>$(HTTPHEADER,content-type,application/rtf)<?/MIVAR>
+<?MIVAR>$(HTTPHEADER,CONTENT-TYPE,APPLICATION/RTF)<?/MIVAR>
 <?MISQL SQL="
-  select title, authors, source, year(pub_date) as pyear
-    from publication
+  select title, 
+	authors, 
+	jrnl_abbrev, 
+	year(pub_date) as pyear, 
+	pub_volume, 
+	pub_pages
+    from publication, journal
     $pubprint_constraint
+    $pubprint_pubJrnlJoin
     $pubprint_orderClause;">
-%A $2 
+%A $2
 %D $4
 %T $1
 %J $3
-%V ?
-%P ?
+%V $5
+%P $6
 <?/MISQL>
 <?/MIBLOCK>
 
-
 <?MIBLOCK COND="$(XST,$printable)">
 
-<?MICOMMENT>
-FILE: pubprintable.html
-
-Mainly, (if variable 'printable' exists)
-This page simply generates a pretty listing of all of the publications
-currently selected and being displayed in the publister pane. This way, a user
-can search for a set of pubs, then generate and print out a list of them for his own personal use.
-
-
-Alternatively, (if variable 'refer' exists)
-This page simply generates a REFER format file for the selected pubs. Since we do not separate out Volume, Pages, Issue number and things like that in ZFIN, these things are not properly placed in the REFER file -- so some editting will be required by user. But this should give a good start.
-<?/MICOMMENT>
-
-
-
 <?MISQL SQL="select WebExplode(object,'page_title=List Pubs') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
-
 
 <?MISQL SQL="select today from single;"><?/MISQL>
 
@@ -59,11 +82,11 @@ This page simply generates a REFER format file for the selected pubs. Since we d
 
 <p>
 
-
 <?MISQL SQL="
   select count(*)::integer
-    from publication 
-    $pubprint_constraint;">
+    from publication, journal 
+    $pubprint_constraint
+    $pubprint_pubJrnlJoin;">
   <?MIVAR NAME=$pubprint_recordCount>$1<?/MIVAR>
 <?/MISQL>
 
@@ -86,12 +109,30 @@ This page simply generates a REFER format file for the selected pubs. Since we d
 
 
 <?MISQL SQL="
-  select title, authors, source, year(pub_date) as pyear
-    from publication $pubprint_constraint $pubprint_orderClause;">
-  $2 ($4) $1. $3.
+  select title, 
+		authors, 
+		jrnl_abbrev, 
+		pub_volume, 
+		pub_pages,
+		year(pub_date) as pyear
+    from publication, journal 
+    $pubprint_constraint 
+    $pubprint_pubJrnlJoin 
+    $pubprint_orderClause;">
+
+  <?MIVAR NAME=$pubprint_title>$1<?/MIVAR>
+  <?MIVAR NAME=$pubprint_authors>$2<?/MIVAR>
+  <?MIVAR NAME=$pubprint_jrnl_abbrev>$3<?/MIVAR>
+  <?MIVAR NAME=$pubprint_pub_volume>$4<?/MIVAR>
+  <?MIVAR NAME=$pubprint_pub_pages>$5<?/MIVAR>
+  <?MIVAR NAME=$pubprint_pyear>$6<?/MIVAR>
+
+
+  $pubprint_authors ($pubprint_pyear) $pubprint_title. $pubprint_jrnl_abbrev $(IF,$(NC,$pubprint_pub_volume,),$pubprint_pub_volume:,$pubprint_pub_volume) $(IF,$(NC,$pubprint_pub_pages,),$pubprint_pub_pages,$pubprint_pub_pages)
+
   <hr width=80%>
 <?/MISQL>
-</HTML>
+</html>
 
 <?/MIBLOCK>
 
