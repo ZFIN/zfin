@@ -1,5 +1,3 @@
-<HTML>
-
 <?MIERROR>
   <?MIVAR COND=$(XST,$MI_SQL)>
     SQL: $MI_SQL<br><br>
@@ -11,114 +9,197 @@
 
 <?/MIERROR>
 
+<?MICOMMENT>
+*** 
+FILE: pubview2.apg
+PREFIX: pubview2_ (not all have this prefix)
+
+INPUT VARS:
+$OID: the zdb_id of the publication record
+
+OPTIONAL VARS:
+$fdbname: foreign db name
+$geneid: zdb-mrkr-id
+$abbrev: abbreviation of the gene?
+
+OUTPUT VARS:
+
+OUTPUT:
+
+EFFECTS:
+
+displays a publication record, or many publication records if > 1 returned.
+
+==========================================================================
+============== add optional variable definitions, check permissions
+==========================================================================
+***
+<?/MICOMMENT>
+
 <?MIBLOCK COND="$(NXST,$abbrev)">
-<?MIVAR NAME=$abbrev><?/MIVAR>
-<?/MIBLOCK>
-<?MIBLOCK COND="$(NXST,$fdbname)">
-<?MIVAR NAME=$fdbname><?/MIVAR>
-<?/MIBLOCK>
-<?MIBLOCK COND="$(NXST,$geneid)">
-<?MIVAR NAME=$geneid><?/MIVAR>
-<?/MIBLOCK>
-<?MIBLOCK COND="$(NXST,$OID)">
-<p>
-ERROR -- something bad happened -- no OID passed in!
+   <?MIVAR NAME=$abbrev><?/MIVAR>
 <?/MIBLOCK>
 
+<?MIBLOCK COND="$(NXST,$fdbname)">
+   <?MIVAR NAME=$fdbname><?/MIVAR>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(NXST,$geneid)">
+   <?MIVAR NAME=$geneid><?/MIVAR>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(NXST,$OID)">
+  <p> ERROR -- something bad happened -- no OID passed in!
+<?/MIBLOCK>
+
+<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
 
 <?MIBLOCK COND="$(XST,$OID)">
 
 <?MISQL SQL="select WebExplode(object,'page_title=View Pub') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
+<?MICOMMENT>
+***
+==========================================================================
+============== fetch and display the existing record
+==========================================================================
+***
+<?/MICOMMENT>
 
 <?MISQL SQL="
-  select title, authors, year(pub_date), source, keywords, pub_abstract, 
-         accession_no, pub_errata_and_notes, jtype, pub_file, pub_completion_date 
-    from publication where zdb_id='$OID';">
+  select title, authors, year(pub_date), jrnl_abbrev, keywords, pub_abstract, 
+         accession_no, pub_errata_and_notes, jtype, pub_file, 
+	 pub_completion_date, pub_volume, pub_pages, status 
+    from publication, journal where zdb_id='$OID'
+     and jrnl_zdb_id = pub_jrnl_zdb_id;">
 <?/MISQL>
-<?MIVAR NAME=$title>$1<?/MIVAR>
-<?MIVAR NAME=$authors>$2<?/MIVAR>
-<?MIVAR NAME=$year>$3<?/MIVAR>
-<?MIVAR NAME=$source>$4<?/MIVAR>
-<?MIVAR NAME=$keywords>$5<?/MIVAR>
-<?MIVAR NAME=$pub_abstract>$6<?/MIVAR>
-<?MIVAR NAME=$accession_no>$7<?/MIVAR>
-<?MIVAR NAME=$pub_errata_and_notes>$8<?/MIVAR>
-<?MIVAR NAME=$jtype>$9<?/MIVAR>
-<?MIVAR NAME=$pub_file>$10<?/MIVAR>
-<?MIVAR NAME=$pub_completion_date>$11<?/MIVAR>
+
+   <?MIVAR NAME=$title>$1<?/MIVAR>
+   <?MIVAR NAME=$authors>$2<?/MIVAR>
+   <?MIVAR NAME=$year>$3<?/MIVAR>
+   <?MIVAR NAME=$pubview2_jrnl_abbrev>$4<?/MIVAR>
+   <?MIVAR NAME=$keywords>$5<?/MIVAR>
+   <?MIVAR NAME=$pub_abstract>$6<?/MIVAR>
+   <?MIVAR NAME=$accession_no>$7<?/MIVAR>
+   <?MIVAR NAME=$pub_errata_and_notes>$8<?/MIVAR>
+   <?MIVAR NAME=$jtype>$9<?/MIVAR>
+   <?MIVAR NAME=$pub_file>$10<?/MIVAR>
+   <?MIVAR NAME=$pub_completion_date>$11<?/MIVAR>
+   <?MIVAR NAME=$pubview2_pub_volume>$12<?/MIVAR>
+   <?MIVAR NAME=$pubview2_pub_pages>$13<?/MIVAR>
+   <?MIVAR NAME=$pubview2_pub_status>$14<?/MIVAR>
 
 <?MIVAR NAME=$rec_title>PUB:$(SUBSTR,$title,1,10)...<?/MIVAR>
 
-<?MIBLOCK COND="$(EC,$title,$MI_NOVALUE)">
-<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
-<form><center><font size=+2>
-<b>Requested ID not found in ZFIN.</font>
-</form>
-<?/MIBLOCK>
+  <?MIBLOCK COND="$(EC,$title,$MI_NOVALUE)">
+	<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+	<form><center><font size=+2>
+	<b>Requested ID not found in ZFIN.</font>
+	</form>
+  <?/MIBLOCK>
 
 
-<?MIBLOCK COND="$(NC,$title,$MI_NOVALUE)">
+  <?MIBLOCK COND="$(NC,$title,$MI_NOVALUE)">
 
-    <?MIVAR>
-      <TITLE>ZFIN View Pub:$title </TITLE>
-    <?/MIVAR>
+     <?MIVAR>
+       <TITLE>ZFIN View Pub:$title </TITLE>
+     <?/MIVAR>
 
-<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+     <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
-<!-- If VIEWING, THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
-<?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=publication') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
+     <?MICOMMENT> 
+	*** If VIEWING, THROW UP THE ZDB DATA MANAGER FOR THE RECORD *** 
+     <?/MICOMMENT>
 
-<BODY BASEFONT=2>
+     <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=publication') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
 
-<!-- NOW JUST TOSS OUT THE RETRIEVED DATA IN A TABLE -->
+     <BODY BASEFONT=2>
+
+
 <?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
 <?MIVAR NAME=$MI_NULL> <?/MIVAR>
 
+
+<?MICOMMENT>
+***
+==========================================================================
+============== NOW JUST TOSS OUT THE RETRIEVED DATA IN A TABLE
+==========================================================================
+***
+<?/MICOMMENT>
+
 <?MIVAR>
 
-<center> <p>  <FONT SIZE=+2> $title </FONT> <P>
-<B>$authors</B> <P>
+<center> 
+  <p>  
+   <FONT SIZE=+2> $title 
+   </FONT> <P>
+	<B>$authors</B> 
+  <p>
 </center>
-<P>
+<p>
 
-<TABLE width=100%>
-<TR>
-<TD><B>DATE:</B> $year  </TD>
-<TD><B>SOURCE:</B> $source ($jtype)</TD>
-</TR>
+<TABLE width=90%>
+  <TR>
+   <TD>
+      <B>DATE:</B> $year  
+   </TD>
+   <TD><B>SOURCE:</B> $pubview2_jrnl_abbrev ($jtype)
+   </TD>
+
+   <?MIVAR COND="$(NC,$pubview2_pub_volume,)">
+     <TD>
+       <B>VOLUME:</B> $pubview2_pub_volume 
+     </TD>
+   <?/MIVAR>
+
+   <?MIVAR COND="$(NC,$pubview2_pub_pages,)">
+      <TD>
+        <B>PAGES:</B> $pubview2_pub_pages 
+      </TD>
+   <?/MIVAR>
+   <?MIVAR COND="$(OR,$(EC,$pubview2_pub_status,Epub ahead of print),$(EC,$pubview2_pub_status,in press))">
+      <TD><B>STATUS:</B> $pubview2_pub_status 
+      </TD>
+   <?/MIVAR>
+ </TR>
 </TABLE>
+
+<?/MIVAR>
+<TABLE width=100%> 
+  <TR>
+   <TD>
+     <B>CONTACTS:</B>
+       <?MIBLOCK COND="$(EC,$authors,ZFIN Staff)">
+	<?MISQL SQL=" select name, zdb_id from lab where name = 'ZFIN Database Team'">
+		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$2">$1</A>
+	<?/MISQL>
+
+       <?MIELSE>
+
+	<?MISQL SQL="select a.full_name,a.zdb_id from person a, int_person_pub b where source_id=a.zdb_id and target_id='$OID' order by a.full_name;">
+
+ 	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$2">$1</A>,  
+	<?/MISQL>
+
+       <?/MIBLOCK>
+   </TD>
+
+   <?MIVAR>
+   <TD align=right>
+	<form method=post  action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+	<input type=hidden name=MIval value=aa-pubprintable.apg>
+	<input type=hidden name=constraint value="where zdb_id='$OID'">
+	<input type=submit name=printable value="Generate reference">
+	</form>
+   </TD>
+
 <?/MIVAR>
 
-<TABLE width=100%>
-<TR>
-<TD>
-<B>CONTACTS:</B>
-<?MIBLOCK COND="$(EC,$authors,ZFIN Staff)">
-<?MISQL SQL=" select name, zdb_id from lab where name = 'ZFIN Database Team'">
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$2">$1</A>
-<?/MISQL>
+</TR>
 
-<?MIELSE>
-<?MISQL SQL="select a.full_name,a.zdb_id from person a, int_person_pub b where source_id=a.zdb_id and target_id='$OID' order by a.full_name;">
-
- <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$2">$1</A>,  
-<?/MISQL>
-
-<?/MIBLOCK>
-</TD>
-
-<?MIVAR>
-<TD align=right>
-<form method=post  action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
-<input type=hidden name=MIval value=aa-pubprintable.apg>
-<input type=hidden name=constraint value="where zdb_id='$OID'">
-<input type=submit name=printable value="Generate reference">
-</form>
-</TD>
-<?/MIVAR>
-
-</TR></TABLE>
+</TABLE>
 
 <?MIVAR COND="$(NC,$keywords,NULL)"><B>KEYWORDS:</B> $keywords <p><?/MIVAR>
 
@@ -134,13 +215,12 @@ ERROR -- something bad happened -- no OID passed in!
   <p>
 <?/MIVAR>
 
-
 <?MIVAR COND="$(EC,$AUTHORIZED,root)">
   <B>FILE:</B>
-  <?MIVAR COND="$(NC,$pub_file,NULL)">
+  <?MIVAR COND="$(NC,$pub_file,)">
     <A HREF="<!--|PDF_LOAD|-->/$pub_file">PDF</A>
   <?/MIVAR>
-  <?MIVAR COND="$(EC,$pub_file,NULL)">
+  <?MIVAR COND="$(EC,$pub_file,)">
     Upload a PDF from the 
     <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID">Curation</a> 
     page.
@@ -151,10 +231,9 @@ ERROR -- something bad happened -- no OID passed in!
 <B>ABSTRACT:</B> 
 <?MIVAR COND="$(NC,$pub_abstract,NULL)"><br>  $pub_abstract  <?/MIVAR>
 
-
 <?MIBLOCK COND="$(AND,$(NC,$abbrev,$MI_NOVALUE),$(NC,$fdbname,$MI_NOVALUE),$(NC,$geneid,$MI_NOVALUE))">
   <p>
-  <b>DETAILS:</b>
+    <b>DETAILS:</b>
   <p>
   <?MIVAR NAME=first>1<?/MIVAR>	
   <?MISQL SQL="select goterm_name from go_term
@@ -217,9 +296,13 @@ ERROR -- something bad happened -- no OID passed in!
   <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-msegselect.apg&pubId=$OID">Clones and Probes</a> &nbsp; ($1)
   <?/MIVAR>
 
-  <!---Expression section--->
+  <?MICOMMENT> *** Expression section *** <?/MICOMMENT>
 
-  <!--we first check to see if these are GELI pubs or pubs that contain full FX-->
+  <?MICOMMENT> 
+	*** we first check to see if these are GELI pubs or 
+	    pubs that contain full FX 
+	***
+  <?/MICOMMENT>
 
   <?MISQL SQL="
         select count(xpat_zdb_id)
@@ -254,7 +337,7 @@ ERROR -- something bad happened -- no OID passed in!
    <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatindexview.apg&OID=$OID">Gene Expression Summary</a>&nbsp;
   <?/MIVAR>
 
-  <!--end expression pubs-->
+  <?MICOMMENT> *** end expression pubs *** <?/MICOMMENT>
 
   <?MISQL SQL="
 	select count(distinct lnkgmem_member_zdb_id)
@@ -274,8 +357,7 @@ ERROR -- something bad happened -- no OID passed in!
 	 from  record_attribution
 	 where recattrib_source_zdb_id = '$OID'
 	  and  (recattrib_data_zdb_id like 'ZDB-FISH-%'
-	      or recattrib_data_zdb_id like 'ZDB-LOCUS-%');
-	">
+	      or recattrib_data_zdb_id like 'ZDB-LOCUS-%');">
   <?/MISQL> 
   <?MIVAR COND="$(>,$1,0)">
   <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&pubId=$OID">Phenotype Alleles</a> &nbsp; ($(FIX,$1))
@@ -295,7 +377,10 @@ ERROR -- something bad happened -- no OID passed in!
   <?/MIVAR>
 
   </ul>
-<?/MIBLOCK> <!-- only non-unpublished paper gets additional info -->
+<?/MIBLOCK> 
+	<?MICOMMENT> 
+		*** only non-unpublished paper gets additional info ***
+	<?/MICOMMENT>
 <p>
 <?MIVAR COND="$(NC,$pub_errata_and_notes,NULL)">
   <B>ERRATA and NOTES:</B> 
@@ -303,8 +388,8 @@ ERROR -- something bad happened -- no OID passed in!
 <?/MIVAR>
 
 
-<?/MIBLOCK>  <!-- ends cond oid xst -->
-<?/MIBLOCK>  <!-- ends rowcount gt 0 -->
+<?/MIBLOCK>  <?MICOMMENT> *** ends cond oid xst *** <?/MICOMMENT>
+<?/MIBLOCK>  <?MICOMMENT> *** ends rowcount gt 0 *** <?/MICOMMENT>
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 
