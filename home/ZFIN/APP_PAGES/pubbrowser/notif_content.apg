@@ -1,5 +1,7 @@
 <?MICOMMENT>
+***
 FILE: notif_content.apg
+PREFIX: nc_
 
   Code the content of the notificatioin letter, both the form and the preview.
 
@@ -10,7 +12,7 @@ INPUT VARS:
 
 OUTPUT VARS: 
   none
-
+***
 <?/MICOMMENT>
 
 <?MIERROR>
@@ -71,16 +73,23 @@ OUTPUT VARS:
 </SCRIPT>
 
 
-<?MICOMMENT>== prepare the variables that will be used in the letter ==<?/MICOMMENT>
-<?MISQL SQL="select title, source 
-               from publication 
-              where zdb_id = '$OID';">
+<?MICOMMENT> *** prepare the variables that will be used in the letter ***
+<?/MICOMMENT>
+
+<?MISQL SQL="select title, jrnl_abbrev, pub_volume, pub_pages
+               from publication, journal
+               where zdb_id = '$OID'
+	       and pub_jrnl_zdb_id = jrnl_zdb_id;">
+
 	<?MIVAR NAME=pub_title>$1<?/MIVAR>
-        <?MIVAR NAME=pub_source>$2<?/MIVAR>
+        <?MIVAR NAME=nc_jrnl_abbrev>$2<?/MIVAR>
+        <?MIVAR NAME=nc_pub_volume>$3<?/MIVAR>
+        <?MIVAR NAME=nc_pub_pages>$4<?/MIVAR>
+
 <?/MISQL>
 
 <?MISQL SQL="select name 
-               from ZDB_submitters
+              from ZDB_submitters
               where zdb_id = '$sender_id';">
 	<?MIVAR NAME=sender_name>$1<?/MIVAR>
 <?/MISQL>
@@ -95,61 +104,80 @@ OUTPUT VARS:
   	  $(TRIM,$(SEPARATE,$notif_item,",")) 
 <?/MIVAR>
 
-<?MICOMMENT>==Letter content. Under edit status, it is a template; under preview, it is html formatted.==<?/MICOMMENT> 
-<FORM action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method=post name=letter>
+<?MICOMMENT> *** Letter content. Under edit status, it is a template; 
+	under preview, it is html formatted. ***
+<?/MICOMMENT> 
+
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method=post name=letter>
     <?MIVAR>
-    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-notif_frame.apg">
-    
+    <input type=hidden name=MIval value="aa-notif_frame.apg">
     <?/MIVAR>
 
 Dear <?MIVAR>$(IF,$(EC,$status,preview),$notif_recipient,<input type=text size=50 name=notif_recipient $(IF,$(XST,$notif_recipient),value='$notif_recipient')>)<?/MIVAR>, 
 <p>
 
 <?MIVAR>
-I am pleased to report that information about <?MIVAR>$(IF,$(EC,$status,preview),$notif_topic,<input type=text size=50 name=notif_topic $(IF,$(XST,$notif_topic),value='$notif_topic')>)<?/MIVAR> has been curated from your publication "$pub_title", $pub_source, and entered into ZFIN, the Zebrafish Information Network. You can view this information beginning at the following locations:  
+I am pleased to report that information about <?MIVAR>$(IF,$(EC,$status,preview),$notif_topic,<input type=text size=50 name=notif_topic $(IF,$(XST,$notif_topic),value='$notif_topic')>)<?/MIVAR> has been curated from your publication "$pub_title", $nc_jrnl_abbrev $nc_pub_volume:$nc_pub_pages, and entered into ZFIN, the Zebrafish Information Network. You can view this information beginning at the following locations:  
 <?/MIVAR>
 <p>
 
-<?MICOMMENT>An order of Gene, Gene Expression, Fish, Locus is expected. Curators requested that genes be ordered by abbrev, fish be ordered by locus abbrev. <?/MICOMMENT>
+<?MICOMMENT> *** An order of Gene, Gene Expression, Fish, Locus is expected. 
+		Curators requested that genes be ordered by abbrev, 
+		fish be ordered by locus abbrev. ***
+<?/MICOMMENT>
 
 <?MIVAR NAME=mysql>
-             select 'Gene',mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_abbrev_order
-               from record_attribution, marker
+             select 'Gene',
+			mrkr_zdb_id, 
+			mrkr_name, 
+			mrkr_abbrev, 
+			mrkr_abbrev_order
+              from record_attribution, marker
               where recattrib_source_zdb_id = '$OID'
-	        and recattrib_data_zdb_id   = mrkr_zdb_id
-		and mrkr_type = 'GENE'
-           order by mrkr_abbrev_order;
+	      and recattrib_data_zdb_id   = mrkr_zdb_id
+	      and mrkr_type = 'GENE'
+              order by mrkr_abbrev_order;
 <?/MIVAR>
 <?MIVAR NAME=sqlArray>$mysql<?/MIVAR>
 
 <?MIVAR NAME=mysql>
-             select distinct 'Gene Expression', mrkr_zdb_id, mrkr_name, mrkr_abbrev, 
-		    mrkr_abbrev_order
+             select distinct 'Gene Expression', 
+			mrkr_zdb_id, 
+			mrkr_name, 
+			mrkr_abbrev, 
+		    	mrkr_abbrev_order
                from record_attribution, marker, expression_pattern
-              where recattrib_source_zdb_id = '$OID'
-	        and recattrib_data_zdb_id   = xpat_zdb_id
-		and xpat_gene_zdb_id = mrkr_zdb_id
-           order by mrkr_abbrev_order;
+               where recattrib_source_zdb_id = '$OID'
+	       and recattrib_data_zdb_id   = xpat_zdb_id
+	       and xpat_gene_zdb_id = mrkr_zdb_id
+               order by mrkr_abbrev_order;
 <?/MIVAR>
 <?MIVAR>$(VECAPPEND,$sqlArray,$mysql)<?/MIVAR>
 
 <?MIVAR NAME=mysql>
-             select 'Mutant', fish.zdb_id, fish.name, fish.abbrev, 
-		    locus_abbrev_order
+             select 'Mutant', 
+			fish.zdb_id, 
+			fish.name, 
+			fish.abbrev, 
+		    	locus_abbrev_order
                from record_attribution, fish, locus
-              where recattrib_source_zdb_id = '$OID'
-	        and recattrib_data_zdb_id   = fish.zdb_id
-		and fish.locus = locus.zdb_id
-           order by locus_abbrev_order;
+               where recattrib_source_zdb_id = '$OID'
+	       and recattrib_data_zdb_id   = fish.zdb_id
+	       and fish.locus = locus.zdb_id
+               order by locus_abbrev_order;
 <?/MIVAR>
 <?MIVAR>$(VECAPPEND,$sqlArray,$mysql)<?/MIVAR>
 
 <?MIVAR NAME=mysql>
-             select 'Mutant', zdb_id, locus_name, abbrev, locus_abbrev_order
+             select 'Mutant', 
+			zdb_id, 
+			locus_name, 
+			abbrev, 
+			locus_abbrev_order
                from record_attribution, locus
-              where recattrib_source_zdb_id = '$OID'
-	        and recattrib_data_zdb_id   = zdb_id
-           order by locus_abbrev_order;
+               where recattrib_source_zdb_id = '$OID'
+	       and recattrib_data_zdb_id   = zdb_id
+               order by locus_abbrev_order;
 <?/MIVAR>
 <?MIVAR>$(VECAPPEND,$sqlArray,$mysql)<?/MIVAR>
 
@@ -174,7 +202,11 @@ I am pleased to report that information about <?MIVAR>$(IF,$(EC,$status,preview)
            <br>
 	   <?MIBLOCK COND="$(NC,$attrib_data_title,Gene Expression)">
 	     <?MIVAR>
-	        <?MICOMMENT>we always only want to link to production page<?/MICOMMENT>
+
+	        <?MICOMMENT> *** we always only want to link to production page
+		             ***
+		<?/MICOMMENT>
+
                 <a href="http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id">http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id</a> 
 	     <?/MIVAR>
 	   <?MIELSE>
@@ -191,7 +223,11 @@ I am pleased to report that information about <?MIVAR>$(IF,$(EC,$status,preview)
            <br>	  
 	   <?MIBLOCK COND="$(NC,$attrib_data_title,Gene Expression)">
 	     <?MIVAR>
-	        <?MICOMMENT>we always only want to link to production page<?/MICOMMENT>
+
+	        <?MICOMMENT> *** we always only want to link to production page
+				***
+		<?/MICOMMENT>
+
                 <a href="http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id">http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id</a> 
 	     <?/MIVAR>
 	   <?MIELSE>
@@ -205,7 +241,10 @@ I am pleased to report that information about <?MIVAR>$(IF,$(EC,$status,preview)
 
   <?/MISQL>
   <?MIVAR COND="$(EC,$addLineBreak,t)">
-     <br> <?MICOMMENT> extra line to separate each category <?/MICOMMENT>
+     <br> 
+
+    <?MICOMMENT>*** extra line to separate each category *** <?/MICOMMENT>
+
   <?/MIVAR>
 <?/MIBLOCK>	
 
@@ -223,7 +262,7 @@ I am pleased to report that information about <?MIVAR>$(IF,$(EC,$status,preview)
 <?MIELSE COND="$(EC,$status,edit)">
 
   <?MIVAR>
-    <TEXTAREA NAME=notif_optnote rows="4" cols="70" wrap="virtual")></TEXTAREA>
+    <textarea name=notif_optnote rows="4" cols="70" wrap="virtual")></textarea>
   <?/MIVAR>  
 <?/MIBLOCK>
 
@@ -252,8 +291,6 @@ Eugene, Oregon, USA
 ZFIN home: <a href="http://zfin.org">http://zfin.org</a>
 
 <p><p>
-
-
 
 <?MIVAR>
 <INPUT TYPE=hidden NAME=contacts_email VALUE="$contacts_email">

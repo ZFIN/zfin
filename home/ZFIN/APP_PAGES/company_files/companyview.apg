@@ -1,5 +1,6 @@
 <?MICOMMENT>
 FILE: COMPANYVIEW.html
+PREFIX: cv_
 
 This file is used both for displaying and updating a COMPANY record. If the variable UPDATE is passed in, then we are in updating mode, and "UPDATE" buttons are placed next to each of the field this user (based on permissions) is allowed to update.
 
@@ -17,6 +18,7 @@ UPDATE -- optional, signifies we are in updating mode.
 ahead and look for it -- convert to OID if necessary -->
 <?MIVAR COND="$(XST,$temp_oid)" NAME=$OID>$temp_oid<?/MIVAR>
 
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
 
 <?MIBLOCK COND="$(NXST,$OID)">
   <p>
@@ -277,11 +279,41 @@ ahead and look for it -- convert to OID if necessary -->
     <?/MIVAR>
     <br>
 
+    <?MISQL SQL="select distinct a.title, 
+				year(pub_date) as pyear, 
+				a.zdb_id, 
+				a.authors, 
+				jrnl_abbrev,
+				a.pub_volume,
+				a.pub_pages, 
+				pub_authors_lower
+			from publication a, 
+				int_person_pub b, 
+				int_person_company c,
+				journal 
+			where b.target_id=a.zdb_id 
+			and b.source_id=c.source_id 
+			and c.target_id='$OID'
+			and jrnl_zdb_id = pub_jrnl_zdb_id 
+			order by pyear desc, pub_authors_lower;">
 
+    <?MIVAR NAME=$cv_pub_title>$1<?/MIVAR>
+    <?MIVAR NAME=$cv_pub_pyear>$2<?/MIVAR>
+    <?MIVAR NAME=$cv_pub_authors>$3<?/MIVAR>
+    <?MIVAR NAME=$cv_pub_zdb_id>$4<?/MIVAR>
+    <?MIVAR NAME=$cv_jrnl_abbrev>$5<?/MIVAR>
+    <?MIVAR NAME=$cv_pub_volume>$6<?/MIVAR>
+    <?MIVAR NAME=$cv_pub_pages>$7<?/MIVAR>
+    <?MIVAR NAME=$cv_pub_authors_lower>$8<?/MIVAR>
 
-    <?MISQL SQL="select distinct a.title, year(pub_date) as pyear, a.zdb_id, a.authors, a.source, lower(a.authors) from publication a, int_person_pub b, int_person_company c where b.target_id=a.zdb_id and b.source_id=c.source_id and c.target_id='$OID' order by pyear desc, 6 asc;">
-
-      <TR><TD colspan=1 align=left><font size=3><DIV class="show_pubs"> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3">$4 ($2) $1. $5.</A></DIV></TD></TR>
+      <TR>
+	<TD colspan=1 align=left>
+	 <font size=3>
+	  <DIV class="show_pubs"> 
+	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$cv_pub_authors">$cv_pub_zdb_id $cv_jrnl_abbrev:$cv_pub_volume ($cv_pub_pyear) $cv_pub_title. $cv_pub_pages.</A>
+	  </DIV>
+	</TD>
+      </TR>
       <p>
     <?/MISQL>
     </form>

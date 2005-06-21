@@ -1,5 +1,6 @@
 <?MICOMMENT>
 FILE: LABVIEW.html
+PREFIX: lv_
 
 This file is used both for displaying and updating a LAB record. If the variable UPDATE is passed in, then we are in updating mode, and "UPDATE" buttons are placed next to each of the field this user (based on permissions) is allowed to update.
 
@@ -16,7 +17,6 @@ UPDATE -- optional, signifies we are in updating mode.
 <!-- OID might come in as temp_oid (after an update/do-select cycle) so go
 ahead and look for it -- convert to OID if necessary -->
 <?MIVAR COND="$(XST,$temp_oid)" NAME=$OID>$temp_oid<?/MIVAR>
-
 
 
 <?MIBLOCK COND="$(NXST,$OID)">
@@ -326,9 +326,43 @@ $1</A>
 <?/MIVAR>
 <br>
 
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
+<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
 
-<?MISQL SQL="select distinct a.title, year(pub_date) as pyear, a.zdb_id, a.authors, a.source, lower(a.authors) from publication a, int_person_pub b, int_person_lab c where b.target_id=a.zdb_id and b.source_id=c.source_id and c.target_id='$OID' order by pyear desc, 6 asc;">
-  <TR><TD align=left><DIV class="show_pubs"> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3">$4 ($2) $1. $5.</A></DIV></TD></TR>
+<?MISQL SQL="select distinct a.title, 
+				year(pub_date) as pyear, 
+				a.zdb_id, a.authors, 
+				jrnl_abbrev, 
+				pub_volume, 
+				pub_pages, 
+				pub_authors_lower 
+		from publication a, 
+			int_person_pub b, 
+			int_person_lab c, 
+			journal 
+		where b.target_id=a.zdb_id 
+		and b.source_id=c.source_id 
+		and c.target_id='$OID' 
+		and jrnl_zdb_id = pub_jrnl_zdb_id
+		order by pyear desc, pub_authors_lower asc;">
+
+<?MIVAR NAME=$lv_pub_title>$1<?/MIVAR>
+<?MIVAR NAME=$lv_pub_year>$2<?/MIVAR>
+<?MIVAR NAME=$lv_pub_zdb_id>$3<?/MIVAR>
+<?MIVAR NAME=$lv_pub_authors>$4<?/MIVAR>
+<?MIVAR NAME=$lv_jrnl_abbrev>$5<?/MIVAR>
+<?MIVAR NAME=$lv_pub_volume>$6<?/MIVAR>
+<?MIVAR NAME=$lv_pub_pages>$7<?/MIVAR>
+<?MIVAR NAME=$lv_pub_lwr_authors>$8<?/MIVAR>
+
+
+  <TR>
+     <TD align=left>
+     <DIV class="show_pubs"> 
+        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$lv_pub_zdb_id">$lv_pub_authors ($lv_pub_year) $lv_pub_title. $lv_jrnl_abbrev. $lv_pub_volume:$lv_pub_pages.</A>
+     </DIV>
+     </TD>
+ </TR>
 
 <?/MISQL>
 

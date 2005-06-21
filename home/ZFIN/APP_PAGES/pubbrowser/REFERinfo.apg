@@ -1,7 +1,14 @@
-<!-- FILE: REFERinfo.html
+<?MICOMMENT> 
 
+FILE: REFERinfo.html
+PREFIX: refer_
+
+INPUT VARS:
+OUTPUT VARS:
+
+EFFECTS:
 Documentation for the REFER format export capability.
--->
+<?/MICOMMENT>
 
 <HTML>
 
@@ -19,7 +26,6 @@ Because ZFIN is not a true bibliographic facility, it can not export completely 
 
 <li><B>Special Characters.</b> Some platforms do not deal with special characters like umlauts and tildes very well; you may have to edit them back into references by hand.
 <li><B>Reference Types.</b> ZFIN does not know about reference types (e.g. books versus journals versus conference proceedings). The import facilities for most bibliographic utilies we've tested will treat all entries produced by this facility as "Journal Articles". 
-<li><B>Volume,Pages,Publisher,etc.</b>  ZFIN does not separate volume number, pages, and other details; this information will appear at the  end of the Journal Title. You may want to move it to appropriate fields in your bibliographic program.
 </ul>
 <p>
 In sum, using this facility is not effortless. However, it should be a big improvement over manual entry, or cut-and-paste methodologies, particularly  for larger numbers of references.
