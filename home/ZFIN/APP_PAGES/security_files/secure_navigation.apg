@@ -56,7 +56,6 @@ to the guest cookie. This way logging will be to their unique cookie name
   <?MIVAR NAME=$AUTHORIZED>GUEST<?/MIVAR>
 <?/MIBLOCK>
 
-
 <?MICOMMENT>
  If they didn't pass a cookie, just start by giving them a GUEST cookie 
   -- and record their login as a GUEST
@@ -72,8 +71,6 @@ to the guest cookie. This way logging will be to their unique cookie name
     $(HTTPHEADER,set-cookie,ZDB_authorize=$1;path=/<!--|CGI_BIN_DIR_NAME|-->)
   <?/MIVAR>
 <?/MIBLOCK>
-
-
 
 <?MICOMMENT> check if updates are disabled <?/MICOMMENT>
 <?MISQL SQL="
@@ -128,6 +125,7 @@ to the guest cookie. This way logging will be to their unique cookie name
     <?MIBLOCK COND="$(AND,$(XST,$ZDB_access),$(XST,$permission))">
 
       <?MIVAR NAME=$AUTHORIZED>false<?/MIVAR>
+
       <?MIVAR COND="$(EC,$ZDB_access,$permission)" NAME=$AUTHORIZED>$ZDB_access<?/MIVAR>
 
       <?MIVAR COND="$(AND,$(OR,$(EC,$permission,submit),$(EC,$permission,preview)),$(EC,$ZDB_access,fishauth))" NAME=$AUTHORIZED>$ZDB_access<?/MIVAR>
@@ -144,7 +142,7 @@ to the guest cookie. This way logging will be to their unique cookie name
       -- ID column.  There are a few exceptions, however.  Catch them.
     <?/MICOMMENT>
 
-    <?MIBLOCK COND="$(AND,$(XST,$OID),$(XST,$rtype))">
+    <?MIBLOCK COND="$(AND,$(XST,$OID),$(XST,$rtype),$(NC,$rtype,journal))">
       <?MIVAR NAME=$ownerColumn>owner<?/MIVAR>
       <?MIVAR NAME=$zdbIdColumn>zdb_id<?/MIVAR>
       <?MIBLOCK COND="$(EC,$rtype,marker)">
