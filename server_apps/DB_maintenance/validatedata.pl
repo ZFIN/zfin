@@ -2227,7 +2227,7 @@ sub pubTitlesAreUnique($) {
 
   my $sql1 = '
     select title 
-      from publication 
+      from publication, journal
       where zdb_id not in (
 	"ZDB-PUB-021016-117", { "ZDB-PUB-961014-110", }
 	"ZDB-PUB-961014-169", { "ZDB-PUB-961014-170", }
@@ -2254,7 +2254,8 @@ sub pubTitlesAreUnique($) {
         ,"ZDB-PUB-010918-3"   {, "ZDB-PUB-040216-6" }
         , "ZDB-PUB-050127-1" {, "ZDB-PUB-030408-12"}
         )
-        and source <> "ZFIN Direct Data Submission"
+        and jrnl_abbrev <> "ZFIN Direct Data Submission"
+        and jrnl_zdb_id = pub_jrnl_zdb_id
       group by title 
       having count(*) > 1 
      into temp dup_titles with no log;';
