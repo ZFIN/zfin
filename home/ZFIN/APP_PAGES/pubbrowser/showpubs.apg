@@ -950,9 +950,9 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 	    else
 		'aa-locusview.apg'
 	    end as stock_page, xpat_stock_zdb_id
-	from publication, expression_pattern, journal
+	from publication, journal, expression_pattern
 	     left outer join fish on xpat_stock_zdb_id = fish.zdb_id
-	     left outer join locus on xpat_stock_zdb_id = locus.zdb_id 
+	     left outer join locus on fish.locus = locus.zdb_id
 	where xpat_zdb_id in ('$showpubs_inXpatList')
 	  and xpat_source_zdb_id = publication.zdb_id
 	  and jrnl_zdb_id = pub_jrnl_zdb_id          
@@ -963,7 +963,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 		 jrnl_abbrev, 
 		 publication.pub_volume, 
                  publication.pub_pages, 
-		 7, 8, 9, 10, 11
+		 7, 8, 9, 10, 11, 12
 	order by authors_lower">
 
       <?MIVAR NAME=$showpubs_pub_zdb_id>$1<?/MIVAR>
@@ -971,12 +971,13 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
       <?MIVAR NAME=$showpubs_pub_authors>$3<?/MIVAR>
       <?MIVAR NAME=$showpubs_pub_jrnl_abbrev>$4<?/MIVAR>
       <?MIVAR NAME=$showpubs_pub_volume>$5<?/MIVAR>
-      <?MIVAR NAME=$showpubs_pub_pages>$6<?/MIVAR>	
-      <?MIVAR NAME=$showpubs_xpat_zdb_id>$7<?/MIVAR>
-      <?MIVAR NAME=$showpubs_xpat_assay_name>$8<?/MIVAR>
-      <?MIVAR NAME=$showpubs_stock_abbrev>$9<?/MIVAR>
-      <?MIVAR NAME=$showpubs_stock_page>$10<?/MIVAR>
-      <?MIVAR NAME=$showpubs_stock_zdb_id>$11<?/MIVAR>
+      <?MIVAR NAME=$showpubs_pub_pages>$6<?/MIVAR>
+      <?MIVAR NAME=$showpubs_pub_authors_lower>$7<?/MIVAR>
+      <?MIVAR NAME=$showpubs_xpat_zdb_id>$8<?/MIVAR>
+      <?MIVAR NAME=$showpubs_xpat_assay_name>$9<?/MIVAR>
+      <?MIVAR NAME=$showpubs_stock_abbrev>$10<?/MIVAR>
+      <?MIVAR NAME=$showpubs_stock_page>$11<?/MIVAR>
+      <?MIVAR NAME=$showpubs_stock_zdb_id>$12<?/MIVAR>
 
       <?MIBLOCK COND="$(AND,$(>,$MI_CURRENTROW,1),$(NE,$last_pub_id,$showpubs_pub_zdb_id))">
          <?MIVAR NAME=$rowcolor>$(IF,$(EC,$rowcolor,$highlight),#FFFFFF,$highlight)<?/MIVAR>
@@ -1064,10 +1065,10 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 	     end as stock_abbrev, xpat_stock_zdb_id
         from publication, 
 		record_attribution, 
-		expression_pattern, 
-		journal
+		journal,
+		expression_pattern
 	     left outer join fish on xpat_stock_zdb_id = fish.zdb_id
-	     left outer join locus on xpat_stock_zdb_id = locus.zdb_id 
+	     left outer join locus on fish.locus = locus.zdb_id
         where xpat_gene_zdb_id = '$OID'
           and xpat_zdb_id = recattrib_data_zdb_id
 	  and pub_jrnl_zdb_id = jrnl_zdb_id
@@ -1087,10 +1088,11 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
       <?MIVAR NAME=$showpubs_pub_jrnl_abbrev>$4<?/MIVAR>
       <?MIVAR NAME=$showpubs_pub_volume>$5<?/MIVAR>
       <?MIVAR NAME=$showpubs_pub_pages>$6<?/MIVAR>
-      <?MIVAR NAME=$showpubs_xpat_zdb_id>$7<?/MIVAR>
-      <?MIVAR NAME=$showpubs_xpat_assay_name>$8<?/MIVAR>
-      <?MIVAR NAME=$showpubs_stock_abbrev>$9<?/MIVAR>
-      <?MIVAR NAME=$showpubs_stock_zdb_id>$10<?/MIVAR>
+      <?MIVAR NAME=$showpubs_pub_authors_lower>$7<?/MIVAR>      
+      <?MIVAR NAME=$showpubs_xpat_zdb_id>$8<?/MIVAR>
+      <?MIVAR NAME=$showpubs_xpat_assay_name>$9<?/MIVAR>
+      <?MIVAR NAME=$showpubs_stock_abbrev>$10<?/MIVAR>
+      <?MIVAR NAME=$showpubs_stock_zdb_id>$11<?/MIVAR>
 
 
       <?MIBLOCK COND="$(AND,$(>,$MI_CURRENTROW,1),$(NE,$last_pub_id,$showpubs_pub_zdb_id))">
