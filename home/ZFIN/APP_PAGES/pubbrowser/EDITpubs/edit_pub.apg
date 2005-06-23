@@ -111,7 +111,7 @@ a new or updated existing pub
     <?MIVAR NAME=$q_pub_errata_and_notes><?/MIVAR>
     <?MIVAR NAME=$q_accession_no><?/MIVAR>
     <?MIVAR NAME=$q_num_auths><?/MIVAR>
-    <?MIVAR NAME=$q_status>e-pub ahead of print<?/MIVAR>
+    <?MIVAR NAME=$q_status>Epub ahead of print<?/MIVAR>
     <?MIVAR NAME=$q_jtype>Unknown<?/MIVAR>
     <?MIVAR NAME=$editpub_jrnl_abbrev><?/MIVAR>
     <?MIVAR NAME=$editpub_pub_volume><?/MIVAR>
@@ -147,7 +147,7 @@ a new or updated existing pub
     <SELECT name=q_status>
     <option $(IF,$(EC,$q_status,active),SELECTED)>active
     <option $(IF,$(EC,$q_status,inactive),SELECTED)>inactive
-    <option $(IF,$(EC,$q_status,e-pub ahead of print),SELECTED)>e-pub ahead of print   
+    <option $(IF,$(EC,$q_status,Epub ahead of print),SELECTED)>Epub ahead of print   
     <option $(IF,$(EC,$q_status,in press),SELECTED)>in press
 
     </SELECT>
