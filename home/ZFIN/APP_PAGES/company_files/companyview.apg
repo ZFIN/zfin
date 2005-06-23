@@ -284,8 +284,18 @@ ahead and look for it -- convert to OID if necessary -->
 				a.zdb_id, 
 				a.authors, 
 				jrnl_abbrev,
-				a.pub_volume,
-				a.pub_pages, 
+  	                case
+		          when a.pub_volume is not null
+		          then a.pub_volume || ':'
+	                else
+		          ''
+		        end,
+  	                case
+		          when a.pub_pages is not null
+		          then a.pub_pages
+	                else
+		          ''
+		        end,
 				pub_authors_lower
 			from publication a, 
 				int_person_pub b, 
@@ -299,8 +309,8 @@ ahead and look for it -- convert to OID if necessary -->
 
     <?MIVAR NAME=$cv_pub_title>$1<?/MIVAR>
     <?MIVAR NAME=$cv_pub_pyear>$2<?/MIVAR>
-    <?MIVAR NAME=$cv_pub_authors>$3<?/MIVAR>
-    <?MIVAR NAME=$cv_pub_zdb_id>$4<?/MIVAR>
+    <?MIVAR NAME=$cv_pub_zdb_id>$3<?/MIVAR>
+    <?MIVAR NAME=$cv_authors>$4<?/MIVAR>
     <?MIVAR NAME=$cv_jrnl_abbrev>$5<?/MIVAR>
     <?MIVAR NAME=$cv_pub_volume>$6<?/MIVAR>
     <?MIVAR NAME=$cv_pub_pages>$7<?/MIVAR>
@@ -310,7 +320,7 @@ ahead and look for it -- convert to OID if necessary -->
 	<TD colspan=1 align=left>
 	 <font size=3>
 	  <DIV class="show_pubs"> 
-	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$cv_pub_authors">$cv_pub_zdb_id $cv_jrnl_abbrev:$cv_pub_volume ($cv_pub_pyear) $cv_pub_title. $cv_pub_pages.</A>
+	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$cv_pub_zdb_id">$cv_authors ($cv_pub_pyear) $cv_pub_title. $cv_jrnl_abbrev. $cv_pub_volume$cv_pub_pages.</A>
 	  </DIV>
 	</TD>
       </TR>

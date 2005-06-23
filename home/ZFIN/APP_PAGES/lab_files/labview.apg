@@ -333,8 +333,18 @@ $1</A>
 				year(pub_date) as pyear, 
 				a.zdb_id, a.authors, 
 				jrnl_abbrev, 
-				pub_volume, 
-				pub_pages, 
+  	                case
+		          when pub_volume is not null
+		          then pub_volume || ':'
+	                else
+		          ''
+		        end,
+  	                case
+		          when pub_pages is not null
+		          then pub_pages
+	                else
+		          ''
+		        end,
 				pub_authors_lower 
 		from publication a, 
 			int_person_pub b, 
@@ -359,7 +369,7 @@ $1</A>
   <TR>
      <TD align=left>
      <DIV class="show_pubs"> 
-        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$lv_pub_zdb_id">$lv_pub_authors ($lv_pub_year) $lv_pub_title. $lv_jrnl_abbrev. $lv_pub_volume:$lv_pub_pages.</A>
+        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$lv_pub_zdb_id">$lv_pub_authors ($lv_pub_year) $lv_pub_title. $lv_jrnl_abbrev. $lv_pub_volume$lv_pub_pages</A>
      </DIV>
      </TD>
  </TR>
