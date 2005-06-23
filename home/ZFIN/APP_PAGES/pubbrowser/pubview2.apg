@@ -89,7 +89,20 @@ displays a publication record, or many publication records if > 1 returned.
    <?MIVAR NAME=$pubview2_pub_volume>$12<?/MIVAR>
    <?MIVAR NAME=$pubview2_pub_pages>$13<?/MIVAR>
    <?MIVAR NAME=$pubview2_pub_status>$14<?/MIVAR>
-
+   
+   <?MIVAR NAME=$pubview_source>$pubview2_jrnl_abbrev<?/MIVAR>   
+   
+   <?MICOMMENT> IF volume is null and pages is not null, colon should be empty<?/MICOMMENT>
+   <?MIVAR NAME=$pubview_colon><?/MIVAR>
+   
+   <?MIBLOCK COND="$(NC,$pubview2_pub_volume,)">
+       <?MIVAR NAME=$pubview_source>$pubview_source $pubview2_pub_volume<?/MIVAR>
+       <?MIVAR NAME=$pubview_colon>:<?/MIVAR>
+   <?/MIBLOCK>
+   <?MIVAR NAME=$pubview_source COND="$(NC,$pubview2_pub_pages,)">$pubview_source$pubview_colon$pubview2_pub_pages<?/MIVAR>
+   <?MIVAR NAME=$pubview_source COND="$(NC,$jtype,Unpublished)">$pubview_source ($jtype)<?/MIVAR>
+   
+     
 <?MIVAR NAME=$rec_title>PUB:$(SUBSTR,$title,1,10)...<?/MIVAR>
 
   <?MIBLOCK COND="$(EC,$title,$MI_NOVALUE)">
@@ -145,20 +158,8 @@ displays a publication record, or many publication records if > 1 returned.
    <TD>
       <B>DATE:</B> $year  
    </TD>
-   <TD><B>SOURCE:</B> $pubview2_jrnl_abbrev ($jtype)
+   <TD><B>SOURCE:</B> $pubview_source
    </TD>
-
-   <?MIVAR COND="$(NC,$pubview2_pub_volume,)">
-     <TD>
-       <B>VOLUME:</B> $pubview2_pub_volume 
-     </TD>
-   <?/MIVAR>
-
-   <?MIVAR COND="$(NC,$pubview2_pub_pages,)">
-      <TD>
-        <B>PAGES:</B> $pubview2_pub_pages 
-      </TD>
-   <?/MIVAR>
    <?MIVAR COND="$(OR,$(EC,$pubview2_pub_status,Epub ahead of print),$(EC,$pubview2_pub_status,in press))">
       <TD><B>STATUS:</B> $pubview2_pub_status 
       </TD>
@@ -264,7 +265,7 @@ displays a publication record, or many publication records if > 1 returned.
   <?MICOMMENT>Curators decided to not include related markers' attribution.<?/MICOMMENT>
 
 <?MIVAR COND="$(EC,$AUTHORIZED,root)">
-<br><br><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID">FX</a>
+<br><br><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID">FX Curation</a>
 <?/MIVAR>
 
   <ul>
