@@ -355,7 +355,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 <?MIVAR NAME=showpubs_tr_color><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 <?MIVAR NAME=showpubs_tr_bg>$showpubs_tr_color<?/MIVAR>
 
-<TABLE cellspacing = 1 <?MIVAR>$showpubs_cellPadding<?/MIVAR>>
+<TABLE cellspacing = 0 <?MIVAR>$showpubs_cellPadding<?/MIVAR>>
 
 
 <?MIBLOCK COND="$(NC,$rtype,goview)"> <?MICOMMENT> 
@@ -1111,7 +1111,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
          <?MIVAR NAME=$showpubs_tr_bg>$(IF,$(EC,$showpubs_tr_bg,$showpubs_tr_color),,$showpubs_tr_color)<?/MIVAR>
       <?/MIBLOCK>
 
-      <TR bgcolor="$rowcolor">
+      <TR bgcolor="$showpubs_tr_bg">
 
 	<TD width = 50% <?MIBLOCK COND="$(EC,$justpubs,true)">colspan=4<?/MIBLOCK> >
 	  <DIV class="show_pubs">
@@ -1229,15 +1229,15 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 
 
       <?MIBLOCK COND="$(AND,$(>,$MI_CURRENTROW,1),$(NE,$last_pub_id,$showpubs_pub_zdb_id))">
-         <?MIVAR NAME=$rowcolor>$(IF,$(EC,$rowcolor,$highlight),#FFFFFF,$highlight)<?/MIVAR>
+         <?MIVAR NAME=$showpubs_tr_bg>$(IF,$(EC,$showpubs_tr_bg,$showpubs_tr_color),,$showpubs_tr_color)<?/MIVAR>
       <?/MIBLOCK>
 
-      <TR bgcolor="$rowcolor">
+      <TR bgcolor="$showpubs_tr_bg">
 	<TD width = 50%>
 	  <DIV class="show_pubs">
             <?MIBLOCK COND="$(NE,$last_pub_id,$showpubs_pub_zdb_id)">
             <?MIVAR>
-	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$showpubs_pub_zdb_id">$showpubs_pub_authors ($showpubs_pub_year) $showpubs_pub_jrnl_abbrev $showpubs_pub_volume || ':' $showpubs_pub_pages.</A>
+	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$showpubs_pub_zdb_id">$showpubs_pub_authors ($showpubs_pub_year) $showpubs_pub_jrnl_abbrev $showpubs_pub_volume$showpubs_pub_pages.</A>
             <?/MIVAR>
             <?/MIBLOCK>
 	  </DIV>
