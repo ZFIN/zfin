@@ -1100,11 +1100,10 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
       <?MIVAR NAME=$showpubs_pub_jrnl_abbrev>$4<?/MIVAR>
       <?MIVAR NAME=$showpubs_pub_volume>$5<?/MIVAR>
       <?MIVAR NAME=$showpubs_pub_pages>$6<?/MIVAR>	
-      <?MIVAR NAME=$showpubs_xpat_zdb_id>$7<?/MIVAR>
-      <?MIVAR NAME=$showpubs_xpat_assay_name>$8<?/MIVAR>
-      <?MIVAR NAME=$showpubs_stock_abbrev>$9<?/MIVAR>
-      <?MIVAR NAME=$showpubs_stock_page>$10<?/MIVAR>
-      <?MIVAR NAME=$showpubs_stock_zdb_id>$11<?/MIVAR>
+      <?MIVAR NAME=$showpubs_xpat_zdb_id>$8<?/MIVAR>
+      <?MIVAR NAME=$showpubs_xpat_assay_name>$9<?/MIVAR>
+      <?MIVAR NAME=$showpubs_stock_abbrev>$10<?/MIVAR>
+      <?MIVAR NAME=$showpubs_stock_page>$11<?/MIVAR>
       <?MIVAR NAME=$showpubs_stock_zdb_id>$12<?/MIVAR>
 
       <?MIBLOCK COND="$(AND,$(>,$MI_CURRENTROW,1),$(NE,$last_pub_id,$showpubs_pub_zdb_id))">
