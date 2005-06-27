@@ -103,7 +103,7 @@ CREATE INDEX llzdb_ll_id_index ON ll_zdb
 CREATE INDEX llzdb_zdb_id_index ON ll_zdb
     (llzdb_zdb_id) using btree;
 
-    
+
 
 --REFSEQ ACCESSION NUM--
 CREATE TEMP TABLE REF_SEQ_ACC
