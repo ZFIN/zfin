@@ -36,6 +36,13 @@ displays a publication record, or many publication records if > 1 returned.
 ***
 <?/MICOMMENT>
 
+
+<script language="javascript">
+   function start_note() {
+  	top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect_note.apg","notewindow","scrollbars=no,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
+	}
+</script>
+
 <?MIBLOCK COND="$(NXST,$abbrev)">
    <?MIVAR NAME=$abbrev><?/MIVAR>
 <?/MIBLOCK>
@@ -51,6 +58,9 @@ displays a publication record, or many publication records if > 1 returned.
 <?MIBLOCK COND="$(NXST,$OID)">
   <p> ERROR -- something bad happened -- no OID passed in!
 <?/MIBLOCK>
+
+<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
 
 <?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
 <?MIVAR NAME=$MI_NULL><?/MIVAR>
@@ -229,6 +239,29 @@ displays a publication record, or many publication records if > 1 returned.
   <P>
 <?/MIVAR>
 
+<?MICOMMENT> =========== FIGURES link ================
+	     == if non-Unpublished, non-curation, 
+  	     == with non-GELI figure(s)
+<?/MICOMMENT>
+
+<?MISQL SQL="
+	select count(*)::integer
+ 	  from figure
+ 	 where fig_source_zdb_id = '$OID'
+	   and fig_comments <> 'GELI';">
+<?/MISQL>
+<?MIVAR NAME=$pbv_fig_nongeli_count>$1<?/MIVAR>
+
+<?MIVAR COND="$(AND,$(NC,$jtype,Unpublished),$(NC,$jtype,Curation),$(!=,$pbv_fig_nongeli_count,0))">
+  <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&OID=$OID">
+	  <b>FIGURES</b>
+  </a> &nbsp;
+  <font size=-1>(<a href="javascript:start_note();">current status</a>)</font> 
+  <p>
+<?/MIVAR>
+
+<?MICOMMENT> ============  ABSTRACT  ================= 
+<?/MICOMMENT>
 <B>ABSTRACT:</B> 
 <?MIVAR COND="$(NC,$pub_abstract,NULL)"><br>  $pub_abstract  <?/MIVAR>
 
@@ -256,19 +289,30 @@ displays a publication record, or many publication records if > 1 returned.
 <?/MIBLOCK>
 
 <p>
-<?MISQL SQL=" select jtype
-                from publication 
-	       where zdb_id = '$OID' ;">
-<?/MISQL>
-<?MIBLOCK COND="$(AND,$(NC,$1,Unpublished),$(NC,$1,Curation))">
+<?MICOMMENT> =========================================================
+             ==         ADDITIONAL INFORMATION        
+             ==
+             == only for non-Unpublished and non-Curation pubs
+             =========================================================   
+<?/MICOMMENT>
+
+<?MIBLOCK COND="$(AND,$(NC,$jtype,Unpublished),$(NC,$jtype,Curation))">
   <B>ADDITIONAL INFORMATION: </B>
+
+  <?MIVAR COND="$(EC,$AUTHORIZED,root)">
+    <br><br>
+    <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID">FX</a>
+  <?/MIVAR>
+  
   <?MICOMMENT>Curators decided to not include related markers' attribution.<?/MICOMMENT>
+
 
 <?MIVAR COND="$(EC,$AUTHORIZED,root)">
 <br><br><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID">FX Curation</a>
 <?/MIVAR>
 
   <ul>
+  <?MICOMMENT> ======== Genes / Markers  ============ <?/MICOMMENT>
   <?MISQL SQL="
       select count(recattrib_data_zdb_id)::integer
 	from  record_attribution, marker
@@ -283,6 +327,7 @@ displays a publication record, or many publication records if > 1 returned.
   <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&pubId=$OID&type=pub_mrkr">Genes / Markers</a> &nbsp; ($1)
   <?/MIVAR> 
 
+  <?MICOMMENT> ======== Clones / Probes  ============ <?/MICOMMENT>
   <?MISQL SQL="
 	select count(recattrib_data_zdb_id)::integer
 	 from  record_attribution, marker
@@ -305,41 +350,36 @@ displays a publication record, or many publication records if > 1 returned.
 	***
   <?/MICOMMENT>
 
+  <?MICOMMENT> ======== Gene Expression Data  ============ <?/MICOMMENT>
   <?MISQL SQL="
-        select count(xpat_zdb_id)
-        from expression_pattern
-        where xpat_source_zdb_id='$OID'
-        and xpat_zdb_id in (select xpatanat_xpat_zdb_id from expression_pattern_anatomy)">
+	select count(*)::integer
+ 	  from figure
+ 	 where fig_source_zdb_id = '$OID';">
   <?/MISQL>
+  <?MIVAR NAME=pbv_fig_count>$1<?/MIVAR>
 
-  <?MIBLOCK COND="$(>,$1,0)">
+  <?MIBLOCK COND="$(>,$pbv_fig_count,1)">
+     <?MIVAR NAME=pbv_fig_page>fxallfigures.apg<?/MIVAR>
+     <?MIVAR NAME=pbv_fig_page_link_id>$OID<?/MIVAR>	
+  <?MIELSE COND="$(=,$pbv_fig_count,1)">
+     <?MISQL SQL="select fig_zdb_id
+                  from figure
+                  where fig_source_zdb_id='$OID';">
+      <?/MISQL> 
+      <?MIVAR NAME=pbv_fig_page_link_id>$1<?/MIVAR>
+      <?MIVAR NAME=pbv_fig_page>fxfigureview.apg<?/MIVAR>
+  <?/MIBLOCK>	
 
-    <?MISQL SQL="
-
-	select count(xpat_zdb_id)
-	 from  expression_pattern
-	 where xpat_source_zdb_id = '$OID'
-	;">
-    <?/MISQL> 
-    <?MIVAR COND="$(>,$1,0)">
-     <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&pubId=$OID">Gene Expression Data</a> &nbsp; ($(FIX,$1))
-    <?/MIVAR>
-
-  <?/MIBLOCK>
-
-  <?MISQL SQL="
-        select count(distinct xpat_gene_zdb_id)
-         from expression_pattern,publication
-         where xpat_source_zdb_id = '$OID'
-           and xpat_source_zdb_id = zdb_id 
-         and jtype <>'Unpublished'">
-  <?/MISQL>
-  <?MIVAR COND="$(>,$1,0)">
-   <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatindexview.apg&OID=$OID">Gene Expression Summary</a>&nbsp;
+  <?MIVAR COND="$(!=,$pbv_fig_count,0)">
+       <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$pbv_fig_page&OID=$pbv_fig_page_link_id">
+	   Gene Expression Data
+           </a> 
   <?/MIVAR>
+
 
   <?MICOMMENT> *** end expression pubs *** <?/MICOMMENT>
 
+  <?MICOMMENT> ======== Mapping Data  ============ <?/MICOMMENT>
   <?MISQL SQL="
 	select count(distinct lnkgmem_member_zdb_id)
 	  from record_attribution, linkage_member
@@ -353,6 +393,7 @@ displays a publication record, or many publication records if > 1 returned.
   <?/MIVAR>
 
 
+  <?MICOMMENT> ======== Phenotype Alleles  ============ <?/MICOMMENT>
   <?MISQL SQL="
 	select count(recattrib_data_zdb_id)
 	 from  record_attribution
@@ -365,7 +406,7 @@ displays a publication record, or many publication records if > 1 returned.
   <?/MIVAR>
  
 
-
+  <?MICOMMENT> ======== Orthology  ============ <?/MICOMMENT>
   <?MISQL SQL="
 	select count(recattrib_data_zdb_id)
 	 from  record_attribution
@@ -378,6 +419,7 @@ displays a publication record, or many publication records if > 1 returned.
   <?/MIVAR>
 
   </ul>
+
 <?/MIBLOCK> 
 	<?MICOMMENT> 
 		*** only non-unpublished paper gets additional info ***

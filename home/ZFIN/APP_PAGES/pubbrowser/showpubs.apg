@@ -118,7 +118,7 @@ $(IF,$(>,$(POSITION,$rtype,fish),0),
 $(IF,$(>,$(POSITION,$OID,XPAT),0),
       $(SETVAR,$return_page1,aa-xpatupdatePubs.apg)
       $(SETVAR,$return_page2,aa-do-xpatupdatePubs.apg)
-      $(SETVAR,$target_table,expression_pattern)
+      $(SETVAR,$target_table,expression_experiment)
       )
 
 $(IF,$(>,$(POSITION,$OID,IMAGE),0),
@@ -1064,8 +1064,8 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 		        end,	
 		publication.pub_pages, 
 	        pub_authors_lower as authors_lower, 
-		xpat_zdb_id, 
-		xpat_assay_name,
+		xpatex_zdb_id, 
+		xpatex_assay_name,
   	     case
 		when fish.abbrev is not null
 		then fish.abbrev
@@ -1077,21 +1077,16 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 		then 'aa-fishview.apg'
 	    else
 		'aa-locusview.apg'
-	    end as stock_page, xpat_stock_zdb_id
-	from publication, journal, expression_pattern
-	     left outer join fish on xpat_stock_zdb_id = fish.zdb_id
-	     left outer join locus on fish.locus = locus.zdb_id
-	where xpat_zdb_id in ('$showpubs_inXpatList')
-	  and xpat_source_zdb_id = publication.zdb_id
+	    end as stock_page, featexp_genome_feature_zdb_id
+	from publication, journal, expression_experiment, feature_experiment
+	     left outer join fish on featexp_genome_feature_zdb_id = fish.zdb_id
+	     left outer join locus on featexp_genome_feature_zdb_id = locus.zdb_id 
+	where xpatex_zdb_id in ('$showpubs_inXpatList')
+	  and xpatex_source_zdb_id = publication.zdb_id
 	  and jrnl_zdb_id = pub_jrnl_zdb_id          
-          and xpat_gene_zdb_id = '$OID'
-        group by publication.zdb_id, 
-		 2, 
-		 authors, 
-		 jrnl_abbrev, 
-		 5, 
-                 publication.pub_pages, 
-		 7, 8, 9, 10, 11, 12
+	  amd xpatex_featexp_zdb_id = featexp_zdb_id
+          and xpatex_gene_zdb_id = '$OID'
+        group by publication.zdb_id, 2, authors, jrnl_abbrev, 5, publication.pub_pages, 7, 8, 9, 10, 11, 12
 	order by authors_lower">
 
       <?MIVAR NAME=$showpubs_pub_zdb_id>$1<?/MIVAR>
@@ -1187,32 +1182,23 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 		        end,	
 		pub_pages, 
 		pub_authors_lower as authors_lower, 
-		xpat_zdb_id, 
-		xpat_assay_name,
+		xpatex_zdb_id, 
+		xpatex_assay_name,
   	     case
 		when fish.abbrev is not null
 		then fish.abbrev
 	     else
 		locus.abbrev
-	     end as stock_abbrev, xpat_stock_zdb_id
-        from publication, 
-		record_attribution, 
-		journal,
-		expression_pattern
-	     left outer join fish on xpat_stock_zdb_id = fish.zdb_id
-	     left outer join locus on fish.locus = locus.zdb_id
-        where xpat_gene_zdb_id = '$OID'
-          and xpat_zdb_id = recattrib_data_zdb_id
+	     end as stock_abbrev, featexp_genome_feature_zdb_id
+        from publication, record_attribution, journal, expression_experiment, feature_experiment
+	     left outer join fish on featexp_genome_feature_zdb_id = fish.zdb_id
+	     left outer join locus on featexp_genome_feature_zdb_id = locus.zdb_id 
+        where xpatex_gene_zdb_id = '$OID'
+          and xpatex_zdb_id = recattrib_data_zdb_id
+          and xpatex_featexp_zdb_id = featexp_zdb_id
 	  and pub_jrnl_zdb_id = jrnl_zdb_id
-          and recattrib_source_zdb_id = publication.zdb_id 
-	  and jtype <> 'Unpublished'
-        group by publication.zdb_id, 
-		2, 
-		authors, 
-		jrnl_abbrev, 
-		5, 
-		pub_pages, 
-		7, 8, 9, 10, 11
+          and recattrib_source_zdb_id = publication.zdb_id and jtype <> 'Unpublished'
+        group by publication.zdb_id, 2, authors, jrnl_abbrev, 5, pub_pages, 7, 8, 9
         order by authors_lower;">
       <?MIVAR NAME=$showpubs_pub_zdb_id>$1<?/MIVAR>
       <?MIVAR NAME=$showpubs_pub_year>$2<?/MIVAR>
