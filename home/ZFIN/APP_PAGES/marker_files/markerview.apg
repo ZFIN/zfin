@@ -1177,7 +1177,8 @@ Datablade documentation.
 <?MISQL SQL="
     select count(distinct xpatex_source_zdb_id)::integer
       from expression_experiment 
-     where '$OID' in (xpatex_gene_zdb_id, xpatex_probe_feature_zdb_id)">
+     where '$OID' in (xpatex_gene_zdb_id, xpatex_probe_feature_zdb_id)
+     and xpatex_zdb_id in (select distinct xpatres_xpatex_zdb_id from expression_result)">
 <?/MISQL>
 <?MIVAR NAME=mrkrview_xpatsource_count>$1<?/MIVAR>
 
