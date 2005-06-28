@@ -6,7 +6,6 @@ INPUT VARS:
  -- OID -- the OID of the fish image record to view
  -- PDATE -- a flag variable to indicate we're in update mode
  -- temp_oid -- could be passed instead of fimgview_OID --
- -- image_table -- optional value, sets fish_image table
 
 OUTPUT VARS:
 none
@@ -43,6 +42,12 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 <HTML>
 
 <head>
+
+<style type="text/css">
+        div { font-family: arial }
+        .fig { line-height: 1.5; text-align:justify; }
+</style>
+
 <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
 
 <?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
@@ -112,23 +117,16 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 <?/MIBLOCK>
 
 
-<?MISQL COND=$(EC,$image_table,fish_image) SQL="
+<?MISQL SQL="
   select fimg_image, fimg_annotation, fimg_image_with_annotation, 
 	 fimg_width, fimg_fish_zdb_id, 
 	 HTML_breaks(fimg_comments), fimg_view, fimg_direction, 
-	 fimg_form, fimg_preparation, get_fish_full_name(fimg_fish_zdb_id)
+	 fimg_form, fimg_preparation, get_fish_full_name(fimg_fish_zdb_id),
+	 fimg_thumbnail
     from $image_table 
     where fimg_zdb_id='$OID';">
 <?/MISQL>
 
-<?MISQL COND=$(EC,$image_table,fx_fish_image_private) SQL="
-  select fimgp_image, fimgp_annotation, fimgp_image_with_annotation, 
-	 fimgp_width, fimgp_fish_zdb_id, 
-	 HTML_breaks(fimgp_comments), fimgp_view, fimgp_direction, 
-	 fimgp_form, fimgp_preparation, get_fish_full_name(fimgp_fish_zdb_id)
-    from $image_table 
-    where fimgp_zdb_id='$OID';">
-<?/MISQL>
 <?MIVAR NAME=$fimgview_fimg_image>$1<?/MIVAR>
 <?MIVAR NAME=$fimgview_fimg_annotation>$2<?/MIVAR>
 <?MIVAR NAME=$fimgview_fimg_image_with_annotation>$3<?/MIVAR>
@@ -140,6 +138,7 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 <?MIVAR NAME=$fimgview_fimg_form>$9<?/MIVAR>
 <?MIVAR NAME=$fimgview_fimg_preparation>$10<?/MIVAR>
 <?MIVAR NAME=$fimgview_full_fish_name>$11<?/MIVAR>
+<?MIVAR NAME=$fimgview_thumbnail>$12<?/MIVAR>
 
 <?MICOMMENT>
   for the purpose of having consistant parameter names when pass to showpub.apg
@@ -262,15 +261,15 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 		    if (($fimgview_fimg_width > frameWidth)||$fimgview_fimg_width==0) {   
 		      document.write(
 			  '<IMG width="' + frameWidth + '"' +
-			  '  SRC="<!--|IMAGE_LOAD|-->/$fimgview_imageToShow">' +
+			  '  SRC="/imageLoadUp/$fimgview_imageToShow">' +
 			  '<br>'); 
 		      document.write(
 			  '<INPUT TYPE=button ' +
 			  '  value="View image at high resolution"' +
-			  '  onClick="popup_image(' + "'<!--|IMAGE_LOAD|-->/$fimgview_imageToShow'" + ')">');
+			  '  onClick="popup_image(' + "'/imageLoadUp/$fimgview_imageToShow'" + ')">');
 		    } 
 		    else {
-		      document.write('<IMG SRC="<!--|IMAGE_LOAD|-->/$fimgview_imageToShow">');
+		      document.write('<IMG SRC="/imageLoadUp/$fimgview_imageToShow">');
 		    }
 		  </script>
 		<?/MIVAR>
@@ -288,60 +287,209 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 	<?/MIBLOCK>
 
 	<A NAME="image_info">
-	<p>
-	<TABLE border=0 width=100% cellpadding=3>
-	  <TR align=center>
-	    <?MIVAR><TD bgcolor="$fimgview_highlight"><?/MIVAR>
-	      <?MIVAR COND="$(XST,$UPDATE)">
-		<INPUT TYPE=button value=Update onClick="doit('stock','selection','Depicted+Stock','fish_image','fimg_zdb_id')">
-	      <?/MIVAR>
-	      <big>Stock:</big> 
-	      <?MIBLOCK COND="$(NC,$fimgview_full_fish_name,UNKNOWN)">
-		<?MIVAR>
-		  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$fimgview_fimg_fish_zdb_id">$fimgview_full_fish_name</A>
-		<?/MIVAR>
-	      <?MIELSE>
-		<?MIVAR>
-		  $fimgview_full_fish_name
-		<?/MIVAR>
-	      <?/MIBLOCK>
+	
+        <?MIVAR COND="$(AND,$(NC,$fimgview_full_fish_name,UNKNOWN),$(NC,$fimgview_full_fish_name,NULL))">
+	  <p>
+                <?MIBLOCK COND=$(XST,$UPDATE)>
+         	  <INPUT TYPE=button value=Update onClick="doit('stock','selection','Depicted+Stock','fish_image','fimg_zdb_id')">
+	        <?/MIBLOCK>
+	        
+ 	        <big>Genetic Background:</big> 
+  	        <?MIBLOCK COND="$(NC,$fimgview_full_fish_name,UNKNOWN)">
+		  <?MIVAR>
+		    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$fimgview_fimg_fish_zdb_id">$fimgview_full_fish_name</A>
+		  <?/MIVAR>
+	        <?MIELSE>
+		  <?MIVAR>
+		    $fimgview_full_fish_name
+		  <?/MIVAR>
+	        <?/MIBLOCK>  
+	<?/MIVAR>
+	  
 
-	    </TD>
-	  </TR>
-	  <TR>
-	    <TD bgcolor="white">
+        <?MICOMMENT>
+              ******************
+              * Figure Caption *
+              ******************
+        <?/MICOMMENT>
 
-	      <TABLE>
-		<TR>
-		  <TD>
-		    <B>Caption/Comments:</b>
-		  </TD>
-		</TR>
-		<?MIVAR COND="$(XST,$UPDATE)">
-		  <INPUT TYPE=button value=Update onClick="doit('fimg_comments','textarea','Image+Caption','fish_image','fimg_zdb_id')">
-		<?/MIVAR>
-		<?MIVAR>
-		  <TR>
-		    <TD>
-		      $fimgview_fimg_comments
-		    </TD>
-		  </TR>
-		<?/MIVAR>
-	      </TABLE>
 
-	    </TD>
-	  </TR>
-	</TABLE>
+        <?MIBLOCK COND=$(NXST,$UPDATE)>
+          <?MICOMMENT> 
+              *** This image may be on of many images for a figure. 	
+              *** Add the text "<b>One of multiple images for</b>" when 
+              *** multiple images exist.
+          <?/MICOMMENT>	        
+          <?MISQL SQL="
+            select fig_caption, fig_zdb_id, fig_label, fimg_label
+              from figure, fish_image
+             where fimg_zdb_id = '$OID'
+               and fimg_fig_zdb_id = fig_zdb_id;">
 
-	<p>
-	<b>Developmental Stage(s):</B> <br>
+            <?MIVAR NAME=$fimgview_fig_caption>$1<?/MIVAR>
+            <?MIVAR NAME=$fimgview_fig_zdb_id>$2<?/MIVAR>
+            <?MIVAR NAME=$fimgview_fig_label>$3<?/MIVAR>
+            <?MIVAR NAME=$fimgview_img_label>$4<?/MIVAR>
+  
+            <?MISQL SQL="
+                select count(*)::integer
+                  from fish_image 
+                 where fimg_fig_zdb_id = '$fimgview_fig_zdb_id';">
+	     
+               <?MIVAR NAME=fig_count>$1<?/MIVAR>
+            <?/MISQL>
+	            
+            <?MIVAR NAME=$fimgview_caption_display COND=$(AND,$(NC,$fimgview_fig_caption,),$(NC,$fimgview_fig_caption,NULL))>
+              <div class="fig">
+                $(IF,$(NC,$fig_count,1),<b>One of multiple images for</b>)
+           
+                <b>$fimgview_fig_label</b> $fimgview_fig_caption
+              </div>
+            <?/MIVAR>
+
+          <?/MISQL> <?MICOMMENT> end of expression pattern query <?/MICOMMENT>
+          
+        <?/MIBLOCK>
+        		
+	<?MIBLOCK COND=$(OR,$(XST,$UPDATE),$(AND,$(NXST,$fimgview_caption_display),$(NC,$fimgview_fimg_comments,NULL)))>
+	  <?MIVAR NAME=$fimgview_caption_display>$fimgview_fimg_comments<?/MIVAR>
+	<?/MIBLOCK>
+		
+	<?MIVAR COND=$(XST,$UPDATE)>
+          <?MIVAR NAME=$fimgview_caption_display>
+            <textarea name=caption cols=85 rows=5>$fimgview_caption_display</textarea>
+            <br>
+            <input type=button value="submit" onClick="dopopup(document.updater.caption.value,'$fimgview_caption_display','fimg_comments','fish_image','fimg_zdb_id');">
+
+          <?/MIVAR>
+        <?/MIVAR>
+          
+        <?MIBLOCK COND=$(XST,$fimgview_caption_display)>
+	  <p> 
+
+
+	  <TABLE width=100% cellspacing=0 cellpadding=5>
+	    <TR bgcolor="<!--|SIDEBAR_COLOR|-->">
+	      <TD>
+	        <B>Caption/Comments:</b>		    
+	      </TD>
+	    </TR>			
+	  </TABLE>
+	  <TABLE width=100% cellspacing=0 cellpadding=10>
+	    <tr bgcolor="<!--|HIGHLIGHT_COLOR|-->">
+	      <td>
+	        <?MIVAR>$fimgview_caption_display<?/MIVAR>
+	      </td>
+	    </tr>		
+	  </TABLE>
+
+	  
+	<?/MIBLOCK>
+	
+
+	  
+
+        <?MICOMMENT>
+              *************************
+              * Expression Experiment *
+              *************************
+        <?/MICOMMENT>	
+
+        <?MIBLOCK COND=$(NXST,$UPDATE)>
+
+          <?MICOMMENT> ******* Get the figure info *******<?/MICOMMENT>	        
+          <?MISQL SQL="
+            select fimg_fig_zdb_id, count(xpatfig_fig_zdb_id), fig_source_zdb_id, pub_mini_ref
+              from fish_image, figure, OUTER(expression_pattern_figure), publication
+             where fimg_zdb_id = '$OID'
+               and fimg_fig_zdb_id = fig_zdb_id
+               and fig_zdb_id = xpatfig_fig_zdb_id
+               and fig_source_zdb_id = zdb_id
+             group by 1,3,4;">
+             
+             <?MIVAR NAME=fimgview_xpat_fig_zdb_id>$1<?/MIVAR>
+             <?MIVAR NAME=fimgview_xpatfig_count>$2<?/MIVAR>
+             <?MIVAR NAME=fimgview_fig_source_zdb_id>$3<?/MIVAR>
+             <?MIVAR NAME=fimgview_pub_mini_ref>$4<?/MIVAR>
+             
+          <?/MISQL>
+          
+          <?MIBLOCK COND=$(XST,$fimgview_fig_zdb_id)>
+
+            <?MICOMMENT> ***** Get the Probe info for Unpublished pubs ***** <?/MICOMMENT>	          
+        
+            <?MISQL SQL="
+               select xpatex_probe_feature_zdb_id, mrkr_abbrev
+               from 
+               figure, marker, publication,
+               expression_pattern_figure, expression_result, 
+               expression_experiment
+               where
+               fig_zdb_id = '$fimgview_fig_zdb_id'
+               and fig_source_zdb_id = zdb_id
+               and jtype = 'Unpublished'
+               and xpatfig_fig_zdb_id = fig_zdb_id
+               and xpatfig_xpatres_zdb_id = xpatres_zdb_id
+               and xpatres_xpatex_zdb_id = xpatex_zdb_id
+               and xpatex_probe_feature_zdb_id = mrkr_zdb_id;">
+               
+                <?MIVAR NAME=fimgview_probe_zdb_id>$1<?/MIVAR>
+                <?MIVAR NAME=fimgview_probe_name>$2<?/MIVAR>
+            <?/MISQL>      
+
+            <p>
+  	    <TABLE width=100% cellspacing=0>
+	      <TR bgcolor="<!--|SIDEBAR_COLOR|-->">
+	        <TD>
+	          <b>Gene Expression:</b>
+	        </td>
+	      </tr>
+	      <tr bgcolor="<!--|HIGHLIGHT_COLOR|-->">
+	        <td>
+	        
+            <?MIBLOCK COND="$(AND,$(XST,$fimgview_xpat_fig_zdb_id),$(>,$fimgview_xpatfig_count,0))">
+              <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=<?MIVAR>$fimgview_fig_zdb_id<?/MIVAR>">Gene expression details</a>
+              <br>          
+            <?/MIBLOCK>
+
+
+            <?MICOMMENT> ***** Pass probe id to Additional Figures link if exists ***** <?/MICOMMENT>
+            <?MIBLOCK COND="$(XST,$fimgview_probe_zdb_id)">
+              <?MIVAR> 
+                <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&OID=$fimgview_fig_source_zdb_id&fxallfig_probe_zdb_id=$fimgview_probe_zdb_id">Figures for <?MIVAR>$fimgview_pub_mini_ref<?/MIVAR> <?MIVAR>[$fimgview_probe_name]<?/MIVAR></a>
+              <?/MIVAR>
+            <?MIELSE>      
+              <?MIVAR> 
+                <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&OID=$fimgview_fig_source_zdb_id">Figures for <?MIVAR>$fimgview_pub_mini_ref<?/MIVAR></a>
+              <?/MIVAR>
+            <?/MIBLOCK> 
+
+                </td>
+              </tr>
+            </table>
+          <?/MIBLOCK> <?MICOMMENT> xst figure <?/MICOMMENT>
+          
+        <?/MIBLOCK> <?MICOMMENT> nxst UPDATE <?/MICOMMENT>
+
+
+
+	
+	  
+
+        <?MICOMMENT>
+              ***************
+              * Dev. Stages *
+              ***************
+        <?/MICOMMENT>
+
+
 
 	<?MISQL SQL="
 	  select lo.stg_zdb_id,       	     hi.stg_zdb_id, 
 		 lo.stg_name,        	     hi.stg_name, 
 		 lo.stg_hours_start, 	     hi.stg_hours_end,
-		 get_stg_name_long_html(lo.stg_zdb_id),
-		 get_stg_name_long_html(hi.stg_zdb_id)
+		 get_stg_name_html(lo.stg_zdb_id, 'long'),
+		 get_stg_name_html(hi.stg_zdb_id, 'long')
 	    from fish_image_stage, stage lo, stage hi
 	    where fimgstg_fimg_zdb_id = '$OID'
 	      and lo.stg_zdb_id = fimgstg_start_stg_zdb_id
@@ -354,8 +502,17 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 	  <?MIVAR NAME=$fimgview_end_stg_name>$4<?/MIVAR>
 	  <?MIVAR NAME=$fimgview_start_stg_name_long_html>$7<?/MIVAR>
 	  <?MIVAR NAME=$fimgview_end_stg_name_long_html>$8<?/MIVAR>
+	  
+	  <p>
+	  <table width=100% cellspacing=0>
+	    <tr bgcolor="<!--|SIDEBAR_COLOR|-->">
+	      <td>
+                <b>Developmental Stage(s):</B>
+              </td>
+            </tr>
+            <tr bgcolor="<!--|HIGHLIGHT_COLOR|-->">
+              <td>
 
-	  <center><b>
 	  <?MIBLOCK COND=$(NXST,$UPDATE)>
 	    <?MIVAR>
 	      $fimgview_start_stg_name_long_html
@@ -384,94 +541,34 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 	      </SELECT>
 	    <?/MIVAR>
 	  <?/MIBLOCK>
-	  </b></center>
+
+              </td>
+            </tr>
+          </table>
         <?/MISQL> <?MICOMMENT> end developmental stages SQL <?/MICOMMENT>
 
-        <?MICOMMENT> display stages for new images <?/MICOMMENT> 
-        <?MIBLOCK COND="$(EC,$MI_ROWCOUNT,0)">
-          <SELECT NAME=stage  onChange="dopopup(this.options[this.selectedIndex].value,'','fimgstg_start_stg_zdb_id','fish_image_stage','fimgstg_fimg_zdb_id')">
-             <?MISQL SQL="
-	       select stg_name, stg_hours_start, stg_hours_end ,stg_zdb_id
-		 from stage 
-		    order by stg_hours_start, stg_hours_end desc;">
-		<option value="$4">$1
-	      <?/MISQL>
-	    </SELECT>
-	      to 
-	    <SELECT NAME=stage  onChange="dopopup(this.options[this.selectedIndex].value,'','fimgstg_end_stg_zdb_id','fish_image_stage','fimgstg_fimg_zdb_id')">
-	      <?MISQL SQL="
-		  select stg_name, stg_hours_start, stg_hours_end, stg_zdb_id 
-		    from stage 
-		    order by stg_hours_start, stg_hours_end desc;">
-		  <option value="$4">$1
-	      <?/MISQL>
-	    </SELECT>
- 	 <?/MIBLOCK>   <?MICOMMENT> end developmental stages <?/MICOMMENT>
+	  
 
+        <?MICOMMENT>
+              ***************
+              * Preparation *
+              ***************
+        <?/MICOMMENT>
 
+        <?MIVAR NAME=fimgview_notspecified>not specified<?/MIVAR>
+        <?MIBLOCK COND=$(OR,$(XST,$UPDATE),$(NC,$fimgview_fimg_preparation,$fimgview_notspecified))>
+        <p>
 
-
-	<hr width=80%>
-
-	<?MICOMMENT> Show expression patterns if they exist <?/MICOMMENT>
-
-	<?MISQL SQL="
-	  select xpat_zdb_id, xpat_gene_zdb_id, xpat_assay_name
-	    from expression_pattern
-	    where exists 
-		  ( select * 
-		      from expression_pattern_image
-		      where xpatfimg_fimg_zdb_id = '$OID'
-			and xpatfimg_xpat_zdb_id = xpat_zdb_id);">
-
-	  <?MIVAR NAME=$fimgview_xpat_zdb_id>$1<?/MIVAR>
-	  <?MIVAR NAME=$fimgview_xpat_gene_zdb_id>$2<?/MIVAR>
-	  <?MIVAR NAME=$fimgview_xpat_assay_name>$3<?/MIVAR>
-
-	  <?MIVAR NAME=$fimgview_labeledMarkerList><?/MIVAR>
-	  <?MISQL SQL="
-	    select mrkr_zdb_id, mrkr_abbrev
-	      from marker
-	      where mrkr_zdb_id = '$fimgview_xpat_gene_zdb_id'
-	      order by mrkr_abbrev;">
-
-	    <?MIVAR NAME=$fimgview_mrkr_zdb_id>$1<?/MIVAR>
-	    <?MIVAR NAME=$fimgview_mrkr_abbrev>$2<?/MIVAR>
-
-	    <?MIBLOCK COND=$(!=,$MI_CURRENTROW,1)>
-	      <?MIVAR NAME=$fimgview_labeledMarkerList>$fimgview_labeledMarkerList, <?/MIVAR>
-	    <?/MIBLOCK>
-	    <?MIVAR NAME=$fimgview_labeledMarkerList>$fimgview_labeledMarkerList<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$fimgview_mrkr_zdb_id">$fimgview_mrkr_abbrev</a><?/MIVAR>
-	  <?/MISQL>
-
-	  <p>
-	  <b>Shows part of <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatview.apg&OID=$fimgview_xpat_zdb_id">expression pattern</a>
-	  of $fimgview_labeledMarkerList 
-	  by $fimgview_xpat_assay_name</a><br>
-
-
-        <?/MISQL> <?MICOMMENT> end of expression pattern query <?/MICOMMENT>
-        <br>
-
-
-
-
-
-	<hr width=80%>
-
-	<b>Image Preparation:</B> <p>
-	<TABLE border=0 WIDTH=100% cellpadding=4>
-	  <TH>Preparation</TH>
-	  <TH>Image Form</TH>
-	  <TH>View</TH>
-	  <TH>Direction</TH>
-	  <TR align=center>
+	<TABLE border=0 WIDTH=100% cellpadding=4 cellspacing=0>
+	  <tr bgcolor="<!--|SIDEBAR_COLOR|-->">
+  	    <td><b>Preparation</b></td>
+	    <td><b>Image Form</b></td>
+	    <td><b>View</b></td>
+	    <td><b>Direction</b></td>
+	  </tr>
+	  <TR bgcolor="<!--|HIGHLIGHT_COLOR|-->">
 	    <TD>
-	      <?MIBLOCK COND="$(NXST,$UPDATE)">
-		<?MIVAR>
-		  $fimgview_fimg_preparation
-		<?/MIVAR>
-	      <?MIELSE>
+	      <?MIBLOCK COND=$(XST,$UPDATE)>
 		<?MIVAR>
 		  <SELECT name=preparation onChange="dopopup(this.options[this.selectedIndex].value,'$fimgview_fimg_preparation','fimg_preparation','fish_image','fimg_zdb_id')">
 		    <?MISQL SQL="
@@ -482,14 +579,12 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 		    <?/MISQL>
 		  </SELECT>
 		<?/MIVAR>
-	      <?/MIBLOCK>
+              <?MIELSE>
+                <?MIVAR>$fimgview_fimg_preparation<?/MIVAR>
+              <?/MIBLOCK>
 	    </TD>
 	    <TD> 
-	      <?MIBLOCK COND="$(NXST,$UPDATE)">
-		<?MIVAR>
-		  $fimgview_fimg_form
-		<?/MIVAR>
-	      <?MIELSE>
+	      <?MIBLOCK COND=$(XST,$UPDATE)>
 		<?MIVAR>
 		  <SELECT name=form onChange="dopopup(this.options[this.selectedIndex].value,'$fimgview_fimg_form','fimg_form','fish_image','fimg_zdb_id')">
 		    <?MISQL SQL="
@@ -500,14 +595,12 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 		    <?/MISQL>
 		  </SELECT>
 		<?/MIVAR>
-	      <?/MIBLOCK>
+              <?MIELSE>
+                <?MIVAR>$fimgview_fimg_form<?/MIVAR>
+              <?/MIBLOCK>
 	    </TD>
 	    <TD> 
-	      <?MIBLOCK COND="$(NXST,$UPDATE)">
-		<?MIVAR>
-		  $fimgview_fimg_view
-		<?/MIVAR>
-	      <?MIELSE>
+	      <?MIBLOCK COND=$(XST,$UPDATE)>
 		<?MIVAR>
 		  <SELECT name=view onChange="dopopup(this.options[this.selectedIndex].value,'$fimgview_fimg_view','fimg_view','fish_image','fimg_zdb_id')">
 		    <?MISQL SQL="
@@ -518,14 +611,12 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 		    <?/MISQL>
 		  </SELECT>
 		<?/MIVAR>
-	      <?/MIBLOCK>
+              <?MIELSE>
+                <?MIVAR>$fimgview_fimg_view<?/MIVAR>
+              <?/MIBLOCK>
 	    </TD>
 	    <TD> 
-	      <?MIBLOCK COND="$(NXST,$UPDATE)">
-		<?MIVAR>
-		  $fimgview_fimg_direction
-		<?/MIVAR>
-	      <?MIELSE>
+	      <?MIBLOCK COND=$(XST,$UPDATE)>
 		<?MIVAR>
 		  <SELECT name=direction onChange="dopopup(this.options[this.selectedIndex].value,'$fimgview_fimg_direction','fimg_direction','fish_image','fimg_zdb_id')">
 		    <?MISQL SQL="
@@ -536,13 +627,31 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 		    <?/MISQL>
 		  </SELECT>
 		<?/MIVAR>
-	      <?/MIBLOCK>
+              <?MIELSE>
+                <?MIVAR>$fimgview_fimg_direction<?/MIVAR>
+              <?/MIBLOCK>
 	    </TD>
 	  </TR>
 	</TABLE>
-	<p>
+	<?/MIBLOCK> <?MICOMMENT> preparation section <?/MICOMMENT>
+	
+        <?MIBLOCK COND=$(NXST,$UPDATE)>	
+  	  <p>
+	
+	  <?MIVAR NAME=fimgview_pub_zdb_id><?/MIVAR>
+	  <?MISQL SQL="
+	    select fig_source_zdb_id
+	    from figure, fish_image
+	    where fimg_zdb_id = '$OID'
+	      and fimg_fig_zdb_id = fig_zdb_id;">
+	      
+	    <?MIVAR NAME=fimgview_pub_zdb_id>$1<?/MIVAR>
+	  <?/MISQL>
 
-	<hr width=80%>
+          <?MISQL SQL="select WebExplode(object,'pubackn_pub_zdb_id=$fimgview_pub_zdb_id') from webPages where ID='aa-pubacknowledgement.apg';">$1<?/MISQL>	
+        <?/MIBLOCK>
+	
+	<br>
 	<?MISQL SQL="
   		select count(*)::integer 
   		from record_attribution
@@ -553,7 +662,7 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 	<?/MISQL>
 	<?MIBLOCK COND="$(>,$1,0)">
 	  <?MIVAR>
-	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=fish_image&title=$fimgview_title&name=$(URLENCODE,$fimgview_name)&total_count=$1"><b>Citations</b></A>
+	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=fish_image&title=Image&name=$(URLENCODE,<img src=/imageLoadUp/$fimgview_thumbnail>)&total_count=$1"><b>Citations</b></A>
 	  <?/MIVAR>
 	<?MIELSE>
 	  <b>Citations</b>
@@ -574,9 +683,3 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 <?MIBLOCK COND="$(NXST,$fimgview_accession)">
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 <?/MIBLOCK>
-
-
-</HTML>
-
-
-
