@@ -546,7 +546,7 @@ EFFECTS
         select fimg_zdb_id
         from fish_image
         where fimg_zdb_id in ('$xpcur_G_oid_attrib_csv')
-          and fimgfig_zdb_id in ('$xpcur_G_fig_attrib_csv')
+          and fimg_fig_zdb_id in ('$xpcur_G_fig_attrib_csv')
         ;">
         <?MIVAR> $(VECAPPEND,$xpcur_image_attrib,$1)<?/MIVAR>
     <?/MISQL>
