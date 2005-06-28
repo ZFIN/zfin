@@ -98,6 +98,10 @@ INPUT VARS:
       xpcur_G_structure_add_xpatex :: xpat zdb
       xpcur_G_structure_add_start_stg :: stg zdb
       xpcur_G_structure_add_end_stg :: stg zdb  
+      
+  Permission
+      xpcur_G_light_fig_text :: standard text when ZFIN is not granted permission
+      xpcur_G_TO_fig_text :: standard text for FX data not Figure related
 
 GLOBALS (value set by xpatcuration.apg) :
     xpcur_G_oid_attrib_csv :: list of ZDBs attributed to OID; seperator="','"
@@ -124,6 +128,8 @@ COOKIES:
       xpcur_c_panel :: boolean; show or hide data for panels
       xpcur_c_structure :: boolean; show or hide data for structures
       xpcur_c_figure_only :: a figure zdb_id; only show data for this figure
+      xpcur_c_permission :: boolean; show or hide permission data
+      xpcur_c_has_permission :: permission status of the publication (Yes/No)
       
   Structure Lists
       xpcur_c_anatitem_add_csv :: comma seperated list of anatomy items; check anatomy item in the add column.
@@ -162,6 +168,9 @@ EFFECTS
     <?MIVAR NAME=$title>$1<?/MIVAR>
   <?/MISQL>
 <?MIBLOCK COND="$(XST,$title)">
+
+<?MIVAR NAME=xpcur_G_light_fig_text>image unavailable <a href=#acknowledgment>?</a><?/MIVAR>
+<?MIVAR NAME=xpcur_G_TO_fig_text>unillustrated text statements<?/MIVAR>
 
 
   <script type="text/javascript" language="javascript">
@@ -228,6 +237,8 @@ EFFECTS
       setCookie('figure_only','')
       setCookie('tod','')
       setCookie('show_all','false')
+      setCookie('permission','')
+      urlSetCookie('has_permission','<?MISQL SQL="select pub_can_show_images from publication where zdb_id = '$OID';">$1<?/MISQL>');
       replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID");
 
       <?MICOMMENT> Keep the table clean. Delete all entries for this pub that were not entered today. <?/MICOMMENT>
@@ -239,7 +250,7 @@ EFFECTS
       <?MICOMMENT> Generate the list <?/MICOMMENT>
       <?MISQL SQL="  
           SELECT distinct xpatres_anat_item_zdb_id, xpatres_expression_found
-          FROM fx_expression_experiment, fx_expression_result
+          FROM expression_experiment, expression_result, expression_pattern_figure
           WHERE xpatex_source_zdb_id = '$OID'
             AND xpatex_zdb_id = xpatres_xpatex_zdb_id
             AND NOT EXISTS
@@ -330,7 +341,7 @@ EFFECTS
       <?MIBLOCK COND=$(EC,ZDB-XPATINF-,$(SUBSTR,$delete_item,1,12))>
         <?MISQL SQL="
             SELECT xpatres_zdb_id 
-            FROM fx_expression_result, expression_pattern_infrastructure, fx_expression_experiment
+            FROM expression_result, expression_pattern_infrastructure
             WHERE xpatres_anat_item_zdb_id = xpatinf_anatitem_zdb_id
               AND xpatres_expression_found = xpatinf_expressed
               AND xpatinf_zdb_id = '$delete_item'
@@ -355,7 +366,7 @@ EFFECTS
 
       <?MISQL SQL="
         SELECT xpatres_zdb_id, count(*)
-          FROM fx_expression_result, fx_expression_pattern_figure fxpf1
+          FROM expression_result, expression_pattern_figure fxpf1
          WHERE xpatres_xpatex_zdb_id = '$xpcur_panel_xpatex'
            AND xpatres_start_stg_zdb_id = '$xpcur_panel_start_stg'
            AND xpatres_end_stg_zdb_id = '$xpcur_panel_end_stg' 
@@ -363,7 +374,7 @@ EFFECTS
            AND EXISTS
                (
                  SELECT *
-                   FROM fx_expression_pattern_figure fxpf2
+                   FROM expression_pattern_figure fxpf2
                   WHERE fxpf2.xpatfig_fig_zdb_id = '$xpcur_panel_fig'
                     AND fxpf2.xpatfig_xpatres_zdb_id = xpatres_zdb_id
                )
@@ -378,7 +389,7 @@ EFFECTS
       
       <?MISQL SQL="
         DELETE 
-          FROM fx_expression_pattern_figure
+          FROM expression_pattern_figure
          WHERE xpatfig_fig_zdb_id = '$xpcur_panel_fig'
            AND xpatfig_xpatres_zdb_id in ('$xpcur_xpatfig_delete_csv')
           ;">
@@ -521,7 +532,7 @@ EFFECTS
     <?MIVAR NAME=xpcur_fig_attrib><?/MIVAR>
     <?MISQL SQL="
         select fig_zdb_id
-        from fx_figure
+        from figure
         where fig_zdb_id in ('$xpcur_G_oid_attrib_csv')
         $(IF,$(XST,$xpcur_c_figure_only),and fig_zdb_id = '$xpcur_c_figure_only')
         ;">
@@ -532,10 +543,10 @@ EFFECTS
 
     <?MIVAR NAME=xpcur_image_attrib><?/MIVAR>
     <?MISQL SQL="
-        select fimgp_zdb_id
-        from fx_fish_image_private
-        where fimgp_zdb_id in ('$xpcur_G_oid_attrib_csv')
-          and fimgp_fig_zdb_id in ('$xpcur_G_fig_attrib_csv')
+        select fimg_zdb_id
+        from fish_image
+        where fimg_zdb_id in ('$xpcur_G_oid_attrib_csv')
+          and fimgfig_zdb_id in ('$xpcur_G_fig_attrib_csv')
         ;">
         <?MIVAR> $(VECAPPEND,$xpcur_image_attrib,$1)<?/MIVAR>
     <?/MISQL>
@@ -608,7 +619,7 @@ EFFECTS
 	  =================
 <?/MICOMMENT>
 <a name=environment>
-<p><b><font size=3>Environment:</font>
+<p><b><font size=3>Environment:</font></b>
 <?MIBLOCK COND=$(OR,$(NXST,$xpcur_c_environment),$(EC,$xpcur_c_environment,hide))>
   <?MIVAR><a href="javascript:onClick=urlSetCookie('environment','show')">$unhide</a><?/MIVAR>
   <br>
@@ -630,7 +641,7 @@ EFFECTS
 <a name=condition>
 
     
-<p><b><font size=3>Define Environments:</font> 
+<p><b><font size=3>Define Environments:</font> </b>
 
 <?MIBLOCK COND=$(OR,$(NXST,$xpcur_c_condition),$(EC,$xpcur_c_condition,hide))>
   <?MIVAR><a href="javascript:onClick=urlSetCookie('condition','show')">$unhide</a><?/MIVAR>
@@ -652,7 +663,7 @@ EFFECTS
 <?/MICOMMENT>
 <a name=figure>
 
-<p><b><font size=3>Figure:</font>
+<p><b><font size=3>Figure:</font></b>
 <?MIBLOCK COND=$(OR,$(NXST,$xpcur_c_figure),$(EC,$xpcur_c_figure,hide))>
   <?MIVAR><a href="javascript:onClick=urlSetCookie('figure','show')">$unhide</a><?/MIVAR>
   <br>
@@ -673,9 +684,13 @@ EFFECTS
 	  ============
 <?/MICOMMENT>
 <a name=image>
-<p><b><font size=3>Image:</font>
+<p><b><font size=3>Image:</font></b>
 <?MIBLOCK COND=$(OR,$(NXST,$xpcur_c_image),$(EC,$xpcur_c_image,hide))>
-  <?MIVAR><a href="javascript:onClick=urlSetCookie('image','show')">$unhide</a><?/MIVAR>
+  <?MIBLOCK COND=$(AND,$(XST,$xpcur_c_has_permission),$(EC,$xpcur_c_has_permission,t))>
+    <?MIVAR><a href="javascript:onClick=urlSetCookie('image','show');">$unhide</a><?/MIVAR>
+  <?MIELSE>
+    <?MIVAR><a href="javascript:onClick=alert('Please change permission before adding images.')">$unhide</a><?/MIVAR>  
+  <?/MIBLOCK>
   <br>
   
 <?MIELSE>
@@ -693,7 +708,7 @@ EFFECTS
 <?/MICOMMENT>
 <a name=experiment>
 
-<p><b><font size=3>Experiments:</font>
+<p><b><font size=3>Experiments:</font></b>
 <?MIBLOCK COND=$(OR,$(NXST,$xpcur_c_experiment),$(EC,$xpcur_c_experiment,hide))>
   <?MIVAR><a href="javascript:onClick=urlSetCookie('experiment','show')">$unhide</a><?/MIVAR>
   <br>
@@ -713,7 +728,7 @@ EFFECTS
 	  ============
 <?/MICOMMENT>
 <a name=panel>
-<p><b><font size=3>Expression:</font>
+<p><b><font size=3>Expression:</font></b>
 <?MIBLOCK COND=$(OR,$(NXST,$xpcur_c_panel),$(EC,$xpcur_c_panel,hide))>
   <?MIVAR><a href="javascript:onClick=urlSetCookie('panel','show')">$unhide</a><?/MIVAR>
   <br>
@@ -733,7 +748,7 @@ EFFECTS
 <?/MICOMMENT>
 <a name=structure>
 <p>
-<b><font size=3>Structure:</font>
+<b><font size=3>Structure:</font></b>
 <?MIBLOCK COND=$(OR,$(NXST,$xpcur_c_structure),$(EC,$xpcur_c_structure,hide))>
   <?MIVAR><a href="javascript:onClick=urlSetCookie('structure','show')">$unhide</a><?/MIVAR>
   <br>
@@ -745,6 +760,31 @@ EFFECTS
 
 <?/MIBLOCK>
 
+
+<?MICOMMENT> 
+	  ================
+	  =  Permission  =
+	  ================
+<?/MICOMMENT>
+<a name=permission>
+<p>
+<b><font size=3>Permission:</font></b>
+<?MIBLOCK COND=$(OR,$(NXST,$xpcur_c_permission),$(EC,$xpcur_c_permission,hide))>
+  <?MIVAR><a href="javascript:onClick=urlSetCookie('permission','show')">$unhide</a><?/MIVAR>
+  <br>
+  
+<?MIELSE>
+
+  <?MIVAR><a href="javascript:onClick=urlSetCookie('permission','hide')">$hide</a><?/MIVAR>
+  <br>
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-xpatcurpermission.apg';">$1<?/MISQL>
+
+
+<?/MIBLOCK>
+
+
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pubacknowledgement.apg';">$1<?/MISQL>
+  
 
 <?MICOMMENT> 
   ====================
