@@ -257,7 +257,8 @@ Datablade documentation.
 	select name, a.abbrev, initcap(line_type), mother, father, 
 	       discoverer, lab, HTML_breaks(phenotype), segregation, 
 	       orig_crossnum, HTML_breaks(a.comments), fish_extinct, a.owner, 
-	       lower(pheno_keywords), allele, locus, b.abbrev, b.cloned_gene 
+	       lower(pheno_keywords), allele, locus, b.abbrev, b.cloned_gene,
+	       get_fish_abbrev_html(a.zdb_id), get_allele_html(allele)
 	  from fish a, OUTER locus b
 	  where a.zdb_id = '$OID'
 	    and b.zdb_id = a.locus;">
@@ -281,6 +282,8 @@ Datablade documentation.
       <?MIVAR NAME=$locus>$16<?/MIVAR>
       <?MIVAR NAME=$locus_abbrev>$17<?/MIVAR>
       <?MIVAR NAME=$cloned_gene>$18<?/MIVAR>
+      <?MIVAR NAME=$abbrev_html>$19<?/MIVAR>
+      <?MIVAR NAME=$allele_html>$20<?/MIVAR>
 
      <?MIVAR NAME=$rec_title>Record for $title $abbrev<?/MIVAR>
 
@@ -376,9 +379,13 @@ Datablade documentation.
 	<?/MIVAR>
  
 	<?MIVAR> 
-	  <font size= +1><b>Abbreviation: &nbsp; <i>$abbrev</i></b></font>
+	  <font size= +1><b>Abbreviation: &nbsp; <i>$abbrev_html</i></b></font>
 	<?/MIVAR>
 	<br>
+	<?MIVAR COND="$(<,0,$(POSITION,$abbrev_html,unspecified))">
+	  <font size='-1'>Note:  This record has been created in support of data for which a publication has not specified an allele.</font>
+	  <br>
+	<?/MIVAR>
 	<?MIBLOCK COND="$(OR,$(EC,$AUTHORIZED,root),$(EC,$AUTHORIZED,fishauth))">
 	  <?MIVAR COND="$(XST,$UPDATE)">
 	    <INPUT TYPE=button value=Update onClick="doit('owner','selection','Owner')">
@@ -515,8 +522,8 @@ Datablade documentation.
 	  <?MISQL SQL="
 	    select fimg_zdb_id, fimg_thumbnail, fimg_preparation, fimg_view, 
 		   fimg_direction, 
-		   get_stg_name_long_html(lo.stg_zdb_id),
-		   get_stg_name_long_html(hi.stg_zdb_id),
+		   get_stg_name_html(lo.stg_zdb_id,'long'),
+		   get_stg_name_html(hi.stg_zdb_id,'long'),
 		   lo.stg_hours_start, hi.stg_hours_end
 	      from fish_image, OUTER (fish_image_stage, stage lo, stage hi)
 	      where fimg_fish_zdb_id = '$OID'
@@ -549,8 +556,10 @@ Datablade documentation.
 	      <?/MIBLOCK>
 
 	      <p>
-	      <TABLE width="100%" border="1">
-		<TR>
+	      <TABLE width="100%">
+                <?MIVAR>
+		<TR bgcolor=$highlight>
+                <?/MIVAR>
 		  <TD colspan="2">
 		    <font size=-1>
 		    <b>Dev. Stage(s):</b> $lo_stg_name_html
@@ -561,10 +570,10 @@ Datablade documentation.
 	    <?/MIVAR> 
 
 	    <?MIVAR COND=$(=,$column,1)>
-		<TR>
+		<TR bgcolor=$highlight>
 	    <?/MIVAR>
 		  <TD>
-		    <TABLE>
+		    <TABLE  bgcolor=$highlight>
 		      <TR>
 			<TD align="center">
 			  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$fimg_zdb_id">
@@ -611,7 +620,6 @@ Datablade documentation.
 	<!---------------- ends Mapping ----------------------------->
 
 
-
  	<!-------------------- Keywords  ----------------------------->
 	 <br>
 	  <?MIVAR COND="$(XST,$UPDATE)">
@@ -623,6 +631,26 @@ Datablade documentation.
          
   	<!------------------ ends Keywords  ----------------------------->
 
+
+        <?MICOMMENT> ==========================================================
+                     ==  Gene Expression in fish Background (only to mutant)
+                     ==========================================================  
+        <?/MICOMMENT>
+        <?MIBLOCK COND="$(EC,$title,mutant)">
+	  <?MISQL SQL="
+		select xpatex_zdb_id
+                  from feature_experiment join
+                       expression_experiment on featexp_zdb_id = xpatex_featexp_zdb_id
+                 where featexp_genome_feature_zdb_id = '$OID';">
+    
+          <?/MISQL>
+  	  <?MIBLOCK COND="$(!=,$MI_ROWCOUNT,0)">
+	     <hr width=90%>
+             <?MIVAR>
+             <b> <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&mutsearchtype=begins&mutant=$allele">GENE EXPRESSION IN <i>$allele_html</i> BACKGROUND </a> </b>
+	     <?/MIVAR>
+          <?/MIBLOCK> <?MICOMMENT> end of if there are xpats <?/MICOMMENT> 
+	<?/MIBLOCK> <?MICOMMENT> end of if mutant <?/MICOMMENT>
 
 
 	<!------------ Phenotype & Description ---------------->
@@ -840,7 +868,7 @@ Datablade documentation.
 
 	  <?MISQL SQL="
 	    select distinct c.allele, b.chrom_num, c.chrom_change, 
-		   c.mutagen, c.protocol, b.zdb_id, c.zdb_id 
+		   c.mutagen, c.protocol, b.zdb_id, c.zdb_id, get_allele_html(c.allele)
 	      from  int_fish_chromo a, chromosome b, alteration c 
 	      where source_id = '$OID' 
 	        and target_id = b.zdb_id 
@@ -853,6 +881,7 @@ Datablade documentation.
 	    <?MIVAR NAME=$alt_protocol>$5<?/MIVAR>
 	    <?MIVAR NAME=$chrom_zdb_id>$6<?/MIVAR>
 	    <?MIVAR NAME=$alt_zdb_id>$7<?/MIVAR>
+	    <?MIVAR NAME=$alt_allele_html>$8<?/MIVAR>
 
 	    <?MISQL SQL="
 		    select alteration.zdb_id 
@@ -885,7 +914,7 @@ Datablade documentation.
 	      </TR>
 	     <?/MIVAR>
 	      <TR>	 
-		<TD align=center><b><i>$alt_allele</i></b>
+		<TD align=center><b><i>$alt_allele_html</i></b>
 		</TD>
 
 		<TD>		  

@@ -141,16 +141,13 @@ I am pleased to report that information about <?MIVAR>$(IF,$(EC,$status,preview)
 <?MIVAR NAME=sqlArray>$mysql<?/MIVAR>
 
 <?MIVAR NAME=mysql>
-             select distinct 'Gene Expression', 
-			mrkr_zdb_id, 
-			mrkr_name, 
-			mrkr_abbrev, 
-		    	mrkr_abbrev_order
-               from record_attribution, marker, expression_pattern
-               where recattrib_source_zdb_id = '$OID'
-	       and recattrib_data_zdb_id   = xpat_zdb_id
-	       and xpat_gene_zdb_id = mrkr_zdb_id
-               order by mrkr_abbrev_order;
+             select distinct 'Gene Expression', mrkr_zdb_id, mrkr_name, mrkr_abbrev, 
+		    mrkr_abbrev_order
+               from record_attribution, marker, expression_experiment
+              where recattrib_source_zdb_id = '$OID'
+	        and recattrib_data_zdb_id   = xpatex_zdb_id
+		and xpatex_gene_zdb_id = mrkr_zdb_id
+           order by mrkr_abbrev_order;
 <?/MIVAR>
 <?MIVAR>$(VECAPPEND,$sqlArray,$mysql)<?/MIVAR>
 
