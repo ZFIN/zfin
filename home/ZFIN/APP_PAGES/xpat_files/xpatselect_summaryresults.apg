@@ -16,7 +16,7 @@ OUTPUT VARS:
 
 <?MICOMMENT> *** get gene count *** <?/MICOMMENT>
 
-<?MISQL SQL="select count(unique xpat_gene_zdb_id) from $xpsumres_resultTable;">
+<?MISQL SQL="select count(unique xpat_gene_zdb_id)::Integer from $xpsumres_resultTable;">
   <?MIVAR NAME="xpsumres_geneCount">$1<?/MIVAR>
 <?/MISQL>
 
@@ -61,7 +61,7 @@ OUTPUT VARS:
   <?MIVAR NAME="xpsumres_lastGeneZdbId"><?/MIVAR>
   <?MIVAR NAME="xpsumres_recordIndex">0<?/MIVAR>
   <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
-select mrkr_zdb_id, mrkr_abbrev, count(unique xpat_fig_zdb_id), 
+select mrkr_zdb_id, mrkr_abbrev, count(unique xpat_fig_zdb_id)::Integer, 
        mrkr_abbrev_order, mrkr_type, xpat_matching_significance,
        get_mrkr_abbrev_html_link(mrkr_zdb_id)
 from $xpsumres_resultTable
@@ -76,7 +76,7 @@ order by xpat_matching_significance, mrkr_abbrev_order
     <?MIVAR NAME="xpsumres_geneAbbrevLink">$7<?/MIVAR>
  
     <?MISQL SQL="
-select count(distinct publication.zdb_id)
+select count(distinct publication.zdb_id)::Integer
 from $xpsumres_resultTable
      join figure on xpat_fig_zdb_id = fig_zdb_id
      join publication on fig_source_zdb_id = publication.zdb_id
@@ -136,7 +136,7 @@ where xpat_gene_zdb_id = '$xpsumres_geneZdbId'
           <?/MICOMMENT>
 
           <?MISQL SQL="
-		select count(*)
+		select count(*)::Integer
 		  from $xpsumres_resultTable
 		 where xpat_gene_zdb_id = '$xpsumres_geneZdbId'
 		   and exists (
