@@ -347,8 +347,8 @@ Datablade documentation.
 
        <!------------- Locus Description ------------------------>
        <!-- comment out description to public until we decide how and if we can keep them current 6/26/03 -->
-	  <p>
           <?MIBLOCK COND="$(XST,$UPDATE)">
+	    <p>
 	    <INPUT TYPE=button 
               value="Update" 
               onClick="doit('comments','textarea','Locus+Description');"> 
@@ -382,7 +382,7 @@ Datablade documentation.
     
         <?/MISQL>
 	<?MIBLOCK COND="$(!=,$MI_ROWCOUNT,0)">
-	   <hr width=90%>
+	   <hr width=80%>
            <?MIVAR>
            <b> <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&mutsearchtype=begins&mutant=$name">GENE EXPRESSION IN <i>$abbrev</i> BACKGROUND </a> </b>
 	   <?/MIVAR>
@@ -391,7 +391,7 @@ Datablade documentation.
 
 
         <!------------- mapping information   -------------------------->
-          <br><hr width=90%>  
+          <p><hr width=80%>  
 	  <b>MAPPING INFORMATION:</b>
           <TABLE width="100%" bgcolor=<?MIVAR>"$highlight"<?/MIVAR>>
           <TR><TD>
