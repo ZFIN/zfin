@@ -147,7 +147,8 @@ EFFECTS
     <td> 
           <?MISQL SQL="select dblink_zdb_id, dblink_acc_num, mrkr_abbrev
                        from db_link, marker
-                       where dblink_zdb_id = '$xpcurxprss_xpatex_genbank';">
+                       where dblink_zdb_id = '$xpcurxprss_xpatex_genbank'
+                         and dblink_linked_recid = mrkr_zdb_id;">
             $2 ($3)
           <?/MISQL>
     </td>
