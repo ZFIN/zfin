@@ -145,7 +145,7 @@ EFFECTS
       <?MIVAR COND=$(NXST,$xpcur_G_xpatex_genbank) NAME=xpcur_G_xpatex_genbank><?/MIVAR>
     
       <?MISQL SQL="
-        select count(*) 
+        select count(*) :: integer
         from expression_experiment, feature_experiment
         where xpatex_gene_zdb_id = '$xpcur_G_xpatex_gene'
           and xpatex_assay_name = '$xpcur_G_xpatex_assay'
