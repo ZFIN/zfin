@@ -226,3 +226,104 @@ td.ack a {
 	font-size:9pt;
 }
 
+/** style for auto suggestion **/
+
+ .suggestion_list
+ {
+ font-size: 9pt;	
+ background: white;
+ border: 1px solid;
+ padding: 4px;
+ }
+
+ .suggestion_list ul
+ {
+ padding: 0;
+ margin: 0;
+ list-style-type: none;
+ }
+
+ .suggestion_list a
+ {
+ text-decoration: none;
+ color: navy;
+ }
+
+ .suggestion_list .selected
+ {
+ background: navy;
+ color: white;
+ }
+
+ .suggestion_list .selected a
+ {
+ color: white;
+ }
+
+ #autosuggest
+ {
+ display: none;
+ }
+
+
+/**** style declaration for zfin return results class *****/
+
+table.searchresults {
+  width:100%;  
+  border-collapse:collapse;
+}
+
+table.searchresults th { 
+  text-align:left;
+  vertical-align:bottom;
+  padding-left: 5px;
+  padding-right: 5px;
+ }
+
+table.searchresults td { 
+  text-align:left;
+  vertical-align:top;
+  padding: 3px;
+
+ }
+
+table.searchresults caption { 
+  font-weight:bold;
+  text-align:center;
+  vertical-align:top;
+  padding-bottom: 15px;
+}
+
+td.anatomy { 
+  font-size: small;
+  vertical-align:top;
+ }
+
+td.thumbnail { 
+  text-align: right;  
+}
+
+td.small { 
+  font-size: small;
+ }
+
+tr.odd { 
+  background-color: #EEEEEE; 
+}
+
+/*** gene name & abbrev ***/
+
+.genedom { font-style: italic; } 
+
+/*** non-gene name & abbrev - just a placeholder for now ***/
+
+.nongenedommarker {font-style: normal;}
+
+/*** mutant name & abbrev  ***/
+
+.mutant { font-style: italic; }
+
+/*** wildtype name & abbrev ***/
+
+.wildtype { font-style: normal; }
+

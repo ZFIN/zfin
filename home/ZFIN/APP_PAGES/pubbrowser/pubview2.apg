@@ -300,16 +300,8 @@ displays a publication record, or many publication records if > 1 returned.
   <B>ADDITIONAL INFORMATION: </B>
 
   <?MIVAR COND="$(EC,$AUTHORIZED,root)">
-    <br><br>
-    <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID">FX</a>
+    <br><br><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID">FX Curation</a>
   <?/MIVAR>
-  
-  <?MICOMMENT>Curators decided to not include related markers' attribution.<?/MICOMMENT>
-
-
-<?MIVAR COND="$(EC,$AUTHORIZED,root)">
-<br><br><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID">FX Curation</a>
-<?/MIVAR>
 
   <ul>
   <?MICOMMENT> ======== Genes / Markers  ============ <?/MICOMMENT>
@@ -425,7 +417,7 @@ displays a publication record, or many publication records if > 1 returned.
 		*** only non-unpublished paper gets additional info ***
 	<?/MICOMMENT>
 <p>
-<?MIVAR COND="$(NC,$pub_errata_and_notes,NULL)">
+<?MIVAR COND="$(NC,$pub_errata_and_notes,)">
   <B>ERRATA and NOTES:</B> 
   <br>  $pub_errata_and_notes  
 <?/MIVAR>

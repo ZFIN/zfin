@@ -29,7 +29,7 @@
 	WHERE anatitem_zdb_id = '$OID'
 	  and s1.stg_zdb_id = anatitem_start_stg_zdb_id
 	  and s2.stg_zdb_id = anatitem_end_stg_zdb_id
-      ;">
+	;">
       <?MIVAR NAME="item_name">$1<?/MIVAR>
       <?MIVAR NAME="item_stg_start_html">$2<?/MIVAR>
       <?MIVAR NAME="item_stg_end_html">$3<?/MIVAR>
@@ -66,7 +66,6 @@
       <?/MISQL>
 
       <?MICOMMENT>  =========  Starts Display  ============== <?/MICOMMENT>
-
 
 <?MIBLOCK COND="$(NXST,$UPDATE)"> <!---- define Input Welcome button---->     
   <table width="15%" align=right>
@@ -381,14 +380,14 @@
 
 
 <BR>
-
+<?MICOMMENT>use the fast search table to get number of genes that have 
+            expression at this structure
+<?/MICOMMENT>
 <?MISQL SQL="
-	SELECT count (distinct mrkr_abbrev)::Integer
-	FROM expression_pattern_anatomy, expression_pattern, marker
-	WHERE xpatanat_anat_item_zdb_id = '$OID'
-	  and xpat_zdb_id = xpatanat_xpat_zdb_id
-	  and xpat_gene_zdb_id = mrkr_zdb_id
-;">
+	SELECT anatstat_object_count
+	  FROM anatomy_stats
+	 WHERE anatstat_anatitem_zdb_id = '$OID';">
+
   <?MIVAR NAME=$totalxpats>$1<?/MIVAR>
 <?/MISQL>
 
@@ -410,19 +409,15 @@ Genes
      <TD bgcolor="#EEEEEE">
 <?MISQL SQL="
 	SELECT FIRST 10 distinct mrkr_abbrev, mrkr_zdb_id,  
-	       xpat_assay_name, xpat_zdb_id, mrkr_abbrev_order
-	FROM expression_pattern_anatomy, expression_pattern, marker
-	WHERE xpatanat_anat_item_zdb_id = '$OID'
-	  and xpat_zdb_id = xpatanat_xpat_zdb_id
-	  and xpat_gene_zdb_id = mrkr_zdb_id
+	       mrkr_abbrev_order
+	  FROM expression_experiment, expression_result, marker
+	 WHERE xpatres_anat_item_zdb_id = '$OID'
+	   and xpatex_zdb_id = xpatres_xpatex_zdb_id
+	   and xpatex_gene_zdb_id = mrkr_zdb_id
 	ORDER BY mrkr_abbrev_order
 ;">
 <?MIVAR NAME="gene_abbrev">$1<?/MIVAR>
 <?MIVAR NAME="gene_zdb_id">$2<?/MIVAR>
-<?MIVAR NAME="segment_abbrev">$3<?/MIVAR>
-<?MIVAR NAME="segment_zdb_id">$4<?/MIVAR>
-<?MIVAR NAME="xpat_assay_name">$5<?/MIVAR>
-<?MIVAR NAME="xpat_zdb_id">$6<?/MIVAR>
 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$gene_zdb_id">$gene_abbrev</A>
 <?/MISQL>
 <?MIBLOCK COND="$(>,$totalxpats,10)">
@@ -463,7 +458,7 @@ Genes
 	  and end.stg_zdb_id = parent.anatitem_end_stg_zdb_id
 	  and allanatcon_min_contain_distance = '1'
 	ORDER BY  parent.anatitem_name_order
- ;">
+    ;">
     <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$5">$6</A> &nbsp; 
  <?/MISQL>
       </TD>
@@ -484,7 +479,7 @@ Genes
 	  and end.stg_zdb_id = child.anatitem_end_stg_zdb_id
 	  and allanatcon_min_contain_distance = '1'
 	ORDER BY child.anatitem_name_order
-  ;">
+     ;">
      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$5">$6</A> &nbsp; 
  <?/MISQL>
       </TD>

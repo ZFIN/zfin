@@ -82,8 +82,8 @@ EFFECTS
       var prefLabelIndex = document.figure_new.xpcur_G_fig_add_prefix_label.selectedIndex ;
       var prefLabel = document.figure_new.xpcur_G_fig_add_prefix_label[prefLabelIndex].value ;
       
-      if (prefLabel == "T.O.D.") {    
-        document.figure_new.xpcur_G_fig_add_label.value = 'T.O.D.' ;   
+      if (prefLabel == "text only") {    
+        document.figure_new.xpcur_G_fig_add_label.value = 'text only' ;   
         return true;
       }
       else {        
@@ -119,7 +119,7 @@ EFFECTS
 
 <?MISQL SQL="
     select fig_zdb_id, fig_caption, fig_comments, fig_label
-    from fx_figure
+    from figure
     where fig_zdb_id in ('$xpcur_G_fig_attrib_csv')
     order by fig_label;">
 
@@ -149,10 +149,10 @@ EFFECTS
     </td>
     <td>
       <?MISQL SQL="
-          select fimgp_thumbnail, fimgp_label
-          from fx_fish_image_private
-          where fimgp_fig_zdb_id = '$xpcurfig_fig_zdb_id'
-          order by fimgp_label;">
+          select fimg_thumbnail, fimg_label
+          from fish_image
+          where fimg_fig_zdb_id = '$xpcurfig_fig_zdb_id'
+          order by fimg_label;">
           <?MIVAR COND=$(NC,$1,NULL)>
             <img src="<!--|IMAGE_LOAD|-->/$1">$2 
           <?/MIVAR>
@@ -175,8 +175,12 @@ EFFECTS
     </td>
     <td>  $xpcurfig_fig_caption <br>
             <?MIVAR NAME=$delimiter>&<?/MIVAR>
-            <?MIVAR NAME=$xpcur_G_fig_caption DELIMIT="$delimiter" REPLACE=";;">$xpcurfig_fig_caption<?/MIVAR>
-       <TEXTAREA name="xpcur_G_fig_caption" cols=85 rows=5 >$xpcurfig_fig_caption</TEXTAREA>
+            <?MIVAR NAME=$xpcur_G_fig_caption>$(REPLACE,$xpcurfig_fig_caption,&,;;)<?/MIVAR>
+       <TEXTAREA name="xpcur_G_fig_caption" cols=85 rows=5
+          <?MIBLOCK COND=$(EC,$xpcur_c_has_permission,f)>
+            onClick="alert('No Legend Permission. Please update pub permissions.');this.blur();";
+          <?/MIBLOCK>
+       >$xpcur_G_fig_caption</TEXTAREA>
     </td>
   </tr>
   <tr>
@@ -185,10 +189,10 @@ EFFECTS
     </td>
     <td>
       <?MISQL SQL="
-          select fimgp_thumbnail, fimgp_label
-          from fx_fish_image_private
-          where fimgp_fig_zdb_id = '$xpcurfig_fig_zdb_id'
-          order by fimgp_label;">
+          select fimg_thumbnail, fimg_label
+          from fish_image
+          where fimg_fig_zdb_id = '$xpcurfig_fig_zdb_id'
+          order by fimg_label;">
           <?MIVAR COND=$(NC,$1,NULL)>
             <img src="<!--|IMAGE_LOAD|-->/$1">$2 
           <?/MIVAR>
@@ -217,12 +221,16 @@ EFFECTS
     <td> 
         <select name="xpcur_G_fig_add_prefix_label">
           <option value="Fig. ">Fig. </option>
-          <option value="T.O.D.">T.O.D.</option>
+          <option value="text only">text only</option>
         </select>
         <input name="xpcur_G_fig_add_label" type=textbox size=5>
     </td>
     <td>
-        <TEXTAREA name="xpcur_G_fig_add_caption" cols=50 rows=3></TEXTAREA>
+        <TEXTAREA name="xpcur_G_fig_add_caption" cols=50 rows=3
+          <?MIBLOCK COND=$(EC,$xpcur_c_has_permission,f)>
+            onClick="alert('No Legend Permission. Please update pub permissions.');this.blur();";
+          <?/MIBLOCK>
+        ></TEXTAREA>
     </td>
     <td>
         <input name="xpcur_G_fig_add_comments" type=textbox size=20>

@@ -36,7 +36,7 @@ EFFECTS
 
 <?MISQL SQL="
     select mrkr_abbrev, env_name, abbrev, xpatassay_abbrev
-    from fx_expression_experiment, feature_environment, environment, fish, marker, expression_pattern_assay
+    from expression_experiment, feature_environment, environment, fish, marker, expression_pattern_assay
     where xpatex_zdb_id = '$xpatex_zdb_id'
       and xpatex_featenv_zdb_id = featenv_zdb_id
       and featenv_env_zdb_id = env_zdb_id

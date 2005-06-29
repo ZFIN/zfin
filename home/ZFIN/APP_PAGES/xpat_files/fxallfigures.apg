@@ -1,0 +1,225 @@
+<?MICOMMENT>
+
+FILE:         fxallfigures.apg
+PREFIX:       fxallfig_
+
+INPUT VARS:
+
+
+
+<?/MICOMMENT>
+
+
+
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+
+<?/MIERROR>
+
+
+<script>
+function updateInnerHTML(element_id,html_to_display) {
+    var c1 = document.getElementById(element_id);
+    c1.innerHTML = html_to_display;
+}
+</script>
+
+<HTML>
+<head>
+
+<style type="text/css">
+	p { font-family: arial }
+	.fig { line-height: 1.5 }
+	p { text-align: justify }
+</style>
+
+
+<META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
+
+<?MIVAR NAME=$fxallfig_pub_zdb_id>$OID<?/MIVAR>
+<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
+<?MIBLOCK COND="$(NXST,$fxallfig_probe_zdb_id)">
+  <?MIVAR NAME=$fxallfig_probe_zdb_id><?/MIVAR>
+<?/MIBLOCK>
+<?MIVAR>
+    <TITLE>ZFIN View Publication:$fxallfig_pub_zdb_id </TITLE>
+<?/MIVAR>
+<?MIVAR NAME=fxallfig_LFC>Light Figure Curated<?/MIVAR>
+<?MIVAR NAME=$fxallfig_size>350<?/MIVAR>
+<?MIVAR NAME=fxallfig_height>0<?/MIVAR>
+<?MIVAR NAME=fxallfig_width>0<?/MIVAR>
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+
+<?MISQL SQL="select WebExplode(object,'rtype=fxfig') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
+<!----------- Input welcome button --------->
+<?MIVAR>
+          <table width = 15% align=right><tr>
+           <form method=post
+                 action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"
+                 target=comments>
+           <input type=hidden name=subject value=" ">
+           <input type=hidden name=marker_id value="$OID">
+           <input type=hidden name=MIval value="aa-your_input_welcome.apg">
+           <input type=hidden name=page_id value="$OID">
+          <td>
+           <input type=submit value="Your Input Welcome">
+          </td>
+           </form></tr></table>
+         <?/MIVAR>
+     <!---------------------------------------->
+<p>
+<?MISQL SQL="select WebExplode(object,'fxpubdis_source_zdb_id=$OID&fxpubdis_fig_zdb_id=test&fxpubdis_probe_zdb_id=$fxallfig_probe_zdb_id') from webPages where ID='aa-fxpubdisplay.apg';">$1<?/MISQL>
+<?MISQL SQL="execute function pub_xpat_curation_status('$OID')">
+            <?MIVAR NAME=fxallfig_pub_status>$1<?/MIVAR>
+<?/MISQL>
+
+<?MIBLOCK COND=$(EC,$fxallfig_pub_status,$fxallfig_LFC)>
+  <?MIVAR NAME=fxallfig_is_lite>yes<?/MIVAR>
+<?MIELSE>
+  <?MIVAR NAME=fxallfig_is_lite>no<?/MIVAR>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(EQ,$fxallfig_is_lite,yes)">
+ <?MISQL SQL="select WebExplode(object,'pubackn_pub_zdb_id=$OID') from webPages where ID='aa-pubacknowledgement.apg';">$1<?/MISQL>
+<p>
+<?/MIBLOCK>
+<?MICOMMENT>
+if probe id exists, call fxprobefig.apg otherwise do all the processing here
+<?/MICOMMENT>
+<?MIBLOCK COND="$(NE,$fxallfig_probe_zdb_id,)">
+<?MICOMMENT>
+     <?MIVAR NAME=AUTH_HTML><?/MIVAR>
+          
+          <?MIVAR NAME=AUTH_HTML>$AUTH_HTML
+          
+          &nbsp;<b>Submitted by:</b>
+          <?MISQL SQL="
+             SELECT full_name, zdb_id
+             FROM person, int_data_source, expression_experiment
+             WHERE xpatex_probe_feature_zdb_id = '$fxallfig_probe_zdb_id'
+             and xpatex_zdb_id=ids_data_zdb_id 
+             and ids_source_zdb_id = zdb_id
+             ORDER by 1;">
+             <?MIVAR NAME=AUTH_LINK><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$2">$1</a><?/MIVAR>
+             <?MIVAR>
+               $(IF,$(=,$MI_CURRENTROW,1),$AUTH_LINK,", "$AUTH_LINK)
+             <?/MIVAR>
+             $(SETVAR,$XPAT_AUTH[$MI_CURRENTROW],$1)
+          <?/MISQL>
+          
+         <?/MIVAR>
+         <?MIVAR COND="$(!=,0,$MI_ROWCOUNT)">$AUTH_HTML<?/MIVAR>
+<?/MICOMMENT>        
+     
+     <?MISQL SQL="select mrkr_abbrev 
+                 from marker
+                 where mrkr_zdb_id='$fxallfig_probe_zdb_id'
+                 ">
+     <?/MISQL>
+   &nbsp;<b>Probe : </b><?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$fxallfig_probe_zdb_id">$1<?/MIVAR> </a> 
+ <?MISQL SQL="select WebExplode(object,'clorlk_mrkr_zdb_id=$fxallfig_probe_zdb_id') from webPages where ID='aa-cloneorderlink.apg';">$1<?/MISQL>
+<p>
+<?MISQL SQL="select WebExplode(object,'fxprobefig_source_zdb_id=$OID&fxprobefig_probe_zdb_id=$fxallfig_probe_zdb_id') from webPages where ID='aa-fxprobefig.apg';">$1<?/MISQL>
+<?MIELSE>
+  <?MIVAR NAME=$fxallfig_sql> 
+           select distinct fig_zdb_id, fig_label, fig_caption, fimg_thumbnail,
+                           fimg_zdb_id, fig_comments, fig_source_zdb_id, zero_pad(fig_full_label) as fig_order, fimg_image, fimg_width, fimg_height
+           from figure left outer join fish_image
+                         on fimg_fig_zdb_id=fig_zdb_id  
+            where fig_source_zdb_id ='$OID'
+            order by fig_order 
+           ;
+   <?/MIVAR>
+
+   <?MISQL SQL="$fxallfig_sql">
+       <?MIVAR NAME=fxallfig_fig_zdb_id>$1<?/MIVAR>
+       <?MIVAR NAME=fxallfig_label>$2<?/MIVAR>
+       <?MIVAR NAME=fxallfig_caption>$3<?/MIVAR>
+       <?MIVAR NAME=fxallfig_thumbnail>$4<?/MIVAR>
+       <?MIVAR NAME=fxallfig_image_zdb_id>$5<?/MIVAR>
+       <?MIVAR NAME=fxallfig_comments>$6<?/MIVAR>
+       <?MIVAR NAME=fxallfig_source_zdb_id>$7<?/MIVAR>
+       <?MIVAR NAME=fxallfig_image>$9<?/MIVAR>
+       <?MICOMMENT>check if the figure has associated expression patterns. 
+                  This will determine whether to display the "All expression" link
+       <?/MICOMMENT>
+      <?MIBLOCK COND="$(>,$(POSITION,$fxallfig_label,text),0)">
+           <?MIVAR NAME=$fxallfig_is_text>yes<?/MIVAR>
+      <?MIELSE> 
+           <?MIVAR NAME=$fxallfig_is_text>no<?/MIVAR>
+      <?/MIBLOCK>
+       <table width = 100% align = center cellspacing = 0 cellpadding = 5 bgcolor="#EEEEEE">
+       <?MIBLOCK COND="$(NE,$fxallfig_image_zdb_id,)"><?MICOMMENT>begin not null image block<?/MICOMMENT>
+       <?MIVAR NAME=fxallfig_height>$10<?/MIVAR>
+       <?MIVAR NAME=fxallfig_width>$11<?/MIVAR>
+       <?MIBLOCK COND="$(>,$fxallfig_height,$fxallfig_width)">
+             <?MIVAR NAME=$fxallfig_dimension>height<?/MIVAR>
+       <?MIELSE>
+             <?MIVAR NAME=$fxallfig_dimension>width<?/MIVAR>
+       <?/MIBLOCK>
+          <?MIVAR>
+              <tr><td>
+              <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=<?MIVAR>$fxallfig_image_zdb_id<?/MIVAR>&image_table=fish_image">
+              <!--<Img src="<!--|IMAGE_LOAD|-->/$fxallfig_thumbnail" align = left border=2></a>-->
+              <Img src="<!--|IMAGE_LOAD|-->/$fxallfig_image" align = left  width=$fxallfig_size border=2></a>
+              <p class="fig"><?MIVAR COND="$(EQ,$fxallfig_is_text,no)"><b>$fxallfig_label </b> <?/MIVAR> <?MIVAR>$fxallfig_caption <?/MIVAR>
+<?MICOMMENT>
+             <?MIBLOCK COND="$(EQ,yes,$fxallfig_has_results)">
+                  &nbsp;&nbsp;&nbsp;&nbsp&nbsp;<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=<?MIVAR>$fxallfig_fig_zdb_id<?/MIVAR>"><i>All expression for this figure</b></a><td>
+                 </tr>
+             <?/MIBLOCK>
+<?/MICOMMENT>
+          <?/MIVAR>
+      <?MIELSE>
+          <?MIVAR>
+           <tr><td><img src="http://<!--|DOMAIN_NAME|-->/images/imagenotavailable.gif" border=2 align=left>
+            <p class="fig"><?MIVAR COND="$(EQ,$fxallfig_is_text,no)"><b>$fxallfig_label</b><?/MIVAR> $fxallfig_caption</p>
+<?MICOMMENT>
+             <?MIBLOCK COND="$(EQ,yes,$fxallfig_has_results)">
+                  &nbsp;&nbsp;&nbsp;&nbsp&nbsp;<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=<?MIVAR>$fxallfig_fig_zdb_id<?/MIVAR>"><b>All expression for this figure</b></a><td>
+                  </tr>
+                  </tr>
+            <?/MIBLOCK>
+<?/MICOMMENT>
+         <?/MIVAR>
+    <?/MIBLOCK><?MICOMMENT>end not null image block<?/MICOMMENT>
+    <p>
+       <?MISQL SQL="select * from expression_pattern_figure where xpatfig_fig_zdb_id='$fxallfig_fig_zdb_id'"><?/MISQL>
+       <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)"> 
+             <?MIVAR NAME=$fxallfig_has_results>yes<?/MIVAR>
+       <?MIELSE>
+             <?MIVAR NAME=$fxallfig_has_results>no<?/MIVAR>
+       <?/MIBLOCK> 
+             <?MIBLOCK COND="$(EQ,yes,$fxallfig_has_results)">
+    <tr><td><?MISQL SQL="select WebExplode(object,'OID=$fxallfig_fig_zdb_id') from webPages where ID='aa-fxfiggenelist.apg';">$1<?/MISQL>
+    <tr><td> <?MISQL SQL="select WebExplode(object,'fxfigfi_fig_zdb_id=$fxallfig_fig_zdb_id&fxfigfi_is_displayed=t') from webPages where ID='aa-fxfigfishlist.apg';">$1<?/MISQL>
+    </tr></td>
+    <tr><td><?MISQL SQL="select WebExplode(object,'fxfiganat_fig_zdb_id=$fxallfig_fig_zdb_id') from webPages where ID='aa-fxfiganatlist.apg';">$1<?/MISQL>
+    </tr></td>
+    <tr><td> <?MISQL SQL="select WebExplode(object,'fxfigst_fig_zdb_id=$fxallfig_fig_zdb_id&fxfigst_is_displayed=t') from webPages where ID='aa-fxfigstgrng.apg';">$1<?/MISQL>
+    </tr></td>
+<tr><td>
+                  <tr><td><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=<?MIVAR>$fxallfig_fig_zdb_id<?/MIVAR>">Gene expression details</a><td>
+                 </tr>
+             <?/MIBLOCK>
+
+    </table> 
+    <p>
+  <?/MISQL>
+<?MIBLOCK COND="$(EQ,$fxallfig_is_lite,no)">
+ <?MISQL SQL="select WebExplode(object,'pubackn_pub_zdb_id=$fxallfig_source_zdb_id') from webPages where ID='aa-pubacknowledgement.apg';">$1<?/MISQL>
+<?/MIBLOCK>
+<?/MIBLOCK> <?MICOMMENT>end no probe condition <?/MICOMMENT>
+
+<p>
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>

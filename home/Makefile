@@ -26,7 +26,7 @@ SUBDIRS  = ZFIN zf_info images unavailable
 MIRROR_SUBDIRS = zf_info images
 POSTLOADDB_SUBDIRS = ZFIN
 
-GENERICS = index.html robots.txt zfin_style.css nn4_zfin_style.css header.js footer.js client_sniff.js warranty.html
+GENERICS = index.html robots.txt zfin_style.css nn4_zfin_style.css header.js footer.js client_sniff.js autosuggest.js warranty.html
 
 STATICS  = favicon.ico 
 

@@ -62,9 +62,10 @@ EFFECTS
 
   <script type="text/javascript" language="javascript">
 
-    function openChild(file,window) {
+    function openChild(childWinUrl,childWinName) {
+      window.name = "expressionCuration";  //name parent window
       if (!self.childWindow) {      
-        childWindow=open(file,window,'resizable=yes,width=800,height=400,scrollbars=1');
+        childWindow=open(childWinUrl,childWinName, 'resizable=yes,width=800,height=400,scrollbars=1');
       }
       else {
         childWindow.focus();
@@ -291,7 +292,7 @@ EFFECTS
           <?/MICOMMENT>
       <?MISQL SQL="
           SELECT distinct xpatfig_fig_zdb_id, xpatex_zdb_id, xpatres_start_stg_zdb_id, xpatres_end_stg_zdb_id
-            FROM fx_expression_experiment, fx_expression_pattern_figure, fx_expression_result
+            FROM expression_experiment, expression_pattern_figure, expression_result
            WHERE xpatres_zdb_id = xpatfig_xpatres_zdb_id
              AND xpatex_source_zdb_id = '$OID'
              AND xpatex_zdb_id = xpatres_xpatex_zdb_id;">
@@ -313,7 +314,7 @@ EFFECTS
         
           <?MISQL SQL="
             SELECT distinct xpatinf_zdb_id, xpatres_zdb_id
-              FROM expression_pattern_infrastructure, OUTER(fx_expression_result, fx_expression_pattern_figure, fx_expression_experiment)
+              FROM expression_pattern_infrastructure, OUTER(expression_result, expression_pattern_figure, expression_experiment)
              WHERE xpatinf_anatitem_zdb_id = xpatres_anat_item_zdb_id
                AND xpatinf_expressed = xpatres_expression_found
                AND xpatinf_pub_zdb_id = '$OID'
@@ -354,7 +355,7 @@ EFFECTS
   <option value="---">---------------------------------</option>
   <?MISQL SQL="
     select distinct xpatex_zdb_id, fig_label, fig_zdb_id, xpatres_start_stg_zdb_id, xpatres_end_stg_zdb_id, s.stg_hours_start, mrkr_abbrev_order, s.stg_abbrev, e.stg_abbrev, LOWER(abbrev)
-    from fx_expression_experiment, fx_expression_result, fx_figure, fx_expression_pattern_figure, marker, stage s, stage e, feature_experiment, fish
+    from expression_experiment, expression_result, figure, expression_pattern_figure, marker, stage s, stage e, feature_experiment, fish
     where xpatex_source_zdb_id = '$OID'
       and xpatex_gene_zdb_id = mrkr_zdb_id
       and xpatex_zdb_id = xpatres_xpatex_zdb_id
@@ -477,7 +478,7 @@ EFFECTS
   </tr>
   <tr>
     <td colspan=4>
-      <a href="javascript:onClick=openChild('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=stages','AO');">Open AO Browser</a>
+      <a href="javascript:onClick=openChild('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=stages&type=select','AO');">Open AO Browser</a>
     </td>
   </tr>
 </form> 

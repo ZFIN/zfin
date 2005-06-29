@@ -1,0 +1,73 @@
+<?MICOMMENT>
+
+FILE: xpatfeatexp.apg
+PREFIX: fxp_ 
+
+DESCRIPTION:
+   This subroutine accepts feature_experiment zdb id, and generates a
+   string of fish line and experiment condition defined by that. It
+   makes use of xpatexpcdnsummary.apg to generate condition summary. 
+
+INPUT VARS:
+	fxp_zdb_id: feature experiment zdb id 
+
+OUTPUT VARS:
+        none
+
+OUPUT:
+   A string of fish line and condition if not Standard.
+   The fish line embeds hotlink to fish view page, the condition
+   summary embeds hotlink to environment page.
+
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+
+<?/MIERROR>
+<?MIVAR NAME=MI_NOVALUE><?/MIVAR>
+<?MIVAR NAME=MI_NULL><?/MIVAR>
+
+<?MIBLOCK COND="$(NXST,$fxp_zdb_id)">
+    ERROR: Feature experiment zdb id is not passed in.
+
+<?MIELSE>
+  <?MISQL SQL="
+	select get_fish_abbrev_html_link(featexp_genome_feature_zdb_id), 
+	       featexp_exp_zdb_id
+ 	  from feature_experiment
+	 where featexp_zdb_id = '$fxp_zdb_id';">
+
+	<?MIVAR NAME=fxp_fishline_html>$1<?/MIVAR>
+	<?MIVAR NAME=fxp_exp_zdb_id>$2<?/MIVAR>
+
+  <?/MISQL>
+  
+  <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
+     ERROR: Invalid feature experiment zdb id.
+
+  <?MIELSE>
+
+     <?MISQL SQL="select WebExplode(object,
+				   'cds_exp_zdb_id=$fxp_exp_zdb_id') 
+		    from webPages 
+		   where ID='aa-xpatexpcdnsummary.apg';">
+     <?/MISQL>
+     <?MIVAR NAME=fxp_exp_html>$(TRIM,$1)<?/MIVAR>	
+     
+     <?MICOMMENT>===========  Display   =================
+		 ==   fish line and experiment condition 
+     <?/MICOMMENT>
+     <?MIVAR> 
+	$fxp_fishline_html$(IF,$(NC,$fxp_exp_html,),", "$fxp_exp_html) 
+     <?/MIVAR>	 
+ 
+   <?/MIBLOCK> <?MICOMMENT> end if featexp zdb id is valid <?/MICOMMENT>
+
+<?/MIBLOCK> <?MICOMMENT> end if featexp zdb id is passed in <?/MICOMMENT>

@@ -36,7 +36,7 @@ EFFECTS
 
 <?MISQL SQL="
     select mrkr_abbrev, exp_name, abbrev, xpatassay_abbrev, dblink_acc_num
-    from fx_expression_experiment, feature_experiment, experiment, fish, marker, expression_pattern_assay, OUTER(db_link)
+    from expression_experiment, feature_experiment, experiment, fish, marker, expression_pattern_assay, OUTER(db_link)
     where xpatex_zdb_id = '$xpcurexpssdisp_xpatex_zdb_id'
       and xpatex_featexp_zdb_id = featexp_zdb_id
       and featexp_exp_zdb_id = exp_zdb_id

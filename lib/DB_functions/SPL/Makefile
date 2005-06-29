@@ -31,8 +31,10 @@ SUBDIRS = Regen_names
 DBLINK_STATS = get_dblink_acc_num_display.sql p_dblink_has_parent.sql \
 	       p_check_caps_acc_num.sql p_one_ortho_per_db.sql \
 	       get_genbank_dblink_length_type.sql
-FISH_STATS   = get_fish_full_name.sql get_image_stats.sql \
-	       p_locus_name_abbrev_equal.sql
+FISH_STATS   = get_fish_full_name_html.sql get_fish_abbrev_html.sql \
+	       get_fish_full_name.sql \
+	       get_image_stats.sql p_locus_name_abbrev_equal.sql \
+	       get_allele_html.sql
 MRKR_STATS   = gene_contains_seg.sql mhist_event.sql p_mrel_grpmem_correct.sql \
 	       p_2_linkage_pairs.sql p_check_zdb_id_in_genedom.sql \
 	       p_goterm_not_obsolete.sql p_marker_has_goterm.sql \
@@ -40,8 +42,11 @@ MRKR_STATS   = gene_contains_seg.sql mhist_event.sql p_mrel_grpmem_correct.sql \
                p_insert_into_record_attribution_tablezdbids.sql \
                p_insert_into_record_attribution_datazdbids.sql \
 	       p_insert_marker_go_ev.sql p_populate_go_unknowns.sql \
-	       p_check_drop_go_unknown.sql				
-PUB_STATS    = get_pub_mini_ref.sql p_drop_go_unknown_attribution.sql
+	       p_check_drop_go_unknown.sql \
+	       get_mrkr_abbrev_html.sql get_mrkr_name_html.sql \
+
+PUB_STATS    = get_pub_mini_ref.sql p_drop_go_unknown_attribution.sql \
+	       pub_xpat_curation_status.sql jrnl_acknowledgment.sql 
 REGEN_GNRCS  = regen_fishsearch.sql regen_oevdisp.sql \
 	       regen_panelcount.sql regen_maps.sql
 REGEN_STATS  = grab_zdb_flag.sql release_zdb_flag.sql
@@ -54,7 +59,7 @@ ZDB_STATS    = get_obj_name.sql get_obj_abbrev.sql get_date_from_id.sql \
 # Some of the stage functions call other stage functions.  Therefore
 # the order they are listed matters.
 STAGE_STATS  = create_stg_name_ext.sql create_stg_name_long.sql \
-	       get_stg_name_html.sql get_stg_name_long_html.sql \
+	       get_stg_name_html.sql \
 	       stg_window_consistent.sql fimg_overlaps_stg_window.sql \
 	       anatitem_overlaps_stg_window.sql \
 	       p_check_anatitem_overlaps_stg_window.sql \
@@ -69,7 +74,9 @@ STAGE_STATS  = create_stg_name_ext.sql create_stg_name_long.sql \
 # leaving them all in one file, then by splitting them up.
 MULTIPLE_PROCS = insert_clone.sql regen_anatomy.sql clone_2_sanger.sql
 
-GENERIC_PROCS = $(ZDB_GNRCS) $(REGEN_GNRCS)
+GENERIC_PROCS = $(ZDB_GNRCS) $(REGEN_GNRCS) get_mrkr_name_html_link.sql \
+	        get_mrkr_abbrev_html_link.sql get_fish_full_name_html_link.sql \
+                get_fish_abbrev_html_link.sql 
 STATIC_PROCS  = $(DBLINK_STATS) $(FISH_STATS) $(MRKR_STATS) $(PUB_STATS) \
 		$(REGEN_STATS) $(ZDB_STATS) $(STAGE_STATS)
 

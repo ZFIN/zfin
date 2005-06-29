@@ -146,7 +146,6 @@ DBACCESS = $(INFORMIXDIR)/bin/dbaccess
 WEBLINTIFMX = $(INFORMIXDIR)/extend/web.4.13.FC2/utils/weblint 2 <
 
 # --- Java
-
 JAVAHOME_11   = /private/apps/java1.1
 JAVAC_11      = $(JAVAHOME_11)/bin/javac
 

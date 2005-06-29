@@ -1,0 +1,128 @@
+<?MICOMMENT>
+
+FILE:     xpatselect_resultsbygene.apg
+PREFIX:   xpresbg_
+
+INPUT VARS:
+   xpresbg_resultTable temp table with figure & gene information
+
+OUTPUT VARS:
+   xpresbg_geneCount    used by xpatselect to fill xpatsel_nResults variable
+
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
+
+<table class="searchresults"> <!-- open detailed results table -->
+  <caption class="searchresults">
+    Expression Pattern Search Results
+  </caption>
+  <thead class="searchresults">
+    <tr>
+      <th>Gene</th>
+      <th>Publication</th>
+      <th>Data</th>
+      <th>Genetic Background(s)</th>
+      <th>Stage Range</th>
+      <th>Assay Type</th>
+    </tr>
+   </thead>
+
+  <?MISQL SQL="select gene.mrkr_zdb_id, gene.mrkr_type, gene.mrkr_abbrev, gene.mrkr_abbrev_order,
+       get_mrkr_abbrev_html_link(gene.mrkr_zdb_id),
+       fig_label, fig_zdb_id, publication.zdb_id, pub_mini_ref,
+       case
+          when publication.jtype = 'Unpublished'
+          then xpatex_direct_submission_date
+       else
+         pub_date::datetime year to second end as date,
+       case
+         when publication.jtype = 'Unpublished'
+         then 't'
+       else 'f' end as is_direct_submission,
+       probe.mrkr_zdb_id as probe_zdb_id, probe.mrkr_abbrev as probe_abbrev,
+       (select count(fimgp_zdb_id) from fx_fish_image_private where fimgp_fig_zdb_id = xpat_fig_zdb_id) as image_count,
+       fig_full_label
+from $xpresbg_resultTable 
+     join marker gene on mrkr_zdb_id = xpat_gene_zdb_id
+     join fx_figure on fig_zdb_id = xpat_fig_zdb_id
+     join publication on fig_source_zdb_id = publication.zdb_id
+     join fx_expression_experiment on xpatex_zdb_id = xpat_xpatex_zdb_id
+     left outer join marker probe on xpatex_probe_feature_zdb_id  = probe.mrkr_zdb_id
+group by gene.mrkr_type, gene.mrkr_zdb_id, gene.mrkr_abbrev_order,
+         gene.mrkr_abbrev, publication.zdb_id, pub_mini_ref, fig_label, fig_full_label, fig_zdb_id, 10, 11, 12, 13, 14
+order by gene.mrkr_type, gene.mrkr_abbrev_order, date desc, publication.zdb_id, fig_full_label
+;">
+  <?MIVAR NAME="$xpresbg_geneAbbrevLink">$5<?/MIVAR>
+  <?MIVAR NAME="$xpresbg_figLabel">$6<?/MIVAR>
+  <?MIVAR NAME="$xpresbg_figZdbId">$7<?/MIVAR>
+  <?MIVAR NAME="$xpresbg_pubZdbId">$8<?/MIVAR>
+  <?MIVAR NAME="$xpresbg_pubMiniRef">$9<?/MIVAR>
+  <?MIVAR NAME="$xpresbg_pubDate">$10<?/MIVAR>
+  <?MIVAR NAME="$xpresbg_pubIsDirectSubmission">$11<?/MIVAR>
+  <?MIVAR NAME="$xpresbg_probeZdbId">$12<?/MIVAR>
+  <?MIVAR NAME="$xpresbg_probeAbbrev">$13<?/MIVAR>
+  <?MIVAR NAME="$xpresbg_imageCount">$14<?/MIVAR>
+
+
+
+  <tr>
+    <?MICOMMENT> gene <?/MICOMMENT>
+    <td> 
+      <?MIVAR>$xpresbg_geneAbbrevLink<?/MIVAR>
+    </td>
+
+    <?MICOMMENT> pub <?/MICOMMENT>
+    <td>
+
+          <?MIVAR> <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$xpresbg_pubZdbId">$xpresbg_pubMiniRef</a> <?/MIVAR>
+          <?MIBLOCK COND="$(NE,$xpresbg_probeAbbrev,NULL)">
+            <?MIVAR>[<a HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$xpresbg_probeZdbId">$xpresbg_probeAbbrev]</a><?/MIVAR>
+          <?/MIBLOCK>
+
+
+
+    </td>
+
+    <?MICOMMENT> data <?/MICOMMENT>
+    <td nowrap <?MIBLOCK COND="$(>,$xpresbg_imageCount,0)"><?MIVAR>title="$xpresbg_figLabel has images"<?/MIVAR><?/MIBLOCK> > 
+      <?MIVAR> 
+        <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$xpresbg_figZdbId">$xpresbg_figLabel</a> 
+      <?/MIVAR>        
+      <?MIBLOCK COND="$(>,$xpresbg_imageCount,0)"><img src="/images/camera_icon.gif" border=0><?/MIBLOCK>         
+    </td>
+  
+    <?MICOMMENT> genetic background <?/MICOMMENT>
+    <td>
+        <?MISQL SQL="
+	  select WebExplode(object, 'fxfigfi_fig_zdb_id=$xpresbg_figZdbId')
+	  from webpages
+	  where id = 'aa-fxfigfishlist.apg';">$1<?/MISQL>
+    </td>
+
+    <?MICOMMENT> stage <?/MICOMMENT>
+    <td>
+    stage - stage
+    </td>
+
+    <?MICOMMENT> assay <?/MICOMMENT>
+    <td>
+    ASY
+    </td>
+ 
+  </tr>
+  <?/MISQL>
+  <?MIVAR NAME="$xpresbg_geneCount">$MI_ROWCOUNT<?/MIVAR>
+</table> <!-- close detailed results table -->
+
+
+

@@ -32,6 +32,8 @@ if (version != "n3") {
 <TITLE>ZFIN</TITLE>
 </HEAD>
 
+<?MIVAR NAME=MI_NOVALUE><?/MIVAR>
+<?MIVAR NAME=MI_NULL><?/MIVAR>
 
 <?MIVAR NAME=$start_page>MIval=aa-ZDB_home.apg<?/MIVAR>
 
@@ -46,7 +48,6 @@ if (version != "n3") {
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,MRPHLNO),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,EST),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,CDNA),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,XPAT),0)">MIval=aa-xpatview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,SSLP),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,STS),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,BAC),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
@@ -57,8 +58,32 @@ if (version != "n3") {
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,LOCUS),0)">MIval=aa-locusview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,REFCROSS),0)">MIval=aa-crossview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,IMAGE),0)">MIval=aa-imageview.apg&OID=$record<?/MIVAR> 
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,COMPANY),0)">MIval=aa-companyview.apg&OID=$record<?/MIVAR><?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,ANAT),0)">MIval=aa-anatomy_item.apg&OID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,XPAT),0)">MIval=aa-xpatview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,COMPANY),0)">MIval=aa-companyview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,ANAT),0)">MIval=aa-anatomy_item.apg&OID=$record<?/MIVAR>
+
+<?MICOMMENT>environment condition (ZDB-EXP- id) is provided in the download xpat.txt file<?/MICOMMENT>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,EXP),0)">MIval=aa-xpatexpcdndisplay.apg&cdp_exp_zdb_id=$record<?/MIVAR>
+
+<?MICOMMENT> there is no longer an expression page, a publication's all figure page is 
+      the best place to go right now. For direct submission pub, like Thisse, there isn't 
+      a truely all figures page, but all figures page per probe. 
+<?/MICOMMENT>
+<?MIBLOCK COND="$(>,$(POSITION,$record,XPAT),0)">
+    <?MISQL SQL="
+		select xpatex_source_zdb_id,jtype, xpatex_probe_feature_zdb_id
+                  from expression_experiment
+		       join publication on xpatex_source_zdb_id = zdb_id
+	         where xpatex_zdb_id = '$record';">
+    <?/MISQL>
+    <?MIVAR NAME=xpat_pub_id>$1<?/MIVAR>
+    <?MIVAR NAME=xpat_pub_type>$2<?/MIVAR>
+    <?MIVAR NAME=xpat_probe_id>$3<?/MIVAR>
+    <?MIVAR NAME=$conditional_probe><?/MIVAR>
+    <?MIVAR COND="$(EC,$xpat_pub_type,Unpublished)">
+	$(SETVAR,$conditional_probe,&fxallfig_probe_zdb_id=$xpat_probe_id)
+    <?/MIVAR>
+    <?MIVAR NAME=$start_page>MIval=aa-fxallfigures.apg&OID=$xpat_pub_id$conditional_probe<?/MIVAR>
+<?/MIBLOCK>
 
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOGENE),0)">MIval=aa-newmrkrselect.apg<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOLAB),0)">MIval=aa-labselect.apg<?/MIVAR>
@@ -76,7 +101,6 @@ if (version != "n3") {
     window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$start_page")
   <?/MIVAR>
 </SCRIPT>
-
 
 </FRAMESET>
 

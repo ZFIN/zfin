@@ -11,18 +11,14 @@ tab separated file containing:
         zfin gene symbol
         zfin probe id              (Link to EST)
         zfin probe symbol
-        GenBank probe accession    (link to sequence)
         assay type
         zfin expression pattern id (link to expression)
         zfin publication id        (link to attribution)
+	zfin fish line id 	   (link to FISH)
+	zfin experiment id	   (link to environment)
 
-the probe is the EST used in the assay, GenBank accession number(s) 
-are for the EST (not the GENE)
+the probe is the EST used in the assay
 
-currently there are only two expression pattern sources,
-one sends EST named CBxxx  (Christine & Benard Thiesse)
-the other EST named IBDxxx (Igor B. Dawid)
-this condition is not expected to hold.
 
 ###############################################################################
 http://zfin.org/data_transfer/Sanger/VegaGeneSeq.txt 
@@ -95,11 +91,6 @@ Format: stage-id|stage-name|hours-start|hours-end|
 
 
 -------------------------------------------------------------------------
-
-vega_xpat_probe_gene.unl
-        table to associate xpat with probe & gene. also gives expression type.
-Format: xpat-id|probe-id|gene-id|xpat-type|
-
 
 vega_xpat_stage_anatomy.unl
         table to associate expression to the anatomy and stage CV

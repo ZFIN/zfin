@@ -53,11 +53,11 @@ EFFECTS
     <td>Delete</td>
   </tr>  
 <?MISQL SQL="
-          select fig_zdb_id, fig_label, fimgp_thumbnail, fimgp_zdb_id, fimgp_label
-	  from fx_fish_image_private, fx_figure
+          select fig_zdb_id, fig_label, fimg_thumbnail, fimg_zdb_id, fimg_label
+	  from fish_image, figure
 	  where fig_zdb_id in ('$xpcur_G_fig_attrib_csv')
-            and fimgp_fig_zdb_id = fig_zdb_id
-          order by fig_label,fimgp_label;">
+            and fimg_fig_zdb_id = fig_zdb_id
+          order by fig_label,fimg_label;">
           
       <?MIVAR name=xpcurimg_fig_zdb_id>$1<?/MIVAR>
       <?MIVAR name=xpcurimg_fig_label>$2<?/MIVAR>
@@ -78,7 +78,7 @@ EFFECTS
       <select name="xpcur_G_image_fig">
         <?MISQL SQL="
           select fig_zdb_id, fig_label
-	  from fx_figure
+	  from figure
 	  where fig_zdb_id in ('$xpcur_G_fig_attrib_csv')
           order by fig_label;">
             <option value=$1 $(IF,$(EC,$1,$xpcurimg_fig_zdb_id),SELECTED)>$2</option>
@@ -87,7 +87,7 @@ EFFECTS
     </td>
     <td>  
       <?MIVAR COND=$(NC,$xpcurimg_thumbnail,NULL)>
-        <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$xpcurimg_image_zdb_id&image_table=fx_fish_image_private">
+        <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$xpcurimg_image_zdb_id">
         <img src="<!--|IMAGE_LOAD|-->/$xpcurimg_thumbnail"></a>
       <?/MIVAR>
         <input name="xpcur_G_image_label" type=textbox size=5 value="$xpcurimg_image_label">
@@ -122,7 +122,7 @@ EFFECTS
       Fig: <select name="xpcur_G_image_fig">
         <?MISQL SQL="
           select fig_zdb_id, fig_label
-	  from fx_figure
+	  from figure
 	  where fig_zdb_id in ('$xpcur_G_fig_attrib_csv')
           order by fig_label;">
             <option value=$1>$2</option>

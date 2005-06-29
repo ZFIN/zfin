@@ -335,6 +335,10 @@ Startframes.apg will pass this variables on to the select form.
        <?MIVAR name=$num_recs>$1<?/MIVAR>
     <?/MISQL>
 
+<!-- Debugging
+  <?MIVAR>$MI_SQL<?/MIVAR>
+-->
+
     <?MIBLOCK COND="$(XST,$pubId)">
 	<?MISQL SQL="
 		select count(*)::integer
@@ -409,7 +413,7 @@ Startframes.apg will pass this variables on to the select form.
 	<!--- Query Database --->
 	<?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
 	  select distinct 
-		 name, fish_id, abbrev, allele, chrom_change, chrom_num,
+		 name, fish_id, abbrev, get_allele_html(allele), chrom_change, chrom_num,
 		 locus, gene_abbrev, gene_id, fishsearch_name_order, 
 		 fishsearch_allele_order 
 	    from $target_table 
@@ -429,6 +433,9 @@ Startframes.apg will pass this variables on to the select form.
 
 	  <TR align=left border="0" cellspacing="0" cellpadding="3" valign=top bgcolor="$row_color"> 
 	    <TD>
+	    <!-- 
+<?MIVAR>$target_table<?/MIVAR>
+-->
 	      $(IF,$(XST,$return_rec),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$fish_id">SELECT</A>",&nbsp;) 
 	    </TD>
 	    <TD valign=top> 

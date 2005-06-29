@@ -1,0 +1,89 @@
+<?MICOMMENT>
+
+FILE:     fxfiguregenelist.apg
+PREFIX:   fxfigge_
+
+This displays a list of gene abbrev. There are two types of display:
+
+1. for figview.apg, each gene abbrev is an anchor to a data section.
+2. display a list of comma separated gene abbrevs.
+
+
+INPUT VARS:
+  $fxfigge_fig_zdb_id		figure zdb-id.
+  $fxfigge_display_option	either anchor or blank      	
+
+
+OUTPUT VARS:
+  None.
+
+OUTPUT:
+  A list of genes.
+
+EFFECTS  
+  None.
+
+http://iguana.zfin.org/fx/darrow.gif
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
+
+<?MIVAR COND=$(NXST,$fxfigge_display_option) NAME=$fxfigge_display_option><?/MIVAR>
+<?MIVAR NAME=$fxfigge_list_items><?/MIVAR>
+<?MIVAR NAME=$fxfigge_down_arrow>http://iguana.zfin.org/fx/darrow.gif<?/MIVAR>
+<?MISQL SQL="
+    SELECT distinct mrkr_abbrev, mrkr_zdb_id, mrkr_name_order
+      FROM expression_pattern_figure, expression_result,
+           expression_experiment, marker
+     WHERE xpatfig_fig_zdb_id = '$OID'
+       AND xpatfig_xpatres_zdb_id = xpatres_zdb_id
+       AND xpatres_xpatex_zdb_id = xpatex_zdb_id
+       AND xpatex_probe_feature_zdb_id = mrkr_zdb_id
+     ORDER BY mrkr_name_order;">
+
+    <?MIBLOCK COND=$(EC,$fxfigge_display_option,anchor)>
+      <?MIVAR NAME=$fxfigge_down_arrow><img src=http://iguana.zfin.org/fx/darrow.gif><?/MIVAR>
+      <?MIVAR NAME=fxfigge_gene_href><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-figview.apg&OID=OID#$2"><?/MIVAR>
+    <?MIELSE>
+      <?MIVAR NAME=$fxfigge_down_arrow><?/MIVAR>
+      <?MIVAR NAME=fxfigge_gene_href><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2"><?/MIVAR>
+    <?/MIBLOCK>
+
+    <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
+        <?MIVAR NAME=fxfigge_list_items>$fxfigge_gene_href$1</a>$fxfigge_down_arrow<?/MIVAR>
+    <?MIELSE>
+        <?MIVAR>$(VECAPPEND,fxfigge_list_items,$fxfigge_gene_href$1</a>$fxfigge_down_arrow)<?/MIVAR>
+    <?/MIBLOCK>
+<?MIVAR NAME=$probeid>$2<?/MIVAR>    
+<?/MISQL>
+
+  <?MIVAR NAME=fxfigge_separate_items SEPARATE=", ">$fxfigge_list_items<?/MIVAR>
+<?MIBLOCK COND="$(NE,$fxfigge_separate_items,)">
+ <?MIVAR><b>Probe :</b> $fxfigge_separate_items<?/MIVAR>
+ <?MISQL SQL="select WebExplode(object,'clorlk_mrkr_zdb_id=$probeid') from webPages where ID='aa-cloneorderlink.apg';">$1<?/MISQL>
+<?MIELSE>
+ <?MIVAR>$fxfigge_separate_items<?/MIVAR>
+<?/MIBLOCK>
+<?MICOMMENT>
+  ============================================================================
+  ==========  Unset any existence vars, before the next call of this page
+  ============================================================================
+<?/MICOMMENT>
+
+<?MIVAR>
+  $(UNSETVAR,$fxfigge_fig_zdb_id)
+  $(UNSETVAR,$fxfigge_display_option)
+  $(UNSETVAR,$fxfigge_down_arrow)
+  $(UNSETVAR,$fxfigge_list_items)  
+  $(UNSETVAR,$fxfigge_separate_items)
+<?/MIVAR>

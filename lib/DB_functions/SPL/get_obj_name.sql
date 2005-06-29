@@ -37,12 +37,12 @@ get_obj_name(zdbId varchar(50))
   elif (objType = "FIG") then
     select fig_zdb_id 
       into objName
-      from fx_figure
+      from figure
       where fig_zdb_id = zdbId ;
   elif (objType = "XPATRES") then
     select xpatres_zdb_id 
       into objName
-      from fx_expression_result
+      from expression_result
       where xpatres_zdb_id = zdbId ;
   elif (objType = "XPATINF") then
     select xpatinf_zdb_id
@@ -251,10 +251,10 @@ get_obj_name(zdbId varchar(50))
       from url_ref
       where urlref_zdb_id = zdbId ;
   elif (objType = "XPAT") then --don't have names, use ZDB ID
-    select xpat_zdb_id
+    select xpatex_zdb_id
       into objName
-      from expression_pattern
-      where xpat_zdb_id = zdbId ;
+      from expression_experiment
+      where xpatex_zdb_id = zdbId ;
   elif (objType = "XPATRES") then
     select xpatres_zdb_id		-- don't have names, use ZDB ID
       into objName

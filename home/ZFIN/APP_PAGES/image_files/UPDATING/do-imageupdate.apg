@@ -13,7 +13,7 @@ annotations -- huge string of urlencoded changed annotations for the image.
 
 OUTPUT VARS:
 redirect to imageview.apg
-updates records in fish_image or fx_fish_image_private
+updates records in fish_image
 
 DESCRIPTION: commits the updates requested in the forms tossed up by
 imageupdate.html. Also files update record.

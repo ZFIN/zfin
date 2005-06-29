@@ -104,16 +104,19 @@ ORDER BY 1
           <td bgcolor="#EEEEEE">
             <FONT size=-1 style="font-family:arial;">
               <?MISQL SQL="
-select distinct xpat_gene_zdb_id
-from expression_pattern_anatomy, expression_pattern
-where xpatanat_anat_item_zdb_id = '$xpanatv_item_zdb_id'
-  and xpatanat_xpat_zdb_id = xpat_zdb_id
+select distinct xpatex_gene_zdb_id
+from expression_experiment
+     join expression_result
+       on xpatex_zdb_id = xpatres_xpatex_zdb_id
+where xpatres_anat_item_zdb_id = '$xpanatv_item_zdb_id'
 UNION
-select distinct xpat_gene_zdb_id
-from expression_pattern_anatomy, all_anatomy_contains, expression_pattern
-where allanatcon_contained_zdb_id = xpatanat_anat_item_zdb_id
-  and xpatanat_xpat_zdb_id = xpat_zdb_id
-  and allanatcon_container_zdb_id = '$xpanatv_item_zdb_id'
+select distinct xpatex_gene_zdb_id
+from expression_experiment
+     join expression_result
+       on xpatex_zdb_id = xpatres_xpatex_zdb_id
+     join all_anatomy_contains
+       on allanatcon_contained_zdb_id = xpatres_anat_item_zdb_id
+where allanatcon_container_zdb_id = '$xpanatv_item_zdb_id'
               ;">
               <?/MISQL>
               <?MIVAR name=$xpanatv_totalcount>$MI_ROWCOUNT<?/MIVAR>

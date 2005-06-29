@@ -1,0 +1,34 @@
+<?MICOMMENT>
+
+FILE:     xpatselect_resultsasimages.apg
+PREFIX:   xpresimg_
+
+INPUT VARS:
+   xpresimg_resultTable temp table with figure & gene information
+
+OUTPUT VARS:
+   xpresimg_imgCount    used by xpatselect to fill xpatsel_nResults variable
+
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
+<?MISQL SQL=" 
+select distinct fimgp_thumbnail, fimgp_zdb_id, fig_label, pub_mini_ref
+from $xpresimg_resultTable
+     join fx_fish_image_private on fimgp_fig_zdb_id = xpat_fig_zdb_id
+     join fx_figure on fig_zdb_id = xpat_fig_zdb_id
+     join publication on publication.zdb_id = fig_source_zdb_id
+;">
+  <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$2&image_table=fx_fish_image_private">
+    <Img src="<!--|IMAGE_LOAD|-->/$1" title="$4 - $3"></a>
+<?/MISQL>
+<?MIVAR NAME="$xpresimg_imgCount">$MI_ROWCOUNT<?/MIVAR>

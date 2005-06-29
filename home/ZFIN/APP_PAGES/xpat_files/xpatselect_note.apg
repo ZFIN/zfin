@@ -1,10 +1,22 @@
 <html>
 <body>
-ZFIN displays images of gene expression patterns that have been
-directly submitted to ZFIN and an index of recently-published papers
-that report gene expression.  ZFIN is currently developing the means to
-include images from the literature.  If you have questions or
-suggestions or would like to submit expression pattern images to ZFIN,
-please <a href="mailto:zfinadmn@zfin.org">contact us</a>.
+<p>ZFIN now displays three kinds of gene expression data:</p>
+
+<ol>
+<li>  annotated images that have been directly submitted to ZFIN by
+researchers.
+<li>  annotated figures from the current literature, when copyright
+permissions
+are available.
+<li> an index of gene expression data from older publications
+</ol>
+
+<p>ZFIN began to include published figures in 2004.  We are currently
+able to add figures from older publications only on an ad hoc basis.
+A more complete incorporation of figures from the older literature is
+a long-term goal.</p>
+
+<p>If you have questions or suggestions or would like to submit
+expression pattern images to ZFIN, please contact us. </p>
 </body>
 </html>

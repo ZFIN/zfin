@@ -140,32 +140,33 @@ document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
 	select m.mrkr_abbrev, f.abbrev, xpat.xpat_assay_name, xpatstg.xpatstg_expression_found,
 	       stg.stg_name,xpat.xpat_zdb_id, xpat.xpat_direct_submission_date, lower(f.abbrev),
 	       stg.stg_hours_start, stg.stg_hours_end, m.mrkr_zdb_id, f.zdb_id,
-	       get_stg_name_long_html(stg.stg_zdb_id), 'aa-fishview.apg'
+	       get_stg_name_html(stg.stg_zdb_id, 'long'), 'aa-fishview.apg'
 
-	from marker m, expression_pattern xpat, fish f, stage stg,
-	     expression_pattern_stage xpatstg 
+	from marker m, expression_experiment xpat, fish f, stage stg,
+	     expression_result xpatstg, feature_experiment 
 
-	where xpat.xpat_source_zdb_id = '$OID'
-	  and xpat.xpat_gene_zdb_id=m.mrkr_zdb_id 
-	  and xpat.xpat_stock_zdb_id=f.zdb_id 
-	  and xpatstg.xpatstg_xpat_zdb_id=xpat.xpat_zdb_id 
-	  and xpatstg.xpatstg_start_stg_zdb_id=stg.stg_zdb_id 
+	where xpat.xpatex_source_zdb_id = '$OID'
+	  and xpat.xpatex_gene_zdb_id=m.mrkr_zdb_id 
+	  and xpat.xpatex_featexp_zdb_id=featexp_zdb_id
+	  and featexp_genome_feature_zdb_id=f.zdb_id 
+	  and xpatstg.xpatres_xpatex_zdb_id=xpat.xpatex_zdb_id 
+	  and xpatstg.xpatres_start_stg_zdb_id=stg.stg_zdb_id 
 
 	union 
 
 	select mrkr_abbrev, abbrev, xpat_assay_name, xpatstg_expression_found,
 	       stg_name, xpat_zdb_id, xpat_direct_submission_date, lower(abbrev),
 	       stg_hours_start, stg_hours_end, mrkr_zdb_id, zdb_id, 
-               get_stg_name_long_html(stg_zdb_id), 'aa-locusview.apg'
+               get_stg_name_html(stg_zdb_id,'long'), 'aa-locusview.apg'
 
-	from marker, expression_pattern, expression_pattern_stage, locus, stage 
+	from marker, expression_experiment, expression_result, locus, stage, feature_experiment
 
-	where xpat_source_zdb_id = '$OID' 
-	  and xpat_stock_zdb_id = zdb_id 
-	  and xpatstg_xpat_zdb_id = xpat_zdb_id 
-	  and xpatstg_start_stg_zdb_id = stg_zdb_id 
-	  and xpat_gene_zdb_id = mrkr_zdb_id 
-
+	where xpatex_source_zdb_id = '$OID' 
+	  and xpatex_featexp_zdb_id = featexp_zdb_id
+	  and featexp_genome_feature_zdb_id = zdb_id
+	  and xpatres_xpatex_zdb_id = xpatex_zdb_id 
+	  and xpatres_start_stg_zdb_id = stg_zdb_id 
+	  and xpatex_gene_zdb_id = mrkr_zdb_id 
 
 	order by 1,2,3,9">
         <?MIVAR name="$xiview_geneAbbrev">$1<?/MIVAR>

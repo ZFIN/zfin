@@ -193,91 +193,7 @@ sub recordResult(@) {
 
 #######################  Checking  ##################################
 
-#=================== Stage Window  =================================
-
-#--------------------------------------------------------
-#Parameter
-# $      Email Address for recipients
-
-sub stageWindowConsistent ($) {
-
-  my $routineName = "stageWindowConsistent";
-
-  my $sql = '
-             select stg_zdb_id, 
-                    stg_name
-                    stg_hours_start, 
-                    stg_hours_end
-               from stage
-              where stg_hours_start > stg_hours_end ';
-  
-  my @colDesc = ("Stg ZDB ID     ",
-		 "Stg name       ",
-		 "Stg hours start",
-		 "Stg hours end  " );
-
-  my $nRecords = execSql ($sql, undef, @colDesc);
-
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "stage window inconsistence in stage";
-    my $errMsg = "In stage table, $nRecords records' stage start hours are "
-                     ."greater than end hours. ";
-    logError ($errMsg); 
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
-  }
-  &recordResult($routineName, $nRecords);
-}
- 
-
 #=================== Anatomy Item  =================================
-#-----------------------------------------------------------
-#Parameter
-# $      Email Address for recipients
- 
-sub anatomyItemStageWindowConsistent ($) {
-  
-  my $routineName = "anatomyItemStageWindowConsistent";
-  
-  my $sql = ' 
-              select anatitem_zdb_id, 
-                     anatitem_name,
-                     anatitem_start_stg_zdb_id, 
-                     s1.stg_name_long, 
-                     anatitem_end_stg_zdb_id,
-                     s2.stg_name_long
-
-        	from anatomy_item,
-                     stage s1, stage s2 
-               where stg_window_consistent
-                             (anatitem_start_stg_zdb_id,
-                              anatitem_end_stg_zdb_id  ) = "f"
-                 and anatitem_start_stg_zdb_id = s1.stg_zdb_id
-                 and anatitem_end_stg_zdb_id = s2.stg_zdb_id
-            ';
-
-  my @colDesc = ("Anatitem ZDB ID          ",
-		 "Anatitem name            ",
-		 "Anatitem start stg ZDB ID",
-		 "Start stg name and period",
-		 "Anatitem end stg ZDB ID  ",
-                 "End stg name and period  " );
-
-  my $nRecords = execSql ($sql, undef, @colDesc);
-  
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Stage window inconsistence in anatomy_item";
-    my $errMsg = "In anatomy_item, $nRecords records have inconsistent " 
-                   ."stage window. ";
-
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
-  }
-  &recordResult($routineName, $nRecords);
-}
-
-
 
 #----------------------------------------------------------------
 #Parameter
@@ -297,8 +213,8 @@ sub checkFigXpatexSourceConsistant ($) {
   my $routineName = "checkFigXpatexSourceConsistant";
 	
   my $sql = 'select xpatfig_fig_zdb_id, xpatfig_xpatres_zdb_id
-               from fx_figure, fx_expression_pattern_figure,
-               fx_expression_result, fx_expression_experiment
+               from figure, expression_pattern_figure,
+               expression_result, expression_experiment
                where xpatfig_fig_zdb_id = fig_zdb_id
                and xpatfig_xpatres_zdb_id = xpatres_zdb_id
                and xpatres_xpatex_zdb_id = xpatex_zdb_id
@@ -325,132 +241,58 @@ sub checkFigXpatexSourceConsistant ($) {
 } 
 
 
-
-#----------------------------------------------------------------
-#Parameter
-# $      Email Address for recipients
-
-
-sub expressionPatternStageWindowConsistent($) {
-	
-  my $routineName = "expressionPatternStageWindowConsistent";
-	
-  my $sql = '
-             select xpatstg_xpat_zdb_id, 
-                    xpatstg_start_stg_zdb_id,
-                    s1.stg_name_long,   
-                    xpatstg_end_stg_zdb_id,
-                    s2.stg_name_long
-
-	       from expression_pattern_stage,
-                    stage s1, stage s2 
-
-              where stg_window_consistent (
-                                     xpatstg_start_stg_zdb_id,
-                                     xpatstg_end_stg_zdb_id
-                                     ) = "f" 
-                and xpatstg_start_stg_zdb_id = s1.stg_zdb_id
-                and xpatstg_end_stg_zdb_id = s2.stg_zdb_id
-              ';
-  	
-  my @colDesc = ("Xpatstg ZDB ID     ",
-		 "Start Stage ZDB ID ",
-		 "Start Stage Name   ",
-		 "End Stage ZDB ID   ",
-		 "End Stage Name     ");
-
-  my $nRecords = execSql ($sql, undef, @colDesc);
-
-  if ( $nRecords > 0 ) {
-
-    my $sendToAddress = $_[0];
-    my $subject = "Stage window inconsistence";
-    my $errMsg = "In expression_pattern_stage, $nRecords records' stage"
-    		      ." windoware not consistent. ";
-      		       
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
-  }
-  &recordResult($routineName, $nRecords);
-} 
-
 #---------------------------------------------------------------
 #Parameter
 # $      Email Address for recipients
 # 
-
-sub expressionPatternAnatomyStageWindowOverlapsAnatomyItem ($) {
+# Use the SPL routine anatitem_overlaps_stg_window() to check if
+# any record in expression_result violates the rule.
+# 
+sub expressionResultStageWindowOverlapsAnatomyItem ($) {
 	
-  my $routineName = "expressionPatternAnatomyStageWindowOverlapsAnatomyItem";
+  my $routineName = "expressionResultStageWindowOverlapsAnatomyItem";
 	
   my $sql = '
-            select xpatanat_anat_item_zdb_id, 
-                   xpatanat_xpat_start_stg_zdb_id,
-       	           xpatanat_xpat_end_stg_zdb_id
-	      from expression_pattern_anatomy
+            select xpatres_zdb_id,
+                   s1.stg_name_long, s2.stg_name_long,
+                   xpatres_anat_item_zdb_id, anatitem_name,
+                   s3.stg_name_long, s4.stg_name_long
+	      from expression_result 
+                   join anatomy_item
+                        on xpatres_anat_item_zdb_id = anatitem_zdb_id
+                   join stage s1
+                        on xpatres_start_stg_zdb_id = s1.stg_zdb_id
+                   join stage s2
+                        on xpatres_end_stg_zdb_id = s2.stg_zdb_id
+                   join stage s3
+                        on anatitem_start_stg_zdb_id = s3.stg_zdb_id
+                   join stage s4
+                        on anatitem_end_stg_zdb_id = s4.stg_zdb_id
              where anatitem_overlaps_stg_window(
-                                     xpatanat_anat_item_zdb_id,
-                                     xpatanat_xpat_start_stg_zdb_id,
-                                     xpatanat_xpat_end_stg_zdb_id
+                                     xpatres_anat_item_zdb_id,
+                                     xpatres_start_stg_zdb_id,
+                                     xpatres_end_stg_zdb_id
                                      ) = "f"';
 
-  my $nRecords = execSql ($sql);
+   my @colDesc = ( "Xpatres ZDB ID      ",
+		   "Xpatres start stage ",
+		   "Xpatres end stage   ",
+		   "Anatitem ZDB ID     ",
+		   "Anatitem name       ",
+		   "Anatitem start stage",
+		   "Anatitem end stage  " );
+
+  my $nRecords = execSql($sql, undef, @colDesc);
   
   if ( $nRecords > 0 ) {
-
-    my $sqlDtl = ' 
-                   select xpatanat_anat_item_zdb_id,
-			  anatitem_name,
-			  anatitem_start_stg_zdb_id,
-			  s1.stg_name_long,
-			  anatitem_end_stg_zdb_id,
-			  s2.stg_name_long,
-                          xpatanat_xpat_start_stg_zdb_id,
-			  s3.stg_name_long,
-                          xpatanat_xpat_end_stg_zdb_id,
-			  s4.stg_name_long,
-			  xpatanat_xpat_zdb_id
-                     from expression_pattern_anatomy, 
-                          anatomy_item,
-			  stage s1, stage s2, stage s3, stage s4
-                    where anatitem_overlaps_stg_window(
-                                     xpatanat_anat_item_zdb_id,
-                                     xpatanat_xpat_start_stg_zdb_id,
-                                     xpatanat_xpat_end_stg_zdb_id
-                                     ) = "f"
-                      and xpatanat_anat_item_zdb_id      = anatitem_zdb_id
-		      and anatitem_start_stg_zdb_id      = s1.stg_zdb_id
-		      and anatitem_end_stg_zdb_id        = s2.stg_zdb_id
-		      and xpatanat_xpat_start_stg_zdb_id = s3.stg_zdb_id
-		      and xpatanat_xpat_end_stg_zdb_id   = s4.stg_zdb_id
-	         ';
-
-    my @colDesc = ("Xpatanat anat item ZDB ID",
-		   "Anatitem name            ",
-		   "Anatitem start stg ZDB ID",
-		   "Start stg name and period",
-		   "Anatitem end stg ZDB ID  ",
-		   "End stg name and period  ",
-		   "Xpatanat xpat start stg ZDB ID",
-		   "Start stg name and period",
-		   "Xpatanat xpat end stg ZDB ID",
-		   "End stg name and period     ",
-		   "Xpatanat xpat ZDB ID     " );
-
-    my $nRecordsDtl = execSql($sqlDtl, undef, @colDesc);
-   
-    if ( $nRecords == $nRecordsDtl ) {
-     
+      
       my $sendToAddress = $_[0];
       my $subject = "Xpat's stage window not overlaps with anatomy item's";
-      my $errMsg = "In expression_pattern_anatomy, $nRecords records' stage "
-	           ."window don't overlap with the anatomy item's stage window.";
-		      
+      my $errMsg = "In expression_result, $nRecords records' stage "
+	  ."window don't overlap with the anatomy item's stage window.";
+      
       logError ($errMsg);	
-      &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql, $sqlDtl);
-    }else {
-      print "Two queries are not consistent.\n";
-    }
+      &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);   
   }
   &recordResult($routineName, $nRecords);
 }
@@ -1269,10 +1111,10 @@ sub prefixedGenesHave1Est ($) {
 #---------------------------------------------------------------
 # xpatHasConsistentMarkerRelationship
 #
-# Temporary expression patterns are sometimes not updated 
+# Temporary expression experiments are sometimes not updated 
 # when an actual marker relationship is found.
 #
-# This test identifies any expresssion_pattern (probe,gene) pairs
+# This test identifies any expresssion_experiment (probe,gene) pairs
 # that need to be updated based on marker_relationship.
 # 
 # 
@@ -1284,15 +1126,15 @@ sub xpatHasConsistentMarkerRelationship ($) {
 
   my $routineName = "xpatHasConsistentMarkerRelationship";
 
-  my $sql = 'select xpat_zdb_id, xpat_probe_zdb_id, xpat_gene_zdb_id
-               from expression_pattern
-               where xpat_probe_zdb_id is not null
+  my $sql = 'select xpatex_zdb_id, xpatex_probe_feature_zdb_id, xpatex_gene_zdb_id
+               from expression_experiment
+               where xpatex_probe_feature_zdb_id is not null
                and not exists
                 (
                    select * 
                      from marker_relationship
-                     where xpat_probe_zdb_id = mrel_mrkr_2_zdb_id
-                     and xpat_gene_zdb_id = mrel_mrkr_1_zdb_id
+                     where xpatex_probe_feature_zdb_id = mrel_mrkr_2_zdb_id
+                     and xpatex_gene_zdb_id = mrel_mrkr_1_zdb_id
                  )';
 
   my @colDesc = ("xpat ZDB ID       ",
@@ -1303,8 +1145,8 @@ sub xpatHasConsistentMarkerRelationship ($) {
 	
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
-    my $subject = "For a given probe, expression_pattern gene is out-of-sync.";
-    my $errMsg = "$nRecords genes in expression_pattern need to be synchronized "
+    my $subject = "For a given probe, expression_experiment gene is out-of-sync.";
+    my $errMsg = "$nRecords genes in expression_experiment need to be synchronized "
 		. "with marker_relationship.";
 
     logError ($errMsg);
@@ -2695,15 +2537,7 @@ sub subZdbActiveDataSourceStillInUse {
   my @row = @_;
   my $sql = "select $row[2]
                from $row[1]                
-              where $row[2] = '$row[0]'
-              union 
-                select xpatex_zdb_id
-                  from fx_expression_experiment
-                  where xpatex_zdb_id = '$row[0]'
-              union
-                select fimgp_zdb_id
-                  from fx_fish_image_private
-                  where fimgp_zdb_id = '$row[0]'";
+              where $row[2] = '$row[0]'";
   
   my @result = $dbh->selectrow_array($sql);
   return @result? 0:1 ;
@@ -2987,12 +2821,7 @@ my $dbaEmail     = "<!--|VALIDATION_EMAIL_DBA|-->";
 my $goEmail      = "<!--|GO_EMAIL_CURATOR|-->";
 
 if($daily) {
-  stageWindowConsistent ($adEmail);
-
-  anatomyItemStageWindowConsistent($adEmail);
-
-  expressionPatternStageWindowConsistent($xpatEmail);
-  expressionPatternAnatomyStageWindowOverlapsAnatomyItem($xpatEmail);
+  expressionResultStageWindowOverlapsAnatomyItem($xpatEmail);
   xpatHasConsistentMarkerRelationship($xpatEmail);
   checkFigXpatexSourceConsistant($dbaEmail);
 

@@ -1,0 +1,107 @@
+<?MICOMMENT>
+
+FILE:     fxfigfishlist.apg
+PREFIX:   fxfigfi_
+
+This displays a list of fish. It's simple. 
+
+Display a comma seperated-hyperlinked list 
+of all fish for a figure. Order by fish_name_order.
+
+This page gets called from
+  fxfigureview.apg ::    no optional input vars
+  fxallfigures.apg ::    with opt $fxfigfi_is_displayed
+  fxprobefig.apg  ::     with opt $fxfigfi_is_displayed
+  xpatselect_resultsbygene.apg ::   no optional input vars
+  xpatselect_detailedresults.apg :: with $fxfigfi_resultTable, $fxfigfi_gene_zdb_id
+INPUT VARS:
+  $fxfigfi_fig_zdb_id	 - figure zdb-id. 
+  $fxfigfi_is_displayed  - optional, display string "Genetic Background:"
+  $fxfigfi_resultTable   - optional, get fish from figs that match to xpatselect result table. 
+  $fxfigfi_gene_zdb_id 	 - optional, get fish from figs that match gene id.
+
+OUTPUT VARS:
+  None.
+
+OUTPUT:
+  A list of fish.
+
+EFFECTS  
+  None.
+
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
+<?MICOMMENT> === if $fxfigfi_resultTable $fxfigfi_gene_zdb_id are passed in,
+             === take advantage of the pre-efforts
+<?/MICOMMENT>
+<?MIBLOCK COND="$(AND,$(XST,$fxfigfi_resultTable),$(XST,$fxfigfi_gene_zdb_id))">
+  <?MIVAR NAME=$fxfigfl_sql>
+       SELECT distinct get_fish_abbrev_html_link(zdb_id), fish_name_order
+         FROM expression_experiment, feature_experiment, fish, $fxfigfi_resultTable
+        WHERE xpat_fig_zdb_id = '$fxfigfi_fig_zdb_id'
+          AND xpat_gene_zdb_id = '$fxfigfi_gene_zdb_id'
+          AND xpat_xpatex_zdb_id = xpatex_zdb_id
+          AND xpatex_featexp_zdb_id = featexp_zdb_id
+          AND featexp_genome_feature_zdb_id = zdb_id
+     ORDER BY fish_name_order;
+  <?/MIVAR>
+<?MIELSE>
+  <?MIVAR NAME=$fxfigfl_sql>
+       SELECT distinct get_fish_abbrev_html_link(zdb_id), fish_name_order
+         FROM expression_experiment, feature_experiment, fish, figure
+        WHERE fig_zdb_id = '$fxfigfi_fig_zdb_id'
+	  AND fig_source_zdb_id =  xpatex_source_zdb_id
+          AND xpatex_featexp_zdb_id = featexp_zdb_id
+          AND featexp_genome_feature_zdb_id = zdb_id
+     ORDER BY fish_name_order;
+  <?/MIVAR>
+<?/MIBLOCK>
+	
+<?MICOMMENT> 
+   ============================================================================
+   ============ execute the SQL, and display result
+   ============================================================================
+<?/MICOMMENT>
+<?MISQL SQL="$fxfigfl_sql">
+
+    <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
+      <?MIVAR NAME=fxfigfish_list_items>$1<?/MIVAR>
+    <?MIELSE>
+      <?MIVAR>$(VECAPPEND,fxfigfish_list_items,$1)<?/MIVAR>
+    <?/MIBLOCK>
+<?/MISQL>
+
+<?MIBLOCK COND="$(XST,$fxfigfi_is_displayed)">
+  <?MIVAR NAME="fxfigfi_Label"><b>Genetic Background : </b><?/MIVAR>
+<?MIELSE>
+  <?MIVAR NAME="fxfigfi_Label"><?/MIVAR>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(<,0,$MI_ROWCOUNT)">
+    <?MIVAR NAME=fxfigfish_separate_items SEPARATE=", ">$fxfigfish_list_items<?/MIVAR>
+    <?MIVAR>$fxfigfi_Label$fxfigfish_separate_items<?/MIVAR>
+<?/MIBLOCK>
+
+<?MICOMMENT>
+  ============================================================================
+  ==========  Unset any existsence vars, before the next call of this page
+  ============================================================================
+<?/MICOMMENT>
+
+<?MIVAR>
+  $(IF,$(XST,$fxfigfi_gene_zdb_id),$(UNSETVAR,$fxfigfi_gene_zdb_id))
+  $(IF,$(XST,$fxfigfi_resultTable),$(UNSETVAR,$fxfigfi_resultTable))
+  $(UNSETVAR,$fxfigfish_fig_zdb_id)
+  $(UNSETVAR,$fxfigfish_list_items)  
+  $(UNSETVAR,$fxfigfish_separate_items)
+<?/MIVAR>

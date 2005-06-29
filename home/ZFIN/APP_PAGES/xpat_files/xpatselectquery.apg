@@ -3,27 +3,40 @@
 FILE:     xpatselectquery.apg
 PREFIX:   xpatselqry_
 
-Queries the database for expression patterns that meet the criteria 
+Queries the database for expression experiement figures that meet the criteria
 specified by a user in xpatselect.apg.  The page is webexploded by
 xpatselect.apg.
 
 This populates the temp table named by xpatselqry_resultTable,
-with a list of expression pattern ZDB IDs that match the criteria.
-If the search includes gene or fish names, then the text that 
-matched is also included in the record.
-That table is created by xpatselect.apg, is empty when this page is
-called, and has a single column in it, named xpat_zdb_id.
+with a list of expression experiments and supporting figures.
+For certain searches, we also return the text that caused the record
+to match the search.
 
 INPUT VARS:
-  xpatselqry_resultTable       Name of the temp table to put matching 
-				expression patterns in.  This table is the
+  xpatselqry_resultTable        Name of the temp table to put matching 
+				expression experiment figures in.  This table 
+                                is the
 				output of this page.  See above for more.
-  xpatselqry_mrkrName		Exists if user entered a gene/EST name
-  xpatselqry_mrkrSearchType  	Should gene/EST name 'begins' with or 'contains' 
+  xpatselqry_geneName		Exists if user entered a gene name
+  xpatselqry_geneSearchType  	Should gene name 'begins' with or 'contains' 
 				or 'equals'
+
+  xpatselqry_geneZdbId		Think of it like a super duper equals search.
+				If this variable comes in, we can immediately
+				slim the query down to just xpatex records
+				that match this very gene.
+
+  xpatselqry_probeName		Exists if the user entered a probe name
+  xpatselqry_probeSearchType	Should probe name be 
+                                'begins' / 'contains' / 'equals' 
+
   xpatselqry_fishName		Exists if user entered a mutant/background string.
   xpatselqry_fishSearchType	Specifies if mutant name should 'begins' with or
 				'contains' the string in mutant.
+
+  xpatselqry_MOgene		Exists if user entered a MO knockdown string.
+  xpatselqry_MOsearchtype	Specifies if gene name should 'begins' with or
+				'contains' the string.
   xpatselqry_author		Exists if user entered an author string
   xpatselqry_authorSearchType	Specifies if the author should 'begins' with or
 				'contains' the string in author 
@@ -37,27 +50,40 @@ INPUT VARS:
   xpatselqry_stageEnd		Exists if user specified a stage window.
 				ending stage of selected stage window.
   xpatselqry_assay		Exists if user specified and assay type.
+  xpatselqry_jtype		Exists if user wants to constrain to just published
+				or direct submission xpat records.
+  xpatselqry_imagesOnly		Exists if user wants to constrain to figures
+				with images only.
+
 
 OUTPUT VARS:
-  xpatselqry_testCountVec	Vector containing # or xpression patterns left after
-				each test applied.  If this does not exist then no
-				tests were applied.
-  xpatselqry_testNameVec	Vector containing the name of each test applied.
-				If this does not exist then no tests were applied.
-				There is a 1:1 correspondence between entries in
-				this vector and in xpatselqry_countVec
-
+  xpatselqry_matchedText	This variable will start out not existing, if
+				a query runs that causes text to get matched,
+				the piece of text entered into the field will
+				be stored here (for whichever field, gene name,
+				probe name, fish or author, so far).  If this
+				variable exists when any of those querries
+				starts, the query will just pass on matching
+				text columns instead of re-filling them.
+				(which means that the order of the queries
+				implies the relative importance of them
+				showing up in the matching text column)
+  xpatselqry_matchedTextSearchType	'contains' / 'begins' / 'equals' for above
 
 OUTPUT:
-  None.
+  This file does not produce any HTML.
 
 EFFECTS  
-  The table named by xpatselqry_resultTable contains expression pattern IDs,
-  and matching text if appropriate, for
-  any expression patterns that met the user criteria.
+  The table named by xpatselqry_resultTable contains information about matching
+  expression experiments, their supporting figures, and matching text if 
+  appropriate.
 
   Also, several other temp tables, that are specific to this app page may
   have been created.  Those temp tables will be empty.
+
+DEBUGGING:
+  This app page has support for $debug_sql and $debug_timing.
+
 <?/MICOMMENT>
 
 <?MIERROR>
@@ -70,7 +96,6 @@ EFFECTS
   Message: $MI_ERRORMSG <br>
 <?/MIERROR>
 
-
 <?MISQL COND=$(XST,$debug_timing) SQL="
   execute function get_time()">
   <br>$1 Starting query page
@@ -82,12 +107,25 @@ EFFECTS
   ============================================================================
 
   There are many different things that can be specified in the user interface
-  for selecting expression patterns.  This code performs the checks one at a 
-  time, always anding the results with the previous results.  Initially, the
-  code assumes that every expression pattern qualifies.
+  for selecting expression experiment figures.  This code performs the checks 
+  one at a time, always anding the results with the previous results.  Initially,
+  the code assumes that every expression experiment figure qualifies.
 
-  The gene/probe name test and the fish name test hang on to the matching text
-  that caused the expression pattern to pass.  These require special handling.
+  Several tests hang on to the matching text that caused the expression 
+  experiment figure to match.  We only hang on to the matching text for the
+  first such test.  Therefore, the order of the tests matter.  See the
+  discussion of the $xpatselqry_matchedText variable in the page header
+  for more information.
+
+  The tests that don't require knowledge of anatomy (expression_result) or
+  figures (expression_pattern_figure) are run first, followed by the 
+  test that require this information.  We do this because getting information
+  about anatomy/figures causes a large increase in the number of rows we
+  have to process.  Therefore, we postpone getting that information until
+  we absolutely need it.
+
+  If we don't run any tests that need anatomy/figure information, then we
+  pull in figure information at the very end before returning to the caller.
 <?/MICOMMENT>
 
 <?MISQL SQL="
@@ -96,134 +134,420 @@ EFFECTS
   <?MIVAR NAME=$xpatselqry_session_id>$1<?/MIVAR>
 <?/MISQL>
 
+<?MICOMMENT>
+  ** Use nulls in matching columns until we run a test that keeps the 
+  ** matching text
+<?/MICOMMENT>
 <?MIVAR NAME=$xpatselqry_matchingCols>NULL::varchar(255), NULL::varchar(80), NULL::integer<?/MIVAR>
-<?MIVAR NAME=$xpatselqry_matchTable>expression_pattern<?/MIVAR>
-<?MIVAR>$(UNSETVAR,$xpatselqry_testCountVec)<?/MIVAR>
-<?MIVAR>$(UNSETVAR,$xpatselqry_testNameVec)<?/MIVAR>
 
-<?MICOMMENT> ===== Process variables for single quotes ===== <?/MICOMMENT>
+<?MICOMMENT>
+  ** Start with expression_experiment as the query table.
+  ** This will be replaced with a new temp table name after each test is
+  ** run.  This page uses a chain of tables, each test producing a new
+  ** temp table that then becomes the input to the next test.
+<?/MICOMMENT>
+<?MIVAR NAME=$xpatselqry_matchTable>expression_experiment<?/MIVAR>
 
-<?MIVAR COND="$(XST,$xpatselqry_mrkrName)" NAME=$xpatselqry_mrkrName DELIMIT="'" REPLACE="''">$xpatselqry_mrkrName<?/MIVAR> 
-<?MIVAR COND="$(XST,$xpatselqry_fishName)" NAME=$xpatselqry_fishName DELIMIT="'" REPLACE="''">$xpatselqry_fishName<?/MIVAR> 
-<?MIVAR COND="$(XST,$xpatselqry_author)" NAME=$xpatselqry_author DELIMIT="'" REPLACE="''">$xpatselqry_author<?/MIVAR> 
+
+<?MICOMMENT> *** Process variables for single quotes *** <?/MICOMMENT>
+
+<?MIVAR COND="$(XST,$xpatselqry_geneName)" NAME=$xpatselqry_geneName>$(REPLACE,$xpatselqry_geneName,','')<?/MIVAR> 
+<?MIVAR COND="$(XST,$xpatselqry_probeName)" NAME=$xpatselqry_probeName>$(REPLACE,$xpatselqry_probeName,','')<?/MIVAR>
+<?MIVAR COND="$(XST,$xpatselqry_fishName)" NAME=$xpatselqry_fishName>$(REPLACE,$xpatselqry_fishName,','')<?/MIVAR> 
+<?MIVAR COND="$(XST,$xpatselqry_author)" NAME=$xpatselqry_author>$(REPLACE,$xpatselqry_author,','')<?/MIVAR> 
+<?MIVAR COND="$(XST,$xpatselqry_MOgene)" NAME=$xpatselqry_MOgene>$(REPLACE,$xpatselqry_MOgene,','')<?/MIVAR> 
 
 
-<?MIBLOCK COND="$(XST,$xpatselqry_mrkrName)">
+<?MIBLOCK COND="$(XST,$xpatselqry_jtype)">
   <?MICOMMENT>
     ============================================================================
-    ==========  MARKER NAME TESTS
+    ==========  JTYPE TEST
     ============================================================================
   <?/MICOMMENT>
 
-  <?MISQL COND=$(XST,$debug_timing) SQL="
-    execute function get_time()">
-    <br>$1 Before marker name tests
+  <?MICOMMENT> *** Create or reuse temp table *** <?/MICOMMENT>
+  <?MIVAR NAME=$xpatselectquery_temp_jtype>$(CONCAT,xpatselectquery_temp_jtype_,$xpatselqry_session_id)<?/MIVAR>
+  <?MISQL SQL="
+    execute function table_exists('$xpatselectquery_temp_jtype')">
+    <?MISQL COND=$(EC,$1,f) SQL="
+      create temp table $xpatselectquery_temp_jtype (
+        xpatex_zdb_id			varchar(50),
+        xpatex_source_zdb_id            varchar(50),
+        xpatex_assay_name               varchar(40),
+        xpatex_probe_feature_zdb_id     varchar(50),
+        xpatex_gene_zdb_id              varchar(50),
+        xpatex_featexp_zdb_id           varchar(50),
+	xpatex_matching_text		varchar(255),
+        xpatex_matching_precedence	varchar(80),
+        xpatex_matching_significance 	integer
+      )
+      with NO LOG;">
+    <?/MISQL>
   <?/MISQL>
 
-  <?MICOMMENT> Create or reuse temp table <?/MICOMMENT>
+  <?MICOMMENT> *** So, I'm sending this in as Published or Unpublished, when I'm really testing
+                   for Journal and Unpublished.. I think it's possible that someday we might need
+                   to expand Published into more than just Journal, so I'll leave the layer of
+                   abstraction here.  Can't hurt... can it?                       *** <?/MICOMMENT>
+  <?MIVAR NAME="$xpatselqry_jtype" COND="$(EC,$xpatselqry_jtype,Published)">Journal<?/MIVAR>
+
+  <?MICOMMENT> *** Get records that pass this test *** <?/MICOMMENT>
+  
+  <?MIVAR NAME=xpatselqry_jtype_sql>
+    insert into $xpatselectquery_temp_jtype
+        ( xpatex_zdb_id, xpatex_source_zdb_id, xpatex_assay_name,
+          xpatex_probe_feature_zdb_id, xpatex_gene_zdb_id,
+          xpatex_featexp_zdb_id )
+      select distinct 
+             xpatex_zdb_id, xpatex_source_zdb_id, xpatex_assay_name,
+             xpatex_probe_feature_zdb_id, xpatex_gene_zdb_id,
+             xpatex_featexp_zdb_id
+        from $xpatselqry_matchTable 
+             join publication 
+               on xpatex_source_zdb_id = publication.zdb_id
+        where jtype = '$xpatselqry_jtype'
+  <?/MIVAR>
+  <?MISQL SQL="$xpatselqry_jtype_sql"><?/MISQL>
+
+  <?MICOMMENT> *** Debugging *** <?/MICOMMENT>
+  <?MIVAR COND=$(XST,$debug_sql)>
+    <p>Gene ID Test: $MI_ROWCOUNT records passed
+    <br>SQL: <pre>$MI_SQL</pre><p>
+  <?/MIVAR>
+  <?MISQL COND=$(XST,$debug_timing) SQL="
+    execute function get_time()">
+    <br>$1 After jtype test
+  <?/MISQL>
+
+
+  <?MICOMMENT> *** Cleanup and hand off to next test *** <?/MICOMMENT>
+  <?MIVAR NAME=$xpatselqry_matchTable>$xpatselectquery_temp_jtype<?/MIVAR>
+
+<?/MIBLOCK>
+
+
+
+
+
+<?MIBLOCK COND="$(XST,$xpatselqry_geneZdbId)">
+  <?MICOMMENT>
+    ============================================================================
+    ==========  GENE ID TEST
+    ============================================================================
+  <?/MICOMMENT>
+
+  <?MICOMMENT> *** Create or reuse temp table *** <?/MICOMMENT>
+  <?MIVAR NAME=$xpatselectquery_temp_geneid>$(CONCAT,xpatselectquery_temp_geneid_,$xpatselqry_session_id)<?/MIVAR>
+  <?MISQL SQL="
+    execute function table_exists('$xpatselectquery_temp_geneid')">
+    <?MISQL COND=$(EC,$1,f) SQL="
+      create temp table $xpatselectquery_temp_geneid (
+        xpatex_zdb_id			varchar(50),
+        xpatex_source_zdb_id            varchar(50),
+        xpatex_assay_name               varchar(40),
+        xpatex_probe_feature_zdb_id     varchar(50),
+        xpatex_gene_zdb_id              varchar(50),
+        xpatex_featexp_zdb_id           varchar(50),
+	xpatex_matching_text		varchar(255),
+        xpatex_matching_precedence	varchar(80),
+        xpatex_matching_significance 	integer
+      )
+      with NO LOG;">
+    <?/MISQL>
+  <?/MISQL>
+
+  <?MICOMMENT> *** Get records that pass this test *** <?/MICOMMENT>
+  <?MISQL SQL="
+    insert into $xpatselectquery_temp_geneid
+        ( xpatex_zdb_id, xpatex_source_zdb_id, xpatex_assay_name,
+          xpatex_probe_feature_zdb_id, xpatex_gene_zdb_id,
+          xpatex_featexp_zdb_id )
+      select distinct 
+             xpatex_zdb_id, xpatex_source_zdb_id, xpatex_assay_name,
+             xpatex_probe_feature_zdb_id, xpatex_gene_zdb_id,
+             xpatex_featexp_zdb_id
+        from $xpatselqry_matchTable
+        where xpatex_gene_zdb_id = '$xpatselqry_geneZdbId'">
+  <?/MISQL>
+
+  <?MICOMMENT> *** Debugging *** <?/MICOMMENT>
+  <?MIVAR COND=$(XST,$debug_sql)>
+    <p>Gene ID Test: $MI_ROWCOUNT records passed
+    <br>SQL: <pre>$MI_SQL</pre><p>
+  <?/MIVAR>
+  <?MISQL COND=$(XST,$debug_timing) SQL="
+    execute function get_time()">
+    <br>$1 After gene id test
+  <?/MISQL>
+
+
+  <?MICOMMENT> *** Cleanup and hand off to next test *** <?/MICOMMENT>
+  <?MIVAR NAME=$xpatselqry_matchTable>$xpatselectquery_temp_geneid<?/MIVAR>
+
+<?/MIBLOCK>
+
+
+
+<?MICOMMENT> *** dont need to do gene name test if we already did a gene id test *** <?/MICOMMENT>
+<?MIBLOCK COND="$(AND,$(XST,$xpatselqry_geneName),$(NXST,$xpatselqry_geneZdbId))">
+  <?MICOMMENT>
+    ============================================================================
+    ==========  GENE NAME TESTS 
+    ============================================================================
+  <?/MICOMMENT>
+
+  <?MICOMMENT> *** Create or reuse temp table *** <?/MICOMMENT>
   <?MIVAR NAME=$xpatselectquery_temp_marker>$(CONCAT,xpatselectquery_temp_marker_,$xpatselqry_session_id)<?/MIVAR>
   <?MISQL SQL="
     execute function table_exists('$xpatselectquery_temp_marker')">
     <?MISQL COND=$(EC,$1,f) SQL="
       create temp table $xpatselectquery_temp_marker (
-        xpat_zdb_id 			varchar(50),
-	xpat_matching_text		varchar(255),
-        xpat_matching_precedence	varchar(80),
-        xpat_matching_significance 	integer,
-        xpat_stock_zdb_id 		varchar(50),
-	xpat_assay_name 		varchar(40),
-	xpat_source_zdb_id		varchar(50),
-        primary key (xpat_zdb_id)
-      ) with NO LOG;">
+        xpatex_zdb_id			varchar(50),
+        xpatex_source_zdb_id            varchar(50),
+        xpatex_assay_name               varchar(40),
+        xpatex_probe_feature_zdb_id     varchar(50),
+        xpatex_gene_zdb_id              varchar(50),
+        xpatex_featexp_zdb_id           varchar(50),
+	xpatex_matching_text		varchar(255),
+        xpatex_matching_precedence	varchar(80),
+        xpatex_matching_significance 	integer
+      )
+      with NO LOG;">
     <?/MISQL>
   <?/MISQL>
 
+  <?MICOMMENT>
+    ** Depending on the search type, either use all_map_names alone,
+    ** or all_map_names in combination with all_name_ends
+  <?/MICOMMENT>
   <?MIVAR NAME=$xpatselqry_nameEndsTable><?/MIVAR>
-  <?MIBLOCK COND="$(EC,$xpatselqry_mrkrSearchType,begins)">
-    <?MIVAR NAME=$xpatselqry_nameCond>allmapnm_name_lower like '$(LOWER,$xpatselqry_mrkrName)%'<?/MIVAR>
-  <?MIELSE COND="$(EC,$xpatselqry_mrkrSearchType,equals)">
-    <?MIVAR NAME=$xpatselqry_nameCond>allmapnm_name_lower = '$(LOWER,$xpatselqry_mrkrName)'<?/MIVAR>
-  <?MIELSE>
-    <?MIVAR NAME=$xpatselqry_nameEndsTable>, all_name_ends<?/MIVAR>
+  <?MIBLOCK COND="$(EC,$xpatselqry_geneSearchType,begins)">
     <?MIVAR NAME=$xpatselqry_nameCond>
-          allnmend_name_end_lower like '$(LOWER,$xpatselqry_mrkrName)%'
-      and allmapnm_serial_id = allnmend_allmapnm_serial_id
+      allmapnm_name_lower like '$(LOWER,$xpatselqry_geneName)%'
+    <?/MIVAR>
+  <?MIELSE COND="$(EC,$xpatselqry_geneSearchType,equals)">
+    <?MIVAR NAME=$xpatselqry_nameCond>
+      allmapnm_name_lower = '$(LOWER,$xpatselqry_geneName)'
+    <?/MIVAR>
+  <?MIELSE>
+    <?MIVAR NAME=$xpatselqry_nameEndsTable>
+      join all_name_ends on allmapnm_serial_id = allnmend_allmapnm_serial_id
+    <?/MIVAR>
+    <?MIVAR NAME=$xpatselqry_nameCond>
+      allnmend_name_end_lower like '$(LOWER,$xpatselqry_geneName)%'
     <?/MIVAR>
   <?/MIBLOCK>
 
   <?MICOMMENT> 
-    Each xpat can match on mutliple names.  Take only the most significant name.
-    Break ties on significance with precedence string, and then name (do this
-    just so results are presented consistently).
+    **** Matching Text **** 
+    **
+    ** This is the first test that saves the matching text.  Therefore the
+    ** test for existence of $xpatselqry_matchedText below is not really
+    ** needed.  However, it is included because this test may get moved
+    ** around.
+    **
   <?/MICOMMENT>
-  <?MIVAR NAME=$xpatselqry_prevSavedXpat><?/MIVAR>
+  <?MIVAR NAME="$xpatselqry_geneOnlyGetBest"><?/MIVAR>
+  <?MIBLOCK COND="$(NXST,$xpatselqry_matchedText)">
+    <?MIVAR NAME="$xpatselqry_matchedText">$xpatselqry_geneName<?/MIVAR>
+    <?MIVAR NAME="$xpatselqry_matchedTextSearchType">$xpatselqry_geneSearchType<?/MIVAR>
+    <?MIVAR NAME="$xpatselqry_matchingCols">
+      allmapnm_name, allmapnm_precedence, allmapnm_significance
+    <?/MIVAR>
+    <?MICOMMENT>
+      ** Each xpat can match on mutliple names.  Save only the most 
+      ** significant name.
+    <?/MICOMMENT>
+    <?MIVAR NAME="$xpatselqry_geneOnlyGetBest">
+      and allmapnm_significance = ( select min(allmapnm_significance)
+                                      from all_map_names
+                                           $xpatselqry_nameEndsTable
+                                      where allmapnm_zdb_id = xpatex_gene_zdb_id
+                                        and $xpatselqry_nameCond )
+    <?/MIVAR>
+  <?/MIBLOCK>
+
+  <?MICOMMENT> *** Get records that pass this test *** <?/MICOMMENT>
   <?MISQL SQL="
-    select xpat_zdb_id, xpat_stock_zdb_id, xpat_assay_name, 
-	   allmapnm_name, allmapnm_precedence, allmapnm_significance,
-	   xpat_probe_zdb_id, allmapnm_zdb_id, xpat_source_zdb_id,
-	   mrkrtype_significance, allmapnm_name_lower
-      from $xpatselqry_matchTable, all_map_names, marker, marker_types
-	   $xpatselqry_nameEndsTable
-      where allmapnm_zdb_id = xpat_gene_zdb_id
-	and $xpatselqry_nameCond
-        and allmapnm_precedence <> 'Accession number'
-        and allmapnm_zdb_id = mrkr_zdb_id
-	and mrkr_type = marker_type
-    UNION
-    select xpat_zdb_id, xpat_stock_zdb_id, xpat_assay_name, 
-	   allmapnm_name, allmapnm_precedence, allmapnm_significance,
-	   xpat_probe_zdb_id, allmapnm_zdb_id, xpat_source_zdb_id,
-	   mrkrtype_significance, allmapnm_name_lower
-      from $xpatselqry_matchTable, all_map_names, marker, marker_types
-	   $xpatselqry_nameEndsTable
-      where allmapnm_zdb_id = xpat_probe_zdb_id
-	and $xpatselqry_nameCond
-        and allmapnm_precedence <> 'Accession number'
-        and allmapnm_zdb_id = mrkr_zdb_id
-	and mrkr_type = marker_type
-    ORDER BY 1, 10, 6, 5, 11">
-    <?MIVAR NAME=$xpatselqry_xpat_zdb_id>$1<?/MIVAR>
-    <?MIBLOCK COND="$(NE,$xpatselqry_prevSavedXpat,$xpatselqry_xpat_zdb_id)">
-      <?MIVAR NAME=$xpatselqry_xpat_stock_zdb_id>$2<?/MIVAR>
-      <?MIVAR NAME=$xpatselqry_xpat_assay_name>$3<?/MIVAR>
-      <?MIVAR NAME=$xpatselqry_allmapnm_name>$4<?/MIVAR>
-      <?MIVAR NAME=$xpatselqry_allmapnm_precedence>$5<?/MIVAR>
-      <?MIVAR NAME=$xpatselqry_allmapnm_significance>$6<?/MIVAR>
-      <?MIVAR NAME=$xpatselqry_xpat_probe_zdb_id>$7<?/MIVAR>
-      <?MIVAR NAME=$xpatselqry_allmapnm_zdb_id>$8<?/MIVAR>
-      <?MIVAR NAME=$xpatselqry_xpat_source_zdb_id>$9<?/MIVAR>
-
-      <?MICOMMENT> bold the part of the name that matched <?/MICOMMENT>
-      <?MIVAR NAME=$xpatselqry_startPos>$(POSITION,$(LOWER,$xpatselqry_allmapnm_name),$(LOWER,$xpatselqry_mrkrName))<?/MIVAR>
-      <?MIVAR NAME=$xpatselqry_matchLength>$(STRLEN,$xpatselqry_mrkrName)<?/MIVAR>
-      <?MIVAR NAME=$xpatselqry_allmapnm_name>$(SUBSTR,$xpatselqry_allmapnm_name,1,$(-,$xpatselqry_startPos,1))<b>$(SUBSTR,$xpatselqry_allmapnm_name,$xpatselqry_startPos,$xpatselqry_matchLength)</b>$(SUBSTR,$xpatselqry_allmapnm_name,$(+,$xpatselqry_startPos,$xpatselqry_matchLength))<?/MIVAR>
-
-      <?MICOMMENT> if name matched probe, add "probe" to matching precedence <?/MICOMMENT>
-      <?MIVAR COND=$(EQ,$xpatselqry_xpat_probe_zdb_id,$xpatselqry_allmapnm_zdb_id)
-              NAME=$xpatselqry_allmapnm_precedence>$xpatselqry_allmapnm_precedence (probe)<?/MIVAR>
-
-      <?MIVAR NAME=$xpatselqry_allmapnm_name DELIMIT="'" REPLACE="''">$xpatselqry_allmapnm_name<?/MIVAR>
-      <?MISQL SQL="
-	insert into $xpatselectquery_temp_marker
-	  values (
-	    '$xpatselqry_xpat_zdb_id', '$xpatselqry_allmapnm_name',
-	    '$xpatselqry_allmapnm_precedence', $xpatselqry_allmapnm_significance,
-	    '$xpatselqry_xpat_stock_zdb_id', '$xpatselqry_xpat_assay_name',
-	    '$xpatselqry_xpat_source_zdb_id' )">
-      <?/MISQL>
-      <?MIVAR NAME=$xpatselqry_prevSavedXpat>$xpatselqry_xpat_zdb_id<?/MIVAR>
-    <?/MIBLOCK>
+    insert into $xpatselectquery_temp_marker 
+        ( xpatex_zdb_id, xpatex_source_zdb_id, xpatex_assay_name,
+          xpatex_probe_feature_zdb_id, xpatex_gene_zdb_id,
+          xpatex_featexp_zdb_id, xpatex_matching_text,
+          xpatex_matching_precedence, xpatex_matching_significance )
+      select distinct 
+             xpatex_zdb_id, xpatex_source_zdb_id, xpatex_assay_name,
+             xpatex_probe_feature_zdb_id, xpatex_gene_zdb_id,
+             xpatex_featexp_zdb_id,
+             $xpatselqry_matchingCols
+        from $xpatselqry_matchTable 
+             join all_map_names 
+               on allmapnm_zdb_id = xpatex_gene_zdb_id
+             $xpatselqry_nameEndsTable
+        where $xpatselqry_nameCond
+          $xpatselqry_geneOnlyGetBest">
   <?/MISQL>
 
-  <?MIVAR>$(VECAPPEND,$xpatselqry_testNameVec,Gene/EST)<?/MIVAR>
-  <?MISQL SQL="
-    select count(*)::integer 
-      from $xpatselectquery_temp_marker">
-    <?MIVAR>$(VECAPPEND,$xpatselqry_testCountVec,$1)<?/MIVAR>
+  <?MICOMMENT> *** I am so sly.  Ok, so we don't want to have a seperate probe search box.
+               *** Instead we want just the one.. but the thing is, we don't want to just
+               *** treat the probe as another way to refer to the gene.  There can be
+               *** multiple probes for one gene, and we might want to return only the records
+               *** that apply to just one probe.  So we're not going to do a probe search
+               *** unless the gene search fails.  This means that if they want to search just
+               *** for a probe, it's going to have to be a pretty exact match.  The silver
+               *** lining is that people aren't likely to want to do that.  The ucky gooey
+               *** green lining is that cb110 is a probe you can't search for because it's
+               *** an alternate name of fgf8.  I think that's goofy, but whatever.  <?/MICOMMENT>
+
+  <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
+    <?MICOMMENT> ** we need to know this to not change the value of matchTable ** <?/MICOMMENT>
+    <?MIVAR NAME="$xpatselqry_skippedGeneTest">true<?/MIVAR> 
+
+    <?MIVAR NAME="$xpatselqry_probeName">$xpatselqry_geneName<?/MIVAR>
+    <?MIVAR NAME="$xpatselqry_probeSearchType">$xpatselqry_geneSearchType<?/MIVAR>
+
+    <?MICOMMENT> ** we're pretending this search never happened ** <?/MICOMMENT>
+    <?MIVAR> $(UNSETVAR,$xpatselqry_matchedText) <?/MIVAR> 
+  <?/MIBLOCK>
+
+
+  <?MICOMMENT> *** Debugging *** <?/MICOMMENT>
+  <?MIVAR COND=$(XST,$debug_sql)>
+    <p>Gene Name Test: $MI_ROWCOUNT records passed
+    <br>SQL: <pre>$MI_SQL</pre><p>
+  <?/MIVAR>
+  <?MISQL COND=$(XST,$debug_timing) SQL="
+    execute function get_time()">
+    <br>$1 After gene name tests
   <?/MISQL>
-  <?MIVAR NAME=$xpatselqry_matchTable>$xpatselectquery_temp_marker<?/MIVAR>
-  <?MIVAR NAME=$xpatselqry_matchingCols>xpat_matching_text, xpat_matching_precedence, xpat_matching_significance<?/MIVAR>
-<?/MIBLOCK>
+
+
+  <?MICOMMENT> *** Cleanup and hand off to next test, unless we got 0
+                   results and are doing a probe search next.    *** <?/MICOMMENT>
+  <?MIBLOCK COND="$(NXST,$xpatselqry_skippedGeneTest)">
+    <?MISQL COND="$(NC,$xpatselqry_matchTable,expression_experiment)" SQL="
+      delete from $xpatselqry_matchTable">
+    <?/MISQL>
+    <?MIVAR NAME=$xpatselqry_matchingCols>
+      xpatex_matching_text, xpatex_matching_precedence, xpatex_matching_significance
+    <?/MIVAR>
+    <?MIVAR NAME=$xpatselqry_matchTable>$xpatselectquery_temp_marker<?/MIVAR>
+  <?/MIBLOCK>
+<?/MIBLOCK>  <?MICOMMENT> *** end gene name query *** <?/MICOMMENT>
+
+
+
+<?MIBLOCK COND="$(XST,$xpatselqry_probeName)">
+  <?MICOMMENT>
+    ============================================================================
+    ==========  PROBE NAME TESTS
+    ============================================================================
+
+    This code is structurally very similar to the gene name test above.  See
+    that code for comments that work with this code as well.
+  <?/MICOMMENT>
+
+  <?MICOMMENT> *** Create or reuse temp table *** <?/MICOMMENT>
+  <?MIVAR NAME=$xpatselectquery_temp_probe>$(CONCAT,xpatselectquery_temp_probe_,$xpatselqry_session_id)<?/MIVAR>
+  <?MISQL SQL="
+    execute function table_exists('$xpatselectquery_temp_probe')">
+    <?MISQL COND=$(EC,$1,f) SQL="
+      create temp table $xpatselectquery_temp_probe (
+        xpatex_zdb_id			varchar(50),
+        xpatex_source_zdb_id            varchar(50),
+        xpatex_assay_name               varchar(40),
+        xpatex_gene_zdb_id              varchar(50),
+        xpatex_featexp_zdb_id           varchar(50),
+	xpatex_matching_text		varchar(255),
+        xpatex_matching_precedence	varchar(80),
+        xpatex_matching_significance 	integer
+      )
+      with NO LOG;">
+    <?/MISQL>
+  <?/MISQL>
+
+  <?MICOMMENT> *** use all_name_ends depending on search type *** <?/MICOMMENT>
+  <?MIVAR NAME=$xpatselqry_nameEndsTable><?/MIVAR>
+  <?MIBLOCK COND="$(EC,$xpatselqry_probeSearchType,begins)">
+    <?MIVAR NAME=$xpatselqry_nameCond>
+      allmapnm_name_lower like '$(LOWER,$xpatselqry_probeName)%'
+    <?/MIVAR>
+  <?MIELSE COND="$(EC,$xpatselqry_probeSearchType,equals)">
+    <?MIVAR NAME=$xpatselqry_nameCond>
+      allmapnm_name_lower = '$(LOWER,$xpatselqry_probeName)'
+    <?/MIVAR>
+  <?MIELSE>
+    <?MIVAR NAME=$xpatselqry_nameEndsTable>
+      join all_name_ends on allmapnm_serial_id = allnmend_allmapnm_serial_id
+    <?/MIVAR>
+    <?MIVAR NAME=$xpatselqry_nameCond>
+      allnmend_name_end_lower like '$(LOWER,$xpatselqry_probeName)%'
+    <?/MIVAR>
+  <?/MIBLOCK>
+
+  <?MICOMMENT> *** Matching text *** <?/MICOMMENT>
+  <?MIVAR NAME="$xpatselqry_probeOnlyGetBest"><?/MIVAR>
+  <?MIBLOCK COND="$(NXST,$xpatselqry_matchedText)">
+    <?MIVAR NAME="$xpatselqry_matchedText">$xpatselqry_probeName<?/MIVAR>
+    <?MIVAR NAME="$xpatselqry_matchedTextSearchType">$xpatselqry_probeSearchType<?/MIVAR>
+    <?MIVAR NAME="$xpatselqry_matchingCols">
+       allmapnm_name, 
+       case allmapnm_precedence 
+          when 'Current symbol' then 'Probe name'
+          when 'Accession number' then 'Probe acc#'
+          else allmapnm_precedence 
+       end, 
+       allmapnm_significance
+    <?/MIVAR>
+    <?MIVAR NAME="$xpatselqry_probeOnlyGetBest">
+      and allmapnm_significance = ( select min(allmapnm_significance) 
+                                      from all_map_names
+                                           $xpatselqry_nameEndsTable
+                                      where allmapnm_zdb_id = xpatex_probe_feature_zdb_id
+                                        and $xpatselqry_nameCond )
+    <?/MIVAR>
+  <?/MIBLOCK>
+
+  <?MICOMMENT> *** Get records that pass this test *** <?/MICOMMENT>
+  <?MISQL SQL="
+    insert into $xpatselectquery_temp_probe
+        ( xpatex_zdb_id, xpatex_source_zdb_id, xpatex_assay_name,
+          xpatex_gene_zdb_id,
+          xpatex_featexp_zdb_id, xpatex_matching_text,
+          xpatex_matching_precedence, xpatex_matching_significance )
+      select distinct
+             xpatex_zdb_id, xpatex_source_zdb_id, xpatex_assay_name,
+             xpatex_gene_zdb_id, xpatex_featexp_zdb_id,
+             $xpatselqry_matchingCols
+        from $xpatselqry_matchTable 
+             join all_map_names 
+               on allmapnm_zdb_id = xpatex_probe_feature_zdb_id
+             $xpatselqry_nameEndsTable
+        where $xpatselqry_nameCond
+          $xpatselqry_probeOnlyGetBest">
+  <?/MISQL>
+
+  <?MICOMMENT> *** Debugging *** <?/MICOMMENT>
+  <?MIVAR COND=$(XST,$debug_sql)>
+    <p>Probe Name Test: $MI_ROWCOUNT records passed
+    <br>SQL: <pre>$MI_SQL</pre><p>
+  <?/MIVAR>
+  <?MISQL COND=$(XST,$debug_timing) SQL="
+    execute function get_time()">
+    <br>$1 After probe name tests
+  <?/MISQL>
+
+
+  <?MICOMMENT> *** Cleanup and hand off to next test *** <?/MICOMMENT>
+  <?MISQL COND="$(NC,$xpatselqry_matchTable,expression_experiment)" SQL="
+    delete from $xpatselqry_matchTable">
+  <?/MISQL>
+  <?MIVAR NAME=$xpatselqry_matchingCols>
+    xpatex_matching_text, xpatex_matching_precedence, xpatex_matching_significance
+  <?/MIVAR>
+  <?MIVAR NAME=$xpatselqry_matchTable>$xpatselectquery_temp_probe<?/MIVAR>
+
+<?/MIBLOCK>  <?MICOMMENT> *** end probe name query *** <?/MICOMMENT>
+
 
 
 <?MIBLOCK COND="$(XST,$xpatselqry_fishName)">
@@ -231,102 +555,270 @@ EFFECTS
     ============================================================================
     ==========  FISH NAME TESTS
     ============================================================================
+
+    This test is coded in a very similar way to earlier tests.  See the
+    gene name test for comments that apply to this code as well.
   <?/MICOMMENT>
-
-  <?MISQL COND=$(XST,$debug_timing) SQL="
-    execute function get_time()"><br>$1 Before fish name tests
-  <?/MISQL>
-
-  <?MICOMMENT> Create or reuse temp table <?/MICOMMENT>
+ 
+  <?MICOMMENT> *** Create or reuse temp table *** <?/MICOMMENT>
   <?MIVAR NAME=$xpatselectquery_temp_fish>$(CONCAT,xpatselectquery_temp_fish_,$xpatselqry_session_id)<?/MIVAR>
   <?MISQL SQL="
     execute function table_exists('$xpatselectquery_temp_fish')">
     <?MISQL COND=$(EC,$1,f) SQL="
       create temp table $xpatselectquery_temp_fish (
-        xpat_zdb_id	 		varchar(50),
-	xpat_matching_text		varchar(255),
-        xpat_matching_precedence	varchar(80),
-        xpat_matching_significance 	integer,
-	xpat_assay_name 		varchar(40),
-	xpat_source_zdb_id		varchar(50),
-        primary key (xpat_zdb_id)
+        xpatex_zdb_id			varchar(50),
+        xpatex_source_zdb_id            varchar(50),
+        xpatex_assay_name               varchar(40),
+        xpatex_gene_zdb_id              varchar(50),
+        xpatex_featexp_zdb_id           varchar(50),
+	xpatex_matching_text		varchar(255),
+        xpatex_matching_precedence	varchar(80),
+        xpatex_matching_significance 	integer
       ) with NO LOG;">
     <?/MISQL>
   <?/MISQL>
 
+  <?MICOMMENT> *** use all_name_ends depending on search type *** <?/MICOMMENT>
   <?MIVAR NAME=$xpatselqry_nameEndsTable><?/MIVAR>
   <?MIBLOCK COND="$(EC,$xpatselqry_fishSearchType,begins)">
-    <?MIVAR NAME=$xpatselqry_nameCond>allmapnm_name_lower like '$(LOWER,$xpatselqry_fishName)%'<?/MIVAR>
-  <?MIELSE>
-    <?MIVAR NAME=$xpatselqry_nameEndsTable>, all_name_ends<?/MIVAR>
     <?MIVAR NAME=$xpatselqry_nameCond>
-          allnmend_name_end_lower like '$(LOWER,$xpatselqry_fishName)%'
-      and allnmend_allmapnm_serial_id = allmapnm_serial_id
+      allmapnm_name_lower like '$(LOWER,$xpatselqry_fishName)%'
+    <?/MIVAR>
+  <?MIELSE>
+    <?MIVAR NAME=$xpatselqry_nameEndsTable>
+      join all_name_ends on allmapnm_serial_id = allnmend_allmapnm_serial_id
+    <?/MIVAR>
+    <?MIVAR NAME=$xpatselqry_nameCond>
+      allnmend_name_end_lower like '$(LOWER,$xpatselqry_fishName)%'
     <?/MIVAR>
   <?/MIBLOCK>
 
-  <?MICOMMENT> 
-    Each xpat can match on mutliple names.  Take only the most significant name.
-    Break ties on significance with precedence string, and then name (do this
-    just so results are presented consistently).
-  <?/MICOMMENT>
-  <?MIVAR NAME=$xpatselqry_prevSavedXpat><?/MIVAR>
-  <?MISQL SQL="
-    select xpat_zdb_id, xpat_assay_name, 
-	   allmapnm_name, allmapnm_precedence, allmapnm_significance,
-	   $xpatselqry_matchingCols, xpat_source_zdb_id
-      from $xpatselqry_matchTable, fish, all_map_names $xpatselqry_nameEndsTable
-      where xpat_stock_zdb_id = zdb_id
-	and allmapnm_zdb_id = zdb_id
-	and $xpatselqry_nameCond
-      order by xpat_zdb_id, allmapnm_significance, allmapnm_precedence, allmapnm_name_lower">
-    <?MIVAR NAME=$xpatselqry_xpat_zdb_id>$1<?/MIVAR>
-    <?MIBLOCK COND="$(NE,$xpatselqry_prevSavedXpat,$xpatselqry_xpat_zdb_id)">
-      <?MIVAR NAME=$xpatselqry_xpat_assay_name>$2<?/MIVAR>
-      <?MIVAR NAME=$xpatselqry_allmapnm_name>$3<?/MIVAR>
-      <?MIVAR NAME=$xpatselqry_allmapnm_precedence>$4<?/MIVAR>
-      <?MIVAR NAME=$xpatselqry_allmapnm_significance>$5<?/MIVAR>
-      <?MIVAR NAME=$xpatselqry_matching_name>$6<?/MIVAR>
-      <?MIVAR NAME=$xpatselqry_matching_precedence>$7<?/MIVAR>
-      <?MIVAR NAME=$xpatselqry_matching_significance>$8<?/MIVAR>
-      <?MIVAR NAME=$xpatselqry_xpat_source_zdb_id>$9<?/MIVAR>
+  <?MICOMMENT> *** Matching text *** <?/MICOMMENT>
+  <?MIVAR NAME="$xpatselqry_fishOnlyGetBest"><?/MIVAR>
+  <?MIBLOCK COND="$(NXST,$xpatselqry_matchedText)">
+                                           <?MICOMMENT> ** this REPLACE is to get rid of the special
+                                                        ** encoding that's required because informix
+                                                        ** treats _ as a ? wildcard  <?/MICOMMENT>
+    <?MIVAR NAME="$xpatselqry_matchedText">$(REPLACE,$xpatselqry_fishName,\_,_)<?/MIVAR>
+    <?MIVAR NAME="$xpatselqry_matchedTextSearchType">$xpatselqry_fishSearchType<?/MIVAR>
+    <?MIVAR NAME="$xpatselqry_matchingCols"> 
+      allmapnm_name, allmapnm_precedence, allmapnm_significance
+    <?/MIVAR>
+    <?MIVAR NAME="$xpatselqry_fishOnlyGetBest">
+      and allmapnm_significance = ( select min(allmapnm_significance) 
+                                    from all_map_names
+                                         $xpatselqry_nameEndsTable
+                                    where allmapnm_zdb_id = featexp_genome_feature_zdb_id
+                                      and $xpatselqry_nameCond )
+    <?/MIVAR>
+  <?/MIBLOCK>
 
-      <?MICOMMENT> 
-	If matching name was already set by a previous test, then do not record
-	the matching name from the fish.
-      <?/MICOMMENT>
-      <?MIBLOCK COND="$(EQ,$xpatselqry_matching_name,NULL)">
-        <?MICOMMENT> bold the part of the name that matched <?/MICOMMENT>
-        <?MIVAR NAME=$xpatselqry_startPos>$(POSITION,$(LOWER,$xpatselqry_allmapnm_name),$(LOWER,$xpatselqry_fishName))<?/MIVAR>
-        <?MIVAR NAME=$xpatselqry_matchLength>$(STRLEN,$xpatselqry_fishName)<?/MIVAR>
-        <?MIVAR NAME=$xpatselqry_allmapnm_name>$(SUBSTR,$xpatselqry_allmapnm_name,1,$(-,$xpatselqry_startPos,1))<b>$(SUBSTR,$xpatselqry_allmapnm_name,$xpatselqry_startPos,$xpatselqry_matchLength)</b>$(SUBSTR,$xpatselqry_allmapnm_name,$(+,$xpatselqry_startPos,$xpatselqry_matchLength))<?/MIVAR>
-      <?MIELSE>
-        <?MIVAR NAME=$xpatselqry_allmapnm_name>$xpatselqry_matching_name<?/MIVAR>
-        <?MIVAR NAME=$xpatselqry_allmapnm_precedence>$xpatselqry_matching_precedence<?/MIVAR>
-        <?MIVAR NAME=$xpatselqry_allmapnm_significance>$xpatselqry_matching_significance<?/MIVAR>
-      <?/MIBLOCK>
-      <?MISQL SQL="
-	insert into $xpatselectquery_temp_fish
-	  values (
-	    '$xpatselqry_xpat_zdb_id', '$xpatselqry_allmapnm_name',
-	    '$xpatselqry_allmapnm_precedence', $xpatselqry_allmapnm_significance,
-	    '$xpatselqry_xpat_assay_name', '$xpatselqry_xpat_source_zdb_id' )">
-      <?/MISQL>
-      <?MIVAR NAME=$xpatselqry_prevSavedXpat>$xpatselqry_xpat_zdb_id<?/MIVAR>
-    <?/MIBLOCK>
-  <?/MISQL>
-  <?MIVAR>$(VECAPPEND,$xpatselqry_testNameVec,Mutant Background)<?/MIVAR>
+  <?MICOMMENT> *** Get records that pass this test *** <?/MICOMMENT>
   <?MISQL SQL="
-    select count(*)::integer 
-      from $xpatselectquery_temp_fish">
-    <?MIVAR>$(VECAPPEND,$xpatselqry_testCountVec,$1)<?/MIVAR>
+    insert into $xpatselectquery_temp_fish 
+      select distinct 
+             xpatex_zdb_id, xpatex_source_zdb_id, xpatex_assay_name, 
+             xpatex_gene_zdb_id,xpatex_featexp_zdb_id,
+             $xpatselqry_matchingCols
+        from $xpatselqry_matchTable
+             join feature_experiment on featexp_zdb_id = xpatex_featexp_zdb_id
+             join all_map_names on allmapnm_zdb_id = featexp_genome_feature_zdb_id
+             $xpatselqry_nameEndsTable
+        where $xpatselqry_nameCond
+              $xpatselqry_fishOnlyGetBest;">
   <?/MISQL>
-  <?MISQL COND="$(NC,$xpatselqry_matchTable,expression_pattern)" SQL="
+
+  <?MICOMMENT> *** Debugging *** <?/MICOMMENT>
+  <?MIVAR COND=$(XST,$debug_sql)>
+    <p>Fish Name Test: $MI_ROWCOUNT records passed
+    <br>SQL: <pre>$MI_SQL</pre><p>
+  <?/MIVAR>
+  <?MISQL COND=$(XST,$debug_timing) SQL="
+    execute function get_time()">
+    <br>$1 After fish name tests
+  <?/MISQL>
+
+
+  <?MICOMMENT> *** Cleanup and hand off to next test *** <?/MICOMMENT>
+  <?MISQL COND="$(NC,$xpatselqry_matchTable,expression_experiment)" SQL="
     delete from $xpatselqry_matchTable">
   <?/MISQL>
   <?MIVAR NAME=$xpatselqry_matchTable>$xpatselectquery_temp_fish<?/MIVAR>
-  <?MIVAR NAME=$xpatselqry_matchingCols>xpat_matching_text, xpat_matching_precedence, xpat_matching_significance<?/MIVAR>
-<?/MIBLOCK>
+  <?MIVAR NAME=$xpatselqry_matchingCols>
+    xpatex_matching_text, xpatex_matching_precedence, xpatex_matching_significance
+  <?/MIVAR>
+
+<?/MIBLOCK>  <?MICOMMENT> *** end fish name query *** <?/MICOMMENT>
+
+
+
+<?MIBLOCK COND="$(XST,$xpatselqry_MOgene)">
+
+
+  <?MICOMMENT>
+    ============================================================================
+    ==========  MO knockdown Gene
+    ============================================================================
+
+    This code is slightly different from the other sections. Select multiple 
+    matches and then delete the duplicates.
+  <?/MICOMMENT>
+ 
+  <?MICOMMENT> *** Create or reuse temp table *** <?/MICOMMENT>
+  <?MIVAR NAME=$xpatselectquery_temp_mo>$(CONCAT,xpatselectquery_temp_mo_,$xpatselqry_session_id)<?/MIVAR>
+  <?MISQL SQL="
+    execute function table_exists('$xpatselectquery_temp_mo')">
+  <?/MISQL>
+    <?MISQL COND=$(EC,$1,f) SQL="
+      create temp table $xpatselectquery_temp_mo (
+        xpatex_zdb_id			varchar(50),
+        xpatex_source_zdb_id            varchar(50),
+        xpatex_assay_name               varchar(40),
+        xpatex_gene_zdb_id              varchar(50),
+        xpatex_featexp_zdb_id           varchar(50),
+	xpatex_matching_text		varchar(255),
+        xpatex_matching_precedence	varchar(80),
+        xpatex_matching_significance 	integer
+      ) with NO LOG;">
+    <?/MISQL>
+
+  <?MICOMMENT> *** use all_name_ends depending on search type *** <?/MICOMMENT>
+  <?MIVAR NAME=$xpatselqry_nameEndsTable><?/MIVAR>
+  <?MIBLOCK COND="$(EC,$xpatselqry_MOsearchtype,begins)">
+    <?MIVAR NAME=$xpatselqry_nameCond>allmapnm_name_lower like '$(LOWER,$xpatselqry_MOgene)%'
+    <?/MIVAR>
+  <?MIELSE>
+    <?MIVAR NAME=$xpatselqry_nameEndsTable>
+      join all_name_ends on allmapnm_serial_id = allnmend_allmapnm_serial_id
+    <?/MIVAR>
+    <?MIVAR NAME=$xpatselqry_nameCond>allnmend_name_end_lower like '$(LOWER,$xpatselqry_MOgene)%'
+    <?/MIVAR>
+  <?/MIBLOCK>
+
+  <?MICOMMENT> *** Matching text *** <?/MICOMMENT>
+  <?MIVAR NAME="$xpatselqry_MOgeneOnlyGetBest"><?/MIVAR>
+
+  <?MIBLOCK COND="$(NXST,$xpatselqry_matchedText)">
+    <?MIVAR NAME="$xpatselqry_matchedText">$xpatselqry_MOgene<?/MIVAR>
+    <?MIVAR NAME="$xpatselqry_matchedTextSearchType">$xpatselqry_MOsearchtype<?/MIVAR>
+    <?MIVAR NAME="$xpatselqry_matchingCols"> 
+      allmapnm_name, 
+       case allmapnm_precedence 
+          when 'Current symbol' then 'MO symbol'
+          when 'Current name' then 'MO name'
+          else allmapnm_precedence 
+       end, 
+       allmapnm_significance
+    <?/MIVAR>
+  <?/MIBLOCK>
+
+
+  <?MICOMMENT> *** Get records that pass this test *** <?/MICOMMENT>
+ 
+  <?MIVAR NAME=xpatselqry_mo_sql>
+    insert into $xpatselectquery_temp_mo 
+      select distinct 
+             xpatex_zdb_id, xpatex_source_zdb_id, xpatex_assay_name, 
+             xpatex_gene_zdb_id, xpatex_featexp_zdb_id,
+             $xpatselqry_matchingCols
+        from $xpatselqry_matchTable
+             join feature_experiment on featexp_zdb_id = xpatex_featexp_zdb_id
+             join experiment_condition on expcond_exp_zdb_id = featexp_exp_zdb_id
+             join marker on expcond_mrkr_zdb_id = mrkr_zdb_id
+             join marker_relationship on mrkr_zdb_id = mrel_mrkr_1_zdb_id 
+             join all_map_names on allmapnm_zdb_id = mrel_mrkr_2_zdb_id 
+             $xpatselqry_nameEndsTable
+        where $xpatselqry_nameCond
+          and allmapnm_significance < 3
+        ;
+  <?/MIVAR>
+  <?MISQL SQL="$xpatselqry_mo_sql">
+  <?/MISQL>
+
+  <?MICOMMENT> *** Debugging *** <?/MICOMMENT>
+  <?MIVAR COND=$(XST,$debug_sql)>
+    <p>MO Name Test: $MI_ROWCOUNT records passed
+    <br>SQL: <pre>$MI_SQL</pre><p>
+  <?/MIVAR>
+  <?MISQL COND=$(XST,$debug_timing) SQL="
+    execute function get_time()">
+    <br>$1 After MO name tests
+  <?/MISQL>
+  
+
+  <?MICOMMENT> *** Create or reuse temp table *** <?/MICOMMENT>
+  <?MIVAR NAME=$xpatselectquery_temp_mo1>$(CONCAT,xpatselectquery_temp_mo1_,$xpatselqry_session_id)<?/MIVAR>
+  <?MISQL SQL="
+    execute function table_exists('$xpatselectquery_temp_mo1')">
+  <?/MISQL>
+    <?MISQL COND=$(EC,$1,f) SQL="
+      create temp table $xpatselectquery_temp_mo1 (
+        xpatex_zdb_id			varchar(50),
+        xpatex_source_zdb_id            varchar(50),
+        xpatex_assay_name               varchar(40),
+        xpatex_gene_zdb_id              varchar(50),
+        xpatex_featexp_zdb_id           varchar(50),
+	xpatex_matching_text		varchar(255),
+        xpatex_matching_precedence	varchar(80),
+        xpatex_matching_significance 	integer
+      ) with NO LOG;">
+    <?/MISQL>
+
+  <?MIVAR NAME=xpatselqry_previous><?/MIVAR>
+  <?MISQL SQL="select
+        xpatex_zdb_id,
+        xpatex_source_zdb_id,
+        xpatex_assay_name,
+        xpatex_gene_zdb_id,
+        xpatex_featexp_zdb_id,
+	xpatex_matching_text,
+        xpatex_matching_precedence,
+        xpatex_matching_significance
+               from $xpatselectquery_temp_mo 
+               order by xpatex_zdb_id, xpatex_matching_significance;">
+
+     <?MIVAR NAME=xpatselqry_zdb_id>$1<?/MIVAR>
+     <?MIVAR NAME=xpatselqry_source_zdb_id>$2<?/MIVAR>
+     <?MIVAR NAME=xpatselqry_assay_name>$3<?/MIVAR>
+     <?MIVAR NAME=xpatselqry_gene_zdb_id>$4<?/MIVAR>
+     <?MIVAR NAME=xpatselqry_featexp_zdb_id>$5<?/MIVAR>
+     <?MIBLOCK COND=$(NC,$xpatselqry_previous,$xpatselqry_zdb_id)>
+         <?MISQL SQL="insert into $xpatselectquery_temp_mo1
+                      values ('$1','$2','$3','$4','$5','$6','$7','$8');">
+         <?/MISQL>
+     <?/MIBLOCK>               
+
+     <?MIVAR NAME=xpatselqry_previous>$xpatselqry_zdb_id<?/MIVAR>
+  <?/MISQL>  
+
+  <?MISQL SQL="select xpatex_zdb_id, count(*)
+               from $xpatselectquery_temp_mo1
+               group by 1
+               having count(*) > 1;">
+            <br>multiple records for $1
+  <?/MISQL>
+
+  <?MICOMMENT> *** Debugging *** <?/MICOMMENT>
+  <?MIVAR COND=$(XST,$debug_sql)>
+    <p>MO Name Test: <?MISQL SQL="select count(*) from $xpatselectquery_temp_mo1">$1<?/MISQL> records passed
+    <br>SQL: <pre>$MI_SQL</pre><p>
+  <?/MIVAR>
+  
+  
+  
+  <?MICOMMENT> *** Cleanup and hand off to next test *** <?/MICOMMENT>
+  <?MISQL COND="$(NC,$xpatselqry_matchTable,expression_experiment)" SQL="
+    delete from $xpatselqry_matchTable">
+  <?/MISQL>
+  <?MISQL SQL="
+    delete from $xpatselectquery_temp_mo">
+  <?/MISQL>
+  <?MIVAR NAME=$xpatselqry_matchTable>$xpatselectquery_temp_mo1<?/MIVAR>
+  <?MIVAR NAME=$xpatselqry_matchingCols>
+    xpatex_matching_text, xpatex_matching_precedence, xpatex_matching_significance
+  <?/MIVAR>
+
+<?/MIBLOCK>  <?MICOMMENT> *** end MO name query *** <?/MICOMMENT>
 
 
 <?MIBLOCK COND="$(XST,$xpatselqry_author)">
@@ -336,23 +828,19 @@ EFFECTS
     ============================================================================
   <?/MICOMMENT>
 
-  <?MISQL COND=$(XST,$debug_timing) SQL="
-    execute function get_time()">
-    <br>$1 Before author name tests
-  <?/MISQL>
-
-  <?MICOMMENT> Create or reuse temp table <?/MICOMMENT>
+  <?MICOMMENT> *** Create or reuse temp table *** <?/MICOMMENT>
   <?MIVAR NAME=$xpatselectquery_temp_author>$(CONCAT,xpatselectquery_temp_author_,$xpatselqry_session_id)<?/MIVAR>
   <?MISQL SQL="
     execute function table_exists('$xpatselectquery_temp_author')">
     <?MISQL COND=$(EC,$1,f) SQL="
       create temp table $xpatselectquery_temp_author (
-        xpat_zdb_id 		varchar(50),
-	xpat_matching_text		varchar(255),
-        xpat_matching_precedence	varchar(80),
-        xpat_matching_significance 	integer,
-	xpat_assay_name 		varchar(40),
-        primary key (xpat_zdb_id)
+        xpatex_zdb_id			varchar(50),
+        xpatex_source_zdb_id            varchar(50),
+        xpatex_assay_name               varchar(40),
+        xpatex_gene_zdb_id              varchar(50),
+	xpatex_matching_text		varchar(255),
+        xpatex_matching_precedence	varchar(80),
+        xpatex_matching_significance 	integer
       ) with NO LOG;">
     <?/MISQL>
   <?/MISQL>
@@ -363,21 +851,109 @@ EFFECTS
     <?MIVAR NAME=$xpatselqry_likeString>%$(LOWER,$xpatselqry_author)%<?/MIVAR>
   <?/MIBLOCK>
 
+  <?MICOMMENT> **** Matching Text **** <?/MICOMMENT>
+  <?MIVAR NAME="$xpatselqry_authorMatchingCols">$xpatselqry_matchingCols<?/MIVAR>
+  <?MIBLOCK COND="$(NXST,$xpatselqry_matchedText)">
+    <?MIVAR NAME="$xpatselqry_matchedText">$xpatselqry_author<?/MIVAR>
+    <?MIVAR NAME="$xpatselqry_matchedTextSearchType">$xpatselqry_authorSearchType<?/MIVAR>
+    <?MIVAR NAME="$xpatselqry_authorMatchingCols">
+      publication.authors, 'Author', 1
+    <?/MIVAR>
+  <?/MIBLOCK>
+
+  <?MICOMMENT> *** Get records that pass this test *** <?/MICOMMENT>
   <?MISQL SQL="
     insert into $xpatselectquery_temp_author
-      select distinct xpat_zdb_id, $xpatselqry_matchingCols, 
-	     xpat_assay_name
-	from $xpatselqry_matchTable, publication
-	where xpat_source_zdb_id = zdb_id 
-	  and lower(authors) like '$xpatselqry_likeString'">
+      select distinct 
+             xpatex_zdb_id, xpatex_source_zdb_id, xpatex_assay_name,
+             xpatex_gene_zdb_id,
+             $xpatselqry_authorMatchingCols 
+	from $xpatselqry_matchTable
+             join publication on publication.zdb_id = xpatex_source_zdb_id
+	where lower(authors) like '$xpatselqry_likeString'">
   <?/MISQL>
-  <?MIVAR>$(VECAPPEND,$xpatselqry_testCountVec,$MI_ROWCOUNT)<?/MIVAR>
-  <?MIVAR>$(VECAPPEND,$xpatselqry_testNameVec,Author)<?/MIVAR>
-  <?MISQL COND="$(NC,$xpatselqry_matchTable,expression_pattern)" SQL="
+
+  <?MICOMMENT> *** Debugging *** <?/MICOMMENT>
+  <?MIVAR COND=$(XST,$debug_sql)>
+    <p>Author Name Test: $MI_ROWCOUNT records passed
+    <br>SQL: <pre>$MI_SQL</pre><p>
+  <?/MIVAR>
+  <?MISQL COND=$(XST,$debug_timing) SQL="
+    execute function get_time()">
+    <br>$1 After author name tests
+  <?/MISQL>
+
+  <?MICOMMENT> *** Cleanup and hand off to next test *** <?/MICOMMENT>
+  <?MISQL COND="$(NC,$xpatselqry_matchTable,expression_experiment)" SQL="
     delete from $xpatselqry_matchTable">
   <?/MISQL>
   <?MIVAR NAME=$xpatselqry_matchTable>$xpatselectquery_temp_author<?/MIVAR>
-<?/MIBLOCK>
+  <?MIVAR NAME=$xpatselqry_matchingCols>
+    xpatex_matching_text, xpatex_matching_precedence, xpatex_matching_significance
+  <?/MIVAR>
+<?/MIBLOCK>  <?MICOMMENT> *** end author name query *** <?/MICOMMENT>
+
+
+
+<?MIBLOCK COND="$(XST,$xpatselqry_assay)">
+  <?MICOMMENT>
+    ============================================================================
+    ==========  ASSAY TYPE TESTS
+    ============================================================================
+  <?/MICOMMENT>
+
+  <?MICOMMENT> *** Create or reuse temp table *** <?/MICOMMENT>
+  <?MIVAR NAME=$xpatselectquery_temp_assay>$(CONCAT,xpatselectquery_temp_assay_,$xpatselqry_session_id)<?/MIVAR>
+  <?MISQL SQL="
+    execute function table_exists('$xpatselectquery_temp_assay')">
+    <?MISQL COND=$(EC,$1,f) SQL="
+      create temp table $xpatselectquery_temp_assay (
+        xpatex_zdb_id			varchar(50),
+        xpatex_source_zdb_id            varchar(50),
+        xpatex_gene_zdb_id              varchar(50),
+	xpatex_matching_text		varchar(255),
+        xpatex_matching_precedence	varchar(80),
+        xpatex_matching_significance 	integer
+      ) with NO LOG;">
+    <?/MISQL>
+  <?/MISQL>
+
+  <?MICOMMENT> *** Get records that pass this test *** <?/MICOMMENT>
+  <?MISQL SQL="
+    insert into $xpatselectquery_temp_assay
+      select distinct 
+             xpatex_zdb_id, xpatex_source_zdb_id, xpatex_gene_zdb_id,
+             $xpatselqry_matchingCols
+        from $xpatselqry_matchTable
+        where xpatex_assay_name = '$xpatselqry_assay';">
+  <?/MISQL>
+
+  <?MICOMMENT> *** Debugging *** <?/MICOMMENT>
+  <?MIVAR COND=$(XST,$debug_sql)>
+    <p>Assay Name Test: $MI_ROWCOUNT records passed
+    <br>SQL: <pre>$MI_SQL</pre><p>
+  <?/MIVAR>
+  <?MISQL COND=$(XST,$debug_timing) SQL="
+    execute function get_time()">
+    <br>$1 After Assay test
+  <?/MISQL>
+
+
+  <?MICOMMENT> *** Cleanup and hand off to next test *** <?/MICOMMENT>
+  <?MISQL COND="$(NC,$xpatselqry_matchTable,expression_experiment)" SQL="
+    delete from $xpatselqry_matchTable">
+  <?/MISQL>
+  <?MIVAR NAME=$xpatselqry_matchTable>$xpatselectquery_temp_assay<?/MIVAR>
+<?/MIBLOCK>  <?MICOMMENT> *** end assay name query *** <?/MICOMMENT>
+
+
+
+<?MICOMMENT>
+  ** Done with tests that don't test specific anatomy or figure information
+  ** Moving into tests that care about this information
+<?/MICOMMENT>
+<?MIVAR NAME=$xpatselqry_figuresFetched>0<?/MIVAR>
+
 
 
 <?MIBLOCK COND="$(XST,$xpatselqry_anatomyZdbIdList)">
@@ -387,23 +963,18 @@ EFFECTS
     ============================================================================
   <?/MICOMMENT>
 
-  <?MISQL COND=$(XST,$debug_timing) SQL="
-    execute function get_time()">
-    <br>$1 Before anatomy tests
-  <?/MISQL>
-
-  <?MICOMMENT> Create or reuse temp table <?/MICOMMENT>
+  <?MICOMMENT> *** Create or reuse temp table *** <?/MICOMMENT>
   <?MIVAR NAME=$xpatselectquery_temp_anatomy>$(CONCAT,xpatselectquery_temp_anatomy_,$xpatselqry_session_id)<?/MIVAR>
   <?MISQL SQL="
     execute function table_exists('$xpatselectquery_temp_anatomy')">
     <?MISQL COND=$(EC,$1,f) SQL="
       create temp table $xpatselectquery_temp_anatomy (
-        xpat_zdb_id	 		varchar(50),
-	xpat_matching_text		varchar(255),
-        xpat_matching_precedence	varchar(80),
-        xpat_matching_significance 	integer,
-	xpat_assay_name 		varchar(40),
-        primary key (xpat_zdb_id)
+        xpatex_fig_zdb_id	 	varchar(50),
+        xpatex_gene_zdb_id		varchar(50),
+        xpatex_zdb_id		        varchar(50),
+	xpatex_matching_text		varchar(255),
+        xpatex_matching_precedence	varchar(80),
+        xpatex_matching_significance 	integer
       ) with NO LOG;">
     <?/MISQL>
   <?/MISQL>
@@ -418,14 +989,20 @@ EFFECTS
       execute function table_exists('$xpatselectquery_temp_anatomy_junior')">
       <?MISQL COND=$(EC,$1,f) SQL="
         create temp table $xpatselectquery_temp_anatomy_junior (
-          junior_xpat_zdb_id 		varchar(50),
-          junior_parent_zdb_id		varchar(50)
+          junior_xpatex_fig_zdb_id 		varchar(50),
+          junior_xpatex_gene_zdb_id		varchar(50),
+          junior_xpatex_zdb_id   		varchar(50),
+          junior_xpatres_zdb_id                 varchar(50),
+	  junior_xpatex_matching_text		varchar(255),
+          junior_xpatex_matching_precedence	varchar(80),
+          junior_xpatex_matching_significance 	integer,
+          junior_parent_zdb_id			varchar(50)
         ) with NO LOG;">
       <?/MISQL>
     <?/MISQL>
 
-    <?MIVAR NAME=$anatitem_constraint>$(SEPARATE,$xpatselqry_anatomyZdbIdList,"','")<?/MIVAR>
-    <?MIVAR NAME=$item_count>$(VECSIZE,$xpatselqry_anatomyZdbIdList)<?/MIVAR>
+    <?MIVAR NAME=$xpatselqry_anatitem_constraint>$(SEPARATE,$xpatselqry_anatomyZdbIdList,"','")<?/MIVAR>
+    <?MIVAR NAME=$xpatselqry_item_count>$(VECSIZE,$xpatselqry_anatomyZdbIdList)<?/MIVAR>
 
     <?MICOMMENT> ====== 'part at stage' goodies - when the user selects a stage without choosing any
 		 	anatomy, it's gonna check the stage limits of the xpat record, but if there's
@@ -433,9 +1010,9 @@ EFFECTS
 			by using expression_pattern_anatomy.  
     <?/MICOMMENT>		
 
-    <?MIVAR NAME=stage_overlap_sql><?/MIVAR>
-    <?MIVAR NAME=stage_overlap_sql COND=$(XST,$xpatselqry_stageStart)>
-	AND stg_windows_overlap(xpatanat_xpat_start_stg_zdb_id, xpatanat_xpat_end_stg_zdb_id,
+    <?MIVAR NAME=$xpatselqry_stage_overlap_sql><?/MIVAR>
+    <?MIVAR NAME=$xpatselqry_stage_overlap_sql COND=$(XST,$xpatselqry_stageStart)>
+	AND stg_windows_overlap(xpatres_start_stg_zdb_id, xpatres_end_stg_zdb_id,
 	    		    '$xpatselqry_stageStart', '$xpatselqry_stageEnd')
     <?/MIVAR>
 
@@ -446,53 +1023,64 @@ EFFECTS
 
         <?MIBLOCK COND="$(AND,$(XST,$xpatselqry_includeSubstructures),$(NE,$xpatselqry_includeSubstructures,))">
           <?MISQL SQL="
-          INSERT INTO $xpatselectquery_temp_anatomy_junior (junior_xpat_zdb_id)
-          SELECT distinct xpat_zdb_id
-	  FROM $xpatselqry_matchTable
-               JOIN expression_pattern_anatomy
-                 ON xpatanat_xpat_zdb_id = xpat_zdb_id 
-               JOIN anatomy_item as child
-                 ON child.anatitem_zdb_id = xpatanat_anat_item_zdb_id
-               JOIN all_anatomy_contains
-                 ON allanatcon_contained_zdb_id = child.anatitem_zdb_id
-               JOIN anatomy_item as parent
-                 ON allanatcon_container_zdb_id = parent.anatitem_zdb_id
-	  WHERE parent.anatitem_zdb_id in ('$anatitem_constraint')
-	        $stage_overlap_sql
-	 ;"><?/MISQL>
-         <?/MIBLOCK>
+            INSERT INTO $xpatselectquery_temp_anatomy_junior 
+                ( junior_xpatex_fig_zdb_id, junior_xpatex_gene_zdb_id,
+                  junior_xpatex_zdb_id, junior_xpatres_zdb_id,
+                  junior_xpatex_matching_text, junior_xpatex_matching_precedence,
+                  junior_xpatex_matching_significance )
+              SELECT xpatfig_fig_zdb_id, xpatex_gene_zdb_id, xpatex_zdb_id, 
+                     xpatres_zdb_id, $xpatselqry_matchingCols
+	      FROM $xpatselqry_matchTable               
+                   JOIN expression_result
+                     ON xpatres_xpatex_zdb_id = xpatex_zdb_id
+                   JOIN expression_pattern_figure
+                     ON xpatres_zdb_id = xpatfig_xpatres_zdb_id
+                   JOIN all_anatomy_contains
+                     ON allanatcon_contained_zdb_id = xpatres_anat_item_zdb_id
+	      WHERE allanatcon_container_zdb_id in ('$xpatselqry_anatitem_constraint')
+                $xpatselqry_stage_overlap_sql;">
+          <?/MISQL>
+        <?/MIBLOCK>
 
+      
       <?MISQL SQL="
-	INSERT INTO $xpatselectquery_temp_anatomy_junior (junior_xpat_zdb_id)
-    	  SELECT distinct xpat_zdb_id
-	  FROM $xpatselqry_matchTable
-               JOIN expression_pattern_anatomy
-                 ON xpat_zdb_id = xpatanat_xpat_zdb_id 
-               JOIN anatomy_item 
-                 ON anatitem_zdb_id = xpatanat_anat_item_zdb_id
-	  WHERE anatitem_zdb_id in ('$anatitem_constraint') 
-	  $stage_overlap_sql
-       ;"><?/MISQL>
+	INSERT INTO $xpatselectquery_temp_anatomy_junior 
+            ( junior_xpatex_fig_zdb_id, junior_xpatex_gene_zdb_id,
+              junior_xpatex_zdb_id, junior_xpatres_zdb_id,
+              junior_xpatex_matching_text, junior_xpatex_matching_precedence,
+              junior_xpatex_matching_significance )
+    	  SELECT distinct xpatfig_fig_zdb_id, xpatex_gene_zdb_id, xpatex_zdb_id, 
+                          xpatres_zdb_id, $xpatselqry_matchingCols
+	    FROM $xpatselqry_matchTable
+                 JOIN expression_result
+                   ON xpatres_xpatex_zdb_id = xpatex_zdb_id
+                 JOIN expression_pattern_figure
+                   ON xpatres_zdb_id = xpatfig_xpatres_zdb_id
+            WHERE xpatres_anat_item_zdb_id in ('$xpatselqry_anatitem_constraint') 
+	      $xpatselqry_stage_overlap_sql;">
+      <?/MISQL>
+
 
     <?MICOMMENT> ---- copy into the 'real' temp table ---- <?/MICOMMENT>
   
     <?MISQL SQL="
-	INSERT INTO $xpatselectquery_temp_anatomy 
-          (xpat_zdb_id, xpat_matching_text, xpat_matching_precedence, 
-	       xpat_matching_significance, xpat_assay_name)
-	SELECT distinct xpat_zdb_id, $xpatselqry_matchingCols, xpat_assay_name
-	FROM $xpatselectquery_temp_anatomy_junior
-          JOIN $xpatselqry_matchTable
-	    ON xpat_zdb_id = junior_xpat_zdb_id
-      ;"><?/MISQL>
+      INSERT INTO $xpatselectquery_temp_anatomy 
+          ( xpatex_fig_zdb_id, xpatex_gene_zdb_id, 
+            xpatex_zdb_id, 
+            xpatex_matching_text, xpatex_matching_precedence, 
+            xpatex_matching_significance )
+	SELECT distinct junior_xpatex_fig_zdb_id, junior_xpatex_gene_zdb_id, 
+                        junior_xpatex_zdb_id, 
+                        junior_xpatex_matching_text, junior_xpatex_matching_precedence,
+                        junior_xpatex_matching_significance
+	  FROM $xpatselectquery_temp_anatomy_junior;">
+    <?/MISQL>
 
     <?/MIBLOCK> <?MICOMMENT> end 'or' query <?/MICOMMENT>
 
-
-
    <?MICOMMENT> ------ this is for the "and" search, or "every selected structure", 
 		      it populates a different temp table than above, with all of the
-		      xpatanat_xpat_zdb_id's that are kosher with the anatomy part of the
+		      temp table zdb_id's that are kosher with the anatomy part of the
 		      query.   This is Brock's SQL logic, and he's a smarty pants, 
 	              the combination of the GROUP BY and HAVING create an 'and' from 
 		      the anatomy list.  On first glance, I thought it would only return
@@ -502,28 +1090,29 @@ EFFECTS
 
    <?MIBLOCK COND="$(AND,$(XST,$xpatselqry_structureBool),$(EC,$xpatselqry_structureBool,and))">
 
+
     <?MICOMMENT> -- default the variables to substructures not included -- <?/MICOMMENT>
 
-    <?MIVAR NAME=case> xpatanat_anat_item_zdb_id <?/MIVAR>
-    <?MIVAR NAME=container_join> <?/MIVAR>
-    <?MIVAR NAME=container_or> <?/MIVAR>
+    <?MIVAR NAME="$xpatselqry_case"> xpatres_anat_item_zdb_id <?/MIVAR>
+    <?MIVAR NAME="$xpatselqry_container_join"> <?/MIVAR>
+    <?MIVAR NAME="$xpatselqry_container_or"> <?/MIVAR>
 
     <?MIBLOCK COND="$(AND,$(XST,$xpatselqry_includeSubstructures),$(EC,$xpatselqry_includeSubstructures,checked))">
-      <?MIVAR NAME=case>
+      <?MIVAR NAME=$xpatselqry_case>
          case
-           when xpatanat_anat_item_zdb_id in ('$anatitem_constraint')  
-  	   then xpatanat_anat_item_zdb_id
+           when xpatres_anat_item_zdb_id in ('$xpatselqry_anatitem_constraint')  
+  	   then xpatres_anat_item_zdb_id
          else
            allanatcon_container_zdb_id
          end 
       <?/MIVAR>
 
-      <?MIVAR NAME=container_join>
+      <?MIVAR NAME=$xpatselqry_container_join>
         LEFT OUTER JOIN all_anatomy_contains
-          ON xpatanat_anat_item_zdb_id = allanatcon_contained_zdb_id
-             AND allanatcon_container_zdb_id in ('$anatitem_constraint')
+          ON xpatres_anat_item_zdb_id = allanatcon_contained_zdb_id
+             AND allanatcon_container_zdb_id in ('$xpatselqry_anatitem_constraint')
       <?/MIVAR>
-      <?MIVAR NAME=$container_or>
+      <?MIVAR NAME=$xpatselqry_container_or>
 	  OR allanatcon_container_zdb_id is not null
       <?/MIVAR>
 
@@ -531,47 +1120,71 @@ EFFECTS
 
     <?MISQL SQL="
 	INSERT INTO $xpatselectquery_temp_anatomy_junior
-	SELECT distinct xpatanat_xpat_zdb_id,
-       	       $case as junior_parent_zdb_id
-        FROM expression_pattern_anatomy 
-	     $container_join
-        WHERE (xpatanat_anat_item_zdb_id in ('$anatitem_constraint')
-	       $container_or )
-	$stage_overlap_sql
-     ;">
-   <?/MISQL>
+             (junior_xpatex_fig_zdb_id, junior_xpatex_gene_zdb_id,  
+              junior_xpatex_zdb_id,
+              junior_xpatex_matching_text, junior_xpatex_matching_precedence,
+              junior_xpatex_matching_significance, junior_parent_zdb_id)
+	SELECT distinct xpatfig_fig_zdb_id, xpatex_gene_zdb_id,
+                        xpatex_zdb_id,
+                        $xpatselqry_matchingCols, 
+       	                $xpatselqry_case as junior_parent_zdb_id
+          FROM $xpatselqry_matchTable
+               join expression_result 
+                 on xpatres_xpatex_zdb_id = xpatex_zdb_id 
+               join expression_pattern_figure 
+                 on xpatres_zdb_id = xpatfig_xpatres_zdb_id
+	       $xpatselqry_container_join
+        WHERE (xpatres_anat_item_zdb_id in ('$xpatselqry_anatitem_constraint')
+	       $xpatselqry_container_or )
+	  $xpatselqry_stage_overlap_sql
+      ;">
+    <?/MISQL>
+
+   <?MICOMMENT> *** After this point, the temp table doesn't have xpatres records anymore.
+                    That doesn't hurt anything below this point in xpatselectquery, and
+                    any display page should be sure not to expect it *** <?/MICOMMENT>
+
 
    <?MISQL SQL="  
      insert into $xpatselectquery_temp_anatomy 
-       (xpat_zdb_id, xpat_matching_text, xpat_matching_precedence, 
-	xpat_matching_significance, xpat_assay_name)
-     select xpat_zdb_id, $xpatselqry_matchingCols, xpat_assay_name
-     from $xpatselectquery_temp_anatomy_junior
-          JOIN $xpatselqry_matchTable
-	    ON xpat_zdb_id = junior_xpat_zdb_id
-     group by xpat_zdb_id, 2, 3, 4, xpat_assay_name
-     having count (distinct junior_parent_zdb_id) = $item_count
-    ;"><?/MISQL>
-
+         ( xpatex_fig_zdb_id, xpatex_gene_zdb_id, 
+           xpatex_zdb_id, xpatex_matching_text, 
+           xpatex_matching_precedence, xpatex_matching_significance)
+       select junior_xpatex_fig_zdb_id, junior_xpatex_gene_zdb_id,
+              junior_xpatex_zdb_id, junior_xpatex_matching_text, 
+              junior_xpatex_matching_precedence, 
+              junior_xpatex_matching_significance
+       from $xpatselectquery_temp_anatomy_junior
+       group by junior_xpatex_fig_zdb_id, junior_xpatex_gene_zdb_id,
+                junior_xpatex_zdb_id, junior_xpatex_matching_text, 
+                junior_xpatex_matching_precedence, 
+                junior_xpatex_matching_significance
+       having count (distinct junior_parent_zdb_id) = $xpatselqry_item_count
+     ;">
+   <?/MISQL>
 
     <?/MIBLOCK> <?MICOMMENT> end structurebool = and <?/MICOMMENT>
 
-    <?MISQL SQL="delete from $xpatselectquery_temp_anatomy_junior"><?/MISQL>
+  <?MICOMMENT> *** Debugging *** <?/MICOMMENT>
+  <?MIVAR COND=$(XST,$debug_sql)>
+    <p>Anatomy Test: $MI_ROWCOUNT records passed
+    <br>SQL: <pre>$MI_SQL</pre><p>
+  <?/MIVAR>
+  <?MISQL COND=$(XST,$debug_timing) SQL="
+    execute function get_time()">
+    <br>$1 After anatomy tests
+  <?/MISQL>
 
 
-    <?MIVAR>$(VECAPPEND,$xpatselqry_testNameVec,Anatomy)<?/MIVAR>
-    <?MISQL SQL="
-      select count(*)::integer 
-        from $xpatselectquery_temp_anatomy">
-    <?MIVAR>$(VECAPPEND,$xpatselqry_testCountVec,$1)<?/MIVAR>
-    <?/MISQL>
-
-  <?MISQL COND="$(NC,$xpatselqry_matchTable,expression_pattern)" SQL="
+  <?MICOMMENT> *** Cleanup and hand off to next test *** <?/MICOMMENT>
+  <?MISQL SQL="delete from $xpatselectquery_temp_anatomy_junior"><?/MISQL>
+  <?MISQL COND="$(NC,$xpatselqry_matchTable,expression_experiment)" SQL="
     delete from $xpatselqry_matchTable">
   <?/MISQL>
   <?MIVAR NAME=$xpatselqry_matchTable>$xpatselectquery_temp_anatomy<?/MIVAR>
+  <?MIVAR NAME=$xpatselqry_figuresFetched>1<?/MIVAR>
 
-<?/MIBLOCK> <?MICOMMENT> end xst anat zdb list <?/MICOMMENT>
+<?/MIBLOCK> <?MICOMMENT> *** end xst anat zdb list *** <?/MICOMMENT>
 
 
 <?MIBLOCK COND="$(AND,$(XST,$xpatselqry_stageStart),$(NXST,$xpatselqry_anatomyZdbIdList))">
@@ -585,137 +1198,125 @@ EFFECTS
     run.
   <?/MICOMMENT>
 
-  <?MISQL COND=$(XST,$debug_timing) SQL="
-    execute function get_time()">
-    <br>$1 Before stage window tests
-  <?/MISQL>
-
-  <?MICOMMENT> Create or reuse temp table <?/MICOMMENT>
+  <?MICOMMENT> *** Create or reuse temp table *** <?/MICOMMENT>
   <?MIVAR NAME=$xpatselectquery_temp_stage>$(CONCAT,xpatselectquery_temp_stage_,$xpatselqry_session_id)<?/MIVAR>
   <?MISQL SQL="
     execute function table_exists('$xpatselectquery_temp_stage')">
     <?MISQL COND=$(EC,$1,f) SQL="
       create temp table $xpatselectquery_temp_stage (
-	xpat_zdb_id 			varchar(50),
-	xpat_matching_text		varchar(255),
-        xpat_matching_precedence	varchar(80),
-        xpat_matching_significance 	integer,
-	xpat_assay_name 		varchar(40),
-	primary key (xpat_zdb_id)
+        xpatex_fig_zdb_id	 	varchar(50),
+        xpatex_gene_zdb_id		varchar(50),
+        xpatex_zdb_id		        varchar(50),
+	xpatex_matching_text		varchar(255),
+        xpatex_matching_precedence	varchar(80),
+        xpatex_matching_significance 	integer
       ) with NO LOG;">
     <?/MISQL>
   <?/MISQL>
 
+  <?MICOMMENT> *** Get records that pass this test *** <?/MICOMMENT>
   <?MISQL SQL="
     insert into $xpatselectquery_temp_stage
-      select xpat_zdb_id, $xpatselqry_matchingCols, xpat_assay_name
+      select xpatfig_fig_zdb_id, xpatex_gene_zdb_id, 
+             xpatex_zdb_id,
+             $xpatselqry_matchingCols
 	from $xpatselqry_matchTable
-	where exists
-	      ( select 1
-		  from expression_pattern_stage
-		  where xpat_zdb_id = xpatstg_xpat_zdb_id
-		    and stg_windows_overlap(xpatstg_start_stg_zdb_id, xpatstg_end_stg_zdb_id,
-					    '$xpatselqry_stageStart', '$xpatselqry_stageEnd') )">
+             join expression_result
+               on xpatres_xpatex_zdb_id = xpatex_zdb_id 
+             join expression_pattern_figure
+               on xpatres_zdb_id = xpatfig_xpatres_zdb_id
+        where stg_windows_overlap(xpatres_start_stg_zdb_id, xpatres_end_stg_zdb_id,
+		 	          '$xpatselqry_stageStart', '$xpatselqry_stageEnd')">
   <?/MISQL>
-  <?MIVAR>$(VECAPPEND,$xpatselqry_testCountVec,$MI_ROWCOUNT)<?/MIVAR>
-  <?MIVAR>$(VECAPPEND,$xpatselqry_testNameVec,Between Stages)<?/MIVAR>
-  <?MISQL COND="$(NC,$xpatselqry_matchTable,expression_pattern)" SQL="
+
+  <?MICOMMENT> *** Debugging *** <?/MICOMMENT>
+  <?MIVAR COND=$(XST,$debug_sql)>
+    <p>Stage Test: $MI_ROWCOUNT records passed
+    <br>SQL: <pre>$MI_SQL</pre><p>
+  <?/MIVAR>
+  <?MISQL COND=$(XST,$debug_timing) SQL="
+    execute function get_time()">
+    <br>$1 After stage window tests
+  <?/MISQL>
+
+
+  <?MICOMMENT> *** Cleanup and hand off to next test *** <?/MICOMMENT>
+  <?MISQL COND="$(NC,$xpatselqry_matchTable,expression_experiment)" SQL="
     delete from $xpatselqry_matchTable">
   <?/MISQL>
   <?MIVAR NAME=$xpatselqry_matchTable>$xpatselectquery_temp_stage<?/MIVAR>
-<?/MIBLOCK>
+  <?MIVAR NAME=$xpatselqry_figuresFetched>1<?/MIVAR>
+<?/MIBLOCK>  <?MICOMMENT> *** end stage range query *** <?/MICOMMENT>
 
-
-<?MIBLOCK COND="$(XST,$xpatselqry_assay)">
-  <?MICOMMENT>
-    ============================================================================
-    ==========  ASSAY TYPE TESTS
-    ============================================================================
-  <?/MICOMMENT>
-
-  <?MISQL COND=$(XST,$debug_timing) SQL="
-    execute function get_time()">
-    <br>$1 Before Assay test
-  <?/MISQL>
-
-  <?MICOMMENT> create or reuse temp table <?/MICOMMENT>
-  <?MIVAR NAME=$xpatselectquery_temp_assay>$(CONCAT,xpatselectquery_temp_assay_,$xpatselqry_session_id)<?/MIVAR>
-  <?MISQL SQL="
-    execute function table_exists('$xpatselectquery_temp_assay')">
-    <?MISQL COND=$(EC,$1,f) SQL="
-      create temp table $xpatselectquery_temp_assay (
-        xpat_zdb_id	 		varchar(50),
-	xpat_matching_text		varchar(255),
-        xpat_matching_precedence	varchar(80),
-        xpat_matching_significance 	integer,
-	primary key (xpat_zdb_id)
-      ) with NO LOG;">
-    <?/MISQL>
-  <?/MISQL>
-
-  <?MISQL SQL="
-    insert into $xpatselectquery_temp_assay
-      select xpat_zdb_id, $xpatselqry_matchingCols
-	from $xpatselqry_matchTable
-	where xpat_assay_name = '$xpatselqry_assay'">
-  <?/MISQL>
-  <?MIVAR>$(VECAPPEND,$xpatselqry_testCountVec,$MI_ROWCOUNT)<?/MIVAR>
-  <?MIVAR>$(VECAPPEND,$xpatselqry_testNameVec,Assay Type)<?/MIVAR>
-  <?MISQL COND="$(NC,$xpatselqry_matchTable,expression_pattern)" SQL="
-    delete from $xpatselqry_matchTable">
-  <?/MISQL>
-  <?MIVAR NAME=$xpatselqry_matchTable>$xpatselectquery_temp_assay<?/MIVAR>
-<?/MIBLOCK>
-
-<?MISQL COND=$(XST,$debug_timing) SQL="
-  execute function get_time()">
-  <br>$1 Moving results to output table
-<?/MISQL>
 
 <?MICOMMENT>
   ============================================================================
   ==========  Move results to output table
   ============================================================================
+
+  If we need to also get the figure information then get it as well.
+
 <?/MICOMMENT>
 
-<?MISQL SQL="
-  insert into $xpatselqry_resultTable
-      ( xpat_zdb_id, xpat_image_count, xpat_matching_text, 
-	xpat_matching_precedence, xpat_matching_significance )
-    select xpat_zdb_id, 
-	   ( select count(*) 
-	       from expression_pattern_image
-	       where xpatfimg_xpat_zdb_id = xpat_zdb_id ),
-	   $xpatselqry_matchingCols
-      from $xpatselqry_matchTable">
-<?/MISQL>
-<?MIVAR>$(VECAPPEND,$xpatselqry_testCountVec,$MI_ROWCOUNT)<?/MIVAR>
-<?MIVAR>$(VECAPPEND,$xpatselqry_testNameVec,Select only expression patterns with images)<?/MIVAR>
+<?MIVAR NAME="$xpatselqry_imagesOnlyConstraint"><?/MIVAR>
+
+<?MIBLOCK COND="$(AND,$(XST,$xpatselqry_imagesOnly),$xpatselqry_figuresFetched)">
+  <?MIVAR NAME="$xpatselqry_imagesOnlyConstraint">
+    where exists (select fimg_zdb_id from fish_image where fimg_fig_zdb_id = xpatex_fig_zdb_id) 
+  <?/MIVAR>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(AND,$(XST,$xpatselqry_imagesOnly),$(NOT,$xpatselqry_figuresFetched))">
+  <?MIVAR NAME="$xpatselqry_imagesOnlyConstraint">
+    where exists (select fimg_zdb_id from fish_image where fimg_fig_zdb_id = xpatfig_fig_zdb_id) 
+  <?/MIVAR>
+<?/MIBLOCK> 
 
 <?MISQL COND=$(XST,$debug_timing) SQL="
   execute function get_time()">
-  <br>$1 Setting ann_exist
+  <br>$1 Moving results to return table
 <?/MISQL>
 
-<?MISQL SQL="
-	update $xpatselqry_resultTable
-          set xpat_ann_exist = 't'
-	  where exists ( select 'x'
-			   from expression_pattern_stage
-			   where xpat_zdb_id = xpatstg_xpat_zdb_id
-			     and xpatstg_comments is not null )
-             or exists ( select 'x'
-			   from expression_pattern_anatomy
-			   where xpat_zdb_id = xpatanat_xpat_zdb_id );">
-<?/MISQL>
+<?MIBLOCK COND=$xpatselqry_figuresFetched>
+  <?MISQL SQL="
+    insert into $xpatselqry_resultTable  
+        ( xpat_fig_zdb_id, xpat_gene_zdb_id, xpat_xpatex_zdb_id, 
+           xpat_matching_text, 
+	   xpat_matching_precedence, xpat_matching_significance )
+      select xpatex_fig_zdb_id, xpatex_gene_zdb_id, 
+             xpatex_zdb_id,
+             $xpatselqry_matchingCols 
+        from $xpatselqry_matchTable
+             $xpatselqry_imagesOnlyConstraint ;">
+  <?/MISQL>
+<?MIELSE>
+  <?MISQL SQL="
+    insert into $xpatselqry_resultTable  
+        ( xpat_fig_zdb_id, xpat_gene_zdb_id, xpat_xpatex_zdb_id, 
+           xpat_matching_text, 
+	   xpat_matching_precedence, xpat_matching_significance )
+      select distinct
+             xpatfig_fig_zdb_id, xpatex_gene_zdb_id, 
+             xpatex_zdb_id, 
+             $xpatselqry_matchingCols 
+        from $xpatselqry_matchTable
+             join expression_result
+               on xpatex_zdb_id = xpatres_xpatex_zdb_id
+             join expression_pattern_figure 
+               on xpatres_zdb_id = xpatfig_xpatres_zdb_id
+             $xpatselqry_imagesOnlyConstraint  ;">
+
+  <?/MISQL>
+<?/MIBLOCK>
 
 
-<?MISQL COND=$(XST,$debug_timing) SQL="
-  execute function get_time()">
-  <br>$1 deleting data from temp
-<?/MISQL>
+<?MICOMMENT> *** Debugging *** <?/MICOMMENT>
+<?MIVAR COND=$(XST,$debug_sql)>
+  <p>Final count: $MI_ROWCOUNT records passed
+  <br>SQL: <pre>$MI_SQL</pre><p>
+<?/MIVAR>
 
-<?MISQL COND="$(NC,$xpatselqry_matchTable,expression_pattern)" SQL="
+<?MISQL COND="$(NC,$xpatselqry_matchTable,expression_experiment)" SQL="
   delete from $xpatselqry_matchTable">
 <?/MISQL>
 
@@ -723,3 +1324,5 @@ EFFECTS
   execute function get_time()">
   <br>$1 exiting query page
 <?/MISQL>
+
+

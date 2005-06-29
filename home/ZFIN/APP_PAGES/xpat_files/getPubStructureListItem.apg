@@ -49,7 +49,7 @@ EFFECTS
   <?MICOMMENT> Is the item a TOD/GELI member. <?/MICOMMENT>
   <?MISQL SQL="
     select xpatres_zdb_id
-    from fx_expression_result, record_attribution
+    from expression_result, record_attribution
     where xpatres_anat_item_zdb_id = '$gPSLitem_anatitem_zdb_id'
       and xpatres_expression_found = '$gPSLitem_expressed'
       and xpatres_start_stg_zdb_id = '$gPSLitem_stg_start_zdb_id'
@@ -72,7 +72,7 @@ EFFECTS
     <?MICOMMENT>Does the item exist in expression result.<?/MICOMMENT>
     <?MISQL SQL="
       select xpatres_zdb_id
-      from fx_expression_result
+      from expression_result
       where xpatres_xpatex_zdb_id = '$gPSLitem_xpatex_zdb_id'
         and xpatres_anat_item_zdb_id = '$gPSLitem_anatitem_zdb_id'
         and xpatres_start_stg_zdb_id = '$gPSLitem_stg_start_zdb_id'
@@ -91,7 +91,7 @@ EFFECTS
       <?MISQL SQL="INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES('$gPSLitem_xpatres_zdb_id');"><?/MISQL>
 
       <?MISQL SQL="
-        INSERT into fx_expression_result(
+        INSERT into expression_result(
           xpatres_zdb_id,
           xpatres_xpatex_zdb_id,
           xpatres_anat_item_zdb_id,

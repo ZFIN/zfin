@@ -141,6 +141,8 @@
 
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,XPAT),0)">aa-xpatview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,ANAT),0)">aa-anatomy_item.apg<?/MIVAR>
+
+      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,FIG),0)">aa-fxfigureview.apg<?/MIVAR>
    
 
     <?MIBLOCK COND="$(EC,$start_page,NULL)">

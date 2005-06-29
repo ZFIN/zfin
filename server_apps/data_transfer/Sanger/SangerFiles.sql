@@ -3,52 +3,26 @@
 
 --
 -- Vega Expression
---	gene id, gene symbol, probe id ,probe symbol,probe genbank accession,expression type, expression pattern zfin id
+--	gene id, gene symbol, probe id,probe symbol,expression type, expression pattern zfin id, pub zfin id, fish line zfin id, experiment zfin id
 
 -- generate a file with genes and associated expression patterns
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/VegaXpat.txt'
  DELIMITER "	"  
- select gene.mrkr_zdb_id	gene_zdb,
-	   gene.mrkr_abbrev	gene_sym,
-	   probe.mrkr_zdb_id	probe_zdb,
-	   probe.mrkr_abbrev	probe_sym,
-	   dblink_acc_num	genbank_acc,
-	   xpat_assay_name  	assay_type, 
-	   xpat_zdb_id		xpad_zdb_id, 
-	   xpat_source_zdb_id     pub_zdb
-  from marker gene, marker probe, 
-	  expression_pattern, 
-	  db_link,
-	  foreign_db_contains
+ select gene.mrkr_zdb_id gene_zdb, gene.mrkr_abbrev,
+        probe.mrkr_zdb_id probe_zdb, probe.mrkr_abbrev,
+        xpatex_assay_name, xpatex_zdb_id xpat_zdb, 
+        xpatex_source_zdb_id, 
+        featexp_genome_feature_zdb_id, featexp_exp_zdb_id 	
+ from fx_expression_experiment
+      join feature_experiment 
+	  on featexp_zdb_id = xpatex_featexp_zdb_id
+      join marker gene
+	  on gene.mrkr_zdb_id = xpatex_gene_zdb_id
+      left join marker probe
+	  on probe.mrkr_zdb_id = xpatex_probe_feature_zdb_id
+ order by gene_zdb, xpat_zdb, probe_zdb;
 
- where gene.mrkr_zdb_id = xpat_gene_zdb_id
- and probe.mrkr_zdb_id = xpat_probe_zdb_id
- and probe.mrkr_zdb_id = dblink_linked_recid
- and dblink_fdbcont_zdb_id = fdbcont_zdb_id
- and fdbcont_fdb_db_name in ('GenBank','RefSeq')
- and fdbcont_fdbdt_data_type = 'cDNA'
- union
-  select gene.mrkr_zdb_id	gene_zdb,
-	   gene.mrkr_abbrev	gene_sym,
-	   probe.mrkr_zdb_id	probe_zdb,
-	   probe.mrkr_abbrev	probe_sym,
-	   dblink_acc_num	genbank_acc,
-	   xpat_assay_name      assay_type, 
-	   xpat_zdb_id		xpad_zdb_id, 
-	   xpat_source_zdb_id 	pub_zdb
- from marker gene, marker probe, 
- 	  expression_pattern, 
-	  db_link,
-	  foreign_db_contains
-	   
- where probe.mrkr_zdb_id = xpat_probe_zdb_id
- and gene.mrkr_zdb_id = xpat_gene_zdb_id
- and gene.mrkr_zdb_id = dblink_linked_recid
- and dblink_fdbcont_zdb_id = fdbcont_zdb_id
- and fdbcont_fdb_db_name in ('GenBank','RefSeq')
- and fdbcont_fdbdt_data_type = 'cDNA'
- order by 1,3,7;
 ----------------------------------------------------
 -- sequence links for genes 
 -- chose RefSeqs if they exist
@@ -142,25 +116,12 @@ unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/vega_xpat_anatomy_relat
 select anatrel_anatitem_1_zdb_id, anatrel_anatitem_2_zdb_id 
   from anatomy_relationship;
 
---
-unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/vega_xpat_probe_gene.unl'
-select 
-    xpat_zdb_id, 
-    xpat_probe_zdb_id,
-    xpat_gene_zdb_id,
-    xpat_assay_name
-from expression_pattern;
 
---
 unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/vega_xpat_stage_anatomy.unl'
 select 
-    xpatstg_xpat_zdb_id,
-    xpatstg_start_stg_zdb_id,
-    xpatstg_end_stg_zdb_id,
-    xpatanat_anat_item_zdb_id  -- or null 
-from expression_pattern_stage, outer expression_pattern_anatomy
-where xpatstg_xpat_zdb_id      = xpatanat_xpat_zdb_id
-and   xpatstg_start_stg_zdb_id = xpatanat_xpat_start_stg_zdb_id
-and   xpatstg_end_stg_zdb_id   = xpatanat_xpat_end_stg_zdb_id
-;
+    xpatres_xpatex_zdb_id,
+    xpatres_start_stg_zdb_id,
+    xpatres_end_stg_zdb_id,
+    xpatres_anat_item_zdb_id   
+from fx_expression_result;
 

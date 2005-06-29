@@ -157,7 +157,7 @@ create temp table meow_exp2 (
   title lvarchar,
   authors lvarchar ,
   pub_date date ,
-  source lvarchar ,
+  source_zdb_id lvarchar ,
   accession_no varchar(80)
 ) with no log;
 
@@ -276,10 +276,13 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/SC_sts.txt'
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zdb_history.txt'
  DELIMITER "	" select zrepld_old_zdb_id, zrepld_new_zdb_id from zdb_replaced_data;
 
--- generate a file with genes and associated expression patterns
+-- generate a file with genes that have expression data in ZFIN
+-- NCBI will use the gene symbol to link to xpatselect page.
 
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/xpat.txt'
- DELIMITER "	"  select xpat_gene_zdb_id, xpat_zdb_id from expression_pattern;
+ DELIMITER "	"  select xpatex_gene_zdb_id, mrkr_abbrev
+		     from fx_expression_experiment
+			  join marker on mrkr_zdb_id = xpatex_gene_zdb_id;
 
 --- generate mapping data for NCBI
  

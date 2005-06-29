@@ -1,3 +1,17 @@
+<?MICOMMENT>
+
+filename: anatdict.apg
+prefix:   none
+
+INPUT VAR
+    mode:  "search" or "stages" or "alpha"
+    type:  "select"(with select ability) or "" 
+OUTPUT VAR
+    none
+
+...
+<?/MICOMMENT>  
+
 <?MIERROR>
   <?MIVAR COND=$(XST,$MI_SQL)>
     SQL: $MI_SQL<br><br>
@@ -23,15 +37,35 @@ document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
 
 <TITLE>Anatomical Ontology Browser</TITLE>
 
+<?MICOMMENT>
+  ============================================================================
+  ====  Prepare anatomy suggestion List
+  ==  anaother place that use this feature is xpatselect.apg, it would be 
+  ==  nice to create a submodule for it even it is small. Let's do it with 
+  ==  the new language which has easy subroutine definition feature.  
+  ============================================================================
+<?/MICOMMENT>
+
+<?MIVAR NAME=anatdict_anatList><?/MIVAR>
+
+<?MISQL SQL="
+	select anatitem_name 
+	  from anatomy_item 
+      order by anatitem_name_lower;">
+   <?MIVAR NAME=anatdict_curAnat>"$1"<?/MIVAR>
+   <?MIVAR>$(SETVAR,$anatdict_anatList,$(IF,$(NC,$MI_CURRENTROW,1),$anatdict_anatList",")$anatdict_curAnat)<?/MIVAR>
+<?/MISQL>
+
+
 <BODY vlink="blue" bgcolor="<!--|BACKGROUND_COLOR|-->" border=0>
 <basefont size=2>
-
-<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
-
 
 <?MIVAR COND="$(NXST,$resolution)" NAME="resolution">9<?/MIVAR>
 <?MIVAR COND="$(NXST,$highlight_text)" NAME="highlight_text"><?/MIVAR>
 <?MIVAR COND="$(NXST,$mode)" NAME="mode">none<?/MIVAR>
+<?MIVAR COND="$(NXST,$type)" NAME="type"><?/MIVAR>
+
+<?MISQL COND="$(NC,$type,select)" SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
 <SCRIPT>
 
@@ -45,19 +79,32 @@ function add_part(item_name) {
 }
 
 function updateParent(AOname, AOid) {
-  if (opener == null) opener = self;
-  var terms = opener.document.structure2.xpcur_G_structure_add_name.value;
-  var ids = opener.document.structure2.xpcur_G_structure_add.value;
+
+  if (opener == null) opener = self; 
+  if (opener.name == "expressionCuration") {
+  	var terms = opener.document.structure2.xpcur_G_structure_add_name.value;
+  	var ids = opener.document.structure2.xpcur_G_structure_add.value;
+        terms = terms.replace("'", "");
   
-  terms = terms.replace("'", "");
-  
-  if (terms == "") {
-    opener.document.structure2.xpcur_G_structure_add_name.value = AOname;
-    opener.document.structure2.xpcur_G_structure_add.value = AOid;
-  }
-  else {
-    opener.document.structure2.xpcur_G_structure_add_name.value = terms+"|"+AOname;
-    opener.document.structure2.xpcur_G_structure_add.value = ids+","+AOid;
+ 	if (terms == "") {
+    	  opener.document.structure2.xpcur_G_structure_add_name.value = AOname;
+    	  opener.document.structure2.xpcur_G_structure_add.value = AOid;
+  	}
+  	else {
+      	  opener.document.structure2.xpcur_G_structure_add_name.value = terms+"|"+AOname;
+    	  opener.document.structure2.xpcur_G_structure_add.value = ids+","+AOid;
+  	}
+   }
+  if (opener.name == "expressionSearch") { 
+	var curTerms = opener.document.critform.TA_selected_structures.value; 
+	if (!curTerms) {
+	  opener.document.critform.TA_selected_structures.value = AOname;
+	}
+	else {
+          // make sure only one "\n" between terms
+	  curTerms = curTerms.replace(/\n+$/g,"");
+	  opener.document.critform.TA_selected_structures.value = curTerms+"\n"+AOname;
+	}
   }
 }
     
@@ -70,6 +117,7 @@ function updateParent(AOname, AOid) {
 
   <?MIVAR>
     <INPUT type="hidden" name="mode" value="$mode">
+    <INPUT type="hidden" name="type" value="$type">
   <?/MIVAR>
 
 
@@ -77,23 +125,24 @@ function updateParent(AOname, AOid) {
     <TR>
       <TD valign=top bgcolor="#CCCCCC">
         <FONT size=+1 color="#OOOOOO">Anatomical Ontology Browser</FONT>
-
+        <?MIVAR>
         <FONT style="font-weight:bold;">
 	  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 	  [
-	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=stages">
+	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=stages&type=$type">
             Browse by Stage
           </A>
 	  ] &nbsp;&nbsp; [
-	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=search">
+	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=search&type=$type">
             Search
           </A>
           ] &nbsp;&nbsp; [
-          <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=alpha">
+          <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=alpha&type=$type">
             Complete List 
           </A>
 	  ]
         </FONT>
+        <?/MIVAR>
       </TD>
     </TR>
   </TABLE>
@@ -121,9 +170,17 @@ function updateParent(AOname, AOid) {
 	<?MIBLOCK COND="$(AND,$(XST,$mode),$(EC,$mode,search))">
    
 	  <FONT size=2><B>Search Anatomical Ontology:</B></FONT>
-    	  <INPUT type=text size=20 name=searchterm
+	  <DIV id="autosuggest"><ul></ul></DIV>
+    	  <INPUT type=text size=20 name=searchterm id=searchterm
 	    	<?MIVAR COND="$(XST,$searchterm)"> value="$searchterm" <?/MIVAR>
           >
+	  <script src="http://<!--|DOMAIN_NAME|-->/autosuggest.js"></script>
+              <?MIVAR>
+	  <script>
+		  var anatomyList = new Array($anatdict_anatList);
+		  new AutoSuggest(document.getElementById("searchterm"),anatomyList);
+          </script>
+	      <?/MIVAR>
           <INPUT type="button" value="Search" onclick="document.dictform.mode.value='search';
 						 document.dictform.submit();">
 	<?/MIBLOCK>
@@ -188,9 +245,9 @@ function updateParent(AOname, AOid) {
 	        <?MIBLOCK COND="$(NE,$highlight_text,)">
 		   		<?MIVAR COND="$(>,$(POSITION,$item_name,$highlight_text),0)" NAME="$highlight">true<?/MIVAR>
 	        <?/MIBLOCK>
-	
 	        <?MIVAR>
-		  <?MIVAR COND=$(EC,$AUTHORIZED,root)><a href="javascript:updateParent('$(REPLACE,$item_name,"'","\'")','$item_zdb_id');">select</a><?/MIVAR>
+		   
+		  <?MIVAR COND=$(AND,$(XST,$type),$(EC,$type,select))><input type="button" onClick="updateParent('$(REPLACE,$item_name,"'","\'")','$item_zdb_id');" value="Add" title="Click to add term to main window anatomy box"><?/MIVAR>
 	          <font style="font-family:arial; font-size:small; font-weight:bold;  $(IF,$(EQ,$highlight,true),background-color:#ffff99)">
 	          <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">
 	          $item_name<?MIBLOCK COND="$(NE,$item_abbrev,NULL)"><?/MIBLOCK></A></font> &nbsp;
@@ -254,7 +311,7 @@ function updateParent(AOname, AOid) {
 	   <?MIBLOCK COND="$(EC,$MI_ROWCOUNT,0)">
 	        <?MIVAR>
 		  No results found for "<b>$searchterm</b>", try viewing the 
-		  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=alpha">complete list</a>.
+		  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=alpha&type=$type">complete list</a>.
 		<?/MIVAR>
 	        <?MICOMMENT> ---- capturing failed searches for use as possible synonyms ---- <?/MICOMMENT>
       		<?MISQL SQL="insert into xpat_anatomy_capture values ('$searchterm',current);"><?/MISQL>
@@ -337,7 +394,8 @@ function updateParent(AOname, AOid) {
 		      <?/MIBLOCK>
 
 		      <?MIVAR>
-		        <?MIVAR COND=$(EC,$AUTHORIZED,root)><a href="javascript:updateParent('$(REPLACE,$item_name,"'","\'")','$item_zdb_id');">select</a><?/MIVAR>
+		        <?MIVAR COND=$(AND,$(XST,$type),$(EC,$type,select))><input type="button" onClick="updateParent('$(REPLACE,$item_name,"'","\'")','$item_zdb_id');" value="Add" title="Click to add term to main window anatomy box"><?/MIVAR>
+
 			<font style="font-family:arial; font-size:small; font-weight:bold;  margin-left:$indent; $(IF,$(EQ,$highlight,true),background-color:#ffff99)">
 			  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">
 			    $item_name
@@ -413,7 +471,7 @@ function updateParent(AOname, AOid) {
 	      <?/MIBLOCK>
 
 	      <?MIVAR>
-		<?MIVAR COND=$(EC,$AUTHORIZED,root)><a href="javascript:updateParent('$(REPLACE,$item_name,"'","\'")','$item_zdb_id');">select</a><?/MIVAR>
+		<?MIVAR COND=$(AND,$(XST,$type),$(EC,$type,select))><input type="button" onClick="updateParent('$(REPLACE,$item_name,"'","\'")','$item_zdb_id');" value="Add" title="Click to add term to main window anatomy box"><?/MIVAR>
 		<font style="font-family:arial; font-size:small; font-weight:bold;  $(IF,$(EQ,$highlight,true),background-color:#ffff99)">
 		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">
 		  $item_name<?MIBLOCK COND="$(NE,$item_abbrev,NULL)"><?/MIBLOCK></A></font> &nbsp;
@@ -468,11 +526,15 @@ function updateParent(AOname, AOid) {
         </TD>
       </TR>
     </TABLE>
+
+  <?MIVAR COND="$(EC,$type,select)">
+	<input type="button" value="Close Window" onClick="window.close()";>
+  <?/MIVAR>
   </CENTER>
 
 </FORM>
 
-<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+<?MISQL COND="$(NC,$type,select)" SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 
 
 

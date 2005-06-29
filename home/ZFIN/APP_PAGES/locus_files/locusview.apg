@@ -366,10 +366,32 @@ Datablade documentation.
 	  <?/MIBLOCK>
   	
 	<!------------- Locus Description ------------------------>
+    
+        <?MICOMMENT> ==========================================================
+                     ==  Gene Expression in fish Background
+                     ==========================================================  
+        <?/MICOMMENT>
+	<?MISQL SQL="
+		select xpatex_zdb_id
+                  from feature_experiment 
+                       join expression_experiment 
+			  on featexp_zdb_id = xpatex_featexp_zdb_id
+		       join fish
+			  on zdb_id = featexp_genome_feature_zdb_id
+                 where locus = '$OID';">
+    
+        <?/MISQL>
+	<?MIBLOCK COND="$(!=,$MI_ROWCOUNT,0)">
+	   <hr width=90%>
+           <?MIVAR>
+           <b> <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&mutsearchtype=begins&mutant=$name">GENE EXPRESSION IN <i>$abbrev</i> BACKGROUND </a> </b>
+	   <?/MIVAR>
+        <?/MIBLOCK> <?MICOMMENT> end of if there are xpats <?/MICOMMENT> 
 
-     
+
+
         <!------------- mapping information   -------------------------->
-          <p>  
+          <br><hr width=90%>  
 	  <b>MAPPING INFORMATION:</b>
           <TABLE width="100%" bgcolor=<?MIVAR>"$highlight"<?/MIVAR>>
           <TR><TD>
@@ -412,7 +434,8 @@ Datablade documentation.
 		        from linkage_member
 			where lnkgmem_member_zdb_id=a.fish_id) as linkages,
 		     (select unique count(*)::integer
-		        from mapped_marker where marker_id = a.locus) as paneled 
+		        from mapped_marker where marker_id = a.locus) as paneled,
+		     get_allele_html(allele)
 	        from fish_search a 
 		where locus ='$OID' 
 		order by allele;">
@@ -424,11 +447,12 @@ Datablade documentation.
 	      <?MIVAR NAME=$del_markers>$6<?/MIVAR>
 	      <?MIVAR NAME=$linkages>$7<?/MIVAR>
               <?MIVAR NAME=$paneled>$8<?/MIVAR>
+              <?MIVAR NAME=$allele_html>$9<?/MIVAR>
 
 	      $(SETVAR,$mindex,$(POSITION,$phenotype,"Details:"))
 	      <TR>
 
-	      <TD><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$fish_id"><i>$allele</i></A> </TD>
+	      <TD><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$fish_id"><i>$allele_html</i></A> </TD>
 	      <TD>	
 	      <!-- find any allele alias -->
 	      <?MISQL SQL="

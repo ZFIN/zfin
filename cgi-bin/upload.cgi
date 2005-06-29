@@ -313,15 +313,16 @@ sub getRecordOwnership () {
     # for FX, we have duplicate tables, fish_image and fx_fish_image_private.
     # zdb_ids for images are distinct between tables.
     # thus, the owner of an image could either be in fish_image or 
-    # fx_fish_image_private--2 tables have to be passed in. 
+    # fx_fish_image_private--2 tables have to be passed in.  This will go
+    # away when FX changes are committed
     
     $vColumnOwner = $_[0];
     $vTableName = $_[1];
     $vColumnZdb = $_[2];
     $vOID = $_[3];
-    $vAltColumnOwner = $_[4];
-    $vAltTableName = $_[5];
-    $vAltColumnZdb = $_[6];
+#    $vAltColumnOwner = $_[4];
+#    $vAltTableName = $_[5];
+#    $vAltColumnZdb = $_[6];
     
     my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
 			   '', 
@@ -332,11 +333,11 @@ sub getRecordOwnership () {
     
     my $cur = $dbh->prepare("select $vColumnOwner
                                from $vTableName
-                               where $vColumnZdb = '$vOID'
-                             union
-                                select $vAltColumnOwner
-                                  from $vAltTableName
-                                  where $vAltColumnZdb = '$vOID';"
+                               where $vColumnZdb = '$vOID';"
+ #                            union
+ #                               select $vAltColumnOwner
+ #                                 from $vAltTableName
+ #                                 where $vAltColumnZdb = '$vOID';"
 			    );
     
     $cur->execute;
@@ -377,8 +378,8 @@ sub checkForOID () { # check that the zdb_id of the filename
     
     $vTableName = $_[0];
     $vColumn = $_[1];
-    $vAltColumn = $_[2];
-    $vAltTableName = $_[3];
+   # $vAltColumn = $_[2];
+   # $vAltTableName = $_[3];
     $vOID = $_[4];
     
     my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
@@ -390,11 +391,11 @@ sub checkForOID () { # check that the zdb_id of the filename
     
     my $cur = $dbh->prepare("select $vColumn as OID
                                  from $vTableName
-                                 where $vColumn = '$vOID'
-                               union
-                                 select $vAltColumn as OID
-                                   from $vAltTableName
-                                   where $vAltColumn = '$vOID';"
+                                 where $vColumn = '$vOID';"
+                              # union
+                              #   select $vAltColumn as OID
+                              #     from $vAltTableName
+                              #     where $vAltColumn = '$vOID';"
 			    );
     $cur->execute;
     my ($existOID);
@@ -701,11 +702,15 @@ elsif (!($filename) &&
     # make sure the table variable is one specified by the calling
     # apg page. 
 
-    if ($table eq "fx_fish_image_private" || $table eq "fish_image") {
-    
+    if ($table eq "fish_image") {
+
+    #"fx_fish_image_private" || $table eq
+
 	$zdb_id = $query->param("zdb_id");
 	
-	if ($zdb_id !~ m/fimg_zdb_id|fimgp_zdb_id/){
+	if ($zdb_id !~ m/fimg_zdb_id/){
+	    #|fimgp_zdb_id
+
 	    &filename_error($zdb_id.'zdb_id is not ZFIN pattern') ;
 	}
 
@@ -889,10 +894,10 @@ else { # filename isn't null or redirect isn't do-imageupdate.apg
 			&getRecordOwnership("fimg_owner_zdb_id",
 					    "fish_image", 
 					    "fimg_zdb_id",
-					    $OID_from_apg_page,
-					    "fimgp_owner_zdb_id",
-					    "fx_fish_image_private",
-					    "fimgp_zdb_id");
+					    $OID_from_apg_page);
+					 #   "fimgp_owner_zdb_id",
+					 #   "fx_fish_image_private",
+					 #   "fimgp_zdb_id");
 			
 			&getSuffix; # get the file suffix
 			
@@ -914,8 +919,8 @@ else { # filename isn't null or redirect isn't do-imageupdate.apg
 				
 				&checkForOID ('fish_image',
 					      'fimg_zdb_id',
-					      'fimgp_zdb_id',
-					      'fx_fish_image_private',
+					     # 'fimgp_zdb_id',
+					     # 'fx_fish_image_private',
 					      $OID); 
 				    
 				$image_thumb_exists = system("/bin/test 'grep $file_thumb <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/'");  
@@ -1023,8 +1028,8 @@ else { # filename isn't null or redirect isn't do-imageupdate.apg
 
 		&checkForOID ('publication',
 			      'zdb_id',
-			      'sngl_one',
-			      'single',
+			     # 'sngl_one',
+			     # 'single',
 			      $OID);
 		
 		# returns $OID_in_DB if OID exists in the database

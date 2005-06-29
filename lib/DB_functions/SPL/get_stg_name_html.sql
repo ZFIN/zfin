@@ -1,38 +1,44 @@
 create function
 get_stg_name_html(
   stgZdbId        like stage.stg_zdb_id,
-  javascriptFunc  varchar(80) default NULL)
+  nameType  	  varchar(30) default NULL)
 
   returning varchar(200);
 
   -- Generates a string containing the stage name with embedded hot links to 
   -- the stage index page except the Unknown stage. 
+  --
+  -- INPUT:
+  --       stage zdb id
+  --       name type: default NULL / abbrev / long 
+  --         if abbrev, the display name is the stg_abbrev column
+  --         if long, the display name is the stg_name_long column, but
+  --  the hyperlink is only on the standard name part. 
+  --         if NULL or others, the display name is the stg_name column
   -- 
-  -- If the OPTIONAL javascriptFunc parameter is provided then the generated
-  -- HTML will invoke that javascript routine, passing the URL of the stage  
-  -- index page with proper anchor as a parameter to the javascript function.
+  -- RETURN:
+  --       stage name string with embeded hyperlink 
+  --       for the "Unknown" stage, return "Unknown" text.
+  --       If a non-existent stage ZDB ID is passed in, return "INVALID STAGE"
   --
-  -- If a non-existent stage ZDB ID is passed in then
-  --
-  --   UNKNOWN
-  --
-  -- is returned.
 
-  define stgNameHtml    varchar(200);
   define stgName        like stage.stg_name;
+  define stgAbbrev      like stage.stg_abbrev;
+  define stgNameExt     like stage.stg_name_ext;
+
   define col            int;
   define stgUrl		varchar(60);
   define stgNameAnchor	varchar(60);
-
+  define stgNameHtml    varchar(200);
   let stgUrl = "/zf_info/zfbook/stages/index.html";
 
-  select stg_name
-    into stgName
+  select stg_name, stg_abbrev, stg_name_ext
+    into stgName, stgAbbrev, stgNameExt
     from stage
     where stg_zdb_id = stgZdbId;
 
   if (stgName is NULL) then
-    let stgNameHtml = "UNKNOWN";
+    let stgNameHtml = "INVALID STAGE";
   elif (stgName = "Unknown") then
     let stgNameHtml = stgName;
   else
@@ -44,11 +50,14 @@ get_stg_name_html(
 
       let stgNameAnchor = substring(stgName from 1 for col - 1);
 
-      if (javascriptFunc is NULL) then
-        let stgNameHtml = '<a href="' || stgUrl || "#" || stgNameAnchor || '">' || stgName || "</a>";
-      else
-	let stgNameHtml = '<a href="javascript:' || javascriptFunc || "('" ||
-			  stgUrl || "#" || stgNameAnchor || "')" || '">' || stgName || "</a>";
+      if (nameType = "abbrev") then
+        let stgNameHtml = '<a href="' || stgUrl || "#" || stgNameAnchor || '">' || stgAbbrev || "</a>";
+
+      elif (nameType = "long") then 
+	let stgNameHtml = '<a href="' || stgUrl || "#" || stgNameAnchor || '">' || stgName || "</a>" || " " || stgNameExt;
+
+      else	
+	let stgNameHtml = '<a href="' || stgUrl || "#" || stgNameAnchor || '">' || stgName || "</a>";
       end if      
 
   end if

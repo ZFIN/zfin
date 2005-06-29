@@ -63,7 +63,7 @@ EFFECTS
   </tr>  
 <?MISQL SQL="
     select distinct fig_zdb_id, fig_label, xpatres_start_stg_zdb_id, xpatres_end_stg_zdb_id, xpatres_xpatex_zdb_id, mrkr_abbrev_order, stg_hours_start, LOWER(abbrev)
-    from fx_figure, fx_expression_pattern_figure, fx_expression_result, fx_expression_experiment, marker, stage, feature_experiment, fish
+    from figure, expression_pattern_figure, expression_result, expression_experiment, marker, stage, feature_experiment, fish
     where fig_source_zdb_id = '$OID'
       and xpatfig_fig_zdb_id = fig_zdb_id
       and xpatfig_xpatres_zdb_id = xpatres_zdb_id
@@ -85,7 +85,7 @@ EFFECTS
     <tr>
       <?MISQL SQL="
         select start.stg_name_long, end.stg_name_long, anatitem_name, xpatres_expression_found, anatitem_name_order
-        from fx_expression_pattern_figure, fx_expression_result, anatomy_item, stage as start, stage as end       
+        from expression_pattern_figure, expression_result, anatomy_item, stage as start, stage as end       
         where xpatfig_fig_zdb_id = '$xpcurpnl_fig_zdb_id'
           and xpatfig_xpatres_zdb_id = xpatres_zdb_id
           and xpatres_start_stg_zdb_id = '$xpcurpnl_start_stg_zdb_id'
@@ -140,7 +140,7 @@ EFFECTS
         <select name="xpcur_G_panel_fig_zdb_id">
           <?MISQL SQL="
             select fig_zdb_id, fig_label
-	    from fx_figure
+	    from figure
 	    where fig_zdb_id in ('$xpcur_G_fig_attrib_csv')
             order by fig_label;">
             <option value=$1>$2</option>
@@ -151,7 +151,7 @@ EFFECTS
         <select name="xpcur_G_panel_add_xpatex">
           <?MISQL SQL="
             select xpatex_zdb_id, mrkr_abbrev_order, LOWER(abbrev)
-	    from fx_expression_experiment, marker, feature_experiment, fish
+	    from expression_experiment, marker, feature_experiment, fish
 	    where xpatex_source_zdb_id = '$OID'
 	      and xpatex_gene_zdb_id = mrkr_zdb_id
 	      and xpatex_featexp_zdb_id = featexp_zdb_id

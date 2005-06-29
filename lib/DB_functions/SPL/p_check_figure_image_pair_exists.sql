@@ -7,8 +7,8 @@ create procedure p_check_figure_image_pair_exists (vImgZdbId varchar(50),
 
   then 
 
-      let vImgComments = (select fimgp_comments 
-	    		    from fx_fish_image_private
+      let vImgComments = (select fimg_comments 
+	    		    from fish_image
 			    where vImgZdbID = fimgp_zdb_id
 			    and fimgp_owner_zdb_id = 'ZDB-PERS-030520-1') ;
 
@@ -17,9 +17,9 @@ create procedure p_check_figure_image_pair_exists (vImgZdbId varchar(50),
   	then
 
     	let vOk = (select count(*) 
-			from FX_fish_image_private
-			where fimgp_fig_zdb_id = vFigZdbId
-			and fimgp_zdb_id = vImgZdbId) ;
+			from fish_image
+			where fimg_fig_zdb_id = vFigZdbId
+			and fimg_zdb_id = vImgZdbId) ;
 
     		if vOk > 0 then
 
