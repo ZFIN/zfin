@@ -23,7 +23,7 @@ OUTPUT:
 EFFECTS  
   None.
 
-http://iguana.zfin.org/fx/darrow.gif
+http://<!--|DOMAIN_NAME|-->/images/darrow.gif
 <?/MICOMMENT>
 
 <?MIERROR>
@@ -40,7 +40,7 @@ http://iguana.zfin.org/fx/darrow.gif
 
 <?MIVAR COND=$(NXST,$fxfigge_display_option) NAME=$fxfigge_display_option><?/MIVAR>
 <?MIVAR NAME=$fxfigge_list_items><?/MIVAR>
-<?MIVAR NAME=$fxfigge_down_arrow>http://iguana.zfin.org/fx/darrow.gif<?/MIVAR>
+<?MIVAR NAME=$fxfigge_down_arrow>http://<!--|DOMAIN_NAME|-->/images/darrow.gif<?/MIVAR>
 <?MISQL SQL="
     SELECT distinct mrkr_abbrev, mrkr_zdb_id, mrkr_name_order
       FROM expression_pattern_figure, expression_result,
@@ -52,7 +52,7 @@ http://iguana.zfin.org/fx/darrow.gif
      ORDER BY mrkr_name_order;">
 
     <?MIBLOCK COND=$(EC,$fxfigge_display_option,anchor)>
-      <?MIVAR NAME=$fxfigge_down_arrow><img src=http://iguana.zfin.org/fx/darrow.gif><?/MIVAR>
+      <?MIVAR NAME=$fxfigge_down_arrow><img src=http://<!--|DOMAIN_NAME|-->/images/darrow.gif><?/MIVAR>
       <?MIVAR NAME=fxfigge_gene_href><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-figview.apg&OID=OID#$2"><?/MIVAR>
     <?MIELSE>
       <?MIVAR NAME=$fxfigge_down_arrow><?/MIVAR>
