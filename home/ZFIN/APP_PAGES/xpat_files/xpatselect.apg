@@ -478,6 +478,7 @@ function openChild(childWinUrl,childWinName) {
     <?MICOMMENT> ** build url to pass in ** <?/MICOMMENT>
     
   <?MIVAR>
+    $(VECAPPEND,$xpatsel_urlVec,xpatsel_calledBySelf=true)
     $(IF,$(XST,$searchtype),$(VECAPPEND,$xpatsel_urlVec,searchtype=$searchtype))
     $(IF,$(XST,$xpatsel_probeName),$(VECAPPEND,$xpatsel_urlVec,xpatsel_probeName=$(URLENCODE,$xpatsel_probeName)))
     $(IF,$(XST,$xpatsel_probeSearchType),$(VECAPPEND,$xpatsel_urlVec,xpatsel_probeSearchType=$xpatsel_probeSearchType))
@@ -601,6 +602,7 @@ function openChild(childWinUrl,childWinName) {
     <?MIBLOCK COND="$(XST,$pubId)">
       <?MIVAR name=$UserInput>$UserInput&pubId=$pubId<?/MIVAR>
     <?MIELSE>
+      <?MIVAR name=$UserInput>$UserInput&xpatsel_calledBySelf=true<?/MIVAR>
       <?MIVAR name=$UserInput COND=$(XST,$gene_name)>$UserInput&gene_name=$(URLENCODE,$gene_name)<?/MIVAR>
       <?MIVAR name=$UserInput COND=$(XST,$xpatsel_geneZdbId)>$UserInput&xpatsel_geneZdbId=$(URLENCODE,$xpatsel_geneZdbId)<?/MIVAR>
       <?MIVAR name=$UserInput COND=$(XST,$xpatsel_probeName)>$UserInput&xpatsel_probeName=$(URLENCODE,$xpatsel_probeName)<?/MIVAR>
@@ -779,6 +781,7 @@ function openChild(childWinUrl,childWinName) {
     .selectLabel { font-weight: bold; }
     .filterLabel { ; }
 
+    #xpatselJtypeBox { margin-top: .3em; margin-bottom: .3em; }
 
     </style>
 
@@ -932,7 +935,7 @@ function openChild(childWinUrl,childWinName) {
 
         <?MICOMMENT> <!--- new selected structures textarea ---> <?/MICOMMENT>
 
-        <TD> 
+        <TD align="left" valign="top"> 
 	  <TABLE border=0 bgcolor="#EEEEEE"> 
             <TR>
 	      <TD colspan=2>
@@ -994,26 +997,25 @@ function openChild(childWinUrl,childWinName) {
 
            <fieldset>
 
-             <legend>Show:</legend>                    
+             <legend>Filters:</legend>                    
 
              <?MICOMMENT> *** Images Only Checkbox *** <?/MICOMMENT>
 
-             <input type="checkbox" id="xpatselImagesOnly"
-                    name="xpatsel_imagesOnly" value="checked" 
-                    <?MIVAR> $(IF,$(AND,$(XST,$xpatsel_imagesOnly),$(EC,$xpatsel_imagesOnly,checked)),checked="checked") <?/MIVAR> > 
-             <label for="xpatselImagesOnly">only figures with images </label>
+               <input type="checkbox" id="xpatselImagesOnly"
+                      name="xpatsel_imagesOnly" value="checked" 
+                      <?MIVAR> $(IF,$(AND,$(XST,$xpatsel_imagesOnly),$(EC,$xpatsel_imagesOnly,checked)),checked="checked") <?/MIVAR> > 
+               <label for="xpatselImagesOnly" id="xpatselImagesOnlyLabel">Only show figures with images </label>
 
              <?MICOMMENT> *** End Images Only Checkbox *** <?/MICOMMENT>
  
-             <br>
+             
+             <div id="xpatselJtypeBox">
 
              <?MICOMMENT> *** start direct submission checkbox *** <?/MICOMMENT>
 
-
-
              <input id="xpatselJtypeDirect" name="xpatsel_jtypeDirect" type="checkbox" value="checked"
                     <?MIVAR> $(IF,$(AND,$(XST,$xpatsel_jtypeDirect),$(EC,$xpatsel_jtypeDirect,checked)),checked="checked") <?/MIVAR> > 
-             <label for="xpatselJtypeDirect">direct submission data</label>
+             <label for="xpatselJtypeDirect">Show direct submission data</label>
 
              <?MICOMMENT> *** end direct submission checbkox *** <?/MICOMMENT>
 
@@ -1024,19 +1026,19 @@ function openChild(childWinUrl,childWinName) {
              
              <input id="xpatselJtypePublished" name="xpatsel_jtypePublished" type="checkbox" value="checked"
                     <?MIVAR> $(IF,$(AND,$(XST,$xpatsel_jtypePublished),$(EC,$xpatsel_jtypePublished,checked)),checked="checked") <?/MIVAR> > 
-             <label for="xpatselJtypePublished">published literature</label>
+             <label for="xpatselJtypePublished">Show published literature</label>
 
              <?MICOMMENT> *** end published checkbox *** <?/MICOMMENT>
 
+             </div> <?MICOMMENT> ** end jtype box div ** <?/MICOMMENT>
+             
 
-             <br>
-
-
-	    <?MIVAR>
-              <input align="right" type="text" id="xpatselWinsize" 
-                     name="WINSIZE" size="3" 
-                     onChange='document.critform.START.value = "";' $(IF,$(XST,$WINSIZE),value='$WINSIZE',value="25")>
+            <?MIVAR>
+               <input type="text" id="xpatselWinsize" 
+                      name="WINSIZE" size="3" 
+                  onChange='document.critform.START.value = "";' $(IF,$(XST,$WINSIZE),value='$WINSIZE',value="25")>
             <?/MIVAR>
+
 
             <label for="xpatselWinsize"> results per page </label>
 
