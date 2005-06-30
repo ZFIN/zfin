@@ -91,7 +91,7 @@ $xpdetres_imagesOnlyConstraint
   <?MIVAR NAME=$xpdetres_start_pos>$(POSITION,$(LOWER,$xpdetres_matching_output),$(LOWER,$xpdetres_matchedText))<?/MIVAR>
   <?MIVAR NAME=$xpdetres_str_length>$(STRLEN,$xpdetres_matchedText)<?/MIVAR>
 	  
-  <?MIVAR><p style="font-size: small;">Searched matched on $(LOWER,$xpdetres_matching_qualification): $(SUBSTR,$xpdetres_matching_output,1,$(-,$xpdetres_start_pos,1))<strong>$xpdetres_matchedText</strong>$(SUBSTR,$xpdetres_matching_output,$(+,$xpdetres_start_pos,$xpdetres_str_length))</p>
+  <?MIVAR><p style="font-size: small;">Search matched on $(LOWER,$xpdetres_matching_qualification): $(SUBSTR,$xpdetres_matching_output,1,$(-,$xpdetres_start_pos,1))<strong>$xpdetres_matchedText</strong>$(SUBSTR,$xpdetres_matching_output,$(+,$xpdetres_start_pos,$xpdetres_str_length))</p>
   <?/MIVAR>
 
 <?/MIBLOCK>
