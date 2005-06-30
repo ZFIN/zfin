@@ -67,7 +67,7 @@ $fxpubdis_probe_zdb_id (probe zdb id for unpublished pubs)
    <?MIVAR NAME=$fxpubdis_colon>:<?/MIVAR>
 <?/MIBLOCK>
 <?MIVAR NAME=$fxpubdis_source COND="$(NC,$fxpubdis_pages,)">$fxpubdis_source$fxpubdis_colon$fxpubdis_pages<?/MIVAR>
-<?MIVAR NAME=$fxpubdis_source COND="$(NC,$fxpubdis_jtype,Unpublished)">$fxpubdis_source($fxpubdis_jtype)<?/MIVAR>
+<?MIVAR NAME=$fxpubdis_source COND="$(AND,$(NC,$fxpubdis_jtype,Unpublished),$(NC,$fxpubdis_jtype,Journal))">$fxpubdis_source($fxpubdis_jtype)<?/MIVAR>
 
 <?MICOMMENT>
 Determine if the pub has multiple figures. This is used to determine if we need
