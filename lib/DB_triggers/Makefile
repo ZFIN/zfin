@@ -38,8 +38,14 @@ TRIGGERS = \
 	experiment_update_trigger.sql \
 	experiment_condition_insert_trigger.sql \
 	experiment_condition_update_trigger.sql \
+	expression_experiment_insert_trigger.sql \
+	expression_experiment_update_trigger.sql \
 	expression_pattern_infrastructure_insert_trigger.sql \
 	expression_pattern_infrastructure_update_trigger.sql \
+	expression_result_insert_trigger.sql \
+	expression_result_update_trigger.sql \
+	figure_insert_trigger.sql \
+	figure_update_trigger.sql \
 	fish_allele_update_trigger.sql \
 	fish_image_anatomy_insert_trigger.sql \
 	fish_image_anatomy_update_trigger.sql \
