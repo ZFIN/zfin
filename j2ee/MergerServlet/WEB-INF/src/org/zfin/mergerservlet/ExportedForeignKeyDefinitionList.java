@@ -11,8 +11,8 @@ import java.util.*;
  * The existence of the zdb_active_data and zdb_active_source tables in 
  * the ZFIN database sullies the purity of some lists.  Sometimes, the 
  * foreign keys in a list all point to the same parent table.  However,
- * they point to two tables, where one of the tables is zdb_active_data
- * or zdb_active_source.
+ * sometimes they point to two tables, where one of the tables is 
+ * zdb_active_data or zdb_active_source.
  *
  * Thought about changing the name of this class to be 
  * ForeignKeyDefinitionList.  It could then also be used to represent 
@@ -31,14 +31,15 @@ class ExportedForeignKeyDefinitionList
     /**
      * Parent table for the foreign key relationships.  This will never
      * point to zdb_active_data or zdb_active_source.  However, if this 
-     * table (the parent table) has an FK that points to zdb_active_data
-     * or zdb_active_source, then some of the entries in the list may 
-     * point at zdb_active_data or zdb_active_source.
+     * table (the parent table) has a PK that is an FK that points to 
+     * zdb_active_data or zdb_active_source, then some of the entries in 
+     * the list may point at zdb_active_data or zdb_active_source.
      */
     Table parentTable;
 
     /**
-     * list of foreign key definitions.
+     * List of foreign key definitions exported from parentTable (and/or
+     * zdb_active_data or zdb_active_source).
      */
     private ArrayList /*<ForeignKeyDefinition>*/ exportedForeignKeys;
 
@@ -75,6 +76,7 @@ class ExportedForeignKeyDefinitionList
      * @param orig Exported foreign key definition list to make a shallow copy
      *             of.
      */
+
     public ExportedForeignKeyDefinitionList (ExportedForeignKeyDefinitionList orig)
     {
 	this.parentTable = orig.parentTable;
@@ -135,7 +137,7 @@ class ExportedForeignKeyDefinitionList
 	// iterate through all entries in the list looking for
 	// child table.  Yeah, this is O(n), but n is always less 
 	// than 100
-	Iterator fkIter = this.iterator();
+	Iterator /*<ForeignKeyDefinition>*/ fkIter = this.iterator();
 	while (fkIter.hasNext()) {
 	    ForeignKeyDefinition fkDef = (ForeignKeyDefinition) fkIter.next();
 	    if (fkDef.getChildTable() == childTable) {
