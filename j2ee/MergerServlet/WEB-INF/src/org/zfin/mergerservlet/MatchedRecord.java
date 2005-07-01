@@ -7,8 +7,9 @@ import org.zfin.mergerservlet.*;
 
 
 /**
- * Define a class to represent actual records in the database that we have
- * matched on.  these form a tree of matching records.
+ * Defines a record in the database that we have matched on, and all
+ * of that record's dependent records, arranged as a tree of matched 
+ * records.
  */
 
 
@@ -19,7 +20,7 @@ public class MatchedRecord
      * -------------------------------------------------------------------- */
 
     /** 
-     * Database that matched record exists in.  
+     * Database that matched record and dependents exist in.  
      */
     MergerDatabase database;
 
@@ -30,7 +31,7 @@ public class MatchedRecord
 
     /** 
      * Primary key for this record.  This will be non-null if table has 
-     * a primay key
+     * a primary key
      */
     private KeyValue primaryKeyValue;
 
@@ -39,11 +40,14 @@ public class MatchedRecord
      * a foreign key relationship.  This will be null
      * for the root of the matched record tree.  For everything else, this will
      * have a value. 
-     *
-     * :TODO: Might also want to store the foreign key that caused this record
-     * to match?
      */
     private MatchedRecord parentRecord;
+
+    /*
+     * :TODO: Also need to store foreign key value that caused this record
+     * to match.  This will allow us to update the foreign key when we
+     * actually do the merge.
+     */
 
     /**
      * List of dependent matched records.  In other words, the list of records
@@ -71,29 +75,15 @@ public class MatchedRecord
 			 String zdbId)
 	throws SQLException
     {
-	// :TODO: Move the JDBC calls out of this object.
-
 	database = db;
-	Connection conn = database.getConnection();
-	Metadata meta = database.getMetadata();
+	Metadata metadata = database.getMetadata();
 
-	// Determine the object type of the ZDB ID
-	ZdbObjectType objType = meta.getObjectTypeFromZdbId(zdbId);
+	// get home table for ZDB ID
+	ZdbObjectType objType = metadata.getObjectTypeFromZdbId(zdbId);
 	table = objType.getHomeTable();
-	String zdbIdColumnName = objType.getZdbIdColumnName();
 
-	// build primary key
-	PreparedStatement stmt = 
-	    conn.prepareStatement(
-				  "select " + zdbIdColumnName +
-				  "  from " + table.getName() +
-				  "  where " + zdbIdColumnName + " = ?;");
-	stmt.setObject(1, zdbId);
-	ResultSet zadRs = stmt.executeQuery();
-	zadRs.next();
-	Object value = zadRs.getObject(1);
-	primaryKeyValue = new KeyValue();
-	primaryKeyValue.addColumnNameValuePair(zdbIdColumnName, value);
+	// build PK for this ZDB ID
+	primaryKeyValue = database.buildPrimaryKeyForZdbId(zdbId);
 
 	// No parent record in case where ZDB ID is provided.
 	parentRecord = null;
@@ -101,39 +91,12 @@ public class MatchedRecord
 	// Gather dependent records as well
 	// :TODO: Is automatic recursion a good thing?  Should we force a
 	//        separate explicit call after construction to do this?
-	dependentRecords = new ArrayList /*<MatchedRecord>*/ ();
 	gatherDependentRecords();
 	
 	return;
     }
 
 
-
-    /** Constructor, given only the table and primary key value
-     * 
-     * @param db      Database that matched record exists in.
-     * @param tbl     Table primary key value is from
-     * @param pkValue Primary key value 
-     */
-
-    public MatchedRecord (MergerDatabase db,
-			  Table tbl,
-			  KeyValue pkValue)
-	throws SQLException
-    {
-	database = db;
-	table = tbl;
-	primaryKeyValue = pkValue;
-	parentRecord = null;
-
-	// Gather dependent records as well
-	// :TODO: Is automatic recursion a good thing?  Should we force a
-	//        separate explicit call after construction to do this?
-	dependentRecords = new ArrayList /*<MatchedRecord>*/ ();
-	gatherDependentRecords();
-
-	return;
-    }
 
     /** 
      * Constructor, given the parent record, and table and primary key value 
@@ -152,17 +115,17 @@ public class MatchedRecord
 	database = parentRecord.getDatabase();
 	table = tbl;
 	primaryKeyValue = pkValue;
-	dependentRecords = new ArrayList /*<MatchedRecord>*/ ();
 	gatherDependentRecords();
 
 	return;
     }
 
 
+
+
     /* -------------------------------------------------------------------- 
      * PUBLIC METHODS
      * -------------------------------------------------------------------- */
-
 
 
     /**
@@ -193,6 +156,28 @@ public class MatchedRecord
     {
 	return table;
     }
+
+    /**
+     * Show the matched record in HTML format.
+     */
+
+    public String show()
+    {
+	String thisRec = 
+	    "<div style=\"padding-left: 2em;\">\n" +
+	    primaryKeyValue.show() + "\n";
+
+	// show each of the dependent records
+	Iterator drIter = dependentRecords.iterator();
+	String childRecs = "";
+	while (drIter.hasNext()) {
+	    MatchedRecord dr = (MatchedRecord) drIter.next();
+	    childRecs += dr.show();
+	}
+	String footer = "</div>\n";
+	return thisRec + childRecs + footer;
+    }
+
 
 
     /**
@@ -239,8 +224,6 @@ public class MatchedRecord
     }
 
 
-
-
     /**
      * Add a record to this record's dependent records list.
      *
@@ -267,7 +250,8 @@ public class MatchedRecord
     private void gatherDependentRecords()
 	throws SQLException
     {
-	database.getMetadata().getDependentRecords(this);
+	dependentRecords = new ArrayList /*<MatchedRecord>*/ ();
+	database.getDependentRecords(this);
 	return;
     }
 
