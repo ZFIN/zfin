@@ -18,7 +18,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/j2ee/MergerServlet/WEB-INF
 
-STATICS = web.xml header.jsp footer.jsp
+STATICS = web.xml header.jsp footer.jsp matched.jsp
 
 SUBDIRS = src
 
