@@ -42,10 +42,11 @@ class ForeignKeyDefinition implements Comparable
 
 
     /**
-     * Parameterized SQL condition for this foreign key definition.
+     * Parameterized SQL select statement to get PK with a paramterized
+     * FK condition.  Storing this is an optimization.  It could be 
+     * generated on the fly every time.
      */
-    private String parameterizedSqlCondition;
-
+    private String sqlSelectPkWhereParameterizedFk;
 
 
 
@@ -74,7 +75,7 @@ class ForeignKeyDefinition implements Comparable
 	childTable = childTbl;
 	name = fkName;
 	foreignKeyColumns = new ArrayList /*<ForeignKeyColumn>*/ ();
-	parameterizedSqlCondition = null; /* instantiate when needed */
+	sqlSelectPkWhereParameterizedFk = null; /* instantiate when needed */
     }
 
 
@@ -155,7 +156,56 @@ class ForeignKeyDefinition implements Comparable
 	return;
     }
 
+    /**
+     * Generate and SQL query to select the primary key columns of the 
+     * child table, using a parameterized where clause on the foreign
+     * key columns.
+     *
+     * For example, if the child table's primary key definition has 2
+     * columns in it, col1, and col2, and the child table's 
+     * foreign key definition has 2 columns in it, col2 and 
+     * col3, then this will return a string of the form:
+     *
+     *   "select col1, col2 from child_table where col2 = ? and col3 = ?"
+     * 
+     * @return parameterized SQL query of the form: 
+     *         select pkcol1, pkcol2, ... 
+     *           from child_table
+     *           where fkcol1 = ? and fkcol2 = ? and ...
+     */
 
+    public String getSqlSelectPkWhereParameterizedFk()
+    {
+	// instantiate string if routine has not been called before
+	if (null == sqlSelectPkWhereParameterizedFk) {
+	    sqlSelectPkWhereParameterizedFk = 
+		"select " + childTable.getCommaSeparatedPkColumnNames() +
+		"  from " + childTable.getName() +
+		"  where " + getParameterizedSqlCondition();
+	}
+	return sqlSelectPkWhereParameterizedFk;
+    }
+
+
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+     * COLLECTION METHODS
+     * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
+
+    /**
+     * Return iterator on columns in foreign key definition.
+     */
+
+    public Iterator /*<ForeignKeyColumn>*/ iterator()
+    {
+	return foreignKeyColumns.iterator();
+    }
+
+
+
+    /* --------------------------------------------------------------------
+     * PRIVATE METHODS
+     * -------------------------------------------------------------------- */
 
     /** 
      * Get a parameterized SQL condition string that can be used with specific 
@@ -172,35 +222,22 @@ class ForeignKeyDefinition implements Comparable
      *         into an SQL where clause.
      */
 
-    public String getParameterizedSqlCondition()
+    private String getParameterizedSqlCondition()
     {
-	// Method instantiates condition string only the first time it is 
-	// called.  After that, it reuses the string.
-
-	if (null == parameterizedSqlCondition) {
-	    Iterator colIter = foreignKeyColumns.iterator();
-	    while (colIter.hasNext()) {
-		ForeignKeyColumn column = (ForeignKeyColumn) colIter.next();
-		String columnName = column.getForeignKeyColumnName();
-		if (null == parameterizedSqlCondition) {
-		    parameterizedSqlCondition = columnName + " = ?";
-		}
-		else {
-		    parameterizedSqlCondition += " and " + columnName + " = ?";
-		}
+	String parameterizedSqlCondition = null;
+	Iterator /*<ForeignKeyColumn>*/ colIter = foreignKeyColumns.iterator();
+	while (colIter.hasNext()) {
+	    ForeignKeyColumn column = (ForeignKeyColumn) colIter.next();
+	    String columnName = column.getForeignKeyColumnName();
+	    if (null == parameterizedSqlCondition) {
+		parameterizedSqlCondition = columnName + " = ?";
+	    }
+	    else {
+		parameterizedSqlCondition += " and " + columnName + " = ?";
 	    }
 	}
 	return parameterizedSqlCondition;
     }
 
-
-    /**
-     * Return iterator on columns in foreign key definition.
-     */
-
-    public Iterator /*<ForeignKeyColumn>*/ iterator()
-    {
-	return foreignKeyColumns.iterator();
-    }
 
 }
