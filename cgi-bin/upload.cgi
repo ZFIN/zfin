@@ -380,7 +380,7 @@ sub checkForOID () { # check that the zdb_id of the filename
     $vColumn = $_[1];
    # $vAltColumn = $_[2];
    # $vAltTableName = $_[3];
-    $vOID = $_[4];
+    $vOID = $_[2];
     
     my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
 			   '', 
