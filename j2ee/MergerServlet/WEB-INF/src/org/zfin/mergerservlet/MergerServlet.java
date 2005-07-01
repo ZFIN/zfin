@@ -23,22 +23,6 @@ public class MergerServlet extends HttpServlet
      * ATTRIBUTES
      * -------------------------------------------------------------------- */
 
-
-    /* :TODO: Not sure if these will just be for the servlet initialization,
-     * or if they will be reused with each call.  Probably can't be reused with
-     * each call, as servlet can handle multiple, simultaneous calls, in which
-     * case these can be moved into the init routine.
-     */
-
-    private Context initContext;
-    private Context jdbcContext;
-
-    /** JDBC data source.  Database connections are obtained with this 
-     * data source.  Note that the servlet does not maintain an open connection
-     * itself between invocations.
-     */
-    private DataSource dataSource;
-
     /** 
      * Database name.  All connections within this servlet use the same
      * database.
@@ -69,87 +53,30 @@ public class MergerServlet extends HttpServlet
 
     /**
      * Initialize the servlet.  This consists of reading the data dictionary
-     * and saving it.
+     * and saving it, and establishing a datasource for subsquent requests
+     * to use.
      */
 
     public void init()
 	throws ServletException
     {
-	// I think it is worth the effort to catch each excpetion 
-	// individually.  Unfortunately, this renders this method
-	// unreadable.
-
 	// Get a datasource and connection to the database.
 	// The connection is used only by init method, but the datasource
 	// is used to get connections for each request that comes in.
 	try {
-	    initContext = new InitialContext();
+	    Context initContext = new InitialContext();
+	    Context jdbcContext = (Context) initContext.lookup("java:comp/env");
+	    DataSource dataSource = 
+		(DataSource) jdbcContext.lookup("jdbc/zfinDatabase");
+	    databaseName = getServletContext().getInitParameter("db_name");
+
+	    // Gather metadata on current database.
+	    metadata = new Metadata(dataSource, databaseName);
 	}
-	catch (NamingException nameException) {
-	    throw new ServletException ("Failed to get initial context.",
-					nameException);
-	}
-	try {
-	    jdbcContext = (Context) initContext.lookup("java:comp/env");
-	}
-	catch (NamingException nameException) {
-	    throw new ServletException ("Failed to get JDBC env context.",
-					nameException);
-	}
-	try {
-	    dataSource = (DataSource) jdbcContext.lookup("jdbc/zfinDatabase");
-	}
-	catch (NamingException nameException) {
-	    throw new ServletException ("Failed to lookup jdbc/zfinDatabase.",
-					nameException);
-	}
-	Connection dbConn;
-	databaseName = getServletContext().getInitParameter("db_name");
-	try {
-	    dbConn = openConnection();
-	}
-	catch (SQLException sqlException) {
-	    throw new ServletException ("Database Connection open failed.",
-					sqlException);
+	catch (Exception exception) {
+	    throw new ServletException (exception);
 	}
 
-	// Gather metadata on current database.
-	try {
-	    metadata = new Metadata(dbConn, databaseName);
-	}
-	catch (SQLException sqlException) {
-	    throw new ServletException ("Failed to gather metadata.",
-					sqlException);
-	}
-
-	try {
-	    dbConn.close();  // done with connection, hang on to dataSource.        						  
-	}
-	catch (SQLException sqlException) {
-	    throw new ServletException ("Failed to close database connect.",
-					sqlException);
-	}
-
-	return;
-    }
-
-
-    /**
-     * Destroy the servlet.  This frees the resources allocated by init.
-     */
-
-    public void destroy()
-    {
-	try {
-	    jdbcContext.close();
-	    initContext.close();
-	}
-	catch (NamingException closeException) {
-	    // This method can't throw an exception, so the best we can
-	    // do is write an error to the log
-	    System.out.println("MergerServlet got an exception when closing\n" +
-			       "  contexts.\n" + closeException);
-	}
 	return;
     }
 
@@ -159,9 +86,7 @@ public class MergerServlet extends HttpServlet
      * -------------------------------------------------------------------- */
 
     /**
-     * Handle HTTP GET requests.  I expect the only GET request that will 
-     * come in is the initial one that results in an empty form being thrown
-     * up.
+     * Handle HTTP GET requests.
      *
      * @param request  An HttpServletRequest object that contains the request 
      *                 the client has made of the servlet
@@ -176,6 +101,9 @@ public class MergerServlet extends HttpServlet
     {
 	response.setContentType("text/html");
 
+	// This code explicitly throws up header and footer.  Not sure
+	// if it would be better to have the matched.jsp do that.
+
 	// show header
 	RequestDispatcher dispatcher =
 	    request.getRequestDispatcher("/WEB-INF/header.jsp");
@@ -184,40 +112,29 @@ public class MergerServlet extends HttpServlet
 	PrintWriter out = response.getWriter();
 
 	// Get Database object so we can get data.
-	Connection dbConn;
 	try {
-	    dbConn = openConnection();
-	}
-	catch (SQLException sqlException) {
-	    throw new ServletException ("Database Connection open failed.",
-					sqlException);
-	}
-	MergerDatabase db = new MergerDatabase(metadata, dbConn);
+	    // A MergerDatabase object encapsulates all the DB / SQL
+	    // access that is done when looking for matching records.
+	    MergerDatabase db = new MergerDatabase(metadata);
 
-	// get matching records for the provided ZDB ID
-	String dataZdbId = request.getParameter("dataZdbId");
-	MatchedRecord root;
-	try {
-	    root = new MatchedRecord(db, dataZdbId);
-	}
-	catch (SQLException sqlException) {
-	    throw new ServletException ("Failed to create matched record.",
-					sqlException);
-	}
+	    // get matching records for the provided ZDB ID
+	    String zdbId = request.getParameter("zdbId");
+	    MatchedRecord root = new MatchedRecord(db, zdbId);
 
-	// Show matched record.
-	out.println(root.toHtml());
+	    // Show matched record.
+	    // Add this to the request so JSP can pick it up.
+	    // With the current implementation, this is just a (bad) proof
+	    // of concept.  The matched.jsp does very little.
+	    request.setAttribute("matchedRecord", root);
+	    dispatcher = request.getRequestDispatcher("/WEB-INF/matched.jsp");
+	    dispatcher.include(request,response);
 
-	// Done, show footer
-	dispatcher = request.getRequestDispatcher("/WEB-INF/footer.jsp");
-	dispatcher.include(request, response);
-
-	try {
-	    dbConn.close();
+	    // Done, show footer
+	    dispatcher = request.getRequestDispatcher("/WEB-INF/footer.jsp");
+	    dispatcher.include(request, response);
 	}
-	catch (SQLException sqlException) {
-	    throw new ServletException ("Failed to close connection.", 
-					sqlException);
+	catch (Exception exception) {
+	    throw new ServletException (exception);
 	}
 
 	return;
@@ -242,36 +159,4 @@ public class MergerServlet extends HttpServlet
 	return;
     }
 
-
-
-    /* -------------------------------------------------------------------- 
-     * PRIVATE METHODS
-     * -------------------------------------------------------------------- */
-
-    /** 
-     * Open a database connection to the database.
-     *
-     * @return JDBC connectoin to the database
-     */
-    private Connection openConnection()
-	throws SQLException
-    {
-	Connection conn = dataSource.getConnection();
-	Statement dbStmt = conn.createStatement();
-	dbStmt.executeUpdate("database " + databaseName);
-	dbStmt.close();
-
-	// Force callers to do explicit commits. The setAutoCommit method
-	// cannot be called until after you established the database, b/c
-	// until then you don't know if the database supports transactions.
-       	conn.setAutoCommit(false);
-
-	Statement setParams = conn.createStatement();
-	setParams.executeUpdate("execute procedure set_session_params()");
-	setParams.close();
-
-	return conn;
-    }
 }
-
-    
