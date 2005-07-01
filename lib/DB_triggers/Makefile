@@ -53,6 +53,8 @@ TRIGGERS = \
 	fish_image_stage_update_trigger.sql \
 	fish_insert_trigger.sql \
 	fish_name_update_trigger.sql \
+	journal_insert_trigger.sql \
+	journal_update_trigger.sql \
 	lab_insert_trigger.sql \
 	lab_update_trigger.sql \
 	linkage_pair_member_insert_trigger.sql \
