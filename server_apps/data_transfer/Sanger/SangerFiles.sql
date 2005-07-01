@@ -14,7 +14,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/VegaXpat.txt'
         xpatex_assay_name, xpatex_zdb_id xpat_zdb, 
         xpatex_source_zdb_id, 
         featexp_genome_feature_zdb_id, featexp_exp_zdb_id 	
- from fx_expression_experiment
+ from expression_experiment
       join feature_experiment 
 	  on featexp_zdb_id = xpatex_featexp_zdb_id
       join marker gene
@@ -123,5 +123,5 @@ select
     xpatres_start_stg_zdb_id,
     xpatres_end_stg_zdb_id,
     xpatres_anat_item_zdb_id   
-from fx_expression_result;
+from expression_result;
 
