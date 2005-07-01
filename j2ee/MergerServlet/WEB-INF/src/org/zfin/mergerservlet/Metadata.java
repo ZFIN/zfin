@@ -5,6 +5,22 @@ import java.sql.*;
 import java.util.*;
 import org.zfin.mergerservlet.*;
 
+/**
+ * Metadata contains information about the target database.  This includes 
+ * the tables, primary keys, and foreign keys that exist in the database,
+ * as well as information needed to open a connection to the database.
+ *
+ * The encapsulates all knowledge of JDBC metadata routines.  It also 
+ * provides connections to the database.  However, it does not encapsulate
+ * JDBC/SQL access to the database when searching for data.  See MergerDatabase
+ * for that.
+ *
+ * :TODO: This whole class could be (maybe?) converted to a static class, as 
+ *        there is only a need for one metadata object at a time.  Once it
+ *        is constructred, it never changes.
+ */
+
+
 public class Metadata
 {
     /* --------------------------------------------------------------------
@@ -21,10 +37,20 @@ public class Metadata
     private static HashSet /*<String>*/ ignoreTables;
 
 
-    /**
-     * JDBC metadata object.  All JDBC metadata calls use this object
-     */
 
+    /**
+     * DataSource for getting connections to the database.  The connection to
+     * get the metadata info, and then subsequent connections to extract data,
+     * all come from this DataSource.
+     */
+    private DataSource dataSource;
+
+
+    /**
+     * JDBC metadata object.  JDBC has a metadata API and all calls to that
+     * API go through this object.  This is valid only during construction.
+     * It is null after that.
+     */
     private DatabaseMetaData jdbcMetadata;
 
 
@@ -32,8 +58,18 @@ public class Metadata
      * Name of database this metadata is for.  This is passed into the 
      * constructor.  This is called the "catalog" in JDBC metadata lingo.
      */
-    private String dbName;
+    private String databaseName;
     
+
+
+    /**
+     * Database connection used to get metadata information.
+     * This connection is valid only during construction.
+     * It is null after that.
+     */
+    private Connection dbConnection;
+
+
 
     /** 
      * Many JDBC metadata methods allow you to specify the owner of
@@ -43,10 +79,13 @@ public class Metadata
      */
     final private String owner = null;
 
+
+
     /**
      * List of tables in the given database.
      */
-    private TreeMap tables;
+    private TreeMap /*<String,Table>*/ tables;
+
 
 
     /** 
@@ -62,19 +101,24 @@ public class Metadata
      * -------------------------------------------------------------------- */
 
     /**
-     * Constructor.  Builds a Metadata object that can be used to get
-     * information about the database the connection is using.
+     * Constructor.  Builds a Metadata object that is used to get
+     * information about a database
      *
-     * @param connection Database connection to get metadata from
-     * @param databaseName Name of database to get metadata from
+     * @param ds     JDBC/JNDI DataSource.  Connections to the database are
+     *               obtained with this DataSource.
+     * @param dbName Name of database that all connections will be to.  Metadata
+     *               in this object will be about this database.
      */
 
-    public Metadata (Connection connection,
-		     String databaseName)
+    public Metadata (DataSource ds,
+		     String dbName)
 	throws SQLException
     {
-	jdbcMetadata = connection.getMetaData();
-	dbName = databaseName;
+	dataSource = ds;
+	databaseName = dbName;
+	dbConnection = openConnection();
+	jdbcMetadata = dbConnection.getMetaData();
+
 	ignoreTables = new HashSet /*<String>*/ ();
 	ignoreTables.add("all_map_names");
 	ignoreTables.add("all_name_ends");
@@ -87,6 +131,12 @@ public class Metadata
 	// and zdb_active_source
 	inheritZdbActiveForeignKeys();
 
+	// Meatadata now set in stone.  Release stuff
+	jdbcMetadata = null;
+	dbConnection.close();
+	dbConnection = null;
+
+	return;
     }
 
 
@@ -99,7 +149,7 @@ public class Metadata
      * Return list of tables in the database.
      */
 
-    public Map getTables()
+    public Map /*<String,Table>*/ getTables()
     {
 	return tables;
     }
@@ -170,26 +220,25 @@ public class Metadata
 
 
 
+
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
      * PUBLIC JDBC METADATA ISOLATION METHODS
      * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      * 
-     * I am not sure what to call this type of method.  These methods exist
-     * here so that knowledge of JDBC metadata calls are all isolated in one
-     * place.  If that was not a goal, then they could have been dispersed in
-     * other object files instead.
+     * These methods exist here so that knowledge of JDBC metadata calls are 
+     * all isolated in one class.  
      *
-     * You can also view these as a callback mechanism.
-     * The objects that need the service that the method provides invoke the
-     * method, passing themselves as the input parameter.  The method then 
-     * gets the desired information and passes it to the calling object 
-     * through methods.
+     * You can view these as a callback mechanism. The objects that need the 
+     * service that the method provides invoke the method, passing themselves 
+     * as the input parameter.  The method then gets the desired information 
+     * and passes it to the calling object through methods.
      */
 
     /**
      * Get the definition of the primary key for a table.
      *
-     * @param pkDef  Primary key definition to populate.
+     * @param pkDef  Primary key definition to populate.  This specifies
+     *               which table the PK is for.
      */
 
     public void getPrimaryKeyForTable(PrimaryKeyDefinition pkDef)
@@ -197,7 +246,7 @@ public class Metadata
     {
 	Table table = pkDef.getTable();
 	ResultSet pkRs = 
-	    jdbcMetadata.getPrimaryKeys(dbName, owner, table.getName());
+	    jdbcMetadata.getPrimaryKeys(databaseName, owner, table.getName());
 	while (pkRs.next()) {
 	    String colName = pkRs.getString("COLUMN_NAME");
 	    int colNum = pkRs.getInt("KEY_SEQ") - 1;
@@ -211,7 +260,8 @@ public class Metadata
      * Get the list of exported keys for a table.  Exported keys are foreign
      * keys in other tables that point back to this table.
      *
-     * @param fkDefs Empty foreign key definition list to put keys into
+     * @param fkDefs Empty foreign key definition list to put keys into.
+     *               List specifies what table to get exported keys for.
      */
 
     public void getExportedKeys(ExportedForeignKeyDefinitionList fkDefs)
@@ -219,13 +269,13 @@ public class Metadata
     {
 	Table parentTable = fkDefs.getParentTable();
 	ResultSet efkRs = 
-	    jdbcMetadata.getExportedKeys(dbName, owner, parentTable.getName());
+	    jdbcMetadata.getExportedKeys(databaseName, owner, 
+					 parentTable.getName());
 
 	// The above call gets all the columns in all the foreign keys that 
 	// point back to this table.  Now we have detect when each foreign key 
 	// starts and ends in the result set, and create an FK for each one.  
 	// Determine this by when the FK name changes 
-
 	String prevFkName = "";
 	ForeignKeyDefinition fkDef = null;
 
@@ -248,76 +298,43 @@ public class Metadata
     }
 
 
+
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
      * PUBLIC JDBC SQL ISOLATION METHODS
      * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
      * 
      * These methods exist here so that knowledge of JDBC SQL calls are 
-     * isolated in one place.  You can also argue that since we use the 
-     * metadata to generate most of our SQL, that this is a natural place
-     * to put these methods.
+     * isolated in one place.  These are standard JDBC calls that are 
+     * independent of the JDBC metadata interface.
      */
 
-    /**
-     * Given a matching record, with no dependent records, find that matching
-     * record's dependent records and add them to the matching record.
+    /** 
+     * Open a database connection to the database.  Also set several 
+     * standard session parameters that ZFIN uses.
      *
-     * @param parentRecord Record to find dependent records for.  Dependent 
-     *                     records are added to this object.
+     * @return JDBC connection to the database
      */
 
-    public void getDependentRecords(MatchedRecord parentRecord)
+    public Connection openConnection()
 	throws SQLException
     {
-	Connection conn = parentRecord.getDatabase().getConnection();
+	Connection conn = dataSource.getConnection();
+	Statement dbStmt = conn.createStatement();
+	dbStmt.executeUpdate("database " + databaseName);
+	dbStmt.close();
 
-	// for each foreign key that depends on the matched record
-	Table parentTable = parentRecord.getTable();
-	KeyValue parentPkValue = parentRecord.getPrimaryKeyValue();
-	ExportedForeignKeyDefinitionList fkDefs = 
-	    parentTable.getAllExportedForeignKeyDefs();
-	Iterator fkDefIter = fkDefs.iterator();
+	// Force callers to do explicit commits. The setAutoCommit method
+	// cannot be called until after you established the database, b/c
+	// until then you don't know if the database supports transactions.
+       	conn.setAutoCommit(false);
 
-	while (fkDefIter.hasNext()) {
+	Statement setParams = conn.createStatement();
+	setParams.executeUpdate("execute procedure set_session_params()");
+	setParams.close();
 
-	    // get dependent records for the current FK definition.
-	    ForeignKeyDefinition childFkDef = 
-		(ForeignKeyDefinition) fkDefIter.next();
-	    Table childTable = childFkDef.getChildTable();
-	    String childFkCondition = childFkDef.getParameterizedSqlCondition();
-	    String childPkCommaList = 
-		childTable.getCommaSeparatedPkColumnNames();
-
-	    // :TODO:  This whole select string could be generated within the
-	    // foreign key definition.  Think about that.
-	    String selectString = 
-		"select " + childPkCommaList +
-		"  from " + childTable.getName() +
-		"  where " + childFkCondition;
-	    PreparedStatement select = conn.prepareStatement(selectString);
-
-	    // bind the column values from the parent primary key value to
-	    // the foreign key condition in the query.
-	    Iterator parentPkValueIter = parentPkValue.iterator();
-	    int colNum = 1;
-	    while (parentPkValueIter.hasNext()) {
-		ColumnNameValuePair parentPkColumnNvp = 
-		    (ColumnNameValuePair) parentPkValueIter.next();
-		select.setObject(colNum, parentPkColumnNvp.getValue());
-		colNum++;
-	    }
-
-	    ResultSet dependentRecords = select.executeQuery();
-	    addResultSetAsDependentRecords(parentRecord, dependentRecords,
-					   childTable);
-	    // clean up
-	    dependentRecords.close();
-	    select.close();
-
-	} // end while parentRecord still has FK defs to proccess
-
-	return;
+	return conn;
     }
+
 
 
     /**
@@ -348,6 +365,9 @@ public class Metadata
 
     /**
      * Build a complete list of tables that exist in the current database.
+     * At the end of this method we know about each table in the database,
+     * what the table's primary key definition is, and what the directly
+     * exported foreign keys are for each table.
      */
 
     private void createTableList()
@@ -359,7 +379,7 @@ public class Metadata
 	String tableTypes[] = new String[1];
 	tableTypes[0] = "TABLE";
         ResultSet tableRs = 
-	    jdbcMetadata.getTables(dbName, owner, null, tableTypes);
+	    jdbcMetadata.getTables(databaseName, owner, null, tableTypes);
 	while (tableRs.next()) {
 	    String tableName = tableRs.getString("TABLE_NAME");
 	    if (! ignoreTables.contains(tableName)) {
@@ -389,7 +409,7 @@ public class Metadata
     {
 	zdbObjectTypes = new TreeMap /*<ZdbObjectType>*/ ();
 	
-	Statement zotStmt = jdbcMetadata.getConnection().createStatement();
+	Statement zotStmt = dbConnection.createStatement();
 	ResultSet zotRs = 
 	    zotStmt.executeQuery("select *" +
 				 "  from zdb_object_type");
@@ -404,42 +424,8 @@ public class Metadata
 
 
 
-    /** 
-     * Given a result set, add the records in it to the dependent records list
-     * of the matched record that was also passed in.
-     *
-     */
-
-    private void addResultSetAsDependentRecords(MatchedRecord parentRecord,
-						ResultSet rs,
-						Table childTable)
-	throws SQLException
-    {
-	PrimaryKeyDefinition childPkDef = childTable.getPrimaryKeyDefinition();
-	while (rs.next()) {
-	    // build PK value for child record
-	    KeyValue childPkValue = new KeyValue();
-	    Iterator childPkColIter = childPkDef.iterator();
-	    int colNum = 1;
-	    while (childPkColIter.hasNext()) {
-		String childPkColName = (String) childPkColIter.next();
-		Object value = rs.getObject(colNum);
-		childPkValue.addColumnNameValuePair(childPkColName, value);
-		colNum++;
-	    }
-	    // :TODO: At this point we should build FK value that caused the 
-	    //        record to match.  However, I am not sure we need it
-	    MatchedRecord childRecord = 
-		new MatchedRecord(parentRecord, childTable, childPkValue);
-	    parentRecord.addDependentRecord(childRecord);
-	}
-	return;
-    }
-		
-
-
     /**
-     * Modify tables defs for object home tables to include FKs from the
+     * Modify table defs for object home tables to include FKs from the
      * ZDB_ACTIVE_* tables.  All tables and all ZDB object types must be
      * defined before calling this method.
      */
