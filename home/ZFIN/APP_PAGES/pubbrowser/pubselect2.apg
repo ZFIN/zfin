@@ -354,11 +354,12 @@ function list_all(user_access) {
 <?MIVAR name=$UserInput COND=$(XST,$year)>$UserInput&year=$year<?/MIVAR>
 <?MIVAR name=$UserInput COND=$(XST,$anon1)>$UserInput&anon1=$anon1<?/MIVAR>
 <?MIVAR name=$UserInput COND=$(XST,$order_pref)>$UserInput&order_pref=$order_pref<?/MIVAR>
-<?MIVAR name=$UserInput COND=$(XST,$pub_status)>$UserInput&pub_status=$pub_status<?/MIVAR>
+<?MIVAR name=$UserInput COND=$(XST,$pub_status)>$UserInput&pub_status=$(URLENCODE,$pub_status)<?/MIVAR>
 <?MIVAR name=$UserInput COND=$(XST,$return_rec)>$UserInput&return_rec=$return_rec<?/MIVAR>
 <?MIVAR name=$UserInput COND=$(XST,$authors)>$UserInput&authors=$(URLENCODE,$authors)<?/MIVAR>
 <?MIVAR name=$UserInput COND=$(XST,$title)>$UserInput&title=$(URLENCODE,$title)<?/MIVAR>
 <?MIVAR name=$UserInput COND=$(XST,$yr_cmpr)>$UserInput&yr_cmpr=$(URLENCODE,$yr_cmpr)<?/MIVAR>
+<?MIVAR name=$UserInput COND=$(XST,$pubsel2_pstatus)>$UserInput&pubsel2_pstatus=$(URLENCODE,$pubsel2_pstatus)<?/MIVAR>
 <?MIVAR name=$UserInput COND=$(XST,$anon1text)>$UserInput&anon1text=$(URLENCODE,$anon1text)<?/MIVAR>
 <?MIVAR name=$UserInput COND=$(XST,$anon1textAllOneWord)>$UserInput&anon1textAllOneWord=$anon1textAllOneWord<?/MIVAR>
 <?MIVAR name=$UserInput COND=$(XST,$query_results)>$UserInput&query_results=$query_results<?/MIVAR>
@@ -834,8 +835,8 @@ $(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/
           <OPTION VALUE="Any" $(IF,$(EC,$pub_status,Any),SELECTED)> Any
           <OPTION VALUE="active" $(IF,$(EC,$pub_status,"active"),SELECTED)> Active
           <OPTION VALUE="inactive" $(IF,$(EC,$pub_status,inactive),SELECTED)> Inactive
-          <OPTION VALUE="Epub ahead of print" $(IF,$(EC,$pub_status,Epub ahead of print),SELECTED)> Epub ahead of print
-	<OPTION VALUE="in press" $(IF,$(EC,$pub_status,in press),SELECTED)> in press
+          <OPTION VALUE="Epub ahead of print" $(IF,$(EC,$pub_status,Epub ahead of print),SELECTED)>Epub ahead of print
+	<OPTION VALUE="in press" $(IF,$(EC,$pub_status,in press),SELECTED)>in press
 
         </SELECT>  
       </td>
