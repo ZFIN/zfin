@@ -1,5 +1,6 @@
 package org.zfin.mergerservlet;
 
+import java.sql.*;
 import java.util.*;
 
 /**
@@ -43,16 +44,40 @@ class KeyValue
     /** 
      * Add a column name value pair to the key value.
      *
+     * @param db         Database that column name value pair exists in.
      * @param columnName Name of the column 
      * @param value      Value of the column
      */
 
-    public void addColumnNameValuePair(String columnName, 
+    public void addColumnNameValuePair(MergerDatabase db,
+				       String columnName, 
 				       Object value)
+	throws SQLException
     {
-	ColumnNameValuePair cnvp = new ColumnNameValuePair(columnName, value);
+	ColumnNameValuePair cnvp = 
+	    new ColumnNameValuePair(db, columnName, value);
 	columnValuePairs.add(cnvp);
 	return;
+    }
+
+
+    /**
+     * Show the primary key in HTML format, with links, if appropriate.
+     */
+    
+    public String show()
+    {
+	String kvString = "";
+	Iterator colIter = columnValuePairs.iterator();
+	while (colIter.hasNext()) {
+	    if (! kvString.equals("")) {
+		kvString += ", ";
+	    }
+	    ColumnNameValuePair nameValuePair = 
+		(ColumnNameValuePair) colIter.next();
+	    kvString = kvString + nameValuePair.show();
+	}
+	return kvString;
     }
 
 
@@ -113,11 +138,17 @@ class KeyValue
     }
 
 
+
+   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+     * COLLECTION METHODS
+     * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
+
+
     /**
      * Return iterator for column name/value pair list
      */
 
-    public Iterator iterator()
+    public Iterator /*<ColumnNameValuePair>*/ iterator()
     {
 	return columnValuePairs.iterator();
     }
