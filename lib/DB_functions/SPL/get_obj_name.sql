@@ -25,7 +25,10 @@ get_obj_name(zdbId varchar(50))
   elif (objType = "FISH") then
     let objName = get_fish_full_name(zdbId);
   elif (objType = "MRKRGOEV") then
-    select mrkrgoev_zdb_id
+    select get_obj_abbrev(mrkrgoev_mrkr_zdb_id) || ", " ||
+           get_obj_name(mrkrgoev_go_term_zdb_id) || ", " || 
+	   mrkrgoev_evidence_code || ", " ||
+	   get_obj_name(mrkrgoev_source_zdb_id)
       into objName
       from marker_go_term_evidence
       where mrkrgoev_zdb_id = zdbId;
@@ -35,12 +38,15 @@ get_obj_name(zdbId varchar(50))
       from experiment
       where exp_zdb_id = zdbId ;
   elif (objType = "FIG") then
-    select fig_zdb_id 
+    select get_obj_name(fig_source_zdb_id) || " " || fig_label
       into objName
       from figure
       where fig_zdb_id = zdbId ;
   elif (objType = "XPATRES") then
-    select xpatres_zdb_id 
+    select get_obj_name(xpatres_xpatex_zdb_id) || ", " || 
+           get_obj_name(xpatres_anat_item_zdb_id) || ", " ||
+           get_obj_name(xpatres_start_stg_zdb_id) || ", " ||
+           get_obj_name(xpatres_end_stg_zdb_id)
       into objName
       from expression_result
       where xpatres_zdb_id = zdbId ;
@@ -165,11 +171,6 @@ get_obj_name(zdbId varchar(50))
       into objName
       from journal
       where jrnl_zdb_id = zdbId;
-  elif (objType = "LABEL") then
-    select lbl_name 
-      into objName
-      from label
-      where lbl_zdb_id = zdbId;
   elif (objType = "LINK") then
     select lnkg_zdb_id		-- don't have names, return ZDB ID.
       into objName
@@ -190,11 +191,14 @@ get_obj_name(zdbId varchar(50))
       into objName
       from mapped_marker
       where zdb_id = zdbId;
-  elif (objType = "MREL") then  -- Doesn't have name, could use mrel_type
-    select mrel_zdb_id
+  elif (objType = "MREL") then
+    select get_obj_abbrev(mrel_mrkr_1_zdb_id) || " " ||
+           mreltype_1_to_2_comments || " " ||
+           get_obj_abbrev(mrel_mrkr_2_zdb_id)           
       into objName
-      from marker_relationship
-      where mrel_zdb_id = zdbId;
+      from marker_relationship, marker_relationship_type
+      where mrel_zdb_id = zdbId
+        and mrel_type = mreltype_name;
   elif (objType = "MRKRGO") then
     select mrkrgo_zdb_id
       into objName
