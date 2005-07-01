@@ -23,11 +23,6 @@ public class ZdbObjectType implements Comparable
      * -------------------------------------------------------------------- */
 
     /**
-     * Metadata object that for the database this object type is in.  
-     */
-    final private Metadata metadata;
-
-    /**
      * Name of the ZDB Object Type.  This is case sensitive and in almost
      * every case is in ALL CAPS.  
      */
@@ -50,6 +45,7 @@ public class ZdbObjectType implements Comparable
      * Name of column containing the ZDB ID in the home table
      */
     private String zdbIdColumnName;
+
 
     /**
      * A boolean field indicating if the object type is considered to be 
@@ -96,34 +92,37 @@ public class ZdbObjectType implements Comparable
      * this object type.  The constructor then makes callbacks to the metadata
      * to extract info from the JDBC result.
      *
-     * @param meta   Metadata object for the database that the 
-     *               object type exists in.
+     * This also adds the object type the object type's home table's list of
+     * object types.
+     *
+     * @param meta   Metadata object for the database that the object type 
+     *               exists in.  The object type is added to the home table
+     *               the object belongs to.
      * @param dbRow  JDBC row containing the definition of this object type
-     *               fromthe database.
+     *               from the database.
      */
+
     public ZdbObjectType (Metadata meta,
 			  ResultSet dbRow)
 	throws SQLException
     {
-	metadata = meta;
-        name = 
-	    (String) metadata.resultSetGetColumn(dbRow, "zobjtype_name");
-        appPage = 
-	    (String) metadata.resultSetGetColumn(dbRow, "zobjtype_app_page");
+        name = (String) meta.resultSetGetColumn(dbRow, "zobjtype_name");
+        appPage = (String) meta.resultSetGetColumn(dbRow, "zobjtype_app_page");
 
 	// Get home table for this object type; add this object type to the
 	// home table.
 	String tableName = 
-	    (String) metadata.resultSetGetColumn(dbRow, "zobjtype_home_table");
-	homeTable = metadata.getTable(tableName);
+	    (String) meta.resultSetGetColumn(dbRow, "zobjtype_home_table");
+	homeTable = meta.getTable(tableName);
 	homeTable.addZdbObjectType(this);
 
-	zdbIdColumnName = 
-	    (String) metadata.resultSetGetColumn(dbRow, 
-						 "zobjtype_home_zdb_id_column");
+	zdbIdColumnName =
+	    (String) meta.resultSetGetColumn(dbRow, 
+					     "zobjtype_home_zdb_id_column");
+
 	// Last fields can be null; deal with that.
 	Boolean isDataBool = 
-	    (Boolean) metadata.resultSetGetColumn(dbRow, "zobjtype_is_data");
+	    (Boolean) meta.resultSetGetColumn(dbRow, "zobjtype_is_data");
 	if (null == isDataBool) {
 	    isData = false;
 	}
@@ -131,7 +130,7 @@ public class ZdbObjectType implements Comparable
 	    isData = isDataBool.booleanValue();
 	}
 	Boolean isSourceBool = 
-	    (Boolean) metadata.resultSetGetColumn(dbRow, "zobjtype_is_source");
+	    (Boolean) meta.resultSetGetColumn(dbRow, "zobjtype_is_source");
 	if (null == isSourceBool) {
 	    isSource = false;
 	}
@@ -168,11 +167,11 @@ public class ZdbObjectType implements Comparable
 	return name;
     }
 
-    public Metadata getMetadata()
-    {
-	return metadata;
-    }
 
+    /**
+     * Return home table for the object type.  This is the table where
+     * records of this type are defined.
+     */
 
     public Table getHomeTable()
     {
@@ -180,16 +179,43 @@ public class ZdbObjectType implements Comparable
     }
 
 
+    /**
+     * Return the app page for this ZDB ID.  Not all object types have
+     * their own app pages, in which case this will be null.
+     */
+
+    public String getAppPage()
+    {
+	return appPage;
+    }
+
+    /**
+     * Return the name of the column in the home table where the ZDB ID
+     * resides.
+     */
+
     public String getZdbIdColumnName()
     {
 	return zdbIdColumnName;
     }
 
 
+    /**
+     * Return true if ZDB IDs with this object type occur in ZDB_ACTIVE_DATA,
+     * false otherwise
+     */
+
     public boolean isData()
     {
 	return isData;
     }
+
+
+    
+    /**
+     * Return true if ZDB IDs with this object type occur in ZDB_ACTIVE_SOURCE,
+     * false otherwise.
+     */
 
     public boolean isSource()
     {
