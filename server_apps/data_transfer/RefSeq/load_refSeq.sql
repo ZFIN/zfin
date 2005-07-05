@@ -481,7 +481,7 @@ SELECT
     dblink_zdb_id,
     dblink_fdbcont_zdb_id,
     dblink_length
-FROM db_link, automated_dblink, fx_expression_experiment
+FROM db_link, automated_dblink, expression_experiment
 WHERE dblink_zdb_id = link_id
   AND xpatex_dblink_zdb_id = link_id;
 

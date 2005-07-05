@@ -281,7 +281,7 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zdb_history.txt'
 
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/xpat.txt'
  DELIMITER "	"  select xpatex_gene_zdb_id, mrkr_abbrev
-		     from fx_expression_experiment
+		     from expression_experiment
 			  join marker on mrkr_zdb_id = xpatex_gene_zdb_id;
 
 --- generate mapping data for NCBI

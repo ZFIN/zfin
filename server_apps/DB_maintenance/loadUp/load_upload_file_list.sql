@@ -38,8 +38,7 @@ load from /tmp/fl_image_modified insert into tmp_image_file_list ;
 load from /tmp/fl_pdf_modified insert into tmp_pdf_file_list ;
 
 --create temp tables to store the mismatches (one for pdfs, one for
---images.  for images: have to check 2 places: fish_image and 
---fx_fish_image_private)
+--images. )
 
 create temp table tmp_not_in_images (
 	filename varchar(65)
@@ -70,10 +69,7 @@ insert into tmp_not_in_images
 	from tmp_image_file_list
 	where not exists (select 'x' 
 				from fish_image
-				where filename = fimg_image)
-        and not exists (select 'x'
-				from fx_fish_image_private
-				where filename = fimgp_image);
+				where filename = fimg_image);
 
 
 insert into tmp_not_in_image_files
@@ -81,12 +77,6 @@ insert into tmp_not_in_image_files
 	from fish_image 
 	where fimg_image not in (select filename
 				   from tmp_image_file_list) ;
-
-insert into tmp_not_in_image_files
-    select fimgp_image
-	from fx_fish_image_private	
-        where fimgp_image not in (select filename
-		            	    from tmp_image_file_list);
 
 
 unload to /tmp/filesystem_images_not_in_database.unl
