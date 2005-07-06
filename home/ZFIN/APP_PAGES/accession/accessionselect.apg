@@ -139,11 +139,30 @@
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,RFLP),0)">aa-markerview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,IMAGE),0)">aa-imageview.apg<?/MIVAR>
 
-      <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,XPAT),0)">aa-xpatview.apg<?/MIVAR>
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,ANAT),0)">aa-anatomy_item.apg<?/MIVAR>
 
       <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$aname,FIG),0)">aa-fxfigureview.apg<?/MIVAR>
-   
+      <?MICOMMENT> there is no longer an expression page, a publication's all figure page is 
+          the best place to go right now. For direct submission pub, like Thisse, there isn't 
+          a truely all figures page, but all figures page per probe. 
+      <?/MICOMMENT>
+      <?MIBLOCK COND="$(>,$(POSITION,$aname,XPAT),0)">
+        <?MISQL SQL="
+		select xpatex_source_zdb_id,jtype, xpatex_probe_feature_zdb_id
+                  from expression_experiment
+		       join publication on xpatex_source_zdb_id = zdb_id
+	         where xpatex_zdb_id = '$aname';">
+         <?/MISQL>
+    	 <?MIVAR NAME=xpat_pub_id>$1<?/MIVAR>
+    	 <?MIVAR NAME=xpat_pub_type>$2<?/MIVAR>
+   	 <?MIVAR NAME=xpat_probe_id>$3<?/MIVAR>
+   	 <?MIVAR NAME=$conditional_probe><?/MIVAR>
+    	 <?MIVAR COND="$(EC,$xpat_pub_type,Unpublished)">
+	    $(SETVAR,$conditional_probe,fxallfig_probe_zdb_id=$xpat_probe_id)
+    	 <?/MIVAR>
+         <?MIVAR NAME=$start_page>aa-fxallfigures.apg&$conditional_probe<?/MIVAR>
+         <?MIVAR>$(SETVAR,$OID,$xpat_pub_id)<?/MIVAR>
+      <?/MIBLOCK>   
 
     <?MIBLOCK COND="$(EC,$start_page,NULL)">
       <form><center><font size=4><?MIVAR><b>Requested ID is not available in ZFIN.</b> </font></center><?/MIVAR>
