@@ -1,4 +1,4 @@
-#!/private/bin/perl
+#!/usr/bin/perl
 #
 # check gene_association file
 # version: $Revision$
@@ -82,7 +82,7 @@ use constant SPECIAL => 2;
 #
 # Column information:  Name, Check Cardinality equals 1, Special Check Included
 #
-$column[DB] = ["DB", 1, 0];
+$column[DB] = ["DB", 1, 1];
 $column[DB_OBJECT_ID] = ["DB_Object_ID", 1, 0];
 $column[DB_OBJECT_SYMBOL] = ["DB_Object_Symbol", 1, 0];
 $column[QUALIFIER] = ["Qualifier", 0, 1];
@@ -101,8 +101,9 @@ $column[ASSIGNED_BY] = ["Assigned_by", 1, 0];
 #
 # Evidence Codes
 #
-my %evicodes = ( IC => 1,  IDA => 1, IEA => 1, IEP => 1, IGI => 1, IMP => 1, 
-		 IPI => 1, ISS => 1, NAS => 1, ND => 1, TAS => 1, NR => 1 );
+my %evicodes = ( IC => 1,  IDA => 1, IEA => 1, IEP => 1, IGI => 1,
+		 IMP => 1, IPI => 1, ISS => 1, NAS => 1, ND => 1,
+		 TAS => 1, NR => 1, RCA =>1 );
 
 #
 # Object Types
@@ -110,10 +111,32 @@ my %evicodes = ( IC => 1,  IDA => 1, IEA => 1, IEP => 1, IGI => 1, IMP => 1,
 my %objtypes = ( gene => 1, transcript => 1, protein => 1,
 		 protein_structure => 1, complex => 1 );
 
+#
+# Database abbreviations
+#
+my %dbnames = (  cgen => 1, ddb => 1, ensembl => 1, fb => 1, gr => 1, genedb_gmorsitans => 1,
+		 genedb_lmajor => 1, genedb_pfalciparum => 1, genedb_spombe => 1,
+		 genedb_tbrucei => 1, mgi => 1, pdb => 1, refseq => 1, rgd => 1, sgd => 1,
+		 tair => 1, tigr_ath1 => 1, tigr_cmr => 1, tigr_tgi => 1, tigr_tba1 => 1,
+		 uniprot => 1, vida => 1, wb => 1, zfin => 1, cgd => 1, silkdb => 1,
+	         hinv => 1 ); 
+
+#
+# Qualifier Types
+#
+my %qualtypes = ( not => 1, contributes_to => 1, colocalizes_with => 1 );
+
 # begin input loop
 while ( defined($line = <>) ) {
-    chomp $line;
     $linenum++;
+
+    unless ( $line =~ /.*\n/ ) {
+	&checkwarn ("$linenum: No end of line character, the last line of the file is probably missing a return character\n");
+	$lineerr++;
+	$totalerr++;
+    }
+	
+    chomp $line;
 
 # skip comment lines
     next if ($line =~ m/^\!/);
@@ -130,7 +153,7 @@ while ( defined($line = <>) ) {
     my @cols = split(/\t/, $line);
 
     if ( @cols ne COLNUM) {
-	&checkwarn ("$linenum: Too few or too many columns on this line, found " . @cols . ". Line skipped.\n");
+	&checkwarn ("$linenum: Too few or too many columns on this line, found " . @cols . ". There should be " . COLNUM . ". Line skipped.\n");
 	# increment error counters
 	$lineerr++;
 	$totalerr++;
@@ -143,7 +166,7 @@ while ( defined($line = <>) ) {
 # Any leading or trailing spaces?
 	my $value = $cols[$cnum];
 	if ( ($value =~ m/^\s/) || ($value =~ m/\s$/) ) {
-	    &checkwarn ($linenum . ": " . $column[$cnum][LABEL] . " column=" . $cnum . " leading or trailing spaces: \"" . $value . "\"\n");
+	    &checkwarn ($linenum . ": " . $column[$cnum][LABEL] . " column=" . ($cnum + 1) . " leading or trailing white space: \"" . $value . "\"\n");
 	    # error to have leading or trailing spaces, remove them and continue
 	    $cols[$cnum] =~ s/^\s+//;
 	    $cols[$cnum] =~ s/\s+$//;
@@ -155,13 +178,13 @@ while ( defined($line = <>) ) {
 # Check Cardinality
 	if ($column[$cnum][CARDINAL]) {
 	    if ($cols[$cnum] eq "") {
-		&checkwarn ($linenum . ": " . $column[$cnum][LABEL] . " column=" . $cnum . " cardinality should equal 1, found 0: \"" . $cols[$cnum] . "\"\n");
+		&checkwarn ($linenum . ": " . $column[$cnum][LABEL] . " column=" . ($cnum + 1) . " cardinality should equal 1, found 0: \"" . $cols[$cnum] . "\"\n");
 		$errors[$cnum]++;
 		$totalerr++;
 	    }
 	    my @field = split(/\t/, $cols[$cnum]);
 	    if ( @field > 1 ) {
-		&checkwarn ($linenum . ": " . $column[$cnum][LABEL] . " column=" . $cnum . " cardinality should equal 1, found > 1: \"" . $cols[$cnum] . "\"\n");
+		&checkwarn ($linenum . ": " . $column[$cnum][LABEL] . " column=" . ($cnum + 1) . " cardinality should equal 1, found > 1: \"" . $cols[$cnum] . "\"\n");
 		$errors[$cnum]++;
 		$totalerr++;
 	    }
@@ -173,12 +196,21 @@ while ( defined($line = <>) ) {
 
 	if ($column[$cnum][SPECIAL]) {
 
-# Qualifier Column on NOT and contributes_to
+# Was a valid DB abbreviation used
+	    if ($cnum == DB) {
+		unless ($dbnames{ lc($cols[DB]) }) {
+		    &checkwarn ("$linenum: " . $column[DB][LABEL] . " column=" . (DB + 1) . " allowed database abbreviation not correct, found \"" . $cols[DB] . "\"\n");
+		    $errors[DB]++;
+		    $totalerr++;
+		}
+	    }
+
+# Qualifier Column on NOT, contributes_to, colocalizes_with
 	    if ($cnum == QUALIFIER) {
 		my @field = split(/\|/, $cols[QUALIFIER]);
 		foreach my $value (@field) {
-		    if ( (! $value =~ m/NOT/i) && (! $value =~ m/contributes_to/i) ) {
-			&checkwarn ($linenum . ": " . $column[QUALIFIER][LABEL] . " column=" . QUALIFIER . " only NOT and contributes_to allowed \"" . $cols[QUALIFIER] . "\"\n");
+		    unless ( $qualtypes{ lc($value) } ) {
+			&checkwarn ($linenum . ": " . $column[QUALIFIER][LABEL] . " column=" . (QUALIFIER + 1) . " allowed type not present, found \"" . $cols[QUALIFIER] . "\"\n");
 			$errors[QUALIFIER]++;
 			$totalerr++;
 		    }
@@ -188,7 +220,7 @@ while ( defined($line = <>) ) {
 # Aspect only one of P, F or C
 	    if ($cnum == ASPECT) {
 		unless ( ($cols[ASPECT] eq 'P') || ($cols[ASPECT] eq 'F') || ($cols[ASPECT] eq 'C') ) {
-		    &checkwarn ("$linenum: " . $column[ASPECT][LABEL] . " column=" . ASPECT . " only P, F, or C allowed \"" . $cols[ASPECT] . "\"\n");
+		    &checkwarn ("$linenum: " . $column[ASPECT][LABEL] . " column=" . (ASPECT + 1) . " only P, F, or C allowed \"" . $cols[ASPECT] . "\"\n");
 		    $errors[ASPECT]++;
 		    $totalerr++;
 		}
@@ -197,7 +229,7 @@ while ( defined($line = <>) ) {
 # Was a valid Evidence code used
 	    if ($cnum == EVIDENCE) {
 		unless ($evicodes{ $cols[EVIDENCE] }) {
-		    &checkwarn ("$linenum: " . $column[EVIDENCE][LABEL] . " column=" . EVIDENCE . " one of the allowed evidence codes not found \"" . $cols[EVIDENCE] . "\"\n");
+		    &checkwarn ("$linenum: " . $column[EVIDENCE][LABEL] . " column=" . (EVIDENCE + 1) . " allowed evidence codes not present, found \"" . $cols[EVIDENCE] . "\"\n");
 		    $errors[EVIDENCE]++;
 		    $totalerr++;
 		}
@@ -205,8 +237,8 @@ while ( defined($line = <>) ) {
 
 # Was a valid Object type provided
 	    if ($cnum == DB_OBJECT_TYPE) {
-		unless ($objtypes{ $cols[DB_OBJECT_TYPE] }) {
-		    &checkwarn ("$linenum: " . $column[DB_OBJECT_TYPE][LABEL] . " column=" . DB_OBJECT_TYPE . " one of the allowed types was not found \"" . $cols[DB_OBJECT_TYPE] . "\"\n");
+		unless ($objtypes{ lc($cols[DB_OBJECT_TYPE]) }) {
+		    &checkwarn ("$linenum: " . $column[DB_OBJECT_TYPE][LABEL] . " column=" . (DB_OBJECT_TYPE + 1) . " allowed type not present, found \"" . $cols[DB_OBJECT_TYPE] . "\"\n");
 		    $errors[DB_OBJECT_TYPE]++;
 		    $totalerr++;
 		}
@@ -218,7 +250,7 @@ while ( defined($line = <>) ) {
 		foreach my $value (@field) {
 		    # WB uses [ & ] in their reference IDs
 		    unless ( $value =~ m/\w+\:[\[\]\w]+/ ) {
-			&checkwarn ("$linenum: " . $column[REFERENCE][LABEL] . " column=" . REFERENCE . " format of reference not DB:REFID \"" . $cols[REFERENCE] . "\"\n");
+			&checkwarn ("$linenum: " . $column[REFERENCE][LABEL] . " column=" . (REFERENCE + 1) . " format of reference not DB:REFID \"" . $cols[REFERENCE] . "\"\n");
 			$errors[REFERENCE]++;
 			$totalerr++;
 		    }
@@ -230,7 +262,7 @@ while ( defined($line = <>) ) {
 		my @field = split(/\|/, $cols[TAXON]);
 		foreach my $value (@field) {
 		    unless ( $value =~ m/^taxon:/ ) {
-			&checkwarn ("$linenum: " . $column[TAXON][LABEL] . " column=" . TAXON . " must start with taxon: \"" . $cols[TAXON] . "\"\n");
+			&checkwarn ("$linenum: " . $column[TAXON][LABEL] . " column=" . (TAXON + 1) . " must start with taxon: \"" . $cols[TAXON] . "\"\n");
 			$errors[TAXON]++;
 			$totalerr++;
 		    }
@@ -240,7 +272,7 @@ while ( defined($line = <>) ) {
 # GOID string must start with GO:
 	    if ($cnum == GOID) {
 		unless ( $cols[GOID] =~ m/^GO:/ ) {
-		    &checkwarn ("$linenum: " . $column[GOID][LABEL] . " column=" . GOID . " must start with GO: \"" . $cols[GOID] . "\"\n");
+		    &checkwarn ("$linenum: " . $column[GOID][LABEL] . " column=" . (GOID + 1) . " must start with GO: \"" . $cols[GOID] . "\"\n");
 		    $errors[GOID]++;
 		    $totalerr++;
 		}
@@ -251,14 +283,14 @@ while ( defined($line = <>) ) {
 	    if ($cnum == DATE) {
 		if ($cols[DATE] =~ m/(\d\d\d\d)(\d\d)(\d\d)/) {
 		    if ( ($1 > $currentyear) || ($1 < MINYEAR) || ($2 > 12) || ($3 > 31) ) {
-			&checkwarn ("$linenum: " . $column[DATE][LABEL] . " column=" . DATE . " bad date format \"" . $cols[DATE] . "\"\n");
+			&checkwarn ("$linenum: " . $column[DATE][LABEL] . " column=" . (DATE + 1) . " bad date format \"" . $cols[DATE] . "\"\n");
 			$errors[DATE]++;
 			$totalerr++;
 		    }
 		} elsif ($cols[DATE] ne "") {
 		    # can ignore blank columns because the cardinality check would have
 		    # already reported them.
-			&checkwarn ("$linenum: " . $column[DATE][LABEL] . " column=" . DATE . " bad date format \"" . $cols[DATE] . "\"\n");
+			&checkwarn ("$linenum: " . $column[DATE][LABEL] . " column=" . (DATE + 1) . " bad date format \"" . $cols[DATE] . "\"\n");
 			$errors[DATE]++;
 			$totalerr++;
 		}
@@ -274,7 +306,7 @@ use constant TABWIDTH => 8;
 
 if ($totalerr > 0) {
     print "\nNUMBER of ERRORS by COLUMN\n\n";
-    print "Column Name\t\tIndex\tNumber of Errors\n";
+    print "Column Name\t\tCol#\tNumber of Errors\n";
     for (my $index=0; $index < @errors; $index++) {
 	if ($errors[$index] > 0) {
 	    if (length($column[$index][LABEL]) < TABWIDTH) {
@@ -283,7 +315,7 @@ if ($totalerr > 0) {
 	    if (length($column[$index][LABEL]) < (TABWIDTH * 2)) {
 		$column[$index][LABEL] .= "\t";
 	    }
-	    print $column[$index][LABEL] . "\t" . $index . "\t" . $errors[$index] . "\n";
+	    print $column[$index][LABEL] . "\t" . ($index + 1) . "\t" . $errors[$index] . "\n";
 	}
     }
     print "General errors\t\t-\t" . $lineerr . "\n" if ($lineerr > 0);
