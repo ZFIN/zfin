@@ -35,7 +35,7 @@ CREATE TEMP TABLE tmp_Zgc_Lib
   (
     zLib_name    varchar(80),
     zLib_tissue  varchar(100),
-    zLib_vector  varchar(20),
+    zLib_vector  varchar(80),
     junk         integer  
   ) 
 with no log;
@@ -120,7 +120,7 @@ CREATE index zGENE_abbrev_index
 CREATE TEMP TABLE tmp_Zgc_Clone
   (
     zClone_mrkr_zdb_id 		varchar(50),
-    zClone_vector		varchar(50),
+    zClone_vector		varchar(80),
     zClone_probelib_zdb_id	varchar(50)
   )
 with no log;
@@ -645,7 +645,8 @@ FROM
     tmp_Zgc, tmp_Zgc_EST, marker
 WHERE
     zgc_abbrev = zEST_abbrev
-    AND zgc_mrkr_abbrev = mrkr_abbrev;
+    AND zgc_mrkr_abbrev = mrkr_abbrev    
+    AND get_obj_type(mrkr_zdb_id) = "GENE";
 
 
 INSERT into tmp_Zgc_Mrel
@@ -960,8 +961,6 @@ WHERE exists
       and recattrib_source_zdb_id = rec_source 
   )
 ;
-  
-  
 
 !echo 'Clone'
 INSERT into clone
