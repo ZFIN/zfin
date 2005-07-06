@@ -30,8 +30,8 @@ GENERICS = xpatview.apg xpatselect.apg anatdict.apg anatomy_item.apg \
 	fxpubdisplay.apg fxfigureview.apg  fxfiggenelist.apg \
 	fxfiganatlist.apg  fxfigstgrng.apg fxallfigures.apg \
 	fxassayabbrev.apg xpatselect_summaryresults.apg xpatselect_detailedresults.apg \
-	fxfigassaylist.apg fxfigfishlist.apg fxinfo.apg xpatselect_resultsbygene.apg \
-	xpatexpcdnsummary.apg xpatselect_resultsasimages.apg \
+	fxfigassaylist.apg fxfigfishlist.apg fxinfo.apg \
+	xpatexpcdnsummary.apg \
 	xpatexpcdndisplay.apg xpatfeatexp.apg fxprobefig.apg xpatcurpermission.apg \
 	fxfigprobelist.apg fxgenestgrng.apg
 
