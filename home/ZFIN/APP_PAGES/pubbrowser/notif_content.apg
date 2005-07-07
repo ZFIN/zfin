@@ -143,9 +143,8 @@ I am pleased to report that information about <?MIVAR>$(IF,$(EC,$status,preview)
 <?MIVAR NAME=mysql>
              select distinct 'Gene Expression', mrkr_zdb_id, mrkr_name, mrkr_abbrev, 
 		    mrkr_abbrev_order
-               from record_attribution, marker, expression_experiment
-              where recattrib_source_zdb_id = '$OID'
-	        and recattrib_data_zdb_id   = xpatex_zdb_id
+               from marker, expression_experiment
+              where xpatex_source_zdb_id = '$OID'
 		and xpatex_gene_zdb_id = mrkr_zdb_id
            order by mrkr_abbrev_order;
 <?/MIVAR>
@@ -178,8 +177,8 @@ I am pleased to report that information about <?MIVAR>$(IF,$(EC,$status,preview)
 <?/MIVAR>
 <?MIVAR>$(VECAPPEND,$sqlArray,$mysql)<?/MIVAR>
 
+<?MIVAR NAME=addLineBreak>f<?/MIVAR>
 <?MIBLOCK INDEX=$sql FOREACH=$sqlArray>
-    <?MIVAR NAME=addLineBreak>f<?/MIVAR>
 
     <?MISQL SQL="$sql"> 	
 
@@ -187,12 +186,21 @@ I am pleased to report that information about <?MIVAR>$(IF,$(EC,$status,preview)
 	<?MIVAR NAME=attrib_data_id>$2<?/MIVAR>
 	<?MIVAR NAME=attrib_data_name>$3<?/MIVAR>
         <?MIVAR NAME=attrib_data_abbrev>$4<?/MIVAR> 
+
+        <?MIVAR COND="$(AND,$(EC,$addLineBreak,t),$(=,$MI_CURRENTROW,1))">
+            <br> 
+            <?MICOMMENT>*** extra line to separate each category *** <?/MICOMMENT>
+        <?/MIVAR>
 	
         <?MICOMMENT> to distinguish from gene <?/MICOMMENT>
         <?MIVAR COND="$(EC,$attrib_data_title,Gene Expression)">
 	   $(SETVAR,$attrib_data_id,$attrib_data_id"XPAT")
 	<?/MIVAR>
-      
+
+        <?MICOMMENT> ====================================================
+                     ==   Edit stage
+                     ====================================================
+        <?/MICOMMENT>     
         <?MIVAR COND="$(EC,$status,edit)">
            <INPUT TYPE=checkbox NAME=notif_item VALUE="$attrib_data_id" $(IF,$(AND,$(XST,$notif_items),$(>,$(POSITION,$notif_items,$attrib_data_id),0)), CHECKED)>
            $attrib_data_title: <i>$attrib_data_name</i> (<i>$attrib_data_abbrev</i>)
@@ -206,43 +214,49 @@ I am pleased to report that information about <?MIVAR>$(IF,$(EC,$status,preview)
 
                 <a href="http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id">http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id</a> 
 	     <?/MIVAR>
-	   <?MIELSE>
-	     <?MIVAR>
-		<a href="http://zfin.org/cgi-bin/webdriver?MIval=aa-xpatindexview.apg&OID=$OID">curated gene expression</a>
-	     <?/MIVAR>
+             <br>
 	   <?/MIBLOCK>
-           <br>
 	   $(SETVAR,$addLineBreak,t)
         <?/MIVAR>
+        
+        <?MICOMMENT> ====================================================
+                     ==   Preview stage
+                     ====================================================
+        <?/MICOMMENT> 
+	<?MIBLOCK COND="$(AND,$(EC,$status,preview),$(XST,$notif_items))">
 
-        <?MIVAR COND="$(AND,$(EC,$status,preview),$(XST,$notif_items),$(>,$(POSITION,$notif_items,$attrib_data_id),0))">       
-	   $attrib_data_title: <i>$attrib_data_name</i> (<i>$attrib_data_abbrev</i>)
-           <br>	  
-	   <?MIBLOCK COND="$(NC,$attrib_data_title,Gene Expression)">
-	     <?MIVAR>
+          <?MICOMMENT> ==|   handle expression data with different format  |== <?/MICOMMENT>
 
-	        <?MICOMMENT> *** we always only want to link to production page
-				***
-		<?/MICOMMENT>
+	  <?MIBLOCK COND="$(EC,$attrib_data_title,Gene Expression)">
+	    <?MIVAR COND="$(=,$MI_CURRENTROW,1)">
+	       &nbsp;&nbsp;&nbsp;&nbsp; 
+               <a href="http://zfin.org/cgi-bin/webdriver?MIval=aa-fxallfigures.apg&OID=$OID">Curated gene expression</a> for: <br>
+            <?/MIVAR>
+            <?MIVAR COND="$(>,$(POSITION,$notif_items,$attrib_data_id),0)">
+       	       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	       <i>$attrib_data_name</i> (<i>$attrib_data_abbrev</i>)
+               <br>
+            <?/MIVAR>
 
+          <?MICOMMENT> ==|  format for the rest  |== <?/MICOMMENT>          
+ 	
+          <?MIELSE>
+	    <?MIVAR COND="$(>,$(POSITION,$notif_items,$attrib_data_id),0)">
+	  	$attrib_data_title: <i>$attrib_data_name</i> (<i>$attrib_data_abbrev</i>)
+           	<br>
                 <a href="http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id">http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id</a> 
-	     <?/MIVAR>
-	   <?MIELSE>
-	     <?MIVAR>
-		<a href="http://zfin.org/cgi-bin/webdriver?MIval=aa-xpatindexview.apg&OID=$OID">curated gene expression</a>
-	     <?/MIVAR>
-	   <?/MIBLOCK>
-           <br>
-	   $(SETVAR,$addLineBreak,t)
-        <?/MIVAR>
+                <br>
+	    <?/MIVAR>
+ 
+	  <?/MIBLOCK>
+
+	  <?MIVAR>$(SETVAR,$addLineBreak,t)<?/MIVAR>
+
+        <?/MIBLOCK> <?MICOMMENT> == end preview stage == <?/MICOMMENT>
 
   <?/MISQL>
-  <?MIVAR COND="$(EC,$addLineBreak,t)">
-     <br> 
+  <?MIVAR> $(SETVAR,$attrib_data_title,)<?/MIVAR>
 
-    <?MICOMMENT>*** extra line to separate each category *** <?/MICOMMENT>
-
-  <?/MIVAR>
 <?/MIBLOCK>	
 
 
