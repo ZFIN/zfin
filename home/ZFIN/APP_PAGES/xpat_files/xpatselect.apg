@@ -722,9 +722,13 @@ function openChild(childWinUrl,childWinName) {
 <?MIVAR NAME=xpatsel_anatList><?/MIVAR>
 
 <?MISQL SQL="
-		select anatitem_name
-		  from anatomy_item
-	       order by anatitem_name_lower;">
+	select anatitem_name, anatitem_name_lower as name_lower_column 
+	  from anatomy_item 
+      union
+	select dalias_alias, dalias_alias_lower as name_lower_column
+          from data_alias
+         where dalias_data_zdb_id[1,9] = 'ZDB-ANAT-'
+      order by name_lower_column ; ">
 	   <?MIVAR NAME=xpatsel_curAnat>"$1"<?/MIVAR>
 	   <?MIVAR>$(SETVAR,$xpatsel_anatList,$(IF,$(NC,$MI_CURRENTROW,1),$xpatsel_anatList",")$xpatsel_curAnat)<?/MIVAR>
 <?/MISQL>
