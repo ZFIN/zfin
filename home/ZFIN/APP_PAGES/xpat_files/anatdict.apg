@@ -49,9 +49,13 @@ document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
 <?MIVAR NAME=anatdict_anatList><?/MIVAR>
 
 <?MISQL SQL="
-	select anatitem_name 
+	select anatitem_name, anatitem_name_lower as name_lower_column 
 	  from anatomy_item 
-      order by anatitem_name_lower;">
+      union
+	select dalias_alias, dalias_alias_lower as name_lower_column
+          from data_alias
+         where dalias_data_zdb_id[1,9] = 'ZDB-ANAT-'
+      order by name_lower_column;">
    <?MIVAR NAME=anatdict_curAnat>"$1"<?/MIVAR>
    <?MIVAR>$(SETVAR,$anatdict_anatList,$(IF,$(NC,$MI_CURRENTROW,1),$anatdict_anatList",")$anatdict_curAnat)<?/MIVAR>
 <?/MISQL>
@@ -107,8 +111,9 @@ function updateParent(AOname, AOid) {
 	}
   }
 }
-    
-</SCRIPT>
+</script>
+<script src="http://<!--|DOMAIN_NAME|-->/autosuggest.js"></script>
+
 
 <?MISQL SQL="select WebExplode(object,'permission=root') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
@@ -171,16 +176,15 @@ function updateParent(AOname, AOid) {
    
 	  <FONT size=2><B>Search Anatomical Ontology:</B></FONT>
 	  <DIV id="autosuggest"><ul></ul></DIV>
-    	  <INPUT type=text size=20 name=searchterm id=searchterm
+    	  <INPUT type=text size=30 name=searchterm id=searchterm
 	    	<?MIVAR COND="$(XST,$searchterm)"> value="$searchterm" <?/MIVAR>
-          >
-	  <script src="http://<!--|DOMAIN_NAME|-->/autosuggest.js"></script>
-              <?MIVAR>
-	  <script>
+          >	  
+          <?MIVAR>
+	    <script>
 		  var anatomyList = new Array($anatdict_anatList);
 		  new AutoSuggest(document.getElementById("searchterm"),anatomyList);
-          </script>
-	      <?/MIVAR>
+            </script>
+	  <?/MIVAR>
           <INPUT type="button" value="Search" onclick="document.dictform.mode.value='search';
 						 document.dictform.submit();">
 	<?/MIBLOCK>
