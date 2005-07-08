@@ -72,7 +72,6 @@ EFFECTS
 <table width=100% border=0 bgcolor="<!--|HIGHLIGHT_COLOR|-->">
   <tr bgcolor=#CCCCCC>
     <td>&nbsp;</td>
-    <td>Display Name</td>
     <td>
       <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&newmrkrSource=$OID">Gene </a><?/MIVAR>
     </td>
@@ -105,51 +104,105 @@ EFFECTS
     
     <?MISQL SQL="select WebExplode(object,'xpcurexpssdisp_xpatex_zdb_id=$xpcurxprss_xpatex_zdb_id') from webPages where ID='aa-xpatcurexpssdisplayname.apg';">$1<?/MISQL>
     <?MIVAR NAME=xpcurxprss_xpatex_display_name>$xpcurexpssdisp_xpatex_display_name<?/MIVAR>
+
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#experiment" method=post name=experiment onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','experiment');">
     
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
     <INPUT TYPE=HIDDEN NAME=xpcur_G_xpatex_zdb_id VALUE="<?MIVAR>$xpcurxprss_xpatex_zdb_id<?/MIVAR>"> 
     <INPUT TYPE=HIDDEN NAME=xpcur_G_xpatex VALUE="update"> 
   <tr>
-    <td></td>
-    <td>$xpcurxprss_xpatex_display_name</td>
+    <td><input name="xpcur_G_xpatex_update" type=submit value="Update"></td>
     <td> 
+       <select name="xpcur_G_xpatex_gene">
           <?MISQL SQL="select mrkr_zdb_id, mrkr_abbrev 
                        from marker 
-                       where mrkr_zdb_id = '$xpcurxprss_xpatex_gene';">
-                       $2
-            <?MIVAR> $(VECAPPEND,$xpcur_gene_attrib,$1)<?/MIVAR>
+                        where mrkr_zdb_id in ('$xpcur_G_gene_attrib_csv')
+                        order by mrkr_abbrev;">
+             <option value="$1" $(IF,$(EC,$xpcurxprss_xpatex_gene,$1),SELECTED)>$2</option>
+
           <?/MISQL>
+       </select>
     </td>
     <td> 
+       <select name="xpcur_G_xpatex_fish">
           <?MISQL SQL="
-            select zdb_id, abbrev
+            select zdb_id, abbrev 
             from fish
-            where zdb_id = '$xpcurxprss_xpatex_fish';">
+            where abbrev = 'WT'
+            order by fish_name_order;">
+            <?MIVAR NAME=fishOption>$2<?/MIVAR>
+            <?MIVAR NAME=fishOption DELIMIT="<sup>" REPLACE=" (">$fishOption<?/MIVAR>
+            <?MIVAR NAME=fishOption DELIMIT="</sup>" REPLACE=")">$fishOption<?/MIVAR>
+            <option value="$1" 
+                $(IF,$(EC,$xpcurxprss_xpatex_fish,$1),SELECTED)>$fishOption</option>
+          <?/MISQL>
+            <option value="-">----------</option>
+          <?MISQL SQL="
+            select zdb_id, abbrev 
+            from fish
+            where zdb_id in ('$xpcur_G_fish_attrib_csv')
+            order by fish_name_order;">
             <?MIVAR NAME=fishOption>$2<?/MIVAR>
             <?MIVAR NAME=fishOption DELIMIT="<SUP>" REPLACE=" (">$fishOption<?/MIVAR>
             <?MIVAR NAME=fishOption DELIMIT="</SUP>" REPLACE=")">$fishOption<?/MIVAR>
-            $fishOption
+            <option value="$1" 
+                $(IF,$(EC,$xpcurxprss_xpatex_fish,$1),SELECTED)>$fishOption</option>
           <?/MISQL>
+            <option value="-">----------</option>
+          <?MISQL SQL="
+            select zdb_id, abbrev 
+            from fish
+            where line_type = 'wild type'
+              and abbrev <> 'WT'
+            order by fish_name_order;">
+            <?MIVAR NAME=fishOption>$2<?/MIVAR>
+            <?MIVAR NAME=fishOption DELIMIT="<sup>" REPLACE=" (">$fishOption<?/MIVAR>
+            <?MIVAR NAME=fishOption DELIMIT="</sup>" REPLACE=")">$fishOption<?/MIVAR>
+            <option value="$1" 
+                $(IF,$(EC,$xpcurxprss_xpatex_fish,$1),SELECTED)>$fishOption</option>
+          <?/MISQL>
+        </select>
     </td>
     <td> 
+      <select name="xpcur_G_xpatex_exp">
           <?MISQL SQL="
               select exp_zdb_id, exp_name
-              from experiment 
-              where exp_zdb_id = '$xpcurxprss_xpatex_exp'
+              from experiment
+              where exp_zdb_id in ('$xpcur_G_exp_attrib_csv') 
+                 or exp_name = 'Standard'
               order by 1;">
-              $2
+              <option value="$1" $(IF,$(EC,$xpcurxprss_xpatex_exp,$1),SELECTED)>$2</option>
           <?/MISQL>
+      </select>
     </td>
-    <td> $xpcurxprss_xpatex_assay
+    <td>  
+       <select name="xpcur_G_xpatex_assay">
+           <?MISQL SQL="select xpatassay_name, xpatassay_display_order from expression_pattern_assay order by 2;">
+             <option value="$1" $(IF,$(EC,$xpcurxprss_xpatex_assay,$1),SELECTED)>$1</option>
+           <?/MISQL>
+       </select>
+
     </td>
 
-    <td> 
+    <td>  
+      <select name="xpcur_G_xpatex_genbank">
+          <option value=""></option>
+
           <?MISQL SQL="select dblink_zdb_id, dblink_acc_num, mrkr_abbrev
                        from db_link, marker
-                       where dblink_zdb_id = '$xpcurxprss_xpatex_genbank'
-                         and dblink_linked_recid = mrkr_zdb_id;">
-            $2 ($3)
+                        where dblink_zdb_id in ('$xpcur_G_dblink_genbank_csv')
+                          and dblink_linked_recid = mrkr_zdb_id
+                          and mrkr_zdb_id in ('$xpcur_G_gene_attrib_csv')
+                        UNION
+                        select dblink_zdb_id, dblink_acc_num, mrkr_abbrev
+                        from marker, marker_relationship, db_link
+                        where dblink_zdb_id in ('$xpcur_G_dblink_genbank_csv')
+                          and dblink_linked_recid = mrel_mrkr_2_zdb_id
+                          and mrel_mrkr_1_zdb_id = mrkr_zdb_id
+                          and mrkr_zdb_id in ('$xpcur_G_gene_attrib_csv') 
+                        order by mrkr_abbrev, dblink_acc_num;">
+             <option value=$1 $(IF,$(EC,$1,$xpcurxprss_xpatex_genbank),SELECTED)>$2 ($3)</option>
           <?/MISQL>
     </td>
     <td>
@@ -160,7 +213,7 @@ EFFECTS
 <?/MISQL>    
 
   <tr>
-    <td colspan=8>
+    <td colspan=7>
       <hr>
     </td>
   </tr>
@@ -174,7 +227,6 @@ EFFECTS
     <td>
       <input name="xpcur_G_xpatex_add" type=submit value="Add">
     </td>
-    <td>&nbsp;</td>
     <td> 
         <select name="xpcur_G_xpatex_gene">
           <?MISQL SQL="select mrkr_zdb_id, mrkr_abbrev 
