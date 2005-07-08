@@ -35,7 +35,7 @@ EFFECTS
 <?MIVAR name="$xpcurexpssdisp_xpatex_display_name"><?/MIVAR>
 
 <?MISQL SQL="
-    select mrkr_abbrev, exp_name, abbrev, xpatassay_abbrev, dblink_acc_num
+    select mrkr_abbrev, exp_name, abbrev, xpatassay_abbrev, dblink_acc_num, line_type
     from expression_experiment, feature_experiment, experiment, fish, marker, expression_pattern_assay, OUTER(db_link)
     where xpatex_zdb_id = '$xpcurexpssdisp_xpatex_zdb_id'
       and xpatex_featexp_zdb_id = featexp_zdb_id
@@ -52,9 +52,9 @@ EFFECTS
 <?MIVAR NAME=xpcurexpssdisp_fish_non_sup_display>$(LOWER,$3)<?/MIVAR>
 <?MIVAR NAME=xpcurexpssdisp_fish_non_sup_display DELIMIT="<sup>" REPLACE=" (">$xpcurexpssdisp_fish_non_sup_display<?/MIVAR>
 <?MIVAR NAME=xpcurexpssdisp_fish_non_sup_display DELIMIT="</sup>" REPLACE=")">$xpcurexpssdisp_fish_non_sup_display<?/MIVAR>
+<?MIVAR NAME=xpcurexpssdisp_fish_non_sup_display COND="$(EC,$6,wild type)">$(UPPER,$xpcurexpssdisp_fish_non_sup_display)<?/MIVAR>
 
-
-<?MIVAR NAME=xpcurexpssdisp_xpatex_display_name>$1 / $xpcurexpssdisp_fish_non_sup_display / $2 / $4 $xpcurexpssdisp_genbank<?/MIVAR>
+<?MIVAR NAME=xpcurexpssdisp_xpatex_display_name>$1 - $xpcurexpssdisp_fish_non_sup_display - $2 - $4 $xpcurexpssdisp_genbank<?/MIVAR>
 
 <?MIVAR>$(UNSETVAR,$xpcurexpssdisp_genbank)<?/MIVAR>
 <?MIVAR>$(UNSETVAR,$xpcurexpssdisp_mrkr_abbrev)<?/MIVAR>
