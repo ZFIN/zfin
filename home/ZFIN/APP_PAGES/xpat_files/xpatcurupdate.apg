@@ -153,7 +153,9 @@ EFFECTS
           and featexp_genome_feature_zdb_id = '$xpcur_G_xpatex_fish'
           and featexp_exp_zdb_id = '$xpcur_G_xpatex_exp'
           and xpatex_source_zdb_id = '$OID'
-          and xpatex_dblink_zdb_id = '$xpcur_G_xpatex_genbank'
+          and $(IF,$(EC,$xpcur_G_xpatex_genbank,),
+              xpatex_dblink_zdb_id is null,
+              xpatex_dblink_zdb_id = '$xpcur_G_xpatex_genbank')
         ;">
       <?/MISQL>
     
