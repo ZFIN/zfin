@@ -46,6 +46,10 @@ Datablade documentation.
   function info() {
     window.alert('ANONYMOUS LINKAGE:\n This marker is a dummy placeholder for a marker that has been linked to this locus, \nbut has not been published yet. ZFIN supports anonymous linkages to promote scientific \collaboration; you should contact the submitter of this mapping data (just click the link) \nto negotiate access to this information.');
   }
+  
+  function start_note() {
+       top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect_note.apg","notewindow","scrollbars=no,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=325");
+  }
 
   function Delete_listitem(item_name,item_id,oid) {
     window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-locusupdate.apg&UPDATE=1&OID='+oid+'&attr='+item_name+'&attr_type=Delete_listitem&old_value='+item_id+'&new_value=deleted');
@@ -372,20 +376,69 @@ Datablade documentation.
                      ==========================================================  
         <?/MICOMMENT>
 	<?MISQL SQL="
-		select xpatex_zdb_id
-                  from feature_experiment 
-                       join expression_experiment 
+		select count(distinct xpatex_source_zdb_id)::integer
+                  from expression_experiment 
+                       join feature_experiment 
 			  on featexp_zdb_id = xpatex_featexp_zdb_id
 		       join fish
 			  on zdb_id = featexp_genome_feature_zdb_id
-                 where locus = '$OID';">
+                 where locus = '$OID' and xpatex_zdb_id in (select distinct xpatres_xpatex_zdb_id from expression_result);">
     
         <?/MISQL>
-	<?MIBLOCK COND="$(!=,$MI_ROWCOUNT,0)">
-	   <hr width=80%>
-           <?MIVAR>
-           <b> <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&mutsearchtype=begins&mutant=$name">GENE EXPRESSION IN <i>$abbrev</i> BACKGROUND </a> </b>
-	   <?/MIVAR>
+        <?MIVAR NAME=locusview_xpatsource_count>$1<?/MIVAR>
+	<?MIBLOCK COND="$(!=,$locusview_xpatsource_count,0)">
+           <HR width="80%">
+           <b>GENE EXPRESSION: </b></b><font size=-1>(<a href="javascript:start_note();">current status</a></font>)
+           <table width="100%" border="0" <?MIVAR>bgcolor="$highlight"<?/MIVAR>>
+
+           <?MICOMMENT> query literature pub <?/MICOMMENT>
+           <?MISQL SQL="
+             select pub_mini_ref
+             from expression_experiment
+             join publication
+                    on xpatex_source_zdb_id = publication.zdb_id
+             join feature_experiment
+                    on featexp_zdb_id = xpatex_featexp_zdb_id
+             join fish
+                    on fish.zdb_id = featexp_genome_feature_zdb_id
+             where locus = '$OID'
+             and jtype <> 'Unpublished'; ">
+
+             <?MIVAR NAME=locusview_xpatsource_desc>$1<?/MIVAR>
+            <?/MISQL>   
+            <?MICOMMENT>
+
+      ========= if literature pub involved, display total figures ==========
+            <?/MICOMMENT>
+            <?MIBLOCK COND="$(!=,$MI_ROWCOUNT,0)">
+              <?MICOMMENT> if more than one pub, show count,
+                 in case of one pub, show pub miniref
+              <?/MICOMMENT>
+              <?MIVAR COND="$(!=,$MI_ROWCOUNT,1)" NAME=locusview_xpatsource_desc>
+                $locusview_xpatsource_count publications
+              <?/MIVAR> 
+
+              <?MISQL SQL="
+                 select count(distinct xpatfig_fig_zdb_id)::integer
+                 from expression_pattern_figure
+                 join expression_result
+                        on xpatfig_xpatres_zdb_id = xpatres_zdb_id
+                 join expression_experiment
+                        on xpatex_zdb_id = xpatres_xpatex_zdb_id
+                 join feature_experiment
+                        on featexp_zdb_id = xpatex_featexp_zdb_id
+                 join fish
+                        on zdb_id = featexp_genome_feature_zdb_id
+                 where locus = '$OID';">
+              <?/MISQL>
+              <?MIVAR NAME=locusview_xpatfig_count>$1<?/MIVAR>
+              <tr><td><b>All expression data: </b> </td>
+              <td> 
+              <?MIVAR>
+                <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&mutsearchtype=begins&mutant=$name">$locusview_xpatfig_count figure(s) </a> from $locusview_xpatsource_desc
+	      <?/MIVAR>
+        </table>
+         <?/MIBLOCK>
         <?/MIBLOCK> <?MICOMMENT> end of if there are xpats <?/MICOMMENT> 
 
 
