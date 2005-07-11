@@ -52,7 +52,7 @@ ENDEMICTARGETS_CLEAN = $(OBJS)
 
 CC= /local/apps/Lang/SUNWspro/bin/cc
 
-INCDIR = $(INFORMIXDIR)/incl/dmi
+INCDIR = $(INFORMIXDIR)/incl/public
 LIBDIR = $(INFORMIXDIR)/lib 
 
 # Use xcode because we are creating an so.  See cc man page for details.
