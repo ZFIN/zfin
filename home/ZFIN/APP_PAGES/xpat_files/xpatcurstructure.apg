@@ -295,7 +295,9 @@ EFFECTS
             FROM expression_experiment, expression_pattern_figure, expression_result
            WHERE xpatres_zdb_id = xpatfig_xpatres_zdb_id
              AND xpatex_source_zdb_id = '$OID'
-             AND xpatex_zdb_id = xpatres_xpatex_zdb_id;">
+             AND xpatex_zdb_id = xpatres_xpatex_zdb_id
+             $(IF,$(XST,$xpcur_c_gene_only),and xpatex_gene_zdb_id = '$xpcur_c_gene_only')
+             ;">
 
           <?MIVAR NAME=xpcurstr_fig_zdb_id>$1<?/MIVAR>
           <?MIVAR NAME=xpcurstr_xpatex_zdb_id>$2<?/MIVAR>
@@ -345,8 +347,9 @@ EFFECTS
   <input type=hidden name=OID value="<?MIVAR>$OID<?/MIVAR>">
 </form>
 
+<?MIVAR NAME=xpcurstr_row_color><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 
-<table width=100% border=0 bgcolor="<!--|HIGHLIGHT_COLOR|-->">
+<table width=100% border=0 cellspacing=0 cellpadding=3>
 <form name=panel_structures>
   <tr>
     <td colspan=3>
@@ -366,6 +369,7 @@ EFFECTS
       and xpatres_end_stg_zdb_id = e.stg_zdb_id
       and xpatex_featexp_zdb_id = featexp_zdb_id
       and featexp_genome_feature_zdb_id = zdb_id
+      $(IF,$(XST,$xpcur_c_gene_only),and xpatex_gene_zdb_id = '$xpcur_c_gene_only')
     order by fig_label,mrkr_abbrev_order,10,s.stg_hours_start;">
       
     <?MIVAR NAME=xpcurstr_xpatex_zdb_id>$1<?/MIVAR>
@@ -388,8 +392,8 @@ EFFECTS
   </tr>
   <tr bgcolor=#CCCCCC>
     <td>Add/Remove</td>
-    <td>Structure</td>
-    <td>Expressed</td>
+    <td>Modifier</td>
+    <td width=80%>Structure</td>
     <?MICOMMENT> drop this dangerous delete
        <td>Delete all expression of this structure for this publication.</td>
     <?/MICOMMENT>
@@ -402,7 +406,7 @@ EFFECTS
 <?/MIVAR>
 <?MIVAR NAME=xpcur_c_anatitem_add_csv DELIMIT="'" REPLACE="">$xpcur_c_anatitem_add_csv<?/MIVAR>  
 <?MISQL SQL="
-    select anatitem_zdb_id, anatitem_name, xpatinf_expressed, anatitem_name_order, xpatinf_zdb_id, s1.stg_name_long, s2.stg_name_long
+    select anatitem_zdb_id, anatitem_name, xpatinf_expressed, anatitem_name_order, xpatinf_zdb_id, s1.stg_abbrev ||' '|| s1.stg_name_ext, s2.stg_abbrev ||' '|| s2.stg_name_ext
     from expression_pattern_infrastructure, anatomy_item, stage s1, stage s2
     where xpatinf_anatitem_zdb_id = anatitem_zdb_id
       and xpatinf_pub_zdb_id = '$OID'
@@ -418,7 +422,7 @@ EFFECTS
     <?MIVAR NAME=$xpcurstr_end_stg_name>$7<?/MIVAR>
     <?MIVAR>
 
-    <tr>
+    <tr bgcolor=$xpcurstr_row_color>
       <td align=center>
         <input type=radio 
                name="$xpcurstr_xpatinf_zdb_id" 
@@ -429,14 +433,14 @@ EFFECTS
                  value="remove" 
                  $(IF,$(=,0,$(POSITION,$xpcur_c_anatitem_add_csv,$xpcurstr_anatitem_zdb_id$xpcurstr_expression_found,1)),CHECKED)>
       </td>
+      <td> $(IF,$(EC,$xpcurstr_expression_found,t),,not detected) </td>
       <td>
         <?MIBLOCK COND="$(AND,$(XST,$xpcur_G_structure_add),$(!=,0,$(POSITION,$xpcur_G_structure_add,$xpcurstr_anatitem_zdb_id)))">
-          <?MIVAR><b>$xpcurstr_anatitem_name</b> ($xpcurstr_start_stg_name - $xpcurstr_end_stg_name)<?/MIVAR>
+          <?MIVAR><b>$xpcurstr_anatitem_name</b> - $xpcurstr_start_stg_name - $xpcurstr_end_stg_name <?/MIVAR>
         <?MIELSE>
-          <?MIVAR>$xpcurstr_anatitem_name ($xpcurstr_start_stg_name - $xpcurstr_end_stg_name)<?/MIVAR>
+          <?MIVAR>$xpcurstr_anatitem_name - $xpcurstr_start_stg_name - $xpcurstr_end_stg_name <?/MIVAR>
         <?/MIBLOCK>
       </td>
-      <td> $(IF,$(EC,$xpcurstr_expression_found,t),YES,NO) </td>
       <?MICOMMENT> drop the dangerous delete
         <td colspan=3 align=left>
           <?MIVAR><input name="delete" type=button value=" X " onClick="deleteZDB('$xpcurstr_xpatinf_zdb_id','anatitem')"><?/MIVAR>
@@ -445,6 +449,7 @@ EFFECTS
     </tr>
     <?/MIVAR>
     <?MIVAR NAME=xpcurstr_field_count>$(+,$xpcurstr_field_count,1)<?/MIVAR>
+    <?MIVAR NAME=xpcurstr_row_color>$(IF,$(EC,$xpcurstr_row_color,),<!--|HIGHLIGHT_COLOR|-->,)<?/MIVAR>
   <?/MISQL>    
 
   <?MIVAR><input type=hidden name=xpcurstr_field_count value=$xpcurstr_field_count><?/MIVAR>
@@ -464,13 +469,13 @@ EFFECTS
     <td>
       <input name="xpcur_G_structure_add_button" type=submit value="Add">
     </td>
+    <td nowrap> 
+        <input name="structure_expressed" value=t type=radio CHECKED> detected <br> 
+        <input name="structure_expressed" value=f type=radio> Not detected
+    </td>
     <td align=left>
         <input type=textbox name="xpcur_G_structure_add_name" size=80>
         <input type=hidden name="xpcur_G_structure_add">
-    </td>
-    <td> 
-        <input name="structure_expressed" value=t type=radio CHECKED> Yes <br> 
-        <input name="structure_expressed" value=f type=radio> No
     </td>
     <td>
       &nbsp;
