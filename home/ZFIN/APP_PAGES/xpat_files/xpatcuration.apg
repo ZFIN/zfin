@@ -169,7 +169,12 @@ EFFECTS
   <?/MISQL>
 <?MIBLOCK COND="$(XST,$title)">
 
-<?MIVAR NAME=xpcur_G_light_fig_text>image unavailable <a href=#acknowledgment>?</a><?/MIVAR>
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Starting query page
+<?/MISQL>
+
+<?MIVAR NAME=xpcur_G_light_fig_text><?/MIVAR>
 <?MIVAR NAME=xpcur_G_TO_fig_text>unillustrated text statements<?/MIVAR>
 
 
@@ -198,6 +203,7 @@ EFFECTS
     function setCookie(name,value) {
       var thisCookie = "xpcur_c_"+name;
       document.cookie = thisCookie+"="+value;
+
     }
     
     function urlSetCookie(name,value) {
@@ -238,7 +244,7 @@ EFFECTS
       setCookie('tod','')
       setCookie('show_all','false')
       setCookie('permission','')
-      urlSetCookie('has_permission','<?MISQL SQL="select pub_can_show_images from publication where zdb_id = '$OID';">$1<?/MISQL>');
+      setCookie('has_permission','<?MISQL SQL="select pub_can_show_images from publication where zdb_id = '$OID';">$1<?/MISQL>');
       replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID");
 
       <?MICOMMENT> Keep the table clean. Delete all entries for this pub that were not entered today. <?/MICOMMENT>
@@ -444,6 +450,7 @@ EFFECTS
 
 <?/MICOMMENT>
 
+
     <?MIVAR NAME=hide><font color=blue size=-1><u>hide</u></font><?/MIVAR>
     <?MIVAR NAME=unhide><font color=blue size=-1><u>show</u></font><?/MIVAR>
 
@@ -475,7 +482,7 @@ EFFECTS
         from marker 
         where mrkr_zdb_id in ('$xpcur_G_oid_attrib_csv')
           and mrkr_type in (select mtgrpmem_mrkr_type from marker_type_group_member where mtgrpmem_mrkr_type_group = 'GENEDOM')
-        ;">
+         ;">
         <?MIVAR> $(VECAPPEND,$xpcur_gene_attrib,$1)<?/MIVAR>
     <?/MISQL>
       <?MIVAR NAME=xpcur_G_gene_attrib_csv SEPARATE="','">$xpcur_gene_attrib<?/MIVAR>
@@ -552,7 +559,61 @@ EFFECTS
     <?/MISQL>
       <?MIVAR NAME=xpcur_G_image_attrib_csv SEPARATE="','">$xpcur_image_attrib<?/MIVAR>
       
+      
+    <?MISQL SQL="
+        select max(LENGTH(mrkr_abbrev))::integer from marker where mrkr_zdb_id in ('$xpcur_G_gene_attrib_csv');">
+        <?MIVAR NAME=xpcur_G_max_gene_abbrev>$1<?/MIVAR>
+    <?/MISQL>
+    
+    <?MISQL SQL="
+        select max(LENGTH(abbrev))::integer from fish where zdb_id in ('$xpcur_G_fish_attrib_csv') or line_type = 'wild type';">
+        <?MIVAR NAME=xpcur_G_max_fish_abbrev COND=$(NE,$1,NULL)>$(IF,$(<,$1,13),$1,$(-,$1,8))<?/MIVAR>
+    <?/MISQL>
+    
+    <?MISQL SQL="
+        select max(LENGTH(exp_name))::integer from experiment 
+        where exp_zdb_id in ('$xpcur_G_exp_attrib_csv')
+              or exp_name = 'Standard';">
+        <?MIVAR NAME=xpcur_G_max_exp_name>$1<?/MIVAR>
+    <?/MISQL>
 
+    <?MIBLOCK COND=$(NXST,$xpcur_G_panel_add_start_stg)>
+    
+      <?MISQL SQL="
+        select first 1 stg_zdb_id, stg_hours_start from stage 
+        where stg_hours_start > 15
+        order by 2 asc;">
+        <?MIVAR NAME=xpcur_G_panel_add_start_stg>$1<?/MIVAR>
+        <?MIVAR NAME=xpcur_G_panel_add_end_stg>$1<?/MIVAR>
+      <?/MISQL>
+    
+      <?MIBLOCK COND=$(XST,$xpcur_c_figure_only)>
+        <?MISQL SQL="
+          select first 1 stg_zdb_id, stg_hours_start 
+          from stage, expression_pattern_figure, expression_result 
+          where xpatfig_fig_zdb_id = '$xpcur_c_figure_only'
+            and xpatfig_xpatres_zdb_id = xpatres_zdb_id
+            and xpatres_start_stg_zdb_id = stg_zdb_id
+          order by 2 asc;">
+        <?MIVAR NAME=xpcur_G_panel_add_start_stg>$1<?/MIVAR>
+        <?MIVAR NAME=xpcur_G_panel_add_end_stg>$1<?/MIVAR>
+        <?/MISQL>
+      <?MIELSE>
+        <?MISQL SQL="
+          select first 1 stg_zdb_id, stg_hours_start 
+          from stage, expression_result, expression_experiment 
+          where xpatex_source_zdb_id = '$OID'
+            and xpatex_zdb_id = xpatres_xpatex_zdb_id
+            and xpatres_start_stg_zdb_id = stg_zdb_id
+          order by 2 asc;">
+        <?MIVAR NAME=xpcur_G_panel_add_start_stg>$1<?/MIVAR>
+        <?MIVAR NAME=xpcur_G_panel_add_end_stg>$1<?/MIVAR>
+        <?/MISQL>    
+      <?/MIBLOCK>
+      
+    <?/MIBLOCK>    
+       
+   
 
 <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
 <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-STORE">
@@ -574,6 +635,7 @@ EFFECTS
     <TD><font size=-1> <b>ZFIN ID:</b> <?MIVAR>$OID<?/MIVAR> </font></TD>
   </TR>
 </TABLE>
+
   
 <?MICOMMENT> 
   ==================================
@@ -723,6 +785,59 @@ EFFECTS
 
 
 <?MICOMMENT> 
+	  =============
+	  =  FILTERS  =
+	  =============
+<?/MICOMMENT>
+
+
+<form>
+<a name=gene_only>
+<a name=figure_only>
+<br>
+<table border=0 cellpadding=0 bgcolor="#CCCCCC" width=100%>
+<tr>
+  <td>
+    <b>Show:</b>
+  </td>
+  <td>
+    Only Fig:
+    <select onChange="urlSetCookie('figure_only',this.value)">
+      <option value="">ALL</option>
+      <?MISQL SQL="
+        select fig_zdb_id, fig_label, zero_pad(fig_label)
+        from figure 
+        where fig_zdb_id in ('$xpcur_G_oid_attrib_csv')
+        order by 3
+        ;">
+      <option value="$1"
+        $(IF,$(AND,$(XST,$xpcur_c_figure_only),$(EC,$xpcur_c_figure_only,$1)),SELECTED)>$2</option>     
+      <?/MISQL>
+    </select>
+  </td>
+  <td>
+    Only GENE:
+    <select onChange="urlSetCookie('gene_only',this.value)">
+      <option value="">ALL</option>
+      <?MISQL SQL="
+        select mrkr_zdb_id, mrkr_abbrev
+        from marker 
+        where mrkr_zdb_id in ('$xpcur_G_oid_attrib_csv')
+          and mrkr_type in (select mtgrpmem_mrkr_type from marker_type_group_member where mtgrpmem_mrkr_type_group = 'GENEDOM')
+        order by mrkr_abbrev
+        ;">
+      <option value="$1"
+        $(IF,$(AND,$(XST,$xpcur_c_gene_only),$(EC,$xpcur_c_gene_only,$1)),SELECTED)>$2</option>     
+      <?/MISQL>
+    </select>
+  </td>
+
+</tr>
+</table>
+
+</form>
+
+<?MICOMMENT> 
 	  ============
 	  =  PANELS  =
 	  ============
@@ -785,6 +900,10 @@ EFFECTS
 
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pubacknowledgement.apg';">$1<?/MISQL>
   
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 End query page
+<?/MISQL>
 
 <?MICOMMENT> 
   ====================
