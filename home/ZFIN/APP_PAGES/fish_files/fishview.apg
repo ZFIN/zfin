@@ -666,7 +666,7 @@ Datablade documentation.
              where    featexp_genome_feature_zdb_id='$OID'
              and jtype <> 'Unpublished'; ">
 
-             <?MIVAR NAME=fishiew_xpatsource_desc>$1<?/MIVAR>
+             <?MIVAR NAME=fishview_xpatsource_desc>$1<?/MIVAR>
             <?/MISQL>
             <?MICOMMENT>
       ========= if literature pub involved, display total figures ==========
