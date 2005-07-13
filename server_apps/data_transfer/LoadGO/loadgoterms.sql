@@ -96,6 +96,7 @@ insert into sec_unload_report
     and mrkrgoev_go_term_zdb_id = goterm_zdb_id ;
 
 --these two unload files will be picked up by loadgo.pl, the script
+--these two unload files will be picked up by loadgo.pl, the script
 --running this sql script and sent to Doug H. and informix
 
 unload to 'newannotsecterms.unl' select * from sec_unload_report ;
@@ -389,6 +390,7 @@ insert into tmp_new_obsoletes (counter,
    group by mrkr_name, goterm_name, comment ;
 
 
+
 unload to new_obsolete_terms.unl 
   select "Number annotations: "||counter,
 	 "Gene: "||mrkr_name,
@@ -418,5 +420,36 @@ update go_term
 			  from tmp_obs_no_dups) 
   and goterm_is_obsolete = 'f' ;
 
+---This final check is to see if any obsolete or secondary GO terms
+---have been added to the "with" field
+
+create temp table obssec_with (
+                go_id  varchar(80),
+                mrkr_name      varchar(80),
+                is_what    varchar(3)
+                );
+
+insert into obssec_with
+      select distinct infgrmem_inferred_from, mrkr_name, 'obs' 
+      from inference_group_member, go_term, marker, marker_go_term_evidence
+      where substr(infgrmem_inferred_from, -7) = goterm_go_id
+      and goterm_is_obsolete='t'
+      and infgrmem_mrkrgoev_zdb_id=mrkrgoev_zdb_id
+      and mrkrgoev_mrkr_zdb_id=mrkr_zdb_id;
+
+insert into obssec_with
+      select distinct infgrmem_inferred_from, mrkr_name, 'sec' 
+      from inference_group_member, go_term, marker, marker_go_term_evidence
+      where substr(infgrmem_inferred_from, -7) = goterm_go_id
+      and goterm_is_secondary='t'
+      and infgrmem_mrkrgoev_zdb_id=mrkrgoev_zdb_id
+      and mrkrgoev_mrkr_zdb_id=mrkr_zdb_id;
+
+
+unload to obso_sec_with.unl 
+	 select distinct "Gene: "||mrkr_name,
+	 "Go Term: "||go_id,
+	 "Flag : "||is_what
+	from obssec_with ;
 --rollback work;
 commit work;
