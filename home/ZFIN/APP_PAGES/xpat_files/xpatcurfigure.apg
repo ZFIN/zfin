@@ -99,8 +99,9 @@ EFFECTS
     }
   </script>
 
+  <?MIVAR NAME=xpcurfig_row_color><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
   
-  <table width=100% border=0 bgcolor="<!--|HIGHLIGHT_COLOR|-->">
+  <table width=100% border=0 cellspacing=0 cellpadding=3>
     <tr bgcolor=#CCCCCC>
 
   <?MIBLOCK COND=$(NXST,$xpcur_c_figure_only)>
@@ -118,10 +119,10 @@ EFFECTS
     </tr>  
 
 <?MISQL SQL="
-    select fig_zdb_id, fig_caption, fig_comments, fig_label
+    select fig_zdb_id, fig_caption, fig_comments, fig_label, zero_pad(fig_label)
     from figure
     where fig_zdb_id in ('$xpcur_G_fig_attrib_csv')
-    order by fig_label;">
+    order by 5;">
 
   <?MIVAR name=xpcurfig_fig_zdb_id>$1<?/MIVAR>
   <?MIVAR name=xpcurfig_fig_caption>$2<?/MIVAR>
@@ -134,20 +135,20 @@ EFFECTS
 
 <?MIBLOCK COND=$(NXST,$xpcur_c_figure_only)>
   <?MIVAR>
-  <tr>
-    <td>
+  <tr bgcolor=$xpcurfig_row_color>
+    <td valign=top>
       <a href="javascript:onClick=urlSetCookie('figure_only','$xpcurfig_fig_zdb_id');"><font color=blue>Only</font></a>
     </td>
-    <td> 
+    <td valign=top> 
        $xpcurfig_fig_label
     </td>
-    <td>  
+    <td valign=top>  
        $xpcurfig_fig_caption
     </td>
-    <td> 
+    <td valign=top> 
        $xpcurfig_fig_comment
     </td>
-    <td>
+    <td valign=top>
       <?MISQL SQL="
           select fimg_thumbnail, fimg_label
           from fish_image
@@ -158,22 +159,22 @@ EFFECTS
           <?/MIVAR>
       <?/MISQL>
     </td>
-    <td>
+    <td valign=top>
       <?MIVAR><input name="delete" type=button value=" X " onClick="deleteZDB('$xpcurfig_fig_zdb_id','figure')"><?/MIVAR>
     </td> 
   </tr>  
   <?/MIVAR>
 <?MIELSE>
   <?MIVAR>
-  <tr>
-    <td>
+  <tr bgcolor=$xpcurfig_row_color>
+    <td valign=top>
       <input name="xpcur_G_fig_update" type=button value="Update" onClick="if (document.figureUpdate.xpcur_G_fig_label.value != ''){uninterpretCaption();setCookie('xpatcuration_update','update');setCookie('anchor','figure');document.figureUpdate.submit();}"><br>
       <a href="javascript:onClick=urlSetCookie('figure_only','');"><font color=blue>Show All</font></a>
     </td>
-    <td> 
+    <td valign=top> 
         <input name="xpcur_G_fig_label" type=textbox size=5 value="$xpcurfig_fig_label">
     </td>
-    <td>  $xpcurfig_fig_caption <br>
+    <td valign=top>  $xpcurfig_fig_caption <br>
             <?MIVAR NAME=$delimiter>&<?/MIVAR>
             <?MIVAR NAME=$xpcur_G_fig_caption>$(REPLACE,$xpcurfig_fig_caption,&,;;)<?/MIVAR>
        <TEXTAREA name="xpcur_G_fig_caption" cols=85 rows=5
@@ -184,10 +185,10 @@ EFFECTS
     </td>
   </tr>
   <tr>
-    <td colspan=2> Comments:<br>
+    <td valign=top colspan=2> Comments:<br>
         <input name="xpcur_G_fig_comments" type=textbox size=20 value="$xpcurfig_fig_comment">
     </td>
-    <td>
+    <td valign=top>
       <?MISQL SQL="
           select fimg_thumbnail, fimg_label
           from fish_image
@@ -202,6 +203,8 @@ EFFECTS
   <?/MIVAR>
 <?/MIBLOCK>
 </form>
+
+  <?MIVAR NAME=xpcurfig_row_color>$(IF,$(EC,$xpcurfig_row_color,),<!--|HIGHLIGHT_COLOR|-->,)<?/MIVAR>
 <?/MISQL>  
 
   <tr>
