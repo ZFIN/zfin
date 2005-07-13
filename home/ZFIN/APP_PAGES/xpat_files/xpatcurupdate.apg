@@ -81,7 +81,9 @@ INPUT VARS:
       xpcur_G_structure_add_start_stg :: stg zdb
       xpcur_G_structure_add_end_stg :: stg zdb
   
-
+  Atrribution
+      xpcur_G_mrkr_attrib :: mrkr abbrev 
+      
 COOKIES:
   xpcur_c_xpatcuration_update :: gate variable; set to update for an update to occur.
       
@@ -330,7 +332,14 @@ EFFECTS
             <?/MISQL> 
 
           <?/MIBLOCK>  <?MICOMMENT> END $xpcur_G_xpatex = add <?/MICOMMENT>
-    
+
+          <?MIVAR NAME=xpcur_c_gene_only>$xpcur_G_xpatex_gene<?/MIVAR>
+          <?MIVAR>
+            <SCRIPT>
+              setCookie('gene_only','$xpcur_G_xpatex_gene')
+            </SCRIPT> 
+          <?/MIVAR>
+      
         <?MIELSE> 
           <?MICOMMENT> ============================================================
                           Gene and Probe not related through marker relationship
@@ -966,8 +975,47 @@ EFFECTS
   <?/MIBLOCK>
 
 
-
+  <?MICOMMENT> ================| Attribution |================ <?/MICOMMENT>
+  <?MIBLOCK COND=$(XST,$xpcur_G_mrkr_attrib)>
   
+    <?MICOMMENTS>
+       ================================================
+         Check that the mrkr_record exists. 
+         Then, add a record to record attribution
+       ================================================
+    <?/MICOMMENTS>
+    
+    <?MISQL SQL="select mrkr_zdb_id 
+                 from marker
+                 where mrkr_abbrev = '$xpcur_G_mrkr_attrib'
+                ;">
+            <?MIVAR NAME=xpcurup_attrib_mrkr_zdb>$1<?/MIVAR>
+    <?/MISQL>
+    
+    <?MIBLOCK COND=$(XST,$xpcurup_attrib_mrkr_zdb)>
+      <?MISQL SQL="
+        select count(*)::integer
+        from record_attribution
+        where recattrib_data_zdb_id = '$xpcurup_attrib_mrkr_zdb'
+          and recattrib_source_zdb_id = '$OID'
+        ;">
+      <?/MISQL>
+    
+      <?MISQL COND=$(=,$1,0) SQL="
+        insert into record_attribution(recattrib_data_zdb_id,recattrib_source_zdb_id)
+        values ('$xpcurup_attrib_mrkr_zdb','$OID');">
+      <?/MISQL>    
+      
+      <?MIVAR NAME=xpcur_c_gene_only>$xpcurup_attrib_mrkr_zdb<?/MIVAR>
+      <?MIVAR>
+        <SCRIPT>
+          setCookie('gene_only','$xpcurup_attrib_mrkr_zdb')
+        </SCRIPT>      
+      <?/MIVAR>
+    <?MIELSE>
+      <?MIVAR NAME=xpcurup_alert>Could not find $xpcur_G_mrkr_attrib in the marker table.<?/MIVAR>    
+    <?/MIBLOCK>
+  <?/MIBLOCK>
   
     
     <?MIVAR COND=$(XST,$xpcurup_alert)>
