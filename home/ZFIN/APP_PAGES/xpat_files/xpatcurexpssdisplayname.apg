@@ -48,13 +48,26 @@ EFFECTS
 <?/MISQL>
 
 <?MIVAR NAME=xpcurexpssdisp_mrkr_abbrev>$1<?/MIVAR>
-<?MIVAR NAME=xpcurexpssdisp_genbank>$(IF,$(EC,$5,NULL),,/ $5)<?/MIVAR>
+<?MIVAR NAME=xpcurexpssdisp_exp_name>$2<?/MIVAR>
+<?MIVAR NAME=xpcurexpssdisp_genbank>$(IF,$(EC,$5,NULL),, &nbsp;$5)<?/MIVAR>
 <?MIVAR NAME=xpcurexpssdisp_fish_non_sup_display>$(LOWER,$3)<?/MIVAR>
 <?MIVAR NAME=xpcurexpssdisp_fish_non_sup_display DELIMIT="<sup>" REPLACE=" (">$xpcurexpssdisp_fish_non_sup_display<?/MIVAR>
 <?MIVAR NAME=xpcurexpssdisp_fish_non_sup_display DELIMIT="</sup>" REPLACE=")">$xpcurexpssdisp_fish_non_sup_display<?/MIVAR>
 <?MIVAR NAME=xpcurexpssdisp_fish_non_sup_display COND="$(EC,$6,wild type)">$(UPPER,$xpcurexpssdisp_fish_non_sup_display)<?/MIVAR>
 
-<?MIVAR NAME=xpcurexpssdisp_xpatex_display_name>$1 - $xpcurexpssdisp_fish_non_sup_display - $2 - $4 $xpcurexpssdisp_genbank<?/MIVAR>
+<?MIBLOCK COND="$(<,$(STRLEN,$xpcurexpssdisp_fish_non_sup_display),$xpcur_G_max_fish_abbrev)">
+  <?MIVAR NAME=xpcurexpssdisp_fish_non_sup_display>$xpcurexpssdisp_fish_non_sup_display$(STRFILL,&nbsp;,$(*,$(-,$xpcur_G_max_fish_abbrev,$(STRLEN,$xpcurexpssdisp_fish_non_sup_display)),1.5))<?/MIVAR>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(<,$(STRLEN,$xpcurexpssdisp_mrkr_abbrev),$xpcur_G_max_gene_abbrev)">
+  <?MIVAR NAME=xpcurexpssdisp_mrkr_abbrev>$xpcurexpssdisp_mrkr_abbrev$(STRFILL,&nbsp;,$(*,$(-,$xpcur_G_max_gene_abbrev,$(STRLEN,$xpcurexpssdisp_mrkr_abbrev)),2))<?/MIVAR>
+<?/MIBLOCK>
+
+<?MIBLOCK COND="$(<,$(STRLEN,$xpcurexpssdisp_exp_name),$xpcur_G_max_exp_name)">
+  <?MIVAR NAME=xpcurexpssdisp_exp_name>$xpcurexpssdisp_exp_name$(STRFILL,&nbsp;,$(*,$(-,$xpcur_G_max_exp_name,$(STRLEN,$xpcurexpssdisp_exp_name)),2))<?/MIVAR>
+<?/MIBLOCK>
+
+<?MIVAR NAME=xpcurexpssdisp_xpatex_display_name>$xpcurexpssdisp_mrkr_abbrev &nbsp; $xpcurexpssdisp_fish_non_sup_display &nbsp; $xpcurexpssdisp_exp_name &nbsp; $4 $xpcurexpssdisp_genbank<?/MIVAR>
 
 <?MIVAR>$(UNSETVAR,$xpcurexpssdisp_genbank)<?/MIVAR>
 <?MIVAR>$(UNSETVAR,$xpcurexpssdisp_mrkr_abbrev)<?/MIVAR>
