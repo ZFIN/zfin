@@ -56,6 +56,12 @@ EFFECTS
 
 <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
 
+<a name=attrib>
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#attrib" method=post name=attrib_mrkr onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','attrib');">
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+  Attribute Mrkr: <input type=textbox name=xpcur_G_mrkr_attrib size=10> <input type=submit value=Submit>
+</form>
 
   <?MICOMMENT> 
      Save previously submitted values. Set form values of form new_experiment 
@@ -68,8 +74,14 @@ EFFECTS
   <?MIVAR NAME=xpcurxprss_old_xpatex_assay>$(IF,$(XST,$xpcur_G_xpatex_assay),$xpcur_G_xpatex_assay)<?/MIVAR>
   <?MIVAR NAME=xpcurxprss_old_xpatex_genbank>$(IF,$(XST,$xpcur_G_xpatex_genbank),$xpcur_G_xpatex_genbank)<?/MIVAR>
 
+
+<?MIVAR NAME=xpcurxprss_row_color><?/MIVAR> 
+<?MIVAR NAME=xpcurxprss_prev_fish><?/MIVAR>
+<?MIVAR NAME=xpcurxprss_prev_gene><?/MIVAR>
+<?MIVAR NAME=xpcurxprss_prev_fig><?/MIVAR>
+
   
-<table width=100% border=0 bgcolor="<!--|HIGHLIGHT_COLOR|-->">
+<table width=100% border=0 cellpadding=3 cellspacing=0>
   <tr bgcolor=#CCCCCC>
     <td>&nbsp;</td>
     <td>
@@ -90,6 +102,7 @@ EFFECTS
       and xpatex_dblink_zdb_id = dblink_zdb_id
       and xpatex_gene_zdb_id = mrkr_zdb_id
       and featexp_exp_zdb_id = exp_zdb_id
+      $(IF,$(XST,$xpcur_c_gene_only),and mrkr_zdb_id = '$xpcur_c_gene_only')
     order by mrkr_abbrev_order,fish_name_order,exp_name,xpatex_assay_name;">
 
 <?MIVAR COND=$(EC,$debugg,true)><p>Experiment Select:<br> $MI_SQL <?/MIVAR>
@@ -102,16 +115,19 @@ EFFECTS
     <?MIVAR NAME=xpcurxprss_xpatex_gene>$7<?/MIVAR>
     <?MIVAR NAME=xpcurxprss_xpatex_genbank>$8<?/MIVAR>
     
-    <?MISQL SQL="select WebExplode(object,'xpcurexpssdisp_xpatex_zdb_id=$xpcurxprss_xpatex_zdb_id') from webPages where ID='aa-xpatcurexpssdisplayname.apg';">$1<?/MISQL>
-    <?MIVAR NAME=xpcurxprss_xpatex_display_name>$xpcurexpssdisp_xpatex_display_name<?/MIVAR>
-
-<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#experiment" method=post name=experiment onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','experiment');">
-    
+    <?MIBLOCK COND=$(NC,$xpcurxprss_xpatex_fish,$xpcurxprss_prev_fish)>
+        <?MIVAR NAME=xpcurxprss_row_color>$(IF,$(EC,$xpcurxprss_row_color,),<!--|HIGHLIGHT_COLOR|-->,)<?/MIVAR>     
+    <?MIELSE COND=$(NC,$xpcurxprss_xpatex_gene,$xpcurxprss_prev_gene)>
+        <?MIVAR NAME=xpcurxprss_row_color>$(IF,$(EC,$xpcurxprss_row_color,),<!--|HIGHLIGHT_COLOR|-->,)<?/MIVAR>     
+    <?/MIBLOCK>
+<?MIVAR>
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#experiment" method=post name=experiment onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','experiment');setCookie('gene_only','$xpcurxprss_xpatex_gene');">
+<?/MIVAR>    
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
     <INPUT TYPE=HIDDEN NAME=xpcur_G_xpatex_zdb_id VALUE="<?MIVAR>$xpcurxprss_xpatex_zdb_id<?/MIVAR>"> 
     <INPUT TYPE=HIDDEN NAME=xpcur_G_xpatex VALUE="update"> 
-  <tr>
+  <tr bgcolor=$xpcurxprss_row_color>
     <td><input name="xpcur_G_xpatex_update" type=submit value="Update"></td>
     <td> 
        <select name="xpcur_G_xpatex_gene">
@@ -210,6 +226,9 @@ EFFECTS
     </td>    
   </tr>
   </form>
+
+    <?MIVAR NAME=xpcurxprss_prev_fish>$xpcurxprss_xpatex_fish<?/MIVAR>
+    <?MIVAR NAME=xpcurxprss_prev_gene>$xpcurxprss_xpatex_gene<?/MIVAR>  
 <?/MISQL>    
 
   <tr>
@@ -233,7 +252,8 @@ EFFECTS
                        from marker 
                        where mrkr_zdb_id in ('$xpcur_G_gene_attrib_csv')
                        order by mrkr_abbrev;">
-            <option value="$1" $(IF,$(EC,$xpcurxprss_old_xpatex_gene,$1),SELECTED)>$2</option>
+            <option value="$1" $(IF,$(EC,$xpcurxprss_old_xpatex_gene,$1),SELECTED)
+                   $(IF,$(AND,$(XST,$xpcur_c_gene_only),$(EC,$xpcur_c_gene_only,$1)),SELECTED)>$2</option>
           <?/MISQL>
       </select></td>
     
