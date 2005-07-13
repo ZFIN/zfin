@@ -234,6 +234,9 @@ print "loading...\n";
 # in ZFIN to reflect secondary or obsolete terms, and adds new terms to the
 # go_term table.  It also produces unload files with terms
 # annotated to secondary or obsolete terms for curators to fix.
+#
+# Added on 7/13/2005: an addition to the loadgoterms.sql script to check for
+# obsolete or secondary GO terms in the with field
 
 system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> loadgoterms.sql >out 2> report.txt");
 
@@ -255,5 +258,8 @@ system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> loadgoterms.sql >out 
 
 &isEmptyFile ("new_obsolete_terms.unl","No new obsolete terms\n",
 	      "<!--|GO_EMAIL_CURATOR|-->","Terms now obsolete");
+
+&isEmptyFile ("obso_sec_with.unl","No obsolete or secondary terms in with field\n",
+	      "<!--|GO_EMAIL_CURATOR|-->","Inferred from terms (With) terms now obsolete/secondary");
 
 exit;
