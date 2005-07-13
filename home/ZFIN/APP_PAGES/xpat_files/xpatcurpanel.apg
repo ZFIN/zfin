@@ -53,7 +53,12 @@ EFFECTS
 
 <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
 
-<table width=100% border=0 bgcolor="<!--|HIGHLIGHT_COLOR|-->">
+<?MIVAR NAME=xpcurpnl_row_color><?/MIVAR> 
+<?MIVAR NAME=xpcurpnl_prev_fish><?/MIVAR>
+<?MIVAR NAME=xpcurpnl_prev_gene><?/MIVAR>
+<?MIVAR NAME=xpcurpnl_prev_fig><?/MIVAR>
+    
+<table width=100% border=0 cellspacing=0 cellpadding=3>
   <tr bgcolor=#CCCCCC>
     <td>Figure</td>
     <td>Experiment</td>
@@ -62,7 +67,15 @@ EFFECTS
     <td>Delete</td>
   </tr>  
 <?MISQL SQL="
-    select distinct fig_zdb_id, fig_label, xpatres_start_stg_zdb_id, xpatres_end_stg_zdb_id, xpatres_xpatex_zdb_id, mrkr_abbrev_order, stg_hours_start, LOWER(abbrev)
+    select distinct fig_zdb_id, fig_label, 
+                    xpatres_start_stg_zdb_id, 
+                    xpatres_end_stg_zdb_id, 
+                    xpatres_xpatex_zdb_id, 
+                    mrkr_abbrev_order, 
+                    stg_hours_start, 
+                    LOWER(abbrev), 
+                    xpatex_gene_zdb_id, 
+                    zdb_id
     from figure, expression_pattern_figure, expression_result, expression_experiment, marker, stage, feature_experiment, fish
     where fig_source_zdb_id = '$OID'
       and xpatfig_fig_zdb_id = fig_zdb_id
@@ -73,6 +86,7 @@ EFFECTS
       and xpatex_featexp_zdb_id = featexp_zdb_id
       and featexp_genome_feature_zdb_id = zdb_id
       and fig_zdb_id in ('$xpcur_G_fig_attrib_csv')
+      $(IF,$(XST,$xpcur_c_gene_only),and mrkr_zdb_id = '$xpcur_c_gene_only')
     order by fig_label, mrkr_abbrev_order, 8, stg_hours_start;">
 
       <?MIVAR NAME=xpcurpnl_fig_zdb_id>$1<?/MIVAR>
@@ -81,10 +95,20 @@ EFFECTS
       <?MIVAR NAME=xpcurpnl_end_stg_zdb_id>$4<?/MIVAR>
       <?MIVAR NAME=xpcurpnl_xpatex_zdb_id>$5<?/MIVAR>
       <?MIVAR NAME=xpcurpnl_delete>panel,$1,$5,$3,$4<?/MIVAR>
+      <?MIVAR NAME=xpcurpnl_fish>$9<?/MIVAR>
+      <?MIVAR NAME=xpcurpnl_gene>$8<?/MIVAR>
+
+    <?MIBLOCK COND=$(NC,$9,$xpcurpnl_prev_fish)>
+        <?MIVAR NAME=xpcurpnl_row_color>$(IF,$(EC,$xpcurpnl_row_color,),<!--|HIGHLIGHT_COLOR|-->,)<?/MIVAR>     
+    <?MIELSE COND=$(NC,$8,$xpcurpnl_prev_gene)>
+        <?MIVAR NAME=xpcurpnl_row_color>$(IF,$(EC,$xpcurpnl_row_color,),<!--|HIGHLIGHT_COLOR|-->,)<?/MIVAR>     
+    <?MIELSE COND=$(NC,$xpcurpnl_fig_zdb_id,$xpcurpnl_prev_fig)>
+        <?MIVAR NAME=xpcurpnl_row_color>$(IF,$(EC,$xpcurpnl_row_color,),<!--|HIGHLIGHT_COLOR|-->,)<?/MIVAR>      
+    <?/MIBLOCK>
      
-    <tr>
+    <tr bgcolor=$xpcurpnl_row_color>
       <?MISQL SQL="
-        select start.stg_name_long, end.stg_name_long, anatitem_name, xpatres_expression_found, anatitem_name_order
+        select start.stg_abbrev ||' '|| start.stg_name_ext, end.stg_abbrev ||' '|| end.stg_name_ext, anatitem_name, xpatres_expression_found, anatitem_name_order
         from expression_pattern_figure, expression_result, anatomy_item, stage as start, stage as end       
         where xpatfig_fig_zdb_id = '$xpcurpnl_fig_zdb_id'
           and xpatfig_xpatres_zdb_id = xpatres_zdb_id
@@ -100,7 +124,7 @@ EFFECTS
         <?MIVAR NAME=xpcurpnl_start_stg>$1<?/MIVAR>
         <?MIVAR NAME=xpcurpnl_end_stg>$2<?/MIVAR>
         <?MIVAR NAME=xpcurpnl_anatitem_name>$3<?/MIVAR>
-        <?MIVAR NAME=xpcurpnl_expression_found><font color="$(IF,$(EC,$4,t),#66CCFF,green)">$(IF,$(EC,$4,t),y,n)</font><?/MIVAR>
+        <?MIVAR NAME=xpcurpnl_expression_found>$(IF,$(EC,$4,f),<font color=red>&#40not&#41</font>) <?/MIVAR>
       
         <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">     
           <?MISQL SQL="select WebExplode(object,'xpcurexpssdisp_xpatex_zdb_id=$xpcurpnl_xpatex_zdb_id') from webPages where ID='aa-xpatcurexpssdisplayname.apg';"><?/MISQL>
@@ -109,10 +133,10 @@ EFFECTS
             <td valign=top>$xpcurpnl_fig_label</td>
             <td valign=top>$xpcurpnl_xpatex_display_name</td>    
             <td valign=top>$xpcurpnl_start_stg $(IF,$(NE,$xpcurpnl_start_stg,$xpcurpnl_end_stg),- <br>$xpcurpnl_end_stg)</td>
-            <td valign=top>$xpcurpnl_anatitem_name($xpcurpnl_expression_found)
+            <td valign=top>$xpcurpnl_expression_found$xpcurpnl_anatitem_name
           <?/MIVAR>
         <?MIELSE>  
-          <?MIVAR>, $xpcurpnl_anatitem_name($xpcurpnl_expression_found)<?/MIVAR>  
+          <?MIVAR>, $xpcurpnl_expression_found$xpcurpnl_anatitem_name<?/MIVAR>  
         <?/MIBLOCK> <?MICOMMENT> MI_CURRENTROW = 1 <?/MICOMMENT>
   
       <?/MISQL>
@@ -121,7 +145,10 @@ EFFECTS
         <?MIVAR><input name="delete" type=button value=" X " onClick="deleteZDB('$xpcurpnl_delete','panel')"><?/MIVAR>
       </td>           
     </tr>
-        
+
+    <?MIVAR NAME=xpcurpnl_prev_fish>$xpcurpnl_fish<?/MIVAR>
+    <?MIVAR NAME=xpcurpnl_prev_gene>$xpcurpnl_gene<?/MIVAR>
+    <?MIVAR NAME=xpcurpnl_prev_fig>$xpcurpnl_fig_zdb_id<?/MIVAR>
     
 <?/MISQL>    
 <?MICOMMENT> ==| Enter a New Panel |== <?/MICOMMENT>
@@ -156,6 +183,7 @@ EFFECTS
 	      and xpatex_gene_zdb_id = mrkr_zdb_id
 	      and xpatex_featexp_zdb_id = featexp_zdb_id
 	      and featexp_genome_feature_zdb_id = zdb_id
+              $(IF,$(XST,$xpcur_c_gene_only),and mrkr_zdb_id = '$xpcur_c_gene_only')
             order by mrkr_abbrev_order, 3;">
             <?MIVAR NAME=xpcurpnl_xpatex_zdb_id>$1<?/MIVAR>  
             <?MISQL SQL="select WebExplode(object,'xpcurexpssdisp_xpatex_zdb_id=$xpcurpnl_xpatex_zdb_id') from webPages where ID='aa-xpatcurexpssdisplayname.apg';"><?/MISQL>
@@ -170,7 +198,7 @@ EFFECTS
 	      from stage
 	     where stg_name <> 'Unknown' 
             order by stg_hours_start;">
-            <option value="$1">$2</option>
+            <option value="$1" $(IF,$(AND,$(XST,$xpcur_G_panel_add_start_stg),$(EC,$xpcur_G_panel_add_start_stg,$1)),SELECTED)>$2</option>
           <?/MISQL>
       </select>
       <br>
@@ -180,7 +208,7 @@ EFFECTS
 	      from stage
 	     where stg_name <> 'Unknown' 
             order by stg_hours_end;">
-            <option value="$1">$2</option>
+            <option value="$1" $(IF,$(AND,$(XST,$xpcur_G_panel_add_end_stg),$(EC,$xpcur_G_panel_add_end_stg,$1)),SELECTED)>$2</option>
           <?/MISQL>
       </select>
     </td>
