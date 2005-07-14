@@ -790,7 +790,7 @@ Datablade documentation.
 <?MIVAR NAME=display_mut_trg_title>f<?/MIVAR>
 
 <?MICOMMENT>=========================================================
-This section of the code has been commented..see FogBugz 738. The update feature for adding knockdown reagents is no longre necessary.
+This section of the code has been commented..see FogBugz 743. The update feature for adding knockdown reagents is no longer necessary.
 I am commenting this part of the code rather than deleting it. If no flags are raised in a month from today (7/14/05), this section can be deleted by the next person who touches markerview.apg (Prita)
 ---------------------------------------------------------------------
  
