@@ -788,6 +788,12 @@ Datablade documentation.
 	    =========================================================
 <?/MICOMMENT>
 <?MIVAR NAME=display_mut_trg_title>f<?/MIVAR>
+
+<?MICOMMENT>=========================================================
+This section of the code has been commented..see FogBugz 738. The update feature for adding knockdown reagents is no longre necessary.
+I am commenting this part of the code rather than deleting it. If no flags are raised in a month from today (7/14/05), this section can be deleted by the next person who touches markerview.apg (Prita)
+---------------------------------------------------------------------
+ 
 <?MIBLOCK COND="$(AND,$(XST,$type_of_genedom),$(XST,$UPDATE))">
      <?MIVAR COND="$(EC,$display_mut_trg_title,f)">
          <hr width=80%>
@@ -807,6 +813,7 @@ Datablade documentation.
      <input type=button value="Add" onClick=new_attrib_mrel(this.form);> 
      </form>
 <?/MIBLOCK>
+<?/MICOMMENT>
 
    <?MICOMMENT>==============================
                ==    Mutant Locus
