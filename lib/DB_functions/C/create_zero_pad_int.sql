@@ -1,4 +1,4 @@
-create function zero_pad_int(src int, width int)
+create function zero_pad_int(src int, width smallint)
   returning varchar(20)
   with (variant)
   external name
