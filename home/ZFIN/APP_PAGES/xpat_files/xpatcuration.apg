@@ -243,6 +243,8 @@ EFFECTS
       setCookie('figure_only','')
       setCookie('tod','')
       setCookie('show_all','false')
+      setCookie('gene_only','')
+      setCookie('figure_only','')
       setCookie('permission','')
       setCookie('has_permission','<?MISQL SQL="select pub_can_show_images from publication where zdb_id = '$OID';">$1<?/MISQL>');
       replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID");
@@ -359,6 +361,16 @@ EFFECTS
         <?/MISQL>
         <?MISQL SQL="delete from expression_pattern_infrastructure where xpatinf_zdb_id = '$delete_item';"><?/MISQL>
       <?MIELSE>  
+        <?MIBLOCK COND=$(EC,ZDB-XPAT-,$(SUBSTR,$delete_item,1,9))>
+          <?MISQL SQL="
+            SELECT xpatres_zdb_id 
+            FROM expression_result
+            WHERE xpatres_xpatex_zdb_id = '$delete_item';">
+            
+            <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id = '$1';"><?/MISQL>
+         
+          <?/MISQL>
+        <?/MIBLOCK>
         <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id = '$delete_item';"><?/MISQL>
       <?/MIBLOCK>
     <?MIELSE>
