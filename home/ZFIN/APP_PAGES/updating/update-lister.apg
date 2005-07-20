@@ -44,8 +44,8 @@
 
 <table width=100%>
   <?MISQL SQL="
-    select submitter_id, when::date, field_name, old_value, comments, 
-           submitter_name 
+    select submitter_id, when::date, field_name, old_value, 
+	   comments, submitter_name, new_value
       from updates
       where $constraint
       order by when desc;">
@@ -55,6 +55,8 @@
     <?MIVAR NAME=$updlister_old_value>$(IF,$(EQ,$4,NULL),,$4)<?/MIVAR>
     <?MIVAR NAME=$updlister_comments>$(IF,$(EQ,$5,NULL),,$5)<?/MIVAR>
     <?MIVAR NAME=$updlister_submitter_name>$6<?/MIVAR>
+    <?MIVAR NAME=$updlister_new_value>$(IF,$(EQ,$7,NULL),,$7)<?/MIVAR>	
+	
     <tr>
       <td colspan=2> <hr> </td>
     </tr>
@@ -73,11 +75,17 @@
       </td>
     </tr>
     <tr>
-      <td align="right" valign="top"><b>Old value:</b> </td>
+      <td align="right" valign="top"  width=40%><b>Old value:</b> </td>
       <td valign="top">$updlister_old_value </td>
     </tr>
     <tr>
-      <td align="right" valign="top"><b>Submitter&nbsp;comments:</b> </td>
+      <td align="right" valign="top" width=40%><b>New value:</b> </td>
+      <td valign="top">$updlister_new_value </td>
+    </tr>
+    <tr>
+      <td align="right" valign="top" width=40%>
+		<b>Submitter&nbsp;comments:</b> 
+      </td>
       <td valign="top">$updlister_comments</td>
     </tr>
   <?/MISQL>
