@@ -60,7 +60,11 @@ EFFECTS
 <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#attrib" method=post name=attrib_mrkr onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','attrib');">
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
-  Attribute Mrkr: <input type=textbox name=xpcur_G_mrkr_attrib size=10> <input type=submit value=Submit>
+  Attribute Mrkr: <input type=textbox name=xpcur_G_mrkr_attrib size=10> <input type=submit value=Submit><br>
+
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+  Attribute Fish: <input type=textbox name=xpcur_G_fish_attrib size=10> <input type=submit value=Submit><br>
 </form>
 
   <?MICOMMENT> 
@@ -103,6 +107,7 @@ EFFECTS
       and xpatex_gene_zdb_id = mrkr_zdb_id
       and featexp_exp_zdb_id = exp_zdb_id
       $(IF,$(XST,$xpcur_c_gene_only),and mrkr_zdb_id = '$xpcur_c_gene_only')
+      $(IF,$(XST,$xpcur_c_fish_only),and zdb_id = '$xpcur_c_fish_only')
     order by mrkr_abbrev_order,fish_name_order,exp_name,xpatex_assay_name;">
 
 <?MIVAR COND=$(EC,$debugg,true)><p>Experiment Select:<br> $MI_SQL <?/MIVAR>
@@ -121,7 +126,7 @@ EFFECTS
         <?MIVAR NAME=xpcurxprss_row_color>$(IF,$(EC,$xpcurxprss_row_color,),<!--|HIGHLIGHT_COLOR|-->,)<?/MIVAR>     
     <?/MIBLOCK>
 <?MIVAR>
-<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#experiment" method=post name=experiment onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','experiment');setCookie('gene_only','$xpcurxprss_xpatex_gene');">
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#experiment" method=post name=experiment onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','experiment');setCookie('gene_only','$xpcurxprss_xpatex_gene');setCookie('fish_only','$xpcurxprss_xpatex_fish');">
 <?/MIVAR>    
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
@@ -155,13 +160,13 @@ EFFECTS
           <?/MISQL>
             <option value="-">----------</option>
           <?MISQL SQL="
-            select zdb_id, abbrev 
+            select zdb_id, LOWER(abbrev) 
             from fish
             where zdb_id in ('$xpcur_G_fish_attrib_csv')
             order by fish_name_order;">
             <?MIVAR NAME=fishOption>$2<?/MIVAR>
-            <?MIVAR NAME=fishOption DELIMIT="<SUP>" REPLACE=" (">$fishOption<?/MIVAR>
-            <?MIVAR NAME=fishOption DELIMIT="</SUP>" REPLACE=")">$fishOption<?/MIVAR>
+            <?MIVAR NAME=fishOption DELIMIT="<sup>" REPLACE=" (">$fishOption<?/MIVAR>
+            <?MIVAR NAME=fishOption DELIMIT="</sup>" REPLACE=")">$fishOption<?/MIVAR>
             <option value="$1" 
                 $(IF,$(EC,$xpcurxprss_xpatex_fish,$1),SELECTED)>$fishOption</option>
           <?/MISQL>
@@ -271,6 +276,7 @@ EFFECTS
             <option value="$1" 
                 $(IF,$(AND,$(EC,wt,$fishOption),$(EC,$xpcurxprss_old_xpatex_fish,)),SELECTED)
                 $(IF,$(EC,$xpcurxprss_old_xpatex_fish,$1),SELECTED)>$fishOption</option>
+                   $(IF,$(AND,$(XST,$xpcur_c_fish_only),$(EC,$xpcur_c_fish_only,$1)),SELECTED)>$2</option>
           <?/MISQL>
             <option value="-">----------</option>
           <?MISQL SQL="
@@ -284,6 +290,7 @@ EFFECTS
             <option value="$1" 
                 $(IF,$(AND,$(EC,wt,$fishOption),$(EC,$xpcurxprss_old_xpatex_fish,)),SELECTED)
                 $(IF,$(EC,$xpcurxprss_old_xpatex_fish,$1),SELECTED)>$fishOption</option>
+                   $(IF,$(AND,$(XST,$xpcur_c_fish_only),$(EC,$xpcur_c_fish_only,$1)),SELECTED)>$2</option>
           <?/MISQL>
             <option value="-">----------</option>
           <?MISQL SQL="
@@ -298,6 +305,7 @@ EFFECTS
             <option value="$1" 
                 $(IF,$(AND,$(EC,wt,$fishOption),$(EC,$xpcurxprss_old_xpatex_fish,)),SELECTED)
                 $(IF,$(EC,$xpcurxprss_old_xpatex_fish,$1),SELECTED)>$fishOption</option>
+                   $(IF,$(AND,$(XST,$xpcur_c_fish_only),$(EC,$xpcur_c_fish_only,$1)),SELECTED)>$2</option>
           <?/MISQL>
       </select></td>
     <td>

@@ -87,6 +87,7 @@ EFFECTS
       and featexp_genome_feature_zdb_id = zdb_id
       and fig_zdb_id in ('$xpcur_G_fig_attrib_csv')
       $(IF,$(XST,$xpcur_c_gene_only),and mrkr_zdb_id = '$xpcur_c_gene_only')
+      $(IF,$(XST,$xpcur_c_fish_only),and zdb_id = '$xpcur_c_fish_only')
     order by fig_label, mrkr_abbrev_order, 8, stg_hours_start;">
 
       <?MIVAR NAME=xpcurpnl_fig_zdb_id>$1<?/MIVAR>
@@ -184,6 +185,7 @@ EFFECTS
 	      and xpatex_featexp_zdb_id = featexp_zdb_id
 	      and featexp_genome_feature_zdb_id = zdb_id
               $(IF,$(XST,$xpcur_c_gene_only),and mrkr_zdb_id = '$xpcur_c_gene_only')
+              $(IF,$(XST,$xpcur_c_fish_only),and zdb_id = '$xpcur_c_fish_only')
             order by mrkr_abbrev_order, 3;">
             <?MIVAR NAME=xpcurpnl_xpatex_zdb_id>$1<?/MIVAR>  
             <?MISQL SQL="select WebExplode(object,'xpcurexpssdisp_xpatex_zdb_id=$xpcurpnl_xpatex_zdb_id') from webPages where ID='aa-xpatcurexpssdisplayname.apg';"><?/MISQL>

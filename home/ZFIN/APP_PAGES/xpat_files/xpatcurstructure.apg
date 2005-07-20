@@ -292,11 +292,14 @@ EFFECTS
           <?/MICOMMENT>
       <?MISQL SQL="
           SELECT distinct xpatfig_fig_zdb_id, xpatex_zdb_id, xpatres_start_stg_zdb_id, xpatres_end_stg_zdb_id
-            FROM expression_experiment, expression_pattern_figure, expression_result
+            FROM expression_experiment, expression_pattern_figure, expression_result, fish, feature_experiment
            WHERE xpatres_zdb_id = xpatfig_xpatres_zdb_id
              AND xpatex_source_zdb_id = '$OID'
              AND xpatex_zdb_id = xpatres_xpatex_zdb_id
+             AND xpatex_featexp_zdb_id = featexp_zdb_id
+             AND featexp_genome_feature_zdb_id = zdb_id
              $(IF,$(XST,$xpcur_c_gene_only),and xpatex_gene_zdb_id = '$xpcur_c_gene_only')
+             $(IF,$(XST,$xpcur_c_fish_only),and zdb_id = '$xpcur_c_fish_only')
              ;">
 
           <?MIVAR NAME=xpcurstr_fig_zdb_id>$1<?/MIVAR>
@@ -370,6 +373,7 @@ EFFECTS
       and xpatex_featexp_zdb_id = featexp_zdb_id
       and featexp_genome_feature_zdb_id = zdb_id
       $(IF,$(XST,$xpcur_c_gene_only),and xpatex_gene_zdb_id = '$xpcur_c_gene_only')
+      $(IF,$(XST,$xpcur_c_fish_only),and zdb_id = '$xpcur_c_fish_only')
     order by fig_label,mrkr_abbrev_order,10,s.stg_hours_start;">
       
     <?MIVAR NAME=xpcurstr_xpatex_zdb_id>$1<?/MIVAR>

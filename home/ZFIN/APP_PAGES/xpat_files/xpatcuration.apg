@@ -245,6 +245,7 @@ EFFECTS
       setCookie('show_all','false')
       setCookie('gene_only','')
       setCookie('figure_only','')
+      setCookie('fish_only','')
       setCookie('permission','')
       setCookie('has_permission','<?MISQL SQL="select pub_can_show_images from publication where zdb_id = '$OID';">$1<?/MISQL>');
       replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID");
@@ -806,6 +807,7 @@ EFFECTS
 <form>
 <a name=gene_only>
 <a name=figure_only>
+<a name=fish_only>
 <br>
 <table border=0 cellpadding=0 bgcolor="#CCCCCC" width=100%>
 <tr>
@@ -844,6 +846,46 @@ EFFECTS
     </select>
   </td>
 
+  <td>
+    Only FISH:
+    <select onChange="urlSetCookie('fish_only',this.value)">
+      <option value="">ALL</option>
+      <?MISQL SQL="
+        select zdb_id, abbrev
+        from fish 
+        where abbrev='WT'
+        order by fish_name_order
+        ;">
+      <option value="$1"
+        $(IF,$(AND,$(XST,$xpcur_c_fish_only),$(EC,$xpcur_c_fish_only,$1)),SELECTED)>$2</option>     
+      <?/MISQL>
+ <option value="-">----------</option>
+      <?MISQL SQL="
+        select zdb_id, abbrev
+        from fish 
+        where zdb_id in ('$xpcur_G_oid_attrib_csv')
+        order by abbrev
+        ;">
+         <?MIVAR NAME=fishOption>$2<?/MIVAR>^M
+            <?MIVAR NAME=fishOption DELIMIT="<sup>" REPLACE=" (">$fishOption<?/MIVAR>
+            <?MIVAR NAME=fishOption DELIMIT="</sup>" REPLACE=")">$fishOption<?/MIVAR>
+      <option value="$1"
+        $(IF,$(AND,$(XST,$xpcur_c_fish_only),$(EC,$xpcur_c_fish_only,$1)),SELECTED)>$fishOption</option>     
+      <?/MISQL>
+<option value="-">----------</option>
+
+      <?MISQL SQL="
+        select zdb_id, abbrev
+        from fish 
+        where line_type = 'wild type'
+        and abbrev <> 'WT'
+        order by fish_name_order
+        ;">
+      <option value="$1"
+        $(IF,$(AND,$(XST,$xpcur_c_fish_only),$(EC,$xpcur_c_fish_only,$1)),SELECTED)>$2</option>     
+      <?/MISQL>
+    </select>
+  </td>
 </tr>
 </table>
 
