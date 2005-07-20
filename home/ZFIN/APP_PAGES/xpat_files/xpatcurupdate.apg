@@ -83,6 +83,7 @@ INPUT VARS:
   
   Atrribution
       xpcur_G_mrkr_attrib :: mrkr abbrev 
+      xpcur_G_fish_attrib :: fish abbrev 
       
 COOKIES:
   xpcur_c_xpatcuration_update :: gate variable; set to update for an update to occur.
@@ -1017,6 +1018,46 @@ EFFECTS
     <?/MIBLOCK>
   <?/MIBLOCK>
   
+  <?MIBLOCK COND=$(XST,$xpcur_G_fish_attrib)>
+  
+    <?MICOMMENTS>
+       ================================================
+         Check that the fish_record exists. 
+         Then, add a record to record attribution
+       ================================================
+    <?/MICOMMENTS>
+    
+    <?MISQL SQL="select zdb_id 
+                 from fish
+                 where allele = '$xpcur_G_fish_attrib'
+                ;">
+            <?MIVAR NAME=xpcurup_attrib_fish_zdb>$1<?/MIVAR>
+    <?/MISQL>
+    
+    <?MIBLOCK COND=$(XST,$xpcurup_attrib_fish_zdb)>
+      <?MISQL SQL="
+        select count(*)::integer
+        from record_attribution
+        where recattrib_data_zdb_id = '$xpcurup_attrib_fish_zdb'
+          and recattrib_source_zdb_id = '$OID'
+        ;">
+      <?/MISQL>
+    
+      <?MISQL COND=$(=,$1,0) SQL="
+        insert into record_attribution(recattrib_data_zdb_id,recattrib_source_zdb_id)
+        values ('$xpcurup_attrib_fish_zdb','$OID');">
+      <?/MISQL>    
+      
+      <?MIVAR NAME=xpcur_c_fish_only>$xpcurup_attrib_fish_zdb<?/MIVAR>
+      <?MIVAR>
+        <SCRIPT>
+          setCookie('fish_only','$xpcurup_attrib_fish_zdb')
+        </SCRIPT>      
+      <?/MIVAR>
+    <?MIELSE>
+      <?MIVAR NAME=xpcurup_alert>Could not find $xpcur_G_fish_attrib in the fish table.<?/MIVAR>    
+    <?/MIBLOCK>
+  <?/MIBLOCK>
     
     <?MIVAR COND=$(XST,$xpcurup_alert)>
       <script>
