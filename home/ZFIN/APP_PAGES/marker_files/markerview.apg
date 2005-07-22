@@ -1190,7 +1190,7 @@ I am commenting this part of the code rather than deleting it. If no flags are r
 <?MIVAR NAME=mrkrview_xpatsource_count>$1<?/MIVAR>
 
     <HR width="80%">
-    <b>GENE EXPRESSION: </b></b><font size=-1>(<a href="javascript:start_note();">current status</a></font>)
+    <b>GENE EXPRESSION:</b><font size=-1>(<a href="javascript:start_note();">current status</a></font>)
 
 <?MIBLOCK COND="$(!=,$mrkrview_xpatsource_count,0)">
     <table width="100%" border="0" <?MIVAR>bgcolor="$highlight"<?/MIVAR>>
