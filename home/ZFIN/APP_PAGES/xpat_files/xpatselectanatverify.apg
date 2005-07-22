@@ -68,12 +68,6 @@ WHERE anatitem_name_lower = lower('$xpanatv_part')
 
 UNION
 
-SELECT anatitem_name, anatitem_zdb_id,'<I>(abbrev match)</I> '
-FROM anatomy_item
-WHERE anatitem_abbrev_lower = lower('$xpanatv_part')
-
-UNION
-
 SELECT anatitem_name, anatitem_zdb_id,'<I>(synonym match)</I> '
 FROM data_alias, anatomy_item 
 WHERE dalias_data_zdb_id = anatitem_zdb_id
@@ -153,7 +147,7 @@ where allanatcon_container_zdb_id = '$xpanatv_item_zdb_id'
           <FONT size=-1 style="font-family:arial;"> 
             <?MICOMMENT> ---- not in dictionary ---- <?/MICOMMENT>
             <?MIVAR>
-              <B>does not exactly match a dictionary term, abbreviation or synonym.<br>You can browse the dictionary
+              <B>does not exactly match a dictionary term, or synonym.<br>You can browse the dictionary
               <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=stages">by stage</a> 
               or see the 
               <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=alpha">complete list</a>.

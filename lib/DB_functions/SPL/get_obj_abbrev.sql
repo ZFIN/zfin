@@ -52,11 +52,6 @@ get_obj_abbrev(zdbId varchar(50))
       into objName
       from locus
       where zdb_id = zdbId;
-  elif (objType = "ANAT") then
-    select anatitem_abbrev   -- NULL values
-      into objName
-      from anatomy_item
-      where anatitem_zdb_id = zdbId;
   elif (objType = "CHROMO") then
     select abbrev   -- NULL values, redundant with locus.name?
       into objName

@@ -204,13 +204,6 @@ create dba function "informix".regen_anatomy_tokens() returning integer
       select anatitem_zdb_id, anatitem_name_lower
         from anatomy_item;
 
-    let errorHint = "Anatomy abbrevs";
-    insert into tokenize_in_temp
-        ( tokin_zdb_id, tokin_name )
-      select anatitem_zdb_id, anatitem_abbrev_lower
-        from anatomy_item
-        where anatitem_abbrev_lower is not null;
-
     let errorHint = "Anatomy aliases";
     insert into tokenize_in_temp
         ( tokin_zdb_id, tokin_name )

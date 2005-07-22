@@ -24,13 +24,5 @@ create trigger anatomy_items_update_trigger
 			into anatitem_name_order,
 		execute function 
 	  		lower(new_anatomy_item.anatitem_name)
-			into anatitem_name_lower,
-                -- scrub abbrev
-        	execute function 
-	  		scrub_char(new_anatomy_item.anatitem_abbrev) 
-			into anatitem_abbrev,
-                -- then push it to abbrev lower column
-        	execute function 
-	  		lower(new_anatomy_item.anatitem_abbrev) 
-			into anatitem_abbrev_lower
+			into anatitem_name_lower
     );

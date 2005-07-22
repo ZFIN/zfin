@@ -21,9 +21,6 @@ create trigger anatomy_items_insert_trigger
       execute function
 	scrub_char(new_anatomy_item.anatitem_name_lower)
 	into anatitem_name_lower,
-      execute function 
-	lower(new_anatomy_item.anatitem_abbrev) 
-	into anatitem_abbrev_lower,
       execute function
 	scrub_char(new_anatomy_item.anatitem_name_order)
 	into anatitem_name_order
