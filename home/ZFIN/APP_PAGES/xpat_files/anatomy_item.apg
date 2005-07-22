@@ -23,8 +23,8 @@
 	SELECT anatitem_name,
 	       get_stg_name_long_html(s1.stg_zdb_id), 
 	       get_stg_name_long_html(s2.stg_zdb_id),
-               anatitem_abbrev, anatitem_definition,
-	       anatitem_description
+               anatitem_definition, anatitem_description,
+	       anatitem_is_obsolete
 	FROM anatomy_item, stage s1, stage s2
 	WHERE anatitem_zdb_id = '$OID'
 	  and s1.stg_zdb_id = anatitem_start_stg_zdb_id
@@ -33,15 +33,15 @@
       <?MIVAR NAME="item_name">$1<?/MIVAR>
       <?MIVAR NAME="item_stg_start_html">$2<?/MIVAR>
       <?MIVAR NAME="item_stg_end_html">$3<?/MIVAR>
-      <?MIVAR NAME="item_abbrev">$4<?/MIVAR>
-      <?MIVAR NAME="item_definition">$5<?/MIVAR>
-      <?MIVAR NAME="item_description">$6<?/MIVAR>
+      <?MIVAR NAME="item_definition">$4<?/MIVAR>
+      <?MIVAR NAME="item_description">$5<?/MIVAR>
+      <?MIVAR NAME="item_is_obsolete">$6<?/MIVAR>
+	
    <?/MISQL>
  
    <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
 	<center><font size=4><b>Requested ID not found on ZFIN. </font>  
    <?MIELSE> 
-      <?MIVAR NAME=$item_abbrev COND="$(EC,$item_abbrev,NULL)"><?/MIVAR>
       <?MIVAR NAME=$item_definition COND="$(EC,$item_definition,NULL)"><?/MIVAR>
       <?MIVAR NAME=$item_description COND="$(EC,$item_description,NULL)"><?/MIVAR>
 
@@ -90,23 +90,6 @@
 
 <?MIBLOCK COND="$(XST,$UPDATE)">
 <!-- First, do any updates -->
-
-  <?MIBLOCK COND="$(XST,$updated_abbrev)">
-    <?MISQL SQL="update anatomy_item 
-                 set anatitem_abbrev = '$updated_abbrev' 
-                 where anatitem_zdb_id = '$OID';">
-    <?/MISQL>
-    <?MIVAR NAME="item_abbrev">$updated_abbrev<?/MIVAR>
-  <?/MIBLOCK>
-
- <?MIBLOCK COND="$(XST,$delete_abbrev)">
-    <?MISQL SQL="update anatomy_item 
-                 set anatitem_abbrev = null 
-                 where anatitem_zdb_id = '$OID';">
-    <?/MISQL>
-    <?MIVAR NAME="item_abbrev"><?/MIVAR>
-  <?/MIBLOCK>
-
 
   <?MIBLOCK COND="$(XST,$delete_synonym)"> 
     <?MISQL SQL="DELETE FROM data_alias WHERE dalias_zdb_id = '$updated_synonym_zdb_id';"><?/MISQL>
@@ -173,24 +156,6 @@
       <?MIVAR><B>Update Anatomy Record</B><?/MIVAR>
     </TD>
   </TR>
-  <TR>
-    <TD>
- <?MIVAR>
-  <FORM action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" name="update_abbrev" method="get">
-
-      <INPUT type="hidden" name="MIval" value="aa-anatomy_item.apg">
-      <INPUT type="hidden" name="OID" value="$OID">
-      <INPUT type="hidden" name="UPDATE" value="1">
-      <INPUT type="text" name="updated_abbrev" size="10" value="$item_abbrev">
-      <INPUT type="submit" value="Update Abbrev">
-      <INPUT type="hidden" name="delete_abbrev">
-      <INPUT type="button" value="Delete Abbrev"
-	   onClick="document.update_abbrev.delete_abbrev.value='1';
-		    document.update_abbrev.submit();">
-  </FORM>
-  <?/MIVAR>
-    </TD>
-  </TR>
   
   <?MIVAR NAME="$alias_number">0<?/MIVAR>
 
@@ -208,12 +173,11 @@
     <?MIVAR COND="$(NXST,$current_synonym_ref)" NAME="current_synonym_ref"><?/MIVAR>
     <TR>
       <TD>
- <?MIVAR>
 
   <?MIVAR NAME="alias_number">$(+,$alias_number,1)<?/MIVAR>
 
   <FORM action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" name="update_synonym_$alias_number" method="get">
-
+   <?MIVAR>
       <INPUT type="hidden" name="MIval" value="aa-anatomy_item.apg">
       <INPUT type="hidden" name="OID" value="$OID">
       <INPUT type="hidden" name="UPDATE" value="1">
@@ -225,10 +189,9 @@
       <INPUT type="button" value="Delete $current_synonym"
              onClick="document.update_synonym_$alias_number.delete_synonym.value='1'
 		      document.update_synonym_$alias_number.submit();">
-
+    <?/MIVAR>
   </FORM>
 
-  <?/MIVAR>
       </TD>
     </TR>
     <?MICOMMENT> -- clear this guy for the next loop -- <?/MICOMMENT>
@@ -308,14 +271,15 @@
   <FONT SIZE=+1><STRONG>Name: <I>$item_name</I> </STRONG></FONT>
 <?/MIVAR>
 
-<P>
-<?MIBLOCK COND="$(AND,$(NE,$item_abbrev,NULL),$(NE,$item_abbrev,))">
-   <STRONG>Abbreviation: </STRONG> <?MIVAR>$item_abbrev<?/MIVAR>
+<?MICOMMENT> == In case of obsolete == <?/MICOMMENT>
+<?MIBLOCK COND="$(EC,$item_is_obsolete,t)">
+  <font color=red>(obsolete)<?/font>
+  <p>
+<?MICOMMENT> == Only display other info if term not obsolete == <?/MICOMMENT>
+<?MIELSE>
+ <BR>
 
-<BR>
-<?/MIBLOCK>
-
-<!--------- Display previous names (synonyms, but I stole this code from markerview, 
+ <!--------- Display previous names (synonyms, but I stole this code from markerview, 
             really both should be webexploded)        --------------------------------> 
 
 
@@ -336,10 +300,6 @@
       <?MISQL SQL="select WebExplode(object,'dataId=$aliasId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
   <?/MIBLOCK>
 	
-  <?MIBLOCK COND="$(=,$MI_CURRENTROW,$MI_ROWCOUNT)">
-  
-  <?/MIBLOCK>
-
 <?/MISQL>
 <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
 <BR>
@@ -611,6 +571,7 @@ auditory (tympanal or flagellar) organs, which may be in a variety of anatomical
 <?/MISQL>
 <!---  end pub relationships -->
 
+<?/MIBLOCK> <?MICOMMENT>-- close if not obsolete -- <?/MICOMMENT> 
 <?/MIBLOCK> <?MICOMMENT>-- close OID valid -- <?/MICOMMENT> 
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>

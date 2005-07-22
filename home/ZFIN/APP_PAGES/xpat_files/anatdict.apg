@@ -216,14 +216,13 @@ function updateParent(AOname, AOid) {
           <?MICOMMENT> encode the variable for searching <?/MICOMMENT>
           <?MIVAR NAME=searchterm DELIMIT="'" REPLACE="''">$searchterm<?/MIVAR>
 	      <?MISQL SQL="
-		SELECT anatitem_name, anatitem_zdb_id, anatitem_abbrev, 
+		SELECT anatitem_name, anatitem_zdb_id, 
 		       anatstat_synonym_count, anatstat_total_distinct_count,
-		       anatitem_name_order
+		        anatitem_is_obsolete, anatitem_name_order
 		  FROM anatomy_item, anatomy_stats 
 		  WHERE anatitem_zdb_id = anatstat_anatitem_zdb_id
 		    AND anatstat_object_type = 'GENE'
 		    AND (   anatitem_name_lower like lower('%$searchterm%')
-		         OR anatitem_abbrev_lower like lower('%$searchterm%')
 		         OR (    anatstat_synonym_count > 0 
 			     AND exists 
 			           ( select 1
@@ -235,9 +234,9 @@ function updateParent(AOname, AOid) {
 
 	        <?MIVAR NAME="$item_name">$1<?/MIVAR>
 		    <?MIVAR NAME="$item_zdb_id">$2<?/MIVAR>
-	        <?MIVAR NAME="$item_abbrev">$3<?/MIVAR>
-	        <?MIVAR NAME="$synonymcount">$4<?/MIVAR>
-	        <?MIVAR NAME="$totalcount">$5<?/MIVAR>
+	        <?MIVAR NAME="$synonymcount">$3<?/MIVAR>
+	        <?MIVAR NAME="$totalcount">$4<?/MIVAR>
+	        <?MIVAR NAME="$item_is_obsolete">$5<?/MIVAR>		
 	        <?MIVAR NAME="$highlight">false<?/MIVAR>
 
 			<?MICOMMENT> restore the variable <?/MICOMMENT>
@@ -254,61 +253,33 @@ function updateParent(AOname, AOid) {
 		  <?MIVAR COND=$(AND,$(XST,$type),$(EC,$type,select))><input type="button" onClick="updateParent('$(REPLACE,$item_name,"'","\'")','$item_zdb_id');" value="Add" title="Click to add term to main window anatomy box"><?/MIVAR>
 	          <font style="font-family:arial; font-size:small; font-weight:bold;  $(IF,$(EQ,$highlight,true),background-color:#ffff99)">
 	          <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">
-	          $item_name<?MIBLOCK COND="$(NE,$item_abbrev,NULL)"><?/MIBLOCK></A></font> &nbsp;
+	          $item_name</A></font> &nbsp;
+                 <?/MIVAR>
+                 <?MIVAR COND="$(EC,$item_is_obsolete,t)">
+		     <font size=-1 color=red>(obsolete)</font>
+                 <?/MIVAR>
 	 
-	        <?/MIVAR>
 	        <?MIBLOCK COND="$(>,$totalcount,0)">
 	          <?MIVAR> 
 	            [<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name&xpatsel_processed_selected_structures=$processed_item_name&include_substructures=checked">$totalcount gene(s) expressed</A> in all stages]&nbsp;&nbsp;
 	          <?/MIVAR>
 	        <?/MIBLOCK>
 
-
-	        <?MIBLOCK COND="$(NE,$item_abbrev,NULL)">
-	          <font style="font-family:arial; font-size:small; font-weight:bold;)">
-
-		      <?MIVAR><I>
-		      	(abbrev: <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">$item_abbrev</A>
-
-		        <?MIBLOCK COND="$(>,$synonymcount,0)"> 
-
-		          <?MICOMMENT> 
-			 		 --------- dear gentle reader of the lines below, I know that the lack of 
-		  		    returns makes it a impossible to read, but it has to be that way
-				    to make the comma spacing look right.  Sorry.    ---------------
-		          <?/MICOMMENT>
-
-		          <?MISQL SQL="
-			  		SELECT dalias_alias
-		            FROM data_alias
-		            WHERE dalias_data_zdb_id = '$item_zdb_id';">
-					  ,<?MIBLOCK COND="$(=,$MI_CURRENTROW,1)"> synonym(s): <?/MIBLOCK> 
-					  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">$1</A>
-			      <?/MISQL>
-		        <?/MIBLOCK>)
-
-		         </I>
-               <?/MIVAR>
-		     </font>
-		   <?MIELSE> <?MICOMMENT> --- No Abbrev, but maybe still a synonym ---- <?/MICOMMENT>
-		     <?MIBLOCK COND="$(>,$synonymcount,0)"> 
+		<?MIBLOCK COND="$(>,$synonymcount,0)"> 
 	  
-		       <?MICOMMENT> 
-		       --------- ditto the above statement about crimes against readability   ---------------
-		       <?/MICOMMENT>
-  		        <font style="font-family:arial; font-size:small; font-weight:bold;)"><I>
-		      	(<?MISQL SQL="
-			 	 SELECT dalias_alias
+  		  <font style="font-family:arial; font-size:small; font-weight:bold;)"><I>
+                    (<?MISQL SQL="
+		 	 SELECT dalias_alias
 		           FROM data_alias
-		           WHERE dalias_data_zdb_id = '$item_zdb_id';">
-					<?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">synonym(s): <?MIELSE>, <?/MIBLOCK> 
-			    	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">$1</A>
-			      <?/MISQL> ) 
-				</font></I>
+		          WHERE dalias_data_zdb_id = '$item_zdb_id';">
+			
+	 		<?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">synonym(s): <?MIELSE>, <?/MIBLOCK> 
+		    	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">$1</A>
+		      <?/MISQL> ) 		
+ 		  </font></I>
 	  
-		      <?/MIBLOCK>
-	       <?/MIBLOCK> <?MICOMMENT> end abbrev exists / not exists <?/MICOMMENT>
-		 <BR>
+	        <?/MIBLOCK> <?MICOMMENT>-- end of if there is synonym -- <?/MICOMMENT>
+	        <BR>
 	    <?/MISQL> <?MICOMMENT> end select unique anatomy item name <?/MICOMMENT>
 
 
@@ -360,7 +331,7 @@ function updateParent(AOname, AOid) {
                     <?/MICOMMENT>
 		    <?MISQL SQL="
 		      select anatdisp_item_name, anatdisp_item_zdb_id, anatdisp_seq_num,
-			     anatdisp_indent, anatitem_abbrev, anatstat_synonym_count
+			     anatdisp_indent, anatstat_synonym_count, anatitem_is_obsolete
 		        from anatomy_display, anatomy_item, anatomy_stats
 		       where anatitem_zdb_id = anatdisp_item_zdb_id
 			 and anatitem_zdb_id = anatstat_anatitem_zdb_id
@@ -373,8 +344,8 @@ function updateParent(AOname, AOid) {
 		      <?MIVAR NAME="$item_name">$1<?/MIVAR>
 		      <?MIVAR NAME="$item_zdb_id">$2<?/MIVAR>
 		      <?MIVAR NAME="$item_indent">$4<?/MIVAR>
-		      <?MIVAR NAME="$item_abbrev">$5<?/MIVAR>
-		      <?MIVAR NAME="$synonymcount">$6<?/MIVAR>
+		      <?MIVAR NAME="$synonymcount">$5<?/MIVAR>
+		      <?MIVAR NAME="$item_is_obsolete">$6<?/MIVAR>	
 		      <?MIVAR NAME="$highlight">false<?/MIVAR>
 
 		      <?MIVAR NAME=$item_name_safe DELIMIT="'" REPLACE="''">$item_name<?/MIVAR>
@@ -406,30 +377,31 @@ function updateParent(AOname, AOid) {
 			  </A>
 			</font> &nbsp; 
 		      <?/MIVAR>
+                      <?MIVAR COND="$(EC,$item_is_obsolete,t)">
+		          <font size=-1 color=red>(obsolete)</font>
+                      <?/MIVAR>
+				      
 		      <?MIBLOCK COND="$(>,$totalcount,0)">
 			<?MIVAR>
 			  [<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name&xpatsel_processed_selected_structures=$processed_item_name&include_substructures=checked&stage_start=$OID&stage_end=$OID" target="_parent">$totalcount gene(s) expressed at this stage</A>]
 			<?/MIVAR> 
 
-			<?MIBLOCK COND="$(NE,$item_abbrev,NULL)">
-			  <font style="font-family:arial; font-size:small; font-weight:bold;)">
-			    <?MIVAR><I>
-			      &nbsp;&nbsp;(abbrev: <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">$item_abbrev</A>
-			      <?MIBLOCK COND="$(>,$synonymcount,0)">
 
-				<?MICOMMENT> --------- dear gentle reader of the lines below, I know that the lack of 
-						       returns makes it a impossible to read, but it has to be that way
-						       to make the comma spacing look right.  Sorry.    ---------------
-				<?/MICOMMENT>
+			<?MIBLOCK COND="$(>,$synonymcount,0)">
+		  	  <font style="font-family:arial; font-size:small; font-weight:bold;)">
+			  <I>&nbsp;&nbsp;(
+			  <?MICOMMENT> --------- dear gentle reader of the lines below, I know that the lack of 
+					       returns makes it a impossible to read, but it has to be that way
+					       to make the comma spacing look right.  Sorry.    ---------------
+			  <?/MICOMMENT>
 
-				<?MISQL SQL="
-				  SELECT dalias_alias
+			  <?MISQL SQL="
+			          SELECT dalias_alias
 				    FROM data_alias
-				    WHERE dalias_data_zdb_id = '$item_zdb_id';">,<?MIBLOCK COND="$(=,$MI_CURRENTROW,1)"> synonym(s): <?/MIBLOCK> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">$1</A><?/MISQL>
-			      <?/MIBLOCK>)
-			    </I><?/MIVAR>
-			  </font>
-			<?/MIBLOCK>
+				    WHERE dalias_data_zdb_id = '$item_zdb_id';">,<?MIBLOCK COND="$(=,$MI_CURRENTROW,1)"> synonym(s): <?/MIBLOCK> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">$1</A>
+                           <?/MISQL>
+ 			   ) </I> </font>
+		        <?/MIBLOCK> <?MICOMMENT> end if synonym exists <?/MICOMMENT>
 		      <?/MIBLOCK> <?MICOMMENT> end totalcount > 0 <?/MICOMMENT>
 		      <BR>
 		    <?/MISQL> <?MICOMMENT> end select anatdisp_item_name ... <?/MICOMMENT>
@@ -452,9 +424,9 @@ function updateParent(AOname, AOid) {
 	    <?/MICOMMENT>
 
 	    <?MISQL SQL="
-	      SELECT anatitem_name, anatitem_zdb_id, anatitem_abbrev, 
+	      SELECT anatitem_name, anatitem_zdb_id,
 		     anatstat_synonym_count, anatstat_total_distinct_count,
-		     anatitem_name_order
+		     anatitem_is_obsolete, anatitem_name_order
 		FROM anatomy_item, anatomy_stats
 		WHERE anatitem_zdb_id = anatstat_anatitem_zdb_id
 		  AND anatstat_object_type = 'GENE'
@@ -462,9 +434,9 @@ function updateParent(AOname, AOid) {
 	      ;">
 	      <?MIVAR NAME="$item_name">$1<?/MIVAR>
 	      <?MIVAR NAME="$item_zdb_id">$2<?/MIVAR>
-	      <?MIVAR NAME="$item_abbrev">$3<?/MIVAR>
-	      <?MIVAR NAME="$synonymcount">$4<?/MIVAR>
-	      <?MIVAR NAME="$totalcount">$5<?/MIVAR>
+	      <?MIVAR NAME="$synonymcount">$3<?/MIVAR>
+	      <?MIVAR NAME="$totalcount">$4<?/MIVAR>
+	      <?MIVAR NAME="$item_is_obsolete">$5<?/MIVAR>
 	      <?MIVAR NAME="$highlight">false<?/MIVAR>
 
 	      <?MIVAR NAME=$item_name_safe DELIMIT="'" REPLACE="''">$item_name<?/MIVAR>
@@ -478,9 +450,11 @@ function updateParent(AOname, AOid) {
 		<?MIVAR COND=$(AND,$(XST,$type),$(EC,$type,select))><input type="button" onClick="updateParent('$(REPLACE,$item_name,"'","\'")','$item_zdb_id');" value="Add" title="Click to add term to main window anatomy box"><?/MIVAR>
 		<font style="font-family:arial; font-size:small; font-weight:bold;  $(IF,$(EQ,$highlight,true),background-color:#ffff99)">
 		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">
-		  $item_name<?MIBLOCK COND="$(NE,$item_abbrev,NULL)"><?/MIBLOCK></A></font> &nbsp;
+		  $item_name</A></font> &nbsp;
 	      <?/MIVAR>
-
+              <?MIVAR COND="$(EC,$item_is_obsolete,t)">
+	          <font size=-1 color=red>(obsolete)</font>
+              <?/MIVAR>
 
 
 	      <?MIBLOCK COND="$(>,$totalcount,0)">
@@ -489,40 +463,16 @@ function updateParent(AOname, AOid) {
 		<?/MIVAR>
 	      <?/MIBLOCK>
 
-	      <?MIBLOCK COND="$(NE,$item_abbrev,NULL)">
-		<font style="font-family:arial; font-size:small; font-weight:bold;)">
+	      <?MIBLOCK COND="$(>,$synonymcount,0)"> 
 
-		  <?MIVAR><I>
-		    (abbrev: <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">$item_abbrev</A>
-
-		    <?MIBLOCK COND="$(>,$synonymcount,0)"> 
-
-		      <?MICOMMENT> --------- dear gentle reader of the lines below, I know that the lack of 
-					     returns makes it a impossible to read, but it has to be that way
-					     to make the comma spacing look right.  Sorry.    ---------------
-		      <?/MICOMMENT>
-
-		      <?MISQL SQL="
-			SELECT dalias_alias
-			  FROM data_alias
-			  WHERE dalias_data_zdb_id = '$item_zdb_id';">,<?MIBLOCK COND="$(=,$MI_CURRENTROW,1)"> synonym(s): <?/MIBLOCK> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">$1</A><?/MISQL>
-		    <?/MIBLOCK>)
-
-		  </I><?/MIVAR>
-		</font>
-	      <?MIELSE> <?MICOMMENT> --- No Abbrev, but maybe still a synonym ---- <?/MICOMMENT>
-		<?MIBLOCK COND="$(>,$synonymcount,0)"> 
-
-		  <?MICOMMENT> --------- ditto the above statement about crimes against readability   ---------------
-		  <?/MICOMMENT>
 		  <font style="font-family:arial; font-size:small; font-weight:bold;)"><I>
 		    (<?MISQL SQL="
 		       SELECT dalias_alias
 			 FROM data_alias
 			 WHERE dalias_data_zdb_id = '$item_zdb_id';"><?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">synonym(s): <?MIELSE>, <?/MIBLOCK> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">$1</A><?/MISQL> ) 
 		  </font></I>
-		<?/MIBLOCK>
-	      <?/MIBLOCK>
+	      <?/MIBLOCK> <?MICOMMENT> end of if synonym exists <?/MICOMMENT>
+	      
 	      <BR>
 	    <?/MISQL>
 
