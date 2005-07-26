@@ -99,7 +99,7 @@ EFFECTS
         FROM expression_pattern_figure join expression_result
 	       on xpatfig_xpatres_zdb_id = xpatres_zdb_id
              join stage
-	       on xpatres_start_stg_zdb_id = stg_zdb_id
+	       on xpatres_end_stg_zdb_id = stg_zdb_id
        WHERE xpatfig_fig_zdb_id = '$fxfigst_fig_zdb_id'
     ORDER BY stg_hours_end desc;
   <?/MIVAR>
