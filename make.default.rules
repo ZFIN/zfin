@@ -88,9 +88,6 @@ clobber :			# Remove targets, but not target dir.
   endif
 
 sanitycheck :
-    ifdef GENERICS
-	$(SPECIFICCHECK) $(GENERICS)
-    endif
 	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
 
 
