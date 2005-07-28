@@ -67,6 +67,7 @@ STAGE_STATS  = create_stg_name_ext.sql create_stg_name_long.sql \
 	       p_stg_hours_consistent.sql p_fimg_overlaps_stg_window.sql \
 	       p_check_anatrel_stg_consistent.sql \
 	       p_check_anat_anatrel_stg_consistent.sql
+ANAT_STATS = create_anatomy_relationship_list.sql
 # insert_clone and regen_anatomy.sql are special cases.  They contain 
 # multiple procedures/functions in a single file.  We thought about splitting 
 # these into a single file per function, but the functions are tightly
@@ -78,7 +79,7 @@ GENERIC_PROCS = $(ZDB_GNRCS) $(REGEN_GNRCS) get_mrkr_name_html_link.sql \
 	        get_mrkr_abbrev_html_link.sql get_fish_full_name_html_link.sql \
                 get_fish_abbrev_html_link.sql 
 STATIC_PROCS  = $(DBLINK_STATS) $(FISH_STATS) $(MRKR_STATS) $(PUB_STATS) \
-		$(REGEN_STATS) $(ZDB_STATS) $(STAGE_STATS)
+		$(REGEN_STATS) $(ZDB_STATS) $(STAGE_STATS) $(ANAT_STATS)
 
 SPECIFIC_PROC_TARGETS = $(foreach SPEC, $(GENERIC_PROCS), $(TARGETDIR)/$(SPEC))
 STATIC_PROC_TARGETS   = $(foreach STAT, $(STATIC_PROCS),  $(TARGETDIR)/$(STAT))
