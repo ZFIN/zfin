@@ -18,6 +18,7 @@
 <?MIBLOCK COND="$(XST,$OID)">
 
    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+   <?MISQL SQL="select WebExplode(object,'page_title=View Pub') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
    <?MISQL SQL="
 	SELECT anatitem_name,
@@ -265,7 +266,12 @@
     </TD
   </TR>
 </TABLE>
-<?/MIBLOCK>
+<?/MIBLOCK> <?MICOMMENT> == end if update ==<?/MICOMMENT>
+
+<?MICOMMENT> ===============================================================
+             ==       Page Display
+             ===============================================================
+<?/MICOMMENT>
 <BR>
 <?MIVAR>
   <FONT SIZE=+1><STRONG>Name: <I>$item_name</I> </STRONG></FONT>
@@ -312,8 +318,8 @@
 <STRONG>Definition:</STRONG> $1<BR>
 <?/MISQL>
 
-<?MISQL SQL="SELECT anatitem_description from anatomy_item where anatitem_zdb_id = '$OID' and anatitem_description is not null;">
-<STRONG>Description:</STRONG> $1<BR>
+<?MISQL COND="$(EC,$AUTHORIZED,root)" SQL="SELECT anatitem_description from anatomy_item where anatitem_zdb_id = '$OID' and anatitem_description is not null;">
+<STRONG>Curator Note:</STRONG> $1<BR>
 <?/MISQL>
 
 
@@ -408,18 +414,14 @@ Genes
     </TD>
     <TD bgcolor="#EEEEEE">
  <?MISQL SQL="
-	SELECT start.stg_name, start.stg_zdb_id, end.stg_name, 
-	       end.stg_zdb_id, parent.anatitem_zdb_id, parent.anatitem_name,
-	       start.stg_hours_start, end.stg_hours_start, parent.anatitem_name_order
-	FROM all_anatomy_contains, stage as start, stage as end, anatomy_item parent
-	WHERE allanatcon_contained_zdb_id = '$OID'
-	  and allanatcon_container_zdb_id = parent.anatitem_zdb_id
-	  and start.stg_zdb_id = parent.anatitem_start_stg_zdb_id
-	  and end.stg_zdb_id = parent.anatitem_end_stg_zdb_id
-	  and allanatcon_min_contain_distance = '1'
-	ORDER BY  parent.anatitem_name_order
+	SELECT anatitem_zdb_id, anatitem_name, anatitem_name_order
+	  FROM anatomy_relationship JOIN anatomy_item
+               ON anatrel_anatitem_1_zdb_id = anatitem_zdb_id
+	 WHERE anatrel_anatitem_2_zdb_id = '$OID'
+	   AND anatrel_dagedit_id in ('part_of', 'is_a')
+	ORDER BY anatitem_name_order
     ;">
-    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$5">$6</A> &nbsp; 
+    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$1">$2</A> &nbsp; 
  <?/MISQL>
       </TD>
     </TR>
@@ -429,21 +431,63 @@ Genes
       </TD>
       <TD bgcolor="#EEEEEE">
  <?MISQL SQL="
-       SELECT start.stg_name, start.stg_zdb_id, end.stg_name, 
-	       end.stg_zdb_id, child.anatitem_zdb_id, child.anatitem_name,
-	       start.stg_hours_start, end.stg_hours_start, child.anatitem_name_order
-	FROM all_anatomy_contains, stage as start, stage as end, anatomy_item child
-	WHERE allanatcon_container_zdb_id = '$OID'
-	  and allanatcon_contained_zdb_id = child.anatitem_zdb_id
-	  and start.stg_zdb_id = child.anatitem_start_stg_zdb_id
-	  and end.stg_zdb_id = child.anatitem_end_stg_zdb_id
-	  and allanatcon_min_contain_distance = '1'
-	ORDER BY child.anatitem_name_order
+	SELECT anatitem_zdb_id, anatitem_name, anatitem_name_order
+	  FROM anatomy_relationship JOIN anatomy_item
+               ON anatrel_anatitem_2_zdb_id = anatitem_zdb_id
+	 WHERE anatrel_anatitem_1_zdb_id = '$OID'
+	   AND anatrel_dagedit_id in ('part_of', 'is_a')
+	ORDER BY anatitem_name_order
      ;">
-     <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$5">$6</A> &nbsp; 
+     <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$1">$2</A> &nbsp; 
  <?/MISQL>
       </TD>
-    </TR>
+  </TR>
+  <?MICOMMENT>====================================================================== 
+              == for develops from relationship, only show if there is content  ===
+              ======================================================================
+  <?/MICOMMENT>
+  <?MISQL SQL="
+	select 't'
+          from anatomy_relationship
+	 where '$OID' in (anatrel_anatitem_1_zdb_id, anatrel_anatitem_2_zdb_id)
+           and anatrel_dagedit_id = 'develops_from';">
+  <?/MISQL>
+  <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+    <TR>
+     <TD bgcolor="#EEEEEE" valign=top align=left width=110>
+      Develops from: 
+     </TD>
+     <TD bgcolor="#EEEEEE">
+      <?MISQL SQL="
+	SELECT anatitem_zdb_id, anatitem_name, anatitem_name_order
+	  FROM anatomy_relationship JOIN anatomy_item
+               ON anatrel_anatitem_1_zdb_id = anatitem_zdb_id
+	 WHERE anatrel_anatitem_2_zdb_id = '$OID'
+	   AND anatrel_dagedit_id = 'develops_from'
+	ORDER BY anatitem_name_order
+        ;">
+         <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$1">$2</A> &nbsp; 
+       <?/MISQL>
+      </TD>
+     </TR>
+     <TR>
+      <TD bgcolor="#EEEEEE" valign=top align=left>
+        Develops into: 
+      </TD>
+      <TD bgcolor="#EEEEEE">
+      <?MISQL SQL="
+	SELECT anatitem_zdb_id, anatitem_name, anatitem_name_order
+	  FROM anatomy_relationship JOIN anatomy_item
+               ON anatrel_anatitem_2_zdb_id = anatitem_zdb_id
+	 WHERE anatrel_anatitem_1_zdb_id = '$OID'
+	   AND anatrel_dagedit_id = 'develops_from'
+	ORDER BY anatitem_name_order
+          ;">
+         <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$1">$2</A> &nbsp; 
+      <?/MISQL>
+      </TD>
+     </TR>  
+   <?/MIBLOCK> <?MICOMMENT> == end if there is develops from relationship == <?/MICOMMENT>  	
   </TABLE>
 <?/MIBLOCK> <?MICOMMENT> if not term 'unspecified' <?/MICOMMENT>
 
