@@ -233,20 +233,20 @@ function updateParent(AOname, AOid) {
      		;">
 
 	        <?MIVAR NAME="$item_name">$1<?/MIVAR>
-		    <?MIVAR NAME="$item_zdb_id">$2<?/MIVAR>
+		<?MIVAR NAME="$item_zdb_id">$2<?/MIVAR>
 	        <?MIVAR NAME="$synonymcount">$3<?/MIVAR>
 	        <?MIVAR NAME="$totalcount">$4<?/MIVAR>
 	        <?MIVAR NAME="$item_is_obsolete">$5<?/MIVAR>		
 	        <?MIVAR NAME="$highlight">false<?/MIVAR>
 
-			<?MICOMMENT> restore the variable <?/MICOMMENT>
-			<?MIVAR NAME=searchterm DELIMIT="'" REPLACE="''">$searchterm<?/MIVAR>
+		<?MICOMMENT> restore the variable <?/MICOMMENT>
+		<?MIVAR NAME=searchterm DELIMIT="'" REPLACE="''">$searchterm<?/MIVAR>
 
 	        <?MIVAR NAME=$item_name_safe DELIMIT="'" REPLACE="''">$item_name<?/MIVAR>
                 <?MIVAR NAME=processed_item_name>$(REPLACE,$item_name,',','|')<?/MIVAR>
 
 	        <?MIBLOCK COND="$(NE,$highlight_text,)">
-		   		<?MIVAR COND="$(>,$(POSITION,$item_name,$highlight_text),0)" NAME="$highlight">true<?/MIVAR>
+		   	<?MIVAR COND="$(>,$(POSITION,$item_name,$highlight_text),0)" NAME="$highlight">true<?/MIVAR>
 	        <?/MIBLOCK>
 	        <?MIVAR>
 		   
@@ -464,6 +464,10 @@ function updateParent(AOname, AOid) {
 	      <?/MIBLOCK>
 
 	      <?MIBLOCK COND="$(>,$synonymcount,0)"> 
+	          <?MICOMMENT> --------- dear gentle reader of the lines below, I know that the lack of 
+				       returns makes it a impossible to read, but it has to be that way
+				       to make the comma spacing look right.  Sorry.    ---------------
+		  <?/MICOMMENT>
 
 		  <font style="font-family:arial; font-size:small; font-weight:bold;)"><I>
 		    (<?MISQL SQL="
