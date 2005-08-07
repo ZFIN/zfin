@@ -1219,14 +1219,6 @@ Datablade documentation.
  		 select distinct p.zdb_id
 			  from fish_search f,data_alias,record_attribution,publication p 
 			where f.fish_id = '$OID'
-			  and dalias_data_zdb_id = f.locus
-			  and recattrib_data_zdb_id = dalias_zdb_id 
-    		 	  and recattrib_source_zdb_id = p.zdb_id
-     		  	  and p.jtype not in ('Curation', 'Unpublished')
-		 UNION
- 		 select distinct p.zdb_id
-			  from fish_search f,data_alias,record_attribution,publication p 
-			where f.fish_id = '$OID'
 			  and dalias_data_zdb_id = f.alt_zdb_id
 			  and recattrib_data_zdb_id = dalias_zdb_id 
     		 	  and recattrib_source_zdb_id = p.zdb_id
@@ -1236,13 +1228,6 @@ Datablade documentation.
  		   	  from fish_search f,column_attribution,publication p
   		  	where f.fish_id = '$OID'
 			and colattrib_data_zdb_id = f.fish_id
-    		  	and colattrib_source_zdb_id = p.zdb_id
-			and p.jtype not in ('Curation','Unpublished')
-		UNION
- 		 select distinct p.zdb_id
- 		   	  from fish_search f,column_attribution,publication p
-  		  	where f.fish_id = '$OID'
-			and colattrib_data_zdb_id = f.locus
     		  	and colattrib_source_zdb_id = p.zdb_id
 			and p.jtype not in ('Curation','Unpublished')
 		UNION
@@ -1275,10 +1260,11 @@ Datablade documentation.
 	  select distinct p.zdb_id from 
 	   fish_search f, column_attribution, publication p
 	   where f.fish_id = '$OID'
-	     and colattrib_data_zdb_id in (f.alt_zdb_id, f.locus, f.fish_id)
+	     and colattrib_data_zdb_id in (f.alt_zdb_id,f.locus,f.fish_id)
 	     and colattrib_source_zdb_id = zdb_id
 	     and jtype in ('Curation','Unpublished')
 	   into temp all_curation_pubs_temp with no log;
+
   	">
 	<?/MISQL>
 
