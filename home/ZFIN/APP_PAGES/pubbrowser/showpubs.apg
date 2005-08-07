@@ -906,32 +906,6 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 		publication p,
 		journal 
 	  where f.fish_id = '$OID'
-	    and dalias_data_zdb_id  = f.locus
-	    and recattrib_data_zdb_id = dalias_zdb_id 
-    	    and recattrib_source_zdb_id = p.zdb_id
-	    and jrnl_zdb_id = pub_jrnl_zdb_id
-            and p.jtype not in ('Curation', 'Unpublished')
-    UNION
-      select distinct title, 
-			zdb_id, 
-			year(pub_date) as pyear, 
-			authors, 
-			jrnl_abbrev,
-  	                case
-		          when pub_volume is not null
-		          then pub_volume || ':'
-	                else
-		          ''
-		        end,	
-			pub_pages, 
-	 		pub_authors_lower, 
-			pub_date  
-	from fish_search f,
-		data_alias,
-		record_attribution,
-		publication p,
-		journal 
-	  where f.fish_id = '$OID'
 	    and dalias_data_zdb_id  = f.alt_zdb_id
 	    and recattrib_data_zdb_id = dalias_zdb_id 
     	    and recattrib_source_zdb_id = p.zdb_id
@@ -982,30 +956,6 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 			journal
   	      where f.fish_id = '$OID'
 		and colattrib_data_zdb_id = f.alt_zdb_id
-    		and colattrib_source_zdb_id = p.zdb_id
-		and jrnl_zdb_id = pub_jrnl_zdb_id
-		and p.jtype not in ('Curation','Unpublished')
-    UNION
-      select distinct title, 
-		zdb_id, 
-		year(pub_date) as pyear, 
-		authors, 
-		jrnl_abbrev,
-  	                case
-		          when pub_volume is not null
-		          then pub_volume || ':'
-	                else
-		          ''
-		        end,	
-		pub_pages, 
-	 	pub_authors_lower, 
-		pub_date  
- 	    from fish_search f,
-		column_attribution,
-		publication p,
-		journal
-  	      where f.fish_id = '$OID'
-		and colattrib_data_zdb_id = f.locus
     		and colattrib_source_zdb_id = p.zdb_id
 		and jrnl_zdb_id = pub_jrnl_zdb_id
 		and p.jtype not in ('Curation','Unpublished')
