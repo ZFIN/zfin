@@ -389,7 +389,7 @@ $warnings
     <TR>
     <TD> <input type=submit name=doit value="Send registration request!"> </TD>
       <TD align=right><font size=-1>
-      <input type=button name=new_allele value="Help!" onClick="show_doc('Registration+Help','/ZFIN/fish_files/locus_intro.html')"></font>
+      <input type=button name=new_allele value="Help!" onClick="show_doc('Registration+Help','/ZFIN/help_files/locus_intro.html')"></font>
       </TD>
     </TR>
   </TABLE>
