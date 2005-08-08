@@ -18,7 +18,7 @@ while ($line = <CUT>) {
     if($nm_acc =~ /(.*)\./){$nm_acc = $1;}
     if($np_acc =~ /(.*)\./){$np_acc = $1;}
     
-    push @AoA, "$ll_id|$nm_acc|$np_acc|" ;
+    push @AoA, "$ll_id|$nm_acc||$np_acc||" ;
   }
 }
 
