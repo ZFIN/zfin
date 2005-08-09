@@ -140,7 +140,7 @@
 #
 # S        11:20pm   weekly download data run, also does DATA TRANSFER OUT
 #                    and BACKUPS (calls unload_production.sh at end)
-#20 23 * * 0 <!--|ROOT_PATH|-->/server_apps/data_transfer/pull.sh
+20 23 * * 0 <!--|ROOT_PATH|-->/server_apps/data_transfer/pull.sh
 #
 #
 #    W     11:20pm   Weekly load of data from ZIRC
