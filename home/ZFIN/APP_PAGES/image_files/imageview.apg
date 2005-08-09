@@ -288,7 +288,7 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 
 	<A NAME="image_info">
 	
-        <?MIVAR COND="$(AND,$(NC,$fimgview_full_fish_name,UNKNOWN),$(NC,$fimgview_full_fish_name,NULL))">
+        <?MIVAR COND="$(OR,$(XST,$UPDATE),$(AND,$(NC,$fimgview_full_fish_name,UNKNOWN),$(NC,$fimgview_full_fish_name,NULL)))">
 	  <p>
                 <?MIBLOCK COND=$(XST,$UPDATE)>
          	  <INPUT TYPE=button value=Update onClick="doit('stock','selection','Depicted+Stock','fish_image','fimg_zdb_id')">
@@ -316,7 +316,7 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 
         <?MIBLOCK COND=$(NXST,$UPDATE)>
           <?MICOMMENT> 
-              *** This image may be on of many images for a figure. 	
+              *** This image may be one of many images for a figure. 	
               *** Add the text "<b>One of multiple images for</b>" when 
               *** multiple images exist.
           <?/MICOMMENT>	        
@@ -660,9 +660,9 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
   	">
 	
 	<?/MISQL>
-	<?MIBLOCK COND="$(>,$1,0)">
+	<?MIBLOCK COND="$(OR,$(>,$1,0),$(XST,$UPDATE))">
 	  <?MIVAR>
-	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=fish_image&title=Image&name=$(URLENCODE,<img src=/imageLoadUp/$fimgview_thumbnail>)&total_count=$1"><b>Citations</b></A>
+	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=fish_image&title=Image&name=$(URLENCODE,<img src=/imageLoadUp/$fimgview_thumbnail>)&total_count=$1$(IF,$(XST,$UPDATE),&UPDATE=1)"><b>Citations</b></A>
 	  <?/MIVAR>
 	<?MIELSE>
 	  <b>Citations</b>
