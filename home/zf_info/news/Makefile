@@ -26,10 +26,10 @@ TARGETDIR = $(TARGETROOT)/home/zf_info/news
 
 VARIABLE_GENERICS = jobs.html mtgs.html curator.html
 
-GENERICS = siteNews.html usersurvey2005.html  $(VARIABLE_GENERICS)
+GENERICS = siteNews.html usersurvey2005.html ZFIN_jobs.html $(VARIABLE_GENERICS)
 
 
-STATICS =  Newsletter_Summer04.pdf Madison_2004_poster.jpg RegistrationForm.pdf newsgroup.html funding_opps.html ISDB2005.pdf Newsletter_Winter05.pdf Newsletters.html Newsletter_Summer05.pdf ZFIN_jobs.html
+STATICS =  Newsletter_Summer04.pdf Madison_2004_poster.jpg RegistrationForm.pdf newsgroup.html funding_opps.html ISDB2005.pdf Newsletter_Winter05.pdf Newsletters.html Newsletter_Summer05.pdf 
  
 
 
