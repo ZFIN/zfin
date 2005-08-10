@@ -1,0 +1,97 @@
+=======================================================
+== README for data_transfer/Anatomy
+=======================================================
+
+This directory has a group of scripts for unload the AO from ZFIN to OBO file,
+and a group of scripts for load the OBO file back into ZFIN to update the AO.
+
+---------------------------------------------------
+-- Unload AO
+--------------------------------------------------
+
+Scripts:
+--------
+  err_report.pl -- function reportErr($)
+
+  anatitem_2_obo.pl -- unload anatomy and anatomy relationship to a obo file.
+
+  stg_2_obo.pl -- unload stage information to a obo file.
+
+  unloadAO.pl  -- master script. Generate and send zfin.obo to <!--|AO_EMAIL_CURATOR|-->, error to <!--|AO_EMAIL_ERR|-->
+
+Execution:
+----------
+  To generate OBO for curators
+
+	% gmake unload
+     
+  To generate OBO for OBO site
+	
+	% gmake unloadshare
+
+---------------------------------------------------
+-- Load AO
+--------------------------------------------------
+
+Scripts:
+--------
+
+   parseOBO.pl -- parser, generates the .unl files for loading
+
+   loadAO.sql -- big SQL, prepare and load AO to ZFIN. 
+
+   make_annot_translation.sql -- unload AO_translation.unl, launch
+			batch_xpat_annot_adjust() function.
+
+   batch_xpat_annot_adjust.pl -- execute xpat_annot_adjust() function on 
+			each row in anatitem_stg_change_tmp table.
+
+   parse_stage_keywords.pl -- reads stageKeywords.csv from Thisse template,
+			parse it into stageKeywords.unl for loading.
+
+   check_thisse_keywords.sql -- pick up stageKeywords.unl, output problem
+                        keywords after ZFIN AO got updated. 
+
+   loadMaster.sh -- launch the load, then ajust xpat annotation, check Thisse
+		    template and send problems to curators.		    
+   
+Execution:
+----------
+
+   It would be nice to automate this process, and just type "gmake load" and done, however, the free human editing in DAG edit or OBO edit is not going to be error free. That means we have to stop at each step for correction.  So go to the TARGET directory:
+
+  	% parseOBO.pl filename
+
+   Till no error output, make sure loadAO.sql is ended with rollback work,
+
+	% dbaccess <db_name> loadAO.sql
+
+   Check that
+     o No SQL error
+     o None of pub_incorrect.err, startStgInconsistent.err, 
+       and endStgInconsistent.err has content.
+     o Make notes on the important numbers such as new AO terms.
+   We might need some handling on the statistics after the curators
+   define them. For now, this is more of a courtesy check. 
+
+   Then send annotationViolates.err content to Ceri & Melissa, 
+   Ask for 
+	
+     o  AO_translation.unl with format
+
+        ZDB-ANAT-XXXX|ZDB-STAGE-XXXX|ZDB-STAGE-XXXX|ZDB-ANAT-XXXX
+   
+     Excel won't put an ending "|", later script will add that.
+                                                         
+     o  stageKeyword.csv exported from last Thisse send
+
+   Ready? Check out and uncommit "commit work;" in loadAO.sql
+
+	% load_postload.sh
+
+   
+
+------------------------------
+-- Future Improvement?
+------------------------------
+ o If provide infrastructure table to store the AO translations, and provide web interface for curators to enter, then we could keep track in the DB, meantime the batch_xpat_annot_adjust() function would directly run on the db records, and get rid of the make_annot_translation.sql.
