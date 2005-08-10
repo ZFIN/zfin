@@ -1286,7 +1286,7 @@ I am commenting this part of the code rather than deleting it. If no flags are r
            and  xpatfig_xpatres_zdb_id=xpatres_zdb_id
            and  xpatex_zdb_id=xpatres_xpatex_zdb_id
            and  xpatex_source_zdb_id= '$mrkrview_xpatsubpub_id'
-	   and '$OID' in (xpatex_gene_zdb_id, xpatex_probe_feature_zdb_id)
+	   and  xpatex_probe_feature_zdb_id='$mrkrview_xpatsub_probe_id'
            ">
       <?MIVAR NAME=mrkrview_image_count>$1<?/MIVAR>
 	 <?MISQL SQL="
