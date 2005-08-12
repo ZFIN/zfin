@@ -36,7 +36,7 @@ print MAIL<<STOP;
 From: $data{sender_email}
 To: $data{contacts}
 Cc: $data{sender_email}
-Subject: Author Notification from ZFIN
+Subject: $data{ltitle}
 STOP
 
 #To be able to support italic and bold, we decided to use HTML format rather than plain text format. 
