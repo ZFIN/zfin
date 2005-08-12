@@ -77,6 +77,8 @@ INPUT VARS:
 			below.
     xpatsel_jtypeDirect		'checked' if the user wants to see direct submission data (default on)
     xpatsel_jtypePublished	'checked' if the user wants to see published data (default on)
+    xpatsel_recentRecords	empty by default, if a number of days is entered, the search
+				will only return records from today less that number of days.
 
 
 
@@ -180,6 +182,7 @@ function call_reset() {
   document.critform.mutsearchtype.selectedIndex = 0;
   document.critform.authsearchtype.selectedIndex = 0;
   document.critform.WINSIZE.value = 25;
+  document.critform.xpatsel_recentRecords.value = '';
 }
 
 // we decided to take off this function. Doesn't hurt to keep
@@ -401,6 +404,7 @@ function openChild(childWinUrl,childWinName) {
     <?/MIBLOCK>
     $(IF,$(XST,$include_substructures),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_includeSubstructures=$include_substructures))
     $(IF,$(XST,$xpatsel_imagesOnly),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_imagesOnly=$xpatsel_imagesOnly))
+    $(IF,$(XST,$xpatsel_recentRecords),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_recentRecords=$xpatsel_recentRecords))
     $(IF,$(XST,$structure_bool),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_structureBool=$structure_bool))
     <?MIVAR COND="$(OR,$(NE,$stage_start,$xpatsel_minStage),$(NE,$stage_end,$xpatsel_maxStage))">
       $(VECAPPEND,$xpatsel_queryVec,xpatselqry_stageStart=$stage_start)
@@ -470,10 +474,7 @@ function openChild(childWinUrl,childWinName) {
 
 
 
-  <?MICOMMENT> --- choose between summary and detailed results --- <?/MICOMMENT>
-  <?MIBLOCK COND="$(>,$xpatsel_geneCount,1)"> 
-
-    <?MICOMMENT> --- summary results --- <?/MICOMMENT>
+ 
 
     <?MICOMMENT> ** build url to pass in ** <?/MICOMMENT>
     
@@ -495,6 +496,7 @@ function openChild(childWinUrl,childWinName) {
     $(IF,$(XST,$xpatsel_jtypeDirect),$(VECAPPEND,$xpatsel_urlVec,xpatsel_jtypeDirect=$xpatsel_jtypeDirect))
     $(IF,$(XST,$xpatsel_jtypePublished),$(VECAPPEND,$xpatsel_urlVec,xpatsel_jtypePublished=$xpatsel_jtypePublished))
     $(IF,$(XST,$xpatsel_imagesOnly),$(VECAPPEND,$xpatsel_urlVec,xpatsel_imagesOnly=$xpatsel_imagesOnly))
+    $(IF,$(XST,$xpatsel_recentRecords),$(VECAPPEND,$xpatsel_urlVec,xpatsel_recentRecords=$xpatsel_recentRecords))
     $(IF,$(XST,$structure_bool),$(VECAPPEND,$xpatsel_urlVec,structure_bool=$structure_bool))
     $(IF,$(XST,$WINSIZE),$(VECAPPEND,$xpatsel_urlVec,WINSIZE=$WINSIZE))
     <?MIVAR COND="$(OR,$(NE,$stage_start,$xpatsel_minStage),$(NE,$stage_end,$xpatsel_maxStage))">
@@ -514,19 +516,10 @@ function openChild(childWinUrl,childWinName) {
     <?MIVAR COND="$(XST,$xpatsel_matchedText)" NAME="$xpatsel_summaryMatchString">&xpsumres_matchedText=$(URLENCODE,$xpatsel_matchedText)&xpsumres_matchedTextSearchType=$xpatsel_matchedTextSearchType<?/MIVAR>
 
 
+ <?MICOMMENT> --- choose between summary and detailed results --- <?/MICOMMENT>
+  <?MIBLOCK COND="$(>,$xpatsel_geneCount,1)"> 
 
-
-
-
-
-<?MIVAR>
-
-<?/MIVAR>
-
-
-
-
-
+    <?MICOMMENT> --- summary results --- <?/MICOMMENT>
 
 
 
@@ -541,8 +534,12 @@ function openChild(childWinUrl,childWinName) {
    <?MIVAR NAME="xpatsel_detailedMatchString"><?/MIVAR> <?MICOMMENT> ** only pass in matching text stuff if it's not null ** <?/MICOMMENT>
    <?MIVAR COND="$(XST,$xpatsel_matchedText)" NAME="$xpatsel_detailedMatchString">&xpdetres_matchedText=$(URLENCODE,$xpatsel_matchedText)&xpdetres_matchedTextSearchType=$xpatsel_matchedTextSearchType<?/MIVAR>
 
+   <?MIVAR NAME="xpatsel_imagesOnlyString"><?/MIVAR>
+   <?MIVAR COND="$(XST,$xpatsel_imagesOnly)" NAME="xpatsel_imagesOnlyString">
+     &xpdetres_imagesOnly=$xpatsel_imagesOnly
+   <?/MIVAR>
 
-   <?MISQL SQL="select WebExplode(object,'&xpdetres_resultTable=$xpatselect_temp_match$xpatsel_detailedMatchString') 
+   <?MISQL SQL="select WebExplode(object,'&xpdetres_baseUrl=$xpatsel_baseUrl&xpdetres_resultTable=$xpatselect_temp_match$xpatsel_imagesOnlyString$xpatsel_detailedMatchString') 
                from webPages where ID='aa-xpatselect_detailedresults.apg';">$1<?/MISQL>
    <?MIVAR NAME="xpatsel_nResults">$xpdetres_pubCount<?/MIVAR>
   
@@ -613,6 +610,7 @@ function openChild(childWinUrl,childWinName) {
       <?MIVAR name=$UserInput COND=$(XST,$xpatsel_jtypePublished)>$UserInput&xpatsel_jtypePublished=$xpatsel_jtypePublished<?/MIVAR>
       <?MIVAR name=$UserInput COND=$(XST,$xpatsel_jtype)>$UserInput&xpatsel_jtype=$xpatsel_jtype<?/MIVAR>
       <?MIVAR name=$UserInput COND=$(XST,$xpatsel_imagesOnly)>$UserInput&xpatsel_imagesOnly=$xpatsel_imagesOnly<?/MIVAR>
+      <?MIVAR name=$UserInput COND=$(XST,$xpatsel_recentRecords)>$UserInput&xpatsel_recentRecords=$xpatsel_recentRecords<?/MIVAR>
       <?MIVAR name=$UserInput COND=$(XST,$searchtype)>$UserInput&searchtype=$searchtype<?/MIVAR>
       <?MIVAR name=$UserInput COND=$(XST,$MOsearchtype)>$UserInput&MOsearchtype=$MOsearchtype<?/MIVAR>
       <?MIVAR name=$UserInput COND=$(XST,$MOgene)>$UserInput&MOgene=$MOgene<?/MIVAR>
@@ -784,8 +782,11 @@ function openChild(childWinUrl,childWinName) {
     .multisearchLabel { font-weight: bold; }
     .selectLabel { font-weight: bold; }
     .filterLabel { ; }
+    .accessoryLabel { font-size: .75em; }
 
     #xpatselJtypeBox { margin-top: .3em; margin-bottom: .3em; }
+
+    
 
     </style>
 
@@ -942,20 +943,20 @@ function openChild(childWinUrl,childWinName) {
         <TD align="left" valign="top"> 
 	  <TABLE border=0 bgcolor="#EEEEEE"> 
             <TR>
-	      <TD colspan=2>
+	      <TD colspan="2">
 		<span style="float: left;">
                   <label for="TA_selected_structures" class="multisearchLabel">
 		    <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=search">Anatomy</A>
                   </label>
                 </span>
                 <span style="float: right;">
-                  <FONT size="-1">[<I>Enter one anatomical term per line</I>]</FONT>
+                  <label class="accessoryLabel">[Enter one anatomical term per line]</label>
                 </span>
 	     </TD>
 	     </TR>
 	     <TR>
-	     <TD>
-		<TEXTAREA cols="30" rows="3" name="TA_selected_structures" id="TA_selected_structures"><?MIVAR COND="$(XST,$TA_selected_structures)">$TA_selected_structures<?/MIVAR></TEXTAREA>
+	     <TD colspan="2">
+		<TEXTAREA cols="46" rows="3" name="TA_selected_structures" id="TA_selected_structures"><?MIVAR COND="$(XST,$TA_selected_structures)">$TA_selected_structures<?/MIVAR></TEXTAREA>
 	        <DIV id="autosuggest"><ul></ul></DIV>
                 <script>
 		  var agt = navigator.userAgent;
@@ -972,27 +973,27 @@ function openChild(childWinUrl,childWinName) {
 		<input type="hidden" name="xpatsel_processed_selected_structures" <?MIVAR COND=$(XST,$xpatsel_processed_selected_structures)>value=$xpatsel_processed_selected_structures<?/MIVAR>>
 		
 	      </TD> <?MICOMMENT> end new selected structures textarea <?/MICOMMENT>
-	      <TD>
+            </TR>
+            <TR>
+	      <TD valign="top">
 		<?MICOMMENT>
 		  this bit is sneaky, basically, this means that if you're opening the page
 		  for the first time and the variable is empty, then create it - but if
 		  the page has been submitted and the variable is empty, then it's supposed
 		  to be, and we wanna leave it that way.
 		<?/MICOMMENT>
-		<FONT size=-1>
-
-	          <input type=checkbox id="xpatselIncludeSubstructures" name="include_substructures" value="checked" <?MIVAR> $(IF,$(AND,$(XST,$include_substructures),$(EC,$include_substructures,checked)),checked="checked") <?/MIVAR> >  <label for="xpatselIncludeSubstructures" class="filterLabel" >Include substructures</label> <br>
+	          <input type=checkbox id="xpatselIncludeSubstructures" name="include_substructures" value="checked" <?MIVAR> $(IF,$(AND,$(XST,$include_substructures),$(EC,$include_substructures,checked)),checked="checked") <?/MIVAR> >  <label for="xpatselIncludeSubstructures" class="accessoryLabel" >Include substructures</label> 
+             </TD>
+             <TD>
 
 		  <?MIVAR COND="$(NXST,$structure_bool)" NAME="structure_bool">and<?/MIVAR>
-	          <font size=-1>
-                    <b>Expression in: </b>
-                  </font><br>
+                    <label class="accessoryLabel">Expression in: </label> 
+                  <br>
 		  <input type="radio" id="xpatselStructureBoolAnd" name="structure_bool" value="and" <?MIVAR>$(IF,$(EC,$structure_bool,and),checked="checked")<?/MIVAR> >
-	          <label for="xpatselStructureBoolAnd" class="filterLabel" ><b>Every</b> term entered <br></label>
+	          <label for="xpatselStructureBoolAnd" class="accessoryLabel" ><b>Every</b> term entered <br></label>
 		  
 		  <input type="radio" id="xpatselStructureBoolOr" name="structure_bool" value="or"  <?MIVAR>$(IF,$(EC,$structure_bool,or),checked="checked")<?/MIVAR> > 
-	          <label for="xpatselStructureBoolOr" class="filterLabel" ><b>Any</b> term entered </label>
-		</FONT>
+	          <label for="xpatselStructureBoolOr" class="accessoryLabel" ><b>Any</b> term entered </label>
 	      </TD>
 	    </TR>
 	  </TABLE>
@@ -1008,7 +1009,7 @@ function openChild(childWinUrl,childWinName) {
                <input type="checkbox" id="xpatselImagesOnly"
                       name="xpatsel_imagesOnly" value="checked" 
                       <?MIVAR> $(IF,$(AND,$(XST,$xpatsel_imagesOnly),$(EC,$xpatsel_imagesOnly,checked)),checked="checked") <?/MIVAR> > 
-               <label for="xpatselImagesOnly" id="xpatselImagesOnlyLabel">Only show figures with images </label>
+               <label for="xpatselImagesOnly" id="xpatselImagesOnlyLabel">Show only figures with images </label>
 
              <?MICOMMENT> *** End Images Only Checkbox *** <?/MICOMMENT>
  
@@ -1035,7 +1036,18 @@ function openChild(childWinUrl,childWinName) {
              <?MICOMMENT> *** end published checkbox *** <?/MICOMMENT>
 
              </div> <?MICOMMENT> ** end jtype box div ** <?/MICOMMENT>
-             
+
+            <?MICOMMENT> ** start recent xpats ** <?/MICOMMENT>
+
+            <?MIVAR>
+            <label for="xpatselRecentRecords">Added in last </label>
+            <input name="xpatsel_recentRecords" id="xpatselRecentRecords" size="3" $(IF,$(XST,$xpatsel_recentRecords),value='$xpatsel_recentRecords')>
+            <?/MIVAR>
+            <label for="xpatselRecentRecords">days</label>
+
+            
+            <?MICOMMENT> ** end recent xpats ** <?/MICOMMENT>
+            <br> 
 
             <?MIVAR>
                <input type="text" id="xpatselWinsize" 
