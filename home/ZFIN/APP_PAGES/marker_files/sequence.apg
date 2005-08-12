@@ -186,8 +186,7 @@
           <font><b>
           <?MIVAR>
             $(IF,$(=,$(POSITION,$OID,GENE),0),
-              $mrkr_type: $mrkr_name <br>
-              Abbreviation: $link_backto_OID,
+              $mrkr_type: $link_backto_OID <br>,
               
               Gene Name: <i>$mrkr_name</i><br>
               Gene Symbol: $link_backto_OID
@@ -299,7 +298,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
       <TD width=30%><b>Type</b></TD>
       <TD width=40%><b>Accession #</b></TD>
       <TD align=right width=10%><b>Length</b></TD>
-      <TD align=center width=20%><A HREF="javascript:start_help()"><b>Analysis</b></A><img src="/images/new1.gif"></img></TD>
+      <TD align=center width=20%><A HREF="javascript:start_help()"><b>Analysis</b></A></TD>
     </TR>
 
       <?MISQL SQL="
