@@ -54,7 +54,10 @@ INPUT VARS:
 				or direct submission xpat records.
   xpatselqry_imagesOnly		Exists if user wants to constrain to figures
 				with images only.
-
+  xpatselqry_recentRecords	Exists if user wants to constrain to records that are
+				new within the specified number of days.  For direct
+				submission records, it's the direct submission date,
+				for published data, it's the date that curation is closed.
 
 OUTPUT VARS:
   xpatselqry_matchedText	This variable will start out not existing, if
@@ -158,6 +161,76 @@ DEBUGGING:
 <?MIVAR COND="$(XST,$xpatselqry_MOgene)" NAME=$xpatselqry_MOgene>$(REPLACE,$xpatselqry_MOgene,','')<?/MIVAR> 
 
 
+<?MIBLOCK COND="$(XST,$xpatselqry_recentRecords)">
+  <?MICOMMENT>
+    ============================================================================
+    ==========  DATE TEST
+    ============================================================================
+  <?/MICOMMENT>
+
+  <?MICOMMENT> *** Create or reuse temp table *** <?/MICOMMENT>
+  <?MIVAR NAME=$xpatselectquery_temp_date>$(CONCAT,xpatselectquery_temp_date_,$xpatselqry_session_id)<?/MIVAR>
+  <?MISQL SQL="
+    execute function table_exists('$xpatselectquery_temp_date')">
+    <?MISQL COND=$(EC,$1,f) SQL="
+      create temp table $xpatselectquery_temp_date (
+        xpatex_zdb_id			varchar(50),
+        xpatex_source_zdb_id            varchar(50),
+        xpatex_assay_name               varchar(40),
+        xpatex_probe_feature_zdb_id     varchar(50),
+        xpatex_gene_zdb_id              varchar(50),
+        xpatex_featexp_zdb_id           varchar(50),
+	xpatex_matching_text		varchar(255),
+        xpatex_matching_precedence	varchar(80),
+        xpatex_matching_significance 	integer
+      )
+      with NO LOG;">
+    <?/MISQL>
+  <?/MISQL>
+
+
+  <?MICOMMENT> *** Get records that pass this test *** <?/MICOMMENT>
+
+  <?MIVAR NAME="xpatselqry_date_sql">
+    insert into $xpatselectquery_temp_date
+        ( xpatex_zdb_id, xpatex_source_zdb_id, xpatex_assay_name,
+          xpatex_probe_feature_zdb_id, xpatex_gene_zdb_id,
+          xpatex_featexp_zdb_id )
+      select distinct 
+             xpatex_zdb_id, xpatex_source_zdb_id, xpatex_assay_name,
+             xpatex_probe_feature_zdb_id, xpatex_gene_zdb_id,
+             xpatex_featexp_zdb_id
+        from $xpatselqry_matchTable 
+             join publication 
+               on xpatex_source_zdb_id = publication.zdb_id
+        where case
+      when publication.jtype = 'Unpublished'
+      then xpatex_direct_submission_date::datetime year to day
+        else 
+      pub_date::datetime year to day end > current - $xpatselqry_recentRecords units day
+  <?/MIVAR>
+  <?MISQL SQL="$xpatselqry_date_sql"><?/MISQL>
+
+  <?MICOMMENT> *** Debugging *** <?/MICOMMENT>
+  <?MIVAR COND=$(XST,$debug_sql)>
+    <p>Date Test: $MI_ROWCOUNT records passed
+    <br>SQL: <pre>$MI_SQL</pre><p>
+  <?/MIVAR>
+  <?MISQL COND=$(XST,$debug_timing) SQL="
+    execute function get_time()">
+    <br>$1 After date test
+  <?/MISQL>
+
+
+  <?MICOMMENT> *** Cleanup and hand off to next test *** <?/MICOMMENT>
+  <?MIVAR NAME=$xpatselqry_matchTable>$xpatselectquery_temp_date<?/MIVAR>
+
+<?/MIBLOCK>
+
+
+
+
+
 <?MIBLOCK COND="$(XST,$xpatselqry_jtype)">
   <?MICOMMENT>
     ============================================================================
@@ -211,7 +284,7 @@ DEBUGGING:
 
   <?MICOMMENT> *** Debugging *** <?/MICOMMENT>
   <?MIVAR COND=$(XST,$debug_sql)>
-    <p>Gene ID Test: $MI_ROWCOUNT records passed
+    <p>Jtype Test: $MI_ROWCOUNT records passed
     <br>SQL: <pre>$MI_SQL</pre><p>
   <?/MIVAR>
   <?MISQL COND=$(XST,$debug_timing) SQL="
