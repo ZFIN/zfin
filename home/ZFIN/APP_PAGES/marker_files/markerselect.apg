@@ -438,7 +438,13 @@ DEBUGGING:
       ) with NO LOG;">
     <?/MISQL>
   <?/MISQL>
-
+  <?MICOMMENT> right now, Morpholino is not included in SEARCH_MK group
+	       yet. As seen, it is easy to forgot to add new types into
+               type group. It is also a question whether knockdown reagent
+               need to be listed out of marker group...As fish redo comes
+               along, it is a question to resolve. Also this page needs
+	       some help to be more tidy.
+  <?/MICOMMENT>
   <?MIBLOCK COND="$(EC,$type,pub_mrkr)">
 
      <?MISQL SQL="
@@ -452,10 +458,26 @@ DEBUGGING:
 	  and recattrib_data_zdb_id = mrkr_zdb_id 
 	  and mrkr_type in 
 		  (select mtgrpmem_mrkr_type from marker_type_group_member
-                    where mtgrpmem_mrkr_type_group = 'SEARCH_MK');
+                    where mtgrpmem_mrkr_type_group = 'SEARCH_MK')
+	  and  mrkr_type <> 'MRPHLNO';
 	">
      <?/MISQL>	
-
+  <?MIELSE COND="$(EC,$type,pub_mo)" >     
+     <?MISQL SQL="
+       insert into $markerselect_temp_marker
+	   ( mstmrkr_zdb_id, mstmrkr_name, mstmrkr_abbrev, 
+	     mstmrkr_abbrev_order,  mstmrkr_type )
+	select mrkr_zdb_id, mrkr_name, mrkr_abbrev, 
+	       mrkr_abbrev_order, mrkr_type
+	from  record_attribution, marker 
+	where recattrib_source_zdb_id = '$pubId'
+	  and recattrib_data_zdb_id = mrkr_zdb_id 
+	  and mrkr_type = 'MRPHLNO';
+	">
+     <?/MISQL>	
+     <?MIVAR NAME=$type_of_knockdown_reagent>t<?/MIVAR>
+     <?MIVAR NAME=$xpat_loci_cols>n<?/MIVAR>
+	
   <?MIELSE COND="$(EC,$type,pub_mapped)" >     
      <?MISQL SQL="
        insert into $markerselect_temp_marker
@@ -535,7 +557,14 @@ DEBUGGING:
       <TD width=90%> 
           <font size="+1"><center>
 	  <?MIBLOCK COND="$(XST,$pubId)">
-            <?MIVAR>$(IF,$(EC,$type,pub_mrkr),Genes / Markers, Mapping Data) List (<b>$num_recs</b> records.)<?/MIVAR>
+            <?MIBLOCK COND="$(EC,$type,pub_mrkr)">
+                Genes / Markers
+            <?MIELSE COND="$(EC,$type,pub_mo)">
+                Morpholino 
+            <?MIELSE>
+ 	        Mapping Data
+            <?/MIBLOCK>
+            <?MIVAR> List (<b>$num_recs</b> records.)<?/MIVAR>
 	  <?MIELSE COND="$(XST,$accession)">
 	    <?MIVAR>Marker List (<b>$num_recs</b> records.)<?/MIVAR>
 	  <?MIELSE>
