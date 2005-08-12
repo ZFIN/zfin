@@ -2,16 +2,19 @@
 
 FILE: notif_frame.apg
 
+prefix: nf_   -- to be used
+
   The template that hold the author notification letter content. 
   It wraps the letter and send it to a CGI program to send out via email. 
 
 INPUT VARS:
-  status   :: edit or preview
-  contacts_id :: a string of contacts' zdb ids separated by comma
+  status       :: edit or preview
+  contact_list :: a string of '|' delimited contacts name and eaddress, like
+		  lastname, firstname=email@address|lastname, firstname=email@address|
   additional_eaddr :: additional contacts' email addresses separated by comma.
                    At least one of the contacts_id and additional_eaddr should be non empty.
                    The calling page pubcuration.apg checks and makes sure of it.
-  OID      :: the publication zdb id 
+  OID       :: the publication zdb id 
   sender_id :: current login user's zdb id
   
 OUTPUT VARS: 
@@ -36,87 +39,118 @@ OUTPUT:
 </HEAD>
 <BODY>
 
-<?MICOMMENT>== this block process the contacts id sent from pubcuration.apg page. The comma separated string is parsed and the corresponding name and email address is queried out and stored properly. <?/MICOMMENT>
-
-<?MIBLOCK COND="$(XST,$contacts_id)">
-
-  <?MIVAR NAME=contacts_name_arr><?/MIVAR>
-  <?MIVAR NAME=contacts_email_arr><?/MIVAR>
-  <?MIVAR NAME=cursor>$(POSITION,$contacts_id,",")<?/MIVAR>
-  <?MIBLOCK WHILE=$cursor>
-    <?MIVAR NAME=$each_contact_id>$(TRIM,$(INDEX,0,$contacts_id))<?/MIVAR>
-    
-    <?MIVAR>$(SETVAR,$contacts_id,$(SUBSTR,$contacts_id,$(+,$(POSITION,$contacts_id,","),1)))<?/MIVAR>
-
-    <?MISQL SQL="SELECT full_name, email 
-                 FROM person
-                WHERE zdb_id ='$each_contact_id' ; ">
-
-         <?MIVAR>$(VECAPPEND,$contacts_name_arr,$1)<?/MIVAR>
-         <?MIVAR>$(VECAPPEND,$contacts_email_arr,$2)<?/MIVAR>	
-    <?/MISQL>
-    <?MIVAR>
-      $(SETVAR,$cursor,$(POSITION,$contacts_id,","))
-    <?/MIVAR>	
-  <?/MIBLOCK>
-
-  <?MIVAR>$(SETVAR,$each_contact_id,$(TRIM,$contacts_id))<?/MIVAR>
-
-  <?MISQL SQL="SELECT full_name, email 
-                 FROM person
-                WHERE zdb_id='$each_contact_id'  ; ">       
-       <?MIVAR>$(VECAPPEND,$contacts_name_arr,$1)<?/MIVAR>
-       <?MIVAR>$(VECAPPEND,$contacts_email_arr,$2)<?/MIVAR>
-  <?/MISQL>
-
-  <?MIVAR NAME=$contacts_email>$(SEPARATE,$contacts_email_arr,",")<?/MIVAR>
-  <?MIVAR NAME=$contacts_name>$(SEPARATE,$contacts_name_arr,", ")<?/MIVAR>
-  <?MIVAR>$(SETVAR,$contacts_email,$(SUBSTR,$contacts_email,$(+,$(POSITION,$contacts_email,","),1)))<?/MIVAR>
-  <?MIVAR>$(SETVAR,$contacts_name,$(SUBSTR,$contacts_name,$(+,$(POSITION,$contacts_name,","),1)))<?/MIVAR>
-
-<?/MIBLOCK>  
-
-<?MIBLOCK COND="$(XST,$additional_eaddr)"> 
-   <?MIVAR NAME=additional_eaddr>$(URLDECODE,$additional_eaddr)<?/MIVAR>
-   <?MIBLOCK COND="$(XST,$contacts_email)">
-      <?MIVAR>
-      $(SETVAR,$contacts_email,$contacts_email", "$additional_eaddr)
-      $(SETVAR,$contacts_name,$contacts_name", "$additional_eaddr)
-      <?/MIVAR>
-   <?MIELSE>
-      <?MIVAR NAME=$contacts_email>$additional_eaddr<?/MIVAR>
-      <?MIVAR NAME=$contacts_name>$additional_eaddr<?/MIVAR>
-   <?/MIBLOCK>
-<?/MIBLOCK>
+<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
+<?MICOMMENT>--------------------------------------------------------------
+	     -- $contacts_name is a comma separated name list to form a curator note
+             -- $contacts_email is a comma separated email list for recipient field
+             -- (the variables would exist already at preview time)
+             --------------------------------------------------------------
+<?/MICOMMENT> 
+<?MIVAR COND="$(NXST,$contacts_name)" NAME=contacts_name><?/MIVAR>
+<?MIVAR COND="$(NXST,$contacts_email)" NAME=contacts_email><?/MIVAR>
 
 <H2>Author Notification</H2>
 
+<?MIVAR COND="$(EC,$status,edit)"> Recipients: <?/MIVAR>
+
+<?MICOMMENT>===============================================================
+            == if a list of Contacts is provided 
+            =================================================================
+<?/MICOMMENT>
+<?MIBLOCK COND="$(XST,$contact_list)">
+
+  <?MICOMMENT>
+        --------------------------------------------------------------
+        -- $contact_list in format of
+        -- lastname, firstname=email@address|lastname, firstname=email@address|
+        --
+        -- note: WHILE only takes integer.
+        --------------------------------------------------------------
+  <?/MICOMMENT>
+  <?MIVAR NAME=cursor>$(POSITION,$contact_list,"|")<?/MIVAR>
+  <?MIBLOCK WHILE=$cursor>
+    <?MIVAR NAME=$name_eaddr_pair>$(SUBSTR,$contact_list,1,$(-,$cursor,1))<?/MIVAR>
+    <?MIVAR NAME=$index_equal_sign>$(POSITION,$name_eaddr_pair,"=")<?/MIVAR>	
+    <?MIVAR NAME=$contact_name>$(SUBSTR,$name_eaddr_pair,1,$(-,$index_equal_sign,1))<?/MIVAR>
+    <?MIVAR NAME=$contact_email>$(SUBSTR,$name_eaddr_pair,$(+,$index_equal_sign,1))<?/MIVAR>
+  
+    <?MICOMMENT>--- Display the Recipients list ----------------<?/MICOMMENT>
+    <?MIVAR>    
+      $contact_name ($contact_email) &nbsp;
+    <?/MIVAR>
+
+    <?MICOMMENT>--- Form the name and address list  ----------------<?/MICOMMENT>
+    <?MIVAR>
+	$(SETVAR,$contacts_name,$contacts_name$(IF,$(NC,$contacts_name,),", ")$contact_name)
+	$(SETVAR,$contacts_email,$contacts_email$(IF,$(NC,$contacts_email,),",")$contact_email)
+    <?/MIVAR>
+
+    <?MICOMMENT>--- Continue the loop  ----------------<?/MICOMMENT>
+    <?MIVAR>
+        $(SETVAR,$contact_list,$(SUBSTR,$contact_list,$(+,$(POSITION,$contact_list,"|"),1)))
+        $(SETVAR,$cursor,$(POSITION,$contact_list,"|"))
+    <?/MIVAR>	
+  <?/MIBLOCK><?MICOMMENT> == end of while loop ==<?/MICOMMENT>
+
+<?/MIBLOCK>  
+
+<?MICOMMENT>===============================================================
+            == if additional email address is provided
+            =================================================================
+<?/MICOMMENT>
+<?MIBLOCK COND="$(XST,$additional_eaddr)"> 
+   <?MICOMMENT> -- seems this is not necessary --- <?/MICOMMENT>
+   <?MIVAR NAME=additional_eaddr>$(URLDECODE,$additional_eaddr)<?/MIVAR>
+
+   <?MICOMMENT>--- Display the list ----------------<?/MICOMMENT>
+   <?MIVAR>    
+      $additional_eaddr 
+   <?/MIVAR>
+
+   <?MIVAR>
+      $(SETVAR,$contacts_email,$(IF,$(NC,$contacts_email,),$contacts_email",")$additional_eaddr)
+      $(SETVAR,$contacts_name,$(IF,$(NC,$contacts_name,),$contacts_name", ")$additional_eaddr)
+   <?/MIVAR>
+<?/MIBLOCK>
+<?MICOMMENT>--- to separate the recipients list from the letter ---<?/MICOMMENT>
+<?MIVAR COND="$(EC,$status,edit)"> <HR width=80%> <?/MIVAR>
+
+<?MICOMMENT>===============================================================
+            == webexplode and display the notif_content.apg page
+            =================================================================
+<?/MICOMMENT>
 <?MISQL SQL="select WebExplode(object, '') from webPages where ID='aa-notif_content.apg';"> 
-  $1
+ 
+  <?MIVAR NAME=$lcontent>$1<?/MIVAR>
 <?/MISQL>
-
-<?MICOMMENT> == chop out the letter content == <?/MICOMMENT>
-<?MIVAR NAME=$letter>$(SUBSTR,$1,$(POSITION,$1,Dear),$(-,$(POSITION,$1,<p><p>),$(POSITION,$1,Dear)))<?/MIVAR>
-
-<?MIVAR NAME=$letter>$(REPLACE,$letter,',%27)<?/MIVAR>
+<?MIVAR> <p> $lcontent <?/MIVAR>
 
 <HR width = 60%>
+<?MICOMMENT>=====================================================================
+            == Define parameters to the CGI program 
+            == note: on embryonix, we would send the letter to the sender(tester),
+            == while having the curator note display the true contact list.
+            ===================================================================== 
+<?/MICOMMENT> 
 
-<?MICOMMENT> == define the parameters that will be sent over to a CGI program to form the letter==<?/MICOMMENT> 
 <?MIBLOCK COND="$(EC,$status,preview)">
   <FORM ACTION="/<!--|CGI_BIN_DIR_NAME|-->/send_notification.cgi" 
 	METHOD=post 
 	NAME=send_mail">
 
+  <?MICOMMENT> == take out the letter content == <?/MICOMMENT>
+  <?MIVAR NAME=$lstart>$(POSITION,$lcontent,Dear)<?/MIVAR>
+  <?MIVAR NAME=$letter>$(SUBSTR,$lcontent,$lstart,$(-,$(POSITION,$lcontent,<p><p><p>),$lstart))<?/MIVAR>
+  <?MIVAR NAME=$letter>$(REPLACE,$letter,',%27)<?/MIVAR>
+  <?MIVAR NAME=pnote>Notified authors: $contacts_name<?/MIVAR>
+
   <?MIVAR>
-  <INPUT TYPE=hidden name=contacts value="$contacts_email">
+  <INPUT TYPE=hidden name=contacts value="$(IF,$(EC,<!--|MACHINE_NAME|-->,embryonix),$sender_email,$contacts_email)">
   <INPUT TYPE=hidden name=sender_email value="$sender_email">
   <INPUT TYPE=hidden name=sender_name value="$sender_name">
-  <INPUT TYPE=hidden name=letter value='$letter'>
-  <?/MIVAR>
-
-  <?MIVAR NAME=pnote>Notified authors: $contacts_name<?/MIVAR>
-  <?MIVAR>
-    <INPUT TYPE=submit value="Send Notification" onClick="addNotifNote('$pnote')">
+  <INPUT TYPE=hidden name=letter value='$letter'><?MICOMMENT>- single quotes are critical -<?/MICOMMENT>
+  <INPUT TYPE=hidden name=ltitle value="ZFIN Author Notification">	
+  <INPUT TYPE=submit value="Send Notification" onClick="addNotifNote('$pnote')">
   <?/MIVAR>
 <?/MIBLOCK>
