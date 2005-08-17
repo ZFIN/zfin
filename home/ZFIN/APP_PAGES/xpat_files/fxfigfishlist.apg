@@ -58,15 +58,17 @@ EFFECTS
 <?MIELSE>
   <?MIVAR NAME=$fxfigfl_sql>
        SELECT distinct get_fish_abbrev_html_link(zdb_id), fish_name_order
-         FROM expression_experiment, feature_experiment, fish, figure
+         FROM expression_experiment, feature_experiment, fish, figure, expression_result, expression_pattern_figure
         WHERE fig_zdb_id = '$fxfigfi_fig_zdb_id'
+          AND fig_zdb_id=xpatfig_fig_zdb_id
+          AND xpatres_zdb_id=xpatfig_xpatres_zdb_id
+          AND xpatres_xpatex_zdb_id=xpatex_zdb_id
 	  AND fig_source_zdb_id =  xpatex_source_zdb_id
           AND xpatex_featexp_zdb_id = featexp_zdb_id
           AND featexp_genome_feature_zdb_id = zdb_id
      ORDER BY fish_name_order;
   <?/MIVAR>
 <?/MIBLOCK>
-	
 <?MICOMMENT> 
    ============================================================================
    ============ execute the SQL, and display result
