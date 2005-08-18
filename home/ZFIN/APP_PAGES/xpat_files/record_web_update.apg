@@ -1,0 +1,101 @@
+<?MICOMMENT>
+
+FILE:     record_web_update.apg
+PREFIX:   recweb_
+
+Insert a record into the updates table.
+
+Other pages exist that insert into the updates table. They 
+should be updated to call this page.
+
+
+
+INPUT VARS:
+  $recweb_rec_id         ZDB id of the updated record      	
+  $recweb_pers_id        zdb id of logged in user
+  $recweb_pers_name      name of logged in user
+  $recweb_table_column   column name being updated
+  $recweb_old_value      value being update
+  $recweb_new_value      value to enter in the database
+  $recweb_comments       optional
+
+
+OUTPUT VARS:
+  None.
+
+OUTPUT:
+
+
+EFFECTS  
+  Insert a record into updates.
+
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
+
+
+  <?MICOMMENT> *** Check required INPUT *** <?/MICOMMENT> 
+
+  <?MIBLOCK COND="$(AND,$(XST,$recweb_rec_id),$(XST,$recweb_new_value),$(XST,$recweb_table_column),$(XST,$recweb_pers_id),$(XST,$recweb_pers_name))">
+  
+  <?MIVAR NAME=recweb_old_value COND=$(NXST,$recweb_old_value)><?/MIVAR>
+  <?MIVAR NAME=recweb_comments COND=$(NXST,$recweb_comments)><?/MIVAR>
+  
+  <?MIVAR NAME=$recweb_new_value>$(REPLACE,$recweb_new_value,"'","''")<?/MIVAR>
+  <?MIVAR NAME=$recweb_old_value>$(REPLACE,$recweb_old_value,"'","''")<?/MIVAR>
+  <?MIVAR NAME=$recweb_comments>$(REPLACE,$recweb_comments,"'","''")<?/MIVAR>
+
+  <?MICOMMENT> *** insert update record *** <?/MICOMMENT>
+  <?MISQL SQL="
+    insert into updates (
+        submitter_id,
+        submitter_name, 
+        rec_id, 
+        field_name,
+        new_value,
+        old_value, 
+        comments,
+        when
+      ) 
+      values (
+        '$recweb_pers_id', 
+        '$recweb_pers_name',
+        '$recweb_rec_id', 
+        '$recweb_table_column',
+        '$recweb_new_value',  
+        '$recweb_old_value', 
+        '$recweb_comments', 
+        current
+      );">
+  <?/MISQL>
+
+
+  <?/MIBLOCK> <?MICOMMENT> Check INPUT variables <?/MICOMMENT>
+
+
+
+  <?MICOMMENT>
+    ============================================================================
+    ==========  Unset page variables before the next call of this page
+    ============================================================================
+  <?/MICOMMENT>
+
+  <?MIVAR>
+  $(UNSETVAR,$recweb_rec_id)
+  $(UNSETVAR,$recweb_pers_id)
+  $(UNSETVAR,$recweb_pers_name)
+  $(UNSETVAR,$recweb_column_name)
+  $(UNSETVAR,$recweb_new_value)
+  $(UNSETVAR,$recweb_old_value)  
+  $(UNSETVAR,$recweb_comments)  
+  <?/MIVAR>
+
