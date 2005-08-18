@@ -33,7 +33,7 @@ GENERICS = xpatview.apg xpatselect.apg anatdict.apg anatomy_item.apg \
 	fxfigassaylist.apg fxfigfishlist.apg fxinfo.apg \
 	xpatexpcdnsummary.apg \
 	xpatexpcdndisplay.apg xpatfeatexp.apg fxprobefig.apg xpatcurpermission.apg \
-	fxfigprobelist.apg fxgenestgrng.apg
+	fxfigprobelist.apg fxgenestgrng.apg record_web_update.apg
 
 
 # Use default rules for app page directories. 
