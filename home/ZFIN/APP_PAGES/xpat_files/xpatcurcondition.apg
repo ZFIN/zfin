@@ -314,7 +314,6 @@ EFFECTS
 </SCRIPT>
 
 <table width=100% border=0 bgcolor="<!--|HIGHLIGHT_COLOR|-->">
-<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#condition" method=post name=condition onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','condition');">
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
   <tr bgcolor=#CCCCCC>
@@ -326,7 +325,7 @@ EFFECTS
     </td>
     <td>Value</td>
     <td>Units</td> 
-    <td>Comments</td>
+    <td>Comments</td> 
     <td>Delete</td>
   </tr>  
 <?MISQL SQL="
@@ -341,6 +340,9 @@ EFFECTS
       and mrel_mrkr_2_zdb_id = gene.mrkr_zdb_id
     order by exp_name, 3;">
     
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#condition" method=post name=condition onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','condition');">
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
     <?MIVAR NAME="xpcurcond_exp_name">$1<?/MIVAR>
     <?MIVAR NAME="xpcurcond_expcond_zdb_id">$2<?/MIVAR>
     <?MIVAR NAME="xpcurcond_cdt">$3<?/MIVAR>
@@ -366,14 +368,16 @@ EFFECTS
     </td>
     <td> $xpcurcond_expunit_name
     </td>
-    <td> $xpcurcond_expcond_comments
-    </td>    
     <td>
+    <INPUT TYPE=HIDDEN NAME=xpcur_G_expcond_zdb_id VALUE="<?MIVAR>$2<?/MIVAR>">
+<input name="xpcur_G_expcond_comments" type=textbox size=20 value="$6"><input name="xpcur_G_expcond_update" type=submit value="Update Comments">
+    </td>    
+    <td align=center>
         <?MIVAR><input name="delete" type=button value=" X " onClick="deleteZDB('$xpcurcond_expcond_zdb_id','condition')"><?/MIVAR>
     </td> 
   </tr>
-<?/MISQL>    
 </form>
+<?/MISQL>    
 
   <tr>
     <td colspan=8>
