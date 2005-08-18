@@ -85,6 +85,10 @@ INPUT VARS:
       xpcur_G_mrkr_attrib :: mrkr abbrev 
       xpcur_G_fish_attrib :: fish abbrev 
       
+  Update
+      xpcurup_old_value :: value to be changed
+      xpcurup_new_value :: value that replaces old value
+      
 COOKIES:
   xpcur_c_xpatcuration_update :: gate variable; set to update for an update to occur.
       
@@ -221,6 +225,11 @@ EFFECTS
                    '$xpcur_G_xpatex_fish',
                    '$xpcur_G_xpatex_exp');">
             <?/MISQL>
+            
+            <?MISQL SQL="
+              select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=featexp_zdb_id&recweb_new_value=$xpcurup_featexp_zdb_id&recweb_comments=create+new+record') 
+              from webPages where ID='aa-record_web_update.apg';">
+            <?/MISQL>
     
           <?/MIBLOCK>
 
@@ -271,6 +280,11 @@ EFFECTS
                    $(IF,$(EC,$xpcur_G_xpatex_genbank,),NULL,'$xpcur_G_xpatex_genbank') ,
                    TODAY);">
               <?/MISQL>       
+              
+              <?MISQL SQL="
+                select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=expression_experiment&recweb_new_value=$xpcurup_xpat_zdb&recweb_comments=create+new+record') 
+                from webPages where ID='aa-record_web_update.apg';">
+              <?/MISQL>              
             <?/MIBLOCK>
      
             <?MICOMMENT>  
@@ -298,9 +312,12 @@ EFFECTS
             <?/MIBLOCK>
 
           <?MIELSE COND=$(EC,$xpcur_G_xpatex,update)>
-
-            <?MIVAR NAME=old_genbank><?/MIVAR>
-            <?MISQL SQL="
+               <SCRIPT> 
+               var msg="Are you sure you want to update?";
+               if (confirm(msg))
+                {
+                 <?MIVAR NAME=old_genbank><?/MIVAR>
+                 <?MISQL SQL="
               select dblink_zdb_id
               from db_link, expression_experiment, record_attribution
               where xpatex_zdb_id = '$xpcur_G_xpatex_zdb_id'
@@ -320,6 +337,17 @@ EFFECTS
               <?/MISQL>
  
             <?/MIBLOCK>
+            
+            <?MISQL SQL="
+              select xpatex_gene_zdb_id,
+                     xpatex_probe_feature_zdb_id,
+                     xpatex_featexp_zdb_id,
+                     xpatex_dblink_zdb_id,
+                     xpatex_assay_name
+              from expression_experiment
+              where xpatex_zdb_id = '$xpcur_G_xpatex_zdb_id';">
+              <?MIVAR NAME=xpcurup_old_value>$1,$2,$3,$4,$5<?/MIVAR>
+            <?/MISQL>
  
             <?MISQL SQL="
               UPDATE expression_experiment
@@ -331,15 +359,26 @@ EFFECTS
                where xpatex_zdb_id = '$xpcur_G_xpatex_zdb_id'
                ;">
             <?/MISQL> 
-
+            
+            <?MIVAR NAME=$xpcurup_new_value>$xpcur_G_xpatex_gene,$xpcurup_xpatex_probe,$xpcurup_featexp_zdb_id,$xpcur_G_xpatex_genbank,$xpcur_G_xpatex_assay<?/MIVAR>
+            
+            <?MISQL SQL="
+              select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=expression_experiment&recweb_new_value=$xpcurup_new_value&recweb_old_value=$xpcurup_old_value&recweb_comments=create+new+record') 
+              from webPages where ID='aa-record_web_update.apg';">
+            <?/MISQL>            
+           }
+           </SCRIPT>
           <?/MIBLOCK>  <?MICOMMENT> END $xpcur_G_xpatex = add <?/MICOMMENT>
 
-          <?MIVAR NAME=xpcur_c_gene_only>$xpcur_G_xpatex_gene<?/MIVAR>
-          <?MIVAR>
-            <SCRIPT>
-              setCookie('gene_only','$xpcur_G_xpatex_gene')
-            </SCRIPT> 
-          <?/MIVAR>
+
+          <?MIBLOCK COND="$(AND,$(XST,$xpcur_c_auto_on),$(EC,$xpcur_c_auto_on,on))">
+            <?MIVAR NAME=xpcur_c_gene_only>$xpcur_G_xpatex_gene<?/MIVAR>
+            <?MIVAR>
+              <SCRIPT>
+                setCookie('gene_only','$xpcur_G_xpatex_gene')
+              </SCRIPT> 
+            <?/MIVAR>
+          <?/MIBLOCK>
       
         <?MIELSE> 
           <?MICOMMENT> ============================================================
@@ -402,6 +441,11 @@ EFFECTS
           INSERT into experiment(exp_zdb_id, exp_name, exp_source_zdb_id)
           VALUES ('$xpcurup_exp_zdb_id','$xpcur_G_exp_add_name','$OID');">
       <?/MISQL> 
+
+      <?MISQL SQL="
+        select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=exp_zdb_id&recweb_new_value=$xpcurup_exp_zdb_id&recweb_comments=create+new+record') 
+        from webPages where ID='aa-record_web_update.apg';">
+      <?/MISQL>
     <?MIELSE>
       <SCRIPT>
         alert("Environment '<?MIVAR>$xpcur_G_exp_add_name<?/MIVAR>' exists for this publication.");      
@@ -410,6 +454,13 @@ EFFECTS
   <?/MIBLOCK>
 
   <?MIBLOCK COND=$(AND,$(XST,$xpcur_G_update_exp_zdb_id),$(XST,$xpcur_G_exp_name))>
+
+    <?MISQL SQL="
+        select exp_name
+        from experiment
+        where exp_zdb_id = '$xpcur_G_update_exp_zdb_id';">
+        <?MIVAR NAME=xpcurup_old_value>$(URLENCODE,$1)<?/MIVAR>
+    <?/MISQL>
   
     <?MISQL SQL="
         Update experiment
@@ -417,7 +468,12 @@ EFFECTS
         where exp_zdb_id = '$xpcur_G_update_exp_zdb_id'
         ;">
     <?/MISQL> 
-    
+
+    <?MIVAR NAME=xpcurup_new_value>$(URLENCODE,$xpcur_G_exp_name)<?/MIVAR>
+    <?MISQL SQL="
+      select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=exp_name&recweb_new_value=$xpcurup_new_value&recweb_old_value=$xpcurup_old_value&recweb_comments=update+name') 
+      from webPages where ID='aa-record_web_update.apg';">
+    <?/MISQL>      
   <?/MIBLOCK>
 
   
@@ -458,11 +514,39 @@ EFFECTS
         VALUES ($xpcur_G_expcond_insert_values)
         ;">
     <?/MISQL> 
-    
+
+    <?MISQL SQL="
+      select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=expcond_zdb_id&recweb_new_value=$xpcurup_expcond_zdb_id&recweb_comments=create+new+record') 
+      from webPages where ID='aa-record_web_update.apg';">
+    <?/MISQL>
+      
     <?MISQL SQL="insert into record_attribution(recattrib_data_zdb_id, recattrib_source_zdb_id)
                  values('$xpcurup_expcond_zdb_id','$OID');">
     <?/MISQL>
     
+  <?/MIBLOCK>
+
+
+  <?MIBLOCK COND=$(AND,$(XST,$xpcur_G_expcond_zdb_id),$(XST,$xpcur_G_expcond_comments))>
+
+    <?MISQL SQL="
+        select expcond_comments
+        from experiment_condition
+        where expcond_zdb_id = '$xpcur_G_expcond_zdb_id';">
+        <?MIVAR NAME=xpcurup_old_value>$(URLENCODE,$1)<?/MIVAR>
+    <?/MISQL>
+    <?MISQL SQL="
+        update experiment_condition
+        set expcond_comments = '$xpcur_G_expcond_comments'
+        where expcond_zdb_id = '$xpcur_G_expcond_zdb_id'
+        ;">
+    <?/MISQL> 
+
+    <?MIVAR NAME=xpcurup_new_value>$(URLENCODE,$xpcur_G_expcond_comments)<?/MIVAR>
+    <?MISQL SQL="
+      select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=expcond_comments&recweb_new_value=$xpcurup_new_value&recweb_old_value=$xpcurup_old_value&recweb_comments=update') 
+      from webPages where ID='aa-record_web_update.apg';">
+    <?/MISQL>       
   <?/MIBLOCK>
 
 
@@ -508,13 +592,19 @@ EFFECTS
             '$xpcur_G_fig_add_comments',
             '$OID');">
       <?/MISQL> 
-      
-      <?MIVAR NAME=xpcur_c_figure_only>$xpcurup_fig_zdb_id<?/MIVAR>
 
+      <?MISQL SQL="
+        select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=fig_zdb_id&recweb_new_value=$xpcurup_fig_zdb_id&recweb_comments=create+new+record') 
+        from webPages where ID='aa-record_web_update.apg';">
+      <?/MISQL>
+    
+      <?MIBLOCK COND="$(AND,$(XST,$xpcur_c_auto_on),$(EC,$xpcur_c_auto_on,on))">
+        <?MIVAR NAME=xpcur_c_figure_only>$xpcurup_fig_zdb_id<?/MIVAR>
        
-      <SCRIPT>
-        <?MIVAR>setCookie('figure_only','$xpcurup_fig_zdb_id');<?/MIVAR>
-      </SCRIPT>
+        <SCRIPT>
+          <?MIVAR>setCookie('figure_only','$xpcurup_fig_zdb_id');<?/MIVAR>
+        </SCRIPT>
+      <?/MIBLOCK>
     
   <?/MIBLOCK>
   
@@ -537,6 +627,13 @@ EFFECTS
     <?/MIBLOCK>    
 
     <?MISQL SQL="
+        select fig_label, fig_caption, fig_comments
+        from figure
+        where fig_zdb_id = '$xpcur_G_fig_zdb_id';">
+        <?MIVAR NAME=xpcurup_old_value>$(URLENCODE,$xpcur_G_fig_zdb_id<BR>$1<BR>$2<BR>$3)<?/MIVAR>
+    <?/MISQL>
+
+    <?MISQL SQL="
         Update figure
         Set fig_caption = '$xpcur_G_fig_caption',
             fig_comments = '$xpcur_G_fig_comments',
@@ -544,7 +641,12 @@ EFFECTS
         where fig_zdb_id = '$xpcur_G_fig_zdb_id'
         ;">
     <?/MISQL> 
-
+    
+    <?MIVAR NAME=xpcurup_new_value>$(URLENCODE,$xpcur_G_fig_zdb_id<BR>$xpcur_G_fig_label<BR>$xpcur_G_fig_caption<BR>$xpcur_G_fig_comments)<?/MIVAR>
+    <?MISQL SQL="
+      select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=figure&recweb_new_value=$xpcurup_new_value&recweb_old_value=$xpcurup_old_value&recweb_comments=update') 
+      from webPages where ID='aa-record_web_update.apg';">
+    <?/MISQL>  
   <?/MIBLOCK>  
 
 
@@ -599,6 +701,11 @@ EFFECTS
               '$ZDB_ident'
               );">
         <?/MISQL>
+        <?MISQL SQL="
+          select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=fimg_zdb_id&recweb_new_value=$xpcur_G_image_OID&recweb_comments=create+new+record') 
+          from webPages where ID='aa-record_web_update.apg';">
+        <?/MISQL>
+      
         <?MISQL SQL="insert INTO RECORD_ATTRIBUTION (recattrib_data_zdb_id, recattrib_source_zdb_id)
                      VALUES ('$xpcur_G_image_OID','$OID');">
         <?/MISQL>
@@ -606,11 +713,23 @@ EFFECTS
       <?MIELSE>
 
         <?MISQL SQL="
+          select fimg_label, fimg_fig_zdb_id
+          from fish_image
+          where fimg_zdb_id = '$xpcur_G_image_OID';">
+          <?MIVAR NAME=xpcurup_old_value>$(URLENCODE,$xpcur_G_image_OID<BR>$1<BR>$2)<?/MIVAR>
+        <?/MISQL>
+        <?MISQL SQL="
           Update fish_image
           Set fimg_label = '$xpcur_G_image_label',
               fimg_fig_zdb_id = '$xpcur_G_image_fig'
           where fimg_zdb_id = '$xpcur_G_image_OID'
           ;">
+        <?/MISQL>  
+
+        <?MIVAR NAME=xpcurup_new_value>$(URLENCODE,$xpcur_G_image_OID<BR>$xpcur_G_image_label<BR>$xpcur_G_image_fig)<?/MIVAR>
+        <?MISQL SQL="
+          select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=fish_image&recweb_new_value=$xpcurup_new_value&recweb_old_value=$xpcurup_old_value&recweb_comments=update') 
+          from webPages where ID='aa-record_web_update.apg';">
         <?/MISQL>  
       <?/MIBLOCK>
     <?MIELSE>
@@ -666,6 +785,10 @@ EFFECTS
               '$xpcur_G_panel_fig_zdb_id'
             );">
         <?/MISQL>
+        <?MISQL SQL="
+          select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=expression_pattern_figure&recweb_new_value=$gPSLitem_xpatres_zdb_id,$xpcur_G_panel_fig_zdb_id&recweb_comments=create+new+record') 
+          from webPages where ID='aa-record_web_update.apg';">
+        <?/MISQL>
       <?MIELSE>
 
         <SCRIPT>
@@ -683,33 +806,26 @@ EFFECTS
   <?MICOMMENT> ================| Panel_Structure |================ <?/MICOMMENT>
   <?MIBLOCK COND=$(OR,$(AND,$(XST,$xpcur_G_structures_add),$(NE,$xpcur_G_structures_add,)),$(AND,$(XST,$xpcur_G_structures_remove),$(NE,$xpcur_G_structures_remove,)))>
   
-    <?MICOMMENT>
-        Figures will often have panels with duplicate sets of Structures expressed. Duplicate
-        entry can be avoided if the structures are added to a panel as a set. 
+    <?MIBLOCK WHILE=$xpcur_G_exp_count>
+      <?MIVAR>
+        <?MIVAR NAME=xpcurup_pipe_char_at>$(POSITION,$xpcur_G_fig_xpat_stg,|)<?/MIVAR>
+        <?MIVAR NAME=xpcurup_figxpat_length>$(-,$xpcurup_pipe_char_at,1)<?/MIVAR>
+        <?MIVAR NAME=xpcurup_fig_xpat_stg>$(SUBSTR,$xpcur_G_fig_xpat_stg,1,$xpcurup_figxpat_length)<?/MIVAR>
+        <?MIVAR NAME=xpcur_G_fig_xpat_stg>$(SUBSTR,$xpcur_G_fig_xpat_stg,$(+,1,$xpcurup_pipe_char_at))<?/MIVAR>
         
-        Selecting a set of structures requires a list and this is complicated. The list is 
-        specific to the publication and doesn't represent data for searching. To accomodate
-        the unusual nature of this data, it is put into a table and flagged. In this case 
-        the flag is not a field in the table, the flag is a record in record_attribution. 
-        
-        When the data is entered as a member of the list, the data is flagged. This can 
-        happen two ways:
-          1- The add structure form.
-          2- An orphanned structure - a structure which is associate with 0 panels. This may
-             happen via a curator update.
-        
-        Flagged data must be unflagged when the structure is associated with a panel.     
-    <?/MICOMMENT>
-    
+        $(SETVAR,$xpcur_G_exp_count,$(-,$xpcur_G_exp_count,1))
+      <?/MIVAR>  
+  
+
     <?MICOMMENT> ============================================================== 
                   Extract figure_zdb_id, xpatex_zdb_id, sstage_zdb_id, and 
                   estage_zdb_id from fig_xpat_stg.
                 ==============================================================
     <?/MICOMMENT>        
-    <?MIVAR NAME=xpcurup_panel_fig_zdb_id>$(INDEX,0,$xpcur_G_fig_xpat_stg)<?/MIVAR>
-    <?MIVAR NAME=xpcurup_panel_xpatex_zdb_id>$(INDEX,1,$xpcur_G_fig_xpat_stg)<?/MIVAR>
-    <?MIVAR NAME=xpcurup_panel_sstage_zdb_id>$(INDEX,2,$xpcur_G_fig_xpat_stg)<?/MIVAR>
-    <?MIVAR NAME=xpcurup_panel_estage_zdb_id>$(INDEX,3,$xpcur_G_fig_xpat_stg)<?/MIVAR>
+    <?MIVAR NAME=xpcurup_panel_fig_zdb_id>$(INDEX,0,$xpcurup_fig_xpat_stg)<?/MIVAR>
+    <?MIVAR NAME=xpcurup_panel_xpatex_zdb_id>$(INDEX,1,$xpcurup_fig_xpat_stg)<?/MIVAR>
+    <?MIVAR NAME=xpcurup_panel_sstage_zdb_id>$(INDEX,2,$xpcurup_fig_xpat_stg)<?/MIVAR>
+    <?MIVAR NAME=xpcurup_panel_estage_zdb_id>$(INDEX,3,$xpcurup_fig_xpat_stg)<?/MIVAR>
     
     <?MIVAR COND=$(EC,$debugg,true)>
       <b>$xpcur_G_fig_xpat_stg</b><BR>
@@ -731,7 +847,7 @@ EFFECTS
     <?MIVAR NAME=xpcurup_anatitem_add><?/MIVAR>
     <?MIVAR NAME=xpcurup_anatitem_remove><?/MIVAR>
     
-    <?MIVAR NAME=xpcurup_xpatinf_add_csv DELIMIT="|" REPLACE="','">$xpcur_G_structures_add<?/MIVAR>
+    <?MIVAR NAME=xpcurup_xpatinf_add_csv>$(REPLACE,$xpcur_G_structures_add,"|","','")<?/MIVAR>
     
     <?MISQL SQL="
       select xpatinf_anatitem_zdb_id, xpatinf_expressed
@@ -804,14 +920,43 @@ EFFECTS
             '$xpcurup_panel_fig_zdb_id',
             '$xpcurup_panel_xpatres_zdb_id');">
         <?/MISQL>         
-        
+        <?MISQL SQL="
+          select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=expression_pattern_figure&recweb_new_value=$xpcurup_panel_xpatres_zdb_id,$xpcurup_panel_fig_zdb_id&recweb_comments=create+new+record') 
+          from webPages where ID='aa-record_web_update.apg';">
+        <?/MISQL>        
     <?/MISQL>
 
     <?MICOMMENT> =============================================================== 
-                   Delete removed structures from expression_pattern_image. 
+                   Delete removed structures from expression_pattern_figure. 
                  ===============================================================
     <?/MICOMMENT>
 
+    <?MIVAR NAME=xpcurup_old_value><?/MIVAR>
+    <?MISQL SQL="
+        select xpatfig_xpatres_zdb_id
+        from expression_pattern_figure
+        where xpatfig_fig_zdb_id = '$xpcurup_panel_fig_zdb_id'
+          and exists
+            (
+              select *
+              from expression_result, expression_pattern_infrastructure
+              where xpatfig_xpatres_zdb_id = xpatres_zdb_id
+                and xpatres_anat_item_zdb_id = xpatinf_anatitem_zdb_id
+                and xpatres_expression_found = xpatinf_expressed
+                and xpatinf_zdb_id in ('$xpcurup_xpatinf_remove_csv')
+                and xpatres_xpatex_zdb_id = '$xpcurup_panel_xpatex_zdb_id'
+                and xpatres_start_stg_zdb_id = '$xpcurup_panel_sstage_zdb_id'
+                and xpatres_end_stg_zdb_id = '$xpcurup_panel_estage_zdb_id'
+            )
+        ;">
+        
+        <?MIBLOCK COND=$(EC,$xpcurup_old_value,)>
+            <?MIVAR NAME=xpcurup_old_value>$1<?/MIVAR>
+        <?MIELSE>
+            <?MIVAR NAME=xpcurup_old_value>$xpcurup_old_value,$1<?/MIVAR>
+        <?/MIBLOCK>        
+    <?/MISQL>
+    
     <?MISQL SQL="
         delete from expression_pattern_figure
         where xpatfig_fig_zdb_id = '$xpcurup_panel_fig_zdb_id'
@@ -829,6 +974,64 @@ EFFECTS
             )
         ;">
     <?/MISQL>
+
+    <?MIBLOCK COND=$(NC,$xpcurup_old_value,)>
+    
+      <?MIVAR NAME=xpcurup_old_value>xpatfig_fig_zdb_id = $xpcurup_panel_fig_zdb_id<BR>xpatfig_xpatres_zdb_id = $xpcurup_old_value<?/MIVAR>
+      <?MIVAR NAME=xpcurup_old_value>$(URLENCODE,$xpcurup_old_value)<?/MIVAR>
+      <?MISQL SQL="
+        select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=expression_pattern_figure&recweb_new_value=removed&recweb_old_value=$xpcurup_old_value&recweb_comments=delete+record') 
+        from webPages where ID='aa-record_web_update.apg';">
+      <?/MISQL>   
+
+    <?/MIBLOCK>
+
+    <?MICOMMENT> =============================================================== 
+                   Add Unspecified to the Expression if all structures were removed. 
+                 ===============================================================
+    <?/MICOMMENT>
+    
+    <?MISQL SQL="
+        select count(*)::integer
+        from expression_pattern_figure, expression_result
+        where xpatfig_fig_zdb_id = '$xpcurup_panel_fig_zdb_id'
+          and xpatfig_xpatres_zdb_id = xpatres_zdb_id
+          and xpatres_xpatex_zdb_id = '$xpcurup_panel_xpatex_zdb_id'
+          and xpatres_start_stg_zdb_id = '$xpcurup_panel_sstage_zdb_id'
+          and xpatres_end_stg_zdb_id = '$xpcurup_panel_estage_zdb_id'            
+        ;">
+    <?/MISQL>
+    
+    <?MIBLOCK COND=$(=,$1,0)>
+      <?MISQL SQL="
+        select anatitem_zdb_id
+        from anatomy_item
+        where anatitem_name = 'unspecified'
+        ;">
+        <?MISQL SQL="select WebExplode(object,'gPSLitem_anatitem_zdb_id=$1&gPSLitem_expressed=t&gPSLitem_xpatex_zdb_id=$xpcurup_panel_xpatex_zdb_id&gPSLitem_stg_start_zdb_id=$xpcurup_panel_sstage_zdb_id&gPSLitem_stg_end_zdb_id=$xpcurup_panel_estage_zdb_id') from webPages where ID='aa-getPubStructureListItem.apg';">$1<?/MISQL>
+
+        <?MIVAR NAME=$xpcurup_panel_xpatres_zdb_id>$gPSLitem_xpatres_zdb_id<?/MIVAR>              
+      <?/MISQL>      
+
+      <?MISQL SQL="
+          INSERT into expression_pattern_figure (
+            xpatfig_fig_zdb_id,
+            xpatfig_xpatres_zdb_id)
+          VALUES (
+            '$xpcurup_panel_fig_zdb_id',
+            '$xpcurup_panel_xpatres_zdb_id');">
+      <?/MISQL>     
+      <?MISQL SQL="
+        select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=expression_pattern_figure&recweb_new_value=$xpcurup_panel_xpatres_zdb_id,$xpcurup_panel_fig_zdb_id&recweb_comments=create+new+record') 
+        from webPages where ID='aa-record_web_update.apg';">
+      <?/MISQL>        
+      
+      <script>
+        alert('The Unspecified term was added when the last anatomy item was removed.');
+      </script>
+    
+    <?/MIBLOCK>
+    
     
     <?MIVAR COND=$(EC,$debugg,true)>
       <br>Delete Panel Structures: $MI_SQL<br><br>
@@ -868,11 +1071,12 @@ EFFECTS
       <br>Delete Results: $MI_SQL<br><br>
     <?/MIVAR>
 
+  <?/MIBLOCK>
   <?/MIBLOCK>  
 
 
   <?MICOMMENT> ================| Structure |================ <?/MICOMMENT>
-  <?MIBLOCK COND=$(XST,$xpcur_G_structure_add_name)>
+  <?MIBLOCK COND=$(XST,$xpcur_G_structure_add_button)>
   
     <?MICOMMENTS>
        ================================================          
@@ -891,6 +1095,20 @@ EFFECTS
        ================================================
     <?/MICOMMENTS>
     
+    <?MIBLOCK COND=$(XST,$xpcur_G_AO_term)>
+      
+      <?MIVAR NAME=xpcur_G_AO_term>$(REPLACE,$xpcur_G_AO_term,"'","''")<?/MIVAR>
+      
+      <?MISQL SQL="
+        select anatitem_zdb_id
+        from anatomy_item
+        where anatitem_name = '$xpcur_G_AO_term';">
+        
+        <?MIVAR NAME=xpcur_G_structure_add>$1<?/MIVAR>
+        
+      <?/MISQL>      
+      
+    <?/MIBLOCK>  
 
     <?MIVAR NAME=i>0<?/MIVAR>
     <?MIBLOCK WHILE=$(NE,$(INDEX,$i,$xpcur_G_structure_add),)>    	
@@ -960,12 +1178,27 @@ EFFECTS
     <?/MICOMMENTS>
     
     <?MIVAR NAME=xpcur_G_pub_ack COND=$(NXST,$xpcur_G_pub_ack)><?/MIVAR>
+    <?MIVAR NAME=xpcur_G_pub_ack>$(REPLACE,$xpcur_G_pub_ack,"'","''")<?/MIVAR>
+
+    <?MISQL SQL="
+      select pub_can_show_images, pub_acknowledgment
+      from publication
+      where zdb_id = '$OID';">
+      <?MIVAR NAME=xpcurup_old_value>$(URLENCODE,show images = $1<BR>$2)<?/MIVAR>
+    <?/MISQL>
+      
 
     <?MISQL SQL="update publication 
                  set pub_can_show_images = '$xpcur_G_can_show_image',
                      pub_acknowledgment = '$xpcur_G_pub_ack'
                  where zdb_id = '$OID';">
     <?/MISQL>
+    
+    <?MIVAR NAME=xpcurup_new_value>$(URLENCODE,show images = $xpcur_G_can_show_image<BR>$xpcur_G_pub_ack)<?/MIVAR>
+    <?MISQL SQL="
+      select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=publication&recweb_new_value=$xpcurup_new_value&recweb_old_value=$xpcurup_old_value&recweb_comments=update permissions') 
+      from webPages where ID='aa-record_web_update.apg';">
+    <?/MISQL>      
     
     <script>
       <?MIVAR>setCookie('has_permission','$xpcur_G_can_show_image');<?/MIVAR>
@@ -1007,12 +1240,14 @@ EFFECTS
         values ('$xpcurup_attrib_mrkr_zdb','$OID');">
       <?/MISQL>    
       
-      <?MIVAR NAME=xpcur_c_gene_only>$xpcurup_attrib_mrkr_zdb<?/MIVAR>
-      <?MIVAR>
-        <SCRIPT>
-          setCookie('gene_only','$xpcurup_attrib_mrkr_zdb')
-        </SCRIPT>      
-      <?/MIVAR>
+      <?MIBLOCK COND="$(AND,$(XST,$xpcur_c_auto_on),$(EC,$xpcur_c_auto_on,on))">
+        <?MIVAR NAME=xpcur_c_gene_only>$xpcurup_attrib_mrkr_zdb<?/MIVAR>
+        <?MIVAR>
+          <SCRIPT>
+            setCookie('gene_only','$xpcurup_attrib_mrkr_zdb')
+          </SCRIPT>      
+        <?/MIVAR>
+      <?/MIBLOCK>
     <?MIELSE>
       <?MIVAR NAME=xpcurup_alert>Could not find $xpcur_G_mrkr_attrib in the marker table.<?/MIVAR>    
     <?/MIBLOCK>
@@ -1046,14 +1281,10 @@ EFFECTS
       <?MISQL COND=$(=,$1,0) SQL="
         insert into record_attribution(recattrib_data_zdb_id,recattrib_source_zdb_id)
         values ('$xpcurup_attrib_fish_zdb','$OID');">
-      <?/MISQL>    
+      <?/MISQL>   
       
-      <?MIVAR NAME=xpcur_c_fish_only>$xpcurup_attrib_fish_zdb<?/MIVAR>
-      <?MIVAR>
-        <SCRIPT>
-          setCookie('fish_only','$xpcurup_attrib_fish_zdb')
-        </SCRIPT>      
-      <?/MIVAR>
+      <?MIVAR NAME=xpcur_G_xpatex_fish>$xpcurup_attrib_fish_zdb<?/MIVAR>
+      
     <?MIELSE>
       <?MIVAR NAME=xpcurup_alert>Could not find $xpcur_G_fish_attrib in the fish table.<?/MIVAR>    
     <?/MIBLOCK>
