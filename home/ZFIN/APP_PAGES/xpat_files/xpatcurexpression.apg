@@ -44,6 +44,68 @@ EFFECTS
 
 <?/MICOMMENT>
 
+<SCRIPT>
+function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,exptid)
+{
+   var fish = document.experiment.xpcur_G_xpatex_fish;
+   for (i=0; i<fish.length; i++)
+   {
+      if (fish[i].value == fishid)
+      {
+        fish.selectedIndex = i;
+      }
+    }
+   var gene = document.experiment.xpcur_G_xpatex_gene;
+   for (i=0; i<gene.length; i++)
+   {
+      if (gene[i].value == geneid)
+      {
+        gene.selectedIndex = i;
+      }
+    }
+   var env = document.experiment.xpcur_G_xpatex_exp;
+   for (i=0; i<env.length; i++)
+   {
+      if (env[i].value == envid)
+      {
+        env.selectedIndex = i;
+      }
+    }
+   var assay = document.experiment.xpcur_G_xpatex_assay;
+   for (i=0; i<assay.length; i++)
+   {
+      if (assay[i].value == assayid)
+      {
+        assay.selectedIndex = i;
+      }
+    }
+   var genbank = document.experiment.xpcur_G_xpatex_genbank;
+   for (i=0; i<genbank.length; i++)
+   {
+      if (genbank[i].value == genbankid)
+      {
+        genbank.selectedIndex = i;
+      }
+    }
+   experiment.xpcur_G_xpatex_zdb_id.value = exptid;
+   xpcur_G_panel_add.xpcur_G_panel_add_xpatex.value = exptid;
+   <?MIVAR NAME=$xpcur_G_xpatex_zdb_id>exptid<?/MIVAR>
+
+   var expt = document.panel_structures.xpcurstr_fig_xpat_stg;
+   for (i=0; i<expt.length; i++)
+   {
+      if (expt[i].value == exptid)
+      {
+        expt.selectedIndex = i;
+      }
+    }
+}
+
+
+
+
+
+</SCRIPT>
 <?MIERROR>
   <?MIVAR COND=$(XST,$MI_SQL)>
     SQL: $MI_SQL<br><br>
@@ -53,19 +115,8 @@ EFFECTS
   State:   $MI_ERRORSTATE <br>
   Message: $MI_ERRORMSG <br>
 <?/MIERROR>
-
+<?MIVAR NAME=$gene><?/MIVAR>
 <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
-
-<a name=attrib>
-<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#attrib" method=post name=attrib_mrkr onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','attrib');">
-    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
-    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
-  Attribute Mrkr: <input type=textbox name=xpcur_G_mrkr_attrib size=10> <input type=submit value=Submit><br>
-
-    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
-    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
-  Attribute Fish: <input type=textbox name=xpcur_G_fish_attrib size=10> <input type=submit value=Submit><br>
-</form>
 
   <?MICOMMENT> 
      Save previously submitted values. Set form values of form new_experiment 
@@ -79,15 +130,16 @@ EFFECTS
   <?MIVAR NAME=xpcurxprss_old_xpatex_genbank>$(IF,$(XST,$xpcur_G_xpatex_genbank),$xpcur_G_xpatex_genbank)<?/MIVAR>
 
 
-<?MIVAR NAME=xpcurxprss_row_color><?/MIVAR> 
+<?MIVAR NAME=xpcurxprss_row_color>#FFFFFF<?/MIVAR> 
 <?MIVAR NAME=xpcurxprss_prev_fish><?/MIVAR>
 <?MIVAR NAME=xpcurxprss_prev_gene><?/MIVAR>
 <?MIVAR NAME=xpcurxprss_prev_fig><?/MIVAR>
+<?MIVAR NAME=xpcurxprss_radio_index>0<?/MIVAR>
 
-  
 <table width=100% border=0 cellpadding=3 cellspacing=0>
+<form name=xpcurxprss_select>
   <tr bgcolor=#CCCCCC>
-    <td>&nbsp;</td>
+    <td>Select</td>
     <td>
       <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&newmrkrSource=$OID">Gene </a><?/MIVAR>
     </td>
@@ -97,6 +149,7 @@ EFFECTS
 	<td>GenBank</td>
 	<td>Delete</td>
   </tr>  
+
 <?MISQL SQL="
     select distinct xpatex_zdb_id, xpatex_assay_name, xpatex_probe_feature_zdb_id, featexp_genome_feature_zdb_id, featexp_exp_zdb_id, exp_name, xpatex_gene_zdb_id, dblink_zdb_id, mrkr_abbrev_order, fish_name_order
     from expression_experiment, feature_experiment, fish, OUTER(db_link), marker, experiment
@@ -121,135 +174,99 @@ EFFECTS
     <?MIVAR NAME=xpcurxprss_xpatex_genbank>$8<?/MIVAR>
     
     <?MIBLOCK COND=$(NC,$xpcurxprss_xpatex_fish,$xpcurxprss_prev_fish)>
-        <?MIVAR NAME=xpcurxprss_row_color>$(IF,$(EC,$xpcurxprss_row_color,),<!--|HIGHLIGHT_COLOR|-->,)<?/MIVAR>     
+        <?MIVAR NAME=xpcurxprss_row_color>$(IF,$(EC,$xpcurxprss_row_color,#FFFFFF),<!--|HIGHLIGHT_COLOR|-->,#FFFFFF)<?/MIVAR>     
     <?MIELSE COND=$(NC,$xpcurxprss_xpatex_gene,$xpcurxprss_prev_gene)>
-        <?MIVAR NAME=xpcurxprss_row_color>$(IF,$(EC,$xpcurxprss_row_color,),<!--|HIGHLIGHT_COLOR|-->,)<?/MIVAR>     
+        <?MIVAR NAME=xpcurxprss_row_color>$(IF,$(EC,$xpcurxprss_row_color,#FFFFFF),<!--|HIGHLIGHT_COLOR|-->,#FFFFFF)<?/MIVAR>     
     <?/MIBLOCK>
-<?MIVAR>
-<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#experiment" method=post name=experiment onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','experiment');setCookie('gene_only','$xpcurxprss_xpatex_gene');setCookie('fish_only','$xpcurxprss_xpatex_fish');">
-<?/MIVAR>    
-    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
-    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
-    <INPUT TYPE=HIDDEN NAME=xpcur_G_xpatex_zdb_id VALUE="<?MIVAR>$xpcurxprss_xpatex_zdb_id<?/MIVAR>"> 
-    <INPUT TYPE=HIDDEN NAME=xpcur_G_xpatex VALUE="update"> 
-  <tr bgcolor=$xpcurxprss_row_color>
-    <td><input name="xpcur_G_xpatex_update" type=submit value="Update"></td>
-    <td> 
-       <select name="xpcur_G_xpatex_gene">
+
+  
+  <tr bgcolor=$xpcurxprss_row_color
+      onmouseover="this.style.background='$xpcur_G_active_row_color';" 
+      onmouseout="this.style.background='$xpcurxprss_row_color';">
+  <?MIVAR>
+    <td><input name="xpcur_G_xpatex_select" type=radio value="$xpcurxprss_xpatex_zdb_id" onClick="set_expt('$xpcurxprss_xpatex_gene','$xpcurxprss_xpatex_fish', '$xpcurxprss_xpatex_probe','$xpcurxprss_xpatex_exp','$xpcurxprss_xpatex_genbank','$xpcurxprss_xpatex_assay','$xpcurxprss_xpatex_zdb_id');"></td>
+
+    <td onClick="document.forms['xpcurxprss_select'].elements['xpcur_G_xpatex_select'][$xpcurxprss_radio_index].click();"> 
+  <?/MIVAR>
           <?MISQL SQL="select mrkr_zdb_id, mrkr_abbrev 
                        from marker 
-                        where mrkr_zdb_id in ('$xpcur_G_gene_attrib_csv')
-                        order by mrkr_abbrev;">
-             <option value="$1" $(IF,$(EC,$xpcurxprss_xpatex_gene,$1),SELECTED)>$2</option>
-
+                        where mrkr_zdb_id = '$xpcurxprss_xpatex_gene';">
+             $2
+           
           <?/MISQL>
-       </select>
     </td>
-    <td> 
-       <select name="xpcur_G_xpatex_fish">
-          <?MISQL SQL="
-            select zdb_id, abbrev 
+    <td onClick="document.forms['xpcurxprss_select'].elements['xpcur_G_xpatex_select'][$xpcurxprss_radio_index].click();"> 
+            <?MISQL SQL="select zdb_id, abbrev 
             from fish
-            where abbrev = 'WT'
+            where zdb_id ='$xpcurxprss_xpatex_fish'
             order by fish_name_order;">
             <?MIVAR NAME=fishOption>$2<?/MIVAR>
+            <?MIVAR NAME=fishOption DELIMIT="SUP" REPLACE="sup">$fishOption<?/MIVAR>
             <?MIVAR NAME=fishOption DELIMIT="<sup>" REPLACE=" (">$fishOption<?/MIVAR>
             <?MIVAR NAME=fishOption DELIMIT="</sup>" REPLACE=")">$fishOption<?/MIVAR>
-            <option value="$1" 
-                $(IF,$(EC,$xpcurxprss_xpatex_fish,$1),SELECTED)>$fishOption</option>
+                $fishOption
           <?/MISQL>
-            <option value="-">----------</option>
-          <?MISQL SQL="
-            select zdb_id, LOWER(abbrev) 
-            from fish
-            where zdb_id in ('$xpcur_G_fish_attrib_csv')
-            order by fish_name_order;">
-            <?MIVAR NAME=fishOption>$2<?/MIVAR>
-            <?MIVAR NAME=fishOption DELIMIT="<sup>" REPLACE=" (">$fishOption<?/MIVAR>
-            <?MIVAR NAME=fishOption DELIMIT="</sup>" REPLACE=")">$fishOption<?/MIVAR>
-            <option value="$1" 
-                $(IF,$(EC,$xpcurxprss_xpatex_fish,$1),SELECTED)>$fishOption</option>
-          <?/MISQL>
-            <option value="-">----------</option>
-          <?MISQL SQL="
-            select zdb_id, abbrev 
-            from fish
-            where line_type = 'wild type'
-              and abbrev <> 'WT'
-            order by fish_name_order;">
-            <?MIVAR NAME=fishOption>$2<?/MIVAR>
-            <?MIVAR NAME=fishOption DELIMIT="<sup>" REPLACE=" (">$fishOption<?/MIVAR>
-            <?MIVAR NAME=fishOption DELIMIT="</sup>" REPLACE=")">$fishOption<?/MIVAR>
-            <option value="$1" 
-                $(IF,$(EC,$xpcurxprss_xpatex_fish,$1),SELECTED)>$fishOption</option>
-          <?/MISQL>
-        </select>
     </td>
-    <td> 
-      <select name="xpcur_G_xpatex_exp">
+    <td onClick="document.forms['xpcurxprss_select'].elements['xpcur_G_xpatex_select'][$xpcurxprss_radio_index].click();"> 
           <?MISQL SQL="
               select exp_zdb_id, exp_name
               from experiment
-              where exp_zdb_id in ('$xpcur_G_exp_attrib_csv') 
-                 or exp_name = 'Standard'
+              where exp_zdb_id ='$xpcurxprss_xpatex_exp'
               order by 1;">
-              <option value="$1" $(IF,$(EC,$xpcurxprss_xpatex_exp,$1),SELECTED)>$2</option>
+              $2
           <?/MISQL>
-      </select>
     </td>
-    <td>  
-       <select name="xpcur_G_xpatex_assay">
-           <?MISQL SQL="select xpatassay_name, xpatassay_display_order from expression_pattern_assay order by 2;">
-             <option value="$1" $(IF,$(EC,$xpcurxprss_xpatex_assay,$1),SELECTED)>$1</option>
-           <?/MISQL>
-       </select>
+    <td onClick="document.forms['xpcurxprss_select'].elements['xpcur_G_xpatex_select'][$xpcurxprss_radio_index].click();">  
+             $xpcurxprss_xpatex_assay
 
     </td>
 
-    <td>  
-      <select name="xpcur_G_xpatex_genbank">
-          <option value=""></option>
+    <td onClick="document.forms['xpcurxprss_select'].elements['xpcur_G_xpatex_select'][$xpcurxprss_radio_index].click();">  
 
           <?MISQL SQL="select dblink_zdb_id, dblink_acc_num, mrkr_abbrev
                        from db_link, marker
-                        where dblink_zdb_id in ('$xpcur_G_dblink_genbank_csv')
+                        where dblink_zdb_id ='$xpcurxprss_xpatex_genbank'
                           and dblink_linked_recid = mrkr_zdb_id
                           and mrkr_zdb_id in ('$xpcur_G_gene_attrib_csv')
                         UNION
                         select dblink_zdb_id, dblink_acc_num, mrkr_abbrev
                         from marker, marker_relationship, db_link
-                        where dblink_zdb_id in ('$xpcur_G_dblink_genbank_csv')
+                        where dblink_zdb_id ='$xpcurxprss_xpatex_genbank'
                           and dblink_linked_recid = mrel_mrkr_2_zdb_id
                           and mrel_mrkr_1_zdb_id = mrkr_zdb_id
                           and mrkr_zdb_id in ('$xpcur_G_gene_attrib_csv') 
                         order by mrkr_abbrev, dblink_acc_num;">
-             <option value=$1 $(IF,$(EC,$1,$xpcurxprss_xpatex_genbank),SELECTED)>$2 ($3)</option>
+             $2 ($3)
           <?/MISQL>
     </td>
     <td>
       <?MIVAR><input name="delete" type=button value=" X " onClick="deleteZDB('$xpcurxprss_xpatex_zdb_id','experiment')"><?/MIVAR>
     </td>    
   </tr>
-  </form>
 
     <?MIVAR NAME=xpcurxprss_prev_fish>$xpcurxprss_xpatex_fish<?/MIVAR>
     <?MIVAR NAME=xpcurxprss_prev_gene>$xpcurxprss_xpatex_gene<?/MIVAR>  
+    <INPUT TYPE=HIDDEN NAME=xpcur_G_xpatex_zdb_id VALUE="<?MIVAR>$xpcur_G_xpatex_zdb_id<?/MIVAR>">
+    <?MIVAR NAME=xpcurxprss_radio_index>$(+,$xpcurxprss_radio_index,1)<?/MIVAR>
 <?/MISQL>    
 
+<!--new form tage added-->
+</form>
   <tr>
     <td colspan=7>
       <hr>
     </td>
   </tr>
   
-<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#experiment" method=post name=new_experiment onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','experiment');">
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#experiment" method=post name=experiment onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','experiment');">
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
-    <INPUT TYPE=HIDDEN NAME=xpcur_G_xpatex VALUE="add"> 
+    <!--<INPUT TYPE=HIDDEN NAME=xpcur_G_xpatex VALUE="add"--> 
+
 <?MICOMMENT> ==| Enter a New Experiment |== <?/MICOMMENT>
   <tr>
     <td>
-      <input name="xpcur_G_xpatex_add" type=submit value="Add">
+      <input name="xpcur_G_xpatex" type=submit value="Add">
     </td>
     <td> 
         <select name="xpcur_G_xpatex_gene">
@@ -275,8 +292,8 @@ EFFECTS
             <?MIVAR NAME=fishOption DELIMIT="</sup>" REPLACE=")">$fishOption<?/MIVAR>
             <option value="$1" 
                 $(IF,$(AND,$(EC,wt,$fishOption),$(EC,$xpcurxprss_old_xpatex_fish,)),SELECTED)
-                $(IF,$(EC,$xpcurxprss_old_xpatex_fish,$1),SELECTED)>$fishOption</option>
-                   $(IF,$(AND,$(XST,$xpcur_c_fish_only),$(EC,$xpcur_c_fish_only,$1)),SELECTED)>$2</option>
+                $(IF,$(EC,$xpcurxprss_old_xpatex_fish,$1),SELECTED)
+                   $(IF,$(AND,$(XST,$xpcur_c_fish_only),$(EC,$xpcur_c_fish_only,$1)),SELECTED)>$fishOption</option>
           <?/MISQL>
             <option value="-">----------</option>
           <?MISQL SQL="
@@ -285,12 +302,13 @@ EFFECTS
             where zdb_id in ('$xpcur_G_fish_attrib_csv')
             order by fish_name_order;">
             <?MIVAR NAME=fishOption>$2<?/MIVAR>
-            <?MIVAR NAME=fishOption DELIMIT="<SUP>" REPLACE=" (">$fishOption<?/MIVAR>
-            <?MIVAR NAME=fishOption DELIMIT="</SUP>" REPLACE=")">$fishOption<?/MIVAR>
+            <?MIVAR NAME=fishOption DELIMIT="SUP" REPLACE="sup">$fishOption<?/MIVAR>
+            <?MIVAR NAME=fishOption DELIMIT="<sup>" REPLACE=" (">$fishOption<?/MIVAR>
+            <?MIVAR NAME=fishOption DELIMIT="</sup>" REPLACE=")">$fishOption<?/MIVAR>
             <option value="$1" 
                 $(IF,$(AND,$(EC,wt,$fishOption),$(EC,$xpcurxprss_old_xpatex_fish,)),SELECTED)
-                $(IF,$(EC,$xpcurxprss_old_xpatex_fish,$1),SELECTED)>$fishOption</option>
-                   $(IF,$(AND,$(XST,$xpcur_c_fish_only),$(EC,$xpcur_c_fish_only,$1)),SELECTED)>$2</option>
+                $(IF,$(EC,$xpcurxprss_old_xpatex_fish,$1),SELECTED)
+                   $(IF,$(AND,$(XST,$xpcur_c_fish_only),$(EC,$xpcur_c_fish_only,$1)),SELECTED)>$fishOption</option>
           <?/MISQL>
             <option value="-">----------</option>
           <?MISQL SQL="
@@ -304,7 +322,7 @@ EFFECTS
             <?MIVAR NAME=fishOption DELIMIT="</sup>" REPLACE=")">$fishOption<?/MIVAR>
             <option value="$1" 
                 $(IF,$(AND,$(EC,wt,$fishOption),$(EC,$xpcurxprss_old_xpatex_fish,)),SELECTED)
-                $(IF,$(EC,$xpcurxprss_old_xpatex_fish,$1),SELECTED)>$fishOption</option>
+                $(IF,$(EC,$xpcurxprss_old_xpatex_fish,$1),SELECTED)
                    $(IF,$(AND,$(XST,$xpcur_c_fish_only),$(EC,$xpcur_c_fish_only,$1)),SELECTED)>$2</option>
           <?/MISQL>
       </select></td>
@@ -347,8 +365,26 @@ EFFECTS
           <?/MISQL>
         </select>
       </td>
+<!--</form>-->
+<?MIVAR>
+<!--<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#experiment" method=post name=experiment onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','experiment');">
+<?/MIVAR>   
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>">
+    <INPUT TYPE=HIDDEN NAME=xpcur_G_xpatex VALUE="update"> 
+    <input type=hidden name="xpcur_G_xpatex_gene">
+    <INPUT TYPE=HIDDEN NAME=xpcur_G_xpatex_assay"> 
+    <INPUT TYPE=HIDDEN NAME=xpcur_G_xpatex_fish"> 
+    <INPUT TYPE=HIDDEN NAME=xpcur_G_xpatex_exp"> 
+    <INPUT TYPE=HIDDEN NAME=xpcur_G_xpatex_genbank"> -->
+    <INPUT TYPE=HIDDEN NAME=xpcur_G_xpatex_zdb_id VALUE="<?MIVAR>$xpcur_G_xpatex_zdb_id<?/MIVAR>">
+    <INPUT TYPE=HIDDEN NAME=xpcur_G_xpatex VALUE="update"> 
+    <td>
+      <input name="xpcur_G_xpatex_update" type=submit value="Replace">
+    </td>
+</form>
   </tr>
-</form> 
+<!--</form>-->
   
 </table>
 
