@@ -7,7 +7,22 @@ An apg page for the record keeping of Curating Publications - only accessable as
 
     JavaScript required
     
-    This page is unlike other update forms in ZFIN. There is not a non-update state. 
+    This page is unlike other update forms in ZFIN. Other forms combine the curation and 
+    data on the same page. Here (FX) the curation is separated from the data and the page 
+    is always in UPDATE mode.
+    
+    
+    The data is seperated by each object captured in the database. Each section displays
+    data in a table and contains a form for submitting new data. The sections are ordered
+    by how a curator would naturally enter information from a publication.
+    
+    A hide and show toggle controls the display of each section. After a curator is finished
+    entering Environments, the section can be hidden. While hidden, a section displays a 
+    title and toggle switch. The switch, an html link, is clicked to display the section. The
+    toggle is operated by javascript and cookies. The toggle of a switch, changes a cookie 
+    value and refreshes the page. Unsubmitted changes at the time a toggle triggers are lost.
+    
+    
     The first form submission is the only data we want to capture. If the page is reloaded
     or the back button is used, resubmitted form data should be ignored. 
     
@@ -18,18 +33,34 @@ An apg page for the record keeping of Curating Publications - only accessable as
     
     Ignore form data if cookie xpcur_c_curation_update != 'update';
     All updates are handled by xpatcurupdate.apg
-
-
-    The data is seperated by each object captured in the database. Each section displays
-    data in a table and contains a form for submitting new data. The sections are ordered
-    by how a curator would naturally enter information from a publication.
     
-    A hide and show toggle controls the display of each section. After a curator is finished
-    entering Environments, the section can be hidden. While hidden, a section displays a 
-    title and toggle switch. The switch, an html link, is clicked to display the section. The
-    toggle is operated by javascript and cookies. The toggle of a switch, changes a cookie 
-    value and refreshes the page. Unsubmitted changes at the time a toggle triggers are lost.
-                  
+    
+    MAP:
+    1.Javascript:
+        getCookie(cName)  
+	replaceLocation(url)
+	setCookie(name,value)
+	urlSetCookie(name,value)
+	deleteZDB(item,anchor)
+	updateZDB(zdbid,comments)
+	setEndStage( form_name, start_stg, end_stg ) 
+
+    2.Housecleaning:
+        Do housecleaning whenever the user visits a new pub.
+	       
+	1. reset cookies
+	2. clean table expression_pattern_infrastructure
+	3. insert records for the structure list
+    
+    3.Delete Record Code 
+    
+    4.Execute Update Page
+    
+    5.Data List Compilation 
+        Select subsets of data specific to this publication. The lists are codependent so 
+        define them in the parent page and not the function page.
+    
+    6.Data sections
      
 INPUT VARS:
   $OID :: the ZDB of a Publication
@@ -199,7 +230,7 @@ EFFECTS
 
     }
     
-    
+
     function setCookie(name,value) {
       var thisCookie = "xpcur_c_"+name;
       document.cookie = thisCookie+"="+value;
@@ -215,11 +246,35 @@ EFFECTS
 
       
     function deleteZDB(item,anchor) {
-        <?MIVAR>
+        if (anchor == 'experiment')
+           {
+            var msg="Are you sure you want to delete this experiment?";
+            if (confirm(msg))
+             <?MIVAR>
+              replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID&delete_item="+item+"&anchor="+anchor);
+             <?/MIVAR>
+            }
+        else 
+           {
+            <?MIVAR>
           replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID&delete_item="+item+"&anchor="+anchor);
-        <?/MIVAR>
+            <?/MIVAR>
+           }
     }
 
+    function updateZDB(zdbid,comments) {
+    window.alert(comments);
+    window.alert(zdbid);
+    <?MIVAR>
+    <?/MIVAR>
+    }
+    
+    function setEndStage( form_name, start_stg, end_stg ) {
+
+      var startStageIndex = document.forms[form_name].elements[start_stg].selectedIndex; 
+      document.forms[form_name].elements[end_stg].selectedIndex = startStageIndex;
+         
+    } 
     
     <?MICOMMENT>
        Do housecleaning whenever the user visits a new pub.
@@ -246,6 +301,9 @@ EFFECTS
       setCookie('gene_only','')
       setCookie('figure_only','')
       setCookie('fish_only','')
+      <?MIVAR COND=$(NXST,$xpcur_c_auto_on)>
+        setCookie('auto_on','on')
+      <?/MIVAR>
       setCookie('permission','')
       setCookie('has_permission','<?MISQL SQL="select pub_can_show_images from publication where zdb_id = '$OID';">$1<?/MISQL>');
       replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID");
@@ -323,15 +381,7 @@ EFFECTS
       setCookie('show_all','false')
       replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID");          
     <?/MIVAR> 
-
-    
-    function setEndStage( form_name, start_stg, end_stg ) {
-
-      var startStageIndex = document.forms[form_name].elements[start_stg].selectedIndex; 
-      document.forms[form_name].elements[end_stg].selectedIndex = startStageIndex;
-         
-    }    
-
+  
 
   </SCRIPT>
 
@@ -356,11 +406,15 @@ EFFECTS
               AND xpatinf_zdb_id = '$delete_item'
 	      AND xpatinf_pub_zdb_id = xpatex_source_zdb_id
               AND xpatres_xpatex_zdb_id = xpatex_zdb_id ;">
-            
-           <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id = '$1';"><?/MISQL>
-         
+           <?MIVAR NAME=xpcur_delete_zdb_id>$1<?/MIVAR> 
+           <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id = '$xpcur_delete_zdb_id';"><?/MISQL>
+           <?MISQL SQL="
+              select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=expression_result&recweb_new_value=deleted&recweb_old_value=$xpcur_delete_zdb_id&recweb_comments=delete') 
+              from webPages where ID='aa-record_web_update.apg';">
+           <?/MISQL>           
         <?/MISQL>
         <?MISQL SQL="delete from expression_pattern_infrastructure where xpatinf_zdb_id = '$delete_item';"><?/MISQL>
+       
       <?MIELSE>  
         <?MIBLOCK COND=$(EC,ZDB-XPAT-,$(SUBSTR,$delete_item,1,9))>
           <?MISQL SQL="
@@ -373,7 +427,12 @@ EFFECTS
           <?/MISQL>
         <?/MIBLOCK>
         <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id = '$delete_item';"><?/MISQL>
+        <?MISQL SQL="
+           select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=expression_result&recweb_new_value=deleted&recweb_old_value=$delete_item&recweb_comments=delete') 
+           from webPages where ID='aa-record_web_update.apg';">
+        <?/MISQL>      
       <?/MIBLOCK>
+      
     <?MIELSE>
       <?MICOMMENT>  <?/MICOMMENT>
       <?MIVAR NAME=xpcur_panel_fig>$(INDEX,1,$delete_item)<?/MIVAR>
@@ -413,6 +472,12 @@ EFFECTS
            AND xpatfig_xpatres_zdb_id in ('$xpcur_xpatfig_delete_csv')
           ;">
       <?/MISQL>            
+      <?MIVAR NAME=xpcur_old_value>xpatfig_fig_zdb_id = $xpcur_panel_fig<br>xpatfig_xpatres_zdb_id = '$xpcur_xpatfig_delete_csv'<?/MIVAR>
+      <?MIVAR NAME=xpcur_old_value>$(URLENCODE,$xpcur_old_value)<?/MIVAR>
+      <?MISQL SQL="
+         select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=expression_result&recweb_new_value=deleted&recweb_old_value=$xpcur_old_value&recweb_comments=delete') 
+         from webPages where ID='aa-record_web_update.apg';">
+      <?/MISQL>      
       
       <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id in ('$xpcur_xpatres_delete_csv');"><?/MISQL>
   
@@ -466,6 +531,7 @@ EFFECTS
 
     <?MIVAR NAME=hide><font color=blue size=-1><u>hide</u></font><?/MIVAR>
     <?MIVAR NAME=unhide><font color=blue size=-1><u>show</u></font><?/MIVAR>
+    <?MIVAR NAME=xpcur_G_active_row_color>#CCFFFF<?/MIVAR>
 
     <?MIVAR NAME=xpcur_oid_attrib><?/MIVAR>
     <?MISQL SQL="
@@ -643,9 +709,29 @@ EFFECTS
   ===========================
 <?/MICOMMENT>
 
+<?MICOMMENT> *** First find out the last modification date of the record in question. *** <?/MICOMMENT>
+<?MISQL SQL="
+    select when, day(when), comments, month(when), year(when) 
+    from updates 
+    where rec_id='$OID' 
+    order by when;">
+<?/MISQL>
+<?MIVAR NAME=$mod_date COND="$(OR,$(EC,$1,NOVALUE),$(EC,$3,*RECORD_CREATED*))">Never modified<?/MIVAR>
+
+<?MIVAR  NAME=$mod_date COND="$(AND,$(NC,$1,NOVALUE),$(NC,$3,*RECORD_CREATED*))">
+$(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5 
+<?/MIVAR>
+
 <TABLE WIDTH=100% border=0 bgcolor="<!--|HIGHLIGHT_COLOR|-->">
   <TR align=center>
     <TD><font size=-1> <b>ZFIN ID:</b> <?MIVAR>$OID<?/MIVAR> </font></TD>
+    <TD>
+      <?MIVAR>
+        <font size=-1>
+        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-update-vframeset.apg&OID=$OID&rtype=publication">
+        <b>Updated:</b> $mod_date </A> </font>    
+      <?/MIVAR>
+    </TD>
   </TR>
 </TABLE>
 
@@ -688,6 +774,24 @@ EFFECTS
     </tr>
   </table>
 
+<br>
+<a name=attrib>
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#attrib" method=post name=attrib_mrkr onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','attrib');">
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+  Attribute Mrkr: <input type=textbox name=xpcur_G_mrkr_attrib size=10> <input type=submit value=Submit>
+  &nbsp;&nbsp;&nbsp;
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+  Attribute Fish: <input type=textbox name=xpcur_G_fish_attrib size=10> <input type=submit value=Submit>
+  <br>
+</form>
+
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Starting Environment
+<?/MISQL>
+
 <?MICOMMENT> 
 	  =================
 	  =  ENVIRONMENT  =
@@ -707,6 +811,10 @@ EFFECTS
 
 <?/MIBLOCK>
 
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Starting Condition
+<?/MISQL>
 
 <?MICOMMENT> 
 	  ===============
@@ -730,6 +838,10 @@ EFFECTS
 
 <?/MIBLOCK> 
 
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Starting Figure
+<?/MISQL>
 
 <?MICOMMENT> 
 	  =============
@@ -752,6 +864,10 @@ EFFECTS
 
 <?/MIBLOCK>
 
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Starting Images
+<?/MISQL>
 
 <?MICOMMENT> 
 	  ============
@@ -776,6 +892,12 @@ EFFECTS
 
 <?/MIBLOCK>
 
+
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Starting Experiments
+<?/MISQL>
+
 <?MICOMMENT> 
 	  =================
 	  =  Experiments  =
@@ -796,7 +918,10 @@ EFFECTS
 
 <?/MIBLOCK>
 
-
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Starting Filters
+<?/MISQL>
 <?MICOMMENT> 
 	  =============
 	  =  FILTERS  =
@@ -809,7 +934,7 @@ EFFECTS
 <a name=figure_only>
 <a name=fish_only>
 <br>
-<table border=0 cellpadding=0 bgcolor="#CCCCCC" width=100%>
+<table border=0 cellpadding=0 bgcolor="#33CC99" width=100%>
 <tr>
   <td>
     <b>Show:</b>
@@ -866,7 +991,8 @@ EFFECTS
         where zdb_id in ('$xpcur_G_oid_attrib_csv')
         order by abbrev
         ;">
-         <?MIVAR NAME=fishOption>$2<?/MIVAR>^M
+         <?MIVAR NAME=fishOption>$2<?/MIVAR>
+            <?MIVAR NAME=fishOption DELIMIT="SUP" REPLACE="sup">$fishOption<?/MIVAR>
             <?MIVAR NAME=fishOption DELIMIT="<sup>" REPLACE=" (">$fishOption<?/MIVAR>
             <?MIVAR NAME=fishOption DELIMIT="</sup>" REPLACE=")">$fishOption<?/MIVAR>
       <option value="$1"
@@ -886,10 +1012,21 @@ EFFECTS
       <?/MISQL>
     </select>
   </td>
+  <td>
+    <?MIVAR>
+    auto on: <input type=checkbox name=auto_on $(IF,$(AND,$(XST,$xpcur_c_auto_on),$(EC,$xpcur_c_auto_on,on)),CHECKED)
+                    onClick="if(this.checked==true){setCookie('auto_on','on');}else{setCookie('auto_on','off');}">  
+    <?/MIVAR>
+  </td>  
 </tr>
 </table>
 
 </form>
+
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Starting Panels
+<?/MISQL>
 
 <?MICOMMENT> 
 	  ============
@@ -909,6 +1046,11 @@ EFFECTS
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-xpatcurpanel.apg';">$1<?/MISQL>
 
 <?/MIBLOCK>
+
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Starting Structures
+<?/MISQL>
 
 <?MICOMMENT> 
 	  ================
