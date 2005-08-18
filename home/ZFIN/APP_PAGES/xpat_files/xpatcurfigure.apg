@@ -114,7 +114,7 @@ EFFECTS
   <?MIELSE>
       <td></td>
       <td>Label</td>
-      <td>Caption</td>
+      <td colspan=2>Caption</td>
   <?/MIBLOCK>
     </tr>  
 
@@ -174,7 +174,7 @@ EFFECTS
     <td valign=top> 
         <input name="xpcur_G_fig_label" type=textbox size=5 value="$xpcurfig_fig_label">
     </td>
-    <td valign=top>  $xpcurfig_fig_caption <br>
+    <td valign=top colspan=2>  $xpcurfig_fig_caption <br>
             <?MIVAR NAME=$delimiter>&<?/MIVAR>
             <?MIVAR NAME=$xpcur_G_fig_caption>$(REPLACE,$xpcurfig_fig_caption,&,;;)<?/MIVAR>
        <TEXTAREA name="xpcur_G_fig_caption" cols=85 rows=5
