@@ -53,19 +53,296 @@ EFFECTS
 
 <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
 
+ <style type="text/css"><!--
+    .tbl {
+       width: 100%;
+       border: 0px;
+       border-collapse: collapse;
+       font-family: arial, sans-serif;
+    }
+    --></style>
+
+  
+<script language="javascript">
+    <?MIVAR NAME=xpcurpnlOB>[<?/MIVAR>
+    <?MIVAR NAME=xpcurpnlCB>]<?/MIVAR>
+    
+    var xpcurpnlArray = new Array();
+    var xpcurpnl_array1 = new Array();
+    var xpcurpnl_stage_hours_start = 0.0;
+    var xpcurpnl_stage_hours_end = 0.0;
+    
+    <?MIVAR NAME=xpcurpnl_index>0<?/MIVAR>
+    <?MISQL SQL="
+        select distinct fig_label, fig_zdb_id, xpatex_zdb_id, s1.stg_zdb_id, s2.stg_zdb_id, s1.stg_abbrev, s2.stg_abbrev,
+               zero_pad(fig_label), mrkr_abbrev_order, LOWER(abbrev), s1.stg_hours_start, s2.stg_hours_end
+        from figure, expression_pattern_figure, expression_result, stage as s1, stage as s2, 
+             expression_experiment, marker, feature_experiment, fish
+        where fig_source_zdb_id = '$OID'
+          and xpatex_source_zdb_id = '$OID'
+          and xpatfig_fig_zdb_id = fig_zdb_id
+          and xpatfig_xpatres_zdb_id = xpatres_zdb_id
+          and xpatres_xpatex_zdb_id = xpatex_zdb_id 
+          and xpatex_gene_zdb_id = mrkr_zdb_id
+          and xpatres_start_stg_zdb_id = s1.stg_zdb_id
+          and xpatres_end_stg_zdb_id = s2.stg_zdb_id
+          and xpatex_featexp_zdb_id = featexp_zdb_id
+          and featexp_genome_feature_zdb_id = zdb_id
+          and fig_zdb_id in ('$xpcur_G_fig_attrib_csv')
+          $(IF,$(XST,$xpcur_c_figure_only),and fig_zdb_id = '$xpcur_c_figure_only')
+          $(IF,$(XST,$xpcur_c_gene_only),and xpatex_gene_zdb_id = '$xpcur_c_gene_only')
+          $(IF,$(XST,$xpcur_c_fish_only),and zdb_id = '$xpcur_c_fish_only')
+        order by 8,9,10,11;">
+        
+        <?MIVAR NAME=xpcurpnl_figexp_name>xpcurpnl_figexp_$xpcurpnl_index<?/MIVAR>
+          
+        var $xpcurpnl_figexp_name = new Array();
+        $xpcurpnl_figexp_name$xpcurpnlOB$(+,0,0)$xpcurpnlCB = '$1';
+        $xpcurpnl_figexp_name$xpcurpnlOB$(+,0,1)$xpcurpnlCB = '$2,$3,$4,$5';
+        $xpcurpnl_figexp_name$xpcurpnlOB$(+,0,2)$xpcurpnlCB = '$(REPLACE,$2$3$4$5,"-","")';
+        $xpcurpnl_figexp_name$xpcurpnlOB$(+,0,4)$xpcurpnlCB = '$6';
+        $xpcurpnl_figexp_name$xpcurpnlOB$(+,0,5)$xpcurpnlCB = '$7';
+        $xpcurpnl_figexp_name$xpcurpnlOB$(+,0,6)$xpcurpnlCB = '$2';
+        $xpcurpnl_figexp_name$xpcurpnlOB$(+,0,7)$xpcurpnlCB = '$3';
+        $xpcurpnl_figexp_name$xpcurpnlOB$(+,0,8)$xpcurpnlCB = '$4';
+        $xpcurpnl_figexp_name$xpcurpnlOB$(+,0,9)$xpcurpnlCB = '$5';
+        $xpcurpnl_figexp_name$xpcurpnlOB$(+,0,10)$xpcurpnlCB = $11;
+        $xpcurpnl_figexp_name$xpcurpnlOB$(+,0,11)$xpcurpnlCB = $12;
+
+        <?MISQL SQL="select WebExplode(object,'xpcurexpssdisp_xpatex_zdb_id=$3') from webPages where ID='aa-xpatcurexpssdisplayname.apg';"><?/MISQL>
+        $xpcurpnl_figexp_name$xpcurpnlOB$(+,0,3)$xpcurpnlCB = '$(REPLACE,$xpcurexpssdisp_xpatex_display_name,"&nbsp;"," ")';
+        
+        xpcurpnlArray$xpcurpnlOB$xpcurpnl_index$xpcurpnlCB = $xpcurpnl_figexp_name ;
+        <?MIVAR NAME=xpcurpnl_index>$(+,$xpcurpnl_index,1)<?/MIVAR>
+    <?/MISQL>
+ 
+    var xpcurpnl_Stages = new Array();
+    
+    <?MISQL SQL="
+        select stg_zdb_id, stg_hours_start
+        from stage
+        order by stg_hours_start;">
+        
+        <?MIVAR NAME=xpcurpnl_stg_array>xpcurpnl_stg_$MI_CURRENTROW<?/MIVAR>
+          
+        var $xpcurpnl_stg_array = new Array();
+        $xpcurpnl_stg_array$xpcurpnlOB$(+,0,0)$xpcurpnlCB = '$1';
+        $xpcurpnl_stg_array$xpcurpnlOB$(+,0,1)$xpcurpnlCB = $2;
+ 
+        xpcurpnl_Stages$xpcurpnlOB$(-,$MI_CURRENTROW,1)$xpcurpnlCB = $xpcurpnl_stg_array ;
+    <?/MISQL>
+
+  function set_expression_form(xpcurpnl_id_minus)
+  {
+    var xpcurpnl_form_fig = document.xpcur_G_panel_add.xpcur_G_panel_fig_zdb_id ;
+    var xpcurpnl_form_xpat = document.xpcur_G_panel_add.xpcur_G_panel_add_xpatex ;
+    var xpcurpnl_form_stg_start = document.xpcur_G_panel_add.xpcur_G_panel_add_start_stg ;
+    var xpcurpnl_form_stg_end = document.xpcur_G_panel_add.xpcur_G_panel_add_end_stg ;
+    
+    for(i=0; i<xpcurpnlArray.length; i++) {
+      xpcurpnl_array1 = xpcurpnlArray[i];
+      
+      if (xpcurpnl_array1[2] == xpcurpnl_id_minus)
+      {
+        for(j=0; j<xpcurpnl_form_fig.length; j++)
+        {
+          if (xpcurpnl_form_fig[j].value == xpcurpnl_array1[6])
+          {
+            xpcurpnl_form_fig.selectedIndex = j;
+          }
+        }
+        for(k=0; k<xpcurpnl_form_xpat.length; k++)
+        {
+          if (xpcurpnl_form_xpat[k].value == xpcurpnl_array1[7])
+          {
+            xpcurpnl_form_xpat.selectedIndex = k;
+          }
+        }
+        for(m=0; m<xpcurpnl_form_stg_start.length; m++)
+        {
+          if (xpcurpnl_form_stg_start[m].value == xpcurpnl_array1[8])
+          {
+            xpcurpnl_form_stg_start.selectedIndex = m;
+          }
+        }
+        for(n=0; n<xpcurpnl_form_stg_end.length; n++)
+        {
+          if (xpcurpnl_form_stg_end[n].value == xpcurpnl_array1[9])
+          {
+            xpcurpnl_form_stg_end.selectedIndex = n;
+          }                    
+        }
+      }
+    }
+  }
+  
+
+  function set_selected_expression()
+  {    
+    var expression_selected = document.panel_structures.xpcurstr_expression ;
+    var expression_fig_xpat_stg = document.panel_structures.xpcurstr_fig_xpat_stg ;
+    var expression_count = window.document.hidden_panel.xpcur_G_exp_count ;
+    var expression_checkbox = document.forms['xpcur_exp'].elements ;
+
+    stage_hours_start = 0.0;
+    <?MISQL SQL="
+      select max(stg_hours_end)
+      from stage;">
+              
+      stage_hours_end = $1 ;
+    <?/MISQL>  
+    
+    var expression_display = "";
+    var expression_ids = "";
+    var xpcurpnl_num_checked = 0;
+    var exp_id;
+    var checked_exp = new Array();
+    
+      
+    for(i=0; i<xpcurpnlArray.length; i++) {
+      xpcurpnl_array1 = xpcurpnlArray[i];
+      expid = xpcurpnl_array1[2];
+      
+      for (j=0; j<expression_checkbox.length; j++) {
+    
+        if(expression_checkbox[j].name == expid && expression_checkbox[j].checked == true) 
+        {
+          checked_exp[xpcurpnl_num_checked] = xpcurpnl_array1;
+          xpcurpnl_num_checked++;
+        
+          if (expression_display == "") {
+              expression_display = xpcurpnl_array1[0]+' '+xpcurpnl_array1[3]+' '+xpcurpnl_array1[4];
+              expression_ids = xpcurpnl_array1[1]+'|';
+          }
+          else {
+              expression_display = expression_display+'\n'+xpcurpnl_array1[0]+' '+xpcurpnl_array1[3]+' '+xpcurpnl_array1[4];
+              expression_ids = expression_ids +xpcurpnl_array1[1]+'|';
+          }
+          
+          if ( xpcurpnl_array1[4] != xpcurpnl_array1[5] )
+          {
+              expression_display = expression_display+', '+xpcurpnl_array1[5];
+          
+          }
+
+        }          
+      } //j loop
+    } // i loop
+    
+    expression_selected.value = expression_display;
+    expression_fig_xpat_stg.value = expression_ids;
+    expression_count.value = xpcurpnl_num_checked;
+
+    reset_structures_for_panel(checked_exp,xpcurpnl_num_checked); 
+    
+    setAOStage() ;
+    setExpressionStage() ;
+
+  }
+  
+  function setExpressionStage()
+  {
+        var stage_id;
+        var stage_array = new Array();
+        var expression_stg_start_select = document.xpcur_G_panel_add.xpcur_G_panel_add_start_stg ;
+        var expression_stg_end_select = document.xpcur_G_panel_add.xpcur_G_panel_add_end_stg ;
+      
+        if (stage_hours_start > 0)
+        {
+          for (i=0; i<xpcurpnl_Stages.length; i++)
+          {
+            stage_array = xpcurpnl_Stages[i];
+           
+            if ( stage_hours_start == stage_array[1] )
+            {
+              stage_id = stage_array[0];
+            }
+          }     
+        }
+
+        for (i=0; i<expression_stg_start_select.length; i++)
+        {
+          if (expression_stg_start_select[i].value == stage_id)
+          {
+            expression_stg_start_select.selectedIndex = i ;
+          }
+        }  
+
+        for (i=0; i<expression_stg_end_select.length; i++)
+        {
+          if (expression_stg_end_select[i].value == stage_id)
+          {
+            expression_stg_end_select.selectedIndex = i ;
+          }
+        }  
+  
+  }
+  
+    function setAOStage ()
+    {
+    
+      if (getCookie('xpcur_c_structure') != 'hide')
+      {
+        var stage_id;
+        var stage_array = new Array();
+        var expression_stg_select = document.xpcur_G_panel_add.xpcur_G_panel_add_start_stg ;
+        var AO_stg_select = document.structure2.stage_id ;
+      
+        if (stage_hours_start > 0)
+        {
+          for (i=0; i<xpcurpnl_Stages.length; i++)
+          {
+            stage_array = xpcurpnl_Stages[i];
+           
+            if ( stage_hours_start == stage_array[1] )
+            {
+              stage_id = stage_array[0];
+            }
+          }     
+        }
+      
+        else
+        {       
+          for (i=0; i<expression_stg_select.length; i++)
+          {
+            if (expression_stg_select[i].selected == true)
+            {
+              stage_id = expression_stg_select[i].value ;
+            }
+          }
+        } //else
+        
+        for (i=0; i<AO_stg_select.length; i++)
+        {
+          if (AO_stg_select[i].value == stage_id)
+          {
+            AO_stg_select.selectedIndex = i ;
+          }
+        }
+          
+      } //getCookie
+    } //function
+    
+</script>
+
+
+
 <?MIVAR NAME=xpcurpnl_row_color><?/MIVAR> 
 <?MIVAR NAME=xpcurpnl_prev_fish><?/MIVAR>
 <?MIVAR NAME=xpcurpnl_prev_gene><?/MIVAR>
 <?MIVAR NAME=xpcurpnl_prev_fig><?/MIVAR>
     
-<table width=100% border=0 cellspacing=0 cellpadding=3>
+<table class="tbl" width=100% cellspacing=0 cellpadding=3>
   <tr bgcolor=#CCCCCC>
+    <td>Select</td>
     <td>Figure</td>
     <td>Experiment</td>
     <td>Stage Range</td>
     <td width=25%>Expressed in</td>
     <td>Delete</td>
   </tr>  
+
+<form name="xpcur_exp">
 <?MISQL SQL="
     select distinct fig_zdb_id, fig_label, 
                     xpatres_start_stg_zdb_id, 
@@ -99,17 +376,29 @@ EFFECTS
       <?MIVAR NAME=xpcurpnl_fish>$9<?/MIVAR>
       <?MIVAR NAME=xpcurpnl_gene>$8<?/MIVAR>
 
+      <?MICOMMENT> The panel ID format is Fig,xpatex,sstg,estg. <?/MICOMMENT>
+      <?MIVAR NAME=xpcurpnl_id>$xpcurpnl_fig_zdb_id$xpcurpnl_xpatex_zdb_id$xpcurpnl_start_stg_zdb_id$xpcurpnl_end_stg_zdb_id<?/MIVAR>
+      <?MIVAR NAME=xpcurpnl_id_minus>$(REPLACE,$xpcurpnl_id,"-","")<?/MIVAR>
+      
+      
     <?MIBLOCK COND=$(NC,$9,$xpcurpnl_prev_fish)>
-        <?MIVAR NAME=xpcurpnl_row_color>$(IF,$(EC,$xpcurpnl_row_color,),<!--|HIGHLIGHT_COLOR|-->,)<?/MIVAR>     
+        <?MIVAR NAME=xpcurpnl_row_color>$(IF,$(EC,$xpcurpnl_row_color,<!--|HIGHLIGHT_COLOR|-->),#FFFFFF,<!--|HIGHLIGHT_COLOR|-->)<?/MIVAR>     
     <?MIELSE COND=$(NC,$8,$xpcurpnl_prev_gene)>
-        <?MIVAR NAME=xpcurpnl_row_color>$(IF,$(EC,$xpcurpnl_row_color,),<!--|HIGHLIGHT_COLOR|-->,)<?/MIVAR>     
+        <?MIVAR NAME=xpcurpnl_row_color>$(IF,$(EC,$xpcurpnl_row_color,<!--|HIGHLIGHT_COLOR|-->),#FFFFFF,<!--|HIGHLIGHT_COLOR|-->)<?/MIVAR>     
     <?MIELSE COND=$(NC,$xpcurpnl_fig_zdb_id,$xpcurpnl_prev_fig)>
-        <?MIVAR NAME=xpcurpnl_row_color>$(IF,$(EC,$xpcurpnl_row_color,),<!--|HIGHLIGHT_COLOR|-->,)<?/MIVAR>      
+        <?MIVAR NAME=xpcurpnl_row_color>$(IF,$(EC,$xpcurpnl_row_color,<!--|HIGHLIGHT_COLOR|-->),#FFFFFF,<!--|HIGHLIGHT_COLOR|-->)<?/MIVAR>      
     <?/MIBLOCK>
      
-    <tr bgcolor=$xpcurpnl_row_color>
+    <tr bgcolor='$xpcurpnl_row_color' onmouseover="this.style.background='$xpcur_G_active_row_color';" onmouseout="this.style.background='$xpcurpnl_row_color';">
       <?MISQL SQL="
-        select start.stg_abbrev ||' '|| start.stg_name_ext, end.stg_abbrev ||' '|| end.stg_name_ext, anatitem_name, xpatres_expression_found, anatitem_name_order
+        select start.stg_abbrev ||' '|| start.stg_name_ext, 
+               end.stg_abbrev ||' '|| end.stg_name_ext, 
+               case anatitem_name
+                 when 'unspecified' then '<font color=orange>unspecified</font>'
+                 else anatitem_name
+               end,
+               xpatres_expression_found, 
+               anatitem_name_order
         from expression_pattern_figure, expression_result, anatomy_item, stage as start, stage as end       
         where xpatfig_fig_zdb_id = '$xpcurpnl_fig_zdb_id'
           and xpatfig_xpatres_zdb_id = xpatres_zdb_id
@@ -131,10 +420,13 @@ EFFECTS
           <?MISQL SQL="select WebExplode(object,'xpcurexpssdisp_xpatex_zdb_id=$xpcurpnl_xpatex_zdb_id') from webPages where ID='aa-xpatcurexpssdisplayname.apg';"><?/MISQL>
           <?MIVAR NAME=xpcurpnl_xpatex_display_name>$xpcurexpssdisp_xpatex_display_name<?/MIVAR>
           <?MIVAR>
-            <td valign=top>$xpcurpnl_fig_label</td>
-            <td valign=top>$xpcurpnl_xpatex_display_name</td>    
-            <td valign=top>$xpcurpnl_start_stg $(IF,$(NE,$xpcurpnl_start_stg,$xpcurpnl_end_stg),- <br>$xpcurpnl_end_stg)</td>
-            <td valign=top>$xpcurpnl_expression_found$xpcurpnl_anatitem_name
+            <td valign=top><input name="$xpcurpnl_id_minus" type=checkbox onClick="if(this.checked==true){set_expression_form('$xpcurpnl_id_minus');}set_selected_expression();"></td>
+            <td valign=top onClick="document.xpcur_exp.$xpcurpnl_id_minus.click();" >$xpcurpnl_fig_label</td>
+            <td valign=top onClick="document.xpcur_exp.$xpcurpnl_id_minus.click();" >
+              $xpcurpnl_xpatex_display_name
+            </td>    
+            <td valign=top onClick="document.xpcur_exp.$xpcurpnl_id_minus.click();" >$xpcurpnl_start_stg $(IF,$(NE,$xpcurpnl_start_stg,$xpcurpnl_end_stg),- <br>$xpcurpnl_end_stg)</td>
+            <td valign=top onClick="document.xpcur_exp.$xpcurpnl_id_minus.click();" >$xpcurpnl_expression_found$xpcurpnl_anatitem_name
           <?/MIVAR>
         <?MIELSE>  
           <?MIVAR>, $xpcurpnl_expression_found$xpcurpnl_anatitem_name<?/MIVAR>  
@@ -151,10 +443,11 @@ EFFECTS
     <?MIVAR NAME=xpcurpnl_prev_gene>$xpcurpnl_gene<?/MIVAR>
     <?MIVAR NAME=xpcurpnl_prev_fig>$xpcurpnl_fig_zdb_id<?/MIVAR>
     
-<?/MISQL>    
+<?/MISQL>
+</form>
 <?MICOMMENT> ==| Enter a New Panel |== <?/MICOMMENT>
   <tr>
-    <td colspan=5>
+    <td colspan=6>
       <hr>
     </td>
   </tr>
@@ -162,7 +455,7 @@ EFFECTS
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg"> 
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
   <tr>
-    <td>
+    <td colspan=2>
       <input name="xpcur_G_panel_add" type=submit value="Add">
 
         <select name="xpcur_G_panel_fig_zdb_id">
@@ -194,23 +487,23 @@ EFFECTS
           <?/MISQL>
       </select></td>
     <td colspan=3> 
-        Start: <select name="xpcur_G_panel_add_start_stg" onChange="setEndStage('xpcur_G_panel_add','xpcur_G_panel_add_start_stg','xpcur_G_panel_add_end_stg');">
+        Start: <select name="xpcur_G_panel_add_start_stg" onChange="setEndStage('xpcur_G_panel_add','xpcur_G_panel_add_start_stg','xpcur_G_panel_add_end_stg');setAOStage();">
           <?MISQL SQL="
-            select stg_zdb_id, stg_name_long, stg_hours_start
+            select stg_zdb_id, stg_abbrev, stg_name_ext
 	      from stage
 	     where stg_name <> 'Unknown' 
             order by stg_hours_start;">
-            <option value="$1" $(IF,$(AND,$(XST,$xpcur_G_panel_add_start_stg),$(EC,$xpcur_G_panel_add_start_stg,$1)),SELECTED)>$2</option>
+            <option value="$1" $(IF,$(AND,$(XST,$xpcur_G_panel_add_start_stg),$(EC,$xpcur_G_panel_add_start_stg,$1)),SELECTED)>$2 $3</option>
           <?/MISQL>
       </select>
       <br>
       End: <select name="xpcur_G_panel_add_end_stg">
           <?MISQL SQL="
-            select stg_zdb_id, stg_name_long, stg_hours_end
+            select stg_zdb_id, stg_abbrev, stg_name_ext
 	      from stage
 	     where stg_name <> 'Unknown' 
             order by stg_hours_end;">
-            <option value="$1" $(IF,$(AND,$(XST,$xpcur_G_panel_add_end_stg),$(EC,$xpcur_G_panel_add_end_stg,$1)),SELECTED)>$2</option>
+            <option value="$1" $(IF,$(AND,$(XST,$xpcur_G_panel_add_end_stg),$(EC,$xpcur_G_panel_add_end_stg,$1)),SELECTED)>$2 $3</option>
           <?/MISQL>
       </select>
     </td>
