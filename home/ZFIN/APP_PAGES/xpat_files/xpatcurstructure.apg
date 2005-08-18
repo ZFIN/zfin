@@ -62,40 +62,132 @@ EFFECTS
 
   <script type="text/javascript" language="javascript">
 
+    function updateInnerHTML(element_id,html_to_display) {
+        var c1 = document.getElementById(element_id);
+        c1.innerHTML = html_to_display;
+    }
+
+    <?MIVAR NAME=xpcurstrOB>[<?/MIVAR>
+    <?MIVAR NAME=xpcurstrCB>]<?/MIVAR>
+    
+    var xpatinfArray = new Array();
+    var array1 = new Array();
+    var stage_hours_start = 0.0;
+    <?MISQL SQL="
+      select max(stg_hours_end)
+      from stage;">
+              
+      var stage_hours_end = $1 ;
+    <?/MISQL>    
+    
+    <?MISQL SQL="
+        select xpatinf_zdb_id, s1.stg_hours_start, s2.stg_hours_end, 
+           case anatitem_name
+             when 'unspecified' then '<font color=orange>unspecified</font>'
+             else anatitem_name
+           end
+        from expression_pattern_infrastructure, anatomy_item, stage s1, stage s2
+        where xpatinf_pub_zdb_id = '$OID'
+          and xpatinf_anatitem_zdb_id = anatitem_zdb_id
+          and anatitem_start_stg_zdb_id = s1.stg_zdb_id
+          and anatitem_end_stg_zdb_id = s2.stg_zdb_id;">
+        <?MIVAR NAME=xpcurstr_xpatinf_zdb_minus>$(REPLACE,$1,"-","")<?/MIVAR>        
+          
+        var xpinf$xpcurstr_xpatinf_zdb_minus = new Array();
+        xpinf$xpcurstr_xpatinf_zdb_minus$xpcurstrOB$(+,0,0)$xpcurstrCB = 'str$xpcurstr_xpatinf_zdb_minus';
+        xpinf$xpcurstr_xpatinf_zdb_minus$xpcurstrOB$(+,0,1)$xpcurstrCB = $2 ;
+        xpinf$xpcurstr_xpatinf_zdb_minus$xpcurstrOB$(+,0,2)$xpcurstrCB = $3 ;
+        xpinf$xpcurstr_xpatinf_zdb_minus$xpcurstrOB$(+,0,3)$xpcurstrCB = '$(REPLACE,$4,"'","\'")';
+        xpinf$xpcurstr_xpatinf_zdb_minus$xpcurstrOB$(+,0,4)$xpcurstrCB = '$1';
+        
+        xpatinfArray$xpcurstrOB$(-,$MI_CURRENTROW,1)$xpcurstrCB = xpinf$xpcurstr_xpatinf_zdb_minus ;
+    <?/MISQL>
+
+    var xpressArray = new Array();
+    var array2 = new Array();
+    
+    <?MIVAR NAME=xpcurstr_xpress_index>0<?/MIVAR>  
+    <?MISQL SQL="
+          SELECT distinct xpatfig_fig_zdb_id, xpatex_zdb_id, xpatres_start_stg_zdb_id, xpatres_end_stg_zdb_id
+            FROM expression_experiment, expression_pattern_figure, expression_result
+           WHERE xpatres_zdb_id = xpatfig_xpatres_zdb_id
+             AND xpatex_source_zdb_id = '$OID'
+             AND xpatex_zdb_id = xpatres_xpatex_zdb_id
+             $(IF,$(XST,$xpcur_c_gene_only),and xpatex_gene_zdb_id = '$xpcur_c_gene_only')
+             ;">
+
+          <?MIVAR NAME=xpcurstr_fig_zdb_id>$1<?/MIVAR>
+          <?MIVAR NAME=xpcurstr_xpatex_zdb_id>$2<?/MIVAR>
+          <?MIVAR NAME=xpcurstr_sstage_zdb_id>$3<?/MIVAR>
+          <?MIVAR NAME=xpcurstr_estage_zdb_id>$4<?/MIVAR>   
+           
+          <?MIVAR NAME=xpcurstr_xpress_name>xpress$xpcurstr_xpress_index<?/MIVAR>
+          <?MIVAR NAME=xpcurstr_anat_count>0<?/MIVAR>
+          
+        var $xpcurstr_xpress_name = new Array();
+        $xpcurstr_xpress_name$xpcurstrOB$(+,0,0)$xpcurstrCB = '$1$2$3$4';
+        
+          <?MISQL SQL="
+            SELECT distinct xpatinf_zdb_id, anatitem_name
+              FROM expression_pattern_infrastructure, anatomy_item,
+                   expression_result, expression_pattern_figure
+             WHERE xpatinf_anatitem_zdb_id = xpatres_anat_item_zdb_id
+               AND xpatinf_anatitem_zdb_id = anatitem_zdb_id
+               AND xpatinf_expressed = xpatres_expression_found
+               AND xpatinf_pub_zdb_id = '$OID'
+               AND xpatres_zdb_id = xpatfig_xpatres_zdb_id
+               AND xpatfig_fig_zdb_id = '$xpcurstr_fig_zdb_id'
+               AND xpatres_xpatex_zdb_id = '$xpcurstr_xpatex_zdb_id'
+               AND xpatres_start_stg_zdb_id = '$xpcurstr_sstage_zdb_id'
+               AND xpatres_end_stg_zdb_id = '$xpcurstr_estage_zdb_id'
+             ORDER BY anatitem_name;"> 
+        
+            <?MIVAR NAME=xpcurstr_anat_count>$(+,$xpcurstr_anat_count,1)<?/MIVAR>
+            $xpcurstr_xpress_name$xpcurstrOB$xpcurstr_anat_count$xpcurstrCB = '$1'
+            
+          <?/MISQL>
+        xpressArray$xpcurstrOB$xpcurstr_xpress_index$xpcurstrCB = $xpcurstr_xpress_name ;
+        
+        
+        <?MIVAR NAME=xpcurstr_xpress_index>$(+,$xpcurstr_xpress_index,1)<?/MIVAR> 
+    <?/MISQL>
+
     function openChild(childWinUrl,childWinName) {
       window.name = "expressionCuration";  //name parent window
-      if (!self.childWindow) {      
+      if (!self.childWindow) {     
         childWindow=open(childWinUrl,childWinName, 'resizable=yes,width=800,height=400,scrollbars=1');
+        childWindow.focus();
       }
       else {
         childWindow.focus();
+        childWindow=open(childWinUrl,childWinName, 'resizable=yes,width=800,height=400,scrollbars=1');
       }
       if (childWindow.opener == null) childWindow.opener = self;
       
     }
 
     //structures are a dynamic set
-    function dynamic_set_value_selection(dynamic_field,offset,span) {
+    function dynamic_set_value_selection(dynamic_field) {
       var structures_add = '';
       var structures_remove = '';
-      var end = parseInt(offset)+parseInt(span)*2;
       //alert("(offset,span) = ("+offset+","+span+")");
-      for (i=offset; i<end; i++) {
+      for (i=0; i<dynamic_field.length; i++) {
         if (dynamic_field[i].checked) {
           if (dynamic_field[i].value == "add") {
             if (structures_add == "") { structures_add = dynamic_field[i].name; }
             else { structures_add = structures_add+"|"+dynamic_field[i].name; }
           }
           else {
-            if (structures_remove == "") { structures_remove = dynamic_field[i].name; }
-            else { structures_remove = structures_remove+"|"+dynamic_field[i].name; }
+            if (dynamic_field[i].value == "remove") {
+              if (structures_remove == "") { structures_remove = dynamic_field[i].name; }
+              else { structures_remove = structures_remove+"|"+dynamic_field[i].name; }
+            }
           }
         }
       }
       
-      if (structures_add != '') {
-        panelIndex = document.panel_structures.xpcurstr_fig_xpat_stg.selectedIndex;
-        fig_xpat_stg = document.panel_structures.xpcurstr_fig_xpat_stg.options[panelIndex].value;
+      if (structures_add != '' || structures_remove != '') {
+        fig_xpat_stg = document.panel_structures.xpcurstr_fig_xpat_stg.value;
         
         window.document.hidden_panel.xpcur_G_structures_add.value = structures_add;
         window.document.hidden_panel.xpcur_G_structures_remove.value = structures_remove;
@@ -107,30 +199,10 @@ EFFECTS
 
       }
       else {
-        alert('At least one item must be associated with a panel. Use the Delete button to remove a panel.')
+        alert('Please select a structure by clicking a radio button.')
       }
     
     }
-
-    function StringTokenizer (material, separator)
-    {
-       // Attributes.
-       this.material = material;
-       this.separator = separator;
-
-       // Operations.
-       this.getTokens = getTokens;
-       this.nextToken = nextToken;
-       this.countTokens = countTokens;
-       this.hasMoreTokens = hasMoreTokens;
-       this.tokensReturned = tokensReturned;
-
-       // Initialisation code.
-       this.tokens = this.getTokens();
-       this.tokensReturned = 0; 
-
-    }  // end constructor
-
 
     function trim (strToTrim) {
        return(strToTrim.replace(/^\s+|\s+$/g, ''));
@@ -141,211 +213,172 @@ EFFECTS
        return unescape(str.replace(/\+/g, " "));
     }
 
-    function getTokens()
-    {
-       // Create array of tokens.
-       var tokens = new Array();
-       var nextToken;
 
-       // If no separators found, single token is the material string itself.
-    	if (this.material.indexOf (this.separator) < 0)
-    	{
-    		tokens [0] = this.material;
-    		return tokens;
-    	}  // end if
-
-       // Establish initial start and end positions of the first token.
-       start = 0;
-       end = this.material.indexOf (this.separator, start);
-
-       // Counter for how many tokens were found.
-       var counter = 0;
-
-       // Go through material, token at a time.
-     	while (this.material.length - start > 1)
-    	{
-		nextToken = this.material.substring (start, end);
-		start = end + 1;
-		if (this.material.indexOf (this.separator, start + 1) < 0)
-		{
-			end = this.material.length;
-		}  // end if
-		else
-		{
-			end = this.material.indexOf (this.separator, start + 1);
-		}  // end else
-
-          tokens [counter] = trim (nextToken);
-
-		counter ++;
-	}   // end if
-
-       // Return the initialised array.
-       return tokens;
-
-
-    }  // end getTokens function
-
-
-
-    function countTokens()
-    {
-      return this.tokens.length;
-    }  // end countTokens function
-
-
-
-
-    function nextToken()
-    {
-
-       if (this.tokensReturned >= this.tokens.length)
-       {
-          return null;
-       }  // end if
-       else
-       {
-          var returnToken = this.tokens [this.tokensReturned];
-          this.tokensReturned ++;
-          return returnToken;
-       }  // end else
-
-    }  // end nextToken function
-
-
-
-
-    function hasMoreTokens()
-    {
-       if (this.tokensReturned < this.tokens.length)
-       {
-          return true;
-       }  // end if
-       else
-       {
-          return false;
-       }  // end else
-    }  // end hasMoreTokens function
-
-    function tokensReturned()
-    {
-       return this.tokensReturned;
-    }  // end tokensReturned function
-    
 
     //reset checked structures when experiment is selected.
     
-    function reset_structures_for_panel(xpat_panel_fig_image_string) {
-          
-      var separator = ",";
-      var decodeStr = URLDecode(xpat_panel_fig_image_string) + ",";
-      var tokenizer = new StringTokenizer ( decodeStr, separator );
-      var count = 0;
-      var xpatex_zdb = "";
-      var panel = "";
-      var figure_zdb = "";
-      var image_zdb = "";
-      
-      while (count < 4)
+    function reset_structures_for_panel(fig_xpat_stg_selected_array, num_expression) 
+    {
+                  
+      var xpinfDisplay;
+      for(z=0; z<xpatinfArray.length; z++)
       {
-        if (count == 1) { var xpatex_zdb = tokenizer.nextToken(); }
-        
-        if (count == 0) { var fig_zdb = tokenizer.nextToken(); }
-        
-        if (count == 2) { var sstage_zdb = tokenizer.nextToken(); }
-        
-        if (count == 3) { var estage_zdb = tokenizer.nextToken(); }
-        
-        count++;
-      }
-      
-      //alert("xpat = "+xpatex_zdb+ "\nfig = "+figimgpan_zdb_id+ "\nsstage = "+sstage_zdb_id+ "\nestage = "+estage_zdb_id);
-      
-      <?MICOMMENT>
-          This is problem of finding the overlap of two list. One list is
-          experiments - defined as a combination of figure / experiment/ stage.
-          The other list is structures - defined as a combination of pub,
-          curator, and anatomy_item. The input is an experiment so it makes 
-          more sense to group by experiment first.
-          
-          Select each distinct set of {figure,experiment,stage}. Then for each
-          set, loop through the structures in expression_pattern_infrastructure. 
-          If the structure belongs to the experiment then set the radio button 
-          to ADD. Otherwise set the radio button to remove.
-          
-          Radio buttons are array objects. In the form on this page the ADD
-          button is listed first, so ADD is element 0 and remove is element 1.
-      <?/MICOMMENT>
-      
-          <?MICOMMENT>
-              This comment should be inside the following SQL. However, all web 
-              datablade code inside the SQL block which executes after the       
-              micomment is no longer interpreted when the micomment is inside the
-              SQL tag.
-                
-                    The '{' character causes strange behavior with the query results 
-                    when it is not encapsulated by a variable.
+        array1 = xpatinfArray[z];
+
+        document.forms['panel_structures'].elements[array1[4]][0].click();                
+      }              
+            
+                      
+          var xpressStructure = new Array();
+          var exp_checked = new Array();
+          var str_checked = new Array();
+          var str_checked_index = 0;
                     
-                    The Curious programmer can replace the variable $loopEntryCondition 
-                    with the logic... gmake the file... refresh the web page... view 
-                    the source.
-          <?/MICOMMENT>
-      <?MISQL SQL="
-          SELECT distinct xpatfig_fig_zdb_id, xpatex_zdb_id, xpatres_start_stg_zdb_id, xpatres_end_stg_zdb_id
-            FROM expression_experiment, expression_pattern_figure, expression_result, fish, feature_experiment
-           WHERE xpatres_zdb_id = xpatfig_xpatres_zdb_id
-             AND xpatex_source_zdb_id = '$OID'
-             AND xpatex_zdb_id = xpatres_xpatex_zdb_id
-             AND xpatex_featexp_zdb_id = featexp_zdb_id
-             AND featexp_genome_feature_zdb_id = zdb_id
-             $(IF,$(XST,$xpcur_c_gene_only),and xpatex_gene_zdb_id = '$xpcur_c_gene_only')
-             $(IF,$(XST,$xpcur_c_fish_only),and zdb_id = '$xpcur_c_fish_only')
-             ;">
+      for(i=0; i<fig_xpat_stg_selected_array.length; i++)
+      {
+          exp_checked = fig_xpat_stg_selected_array[i];       
 
-          <?MIVAR NAME=xpcurstr_fig_zdb_id>$1<?/MIVAR>
-          <?MIVAR NAME=xpcurstr_xpatex_zdb_id>$2<?/MIVAR>
-          <?MIVAR NAME=xpcurstr_sstage_zdb_id>$3<?/MIVAR>
-          <?MIVAR NAME=xpcurstr_estage_zdb_id>$4<?/MIVAR>          
-
-          <?MIVAR NAME=loopEntryCondition>
-            if (fig_zdb == '$xpcurstr_fig_zdb_id' 
-                && xpatex_zdb == '$xpcurstr_xpatex_zdb_id' 
-                && sstage_zdb == '$xpcurstr_sstage_zdb_id' 
-                && estage_zdb == '$xpcurstr_estage_zdb_id') {
-          <?/MIVAR>
-          <?MIVAR NAME=closingBracket>}<?/MIVAR>
-          
-          $loopEntryCondition
+          for (j=0; j<xpressArray.length; j++)
+          {
+            xpressStructure = xpressArray[j];
+            
+            if (exp_checked[6]+exp_checked[7]+exp_checked[8]+exp_checked[9] == xpressStructure[0])
+            {
+                if (stage_hours_start < exp_checked[10])
+                {
+                  stage_hours_start = exp_checked[10];
+                }
+                if (stage_hours_end > exp_checked[11])
+                {
+                  stage_hours_end = exp_checked[11];
+                }
+                
+                for (k=1; k<xpressStructure.length; k++)
+                {
+                  str_checked[str_checked_index] = xpressStructure[k];
+                  str_checked_index++;
+                  
+                } //for each expressed structure
+            
+            } //if checked == structure
+            
+          } //for structures
+      } //for checked
+      
+                  
+      for(y=0; y<xpatinfArray.length; y++)
+      {
+        array1 = xpatinfArray[y];
+        xpinfDisplay = array1[3];
+        var item_start_hour = eval(array1[1]);
+        var item_end_hour = eval(array1[2]);
         
-          <?MISQL SQL="
-            SELECT distinct xpatinf_zdb_id, xpatres_zdb_id
-              FROM expression_pattern_infrastructure, OUTER(expression_result, expression_pattern_figure, expression_experiment)
-             WHERE xpatinf_anatitem_zdb_id = xpatres_anat_item_zdb_id
-               AND xpatinf_expressed = xpatres_expression_found
-               AND xpatinf_pub_zdb_id = '$OID'
-               AND xpatres_zdb_id = xpatfig_xpatres_zdb_id
-               AND xpatfig_fig_zdb_id = '$xpcurstr_fig_zdb_id'
-               AND xpatres_xpatex_zdb_id = '$xpcurstr_xpatex_zdb_id'
-               AND xpatres_start_stg_zdb_id = '$xpcurstr_sstage_zdb_id'
-               AND xpatres_end_stg_zdb_id = '$xpcurstr_estage_zdb_id';">
+        if (num_expression != 0)
+        {
+              if ( stage_hours_start < stage_hours_end )
+              {                
+                if (item_start_hour <= stage_hours_start && item_end_hour > stage_hours_start)
+                {
+                  xpinfDisplay = '<b>'+array1[3]+'</b>';                
+                }
+              
+                else
+                { 
+                  if (item_start_hour < stage_hours_end && item_end_hour >= stage_hours_end)
+                  {
+                    xpinfDisplay = '<b>'+array1[3]+'</b>';
+                  }
+              
+                  else
+                  {
+                    if (item_start_hour < stage_hours_end && item_end_hour > stage_hours_start)
+                    {
+                      xpinfDisplay = '<b>'+array1[3]+'</b>';
+                    }
+                  }
+                }
+              }
+              else
+              {
+                if (item_start_hour < stage_hours_end && item_end_hour > stage_hours_start)
+                {
+                  xpinfDisplay = '<b>'+array1[3]+'</b>';
+                }
+              
+              }
+        }      
+        updateInnerHTML(array1[0],xpinfDisplay);  
+      }  
+      
 
-            <?MIBLOCK COND=$(NC,$2,NULL)> 
-              document.forms['panel_structures'].elements['<?MIVAR>$1<?/MIVAR>'][0].click();          
-            <?MIELSE> 
-              document.forms['panel_structures'].elements['<?MIVAR>$1<?/MIVAR>'][1].click();
-            <?/MIBLOCK>   
-          <?/MISQL>
+      if ( num_expression != 0 )
+      {
+          for(m=0; m<xpatinfArray.length; m++)
+          {
+            array1 = xpatinfArray[m];
+            var count = 0;
+        
+            for(n=0; n<str_checked.length; n++)
+            {
+              if (array1[4] == str_checked[n])
+              {
+                count++;
+              }        
+            }
           
-          $closingBracket
-      <?/MISQL>
-    }    
+            if (count == num_expression)
+            {
+              document.forms['panel_structures'].elements[array1[4]][2].click();
+            } 
+          }
+      }
 
-  </script>
+    } //function    
+
+        
+    function openAO () 
+    {
+      
+        var stage = document.structure2.stage_id.value;
+        openChild('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=search&type=select&OID='+stage,'AO');
+      
+    }
     
-<form name=hidden_panel action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=<?MIVAR>$OID<?/MIVAR>#structure" method=post>
+    function increment_radio_button(radio)    
+    {
+      var max = radio.length -1 ;    
+      var selectIndex = max;
+      
+      for (i=1; i<=max; i++)
+      {
+        if(radio[i].checked == true)
+        {
+          selectIndex = i-1;
+        }
+      }
+
+      radio[selectIndex].click();
+      
+    }
+  </script>
+
+<script src="http://<!--|DOMAIN_NAME|-->/autosuggest.js"></script>
+
+<?MIVAR NAME=anatdict_anatList><?/MIVAR>
+
+<?MISQL SQL="
+	select anatitem_name, anatitem_name_lower as name_lower_column 
+	  from anatomy_item 
+        order by name_lower_column;">
+   <?MIVAR NAME=xpcurstr_curAnat>"$1"<?/MIVAR>
+   <?MIVAR>$(SETVAR,$xpcurstr_anatList,$(IF,$(NC,$MI_CURRENTROW,1),$xpcurstr_anatList",")$xpcurstr_curAnat)<?/MIVAR>
+<?/MISQL>
+    
+<form name=hidden_panel action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=<?MIVAR>$OID<?/MIVAR><?MISQL SQL="execute function get_time();">&rand=$1<?/MISQL>#structure" method=post>
   <input type=hidden name=xpcur_G_structures_add value="">
   <input type=hidden name=xpcur_G_structures_remove value="">   
   <input type=hidden name=xpcur_G_fig_xpat_stg value=""> 
+  <input type=hidden name=xpcur_G_exp_count value=""> 
   <input type=hidden name=MIval value="aa-xpatcuration.apg">
   <input type=hidden name=OID value="<?MIVAR>$OID<?/MIVAR>">
 </form>
@@ -355,62 +388,44 @@ EFFECTS
 <table width=100% border=0 cellspacing=0 cellpadding=3>
 <form name=panel_structures>
   <tr>
-    <td colspan=3>
-<input type=button value="Update Structures for Experiment" onClick="if (document.panel_structures.xpcurstr_fig_xpat_stg.value != '---'){dynamic_set_value_selection(document.panel_structures.elements,'2',document.panel_structures.xpcurstr_field_count.value);}">
-<select name=xpcurstr_fig_xpat_stg onChange="reset_structures_for_panel(this.value);">
-  <option value="---">---------------------------------</option>
-  <?MISQL SQL="
-    select distinct xpatex_zdb_id, fig_label, fig_zdb_id, xpatres_start_stg_zdb_id, xpatres_end_stg_zdb_id, s.stg_hours_start, mrkr_abbrev_order, s.stg_abbrev, e.stg_abbrev, LOWER(abbrev)
-    from expression_experiment, expression_result, figure, expression_pattern_figure, marker, stage s, stage e, feature_experiment, fish
-    where xpatex_source_zdb_id = '$OID'
-      and xpatex_gene_zdb_id = mrkr_zdb_id
-      and xpatex_zdb_id = xpatres_xpatex_zdb_id
-      and xpatres_zdb_id = xpatfig_xpatres_zdb_id
-      and xpatfig_fig_zdb_id = fig_zdb_id
-      and fig_zdb_id in ('$xpcur_G_fig_attrib_csv')
-      and xpatres_start_stg_zdb_id = s.stg_zdb_id
-      and xpatres_end_stg_zdb_id = e.stg_zdb_id
-      and xpatex_featexp_zdb_id = featexp_zdb_id
-      and featexp_genome_feature_zdb_id = zdb_id
-      $(IF,$(XST,$xpcur_c_gene_only),and xpatex_gene_zdb_id = '$xpcur_c_gene_only')
-      $(IF,$(XST,$xpcur_c_fish_only),and zdb_id = '$xpcur_c_fish_only')
-    order by fig_label,mrkr_abbrev_order,10,s.stg_hours_start;">
-      
-    <?MIVAR NAME=xpcurstr_xpatex_zdb_id>$1<?/MIVAR>
-    <?MIVAR NAME=xpcurstr_figure_label>$2<?/MIVAR>
-    <?MIVAR NAME=xpcurstr_figure_zdb_id>$3<?/MIVAR>
-    <?MIVAR NAME=xpcurstr_sstage_zdb_id>$4<?/MIVAR>
-    <?MIVAR NAME=xpcurstr_estage_zdb_id>$5<?/MIVAR>
-    <?MIVAR NAME=xpcurstr_sstage_abbrev>$8<?/MIVAR>
-    <?MIVAR NAME=xpcurstr_estage_abbrev>$9<?/MIVAR>
+    <td colspan=5>
+    <input type=hidden name=xpcurstr_fig_xpat_stg value="">
+<input type=button value="Update Structures for Expression(s)" onClick="if (document.panel_structures.xpcurstr_fig_xpat_stg.value != ''){dynamic_set_value_selection(document.panel_structures.elements);}">
+<br><textarea name=xpcurstr_expression cols=110 rows=3 nowrap></textarea>
 
-    <?MISQL SQL="select WebExplode(object,'xpcurexpssdisp_xpatex_zdb_id=$xpcurstr_xpatex_zdb_id') from webPages where ID='aa-xpatcurexpssdisplayname.apg';">$1<?/MISQL>
-    <?MIVAR NAME=xpcurstr_xpatex_display_name>$xpcurexpssdisp_xpatex_display_name<?/MIVAR>
-    <?MIVAR NAME=xpcurstr_distinct_experiment>$xpcurstr_figure_zdb_id,$xpcurstr_xpatex_zdb_id,$xpcurstr_sstage_zdb_id,$xpcurstr_estage_zdb_id<?/MIVAR>
-    
-    <option value="$xpcurstr_distinct_experiment">$xpcurstr_figure_label - $xpcurstr_xpatex_display_name ($xpcurstr_sstage_abbrev to $xpcurstr_estage_abbrev)</option>
-    
-  <?/MISQL>
-</select>
     </td>
   </tr>
   <tr bgcolor=#CCCCCC>
-    <td>Add/Remove</td>
+
+    <td align=center><b>&Phi;</b></td>
+    <td align=center><b><font color=red>&otimes;</font></b></td>
+    <td align=center><b><font color=green>+</font></b></td>
     <td>Modifier</td>
     <td width=80%>Structure</td>
-    <?MICOMMENT> drop this dangerous delete
-       <td>Delete all expression of this structure for this publication.</td>
-    <?/MICOMMENT>
+
   </tr>  
+  
 <?MIVAR NAME=xpcurstr_previous_anatitem><?/MIVAR>  
 <?MIVAR NAME=xpcurstr_field_count>0<?/MIVAR>  
 <?MIVAR COND=$(NXST,$xpcur_c_anatitem_add_csv) NAME=xpcur_c_anatitem_add_csv><?/MIVAR>
-<?MIVAR COND=$(EC,$debugg,true)>
-  $xpcur_c_anatitem_add_csv<BR>
-<?/MIVAR>
+<?MISQL SQL="
+    select xpatinf_zdb_id
+    from expression_pattern_infrastructure, anatomy_item
+    where xpatinf_pub_zdb_id = '$OID'
+      and xpatinf_anatitem_zdb_id = anatitem_zdb_id
+      and anatitem_name = 'unspecified';">
+    <?MIVAR NAME=xpcurstr_unspecied_id>$1<?/MIVAR>
+<?/MISQL>
+
 <?MIVAR NAME=xpcur_c_anatitem_add_csv DELIMIT="'" REPLACE="">$xpcur_c_anatitem_add_csv<?/MIVAR>  
 <?MISQL SQL="
-    select anatitem_zdb_id, anatitem_name, xpatinf_expressed, anatitem_name_order, xpatinf_zdb_id, s1.stg_abbrev ||' '|| s1.stg_name_ext, s2.stg_abbrev ||' '|| s2.stg_name_ext
+    select anatitem_zdb_id, 
+           case anatitem_name
+             when 'unspecified' then '<font color=orange>unspecified</font>'
+             else anatitem_name
+           end,
+           xpatinf_expressed, anatitem_name_order, xpatinf_zdb_id, 
+           s1.stg_abbrev, s2.stg_abbrev 
     from expression_pattern_infrastructure, anatomy_item, stage s1, stage s2
     where xpatinf_anatitem_zdb_id = anatitem_zdb_id
       and xpatinf_pub_zdb_id = '$OID'
@@ -422,74 +437,115 @@ EFFECTS
     <?MIVAR NAME=$xpcurstr_anatitem_name>$2<?/MIVAR>
     <?MIVAR NAME=$xpcurstr_expression_found>$3<?/MIVAR>
     <?MIVAR NAME=$xpcurstr_xpatinf_zdb_id>$5<?/MIVAR>
+    <?MIVAR NAME=xpcurstr_xpatinf_zdb_minus>$(REPLACE,$5,"-","")<?/MIVAR>
     <?MIVAR NAME=$xpcurstr_start_stg_name>$6<?/MIVAR>
     <?MIVAR NAME=$xpcurstr_end_stg_name>$7<?/MIVAR>
     <?MIVAR>
 
-    <tr bgcolor=$xpcurstr_row_color>
+    <tr bgcolor="$xpcurstr_row_color" 
+        onmouseover="this.style.background='$xpcur_G_active_row_color';" 
+        onmouseout="this.style.background='$xpcurstr_row_color';"
+        >
       <td align=center>
         <input type=radio 
-               name="$xpcurstr_xpatinf_zdb_id" 
-               value="add" 
-               $(IF,$(!=,0,$(POSITION,$xpcur_c_anatitem_add_csv,$xpcurstr_anatitem_zdb_id$xpcurstr_expression_found,1)),CHECKED)>
-        / <input type=radio 
                  name="$xpcurstr_xpatinf_zdb_id" 
-                 value="remove" 
+                 value="ignore" 
                  $(IF,$(=,0,$(POSITION,$xpcur_c_anatitem_add_csv,$xpcurstr_anatitem_zdb_id$xpcurstr_expression_found,1)),CHECKED)>
       </td>
-      <td> $(IF,$(EC,$xpcurstr_expression_found,t),,not detected) </td>
-      <td>
+      <td align=center>
+         <input type=radio 
+                 name="$xpcurstr_xpatinf_zdb_id" 
+                 value="remove">
+      </td>
+      <td align=center>
+         <input type=radio 
+               name="$xpcurstr_xpatinf_zdb_id" 
+               value="add" 
+               <?MIVAR COND="$(AND,$(XST,$xpcurstr_unspecied_id),$(NC,$xpcurstr_xpatinf_zdb_id,$xpcurstr_unspecied_id))">onClick="document.forms['panel_structures'].elements['$xpcurstr_unspecied_id'][1].click();"<?/MIVAR>
+               $(IF,$(!=,0,$(POSITION,$xpcur_c_anatitem_add_csv,$xpcurstr_anatitem_zdb_id$xpcurstr_expression_found,1)),CHECKED)>
+      </td>
+      
+      <td align=center onClick="increment_radio_button(document.forms['panel_structures'].elements['$xpcurstr_xpatinf_zdb_id']);"> $(IF,$(EC,$xpcurstr_expression_found,t),,<font color=red>not</font>) </td>
+      
+      <td onClick="increment_radio_button(document.forms['panel_structures'].elements['$xpcurstr_xpatinf_zdb_id']);">
         <?MIBLOCK COND="$(AND,$(XST,$xpcur_G_structure_add),$(!=,0,$(POSITION,$xpcur_G_structure_add,$xpcurstr_anatitem_zdb_id)))">
-          <?MIVAR><b>$xpcurstr_anatitem_name</b> - $xpcurstr_start_stg_name - $xpcurstr_end_stg_name <?/MIVAR>
+          <?MIVAR><span id="str$xpcurstr_xpatinf_zdb_minus"><b>$xpcurstr_anatitem_name</b></span> ($xpcurstr_start_stg_name - $xpcurstr_end_stg_name) <?/MIVAR>
         <?MIELSE>
-          <?MIVAR>$xpcurstr_anatitem_name - $xpcurstr_start_stg_name - $xpcurstr_end_stg_name <?/MIVAR>
+          <?MIVAR><span id="str$xpcurstr_xpatinf_zdb_minus">$xpcurstr_anatitem_name</span> ($xpcurstr_start_stg_name - $xpcurstr_end_stg_name) <?/MIVAR>
         <?/MIBLOCK>
       </td>
-      <?MICOMMENT> drop the dangerous delete
-        <td colspan=3 align=left>
-          <?MIVAR><input name="delete" type=button value=" X " onClick="deleteZDB('$xpcurstr_xpatinf_zdb_id','anatitem')"><?/MIVAR>
-        </td> 
-      <?/MICOMMENT>
     </tr>
     <?/MIVAR>
-    <?MIVAR NAME=xpcurstr_field_count>$(+,$xpcurstr_field_count,1)<?/MIVAR>
-    <?MIVAR NAME=xpcurstr_row_color>$(IF,$(EC,$xpcurstr_row_color,),<!--|HIGHLIGHT_COLOR|-->,)<?/MIVAR>
+    <?MIVAR NAME=xpcurstr_row_color>$(IF,$(EC,$xpcurstr_row_color,#FFFFFF),<!--|HIGHLIGHT_COLOR|-->,#FFFFFF)<?/MIVAR>
   <?/MISQL>    
 
-  <?MIVAR><input type=hidden name=xpcurstr_field_count value=$xpcurstr_field_count><?/MIVAR>
-
+  <tr>
+    <td colspan=5>
+      <input type=button value="Update Structures for Expression(s)" onClick="if (document.panel_structures.xpcurstr_fig_xpat_stg.value != ''){dynamic_set_value_selection(document.panel_structures.elements);}">
+    </td>
+  </tr>
 
 </form>
 
 
   <tr>
-    <td colspan=3><HR></td>
+    <td colspan=5><HR></td>
   </tr>
 <?MICOMMENT> ==| Enter a New Structure |== <?/MICOMMENT>
 <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#structure" method=post name=structure2 onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','structure');">
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
   <tr>
-    <td>
+    <td colspan=2 valign=top>
       <input name="xpcur_G_structure_add_button" type=submit value="Add">
     </td>
-    <td nowrap> 
-        <input name="structure_expressed" value=t type=radio CHECKED> detected <br> 
-        <input name="structure_expressed" value=f type=radio> Not detected
-    </td>
-    <td align=left>
+    <td colspan=3 align=left>
         <input type=textbox name="xpcur_G_structure_add_name" size=80>
-        <input type=hidden name="xpcur_G_structure_add">
+        <input type=hidden name="xpcur_G_structure_add">   
+        <br>
+        
+	<input name="structure_expressed" value=t type=radio CHECKED> Detected 
+        <input name="structure_expressed" value=f type=radio> <font color=red>not</font>
+    </td>
+  </tr>
+  <tr>
+    <td colspan=5>&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan=4>
+        <a href="javascript:onClick=openAO('stage');">Open AO to stage</a>
     </td>
     <td>
-      &nbsp;
+        
+          <select name=stage_id>
+            <?MISQL SQL="
+              select stg_zdb_id, stg_abbrev, stg_name_ext
+  	      from stage
+              where stg_name <> 'Unknown' 
+              order by stg_hours_start;">
+              <option value="$1" $(IF,$(AND,$(XST,$xpcur_G_panel_add_start_stg),$(EC,$xpcur_G_panel_add_start_stg,$1)),SELECTED)>$2 $3</option>
+            <?/MISQL>        
+          </select>
     </td>
   </tr>
   <tr>
     <td colspan=4>
-      <a href="javascript:onClick=openChild('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=stages&type=select','AO');">Open AO Browser</a>
+        <?MIVAR>
+        Add Term: 
+    </td>
+    <td>
+            <input type=textbox name="xpcur_G_AO_term" id=AOterm size=30>
+            <DIV id="autosuggest"><ul></ul></DIV>
+
+	    <script>
+		  var anatomyList = new Array($xpcurstr_anatList);
+		  new AutoSuggest(document.getElementById("AOterm"),anatomyList);
+            </script>        
+        <?/MIVAR>    
     </td>
   </tr>
-</form> 
+  
+  </form>
+  
 </table>
 <?/MIBLOCK> <?MICOMMENT> end authorize <?/MICOMMENT>
