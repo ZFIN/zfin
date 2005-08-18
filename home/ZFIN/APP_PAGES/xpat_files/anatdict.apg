@@ -35,7 +35,21 @@ document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
 }
 </SCRIPT>
 
-<TITLE>Anatomical Ontology Browser</TITLE>
+<?MIVAR NAME=anatdict_title_ext><?/MIVAR>
+<?MIBLOCK COND="$(AND,$(XST,$mode),$(EC,$mode,search),$(XST,$OID))">
+   
+  <?MISQL SQL="
+      select stg_abbrev, stg_name_ext
+      from stage
+      where stg_zdb_id = '$OID';">
+
+      <?MIVAR NAME=anatdict_title_ext>- $1 $2<?/MIVAR>
+  <?/MISQL>
+<?/MIBLOCK>
+
+<?MIVAR>        
+<TITLE>Anatomical Ontology Browser $anatdict_title_ext</TITLE>
+<?/MIVAR>
 
 <?MICOMMENT>
   ============================================================================
@@ -134,10 +148,6 @@ function updateParent(AOname, AOid) {
         <FONT style="font-weight:bold;">
 	  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 	  [
-	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=stages&type=$type">
-            Browse by Stage
-          </A>
-	  ] &nbsp;&nbsp; [
 	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=search&type=$type">
             Search
           </A>
@@ -155,26 +165,17 @@ function updateParent(AOname, AOid) {
   <TABLE width=100% >
     <TR>
       <TD>
-        <?MIBLOCK COND="$(AND,$(XST,$mode),$(EC,$mode,stages))">
-   
-          <FONT size=2><B>
-	    <a href="/zf_info/zfbook/stages/index.html">Developmental Stage:</a>
-	  </B></FONT><BR>
-          <SELECT name="OID" onChange="document.dictform.mode.value='stages'; document.dictform.submit();">
-            <OPTION VALUE="">Select a stage</OPTION>
-            <?MISQL SQL="
-		select stg_zdb_id, stg_name_long
-		  from stage
-		 where stg_name <> 'Unknown' 
-		order by stg_hours_start, stg_hours_end desc;">
-              <OPTION VALUE="$1"$(IF,$(AND,$(XST,$OID),$(EC,$OID,$1)),SELECTED)>$2</OPTION>
-            <?/MISQL>
-          </select>
-        <?/MIBLOCK>
-
-	<?MIBLOCK COND="$(AND,$(XST,$mode),$(EC,$mode,search))">
-   
-	  <FONT size=2><B>Search Anatomical Ontology:</B></FONT>
+        <?MIBLOCK COND="$(AND,$(XST,$mode),$(EC,$mode,search))">
+      
+          <TABLE border=0 width=100% cellspacing=0 cellpadding=5>
+          <TR bgcolor=<!--|HIGHLIGHT_COLOR|-->>
+            <TD colspan=3>
+              <b>[Search]</b>
+            </TD>
+          </TR>
+          <TR bgcolor=<!--|HIGHLIGHT_COLOR|-->>
+          <TD width=45%>
+	  <FONT size=2><B>Anatomical Term</B></FONT><br>
 	  <DIV id="autosuggest"><ul></ul></DIV>
     	  <INPUT type=text size=30 name=searchterm id=searchterm
 	    	<?MIVAR COND="$(XST,$searchterm)"> value="$searchterm" <?/MIVAR>
@@ -185,14 +186,33 @@ function updateParent(AOname, AOid) {
 		  new AutoSuggest(document.getElementById("searchterm"),anatomyList);
             </script>
 	  <?/MIVAR>
-          <INPUT type="button" value="Search" onclick="document.dictform.mode.value='search';
+          <INPUT type="button" value="Search" onclick="document.dictform.OID.selectedIndex=0;document.dictform.mode.value='search';
 						 document.dictform.submit();">
+
+	  </TD>
+          <TD width=10%>
+            <b>or</b>
+          </TD>
+          <TD width=45%>
+   
+          <FONT size=2><B>
+	    <a href="/zf_info/zfbook/stages/index.html">Developmental Stage</a>
+	  </B></FONT><BR>
+          <SELECT name="OID" onChange="document.dictform.searchterm.value='';document.dictform.mode.value='search'; document.dictform.submit();">
+            <OPTION VALUE="">Select a stage</OPTION>
+            <?MISQL SQL="
+		select stg_zdb_id, stg_name_long
+		  from stage
+		 where stg_name <> 'Unknown' 
+		order by stg_hours_start, stg_hours_end desc;">
+              <OPTION VALUE="$1"$(IF,$(AND,$(XST,$OID),$(EC,$OID,$1)),SELECTED)>$2</OPTION>
+            <?/MISQL>
+          </select>
+          </TD>
+	  </TR>
+	  </TABLE>
+	  
 	<?/MIBLOCK>
-      </TD>
-    </TR>
-    <TR>
-      <TD bgcolor="#CCCCCC">
-        &nbsp;
       </TD>
     </TR>
   </TABLE>
@@ -211,7 +231,7 @@ function updateParent(AOname, AOid) {
 	        ============================================================================
 	      <?/MICOMMENT>
 
-	      <?MIVAR>Search results for <B>$searchterm</B><?/MIVAR>
+	      <?MIVAR>Results for <B>$searchterm</B><?/MIVAR>
 	      <HR width=500 size=1 noshade align=left>
           <?MICOMMENT> encode the variable for searching <?/MICOMMENT>
           <?MIVAR NAME=searchterm DELIMIT="'" REPLACE="''">$searchterm<?/MIVAR>
@@ -295,7 +315,7 @@ function updateParent(AOname, AOid) {
 	    <?/MIBLOCK> <?MICOMMENT> end searchterm exists and is non emptry <?/MICOMMENT>
 	  <?/MIBLOCK> <?MICOMMENT> end mode is search <?/MICOMMENT>
 
-	  <?MIBLOCK COND="$(AND,$(XST,$mode),$(EC,$mode,stages))">
+	  <?MIBLOCK COND="$(AND,$(XST,$mode),$(EC,$mode,search))">
 	    <?MIBLOCK COND="$(XST,$OID)">
 
 	      <?MICOMMENT> 
@@ -308,9 +328,8 @@ function updateParent(AOname, AOid) {
 		<TR>
 		  <TD>
 		    <?MISQL SQL="select stg_name_long from stage where stg_zdb_id = '$OID'"><B>$1</B><?/MISQL>
-		  </TD>
-	          <TD align=left>
-		    <FONT size=2> <B>Highlight terms containing:</B> </FONT> <BR>
+		  <br>
+		    <FONT size=2> Highlight terms containing: </FONT> <BR>
 		    <?MIVAR>
 		      <INPUT type="text" size="20" 
 			     name="highlight_text"
@@ -320,7 +339,7 @@ function updateParent(AOname, AOid) {
                   </TD>
 	        </TR>
               </TABLE>
-	      <HR width=500 size=1 noshade align=left>
+	      <HR width=100% size=1 noshade align=left>
 
 
 	      <TABLE BORDER=0 WIDTH=100%>
