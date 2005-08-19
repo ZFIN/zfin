@@ -1,21 +1,26 @@
 #!/private/bin/perl -w
-
+#
+# FILE: blast2tab.pl
+#
 # Parse the blast output into table format  
 #
+# INPUT: 
+#       STDIN blast result file
+# OUTPUT:
+#        table format blast result
+#
+use strict;
 
 use LWP::Simple;
 use Getopt::Std;
-use vars qw($opt_p $opt_b $opt_e $opt_m $opt_n $opt_d $opt_h $opt_l);
-getopts('p:b:e:m:n:d:l:h');
+use vars qw($opt_p $opt_b $opt_e $opt_m $opt_n $opt_h $opt_l);
+getopts('p:b:e:m:n:l:h');
 
 my $usage =<<END;
 Usage :
        blast2unl.pl [options]  < inputfile 
 
  Options:
-  -d   database used in the blast. 
-         gb (default) = GenBank 
-         sp = SwissProt/TrEMBL
   -p   percentage threshold
   -b   bits threshold
   -e   expect value threshold
@@ -32,55 +37,40 @@ my $BITS    = $opt_b ? $opt_b : 0;
 my $EXPECT  = $opt_e ? $opt_e : 1e30;
 my $START   = $opt_m ? $opt_m : 0;
 my $END     = $opt_n ? $opt_n : 1e30;
-my $BLASTDB = $opt_d ? $opt_d : "gb";
 my $LENGTH  = $opt_l ? $opt_l : 0;
 
-my ($Query, $Sbjct, $queryLength, $sbjctLength, $subjectdef);
+my ($Query, $Sbjct, $queryLength, $sbjctLength, $subjectdef, $sbjctAccession, @sbjctArray);
 my $HSP = "";
 
 while (<>) {
-   
+    
     if (/^Query=\s+(\S+)/) {
-		my $querydef = $1;  # save var right away
-		outputHSP(  ); 
-  
-		($Query) = $querydef =~ /gb\|(\w+)/;   #gb accession
+	my $querydef = $1;  # save var right away
+	outputHSP(  ); 
+	
+	($Query) = $querydef =~ /gb\|(\w+)/;   #gb accession
     }
     elsif (/^\s+\((\d+)\s+letters/) {
-		$queryLength = $1;
+	$queryLength = $1;
     }
     elsif (/^>(.+)$/) {
-		$subjectdef = $1; chomp $subjectdef; 
-		outputHSP(  ); 
-
-		while (<>) {
-			if (/Length = (\d+)/) {
-				$sbjctLength = $1;
-				last;
-			}else {
-				s/^\s*//; s/\s*$//;
-				$subjectdef .= " ".$_;
-			}
-		}
-
-		if ($subjectdef =~ /complete cds/ ||
-			$subjectdef =~ /partial cds/ ||
-			$subjectdef =~ /mRNA sequence/ ) {
-			
-				$sbjctType = "cdna";
-			}else {
-				$sbjctType = "genomic";
-			}
+	$subjectdef = $1; chomp $subjectdef; 
+	outputHSP(  ); 
 	
-		if ($BLASTDB eq "gb") {
-			($Sbjct) = $subjectdef =~ /[gb|emb]\|(\w+)/;
-		}
-		if ($BLASTDB eq "sp") {
-			($Sbjct) = $subjectdef =~ /sp\|(\w+)/;
-		}
-		
+	while (<>) {
+	    if (/Length = (\d+)/) {
+		$sbjctLength = $1;
+		last;
+	    }else {
+		s/^\s*//; s/\s*$//;
+		$subjectdef .= " ".$_;
+	    }
+	}
+	($sbjctAccession) = split(/ /, $subjectdef); #get the accession part
+	@sbjctArray = split(/[\|\.]/,$sbjctAccession);
+	$Sbjct = $sbjctArray[1] ? $sbjctArray[1] : $sbjctArray[0] ;  	
     }
-	elsif (/^ Score = /) {
+    elsif (/^ Score = /) {
         outputHSP(  );
         my @stat = ($_);
         while (<>) {
@@ -126,9 +116,8 @@ sub outputHSP {
 		$HSP->{mismatch},
         countGaps($HSP->{q_align}) + countGaps($HSP->{s_align}),
         $HSP->{q_begin}, $HSP->{q_end}, $HSP->{s_begin}, $HSP->{s_end},
-        $HSP->{expect}, $HSP->{bits}, $sbjctType)."|\n";
+        $HSP->{expect}, $HSP->{bits})."|\n";
     $HSP = "";
-    $sbjctType = "genomic"; 
 }
 
 sub countGaps {

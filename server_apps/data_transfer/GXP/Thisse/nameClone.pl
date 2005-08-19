@@ -1,5 +1,7 @@
 #!/private/bin/perl -w
 #
+# FILE: nameClone.pl
+#
 # Usage:  nameClone.pl  dbname
 #
 # Read in: probes.raw
@@ -19,7 +21,7 @@
 #          acc4blast.txt     accessions need blast efforts 
 #          (acc_imClone.unl   image clone name definition from xdget )
 #
-
+use strict;
 use DBI;
 
 #====================================

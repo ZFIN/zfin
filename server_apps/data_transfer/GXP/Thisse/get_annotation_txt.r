@@ -25,7 +25,9 @@ foreach adir read %.[
 			]
 			if find words "null" [
 				print join f " has null string"
-			] 
+			]
+			
+ 
 		]
 		[]
 	 ]

@@ -39,13 +39,13 @@ my $password = "";
 my $AUTHOR_1 = "Rauch, Gerd-Jörg";
 my $AUTHOR_2 = "Talbot, Will";
 
-my $stage_in   = "stage_codes.txt";
+my $stage_in   = "cegs_stage_codes.txt";
 my %stage_hash = ();
 
-my $view_in    = "view_codes.txt";
+my $view_in    = "cegs_view_codes.txt";
 my %view_hash  = ();
 
-my $probe_in   = "probes.txt";
+my $probe_in   = "gene.txt";
 my $probe_out  = "probes.unl";
 my $err        = "parseTalbot.err";
 my $probe_acc  = "acc4blast.txt";
@@ -112,6 +112,8 @@ close (VIEW_IN);
 #########################################
 #  probes.unl
 #
+#       input                       output
+#      ---------                  ---------
 #      0  ceg_id                   _keyValue 
 #      1  acc_number               clone_name 
 #      2  name                     gene_zdb_id 
@@ -153,9 +155,9 @@ while (<PROBE_IN>) {
 	my $clone_name_whole = $othname_col eq '' ? $name_col : $othname_col;
 	my ($clone_name, $ver) = split(/\./, $clone_name_whole);
 	my $gene_sym = $othname_col ne '' ? $name_col : '' ;
-	$gene_sym =~ s/zgc\s/zgc:/;
+	$gene_sym =~ s/zgc\s/zgc:/; $gene_sym =~ s/wu\s/wu:/;
        
-    my $vector      = $row[5]; $vector =~ s/^\s+//; $vector =~ s/\s+$//;
+	my $vector      = $row[5]; $vector =~ s/^\s+//; $vector =~ s/\s+$//;
 	my $library     = $row[6]; $library =~ s/^\s+//; $library =~ s/\s+$//;
 	my $digest      = $row[12];$digest =~ s/^\s+//; $digest =~ s/\s+$//;
 	my $polymerase  = $row[13];$polymerase =~ s/^\s+//; $polymerase =~ s/\s+$//;
@@ -328,11 +330,11 @@ while (<IMG_IN>) {
 	    print "ERROR: unexpected stage code in $image_in: $_ \n";
 	    exit;
 	}
-	if ($img_view < 1 || $img_view > keys(%view_hash)) {
+	if ($img_view < 0 || $img_view > keys(%view_hash)) {
 	    print "ERROR: unexpected view code in $image_in: $_ \n";
 	    exit;
 	}
-	$img_name =~ s/ /__/g;
+	$img_name =~ s/  */__/g;  # replace one or more space with __
 	my ($img_name_r, $img_name_e) = split(/\./, $img_name);
 	print IMG_OUT join("|",$img_key,$img_name_r,$stage_hash{$img_stage},$view_hash{$img_view},"","","")."|\n";
 	next;

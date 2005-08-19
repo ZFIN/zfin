@@ -1,5 +1,7 @@
 #!/bin/tcsh
 #
+# FILE: thisseData2Unl.sh
+#
 # This master script calls parseThisse.pl and  nameClone.pl first, 
 # and generates a group of .unl file for loading. If there is unknown 
 # accession number, it will blast the accessions against ZFIN sequence 
@@ -31,6 +33,7 @@ else
     exit;
     
 endif
+
 #=========== Duplication check =================
 echo "== checking duplication ..."
 
@@ -57,7 +60,7 @@ else
     
 endif
 if (-e acc_imClone.unl) then
-    echo "acc_imClone.unl file generated"
+    echo "acc_imClone.unl file generated, error sign for ZGC package."
 endif
 
 #=========== BLAST (optional) ======================
@@ -72,17 +75,23 @@ else
     echo "== BLASTing and filter results ..."
     xdget -n -f -Tgb1 -e probe_fasta_retrieve.log gbk_zf_all acc4blast.txt > acc4blast.fa
 
-    nice +10 /private/apps/wublast/blastn zfin_seq acc4blast.fa -e 1e-20  -o blast2zfin.out
+    nice +10 /private/apps/wublast/blastn zfin_cdna acc4blast.fa -e 1e-20  -o blast2zfin.out
 
     ./blast2tab.pl -p 90 -l 40 < blast2zfin.out | \
     ./filterBlast.pl $dbname 
 
     echo ""
     if (! -z is_gene.unl) then
-	echo "auto gene assignments exist in is_gene.unl"
+        set is_gene_count = `/bin/wc -l is_gene.unl`;
+	echo "Auto gene assignments: " $is_gene_count;
     endif 
 
-    echo "please send blast2zfin.scnd to curator "
+    # count the number of queries in the blast table format result file
+    set to_curate_count = `cut -d\| -f1 blast2zfin.scnd | uniq | /bin/wc`;
+    @ to_curate_count -= 1 ;   #count off the title line
+
+    echo "To be curated: " $to_curate_count " query sequences in blast2zfin.scnd";
+    echo "Please send the above two numbers and blast2zfin.scnd and blast2zfin.third (if not empty) to curator, and wait for suppliment data to the is_gene.unl.";
     echo ""
 
 endif 

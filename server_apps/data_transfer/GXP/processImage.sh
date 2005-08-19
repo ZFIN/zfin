@@ -1,16 +1,29 @@
 #!/bin/tcsh
 #
-# Move images(.jpg) and annotation files if exist 
-# to a new Imagesdir/. Then check for image consistency,
-# and make thumbnail image, and annotation image. 
+# FILE: processImages.sh
 #
-set usage = <<EOF
-Usage:  processImage.sh  labname  [release_type] 
-  lab_name:    Thisse  Talbot                  
-  release_type:                            
-     Thisse   cb            with annotation  
-              fr            default, without annotation   
-EOF
+# Check image files sent are consistent with the entries in 
+# image.csv file. Make thumbnail images and annotation images if
+# applicable.
+#
+# INPUT: 
+#      labname
+# optional:
+#      release type
+#
+# OUTPUT:
+#      images/images, thumbnails, annotations
+#      images.dim : image name, height, width
+#
+#      missing image file if any
+#      missing entry in image.csv if any
+#      error output from thumbnail generation
+#      missing thumbnail file if any 
+#
+# EFFECT:
+# image file name extension are forced to lower case "jpg", space in name 
+# are changed to "__". All images and annotation files are under images/
+#      
 
 if (($#argv < 1) || ($#argv == 1 && $1 == "Thisse")) then
   echo ""
@@ -23,59 +36,70 @@ if (($#argv < 1) || ($#argv == 1 && $1 == "Thisse")) then
 endif
 
 echo "== process images for '$1' lab with option '$2' =="
-echo "...rename *.JPG to *.jpg ...";
-foreach file (`ls -R -1 .`)             # recursively list all file names
-	if ("$file:e" == "JPG") then        # quote around the file extension is critical
-	   mv $file $file:r.jpg
-    endif
-end
-
-
-echo "...create Imagesdir/, move .jpg (corresponding .txt) into it...";
-rm -rf Imagesdir
-mkdir Imagesdir
+#----------------------------------------------------------
+# Create IMGTMP/, move image files into it
+#
+# replace extension JPG with jpg, replace space with '__'
+#----------------------------------------------------------
+echo "...create new IMGTMP/, move .jpg (corresponding .txt) into it...";
+/bin/rm -rf IMGTMP
+mkdir IMGTMP
 
 if ($1 == "Thisse")  then
-  foreach item (*)
-    # directory item happened to have space in name, quotes help.
-    if (-d "$item" && "$item" != "Imagesdir") then 
+  foreach item (images/*)
+    if (-d "$item") then   # quote preserves names with space
 
-        cp "$item"/*.jpg Imagesdir/
-		if ($2 == "cb") then
-			cp "$item"/*.txt Imagesdir/
-		endif 
+        /bin/cp "$item"/* IMGTMP/
 
-    else if (-f $item && $item:e == "jpg") then
-			cp $item  Imagesdir/
-	else
+    else if (-f "$item") then
+	      /bin/cp "$item" IMGTMP/
     endif
   end
+
+  cd IMGTMP/
+  foreach file (`ls -1 .`)    
+     set new_name = `echo "$file" | sed 's/JPG/jpg/' | sed 's/ /__/g' `;
+     if ($file != $new_name ) then
+         /bin/mv "$file" $new_name;
+     endif
+  end
+  cd ..
 
 else if ($1 == "Talbot")  then
 
   foreach jpg (images/*/large/*)
-     set new_name = `echo "$jpg" | cut -d\/ -f4 | sed 's/ /__/g' `;
-     cp "$jpg" Imagesdir/$new_name;         #quote helps to preserve the name which has space in it
+     set new_name = `echo "$jpg" | cut -d\/ -f4 | sed 's/JPG/jpg/' | sed 's/ /__/g' `;
+     /bin/cp "$jpg" IMGTMP/$new_name;      
   end
 
 endif
 
 
-# generate image name list from the images.csv(txt).(space replaced by "__")
+#-------------------------------------------------------------
+# Generate image name list from images.csv(txt), move to IMGTMP
+#
+# replace extension JPG with jpg, replace space with '__'
+#-------------------------------------------------------------
 if ($1 == "Thisse")  then
-    cat images.csv | cut -d, -f2 | cut -f1 -d\. | tr -d \" | sed 's/JPG/jpg/' | sort >! imgname.list
+    cat images.csv | cut -d, -f2 | cut -f1 -d\. | tr -d \" | sed 's/JPG/jpg/' | sed 's/ /__/g' | sort >! imgname.list
+
 else if ($1 == "Talbot") then
     sed -n '/^[0-9]/ p' images.txt | cut -f2 | cut -f1 -d\. | sed 's/ /__/g' | sed 's/JPG/jpg/' | sort >! imgname.list
 endif
-mv imgname.list Imagesdir/
 
-echo "in Imagesdir, check bad image names with space in"
-cd Imagesdir
-ls -1 | grep ' '
-echo "---"
+/bin/mv imgname.list IMGTMP/
 
 
-# check image consistency
+#=======================================================================
+#   at IMGTMP/
+#=======================================================================
+
+cd IMGTMP
+
+#------------------------------------------------------------
+# Check image consistency
+#------------------------------------------------------------
+
 ls -1 *.jpg | cut -d. -f1| sort >! imgjpg.list
 echo ".jpg sent but not in images.csv(txt)"
 diff imgname.list imgjpg.list  |grep '^>' | cut -c 3-
@@ -93,19 +117,23 @@ endif
 
 echo "Ready to generate thumbnail and annotation images? (y or n)"
 set goahead = $< 
-if ($goahead == 'n') then
-
-    rm -rf Imagesdir
+if ($goahead == 'n') then   #if abort, drop IMGTMP
+    /bin/rm -rf IMGTMP
     exit;
 endif
+
+
+#------------------------------------------------------------
+# Generate thumbnail images, and annotation images if any
+#------------------------------------------------------------
 
 echo "image generation ...."
 foreach file (*.jpg)
 
-    # this line writes out the image name,width,height
-    echo "$file:r `/local/apps/jpeg/bin/djpeg -pnm '$file'|/local/apps/netpbm/bin/pnmfile|cut -f 3,5 -d ' '`" >> imagedim.raw
+    set imgdim = `/local/apps/jpeg/bin/djpeg -pnm $file | /local/apps/netpbm/bin/pnmfile | cut -f3,5 -d' ' | sed 's/ /\|/' `;
 
-    sed  '/^$/d; s/ /\|/g; s/$/\|/' imagedim.raw > images.dim
+    # this line writes out the image name,width,height
+    echo "$file:r|$imgdim|" >> images.dim
 
     if ($1 == "Thisse" && $2 == "cb") then   # if image annotation exist
 
@@ -119,15 +147,14 @@ foreach file (*.jpg)
 
     else	
 	../thumbnail.sh 64 $file $file:r--t.jpg ;
- 
     endif
-
 end 
 
-# images size into images.dim
-sed  '/^$/d; s/ /\|/g; s/$/\|/' imagedim.raw > images.dim
 
-# check for success of thumnail and annotation image generation
+#------------------------------------------------------------
+# Check success of thumnail and annotation image generation
+#------------------------------------------------------------
+
 if ($1 == "Thisse" && $2 == "cb") then 
     ls -1 *--C.jpg | cut -d\- -f1| sort >! img_C_jpg.list
     echo "missed --C.jpg files"
@@ -141,24 +168,20 @@ echo "missed --t.jpg files"
 diff imgname.list img_t_jpg.list  |grep '^<' | cut -c 3-
 echo "---"
 
-echo "Ready to finish up and clean up? (y or n)"
-set goahead = $< 
-if ($goahead == 'n') then
-    exit;
-endif
 
-mv *.jpg *.txt ../
-mv images.dim ../
+#--------------------------------------------------------------
+# Refresh images/ with new images, mv images.dim out
+# clean out IMGTMP 
+#----------------------------------------------------------------
 
-cd ../
-rm -rf Imagesdir
-if ($1 == "Thisse") then 
-    set argv2_upper = `echo $2 | tr '[a-z]' '[A-Z]'`
-    foreach dir ($2* $argv2_upper*) 
-	  if (-d "$dir") then               #dir name might include parenthesis
-	    rm -rf "$dir"
-	  endif
-    end
-else if ($1 == "Talbot") then 
-    rm -rf images/
-endif
+cd .. 
+
+/bin/rm -rf images/*
+
+/bin/mv IMGTMP/*.jpg *.txt images/
+/bin/chmod 644 images/*
+/bin/mv IMGTMP/images.dim .
+
+/bin/rm -rf IMGTMP
+
+exit;

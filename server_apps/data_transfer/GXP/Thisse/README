@@ -8,17 +8,21 @@
 ---------------------
 
    * Download data package (.sitx file) from ftp://ftp-igbmc.u-strasbg.fr/pub/Thisse/, use STUFFITS (www.stuffit.com) to expand the package. 
-   * Use FileMaker Pro to open and export FileMake Pro Database files (listed below) into .csv files. Open files with account name "Thisse" and password "thisse". From File pulldown menu, choose Export, give names as defined below, use .csv extension. When exporting DATA_FRX, the default exporting columns might be of a wrong order, DO "Clear All", Then move columns till "date last modified". Make sure "digest" column is right after "library". For others, it is safe to use the default, just double check "date last modified" is the last column for exporting. The output character set should be Windows(ANSI).
+
+   * Use FileMaker Pro to open and export 
 
 	DATA_FRX->probes(.csv) 
 	rel_authors->authors(.csv) 
 	rel_expression->expression(.csv) 
 	rel_images->images(.csv) 
 
+    Open files with account name "Thisse" and password "thisse". From 'File' pulldown menu, choose Export, give names as defined above, use .csv extension, and export columns from _keyValue to "date last modified". Use Windows(ANSI) as character set.
             
-   * Transfer all images and  probes.csv, images.csv, expression.csv, authors.csv files to one new directory, recommended name FR#_mmdd, # is the package number if given.
+   * At UNIX shell, create a new directory, recommended name FR#_mmdd, # is the package number
 
-   * Copy all the executables to the same dir
+     Copy executables from data_transfer/GXP and data_transfer/GXP/Thisse into it.
+     Transfer probes.csv, images.csv, expression.csv, authors.csv files into that directory. 
+     Under that, create an images directory, and transfer all the images into it. 
 
 -------------------
 -- Spellcheck 
@@ -54,22 +58,23 @@
 
 	  labname:                  Thisse / Talbot
           release_type: 	    cb    with annotation
-          (in case of Thisse)   fr    without annotation
+          (in case of Thisse)       fr    without annotation
     
     $resulted files$:  images.dim	
+
     $description$ :
-	    It creates Imagesdir/ and move all .jpg a(nd corresponding .txt files) into it. It does image reality check with images.csv file, if no missed entries reported, answer "y" to continue when it prompts, otherwise, answer "n" and solve the inconsistency with Curator, and launch the process again. 
-	The second half of the program calls thumbnail.sh to generate thumbnail images, upon finish, it checks for completeness. Answer "y" to finish with cleanup if no missed images reported, otherwise, answer "n" to quit and investigate.
+	It pulls images out of directory hierarchy to one level, and does image reality check with images.csv file. It prompts for user input after the reality check, giving you an opportunity to quit on image file missing or image description missing.
+	It also calls utility programs to generate image dimension to images.dim file and calls thumbnail.sh to generate thumbnail images, and annotation images in case of Thisse cb release. It is rare to see error at this step, and it is not hard to makeup e.g. rerun thumbnail script for a specific image. 
 
 
 --------------------------------------------------
 -- Preload processing: Parsing, Naming, Blasting
 --------------------------------------------------
 
-    $note$ : 
-		- Update your test database and source the environment. The scripts would inherit environment from the running shell. 
+    $NOTE$ : 
+	- Update your test database and source the environment. The scripts would inherit environment from the running shell. 
         - Ask Peiran to update the ZFIN blast database, or run 
-			  /research/zblastfiles/users/peirans/Scripts/ZFIN/processZFIN.pl 0
+	    /research/zblastfiles/users/peirans/Scripts/ZFIN/processZFIN.pl 0
  
     $executables$:  parseThisse.pl  checkDups.sql nameClone.pl blast2tab.pl 
 		    filterBlast.pl thisseData2Unl.sh
@@ -81,22 +86,28 @@
     $result files$:   
 			probes.unl
 			expression.unl 
-			keywords.unl 
 			images.unl 
 			authors.unl 
 			(acc_imClone.unl)
 			(is_gene.unl)
 			(blast2zfin.scnd)
+                        (blast2zfin.third) - blast hits only EST, no Gene.
 	
     $description$ :
-	    This master script calls parseThisse.pl and  nameClone.pl first, and generates a group of .unl file for loading. If there is unknown accession number, it will blast the accessions against ZFIN sequence database, use blast2tab.pl to convert the results to table format while filter out matches with <90% identity. The blast2zfin.fst file is then feeded into filterBlast.pl which exams the results and write qualified matches into is_gene.unl, and the rest to blast2zfin.scnd for manual curation. 
+	This master script calls parseThisse.pl to process .csv files into properly formated .unl files. It calls nameClone.pl to match probes to ZFIN objects(gene/est/clone). Unknown probes are written to acc4blast.txt, and used to retrieve fasta sequence from gbk_zf_all, and launch blast for sequence analysis. blast2tab.pl and filterBlast.pl are used to categorize blast results to auto-assignments(is_gene.unl), or curation-needed (blast2zfin.scnd, blast2zfin.third).
+	Thisse ZGC should not need any blast efforts, since all the probes should match a pair of Gene and MGC clone in zfin. Thus no is_gene.unl, no acc_imClone.unl.
 
 ----------------
 -- Loading
 ----------------
 
-    $note$ : Test load on your database and almostdb before running on production. 
-    $executables$: pre_gxp_load.sql gxp_load_func.sql post_gxp_load.sql
+    $NOTE$ : This is the only step to run for almost or production load. 
+	     For GIS load, when you get the is_gene.txt file from curator, 
+	make sure to go over the file checking the format and then append
+        it to is_gene.unl for loading. 
+ 
+    $executables$: pre_gxp_load.sql pre_gxp_load_cleanup.sql 
+		   gxp_load_func.sql gxp_load_cleanup.sql 
 		   gxp_load_quantity_check.sql load_gxp.sh get_fr_gene_list.sql
 		   getStat4Load.sql
 
@@ -107,32 +118,47 @@
           lab_name   :     Thisse /Talbot
           release_type:    fr/cb
 
-	$result files$  :  (FR only)
-		  fr_gene.txt     FR# to ZFIN gene, cDNA translation table
-		  statistics.txt  
-       Send the two files to Ceri. 
+    $input files$   :
+			probes.unl
+			expression.unl 
+			images.unl 
+			authors.unl 
+			images.dim
+			(acc_imClone.unl)
+			(is_gene.unl)
+		
+    $result files$  :  (FR only)
+
+		        fr_gene.txt     FR# to ZFIN gene, cDNA translation table
+		        statistics.txt  
 
     $description$ :
-	  This master script first calls pre_gxp_load.sql to load the files into a set of tables and conduct quality check with zfin db. Errors are written to separate .err file. The script would exit on any error with temp tables cleaned up. (Error file description is provided below, read first one at least!) Upon success, it executes the gxp_load_func.sql and then uses the SPL function with a set of predefined parameters to load the data into database. If the load fails with exit value "1", check /tmp/gxp_load_exception for reasons. If the load successes with "0", the gxp_load_quantity_check.sql would generate related table contents comparison report. Please go over the report. If everything looks good, answer yes to the prompt to clean up all the temporary tables, otherwise, keep the table for diagnose and run post_gxp_load.sql later.
+	This master script first calls pre_gxp_load.sql to load the files into a set of temporarily created (but not temp) tables and conduct quality check with zfin db. Errors are written to separate .err file. The script would exit on any error with table cleanup. (Description for each error file is provided below, read first one at least!) 
+	Upon success, it executes the load function (defined by gxp_load_func.sql) to really affect content in zfin database. If the load fails with exit value "1", check /tmp/gxp_load_exception for the reason. If the load successes with "0", the gxp_load_quantity_check.sql would provide table content comparison report. Please go over the report, especially look for MARKER, EXPRESSION_EXPERIMENT, FISH_IMAGE tables.
+	gxp_load_cleanup.sql would drop the non-temp tables. If you kept the talbes around for investigation, REMEMBER to drop them when you finish. 
+ 	After production run for thisse fr, send fr_gene.txt, and statistics.txt to Ceri.
 
 
 ----------------
 -- Post load
 ----------------
 
-    $note$ : Thisse FR ZGC only 
-    $executables$: /research/zusers/peirans/GXP/Thisse/redundance_check.sh
-		copy it to your execution directory where probes.unl, blast2tab.unl and filterBlast.pl reside.
+    $NOTE$ : Thisse FR ZGC only 
+
+    $executables$: redundance_check.sh
+	
     $command$ :
 
 		> redundance_check.sh <dbname>
 
-	$result files$  : 	
+    $result files$  : 	
 			is_gene.unl
 			blast2zfin.scnd
+			(blast2zfin.third)
 	 
     $description$ :
-		Start from FR5, we run BLAST for redundant check after Thisse FR ZGC data is loaded. This effort is expected to be replaced by ZFIN redundance pipeline in Feb/2005, so it is not committed into CVS. Please send is_gene.unl and blast2zfin.scnd to Ceri after the execution. 
+	Start from FR5, we run BLAST for redundant check after Thisse FR ZGC load. This effort is expected to be replaced by ZFIN redundance pipeline. 
+	Please send is_gene.unl and blast2zfin.scnd(blast2zfin.third) to Ceri. 
 
 
 ---------------------
@@ -141,8 +167,8 @@
 
  Do a "ls -l *.err";
     1) exist_same_xpat_experiment_from_directsub.err: 
-		When there exists an expression experiment record using the same probe and is also from direct submission, it is highly possible to be from the same submission. Upon this error, check if the existing one has the same submission source, if yes, send to curator to contact the source for correction. Otherwise, ignore this error by commenting out the exit code from load_gxp.sh after all the other errors are fixed. 
-		We have seen this error a couple times, it either requires a deletion of misplaced expression data or a switch of the expression data from one clone to another. Peiran has a small SQL file to deal with this, and will create a SPL routine into CVS.
+	When there exists an expression experiment record using the same probe and is also from direct submission, it is highly possible to be from the same submission. Upon this error, check if the existing one has the same submission source, if yes, send to curator to contact the source for correction. Otherwise, ignore this error by commenting out the exit code from load_gxp.sh after all the other errors are fixed. 
+	We have seen this error a couple times, it either requires a deletion of misplaced expression data or a switch of the expression data from one clone to another. Peiran has a small SQL file to deal with this, and will create a SPL routine into CVS.
  
     2) unknown_probelib.err  : there might be an alias library name in zfin    
 

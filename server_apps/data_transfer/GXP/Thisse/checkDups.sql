@@ -1,10 +1,16 @@
+--------------------------------------------------------------
+-- This file loads probes.raw file into a temp table,
+-- output any duplicated probe name entries and/or 
+-- genbank accession entries. We want to catch these errors
+-- early on.
+-------------------------------------------------------------
 
 create temp table probes_dup_check_tmp (
    prbdupchk_keyValue	 	varchar(50) not null primary key,
    prbdupchk_clone_name  	varchar(50) not null unique,
    prbdupchk_gene_zdb_id   	varchar(120) default null, 
-   prbdupchk_gb5p 			varchar (50),
-   prbdupchk_gb3p 			varchar (50),
+   prbdupchk_gb5p 		varchar (50),
+   prbdupchk_gb3p 		varchar (50),
    prbdupchk_library 		varchar(80),
    prbdupchk_digest 		varchar(20),
    prbdupchk_vector 		varchar(80),
