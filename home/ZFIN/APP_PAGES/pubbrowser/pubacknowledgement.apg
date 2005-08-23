@@ -86,7 +86,7 @@ EFFECTS
          for permission to reproduce figures from this article. Please note that 
          this material may be protected by copyright.<?/MIVAR>
 
-      <?MISQL SQL="select pub_acknowledgment from publication where zdb_id = '$pubackn_jrnl_zdb_id';">
+      <?MISQL SQL="select pub_acknowledgment from publication where zdb_id = '$pubackn_pub_zdb_id';">
         <?MIVAR NAME=pubackn_pub_ack>$1<?/MIVAR> 
       <?/MISQL>
       
@@ -104,7 +104,7 @@ EFFECTS
       <?/MIBLOCK>
       
             <?MIVAR COND=$(NC,$pubackn_journal_ack,)>$pubackn_journal_ack<?/MIVAR>
-            <?MIVAR COND=$(AND,$(NC,$pubackn_pub_ack,NULL),$(NC,$pubackn_pub_ack,))><br><br>'$pubackn_pub_ack'<?/MIVAR>
+            <?MIVAR COND=$(AND,$(NC,$pubackn_pub_ack,NULL),$(NC,$pubackn_pub_ack,))><br><br>$pubackn_pub_ack<?/MIVAR>
 
       <?MIBLOCK COND=$(NC,$pubackn_display,text)>
             </td>
