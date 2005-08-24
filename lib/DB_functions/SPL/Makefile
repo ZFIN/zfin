@@ -46,7 +46,8 @@ MRKR_STATS   = gene_contains_seg.sql mhist_event.sql p_mrel_grpmem_correct.sql \
 	       get_mrkr_abbrev_html.sql get_mrkr_name_html.sql \
 
 PUB_STATS    = get_pub_mini_ref.sql p_drop_go_unknown_attribution.sql \
-	       pub_xpat_curation_status.sql jrnl_acknowledgment.sql 
+	       pub_xpat_curation_status.sql jrnl_acknowledgment.sql \
+	       get_pub_default_permissions.sql 
 REGEN_GNRCS  = regen_fishsearch.sql regen_oevdisp.sql \
 	       regen_panelcount.sql regen_maps.sql
 REGEN_STATS  = grab_zdb_flag.sql release_zdb_flag.sql
