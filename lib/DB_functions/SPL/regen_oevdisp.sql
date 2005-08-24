@@ -130,7 +130,7 @@ create dba function "informix".regen_oevdisp()
 	if (preGeneZdbId <> "") then
 	  insert into orthologue_evidence_display_temp
 	     values
-	       ( preGeneZdbId, prePubZdbId, preEvidenceCode, organismList);
+	       ( preGeneZdbId, prePubZdbId, preEvidenceCode, organismList );
 	end if
   	let organismList = organismName;
   	let preGeneZdbId = geneZdbId;
@@ -141,7 +141,7 @@ create dba function "informix".regen_oevdisp()
 	
     insert into orthologue_evidence_display_temp
 	values
-	  ( preGeneZdbId, prePubZdbId, preEvidenceCode, organismList );
+	  ( preGeneZdbId, prePubZdbId, preEvidenceCode, organismList);
 
      --return error message if orthologue_evidence_display_temp is empty.
 	
@@ -239,6 +239,19 @@ create dba function "informix".regen_oevdisp()
 	where o.oevdisp_gene_zdb_id = t.gene_zdb_id
           and o.oevdisp_evidence_code = t.evidence_code
 	  and o.oevdisp_organism_list = t.organism_list;
+
+    -- we didn't drop gene attribution in this function since we don't 
+    -- know if that is solely based on orthologue attribution. we are 
+    -- making this additionally steps to add gene attribution is to  
+    -- pick up missed one if any.  
+    insert into record_attribution
+                ( recattrib_data_zdb_id, recattrib_source_zdb_id )
+       select distinct gene_zdb_id, pub_zdb_id   
+         from orthologue_evidence_display_temp      
+        where not exists ( select 't'
+                             from record_attribution
+	                    where recattrib_data_zdb_id = gene_zdb_id
+                              and recattrib_source_zdb_id = pub_zdb_id );
 
     let errorHint = "Dropping tables";	  
   
