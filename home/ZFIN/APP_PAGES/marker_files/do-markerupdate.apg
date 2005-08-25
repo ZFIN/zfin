@@ -717,6 +717,10 @@ colattrib_source_zdb_id)
 
   <!-- Special case for deleting an alias -->
   <?MIBLOCK COND="$(EC,$attr_type,delete-alias)">
+    <?MICOMMENT>alias is sent over in an URLENCODED format,
+           test showed that it is converted back automatically,
+	   even with "'" replaced by "''"
+    <?/MICOMMENT>
     <?MISQL SQL="
 	select recattrib_source_zdb_id, dalias_zdb_id
 	  from record_attribution, data_alias
@@ -1113,7 +1117,6 @@ colattrib_source_zdb_id)
 <?/MIBLOCK> <!-- ends cond authorized -->
 
 <!-- okay, now just bail back to the markerview to view results -->
-
 
 <?MIBLOCK COND="$(NXST,$species_update)">
 
