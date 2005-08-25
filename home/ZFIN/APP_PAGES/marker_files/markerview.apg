@@ -173,7 +173,6 @@ Datablade documentation.
 	}
 
 	function Delete_alias(alias,marker_id) {
-		alias = escape(alias);
  		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=dalias_alias&attr_type=delete-alias&old_value='+alias+'&new_value=deleted&target_table=marker');
 	}
 	
@@ -478,7 +477,7 @@ Datablade documentation.
 
   <?MIVAR NAME=$alias>$1<?/MIVAR>
   <?MIVAR NAME=$aliasId>$2<?/MIVAR>
-  <?MIVAR COND="$(XST,$alias)" NAME=$alias_plus DELIMIT=" " REPLACE="+">$alias<?/MIVAR>
+  <?MIVAR COND="$(XST,$alias)" NAME=$alias_plus>$(URLENCODE,$alias)<?/MIVAR>
   <?MIVAR COND="$(XST,$UPDATE)">
     <br> 
     <INPUT TYPE=button 
@@ -537,7 +536,7 @@ Datablade documentation.
 
   <?MIVAR NAME=$alias>$1<?/MIVAR>
   <?MIVAR NAME=$aliasId>$2<?/MIVAR>
-  <?MIVAR COND="$(XST,$alias)" NAME=$alias_plus DELIMIT=" " REPLACE="+">$alias<?/MIVAR>
+  <?MIVAR COND="$(XST,$alias)" NAME=$alias_plus>$(URLENCODE,$alias)<?/MIVAR>
   <?MIVAR COND="$(XST,$UPDATE)">
     <br> 
     <INPUT TYPE=button 
