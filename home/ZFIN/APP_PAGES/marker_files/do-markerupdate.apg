@@ -40,6 +40,7 @@ when name is modified for markers in this group, set abbrev = name.
 <?MIVAR COND="$(NXST,$attr_type)" NAME=$attr_type><?/MIVAR>
 <?MIVAR COND="$(NXST,$old_value)" NAME=$old_value><?/MIVAR>
 <?MIVAR COND="$(NXST,$new_value)" NAME=$new_value><?/MIVAR>
+<?MIVAR COND="$(NXST,$comments)" NAME=$comments><?/MIVAR>
 
 <?MIVAR COND="$(NXST,$xtra_param)" NAME=$xtra_param>alias<?/MIVAR>
 <?MIVAR COND="$(NXST,$dataOID)" NAME=$dataOID><?/MIVAR>
@@ -69,9 +70,6 @@ COND="$(OR,$(EC,$attr,putgene_putative_gene_name),$(EC,$attr,putgene_comments),$
 
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
-  <?MIVAR COND="$(NXST,$new_value)" NAME=$new_value>NULL<?/MIVAR>
-  <?MIVAR COND="$(NXST,$comments)" NAME=$comments>NULL<?/MIVAR>
-
   <?MIVAR COND="$(EC,$attr_type,special-listitem)" NAME=$comments>Deleted 
 the record $old_value from the list of $attr associated with this 
 marker.<?/MIVAR>
@@ -94,24 +92,20 @@ marker.<?/MIVAR>
   <?/MIBLOCK>
 
 
-  <?MIVAR COND="$(EC,$attr_type,special-newmrkrrel)" 
-NAME=$comments>Created new marker relationship of relationship: $old_value 
-for this record.<?/MIVAR>
+  <?MIVAR COND="$(EC,$attr_type,special-newmrkrrel)" NAME=$comments>Created new marker relationship of relationship: $old_value for this record.<?/MIVAR>
 
-  <?MIVAR COND="$(EC,$attr_type,special-newattrib)" NAME=$comments>Add new 
-data attribution: $old_value to $new_value for this record.<?/MIVAR>
+  <?MIVAR COND="$(EC,$attr_type,special-newattrib)" NAME=$comments>Add new data attribution: $old_value to $new_value for this record.<?/MIVAR>
 
   <?MIVAR NAME=$new_value DELIMIT="'" REPLACE="''">$new_value<?/MIVAR>
   <?MIVAR NAME=$old_value DELIMIT="'" REPLACE="''">$old_value<?/MIVAR>
   <?MIVAR NAME=$comments DELIMIT="'" REPLACE="''">$comments<?/MIVAR>
+
   <!-- insert update record for the update! -->
   <?MISQL SQL="
-    insert into updates 
-        (submitter_id,submitter_name, rec_id, field_name, old_value, 
-comments,
-         when) 
-      values ('$ZDB_ident', '$ZDB_name','$OID', '$attr',  '$old_value', 
-              '$comments', current);">
+    insert into updates (submitter_id,submitter_name, rec_id, field_name, 
+                         old_value, new_value, comments, when) 
+         values ('$ZDB_ident', '$ZDB_name','$OID', '$attr', 
+                  '$old_value', '$new_value', '$comments', current);">
   <?/MISQL>
   <!-- OK, NOW UPDATE THE  ACTUAL DATA RECORD. -->
   <?MIBLOCK COND="$(AND,$(NC,$attr,dalias_alias),
