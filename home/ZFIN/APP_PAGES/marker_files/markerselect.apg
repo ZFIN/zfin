@@ -711,16 +711,13 @@ DEBUGGING:
       <?/MIBLOCK><?MICOMMENT>===== end of title display ===<?/MICOMMENT>
 
 
-       $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID="), $(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID="))
-
-      <?MICOMMENT> start new row and column <?/MICOMMENT>
-      <TR bgcolor="<?MIVAR>$row_color<?/MIVAR>">
-
+      $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID="), $(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID="))
               
-        <?MICOMMENT> == In case of MO search, list the gene symbol first,
-		     == and group the MO list by it.
-        <?/MICOMMENT>
-        <?MIBLOCK COND="$(!=,$(POSITION,$OID,MRPHLNO),0)">
+      <?MICOMMENT> == In case of MO search, list the gene symbol first,
+		   == group the MO list by gene symbol, also alternate
+                   == row color by gene group.
+      <?/MICOMMENT>
+      <?MIBLOCK COND="$(!=,$(POSITION,$OID,MRPHLNO),0)">
          <?MISQL SQL=" 
                       select mrkr_abbrev, mrkr_zdb_id
                         from marker join marker_relationship
@@ -728,15 +725,34 @@ DEBUGGING:
                        where mrel_mrkr_1_zdb_id = '$OID'
                          and mrel_type = 'knockdown reagent targets gene';">
 
+             <?MICOMMENT>== when starts MOs on a new gene ==<?/MICOMMENT>
              <?MIBLOCK COND="$(OR,$(NXST,$target_gene_zdb_id),$(AND,$(XST,$target_gene_zdb_id),$(NC,$2,$target_gene_zdb_id)))">
+
                <?MIVAR NAME=$display_target_gene><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2> $1 </A><?/MIVAR>
+                   
+               <?MIBLOCK COND="$(NC,$rowNUM,1)">
+                 <?MIBLOCK COND="$(EC,$row_color,$highlight)">   
+		    <?MIVAR>$(SETVAR,$row_color,#FFFFFF)<?/MIVAR>
+                 <?MIELSE>
+		    <?MIVAR>$(SETVAR,$row_color,$highlight)<?/MIVAR>
+                 <?/MIBLOCK> 
+               <?/MIBLOCK>
+
+             <?MICOMMENT>== when MOs continue on the same gene ==<?/MICOMMENT>
              <?MIELSE>
-               <?MIVAR NAME=$display_target_gene> &nbsp; <?/MIVAR>
-             <?/MIBLOCK>
+                 <?MIVAR NAME=$display_target_gene> &nbsp; <?/MIVAR>
+
+             <?/MIBLOCK> <?MICOMMENT> end of line display difference <?/MICOMMENT>
 
              <?MIVAR NAME=$target_gene_zdb_id>$2<?/MIVAR>
 
-          <?/MISQL>
+        <?/MISQL>
+      <?/MIBLOCK> 
+
+      <?MICOMMENT> start new row and column <?/MICOMMENT>
+      <TR bgcolor="<?MIVAR>$row_color<?/MIVAR>">
+
+        <?MIBLOCK COND="$(!=,$(POSITION,$OID,MRPHLNO),0)">
           <TD>
            <?MIVAR>$display_target_gene<?/MIVAR>
           </TD>
@@ -816,13 +832,13 @@ DEBUGGING:
             <?/MIBLOCK>
  	  </TR>
 
-	  <?MICOMMENT>    change row_color    <?/MICOMMENT>
-	  <?MIBLOCK>
-	    <?MIBLOCK COND="$(EC,$row_color,$highlight)">     
-	      <?MIVAR name=$row_color>#FFFFFF<?/MIVAR>
-	    <?MIELSE COND="$(EC,$row_color,#FFFFFF)">      
-	      <?MIVAR name=$row_color>$highlight<?/MIVAR>
-	    <?/MIBLOCK>
+	  <?MICOMMENT> change row_color for non-morph case <?/MICOMMENT>
+	  <?MIBLOCK COND="$(=,$(POSITION,$OID,MRPHLNO),0)">
+               <?MIBLOCK COND="$(EC,$row_color,$highlight)">   
+		  <?MIVAR>$(SETVAR,$row_color,#FFFFFF)<?/MIVAR>
+               <?MIELSE>
+		  <?MIVAR>$(SETVAR,$row_color,$highlight)<?/MIVAR>
+               <?/MIBLOCK>
 	  <?/MIBLOCK>
 
     <?/MISQL> 	 <?MICOMMENT> for each search result <?/MICOMMENT>
