@@ -188,7 +188,7 @@ create dba function "informix".regen_names() returning integer
     --   4 Marker relations          Marker (not used in regen_names)
     --   5 Previous name             Marker
     --   6 Locus                     Marker
-    --   7 Putative name assignment  Marker
+    --   (7 Putative name assignment  Marker) dropped
     --   8 Orthologue                Marker
     --   9 Accession number          Marker
     --  10 Sequence similarity       Marker

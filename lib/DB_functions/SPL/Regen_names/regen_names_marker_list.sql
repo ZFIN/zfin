@@ -209,25 +209,6 @@ create procedure regen_names_marker_list()
  	and dalias_group = aliasgrp_name
   	and aliasgrp_name = "sequence similarity";
 
-
-  -- -------------------------------------------------------------------
-  --   Get putative names for markers into all_m_names_new.
-  -- -------------------------------------------------------------------
-
-  let namePrecedence = "Putative name assignment";
-  select nmprec_significance 
-    into nameSignificance
-    from name_precedence 
-    where nmprec_precedence = namePrecedence;
-
-  insert into regen_all_names_temp
-      ( rgnallnm_name, rgnallnm_zdb_id, rgnallnm_significance,
-	rgnallnm_precedence, rgnallnm_name_lower )
-    select putgene_putative_gene_name, putgene_mrkr_zdb_id, nameSignificance,
-           namePrecedence, lower(putgene_putative_gene_name)
-      from putative_non_zfin_gene, regen_zdb_id_temp
-      where rgnz_zdb_id = putgene_mrkr_zdb_id;
-
 	
   -- -------------------------------------------------------------------
   --   Get MARKER NAMES and SYMBOLS into all_m_names_new.

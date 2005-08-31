@@ -52,7 +52,7 @@ when name is modified for markers in this group, set abbrev = name.
 name -->
 
 <?MIBLOCK 
-COND="$(OR,$(EC,$attr,putgene_putative_gene_name),$(EC,$attr,putgene_comments),$(EC,$attr,comments))">
+COND="$(EC,$attr,comments)">
   <?MISQL SQL="
     select WebExplode(object,'permission=root') 
       from webPages 
@@ -109,8 +109,6 @@ marker.<?/MIVAR>
   <?/MISQL>
   <!-- OK, NOW UPDATE THE  ACTUAL DATA RECORD. -->
   <?MIBLOCK COND="$(AND,$(NC,$attr,dalias_alias),
-                      $(NC,$attr,putgene_comments),
-		      $(NC,$attr,putgene_putative_gene_name),
                       $(NC,$attr,mrkr_comments),
 		      $(OR,$(EC,$attr_type,text),
 		           $(EC,$attr_type,textarea)))">
@@ -178,12 +176,6 @@ marker.<?/MIVAR>
 		lower('$new_value'));">
     <?/MISQL>
   <?/MIBLOCK>
-  <?MISQL COND="$(OR,$(EC,$attr,putgene_comments),
-		      $(EC,$attr,putgene_putative_gene_name))" SQL="
-    update putative_non_zfin_gene  
-      set $attr='$new_value' 
-      where putgene_mrkr_zdb_id='$OID';">
-  <?/MISQL>
 
 
   <!-- Special case for deleting one of the associated seqs/sources/pubs -->
