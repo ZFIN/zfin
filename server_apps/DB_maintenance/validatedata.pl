@@ -2176,41 +2176,6 @@ sub extinctFishHaveNoSuppliers ($) {
 } 
 
 
-#---------------------------------------------------------
-#Parameter
-# $      Email Address for recipients
-# 
-sub putativeNonZfinGeneNotInZfin ($) {
- 
-  my $routineName = "putativeNonZfinGeneNotInZfin";
-  
-  my $sql = '
-             select putgene_mrkr_zdb_id, 
-                    putgene_putative_gene_name
-               from putative_non_zfin_gene, 
-                    marker  
-              where putgene_putative_gene_name = mrkr_name
-                and mrkr_type in (select mtgrpmem_mrkr_type
-                                    from marker_type_group_member
-                                   where mtgrpmem_mrkr_type_group="GENEDOM")
-            ';
-  
-  my @colDesc = ("Putgene mrkr ZDB ID       ",
-		 "Putgene putative gene name" );
-
-  my $nRecords = execSql ($sql, undef, @colDesc);
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Putative gene name in ZFIN";
-    my $errMsg = "In putative_non_zfin_gene table, $nRecords records' "
-    	              ."putative gene name is a gene name in ZFIN .";
-      	
-    logError ($errMsg); 
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
-  }
-  &recordResult($routineName, $nRecords);
-} 
-
 #---------------------------------------------------------------
 # Each entry in foreign_db should have 1 or more entries in
 # foreign_db_contains.  foreign_db_contains describes what type(s) of
@@ -2845,7 +2810,6 @@ if($daily) {
 
   pubTitlesAreUnique($otherEmail);
   extinctFishHaveNoSuppliers($otherEmail);
-  putativeNonZfinGeneNotInZfin($geneEmail);
   zdbReplacedDataIsReplaced($dbaEmail);
 
   mrkrgoevDuplicatesFound($goEmail);
