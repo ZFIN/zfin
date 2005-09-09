@@ -19,9 +19,10 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/ZGC
 
-GENERICS = zgc.pl zLib.pl
+GENERICS = zgc.pl zLib.pl cleanup_zgc.sql
 
-STATICS = load_zgc.sql zgc.sed StaticLibList.unl
+STATICS = zgc.sed StaticLibList.unl zgc_pre_load_preparation.sql \
+	  zgc_post_load_cleanup.sql
 
 # ---------------  Production Rules  ------------------------------------
 
