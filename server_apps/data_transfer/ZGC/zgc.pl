@@ -1,4 +1,4 @@
-#!/local/bin/perl 
+#!/private/bin/perl 
 #  Script to create ZGC links in the database
 
 use DBI;
@@ -57,15 +57,27 @@ if ($vCloneDiff ne "")
 
   
   #load links
-  system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> load_zgc.sql");
+  $sys_status = system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> zgc_pre_load_preparation.sql");
+  if ($sys_status > 0)
+  {
+      &emailError("Failed to create ZGC tables.", "<!--|VALIDATION_EMAIL_AD|-->");
+  }
+  
+  $sys_status = system("echo 'execute procedure p_zgc_load()' | $ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|-->");
+  if ($sys_status < 0)
+  {  
+      system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> zgc_post_load_cleanup.sql");
+      &emailError("Failed to load ZGC data.", "<!--|VALIDATION_EMAIL_AD|-->");
+  }  
+  system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> zgc_post_load_cleanup.sql");
 
   &zgcReport(); 
   &reportFile('zLib_not_found.unl','Non-ZFIN library'); 
+  &reportFile('zLib_vector_not_found.unl','Vector Not Found'); 
   &reportFile('zName_mismatch.unl','Mismatched zgc genes'); 
-  &reportFile('gene_candidates.unl','Feed clones into BLAST'); 
+#  &reportFile('gene_candidates.unl','Feed clones into BLAST'); 
   &reportFile('refseq_relation.unl','GenBank number is on a gene in ZFIN but the clone is unassigned by ZGC.'); 
-  &reportFile('unNoDbLink.unl','Missing Db_link'); 
-  &reportFile('unRefSeqAttrib.unl','Attributed to RefSeq'); 
+ 
   &sendReport();
 }
 
@@ -153,7 +165,7 @@ sub sendReport()
     open(MAIL, "| $mailprog") || die "cannot open mailprog $mailprog, stopped";
     open(REPORT, "report") || die "cannot open report";
 
-    print MAIL "To: tomc\@cs.uoregon.edu, bsprunge\@cs.uoregon.edu\n";
+    print MAIL "To: bsprunge\@cs.uoregon.edu, tomc\@cs.uoregon.edu\n"; 
     print MAIL "Subject: ZGC Report\n";
     while($line = <REPORT>)
     {
