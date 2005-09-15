@@ -215,7 +215,7 @@ create function xpat_annot_adjust (
            where anatitem_overlaps_stg_window(oldAnatitemZdbId, 
 			xpatres_start_stg_zdb_id, xpatres_end_stg_zdb_id) = "f"
 
-          insert into zdb_replaced_data (zrepld_old_zdb_id,t_zrepld_new_zdb_id)
+          insert into zdb_replaced_data (zrepld_old_zdb_id,zrepld_new_zdb_id)
 	       values (oldXpatResZdbId, xpatResZdbId);
 
 	  delete from zdb_active_data
