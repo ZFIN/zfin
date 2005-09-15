@@ -34,6 +34,7 @@ my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
 		      )
     || &reportError("Failed while connecting to <!--|DB_NAME|--> "); 
 
+#this variable is global, used in sub getParents() too
 my $shareVersion;
 $shareVersion = 't' if ( $ARGV[0] && $ARGV[0] eq "share") ;
 
@@ -49,14 +50,20 @@ print "namespace: zebrafish_anatomy\n";
 
 
 # ---- query anatomy table ----
+
+my $condition = '';
+$condition = "where anatitem_obo_id[1,3] = 'ZFA' " if $shareVersion;
+
 my $anat_sql = "select anatitem_zdb_id, anatitem_name, 
                        str.stg_obo_id, stp.stg_obo_id,
                        anatitem_definition, anatitem_obo_id, 
                        anatitem_description, anatitem_is_obsolete
                   from anatomy_item join
                        stage str on str.stg_zdb_id = anatitem_start_stg_zdb_id
-                       join stage stp on stp.stg_zdb_id = anatitem_end_stg_zdb_id
-              order by anatitem_zdb_id ";
+                       join stage stp on stp.stg_zdb_id = anatitem_end_stg_zdb_id "
+               .$condition
+               ." order by anatitem_zdb_id ";
+
 
 my $anat_sth = $dbh->prepare($anat_sql) 
     or &reportError("Couldn't prepare the statement:$!\n");
@@ -181,11 +188,14 @@ sub getSynonyms ($){
 sub getParents ($){
     my $anatZdbId = $_[0];
     my @arel_array = ();
+    my $condition = '';
+    $condition = "and anatitem_obo_id[1,3] = 'ZFA' " if $shareVersion;
 
     my $arel_sql = "select anatitem_obo_id, anatrel_dagedit_id
                       from anatomy_relationship join 
-                           anatomy_item on anatrel_anatitem_1_zdb_id = anatitem_zdb_id
-                     where anatrel_anatitem_2_zdb_id = ?";
+                           anatomy_item on anatrel_anatitem_1_zdb_id = anatitem_zdb_id 
+                     where anatrel_anatitem_2_zdb_id = ? "
+                     .$condition;
 
     my $arel_sth = $dbh->prepare($arel_sql)
 	    or  &reportError("Couldn't prepare the statement:$!\n");
