@@ -59,7 +59,7 @@ while (my @data = $sth->fetchrow_array()) {
 	print "name: $stgName\n";
 	print "namespace: zebrafish_stages\n";
 	print "is_a: $stgRootId ! Stages \n";   
-  	print "xref: ZFIN:$stgId\n";
+  	print "xref_analog: ZFIN:$stgId\n";
     }
 
 $dbh->disconnect;
