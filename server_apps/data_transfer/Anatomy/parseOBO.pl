@@ -15,10 +15,11 @@
 #         anatrel.unl: parentTerm|childTerm|relType
 #         stage_ids.unl: ZFS and ZDB-STAGE- id pairs
 #         anatitem_ids.unl: ZFA and ZDB-ANAT- id pairs
+#         cell_ids.unl: ZFC and CL id pairs
 # 
 use strict;
 
-my ($termId, $termName,$termXref, @mergedTerms,$termStartStg, $termEndStg, @termPartOf,@termDevelopsFrom,@termIsA,$termDef, $termComment, @termSynonym);
+my ($termId, $termName,$termXref,$termCL, @mergedTerms,$termStartStg, $termEndStg, @termPartOf,@termDevelopsFrom,@termIsA,$termDef, $termComment, @termSynonym);
 
 &initiateVar ();
 
@@ -31,6 +32,7 @@ open ANATMERG, ">anatitem_merged.unl" or die "Cannot open anatmerge.unl file for
 
 open STAGEIDS, ">stage_ids.unl" or die "Cannot open stage_ids.unl file for write \n";
 open ANATIDS, ">anatitem_ids.unl" or die "Cannot open anatitem_ids.unl file for write \n";
+open CELLIDS, ">cell_ids.unl" or die "Cannot open cell_ids.unl file for write \n";
 
 $/ = "\n\n[";
 while (<>) {
@@ -108,8 +110,9 @@ while (<>) {
 	    $termDef =~ s/\\n/ /g;   # replace '\n' to a space character
 	    next;
 	}
-	if ( /^synonym|related_synonym:\s+\"(.+)\"/ ) {
+	if ( /^synonym:\s+\"(.+)\"/ ) {
 	    push @termSynonym, &stringTrim($1);
+	    push @termSynonym, /\[ZFIN:(\S+)\]/ ? $1 : "";
 	    next;
 	}
 	if ( /^comment:\s+(.+)/ ) {
@@ -118,45 +121,65 @@ while (<>) {
 	    $termDef =~ s/\\n/ /g;   # replace '\n' to a space character
 	    next;
 	}
+	if (/^xref_unknown:\s+(CL:\d+)/) {
+	    $termCL = $1;
+	    next;
+	}
     } # end foreach term attribute processing
 
     #-----------------------------------------------
     # Anatomy term Continue (non-obsolete)
-    # write out info to different files for loading
+    # verification work
     #----------------------------------------------- 
 
-    # if both start and end stages are undefined, output for warning
+    # Warning if both start and end stages are undefined
     print "Both stages undefined for $termId\n" 
-	unless $termId =~ /ZFS:0100000/ || $termStartStg || $termEndStg;
+	unless ($termId ne "ZFS:0100000") || $termStartStg || $termEndStg;
 
     # otherwise replace undefined with the "Unknown"
     $termStartStg = "ZFS:0000000" unless $termId =~ /ZFS:0100000/ || $termStartStg;
     $termEndStg = "ZFS:0000000" unless $termId =~ /ZFS:0100000/ || $termEndStg;
  
-    print ANATIDS  join("|", $termId, $termXref,"\n");
+    # Warning if both start and end stages are Unknown
+    print "Both stages defined as Unknown for $termId\n" 
+	if ($termId ne "ZFS:0100000") && ($termStartStg eq $termEndStg) && ($termStartStg eq "ZFS:0000000");
 
+    # Warning if obo id is not exactly 7 digits
+    print "OBO id not 7 digits: $termId\n" unless ($termId =~ /\d{7}/) && ($termId !~ /\d{8}/) ;
+
+    #-----------------------------------------------
+    # Anatomy term Continue (non-obsolete)
+    # write information to different files for loading
+    #-----------------------------------------------    
     if ( $termXref )  {
+
+        print ANATIDS join("|", $termId, $termXref,"\n");
 	print ANATEXT join("|", $termXref, $termName, $termStartStg, $termEndStg, $termDef, $termComment,"\n");
-    }else {
+    }
+    else {
 	# the last column is saved for new zdb id
 	print ANATNEW join("|", $termId, $termName, $termStartStg, $termEndStg, $termDef, $termComment)."||\n";
     }
 
+    print CELLIDS  join("|", $termId, $termCL, "\n") if $termCL; 
+
     # the last column is saved for new zdb id
     foreach (@mergedTerms) {
-	print ANATMERG join("|", $termXref, $_)."|\n";
-    }
-    foreach (@termSynonym) {
-	print ANATALIAS join("|", $termXref, $_)."||\n";
+	print ANATMERG join("|", $termId, $_)."|\n";
+    }    
+    # shift out synonym and attribution
+    # the last column is saved for new zdb id
+    while (@termSynonym) {
+	print ANATALIAS join("|", $termId, shift @termSynonym, shift @termSynonym )."||\n";
     }
     foreach (@termPartOf) {
-	print ANATREL join("|", $_, $termXref, "part_of")."|\n";
+	print ANATREL join("|", $_, $termId, "part_of")."|\n";
     }
     foreach (@termDevelopsFrom) {
-	print ANATREL join("|", $_, $termXref, "develops_from")."|\n";
+	print ANATREL join("|", $_, $termId, "develops_from")."|\n";
     }
     foreach (@termIsA) {
-	print ANATREL join("|", $_, $termXref, "is_a")."|\n";
+	print ANATREL join("|", $_, $termId, "is_a")."|\n";
     }
     
     &initiateVar ();
@@ -171,6 +194,7 @@ close ANATALIAS;
 close ANATMERG;
 close STAGEIDS;
 close ANATIDS;
+close CELLIDS;
 
 exit;
 
@@ -198,6 +222,7 @@ sub initiateVar  {
     $termDef = "";
     $termComment = "";
     $termXref = "";
+    $termCL = "";
 }
 #=====================================
 # sub stringTrim
