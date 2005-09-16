@@ -12,6 +12,7 @@
 --      anatalias.unl
 --      anatitem_ids.unl
 --      stage_ids.unl
+--      cell_ids.unl
 --
 -- OUTPUT:
 --     startStgInconsistent.err
@@ -66,6 +67,21 @@ create unique index stg_id_translation_primary_key
 	on stg_id_translation (sit_zdb_id);
 
 load from "stage_ids.unl" insert into stg_id_translation;
+
+-----------------------------------------------------
+-- Cell Ontology ZFC id and CL id translation table
+-----------------------------------------------------
+!echo '===== cell ontology id translation ====='
+create temp table cl_id_translation (
+	cit_obo_id	char(11),
+	cit_cl_id	char(10)
+)with no log;
+create unique index cl_id_translation_primary_key
+	on cl_id_translation (cit_obo_id);
+create unique index cl_id_translation_index 
+	on cl_id_translation (cit_cl_id);
+
+load from "cell_ids.unl" insert into cl_id_translation;
 
 
 ------------------------------------------------------
@@ -622,11 +638,20 @@ insert into tmp_ao_updates(t_rec_id, t_field_name, t_old_value, t_when, t_commen
 	     CURRENT, "Deleted."
         from tmp_obsolete_alias;
 
--- delete current synonym, cascade to record_attribution 
+-- delete dead synonym, cascade to record_attribution 
 delete from zdb_active_data 
       where zactvd_zdb_id in 
 		(select t_dalias_id
 		   from tmp_obsolete_alias);
+
+!echo '== delete unchanged ones from the new input =='
+delete from input_data_alias
+      where exists (select 't'
+                      from data_alias, outer record_attribution
+		     where dalias_data_zdb_id = i_dalias_data_zdb_id
+	   	       and dalias_alias = i_dalias_alias
+		       and dalias_zdb_id = recattrib_data_zdb_id
+                       and i_dalias_attribution = recattrib_source_zdb_id);
 
 !echo '== validate record attribution  =='
 unload to "pub_incorrect.err" 
@@ -655,12 +680,6 @@ delete from record_attribution
 insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
 	select * from alias_attribution_temp ;
 
-!echo '== delete unchanged ones from the new input =='
-delete from input_data_alias
-      where exists (select 't'
-                      from data_alias
-		     where dalias_data_zdb_id = i_dalias_data_zdb_id
-	   	       and dalias_alias = i_dalias_alias );
 
 !echo '== get data alias zdb id and load =='
 update input_data_alias set i_dalias_zdb_id = get_id("DALIAS");
@@ -701,14 +720,24 @@ update anatomy_item set anatitem_is_obsolete = 't'
 		      from obsolete_anatomy_item
 		     where anatitem_zdb_id = o_anatitem_zdb_id);
 
+----------------------------------------------------------------
+-- Update obo id on cell ontology terms
+--
+---------------------------------------------------------------
+!echo '== update obo id on cell terms =='
+update anatomy_item set anatitem_obo_id = (select cit_cl_id
+                                             from cl_id_translation
+                                            where cit_obo_id = anatitem_obo_id)
+                  where anatitem_obo_id in (select cit_obo_id
+					      from cl_id_translation);
 
 -----------------------------------------------------------------
 -- Load anatomy_relationship
 -----------------------------------------------------------------
 
 !echo '== unload startStgInconsistent.err == '	
-unload to "startStgInconsistent.err"
-select pa.anatitem_name, ca.anatitem_name, n_anatrel_dagedit_id, p.stg_hours_start, c.stg_hours_start
+unload to "start_startInconsistent.err"
+select pa.anatitem_name, ca.anatitem_name, n_anatrel_dagedit_id, p.stg_name, c.stg_name
   from new_anatomy_relationship, anatomy_item pa, anatomy_item ca, 
        stage p, stage c
  where n_anatrel_anatitem_1_zdb_id = pa.anatitem_zdb_id
@@ -718,9 +747,21 @@ select pa.anatitem_name, ca.anatitem_name, n_anatrel_dagedit_id, p.stg_hours_sta
    and p.stg_hours_start > c.stg_hours_start
    and c.stg_name <> "Unknown";
 
+unload to "end_startInconsistent.err"
+select pa.anatitem_name, ca.anatitem_name, n_anatrel_dagedit_id, p.stg_name, c.stg_name
+  from new_anatomy_relationship, anatomy_item pa, anatomy_item ca, 
+       stage p, stage c
+ where n_anatrel_anatitem_1_zdb_id = pa.anatitem_zdb_id
+   and n_anatrel_anatitem_2_zdb_id = ca.anatitem_zdb_id
+   and pa.anatitem_end_stg_zdb_id = p.stg_zdb_id
+   and ca.anatitem_start_stg_zdb_id = c.stg_zdb_id
+   and (p.stg_hours_end + 0.1) < c.stg_hours_start
+   and n_anatrel_dagedit_id = "develops_from"
+   and c.stg_name <> "Unknown";
+
 !echo '== unload endStgInconsistent.err == '	
-unload to "endStgInconsistent.err"  
-select pa.anatitem_name, ca.anatitem_name, n_anatrel_dagedit_id, p.stg_hours_end, c.stg_hours_end
+unload to "end_endInconsistent.err"  
+select pa.anatitem_name, ca.anatitem_name, n_anatrel_dagedit_id, p.stg_name, c.stg_name
   from new_anatomy_relationship, anatomy_item pa, anatomy_item ca, 
        stage p, stage c
  where n_anatrel_anatitem_1_zdb_id = pa.anatitem_zdb_id
@@ -728,8 +769,9 @@ select pa.anatitem_name, ca.anatitem_name, n_anatrel_dagedit_id, p.stg_hours_end
    and pa.anatitem_end_stg_zdb_id = p.stg_zdb_id
    and ca.anatitem_end_stg_zdb_id = c.stg_zdb_id
    and p.stg_hours_end < c.stg_hours_end
-   and n_anatrel_dagedit_id <> "develops_from";
-  
+   and n_anatrel_dagedit_id <> "develops_from"
+   and c.stg_name <> "Unknown";
+
 !echo '== load in anatomy_relationship =='
 insert into anatomy_relationship (anatrel_anatitem_1_zdb_id, 
 				  anatrel_anatitem_2_zdb_id,
