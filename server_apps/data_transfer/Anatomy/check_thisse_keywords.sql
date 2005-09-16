@@ -37,14 +37,14 @@ update stage_keyword_tmp
 				  from anatomy_item
 			         where anatitem_name = t_keyword);
 	
-unload to "keywordDead.err" 
+unload to "kwdNameNotPrim.err" 
 	select t_stg_start, t_stg_end, t_keyword 
 	  from stage_keyword_tmp
 	 where t_keyword_zdb_id is null;
 
 delete from stage_keyword_tmp where t_keyword_zdb_id is null;
 
-unload to "stageKeyword.err" 
+unload to "kwdStageInconsis.err" 
 	select t_stg_start, t_stg_end, t_keyword 
 	  from stage_keyword_tmp
 	 where anatitem_overlaps_stg_window(t_keyword_zdb_id,t_stg_start_zdb_id,t_stg_end_zdb_id) = "f";
