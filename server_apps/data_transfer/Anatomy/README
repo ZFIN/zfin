@@ -67,9 +67,9 @@ Execution:
 	% dbaccess <db_name> loadAO.sql
 
    Check that
-     o No SQL error
-     o None of pub_incorrect.err, startStgInconsistent.err, 
-       and endStgInconsistent.err has content.
+     o No SQL error. 
+       If there is, check pub_incorrect.err, start_startInconsistent.err, 
+       end_startInconsistent.err and end_endInconsistent.err.
      o Make notes on the important numbers such as new AO terms.
    We might need some handling on the statistics after the curators
    define them. For now, this is more of a courtesy check. 
@@ -82,12 +82,16 @@ Execution:
         ZDB-ANAT-XXXX|ZDB-STAGE-XXXX|ZDB-STAGE-XXXX|ZDB-ANAT-XXXX
    
      Excel won't put an ending "|", later script will add that.
+     If any of the AO term involved is a new term, which means no 
+     ZDB-ANAT- id is available untill the load finish, then you need
+     to manually run the steps in loadMaster.sh. 
                                                          
-     o  stageKeyword.csv exported from last Thisse send
+     o  stageKeyword.csv exported from last Thisse sending
 
-   Ready? Check out and uncommit "commit work;" in loadAO.sql
+   Readyt to automate the steps? 
+   Check out and uncommit "commit work;" in loadAO.sql
 
-	% load_postload.sh
+	% loadMaster.sh
 
    
 
