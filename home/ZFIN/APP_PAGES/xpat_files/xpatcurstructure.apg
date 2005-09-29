@@ -360,6 +360,22 @@ EFFECTS
       radio[selectIndex].click();
       
     }
+    
+    function countExpressionForStructure(structure)
+    {
+      var strCount = 0;
+      for(i=0; i<xpressArray.length; i++)
+      {
+        for(j=0; j<xpressArray[i].length; j++)
+        {
+          if(xpressArray[i][j] == structure)
+          {
+            strCount++;
+          }
+        }
+      }
+      return strCount;
+    }
   </script>
 
 <script src="http://<!--|DOMAIN_NAME|-->/autosuggest.js"></script>
@@ -401,7 +417,8 @@ EFFECTS
     <td align=center><b><font color=red>&otimes;</font></b></td>
     <td align=center><b><font color=green>+</font></b></td>
     <td>Modifier</td>
-    <td width=80%>Structure</td>
+    <td width=70%>Structure</td>
+    <td>Remove</td> 
 
   </tr>  
   
@@ -474,13 +491,16 @@ EFFECTS
           <?MIVAR><span id="str$xpcurstr_xpatinf_zdb_minus">$xpcurstr_anatitem_name</span> ($xpcurstr_start_stg_name - $xpcurstr_end_stg_name) <?/MIVAR>
         <?/MIBLOCK>
       </td>
+      <td>
+        <input type=button value='X' onClick="if(countExpressionForStructure('$xpcurstr_xpatinf_zdb_id')!=0){alert('Expression is recorded for this structure. \n\nRemove all expression of this structure and try again.');}else{deleteZDB('$xpcurstr_xpatinf_zdb_id','structure');}">
+      </td>
     </tr>
     <?/MIVAR>
     <?MIVAR NAME=xpcurstr_row_color>$(IF,$(EC,$xpcurstr_row_color,#FFFFFF),<!--|HIGHLIGHT_COLOR|-->,#FFFFFF)<?/MIVAR>
   <?/MISQL>    
 
   <tr>
-    <td colspan=5>
+    <td colspan=6>
       <input type=button value="Update Structures for Expression(s)" onClick="if (document.panel_structures.xpcurstr_fig_xpat_stg.value != ''){dynamic_set_value_selection(document.panel_structures.elements);}">
     </td>
   </tr>
@@ -500,7 +520,8 @@ EFFECTS
       <input name="xpcur_G_structure_add_button" type=submit value="Add">
     </td>
     <td colspan=3 align=left>
-        <input type=textbox name="xpcur_G_structure_add_name" size=80>
+        <input type=textbox name="xpcur_G_structure_add_name" size=80
+               onFocus="this.blur();alert('This field is not editable. Use the \'Add Term\' field below.');">
         <input type=hidden name="xpcur_G_structure_add">   
         <br>
         
@@ -543,6 +564,7 @@ EFFECTS
             </script>        
         <?/MIVAR>    
     </td>
+    <td>&nbsp;</td>
   </tr>
   
   </form>
