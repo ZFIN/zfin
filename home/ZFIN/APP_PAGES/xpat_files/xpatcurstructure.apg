@@ -113,7 +113,6 @@ EFFECTS
            WHERE xpatres_zdb_id = xpatfig_xpatres_zdb_id
              AND xpatex_source_zdb_id = '$OID'
              AND xpatex_zdb_id = xpatres_xpatex_zdb_id
-             $(IF,$(XST,$xpcur_c_gene_only),and xpatex_gene_zdb_id = '$xpcur_c_gene_only')
              ;">
 
           <?MIVAR NAME=xpcurstr_fig_zdb_id>$1<?/MIVAR>
