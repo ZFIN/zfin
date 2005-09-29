@@ -62,7 +62,11 @@
             order by 2;">
           <?MIVAR NAME=$supplier_zdb_id>$1<?/MIVAR>
           <?MIVAR NAME=$supplier_name>$2<?/MIVAR>
-          <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sourceview.apg&OID=$supplier_zdb_id">$supplier_name</A><BR>
+          <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sourceview.apg&OID=$supplier_zdb_id">$supplier_name</A>
+	  <?MIVAR COND=$(EC,$supplier_zdb_id,ZDB-LAB-991005-53)>
+	     &nbsp;&nbsp;(<A HREF="/zirc/index.php?OID=$fish_zdb_id">order this</A>)
+	  <?/MIVAR>
+	<BR>
         <?/MISQL>
       </TD>  
     </TR>

@@ -857,14 +857,13 @@ Datablade documentation.
                   <?MIVAR COND="$(XST,$UPDATE)">
 		    <input type=button name=delt_source value="Delete" onClick="delete_source('$supplier_zdb_id')">
                   <?/MIVAR>
+		  
+	    	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sourceview.apg&OID=$supplier_zdb_id">$supplier_name</A>
+                   
 		  <?MIBLOCK COND=$(EC,$supplier_zdb_id,ZDB-LAB-991005-53)>
                     <?MIVAR>
-		      <A HREF="/zirc/home/guide.php?OID=$OID">$supplier_name</A>
+		      &nbsp;&nbsp;(<A HREF="/zirc/index.php?OID=$OID">order this</A>)
 		    <?/MIVAR>
-		  <?MIELSE>
-                    <?MIVAR>
-		      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sourceview.apg&OID=$supplier_zdb_id">$supplier_name</A>
-                    <?/MIVAR>
 		  <?/MIBLOCK>
 		  <?MIVAR>$(UNSETVAR,$status_list)<?/MIVAR>
 		  <?MISQL SQL="
