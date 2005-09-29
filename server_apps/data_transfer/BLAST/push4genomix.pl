@@ -81,7 +81,7 @@ while (($acc_num, $mrkr_zdb_id, $mrkr_abbrev) = $sth->fetchrow_array) {
 		
 		my $sql = "select mrel_mrkr_1_zdb_id, mrkr_abbrev
                         from marker_relationship, marker
-                       where mrel_mrkr_2_zdb_id = '$o_id'
+                       where mrel_mrkr_2_zdb_id = '$mrkr_zdb_id'
                          and mrel_type in ('gene encodes small segment',
                                          'gene contains small segment')
                          and mrel_mrkr_1_zdb_id = mrkr_zdb_id "; 
@@ -133,7 +133,7 @@ sub queryGeneAndDisplay () {
     my $gene_count = @$sec_array_ref;
 
 	if ( $gene_count == 1 ) {
-		my $row = $sec_array_ref[0];
+		my $row = $sec_array_ref->[0];
 		
 		my $gene_zdb_id = $row->[0];
 		my $gene_abbrev = $row->[1]; 
