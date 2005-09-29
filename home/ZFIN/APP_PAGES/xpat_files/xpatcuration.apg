@@ -251,13 +251,13 @@ EFFECTS
             var msg="Are you sure you want to delete this experiment?";
             if (confirm(msg))
              <?MIVAR>
-              replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID&delete_item="+item+"&anchor="+anchor);
+              replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID&delete_item="+item+"#"+anchor);
              <?/MIVAR>
             }
         else 
            {
             <?MIVAR>
-          replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID&delete_item="+item+"&anchor="+anchor);
+          replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID&delete_item="+item+"#"+anchor);
             <?/MIVAR>
            }
     }
@@ -397,25 +397,7 @@ EFFECTS
       ZDB-IDs are deleted from zdb_active_data.
     <?/MICOMMENT>
     <?MIBLOCK COND=$(EC,ZDB-,$(SUBSTR,$delete_item,1,4))>
-      <?MIBLOCK COND=$(EC,ZDB-XPATINF-,$(SUBSTR,$delete_item,1,12))>
-        <?MISQL SQL="
-            SELECT xpatres_zdb_id 
-            FROM expression_result, expression_pattern_infrastructure
-            WHERE xpatres_anat_item_zdb_id = xpatinf_anatitem_zdb_id
-              AND xpatres_expression_found = xpatinf_expressed
-              AND xpatinf_zdb_id = '$delete_item'
-	      AND xpatinf_pub_zdb_id = xpatex_source_zdb_id
-              AND xpatres_xpatex_zdb_id = xpatex_zdb_id ;">
-           <?MIVAR NAME=xpcur_delete_zdb_id>$1<?/MIVAR> 
-           <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id = '$xpcur_delete_zdb_id';"><?/MISQL>
-           <?MISQL SQL="
-              select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=expression_result&recweb_new_value=deleted&recweb_old_value=$xpcur_delete_zdb_id&recweb_comments=delete') 
-              from webPages where ID='aa-record_web_update.apg';">
-           <?/MISQL>           
-        <?/MISQL>
-        <?MISQL SQL="delete from expression_pattern_infrastructure where xpatinf_zdb_id = '$delete_item';"><?/MISQL>
-       
-      <?MIELSE>  
+  
         <?MIBLOCK COND=$(EC,ZDB-XPAT-,$(SUBSTR,$delete_item,1,9))>
           <?MISQL SQL="
             SELECT xpatres_zdb_id 
@@ -430,8 +412,7 @@ EFFECTS
         <?MISQL SQL="
            select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=expression_result&recweb_new_value=deleted&recweb_old_value=$delete_item&recweb_comments=delete') 
            from webPages where ID='aa-record_web_update.apg';">
-        <?/MISQL>      
-      <?/MIBLOCK>
+        <?/MISQL>  
       
     <?MIELSE>
       <?MICOMMENT>  <?/MICOMMENT>
@@ -699,7 +680,33 @@ EFFECTS
 <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="MUST-REVALIDATE">
 <META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
 <META HTTP-EQUIV="EXPIRES" CONTENT="01 Jan 2000 00:00:00 GMT">
+
+<?MICOMMENT> 
+  ==========================
+  =    Onload Functions    =
+  ==========================
+
+  * Trigger javascript actions that alter the display. *
   
+  For example. Each checkbox click in the expression section changes the
+  structure list. Setting the checkbox attribute checked will not trigger
+  the javascript and display information would be lost.
+  
+<?/MICOMMENT>
+
+<?MIVAR NAME=xpcur_onload><?/MIVAR>
+<?MIBLOCK COND=$(AND,$(XST,$xpcur_c_checked_expression),$(XST,$xpcur_c_panel),$(EC,$xpcur_c_panel,show))>
+  <?MIVAR NAME=xpcur_onload>rememberCheckedExpression();<?/MIVAR>
+<?/MIBLOCK>
+<?MIBLOCK COND=$(AND,$(XST,$xpcur_c_condition),$(EC,$xpcur_c_condition,show))>
+  <?MIVAR NAME=xpcur_onload>$xpcur_onload resetCondForm();<?/MIVAR>
+<?/MIBLOCK>
+
+<?MIVAR COND=$(NE,$xpcur_onload,)>
+  <body onLoad="$xpcur_onload">
+<?/MIVAR>
+
+
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
   
