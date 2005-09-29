@@ -179,9 +179,6 @@ EFFECTS
 
   function set_selected_expression()
   {    
-    var expression_selected = document.panel_structures.xpcurstr_expression ;
-    var expression_fig_xpat_stg = document.panel_structures.xpcurstr_fig_xpat_stg ;
-    var expression_count = window.document.hidden_panel.xpcur_G_exp_count ;
     var expression_checkbox = document.forms['xpcur_exp'].elements ;
 
     stage_hours_start = 0.0;
@@ -197,6 +194,7 @@ EFFECTS
     var xpcurpnl_num_checked = 0;
     var exp_id;
     var checked_exp = new Array();
+    var c_checked_expression = "";
     
       
     for(i=0; i<xpcurpnlArray.length; i++) {
@@ -209,6 +207,8 @@ EFFECTS
         {
           checked_exp[xpcurpnl_num_checked] = xpcurpnl_array1;
           xpcurpnl_num_checked++;
+          c_checked_expression = expid+"|"+c_checked_expression ;
+          
         
           if (expression_display == "") {
               expression_display = xpcurpnl_array1[0]+' '+xpcurpnl_array1[3]+' '+xpcurpnl_array1[4];
@@ -229,14 +229,22 @@ EFFECTS
       } //j loop
     } // i loop
     
-    expression_selected.value = expression_display;
-    expression_fig_xpat_stg.value = expression_ids;
-    expression_count.value = xpcurpnl_num_checked;
-
-    reset_structures_for_panel(checked_exp,xpcurpnl_num_checked); 
-    
-    setAOStage() ;
+    setCookie("checked_expression",c_checked_expression);
     setExpressionStage() ;
+
+    <?MIBLOCK COND=$(AND,$(XST,$xpcur_c_structure),$(EC,$xpcur_c_structure,show))>
+      var expression_selected = document.panel_structures.xpcurstr_expression ;
+      var expression_fig_xpat_stg = document.panel_structures.xpcurstr_fig_xpat_stg ;
+      var expression_count = window.document.hidden_panel.xpcur_G_exp_count ;
+    
+      expression_selected.value = expression_display;
+      expression_fig_xpat_stg.value = expression_ids;
+      expression_count.value = xpcurpnl_num_checked;
+
+      reset_structures_for_panel(checked_exp,xpcurpnl_num_checked); 
+      
+      setAOStage() ;
+    <?/MIBLOCK>
 
   }
   
@@ -276,6 +284,44 @@ EFFECTS
           }
         }  
   
+  }
+  
+  <?MICOMMENT>
+    Cookie: c_checked_expression keeps track of clicked checkboxes even if
+    the page reloads. 
+  
+    Format: checkbox_1|checkbox_2|checkbox_3|
+  
+    Function: rememberCheckedExpression() reads cookie c_checked_expression
+    and clicks the checkboxes.
+  <?/MICOMMENT>
+  
+  function rememberCheckedExpression ()
+  {
+    var expression_elements = document.forms['xpcur_exp'].elements ;
+    
+    var checkedMemory = getCookie("xpcur_c_checked_expression");
+    var expId = "";
+
+    var pos2 = checkedMemory.indexOf('|');
+    var pos = 0;
+    
+    while ( pos2 > -1 ) 
+    {
+      expId = checkedMemory.substr(pos,pos2-pos);
+
+      for (jj=0; jj<expression_elements.length; jj++) 
+      {    
+        if(expression_elements[jj].name == expId) 
+        {      
+          expression_elements[jj].click();
+        }
+      }
+      pos = checkedMemory.indexOf('|',pos+1)+1;
+      pos2= checkedMemory.indexOf('|',pos);
+      
+    }    
+    
   }
   
     function setAOStage ()
@@ -352,8 +398,9 @@ EFFECTS
                     stg_hours_start, 
                     LOWER(abbrev), 
                     xpatex_gene_zdb_id, 
-                    zdb_id
-    from figure, expression_pattern_figure, expression_result, expression_experiment, marker, stage, feature_experiment, fish
+                    zdb_id,
+                    xpatassay_display_order
+    from figure, expression_pattern_figure, expression_result, expression_experiment, marker, stage, feature_experiment, fish, expression_pattern_assay
     where fig_source_zdb_id = '$OID'
       and xpatfig_fig_zdb_id = fig_zdb_id
       and xpatfig_xpatres_zdb_id = xpatres_zdb_id
@@ -363,9 +410,10 @@ EFFECTS
       and xpatex_featexp_zdb_id = featexp_zdb_id
       and featexp_genome_feature_zdb_id = zdb_id
       and fig_zdb_id in ('$xpcur_G_fig_attrib_csv')
+      and xpatex_assay_name = xpatassay_name
       $(IF,$(XST,$xpcur_c_gene_only),and mrkr_zdb_id = '$xpcur_c_gene_only')
       $(IF,$(XST,$xpcur_c_fish_only),and zdb_id = '$xpcur_c_fish_only')
-    order by fig_label, mrkr_abbrev_order, 8, stg_hours_start;">
+    order by fig_label, mrkr_abbrev_order, LOWER(abbrev), xpatassay_display_order, stg_hours_start;">
 
       <?MIVAR NAME=xpcurpnl_fig_zdb_id>$1<?/MIVAR>
       <?MIVAR NAME=xpcurpnl_fig_label>$2<?/MIVAR>
@@ -464,26 +512,29 @@ EFFECTS
 	    from figure
 	    where fig_zdb_id in ('$xpcur_G_fig_attrib_csv')
             order by fig_label;">
-            <option value=$1>$2</option>
+            <option value=$1
+                    $(IF,$(AND,$(XST,$xpcur_G_panel_fig_zdb_id),$(EC,$xpcur_G_panel_fig_zdb_id,$1)),SELECTED)>$2</option>
           <?/MISQL>
       </select>
     </td>
     <td>
         <select name="xpcur_G_panel_add_xpatex">
           <?MISQL SQL="
-            select xpatex_zdb_id, mrkr_abbrev_order, LOWER(abbrev)
-	    from expression_experiment, marker, feature_experiment, fish
+            select xpatex_zdb_id, mrkr_abbrev_order, LOWER(abbrev), xpatassay_display_order
+	    from expression_experiment, marker, feature_experiment, fish, expression_pattern_assay
 	    where xpatex_source_zdb_id = '$OID'
 	      and xpatex_gene_zdb_id = mrkr_zdb_id
 	      and xpatex_featexp_zdb_id = featexp_zdb_id
 	      and featexp_genome_feature_zdb_id = zdb_id
+	      and xpatex_assay_name = xpatassay_name
               $(IF,$(XST,$xpcur_c_gene_only),and mrkr_zdb_id = '$xpcur_c_gene_only')
               $(IF,$(XST,$xpcur_c_fish_only),and zdb_id = '$xpcur_c_fish_only')
-            order by mrkr_abbrev_order, 3;">
+            order by mrkr_abbrev_order, LOWER(abbrev), xpatassay_display_order;">
             <?MIVAR NAME=xpcurpnl_xpatex_zdb_id>$1<?/MIVAR>  
             <?MISQL SQL="select WebExplode(object,'xpcurexpssdisp_xpatex_zdb_id=$xpcurpnl_xpatex_zdb_id') from webPages where ID='aa-xpatcurexpssdisplayname.apg';"><?/MISQL>
             <?MIVAR NAME=xpcurpnl_xpatex_display_name>$xpcurexpssdisp_xpatex_display_name<?/MIVAR>
-            <option value=$xpcurpnl_xpatex_zdb_id>$xpcurpnl_xpatex_display_name</option>
+            <option value=$xpcurpnl_xpatex_zdb_id
+                    $(IF,$(AND,$(XST,$xpcur_G_panel_add_xpatex),$(EC,$xpcur_G_panel_add_xpatex,$xpcurpnl_xpatex_zdb_id)),SELECTED)>$xpcurpnl_xpatex_display_name</option>
           <?/MISQL>
       </select></td>
     <td colspan=3> 
