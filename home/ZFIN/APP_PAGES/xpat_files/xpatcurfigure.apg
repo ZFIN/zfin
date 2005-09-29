@@ -75,23 +75,43 @@ EFFECTS
       var amped = unescape(figCap.replace(/;;;/g, ";&"));
       amped = amped.replace(/;;/g, "&");
       amped = amped.replace(/'/g, "&prime;");
-      window.document.figureUpdate.xpcur_G_fig_caption.value=amped;
+      window.document.figureUpdate.xpcur_G_fig_caption.value=amped;      
+    }
+
+    function validCaption(figCap) {    
+      count = 0;
+      pos = figCap.indexOf('"');
+      while ( pos != -1 ) {
+        count++;
+        pos = figCap.indexOf('"',pos+1);
+      }
+      if ( 0 != count % 2) {
+        return confirm('A quote is missing. The page may break if this is not corrected. Continue?');
+      }
+      return true;
     }
     
     function validateFigLabel() {
       var prefLabelIndex = document.figure_new.xpcur_G_fig_add_prefix_label.selectedIndex ;
       var prefLabel = document.figure_new.xpcur_G_fig_add_prefix_label[prefLabelIndex].value ;
+      var label = document.figure_new.xpcur_G_fig_add_label.value ;
       
       if (prefLabel == "text only") {    
         document.figure_new.xpcur_G_fig_add_label.value = 'text only' ;   
         return true;
       }
       else {        
-        if ( document.figure_new.xpcur_G_fig_add_label.value == '')
+        if ( /fig/i.test(label) )
         {
+          alert('Remove \'fig\' from the \'label\' field. A standard prefix will be auto-generated.');
           return false;
         }
         else {
+          if ( label == '')
+          {
+            alert('Enter a label.');
+            return false;
+          }
           document.figure_new.xpcur_G_fig_add_label.value = 'Fig. '+document.figure_new.xpcur_G_fig_add_label.value ;
           return true;
         }
@@ -168,7 +188,7 @@ EFFECTS
   <?MIVAR>
   <tr bgcolor=$xpcurfig_row_color>
     <td valign=top>
-      <input name="xpcur_G_fig_update" type=button value="Update" onClick="if (document.figureUpdate.xpcur_G_fig_label.value != ''){uninterpretCaption();setCookie('xpatcuration_update','update');setCookie('anchor','figure');document.figureUpdate.submit();}"><br>
+      <input name="xpcur_G_fig_update" type=button value="Update" onClick="if (document.figureUpdate.xpcur_G_fig_label.value != '' && validCaption((this.form).xpcur_G_fig_caption.value)){uninterpretCaption();setCookie('xpatcuration_update','update');setCookie('anchor','figure');document.figureUpdate.submit();}"><br>
       <a href="javascript:onClick=urlSetCookie('figure_only','');"><font color=blue>Show All</font></a>
     </td>
     <td valign=top> 
@@ -219,7 +239,7 @@ EFFECTS
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
   <tr>
     <td>
-      <input name="xpcur_G_fig_add" type=button value="Add" onClick="if (validateFigLabel()){setCookie('xpatcuration_update','update');setCookie('anchor','figure');document.figure_new.submit();}">
+      <input name="xpcur_G_fig_add" type=button value="Add" onClick="if (validateFigLabel() && validCaption((this.form).xpcur_G_fig_add_caption.value)){setCookie('xpatcuration_update','update');setCookie('anchor','figure');document.figure_new.submit();}">
     </td>
     <td> 
         <select name="xpcur_G_fig_add_prefix_label">
