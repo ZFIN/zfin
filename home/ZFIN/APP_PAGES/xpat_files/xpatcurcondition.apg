@@ -6,7 +6,7 @@ PREFIX:   xpcurcond_
 This page manages the display and submition of experiment conditions.
 
 Each condition for this publication is displayed as a single row. The
-data is not updatable, however, a delete button exists for each row.
+Comment field is updatable and a delete button exists.
 
 Javascript functions enforce relationships between condition_data_type,
 condition, and experiment_unit. 
@@ -15,6 +15,9 @@ A function also enforces a constraint on morpholinos. At the time the
 page is loaded, the valid morpholinos are retrieved from the database. 
 The form rejects morpholino entries not in the valid morpholino list.
 
+OnLoad, the formReset() function is called. If form variables exist from
+a previous page submition, drop-down lists are populated with the 
+corresponding values.
 
 INPUT VARS:
 
@@ -313,12 +316,11 @@ EFFECTS
     }
 </SCRIPT>
 
-<table width=100% border=0 bgcolor="<!--|HIGHLIGHT_COLOR|-->">
+<table width=100% border=0 cellspacing=0 cellpadding=3>
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
-  <tr bgcolor=#CCCCCC>
-    <td>&nbsp;</td>
-    <td>Env.</td>
+  <tr bgcolor=#CCCCCC>    
+    <td colspan=2>Env.</td>
     <td>Condition</td>
     <td>
       <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&newmrkrSource=$OID&marker_type=MRPHLNO" target=ZFIN_morph>Morpholino</a><?/MIVAR>
@@ -328,6 +330,10 @@ EFFECTS
     <td>Comments</td> 
     <td>Delete</td>
   </tr>  
+
+<?MIVAR NAME=xpcurcond_prev_exp_name><?/MIVAR>
+<?MIVAR NAME=xpcurcond_row_color>#FFFFFF<?/MIVAR>
+
 <?MISQL SQL="
     select exp_name, expcond_zdb_id, cdt_group||':'||cdt_name, expcond_value, expunit_name, expcond_comments, expcond_mrkr_zdb_id, gene.mrkr_abbrev, morph.mrkr_abbrev, gene.mrkr_zdb_id
     from experiment, experiment_condition, condition_data_type, experiment_unit, OUTER( marker morph, marker_relationship,marker gene)
@@ -353,10 +359,13 @@ EFFECTS
     <?MIVAR NAME="xpcurcond_gene_abbrev">$8<?/MIVAR>
     <?MIVAR NAME="xpcurcond_morph_abbrev">$9<?/MIVAR>
     <?MIVAR NAME="xpcurcond_gene_zdb_id">$10<?/MIVAR>
-
-  <tr>
-    <td>&nbsp;</td>
-    <td> $xpcurcond_exp_name
+    
+    <?MIBLOCK COND=$(NE,$xpcurcond_prev_exp_name,$xpcurcond_exp_name)>
+      <?MIVAR NAME=xpcurcond_row_color>$(IF,$(EC,$xpcurcond_row_color,#FFFFFF),<!--|HIGHLIGHT_COLOR|-->,#FFFFFF)<?/MIVAR>     
+    <?/MIBLOCK>
+  <tr bgcolor=$xpcurcond_row_color>
+    
+    <td colspan=2> $(IF,$(NE,$xpcurcond_prev_exp_name,$xpcurcond_exp_name),$xpcurcond_exp_name,&nbsp;)
     </td>
     <td> $(SUBSTR,$xpcurcond_cdt,1,30)
     </td>
@@ -377,6 +386,7 @@ EFFECTS
     </td> 
   </tr>
 </form>
+  <?MIVAR NAME=xpcurcond_prev_exp_name>$xpcurcond_exp_name<?/MIVAR>
 <?/MISQL>    
 
   <tr>
@@ -401,7 +411,8 @@ EFFECTS
               from experiment 
               where exp_zdb_id in ('$xpcur_G_exp_attrib_csv') 
               order by 2;">
-            <option value="$1">$2</option>
+            <option value="$1"
+                    $(IF,$(AND,$(XST,$xpcur_G_cond_add_exp),$(EC,$xpcur_G_cond_add_exp,$1)),SELECTED)>$2</option>
           <?/MISQL>
       </select>
     </td>
@@ -409,7 +420,8 @@ EFFECTS
         <select name="xpcur_G_cond_add_cond" onChange="resetCondForm();">
           <option value=""></option>
           <?MISQL SQL="select distinct cdt_group from condition_data_type order by 1;">
-            <option value="$1">$1</option>
+            <option value="$1"
+                    $(IF,$(AND,$(XST,$xpcur_G_cond_add_cond),$(EC,$xpcur_G_cond_add_cond,$1)),SELECTED)>$1</option>
           <?/MISQL>
         </select>
         <select name="xpcur_G_cond_add_cond_type">
@@ -466,7 +478,8 @@ EFFECTS
              and recattrib_source_zdb_id = '$OID'
              and recattrib_data_zdb_id = mrel_mrkr_1_zdb_id
              and mrel_mrkr_2_zdb_id = gene.mrkr_zdb_id
-             and mrel_mrkr_1_zdb_id = morph.mrkr_zdb_id;">
+             and mrel_mrkr_1_zdb_id = morph.mrkr_zdb_id
+             order by gene.mrkr_abbrev, morph.mrkr_abbrev;">
            <option value="$1">$1, $2 -> $3</option>
         <?/MISQL>
       </select>
