@@ -1072,6 +1072,11 @@ EFFECTS
     <?/MIVAR>
 
   <?/MIBLOCK>
+  
+  <?MIVAR NAME=xpcur_c_checked_expression><?/MIVAR>
+  <script>
+    setCookie("checked_expression",'');    
+  </script>
   <?/MIBLOCK>  
 
 
