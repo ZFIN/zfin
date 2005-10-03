@@ -15,10 +15,43 @@
   <p>
   ERROR -- something bad happened -- no OID passed in!
 <?/MIBLOCK>
-<?MIBLOCK COND="$(XST,$OID)">
+<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
 
+<SCRIPT>
+
+function updateInnerHTML(element_id,html_to_display) {
+    var c1 = document.getElementById(element_id);
+    c1.innerHTML = html_to_display;
+}
+
+function new_anat_ref() {
+                var genename=document.addcanmrkr.anat_gene.value;
+                var refid=document.addcanmrkr.anat_ref.value;
+                <?MIVAR>
+                window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-addcanmrkr.apg&OID=$OID&anatcmrkr_gene='+genename+'&anatcmrkr_ref='+refid);
+                <?/MIVAR>
+}
+
+function Delete_gene(anatkeyid) {
+                <?MIVAR>
+                window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-addcanmrkr.apg&OID=$OID&anatcmrkr_anatkey='+anatkeyid);
+                <?/MIVAR>
+}
+
+function Delete_attrib(subattr,data_zdbId,source_zdbId,info) {
+                <?MIVAR>
+                window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-addcanmrkr.apg&attrib='+subattr+'&data='+data_zdbId+'&OID=$OID&source='+source_zdbId);
+                <?/MIVAR>
+
+}
+
+</SCRIPT>
+
+
+<?MIBLOCK COND="$(XST,$OID)">
+<?MIVAR NAME=$userid>GUEST<?/MIVAR>
    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
-   <?MISQL SQL="select WebExplode(object,'page_title=View Pub') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
    <?MISQL SQL="
 	SELECT anatitem_name,
@@ -50,7 +83,7 @@
       <?MIVAR NAME=$item_name_url>$(URLENCODE,$item_name)<?/MIVAR>
       <?MIVAR NAME=$processed_item_name>$(REPLACE,$item_name,',','|')<?/MIVAR>
 
-
+<?MICOMMENT>
       <!-- title for webpage history ----------->	
       <?MIBLOCK COND="$(XST,$UPDATE)">
 	 <?MIVAR>
@@ -61,7 +94,7 @@
  		<TITLE>ZFIN View Anatomy Item: $item_name</title>
 	 <?/MIVAR>
       <?/MIBLOCK>
-
+<?/MICOMMENT>
 
       <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=anatomy_item') from webPages where ID='aa-data_mgr.apg';">$1
       <?/MISQL>
@@ -88,7 +121,7 @@
 
 
 
-
+<?MICOMMENT>
 <?MIBLOCK COND="$(XST,$UPDATE)">
 <!-- First, do any updates -->
 
@@ -267,7 +300,7 @@
   </TR>
 </TABLE>
 <?/MIBLOCK> <?MICOMMENT> == end if update ==<?/MICOMMENT>
-
+<?/MICOMMENT>
 <?MICOMMENT> ===============================================================
              ==       Page Display
              ===============================================================
@@ -344,57 +377,7 @@
   </TR>
 </TABLE>
 
-
-<BR>
-<?MICOMMENT>use the fast search table to get number of genes that have 
-            expression at this structure
-<?/MICOMMENT>
-<?MISQL SQL="
-	SELECT anatstat_object_count
-	  FROM anatomy_stats
-	 WHERE anatstat_anatitem_zdb_id = '$OID';">
-
-  <?MIVAR NAME=$totalxpats>$1<?/MIVAR>
-<?/MISQL>
-
-<?MIBLOCK COND="$(>,$totalxpats,0)">
-
-  <TABLE width="90%">
-    <TR>
-     <TD bgcolor="#CCCCCC">
-       <?MIVAR>
-       <STRONG>Expresses
-       (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name_url&xpatsel_processed_selected_structures=$processed_item_name">$totalxpats</A>) 
-Genes
-        <?MIBLOCK COND="$(>,$totalxpats,10)">, first 10: <?/MIBLOCK>
-       </STRONG>
-       <?/MIVAR>
-     </TD>
-   </TR>
-   <TR>
-     <TD bgcolor="#EEEEEE">
-<?MISQL SQL="
-	SELECT FIRST 10 distinct mrkr_abbrev, mrkr_zdb_id,  
-	       mrkr_abbrev_order
-	  FROM expression_experiment, expression_result, marker
-	 WHERE xpatres_anat_item_zdb_id = '$OID'
-	   and xpatex_zdb_id = xpatres_xpatex_zdb_id
-	   and xpatex_gene_zdb_id = mrkr_zdb_id
-	ORDER BY mrkr_abbrev_order
-;">
-<?MIVAR NAME="gene_abbrev">$1<?/MIVAR>
-<?MIVAR NAME="gene_zdb_id">$2<?/MIVAR>
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$gene_zdb_id">$gene_abbrev</A>
-<?/MISQL>
-<?MIBLOCK COND="$(>,$totalxpats,10)">
-  <?MIVAR>, <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name_url&xpatsel_processed_selected_structures=$processed_item_name"><b>All ($totalxpats)</b></A> <?/MIVAR>
-<?/MIBLOCK>
-      </TD>
-    </TR>
-  </TABLE>
-<BR>
-<?/MIBLOCK>
-
+<br>
 <?MICOMMENT>========================================================
             == RELATIONSHIP
 	    ========================================================
@@ -487,9 +470,232 @@ Genes
       <?/MISQL>
       </TD>
      </TR>  
+</TABLE>
    <?/MIBLOCK> <?MICOMMENT> == end if there is develops from relationship == <?/MICOMMENT>  	
-  </TABLE>
+<!--  </TABLE>-->
 <?/MIBLOCK> <?MICOMMENT> if not term 'unspecified' <?/MICOMMENT>
+
+<?MICOMMENT> ===============================================================
+             ==       Recommended Markers display and entry
+             ===============================================================
+<?/MICOMMENT>
+<br>
+
+<?MISQL SQL="select anatcmrkr_zdb_id from anatomy_canonical_marker 
+             where
+             anatcmrkr_anatitem_zdb_id='$OID'">
+<?/MISQL>
+<?MIVAR NAME=anat_item_ct>$MI_ROWCOUNT<?/MIVAR>
+<?MIBLOCK COND="$(OR,$(>,$anat_item_ct,0),$(XST,$UPDATE))">
+  <BR>
+  <TABLE width="90%">
+  <TR>
+   <TD bgcolor="#CCCCCC">
+   <STRONG>
+    Recommended Markers:
+   </STRONG>
+<?/MIBLOCK>
+
+<?MISQL SQL="select distinct mrkr_abbrev, anatcmrkr_zdb_id, anatcmrkr_mrkr_zdb_id
+             from marker, anatomy_canonical_marker, record_attribution
+             where anatcmrkr_anatitem_zdb_id='$OID'
+             and recattrib_data_zdb_id=anatcmrkr_zdb_id
+             and anatcmrkr_mrkr_zdb_id=mrkr_zdb_id">
+
+            <?MIVAR NAME=anat_item_marker>$1<?/MIVAR>
+            <?MIVAR NAME=anat_item_cmrkrid>$2<?/MIVAR>
+            <?MIVAR NAME=anat_item_mrkr_id>$3<?/MIVAR>
+            <TR>
+            <TD>
+            <?MIVAR COND="$(XST,$UPDATE)">
+             <INPUT TYPE=button value=Delete
+             onClick="Delete_gene('$anat_item_cmrkrid')">
+            <?/MIVAR>
+
+            <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$anat_item_mrkr_id">$anat_item_marker</A>
+            <?MISQL SQL="select WebExplode(object,'dataId=$anat_item_cmrkrid&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>  
+
+<?/MISQL>
+<?MIVAR COND="$(XST,$UPDATE)">
+             <form name=addcanmrkr>
+               <TR>
+               <TD>
+               Gene:<input type=text size=15 name=anat_gene>
+               Reference: <input type=text size=15 name=anat_ref>
+               <input type=button value="Add it!" onClick=new_anat_ref();>
+             </form>
+<?/MIVAR>
+</TABLE>
+
+
+<?MICOMMENT> ===============================================================
+             ==       Potential Probes (5 star probes) display
+             ===============================================================
+<?/MICOMMENT>
+
+<?MICOMMENT> set variables for hide and seek display<?/MICOMMENT>
+
+<?MIVAR NAME="$anatitem_condensed_count" COND="$(NXST,$anatitem_condensed_count)">10<?/MIVAR>
+<?MIVAR NAME="$anatitem_max_count" COND="$(NXST,$anatitem_max_count)">14<?/MIVAR>
+
+
+<br>
+<?MISQL SQL="select * from expression_experiment,expression_result,clone where
+     xpatres_anat_item_zdb_id='$OID'
+and  xpatex_zdb_id=xpatres_xpatex_zdb_id
+and  xpatex_probe_feature_zdb_id=clone_mrkr_zdb_id
+and  clone_rating=4
+">
+<?/MISQL>
+<?MIVAR NAME=clone_count>$MI_ROWCOUNT<?/MIVAR>
+<?MIBLOCK COND="$(NE,$OID,ZDB-ANAT-041102-1)"> <!--begin "if not specified" anatomy item condition-->
+  <?MIBLOCK COND="$(>,$clone_count,0)"> <!--begin 5 star probes condition--!>
+    <TABLE width="90%">
+    <TR>
+    <TD bgcolor="#CCCCCC">
+    <STRONG>
+      <a href="/zf_info/stars.html">High Quality Probes</a>:
+    </STRONG>
+    <?MISQL SQL="select distinct pub_mini_ref, zdb_id 
+                 from expression_experiment,expression_result,clone,publication                  where
+                      xpatres_anat_item_zdb_id='$OID'
+                 and  xpatex_zdb_id=xpatres_xpatex_zdb_id
+                 and  xpatex_probe_feature_zdb_id=clone_mrkr_zdb_id
+                 and  clone_rating=4 and xpatex_source_zdb_id=zdb_id">
+                 <?MIVAR NAME=source>$1<?/MIVAR>
+                 <?MIVAR NAME=pub_zdb_id>$2<?/MIVAR>
+                 <?MIVAR>(<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$pub_zdb_id">$source</a><?/MIVAR>) &nbsp;
+    <?/MISQL>
+    <TR>
+    <TD bgcolor="#EEEEEE">
+    <?MISQL SQL="
+	SELECT distinct m1.mrkr_abbrev as probe, m1.mrkr_zdb_id as probe_id,  
+	       m1.mrkr_abbrev_order,get_mrkr_abbrev_html_link(m2.mrkr_zdb_id) as gene_abbrev,m2.mrkr_zdb_id as gene_id,m2.mrkr_abbrev_order, xpatex_zdb_id, xpatex_source_zdb_id,m2.mrkr_abbrev as gene_name, get_mrkr_abbrev_html(m1.mrkr_zdb_id) as probe_link
+	  FROM expression_experiment, expression_result, marker m1,marker m2, clone, expression_pattern_figure
+	 WHERE xpatres_anat_item_zdb_id = '$OID'
+           and xpatfig_xpatres_zdb_id=xpatres_zdb_id
+	   and xpatex_zdb_id = xpatres_xpatex_zdb_id
+	   and xpatex_probe_feature_zdb_id = m1.mrkr_zdb_id
+           and xpatex_probe_feature_zdb_id=clone_mrkr_zdb_id
+           and clone_rating=4
+           and xpatex_gene_zdb_id=m2.mrkr_zdb_id
+	 ORDER BY m2.mrkr_abbrev_order
+       ;">
+      <?MIVAR NAME=probe_name>$1<?/MIVAR>
+      <?MIVAR NAME=probe_zdb_id>$2<?/MIVAR>
+      <?MIVAR NAME=gene_abbrev>$4<?/MIVAR>
+      <?MIVAR NAME=gene_zdb_id>$5<?/MIVAR>
+      <?MIVAR NAME=xpatex_id>$7<?/MIVAR>
+      <?MIVAR NAME=xpatex_source_id>$8<?/MIVAR>
+      <?MIVAR NAME=gene_name>$9<?/MIVAR>
+      <?MIVAR NAME=probe_link>$10<?/MIVAR>
+      <?MIVAR NAME=display_html><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$gene_zdb_id'><i>$gene_name</i></A> <a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$probe_zdb_id>[$probe_name]</a><?/MIVAR>
+      <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
+         <?MIVAR NAME=probe_short_list>$display_html<?/MIVAR>
+         <?MIVAR NAME=probe_long_list>$display_html<?/MIVAR>
+      <?MIELSE COND=$(<,$MI_CURRENTROW,$anatitem_condensed_count)>
+         <?MIVAR>$(VECAPPEND,probe_long_list,$display_html)
+         <?/MIVAR>
+         <?MIVAR>$(VECAPPEND,probe_short_list,$display_html)
+         <?/MIVAR>
+       <?MIELSE>
+          <?MIVAR>$(VECAPPEND,probe_long_list,$display_html)
+          <?/MIVAR>
+       <?/MIBLOCK>
+
+    <?/MISQL>
+    <?MIVAR NAME=probe_separate_short_list SEPARATE=", ">$probe_short_list<?/MIVAR>
+     <?MIVAR NAME=probe_separate_long_list SEPARATE=", ">$probe_long_list<?/MIVAR>
+  
+     <?MIVAR NAME=probe_escape_short_list>$(REPLACE,$probe_separate_short_list,"'","")<?/MIVAR>
+     <?MIVAR NAME=probe_escape_long_list>$(REPLACE,$probe_separate_long_list,"'","")<?/MIVAR>
+  
+     <?MIVAR NAME=probe_zdb_minus>$(REPLACE,$OID,"-","")<?/MIVAR>
+     <?MIVAR NAME=$probe_left_arrow><img border=0 onClick=updateProbeList$probe_zdb_minus('short') src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif><?/MIVAR>
+      <?MIVAR NAME=$probe_right_arrow><img onClick=updateProbeList$probe_zdb_minus('long') src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif><?/MIVAR>
+
+  <script>
+  <?MIVAR>
+   function updateProbeList$probe_zdb_minus(display_option) {
+      var long_display = "$probe_escape_long_list  <a href=\"javascript:updateProbeList$probe_zdb_minus('short');\">$probe_left_arrow</a>";
+      var short_display = "$probe_escape_short_list ... <a href=javascript:onClick=updateProbeList$probe_zdb_minus('long')>(all $(VECSIZE,$probe_long_list))</a> $probe_right_arrow";
+
+      if (display_option == "long") {
+        updateInnerHTML('probeList$probe_zdb_minus',long_display)
+    }
+    else {
+        updateInnerHTML('probeList$probe_zdb_minus',short_display)    
+    }
+}
+  <?/MIVAR>
+  </script>
+  <?MIBLOCK COND="$(EQ,$probe_escape_short_list,)">
+     <?MIVAR NAME=$probe_escape_short_list> $probe_escape_short_list<?/MIVAR>
+  <?/MIBLOCK>
+  <?MIVAR><span id="probeList$probe_zdb_minus"><?/MIVAR>
+  <?MIBLOCK COND="$(<,$(VECSIZE,$probe_long_list),$anatitem_max_count)">
+    <?MIVAR>
+    $probe_escape_long_list
+    <?/MIVAR>
+  <?MIELSE>
+    <?MIVAR>
+    $probe_escape_short_list ... <a href=javascript:onClick=updateProbeList$probe_zdb_minus('long')>(all $(VECSIZE,$probe_long_list))</a> $probe_right_arrow
+    <?/MIVAR>
+  <?/MIBLOCK>
+
+   </span>
+
+  </TABLE>
+  <?/MIBLOCK> <!--end unspecified anatomy term condition-->
+<?/MIBLOCK> <!--end 5 star probe count condition--> 
+
+
+<?MICOMMENT>use the fast search table to get number of genes that have 
+            expression at this structure
+<?/MICOMMENT>
+<?MISQL SQL="
+	SELECT anatstat_object_count
+	  FROM anatomy_stats
+	 WHERE anatstat_anatitem_zdb_id = '$OID';">
+
+  <?MIVAR NAME=$totalxpats>$1<?/MIVAR>
+<?/MISQL>
+<BR>
+<?MIBLOCK COND="$(>,$totalxpats,0)">
+
+  <TABLE width="90%">
+    <TR>
+     <TD bgcolor="#CCCCCC">
+       <?MIVAR>
+       <STRONG>All Expressed Genes 
+        <?MIBLOCK COND="$(>,$totalxpats,10)">, first 10: <?/MIBLOCK>
+       </STRONG>
+       <?/MIVAR>
+     </TD>
+   </TR>
+   <TR>
+     <TD bgcolor="#EEEEEE">
+<?MISQL SQL="
+	SELECT FIRST 10 distinct get_mrkr_abbrev_html_link(mrkr_zdb_id), mrkr_zdb_id,  
+	       mrkr_abbrev_order
+	  FROM expression_experiment, expression_result, marker
+	 WHERE xpatres_anat_item_zdb_id = '$OID'
+	   and xpatex_zdb_id = xpatres_xpatex_zdb_id
+	   and xpatex_gene_zdb_id = mrkr_zdb_id
+	ORDER BY mrkr_abbrev_order
+;">
+<?MIVAR NAME="gene_abbrev">$1<?/MIVAR>
+<?MIVAR NAME="gene_zdb_id">$2<?/MIVAR>
+<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$gene_zdb_id">$gene_abbrev</A>
+<?/MISQL>
+<?MIBLOCK COND="$(>,$totalxpats,10)">
+  <?MIVAR>, <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name_url&xpatsel_processed_selected_structures=$processed_item_name"><b>All ($totalxpats)</b></A> <?/MIVAR>
+<?/MIBLOCK>
+      </TD>
+    </TR>
+  </TABLE>
+<BR>
+<?/MIBLOCK>
 
 
 
