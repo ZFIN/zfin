@@ -5,6 +5,7 @@ Requires:  $CLONE_MARKER_ID, $highlight
 
 <?MIVAR NAME=$SOURCE><?/MIVAR>
 <?MIVAR NAME=$COUNT>0<?/MIVAR>
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
 
 <?MISQL SQL="
   		SELECT l.zdb_id, l.name
@@ -64,7 +65,8 @@ Requires:  $CLONE_MARKER_ID, $highlight
         mrkr_name,  -- 15
         clone_comments, -- 16
         clone_pcr_amplification, -- 17
-        mrkr_type -- 18
+        mrkr_type, -- 18
+        clone_rating --19
 	FROM clone, marker, probe_library, vector, outer fish, outer anatomy_item
 	WHERE '$CLONE_MARKER_ID' = clone_mrkr_zdb_id
           and clone_mrkr_zdb_id = mrkr_zdb_id
@@ -88,7 +90,7 @@ Requires:  $CLONE_MARKER_ID, $highlight
     Vector          Vector Type    Polymerase
     PCR Amplification
     Source
-
+    Clone rating (added by pm 08/17/05) This is provided by the Thisses
 
     BAC:
     Species    Strain    Sex
@@ -128,6 +130,7 @@ Requires:  $CLONE_MARKER_ID, $highlight
     <?MIVAR NAME=clone_comments>$16<?/MIVAR>
     <?MIVAR NAME=clone_pcr_amplification><BR>$17<?/MIVAR>
     <?MIVAR NAME=mrkr_type>$18<?/MIVAR>
+    <?MIVAR NAME=clone_rating>$19<?/MIVAR>
     
     <TABLE width="100%" border=0 cellpadding=5 bgcolor="$highlight">
     
@@ -204,7 +207,23 @@ Requires:  $CLONE_MARKER_ID, $highlight
       </TR>
      <?/MIVAR>
     <?/MIBLOCK>
+     <?MIBLOCK COND="$(NE,$clone_rating,)">
+ <?MIVAR COND="$(=,$clone_rating,0)" NAME=$clone_image><img src=http://<!--|DOMAIN_NAME|-->/images/10stars.gif><?/MIVAR>
+ <?MIVAR COND="$(=,$clone_rating,0)" NAME=$clone_key>Probe is difficult to use. Generally basal level of expression with more intense labeling in particular structure.<?/MIVAR>
+ <?MIVAR COND="$(=,$clone_rating,1)" NAME=$clone_image><img src=http://<!--|DOMAIN_NAME|-->/images/20stars.gif title="finicky probe"><?/MIVAR>
+ <?MIVAR COND="$(=,$clone_rating,1)" NAME=$clone_key>Weak expression pattern<?/MIVAR>
+ <?MIVAR COND="$(=,$clone_rating,2)" NAME=$clone_image><img src=http://<!--|DOMAIN_NAME|-->/images/30stars.gif title="adequate probe"><?/MIVAR>
+ <?MIVAR COND="$(=,$clone_rating,2)" NAME=$clone_key>Moderate expression pattern<?/MIVAR>
+ <?MIVAR COND="$(=,$clone_rating,3)" NAME=$clone_image><img src=http://<!--|DOMAIN_NAME|-->/images/40stars.gif title="good probe"><?/MIVAR>
+ <?MIVAR COND="$(=,$clone_rating,3)" NAME=$clone_key>Nice strong expression pattern<?/MIVAR>
+ <?MIVAR COND="$(=,$clone_rating,4)" NAME=$clone_image><img src=http://<!--|DOMAIN_NAME|-->/images/50stars.gif title="excellent probe"><?/MIVAR>
+ <?MIVAR COND="$(=,$clone_rating,4)" NAME=$clone_key>Simple to use, intense expression pattern restricted to a few structures<?/MIVAR>
+<?MIVAR NAME=$fxprobefig_best><img src=http://<!--|DOMAIN_NAME|-->/images/50stars.gif>= intense staining in a restricted group of structures<?/MIVAR>
+      <TR>
+        <TD colspan=3 nowrap><a href="/zf_info/stars.html"><b>Quality:</b></a><?MIVAR>&nbsp; $clone_image ($clone_key) <?/MIVAR> </TD>
+      </TR>
     </TABLE>
+    <?/MIBLOCK>
 
 <?MIVAR NAME=comment>hard coded as "none given" for thisse load<?/MIVAR>
 <!-- <p align=left><b>Comments:</b><br>&nbsp;$3</p> -->
