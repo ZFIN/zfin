@@ -128,9 +128,10 @@ to display the "Additional figures" link
          </tr>
          <?MIBLOCK COND="$(NE,$fxpubdis_notes,NULL)"><?MICOMMENT>display disclaimer for Thisse FR clones pub<?/MICOMMENT>
              <tr><td><?MIVAR>$fxpubdis_notes<?/MIVAR>
+           <?MIBLOCK COND="$(OR,$(EQ,$fxpubdis_zdb_id,ZDB-PUB-040907-1),$(EQ,$fxpubdis_zdb_id,ZDB-PUB-010810-1))">
              <tr><td> <a href="/ZFIN/Methods/ThisseProtocol.html"><b>Thisse <i>in situ</i> hybridization protocol</b></a>
+           <?/MIBLOCK>  
          <?/MIBLOCK>
-         <tr><td>
          <?MIBLOCK COND="$(XST,$fxpubdis_is_figure)"><?MICOMMENT>Display Additional Figures link only in fxfigureview.apg page but with probe<?/MICOMMENT>
            <tr><td>
             <?MIVAR> <tr><td><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&OID=$fxpubdis_zdb_id&fxallfig_probe_zdb_id=$fxpubdis_probe_zdb_id"><b>ADDITIONAL FIGURES</a></b><?/MIVAR>
