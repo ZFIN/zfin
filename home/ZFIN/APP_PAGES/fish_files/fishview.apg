@@ -652,7 +652,7 @@ Datablade documentation.
          <?MIVAR NAME=fishview_xpatsource_count>$1<?/MIVAR>
          <?MIBLOCK COND="$(!=,$fishview_xpatsource_count,0)">
             <HR width="80%">
-             <b>GENE EXPRESSION: </b></b><font size=-1>(<a href="javascript:start_note();">current status</a></font>)
+             <b>GENE EXPRESSION IN THIS BACKGROUND: </b></b><font size=-1>(<a href="javascript:start_note();">current status</a></font>)
              <table width="100%" border="0" <?MIVAR>bgcolor="$highlight"<?/MIVAR>>
 
              <?MICOMMENT> query literature pub <?/MICOMMENT>
@@ -693,7 +693,7 @@ Datablade documentation.
               <tr><td><b>All expression data: </b> </td>
               <td>
               <?MIVAR>
-               <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&mutsearchtype=begins&mutant=$allele">$fishview_xpatfig_count figure(s)</a>from $fishview_xpatsource_desc
+               <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&mutsearchtype=begins&mutant=$allele">$fishview_xpatfig_count figure(s)</a> from $fishview_xpatsource_desc
 	     <?/MIVAR>
 </table>
           <?/MIBLOCK> <?MICOMMENT> end of if there are xpats <?/MICOMMENT> 
