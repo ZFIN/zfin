@@ -19,7 +19,7 @@ Return to the <A HREF="data_model.html"> Table of Contents</a>
 
 <P>	<B>Role:</B>  The LAB Class supports a listing of labs that are doing zebrafish research. The goal is to provide users with a means for systematically finding basic information about labs.
 	
-<P>	<B>How/Who enters:</B>  A new LAB is initially created via a formal request to the DB Admin by the head of the lab. This request includes enough information to create a PERSON entry for each of the lab members. Fields except name, location, and contact person are editable by the contact person for the lab (who essentially “owns”  the record). It is this person’s responsibility to keep the lab information up to date; the DB Admin does not routinely do so but can provide help if necessary.
+<P>	<B>How/Who enters:</B>  A new LAB is initially created via a formal request to the DB Admin by the head of the lab. This request includes enough information to create a PERSON entry for each of the lab members. Fields except name, location, and contact person are editable by the contact person for the lab (who essentially &ldquo;owns&rdquo;  the record). It is this person&rsquo;s responsibility to keep the lab information up to date; the DB Admin does not routinely do so but can provide help if necessary.
 	
 <P>	<B>Security: </B> Only the DB Admin can create (i.e. insert) a new LAB record in the database. Other than DB admin., only the lab contact person can change the editable fields. Accordingly, no error checking or validation of any fields is deemed necessary.
 <BR>	
@@ -38,7 +38,7 @@ Return to the <A HREF="data_model.html"> Table of Contents</a>
 <P>	<B>publications. </B>By joining across the PERSON-PUB and PERSON-LAB intersection tables, the database dynamically constructs the list of publications produced by a LAB.
 
 <H3>Open Issues/Questions:  </H3>
-<P>			•  Should we really allow the LAB’s contact person to update members remotely? Makes sense, but is a bit out of step with our general and very conservative policy of routing all changes to data through the DB Admin.
+<P>			&bull;  Should we really allow the LAB&rsquo;s contact person to update members remotely? Makes sense, but is a bit out of step with our general and very conservative policy of routing all changes to data through the DB Admin.
 <BR>
 <BR>
 <BR>

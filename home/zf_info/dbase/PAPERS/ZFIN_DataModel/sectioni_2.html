@@ -30,22 +30,22 @@ Return to the <A HREF="data_model.html"> Table of Contents</a>
 </TABLE>
 			
 <H4>ATTRIBUTES :</H4>
-	<P><B>name (TEXT, REQUIRED). </B> Holds the MEDLINE format of the person’s name (i.e. what you see in a MEDLINE paper author list); this is to support automated connection of new publications to existing authors. 
+	<P><B>name (TEXT, REQUIRED). </B> Holds the MEDLINE format of the person&rsquo;s name (i.e. what you see in a MEDLINE paper author list); this is to support automated connection of new publications to existing authors. 
 <P>	<B>nicknames (TEXT, OPTIONAL).</B> Contains a semicolon separated list of alternate names for the individual. The goal is to track individuals who use a pen name, alternative spellings, or whose name has changed due to marriage or other circumstances. 
-<P>	<B>bio (TEXT, OPTIONAL).</B> Holds a person’s biographical sketch. This attribute is not filled in when the new PERSON entry is initially created; it is the responsibility of the person to connect to the database and provide this information to update his/her record. No validation.
+<P>	<B>bio (TEXT, OPTIONAL).</B> Holds a person&rsquo;s biographical sketch. This attribute is not filled in when the new PERSON entry is initially created; it is the responsibility of the person to connect to the database and provide this information to update his/her record. No validation.
 <P>	<B>nonZF_pubs (TEXT, OPTIONAL).</B> A text field in which a PERSON may list other non-zebrafish publications they have produced. Though no formatting is enforced, we presume (and perhaps should recommend) that people type in semicolon-separated citations in standard MEDLINE format. Provides an essentially non-searchable place for people to list non-zebrafish publications. 
 
 <H4>IMPLICIT ATTRIBUTES :</H4>
-<P>	<B>publications: </B> All PERSONs are cross-indexed to the PUBLICATIONs which they have authored. This is implemented using the “intersection table” PERSON-PUB (see section IV), which allows a PERSON’s list of publications to be constructed dynamically. No explicit list of publications needs to be maintained in a PERSON’s record. 
+<P>	<B>publications: </B> All PERSONs are cross-indexed to the PUBLICATIONs which they have authored. This is implemented using the &ldquo;intersection table&rdquo; PERSON-PUB (see section IV), which allows a PERSON&rsquo;s list of publications to be constructed dynamically. No explicit list of publications needs to be maintained in a PERSON&rsquo;s record. 
 <P>	<B>lab: </B> All PERSONs  are cross-indexed with the LABs in which they work. This allows each PERSON to be a member of zero or more LABs. Again, this is implemented using the intersection table PERSON-LAB, so that no explicit tracking of LAB is required in the PERSON data record.
 
 <H3>PRIVATE ATTRIBUTES (System only)</H3>
 <P>	<B>login (CHAR(8), OPTIONAL).</B> This field contains the persons login name. It is non-NULL only if the person has been registered as an authorized submitter to the database. This field may not contain spaces or other weird characters, and is never publicly displayed.
-<P>	<B>password (CHAR(8), OPTIONAL).</B> This field contains the current password of an authorized submitter. It is used by the system to verify authenticity of submissions. The password is assigned when the person becomes an authorized submitter and is given an “account” by the DB admin. This field is never publicly displayed.
+<P>	<B>password (CHAR(8), OPTIONAL).</B> This field contains the current password of an authorized submitter. It is used by the system to verify authenticity of submissions. The password is assigned when the person becomes an authorized submitter and is given an &ldquo;account&rdquo; by the DB admin. This field is never publicly displayed.
 <P>	<B>last_submit (DATE, OPTIONAL).</B> This field allows the system to record when the person last entered a submission into the database. This is used to track usage and purge inactive accounts after some period.
 
 <H3>Open Issues/Questions:  </H3>
-<P>			•  Do we REALLY want to list the nonZF_pubs field? Could we do away with it, and just assume that people list such pubs on their personal home pages, the URL for which is part of their record? Seems like this approach would be useful from the perspective of avoiding data overload.
+<P>			&bull;  Do we REALLY want to list the nonZF_pubs field? Could we do away with it, and just assume that people list such pubs on their personal home pages, the URL for which is part of their record? Seems like this approach would be useful from the perspective of avoiding data overload.
 <BR>
 <BR>
 <BR>

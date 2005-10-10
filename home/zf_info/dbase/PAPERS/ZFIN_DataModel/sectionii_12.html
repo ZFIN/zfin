@@ -18,7 +18,7 @@ Return to the <A HREF="data_model.html"> Table of Contents</a>
 <hr>
 
 <P>	<B>Role:</B>  The CHROMOSOME class embodies the basic genetic building block represented in ZDB. It was developed in response to earlier difficulties trying to represent each mutation as a strain of fish, difficulties like dealing with double-mutants. The chromosome-based approach was inspired by the <I>Drosophila</I> community, where the fly mutations (i.e. the Red Book) have long been catalogued in this way.  Note that our model also has a GENE class, but it represents cloned genetic sequences which are not (at least initially) associated with a CHROMOSOME that exists in some strain of fish.
-<P>			    As discussed in the preceding overview, CHROMOSOME records are essentially “containers” for ALTERATION records, which detail the specific alterations that have occurred within a given mutant chromosome.
+<P>			    As discussed in the preceding overview, CHROMOSOME records are essentially &ldquo;containers&rdquo; for ALTERATION records, which detail the specific alterations that have occurred within a given mutant chromosome.
 	
 <P>	<B>How/Who enters:</B>  Initially, the DB Admin enters available chromosomes. Authorized submitters are allowed to create new CHROMOSOME records and update existing ones.
 	
@@ -30,11 +30,11 @@ Return to the <A HREF="data_model.html"> Table of Contents</a>
 </TABLE>			
 			
 <H4>ATTRIBUTES:</H4>
-<P>	<B>name (text, REQUIRED).  </B>This field holds the official complete name of the mutated CHROMOSOME. For example “no tail”.
+<P>	<B>name (text, REQUIRED).  </B>This field holds the official complete name of the mutated CHROMOSOME. For example &ldquo;no tail&rdquo;.
 <P>	<B>abbrev (text, REQUIRED).</B> This field holds the officially accepted abbreviation for the CHROMOSOME. It is assumed that the name adheres to the conventions established by the zebrafish community; the database will not check the value for correctness. For example, the mutation <I>no tail</I>, is abbreviated as <I>ntl</I>.
 <P>	<B>chrom# (INTEGER{1-25}, REQUIRED). </B> Specifies the chromosome number represented by the record. 
 <P>	<B>phenotype (text, REQUIRED).</B> A free form textual description of the phenotype associated with the mutant chromosome, including anatomical, developmental, physiological, behavioral aspects. 
-<P>	<B>pheno_pattern (text, REQUIRED). </B>A more rigid and compact summary of the mutant phenotype, to be used to support searches. The format is ([GENE] PART, STAGE-start, STAGE-end), where the values for this set are determined by presenting the user with the following interface: “Please summarize the primary phenotypic characteristic of this mutation: Affects [expression of <GENE> in] <PART> from stage <STAGE-start> to <STAGE-end>.”
+<P>	<B>pheno_pattern (text, REQUIRED). </B>A more rigid and compact summary of the mutant phenotype, to be used to support searches. The format is ([GENE] PART, STAGE-start, STAGE-end), where the values for this set are determined by presenting the user with the following interface: &ldquo;Please summarize the primary phenotypic characteristic of this mutation: Affects [expression of <GENE> in] <PART> from stage <STAGE-start> to <STAGE-end>.&rdquo;
 <P>			MIGHT NOT PHYSICALLY EXIST as an actual field. It is likely that this function will be implemented as EXPRESSION-DATA intersection table, which maps expression to data records (CHROMOSOMES or IMAGES) that match the given phenotype.
 <P>	<B>lab (TEXT, REQUIRED. </B>Specification of the lab in which this mutant chromosome was first generated.
 

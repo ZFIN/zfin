@@ -29,7 +29,7 @@ Return to the <A HREF="data_model.html"> Table of Contents</a>
 </TABLE>
 	
 <H4>ATTRIBUTES:</H4>
-<P>	<B>allele (TEXT, REQUIRED). </B> The official allele designation of this alteration. If an allele consists of more than one alteration (e.g., allele ‘b345’ consists of an insertion AND a translocation), then both alterations have the same allele name.
+<P>	<B>allele (TEXT, REQUIRED). </B> The official allele designation of this alteration. If an allele consists of more than one alteration (e.g., allele &lsquo;b345&rsquo; consists of an insertion AND a translocation), then both alterations have the same allele name.
 <P>	<B>mutagen (TEXT, REQUIRED). </B>The mutagenizing agent. Must be one of {ENU, EMS, g-rays, DNA, spontaneous}.
 <P>	<B>protocol (TEXT, REQUIRED). </B> The mutagenizing protocol. Describes what was treated with the mutagenizing agent. One of {adult males, adult females, sperm, embryos}.
 <P>	<B>chrom_change (Closed Set, REQUIRED).</B> Describes the nature of the mutation. Valid values come from the set {Dp, Df, T, Tp, In, UNKNOWN} standing for Duplication, Deficiency, Translocation, Transposition, Insertion.
@@ -38,13 +38,13 @@ Return to the <A HREF="data_model.html"> Table of Contents</a>
 <P>	<B>cyto_loc (text, OPTIONAL). </B>Gives location of mutation in cytological terms.
 <P>	<B>breakpoints (text, OPTIONAL).</B> Two genetic and cytological locations.
 <P>	<B>affected_genes (GENE, OPTIONAL).</B> Points to all genes that are known to be affected by this genetic alteration. THIS FIELD DOES NOT EXIST PHYSICALLY; it is an intersection table. Whenever a GENE-SEQ is found to be affected by the mutation described by this CHROMOSOME record, the person that discovers it can update this field, adding the GENE-SEQ to the list of known mutations. 
-<P>	<B>potential_genes (GENE, OPTIONAL). </B>Points to all <I>possible</I> genes that could be affected by this alteration. The difference between this attribute and the affected_genes is that the genes in this list are <I>suspected</I> to be affected, but this has not been formally established. THIS FIELD DOES NOT PHYSICALLY EXIST. Rather the information is computed dynamically by comparing the breakpoint information in this record with the genetic locations of GENE-SEQ records. The idea is that if a GENE-SEQ falls on or between your breakpoints, then it may be affected by the mutation. The interface should do this calculation and present the resulting list of GENE-SEQs as “genes potentially affected by mutation”.
+<P>	<B>potential_genes (GENE, OPTIONAL). </B>Points to all <I>possible</I> genes that could be affected by this alteration. The difference between this attribute and the affected_genes is that the genes in this list are <I>suspected</I> to be affected, but this has not been formally established. THIS FIELD DOES NOT PHYSICALLY EXIST. Rather the information is computed dynamically by comparing the breakpoint information in this record with the genetic locations of GENE-SEQ records. The idea is that if a GENE-SEQ falls on or between your breakpoints, then it may be affected by the mutation. The interface should do this calculation and present the resulting list of GENE-SEQs as &ldquo;genes potentially affected by mutation&rdquo;.
 <P>	<B>chrom_id (TEXT, REQUIRED). </B> For system use. Contains the ZDB_ID of the CHROMOSOME record with which this alteration is associated.
 
 <H3>Open Issues/Questions:  </H3>
-<P>			•  (Eck, 7/19/96) Given the brief discussion in ROLE above, should we even have a phenotype attribute at the ALTERATION level? If I understand it correctly, the only way to pick apart the phenotypic contributions of individual alterations is to isolate them on a chromosome by somehow knocking out all other alterations. But then wouldn’t this create a completely new chromosome, with its own CHROMOSOME record --- which would have its own phenotype. 
-<P>			•  Format for genetic location needs to be determined.  Probably something like “{u|d}real#”, where u/d refers to the long/short (up/down) arm of the chromosome, followed by a recombination (centimorgan) distance.
-<P>			•  Format for cytological location needs to be determined.  Something like (integer, letter, integer) to locate the exact region of the mutation.
+<P>			&bull;  (Eck, 7/19/96) Given the brief discussion in ROLE above, should we even have a phenotype attribute at the ALTERATION level? If I understand it correctly, the only way to pick apart the phenotypic contributions of individual alterations is to isolate them on a chromosome by somehow knocking out all other alterations. But then wouldn&rsquo;t this create a completely new chromosome, with its own CHROMOSOME record --- which would have its own phenotype. 
+<P>			&bull;  Format for genetic location needs to be determined.  Probably something like &ldquo;{u|d}real#&rdquo;, where u/d refers to the long/short (up/down) arm of the chromosome, followed by a recombination (centimorgan) distance.
+<P>			&bull;  Format for cytological location needs to be determined.  Something like (integer, letter, integer) to locate the exact region of the mutation.
 <BR>
 <BR>
 <BR>

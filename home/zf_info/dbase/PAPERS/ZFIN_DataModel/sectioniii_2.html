@@ -17,8 +17,8 @@ Return to the <A HREF="data_model.html"> Table of Contents</a>
 <hr>
 
 <P>	<B>Role:</B>  The purpose of the Phys_Structure class is to implement a flexible, extensible mechanism for describing the hierarchical structural relationships among the various anatomical parts of the zebrafish. In conjunction with the PART catalog, this data structure provides the basis for implementing vital functions including:
-<P>			•  Enforcing uniform terminology when identifying anatomical structures visible in an image.
-<P>			•  Constructing and displaying dynamic graphical representations (e.g. a tree) of the anatomical structure as a means for users to specify in what area of the fish they are interested, to identify anatomical parts, or to access other interface-related functions. 
+<P>			&bull;  Enforcing uniform terminology when identifying anatomical structures visible in an image.
+<P>			&bull;  Constructing and displaying dynamic graphical representations (e.g. a tree) of the anatomical structure as a means for users to specify in what area of the fish they are interested, to identify anatomical parts, or to access other interface-related functions. 
 <P>			The approach to implementing the PHYS_STRUCTURE class is somewhat abstract. Each member of the class defines a single structural relationship between two PARTs. For example, the brain consists of a forebrain, a midbrain, and a hindbrain.  This relationship is represented in the following four instances of the Phys_Structure class:
 <BR>
 <BR>
@@ -54,10 +54,10 @@ Return to the <A HREF="data_model.html"> Table of Contents</a>
 <P>	<B>Number (integer, REQUIRED).</B> This field specifies how many of the containee parts exist in the container part. For example, this would specify that a fish has two (2) eyes. 
 	
 <H3>Open Issues/Questions:  </H3>
-<P>			•  There is a potent tradeoff between flexibility and efficiency associated with the representation of the structure of the organism. The distributed PHYS_STRUCTURE approach described above represents the most flexible extreme, supporting the widest variety of queries and the easiest modifications to the hierarchical structure. However, it may also be quite inefficient if we frequently need to construct the entire physical structure. 
+<P>			&bull;  There is a potent tradeoff between flexibility and efficiency associated with the representation of the structure of the organism. The distributed PHYS_STRUCTURE approach described above represents the most flexible extreme, supporting the widest variety of queries and the easiest modifications to the hierarchical structure. However, it may also be quite inefficient if we frequently need to construct the entire physical structure. 
 				
 <P>				In short, it remains to be seen whether this is the best representational approach. One compromise might be to use this distributed representation as the basic representation, and periodically use it to construct some other, more efficient structure (i.e. a linked list of some sort) which can be cached and used for everyday tree traversals. 
-<P>			•	<B>Monte:</B>  What about functional, developmental, structural relationships?
+<P>			&bull;	<B>Monte:</B>  What about functional, developmental, structural relationships?
  <BR>
 <BR>
 <BR>

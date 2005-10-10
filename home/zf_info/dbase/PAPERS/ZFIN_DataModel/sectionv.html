@@ -17,7 +17,7 @@ Return to the <A HREF="data_model.html"> Table of Contents</a>
 
 <H3>Entering Publications (may also apply to some other classes).</H3>
 <P>	For many data classes (e.g. genes, labs, etc.), submitters should be able to specify the publications associated with that data item. This process must be as streamlined as possible, because users have very little patience with this.  
-<P>	A crucial issue is that publication data that are somehow malformed (e.g. the submitter didn’t type the date in the correct format) can essentially be lost in the database, because later queries will not be able to retrieve them. For this reason, all new PUBLICATION records are entered by the DB admin. Specifically, the way it works is as follows:
+<P>	A crucial issue is that publication data that are somehow malformed (e.g. the submitter didn&rsquo;t type the date in the correct format) can essentially be lost in the database, because later queries will not be able to retrieve them. For this reason, all new PUBLICATION records are entered by the DB admin. Specifically, the way it works is as follows:
 <P>   1) When asked to list publications, users provide the name of the first author and the first n words of the title for each publication they wish to list. 
 <P>   2) Upon submission, the system matches this list against the PUBLICATION database. 
 <P>   3) All publications it finds in the database are added to the current data record (e.g. an image file being submitted).

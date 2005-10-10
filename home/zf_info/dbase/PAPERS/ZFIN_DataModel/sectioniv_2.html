@@ -18,7 +18,7 @@ Return to the <A HREF="data_model.html"> Table of Contents</a>
 
 <P>	<B>Role:</B> Because LABs generally have more than one member, and, in some instances, a PERSON may be a member of more than one LAB, it makes sense to implement the connection between these two data types as an intersection table.  Queries on this table can easily retrieve all the members for a given lab., or all labs in which a certain person is a member. 
 			
-<P>	<B>How/Who enters:</B>  Records are entered indirectly, as new PERSONS are entered into the system or as PERSON records are updated to reflect a new LAB. Specifically, a PERSON is connected with his or her LAB(s) by selecting one or more labs from a list of labs known to the system, while filling in the “Lab” field in the PERSON record during an update. The system then makes the appropriate entry into the PERSON-LAB table.
+<P>	<B>How/Who enters:</B>  Records are entered indirectly, as new PERSONS are entered into the system or as PERSON records are updated to reflect a new LAB. Specifically, a PERSON is connected with his or her LAB(s) by selecting one or more labs from a list of labs known to the system, while filling in the &ldquo;Lab&rdquo; field in the PERSON record during an update. The system then makes the appropriate entry into the PERSON-LAB table.
 	
 <P>	<B>Security: </B> Security issues are minimal because this table is invisible to users. 
 <BR>

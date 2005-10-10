@@ -31,7 +31,7 @@ Return to the <A HREF="data_model.html"> Table of Contents</a>
 </TABLE>	
 			
 <H4>ATTRIBUTES:</H4>
-<P>	<B>cloned_gene (CLONED_GENE, OPTIONAL). </B>In time, it may be established that a sequence originally generated as an EST is a gene. When this happens, the EST is “migrated” into a new CLONED_GENE record. In this case, the EST record remains, but this field contains the ZDB_ID of the CLONED_GENE that the EST gave rise to. Alternatively, if the EST is found to correspond to a known gene, then the ZDB_ID of that cloned gene is used as a pointer to that information.
+<P>	<B>cloned_gene (CLONED_GENE, OPTIONAL). </B>In time, it may be established that a sequence originally generated as an EST is a gene. When this happens, the EST is &ldquo;migrated&rdquo; into a new CLONED_GENE record. In this case, the EST record remains, but this field contains the ZDB_ID of the CLONED_GENE that the EST gave rise to. Alternatively, if the EST is found to correspond to a known gene, then the ZDB_ID of that cloned gene is used as a pointer to that information.
 <P>	<B>source (SOURCE, OPTIONAL).</B> This field holds the ZDB_ID# of a SOURCE (i.e. person, lab, or company) from which the EST is currently available.
 <P>	<B>EST-seq (SEQUENCE, OPTIONAL). </B>THIS FIELD DOES NOT EXIST PHYSICALLY; the association is established by joining with the SEQUENCE class. Each EST may have at most one SEQUENCE record associated with it, with seq_type=EST.
 <H3>Open Issues/Questions:  </H3>
