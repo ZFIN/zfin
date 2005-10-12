@@ -33,7 +33,7 @@ $dbh = DBI->connect("DBI:Informix:$dbname", $username, $password)
 # Sanger_FPC, VEGA, GenBank, RefSeq, Ensembl, Sanger clone, 
 # GenPept, SwissProt, RefSeq, VEGA_clone
 
-$sql = "select dblink_acc_num, mrkr_zdb_id, mrkr_abbrev
+$sql = "select dblink_acc_num as acc_num, mrkr_zdb_id, mrkr_abbrev
           from db_link, marker
          where dblink_linked_recid = mrkr_zdb_id 
            and dblink_fdbcont_zdb_id in ('ZDB-FDBCONT-040412-10','ZDB-FDBCONT-040412-14',
@@ -42,7 +42,13 @@ $sql = "select dblink_acc_num, mrkr_zdb_id, mrkr_abbrev
                                          'ZDB-FDBCONT-040917-2','ZDB-FDBCONT-040412-41',
                                          'ZDB-FDBCONT-040412-42','ZDB-FDBCONT-040412-47',
                                          'ZDB-FDBCONT-040527-1','ZDB-FDBCONT-040826-2')
-       order by dblink_acc_num, mrkr_zdb_id ";
+       union
+        select mrkrseq_mrkr_zdb_id as acc_num, mrkr_zdb_id, mrkr_abbrev
+          from marker_sequence, marker_relationship, marker
+         where mrkrseq_mrkr_zdb_id = mrel_mrkr_1_zdb_id
+           and mrel_mrkr_2_zdb_id = mrkr_zdb_id
+           and mrel_type = 'knockdown reagent targets gene'
+       order by acc_num, mrkr_zdb_id ";
            
 $sth = $dbh->prepare($sql);
 $sth -> execute();
