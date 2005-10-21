@@ -25,11 +25,13 @@ info  -- the column name for the column attrib
 <?MIVAR COND="$(NXST,$old_value)" NAME=$old_value>NULL<?/MIVAR>
 <?MIVAR COND="$(NXST,$comments)" NAME=$comments>NULL<?/MIVAR>
 <?MIVAR COND="$(NXST,$abbrev)" NAME=$abbrev><?/MIVAR>
+<?MIVAR COND="$(NXST,$mode)" NAME=$mode><?/MIVAR>
+<?MIVAR COND="$(NXST,$attr)" NAME=$attr><?/MIVAR>
+<?MIVAR COND="$(NXST,$attr_type)" NAME=$attr_type><?/MIVAR>
 
 <?MIVAR NAME=$new_value DELIMIT="'" REPLACE="''">$new_value<?/MIVAR>
 <?MIVAR NAME=$old_value DELIMIT="'" REPLACE="''">$old_value<?/MIVAR>
 <?MIVAR NAME=$comments DELIMIT="'" REPLACE="''">$comments<?/MIVAR>
-
 <?MISQL SQL="insert into updates (submitter_id,submitter_name, rec_id, field_name, old_value, comments, when) values ('$ZDB_ident', '$ZDB_name','$OID', '$attr',  '$old_value', '$comments', current);"><?/MISQL>
 
 <?MISQL COND="$(AND,$(NC,$attr,locus_dalias_alias),$(OR,$(EC,$attr_type,text),$(EC,$attr_type,textarea)))" SQL="update locus set $attr='$new_value' where zdb_id='$OID';"><?/MISQL>
@@ -72,11 +74,15 @@ info  -- the column name for the column attrib
 		lower('$abbrev');">
     	<?/MISQL>		
      <?/MIBLOCK>
-<?/MIBLOCk>
+<?/MIBLOCK>
 
 
 
-<!-- insert update record for the update! -->
+<!-- delete a gene-locus connectione(FB 448)-->
+<?MIBLOCK COND="$(EC,$mode,delete)">
+   <?MISQL SQL="update locus set cloned_gene=NULL where zdb_id='$OID'">
+   <?/MISQL>
+<?/MIBLOCK>
 
 <!-- Special case for deleting one of the associated sources/pubs -->
 <?MIBLOCK COND="$(EC,$attr_type,special-listitem)">
@@ -173,7 +179,6 @@ info  -- the column name for the column attrib
 	</script>
    <?/MIBLOCK> 
  <?/MIBLOCK> <!-- special-newattrib -->
-
 
 
 
