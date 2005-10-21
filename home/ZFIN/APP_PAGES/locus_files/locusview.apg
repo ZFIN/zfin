@@ -59,6 +59,10 @@ Datablade documentation.
 	window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-locusupdate.apg&OID=$OID&dataOID='+data_zdbId+'&attr='+attr+'&attr_type=special-listitem&old_value='+source_zdbId+'&new_value=deleted&info='+info);
 	}
 
+  function deletegene() {
+	window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-locusupdate.apg&OID=$OID&mode=delete');
+        }
+
   function new_attrib_prevname() {
 	var prev_name=document.updater.attrib_prevname.value;
 	var pub_id=document.updater.attrib_prevname_pubid.value.toUpperCase();
@@ -324,6 +328,11 @@ Datablade documentation.
 	<?/MIVAR>
 	<B>Affected Gene:</B> 
 	<?MIVAR COND="$(EC,$cloned_gene,NULL)">Not yet established.<?/MIVAR>
+	<?MIVAR COND="$(AND,$(NC,$cloned_gene,NULL),$(XST,$UPDATE))">
+ 	  <INPUT TYPE=button 
+	    value="Delete" 
+	    onClick="deletegene()">
+	<?/MIVAR>
 	<?MIVAR COND="$(AND,$(NC,$cloned_gene,NULL),$(XST,$UPDATE))">
 	  Add Reference: &nbsp; Reference:
 	  <input type=text name=attrib_cloned_pubid>
