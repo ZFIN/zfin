@@ -83,7 +83,6 @@ DEBUGGING:
       where ID = 'aa-identify.apg';">
     $1
 <?/MISQL>
-
 <?MICOMMENT> set userid to ZDB_ID of user or GUEST to be used by the map viewer<?/MICOMMENT>
 <?MIVAR NAME=$userid>GUEST<?/MIVAR>
 <?MIBLOCK COND="$(NC,$(SUBSTR,$ZDB_name,1,5),GUEST)">
@@ -93,6 +92,7 @@ DEBUGGING:
 <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 <?MIVAR NAME=$MI_NULL><?/MIVAR>
 <?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
+<?MIVAR NAME=$update_mode><?/MIVAR>
 
 <!---------------this part is executed after a search is submitted ---------------->
 
@@ -114,7 +114,7 @@ DEBUGGING:
    <?MIVAR NAME=$mrkr_param_list>&query_results=t$(IF,$(XST,$input_name),&input_name=$input_name)$(IF,$(XST,$input_acc),&input_acc=$input_acc)$(IF,$(XST,$compare),&compare=$compare)$(IF,$(NC,$lg,0),&lg=$lg)$(IF,$(XST,$WINSIZE),&WINSIZE=$WINSIZE)$(IF,$(XST,$return_rec),&return_rec=$return_rec)<?/MIVAR>
     <?MIVAR NAME=$mseg_param_list>$mrkr_param_list$(IF,$(XST,$return_rec),&return_rec=$return_rec)<?/MIVAR>
    
-
+   <?MIVAR COND="$(XST,$return_rec)" NAME=$update_mode>yes<?/MIVAR>
   <?MIVAR COND="$(NC,$marker_type,all)" NAME=$mlist SEPARATE="','">$marker_type<?/MIVAR>
 
   <?MIBLOCK COND="$(AND,$(XST,$mlist),$(EC,$marker_type,$mlist),$(NXST,$getTop))">
@@ -153,7 +153,6 @@ DEBUGGING:
 		mrkrmch_name	varchar(120),
 		mrkrmch_significance	integer ); ">
       <?/MISQL> 	 
-
       <?MIBLOCK COND="$(EC,$compare,starts)">
         <?MIVAR NAME=$newmrkrsel_nameTable><?/MIVAR>
         <?MIVAR NAME=$newmrkrsel_nameTest>
@@ -198,7 +197,6 @@ DEBUGGING:
  		$(SETVAR,$mchIdLast,$mchId)          	
         <?/MISQL>
       <?/MISQL>
-    
       <?MIVAR>
         $(SETVAR,$name_sig_cols,", mrkrmch_name, mrkrmch_significance") 
 	$(SETVAR,$sig_order," mrkrmch_significance, ")
@@ -349,7 +347,6 @@ DEBUGGING:
 	drop table bigselect_acc_match; ">
     <?/MISQL>
     
-
    <!------------------  Retreive and Display the data -------------------->
 
      <?MIVAR NAME="critList"><?/MIVAR> 
@@ -385,6 +382,10 @@ DEBUGGING:
 	  <?MIVAR COND="$(=,$MI_CURRENTROW,1)" NAME=OID>$1<?/MIVAR>
        <?/MISQL>
      <?/MIBLOCK>
+     <?MIBLOCK COND="$(EQ,$update_mode,yes)">
+	<?MIVAR NAME=OID><?/MIVAR>
+     <?/MIBLOCK>
+
      <?MIBLOCK COND="$(NC,$OID,)">
        <?MIVAR>
          <SCRIPT>location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID")</SCRIPT>
@@ -398,7 +399,7 @@ DEBUGGING:
      <!--else keep going,  query count(*) -->
 
      <?MISQL SQL="
-  	select mrkr_type, count(distinct mrkr_zdb_id)::integer
+  	select  mrkr_type, count(distinct mrkr_zdb_id)::integer
     	 from bigselect_temp_markers
 	 group by mrkr_type;">
      <?/MISQL>
@@ -406,7 +407,7 @@ DEBUGGING:
      <?MIVAR NAME=$type_count>$2<?/MIVAR>
      <?MIVAR COND="$(=,$num_of_type,0)">$(SETVAR, $type_count,0)<?/MIVAR> 
   
-    <?MIBLOCK COND="$(AND,$(=,$num_of_type,1),$(=,$type_count,1))">
+    <?MIBLOCK COND="$(AND,$(=,$num_of_type,1),$(=,$type_count,1),$(NC,$update_mode,yes))">
 	<?MISQL SQL="
   		select mrkr_zdb_id
     	 	from bigselect_temp_markers;">
@@ -443,7 +444,6 @@ DEBUGGING:
 	 <?MIVAR NAME=$mtype_in_db>$1<?/MIVAR>  
 	 <?MIVAR NAME=$search_count>$2<?/MIVAR>
 	 <?MIVAR NAME=$mtype_display>$3<?/MIVAR>
-
 	 <?MIBLOCK COND="$(!=,$search_count,0)">  
 	   <?MISQL SQL="
 		select mtgrpmem_mrkr_type
@@ -452,7 +452,6 @@ DEBUGGING:
 		  and  mtgrpmem_mrkr_type_group = 'SEARCH_SEG' ;
 	     ">
            <?/MISQL> 
-	  
 	   <?MIBLOCK COND="$(!=,$MI_ROWCOUNT,0)">
 		<?MIVAR NAME=$linkto>msegselect.apg<?/MIVAR>
 		<?MIVAR NAME=$linkparam>$mseg_param_list<?/MIVAR>
