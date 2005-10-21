@@ -190,6 +190,7 @@ DEBUGGING:
 	<?/MISQL>
 	<?MIVAR COND="$(!=,$MI_ROWCOUNT,0)" NAME=type_of_knockdown_reagent>t<?/MIVAR>
     <?MIELSE>
+ssss
 	<?MIVAR NAME=$constraint> mrkr_type not in (select mtgrpmem_mrkr_type from marker_type_group_member where mtgrpmem_mrkr_type_group ='SEARCH_SEG')<?/MIVAR>
     <?/MIBLOCK>
 
@@ -207,7 +208,6 @@ DEBUGGING:
 	) with NO LOG;">
       <?/MISQL>
     <?/MISQL>
-
     <?MIBLOCK COND="$(XST,$input_name)">
       <?MISQL COND=$(XST,$debug_timing) SQL="
         execute function get_time()">
@@ -244,7 +244,6 @@ DEBUGGING:
  	   $(SETVAR,$geneMchIdLast,$geneMchId)          	
          <?/MISQL>
       <?/MISQL>
-     	
       <?MIVAR NAME=$mrkrsel_optional_match_table>,$markerselect_temp_match<?/MIVAR>
       <?MIVAR>
 	$(SETVAR,$mrkrsel_optional_match_cols,", mstmatch_name, mstmatch_significance, mstmatch_precedence")
@@ -254,7 +253,6 @@ DEBUGGING:
       <?MICOMMENT>restore the input string for display<?/MICOMMENT>
       <?MIVAR COND="$(XST,$input_name)" NAME=input_name DELIMIT="''" REPLACE="'">$input_name<?/MIVAR>
     <?/MIBLOCK>  <?MICOMMENT>-------------------------------------<?/MICOMMENT>
-
 
 
     <?MICOMMENT>---------------------------------------------------
@@ -307,7 +305,6 @@ DEBUGGING:
 	$(VECAPPEND, $constraint," mrkr_zdb_id = mstmatch_zdb_id ")
       <?/MIVAR>
     <?/MIBLOCK> <?MICOMMENT>---------------------------------------<?/MICOMMENT>
-
 
     <?MICOMMENT>--------------- if LG is selected -----------------<?/MICOMMENT>
     <?MIBLOCK COND="$(NC,$lg,0)">
@@ -533,7 +530,6 @@ DEBUGGING:
 
   <?/MIBLOCK>
 
-
   <?MICOMMENT> ===========================================================
                ===   Display Search Results
                ===========================================================
@@ -633,7 +629,11 @@ DEBUGGING:
     <?MICOMMENT> For morpholino, the order is only meaningful when it is by gene
                  symbol. Alternatively, we could store the expected gene symbol 
                  string as the morpholino name/abbrev order string. 
+                 ****This part of the code is being commented out as it wasn't 
+                 returning counts properly (FB 773). This code will be removed 
+                 after it is on production and succesfully working (on 11/21)**
     <?/MICOMMENT> 
+<?MICOMMENT>
     <?MIBLOCK COND="$(AND,$(XST,$marker_type),$(EC,$marker_type,MRPHLNO))">
 	<?MIVAR NAME=$mrkrsel_master_sql> 
 	       select distinct mstmrkr_name, mstmrkr_abbrev, mstmrkr_type, 
@@ -649,7 +649,7 @@ DEBUGGING:
             order by mstmrkr_significance, mstmrkr_type, mg.mrkr_abbrev_order;	
        <?/MIVAR>
     <?/MIBLOCK>
-
+<?/MICOMMENT>
     <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="$mrkrsel_master_sql">
 	
       <?MIVAR name=$marker_name>$1<?/MIVAR>
