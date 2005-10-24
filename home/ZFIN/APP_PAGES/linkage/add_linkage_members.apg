@@ -202,7 +202,7 @@ Linkage Members:   (At least one member must be specified) <br>
 	 <?MISQL SQL="select distinct a.zdb_id,a.allele,b.abbrev 
 	   from fish a, locus b
 	     where  a.locus = b.zdb_id 
-               and b.abbrev like '%$(LOWER,$member)%' 
+               and lower(b.abbrev) like '%$(LOWER,$member)%' 
 	       order by b.abbrev;">
 	   <TR>
 	     <TD>
