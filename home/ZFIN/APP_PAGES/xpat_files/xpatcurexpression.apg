@@ -151,7 +151,18 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,exptid)
   </tr>  
 
 <?MISQL SQL="
-    select distinct xpatex_zdb_id, xpatex_assay_name, xpatex_probe_feature_zdb_id, featexp_genome_feature_zdb_id, featexp_exp_zdb_id, exp_name, xpatex_gene_zdb_id, dblink_zdb_id, mrkr_abbrev_order, fish_name_order, xpatassay_display_order
+    select distinct xpatex_zdb_id, 
+           xpatex_assay_name, 
+           xpatex_probe_feature_zdb_id, 
+           featexp_genome_feature_zdb_id, 
+           featexp_exp_zdb_id, 
+           exp_name, 
+           xpatex_gene_zdb_id, 
+           dblink_zdb_id, 
+           mrkr_abbrev_order, 
+           fish_name_order, 
+           xpatassay_display_order,
+           zero_pad(exp_name)
     from expression_experiment, feature_experiment, fish, OUTER(db_link), marker, experiment, expression_pattern_assay
     where xpatex_source_zdb_id = '$OID'
       and xpatex_featexp_zdb_id = featexp_zdb_id
@@ -162,7 +173,7 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,exptid)
       and xpatex_assay_name = xpatassay_name
       $(IF,$(XST,$xpcur_c_gene_only),and mrkr_zdb_id = '$xpcur_c_gene_only')
       $(IF,$(XST,$xpcur_c_fish_only),and zdb_id = '$xpcur_c_fish_only')
-    order by mrkr_abbrev_order,fish_name_order,xpatassay_display_order,exp_name;">
+    order by mrkr_abbrev_order,fish_name_order,xpatassay_display_order,12;">
 
 <?MIVAR COND=$(EC,$debugg,true)><p>Experiment Select:<br> $MI_SQL <?/MIVAR>
 
@@ -330,11 +341,11 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,exptid)
     <td>
         <select name="xpcur_G_xpatex_exp">
           <?MISQL SQL="
-              select exp_zdb_id, exp_name
+              select exp_zdb_id, exp_name, zero_pad(exp_name)
               from experiment
               where exp_zdb_id in ('$xpcur_G_exp_attrib_csv') 
-                 or exp_name = 'Standard'
-              order by 1;">
+                 or exp_name = '$xpcur_G_exp_standard_name'
+              order by zero_pad(exp_name);">
             <option value="$1" $(IF,$(EC,$xpcurxprss_old_xpatex_exp,$1),SELECTED)>$2</option>
           <?/MISQL>
       </select></td>
