@@ -115,7 +115,7 @@ EFFECTS
                     <?MIVAR NAME=$fxinfo_end>$12<?/MIVAR>
                     <?MIVAR NAME=$expfound>$13<?/MIVAR>
 
-                    <?MIBLOCK COND=$(NE,$fxinfo_experiment,Standard)>
+                    <?MIBLOCK COND=$(NE,$fxinfo_experiment,_Standard)>
                         <?MIVAR NAME=$fxinfo_fish>$3, $10<?/MIVAR>
                     <?MIELSE>
                         <?MIVAR NAME=$fxinfo_fish>$3<?/MIVAR>
@@ -176,7 +176,7 @@ EFFECTS
               <?MIVAR NAME=$lastassay>$4<?/MIVAR>
               <?MIVAR NAME=$laststage>$9<?/MIVAR>
               <?MIVAR NAME=$lastterm>$8<?/MIVAR>
-              <?MIBLOCK COND=$(NE,$10,Standard)>
+              <?MIBLOCK COND=$(NE,$10,_Standard)>
                   <?MIVAR NAME=$lastfish>$3, $10<?/MIVAR>
               <?MIELSE>
                   <?MIVAR NAME=$lastfish>$3<?/MIVAR>
@@ -189,6 +189,7 @@ EFFECTS
        <?/MISQL>
 <p>
 <?/MISQL>
+
 <p>
 </table>
 

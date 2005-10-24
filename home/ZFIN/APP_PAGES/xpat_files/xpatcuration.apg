@@ -135,6 +135,10 @@ INPUT VARS:
       xpcur_G_TO_fig_text :: standard text for FX data not Figure related
 
 GLOBALS (value set by xpatcuration.apg) :
+
+    xpcur_G_active_row_color :: font color 
+    xpcur_G_exp_standard_name :: name of the standard environment
+    
     xpcur_G_oid_attrib_csv :: list of ZDBs attributed to OID; seperator="','"
     xpcur_G_fish_attrib_csv :: list of fish ZDBs attributed to OID; seperator="','"
     xpcur_G_gene_attrib_csv :: list of gene ZDBs attributed to OID; seperator="','"
@@ -513,6 +517,7 @@ EFFECTS
     <?MIVAR NAME=hide><font color=blue size=-1><u>hide</u></font><?/MIVAR>
     <?MIVAR NAME=unhide><font color=blue size=-1><u>show</u></font><?/MIVAR>
     <?MIVAR NAME=xpcur_G_active_row_color>#CCFFFF<?/MIVAR>
+    <?MIVAR NAME=xpcur_G_exp_standard_name>_Standard<?/MIVAR>
 
     <?MIVAR NAME=xpcur_oid_attrib><?/MIVAR>
     <?MISQL SQL="
@@ -633,7 +638,7 @@ EFFECTS
     <?MISQL SQL="
         select max(LENGTH(exp_name))::integer from experiment 
         where exp_zdb_id in ('$xpcur_G_exp_attrib_csv')
-              or exp_name = 'Standard';">
+              or exp_name = '$xpcur_G_exp_standard_name';">
         <?MIVAR NAME=xpcur_G_max_exp_name>$1<?/MIVAR>
     <?/MISQL>
 
