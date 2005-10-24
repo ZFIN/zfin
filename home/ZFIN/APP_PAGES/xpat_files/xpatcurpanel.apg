@@ -399,8 +399,9 @@ EFFECTS
                     LOWER(abbrev), 
                     xpatex_gene_zdb_id, 
                     zdb_id,
-                    xpatassay_display_order
-    from figure, expression_pattern_figure, expression_result, expression_experiment, marker, stage, feature_experiment, fish, expression_pattern_assay
+                    xpatassay_display_order,
+                    zero_pad(exp_name)
+    from figure, expression_pattern_figure, expression_result, expression_experiment, marker, stage, feature_experiment, fish, expression_pattern_assay, experiment
     where fig_source_zdb_id = '$OID'
       and xpatfig_fig_zdb_id = fig_zdb_id
       and xpatfig_xpatres_zdb_id = xpatres_zdb_id
@@ -411,9 +412,10 @@ EFFECTS
       and featexp_genome_feature_zdb_id = zdb_id
       and fig_zdb_id in ('$xpcur_G_fig_attrib_csv')
       and xpatex_assay_name = xpatassay_name
+      and featexp_exp_zdb_id = exp_zdb_id
       $(IF,$(XST,$xpcur_c_gene_only),and mrkr_zdb_id = '$xpcur_c_gene_only')
       $(IF,$(XST,$xpcur_c_fish_only),and zdb_id = '$xpcur_c_fish_only')
-    order by fig_label, mrkr_abbrev_order, LOWER(abbrev), xpatassay_display_order, stg_hours_start;">
+    order by fig_label, mrkr_abbrev_order, LOWER(abbrev), xpatassay_display_order, 12, stg_hours_start;">
 
       <?MIVAR NAME=xpcurpnl_fig_zdb_id>$1<?/MIVAR>
       <?MIVAR NAME=xpcurpnl_fig_label>$2<?/MIVAR>
@@ -520,16 +522,17 @@ EFFECTS
     <td>
         <select name="xpcur_G_panel_add_xpatex">
           <?MISQL SQL="
-            select xpatex_zdb_id, mrkr_abbrev_order, LOWER(abbrev), xpatassay_display_order
-	    from expression_experiment, marker, feature_experiment, fish, expression_pattern_assay
+            select xpatex_zdb_id, mrkr_abbrev_order, LOWER(abbrev), xpatassay_display_order, zero_pad(exp_name)
+	    from expression_experiment, marker, feature_experiment, fish, expression_pattern_assay, experiment
 	    where xpatex_source_zdb_id = '$OID'
 	      and xpatex_gene_zdb_id = mrkr_zdb_id
 	      and xpatex_featexp_zdb_id = featexp_zdb_id
 	      and featexp_genome_feature_zdb_id = zdb_id
 	      and xpatex_assay_name = xpatassay_name
+              and featexp_exp_zdb_id = exp_zdb_id
               $(IF,$(XST,$xpcur_c_gene_only),and mrkr_zdb_id = '$xpcur_c_gene_only')
               $(IF,$(XST,$xpcur_c_fish_only),and zdb_id = '$xpcur_c_fish_only')
-            order by mrkr_abbrev_order, LOWER(abbrev), xpatassay_display_order;">
+            order by mrkr_abbrev_order, LOWER(abbrev), xpatassay_display_order, zero_pad(exp_name);">
             <?MIVAR NAME=xpcurpnl_xpatex_zdb_id>$1<?/MIVAR>  
             <?MISQL SQL="select WebExplode(object,'xpcurexpssdisp_xpatex_zdb_id=$xpcurpnl_xpatex_zdb_id') from webPages where ID='aa-xpatcurexpssdisplayname.apg';"><?/MISQL>
             <?MIVAR NAME=xpcurpnl_xpatex_display_name>$xpcurexpssdisp_xpatex_display_name<?/MIVAR>
