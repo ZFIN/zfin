@@ -40,136 +40,211 @@ OID (optional) -- should be set to OID of the record being displayed,
 rtype (optional) -- Only necessary if permission=owns.
 <?/MICOMMENT>
 
-<?MIVAR NAME=$AUTHORIZED>false<?/MIVAR>
-<?MIVAR NAME=$ZDB_ident>UNKNOWN<?/MIVAR>
+<?MICOMMENT> 
+  ============================================================
+  === Initialization
+  ============================================================
+<?/MICOMMENT>
+
+<?MIVAR NAME=$AUTHORIZED>GUEST<?/MIVAR>
 <?MIVAR NAME=$ZDB_name>UNKNOWN<?/MIVAR>
+
+<?MIVAR NAME=$ZDB_access>GUEST<?/MIVAR>
 <?MIVAR NAME=$DB_LOCK>f<?/MIVAR>
 
 
-<?MICOMMENT>
- If they pass in a GUEST cookie, set authorize to GUEST, and their name 
-to the guest cookie. This way logging will be to their unique cookie name  
+<?MICOMMENT> 
+  ============================================================
+  ===  No cookie
+  === generate a new GUEST cookie, set $ZDB_name to the cookie
+  ============================================================
 <?/MICOMMENT>
-<?MIBLOCK COND="$(AND,$(XST,$ZDB_authorize),$(EC,$(SUBSTR,$ZDB_authorize,1,5),GUEST))">
-  <?MIVAR NAME=$ZDB_name>$ZDB_authorize<?/MIVAR>
-  <?MIVAR NAME=$ZDB_authorize>GUEST<?/MIVAR>
-  <?MIVAR NAME=$AUTHORIZED>GUEST<?/MIVAR>
-<?/MIBLOCK>
 
-<?MICOMMENT>
- If they didn't pass a cookie, just start by giving them a GUEST cookie 
-  -- and record their login as a GUEST
-<?/MICOMMENT>
 <?MIBLOCK COND="$(NXST,$ZDB_authorize)">
+  <?MIVAR NAME=ZDB_authorize><?/MIVAR>	
   <?MISQL SQL="
     execute function conc('GUEST',get_random_cookie());">
-  <?/MISQL>
-  <?MIVAR NAME=$ZDB_authorize>GUEST<?/MIVAR>
-  <?MIVAR NAME=$ZDB_name>$1<?/MIVAR>
-  <?MIVAR NAME=$AUTHORIZED>GUEST<?/MIVAR>
+  <?/MISQL>  
   <?MIVAR>
     $(HTTPHEADER,set-cookie,ZDB_authorize=$1;path=/<!--|CGI_BIN_DIR_NAME|-->)
   <?/MIVAR>
+  <?MIVAR NAME=$ZDB_name>$1<?/MIVAR>
 <?/MIBLOCK>
 
-<?MICOMMENT> check if updates are disabled <?/MICOMMENT>
-<?MISQL SQL="
-    select zflag_is_on
-    from zdb_flag
-    where zflag_name = 'disable updates';">
 
-    <?MIVAR NAME=$DB_LOCK>$1<?/MIVAR>
+<?MICOMMENT>
+  ============================================================
+  ===  GUEST cookie	
+  === set $ZDB_name to the cookie
+  ============================================================
+<?/MICOMMENT>
 
-<?/MISQL>
+<?MIBLOCK COND="$(AND,$(XST,$ZDB_authorize),$(EC,$(SUBSTR,$ZDB_authorize,1,5),GUEST))">
+  <?MIVAR NAME=$ZDB_name>$ZDB_authorize<?/MIVAR>
+<?/MIBLOCK>
 
+
+<?MICOMMENT>
+  ============================================================
+  ===  Logged in user 	
+  === 
+  ============================================================
+<?/MICOMMENT>
 
 <?MIBLOCK COND=$(NC,$(SUBSTR,$ZDB_authorize,1,5),GUEST)>
-  <?MIBLOCK COND=$(EC,$DB_LOCK,t)>
-  <?MICOMMENT>
-  Updates are disabled. 
-    --  Display alert and set user level to Guest.
-    --  User may be on a page which allows updates so set page to homepage.
+
+  <?MICOMMENT> 
+       ----------------------------
+       --  check if updates are disabled 
+       ----------------------------
   <?/MICOMMENT>
+  <?MISQL SQL="
+        select zflag_is_on
+          from zdb_flag
+         where zflag_name = 'disable updates';">
+     <?MIVAR NAME=$DB_LOCK>$1<?/MIVAR>
+  <?/MISQL>
 
-    <SCRIPT>
+
+  <?MIBLOCK COND=$(EC,$DB_LOCK,t)>
+     <?MICOMMENT>
+         ----------------------------------------------------------
+         --     Updates are disabled. 
+         --  Display alert and set user level to Guest.
+         --  User may be on a page which allows updates so set page to homepage.
+	 ----------------------------------------------------------
+     <?/MICOMMENT>
+
+     <SCRIPT>
 	alert('The Database is currently locked for administrative operations and will not allow logins. Please try again later or contact <judys@cs.uoregon.edu> for further information.');
-    </SCRIPT>
+     </SCRIPT>
 
-    <?MISQL SQL="
+     <?MISQL SQL="
       execute function conc('GUEST',get_random_cookie());">
-    <?/MISQL>
-    <?MIVAR NAME=$ZDB_authorize>GUEST<?/MIVAR>
-    <?MIVAR NAME=$ZDB_name>$1<?/MIVAR>
-    <?MIVAR>
+     <?/MISQL>
+     <?MIVAR>
       $(HTTPHEADER,set-cookie,ZDB_authorize=$1;path=/<!--|CGI_BIN_DIR_NAME|-->)
+     <?/MIVAR>
+
+     <?MIVAR NAME=$ZDB_name>$1<?/MIVAR>
+
+     <SCRIPT>
+	window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg")
+     </SCRIPT>
+
+  <?MIELSE> 
+     <?MICOMMENT>
+	  -----------------------------------------------
+          --- Unpdates enabled
+	  -----------------------------------------------
+     <?/MICOMMENT>
+
+     <?MICOMMENT> If authorize cookie passed in, pull out the info for it <?/MICOMMENT>
+     <?MISQL SQL="
+           select zdb_id, access, name
+     	     from ZDB_submitters 
+	    where cookie='$ZDB_authorize';">
+       <?MIVAR NAME=$ZDB_ident>$1<?/MIVAR>
+       <?MIVAR NAME=$ZDB_access>$2<?/MIVAR>
+       <?MIVAR NAME=$ZDB_name>$3<?/MIVAR>
+     <?/MISQL>
+     <?MIVAR>$(SETVAR, $AUTHORIZED,$ZDB_access)<?/MIVAR>
+ 
+  <?/MIBLOCK> <?MICOMMENT> ===   end of $DB_LOCK check === <?/MICOMMENT>
+<?/MIBLOCK> <?MICOMMENT> ===   end of log in user === <?/MICOMMENT>
+
+
+<?MICOMMENT>
+  ============================================================
+  === When PERMISSION is set
+  === 
+  ============================================================
+<?/MICOMMENT>
+
+<?MIBLOCK COND="$(XST,$permission)">
+
+    <?MIVAR>$(SETVAR,$AUTHORIZED,false)<?/MIVAR>
+
+    <?MIVAR COND="$(EC,$ZDB_access,$permission)">
+	 $(SETVAR,$AUTHORIZED,$ZDB_access)
     <?/MIVAR>
 
-    <SCRIPT>
-	window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg")
-    </SCRIPT>
+    <?MIVAR COND="$(AND,$(OR,$(EC,$permission,submit),$(EC,$permission,preview)),$(EC,$ZDB_access,fishauth))">
+	 $(SETVAR,$AUTHORIZED,$ZDB_access)
+    <?/MIVAR>
 
-  <?MIELSE> <?MICOMMENT> allow updates <?/MICOMMENT>
+    <?MIVAR COND="$(AND,$(EC,$permission,submit),$(EC,$ZDB_access,preview))">
+	 $(SETVAR,$AUTHORIZED,$ZDB_access)
+    <?/MIVAR>
 
-    <?MICOMMENT> If authorize cookie passed in, pull out the info for it <?/MICOMMENT>
-    <?MISQL SQL="
-      select zdb_id, access, name
-	from ZDB_submitters 
-	where cookie='$ZDB_authorize';">
-      <?MIVAR NAME=$AUTHORIZED>$2<?/MIVAR>
-      <?MIVAR NAME=$ZDB_access>$2<?/MIVAR>
-      <?MIVAR COND="$(EC,$ZDB_name,UNKNOWN)" NAME=$ZDB_name>$3<?/MIVAR>
-      <?MIVAR NAME=$ZDB_ident>$1<?/MIVAR>
-    <?/MISQL>
+    <?MIBLOCK COND="$(EC,$permission,"owns")">
+      <?MICOMMENT>
+        ------------------------------------------------------------------------
+        -- Only when permission is "owns", there are more chances to get authorization. 
+	------------------------------------------------------------------------
+      <?/MICOMMENT>
 
-    <?MICOMMENT>But now check permission level for the page, if specified<?/MICOMMENT>
-    <?MIBLOCK COND="$(AND,$(XST,$ZDB_access),$(XST,$permission))">
+      <?MICOMMENT>
+        ------------------------------------------------------------------------
+        -- Get record owner and compare to ZDB_ident. If you own the record, you 
+        -- get 'owner' authorization 
+        -- Most tables have "owner" as the owner column and zdb_id as the ZDB
+        -- ID column.  There are a few exceptions, however.  Catch them.
+	------------------------------------------------------------------------
+      <?/MICOMMENT>
+      <?MIBLOCK COND="$(AND,$(XST,$OID),$(XST,$rtype),$(NC,$rtype,journal))">
+        <?MIVAR NAME=$ownerColumn>owner<?/MIVAR>
+        <?MIVAR NAME=$zdbIdColumn>zdb_id<?/MIVAR>
+        <?MIBLOCK COND="$(EC,$rtype,marker)">
+	  <?MIVAR NAME=$ownerColumn>mrkr_owner<?/MIVAR>
+	  <?MIVAR NAME=$zdbIdColumn>mrkr_zdb_id<?/MIVAR>
+        <?MIELSE COND="$(EC,$rtype,fish_image)">
+	  <?MIVAR NAME=$ownerColumn>fimg_owner_zdb_id<?/MIVAR>
+	  <?MIVAR NAME=$zdbIdColumn>fimg_zdb_id<?/MIVAR>
+        <?/MIBLOCK>
+        <?MISQL SQL="
+	    select $ownerColumn
+	      from $rtype 
+	     where $zdbIdColumn = '$OID';">
+        <?/MISQL>
+        <?MIVAR COND="$(AND,$(XST,$ZDB_ident),$(EC,$1,$ZDB_ident))">
+	    $(SETVAR,$AUTHORIZED,owner)
+        <?/MIVAR>
+      <?/MIBLOCK> <?MICOMMENT>-- end of record ownership check --<?/MICOMMENT>
 
-      <?MIVAR NAME=$AUTHORIZED>false<?/MIVAR>
 
-      <?MIVAR COND="$(EC,$ZDB_access,$permission)" NAME=$AUTHORIZED>$ZDB_access<?/MIVAR>
+      <?MICOMMENT>
+        ------------------------------------------------
+        -- adminasst scenario
+        ------------------------------------------------
+      <?/MICOMMENT>        
+      <?MIBLOCK COND="$(AND,$(EC,$ZDB_access,adminasst),$(XST,$rtype))">
+         <?MIVAR COND="$(OR,$(EC,$rtype,person),$(EC,$rtype,lab))">
+	   $(SETVAR,$AUTHORIZED,owner)
+         <?/MIVAR>
+      <?/MIBLOCK>
 
-      <?MIVAR COND="$(AND,$(OR,$(EC,$permission,submit),$(EC,$permission,preview)),$(EC,$ZDB_access,fishauth))" NAME=$AUTHORIZED>$ZDB_access<?/MIVAR>
-
-      <?MIVAR COND="$(AND,$(EC,$permission,submit),$(EC,$ZDB_access,preview))" NAME=$AUTHORIZED>$ZDB_access<?/MIVAR>
-
-    <?/MIBLOCK>  <?MICOMMENT>ends checks permissions <?/MICOMMENT>
+    <?/MIBLOCK> <?MICOMMENT> == end of permission is "owns"   == <?/MICOMMENT>
 
     <?MICOMMENT>
-      -- Last possibility to get permission is if you own the record. Get 
-      -- record owner and compare to ZDB_ident. If you own the record, you 
-      -- get 'owner' authorization 
-      -- Most tables have "owner" as the owner column and zdb_id as the ZDB
-      -- ID column.  There are a few exceptions, however.  Catch them.
+	------------------------------------------------
+	-- don't know where "root" and "owner" are used,
+	-- thus kept the previous logic-- give "root" priority
+	------------------------------------------------
     <?/MICOMMENT>
+    <?MIVAR COND="$(AND,$(XST,$ZDB_access),$(EC,$ZDB_access,root))">
+	$(SETVAR,$AUTHORIZED,root)
+    <?/MIVAR>
 
-    <?MIBLOCK COND="$(AND,$(XST,$OID),$(XST,$rtype),$(NC,$rtype,journal))">
-      <?MIVAR NAME=$ownerColumn>owner<?/MIVAR>
-      <?MIVAR NAME=$zdbIdColumn>zdb_id<?/MIVAR>
-      <?MIBLOCK COND="$(EC,$rtype,marker)">
-	<?MIVAR NAME=$ownerColumn>mrkr_owner<?/MIVAR>
-	<?MIVAR NAME=$zdbIdColumn>mrkr_zdb_id<?/MIVAR>
-      <?MIELSE COND="$(EC,$rtype,fish_image)">
-	<?MIVAR NAME=$ownerColumn>fimg_owner_zdb_id<?/MIVAR>
-	<?MIVAR NAME=$zdbIdColumn>fimg_zdb_id<?/MIVAR>
-      <?/MIBLOCK>
-      <?MISQL SQL="
-	select $ownerColumn
-	  from $rtype 
-	  where $zdbIdColumn = '$OID';">
-      <?/MISQL>
-      <?MIVAR COND="$(EC,$1,$ZDB_ident)" NAME=$AUTHORIZED>owner<?/MIVAR>
-    <?/MIBLOCK>
+<?/MIBLOCK>  <?MICOMMENT>ends checks permissions <?/MICOMMENT>
 
-    <?MIBLOCK COND="$(AND,$(EC,$ZDB_access,adminasst),$(XST,$rtype))">
-      <?MIVAR COND="$(OR,$(EC,$rtype,person),$(EC,$rtype,lab))" NAME=$AUTHORIZED>owner<?/MIVAR>
-    <?/MIBLOCK>
+<?MICOMMENT> 
+     ============================================
+     === If authorization fails, let them know. 
+     ============================================
+<?/MICOMMENT>
 
-    <?MICOMMENT> Last chance to AUTHORIZE is if you're root <?/MICOMMENT>
-    <?MIVAR COND="$(AND,$(XST,$ZDB_access),$(EC,$ZDB_access,root))" NAME=$AUTHORIZED>root<?/MIVAR>
-
-
-    <?MICOMMENT> If authorization fails, let them know. <?/MICOMMENT>
-    <?MIBLOCK COND="$(EC,$AUTHORIZED,false)">
+<?MIBLOCK COND="$(EC,$AUTHORIZED,false)">
 
       <?MISQL SQL="
 	select WebExplode(object,'') 
@@ -178,8 +253,4 @@ to the guest cookie. This way logging will be to their unique cookie name
 	$1
       <?/MISQL>
 
-    <?/MIBLOCK>  <?MICOMMENT> ends if no authorize cookie <?/MICOMMENT>
-
-  <?/MIBLOCK> <?MICOMMENT> END check if updates are disabled <?/MICOMMENT>
-
-<?/MIBLOCK> <?MICOMMENT> END NC GUEST  <?/MICOMMENT>
+<?/MIBLOCK>  <?MICOMMENT> ends if no authorize cookie <?/MICOMMENT>
