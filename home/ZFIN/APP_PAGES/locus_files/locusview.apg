@@ -59,8 +59,8 @@ Datablade documentation.
 	window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-locusupdate.apg&OID=$OID&dataOID='+data_zdbId+'&attr='+attr+'&attr_type=special-listitem&old_value='+source_zdbId+'&new_value=deleted&info='+info);
 	}
 
-  function deletegene(clonedgene) {
-	window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-locusupdate.apg&OID=$OID&old_value='+clonedgene+'&new_value=deleted&mode=delete');
+  function deletegene(attr,clonedgene) {
+	window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-locusupdate.apg&OID=$OID&attr='+attr+'&old_value='+clonedgene+'&new_value=deleted&mode=delete');
         }
 
   function new_attrib_prevname() {
@@ -328,14 +328,12 @@ Datablade documentation.
 	<?/MIVAR>
 	<B>Affected Gene:</B> 
 	<?MIVAR COND="$(EC,$cloned_gene,NULL)">Not yet established.<?/MIVAR>
-<?MICOMMENT>	
         <?MIVAR COND="$(AND,$(NC,$cloned_gene,NULL),$(XST,$UPDATE))">
  	  <INPUT TYPE=button 
 	    value="Delete" 
-	    onClick="deletegene('cloned_gene')">
+	    onClick="deletegene('cloned_gene','$cloned_gene')">
 	<?/MIVAR>
-<?/MICOMMENT>
-	<?MIVAR COND="$(AND,$(NC,$cloned_gene,NULL),$(XST,$UPDATE))">
+        <?MIVAR COND="$(AND,$(NC,$cloned_gene,NULL),$(XST,$UPDATE))">
 	  Add Reference: &nbsp; Reference:
 	  <input type=text name=attrib_cloned_pubid>
 	  <input type=button value="Add" onClick=new_attrib_cloned();> 
