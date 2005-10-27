@@ -887,6 +887,7 @@ EFFECTS
                  ===============================================================      
     <?/MICOMMENT>  
 
+    <?MIVAR>$(UNSETVAR,$xpcurup_xpatfig_add_list)<?/MIVAR>
     <?MIVAR NAME=xpcurup_xpatfig_add_list><?/MIVAR>
     <?MISQL SQL="
       select xpatinf_anatitem_zdb_id, xpatinf_expressed
@@ -899,7 +900,7 @@ EFFECTS
     <?/MISQL>
 
     <?MIVAR NAME=xpcurup_xpatfig_add_csv SEPARATE="','">$xpcurup_xpatfig_add_list<?/MIVAR>
-       
+    
     <?MISQL SQL="
       select xpatres_zdb_id
       from expression_result 
@@ -910,7 +911,7 @@ EFFECTS
               from expression_pattern_figure
               where xpatfig_fig_zdb_id = '$xpcurup_panel_fig_zdb_id'
             );">
-
+     
         <?MIVAR NAME=xpcurup_panel_xpatres_zdb_id>$1<?/MIVAR>
         <?MISQL SQL="
           INSERT into expression_pattern_figure (
