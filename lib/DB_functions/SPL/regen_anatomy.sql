@@ -115,11 +115,14 @@ create function populate_all_anatomy_contains()
   -- the first level is a gimmie from anatomy_relationship
   -- also _all_ child nodes are explicitly listed
   -- so we only need to find ancestors of these child nodes
-  insert into all_anatomy_contains_new
-    select anatrel_anatitem_1_zdb_id ,
+  insert into all_anatomy_contains_new (allanatcon_container_zdb_id, 
+  					allanatcon_contained_zdb_id,
+  					allanatcon_min_contain_distance)
+    select anatrel_anatitem_1_zdb_id,
 	   anatrel_anatitem_2_zdb_id, 
 	   dist
-      from anatomy_relationship;
+    from anatomy_relationship
+    where anatrel_dagedit_id in ('is_a','part_of');
 
   -- continue as long as progress is made 
   -- there may be more elegant ways to do this so please do tell. 
@@ -134,7 +137,7 @@ create function populate_all_anatomy_contains()
     insert into all_anatomy_contains_new
       select distinct a.anatrel_anatitem_1_zdb_id,     -- A.ancestor
 		      b.allanatcon_containeD_zdb_id,  -- B.child
-		      dist                            -- min depth
+		      dist                             -- min depth
 	from anatomy_relationship a,            -- source of all ancestors
              all_anatomy_contains_new b     -- source of all childs 
 
@@ -145,7 +148,12 @@ create function populate_all_anatomy_contains()
 	      -- checking for duplicates here is where the time gets absurd  
 	      -- (2:30 vs 0:06), so 
 	      --   "kill em all and let god sort them out later"
-	      ;
+	  and a.anatrel_dagedit_id in ('is_a', 'part_of')
+	      -- all_anatomy_contains doesn't want develops_from relationships,
+	      -- and it's better to explicitly include rather than exclude,
+	      -- since we want the behavior to stay the same the next time
+	      -- a new type is added
+	  ;
 
   end while
 
@@ -504,7 +512,13 @@ create dba function "informix".regen_anatomy()
       -- ---- ALL_ANATOMY_CONTAINS ----
       let errorHint = "Creating all_anatomy_contains_new";
       -- this table stores every anatomy term with every ancestor 
-      -- and the shortest distance between each pair. 
+      -- that has a contains relationship and the shortest distance 
+      -- between each pair.  In this case, a contains relationship
+      -- is being defined as dagedit_id's "is_a" and "part_of", which
+      -- leaves out "develops_from".  Unfortunately, the only place
+      -- where that is defined is in this file, when we have a generic
+      -- DAG, we will probably need relationship type groups so that
+      -- nothing has to be hardcoded.
 
       let errorHint = "Creating all_anatomy_contains_new";
       if (exists (select *
@@ -517,7 +531,7 @@ create dba function "informix".regen_anatomy()
         (
 	  allanatcon_container_zdb_id		varchar(50),
 	  allanatcon_contained_zdb_id		varchar(50),
-	  allanatcon_min_contain_distance	integer not null 
+	  allanatcon_min_contain_distance	integer not null
         )
 	fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
 	extent size 256 next size 256 
