@@ -25,7 +25,7 @@ OUTPUT VAR
 
 <HTML>
 
-<script language="JavaScript" src="http://<!--|DOMAIN_NAME|-->/client_sniff.js"></script>
+<script language="JavaScript" src="/<!--|DOMAIN_NAME|-->/client_sniff.js"></script>
 
 <SCRIPT> 
 if (is_nav4) {
@@ -126,10 +126,10 @@ function updateParent(AOname, AOid) {
   }
 }
 </script>
-<script src="http://<!--|DOMAIN_NAME|-->/autosuggest.js"></script>
+<script src="/<!--|DOMAIN_NAME|-->/autosuggest.js"></script>
 
 
-<?MISQL SQL="select WebExplode(object,'permission=root') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+<?MISQL SQL="select WebExplode(object, '') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
 <FORM name="dictform" method="GET" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
   <INPUT type="hidden" name="MIval" value="aa-anatdict.apg">
