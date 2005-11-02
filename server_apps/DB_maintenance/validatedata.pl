@@ -1,5 +1,6 @@
 #! /private/bin/perl -w 
 
+
 ##
 # validatedata.pl
 #
@@ -2005,67 +2006,10 @@ sub subZdbObjectHandledByGetObjName {
   my $sth = $dbh->prepare ($sql) or die "Prepare fails";
   $sth->execute();
   my $result =  $sth->fetchrow_array();
-  
-  my $null = "NULL";
-
-  return 1 if $result eq $null;
-  return 0;
-}
-#------------------------------------------------------------
-# noRecordsFoundGetObjName 
-#
-# If there are no rows in existence for a given obj type, 
-# return an error.  Only execute this check monthly.
-#
-#Parameter
-# $      Email Address for recipients
-# 
-sub noRecordsFoundGetObjName ($) {
-
-  my $routineName = "noRecordsFoundGetObjName";
-
-  my $sql = "
-             select zobjtype_name,
-                    zobjtype_home_table,
-                    zobjtype_home_zdb_id_column 
-              from  zdb_object_type
-              ";
-
-  my @colDesc = ("Zobjtype name              ",
-		 "Zobjtype home table        ",
-		 "Zobjtype home ZDB ID column" );
-  
-  my $subSqlRef = \&subNoRecordsFoundGetObjName;
-
-  my $nRecords = execSql ($sql, $subSqlRef, @colDesc);
-
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];   	  
-    my $subject = "No records found in table with registerd ZDB-id";
-    my $errMsg = "In zdb_object_type, $nRecords records are registered,
-                     but have no records in their home table.";
-    logError ($errMsg); 
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
-  }
-  &recordResult($routineName, $nRecords);
-}
-
-#----------------
-#
-sub subNoRecordsFoundGetObjName {
-
-  my @row = @_;
-  my $sql = "select first 1 get_obj_name($row[2])
-                 from $row[1]";
-  
-  my $sth = $dbh->prepare ($sql) or die "Prepare fails";
-  $sth->execute();
-  my $result =  $sth->fetchrow_array();
     
-  return 1 if !$result ;
+  return 1 if !$result || $result eq "NULL";
   return 0;
 }
-
 
 #======================== Others ====================================
 #locusAlleleHaveDupPub 
@@ -2192,6 +2136,7 @@ sub pubTitlesAreUnique($) {
   }
   &recordResult($routineName, $nRecords);
 } 
+
 
 #-------------------------------------------------------
 #Parameter
@@ -2912,8 +2857,6 @@ if($monthly) {
   humanOrthologyHasEntrezAccession($geneEmail);
   containedInRelationshipsInEST($geneEmail);
   encodesRelationshipsInBACorPAC($geneEmail);
-  noRecordsFoundGetObjName($dbaEmail);
-
 }
 if($yearly) {
   print "run yearly check. \n\n";
