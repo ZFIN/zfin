@@ -93,6 +93,11 @@ get_obj_name(zdbId varchar(50))
       into objName
       from anatomy_item
       where anatitem_zdb_id = zdbId;
+  elif (objType = "ANATCMK") then
+    select anatcmrkr_zdb_id 	-- don't have names, return ZDB ID
+      into objName
+      from anatomy_canonical_marker
+      where anatcmrkr_zdb_id = zdbId;
   elif (objType = "ANATHLOG") then
     select anathlog_anat_item_zdb_id || ":" || anathlog_organism
       into objName
