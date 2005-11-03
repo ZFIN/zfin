@@ -67,7 +67,7 @@ Requires:  $CLONE_MARKER_ID, $highlight
         clone_pcr_amplification, -- 17
         mrkr_type, -- 18
         clone_rating --19
-	FROM clone, marker, probe_library, vector, outer fish, outer anatomy_item
+	FROM clone, marker, probe_library, outer vector, outer fish, outer anatomy_item
 	WHERE '$CLONE_MARKER_ID' = clone_mrkr_zdb_id
           and clone_mrkr_zdb_id = mrkr_zdb_id
           and clone_probelib_zdb_id = probelib_zdb_id
