@@ -1,32 +1,58 @@
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+
+<?/MIERROR>
 
 
-<!-- This file is for nomenclature history display.
-  
-   Get all the Marker_history records for the ZDB_ID passed in. 
-   Display events sorted by date.
-   
-   Parameter:
-   OID     the zdb id of a marker			
--->
-<HTML>
-<HEAD>
+<?MICOMMENT> 
+===========================================================
+FILE: nomenview.apg
+PREFIX: none as of 11/4/05
+
+This file is for nomenclature history display.
+Get all the Marker_history records for the ZDB_ID passed in. 
+Display events sorted by date.
+
+INPUT VARS: 
+$OID : the zdb_id of the marker.
+$UPDATE: if the viewer is in update mode, this is set to 1.
+===========================================================
+<?/MICOMMENT>
+
+
+
+<?MICOMMENT> ============= Check for input variables ===== <?/MICOMMENT>
+
 
 <?MIBLOCK COND="$(NXST,$OID)">
-<p>
-ERROR -- something bad happened -- no OID passed in!
+   <p> ERROR -- something bad happened -- no OID passed in!
 <?/MIBLOCK>
 
+
+<?MICOMMENT> ============= Check for user permissions, only let root do updates ===== <?/MICOMMENT>
+
+
 <?MISQL SQL="
-  select WebExplode(object,'page_title=nomenview&permission=root') 
+  select WebExplode(object,'page_title=nomenview') 
     from webPages 
     where ID='aa-secure_navigation.apg';">$1
 <?/MISQL>
+
+<?MICOMMENT> ============= Initialize JavaScript variables and other variables ===== <?/MICOMMENT>
 
 <?MIVAR NAME=$userid>GUEST<?/MIVAR>
 <?MIVAR NAME=rtype>marker<?/MIVAR>
 <?MIVAR NAME=chronology COND=$(NXST,$chronology)>desc<?/MIVAR>
 <?MIVAR NAME=highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 <?MIVAR NAME=ROWCOUNT>0<?/MIVAR>
+
+<?MICOMMENT> ============= JavaScript Functions =====  <?/MICOMMENT>
 
 <?MIVAR>
 <SCRIPT>
@@ -55,26 +81,27 @@ ERROR -- something bad happened -- no OID passed in!
 </SCRIPT>
 <?/MIVAR>
 
-<!--------------------------------------------->
+<?MICOMMENT> =========== MAIN ======================= <?/MICOMMENT>
 
-    <TITLE>ZFIN Marker History </TITLE>
+<TITLE>ZFIN Marker History </TITLE>
 
-  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
   
-  <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=marker') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
+<?MISQL SQL="select WebExplode(object,'rtype=marker') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
 
-<?MIVAR COND="$(XST,$UPDATE)">
+  <?MIVAR COND="$(AND,$(XST,$UPDATE),$(EC,$AUTHORIZED,root))">
        <form>
 	<center><font size=+2><input type=button 
 	value=" DONE UPDATING. Back to Viewing! " onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-nomenview.apg&OID=$OID')"> </font></center>
        </form>
-<?/MIVAR>
+ 
+  <?/MIVAR>
 
-<?MIBLOCK COND="$(NXST,$UPDATE)"> <!---- define Input Welcome button---->     
-  <table width="15%" align=right>
-   <tr> 
-   <?MIVAR>
-        <form method=post 
+  <?MIBLOCK COND="$(NXST,$UPDATE)">   
+    <table width="15%" align=right>
+     <tr> 
+     <?MIVAR>
+          <form method=post 
               action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
               target=comments>
            <input type=hidden name=subject value="$abbrev">
@@ -86,11 +113,11 @@ ERROR -- something bad happened -- no OID passed in!
     <?/MIVAR>
     </tr>
    </table>
-<BR>
-<?/MIBLOCK> 
+  <br>
+  <?/MIBLOCK> 
 
 
-<BR>
+<br>
 <form name=updater method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 <TABLE WIDTH=100%><TR BGCOLOR=#CCCCCC><TD>
   <font size=+2><b>NOMENCLATURE</b></font>
@@ -102,7 +129,8 @@ ERROR -- something bad happened -- no OID passed in!
 
 <TABLE width=100%>
 
-<!-- Query for History Events and order by date -->
+<?MICOMMENT> ============= Query for History Events and order by date ========= <?/MICOMMENT>
+
 <?MISQL SQL="
   SELECT mhist_date, 
          mhist_event, 
@@ -142,18 +170,18 @@ ERROR -- something bad happened -- no OID passed in!
       <td><b>Event</b></td>
       <td><b>Old Symbol<b></td>
       <td><b>Date<b>  
-      <?MIVAR COND="$(NC,$AUTHORIZED,false)">
+	<?MIVAR COND="$(EC,$AUTHORIZED,root)">
         <input type=button name=switch_date onClick=toggle_date($(IF,$(EC,$chronology,desc),'asc','desc'),'$abbrev') 
                value="$(IF,$(EC,$chronology,desc),\/,/\)">
-      <?/MIVAR>
+	<?/MIVAR>
       </td>
       <td><b>Reason<b></td>
       <td><b>Comments</b></td>
     </tr>  
-  <?/MIBLOCK> <!-- end if (mi_currentrow == 1) -->
+  <?/MIBLOCK> <?MICOMMENT> ========= end if (mi_currentrow == 1) ======== <?/MICOMMENT>
     <tr $bgcolor>
       <td>
-      <?MIVAR COND="$(XST,$UPDATE)">
+      <?MIVAR COND="$(AND,$(XST,$UPDATE),$(EC,$AUTHORIZED,root))">
         <input type=button value="Edit/Delete" onClick=edit_nomen('$NomenId')>
       <?/MIVAR>
 
@@ -201,11 +229,13 @@ ERROR -- something bad happened -- no OID passed in!
     </td>
   </tr>
 
-<?/MISQL> <!-- end Main query for history events -->
-</TABLE>
-<?MIVAR COND=$(=,$ROWCOUNT,0)>History Unavailable<?/MIVAR>
+   <?/MISQL> <?MICOMMENT>======== end Main query for history events =======<?/MICOMMENT>
+
+  </TABLE>
+
+ <?MIVAR COND=$(=,$ROWCOUNT,0)>History Unavailable<?/MIVAR>
+
 </form>
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 
-</HTML>

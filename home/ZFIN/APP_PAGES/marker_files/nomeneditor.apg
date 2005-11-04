@@ -1,20 +1,33 @@
-<!-- a simple app page (in a newly created window) used to edit a marker_history event. 
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
 
-Expected vars:
-OID:  the marker_history zdb id; must be mhist_mrkr's latest history event
-UPDATE: true if you are passing in update values
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+
+<?/MIERROR>
+
+<?MICOMMENT> 
+===========================================================
+FILE: nomeneditor.apg
+PREFIX: none as of 11/4/05
+
+app page (in a newly created window) used to edit a marker_history event.
+
+INPUT VARS: 
+$OID : the zdb_id of the marker.
+$UPDATE: true if you are passing in update values
 newattrib,newpub -- to attribute a publication
 delattrib,delpub -- to delete an attribution, delpub holds the accession of the pub to be deleted
--->
-
-<HTML>
-<HEAD>
-</HEAD>
+===========================================================
+<?/MICOMMENT>
 
 <basefont size=2>
 
 <?MISQL SQL="
-  select WebExplode(object,'permission=root') 
+  select WebExplode(object,'')
     from webPages 
     where ID='aa-secure_navigation.apg';">
   $1
@@ -22,7 +35,7 @@ delattrib,delpub -- to delete an attribution, delpub holds the accession of the 
 
 <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 
-<?MIBLOCK COND="$(NC,AUTHORIZED,false)">
+<?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
 
   <?MIBLOCK COND="$(XST,$UPDATE)">
 
@@ -82,7 +95,7 @@ delattrib,delpub -- to delete an attribution, delpub holds the accession of the 
     <?/MIBLOCK>	
 
 
-  <?/MIBLOCK> <!-- end updating -->
+  <?/MIBLOCK> <?MICOMMENT> ====== end updating  ======== <?/MICOMMENT>
 
 
   <?MIBLOCK COND="$(NXST,$exiter)">
@@ -148,12 +161,20 @@ delattrib,delpub -- to delete an attribution, delpub holds the accession of the 
       <?/MIBLOCK>
 	   
     </form>
-  <?/MIBLOCK> <!-- end NXST exiter -->
-<?/MIBLOCK>  <!-- ends authorized -->
+  <?/MIBLOCK>  <?MICOMMENT> ====== end NXST exiter ======== <?/MICOMMENT>
+
+<?MIELSE>
+ 	<?MISQL SQL="
+  		select WebExplode(object,'')
+    			from webPages 
+    		where ID='aa-unauth.apg';">$1
+	<?/MISQL>
+
+<?/MIBLOCK>  <?MICOMMENT> ====== ends authorized ======== <?/MICOMMENT>
 
 <?MIVAR COND="$(XST,$exiter)">
 <SCRIPT>
-window.confirm('Exiting. Please return to the main window.\n Note that your updates will not be reflected there until that\n window is reloaded (so do not panic!)\Just continue working and all will be well!');
+window.confirm('Exiting. Note that your updates will not be reflected there until your window is reloaded');
 window.close();</SCRIPT>
 <?/MIVAR>
 
