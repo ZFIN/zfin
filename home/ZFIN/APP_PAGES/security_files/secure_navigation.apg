@@ -83,7 +83,6 @@ rtype (optional) -- Only necessary if permission=owns.
   <?MIVAR NAME=$ZDB_name>$ZDB_authorize<?/MIVAR>
 <?/MIBLOCK>
 
-
 <?MICOMMENT>
   ============================================================
   ===  Logged in user 	
@@ -139,7 +138,10 @@ rtype (optional) -- Only necessary if permission=owns.
 	  -----------------------------------------------
      <?/MICOMMENT>
 
-     <?MICOMMENT> If authorize cookie passed in, pull out the info for it <?/MICOMMENT>
+     <?MICOMMENT>--------------------------------------
+	         -- pull out info from ZDB_submitters 
+                 ---------------------------------------
+     <?/MICOMMENT>
      <?MISQL SQL="
            select zdb_id, access, name
      	     from ZDB_submitters 
@@ -149,40 +151,6 @@ rtype (optional) -- Only necessary if permission=owns.
        <?MIVAR NAME=$ZDB_name>$3<?/MIVAR>
      <?/MISQL>
      <?MIVAR>$(SETVAR, $AUTHORIZED,$ZDB_access)<?/MIVAR>
- 
-  <?/MIBLOCK> <?MICOMMENT> ===   end of $DB_LOCK check === <?/MICOMMENT>
-<?/MIBLOCK> <?MICOMMENT> ===   end of log in user === <?/MICOMMENT>
-
-
-<?MICOMMENT>
-  ============================================================
-  === When PERMISSION is set
-  === 
-  ============================================================
-<?/MICOMMENT>
-
-<?MIBLOCK COND="$(XST,$permission)">
-
-    <?MIVAR>$(SETVAR,$AUTHORIZED,false)<?/MIVAR>
-
-    <?MIVAR COND="$(EC,$ZDB_access,$permission)">
-	 $(SETVAR,$AUTHORIZED,$ZDB_access)
-    <?/MIVAR>
-
-    <?MIVAR COND="$(AND,$(OR,$(EC,$permission,submit),$(EC,$permission,preview)),$(EC,$ZDB_access,fishauth))">
-	 $(SETVAR,$AUTHORIZED,$ZDB_access)
-    <?/MIVAR>
-
-    <?MIVAR COND="$(AND,$(EC,$permission,submit),$(EC,$ZDB_access,preview))">
-	 $(SETVAR,$AUTHORIZED,$ZDB_access)
-    <?/MIVAR>
-
-    <?MIBLOCK COND="$(EC,$permission,"owns")">
-      <?MICOMMENT>
-        ------------------------------------------------------------------------
-        -- Only when permission is "owns", there are more chances to get authorization. 
-	------------------------------------------------------------------------
-      <?/MICOMMENT>
 
       <?MICOMMENT>
         ------------------------------------------------------------------------
@@ -223,13 +191,39 @@ rtype (optional) -- Only necessary if permission=owns.
 	   $(SETVAR,$AUTHORIZED,owner)
          <?/MIVAR>
       <?/MIBLOCK>
+ 
+  <?/MIBLOCK> <?MICOMMENT> ===   end of $DB_LOCK check === <?/MICOMMENT>
+<?/MIBLOCK> <?MICOMMENT> ===   end of log in user === <?/MICOMMENT>
 
-    <?/MIBLOCK> <?MICOMMENT> == end of permission is "owns"   == <?/MICOMMENT>
+
+<?MICOMMENT>
+  ============================================================
+  === When PERMISSION is set
+  === 
+  ============================================================
+<?/MICOMMENT>
+
+<?MIBLOCK COND="$(XST,$permission)">
+
+    <?MIVAR>$(SETVAR,$AUTHORIZED,false)<?/MIVAR>
+
+    <?MIVAR COND="$(EC,$ZDB_access,$permission)">
+	
+	 $(SETVAR,$AUTHORIZED,$ZDB_access)
+    <?/MIVAR>
+
+    <?MIVAR COND="$(AND,$(OR,$(EC,$permission,submit),$(EC,$permission,preview)),$(EC,$ZDB_access,fishauth))">
+	 $(SETVAR,$AUTHORIZED,$ZDB_access)
+    <?/MIVAR>
+
+    <?MIVAR COND="$(AND,$(EC,$permission,submit),$(EC,$ZDB_access,preview))">
+	 $(SETVAR,$AUTHORIZED,$ZDB_access)
+    <?/MIVAR>
+
 
     <?MICOMMENT>
 	------------------------------------------------
-	-- don't know where "root" and "owner" are used,
-	-- thus kept the previous logic-- give "root" priority
+	-- root user got authorized
 	------------------------------------------------
     <?/MICOMMENT>
     <?MIVAR COND="$(AND,$(XST,$ZDB_access),$(EC,$ZDB_access,root))">
@@ -237,6 +231,7 @@ rtype (optional) -- Only necessary if permission=owns.
     <?/MIVAR>
 
 <?/MIBLOCK>  <?MICOMMENT>ends checks permissions <?/MICOMMENT>
+
 
 <?MICOMMENT> 
      ============================================
