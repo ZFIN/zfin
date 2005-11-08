@@ -21,7 +21,7 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
 <basefont size=2>
 
 <?MISQL SQL="
-  select WebExplode(object,'permission=root') 
+  select WebExplode(object,'permission=owns') 
     from webPages 
     where ID='aa-secure_navigation.apg';">
   $1
