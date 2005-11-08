@@ -177,6 +177,7 @@ rtype (optional) -- Only necessary if permission=owns.
         <?/MISQL>
         <?MIVAR COND="$(AND,$(XST,$ZDB_ident),$(EC,$1,$ZDB_ident))">
 	    $(SETVAR,$AUTHORIZED,owner)
+	    $(SETVAR,$ZDB_access,owns)
         <?/MIVAR>
       <?/MIBLOCK> <?MICOMMENT>-- end of record ownership check --<?/MICOMMENT>
 
@@ -189,6 +190,7 @@ rtype (optional) -- Only necessary if permission=owns.
       <?MIBLOCK COND="$(AND,$(EC,$ZDB_access,adminasst),$(XST,$rtype))">
          <?MIVAR COND="$(OR,$(EC,$rtype,person),$(EC,$rtype,lab))">
 	   $(SETVAR,$AUTHORIZED,owner)
+	   $(SETVAR,$ZDB_access,owns)
          <?/MIVAR>
       <?/MIBLOCK>
  
@@ -207,8 +209,7 @@ rtype (optional) -- Only necessary if permission=owns.
 
     <?MIVAR>$(SETVAR,$AUTHORIZED,false)<?/MIVAR>
 
-    <?MIVAR COND="$(EC,$ZDB_access,$permission)">
-	
+    <?MIVAR COND="$(EC,$ZDB_access,$permission)">	
 	 $(SETVAR,$AUTHORIZED,$ZDB_access)
     <?/MIVAR>
 
@@ -225,11 +226,11 @@ rtype (optional) -- Only necessary if permission=owns.
 	------------------------------------------------
 	-- root user got authorized
 	------------------------------------------------
-    <?/MICOMMENT>
+    <?/MICOMMENT>   
     <?MIVAR COND="$(AND,$(XST,$ZDB_access),$(EC,$ZDB_access,root))">
 	$(SETVAR,$AUTHORIZED,root)
     <?/MIVAR>
-
+ 
 <?/MIBLOCK>  <?MICOMMENT>ends checks permissions <?/MICOMMENT>
 
 
