@@ -11,13 +11,6 @@ document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
 <BODY bgcolor="<!--|BACKGROUND_COLOR|-->" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
 <basefont size=2>
 
-<!-- Now check authorization -->
-<?MISQL SQL="select WebExplode(object,'') 
-             from webPages 
-             where ID='aa-identify.apg';
-            ">$1
-<?/MISQL>
-
 
 <table width=100% cellspacing=0 border=0 cellpadding=0 class="header">
   <tr>
