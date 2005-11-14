@@ -91,7 +91,7 @@ ahead and look for it -- convert to OID if necessary -->
     <?/MIVAR>
   <?MIELSE>
     <?MIVAR>
-      <TITLE>ZFIN View Company:$name </TITLE>
+      <TITLE>ZFIN Company: $name </TITLE>
     <?/MIVAR>
   <?/MIBLOCK>
 
