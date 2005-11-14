@@ -28,6 +28,15 @@
   ERROR -- something bad happened -- no OID passed in!
 <?/MIBLOCK>
 
+ 
+<?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'') from webPages where ID='aa-secure_navigation.apg';">$1
+<?/MISQL>
+
+<?MISQL COND="$(XST,$UPDATE)" SQL="select WebExplode(object,'permission=owns&rtype=marker') from webPages where ID='aa-secure_navigation.apg';">$1
+<?/MISQL>
+
+<?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
+
 <?MISQL SQL="select mrkr_zdb_id from marker where mrkr_zdb_id='$OID'"><?/MISQL>
 <?MIVAR NAME=$geneid>$1<?/MIVAR>
 <?mivar name=$caller>$(SUBSTR,$OID,5,3)<?/mivar>
@@ -328,7 +337,7 @@
 <hr>
 <p>
 <?/MIBLOCK>
+<?/MIBLOCK> <?MICOMMENT>-- end of OID check--<?/MICOMMENT>
+<?/MIBLOCK> <?MICOMMENT>-- end of AUTHORIZED check--<?/MICOMMENT>
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
-
-<?/MIBLOCK>
