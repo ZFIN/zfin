@@ -1,10 +1,9 @@
-<!-- A Subroutine that throws up a ZFIN data manager. Used in the VIEWERS for 
+<?MICOMMENT>
+A Subroutine that throws up a ZFIN data manager. Used in the VIEWERS for 
 each data type.
 Parameters:
 rtype (required)	-- Name of the table the record is from.
--->
 
-<?MICOMMENT>
 
 Last updated by Prita on 12/15/04
 Removed the "Add/Update Gene Expression Index" link
