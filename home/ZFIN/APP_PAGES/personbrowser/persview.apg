@@ -102,18 +102,6 @@ window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-update-pers
 <?MIBLOCK COND="$(NC,$name,$MI_NOVALUE)">
 <body bgcolor="#e5e5e5"  TEXT="black">
 
-<!-- the call to idnetify in htmlpageheader was causing a problem with a owner being able to edit their own record. this is kind of messy to be called twice but need header before the data mgr-->
-<!-- if not updating -->
-<?MIBLOCK COND="$(NXST,$UPDATE)">
-<?MISQL SQL="select WebExplode(object,'page_title=View Person&rtype=person') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
-<?/MIBLOCK>
-
-<!-- If updating, only let owner update anything -->
-<?MIBLOCK COND="$(XST,$UPDATE)">
-<?MISQL SQL="select WebExplode(object,'page_title=Update Person&permission=owns&rtype=person') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
-<?/MIBLOCK>
-
-
 
 <!-- If VIEWING, THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
 <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=person') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
