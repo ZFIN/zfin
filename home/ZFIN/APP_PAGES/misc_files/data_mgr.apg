@@ -47,17 +47,18 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 <TR align=center>
 <TD><font size=-1> <b>ZFIN ID:</b> $OID </font>
 </TD>
-<?MIBLOCK COND="$(EC,$rtype,go)">
-  <?MISQL SQL="select mrkr_abbrev from marker where mrkr_zdb_id='$OID'">
-  <?/MISQL>
-<?/MIBLOCK>
-
 
 
 <?/MIVAR>
 
-<!-- all of the following options show up only if your registered ZFIN -->
-<?MIBLOCK COND="$(AND,$(XST,$AUTHORIZED),$(NC,$AUTHORIZED,GUEST))">
+<?MICOMMENT>
+  -----------------------------------------------
+  -- root, owner and adminasst are able to see/use
+  -- the update links
+  ------------------------------------------------
+<?/MICOMMENT>
+
+<?MIBLOCK COND="$(AND,$(XST,$AUTHORIZED),$(OR,$(EC,$AUTHORIZED,root),$(EC,$AUTHORIZED,owner),$(EC,$AUTHORIZED,adminasst)))">
 
 <?MIBLOCK COND="$(NC,$rtype,publication)">  <!-- dont show second row for pubs -->
 
