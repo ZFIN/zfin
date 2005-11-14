@@ -1,6 +1,6 @@
 <!-- FILE: refcrosslist.html.  Just provides a listing of all panels in ZFIN -->
 
-<TITLE> ZFIN Panel list </TITLE>
+<TITLE> ZFIN : Mapping Panels : Summary Listing </TITLE>
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
