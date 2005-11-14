@@ -99,7 +99,7 @@ function Delete_attrib(subattr,data_zdbId,source_zdbId,info) {
       <?/MIBLOCK>
 <?/MICOMMENT>
 
-      <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=anatomy_item') from webPages where ID='aa-data_mgr.apg';">$1
+      <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'') from webPages where ID='aa-data_mgr.apg';">$1
       <?/MISQL>
 
       <?MICOMMENT>  =========  Starts Display  ============== <?/MICOMMENT>
