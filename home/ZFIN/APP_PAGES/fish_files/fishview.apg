@@ -266,7 +266,6 @@ Datablade documentation.
 	  where a.zdb_id = '$OID'
 	    and b.zdb_id = a.locus;">
       <?/MISQL>
-
       <?MIVAR NAME=$name>$1<?/MIVAR>
       <?MIVAR NAME=$abbrev>$2<?/MIVAR>
       <?MIVAR NAME=$title>$3<?/MIVAR>
@@ -297,7 +296,7 @@ Datablade documentation.
 	<?/MIVAR>
       <?MIELSE>
 	<?MIVAR>
-	  <TITLE>ZFIN View: $(IF,$(NC,$title,Wild type),$allele,$abbrev) </TITLE>
+	  <TITLE>ZFIN : Allele : [$(IF,$(NC,$title,Wild type),$allele,$abbrev)] </TITLE>
 	<?/MIVAR>
       <?/MIBLOCK>
 

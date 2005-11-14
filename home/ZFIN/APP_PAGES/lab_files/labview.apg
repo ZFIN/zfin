@@ -83,7 +83,7 @@ window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-labupdat
 <?MIBLOCK COND="$(NXST,$UPDATE)">
   <?MIVAR NAME=$rec_title>$name<?/MIVAR>
   <?MIVAR>
-    <TITLE>ZFIN View Lab:$name</TITLE>
+    <TITLE>ZFIN : Laboratory : $name</TITLE>
   <?/MIVAR>
 <?MIELSE>
   <?MIVAR NAME=$rec_title>$name<?/MIVAR>
