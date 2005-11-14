@@ -48,6 +48,9 @@ function Delete_attrib(subattr,data_zdbId,source_zdbId,info) {
 
 </SCRIPT>
 
+<?MISQL SQL="select WebExplode(object,'') 
+		from webPages 
+		where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
 <?MIBLOCK COND="$(XST,$OID)">
 <?MIVAR NAME=$userid>GUEST<?/MIVAR>
@@ -507,7 +510,7 @@ function Delete_attrib(subattr,data_zdbId,source_zdbId,info) {
             <?MIVAR NAME=anat_item_mrkr_id>$3<?/MIVAR>
             <TR>
             <TD>
-            <?MIVAR COND="$(XST,$UPDATE)">
+            <?MIVAR COND="$(AND,$(XST,$UPDATE),$(EC,$AUTHORIZED,root))">
              <INPUT TYPE=button value=Delete
              onClick="Delete_gene('$anat_item_cmrkrid')">
             <?/MIVAR>
@@ -516,7 +519,7 @@ function Delete_attrib(subattr,data_zdbId,source_zdbId,info) {
             <?MISQL SQL="select WebExplode(object,'dataId=$anat_item_cmrkrid&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>  
 
 <?/MISQL>
-<?MIVAR COND="$(XST,$UPDATE)">
+<?MIVAR COND="$(AND,$(XST,$UPDATE),$(EC,$AUTHORIZED,root))">
              <form name=addcanmrkr>
                <TR>
                <TD>
