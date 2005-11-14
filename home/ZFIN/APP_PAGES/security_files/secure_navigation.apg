@@ -1,48 +1,59 @@
 <?MICOMMENT>
-FILE: secure_navigation
+ FILE: secure_navigation.apg
 
-This file should be webexploded at the top of every page in ZFIN. 
- It figures out the 
- real name of the requesting user (will be GUEST if not logged in) and 
- checks any security constraints posted for the page. If security check fails,
- the AUTHORIZE variable is set to false, which should be checked for in the 
- calling page to control access.
+ This file should be webexploded at the top of every stand alone page in ZFIN. 
 
-FUNCTION:
-This page first checks to see whether the variable ZDB_AUTHORIZE exists; 
-this variable corresponds to a cookie that will have been passed from the 
-client if the user has, indeed, signed on during that session.
+ It figures out the real name of the requesting user (GUEST if not logged in)
+ and the user's accessing level. 
+ 
+ Without any security constraints(the optional permission parameter), 
+ users are all granted access either as GUEST or the logged in user's
+ pre-defined access level. If the user is the owner of the record, set
+ $AUTHORIZED to owner unless the user is root. 
 
-If the ZDB_AUTHORIZE exists, then we go on to check if that cookie is still 
-active in our table of authorized submitters. 
+ With security constraints, 
+   permission=owns should be companied with $OID and $rtype and the owner of 
+      the record as well as root users got authorized.
+   permission=root, root users got authorized.
+ other users would fail the check and the AUTHROIZED variable
+ would be set to false.
+ When AUTHORIZED is false, unauth.apg would be called to display security 
+ violation message. 
 
-If so, then the final check is to see if the user meets the specified 
-authorization level, passed in the optional variable PERMISSION. 
-Possible values are:
-  root -- require that user have 'root' permission.
-  owns -- require that user owns the requested record (ie they submitted it)
-  submit -- require that user is authorized submitter.
-  <missing> -- merely require that user has logged in.
+ old statement:
+    This file should be webexploded at the top of every page in ZFIN.
+ Is that so? 
 
-If everything is kosher, 
-  set AUTHORIZE to the users permission level (root, submit, or GUEST), 
-  update the page title, 
-  log the page access (if logging turned on for that user) and 
-  return to calling page. 
-Else 
-  set AUTHORIZE to false, and return.
+ INPUT VARS:
+   ZDB_authorize  -- cookie
+   permission (optional) -- only owns and root have been used 
+   OID (optional) -- OID of the record being displayed, along with permission=owns
+   rtype (optional) -- record type, along with permission=owns
 
-VARIABLES EXPECTED:
-permission (optional) -- if present, should be either 
-  root,owns,submit,fishauth,preview,betatest
-OID (optional) -- should be set to OID of the record being displayed, 
-  if applicable. Only necessary if permission=owns.
-rtype (optional) -- Only necessary if permission=owns.
+ OUTPUT VARS:
+   AUTHORIZED  -- false, GUEST, zdb_submitter.access, or owner.
+   ZDB_name  -- GUEST or user's real name
+
+ NOTES:
+   1)Previously, the page claims "This file should be webexploded at the top of 
+   every page in ZFIN." Most of the times, we followed that. Now we question it.
+   Pages call secure_navigation.apg half times without setting permission,
+   and then every user gets authorized. Most of the times, calling page checks 
+   if authorized equals false. You see, this doesn't make enough sense.
+   2)The other half times, it is called with either "root" or
+   "owns" permission (though we have 7 more levels to use). We will
+   look into reducing the number of different levels, and grant access
+   based on significance instead of could-be tedious conditional clause.
+   3)Calling page checks whether AUTHORIZED is set to false, but that is of no
+   use since this page calls unauth.apg, and didn't return the control.
+   We are not going into every page and fix this issue now, but will 
+   address it when switch language. 
 <?/MICOMMENT>
 
 <?MICOMMENT> 
   ============================================================
   === Initialization
+  === by default, we welcome guest.
   ============================================================
 <?/MICOMMENT>
 
@@ -69,6 +80,16 @@ rtype (optional) -- Only necessary if permission=owns.
     $(HTTPHEADER,set-cookie,ZDB_authorize=$1;path=/<!--|CGI_BIN_DIR_NAME|-->)
   <?/MIVAR>
   <?MIVAR NAME=$ZDB_name>$1<?/MIVAR>
+
+  <?MICOMMENT>
+    -------------------------------------
+    -- When PERMISSION is set
+    -- unauthorize
+    -------------------------------------
+  <?/MICOMMENT>
+  <?MIBLOCK COND=$(AND,$(XST,$permission),$(NC,$permission,GUEST))>
+     <?MIVAR>$(SETVAR, $AUTHORIZED,false)<?/MIVAR>
+  <?/MIBLOCK>
 <?/MIBLOCK>
 
 
@@ -81,7 +102,18 @@ rtype (optional) -- Only necessary if permission=owns.
 
 <?MIBLOCK COND="$(AND,$(XST,$ZDB_authorize),$(EC,$(SUBSTR,$ZDB_authorize,1,5),GUEST))">
   <?MIVAR NAME=$ZDB_name>$ZDB_authorize<?/MIVAR>
+
+  <?MICOMMENT>
+    -------------------------------------
+    -- When PERMISSION is set
+    -- unauthorize
+    -------------------------------------
+  <?/MICOMMENT>
+  <?MIBLOCK COND=$(AND,$(XST,$permission),$(NC,$permission,GUEST))>
+     <?MIVAR>$(SETVAR, $AUTHORIZED,false)<?/MIVAR>
+  <?/MIBLOCK>
 <?/MIBLOCK>
+
 
 <?MICOMMENT>
   ============================================================
@@ -134,12 +166,13 @@ rtype (optional) -- Only necessary if permission=owns.
   <?MIELSE> 
      <?MICOMMENT>
 	  -----------------------------------------------
-          --- Unpdates enabled
+          --- Updates enabled
 	  -----------------------------------------------
      <?/MICOMMENT>
 
      <?MICOMMENT>--------------------------------------
 	         -- pull out info from ZDB_submitters 
+                 -- assign access level to $AUTHROIZED
                  ---------------------------------------
      <?/MICOMMENT>
      <?MISQL SQL="
@@ -152,7 +185,7 @@ rtype (optional) -- Only necessary if permission=owns.
      <?/MISQL>
      <?MIVAR>$(SETVAR, $AUTHORIZED,$ZDB_access)<?/MIVAR>
 
-      <?MICOMMENT>
+     <?MICOMMENT>
         ------------------------------------------------------------------------
         -- Get record owner and compare to ZDB_ident. If you own the record, you 
         -- get 'owner' authorization 
@@ -177,7 +210,6 @@ rtype (optional) -- Only necessary if permission=owns.
         <?/MISQL>
         <?MIVAR COND="$(AND,$(XST,$ZDB_ident),$(EC,$1,$ZDB_ident))">
 	    $(SETVAR,$AUTHORIZED,owner)
-	    $(SETVAR,$ZDB_access,owns)
         <?/MIVAR>
       <?/MIBLOCK> <?MICOMMENT>-- end of record ownership check --<?/MICOMMENT>
 
@@ -190,53 +222,42 @@ rtype (optional) -- Only necessary if permission=owns.
       <?MIBLOCK COND="$(AND,$(EC,$ZDB_access,adminasst),$(XST,$rtype))">
          <?MIVAR COND="$(OR,$(EC,$rtype,person),$(EC,$rtype,lab))">
 	   $(SETVAR,$AUTHORIZED,owner)
-	   $(SETVAR,$ZDB_access,owns)
          <?/MIVAR>
       <?/MIBLOCK>
- 
+
+      <?MICOMMENT>
+	------------------------------------------------
+	-- root user got authorized
+	------------------------------------------------
+      <?/MICOMMENT>   
+      <?MIVAR COND="$(AND,$(XST,$ZDB_access),$(EC,$ZDB_access,root))">
+	 $(SETVAR,$AUTHORIZED,root)
+      <?/MIVAR>
+
+      <?MICOMMENT>
+           ---------------------------
+           --- When PERMISSION is set
+           --- either owns or root
+           ---------------------------
+      <?/MICOMMENT>
+      <?MIBLOCK COND="$(AND,$(XST,$permission),$(EC,$permission,owns))"> 
+	 <?MIVAR COND="$(AND,$(NC,$AUTHORIZED,owner),$(NC,$AUTHORIZED,root))">
+	     $(SETVAR,$AUTHORIZED,false)
+         <?/MIVAR>
+      <?/MIBLOCK>
+      <?MIBLOCK COND="$(AND,$(XST,$permission),$(EC,$permission,root))"> 
+	 <?MIVAR COND="$(NC,$AUTHORIZED,root)">
+	     $(SETVAR,$AUTHORIZED,false)
+         <?/MIVAR>
+      <?/MIBLOCK>
+
   <?/MIBLOCK> <?MICOMMENT> ===   end of $DB_LOCK check === <?/MICOMMENT>
 <?/MIBLOCK> <?MICOMMENT> ===   end of log in user === <?/MICOMMENT>
 
 
-<?MICOMMENT>
-  ============================================================
-  === When PERMISSION is set
-  === 
-  ============================================================
-<?/MICOMMENT>
-
-<?MIBLOCK COND="$(XST,$permission)">
-
-    <?MIVAR>$(SETVAR,$AUTHORIZED,false)<?/MIVAR>
-
-    <?MIVAR COND="$(EC,$ZDB_access,$permission)">	
-	 $(SETVAR,$AUTHORIZED,$ZDB_access)
-    <?/MIVAR>
-
-    <?MIVAR COND="$(AND,$(OR,$(EC,$permission,submit),$(EC,$permission,preview)),$(EC,$ZDB_access,fishauth))">
-	 $(SETVAR,$AUTHORIZED,$ZDB_access)
-    <?/MIVAR>
-
-    <?MIVAR COND="$(AND,$(EC,$permission,submit),$(EC,$ZDB_access,preview))">
-	 $(SETVAR,$AUTHORIZED,$ZDB_access)
-    <?/MIVAR>
-
-
-    <?MICOMMENT>
-	------------------------------------------------
-	-- root user got authorized
-	------------------------------------------------
-    <?/MICOMMENT>   
-    <?MIVAR COND="$(AND,$(XST,$ZDB_access),$(EC,$ZDB_access,root))">
-	$(SETVAR,$AUTHORIZED,root)
-    <?/MIVAR>
- 
-<?/MIBLOCK>  <?MICOMMENT>ends checks permissions <?/MICOMMENT>
-
-
 <?MICOMMENT> 
      ============================================
-     === If authorization fails, let them know. 
+     === If authorization fails, call unauth.apg. 
      ============================================
 <?/MICOMMENT>
 
