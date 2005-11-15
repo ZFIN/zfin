@@ -1,7 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
   <head>
-  <title>ZFIN Gene Ontology</title>
 </head>
 <!--app page to enter gene ontology info-->
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
@@ -45,7 +44,8 @@
 <?MIVAR NAME=$name>$2<?/MIVAR>
 
 <head>
-<title>ZFIN Gene Ontology Report for<?MIVAR> $gene:<?/MIVAR></title>
+<title>ZFIN : GO Details : <?MIVAR> $gene <?/MIVAR>
+</title>
 </head>
 
 <?MICOMMENT>

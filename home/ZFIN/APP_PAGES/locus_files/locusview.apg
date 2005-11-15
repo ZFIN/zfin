@@ -168,7 +168,7 @@ Datablade documentation.
     <?/MIVAR>
   <?MIELSE>
     <?MIVAR>
-      <TITLE>ZFIN Locus : $name </TITLE>
+      <TITLE>ZFIN : Locus : $name </TITLE>
     <?/MIVAR>
   <?/MIBLOCK>
 
