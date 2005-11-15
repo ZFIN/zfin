@@ -370,7 +370,7 @@ Datablade documentation.
 		<?/MIVAR>
 	  <?MIELSE>
 		<?MIVAR>
- 			<TITLE>ZFIN View $marker_type_display: $abbrev</title>
+ 			<TITLE>ZFIN : $marker_type_display Page : $abbrev </title>
 		<?/MIVAR>
           <?/MIBLOCK>
           
