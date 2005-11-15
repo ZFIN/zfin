@@ -41,7 +41,9 @@ OUTPUT:
   ***
 <?/MICOMMENT>
 
-<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+<?MISQL SQL="select WebExplode(object,'permission=root') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+<?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
 <?MIBLOCK COND="$(NXST,$link_authors)">
 
@@ -284,3 +286,4 @@ OUTPUT:
   <?/MIVAR>
 </SCRIPT>
 
+<?/MIBLOCK> <?MICOMMENT>-- end $AUTHORIZED check --<?/MICOMMENT>
