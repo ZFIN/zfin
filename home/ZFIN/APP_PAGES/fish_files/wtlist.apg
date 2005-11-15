@@ -1,6 +1,6 @@
 <HTML>
 <HEAD>
-<?MIVAR Name=page_name>ZFIN Wild-Type Lines<?/MIVAR>
+<?MIVAR Name=page_name>ZFIN :  Wild-Type Lines : Summary Listing<?/MIVAR>
 
 <?MIVAR><TITLE>$page_name</TITLE><?/MIVAR>
 </HEAD>

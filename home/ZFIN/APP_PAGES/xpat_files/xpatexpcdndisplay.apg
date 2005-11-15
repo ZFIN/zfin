@@ -49,15 +49,19 @@ EFFECTS:
 <?MIELSE>
   <?MICOMMENT>valid experiment zdb id <?/MICOMMENT>
   <?MISQL SQL="
-	select exp_name
- 	  from experiment
-	 where exp_zdb_id = '$cdp_exp_zdb_id';">
+	select exp_name, exp_source_zdb_id, pub_mini_ref
+ 	  from experiment, publication
+	 where exp_zdb_id = '$cdp_exp_zdb_id'
+         and exp_source_zdb_id=zdb_id;">
+
   <?/MISQL>
+  
 
   <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
      ERROR: Invalid experiment zdb id.
 
   <?MIELSE>
+   <?MIVAR NAME=cdp_mini_ref>$3<?/MIVAR>
     <?MICOMMENT>should we hide the standard condition? there actually is
                 descriptive information stored in the database. It is not
                 wrong to show it and maybe in some cases we do want to check
@@ -84,7 +88,7 @@ EFFECTS:
 	<?MIVAR NAME=cdp_cdn_comments>$6<?/MIVAR>
 
         <?MIVAR COND="$(=,$MI_CURRENTROW,1)">
-	  <TITLE>Experiment condition</TITLE>
+	  <TITLE>ZFIN : Experimental Condition :<?MIVAR>$cdp_mini_ref ; $cdp_cdt_name<?/MIVAR> </TITLE>
           <table width=100%>
             <tr bgcolor=#ccccccc>
               <td> <font size=+2> <b> Environment Description </b> </font></td>

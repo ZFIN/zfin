@@ -80,7 +80,7 @@ displays a publication record, or many publication records if > 1 returned.
 <?MISQL SQL="
   select title, authors, year(pub_date), jrnl_abbrev, keywords, pub_abstract, 
          accession_no, pub_errata_and_notes, jtype, pub_file, 
-	 pub_completion_date, pub_volume, pub_pages, status 
+	 pub_completion_date, pub_volume, pub_pages, status, pub_mini_ref 
     from publication, journal where zdb_id='$OID'
      and jrnl_zdb_id = pub_jrnl_zdb_id;">
 <?/MISQL>
@@ -99,6 +99,7 @@ displays a publication record, or many publication records if > 1 returned.
    <?MIVAR NAME=$pubview2_pub_volume>$12<?/MIVAR>
    <?MIVAR NAME=$pubview2_pub_pages>$13<?/MIVAR>
    <?MIVAR NAME=$pubview2_pub_status>$14<?/MIVAR>
+   <?MIVAR NAME=$pubview2_pub_miniref>$15<?/MIVAR>
    
    <?MIVAR NAME=$pubview_source>$pubview2_jrnl_abbrev<?/MIVAR>   
    
@@ -126,7 +127,7 @@ displays a publication record, or many publication records if > 1 returned.
   <?MIBLOCK COND="$(NC,$title,$MI_NOVALUE)">
 
      <?MIVAR>
-       <TITLE>ZFIN View Pub:$title </TITLE>
+       <TITLE>ZFIN : Publication : $pubview2_pub_miniref. $title </TITLE>
      <?/MIVAR>
 
      <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
@@ -158,7 +159,21 @@ displays a publication record, or many publication records if > 1 returned.
   <p>  
    <FONT SIZE=+2> $title 
    </FONT> <P>
-	<B>$authors</B> 
+<?MICOMMENT><B>$authors</B><?/MICOMMENT>
+       <?MIBLOCK COND="$(EC,$authors,ZFIN Staff)">
+	<?MISQL SQL=" select name, zdb_id from lab where name = 'ZFIN Database Team'">
+<?MIVAR NAME=contact><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$2">$1</A><?/MIVAR>
+	<B>$contact</B>
+	<?/MISQL>
+
+       <?MIELSE>
+
+	<?MISQL SQL="select a.full_name,a.zdb_id from person a, int_person_pub b where source_id=a.zdb_id and target_id='$OID' order by a.full_name;">
+
+ <?MIVAR NAME=contact><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$2">$1</A>, <?/MIVAR> 
+	<B>$contact</B>
+	<?/MISQL>
+<?/MIBLOCK>
   <p>
 </center>
 <p>
@@ -179,6 +194,7 @@ displays a publication record, or many publication records if > 1 returned.
 
 <?/MIVAR>
 <TABLE width=100%> 
+<?MICOMMENT>
   <TR>
    <TD>
      <B>CONTACTS:</B>
@@ -196,6 +212,7 @@ displays a publication record, or many publication records if > 1 returned.
 
        <?/MIBLOCK>
    </TD>
+<?/MICOMMENT>
 
    <?MIVAR>
    <TD align=right>
