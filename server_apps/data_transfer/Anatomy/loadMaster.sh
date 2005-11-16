@@ -68,7 +68,7 @@ $INFORMIXDIR/bin/dbaccess <!--|DB_NAME|--> make_annot_translation.sql
 $INFORMIXDIR/bin/dbaccess <!--|DB_NAME|--> check_thisse_keywords.sql
 
 set SUBJECT = "Auto: Problem AO in Thiss Template"
-set MAILTO = "<!--|AO_EMAIL_CURATOR|-->"
+set MAILTO = `echo "<!--|AO_EMAIL_CURATOR|-->" | tr -d '\' `;
 
 echo "From: $LOGNAME" > /tmp/AO_thisse_mail
 echo "To: $MAILTO" >> /tmp/AO_thisse_mail
@@ -77,10 +77,10 @@ echo "Mime-Version: 1.0" >> /tmp/AO_thisse_mail
 echo "Content-Type: text/plain" >> /tmp/AO_thisse_mail
 
 echo "Keywords no long exist:" >> /tmp/AO_thisse_mail
-cat ./keywordDead.err >> /tmp/AO_thisse_mail
+cat ./keywordNameNotPrim.err >> /tmp/AO_thisse_mail
 
 echo "\nKeywords has stage problem:" >> /tmp/AO_thisse_mail
-cat ./stageKeyword.err >> /tmp/AO_thisse_mail
+cat ./kwdStageInconsis.err >> /tmp/AO_thisse_mail
 
 /usr/lib/sendmail -t -oi < /tmp/AO_thisse_mail
 
