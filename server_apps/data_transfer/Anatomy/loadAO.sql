@@ -772,6 +772,7 @@ select pa.anatitem_name, ca.anatitem_name, n_anatrel_dagedit_id, p.stg_name, c.s
    and n_anatrel_dagedit_id <> "develops_from"
    and c.stg_name <> "Unknown";
 
+
 !echo '== load in anatomy_relationship =='
 insert into anatomy_relationship (anatrel_anatitem_1_zdb_id, 
 				  anatrel_anatitem_2_zdb_id,
@@ -855,7 +856,7 @@ unload to "annotationViolates.err"
                                      xpatres_end_stg_zdb_id
                                      ) = "f";
 
-rollback work;
+--rollback work;
 
 --if no error from the screen, numbers looks right, and except 
 --annotationViolates.err the other three .err files are with zero length,
@@ -863,5 +864,5 @@ rollback work;
 --ask for a file AO_translation.unl from one of them with file format
 -- ZDB-ANAT-XXXX|ZDB-STAGE-XXXX|ZDB-STAGE-XXXX|ZDB-ANAT-XXXX
 -- 
---commit work;
+commit work;
  
