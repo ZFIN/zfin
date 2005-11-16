@@ -23,7 +23,8 @@ setenv INFORMIXSQLHOSTS <!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->
 # Check and prepare AO_translation.unl
 #---------------------------------------
 if (-e AO_translation.unl) then
-    /bin/sed 's/$/\|/' AO_translation.unl > n_AO_translation.unl
+    # ensure one and only one trailing bar 
+    /bin/sed 's/\|$//' AO_translation.unl | /bin/sed 's/$/\|/' > n_AO_translation.unl
     /bin/mv n_AO_translation.unl AO_translation.unl
 else
     echo "Cannot find AO_translation.unl, continue?";
@@ -83,6 +84,8 @@ echo "\nKeywords has stage problem:" >> /tmp/AO_thisse_mail
 cat ./kwdStageInconsis.err >> /tmp/AO_thisse_mail
 
 /usr/lib/sendmail -t -oi < /tmp/AO_thisse_mail
+
+/bin/rm -f /tmp/AO_thisse_mail
 
 exit;
 
