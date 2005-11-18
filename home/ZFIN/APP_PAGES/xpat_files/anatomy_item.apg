@@ -86,7 +86,6 @@ function Delete_attrib(subattr,data_zdbId,source_zdbId,info) {
       <?MIVAR NAME=$item_name_url>$(URLENCODE,$item_name)<?/MIVAR>
       <?MIVAR NAME=$processed_item_name>$(REPLACE,$item_name,',','|')<?/MIVAR>
 
-<?MICOMMENT>
       <!-- title for webpage history ----------->	
       <?MIBLOCK COND="$(XST,$UPDATE)">
 	 <?MIVAR>
@@ -94,10 +93,9 @@ function Delete_attrib(subattr,data_zdbId,source_zdbId,info) {
 	 <?/MIVAR>
       <?MIELSE>
 	 <?MIVAR>
- 		<TITLE>ZFIN View Anatomy Item: $item_name</title>
+ 		<TITLE>ZFIN : Anatomical Structure : $item_name</title>
 	 <?/MIVAR>
       <?/MIBLOCK>
-<?/MICOMMENT>
 
       <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'') from webPages where ID='aa-data_mgr.apg';">$1
       <?/MISQL>
