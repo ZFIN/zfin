@@ -69,7 +69,11 @@ if (authorization != 'root'){
 
 </SCRIPT>
 
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+
 
 <form name=ldata  method=post  action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 
