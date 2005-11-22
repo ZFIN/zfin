@@ -1187,7 +1187,6 @@ I am commenting this part of the code rather than deleting it. If no flags are r
      and xpatex_zdb_id in (select distinct xpatres_xpatex_zdb_id from expression_result)">
 <?/MISQL>
 <?MIVAR NAME=mrkrview_xpatsource_count>$1<?/MIVAR>
-<?MIVAR>$MI_SQL<?/MIVAR>
     <HR width="80%">
     <b>GENE EXPRESSION:</b><font size=-1>(<a href="javascript:start_note();">current status</a></font>)
 
