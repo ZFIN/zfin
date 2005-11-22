@@ -1187,7 +1187,7 @@ I am commenting this part of the code rather than deleting it. If no flags are r
      and xpatex_zdb_id in (select distinct xpatres_xpatex_zdb_id from expression_result)">
 <?/MISQL>
 <?MIVAR NAME=mrkrview_xpatsource_count>$1<?/MIVAR>
-
+<?MIVAR>$MI_SQL<?/MIVAR>
     <HR width="80%">
     <b>GENE EXPRESSION:</b><font size=-1>(<a href="javascript:start_note();">current status</a></font>)
 
@@ -1196,7 +1196,7 @@ I am commenting this part of the code rather than deleting it. If no flags are r
 
     <?MICOMMENT> query literature pub <?/MICOMMENT>
     <?MISQL SQL="
-	select pub_mini_ref
+	select distinct pub_mini_ref
           from expression_experiment 
 	       join publication
                     on xpatex_source_zdb_id = zdb_id
@@ -1205,7 +1205,6 @@ I am commenting this part of the code rather than deleting it. If no flags are r
 
 	<?MIVAR NAME=mrkrview_xpatsource_desc>$1<?/MIVAR>
     <?/MISQL>    
-     
     <?MICOMMENT> 
       ========= if literature pub involved, display total figures ==========
     <?/MICOMMENT>
@@ -1213,8 +1212,11 @@ I am commenting this part of the code rather than deleting it. If no flags are r
 
       <?MICOMMENT> if more than one pub, show count, 
 	         in case of one pub, show pub miniref 
-      <?/MICOMMENT>  
       <?MIVAR COND="$(!=,$MI_ROWCOUNT,1)" NAME=mrkrview_xpatsource_desc>
+		$mrkrview_xpatsource_count publications
+      <?/MIVAR>     
+      <?/MICOMMENT>  
+      <?MIVAR COND="$(>,$mrkrview_xpatsource_count,1)" NAME=mrkrview_xpatsource_desc>
 		$mrkrview_xpatsource_count publications
       <?/MIVAR>     
 
@@ -1228,7 +1230,6 @@ I am commenting this part of the code rather than deleting it. If no flags are r
 	  where '$OID' in (xpatex_gene_zdb_id, xpatex_probe_feature_zdb_id); ">
        <?/MISQL>
        <?MIVAR NAME=mrkrview_xpatfig_count>$1<?/MIVAR>     
-
          <tr><td><b>All expression data: </b> </td>
 
            <td> <?MIVAR> 
