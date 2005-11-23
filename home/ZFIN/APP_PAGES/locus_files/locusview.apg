@@ -297,21 +297,6 @@ Datablade documentation.
 	    
 	<?/MISQL>
 
-	<?MISQL SQL="
-	  select dalias_alias, dalias_zdb_id 
-	    from data_alias, fish 
-	    where dalias_data_zdb_id = fish.zdb_id
-              and fish.locus = '$OID' ;">
-	  <?MIVAR NAME=$fish_alias>$1<?/MIVAR>
-	  <?MIVAR NAME=$fish_aliasId>$2<?/MIVAR>
-	  <?MIVAR COND="$(XST,$fish_alias)" NAME=$fish_alias DELIMIT=" " REPLACE="+">$fish_alias<?/MIVAR>
-	  <?MIVAR COND="$(XST,$UPDATE)"><br> <INPUT TYPE=button value=Delete onClick="Delete_listitem('fish_dalias_alias','$fish_alias','$OID')"><?/MIVAR>
-          <i>
-	  $(IF,$(AND,$(NXST,$UPDATE),$(OR,$(XST,$alias),$(>,$MI_CURRENTROW,1))),;) $1 
-         </i> 
-	<?MISQL SQL="select WebExplode(object,'dataId=$fish_aliasId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
-	<?/MISQL>
-
 	
 	<!------------- ends Previous Name  ------------------------>
 
