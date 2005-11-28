@@ -7,7 +7,7 @@
      US WHAT TYPE OF RECORD IS BEING UPDATED.
 -->
 
-<?MIBLOCK COND=$(AND,$(NXST,$OID),$(NXST,$rtype))>
+<?MIBLOCK COND=$(OR,$(NXST,$OID),$(NXST,$rtype))>
 <p>
 ERROR -- something bad happened -- no OID passed in or no rtype!
 <?/MIBLOCK>
