@@ -56,11 +56,22 @@ system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> zgcCount.sql > zgcStat
 
 chdir "<!--|ROOT_PATH|-->/server_apps/Reports/Vega";
 
+# Run vega_thisse_report.sql before VegaCount.sql.
+# A file is created by vega_thisse_report.sql that is read by VegaCount.sql.
+
+system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> vega_thisse_report.sql 2> err");
+
+&sendResult("Monthly Vega-Thisse statistics", "van_slyke\@uoneuro.uoregon.edu", "./vega_thisse_report.unl");
+
+&sendResult("Vega-Thisse statistics Err", "bsprunge\@cs.uoregon.edu", "./err");
+
+
 system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> VegaCount.sql > VegaStatistics 2> err");
 
 &sendResult("Monthly Vega statistics", "sramacha\@uoneuro.uoregon.edu, ksf\@cs.uoregon.edu", "./VegaStatistics");
 
 &sendResult("Monthly Vega statistics Err", "tomc\@cs.uoregon.edu", "./err");
+
 
 #-------------------------------------------------------------------------- 
 
