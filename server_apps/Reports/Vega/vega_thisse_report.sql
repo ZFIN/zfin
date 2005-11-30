@@ -34,7 +34,7 @@ select distinct dblink_linked_recid
        select * 
          from expression_experiment 
         where xpatex_gene_zdb_id = dblink_linked_recid 
-          and xpatex_source_zdb_id not in ("ZDB-PUB-040907-1","ZDB-PUB-010810-1")
+          and xpatex_source_zdb_id in ("ZDB-PUB-040907-1","ZDB-PUB-010810-1","ZDB-PUB-051025-1")
      )
 ;
 
