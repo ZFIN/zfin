@@ -184,3 +184,41 @@ select count(*) si_genes
  where mrkr_abbrev[1,3] = 'si:'
 ;
 
+
+!echo    '---------------------------------------------------------------------'
+!echo 'Genes with a Vega link and no Thisse expression'
+
+create temp table tmp_vega_thisse_report
+  (
+    veth_significance  integer,
+    veth_mrkr_abbrev   varchar(50),
+    veth_acc_num       varchar(40),
+    veth_length        integer
+  )
+with no log;
+
+load from 'vega_thisse_report.unl'
+insert into tmp_vega_thisse_report;
+
+!echo    '---------------------------------------------------------------------'
+!echo '# of named genes'
+select count(*) named_genes from tmp_vega_thisse_report where veth_mrkr_abbrev not like "%:%";
+
+!echo    '---------------------------------------------------------------------'
+!echo '# of zgc genes'
+select count(*) zgc_genes 
+  from tmp_vega_thisse_report
+ where exists
+     (
+       select *
+         from marker_relationship, marker gene, marker clone
+        where gene.mrkr_abbrev = veth_mrkr_abbrev
+          and gene.mrkr_zdb_id = mrel_mrkr_1_zdb_id
+          and mrel_mrkr_2_zdb_id = clone.mrkr_zdb_id
+          and clone.mrkr_abbrev[1,3] = "MGC"
+     );
+
+!echo    '---------------------------------------------------------------------'
+!echo '# of si genes'
+select count(*) si_genes from tmp_vega_thisse_report;
+
