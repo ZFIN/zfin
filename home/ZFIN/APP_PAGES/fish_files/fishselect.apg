@@ -809,7 +809,7 @@ Startframes.apg will pass this variables on to the select form.
 <?/MIBLOCK>
 
 <form name="BrowserForm" method=get
-  onSubmit="updateList(); alert(document.BrowserForm.selected.value); "
+  onSubmit="updateList();"
   action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 
 <?MIBLOCK COND="$(XST,$update_lineage)">
