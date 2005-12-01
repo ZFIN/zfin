@@ -44,7 +44,13 @@ var pattern = /Click/;
 	    post = ";%')";
 	    i = document.BrowserForm.structure_list.options.length - 1;
 	    while (i >= 0 ) {
-		  results = results + pre + document.BrowserForm.structure_list.options[i].text + post;
+		  term = document.BrowserForm.structure_list.options[i].text;
+		  /**** This is for Safari, for some reason, which has a tendency
+			to go a little crazy with inserting whitespace around
+			the strings that are coming out of the select box. 
+			it's the regular expression equivalent to a trim function ****/
+		  term = term.replace(/^\s*|\s*$/g,'');
+		  results = results + pre + term + post;
 		  if (i != 0) { results = results + " " + getSelectedSeparator() + " "; }
 
 		  i--;
@@ -802,8 +808,8 @@ Startframes.apg will pass this variables on to the select form.
        </TR>
 <?/MIBLOCK>
 
-<form name="BrowserForm" method=post
-  onSubmit="updateList();"
+<form name="BrowserForm" method=get
+  onSubmit="updateList(); alert(document.BrowserForm.selected.value); "
   action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 
 <?MIBLOCK COND="$(XST,$update_lineage)">
@@ -944,7 +950,7 @@ we have to do at this point is pass the return record along to the fishlister.
    <TD class="fullwidth">
     <INPUT type="hidden" name="selected"  value="'t'::boolean">
     <?MIVAR><INPUT type="hidden" name="line_type"  value=$line_type><?/MIVAR>
-    <A HREF="javascript:start_help('phenokeywords')"><b>Select Affected Structures and/or Defects:</b><br>
+    <A HREF="javascript:start_help('phenokeywords')"><b>Select Affected Structures and/or Defects:</b></A><br>
 
 <!-- applet replacement -->
     <table width=360 height=100 border=0 cellpadding=3 cellspacing=0 bgcolor="#88a6a6">
