@@ -15,7 +15,7 @@
   my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->', '', '', {AutoCommit => 1, RaiseError => 1})
   || die "Failed while connecting to <!--|DB_NAME|--> "; #$DBI::errstr";
 
- print "<APPLET archive = \"browser.jar\" codebase = \"/client_apps/Browser\" CODE=\"Browser.class\" NAME =\"Browser\" WIDTH=470 HEIGHT=120>\n" .
+ print "<APPLET archive = \"browser.jar\" codebase = \"/client_apps/Browser\" CODE=\"Browser.class\" NAME =\"Browser\" WIDTH=500 HEIGHT=420>\n" .
 	"<param name=format_pre value=\" a.pheno_keywords like '%;\" >\n" .
 	"<param name=format_post value=\";%'\" >\n" .
 	"<param name=list_label value=\"Keyword Dictionary\">\n" .
