@@ -184,14 +184,14 @@ select count(distinct tzgi_gene_zdb_id) genes
 
 select count(xpatex_zdb_id) xpats
   from expression_experiment
- where xpatex_source_zdb_id = "ZDB-PUB-040907-1";
+ where xpatex_source_zdb_id in ("ZDB-PUB-040907-1","ZDB-PUB-051025-1");
 
 !echo 'Thisse FR expression experiemnt image numbers'
 
 select count(fimg_zdb_id) images
   from figure join fish_image
        on fig_zdb_id = fimg_fig_zdb_id
- where fig_source_zdb_id = "ZDB-PUB-040907-1";
+ where fig_source_zdb_id in ("ZDB-PUB-040907-1","ZDB-PUB-051025-1");
 
 
 !echo '----------------------------------------------------------------------------'
@@ -207,7 +207,7 @@ select  tzg_gene_zdb_id as zgc_genes,
        on xpatres_zdb_id = xpatfig_xpatres_zdb_id
        join fish_image
        on xpatfig_fig_zdb_id = fimg_fig_zdb_id
- where xpatex_source_zdb_id = "ZDB-PUB-040907-1"
+ where xpatex_source_zdb_id in ("ZDB-PUB-040907-1","ZDB-PUB-051025-1")
  into temp tmp_zgcCount_zgc_fr with no log;
 
 !echo 'ZGC genes have added expression patterns from Thisse FR (and image numbers)'
@@ -229,7 +229,7 @@ select xpatex_zdb_id as xpats,
        on xpatres_zdb_id = xpatfig_xpatres_zdb_id
        join fish_image
        on xpatfig_fig_zdb_id = fimg_fig_zdb_id
- where  xpatex_source_zdb_id = "ZDB-PUB-040907-1"
+ where  xpatex_source_zdb_id in ("ZDB-PUB-040907-1","ZDB-PUB-051025-1")
   and   mrkr_abbrev[1,4] = "MGC:"
 into temp tmp_zgcCount_mgc_fr with no log;
 
