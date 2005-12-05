@@ -30,4 +30,4 @@ include $(TOP)/make.default.rules
 # ---------------  Misc Targets  ----------------------------------------
 
 run : $(TARGETDIR)/../Count.pl
-	$(TARGETDIR)/..Count.pl
+	$(TARGETDIR)/../Count.pl
