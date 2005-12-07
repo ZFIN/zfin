@@ -113,8 +113,8 @@ display detailed orthology data.
 
 <?MIBLOCK COND="$(>,$orthoNum,0)">
 
-  <!-- overview table for orthologue data -->
-  <TABLE width="100%" border="0" cellspacing="0" style="background: rgb(238,238,238);">
+  <!-- ==========   overview table for orthologue data ===================== -->
+  <TABLE width="100%" border="0" cellspacing="0">
     <TR style="background-color: rgb(204,204,204);">
       <TD><b>Species</b></TD>
       <TD><b>Symbol</b></TD>
@@ -228,9 +228,9 @@ display detailed orthology data.
       <TD colspan=4></TD> 
     </TR>
   </TABLE><br/>
-  <!-- end of overview table -->
+  <!-- ============  end of overview table ================= -->
   
-  <!-- evidence table for orthologue data -->
+  <!-- ============  evidence table for orthologue data ================  -->
   <TABLE width="100%" border="0" cellspacing="0">
   <CAPTION style="text-align: left; font-size: large; font-weight: bold;">
     Orthology by Evidence Code:
@@ -359,9 +359,9 @@ display detailed orthology data.
       
     <?/MIBLOCK>
   </TABLE><br/>             
-  <!-- end of evidence table -->  
+  <!-- ==========  end of evidence table ========  -->  
   
-  <!-- publication table for orthologue data -->
+  <!-- ==========  publication table for orthologue data ===========  -->
   <TABLE width="100%" border="0" cellspacing="0">
     <CAPTION style="text-align: left; font-size: large; font-weight: bold;">
       Orthology by Publication:
@@ -473,7 +473,7 @@ display detailed orthology data.
       <?MIVAR>$(SETVAR,$indx,$(+,$indx,1))<?/MIVAR>
     <?/MIBLOCK> 
   </TABLE><br/>
-  <!-- end of publication table -->    
+  <!-- ========  end of publication table =========  -->    
   
 <?MIELSE> <?MICOMMENT>
   &nbsp None submitted.
