@@ -122,7 +122,7 @@ display detailed orthology data.
       <TD><b>Accession #</b></TD>
     </TR>  
 
-    <TR>
+    <TR style="background-color: rgb(238,238,238)">
       <TD><b>Zebrafish</b></TD>
       <?MIVAR><TD>$abbrev</TD><?/MIVAR>
         
