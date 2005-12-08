@@ -296,7 +296,7 @@ Datablade documentation.
 	<?/MIVAR>
       <?MIELSE>
 	<?MIVAR>
-	  <TITLE>ZFIN : Allele : [$(IF,$(NC,$title,Wild type),$allele,$abbrev)] </TITLE>
+	  <TITLE>ZFIN : Locus : $(IF,$(NC,$title,Wild type),$name,$abbrev)  Allele : $(IF,$(NC,$title,Wild type),$allele) </TITLE>
 	<?/MIVAR>
       <?/MIBLOCK>
 
