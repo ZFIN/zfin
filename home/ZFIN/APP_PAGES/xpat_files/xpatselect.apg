@@ -746,7 +746,7 @@ function openChild(childWinUrl,childWinName) {
          &nbsp;&nbsp;
 
 	<?MIBLOCK COND="$(NXST,$query_results)">
-          <b>Search for Gene Expression Data </b> <a href="http://<!--|DOMAIN_NAME|-->/zf_info/news/siteNews.html"><b> (New Features)</b></a><img src="http://<!--|DOMAIN_NAME|-->/images/new1.gif">
+          <b>Search for Gene Expression Data </b>
 	<?MIELSE>
           <a name=modify></a><b>Modify your search.</b>
 	<?/MIBLOCK>
