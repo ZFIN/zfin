@@ -31,6 +31,12 @@
   <p>
   ERROR -- something bad happened -- no OID passed in!
 <?/MIBLOCK>
+
+
+<?MISQL COND="$(NXST,$UPDATE)"  SQL="select WebExplode(object,'') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+<?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
+
 <?MISQL SQL="select mrkr_zdb_id,mrkr_abbrev from marker where mrkr_zdb_id='$OID'"><?/MISQL>
 <?MIVAR NAME=$mrkr_id>$1<?/MIVAR>
 <?MIVAR NAME=$mrkr_sym>$2<?/MIVAR>
@@ -402,5 +408,5 @@ function call_reset() {
 </form>
 <?/MIVAR>
 <?/MIBLOCK>
-
+<?/MIBLOCK>
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
