@@ -1,6 +1,6 @@
-create function get_allele_html( allele varchar(20) )
+create function get_allele_html( allele like alteration.allele )
 
-  returning varchar(20);	
+  returning varchar(40);	
 
   -- --------------------------------------------------------------------- 
   -- Display all alleles with un_% as unspecified. 

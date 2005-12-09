@@ -137,12 +137,12 @@ create dba function "informix".regen_fishsearch()
 	fishsearch_name_order	varchar(100)
 	  not null,
 	line_type	varchar (30),
-	abbrev		varchar (20), 
+	abbrev		varchar (30), 
 	phenotype	lvarchar(6000), 
 	chrom_num	varchar(3),
 	chrom_change	varchar (30), 
 	comments	lvarchar, 
-	allele		varchar (20),
+	allele		varchar (40),
 	fishsearch_allele_order varchar(50)
 	  not null,
 	mutagen		varchar (20),
