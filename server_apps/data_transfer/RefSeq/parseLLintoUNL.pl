@@ -8,17 +8,17 @@ open (UNLMM, ">ll_mm_id.unl") or die "cannot open ll_mm_id.unl";
 
 while ($line = <CUT>) {
   chop $line;
-  ($org,$ll_id,$abbrev,$org_id,$alias1,$alias2) = split ' ',$line,6;
+  ($org,$ll_id,$abbrev,$org_id,$alias1,$dbRef) = split ' ',$line,6;
   
 
-  if ($org eq "7955" && $org_id =~ "^ZDB") {
-    print UNLDR "$ll_id|$org_id|\n";
+  if ($org eq "7955" && $dbRef =~ "^ZFIN:(.*)") {
+    print UNLDR "$ll_id|$1|\n";
   }  
-  elsif ($org eq "9606" && $org_id ) {
+  elsif ($org eq "9606" && $dbRef ) {
     print UNLHS "$ll_id|$abbrev|$org_id|\n";
   }
-  elsif ($org eq "10090" && $org_id ) {
-    if ($abbrev =~ /^MGI:/) 
+  elsif ($org eq "10090" && $dbRef ) {
+    if ($dbRef =~ /^MGI:/) 
     { 
       $alias1 =~ s/\|/,/g;
       $abbrev = $alias1;
