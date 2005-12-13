@@ -207,6 +207,7 @@ DEBUGGING:
 	) with NO LOG;">
       <?/MISQL>
     <?/MISQL>
+
     <?MIBLOCK COND="$(XST,$input_name)">
       <?MISQL COND=$(XST,$debug_timing) SQL="
         execute function get_time()">
@@ -243,6 +244,7 @@ DEBUGGING:
  	   $(SETVAR,$geneMchIdLast,$geneMchId)          	
          <?/MISQL>
       <?/MISQL>
+     	
       <?MIVAR NAME=$mrkrsel_optional_match_table>,$markerselect_temp_match<?/MIVAR>
       <?MIVAR>
 	$(SETVAR,$mrkrsel_optional_match_cols,", mstmatch_name, mstmatch_significance, mstmatch_precedence")
@@ -252,6 +254,7 @@ DEBUGGING:
       <?MICOMMENT>restore the input string for display<?/MICOMMENT>
       <?MIVAR COND="$(XST,$input_name)" NAME=input_name DELIMIT="''" REPLACE="'">$input_name<?/MIVAR>
     <?/MIBLOCK>  <?MICOMMENT>-------------------------------------<?/MICOMMENT>
+
 
 
     <?MICOMMENT>---------------------------------------------------
@@ -304,6 +307,7 @@ DEBUGGING:
 	$(VECAPPEND, $constraint," mrkr_zdb_id = mstmatch_zdb_id ")
       <?/MIVAR>
     <?/MIBLOCK> <?MICOMMENT>---------------------------------------<?/MICOMMENT>
+
 
     <?MICOMMENT>--------------- if LG is selected -----------------<?/MICOMMENT>
     <?MIBLOCK COND="$(NC,$lg,0)">
@@ -529,6 +533,7 @@ DEBUGGING:
 
   <?/MIBLOCK>
 
+
   <?MICOMMENT> ===========================================================
                ===   Display Search Results
                ===========================================================
@@ -628,29 +633,26 @@ DEBUGGING:
     <?MICOMMENT> For morpholino, the order is only meaningful when it is by gene
                  symbol. Alternatively, we could store the expected gene symbol 
                  string as the morpholino name/abbrev order string. 
-                 ****This part of the code is being commented out as it wasn't 
-                 returning counts properly (FB 773). This code will be removed 
-                 after it is on production and succesfully working (on 11/21)**
     <?/MICOMMENT> 
-<?MICOMMENT>
-    <?MIBLOCK COND="$(AND,$(XST,$marker_type),$(EC,$marker_type,MRPHLNO))">
+    <?MIBLOCK COND="$(OR,$(AND,$(XST,$marker_type),$(EC,$marker_type,MRPHLNO)),$(EC,$type,pub_mo))">
 	<?MIVAR NAME=$mrkrsel_master_sql> 
 	       select distinct mstmrkr_name, mstmrkr_abbrev, mstmrkr_type, 
-		      mrkrtype_type_display, mstmrkr_zdb_id, 
+		      mt.mrkrtype_type_display, mstmrkr_zdb_id, 
 		      mg.mrkr_abbrev_order, mstmrkr_match_name, 
 		      mstmrkr_significance, mstmrkr_precedence
-		from $markerselect_temp_marker, marker_types mt, 
-		     marker_relationship, marker mg
+		from $markerselect_temp_marker, marker_types mt,
+		     outer (marker_relationship, marker mg)
                where mstmrkr_type = mt.marker_type
-                 and mstmrkr_zdb_id = mrel_mrkr_1_zdb_id
+		 and mstmrkr_zdb_id = mrel_mrkr_1_zdb_id
                  and mrel_mrkr_2_zdb_id = mg.mrkr_zdb_id
                  and mrel_type = 'knockdown reagent targets gene'
             order by mstmrkr_significance, mstmrkr_type, mg.mrkr_abbrev_order;	
        <?/MIVAR>
     <?/MIBLOCK>
-<?/MICOMMENT>
+    
+    <?MIVAR NAME=displayTitle>f<?/MIVAR>
     <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="$mrkrsel_master_sql">
-	
+
       <?MIVAR name=$marker_name>$1<?/MIVAR>
       <?MIVAR name=$marker_abbrev>$2<?/MIVAR>
       <?MIVAR name=$mtype>$3<?/MIVAR>
@@ -658,9 +660,8 @@ DEBUGGING:
       <?MIVAR name=$OID>$5<?/MIVAR>
       <?MIVAR name=$match_name>$(URLDECODE,$7)<?/MIVAR>
       <?MIVAR name=$match_text>$9<?/MIVAR>
-
-
-      <?MIBLOCK COND="$(EC,$MI_CURRENTROW,1)"> 
+ 
+      <?MIBLOCK COND="$(EC,$displayTitle,f)"> 
         <?MICOMMENT> == display the "Show genes with known loci" button ==
         <?/MICOMMENT>
         <?MIBLOCK COND="$(AND,$(XST,$marker_type),$(XST,$type_of_genedom))">
@@ -708,7 +709,7 @@ DEBUGGING:
            <?/MIBLOCK>
          </TR>
       <?/MIBLOCK><?MICOMMENT>===== end of title display ===<?/MICOMMENT>
-
+      <?MIVAR>$(SETVAR,$displayTitle,t)<?/MIVAR>
 
       $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID="), $(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID="))
               
@@ -717,17 +718,17 @@ DEBUGGING:
                    == row color by gene group.
       <?/MICOMMENT>
       <?MIBLOCK COND="$(!=,$(POSITION,$OID,MRPHLNO),0)">
+	 <?MIVAR NAME=$display_target_gene><?/MIVAR>
          <?MISQL SQL=" 
                       select mrkr_abbrev, mrkr_zdb_id
-                        from marker join marker_relationship
+                        from marker left outer join marker_relationship
                              on mrkr_zdb_id = mrel_mrkr_2_zdb_id
                        where mrel_mrkr_1_zdb_id = '$OID'
                          and mrel_type = 'knockdown reagent targets gene';">
 
              <?MICOMMENT>== when starts MOs on a new gene ==<?/MICOMMENT>
              <?MIBLOCK COND="$(OR,$(NXST,$target_gene_zdb_id),$(AND,$(XST,$target_gene_zdb_id),$(NC,$2,$target_gene_zdb_id)))">
-
-               <?MIVAR NAME=$display_target_gene><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2> $1 </A><?/MIVAR>
+	       <?MIVAR NAME=$display_target_gene><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2> $1 </A><?/MIVAR>
                    
                <?MIBLOCK COND="$(NC,$rowNUM,1)">
                  <?MIBLOCK COND="$(EC,$row_color,$highlight)">   
