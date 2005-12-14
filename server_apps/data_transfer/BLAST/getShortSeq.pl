@@ -22,7 +22,7 @@ my $dbname = "<!--|DB_NAME|-->";
 my $user = "";
 my $passwd = "";
 
-my $outputdir = "<!--|FTP_ROOT|-->/pub/transfer/Genomix/";
+my $outputdir = "/research/zblastfiles/files/genomix/";
 my $mrphFile = $outputdir."zfin_mrph.fa";
 my $microFile = $outputdir."zfin_microRNA.fa";
 

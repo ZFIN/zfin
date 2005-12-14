@@ -18,7 +18,7 @@ my $dbname = "<!--|DB_NAME|-->";
 my $username = "";
 my $password = "";
 
-my $outputdir = "<!--|FTP_ROOT|-->/pub/transfer/Genomix/";
+my $outputdir = "/research/zblastfiles/files/genomix/";
 my $accFile = $outputdir."zfin_genbank_acc.unl";
 my $accFile_cdna = $outputdir."zfin_genbank_cdna_acc.unl";
 
