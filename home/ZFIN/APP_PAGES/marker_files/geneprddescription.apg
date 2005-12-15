@@ -27,7 +27,7 @@
 <?MIVAR NAME=$MI_NULL><?/MIVAR>
 
 <?MISQL SQL="
-  select WebExplode(object,'page_title=geneprddescription&permission=root') 
+  select WebExplode(object,'page_title=geneprddescription') 
     from webPages 
     where ID='aa-secure_navigation.apg';">$1
 <?/MISQL>
