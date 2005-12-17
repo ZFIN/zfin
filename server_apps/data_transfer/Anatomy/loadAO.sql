@@ -4,19 +4,20 @@
 -- The script loads AO files produced by parser into ZFIN db.
 --
 -- INPUT:
---      anatitem_new.unl
---      anatitem_exist.unl
---      anatitem_merged.unl
---      anatitem_obsolete.unl
---      anatrel.unl
---      anatalias.unl
---      anatitem_ids.unl
---      stage_ids.unl
---      cell_ids.unl
+--      anatitem_new.unl  : terms without xref_analog line
+--      anatitem_exist.unl: terms with xref_analog line
+--      anatitem_merged.unl: ZFA:#######|ZFA:#######|
+--      anatitem_obsolete.unl: ZDB-ANAT-######-##|
+--      anatrel.unl  : ZFA:#######(parent)|ZFA:#######(child)|rel_type|
+--      anatalias.unl: ZFA:#######|synonym|ZDB-PUB-######-##|
+--      anatitem_ids.unl: ZFA:#######|ZDB-ANAT-######-##|
+--      stage_ids.unl   : ZFS:#######|ZDB-STAGE-######-##|
+--      cell_ids.unl    : ZFC:#######|CL:#######|
 --
 -- OUTPUT:
---     startStgInconsistent.err
---     endStgInconsistent.err
+--     start_startInconsistent.err
+--     end_endInconsistent.err
+--     end_startInconsistent.err
 --     pub_incorrect.err
 -- 		 for the above three, zero length means error free
 --     annotationViolates.err
@@ -832,11 +833,11 @@ insert into updates (submitter_id, submitter_name, rec_id,
 
 unload to "annotationViolates.err"
 	    select xpatex_source_zdb_id, 
-		   s1.stg_abbrev, s1.stg_zdb_id,
-                   s2.stg_abbrev, s2.stg_zdb_id,
-		   anatitem_name, anatitem_zdb_id,
-		   s3.stg_abbrev, s3.stg_zdb_id,
-		   s4.stg_abbrev, s4.stg_zdb_id
+		   s1.stg_abbrev, 
+                   s2.stg_abbrev, 
+		   anatitem_name, 
+		   s3.stg_abbrev, 
+		   s4.stg_abbrev
 	      from expression_result 
 		   join expression_experiment
 			on xpatres_xpatex_zdb_id = xpatex_zdb_id
