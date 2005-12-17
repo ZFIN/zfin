@@ -35,7 +35,8 @@ update stage_keyword_tmp
 update stage_keyword_tmp 
 	set t_keyword_zdb_id = (select anatitem_zdb_id 
 				  from anatomy_item
-			         where anatitem_name = t_keyword);
+			         where anatitem_name = t_keyword
+			           and anatitem_is_obsolete = "f");
 	
 unload to "kwdNameNotPrim.err" 
 	select t_stg_start, t_stg_end, t_keyword 
