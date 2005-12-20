@@ -36,6 +36,9 @@
 #	
 # Alleles
 #	zfin id, allele, locus, pheno_keywords, corresponding zfin gene id, gene symbol
+#
+# Morpholino
+#       zfin id of gene, gene symbol, zfin id of MO, MO symbol, public note
 
 
 
@@ -58,3 +61,16 @@ chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads";
 system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> DownloadFiles.sql");
 
 system("./generateStagedAnatomy.pl");
+
+# remove HTML tags from the public note column of the download file of Morpholino data
+$fileWithHTMLtags = '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/Morpholinos2.txt';
+open (INP, $fileWithHTMLtags) || die "Can't open $fileWithHTMLtags : $!\n";
+@lines=<INP>;
+$fileWithNoHTMLtags = '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/Morpholinos.txt';
+open (RESULT,  ">$fileWithNoHTMLtags") || die "Can't open: $fileWithNoHTMLtags $!\n";
+foreach $line (@lines) {
+  $line =~ s/<[^<>]+>//g;
+  print RESULT "$line";
+}
+close INP;
+close RESULT;
