@@ -39,6 +39,9 @@
 --	zfin id, allele, locus abbrev,locus name, pheno_keywords, locus id corresponding zfin gene id, gene symbol
 --
 -- create genetic markers file
+--
+-- Morpholino data
+--      zfin id of gene, gene symbol, zfin id of MO, MO symbol, public note
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genetic_markers.txt' 
   DELIMITER "	" 
@@ -335,4 +338,22 @@ select xpatres_xpatex_zdb_id,
        xpatres_end_stg_zdb_id,
        xpatres_anat_item_zdb_id 
   from expression_result;
+
+
+-- Morpholino data
+-- unloaded Morpholino data would have HTML tags in public note column,
+-- which will be removed by Perl script
+unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/Morpholinos2.txt'
+ DELIMITER "	"
+select gn.mrkr_zdb_id, gn.mrkr_abbrev, mo.mrkr_abbrev, mrkrseq_sequence, mo.mrkr_comments
+  from marker gn, marker mo, marker_sequence, marker_relationship
+  where gn.mrkr_zdb_id = mrel_mrkr_2_zdb_id
+    and mo.mrkr_zdb_id = mrel_mrkr_1_zdb_id
+    and mrel_mrkr_2_zdb_id like "ZDB-GENE-%" 
+    and mrel_mrkr_1_zdb_id like "ZDB-MRPHLNO-%"
+    and mrel_type = "knockdown reagent targets gene"
+    and mo.mrkr_zdb_id = mrkrseq_mrkr_zdb_id
+    order by gn.mrkr_abbrev;
+  
+  
 
