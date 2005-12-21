@@ -452,8 +452,8 @@ Datablade documentation.
         <?/MIBLOCK>
  
 	<!------------------- Affected Gene ---------------------->
-	    <br>
-	      <B>Affected Gene: &nbsp;</B> 
+	    <br><br>
+	      <B>AFFECTED GENE: &nbsp;</B> 
 	      <?MIVAR COND="$(XST,$UPDATE)">
 	       <br>Add reference:&nbsp;
 		Reference:<input type=text name=attrib_affgene_pubid>
@@ -466,7 +466,6 @@ Datablade documentation.
 		<?MIVAR>
 		  <TABLE width=100% cellpadding=5 border=0 bgcolor="$highlight" cols=2 rows=1>
 		    <TR><TD>
-		    <b>Cloned Gene:</b> 
 		    <b><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$cloned_gene"><i>$gene_name ($gene_abbrev)</i></A></b>
 		      has been shown to correspond to locus <i>$name</i>.
 		      <?MISQL SQL="select WebExplode(object,'dataId=$locus&type=colattrib&info=cloned_gene') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
