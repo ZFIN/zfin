@@ -29,6 +29,8 @@ Execution:
 	
 	% gmake unloadshare
 
+  With both execution, the OBO file would be emailed to curators. Curators would re-save them in DagEdit to re-order the items, and commit the internal version into CVS, and send the external one to OBO site and collaborators. 
+
 ---------------------------------------------------
 -- Load AO
 --------------------------------------------------
@@ -58,44 +60,71 @@ Scripts:
 Execution:
 ----------
 
-   It would be nice to automate this process, and just type "gmake load" and done, however, the free human editing in DAG edit or OBO edit is not going to be error free. That means we have to stop at each step for correction.  So go to the TARGET directory:
+   It would be nice to automate this process, and just type "gmake load" and done, however, the free human editing in DAG edit or OBO edit is not going to be error free, which means testing is always needed.  
 
-  	% parseOBO.pl filename
+   1) Get the up-to-date anatomy.obo file from CVS
 
-   Till no error output, make sure loadAO.sql is ended with rollback work,
+   2) Parse
+      At a fresh test db, go to the TARGET directory:
+
+  	% parseOBO.pl <path_to_anatomy.obo>
+
+     Check STDOUT for error. Fix anaotmy.obo.
+     
+   3) Test load 
+     At source dir, check out loadAO.sql, comment out "commit work",
+     and test load.
 
 	% dbaccess <db_name> loadAO.sql
 
-   Check that
+     Check that
      o No SQL error. 
-       If there is, check pub_incorrect.err, start_startInconsistent.err, 
-       end_startInconsistent.err and end_endInconsistent.err.
-     o Make notes on the important numbers such as new AO terms.
-   We might need some handling on the statistics after the curators
-   define them. For now, this is more of a courtesy check. 
 
-   Then send annotationViolates.err content to Ceri & Melissa, 
-   Ask for 
-	
+     o ls -l *.err
+       check pub_incorrect.err, start_startInconsistent.err, 
+       end_startInconsistent.err and end_endInconsistent.err.
+       Normally, we have stage conflicts, hand it to curators,
+       make correction and repeat the parsing and test load.
+
+     Send annotationViolates.err content to Ceri & Melissa, 
+     Ask for 
      o  AO_translation.unl with format
 
-        ZDB-ANAT-XXXX|ZDB-STAGE-XXXX|ZDB-STAGE-XXXX|ZDB-ANAT-XXXX
-   
+        ZDB-ANAT-XXXX|start stg abbrev|end stg abbrev|ZDB-ANAT-XXXX
+        (   old term )                               (  new term  ) 
+
      Excel won't put an ending "|", later script will add that.
      If any of the AO term involved is a new term, which means no 
-     ZDB-ANAT- id is available untill the load finish, then you need
-     to manually run the steps in loadMaster.sh. 
-                                                         
-     o  stageKeyword.csv exported from last Thisse sending
+     ZDB-ANAT- id is not available untill the load finish, then save
+     those and manually run the adjustment steps from loadMaster.sh
+     after the load. 
+   
+   4) Generate                                            
+      o  stageKeyword.csv exported from last Thisse sending
+             
+   5) Load production
+      At production TARGET dir (has to be informix user), copy over
+      (anatomy.obo,) AO_translation.unl and stageKeyword.csv.
 
-   Readyt to automate the steps? 
-   Check out and uncommit "commit work;" in loadAO.sql
+        % parseOBO.pl <path_to_anatomy.obo>
 
 	% loadMaster.sh
 
-   
+      Currently for statistics, we make notes from the SQL output. When it gets regular and stable, we should automate this :
+          how many new terms
+          how many stages changed
+          how many new definitions, updated definitions
+          how many more relationships
+
+Postload
+---------
+
+   Commit the anatomy.obo file, which is used for the load(normally with some corrections), into CVS. 
+   Unload AO, refer to the first half of this file.
+ 
 
 ------------------------------
 -- Future Improvement?
 ------------------------------
- o If provide infrastructure table to store the AO translations, and provide web interface for curators to enter, then we could keep track in the DB, meantime the batch_xpat_annot_adjust() function would directly run on the db records, and get rid of the make_annot_translation.sql.
+ o Generate and compare statistics 
+ o Web interface for updates??
