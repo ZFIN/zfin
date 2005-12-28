@@ -10,8 +10,6 @@
 --      anatitem_obsolete.unl: ZDB-ANAT-######-##|
 --      anatrel.unl  : ZFA:#######(parent)|ZFA:#######(child)|rel_type|
 --      anatalias.unl: ZFA:#######|synonym|ZDB-PUB-######-##|
---      anatitem_ids.unl: ZFA:#######|ZDB-ANAT-######-##|
---      stage_ids.unl   : ZFS:#######|ZDB-STAGE-######-##|
 --      cell_ids.unl    : ZFC:#######|CL:#######|
 --
 -- OUTPUT:
@@ -38,36 +36,6 @@
 !echo '====================================================='
 !echo '===== Load data into temp table and Prepare       ==='
 !echo '====================================================='
-
------------------------------------------------------
--- Anatomy OBO id and ZDB id translation table
------------------------------------------------------
-!echo '===== anatomy_item id translation ====='
-create temp table ao_id_translation (
-	ait_obo_id	char(11),
-	ait_zdb_id	varchar(50)
-)with no log;
-create unique index ao_id_translation_index 
-	on ao_id_translation (ait_obo_id);
-create unique index ao_id_translation_primary_key
-	on ao_id_translation (ait_zdb_id);
-
-load from "anatitem_ids.unl" insert into ao_id_translation;
-
------------------------------------------------------
--- Stage OBO id and ZDB id translation table
------------------------------------------------------
-!echo '===== stage id translation ====='
-create temp table stg_id_translation (
-	sit_obo_id	char(11),
-	sit_zdb_id	varchar(50)
-)with no log;
-create unique index stg_id_translation_index 
-	on stg_id_translation (sit_obo_id);
-create unique index stg_id_translation_primary_key
-	on stg_id_translation (sit_zdb_id);
-
-load from "stage_ids.unl" insert into stg_id_translation;
 
 -----------------------------------------------------
 -- Cell Ontology ZFC id and CL id translation table
@@ -118,14 +86,14 @@ update new_anatomy_item
 !echo '== update stg obo id =='
 update new_anatomy_item
    set n_anatitem_start_stg_zdb_id = 
-		(select sit_zdb_id
-		   from stg_id_translation
-		  where n_anatitem_start_stg_zdb_id = sit_obo_id);
+		(select stg_zdb_id
+		   from stage
+		  where n_anatitem_start_stg_zdb_id = stg_obo_id);
 update new_anatomy_item
    set n_anatitem_end_stg_zdb_id = 
-		(select sit_zdb_id
-		   from stg_id_translation
-		  where n_anatitem_end_stg_zdb_id = sit_obo_id);
+		(select stg_zdb_id
+		   from stage
+		  where n_anatitem_end_stg_zdb_id = stg_obo_id);
 
 --------------------------------------------------------
 -- Existing/Updated anatomy items
@@ -155,14 +123,14 @@ load from "anatitem_exist.unl" insert into updated_anatomy_item;
 !echo '== update stg obo id =='
 update updated_anatomy_item
    set u_anatitem_start_stg_zdb_id = 
-		(select sit_zdb_id
-		   from stg_id_translation
-		  where u_anatitem_start_stg_zdb_id = sit_obo_id);
+		(select stg_zdb_id
+		   from stage
+		  where u_anatitem_start_stg_zdb_id = stg_obo_id);
 update updated_anatomy_item
    set u_anatitem_end_stg_zdb_id = 
-		(select sit_zdb_id
-		   from stg_id_translation
-		  where u_anatitem_end_stg_zdb_id = sit_obo_id);
+		(select stg_zdb_id
+		   from stage
+		  where u_anatitem_end_stg_zdb_id = stg_obo_id);
 
 -------------------------------------------------------------------
 -- Merged anatomy items
@@ -181,11 +149,11 @@ load from "anatitem_merged.unl" insert into merged_anatomy_item;
 
 !echo '== update obo id to zdb id on merged new term =='
 update merged_anatomy_item
-	set m_anatitem_new_zdb_id = (select ait_zdb_id 
-			               from ao_id_translation
-				      where m_anatitem_new_zdb_id = ait_obo_id)
-      where m_anatitem_new_zdb_id in (select ait_obo_id
-				        from ao_id_translation);
+	set m_anatitem_new_zdb_id = (select anatitem_zdb_id 
+			               from anatomy_item
+				      where m_anatitem_new_zdb_id = anatitem_obo_id)
+      where m_anatitem_new_zdb_id in (select anatitem_obo_id
+				        from anatomy_item);
 
 !echo '== update merged new term zdb id if it is a new term =='
 update merged_anatomy_item
@@ -197,11 +165,11 @@ update merged_anatomy_item
 
 !echo '== update obo id to zdb id on merged old term =='
 update merged_anatomy_item
-	set m_anatitem_old_zdb_id = (select ait_zdb_id 
-			               from ao_id_translation
-				      where m_anatitem_old_zdb_id = ait_obo_id)
-      where m_anatitem_old_zdb_id in (select ait_obo_id
-					from ao_id_translation);
+	set m_anatitem_old_zdb_id = (select anatitem_zdb_id 
+			               from anatomy_item
+				      where m_anatitem_old_zdb_id = anatitem_obo_id)
+      where m_anatitem_old_zdb_id in (select anatitem_obo_id
+					from anatomy_item);
 
 -------------------------------------------------------------------
 -- Obsolete anatomy items
@@ -237,11 +205,11 @@ load from "anatalias.unl" insert into input_data_alias;
 
 !echo '== update obo id to zdb id on anat term =='
 update input_data_alias
-	set i_dalias_data_zdb_id = (select ait_zdb_id 
-			              from ao_id_translation
-				     where i_dalias_data_zdb_id = ait_obo_id)
-      where i_dalias_data_zdb_id in (select ait_obo_id
-					 from ao_id_translation);
+	set i_dalias_data_zdb_id = (select anatitem_zdb_id
+			              from anatomy_item
+				     where i_dalias_data_zdb_id = anatitem_obo_id)
+      where i_dalias_data_zdb_id in (select anatitem_obo_id
+				       from anatomy_item);
 
 !echo '== update new anatomy term zdb id =='
 update input_data_alias set i_dalias_data_zdb_id = 
@@ -277,19 +245,19 @@ load from 'anatrel.unl' insert into new_anatomy_relationship;
 
 !echo '== update obo id to zdb id on parent term =='
 update new_anatomy_relationship 
-   set n_anatrel_anatitem_1_zdb_id = (select ait_zdb_id 
-			               from ao_id_translation
-				      where n_anatrel_anatitem_1_zdb_id = ait_obo_id)
- where n_anatrel_anatitem_1_zdb_id in (select ait_obo_id
-					 from ao_id_translation);
+   set n_anatrel_anatitem_1_zdb_id = (select anatitem_zdb_id
+			                from anatomy_item
+				       where n_anatrel_anatitem_1_zdb_id = anatitem_obo_id)
+ where n_anatrel_anatitem_1_zdb_id in (select anatitem_obo_id
+					 from anatomy_item);
 
 !echo '== update obo id to zdb id on child term =='
 update new_anatomy_relationship 
-   set n_anatrel_anatitem_2_zdb_id = (select ait_zdb_id 
-			               from ao_id_translation
-				      where n_anatrel_anatitem_2_zdb_id = ait_obo_id)
- where n_anatrel_anatitem_2_zdb_id in (select ait_obo_id
-					 from ao_id_translation);
+   set n_anatrel_anatitem_2_zdb_id = (select anatitem_zdb_id 
+			                from anatomy_item
+				      where n_anatrel_anatitem_2_zdb_id = anatitem_obo_id)
+ where n_anatrel_anatitem_2_zdb_id in (select anatitem_obo_id
+					 from anatomy_item);
 
 !echo '==update parent term zdb id if it is new=='
 update new_anatomy_relationship 
@@ -508,13 +476,28 @@ insert into anatomy_item (anatitem_zdb_id, anatitem_obo_id, anatitem_name,
 ---------------------------------------------------------
 
 !echo '=== update expression_result on merged terms ==='
+
+-- expression_pattern_figure is an extension of expression_result records
+-- We have to take it into careful consideration. When later, more info
+-- becomes more extensions, we have to take them all into consideration!
+
+create temp table tmp_xpat_figure (
+	txf_xpatres_zdb_id	varchar(50),
+	txf_xpatfig_zdb_id	varchar(50)
+)with no log;
+
 -- Step 1
 -- find out annotations exist on both new and old terms,
 -- and delete the one on the to-be-merged(old) terms
 -- with track record in zdb_replaced_data
+create temp table tmp_xpatres_merge_pair_same_annotation (
+	txs_old_xpatres_zdb_id	varchar(50),
+	txs_new_xpatres_zdb_id	varchar(50)
+)with no log;
 
-select o.xpatres_zdb_id as txo_old_xpatres_zdb_id,
-       n.xpatres_zdb_id as txo_new_xpatres_zdb_id
+insert into tmp_xpatres_merge_pair_same_annotation
+select o.xpatres_zdb_id,
+       n.xpatres_zdb_id 
   from merged_anatomy_item
 	join expression_result o
 		on m_anatitem_old_zdb_id = o.xpatres_anat_item_zdb_id
@@ -523,23 +506,33 @@ select o.xpatres_zdb_id as txo_old_xpatres_zdb_id,
  where o.xpatres_xpatex_zdb_id = n.xpatres_xpatex_zdb_id 
    and o.xpatres_start_stg_zdb_id = n.xpatres_start_stg_zdb_id 
    and o.xpatres_end_stg_zdb_id = n.xpatres_end_stg_zdb_id 
-   and o.xpatres_expression_found = n.xpatres_expression_found
+   and o.xpatres_expression_found = n.xpatres_expression_found;
 -- xpatres_comment is not significant to distinguish two records
-into temp tmp_xpatres_merge_pair with no log;
 
 insert into zdb_replaced_data (zrepld_old_zdb_id, zrepld_new_zdb_id)
-	select txo_old_xpatres_zdb_id,txo_new_xpatres_zdb_id
-          from tmp_xpatres_merge_pair;
+	select txs_old_xpatres_zdb_id,txs_new_xpatres_zdb_id
+          from tmp_xpatres_merge_pair_same_annotation;
 
+-- Save the xpat figure records (with the new anatomy item) in a temp table,
+-- we will do a distinct select and insert them back later. 
+insert into tmp_xpat_figure
+     select txs_new_xpatres_zdb_id, xpatfig_fig_zdb_id
+       from tmp_xpatres_merge_pair_same_annotation, expression_pattern_figure
+      where txs_old_xpatres_id = xpatfig_xpatres_zdb_id;
+
+-- Delete redundant xpatres record and cascade to xpat figure records
 delete from zdb_active_data 
 	where exists (
 	   select 'x'
-	     from tmp_xpatres_merge_pair
+	     from tmp_xpatres_merge_pair_same_annotation
 	    where zactvd_zdb_id = txo_old_xpatres_zdb_id);
 
 -- Step 2
--- separate out annotations on old terms in a temp table, replace terms
+-- separate out the remaining annotations on old terms in a temp table, replace terms
 -- with the corresponding new ones. 
+-- Two notes: a) we prefer to give a new XPATRES zdb id for easy record tracking
+--            b) more than one old terms could be merged into the same term and
+--               and potentially bring in duplicate annotation 
 create temp table tmp_xpatres_merge_record (
 	txm_xpatres_zdb_id 	varchar(50),
 	txm_xpatex_zdb_id	varchar(50),
@@ -563,6 +556,30 @@ insert into tmp_xpatres_merge_record (txm_xpatex_zdb_id,
 		on m_anatitem_old_zdb_id = xpatres_anat_item_zdb_id;
 
 update tmp_xpatres_merge_record set txm_xpatres_zdb_id = get_id ("XPATRES");
+
+-- Deal with expression_pattern_figure
+create temp table tmp_xpatres_merge_pair_diff_annotation (
+	txd_new_xpatres_zdb_id	varchar(50),
+	txd_old_xpatres_zdb_id	varchar(50)
+)with no log;
+
+insert into tmp_xpatres_merge_pair_diff_annotation
+      select txm_xpatres_zdb_id, xpatres_zdb_id
+        from tmp_xpatres_merge_record, expression_result, merged_anatomy_item
+       where txm_xpatex_zdb_id = xpatres_xpatex_zdb_id
+         and txm_start_stg_zdb_id =  xpatres_start_stg_zdb_id
+         and txm_end_stg_zdb_id = xpatres_end_stg_zdb_id
+         and txm_anat_item_zdb_id = m_anatitem_new_zdb_id
+         and xpatres_anat_item_zdb_id = m_anatitem_old_zdb_id;
+
+-- Save the xpat figure records (with the new anatomy item) in a temp table,
+-- we will do a distinct select and insert them back later. 
+insert into tmp_xpat_figure
+     select txd_new_xpatres_zdb_id, xpatfig_fig_zdb_id
+       from tmp_xpatres_merge_pair_diff_annotation, expression_pattern_figure
+      where txd_old_xpatres_zdb_id = xpatfig_xpatres_zdb_id;
+
+-- register the new xpatres zdb id before anything else.
 insert into zdb_active_data (zactvd_zdb_id)
 	select txm_xpatres_zdb_id from tmp_xpatres_merge_record;
 
@@ -575,7 +592,8 @@ insert into zdb_replaced_data (zrepld_old_zdb_id, zrepld_new_zdb_id)
 	   and xpatres_start_stg_zdb_id = txm_start_stg_zdb_id
            and xpatres_end_stg_zdb_id = txm_end_stg_zdb_id
            and xpatres_expression_found = txm_xpat_found;
-    
+
+-- delete annotation on old terms and that cascade to xpat figures  
 delete from zdb_active_data 
 	where exists 
 	       (select 'x'
@@ -583,13 +601,21 @@ delete from zdb_active_data
                        expression_result
 			   on m_anatitem_old_zdb_id = xpatres_anat_item_zdb_id
 	         where zactvd_zdb_id = xpatres_zdb_id);
-  
+
+-- restore the annotation with new terms (it establishes some primary keys
+-- for the xpat figures restore.  
 insert into expression_result (xpatres_zdb_id, xpatres_xpatex_zdb_id,
 			xpatres_start_stg_zdb_id,  xpatres_end_stg_zdb_id,
 			xpatres_anat_item_zdb_id, xpatres_expression_found,
 			xpatres_comments)
      select * 
        from tmp_xpatres_merge_record;
+
+-- restore xpat figures with a distinct select
+insert into expression_pattern_figure(xpatfig_xpatres_zdb_id, xpatfig_fig_zdb_id)
+     select distinct txf_xpatres_zdb_id, txf_xpatfig_zdb_id
+       from tmp_xpat_figure;
+
 
 -- Step 3  Delete merged anatomy terms
 -- 
