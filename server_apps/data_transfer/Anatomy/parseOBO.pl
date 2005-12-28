@@ -13,13 +13,11 @@
 #         anatitem_merged.unl: term has alt_id:xxxxx
 #         anatalias.unl: term and each of its synonym
 #         anatrel.unl: parentTerm|childTerm|relType
-#         stage_ids.unl: ZFS and ZDB-STAGE- id pairs
-#         anatitem_ids.unl: ZFA and ZDB-ANAT- id pairs
 #         cell_ids.unl: ZFC and CL id pairs
 # 
 use strict;
 
-my ($termId, $termName,$termXref,$termCL, @mergedTerms,$termStartStg, $termEndStg, @termPartOf,@termDevelopsFrom,@termIsA,$termDef, $termComment, @termSynonym);
+my ($termId, $termName,$termXref,$termCL, @mergedTerms, @termXrefs, $termStartStg, $termEndStg, @termPartOf,@termDevelopsFrom,@termIsA,$termDef, $termComment, @termSynonym);
 
 &initiateVar ();
 
@@ -30,8 +28,6 @@ open ANATREL, ">anatrel.unl" or die "Cannot open anatrel.unl file for write \n";
 open ANATALIAS, ">anatalias.unl" or die "Cannot open anatalias.unl file for write \n";
 open ANATMERG, ">anatitem_merged.unl" or die "Cannot open anatmerge.unl file for write \n";
 
-open STAGEIDS, ">stage_ids.unl" or die "Cannot open stage_ids.unl file for write \n";
-open ANATIDS, ">anatitem_ids.unl" or die "Cannot open anatitem_ids.unl file for write \n";
 open CELLIDS, ">cell_ids.unl" or die "Cannot open cell_ids.unl file for write \n";
 
 $/ = "\n\n[";
@@ -39,18 +35,6 @@ while (<>) {
 
     next unless /^Term/;                   #skip header and Typedef
     next if /name:\s+Zebrafish Anatomy/i;  #skip place holders 
-
-    #-------------------------------------------
-    # Stage term
-    # write out obo id and zfin id pair for term
-    # start stage and end stage id translation
-    #---------------------------------------------
-    if (/id:\s+(ZFS:\d+)/ ) {    
-	my $stageId = $1;
-	/xref_analog:\s+ZFIN:(\S+)/;
-	print STAGEIDS join("|", $stageId, $1, "\n");
-	next;
-    }
 
     #---------------------------------------------
     # Obsolete term
@@ -81,7 +65,7 @@ while (<>) {
 	    next;
 	}
        	if ( /^xref_analog:\s+ZFIN:(\S+)/ ) {
-	    $termXref = $1; 
+	    push @termXrefs, $1; 
 	    next;
 	}
 	if ( /^alt_id:\s+(\S+)/ ) {
@@ -126,6 +110,16 @@ while (<>) {
 	    next;
 	}
     } # end foreach term attribute processing
+    
+    # the xref_analog of the merged term would became a xref_analog line for the 
+    # merged-into term, inserting before any existing xref_analog line. Curators 
+    # should only merge an existing term to either a brand new term or
+    # another existing term. If to a brand new term, the xref_analog line would
+    # be ignored; if to an existing term, the last xref_analog line should be used.
+    for (my $numOfMergs = @mergedTerms; $numOfMergs > 0; $numOfMergs--) {
+	shift @termXrefs;
+    }
+    $termXref = shift @termXrefs;
 
     #-----------------------------------------------
     # Anatomy term Continue (non-obsolete)
@@ -153,7 +147,6 @@ while (<>) {
     #-----------------------------------------------    
     if ( $termXref )  {
 
-        print ANATIDS join("|", $termId, $termXref,"\n");
 	print ANATEXT join("|", $termXref, $termName, $termStartStg, $termEndStg, $termDef, $termComment,"\n");
     }
     else {
@@ -192,8 +185,6 @@ close ANATOBS;
 close ANATREL;
 close ANATALIAS;
 close ANATMERG;
-close STAGEIDS;
-close ANATIDS;
 close CELLIDS;
 
 exit;
