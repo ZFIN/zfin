@@ -22,7 +22,7 @@
 
      Copy executables from data_transfer/GXP and data_transfer/GXP/Thisse into it.
      Transfer probes.csv, images.csv, expression.csv, authors.csv files into that directory. 
-     Under that, create an images directory, and transfer all the images into it. 
+     Under that, create a directory named "images", and transfer all the images into it. 
 
 -------------------
 -- Spellcheck 
@@ -75,7 +75,8 @@
 	- Update your test database and source the environment. The scripts would inherit environment from the running shell. 
         - Ask Peiran to update the ZFIN blast database, or run 
 	    /research/zblastfiles/users/peirans/Scripts/ZFIN/processZFIN.pl 0
- 
+        - EU clones with RefSeq accessions should not need blast efforts since we keep updated with RefSeq. If it ever needs blast efforts, the thissData2Unl.sh needs to be modified to use refseq_zf datafiles (instead of gbk_zf_all) to retrieve fasta sequences.  
+
     $executables$:  parseThisse.pl  checkDups.sql nameClone.pl blast2tab.pl 
 		    filterBlast.pl thisseData2Unl.sh
 
@@ -116,7 +117,7 @@
 	  > load_gxp.sh <db_name> <lab_name> [release_type]
 
           lab_name   :     Thisse /Talbot
-          release_type:    fr/cb
+          release_type:    fr/cb/eu/eu_nm
 
     $input files$   :
 			probes.unl
