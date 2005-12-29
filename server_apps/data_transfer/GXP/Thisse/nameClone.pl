@@ -82,13 +82,16 @@ while (<PROBE_IN>) {
     my $gene_id_col = $row[2];
     my $acc_col     = $row[3];
 
-    # report invalide accession number
-    if ($acc_col !~ /^\w\w\d{6}$/) {
+    # report invalid accession number
+    # this was added here since we had uncovered mistaken accession#.
+    if ( $acc_col !~ /^\w\w\d{6}$/ && $acc_col !~ /^\w\d{5}$/ && $acc_col !~ /^NM_\d+$/ ) { 
 	print ERR "Invalid accession number $acc_col for $clone_col \n";
 	next;
     }
  
     # get back clone name and gene id for accessions in ZFIN. 
+    # if it is a cDNA accession it would be a GenBank number
+    # RefSeq NM_# are only associated with genes in ZFIN. See below.
     my ($gene_zdb, $clone_name) = $dbh->selectrow_array ("
                                   select g.mrkr_zdb_id, e.mrkr_name
                                     from db_link, marker g, marker_relationship, marker e
@@ -97,7 +100,7 @@ while (<PROBE_IN>) {
                                      and mrel_mrkr_1_zdb_id = g.mrkr_zdb_id
                                      and g.mrkr_type like 'GENE%'
                                      and mrel_mrkr_2_zdb_id = e.mrkr_zdb_id
-                                     and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-37'   
+                                     and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-37'
                                 ");
     if ($clone_name) {
 	
@@ -108,7 +111,7 @@ while (<PROBE_IN>) {
 
 	# if clone not exist and image clone name is not given, 
 	# we will use xdget to find out image clone names to replace the fr#
-	if (!$im_clone_name) {
+	if (!$im_clone_name && $acc_col !~ /^NM_\d+$/) {
 	    print ACC4IMNAME "$acc_col\n";
 	    $getImNameNeeded = 1;
 	}
@@ -120,13 +123,14 @@ while (<PROBE_IN>) {
 
 	# when accession is not associated with a clone, try gene
    
-	# find out the gb acc related to which gene
+	# find out the gb/refseq acc related to which gene
 	my $sth = $dbh->prepare ("select mrkr_zdb_id
                                     from db_link, marker
                                    where dblink_acc_num = '$acc_col'
                                      and dblink_linked_recid = mrkr_zdb_id
                                      and mrkr_type like 'GENE%'
-                                     and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-37' 
+                                     and dblink_fdbcont_zdb_id in ('ZDB-FDBCONT-040412-37',
+                                                                   'ZDB-FDBCONT-040412-38')
                                 ");
 	$sth->execute();
 	my $array_ref = $sth->fetchall_arrayref();
@@ -158,7 +162,7 @@ close (ACC4IMNAME);
 
 &getImageCloneName($acc4imname) if $getImNameNeeded;
     
-unlink $acc4imname;	
+#unlink $acc4imname;	
 close (ERR);
 
 
