@@ -26,7 +26,7 @@
 
 if ($#argv < 2) then
     echo "Usage: load_gxp.sh  dbname  labname  <datatype>"
-    echo " e.g.  load_gxp.sh almdb Thisse fr"
+    echo " e.g.  load_gxp.sh almdb Thisse fr/eu_nm/eu"
     exit
 endif
 
@@ -53,6 +53,12 @@ if ($labname == "Thisse") then
     	set pubId    = "ZDB-PUB-010810-1"
 	set sourceId = "ZDB-LAB-991005-53"    # ZIRC
 	set genePrefix = "sb:"
+
+    else if ( $datatype == "eu" || $datatype == "eu_nm" ) then
+    	set pubId    = "ZDB-PUB-051025-1"     
+	set sourceId = ""    
+	set genePrefix = "sb:" 
+
     else   # fr
    	set pubId    = "ZDB-PUB-040907-1"
 	set sourceId = "ZDB-LAB-040907-1"     # I.M.A.G.E. consortium
@@ -139,7 +145,7 @@ echo "== Please compare with the probe # and image # sent  =="
 /bin/diff preload_quantity.txt postload_quantity.txt
 
 echo "Generating statistics ..."
-if ($labname == "Thisse" && $datatype == "fr") then
+if ($labname == "Thisse" && $datatype != "cb") then
     $INFORMIXDIR/bin/dbaccess $dbname get_fr_gene_list.sql
     $INFORMIXDIR/bin/dbaccess $dbname getStat4Load.sql >& statistics.txt 
 endif
@@ -155,11 +161,11 @@ endif
 if ( $HOST == "helix" ) then 
     /bin/sed 's/^/images\//' fimg_oldname_2_newname.txt | \
     /bin/sed 's/ZDB/\/research\/zprod\/loadUp\/imageLoadUp\/ZDB/' | \
-    /bin/sed 's/(/\\(/' | /bin/sed 's/)/\\)/' > fimg_oldname_2_newname.conv
+    /bin/sed 's/(/\\(/g' | /bin/sed 's/)/\\)/g' > fimg_oldname_2_newname.conv
 else
     /bin/sed 's/^/images\//' fimg_oldname_2_newname.txt | \
     /bin/sed 's/ZDB/\/research\/zcentral\/loadUp\/imageLoadUp\/ZDB/' | \
-    /bin/sed 's/(/\\(/' | /bin/sed 's/)/\\)/' > fimg_oldname_2_newname.conv
+    /bin/sed 's/(/\\(/g' | /bin/sed 's/)/\\)/g' > fimg_oldname_2_newname.conv
 endif
 
 # create a scrip for the move
@@ -175,7 +181,7 @@ endif
 
 chmod u+x copy_image.sh
 echo "Copy images to repository..."
-sudo ./copy_image.sh
+./copy_image.sh
 
 
 #-----------------------------------------------
@@ -186,8 +192,8 @@ set goahead = $<
 if ($goahead == 'y') then
     $INFORMIXDIR/bin/dbaccess $dbname pre_gxp_load_cleanup.sql
     $INFORMIXDIR/bin/dbaccess $dbname gxp_load_cleanup.sql
-    if ($labname == "Thisse" && $datatype == "fr" && $HOST == "helix") then
-       	echo "Please submit fr_gene.txt and statistics.txt to curator." 
+    if ($labname == "Thisse" && $datatype != "cb" && $HOST == "helix") then
+       	echo "Please submit accession_gene.txt and statistics.txt to curator." 
     endif
 else 
     echo "Abort with the 15 temporary tables in db"
