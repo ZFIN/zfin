@@ -50,6 +50,7 @@ create table probes_tmp (
    prb_cloning_site 	varchar(20),
    prb_polymerase 	varchar(80),
    prb_comments 	lvarchar,               --> mrkr_comments
+   prb_rating           integer,
    prb_modified 	varchar(20)           -- not used  
 );
 
@@ -151,7 +152,7 @@ UNLOAD TO 'probe_without_encoding_gene.err'
 		    and mrel_type = "gene encodes small segment"
 		    and mrkr_name = prb_clone_name);
 
---When there exists an xpat using the same probe and is from direct submission, 
+--When there exists an xpat using the same probe and is from direct submission,
 --it is highly possible that the data is from the same submission, which is 
 -- problematic. Flag it.
 UNLOAD TO 'exist_same_xpat_experiment_from_directsub.err'
@@ -159,7 +160,7 @@ UNLOAD TO 'exist_same_xpat_experiment_from_directsub.err'
 	  from probes_tmp, expression_experiment, marker
 	 where mrkr_zdb_id = xpatex_probe_feature_zdb_id
 	   and mrkr_name = prb_clone_name
-	   and xpatex_source_zdb_id in ("ZDB-PUB-040907-1", "ZDB-PUB-010810-1", "ZDB-PUB-031103-24");
+	   and xpatex_source_zdb_id in ("ZDB-PUB-040907-1", "ZDB-PUB-010810-1", "ZDB-PUB-031103-24", "ZDB-PUB-051025-1");
 
 UNLOAD TO 'unknown_probelib.err' 
 	select distinct prb_library 
@@ -167,7 +168,15 @@ UNLOAD TO 'unknown_probelib.err'
 	 where prb_library not in (select probelib_name from probe_library);
 
 update probes_tmp set prb_library = 
-	(select probelib_zdb_id from probe_library where probelib_name = prb_library);
+	(select probelib_zdb_id 
+           from probe_library 
+          where probelib_name = prb_library);
+
+-- use the "unknown" if probe library is not provided.
+-- we hardcode the zdb id since there is equal chance of the name to 
+-- be changed as the id. 
+update probes_tmp set prb_library = "ZDB-PROBELIB-040512-1"
+                where prb_library is null;
 
 UNLOAD TO 'unknown_gene_id.err'
 	select prb_clone_name,prb_gene_zdb_id
