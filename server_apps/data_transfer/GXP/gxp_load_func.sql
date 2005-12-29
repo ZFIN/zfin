@@ -88,7 +88,7 @@ create function gxp_load_func (
 	-- exiting this exception handler will commit the transaction.
 	rollback work;
   
-        return 1;
+        return -1;
 
     end exception;
 
@@ -334,6 +334,10 @@ insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
 -- we do not attribute GenBank acc db_link record to    --
 -- the lab, or pub since neither is the originator.     --
 --------------------------------------------------------------
+if (sbm_release_type == "eu_nm" ) then
+   -- for RefSeq NM_# clones, we don't attach NM_# to clones.  
+else
+
 let errorHint = "db_link";
 
 -- Associate the not-null GenBank accession number with the 
@@ -417,6 +421,7 @@ insert into db_link (dblink_zdb_id,dblink_linked_recid,dblink_acc_num,
 		     dblink_fdbcont_zdb_id, dblink_info)
 	select * from tmp_gxp_db_link;
 
+end if -- eu_nm type don't attach NM_# to clones
 
 -------------------------------------------------------------------
 -- Combine the new and existing ESTs/cDNAs into tmp_gxp_marker 
@@ -449,6 +454,12 @@ if (sbm_lab_name = "Thisse" AND sbm_release_type = "fr") then
 
 end if
 
+-- Thisse put "genomix DNA" to probe library box, we move it to a disclaimer  
+if (sbm_lab_name = "Thisse" AND sbm_release_type LIKE "eu%") then 
+	update probes_tmp set prb_pcr_amp = "Probes for in situ hybridization amplified by PCR from genomic DNA.<br>" || prb_pcr_amp;
+
+end if
+
 -- In the case that the clone record is already exist, update five fields
 -- with the incoming data and leave the rest as it is 
 
@@ -463,11 +474,11 @@ into temp tmp_gxp_clone_data_exist_marker with no log;
 
 update clone set (clone_polymerase_name, clone_digest,
 		  clone_insert_size,  clone_cloning_site,
-		  clone_pcr_amplification) 
+		  clone_pcr_amplification, clone_rating) 
 
         =((select prb_polymerase, prb_digest, 
 		  prb_insert_size, prb_cloning_site,
-		  prb_pcr_amp
+		  prb_pcr_amp, prb_rating
 	     from probes_tmp, tmp_gxp_clone_data_exist_marker
 	    where prb_clone_name = tcl_mrkr_name
 	      and tcl_mrkr_zdb_id = clone.clone_mrkr_zdb_id
@@ -482,12 +493,14 @@ insert into clone
     clone_vector_name,  clone_polymerase_name,
     clone_insert_size,  clone_cloning_site,
     clone_digest,       clone_probelib_zdb_id,
-    clone_sequence_type,clone_pcr_amplification
+    clone_sequence_type,clone_pcr_amplification,
+    clone_rating
   )
   select t_mrkr_zdb_id,  'f',
 	prb_vector,  prb_polymerase,
 	prb_insert_size,  prb_cloning_site,
-	prb_digest,  prb_library, 'cDNA', prb_pcr_amp
+	prb_digest,  prb_library, 'cDNA', 
+	prb_pcr_amp, prb_rating
     from probes_tmp, tmp_gxp_marker
    where prb_clone_name = t_mrkr_name
      and prb_clone_name not in (select tcl_mrkr_name from tmp_gxp_clone_data_exist_marker);
