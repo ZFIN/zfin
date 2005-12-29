@@ -12,7 +12,7 @@
 #
 # Output  :  
 #      probes.raw :   probe file which need furture massage
-#      frAcc.unl  :   will be used for FR# to ZFIN marker translation table
+#      accession.unl  :   for FR#/EU# to ZFIN marker translation table
 #      expression.unl
 #      images.unl
 #      authors.unl
@@ -106,8 +106,8 @@ open ERR, ">parseThisse.err" or die "Cannot open parseThisse.err to write";
 #      0  _keyValue 
 #      1  clone_name 
 #      2  gene_zdb_id 
-#      3  gb5p 
-#      4  gb3p 
+#      3  gb5p/refseq forward prime
+#      4  gb3p/refseq reverse prime
 #      5  library 
 #      6  digest
 #      7  vector 
@@ -116,16 +116,19 @@ open ERR, ">parseThisse.err" or die "Cannot open parseThisse.err to write";
 #      0  cloning_site
 #      1  polymerase 
 #      2  comments 
-#      3  modified_date 
+#      3  rating
+#      4  modified_date 
 #######################
 
 open PROBE_IN, "<probes.csv" or die "Cannot open probes.csv file for read";
 open PROBE_OUT, ">probes.raw" or die "Cannnot open probes.raw file for write";
-open FR_ACC, ">frAcc.unl" or die "Cannot open frAcc.unl file for write";
+open ACC, ">accession.unl" or die "Cannot open accession.unl file for write";
 
 while (<PROBE_IN>) {
     
     my @probe = processCsvRow ($_); 
+
+    $probe[1] =~ s/EU/eu/;       # EST name has to be lower in zfin
 
     $probe[8] =~ s/\222/\' /g;     #\222 is for windows single quote
     $probe[8] =~ s/3\'\s+5\'/3\'<br>5\'/;
@@ -136,12 +139,14 @@ while (<PROBE_IN>) {
  
     $probe[12] =~ s/<br>/ /g;      #remove line break in comments field, conservatively replace by space
 
+    $probe[13] =~ s/--//g;         #clone rating could be null
+
     print PROBE_OUT join("|", @probe)."|\n";
-    print FR_ACC "$probe[1]|$probe[3]|\n";   
+    print ACC "$probe[1]|$probe[3]|\n";   
 }
 close (PROBE_IN);
 close (PROBE_OUT);
-close (FR_ACC);
+close (ACC);
 
 ##########################
 # EXPRESSION  
