@@ -303,17 +303,18 @@ function list_all(user_access) {
       <?MIVAR>$(VECAPPEND,$constraint,$curation_constraint)<?/MIVAR>
     <?/MIBLOCK>
   <?/MIBLOCK>
-  <?MIBLOCK COND="$(NXST,$constraint)">
+
+<?/MIBLOCK> <?MICOMMENT> end of three way choice, xst $clear_all, xst $pub_acc_constraint, or the rest <?/MICOMMENT>
+
+<?MIBLOCK COND="$(NXST,$constraint)">
 	<?MIVAR NAME=constraint><?/MIVAR>     
-  <?MIELSE>
+<?MIELSE>
     <?MIVAR>
 	$(SETVAR,$constraint,$(SEPARATE,$constraint, AND ))
 	$(SETVAR,$constraint, where $constraint)
    <?/MIVAR>
-  <?/MIBLOCK>
-  
 <?/MIBLOCK>
-
+  
 
 <?MIVAR NAME=$order_clause COND="$(AND,$(XST,$order_pref),$(EC,$order_pref,name))">
 	order by authors,pyear desc
@@ -415,7 +416,7 @@ function list_all(user_access) {
       <br>
       <?MISQL SQL="select count(distinct zdb_id)::integer 
                    from $target_tables 
-                   $constraint;"><?/MISQL> 
+                   $constraint;"><?/MISQL>
 
       <?MIVAR NAME=$num_recs>$1<?/MIVAR>
       <?MIVAR>
