@@ -225,6 +225,7 @@ Requires:  $CLONE_MARKER_ID, $highlight
       </TR>
     <?/MIBLOCK> <?MICOMMENT> -- end of if clone_rating --<?/MICOMMENT>
 
+        <TD colspan=3 nowrap><a href="/ZFIN/Methods/ThisseProtocol.html"><b>Thisse <i>in situ </i> hybridization protocol</b></a></TD>
   </TABLE>
 <?MIVAR NAME=comment>hard coded as "none given" for thisse load<?/MIVAR>
 <!-- <p align=left><b>Comments:</b><br>&nbsp;$3</p> -->
