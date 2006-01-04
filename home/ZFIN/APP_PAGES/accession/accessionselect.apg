@@ -50,12 +50,12 @@
 
     <!-- look if accession number links to publication -->
 
-    <?MISQL SQL="select count(*)::integer from publication where lower(accession_no) like lower('%$aname%') and status ='active';"> 
+    <?MISQL SQL="select count(*)::integer from publication where accession_no = '$aname' and status ='active';"> 
       $(SETVAR,$pcount,$1)
     <?/MISQL>
     <?MIBLOCK COND="$(NC,$pcount,0)">
 	<?MIVAR NAME=$start_page>aa-pubselect2.apg<?/MIVAR>	
-	<?MIVAR NAME=$pub_acc_constraint> where accession_no = '$aname' <?/MIVAR> 
+	<?MIVAR NAME=$pub_acc_constraint> accession_no = '$aname' and status='active' <?/MIVAR> 
         <?MISQL SQL="select WebExplode(object,'') from webPages where ID='$start_page';">$1<?/MISQL>
      <?/MIBLOCK>
 
