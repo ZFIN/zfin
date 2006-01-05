@@ -401,8 +401,7 @@ DEBUGGING:
    <?MIELSE> <?MICOMMENT> if not $getTop <?/MICOMMENT>
   	<?MISQL SQL="
   		select mrkr_abbrev
-    	 	from bigselect_temp_markers;">
-		<?MIVAR>$1<?/MIVAR>
+    	 	from bigselect_temp_markers;">	
         <?/MISQL>   
 
      <?MISQL SQL="
