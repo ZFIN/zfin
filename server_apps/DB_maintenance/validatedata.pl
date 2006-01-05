@@ -636,13 +636,14 @@ sub locusNameUnique ($) {
   my $routineName = "locusNameUnique";
 	
   my $sql = 'select locus_name, abbrev, zdb_id
-	       from locus 
+	       from locus a
 	       where exists
-		     ( select count(*), locus_name
-			 from locus 
-			 where locus_name not like "Df%"
-			   and locus_name not like "T%"
-			 group by locus_name 
+		     ( select "x"
+			 from locus b
+			 where b.locus_name not like "Df%"
+			   and b.locus_name not like "T%"
+                           and a.locus_name = b.locus_name
+			 group by b.locus_name 
 			 having count(*) > 1 )
 	       order by locus_name, abbrev, zdb_id';
 
