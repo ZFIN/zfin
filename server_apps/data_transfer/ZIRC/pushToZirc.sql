@@ -36,6 +36,13 @@ unload to '<!--|ROOT_PATH|-->/home/data_transfer/ZIRC/zfinAlterationAliases'
     from data_alias, alteration
     where dalias_data_zdb_id = alteration.zdb_id;
 
+-- generate fish alias
+
+unload to '<!--|ROOT_PATH|-->/home/data_transfer/ZIRC/zfinFishAliases'
+  delimiter '	'
+  select dalias_data_zdb_id, dalias_alias
+    from data_alias, fish
+    where dalias_data_zdb_id = fish.zdb_id;
 
 -- generate locus list
 
