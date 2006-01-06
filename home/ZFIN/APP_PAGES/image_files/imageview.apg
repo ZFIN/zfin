@@ -116,6 +116,15 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 <?/MIBLOCK>
 
+<?MISQL SQL="select fimg_fig_zdb_id from fish_image where fimg_zdb_id='$OID'"><?/MISQL>
+<?MIVAR NAME=fig_zdb_id>$1<?/MIVAR>
+
+<?MISQL SQL="select pub_mini_ref, fig_label from publication, figure where fig_zdb_id='$fig_zdb_id' and fig_source_zdb_id=zdb_id ">
+<?/MISQL>
+<?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+  <?MIVAR NAME=$fimgview_miniref>$1<?/MIVAR>
+  <?MIVAR NAME=$fimgview_label>$2<?/MIVAR>
+<?/MIBLOCK>
 
 <?MISQL SQL="
   select fimg_image, fimg_annotation, fimg_image_with_annotation, 
@@ -147,12 +156,7 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 <?MIVAR NAME=$fimgview_name>$fimgview_full_fish_name<?/MIVAR>
 <?MIVAR NAME=$fimgview_title>Stock<?/MIVAR>
 <?MIVAR NAME=$fimgview_abbrev><?/MIVAR>
-<?MISQL SQL="select pub_mini_ref, fig_label from publication, figure where fig_zdb_id='$fimgview_fig_image_zdb_id' and fig_source_zdb_id=zdb_id ">
 
-<?MIVAR NAME=$fimgview_miniref>$1<?/MIVAR>
-<?MIVAR NAME=$fimgview_label>$2<?/MIVAR>
-
-<?/MISQL>
 
 <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
     
@@ -167,10 +171,13 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
   <?/MIBLOCK>
 
 <?MIELSE>
+<?MIBLOCK COND="$(XST,$fimgview_miniref)">
  <?MIVAR NAME=$fimgview_miniref>$(REPLACE,$fimgview_miniref,"<i>","")<?/MIVAR>
  <?MIVAR NAME=$fimgview_miniref>$(REPLACE,$fimgview_miniref,"</i>","")<?/MIVAR>
   <?MIVAR><TITLE> ZFIN : $fimgview_miniref $fimgview_label  Image View </TITLE><?/MIVAR>
-
+<?MIELSE>
+  <?MIVAR><TITLE> ZFIN : View Image </TITLE><?/MIVAR>
+<?/MIBLOCK>
   <?MICOMMENT> tried MIBLOCK with COND here.  Didn't work.  <?/MICOMMENT>
 
   <?MIVAR NAME=$fimgview_imageToShow>$(IF,$(EQ,$fimgview_fimg_image_with_annotation,"NULL"),$fimgview_fimg_image,$fimgview_fimg_image_with_annotation)<?/MIVAR>
@@ -295,7 +302,7 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 	<?/MIBLOCK>
 
 	<A NAME="image_info">
-<p>	
+<p>
 <?MISQL SQL="select WebExplode(object,'OID=$fimgview_fig_image_zdb_id') from webPages where ID='aa-fxfiggenelist.apg';">$1<?/MISQL>
         <?MIVAR COND="$(OR,$(XST,$UPDATE),$(AND,$(NC,$fimgview_full_fish_name,UNKNOWN),$(NC,$fimgview_full_fish_name,NULL)))">
 	  <p>
