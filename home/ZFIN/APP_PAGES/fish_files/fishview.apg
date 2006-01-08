@@ -289,14 +289,16 @@ Datablade documentation.
 
      <?MIVAR NAME=$rec_title>Record for $title $abbrev<?/MIVAR>
 
-
+      <?MICOMMENT> the get_allele_html function replaced "un_%" type allele by 
+                   unspecified, we use that for title so be consistent with page
+      <?/MICOMMENT>
       <?MIBLOCK COND="$(XST,$UPDATE)">
 	<?MIVAR>
-	  <TITLE>ZFIN Update: $(IF,$(NC,$title,Wild type),$allele,$abbrev) </TITLE>
+	  <TITLE>ZFIN Update: $(IF,$(NC,$title,Wild type),$allele_html,$abbrev) </TITLE>
 	<?/MIVAR>
       <?MIELSE>
 	<?MIVAR>
-	  <TITLE>ZFIN : Locus : $(IF,$(NC,$title,Wild type),$name,$abbrev)  Allele : $(IF,$(NC,$title,Wild type),$allele) </TITLE>
+	  <TITLE>ZFIN : Allele : $(IF,$(NC,$title,Wild type),$allele_html) ($(IF,$(NC,$title,Wild type),$name,$abbrev))</TITLE>
 	<?/MIVAR>
       <?/MIBLOCK>
 
