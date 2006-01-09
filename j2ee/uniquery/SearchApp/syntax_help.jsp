@@ -9,34 +9,36 @@
 
 <div class="help_body">
     <h2 align="center">Search ZFIN Tips</h2>
-    <p>The <b>Search ZFIN</b> feature provides a quick and easy glance at data available on the ZFIN web site.  You may use this feature by entering the topic of interest to you.  Snapshots of all ZFIN pages are searched for an occurrence of the query string
-     <p>You may find differences in results from the <b>Search ZFIN</b> versus the specific search forms. <b>Search ZFIN</b> will scan the entire ZFIN site including the Zebrafish Book, meetings and jobs.  <b>Search ZFIN</b> does not take advantage of the relationships that are defined for data in our database.  For a comprehensive search of expression or anatomical structures we recommend you use the <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg">Expression</a> or  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=search">Anatomy</a> search forms.
-     <p>If you do not find what you are looking for, please be sure to try one of ZFIN's more specific search forms that may be accessed from the links in the top menu bar.</p>
-    <h3>Comparison of <b>Search ZFIN</b> and specific ZFIN search forms</h3>
+    <p><b>Search ZFIN</b> provides a quick and easy glance at data available on the ZFIN web site.  Simply enter your topic of interest and press the enter key.  
+     <p>Results from <b>Search ZFIN</b> and specific ZFIN search forms may vary.  Specific ZFIN search forms query a particular class of data while <b>Search ZFIN</b> searches snapshots of all ZFIN pages for an occurrence of your query string.  
+     <p><b>Search ZFIN</b> does not take advantage of the data relationships and ontologies that are defined in the ZFIN database.  For a comprehensive search of expression or anatomical structures we recommend you use the <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg">Expression</a> or  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=search">Anatomy</a> search forms.  
+     <p>If you do not find what you are looking for using this search, please be sure to try one of ZFIN's more specific search forms that may be accessed from the links in the top menu bar.</p>
     <br>
     <table>
       <tr>
 	<th> </th>
-        <th>ZFIN Search</th> 
-        <th>Specific Search Forms</th>
+        <th>Search ZFIN</th> 
+        <th>Specific search forms</th>
       </tr>
       <tr>
-        <td><b>Highly Customizable Searches</b></td>
+        <td>Highly Customizable Searches</td>
         <td align="center">No</td>
         <td align="center">Yes</td>
       </tr>
       <tr>
-        <td><b>Uses established relationships between data in ZFIN</b></td>
+        <td>Uses established relationships among data in ZFIN</td>
         <td align="center">No</td>
         <td align="center">Yes</td>
       </tr>
       <tr>
-        <td><b>Provides a quick view of data in ZFIN related to query term</b></td>
+        <td>Provides a quick view of all data in ZFIN related to query term</td>
         <td align="center">Yes</td>
         <td align="center">No</td>
       </tr>
     </table>
-      <p>Search for <b>eye</b> using <b>Search ZFIN</b></p>
+    <h3>Comparison of <b>Search ZFIN</b> and specific ZFIN search forms</h3>
+      <ul>
+      <li>Search for <b>eye</b> using <b>Search ZFIN</b>
       <ul>
 	<li> Results will include all occurrences of <b>eye</b> and words for which <b>eye</b> is a root such as:<b>eye</b>less, <b>eye</b>sight, <b>eye</b>cup.  
 	<li>Results are organized by categories that reflect the various data types in ZFIN. Categories include:
@@ -44,23 +46,23 @@
 	    <li>Mutants/Trangenics
 	    <li>Genes/Markers/Clones
 	    <li>Expression
-	    <li>Images
 	    <li>Anatomy
 	    <li>Publications
 	    <li>People
 	    <li>The Zebrafish Book
 	  </ul>
-	<li>The number of matches for each category are displayed.  
+	<li>The number of matches for each category is displayed.  
 	<li>Each category links to a complete list of matches for that category.
 	<li>Each item in the complete results category will link directly to data for that category type. 
       </ul>
-      <p>Search for <b>eye</b> using <b>Gene Expression Search Form</b></p>
+      <li>Search for <b>eye</b> using ZFIN's <b>Gene Expression</b> search form
       <ul>
-	<li>Queries may be refined by specifying other parameters such as: Gene/EST, developmental stage or stage range,author or assay name.
-	<li>Results will include all expression data that has been annotated to the <b>eye</b> and to any substructures of the <b>eye</b>. (lens, optic vesicle, presumptive retina, etc.)
+	<li>Queries may be refined by specifying other parameters such as: Gene/EST, developmental stage or stage range, author or assay name.
+	<li>Results will include all expression data that have been annotated to the <b>eye</b> and to any substructures of the <b>eye</b>. (lens, optic vesicle, presumptive retina, etc.)
         <li>Results are limited to expression data.
 	<li>Results list will provide hot links to expression data, genes and publications.
 	<li>Results are ordered by gene symbol.
+      </ul>
       </ul>
       <p>
     <h3>Wildcard Searches</h3>

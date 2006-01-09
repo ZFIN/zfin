@@ -17,14 +17,29 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/j2ee/uniquery/SearchApp
 
-GENERICS = syntax_help.jsp  category_search.jsp
+# Need to come up with a better way to make context descriptors.
+
+CONTEXT_DESCRIPTOR = SearchApp.xml
+CONTEXT_DESCRIPTOR_PATH = $(CONTEXT_DIR)/$(CONTEXT_DESCRIPTOR)
+
+GENERICS = syntax_help.jsp  category_search.jsp category_search_BETA.jsp
 
 STATICS = internal_error.jsp search_parse_error.jsp
 
 SUBDIRS = WEB-INF
 
+ENDEMICTARGETS_POST = $(CONTEXT_DESCRIPTOR_PATH)
+
+
 # ---------------  Production Rules  ------------------------------------
 
-# Use defualt rules for directories without app pages in them.
+# Use default rules for directories without app pages in them.
 
 include $(TOP)/make.default.rules
+
+
+# ---------------  Endemic Rules  ----------------------------------------
+
+$(CONTEXT_DESCRIPTOR_PATH) : $(CONTEXT_DESCRIPTOR) $(TRANSLATETABLE)
+	$(MAKESPECIFIC) $(CONTEXT_DESCRIPTOR) $(TRANSLATETABLE) $(CONTEXT_DESCRIPTOR_PATH)
+	$(SET_CONTEXT_DESCRIPTOR) $(DOMAIN_NAME) $(CONTEXT_DESCRIPTOR)
