@@ -1,4 +1,10 @@
-
+/**
+ * Stop words are ones that should be ignored because
+ * they are too common to be useful when searching.
+ * 
+ * Towards the end, we have added all the words
+ * that appear in the header and footers of each ZFIN page.
+ */
 package org.zfin.uniquery;
 
 import org.apache.lucene.analysis.Analyzer;
@@ -33,7 +39,12 @@ public class ZfinAnalyzer extends Analyzer
         "under", "up", "use", "very", "want", "was",
         "way", "we", "well", "were", "what", "when",
         "where", "which", "while", "who", "will",
-        "with", "would", "you", "your",
+        "with", "would", "you", "your", "zfin",
+        "anatomy", "publication", "people", "lab", "companies",
+        "acc", "email", "home", "mutant", "transgenic", "wild", 
+        "type", "gene", "marker", "clone", "expression", "map",
+        "about", "helpful", "hint", "citing", "copyright", 
+        "university", "oregon", "eugene", "logo", "design",
         "a", "b", "c", "d", "e", "f", "g", "h", "i",
         "j", "k", "l", "m", "n", "o", "p", "q", "r",
         "s", "t", "u", "v", "w", "x", "y", "z"
