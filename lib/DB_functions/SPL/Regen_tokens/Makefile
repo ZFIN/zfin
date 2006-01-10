@@ -23,7 +23,7 @@ TARGETDIR = $(TARGETROOT)/$(DIR)
 TESTDIR = /tmp/$(DBNAME)/$(DIR)
 
 STATIC_PROCS = tokenize_init.sql tokenize_list.sql
-GENERIC_PROCS = regen_anatomy_tokens.sql
+GENERIC_PROCS = regen_anatomy_tokens.sql regen_alias_tokens.sql
 
 SPECIFIC_PROC_TARGETS = $(foreach SPEC, $(GENERIC_PROCS), $(TARGETDIR)/$(SPEC))
 STATIC_PROC_TARGETS   = $(foreach STAT, $(STATIC_PROCS),  $(TARGETDIR)/$(STAT))
@@ -76,3 +76,27 @@ testanatpost :
       from all_anatomy_tokens \
       order by anattok_anatitem_zdb_id, anattok_token_lower' | $(DBACCESS) $(DBNAME)
 	-/bin/diff $(TESTDIR)/all_anatomy_tokens.pre $(TESTDIR)/all_anatomy_tokens.post
+
+
+# TEST REGEN_ALIAS_TOKENS()
+
+runalias :
+	/bin/date
+	echo 'execute function regen_alias_tokens()' | $(DBACCESS) $(DBNAME)
+	/bin/date
+
+testaliaspre : 
+	-mkdir -p $(TESTDIR)
+	echo ' \
+  unload to "$(TESTDIR)/all_alias_tokens.pre" \
+    select aliastok_token_lower, aliastok_dalias_zdb_id \
+      from all_alias_tokens \
+      order by aliastok_dalias_zdb_id, aliastok_token_lower' | $(DBACCESS) $(DBNAME)
+
+testaliaspost :
+	echo ' \
+  unload to "$(TESTDIR)/all_alias_tokens.post" \
+    select alias_token_lower, aliastok_dalias_zdb_id \
+      from all_alias_tokens \
+      order by aliastok_dalias_zdb_id, aliastok_token_lower' | $(DBACCESS) $(DBNAME)
+	-/bin/diff $(TESTDIR)/all_alias_tokens.pre $(TESTDIR)/all_alias_tokens.post
