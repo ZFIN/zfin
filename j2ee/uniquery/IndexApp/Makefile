@@ -21,7 +21,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/j2ee/uniquery/IndexApp
 
-GENERICS = regenerateindex.pl
+GENERICS = regenerateindex.pl makeStaticIndex.pl
 
 SUBDIRS = logs etc lib src
 

@@ -50,6 +50,21 @@ $dateTime = `/bin/date`;
 chop($dateTime);
 print ("$dateTime: Regenerating index.\n");
 
+#------------------------------
+# Generate full listing of all APP Pages for the Indexer to use
+# this step has been added to avoid crawling the website unnecessarily
+# to discover APP pages which we can determine using SQL instead, faster.
+#
+# Filename generated: allAPPPagesList.txt
+$status = system("./makeStaticIndex.pl");
+if ($status) {
+    abort($status, "makeStaticIndex.pl failed.");
+}
+
+$dateTime = `/bin/date`;
+chop($dateTime);
+print ("$dateTime: Rotating existing indexes.\n");
+
 # create directory for new indexes
 $status = system("/bin/rm -rf $newIndexDir");
 if ($status) {
@@ -61,41 +76,51 @@ if ($status) {
     abort($status, "mkdir $newIndexDir failed.");
 }
 
+$dateTime = `/bin/date`;
+chop($dateTime);
+print ("$dateTime: Launching Java indexer.\n");
+
 # generate the new indexes
+# we call Java with some memory adjustments (1 Gig)
 $status = 
-    system("/private/apps/java1.4/bin/java" .
-	   " -server" .
-	   " -classpath " .
-	      "$indexAppDir/classes:" .
-	      "$indexAppDir/lib/UniquerySupport.jar:" .
-	      "$indexAppDir/lib/commons-lang-2.0.jar:" .
-	      "$indexAppDir/lib/cvu.jar:" .
-	      "$indexAppDir/lib/lucene-1.3.jar" .
-	   " org.zfin.uniquery.index.Spider " .
-	   " -d $newIndexDir " .
-	   " -u $indexAppDir/etc/searchurls.txt " .
-	   " -e $indexAppDir/etc/excludeurls.txt " .
-	   " -c $indexAppDir/etc/crawlonlyurls.txt " .
-	   " -t 2 " .
-	   " -l $logsDir " .
-	   " -v");
+    system("/private/apps/java5.0/bin/java -XX:NewSize=256m -XX:MaxNewSize=256m -XX:SurvivorRatio=8 -Xms1G -Xmx1G" .
+      " -server" .
+      " -classpath " .
+         "$indexAppDir/classes:" .
+         "$indexAppDir/lib/UniquerySupport.jar:" .
+         "$indexAppDir/lib/commons-lang-2.0.jar:" .
+         "$indexAppDir/lib/cvu.jar:" .
+         "$indexAppDir/lib/lucene-1.3.jar" .
+      " org.zfin.uniquery.index.Indexer " .
+      " -d $newIndexDir " .
+      " -u $indexAppDir/etc/searchurls.txt " .
+      " -e $indexAppDir/etc/excludeurls.txt " .
+      " -c $indexAppDir/etc/crawlonlyurls.txt " .
+      " -q $indexAppDir/etc/allAPPPagesList.txt " .
+      " -t 10 " .
+      " -l $logsDir " .
+      " -v");
 if ($status) {
     abort($status, "Spider failed.");
 }
+
+$dateTime = `/bin/date`;
+chop($dateTime);
+print ("$dateTime: Committing new indexes.\n");
 
 # rename current index to old index and move new to current
 
 if (-d "$oldIndexDir") {
     $status = system("/bin/rm -rf $oldIndexDir");
     if ($status) {
-	abort($status, "rm $oldIndexDir failed.");
+        abort($status, "rm $oldIndexDir failed.");
     }
 }
 
 if (-d "$indexDir") {
     $status = system("/bin/mv $indexDir $oldIndexDir");
     if ($status) {
-	abort($status, "mv $indexDir $oldIndexDir failed.");
+        abort($status, "mv $indexDir $oldIndexDir failed.");
     }
 }
 
