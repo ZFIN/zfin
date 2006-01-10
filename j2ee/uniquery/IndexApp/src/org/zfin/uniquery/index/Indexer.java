@@ -1,10 +1,3 @@
-/**
- * This class is an adaptation of the Spider class from the spindle library (www.bitmechanic.com)
- * The original author was James Cooper (pixel@bitmechanic.com) with modifications
- * made by Shad Stafford (staffors@cs.uoregon.edu)
- */
- 
- 
 package org.zfin.uniquery.index;
 
 import org.zfin.uniquery.ZfinAnalyzer;
@@ -19,7 +12,6 @@ import cvu.html.TextToken;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Enumeration;
-import java.util.Calendar;
 import java.util.TreeSet;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -36,16 +28,49 @@ import java.io.IOException;
 import java.security.Security;
 
 
-public class Spider implements Runnable
+/**
+ * Indexer
+ * 
+ * This class is an adaptation of the Spider class from the spindle library (www.bitmechanic.com)
+ * The original author was James Cooper (pixel@bitmechanic.com) with modifications
+ * made by Shad Stafford (staffors@cs.uoregon.edu)
+ *
+ * Originally called "Spider" we have changed the functionality of this code fundamentally to
+ * avoid crawling data pages.  Too many redundant and unnecessary HTTP calls were being made
+ * only to discover a page was already indexed.  As a result, "Spider" began to take 50+ hours
+ * to Index ZFIN, and growing (starting from 18 hours initially two years ago).
+ *
+ * "Indexer" was developed with a new paradigm in mind:  use the database!  Crawling to discover
+ * data pages is not necessary since we can determine all of the data pages using a (albeit complex) 
+ * SQL query.  This saves an enormous amount of wasted time spent crawling pages unnecessarily, 
+ * cross-referencing them against discovered or indexed pages, and so forth.  
+ * Indexer currently takes 15 hours to complete on 10 threads.
+ *
+ * Crawling is useful, however, for static pages so we allow crawling on non "webdriver" pages like
+ * the Zebrafish Book, for example.
+ *
+ * Data page URLS are fed in via a command-line option "-q" (for quick), and this data is updated
+ * regularly via the CRON process that generates the indexes (by running this program).
+ * 
+ * Finally, this program uses a number of threads (passed as a command-line option "-t").  
+ * Tests have shown that:
+ *   4 threads gives the most "bang for the buck."  At the time of that
+ *     testing, Embryonix only has 4 processors -- which probably has something to do with it.
+ *   2-3 threads is adequate, takes about 20% more time to complete
+ *   10 threads hogs system resources and saves only about 10% time over 4 threads
+ *   1-thread barely affects system performance so can be used occasionally during working hours
+ */
+public class Indexer implements Runnable
     {
     private static final String lineSep = System.getProperty("line.separator");
     
-    private long memoryFree = Runtime.getRuntime().freeMemory();
-    private long memoryTotal = Runtime.getRuntime().totalMemory();
-    private long memoryUsed = memoryTotal - memoryFree;
+    //private long memoryFree = Runtime.getRuntime().freeMemory();
+    //private long memoryTotal = Runtime.getRuntime().totalMemory();
+    //private long memoryUsed = memoryTotal - memoryFree;
 
     private String indexDir;
     private ArrayList URLsToIndex;
+    private ArrayList staticIndex;
     private ArrayList include;
     private ArrayList exclude;
     private ArrayList crawlOnly;
@@ -67,10 +92,11 @@ public class Spider implements Runnable
     private long timeSpentIndexing = 0;
     private long timeSpentUrlProcessing = 0;
     private long timeSpentOptimizing = 0;
+    private int filesIndexed = 0;
     
     private boolean verbose = false;
     private String logDirectory = ".";
-    private PrintWriter memUsage = null;
+    //private PrintWriter memUsage = null;
     private PrintWriter log = null;
     private PrintWriter indexedUrlLog = null;
     private PrintWriter crawledUrlLog = null;
@@ -81,9 +107,12 @@ public class Spider implements Runnable
     private static int errorCount = 0;
 
 
+    /**
+     *  MAIN
+     */
     public static void main(String argv[]) throws Exception
         {
-        Spider s = new Spider(argv);
+        Indexer s = new Indexer(argv);
         s.go();
         if (errorCount > 100)
             {
@@ -97,8 +126,12 @@ public class Spider implements Runnable
 
 
 
-
-    public Spider(String argv[])
+    /**
+     *  Indexer
+     *
+     *  Initialize variables and open log writer streams.
+     */
+    public Indexer(String argv[])
         {
         try
             {
@@ -110,12 +143,21 @@ public class Spider implements Runnable
             exclude = new ArrayList();
             crawlOnly = new ArrayList();
             URLsToIndex = new ArrayList();
+            staticIndex = new ArrayList();
             threadList = new ArrayList();
             discoveredURLs = new TreeSet();
             mimeTypes = new HashMap();
             parseArgs(argv);
             
-            memUsage = new PrintWriter(new FileWriter(logDirectory + "/memusage.log"));
+            /* 
+             * The "staticIndex" is what the main comments above refer to as 
+             * the list of "data page URLs."  This has sped up performace dramatically
+             * by reducing wasted time spent crawling data pages we can pre-determine
+             * from the database.
+             */
+            URLsToIndex.addAll(staticIndex);
+            
+            //memUsage = new PrintWriter(new FileWriter(logDirectory + "/memusage.log"));
             log = new PrintWriter(new FileWriter(logDirectory + "/spider.log"));
             indexedUrlLog = new PrintWriter(new FileWriter(logDirectory + "/indexedUrls.log"));
             crawledUrlLog = new PrintWriter(new FileWriter(logDirectory + "/crawledUrls.log"));
@@ -132,6 +174,11 @@ public class Spider implements Runnable
 
 
 
+    /**
+     *  go
+     *
+     *  This is the main method for threading processes.
+     */
     public void go() throws Exception
         {
         // create the index directory -- or append to existing
@@ -144,7 +191,10 @@ public class Spider implements Runnable
             }
         index = new IndexWriter(new File(indexDir), new ZfinAnalyzer(), !incremental);
 
-        // check if we can do https URLs
+        // check if we can do https URLs.
+        // to date, this does not actually work, HTTPS calls require appropriate
+        // certificates and handling which we are not doing here; more work is needed
+        // for this to work
         try
             {
             System.setProperty("java.protocol.handler.pkgs", "com.sun.net.ssl.internal.www.protocol");
@@ -157,7 +207,9 @@ public class Spider implements Runnable
             log.println("Disabling support for https URLs");
             }
 
-        // index each entry point URL
+
+        // generate the specified number of threads and begin indexing
+        // from "run()" method below
         long start = System.currentTimeMillis();
         for (int i = 0; i < threads; i++)
             {
@@ -172,8 +224,9 @@ public class Spider implements Runnable
             }
         long elapsed = System.currentTimeMillis() - start;
 
-        // save the index
-        log.println("Indexed " + discoveredURLs.size() + " URLs (" + (bytes / 1024) + " KB) in " + (elapsed / 1000) + " seconds");
+
+        // after all threads have completed, close the index and write appropriate logs
+        log.println("Indexed " + filesIndexed + " URLs (" + (bytes / 1024) + " KB) in " + (elapsed / 1000) + " seconds");
         log.println("Optimizing index");
 
         long optimizingStart = System.currentTimeMillis();
@@ -192,25 +245,39 @@ public class Spider implements Runnable
         crawledUrlLog.close();
         ignoredUrlLog.close();
         malformedUrlLog.close();
+        
+        //exit
         }
 
 
 
+    /**
+     *  run
+     *
+     *  The threading environment equivalent of MAIN.
+     */
     public void run()
         {
         String url;
         try
             {
+                
+            // get the next URL in our list
             while ((url = dequeueURL()) != null)
                 {
+            	// Test Indexer on https for hoover security testing
+            	//url = StringUtils.replaceOnce(url,"http://quark.zfin.org","https://hoover.zfin.org");
+            	
+            	// index the url
                 indexURL(url);
-                String memoryStats = getMemoryUsage();
-                if (discoveredURLs.size()%10 == 0) {
-                    memUsage.println(memoryStats);
-                    memUsage.flush();
-                    //System.out.println(memoryStats);
-                }
-                //System.out.println(memoryStats);
+                
+                
+//                String memoryStats = getMemoryUsage();
+//                if (discoveredURLs.size()%10 == 0) {
+//                    System.out.println(memoryStats);
+//                    memUsage.println(memoryStats);
+//                    memUsage.flush();
+//                }
                 }
             }
         catch (Exception e)
@@ -224,12 +291,21 @@ public class Spider implements Runnable
 
 
 
+    /**
+     *  dequeueURL
+     *
+     *  We maintain a list of urls to index.  As we index and crawl, this list
+     *  dynamically grows and shrinks.  To avoid infinite loops, this means
+     *  we must also keep a list of "where we've been" to avoid retracing steps (discoveredURLs).
+     *
+     *  This function retrieves and removes the next URL from our list left to index (URLsToIndex).
+     */
     public synchronized String dequeueURL() throws Exception
         {
         while (true)
             {
             if (URLsToIndex.size() > 0)
-                {
+            	{
                 return (String) URLsToIndex.remove(0);
                 }
             else
@@ -251,17 +327,33 @@ public class Spider implements Runnable
 
 
 
+    /**
+     *  enqueueURL
+     *
+     *  In the process of indexing, we also discover new URLS on a page.
+     *  This is the aspect of "crawling" where, for new URLS, we add it to
+     *  our list of urls to index.
+     *
+     *  We must becareful to not add a url we have previously added (discoveredURLs).
+     *  Also, once we add the new url, we must keep track of the fact that
+     *  we have done so so that we don't do it again.
+     */
     public synchronized void enqueueURL(String url)
         {
-        if (!discoveredURLs.contains(url))
+        if (!discoveredURLs.contains(url))  // careful not to add something we already saw
             {
-            URLsToIndex.add(url);
-            discoveredURLs.add(url);
+            URLsToIndex.add(url);  // adds the new url
+            discoveredURLs.add(url);  // keeps track that we have now "seen" it so we don't do it again next time
             notifyAll();
             }
         }
 
 
+    /* no longer needed, memory issue being debugged was solved by increasing JVM allocated memory
+     *
+     * This was done by adding the command-line option:  -XX:NewSize=128m -XX:MaxNewSize=128m -XX:SurvivorRatio=8 -Xms256M -Xmx256M
+     * when we run the java machine
+     *
     private String getMemoryUsage () {
         memoryFree = Runtime.getRuntime().freeMemory();
         memoryTotal = Runtime.getRuntime().totalMemory();
@@ -269,14 +361,33 @@ public class Spider implements Runnable
         String memUsage = memoryUsed + " (used) \t " + memoryFree + " (free) \t " + discoveredURLs.size() + " (discovered) \t " + URLsToIndex.size() + " (to do) ";
         return memUsage;
     }
+    */
 
+    
+    /**
+     *  indexURL
+     *  
+     *  The main workhorse of this code.  For a given URL, it loads the HTML page by doing a HTTP GET request.
+     *  Then it parses the HTML text, records any newly discovered URLs, and then strips off the HTML formatting tags
+     *  so that only the text body is left.
+     *
+     *  Finally, it indexes that data for the given url.  That means, it uses the Lucene engine
+     *  to create some kind of ranking and proprietary database entry in the index files which
+     *  can later be searched using some Lucene APIs.
+     *
+     */
     private void indexURL(String url)
     {
+        // Note that we store various performance times for analysis.        
     	long loadingStartTime = System.currentTimeMillis();
     	URLSummary summary = null;
+    	
     	try 
     	{
-    		summary = loadURL(url);
+    	    /*
+    	     * download and parse the HTML page from the given url
+    	     */
+    		summary = loadURL(url);  
     	} 
     	catch (IOException e) 
     	{
@@ -290,6 +401,7 @@ public class Spider implements Runnable
     	
     	timeSpentLoading += (System.currentTimeMillis() - loadingStartTime);
     	
+    	// begin work
     	if (summary != null && summary.body != null)
     	{
     		if (summary.body.startsWith("Dynamic Page Generation Error"))
@@ -307,8 +419,16 @@ public class Spider implements Runnable
     				log.flush();
     			}
     		}
+    		
     		long parsingStartTime = System.currentTimeMillis();
     		
+    		
+    		/*
+    		 *  We could have updated the summary while we load the url, however, this
+    		 *  would have wasted time if the URL was a 404 error or other bad page.  So we wait until
+    		 *  after we have checked for errors before updating the summary
+    		 *
+    		 */
     		try 
     		{
     			updateSummary(summary);
@@ -327,12 +447,23 @@ public class Spider implements Runnable
     		
     		long indexingStartTime = System.currentTimeMillis();
     		
+    		
+    		/* 
+    		 * determine whether to continue indexing this page based on the crawlonly
+    		 * parameters set forth using command-line option configuration files --
+    		 * "crawlonly" means to read and parse the page for new URLS, but don't index it
+    		 */
     		boolean indexThisPage = true;
     		for (int x = 0; indexThisPage && x < crawlOnly.size(); x++)
     		{
     			String str = (String) crawlOnly.get(x);
     			indexThisPage = (url.indexOf(str) == -1);
     		}
+    		
+    		
+    		/*
+    		 * Prepare the Lucene document for indexing.
+    		 */
     		if (indexThisPage)
     		{
     			Document doc = new Document();
@@ -399,7 +530,9 @@ public class Spider implements Runnable
     				bytes += summary.body.length();
     				try 
     				{
+    				    // index the document (the results of parsing URL)
     					index.addDocument(doc);
+    					filesIndexed++;
     				} 
     				catch (IOException e) 
     				{
@@ -420,9 +553,13 @@ public class Spider implements Runnable
     		timeSpentIndexing += (System.currentTimeMillis() - indexingStartTime);
     		
     		/**
-    		 * Now we parse the page we just crawled and
+    		 * Now we parse the page we just crawled (and possibly indexed) and
     		 * process any URLS on that page.
-    		 * This is a depth-first search spider.
+    		 * This is a depth-first search "spidering" process.
+    		 *
+    		 * We do not index those files now, we simply decide whether to add them
+    		 * to our list of files to index later depending on whether we've
+    		 * already added it, or if it's on the include/exclude lists.
     		 */
     		long urlProcessingStartTime = System.currentTimeMillis();
     		ArrayList malformedUrls = new ArrayList();
@@ -445,12 +582,14 @@ public class Spider implements Runnable
     			{                        
     				if (summary.urls[i].indexOf('\'') != -1)
     				{
-    					// Why is this malformed?  I do not agree, commenting out.
+    					// Why is this (single quote in URL) malformed?  I do not agree, commenting out. -- Paea
     					// malformedUrls.add(summary.urls[i]); 
     				}
     				else
     				{
-    					enqueueURL(summary.urls[i]);
+    				    // enqueue MUST check if we already enqueued it!  That is the assumption here.
+    				    // no duplicates should be enqueued.  Checking in both places would be inefficient.
+    					enqueueURL(summary.urls[i]);  
     				}
     			}
     			else
@@ -476,6 +615,12 @@ public class Spider implements Runnable
     }
         
 
+    /*
+     *  getDocType
+     *
+     *  Based on the URL and data page naming conventions, 
+     *  we assign the SearchCategory (or DocType) accordingly.
+     */
     private String getDocType(String url, URLSummary summary)
         {
         if (url.indexOf("fishview.apg") != -1)
@@ -678,7 +823,7 @@ public class Spider implements Runnable
 
 
 
-
+    // chopOffNamedAnchor
     private String chopOffNamedAnchor(String url)
         {
         int pos = url.indexOf("#");
@@ -743,6 +888,12 @@ public class Spider implements Runnable
 
 
 
+    /**
+     *  loadURL
+     *
+     *  Given a URL, open the HTML page using an HTTP Get Request.  Then parse the
+     *  results and store various parts of the HTML page in a URLSummary object.
+     */
     private URLSummary loadURL(String url) throws IOException
         {
 		long loadFileStartTime = System.currentTimeMillis();	
@@ -806,7 +957,11 @@ public class Spider implements Runnable
 
 
 
-
+    /**
+     *  parseArgs
+     *
+     *  Parse the command line arguments.
+     */
     private void parseArgs(String argv[]) throws IOException
         {
         for (int i = 0; i < argv.length; i++)
@@ -815,6 +970,10 @@ public class Spider implements Runnable
                 {
                 indexDir = argv[++i];
                 }
+            else if (argv[i].equals("-q")) // "q" stands for quick since static index is very quick
+	            {
+	            loadFromFile(argv[++i], staticIndex);
+	            }
             else if (argv[i].equals("-u"))
                 {
                 loadFromFile(argv[++i], URLsToIndex);
@@ -886,7 +1045,12 @@ public class Spider implements Runnable
         
         
         
-        
+    /** 
+     *  loadFromFile
+     *
+     *  Opens a file and puts it into an ArrayList, line-by-line.
+     *  Ignores lines starting with a "#" (comments).
+     */
     private void loadFromFile(String filename, ArrayList list) throws IOException
         {
         BufferedReader in = new BufferedReader(new FileReader(filename));
@@ -904,10 +1068,12 @@ public class Spider implements Runnable
             }
         }
 
-
-    }
-
-class URLSummary
+    /**
+     *  URLSummary
+     *
+     *  A class that stores various aspects of an HTML page after it has been parsed.
+     */
+    public class URLSummary
 	{
 	URL url;
 	String body = null;
@@ -915,3 +1081,5 @@ class URLSummary
 	String title = null;
 	String[] urls = null;
 	}
+    
+    }
