@@ -662,6 +662,9 @@ function openChild(childWinUrl,childWinName) {
 	    <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,1))"> $(-,$CURRENT,1)</A><?/MIVAR>
 	  </td>
         <?/MIBLOCK>
+<?MIBLOCK COND="$(XST,$xpdetres_figCount)">
+  <?MIVAR NAME=$xpatsel_nResults>$xpdetres_figCount<?/MIVAR>
+<?/MIBLOCK>
 
         <?MIBLOCK COND="$(>,$xpatsel_nResults,$WINSIZE)">
 	  <td align=center valign=top>
