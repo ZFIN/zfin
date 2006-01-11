@@ -22,7 +22,7 @@ TARGETDIR = $(TARGETROOT)/j2ee/uniquery/SearchApp
 CONTEXT_DESCRIPTOR = SearchApp.xml
 CONTEXT_DESCRIPTOR_PATH = $(CONTEXT_DIR)/$(CONTEXT_DESCRIPTOR)
 
-GENERICS = syntax_help.jsp  category_search.jsp category_search_BETA.jsp
+GENERICS = syntax_help.jsp  category_search.jsp
 
 STATICS = internal_error.jsp search_parse_error.jsp
 
