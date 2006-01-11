@@ -80,7 +80,7 @@ displays a publication record, or many publication records if > 1 returned.
 <?MISQL SQL="
   select title, authors, year(pub_date), jrnl_abbrev, keywords, pub_abstract, 
          accession_no, pub_errata_and_notes, jtype, pub_file, 
-	 pub_completion_date, pub_volume, pub_pages, status
+	 pub_completion_date, pub_volume, pub_pages, status, pub_mini_ref
     from publication, journal where zdb_id='$OID'
      and jrnl_zdb_id = pub_jrnl_zdb_id;">
 <?/MISQL>
