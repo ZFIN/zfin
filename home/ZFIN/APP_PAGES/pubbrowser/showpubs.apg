@@ -54,6 +54,9 @@ OUTPUT VARS:
 <?MIBLOCK COND="$(NXST,$OID)">
 <p> ERROR -- something bad happened -- no OID passed in!
 <?/MIBLOCK>
+
+<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
 	
 <?MIVAR COND="$(NXST,$rtype)" NAME=$rtype><?/MIVAR>
 <?MIVAR COND="$(NXST,$title)" NAME=$title><?/MIVAR>
