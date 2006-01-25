@@ -290,6 +290,7 @@ display detailed orthology data.
                       and oevdisp_zdb_id=recattrib_data_zdb_id
                       and zdb_id = recattrib_source_zdb_id
                       and oevdisp_organism_list = '$item2'
+                      and oevdisp_evidence_code='$item'
                     group by zdb_id, pub_mini_ref
                     order by pub_mini_ref
                    ;"
