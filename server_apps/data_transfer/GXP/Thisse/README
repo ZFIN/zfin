@@ -9,14 +9,16 @@
 
    * Download data package (.sitx file) from ftp://ftp-igbmc.u-strasbg.fr/pub/Thisse/, use STUFFITS (www.stuffit.com) to expand the package. 
 
-   * Use FileMaker Pro to open and export 
+   * Use FileMaker Pro to open the files with user "Thisse" and password "thisse". From 'File' pulldown menu, choose Export, give names as defined below,
 
 	DATA_FRX->probes(.csv) 
 	rel_authors->authors(.csv) 
 	rel_expression->expression(.csv) 
 	rel_images->images(.csv) 
 
-    Open files with account name "Thisse" and password "thisse". From 'File' pulldown menu, choose Export, give names as defined above, use .csv extension, and export columns from _keyValue to "date last modified". Use Windows(ANSI) as character set.
+    Be sure to use .csv extension. 
+    Be sure to export columns from _keyValue to "date last modified", expecially for probes.csv, you might need to explicitly include "probe rating" column right before "date last modified" column. 
+    Also use Windows(ANSI) as character set.
             
    * At UNIX shell, create a new directory, recommended name FR#_mmdd, # is the package number
 
