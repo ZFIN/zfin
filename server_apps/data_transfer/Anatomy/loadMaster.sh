@@ -55,11 +55,14 @@ $INFORMIXDIR/bin/dbaccess <!--|DB_NAME|--> loadAO.sql
 #-------------------------------------------
 # Define batch_xpat_annot_adjust() function
 # and run it on entries in AO_translation.unl
+# then, check annotation again for any omission
 #-------------------------------------------
 
 $INFORMIXDIR/bin/dbaccess <!--|DB_NAME|--> batch_xpat_annot_adjust.sql
 
 $INFORMIXDIR/bin/dbaccess <!--|DB_NAME|--> make_annot_translation.sql
+
+$INFORMIXDIR/bin/dbaccess <!--|DB_NAME|--> check_annotation.sql
 
 #--------------------------------------
 # Check keywords in Thisse template
