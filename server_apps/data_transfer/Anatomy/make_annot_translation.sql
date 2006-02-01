@@ -19,17 +19,35 @@ create temp table anatitem_stg_change_tmp (
 
 load from "AO_translation.unl" insert into anatitem_stg_change_tmp;
 
+-- update old anatomy obo id to zdb id 
+update anatitem_stg_change_tmp
+   set t_oldanat_zdb_id = (select anatitem_zdb_id
+                             from anatomy_item
+                            where anatitem_obo_id = t_oldanat_zdb_id)
+ where t_oldanat_zdb_id in (select anatitem_obo_id 
+                              from anatomy_item);
+
+-- update new anatomy obo id to zdb id 
+update anatitem_stg_change_tmp
+   set t_newanat_zdb_id = (select anatitem_zdb_id
+                             from anatomy_item
+                            where anatitem_obo_id = t_newanat_zdb_id)
+ where t_newanat_zdb_id in (select anatitem_obo_id 
+                              from anatomy_item);
+
+-- update start stage abbrev to stage id
 update anatitem_stg_change_tmp 
    set t_start_stg_zdb_id = (select stg_zdb_id 
-                              from stage 
-                             where stg_abbrev = t_start_stg_zdb_id)
+                               from stage 
+                              where stg_abbrev = t_start_stg_zdb_id)
  where t_start_stg_zdb_id in (select stg_abbrev
                                 from stage);
 
+-- update end stage abbrev to stage id
 update anatitem_stg_change_tmp 
    set t_end_stg_zdb_id = (select stg_zdb_id 
-                              from stage 
-                             where stg_abbrev = t_end_stg_zdb_id)
+                             from stage 
+                            where stg_abbrev = t_end_stg_zdb_id)
  where t_end_stg_zdb_id in (select stg_abbrev
                                 from stage);
  
