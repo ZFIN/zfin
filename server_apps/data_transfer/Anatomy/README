@@ -54,6 +54,10 @@ Scripts:
    check_thisse_keywords.sql -- pick up stageKeywords.unl, output problem
                         keywords after ZFIN AO got updated. 
 
+   check_annotation.sql   -- check the expression annotation stage window 
+                        with the anatomy stage window, output inconsistences to 
+                        annotationViolates.err
+
    loadMaster.sh -- launch the load, then ajust xpat annotation, check Thisse
 		    template and send problems to curators.		    
    
@@ -90,20 +94,25 @@ Execution:
      Ask for 
      o  AO_translation.unl with format
 
-        ZDB-ANAT-XXXX|start stg abbrev|end stg abbrev|ZDB-ANAT-XXXX
-        (   old term )                               (  new term  ) 
+        ZFA:####|start stg abbrev|end stg abbrev|ZFA:####
+        (old term )                             (new term ) 
 
      Excel won't put an ending "|", later script will add that.
-     If any of the AO term involved is a new term, which means no 
-     ZDB-ANAT- id is not available untill the load finish, then save
-     those and manually run the adjustment steps from loadMaster.sh
-     after the load. 
    
    4) Generate                                            
       o  stageKeyword.csv exported from last Thisse sending
-             
-   5) Load production
-      At production TARGET dir (has to be informix user), copy over
+  
+   5) Load test database (might skip)
+      change loadAO.sql to "commit work", gmake.
+      At TARGET dir, copy over anatomy.obo, AO_translation.unl and 
+      stageKeyword.csv.
+        
+        % parseOBO.pl <path_to_anatomy.obo>
+
+	% loadMaster.sh          
+
+   6) Load Production
+      At zfindb TARGET dir (has to be informix user), copy over
       (anatomy.obo,) AO_translation.unl and stageKeyword.csv.
 
         % parseOBO.pl <path_to_anatomy.obo>
@@ -115,6 +124,13 @@ Execution:
           how many stages changed
           how many new definitions, updated definitions
           how many more relationships
+
+   Note: At the end of loadAO.sql we check annotation and so to have the translations on hand for loadMaster.sh. However, there could be omissions, thus we run check_annotation.sql again at the end of loadMaster.sh. If anything in annotationViolates.sql, send to curators. You could then either run the following function to adjust one by one:
+
+      execute function xpat_annot_adjust(oldAnatZdbId, startStgZdbId, endStgZdbId, newAnatZdbId)
+   
+   Or create the AO_translation.unl file as the above format and run make_annot_translation.sql.
+   
 
 Postload
 ---------
