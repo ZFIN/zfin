@@ -35,7 +35,8 @@ while (<>) {
 
     next unless /^Term/;                   #skip header and Typedef
     next if /name:\s+Zebrafish Anatomy/i;  #skip place holders 
-
+    next if /id:\s+ZFS:\d+/;               #skip stage terms
+ 
     #---------------------------------------------
     # Obsolete term
     # write out zfin id, filter out new terms that 
