@@ -518,14 +518,14 @@ insert into zdb_replaced_data (zrepld_old_zdb_id, zrepld_new_zdb_id)
 insert into tmp_xpat_figure
      select txs_new_xpatres_zdb_id, xpatfig_fig_zdb_id
        from tmp_xpatres_merge_pair_same_annotation, expression_pattern_figure
-      where txs_old_xpatres_id = xpatfig_xpatres_zdb_id;
+      where txs_old_xpatres_zdb_id = xpatfig_xpatres_zdb_id;
 
 -- Delete redundant xpatres record and cascade to xpat figure records
 delete from zdb_active_data 
 	where exists (
 	   select 'x'
 	     from tmp_xpatres_merge_pair_same_annotation
-	    where zactvd_zdb_id = txo_old_xpatres_zdb_id);
+	    where zactvd_zdb_id = txs_old_xpatres_zdb_id);
 
 -- Step 2
 -- separate out the remaining annotations on old terms in a temp table, replace terms
