@@ -127,7 +127,7 @@ displays a publication record, or many publication records if > 1 returned.
   <?MIBLOCK COND="$(NC,$title,$MI_NOVALUE)">
 
      <?MIVAR>
-       <TITLE>ZFIN : Publication : $(REPLACE,$pubview2_pub_miniref,"<i>et al.</i>","et al."). $title </TITLE>
+       <TITLE>ZFIN: Publication: $(REPLACE,$pubview2_pub_miniref,"<i>et al.</i>","et al."). $title </TITLE>
      <?/MIVAR>
 
      <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>

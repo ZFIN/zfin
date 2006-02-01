@@ -93,7 +93,7 @@ function Delete_attrib(subattr,data_zdbId,source_zdbId,info) {
 	 <?/MIVAR>
       <?MIELSE>
 	 <?MIVAR>
- 		<TITLE>ZFIN : Anatomical Structure : $item_name</title>
+ 		<TITLE>ZFIN: Anatomical Structure: $item_name</title>
 	 <?/MIVAR>
       <?/MIBLOCK>
 

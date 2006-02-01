@@ -87,11 +87,11 @@ ahead and look for it -- convert to OID if necessary -->
 
   <?MIBLOCK COND="$(XST,$UPDATE)">
     <?MIVAR>
-      <TITLE>ZFIN Update Company:$name </TITLE>
+      <TITLE>ZFIN Update Company: $name </TITLE>
     <?/MIVAR>
   <?MIELSE>
     <?MIVAR>
-      <TITLE>ZFIN Company: $name </TITLE>
+      <TITLE>ZFIN: Company: $name </TITLE>
     <?/MIVAR>
   <?/MIBLOCK>
 

@@ -119,7 +119,7 @@ get source zdb id, comments, label and caption of figure to determine type of FX
 <?/MISQL>
 
 <?MIVAR>
-    <TITLE>ZFIN : Figure : $(REPLACE,$fxfigview_miniref,"<i>et al.</i>","et al."), $fxfigview_label </TITLE>
+    <TITLE>ZFIN: Figure: $(REPLACE,$fxfigview_miniref,"<i>et al.</i>","et al."), $fxfigview_label </TITLE>
 <?/MIVAR>
 <?MICOMMENT>
 the block below is to determine if the figure is a text only.

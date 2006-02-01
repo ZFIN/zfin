@@ -44,7 +44,7 @@
 <?MIVAR NAME=$name>$2<?/MIVAR>
 
 <head>
-<title>ZFIN : GO Details : <?MIVAR> $gene <?/MIVAR>
+<title>ZFIN: GO Details: <?MIVAR> $gene <?/MIVAR>
 </title>
 </head>
 

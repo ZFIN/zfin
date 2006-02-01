@@ -124,7 +124,7 @@
       <?/MIVAR>
     <?MIELSE>
       <?MIVAR>
-        <TITLE>ZFIN : Sequence Details : $mrkr_abbrev</title>
+        <TITLE>ZFIN: Sequence Details: $mrkr_abbrev</title>
       <?/MIVAR>
     <?/MIBLOCK>
  

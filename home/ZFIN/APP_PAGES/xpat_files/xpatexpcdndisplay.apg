@@ -88,7 +88,7 @@ EFFECTS:
 	<?MIVAR NAME=cdp_cdn_comments>$6<?/MIVAR>
 
         <?MIVAR COND="$(=,$MI_CURRENTROW,1)">
-	  <TITLE>ZFIN : Experimental Condition :<?MIVAR>$cdp_mini_ref ; $cdp_cdt_name<?/MIVAR> </TITLE>
+	  <TITLE>ZFIN: Experimental Condition: <?MIVAR>$(REPLACE,$cdp_mini_ref,<i>et al.</i>,et at.); $cdp_cdt_name<?/MIVAR> </TITLE>
           <table width=100%>
             <tr bgcolor=#ccccccc>
               <td> <font size=+2> <b> Environment Description </b> </font></td>
