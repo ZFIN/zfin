@@ -6,7 +6,7 @@ go-obj: context [
      id: copy ""
      name: copy ""
      namespace: copy []
-     def: copy []
+     def: copy ""
      is_a: copy []
      exact_synonym: copy []
      alt_id: copy ""
@@ -44,7 +44,13 @@ parse read ftp://ftp.geneontology.org/go/ontology/gene_ontology.obo [
             )
        ];;; end some name: value
        (;;; fix up any loose pipes in the def field
+	;;; first make sure the "" are replaced
+       replace/all goob/def "^"" "'"  
+				  ;;; caret ^ is the string escape char	
+                                  ;;; like backslash in unix
+
        replace/all goob/def "|" "\|"
+       replace/all goob/def "'" "^""  
        ;;; move data from object to a line in the buffer
        foreach field next first goob[
           insert tail buffer join get in goob to word! field "|"
