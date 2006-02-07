@@ -245,6 +245,10 @@ system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> loadgoterms.sql >out 
 
 &countFileLines ("new_obsolete_terms.unl", "loadgo.pl failed at creating obsolete unload file");
 
+&countFileLines ("reinstated_go_terms.txt","loadgo.pl failed at creating reinstated term unload file");
+
+&countFileLines ("obso_sec_with.unl","loadgo.pl failed at creating secondary with term unload file");
+
 &countFileLines ("newannotsecterms.unl","loadgo.pl failed at creating secondary term unload file");
 
 # open the files we create and count line by line until we read the EOF.
@@ -259,7 +263,9 @@ system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> loadgoterms.sql >out 
 &isEmptyFile ("new_obsolete_terms.unl","No new obsolete terms\n",
 	      "<!--|GO_EMAIL_CURATOR|-->","Terms now obsolete");
 
-&isEmptyFile ("obso_sec_with.unl","No obsolete or secondary terms in with field\n",
-	      "<!--|GO_EMAIL_CURATOR|-->","Inferred from terms (With) terms now obsolete/secondary");
+&isEmptyFile ("obso_sec_with.unl","No obsolete or secondary terms in with field\n","<!--|GO_EMAIL_CURATOR|-->","Inferred from terms (With) terms now obsolete/secondary");
+
+&isEmptyFile ("reinstated_go_terms.txt","No new reinstated terms\n",
+	      "<!--|GO_EMAIL_CURATOR|-->","Terms now reinstated");
 
 exit;
