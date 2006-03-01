@@ -146,12 +146,14 @@ update mapped_deletion
 update mapped_marker
   set marker_id = (select zrepld_new_zdb_id
 			from zdb_replaced_data
-			where zrepld_old_zdb_id = marker_id)
+			where zrepld_old_zdb_id = marker_id),
+      marker_type = 'GENE'
   where exists (select 'x'
 		  from zdb_replaced_data
 		  where zrepld_old_zdb_id = marker_id)
   and (marker_id like 'ZDB-LOCUS-%' or marker_id like 'ZDB-FISH-%'
-		or marker_id like 'ZDB-ALT-%');
+		or marker_id like 'ZDB-ALT-%')
+  and marker_type = 'MUTANT';
 
 
 create temp table tmp_pato_attrib (pato_id varchar(50), 
