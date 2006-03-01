@@ -169,7 +169,7 @@ select ftrgrpmem_ftr_type
 --create feature_realtionship_type table
 
 create table feature_marker_relationship_type (
-	fmreltype_name	varchar(40) 
+	fmreltype_name	varchar(60) 
 		not null constraint fmreltype_name_not_null,
 	fmreltype_ftr_type_group varchar(30)
 		not null constraint fmreltype_group1_not_null,
@@ -232,7 +232,7 @@ insert into marker_type_group_member (mtgrpmem_mrkr_type,
 create table feature_marker_relationship (
 	fmrel_zdb_id		varchar(50)
 	  not null constraint fmrel_zdb_id_not_null,
-        fmrel_type		varchar(40)
+        fmrel_type		varchar(60)
 	  not null constraint fmrel_type_not_null,
 	fmrel_ftr_zdb_id   varchar(50)
 	  not null constraint fmrel_ftr1_not_null,
