@@ -1,4 +1,4 @@
-#!/local/bin/perl 
+#!/private/bin/perl 
 
 $ENV{"INFORMIXDIR"}="/private/apps/Informix/informix";
 $ENV{"INFORMIXSERVER"}="wanda";
