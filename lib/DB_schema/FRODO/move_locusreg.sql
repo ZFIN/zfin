@@ -31,14 +31,58 @@ select get_id('GENE'),
 	lower(abbrev)
   from tmp_locus_registration;
 
+!echo "here is the second marker dup trial"
+
+select mrkr_name, count(*) as count
+ from marker
+ group by mrkr_name
+ having count(*) >1 
+  into temp tmp_name;
+
+select * from tmp_name ;
+
+select mrkr_name, count(*) as count
+ from marker
+ group by mrkr_name
+ having count(*) >1 ;
+
+select mrkr_abbrev, count(*) as count
+  from marker
+  group by mrkr_abbrev
+  having count(*) >1
+  into temp tmp_abbrev;
+
+select mrkr_abbrev, count(*) as count
+  from marker
+  group by mrkr_abbrev
+  having count(*) >1;
+
+update marker
+  set mrkr_abbrev = mrkr_abbrev||"_"||lower(mrkr_zdb_id)
+  where mrkr_abbrev in (select mrkr_abbrev 
+  				from tmp_abbrev
+  				);
+
+update marker
+  set mrkr_name = mrkr_name||"_"||mrkr_zdb_id
+  where mrkr_name in (select mrkr_name 
+  				from tmp_name
+  				) ;
+
 --update marker
 --  set mrkr_abbrev = lower(mrkr_abbrev||mrkr_zdb_id)
 --  where exists (select 'x'	
---		  from tmp_locus_registration
+---		  from tmp_locus_registration
 --		  where mrkr_name = locus_name
 --		  and mrkr_abbrev = abbrev
 --		  and mrkr_owner = owner)
 --   and mrkr_zdb_id like 'ZDB-GENE-%';
+
+
+select mrkr_name, count(*) as count
+ from marker
+ group by mrkr_name
+ having count(*) >1 ;
 
 
 insert into genotype (geno_zdb_id,
