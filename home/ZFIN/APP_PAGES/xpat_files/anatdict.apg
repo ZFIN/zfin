@@ -25,7 +25,7 @@ OUTPUT VAR
 
 <HTML>
 
-<script language="JavaScript" src="/http://zfin.org/client_sniff.js"></script>
+<script language="JavaScript" src="http://zfin.org/client_sniff.js"></script>
 
 <SCRIPT> 
 if (is_nav4) {
