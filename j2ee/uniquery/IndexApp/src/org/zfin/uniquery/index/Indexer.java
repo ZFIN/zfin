@@ -635,9 +635,13 @@ public class Indexer implements Runnable
             {
             return SearchCategory.MUTANTS_MAPPINGDETAIL;
             }
-        else if (url.indexOf("markerview.apg") != -1)
+        else if ((url.indexOf("markerview.apg") != -1 ) && (url.indexOf("ZDB-GENE") != -1))
             {
             return SearchCategory.GENES_MARKERVIEW;
+            }
+	else if (url.indexOf("markerview.apg") != -1 )
+            {
+            return SearchCategory.MARKERS_MARKERVIEW;
             }
         else if (url.indexOf("markergoview.apg") != -1)
             {
@@ -651,10 +655,10 @@ public class Indexer implements Runnable
             {
             return SearchCategory.GENES_GENEPRDDESCRIPTION;
             }
-        else if (url.indexOf("mappingdetail.apg") != -1)
-            {
-            return SearchCategory.GENES_MAPPINGDETAIL;
-            }
+        //else if (url.indexOf("mappingdetail.apg") != -1)
+        //    {
+        //    return SearchCategory.GENES_MAPPINGDETAIL;
+        //    }
         else if (url.indexOf("fxfigureview.apg") != -1)
             {
             return SearchCategory.EXPRESSION_FXFIGVIEW;
@@ -667,14 +671,14 @@ public class Indexer implements Runnable
             {
             return SearchCategory.ANATOMY_ZFINFO;
             }
-        else if (url.indexOf("imageview.apg") != -1)
-            {
-            return SearchCategory.IMAGES;
-            }
-        else if (url.indexOf("pubview2.apg") != -1)
-            {
-            return SearchCategory.PUBLICATIONS;
-            }
+        //else if (url.indexOf("imageview.apg") != -1)
+        //    {
+        //    return SearchCategory.IMAGES;
+	//   }
+	// else if (url.indexOf("pubview2.apg") != -1)
+        //    { 
+        //    return SearchCategory.PUBLICATIONS;
+	//     }
         else if (url.indexOf("persview.apg") != -1)
             {
             return SearchCategory.PEOPLE_PERSVIEW;
@@ -915,7 +919,7 @@ public class Indexer implements Runnable
                     summary = new URLSummary();
                     summary.url = u;
         
-                    BufferedReader in = new BufferedReader(new InputStreamReader(uc.getInputStream()));
+                    BufferedReader in = new BufferedReader(new InputStreamReader(uc.getInputStream(), "ISO-8859-1"));
         
                     StringBuffer body = new StringBuffer(2048);
                     String line;
