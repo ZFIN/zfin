@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.util.regex.Pattern;
 import java.net.URLEncoder;
 
-
 /**
  *  The SearchBean is a Bean that is used by the JSP Quick Search tool
  *  to perform a large variety of tasks.
@@ -42,7 +41,8 @@ import java.net.URLEncoder;
  *  take up a significant amount of system memory.
  */
 public class SearchBean
-    {            
+    {    
+     
     public static final String URL = "url";
     public static final String TITLE = "title";
     public static final String BODY = "body";
@@ -423,8 +423,11 @@ public class SearchBean
         int screenWidth = 100;
         String unitOfMeasure = "%"; // % means percent literally
         int numberOfColumns = 5;
+	int numberOfResults = 0;
         int columnWidth = screenWidth / numberOfColumns;
         String cellSelected = "";
+	String categoryHtml = "";
+	String searchResultHTML = "";
         ArrayList categories = new ArrayList();
         categories.addAll(SearchCategory.CATEGORIES);
         
@@ -432,8 +435,9 @@ public class SearchBean
         returnResults += "<TABLE border='0' width='" + screenWidth + unitOfMeasure + "' align='center' cellpadding='2' cellspacing='2' class='category_table'> \n";
         for (int i=0; i<categories.size(); i++) {
             SearchCategory category = (SearchCategory) categories.get(i);
-            if (category.getId().equalsIgnoreCase(categoryTerm.trim())) {
-                cellSelected = "<img src=/images/left_arrow.gif />";
+	    String currentCategoryId = category.getId();
+            if (currentCategoryId.equalsIgnoreCase(categoryTerm.trim())) {
+                cellSelected = "<img src=/images/right_arrow.gif />&nbsp;";
             } else {
                 cellSelected = "";
             }
@@ -441,14 +445,34 @@ public class SearchBean
             if (i%numberOfColumns == 0) {
                 returnResults += "<TR> \n";
             }
-            
-                //returnResults += "<TD width='" + columnWidth + unitOfMeasure + "' nowrap style='font-size: 9pt;'>";
-                returnResults += "<TD nowrap class='category_item'>";
-                returnResults += "<a href='category_search.jsp?pageSize=" + pageSize + "&query=" + URLEncoder.encode(queryTerm, "UTF-8") + "&category=" + category.getId() + "'><b>" + category.getDescription() + "</b></a>";
-                returnResults += " (" + getSearchResultsCount(indexPath, queryTerm, category.getId()) + ")";
-                returnResults += cellSelected;
-                returnResults += "&nbsp;";
-                returnResults += "</TD> \n";
+            numberOfResults = getSearchResultsCount(indexPath, queryTerm, currentCategoryId);
+	    if (currentCategoryId.equalsIgnoreCase("All") || numberOfResults > 1) {
+		categoryHtml = "<a href='category_search.jsp?pageSize=" + pageSize + "&query=" + URLEncoder.encode(queryTerm, "UTF-8") + "&category=" + currentCategoryId + "'><b>" + category.getDescription() + "</b></a>";
+	    } 
+	    else if (numberOfResults == 1) {
+		   
+		for (int j=0; j < allCategoryHitsList.size(); j++ ) {
+		    CategoryHits catHit = (CategoryHits) allCategoryHitsList.get(j);
+		    // if the category is found, use those results (then exit for loop)
+		    if (catHit.getCategory().getId().equals(currentCategoryId)) {
+			searchResultHTML = catHit.getHits().doc(0).get(SearchBean.URL);
+			break;
+		    }
+		}
+		categoryHtml = "<a href='" + searchResultHTML + "'><b>" + category.getDescription() + "</b></a>";
+		
+	    }	    
+	    else{
+		categoryHtml = category.getDescription() ;
+	    }
+	    
+	    returnResults += "<TD nowrap class='category_item'>";
+	    returnResults += cellSelected;
+	    returnResults += categoryHtml;
+	    returnResults += " (" + numberOfResults  + ")";
+	    /*returnResults += cellSelected;
+	    returnResults += "&nbsp;";*/
+	    returnResults += "</TD> \n";
         }
         returnResults += "</TABLE> \n";
         returnResults += "</div>";
@@ -512,12 +536,22 @@ public class SearchBean
         
         return returnResults;
     }
-    
+
+    /**
+     *  getNewZdbId
+
+     */
+    public String getNewZdbId(String dbName, String queryTerm) throws Exception {
+        RelatedTerms terms = new RelatedTerms(dbName);
+        String replacedId = terms.getReplacedZdbId(queryTerm);
+        return  replacedId;
+    }
+            
     /**
      *  getRelatedTermsHTML
      *
-     *  This function formats the Google-like "Did you mean" feature for alias and anotomy 
-     *  term suggestions.
+     *  This function formats the Google-like "Alternative search" feature for 
+     *  alias and anotomy term suggestions.
      *  It encapsulates this feature in HTML formatting for use by the JSP.
      *
      *  Relies on the "related_terms", "alias_list_header", "related_terms_match",
@@ -530,14 +564,13 @@ public class SearchBean
             
         if (aliasHits.size() > 0) {
            returnResults += "<div class='related_terms'>";
-           returnResults += "<span class='alias_list_header'>Did you mean: </span>";
+           returnResults += "<span class='alias_list_header'>Alternative search: </span>";
            Vector keys = new Vector(aliasHits.keySet());
            Collections.sort(keys);
            Iterator aliaskeys = keys.iterator();
            boolean separator = false;
            while (aliaskeys.hasNext()) {
               String oldTerm = (String) aliaskeys.next();
-              //returnResults += "<div><span class='alias_list_header'>Instead of <b>" + oldTerm + "</b>, consider using:</span>";
               returnResults += "<span class='alias_list'>";
               ArrayList matchingTerms = (ArrayList) aliasHits.get(oldTerm);
               for (int i = 0; i < matchingTerms.size(); i++) {
@@ -548,19 +581,56 @@ public class SearchBean
                  if (separator) {
                     returnResults += " or ";
                  }
-                 returnResults += "<a title='" + matchedText + "' href=\"javascript:document.uniquery_search.query.value='" + newTermFiltered + "';document.uniquery_search.submit();\"><em>" + newTermFiltered + "</em></a> <span class='related_terms_match'>(" + matchedText + ")</span>";
+		 returnResults += "<a title='" + matchedText + "' href=\"category_search.jsp?query=" + newTermFiltered + "\"><em>" + newTermFiltered + "</em></a> <span class='related_terms_match'>(" + matchedText + ")</span>";
+
+                 //returnResults += "<a title='" + matchedText + "' href=\"javascript:document.uniquery_search.query.value='" + newTermFiltered + "';document.uniquery_search.submit();\"><em>" + newTermFiltered + "</em></a> <span class='related_terms_match'>(" + matchedText + ")</span>";
+
                  separator = true;
               }
               returnResults += "</span>";
               //returnResults += "</div>";
            }
            returnResults += "</div>";
-        }
-        
-        return returnResults;
+	   
+	}
+	return returnResults;
     }
-    
+	
     /**
+      * getBestMatchHTML
+      * 
+      * This function returns a direct data page link as the first hit if the query term 
+      * matches genes/markers/clones/mutants/anatomy item name/symbol.
+      *
+      */     
+    public String getBestMatchHTML(String dbName, String queryTerm) throws Exception {
+	RelatedTerms term = new RelatedTerms(dbName);
+	String theMatchId = term.getBestMatchId(queryTerm);
+	String viewPageUrl = "";
+	String returnResults = "";
+
+	if (theMatchId.length() > 0) {
+	    if (theMatchId.startsWith("ZDB-FISH")) {
+		viewPageUrl = "/cgi-bin/webdriver?MIval=aa-fishview.apg&OID=" + theMatchId;
+	    }
+	    else if (theMatchId.startsWith("ZDB-LOCUS")) {	
+		viewPageUrl = "/cgi-bin/webdriver?MIval=aa-locusview.apg&OID=" + theMatchId;
+	    }
+	    else if (theMatchId.startsWith("ZDB-ANAT")) {	
+		viewPageUrl = "/cgi-bin/webdriver?MIval=aa-anatomy_item.apg&OID=" + theMatchId;
+	    }
+	    else {
+		viewPageUrl = "/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=" + theMatchId;
+	    }	
+	    returnResults += "<br><span class='best_match'>Exact Match: ";
+            returnResults += "<a href='" + viewPageUrl + "'><b>" + queryTerm + "</b></a> ";
+	    returnResults += "</span>";
+	}
+	return returnResults;
+    }
+
+
+   /**
      *  getRelatedSearchPageHTML
      *
      *  This function formats the suggestion to use specific search forms.
@@ -581,11 +651,11 @@ public class SearchBean
         Hashtable anatomyHits = terms.getAllAnatomyHits(queryTerm);
         
         if (categoryDescription.toLowerCase().equals("mutants/transgenics")) {
-           specificSearchURL = "/cgi-bin_quark/webdriver?MIval=aa-fishselect.apg&line_type=mutant";
+           specificSearchURL = "/cgi-bin/webdriver?MIval=aa-fishselect.apg&line_type=mutant";
         } else if (categoryDescription.toLowerCase().equals("genes/markers/clones")) {
-           specificSearchURL = "/cgi-bin_quark/webdriver?MIval=aa-newmrkrselect.apg&input_name="+queryTerm;
+           specificSearchURL = "/cgi-bin/webdriver?MIval=aa-newmrkrselect.apg&input_name="+queryTerm;
         } else if (categoryDescription.toLowerCase().equals("expression")) {
-           specificSearchURL = "/cgi-bin_quark/webdriver?MIval=aa-xpatselect.apg";
+           specificSearchURL = "/cgi-bin/webdriver?MIval=aa-xpatselect.apg";
            if (anatomyHits.size() > 0) {
              specificSearchURL += "&TA_selected_structures=";
              Vector anatkeys = new Vector(anatomyHits.keySet());
@@ -595,9 +665,11 @@ public class SearchBean
                 String anatTerm = (String) anatkeysIter.next();
                 specificSearchURL += anatTerm + "%0D%0A"; // %0D%0A = CR-LF
              }
-           }
+           }else {
+	       specificSearchURL += "&gene_name=" + queryTerm;
+	   }
         } else if (categoryDescription.toLowerCase().equals("anatomy")) {
-           specificSearchURL = "/cgi-bin_quark/webdriver?MIval=aa-anatdict.apg&mode=search";
+           specificSearchURL = "/cgi-bin/webdriver?MIval=aa-anatdict.apg&mode=search";
            if (anatomyHits.size() > 0) {
              specificSearchURL += "&searchterm=";
              Vector anatkeys = new Vector(anatomyHits.keySet());
@@ -608,30 +680,33 @@ public class SearchBean
                 specificSearchURL += anatTerm + " ";
              }
            }
-        } else if (categoryDescription.toLowerCase().equals("mapping data")) {
-           specificSearchURL = "/cgi-bin_quark/mapper_select.cgi";
-        } else if (categoryDescription.toLowerCase().equals("publications")) {
-           specificSearchURL = "/cgi-bin_quark/webdriver?MIval=aa-pubselect2.apg";
+	   //} else if (categoryDescription.toLowerCase().equals("mapping data")) {
+           //specificSearchURL = "/cgi-bin/mapper_select.cgi";
+	   //} else if (categoryDescription.toLowerCase().equals("publications")) {
+           //specificSearchURL = "/cgi-bin/webdriver?MIval=aa-pubselect2.apg&title="+queryTerm;
         } else if (categoryDescription.toLowerCase().equals("people")) {
-           specificSearchURL = "/cgi-bin_quark/webdriver?MIval=aa-quickfindpers.apg&pname="+queryTerm;
+           specificSearchURL = "/cgi-bin/webdriver?MIval=aa-quickfindpers.apg&pname="+queryTerm;
         } else {                
            specificSearchURL = "";
         }                
     
         if (specificSearchURL.length() > 0) {
             returnResults += "<span class='specific_search'>";
-            returnResults += "Please try the ";
+            returnResults += "Advanced search: "; //"Please try the ";
             returnResults += "<a href='" + specificSearchURL + "'>" + categoryDescription + "</a> ";
-            returnResults += "search form for more specific results.";
             
-            if (categoryDescription.toLowerCase().equals("expression") && anatomyHits.size() > 0) {
-               returnResults += "<br>Also, <b>" + anatomyHits.size() + "</b> of your search terms ";
-               returnResults += "<a href='" + specificSearchURL + "'>" + anatomyHits.keySet() + "</a> resulted in an anatomical dictionary match.";
-            }
+	    //this line and link do not provide useful information
+            //if (categoryDescription.toLowerCase().equals("expression") && anatomyHits.size() > 0) {
+		//returnResults += "<br>Also, <b>" + anatomyHits.size() + "</b> of your search terms ";
+	    //returnResults += "<br>search term(s) ";
+	    //returnResults += "<a href='" + specificSearchURL + "'>" + anatomyHits.keySet() + "</a> resulted in anatomical dictionary match(es).";
+            //}
+
             returnResults += "</span>";
-        } else {
-            returnResults += "Please try the above custom search pages for more specific results.";
-        }
+        } 
+	//else {
+        //    returnResults += "Please try the above custom search pages for more specific results.";
+        //}
         
         return returnResults;
     }
@@ -644,8 +719,9 @@ public class SearchBean
      *  It encapsulates this feature in HTML formatting for use by the JSP.
      *
      *  Relies on the "search", "titlebar", and "submitbar" CSS styles for formatting.
-     */        
-    public String getAdvancedSearchHTML(String queryTerm, String categoryTerm, int pageSize) {
+     
+
+     public String getAdvancedSearchHTML(String queryTerm, String categoryTerm, int pageSize) {
         String returnResults = "";
         
         returnResults += "<TABLE class='search' width='100%' border='0' cellpadding='1' cellspacing='0'>";
@@ -695,7 +771,6 @@ public class SearchBean
         returnResults += "</TABLE>";
         
         return returnResults;
+     }
+    */          
     }
-        
-    }
-
