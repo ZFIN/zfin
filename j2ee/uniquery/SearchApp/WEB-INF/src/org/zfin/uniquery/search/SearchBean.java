@@ -41,8 +41,8 @@ import java.net.URLEncoder;
  *  take up a significant amount of system memory.
  */
 public class SearchBean
-    {    
-     
+{    
+    
     public static final String URL = "url";
     public static final String TITLE = "title";
     public static final String BODY = "body";
@@ -52,7 +52,15 @@ public class SearchBean
     private String categoryId;
     private String queryString;
     private ArrayList allResultsList;
-    
+
+    /** the constructor
+     * the jsp:useBean definition seems not pass without
+     * a standard constructor
+     */
+    public SearchBean() {
+	super();
+    }
+	
     
     /**
      *  categorizeSearchResults
@@ -66,7 +74,7 @@ public class SearchBean
      *  Therefore, we store the query along with the categorized results until a new query is issued.
      */
     private void categorizeSearchResults(String indexPath, String queryString) throws Exception
-        {
+    {
         IndexReader reader = IndexReader.open(indexPath);
         Searcher searcher = new IndexSearcher(reader);
         ZfinAnalyzer analyzer = new ZfinAnalyzer();
