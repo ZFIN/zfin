@@ -31,7 +31,7 @@ public class ZfinAnalyzer extends Analyzer
         "has", "had", "he", "have", "her", "here", "him",
         "himself", "his", "how","if", "in", "into", "is",
         "it", "its", "just", "make", "many", "me", "my", 
-        "now", "of", "on", "or", "our", "out", "over", 
+        "no", "not", "now", "of", "on", "or", "our", "out", "over", 
         "re", "said", "see", "should", "since", "so", "some",
         "still", "such", "take", "than", "that", "the",
         "their", "them", "then", "there", "these",
