@@ -1,59 +1,40 @@
 # This file contains keywords indicating which urls to avoid crawling and indexing.
 # When the spider encounters a URL, it looks through this list of keys, if any of them
 # appear in anywhere in the URL it will be ignored.
+
+# special pages 
 #
 view_mapplet
 view_zmapplet
-aa-showpubs
 ZFIN_jump
-ortholist.apg
 pdf
 images
 data_transfer
-sourceview
-nomenview
-xpatview
-xpatindexview
 javascript
 SearchApp
-zirclist.apg
+php
 
-# The following are the search pages which we do not want to crawl.
+# We do not want to crawl select pages.
 # These (especially xpatselect) take a long time to crawl.
 # To avoid this problem, we have created a fixed-list of all the
 # app pages (data) to be indexed.
 
-aa-fishselect.apg
-aa-newmrkrselect.apg
-aa-markerselect.apg
-aa-msegselect.apg
-aa-xpatselect.apg
-aa-pubselect2.apg
-aa-persselect.apg
-aa-labselect.apg
-aa-companyselect.apg
-aa-fxallfigures.apg
+select.apg
+select2.apg
+anatdict.apg
 
 # The following are all the app pages included by the fixed-list 
 # described above.  We do not want to crawl them.  Instead
 # they are forcible added to the "to be indexed" list upfront.
 
-aa-xpatselect.apg
+view.apg
+view2.apg
+aa-orthoviewdetailed.apg
 aa-anatomy_item.apg
-aa-companyview.apg
-aa-crossview.apg
-aa-fishview.apg
 aa-fxassayabbrev.apg
-aa-fxfigureview.apg
+aa-fxallfigures.apg
 aa-geneprddescription.apg
-aa-imageview.apg
-aa-labview.apg
-aa-locusview.apg
 aa-mappingdetail.apg
-aa-markergoview.apg
-aa-markerview.apg
-aa-persview.apg
-aa-pubview2.apg
 aa-quickfindpers.apg
 aa-refcrosslist.apg
 aa-sequence.apg
@@ -61,3 +42,5 @@ aa-wtlist.apg
 aa-xpatexpcdndisplay.apg
 aa-zirclist.apg
 aa-ZDB_home.apg
+aa-showpubs.apg
+aa-ortholist.apg
