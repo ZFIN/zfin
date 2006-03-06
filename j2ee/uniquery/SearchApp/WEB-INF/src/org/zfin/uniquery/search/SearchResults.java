@@ -68,27 +68,34 @@ public class SearchResults
      * Simple String concatenation ("+=") is very very slow in reality.
      */
     public String toString() {
-        String htmlOutput = "";
-        
+        //String htmlOutput = "";
+        StringBuffer htmlOutputBuffer = new StringBuffer();
+
         Iterator hitsIterator = results;
 
         while (hitsIterator.hasNext()) {
             Hit hit = (Hit) hitsIterator.next();
-                    System.out.println("************  Got here 3  ************");
+ 
             Document doc = hit.getDocument();
             String pageTitle = doc.get(SearchBean.TITLE);
             if (pageTitle.trim().length() < 1)
                 {
                 pageTitle = "Untitled";
                 }
-            htmlOutput += "<p>\n";
-            htmlOutput += "<a href='" + doc.get(SearchBean.URL) + "'>" + pageTitle + "</a><br>\n";
-            htmlOutput += hit.getHighlightedText() + "<br>\n";
-            htmlOutput += "<font color='green' size='-2'>" + doc.get(SearchBean.URL) + "</font>\n";
-            htmlOutput += "<p>\n";
+	    htmlOutputBuffer.append("<p>\n");
+	    htmlOutputBuffer.append("<a href='" + doc.get(SearchBean.URL) + "'>" + pageTitle + "</a><br>\n");
+	    htmlOutputBuffer.append(hit.getHighlightedText() + "<br>\n");
+	    htmlOutputBuffer.append("<font color='green' size='-2'>" + doc.get(SearchBean.URL) + "</font>\n");
+	    htmlOutputBuffer.append("<p>\n");
+
+            //htmlOutput += "<p>\n";
+            //htmlOutput += "<a href='" + doc.get(SearchBean.URL) + "'>" + pageTitle + "</a><br>\n";
+            //htmlOutput += hit.getHighlightedText() + "<br>\n";
+            //htmlOutput += "<font color='green' size='-2'>" + doc.get(SearchBean.URL) + "</font>\n";
+            //htmlOutput += "<p>\n";
         }
         
-        return htmlOutput;
+        return htmlOutputBuffer.toString();
     }
 
     }
