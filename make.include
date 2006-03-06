@@ -165,7 +165,7 @@ JAVACFLAGS =
 
 # --- Tomcat related
 
-CONTEXT_DIR = /private/tomcat/conf/Catalina/$(DOMAIN_NAME)
+CONTEXT_DIR = /private/apps/tomcat/conf/Catalina/$(DOMAIN_NAME)
 
 SET_CONTEXT_DESCRIPTOR = /private/ZfinLinks/Commons/bin/setContextDescriptor.pl
 

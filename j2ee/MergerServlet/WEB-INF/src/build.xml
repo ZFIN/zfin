@@ -11,8 +11,8 @@
     <!-- classpaths -->
     <path id="default_classpath">
         <pathelement location="${build.dir}" />
-        <pathelement location="/private/tomcat/common/lib/ifxjdbc.jar" />
-        <pathelement location="/private/tomcat/common/lib/servlet-api.jar" />
+        <pathelement location="/private/apps/tomcat/common/lib/ifxjdbc.jar" />
+        <pathelement location="/private/apps/tomcat/common/lib/servlet-api.jar" />
     </path>
 
     <target name="init">
