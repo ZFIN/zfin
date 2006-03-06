@@ -24,6 +24,7 @@ public class SearchCategory
     public static final String MUTANTS_LOCUSVIEW        = "MUTANTS_LOCUSVIEW";
     public static final String MUTANTS_MAPPINGDETAIL    = "MUTANTS_MAPPINGDETAIL";
     public static final String GENES_MARKERVIEW         = "GENES_MARKERVIEW";
+    public static final String MARKERS_MARKERVIEW       = "MARKERS_MARKERVIEW";
     public static final String GENES_SEQUENCE           = "GENES_SEQUENCE";
     public static final String GENES_GENEPRDDESCRIPTION = "GENES_GENEPRDDESCRIPTION";
     public static final String GENES_MARKERGOVIEW       = "GENES_MARKERGOVIEW"; 
@@ -32,7 +33,7 @@ public class SearchCategory
     public static final String ANATOMY_ITEM             = "ANATOMY_ITEM";
     public static final String ANATOMY_ZFINFO           = "ANATOMY_ZFINFO";
     public static final String IMAGES                   = "IMAGES";
-    public static final String PUBLICATIONS             = "PUBLICATIONS";
+	//public static final String PUBLICATIONS             = "PUBLICATIONS";
     public static final String PEOPLE_PERSVIEW          = "PEOPLE_PERSVIEW";
     public static final String PEOPLE_LABVIEW           = "PEOPLE_LABVIEW";
     public static final String NOMENCLATURE_LAB         = "NOMENCLATURE_LAB";
@@ -60,12 +61,12 @@ public class SearchCategory
         String[] allTypes = {ALL};
         categoryList.add(new SearchCategory("ALL", "All", allTypes));
 
-        String[] geneTypes = {GENES_MARKERVIEW};
+        String[] geneTypes = {GENES_MARKERVIEW, MARKERS_MARKERVIEW};
         categoryList.add(new SearchCategory("GENES", "Genes/Markers/Clones", geneTypes));
-        
-        String[] mutantTypes = {MUTANTS_FISHVIEW, MUTANTS_LOCUSVIEW};
-        categoryList.add(new SearchCategory("MUTANTS", "Mutants/Transgenics", mutantTypes));
-        
+	
+	String[] mutantTypes = {MUTANTS_FISHVIEW, MUTANTS_LOCUSVIEW};
+	categoryList.add(new SearchCategory("MUTANTS", "Mutants/Transgenics", mutantTypes));
+	
         String[] expressionTypes = {EXPRESSION_FXFIGVIEW};
         categoryList.add(new SearchCategory("EXPRESSION", "Expression", expressionTypes));
 
@@ -82,7 +83,7 @@ public class SearchCategory
         //categoryList.add(new SearchCategory("MAPPING", "Mapping Data", mappingTypes));
 		
         String[] sequenceTypes = {GENES_SEQUENCE};
-        categoryList.add(new SearchCategory("SEQUENCE", "Gene Sequence", sequenceTypes));
+        categoryList.add(new SearchCategory("SEQUENCE", "Sequence Information", sequenceTypes));
         
         String[] anatomyTypes = {ANATOMY_ITEM, ANATOMY_ZFINFO};
         categoryList.add(new SearchCategory("ANATOMY", "Anatomy", anatomyTypes));
@@ -102,8 +103,8 @@ public class SearchCategory
         String[] meetingTypes = {MEETINGS, JOBS};
         categoryList.add(new SearchCategory("MEETINGS", "Jobs/Meetings", meetingTypes));
 
-        String[] publicationTypes = {PUBLICATIONS};
-        categoryList.add(new SearchCategory("PUBLICATIONS", "Publications", publicationTypes));
+        //String[] publicationTypes = {PUBLICATIONS};
+        //categoryList.add(new SearchCategory("PUBLICATIONS", "Publications", publicationTypes));
 		
         String[] peopleTypes = {PEOPLE_PERSVIEW, PEOPLE_LABVIEW};
         categoryList.add(new SearchCategory("PEOPLE", "People", peopleTypes));
