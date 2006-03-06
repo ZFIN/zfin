@@ -10,15 +10,15 @@
 <div class="help_body">
     <h2 align="center">Search ZFIN Tips</h2>
     <p><b>Search ZFIN</b> provides a quick and easy glance at data available on the ZFIN web site.  Simply enter your topic of interest and press the enter key.  
-     <p>Results from <b>Search ZFIN</b> and specific ZFIN search forms may vary.  Specific ZFIN search forms query a particular class of data while <b>Search ZFIN</b> searches snapshots of all ZFIN pages for an occurrence of your query string.  
+     <p>Results from <b>Search ZFIN</b> and advanced ZFIN search forms may vary.  Advanced ZFIN search forms query a particular class of data while <b>Search ZFIN</b> searches snapshots of all ZFIN pages for an occurrence of your query string.  
      <p><b>Search ZFIN</b> does not take advantage of the data relationships and ontologies that are defined in the ZFIN database.  For a comprehensive search of expression or anatomical structures we recommend you use the <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg">Expression</a> or  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=search">Anatomy</a> search forms.  
-     <p>If you do not find what you are looking for using this search, please be sure to try one of ZFIN's more specific search forms that may be accessed from the links in the top menu bar.</p>
+     <p>If you do not find what you are looking for using this search, please be sure to try one of ZFIN's advanced search forms that may be accessed from the links in the top menu bar.</p>
     <br>
-    <table>
+    <table width=90%>
       <tr>
 	<th> </th>
         <th>Search ZFIN</th> 
-        <th>Specific search forms</th>
+        <th>Advanced search forms</th>
       </tr>
       <tr>
         <td>Highly Customizable Searches</td>
@@ -36,7 +36,7 @@
         <td align="center">No</td>
       </tr>
     </table>
-    <h3>Comparison of <b>Search ZFIN</b> and specific ZFIN search forms</h3>
+    <h3>Comparison of <b>Search ZFIN</b> and advanced ZFIN search forms</h3>
       <ul>
       <li>Search for <b>eye</b> using <b>Search ZFIN</b>
       <ul>
