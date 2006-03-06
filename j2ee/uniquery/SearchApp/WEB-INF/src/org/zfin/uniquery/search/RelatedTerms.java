@@ -1,5 +1,6 @@
 package org.zfin.uniquery.search;
 
+import org.apache.commons.lang.StringUtils;
 import org.zfin.uniquery.ZfinAnalyzer;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.Token;
@@ -104,12 +105,89 @@ public class RelatedTerms
       return results;
    }
 
+    /**
+     * Search all_map_names and anatomy_item tables for exact name/symbol match
+     * on markers/clones/genes/mutants/anatomy terms. We could only use base 
+     * tables, may update when Fish tables consolidated.
+     * Return zdb id if match, otherwise empty string.
+     */
+    public String getBestMatchId (String queryTerm) throws Exception {
+
+      String queryTermEscaped = StringUtils.replace(queryTerm,"'","''");
+      String resultId = "";
+
+      Connection db = openConnection();
+
+      Statement stmt = db.createStatement();
+      String theSql = "select allmapnm_zdb_id as zdb_id from all_map_names where allmapnm_name_lower = '"+queryTermEscaped.toLowerCase() + "' and allmapnm_precedence in ('Current symbol', 'Current name', 'Fish name/allele', 'Locus abbreviation', 'Locus name') UNION select anatitem_zdb_id as zdb_id from anatomy_item where anatitem_name = '"+queryTermEscaped.toLowerCase() + "'";
+
+      ResultSet rs = stmt.executeQuery(theSql);
+      while (rs.next()) {
+          resultId = rs.getString("zdb_id");
+      }
+
+      /* release resources to prevent leaks */
+      rs.close();
+      stmt.close();
+      db.close();
+      
+      return resultId;
+    }
+ 
+    /**
+
+     */
+    public String getReplacedZdbId (String queryTerm) throws Exception {
+	String resultId = "";
+	Connection db = openConnection();
+	
+	Statement stmt = db.createStatement();
+	String theSql = "select zrepld_new_zdb_id from zdb_replaced_data where zrepld_old_zdb_id = '" + queryTerm.toUpperCase() + "'";
+	
+	ResultSet rs = stmt.executeQuery(theSql);
+	while (rs.next()) {
+	    resultId = rs.getString("zrepld_new_zdb_id");
+	}
+	
+	/* release resources to prevent leaks */
+	rs.close();
+	stmt.close();
+	db.close();
+      
+	return resultId;
+	
+    }
+    
+    /**
+
+    public String getTest (String queryTerm) throws Exception {
+
+      String queryTermEscaped = StringUtils.replace(queryTerm,"'","''");
+      String resultId = "";
+
+      Connection db = openConnection();
+
+      Statement stmt = db.createStatement();
+      String theSql = "select full_name from person where zdb_id = 'ZDB-PERS-990226-25'";
+      ResultSet rs = stmt.executeQuery(theSql);
+      while (rs.next()) {
+          resultId = rs.getString("full_name");
+      }
+
+      // release resources to prevent leaks 
+      rs.close();
+      stmt.close();
+      db.close();
+      
+      return resultId;
+    }
+   */     
 
    /**
     * Searches alias tokens for a match of a given query string.
     * Returns results {token=hits} as a Hashtable, 
     *   where hits is an ArrayList.
-    */
+    
    public Hashtable getAllAliasHits (String queryString) throws Exception {
       Hashtable results = new Hashtable();
       long start = System.currentTimeMillis();   
@@ -126,8 +204,54 @@ public class RelatedTerms
       timeToGetAliasHits = System.currentTimeMillis() - start;
       
       return results;
+   }  
+   * commenting it all out for exact synonymn only testing
+   */ 
+
+   /**
+    * Searches alias tokens for a match of a given query string.
+    * Returns results {token=hits} as a Hashtable, 
+    *   where hits is an ArrayList.
+    */
+   public Hashtable getAllAliasHits (String queryString) throws Exception {
+      Hashtable results = new Hashtable();
+      long start = System.currentTimeMillis();   
+
+      Connection db = openConnection();
+               
+      ArrayList abbrevHits = new ArrayList();
+
+      Statement stmt = db.createStatement();
+      ResultSet rs = stmt.executeQuery("select dalias_alias_lower, get_obj_abbrev(dalias_data_zdb_id) as alias_abbrev from data_alias where dalias_alias_lower = '"+ StringUtils.replace(queryString,"'","''") +"'");
+      while (rs.next()) {
+          String match = rs.getString("dalias_alias_lower");
+          String abbrev = rs.getString("alias_abbrev");
+
+          /**
+           * Added the [abbrev,match] array so we can display the previous name
+           * matching text along with the new name abbrevation.
+           */
+          String [] hit = {abbrev,match};
+
+	  abbrevHits.add(hit);
+          
+      }      
+      abbrevHits.trimToSize();
+      
+      /* release resources to prevent leaks */
+      rs.close();
+      stmt.close();
+      db.close();
+      
+      if (!abbrevHits.isEmpty()) {
+	  results.put(queryString,abbrevHits);
+      }
+    
+      timeToGetAliasHits = System.currentTimeMillis() - start;
+      
+      return results;
    }   
-   
+     
 
    /**
     * Searches alias tokens for a match of a given token.
