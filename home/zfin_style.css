@@ -327,3 +327,12 @@ tr.odd {
 
 .wildtype { font-style: normal; }
 
+
+
+/** Quicksearch Header **/
+
+#quicksearchBox {
+	position: absolute;
+	right: 10px;
+	top: 10px;
+}
