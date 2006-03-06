@@ -66,7 +66,7 @@ $filename    = "$indexAppDir/etc/allAPPPagesList.txt";
 
 # single quotes on purpose (ignores special characters such as '?')
 $urlHead     = 'http://<!--|DOMAIN_NAME|-->/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-'; 
-$urlTail     = '.apg&OID=';
+$urlTail     = '.apg';
 
 
 #------------------------------
@@ -85,31 +85,31 @@ $urlTail     = '.apg&OID=';
 my $sql = <<ENDSQL;
 
 -- anatomy_item
-SELECT distinct "anatomy_item" AS app_file, anatitem_zdb_id AS oid
+SELECT "anatomy_item" AS app_file, anatitem_zdb_id AS oid
 FROM anatomy_item
 
 UNION
 
 -- companyview
-SELECT distinct "companyview" AS app_file, zdb_id AS oid
+SELECT "companyview" AS app_file, zdb_id AS oid
 FROM company
 
 UNION
 
 -- crossview
-SELECT distinct "crossview" AS app_file, zdb_id AS oid
+SELECT "crossview" AS app_file, zdb_id AS oid
 FROM panels
 
 UNION
 
 -- fishview
-SELECT distinct "fishview" AS app_file, zdb_id AS oid
+SELECT "fishview" AS app_file, zdb_id AS oid
 FROM fish
 
 UNION
 
 -- fxfigureview
-SELECT distinct "fxfigureview" AS app_file, fig_zdb_id AS oid
+SELECT "fxfigureview" AS app_file, fig_zdb_id AS oid
 FROM figure
 
 UNION
@@ -128,13 +128,13 @@ and exists (
 UNION
 
 -- labview
-SELECT distinct "labview" AS app_file, zdb_id AS oid
+SELECT "labview" AS app_file, zdb_id AS oid
 FROM lab
 
 UNION
 
 -- locusview
-SELECT distinct "locusview" AS app_file, zdb_id AS oid
+SELECT "locusview" AS app_file, zdb_id AS oid
 FROM locus
 
 UNION
@@ -146,56 +146,30 @@ FROM marker_go_term_evidence
 UNION
 
 -- markerview
-SELECT distinct "markerview" AS app_file, mrkr_zdb_id AS oid
+SELECT "markerview" AS app_file, mrkr_zdb_id AS oid
 FROM marker
 
 UNION
 
 -- persview
-SELECT distinct "persview" AS app_file, zdb_id AS oid
+SELECT "persview" AS app_file, zdb_id AS oid
 FROM person
-
-UNION
-
--- pubview2
-SELECT distinct "pubview2" AS app_file, zdb_id AS oid
-FROM publication
 
 UNION
 
 -- sequence
 SELECT distinct "sequence" AS app_file, dblink_linked_recid AS oid
-FROM db_link
+FROM   db_link, foreign_db_contains, foreign_db_data_type
+WHERE  dblink_fdbcont_zdb_id = fdbcont_zdb_id
+ AND   fdbcont_fdbdt_data_type = fdbdt_data_type
+ AND   fdbdt_super_type = "sequence"
+
 
 UNION
 
 -- xpatexpcdndisplay
 SELECT "xpatexpcdndisplay" AS app_file, expcond_zdb_id AS oid
 FROM experiment_condition
-
-
--- The last sql queries return single row entries with
--- empty OID fields.  The reason we include these queries
--- in this file is simply so that all the indexed pages
--- are generated from and maintained in this single file.
-
-UNION
-
--- fxassayabbrev
-SELECT distinct "fxassayabbrev" AS app_file, "" AS oid
-FROM single
-
-UNION
-
--- refcrosslist
-SELECT "refcrosslist" AS app_file, "" AS oid
-FROM single
-
-UNION
-
--- wtlist
-SELECT "wtlist" AS app_file, "" AS oid
-FROM single
 
 ENDSQL
 
@@ -209,12 +183,6 @@ $ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
 $ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
 $ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
 $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
-
-# hard-coded for testing REMOVE! and make generic
-#$ENV{"INFORMIXDIR"}="/private/apps/Informix/informix";
-#$ENV{"INFORMIXSERVER"}="wanda";
-#$ENV{"ONCONFIG"}="onconfig";
-#$ENV{"INFORMIXSQLHOSTS"}="/private/apps/Informix/informix/etc/sqlhosts";
 
 #------------------------------
 # MAIN
@@ -250,15 +218,23 @@ $sth->execute();
 while (my @row = $sth->fetchrow_array()) {
 	$nRecords ++;
 	my $url;
-	my $app_page = $row[0];
-	my $oid = $row[1];
+	my $app_page = trim($row[0]);
+	my $oid = trim($row[1]);
 	
 	# generate specific URL for data-page corresponding to APP_PAGE, OID pairs
-	$url = $urlHead . trim($app_page) . $urlTail . trim($oid);
+	my $idName = ($app_page eq "xpatexpcdndisplay") ? "&cdp_exp_zdb_id=" : "&OID=";
+	$url = $urlHead . $app_page . $urlTail . $idName . $oid;
 	
 	# write URL to file
 	print RESULT "$url\n";
 }
+
+#The reason we include these in this file is simply so that all the indexed 
+#pages are generated from and maintained in this single file.
+
+print RESULT $urlHead . "fxassayabbrev" . $urlTail . "\n";
+print RESULT $urlHead . "refcrosslist" . $urlTail . "\n";
+print RESULT $urlHead . "wtlist" . $urlTail . "\n";
 
 #------------------------------
 # Status
