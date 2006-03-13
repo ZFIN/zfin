@@ -26,10 +26,6 @@ This field should hold the full name of the person, with the last name first. Fo
 <b>PubMed name:</b><br>
 This field should hold the name of the person in PubMed format. For instance, John Pat Dole would be "Dole-J-P.".<br>
 <INPUT type=text name="name" size="60">
-<p>
-<b>Address:</b><br>
-This field holds the PERSON's surface mail address. Be sure to include all necessary zip codes or country codes. <br>
-<TEXTAREA name=address WRAP=virtual rows=6 cols=70></TEXTAREA>
 
 <p>
 <input type=submit value="SUBMIT">

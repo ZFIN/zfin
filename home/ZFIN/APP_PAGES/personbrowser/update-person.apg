@@ -96,6 +96,12 @@ modified to support I.E.  call to location.replace replaced with location.href
       where zdb_id='$OID';">
   <?/MISQL>
 
+  <?MISQL COND="$(EC,$attr,address)" SQL="
+	update person_address
+          set pers_old_address = null
+	  where pers_zdb_id = '$OID';">
+  <?/MISQL>
+
 <?/MIBLOCK> <?MICOMMENT> *** ends cond authorized *** <?/MICOMMENT>
 
 <?MICOMMENT>

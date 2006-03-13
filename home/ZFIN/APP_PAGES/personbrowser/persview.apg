@@ -15,8 +15,6 @@ UPDATE -- optional, signifies we are in updating mode.
 ahead and look for it -- convert to OID if necessary -->
 <?MIVAR COND="$(XST,$temp_oid)" NAME=$OID>$temp_oid<?/MIVAR>
 
-
-
 <?MIBLOCK COND="$(NXST,$OID)">
 <p>
 ERROR -- something bad happened -- no OID passed in!
@@ -217,8 +215,23 @@ $(IF,$(=,$MI_CURRENTROW,2),<font size=-1>and also: )
 <?MIVAR COND="$(XST,$UPDATE)">
 <br><INPUT TYPE=button value=Update onClick="doit('address','textarea')">
 <?/MIVAR>
-</TD> 
 
+<?MISQL SQL="select pers_old_address
+		from person_address
+ 		where pers_zdb_id = '$OID';">
+<?/MISQL>
+
+<?MIVAR NAME=$pers_old_address>$1<?/MIVAR>
+<br>
+<?MIVAR COND="$(AND,$(EC,$AUTHORIZED,root),$(OR,$(EC,$pers_old_address,$MI_NULL),$(EC,$pers_old_address,$MI_NOVALUE)))">
+	<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-updateaddress.apg&OID=$OID"><font color=red>Address Change Required</font></a>
+<?/MIVAR>
+
+<?MIVAR COND="$(AND,$(EC,$AUTHORIZED,root),$(NC,$pers_old_address,$MI_NULL))">
+	<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-updateaddress.apg&OID=$OID">Update Address</a>
+<?/MIVAR>
+
+</TD> 
 
 <TD>
 <?MIBLOCK COND="$(EC,$snapshot,NULL)">
