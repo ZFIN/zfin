@@ -84,6 +84,7 @@ TRIGGERS = \
 	orthologue_update_trigger.sql \
 	person_insert_trigger.sql \
 	person_update_trigger.sql \
+	person_address_update_trigger.sql \
 	publication_insert_trigger.sql \
 	publication_update_trigger.sql \
 	record_attribution_insert_trigger.sql \
