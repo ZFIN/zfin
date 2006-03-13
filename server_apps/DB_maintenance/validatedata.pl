@@ -2138,6 +2138,32 @@ sub pubTitlesAreUnique($) {
   &recordResult($routineName, $nRecords);
 } 
 
+#-------------------------------------------------------
+#Parameter
+# $      Email Address for recipients
+# 
+sub addressStillNeedsUpdate ($) {
+	
+  my $routineName = "addressStillNeedsUpdate";
+	
+  my $sql = 'select pers_zdb_id
+		from person_address
+                where pers_old_address is null';
+
+  my @colDesc = ("Person ZDB ID           ");
+
+  my $nRecords = execSql ($sql, undef, @colDesc);
+
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Autogen: People that need their addresses updated";
+    my $errMsg ="$nRecords people need their addresses updated in new address table.";
+      		        
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
+  }
+  &recordResult($routineName, $nRecords);
+} 
 
 #-------------------------------------------------------
 #Parameter
@@ -2176,6 +2202,7 @@ sub extinctFishHaveNoSuppliers ($) {
   }
   &recordResult($routineName, $nRecords);
 } 
+
 
 
 #---------------------------------------------------------------
@@ -2786,6 +2813,7 @@ my $geneEmail    = "<!--|VALIDATION_EMAIL_GENE|-->";
 my $mutantEmail  = "<!--|VALIDATION_EMAIL_MUTANT|-->";
 my $dbaEmail     = "<!--|VALIDATION_EMAIL_DBA|-->";
 my $goEmail      = "<!--|GO_EMAIL_CURATOR|-->";
+my $adminEmail   = "<!--|ZFIN_ADMIN|-->";
 
 if($daily) {
   expressionResultStageWindowOverlapsAnatomyItem($xpatEmail);
@@ -2858,6 +2886,8 @@ if($monthly) {
   humanOrthologyHasEntrezAccession($geneEmail);
   containedInRelationshipsInEST($geneEmail);
   encodesRelationshipsInBACorPAC($geneEmail);
+  addressStillNeedsUpdate($adminEmail);
+
 }
 if($yearly) {
   print "run yearly check. \n\n";
