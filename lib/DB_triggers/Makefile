@@ -76,6 +76,8 @@ TRIGGERS = \
 	inference_group_member_inferred_from_update_trigger.sql \
 	marker_relationship_insert_trigger.sql \
 	marker_relationship_update_trigger.sql \
+	new_person_address_update_trigger.sql \
+	new_person_address_insert_trigger.sql \
 	orthologue_evidence_display_insert_trigger.sql \
 	orthologue_evidence_display_update_trigger.sql \
 	orthologue_insert_trigger.sql \
