@@ -21,7 +21,7 @@ while ($line = <CUT>) {
     if ($dbRef =~ /^MGI:/) 
     { 
       $alias1 =~ s/\|/,/g;
-      $abbrev = $alias1;
+      $abbrev = "$abbrev,$alias1";
     }    
     print UNLMM "$ll_id|$abbrev|$org_id|\n";
   }
