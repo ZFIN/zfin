@@ -71,8 +71,8 @@ UNLOAD to mm_ortho_abbrev_conflict.unl
 SELECT mrkr_abbrev, ortho_abbrev, llmm_mm_abbrev
 FROM ll_mouse, db_link, orthologue, marker, foreign_db_contains
 WHERE llmm_ll_id = dblink_acc_num
-  and llmm_mm_abbrev != ortho_abbrev
-
+--  and llmm_mm_abbrev != ortho_abbrev
+  and llmm_mm_abbrev not like ortho_abbrev||'%'
   and dblink_fdbcont_zdb_id = fdbcont_zdb_id
   and fdbcont_organism_common_name = "Mouse"
   and fdbcont_fdbdt_data_type = "orthologue"
