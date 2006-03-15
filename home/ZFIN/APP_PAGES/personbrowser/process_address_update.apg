@@ -111,6 +111,17 @@ an updated person record
 
   <?MIVAR COND="$(OR,$(EC,$ua_pers_country_code,NULL),$(NXST,$ua_pers_country_code))"
         NAME=$ua_pers_country_code><?/MIVAR>
+
+    <?MICOMMENT>Users would rather see country name displayed, instead
+	of country code for non-USA countries.  Thus, for the time being
+	we have to put the country name in the old table rather than
+	the country code.  The new table only holds the code. <?/MICOMMENT>
+
+     <?MISQL SQL="select ctc_name 
+		    from country_code
+		    where ctc_code = '$ua_pers_country_code'"><?/MISQL>
+
+     <?MIVAR NAME=$pua_pers_country_name>$1<?/MIVAR>
 	
   <?MIVAR COND="$(NXST,$ua_pers_postal_code)" 
 	NAME=$ua_pers_postal_code><?/MIVAR>
@@ -187,13 +198,15 @@ an updated person record
      <?/MIVAR>
 
      <?MICOMMNET> ua_concantenated_address just holds an address to put back 
-	     in person table. <?/MICOMMENT>
+	     in the old person table for display/consistancy issuse. 
+     <?/MICOMMENT>
 
-     <?MIVAR NAME=$ua_concantenated_address>$ua_pers_street1$ua_pers_street2$ua_pers_street3$ua_pers_street4$ua_pers_street5$ua_pers_street6$ua_pers_city$ua_pers_state_code$ua_pers_postal_code$ua_pers_country_code<?/MIVAR>
+     <?MIVAR NAME=$ua_concantenated_address>$ua_pers_street1$ua_pers_street2$ua_pers_street3$ua_pers_street4$ua_pers_street5$ua_pers_street6$ua_pers_city$ua_pers_state_code$ua_pers_postal_code$pua_pers_country_name<?/MIVAR>
  
 
-     <?MICOMMENT> update the person table with the new addres (in concantenated version), so
-	updator only has to do this update once to have it viewable to the public.
+     <?MICOMMENT> update the person table with the new addres 
+	(in concantenated version), so updator only has to do this update 
+	once to have it viewable to the public.
 	update the person_address table so that we know that the person_address
         and person tables are in sync.  when they are not in sync, the link 
 	changes on the persview.apg page so that the updator knows
