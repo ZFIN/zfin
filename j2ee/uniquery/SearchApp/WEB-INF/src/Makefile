@@ -38,9 +38,9 @@ ENDEMICTARGETS_POST = $(CLASSES)
 
 include $(TOP)/make.default.rules
 
-
 # ---------------  Endemic Rules  ------------------------------------
 
 # Target to make the class files if we need to
 $(CLASSES) : $(CLASS_DIR)/%.class : $(SOURCE_DIR)/%.java
 	/local/bin/ant -Dwebinf.dir=$(WEBINFDIR)
+	/bin/chmod o+r $(CLASSES)
