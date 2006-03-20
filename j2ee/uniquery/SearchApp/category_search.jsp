@@ -49,11 +49,8 @@
      * Get the path to search indexes from the Tomcat ServeltContext parameters
      */
     String indexPath = getServletContext().getInitParameter("path_to_index");
-    // hard coding indexPath for now
-    indexPath = "/research/zcentral/www_homes/quark/j2ee/uniquery/indexes";
     String dbName = getServletContext().getInitParameter("db_name");
-
-
+    
     /*
      * Get relevant browser query parameters
      */
