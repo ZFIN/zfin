@@ -808,7 +808,7 @@ Startframes.apg will pass this variables on to the select form.
        </TR>
 <?/MIBLOCK>
 
-<form name="BrowserForm" method=get
+<form name="BrowserForm" method=post
   onSubmit="updateList();"
   action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 
