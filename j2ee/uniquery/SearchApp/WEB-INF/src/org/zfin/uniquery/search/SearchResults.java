@@ -78,21 +78,22 @@ public class SearchResults
  
             Document doc = hit.getDocument();
             String pageTitle = doc.get(SearchBean.TITLE);
+	    String searchResultURL = doc.get(SearchBean.URL);
+
             if (pageTitle.trim().length() < 1)
                 {
                 pageTitle = "Untitled";
                 }
+	    //searchResultURL starts with "/cgi-bin_hostname/", get rid of the hostname
+	    int pos = searchResultURL.substring(1).indexOf("/");
+	    searchResultURL = "/cgi-bin" +  searchResultURL.substring(pos+1);
+
 	    htmlOutputBuffer.append("<p>\n");
-	    htmlOutputBuffer.append("<a href='" + doc.get(SearchBean.URL) + "'>" + pageTitle + "</a><br>\n");
+	    htmlOutputBuffer.append("<a href='" + searchResultURL + "'>" + pageTitle + "</a><br>\n");
 	    htmlOutputBuffer.append(hit.getHighlightedText() + "<br>\n");
 	    htmlOutputBuffer.append("<font color='green' size='-2'>" + doc.get(SearchBean.URL) + "</font>\n");
 	    htmlOutputBuffer.append("<p>\n");
 
-            //htmlOutput += "<p>\n";
-            //htmlOutput += "<a href='" + doc.get(SearchBean.URL) + "'>" + pageTitle + "</a><br>\n";
-            //htmlOutput += hit.getHighlightedText() + "<br>\n";
-            //htmlOutput += "<font color='green' size='-2'>" + doc.get(SearchBean.URL) + "</font>\n";
-            //htmlOutput += "<p>\n";
         }
         
         return htmlOutputBuffer.toString();

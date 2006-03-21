@@ -435,7 +435,7 @@ public class SearchBean
         int columnWidth = screenWidth / numberOfColumns;
         String cellSelected = "";
 	String categoryHtml = "";
-	String searchResultHTML = "";
+	String searchResultURL = "";
         ArrayList categories = new ArrayList();
         categories.addAll(SearchCategory.CATEGORIES);
         
@@ -463,11 +463,14 @@ public class SearchBean
 		    CategoryHits catHit = (CategoryHits) allCategoryHitsList.get(j);
 		    // if the category is found, use those results (then exit for loop)
 		    if (catHit.getCategory().getId().equals(currentCategoryId)) {
-			searchResultHTML = catHit.getHits().doc(0).get(SearchBean.URL);
+			searchResultURL = catHit.getHits().doc(0).get(SearchBean.URL);
 			break;
 		    }
 		}
-		categoryHtml = "<a href='" + searchResultHTML + "'><b>" + category.getDescription() + "</b></a>";
+                //searchResultURL starts with "/cgi-bin_hostname/", get rid of the hostname
+                int pos = searchResultURL.substring(1).indexOf("/");
+		searchResultURL = "/cgi-bin" +  searchResultURL.substring(pos+1);
+		categoryHtml = "<a href='" + searchResultURL + "'><b>" + category.getDescription() + "</b></a>";
 		
 	    }	    
 	    else{
