@@ -129,6 +129,16 @@ if ($status) {
     abort($status, "mv $newIndexDir $indexDir failed.");
 }
 
+$status = system("/bin/chmod o+rx $indexDir");
+if ($status) {
+    abort($status, "chmod o+rx $indexDir failed.");
+}
+
+$status = system("/bin/chmod o+r $indexDir/*");
+if ($status) {
+    abort($status, "chmod o+r $indexDir/* failed.");
+}
+
 $dateTime = `/bin/date`;
 chop($dateTime);
 print ("$dateTime: Finished indexing.  Checking logs for crawled dups ...\n");
