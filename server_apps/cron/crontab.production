@@ -65,9 +65,9 @@
 00 20 * * * <!--|ROOT_PATH|-->/server_apps/DB_maintenance/dumpServer.pl
 #
 #
-#  MTWTF    8:10pm   unload production using unloaddb.pl.  Also see pull.sh.
+#  MTWT    8:10pm   unload production using unloaddb.pl.  Also see pull.sh.
 #
-10 20 * * 1-5 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/unload_production.sh
+10 20 * * 1-4 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/unload_production.sh
 #
 #
 #
@@ -128,9 +128,9 @@
 # ------------------------------------------------------------------------
 #
 # Nights   When      Comments
-# MTWTFS    11:00pm   Get genbank daily update file, update accession_bank and db_link, the Sunday run is in pull.sh
+# SMTWTS    11:00pm   Get genbank daily update file, update accession_bank and db_link, the Friday run is in pull.sh
 #
-00 23 * * 1-6 <!--|ROOT_PATH|-->/server_apps/data_transfer/Genbank/gbaccession.pl
+00 23 * * 0-4,6 <!--|ROOT_PATH|-->/server_apps/data_transfer/Genbank/gbaccession.pl
 #
 #
 # SMTWT    11:10pm   load and update go terms
@@ -138,9 +138,9 @@
 10 23 * * 0-4 <!--|ROOT_PATH|-->/server_apps/data_transfer/LoadGO/loadgo.pl
 #
 #
-# S        11:20pm   weekly download data run, also does DATA TRANSFER OUT
+# F        11:00pm   weekly download data run, also does DATA TRANSFER OUT
 #                    and BACKUPS (calls unload_production.sh at end)
-20 23 * * 0 <!--|ROOT_PATH|-->/server_apps/data_transfer/pull.sh
+00 23 * * 5 <!--|ROOT_PATH|-->/server_apps/data_transfer/pull.sh
 #
 #
 #    W     11:20pm   Weekly load of data from ZIRC
