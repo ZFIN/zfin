@@ -26,15 +26,14 @@
 # ------- 10 PM - 10:30 PM  RELOAD / INDEX            -------
 # -----------------------------------------------------------
 # Nights   When      Comments
-# SMTWT    10:00pm   Reload almdb, remake web site.
+# MTWT    10:00pm   Reload almdb, remake web site.
 #
-00 22 * * 0-4 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/load_and_index_almost.pl
+00 22 * * 1-4 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/load_and_index_almost.pl
 #
 #
-#      F   10:00pm   Reload almdb, remake web site, generate quick search
-#                    index, and copy it to production.
-#          temporarily stop the indexer by taking out -i option           
-00 22 * * 5 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/load_and_index_almost.pl
+#  Sat     1:00am   Reload almdb, remake web site, generate quick search
+#                    index, and copy it to production.          
+00 01 * * 6 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/load_and_index_almost.pl -i
 #
 #
 # ------------------------------------------------------------
