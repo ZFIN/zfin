@@ -1,0 +1,355 @@
+ZDB-FISH-030812-1|Unbalanced translocation, heterozygotes transmit deletion as Mendelian recessive lethal.|ZDB-PUB-010731-5|
+ZDB-FISH-030812-4|Unbalanced translocation, heterozygotes transmit deletion as Mendelian recessive lethal.|ZDB-PUB-010731-5|
+ZDB-FISH-040129-3|The viral insert is within an intron of <em>smoothened</em>, not an exon (like <em>hi1640</em>) which most likely results in the less severe phenotype observed. (A. Wilbanks, pers. comm.)|ZDB-PUB-030129-1|
+ZDB-FISH-040622-1|about 100bp upstream of gene, rt-pcr suggests about 200-fold reduction in message|ZDB-PUB-040708-1|
+ZDB-FISH-040622-10|in 1st intron, (1st exon ends about 60 bp after ATG in message), rt-pcr suggests only 3-fold reduction in message, but most of the transcript is 'trapped', creating a frameshift after the  first 20 amino acids|ZDB-PUB-040708-1|
+ZDB-FISH-040622-11|in 2nd intron|ZDB-PUB-040708-1|
+ZDB-FISH-040622-12|at splice donor of second exon (which ends 85 bp after ATG), rt-pcr suggests over 1000-fold reduction in message|ZDB-PUB-040708-1|
+ZDB-FISH-040622-2|in second intron, rt-pcr suggests about 20-fold reduction in message|ZDB-PUB-040708-1|
+ZDB-FISH-040622-3|insert is upstream of gene, hypomorph|ZDB-PUB-040708-1|
+ZDB-FISH-040622-4|in 1st intron, just after ATG, rt-pcr suggests about 5-fold reduction in message|ZDB-PUB-040708-1|
+ZDB-FISH-040622-5|in intron, between an all 5'UTR exon and first coding exon, rt-pcr suggests about 10-fold reduction in message|ZDB-PUB-040708-1|
+ZDB-FISH-040622-6|in intron, between an all 5'UTR exon and first coding exon|ZDB-PUB-040708-1|
+ZDB-FISH-040622-7|in first intron, rt-pcr suggests greater than 100-fold reduction in message, most of the transcript is 'trapped', creating a frameshift after the first 20 amino acids|ZDB-PUB-040708-1|
+ZDB-FISH-040622-9|in 1st intron, just after ATG|ZDB-PUB-040708-1|
+ZDB-FISH-040709-1|in exon, about 85 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-040709-2|in exon (5' UTR, about 5 nt upstream of ATG)|ZDB-PUB-040708-1|
+ZDB-FISH-040709-3|in intron, between two all 5'UTR exons|ZDB-PUB-040708-1|
+ZDB-FISH-040712-1|in 1st intron, just after ATG|ZDB-PUB-040708-1|
+ZDB-FISH-040712-2|in intron, between an all 5'UTR exon and first coding exon|ZDB-PUB-040708-1|
+ZDB-FISH-040712-3|in intron, between an all 5'UTR exon and first coding exon|ZDB-PUB-040708-1|
+ZDB-FISH-040712-4|in exon (5' UTR, about 270 nt upstream of ATG)|ZDB-PUB-040708-1|
+ZDB-FISH-040713-1|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040713-10|determined to be in locus by non-complementation|ZDB-PUB-040708-1|
+ZDB-FISH-040713-3|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040713-4|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040713-5|in 3' utr|ZDB-PUB-040708-1|
+ZDB-FISH-040713-6|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040713-7|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040713-8|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040713-9|in exon, about 30 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-040714-1|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040714-2|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040714-3|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040714-4|in exon, about 75 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-040714-5|in exon, about 30 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-040714-6|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040715-1|in exon, about 120 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-040715-4|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040715-5|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040715-6|about 100 bp upstream of start of gene|ZDB-PUB-040708-1|
+ZDB-FISH-040715-7|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040715-8|about 125 bp upstream of start of gene|ZDB-PUB-040708-1|
+ZDB-FISH-040716-1|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040716-2|in exon (5' UTR, about 200 nt upstream of ATG)|ZDB-PUB-040708-1|
+ZDB-FISH-040716-3|in exon, about 200 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-040716-4|in exon, about 320 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-040719-1|in 1st intron, just after ATG|ZDB-PUB-040708-1|
+ZDB-FISH-040719-2|in exon (5' UTR, about 165 nt upstream of ATG)|ZDB-PUB-040708-1|
+ZDB-FISH-040719-4|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040719-5|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040719-6|in intron, between an all 5'UTR exon and first coding exon|ZDB-PUB-040708-1|
+ZDB-FISH-040719-7|in intron, well into gene  |ZDB-PUB-040708-1|
+ZDB-FISH-040720-1|in intron, between an all 5'UTR exon and first coding exon|ZDB-PUB-040708-1|
+ZDB-FISH-040720-10|in first intron, phenotype is less severe than hi1055b|ZDB-PUB-040708-1|
+ZDB-FISH-040720-11|in exon, about 230 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-040720-19|in intron, before the exon hi1073 is in, but phenotype seems about the same as|ZDB-PUB-040708-1|
+ZDB-FISH-040720-2|in intron, between an all 5'UTR exon and first coding exon|ZDB-PUB-040708-1|
+ZDB-FISH-040720-3|in exon, about 240 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-040720-4|in 1st intron, just after ATG|ZDB-PUB-040708-1|
+ZDB-FISH-040720-5|at splice acceptor for third exon (which begins about 60 nt after ATG in message)|ZDB-PUB-040708-1|
+ZDB-FISH-040720-6|in 1st intron, just after ATG|ZDB-PUB-040708-1|
+ZDB-FISH-040720-7|in 1st intron, just after ATG|ZDB-PUB-040708-1|
+ZDB-FISH-040720-8|in exon (5' UTR, about 5 nt upstream of ATG)|ZDB-PUB-040708-1|
+ZDB-FISH-040720-9|in first intron (very near splice acceptor), phenotype is more severe than hi1944|ZDB-PUB-040708-1|
+ZDB-FISH-040721-1|in 1st intron, just after ATG|ZDB-PUB-040708-1|
+ZDB-FISH-040721-10|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040721-11|in second intron|ZDB-PUB-040708-1|
+ZDB-FISH-040721-12|in second intron|ZDB-PUB-040708-1|
+ZDB-FISH-040721-13|in second intron|ZDB-PUB-040708-1|
+ZDB-FISH-040721-14|a bit upstream of the gene, or in an intron between an all 5' UTR exon and first coding exon (700 bp upstream of the ATG)|ZDB-PUB-040708-1|
+ZDB-FISH-040721-15|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040721-16|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040721-2|in exon (5' UTR, about 220 nt upstream of ATG)|ZDB-PUB-040708-1|
+ZDB-FISH-040721-3|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040721-4|in exon, about 100 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-040721-5|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040721-6|in 1st intron, just after ATG|ZDB-PUB-040708-1|
+ZDB-FISH-040721-7|in 1st intron, just after ATG|ZDB-PUB-040708-1|
+ZDB-FISH-040721-8|in 1st intron, just after ATG|ZDB-PUB-040708-1|
+ZDB-FISH-040721-9|in exon, about 2500 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-040722-1|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040722-2|in 2nd intron|ZDB-PUB-040708-1|
+ZDB-FISH-040722-3|about 180 bp upstream of start of gene|ZDB-PUB-040708-1|
+ZDB-FISH-040722-4|in 3rd intron|ZDB-PUB-040708-1|
+ZDB-FISH-040722-5|in intron, between an all 5'UTR exon and first coding exon|ZDB-PUB-040708-1|
+ZDB-FISH-040722-6|in an intron much later in the gene than hi1370 and hi1386|ZDB-PUB-040708-1|
+ZDB-FISH-040722-7|in intron, between an all 5'UTR exon and first coding exon|ZDB-PUB-040708-1|
+ZDB-FISH-040722-8|in exon, about 40 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-040723-1|in second intron|ZDB-PUB-040708-1|
+ZDB-FISH-040723-4|in 1st intron, just after ATG|ZDB-PUB-040708-1|
+ZDB-FISH-040723-5|in 1st intron, just after ATG|ZDB-PUB-040708-1|
+ZDB-FISH-040723-6|in 1st intron, (1st exon ends about 60 bp after ATG in message), rt-pcr suggests only 3-fold reduction in message, but most of the transcript is 'trapped', creating a frameshift after the  first 20 amino acids|ZDB-PUB-040708-1|
+ZDB-FISH-040723-7|in 1st intron, (1st exon ends about 60 bp after ATG in message), rt-pcr suggests about 20-fold reduction in message|ZDB-PUB-040708-1|
+ZDB-FISH-040726-1|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040726-2|in intron after 372 amino acids worth of coding, rt-pcr shows greatly reduced amount of message, but what transcript is made is 'trapped', creating a frameshift after the  first 372 amino acids|ZDB-PUB-040708-1|
+ZDB-FISH-040726-3|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040727-1|in exon (5' UTR, about 5 nt upstream of ATG)|ZDB-PUB-040708-1|
+ZDB-FISH-040727-2|in exon (5' UTR, about 180 nt upstream of ATG)|ZDB-PUB-040708-1|
+ZDB-FISH-040727-3|in intron, between an all 5'UTR exon and first coding exon|ZDB-PUB-040708-1|
+ZDB-FISH-040727-4|in intron, between an all 5'UTR exon and first coding exon|ZDB-PUB-040708-1|
+ZDB-FISH-040727-5|in exon (5' UTR, about 410 nt upstream of ATG)|ZDB-PUB-040708-1|
+ZDB-FISH-040727-6|in intron, well into gene  |ZDB-PUB-040708-1|
+ZDB-FISH-040727-7|in exon, about 170 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-040728-1|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040728-10|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040728-11|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040728-2|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040728-3|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040728-4|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040728-5|a bit upstream of the gene, or in an intron between an all 5' UTR exon and first coding exon (200 bp upstream of the ATG)|ZDB-PUB-040708-1|
+ZDB-FISH-040728-6|in exon, about 120 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-040728-7|in intron, well into gene  |ZDB-PUB-040708-1|
+ZDB-FISH-040728-8|in exon (5' UTR, about 60 nt upstream of ATG)|ZDB-PUB-040708-1|
+ZDB-FISH-040728-9|in exon, about 410 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-040803-1|in exon (5' UTR, about 75 nt upstream of ATG)|ZDB-PUB-040708-1|
+ZDB-FISH-040804-1|in intron, between an all 5'UTR exon and first coding exon|ZDB-PUB-040708-1|
+ZDB-FISH-040805-1|in 1st intron, just after ATG|ZDB-PUB-040708-1|
+ZDB-FISH-040805-2|in exon, about 620 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-040809-1|in intron, between an all 5'UTR exon and first coding exon|ZDB-PUB-040708-1|
+ZDB-FISH-040811-1|in 3' utr|ZDB-PUB-040708-1|
+ZDB-FISH-040823-1|in intron, between an all 5'UTR exon and first coding exon|ZDB-PUB-040708-1|
+ZDB-FISH-040824-1|in intron, well into gene  |ZDB-PUB-040708-1|
+ZDB-FISH-040824-2|in intron, between an all 5'UTR exon and first coding exon|ZDB-PUB-040708-1|
+ZDB-FISH-040824-3|in intron, well into gene  |ZDB-PUB-040708-1|
+ZDB-FISH-040824-4|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040824-5|in exon, about 945 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-040824-6|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040824-7|in 1st intron, just after ATG|ZDB-PUB-040708-1|
+ZDB-FISH-040824-8|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040825-10|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040825-6|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040825-7|in intron, between an all 5'UTR exon and first coding exon|ZDB-PUB-040708-1|
+ZDB-FISH-040825-8|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040825-9|in 1st intron, just after ATG|ZDB-PUB-040708-1|
+ZDB-FISH-040826-10|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040826-2|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040826-3|in exon, about 100 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-040826-4|in second intron (the intron following the exon which hi3174a has insert in)|ZDB-PUB-040708-1|
+ZDB-FISH-040826-5|in intron, between an all 5'UTR exon and first coding exon|ZDB-PUB-040708-1|
+ZDB-FISH-040826-6|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040826-7|in exon, about 35 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-040826-8|in intron, between an all 5'UTR exon and first coding exon, rt-pcr suggests this is a null|ZDB-PUB-040708-1|
+ZDB-FISH-040826-9|in exon (5' UTR, about 35 nt upstream of ATG)|ZDB-PUB-040708-1|
+ZDB-FISH-040827-2|in exon, about 50 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-040827-3|at splice donor of the second exon (183 nt past ATG)|ZDB-PUB-040708-1|
+ZDB-FISH-040827-4|in fourth intron|ZDB-PUB-040708-1|
+ZDB-FISH-040827-5|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040827-6|in intron, between an all 5'UTR exon and first coding exon|ZDB-PUB-040708-1|
+ZDB-FISH-040827-7|in exon (5' UTR, about 50 nt upstream of ATG)|ZDB-PUB-040708-1|
+ZDB-FISH-040827-8|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040830-10|in intron, between an all 5'UTR exon and first coding exon|ZDB-PUB-040708-1|
+ZDB-FISH-040830-11|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040830-2|in 1st post-ATG intron, rt-pcr suggests about 10-fold reduction in message|ZDB-PUB-040708-1|
+ZDB-FISH-040830-4|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040830-5|in 1st intron, just after ATG|ZDB-PUB-040708-1|
+ZDB-FISH-040830-6|in exon, about 115 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-040830-7|in exon (5' UTR, about 75 nt upstream of ATG)|ZDB-PUB-040708-1|
+ZDB-FISH-040830-8|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040830-9|in intron, well into gene  |ZDB-PUB-040708-1|
+ZDB-FISH-040831-1|in exon, about 30 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-040831-2|in intron, between an all 5'UTR exon and first coding exon|ZDB-PUB-040708-1|
+ZDB-FISH-040831-3|in exon, about 100 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-040831-4|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040831-5|in 1st post-ATG intron, rt-pcr suggests no message in mutants|ZDB-PUB-040708-1|
+ZDB-FISH-040831-6|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040907-1|in 1st intron, just after ATG|ZDB-PUB-040708-1|
+ZDB-FISH-040907-2|in exon (5' UTR, about 90 nt upstream of ATG)|ZDB-PUB-040708-1|
+ZDB-FISH-040907-3|in 1st intron, phenotype seems the same as hi1872 which is in exon (5'utr)|ZDB-PUB-040708-1|
+ZDB-FISH-040907-4|in 1st intron, phenotype seems the same as hi1872 which is in exon (5'utr)|ZDB-PUB-040708-1|
+ZDB-FISH-040907-5|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040908-1|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040908-2|in exon (5' UTR, about 160 nt upstream of ATG)|ZDB-PUB-040708-1|
+ZDB-FISH-040908-3|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040909-1|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040909-2|in intron, between an all 5'UTR exon and first coding exon, very near splice acceptor and ATG|ZDB-PUB-040708-1|
+ZDB-FISH-040910-1|in 1st intron, just after ATG|ZDB-PUB-040708-1|
+ZDB-FISH-040910-2|in exon, about 50 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-040910-3|in intron, between two all 5'UTR exons|ZDB-PUB-040708-1|
+ZDB-FISH-040913-1|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040913-2|about 90 bp upstream of start of gene|ZDB-PUB-040708-1|
+ZDB-FISH-040913-4|in 1st intron, just after ATG|ZDB-PUB-040708-1|
+ZDB-FISH-040914-1|in intron, between an all 5'UTR exon and first coding exon|ZDB-PUB-040708-1|
+ZDB-FISH-040914-2|in intron, between an all 5'UTR exon and first coding exon|ZDB-PUB-040708-1|
+ZDB-FISH-040914-3|in exon, about 550 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-040915-10|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040915-2|in 1st intron, just after ATG|ZDB-PUB-040708-1|
+ZDB-FISH-040915-3|in 1st intron, just after ATG|ZDB-PUB-040708-1|
+ZDB-FISH-040915-4|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040915-5|in intron, between an all 5'UTR exon and first coding exon|ZDB-PUB-040708-1|
+ZDB-FISH-040915-6|in exon, about 45 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-040915-7|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040915-8|about 270 bp upstream of start of gene|ZDB-PUB-040708-1|
+ZDB-FISH-040915-9|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040917-1|in intron, well into gene  |ZDB-PUB-040708-1|
+ZDB-FISH-040923-1|in exon, about 900 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-040923-2|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040924-1|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040924-2|in intron, between an all 5'UTR exon and first coding exon|ZDB-PUB-040708-1|
+ZDB-FISH-040924-3|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040924-4|in intron, between an all 5'UTR exon and first coding exon|ZDB-PUB-040708-1|
+ZDB-FISH-040924-5|in intron, between an all 5'UTR exon and first coding exon|ZDB-PUB-040708-1|
+ZDB-FISH-040924-6|in intron, between an all 5'UTR exon and first coding exon|ZDB-PUB-040708-1|
+ZDB-FISH-040924-7|in exon, about 50 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-040927-1|in intron, between an all 5'UTR exon and first coding exon|ZDB-PUB-040708-1|
+ZDB-FISH-040927-10|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040927-11|in intron, well into gene  |ZDB-PUB-040708-1|
+ZDB-FISH-040927-12|in 2nd intron|ZDB-PUB-040708-1|
+ZDB-FISH-040927-13|about 500 bp upstream of start of gene|ZDB-PUB-040708-1|
+ZDB-FISH-040927-14|in exon, about 45 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-040927-15|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040927-2|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040927-3|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040927-4|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040927-5|in exon, about 130 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-040927-6|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040927-7|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040927-8|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040927-9|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040929-1|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040929-2|in intron, between an all 5'UTR exon and first coding exon|ZDB-PUB-040708-1|
+ZDB-FISH-040929-3|in exon (5' UTR, about 55 nt upstream of ATG)|ZDB-PUB-040708-1|
+ZDB-FISH-040929-4|in exon, about 160 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-040929-5|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040929-6|in exon (5' UTR, about 10 nt upstream of ATG)|ZDB-PUB-040708-1|
+ZDB-FISH-040929-7|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040930-1|in intron, between an all 5'UTR exon and first coding exon|ZDB-PUB-040708-1|
+ZDB-FISH-040930-10|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040930-11|in exon (5' UTR, about 1300 nt upstream of ATG)|ZDB-PUB-040708-1|
+ZDB-FISH-040930-2|in 1st intron, just after ATG|ZDB-PUB-040708-1|
+ZDB-FISH-040930-3|about 15 bp upstream of start of gene|ZDB-PUB-040708-1|
+ZDB-FISH-040930-4|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040930-5|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040930-6|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040930-7|in third intron|ZDB-PUB-040708-1|
+ZDB-FISH-040930-8|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-040930-9|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-041001-1|in exon (5' UTR, about 10 nt upstream of ATG)|ZDB-PUB-040708-1|
+ZDB-FISH-041001-10|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-041001-11|about 200 bp upstream of start of gene|ZDB-PUB-040708-1|
+ZDB-FISH-041001-12|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-041001-13|in 2nd intron|ZDB-PUB-040708-1|
+ZDB-FISH-041001-14|less than 200 bp upstream of start of gene|ZDB-PUB-040708-1|
+ZDB-FISH-041001-2|in exon, about 10 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-041001-3|at splice acceptor of an exon which begins about 190 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-041001-4|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-041001-5|at splice donor of 1st exon, which is entirely 5' utr, about 10 nt before ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-041001-6|in 1st intron, just after ATG|ZDB-PUB-040708-1|
+ZDB-FISH-041001-7|in intron, between an all 5'UTR exon and first coding exon|ZDB-PUB-040708-1|
+ZDB-FISH-041001-8|in 1st intron, just after ATG|ZDB-PUB-040708-1|
+ZDB-FISH-041001-9|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-041005-1|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-041005-2|in exon, about 40 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-041005-3|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-041006-1|in exon, about 370 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-041006-2|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-041006-3|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-041006-4|in intron, between an all 5'UTR exon and first coding exon|ZDB-PUB-040708-1|
+ZDB-FISH-041007-1|in exon, about 25 nt past ATG in message, most severe phenotype, likely null|ZDB-PUB-040708-1|
+ZDB-FISH-041007-10|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-041007-11|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-041007-12|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-041007-13|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-041007-2|determined to be in locus by non-complementation to 1193 and 2557, likely hypomorph, less severe phenotype than hi2557|ZDB-PUB-040708-1|
+ZDB-FISH-041007-3|in 1st (very large) intron, likely hypomorph, less severe phenotype than hi2557|ZDB-PUB-040708-1|
+ZDB-FISH-041007-4|in 1st (very large) intron, likely hypomorph, less severe phenotype than hi2557|ZDB-PUB-040708-1|
+ZDB-FISH-041007-5|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-041007-6|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-041007-7|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-041007-8|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-041007-9|in exon (5' UTR, about 35 nt upstream of ATG)|ZDB-PUB-040708-1|
+ZDB-FISH-041008-1|in exon, at ATG |ZDB-PUB-040708-1|
+ZDB-FISH-041008-2|in exon (5' UTR, about 5 nt upstream of ATG)|ZDB-PUB-040708-1|
+ZDB-FISH-041008-3|in exon|ZDB-PUB-040708-1|
+ZDB-FISH-041008-4|in intron, between an all 5'UTR exon and first coding exon|ZDB-PUB-040708-1|
+ZDB-FISH-041011-1|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-041011-2|in exon, about 60 nt past ATG in message|ZDB-PUB-040708-1|
+ZDB-FISH-041011-3|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-041011-4|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-041011-5|in intron, well into gene  |ZDB-PUB-040708-1|
+ZDB-FISH-041011-6|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-041026-1|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-041026-2|in second (very large) intron|ZDB-PUB-040708-1|
+ZDB-FISH-041026-3|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-041027-1|in 1st post-ATG intron (after hi1518)|ZDB-PUB-040708-1|
+ZDB-FISH-041027-2|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-050126-3|A dominant mutation isolated from the F1 generation of ENU mutagenized fish.|ZDB-PUB-050603-10|
+ZDB-FISH-050126-4|A dominant mutation isolated from the F1 generation of ENU mutagenized fish.|ZDB-PUB-050603-10|
+ZDB-FISH-050126-5|A dominant mutation isolated from the F1 generation of ENU mutagenized fish.|ZDB-PUB-050603-10|
+ZDB-FISH-050216-3|Presumptive translocation.|ZDB-PUB-030129-1|
+ZDB-FISH-050224-1|Blagden, et al. (1997) tentatively concluded that <em>i2</em> was allelic with <em>boz<sup>m168</sup></em> based on complementation analysis.|ZDB-PUB-971103-2|
+ZDB-FISH-050524-1|Variable penetrance of phenotype suggests the possibility that multiple loci may be involved.|ZDB-PUB-050513-12|
+ZDB-FISH-050930-1|Segregation is Mendelian, but semi-dominant.|ZDB-PUB-030129-1|
+ZDB-FISH-050930-2|Segregation is Mendelian, but semi-dominant.|ZDB-PUB-030129-1|
+ZDB-FISH-970731-1|Deficiency (gamma-ray induced) also AC6.590(RAPD), I1.900 (RAPD). Mendelian.|ZDB-PUB-030129-1|
+ZDB-FISH-970731-32|Spontaneous out of <em>golden (gol-1)</em>.|ZDB-PUB-030129-1|
+ZDB-FISH-970731-9|Null allele (nonsense mutation in ORF).|ZDB-PUB-030129-1|
+ZDB-FISH-980202-1107|Itoh, et al. (2003) showed that <em>mib<sup>ta52b</sup></em> mutants have a point mutation in the <em>mib</em> gene resulting in an amino acid substitution M1013R in the prototypical RING domain.|ZDB-PUB-030210-2|
+ZDB-FISH-980202-128|Miller-Bertoglio, et al (1999) demonstrate that the <em>mercedes</em>, <em>short tail</em> and <em>ogon</em> mutations are allelic and rename them all as <em>ogon (ogo)</em>.|ZDB-PUB-990920-2|
+ZDB-FISH-980202-1287|Shafizadeh, et al (2002) showed through sequence analysis of the <em>epb41</em> gene that both <em>chablis</em> alleles, <em>tu242e</em> and <em>tu245</em>, were due to the same nonsense mutation as the <em>tu275 allele</em> of the <em>merlot</em> locus.|ZDB-PUB-021029-1|
+ZDB-FISH-980202-1299|Miller-Bertoglio, et al (1999) demonstrate that the <em>mercedes</em>, <em>short tail</em> and <em>ogon</em> mutations are allelic and rename them all as <em>ogon (ogo)</em>.|ZDB-PUB-990920-2|
+ZDB-FISH-980202-139|Formerly <em>golden-2</em>, renamed <em>brass (brs)</em> to avoid confusion with <em>golden-1</em>.|ZDB-PUB-970327-24|
+ZDB-FISH-980202-192|<em>nie<sup>m743</sup></em> was reported to not be a mutation in the <em>crx</em> gene.|ZDB-PUB-051207-16|
+ZDB-FISH-980202-199|Itoh, et al. (2003) showed that <em>mib<sup>m132</sup></em> mutants have a point mutation in the <em>mib</em> gene resulting in a premature stop codon: C785stop.  |ZDB-PUB-030210-2|
+ZDB-FISH-980202-206|The <em>b173</em> allele was originally identified as a translocation, however, after several generations this mutant allele began to segregate as a deletion with Mendelian frequency.|ZDB-PUB-030129-1|
+ZDB-FISH-980202-241|Itoh, et al. (2003) showed that <em>mib<sup>m178</sup></em> mutants have a point mutation in the <em>mib</em> gene resulting in a premature stop codon: G412stop.  |ZDB-PUB-030210-2|
+ZDB-FISH-980202-306|<em>mok<sup>m632</sup></em> was reported to not be a mutation in the <em>crx</em> gene.|ZDB-PUB-051207-16|
+ZDB-FISH-980202-505|Hets are recovered at low percentage (3-5%) of outcrosses, indicating some possible haploinsufficient aspect. |ZDB-PUB-030129-1|
+ZDB-FISH-980202-64|Fails to complement <em>tk48d</em>.|ZDB-PUB-030129-1|
+ZDB-FISH-980202-869|Complementation testing determined that <em>crocodile<sup>tw212d</sup></em> is allelic to <em>brudas<sup>m148</sup></em>.|ZDB-PUB-011220-1|
+ZDB-FISH-980202-964|Mutation type unknown, likely point mutation.|ZDB-PUB-030129-1|
+ZDB-FISH-980202-97|<em>helix<sup>b392</sup></em> is a strong allele of <em>chameleon</em>.|ZDB-PUB-030919-9|
+ZDB-FISH-980224-6|The origin of this mutation is not determined.|ZDB-PUB-030129-1|
+ZDB-FISH-980410-144|The <em>chordino</em> allele <em>din<sup>tt250</sup></em> has been reported to have a 104 bp deletion on the cDNA level (Schulte-Merker, et al., 1997). On the genomic level, these 104 bp are encoded by a distinct exon. <em>din<sup>tt250</sup></em> mutant genomic DNA shows a G -> A exchange in the splice donor site of the intron downstream of the 104 bp exon (TGAGCCGgtgattgt -> TGAGCCGatgattgt, capital letters exon, small letters intron), leading to false splicing and the reported deletion of the exon. Taking advantage of this point mutation, genotyping of the chordino mutation <em>din<sup>(tt250)</sup></em> was performed via allele-specific PCR in two separate PCR reactions, using either a wild-type or mutant-specific primer in antisense orientation. PCR conditions and primers used were: 94?C (3 min), 13 cycles of 94?C (30 sec), 66?C (45 sec), 72?C (1 min), 20 cycles of 94?C (30 sec), 46?C (45 sec), 72?C (1 min), followed by 72?C (10 min). Sense primer for both reactions CGATTCAAGACACAAATGCGGG, wild-type antisense primer CTGTGCACAACTCAC, mutant antisense primer ACTGTGCACAACTCAT.|ZDB-PUB-970812-6|
+ZDB-FISH-980410-184|Possible <em>piggytail</em> mutation.|ZDB-PUB-030129-1|
+ZDB-FISH-980410-199|Not found in 2 random outcrosses.|ZDB-PUB-030129-1|
+ZDB-FISH-980410-277|Possible <i>buffalo bill</i> mutation.|ZDB-PUB-030129-1|
+ZDB-FISH-980410-41|Not found in random outcrosses.|ZDB-PUB-030129-1|
+ZDB-FISH-980410-71|Possibly dominant or two mutations.|ZDB-PUB-030129-1|
+ZDB-FISH-990427-3|<em>loose ends</em> was found to be an allele of <em>deadly seven</em> by complementation.|ZDB-PUB-030129-1|
+ZDB-FISH-991005-24|Deletion.|ZDB-PUB-030129-1|
+ZDB-FISH-991005-29|Deletes the <em>leo</em> locus.|ZDB-PUB-030129-1|
+ZDB-FISH-991005-39|Deletes the <em>leo</em> locus.|ZDB-PUB-030129-1|
+ZDB-FISH-991111-48|Balanced translocation with <em>r3</em>.|ZDB-PUB-030129-1|
+ZDB-FISH-991130-127|Balanced translocation with <em>b246</em>. Non-Mendelian.|ZDB-PUB-030129-1|
+ZDB-FISH-991130-207|Deletion, non-Mendelian.|ZDB-PUB-030129-1|
+ZDB-FISH-991130-215|Balanced translocation.|ZDB-PUB-030129-1|
+ZDB-FISH-991130-36|Deletion (?).|ZDB-PUB-030129-1|
+ZDB-FISH-991201-1|Complex rearrangement.|ZDB-PUB-030129-1|
+ZDB-FISH-991201-105|Balanced translocation with l1.|ZDB-PUB-030129-1|
+ZDB-FISH-991201-110|Terminal translocation.|ZDB-PUB-030129-1|
+ZDB-FISH-991201-116|Balanced translocation with <em>b565</em>.|ZDB-PUB-030129-1|
+ZDB-FISH-991201-122|Balanced translocation with <em>c112</em>.|ZDB-PUB-030129-1|
+ZDB-FISH-991201-127|Balanced translocation with <em>b524</em>.|ZDB-PUB-030129-1|
+ZDB-FISH-991201-132|Balanced translocation (?).|ZDB-PUB-030129-1|
+ZDB-FISH-991201-137|Balanced translocation.|ZDB-PUB-030129-1|
+ZDB-FISH-991201-142|Deletion.|ZDB-PUB-961014-1111|
+ZDB-FISH-991201-21|Deletion.|ZDB-PUB-030129-1|
+ZDB-FISH-991201-34|Deletion.|ZDB-PUB-030129-1|
+ZDB-FISH-991201-50|Miller-Bertoglio, et al (1999) demonstrate that the <em>mercedes</em>, <em>short tail</em> and <em>ogon</em> mutations are allelic and rename them all as <em>ogon (ogo)</em>.|ZDB-PUB-990920-2|
+ZDB-FISH-991201-55|Translocation.|ZDB-PUB-030129-1|
+ZDB-FISH-991201-6|Complex rearrangement.|ZDB-PUB-030129-1|
+ZDB-FISH-991201-66|Balanced translocation with <em>c108</em>.|ZDB-PUB-030129-1|
+ZDB-FISH-991201-73|Balanced translocation with LG 12.|ZDB-PUB-030129-1|
+ZDB-FISH-991201-78|Balanced translocation with LG 12.|ZDB-PUB-030129-1|
+ZDB-FISH-991201-84|Balanced translocation with <em>b386</em>|ZDB-PUB-030129-1|
+ZDB-FISH-991201-89|Translocation (?).|ZDB-PUB-030129-1|
+ZDB-FISH-991201-94|Balanced translocation.|ZDB-PUB-030129-1|
+ZDB-FISH-991201-99|Balanced translocation (?).|ZDB-PUB-030129-1|
+ZDB-FISH-991208-16|<em>b305</em>, <em>b386</em>, <em>b409</em> <em>c4</em> and <em>c47</em> are overlapping deficiencies affecting the <em>cerebum (crm)</em> locus.|ZDB-PUB-970602-1|
+ZDB-FISH-991208-21|<em>b305</em> <em>b386</em>, <em>b409</em> <em>c4</em> and <em>c47</em> are overlapping deficiencies affecting the <em>cerebum (crm)</em> locus. Complex rearrangement.|ZDB-PUB-970602-1|
+ZDB-FISH-991208-26|<em>b305</em> <em>b386</em> <em>b409</em> <em>c4</em> and <em>c47</em> are overlapping deficiencies affecting the <em>cerebum (crm)</em> locus.|ZDB-PUB-970602-1|
+ZDB-FISH-991208-31|<em>b305</em> <em>b386</em> <em>b409</em> <em>c4</em> and <em>c47</em> are overlapping deficiencies affecting the <em>cerebum (crm)</em> locus. Balanced translocation with <em>c111</em>.|ZDB-PUB-970602-1|
+ZDB-FISH-991208-36|<em>b305</em> <em>b386</em><em>b409</em> <em>c4</em> and <em>c47</em> are overlapping deficiencies affecting the <em>cerebum (crm)</em> locus. Balanced translocation with <em>c113</em>.|ZDB-PUB-970602-1|
+ZDB-FISH-020726-1|in 1st post-ATG intron|ZDB-PUB-040708-1|
+ZDB-FISH-030409-1|<em>Df(LG23)wnt1<sup>w5</sup></em> is a deletion of the <em>wnt1</em> and <em>wnt10b</em> loci.|ZDB-PUB-030304-12|
