@@ -467,11 +467,13 @@ public class SearchBean
 			break;
 		    }
 		}
-                //searchResultURL starts with "/cgi-bin_hostname/", get rid of the hostname
-                int pos = searchResultURL.substring(1).indexOf("/");
-		searchResultURL = "/cgi-bin" +  searchResultURL.substring(pos+1);
-		categoryHtml = "<a href='" + searchResultURL + "'><b>" + category.getDescription() + "</b></a>";
-		
+                // if searchResultURL starts with "/cgi-bin_hostname/", 
+                // get rid of the hostname
+		if ( searchResultURL.indexOf("cgi-bin_") > 0 ) {
+		    int pos = searchResultURL.substring(1).indexOf("/");
+		    searchResultURL = "/cgi-bin" +  searchResultURL.substring(pos+1);
+		    categoryHtml = "<a href='" + searchResultURL + "'><b>" + category.getDescription() + "</b></a>";
+		}
 	    }	    
 	    else{
 		categoryHtml = category.getDescription() ;
