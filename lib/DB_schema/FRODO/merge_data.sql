@@ -26,6 +26,15 @@ insert into data_alias (dalias_zdb_id,
 			where line_id = zircflalt_line_id);
 
 
+create temp table tmp_tt (keyword varchar(100), 
+                               stage varchar(50),
+                               entity varchar(100),
+                               entity_zdb_id varchar(50),
+                               attribute varchar(50),
+                               value varchar(50))
+  with no log;
+
+
 insert into genotype (geno_zdb_id ,
 			geno_display_name,
 			geno_handle,
@@ -569,47 +578,6 @@ insert into zdb_active_data
     where not exists (select 'x'
 			from zdb_active_data
 			where zactvd_zdb_id = genox_zdb_id);
-
-insert into phenotype_old (pold_genox_zdb_id,
-				pold_submitter_comments)
-
-select genox_zdb_id, fish.comments
-  from genotype_experiment, experiment, fish
-  where exp_name = '_Standard'
-  and genox_exp_zdb_id = exp_zdb_id 
-  and genox_geno_zdb_id = zdb_id 
-  and fish.comments is not null 
-  and fish.comments != ''
-  and fish.comments not like '%rovisional record for newly registered locus/allele'
-  and fish.comments != 'This record has been created in support of data for which a publication has not specified an allele.'
-  and fish.comments not like 'discovered%';
-   
-update phenotype_old
-  set pold_segregation = (select segregation
-				from fish, genotype_experiment
-				where pold_genox_zdb_id = genox_zdb_id
-				and zdb_id = genox_geno_zdb_id
-				and segregation is not null
-				and segregation != '');
-
-insert into phenotype_old (pold_genox_zdb_id,
-				pold_segregation)
-  select genox_zdb_id, segregation
-    from fish, genotype_experiment
-	where genox_zdb_id not in (select pold_genox_zdb_id
-						from phenotype_old)
-	and zdb_id = genox_geno_zdb_id
-	and segregation is not null
-	and segregation != '' ;
-
-
-create temp table tmp_tt (keyword varchar(100), 
-				stage varchar(50),
-				entity varchar(100),
-				entity_zdb_id varchar(50),
-				attribute varchar(50),
-				value varchar(50))
- with no log;
 
 load from phenoTabbed 
   insert into tmp_tt;
@@ -1273,6 +1241,10 @@ update phenotype_anatomy
 select distinct pato_entity_zdb_id from phenotype_anatomy
   where pato_entity_zdb_id not in (Select anatitem_zdb_id from anatomy_item);
 
+
+--add marker_relationship types for transgenic constructs
+
+
 set constraints all immediate ;
 
 drop table tmp_pato_full_no_dups;
@@ -1325,7 +1297,6 @@ drop table fish_image_direction ;
 drop table fish_image_view ;
 
 drop table fish_image_preparation ;
-
 
 commit work;
 --rollback work ;

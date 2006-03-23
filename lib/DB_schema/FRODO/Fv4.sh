@@ -33,4 +33,7 @@ dbaccess $DBNAME fix_zdb_ids.sql;
 echo `/bin/date` '---last_constraints.sql ---';
 dbaccess $DBNAME last_constraints.sql;
 
+echo `/bin/date` '---update_comments.sql ---';
+dbaccess $DBNAME update_comments.sql;
+
 echo `/bin/date` ;

@@ -192,5 +192,61 @@ insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
   select pato_id, source_id
     from tmp_pato_attrib;
 
+--add feature_marker_relationship attributions b/c the interface does
+
+!echo "Need to fix column attribution and fmrel_zdb_id attributions before production" ;
+  
+insert into record_attribution (recattrib_data_zdb_id,
+				recattrib_sourcE_zdb_id)
+  select distinct fmrel_zdb_id,colattrib_source_zdb_id
+    from feature_marker_relationship,
+	column_attribution, zdb_replaced_data
+    where zrepld_old_zdb_id = colattrib_data_zdb_id
+    and zrepld_new_zdb_id = fmrel_mrkr_zdb_id
+    and colattrib_column_name = 'cloned_gene'
+    and not exists (select 'x' 
+			from record_attribution
+			where recattrib_data_zdb_id = fmrel_zdb_id
+			and colattrib_source_zdb_id = recattrib_source_zdb_id);
+
+--add any not attributed: mainly from loci w/o cloned genes.
+
+insert into record_attribution (recattrib_data_zdb_id,
+				recattrib_sourcE_zdb_id)
+  select fmrel_zdb_id, 'ZDB-PUB-020723-5'
+    from feature_marker_relationship
+    where not exists (select 'x' 
+			from record_attribution
+			where recattrib_data_zdb_id = fmrel_zdb_id);
+	
+--add genofeat attributions
+
+!echo "Need to fix column attribution and genofeat_zdb_id attributions before production" ;
+
+insert into record_attribution (recattrib_data_zdb_id,
+		recattrib_source_zdb_id)
+  select genofeat_zdb_id, colattrib_source_zdb_id
+    from genotype_feature,
+	column_attribution, feature
+    where feature_zdb_id = colattrib_data_zdb_id
+    and feature_zdb_id = genofeat_feature_zdb_id
+    and colattrib_column_name = 'protocol'
+    and not exists (select 'x' 
+			from record_attribution
+			where recattrib_data_zdb_id = genofeat_zdb_id
+			and colattrib_source_zdb_id = recattrib_source_zdb_id);
+
+--add any from genotype_feature that aren't in already...attribute
+--to curation pub.
+
+insert into record_attribution (recattrib_data_zdb_id,
+				recattrib_sourcE_zdb_id)
+  select genofeat_zdb_id, 'ZDB-PUB-020723-5'
+    from genotype_feature
+    where not exists (select 'x' 
+			from record_attribution
+			where recattrib_data_zdb_id = genofeat_zdb_id);
+	
+
 commit work ;
 --rollback work ;

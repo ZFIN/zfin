@@ -564,11 +564,11 @@ update expression_experiment
   where xpatex_genox_zdb_id  like 'ZDB-FEATEXP-%';
 
 
-update phenotype_old
-  set pold_genox_zdb_id = (select new_genox_id
-			from tmp_convert_featexp
-			where pold_genox_zdb_id = featexp_id) 
-  where pold_genox_zdb_id  like 'ZDB-FEATEXP-%'; 
+--update phenotype_old
+--  set pold_genox_zdb_id = (select new_genox_id
+--			from tmp_convert_featexp
+--			where pold_genox_zdb_id = featexp_id) 
+--  where pold_genox_zdb_id  like 'ZDB-FEATEXP-%'; 
 
 update phenotype_anatomy
   set pato_genox_zdb_id = (select new_genox_id
