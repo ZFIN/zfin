@@ -219,6 +219,12 @@ $latestDump = `/bin/ls -1t $dumpDir | head -1`;
 chop($latestDump);
 print(LOG "Using dump $dumpDir/$latestDump\n");
 
+# restart Tomcat to get rid of open session
+$status = system("restarttomcat.pl");
+if ($status) {
+    abort("restarttomcat.pl failed.\n");
+}
+
 # load it
 close(LOG) or abort("Cannot close log file $logFile.\n");
 $status = system("/private/ZfinLinks/Commons/bin/loaddb.pl $dbName $dumpDir/$latestDump >> $logFile 2>&1");
