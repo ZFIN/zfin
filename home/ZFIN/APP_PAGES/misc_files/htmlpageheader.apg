@@ -27,7 +27,7 @@ document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
            <div class="content" align="right" style="padding-right:10px;">
             <form method="GET" action="/SearchApp/category_search.jsp" name="quicksearch">
                  <nobr><a href="/SearchApp/syntax_help.jsp"><b>Site Search: </b></a><input type="text" name="query" size="25"></nobr>
-
+            </form>
            </div>
         
 	   <DIV class="header">
