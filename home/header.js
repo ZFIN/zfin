@@ -223,19 +223,19 @@ document.write("<table width=100% cellspacing=0 border=0 cellpadding=0 class=\"h
        document.write("</td>");
 	  document.write("<td align=\"center\" valign=\"bottom\" bgcolor=\"#FFFFFF\">");
 
-	document.write('	   <div align="right" style="padding-right:10px;">');
-	document.write('      <table width=100% border=0 height=20 cellspacing=0 cellpadding=0 align="right">');
-	document.write('        <tr> ');
-	document.write('          <TD class="content" align="right">');
-	document.write('            <DIV class="content">');
+	document.write('	   <div class="content" align="right" style="padding-right:10px;">');
+	//document.write('      <table width=100% border=0 height=20 cellspacing=0 cellpadding=0 align="right">');
+	//document.write('        <tr> ');
+	//document.write('          <TD class="content" align="right">');
+	//document.write('            <DIV class="content">');
 	document.write('               <form method="GET" action="/SearchApp/category_search.jsp" name="quicksearch">');
 	document.write('                 <nobr><a href="/SearchApp/syntax_help.jsp"><b>Site Search: </b></a><input id=qsearch type="text" name="query" size="25"></nobr>');
 
 	document.write('               </form>');
-	document.write('            </DIV>');
-	document.write('          </TD>');
-	document.write('        </tr>');
-	document.write('      </table>');
+	//document.write('            </DIV>');
+	//document.write('          </TD>');
+	//document.write('        </tr>');
+	//document.write('      </table>');
 	document.write('      </div>');
 	   document.write("<DIV class=\"header\">");
             document.write("<A HREF=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=search\".apg\"><font color=\"<!--|LINKBAR_COLOR|-->\">Anatomy</font></a>&nbsp;&nbsp;");

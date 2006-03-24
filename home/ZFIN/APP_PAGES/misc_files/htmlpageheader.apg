@@ -21,22 +21,14 @@ document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
      </td>
      <td>
 	    <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg"> <IMG src="/images/zfintxt.gif" border=0></a>
-       </td>
-	  <td align="center" valign="bottom" bgcolor="#FFFFFF">
+     </td>
+     <td align="center" valign="bottom" bgcolor="#FFFFFF">
 	  
-	   <div align="right" style="padding-right:10px;">
-      <table width=100% border=0 height=20 cellspacing=0 cellpadding=0 align="right">
-        <tr> 
-          <TD class="content" align="right">
-            <DIV class="content">
-               <form method="GET" action="/SearchApp/category_search.jsp" name="quicksearch">
+           <div class="content" align="right" style="padding-right:10px;">
+            <form method="GET" action="/SearchApp/category_search.jsp" name="quicksearch">
                  <nobr><a href="/SearchApp/syntax_help.jsp"><b>Site Search: </b></a><input type="text" name="query" size="25"></nobr>
-               </form>
-            </DIV>
-          </TD>
-        </tr>
-      </table>
-      </div>
+
+           </div>
         
 	   <DIV class="header">
             <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=search"><font color="<!--|LINKBAR_COLOR|-->">Anatomy</font></a>&nbsp;&nbsp;
