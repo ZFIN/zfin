@@ -49,6 +49,8 @@ TRIGGERS = \
 	fish_allele_update_trigger.sql \
 	fish_image_anatomy_insert_trigger.sql \
 	fish_image_anatomy_update_trigger.sql \
+	fish_image_stage_insert_trigger.sql \
+	fish_image_stage_update_trigger.sql \
 	fish_insert_trigger.sql \
 	fish_name_update_trigger.sql \
 	fish_pheno_keywords_update_trigger.sql \
