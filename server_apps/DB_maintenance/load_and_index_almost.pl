@@ -220,9 +220,9 @@ chop($latestDump);
 print(LOG "Using dump $dumpDir/$latestDump\n");
 
 # restart Tomcat to get rid of open session
-$status = system("restarttomcat.pl");
+$status = system("/private/ZfinLinks/Commons/bin/restarttomcat.pl");
 if ($status) {
-    abort("restarttomcat.pl failed.\n");
+    abort("/private/ZfinLinks/Commons/bin/restarttomcat.pl failed.\n");
 }
 
 # load it
