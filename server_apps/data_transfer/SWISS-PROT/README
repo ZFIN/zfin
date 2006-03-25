@@ -9,20 +9,22 @@ by Peiran, Aug 2004
 To test run Swiss-Prot at test enviornment, get a fresh load with ACCESSION_BANK table. 
     % loaddb.pl -e defline dbname inputdir
 
-at source dir
+Most of the time, we run the test at almost db which should always has last night's dump. Informix user is required.
+
+At source dir
 
 	%gmake runpre
 
-send allproblems.txt file to Ken and wait for a return of ok SP accession
+You would receive emails of the statistics, and allproblems.txt file. Forward those to Ken. Ken would send back some full records which are also ok records, and he would also send a list of ok SP accession. Run the following script to get the full records, and make sure Ken doesn't have any modification to the original records. 
 
 	% sp_match.pl <acc file name>
 
-send the ok2file to Ken for editing, mostly adding additional zfin lines. When ok2file is saved in the target dir, at source dir
+Create an ok2file to include these approved ok records. Save it in the target dir, back to source dir,
 
 	% gmake run
 ---------------------------------------
  
-To run Swiss-Prot at produciton, copy the ok2file from almost target dir to production target dir. At source dir
+To run Swiss-Prot at produciton, copy the ok2file from almost target dir to production target dir. Inform curators that Swiss-Prot is running, related data would be wiped off and reloaded. At source dir
 
 	% gmake run
 
