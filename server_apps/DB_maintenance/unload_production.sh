@@ -18,14 +18,6 @@ while ( -d $pth/$dirname )
 	set dirname=$y.$x
 end
 
-#send out a warning
-#mailx  -s"production unloaded as $dirname" clements@cs.uoregon.edu << END 
-#mailx  -s"production unloaded as $dirname" tomc@cs.uoregon.edu << END 
-#production is being being unloaded to 
-#$pth/$dirname 
-#at `date`.
-#END
-
 # A while back unloads from production to the NFS mounted development RAID
 # started taking a really long time, as much as 8 times longer than 
 # unloading the DB directly on to production disk and then copying it.
