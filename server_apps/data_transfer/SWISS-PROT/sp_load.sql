@@ -33,6 +33,14 @@ begin work;
 --!echo 'Load dr_dblink.unl'
 	load from dr_dblink.unl insert into db_link_with_dups;
 
+--!echo 'Update merged gene ids'
+	update db_link_with_dups
+	   set linked_recid = (select zrepld_new_zdb_id
+                                 from zdb_replaced_data
+                                where zrepld_old_zdb_id = linked_recid)
+         where linked_recid in (select zrepld_old_zdb_id 
+                                  from zdb_replaced_data); 
+
 	create temp table pre_db_link (
                linked_recid varchar(50),
                db_name varchar(50),
@@ -233,6 +241,13 @@ begin work;
 --!echo 'Load kd_spkeywd.unl'
 	load from kd_spkeywd.unl insert into sp_kwd;
 
+--!echo 'Update merged gene ids'
+	update sp_kwd
+	   set mrkr_zdb_id =  (select zrepld_new_zdb_id
+                                 from zdb_replaced_data
+                                where zrepld_old_zdb_id = mrkr_zdb_id)
+         where mrkr_zdb_id in (select zrepld_old_zdb_id 
+                                  from zdb_replaced_data); 
 
 	create temp table pre_marker_go_evidence (
                 mrkrgoev_zdb_id 	varchar(50), 
@@ -310,6 +325,13 @@ begin work;
 --!echo 'Load cc_external.unl'
         load from cc_external.unl delimiter '$' insert into temp_mrkr_cc;
 
+--!echo 'Update merged gene ids'
+	update temp_mrkr_cc
+	   set gene_zdb_id =  (select zrepld_new_zdb_id
+                                 from zdb_replaced_data
+                                where zrepld_old_zdb_id = gene_zdb_id)
+         where gene_zdb_id in (select zrepld_old_zdb_id 
+                                  from zdb_replaced_data); 
         create temp table pre_external_note(
                 p_extnote_zdb_id          varchar(50),
                 p_extnote_data_zdb_id     varchar(50), 
