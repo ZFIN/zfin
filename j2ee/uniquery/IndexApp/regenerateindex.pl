@@ -56,7 +56,7 @@ print ("$dateTime: Regenerating index.\n");
 # to discover APP pages which we can determine using SQL instead, faster.
 #
 # Filename generated: allAPPPagesList.txt
-$status = system("./makeStaticIndex.pl");
+$status = system("$indexAppDir/makeStaticIndex.pl");
 if ($status) {
     abort($status, "makeStaticIndex.pl failed.");
 }
