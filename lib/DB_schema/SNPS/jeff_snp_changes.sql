@@ -10,6 +10,24 @@ update foreign_db
   set fdb_db_name = 'dbSNP'
   where fdb_db_name = 'SNP' ;
 
+insert into foreign_db (fdb_db_name, fdb_db_query, fdb_url_suffix,
+				fdb_db_significance)
+  values ('SNPBLAST', 
+	  'http://www.ncbi.nlm.nih.gov/SNP/snp_blastByOrg.cgi',
+	   null,
+	  '8');
+	  
+insert into foreign_db_contains (fdbcont_zdb_id, 
+				 fdbcont_fdbdt_data_type,
+				 fdbcont_fdb_db_name,
+			 	 fdbcont_organism_common_name,
+				 fdbcont_fdbdt_super_type)
+  values (get_id('FDBCONT'),
+	   'Genomic',
+	   'SNPBLAST',
+	   'Zebrafish',
+	   'sequence');
+
 insert into marker_type_group_member (mtgrpmem_mrkr_type,
 	mtgrpmem_mrkr_type_group)
   values ('SNP','POLYMORPH');
