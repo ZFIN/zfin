@@ -70,8 +70,12 @@ an updated person record
   <?MIVAR COND="$(NXST,$ua_pers_first_name)" 
 	NAME=$ua_pers_first_name><?/MIVAR>
 
+  <?MIVAR NAME=$ua_pers_first_name>$(REPLACE,$ua_pers_first_name,','')<?/MIVAR>
+
   <?MIVAR COND="$(NXST,$ua_pers_last_name)" 
 	NAME=$ua_pers_last_name><?/MIVAR>
+
+  <?MIVAR NAME=$ua_pers_last_name>$(REPLACE,$ua_pers_last_name,','')<?/MIVAR>
 
   <?MIVAR COND="$(NXST,$ua_pers_middle_name_or_initial)" 
 	NAME=$ua_pers_middle_name_or_initial><?/MIVAR>
