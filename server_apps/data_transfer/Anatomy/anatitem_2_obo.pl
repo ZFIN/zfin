@@ -110,7 +110,7 @@ while (my @data = $anat_sth->fetchrow_array()) {
 	foreach my $anatSynonymAttr (&getSynonyms ($anatId)) {
 	    my ($anatSynonym,$anatSynAttrib) = split (/\|/,$anatSynonymAttr);
 	    $anatSynAttrib = $anatSynAttrib ? "ZFIN:$anatSynAttrib": "";
-	    print "synonym: \"$anatSynonym\" [$anatSynAttrib] \n";
+	    print "related_synonym: \"$anatSynonym\" [$anatSynAttrib] \n";
 	}
 
 	#--------------------------------
