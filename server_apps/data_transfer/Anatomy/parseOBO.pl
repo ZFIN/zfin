@@ -95,7 +95,7 @@ while (<>) {
 	    $termDef =~ s/\\n/ /g;   # replace '\n' to a space character
 	    next;
 	}
-	if ( /^synonym:\s+\"(.+)\"/ ) {
+	if ( /^related_synonym:\s+\"(.+)\"/ ) {
 	    push @termSynonym, &stringTrim($1);
 	    push @termSynonym, /\[ZFIN:(\S+)\]/ ? $1 : "";
 	    next;
