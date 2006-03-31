@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>Search ZFIN Tips</title>
+<title>ZFIN Site Search Tips</title>
 <style type="text/css">
 .help_body   { margin-left: 40px; margin-right: 40px; }
 </style>
@@ -8,16 +8,16 @@
 <script language="JavaScript" src="/header.js"></script>
 
 <div class="help_body">
-    <h2 align="center">Search ZFIN Tips</h2>
-    <p><b>Search ZFIN</b> provides a quick and easy glance at data available on the ZFIN web site.  Simply enter your topic of interest and press the enter key.  
-     <p>Results from <b>Search ZFIN</b> and advanced ZFIN search forms may vary.  Advanced ZFIN search forms query a particular class of data while <b>Search ZFIN</b> searches snapshots of all ZFIN pages for an occurrence of your query string.  
-     <p><b>Search ZFIN</b> does not take advantage of the data relationships and ontologies that are defined in the ZFIN database.  For a comprehensive search of expression or anatomical structures we recommend you use the <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg">Expression</a> or  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=search">Anatomy</a> search forms.  
+    <h2 align="center">ZFIN Site Search Tips</h2>
+    <p><b>Site Search</b> provides a quick and easy glance at data available on the ZFIN web site.  Simply enter your topic of interest and press the enter key.  
+     <p>Results from <b>Site Search</b> and advanced ZFIN search forms may vary.  Advanced ZFIN search forms query a particular class of data while <b>Site Search</b> searches snapshots of all ZFIN pages for an occurrence of your query string.  
+     <p><b>Site Search</b> does not take advantage of the data relationships and ontologies that are defined in the ZFIN database.  For a comprehensive search of expression or anatomical structures we recommend you use the <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg">Expression</a> or  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=search">Anatomy</a> search forms.  
      <p>If you do not find what you are looking for using this search, please be sure to try one of ZFIN's advanced search forms that may be accessed from the links in the top menu bar.</p>
     <br>
     <table width=90%>
       <tr>
 	<th> </th>
-        <th>Search ZFIN</th> 
+        <th>Site Search</th> 
         <th>Advanced search forms</th>
       </tr>
       <tr>
@@ -36,9 +36,9 @@
         <td align="center">No</td>
       </tr>
     </table>
-    <h3>Comparison of <b>Search ZFIN</b> and advanced ZFIN search forms</h3>
+    <h3>Comparison of <b>Site Search</b> and advanced ZFIN search forms</h3>
       <ul>
-      <li>Search for <b>eye</b> using <b>Search ZFIN</b>
+      <li>Search for <b>eye</b> using <b>Site Search</b>
       <ul>
 	<li> Results will include all occurrences of <b>eye</b> and words for which <b>eye</b> is a root such as:<b>eye</b>less, <b>eye</b>sight, <b>eye</b>cup.  
 	<li>Results are organized by categories that reflect the various data types in ZFIN. Categories include:
@@ -66,7 +66,7 @@
       </ul>
       <p>
     <h3>Wildcard Searches</h3>
-      <p><b>Search ZFIN</b> does not require use of wildcards.  Wildcard matches are performed automatically. To search for all hox genes, you may use the search: <b>hox</b><br>
+      <p><b>Site Search</b> does not require use of wildcards.  Wildcard matches are performed automatically. To search for all hox genes, you may use the search: <b>hox</b><br>
       Links to all members of the hox gene family (<b>hox</b>a1a, <b>hox</b>a2b, <b>hox</b>a3a, etc.)</p>
 
     <h3>Multiple Word Searches</h3>
@@ -76,7 +76,7 @@
       <p>Commonly occurring words such as <b>from</b>, <b>any</b>, <b>but</b>, <b>some</b>, <b>were</b>, <b>what</b> and <b>when</b> that are specified in a query are not included in search results.</p>
 
 
-<p><b>Search ZFIN</b> is powered by <a HREF="http://jakarta.apache.org/lucene/docs/index.html">Lucene</a>.</p>
+<p><b>Site Search</b> is powered by <a HREF="http://jakarta.apache.org/lucene/docs/index.html">Lucene</a>.</p>
 <p>&nbsp;</p>
 
 <script language="JavaScript" src="/footer.js"></script>
