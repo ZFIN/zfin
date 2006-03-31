@@ -362,6 +362,9 @@ insert into tmp_ao_updates (t_rec_id,t_field_name,t_new_value,t_old_value,t_when
                on u_anatitem_start_stg_zdb_id = sn.stg_zdb_id
          where anatitem_start_stg_zdb_id <> u_anatitem_start_stg_zdb_id;
 
+-- disable trigger is needed for some cases of both stages are to be changed
+set triggers anatomy_items_update_trigger disabled;
+
 update anatomy_item
    set anatitem_start_stg_zdb_id = (select u_anatitem_start_stg_zdb_id
 			  from updated_anatomy_item
@@ -369,6 +372,8 @@ update anatomy_item
   where anatitem_start_stg_zdb_id <> (select u_anatitem_start_stg_zdb_id
 			    from updated_anatomy_item
 			   where anatitem_zdb_id = u_anatitem_zdb_id);
+-- enable trigger
+set triggers anatomy_items_update_trigger enabled;
 
 !echo '== update anatitem_end_stg_zdb_id =='
 
