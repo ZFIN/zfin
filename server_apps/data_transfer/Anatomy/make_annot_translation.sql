@@ -36,6 +36,10 @@ update anatitem_stg_change_tmp
                               from anatomy_item);
 
 -- update start stage abbrev to stage id
+select * 
+  from anatitem_stg_change_tmp
+ where t_start_stg_zdb_id not in (select stg_abbrev from stage);
+
 update anatitem_stg_change_tmp 
    set t_start_stg_zdb_id = (select stg_zdb_id 
                                from stage 
@@ -44,6 +48,10 @@ update anatitem_stg_change_tmp
                                 from stage);
 
 -- update end stage abbrev to stage id
+select * 
+  from anatitem_stg_change_tmp
+ where t_end_stg_zdb_id not in (select stg_abbrev from stage);
+
 update anatitem_stg_change_tmp 
    set t_end_stg_zdb_id = (select stg_zdb_id 
                              from stage 
