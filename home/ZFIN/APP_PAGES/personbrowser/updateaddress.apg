@@ -129,10 +129,25 @@ entered into person_address.
 
      	<?MIVAR NAME=$ua_address>$1<?/MIVAR>
 
+	<?MISQL SQL="
+        	select lab.name, lab.zdb_id
+          	  from lab, int_person_lab, person
+           	  where person.zdb_id='$OID'
+		  and target_id = lab.zdb_id
+		  and source_id = person.zdb_id;">
+     	<?/MISQL>
+
+
+	<?MIVAR NAME=$ua_lab_name>$1<?/MIVAR>
+	<?MIVAR NAME=$ua_lab_zdb_id>$2<?/MIVAR>
+
    	<?MIVAR>
      	  <p><br>
-     	  <b>Current Name (old table): </b>$ua_pers_full_name
-     	  <p><align=center><b>First Name:</b>
+     	  <b>Current Name (old table): </b>$ua_pers_full_name<br>
+
+	  <b>Current Lab: $(IF,$(OR,$(EC,$ua_lab_zdb_id,$MI_NOVALUE),$(EC,$ua_lab_zdb_id,$MI_NULL)),Not in a Lab,</b><a href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->/?MIval=aa-labview.apg&OID=$ua_lab_zdb_id'>$ua_lab_name</a>)
+
+ 	  <p><align=center><b>First Name:</b>
      	      <INPUT TYPE=text name=ua_pers_first_name 
 			size=40 
 			value="$ua_pers_first_name">
@@ -235,9 +250,27 @@ entered into person_address.
      	<INPUT TYPE=text name=ua_pers_postal_code 
 			size=20 
 			value="$ua_pers_postal_code">
+	<p>
+
+	$(IF,$(OR,$(EC,$ua_lab_zdb_id,$MI_NOVALUE),$(EC,$ua_lab_zdb_id,$MI_NULL)),Not in a Lab,
+
+	<input type=checkbox id="uaUpdateAllAddresses"
+                      name="ua_updateAllAddresses" value="checked" 
+                      <?MIVAR> 
+			$(IF,$(AND,$(XST,$ua_updateAllAddresses),
+			$(EC,$ua_updateAllAddresses,checked)),checked="checked") 
+		      <?/MIVAR>  
+               <label for="uaUpdateAllAddresses" id="uaUpdateAllAddressesLabel">
+			 <b>Update All</b> Addresses for people in the
+			  <a href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->/?MIval=aa-labview.apg&OID=$ua_lab_zdb_id'>
+				$ua_lab_name
+			  </a>
+	       </label>
+	</b>)
      	<p>
-    	<table width=100%>
-     	<tr align=center><td>
+    	<table width=100%>    
+ 	<tr align=center><td>
+
      	<input type=submit 
  		name=process_address_update
 		value="SUBMIT this update">
@@ -257,6 +290,8 @@ entered into person_address.
      <?MIVAR>
      	<input type=hidden name=MIval Value=aa-process_address_update.apg>
      	<input type=hidden name=OID Value=$OID>
+     	<input type=hidden name=ua_lab_zdb_id Value=$ua_lab_zdb_id>
+	
      <?/MIVAR>
 
     </form>
