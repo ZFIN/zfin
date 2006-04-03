@@ -76,8 +76,12 @@ Execution:
      Check STDOUT for error. Fix anaotmy.obo.
      
    3) Test load 
-     At source dir, check out loadAO.sql, comment out "commit work",
-     and test load.
+     At TARGET dir, open loadAO.sql, COMMENT OUT "commit work", 
+     it would be a good idea to comment out the "verfiy XPAT annotation" 
+     part for the first couple test run of loadAO.sql. The reason is, 
+     we always find something that need the curators to make adjustment,
+     and this last verification sql executes for long, we don't need to wait 
+     for that when there were other error to fix first. 
 
 	% dbaccess <db_name> loadAO.sql
 
@@ -100,7 +104,8 @@ Execution:
      Excel won't put an ending "|", later script will add that.
    
    4) Generate                                            
-      o  stageKeyword.csv exported from last Thisse sending
+      o  stageKeyword.csv exported from Thisse template on FogBUGZ
+         case 362.
   
    5) Load test database (might skip)
       change loadAO.sql to "commit work", gmake.
@@ -109,7 +114,17 @@ Execution:
         
         % parseOBO.pl <path_to_anatomy.obo>
 
-	% loadMaster.sh          
+	% loadMaster.sh 
+ 
+        Note: At the end of loadMaster.sql we run check_annotation.sql 
+        again to catch any omissions. If anything outputed in 
+        annotationViolates.err, send to curators. 
+        Then either run the following function to adjust one by one:   
+ 
+	execute function xpat_annot_adjust(oldAnatZdbId, startStgZdbId, endStgZdbId, newAnatZdbId)
+   
+        Or create the AO_translation.unl file as the above format and run make_annot_translation.sql.
+
 
    6) Load Production
       At zfindb TARGET dir (has to be informix user), copy over
@@ -120,17 +135,13 @@ Execution:
 	% loadMaster.sh
 
       Currently for statistics, we make notes from the SQL output. When it gets regular and stable, we should automate this :
-          how many new terms
+          how many new cell terms
+          how many new anatomy terms  
           how many stages changed
           how many new definitions, updated definitions
           how many more relationships
 
-   Note: At the end of loadAO.sql we check annotation and so to have the translations on hand for loadMaster.sh. However, there could be omissions, thus we run check_annotation.sql again at the end of loadMaster.sh. If anything in annotationViolates.sql, send to curators. You could then either run the following function to adjust one by one:
 
-      execute function xpat_annot_adjust(oldAnatZdbId, startStgZdbId, endStgZdbId, newAnatZdbId)
-   
-   Or create the AO_translation.unl file as the above format and run make_annot_translation.sql.
-   
 
 Postload
 ---------
