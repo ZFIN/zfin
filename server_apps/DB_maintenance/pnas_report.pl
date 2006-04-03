@@ -167,8 +167,6 @@ while ($pnas_cur->fetch) {
 
     $figure_label =~ s/^\, //;
 
-    print $counter."\n";
-
     if ($counter ne 0) {
 	print REPORT "$zdb_id\n";
 	print REPORT "$title\n" ;
