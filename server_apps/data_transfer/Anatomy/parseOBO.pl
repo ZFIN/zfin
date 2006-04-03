@@ -69,6 +69,10 @@ while (<>) {
 	    push @termXrefs, $1; 
 	    next;
 	}
+	if (/^xref_analog:\s+(CL:\d+)/) {
+	    $termCL = $1;
+	    next;
+	}
 	if ( /^alt_id:\s+(\S+)/ ) {
 	    push @mergedTerms, $1; 
 	    next;
@@ -106,10 +110,7 @@ while (<>) {
 	    $termDef =~ s/\\n/ /g;   # replace '\n' to a space character
 	    next;
 	}
-	if (/^xref_unknown:\s+(CL:\d+)/) {
-	    $termCL = $1;
-	    next;
-	}
+
     } # end foreach term attribute processing
     
     # the xref_analog of the merged term would became a xref_analog line for the 
