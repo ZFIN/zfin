@@ -129,7 +129,13 @@ an updated person record
 	
   <?MIVAR COND="$(NXST,$ua_pers_postal_code)" 
 	NAME=$ua_pers_postal_code><?/MIVAR>
-	
+
+  <?MIVAR COND="$(NXST,$ua_lab_zdb_id)" 
+	NAME=$ua_lab_zdb_id><?/MIVAR>
+
+  <?MIVAR COND="$(NXST,$ua_lab_name)" 
+	NAME=$ua_lab_name><?/MIVAR>
+
   <?MISQL SQL="update person_address
   		set (pers_first_name,
 			pers_last_name,
@@ -160,9 +166,56 @@ an updated person record
 			 '$ua_pers_postal_code')
 		where pers_zdb_id = '$OID';"><?/MISQL>
 
+     <?MIVAR COND=$(AND,$(XST,$ua_updateAllAddresses),$(EC,$ua_updateAllAddresses,checked))>
+
+	<?MICOMMENT> if ua_lab_zdb_id = NoLab then the person is not
+		in a lab, if ua_lab_zdb_id != NoLab, then update
+		all addresses for all lab members when one lab member's
+		address is updated.  This assumes that zfinadmn has checked
+		addresses of lab members for similarity.  Mostly, we're 
+		looking to save zfinadmn time here.
+	<?/MICOMMENT>
+
+
+	<?MIVAR COND=$(NC,$ua_lab_zdb_id,NoLab)>
+	<?MIVAR>$ua_lab_zdb_id<?/MIVAR>
+
+
+		<?MISQL SQL="update person_address
+				set (pers_street1,
+					pers_street2,
+					pers_street3,
+					pers_street4,
+					pers_street5,
+					pers_street6,
+					pers_city,
+					pers_county,
+					pers_state_code,
+					pers_country_code,
+					pers_postal_code) = 
+					('$ua_pers_street1',
+			 		 '$ua_pers_street2',
+			 		 '$ua_pers_street3',
+			 		 '$ua_pers_street4',	 
+					 '$ua_pers_street5',
+			 		 '$ua_pers_street6',
+			 		 '$ua_pers_city',
+			 		 '$ua_pers_county',
+			 		 '$ua_pers_state_code',
+			 		 '$ua_pers_country_code',
+			 		 '$ua_pers_postal_code')
+		where exists (select 'x'
+				from int_person_lab
+				where pers_zdb_id = source_id
+				and target_id = '$ua_lab_zdb_id');"><?/MISQL>
+
+	<?/MIVAR> <?MICOMMENT> end if person is in a lab<?/MICOMMENT>
+
+     <?/MIVAR>
+
 
      <?MICOMMENT>add logic to display concantenated address on the persview.apg.
-            this can all go away when we can display the address from
+	this can all go away when we can display the address from
 	    person_address table, rather than person table<?/MICOMMENT>
 
      <?MIVAR COND=$(NC,$ua_pers_street1,$MI_NULL)>
@@ -201,7 +254,7 @@ an updated person record
 	<?MIVAR NAME=$ua_pers_postal_code>$ua_pers_postal_code<br><?/MIVAR>
      <?/MIVAR>
 
-     <?MICOMMNET> ua_concantenated_address just holds an address to put back 
+     <?MICOMMENT> ua_concantenated_address just holds an address to put back 
 	     in the old person table for display/consistancy issuse. 
      <?/MICOMMENT>
 
@@ -222,14 +275,44 @@ an updated person record
 		   where zdb_id = '$OID';"><?/MISQL>
 
      <?MISQL SQL="update person_address
-  		    set pers_old_address = '$ua_concantenated_address'
-		    where pers_zdb_id = '$OID';"><?/MISQL>
+  		       set pers_old_address = '$ua_concantenated_address'
+		    	   where pers_zdb_id = '$OID';">
+     <?/MISQL>
+ 
 
-     <?MIVAR>
+    <?MICOMMENT>
+	If the checkbox on updateaddress.apg is checked, the user
+	wants to update all the people's addresses for the entire
+	lab that the person of interest belongs to, so do these 
+	updates in addition to the one for the person itself
+    <?/MICOMMENT>
+ 
+    <?MIVAR COND=$(AND,$(XST,$ua_updateAllAddresses),$(EC,$ua_updateAllAddresses,checked))>
+
+        <?MISQL SQL="update person
+  	    	       set address = '$ua_concantenated_address'
+		           where exists (select 'x'
+					   from int_person_lab
+					   where zdb_id = source_id
+					   and target_id = '$ua_lab_zdb_id');">
+        <?/MISQL>
+
+        <?MISQL SQL="update person_address
+  		       set pers_old_address = '$ua_concantenated_address'
+		    	   where exists (select 'x'
+				 	   from int_person_lab
+					   where pers_zdb_id = source_id
+					   and target_id = '$ua_lab_zdb_id');">
+        <?/MISQL>
+ 
+     <?/MIVAR> 
+
+
+   <?MIVAR>
        <SCRIPT>
           window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$OID");
        </SCRIPT>
-     <?/MIVAR>
+     <?/MIVAR> 
 
    <?/MIBLOCK> <?MICOMMENT> ends authorization as root check <?/MICOMMENT>
 
