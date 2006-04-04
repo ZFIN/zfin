@@ -25,7 +25,10 @@ CONTEXT_DESCRIPTOR_PATH = $(CONTEXT_DIR)/$(CONTEXT_DESCRIPTOR)
 
 SUBDIRS = WEB-INF
 
-ENDEMICTARGETS_POST = $(CONTEXT_DESCRIPTOR_PATH)
+# Commend out coz the only effect that is identified so far is
+# that "gmake clobber" deletes the context descriptor file, which
+# we dont' want.
+#ENDEMICTARGETS_POST = $(CONTEXT_DESCRIPTOR_PATH)
 
 
 # ---------------  Production Rules  ------------------------------------
