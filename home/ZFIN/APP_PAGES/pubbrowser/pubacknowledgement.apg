@@ -35,6 +35,8 @@ EFFECTS
   Message: $MI_ERRORMSG <br>
 <?/MIERROR>
 
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
+
 <?MIBLOCK COND="$(AND,$(XST,$pubackn_pub_zdb_id),$(NC,$pubackn_pub_zdb_id,))">
 
 
