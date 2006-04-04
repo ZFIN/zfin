@@ -107,7 +107,7 @@ public class SearchBean
                     // reformulate query into the category-specific query, and rewrite the original query
                     fullQuery = addCategoryPrefixToQuery(category, query, analyzer);
                     query = query.rewrite(reader);
-                    System.err.println("categorizeSearchResults FullQuery = " + fullQuery.toString());     
+                    //System.err.println("categorizeSearchResults FullQuery = " + fullQuery.toString());     
 
                     // search the indexes and get all the hits
                     hits = searcher.search(fullQuery);
