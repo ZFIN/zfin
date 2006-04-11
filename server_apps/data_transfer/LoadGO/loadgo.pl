@@ -153,7 +153,7 @@ while( !( -e "goterm_parsed.unl")) {
 	    $count = 0;
 	    $retry = 0;
 	    print "retry parseGOobo.pl\n";
-	    system("parseGOobo.pl");
+	    system("parseGOobo.pl gene_ontology.obo");
 	}
 	else {
 	    print ("Failed to run parseGOobo.pl"); 
