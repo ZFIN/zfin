@@ -22,109 +22,49 @@ begin work;
 -- OUTPUT: unload files for secondary, obsolete, terms, and 
 --         reinstated go terms
 
-create temp table exist_record (
-                extrecd_zdb_id  varchar(50),
-                new_zdb_id      varchar(50)
-                );
-
-create temp table sec_dups 
-  (
-    sec_id varchar(50),
-    prim_id varchar(50),
-    term_name varchar(255),
-    onto varchar(30)
-  );
-
---load the secondary table with all secondary terms, regardless
---of duplication
-
-load from ontsecgoid.unl insert into sec_dups ;
-
-create temp table sec_oks 
-  (
-    sec_id varchar(50),
-    prim_id varchar(50),
-    term_name varchar(255),
-    onto varchar(30)
-  );
-
---insert only the distinct secondary terms
-
-insert into sec_oks
-  select distinct * from sec_dups ;
-
-create temp table sec_unload 
-  (
-    sec_id varchar(50),
-    prim_id varchar(50),
-    term_name varchar(255),
-    onto varchar(30)
-  );
-
---update the secondary terms in ZFIN
-
-update go_term
-  set goterm_is_secondary = 't'
-  where goterm_go_id in (select sec_id from sec_oks) ;
-
---create a table for unload to report 
-
-insert into sec_unload
-  select sec_id, prim_id, term_name, onto
-    from sec_oks
-    where sec_id in (select goterm_go_id from go_Term) ;
-
-create temp table sec_unload_report 
-  (
-    sec_id varchar(70),
-    prim_id varchar(70),
-    term_name varchar(255),
-    onto varchar(50),
-    go_marker	varchar(70),
-    mrkrgo_pub_zdb_id varchar(70)
-  );
-
-insert into sec_unload_report
-  select 'Now Secondary: GO:'||sec_id, 
-	'Now Primary: GO:'||prim_id, 
-	'Name: '||term_name, 
-	'Ontology: '||onto,
- 	'Gene: '||mrkrgoev_mrkr_zdb_id, 
-	'Pub: '||mrkrgoev_source_zdb_id
-    from sec_unload, go_term, marker_go_term_Evidence
-    where sec_id = goterm_go_id
-    and mrkrgoev_go_term_zdb_id = goterm_zdb_id ;
-
---these two unload files will be picked up by loadgo.pl, the script
---these two unload files will be picked up by loadgo.pl, the script
---running this sql script and sent to Doug H. and informix
-
-unload to 'newannotsecterms.unl' select * from sec_unload_report ;
-unload to 'newsecterms.unl' select * from sec_unload ;
-
---make a temp table that will contain records from ontology.unl 
---(this table will contain
---records that are already in zfindb.go_term at first load).
-
 create temp table goterm_onto_with_dups (
 		goterm_id	varchar(10),
 		goterm_name	varchar(255),
-		goterm_onto	varchar(30)
+		goterm_onto	varchar(30),
+		goterm_definition	lvarchar,
+		goterm_comment		lvarchar,
+		goterm_is_obsolete	varchar(10)
 	)with no log;
 
 --load the ontology file
 
-load from ontology.unl insert into goterm_onto_with_dups;
+load from goterm_parsed.unl insert into goterm_onto_with_dups;
 
---secondary id is first column in this file.
+select count(*) from goterm_onto_with_dups
+  where goterm_is_obsolete = 'true' ;
 
---create table that will weed out any duplications in primary terms 
---from the ontology.pl file (which is currently loaded into goterm_with_dups).
+update goterm_onto_with_dups
+  set goterm_onto = 'Molecular Function'
+  where goterm_onto = 'molecular_function' ;
+
+update goterm_onto_with_dups
+  set goterm_onto = 'Cellular Component'
+  where goterm_onto = 'cellular_component' ;
+
+update goterm_onto_with_dups
+  set goterm_onto = 'Biological Process'
+  where goterm_onto = 'biological_process' ;
+
+select distinct goterm_onto 
+  from goterm_onto_with_dups
+  where not exists (select 'x'
+			from go_ontology
+			where gont_ontology_name = goterm_onto);
+
+--create table that will weed out any duplications in primary terms.
 
 create temp table goterm_onto (		
 		goterm_id	varchar(10),
 		goterm_name	varchar(255),
-		goterm_onto	varchar(30)
+		goterm_onto	varchar(30),
+	        goterm_definition	lvarchar,
+		goterm_comment		lvarchar,
+		goterm_is_obsolete	varchar(10)
 	)with no log;
 
 create index goterm_onto_index 
@@ -137,12 +77,15 @@ create index goterm_name_index
   using btree 
   in idxdbs1 ;
 
-insert into goterm_onto
-  select distinct * 
+insert into goterm_onto (goterm_id, goterm_name, goterm_onto, goterm_definition,
+	goterm_comment, goterm_is_obsolete)
+  select distinct goterm_id, goterm_name, goterm_onto, goterm_definition,
+	goterm_comment, goterm_is_obsolete 
     from goterm_onto_with_dups;
 
---make a copy of goterm_onto (unique ontology.unl records) in gotermonto.unl
-unload to 'gotermonto.unl' select * from goterm_onto;
+select count(*)
+  from goterm_onto
+  where goterm_is_obsolete = 'true' ;
 
 --make a temp table that will eventually hold distinctly new (to ZFIN) 
 --go_Term ids from
@@ -170,54 +113,25 @@ create index goterm_id_index
 insert into new_goterm (goterm_id,
 			goterm_name,
 			goterm_onto,
-			goterm_is_obsolete, goterm_is_secondary) 
+			goterm_is_obsolete, 
+			goterm_is_secondary) 
   select distinct goterm_id,
 		  trim(goterm_name),
 		  goterm_onto,
-		  'f', 'f' 
+		  'f', 
+		  'f' 
   from goterm_onto 
-  where goterm_id not in (select goterm_go_id 
- 	    		    from go_term);
-
---give new goterms new zdb_ids.
+  where not exists (select 'x'
+ 	    		    from go_term
+			    where goterm_go_id = goterm_id);
 
 update new_goterm 
   set goterm_zdb_id = get_id("GOTERM");
 
---make double sure we only get new records, by making a table of
---go term ids that exist in zfindb.go_term and in new_goterm
---and deleting records from exist_Record where this match occurs.
-
-!echo exist record 
-
-insert into exist_record
-                select g.goterm_zdb_id, p.goterm_zdb_id
-                  from go_term g, new_goterm p
-                 where g.goterm_go_id = p.goterm_id;
-
-delete from new_goterm
-  where goterm_zdb_id in
-      (select new_zdb_id from exist_record)
-         and goterm_name in (select goterm_name from go_term);
 
 !echo 'Insert GOTERM into zdb_active_data'
 
 --insert into zdb_active_data select goterm_zdb_id from new_goterm;
-
-select goterm_name 
-  from new_goterm 
-  group by goterm_name 
-    having count(*) > 1 ;
-
-select goterm_id 
-  from new_goterm 
-  group by goterm_id 
-  having count(*) > 1 ;
-
-select goterm_name, goterm_onto 
-  from new_goterm 
-  group by goterm_name, goterm_onto 
-    having count(*) > 1 ;
 
 unload to 'updatedterms.unl'
   select n.goterm_name, g.goterm_name, g.goterm_go_id 
@@ -232,8 +146,9 @@ update go_term
   set goterm_name= (select goterm_name 
 		      from goterm_onto 
                       where goterm_id = goterm_go_id)
-  where goterm_go_id in (select goterm_id 
-		       from goterm_onto) ;
+  where exists (select 'x'
+		       from goterm_onto
+			where goterm_go_id = goterm_id) ;
 
 insert into zdb_active_data 
 	select goterm_zdb_id 
@@ -263,86 +178,23 @@ load from newterms.unl insert into go_term ;
 --check obsoleteness and update
 ---------------------------------------------
 
-create temp table tmp_obs (id	varchar(30),
-			name	varchar(255),
-			namespace varchar(40),
-			def lvarchar,
-			is_a varchar(255),
-			exact_synonym varchar(255),
-			alt_id varchar(30),
-			xref_analog varchar(100),
-			relationship varchar(20),
-			comment lvarchar,
-			is_obsolete varchar(10),
-			xref_unknown varchar(100),
-			subset varchar(100),
-			synonym varchar(255),
-			related_synonym varchar(255),
-			narrow_synonym varchar(255),
-			broad_synonym varchar(255),
-			use_term varchar(255),
-			is_transitive varchar(255)			  
-) with no log ;
+create temp table tmp_obs_no_dups (goterm_id varchar(30), 
+			 		goterm_name varchar(255), 
+			 		goterm_comment lvarchar)
+with no log ;
 
-load from godefs_parsed.unl 
-  insert into tmp_obs ;
+!echo "here are the obsolete terms" ;
 
-create temp table tmp_obs_GO (
-			   name	    varchar(255),
-			   id	    varchar(30),
-			   def	lvarchar,
-			   is_obsolete varchar(10),
-			   comment lvarchar
-) with no log ;
+insert into tmp_obs_no_dups (goterm_id, goterm_name, goterm_comment)
+  select distinct substr(goterm_id, -7), goterm_name, goterm_comment
+    from goterm_onto
+    where goterm_is_obsolete = 'true';
 
 
-insert into tmp_obs_GO (name, id, def, is_obsolete, comment)
-  select name, substr(id, -7), def, 't', comment
-    from tmp_obs 
-    where is_obsolete = 'true' ;
+select * from goterm_onto
+where goterm_id = 'GO:0000067';
 
-create temp table tmp_obs_no_dups (
-			   name	    varchar(255),
-			   id	    varchar(30),
-			   def	lvarchar,
-			   is_obsolete varchar(10),
-			   comment lvarchar
-) with no log ;
-
-
----------------------------------------------
---check for terms that have been reinstated and update
----------------------------------------------
-
-create temp table tmp_reinstate (
-			   name	    varchar(255),
-			   id	    varchar(30),
-			   def	lvarchar,
-			   is_obsolete boolean,
-			   comment lvarchar
-) with no log ;
-
-
-insert into tmp_reinstate (name, id, def, is_obsolete, comment)
-  select name, substr(id, -7), def, 'f', comment
-    from tmp_obs
-    where is_obsolete = '' or is_obsolete is null;
-
-create temp table tmp_reinstate_no_dups (
-			   name	    varchar(255),
-			   id	    varchar(30),
-			   def	lvarchar,
-			   is_obsolete boolean,
-			   comment lvarchar
-) with no log ;
-
-
-insert into tmp_obs_no_dups 
-  select distinct * from tmp_obs_GO ;
-
-insert into tmp_reinstate_no_dups
-  select distinct * from tmp_reinstate ;
-
+--figure out the new ones 
 
 create temp table tmp_new_obsoletes (counter integer,
 				     mrkr_name varchar(255), 
@@ -350,6 +202,16 @@ create temp table tmp_new_obsoletes (counter integer,
 				     comment lvarchar
 ) with no log ;
 
+update statistics high for table go_term;
+update statistics high for table marker_go_term_evidence;
+
+
+create index id_index 
+ on tmp_obs_no_dups (goterm_id) 
+ using btree in idxdbs3 ;
+
+update statistics high for table tmp_obs_no_dups;
+update statistics high for table marker ;
 
 insert into tmp_new_obsoletes (counter,
 				mrkr_name,
@@ -357,13 +219,17 @@ insert into tmp_new_obsoletes (counter,
 				comment)
   select count(*), 
 		mrkr_name, 
-		goterm_name, 
-		comment
-  from go_term, marker_go_term_evidence, marker, tmp_obs_no_dups
-  where goterm_go_id = id
+		go_term.goterm_name, 
+		goterm_comment
+  from go_term, 
+	marker_go_term_evidence, 
+	marker, 
+	tmp_obs_no_dups
+  where goterm_go_id = goterm_id
   and goterm_zdb_id = mrkrgoev_go_term_zdb_id
   and mrkr_zdb_id = mrkrgoev_mrkr_zdb_id 
-   group by mrkr_name, goterm_name, comment ;
+  and goterm_is_obsolete = 'f'
+   group by mrkr_name, go_term.goterm_name, goterm_comment ;
 
 
 unload to new_obsolete_terms.unl 
@@ -373,14 +239,58 @@ unload to new_obsolete_terms.unl
 	 "Use Term Comments: "||comment
 	from tmp_new_obsoletes ;
 
---set goterms to obsolete, and not-obsolete for reinstated
+---------------------------------------------
+--check for terms that have been reinstated and update
+---------------------------------------------
+
+create temp table tmp_reinstate (id  varchar(30),
+			   name	    varchar(255),
+			   def	lvarchar,
+			   comment lvarchar
+) with no log ;
+
+
+update statistics high for table go_term ;
+
+update statistics high for table goterm_onto ;
+
+
+insert into tmp_reinstate (name, id, def, comment)
+  select distinct go_term.goterm_name, 
+			goterm_go_id, 
+			goterm_definition, 
+			goterm_comment 
+    from go_term, goterm_onto
+    where go_term.goterm_is_obsolete = 't' 
+    and "GO:"||go_term.goterm_go_id = goterm_id
+    and (goterm_onto.goterm_is_obsolete = '' 
+		or goterm_onto.goterm_is_obsolete is null);
+
+create index tmpreinstate_index 
+  on tmp_reinstate(id)
+  using btree in idxdbs3 ;
+
+update statistics high for table tmp_reinstate ;
+
+create temp table tmp_reinstate_no_dups (
+			   id    varchar(30),
+			   name	    varchar(255),
+			   def	lvarchar,
+			   comment lvarchar
+) with no log ;
+
+insert into tmp_reinstate_no_dups
+  select distinct * from tmp_reinstate ;
 
 unload to reinstated_go_terms.txt
   select goterm_is_obsolete, goterm_name, goterm_go_id
   from go_term
-  where goterm_go_id in (select id 
-			  from tmp_reinstate_no_dups) 
+  where exists (select 'x'
+			  from tmp_reinstate_no_dups
+			  where "GO:"||goterm_go_id = id) 
   and goterm_is_obsolete = 't' ;
+
+--update the goterms and the reinstates
 
 update go_term
   set goterm_is_obsolete = 'f'
@@ -388,13 +298,116 @@ update go_term
 			  from tmp_reinstate_no_dups) 
   and goterm_is_obsolete = 't' ;
 
-
-
 update go_term
   set goterm_is_obsolete = 't'
-  where goterm_go_id in (select id 
+  where goterm_go_id in (select goterm_id 
 			  from tmp_obs_no_dups) 
   and goterm_is_obsolete = 'f' ;
+
+--secondary terms.
+
+
+create temp table sec_dups 
+  (
+    prim_id varchar(50),
+    sec_id varchar(50)
+  );
+
+load from goterm_secondary.unl
+  insert into sec_dups;
+
+create temp table sec_oks 
+  (
+    prim_id varchar(50),
+    sec_id varchar(50)
+  );
+
+--insert only the distinct secondary terms
+
+insert into sec_oks (sec_id, prim_id)
+  select distinct sec_id, prim_id
+    from sec_dups ;
+
+create temp table sec_unload 
+  (
+    prim_id varchar(50),
+    sec_id varchar(50)
+  );
+
+--update the secondary terms in ZFIN
+
+!echo "here is the secondary update for zfin" ;
+
+update go_term
+  set goterm_is_secondary = 't'
+  where goterm_go_id in (select sec_id from sec_oks) ;
+
+
+--create a table for unload to report 
+
+insert into sec_unload
+  select sec_id, prim_id
+    from sec_oks
+    where sec_id in (select goterm_go_id from go_Term) ;
+
+create temp table sec_unload_report 
+  (
+    sec_id varchar(70),
+    prim_id varchar(70),
+    term_name varchar(255),
+    onto varchar(50),
+    go_marker	varchar(70),
+    mrkrgo_pub_zdb_id varchar(70)
+  );
+
+insert into sec_unload_report
+  select 'Now Secondary: GO:'||sec_id, 
+	'Now Primary: GO:'||prim_id, 
+	'Name: '||goterm_name, 
+	'Ontology: '||goterm_ontology,
+ 	'Gene: '||mrkrgoev_mrkr_zdb_id, 
+	'Pub: '||mrkrgoev_source_zdb_id
+    from sec_unload, go_term, marker_go_term_Evidence
+    where sec_id = goterm_go_id
+    and mrkrgoev_go_term_zdb_id = goterm_zdb_id ;
+
+--deal with reinstated secondary terms
+
+create temp table tmp_not_secondary_any_more (nsec_id varchar(50),
+		nsec_goterm_zdb_id varchar(50),
+		nsec_goterm_name varchar(255))
+with no log ;
+
+insert into tmp_not_secondary_any_more
+  select goterm_go_id, goterm_zdb_id, goterm_name
+    from go_term
+    where not exists (Select 'x'
+			from sec_oks
+			where sec_id = "GO:"||goterm_go_id)
+    and goterm_is_Secondary = 't';
+
+unload to report_not_secondary_any_more.unl
+  select * from tmp_not_Secondary_any_more ;
+
+--do the update automatically, then tell doug with an email from loadgo.pl.
+update go_term
+ set goterm_is_secondary = 'f'
+ where exists (select 'x'
+		 from tmp_not_secondary_any_more
+		 where nsec_goterm_zdb_id = goterm_zdb_id)
+ and goterm_is_secondary = 't';
+
+--these two unload files will be picked up by loadgo.pl, the script
+--these two unload files will be picked up by loadgo.pl, the script
+--running this sql script and sent to Doug H. and informix
+
+unload to 'newannotsecterms.unl' select * from sec_unload_report ;
+unload to 'newsecterms.unl' select * from sec_unload ;
+
+--make a temp table that will contain records from ontology.unl 
+--(this table will contain
+--records that are already in zfindb.go_term at first load).
+
 
 ---This final check is to see if any obsolete or secondary GO terms
 ---have been added to the "with" field
@@ -405,6 +418,8 @@ create temp table obssec_with (
                 is_what    varchar(3)
                 );
 
+!echo "with obs terms" ;
+
 insert into obssec_with
       select distinct infgrmem_inferred_from, mrkr_name, 'obs' 
       from inference_group_member, go_term, marker, marker_go_term_evidence
@@ -412,6 +427,8 @@ insert into obssec_with
       and goterm_is_obsolete='t'
       and infgrmem_mrkrgoev_zdb_id=mrkrgoev_zdb_id
       and mrkrgoev_mrkr_zdb_id=mrkr_zdb_id;
+
+
 
 insert into obssec_with
       select distinct infgrmem_inferred_from, mrkr_name, 'sec' 
@@ -427,5 +444,6 @@ unload to obso_sec_with.unl
 	 "Go Term: "||go_id,
 	 "Flag : "||is_what
 	from obssec_with ;
+
 --rollback work;
 commit work;
