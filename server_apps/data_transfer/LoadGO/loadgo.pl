@@ -26,26 +26,21 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 $dir = "<!--|ROOT_PATH|-->/server_apps/data_transfer/LoadGO/";
 chdir "$dir";
-print "$dir" ;
+print "$dir"."\n" ;
 
 
 #-------------------SubRoutines-------------#
 
-sub downloadGOtermFiles () { # download the 3 flat files from GO
+sub downloadGOtermFiles () { # download the obo file from GO
 
-    system("/local/bin/wget -q http://www.geneontology.org/ontology/function.ontology -O function.ontology") and die "can not download function";
-    system("/local/bin/wget -q http://www.geneontology.org/ontology/process.ontology -O process.ontology") and die "can not download process";
-    system("/local/bin/wget -q http://www.geneontology.org/ontology/component.ontology -O component.ontology") and die "can not download component";
+    system("/local/bin/wget -q ftp://ftp.geneontology.org/go/ontology/gene_ontology.obo -O gene_ontology.obo") and die "can not download gene_ontology.obo";
 
 }
-
-#create output of new secondary and obsolete terms.
-
 sub sendLoadReport ($) { # send email on error or completion
     
-#. is concantenate
-#$_[x] means to take from the array of values passed to the fxn, the 
-#number indicated: $_[0] takes the first member.
+# . is concantenate
+# $_[x] means to take from the array of values passed to the fxn, the 
+# number indicated: $_[0] takes the first member.
     
     my $SUBJECT="Auto LoadGOTerms:".$_[0];
     my $MAILTO=$_[1];
@@ -140,52 +135,48 @@ system("/bin/rm -f *.txt") and die "can not rm txt" ;
 
 print "Download done\n";
 
-# parse_defs.r is a rebol script that fetch the OBO format GO
-# flat file and parses it.  We do this because eventually
-# we'll need to convert our parsing scripts for the flat files to 
-# parsing scripts for the OBO file, and because the obsolete terms are
-# easier to pull out of the OBO file.
+# parseGOobo.pl is a script that fetches the OBO format GO
+# flat file and parses it.
 
-system("parse_defs.r") and die "can not parse_defs" ;
+system("parseGOobo.pl gene_ontology.obo") and die "can not parse obo file" ;
 
 $count = 0;
 $retry = 1;
 
 # wait till parsing is finished
 
-while( !( -e "godefs_parsed.unl")) {
+while( !( -e "goterm_parsed.unl")) {
     
     $count++;
     if ($count > 10) {
 	if ($retry) {
 	    $count = 0;
 	    $retry = 0;
-	    print "retry parse_defs.r\n";
-	    system("parse_defs.r");
+	    print "retry parseGOobo.pl\n";
+	    system("parseGOobo.pl");
 	}
 	else {
-	    print ("Failed to run parse_defs.r"); 
+	    print ("Failed to run parseGOobo.pl"); 
 	    exit;
 	}
     }  
 }
 
 # open the parsed OBO file and make sure that there are more than 10 lines
-# written.  The OBO file should contain > 18K records as of Feb.2005.  Less
-# than 10 lines indicates a problem with the parser.
+# written.
 
-open(GODEFS_PARSED, "< ./godefs_parsed.unl") or die "can't open godefs_parsed";
+open(GODEFS_PARSED, "< ./goterm_parsed.unl") or die "can't open goterm_parsed.unl";
 
 $count++ while <GODEFS_PARSED>;
 
 if ($count < 10) {
 
-    &sendLoadReport("parse_defs.r failed","<!--|GO_EMAIL_CURATOR|-->", "./godefs_parsed.unl") ;
+    &sendLoadReport("parseGOobo.pl failed","<!--|GO_EMAIL_CURATOR|-->", "./goterm_parsed.unl") ;
 
 }
 else {	 
 
-    print "godefs_parsed is not null $count \n";
+    print "goterm_parsed is not null $count \n";
 
 }
 
@@ -195,35 +186,6 @@ $count = 0 ;
 close GODEFS_PARSED;
 
 print "parsing obo file done\n";
-
-print "parsing ontology.pl function.ontology process.ontology component.ontology\n";
-
-# test.pl is a perl script that does the actual parsing of the 3 ontology
-# flat files
-
-system ("test.pl function.ontology process.ontology component.ontology") and die "can not test.pl";
-
-$count = 0;
-$retry = 1;
-
-# wait till parsing is finished
-while( !( -e "ontology.unl")) {
-    
-    $count++;
-    if ($count > 10) {
-	if ($retry) {
-	    $count = 0;
-	    $retry = 0;
-	    print "retry ontology.pl\n";
-	    system("test.pl function.ontology process.ontology component.ontology") and die "can not test.pl second time";
-	}
-	else {
-	    print("Failed to run ontology.pl"); 
-	    exit;
-	}
-    }  
-}
-
 
 #------------Loading Database---------------------#
 
@@ -265,7 +227,9 @@ system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> loadgoterms.sql >out 
 
 &isEmptyFile ("obso_sec_with.unl","No obsolete or secondary terms in with field\n","<!--|GO_EMAIL_CURATOR|-->","Inferred from terms (With) terms now obsolete/secondary");
 
-&isEmptyFile ("reinstated_go_terms.txt","No new reinstated terms\n",
-	      "<!--|GO_EMAIL_CURATOR|-->","Terms now reinstated");
+&isEmptyFile ("reinstated_go_terms.txt","No new reinstated obsolete terms\n",
+	      "<!--|GO_EMAIL_CURATOR|-->","obsolete Terms now reinstated");
+
+&isEmptyFile ("report_not_secondary_any_more.unl","No new reinstated secondary terms\n","<!--|GO_EMAIL_CURATOR|-->","secondary Terms now reinstated");
 
 exit;
