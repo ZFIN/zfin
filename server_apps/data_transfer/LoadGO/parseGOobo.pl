@@ -26,14 +26,14 @@
 
 # set environment variables
 
-$ENV{"INFORMIXDIR"}="/private/apps/Informix/informix";
-$ENV{"INFORMIXSERVER"}="wanda";
-$ENV{"ONCONFIG"}="onconfig";
-$ENV{"INFORMIXSQLHOSTS"}="/private/apps/Informix/informix/etc/sqlhosts";
+$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
+$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
+$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
+$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 # make sure in the right directory
 
-$dir = "/research/zcentral/www_homes/hoover/server_apps/data_transfer/LoadGO/";
+$dir = "<!--|ROOT_PATH|-->/server_apps/data_transfer/LoadGO/";
 chdir "$dir";
 print "$dir"."\n" ;
 
