@@ -20,7 +20,7 @@
 <?MIBLOCK COND="$(NXST,$OID)">
   <p>
   ERROR -- something bad happened -- no OID passed in!
-<?/MIBLOCK> 
+<?/MIBLOCK>
 
 
 <?MIVAR NAME=$target_table>marker<?/MIVAR>
@@ -34,7 +34,7 @@
 	function Delete_listitem(item_name,item_id) {
 		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted&target_table=$target_table&caller=sequence.apg');
 	}
-	
+
 	function Delete_attrib(subattr,data_zdbId,source_zdbId,info) {
 		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&dataOID='+data_zdbId+'&attr='+subattr+'&attr_type=special-listitem&old_value='+source_zdbId+'&new_value=deleted&target_table=$target_table&info='+info+'&caller=sequence.apg');
 	}
@@ -80,13 +80,13 @@
       SELECT mrkr_name, mrkr_abbrev, mrkr_type
       FROM marker
       WHERE mrkr_zdb_id = '$OID';">
-      
+
       <?MIVAR NAME=mrkr_name>$1<?/MIVAR>
       <?MIVAR NAME=mrkr_abbrev>$2<?/MIVAR>
       <?MIVAR NAME=mrkr_type>$3<?/MIVAR>
-      
+
     <?/MISQL>
-    
+
       <?MIVAR NAME=link_backto_OID><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID$(IF,$(XST,$UPDATE),&UPDATE=1)">$(IF,$(!=,$(POSITION,$OID,GENE),0),<i>)$mrkr_abbrev$(IF,$(!=,$(POSITION,$OID,GENE),0),</i>)</a><?/MIVAR>
 
   <!-- if no match for the entered ID, display not found msg ------>
@@ -95,14 +95,14 @@
      <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
      <!-- look to see if replaced zdb_id -->
      <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-zdb_history.apg';">$1<?/MISQL>
-    
+
      <?MIBLOCK COND="$(NXST,$new_oid)">
        <form><center><font size=4>
-        <?MIVAR> <b>Requested ID not found on ZFIN.<?/MIVAR>      
+        <?MIVAR> <b>Requested ID not found on ZFIN.<?/MIVAR>
        </form>
-     <?/MIBLOCK>  
- 
- 
+     <?/MIBLOCK>
+
+
   <?MIELSE> <!-- if entered ID has an entry in ZFIN------------------------>
 
 
@@ -117,7 +117,7 @@
 
   <?MIBLOCK COND="$(NC,$AUTHORIZED,false)"> <!-- if authorized---------->
 
-    <!-- title for webpage history ----------->	
+    <!-- title for webpage history ----------->
     <?MIBLOCK COND="$(XST,$UPDATE)">
       <?MIVAR>
         <TITLE>Update Sequence info: $mrkr_abbrev</title>
@@ -127,39 +127,39 @@
         <TITLE>ZFIN: Sequence Details: $mrkr_abbrev</title>
       <?/MIVAR>
     <?/MIBLOCK>
- 
+
     <!-- page header display ----------------->
     <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
-    
+
 
     <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=$target_table') from webPages where ID='aa-data_mgr.apg';">$1
     <?/MISQL>
 
     <!------- Main page information ---------------->
 
-  
 
-    <!----------------------------------------------------------->       	   
+
+    <!----------------------------------------------------------->
     <p>
 
     <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
-    
+
     <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'BLAST';">
       <?MIVAR NAME=fdb_url_blast>$1<?/MIVAR>
     <?/MISQL>
-    
+
     <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'MEGA BLAST';">
       <?MIVAR NAME=fdb_url_mega_blast>$1<?/MIVAR>
-    <?/MISQL>    
-   
+    <?/MISQL>
+
     <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'PBLAST';">
       <?MIVAR NAME=fdb_url_pblast>$1<?/MIVAR>
-    <?/MISQL> 
-    
+    <?/MISQL>
+
     <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'BLAT';">
       <?MIVAR NAME=fdb_url_blat>$1<?/MIVAR>
-    <?/MISQL> 
-    
+    <?/MISQL>
+
     <?MIVAR name=left_tab>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?/MIVAR>
     <TABLE width=100%>
       <TR bgcolor=#cccccc>
@@ -170,13 +170,13 @@
     </TABLE>
 
     <?MIVAR COND="$(XST,$UPDATE)"> <!---- define button to go back------>
- 
+
       <form name=updater><!-- for buttons for update purpose----------->
       <center><font size=+2>
-      <input type=button 
-          value=" DONE UPDATING. Back to Viewing! " onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sequence.apg&OID=$OID')"> 
+      <input type=button
+          value=" DONE UPDATING. Back to Viewing! " onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sequence.apg&OID=$OID')">
       </font></center>
-   
+
     <?/MIVAR>
 
     <!------------- Title display------------>
@@ -187,32 +187,32 @@
           <?MIVAR>
             $(IF,$(=,$(POSITION,$OID,GENE),0),
               $mrkr_type: $link_backto_OID <br>,
-              
+
               Gene Name: <i>$mrkr_name</i><br>
               Gene Symbol: $link_backto_OID
               )
 
           <?/MIVAR>
-          </b></font>	
+          </b></font>
         </td>
         <td>
-          <?MIBLOCK COND="$(NXST,$UPDATE)"> <!---- define Input Welcome button---->     
+          <?MIBLOCK COND="$(NXST,$UPDATE)"> <!---- define Input Welcome button---->
             <table width="15%" align=right>
-             <tr> 
+             <tr>
              <?MIVAR>
-                  <form method=post 
-                        action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
+                  <form method=post
+                        action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"
                         target=comments>
                      <input type=hidden name=subject value="$mrkr_abbrev">
                      <input type=hidden name=marker_id value="$OID">
                      <input type=hidden name=MIval value="aa-your_input_welcome.apg">
                      <input type=hidden name=page_id value="$OID">
-                     <td><input type=submit value="Your Input Welcome"></td>         
+                     <td><input type=submit value="Your Input Welcome"></td>
                    </form>
               <?/MIVAR>
               </tr>
              </table>
-          <?/MIBLOCK> 
+          <?/MIBLOCK>
         </td>
       </tr>
     </table>
@@ -224,9 +224,9 @@
 <b>Add link to Seq DB:</b> &nbsp;
 DBname:<SELECT name=seqdb>
   <?MISQL SQL="
-    select distinct fdbcont_fdb_db_name 
+    select distinct fdbcont_fdb_db_name
       from foreign_db_contains
-     where fdbcont_fdbdt_super_type = 'sequence' 
+     where fdbcont_fdbdt_super_type = 'sequence'
        and fdbcont_fdb_db_name <> 'BLAST'
      order by fdbcont_fdb_db_name;">
     <option value="$1" $(IF,$(EC,$1,GenBank),SELECTED)>$1</option>
@@ -234,14 +234,14 @@ DBname:<SELECT name=seqdb>
 </SELECT>
 Type:<SELECT name=seq_super>
   <?MISQL SQL="
-    select distinct fdbdt_data_type, fdbdt_super_type 
+    select distinct fdbdt_data_type, fdbdt_super_type
       from foreign_db_data_type
-     where fdbdt_super_type = 'sequence' 
+     where fdbdt_super_type = 'sequence'
      order by fdbdt_data_type;">
     <option value="$2&fdbcont_data=$1" $(IF,$(EC,$1,cDNA),SELECTED)>$1</option>
   <?/MISQL>
 </SELECT>
-Accession:<input type=text size=15 name=seq_acc> 
+Accession:<input type=text size=15 name=seq_acc>
 <input type=button value="Add it!" onClick=new_seqnum();>
 
 <br>
@@ -250,7 +250,7 @@ AccNum:<SELECT name=upd_seq_zdb>
   <?MISQL SQL="
     select distinct fdbcont_fdb_db_name, dblink_acc_num_display, dblink_zdb_id
       from foreign_db_contains, db_link
-     where fdbcont_fdbdt_super_type = 'sequence' 
+     where fdbcont_fdbdt_super_type = 'sequence'
        and fdbcont_fdb_db_name <> 'BLAST'
        and fdbcont_zdb_id = dblink_fdbcont_zdb_id
        and dblink_linked_recid = '$OID'
@@ -262,7 +262,7 @@ Type:<SELECT name=upd_seq_type>
   <?MISQL SQL="
     select distinct fdbdt_data_type
       from foreign_db_data_type
-     where fdbdt_super_type = 'sequence' 
+     where fdbdt_super_type = 'sequence'
      order by fdbdt_data_type;">
     <option value="$1" $(IF,$(EC,$1,cDNA),SELECTED)>$1</option>
   <?/MISQL>
@@ -273,7 +273,7 @@ Length: <input type=text size=10 name=upd_seq_length>
 <br>
 <b>Add reference to Sequence:</b> &nbsp;
 Accession: <input type=text size=15 name=attrib_seq_acc>
-Reference: <input type=text size=15 name=attrib_seq_pubid> 
+Reference: <input type=text size=15 name=attrib_seq_pubid>
 <input type=button value="Add it!" onClick=new_attrib_seq();>
 
 <?MIVAR NAME=$lastitem><?/MIVAR>
@@ -286,7 +286,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
   where dblink_linked_recid = '$OID'
     and dblink_fdbcont_zdb_id = fdbcont_zdb_id
     and fdbcont_fdbdt_super_type = 'sequence'
-  ;">    
+  ;">
 <?/MISQL>
 <?MIVAR NAME=vSequence_count>$1<?/MIVAR>
 
@@ -302,8 +302,8 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
     </TR>
 
       <?MISQL SQL="
-        select dblink_length, fdbcont_fdbdt_data_type, fdb_db_name, fdb_db_query || dblink_acc_num || 
-       (case fdb_url_suffix when NULL then '' else fdb_url_suffix end), 
+        select dblink_length, fdbcont_fdbdt_data_type, fdb_db_name, fdb_db_query || dblink_acc_num ||
+       (case fdb_url_suffix when NULL then '' else fdb_url_suffix end),
                dblink_acc_num_display, dblink_zdb_id, fdb_db_significance, fdbdt_display_order
         from db_link, foreign_DB, foreign_db_contains, foreign_db_data_type
         where dblink_linked_recid = '$OID'
@@ -314,29 +314,29 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
           and fdbcont_fdbdt_super_type = fdbdt_super_type
           and fdbcont_fdb_db_name != 'BLAST'
         order by 8,7,1 desc,3,5
-      ;"> 
+      ;">
 
         <?MIVAR NAME=data_type>$2<?/MIVAR>
         <?MIVAR NAME=dblink_length>$(IF,$(EC,$1,NULL),,$1)<?/MIVAR>
         <?MIVAR NAME=db_name>$3<?/MIVAR>
         <?MIVAR NAME=link_url>$4<?/MIVAR>
         <?MIVAR NAME=acc_num>$5<?/MIVAR>
-        <?MIVAR NAME=dataId>$6<?/MIVAR> 
+        <?MIVAR NAME=dataId>$6<?/MIVAR>
 
         <?MIVAR>
         <?MICOMMENT>
-	  ** 07/24/03 for some weird reasons, the column made up to distinguish 
-	  the source of GenBank accession has to be a one-character string 
-	  to behave right in EC operation. 
+	  ** 07/24/03 for some weird reasons, the column made up to distinguish
+	  the source of GenBank accession has to be a one-character string
+	  to behave right in EC operation.
 	<?/MICOMMENT>
-         
+
         <TR bgcolor=$row_color>
-          
+
           <TD>
             $(IF,$(AND,$(XST,$pre_data_type),$(EC,$data_type,$pre_data_type)),&nbsp;,$data_type)
           </TD>
           <TD>
-            $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$db_name:$acc_num)"')>") 
+            $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$db_name:$acc_num)"')>")
             <A HREF="$link_url">$db_name:$acc_num</A><?/MIVAR>
             <?MISQL SQL="select WebExplode(object,'dataId=$dataId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
           </TD>
@@ -344,7 +344,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
             <nobr>
             <?MIVAR>$dblink_length<?/MIVAR>
             <?MIBLOCK COND=$(AND,$(NC,$dblink_length,),$(EC,$data_type,Polypeptide))> aa
-            <?MIELSE  COND=$(AND,$(NC,$dblink_length,),$(OR,$(EC,$data_type,cDNA),$(EC,$data_type,Genomic)))> bp
+            <?MIELSE  COND=$(AND,$(NC,$dblink_length,),$(OR,$(EC,$data_type,cDNA),$(EC,$data_type,Genomic),$(OR,$(EC,$data_type,Vega Transcript)))> bp
             <?/MIBLOCK>
             </nobr>
           </TD>
@@ -352,24 +352,24 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
              <?MISQL SQL="select WebExplode(object,'seqt_acc=$acc_num&seqt_acc_len=$dblink_length&seqt_acc_type=$data_type&seqt_acc_db=$db_name') from webPages where ID='aa-sequence_tools.apg';">$1<?/MISQL>
           </TD>
         </TR>
-        
-        <?MIVAR NAME=pre_data_type>$data_type<?/MIVAR>  
+
+        <?MIVAR NAME=pre_data_type>$data_type<?/MIVAR>
 
         <?MIBLOCK COND="$(EC,$row_color,$highlight)">
           <?MIVAR NAME=row_color>$highlight<?/MIVAR>
         <?MIELSE>
           <?MIVAR NAME=row_color>$highlight<?/MIVAR>
         <?/MIBLOCK>
-        
+
       <?/MISQL>
 
       </TABLE>
 
 <?/MIBLOCK>
 
-<?MICOMMENT> 
-  Unset the Update variable. 
-  Relationship data is updated from the associated data page. 
+<?MICOMMENT>
+  Unset the Update variable.
+  Relationship data is updated from the associated data page.
 <?/MICOMMENT>
 <?MIVAR>$(UNSETVAR,$UPDATE)<?/MIVAR>
 
@@ -378,7 +378,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 <?MISQL SQL="select clone_mrkr_zdb_id from clone where clone_is_chimeric = 't';">
   $(VECAPPEND,$chimeric_clone_list,$1)
 <?/MISQL>
-<?MIVAR NAME=chimeric_clone_list>$(SEPARATE,$chimeric_clone_list,"','")<?/MIVAR>  
+<?MIVAR NAME=chimeric_clone_list>$(SEPARATE,$chimeric_clone_list,"','")<?/MIVAR>
 
 <?MICOMMENT> -------- ENCODES -------- <?/MICOMMENT>
 
@@ -388,7 +388,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
         from marker_relationship, marker, foreign_db_contains, marker_types, db_link
         where mrel_mrkr_1_zdb_id = '$OID'
           and mrel_type in ('gene encodes small segment',
-                            'gene contains small segment', 
+                            'gene contains small segment',
 	                    'clone contains small segment')
           and mrel_mrkr_2_zdb_id = mrkr_zdb_id
           and mrkr_type = marker_type
@@ -398,7 +398,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
           and mrkr_zdb_id not in ('$chimeric_clone_list')
         order by mrkrtype_significance, mrkrtype_type_display desc, mrkr_abbrev
       ;">
-      
+
         <?MIVAR COND=$(NXST,$encodes_mrkr_abbrev)>
           <p>
           <b>$link_backto_OID Encodes:</b>
@@ -411,29 +411,29 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
               <TD align=center width=20%><A HREF="javascript:start_help()"><b>Analysis</b></A></TD>
             </TR>
         <?/MIVAR>
-        
-        <?MIVAR NAME=encodes_zdb_id>$1<?/MIVAR>     
-        <?MIVAR NAME=encodes_mrkr_abbrev>$2<?/MIVAR> 
-        <?MIVAR NAME=encodes_mrkr_type>$3<?/MIVAR>   
+
+        <?MIVAR NAME=encodes_zdb_id>$1<?/MIVAR>
+        <?MIVAR NAME=encodes_mrkr_abbrev>$2<?/MIVAR>
+        <?MIVAR NAME=encodes_mrkr_type>$3<?/MIVAR>
         <?MIVAR NAME=encodes_mrel_zdb_id>$5<?/MIVAR>
-        
+
         <TR>
           <TD>
-            [$encodes_mrkr_type] 
+            [$encodes_mrkr_type]
             <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$encodes_zdb_id"
             >$encodes_mrkr_abbrev</A>
             <?MISQL SQL="
-              select WebExplode(object,'dataId=$encodes_mrel_zdb_id&type=recattrib') 
-              from webPages 
+              select WebExplode(object,'dataId=$encodes_mrel_zdb_id&type=recattrib')
+              from webPages
               where ID='aa-miniref_display.apg';">
               $1
-            <?/MISQL>        
-          </TD>  
-          
-          <?MIVAR NAME=previous_data_type><?/MIVAR>        
-      
+            <?/MISQL>
+          </TD>
+
+          <?MIVAR NAME=previous_data_type><?/MIVAR>
+
       <?MISQL SQL="
-        select fdbcont_fdbdt_data_type, dblink_length, fdbcont_fdb_db_name, 
+        select fdbcont_fdbdt_data_type, dblink_length, fdbcont_fdb_db_name,
                fdb_db_query || dblink_acc_num || (case fdb_url_suffix when NULL then '' else fdb_url_suffix end),
                dblink_acc_num_display, dblink_zdb_id,
                fdb_db_significance, fdbdt_display_order
@@ -447,26 +447,26 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
           and fdb_db_name != 'BLAST'
           order by fdbdt_display_order, fdbcont_fdbdt_data_type, dblink_length desc, fdb_db_significance
       ;">
-  
+
         <?MIVAR NAME=data_type>$1<?/MIVAR>
         <?MIVAR NAME=dblink_length>$(IF,$(EC,$2,NULL),,$2)<?/MIVAR>
         <?MIVAR NAME=db_name>$3<?/MIVAR>
         <?MIVAR NAME=link_url>$4<?/MIVAR>
         <?MIVAR NAME=acc_num>$5<?/MIVAR>
-        <?MIVAR NAME=dataId>$6<?/MIVAR> 
+        <?MIVAR NAME=dataId>$6<?/MIVAR>
 
           <?MIBLOCK COND=$(XST,$encodes_data_type)>
             <TR><TD>&nbsp;</TD>
           <?/MIBLOCK>
-          
+
           <TD>
             $(IF,$(AND,$(XST,$encodes_data_type),$(EC,$data_type,$encodes_data_type)),&nbsp;,$data_type)
           </TD>
           <TD>
             <A HREF="$link_url">$db_name:$acc_num</A>
             <?MISQL SQL="
-              select WebExplode(object,'dataId=$dataId&type=recattrib') 
-              from webPages 
+              select WebExplode(object,'dataId=$dataId&type=recattrib')
+              from webPages
               where ID='aa-miniref_display.apg';">
               $1
             <?/MISQL>
@@ -485,16 +485,16 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
              <?MISQL SQL="select WebExplode(object,'seqt_acc=$acc_num&seqt_acc_type=$data_type&seqt_acc_db=$db_name') from webPages where ID='aa-sequence_tools.apg';">$1<?/MISQL>
           </TD>
         </TR>
-        
+
         <?MIVAR NAME=encodes_data_type>$data_type<?/MIVAR>
 
       <?/MISQL>
 
-      
+
       $(UNSETVAR,$encodes_data_type)
 
       <?/MISQL>
-   
+
       <?MIVAR COND="$(XST,$encodes_zdb_id)"></TABLE><?/MIVAR>
 
 
@@ -513,7 +513,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
           and mrkr_zdb_id not in ('$chimeric_clone_list')
         order by mrkrtype_significance, mrkrtype_type_display desc, mrkr_abbrev
       ;">
-      
+
         <?MIVAR COND=$(NXST,$contains_mrkr_abbrev)>
           <p>
           <b>$link_backto_OID Contained in:</b><br>
@@ -526,30 +526,30 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
               <TD align=center width=20%><A HREF="javascript:start_help()"><b>Analysis</b></A></TD>
             </TR>
         <?/MIVAR>
-        
+
         <?MIVAR NAME=contains_zdb_id>$1<?/MIVAR>
         <?MIVAR NAME=contains_mrkr_abbrev>$2<?/MIVAR>
         <?MIVAR NAME=contains_mrkr_type>$3<?/MIVAR>
         <?MIVAR NAME=contains_mrel_zdb_id>$5<?/MIVAR>
-        
+
         <TR>
           <TD>
             [$contains_mrkr_type]
             <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$contains_zdb_id"
             > $contains_mrkr_abbrev</A>
             <?MISQL SQL="
-              select WebExplode(object,'dataId=$contains_mrel_zdb_id&type=recattrib') 
-              from webPages 
+              select WebExplode(object,'dataId=$contains_mrel_zdb_id&type=recattrib')
+              from webPages
               where ID='aa-miniref_display.apg';">
               $1
-            <?/MISQL>        
+            <?/MISQL>
           </TD>
-          
+
           <?MIVAR NAME=previous_data_type><?/MIVAR>
-      
+
       <?MISQL SQL="
-        select fdbcont_fdbdt_data_type, dblink_length, fdbcont_fdb_db_name, 
-               fdb_db_query || dblink_acc_num || (case fdb_url_suffix when NULL then '' else fdb_url_suffix end), 
+        select fdbcont_fdbdt_data_type, dblink_length, fdbcont_fdb_db_name,
+               fdb_db_query || dblink_acc_num || (case fdb_url_suffix when NULL then '' else fdb_url_suffix end),
                dblink_acc_num_display, dblink_zdb_id,
                fdb_db_significance, fdbdt_display_order
         from db_link, foreign_DB, foreign_db_contains, foreign_db_data_type
@@ -562,13 +562,13 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
           and fdb_db_name != 'BLAST'
           order by fdbdt_display_order, fdbcont_fdbdt_data_type, dblink_length desc, fdb_db_significance
       ;">
-  
+
         <?MIVAR NAME=data_type>$1<?/MIVAR>
         <?MIVAR NAME=dblink_length>$(IF,$(EC,$2,NULL),,$2)<?/MIVAR>
         <?MIVAR NAME=db_name>$3<?/MIVAR>
         <?MIVAR NAME=link_url>$4<?/MIVAR>
         <?MIVAR NAME=acc_num>$5<?/MIVAR>
-        <?MIVAR NAME=dataId>$6<?/MIVAR> 
+        <?MIVAR NAME=dataId>$6<?/MIVAR>
 
           <?MIBLOCK COND=$(XST,$contains_data_type)>
             <TR><TD>&nbsp;</TD>
@@ -580,8 +580,8 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
           <TD>
             <A HREF="$link_url">$db_name:$acc_num</A>
             <?MISQL SQL="
-              select WebExplode(object,'dataId=$dataId&type=recattrib') 
-              from webPages 
+              select WebExplode(object,'dataId=$dataId&type=recattrib')
+              from webPages
               where ID='aa-miniref_display.apg';">
               $1
             <?/MISQL>
@@ -607,9 +607,9 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
         $(UNSETVAR,$contains_data_type)
 
       <?/MISQL>
-   
+
       <?MIVAR COND="$(XST,$contained_zdb_id)"></TABLE><?/MIVAR>
-        
+
     </form>
 
   <?/MIBLOCK> <!-- authorized -->
