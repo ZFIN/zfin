@@ -110,6 +110,11 @@ create index goterm_id_index
   using btree 
   in idxdbs2 ;
 
+update goterm_onto
+  set goterm_id = substr(goterm_id, -7) ;
+
+update statistics high for table goterm_onto ;
+
 insert into new_goterm (goterm_id,
 			goterm_name,
 			goterm_onto,
@@ -141,6 +146,10 @@ unload to 'updatedterms.unl'
 
 update statistics high for table goterm_onto ;
 update statistics high for table go_Term ;
+
+update statistics high for table goterm_onto ;
+
+!echo "here is the update of name" ;
 
 update go_term 
   set goterm_name= (select goterm_name 
@@ -186,13 +195,11 @@ with no log ;
 !echo "here are the obsolete terms" ;
 
 insert into tmp_obs_no_dups (goterm_id, goterm_name, goterm_comment)
-  select distinct substr(goterm_id, -7), goterm_name, goterm_comment
+  select distinct goterm_id, goterm_name, goterm_comment
     from goterm_onto
     where goterm_is_obsolete = 'true';
 
 
-select * from goterm_onto
-where goterm_id = 'GO:0000067';
 
 --figure out the new ones 
 
@@ -225,7 +232,7 @@ insert into tmp_new_obsoletes (counter,
 	marker_go_term_evidence, 
 	marker, 
 	tmp_obs_no_dups
-  where goterm_go_id = goterm_id
+  where goterm_go_id = tmp_obs_no_dups.goterm_id
   and goterm_zdb_id = mrkrgoev_go_term_zdb_id
   and mrkr_zdb_id = mrkrgoev_mrkr_zdb_id 
   and goterm_is_obsolete = 'f'
@@ -262,7 +269,7 @@ insert into tmp_reinstate (name, id, def, comment)
 			goterm_comment 
     from go_term, goterm_onto
     where go_term.goterm_is_obsolete = 't' 
-    and "GO:"||go_term.goterm_go_id = goterm_id
+    and go_term.goterm_go_id = goterm_onto.goterm_id
     and (goterm_onto.goterm_is_obsolete = '' 
 		or goterm_onto.goterm_is_obsolete is null);
 
@@ -447,3 +454,4 @@ unload to obso_sec_with.unl
 
 --rollback work;
 commit work;
+
