@@ -1543,7 +1543,7 @@ I am commenting this part of the code rather than deleting it. If no flags are r
     <?MIVAR NAME=$mrkrview_prevDataType><?/MIVAR>
     <?MIVAR NAME=$mrkrview_displayAllSequencesLink>0<?/MIVAR>
     <?MISQL SQL="
-        select dblink_length, fdb_db_name, fdb_db_query || dblink_acc_num ||
+        select fdb_db_name, dblink_length, fdb_db_query || dblink_acc_num ||
                (case fdb_url_suffix when NULL then '' else fdb_url_suffix end),
                dblink_acc_num_display, dblink_zdb_id, 's', 'placeholder',
                'placeholder', fdb_db_significance, fdbdt_data_type,
@@ -1556,7 +1556,7 @@ I am commenting this part of the code rather than deleting it. If no flags are r
           and fdbcont_fdbdt_super_type = fdbdt_super_type
           and fdbcont_fdbdt_data_type = fdbdt_data_type
       UNION
-        select dblink_length, fdb_db_name, fdb_db_query || dblink_acc_num ||
+        select  fdb_db_name, dblink_length, fdb_db_query || dblink_acc_num ||
                (case fdb_url_suffix when NULL then '' else fdb_url_suffix end),
                dblink_acc_num_display, dblink_zdb_id, 'r', mrel_mrkr_2_zdb_id,
                mrkr_abbrev, fdb_db_significance, fdbdt_data_type,
@@ -1576,7 +1576,7 @@ I am commenting this part of the code rather than deleting it. If no flags are r
           and mrel_mrkr_2_zdb_id = mrkr_zdb_id
           and mrel_mrkr_2_zdb_id not in ('$chimeric_clone_list')
       UNION
-        select dblink_length, fdb_db_name, fdb_db_query || dblink_acc_num ||
+        select fdb_db_name,dblink_length,  fdb_db_query || dblink_acc_num ||
                (case fdb_url_suffix when NULL then '' else fdb_url_suffix end),
                dblink_acc_num_display, dblink_zdb_id, 'r', mrel_mrkr_1_zdb_id,
                mrkr_abbrev, fdb_db_significance, fdbdt_data_type,
@@ -1594,11 +1594,11 @@ I am commenting this part of the code rather than deleting it. If no flags are r
           and mrel_mrkr_1_zdb_id = mrkr_zdb_id
           and mrel_mrkr_1_zdb_id not in ('$chimeric_clone_list')
 
-        order by 11 asc, 9 asc, 1 desc, 4 asc
+        order by 11 asc, 9 asc, 2 desc, 4 asc
       ;">
 
-      <?MIVAR NAME=dblink_length>$1<?/MIVAR>
-      <?MIVAR NAME=db_name>$2<?/MIVAR>
+      <?MIVAR NAME=db_name>$1<?/MIVAR>
+      <?MIVAR NAME=dblink_length>$2<?/MIVAR>
       <?MIVAR NAME=link_url>$3<?/MIVAR>
       <?MIVAR NAME=acc_num>$4<?/MIVAR>
       <?MIVAR NAME=dataId>$5<?/MIVAR>
@@ -1612,11 +1612,11 @@ I am commenting this part of the code rather than deleting it. If no flags are r
           Data type changed.  Display first row for this data type.
           ** 07/24/03 for some weird reasons, the column made up to distinguish
           the source of GenBank accession has to be a one-character string
-	  to behave right in EC operation.
+          to behave right in EC operation.
         <?/MICOMMENT>
         <?MIVAR>
-          <TR>
-            <TD>
+          <TR style="height:2.25em;">
+            <TD >
               $data_type:
             </TD>
             <TD>
@@ -1641,8 +1641,10 @@ I am commenting this part of the code rather than deleting it. If no flags are r
             <TD align=right>
               <nobr>
                 <?MIVAR>$dblink_length<?/MIVAR>
-                <?MIBLOCK COND=$(EC,$data_type,Polypeptide)> aa
-                <?MIELSE COND=$(OR,$(EC,$data_type,cDNA),$(EC,$data_type,Genomic),$(EC,$data_type,Vega Transcript))> bp
+                <?MIBLOCK COND=$(NC,$dblink_length,)>
+                   <?MIBLOCK COND=$(EQ,$data_type,Polypeptide)> aa
+                   <?MIELSE> bp
+                   <?/MIBLOCK>
                 <?/MIBLOCK>
               </nobr>
             </TD>

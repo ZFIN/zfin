@@ -22,7 +22,6 @@
   ERROR -- something bad happened -- no OID passed in!
 <?/MIBLOCK>
 
-
 <?MIVAR NAME=$target_table>marker<?/MIVAR>
 
 <SCRIPT> <!-- functions for undate--------------------->
@@ -302,7 +301,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
     </TR>
 
       <?MISQL SQL="
-        select dblink_length, fdbcont_fdbdt_data_type, fdb_db_name, fdb_db_query || dblink_acc_num ||
+        select  fdbcont_fdbdt_data_type,dblink_length, fdb_db_name, fdb_db_query || dblink_acc_num ||
        (case fdb_url_suffix when NULL then '' else fdb_url_suffix end),
                dblink_acc_num_display, dblink_zdb_id, fdb_db_significance, fdbdt_display_order
         from db_link, foreign_DB, foreign_db_contains, foreign_db_data_type
@@ -313,11 +312,12 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
           and fdbcont_fdbdt_data_type = fdbdt_data_type
           and fdbcont_fdbdt_super_type = fdbdt_super_type
           and fdbcont_fdb_db_name != 'BLAST'
-        order by 8,7,1 desc,3,5
+        order by 8,7,2 desc,3,5
       ;">
 
-        <?MIVAR NAME=data_type>$2<?/MIVAR>
-        <?MIVAR NAME=dblink_length>$(IF,$(EC,$1,NULL),,$1)<?/MIVAR>
+        <?MIVAR NAME=$MI_NULL><?/MIVAR>
+        <?MIVAR NAME=data_type>$1<?/MIVAR>
+        <?MIVAR NAME=dblink_length>$2<?/MIVAR>
         <?MIVAR NAME=db_name>$3<?/MIVAR>
         <?MIVAR NAME=link_url>$4<?/MIVAR>
         <?MIVAR NAME=acc_num>$5<?/MIVAR>
@@ -330,7 +330,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
 	  to behave right in EC operation.
 	<?/MICOMMENT>
 
-        <TR bgcolor=$row_color>
+        <TR bgcolor=$row_color style="height:2.25em;">
 
           <TD>
             $(IF,$(AND,$(XST,$pre_data_type),$(EC,$data_type,$pre_data_type)),&nbsp;,$data_type)
@@ -342,10 +342,12 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
           </TD>
           <TD align=right>
             <nobr>
-            <?MIVAR>$dblink_length<?/MIVAR>
-            <?MIBLOCK COND=$(AND,$(NC,$dblink_length,),$(EC,$data_type,Polypeptide))> aa
-            <?MIELSE  COND=$(AND,$(NC,$dblink_length,),$(OR,$(EC,$data_type,cDNA),$(EC,$data_type,Genomic),$(OR,$(EC,$data_type,Vega Transcript)))> bp
-            <?/MIBLOCK>
+                <?MIVAR>$dblink_length<?/MIVAR>
+                <?MIBLOCK COND=$(NC,$dblink_length,)>
+                   <?MIBLOCK COND=$(EQ,$data_type,Polypeptide)> aa
+                   <?MIELSE> bp
+                   <?/MIBLOCK>
+                <?/MIBLOCK>
             </nobr>
           </TD>
           <TD align=center>
@@ -449,14 +451,15 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
       ;">
 
         <?MIVAR NAME=data_type>$1<?/MIVAR>
-        <?MIVAR NAME=dblink_length>$(IF,$(EC,$2,NULL),,$2)<?/MIVAR>
+        <?MIVAR NAME=dblink_length>$2<?/MIVAR>
         <?MIVAR NAME=db_name>$3<?/MIVAR>
         <?MIVAR NAME=link_url>$4<?/MIVAR>
         <?MIVAR NAME=acc_num>$5<?/MIVAR>
         <?MIVAR NAME=dataId>$6<?/MIVAR>
+        <?MIVAR NAME=$MI_NULL><?/MIVAR>
 
           <?MIBLOCK COND=$(XST,$encodes_data_type)>
-            <TR><TD>&nbsp;</TD>
+            <TR style="height:2.25em;"><TD>&nbsp;</TD>
           <?/MIBLOCK>
 
           <TD>
@@ -473,10 +476,12 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
           </TD>
           <TD align=right>
             <nobr>
-            <?MIVAR>$dblink_length<?/MIVAR>
-            <?MIBLOCK COND=$(AND,$(NC,$dblink_length,),$(EC,$data_type,Polypeptide))> aa
-            <?MIELSE  COND=$(AND,$(NC,$dblink_length,),$(OR,$(EC,$data_type,cDNA),$(EC,$data_type,Genomic)))> bp
-            <?/MIBLOCK>
+                <?MIVAR>$dblink_length<?/MIVAR>
+                <?MIBLOCK COND=$(NC,$dblink_length,)>
+                   <?MIBLOCK COND=$(EQ,$data_type,Polypeptide)> aa
+                   <?MIELSE> bp
+                   <?/MIBLOCK>
+                <?/MIBLOCK>
             </nobr>
           </TD>
           <TD align=center>
@@ -564,14 +569,14 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
       ;">
 
         <?MIVAR NAME=data_type>$1<?/MIVAR>
-        <?MIVAR NAME=dblink_length>$(IF,$(EC,$2,NULL),,$2)<?/MIVAR>
+        <?MIVAR NAME=dblink_length>$2<?/MIVAR>
         <?MIVAR NAME=db_name>$3<?/MIVAR>
         <?MIVAR NAME=link_url>$4<?/MIVAR>
         <?MIVAR NAME=acc_num>$5<?/MIVAR>
         <?MIVAR NAME=dataId>$6<?/MIVAR>
 
           <?MIBLOCK COND=$(XST,$contains_data_type)>
-            <TR><TD>&nbsp;</TD>
+            <TR style="height:2.25em;"><TD>&nbsp;</TD>
           <?/MIBLOCK>
 
           <TD>
@@ -588,10 +593,12 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
           </TD>
           <TD align=right>
             <nobr>
-            <?MIVAR>$dblink_length<?/MIVAR>
-            <?MIBLOCK COND=$(AND,$(NC,$dblink_length,),$(EC,$data_type,Polypeptide))> aa
-            <?MIELSE  COND=$(AND,$(NC,$dblink_length,),$(OR,$(EC,$data_type,cDNA),$(EC,$data_type,Genomic)))> bp
-            <?/MIBLOCK>
+                <?MIVAR>$dblink_length<?/MIVAR>
+                <?MIBLOCK COND=$(NC,$dblink_length,)>
+                   <?MIBLOCK COND=$(EQ,$data_type,Polypeptide)> aa
+                   <?MIELSE> bp
+                   <?/MIBLOCK>
+                <?/MIBLOCK>
             </nobr>
           </TD>
           <TD align=center>
