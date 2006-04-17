@@ -31,7 +31,7 @@
 --	zfin id, symbol, panel symbol, LG, loc, metric
 --
 -- Sequence data - separate files for GenBank, RefSeq, Entrez Gene, Unigene, 
--- SWISS-PROT, Interpro, GenPept and Vega
+-- SWISS-PROT, Interpro, GenPept and Vega (genes and transcripts)
 -- as well as sequences indirectly associated with genes
 --	zfin id, symbol, accession number
 --	
@@ -230,6 +230,13 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/vega.txt'
 	where mrkr_zdb_id = dblink_linked_recid
 	  and fdbcont_zdb_id = dblink_fdbcont_zdb_id
 	  and fdbcont_fdb_db_name in ('VEGA','PREVEGA') order by 1;      
+
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/vega_transcript.txt'
+ DELIMITER "    " select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num from marker, db_link, 
+foreign_db_contains
+        where mrkr_zdb_id = dblink_linked_recid
+          and fdbcont_zdb_id = dblink_fdbcont_zdb_id
+          and fdbcont_fdb_db_name = 'Vega_Trans' order by 1;
 
 -- Generate alleles file
 
