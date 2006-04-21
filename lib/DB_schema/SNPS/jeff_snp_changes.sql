@@ -28,6 +28,7 @@ insert into foreign_db_contains (fdbcont_zdb_id,
 	   'Zebrafish',
 	   'sequence');
 
+
 insert into marker_type_group_member (mtgrpmem_mrkr_type,
 	mtgrpmem_mrkr_type_group)
   values ('SNP','POLYMORPH');
@@ -43,6 +44,38 @@ insert into marker_type_group_member (mtgrpmem_mrkr_type,
 insert into marker_type_group (mtgrp_name, mtgrp_comments)
   values ('POLYMORPH','Group containing SNPs and SSLPs and INDELs');
 
+insert into marker_type_group (mtgrp_name, mtgrp_comments)
+  values ('FEATURE','Group containing everything but 
+			SNPs and SSLPs and INDELs');
+
+insert into marker_type_group_member (mtgrpmem_mrkr_type,
+	mtgrpmem_mrkr_type_group)
+  values ('GENE','FEATURE');
+
+insert into marker_type_group_member (mtgrpmem_mrkr_type,
+	mtgrpmem_mrkr_type_group)
+  values ('GENEP','FEATURE');
+
+insert into marker_type_group_member (mtgrpmem_mrkr_type,
+	mtgrpmem_mrkr_type_group)
+  values ('PAC','FEATURE');
+
+insert into marker_type_group_member (mtgrpmem_mrkr_type,
+	mtgrpmem_mrkr_type_group)
+  values ('BAC','FEATURE');
+
+insert into marker_type_group_member (mtgrpmem_mrkr_type,
+	mtgrpmem_mrkr_type_group)
+  values ('BAC_END','FEATURE');
+
+insert into marker_type_group_member (mtgrpmem_mrkr_type,
+	mtgrpmem_mrkr_type_group)
+  values ('PAC_END','FEATURE');
+
+insert into marker_type_group_member (mtgrpmem_mrkr_type,
+	mtgrpmem_mrkr_type_group)
+  values ('EST','FEATURE');
+
 update marker_types
   set mrkrtype_significance = '16'
   where marker_type = 'SNP' ;
@@ -52,19 +85,8 @@ insert into marker_relationship_type (mreltype_name,
 	mreltype_mrkr_type_group_2,
 	mreltype_1_to_2_comments,
 	mreltype_2_to_1_comments)
-  values ('clone contains polymorphism', 
-		'CLONE',
-		'POLYMORPH',
-		'Contains',
-		'Contained in');
-
-insert into marker_relationship_type (mreltype_name,
-	mreltype_mrkr_type_group_1, 
-	mreltype_mrkr_type_group_2,
-	mreltype_1_to_2_comments,
-	mreltype_2_to_1_comments)
-  values ('gene contains polymorphism', 
-		'GENE',
+  values ('contains polymorphism', 
+		'FEATURE',
 		'POLYMORPH',
 		'Contains',
 		'Contained in');
@@ -146,6 +168,13 @@ insert into sequence_ambiguity_code (seqac_symbol, seqac_meaning)
 
 insert into sequence_ambiguity_code (seqac_symbol, seqac_meaning)
   values ('N','A/C/G/T') ;
+
+insert into zdb_active_data
+  select fdbcont_zdb_id
+    from foreign_db_contains
+    where not exists (select 'x'
+			from zdb_active_data where fdbcont_zdb_id =
+				zactvd_zdb_id);
 
 
 set constraints all immediate;
