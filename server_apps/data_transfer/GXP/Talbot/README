@@ -34,9 +34,7 @@
           > mv image_expr.txt  images.txt   
 	  > processImage.sh labname [release_type]
 
-	  labname:                  Thisse / Talbot
-          release_type: 	    cb    with annotation
-          (in case of Thisse)       fr    without annotation
+	  labname:                  Talbot
     
     $resulted files$:  images.dim	
     $description$ :
@@ -49,7 +47,8 @@
 --------------------------------------------------
    
     $note$ : 
-	* check cegs_stage_view.txt to make sure for example, 5-somite is chaged to 5-9 somites.
+	* check cegs_stage_codes.txt to make sure for example, 5-somite is chaged to 5-9 somites.
+	* check expression.txt and images.txt for stage 0 or view 0 references, those need to be sent back for corrections. 
 	* Update your test database and source the environment. The scripts would inherit environment from the running shell.
         * Update zfin blast (you need the 'select' permission on almdb)  	
 	/research/zblastfiles/users/peirans/Scripts/ZFIN/processZFIN.pl 0
@@ -82,7 +81,14 @@
              the gene sym provided, not present in ZFIN  --> parseTalbot.err
              no gene sym                          -->  probes.unl & acc4blast.txt 
 	
-	Upon error, the script exit. Please send the parseTalbot.err file to curator for correction. If all consistent, but unknown accession is detected, the master script would blasts acc4blast.txt against zfin cdna database. 
+	Upon error, the script exit. Please send the parseTalbot.err file to curator.
+        For conflicts:
+	  - either curators merge genes, use Talbot lab's gene assignment
+          - or change Talbot's gene assignment to Zfin assignment
+        For Gene sym not found:
+          - delete the gene sym, let the script creates fake genes
+
+        If all consistent, but unknown accession is detected, the master script would blasts acc4blast.txt against zfin cdna database. 
 
 
 ----------------
