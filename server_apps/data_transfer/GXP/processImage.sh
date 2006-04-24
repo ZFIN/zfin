@@ -178,7 +178,7 @@ cd ..
 
 /bin/rm -rf images/*
 
-/bin/mv IMGTMP/*.jpg *.txt images/
+/bin/mv IMGTMP/*.jpg IMGTMP/*.txt images/
 /bin/chmod 644 images/*
 /bin/mv IMGTMP/images.dim .
 
