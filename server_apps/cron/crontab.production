@@ -138,6 +138,11 @@
 10 23 * * 0-4 <!--|ROOT_PATH|-->/server_apps/data_transfer/LoadGO/loadgo.pl
 #
 #
+# F        10:10pm   weekly update of chromosome position and orthology for
+#                    mouse, human, fly
+10 22 * * 5 <!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/loadOrthoChromInfo.pl
+#
+#
 # F        11:00pm   weekly download data run, also does DATA TRANSFER OUT
 #                    and BACKUPS (calls unload_production.sh at end)
 00 23 * * 5 <!--|ROOT_PATH|-->/server_apps/data_transfer/pull.sh
