@@ -235,27 +235,51 @@ e-mail:  <?MIVAR><a href="mailto:$sender_email">$sender_email</a><?/MIVAR>
 		    fish.zdb_id, 
 		    fish.name, 
 		    fish.abbrev,
-       	            locus_abbrev_order
+       	            locus_abbrev_order,
+       	            fish.allele
                from record_attribution, fish, locus
               where recattrib_source_zdb_id = '$OID'
 	        and recattrib_data_zdb_id   = fish.zdb_id
 	        and fish.locus = locus.zdb_id
-           order by locus_abbrev_order;
+	     UNION
+             select 'Mutant', 
+		    fish.zdb_id, 
+		    fish.name, 
+		    fish.abbrev, 
+		    locus_abbrev_order,
+		    fish.allele
+               from record_attribution, locus, fish
+              where recattrib_source_zdb_id = '$OID'
+	        and recattrib_data_zdb_id   = locus.zdb_id
+	        and fish.locus = locus.zdb_id
+	     UNION
+             select 'Mutant', 
+		    fish.zdb_id, 
+		    fish.name, 
+		    fish.abbrev,
+       	            locus_abbrev_order,
+       	            fish.allele
+               from record_attribution, fish, locus, alteration
+              where recattrib_source_zdb_id = '$OID'
+	        and recattrib_data_zdb_id   = alteration.zdb_id
+	        and alteration.locus = locus.zdb_id
+	        and fish.locus = locus.zdb_id
+	      UNION
+	     select 'Mutant', 
+		    fish.zdb_id, 
+		    fish.name, 
+		    fish.abbrev,
+       	            locus_abbrev_order,
+       	            fish.allele
+	     from   record_attribution, fish, data_alias, locus
+	     where  recattrib_source_zdb_id = '$OID'
+	       and  recattrib_data_zdb_id = dalias_zdb_id
+	       and  dalias_data_zdb_id = fish.zdb_id
+	       and  fish.locus = locus.zdb_id
+           order by locus_abbrev_order, fish.allele;
 <?/MIVAR>
 <?MIVAR>$(VECAPPEND,$sqlArray,$mysql)<?/MIVAR>
 
-<?MIVAR NAME=mysql>
-             select 'Mutant', 
-		    zdb_id, 
-		    locus_name, 
-		    abbrev, 
-		    locus_abbrev_order
-               from record_attribution, locus
-              where recattrib_source_zdb_id = '$OID'
-	        and recattrib_data_zdb_id   = zdb_id
-           order by locus_abbrev_order;
-<?/MIVAR>
-<?MIVAR>$(VECAPPEND,$sqlArray,$mysql)<?/MIVAR>
 
 <?MIVAR NAME=addLineBreak>f<?/MIVAR>
 <?MIVAR NAME=gene_expression_checked>f<?/MIVAR>
