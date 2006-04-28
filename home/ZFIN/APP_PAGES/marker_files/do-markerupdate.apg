@@ -177,7 +177,11 @@ marker.<?/MIVAR>
     <?/MISQL>
   <?/MIBLOCK>
 
-
+    <?MIVAR>
+      <script>
+        alert("$attr_type \n$dataOID \n$old_value \n$source_type");      
+      </script>
+    <?/MIVAR>
   <!-- Special case for deleting one of the associated seqs/sources/pubs -->
   <?MIBLOCK COND="$(EC,$attr_type,special-listitem)">
 
@@ -186,7 +190,8 @@ marker.<?/MIVAR>
       <?MISQL SQL="
         delete from record_attribution
 	  where recattrib_data_zdb_id = '$dataOID'
-	    and recattrib_source_zdb_id = '$old_value';">
+	    and recattrib_source_zdb_id = '$old_value'
+	    and recattrib_source_type = '$source_type';">
       <?/MISQL>
       <?MICOMMENT>***08/25 adding alert to deletion of attribution from publication list
                   ***09/09 check first, only when it is deleting the last attribution,give alert. 
@@ -230,20 +235,14 @@ marker.<?/MIVAR>
     <?/MIBLOCK>
 
 
-    <?MIBLOCK COND="$(OR,$(EC,$attr,recattrib),$(EC,$attr,colattrib))">
+    <?MIBLOCK COND="$(EC,$attr,recattrib)">
      
       <?MISQL COND="$(EC,$attr,recattrib)" SQL="
         delete from record_attribution
 	  where recattrib_data_zdb_id = '$dataOID'
-	    and recattrib_source_zdb_id = '$old_value';">
+	    and recattrib_source_zdb_id = '$old_value'
+	    and recattrib_source_type = '$source_type';">
       <?/MISQL>
-
-      <?MISQL COND="$(EC,$attr,colattrib)" SQL="
-        delete from column_attribution
-	  where colattrib_data_zdb_id = '$dataOID'
-	    and colattrib_source_zdb_id = '$old_value'
-	    and colattrib_column_name = '$info';">
-      <?/MISQL> 
 
       <?MICOMMENT>***08/25 adding alert to deletion of attribution from deleteRef button
            ***09/09 check first, only when it is deleting the last attribution,give alert. 
@@ -529,14 +528,6 @@ marker.<?/MIVAR>
                 ;">
          <?/MISQL>
 
-      <?MIELSE COND="$(AND,$(EC,$attr,colattrib),$(NE,$info,mrel))">
-         <?MISQL SQL="
-	    insert into column_attribution
-		(colattrib_data_zdb_id, colattrib_column_name, 
-colattrib_source_zdb_id)
-              values('$old_value','$info', '$new_value')	
-                ;">
-         <?/MISQL>
       <?/MIBLOCK>
 
 

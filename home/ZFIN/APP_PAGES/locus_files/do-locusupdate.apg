@@ -90,20 +90,15 @@ info  -- the column name for the column attrib
   <?MISQL COND="$(EC,$attr,publication)" SQL="
     delete from record_attribution
       where recattrib_data_zdb_id = '$OID'
-        and recattrib_source_zdb_id = '$old_value';">
+        and recattrib_source_zdb_id = '$old_value'
+	and recattrib_source_type = '$source_type';">
   <?/MISQL>
-
+  
   <?MISQL COND="$(EC,$attr,recattrib)" SQL="
       delete from record_attribution
 	where recattrib_data_zdb_id = '$dataOID'
-	  and recattrib_source_zdb_id = '$old_value';">
-   <?/MISQL>
-
-   <?MISQL COND="$(EC,$attr,colattrib)" SQL="
-      delete from column_attribution
-	where colattrib_data_zdb_id = '$dataOID'
-	  and colattrib_source_zdb_id = '$old_value'
-	  and colattrib_column_name = '$info';">
+	  and recattrib_source_zdb_id = '$old_value'
+	  and recattrib_source_type = '$source_type';">
    <?/MISQL>
 
 <?/MIBLOCK>  <!-- ends special listitem case -->
@@ -144,32 +139,18 @@ info  -- the column name for the column attrib
                 ;">
     <?/MISQL>	
     <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
-      <?MISQL COND="$(EC,$info,namealias)" SQL="
-	   select dalias_zdb_id 
-	     from data_alias
-	    where dalias_data_zdb_id = '$OID'
-	      and dalias_alias = '$old_value'
-	    ;">
-	<?MIVAR>$(SETVAR,$old_value,$1)<?/MIVAR>
 
-      <?/MISQL>
-
-
+    <script>
+    alert('<?MIVAR>$info<?/MIVAR>');
+    </script>
       <?MIBLOCK COND="$(EC,$attr,recattrib)">
          <?MISQL SQL="
 	    insert into record_attribution
-		(recattrib_data_zdb_id, recattrib_source_zdb_id)
-              values('$old_value', '$new_value')	
+		(recattrib_data_zdb_id, recattrib_source_zdb_id, recattrib_source_type)
+              values('$old_value', '$new_value', '$info')	
                 ;">
          <?/MISQL>
 
-      <?MIELSE COND="$(EC,$attr,colattrib)">
-         <?MISQL SQL="
-	    insert into column_attribution
-		(colattrib_data_zdb_id, colattrib_column_name, colattrib_source_zdb_id)
-              values('$old_value','$info', '$new_value')	
-                ;">
-         <?/MISQL>
       <?/MIBLOCK>
 
   

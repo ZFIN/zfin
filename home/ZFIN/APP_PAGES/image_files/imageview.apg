@@ -666,24 +666,10 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
           <?MISQL SQL="select WebExplode(object,'pubackn_pub_zdb_id=$fimgview_pub_zdb_id') from webPages where ID='aa-pubacknowledgement.apg';">$1<?/MISQL>	
         <?/MIBLOCK>
 	
-	<br>
-	<?MISQL SQL="
-  		select count(*)::integer 
-  		from record_attribution
- 		 where recattrib_data_zdb_id = '$OID'
-   		 and get_obj_type(recattrib_source_zdb_id) = 'PUB';
-  	">
-	
-	<?/MISQL>
-	<?MIBLOCK COND="$(OR,$(>,$1,0),$(XST,$UPDATE))">
-	  <?MIVAR>
-	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=fish_image&title=Image&name=$(URLENCODE,<img src=/imageLoadUp/$fimgview_thumbnail>)&total_count=$1$(IF,$(XST,$UPDATE),&UPDATE=1)"><b>Citations</b></A>
-	  <?/MIVAR>
-	<?MIELSE>
-	  <b>Citations</b>
-	<?/MIBLOCK>
-	<?MIVAR>&nbsp; ($1)<?/MIVAR>
- 
+
+    <?MICOMMENT> *** Citation Link *** <?/MICOMMENT>
+    <?MISQL SQL="select WebExplode(object,'citlink_data_page=citgeneric.apg') from webPages where ID='aa-citlink.apg';">$1<?/MISQL>
+
 
 	<?MICOMMENT> 
           Throw up the publication info, using the standard display format 

@@ -55,10 +55,9 @@ Datablade documentation.
     window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-locusupdate.apg&UPDATE=1&OID='+oid+'&attr='+item_name+'&attr_type=Delete_listitem&old_value='+item_id+'&new_value=deleted');
   }
   
-  function Delete_attrib(attr,data_zdbId,source_zdbId,info) {
-	window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-locusupdate.apg&OID=$OID&dataOID='+data_zdbId+'&attr='+attr+'&attr_type=special-listitem&old_value='+source_zdbId+'&new_value=deleted&info='+info);
-	}
-
+  <?MISQL SQL="select WebExplode(object,'jsdelatt_OID=$OID&jsdelatt_Mival=aa-do-locusupdate.apg&jsdelatt_page_var=__attr_type=special-listitem__new_value=deleted') 
+        from webPages where ID='aa-js-delete_attrib.apg';">$1<?/MISQL>
+    
   function deletegene(attr,clonedgene) {
         var msg="Are you sure you want to delete this gene-locus connection?";
         if (confirm(msg))
@@ -69,23 +68,18 @@ Datablade documentation.
 	var prev_name=document.updater.attrib_prevname.value;
 	var pub_id=document.updater.attrib_prevname_pubid.value.toUpperCase();
 	if ((prev_name != '') && (pub_id != '')) {
-		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-locusupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+prev_name+'&new_value='+pub_id+'&info=namealias');
+		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-locusupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+prev_name+'&new_value='+pub_id+'&info=standard');
   	}
  }
 
   function new_attrib_cloned() {
 	var pub_id = document.updater.attrib_cloned_pubid.value.toUpperCase();
 	if(pub_id != '') {
-		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-locusupdate.apg&OID=$OID&attr=colattrib&attr_type=special-newattrib&old_value=$OID&new_value='+pub_id+'&info=cloned_gene');
+		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-locusupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value=$OID&new_value='+pub_id+'&info=cloned+gene');
 	}
  }
 
-  function new_attrib_commt() {
-	var pub_id = document.updater.attrib_commt_pubid.value.toUpperCase();
-	if(pub_id != '') {
-		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-locusupdate.apg&OID=$OID&attr=colattrib&attr_type=special-newattrib&old_value=$OID&new_value='+pub_id+'&info=comments');
-	}
- }
+
 <?/MIVAR>
 
 </SCRIPT>
@@ -273,17 +267,29 @@ Datablade documentation.
 	    onClick="doit('locus_dalias_alias','text','Alias')">
 	<?/MIVAR> 
 	<b>Previous names: </b>
+	
+	  <?MIVAR COND="$(XST,$UPDATE)">
+	     <br>Add Reference:&nbsp; 
+   	     Previous name:
+   	     <select name=attrib_prevname>
+	     <?MISQL SQL="
+	        select dalias_alias, dalias_zdb_id  
+	        from   data_alias 
+	        where  dalias_data_zdb_id = '$OID'
+	        order by dalias_alias;">
+	        <option value=$2>$1</option>
+	     <?/MISQL>
+	     </select>
+    	     Reference:<input type=text name=attrib_prevname_pubid>
+    	     <input type=button value="Add" onClick=new_attrib_prevname();> 
+          <?/MIVAR>
+          
 	<?MISQL SQL="
 	  select dalias_alias, dalias_zdb_id  
 	    from data_alias 
 	    where dalias_data_zdb_id = '$OID';">
 
-	  <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(XST,$UPDATE))">
-	     <br>Add Reference:&nbsp; 
-   	     Previous name:<input type=text name=attrib_prevname>	
-    	     Reference:<input type=text name=attrib_prevname_pubid>
-    	     <input type=button value="Add" onClick=new_attrib_prevname();> 
-          <?/MIVAR>
+
 
 	  <?MIVAR NAME=$alias>$1<?/MIVAR>
 	  <?MIVAR NAME=$aliasId>$2<?/MIVAR>
@@ -336,7 +342,7 @@ Datablade documentation.
 	    <TR><TD>
 	    <b><i><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$cloned_gene">$1 ($2) </A> </i></b> 
 	    has been shown to correspond to locus <i>$name</i>.
-	    <?MISQL SQL="select WebExplode(object,'dataId=$OID&type=colattrib&info=cloned_gene') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+	    <?MISQL SQL="select WebExplode(object,'dataId=$OID&type=recattrib&info=cloned+gene') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
 	   </TD>
 	   </TR>
 	  </TABLE>
@@ -361,7 +367,6 @@ Datablade documentation.
             <?/MIVAR>
 	    <?MIVAR>$(IF,$(NC,$comments,NULL),$comments,"No description available") <?/MIVAR>
 	
-           <?MISQL SQL="select WebExplode(object,'dataId=$OID&type=colattrib&info=comments') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
 	  <?/MIBLOCK>
   	
 	<!------------- Locus Description ------------------------>
@@ -491,7 +496,7 @@ Datablade documentation.
 	      <?MIVAR NAME=$fish_abbrev>$2<?/MIVAR>
 	      <?MIVAR NAME=$allele>$3<?/MIVAR>
 	      <?MIVAR NAME=$phenotype>$4<?/MIVAR>
-	      <?MIVAR NAME=$chrom_change>$5<?/MIVAR>
+	      <?MIVAR NAME=$chrom_change>$(IF,$(NC,$5,NULL),$5,"Unknown")<?/MIVAR>
 	      <?MIVAR NAME=$del_markers>$6<?/MIVAR>
 	      <?MIVAR NAME=$linkages>$7<?/MIVAR>
               <?MIVAR NAME=$paneled>$8<?/MIVAR>
@@ -522,7 +527,7 @@ Datablade documentation.
 	      $(IF,$(AND,$(>=,$MI_ROWCOUNT,1),$(XST,$allele_alias)),</i>)
 	      </TD>
 
-	      <TD>$(IF,$(NC,$chrom_change,NULL),$chrom_change,"Unknown")</TD>
+	      <TD> $chrom_change </TD>
 	      
 	      <TD>
 	      $(IF,$(>,$mindex,0),$(SUBSTR,$phenotype,1,$(-,$mindex,1)),"")
@@ -533,166 +538,10 @@ Datablade documentation.
 	<!------------- ends Summary of alleles  ------------------------>
 
 	<!------------------ PUBLICATION ------------------------------------>
-	<HR width="80%" align=center>
-	<?MIVAR NAME=$sum>0<?/MIVAR>
+   
+    <?MICOMMENT> *** Citation Link *** <?/MICOMMENT>
+    <?MISQL SQL="select WebExplode(object,'citlink_data_page=citlocus.apg') from webPages where ID='aa-citlink.apg';">$1<?/MISQL>
 
-	<?MISQL SQL="
-		select distinct zdb_id
-	 	  from fish_search f, record_attribution,publication p
-	 	 where f.locus = '$OID' 
-		   and recattrib_data_zdb_id = f.locus	
-    		   and recattrib_source_zdb_id = p.zdb_id
-     		   and p.jtype not in ('Curation', 'Unpublished')
-	    UNION		 
-		select distinct zdb_id
-	 	  from fish_search f, record_attribution,publication p
-	 	 where f.locus = '$OID' 
-		   and recattrib_data_zdb_id = f.fish_id	
-    		   and recattrib_source_zdb_id = p.zdb_id
-     		   and p.jtype not in ('Curation', 'Unpublished')
-	    UNION		 
-		select distinct zdb_id
-	 	  from fish_search f, record_attribution,publication p
-	 	 where f.locus = '$OID' 
-		   and recattrib_data_zdb_id = f.alt_zdb_id	
-    		   and recattrib_source_zdb_id = p.zdb_id
-     		   and p.jtype not in ('Curation', 'Unpublished')
-	    UNION
-		select distinct zdb_id
-	 	  from fish_search f,  mapped_deletion m, record_attribution,publication p
-	 	 where f.locus = '$OID'
-	  	   and f.allele = m.allele
-	   	   and recattrib_data_zdb_id  = m.mapdel_zdb_id
-    		   and recattrib_source_zdb_id = p.zdb_id
-     		   and p.jtype  not in ('Curation', 'Unpublished')
-	    UNION
-		select distinct zdb_id
-	 	  from fish_search f,  mapped_deletion m, record_attribution,publication p
-	 	 where f.locus = '$OID'
-	  	   and f.locus = m.allele
-	   	   and recattrib_data_zdb_id  = m.mapdel_zdb_id
-    		   and recattrib_source_zdb_id = p.zdb_id
-     		   and p.jtype not in ('Curation', 'Unpublished')
- 	    UNION
-		select distinct zdb_id 
-	 	  from fish_search f, data_alias, record_attribution, publication p
-	 	 where f.locus = '$OID'
-		   and dalias_data_zdb_id = f.locus
-		   and dalias_zdb_id = recattrib_data_zdb_id
-    		   and recattrib_source_zdb_id = p.zdb_id
-     		   and p.jtype not in ('Curation', 'Unpublished')
-	     UNION
-		select distinct zdb_id 
-	 	  from fish_search f, data_alias, record_attribution, publication p
-	 	 where f.locus = '$OID'
-		   and dalias_data_zdb_id = f.fish_id
-		   and dalias_zdb_id = recattrib_data_zdb_id
-    		   and recattrib_source_zdb_id = p.zdb_id
-     		   and p.jtype not in ('Curation', 'Unpublished')
-	     UNION
-		select distinct zdb_id 
-	 	  from fish_search f, data_alias, record_attribution, publication p
-	 	 where f.locus = '$OID'
-		   and dalias_data_zdb_id = f.alt_zdb_id
-		   and dalias_zdb_id = recattrib_data_zdb_id
-    		   and recattrib_source_zdb_id = p.zdb_id
-     		   and p.jtype not in ('Curation', 'Unpublished')
-	   UNION
-		select distinct zdb_id 
-	 	  from fish_search f,column_attribution,publication p
-	 	 where f.locus = '$OID'
-		   and colattrib_data_zdb_id = f.locus	
-    		   and colattrib_source_zdb_id = p.zdb_id
-     		   and p.jtype not in ('Curation', 'Unpublished')
-	   UNION
-		select distinct zdb_id 
-	 	  from fish_search f,column_attribution,publication p
-	 	 where f.locus = '$OID'
-		   and colattrib_data_zdb_id = f.fish_id	
-    		   and colattrib_source_zdb_id = p.zdb_id
-     		   and p.jtype not in ('Curation', 'Unpublished')
-	   UNION
-		select distinct zdb_id 
-	 	  from fish_search f,column_attribution,publication p
-	 	 where f.locus = '$OID'
-		   and colattrib_data_zdb_id = f.alt_zdb_id	
-    		   and colattrib_source_zdb_id = p.zdb_id
-     		   and p.jtype not in ('Curation', 'Unpublished')
- into temp all_real_pubs_temp with no log
-		;">	
-        <?/MISQL>
-
-	<?MISQL SQL="select count(distinct zdb_id) from all_real_pubs_temp;">
-	  <?MIVAR NAME=$count_of_real_pub>$1<?/MIVAR>
-	<?/MISQL>
-
-	<?MISQL SQL="
-	    drop table all_real_pubs_temp;">
-	<?/MISQL>	  	
-
-
-	<?MISQL SQL="
-		select distinct zdb_id
-	 	  from fish_search f,  record_attribution,publication p
-	 	 where f.locus = '$OID'
-		   and recattrib_data_zdb_id = '$OID'
-    		   and recattrib_source_zdb_id = p.zdb_id
-     		   and p.jtype in ('Curation', 'Unpublished')
-	    UNION
-		select distinct zdb_id
-	 	  from fish_search f,  column_attribution,publication p
-	 	 where f.locus = '$OID'
-		   and colattrib_data_zdb_id in (f.alt_zdb_id, f.locus, f.fish_id)
-    		   and colattrib_source_zdb_id = p.zdb_id
-     		   and p.jtype in ('Curation', 'Unpublished')
-	    UNION		 
-		select distinct zdb_id 
-	 	  from fish_search f, data_alias, record_attribution, publication p
-	 	 where f.locus = '$OID'
-		   and dalias_data_zdb_id = f.locus
-		   and dalias_zdb_id = recattrib_data_zdb_id
-    		   and recattrib_source_zdb_id = p.zdb_id
-     		   and p.jtype in ('Curation', 'Unpublished')
-	    UNION		 
-		select distinct zdb_id 
-	 	  from fish_search f, data_alias, record_attribution, publication p
-	 	 where f.locus = '$OID'
-		   and dalias_data_zdb_id = f.fish_id
-		   and dalias_zdb_id = recattrib_data_zdb_id
-    		   and recattrib_source_zdb_id = p.zdb_id
-     		   and p.jtype in ('Curation', 'Unpublished')
-	    UNION		 
-		select distinct zdb_id 
-	 	  from fish_search f, data_alias, record_attribution, publication p
-	 	 where f.locus = '$OID'
-		   and dalias_data_zdb_id = f.alt_zdb_id
-		   and dalias_zdb_id = recattrib_data_zdb_id
-    		   and recattrib_source_zdb_id = p.zdb_id
-     		   and p.jtype in ('Curation', 'Unpublished')
-	  into temp all_curation_pubs_temp with no log
-		;">	
-        <?/MISQL>
-
-	<?MISQL SQL="select count(distinct zdb_id) from all_curation_pubs_temp;">
-	  <?MIVAR NAME=$count_of_curation_pub>$1<?/MIVAR>
-	<?/MISQL>
-
-	<?MISQL SQL="
-	    drop table all_curation_pubs_temp;">
-	<?/MISQL>	  	
-
-	<?MIVAR NAME=$total_count>$(+,$count_of_real_pub,$count_of_curation_pub)<?/MIVAR>
-	
-	<?MIBLOCK COND="$(OR,$(>,$total_count,0),$(XST,$UPDATE))">
-  	  <?MIVAR>
-  	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=$rtype&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev$(IF,$(XST,$UPDATE),&UPDATE=1)&total_count=$total_count&count_of_real_pub=$count_of_real_pub"><b>CITATIONS</b></A>
-  	  <?/MIVAR>
-	<?MIELSE>
-  	  <b>CITATIONS</b>
-	<?/MIBLOCK>
-	<?MIVAR>	
- 	 &nbsp; ($(FIX,$total_count))
-	<?/MIVAR>
 
 <!----------------- ends PUBLICATION ----------------->
 
