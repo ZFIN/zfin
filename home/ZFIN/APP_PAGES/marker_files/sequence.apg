@@ -32,11 +32,11 @@
 
 	function Delete_listitem(item_name,item_id) {
 		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted&target_table=$target_table&caller=sequence.apg');
-	}
+	}	
 
-	function Delete_attrib(subattr,data_zdbId,source_zdbId,info) {
-		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&dataOID='+data_zdbId+'&attr='+subattr+'&attr_type=special-listitem&old_value='+source_zdbId+'&new_value=deleted&target_table=$target_table&info='+info+'&caller=sequence.apg');
-	}
+        <?MISQL SQL="select WebExplode(object,'jsdelatt_OID=$OID&jsdelatt_Mival=aa-do-markerupdate.apg&jsdelatt_page_var=__attr_type=special-listitem__new_value=deleted__caller=sequence.apg__target_table=$target_table') 
+        from webPages where ID='aa-js-delete_attrib.apg';">$1<?/MISQL>
+
 	function new_attrib_seq() {
 		var seq_acc = document.updater.attrib_seq_acc.value;
 		var pub_id = document.updater.attrib_seq_pubid.value.toUpperCase();
