@@ -2,13 +2,15 @@
 Variables Expected: 
  -- dataId -- the OID of the data attributed
  -- type -- colattrib or recattrib
- -- info -- column name for column attribution
+ -- info -- category in record attribution
  -- orgOID --when call showpubs.apg, use it for page return
 
 <?/MICOMMENT>
 
-
-<?MIVAR COND="$(NXST,$info)" NAME=$info><?/MIVAR>
+<?MICOMMENT> 
+  12/16/2005
+  $type is unnecessary. all colattrib entries are changed to recattrib.
+<?/MICOMMENT>
 
 <?MIBLOCK COND="$(EC,$type,recattrib)">
     <?MISQL SQL="
@@ -21,17 +23,19 @@ Variables Expected:
     <?MIBLOCK COND="$(=,$tier,1)">
     			
 	<?MISQL SQL="
-		select pub_mini_ref, p.zdb_id
+		select pub_mini_ref, p.zdb_id, recattrib_source_type
 		  from record_attribution a, publication p
 		 where a.recattrib_data_zdb_id = '$dataId'
- 		   and a.recattrib_source_zdb_id = p.zdb_id;">
+ 		   and a.recattrib_source_zdb_id = p.zdb_id
+ 		   $(IF,$(XST,$info),and a.recattrib_source_type = '$info')
+ 		   ;">
 
   	      <?MIVAR>$(IF,$(=,$MI_CURRENTROW,1),"(","; ")<?/MIVAR>	
 	      <?MIBLOCK COND="$(AND,$(NC,$1,NULL),$(NC,$1,empty))">
  		<?MIVAR COND="$(XST,$UPDATE)">  
     		  <INPUT TYPE=button 
       			value=DeleteRef 
-      			onClick="Delete_attrib('$type','$dataId','$2','')">
+      			onClick="Delete_attrib('$type','$dataId','$2','','$3')">
  		<?/MIVAR>
 		<?MIVAR><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2'>$1</A><?/MIVAR>	
 	      <?/MIBLOCK>
@@ -41,29 +45,31 @@ Variables Expected:
     <?MIELSE COND="$(=,$tier,2)">
 
        <?MISQL SQL="
-		select count(*)
+		select count(distinct recattrib_source_zdb_id)
 		 from record_attribution
  	        where recattrib_data_zdb_id = '$dataId'
-    		  and get_obj_type(recattrib_source_zdb_id) = 'PUB';
+    		  and get_obj_type(recattrib_source_zdb_id) = 'PUB'
+ 		  $(IF,$(XST,$info),and recattrib_source_type = '$info');
   		">
 	     
 	      <?MIBLOCK COND="$(>,$1,1)">
 	        <?MIVAR>	
-	        (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&orgOID=$OID&OID=$dataId&rtype=$rtype">$(FIX,$1)</A>)
+	        (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&orgOID=$OID&OID=$dataId&rtype=$rtype$(IF,$(XST,$info),&recattrsrctype=$(URLENCODE,$info))">$(FIX,$1)</A>)
 	        <?/MIVAR>
  	        <?MIVAR COND="$(XST,$UPDATE)">(For any reference update, click into pub list page.) <?/MIVAR>	 
 	      <?MIELSE COND="$(=,$1,1)" >
 	        <?MISQL SQL="
-	        	select p.zdb_id
+	        	select p.zdb_id, a.recattrib_source_type
 		          from record_attribution a, publication p
 		 	 where a.recattrib_data_zdb_id = '$dataId'
-		  	   and a.recattrib_source_zdb_id = p.zdb_id;">
+		  	   and a.recattrib_source_zdb_id = p.zdb_id
+ 		  $(IF,$(XST,$info),and a.recattrib_source_type = '$info');">
 			
 		  <?MIVAR COND="$(XST,$UPDATE)">  
 
     		    <INPUT TYPE=button 
       			value=DeleteRef 
-      	        	onClick="Delete_attrib('$type','$dataId','$1','')">
+      	        	onClick="Delete_attrib('$type','$dataId','$1','','$2')">
  		  <?/MIVAR>
 		  (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$1">1</A>)
                 <?/MISQL>
@@ -72,72 +78,4 @@ Variables Expected:
 	
    <?/MIBLOCK> <?MICOMMENT> tier 1 or tier 2 <?/MICOMMENT>
 
-
-<?MIELSE COND="$(EC,$type,colattrib)">
-   <?MISQL SQL="
-		select attribcol_display_tier
-	  	  from attributed_column
-	 	 where attribcol_column_name = '$info';">
-     <?MIVAR NAME=$tier>$1<?/MIVAR>
-   <?/MISQL>
-
-   <?MIBLOCK COND="$(=,$tier,1)">
-    			
-	<?MISQL SQL="
-		select pub_mini_ref, p.zdb_id
-		  from column_attribution a, publication p
-		 where a.colattrib_data_zdb_id = '$dataId'
-		   and a.colattrib_column_name = '$info'
-		   and a.colattrib_source_zdb_id = p.zdb_id;">
-
-  	      <?MIVAR>$(IF,$(=,$MI_CURRENTROW,1),"(",";")<?/MIVAR>	
-	     
-	      <?MIBLOCK COND="$(AND,$(NC,$1,NULL),$(NC,$1,empty))">
- 		<?MIVAR COND="$(XST,$UPDATE)">  
-    		  <INPUT TYPE=button 
-      			value=DeleteRef 
-      			onClick="Delete_attrib('$type','$dataId','$2','$info')">
- 		<?/MIVAR>
-		<?MIVAR><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2'>$1</A><?/MIVAR>	
-	      <?/MIBLOCK>
-
-
-	 <?/MISQL>
-         <?MIVAR>$(IF,$(>,$MI_ROWCOUNT,0),")")<?/MIVAR>
-	
-  <?MIELSE COND="$(=,$tier,2)">
-	
-       <?MISQL SQL="
-		select count(*)
-		 from column_attribution
- 	        where colattrib_data_zdb_id = '$dataId'
-		  and colattrib_column_name = '$info'	
-    		  and get_obj_type(colattrib_source_zdb_id) = 'PUB';
-  		">
-	
-	      <?MIBLOCK COND="$(>,$1,1)">
-		<?MIVAR>	
-	       (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&orgOID=$OID&OID=$dataId&rtype=$rtype&attribtype=colattrib&info=$info">$(FIX,$1)</A>) 
-		<?/MIVAR>
-	      <?MIELSE COND="$(=,$1,1)" > 
-		<?MISQL SQL="
-	        	select p.zdb_id
-		          from column_attribution a, publication p
-		 	 where a.colattrib_data_zdb_id = '$dataId'
-		  	   and a.colattrib_column_name = '$info'
-		  	   and a.colattrib_source_zdb_id = p.zdb_id;">
-
-		<?MIVAR COND="$(XST,$UPDATE)">  
-	
-    		  <INPUT TYPE=button 
-      			value=DeleteRef 
-      			onClick="Delete_attrib('$type','$dataId','$1','$info')">
- 		<?/MIVAR>
-		(<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$1">1</A>)
-		<?/MISQL>
-	      <?/MIBLOCK>		
-       <?/MISQL>
-	
-   <?/MIBLOCK> <?MICOMMENT> end tier 1 or tier 2 <?/MICOMMENT>
-
-<?/MIBLOCK> <?MICOMMENT> recattrib or colattrib <?/MICOMMENT>
+<?/MIBLOCK> <?MICOMMENT> recattrib  <?/MICOMMENT>
