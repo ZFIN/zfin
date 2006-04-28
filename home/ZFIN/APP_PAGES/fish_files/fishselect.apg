@@ -319,33 +319,55 @@ Startframes.apg will pass this variables on to the select form.
       <?MIVAR COND="$(XST,$selected_separator)"><input type=hidden name=selected_separator value="$selected_separator"><?/MIVAR>
 
     </form>
+    
+    <?MIVAR NAME=mut_constaint_count>$mut_constraint<?/MIVAR>
+    <?MIVAR NAME=mut_constaint_query>$mut_constraint<?/MIVAR>
 
     <!--***-->	
    <?MIBLOCK COND="$(XST,$pubId)">
-    <?MIVAR NAME=mut_constraint>
-           and recattrib_source_zdb_id = '$pubId'
-	   and (a.fish_id = recattrib_data_zdb_id 
-	      or a.locus = recattrib_data_zdb_id)
-
-    <?/MIVAR> 
     <?MIVAR NAME=target_table>
 	$target_table, record_attribution
     <?/MIVAR>
+    <?MIVAR NAME=mut_constraint_count>
+           and recattrib_source_zdb_id = '$pubId'
+	   and recattrib_data_zdb_id in (a.fish_id, a.locus, a.alt_zdb_id)
+	  UNION
+	  select distinct a.fish_id
+	  from $target_table , data_alias
+	  where line_type = 'mutant'
+	    and recattrib_source_zdb_id = '$pubId'
+	    and recattrib_data_zdb_id = dalias_zdb_id 
+	    and dalias_data_zdb_id = a.fish_id	       
+    <?/MIVAR> 
+    <?MIVAR NAME=mut_constraint_query>
+           and recattrib_source_zdb_id = '$pubId'
+	   and recattrib_data_zdb_id in (a.fish_id, a.locus, a.alt_zdb_id)
+	  UNION
+	  select  distinct 
+		 name, fish_id, abbrev, get_allele_html(allele), chrom_change, chrom_num,
+		 locus, gene_abbrev, gene_id, fishsearch_name_order, 
+		 fishsearch_allele_order 
+	  from $target_table , data_alias
+	  where line_type = 'mutant'
+	    and recattrib_source_zdb_id = '$pubId'
+	    and recattrib_data_zdb_id = dalias_zdb_id 
+	    and dalias_data_zdb_id = a.fish_id	       
+    <?/MIVAR> 
    <?/MIBLOCK>
 	
    <?MISQL SQL="
-         select count(*)::integer 
+         select distinct a.fish_id
 	 from $target_table
 	 where line_type = 'mutant'
-	       $mut_constraint;"> 
-       <?MIVAR name=$num_recs>$1<?/MIVAR>
+	       $mut_constraint_count;"> 
     <?/MISQL>
+    <?MIVAR name=$num_recs>$MI_CURRENTROW<?/MIVAR>
 
 <!-- Debugging
   <?MIVAR>$MI_SQL<?/MIVAR>
 -->
 
-    <?MIBLOCK COND="$(XST,$pubId)">
+    <?MIBLOCK COND="$(XST,$pubI)">
 	<?MISQL SQL="
 		select count(*)::integer
 		  from $target_table
@@ -424,7 +446,7 @@ Startframes.apg will pass this variables on to the select form.
 		 fishsearch_allele_order 
 	    from $target_table 
 	    where line_type = 'mutant' 
-		  $mut_constraint 
+		  $mut_constraint_query 
 	    $order_by;">
 	  <?MIVAR NAME=$gene_id>$9<?/MIVAR>
 	  <?MIVAR NAME=$gene_abbrev>$8<?/MIVAR>
@@ -808,7 +830,7 @@ Startframes.apg will pass this variables on to the select form.
        </TR>
 <?/MIBLOCK>
 
-<form name="BrowserForm" method=post
+<form name="BrowserForm" method=get
   onSubmit="updateList();"
   action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 
