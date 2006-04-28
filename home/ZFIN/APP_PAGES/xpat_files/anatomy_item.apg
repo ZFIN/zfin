@@ -39,12 +39,9 @@ function Delete_gene(anatkeyid) {
                 <?/MIVAR>
 }
 
-function Delete_attrib(subattr,data_zdbId,source_zdbId,info) {
-                <?MIVAR>
-                window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-addcanmrkr.apg&attrib='+subattr+'&data='+data_zdbId+'&OID=$OID&source='+source_zdbId);
-                <?/MIVAR>
 
-}
+        <?MISQL SQL="select WebExplode(object,'jsdelatt_OID=$OID&jsdelatt_Mival=aa-do-addcanmrkr.apg&jsdelatt_page_var=__') 
+        from webPages where ID='aa-js-delete_attrib.apg';">$1<?/MISQL>
 
 </SCRIPT>
 
