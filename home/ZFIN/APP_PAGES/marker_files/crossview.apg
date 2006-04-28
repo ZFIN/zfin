@@ -330,27 +330,13 @@ ERROR -- something bad happened -- no OID passed in!
       </TABLE>
 
 
-      <HR width=80%>
 
       </form>
 
-      <!-- Throw up the publication info, using the standard display format -->
-     
-  	<?MISQL SQL="
-  		select count(*) 
-  		from record_attribution
-  		where recattrib_data_zdb_id = '$OID'
-    		and get_obj_type(recattrib_source_zdb_id) = 'PUB';
-  		">	
-	<?/MISQL>
-	<?MIBLOCK COND="$(OR,$(>,$1,0),$(XST,$UPDATE))">
-	  <?MIVAR>
-	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=panels&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev$(IF,$(XST,$UPDATE),&UPDATE=1)"><b>Publications</b></A>
-	  <?/MIVAR>	
-	<?MIELSE>
-	  <b>Publications</b>
-	<?/MIBLOCK>
- 	<?MIVAR> &nbsp;($(FIX,$1))<?/MIVAR>
+    
+    <?MICOMMENT> *** Citation Link *** <?/MICOMMENT>
+    <?MISQL SQL="select WebExplode(object,'citlink_data_page=citgeneric.apg') from webPages where ID='aa-citlink.apg';">$1<?/MISQL>
+
 
 
       <?/MIBLOCK> <!-- ends mirowcount = 0 mielse -->

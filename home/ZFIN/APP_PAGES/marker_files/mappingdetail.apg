@@ -571,9 +571,13 @@ marker = '';
   		}
 	}
 
-	function Delete_attrib(subattr,data_zdbId,source_zdbId,info) {
-		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&caller=mappingdetail.apg&OID=$detOID&dataOID='+data_zdbId+'&attr='+subattr+'&attr_type=special-listitem&old_value='+source_zdbId+'&new_value=deleted&target_table=$target_table&info='+info);
-	}
+mappingdetail
+jsdelatt_Mival = aa-do-markerupdate.apg
+jsdelatt_page_vars = __caller=mappingdetail.apg__attr_type=special-listitem__new_value=deleted__target_table=$target_table
+jsdelatt_OID = detOID
+
+        <?MISQL SQL="select WebExplode(object,'jsdelatt_OID=$detOID&jsdelatt_Mival=aa-do-markerupdate.apg&jsdelatt_page_var=__caller=mappingdetail.apg__attr_type=special-listitem__new_value=deleted__target_table=$target_table') 
+        from webPages where ID='aa-js-delete_attrib.apg';">$1<?/MISQL>
 
 	function doit_marker(attr,attr_type,print_name,lg) {
 	  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishupdate.apg&caller=mappingdetail.apg&OID=$detOID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name+'&lg='+lg)
