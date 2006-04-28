@@ -225,8 +225,34 @@ Requires:  $CLONE_MARKER_ID, $highlight
       </TR>
     <?/MIBLOCK> <?MICOMMENT> -- end of if clone_rating --<?/MICOMMENT>
 
+    <?MIVAR NAME=$is_thisse_probe>false<?/MIVAR>
+    <?MIVAR NAME=$number_of_thisse_xpat_records><?/MIVAR>
+
+
+    <?MISQL SQL="select count(*)
+		   from expression_experiment
+		   where xpatex_probe_feature_zdb_id = '$OID'
+		   and exists (Select 'x'
+				from record_Attribution
+				where xpatex_zdb_id = recattrib_datA_zdb_id
+				and xpatex_source_zdb_id = recattrib_source_zdb_id
+				and xpatex_source_zdb_id in ('ZDB-PUB-051025-1','ZDB-PUB-040907-1','ZDB-PUB-010810-1'));">
+
+
+    <?MIVAR NAME=$number_of_thisse_xpat_records>$1<?/MIVAR>
+
+    $(IF,$(NE,$number_of_thisse_xpat_records,0),$(SETVAR,$is_thisse_probe,true),)
+
+    <?MIBLOCK COND="$(EC,$is_thisse_probe,true)">
         <TD colspan=3 nowrap><a href="/ZFIN/Methods/ThisseProtocol.html"><b>Thisse <i>in situ </i> hybridization protocol</b></a></TD>
+    <?/MIBLOCK>
+
+    <?MIVAR NAME=$is_thisse_probe>false<?/MIVAR>
+<?/MISQL>
+
   </TABLE>
+ 
+
 <?MIVAR NAME=comment>hard coded as "none given" for thisse load<?/MIVAR>
 <!-- <p align=left><b>Comments:</b><br>&nbsp;$3</p> -->
 <?/MISQL>
