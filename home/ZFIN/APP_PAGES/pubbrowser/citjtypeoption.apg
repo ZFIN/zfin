@@ -1,0 +1,18 @@
+
+
+
+
+<?MIBLOCK COND=$(EC,$sp_G_jtype_option,published)>
+    <?MIVAR NAME=cit_G_jtype_filter>
+        and jtype not in ('Curation', 'Unpublished')    
+    <?/MIVAR>    
+    
+<?MIELSE COND=$(EC,$sp_G_jtype_option,unpublished)>
+    <?MIVAR NAME=cit_G_jtype_filter>
+        and jtype in ('Curation', 'Unpublished')    
+    <?/MIVAR>
+
+<?MIELSE COND=$(EC,$sp_G_jtype_option,all)>
+   <?MIVAR NAME=cit_G_jtype_filter><?/MIVAR>
+   
+<?/MIBLOCK>

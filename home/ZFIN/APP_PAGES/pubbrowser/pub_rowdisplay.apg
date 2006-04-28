@@ -1,0 +1,95 @@
+<?MICOMMENT>
+
+FILE:     pub_rowdisplay.apg
+PREFIX:   pubrd_
+
+     
+INPUT VARS:
+  $sp_G_sql   complete SQL statement
+  
+GLOBALS (set by calling page) 
+  $pub_G_display       either count or links
+  $sp_G_sql            complete SQL statement
+  $showpubs_tr_bg      row background color
+
+
+OUTPUT VARS:
+  $pub_G_count is returned if $pub_G_display = count.
+
+OUTPUT:
+  Either a table of links, or the count records returned by $sp_G_sql.
+
+EFFECTS
+  none
+
+<?/MICOMMENT>
+
+
+  <?MIVAR NAME=pubrd_previous_pub><?/MIVAR>
+  <?MIVAR NAME=pub_G_count>0<?/MIVAR>
+
+
+<?MIBLOCK COND=$(EC,$pub_G_display,count)>
+
+    <?MISQL SQL="$sp_G_sql">
+    
+      <?MIVAR NAME=$pubrd_pub_zdb_id>$2<?/MIVAR>
+      <?MIBLOCK COND="$(NE,$pubrd_pub_zdb_id,$pubrd_previous_pub)">
+        <?MIVAR>
+          $(SETVAR,$pub_G_count,$(+,$pub_G_count,1))
+        <?/MIVAR>
+      <?/MIBLOCK>
+      <?MIVAR NAME=pubrd_previous_pub>$pubrd_pub_zdb_id<?/MIVAR>
+
+    <?/MISQL>
+
+<?MIELSE COND=$(EC,$pub_G_display,links)>
+
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Begin Links
+<?/MISQL>
+
+  <?MISQL SQL="$sp_G_sql">
+ 	<?MIVAR NAME=$pubrd_title>$1<?/MIVAR>
+ 	<?MIVAR NAME=$pubrd_pub_zdb_id>$2<?/MIVAR>
+ 	<?MIVAR NAME=$pubrd_pub_pyear>$3<?/MIVAR>
+ 	<?MIVAR NAME=$pubrd_pub_authors>$4<?/MIVAR>
+ 	<?MIVAR NAME=$pubrd_jrnl_abbrev>$5<?/MIVAR>
+ 	<?MIVAR NAME=$pubrd_pub_volume>$6<?/MIVAR>
+ 	<?MIVAR NAME=$pubrd_pub_pages>$7<?/MIVAR>
+ 	<?MIVAR NAME=$pubrd_pub_authors_lower>$8<?/MIVAR>
+ 	<?MIVAR NAME=$pubrd_pub_date>$9<?/MIVAR>
+ 	<?MIVAR NAME=$pubrd_recattrib_src_type>$(URLENCODE,$10)<?/MIVAR>
+ 	<?MIVAR NAME=$pubrd_pub_data_id>$11<?/MIVAR>
+ 	
+         <?MIBLOCK COND="$(NE,$pubrd_pub_zdb_id,$pubrd_previous_pub)">
+           <?MIVAR>
+   	
+   	  <TR bgcolor=$showpubs_tr_bg>
+     	  <TD align=left>
+     	  <?MIBLOCK COND=$(AND,$(XST,$UPDATE),$(EC,$OID,$pubrd_pub_data_id))>
+     	    <?MIVAR>
+   	      <font size=-1><input type=button value=delete onClick=Delete_attrib('publication','$pubrd_pub_data_id','$pubrd_pub_zdb_id','','$pubrd_recattrib_src_type')></font>
+   	    <?/MIVAR>
+   	  <?/MIBLOCK>    	  
+             <DIV class="show_pubs">
+ 		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$pubrd_pub_zdb_id">$pubrd_pub_authors ($pubrd_pub_pyear) $pubrd_title. $pubrd_jrnl_abbrev $pubrd_pub_volume$pubrd_pub_pages</A>
+             </DIV>
+     	  </TD>
+   	  </TR>
+ 
+           <?MIVAR NAME=$showpubs_tr_bg>$(IF,$(EC,$showpubs_tr_bg,$showpubs_tr_color),,$showpubs_tr_color)<?/MIVAR>
+           
+           <?/MIVAR>
+         <?/MIBLOCK> 
+         <?MIVAR NAME=pubrd_previous_pub>$pubrd_pub_zdb_id<?/MIVAR>
+         
+      <?/MISQL>
+
+<?/MIBLOCK>      
+
+      
+  <?MIVAR>  
+    $(UNSETVAR,$pubrd_previous_pub)  
+  <?/MIVAR>

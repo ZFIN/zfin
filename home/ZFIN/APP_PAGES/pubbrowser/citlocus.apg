@@ -1,0 +1,163 @@
+<?MICOMMENT>
+
+FILE:     citlocus.apg
+PREFIX:   citloc_
+
+     
+INPUT VARS:
+  $citloc_filter    where clause element to narrow results
+  
+GLOBALS (set by calling page) 
+  $OID              data zdb id
+  $sp_G_orderby     order by clause for SQL statement.
+  $cit_G_filter     source_type filter
+
+
+OUTPUT VARS:
+  $sp_G_returnvar   an SQL statement
+
+OUTPUT:
+  none
+
+EFFECTS
+  none
+
+<?/MICOMMENT>
+
+
+
+<?MIVAR COND=$(NXST,$cit_G_filter) NAME=cit_G_filter><?/MIVAR>
+<?MIVAR COND=$(NXST,$sp_G_orderby) NAME=sp_G_orderby><?/MIVAR>     
+
+    	
+<?MICOMMENT> 
+  ================================
+  =    Query Select Variables    =
+  ================================
+<?/MICOMMENT>
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-citselectlist.apg';">$1<?/MISQL>
+
+
+<?MICOMMENT> 
+  ==============================
+  =    SQL Clause Variables    =
+  ==============================
+<?/MICOMMENT>
+
+
+<?MIVAR NAME=citloc_fromwhere>
+  from record_attribution,publication p, journal
+  where recattrib_data_zdb_id = '$OID'
+  and recattrib_source_zdb_id = p.zdb_id
+  and p.pub_jrnl_zdb_id = jrnl_zdb_id
+<?/MIVAR>
+
+
+
+<?MICOMMENT> *** Set Variable cit_G_jtype_filter *** <?/MICOMMENT>
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-citjtypeoption.apg';">$1<?/MISQL>
+
+
+
+
+<?MIVAR>
+  $(VECAPPEND,$citloc_fromwhere,"
+    from fish_search f, record_attribution, publication p, journal
+    where f.locus = '"$OID"'
+    and recattrib_data_zdb_id = f.fish_id
+    and recattrib_source_zdb_id = p.zdb_id
+    and pub_jrnl_zdb_id = jrnl_zdb_id")
+
+  $(VECAPPEND,$citloc_fromwhere,"
+    from fish_search f, record_attribution,publication p, journal
+    where f.locus = '"$OID"'
+    and recattrib_data_zdb_id = f.alt_zdb_id
+    and recattrib_source_zdb_id = p.zdb_id
+    and p.pub_jrnl_zdb_id = jrnl_zdb_id")
+
+  $(VECAPPEND,$citloc_fromwhere,"
+    from fish_search f, mapped_deletion m, record_attribution, publication p, journal
+    where f.locus = '"$OID"'
+    and f.allele = m.allele
+    and recattrib_data_zdb_id  = m.mapdel_zdb_id
+    and recattrib_source_zdb_id = p.zdb_id
+    and p.pub_jrnl_zdb_id = jrnl_zdb_id")
+
+  $(VECAPPEND,$citloc_fromwhere,"
+    from fish_search f, mapped_deletion m, record_attribution, publication p, journal
+    where f.locus = '"$OID"'
+    and f.locus = m.allele
+    and recattrib_data_zdb_id  = m.mapdel_zdb_id
+    and recattrib_source_zdb_id = p.zdb_id
+    and jrnl_zdb_id = p.pub_jrnl_zdb_id")
+
+  $(VECAPPEND,$citloc_fromwhere,"
+    from data_alias, record_attribution, publication p,	journal
+    where dalias_data_zdb_id = '"$OID"'
+    and dalias_zdb_id = recattrib_data_zdb_id
+    and recattrib_source_zdb_id = p.zdb_id
+    and jrnl_zdb_id = p.pub_jrnl_zdb_id")
+
+  $(VECAPPEND,$citloc_fromwhere,"
+    from fish_search f, data_alias, record_attribution, publication p,journal
+    where f.locus = '"$OID"'
+    and dalias_data_zdb_id = f.alt_zdb_id
+    and dalias_zdb_id = recattrib_data_zdb_id
+    and recattrib_source_zdb_id = p.zdb_id
+    and p.pub_jrnl_zdb_id = jrnl_zdb_id")
+
+  $(VECAPPEND,$citloc_fromwhere,"
+    from fish_search f, data_alias, record_attribution, publication p, journal
+    where f.locus = '"$OID"'
+    and dalias_data_zdb_id = f.fish_id
+    and dalias_zdb_id = recattrib_data_zdb_id
+    and recattrib_source_zdb_id = p.zdb_id
+    and p.pub_jrnl_zdb_id = jrnl_zdb_id")
+<?/MIVAR>
+
+
+
+<?MICOMMENT> 
+  ===========================
+  =    Construct the SQL    =
+  ===========================
+<?/MICOMMENT>
+
+
+    <?MIVAR NAME=citloc_sql>
+        $cit_G_select
+        $citloc_fromwhere[1] 
+        $cit_G_jtype_filter
+        $cit_G_filter 
+    <?/MIVAR>
+
+    <?MIBLOCK FROM=2 TO=$(VECSIZE,$citloc_fromwhere) INDEX=$citloc_index>
+      <?MIVAR NAME=citloc_sql>
+        $citloc_sql
+        UNION
+        $cit_G_select
+        $citloc_fromwhere[$citloc_index]
+        $cit_G_jtype_filter
+        $cit_G_filter  
+      <?/MIVAR>
+    <?/MIBLOCK>
+
+    <?MIVAR NAME=citloc_sql>$citloc_sql
+       $sp_G_orderby
+    <?/MIVAR>
+
+
+<?MIVAR NAME=sp_G_returnvar>$citloc_sql<?/MIVAR>
+
+
+<?MIVAR>
+  $(UNSETVAR,$citloc_sql)
+  $(UNSETVAR,$citloc_fromwhere)
+  $(UNSETVAR,$citloc_jtype_filter)
+  $(UNSETVAR,$citloc_filter)
+<?/MIVAR>
+
+
+ 
+    

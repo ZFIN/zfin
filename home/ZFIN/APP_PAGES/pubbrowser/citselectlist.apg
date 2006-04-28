@@ -1,0 +1,21 @@
+
+
+    <?MIVAR NAME=cit_G_select>
+      select distinct p.title, 
+      p.zdb_id, 
+      year(p.pub_date) as pyear, 
+      p.authors, 
+      jrnl_abbrev, 
+      case
+        when p.pub_volume is not null
+          then p.pub_volume || ':'
+        else
+          ''
+      end,		 
+      p.pub_pages,
+      p.pub_authors_lower, 
+      p.pub_date,
+      recattrib_source_type,
+      recattrib_data_zdb_id
+    <?/MIVAR>
+    

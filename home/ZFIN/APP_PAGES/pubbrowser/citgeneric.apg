@@ -1,0 +1,155 @@
+
+<?MIVAR COND=$(NXST,$cit_G_filter) NAME=cit_G_filter><?/MIVAR>
+<?MIVAR COND=$(NXST,$sp_G_orderby) NAME=sp_G_orderby><?/MIVAR>     
+    	
+<?MICOMMENT> 
+  ================================
+  =    Query Select Variables    =
+  ================================
+<?/MICOMMENT>
+
+<?MICOMMENT> *** Set Variable cit_G_select *** <?/MICOMMENT>
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-citselectlist.apg';">$1<?/MISQL>
+
+
+<?MICOMMENT> 
+  ==============================
+  =    SQL Clause Variables    =
+  ==============================
+<?/MICOMMENT>
+
+
+
+<?MICOMMENT> *** Set Variable cit_G_jtype_filter *** <?/MICOMMENT>
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-citjtypeoption.apg';">$1<?/MISQL>
+
+
+
+<?MIVAR NAME=citfish_fromwhere>
+      from record_attribution, publication p, journal
+      where recattrib_data_zdb_id = '$OID'
+      and recattrib_source_zdb_id = p.zdb_id 
+      and jrnl_zdb_id = pub_jrnl_zdb_id
+<?/MIVAR>
+
+
+<?MIVAR>
+  $(VECAPPEND,$citfish_fromwhere,"
+      from record_attribution, publication p, journal, marker_relationship
+      where recattrib_data_zdb_id = mrel_zdb_id 
+      and mrel_mrkr_2_zdb_id = '"$OID"'
+      and recattrib_source_zdb_id = p.zdb_id 
+      and jrnl_zdb_id = pub_jrnl_zdb_id")
+
+  $(VECAPPEND,$citfish_fromwhere,"
+      from record_attribution, publication p, journal, marker_relationship
+      where recattrib_data_zdb_id = mrel_zdb_id 
+      and mrel_mrkr_1_zdb_id = '"$OID"'
+      and recattrib_source_zdb_id = p.zdb_id 
+      and jrnl_zdb_id = pub_jrnl_zdb_id")
+
+  $(VECAPPEND,$citfish_fromwhere,"
+      from record_attribution, publication p, journal, data_alias
+      where recattrib_data_zdb_id = dalias_zdb_id
+      and dalias_data_zdb_id = '"$OID"'
+      and recattrib_source_zdb_id = p.zdb_id 
+      and jrnl_zdb_id = pub_jrnl_zdb_id")
+
+  $(VECAPPEND,$citfish_fromwhere,"
+      from record_attribution, publication p, journal, db_link
+      where recattrib_data_zdb_id = dblink_zdb_id
+      and dblink_linked_recid = '"$OID"'
+      and recattrib_source_zdb_id = p.zdb_id 
+      and jrnl_zdb_id = pub_jrnl_zdb_id")
+
+  $(VECAPPEND,$citfish_fromwhere,"
+      from record_attribution, publication p, journal, orthologue_evidence_display
+      where recattrib_data_zdb_id = oevdisp_zdb_id
+      and oevdisp_gene_zdb_id = '"$OID"'
+      and recattrib_source_zdb_id = p.zdb_id 
+      and jrnl_zdb_id = pub_jrnl_zdb_id")
+
+  $(VECAPPEND,$citfish_fromwhere,"
+      from record_attribution, publication p, journal, marker_go_term_evidence
+      where recattrib_data_zdb_id = mrkrgoev_zdb_id
+      and mrkrgoev_mrkr_zdb_id = '"$OID"'
+      and recattrib_source_zdb_id = p.zdb_id 
+      and jrnl_zdb_id = pub_jrnl_zdb_id")
+
+  $(VECAPPEND,$citfish_fromwhere,"
+      from record_attribution, publication p, journal, locus as loc
+      where recattrib_data_zdb_id = loc.zdb_id
+      and loc.cloned_gene = '"$OID"'
+      and recattrib_source_zdb_id = p.zdb_id 
+      and jrnl_zdb_id = pub_jrnl_zdb_id")
+
+  $(VECAPPEND,$citfish_fromwhere,"
+      from record_attribution, publication p, journal, alteration as a, locus as loc
+      where recattrib_data_zdb_id = a.zdb_id
+      and a.locus = loc.zdb_id
+      and loc.cloned_gene = '"$OID"'
+      and recattrib_source_zdb_id = p.zdb_id 
+      and jrnl_zdb_id = pub_jrnl_zdb_id")
+
+  $(VECAPPEND,$citfish_fromwhere,"
+      from record_attribution, publication p, journal, fish as f, locus as loc
+      where recattrib_data_zdb_id = f.zdb_id
+      and f.locus = loc.zdb_id
+      and loc.cloned_gene = '"$OID"'
+      and recattrib_source_zdb_id = p.zdb_id 
+      and jrnl_zdb_id = pub_jrnl_zdb_id")
+
+<?/MIVAR>
+
+
+
+<?MICOMMENT> 
+  ===========================
+  =    Construct the SQL    =
+  ===========================
+<?/MICOMMENT>
+
+
+    <?MIVAR NAME=citfish_sql>
+        $cit_G_select
+        $citfish_fromwhere[1] 
+        $cit_G_jtype_filter
+        $cit_G_filter 
+    <?/MIVAR>
+
+    <?MIBLOCK FROM=2 TO=$(VECSIZE,$citfish_fromwhere) INDEX=$citfish_index>
+      <?MIVAR NAME=citfish_sql>
+        $citfish_sql
+        UNION
+        $cit_G_select
+        $citfish_fromwhere[$citfish_index]
+        $cit_G_jtype_filter
+        $cit_G_filter  
+      <?/MIVAR>
+    <?/MIBLOCK>
+
+    <?MIVAR NAME=citfish_sql>$citfish_sql
+       $sp_G_orderby
+    <?/MIVAR>
+
+
+<?MIVAR NAME=sp_G_returnvar>$citfish_sql<?/MIVAR>
+
+
+<?MIVAR>
+  $(UNSETVAR,$citfish_sql)
+  $(UNSETVAR,$citfish_fromwhere)
+  $(UNSETVAR,$citfish_jtype_filter)
+  $(UNSETVAR,$citfish_filter)
+<?/MIVAR>
+
+
+<?MICOMMENT> 
+***********
+
+
+
+********
+<?/MICOMMENT>
+ 
+ 
