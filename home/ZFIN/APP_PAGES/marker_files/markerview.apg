@@ -13,8 +13,8 @@ EFFECTS:
 
 NOTE:
 Because this page drops temporary tables it cannot be webexploded from
-inside a select statement.  This page must first be retrieved with a
-select statement and then passed to webexplode from an execute function
+inside a select statement.  This page must first be retrieved with a 
+select statement and then passed to webexplode from an execute function 
 statement.  See discussion of the MIqry2pass variable in the Web
 Datablade documentation.
 <?/MICOMMENT>
@@ -40,7 +40,7 @@ Datablade documentation.
   function start_note() {
     top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect_note.apg","notewindow","scrollbars=no,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=325");
   }
-
+  
   function call_mapplet() {
 	document.mapper.submit();
   }
@@ -75,14 +75,14 @@ Datablade documentation.
    function info() {
 	window.alert('ANONYMOUS LINKAGE:\n This linkage has not been published yet. ZFIN supports anonymous linkages to promote scientific \ncollaboration; you should contact the submitter of this mapping data (just click the link) \nto negotiate access to this information.');
    }
-  //  initialize view_mapplet parameters
+  //  initialize view_mapplet parameters   
    marker = '';
 
   </SCRIPT>
 </HEAD>
 
 
-<!------------------------------------------------------>
+<!------------------------------------------------------>   
 <BODY>
 
 <basefont size=2>
@@ -104,7 +104,7 @@ Datablade documentation.
   <?MIVAR COND="$(NXST,$lod)" NAME=$lod><?/MIVAR>
   <?MIVAR COND="$(NXST,$metric)" NAME=$metric><?/MIVAR>
   <?MIVAR COND="$(NXST,$lg)" NAME=$lg><?/MIVAR>
-  <?MIVAR COND="$(NXST,$map_comments)" NAME=$map_comments><?/MIVAR>
+  <?MIVAR COND="$(NXST,$map_comments)" NAME=$map_comments><?/MIVAR>	
   <?MIVAR NAME=$ref_map><?/MIVAR>
 
   <!-- default user as GUEST---------------------->
@@ -115,8 +115,8 @@ Datablade documentation.
 
   <?MIVAR NAME=$target_table COND="$(>,$(POSITION,$OID,GENE),0)">marker<?/MIVAR>
   <?MISQL SQL="
-    select mrkr_name, mrkr_type, mrkrtype_type_display, mrkr_abbrev, mrkr_comments
-      from marker, marker_types
+    select mrkr_name, mrkr_type, mrkrtype_type_display, mrkr_abbrev, mrkr_comments 
+      from marker, marker_types 
       where mrkr_zdb_id = '$OID'
 	and mrkr_type = marker_type;">
   <?/MISQL>
@@ -142,21 +142,21 @@ Datablade documentation.
 	   and mtgrpmem_mrkr_type = '$marker_type'; ">
      <?MIVAR NAME=type_of_knockdown_reagent>t<?/MIVAR>
   <?/MISQL>
-
+  
   <!-- if no match for the entered ID, display not found msg ------>
   <?MIBLOCK COND="$(OR,$(EC,$name,$MI_NOVALUE),$(NXST,$id_exist))">
      <!-- page header display ----------------->
      <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
      <!-- look to see if replaced zdb_id -->
      <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-zdb_history.apg';">$1<?/MISQL>
-
+    
      <?MIBLOCK COND="$(NXST,$new_oid)">
        <form><center><font size=4>
-        <?MIVAR> <b>Requested ID not found on ZFIN.<?/MIVAR></font>
+        <?MIVAR> <b>Requested ID not found on ZFIN.<?/MIVAR></font>      
        </form>
-     <?/MIBLOCK>
-
-
+     <?/MIBLOCK>  
+ 
+ 
   <?MIELSE> <!-- if entered ID has an entry in ZFIN------------------------>
 
       <SCRIPT> <!-- functions for update--------------------->
@@ -176,10 +176,10 @@ Datablade documentation.
  		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=dalias_alias&attr_type=delete-alias&old_value='+alias+'&comments=Deleted&target_table=marker');
 	}
 
-	function Delete_attrib(subattr,data_zdbId,source_zdbId,info) {
-		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&dataOID='+data_zdbId+'&attr='+subattr+'&attr_type=special-listitem&old_value='+source_zdbId+'&comments=Deleted&target_table=marker&info='+info);
-	}
-
+        <?MISQL SQL="select WebExplode(object,'jsdelatt_OID=$OID&jsdelatt_Mival=aa-do-markerupdate.apg&jsdelatt_page_var=__attr_type=special-listitem__comments=Deleted__target_table=marker') 
+        from webPages where ID='aa-js-delete_attrib.apg';">$1<?/MISQL>
+        
+        
 	function Delete_mrel(mrel_partner_id, type) {
  		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=marker_relationship&attr_type=delete-mrkrrelation&old_value='+mrel_partner_id+'&comments=Deleted&target_table=marker&info='+type);
 	}
@@ -230,14 +230,14 @@ Datablade documentation.
 	}
 	function setChimericism(old_value) {
 	<?MICOMMENT> index 0 = true; index 1 = false <?/MICOMMENT>
-
+				
 		if (document.updateseq.chimericism[0].checked) {
 		  var isChimeric = 't';
 		}
 		else {
 		  var isChimeric = 'f';
 		}
-
+		
 		if (isChimeric != old_value) {
   		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&anchor=sequence&OID=$OID&attr=clone_is_chimeric&attr_type=boolean&old_value='+old_value+'&new_value='+isChimeric+'&target_table=clone');
   		}
@@ -249,7 +249,7 @@ Datablade documentation.
 		if (seq_acc != ''){
 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value='+dbname+'&new_value='+seq_acc+'&target_table=marker&fdbcont_super=protein&fdbcont_data=domain');
   		}
-	}
+	}	
 	function new_mrkrrel(mrkrrel_type, mrkr_abbrev_value) {
 		var mrkr_abbrev = escape(mrkr_abbrev_value);
 		mrkrrel_type.replace(/ /,"%20");
@@ -267,8 +267,8 @@ Datablade documentation.
 	}
 
 
-        <?MICOMMENT> Note Can Be Blank. However, the xtra_param variable is set to alias
-          by the updating page when xtra_param is null. An edit has occured, so set
+        <?MICOMMENT> Note Can Be Blank. However, the xtra_param variable is set to alias 
+          by the updating page when xtra_param is null. An edit has occured, so set 
           note = 'sequence modified'.
         <?/MICOMMENT>
  	function update_mrkrsequence(mrkrseq_zdb,old_seq,new_seq,note) {
@@ -294,7 +294,7 @@ Datablade documentation.
 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+mrkr_abbrev+'&new_value='+pub_id+'&target_table=marker&info=mrel');
   		}
 	}
-
+	
 	function new_attrib_ssprevname(objform) {
 		var prev_name=escape(objform.attrib_ssprevname.value);
 		var pub_id=objform.attrib_ssprevname_pubid.value.toUpperCase();
@@ -306,7 +306,7 @@ Datablade documentation.
 	function new_attrib_prevname(objform) {
 		var prev_name=escape(objform.attrib_prevname.value);
 		var pub_id=objform.attrib_prevname_pubid.value.toUpperCase();
-
+		
 		if ((prev_name != '') && (pub_id != '')) {
 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+prev_name+'&new_value='+pub_id+'&target_table=marker&info=namealias');
   		}
@@ -318,7 +318,7 @@ Datablade documentation.
 		if((seq_acc != '')&&(pub_id != '')) {
 			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+seq_acc+'&new_value='+pub_id+'&target_table=marker&info=seqacc');
 		}
-	}
+	}	
 	function new_attrib_seq() {
 		var seq_acc = document.updateseq.attrib_seq_acc.value;
 		var pub_id = document.updateseq.attrib_seq_pubid.value.toUpperCase();
@@ -337,7 +337,7 @@ Datablade documentation.
 	function new_attrib_mutant(dataid, objform) {
 		var pub_id = objform.attrib_mutant_pubid.value.toUpperCase();
 		if((dataid != '')&&(pub_id != '')) {
-			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=colattrib&attr_type=special-newattrib&old_value='+dataid+'&new_value='+pub_id+'&target_table=marker&info=cloned_gene');
+			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+dataid+'&new_value='+pub_id+'&target_table=marker&info=cloned_gene');
 		}
 	}
 
@@ -348,14 +348,14 @@ Datablade documentation.
  		}
  	}
 
-        <?/MIVAR>
+        <?/MIVAR> 
       </SCRIPT>
 
-     <!-- user authorization check------------------------------->
-
+     <!-- user authorization check-------------------------------> 
+ 
       <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'page_title=View $marker_type') from webPages where ID='aa-secure_navigation.apg';">$1
       <?/MISQL>
-
+     
       <!-- If updating, only let owner update anything -->
       <?MISQL COND="$(XST,$UPDATE)" SQL="select WebExplode(object,'page_title=Update Gene&permission=owns&rtype=marker') from webPages where ID='aa-secure_navigation.apg';">$1
       <?/MISQL>
@@ -363,7 +363,7 @@ Datablade documentation.
 
       <?MIBLOCK COND="$(NC,$AUTHORIZED,false)"> <!-- if authorized---------->
 
-	  <!-- title for webpage history ----------->
+	  <!-- title for webpage history ----------->	
           <?MIBLOCK COND="$(XST,$UPDATE)">
 		<?MIVAR>
  			<TITLE>ZFIN Update: $abbrev</title>
@@ -373,7 +373,7 @@ Datablade documentation.
  			<TITLE>ZFIN: $marker_type_display: $abbrev </title>
 		<?/MIVAR>
           <?/MIBLOCK>
-
+          
 	  <!-- page header display ----------------->
   	  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
@@ -385,26 +385,26 @@ Datablade documentation.
 
 	  <!----- OKAY, NOW  THROW UP THE  MARKER INFO ------------------>
 
-<!----------------------------------------------------------->
+<!----------------------------------------------------------->       	   
 <p>
 
 <?MIVAR COND="$(XST,$UPDATE)"> <!---- define button to go back------>
-
+  
    <form>
      <center><font size=+2>
-     <input type=button
-          value=" DONE UPDATING. Back to Viewing! " onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID')">
+     <input type=button 
+          value=" DONE UPDATING. Back to Viewing! " onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID')"> 
      </font></center>
-   </form>
+   </form> 
 <?/MIVAR>
 
 <?MICOMMENT>=========================================================
             ==     Name    &   Input Welcome button
             ==     Symbol (if genedom)
 	    =========================================================
-<?/MICOMMENT>
+<?/MICOMMENT> 
 <?MICOMMENT> use table to line up title and your input welcome button
-<?/MICOMMENT>
+<?/MICOMMENT> 
 <table width=100% cellspacing=0>
   <tr>
    <td width=85%>
@@ -417,17 +417,17 @@ Datablade documentation.
       <?MIVAR>$title: $(IF,$(XST,$type_of_genedom),<i>$name</i>,$name)<?/MIVAR>
     </b></FONT>
    </td>
-   <?MIBLOCK COND="$(NXST,$UPDATE)">
+   <?MIBLOCK COND="$(NXST,$UPDATE)"> 
     <td width=15% align=right>
      <?MIVAR>
-        <form method=post
-              action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->"
+        <form method=post 
+              action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
               target=comments>
            <input type=hidden name=subject value="$abbrev">
            <input type=hidden name=marker_id value="$OID">
            <input type=hidden name=MIval value="aa-your_input_welcome.apg">
            <input type=hidden name=page_id value="$OID">
-           <td><input type=submit value="Your Input Welcome"></td>
+           <td><input type=submit value="Your Input Welcome"></td>         
          </form>
       <?/MIVAR>
     </td>
@@ -445,17 +445,17 @@ Datablade documentation.
   <?/MIVAR>
 </table>
 
-
+  
 <?MICOMMENT>=========================================================
             ==     Previous Names
 	    =========================================================
-<?/MICOMMENT>
+<?/MICOMMENT> 
 <?MIVAR COND="$(XST,$UPDATE)">
-  <INPUT TYPE=button
+  <INPUT TYPE=button 
     value=Add
     onClick="doit('dalias_alias','text','Alias','alias')">
   <b>Previous Names:</b>
-<?/MIVAR>
+<?/MIVAR> 
 
 <?MISQL SQL="
   select dalias_alias, dalias_zdb_id
@@ -468,10 +468,10 @@ Datablade documentation.
 
   <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(XST,$UPDATE))">
     <form>
-    <br><b>Add Reference:</b>
-    Previous name:<input type=text name=attrib_prevname>
+    <br><b>Add Reference:</b> 
+    Previous name:<input type=text name=attrib_prevname>	
     Reference:<input type=text name=attrib_prevname_pubid>
-    <input type=button value="Add" onClick=new_attrib_prevname(this.form);>
+    <input type=button value="Add" onClick=new_attrib_prevname(this.form);> 
     </form>
   <?/MIVAR>
 
@@ -479,17 +479,17 @@ Datablade documentation.
   <?MIVAR NAME=$aliasId>$2<?/MIVAR>
   <?MIVAR COND="$(XST,$alias)" NAME=$alias_plus>$(URLENCODE,$alias)<?/MIVAR>
   <?MIVAR COND="$(XST,$UPDATE)">
-    <br>
-    <INPUT TYPE=button
-      value=Delete
+    <br> 
+    <INPUT TYPE=button 
+      value=Delete 
       onClick="Delete_alias('$alias_plus','$OID')">
   <?/MIVAR>
   $(IF,$(AND,$(NXST,$UPDATE),$(>,$MI_CURRENTROW,1)),;) $alias
 
-  <?MIBLOCK COND="$(XST,$aliasId)">
+  <?MIBLOCK COND="$(XST,$aliasId)">	
       <?MISQL SQL="select WebExplode(object,'dataId=$aliasId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
   <?/MIBLOCK>
-
+	
 <?/MISQL>
 <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
     <br>
@@ -499,12 +499,12 @@ Datablade documentation.
 <?MICOMMENT>=========================================================
             ==     Sequence Similarities
 	    =========================================================
-<?/MICOMMENT>
+<?/MICOMMENT> 
 <?MIVAR NAME="display_sequence_similarity">false<?/MIVAR>
 
-<?MISQL SQL="select count(*)
-	     from data_alias
-	     where dalias_data_zdb_id = '$OID'
+<?MISQL SQL="select count(*) 
+	     from data_alias 
+	     where dalias_data_zdb_id = '$OID' 
 	       and dalias_group = 'sequence similarity';">
   <?MIVAR COND="$(>,$1,0)" NAME="display_sequence_similarity">true<?/MIVAR>
 <?/MISQL>
@@ -512,11 +512,11 @@ Datablade documentation.
 <?MIBLOCK COND="$(EQ,$display_sequence_similarity,true)">
 
   <?MIVAR COND="$(XST,$UPDATE)">
-      <INPUT TYPE=button
+      <INPUT TYPE=button 
         value=Add
         onClick="doit('dalias_alias','text','Alias','sequence+similarity')">
-  <?/MIVAR>
-
+  <?/MIVAR> 
+ 
   <b>Keywords and Sequence Similarities:</b>
 
  <?MISQL SQL="
@@ -526,10 +526,10 @@ Datablade documentation.
 
   <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(XST,$UPDATE))">
     <form>
-    <br><b>Add Reference:</b>
-    Sequence similarity:<input type=text name=attrib_ssprevname>
+    <br><b>Add Reference:</b> 
+    Sequence similarity:<input type=text name=attrib_ssprevname>	
     Reference:<input type=text name=attrib_ssprevname_pubid>
-    <input type=button value="Add" onClick=new_attrib_ssprevname(this.form);>
+    <input type=button value="Add" onClick=new_attrib_ssprevname(this.form);> 
     </form>
   <?/MIVAR>
 
@@ -538,17 +538,17 @@ Datablade documentation.
   <?MIVAR NAME=$aliasId>$2<?/MIVAR>
   <?MIVAR COND="$(XST,$alias)" NAME=$alias_plus>$(URLENCODE,$alias)<?/MIVAR>
   <?MIVAR COND="$(XST,$UPDATE)">
-    <br>
-    <INPUT TYPE=button
-      value=Delete
+    <br> 
+    <INPUT TYPE=button 
+      value=Delete 
       onClick="Delete_alias('$alias_plus','$OID')">
   <?/MIVAR>
   $(IF,$(AND,$(NXST,$UPDATE),$(>,$MI_CURRENTROW,1)),;) $alias
 
-  <?MIBLOCK COND="$(XST,$aliasId)">
+  <?MIBLOCK COND="$(XST,$aliasId)">	
       <?MISQL SQL="select WebExplode(object,'dataId=$aliasId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
   <?/MIBLOCK>
-
+	
 <?/MISQL>
 <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
     <br>
@@ -556,43 +556,43 @@ Datablade documentation.
 <?/MIBLOCK> <?MICOMMENT> end display_sequence_similarity <?/MICOMMENT>
 
 
- <?MICOMMENT>
+ <?MICOMMENT> 
               ===================
-                Marker Sequence
+                Marker Sequence  
               ===================
  <?/MICOMMENT>
-
+        
  <?MIVAR NAME=$mrkrview_sequence><?/MIVAR>
- <?MIVAR NAME=$mrkrview_mrkrseq_zdb_id><?/MIVAR>
+ <?MIVAR NAME=$mrkrview_mrkrseq_zdb_id><?/MIVAR>  
 
  <?MISQL SQL="
    select mrkrseq_sequence, mrkrseq_zdb_id
      from marker_sequence
     where mrkrseq_mrkr_zdb_id = '$OID';">
     <?MIVAR NAME=$mrkrview_sequence>$1<?/MIVAR>
-    <?MIVAR NAME=$mrkrview_mrkrseq_zdb_id>$2<?/MIVAR>
+    <?MIVAR NAME=$mrkrview_mrkrseq_zdb_id>$2<?/MIVAR>        
  <?/MISQL>
-
+ 
  <?MICOMMENT> get blast linkout url <?/MICOMMENT>
- <?MISQL SQL="select fdb_db_query
-	      from foreign_db
+ <?MISQL SQL="select fdb_db_query 
+	      from foreign_db 
 	     where fdb_db_name ='BLAST';">
     <?MIVAR NAME=fdb_url_blast>$1<?/MIVAR>
  <?/MISQL>
  <?MIVAR NAME=blast_option>&EXPECT=1000&WORD_SIZE=7&ENTREZ_QUERY=Danio rerio [ORGN]&FORMAT_ENTREZ_QUERY=All organisms<?/MIVAR>
-
+ 
   <?MIBLOCK COND="$(AND,$(XST,$UPDATE),$(XST,$type_of_knockdown_reagent))">
       </form>
       <form name=newdata>
 
       <br>
         <b>Sequence:</b>
-
+   
       <table border=0 bgcolor="<!--|HIGHLIGHT_COLOR|-->">
-        <tr><td>
-        <?MISQL SQL="select WebExplode(object,'seqdata_sequence=$mrkrview_sequence') from webPages where ID='aa-sequence_data_entry.apg';">$1<?/MISQL>
+        <tr><td> 
+        <?MISQL SQL="select WebExplode(object,'seqdata_sequence=$mrkrview_sequence') from webPages where ID='aa-sequence_data_entry.apg';">$1<?/MISQL>        
 
-      <INPUT TYPE=button
+      <INPUT TYPE=button 
         value="Update Sequence"
         <?MIVAR>
         onClick="if (validSequence(document.newdata.seqdata_DisplaySequence.value) ){update_mrkrsequence('$mrkrview_mrkrseq_zdb_id','$mrkrview_sequence',document.newdata.seqdata_DisplaySequence.value,document.newdata.seqdata_CuratorNote.value)}">
@@ -600,22 +600,22 @@ Datablade documentation.
         <br>
         </td></tr>
       </table>
-
+        
       <?MIVAR COND="$(NC,$mrkrview_mrkrseq_zdb_id,)">
-         <br>Add Sequence Reference:
+         <br>Add Sequence Reference:	
          <input type=text name=mrkrview_seq_pubid>
-         <input type=button value="Add" onClick=new_attrib_mrkrseq('$mrkrview_mrkrseq_zdb_id');>
+         <input type=button value="Add" onClick=new_attrib_mrkrseq('$mrkrview_mrkrseq_zdb_id');> 
         <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_mrkrseq_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
         <p>
       <?/MIVAR>
       </form>
-
+      
   <?MIELSE COND="$(NC,$mrkrview_mrkrseq_zdb_id,)">
 
       <br> <?MICOMMENT> for display purpose <?/MICOMMENT>
       <?MICOMMENT>use table to align sequence and disclaimer<?/MICOMMENT>
-      <table width=100% cellspacing=0>
-
+      <table width=100% cellspacing=0> 
+ 
        <tr>
         <td width=7%>
           <b>Sequence:</b>
@@ -623,7 +623,7 @@ Datablade documentation.
         <td>
           <?MIVAR>&nbsp;5' - $mrkrview_sequence - 3'<?/MIVAR>
           <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_mrkrseq_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
-
+        
           <?MIVAR>
             &nbsp;  <input type=button value="BLAST IT" onClick="window.open('$(CONCAT,$fdb_url_blast,$mrkrview_sequence,$blast_option)');">
           <?/MIVAR>
@@ -634,16 +634,16 @@ Datablade documentation.
         <td>
          <?MICOMMENT>in checkedout branch, a sequence_disclaimer.apg page is added.
                we are hardcoding now, and will update when merge.
-         <?/MICOMMENT>
+         <?/MICOMMENT> 
          <font size=-1>
            &nbsp;(Although ZFIN verifies reagent sequence data, we recommend that you conduct independent sequence analysis before ordering any reagent.)
          </font>
-        </td>
+        </td> 
       </tr>
      </table>
 
      <br>
-  <?/MIBLOCK>
+  <?/MIBLOCK>      
 
 
 <?MICOMMENT>=========================================================
@@ -658,9 +658,9 @@ Datablade documentation.
      <input type=button value="Add it!" onClick="new_mrkrrel('1to2-knockdown reagent targets gene',this.form.mrkr_abbrev.value)">
      <br>
      Add Reference:
-     Gene symbol:<input type=text name=attrib_mrkr_abbrev>
+     Gene symbol:<input type=text name=attrib_mrkr_abbrev>	
      Reference:<input type=text name=attrib_mrel_pubid>
-     <input type=button value="Add" onClick=new_attrib_mrel(this.form);>
+     <input type=button value="Add" onClick=new_attrib_mrel(this.form);> 
      </form>
   <?/MIBLOCK>
 
@@ -685,7 +685,7 @@ Datablade documentation.
     <?/MIVAR>
 
     <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrview_trg_gene_zdb_id">$mrkrview_trg_gene_sym</a>
-    <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_trg_mrel_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+    <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_trg_mrel_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>	
   <?/MISQL>
   <?MIBLOCK COND="$(!=,$MI_ROWCOUNT,0)">
     <p> <?MICOMMENT> for display purpose <?/MICOMMENT>
@@ -717,16 +717,16 @@ Datablade documentation.
 <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
   <br>
   <B>Curator Notes:</B>
-  <?MISQL SQL="select count(*)
+  <?MISQL SQL="select count(*) 
 		from data_note
 		where dnote_data_zdb_id = '$OID' ;">
-
+  
   <?MIVAR COND="$(NC,$1,0)">
     <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$OID">Notes</A>
   <?/MIVAR>
   <?MIVAR COND="$(EC,$1,0)">
 
-    <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$OID">Add Notes</a>
+    <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$OID">Add Notes</a> 
   <?/MIVAR>
  <?/MISQL>
  <br>
@@ -739,8 +739,8 @@ Datablade documentation.
 <?/MICOMMENT>
 
 <?MISQL SQL="
-     select mrkr_comments
-       from marker
+     select mrkr_comments 
+       from marker 
       where mrkr_Zdb_id='$OID'
         and mrkr_comments is not null
         and mrkr_comments != '';">
@@ -755,17 +755,17 @@ Datablade documentation.
      <b>Note:</b>
      &nbsp;$mrkrview_mrkr_comments
      <?MIVAR COND="$(XST,$UPDATE)">
-	  <INPUT TYPE=button value="Update Note" onClick="doit('mrkr_comments','textarea','Note')">
-     <?/MIVAR>
+	  <INPUT TYPE=button value="Update Note" onClick="doit('mrkr_comments','textarea','Note')"> 
+     <?/MIVAR> 
      <br>
   <?/MIVAR>
 <?/MISQL>
 
 <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">
    <?MIVAR COND="$(XST,$UPDATE)">
-      <INPUT TYPE=button value="Add New Marker Note" onClick="doit('mrkr_comments','textarea','Note')">
+      <INPUT TYPE=button value="Add New Marker Note" onClick="doit('mrkr_comments','textarea','Note')"> 
       <br>
-   <?/MIVAR>
+   <?/MIVAR> 
 <?/MIVAR>
 
 
@@ -775,7 +775,7 @@ Datablade documentation.
 	    =========================================================
 <?/MICOMMENT>
 <?MIVAR NAME="SOURCE"> <?/MIVAR>
-<?MISQL SQL="select WebExplode(object,'CLONE_MARKER_ID=$OID') from webPages where ID='aa-clonebox.apg'
+<?MISQL SQL="select WebExplode(object,'CLONE_MARKER_ID=$OID') from webPages where ID='aa-clonebox.apg' 
 	     and exists (select 'x' from clone where clone_mrkr_zdb_id = '$OID');">
 	<hr width=80%>
         <b>CLONE DATA: </b> $1
@@ -792,12 +792,12 @@ Datablade documentation.
 This section of the code has been commented..see FogBugz 743. The update feature for adding knockdown reagents is no longer necessary.
 I am commenting this part of the code rather than deleting it. If no flags are raised in a month from today (7/14/05), this section can be deleted by the next person who touches markerview.apg (Prita)
 ---------------------------------------------------------------------
-
+ 
 <?MIBLOCK COND="$(AND,$(XST,$type_of_genedom),$(XST,$UPDATE))">
      <?MIVAR COND="$(EC,$display_mut_trg_title,f)">
          <hr width=80%>
 	 <b>
-		MUTANTS AND TARGETED KNOCKDOWNS:
+		MUTANTS AND TARGETED KNOCKDOWNS: 
          </b> <br>
          $(SETVAR,$display_mut_trg_title,t)
      <?/MIVAR>
@@ -806,10 +806,10 @@ I am commenting this part of the code rather than deleting it. If no flags are r
      Name: <input type=text size=15 name=mrkr_abbrev>
      <input type=button value="Add it!" onClick="new_mrkrrel('2to1-knockdown reagent targets gene',this.form.mrkr_abbrev.value)">
      <br>
-     <b>Add Reference:</b>
-     Reagent name:<input type=text name=attrib_mrkr_abbrev>
+     <b>Add Reference:</b> 
+     Reagent name:<input type=text name=attrib_mrkr_abbrev>	
      Reference:<input type=text name=attrib_mrel_pubid>
-     <input type=button value="Add" onClick=new_attrib_mrel(this.form);>
+     <input type=button value="Add" onClick=new_attrib_mrel(this.form);> 
      </form>
 <?/MIBLOCK>
 <?/MICOMMENT>
@@ -820,8 +820,8 @@ I am commenting this part of the code rather than deleting it. If no flags are r
    <?/MICOMMENT>
 
 <?MISQL SQL="
-   select zdb_id, locus_name, abbrev
-     from locus
+   select zdb_id, locus_name, abbrev 
+     from locus 
     where cloned_gene='$OID';">
 <?/MISQL>
 <?MIVAR NAME=$mrkrview_locus_zdb_id>$1<?/MIVAR>
@@ -832,32 +832,32 @@ I am commenting this part of the code rather than deleting it. If no flags are r
   <?MIVAR COND="$(EC,$display_mut_trg_title,f)">
       <hr width=80%>
       <b>
-	MUTANTS AND TARGETED KNOCKDOWNS:
+	MUTANTS AND TARGETED KNOCKDOWNS: 
       </b> <br>
       $(SETVAR,$display_mut_trg_title,t)
-  <?/MIVAR>
+  <?/MIVAR> 
   <?MIVAR><?MICOMMENT>to have backgroup color<?/MICOMMENT>
     <table width =100% border=0 bgcolor=$highlight>
   <?/MIVAR>
   <tr>
     <td>
       <b>Mutant locus: </b>
-
+ 
     <?MIVAR COND="$(XST,$UPDATE)">
       <form>
       <br><b>Add reference:</b>
       Reference:<input type=text name=attrib_mutant_pubid>
       <input type=button value="Add" onClick=new_attrib_mutant("$1", this.form);><br>
-      </form>
+      </form> 
     <?/MIVAR>
-
-    <?MIVAR>
+	 
+    <?MIVAR> 
       <A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$1">
-   	   $mrkrview_locus_name ($3)
-      </A> has been shown to correspond to gene <i>$abbrev</i>.
+   	   $mrkrview_locus_name ($3) 
+      </A> has been shown to correspond to gene <i>$abbrev</i>. 
     <?/MIVAR>
 
-    <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_locus_zdb_id&type=colattrib&info=cloned_gene') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+    <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_locus_zdb_id&type=recattrib&info=cloned_gene') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
   </td></tr>
   </table>
 <?/MIBLOCK>
@@ -888,14 +888,14 @@ I am commenting this part of the code rather than deleting it. If no flags are r
     <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
         <?MIVAR COND="$(EC,$display_mut_trg_title,f)">
 	   <hr width=80%>
-	   <b>MUTANTS AND TARGETED KNOCKDOWNS: </b> <br>
-        <?/MIVAR>
-	<?MIVAR>
+	   <b>MUTANTS AND TARGETED KNOCKDOWNS: </b> <br>         
+        <?/MIVAR> 
+	<?MIVAR> 
 	  <table width=100% border=0 bgcolor=$highlight>
            <tr><td>
   	     <b> Knockdown reagent$mrkrview_agt_plural: </b>
 	<?/MIVAR>
-    <?MIELSE>
+    <?MIELSE>	
 	, &nbsp;
     <?/MIBLOCK>
 
@@ -907,7 +907,7 @@ I am commenting this part of the code rather than deleting it. If no flags are r
     <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrview_agt_zdb_id">
 	$mrkrview_agt_name
     </a>
-    <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_agt_mrel_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+    <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_agt_mrel_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>	
   <?/MISQL>
   <?MIBLOCK COND="$(!=,$MI_ROWCOUNT,0)">
     </td></tr></table>
@@ -936,14 +936,14 @@ I am commenting this part of the code rather than deleting it. If no flags are r
 
 <!-- use vector storing the three ontology and loop through -->
 <?MIVAR NAME=ontologies><?/MIVAR>
-<?MISQL SQL="select gont_ontology_name from go_ontology order by gont_order">
+<?MISQL SQL="select gont_ontology_name from go_ontology order by gont_order"> 
 	$(SETVAR,$ontologies[$MI_CURRENTROW],$1)
 <?/MISQL>
 <?MIBLOCK INDEX=$ontology FOREACH=$ontologies>
     <?MISQL SQL="
-      select first 1 mrkrgoev_zdb_id
+      select first 1 mrkrgoev_zdb_id 
         from go_term,go_evidence_code, marker_go_term_evidence
-        where mrkrgoev_mrkr_zdb_id = '$OID'
+        where mrkrgoev_mrkr_zdb_id = '$OID' 
           and mrkrgoev_go_term_zdb_id = goterm_zdb_id
           and mrkrgoev_evidence_code = goev_code
           and goterm_ontology = '$ontology'
@@ -964,43 +964,43 @@ I am commenting this part of the code rather than deleting it. If no flags are r
   <?/MISQL>
 
 
- <?MIVAR NAME=$rowcount>$1<?/MIVAR>
- <?MIBLOCK COND="$(>,$rowcount,0)">
-	<hr width = "80%">
-  	<b>GENE PRODUCTS: </b>
+ <?MIVAR NAME=$rowcount>$1<?/MIVAR> 
+ <?MIBLOCK COND="$(>,$rowcount,0)">  
+	<hr width = "80%"> 
+  	<b>GENE PRODUCTS: </b> 
         <?MIVAR>$(SETVAR,$titledisplay,1)<?/MIVAR>
     <?MIVAR>
 	<p><b>Gene Ontology</b><?/MIVAR>
       <?MIVAR COND="$(XST,$UPDATE)">
-      <INPUT TYPE=button value="Update" onClick="edit_go('$OID')">
-    <?/MIVAR>
+      <INPUT TYPE=button value="Update" onClick="edit_go('$OID')"> 
+    <?/MIVAR> 
  <?MIELSE>
 
       <?MIBLOCK COND="$(XST,$UPDATE)">
 
-	<hr width = "80%">
-  	<b>GENE PRODUCTS: </b>
+	<hr width = "80%"> 
+  	<b>GENE PRODUCTS: </b> 
         <?MIVAR>$(SETVAR,$titledisplay,1)<?/MIVAR>
 	<p><b>Gene Ontology</b>
       <?MIVAR>
-      <INPUT TYPE=button value="Update" onClick="edit_go('$OID')"><?/MIVAR>
+      <INPUT TYPE=button value="Update" onClick="edit_go('$OID')"><?/MIVAR> 
      <?/MIBLOCK>
   <?/MIBLOCK>
 
-    <?MIBLOCK COND="$(>,$rowcount,0)">
+    <?MIBLOCK COND="$(>,$rowcount,0)">  
     <?MIVAR><TABLE width =100% border=0 bgcolor=$highlight><?/MIVAR>
     <TR bgcolor=#ccccccc>
          <TD align=left width = 15%><b><A HREF="/zf_info/GO.html">Ontology</A></b></TD>
         <?MIBLOCK COND="$(EC,$qualifier,true)">
-        <TD align=left width = 13%><b>Qualifier</b></TD>
-        <?/MIBLOCK>
-         <TD><b>GO Term</b></TD>
+        <TD align=left width = 13%><b>Qualifier</b></TD>           
+        <?/MIBLOCK> 
+         <TD><b>GO Term</b></TD> 
 
 
 <!-- use vector storing the three ontology and loop through for display -->
 
 <?MIBLOCK INDEX=$ontology FOREACH=$ontologies>
-
+    
     <?MIVAR NAME=flgct>0<?/MIVAR>
     <?MIVAR NAME=flag><?/MIVAR>
     <?MIVAR NAME=isnot>f<?/MIVAR>
@@ -1024,11 +1024,11 @@ I am commenting this part of the code rather than deleting it. If no flags are r
     <?MISQL SQL="select goevflag_gflag_name from go_evidence_flag where goevflag_mrkrgoev_zdb_id='$molmrkrgoevid'"><?/MISQL>
     <?MIVAR NAME=flgct>$MI_ROWCOUNT<?/MIVAR>
     <?MIVAR NAME=flag>$1<?/MIVAR>
-
-    <?MICOMMENT>??? donot know what "'f' as mrkrgo_is_false_ref" is for ???<?/MICOMMENT>
+    
+    <?MICOMMENT>??? donot know what "'f' as mrkrgo_is_false_ref" is for ???<?/MICOMMENT> 
     <?MISQL SQL="select distinct goterm_go_id,goev_display_order,goterm_name,'f' as mrkrgo_is_false_ref from go_term,go_evidence_code,marker_go_term_evidence where mrkrgoev_mrkr_zdb_id='$OID' and mrkrgoev_go_term_zdb_id=goterm_zdb_id and mrkrgoev_evidence_code=goev_code and goterm_ontology='$ontology' order by goev_display_order"><?/MISQL>
     <?MIVAR NAME=$anncount>$MI_ROWCOUNT<?/MIVAR>
-
+    
     <?MIBLOCK COND="$(>,$flgct,0)">
        <?MIBLOCK COND="$(=,$flgct,2)">
      	<?MIVAR NAME=$isnot>t<?/MIVAR>
@@ -1087,24 +1087,24 @@ I am commenting this part of the code rather than deleting it. If no flags are r
   <!-----------------  Protein Sequence  -------------->
   <?MIVAR NAME=$lastitem><?/MIVAR>
   <?MISQL SQL="
-    select fdb_db_name,
-	   fdb_db_query || dblink_acc_num ||
+    select fdb_db_name, 
+	   fdb_db_query || dblink_acc_num || 
 	     (case fdb_url_suffix when NULL then '' else fdb_url_suffix end),
            dblink_acc_num_display, fdb_db_significance, dblink_zdb_id
-      from db_link, foreign_db, foreign_db_contains
-      where dblink_linked_recid = '$OID'
+      from db_link, foreign_db, foreign_db_contains 
+      where dblink_linked_recid = '$OID' 
         and dblink_fdbcont_zdb_id = fdbcont_zdb_id
         and fdbcont_fdb_db_name = fdb_db_name
         and fdbcont_fdbdt_super_type = 'protein'
       order by fdb_db_significance, fdb_db_name, dblink_acc_num_display;">
 
     <?MIVAR NAME=$dblinkZdbId>$5<?/MIVAR>
-
+    
     <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
-
+	
         <?MIBLOCK COND="$(=,$titledisplay,0)">
 		<hr width = "80%">
-  		<b>GENE PRODUCTS: </b>
+  		<b>GENE PRODUCTS: </b> 
 		<?MIVAR>$(SETVAR,$titledisplay,1)<?/MIVAR>
 	<?/MIBLOCK>
 	<p><b>Protein Families, Domains and Sites: </b>
@@ -1115,27 +1115,27 @@ I am commenting this part of the code rather than deleting it. If no flags are r
   	  <b>Add link to Protein Seq DB:</b> &nbsp;
   	  DBname:<SELECT name=prt_seqdb>
   	  <?MISQL SQL="
-	    select fdbcont_fdb_db_name
+	    select fdbcont_fdb_db_name 
 	      from foreign_db_contains
 	      where fdbcont_fdbdt_super_type = 'protein'
 	      order by fdbcont_fdb_db_name;">
 	    <option value="$1">$1</option>
   	  <?/MISQL>
   	  </SELECT>
- 	   Accession:<input type=text size=15 name=prt_seq_acc>
+ 	   Accession:<input type=text size=15 name=prt_seq_acc> 
   	   <input type=button value="Add it!" onClick=new_proseqnum();>
-
+     
  	   <?MIVAR><br>
   	  <b>Add reference to Protein Seq:</b> &nbsp;
   	   Accession: <input type=text size=15 name=attrib_prtn_seqacc>
- 	   Reference: <input type=text size=15 name=attrib_prtn_pubid>
+ 	   Reference: <input type=text size=15 name=attrib_prtn_pubid> 
   	   <input type=button value="Add it!" onClick=new_attrib_prtnseq();>
            <?/MIVAR>
            </form>
  	 <?/MIBLOCK> <?MICOMMENT>end of update <?/MICOMMENT>
 	<TABLE width = "100%" border = 0 bgcolor = "$highlight">
  	 <?/MIVAR>
-        <TR>
+        <TR> 
     <?/MIBLOCK>  <?MICOMMENT> end of first row <?/MICOMMENT>
     $(IF,$(AND,$(NC,$lastitem,$1),$(>,$MI_CURRENTROW,1)),</TD>)
     $(IF,$(NC,$lastitem,$1),<TD align=left>)
@@ -1153,15 +1153,15 @@ I am commenting this part of the code rather than deleting it. If no flags are r
   <!--------------end of Protein Sequences --------->
 
   <!--------------- Gene Product Description ------->
-  <?MISQL SQL="select dblink_linked_recid
+  <?MISQL SQL="select dblink_linked_recid 
 		 from external_note, db_link
 		where extnote_data_zdb_id = dblink_zdb_id
 		  and dblink_linked_recid = '$OID';">
-  <?/MISQL>
-  <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+  <?/MISQL>	
+  <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">	
         <?MIBLOCK COND="$(=,$titledisplay,0)">
 		<hr width = "80%">
-  		<b>GENE PRODUCTS: </b>
+  		<b>GENE PRODUCTS: </b> 
 		<?MIVAR>$(SETVAR,$titledisplay,1)<?/MIVAR>
 	<?/MIBLOCK>
 	<p><?MIVAR><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-geneprddescription.apg&OID=$OID><b>Gene Product Description</b></A><?/MIVAR>
@@ -1175,14 +1175,14 @@ I am commenting this part of the code rather than deleting it. If no flags are r
 
 
 <?MICOMMENT>=========================================================
-            ==  GENE EXPRESSION
+            ==  GENE EXPRESSION 
             ==========================================================
 <?/MICOMMENT>
 <?MICOMMENT> check data existence, and count total pubs<?/MICOMMENT>
 <?MIBLOCK COND="$(OR,$(EQ,$marker_type,EST),$(EQ,$marker_type,CDNA),$(EQ,$marker_type,GENE))">
 <?MISQL SQL="
     select count(distinct xpatex_source_zdb_id)::integer
-      from expression_experiment
+      from expression_experiment 
      where '$OID' in (xpatex_gene_zdb_id, xpatex_probe_feature_zdb_id)
      and xpatex_zdb_id in (select distinct xpatres_xpatex_zdb_id from expression_result)">
 <?/MISQL>
@@ -1196,53 +1196,53 @@ I am commenting this part of the code rather than deleting it. If no flags are r
     <?MICOMMENT> query literature pub <?/MICOMMENT>
     <?MISQL SQL="
 	select distinct pub_mini_ref
-          from expression_experiment
+          from expression_experiment 
 	       join publication
                     on xpatex_source_zdb_id = zdb_id
          where '$OID' in (xpatex_gene_zdb_id, xpatex_probe_feature_zdb_id)
 	   and jtype <> 'Unpublished'; ">
 
 	<?MIVAR NAME=mrkrview_xpatsource_desc>$1<?/MIVAR>
-    <?/MISQL>
-    <?MICOMMENT>
+    <?/MISQL>    
+    <?MICOMMENT> 
       ========= if literature pub involved, display total figures ==========
     <?/MICOMMENT>
     <?MIBLOCK COND="$(!=,$MI_ROWCOUNT,0)">
 
-      <?MICOMMENT> if more than one pub, show count,
-	         in case of one pub, show pub miniref
+      <?MICOMMENT> if more than one pub, show count, 
+	         in case of one pub, show pub miniref 
       <?MIVAR COND="$(!=,$MI_ROWCOUNT,1)" NAME=mrkrview_xpatsource_desc>
 		$mrkrview_xpatsource_count publications
-      <?/MIVAR>
-      <?/MICOMMENT>
+      <?/MIVAR>     
+      <?/MICOMMENT>  
       <?MIVAR COND="$(>,$mrkrview_xpatsource_count,1)" NAME=mrkrview_xpatsource_desc>
 		$mrkrview_xpatsource_count publications
-      <?/MIVAR>
+      <?/MIVAR>     
 
       <?MISQL SQL="
 	 select count(distinct xpatfig_fig_zdb_id)::integer
            from expression_pattern_figure
-                join expression_result
+                join expression_result 
 			on xpatfig_xpatres_zdb_id = xpatres_zdb_id
-                join expression_experiment
-			on xpatex_zdb_id = xpatres_xpatex_zdb_id
+                join expression_experiment 
+			on xpatex_zdb_id = xpatres_xpatex_zdb_id 
 	  where '$OID' in (xpatex_gene_zdb_id, xpatex_probe_feature_zdb_id); ">
        <?/MISQL>
-       <?MIVAR NAME=mrkrview_xpatfig_count>$1<?/MIVAR>
+       <?MIVAR NAME=mrkrview_xpatfig_count>$1<?/MIVAR>     
          <tr><td><b>All expression data: </b> </td>
 
-           <td> <?MIVAR>
+           <td> <?MIVAR> 
      	       <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&gene_name=$abbrev&xpatsel_geneZdbId=$OID">$mrkrview_xpatfig_count figure(s)</a> from $mrkrview_xpatsource_desc
-	        <?/MIVAR>
+	        <?/MIVAR>	
            </td>
          </tr>
      <?/MIBLOCK>
 
      <?MICOMMENT>
 	=========   query for figures from direct submission  ===============
-	 <?MISQL SQL="select count(distinct fimg_zdb_id)::integer
+	 <?MISQL SQL="select count(distinct fimg_zdb_id)::integer 
            from fish_image, expression_pattern_figure,
-                expression_result, expression_experiment,
+                expression_result, expression_experiment, 
                 publication
 	   where
 		fimg_fig_zdb_id=xpatfig_fig_zdb_id
@@ -1254,12 +1254,12 @@ I am commenting this part of the code rather than deleting it. If no flags are r
       <?MIVAR NAME=mrkrview_image_count>$1<?/MIVAR>
      <?/MICOMMENT>
      <?MISQL SQL="
-	 select count(distinct xpatfig_fig_zdb_id)::integer,
+	 select count(distinct xpatfig_fig_zdb_id)::integer, 
 		pub.zdb_id, pub.pub_mini_ref,xpatex_probe_feature_zdb_id
            from expression_pattern_figure
                 join expression_result on xpatfig_xpatres_zdb_id = xpatres_zdb_id
-                join expression_experiment
-			on xpatex_zdb_id = xpatres_xpatex_zdb_id
+                join expression_experiment 
+			on xpatex_zdb_id = xpatres_xpatex_zdb_id 
                 join publication pub on pub.zdb_id = xpatex_source_zdb_id
 	  where '$OID' in (xpatex_gene_zdb_id, xpatex_probe_feature_zdb_id)
             and pub.jtype = 'Unpublished'
@@ -1269,17 +1269,17 @@ I am commenting this part of the code rather than deleting it. If no flags are r
 	 <?MIVAR NAME=mrkrview_xpatsubpub_id>$2<?/MIVAR>
 	 <?MIVAR NAME=mrkrview_xpatsubpub_miniref>$3<?/MIVAR>
 	 <?MIVAR NAME=mrkrview_xpatsub_probe_id>$4<?/MIVAR>
-
+	 
 	 <?MIBLOCK COND="$(EC,$MI_CURRENTROW,1)">
 
 	    <tr><td><b>Directly submitted expression data: </b></td>
-
+              
          <?MIELSE>
 	    <tr><td>&nbsp;</td>
          <?/MIBLOCK>
-	 <?MISQL SQL="select count(distinct fimg_zdb_id)::integer
+	 <?MISQL SQL="select count(distinct fimg_zdb_id)::integer 
            from fish_image, expression_pattern_figure,
-                expression_result, expression_experiment
+                expression_result, expression_experiment 
 	   where
 		fimg_fig_zdb_id=xpatfig_fig_zdb_id
            and  xpatfig_xpatres_zdb_id=xpatres_zdb_id
@@ -1296,16 +1296,16 @@ I am commenting this part of the code rather than deleting it. If no flags are r
 	    <?MIVAR NAME=mrkrview_xpatsub_probe_name>$1<?/MIVAR>
 	 <?/MISQL>
 
-         <?MIVAR NAME=mrkrview_xpatsubfig_count_html>
+         <?MIVAR NAME=mrkrview_xpatsubfig_count_html>  
 	   <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&OID=$mrkrview_xpatsubpub_id&fxallfig_probe_zdb_id=$mrkrview_xpatsub_probe_id">$mrkrview_xpatsubfig_count figure(s) ($mrkrview_image_count images)</a>
 	 <?/MIVAR>
 
          <td>
-	   $mrkrview_xpatsubfig_count_html from $mrkrview_xpatsubpub_miniref [$mrkrview_xpatsub_probe_name]
+	   $mrkrview_xpatsubfig_count_html from $mrkrview_xpatsubpub_miniref [$mrkrview_xpatsub_probe_name] 
 	 </td></tr>
-<?/MISQL>
+<?/MISQL>	
      <?/MISQL><?MICOMMENT>query figure count for direct submission xpat<?/MICOMMENT>
-
+     
      </table> <?MICOMMENT>close xpat section table<?/MICOMMENT>
 
 <?/MIBLOCK> <?MICOMMENT>block for gene xpat if exist<?/MICOMMENT>
@@ -1313,7 +1313,7 @@ I am commenting this part of the code rather than deleting it. If no flags are r
 
 
 
-
+ 
 <?MICOMMENT>=========================================================
             ==    MARKER RELATIONSHIP
 	    =========================================================
@@ -1323,9 +1323,9 @@ I am commenting this part of the code rather than deleting it. If no flags are r
 <?MIVAR NAME=$mrel_mtype><?/MIVAR>
 <?MIVAR NAME=$mrel_count><?/MIVAR>
 
-<?MISQL SQL="select count(*)::Integer
-               from marker_relationship
-              where (mrel_mrkr_1_zdb_id = '$OID'
+<?MISQL SQL="select count(*)::Integer 
+               from marker_relationship 
+              where (mrel_mrkr_1_zdb_id = '$OID' 
                      or mrel_mrkr_2_zdb_id = '$OID')
                 and mrel_type <> 'knockdown reagent targets gene';">
      <?MIVAR NAME=$mrel_count>$1<?/MIVAR>
@@ -1345,7 +1345,7 @@ I am commenting this part of the code rather than deleting it. If no flags are r
  <br><form name=updaterrel>
  <b>Add relationship:</b> &nbsp;
  Relationship:<SELECT name=relship>
- <?MISQL SQL="select unique mreltype_name, mreltype_1_to_2_comments
+ <?MISQL SQL="select unique mreltype_name, mreltype_1_to_2_comments 
 	       from marker_relationship_type
 	            join marker_type_group_member
 		      on mreltype_mrkr_type_group_1 = mtgrpmem_mrkr_type_group
@@ -1353,8 +1353,8 @@ I am commenting this part of the code rather than deleting it. If no flags are r
 		and mreltype_name <> 'knockdown reagent targets gene' ">
    <option value="1to2-$1">$1-$2
  <?/MISQL>
-
- <?MISQL SQL="select unique mreltype_name, mreltype_2_to_1_comments
+  
+ <?MISQL SQL="select unique mreltype_name, mreltype_2_to_1_comments 
 	       from marker_relationship_type
 	            join marker_type_group_member
 	              on mreltype_mrkr_type_group_2 = mtgrpmem_mrkr_type_group
@@ -1363,21 +1363,21 @@ I am commenting this part of the code rather than deleting it. If no flags are r
    <option value="2to1-$1">$1-$2
  <?/MISQL>
  </SELECT>
- partner Symbol:<input type=text size=15 name=mrkr_abbrev>
- <?MICOMMENT>new_mrkrrel() function is also used by target gene and
-             knockdown reagent section. That is the reason why we
+ partner Symbol:<input type=text size=15 name=mrkr_abbrev> 
+ <?MICOMMENT>new_mrkrrel() function is also used by target gene and 
+             knockdown reagent section. That is the reason why we 
              need to send values as parameters. There possibly is nicer
              solution...
- <?/MICOMMENT>
+ <?/MICOMMENT> 
  <input type=button value="Add it!" onClick=new_mrkrrel(this.form.relship.options[this.form.relship.selectedIndex].value,this.form.mrkr_abbrev.value);>
-
+ 
   <?MIVAR COND="$(AND,$(>,$mrel_count,0),$(XST,$UPDATE))">
-     <br><b>Add Reference:</b>
-     Marker abbrev:<input type=text name=attrib_mrkr_abbrev>
+     <br><b>Add Reference:</b> 
+     Marker abbrev:<input type=text name=attrib_mrkr_abbrev>	
      Reference:<input type=text name=attrib_mrel_pubid>
-     <input type=button value="Add" onClick=new_attrib_mrel(this.form);>
+     <input type=button value="Add" onClick=new_attrib_mrel(this.form);> 
   <?/MIVAR>
-
+  
 <?/MIBLOCK>  <?MICOMMENT> end if update <?/MICOMMENT>
 
 
@@ -1406,7 +1406,7 @@ I am commenting this part of the code rather than deleting it. If no flags are r
 <?MISQL SQL="select clone_mrkr_zdb_id from clone where clone_is_chimeric = 't';">
   $(VECAPPEND,$chimeric_clone_list,$1)
 <?/MISQL>
-<?MIVAR NAME=chimeric_clone_list>$(SEPARATE,$chimeric_clone_list,"','")<?/MIVAR>
+<?MIVAR NAME=chimeric_clone_list>$(SEPARATE,$chimeric_clone_list,"','")<?/MIVAR>  
 
 
 <?MICOMMENT>
@@ -1420,27 +1420,27 @@ I am commenting this part of the code rather than deleting it. If no flags are r
   where dblink_linked_recid = '$OID'
     and dblink_fdbcont_zdb_id = fdbcont_zdb_id
     and fdbcont_fdbdt_super_type = 'sequence'
-  UNION
+  UNION 
   select dblink_acc_num, fdbcont_fdb_db_name
   from db_link, foreign_db_contains, marker_relationship
   where mrel_mrkr_1_zdb_id = '$OID'
     and dblink_linked_recid = mrel_mrkr_2_zdb_id
     and dblink_fdbcont_zdb_id = fdbcont_zdb_id
     and fdbcont_fdbdt_super_type = 'sequence'
-    and mrel_type in ('gene contains small segment',
+    and mrel_type in ('gene contains small segment', 
 		      'clone contains small segment',
 		      'gene encodes small segment')
     and mrel_mrkr_2_zdb_id not in ('$chimeric_clone_list')
-  UNION
+  UNION 
   select dblink_acc_num, fdbcont_fdb_db_name
   from db_link, foreign_db_contains, marker_relationship
   where mrel_mrkr_2_zdb_id = '$OID'
     and dblink_linked_recid = mrel_mrkr_1_zdb_id
     and dblink_fdbcont_zdb_id = fdbcont_zdb_id
     and fdbcont_fdbdt_super_type = 'sequence'
-    and mrel_type in ('clone contains gene')
-    and mrel_mrkr_1_zdb_id not in ('$chimeric_clone_list')
-  ;">
+    and mrel_type in ('clone contains gene') 
+    and mrel_mrkr_1_zdb_id not in ('$chimeric_clone_list')  
+  ;"> 
 <?/MISQL>
 <?MIVAR NAME=$mrkrview_nSequenceLinks>$MI_ROWCOUNT<?/MIVAR>
 
@@ -1458,23 +1458,23 @@ I am commenting this part of the code rather than deleting it. If no flags are r
   <b>Link to Seq DB:</b> &nbsp;
   DBname:<SELECT name=seqdb>
   <?MISQL SQL="
-    select distinct fdbcont_fdb_db_name
+    select distinct fdbcont_fdb_db_name 
       from foreign_db_contains
-     where fdbcont_fdbdt_super_type = 'sequence'
+     where fdbcont_fdbdt_super_type = 'sequence' 
      order by fdbcont_fdb_db_name;">
     <option value="$1" $(IF,$(EC,$1,GenBank),SELECTED)>$1</option>
   <?/MISQL>
   </SELECT>
   Type:<SELECT name=seq_super>
     <?MISQL SQL="
-      select distinct fdbdt_data_type, fdbdt_super_type
+      select distinct fdbdt_data_type, fdbdt_super_type 
         from foreign_db_data_type
-       where fdbdt_super_type = 'sequence'
+       where fdbdt_super_type = 'sequence' 
       order by fdbdt_data_type;">
     <option value="$2&fdbcont_data=$1" $(IF,$(EC,$1,cDNA),SELECTED)>$1</option>
     <?/MISQL>
   </SELECT>
-  Accession:<input type=text size=15 name=seq_acc>
+  Accession:<input type=text size=15 name=seq_acc> 
   <input type=button value="Add it!" onClick=new_seqnum();>
 
   <br>
@@ -1495,7 +1495,7 @@ I am commenting this part of the code rather than deleting it. If no flags are r
   <?MISQL SQL="
     select distinct fdbdt_data_type
       from foreign_db_data_type
-     where fdbdt_super_type = 'sequence'
+     where fdbdt_super_type = 'sequence' 
      order by fdbdt_data_type;">
     <option value="$1"  $(IF,$(EC,$1,cDNA),SELECTED)>$1</option>
   <?/MISQL>
@@ -1507,7 +1507,7 @@ I am commenting this part of the code rather than deleting it. If no flags are r
   <?MIVAR>$seq_tab<?/MIVAR>
   <b>Add reference:</b> &nbsp;
   Accession: <input type=text size=15 name=attrib_seq_acc>
-  Reference: <input type=text size=15 name=attrib_seq_pubid>
+  Reference: <input type=text size=15 name=attrib_seq_pubid> 
   <input type=button value="Add it!" onClick=new_attrib_seq();>
   <?MICOMMENT>Added CDNA for this condition (FogBugz 410) <?/MICOMMENT>
 
@@ -1518,12 +1518,12 @@ I am commenting this part of the code rather than deleting it. If no flags are r
       FROM clone
       WHERE clone_mrkr_zdb_id = '$OID';">
 
-      <br>
-      <?MIVAR>$seq_tab<?/MIVAR>
-      <b>Chimeric:</b>
+      <br>    
+      <?MIVAR>$seq_tab<?/MIVAR> 
+      <b>Chimeric:</b> 
         Yes:<input type=radio name=chimericism value=t $(IF,$(EC,$1,t),checked)>
-        No:<input type=radio name=chimericism value=f $(IF,$(EC,$1,f),checked)>
-        <input type=button value="Update" onclick=setChimericism('$1')>
+        No:<input type=radio name=chimericism value=f $(IF,$(EC,$1,f),checked)> 
+        <input type=button value="Update" onclick=setChimericism('$1')> 
       (Chimeric links are not displayed on gene pages.)
 
     <?/MISQL>
@@ -1532,7 +1532,7 @@ I am commenting this part of the code rather than deleting it. If no flags are r
 <?/MIBLOCK>  <?MICOMMENT> end update <?/MICOMMENT>
 
 
-<?MIBLOCK COND="$mrkrview_nSequenceLinks">
+<?MIBLOCK COND="$mrkrview_nSequenceLinks">    
   <TABLE  width="100%" border="0" bgcolor=<?MIVAR>"$highlight"<?/MIVAR>>
     <TR>
       <TD width=30% bgcolor=#ccccccc><b>Type</b></TD>
@@ -1543,10 +1543,10 @@ I am commenting this part of the code rather than deleting it. If no flags are r
     <?MIVAR NAME=$mrkrview_prevDataType><?/MIVAR>
     <?MIVAR NAME=$mrkrview_displayAllSequencesLink>0<?/MIVAR>
     <?MISQL SQL="
-        select fdb_db_name, dblink_length, fdb_db_query || dblink_acc_num ||
-               (case fdb_url_suffix when NULL then '' else fdb_url_suffix end),
-               dblink_acc_num_display, dblink_zdb_id, 's', 'placeholder',
-               'placeholder', fdb_db_significance, fdbdt_data_type,
+        select dblink_length, fdb_db_name, fdb_db_query || dblink_acc_num || 
+               (case fdb_url_suffix when NULL then '' else fdb_url_suffix end), 
+               dblink_acc_num_display, dblink_zdb_id, 's', 'placeholder', 
+               'placeholder', fdb_db_significance, fdbdt_data_type, 
                fdbdt_display_order
         from db_link, foreign_DB, foreign_db_contains, foreign_db_data_type
         where dblink_linked_recid = '$OID'
@@ -1555,11 +1555,11 @@ I am commenting this part of the code rather than deleting it. If no flags are r
           and fdbdt_super_type = 'sequence'
           and fdbcont_fdbdt_super_type = fdbdt_super_type
           and fdbcont_fdbdt_data_type = fdbdt_data_type
-      UNION
-        select  fdb_db_name, dblink_length, fdb_db_query || dblink_acc_num ||
-               (case fdb_url_suffix when NULL then '' else fdb_url_suffix end),
-               dblink_acc_num_display, dblink_zdb_id, 'r', mrel_mrkr_2_zdb_id,
-               mrkr_abbrev, fdb_db_significance, fdbdt_data_type,
+      UNION 
+        select dblink_length, fdb_db_name, fdb_db_query || dblink_acc_num || 
+               (case fdb_url_suffix when NULL then '' else fdb_url_suffix end), 
+               dblink_acc_num_display, dblink_zdb_id, 'r', mrel_mrkr_2_zdb_id, 
+               mrkr_abbrev, fdb_db_significance, fdbdt_data_type, 
                fdbdt_display_order
         from db_link, foreign_DB, foreign_db_contains, foreign_db_data_type,
              marker_relationship, marker
@@ -1570,16 +1570,16 @@ I am commenting this part of the code rather than deleting it. If no flags are r
           and fdbdt_super_type = 'sequence'
           and fdbcont_fdbdt_super_type = fdbdt_super_type
           and fdbcont_fdbdt_data_type = fdbdt_data_type
-          and mrel_type in ('gene contains small segment',
+          and mrel_type in ('gene contains small segment', 
                             'clone contains small segment',
                             'gene encodes small segment')
           and mrel_mrkr_2_zdb_id = mrkr_zdb_id
           and mrel_mrkr_2_zdb_id not in ('$chimeric_clone_list')
-      UNION
-        select fdb_db_name,dblink_length,  fdb_db_query || dblink_acc_num ||
-               (case fdb_url_suffix when NULL then '' else fdb_url_suffix end),
+      UNION 
+        select dblink_length, fdb_db_name, fdb_db_query || dblink_acc_num || 
+               (case fdb_url_suffix when NULL then '' else fdb_url_suffix end), 
                dblink_acc_num_display, dblink_zdb_id, 'r', mrel_mrkr_1_zdb_id,
-               mrkr_abbrev, fdb_db_significance, fdbdt_data_type,
+               mrkr_abbrev, fdb_db_significance, fdbdt_data_type, 
                fdbdt_display_order
         from db_link, foreign_DB, foreign_db_contains, foreign_db_data_type,
              marker_relationship, marker
@@ -1590,15 +1590,15 @@ I am commenting this part of the code rather than deleting it. If no flags are r
           and fdbdt_super_type = 'sequence'
           and fdbcont_fdbdt_super_type = fdbdt_super_type
           and fdbcont_fdbdt_data_type = fdbdt_data_type
-          and mrel_type = 'clone contains gene'
+          and mrel_type = 'clone contains gene' 
           and mrel_mrkr_1_zdb_id = mrkr_zdb_id
           and mrel_mrkr_1_zdb_id not in ('$chimeric_clone_list')
+          
+        order by 11 asc, 9 asc, 1 desc, 4 asc
+      ;">   
 
-        order by 11 asc, 9 asc, 2 desc, 4 asc
-      ;">
-
-      <?MIVAR NAME=db_name>$1<?/MIVAR>
-      <?MIVAR NAME=dblink_length>$2<?/MIVAR>
+      <?MIVAR NAME=dblink_length>$1<?/MIVAR>
+      <?MIVAR NAME=db_name>$2<?/MIVAR>
       <?MIVAR NAME=link_url>$3<?/MIVAR>
       <?MIVAR NAME=acc_num>$4<?/MIVAR>
       <?MIVAR NAME=dataId>$5<?/MIVAR>
@@ -1606,21 +1606,21 @@ I am commenting this part of the code rather than deleting it. If no flags are r
       <?MIVAR NAME=related_zdb_id>$7<?/MIVAR>
       <?MIVAR NAME=related_mrkr_abbrev>$8<?/MIVAR>
       <?MIVAR NAME=data_type>$10<?/MIVAR>
-
+        
       <?MIBLOCK COND="$(NE,$data_type,$mrkrview_prevDataType)">
         <?MICOMMENT>
           Data type changed.  Display first row for this data type.
-          ** 07/24/03 for some weird reasons, the column made up to distinguish
-          the source of GenBank accession has to be a one-character string
-          to behave right in EC operation.
+          ** 07/24/03 for some weird reasons, the column made up to distinguish 
+          the source of GenBank accession has to be a one-character string 
+	  to behave right in EC operation. 
         <?/MICOMMENT>
         <?MIVAR>
-          <TR style="height:2.25em;">
-            <TD >
-              $data_type:
+          <TR>         
+            <TD>
+              $data_type: 
             </TD>
             <TD>
-              $(IF,$(AND,$(XST,$UPDATE),$(NE,$attachto,r)),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$db_name:$acc_num)"')>")
+              $(IF,$(AND,$(XST,$UPDATE),$(NE,$attachto,r)),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$db_name:$acc_num)"')>") 
               <A HREF="$link_url">$db_name:$acc_num</A>
 
               <?MIBLOCK COND="$(AND,$(XST,$UPDATE),$(EC,$attachto,r))">
@@ -1630,7 +1630,7 @@ I am commenting this part of the code rather than deleting it. If no flags are r
                     where mrkr_zdb_id = '$related_zdb_id'; ">
                   ( <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$related_zdb_id">$related_mrkr_abbrev</A> )
                 <?/MISQL>
-
+       
                 <?MIVAR>$(UNSETVAR,$UPDATE)<?/MIVAR>
                 <?MISQL SQL="select WebExplode(object,'dataId=$dataId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
                 <?MIVAR>$(SETVAR,$UPDATE,1)<?/MIVAR>
@@ -1641,10 +1641,8 @@ I am commenting this part of the code rather than deleting it. If no flags are r
             <TD align=right>
               <nobr>
                 <?MIVAR>$dblink_length<?/MIVAR>
-                <?MIBLOCK COND=$(NC,$dblink_length,)>
-                   <?MIBLOCK COND=$(EQ,$data_type,Polypeptide)> aa
-                   <?MIELSE> bp
-                   <?/MIBLOCK>
+                <?MIBLOCK COND=$(EC,$data_type,Polypeptide)> aa
+                <?MIELSE COND=$(OR,$(EC,$data_type,cDNA),$(EC,$data_type,Genomic))> bp
                 <?/MIBLOCK>
               </nobr>
             </TD>
@@ -1656,14 +1654,14 @@ I am commenting this part of the code rather than deleting it. If no flags are r
         <?MIVAR NAME=$mrkrview_prevDataType>$data_type<?/MIVAR>
       <?MIELSE>
         <?MICOMMENT>
-          Data type did not change.  Record that there is more than one record
+          Data type did not change.  Record that there is more than one record 
           for at least one data type.
         <?/MICOMMENT>
         <?MIVAR NAME=$mrkrview_displayAllSequencesLink>1<?/MIVAR>
       <?/MIBLOCK>  <?MICOMMENT> end data type did or did not change <?/MICOMMENT>
     <?/MISQL>
 
-    <?MIBLOCK COND=$mrkrview_displayAllSequencesLink>
+    <?MIBLOCK COND=$mrkrview_displayAllSequencesLink>  
       <TR>
         <TD colspan=4>
           <?MIVAR>
@@ -1671,9 +1669,9 @@ I am commenting this part of the code rather than deleting it. If no flags are r
           <?/MIVAR>
         </TD>
       </TR>
-    <?/MIBLOCK>
+    <?/MIBLOCK>    
   </TABLE>
-<?/MIBLOCK> <?MICOMMENT> end there were sequence records <?/MICOMMENT>
+<?/MIBLOCK> <?MICOMMENT> end there were sequence records <?/MICOMMENT>  
 
 <?MIBLOCK COND="$(XST,$UPDATE)">
   </form>  <?MICOMMENT> end form updateseq <?/MICOMMENT>
@@ -1686,11 +1684,11 @@ I am commenting this part of the code rather than deleting it. If no flags are r
 
 <!------------   OTHER MARKER PAGES   ------------------------------->
 
-  <?MIVAR>$(UNSETVAR,dblink_other)<?/MIVAR>
+  <?MIVAR>$(UNSETVAR,dblink_other)<?/MIVAR>  
 
   <?MISQL SQL="
-    select fdb_db_name, fdb_db_query || dblink_acc_num ||
-	     (case fdb_url_suffix when NULL then '' else fdb_url_suffix end),
+    select fdb_db_name, fdb_db_query || dblink_acc_num || 
+	     (case fdb_url_suffix when NULL then '' else fdb_url_suffix end), 
            dblink_acc_num, dblink_zdb_id, dblink_acc_num_display, fdb_db_significance
     from db_link, foreign_DB, foreign_db_contains
     where dblink_linked_recid = '$OID'
@@ -1698,63 +1696,63 @@ I am commenting this part of the code rather than deleting it. If no flags are r
       and fdbcont_fdb_db_name = fdb_db_name
       and fdbcont_fdbdt_data_type = 'other'
     order by 6,1,5
-  ;">
-
+  ;"> 
+  
     <?MIVAR NAME=db_name>$1<?/MIVAR>
     <?MIVAR NAME=link_url>$2<?/MIVAR>
     <?MIVAR NAME=acc_num>$3<?/MIVAR>
     <?MIVAR NAME=dataId>$4<?/MIVAR>
     <?MIVAR NAME=link_display>$5<?/MIVAR>
-
-
+    
+    
     <?MIVAR NAME=mini_ref><?MISQL SQL="select WebExplode(object,'dataId=$dataId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL><?/MIVAR>
-
+    
     <?MIBLOCK COND="$(AND,$(XST,$vPrevDBname),$(NC,$vPrevDBname,$db_name))">
     <?MIBLOCK COND="$(NXST,$dblink_other)">
       <?MIVAR NAME=dblink_other>
         $vDBnameColumn
-      <?/MIVAR>
+      <?/MIVAR>    
     <?MIELSE>
       <?MIVAR>
         $(VECAPPEND,$dblink_other,$vDBnameColumn)
       <?/MIVAR>
     <?/MIBLOCK>
       <?MIVAR>$(UNSETVAR,vDBnameColumn)<?/MIVAR>
-    <?/MIBLOCK>
-
+    <?/MIBLOCK>    
+    
     <?MIBLOCK COND=$(NXST,$vDBnameColumn)>
       <?MIVAR NAME=vDBnameColumn>
         <LI>
-        $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$db_name:$acc_num)"')>")
+        $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$db_name:$acc_num)"')>") 
         <A HREF="$link_url">$db_name:$link_display</A> $mini_ref
-        </LI>
+        </LI>      
       <?/MIVAR>
     <?MIELSE>
       <?MIVAR NAME=vDBnameColumn>
-        $vDBnameColumn
+        $vDBnameColumn 
         <LI>
-        $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$db_name:$acc_num)"')>")
+        $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$db_name:$acc_num)"')>") 
         <A HREF="$link_url">$db_name:$link_display</A> $mini_ref
-        </LI>
-      <?/MIVAR>
+        </LI>      
+      <?/MIVAR>      
     <?/MIBLOCK>
 
   <?MIVAR NAME=vPrevDBname>$db_name<?/MIVAR>
 
-  <?/MISQL>
+  <?/MISQL> 
 
     <?MIBLOCK COND="$(XST,$vPrevDBname)">
     <?MIBLOCK COND="$(NXST,$dblink_other)">
       <?MIVAR NAME=dblink_other>
         $vDBnameColumn
-      <?/MIVAR>
+      <?/MIVAR>    
     <?MIELSE>
       <?MIVAR>
         $(VECAPPEND,$dblink_other,$vDBnameColumn)
       <?/MIVAR>
     <?/MIBLOCK>
-    <?/MIBLOCK>
-
+    <?/MIBLOCK> 
+  
   <?MIBLOCK COND=$(OR,$(XST,$dblink_other),$(XST,$UPDATE))>
     <HR width="80%">
     <?MIVAR><b>OTHER &nbsp;<i>$abbrev</i>&nbsp; GENE / MARKER PAGES:</b><?/MIVAR>
@@ -1767,19 +1765,19 @@ I am commenting this part of the code rather than deleting it. If no flags are r
   <b>Link Other page:</b> &nbsp;
   DBname:<SELECT name=seqdb>
   <?MISQL SQL="
-    select distinct fdbcont_fdb_db_name
+    select distinct fdbcont_fdb_db_name 
       from foreign_db_contains
-     where fdbcont_fdbdt_super_type = 'summary page'
+     where fdbcont_fdbdt_super_type = 'summary page' 
      order by fdbcont_fdb_db_name;">
     <option value="$1" $(IF,$(EC,$1,VEGA),SELECTED)>$1</option>
   <?/MISQL>
   </SELECT>
-  Accession:<input type=text size=25 name=seq_acc>
+  Accession:<input type=text size=25 name=seq_acc> 
   Type:<SELECT name=seq_super>
   <?MISQL SQL="
-    select distinct fdbdt_data_type, fdbdt_super_type
+    select distinct fdbdt_data_type, fdbdt_super_type 
       from foreign_db_data_type
-     where fdbdt_super_type = 'summary page'
+     where fdbdt_super_type = 'summary page' 
      order by fdbdt_data_type;">
     <option value="$2&fdbcont_data=$1" $(IF,$(EC,$1,other),SELECTED)>$1</option>
   <?/MISQL>
@@ -1790,7 +1788,7 @@ I am commenting this part of the code rather than deleting it. If no flags are r
   <?MIVAR>$seq_tab<?/MIVAR>
   <b>Add reference:</b> &nbsp;
   Accession: <input type=text size=15 name=attrib_seq_acc>
-  Reference: <input type=text size=15 name=attrib_seq_pubid>
+  Reference: <input type=text size=15 name=attrib_seq_pubid> 
   <input type=button value="Add it!" onClick=new_attrib_other();>
   <br><br>
 <?/MIBLOCK>  <?MICOMMENT> end update OTHER GENE / MARKER PAGES:<?/MICOMMENT>
@@ -1804,7 +1802,7 @@ I am commenting this part of the code rather than deleting it. If no flags are r
         <?/MIVAR>
     <?/MIBLOCK>
 
-  <?/MIBLOCK>
+  <?/MIBLOCK> 
 <?MIBLOCK COND="$(XST,$UPDATE)">
   </form>  <?MICOMMENT> end form updateother <?/MICOMMENT>
 <?/MIBLOCK>
@@ -1841,89 +1839,25 @@ I am commenting this part of the code rather than deleting it. If no flags are r
  <a name=orthologue><b>ORTHOLOGY:</b></a>
  <?MICOMMENT>at update mode, user will choose species, and invoke refresh<?/MICOMMENT>
  <?MIBLOCK COND="$(XST,$UPDATE)">
-   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-orthoedit.apg';">$1<?/MISQL>
+   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-orthoedit.apg';">$1<?/MISQL> 
  <?/MIBLOCK>
 
- <?MISQL SQL="select WebExplode(object,'OID=$OID') from webPages where ID='aa-orthoviewbrief.apg';">$1<?/MISQL>
-
-<?/MIBLOCK>
+ <?MISQL SQL="select WebExplode(object,'OID=$OID') from webPages where ID='aa-orthoviewbrief.apg';">$1<?/MISQL> 
+  	
+<?/MIBLOCK> 
 
 <!-------------- ends ORTHOLOGY ------------------------------------>
 
 
 <!------------------ PUBLICATION ------------------------------------>
-<HR width="80%" align=center>
 
 <?MICOMMENT> *** 09/05 Decided to count both real pub and citation fake pub, and use CITATION as title. Before any database solution, still hard code the items to extract citation pub. <?/MICOMMENT>
 <?MICOMMENT> *** 08/25 curator's decision that we will not pull over publications from related markers, or the known locus. However, any attribution to data items automatically populated to the marker itself. <?/MICOMMENT>
+<?MICOMMENT> *** 2005/10/25 curator's decide that all allele and locus attribution will be pulled through to the gene page. <?/MICOMMENT>
 
-<?MISQL SQL="
+    <?MICOMMENT> *** Citation Link *** <?/MICOMMENT>
+    <?MISQL SQL="select WebExplode(object,'citlink_data_page=citgeneric.apg') from webPages where ID='aa-citlink.apg';">$1<?/MISQL>
 
-  select recattrib_source_zdb_id as zdb_id
-    from record_attribution, publication p
-   where recattrib_data_zdb_id = '$OID'
-     and recattrib_source_zdb_id = p.zdb_id
-     and jtype not in ('Curation', 'Unpublished')
-  UNION
-  select colattrib_source_zdb_id as zdb_id
-    from column_attribution,publication p,locus l
-     where l.cloned_gene = '$OID'
-       and colattrib_data_zdb_id = l.zdb_id
-       and colattrib_column_name = 'cloned_gene'
-       and colattrib_source_zdb_id = p.zdb_id
-       into temp all_real_pubs_temp with no log;
-  ">
-<?/MISQL>
-
-<?MISQL SQL="select distinct count(*) from all_real_pubs_temp;">
-  <?MIVAR NAME=$count_of_real_pub>$1<?/MIVAR>
-<?/MISQL>
-
-<?MISQL SQL="
-  drop table all_real_pubs_temp;">
-<?/MISQL>
-
-<?MIVAR NAME=related_data_attrib_to_OID>
-      recattrib_data_zdb_id in (select mrel_zdb_id from marker_relationship where mrel_mrkr_2_zdb_id = '$OID' and mrel_mrkr_1_zdb_id not in ('$chimeric_clone_list'))
-    or
-      recattrib_data_zdb_id in (select mrel_zdb_id from marker_relationship where mrel_mrkr_1_zdb_id = '$OID' and mrel_mrkr_2_zdb_id not in ('$chimeric_clone_list'))
-    or
-      recattrib_data_zdb_id in (select dalias_zdb_id from data_alias where dalias_data_zdb_id = '$OID')
-    or
-      recattrib_data_zdb_id in (select dblink_zdb_id from db_link where dblink_linked_recid = '$OID')
-    or
-      recattrib_data_zdb_id in (select oevdisp_zdb_id from orthologue_evidence_display where oevdisp_gene_zdb_id = '$OID')
-    or
-      recattrib_data_zdb_id = '$OID'
-    or
-      recattrib_data_zdb_id in (select mrkrgoev_zdb_id from marker_go_term_evidence where mrkrgoev_mrkr_zdb_id='$OID')
-
- <?/MIVAR>
-
-<?MISQL SQL="
-  select count(distinct recattrib_source_zdb_id)::integer
-    from record_attribution, publication
-   where ($related_data_attrib_to_OID)
-     and recattrib_source_zdb_id = zdb_id
-     and jtype in ('Curation', 'Unpublished');
-  ">
-
-
-
-
-  <?MIVAR NAME=$count_of_curation_pub>$1<?/MIVAR>
-<?/MISQL>
-<?MIVAR NAME=$total_count>$(+,$count_of_real_pub,$count_of_curation_pub)<?/MIVAR>
-<?MIBLOCK COND="$(OR,$(>,$total_count,0),$(XST,$UPDATE))">
-  <?MIVAR>
-  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=marker&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev$(IF,$(XST,$UPDATE),&UPDATE=1)&total_count=$total_count&count_of_real_pub=$count_of_real_pub"><b>CITATIONS</b></A>
-  <?/MIVAR>
-<?MIELSE>
-  <b>CITATIONS</b>
-<?/MIBLOCK>
-<?MIVAR>
-  &nbsp; ($total_count)
-<?/MIVAR>
 </form> <?MICOMMENT> end form updater1 <?/MICOMMENT>
 
 <!----------------- ends PUBLICATION ----------------->
