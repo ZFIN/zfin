@@ -124,7 +124,8 @@ dataOID --zdb id of data item that attributed
   <?MISQL COND="$(EC,$attr,publication)" SQL="
     delete from record_attribution
       where recattrib_data_zdb_id = '$dataOID'
-	and recattrib_source_zdb_id = '$old_value';">
+	and recattrib_source_zdb_id = '$old_value'
+	and recattrib_source_type = '$source_type';">
   <?/MISQL>
 
   <?MISQL COND="$(EC,$attr,source)" SQL="
@@ -136,16 +137,9 @@ dataOID --zdb id of data item that attributed
   <?MISQL COND="$(EC,$attr,recattrib)" SQL="
       delete from record_attribution
 	where recattrib_data_zdb_id = '$dataOID'
-	  and recattrib_source_zdb_id = '$old_value';">
+	  and recattrib_source_zdb_id = '$old_value'
+	and recattrib_source_type = '$source_type';">
    <?/MISQL>
-
-   <?MISQL COND="$(EC,$attr,colattrib)" SQL="
-      delete from column_attribution
-	where colattrib_data_zdb_id = '$dataOID'
-	  and colattrib_source_zdb_id = '$old_value'
-	  and colattrib_column_name = '$info';">
-   <?/MISQL>
-   
 
 
 
@@ -186,16 +180,8 @@ dataOID --zdb id of data item that attributed
       <?MIBLOCK COND="$(EC,$attr,recattrib)">
          <?MISQL SQL="
 	    insert into record_attribution
-		(recattrib_data_zdb_id, recattrib_source_zdb_id)
-              values('$old_value', '$new_value')	
-                ;">
-         <?/MISQL>
-
-      <?MIELSE COND="$(EC,$attr,colattrib)">
-         <?MISQL SQL="
-	    insert into column_attribution
-		(colattrib_data_zdb_id, colattrib_column_name, colattrib_source_zdb_id)
-              values('$old_value','$info', '$new_value')	
+		(recattrib_data_zdb_id, recattrib_source_zdb_id,recattrib_source_type)
+              values('$old_value', '$new_value', '$info')	
                 ;">
          <?/MISQL>
       <?/MIBLOCK>
