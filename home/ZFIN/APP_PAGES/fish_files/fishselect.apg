@@ -286,6 +286,8 @@ Startframes.apg will pass this variables on to the select form.
   <?MIVAR NAME=$fname COND="$(XST,$fname)" DELIMIT="''" REPLACE="'">$fname<?/MIVAR>
   <?MIVAR NAME=$constraint COND="$(NXST,$constraint)"> <?/MIVAR>
   <?MIVAR NAME=$mut_constraint COND="$(NXST,$mut_constraint)"> <?/MIVAR>
+    <?MIVAR NAME=mut_constraint_count>$mut_constraint<?/MIVAR>
+    <?MIVAR NAME=mut_constraint_query>$mut_constraint<?/MIVAR>
 
   <!--  DEBUGGING
   <?MIVAR><p>Constraint is:$constraint
@@ -320,8 +322,8 @@ Startframes.apg will pass this variables on to the select form.
 
     </form>
     
-    <?MIVAR NAME=mut_constaint_count>$mut_constraint<?/MIVAR>
-    <?MIVAR NAME=mut_constaint_query>$mut_constraint<?/MIVAR>
+    <?MIVAR NAME=mut_constraint_count>$mut_constraint<?/MIVAR>
+    <?MIVAR NAME=mut_constraint_query>$mut_constraint<?/MIVAR>
 
     <!--***-->	
    <?MIBLOCK COND="$(XST,$pubId)">
