@@ -48,6 +48,8 @@ when name is modified for markers in this group, set abbrev = name.
 <?MIVAR COND="$(NXST,$anchor)" NAME=$anchor><?/MIVAR>
 <?MIVAR COND="$(NXST,$caller)" NAME=$caller>markerview.apg<?/MIVAR>
 
+<?MIVAR COND="$(NXST,$source_type)" NAME=$source_type>standard<?/MIVAR>
+
 <!-- First check security. Main purpose is just to get submitter id and 
 name -->
 
@@ -179,12 +181,13 @@ marker.<?/MIVAR>
 
    
 
-    <?MIVAR>
+<!--     <?MIVAR>
       <script>
         alert("$attr_type \n$dataOID \n$old_value \n$source_type");      
       </script>
     <?/MIVAR>
-  <!-- Special case for deleting one of the associated seqs/sources/pubs -->
+    Special case for deleting one of the associated seqs/sources/pubs -->
+
   <?MIBLOCK COND="$(EC,$attr_type,special-listitem)">
 
     <?MIBLOCK COND="$(EC,$attr,publication)">
