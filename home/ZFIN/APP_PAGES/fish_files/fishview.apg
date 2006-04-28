@@ -123,63 +123,52 @@ Datablade documentation.
 	  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_linkage.apg&link_id='+link_id+'&OID='+oid);
 	}
 
-	function Delete_attrib(subattr,data_zdbId,source_zdbId,info) {
-		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&dataOID='+data_zdbId+'&attr='+subattr+'&attr_type=special-listitem&old_value='+source_zdbId+'&new_value=deleted&info='+info);
-	}
+    
+        <?MISQL SQL="select WebExplode(object,'jsdelatt_OID=$OID&jsdelatt_Mival=aa-do-fishupdate.apg&jsdelatt_page_var=__attr_type=special-listitem__new_value=deleted') 
+        from webPages where ID='aa-js-delete_attrib.apg';">$1<?/MISQL>
+    
 
 	function new_attrib_prevname() {
 		var prev_name=document.updater0.attrib_prevname.value;
 		var pub_id=document.updater0.attrib_prevname_pubid.value.toUpperCase();
 		if ((prev_name != '') && (pub_id != '')) {
-		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+prev_name+'&new_value='+pub_id+'&info=namealias');
+		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+prev_name+'&new_value='+pub_id+'&info=standard');
+  		}
+	}
+
+	function new_attrib_alle_prevname() {
+		var prev_name=document.updater0.attrib_alle_prevname.value;
+		var pub_id=document.updater0.attrib_alle_prevname_pubid.value.toUpperCase();
+		if ((prev_name != '') && (pub_id != '')) {
+		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+prev_name+'&new_value='+pub_id+'&info=standard');
   		}
 	}
 
 	function new_attrib_affgene(dataid) {
 		var pub_id = document.updater0.attrib_affgene_pubid.value.toUpperCase();
 		if((dataid != '')&&(pub_id != '')) {
-			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr=colattrib&attr_type=special-newattrib&old_value='+dataid+'&new_value='+pub_id+'&info=cloned_gene');
+			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+dataid+'&new_value='+pub_id+'&info=cloned+gene');
 		}
 	}
 
-	function new_attrib_phntype() {
-		var pub_id = document.updater0.attrib_phntype_pubid.value.toUpperCase();
-		if(pub_id != '') {
-			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr=colattrib&attr_type=special-newattrib&old_value=$OID&new_value='+pub_id+'&info=phenotype');
-		}
-	}
 
        	function new_attrib_segr() {
 		var pub_id = document.updater1.attrib_segr_pubid.value.toUpperCase();
 		if(pub_id != '') {
-			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr=colattrib&attr_type=special-newattrib&old_value=$OID&new_value='+pub_id+'&info=segregation');
+			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value=$OID&new_value='+pub_id+'&info=segregation');
 		}
 	}
 
-	function new_attrib_comm() {
-		var pub_id = document.updater1.attrib_comm_pubid.value.toUpperCase();
-		if(pub_id != '') {
-			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr=colattrib&attr_type=special-newattrib&old_value=$OID&new_value='+pub_id+'&info=comments');
-		}
-	}
-
-	function new_attrib_alle_prevname(altOID) {
-		var prev_name=document.updater0.attrib_alle_prevname.value;
-		var pub_id=document.updater0.attrib_alle_prevname_pubid.value.toUpperCase();
-		if ((prev_name != '') && (pub_id != '')) {
-		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&dataOID='+altOID+'&attr=recattrib&attr_type=special-newattrib&old_value='+prev_name+'&new_value='+pub_id+'&info=allelalias');
-  		}
-	}
 	function new_attrib_alle_mutagen(altOID) {
 		var pub_id=document.updater0.attrib_alle_muta_pubid.value.toUpperCase();
 		if (pub_id != '') {
-		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr=colattrib&attr_type=special-newattrib&old_value='+altOID+'&new_value='+pub_id+'&info=mutagen');
+		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+altOID+'&new_value='+pub_id+'&info=molecular+characterization');
   		}
 	}
 	function new_attrib_alle_mutation(altOID) {
 		var pub_id=document.updater0.attrib_alle_mutation_pubid.value.toUpperCase();
 		if (pub_id != '') {
-		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr=colattrib&attr_type=special-newattrib&old_value='+altOID+'&new_value='+pub_id+'&info=mutation');
+		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+altOID+'&new_value='+pub_id+'&info=discovery');
   		}
 	}
 	function set_fish_extinct() {
@@ -411,18 +400,31 @@ Datablade documentation.
 		       onClick="doit('dalias_alias','text','Alias')">
 	      <?/MIVAR> 
 	      <b>Previous names: </b>
-	      
+
+		<?MIBLOCK COND="$(XST,$UPDATE)">
+	          <br>Add Reference:&nbsp; 
+	          
+	          Previous Name: <select name=attrib_prevname>
+		
+		  <?MISQL SQL="
+		      select dalias_alias,dalias_zdb_id 
+		      from   data_alias 
+		      where  dalias_data_zdb_id = '$OID';">	
+		     
+		      <option value=$2>$1</option>		  
+   	 	 
+                  <?/MISQL>
+                  </select> 
+      	         
+      	         Reference:<input type=text name=attrib_prevname_pubid>
+    		  <input type=button value="Add" onClick=new_attrib_prevname();>
+                <?/MIBLOCK>
+                
 	      <?MISQL SQL="
 		select dalias_alias,dalias_zdb_id 
 		  from data_alias 
-		  where dalias_data_zdb_id = '$OID';">
-		
-		<?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(XST,$UPDATE))">
-	         <br>Add Reference:&nbsp; 
-   	 	 Previous name:<input type=text name=attrib_prevname>	
-    		 Reference:<input type=text name=attrib_prevname_pubid>
-    		 <input type=button value="Add" onClick=new_attrib_prevname();> 
-                <?/MIVAR>
+		  where dalias_data_zdb_id = '$OID';">		
+
 		<?MIVAR NAME=$alias>$1<?/MIVAR>
 		<?MIVAR NAME=$daliasId>$2<?/MIVAR>
 		<?MIVAR COND="$(XST,$alias)" NAME=$alias DELIMIT=" " REPLACE="+">$alias<?/MIVAR>
@@ -470,7 +472,7 @@ Datablade documentation.
 		    <TR><TD>
 		    <b><A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$cloned_gene"><i>$gene_name ($gene_abbrev)</i></A></b>
 		      has been shown to correspond to locus <i>$name</i>.
-		      <?MISQL SQL="select WebExplode(object,'dataId=$locus&type=colattrib&info=cloned_gene') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+		      <?MISQL SQL="select WebExplode(object,'dataId=$locus&type=recattrib&info=cloned+gene') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
 		     </TD>
 		     </TR>
 		   </TABLE>
@@ -714,15 +716,10 @@ Datablade documentation.
 	  <b><?MIVAR>$(IF,$(EC,$title,mutant),Phenotype,Description)<?/MIVAR>
 	      :</b> 
 
-	  <?MIVAR COND="$(XST,$UPDATE)">
- 	      Add reference:&nbsp;
-  	      Reference:<input type=text name=attrib_phntype_pubid>
-  	      <input type=button value="Add" onClick=new_attrib_phntype();><br> 
-  	  <?/MIVAR>
 
 	  <?MIBLOCK COND="$(AND,$(NC,$phenotype,),$(NC,$phenotype,NULL))"> 
 	    <?MIVAR><br>$phenotype<?/MIVAR>
-	    <?MISQL SQL="select WebExplode(object,'dataId=$OID&type=colattrib&info=phenotype') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>		 
+	    <?MISQL SQL="select WebExplode(object,'dataId=$OID&type=recattrib&info=phenotype') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>		 
 	  <?/MIBLOCK>
 	<?/MIBLOCK>
 	
@@ -733,7 +730,7 @@ Datablade documentation.
 	<?MIBLOCK COND="$(EC,$AUTHORIZED,zirc)">
 	  <?MIBLOCK COND="$(AND,$(NC,$phenotype,),$(NC,$phenotype,NULL))"> 
 	    <?MIVAR><br>$phenotype<?/MIVAR>
-	    <?MISQL SQL="select WebExplode(object,'dataId=$OID&type=colattrib&info=phenotype') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>		 
+	    <?MISQL SQL="select WebExplode(object,'dataId=$OID&type=recattrib&info=phenotype') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>		 
 	  <?/MIBLOCK>
 	<?/MIBLOCK>
 
@@ -912,7 +909,28 @@ Datablade documentation.
 
 	  <!-- ECK 2/15/99.  A much better solution that avoids this mess: if it's a double mutants, make them go to the (parental) single mutant record to edit the allele info!
 	  -->
-
+	  
+	  
+	  
+  	    <?MIVAR COND="$(XST,$UPDATE)">	
+		      <br>Add Reference: &nbsp;
+		      Previous name:<select name=attrib_alle_prevname>
+                      <?MISQL SQL="
+                         select dalias_zdb_id, dalias_alias 
+                         from alteration, fish, data_alias
+                         where fish.zdb_id = '$OID' 
+                           and fish.allele = alteration.allele
+                           and alteration.zdb_id = dalias_data_zdb_id
+                         order by dalias_alias;">
+                           <option value=$1>$2</option>
+                      <?/MISQL>		      
+		      
+		      </select>
+    		      Reference:<input type=text name=attrib_alle_prevname_pubid>
+    		      <input type=button value="Add" onClick=new_attrib_alle_prevname();> <br>
+            <?/MIVAR>
+            
+            
 	  <?MISQL SQL="
 	    select distinct c.allele, b.chrom_num, c.chrom_change, 
 		   c.mutagen, c.protocol, b.zdb_id, c.zdb_id, get_allele_html(c.allele)
@@ -939,12 +957,7 @@ Datablade documentation.
 		    <?MIVAR NAME=$ALTOID>$1<?/MIVAR>
 	    <?/MISQL>
 
-  	    <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(XST,$UPDATE))">	
-		      <br>Add Reference: &nbsp;
-		      Previous name:<input type=text size=8 name=attrib_alle_prevname>
-    		      Reference:<input type=text name=attrib_alle_prevname_pubid>
-    		      <input type=button value="Add" onClick=new_attrib_alle_prevname("$ALTOID");> <br>
-            <?/MIVAR>
+
 	    <?MIVAR COND="$(=,$MI_CURRENTROW,1)">	
 	      <TABLE width=100% bgcolor="$highlight" cellpadding=2>
 	      <TR bgcolor=#ccccccc>
@@ -970,7 +983,8 @@ Datablade documentation.
 		  <?MISQL SQL="
 		    select dalias_alias, dalias_zdb_id 
 		      from data_alias
-		      where dalias_data_zdb_id = '$ALTOID';">
+		     where dalias_data_zdb_id = '$ALTOID'
+		     order by dalias_alias;">
 		    <?MIVAR NAME=$allele_alias>$1<?/MIVAR>
 		    <?MIVAR NAME=$aliasId>$2<?/MIVAR>
 		    <?MIVAR COND="$(XST,$allele_alias)" NAME=$allele_alias DELIMIT=" " REPLACE="+">$allele_alias<?/MIVAR>
@@ -981,7 +995,7 @@ Datablade documentation.
 		      <br> <INPUT TYPE=button value=Delete onClick="Delete_listitem_alias('alt_alias','$allele_alias','$OID','$ALTOID')">
 	            <?/MIVAR>
 		    $(IF,$(AND,$(NXST,$UPDATE),$(>,$MI_CURRENTROW,1)),;) <i>$1</i>
- 		    <?MISQL SQL="select WebExplode(object,'dataId=$aliasId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+ 		    <?MISQL SQL="select WebExplode(object,'dataId=$aliasId&type=recattrib&info=standard') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
 		  <?/MISQL>
 		  </TD>
 
@@ -1041,7 +1055,7 @@ Datablade documentation.
 		  <?/MIBLOCK>
 		<?/MIBLOCK>
 	          		 
-		  <?MISQL SQL="select WebExplode(object,'dataId=$ALTOID&type=colattrib&info=mutagen') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+		  <?MISQL SQL="select WebExplode(object,'dataId=$ALTOID&type=recattrib&info=molecular+characterization') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
 
 		
 
@@ -1051,7 +1065,7 @@ Datablade documentation.
 
 		  <?MIBLOCK COND="$(NXST,$UPDATE)">
 		    <?MIVAR>$alt_chrom_change<?/MIVAR>
-		    <?MISQL SQL="select WebExplode(object,'dataId=$ALTOID&type=colattrib&info=mutation') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+		    <?MISQL SQL="select WebExplode(object,'dataId=$ALTOID&type=recattrib&info=discovery') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
 		  <?/MIBLOCK>
 
 		  <!-- add option for complex rearrangement , required db change to increase size of field chrom_change 12/06/00  -->
@@ -1071,6 +1085,12 @@ Datablade documentation.
 			<?/MISQL>
 		     </SELECT>
 		   <?/MIBLOCK>
+
+		  <?MIBLOCK COND="$(XST,$UPDATE)">
+		    <?MIVAR>$alt_chrom_change<?/MIVAR>
+		    <?MISQL SQL="select WebExplode(object,'dataId=$ALTOID&type=recattrib&info=discovery') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+		  <?/MIBLOCK>
+
 		  </TD>
 		 </TR>
 	  <?/MISQL>
@@ -1144,7 +1164,7 @@ Datablade documentation.
   	  <?/MIVAR>	
 	  	 
 	  <?MIVAR COND="$(NC,$segregation,)">$segregation <?/MIVAR>
- 	  <?MISQL SQL="select WebExplode(object,'dataId=$OID&type=colattrib&info=segregation') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+ 	  <?MISQL SQL="select WebExplode(object,'dataId=$OID&type=recattrib&info=segregation') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
 
 	  <?MIVAR COND="$(EC,$segregation,)">unknown<?/MIVAR> 
 	  
@@ -1153,139 +1173,21 @@ Datablade documentation.
 	<?/MIBLOCK>  <!-- ends EC type mutant -->
 
 
-	<HR width=85%>
-
 	<?MIVAR COND="$(XST,$UPDATE)">
 	<INPUT TYPE=button value="Update" onClick="doit('comments','textarea','Submitter+comments')"> 
 	<?/MIVAR> 
 
 	<b>SUBMITTER'S COMMENTS:</b><br>
-	<?MIVAR COND="$(AND,$(XST,$UPDATE),$(NC,$comments,),$(NC,$comments,NULL))">
-              Add reference:&nbsp;
-  	      Reference:<input type=text name=attrib_comm_pubid>
-  	      <input type=button value="Add" onClick=new_attrib_comm();><br> 
-	<?/MIVAR> 
+
         <?MIVAR COND="$(AND,$(NC,$comments,),$(NC,$comments,NULL))"> $comments <?/MIVAR>
-	<?MISQL SQL="select WebExplode(object,'dataId=$OID&type=colattrib&info=comments') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+	<?MISQL SQL="select WebExplode(object,'dataId=$OID&type=recattrib&info=comments') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
 
    
-	<HR WIDTH=85%>
-	<!-- Throw up the publication info, using the standard display format -->
-
-	<?MIVAR NAME=related_data_attrib_to_OID>
-      	  recattrib_data_zdb_id in (select dalias_zdb_id from data_alias where dalias_data_zdb_id ='$OID')
-	 <?/MIVAR>
-
-	<?MISQL SQL="
- 		 select distinct  p.zdb_id
-			  from fish_search f, record_attribution,publication p 
-			where f.fish_id = '$OID'
-			  and recattrib_data_zdb_id  = f.fish_id
-    		 	  and recattrib_source_zdb_id = p.zdb_id
-     		  	  and p.jtype not in ('Curation', 'Unpublished')
-		UNION
-		 select distinct  p.zdb_id
-			  from fish_search f, record_attribution,publication p 
-			where f.fish_id = '$OID'
-			  and recattrib_data_zdb_id  = f.alt_zdb_id
-    		 	  and recattrib_source_zdb_id = p.zdb_id
-     		  	  and p.jtype not in ('Curation', 'Unpublished')
-		 UNION
-		 select distinct  p.zdb_id
-			  from fish_search f, mapped_deletion m, record_attribution,publication p 
-			where f.fish_id = '$OID'
-			  and f.allele = m.allele
-			  and recattrib_data_zdb_id  = m.mapdel_zdb_id
-    		 	  and recattrib_source_zdb_id = p.zdb_id
-     		  	  and p.jtype not in ('Curation', 'Unpublished')
-		 UNION
-		 select distinct  p.zdb_id
-			  from fish_search f, mapped_deletion m, record_attribution,publication p 
-			where f.fish_id = '$OID'
-			  and f.locus = m.allele
-			  and recattrib_data_zdb_id  = m.mapdel_zdb_id
-    		 	  and recattrib_source_zdb_id = p.zdb_id
-     		  	  and p.jtype not in ('Curation', 'Unpublished')
-		 UNION
- 		 select distinct p.zdb_id
-			  from fish_search f,data_alias,record_attribution,publication p 
-			where f.fish_id = '$OID'
-			  and dalias_data_zdb_id = f.fish_id
-			  and recattrib_data_zdb_id = dalias_zdb_id 
-    		 	  and recattrib_source_zdb_id = p.zdb_id
-     		  	  and p.jtype not in ('Curation', 'Unpublished')
-		 UNION
- 		 select distinct p.zdb_id
-			  from fish_search f,data_alias,record_attribution,publication p 
-			where f.fish_id = '$OID'
-			  and dalias_data_zdb_id = f.alt_zdb_id
-			  and recattrib_data_zdb_id = dalias_zdb_id 
-    		 	  and recattrib_source_zdb_id = p.zdb_id
-     		  	  and p.jtype not in ('Curation', 'Unpublished')
-		UNION
- 		 select distinct p.zdb_id
- 		   	  from fish_search f,column_attribution,publication p
-  		  	where f.fish_id = '$OID'
-			and colattrib_data_zdb_id = f.fish_id
-    		  	and colattrib_source_zdb_id = p.zdb_id
-			and p.jtype not in ('Curation','Unpublished')
-		UNION
- 		 select distinct p.zdb_id
- 		   	  from fish_search f,column_attribution,publication p
-  		  	where f.fish_id = '$OID'
-			and colattrib_data_zdb_id = f.alt_zdb_id
-    		  	and colattrib_source_zdb_id = p.zdb_id
-			and p.jtype not in ('Curation','Unpublished')
-                 into temp all_real_pubs_temp with no log;
-  	">
-        <?/MISQL>
-
-	<?MISQL SQL="select distinct count(zdb_id) from all_real_pubs_temp;">
-	  <?MIVAR NAME=$count_of_real_pub>$1<?/MIVAR>
-	<?/MISQL>
-
-	<?MISQL SQL="
-	    drop table all_real_pubs_temp;">
-	<?/MISQL>
+   
+    <?MICOMMENT> *** Citation Link *** <?/MICOMMENT>
+    <?MISQL SQL="select WebExplode(object,'citlink_data_page=citfish.apg') from webPages where ID='aa-citlink.apg';">$1<?/MISQL>
 
 
-	<?MISQL SQL="
-	  select distinct p.zdb_id from 
-    		record_attribution, publication p
-   	  where ($related_data_attrib_to_OID)
-     	  and recattrib_source_zdb_id = zdb_id 
-     	  and jtype in ('Curation', 'Unpublished')
-	 UNION
-	  select distinct p.zdb_id from 
-	   fish_search f, column_attribution, publication p
-	   where f.fish_id = '$OID'
-	     and colattrib_data_zdb_id in (f.alt_zdb_id,f.locus,f.fish_id)
-	     and colattrib_source_zdb_id = zdb_id
-	     and jtype in ('Curation','Unpublished')
-	   into temp all_curation_pubs_temp with no log;
-
-  	">
-	<?/MISQL>
-
-	<?MISQL SQL="select distinct count(zdb_id)::integer from all_curation_pubs_temp;">
-	  <?MIVAR NAME=$count_of_curation_pub>$1<?/MIVAR>
-	<?/MISQL>
- 
-	<?MISQL SQL="
-	    drop table all_curation_pubs_temp;">
-	<?/MISQL>
- 	  
-	<?MIVAR NAME=$total_count>$(+,$count_of_real_pub,$count_of_curation_pub)<?/MIVAR>
-
-	<?MIBLOCK COND="$(OR,$(>,$total_count,0),$(XST,$UPDATE))">
-	  <?MIVAR>
-
- 	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=fish&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&total_count=$total_count&count_of_real_pub=$count_of_real_pub$(IF,$(XST,$UPDATE),&UPDATE=1)"><b>CITATIONS</b></A>
-	  <?/MIVAR>
-	<?MIELSE>
-	  <b>CITATIONS</b>
-	<?/MIBLOCK>
-	  <?MIVAR>&nbsp; ($total_count)<?/MIVAR>
         </form>
 
       <?/MIBLOCK> <!-- Cond AUTHORIZED -->
