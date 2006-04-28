@@ -47,10 +47,19 @@ INPUT VARS:    anatomy_item_zdb_id
 
 <!-- First check security. Main purpose is just to get submitter id and name--> 
 
-<?MIVAR COND="$(EC,$AUTHORIZED,root)">
-
-<?MIBLOCK COND="$(XST,$attrib)">
-       <?MISQL SQL="delete from record_attribution where recattrib_source_zdb_id='$source' and recattrib_data_zdb_id='$data'"><?/MISQL>
+<?MISQL SQL="
+    select WebExplode(object,'permission=root') 
+      from webPages 
+      where ID='aa-secure_navigation.apg';">
+    $1
+<?/MISQL>
+<?MIBLOCK COND="$(XST,$attr)">
+       <?MISQL SQL="
+           delete from record_attribution 
+            where recattrib_source_zdb_id='$old_value' 
+              and recattrib_data_zdb_id='$dataOID' 
+	      and recattrib_source_type = '$source_type';">
+       <?/MISQL>
 <?MIELSE>
        <?MIBLOCK COND="$(XST,$anatcmrkr_anatkey)">
            <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id='$anatcmrkr_anatkey'"><?/MISQL>
@@ -75,4 +84,3 @@ INPUT VARS:    anatomy_item_zdb_id
      window.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$OID");
         <?/MIVAR>
 </SCRIPT>
-<?/MIVAR> <?MICOMMENT> end check for root permission <?/MICOMMENT> 
