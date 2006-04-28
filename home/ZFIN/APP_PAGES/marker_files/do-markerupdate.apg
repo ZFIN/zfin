@@ -187,9 +187,7 @@ marker.<?/MIVAR>
   <!-- Special case for deleting one of the associated seqs/sources/pubs -->
   <?MIBLOCK COND="$(EC,$attr_type,special-listitem)">
 
-    <?MIVAR COND="$(NXST,$source_type)>
-	<?MIVAR NAME=$source_type>standard<?/MIVAR>
-    <?/MIVAR>
+    <?MIVAR COND="$(NXST,$source_type)" NAME=$source_type>standard<?/MIVAR>
 
     <?MIBLOCK COND="$(EC,$attr,publication)">
      
