@@ -41,7 +41,8 @@ $sql = "select dblink_acc_num as acc_num, mrkr_zdb_id, mrkr_abbrev
                                          'ZDB-FDBCONT-040412-38','ZDB-FDBCONT-040412-39',
                                          'ZDB-FDBCONT-040917-2','ZDB-FDBCONT-040412-41',
                                          'ZDB-FDBCONT-040412-42','ZDB-FDBCONT-040412-47',
-                                         'ZDB-FDBCONT-040527-1','ZDB-FDBCONT-040826-2')
+                                         'ZDB-FDBCONT-040527-1','ZDB-FDBCONT-040826-2',
+                                         'ZDB-FDBCONT-060417-1')
        union
         select mrkrseq_mrkr_zdb_id as acc_num, mrkr_zdb_id, mrkr_abbrev
           from marker_sequence, marker_relationship, marker
