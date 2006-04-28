@@ -71,11 +71,11 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 
 
 <?MIVAR COND="$(AND,$(NC,$rtype,person),$(NXST,$attribtype),$(NC,$rtype,go))">
-  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$MIval&UPDATE=1&orgOID=$orgOID&OID=$OID&rtype=$rtype&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev$(IF,$(XST,$total_count),&total_count=$total_count)$(IF,$(XST,$count_of_real_pub),&count_of_real_pub=$count_of_real_pub)"><font size=-1 color=red> Add/Update this Record </font></A>
+  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$MIval&UPDATE=1&orgOID=$orgOID&OID=$OID&rtype=$rtype&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev$(IF,$(XST,$total_count),&total_count=$total_count)$(IF,$(XST,$count_of_real_pub),&count_of_real_pub=$count_of_real_pub)$(IF,$(XST,$add_cit_count),&add_cit_count=$add_cit_count)$(IF,$(XST,$recattrsrctype),&recattrsrctype=$recattrsrctype)"><font size=-1 color=red> Add/Update this Record </font></A>
 <?/MIVAR>
 
 <?MIVAR COND="$(AND,$(NC,$rtype,person),$(XST,$attribtype),$(NC,$rtype,go))">
-  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$MIval&UPDATE=1&orgOID=$orgOID&OID=$OID&rtype=$rtype&attribtype=$attribtype&info=$info$(IF,$(XST,$total_count),&total_count=$total_count)$(IF,$(XST,$count_of_real_pub),&count_of_real_pub=$count_of_real_pub)"><font size=-1 color=red> Add/Update this Record </font></A>
+  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$MIval&UPDATE=1&orgOID=$orgOID&OID=$OID&rtype=$rtype&attribtype=$attribtype&info=$info$(IF,$(XST,$total_count),&total_count=$total_count)$(IF,$(XST,$count_of_real_pub),&count_of_real_pub=$count_of_real_pub)$(IF,$(XST,$add_cit_count),&add_cit_count=$add_cit_count)$(IF,$(XST,$recattrsrctype),&recattrsrctype=$recattrsrctype)"><font size=-1 color=red> Add/Update this Record </font></A>
 <?/MIVAR>
 
 <!-- For PERSON records, allow only owner and root. Also allow root access to
