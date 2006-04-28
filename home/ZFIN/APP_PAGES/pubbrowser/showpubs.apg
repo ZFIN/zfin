@@ -30,7 +30,7 @@ abbrev -- for title display
 
 orgOID -- OID for a gene, or fish or locus... record when
          OID is used for some specific item like 'DALIAS'
-info  -- column name for colattrib itme.
+info  -- record attribution source type
 pubOrder -- the column # to order results by (must be a number because of 'union')
 OUTPUT VARS:
 
@@ -78,6 +78,11 @@ OUTPUT VARS:
 <?MIVAR COND="$(NXST,$mutsearch)" NAME=$mutsearch><?/MIVAR>
 <?MIVAR COND="$(NXST,$pubcount)" NAME=$pubcount><?/MIVAR>
 <?MIVAR COND="$(NXST,$caller)" NAME=$caller><?/MIVAR>
+<?MIVAR NAME=cit_G_filter><?/MIVAR>
+<?MIVAR COND="$(NXST,$recattrsrctype)" NAME=recattrsrctype>standard<?/MIVAR>
+<?MIVAR COND=$(NC,$recattrsrctype,standard) NAME=cit_G_filter>and recattrib_source_type = '$recattrsrctype'<?/MIVAR>
+
+<?MIVAR NAME=pub_G_display>links<?/MIVAR>
 
 <?MIBLOCK COND="$(EC,$rtype,xpat)">
   <?MIBLOCK COND="$(NXST,$total_count)">
@@ -85,6 +90,11 @@ OUTPUT VARS:
   <?/MIBLOCK>
 <?/MIBLOCK>
 <?MIVAR COND="$(NXST,$related_data_attrib_to_OID)" NAME=$related_data_attrib_to_OID><?/MIVAR>
+
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Dropping fish table
+<?/MISQL>
 
 <?MIBLOCK COND="$(XST,$fish_table_created)">
 <?MISQL SQL="drop table fish_search_list"><?/MISQL>
@@ -103,7 +113,6 @@ OUTPUT VARS:
 	  into temp fish_search_list"><?/MISQL>
 <?MIVAR NAME=fish_table_created>true<?/MIVAR>
 <?/MIBLOCK>
-
 
 <?MIVAR>
 $(IF,$(>,$(POSITION,$rtype,marker),0),
@@ -153,8 +162,14 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
         window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$return_page1&OID=$orgOID&dataOID=$OID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name+'&target_table=$target_table');
       }
 
-      function Delete_listitem(item_name,item_id,info) {
-        window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$return_page2&OID=$orgOID&dataOID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted&target_table=$target_table&info=$info');
+        <?MISQL SQL="select WebExplode(object,'jsdelatt_OID=$OID&jsdelatt_Mival=$return_page2&jsdelatt_page_var=__attr_type=special-listitem__new_value=deleted') 
+        from webPages where ID='aa-js-delete_attrib.apg';">$1<?/MISQL>
+        
+
+      function Delete_listitem(item_name,item_id,source_type) {
+        var url = '/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$return_page2&OID=$OID&dataOID=$orgOID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted&target_table=$target_table&info=$info&source_type='+source_type ;
+        
+        window.location.replace(url);
       }
   
       function result_order(pubOrder,total_count,count_of_real_pub,evidence)
@@ -204,6 +219,11 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
   <?MISQL COND="$(NXST,$UPDATE)"  SQL="select WebExplode(object,'') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
   <?MISQL COND="$(XST,$UPDATE)"  SQL="select WebExplode(object,'permission=owns&rtype=$rtype') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Page Header
+<?/MISQL>
+
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
   <?MISQL COND="$(AND,$(NXST,$UPDATE),$(NC,$rtype,goview))" SQL="select WebExplode(object,'rtype=$rtype') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
@@ -211,7 +231,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 <?MIVAR COND="$(XST,$UPDATE)">
         <form>
 	  <center>
-	   <font size=+2><input type=button value=" DONE UPDATING. Back to Viewing! " onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$orgOID&dataOID=$OID&rtype=$rtype&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev$(IF,$(XST,$total_count),&total_count=$total_count)$(IF,$(XST,$count_of_real_pub),&count_of_real_pub=$count_of_real_pub)')"> 
+	   <font size=+2><input type=button value=" DONE UPDATING. Back to Viewing! " onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&orgOID=$orgOID&OID=$OID&rtype=$rtype&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev$(IF,$(XST,$total_count),&total_count=$total_count)$(IF,$(XST,$count_of_real_pub),&count_of_real_pub=$count_of_real_pub)$(IF,$(XST,$recattrsrctype),&recattrsrctype=$recattrsrctype)')"> 
 	   </font>
 	  </center>
         </form>
@@ -236,15 +256,32 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
     or
       recattrib_data_zdb_id in (select oevdisp_zdb_id 
 					from orthologue_evidence_display 
-					where oevdisp_gene_zdb_id = '$OID')    or
-     recattrib_data_zdb_id in (select mrkrgoev_zdb_id 
+					where oevdisp_gene_zdb_id = '$OID')    
+    or
+      recattrib_data_zdb_id in (select mrkrgoev_zdb_id 
 					from marker_go_term_evidence 
 					where mrkrgoev_mrkr_zdb_id = '$OID')
+    or 
+      recattrib_data_zdb_id in (select zdb_id 
+                                        from locus 
+                                        where cloned_gene = '$OID')
+    or 
+      recattrib_data_zdb_id in (select a.zdb_id 
+                                        from alteration as a, locus as loc 
+                                        where a.locus = loc.zdb_id and loc.cloned_gene = '$OID')
+    or 
+      recattrib_data_zdb_id in (select f.zdb_id 
+                                        from fish as f, locus as loc 
+                                        where f.locus = loc.zdb_id and loc.cloned_gene = '$OID')
    <?/MIVAR>
+   
 
 <TABLE width=100%><TR><TD bgcolor=#ccccccc>
 <font size=+2><b>CITATIONS</b></font>
-
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Citation Count
+<?/MISQL>
 <?MICOMMENT> *** 
 	want to include pubs associated with alleles of the locus and 
 	with locus itself.  
@@ -263,7 +300,8 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
           from record_attribution
          where (recattrib_data_zdb_id = '$OID'
             or $related_data_attrib_to_OID)
-           and get_obj_type(recattrib_source_zdb_id) = 'PUB';">
+           and get_obj_type(recattrib_source_zdb_id) = 'PUB'
+           $(IF,$(XST,$recattrsrctype),and recattrib_source_type = '$recattrsrctype');">
 	<?MIVAR NAME=$sp_counter>$1<?/MIVAR>
 		($sp_counter total) 
       <?/MISQL>	
@@ -271,20 +309,12 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
       <br>
       <i>Click on a publication to view summary of gene expression reported.</i>
     <?/MIBLOCK>      
-  <?MIELSE COND="$(EC,$attribtype,colattrib)">
-    <?MISQL SQL="
-      select count(*)::integer
-        from column_attribution
-       where colattrib_data_zdb_id = '$OID'
-         and colattrib_column_name = '$info'	
-         and get_obj_type(colattrib_source_zdb_id) = 'PUB';">
-
-	<?MIVAR NAME=$sp_counter>$1<?/MIVAR>
-	($sp_counter total) 
-
-   <?/MISQL>
   <?/MIBLOCK>
 <?/MIBLOCK>
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Citation Count End
+<?/MISQL>
 </TD></TR></TABLE>
 <p>
 
@@ -363,624 +393,101 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 <?MIVAR NAME=showpubs_tr_color><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 <?MIVAR NAME=showpubs_tr_bg>$showpubs_tr_color<?/MIVAR>
 
+
 <TABLE cellspacing = 0 <?MIVAR>$showpubs_cellPadding<?/MIVAR>>
 
 
-<?MIBLOCK COND="$(NC,$rtype,goview)"> <?MICOMMENT> 
-	*** for GO annotation reference, deal separate *** <?/MICOMMENT> 
+<?MICOMMENT>  *** for GO annotation reference, deal separate *** <?/MICOMMENT> 
+<?MIBLOCK COND="$(NC,$rtype,goview)"> 
 
- <?MIBLOCK COND="$(=,$count_of_real_pub,-9)">
-  <?MIVAR NAME=$count_of_real_pub>0<?/MIVAR>
-  <?MISQL COND="$(>,$(POSITION,$OID,LOCUS),0)" SQL="
-		select count(distinct recattrib_source_zdb_id) 
-	 	  from fish f, locus l, record_attribution, publication p
-	 	 where l.zdb_id = '$OID'
-		   and f.locus = l.zdb_id 
-		   and f.zdb_id = recattrib_data_zdb_id
-		   and recattrib_source_zdb_id = p.zdb_id 
-                   and jtype not in ('Curation', 'Unpublished')
-		;">
-	<?MIVAR>$(SETVAR,$count_of_real_pub,$1)<?/MIVAR>
-  <?/MISQL>	
-    	
-  <?MISQL SQL="
-    select count(distinct recattrib_source_zdb_id)::integer
-      from record_attribution, publication
-     where recattrib_data_zdb_id = '$OID' 
-       and recattrib_source_zdb_id = zdb_id
-       and jtype not in ('Curation', 'Unpublished');
-    ">
-    <?MIVAR>$(SETVAR,$count_of_real_pub,$(+,$1,$count_of_real_pub))<?/MIVAR>
-  <?/MISQL>
-<?/MIBLOCK>
-
-<?MIBLOCK COND="$(=,$(POSITION,$rtype,xpat),0)">
-<?MIVAR COND="$(>,$count_of_real_pub,0)">
-   <TR><TD><b>Publications  ($(FIX,$count_of_real_pub)): </b></TD></TR>
-<?/MIVAR>
-<?/MIBLOCK>
-
-<?MIBLOCK COND="$(NXST,$attribtype)">
+  <?MIBLOCK COND="$(=,$count_of_real_pub,-9)">
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Count Real Pubs
+<?/MISQL>
+    <?MIVAR NAME=$count_of_real_pub>0<?/MIVAR>
 	
-    <?MIBLOCK COND="$(>,$(POSITION,$OID,LOCUS),0)">
+	
+    
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Count Real Pub 2
+<?/MISQL>    	
 
-    <?MICOMMENT> *** want to include pubs for alleles associated with locus 
-	and locus itself *** <?/MICOMMENT>
 
-      <?MISQL SQL="
-  	select distinct title, 
-			p.zdb_id, 
-			year(pub_date) as pyear, 
-			authors, 
-			jrnl_abbrev, 
-  	                case
-		          when p.pub_volume is not null
-		          then p.pub_volume || ':'
-	                else
-		          ''
-		        end,		 
-			p.pub_pages,
-	 		pub_authors_lower, 
-			pub_date
-	 	  from fish_search f, 
-			record_attribution,
-			publication p, 
-			journal
-	 	 where f.locus = '$OID'
-		   and recattrib_data_zdb_id = '$OID'
-    		   and recattrib_source_zdb_id = p.zdb_id
-		   and pub_jrnl_zdb_id = jrnl_zdb_id
-     		   and p.jtype not in ('Curation', 'Unpublished')
-	    UNION
-  	select distinct title, 
-			p.zdb_id, 
-			year(pub_date) as pyear, 
-			authors, 
-			jrnl_abbrev, 
-  	                case
-		          when p.pub_volume is not null
-		          then p.pub_volume || ':'
-	                else
-		          ''
-		        end,	
-			p.pub_pages,  
-	 		pub_authors_lower, 
-			pub_date
-	 	  from fish_search f, 
-			record_attribution,
-			publication p, 
-			journal
-	 	 where f.locus = '$OID'
-		   and recattrib_data_zdb_id = f.fish_id
-    		   and recattrib_source_zdb_id = p.zdb_id
-		   and pub_jrnl_zdb_id = jrnl_zdb_id
-     		   and p.jtype not in ('Curation', 'Unpublished')
-	    UNION
-  	select distinct title, 
-			p.zdb_id, 
-			year(pub_date) as pyear, 
-			authors, 
-			jrnl_abbrev, 
-  	                case
-		          when p.pub_volume is not null
-		          then p.pub_volume || ':'
-	                else
-		          ''
-		        end,	
-			p.pub_pages, 
-	 		pub_authors_lower, 
-			pub_date
-	 	  from fish_search f, 
-			record_attribution,
-			publication p, 
-			journal
-	 	 where f.locus = '$OID'
-		   and recattrib_data_zdb_id = f.alt_zdb_id
-    		   and recattrib_source_zdb_id = p.zdb_id
-		   and p.pub_jrnl_zdb_id = jrnl_zdb_id
-     		   and p.jtype not in ('Curation', 'Unpublished')
+  <?/MIBLOCK>  <?MICOMMENT> Count of real_pub = -9<?/MICOMMENT>
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Count Real Pub End
+<?/MISQL>
 
-	    UNION
-  	select distinct title, 
-			p.zdb_id, 
-			year(pub_date) as pyear, 
-			authors, 
-			jrnl_abbrev, 
-  	                case
-		          when p.pub_volume is not null
-		          then p.pub_volume || ':'
-	                else
-		          ''
-		        end,	
-			p.pub_pages,
-	 		pub_authors_lower, 
-			pub_date
-	 	  from fish_search f, 
-			mapped_deletion m, 
-			record_attribution,
-			publication p, 
-			journal
-	 	 where f.locus = '$OID'
-	  	   and f.allele = m.allele
-	   	   and recattrib_data_zdb_id  = m.mapdel_zdb_id
-    		   and recattrib_source_zdb_id = p.zdb_id
-		   and p.pub_jrnl_zdb_id = jrnl_zdb_id
-     		   and p.jtype not in ('Curation', 'Unpublished')
-	    UNION
-  	select distinct title, 
-			p.zdb_id, 
-			year(pub_date) as pyear, 
-			authors, 
-			jrnl_abbrev,
-  	                case
-		          when p.pub_volume is not null
-		          then p.pub_volume || ':'
-	                else
-		          ''
-		        end,	
-			p.pub_pages, 
-	 		pub_authors_lower, 
-			pub_date
-	 	  from fish_search f, 
-			mapped_deletion m, 
-			record_attribution,
-			publication p, 
-			journal
-	 	 where f.locus = '$OID'
-	  	   and f.locus = m.allele
-	   	   and recattrib_data_zdb_id  = m.mapdel_zdb_id
-    		   and recattrib_source_zdb_id = p.zdb_id
-		   and jrnl_zdb_id = p.pub_jrnl_zdb_id
-     		   and p.jtype not in ('Curation', 'Unpublished')
-
-            UNION		 
-	select distinct title, 
-			p.zdb_id, 
-			year(pub_date) as pyear, 
-			authors, 
-			jrnl_abbrev, 
-  	                case
-		          when p.pub_volume is not null
-		          then p.pub_volume || ':'
-	                else
-		          ''
-		        end,	
-			p.pub_pages, 
-	 		pub_authors_lower, 
-			pub_date
-	 	  from fish_search f, 
-			data_alias, 
-			record_attribution, 
-			publication p,
-			journal
-	 	 where f.locus = '$OID'
-		   and dalias_data_zdb_id = f.locus
-		   and dalias_zdb_id = recattrib_data_zdb_id
-    		   and recattrib_source_zdb_id = p.zdb_id
-		   and jrnl_zdb_id = p.pub_jrnl_zdb_id
-     		   and p.jtype not in ('Curation', 'Unpublished')
-            UNION		 
-	select distinct title, 
-			p.zdb_id, 
-			year(pub_date) as pyear, 
-			authors, 
-			jrnl_abbrev,
-  	                case
-		          when p.pub_volume is not null
-		          then p.pub_volume || ':'
-	                else
-		          ''
-		        end,	
-			p.pub_pages,
-	 		pub_authors_lower, 
-			pub_date
-	 	  from fish_search f, 
-			data_alias, 
-			record_attribution, 
-			publication p,
-			journal
-	 	 where f.locus = '$OID'
-		   and dalias_data_zdb_id = f.alt_zdb_id
-		   and dalias_zdb_id = recattrib_data_zdb_id
-    		   and recattrib_source_zdb_id = p.zdb_id
-		   and p.pub_jrnl_zdb_id = jrnl_zdb_id
-     		   and p.jtype not in ('Curation', 'Unpublished')
-            UNION		 
-	select distinct title, 
-			p.zdb_id, 
-			year(pub_date) as pyear, 
-			authors, 
-			jrnl_abbrev,
-  	                case
-		          when p.pub_volume is not null
-		          then p.pub_volume || ':'
-	                else
-		          ''
-		        end,	
-			p.pub_pages, 
-	 		pub_authors_lower, 
-			pub_date
-	 	  from fish_search f, 
-			data_alias, 
-			record_attribution, 
-			publication p,
-			journal
-	 	 where f.locus = '$OID'
-		   and dalias_data_zdb_id = f.fish_id
-		   and dalias_zdb_id = recattrib_data_zdb_id
-    		   and recattrib_source_zdb_id = p.zdb_id
-		   and p.pub_jrnl_zdb_id = jrnl_zdb_id
-     		   and p.jtype not in ('Curation', 'Unpublished')
-	    UNION		 
-	 select distinct title, 
-			p.zdb_id, 
-			year(pub_date) as pyear, 
-			authors, 
-			jrnl_abbrev,
-  	                case
-		          when p.pub_volume is not null
-		          then p.pub_volume || ':'
-	                else
-		          ''
-		        end,	
-			p.pub_pages, 
-	 		pub_authors_lower, 
-			pub_date
-	 	  from fish_search f,
-			column_attribution,
-			publication p,
-			journal
-	 	 where f.locus = '$OID'
-		   and colattrib_data_zdb_id = f.locus	
-    		   and colattrib_source_zdb_id = p.zdb_id
-		   and pub_jrnl_zdb_id = jrnl_zdb_id
-     		   and p.jtype not in ('Curation', 'Unpublished')
-	    UNION		 
-	 select distinct title, 
-			 p.zdb_id, 
-			 year(pub_date) as pyear, 
-			 authors, 
-			 jrnl_abbrev,
-  	                case
-		          when p.pub_volume is not null
-		          then p.pub_volume || ':'
-	                else
-		          ''
-		        end,	
-			 p.pub_pages, 
-	 		 pub_authors_lower, pub_date
-	 	  from fish_search f,
-			column_attribution,
-			publication p,
-			journal
-	 	 where f.locus = '$OID'
-		   and colattrib_data_zdb_id = f.fish_id	
-    		   and colattrib_source_zdb_id = p.zdb_id
-		   and jrnl_zdb_id = pub_jrnl_zdb_id
-     		   and p.jtype not in ('Curation', 'Unpublished')
-	    UNION		 
-	 select distinct title, 
-			 p.zdb_id, 
-			 year(pub_date) as pyear, 
-			 authors,
-			 jrnl_abbrev,
-  	                case
-		          when p.pub_volume is not null
-		          then p.pub_volume || ':'
-	                else
-		          ''
-		        end,	
-			 p.pub_pages, 
-	 		 pub_authors_lower, 
-			 pub_date
-	 	  from fish_search f,
-			column_attribution,
-			publication p,
-			journal
-	 	 where f.locus = '$OID'
-		   and colattrib_data_zdb_id = f.alt_zdb_id	
-    		   and colattrib_source_zdb_id = p.zdb_id
-		   and jrnl_zdb_id = pub_jrnl_zdb_id
-     		   and p.jtype not in ('Curation', 'Unpublished')
-    	order by $pubOrder;">
-
-	<?MIVAR NAME=$sp_title>$1<?/MIVAR>
-	<?MIVAR NAME=$sp_pub_zdb_id>$2<?/MIVAR>
-	<?MIVAR NAME=$sp_pub_pyear>$3<?/MIVAR>
-	<?MIVAR NAME=$sp_pub_authors>$4<?/MIVAR>
-	<?MIVAR NAME=$sp_jrnl_abbrev>$5<?/MIVAR>
-	<?MIVAR NAME=$sp_pub_volume>$6<?/MIVAR>
-	<?MIVAR NAME=$sp_pub_pages>$7<?/MIVAR>
-	<?MIVAR NAME=$sp_pub_authors_lower>$8<?/MIVAR>
-	<?MIVAR NAME=$sp_pub_date>$9<?/MIVAR>
-
-  	$(IF,$(XST,$UPDATE),"<TD><font size=-1><input type=button value=delete onClick=Delete_listitem('publication','"$2"')></font></TD>")
-  	<TR bgcolor=$showpubs_tr_bg>
-    	<TD align=left>
-      	<DIV class="show_pubs">
-		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$sp_pub_zdb_id">$sp_pub_authors ($sp_pub_pyear) $sp_title. $sp_jrnl_abbrev $sp_pub_volume$sp_pub_pages</A>
-        </DIV>
-    	</TD>
-  	</TR>
-
-     <?MIVAR NAME=$showpubs_tr_bg>$(IF,$(EC,$showpubs_tr_bg,$showpubs_tr_color),,$showpubs_tr_color)<?/MIVAR>
-
-      <?/MISQL> 
-     <?/MIBLOCK>
-
-   <?MIBLOCK COND="$(AND,$(=,$(POSITION,$OID,LOCUS),0),$(=,$(POSITION,$OID,FISH),0),$(=,$(POSITION,$rtype,xpat),0))">
-    <?MISQL SQL="
-      select distinct title, 
-		p.zdb_id, 
-		year(pub_date) as pyear, 
-		authors,
-		jrnl_abbrev, 
-  	        case
-		  when pub_volume is not null
-		  then pub_volume || ':'
-	        else
-		          ''
-		        end,	
-		pub_pages, 
-	 	pub_authors_lower, 
-		pub_date  
-      from record_attribution, publication p, journal
-      where recattrib_data_zdb_id = '$OID'
-        and recattrib_source_zdb_id = p.zdb_id 
-	and jrnl_zdb_id = pub_jrnl_zdb_id
-        and p.jtype not in ('Curation','Unpublished')
- 	UNION		 
-	select distinct title, 
-		p.zdb_id, 
-		year(pub_date) as pyear, 
-		authors, 
-		jrnl_abbrev, 
-  	        case
-		  when pub_volume is not null
-		  then pub_volume || ':'
-	        else
-		          ''
-		        end,	
-		pub_pages, 
-	 	pub_authors_lower, 
-		pub_date  
-	 from record_attribution, publication p, locus l, journal
-	 where l.cloned_gene = '$OID'
-	 and l.zdb_id = recattrib_data_zdb_id
-    	 and recattrib_source_zdb_id = p.zdb_id
-	 and jrnl_zdb_id = pub_jrnl_zdb_id
-     	 and p.jtype not in ('Curation', 'Unpublished')
-         order by $pubOrder;">
-
-      $(IF,$(XST,$UPDATE),"<TD><font size=-1><input type=button value=delete onClick=Delete_listitem('publication','"$2"')></font></TD>")
-      <TR bgcolor=$showpubs_tr_bg>
-      <TD align=left>
-      <DIV class="show_pubs">
-	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$4 ($3) $1. $5 $6$7</A>
-      </DIV>
-      </TD>
-     </TR>
-
-     <?MIVAR NAME=$showpubs_tr_bg>$(IF,$(EC,$showpubs_tr_bg,$showpubs_tr_color),,$showpubs_tr_color)<?/MIVAR>
-
-    <?/MISQL>
+  <?MIBLOCK COND="$(=,$(POSITION,$rtype,xpat),0)">
+    <?MIVAR COND="$(>,$count_of_real_pub,0)">
+      <TR><TD><b>Publications  ($(FIX,$count_of_real_pub)): </b></TD></TR>
+    <?/MIVAR>
   <?/MIBLOCK>
 
-  <?MIBLOCK COND="$(>,$(POSITION,$OID,FISH),0)">
-    <?MISQL SQL="
-      select distinct title, 
-			zdb_id, 
-			year(pub_date) as pyear, 
-			authors, 
-			jrnl_abbrev,
-  	                case
-		          when pub_volume is not null
-		          then pub_volume || ':'
-	                else
-		          ''
-		        end,	
-			pub_pages, 
-	 		pub_authors_lower, 
-			pub_date  
-      from fish_search f, 
-		record_attribution, 
-		publication p,
-		journal
-	where  f.fish_id = '$OID'
-	   and recattrib_data_zdb_id  = f.fish_id
-    	   and recattrib_source_zdb_id = p.zdb_id
-	   and pub_jrnl_zdb_id = jrnl_zdb_id
-     	   and p.jtype not in ('Curation', 'Unpublished')
-    UNION
-      select distinct title, 
-			zdb_id, 
-			year(pub_date) as pyear, 
-			authors, 
-			jrnl_abbrev,
-  	                case
-		          when pub_volume is not null
-		          then pub_volume || ':'
-	                else
-		          ''
-		        end,	
-			pub_pages, 
-	 		pub_authors_lower, 
-			pub_date  
-      from fish_search f,
-		record_attribution, 
-		publication p,
-		journal
-	where  f.fish_id = '$OID'
-	   and recattrib_data_zdb_id  = f.alt_zdb_id
-    	   and recattrib_source_zdb_id = p.zdb_id
-	   and pub_jrnl_zdb_id = jrnl_zdb_id
-     	   and p.jtype not in ('Curation', 'Unpublished')
-    UNION
-      select distinct title, 
-			zdb_id, 
-			year(pub_date) as pyear, 
-			authors,
-			jrnl_abbrev,
-  	                case
-		          when pub_volume is not null
-		          then pub_volume || ':'
-	                else
-		          ''
-		        end,	
-			pub_pages,
- 	      	  	pub_authors_lower, 
-			pub_date  
-      from fish_search f, 
-		mapped_deletion m, 
-		record_attribution, 
-		publication p,
-		journal
-	where  f.fish_id = '$OID'
-	   and f.allele = m.allele
-	   and recattrib_data_zdb_id  = m.mapdel_zdb_id
-    	   and recattrib_source_zdb_id = p.zdb_id
-	   and pub_jrnl_zdb_id = jrnl_zdb_id
-     	   and p.jtype not in ('Curation', 'Unpublished')
-    UNION
-      select distinct title, 
-			zdb_id, 
-			year(pub_date) as pyear, 
-			authors, 
-			jrnl_abbrev, 
-  	                case
-		          when pub_volume is not null
-		          then pub_volume || ':'
-	                else
-		          ''
-		        end,	
-			pub_pages,
-			pub_authors_lower, 
-			pub_date  
-      from fish_search f, 
-		mapped_deletion m, 
-		record_attribution, 
-		publication p, 
-		journal
-	where  f.fish_id = '$OID'
-	   and f.locus = m.allele
-	   and recattrib_data_zdb_id  = m.mapdel_zdb_id
-    	   and recattrib_source_zdb_id = p.zdb_id
-	   and pub_jrnl_zdb_id = jrnl_zdb_id
-     	   and p.jtype not in ('Curation', 'Unpublished')
-    UNION
-      select distinct title, 
-			zdb_id, 
-			year(pub_date) as pyear, 
-			authors, 
-			jrnl_abbrev, 
-  	                case
-		          when pub_volume is not null
-		          then pub_volume || ':'
-	                else
-		          ''
-		        end,	
-			pub_pages,	
-			pub_authors_lower, 
-			pub_date  
-	from fish_search f,
-		data_alias,
-		record_attribution,
-		publication p,
-		journal
-	  where f.fish_id = '$OID'
-	    and dalias_data_zdb_id  = f.fish_id
-	    and recattrib_data_zdb_id = dalias_zdb_id 
-    	    and recattrib_source_zdb_id = p.zdb_id
-	    and jrnl_zdb_id = pub_jrnl_zdb_id
-            and p.jtype not in ('Curation', 'Unpublished')
-    UNION
-      select distinct title, 
-			zdb_id, 
-			year(pub_date) as pyear, 
-			authors, 
-			jrnl_abbrev,
-  	                case
-		          when pub_volume is not null
-		          then pub_volume || ':'
-	                else
-		          ''
-		        end,	
-			pub_pages, 
-	 		pub_authors_lower, 
-			pub_date  
-	from fish_search f,
-		data_alias,
-		record_attribution,
-		publication p,
-		journal 
-	  where f.fish_id = '$OID'
-	    and dalias_data_zdb_id  = f.alt_zdb_id
-	    and recattrib_data_zdb_id = dalias_zdb_id 
-    	    and recattrib_source_zdb_id = p.zdb_id
-	    and jrnl_zdb_id = pub_jrnl_zdb_id
-            and p.jtype not in ('Curation', 'Unpublished')
-    UNION
-      select distinct title, 
-			zdb_id, 
-			year(pub_date) as pyear, 
-			authors, 
-			jrnl_abbrev,
-  	                case
-		          when pub_volume is not null
-		          then pub_volume || ':'
-	                else
-		          ''
-		        end,	
-			pub_pages, 
-	 		pub_authors_lower, 
-			pub_date  
- 	    from fish_search f,
-		column_attribution,
-		publication p,
-		journal
-  	      where f.fish_id = '$OID'
-		and colattrib_data_zdb_id = f.fish_id
-    		and colattrib_source_zdb_id = p.zdb_id
-		and jrnl_zdb_id = pub_jrnl_zdb_id
-		and p.jtype not in ('Curation','Unpublished')
-    UNION
-      select distinct title, 
-			zdb_id, 
-			year(pub_date) as pyear, 
-			authors, 
-			jrnl_abbrev, 
-  	                case
-		          when pub_volume is not null
-		          then pub_volume || ':'
-	                else
-		          ''
-		        end,	
-			pub_pages,
-			pub_authors_lower, 
-			pub_date  
- 	    from fish_search f,
-			column_attribution,
-			publication p,
-			journal
-  	      where f.fish_id = '$OID'
-		and colattrib_data_zdb_id = f.alt_zdb_id
-    		and colattrib_source_zdb_id = p.zdb_id
-		and jrnl_zdb_id = pub_jrnl_zdb_id
-		and p.jtype not in ('Curation','Unpublished')
-      order by $pubOrder;">
-      $(IF,$(XST,$UPDATE),"<TD><font size=-1><input type=button value=delete onClick=Delete_listitem('publication','"$2"')></font></TD>")
-      <TR bgcolor=$showpubs_tr_bg>
-      <TD align=left>
-      <DIV class="show_pubs">
-	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$4 ($3) $1. $5 $6$7</A>
-      </DIV>
-      </TD>
-     </TR>
+  <?MIBLOCK COND="$(NXST,$attribtype)">
 
-     <?MIVAR NAME=$showpubs_tr_bg>$(IF,$(EC,$showpubs_tr_bg,$showpubs_tr_color),,$showpubs_tr_color)<?/MIVAR>
 
-    <?/MISQL>
+    <?MIBLOCK COND="$(>,$(POSITION,$OID,LOCUS),0)">
+
+      <?MISQL SQL="
+        select WebExplode(object,'&sp_G_orderby=order by $pubOrder&sp_G_jtype_option=published') 
+        from webPages where ID='aa-citlocus.apg';">
+          <?MIVAR NAME=sp_G_sql>$sp_G_returnvar<?/MIVAR>
+      <?/MISQL>
+    
+      <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pub_rowdisplay.apg';">$1<?/MISQL>
+
+    <?/MIBLOCK>
+
+
+   <?MIBLOCK COND="$(AND,$(=,$(POSITION,$OID,LOCUS),0),$(=,$(POSITION,$OID,FISH),0),$(=,$(POSITION,$rtype,xpat),0))">
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Before SQL
+<?/MISQL>
+
+      <?MISQL SQL="
+        select WebExplode(object,'&sp_G_orderby=order by $pubOrder&sp_G_jtype_option=published') 
+        from webPages where ID='aa-citgeneric.apg';">
+          <?MIVAR NAME=sp_G_sql>$sp_G_returnvar<?/MIVAR>
+      <?/MISQL>
+
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 MADE SQL
+<?/MISQL>
+
+      <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pub_rowdisplay.apg';">$1<?/MISQL>
+
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 LINKS displayed
+<?/MISQL>
+
    <?/MIBLOCK>
+
+
+  <?MIBLOCK COND="$(>,$(POSITION,$OID,FISH),0)">
+
+    <?MISQL SQL="select WebExplode(object,'&sp_G_orderby=order by $pubOrder&sp_G_jtype_option=published') 
+                 from webPages where ID='aa-citfish.apg';">
+        <?MIVAR NAME=sp_G_sql>$sp_G_returnvar<?/MIVAR>
+    <?/MISQL>
+    
+    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pub_rowdisplay.apg';">$1<?/MISQL>
+
+  <?/MIBLOCK>
+
+
+
+
+
+
+
+
 
   <TR><TD>&nbsp;</TD></TR>
 
@@ -1219,249 +726,58 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
   <?/MIBLOCK>
 
 
-  <?MIVAR COND="$(AND,$(=,$(POSITION,$OID,LOCUS),0),$(=,$(POSITION,$OID,FISH),0))">
-    <?MISQL SQL="
-      select distinct p.zdb_id from 
-    	record_attribution, publication p
-      where (recattrib_data_zdb_id = '$OID'
-         or $related_data_attrib_to_OID)
-     	and recattrib_source_zdb_id = p.zdb_id 
-     	and jtype in ('Curation', 'Unpublished')
-	into temp all_curation_pubs_temp with no log;
-        "> 
-    <?/MISQL>
-  <?/MIVAR>
-
-  <?MIVAR COND="$(>,$(POSITION,$OID,FISH),0)">
-    <?MISQL SQL="
-      select distinct p.zdb_id from 
-	fish_search f, column_attribution, publication p
-      where f.fish_id = '$OID'
-	and colattrib_data_zdb_id in (f.alt_zdb_id, f.locus, f.fish_id)
-	and colattrib_source_zdb_id = p.zdb_id
-	and jtype in ('Curation','Unpublished')
-	into temp all_curation_pubs_temp with no log;
-  	">
-  <?/MISQL>
-  <?/MIVAR>
-
- <?MIVAR COND="$(>,$(POSITION,$OID,LOCUS),0)">
-    <?MISQL SQL="
-      select distinct p.zdb_id from 
-	fish_search f, column_attribution, publication p
-      where f.locus = '$OID'
-	and colattrib_data_zdb_id in (f.alt_zdb_id, f.locus, f.fish_id)
-	and colattrib_source_zdb_id = p.zdb_id
-	and jtype in ('Curation','Unpublished')
-	into temp all_curation_pubs_temp with no log;
-  	">
-  <?/MISQL>
-  <?/MIVAR>
-
-  <?MISQL SQL="select distinct count(zdb_id)::integer from all_curation_pubs_temp;">
-      <?MIVAR NAME=$add_cit_count>$1<?/MIVAR>
-  <?/MISQL>
- 
-  <?MISQL SQL="
-	drop table all_curation_pubs_temp;">
-  <?/MISQL>
+ <?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Locus Curation Pub Count End
+<?/MISQL>
 
 
-    <?MIBLOCK COND="$(=,$(POSITION,$rtype,xpat),0)">
-    <?MIBLOCK COND="$(=,$(POSITION,$OID,MRKRGO),0)">
-  <?MIBLOCK COND="$(>,$add_cit_count,0)">
+    <?MIBLOCK COND="$(AND,$(=,$(POSITION,$rtype,xpat),0),
+                          $(=,$(POSITION,$OID,MRKRGO),0),
+                          $(>,$add_cit_count,0) )">
    
-   <?MIVAR COND="$(>,$count_of_real_pub,0)">
+   <?MIVAR COND="$(>,$add_cit_count,0)">
      <TR><TD><b>Additional Citations ($add_cit_count):</b></TD></TR>
    <?/MIVAR>
 
   <?MIVAR COND="$(AND,$(=,$(POSITION,$OID,LOCUS),0),$(=,$(POSITION,$OID,FISH),0))">
-   <?MISQL SQL="
-      select distinct title, 
-			zdb_id,
-			year(pub_date) as pyear, 
-			authors, 
-			jrnl_abbrev, 
-  	                case
-		          when pub_volume is not null
-		          then pub_volume || ':'
-	                else
-		          ''
-		        end,	
-			pub_pages,
-	 		pub_authors_lower, 
-			pub_date  
-      from record_attribution, publication, journal 
-      where (recattrib_data_zdb_id = '$OID'
-         or $related_data_attrib_to_OID)
-        and recattrib_source_zdb_id = zdb_id 
-	and jrnl_zdb_id = pub_jrnl_zdb_id
-        and jtype in ('Curation','Unpublished')
-      order by $pubOrder;">
-     $(IF,$(XST,$UPDATE),"<TD><font size=-1><input type=button value=delete onClick=Delete_listitem('publication','"$2"')></font></TD>")
-     <TR bgcolor=$showpubs_tr_bg>
-      <TD align=left>
-      <DIV class="show_pubs">
-	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$4 ($3) $1. $5.</A>
-      </DIV>
-      </TD>
-     </TR>
 
-     <?MIVAR NAME=$showpubs_tr_bg>$(IF,$(EC,$showpubs_tr_bg,$showpubs_tr_color),,$showpubs_tr_color)<?/MIVAR>
+     <?MISQL SQL="select WebExplode(object,'&sp_G_orderby=order by $pubOrder&sp_G_jtype_option=unpublished') 
+                 from webPages where ID='aa-citgeneric.apg';">
+        <?MIVAR NAME=sp_G_sql>$sp_G_returnvar<?/MIVAR>
+     <?/MISQL>
+    
+     <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pub_rowdisplay.apg';">$1<?/MISQL>
 
-    <?/MISQL>
   <?/MIVAR>
 
  <?MIVAR COND="$(>,$(POSITION,$OID,FISH),0)">
-   <?MISQL SQL="
-     select distinct title, 
-		zdb_id, 
-		year(pub_date) as pyear, 
-		authors,
-		jrnl_abbrev,
-  	                case
-		          when pub_volume is not null
-		          then pub_volume || ':'
-	                else
-		          ''
-		        end,	
-		pub_pages, 
-	 	pub_authors_lower, 
-		pub_date  
-      from record_attribution, publication, journal 
-      where (recattrib_data_zdb_id = '$OID'
-         or $related_data_attrib_to_OID)
-        and recattrib_source_zdb_id = zdb_id 
-	and pub_jrnl_zdb_id = jrnl_zdb_id
-        and jtype in ('Curation','Unpublished')
-    UNION
-     select distinct title, 
-		zdb_id, 
-		year(pub_date) as pyear, 
-		authors, 
-		jrnl_abbrev,
-  	                case
-		          when pub_volume is not null
-		          then pub_volume || ':'
-	                else
-		          ''
-		        end,	
-		pub_pages, 
-	 	pub_authors_lower, 
-		pub_date 
-	from fish_search f, column_attribution, publication p, journal
-      where f.fish_id = '$OID'
-	and colattrib_data_zdb_id in (f.alt_zdb_id, f.locus, f.fish_id)
-	and colattrib_source_zdb_id = p.zdb_id
-	and jrnl_zdb_id = pub_jrnl_zdb_id
-	and jtype in ('Curation','Unpublished')
-      order by $pubOrder;">
-     $(IF,$(XST,$UPDATE),"<TD><font size=-1><input type=button value=delete onClick=Delete_listitem('publication','"$2"')></font></TD>")
-     <TR bgcolor=$showpubs_tr_bg>
-      <TD align=left>
-      <DIV class="show_pubs">
-	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$4 ($3) $1. $5.</A>
-      </DIV>
-      </TD>
-     </TR>
 
-     <?MIVAR NAME=$showpubs_tr_bg>$(IF,$(EC,$showpubs_tr_bg,$showpubs_tr_color),,$showpubs_tr_color)<?/MIVAR>
+     <?MISQL SQL="select WebExplode(object,'&sp_G_orderby=order by $pubOrder&sp_G_jtype_option=unpublished') 
+                 from webPages where ID='aa-citfish.apg';">
+        <?MIVAR NAME=sp_G_sql>$sp_G_returnvar<?/MIVAR>
+     <?/MISQL>
+    
+     <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pub_rowdisplay.apg';">$1<?/MISQL>
 
-    <?/MISQL>
   <?/MIVAR>
+
 
  <?MIVAR COND="$(>,$(POSITION,$OID,LOCUS),0)">
-   <?MISQL SQL="
-     select distinct title, 
-			zdb_id, 
-			year(pub_date) as pyear, 
-			authors,
-			jrnl_abbrev, 
-  	                case
-		          when pub_volume is not null
-		          then pub_volume || ':'
-	                else
-		          ''
-		        end,	
-			pub_pages, 
-	 		pub_authors_lower, 
-			pub_date  
-      from record_attribution, publication, journal 
-      where (recattrib_data_zdb_id = '$OID'
-         or $related_data_attrib_to_OID)
-        and recattrib_source_zdb_id = zdb_id 
-	and jrnl_zdb_id = pub_jrnl_zdb_id
-        and jtype in ('Curation','Unpublished')
-    UNION
-      select distinct title, zdb_id, year(pub_date) as pyear, authors, jrnl_abbrev, 
-  	                case
-		          when pub_volume is not null
-		          then pub_volume || ':'
-	                else
-		          ''
-		        end,	
-		        pub_pages,
-	 pub_authors_lower, pub_date       
-	from fish_search f, column_attribution, publication p, journal
-      where f.locus = '$OID'
-	and colattrib_data_zdb_id in (f.alt_zdb_id, f.locus, f.fish_id)
-	and colattrib_source_zdb_id = p.zdb_id
-	and jrnl_zdb_id = pub_jrnl_zdb_id
-	and jtype in ('Curation','Unpublished')
-      order by $pubOrder;">
-     $(IF,$(XST,$UPDATE),"<TD><font size=-1><input type=button value=delete onClick=Delete_listitem('publication','"$2"')></font></TD>")
-     <TR bgcolor=$showpubs_tr_bg>
-      <TD align=left>
-      <DIV class="show_pubs">
-	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$4 ($3) $1. $5.</A>
-      </DIV>
-      </TD>
-     </TR>
+   
+     <?MISQL SQL="select WebExplode(object,'sp_G_orderby=order by $pubOrder&sp_G_jtype_option=unpublished') 
+               from webPages where ID='aa-citlocus.apg';">
+         <?MIVAR NAME=sp_G_sql>$sp_G_returnvar<?/MIVAR>
+     <?/MISQL>
+  
+     <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pub_rowdisplay.apg';">$1<?/MISQL>
 
-     <?MIVAR NAME=$showpubs_tr_bg>$(IF,$(EC,$showpubs_tr_bg,$showpubs_tr_color),,$showpubs_tr_color)<?/MIVAR>
-
-    <?/MISQL>
   <?/MIVAR>
 
+
   <?/MIBLOCK> <?MICOMMENT> *** add_cit_count > 0 *** <?/MICOMMENT>
-<?/MIBLOCK>
-<?/MIBLOCK>
 
-<?MIELSE COND="$(EC,$attribtype,colattrib)">
-  <?MISQL SQL="
-    select title, 
-		zdb_id, 
-		year(pub_date) as pyear, 
-		authors, 
-		jrnl_abbrev, 
-  	                case
-		          when pub_volume is not null
-		          then pub_volume || ':'
-	                else
-		          ''
-		        end,	
-		pub_pages,
-	 	pub_authors_lower, 
-		pub_date
-      from column_attribution, publication, journal 
-      where colattrib_data_zdb_id = '$OID'
-	and jrnl_zdb_id = pub_jrnl_zdb_id
-        and colattrib_column_name = '$info'		
-        and colattrib_source_zdb_id = zdb_id 
-      order by $pubOrder;">
-    $(IF,$(XST,$UPDATE),"<TD><font size=-1><input type=button value=delete onClick=Delete_listitem('colattrib','"$2"','"$info"')></font></TD>")
-   <TR bgcolor=$showpubs_tr_bg>
-    <TD align=left>
-      <DIV class="show_pubs">
-	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2">$4 ($3) $1. $5.</A>
-      </DIV>
-    </TD>
-  </TR>
-
-    <?MIVAR NAME=$showpubs_tr_bg>$(IF,$(EC,$showpubs_tr_bg,$showpubs_tr_color),,$showpubs_tr_color)<?/MIVAR>
-
-  <?/MISQL>
-   
+ 
  <?/MIBLOCK> <?MICOMMENT> *** end of attribtype *** <?/MICOMMENT>
 
 <?MIELSE COND="$(EC,$rtype,goview)"> 
@@ -1539,6 +855,8 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 </TABLE>
 
 </form>
+
+<?MISQL COND=$(EC,1,0) SQL="drop table all_curation_pubs_temp;"><?/MISQL>
 
 <?/MIBLOCK><?MICOMMENT> -- end of $AUTHORIZED check -- <?/MICOMMENT>
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>

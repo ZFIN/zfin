@@ -307,17 +307,61 @@ displays a publication record, or many publication records if > 1 returned.
 
   <ul>
   <?MICOMMENT> ======== Genes / Markers  ============ <?/MICOMMENT>
+
+  <?MIVAR NAME=locus_recattrib_list><?/MIVAR>
+
+    <?MISQL SQL="
+      select distinct cloned_gene
+        from record_attribution, locus
+       where recattrib_source_zdb_id = '$OID'
+         and recattrib_data_zdb_id = zdb_id
+    ;">  
+      <?MIVAR>$(VECAPPEND,$cloned_gene_list_from_locus,$1)<?/MIVAR>              
+    <?/MISQL>
+
+  <?MIVAR NAME=cloned_gene_list_from_locus_csv SEPARATE="','">$cloned_gene_list_from_locus<?/MIVAR>  
+
+  <?MIVAR NAME=fish_recattrib_list><?/MIVAR>
+
+    <?MISQL SQL="
+      select distinct l.cloned_gene
+        from record_attribution, fish f, locus l
+       where recattrib_source_zdb_id = '$OID'
+         and recattrib_data_zdb_id = f.zdb_id
+         and f.locus = l.zdb_id
+    ;">  
+      <?MIVAR>$(VECAPPEND,$cloned_gene_list_from_fish,$1)<?/MIVAR>              
+    <?/MISQL>
+
+  <?MIVAR NAME=cloned_gene_list_from_fish_csv SEPARATE="','">$cloned_gene_list_from_fish<?/MIVAR>  
+
+  <?MIVAR NAME=gene_recattrib_list><?/MIVAR>
+
+    <?MISQL SQL="
+      select distinct mrkr_zdb_id
+        from record_attribution, marker
+       where recattrib_source_zdb_id = '$OID'
+         and recattrib_data_zdb_id = mrkr_zdb_id
+    ;">  
+      <?MIVAR>$(VECAPPEND,$gene_list,$1)<?/MIVAR>              
+    <?/MISQL>
+
+  <?MIVAR NAME=gene_list_csv SEPARATE="','">$gene_list<?/MIVAR> 
+  
   <?MISQL SQL="
-      select count(recattrib_data_zdb_id)::integer
-	from  record_attribution, marker
-	where recattrib_source_zdb_id = '$OID'
-	  and recattrib_data_zdb_id = mrkr_zdb_id
-	  and mrkr_type in 
-		(select mtgrpmem_mrkr_type from marker_type_group_member
-                 where mtgrpmem_mrkr_type_group = 'SEARCH_MK')
-	  and mrkr_type <> 'MRPHLNO'
+      select count(distinct mrkr_zdb_id)::integer
+	from marker
+       where mrkr_type in 
+	     (
+	       select mtgrpmem_mrkr_type 
+	         from marker_type_group_member
+                where mtgrpmem_mrkr_type_group = 'SEARCH_MK'
+             )
+         and mrkr_type <> 'MRPHLNO'
+         and mrkr_zdb_id in ('$gene_list_csv','$cloned_gene_list_from_locus_csv','$cloned_gene_list_from_fish_csv')
       ; ">
   <?/MISQL> 
+  
   <?MIVAR COND="$(>,$1,0)">
   <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&pubId=$OID&type=pub_mrkr">Genes / Markers</a> &nbsp; ($1)
   <?/MIVAR> 
@@ -403,17 +447,42 @@ displays a publication record, or many publication records if > 1 returned.
 
 
   <?MICOMMENT> ======== Phenotype Alleles  ============ <?/MICOMMENT>
+  <?MIVAR NAME=Pheno_count>0<?/MIVAR>
   <?MISQL SQL="
-	select count(recattrib_data_zdb_id)
-	 from  record_attribution
-	 where recattrib_source_zdb_id = '$OID'
-	  and  (recattrib_data_zdb_id like 'ZDB-FISH-%'
-	      or recattrib_data_zdb_id like 'ZDB-LOCUS-%');">
-  <?/MISQL> 
-  <?MIVAR COND="$(>,$1,0)">
-  <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&pubId=$OID">Phenotype Alleles</a> &nbsp; ($(FIX,$1))
+	select distinct f.fish_id
+	from   record_attribution, fish_search f
+	where  recattrib_source_zdb_id = '$OID'
+	  and  recattrib_data_zdb_id = f.fish_id">
+    <?MIVAR>$(VECAPPEND,$fish_vec,$1)<?/MIVAR>
+  <?/MISQL>
+  <?MIVAR NAME=fish_csv SEPARATE="','">$fish_vec<?/MIVAR>
+  <?MISQL SQL="
+	select distinct f.fish_id
+	from   record_attribution, fish_search f
+	where  recattrib_source_zdb_id = '$OID'
+	  and  recattrib_data_zdb_id = f.alt_zdb_id
+	  and  f.fish_id not in ('$fish_csv');">
+    <?MIVAR>$(VECAPPEND,$fish_vec,$1)<?/MIVAR>
+  <?/MISQL>
+  <?MIVAR NAME=fish_csv SEPARATE="','">$fish_vec<?/MIVAR>
+  <?MISQL SQL="
+	select distinct f.fish_id
+	from   record_attribution, fish_search f, data_alias
+	where  recattrib_source_zdb_id = '$OID'
+	  and  recattrib_data_zdb_id = dalias_zdb_id
+	  and  dalias_data_zdb_id = f.fish_id
+	  and  f.fish_id not in ('$fish_csv');">
+    <?MIVAR>$(VECAPPEND,$fish_vec,$1)<?/MIVAR>
+  <?/MISQL>
+  <?MIVAR NAME=fish_csv SEPARATE="','">$fish_vec<?/MIVAR>
+  
+  <?MIVAR>$(SETVAR,$Pheno_count,$(VECSIZE,$fish_vec))<?/MIVAR>
+  
+  <?MIBLOCK COND="$(NE,$Pheno_count,0)">
+  <?MIVAR>
+  <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&pubId=$OID">Phenotype Alleles</a> &nbsp; ($(FIX,$Pheno_count))
   <?/MIVAR>
- 
+  <?/MIBLOCK>
 
   <?MICOMMENT> ======== Orthology  ============ <?/MICOMMENT>
   <?MISQL SQL="
