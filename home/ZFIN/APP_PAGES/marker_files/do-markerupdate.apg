@@ -177,6 +177,8 @@ marker.<?/MIVAR>
     <?/MISQL>
   <?/MIBLOCK>
 
+   
+
     <?MIVAR>
       <script>
         alert("$attr_type \n$dataOID \n$old_value \n$source_type");      
@@ -184,6 +186,10 @@ marker.<?/MIVAR>
     <?/MIVAR>
   <!-- Special case for deleting one of the associated seqs/sources/pubs -->
   <?MIBLOCK COND="$(EC,$attr_type,special-listitem)">
+
+    <?MIVAR COND="$(NXST,$source_type)>
+	<?MIVAR NAME=$source_type>standard<?/MIVAR>
+    <?/MIVAR>
 
     <?MIBLOCK COND="$(EC,$attr,publication)">
      
