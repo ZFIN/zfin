@@ -83,23 +83,37 @@ an updated person record
   <?MIVAR COND="$(NXST,$ua_pers_street1)" 
 	NAME=$ua_pers_street1><?/MIVAR>
 
+  <?MIVAR NAME=$ua_pers_street1>$(REPLACE,$ua_pers_street1,','')<?/MIVAR>
+
   <?MIVAR COND="$(NXST,$ua_pers_street2)" 
 	NAME=$ua_pers_street2><?/MIVAR>
+
+  <?MIVAR NAME=$ua_pers_street2>$(REPLACE,$ua_pers_street2,','')<?/MIVAR>
 
   <?MIVAR COND="$(NXST,$ua_pers_street3)" 
 	NAME=$ua_pers_street3><?/MIVAR>
 
+  <?MIVAR NAME=$ua_pers_street3>$(REPLACE,$ua_pers_street3,','')<?/MIVAR>
+
   <?MIVAR COND="$(NXST,$ua_pers_street4)" 
 	NAME=$ua_pers_street4><?/MIVAR>
+
+  <?MIVAR NAME=$ua_pers_street4>$(REPLACE,$ua_pers_street4,','')<?/MIVAR>
 
   <?MIVAR COND="$(NXST,$ua_pers_street5)" 
 	NAME=$ua_pers_street5><?/MIVAR>
 
+  <?MIVAR NAME=$ua_pers_street5>$(REPLACE,$ua_pers_street5,','')<?/MIVAR>
+
   <?MIVAR COND="$(NXST,$ua_pers_street6)" 
 	NAME=$ua_pers_street6><?/MIVAR>
 
+  <?MIVAR NAME=$ua_pers_street6>$(REPLACE,$ua_pers_street6,','')<?/MIVAR>
+
   <?MIVAR COND="$(NXST,$ua_pers_city)" 
 	NAME=$ua_pers_city><?/MIVAR>
+
+  <?MIVAR NAME=$ua_pers_city>$(REPLACE,$ua_pers_city,','')<?/MIVAR>
 
   <?MIVAR COND="$(NXST,$ua_pers_country_code)" 
 	NAME=$ua_pers_country_code><?/MIVAR>
