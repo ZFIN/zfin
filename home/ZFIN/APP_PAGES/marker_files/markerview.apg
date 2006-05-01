@@ -1632,10 +1632,10 @@ I am commenting this part of the code rather than deleting it. If no flags are r
                 <?/MISQL>
        
                 <?MIVAR>$(UNSETVAR,$UPDATE)<?/MIVAR>
-                <?MISQL SQL="select WebExplode(object,'dataId=$dataId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+                <?MISQL SQL="select WebExplode(object,'dataId=$dataId&type=recattrib&info=standard') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
                 <?MIVAR>$(SETVAR,$UPDATE,1)<?/MIVAR>
               <?MIELSE>
-                <?MISQL SQL="select WebExplode(object,'dataId=$dataId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+                <?MISQL SQL="select WebExplode(object,'dataId=$dataId&type=recattrib&info=standard') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
               <?/MIBLOCK>
             </TD>
             <TD align=right>

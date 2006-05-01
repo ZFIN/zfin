@@ -338,7 +338,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
           <TD>
             $(IF,$(XST,$UPDATE),"<input type=button value=delete onClick=Delete_listitem('db_link','"$(URLENCODE,$db_name:$acc_num)"')>")
             <A HREF="$link_url">$db_name:$acc_num</A><?/MIVAR>
-            <?MISQL SQL="select WebExplode(object,'dataId=$dataId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+            <?MISQL SQL="select WebExplode(object,'dataId=$dataId&type=recattrib&info=standard') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
           </TD>
           <TD align=right>
             <nobr>
@@ -425,7 +425,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
             <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$encodes_zdb_id"
             >$encodes_mrkr_abbrev</A>
             <?MISQL SQL="
-              select WebExplode(object,'dataId=$encodes_mrel_zdb_id&type=recattrib')
+              select WebExplode(object,'dataId=$encodes_mrel_zdb_id&type=recattrib&info=standard')
               from webPages
               where ID='aa-miniref_display.apg';">
               $1
@@ -468,7 +468,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
           <TD>
             <A HREF="$link_url">$db_name:$acc_num</A>
             <?MISQL SQL="
-              select WebExplode(object,'dataId=$dataId&type=recattrib')
+              select WebExplode(object,'dataId=$dataId&type=recattrib&info=standard')
               from webPages
               where ID='aa-miniref_display.apg';">
               $1
@@ -543,7 +543,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
             <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$contains_zdb_id"
             > $contains_mrkr_abbrev</A>
             <?MISQL SQL="
-              select WebExplode(object,'dataId=$contains_mrel_zdb_id&type=recattrib')
+              select WebExplode(object,'dataId=$contains_mrel_zdb_id&type=recattrib&info=standard')
               from webPages
               where ID='aa-miniref_display.apg';">
               $1
@@ -585,7 +585,7 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
           <TD>
             <A HREF="$link_url">$db_name:$acc_num</A>
             <?MISQL SQL="
-              select WebExplode(object,'dataId=$dataId&type=recattrib')
+              select WebExplode(object,'dataId=$dataId&type=recattrib&info=standard')
               from webPages
               where ID='aa-miniref_display.apg';">
               $1
