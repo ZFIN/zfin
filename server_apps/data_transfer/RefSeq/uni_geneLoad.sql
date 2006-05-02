@@ -26,7 +26,7 @@ load from 'll_id.unl' insert into ll_zdb;
 create index llzdb_ll_id_index on ll_zdb
     (llzdb_ll_id) using btree;
 create index llzdb_zdb_id_index on ll_zdb
-    (llzdb_zdb_id) using btree;
+    (llzdb_zdb_id) using btree in idxdbs3;
 
 --UNI_GENE
 create temp table uni_gene
@@ -40,9 +40,9 @@ with no log;
 load from 'loc2UG.unl' insert into uni_gene;
 
 create index uni_ll_id_index on uni_gene
-    (uni_ll_id) using btree;
+    (uni_ll_id) using btree in idxdbs3;
 create index uni_cluster_id_index on uni_gene
-    (uni_cluster_id) using btree;
+    (uni_cluster_id) using btree in idxdbs3;
 
 
 --TMP_DB_LINK
@@ -117,7 +117,7 @@ delete from zdb_active_data where zactvd_zdb_id in (
 
 !echo 'add active source and active data'
 insert into zdb_active_data select dblink_zdb_id from tmp_db_link
-       where acc_num not in (select acc_num from unigene_link);;
+       where acc_num not in (select acc_num from unigene_link);
 
 
 !echo 'insert new db_links'
