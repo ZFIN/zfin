@@ -32,9 +32,10 @@ with no log;
 LOAD FROM 'll_hs_id.unl' INSERT INTO ll_human;
 
 CREATE INDEX llhs_ll_id_index ON ll_human
-    (llhs_ll_id) using btree;
+    (llhs_ll_id) using btree in idxdbs3;
+
 CREATE INDEX llhs_abbrev_index ON ll_human
-    (llhs_hs_abbrev) using btree;
+    (llhs_hs_abbrev) using btree in idxdbs3;
     
 UNLOAD to hs_ortho_abbrev_conflict.unl
 SELECT mrkr_abbrev, ortho_abbrev, llhs_hs_abbrev
@@ -63,9 +64,9 @@ with no log;
 LOAD FROM 'll_mm_id.unl' INSERT INTO ll_mouse;
 
 CREATE INDEX llmm_ll_id_index ON ll_mouse
-    (llmm_ll_id) using btree;
+    (llmm_ll_id) using btree in idxdbs3;
 CREATE INDEX llmm_abbrev_index ON ll_mouse
-    (llmm_mm_abbrev) using btree;
+    (llmm_mm_abbrev) using btree in idxdbs3;
     
 UNLOAD to mm_ortho_abbrev_conflict.unl
 SELECT mrkr_abbrev, ortho_abbrev, llmm_mm_abbrev
@@ -99,9 +100,9 @@ with no log;
 LOAD FROM 'll_id.unl' INSERT INTO ll_zdb;
 
 CREATE INDEX llzdb_ll_id_index ON ll_zdb
-    (llzdb_ll_id) using btree;
+    (llzdb_ll_id) using btree in idxdbs3;
 CREATE INDEX llzdb_zdb_id_index ON ll_zdb
-    (llzdb_zdb_id) using btree;
+    (llzdb_zdb_id) using btree in idxdbs3;
 
 
 
@@ -120,11 +121,11 @@ with no log;
 LOAD FROM 'loc2ref.unl' INSERT INTO ref_seq_acc;
 
 CREATE INDEX refseq_ll_index ON ref_seq_acc
-    (refseq_ll) using btree;
+    (refseq_ll) using btree in idxdbs3;
 CREATE INDEX refseq_nM_acc_index ON ref_seq_acc
-    (refseq_nM_acc) using btree;
+    (refseq_nM_acc) using btree in idxdbs3;
 CREATE INDEX refseq_nP_acc_index ON ref_seq_acc
-    (refseq_nP_acc) using btree;
+    (refseq_nP_acc) using btree in idxdbs3;
    
 
 --GENBANK ACCESSION NUM--
@@ -140,11 +141,11 @@ with no log;
 LOAD FROM 'loc2acc.unl' INSERT INTO genbank_acc;
 
 CREATE INDEX genbank_ll_index ON genbank_acc
-    (gbacc_ll) using btree;
+    (gbacc_ll) using btree in idxdbs3;
 CREATE INDEX genbank_acc_index ON genbank_acc
-    (gbacc_acc) using btree;
+    (gbacc_acc) using btree in idxdbs3;
 CREATE INDEX genbank_pept_index ON genbank_acc
-    (gbacc_pept) using btree;
+    (gbacc_pept) using btree in idxdbs3;
    
 
 --ACCESSION LENGTH--
@@ -157,13 +158,13 @@ CREATE TEMP TABLE ACC_LENGTH
 with no log;
 
 CREATE INDEX acclen_acc_index ON acc_length
-    (acclen_acc) using btree;
+    (acclen_acc) using btree in idxdbs3;
     
 !echo 'LOAD loc2acclen.unl'
 LOAD FROM 'loc2acclen.unl' INSERT INTO acc_length (acclen_acc, acclen_length);
 
 CREATE INDEX acclen_length_index ON acc_length
-    (acclen_length) using btree;
+    (acclen_length) using btree in idxdbs3;
 
 UPDATE STATISTICS HIGH FOR TABLE acc_length;
 
@@ -188,7 +189,7 @@ GROUP BY 1
 INTO TEMP tmp_acclength_longest;
 
 CREATE INDEX tmp_acclen_longest_index ON tmp_acclength_longest
-    (aAcclen_acc) using btree;
+    (aAcclen_acc) using btree in idxdbs3;
 
 UPDATE STATISTICS HIGH FOR TABLE tmp_acclength_longest;
 
@@ -237,9 +238,9 @@ with no log;
 LOAD FROM 'loc2UG.unl' INSERT INTO uni_gene;
 
 CREATE INDEX uni_ll_id_index ON uni_gene
-    (uni_ll_id) using btree;
+    (uni_ll_id) using btree in idxdbs3;
 CREATE INDEX uni_cluster_id_index ON uni_gene
-    (uni_cluster_id) using btree;
+    (uni_cluster_id) using btree in idxdbs3;
 
 
 --TMP_DB_LINK
@@ -256,11 +257,11 @@ CREATE TEMP TABLE tmp_db_link
 with no log;
 
 CREATE INDEX tmp_linked_recid_index ON tmp_db_link
-    (tmp_linked_recid) using btree;
+    (tmp_linked_recid) using btree in idxdbs3;
 CREATE INDEX tmp_acc_num_index ON tmp_db_link
-    (tmp_acc_num) using btree;
+    (tmp_acc_num) using btree in idxdbs3;
 CREATE INDEX tmp_db_name_index ON tmp_db_link
-    (tmp_db_name) using btree;
+    (tmp_db_name) using btree in idxdbs3;
     
 !echo 'insert RefSeq INTO temp_db_link'
 INSERT INTO tmp_db_link
@@ -440,7 +441,7 @@ SELECT dblink_zdb_id
 ;
 
 CREATE INDEX link_id_index ON automated_dblink 
-    (link_id) using btree in tempdbs1 ;
+    (link_id) using btree in idxdbs3 ;
 
 
         --------------------------
