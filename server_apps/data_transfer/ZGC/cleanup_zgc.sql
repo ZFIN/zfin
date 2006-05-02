@@ -20,11 +20,11 @@ with no log;
   
 CREATE index nogene_zfin_mrkr_abbrev_index
   ON tmp_Zgc_No_Gene(nogene_zfin_mrkr_abbrev)
-  USING btree;
+  USING btree in idxdbs3;
 
 CREATE index nogene_zgc_abbrev_index
   ON tmp_Zgc_No_Gene(nogene_zgc_abbrev)
-  USING btree;
+  USING btree in idxdbs3;
 
   
 CREATE TEMP TABLE tmp_Zgc_MREL
@@ -47,11 +47,11 @@ with no log;
 
 CREATE index zUp_zgc_zdb_id_index
   ON tmp_zUpdate(zUp_zgc_zdb_id)
-  USING btree;
+  USING btree in idxdbs3;
 
 CREATE index zUp_zfin_zdb_id_index
   ON tmp_zUpdate(zUp_zfin_zdb_id)
-  USING btree;
+  USING btree in idxdbs3;
 
 
 CREATE TEMP TABLE tmp_Zgc_Upgrade
@@ -65,7 +65,7 @@ with no log;
 
 CREATE index zUpgrade_zdb_id_index
   ON tmp_Zgc_Upgrade(zUpgrade_zdb_id)
-  USING btree;
+  USING btree in idxdbs3;
 
 
 CREATE TEMP TABLE tmp_Zgc_GENE
@@ -80,7 +80,7 @@ with no log;
 
 CREATE index zGENE_abbrev_index
   ON tmp_Zgc_GENE(zGENE_abbrev)
-  USING btree;
+  USING btree in idxdbs3;
   
 
 LOAD from no_gene_cdna.unl INSERT into tmp_Zgc_No_Gene;

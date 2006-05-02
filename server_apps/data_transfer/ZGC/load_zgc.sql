@@ -42,7 +42,7 @@ with no log;
 
 CREATE index zLib_name_index
  ON tmp_Zgc_Lib(zLib_name)
- USING btree;
+ USING btree in idxdbs3;
  
 CREATE TEMP TABLE tmp_Lib_Bank 
   (
@@ -72,19 +72,19 @@ with no log;
   
 CREATE index zgc_mrkr_abbrev_index
   ON tmp_Zgc(zgc_mrkr_abbrev)
-  USING btree;
+  USING btree in idxdbs3;
 
 CREATE index zgc_name_index
   ON tmp_Zgc(zgc_name)
-  USING btree;
+  USING btree in idxdbs3;
 
 CREATE index zgc_abbrev_index
   ON tmp_Zgc(zgc_abbrev)
-  USING btree;
+  USING btree in idxdbs3;
 
 CREATE index zgc_lib_index
   ON tmp_Zgc(zgc_lib)
-  USING btree;
+  USING btree in idxdbs3;
   
 
 CREATE TEMP TABLE tmp_Zgc_EST
@@ -99,7 +99,7 @@ with no log;
 
 CREATE index zEST_abbrev_index
   ON tmp_Zgc_EST(zEST_abbrev)
-  USING btree;
+  USING btree in idxdbs3;
   
 
 CREATE TEMP TABLE tmp_Zgc_GENE
@@ -114,7 +114,7 @@ with no log;
 
 CREATE index zGENE_abbrev_index
   ON tmp_Zgc_GENE(zGENE_abbrev)
-  USING btree;
+  USING btree in idxdbs3;
   
 
 CREATE TEMP TABLE tmp_Zgc_Clone
@@ -151,11 +151,11 @@ with no log;
 
 CREATE index zDblink_acc_num_index
   ON tmp_Zgc_Dblink_moved(zDblink_acc_num)
-  USING btree;
+  USING btree in idxdbs3;
 
 CREATE index zDblink_zdb_id_index
   ON tmp_Zgc_Dblink_moved(zDblink_zdb_id)
-  USING btree;
+  USING btree in idxdbs3;
   
 
 CREATE TEMP TABLE tmp_Zgc_MREL
@@ -177,11 +177,11 @@ with no log;
 
 CREATE index zMis_zgc_zdb_id_index
   ON tmp_Zname_Mismatch(zMis_zgc_zdb_id)
-  USING btree;
+  USING btree in idxdbs3;
 
 CREATE index zMis_zfin_zdb_id_index
   ON tmp_Zname_Mismatch(zMis_zfin_zdb_id)
-  USING btree;
+  USING btree in idxdbs3;
 
 
 CREATE TEMP TABLE tmp_zUpdate
@@ -194,11 +194,11 @@ with no log;
 
 CREATE index zUp_zgc_zdb_id_index
   ON tmp_zUpdate(zUp_zgc_zdb_id)
-  USING btree;
+  USING btree in idxdbs3;
 
 CREATE index zUp_zfin_zdb_id_index
   ON tmp_zUpdate(zUp_zfin_zdb_id)
-  USING btree;
+  USING btree in idxdbs3;
 
 
 CREATE TEMP TABLE tmp_Zgc_Upgrade
@@ -212,7 +212,7 @@ with no log;
 
 CREATE index zUpgrade_zdb_id_index
   ON tmp_Zgc_Upgrade(zUpgrade_zdb_id)
-  USING btree;
+  USING btree in idxdbs3;
 
 
 	----------------------
