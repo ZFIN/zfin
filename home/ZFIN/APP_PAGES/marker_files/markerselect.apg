@@ -47,6 +47,16 @@ DEBUGGING:
 	document.critform.marker_type.selectedIndex = 0;
 	document.critform.WINSIZE.value = 20;
      }
+
+      function replaceLocation(url) {
+        if (navigator.userAgent.indexOf("Safari") >= 0) 
+          location.href = url;        
+        else 
+          location.replace(url);
+        
+      }
+
+
    </SCRIPT>
 
  <?MISQL SQL="
@@ -583,15 +593,26 @@ DEBUGGING:
   <?/MICOMMENT>
 
   <?MISQL SQL="
-	select distinct mstmrkr_zdb_id
+	select distinct mstmrkr_zdb_id,mstmrkr_type
 	  from $markerselect_temp_marker;">
        <?MIVAR NAME=$the_marker>$1<?/MIVAR>
+       <?MIVAR NAME=$the_type>$2<?/MIVAR>
   <?/MISQL>
   <?MIVAR NAME=$num_recs>$MI_ROWCOUNT<?/MIVAR>
   <?MIBLOCK COND="$(AND,$(NXST,$return_rec),$(NXST,$accession),$(=,$num_recs,1))">
-     <?MIVAR>	
-	<SCRIPT>location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$the_marker")</SCRIPT>
-     <?/MIVAR>
+     <?MIBLOCK COND="$(EC,$the_type,MUTANT)">
+	<SCRIPT>
+          <?MIVAR>	
+            replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$the_marker")
+          <?/MIVAR>
+	</SCRIPT>
+     <?MIELSE>
+	<SCRIPT>
+          <?MIVAR>	
+            replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$the_marker")
+          <?/MIVAR>
+	</SCRIPT>
+     <?/MIBLOCK>
   <?MIELSE>
 
    <?MICOMMENT>return page title display<?/MICOMMENT>
