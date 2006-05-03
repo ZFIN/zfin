@@ -67,9 +67,6 @@ We welcome your input and comments. Please use this form to recommend updates to
     <INPUT TYPE=text NAME="subject" SIZE=45 VALUE="$subject">
   </TR>
 </TABLE>
-<INPUT TYPE=hidden NAME="page_id" VALUE="$page_id">
-<INPUT TYPE=hidden NAME="marker_id" VALUE="$marker_id">
-<INPUT TYPE=hidden NAME="marker_name" VALUE="$subject">
 <?/MIVAR>
 
 <H3>From</H3> 
