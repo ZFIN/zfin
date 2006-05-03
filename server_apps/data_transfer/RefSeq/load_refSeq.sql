@@ -875,6 +875,6 @@ INSERT INTO record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
 ;
 
 
-rollback work;
---commit work;
+--rollback work;
+commit work;
 
