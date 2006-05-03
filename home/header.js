@@ -238,12 +238,14 @@ document.write("<table width=100% cellspacing=0 border=0 cellpadding=0 class=\"h
 	//document.write('      </table>');
 	document.write('      </div>');
 	   document.write("<DIV class=\"header\">");
+   	    document.write("<A HREF=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-blast.apg\"><font color=\"<!--|LINKBAR_COLOR|-->\">BLAST</font></a>&nbsp;&nbsp;");
             document.write("<A HREF=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=search\".apg\"><font color=\"<!--|LINKBAR_COLOR|-->\">Anatomy</font></a>&nbsp;&nbsp;");
             document.write("<A HREF=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubselect2.apg\"><font color=\"<!--|LINKBAR_COLOR|-->\">Publications</font></a>&nbsp;&nbsp;");
             document.write("<A HREF=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-quickfindpers.apg\"><font color=\"<!--|LINKBAR_COLOR|-->\">People</font></a> &nbsp;&nbsp;");
             document.write("<A HREF=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labselect.apg\"><font color=\"<!--|LINKBAR_COLOR|-->\">Labs</font></a> &nbsp;&nbsp;");
             document.write("<A HREF=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-companyselect.apg\"><font color=\"<!--|LINKBAR_COLOR|-->\">Companies </font></a> &nbsp;&nbsp;");
-            document.write("<A HREF=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-accessionselect.apg\"><font color=\"<!--|LINKBAR_COLOR|-->\">Acc #</font></a>");
+	    document.write("<A HREF=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-accessionselect.apg\"><font color=\"<!--|LINKBAR_COLOR|-->\">Acc #</font></a>");
+
 	   document.write("</DIV>");
           document.write("</td>");
     document.write("</tr>");
