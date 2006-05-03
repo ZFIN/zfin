@@ -1,0 +1,280 @@
+
+<HTML>
+<head>
+<?MICOMMENT>this variable is needed for input_button_generic.apg<?/MICOMMENT>
+<?MIVAR name=page_name>ZFIN BLAST<?/MIVAR>
+<title><?MIVAR>$page_name<?/MIVAR></title>
+
+<SCRIPT language="javascript">
+    function setOption () {
+      if (document.MainBlastForm.PROGRAM.value == "blastn") {
+        document.MainBlastForm.XNU.checked = false;
+        document.MainBlastForm.SEG.checked = false;
+        document.MainBlastForm.MATRIX.selectedIndex = 0;
+
+        if (document.MainBlastForm.SHORT.checked) {
+
+          document.MainBlastForm.EXPECT.value = 1000;
+          document.MainBlastForm.WORD.value = 7;
+          document.MainBlastForm.DUST.checked = false;
+          document.MainBlastForm.POLY_A.checked = false;
+         }
+        else{
+          document.MainBlastForm.EXPECT.value = 1e-25;
+          document.MainBlastForm.WORD.value = 11;
+          document.MainBlastForm.DUST.checked = true;
+          document.MainBlastForm.POLY_A.checked = true;
+        }
+      }
+      else {
+         document.MainBlastForm.DUST.checked = false;
+         document.MainBlastForm.POLY_A.checked = false;
+         document.MainBlastForm.MATRIX.selectedIndex = 1;
+
+         if ( document.MainBlastForm.PROGRAM.value == "blastp" ) {
+           document.MainBlastForm.SHORT.disabled = false;
+         }else {
+           document.MainBlastForm.SHORT.disabled = true;
+         }
+
+         if ( document.MainBlastForm.PROGRAM.value == "blastp" &&
+              document.MainBlastForm.SHORT.checked ) {
+           document.MainBlastForm.EXPECT.value = 20000;
+           document.MainBlastForm.WORD.value = 2;
+           document.MainBlastForm.SEG.checked = false;
+           document.MainBlastForm.XNU.checked = false;
+          }
+         else {
+           document.MainBlastForm.EXPECT.value = 10;
+           document.MainBlastForm.WORD.value = 3;
+           document.MainBlastForm.SEG.checked = true;
+           document.MainBlastForm.XNU.checked = true;
+         }
+      }
+    }
+
+    function validateSequence() {
+
+       var input_seq = document.MainBlastForm.SEQUENCE.value;
+       var seq_length = input_seq.length;
+
+       // check for any leading 8-bit character
+       if (input_seq.charCodeAt(0) > 127 || input_seq.charCodeAt(0) < 1) {
+         alert("non-ASCII character is detected at the beginning of the input sequence. ");
+         return false;
+       }
+
+       //check for any trailing 8-bit character
+       if (input_seq.charCodeAt(seq_length-1) > 127 || input_seq.charCodeAt(seq_length-1) < 1) {
+         alert("non-ASCII character is detected at the end of the input sequence.");
+         return false;
+       }
+
+       return true;
+    }
+
+   function setFocus() {
+	<?MIVAR COND=$(XST,$SEQ_ID)>
+	  document.MainBlastForm.SEQ_ID.focus();
+	<?/MIVAR>
+   }
+</SCRIPT>
+</head>
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+
+<?MICOMMENT>note: there is open body tag in the header, but for the onload
+            function, we need to duplicate it here. Good thing is the new
+            home page redo would get the body tag out of header file.
+<?/MICOMMENT> 
+<BODY onload="setOption(); setFocus()">
+
+<?MICOMMENT> Now check authorization <?/MICOMMENT>
+<?MISQL SQL="
+  select WebExplode(object,'') 
+    from webPages 
+    where ID='aa-secure_navigation.apg';">
+  $1
+<?/MISQL>
+
+<?MICOMMENT> ===== Title Bar ======== <?/MICOMMENT>
+<TABLE width=100% border=0 cellpadding=1 cellspacing=0>
+  <TR>
+     <TD class=titlebar>
+       <font size=+1>
+	     <b>BLAST</b>
+       </font>
+     </TD>
+     <TD class=titlebar align=right> 
+        <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>
+     </TD>
+  </TR>
+</TABLE>
+
+<?MICOMMENT> ===== Main Page ======== <?/MICOMMENT>
+
+<FORM ACTION="/blast/blastit.cgi" METHOD=post NAME="MainBlastForm" ENCTYPE="multipart/form-data" onsubmit="return validateSequence()">
+<input type=hidden name=SCOPE value=share>
+<B>Choose program and database:</B>
+<TABLE>
+<TR>
+  <TD> Program: &nbsp;
+       <select name = "PROGRAM" onChange="setOption()">
+         <?MIVAR>
+         <option VALUE="blastn" $(IF,$(AND,$(XST,$PROGRAM),$(EQ,$PROGRAM,blastn)),selected)> Nucleotide - Nucleotide
+         <option VALUE="blastp" $(IF,$(AND,$(XST,$PROGRAM),$(EQ,$PROGRAM,blastp)),selected)> Protein - Protein
+         <option VALUE="blastx" $(IF,$(AND,$(XST,$PROGRAM),$(EQ,$PROGRAM,blastx)),selected)> trans. Nucleotide - Protein
+         <option VALUE="tblastn" $(IF,$(AND,$(XST,$PROGRAM),$(EQ,$PROGRAM,tblastn)),selected)> Protein - trans. Nucleotide
+         <option VALUE="tblastx" $(IF,$(AND,$(XST,$PROGRAM),$(EQ,$PROGRAM,tblastx)),selected)> trans. Nucleotide - trans. Nucleotide
+         <?/MIVAR>
+       </select>
+  </TD>
+  <TD> Database:  </TD>
+  <TD>
+   <?MICOMMENT> Zfin curators have access to more datasets than the general public. 
+                Since the order of the datasets are important, instead of many small condition
+                blocks clauses within the option list, we use two big blocks.  
+   <?/MICOMMENT>
+   <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
+     <select multiple name = "DATALIB" size=9>
+       <?MIVAR>
+         <option VALUE = "gbk_gb_zf"> GenBank Zebrafish
+         <option VALUE = "gbk_gb_hs"> GenBank Human
+         <option VALUE = "gbk_gb_ms"> GenBank Mouse
+         <option VALUE = "refseq_zf_rna"> RefSeq Zebrafish mRNA
+         <option VALUE = "zfin_gb_seq"  $(IF,$(AND,$(XST,$DATALIB),$(EQ,$DATALIB,zfin_gb_seq)),selected)> ZFIN GenBank Sequences
+         <option VALUE = "zfin_cdna_seq"  $(IF,$(OR,$(NXST,$DATALIB),$(AND,$(XST,$DATALIB),$(EQ,$DATALIB,zfin_cdna_seq))),selected)> ZFIN cDNA Sequences
+         <option VALUE = "zfin_mrph"> ZFIN Morpholino Sequences
+         <option VALUE = "zfin_microRNA"> ZFIN MicroRNA Sequences
+         <option VALUE = "vega_zfin"> ZFIN Vega Transcripts
+         <option VALUE = "gbk_zf_mrna"> Zebrafish mRNA
+         <option VALUE = "gbk_hs_mrna"> Human mRNA
+         <option VALUE = "gbk_ms_mrna"> Mouse mRNA
+         <option VALUE = "gbk_est_zf"> EST Zebrafish
+         <option VALUE = "gbk_hs_mrna"> Human mRNA
+         <option VALUE = "gbk_ms_mrna"> Mouse mRNA
+         <option VALUE = "ensembl_zf"> Ensembl Zebrafish Transcripts
+         <option VALUE = "tigr_zf"> TIGR Zebrafish Clusters
+         <option VALUE = "ensembl_zf"> Ensembl Zebrafish Transcripts
+         <option VALUE = "tigr_zf"> TIGR Zebrafish Clusters
+         <option VALUE = "gbk_zf_dna"> Zebrafish DNA
+         <option VALUE = "gbk_hs_mrna"> Human mRNA
+         <option VALUE = "gbk_ms_mrna"> Mouse mRNA
+         <option VALUE = "gbk_htg_zf"> HTG Zebrafish
+         <option VALUE = "gbk_gss_zf"> GSS Zebrafish
+         <option VALUE = "wgs_zf"> Zebrafish Trace Archive
+
+         <option> ========= Protein Db ========
+         <option VALUE = "refseq_zf_aa" $(IF,$(AND,$(XST,$DATALIB),$(EQ,$DATALIB,refseq_zf_aa)),selected)> RefSeq Zebrafish Protein
+         <option VALUE = "sptr_zf" $(IF,$(AND,$(XST,$DATALIB),$(EQ,$DATALIB,sptr_zf)),selected)> SwissProt/TrEMBL Zebrafish
+         <option VALUE = "gbk_hs_mrna"> Human mRNA
+         <option VALUE = "gbk_ms_mrna"> Mouse mRNA
+      <?/MIVAR>
+    </select>
+
+   <?MIELSE>
+     <select multiple name = "DATALIB" size=9>
+       <?MIVAR>
+         <option VALUE = "gbk_gb_zf"> GenBank Zebrafish
+         <option VALUE = "refseq_zf_rna"> RefSeq Zebrafish mRNA
+         <option VALUE = "zfin_gb_seq"  $(IF,$(AND,$(XST,$DATALIB),$(EQ,$DATALIB,zfin_gb_seq)),selected)> ZFIN GenBank Sequences
+         <option VALUE = "zfin_cdna_seq"  $(IF,$(OR,$(NXST,$DATALIB),$(AND,$(XST,$DATALIB),$(EQ,$DATALIB,zfin_cdna_seq))),selected)> ZFIN cDNA Sequences
+         <option VALUE = "zfin_mrph"> ZFIN Morpholino Sequences
+         <option VALUE = "zfin_microRNA"> ZFIN MicroRNA Sequences
+         <option VALUE = "vega_zfin"> ZFIN Vega Transcripts
+         <option VALUE = "gbk_zf_mrna"> Zebrafish mRNA
+         <option VALUE = "gbk_est_zf"> EST Zebrafish
+         <option VALUE = "ensembl_zf"> Ensembl Zebrafish Transcripts
+         <option VALUE = "tigr_zf"> TIGR Zebrafish Clusters
+         <option VALUE = "ensembl_zf"> Ensembl Zebrafish Transcripts
+         <option VALUE = "tigr_zf"> TIGR Zebrafish Clusters
+         <option VALUE = "gbk_zf_dna"> Zebrafish DNA
+         <option VALUE = "gbk_htg_zf"> HTG Zebrafish
+         <option VALUE = "gbk_gss_zf"> GSS Zebrafish
+         <option VALUE = "wgs_zf"> Zebrafish Trace Archive
+
+         <option> ========= Protein Db ========
+         <option VALUE = "refseq_zf_aa" $(IF,$(AND,$(XST,$DATALIB),$(EQ,$DATALIB,refseq_zf_aa)),selected)> RefSeq Zebrafish Protein
+         <option VALUE = "sptr_zf" $(IF,$(AND,$(XST,$DATALIB),$(EQ,$DATALIB,sptr_zf)),selected)> SwissProt/TrEMBL Zebrafish
+      <?/MIVAR>
+    </select>
+  <?/MIBLOCK>
+  </TD>
+</TR>
+</TABLE>
+<b>Query sequence</b> <i>(maximum of 50,000 letters)</i> :
+<p>
+FASTA or free-text format:
+<br>
+<textarea name= "SEQUENCE" rows=6 cols=60>
+</textarea>
+<BR>
+Set subsequence:
+From &nbsp;
+<input TYPE="text" NAME="QUERY_FROM" VALUE="" SIZE="10">
+&nbsp;&nbsp;&nbsp;
+To &nbsp;
+<input TYPE="text" NAME="QUERY_TO" VALUE="" SIZE="15"> <br>
+<input TYPE=checkbox name="SHORT" onclick="setOption()">&nbsp; Search for short, nearly exact matches
+<P>
+Sequence ID:
+<input TYPE=text NAME="SEQ_ID" VALUE="<?MIVAR>$(IF,$(XST,$SEQ_ID),$SEQ_ID)<?/MIVAR>" SIZE="20">
+(one or multiple delimited by ",")
+
+<BR>
+Sequence Type:
+<select name="SEQ_TYPE">
+  <?MIVAR>
+    <option value="nt" $(IF,$(AND,$(XST,$SEQ_TYPE),$(EQ,$SEQ_TYPE,nt)),selected)>Nucleotide
+    <option value="pt" $(IF,$(AND,$(XST,$SEQ_TYPE),$(EQ,$SEQ_TYPE,pt)),selected)>Protein
+  <?/MIVAR>
+</select>
+<P>
+Upload a free-text file:
+<INPUT TYPE=file NAME="SEQ_FILE"  size=30>
+<P>
+<INPUT TYPE=reset VALUE="Clear sequence">
+<INPUT TYPE=submit VALUE="BLAST">
+<HR>
+
+<B>Options: </B> <br>
+
+ Expect: <input type=text name="EXPECT" value="1e-25" size="5">
+          &nbsp;
+ Word Size: <input type=text name="WORD" value="11" size="2">
+          &nbsp;
+ Matrix:
+    <select name = "MATRIX">
+         <option value=""> -------
+         <option> BLOSUM62
+         <option> BLOSUM45
+         <option> BLOSUM80
+         <option> PAM30
+         <option> PAM70
+     </select>
+     <P>
+
+ Filter options for DNA Queries: &nbsp;
+    <input type=checkbox name="DUST" checked> Low complexity
+    <input type=checkbox name="POLY_A" checked> Poly-A's filter
+    <BR>
+
+ Filter options for Protein Queries: <BR>
+  &nbsp;&nbsp;&nbsp;<INPUT type=checkbox name="SEG">
+         SEG - filter low compositional complexity regions <br>
+  &nbsp;&nbsp;&nbsp;<INPUT type=checkbox name="XNU">
+         XNU - filter short-periodicity repeats
+
+<p>
+<b>Format: </b><br>
+  Show:
+    <input type=checkbox name= "GRAPH_DISPLAY" checked> Graphical Overview
+    <i> limit of the first 50 alignments </i>
+  <P>
+
+<HR>
+
+</FORM>
+
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
