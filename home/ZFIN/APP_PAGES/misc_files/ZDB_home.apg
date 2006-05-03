@@ -121,7 +121,7 @@
 		    <A HREF="/zf_info/monitor/mon.html">The Zebrafish <br>&nbsp; Science Monitor</A><BR>
 		    <A HREF="/zf_info/news/newsgroup.html">Zebrafish Newsgroup</A><BR>
 		    <A HREF="http://www.neuro.uoregon.edu/k12/zfk12.html">Zebrafish for K-12</A><BR>
-                    <a href="/zf_info/news/Newsletters.html">ZFIN Newsletter</a><IMG src="/images/new1.gif" border=0><br>  
+                    <a href="/zf_info/news/Newsletters.html">ZFIN Newsletter</a><br>  
 		  </td>
 		</tr>
 	      </table>
@@ -240,6 +240,19 @@
 	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg">Search for gene expression patterns by gene name, 
 	      developmental stage, anatomical structure, developmental or 
 	      physiological process.</A>
+	    </DIV>
+	  </TD>
+	</TR>
+
+	<TR>
+	  <TD class="content_left">
+	    <DIV class="content">
+	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-blast.apg"><B>BLAST</B></A> 
+	    </DIV>
+	  </TD>
+	  <TD class="content_right">
+	    <DIV class="content">
+	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-blast.apg">Search for sequence alignment against ZFIN datasets and Zebrafish datasets. </A>
 	    </DIV>
 	  </TD>
 	</TR>
