@@ -544,10 +544,20 @@ UPDATE STATISTICS HIGH FOR TABLE db_link;
 --with a segment.
 --Contained In MREL types 2004-02: [gene encodes small segment, gene contains small segment, gene hybridized by small segment]
 
-    SELECT *
-    FROM db_link
-    WHERE dblink_linked_recid not like "ZDB-GENE%"
-    into temp tmp_est_db_link;
+	create temp table tmp_est_db_link (dblink_linked_recid varchar(50),
+    					dblink_acc_num varchar(50),
+    					dblink_info varchar(80),
+    					dblink_zdb_id varchar(50),
+    					dblink_acc_num_display varchar(50),
+    					dblink_length integer,
+    					dblink_fdbcont_zdb_id varchar(50)
+	) with no log ;
+
+	insert into tmp_est_db_link 
+	    SELECT *
+    		FROM db_link
+    		WHERE dblink_linked_recid not like "ZDB-GENE%";
+    		
     
     DELETE FROM tmp_db_link
     WHERE tmp_linked_recid like "ZDB-GENE%"
@@ -865,6 +875,6 @@ INSERT INTO record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
 ;
 
 
---rollback work;
-commit work;
+rollback work;
+--commit work;
 
