@@ -151,15 +151,13 @@
          <option VALUE = "gbk_hs_mrna"> Human mRNA
          <option VALUE = "gbk_ms_mrna"> Mouse mRNA
          <option VALUE = "gbk_est_zf"> EST Zebrafish
-         <option VALUE = "gbk_hs_mrna"> Human mRNA
-         <option VALUE = "gbk_ms_mrna"> Mouse mRNA
-         <option VALUE = "ensembl_zf"> Ensembl Zebrafish Transcripts
-         <option VALUE = "tigr_zf"> TIGR Zebrafish Clusters
+         <option VALUE = "gbk_est_hs"> EST Human
+         <option VALUE = "gbk_est_ms"> EST Mouse
          <option VALUE = "ensembl_zf"> Ensembl Zebrafish Transcripts
          <option VALUE = "tigr_zf"> TIGR Zebrafish Clusters
          <option VALUE = "gbk_zf_dna"> Zebrafish DNA
-         <option VALUE = "gbk_hs_mrna"> Human mRNA
-         <option VALUE = "gbk_ms_mrna"> Mouse mRNA
+         <option VALUE = "gbk_hs_dna"> Human DNA
+         <option VALUE = "gbk_ms_dna"> Mouse DNA
          <option VALUE = "gbk_htg_zf"> HTG Zebrafish
          <option VALUE = "gbk_gss_zf"> GSS Zebrafish
          <option VALUE = "wgs_zf"> Zebrafish Trace Archive
@@ -167,8 +165,8 @@
          <option> ========= Protein Db ========
          <option VALUE = "refseq_zf_aa" $(IF,$(AND,$(XST,$DATALIB),$(EQ,$DATALIB,refseq_zf_aa)),selected)> RefSeq Zebrafish Protein
          <option VALUE = "sptr_zf" $(IF,$(AND,$(XST,$DATALIB),$(EQ,$DATALIB,sptr_zf)),selected)> SwissProt/TrEMBL Zebrafish
-         <option VALUE = "gbk_hs_mrna"> Human mRNA
-         <option VALUE = "gbk_ms_mrna"> Mouse mRNA
+         <option VALUE = "sptr_hs"> SwissProt/TrEMBL Human
+         <option VALUE = "sptr_ms"> SwissProt/TrEMBL Mouse
       <?/MIVAR>
     </select>
 
