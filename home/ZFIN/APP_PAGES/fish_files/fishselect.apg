@@ -332,7 +332,22 @@ Startframes.apg will pass this variables on to the select form.
     <?/MIVAR>
     <?MIVAR NAME=mut_constraint_count>
            and recattrib_source_zdb_id = '$pubId'
-	   and recattrib_data_zdb_id in (a.fish_id, a.locus, a.alt_zdb_id)
+	   and recattrib_data_zdb_id = a.fish_id
+	   
+	  UNION
+	  select distinct a.fish_id
+	  from $target_table
+	  where line_type = 'mutant'
+           and recattrib_source_zdb_id = '$pubId'
+	   and recattrib_data_zdb_id = a.locus
+	   
+	  UNION
+	  select distinct a.fish_id
+	  from $target_table
+	  where line_type = 'mutant'
+           and recattrib_source_zdb_id = '$pubId'
+	   and recattrib_data_zdb_id = a.alt_zdb_id
+	  
 	  UNION
 	  select distinct a.fish_id
 	  from $target_table , data_alias
@@ -343,7 +358,28 @@ Startframes.apg will pass this variables on to the select form.
     <?/MIVAR> 
     <?MIVAR NAME=mut_constraint_query>
            and recattrib_source_zdb_id = '$pubId'
-	   and recattrib_data_zdb_id in (a.fish_id, a.locus, a.alt_zdb_id)
+	   and recattrib_data_zdb_id = a.fish_id
+	   
+	  UNION
+	  select distinct 
+		 name, fish_id, abbrev, get_allele_html(allele), chrom_change, chrom_num,
+		 locus, gene_abbrev, gene_id, fishsearch_name_order, 
+		 fishsearch_allele_order 
+	  from $target_table
+	  where line_type = 'mutant'
+           and recattrib_source_zdb_id = '$pubId'
+	   and recattrib_data_zdb_id = a.locus
+	   
+	  UNION
+	  select distinct 
+		 name, fish_id, abbrev, get_allele_html(allele), chrom_change, chrom_num,
+		 locus, gene_abbrev, gene_id, fishsearch_name_order, 
+		 fishsearch_allele_order 
+	  from $target_table
+	  where line_type = 'mutant'
+           and recattrib_source_zdb_id = '$pubId'
+	   and recattrib_data_zdb_id = a.alt_zdb_id
+	   
 	  UNION
 	  select  distinct 
 		 name, fish_id, abbrev, get_allele_html(allele), chrom_change, chrom_num,
@@ -545,7 +581,10 @@ Startframes.apg will pass this variables on to the select form.
       </TABLE>
 
       <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No matching records found<?/MIVAR>
+ 
 
+
+ 
 
       <!-- ends if no overflow -->
     <?/MIBLOCK> <!-- end of num_recs gt 0 -->
