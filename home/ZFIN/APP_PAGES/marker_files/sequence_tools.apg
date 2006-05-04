@@ -52,70 +52,63 @@ function jump(form_select){
     <?MIVAR NAME=seqt_acc_len>0<?/MIVAR>
 <?/MIBLOCK>
 
-    
-<?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'ENSEMBL';"><?MIVAR NAME=fdb_url_ensembl>$1<?/MIVAR><?/MISQL>
+<?MICOMMENT> ===== Prepare Variables ======== <?/MICOMMENT>    
 
+<?MIVAR NAME=zfin_url_blastn>/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-blast.apg&PROGRAM=blastn&SEQ_TYPE=nt&SEQ_ID=<?/MIVAR>
+<?MIVAR NAME=zfin_url_blastp>/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-blast.apg&PROGRAM=blastp&DATALIB=sptr_zf&SEQ_TYPE=pt&SEQ_ID=<?/MIVAR>
+<?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'ENSEMBL';"><?MIVAR NAME=fdb_url_ensembl>$1<?/MIVAR><?/MISQL>
+<?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'PBLAST';"><?MIVAR NAME=fdb_url_pblast>$1<?/MIVAR><?/MISQL>
+<?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'BLASTP';"><?MIVAR NAME=fdb_url_blastp>$1<?/MIVAR><?/MISQL>
+<?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'BLAT';"><?MIVAR NAME=fdb_url_blat>$1<?/MIVAR><?/MISQL>
+<?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'MEGA BLAST';"><?MIVAR NAME=fdb_url_blast>$1<?/MIVAR><?/MISQL>
+<?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'BLAST';"><?MIVAR NAME=fdb_url_blast>$1<?/MIVAR><?/MISQL>
+            
+<?MICOMMENT> =====  Polypeptide  ======== <?/MICOMMENT>   
 <?MIBLOCK COND=$(EQ,$seqt_acc_type,Polypeptide)>
-    <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'PBLAST';"><?MIVAR NAME=fdb_url_pblast>$1<?/MIVAR><?/MISQL>
-    <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'BLASTP';"><?MIVAR NAME=fdb_url_blastp>$1<?/MIVAR><?/MISQL>
-    <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'BLAT';"><?MIVAR NAME=fdb_url_blat>$1<?/MIVAR><?/MISQL>
-    <?MIBLOCK COND=$(EQ,$seqt_acc_db,GenPept)>
-    <FORM NAME="prot_seq_tool" method="get"><DIV>
-        <SELECT NAME="select_prot" onChange="return jump(this);">
-            <OPTION VALUE="none" SELECTED>- Select Tool -</OPTION>
-            <?MIVAR>
-            <OPTION VALUE=$(CONCAT,$fdb_url_blastp,$seqt_acc)>NCBI BLAST</OPTION>
-            <OPTION VALUE=$(CONCAT,$fdb_url_pblast,$seqt_acc)> SIB BLAST</OPTION>
-            <?/MIVAR>
-            <?MIVAR COND=$(EQ,$seqt_acc_db,RefSeq)>
-                <OPTION VALUE=$(CONCAT,$fdb_url_blat,$seqt_acc)>UCSC BLAT</OPTION>
-           <?/MIVAR>
-       </SELECT><DIV>
-       </FORM>
-    <?MIELSE COND=$(EQ,$seqt_acc_db,SWISS-PROT)>
-        <FORM NAME="prot_seq_tool" method="get"><DIV>
-        <SELECT NAME="select_prot" onChange="return jump(this);">
-            <OPTION VALUE="none" SELECTED>- Select Tool -</OPTION>
-            <?MIVAR>
-            <OPTION VALUE=$(CONCAT,$fdb_url_pblast,$seqt_acc)> SIB BLAST</OPTION>
-            <OPTION VALUE=$(CONCAT,$(CONCAT,$fdb_url_ensembl,$seqt_acc),&query=peptide&database=peptide)>Ensembl</OPTION>
-            <?/MIVAR>
-            <?MIVAR COND=$(EQ,$seqt_acc_db,RefSeq)> 
-                <OPTION VALUE=$(CONCAT,$fdb_url_blat,$seqt_acc)>UCSC BLAT</OPTION>
-           <?/MIVAR>
-       </SELECT><DIV>
-       </FORM>
-       <?MIELSE COND=$(EQ,$seqt_acc_db,RefSeq)>
-        <FORM NAME="prot_seq_tool" method="get"><DIV>
-        <SELECT NAME="select_prot" onChange="return jump(this);">
-            <OPTION VALUE="none" SELECTED>- Select Tool -</OPTION>
-            <?MIVAR>
-            <OPTION VALUE=$(CONCAT,$fdb_url_blastp,$seqt_acc)>NCBI BLAST</OPTION>
-            <OPTION VALUE=$(CONCAT,$(CONCAT,$fdb_url_ensembl,$seqt_acc),&query=peptide&database=peptide)>Ensembl</OPTION>
-            <?/MIVAR>
-            <?MIVAR COND=$(EQ,$seqt_acc_db,RefSeq)> 
-                
-                <OPTION VALUE=$(CONCAT,$fdb_url_blat,$seqt_acc)>UCSC BLAT</OPTION>
-           <?/MIVAR>
-       </SELECT><DIV>
-       </FORM>
-       
-    <?/MIBLOCK>
     
+    <FORM NAME="prot_seq_tool" method="get"><DIV>
+       <SELECT NAME="select_prot" onChange="return jump(this);">
+          <OPTION VALUE="none" SELECTED>- Select Tool -</OPTION>
+	  
+          <?MIBLOCK COND=$(EQ,$seqt_acc_db,GenPept)>
+            <?MIVAR>
+	    <OPTION VALUE=$(CONCAT,$(CONCAT,$zfin_url_blastp,$seqt_acc),&DATALIB=refseq_zf_aa)>ZFIN BLAST</OPTION>
+            <OPTION VALUE=$(CONCAT,$fdb_url_blastp,$seqt_acc)>NCBI BLAST</OPTION>
+            <OPTION VALUE=$(CONCAT,$fdb_url_pblast,$seqt_acc)> SIB BLAST</OPTION>
+	    <?/MIVAR>
+	  <?MIELSE COND=$(EQ,$seqt_acc_db,SWISS-PROT)>
+	    <?MIVAR>
+	    <OPTION VALUE=$(CONCAT,$(CONCAT,$zfin_url_blastp,$seqt_acc),&DATALIB=sptr_zf)>ZFIN BLAST</OPTION>
+	    <OPTION VALUE=$(CONCAT,$fdb_url_pblast,$seqt_acc)> SIB BLAST</OPTION>
+            <OPTION VALUE=$(CONCAT,$(CONCAT,$fdb_url_ensembl,$seqt_acc),&query=peptide&database=peptide)>Ensembl</OPTION>
+	    <?/MIVAR>	
+	  <?MIELSE COND=$(EQ,$seqt_acc_db,RefSeq)>
+	    <?MIVAR>
+	    <OPTION VALUE=$(CONCAT,$(CONCAT,$zfin_url_blastp,$seqt_acc),&DATALIB=refseq_zf_aa)>ZFIN BLAST</OPTION>	
+            <OPTION VALUE=$(CONCAT,$fdb_url_blastp,$seqt_acc)>NCBI BLAST</OPTION>
+            <OPTION VALUE=$(CONCAT,$(CONCAT,$fdb_url_ensembl,$seqt_acc),&query=peptide&database=peptide)>Ensembl</OPTION>
+	    <OPTION VALUE=$(CONCAT,$fdb_url_blat,$seqt_acc)>UCSC BLAT</OPTION>
+	    <?/MIVAR>
+          <?/MIBLOCK>
+        
+       </SELECT><DIV>
+   </FORM>
+
+<?MICOMMENT> =====  cDNA  ======== <?/MICOMMENT>       
 <?MIELSE COND=$(AND,$(EQ,$seqt_acc_type,cDNA),$(OR,$(EQ,$seqt_acc_db,GenBank),$(EQ,$seqt_acc_db,RefSeq)))>
-    <FORM NAME="cdna_seq_tool" ><DIV>
-    <SELECT NAME="select_cdna" onChange="return jump(this);" >
+    <FORM NAME="cdna_seq_tool" method="get" ><DIV>
+      <SELECT NAME="select_cdna" onChange="return jump(this);" >
         <OPTION VALUE="none" SELECTED>- Select Tool -</OPTION>
         <?MIBLOCK COND="$(>,$seqt_acc_len,25000)">
-            <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'MEGA BLAST';"><?MIVAR NAME=fdb_url_blast>$1<?/MIVAR><?/MISQL>
+           
             <?MIVAR>
             <OPTION VALUE=$(CONCAT,$fdb_url_blast,$seqt_acc)>Mega BLAST
             <OPTION VALUE=$(CONCAT,$fdb_url_ensembl,$seqt_acc)>Ensembl
             <?/MIVAR>
         <?MIELSE COND="$(<,$seqt_acc_len,25001)">
-            <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'BLAST';"><?MIVAR NAME=fdb_url_blast>$1<?/MIVAR><?/MISQL>
-            <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'BLAT';"><?MIVAR NAME=fdb_url_blat>$1<?/MIVAR><?/MISQL>
+           
             <?MIVAR>
+	    <OPTION VALUE=$(CONCAT,$(CONCAT,$zfin_url_blastn,$seqt_acc),&DATALIB=zfin_cdna_seq)>ZFIN BLAST</OPTION>
             <OPTION VALUE=$(CONCAT,$fdb_url_blast,$seqt_acc)>NCBI BLAST</OPTION>
             <OPTION VALUE=$(CONCAT,$fdb_url_ensembl,$seqt_acc)>Ensembl</OPTION>
             <OPTION VALUE=$(CONCAT,$fdb_url_blat,$seqt_acc)>UCSC BLAT</OPTION>
@@ -124,34 +117,33 @@ function jump(form_select){
     </SELECT><DIV>
     </FORM>
 
+<?MICOMMENT> =====  Genomic  ======== <?/MICOMMENT>    
 <?MIELSE COND=$(AND,$(EC,$seqt_acc_type,Genomic),$(OR,$(EC,$seqt_acc_db,GenBank),$(EC,$seqt_acc_db,RefSeq)))>
     <?MIBLOCK COND="$(>,$seqt_acc_len,200000)">
-        <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'MEGA BLAST';"><?MIVAR NAME=fdb_url_blast>$1<?/MIVAR><?/MISQL>
-        <?MIVAR><input type=button value="- MegaBLAST -" onClick="window.open('$(CONCAT,$fdb_url_blast,$seqt_acc)','SequenceTools');"><?/MIVAR>
-    <?MIELSE COND="$(>,$seqt_acc_len,25000)">
-            <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'MEGA BLAST';"><?MIVAR NAME=fdb_url_blast>$1<?/MIVAR><?/MISQL>
-        <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'ENSEMBL';"><?MIVAR NAME=fdb_url_ensembl>$1<?/MIVAR><?/MISQL>
-        <FORM NAME="genomic_seq_tool"><DIV>
+        
+      <?MIVAR><input type=button value="- MegaBLAST -" onClick="window.open('$(CONCAT,$fdb_url_blast,$seqt_acc)','SequenceTools');"><?/MIVAR>
+
+    <?MIELSE>
+            
+      <FORM NAME="genomic_seq_tool"><DIV>
         <SELECT NAME="select_genomic" onChange="return jump(this);" >
-            <OPTION VALUE="none" SELECTED>- Select Tool -</OPTION>
-            <?MIVAR>
-            <OPTION VALUE=$(CONCAT,$fdb_url_blast,$seqt_acc)>MegaBLAST</OPTION>
-            <OPTION VALUE=$(CONCAT,$fdb_url_ensembl,$seqt_acc)>Ensembl</OPTION>
-            <?/MIVAR>
+          <OPTION VALUE="none" SELECTED>- Select Tool -</OPTION>
+
+	    <?MIBLOCK COND="$(>,$seqt_acc_len,25000)">
+              <?MIVAR>
+              <OPTION VALUE=$(CONCAT,$fdb_url_blast,$seqt_acc)>MegaBLAST</OPTION>
+              <OPTION VALUE=$(CONCAT,$fdb_url_ensembl,$seqt_acc)>Ensembl</OPTION>
+              <?/MIVAR>
+	    <?MIELSE COND="$(<,$seqt_acc_len,25001)">
+              <?MIVAR>
+	       <OPTION VALUE=$(CONCAT,$(CONCAT,$zfin_url_blastn,$seqt_acc),&DATALIB=zfin_gb_seq)>ZFIN BLAST</OPTION>	
+              <OPTION VALUE=$(CONCAT,$fdb_url_blast,$seqt_acc)>NCBI BLAST</OPTION>
+              <OPTION VALUE=$(CONCAT,$fdb_url_ensembl,$seqt_acc)>Ensembl</OPTION>
+              <?/MIVAR>
+            <?/MIBLOCK>
         </SELECT><DIV>
-        </FORM>
-    <?MIELSE COND="$(<,$seqt_acc_len,25001)">
-        <FORM NAME="genomic2_seq_tool"><DIV>
-        <SELECT NAME="select_genomic2"  onChange="return jump(this);" >
-            <OPTION VALUE="none" SELECTED>- Select Tool -</OPTION>>
-            <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'BLAST';"><?MIVAR NAME=fdb_url_blast>$1<?/MIVAR><?/MISQL>
-            <?MISQL SQL="select fdb_db_query from foreign_db where fdb_db_name = 'ENSEMBL';"><?MIVAR NAME=fdb_url_ensembl>$1<?/MIVAR><?/MISQL>
-            <?MIVAR>
-            <OPTION VALUE=$(CONCAT,$fdb_url_blast,$seqt_acc)>NCBI BLAST</OPTION>
-            <OPTION VALUE=$(CONCAT,$fdb_url_ensembl,$seqt_acc)>Ensembl</OPTION>
-            <?/MIVAR>
-        </SELECT><DIV>
-        </FORM>
+      </FORM>
+
     <?/MIBLOCK>
 <?/MIBLOCK>
 
