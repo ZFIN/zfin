@@ -176,10 +176,7 @@
 #
 #  MTWT     2:00am   Validate data, daily + orphans
 #
-00 02 * * 2-5 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/validatedata.pl -d -o <!--|DB_NAME|--> 
-#  T     3:00am   Validate data, daily + orphans
-#
-00 03 * * 3 <!--|ROOT_PATH|-->/server_apps/data_transfer/RefSeq/refseq.pl <!--|DB_NAME|--> 
+00 02 * * 2-5 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/validatedata.pl -d -o <!--|DB_NAME|-->
 #
 #
 #
