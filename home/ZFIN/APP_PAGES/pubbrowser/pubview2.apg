@@ -460,6 +460,15 @@ displays a publication record, or many publication records if > 1 returned.
 	select distinct f.fish_id
 	from   record_attribution, fish_search f
 	where  recattrib_source_zdb_id = '$OID'
+	  and  recattrib_data_zdb_id = f.locus
+	  and  f.fish_id not in ('$fish_csv');">
+    <?MIVAR>$(VECAPPEND,$fish_vec,$1)<?/MIVAR>
+  <?/MISQL>
+  <?MIVAR NAME=fish_csv SEPARATE="','">$fish_vec<?/MIVAR>
+  <?MISQL SQL="
+	select distinct f.fish_id
+	from   record_attribution, fish_search f
+	where  recattrib_source_zdb_id = '$OID'
 	  and  recattrib_data_zdb_id = f.alt_zdb_id
 	  and  f.fish_id not in ('$fish_csv');">
     <?MIVAR>$(VECAPPEND,$fish_vec,$1)<?/MIVAR>
