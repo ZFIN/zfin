@@ -184,8 +184,6 @@
          <option VALUE = "gbk_est_zf"> EST Zebrafish
          <option VALUE = "ensembl_zf"> Ensembl Zebrafish Transcripts
          <option VALUE = "tigr_zf"> TIGR Zebrafish Clusters
-         <option VALUE = "ensembl_zf"> Ensembl Zebrafish Transcripts
-         <option VALUE = "tigr_zf"> TIGR Zebrafish Clusters
          <option VALUE = "gbk_zf_dna"> Zebrafish DNA
          <option VALUE = "gbk_htg_zf"> HTG Zebrafish
          <option VALUE = "gbk_gss_zf"> GSS Zebrafish
