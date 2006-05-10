@@ -38,7 +38,7 @@ create function get_fish_abbrev_html( fishZdbId varchar(50) )
     let fishAbbrevHtml = null;
   else
   
-    if (fishAbbrev like "%un_%") then
+    if (fishAbbrev like "%un\_%") then
       let fishAbbrev = REPLACE(fishAbbrev, fishAllele, "unspecified");    
     end if
     
