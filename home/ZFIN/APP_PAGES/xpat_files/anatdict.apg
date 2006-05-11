@@ -231,14 +231,15 @@ function updateParent(AOname, AOid) {
 	        ============================================================================
 	      <?/MICOMMENT>
 
-	      <?MIVAR>Results for <B>$searchterm</B><?/MIVAR>
+	      <?MIVAR>Results for <B>$searchterm</B> in all stages<?/MIVAR>
 	      <HR width=500 size=1 noshade align=left>
           <?MICOMMENT> encode the variable for searching <?/MICOMMENT>
           <?MIVAR NAME=searchterm DELIMIT="'" REPLACE="''">$searchterm<?/MIVAR>
 	      <?MISQL SQL="
 		SELECT anatitem_name, anatitem_zdb_id, 
 		       anatstat_synonym_count, anatstat_total_distinct_count,
-		        anatitem_is_obsolete, anatitem_name_order
+		       anatitem_is_obsolete, anatstat_object_count,
+                       anatitem_name_order
 		  FROM anatomy_item, anatomy_stats 
 		  WHERE anatitem_zdb_id = anatstat_anatitem_zdb_id
 		    AND anatstat_object_type = 'GENE'
@@ -256,7 +257,8 @@ function updateParent(AOname, AOid) {
 		<?MIVAR NAME="$item_zdb_id">$2<?/MIVAR>
 	        <?MIVAR NAME="$synonymcount">$3<?/MIVAR>
 	        <?MIVAR NAME="$totalcount">$4<?/MIVAR>
-	        <?MIVAR NAME="$item_is_obsolete">$5<?/MIVAR>		
+	        <?MIVAR NAME="$item_is_obsolete">$5<?/MIVAR>
+		<?MIVAR NAME="$no_substr_count">$6<?/MIVAR>	
 	        <?MIVAR NAME="$highlight">false<?/MIVAR>
 
 		<?MICOMMENT> restore the variable <?/MICOMMENT>
@@ -281,7 +283,7 @@ function updateParent(AOname, AOid) {
 	 
 	        <?MIBLOCK COND="$(>,$totalcount,0)">
 	          <?MIVAR> 
-	            [<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name&xpatsel_processed_selected_structures=$processed_item_name&include_substructures=checked">$totalcount gene(s) expressed</A> in all stages]&nbsp;&nbsp;
+	            [ <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name&xpatsel_processed_selected_structures=$processed_item_name&include_substructures=unchecked">$no_substr_count</A> gene(s) expressed &nbsp; (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name&xpatsel_processed_selected_structures=$processed_item_name&include_substructures=checked">$totalcount</A> if substructures included) ]&nbsp;&nbsp;
 	          <?/MIVAR>
 	        <?/MIBLOCK>
 
@@ -328,8 +330,9 @@ function updateParent(AOname, AOid) {
 		<TR>
 		  <TD>
 		    <?MISQL SQL="select stg_name_long from stage where stg_zdb_id = '$OID'"><B>$1</B><?/MISQL>
-		  <br>
-		    <FONT size=2> Highlight terms containing: </FONT> <BR>
+		  </TD>
+                  <TD>
+		    <FONT size=2> Highlight terms containing: </FONT>
 		    <?MIVAR>
 		      <INPUT type="text" size="20" 
 			     name="highlight_text"
@@ -374,13 +377,14 @@ function updateParent(AOname, AOid) {
 
 		      <?MIVAR name=$totalcount>0<?/MIVAR>
 		      <?MISQL SQL="
-			select anatstgstat_total_distinct_count
+			select anatstgstat_total_distinct_count, anatstgstat_object_count
 			  from anatomy_stage_stats
 			  where anatstgstat_anatitem_zdb_id = '$item_zdb_id' 
 			    and anatstgstat_stg_zdb_id = '$OID'
 			    and anatstgstat_object_type = 'GENE'
 			;">
 		        <?MIVAR name=$totalcount>$1<?/MIVAR>
+			<?MIVAR name=$no_substr_count>$1<?/MIVAR>
 		      <?/MISQL>
 
 		      <?MIBLOCK COND="$(NE,$highlight_text,)">
@@ -402,7 +406,7 @@ function updateParent(AOname, AOid) {
 				      
 		      <?MIBLOCK COND="$(>,$totalcount,0)">
 			<?MIVAR>
-			  [<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name&xpatsel_processed_selected_structures=$processed_item_name&include_substructures=checked&stage_start=$OID&stage_end=$OID" target="_parent">$totalcount gene(s) expressed at this stage</A>]
+			  [ <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name&xpatsel_processed_selected_structures=$processed_item_name&include_substructures=unchecked&stage_start=$OID&stage_end=$OID" target="_parent">$no_substr_count</A> gene(s) expressed &nbsp; (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name&xpatsel_processed_selected_structures=$processed_item_name&include_substructures=checked&stage_start=$OID&stage_end=$OID" target="_parent">$totalcount</A> if substructures included) ]
 			<?/MIVAR> 
 
 
@@ -417,7 +421,7 @@ function updateParent(AOname, AOid) {
 			  <?MISQL SQL="
 			          SELECT dalias_alias
 				    FROM data_alias
-				    WHERE dalias_data_zdb_id = '$item_zdb_id';">,<?MIBLOCK COND="$(=,$MI_CURRENTROW,1)"> synonym(s): <?/MIBLOCK> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">$1</A>
+				    WHERE dalias_data_zdb_id = '$item_zdb_id';"><?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">synonym(s): <?/MIBLOCK> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$item_zdb_id">$1</A>
                            <?/MISQL>
  			   ) </I> </font>
 		        <?/MIBLOCK> <?MICOMMENT> end if synonym exists <?/MICOMMENT>
@@ -445,7 +449,7 @@ function updateParent(AOname, AOid) {
 	    <?MISQL SQL="
 	      SELECT anatitem_name, anatitem_zdb_id,
 		     anatstat_synonym_count, anatstat_total_distinct_count,
-		     anatitem_is_obsolete, anatitem_name_order
+		     anatitem_is_obsolete, anatstat_object_count, anatitem_name_order
 		FROM anatomy_item, anatomy_stats
 		WHERE anatitem_zdb_id = anatstat_anatitem_zdb_id
 		  AND anatstat_object_type = 'GENE'
@@ -456,6 +460,7 @@ function updateParent(AOname, AOid) {
 	      <?MIVAR NAME="$synonymcount">$3<?/MIVAR>
 	      <?MIVAR NAME="$totalcount">$4<?/MIVAR>
 	      <?MIVAR NAME="$item_is_obsolete">$5<?/MIVAR>
+	      <?MIVAR NAME="$no_substr_count">$6<?/MIVAR>	
 	      <?MIVAR NAME="$highlight">false<?/MIVAR>
 
 	      <?MIVAR NAME=$item_name_safe DELIMIT="'" REPLACE="''">$item_name<?/MIVAR>
@@ -478,7 +483,7 @@ function updateParent(AOname, AOid) {
 
 	      <?MIBLOCK COND="$(>,$totalcount,0)">
 		<?MIVAR> 
-		  [<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name&xpatsel_processed_selected_structures=$processed_item_name&include_substructures=checked">$totalcount gene(s) expressed</A>]&nbsp;&nbsp;
+		  [ <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name&xpatsel_processed_selected_structures=$processed_item_name&include_substructures=unchecked">$no_substr_count</A> gene(s) expressed &nbsp; (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name&xpatsel_processed_selected_structures=$processed_item_name&include_substructures=checked">$totalcount</A> if substructures included) ]&nbsp;&nbsp;
 		<?/MIVAR>
 	      <?/MIBLOCK>
 
