@@ -652,11 +652,12 @@ and  clone_rating=4
             expression at this structure
 <?/MICOMMENT>
 <?MISQL SQL="
-	SELECT anatstat_object_count
+	SELECT anatstat_object_count, anatstat_total_distinct_count
 	  FROM anatomy_stats
 	 WHERE anatstat_anatitem_zdb_id = '$OID';">
 
   <?MIVAR NAME=$totalxpats>$1<?/MIVAR>
+  <?MIVAR NAME=$totalxpats_ind_substr>$2<?/MIVAR>	
 <?/MISQL>
 <BR>
 <?MIBLOCK COND="$(>,$totalxpats,0)">
@@ -666,7 +667,6 @@ and  clone_rating=4
      <TD bgcolor="#CCCCCC">
        <?MIVAR>
        <STRONG>All Expressed Genes 
-        <?MIBLOCK COND="$(>,$totalxpats,10)">, first 10: <?/MIBLOCK>
        </STRONG>
        <?/MIVAR>
      </TD>
@@ -687,7 +687,7 @@ and  clone_rating=4
 <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$gene_zdb_id">$gene_abbrev</A>
 <?/MISQL>
 <?MIBLOCK COND="$(>,$totalxpats,10)">
-  <?MIVAR>, <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name_url&xpatsel_processed_selected_structures=$processed_item_name"><b>All ($totalxpats)</b></A> <?/MIVAR>
+  <?MIVAR><b>...</b> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name_url&xpatsel_processed_selected_structures=$processed_item_name&include_substructures=unchecked"><b>$totalxpats total</b></A> &nbsp; (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name_url&xpatsel_processed_selected_structures=$processed_item_name&include_substructures=checked">$totalxpats_ind_substr</A> if substructures included)<?/MIVAR>
 <?/MIBLOCK>
       </TD>
     </TR>
