@@ -8,6 +8,11 @@ converting anatomical terms to a zdb_id list
 and display information about the expression
 patterns related to the anatomy items.
 
+2006/05/10 we decided to no longer display the 
+anatomy table on the top of the expression search
+result, thus this file only serve the purpose 
+of returning xpanatv_anatomy_zdb_id_list.
+
 This file is only called from xpatselect.apg
 
 INPUT VARS:
@@ -51,111 +56,25 @@ OUTPUT:
   <?MIVAR NAME=$xpanatv_index>$(+,$xpanatv_index,1)<?/MIVAR> 
 <?/MIBLOCK>
   
-<?MICOMMENT> ==== Display table, fill xpanatv_anatomy_zdb_id_list === <?/MICOMMENT> 
+<?MICOMMENT> ====  fill xpanatv_anatomy_zdb_id_list === <?/MICOMMENT> 
 
-<br>
-<table bgcolor="#CCCCCC"> 
-  <tr>
-    <td colspan="2">
-      <B><font size=-1>Anatomy Terms Searched...</font></B>
-    </td>
-  </tr>
-  <?MIBLOCK INDEX=$xpanatv_part FOREACH=$xpanatv_str_dlmt_list>  <?MICOMMENT> *** open foreach anatitem *** <?/MICOMMENT>
+<?MIBLOCK INDEX=$xpanatv_part FOREACH=$xpanatv_str_dlmt_list>  <?MICOMMENT> *** open foreach anatitem *** <?/MICOMMENT>
     <?MISQL SQL="
-SELECT anatitem_name, anatitem_zdb_id,''
-FROM anatomy_item
-WHERE anatitem_name_lower = lower('$xpanatv_part')
+	SELECT anatitem_zdb_id
+	FROM anatomy_item
+	WHERE anatitem_name_lower = lower('$xpanatv_part')">
+    <?/MISQL>
+    <?MIVAR NAME="$xpanatv_item_zdb_id">$1<?/MIVAR>
 
-UNION
-
-SELECT anatitem_name, anatitem_zdb_id,'<I>(synonym match)</I> '
-FROM data_alias, anatomy_item 
-WHERE dalias_data_zdb_id = anatitem_zdb_id
-  and dalias_alias_lower = lower('$xpanatv_part')
-
-ORDER BY 1
-    ;">
-
-      <?MICOMMENT> I only want the first result, incase the lowering causes it to match both a name and synonym  <?/MICOMMENT>
-      <?MIBLOCK COND="$(EC,$MI_CURRENTROW,1)">  <?MICOMMENT> *** open 'first row only' miblock *** <?/MICOMMENT> 
-        <tr>
-          <td bgcolor="#EEEEEE" valign=top> 
-            <?MICOMMENT> ----- exact match --- <?/MICOMMENT>
-            <?MIVAR NAME="$xpanatv_item_name">$1<?/MIVAR>
-            <?MIVAR NAME="$xpanatv_item_zdb_id">$2<?/MIVAR>
-            <?MIVAR NAME="$xpanatv_matchingText">$3<?/MIVAR>
-
-            <?MIVAR>$(VECAPPEND,$xpanatv_anatomy_zdb_id_list,$xpanatv_item_zdb_id)<?/MIVAR>
-            <?MIVAR NAME="$xpanatv_item_name_safe">$(REPLACE,$xpanatv_item_name,"'","''")<?/MIVAR>
-            <?MIVAR NAME="$xpanatv_processed_item_name">$(REPLACE,$xpanatv_item_name,",","|")<?/MIVAR>
-
-            <?MIVAR>
-              <font size=-1 style="font-family:arial; font-weight:bold;">
-                <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$xpanatv_item_zdb_id">$xpanatv_item_name</A>
-              </font> 
-            <?/MIVAR>
-          </td>
-          <td bgcolor="#EEEEEE">
-            <FONT size=-1 style="font-family:arial;">
-              <?MISQL SQL="
-select distinct xpatex_gene_zdb_id
-from expression_experiment
-     join expression_result
-       on xpatex_zdb_id = xpatres_xpatex_zdb_id
-where xpatres_anat_item_zdb_id = '$xpanatv_item_zdb_id'
-UNION
-select distinct xpatex_gene_zdb_id
-from expression_experiment
-     join expression_result
-       on xpatex_zdb_id = xpatres_xpatex_zdb_id
-     join all_anatomy_contains
-       on allanatcon_contained_zdb_id = xpatres_anat_item_zdb_id
-where allanatcon_container_zdb_id = '$xpanatv_item_zdb_id'
-              ;">
-              <?/MISQL>
-              <?MIVAR name=$xpanatv_totalcount>$MI_ROWCOUNT<?/MIVAR>
-
-              <?MIBLOCK COND="$(>,$xpanatv_totalcount,0)"> 
-                <?MIVAR>has <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&include_substructures=checked&TA_selected_structures=$xpanatv_item_name&xpatsel_processed_selected_structures=$xpanatv_processed_item_name" target="_parent"><B>($xpanatv_totalcount)</B></A> gene(s), total, expressed in all stages <?/MIVAR>
-              <?MIELSE>
-	        has no expression data.
-              <?/MIBLOCK>
-
-            </FONT>
-            <FONT size=-1 style="font-family:arial; font-weight:bold;  ">
-              <?MIVAR>$xpanatv_matchingText<?/MIVAR>
-            </FONT>
-          </td>
-        </tr>
-      <?/MIBLOCK> <?MICOMMENT> *** close 'first row only' miblock *** <?/MICOMMENT> 
+    <?MISQL COND="$(EC,$xpanatv_item_zdb_id,)" SQL="	
+	SELECT anatitem_zdb_id
+	  FROM data_alias, anatomy_item 
+	 WHERE dalias_data_zdb_id = anatitem_zdb_id
+  	   and dalias_alias_lower = lower('$xpanatv_part')
+	;">
+        <?MIVAR NAME="$xpanatv_item_zdb_id">$1<?/MIVAR>
     <?/MISQL>
 
+    <?MIVAR>$(VECAPPEND,$xpanatv_anatomy_zdb_id_list,$xpanatv_item_zdb_id)<?/MIVAR>
 
-    <?MIBLOCK COND="$(EQ,$MI_ROWCOUNT,0)">  <?MICOMMENT> *** open 'nothing returned' miblock *** <?/MICOMMENT>
-      <tr>
-        <td bgcolor="#EEEEEE" valign=top> 
-          <?MICOMMENT> *** not in dictionary *** <?/MICOMMENT>
-          <?MICOMMENT> - set anatomy error to 't' so we won't get any query results - <?/MICOMMENT>
-          <?MIVAR NAME="$xpanatv_anatomy_error_occured">t<?/MIVAR>
-          <FONT size=-1 style="font-family:arial;"> 
-            <?MIVAR> "$xpanatv_part" <?/MIVAR>
-            <?MICOMMENT> ---- capturing failed searches for use as possible synonyms ---- <?/MICOMMENT>
-            <?MISQL SQL="insert into xpat_anatomy_capture values ('$xpanatv_part',current);"><?/MISQL>
-          </FONT>
-        </td>
-        <td bgcolor="#EEEEEE">
-          <FONT size=-1 style="font-family:arial;"> 
-            <?MICOMMENT> ---- not in dictionary ---- <?/MICOMMENT>
-            <?MIVAR>
-              <B>does not exactly match a dictionary term, or synonym.<br>You can browse the dictionary
-              <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=stages">by stage</a> 
-              or see the 
-              <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatdict.apg&mode=alpha">complete list</a>.
-            <?/MIVAR>
-          </FONT>
-        </td>
-      </tr>
-    <?/MIBLOCK> <?MICOMMENT> *** close 'nothing returned' miblock *** <?/MICOMMENT> 
-  <?/MIBLOCK> <?MICOMMENT> *** close 'foreach anatitem' miblock *** <?/MICOMMENT>
-</table>     
-<br>
+<?/MIBLOCK> <?MICOMMENT> *** close 'foreach anatitem' miblock *** <?/MICOMMENT>
