@@ -32,10 +32,9 @@ with no log;
 LOAD FROM 'll_hs_id.unl' INSERT INTO ll_human;
 
 CREATE INDEX llhs_ll_id_index ON ll_human
-    (llhs_ll_id) using btree in idxdbs3;
-
+    (llhs_ll_id) using btree;
 CREATE INDEX llhs_abbrev_index ON ll_human
-    (llhs_hs_abbrev) using btree in idxdbs3;
+    (llhs_hs_abbrev) using btree;
     
 UNLOAD to hs_ortho_abbrev_conflict.unl
 SELECT mrkr_abbrev, ortho_abbrev, llhs_hs_abbrev
@@ -64,9 +63,9 @@ with no log;
 LOAD FROM 'll_mm_id.unl' INSERT INTO ll_mouse;
 
 CREATE INDEX llmm_ll_id_index ON ll_mouse
-    (llmm_ll_id) using btree in idxdbs3;
+    (llmm_ll_id) using btree;
 CREATE INDEX llmm_abbrev_index ON ll_mouse
-    (llmm_mm_abbrev) using btree in idxdbs3;
+    (llmm_mm_abbrev) using btree;
     
 UNLOAD to mm_ortho_abbrev_conflict.unl
 SELECT mrkr_abbrev, ortho_abbrev, llmm_mm_abbrev
@@ -100,9 +99,9 @@ with no log;
 LOAD FROM 'll_id.unl' INSERT INTO ll_zdb;
 
 CREATE INDEX llzdb_ll_id_index ON ll_zdb
-    (llzdb_ll_id) using btree in idxdbs3;
+    (llzdb_ll_id) using btree;
 CREATE INDEX llzdb_zdb_id_index ON ll_zdb
-    (llzdb_zdb_id) using btree in idxdbs3;
+    (llzdb_zdb_id) using btree;
 
 
 
@@ -121,11 +120,11 @@ with no log;
 LOAD FROM 'loc2ref.unl' INSERT INTO ref_seq_acc;
 
 CREATE INDEX refseq_ll_index ON ref_seq_acc
-    (refseq_ll) using btree in idxdbs3;
+    (refseq_ll) using btree;
 CREATE INDEX refseq_nM_acc_index ON ref_seq_acc
-    (refseq_nM_acc) using btree in idxdbs3;
+    (refseq_nM_acc) using btree;
 CREATE INDEX refseq_nP_acc_index ON ref_seq_acc
-    (refseq_nP_acc) using btree in idxdbs3;
+    (refseq_nP_acc) using btree;
    
 
 --GENBANK ACCESSION NUM--
@@ -141,11 +140,11 @@ with no log;
 LOAD FROM 'loc2acc.unl' INSERT INTO genbank_acc;
 
 CREATE INDEX genbank_ll_index ON genbank_acc
-    (gbacc_ll) using btree in idxdbs3;
+    (gbacc_ll) using btree;
 CREATE INDEX genbank_acc_index ON genbank_acc
-    (gbacc_acc) using btree in idxdbs3;
+    (gbacc_acc) using btree;
 CREATE INDEX genbank_pept_index ON genbank_acc
-    (gbacc_pept) using btree in idxdbs3;
+    (gbacc_pept) using btree;
    
 
 --ACCESSION LENGTH--
@@ -158,23 +157,40 @@ CREATE TEMP TABLE ACC_LENGTH
 with no log;
 
 CREATE INDEX acclen_acc_index ON acc_length
-    (acclen_acc) using btree in idxdbs3;
+    (acclen_acc) using btree;
     
 !echo 'LOAD loc2acclen.unl'
 LOAD FROM 'loc2acclen.unl' INSERT INTO acc_length (acclen_acc, acclen_length);
 
 CREATE INDEX acclen_length_index ON acc_length
-    (acclen_length) using btree in idxdbs3;
+    (acclen_length) using btree;
 
 UPDATE STATISTICS HIGH FOR TABLE acc_length;
 
+CREATE TEMP TABLE tmp_multiple_acclength
+  (
+    mAcclen_acc		varchar (20) not null,
+    mAcclen_length	integer
+  )
+with no log;
+
+CREATE TEMP TABLE tmp_acclength_longest
+  (
+    aAcclen_acc		varchar (20) not null,
+    aAcclen_length	integer
+  )
+with no log;
+
 
 -- Delete duplicate records. Keep longer length    
+INSERT INTO tmp_multiple_acclength
+  (
+    mAcclen_acc, mAcclen_length
+  )
 SELECT acclen_acc AS mAcclen_acc, acclen_length AS mAcclen_length 
 FROM acc_length 
 GROUP BY 1,2 
-HAVING COUNT(*) > 1
-INTO TEMP tmp_multiple_acclength; 
+HAVING COUNT(*) > 1; 
 
 DELETE FROM acc_length
 WHERE acclen_acc IN (SELECT mAcclen_acc from tmp_multiple_acclength);
@@ -183,13 +199,17 @@ INSERT INTO acc_length ( acclen_acc, acclen_length )
 SELECT mAcclen_acc, mAcclen_length
 FROM tmp_multiple_acclength;
 
+
+INSERT INTO tmp_acclength_longest
+  (
+    aAcclen_acc, aAcclen_length
+  )
 SELECT acclen_acc AS aAcclen_acc, max(acclen_length) AS aAcclen_length 
 FROM acc_length 
-GROUP BY 1
-INTO TEMP tmp_acclength_longest;
+GROUP BY 1;
 
 CREATE INDEX tmp_acclen_longest_index ON tmp_acclength_longest
-    (aAcclen_acc) using btree in idxdbs3;
+    (aAcclen_acc) using btree;
 
 UPDATE STATISTICS HIGH FOR TABLE tmp_acclength_longest;
 
@@ -238,9 +258,9 @@ with no log;
 LOAD FROM 'loc2UG.unl' INSERT INTO uni_gene;
 
 CREATE INDEX uni_ll_id_index ON uni_gene
-    (uni_ll_id) using btree in idxdbs3;
+    (uni_ll_id) using btree;
 CREATE INDEX uni_cluster_id_index ON uni_gene
-    (uni_cluster_id) using btree in idxdbs3;
+    (uni_cluster_id) using btree;
 
 
 --TMP_DB_LINK
@@ -257,11 +277,27 @@ CREATE TEMP TABLE tmp_db_link
 with no log;
 
 CREATE INDEX tmp_linked_recid_index ON tmp_db_link
-    (tmp_linked_recid) using btree in idxdbs3;
+    (tmp_linked_recid) using btree;
 CREATE INDEX tmp_acc_num_index ON tmp_db_link
-    (tmp_acc_num) using btree in idxdbs3;
+    (tmp_acc_num) using btree;
 CREATE INDEX tmp_db_name_index ON tmp_db_link
-    (tmp_db_name) using btree in idxdbs3;
+    (tmp_db_name) using btree;
+
+
+CREATE TEMP TABLE tmp_put_genpept_on_segment
+  (
+    pept_acc    varchar(50),
+    seg_zdb     varchar(50)
+  )
+with no log;
+
+
+CREATE TEMP TABLE tmp_non_unique_pept_acc
+  (
+    mPept_acc    varchar(50)
+  )
+with no log;
+
     
 !echo 'insert RefSeq INTO temp_db_link'
 INSERT INTO tmp_db_link
@@ -337,6 +373,11 @@ INSERT INTO tmp_db_link
     AND gbacc_acc != "-"
 ;
 
+
+insert into tmp_put_genpept_on_segment
+  (
+    pept_acc, seg_zdb
+  )
 select distinct gbacc_pept as pept_acc, dblink_linked_recid as seg_zdb
     from db_link, foreign_db_contains, genbank_acc 
     where gbacc_acc = dblink_acc_num
@@ -344,14 +385,17 @@ select distinct gbacc_pept as pept_acc, dblink_linked_recid as seg_zdb
       and fdbcont_fdb_db_name = "GenBank"
       and fdbcont_fdbdt_data_type = "cDNA"
       and gbacc_pept != "-"
-      and dblink_linked_recid not like "ZDB-GENE%"
-into temp tmp_put_genpept_on_segment;
+      and dblink_linked_recid not like "ZDB-GENE%";
 
+
+insert into tmp_non_unique_pept_acc
+  (
+    mPept_acc
+  )
 select pept_acc  as mPept_acc
 from tmp_put_genpept_on_segment
 group by 1
-having count(*) > 1
-into temp tmp_non_unique_pept_acc;
+having count(*) > 1;
 
 delete from tmp_put_genpept_on_segment
 where pept_acc in (select mPept_acc from tmp_non_unique_pept_acc);
@@ -441,7 +485,7 @@ SELECT dblink_zdb_id
 ;
 
 CREATE INDEX link_id_index ON automated_dblink 
-    (link_id) using btree in idxdbs3 ;
+    (link_id) using btree in tempdbs1 ;
 
 
         --------------------------
@@ -544,20 +588,33 @@ UPDATE STATISTICS HIGH FOR TABLE db_link;
 --with a segment.
 --Contained In MREL types 2004-02: [gene encodes small segment, gene contains small segment, gene hybridized by small segment]
 
-	create temp table tmp_est_db_link (dblink_linked_recid varchar(50),
-    					dblink_acc_num varchar(50),
-    					dblink_info varchar(80),
-    					dblink_zdb_id varchar(50),
-    					dblink_acc_num_display varchar(50),
-    					dblink_length integer,
-    					dblink_fdbcont_zdb_id varchar(50)
-	) with no log ;
 
-	insert into tmp_est_db_link 
-	    SELECT *
-    		FROM db_link
-    		WHERE dblink_linked_recid not like "ZDB-GENE%";
-    		
+CREATE TEMP TABLE tmp_est_db_link
+  (
+    dblink_linked_recid varchar(50),
+    dblink_acc_num varchar(50),
+    dblink_info varchar(80),
+    dblink_zdb_id varchar(50),
+    dblink_acc_num_display varchar(50),
+    dblink_length integer,
+    dblink_fdbcont_zdb_id varchar(50)
+  )
+with no log;
+
+    INSERT INTO tmp_est_db_link
+      (
+        dblink_linked_recid,
+        dblink_acc_num,
+        dblink_info,
+        dblink_zdb_id,
+        dblink_acc_num_display,
+        dblink_length,
+        dblink_fdbcont_zdb_id
+      )
+    SELECT *
+    FROM db_link
+    WHERE dblink_linked_recid not like "ZDB-GENE%";
+
     
     DELETE FROM tmp_db_link
     WHERE tmp_linked_recid like "ZDB-GENE%"
@@ -595,6 +652,24 @@ UPDATE STATISTICS HIGH FOR TABLE db_link;
 --These records are not linked through marker relationship. However, they have the same
 --accession record. They will be unloaded for curatorial investigation.
 
+CREATE TEMP TABLE tmp_conflict_db_link
+  (
+    conf varchar(50),
+    conf_linked_recid varchar(50),
+    dblink_acc_num varchar(50),
+    fdbcont_fdb_db_name varchar(50),
+    fdbcont_fdbdt_data_type varchar(20)
+  )
+with no log;
+
+    INSERT INTO tmp_conflict_db_link
+      (
+        conf,
+        conf_linked_recid,
+        dblink_acc_num,
+        fdbcont_fdb_db_name,
+        fdbcont_fdbdt_data_type
+      )
     SELECT distinct dblink_linked_recid conf, 
            tmp_linked_recid as conf_linked_recid, 
            dblink_acc_num, 
@@ -605,8 +680,7 @@ UPDATE STATISTICS HIGH FOR TABLE db_link;
       AND dblink_fdbcont_zdb_id = fdbcont_zdb_id
       AND fdbcont_zdb_id = tmp_fdbcont_zdb_id
       AND fdbcont_fdbdt_data_type != 'Genomic'
-      AND dblink_acc_num = tmp_acc_num
-    into temp tmp_conflict_db_link;
+      AND dblink_acc_num = tmp_acc_num;
         
 
     UNLOAD to conflict_dblink.unl
@@ -789,7 +863,13 @@ INSERT INTO record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
 ----------------------------------------------
 --| DELETE OVERLAPPING GENPEP/REFSEQ LINKS |--
 ----------------------------------------------
+CREATE TEMP TABLE overlapping_acc_num
+  (
+    dblink_zdb_id varchar(50)
+  )
+with no log;
 
+INSERT INTO overlapping_acc_num
 SELECT dblink_zdb_id 
 FROM db_link AS genpept, foreign_db_contains AS fdbcont1
 WHERE genpept.dblink_fdbcont_zdb_id = fdbcont1.fdbcont_zdb_id
@@ -800,8 +880,7 @@ WHERE genpept.dblink_fdbcont_zdb_id = fdbcont1.fdbcont_zdb_id
       WHERE refseq.dblink_fdbcont_zdb_id = fdbcont2.fdbcont_zdb_id
         AND fdbcont2.fdbcont_fdb_db_name = "RefSeq"
         AND refseq.dblink_acc_num = genpept.dblink_acc_num
-      )
-INTO TEMP overlapping_acc_num;
+      );
         
 DELETE FROM zdb_active_data WHERE zactvd_zdb_id IN (SELECT * FROM overlapping_acc_num);
 
@@ -829,6 +908,20 @@ INSERT INTO tmp_db_link
 
 -- ------------------ add new records ------------------ --
 !echo 'get all UniGene db_links that remain'
+
+CREATE TEMP TABLE unigene_link
+  (
+    dblink_linked_recid varchar(50),
+    dblink_acc_num varchar(50),
+    dblink_info varchar(80),
+    dblink_zdb_id varchar(50),
+    dblink_acc_num_display varchar(50),
+    dblink_length integer,
+    dblink_fdbcont_zdb_id varchar(50)
+  )
+with no log;
+
+  INSERT INTO unigene_link
   SELECT * 
   FROM db_link
   WHERE dblink_fdbcont_zdb_id in 
@@ -836,9 +929,7 @@ INSERT INTO tmp_db_link
       SELECT fdbcont_zdb_id
       FROM foreign_db_contains
       WHERE fdbcont_fdb_db_name = "UniGene"
-    )
-  INTO temp unigene_link
-  with no log;
+    );
 
 --only keep new links
 DELETE FROM tmp_db_link
