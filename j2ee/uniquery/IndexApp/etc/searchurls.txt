@@ -6,11 +6,4 @@
 
 # WINSIZE should be tuned for indexing performance.
 
-http://quark.zfin.org/cgi-bin_quark/webdriver?MIval=aa-ZDB_home.apg
-#http://quark.zfin.org/cgi-bin_quark/webdriver?MIval=aa-fishselect.apg&START=1&query_results=exist&WINSIZE=1000
-#http://quark.zfin.org/cgi-bin_quark/webdriver?MIval=aa-newmrkrselect.apg&marker_type=all&START=1&query_results=exist&WINSIZE=1000
-#http://quark.zfin.org/cgi-bin_quark/webdriver?MIval=aa-xpatselect.apg&START=1&query_results=exist&WINSIZE=1000
-#http://quark.zfin.org/cgi-bin_quark/webdriver?MIval=aa-pubselect2.apg&START=1&query_results=exist&WINSIZE=1000
-#http://quark.zfin.org/cgi-bin_quark/webdriver?MIval=aa-persselect.apg&START=1&query_results=exist&WINSIZE=1000
-#http://quark.zfin.org/cgi-bin_quark/webdriver?MIval=aa-labselect.apg&START=1&query_results=exist&WINSIZE=1000
-#http://quark.zfin.org/cgi-bin_quark/webdriver?MIval=aa-companyselect.apg&START=1&query_results=exist&WINSIZE=1000
+http://<!--|DOMAIN_NAME|-->/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ZDB_home.apg
