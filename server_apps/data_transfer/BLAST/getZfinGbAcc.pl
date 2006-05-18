@@ -21,14 +21,17 @@ my $password = "";
 my $outputdir = "/research/zblastfiles/files/genomix/";
 my $accFile = $outputdir."zfin_genbank_acc.unl";
 my $accFile_cdna = $outputdir."zfin_genbank_cdna_acc.unl";
+my $accFile_xpat = $outputdir."zfin_genbank_gene_xpat_acc.unl";
 
 ################
 # Form the sql 
 ################
 
-my $sql ="unload to \"$accFile\" delimiter \" \" select distinct dblink_acc_num from db_link where dblink_fdbcont_zdb_id in (select fdbcont_zdb_id from foreign_db_contains where fdbcont_fdb_db_name = \"GenBank\" and fdbcont_fdbdt_super_type = \"sequence\")";  
+my $sql ="unload to \"$accFile\" delimiter \" \" select dblink_acc_num from db_link where dblink_fdbcont_zdb_id in (select fdbcont_zdb_id from foreign_db_contains where fdbcont_fdb_db_name = \"GenBank\" and fdbcont_fdbdt_super_type = \"sequence\")";  
      
-my $sql_cdna ="unload to \"$accFile_cdna\" delimiter \" \" select distinct dblink_acc_num from db_link where dblink_fdbcont_zdb_id in (select fdbcont_zdb_id from foreign_db_contains where fdbcont_fdb_db_name = \"GenBank\" and fdbcont_fdbdt_data_type = \"cDNA\") ";  
+my $sql_cdna ="unload to \"$accFile_cdna\" delimiter \" \" select dblink_acc_num from db_link where dblink_fdbcont_zdb_id in (select fdbcont_zdb_id from foreign_db_contains where fdbcont_fdb_db_name = \"GenBank\" and fdbcont_fdbdt_data_type = \"cDNA\") ";  
+
+my $sql_xpat ="unload to \"$accFile_xpat\" delimiter \" \" select distinct dblink_acc_num from db_link, expression_experiment where xpatex_gene_zdb_id = dblink_linked_recid and  dblink_fdbcont_zdb_id in (select fdbcont_zdb_id from foreign_db_contains where fdbcont_fdb_db_name = \"GenBank\" and fdbcont_fdbdt_data_type = \"cDNA\") ";  
   
 
 #################
@@ -36,5 +39,6 @@ my $sql_cdna ="unload to \"$accFile_cdna\" delimiter \" \" select distinct dblin
 #################
 system ("echo '$sql' | $ENV{INFORMIXDIR}/bin/dbaccess $dbname -") && die "Failure on sql: $sql \n"; 
 system ("echo '$sql_cdna' | $ENV{INFORMIXDIR}/bin/dbaccess $dbname -") && die "Failure on sql: $sql_cdna \n"; 
+system ("echo '$sql_xpat' | $ENV{INFORMIXDIR}/bin/dbaccess $dbname -") && die "Failure on sql: $sql_xpat \n"; 
 
 exit;
