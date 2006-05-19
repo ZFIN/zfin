@@ -28,7 +28,8 @@ GENERICS = ZFIN_jump map-options.pl print_map.cgi runSPL.cgi cgiemail.cgi\
 	   view_mapplet.cgi view_zmapplet.cgi select_structures.cgi \
 	   input_welcome.cgi input_welcome_generic.cgi expired_locus.cgi \
            publications_today.cgi send_notification.cgi usersurvey2005.cgi \
-	   upload.cgi pre_vega.cgi \
+	   upload.cgi pre_vega.cgi send_Judy_your_report.pl \
+	   weekly_report_reminder.txt \
 
 
 # ---------------  Production Rules  ------------------------------------
