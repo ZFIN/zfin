@@ -69,7 +69,8 @@ public class RelatedTerms
          String token = (String)tokens.get(i);
          ArrayList anatomyhits = getAnatomyHits(token);
          if (!anatomyhits.isEmpty()) {
-            results.put(token,anatomyhits);
+	     token = token.replace("''", "'");
+	     results.put(token,anatomyhits);
          }
       }
 
@@ -119,7 +120,7 @@ public class RelatedTerms
       Connection db = openConnection();
 
       Statement stmt = db.createStatement();
-      String theSql = "select allmapnm_zdb_id as zdb_id from all_map_names where allmapnm_name_lower = '"+queryTermEscaped.toLowerCase() + "' and allmapnm_precedence in ('Current symbol', 'Current name', 'Fish name/allele', 'Locus abbreviation', 'Locus name') UNION select anatitem_zdb_id as zdb_id from anatomy_item where anatitem_name = '"+queryTermEscaped.toLowerCase() + "'";
+      String theSql = "select allmapnm_zdb_id as zdb_id from all_map_names where allmapnm_name_lower = '"+queryTermEscaped.toLowerCase() + "' and allmapnm_precedence in ('Current symbol', 'Current name', 'Fish name/allele', 'Locus abbreviation', 'Locus name') UNION select anatitem_zdb_id as zdb_id from anatomy_item where anatitem_name_lower = '"+queryTermEscaped.toLowerCase() + "'";
 
       ResultSet rs = stmt.executeQuery(theSql);
       while (rs.next()) {
@@ -138,11 +139,14 @@ public class RelatedTerms
 
      */
     public String getReplacedZdbId (String queryTerm) throws Exception {
+
+        String queryTermEscaped = StringUtils.replace(queryTerm,"'","''"); 
 	String resultId = "";
+
 	Connection db = openConnection();
 	
 	Statement stmt = db.createStatement();
-	String theSql = "select zrepld_new_zdb_id from zdb_replaced_data where zrepld_old_zdb_id = '" + queryTerm.toUpperCase() + "'";
+	String theSql = "select zrepld_new_zdb_id from zdb_replaced_data where zrepld_old_zdb_id = '" + queryTermEscaped.toUpperCase() + "'";
 	
 	ResultSet rs = stmt.executeQuery(theSql);
 	while (rs.next()) {
@@ -357,7 +361,7 @@ public class RelatedTerms
     */   
    public String filterIllegals (String text) throws Exception {
       text = text.toLowerCase();
-      text = text.replaceAll("'"," ");
+      text = text.replaceAll("'","''");
       text = text.replaceAll("<sup>"," ");
       text = text.replaceAll("</sup>"," ");
       return text;
