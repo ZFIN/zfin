@@ -71,22 +71,39 @@
     $description$ :
 	This master script calls parseTalbot.pl first, which incorporate cegs_stage_codes.txt and cegs_view_codes.txt into expression, keywords, and images files, and generates .unl files for loading. 
 	It also interact with database to query the accession number and check the consistency of Talbot naming with ZFIN naming.
-	Check accession number: 
+
+	- Names in Talbot gene.txt file:
+          There are three name columns in gene.txt files:
+            o name -- 3rd column
+            o other_names -- 4th column
+            o long_name   -- 5th column
+          Ignore long_name. In normal scenario, 
+            o name column holds gene symbol 
+            o other_names column holds clone name. 
+          However, it happens that
+            a). when there is no gene symbol, clone name gets put into the name column 
+	    b). gene symbol and clone name switched position
+          we handles case a) as if that is a rule. For case b) we query the gene symbol
+          agaist zfin marker table, and generate an error message when no match. We will
+          then manually correct the error. 
+
+	- Check accession number: 
 	1) matches >1 genes (direct + encodes relationship) --> parseTalbot.err; 
-	2) matches 1, 
-	     different from what Talbot provides --> parseTalbot.err
-             same                                --> probes.unl
+	2) matches one gene, 
+	    different from what Talbot provided --> parseTalbot.err
+            symbol or previous name is the same as what Talbot provided 
+            or gene name is absent from Talbot file               --> probes.unl
 	3) matches 0, 
-	     the gene sym provided, and validate in ZFIN --> probes.unl
-             the gene sym provided, not present in ZFIN  --> parseTalbot.err
-             no gene sym                          -->  probes.unl & acc4blast.txt 
+	    if gene sym is provided but doesn't match a zfin gene --> parseTalbot.err
+	    no matter whether gene sym is provided --> probes.unl & acc4blast.txt 
 	
-	Upon error, the script exit. Please send the parseTalbot.err file to curator.
-        For conflicts:
+	Upon error, the script exit. Work out the error with curators.
+        For naming conflicts:
 	  - either curators merge genes, use Talbot lab's gene assignment
           - or change Talbot's gene assignment to Zfin assignment
         For Gene sym not found:
-          - delete the gene sym, let the script creates fake genes
+          - either switch the gene name and clone name into the correct columns
+          - or delete the bad gene sym, let the script creates fake genes
 
         If all consistent, but unknown accession is detected, the master script would blasts acc4blast.txt against zfin cdna database. 
 
