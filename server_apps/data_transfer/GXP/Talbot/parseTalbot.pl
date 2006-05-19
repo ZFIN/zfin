@@ -1,6 +1,6 @@
 #!/private/bin/perl -wt
 # 
-# Read in: probes.txt
+# Read in: gene.txt
 #          expression.txt
 #          keywords.txt
 #          images.txt
@@ -149,6 +149,7 @@ while (<PROBE_IN>) {
     s/\s+$//g;
     if (/^[0-9]/) {
 	my @row = split (/\t/);
+	my $cegs_id     = $row[0];
 	my $acc_col     = $row[1];
 	my $name_col    = $row[2];
 	my $othname_col = $row[3];
@@ -156,11 +157,21 @@ while (<PROBE_IN>) {
 	my ($clone_name, $ver) = split(/\./, $clone_name_whole);
 	my $gene_sym = $othname_col ne '' ? $name_col : '' ;
 	$gene_sym =~ s/zgc\s/zgc:/; $gene_sym =~ s/wu\s/wu:/;
-       
+        my $gene_sym_lower = lc $gene_sym;
+	my ($zfin_gene_id, $zfin_sym);
+
 	my $vector      = $row[5]; $vector =~ s/^\s+//; $vector =~ s/\s+$//;
 	my $library     = $row[6]; $library =~ s/^\s+//; $library =~ s/\s+$//;
 	my $digest      = $row[12];$digest =~ s/^\s+//; $digest =~ s/\s+$//;
 	my $polymerase  = $row[13];$polymerase =~ s/^\s+//; $polymerase =~ s/\s+$//;
+	if (! $acc_col) {
+	    print ERR "$cegs_id has no accession number.\n";
+	    next;
+	}
+	if (! $clone_name) {
+	    print ERR "$acc_col has no clone name.\n";
+	    next;
+	}
 
         # find out the gb acc related to which gene
 	my $sth = $dbh->prepare ("select mrkr_zdb_id, mrkr_abbrev
@@ -180,41 +191,70 @@ while (<PROBE_IN>) {
                                 ");
 	$sth->execute();
 	my $array_ref = $sth->fetchall_arrayref();
-	if (@$array_ref > 1) {            # gb acc matches >1 zfin genes
+	if (@$array_ref > 1) {            ## gb acc matches >1 zfin genes ##
 	    print ERR join("    ", $acc_col, $clone_name, $gene_sym, ">1 ZFIN genes")."\n";
 
-	}elsif (@$array_ref == 1) {       # gb acc matches one zfin gene
+	}elsif (@$array_ref == 1) {       ## gb acc matches one zfin gene ##
+
+	    my $array_ref_sym = "";
 	    my ($row) = @$array_ref;
-	    my ($gene_id, $zfin_sym) = @$row; 
-	    
-	    if ($zfin_sym eq $gene_sym || ! $gene_sym) {
-		print PROBE_OUT join("|",$row[0],$clone_name,$gene_id,"",$acc_col,$library,$digest,$vector,"","","",$polymerase,"","")."|\n";
-		print AUTHOR_OUT "$row[0]|$AUTHOR_1||\n";
-		print AUTHOR_OUT "$row[0]|$AUTHOR_2||\n";
-	    }else {
-		print ERR join("    ", $acc_col, $clone_name, $gene_sym, $gene_id, $zfin_sym)."\n";
+	    ($zfin_gene_id, $zfin_sym) = @$row; 
+
+	    if ($zfin_sym ne $gene_sym && $gene_sym) {
+		my $sth_sym =  $dbh->prepare ("
+                                          select dalias_zdb_id
+                                            from data_alias
+                                           where dalias_alias_lower = '$gene_sym_lower'
+                                             and dalias_data_zdb_id = '$zfin_gene_id'");
+		$sth_sym->execute();
+		$array_ref_sym = $sth_sym->fetchall_arrayref();
 	    }
 
-	}elsif ($gene_sym) {               # gb acc has no zfin gene match, but a gene provided
+ 	    # three cases that zfin gene id will get assigned
+            # - talbot gene symbol matches zfin gene symbol
+            # - talbot gene symbol matches zfin gene previous name
+            # - no talbot gene symbol but acc# matched one zfin gene
+	    if ($zfin_sym eq $gene_sym || @$array_ref_sym == 1 || ! $gene_sym) {
+
+		print PROBE_OUT join("|",$row[0],$clone_name,$zfin_gene_id,"",$acc_col,$library,$digest,$vector,"","","",$polymerase,"","")."||\n";
+		print AUTHOR_OUT "$row[0]|$AUTHOR_1||\n";
+		print AUTHOR_OUT "$row[0]|$AUTHOR_2||\n";
 	   
-	    my ($gene_id) = $dbh->selectrow_array("select mrkr_zdb_id 
-                                                     from marker
-                                                    where mrkr_abbrev = '$gene_sym'");
-	    if ($gene_id) {
-		print PROBE_OUT join("|",$row[0],$clone_name,$gene_id,"",$acc_col,$library,$digest,$vector,"","","",$polymerase,"","")."|\n";
-		print AUTHOR_OUT "$row[0]|$AUTHOR_1||\n";
-		print AUTHOR_OUT "$row[0]|$AUTHOR_2||\n";
 	    }else {
-		print ERR join("    ", $acc_col, $clone_name, $gene_sym, "Gene sym not in ZFIN")."\n";
+		print ERR join("    ", $acc_col, $clone_name, $gene_sym, $zfin_gene_id, $zfin_sym)."\n";
 	    }
 
-	}else {                      # gb acc has no zfin gene match, and no gene provided
-	    print PROBE_OUT join("|",$row[0],$clone_name,"","",$acc_col,$library,$digest,$vector,"","","",$polymerase,"","")."|\n";
-	    print AUTHOR_OUT "$row[0]|$AUTHOR_1||\n";
-	    print AUTHOR_OUT "$row[0]|$AUTHOR_2||\n";
-	    print PROBE_ACC "$acc_col\n";
-	}
+	}else{
+            # when gb acc didn't match any zfin gene, but talbot provided a gene symbol,
+            # we don't actually use that symbol, instead we do a blast analysis and use the 
+            # blast results. But we do courtesy check on that name to catch cases when 
+            # clone name was put on the gene name column. 	
 
+	    if ($gene_sym) {       
+		$zfin_gene_id = $dbh->selectrow_array("
+                                             select mrkr_zdb_id 
+                                               from marker
+                                              where mrkr_abbrev = '$gene_sym_lower'
+                                                and mrkr_type like 'GENE%'
+                                            UNION
+                                             select dalias_data_zdb_id
+                                               from data_alias
+                                              where dalias_alias_lower =  '$gene_sym_lower'
+                                                and dalias_data_zdb_id like 'ZDB-GENE%' ");
+	    }
+
+	    if ($gene_sym && !$zfin_gene_id){
+		print ERR join("    ", $acc_col, $clone_name, $gene_sym, "Gene sym not in ZFIN")."\n";
+		
+	    }else {
+		
+		print PROBE_OUT join("|",$row[0],$clone_name,"","",$acc_col,$library,$digest,$vector,"","","",$polymerase,"","")."||\n";
+		print AUTHOR_OUT "$row[0]|$AUTHOR_1||\n";
+		print AUTHOR_OUT "$row[0]|$AUTHOR_2||\n";
+		print PROBE_ACC "$acc_col\n";
+	    }
+	}
+	
 	next;
     }
     &checkUnexpectedLine($probe_in,$_);   
