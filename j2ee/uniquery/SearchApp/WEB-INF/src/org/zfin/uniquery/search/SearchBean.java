@@ -663,11 +663,11 @@ public class SearchBean
         Hashtable anatomyHits = terms.getAllAnatomyHits(queryTerm);
         
         if (categoryDescription.toLowerCase().equals("mutants/transgenics")) {
-           specificSearchURL = "/cgi-bin/webdriver?MIval=aa-fishselect.apg&line_type=mutant";
+           specificSearchURL = "aa-fishselect.apg&line_type=mutant";
         } else if (categoryDescription.toLowerCase().equals("genes/markers/clones")) {
-           specificSearchURL = "/cgi-bin/webdriver?MIval=aa-newmrkrselect.apg&input_name="+queryTerm;
+           specificSearchURL = "aa-newmrkrselect.apg&input_name="+queryTerm;
         } else if (categoryDescription.toLowerCase().equals("expression")) {
-           specificSearchURL = "/cgi-bin/webdriver?MIval=aa-xpatselect.apg";
+           specificSearchURL = "aa-xpatselect.apg";
            if (anatomyHits.size() > 0) {
              specificSearchURL += "&TA_selected_structures=";
              Vector anatkeys = new Vector(anatomyHits.keySet());
@@ -675,13 +675,13 @@ public class SearchBean
              Iterator anatkeysIter = anatkeys.iterator();
              while (anatkeysIter.hasNext()) {
                 String anatTerm = (String) anatkeysIter.next();
-                specificSearchURL += anatTerm + "%0D%0A"; // %0D%0A = CR-LF
+                specificSearchURL += URLEncoder.encode(anatTerm) + "%0D%0A"; // %0D%0A = CR-LF
              }
            }else {
 	       specificSearchURL += "&gene_name=" + queryTerm;
 	   }
         } else if (categoryDescription.toLowerCase().equals("anatomy")) {
-           specificSearchURL = "/cgi-bin/webdriver?MIval=aa-anatdict.apg&mode=search";
+           specificSearchURL = "aa-anatdict.apg&mode=search";
            if (anatomyHits.size() > 0) {
              specificSearchURL += "&searchterm=";
              Vector anatkeys = new Vector(anatomyHits.keySet());
@@ -689,15 +689,11 @@ public class SearchBean
              Iterator anatkeysIter = anatkeys.iterator();
              while (anatkeysIter.hasNext()) {
                 String anatTerm = (String) anatkeysIter.next();
-                specificSearchURL += anatTerm + " ";
+                specificSearchURL += URLEncoder.encode(anatTerm) + " ";
              }
            }
-	   //} else if (categoryDescription.toLowerCase().equals("mapping data")) {
-           //specificSearchURL = "/cgi-bin/mapper_select.cgi";
-	   //} else if (categoryDescription.toLowerCase().equals("publications")) {
-           //specificSearchURL = "/cgi-bin/webdriver?MIval=aa-pubselect2.apg&title="+queryTerm;
         } else if (categoryDescription.toLowerCase().equals("people")) {
-           specificSearchURL = "/cgi-bin/webdriver?MIval=aa-quickfindpers.apg&pname="+queryTerm;
+           specificSearchURL = "aa-quickfindpers.apg&pname="+queryTerm;
         } else {                
            specificSearchURL = "";
         }                
@@ -705,14 +701,8 @@ public class SearchBean
         if (specificSearchURL.length() > 0) {
             returnResults += "<span class='specific_search'>";
             returnResults += "Advanced search: "; //"Please try the ";
-            returnResults += "<a href='" + specificSearchURL + "'>" + categoryDescription + "</a> ";
+            returnResults += "<a href='/cgi-bin/webdriver?MIval=" + specificSearchURL + "'>" + categoryDescription + "</a> ";
             
-	    //this line and link do not provide useful information
-            //if (categoryDescription.toLowerCase().equals("expression") && anatomyHits.size() > 0) {
-		//returnResults += "<br>Also, <b>" + anatomyHits.size() + "</b> of your search terms ";
-	    //returnResults += "<br>search term(s) ";
-	    //returnResults += "<a href='" + specificSearchURL + "'>" + anatomyHits.keySet() + "</a> resulted in anatomical dictionary match(es).";
-            //}
 
             returnResults += "</span>";
         } 
