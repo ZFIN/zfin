@@ -857,7 +857,7 @@ I am commenting this part of the code rather than deleting it. If no flags are r
       </A> has been shown to correspond to gene <i>$abbrev</i>. 
     <?/MIVAR>
 
-    <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_locus_zdb_id&type=recattrib&info=cloned_gene') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+    <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_locus_zdb_id&type=recattrib&info=cloned+gene') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
   </td></tr>
   </table>
 <?/MIBLOCK>
