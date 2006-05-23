@@ -121,7 +121,7 @@ OUTPUT:
 
 	<?MISQL SQL="select WebExplode(object,'clorlk_mrkr_zdb_id=$mrkrrel_seg_mrkr_zdb_id') from webPages where ID='aa-cloneorderlink.apg';">$1<?/MISQL>
 
-	<?MISQL SQL="select WebExplode(object,'dataId=$mrkrrel_mrel_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+	<?MISQL SQL="select WebExplode(object,'dataId=$mrkrrel_mrel_zdb_id&type=recattrib&info=standard') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
        
 
 	<?MIVAR>$(SETVAR,$mrkrrel_last_seg_mrkr_type,$mrkrrel_seg_mrkr_type)<?/MIVAR>	
