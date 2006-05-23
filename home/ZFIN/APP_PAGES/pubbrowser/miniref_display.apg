@@ -13,6 +13,12 @@ Variables Expected:
 <?/MICOMMENT>
 
 <?MIBLOCK COND="$(EC,$type,recattrib)">
+    <?MICOMMENT> 
+      ***The default recattrib type is 'standard'. 
+      ***If no type is passed in, use the default.
+    <?/MICOMMENT>
+    <?MIVAR NAME=info COND=$(NXST,$info)>standard<?/MIVAR>
+
     <?MISQL SQL="
 		select zobjtype_attribution_display_tier
 	  	  from zdb_object_type
@@ -77,5 +83,9 @@ Variables Expected:
        <?/MISQL>
 	
    <?/MIBLOCK> <?MICOMMENT> tier 1 or tier 2 <?/MICOMMENT>
+   
+   <?MIVAR>
+     $(UNSETVAR,$info)
+   <?/MIVAR>
 
 <?/MIBLOCK> <?MICOMMENT> recattrib  <?/MICOMMENT>
