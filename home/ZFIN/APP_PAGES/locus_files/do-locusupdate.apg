@@ -140,9 +140,6 @@ info  -- the column name for the column attrib
     <?/MISQL>	
     <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
 
-    <script>
-    alert('<?MIVAR>$info<?/MIVAR>');
-    </script>
       <?MIBLOCK COND="$(EC,$attr,recattrib)">
          <?MISQL SQL="
 	    insert into record_attribution
