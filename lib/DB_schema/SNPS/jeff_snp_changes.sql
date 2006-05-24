@@ -13,7 +13,7 @@ update foreign_db
 insert into foreign_db (fdb_db_name, fdb_db_query, fdb_url_suffix,
 				fdb_db_significance)
   values ('SNPBLAST', 
-	  'http://www.ncbi.nlm.nih.gov/SNP/snp_blastByOrg.cgi',
+	  'http://www.ncbi.nlm.nih.gov/SNP/snp_blastByOrg.cgi?PROGRAM=blastn&MEGABLAST=yes&DATABASE=zebrafish_7955/zebrafish_7955',
 	   null,
 	  '8');
 	  
