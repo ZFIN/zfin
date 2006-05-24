@@ -17,6 +17,13 @@ insert into foreign_db (fdb_db_name, fdb_db_query, fdb_url_suffix,
 	   null,
 	  '8');
 	  
+insert into foreign_db (fdb_db_name, fdb_db_query, fdb_url_suffix,
+				fdb_db_significance)
+  values ('Ensembl_SNP', 
+	  'http://www.ensembl.org/Danio_rerio/snpview?source=dbSNP&snp=',
+	   null,
+	  '9');
+
 insert into foreign_db_contains (fdbcont_zdb_id, 
 				 fdbcont_fdbdt_data_type,
 				 fdbcont_fdb_db_name,
@@ -27,6 +34,29 @@ insert into foreign_db_contains (fdbcont_zdb_id,
 	   'SNPBLAST',
 	   'Zebrafish',
 	   'sequence');
+
+insert into foreign_db_contains (fdbcont_zdb_id, 
+				 fdbcont_fdbdt_data_type,
+				 fdbcont_fdb_db_name,
+			 	 fdbcont_organism_common_name,
+				 fdbcont_fdbdt_super_type)
+  values (get_id('FDBCONT'),
+	   'other',
+	   'Ensembl_SNP',
+	   'Zebrafish',
+	   'summary page');
+
+insert into foreign_db_contains (fdbcont_zdb_id, 
+				 fdbcont_fdbdt_data_type,
+				 fdbcont_fdb_db_name,
+			 	 fdbcont_organism_common_name,
+				 fdbcont_fdbdt_super_type)
+  values (get_id('FDBCONT'),
+	   'other',
+	   'dbSNP',
+	   'Zebrafish',
+	   'summary page');
+
 
 
 insert into marker_type_group_member (mtgrpmem_mrkr_type,
