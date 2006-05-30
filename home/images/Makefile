@@ -70,7 +70,7 @@ SUBDIRS = LOCAL ANIMATED ARROWS BACKGROUNDS BIG_ANIMATED FACES
 #                    if we take those images out and no longer have
 #                    any jpg files in the directory
 
-STATICS := $(shell echo *.gif) $(shell echo *.jpg)
+STATICS := $(shell echo *.gif) $(shell echo *.jpg) $(shell echo *.png)
 
 
 # --------------------------  Rules  ------------------------------------
