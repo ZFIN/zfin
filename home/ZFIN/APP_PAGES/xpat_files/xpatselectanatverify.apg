@@ -28,9 +28,10 @@ OUTPUT:
 
 <?/MICOMMENT>
 
+<?MIVAR NAME=MI_NOVALUE><?/MIVAR>
+<?MIVAR NAME=MI_NULL><?/MIVAR>
 
 <?MICOMMENT> *** Process variables ***   <?/MICOMMENT>
-
 
 <?MIVAR NAME=xpanatv_index>0<?/MIVAR>
 <?MIVAR NAME=xpanatv_strCount>1<?/MIVAR>
@@ -59,6 +60,7 @@ OUTPUT:
 <?MICOMMENT> ====  fill xpanatv_anatomy_zdb_id_list === <?/MICOMMENT> 
 
 <?MIBLOCK INDEX=$xpanatv_part FOREACH=$xpanatv_str_dlmt_list>  <?MICOMMENT> *** open foreach anatitem *** <?/MICOMMENT>
+
     <?MISQL SQL="
 	SELECT anatitem_zdb_id
 	FROM anatomy_item
