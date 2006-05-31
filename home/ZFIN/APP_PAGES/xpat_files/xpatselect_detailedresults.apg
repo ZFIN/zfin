@@ -56,8 +56,8 @@ order by xpat_matching_significance
   <?MIVAR NAME="xpdetres_geneZdbId">$1<?/MIVAR>
   <?MIVAR NAME="xpdetres_geneAbbrev">$2<?/MIVAR>
   <?MIVAR NAME="xpdetres_geneAbbrevNotHtml">$6<?/MIVAR>
-  <?MIVAR COND="$(NE,$3,NULL)" NAME="xpdetres_matching_output">$3<?/MIVAR>
-  <?MIVAR COND="$(NE,$5,NULL)" NAME="xpdetres_matching_qualification">$5<?/MIVAR>
+  <?MIVAR NAME="xpdetres_matching_output">$3<?/MIVAR>
+  <?MIVAR NAME="xpdetres_matching_qualification">$5<?/MIVAR>
 <?/MISQL>
 
 <?MICOMMENT> **** get figure count **** <?/MICOMMENT>
@@ -86,8 +86,7 @@ $xpdetres_imagesOnlyConstraint
 
  
 <?MICOMMENT> *** display matching text *** <?/MICOMMENT>
-
-<?MIBLOCK COND="$(XST,$xpdetres_matching_output)">
+<?MIBLOCK COND="$(NE,$xpdetres_matching_output,)">
 
   <?MIVAR NAME=$xpdetres_start_pos>$(POSITION,$(LOWER,$xpdetres_matching_output),$(LOWER,$xpdetres_matchedText))<?/MIVAR>
   <?MIVAR NAME=$xpdetres_str_length>$(STRLEN,$xpdetres_matchedText)<?/MIVAR>
