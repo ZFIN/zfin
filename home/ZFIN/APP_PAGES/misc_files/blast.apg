@@ -113,12 +113,12 @@
 
 <?MICOMMENT> ===== Main Page ======== <?/MICOMMENT>
 
-<FORM ACTION="/blast/blastit.cgi" METHOD=post NAME="MainBlastForm" ENCTYPE="multipart/form-data" onsubmit="return validateSequence()">
+<FORM ACTION="/blast/blasttest.cgi" METHOD=post NAME="MainBlastForm" ENCTYPE="multipart/form-data" onsubmit="return validateSequence()">
 <input type=hidden name=SCOPE value=share>
 <B>Choose program and database:</B>
 <TABLE>
 <TR>
-  <TD> Program: &nbsp;
+  <TD> <a href="/zf_info/blast_info.html">Program</a>: &nbsp;
        <select name = "PROGRAM" onChange="setOption()">
          <?MIVAR>
          <option VALUE="blastn" $(IF,$(AND,$(XST,$PROGRAM),$(EQ,$PROGRAM,blastn)),selected)> Nucleotide - Nucleotide
@@ -129,7 +129,7 @@
          <?/MIVAR>
        </select>
   </TD>
-  <TD> Database:  </TD>
+  <TD> <a href="/zf_info/blast_info.html#blast_dbs">Database</a>:  </TD>
   <TD>
    <?MICOMMENT> Zfin curators have access to more datasets than the general public. 
                 Since the order of the datasets are important, instead of many small condition
@@ -144,6 +144,7 @@
          <option VALUE = "refseq_zf_rna"> RefSeq Zebrafish mRNA
          <option VALUE = "zfin_gb_seq"  $(IF,$(AND,$(XST,$DATALIB),$(EQ,$DATALIB,zfin_gb_seq)),selected)> ZFIN GenBank Sequences
          <option VALUE = "zfin_cdna_seq"  $(IF,$(OR,$(NXST,$DATALIB),$(AND,$(XST,$DATALIB),$(EQ,$DATALIB,zfin_cdna_seq))),selected)> ZFIN cDNA Sequences
+         <option VALUE = "zfin_xpat_cdna_seq"> ZFIN Genes with Expression
          <option VALUE = "zfin_mrph"> ZFIN Morpholino Sequences
          <option VALUE = "zfin_microRNA"> ZFIN MicroRNA Sequences
          <option VALUE = "vega_zfin"> ZFIN Vega Transcripts
@@ -177,6 +178,7 @@
          <option VALUE = "refseq_zf_rna"> RefSeq Zebrafish mRNA
          <option VALUE = "zfin_gb_seq"  $(IF,$(AND,$(XST,$DATALIB),$(EQ,$DATALIB,zfin_gb_seq)),selected)> ZFIN GenBank Sequences
          <option VALUE = "zfin_cdna_seq"  $(IF,$(OR,$(NXST,$DATALIB),$(AND,$(XST,$DATALIB),$(EQ,$DATALIB,zfin_cdna_seq))),selected)> ZFIN cDNA Sequences
+         <option VALUE = "zfin_xpat_cdna_seq"> ZFIN Genes with Expression
          <option VALUE = "zfin_mrph"> ZFIN Morpholino Sequences
          <option VALUE = "zfin_microRNA"> ZFIN MicroRNA Sequences
          <option VALUE = "vega_zfin"> ZFIN Vega Transcripts
