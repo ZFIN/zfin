@@ -84,9 +84,9 @@ $xpdetres_imagesOnlyConstraint
   <?MIVAR NAME="xpdetres_pubCount">$1<?/MIVAR>
 <?/MISQL>
 
- 
 <?MICOMMENT> *** display matching text *** <?/MICOMMENT>
-<?MIBLOCK COND="$(NE,$xpdetres_matching_output,)">
+
+<?MIBLOCK COND="$(AND,$(NE,$xpdetres_matching_output,),$(NE,$xpdetres_matching_output,NULL))">
 
   <?MIVAR NAME=$xpdetres_start_pos>$(POSITION,$(LOWER,$xpdetres_matching_output),$(LOWER,$xpdetres_matchedText))<?/MIVAR>
   <?MIVAR NAME=$xpdetres_str_length>$(STRLEN,$xpdetres_matchedText)<?/MIVAR>
