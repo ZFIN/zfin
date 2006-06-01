@@ -113,7 +113,7 @@
 
 <?MICOMMENT> ===== Main Page ======== <?/MICOMMENT>
 
-<FORM ACTION="/blast/blasttest.cgi" METHOD=post NAME="MainBlastForm" ENCTYPE="multipart/form-data" onsubmit="return validateSequence()">
+<FORM ACTION="/blast/blastit.cgi" METHOD=post NAME="MainBlastForm" ENCTYPE="multipart/form-data" onsubmit="return validateSequence()">
 <input type=hidden name=SCOPE value=share>
 <B>Choose program and database:</B>
 <TABLE>
