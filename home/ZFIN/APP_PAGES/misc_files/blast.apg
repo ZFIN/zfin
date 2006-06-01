@@ -118,7 +118,7 @@
 <B>Choose program and database:</B>
 <TABLE>
 <TR>
-  <TD> <a href="/zf_info/blast_info.html">Program</a>: &nbsp;
+  <TD> <a href="/zf_info/blast_info.html">Program</a>: 
        <select name = "PROGRAM" onChange="setOption()">
          <?MIVAR>
          <option VALUE="blastn" $(IF,$(AND,$(XST,$PROGRAM),$(EQ,$PROGRAM,blastn)),selected)> Nucleotide - Nucleotide
@@ -129,14 +129,15 @@
          <?/MIVAR>
        </select>
   </TD>
-  <TD> <a href="/zf_info/blast_info.html#blast_dbs">Database</a>:  </TD>
+  <TD>&nbsp;</TD>
+  <TD><a href="/zf_info/blast_info.html#blast_dbs">Database</a>: </TD>
   <TD>
    <?MICOMMENT> Zfin curators have access to more datasets than the general public. 
                 Since the order of the datasets are important, instead of many small condition
                 blocks clauses within the option list, we use two big blocks.  
    <?/MICOMMENT>
    <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
-     <select multiple name = "DATALIB" size=9>
+     <select multiple name = "DATALIB" size=11>
        <?MIVAR>
          <option VALUE = "gbk_gb_zf"> GenBank Zebrafish
          <option VALUE = "gbk_gb_hs"> GenBank Human
