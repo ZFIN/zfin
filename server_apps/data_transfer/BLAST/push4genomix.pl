@@ -10,7 +10,7 @@
   
 use DBI;
 
-my ($dbh, $sql, $sth, $acc_num, $mrkr_zdb_id, $mrkr_abbrev, $gene_count, $last_acc_num, $output_acc_num, $output_mrkr_1_display, $output_mrkr_1_url, $output_mrkr_2_display, $output_mrkr_2_url);
+my ($dbh, $output_acc_num, $output_mrkr_1_display, $output_mrkr_1_oid, $output_mrkr_2_display, $output_mrkr_2_oid); 
 
 # define environment variable
 $ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
@@ -23,17 +23,87 @@ my $dbname = "<!--|DB_NAME|-->";
 my $username = "";
 my $password = "";
 
-my $zfin_mrkr_url = "http://zfin.org/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=";
-my $zfin_qry_gene_acc_url = "http://zfin.org/cgi-bin/webdriver?MIval=aa-markerselect.apg&marker_type=GENE&query_results=t&input_acc=";
-
-$dbh = DBI->connect("DBI:Informix:$dbname", $username, $password) 
+my $dbh = DBI->connect("DBI:Informix:$dbname", $username, $password) 
 	or die "Cannot connect to Informix database: $DBI::errstr\n" ;
 
+&generateAccMrkrRelationshipFile();
+&generateGeneDataFile();
+
+$dbh->disconnect();
+
+exit;
+#================================
+# sub generateGeneDataFile
+
+sub generateGeneDataFile () {
+    my $sql = "
+	select mrkr_zdb_id
+          from marker
+         where mrkr_type like 'GENE%'";
+           
+    my $sth = $dbh->prepare($sql);
+    $sth -> execute();
+    
+    open OUT, ">$outputdir/gene_related_data.txt" 
+	or die "Cannot open file to write $! \n";
+    
+    my $gene_zdb_id = '';
+     
+    while (($gene_zdb_id) = $sth->fetchrow_array) {
+	my $has_xpat = 0; 
+        my $has_xpat_img = 0;
+	my $has_go = 0;
+
+	$sql = "
+                select xpatfig_fig_zdb_id
+                  from expression_experiment, expression_result,
+                       expression_pattern_figure, fish_image
+                 where xpatex_zdb_id = xpatres_xpatex_zdb_id
+                   and xpatex_gene_zdb_id = '$gene_zdb_id' 
+                   and xpatres_zdb_id  = xpatfig_xpatres_zdb_id
+                   and xpatfig_fig_zdb_id = fimg_fig_zdb_id";
+
+	if ($dbh->selectrow_array ($sql)) {
+	    $has_xpat_img = 1;
+	    $has_xpat = 1;
+	}
+	
+	if (!$has_xpat) {
+
+	    $sql = "
+                select xpatres_zdb_id
+                  from expression_experiment, expression_result 
+                 where xpatex_zdb_id = xpatres_xpatex_zdb_id
+                   and xpatex_gene_zdb_id = '$gene_zdb_id' ";
+
+	    $has_xpat = 1 if $dbh->selectrow_array ($sql);
+	}
+
+	$sql = "
+                select mrkrgoev_zdb_id
+                  from marker_go_term_evidence
+                 where mrkrgoev_mrkr_zdb_id = '$gene_zdb_id' ";
+
+	$has_go = 1 if $dbh->selectrow_array ($sql);
+
+	print OUT "$gene_zdb_id|$has_xpat|$has_xpat_img|$has_go|\n";
+    }
+
+    close OUT;
+
+}
+
+#==========================================================
+# sub generateAccMrkrRelationshipFile
+#
 # get acc and mrkr from db_link, restrict dbs to 
 # Sanger_FPC, VEGA, GenBank, RefSeq, Ensembl, Sanger clone, 
 # GenPept, SwissProt, RefSeq, VEGA_clone
 
-$sql = "select dblink_acc_num as acc_num, mrkr_zdb_id, mrkr_abbrev
+sub generateAccMrkrRelationshipFile() {
+       
+    my $sql = "
+        select dblink_acc_num as acc_num, mrkr_zdb_id, mrkr_abbrev
           from db_link, marker
          where dblink_linked_recid = mrkr_zdb_id 
            and dblink_fdbcont_zdb_id in ('ZDB-FDBCONT-040412-10','ZDB-FDBCONT-040412-14',
@@ -51,71 +121,74 @@ $sql = "select dblink_acc_num as acc_num, mrkr_zdb_id, mrkr_abbrev
            and mrel_type = 'knockdown reagent targets gene'
        order by acc_num, mrkr_zdb_id ";
            
-$sth = $dbh->prepare($sql);
-$sth -> execute();
-	
-open OUT, ">$outputdir/acc_mrkr_link.txt" 
+    my $sth = $dbh->prepare($sql);
+    $sth -> execute();
+    
+    open OUT, ">$outputdir/accession_marker_relationship.txt" 
 	or die "Cannot open file to write $! \n";
+    
+    my $gene_count = 0;
+    my $last_acc_num = '';
+    my $acc_num = '';
+    my $mrkr_zdb_id = '';
+    my $mrkr_abbrev = '';
 
-$gene_count = 0;
-$last_acc_num = '';
-
-while (($acc_num, $mrkr_zdb_id, $mrkr_abbrev) = $sth->fetchrow_array) {
+    while (($acc_num, $mrkr_zdb_id, $mrkr_abbrev) = $sth->fetchrow_array) {
 	
 	if ($acc_num ne $last_acc_num) {
-
-		print OUT "$output_acc_num|$output_mrkr_1_display|$output_mrkr_1_url|$output_mrkr_2_display|$output_mrkr_2_url|\n" if ($last_acc_num && $output_mrkr_1_display) ;
-		
-		$last_acc_num = $acc_num;
-		$gene_count = 0;
-		$output_acc_num = $acc_num;
-		$output_mrkr_1_display = '';
-		$output_mrkr_1_url = '';
-		$output_mrkr_2_display = '';
-		$output_mrkr_2_url = '';
+	    
+	    print OUT "$output_acc_num|$output_mrkr_1_display|$output_mrkr_1_oid|$output_mrkr_2_display|$output_mrkr_2_oid|\n" if ($last_acc_num && $output_mrkr_1_display) ;
+	    
+	    $last_acc_num = $acc_num;
+	    $gene_count = 0;
+	    $output_acc_num = $acc_num;
+	    $output_mrkr_1_display = '';
+	    $output_mrkr_1_oid = '';
+	    $output_mrkr_2_display = '';
+	    $output_mrkr_2_oid = '';
 	}
 	
 	if ( $mrkr_zdb_id =~ /-BAC-|-PAC-/ ) {
-		
-		my $sql = "select mrel_mrkr_2_zdb_id, mrkr_abbrev
+	    
+	    my $sql = "select mrel_mrkr_2_zdb_id, mrkr_abbrev
                         from marker_relationship, marker
                        where mrel_mrkr_1_zdb_id = '$mrkr_zdb_id'
                          and mrel_type = 'clone contains gene'
                          and mrel_mrkr_2_zdb_id = mrkr_zdb_id  ";
-			&queryGeneAndDisplay ($acc_num, $mrkr_zdb_id, $mrkr_abbrev, $sql);
+	    &queryGeneAndDisplay ($acc_num, $mrkr_zdb_id, $mrkr_abbrev, $sql);
 	}		
 	elsif ( $mrkr_zdb_id =~ /EST|CDNA/ ) {	   
-		
-		my $sql = "select mrel_mrkr_1_zdb_id, mrkr_abbrev
+	    
+	    my $sql = "select mrel_mrkr_1_zdb_id, mrkr_abbrev
                         from marker_relationship, marker
                        where mrel_mrkr_2_zdb_id = '$mrkr_zdb_id'
                          and mrel_type in ('gene encodes small segment',
                                          'gene contains small segment')
                          and mrel_mrkr_1_zdb_id = mrkr_zdb_id "; 
-		
-		&queryGeneAndDisplay($acc_num, $mrkr_zdb_id, $mrkr_abbrev, $sql);
+	    
+	    &queryGeneAndDisplay($acc_num, $mrkr_zdb_id, $mrkr_abbrev, $sql);
 	} 
 	
 	elsif ( $mrkr_zdb_id =~ /GENE/ )  {
-		$gene_count ++;
-		if ($gene_count == 1) {
-			
-			$output_mrkr_1_display = $mrkr_abbrev;
-			$output_mrkr_1_url = $zfin_mrkr_url."$mrkr_zdb_id";
-			
-		}else {
-			$output_mrkr_1_display = $gene_count." Genes";
-			$output_mrkr_1_url = $zfin_qry_gene_acc_url.$output_acc_num;
-		}
+	    $gene_count ++;
+	    if ($gene_count == 1) {
 		
+		$output_mrkr_1_display = $mrkr_abbrev;
+		$output_mrkr_1_oid = "$mrkr_zdb_id";
+		
+	    }else {
+		$output_mrkr_1_display = $gene_count." Genes";
+		$output_mrkr_1_oid = $output_acc_num;
+	    }
+	    
 	}
 	
-} # end while
+    } # end while
 
-print OUT "$output_acc_num|$output_mrkr_1_display|$output_mrkr_1_url|$output_mrkr_2_display|$output_mrkr_2_url|\n" if $output_mrkr_1_display;
-
-close OUT;
-exit;
+    print OUT "$output_acc_num|$output_mrkr_1_display|$output_mrkr_1_oid|$output_mrkr_2_display|$output_mrkr_2_oid|\n" if $output_mrkr_1_display;
+    
+    close OUT;
+}
 
 ########################################################
 # queryGeneAndDisplay 
@@ -126,8 +199,8 @@ exit;
 #       clone abbrev
 #       sql to query related gene
 # output:
-#       set $output_mrkr_1_display $output_mrkr_1_url
-#           $output_mrkr_2_display $output_mrkr_2_url
+#       set $output_mrkr_1_display $output_mrkr_1_oid
+#           $output_mrkr_2_display $output_mrkr_2_oid
 #
 sub queryGeneAndDisplay () {
 	
@@ -139,29 +212,29 @@ sub queryGeneAndDisplay () {
     my $sec_array_ref = $dbh->selectall_arrayref($sql);
     my $gene_count = @$sec_array_ref;
 
-	if ( $gene_count == 1 ) {
-		my $row = $sec_array_ref->[0];
-		
-		my $gene_zdb_id = $row->[0];
-		my $gene_abbrev = $row->[1]; 
-			   		
-		$output_mrkr_1_display = $gene_abbrev;
-		$output_mrkr_1_url = $zfin_mrkr_url.$gene_zdb_id;
-		$output_mrkr_2_display = $o_abbrev;
-		$output_mrkr_2_url = $zfin_mrkr_url.$o_id;
-	}
-	elsif ( $gene_count > 1 ) {
-
-		$output_mrkr_1_display = $gene_count." Genes";
-		$output_mrkr_1_url = $zfin_qry_gene_acc_url.$acc;
-		$output_mrkr_2_display = $o_abbrev;
-		$output_mrkr_2_url = $zfin_mrkr_url.$o_id;
-
-	}
+    if ( $gene_count == 1 ) {
+	my $row = $sec_array_ref->[0];
+	
+	my $gene_zdb_id = $row->[0];
+	my $gene_abbrev = $row->[1]; 
+	
+	$output_mrkr_1_display = $gene_abbrev;
+	$output_mrkr_1_oid = $gene_zdb_id;
+	$output_mrkr_2_display = $o_abbrev;
+	$output_mrkr_2_oid = $o_id;
+    }
+    elsif ( $gene_count > 1 ) {
+	
+	$output_mrkr_1_display = $gene_count." Genes";
+	$output_mrkr_1_oid = $acc;
+	$output_mrkr_2_display = $o_abbrev;
+	$output_mrkr_2_oid = $o_id;
+	
+    }
     else {
-		$output_mrkr_1_display = $o_abbrev;
-		$output_mrkr_1_url = $zfin_mrkr_url.$o_id;
-
+	$output_mrkr_1_display = $o_abbrev;
+	$output_mrkr_1_oid = $o_id;
+	
     }
     
 }
