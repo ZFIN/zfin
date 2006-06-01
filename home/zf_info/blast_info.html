@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>
+	ZFIN BLAST programs and datasets
+</title>
+</head>
+
+<script language="JavaScript" src="http://<!--|DOMAIN_NAME|-->/header.js"></script>
+<a name="blast_progs"></a><H3> BLAST Programs </H3>
+<a href="http://blast.wustl.edu">WU BLAST (Washington University BLAST)</a>, developed by Warren Gish, is an implementation of the BLAST (Basic Local Alignment Search Tool) algorithm. The five programs in the WU BLAST version 2.0 are available at ZFIN BLAST. 
+
+<ul>
+  <li><b> BLASTN </b> - compares a nucleotide query sequence against a nucleotide sequence database.  <p>
+
+  <li><b> BLASTP </b> - compares an amino acid query sequence against a protein sequence database.  <p>
+
+  <li><b> BLASTX </b> - compares the six-frame conceptual translation products of a nucleotide query sequence (both strands) against a protein sequence database. <p>
+
+  <li><b> TBLASTN </b> - compares an amino acid query sequence against the six-frame translations of a nucleotide sequence database. <p>
+
+  <li><b> TBLASTX </b> - compares the six-frame translations of a nucleotide query sequence against the six-frame translations of a nucleotide sequence database. <p>
+</ul>
+
+<p>
+
+<a name="blast_dbs"></a><H3>BLAST Datasets </H3>
+
+<b>Subset Relationship Diagram: </b> <p>
+<pre>
+   GenBank Zebrafish 
+       ZFIN GenBank Sequences 
+
+   ZFIN GenBank Sequences + ZFIN Vega Transcripts 
+       ZFIN cDNA Sequences 
+            ZFIN Genes with Expression 
+</pre>
+
+
+<b>Nucleotide Sequence Database </b>
+<ul>
+  <li><b>GenBank Zebrafish</b> - Subset of GenBank that contains zebrafish sequences from these divisions: vetebrate and high-throughput cDNAs (HTC). ESTs, genome survey sequences (GSS), and high-throughput genomic sequences (HTGs) are not included. Zebrafish sequences are parsed from these divisions by examining the organism lines for entries "Danio rerio". <p>
+
+  <li><b>RefSeq Zebrafish mRNA</b> - NCBI RefSeq Zebrafish transcripts (Zebrafish RefSeqs of type: NM_, NR, XM_). <p>
+
+  <li><b>ZFIN GenBank Sequences</b> - Subset of GenBank that contains zebrafish sequences from all divisions (including EST) that are associated with ZFIN zebrafish genes or markers or clones.  <p>
+
+  <li><b>ZFIN cDNA Sequences</b> - Combination of GenBank zebrafish cDNA sequences from all divisions (including EST) that are associated with ZFIN zebrafish genes or markers or clones, and Vega zebrafish transcripts that are associated with ZFIN zebrafish genes.  <p>
+ 
+  <li><b>ZFIN Genes with Expression</b> - Subset of ZFIN cDNA Sequences for which ZFIN has obtained related gene expression data. <p>
+
+  <li><b>ZFIN Morpholino Sequences</b> - Morpholino sequences in ZFIN. <p>
+
+  <li><b>ZFIN MicroRNA Sequences</b> - MicroRNA sequences in ZFIN. <p>
+
+  <li><b>ZFIN Vega Transcripts</b> - Vega zebrafish transcripts that are associated with ZFIN zebrafish genes.  <p>
+
+  <li><b>Zebrafish mRNA</b> - Subset of GenBank that contains zebrafish sequences from all divisions (including EST) that are of type mRNA. Zebrafish mRNA sequences are parsed by examining the organism lines for entries "Danio rerio" and locus line for entries containing "mRNA". <p>
+
+  <li><b>EST Zebrafish</b> - Subset of GenBank that contains zebrafish sequences from EST division. Zebrafish sequences are parsed from the EST divisions by examining the organism lines for entries "Danio rerio". <p>
+
+  <li><b>Ensembl Zebrafish Transcripts</b> - Ensembl zebrafish trnascripts. <p>
+
+  <li><b>TIGR Zebrafish Clusters</b> - Tentative consensus transcript sequences from TIGR's Zebrafish Gene Index (ZGI). <p>
+
+  <li><b>Zebrafish DNA</b> - Subset of GenBank that contains zebrafish sequences from all divisions (including EST) that are of type DNA. Zebrafish DNA sequences are parsed by examining the organism lines for entries "Danio rerio" and locus line for entries containing "DNA". <p>
+
+  <li><b>HTG Zebrafish</b> - Subset of GenBank that contains zebrafish High-throughput Genomic sequences (HTG). Zebrafish sequences are parsed from the HTG division by examining the organism line for entries "Danio rerio". <p>
+
+  <li><b>GSS Zebrafish</b> - Subset of GenBank that contains zebrafish Genome Survey Sequences (GSS). Zebrafish sequences are parsed from the GSS division by examining the organism line for entries "Danio rerio". <p>
+
+  <li><b>Zebrafish Trace Archive</b> - Zebrafish sequences from NCBI Trace Archive database. 
+
+</ul>
+
+<b>Protein Sequence Database</b>
+
+<ul>
+  <li><b>RefSeq Zebrafish Protein</b> - NCBI RefSeq zebrafish protein sequences. (Zebrafish sequences of type: NP_, XP_). <p>
+
+  <li><b>SwissProt/TrEMBL Zebrafish</b> - Zebrafish protein sequences from the "non-redundant" set of sequences from SwissProt and TrEMBL. Zebrafish sequences are defined as those entries "Danio rerio" in the species lines.  <p>
+
+</ul>
+
+</BODY>
+
+<script language="JavaScript" src="http://<!--|DOMAIN_NAME|-->/footer.js"></script>
