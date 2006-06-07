@@ -306,15 +306,8 @@ while (<EXPR_IN>) {
 
     # if there has been a keyword read before, output that
     if  ($keywrd_keyword) { #  $exp_found is defined from the last read
-
-	if ($exp_key eq $keywrd_key && $exp_stage eq $keywrd_stage) {
-	    $exp_desc = $exp_desc_pre.($exp_desc ? "<br>".$exp_desc: "") if $exp_desc_pre; 
-	    print EXPR_OUT join("\|",$exp_key,$stage_hash{$exp_stage},$exp_desc,$exp_found,$keywrd_keyword,"")."|\n";
-	}
-	else {            # if no keywords available for this expression record
-	    print EXPR_OUT join("\|",$exp_key,$stage_hash{$exp_stage},$exp_desc,'t',"unspecified","")."|\n";
-	    next;
-	}
+       $exp_desc = $exp_desc_pre.($exp_desc ? "<br>".$exp_desc: "") if $exp_desc_pre;
+       print EXPR_OUT join("\|",$exp_key,$stage_hash{$exp_stage},$exp_desc,$exp_found,$keywrd_keyword,"")."|\n";
     }
 
     while (<KEYWD_IN>) {
