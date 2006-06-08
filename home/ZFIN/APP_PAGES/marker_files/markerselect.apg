@@ -852,7 +852,7 @@ DEBUGGING:
       	      <?/MISQL>
               <TD>
               <?MIVAR COND="$(>,$xpat_count,0)">
-                <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=exists&gene_name=$marker_abbrev>assays</A>
+                <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=exists&gene_name=$marker_abbrev&xpatsel_geneZdbId=$OID>assays</A>
               <?/MIVAR>&nbsp;	
               </TD>
 
