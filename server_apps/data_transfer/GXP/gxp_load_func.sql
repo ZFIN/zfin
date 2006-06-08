@@ -86,7 +86,7 @@ create function gxp_load_func (
 
 	-- If in a transaction, then roll it back.  Otherwise, by default
 	-- exiting this exception handler will commit the transaction.
-	rollback work;
+rollback work;
   
         return -1;
 
@@ -567,6 +567,7 @@ insert into tmp_gxp_expression_result
  	 where t_mrkr_name = exp_clone_name
    	   and t_mrkr_zdb_id = t_xpatex_probe_zdb_id;
 
+
 insert into zdb_active_data (zactvd_zdb_id)
 	 	select t_xpatres_zdb_id 
 	          from tmp_gxp_expression_result;
@@ -667,6 +668,10 @@ let errorHint = "fish_image";
 insert into zdb_active_data (zactvd_zdb_id)
 	select img_zdb_id 
 	  from images_tmp;
+if (sbm_lab_name = "Talbot") then
+    update images_tmp set img_comments = "CEG load",
+                  img_preparation = "whole-mount";
+    end if 
 
 -- images with annotation need a slightly different SQL
 -- if modify, check both SQLs.
@@ -735,7 +740,7 @@ insert into int_data_source (ids_data_zdb_id, ids_source_zdb_id)
 
 
 
-  commit work;
+commit work;
 
   end
   return 0;
