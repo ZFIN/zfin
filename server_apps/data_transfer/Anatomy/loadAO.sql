@@ -17,7 +17,7 @@
 --     end_endInconsistent.err
 --     end_startInconsistent.err
 --     pub_incorrect.err
--- 		 for the above three, zero length means error free
+--     obsolete_anat_with_xpat.err
 --     annotationViolates.err
 -- 		 Send content to curators 
 --     
@@ -185,6 +185,12 @@ create temp table obsolete_anatomy_item(
 !echo '== load anatitem_obsolete.unl =='
 load from "anatitem_obsolete.unl" insert into obsolete_anatomy_item;
 
+unload to "obsolete_anat_with_xpat.err" 
+   select o_anatitem_zdb_id
+     from obsolete_anatomy_item
+    where exists (select * 
+                    from expression_result
+                   where xpatres_anat_item_zdb_id = o_anatitem_zdb_id) ;
 
 -------------------------------------------------------------------
 -- Anatomy term synonyms/alias 
