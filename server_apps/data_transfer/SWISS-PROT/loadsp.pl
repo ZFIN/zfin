@@ -88,7 +88,7 @@ sub sendRunningResult {
   open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
   $msg3->print(\*SENDMAIL);
 
- #----- Another mail send out problem files ----
+ #----- Another mail send out pubmed numbers that are not in ZFIN ----
 
   my $SUBJECT="Auto: PubMed not in ZFIN";
   my $MAILTO="<!--|SWISSPROT_EMAIL_REPORT|-->";     
@@ -110,6 +110,29 @@ sub sendRunningResult {
   # Output the message to sendmail
   open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
   $msg4->print(\*SENDMAIL);
+
+ #----- Another mail send out accession numbers that are not attributed ----
+
+  my $SUBJECT="Auto: PubMed not in ZFIN";
+  my $MAILTO="<!--|SWISSPROT_EMAIL_REPORT|-->";     
+  my $ATTFILE = "accession_with_no_attribution";
+
+  # Create another new multipart message:
+  $msg5 = new MIME::Lite 
+    From    => "$ENV{LOGNAME}",
+    To      => "$MAILTO",
+    Subject => "$SUBJECT",
+    Type    => 'multipart/mixed';
+
+  attach $msg5 
+    Type     => 'application/octet-stream',
+    Encoding => 'base64',
+    Path     => "./$ATTFILE",
+    Filename => "$ATTFILE";
+
+  # Output the message to sendmail
+  open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
+  $msg5->print(\*SENDMAIL);
 
   close(SENDMAIL);
 }
