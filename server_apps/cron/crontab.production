@@ -140,7 +140,7 @@
 #
 # M        10:10am   weekly reminder email to tech staff to send in our
 #                    status report to Judy.
-10 10 * * 1 <!--|ROOT_PATH|-->/<!--|CGI_BIN_DIR_NAME|-->/send_Judy_your_report.pl
+#10 10 * * 1 <!--|ROOT_PATH|-->/<!--|CGI_BIN_DIR_NAME|-->/send_Judy_your_report.pl
 # F        10:10pm   weekly update of chromosome position and orthology for
 #                    mouse, human, fly
 10 22 * * 5 <!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/loadOrthoChromInfo.pl
