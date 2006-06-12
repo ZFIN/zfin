@@ -361,6 +361,21 @@ begin work;
         insert into external_note (extnote_zdb_id, extnote_data_zdb_id, extnote_note)
                    select * from pre_external_note;
 
+--!echo 'unload accession# with no attribution'
+-- accession from EC, Pfam, POSITE, InterPro, SwissProt
+	unload to "accession_with_no_attribution" 
+		select dblink_linked_recid, dblink_acc_num
+ 		  from db_link
+ 		 where dblink_fdbcont_zdb_id in ("ZDB-FDBCONT-040412-49",
+						 "ZDB-FDBCONT-040412-50",
+					 	 "ZDB-FDBCONT-040412-51",
+						 "ZDB-FDBCONT-040412-48",
+						 "ZDB-FDBCONT-040412-47")
+   		   and dblink_zdb_id not in (
+			select  recattrib_data_zdb_id
+          		  from  record_attribution )
+	      order by dblink_linked_recid ;
+
 
 --rollback work;
 commit work;
