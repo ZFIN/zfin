@@ -11,9 +11,15 @@ OUTPUT_VARS:
 	none
 
 DESCRIPTION:
-	webexplodes fxallfigures.apg, which is the replacement for this page - the layer
-        of indirection here is required because we need the database to translate an xpat
-        id into a pub & probe combo.
+        This page has two functions:
+        if it takes in a GENE zdbid, it webexplodes a correct call to xpatselect. This
+        is intended as a nice way of linking to expression data from offsite.
+
+        if it takes in an XPAT zdbid, it assumes that a user bookmarked one of the old
+        Thisse expression pages and to get the expected behavior it webexplodes 
+        fxallfigures.apg, which is the replacement for this page - the layer of indirection 
+        here is required because we need the database to translate an xpat id into a pub 
+        & probe combo.
 
 <?/MICOMMENT>
 <?MIERROR>
@@ -27,29 +33,47 @@ DESCRIPTION:
 
 <?/MIERROR>
 
-<?MICOMMENT> *** We can translate xpat id's into the publication & probe records for our old
-             *** school direct submission data (Thisse, etc).  In terms of dealing with bookmarks,
-             *** this is all we need....                                          *** <?/MICOMMENT>
 
+<?MICOMMENT> *** This is used as an external link to gene expression data, we display it 
+                 in a search form, but it's nice to have a clean external URL.  Basically
+                 this section of code is translating a gene zdb_id into a 'correct' call to
+                 xpatselect *** <?MICOMMENT>
 
-<?MISQL SQL="select publication.zdb_id, xpatex_probe_feature_zdb_id
-             from publication 
-                  join expression_experiment on xpatex_source_zdb_id = publication.zdb_id
-             where xpatex_zdb_id = '$OID'
-               and publication.jtype = 'Unpublished';">
-  <?MISQL SQL="select WebExplode(object,'OID=$1&fxallfig_probe_zdb_id=$2') from webPages where ID='aa-fxallfigures.apg';">
-    <?MIVAR>$1<?/MIVAR>
+<?MIBLOCK COND="$(NOT,$(=,$(POSITION,$OID,GENE),0))">
+
+  <?MISQL SQL="select mrkr_abbrev from marker where mrkr_zdb_id = '$OID';">
+    <?MIVAR NAME="xpatview_mrkr_abbrev">$1<?/MIVAR>
   <?/MISQL>
-<?/MISQL>
+  
+  <?MISQL SQL="select WebExplode(object,'&query_results=true&gene_name=$(URLENCODE,$xpatview_mrkr_abbrev)&xpatsel_geneZdbId=$OID') from webPages where ID='aa-xpatselect.apg';">$1<?/MISQL>
+  
+<?MIELSE> <?MICOMMENT> *** not a GENE zdb id *** <?/MICOMMENT>
 
-<?MICOMMENT> *** ...but just incase somebody grabs xpat id's out of the download file, there is a possibility
-             *** that they'll plug a GELI xpat id into this page.  So I'm throwing this in to keep it from
-             *** coming up as an empty page.                                                 *** <?/MICOMMENT>
 
-<?MIBLOCK COND="$(EC,$MI_ROWCOUNT,0)">
-  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
-    <br>
-    This page no longer exists. 
-    <br><br>
-  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+  <?MICOMMENT> *** We can translate xpat id's into the publication & probe records for our old
+               *** school direct submission data (Thisse, etc).  In terms of dealing with bookmarks,
+               *** this is all we need....                                          *** <?/MICOMMENT>
+
+  <?MISQL SQL="select publication.zdb_id, xpatex_probe_feature_zdb_id
+               from publication 
+                    join expression_experiment on xpatex_source_zdb_id = publication.zdb_id
+               where xpatex_zdb_id = '$OID'
+                 and publication.jtype = 'Unpublished';">
+    <?MISQL SQL="select WebExplode(object,'OID=$1&fxallfig_probe_zdb_id=$2') from webPages where ID='aa-fxallfigures.apg';">
+      <?MIVAR>$1<?/MIVAR>
+    <?/MISQL>
+  <?/MISQL>
+
+  <?MICOMMENT> *** ...but just incase somebody grabs xpat id's out of the download file, there is a possibility
+               *** that they'll plug a GELI xpat id into this page.  So I'm throwing this in to keep it from
+               *** coming up as an empty page.                                                 *** <?/MICOMMENT>
+
+  <?MIBLOCK COND="$(EC,$MI_ROWCOUNT,0)">
+    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+      <br>
+      This page no longer exists. 
+      <br><br>
+    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+  <?/MIBLOCK>
+
 <?/MIBLOCK>
