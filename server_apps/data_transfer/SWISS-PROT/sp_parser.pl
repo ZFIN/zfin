@@ -72,8 +72,12 @@ while (<>) {
     push (@de, $de);    #put each item of the comments into array     
     $de = $de.' '.$1;
 	if (/.* \(EC ([\d\.\-]*)\)/){ # see http://www.chem.qmul.ac.uk/iubmb/enzyme/ 
-		$ecnumber=$1;        
-		$ecnumber=~s/[\.\-]*$//; # chop trailing dot dash(s) because zfin does not allow -
+		$ecnumber=$1;  
+
+		# we want to use the full EC# for link out
+                # don't know what does it mean that "zfin does not allow -"
+                # let try to see what it breaks. 
+		#$ecnumber=~s/[\.\-]*$//; # chop trailing dot dash(s) because zfin does not allow -
 	}
     next;
   }
