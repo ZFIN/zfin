@@ -1,0 +1,45 @@
+#------------------------------------------------------------------------
+#
+# Makefile for ZFIN_WWW CVS Project, Zebrafish 2006_tutorial directory.
+#
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
+# !! of the makefile hierarchy this makefile is a part of, and of the  !!
+# !! format and conventions used in this makefile.                     !!
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#
+
+
+# ---------------  Variable Definitions  --------------------------------
+
+TOP = ../../..
+include $(TOP)/make.include
+
+TARGETDIR = $(TARGETROOT)/home/zf_info/2006_tutorial
+
+STATICS =  Madison_2006_workshopmodule_zfin-1ii.pdf \
+	   Madison_2006_workshopmodule_zfin-2iii.pdf \
+	   Madison_2006_workshopmodule_zfin-2iv.pdf \
+	   Madison_2006_workshopmodule_zfin-3i.pdf \
+	   Madison_2006_workshopmodule_zfin-3ii.pdf \
+	   Madison_2006_workshopmodule_zfin-3iii.pdf \
+	   Madison_2006_workshopmodule_zfin-4i.pdf \
+	   Madison_2006_workshopmodule_zfin-4ii.pdf \
+	   Madison_2006_workshopmodule_zfin-4iii.pdf \
+	   Madison_2006_workshopmodule_zfin.pdf \
+	   Sanger_Madison_1i.pdf Sanger_Madison_200606.pdf \
+	   Sanger_Madison_2i.pdf Sanger_Madison_2ii.pdf \
+	   Sanger_Madison_2iv.pdf Sanger_Madison_3ii.pdf \
+	   Sanger_Madison_3v.pdf module_1_iii_ncbi.pdf \
+	   module_2_iii_ncbi.pdf module_2_iv_ncbi.pdf \
+	   module_3_i_ncbi.pdf module_3_ii_ncbi.pdf \
+	   module_3_iv_ncbi.pdf module_4_i_ncbi.pdf \
+	   tutorial.html
+
+
+# ---------------  Production Rules  ------------------------------------
+
+# Use default rules for directories without app pages in them.
+
+include $(TOP)/make.default.rules
+
