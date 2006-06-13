@@ -82,6 +82,12 @@ while (<IN>) {
 
    my ($stage_code, $keyword) = processCsvRow ($_); 
    my $stage_range = getStageRange($stage_code);
+
+   # some terms in the template are of formate previous_name(current_name)
+   # e.g. optic nerve (cranial nerve II)
+   if ($keyword =~ /\((.+)\)/) {
+       $keyword = $1;
+   }
    print OUT join("|", $stage_range, $keyword)."||||\n";
 }
 close IN;
