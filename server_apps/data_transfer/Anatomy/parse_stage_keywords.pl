@@ -85,7 +85,7 @@ while (<IN>) {
 
    # some terms in the template are of formate previous_name(current_name)
    # e.g. optic nerve (cranial nerve II)
-   if ($keyword =~ /\((.+)\)/) {
+   if ($keyword =~ /\((\s*.+\s*)\)/) {
        $keyword = $1;
    }
    print OUT join("|", $stage_range, $keyword)."||||\n";

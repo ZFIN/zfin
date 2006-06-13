@@ -211,7 +211,7 @@ while (<EXP_IN>) {
     foreach my $eachkeyword (split(/<br>/, $exp_keywords)) {
 	# some terms in the template are of formate previous_name(current_name)
 	# e.g. optic nerve (cranial nerve II)
-	if ($eachkeyword =~ /\((.+)\)/) {
+	if ($eachkeyword =~ /\((\s*.+\s*)\)/) {
 	    $eachkeyword = $1;
 	}
 	
