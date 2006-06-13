@@ -45,6 +45,10 @@ public class ZfinAnalyzer extends Analyzer
         "type", "gene", "marker", "clone", "expression", "map",
         "about", "helpful", "hint", "citing", "copyright", 
         "university", "oregon", "eugene", "logo", "design",
+	"name", "names", "symbol", "blast", "data","zdb","all",
+        "bp", "aa", "ab", "citation", "mo", "go", "term", "terms",
+        "input", "welcome", "more", "image", "images","information",
+	"page", "pages", "length", "view", "other",
         "a", "b", "c", "d", "e", "f", "g", "h", "i",
         "j", "k", "l", "m", "n", "o", "p", "q", "r",
         "s", "t", "u", "v", "w", "x", "y", "z"
