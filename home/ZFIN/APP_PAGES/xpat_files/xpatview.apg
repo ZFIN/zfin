@@ -37,18 +37,19 @@ DESCRIPTION:
 <?MICOMMENT> *** This is used as an external link to gene expression data, we display it 
                  in a search form, but it's nice to have a clean external URL.  Basically
                  this section of code is translating a gene zdb_id into a 'correct' call to
-                 xpatselect *** <?MICOMMENT>
+                 xpatselect *** <?/MICOMMENT>
+
 
 <?MIBLOCK COND="$(NOT,$(=,$(POSITION,$OID,GENE),0))">
 
   <?MISQL SQL="select mrkr_abbrev from marker where mrkr_zdb_id = '$OID';">
-    <?MIVAR NAME="xpatview_mrkr_abbrev">$1<?/MIVAR>
+    <?MIVAR NAME="$xpatview_mrkr_abbrev">$1<?/MIVAR>
   <?/MISQL>
-  
-  <?MISQL SQL="select WebExplode(object,'&query_results=true&gene_name=$(URLENCODE,$xpatview_mrkr_abbrev)&xpatsel_geneZdbId=$OID') from webPages where ID='aa-xpatselect.apg';">$1<?/MISQL>
-  
-<?MIELSE> <?MICOMMENT> *** not a GENE zdb id *** <?/MICOMMENT>
 
+  <?MISQL SQL="select WebExplode(object,'&query_results=true&gene_name=$(URLENCODE,$xpatview_mrkr_abbrev)&xpatsel_geneZdbId=$OID') from webPages where ID='aa-xpatselect.apg';">$1<?/MISQL>
+
+<?MIELSE> <?MICOMMENT> *** not a GENE zdb id *** <?/MICOMMENT>
+  
 
   <?MICOMMENT> *** We can translate xpat id's into the publication & probe records for our old
                *** school direct submission data (Thisse, etc).  In terms of dealing with bookmarks,
