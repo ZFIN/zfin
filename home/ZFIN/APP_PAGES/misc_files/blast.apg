@@ -113,6 +113,8 @@
 
 <?MICOMMENT> ===== Main Page ======== <?/MICOMMENT>
 
+<font color=red> <p> (The function is currently unavailable for maintenance. Please check back later. )<p></font>
+
 <FORM ACTION="/blast/blastit.cgi" METHOD=post NAME="MainBlastForm" ENCTYPE="multipart/form-data" onsubmit="return validateSequence()">
 <input type=hidden name=SCOPE value=share>
 <B>Choose program and database:</B>
@@ -233,7 +235,7 @@ Upload a free-text file:
 <INPUT TYPE=file NAME="SEQ_FILE"  size=30>
 <P>
 <INPUT TYPE=reset VALUE="Clear sequence">
-<INPUT TYPE=submit VALUE="BLAST">
+<INPUT TYPE=submit disabled VALUE="BLAST">
 <HR>
 
 <B>Options: </B> <br>
