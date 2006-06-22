@@ -723,7 +723,6 @@ jsdelatt_OID = detOID
 	and or_lg is not null 
 	and a.owner=b.zdb_id 
 	and a.refcross_id = c.zdb_id 
-        and marker_type <> 'SNP'
 	order by c.disp_order;">
 
     <?MIVAR NAME=$upd_date>$10<?/MIVAR>
