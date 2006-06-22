@@ -1,5 +1,4 @@
 <?MICOMMENT>
-
 FILE: markerview.apg
 PREFIX: mrkrview_ (but none replaced as of Feb. 2005)
 
@@ -17,6 +16,9 @@ inside a select statement.  This page must first be retrieved with a
 select statement and then passed to webexplode from an execute function 
 statement.  See discussion of the MIqry2pass variable in the Web
 Datablade documentation.
+
+Recent changes:
+for SNP display
 <?/MICOMMENT>
 
 <?MIERROR>
@@ -70,6 +72,14 @@ Datablade documentation.
 
   <?MISQL SQL="select object from webPages where ID='aa-chromoscripts.apg';">$1  <?/MISQL>
 
+<script type="text/javascript" language="JavaScript">
+function jump(form_select){
+    if (0 != form_select.selectedIndex){
+        window.open(form_select.options[form_select.selectedIndex].value,parseInt(Math.random()*2000000000));
+    }
+    return true;
+}
+</script>
 
   <SCRIPT>
    function info() {
@@ -134,6 +144,9 @@ Datablade documentation.
 	">
   <?/MISQL>
   <?MIVAR COND="$(>,$MI_ROWCOUNT,0)" NAME=type_of_genedom>t<?/MIVAR>
+
+  <?MICOMMENT>For now, curators are not permitted to update SNP's, so setting a flag here <?/MICOMMENT>
+  <?MIVAR COND="$(EC,$marker_type,SNP)" NAME=mrkrview_no_update>t<?/MIVAR>
 
   <?MISQL SQL="
 	select 't'
@@ -379,9 +392,20 @@ Datablade documentation.
 
 	  <!-- NOW JUST TOSS OUT THE RETRIEVED DATA IN A TABLE -->
 	  <!-- FIRST THROW UP THE ZDB DATA MANAGER FOR THE RECORD -->
-
+        <?MIBLOCK COND="$(NXST,$mrkrview_no_update)">
   	   <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=marker') from webPages where ID='aa-data_mgr.apg';">$1
 	   <?/MISQL>
+        <?MIELSE>
+           <?MIVAR>
+             <TABLE WIDTH=100% border=0 bgcolor="$highlight">
+           <?/MIVAR>
+           <?MIVAR COND="$(NXST,$MIval)" NAME=$MIval>aa-stub.html<?/MIVAR>
+           <?MIVAR>
+<TR align=center>
+<TD><font size=-1> <b>ZFIN ID:</b> $OID </font><?/MIVAR>
+</TD>
+</table>
+        <?/MIBLOCK>
 
 	  <!----- OKAY, NOW  THROW UP THE  MARKER INFO ------------------>
 
@@ -442,7 +466,18 @@ Datablade documentation.
 	$marker_type_display Symbol:&nbsp;<i>$abbrev</i>
       </b></FONT>
     </td></tr>
-  <?/MIVAR>
+ <?/MIVAR>
+<?MICOMMENT>Adding allele variant display for SNP's<?/MIVAR>
+<?MIBLOCK COND="$(EC,$marker_type,SNP)">
+       <?MISQL SQL="select mrkrseq_variation from marker_sequence where mrkrseq_mrkr_zdb_id='$OID'"><?/MISQL>
+        <?MIVAR NAME=$marker_variant>$1<?/MIVAR>
+       <tr><td>
+        <FONT size=+1><b>
+           Variant Allele:<?MIVAR>$marker_variant<?/MIVAR></b></FONT>
+        </td></tr>
+<?/MIBLOCK>
+
+
 </table>
 
   
@@ -566,11 +601,13 @@ Datablade documentation.
  <?MIVAR NAME=$mrkrview_mrkrseq_zdb_id><?/MIVAR>  
 
  <?MISQL SQL="
-   select mrkrseq_sequence, mrkrseq_zdb_id
+   select mrkrseq_sequence, mrkrseq_zdb_id, mrkrseq_offset_start,mrkrseq_offset_stop
      from marker_sequence
     where mrkrseq_mrkr_zdb_id = '$OID';">
     <?MIVAR NAME=$mrkrview_sequence>$1<?/MIVAR>
     <?MIVAR NAME=$mrkrview_mrkrseq_zdb_id>$2<?/MIVAR>        
+    <?MIVAR NAME=$mrkrview_mrkrseq_start>$3<?/MIVAR>        
+    <?MIVAR NAME=$mrkrview_mrkrseq_stop>$4<?/MIVAR>        
  <?/MISQL>
  
  <?MICOMMENT> get blast linkout url <?/MICOMMENT>
@@ -578,7 +615,8 @@ Datablade documentation.
 	      from foreign_db 
 	     where fdb_db_name ='BLAST';">
     <?MIVAR NAME=fdb_url_blast>$1<?/MIVAR>
- <?/MISQL>
+<?/MISQL>
+
  <?MIVAR NAME=blast_option>&EXPECT=1000&WORD_SIZE=7&ENTREZ_QUERY=Danio rerio [ORGN]&FORMAT_ENTREZ_QUERY=All organisms<?/MIVAR>
  
   <?MIBLOCK COND="$(AND,$(XST,$UPDATE),$(XST,$type_of_knockdown_reagent))">
@@ -611,7 +649,6 @@ Datablade documentation.
       </form>
       
   <?MIELSE COND="$(NC,$mrkrview_mrkrseq_zdb_id,)">
-
       <br> <?MICOMMENT> for display purpose <?/MICOMMENT>
       <?MICOMMENT>use table to align sequence and disclaimer<?/MICOMMENT>
       <table width=100% cellspacing=0> 
@@ -620,17 +657,70 @@ Datablade documentation.
         <td width=7%>
           <b>Sequence:</b>
         </td>
+<?MIBLOCK COND="$(NC,$marker_type,SNP)">
         <td>
           <?MIVAR>&nbsp;5' - $mrkrview_sequence - 3'<?/MIVAR>
           <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_mrkrseq_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
         
           <?MIVAR>
+ 
+
             &nbsp;  <input type=button value="BLAST IT" onClick="window.open('$(CONCAT,$fdb_url_blast,$mrkrview_sequence,$blast_option)');">
           <?/MIVAR>
         </td>
       </tr>
+</table>
+<?MIELSE>
+ <?MISQL SQL="select fdb_db_query 
+	      from foreign_db 
+	     where fdb_db_name ='SNPBLAST';">
+    <?MIVAR NAME=fdb_url_snpblast>$1<?/MIVAR>
+<?/MISQL>
+<?MIVAR NAME=zfin_url_blastn>/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-blast.apg&PROGRAM=blastn&SEQ_TYPR=nt&SEQ_ID=<?/MIVAR>
+<td>&nbsp;</td>
+</tr>
+<tr><td>&nbsp;</td>
+        <?MIVAR NAME=$mrkrview_seq_length>$(STRLEN,mrkrview_sequence)<?/MIVAR>
+<td>
+      <table border="0"  CELLSPACING="0"> 
+        <tr bgcolor="#EEEEEE">
+<?MIVAR><br><td>$(SUBSTR,$mrkrview_sequence,1,$(-,$mrkrview_mrkrseq_start,1)) <?/MIVAR>
+</td> <td>&nbsp;</td></tr>
+          <?MIVAR NAME="mrkrview_ambiguity_code">$(SUBSTR,$mrkrview_sequence,$mrkrview_mrkrseq_start,1) <?/MIVAR>
+          <tr bgcolor="#EEEEEE"><td><font color=green><?MIVAR>$(SUBSTR,$mrkrview_sequence,$mrkrview_mrkrseq_start,1) <?/MIVAR>
+</td></font><td>&nbsp;</td></tr>
+          <tr bgcolor="#EEEEEE"><td><?MIVAR>$(SUBSTR,$mrkrview_sequence,$(+,$mrkrview_mrkrseq_start,1)) <?/MIVAR>
+</td> <td>&nbsp;</td></tr>
+<tr bgcolor="#EEEEEE"><td>
+
+         <font size=-1>
+           &nbsp<i>(SNP highlighted)</i>
+         </font>
+</td>
+        <td><SELECT NAME="select_tool" onChange="return jump(this);">
+            <OPTION VALUE="none" SELECTED>- Select Tool -</OPTION>
+            <?MIVAR>
+            <OPTION VALUE=$(CONCAT,$fdb_url_blast,$mrkrview_sequence)>NCBI BLAST</OPTION>
+            <OPTION VALUE=$fdb_url_snpblast> SNP BLAST</OPTION>
+            <OPTION VALUE=$zfin_url_blastn> ZFIN BLAST</OPTION>
+            <?/MIVAR>
+       </SELECT>
+</td>
+      </tr>
+<tr bgcolor="#EEEEEE">
+     <td><?MIVAR>$mrkrview_ambiguity_code<?/MIVAR>=<?MIVAR>$marker_variant<?/MIVAR></td>
+     <td>&nbsp;</td>
+</tr>
+</tr>
+</td>
+</table>
+<?/MIBLOCK>
+
+
+
       <tr>
         <td> &nbsp; </td>
+<?MIBLOCK COND="$(NC,$marker_type,SNP)">
         <td>
          <?MICOMMENT>in checkedout branch, a sequence_disclaimer.apg page is added.
                we are hardcoding now, and will update when merge.
@@ -639,11 +729,12 @@ Datablade documentation.
            &nbsp;(Although ZFIN verifies reagent sequence data, we recommend that you conduct independent sequence analysis before ordering any reagent.)
          </font>
         </td> 
+<?/MIBLOCK>
       </tr>
      </table>
 
      <br>
-  <?/MIBLOCK>      
+ <?/MIBLOCK>      
 
 
 <?MICOMMENT>=========================================================
@@ -713,7 +804,7 @@ Datablade documentation.
             ==    Curator Note
 	    =========================================================
 <?/MICOMMENT>
-
+<?MIBLOCK COND="$(NXST,$mrkrview_no_update)">
 <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
   <br>
   <B>Curator Notes:</B>
@@ -731,7 +822,7 @@ Datablade documentation.
  <?/MISQL>
  <br>
 <?/MIBLOCK>
-
+<?/MIBLOCK>
 
 <?MICOMMENT>=========================================================
             ==    Note
@@ -1379,7 +1470,16 @@ I am commenting this part of the code rather than deleting it. If no flags are r
   <?/MIVAR>
   
 <?/MIBLOCK>  <?MICOMMENT> end if update <?/MICOMMENT>
-
+<?MICOMMENT>
+<?MIBLOCK COND="$(EC,$marker_type,SNP)">
+   <?MISQL SQL="select mrel_mrkr_1_zdb_id, mrkr_abbrev from marker_relationship, marker where
+                mrel_mrkr_2_zdb_id ='$OID'
+                and mrel_mrkr_1_zdb_id=mrkr_zdb_id">
+                <?MIVAR NAME=$mrkrview_snp_est>$1<?/MIVAR>
+                <?MIVAR NAME=$mrkrview_snp_est_name>$2<?/MIVAR>
+   <?/MISQL>  
+<?/MIBLOCK>
+<?/MICOMMENT>
 
 <TABLE border=0 width=100%>
 	<?MISQL SQL="select WebExplode(object,'mrkrrel_mrkr_zdb_id=$OID&mrkrrel_rel_direction=2_to_1') from webPages where ID='aa-markerrelationship.apg' ;">
@@ -1390,6 +1490,14 @@ I am commenting this part of the code rather than deleting it. If no flags are r
              	  where ID='aa-markerrelationship.apg' ;">
        $1
     <?/MISQL>
+<?MICOMMENT>
+    <?MIBLOCK COND="$(XST,$mrkrview_snp_est)">
+
+	<?MISQL SQL="select WebExplode(object,'mrkrrel_mrkr_zdb_id=$mrkrview_snp_est&mrkrrel_rel_direction=2_to_1&name=$mrkrview_snp_est_name') from webPages where ID='aa-markerrelationship.apg' ;">
+       $1
+    <?/MISQL>
+   <?/MIBLOCK>
+<?/MICOMMENT>
 </TABLE>
 
 <?MIBLOCK COND="$(XST,$UPDATE)">
@@ -1683,7 +1791,6 @@ I am commenting this part of the code rather than deleting it. If no flags are r
 
 
 <!------------   OTHER MARKER PAGES   ------------------------------->
-
   <?MIVAR>$(UNSETVAR,dblink_other)<?/MIVAR>  
 
   <?MISQL SQL="
@@ -1697,13 +1804,11 @@ I am commenting this part of the code rather than deleting it. If no flags are r
       and fdbcont_fdbdt_data_type = 'other'
     order by 6,1,5
   ;"> 
-  
     <?MIVAR NAME=db_name>$1<?/MIVAR>
     <?MIVAR NAME=link_url>$2<?/MIVAR>
     <?MIVAR NAME=acc_num>$3<?/MIVAR>
     <?MIVAR NAME=dataId>$4<?/MIVAR>
     <?MIVAR NAME=link_display>$5<?/MIVAR>
-    
     
     <?MIVAR NAME=mini_ref><?MISQL SQL="select WebExplode(object,'dataId=$dataId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL><?/MIVAR>
     
