@@ -467,7 +467,7 @@ function jump(form_select){
       </b></FONT>
     </td></tr>
  <?/MIVAR>
-<?MICOMMENT>Adding allele variant display for SNP's<?/MIVAR>
+<?MICOMMENT>Adding allele variant display for SNP's<?/MICOMMENT>
 <?MIBLOCK COND="$(EC,$marker_type,SNP)">
        <?MISQL SQL="select mrkrseq_variation from marker_sequence where mrkrseq_mrkr_zdb_id='$OID'"><?/MISQL>
         <?MIVAR NAME=$marker_variant>$1<?/MIVAR>
