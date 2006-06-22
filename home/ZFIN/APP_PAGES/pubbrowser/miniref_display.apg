@@ -12,6 +12,13 @@ Variables Expected:
   $type is unnecessary. all colattrib entries are changed to recattrib.
 <?/MICOMMENT>
 
+<?MICOMMENT> 
+  05/24/2006
+  Define rtype if it isn't apssed as a parameter
+<?/MICOMMENT>
+<?MIBLOCK COND="$(NXST,$rtype)">
+  <?MIVAR NAME=rtype><?/MIVAR>
+<?/MIBLOCK>
 <?MIBLOCK COND="$(EC,$type,recattrib)">
     <?MICOMMENT> 
       ***The default recattrib type is 'standard'. 
