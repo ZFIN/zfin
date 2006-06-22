@@ -27,7 +27,7 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer
 
 SUBDIRS = MEOW JohnP RefSeq SWISS-PROT GXP GO ZIRC Downloads GenPept ZGC \
-	  Sanger Genbank LoadGO BLAST Anatomy ORTHO
+	  Sanger Genbank LoadGO BLAST Anatomy ORTHO SNP
 
 GENERICS = pull.sh
 
