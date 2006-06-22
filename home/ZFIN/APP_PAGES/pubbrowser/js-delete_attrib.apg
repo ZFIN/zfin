@@ -20,7 +20,11 @@ OUTPUT:
 
 
 <?/MICOMMENT>
-
+<?MICOMMENT>
+Added 05/24/06
+declare jsdelete_Mival if it isn't passed in
+<?/MICOMMENT>
+<?MIVAR COND="$(NXST,$jsdelatt_Mival)" NAME=$jsdelatt_Mival><?/MIVAR>
 <?MIVAR NAME=jsdelatt_page_var>$(REPLACE,$jsdelatt_page_var,__,&)<?/MIVAR>
 <?MIVAR>
 	function Delete_attrib(subattr,data_zdbId,source_zdbId,info,source_type) {
