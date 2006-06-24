@@ -669,7 +669,6 @@ function jump(form_select){
           <?/MIVAR>
         </td>
       </tr>
-</table>
 <?MIELSE>
  <?MISQL SQL="select fdb_db_query 
 	      from foreign_db 
