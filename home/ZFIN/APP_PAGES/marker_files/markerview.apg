@@ -657,7 +657,9 @@ function jump(form_select){
         <td width=7%>
           <b>Sequence:</b>
         </td>
-<?MIBLOCK COND="$(NC,$marker_type,SNP)">
+
+    <br> <?MICOMMENT> SNP sequence display is slightly different from others marker types <?/MICOMMENT>
+   <?MIBLOCK COND="$(NC,$marker_type,SNP)">
         <td>
           <?MIVAR>&nbsp;5' - $mrkrview_sequence - 3'<?/MIVAR>
           <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_mrkrseq_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
@@ -669,57 +671,57 @@ function jump(form_select){
           <?/MIVAR>
         </td>
       </tr>
-<?MIELSE>
- <?MISQL SQL="select fdb_db_query 
+   <?MIELSE>
+     <?MISQL SQL="select fdb_db_query 
 	      from foreign_db 
 	     where fdb_db_name ='SNPBLAST';">
-    <?MIVAR NAME=fdb_url_snpblast>$1<?/MIVAR>
-<?/MISQL>
-<?MIVAR NAME=zfin_url_blastn>/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-blast.apg&PROGRAM=blastn&SEQ_TYPR=nt&SEQ_ID=<?/MIVAR>
-<td>&nbsp;</td>
-</tr>
-<tr><td>&nbsp;</td>
+       <?MIVAR NAME=fdb_url_snpblast>$1<?/MIVAR>
+     <?/MISQL>
+    <?MIVAR NAME=zfin_url_blastn>/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-blast.apg&PROGRAM=blastn&SEQ_TYPR=nt&SEQ_ID=<?/MIVAR>
+    <td>&nbsp;</td>
+    </tr>
+    <tr><td>&nbsp;</td>
         <?MIVAR NAME=$mrkrview_seq_length>$(STRLEN,mrkrview_sequence)<?/MIVAR>
-<td>
-      <table border="0"  CELLSPACING="0"> 
+    <td>
+        <table border="0"  CELLSPACING="0"> 
         <tr bgcolor="#EEEEEE">
-<?MIVAR><br><td>$(SUBSTR,$mrkrview_sequence,1,$(-,$mrkrview_mrkrseq_start,1)) <?/MIVAR>
+        <?MIVAR><br><td>$(SUBSTR,$mrkrview_sequence,1,$(-,$mrkrview_mrkrseq_start,1)) <?/MIVAR>
 </td> <td>&nbsp;</td></tr>
-          <?MIVAR NAME="mrkrview_ambiguity_code">$(SUBSTR,$mrkrview_sequence,$mrkrview_mrkrseq_start,1) <?/MIVAR>
-          <tr bgcolor="#EEEEEE"><td><font color=green><?MIVAR>$(SUBSTR,$mrkrview_sequence,$mrkrview_mrkrseq_start,1) <?/MIVAR>
+        <?MIVAR NAME="mrkrview_ambiguity_code">$(SUBSTR,$mrkrview_sequence,$mrkrview_mrkrseq_start,1) <?/MIVAR>
+        <tr bgcolor="#EEEEEE"><td><font color=green><?MIVAR>$(SUBSTR,$mrkrview_sequence,$mrkrview_mrkrseq_start,1) <?/MIVAR>
 </td></font><td>&nbsp;</td></tr>
-          <tr bgcolor="#EEEEEE"><td><?MIVAR>$(SUBSTR,$mrkrview_sequence,$(+,$mrkrview_mrkrseq_start,1)) <?/MIVAR>
+        <tr bgcolor="#EEEEEE"><td><?MIVAR>$(SUBSTR,$mrkrview_sequence,$(+,$mrkrview_mrkrseq_start,1)) <?/MIVAR>
 </td> <td>&nbsp;</td></tr>
-<tr bgcolor="#EEEEEE"><td>
-
+         <tr bgcolor="#EEEEEE"><td>
          <font size=-1>
            &nbsp<i>(SNP highlighted)</i>
          </font>
-</td>
-        <td><SELECT NAME="select_tool" onChange="return jump(this);">
+    </td>
+    <td><SELECT NAME="select_tool" onChange="return jump(this);">
             <OPTION VALUE="none" SELECTED>- Select Tool -</OPTION>
             <?MIVAR>
-            <OPTION VALUE=$(CONCAT,$fdb_url_blast,$mrkrview_sequence)>NCBI BLAST</OPTION>
+            <OPTION VALUE=$(CONCAT,$fdb_url_blast,$mrkrview_sequence)>NCBI BLAST            </OPTION>
             <OPTION VALUE=$fdb_url_snpblast> SNP BLAST</OPTION>
             <OPTION VALUE=$zfin_url_blastn> ZFIN BLAST</OPTION>
             <?/MIVAR>
        </SELECT>
-</td>
-      </tr>
-<tr bgcolor="#EEEEEE">
+     </td>
+     </tr>
+     <tr bgcolor="#EEEEEE">
      <td><?MIVAR>$mrkrview_ambiguity_code<?/MIVAR>=<?MIVAR>$marker_variant<?/MIVAR></td>
      <td>&nbsp;</td>
-</tr>
+     </tr>
 </tr>
 </td>
 </table>
 <?/MIBLOCK>
-
+<?MICOMMENT>end of sequence display block<?/MICOMMENT>
 
 
       <tr>
         <td> &nbsp; </td>
-<?MIBLOCK COND="$(NC,$marker_type,SNP)">
+      <?MICOMMENT>This is for Morpholinos<?/MICOMMENT>
+        <?MIBLOCK COND="$(NC,$marker_type,SNP)">
         <td>
          <?MICOMMENT>in checkedout branch, a sequence_disclaimer.apg page is added.
                we are hardcoding now, and will update when merge.
@@ -728,7 +730,7 @@ function jump(form_select){
            &nbsp;(Although ZFIN verifies reagent sequence data, we recommend that you conduct independent sequence analysis before ordering any reagent.)
          </font>
         </td> 
-<?/MIBLOCK>
+        <?/MIBLOCK>
       </tr>
      </table>
 
@@ -1469,16 +1471,6 @@ I am commenting this part of the code rather than deleting it. If no flags are r
   <?/MIVAR>
   
 <?/MIBLOCK>  <?MICOMMENT> end if update <?/MICOMMENT>
-<?MICOMMENT>
-<?MIBLOCK COND="$(EC,$marker_type,SNP)">
-   <?MISQL SQL="select mrel_mrkr_1_zdb_id, mrkr_abbrev from marker_relationship, marker where
-                mrel_mrkr_2_zdb_id ='$OID'
-                and mrel_mrkr_1_zdb_id=mrkr_zdb_id">
-                <?MIVAR NAME=$mrkrview_snp_est>$1<?/MIVAR>
-                <?MIVAR NAME=$mrkrview_snp_est_name>$2<?/MIVAR>
-   <?/MISQL>  
-<?/MIBLOCK>
-<?/MICOMMENT>
 
 <TABLE border=0 width=100%>
 	<?MISQL SQL="select WebExplode(object,'mrkrrel_mrkr_zdb_id=$OID&mrkrrel_rel_direction=2_to_1') from webPages where ID='aa-markerrelationship.apg' ;">
