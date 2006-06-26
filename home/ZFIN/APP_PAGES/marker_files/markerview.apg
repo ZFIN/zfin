@@ -1481,14 +1481,6 @@ I am commenting this part of the code rather than deleting it. If no flags are r
              	  where ID='aa-markerrelationship.apg' ;">
        $1
     <?/MISQL>
-<?MICOMMENT>
-    <?MIBLOCK COND="$(XST,$mrkrview_snp_est)">
-
-	<?MISQL SQL="select WebExplode(object,'mrkrrel_mrkr_zdb_id=$mrkrview_snp_est&mrkrrel_rel_direction=2_to_1&name=$mrkrview_snp_est_name') from webPages where ID='aa-markerrelationship.apg' ;">
-       $1
-    <?/MISQL>
-   <?/MIBLOCK>
-<?/MICOMMENT>
 </TABLE>
 
 <?MIBLOCK COND="$(XST,$UPDATE)">
