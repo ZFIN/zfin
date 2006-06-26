@@ -199,6 +199,14 @@ DEBUGGING:
 		;">
 	<?/MISQL>
 	<?MIVAR COND="$(!=,$MI_ROWCOUNT,0)" NAME=type_of_knockdown_reagent>t<?/MIVAR>
+	<?MISQL SQL="
+		select 't'
+		  from marker_type_group_member
+		where mtgrpmem_mrkr_type_group = 'POLYMORPH'
+		  and mtgrpmem_mrkr_type = '$marker_type'
+		;">
+	<?/MISQL>
+	<?MIVAR COND="$(!=,$MI_ROWCOUNT,0)" NAME=type_of_polymorphism>t<?/MIVAR>
     <?MIELSE>
 	<?MIVAR NAME=$constraint> mrkr_type not in (select mtgrpmem_mrkr_type from marker_type_group_member where mtgrpmem_mrkr_type_group ='SEARCH_SEG')<?/MIVAR>
     <?/MIBLOCK>
@@ -766,7 +774,8 @@ DEBUGGING:
              <TD align=left width=12%><B>Mutant Locus</b></TD>
 	   <?/MIVAR>
            <?MIVAR COND="$(NXST,$type_of_knockdown_reagent)"> 
-       	     <TD align=left><b>Map<b></TD>
+       	     <TD align=left><b>Chromosome </b>
+ </TD>
            <?/MIVAR>
            <?MIBLOCK COND="$(XST,$input_name)">
 	     <TD align=left><b>Matching Text</b></TD>
