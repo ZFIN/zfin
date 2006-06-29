@@ -60,6 +60,7 @@ if (version != "n3") {
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,IMAGE),0)">MIval=aa-imageview.apg&OID=$record<?/MIVAR> 
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,COMPANY),0)">MIval=aa-companyview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,ANAT),0)">MIval=aa-anatomy_item.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,FIG),0)">MIval=aa-fxfigureview.apg&OID=$record<?/MIVAR>
 
 <?MICOMMENT>environment condition (ZDB-EXP- id) is provided in the download xpat.txt file<?/MICOMMENT>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,EXP),0)">MIval=aa-xpatexpcdndisplay.apg&cdp_exp_zdb_id=$record<?/MIVAR>
