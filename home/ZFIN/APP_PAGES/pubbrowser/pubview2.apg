@@ -423,51 +423,37 @@ displays a publication record, or many publication records if > 1 returned.
 
 
   <?MICOMMENT> ======== Phenotype Alleles  ============ <?/MICOMMENT>
-  <?MIVAR NAME=Pheno_count>0<?/MIVAR>
+
   <?MISQL SQL="
-	select distinct f.fish_id
-	from   record_attribution, fish_search f
+	select fish_id
+	 from  record_attribution, fish_search 
 	where  recattrib_source_zdb_id = '$OID'
-	  and  recattrib_data_zdb_id = f.fish_id">
-    <?MIVAR>$(VECAPPEND,$fish_vec,$1)<?/MIVAR>
-  <?/MISQL>
-  <?MIVAR NAME=fish_csv SEPARATE="','">$fish_vec<?/MIVAR>
-  <?MISQL SQL="
-	select distinct f.fish_id
-	from   record_attribution, fish_search f
+	  and  recattrib_data_zdb_id = fish_id
+
+      UNION 
+	select fish_id
+	from   record_attribution, fish_search 
 	where  recattrib_source_zdb_id = '$OID'
-	  and  recattrib_data_zdb_id = f.locus
-	  and  f.fish_id not in ('$fish_csv');">
-    <?MIVAR>$(VECAPPEND,$fish_vec,$1)<?/MIVAR>
-  <?/MISQL>
-  <?MIVAR NAME=fish_csv SEPARATE="','">$fish_vec<?/MIVAR>
-  <?MISQL SQL="
-	select distinct f.fish_id
-	from   record_attribution, fish_search f
+	  and  recattrib_data_zdb_id = locus
+        
+      UNION     
+	select fish_id
+	from   record_attribution, fish_search
 	where  recattrib_source_zdb_id = '$OID'
-	  and  recattrib_data_zdb_id = f.alt_zdb_id
-	  and  f.fish_id not in ('$fish_csv');">
-    <?MIVAR>$(VECAPPEND,$fish_vec,$1)<?/MIVAR>
-  <?/MISQL>
-  <?MIVAR NAME=fish_csv SEPARATE="','">$fish_vec<?/MIVAR>
-  <?MISQL SQL="
-	select distinct f.fish_id
+	  and  recattrib_data_zdb_id = alt_zdb_id
+
+      UNION
+	select f.fish_id
 	from   record_attribution, fish_search f, data_alias
 	where  recattrib_source_zdb_id = '$OID'
 	  and  recattrib_data_zdb_id = dalias_zdb_id
-	  and  dalias_data_zdb_id = f.fish_id
-	  and  f.fish_id not in ('$fish_csv');">
-    <?MIVAR>$(VECAPPEND,$fish_vec,$1)<?/MIVAR>
+	  and  dalias_data_zdb_id = f.fish_id;">
   <?/MISQL>
-  <?MIVAR NAME=fish_csv SEPARATE="','">$fish_vec<?/MIVAR>
   
-  <?MIVAR>$(SETVAR,$Pheno_count,$(VECSIZE,$fish_vec))<?/MIVAR>
-  
-  <?MIBLOCK COND="$(NE,$Pheno_count,0)">
-  <?MIVAR>
-  <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&pubId=$OID">Phenotype Alleles</a> &nbsp; ($(FIX,$Pheno_count))
+  <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
+    <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&pubId=$OID">Phenotype Alleles</a> &nbsp; ($MI_ROWCOUNT)
   <?/MIVAR>
-  <?/MIBLOCK>
+
 
   <?MICOMMENT> ======== Orthology  ============ <?/MICOMMENT>
   <?MISQL SQL="
