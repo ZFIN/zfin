@@ -308,63 +308,39 @@ displays a publication record, or many publication records if > 1 returned.
   <ul>
   <?MICOMMENT> ======== Genes / Markers  ============ <?/MICOMMENT>
 
-  <?MIVAR NAME=locus_recattrib_list><?/MIVAR>
-
-    <?MISQL SQL="
-      select distinct cloned_gene
+  <?MISQL SQL="
+      select cloned_gene
         from record_attribution, locus
        where recattrib_source_zdb_id = '$OID'
          and recattrib_data_zdb_id = zdb_id
-    ;">  
-      <?MIVAR>$(VECAPPEND,$cloned_gene_list_from_locus,$1)<?/MIVAR>              
-    <?/MISQL>
 
-  <?MIVAR NAME=cloned_gene_list_from_locus_csv SEPARATE="','">$cloned_gene_list_from_locus<?/MIVAR>  
-
-  <?MIVAR NAME=fish_recattrib_list><?/MIVAR>
-
-    <?MISQL SQL="
-      select distinct l.cloned_gene
+     UNION 
+      
+      select l.cloned_gene
         from record_attribution, fish f, locus l
        where recattrib_source_zdb_id = '$OID'
          and recattrib_data_zdb_id = f.zdb_id
          and f.locus = l.zdb_id
-    ;">  
-      <?MIVAR>$(VECAPPEND,$cloned_gene_list_from_fish,$1)<?/MIVAR>              
-    <?/MISQL>
 
-  <?MIVAR NAME=cloned_gene_list_from_fish_csv SEPARATE="','">$cloned_gene_list_from_fish<?/MIVAR>  
+     UNION 
 
-  <?MIVAR NAME=gene_recattrib_list><?/MIVAR>
-
-    <?MISQL SQL="
-      select distinct mrkr_zdb_id
+      select mrkr_zdb_id
         from record_attribution, marker
        where recattrib_source_zdb_id = '$OID'
          and recattrib_data_zdb_id = mrkr_zdb_id
-    ;">  
-      <?MIVAR>$(VECAPPEND,$gene_list,$1)<?/MIVAR>              
-    <?/MISQL>
-
-  <?MIVAR NAME=gene_list_csv SEPARATE="','">$gene_list<?/MIVAR> 
-  
-  <?MISQL SQL="
-      select count(distinct mrkr_zdb_id)::integer
-	from marker
-       where mrkr_type in 
+         and mrkr_type in 
 	     (
 	       select mtgrpmem_mrkr_type 
 	         from marker_type_group_member
                 where mtgrpmem_mrkr_type_group = 'SEARCH_MK'
              )
-         and mrkr_type <> 'MRPHLNO'
-         and mrkr_zdb_id in ('$gene_list_csv','$cloned_gene_list_from_locus_csv','$cloned_gene_list_from_fish_csv')
-      ; ">
-  <?/MISQL> 
+         and mrkr_type <> 'MRPHLNO'; ">
+  <?/MISQL>
   
-  <?MIVAR COND="$(>,$1,0)">
-  <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&pubId=$OID&type=pub_mrkr">Genes / Markers</a> &nbsp; ($1)
+  <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
+      <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&pubId=$OID&type=pub_mrkr">Genes / Markers</a> &nbsp; ($MI_ROWCOUNT)
   <?/MIVAR> 
+
 
   <?MICOMMENT> ======== Morpholino  ============ <?/MICOMMENT>
   <?MISQL SQL="
