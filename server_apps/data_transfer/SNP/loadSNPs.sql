@@ -106,10 +106,6 @@ insert into pre_update (recid,accnum,abb)
 
 ! echo "Inserted data into pre_dblink table."
 
-delete from db_link where dblink_acc_num in (select accnum from pre_update);
-
-! echo "Old db_link data associated with SNP cleared."
-
 insert into zdb_active_data (zactvd_zdb_id)
   select linkId from pre_marker; 
 
