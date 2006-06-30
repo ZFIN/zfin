@@ -104,7 +104,10 @@ insert into pre_update (recid,accnum,abb)
     from marker,pre_marker
     where mrkr_abbrev = abbrev;
 
-! echo "Inserted data into pre_dblink table."
+! echo "Inserted data into pre_update table."
+
+delete from db_link where dblink_acc_num in (select accnum from pre_update);
+! echo "Old db_link data associated with SNP cleared."
 
 insert into zdb_active_data (zactvd_zdb_id)
   select linkId from pre_marker; 
@@ -164,7 +167,9 @@ update mapped_marker
            where abb = map_name) 
   where marker_type = "SNP" 
      and marker_id in 
-       (select mrkr_zdb_id from marker);   
+       (select mrkr_zdb_id from marker)
+     and marker_id in 
+       (select id from pre_marker);   
 
 ! echo "mapped_marker records updated."
 
@@ -175,7 +180,9 @@ update zmap_pub_pan_mark
            where abb = abbrev) 
   where mtype = "SNP" 
      and zdb_id in 
-       (select mrkr_zdb_id from marker);   
+       (select mrkr_zdb_id from marker)
+     and zdb_id in 
+       (select id from pre_marker);   
 
 ! echo "zmap_pub_pan_mark records updated."
 
