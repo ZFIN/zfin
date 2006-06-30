@@ -222,8 +222,8 @@ and display them one after the other horizontally
 <?MIBLOCK COND="$(>,$1,1)">
     <?MIVAR NAME=$fxfigview_hasmultimg>t<?/MIVAR>
       <table width = 100% align = center border = 0 bgcolor="#EEEEEE">
-       <tr>
-       <td width = 96>
+       <tr width = 96>
+       <td>
 <?/MIBLOCK>
 
 
@@ -305,7 +305,7 @@ and display them one after the other horizontally
           <?/MIBLOCK><?MICOMMENT> end multiple images condition <?/MICOMMENT>
 <?/MISQL>        
 
-<?MICOMMENT>Append the label 'Description' to caption if multiple images; mostly this happens in case of "Unpublished" puubs<?/MICOMMENT>
+<?MICOMMENT>Append the label 'Description' to caption if multiple images; mostly this happens in case of "Unpublished" pubs<?/MICOMMENT>
 <?MIBLOCK COND="$(EQ,$fxfigview_hasmultimg,t)">
   <?MIBLOCK COND="$(NE,$fxfigview_caption,)">
             <p class="fig"><?MIVAR><b>$fxfigview_label</b> $fxfigview_caption<?/MIVAR></p></td>
