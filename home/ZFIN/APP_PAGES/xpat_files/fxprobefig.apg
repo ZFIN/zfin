@@ -37,8 +37,8 @@ INPUT VARS:
 
             <?MIVAR NAME=$fxprbfig_fig_zdb_id>$1<?/MIVAR>
             <table width = 100% align = center border = 0 bgcolor="#EEEEEE">
-              <tr>
-              <td width = 96>
+              <tr width = 96>
+              <td>
                <?MISQL SQL="select distinct fig_label, fig_caption, 
                           fimg_thumbnail, fimg_zdb_id, fimg_view, fimg_direction
                    from 
