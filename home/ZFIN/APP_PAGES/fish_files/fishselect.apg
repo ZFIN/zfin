@@ -218,12 +218,14 @@ Startframes.apg will pass this variables on to the select form.
     <?MIVAR NAME=$previous COND="$(XST,$fname)"> and<?/MIVAR>
 
     <!-- change to look for abbrev within () in name  Sept. 00  -->
+    <?MIVAR COND="$(XST,$abbrev)" NAME=$abbrev DELIMIT="'" REPLACE="''">$abbrev<?/MIVAR>    
     <?MIVAR NAME=$constraint COND="$(XST,$abbrev)">
       $constraint $previous ((lower(abbrev) like '$(LOWER,%$abbrev%)') or (name like '(%$(LOWER,$abbrev)%)') )
     <?/MIVAR>
 
     <?MIVAR NAME=$previous COND="$(XST,$abbrev)"> and <?/MIVAR>
 
+    <?MIVAR COND="$(XST,$anon1text)" NAME=$anon1text DELIMIT="'" REPLACE="''">$anon1text<?/MIVAR>  
     <?MIVAR NAME=$constraint COND="$(XST,$anon1text)">
       $constraint $previous (lower($anon1) like '%$(LOWER,$anon1text)%')
     <?/MIVAR>
@@ -233,6 +235,7 @@ Startframes.apg will pass this variables on to the select form.
 
   <!-- NOW for mutant queries, BUILD the mutant constraint clause by extending the basic one to constrain on mutant attributes too -->
 
+  <?MIVAR COND="$(XST,$allele)" NAME=$allele DELIMIT="'" REPLACE="''">$allele<?/MIVAR> 
   <?MIVAR COND="$(XST,$allele)" NAME=$allele>$(LOWER,$allele)<?/MIVAR>
 
   <?MIBLOCK COND="$(AND,$(NXST,$mut_constraint),$(EC,$line_type,mutant),$(OR,$(XST,$constraint),$(NC,$chrom_change,any),$(NC,$chrom_num,0),$(XST,$allele),$(NC,$mutagen,any),$(XST,$selected)))">
@@ -284,6 +287,10 @@ Startframes.apg will pass this variables on to the select form.
 
   <!-- NOW JUST RETRIEVE AND DISPLAY ALL MATCHING ENTRIES. Do slightly different things for mutant and wild type queries  -->
   <?MIVAR NAME=$fname COND="$(XST,$fname)" DELIMIT="''" REPLACE="'">$fname<?/MIVAR>
+  <?MIVAR NAME=$allele COND="$(XST,$allele)" DELIMIT="''" REPLACE="'">$allele<?/MIVAR>
+  <?MIVAR NAME=$abbrev COND="$(XST,$abbrev)" DELIMIT="''" REPLACE="'">$abbrev<?/MIVAR>
+  <?MIVAR NAME=$anon1text COND="$(XST,$anon1text)" DELIMIT="''" REPLACE="'">$anon1text<?/MIVAR>
+
   <?MIVAR NAME=$constraint COND="$(NXST,$constraint)"> <?/MIVAR>
   <?MIVAR NAME=$mut_constraint COND="$(NXST,$mut_constraint)"> <?/MIVAR>
     <?MIVAR NAME=mut_constraint_count>$mut_constraint<?/MIVAR>
