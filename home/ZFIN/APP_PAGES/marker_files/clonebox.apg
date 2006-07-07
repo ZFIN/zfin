@@ -228,7 +228,6 @@ Requires:  $CLONE_MARKER_ID, $highlight
     <?MIVAR NAME=$is_thisse_probe>false<?/MIVAR>
     <?MIVAR NAME=$number_of_thisse_xpat_records><?/MIVAR>
 
-
     <?MISQL SQL="select count(*)
 		   from expression_experiment
 		   where xpatex_probe_feature_zdb_id = '$OID'
@@ -241,7 +240,7 @@ Requires:  $CLONE_MARKER_ID, $highlight
 
     <?MIVAR NAME=$number_of_thisse_xpat_records>$1<?/MIVAR>
 
-    $(IF,$(NE,$number_of_thisse_xpat_records,0),$(SETVAR,$is_thisse_probe,true),)
+    $(IF,$(NE,$number_of_thisse_xpat_records,0.00),$(SETVAR,$is_thisse_probe,true),)
 
     <?MIBLOCK COND="$(EC,$is_thisse_probe,true)">
         <TD colspan=3 nowrap><a href="/ZFIN/Methods/ThisseProtocol.html"><b>Thisse <i>in situ </i> hybridization protocol</b></a></TD>
