@@ -180,6 +180,9 @@ where xpat_gene_zdb_id = '$xpsumres_geneZdbId'
           <?MIVAR NAME=$xpsumres_start_pos>$(POSITION,$(LOWER,$xpsumres_matching_output),$(LOWER,$xpsumres_matchedText))<?/MIVAR>
 	  <?MIVAR NAME=$xpsumres_str_length>$(STRLEN,$xpsumres_matchedText)<?/MIVAR>
 	  
+           <?MICOMMENT> *** restore single apostrophe matching text column *** <?/MICOMMENT>
+          <?MIVAR NAME=$xpsumres_matchedText COND="$(XST,$xpsumres_matchedText)" DELIMIT="''" REPLACE="'">$xpsumres_matchedText<?/MIVAR>
+
 	  <?MIVAR>$xpsumres_matching_qualification: $(SUBSTR,$xpsumres_matching_output,1,$(-,$xpsumres_start_pos,1))<b>$xpsumres_matchedText</b>$(SUBSTR,$xpsumres_matching_output,$(+,$xpsumres_start_pos,$xpsumres_str_length))
 	  <?/MIVAR>
       
