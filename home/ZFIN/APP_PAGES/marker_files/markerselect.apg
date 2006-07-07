@@ -219,6 +219,7 @@ DEBUGGING:
     <?/MISQL>
 
     <?MIBLOCK COND="$(XST,$input_name)">
+    <?MIVAR NAME=$input_name DELIMIT="'" REPLACE="''">$input_name<?/MIVAR>
       <?MISQL COND=$(XST,$debug_timing) SQL="
         execute function get_time()">
         <br>$1 Starting name query
@@ -235,7 +236,6 @@ DEBUGGING:
 	  and allnmend_name_end_lower like '$(LOWER,$input_name)%' 
 	<?/MIVAR>
       <?/MIBLOCK>
-      <?MIVAR NAME=$input_name DELIMIT="'" REPLACE="''">$input_name<?/MIVAR>
       <?MIVAR NAME=geneMchIdLast><?/MIVAR>	
       <?MISQL SQL="
 	 select allmapnm_zdb_id, allmapnm_name, 
