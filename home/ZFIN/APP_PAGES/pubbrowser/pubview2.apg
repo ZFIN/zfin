@@ -309,18 +309,20 @@ displays a publication record, or many publication records if > 1 returned.
   <?MICOMMENT> ======== Genes / Markers  ============ <?/MICOMMENT>
 
   <?MISQL SQL="
-      select cloned_gene
-        from record_attribution, locus
+      select mrkr_zdb_id
+        from record_attribution, locus, marker
        where recattrib_source_zdb_id = '$OID'
          and recattrib_data_zdb_id = zdb_id
+         and cloned_gene = mrkr_zdb_id
 
      UNION 
       
-      select l.cloned_gene
-        from record_attribution, fish f, locus l
+      select mrkr_zdb_id
+        from record_attribution, fish f, locus l, marker
        where recattrib_source_zdb_id = '$OID'
          and recattrib_data_zdb_id = f.zdb_id
          and f.locus = l.zdb_id
+         and cloned_gene = mrkr_zdb_id
 
      UNION 
 
