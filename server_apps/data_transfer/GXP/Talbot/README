@@ -11,9 +11,11 @@
 ---------------------
    Download package from http://cegs.stanford.edu/download/
 
-   Uncompress the package, look for images/, cegs_stage_codes.txt, cegs_view_codes.txt, expression.txt, gene.txt, image_expr.txt and keywords.txt.
+   Uncompress the package, it supposed to contain image files, cegs_stage_codes.txt, cegs_view_codes.txt, expression.txt, gene.txt, image_expr.txt and keywords.txt. If cegs_stage_codes.txt and cegs_view_codes.txt are missing, use the ones from a previous load. Those are static files. 
 
-   At embryonix, create a new directory, and transfer the above files to it. 
+   At embryonix, create a new directory e.g. cegs#_date to hold the above input files, and scripts and result files. Within the folder, put image files into a subfolder images/ . 
+
+   Copy over scripts from ZFIN_WWW/server_apps/data_transfer/GXP folder and its subfolder Talbot/.
  
 -------------------
 -- Spellcheck 
@@ -32,14 +34,27 @@
     $command$    :
 
           > mv image_expr.txt  images.txt   
+    
+    Use "less" command to check a .txt file, if you see ^M in the file, 
+    you need to convert each .txt file into UNIX format by:
+
+	  > tr '\r' '\n' < input_file > output_file
+          > mv output_file input_file
+
+    then
+
 	  > processImage.sh labname [release_type]
 
 	  labname:                  Talbot
     
     $resulted files$:  images.dim	
     $description$ :
-	It creates Imagesdir/ and move all .jpg into it. It does image reality check with images.txt file, if no missed entries reported, answer "y" to continue when it prompts, otherwise, answer "n". If it reports image files that are not in the images.txt file, just delete the images. In case of image files missing, let Ceri know.
-	The second half of the program calls thumbnail.sh to generate thumbnail images, upon finish, it checks for completeness. Answer "y" to finish with cleanup if no missed images reported, otherwise, answer "n" to quit and investigate.
+      The script does image reality check between the JPG files sent and images.txt. The output first lists JPG files sent but not included in the images.txt file, then it lists entries in images.txt file but no JPGs sent. 
+      For the first case, most of the cases, it is safe to answer "y" to continue and let the scripts delete the additional JPG images. If to be extra safe, email Ceri to contact Talbot lab. 
+      For the second case, better let Ceri contact the lab. 
+      (If the output are overwhelming, compare IMGTMP/imgjpg.list and IMGTMP/imgname.list humanly. )
+
+      The second half of the program calls thumbnail.sh to generate thumbnail images, upon finish, it checks for completeness. 
 
 
 --------------------------------------------------
