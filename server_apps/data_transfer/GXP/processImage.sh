@@ -67,8 +67,8 @@ if ($1 == "Thisse")  then
 
 else if ($1 == "Talbot")  then
 
-  foreach jpg (images/*/large/*)
-     set new_name = `echo "$jpg" | cut -d\/ -f4 | sed 's/JPG/jpg/' | sed 's/ /__/g' `;
+  foreach jpg (images/*)
+     set new_name = `echo "$jpg" | cut -d\/ -f2 | sed 's/JPG/jpg/' | sed 's/ /__/g' `;
      /bin/cp "$jpg" IMGTMP/$new_name;      
   end
 
@@ -103,6 +103,12 @@ cd IMGTMP
 ls -1 *.jpg | cut -d. -f1| sort >! imgjpg.list
 echo ".jpg sent but not in images.csv(txt)"
 diff imgname.list imgjpg.list  |grep '^>' | cut -c 3-
+
+echo "#\!/bin/sh" > rmAdditionalImages.sh
+diff imgname.list imgjpg.list  |grep '^>' | cut -c 3- | sed 's/^/\/bin\/rm -f /' | \
+                 sed 's/$/\.jpg/' >> rmAdditionalImages.sh
+/bin/chmod u+x  rmAdditionalImages.sh
+ 
 echo "---"
 echo "rows in images.csv(txt) that don't have .jpg files"
 diff imgname.list imgjpg.list  |grep '^<' | cut -c 3-
@@ -118,6 +124,7 @@ endif
 echo "Ready to generate thumbnail and annotation images? (y or n)"
 set goahead = $< 
 if ($goahead == 'n') then   #if abort, drop IMGTMP
+    cd ..
     /bin/rm -rf IMGTMP
     exit;
 endif
@@ -126,6 +133,8 @@ endif
 #------------------------------------------------------------
 # Generate thumbnail images, and annotation images if any
 #------------------------------------------------------------
+echo "delete additional images ..."
+./rmAdditionalImages.sh
 
 echo "image generation ...."
 foreach file (*.jpg)
