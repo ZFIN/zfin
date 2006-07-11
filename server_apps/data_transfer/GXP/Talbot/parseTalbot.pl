@@ -168,11 +168,7 @@ while (<PROBE_IN>) {
 	print ERR "$cegs_id has no accession number.\n";
 	next;
     }
-    if (! $clone_name) {
-	print ERR "$acc_col has no clone name.\n";
-	next;
-    }
-    
+
     # find out the gb acc related to which gene
     my $sth = $dbh->prepare ("select mrkr_zdb_id, mrkr_abbrev
                                     from db_link, marker
@@ -223,10 +219,20 @@ while (<PROBE_IN>) {
 	}else {
 	    print ERR join("    ", $acc_col, $clone_name, $gene_sym, $zfin_gene_id, $zfin_sym)."\n";
 	}
+
+	# when access in ZFIN, but no clone name, output error. 
+	print ERR "$acc_col has no clone name.\n" if (! $clone_name);
 	
-    }else{
-	# when gb acc didn't match any zfin gene, but talbot provided a gene symbol,
-	# we don't actually use that symbol, instead we do a blast analysis and use the 
+    }
+    
+	
+    else{  # when gb acc didn't match any zfin gene
+	# when access is not in ZFIN and no clone name,create a clone name
+        # using the cegs id
+	$clone_name = "cegs".$cegs_id if (! $clone_name);
+
+	# if talbot provided a gene symbol, we don't actually use
+	# that symbol, instead we do a blast analysis and use the 
 	# blast results. But we do courtesy check on that name to catch cases when 
 	# clone name was put on the gene name column. 	
 	
@@ -262,16 +268,12 @@ close (PROBE_ACC);
 close (AUTHOR_OUT);  
      
 
-########################################
+##############################################
 # expression.txt
 #
-#      CEGS_ID   STAGE    COMMENTS
-#          1       1               
-#
-# keywords.txt
-#
-#      CEGS_ID   STAGE    KEYWORDS
-#           1      1      somites
+#      CEGS_ID   STAGE  EXPR       COMMENTS
+#          1       1    somites; blood;           
+#          1       4    no expression detected;
 #
 # expression.unl
 # 
@@ -285,10 +287,8 @@ close (AUTHOR_OUT);
 #########################################
 
 open EXPR_IN, "<$expression_in" or die "Cannot open $expression_in to read";
-open KEYWD_IN, "<$keyword_in" or die "Cannot open $keyword_in to read";
 open EXPR_OUT, ">$expression_out" or die "Cannot open $expression_out to write";
 <EXPR_IN>;
-<KEYWD_IN>;   #skin title line
 
 my ($exp_key, $exp_stage, $exp_desc, $exp_found, $exp_desc_pre, $keywrd_key, $keywrd_stage, $keywrd_keyword);
 
@@ -296,7 +296,7 @@ while (<EXPR_IN>) {
     s/\s+$//g;            # delete trailing space
     print "Warning: Unexpected line in $expression_in. \n" if !/^[0-9]/;    
 
-    ($exp_key, $exp_stage, $exp_desc) = split (/\t/);
+    ($exp_key, $exp_stage, $exp_keywords, $exp_desc) = split (/\t/);
 
     if ($exp_stage < 1 || $exp_stage > keys(%stage_hash)) {
 	print "ERROR: unexpected stage code in $expression_in: $_ \n";
@@ -304,50 +304,38 @@ while (<EXPR_IN>) {
     }
     $exp_desc =~ s/^[ \"]*//; $exp_desc =~ s/[ \"]*$//; 
 
-    # if there has been a keyword read before, output that
-    if  ($keywrd_keyword) { #  $exp_found is defined from the last read
-       $exp_desc = $exp_desc_pre.($exp_desc ? "<br>".$exp_desc: "") if $exp_desc_pre;
-       print EXPR_OUT join("\|",$exp_key,$stage_hash{$exp_stage},$exp_desc,$exp_found,$keywrd_keyword,"")."|\n";
-    }
+    my @keyword_list = split (/;/, $exp_keywords);
 
-    while (<KEYWD_IN>) {
-	s/\s+$//g;               # delete trailing space
-	print "Warning: Unexpected line in $keyword_in. \n" if !/^[0-9]/; 
-	($keywrd_key, $keywrd_stage, $keywrd_keyword) = split (/\t/);
-	
-	if ($keywrd_stage < 1 || $keywrd_stage > keys(%stage_hash)) {
-	    print "ERROR: unexpected stage code in $keyword_in: $_ \n";
-	    exit;
-	}
-	
-	$exp_found =  "t";
-	$exp_desc_pre = "";
-	# adjust the keyword and expression description in case of no expression and 
-        # ubiquitously expressed
-	if ($keywrd_keyword eq "no expression detected") {
-	    $exp_found = "f" ;
-	    $keywrd_keyword = "whole organism";
-	    $exp_desc_pre = "no expression detected";
-	    $exp_desc = $exp_desc_pre.($exp_desc ? "<br>".$exp_desc: ""); 
-	}
+    $exp_found =  "t";
+    $exp_desc_pre = "";
 
-	if ($keywrd_keyword eq "ubiquitously expressed") {
-
-	    $keywrd_keyword = "unspecified";
-	    $exp_desc_pre = "ubiquitously expressed";
-	    $exp_desc = $exp_desc_pre.($exp_desc ? "<br>".$exp_desc: ""); 
+    if ($exp_keywords) {
+	my @keyword_list = split (/;/, $exp_keywords);
+    
+	foreach $keyword (@keyword_list) {
+	    $keyword =~  s/^\s+//g;
+	    # adjust the keyword and expression description in case of no expression and 
+	    # ubiquitously expressed
+	    if ($keyword eq "no expression detected") {
+		$exp_found = "f" ;
+		$keyword = "whole organism";
+		$exp_desc_pre = "no expression detected";
+		$exp_desc = $exp_desc_pre.($exp_desc ? "<br>".$exp_desc: ""); 
+	    }
+	    
+	    if ($keywrd_keyword eq "ubiquitously expressed") {
+		
+		$keywrd_keyword = "unspecified";
+		$exp_desc_pre = "ubiquitously expressed";
+		$exp_desc = $exp_desc_pre.($exp_desc ? "<br>".$exp_desc: ""); 
+	    }
+	    print EXPR_OUT join("\|",$exp_key,$stage_hash{$exp_stage},$exp_desc,$exp_found,$keyword,"")."|\n";
 	}
-
-	if ($exp_key eq $keywrd_key && $exp_stage eq $keywrd_stage) {
-	    print EXPR_OUT join("\|",$exp_key,$stage_hash{$exp_stage},$exp_desc,$exp_found,$keywrd_keyword,"")."|\n";
-	}
-	else {
-	    last;
-	}
+    }else {
+	print EXPR_OUT join("\|",$exp_key,$stage_hash{$exp_stage},$exp_desc,$exp_found,"unspecified","")."|\n";	
     }
 }
 close (EXPR_IN);
-close (KEYWD_IN);
 close (EXPR_OUT);
 
 
