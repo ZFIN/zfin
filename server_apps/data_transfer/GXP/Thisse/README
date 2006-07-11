@@ -150,7 +150,7 @@
 
     $executables$: redundance_check.sh
 	
-    $command$ :
+    $command$ : at Embryonix
 
 		> redundance_check.sh <dbname>
 
