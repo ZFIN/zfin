@@ -25,7 +25,7 @@ INPUT VARS:
 <?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
 <?MIVAR NAME=$MI_NULL><?/MIVAR>
 
-<?MISQL SQL="select distinct fig_zdb_id, fig_label
+<?MISQL SQL="select distinct fig_zdb_id, fig_full_label
            from figure, expression_pattern_figure, 
                 expression_experiment, expression_result
             where 
@@ -33,21 +33,19 @@ INPUT VARS:
             and xpatex_probe_feature_zdb_id ='$fxprobefig_probe_zdb_id'
             and xpatex_zdb_id=xpatres_xpatex_zdb_id
             and xpatres_zdb_id= xpatfig_xpatres_zdb_id
-            and xpatfig_fig_zdb_id = fig_zdb_id order by fig_label">
+            and xpatfig_fig_zdb_id = fig_zdb_id order by fig_full_label">
 
             <?MIVAR NAME=$fxprbfig_fig_zdb_id>$1<?/MIVAR>
             <table width = 100% align = center border = 0 bgcolor="#EEEEEE">
               <tr width = 96>
               <td>
-               <?MISQL SQL="select distinct fig_label, fig_caption, 
+               <?MISQL SQL="select fig_label, fig_caption, 
                           fimg_thumbnail, fimg_zdb_id, fimg_view, fimg_direction
                    from 
                           figure left outer join fish_image
                           on fimg_fig_zdb_id=fig_zdb_id
                    where 
                           fig_zdb_id = '$fxprbfig_fig_zdb_id'
-                   order by
-                          fig_label
                 ;">
 
                  <?MIVAR NAME=fxprbfig_label>$1<?/MIVAR>
