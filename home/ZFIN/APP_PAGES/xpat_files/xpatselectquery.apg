@@ -31,7 +31,7 @@ INPUT VARS:
                                 'begins' / 'contains' / 'equals' 
 
   xpatselqry_fishName		Exists if user entered a mutant/background string.
-  xpatselqry_fishSearchType	Specifies if mutant name should 'begins' with or
+  xpatselqry_fishSearchType	Specifies if mutant name should 'begins' with, 'equals' or
 				'contains' the string in mutant.
 
   xpatselqry_MOgene		Exists if user entered a MO knockdown string.
@@ -656,6 +656,10 @@ DEBUGGING:
   <?MIBLOCK COND="$(EC,$xpatselqry_fishSearchType,begins)">
     <?MIVAR NAME=$xpatselqry_nameCond>
       allmapnm_name_lower like '$(LOWER,$xpatselqry_fishName)%'
+    <?/MIVAR>
+  <?MIELSE COND="$(EC,$xpatselqry_fishSearchType,equals)">
+   <?MIVAR NAME=$xpatselqry_nameCond>
+      allmapnm_name_lower = '$(LOWER,$xpatselqry_fishName)'
     <?/MIVAR>
   <?MIELSE>
     <?MIVAR NAME=$xpatselqry_nameEndsTable>
