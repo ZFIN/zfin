@@ -659,7 +659,7 @@ Datablade documentation.
 
              <?MICOMMENT> query literature pub <?/MICOMMENT>
              <?MISQL SQL="
-             select pub_mini_ref
+             select distinct pub_mini_ref
              from expression_experiment
              join publication
                     on xpatex_source_zdb_id = publication.zdb_id
@@ -695,7 +695,7 @@ Datablade documentation.
               <tr><td><b>All expression data: </b> </td>
               <td>
               <?MIVAR>
-               <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&mutsearchtype=begins&mutant=$allele">$fishview_xpatfig_count figure(s)</a> from $fishview_xpatsource_desc
+               <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&mutsearchtype=equals&mutant=$allele">$fishview_xpatfig_count figure(s)</a> from $fishview_xpatsource_desc
 	     <?/MIVAR>
 </table>
           <?/MIBLOCK> <?MICOMMENT> end of if there are xpats <?/MICOMMENT> 
