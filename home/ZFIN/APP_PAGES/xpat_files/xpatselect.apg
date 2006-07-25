@@ -54,8 +54,8 @@ INPUT VARS:
 
 
     mutant		Exists if user entered a mutant/background string.
-    mutsearchtype	Specifies if mutant name should 'begins' with or
-			'contains' the string in mutant.
+    mutsearchtype	Specifies if mutant name should 'begins' with
+			'contains' or 'equals' the string in mutant.
     author		Exists if user entered an author string
     authsearchtype	Specifies if the author should 'begins' with or
 			'contains' the string in author.
@@ -873,6 +873,8 @@ function openChild(childWinUrl,childWinName) {
 	      <SELECT name=mutsearchtype>
 		<option value="contains" $(IF,$(AND,$(XST,$mutsearchtype),$(EC,$mutsearchtype,contains)),SELECTED)>contains
 		<option value="begins"  $(IF,$(AND,$(XST,$mutsearchtype),$(EC,$mutsearchtype,begins)),SELECTED) >begins with
+                <option value="equals" $(IF,$(AND,$(XST,$mutsearchtype),$(EC,$mutsearchtype,equals)),SELECTED) >equals
+	    </select>
 	      </SELECT>
 	      <INPUT type=text id="xpatselMutant" name=mutant size=15
 		     onKeyDown="
@@ -890,6 +892,7 @@ function openChild(childWinUrl,childWinName) {
 	      <SELECT name="MOsearchtype">
 		<option value="contains" $(IF,$(AND,$(XST,$MOsearchtype),$(EC,$MOsearchtype,contains)),SELECTED)>contains
 		<option value="begins"  $(IF,$(AND,$(XST,$MOsearchtype),$(EC,$MOsearchtype,begins)),SELECTED) >begins with
+
 	      </SELECT>
 	      <INPUT type=text id="xpatselMoSearchtype" name=MOgene size=13
 		     onKeyDown="
