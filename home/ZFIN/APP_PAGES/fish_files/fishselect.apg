@@ -878,7 +878,7 @@ Startframes.apg will pass this variables on to the select form.
        </TR>
 <?/MIBLOCK>
 
-<form name="BrowserForm" method=get
+<form name="BrowserForm" method=post
   onSubmit="updateList();"
   action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
 
@@ -1027,7 +1027,7 @@ we have to do at this point is pass the return record along to the fishlister.
     <tr>
      <td><center>
        <input type=button value="Add" onClick="
-document.BrowserForm.method = 'get'; 
+document.BrowserForm.method = 'post'; 
 for (i=0 ; i < document.BrowserForm.structure_list.options.length ; i++) {
     document.BrowserForm.structure_list.options[i].selected=true;
 } 
