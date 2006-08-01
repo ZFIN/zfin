@@ -133,6 +133,17 @@ update probes_tmp set prb_gene_zdb_id = (select isgn_gene_zdb_id
 		      )	;
 
 
+update probes_tmp set prb_library = 
+	(select probelib_zdb_id 
+           from probe_library 
+          where probelib_name = prb_library);
+
+-- use "unknown". During the loading, if the clone already exist,
+-- the existing probe library would be used instead.
+update probes_tmp set prb_library = "ZDB-PROBELIB-040512-1"
+	        where prb_library is null;
+
+	
 -- Check data error 
 --------------------
 -- The probes and its encoding genes would both have the expression
@@ -155,16 +166,13 @@ UNLOAD TO 'probe_without_encoding_gene.err'
 --When there exists an xpat using the same probe and is from direct submission,
 --it is highly possible that the data is from the same submission, which is 
 -- problematic. Flag it.
+UNLOAD TO 'exist_same_xpat_experiment_from_directsub.err'
+       select prb_clone_name, xpatex_zdb_id, xpatex_featexp_zdb_id, xpatex_assay_name, xpatex_source_zdb_id
+         from probes_tmp, expression_experiment, marker
+        where mrkr_zdb_id = xpatex_probe_feature_zdb_id
+          and mrkr_name = prb_clone_name
+          and xpatex_source_zdb_id in ("ZDB-PUB-040907-1", "ZDB-PUB-010810-1", "ZDB-PUB-031103-24", "ZDB-PUB-051025-1");
 
-UNLOAD TO 'unknown_probelib.err' 
-	select distinct prb_library 
-	  from probes_tmp 
-	 where prb_library not in (select probelib_name from probe_library);
-
-update probes_tmp set prb_library = 
-	(select probelib_zdb_id 
-           from probe_library 
-          where probelib_name = prb_library);
 
 -- use the "unknown" if probe library is not provided.
 -- we hardcode the zdb id since there is equal chance of the name to 
