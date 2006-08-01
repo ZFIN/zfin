@@ -67,10 +67,11 @@ my $previous_stage_code = 0;
 my $previous_stage_name = "";
 my $stage_code          = 0;
 my $stage_name          = "";
-<STAGE_IN>;    #skin title line;
 
 while (<STAGE_IN>) {
-    s/\s+$//g;                         #important! to eliminate odd trailing space chars
+    next if /^CEG/; #skin title line;
+
+    s/\s+$//g;      #important! to eliminate odd trailing space chars
     print "Warning: unexpected line in $stage_in. \n" if !/^[0-9]/;
     ($stage_code, $stage_name) = split (/\t/);
     if ($stage_code != $previous_stage_code) {
@@ -95,9 +96,10 @@ close (STAGE_IN);
 #
 ##########################################
 open VIEW_IN, "<$view_in" or die "Cannot open $view_in to read";
-<VIEW_IN>;   #skin title line;
 
 while (<VIEW_IN>) {
+    next if /^CEG/; #skin title line;
+    
     s/\s+$//g;   
     print "Warning: unexpected line in $view_in. \n" if !/^[0-9]/;
     my ($view_code, $view_name, $view_orient) = split (/\t/);
@@ -142,9 +144,10 @@ open PROBE_IN, "<$probe_in" or die "Cannot open $probe_in to read";
 open PROBE_OUT, ">$probe_out" or die "Cannot open $probe_out to write";
 open PROBE_ACC, ">$probe_acc" or die "Cannot open $probe_acc to read";
 open AUTHOR_OUT, ">$author_out" or die "Cannot open $author_out to write";
-<PROBE_IN>;
 
 while (<PROBE_IN>) {
+    next if /^CEG/; #skin title line;
+
     s/\s+$//g;
     print "Warning: unexpected line in $probe_in. \n" if !/^[0-9]/;
 
@@ -288,11 +291,12 @@ close (AUTHOR_OUT);
 
 open EXPR_IN, "<$expression_in" or die "Cannot open $expression_in to read";
 open EXPR_OUT, ">$expression_out" or die "Cannot open $expression_out to write";
-<EXPR_IN>;
 
-my ($exp_key, $exp_stage, $exp_desc, $exp_found, $exp_desc_pre, $keywrd_key, $keywrd_stage, $keywrd_keyword);
+my ($exp_key, $exp_stage, $exp_desc, $exp_found, $exp_desc_pre, @keyword_list, $keyword);
 
 while (<EXPR_IN>) {
+    next if /^CEG/; #skin title line;
+
     s/\s+$//g;            # delete trailing space
     print "Warning: Unexpected line in $expression_in. \n" if !/^[0-9]/;    
 
@@ -304,13 +308,11 @@ while (<EXPR_IN>) {
     }
     $exp_desc =~ s/^[ \"]*//; $exp_desc =~ s/[ \"]*$//; 
 
-    my @keyword_list = split (/;/, $exp_keywords);
-
     $exp_found =  "t";
     $exp_desc_pre = "";
 
     if ($exp_keywords) {
-	my @keyword_list = split (/;/, $exp_keywords);
+	@keyword_list = split (/;/, $exp_keywords);
     
 	foreach $keyword (@keyword_list) {
 	    $keyword =~  s/^\s+//g;
@@ -323,9 +325,9 @@ while (<EXPR_IN>) {
 		$exp_desc = $exp_desc_pre.($exp_desc ? "<br>".$exp_desc: ""); 
 	    }
 	    
-	    if ($keywrd_keyword eq "ubiquitously expressed") {
+	    if ($keyword eq "ubiquitously expressed") {
 		
-		$keywrd_keyword = "unspecified";
+		$keyword = "unspecified";
 		$exp_desc_pre = "ubiquitously expressed";
 		$exp_desc = $exp_desc_pre.($exp_desc ? "<br>".$exp_desc: ""); 
 	    }
@@ -361,9 +363,10 @@ close (EXPR_OUT);
 
 open IMG_IN, "<$image_in" or die "Cannot open $image_in to read";
 open IMG_OUT, ">$image_out" or die "Cannot open $image_out to write";
-<IMG_IN>;
 
 while (<IMG_IN>) {
+    next if /^CEG/; #skin title line;
+
     s/\s+$//g;
     print "Warning: Unexpected line in $image_in. \n" if !/^[0-9]/;
     my ($img_key, $img_name, $img_stage, $img_view) = split (/\t/);
