@@ -110,7 +110,8 @@ sub queryAccession ($) {
                                and dblink_fdbcont_zdb_id in (
                                            'ZDB-FDBCONT-040412-36',
                                            'ZDB-FDBCONT-040412-37',
-                                           'ZDB-FDBCONT-040412-14');  
+                                           'ZDB-FDBCONT-040412-14',
+                                           'ZDB-FDBCONT-060417-1');  
                            ");
     $sth->execute();
     
