@@ -669,9 +669,8 @@ insert into zdb_active_data (zactvd_zdb_id)
 	select img_zdb_id 
 	  from images_tmp;
 if (sbm_lab_name = "Talbot") then
-    update images_tmp set img_comments = "CEG load",
-                  img_preparation = "whole-mount";
-    end if 
+    update images_tmp set img_comments = "CEG load";
+end if 
 
 -- images with annotation need a slightly different SQL
 -- if modify, check both SQLs.
