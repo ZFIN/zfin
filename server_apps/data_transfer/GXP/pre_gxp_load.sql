@@ -317,6 +317,11 @@ update images_tmp
 	  set img_preparation = "whole-mount"
 	where img_preparation = "whole mount";
 
+-- the defaul img_preparation is "whole-mount"
+update images_tmp
+	  set img_preparation = "whole-mount"
+	where img_preparation is null;
+
 -- prepare for image renaming
 ALTER TABLE images_tmp add img_zdb_id varchar(50);
 update images_tmp set img_zdb_id = get_id ("IMAGE");
@@ -328,10 +333,10 @@ UNLOAD TO 'fimg_oldname_2_newname.txt'
 ---------------------
 
 UNLOAD TO 'fimg_preparation_unknown.err'
-	select img_clone_name, img_preparation from images_tmp where img_preparation not in (select fimgprep_name from fish_image_preparation);
+	select img_clone_name, img_preparation from images_tmp where not exists (select 't' from fish_image_preparation where fimgprep_name = img_preparation);
 
 UNLOAD TO 'fimg_view_unknown.err'
-	select img_clone_name, img_view from images_tmp where img_view not in (select fimgview_name from fish_image_view);
+	select img_clone_name, img_view from images_tmp where not exists (select 't' from fish_image_view where fimgview_name = img_view);
 
 UNLOAD TO 'img_xpat_inconsist.err'
 	select img_clone_name, img_sstart, img_sstop
