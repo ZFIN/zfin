@@ -73,6 +73,34 @@ function updateInnerHTML(element_id,html_to_display) {
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
+<?MICOMMENT>
+get source zdb id, comments, label and caption of figure to determine type of FX record (GELI, TOD, or light curated)
+<?/MICOMMENT>
+
+<?MISQL SQL="
+           select distinct fig_source_zdb_id, fig_label, fig_comments, 
+                  fig_caption, jtype, pub_mini_ref
+           from figure, publication
+           where fig_zdb_id = '$fxfigview_fig_zdb_id'
+           and   fig_source_zdb_id = zdb_id
+          ;">
+
+          <?MIVAR NAME=fxfigview_source_zdb_id>$1<?/MIVAR>
+          <?MIVAR NAME=fxfigview_label>$2<?/MIVAR>
+          <?MIVAR NAME=fxfigview_comments>$3<?/MIVAR>
+          <?MIVAR NAME=fxfigview_caption>$4<?/MIVAR>
+          <?MIVAR NAME=fxfigview_jtype>$5<?/MIVAR>
+          <?MIVAR NAME=fxfigview_miniref>$6<?/MIVAR>
+<?/MISQL>
+
+<?MICOMMENT> a minimal change to test whether the fig id is valid as source id is required for a fig record <?/MICOMMENT>
+<?MIBLOCK COND="$(NXST,$fxfigview_source_zdb_id)">
+       <form><center><font size=4>
+        <?MIVAR> <b>Requested ID not found on ZFIN.<?/MIVAR></font>      
+       </form>
+
+<?MIELSE><?MICOMMENT>-- if entered ID has an entry in ZFIN-----<?/MICOMMENT>
+
 <a name="topofpage">
 
   <?MISQL SQL="select WebExplode(object,'rtype=fxfig') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
@@ -95,29 +123,7 @@ function updateInnerHTML(element_id,html_to_display) {
       </form></tr>
     </table>
 <?/MIVAR>
-
-<!---------------------------------------->
-
-<p>
-<?MICOMMENT>
-get source zdb id, comments, label and caption of figure to determine type of FX record (GELI, TOD, or light curated)
-<?/MICOMMENT>
-
-<?MISQL SQL="
-           select distinct fig_source_zdb_id, fig_label, fig_comments, fig_caption, jtype, pub_mini_ref
-           from figure, publication
-           where fig_zdb_id = '$fxfigview_fig_zdb_id'
-           and   fig_source_zdb_id = zdb_id
-          ;">
-
-          <?MIVAR NAME=fxfigview_source_zdb_id>$1<?/MIVAR>
-          <?MIVAR NAME=fxfigview_label>$2<?/MIVAR>
-          <?MIVAR NAME=fxfigview_comments>$3<?/MIVAR>
-          <?MIVAR NAME=fxfigview_caption>$4<?/MIVAR>
-          <?MIVAR NAME=fxfigview_jtype>$5<?/MIVAR>
-          <?MIVAR NAME=fxfigview_miniref>$6<?/MIVAR>
-<?/MISQL>
-
+	 
 <?MIVAR>
     <TITLE>ZFIN: Figure: $(REPLACE,$fxfigview_miniref,"<i>et al.</i>","et al."), $fxfigview_label </TITLE>
 <?/MIVAR>
@@ -390,4 +396,7 @@ and display them one after the other horizontally
    <?MICOMMENT>End unpublished condition<?/MICOMMENT>
 <?/MIBLOCK>
 <p>
+
+<?/MIBLOCK><?MICOMMENT>End fig source id (fig id) exists<?/MICOMMENT>
+
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
