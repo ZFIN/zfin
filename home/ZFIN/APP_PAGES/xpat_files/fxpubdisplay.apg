@@ -115,6 +115,7 @@ to display the "Additional figures" link
              WHERE xpatex_probe_feature_zdb_id = '$fxpubdis_probe_zdb_id'
              and xpatex_zdb_id=ids_data_zdb_id 
              and ids_source_zdb_id = zdb_id
+	     and xpatex_source_zdb_id = '$fxpubdis_zdb_id'
              ORDER by 1;">
              <?MIVAR NAME=fxpubdis_auth_link><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-persview.apg&OID=$2">$1</a><?/MIVAR>
              <?MIVAR>
