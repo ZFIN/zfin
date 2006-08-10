@@ -193,7 +193,7 @@ if ($goahead == 'y') then
     $INFORMIXDIR/bin/dbaccess $dbname pre_gxp_load_cleanup.sql
     $INFORMIXDIR/bin/dbaccess $dbname gxp_load_cleanup.sql
     if ($labname == "Thisse" && $datatype != "cb" && $HOST == "helix") then
-       	echo "Please submit accession_gene.txt and statistics.txt to curator." 
+       	echo "Please submit thisseName_ZfinMarker.txt and statistics.txt to curator." 
     endif
 else 
     echo "Abort with the 15 temporary tables in db"
