@@ -1,4 +1,4 @@
-To: aprilm@uoneuro.uoregon.edu, giglias@uoneuro.uoregon.edu, jmatthews@uoneuro.uoregon.edu, cjones@uoneuro.uoregon.edu, monte@uoneuro.uoregon.edu, sramacha@uoneuro.uoregon.edu, dfashena@uoneuro.uoregon.edu, mason@uoneuro.uoregon.edu, rholland@uoneuro.uoregon.edu, zoltan@uoneuro.uoregon.edu, andrzej@uoneuro.uoregon.edu
+To: aprilm@uoneuro.uoregon.edu, zfinadmn@zfin.org, jmatthews@uoneuro.uoregon.edu, cjones@uoneuro.uoregon.edu, monte@uoneuro.uoregon.edu, mhaendel@uoneuro.uoregon.edu, dfashena@uoneuro.uoregon.edu, mason@uoneuro.uoregon.edu, rholland@uoneuro.uoregon.edu, zoltan@uoneuro.uoregon.edu, andrzej@uoneuro.uoregon.edu
 From: zirc@zfin.org
 Subject: SUB: [lineName] [mutantAlleles] [transgeneName] for [required_submitterName]
 

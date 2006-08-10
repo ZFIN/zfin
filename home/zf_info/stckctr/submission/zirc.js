@@ -152,8 +152,10 @@ if (nextPage) {
 
 
 function storedValues(cookieName) {
+//alert("!storedValues: "+cookieName);
 if (getCookie(cookieName)) {
   var cookieValue = getCookie(cookieName);
+//alert("!cookieValue: "+cookieValue);
 	if (cookieValue) {
 	var valueArray = cookieValue.split(escape('&')); //parsing name/value pairs
 	for (var x=0; x<valueArray.length; x++){
@@ -192,6 +194,7 @@ if (getCookie(cookieName)) {
 }  //end of function storedValues() 
 
 function storedMTAValues(cookieName) {
+//alert("!storedMTAValues: "+cookieName);
    if (getCookie(cookieName)) {
      var cookieValue = getCookie(cookieName);
      if (cookieValue) {
@@ -232,6 +235,7 @@ function storedMTAValues(cookieName) {
 }  	   //end of function storedValues() 
 
 function saveForm (cookieName, nextPage) {
+//alert("!saveForm: "+cookieName+"  |  "+nextPage);
 var zircCookie = "";
 //checking for data...
 var formCheck = emptyFormCheck();
