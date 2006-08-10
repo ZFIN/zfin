@@ -4,7 +4,7 @@ Subject: SUB: [lineName] [mutantAlleles] [transgeneName] for [required_submitter
 
 
 
-***for SHERRY ************************************* 
+***for JON ************************************* 
 
 SUBMITTER CONTACT INFORMATION
 Submitter Name:
@@ -56,7 +56,7 @@ organization responsible for funding:
 ---
 
 
-***for SRIDHAR ************************************* 
+***for MELISSA ************************************* 
 
 LINE/MUTANT INFORMATION
 Allele(s):
