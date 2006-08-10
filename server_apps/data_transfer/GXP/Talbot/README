@@ -97,9 +97,15 @@
             o other_names column holds clone name. 
           However, it happens that
             a). when there is no gene symbol, clone name gets put into the name column 
+	    b). only gene symbolin name column, no clone name
 	    b). gene symbol and clone name switched position
-          we handles case a) as if that is a rule. For case b) we query the gene symbol
-          agaist zfin marker table, and generate an error message when no match. We will
+          we handles case a) as if that is a rule and we take whatever in the name column
+          as clone name. This causes problem for case b). And we fix that by checking the
+          gb acc against ZFIN and update the gene symbol with matching ZFIN EST/cDNA 
+          name. When the acc is not in ZFIN, the script would use cegs# as clone name.
+          When the acc is in ZFIN, but only associated with a gene, that would be a 
+          curator's call. For case c) we query the gene symbol agaist zfin
+          marker table, and generate an error message when no match. We will
           then manually correct the error. 
 
 	- Check accession number: 
@@ -121,6 +127,8 @@
           - or delete the bad gene sym, let the script creates fake genes
 
         If all consistent, but unknown accession is detected, the master script would blasts acc4blast.txt against zfin cdna database. 
+
+        It is highly recommended that before the loading, take a look at the probes.unl file and identify gene names that stay in the clone name column. Those should be cases where the gb accession number is in ZFIN only associated with a gene. Send that to a curator for a proper clone name. If this step is not taken, the loading process would probably fail with mrkr_abbrev_unique constraint violated error. 
 
 
 ----------------
