@@ -172,6 +172,15 @@ while (<PROBE_IN>) {
 	next;
     }
 
+    # if the accession is in ZFIN associated with a EST/cDNA, use that EST/cDNA name
+    # (this is needed since Talbot data often mis-place gene name as clone name. )
+    $clone_name = $dbh->selectrow_array ("select mrkr_name
+                                    from db_link, marker
+                                   where dblink_acc_num = '$acc_col'
+                                     and dblink_linked_recid = mrkr_zdb_id
+                                     and mrkr_type in ('EST','CDNA')
+                                     and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-37' ");
+
     # find out the gb acc related to which gene
     my $sth = $dbh->prepare ("select mrkr_zdb_id, mrkr_abbrev
                                     from db_link, marker
