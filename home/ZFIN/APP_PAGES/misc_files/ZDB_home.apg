@@ -4,20 +4,9 @@
 <META HTTP-EQUIV="EXPIRES" CONTENT="-2d">
 <TITLE>ZFIN :  ZFIN Home Page</TITLE>
 
-<script language="JavaScript" src="/client_sniff.js" type="text/javascript"></script>
 
-<SCRIPT> 
-  if (is_nav4) {
-    document.write('<LINK rel=stylesheet type="text/css" href="/nn4_zfin_style.css">');
-  } else {
-    document.write('<LINK rel=stylesheet type="text/css" href="/zfin_style.css">');
-  }
+<LINK rel=stylesheet type="text/css" href="/zfin_style.css">
 
-</SCRIPT>
-
-<!-- <STYLE type="text/css">
-  @import url(/zfin_style.css);
-</STYLE> -->
 
 </HEAD>
 <BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" >
