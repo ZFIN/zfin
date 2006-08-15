@@ -23,35 +23,40 @@ require "err_report.pl";
 # No parameter
 #
 sub sendResult {
-	
-  my $SUBJECT="Auto: OBO file";
-  my $MAILTO="<!--|AO_EMAIL_CURATOR|-->";   
-  my $ATTFILE ="./zfin.obo";
- 
-  # Create a new multipart message:
-  my $msg = new MIME::Lite 
-    From    => "$ENV{LOGNAME}",
-    To      => "$MAILTO",
-    Subject => "$SUBJECT",
-    Type    => 'multipart/mixed';
- 
-  attach $msg 
-    Type     => 'application/octet-stream',
-    Encoding => 'base64',
-    Path     => "./$ATTFILE",
-    Filename => "$ATTFILE";
 
-  # Output the message to sendmail
+    my $input_shareFlag = $_[0];
+    my $file_domain = $input_shareFlag ? "for public" : "for ZFIN";
 
-  open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
-  $msg->print(\*SENDMAIL);
-
-  close(SENDMAIL);
+    my $SUBJECT="Auto: OBO file ".$file_domain;
+    my $MAILTO="<!--|AO_EMAIL_CURATOR|-->";   
+    my $ATTFILE ="./zfin.obo";
+    
+    # Create a new multipart message:
+    my $msg = new MIME::Lite 
+	From    => "$ENV{LOGNAME}",
+	To      => "$MAILTO",
+	Subject => "$SUBJECT",
+	Type    => 'multipart/mixed';
+    
+    attach $msg 
+	Type     => 'application/octet-stream',
+	Encoding => 'base64',
+	Path     => "./$ATTFILE",
+	Filename => "$ATTFILE";
+    
+    # Output the message to sendmail
+    
+    open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
+    $msg->print(\*SENDMAIL);
+    
+    close(SENDMAIL);
 }
 
 
 #--------------- Main --------------------------------
 #
+my $shareFlag = $ARGV[0] ? $ARGV[0] : "";
+
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/Anatomy/";
 
 #remove old files
@@ -92,13 +97,12 @@ print OUT "$typedef";
 
 #-- invoke scripts to generate anatomy items and stage items
 
-my $shareFlag = $ARGV[0] ? $ARGV[0] : "";
 print OUT `./anatitem_2_obo.pl $shareFlag`;
 
 print OUT `./stg_2_obo.pl`;
 
 close OUT;
 
-&sendResult();
+&sendResult($shareFlag);
 
 exit;
