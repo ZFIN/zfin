@@ -29,7 +29,7 @@
 
 	<target name="compile" depends="init" description="compiles code">
 		<mkdir dir="${build.dir}" />
-		<javac destdir="${build.dir}" debug="off" deprecation="off" optimize="on">
+		<javac destdir="${build.dir}" debug="on" deprecation="off" optimize="on">
 			<src path="${src.dir}" />
 			<classpath refid="default_classpath" />
 		</javac>
