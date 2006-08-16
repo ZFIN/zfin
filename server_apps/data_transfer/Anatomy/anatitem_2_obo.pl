@@ -45,7 +45,7 @@ my $rootAnatId = "ZFA:0100000";  #this constant is also referred by parseOBO.pl
 print "\n";
 print "[Term]\n";
 print "id: $rootAnatId \n";
-print "name: Zebrafish Anatomy\n";
+print "name: zebrafish anatomical entity\n";
 print "namespace: zebrafish_anatomy\n";
 
 
