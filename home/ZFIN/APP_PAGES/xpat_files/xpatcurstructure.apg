@@ -384,6 +384,7 @@ EFFECTS
 <?MISQL SQL="
 	select anatitem_name, anatitem_name_lower as name_lower_column 
 	  from anatomy_item 
+	 where anatitem_is_obsolete = 'f'
         order by name_lower_column;">
    <?MIVAR NAME=xpcurstr_curAnat>"$1"<?/MIVAR>
    <?MIVAR>$(SETVAR,$xpcurstr_anatList,$(IF,$(NC,$MI_CURRENTROW,1),$xpcurstr_anatList",")$xpcurstr_curAnat)<?/MIVAR>
