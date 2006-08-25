@@ -18,7 +18,7 @@ create trigger marker_insert_trigger insert on
 	execute procedure mhist_event( new_marker.mrkr_zdb_id,
                 'assigned', new_marker.mrkr_name,
                 new_marker.mrkr_abbrev ),
-        execute procedure p_populate_go_unknowns (new_marker.mrkr_zdb_id,
+        execute procedure p_populate_go_root_terms (new_marker.mrkr_zdb_id,
 				new_marker.mrkr_name, new_marker.mrkr_type)
 		
 
