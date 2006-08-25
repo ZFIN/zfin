@@ -12,7 +12,6 @@
 # Stored Procedure language.  Files must have the same name as the routine 
 # they define.  Each file defines only one routine (except for a few cases,
 # see below).
-#
 # See the routines themselves for comments on their parameters and what 
 # they do.
 
@@ -42,11 +41,11 @@ MRKR_STATS   = gene_contains_seg.sql mhist_event.sql p_mrel_grpmem_correct.sql \
 	       p_check_mrkr_abbrev.sql \
                p_insert_into_record_attribution_tablezdbids.sql \
                p_insert_into_record_attribution_datazdbids.sql \
-	       p_insert_marker_go_ev.sql p_populate_go_unknowns.sql \
-	       p_check_drop_go_unknown.sql \
+	       p_insert_marker_go_ev.sql p_populate_go_root_terms.sql \
+	       p_check_drop_go_root_term.sql \
 	       get_mrkr_abbrev_html.sql get_mrkr_name_html.sql \
 
-PUB_STATS    = get_pub_mini_ref.sql p_drop_go_unknown_attribution.sql \
+PUB_STATS    = get_pub_mini_ref.sql p_drop_go_root_term_attribution.sql \
 	       pub_xpat_curation_status.sql jrnl_acknowledgment.sql \
 	       get_pub_default_permissions.sql p_check_state_country.sql \
 	       p_new_person_address.sql \
