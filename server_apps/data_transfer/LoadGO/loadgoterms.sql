@@ -77,6 +77,8 @@ create index goterm_name_index
   using btree 
   in idxdbs1 ;
 
+update statistics high for table goterm_onto ;
+
 insert into goterm_onto (goterm_id, goterm_name, goterm_onto, goterm_definition,
 	goterm_comment, goterm_is_obsolete)
   select distinct goterm_id, goterm_name, goterm_onto, goterm_definition,
@@ -261,6 +263,8 @@ update statistics high for table go_term ;
 
 update statistics high for table goterm_onto ;
 
+!echo "this is how many are being reinstated" ;
+
 
 insert into tmp_reinstate (name, id, def, comment)
   select distinct go_term.goterm_name, 
@@ -270,8 +274,7 @@ insert into tmp_reinstate (name, id, def, comment)
     from go_term, goterm_onto
     where go_term.goterm_is_obsolete = 't' 
     and go_term.goterm_go_id = goterm_onto.goterm_id
-    and (goterm_onto.goterm_is_obsolete = '' 
-		or goterm_onto.goterm_is_obsolete is null);
+    and goterm_onto.goterm_is_obsolete is null;
 
 create index tmpreinstate_index 
   on tmp_reinstate(id)
@@ -330,6 +333,7 @@ create temp table sec_oks
   );
 
 --insert only the distinct secondary terms
+!echo "start of the non-dup secondary terms" ;
 
 insert into sec_oks (sec_id, prim_id)
   select distinct sec_id, prim_id
@@ -347,15 +351,39 @@ create temp table sec_unload
 
 update go_term
   set goterm_is_secondary = 't'
-  where goterm_go_id in (select sec_id from sec_oks) ;
+  where "GO:"||goterm_go_id in (select sec_id from sec_oks) ;
 
+update go_term
+  set goterm_is_obsolete = 'f'
+  where goterm_is_obsolete = 't'
+  and goterm_is_secondary = 't'
+  and "GO:"||goterm_go_id in (select sec_id from sec_oks) 
+  and not exists (select 'x'
+		    from goterm_onto 
+		    where goterm_onto.goterm_id = goterm_go_id);
+
+select count(*) from 
+  goterm_onto, go_term
+  where goterm_onto.goterm_id = goterm_go_id ;
+
+select count(*) 
+  from goterm_onto
+  where not exists (select 'x'
+			from go_Term
+			where goterm_onto.goterm_id = goterm_go_id) ;
+
+unload to goterm_secondary_and_obsolete.txt
+  select goterm_zdb_id, goterm_name, goterm_go_id
+    from go_term
+    where goterm_is_secondary = 't' 
+	and goterm_is_obsolete = 't' ;
 
 --create a table for unload to report 
 
-insert into sec_unload
+insert into sec_unload (sec_id, prim_id)
   select sec_id, prim_id
     from sec_oks
-    where sec_id in (select goterm_go_id from go_Term) ;
+    where sec_id in (select "GO:"||goterm_go_id from go_Term) ;
 
 create temp table sec_unload_report 
   (
@@ -375,8 +403,13 @@ insert into sec_unload_report
  	'Gene: '||mrkrgoev_mrkr_zdb_id, 
 	'Pub: '||mrkrgoev_source_zdb_id
     from sec_unload, go_term, marker_go_term_Evidence
-    where sec_id = goterm_go_id
+    where sec_id = "GO:"||goterm_go_id
     and mrkrgoev_go_term_zdb_id = goterm_zdb_id ;
+
+!echo "count the number of records in sec_unload_report" ;
+
+select count(*) 
+  from sec_unload_report;
 
 --deal with reinstated secondary terms
 
