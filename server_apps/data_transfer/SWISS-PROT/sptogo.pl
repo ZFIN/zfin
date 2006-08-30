@@ -6,7 +6,7 @@
 # This script parse the SWISS-PROT keyword to GO translation table 
 # to unload file "sp_mrkrgoterm.unl"
 
-my (@line, @spkw, @term_id, @term, @id);
+my (@line, @spkw, @spkw_id, @term_id, @term, @id);
 
 
 if (@ARGV == 0) {
@@ -16,17 +16,19 @@ if (@ARGV == 0) {
 
 open KWGO, ">sp_mrkrgoterm.unl" or die "Cannot open the sp_mrkrgoterm file: $!";
 while(<>) {
-
-#SP_KW:Primosome > GO:alpha DNA polymerase:primase complex ; GO:0005658 
+ #SP_KW:KW-0117 Actin capping > GO:barbed-end actin filament capping ; GO:0051016
  if(/^SP/) {
     chomp;
     @line = split(/ > /, $_);
-    @spkw = split(/:/, $line[0]);
+    @spkw = split(/ /, $line[0]);
+    @spkw_id = split(/:/, $spkw[0]);
+
     @term_id  = split(/ ; /, $line[1]);
     @term = split(/GO:/, $term_id[0]);
     @id = split(/:/, $term_id[1]);
     
-    print KWGO "$spkw[1]|$term[1]|$id[1]|\n";
+    #output: KW-0117| Actin capping|barbed-end actin filament capping|0051016|
+    print KWGO "$spkw_id[1]|$spkw[1]|$term[1]|$id[1]|\n";
   }
  @line=(); @ip=(); @term_id=(); @term=(); @id=();    
 }

@@ -82,8 +82,9 @@ begin work;
 
 
 --!echo 'Insert into zdb_active_data'
-	insert into zdb_active_data 
+	insert into zdb_active_data (zactvd_zdb_id)
                   select dblink_zdb_id from pre_db_link p;
+
 			 
 --!echo 'Insert DBLINK into db_link'
 	insert into db_link (dblink_linked_recid,dblink_acc_num,dblink_info,dblink_zdb_id,
@@ -93,8 +94,8 @@ begin work;
 		  from pre_db_link p;
 
 --!echo 'Attribute db links to the internal pub record'
-	insert into record_attribution
-		select dblink_zdb_id, "ZDB-PUB-020723-2",''
+	insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
+		select dblink_zdb_id, "ZDB-PUB-020723-2"
 		  from pre_db_link;
 
 
@@ -132,15 +133,15 @@ begin work;
                 set dalias_zdb_id = get_id("DALIAS");
 
 --!echo 'Insert DALIAS into zdb_active_data'
-	insert into zdb_active_data 
+	insert into zdb_active_data (zactvd_zdb_id)
                     select dalias_zdb_id from pre_ac_alias;
 
 --!echo 'Insert second AC into data_alias'
 	insert into data_alias select * from pre_ac_alias;
 
 --!echo 'Attribute second AC to the internal pub record'
-	insert into record_attribution 
-               select dalias_zdb_id, "ZDB-PUB-020723-2",''
+	insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
+               select dalias_zdb_id, "ZDB-PUB-020723-2"
 	       from pre_ac_alias;
 
 
@@ -155,21 +156,22 @@ begin work;
 -- 3. ec to GO
 
 	create temp table spkw_goterm_with_dups (
-		sp_kwd  varchar(80),
-		goterm_name  varchar(100),
-		goterm_id  varchar(10)
+		sp_kwd_id	varchar(50),
+		sp_kwd_name  	varchar(80),
+		goterm_name  	varchar(100),
+		goterm_id  	varchar(10)
 	)with no log;
 
 --!echo 'Load sp_mrkrgoterm.unl: spkwtogo translation table'
 	load from sp_mrkrgoterm.unl insert into spkw_goterm_with_dups;
 	create index spkw_goterm_with_dups_keyword_index
-		on spkw_goterm_with_dups (sp_kwd);
+		on spkw_goterm_with_dups (sp_kwd_name);
 
 --!echo 'unload obsolete or secondary goterm, send to curators, delete from loading'
 -- order the boolean column secondary, obsolete makes the obsolete(t) comes first,
 -- secondary(t) comes second, if obsolete&secondary(?) comes last. 
 	unload to "spkw2go_obsl_secd.unl" 
-		select distinct "SP_KW:"||sp_kwd, s.goterm_name, s.goterm_id,
+		select distinct "SP_KW:"||sp_kwd_id, s.goterm_name, s.goterm_id,
 			g.goterm_is_obsolete, g.goterm_is_secondary 
 		  from spkw_goterm_with_dups s, go_term g
 		 where s.goterm_id = g.goterm_go_id
@@ -254,44 +256,50 @@ begin work;
 		mrkr_zdb_id		varchar(50),
 		go_zdb_id		varchar(50),
 		mrkrgoev_source		varchar(50),
-                mrkrgoev_evidence_code	char(3),
-                mrkrgoev_notes 		varchar(255),
-		mrkrgoev_ref		varchar(80)	 
+                mrkrgoev_inference 	varchar(80),
+		mrkrgoev_contributed_by	varchar(80)	 
 	)with no log;
 
 --!echo 'Load spkw'
-	insert into pre_marker_go_evidence (mrkr_zdb_id, go_zdb_id, mrkrgoev_source, mrkrgoev_ref)
-		select distinct sk.mrkr_zdb_id, goterm_zdb_id, "ZDB-PUB-020723-1", "ZFIN SP keyword 2 GO"
+	insert into pre_marker_go_evidence (mrkr_zdb_id, go_zdb_id, mrkrgoev_source, 
+					    mrkrgoev_inference, mrkrgoev_contributed_by)
+		select distinct sk.mrkr_zdb_id, goterm_zdb_id, "ZDB-PUB-020723-1", 
+		       "SP_KW:"||sg.sp_kwd_id, "ZFIN SP keyword 2 GO"
 		  from sp_kwd sk,  spkw_goterm_with_dups sg, go_term
-		 where sk.sp_kwd = sg.sp_kwd
+		 where sk.sp_kwd = sg.sp_kwd_name
 		   and goterm_go_id = sg.goterm_id;
 
 --!echo 'Load intepro'
-	insert into pre_marker_go_evidence (mrkr_zdb_id, go_zdb_id, mrkrgoev_source, mrkrgoev_ref)
-		select distinct db.linked_recid, goterm_zdb_id, "ZDB-PUB-020724-1", "ZFIN InterPro 2 GO"
+	insert into pre_marker_go_evidence (mrkr_zdb_id, go_zdb_id, mrkrgoev_source, 
+					    mrkrgoev_inference, mrkrgoev_contributed_by)
+		select distinct db.linked_recid, goterm_zdb_id, "ZDB-PUB-020724-1",
+		       "InterPro:"||ip.ip_acc,	"ZFIN InterPro 2 GO"
 		  from pre_db_link db, ip_goterm_with_dups ip, go_term
 	 	 where db.acc_num = ip.ip_acc
 		   and goterm_go_id = ip.goterm_id;
 	
 --!echo 'Load ec'
-        insert into pre_marker_go_evidence (mrkr_zdb_id, go_zdb_id, mrkrgoev_source, mrkrgoev_ref)
-		select distinct db.linked_recid, goterm_zdb_id, "ZDB-PUB-031118-3", "ZFIN EC acc 2 GO"
+        insert into pre_marker_go_evidence (mrkr_zdb_id, go_zdb_id, mrkrgoev_source,  
+					    mrkrgoev_inference, mrkrgoev_contributed_by)
+		select distinct db.linked_recid, goterm_zdb_id, "ZDB-PUB-031118-3", 
+		       "EC:"||ec.ec_acc, "ZFIN EC acc 2 GO"
 		from pre_db_link db, ec_goterm_with_dups ec, go_term
 		where db.acc_num = ec.ec_acc
 		  and goterm_go_id = ec.goterm_id;
 
 
 	update pre_marker_go_evidence set mrkrgoev_zdb_id = get_id ("MRKRGOEV");
-	update pre_marker_go_evidence set mrkrgoev_evidence_code = "IEA";
 
---!echo 'these 3 have term name "* unknown", we do not want to include'
+--!echo 'do not include "unknown" terms and root terms if any'
         delete from pre_marker_go_evidence where go_zdb_id in 
 		(select goterm_zdb_id 
 		   from go_term 
-		  where goterm_go_id in ("0005554", "0000004", "0008372"));
+		  where goterm_go_id in ("0005554", "0000004", "0008372",
+					 "0005575", "0003674", "0008150"));
 
 -- if a known go term is assigned to the same marker that has an unknown go term, delete the unknown one
 -- db trigger is added for this purpose. 
+
 
 --!echo 'Insert MRKRGOEV into zdb_active_data'
 	insert into zdb_active_data
@@ -299,12 +307,12 @@ begin work;
 
 --!echo 'Insert into marker_go_term_evidence'
 	insert into marker_go_term_evidence(mrkrgoev_zdb_id,mrkrgoev_mrkr_zdb_id, mrkrgoev_go_term_zdb_id,
-				mrkrgoev_source_zdb_id, mrkrgoev_evidence_code,mrkrgoev_notes,
+				mrkrgoev_source_zdb_id, mrkrgoev_evidence_code,
 				mrkrgoev_date_entered,mrkrgoev_date_modified,mrkrgoev_contributed_by,
 				mrkrgoev_modified_by)
 		select mrkrgoev_zdb_id,mrkr_zdb_id, go_zdb_id,
-		       mrkrgoev_source, mrkrgoev_evidence_code,mrkrgoev_notes,
-		       CURRENT,CURRENT,mrkrgoev_ref, mrkrgoev_ref 
+		       mrkrgoev_source, "IEA", CURRENT,CURRENT,
+		       mrkrgoev_contributed_by, mrkrgoev_contributed_by
 		  from pre_marker_go_evidence;
 
 	
@@ -312,6 +320,11 @@ begin work;
 --	insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
 --	  	               select mrkrgoev_zdb_id,mrkrgoev_source from pre_marker_go_evidence;
 
+-- load inference_group_member
+	insert into inference_group_member (infgrmem_inferred_from, infgrmem_mrkrgoev_zdb_id)
+			select mrkrgoev_inference, mrkrgoev_zdb_id
+			  from pre_marker_go_evidence;
+		
 
 ---------------- loading cc field -----------------------------
 
