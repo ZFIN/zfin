@@ -2805,7 +2805,6 @@ if($daily) {
   zdbReplacedDataIsReplaced($dbaEmail);
 
   mrkrgoevDuplicatesFound($goEmail);
-  mrkrgoevInfgrpDuplicatesFound($goEmail);
   mrkrgoevGoevflagDuplicatesFound($goEmail);
   mrkrgoevObsoleteAnnotationsFound($goEmail);
   mrkrgoevSecondaryAnnotationsFound($goEmail);
@@ -2849,7 +2848,7 @@ if($monthly) {
   containedInRelationshipsInEST($geneEmail);
   encodesRelationshipsInBACorPAC($geneEmail);
   addressStillNeedsUpdate($adminEmail);
-
+  mrkrgoevInfgrpDuplicatesFound($goEmail);
 }
 if($yearly) {
   print "run yearly check. \n\n";
