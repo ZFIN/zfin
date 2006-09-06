@@ -161,15 +161,15 @@ endif
 if ( $HOST == "helix" ) then 
     /bin/sed 's/^/images\//' fimg_oldname_2_newname.txt | \
     /bin/sed 's/ZDB/\/research\/zprod\/loadUp\/imageLoadUp\/ZDB/' | \
-    /bin/sed 's/(/\\(/g' | /bin/sed 's/)/\\)/g' > fimg_oldname_2_newname.conv
+    /bin/sed 's/(/\\(/g' | /bin/sed 's/)/\\)/g' >! fimg_oldname_2_newname.conv
 else
     /bin/sed 's/^/images\//' fimg_oldname_2_newname.txt | \
     /bin/sed 's/ZDB/\/research\/zcentral\/loadUp\/imageLoadUp\/ZDB/' | \
-    /bin/sed 's/(/\\(/g' | /bin/sed 's/)/\\)/g' > fimg_oldname_2_newname.conv
+    /bin/sed 's/(/\\(/g' | /bin/sed 's/)/\\)/g' >! fimg_oldname_2_newname.conv
 endif
 
 # create a scrip for the move
-echo "#\!/bin/tcsh" > copy_image.sh
+echo "#\!/bin/tcsh" >! copy_image.sh
 
 /bin/awk -F\| '{print "/bin/cp ", $1 ".jpg", $2 ".jpg"} \
 	       {print "/bin/cp ", $1 "--t.jpg", $2 "_thumb.jpg"}'  fimg_oldname_2_newname.conv >> copy_image.sh
@@ -179,7 +179,7 @@ if ($datatype == "cb") then
     /bin/awk -F\| '{print "/bin/cp ", $1 "--C.jpg", $2 "_annot.jpg"}' fimg_oldname_2_newname.conv >> copy_image.sh
 endif
 
-chmod u+x copy_image.sh
+chmod ug+x copy_image.sh
 echo "Copy images to repository..."
 ./copy_image.sh
 
