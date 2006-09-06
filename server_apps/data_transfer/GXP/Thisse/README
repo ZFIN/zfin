@@ -104,7 +104,13 @@
 -- Loading
 ----------------
 
-    $NOTE$ : This is the only step to run for almost or production load. 
+    $NOTE$ : This is the only step to run for ALMOST or PRODUCTION load. 
+             To load data into ALMOST or PRODUCTION, you need resource permission
+        to create tables and drop tables, yet you better not be informix because
+        informix do not have the permission to load images into imageLoadUp directory.
+        I know I(Peiran) have the needed resource permission, and I am sure Sierra
+        has it. So ask one of us to load production when you are ready. 
+
 	     For GIS load, when you get the is_gene.txt file from curator, 
 	make sure to go over the file checking the format and then append
         it to is_gene.unl for loading. 

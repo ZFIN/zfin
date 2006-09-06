@@ -135,7 +135,14 @@
 -- Loading
 ----------------
 
-    $note$ : Test load on your database and almostdb before running on production. 
+    $NOTE$ : This is the only step to run for ALMOST or PRODUCTION load. 
+             To load data into ALMOST or PRODUCTION, you need resource 
+        permission to create tables and drop tables, yet you better not be 
+        informix because informix do not have the permission to load images 
+        into imageLoadUp directory. I know I(Peiran) have the needed resource 
+        permission, and I am sure Sierra has it. So ask one of us to load 
+        production when you are ready. 
+
     $executables$: pre_gxp_load.sql gxp_load_func.sql post_gxp_load.sql
 		   gxp_load_quantity_check.sql load_gxp.sh
 
