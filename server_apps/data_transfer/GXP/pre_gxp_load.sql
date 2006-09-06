@@ -355,7 +355,7 @@ select exp_clone_name, exp_sstart, exp_sstop
   from expression_tmp
  where exp_found = "t"
    and exp_description is null
-   and exp_keyword = "unpecified"
+   and exp_keyword = "ZDB-ANAT-041102-1"    --unspecified
    and not exists (select *
                     from images_tmp
 		   where exp_clone_name = img_clone_name
@@ -366,7 +366,7 @@ select exp_clone_name, exp_sstart, exp_sstop
 delete from expression_tmp 
    where exp_found = "t"
    and exp_description is null
-   and exp_keyword = "unpecified"
+   and exp_keyword = "ZDB-ANAT-041102-1"    --unspecified
    and not exists (select *
                     from images_tmp
 		   where exp_clone_name = img_clone_name
