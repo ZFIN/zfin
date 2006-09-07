@@ -81,6 +81,9 @@
 </SCRIPT>
 </head>
 
+
+<?MIVAR NAME=systemUnavail>f<?/MIVAR>
+
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
 <?MICOMMENT>note: there is open body tag in the header, but for the onload
@@ -104,6 +107,9 @@
        <font size=+1>
 	     <b>BLAST</b>
        </font>
+       <?MIVAR COND=$(EC,$systemUnavail,t)>
+	  <font color=red>System under maintenance ...</font>
+       <?/MIVAR>   
      </TD>
      <TD class=titlebar align=right> 
         <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>
@@ -143,6 +149,7 @@
    <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
      <select multiple name = "DATALIB" size=11>
        <?MIVAR>
+	 <option> ==========  Nucleotide Db  ===========
          <option VALUE = "gbk_gb_zf"> GenBank Zebrafish (no ESTs,GSS,HTGs)
          <option VALUE = "gbk_gb_hs"> GenBank Human (no ESTs,GSS,HTGs)
          <option VALUE = "gbk_gb_ms"> GenBank Mouse (no ESTs,GSS,HTGs)
@@ -179,6 +186,7 @@
    <?MIELSE>
      <select multiple name = "DATALIB" size=9>
        <?MIVAR>
+	 <option> ==========  Nucleotide Db  ===========
          <option VALUE = "gbk_gb_zf"> GenBank Zebrafish (no ESTs,GSS,HTGs)
          <option VALUE = "refseq_zf_rna"> RefSeq Zebrafish mRNA
          <option VALUE = "zfin_gb_seq"  $(IF,$(AND,$(XST,$DATALIB),$(EQ,$DATALIB,zfin_gb_seq)),selected)> ZFIN GenBank Sequences
@@ -237,7 +245,7 @@ Upload a free-text file:
 <INPUT TYPE=file NAME="SEQ_FILE"  size=30>
 <P>
 <INPUT TYPE=reset VALUE="Clear sequence">
-<INPUT TYPE=submit VALUE="BLAST">
+<INPUT TYPE=submit  <?MIVAR COND="$(EC,$systemUnavail,t)">disabled<?/MIVAR> VALUE="BLAST">
 <HR>
 
 <B>Options: </B> <br>
