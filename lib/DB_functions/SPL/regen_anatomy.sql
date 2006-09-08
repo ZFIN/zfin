@@ -1035,4 +1035,3 @@ end function;
 grant execute on function "informix".regen_anatomy () 
   to "public" as "informix";
   
-update statistics for function regen_anatomy;
