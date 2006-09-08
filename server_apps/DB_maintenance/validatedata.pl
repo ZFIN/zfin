@@ -2260,37 +2260,28 @@ sub mrkrgoevDuplicatesFound ($) {
   &recordResult($routineName, $nRecords);
 } 
  
-#---------------------------------------------------------------
+#----------------------------------------------------------------------------
 # check for duplicate marker_goterm_Evidence, inference_groups.
 #
 # This statement checks for duplicate marker_Go_term_evidence
 # records that have duplicate inference_group_members.
 # 
-# There are 2 parts to this query.  The inner subquery
-# uses 2 copies of the marker_go_term_evidence table to find
-# all the mrkrgoev records that have identical mrkr, go_term, source,
-# and evidence_code (we can't put an AK on this table and still avoid
+# The first query uses 2 copies of the marker_go_term_evidence table
+# each joining with inference_group_member table to find pairs of
+# mrkrgoev records that have identical mrkr, go_term, source,
+# and evidence_code. And it counts how many same inference members each of
+# the found MRKRGOEV pair has. (we can't put an AK on this table and still avoid
 # a join table between inference_group_member and mrkrgoev--in May 2004 we
 # decided to remove the join table that did this--called inference_group).
 #
-# The outer query relies on 2 views that exist in the db: vMrkrGoevSameSize, 
-# and vGroupSize
-# 
-# vGroupSize gives us the number of inference_group_members for each
-# mrkrgoev_zdb_id.
-# 
-# vMrkrGoevSameSize holds pairs of mrkrgoev_zdb_ids who have same size
-# inference_groups.
-# 
-# We test for equality by doing a self-join on the inference_group_members
-# of mrkrgoev_zdb_ids with same size inference_groups.
-# If one set can be mapped onto another with no inference_group_members
-# left over,then the 2 sets are equal.
-# 
-# If a record exists both in the subquery--duplicates in 
-# marker_go_term_Evidence and in the outer query, duplicates in 
+# The MRKRGOEV pair and the count for same inference members are passed 
+# into a sub-routine where it queries the number of inference members
+# for each of the MRKRGOEV id and compares the two numbers with the count
+# If the three counts are equal, then we find duplicates in 
+# marker_go_term_evidence as well as duplicates in 
 # inference_group_members...then this query will return the duplicate
 # pairs of mrkrgoev_zdb_ids to Doug and Informix.
+#
 # Parameter
 #  $     Email Address for recipient
 #
@@ -2298,44 +2289,26 @@ sub mrkrgoevInfgrpDuplicatesFound ($) {
 
   my $routineName = "mrkrgoevInfgrpDuplicatesFound";
 
-  my $sql = 'select I1.infgrmem_mrkrgoev_zdb_id, 
-                    "has", 
-                    S1.tally, 
-                    "group members just like",
-                    I2.infgrmem_mrkrgoev_zdb_id
-               from inference_group_member I1, 
-                    inference_group_member I2,
-	            vMrkrGoevSameSize S1
-               where S1.mrkrgoev1 = I1.infgrmem_mrkrgoev_zdb_id
-               and S1.mrkrgoev2 = I2.infgrmem_mrkrgoev_zdb_id
-               and I1.infgrmem_inferred_from = I2.infgrmem_inferred_from
-               and exists (select *
-		 	     from marker_go_term_evidence A,
-				  marker_Go_Term_Evidence B
-			     where a.mrkrgoeV_mrkr_zdb_id = 
-                                     b.mrkrgoev_mrkr_zdb_id
-			     and a.mrkrgoev_go_Term_zdb_id = 
-                                     b.mrkrgoev_go_term_zdb_id
-			     and a.mrkrgoev_source_zdb_id = 
-                                     b.mrkrgoev_sourcE_zdb_id
-			     and a.mrkrgoev_evidence_code = 
-                                     b.mrkrgoev_evidence_code
-			     and I1.infgrmem_mrkrgoev_zdb_id = 
-                                     a.mrkrgoev_zdb_id
-			     and I2.infgrmem_mrkrgoev_zdb_id = 
-                                     b.mrkrgoev_zdb_id)
-                group by I1.infgrmem_mrkrgoev_zdb_id, 
-                         I2.infgrmem_mrkrgoev_zdb_id,
-		         S1.tally
-                having count(*) = S1.tally ';
-
+  my $sql = 'select a.mrkrgoev_zdb_id, b.mrkrgoev_zdb_id, count(*)
+	       from marker_go_term_evidence a, inference_group_member ia,
+		    marker_go_Term_evidence b, inference_group_member ib
+	      where a.mrkrgoev_mrkr_zdb_id =  b.mrkrgoev_mrkr_zdb_id
+	        and a.mrkrgoev_go_Term_zdb_id = b.mrkrgoev_go_term_zdb_id
+		and a.mrkrgoev_source_zdb_id = b.mrkrgoev_sourcE_zdb_id
+		and a.mrkrgoev_evidence_code = b.mrkrgoev_evidence_code 
+                and a.mrkrgoev_zdb_id = ia.infgrmem_mrkrgoev_zdb_id
+                and b.mrkrgoev_zdb_id = ib.infgrmem_mrkrgoev_zdb_id
+                and a.mrkrgoev_zdb_id > b.mrkrgoev_zdb_id
+                and ia.infgrmem_inferred_from = ib.infgrmem_inferred_from
+             group by a.mrkrgoev_zdb_id, b.mrkrgoev_zdb_id';
+  
   my @colDesc = ("mrkrgoev_zdb_id_1", 
-		 "has" ,
-		 "count",
-		 "group members alike",
-		 "mrkrgoev_zdb_id_2");
+		 "mrkrgoev_zdb_id_2",
+		 "infgrmem_count   ");
 
-  my $nRecords = execSql ($sql, undef, @colDesc);
+
+  my $nRecords = execSql ($sql, subMrkrgoevInfgrpDuplicatesFound, @colDesc);
+
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
     my $subject = "Possible duplicate records in marker_go_term_evidence, inference_group_member";
@@ -2345,8 +2318,39 @@ sub mrkrgoevInfgrpDuplicatesFound ($) {
   }
   &recordResult($routineName, $nRecords);
 } 
+#----------------------
+# Parameter
+#     $     mrkrgoev zdb id
+#     $     mrkrgoev zdb id
+#     $     count of how many identical inference members the two mrkrgoev id have
 
-#---------------------------------------------------------------
+sub subMrkrgoevInfgrpDuplicatesFound($) {
+    my @input = @_;
+    my $mrkrgoev1 = $input[0];
+    my $mrkrgoev2 = $input[1];
+    my $infgrmem_count = $input[2];
+
+    my $sql = "select count(*) 
+               from inference_group_member   
+              where infgrmem_mrkrgoev_zdb_id= '$mrkrgoev1'";
+ 
+  
+    my @result_a = $dbh->selectrow_array($sql);
+
+    $sql = "select count(*) 
+               from inference_group_member   
+              where infgrmem_mrkrgoev_zdb_id= '$mrkrgoev2'";
+ 
+  
+    my @result_b = $dbh->selectrow_array($sql);
+
+    return ($result_a[0] == $result_b[0] && $result_a[0] == $infgrmem_count) ? 1 : 0 ;
+ 
+}
+
+
+
+#--------------------------------------------------------------------------------------
 # check for duplicate marker_goterm_Evidence, go_evidence_flag.
 
 # Parameter
