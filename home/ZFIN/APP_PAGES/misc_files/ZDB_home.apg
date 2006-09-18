@@ -344,6 +344,7 @@
 	      <?MIVAR COND="$(EC,$AUTHORIZED,root)">
 		,  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mkdist_list.apg" TARGET=NEW_WIN><EM>Generate dist. list</EM></A>
 		,  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mkdist_list_usa.apg" TARGET=NEW_WIN><EM>Generate USA dist. list</EM></A>
+		,  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mkdist_list_PI.apg" TARGET=NEW_WIN><EM>Generate PI dist. list</EM></A>
 		,  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?rtype=person&MIval=aa-new_person.apg"><EM>Add new PERSON</EM></A>
 	      <?/MIVAR>
 
