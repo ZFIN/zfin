@@ -1,4 +1,6 @@
-
+<?MIVAR COND="$(NXST,$title)" NAME=$title><?/MIVAR>
+<?MIVAR COND="$(NXST,$name)" NAME=$name><?/MIVAR>
+<?MIVAR COND="$(NXST,$sbbrev)" NAME=$abbrev><?/MIVAR>
 
 <?MIBLOCK COND=$(XST,$citlink_data_page)>
 
