@@ -53,7 +53,7 @@ $(IF,$(NC,$last,$1),$(SETVAR,$count,0))
 <?MIVAR NAME=$upd_date> $(INDEX,$(-,$9,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $8,$10 
 <?/MIVAR>
 
-$(IF,$(NC,$4,$lasttype),"<TR><TD><font size=2>&nbsp;</TD></TR><TR bgcolor="$highlight"><td colspan=2><b>"$4" Panels</b></TD></TR>")
+$(IF,$(NC,$4,$lasttype),"<TR><TD><font size=2>&nbsp;</TD></TR><TR bgcolor="$highlight"><td colspan=3><b>"$4" Panels</b></TD></TR>")
 $(IF,$(NC,$last,$1),"<TR><TD><font size=3><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID="$1">"$2" ("$6")</A></TD><TD><font size=2><b>Updated;</B>"$upd_date"</TD><TD><font size=2><b>Type:</B> "$4"</TD></TR><TR><TD><font size=2><b>Marker types on panel:</b> "$5)
 
 $(SETVAR,$count,$(+,$count,$7))
@@ -72,7 +72,6 @@ $(SETVAR,$lasttype,$4)
 <?MISQL SQL="select count(*)::integer from panels where status='incomplete';"><?/MISQL>
 
 <?MIBLOCK COND="$(>,$1,0)">
-<hr width=80%>
 <p>
 <b><U>PANELS UNDER DEVELOPMENT</U></b>
 <p>
