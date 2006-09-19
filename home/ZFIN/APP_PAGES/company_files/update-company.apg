@@ -6,9 +6,13 @@ its caller.
 
 -->
 
-<?MIBLOCK COND="$(NXST,$temp_oid)">
-<h1> ERROR in UPDATE! No OID passed in! </H1>
-<?/MIBLOCK>
+<?MIBLOCK COND=$(NXST,$temp_oid)>
+  <?MISQL SQL="execute function get_id('COMPANY');"><?/MISQL>
+  <?MIVAR NAME=$temp_oid>$1<?/MIVAR>
+  <?MISQL SQL="insert into zdb_active_source (zactvs_zdb_id) values ('$temp_oid');"><?/MISQL>
+  <?MISQL SQL="insert into company (zdb_id, name, entry_time, status) values ('$temp_oid', '$name', current,'temporary');"><?/MISQL>
+<?/MIBLOCK>  <!-- ends cond no temp_oid -->
+
 
 <?MIBLOCK COND="$(XST,$temp_oid)">
 
