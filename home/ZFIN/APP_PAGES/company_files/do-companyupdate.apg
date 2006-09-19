@@ -20,6 +20,7 @@ pers_id -- only if attr_type=status, ie, you want to change status of member
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
 <?MIVAR COND="$(NXST,$new_value)" NAME=$new_value>NULL<?/MIVAR>
+<?MIVAR COND="$(NXST,$old_value)" NAME=$old_value>NULL<?/MIVAR>
 <?MIVAR COND="$(NXST,$comments)" NAME=$comments>NULL<?/MIVAR>
 
 <!-- do some special prep if updating membership status. The INDEX statements are because Illustra handles spaces in variables so poorly; it's much easier to pass around integers. Arrgh! -->
