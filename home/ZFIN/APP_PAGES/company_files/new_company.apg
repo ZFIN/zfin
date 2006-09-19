@@ -21,13 +21,10 @@
   <!-- Pass in any variables you want the form to be initialized with on the command-line. You will need to modify setup-new-company to avoid blasting these values however.
   -->
 
-  <!-- FIRST DO SOME IMPORTANT SETUP. MOSTLY THIS IS IN SEPERATE FILE TO KEEP FILE 
-  SIZE MANAGEABLE-->
-  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-setup-new-company.apg';">$1<?/MISQL>
+<?MIVAR COND="$(NXST,$temp_oid)" NAME=$temp_oid><?/MIVAR>
 
   <?MIVAR>
     <FORM METHOD=POST ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
-
     <INPUT type=hidden NAME=temp_oid VALUE=$temp_oid>
     <INPUT type=hidden NAME=MIval VALUE="aa-process-company.apg">
   <?/MIVAR>
@@ -35,6 +32,13 @@
 
   <h1 align=center> Add a new COMPANY to ZFIN</h1>
 
+<?MIVAR COND="$(NXST,$name)" NAME=$name><?/MIVAR>
+<?MIVAR COND="$(NXST,$address)" NAME=$address><?/MIVAR>
+<?MIVAR COND="$(NXST,$phone)" NAME=$phone><?/MIVAR>
+<?MIVAR COND="$(NXST,$fax)" NAME=$fax><?/MIVAR>
+<?MIVAR COND="$(NXST,$email)" NAME=$email><?/MIVAR>
+<?MIVAR COND="$(NXST,$url)" NAME=$url><?/MIVAR>
+<?MIVAR COND="$(NXST,$contact_person)" NAME=$contact_person><?/MIVAR>
 
 
   <p>
@@ -78,33 +82,7 @@
   <INPUT type=text <?MIVAR COND=$(NC,$url,NULL)>value="$url" <?/MIVAR> name="url" size="80">
   <p>
 
-  <A NAME="pub-info">
-  <HR width=100% size=3>
-  <p>
-
-
-  <TABLE width=100%>
-    <TR>
-    <TD><b>COMPANY REPRESENTATIVES:</b> </TD>
-      <TD><input type=submit name="s_member" value="Add"> a new 
-	<SELECT name=mem_status>
-	  <?MISQL SQL="select distinct compos_position,compos_order from company_position order by compos_order">          <option value="$1" >$1
-	  <?/MISQL>
-	</SELECT> to the company. 
-      </TD>
-    </TR>
-    <TR>
-      <TD colspan=2>
-      <ul>
-      <?MISQL SQL="select b.full_name,a.position,c.compos_order from int_person_company a, person b, company_position c where target_id='$temp_oid' and source_id=b.zdb_id and a.position = c.compos_position order by c.compos_order,b.full_name;">
-	<b>$1</b>, <font size=-1> $2 </font>
-	<br>
-      <?/MISQL>
-      </ul>
-      </TD>
-    </TR>
-  </TABLE>
-
+ 
   <HR width=80%>
   <p>
   <input type=submit name="s_done" value="SUBMIT">
