@@ -1685,7 +1685,7 @@ I am commenting this part of the code rather than deleting it. If no flags are r
           and mrel_mrkr_1_zdb_id = mrkr_zdb_id
           and mrel_mrkr_1_zdb_id not in ('$chimeric_clone_list')
           
-        order by 11 asc, 9 asc, 1 desc, 4 asc
+        order by 11 asc, 9 asc, 1 desc, 6 desc, 4 asc
       ;">   
 
       <?MIVAR NAME=dblink_length>$1<?/MIVAR>
