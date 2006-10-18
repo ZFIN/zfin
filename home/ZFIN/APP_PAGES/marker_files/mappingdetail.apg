@@ -830,16 +830,14 @@ jsdelatt_OID = detOID
 	  and lmother.lnkgmem_member_zdb_id = mrkr_zdb_id
 	  and mrkr_type = marker_type
       UNION
-      select f.zdb_id, l.abbrev, 'MUTANT', 'Mutant', 
+      select f.zdb_id, f.allele, 'MUTANT', 'Mutant', 
 	     lnkg_comments, lnkg_zdb_id, lnkg_or_lg
-	from linkage_member lmthis, linkage_member lmother, linkage, fish f,
-	     locus l
+	from linkage_member lmthis, linkage_member lmother, linkage, fish f
 	where lmthis.lnkgmem_member_zdb_id = '$detOID' and
 	      lmthis.lnkgmem_linkage_zdb_id = lmother.lnkgmem_linkage_zdb_id
 	  and lmthis.lnkgmem_member_zdb_id <> lmother.lnkgmem_member_zdb_id
 	  and lmother.lnkgmem_linkage_zdb_id = lnkg_zdb_id
 	  and lmother.lnkgmem_member_zdb_id = f.zdb_id
-	  and f.locus = l.zdb_id
       order by 6;">
 
     <?MIVAR NAME=$distance><?/MIVAR>
