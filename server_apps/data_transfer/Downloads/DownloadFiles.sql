@@ -100,7 +100,7 @@ update ortho_exp
 		
 
 update ortho_exp
-	set mgi = (select dblink_acc_num from db_link , orthologue o, foreign_db_contains
+	set mgi = (select 'MGI:' || dblink_acc_num from db_link , orthologue o, foreign_db_contains
 	   where dblink_fdbcont_zdb_id = fdbcont_zdb_id
 	        and fdbcont_fdb_db_name = 'MGI'
 	        and fdbcont_organism_common_name = o.organism
