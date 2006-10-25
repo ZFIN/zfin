@@ -1668,17 +1668,21 @@ sub orthologyHasEvidence ($) {
 
 
 #---------------------------------------------------------------
-# mouseOrthologyHasMGIAccession
+# mouseOrthologyHasValidMGIAccession
 #
 # This test identifies any mouse orthology records without any
-# MGI accession ID.
-# 
+# 'valid' MGI accession ID. Due to historic reasons, in ZFIN,
+# only the numerical string part of the MGI:####### is stored  
+# as the accession ID. When the whole string of MGI:####### is 
+# entered, that would generate a broken link to MGI site. Thus
+# before we change the data in the database, we valide the id
+# here.
 # 
 #Parameter
 # $      Email Address for recipients
 # 
 
-sub mouseOrthologyHasMGIAccession ($) {
+sub mouseOrthologyHasValidMGIAccession ($) {
 
   my $routineName = "mouseOrthologyHasMGIAccession";
 
@@ -1692,6 +1696,7 @@ sub mouseOrthologyHasMGIAccession ($) {
                        and    fdbcont_organism_common_name = 'Mouse'
                        and    fdbcont_fdb_db_name = 'MGI'
                        and    zdb_id = dblink_linked_recid
+                       and    dblink_acc_num not like 'MGI:%'
                     )";
 
   my @colDesc = ("Orthology ZDB ID  ",
@@ -1702,8 +1707,8 @@ sub mouseOrthologyHasMGIAccession ($) {
 	
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
-    my $subject = "Mouse Orthology is missing MGI accession ID.";
-    my $errMsg = "$nRecords mouse orthology records require an MGI accession ID";
+    my $subject = "Mouse Orthology is missing MGI accession ID or the accession ID has the wrong format.";
+    my $errMsg = "$nRecords mouse orthology records require a valid MGI accession ID";
 
     logError ($errMsg);
     &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
@@ -2846,7 +2851,7 @@ if($monthly) {
   prefixedIbdGenesHave1Est($estEmail);
   genesWithCommonDblinks($geneEmail);
   orthologyHasEvidence($geneEmail);
-  mouseOrthologyHasMGIAccession($geneEmail);
+  mouseOrthologyHasValidMGIAccession($geneEmail);
   mouseOrthologyHasEntrezAccession($geneEmail);
   humanOrthologyHasEntrezAccession($geneEmail);
   containedInRelationshipsInEST($geneEmail);
