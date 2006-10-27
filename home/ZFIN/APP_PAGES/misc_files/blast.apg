@@ -147,19 +147,21 @@
                 blocks clauses within the option list, we use two big blocks.  
    <?/MICOMMENT>
    <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
-     <select multiple name = "DATALIB" size=11>
+     <select multiple name = "DATALIB" size=12>
        <?MIVAR>
 	 <option> ==========  Nucleotide Db  ===========
          <option VALUE = "gbk_gb_zf"> GenBank Zebrafish (no ESTs,GSS,HTGs)
          <option VALUE = "gbk_gb_hs"> GenBank Human (no ESTs,GSS,HTGs)
          <option VALUE = "gbk_gb_ms"> GenBank Mouse (no ESTs,GSS,HTGs)
          <option VALUE = "refseq_zf_rna"> RefSeq Zebrafish mRNA
+	 <?MICOMMENT> zfin_gb_seq & zfin_cdna_seq could be input parameter <?/MICOMMENT>
          <option VALUE = "zfin_gb_seq"  $(IF,$(AND,$(XST,$DATALIB),$(EQ,$DATALIB,zfin_gb_seq)),selected)> ZFIN GenBank Sequences
          <option VALUE = "zfin_cdna_seq"  $(IF,$(OR,$(NXST,$DATALIB),$(AND,$(XST,$DATALIB),$(EQ,$DATALIB,zfin_cdna_seq))),selected)> ZFIN cDNA Sequences
          <option VALUE = "zfin_xpat_cdna_seq"> ZFIN Genes with Expression
          <option VALUE = "zfin_mrph"> ZFIN Morpholino Sequences
          <option VALUE = "zfin_microRNA"> ZFIN MicroRNA Sequences
          <option VALUE = "vega_zfin"> ZFIN Vega Transcripts
+         <option VALUE = "repbase_zf"> Zebrafish Repeats 
          <option VALUE = "gbk_zf_mrna"> Zebrafish mRNA
          <option VALUE = "gbk_hs_mrna"> Human mRNA
          <option VALUE = "gbk_ms_mrna"> Mouse mRNA
