@@ -200,14 +200,9 @@ DEBUGGING:
              xpatex_zdb_id, xpatex_source_zdb_id, xpatex_assay_name,
              xpatex_probe_feature_zdb_id, xpatex_gene_zdb_id,
              xpatex_featexp_zdb_id
-        from $xpatselqry_matchTable 
-             join publication 
-               on xpatex_source_zdb_id = publication.zdb_id
-        where case
-      when publication.jtype = 'Unpublished'
-      then xpatex_direct_submission_date::datetime year to day
-        else 
-      pub_date::datetime year to day end > current - $xpatselqry_recentRecords units day
+        from $xpatselqry_matchTable
+        where xpatex_direct_submission_date::datetime year to day
+                  > current - $xpatselqry_recentRecords units day
   <?/MIVAR>
   <?MISQL SQL="$xpatselqry_date_sql"><?/MISQL>
 
