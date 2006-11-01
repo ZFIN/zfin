@@ -66,14 +66,18 @@ Execution:
 
    It would be nice to automate this process, and just type "gmake load" and done, however, the free human editing in DAG edit or OBO edit is not going to be error free, which means testing is always needed.  
 
-   1) Get the up-to-date anatomy.obo file from CVS
+   1) Get the up-to-date anatomy.obo file from CVS project "Curation"
 
    2) Parse
-      At a fresh test db, go to the TARGET directory:
+      At a fresh test db, clean and re-gmake the Target dir for server_apps/data_transfer/Anatomy,
+      copy over the anatomy.obo file. The file is normally in MS format, do the conversion first:
 
-  	% parseOBO.pl <path_to_anatomy.obo>
+        % tr -d '\r' < anatomy.obo >! anatomy.obo.new
+        % mv anatomy.obo.new anatomy.obo
 
-     Check STDOUT for error. Fix anaotmy.obo.
+  	% parseOBO.pl anatomy.obo
+
+     Check STDOUT for error. Fix the local anaotmy.obo. (we will commit it back to cvs at the end of the load.)
      
    3) Test load 
      At TARGET dir, open loadAO.sql, COMMENT OUT "commit work", 
@@ -90,11 +94,13 @@ Execution:
 
      o ls -l *.err
        check pub_incorrect.err, start_startInconsistent.err, 
-       end_startInconsistent.err and end_endInconsistent.err.
-       Normally, we have stage conflicts, hand it to curators,
-       make correction and repeat the parsing and test load.
+       end_startInconsistent.err, end_endInconsistent.err, and 
+       obsolete_anat_with_xpat.err. Send the error report to curators,
+       After the corrections are made, repeat the parsing and test-loading.
 
-     Send annotationViolates.err content to Ceri & Melissa, 
+     After the above errors are all fixed, uncomment the sql for
+     annotation violation check. Run the loading again and send 
+     annotationViolates.err content to Ceri & Melissa, 
      Ask for 
      o  AO_translation.unl with format
 
@@ -107,13 +113,12 @@ Execution:
       o  stageKeyword.csv exported from Thisse template on FogBUGZ
          case 362.
   
-   5) Load test database (might skip)
-      change loadAO.sql to "commit work", gmake.
-      At TARGET dir, copy over anatomy.obo, AO_translation.unl and 
+   5) Load test database 
+      
+      Change loadAO.sql to "commit work", gmake.
+      At TARGET dir, copy over AO_translation.unl and 
       stageKeyword.csv.
         
-        % parseOBO.pl <path_to_anatomy.obo>
-
 	% loadMaster.sh 
  
         Note: At the end of loadMaster.sql we run check_annotation.sql 
@@ -127,7 +132,7 @@ Execution:
 
 
    6) Load Production
-      At zfindb TARGET dir (has to be informix user), copy over
+      At zfindb TARGET dir (MUST be user informix), copy over
       (anatomy.obo,) AO_translation.unl and stageKeyword.csv.
 
         % parseOBO.pl <path_to_anatomy.obo>
