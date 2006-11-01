@@ -10,5 +10,7 @@ create trigger expression_experiment_insert_trigger insert on
 			new_xpatex.xpatex_source_zdb_id),
 	execute procedure p_insert_into_record_attribution_tablezdbids (
 			new_xpatex.xpatex_zdb_id,
-                        new_xpatex.xpatex_source_zdb_id) 
+                        new_xpatex.xpatex_source_zdb_id), 
+	execute procedure populate_direct_submission_date(
+			new_xpatex.xpatex_zdb_id)
      );	
