@@ -74,10 +74,12 @@ my $typedef = <<END;
 [Typedef]
 id: part_of
 name: part of
+is_transitive: true
 
 [Typedef]
 id: develops_from
 name: develops from
+is_transitive: true
 
 [Typedef]
 id: start
