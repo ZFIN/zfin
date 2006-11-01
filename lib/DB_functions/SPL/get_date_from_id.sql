@@ -27,6 +27,10 @@ get_date_from_id(zdbId varchar(50),format varchar(10))
   IF (format = "MM/DD/YYYY") THEN
       -- date format MM/DD/YYYY.
       let dateFromId = substr(zdb_date,3,2) || '/' || substr(zdb_date,5,2) || '/' || century || substr(zdb_date,0,2);
+
+  ELIF (format = "YYYY-MM-DD") THEN
+      -- datetime year to day format.
+      let dateFromId = century || substr(zdb_date,0,2) || '-' || substr(zdb_date,3,2) || '-' || substr(zdb_date,5,2);
   
   ELSE
       -- date format YYYYMMDD.
