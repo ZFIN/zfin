@@ -15,7 +15,7 @@ create procedure populate_direct_submission_date (
 				xpatexZdbId   varchar(50))
 
 	update expression_experiment 
-           set xpatex_direct_submission_date =  get_date_from_id (xpatexZdbId, "YYYY-MM-DD") :: datetime
+           set xpatex_direct_submission_date =  get_date_from_id (xpatexZdbId, "YYYY-MM-DD") :: datetime year to day;
  
 
 end procedure;
