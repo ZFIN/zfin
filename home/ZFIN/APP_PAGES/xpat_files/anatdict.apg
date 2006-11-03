@@ -384,7 +384,7 @@ function updateParent(AOname, AOid) {
 			    and anatstgstat_object_type = 'GENE'
 			;">
 		        <?MIVAR name=$totalcount>$1<?/MIVAR>
-			<?MIVAR name=$no_substr_count>$1<?/MIVAR>
+			<?MIVAR name=$no_substr_count>$2<?/MIVAR>
 		      <?/MISQL>
 
 		      <?MIBLOCK COND="$(NE,$highlight_text,)">
