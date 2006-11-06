@@ -1,29 +1,52 @@
+Nov 2006
+
+there is a script that pings Ensembl looking for updates.
+when one is found an email alert goes out and
+someone comes to this dir and types:
+
+> gmake run
+
+which executes fetch_ensdarg.sh
+
+	fetch_ensdarg.sh tries to determind the
+	most recent Ensembl database release.
+	then makes a remote mysql connection with a
+	query (fetch_ensdarg.sql)that finds ENSDARGs
+	with a 1:1 corespondnce with ZDBIDs (as assigned by Ensembl).
+	these ENSDARG ZDBID pairs are returned  one per line
+	in a pipe terminated file 'ensdarg.unl'
+	which is loaded into the local database by calling
+	dbaccess with the 'load_ensdarg.sql' script.
+
+
+the below is left as "historical"
+#############################################################
 2004 June 18
 
 this code never made it into Production.
 Although it seemed in theory, a very good idea to the curators,
 In practice the automated Ensembl builds at Sanger are not yet ready
-ready for prime time. maybe when the assembley gets better 
+ready for prime time. maybe when the assembley gets better
 Sanger (and our curators) will feel more comfortable adding these links.
 
 
-there are also issues of how to commumicate to users 
-that this is a strictily mechanical prediction 
-that no human has checked. 
- 
+there are also issues of how to commumicate to users
+that this is a strictily mechanical prediction
+that no human has checked.
+
 
 ############################################################
 
-To find Ensembl ENSDARG links for ZFIN, 
+To find Ensembl ENSDARG links for ZFIN,
 we directly query the Ensembl mysql database in Sanger.
 
-the 'fetch_ensdarg.sh' script needs to be called 
+the 'fetch_ensdarg.sh' script needs to be called
 with the name of the current release, core zebrafish ensembl database.
 
 i.e. danio_rerio_core_18_2 or danio_rerio_core_19_2
 
-I currently have not attempted to find an automated way supplying 
-the correct argument because I expect the data will only change 
+I currently have not attempted to find an automated way supplying
+the correct argument because I expect the data will only change
 when there is a new release several times a year. it will be faily
 easy to detect new release announcements and manually run the script.
 if the data changes within a release or the releases come often

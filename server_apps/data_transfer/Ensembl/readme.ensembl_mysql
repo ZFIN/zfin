@@ -1,3 +1,16 @@
+Nov 2006
+
+
+see Tom's wall for Ensembl Schema details
+
+
+
+
+
+the below is left as historical
+
+###########################################################
+############################################################
 # would have to watch for new releases
 
 ftp://ftp.ensembl.org/pub/zebrafish-18.2/data/mysql/
@@ -149,7 +162,7 @@ describe external_db
 2510    ZFIN_ID         1       KNOWNXREF
 2520    ZFIN_AC         1       KNOWNXREF
 
-    
+
 --------------
 describe xref
 --------------
@@ -183,7 +196,7 @@ describe xref
 42      2510    ZDB-GENE-001221-1       nrf1    1       \N
 46      2510    ZDB-GENE-020423-3       eef1g   1       \N
 
-                                                                                                               
+
 --------------
 describe object_xref
 --------------
@@ -207,7 +220,7 @@ describe object_xref
 9       19824   Translation     9
 10      19824   Translation     10
 
-                                                                                                                                                                                                                         
+
 --------------
 describe identity_xref
 --------------
@@ -359,14 +372,14 @@ use danio_rerio_core_19_2;
 select distinct zdb.dbprimary_acc, gsi.stable_id
 from  object_xref zo, xref zdb, gene_stable_id gsi, gene
 where zdb.external_db_id = 2510
-and  zdb.xref_id = zo.xref_id 
+and  zdb.xref_id = zo.xref_id
 and  gsi.gene_id = gene.gene_id
 and  gene.display_xref_id = zo.object_xref_id
 order by 1;
 
 
 ---------------------------
-perl needs 
+perl needs
 
 bioperl
 

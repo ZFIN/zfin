@@ -1,67 +1,80 @@
 begin work;
+-- TODO
+-- ensdargs to more than one zdb to RENO (merge candidates)
+-- zdb with *many* ensdarg not reliable
+-- attribution
+-- new ENSEMBL link
+--
 
-create table ensdarg (darg_zdb varchar(50), darg_ens varchar(50));
-load from 'ensdarg.unl' insert into ensdarg;
+create table ens_zdb( ez_zdb varchar(50), ez_ens varchar(20));
+load from 'ensdarg.unl' insert into ens_zdb;
+create index ez_zdb_idx on ens_zdb( ez_zdb );
+update statistics for table ens_zdb;
 
-! echo "find & remove any zdb_ids from ensemble which have been SPLIT in ZFIN"
-select * from ensdarg where exists (
-    select 1
-    from zdb_replaced_data a,zdb_replaced_data b
-    where darg_zdb = a.zrepld_old_zdb_id
-    and   darg_zdb = b.zrepld_old_zdb_id
-    and  a.zrepld_new_zdb_id <> b.zrepld_new_zdb_id
+! echo "if a gene has been merged, fix it's zdbid"
+update ens_zdb set ez_zdb = (
+	select zrepld_new_zdb_id
+	 from zdb_replaced_data
+	 where ez_zdb = zrepld_old_zdb_id
+)where ez_zdb in (
+	select zrepld_old_zdb_id from zdb_replaced_data
 );
 
-delete from ensdarg where exists (
-    select 1
-    from zdb_replaced_data a,zdb_replaced_data b
-    where darg_zdb = a.zrepld_old_zdb_id
-    and   darg_zdb = b.zrepld_old_zdb_id
-    and  a.zrepld_new_zdb_id <> b.zrepld_new_zdb_id
-);
+! echo "confirm all zdbids still exists"
+select * from ens_zdb where ez_zdb not in (select * from zdb_active_data);
+delete from ens_zdb where ez_zdb not in (select * from zdb_active_data);
 
-! echo "update any zdb_ids from ensemble which have been REPLACED in ZFIN"
-update ensdarg set darg_zdb = replaced_zdb(darg_zdb)
-where darg_zdb in(select zrepld_old_zdb_id from zdb_replaced_data)
+! echo "confirm zdb-ens pairs are unique"
+select distinct * from  ens_zdb into temp tmp_ens_zdb;
+delete from ens_zdb;
+insert into ens_zdb select * from tmp_ens_zdb;
+drop table tmp_ens_zdb;
+
+update statistics for table ens_zdb;
+
+--! echo "if a gene has a Vega link do NOT add a Ensembl link"
+--delete from ens_zdb where ez_zdb in
+--	(select dblink_linked_recid from db_link
+--	 where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-14'
+--);
+
+
+alter table ens_zdb add ez_zad varchar(50);
+update ens_zdb set ez_zad = get_id('DBLINK');
+
+insert into zdb_active_data select ez_zad from ens_zdb;
+insert into db_link(
+	dblink_linked_recid,
+	dblink_acc_num,
+	dblink_info,
+	dblink_zdb_id,
+	dblink_acc_num_display,
+	dblink_length,
+	dblink_fdbcont_zdb_id
+)
+select
+	ez_zdb,
+	ez_ens,
+	'uncurrated ' || TODAY,
+	ez_zad,
+	ez_ens,
+	0,
+	'ZDB-FDBCONT-061018-1'
+ from ens_zdb
 ;
 
-! echo "sanity check - do the remaining zdb's still exist in zfin"
-select * from ensdarg where darg_zdb not in (
-    select mrkr_zdb_id from marker where mrkr_type = 'GENE'
-);
+! echo "attribute links to fake pub"
+insert into record_attribution (
+	recattrib_data_zdb_id,
+	recattrib_source_zdb_id,
+	recattrib_source_type
+) select ez_zad, 'ZDB-PUB-061101-1', 'standard' from ens_zdb
+;
 
-delete from ensdarg where darg_zdb not in (
-    select mrkr_zdb_id from marker where mrkr_type = 'GENE'
-);
+drop table ens_zdb;
 
-! echo "drop OLD ENSEMBL regord with automated attribution"
-delete from zdb_active_data where zactvd_zdb_id in (
-	select dblink_zdb_id from db_link, record_attribution  
-	where db_name = 'ENSEMBL'
-	and   dblink_zdb_id = recattrib_data_zdb_id
-	and   recattrib_source_zdb_id = 'ZDB-PUB-030703-1' -- Curation of VEGA Database Links
-);
-! echo "drop NEW ENSEMBL records with non-automated attribution."
-delete from ensdarg where exists (
-	select 1 from db_link 
-	where db_name = 'ENSEMBL'
-	and linked_recid = darg_zdb
-	and acc_num = darg_ens
-);
+--
+rollback work;
 
-! echo "Add current ENSEMBL links and automated attribution"
-select distinct *, '123456789012345678901234567890'::varchar(50) zad 
-from ensdarg into temp tmp_dblink with no log;
+--commit work;
 
-update tmp_dblink set zad = get_id('DBLINK');
-insert into zdb_active_data select zad from tmp_dblink;
-insert into record_attribution select zad, 'ZDB-PUB-030703-1' from tmp_dblink;
-insert into db_link (linked_recid,db_name,acc_num,info,dblink_zdb_id,dblink_acc_num_display)
-select darg_zdb,'ENSEMBL',darg_ens,'uncurated ' || TODAY, zad, darg_ens
-from tmp_dblink;
-drop table tmp_dblink;
-drop table ensdarg;
-
-
---rollback work;
-commit work;

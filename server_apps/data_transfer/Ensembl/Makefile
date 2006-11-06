@@ -18,7 +18,7 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Ensembl
 
 GENERICS = fetch_ensdarg.sh
 
-STATICS  = readme fetch_ensdarg.sql load_ensdarg.sql
+STATICS  = readme fetch_ensdarg.sql load_ensdarg.sql readme.ensembl_mysql
 
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.
@@ -38,9 +38,9 @@ $(HTTP_DATA_TRANSFER_DIR) :
 
 # ---------------  Misc Targets  ----------------------------------------
 
-# Run the download script.  
+# Run the download script.
 # This extracts data from ENSEMBL and places it in ZFIN
 # the ENSEMBL database it is run against will change.
 
 run : $(TARGETDIR)/fetch_ensdarg.sh
-	$(TARGETDIR)/fetch_ensdarg.sh danio_rerio_core_19_2
+	$(TARGETDIR)/fetch_ensdarg.sh
