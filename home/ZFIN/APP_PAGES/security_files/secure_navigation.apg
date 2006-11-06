@@ -193,7 +193,7 @@
         -- ID column.  There are a few exceptions, however.  Catch them.
 	------------------------------------------------------------------------
       <?/MICOMMENT>
-      <?MIBLOCK COND="$(AND,$(XST,$OID),$(XST,$rtype),$(NC,$rtype,journal),$(NC,$rtype,anatomy_item),$(NC,$rtype,goview))">
+      <?MIBLOCK COND="$(AND,$(XST,$OID),$(XST,$rtype),$(NC,$rtype,journal),$(NC,$rtype,fxfig),$(NC,$rtype,anatomy_item),$(NC,$rtype,goview))">
         <?MIVAR NAME=$ownerColumn>owner<?/MIVAR>
         <?MIVAR NAME=$zdbIdColumn>zdb_id<?/MIVAR>
         <?MIBLOCK COND="$(EC,$rtype,marker)">
