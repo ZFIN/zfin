@@ -314,31 +314,27 @@ public class SearchBean
 	if (types == null){
 	    throw new RuntimeException("No types found");
 	}
-	System.out.println("Number of types: " + types.length);
-	System.out.println("Number of types: " + types.length);
-	System.out.println("Category: " + category.getId());
-				if(analyzer == null){
-					System.out.println("Analyzer is null: ");
-					throw new RuntimeException("Analyzer is null");
-				}
-				if(query == null){
-					System.out.println("query is null: ");
-					throw new RuntimeException("query is null");
-				}
+	if(analyzer == null){
+	    
+	    throw new RuntimeException("Analyzer is null");
+	}
+	if(query == null){
+	    
+	    throw new RuntimeException("query is null");
+	}
 
         for (int i=0; i<types.length; i++) {
-			System.out.println("First Element: ");
+
 	    TokenStream tokenStream = analyzer.tokenStream("type", new StringReader(types[i]));
-			System.out.println("First tokenStream: ");
+	    
 	    if(tokenStream == null)
 		throw new RuntimeException("tokenStream is null [" + i +"]");
-		Token token = tokenStream.next();
-		if(token == null){
-					System.out.println("token is null: ");
-					break;
-		}
+	    Token token = tokenStream.next();
+	    if(token == null){
+		break;
+	    }
 	    TermQuery termQuery = new TermQuery(new Term("type", token.termText()));
-			System.out.println("First termQuery: ");
+	    
 	    if(termQuery == null)
 		throw new RuntimeException("termQuery is null [" + i +"]");
 	    // the huge boost values are to get terms to sort properly
