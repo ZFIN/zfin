@@ -24,6 +24,15 @@ delete from ens_zdb;
 insert into ens_zdb select * from tmp_ens_zdb;
 drop table tmp_ens_zdb;
 
+! echo "confirm a zdb_id still only exists once. (we do merges ...)"
+select ez_zdb from ens_zdb
+ group by 1 having count(*) > 1
+ into temp tmp_dup_zdb with no log;
+delete from ens_zdb
+ where ens_zdb.ez_zdb in (select * from tmp_dup_zdb)
+;
+drop table tmp_dup_zdb;
+
 update statistics for table ens_zdb;
 
 
