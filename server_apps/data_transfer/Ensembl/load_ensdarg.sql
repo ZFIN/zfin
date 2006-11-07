@@ -1,10 +1,4 @@
 begin work;
--- TODO
--- ensdargs to more than one zdb to RENO (merge candidates)
--- zdb with *many* ensdarg not reliable
--- attribution
--- new ENSEMBL link
---
 
 create table ens_zdb( ez_zdb varchar(50), ez_ens varchar(20));
 load from 'ensdarg.unl' insert into ens_zdb;
@@ -32,13 +26,31 @@ drop table tmp_ens_zdb;
 
 update statistics for table ens_zdb;
 
---! echo "if a gene has a Vega link do NOT add a Ensembl link"
---delete from ens_zdb where ez_zdb in
---	(select dblink_linked_recid from db_link
---	 where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-14'
---);
 
+! echo "delete existing links that are no longer represented by Ensembl 1:1"
+delete from zdb_active_data where zactvd_zdb_id in (
+	select dblink_zdb_id from db_link
+	 where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-061018-1'
+	   and not exists(
+	 	select 1 from ens_zdb
+	 	 where dblink_linked_recid = ez_zdb
+	 	   and dblink_acc_num = ez_ens
+	)
+);
 
+! echo "remove incomming Ensembl links that already exist in ZFIN"
+delete from ens_zdb
+ where exists(
+ 	select 1 from db_link
+ 	 where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-061018-1'
+ 	   and dblink_linked_recid = ez_zdb
+ 	   and dblink_acc_num = ez_ens
+);
+
+-- are there other conditions to test?
+-- the round about senerios I come up with should be covered.
+
+! echo "make new records for incomming Ensembl links"
 alter table ens_zdb add ez_zad varchar(50);
 update ens_zdb set ez_zad = get_id('DBLINK');
 
@@ -73,8 +85,8 @@ insert into record_attribution (
 
 drop table ens_zdb;
 
---
-rollback work;
+--rollback work;
 
---commit work;
+--
+commit work;
 
