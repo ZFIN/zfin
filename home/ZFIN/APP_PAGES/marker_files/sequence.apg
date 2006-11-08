@@ -32,9 +32,9 @@
 
 	function Delete_listitem(item_name,item_id) {
 		window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr='+item_name+'&attr_type=special-listitem&old_value='+item_id+'&new_value=deleted&target_table=$target_table&caller=sequence.apg');
-	}	
+	}
 
-        <?MISQL SQL="select WebExplode(object,'jsdelatt_OID=$OID&jsdelatt_Mival=aa-do-markerupdate.apg&jsdelatt_page_var=__attr_type=special-listitem__new_value=deleted__caller=sequence.apg__target_table=$target_table') 
+        <?MISQL SQL="select WebExplode(object,'jsdelatt_OID=$OID&jsdelatt_Mival=aa-do-markerupdate.apg&jsdelatt_page_var=__attr_type=special-listitem__new_value=deleted__caller=sequence.apg__target_table=$target_table')
         from webPages where ID='aa-js-delete_attrib.apg';">$1<?/MISQL>
 
 	function new_attrib_seq() {
@@ -342,8 +342,8 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
             <nobr>
                 <?MIVAR>$dblink_length<?/MIVAR>
                 <?MIBLOCK COND=$(NC,$dblink_length,)>
-                   <?MIBLOCK COND=$(EQ,$data_type,Polypeptide)> aa
-                   <?MIELSE> bp
+                   <?MIBLOCK COND=$(EC,$data_type,Polypeptide)> aa
+                   <?MIELSE  COND=$(OR,$(EC,$data_type,Vega Transcript),$(EC,$data_type,cDNA),$(EC,$data_type,Genomic))> bp
                    <?/MIBLOCK>
                 <?/MIBLOCK>
             </nobr>
@@ -476,8 +476,9 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
             <nobr>
                 <?MIVAR>$dblink_length<?/MIVAR>
                 <?MIBLOCK COND=$(NC,$dblink_length,)>
-                   <?MIBLOCK COND=$(EQ,$data_type,Polypeptide)> aa
-                   <?MIELSE> bp
+                   <?MIBLOCK COND=$(EC,$data_type,Polypeptide)> aa
+                   <?MIELSE  COND=$(OR,$(EC,$data_type,cDNA),$(EC,$data_type,Vega Transcript),$(EC,$data_type,Genomic))> bp
+
                    <?/MIBLOCK>
                 <?/MIBLOCK>
             </nobr>
@@ -593,8 +594,8 @@ Reference: <input type=text size=15 name=attrib_seq_pubid>
             <nobr>
                 <?MIVAR>$dblink_length<?/MIVAR>
                 <?MIBLOCK COND=$(NC,$dblink_length,)>
-                   <?MIBLOCK COND=$(EQ,$data_type,Polypeptide)> aa
-                   <?MIELSE> bp
+                   <?MIBLOCK COND=$(EC,$data_type,Polypeptide)> aa
+                   <?MIELSE  COND=$(OR,$(EC,$data_type,cDNA),$(EC,$data_type,Vega Transcript),$(EC,$data_type,Genomic))> bp
                    <?/MIBLOCK>
                 <?/MIBLOCK>
             </nobr>

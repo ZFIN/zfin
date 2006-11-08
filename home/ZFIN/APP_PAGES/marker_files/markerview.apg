@@ -1732,8 +1732,10 @@ I am commenting this part of the code rather than deleting it. If no flags are r
             <TD align=right>
               <nobr>
                 <?MIVAR>$dblink_length<?/MIVAR>
-                <?MIBLOCK COND=$(EC,$data_type,Polypeptide)> aa
-                <?MIELSE COND=$(OR,$(EC,$data_type,cDNA),$(EC,$data_type,Genomic))> bp
+                <?MIBLOCK COND=$(NC,$dblink_length,)>
+                   <?MIBLOCK COND=$(EC,$data_type,Polypeptide)> aa
+                   <?MIELSE  COND=$(OR,$(EC,$data_type,Vega Transcript),$(EC,$data_type,cDNA),$(EC,$data_type,Genomic))> bp
+                   <?/MIBLOCK>
                 <?/MIBLOCK>
               </nobr>
             </TD>
