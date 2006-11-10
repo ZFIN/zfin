@@ -91,10 +91,11 @@ name: end stage
 
 END
 
-print OUT "format-version: 1.0\n";
+print OUT "format-version: 1.2\n";
 print OUT "date: $mday:$month:$year $hour:$min\n";
 print OUT "saved-by: ZFIN\n";
 print OUT "default-namespace: zebrafish_anatomical_ontology\n";
+print OUT "synonymtypedef: PLURAL \"PLURAL\" \n";
 print OUT "$typedef";
 
 #-- invoke scripts to generate anatomy items and stage items
