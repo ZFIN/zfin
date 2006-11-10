@@ -91,7 +91,7 @@ while (my @data = $anat_sth->fetchrow_array()) {
 	print "id: $anatOboId\n";
 	print "name: $anatName\n";
 	print "namespace: zebrafish_anatomy\n";
-       	print "xref_analog: ZFIN:$anatId\n";
+       	print "xref: ZFIN:$anatId\n";
 
         #----------------------------------
         #-- Obsolete term
@@ -108,9 +108,10 @@ while (my @data = $anat_sth->fetchrow_array()) {
         #-- but even worse case comes, Dagedit does handle it. 
         #--------------------------------
 	foreach my $anatSynonymAttr (&getSynonyms ($anatId)) {
-	    my ($anatSynonym,$anatSynAttrib) = split (/\|/,$anatSynonymAttr);
+	    my ($anatSynonym,$anatSynGroup,$anatSynAttrib) = split (/\|/,$anatSynonymAttr);
+	    $anatSynGroup = ($anatSynGroup eq "plural") ? "PLURAL" : ""; 
 	    $anatSynAttrib = $anatSynAttrib ? "ZFIN:$anatSynAttrib": "";
-	    print "related_synonym: \"$anatSynonym\" [$anatSynAttrib] \n";
+	    print "synonym: \"$anatSynonym\" RELATED $anatSynGroup [$anatSynAttrib] \n";
 	}
 
 	#--------------------------------
@@ -164,7 +165,7 @@ sub getSynonyms ($){
     my $anatZdbId = $_[0];
     my @alias_array = ();
 
-    my $alias_sql = "select dalias_alias, recattrib_source_zdb_id
+    my $alias_sql = "select dalias_alias, dalias_group, recattrib_source_zdb_id
                        from data_alias left outer join record_attribution
                             on dalias_zdb_id = recattrib_data_zdb_id
                       where dalias_data_zdb_id = ?";
@@ -172,9 +173,9 @@ sub getSynonyms ($){
 	    or &reportError("Couldn't prepare the statement:$!\n");
     $alias_sth->execute($anatZdbId) or &reportError( "Couldn't execute the statement:$!\n");
 
-    while (my ($alias_name, $alias_attribution) = $alias_sth->fetchrow_array()) {
+    while (my ($alias_name, $alias_group, $alias_attribution) = $alias_sth->fetchrow_array()) {
 	$alias_attribution = $alias_attribution ? $alias_attribution : "";
-	push @alias_array, join("|", $alias_name, $alias_attribution);
+	push @alias_array, join("|", $alias_name, $alias_group, $alias_attribution);
     }
     return @alias_array;
 }
