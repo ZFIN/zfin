@@ -263,7 +263,7 @@ e-mail:  <?MIVAR><a href="mailto:$sender_email">$sender_email</a><?/MIVAR>
               where recattrib_source_zdb_id = '$OID'
 	        and recattrib_data_zdb_id   = alteration.zdb_id
 	        and alteration.locus = locus.zdb_id
-	        and fish.locus = locus.zdb_id
+	        and fish.allele = alteration.allele
 	      UNION
 	     select 'Mutant', 
 		    fish.zdb_id, 
