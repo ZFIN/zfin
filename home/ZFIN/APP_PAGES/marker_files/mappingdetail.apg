@@ -571,10 +571,6 @@ marker = '';
   		}
 	}
 
-mappingdetail
-jsdelatt_Mival = aa-do-markerupdate.apg
-jsdelatt_page_vars = __caller=mappingdetail.apg__attr_type=special-listitem__new_value=deleted__target_table=$target_table
-jsdelatt_OID = detOID
 
         <?MISQL SQL="select WebExplode(object,'jsdelatt_OID=$detOID&jsdelatt_Mival=aa-do-markerupdate.apg&jsdelatt_page_var=__caller=mappingdetail.apg__attr_type=special-listitem__new_value=deleted__target_table=$target_table') 
         from webPages where ID='aa-js-delete_attrib.apg';">$1<?/MISQL>
