@@ -6,27 +6,6 @@ Note that when they hit the ZFIN HOME button, they will jump to the standard pag
 <HTML>
 
 <head>
-<SCRIPT>
-
-browserName = navigator.appName;
-browserVer = parseInt(navigator.appVersion);
-if (browserName == "Microsoft Internet Explorer"){
-   bindex = navigator.appVersion.indexOf("MSIE");
-   browserVer = parseInt(navigator.appVersion.substring(bindex+5,bindex+6));
-}
-
-if ((browserName == "Netscape" && browserVer >= 3) || (browserName =="iCab") || (browserName == "Microsoft Internet Explorer" && browserVer >= 5)) version = "n3";
-else version = "n2";
-
-
-if (version != "n3") {   
-  window.location="/ZFIN/misc_html/wrong_browser.html";
-}
-
-
-</SCRIPT>
-  
-
 
   
 <TITLE>ZFIN</TITLE>
