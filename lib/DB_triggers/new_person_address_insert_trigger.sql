@@ -36,6 +36,8 @@ create trigger new_person_address_insert_trigger insert on
     ) into person_address.pers_country_code,
         execute function scrub_char(new_person.pers_county 
     ) into person_address.pers_county,
+	execute function scrub_char(new_person.pers_postal_code 
+    ) into person_address.pers_postal_code,
         execute procedure p_check_state_country (new_person.pers_state_code,
 	     new_person.pers_country_code)
 );
