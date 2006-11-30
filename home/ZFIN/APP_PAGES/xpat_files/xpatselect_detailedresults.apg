@@ -240,7 +240,7 @@ order by date desc, pub_mini_ref, fig_full_label
       <?MICOMMENT> *** stage range column ***  <?/MICOMMENT>
       <td>
         <?MISQL SQL="
-	  select WebExplode(object, 'fxfigst_fig_zdb_id=$xpdetres_figZdbId&fxfigst_gene_zdb_id=$xpdetres_geneZdbId&fxfigst_resultTable=$xpdetres_resultTable')
+	  select WebExplode(object, 'fxfigst_fig_zdb_id=$xpdetres_figZdbId&fxfigst_gene_zdb_id=$xpdetres_geneZdbId')
 	  from webpages
 	  where id = 'aa-fxfigstgrng.apg';">$1<?/MISQL>
 
