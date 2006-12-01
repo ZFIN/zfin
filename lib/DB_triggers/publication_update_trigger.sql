@@ -12,7 +12,7 @@ create trigger publication_update_trigger
          into pub_authors_lower,
       execute function scrub_char(new_publication.jtype)
         into jtype,
-      execute function scrub_char(new_publication.zdb_id) 
+      execute function get_pub_mini_ref(new_publication.zdb_id) 
 	into publication.pub_mini_ref,
       execute function scrub_char(new_publication.pub_mini_ref)
         into publication.pub_mini_ref,
