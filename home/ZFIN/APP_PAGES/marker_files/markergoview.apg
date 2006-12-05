@@ -251,7 +251,7 @@
      	<?MIVAR NAME=$accID>$(SUBSTR,$infername,$position,$currinflength)<?/MIVAR>
      	<?MIBLOCK COND="$(EC,$dbase,ZFIN)">
 	   <?MISQL COND="$(>,$(POSITION,$accID,FISH),0)" SQL="
-		select abbrev
+		select get_fish_abbrev_html(zdb_id)
 		  from fish
 		 where zdb_id = '$accID'">
 	      <?MIVAR NAME=inf_mem_sym>$1<?/MIVAR>	
