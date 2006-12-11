@@ -43,7 +43,7 @@ while (<>) {
     # are not supposed to be flagged.
     #--------------------------------------------- 
     if (/is_obsolete: true/) { 
-	if (/xref_analog:\s+ZFIN:(\S+)/) {
+	if (/xref:\s+ZFIN:(\S+)/) {
 	    print ANATOBS join("|", $1, "\n");
 	}
 	next;
@@ -65,11 +65,11 @@ while (<>) {
 	    $termName = $1; 
 	    next;
 	}
-       	if ( /^xref_analog:\s+ZFIN:(\S+)/ ) {
+       	if ( /^xref:\s+ZFIN:(\S+)/ ) {
 	    push @termXrefs, $1; 
 	    next;
 	}
-	if (/^xref_analog:\s+(CL:\d+)/) {
+	if (/^xref:\s+(CL:\d+)/) {
 	    $termCL = $1;
 	    next;
 	}
@@ -98,8 +98,9 @@ while (<>) {
 	    $termDef =~ s/\\n/ /g;   # replace '\n' to a space character
 	    next;
 	}
-	if ( /^related_synonym:\s+\"(.+)\"/ ) {
+	if ( /^synonym:\s+\"(.+)\"/ ) {
 	    push @termSynonym, &stringTrim($1);
+	    push @termSynonym, /RELATED\s+PLURAL/ ? "plural" : "alias";
 	    push @termSynonym, /\[ZFIN:(\S+)\]/ ? $1 : "";
 	    next;
 	}
@@ -112,11 +113,11 @@ while (<>) {
 
     } # end foreach term attribute processing
     
-    # the xref_analog of the merged term would became a xref_analog line for the 
-    # merged-into term, inserting before any existing xref_analog line. Curators 
+    # the xref of the merged term would became a xref line for the 
+    # merged-into term, inserting before any existing xref line. Curators 
     # should only merge an existing term to either a brand new term or
-    # another existing term. If to a brand new term, the xref_analog line would
-    # be ignored; if to an existing term, the last xref_analog line should be used.
+    # another existing term. If to a brand new term, the xref line would
+    # be ignored; if to an existing term, the last xref line should be used.
     for (my $numOfMergs = @mergedTerms; $numOfMergs > 0; $numOfMergs--) {
 	shift @termXrefs;
     }
@@ -161,10 +162,10 @@ while (<>) {
     foreach (@mergedTerms) {
 	print ANATMERG join("|", $termId, $_)."|\n";
     }    
-    # shift out synonym and attribution
+    # shift out synonym, type and attribution
     # the last column is saved for new zdb id
     while (@termSynonym) {
-	print ANATALIAS join("|", $termId, shift @termSynonym, shift @termSynonym )."||\n";
+	print ANATALIAS join("|", $termId, shift @termSynonym, shift @termSynonym, shift @termSynonym )."||\n";
     }
     foreach (@termPartOf) {
 	print ANATREL join("|", $_, $termId, "part_of")."|\n";
