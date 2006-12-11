@@ -352,7 +352,7 @@ select xpatres_xpatex_zdb_id,
 -- which will be removed by Perl script
 unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/Morpholinos2.txt'
  DELIMITER "	"
-select gn.mrkr_zdb_id, gn.mrkr_abbrev, mo.mrkr_abbrev, mrkrseq_sequence, mo.mrkr_comments
+select gn.mrkr_zdb_id, gn.mrkr_abbrev, mo.mrkr_zdb_id, mo.mrkr_abbrev, mrkrseq_sequence, mo.mrkr_comments
   from marker gn, marker mo, marker_sequence, marker_relationship
   where gn.mrkr_zdb_id = mrel_mrkr_2_zdb_id
     and mo.mrkr_zdb_id = mrel_mrkr_1_zdb_id
