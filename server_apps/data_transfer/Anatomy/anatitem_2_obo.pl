@@ -62,7 +62,7 @@ my $anat_sql = "select anatitem_zdb_id, anatitem_name,
                        stage str on str.stg_zdb_id = anatitem_start_stg_zdb_id
                        join stage stp on stp.stg_zdb_id = anatitem_end_stg_zdb_id "
                .$condition
-               ." order by anatitem_zdb_id ";
+               ." order by anatitem_obo_id ";
 
 
 my $anat_sth = $dbh->prepare($anat_sql) 
