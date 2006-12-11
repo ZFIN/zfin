@@ -202,6 +202,7 @@ unload to "obsolete_anat_with_xpat.err"
 create temp table input_data_alias (
 	i_dalias_data_zdb_id	varchar(50),
 	i_dalias_alias		varchar(255),
+	i_dalias_group 		varchar(20),
 	i_dalias_attribution	varchar(50),
 	i_dalias_zdb_id		varchar(50)
 ) with no log;
@@ -688,6 +689,7 @@ delete from input_data_alias
                       from data_alias, outer record_attribution
 		     where dalias_data_zdb_id = i_dalias_data_zdb_id
 	   	       and dalias_alias = i_dalias_alias
+		       and dalias_group = i_dalias_group
 		       and dalias_zdb_id = recattrib_data_zdb_id
                        and i_dalias_attribution = recattrib_source_zdb_id);
 
@@ -726,8 +728,8 @@ insert into zdb_active_data(zactvd_zdb_id)
 	select i_dalias_zdb_id
 	  from input_data_alias;
 
-insert into data_alias (dalias_zdb_id, dalias_data_zdb_id, dalias_alias)
-	select i_dalias_zdb_id, i_dalias_data_zdb_id, i_dalias_alias
+insert into data_alias (dalias_zdb_id, dalias_data_zdb_id, dalias_alias, dalias_group)
+	select i_dalias_zdb_id, i_dalias_data_zdb_id, i_dalias_alias, i_dalias_group
 	  from input_data_alias;
 
 insert into tmp_ao_updates(t_rec_id, t_field_name, t_new_value, t_when, t_comments)
