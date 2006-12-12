@@ -7,9 +7,9 @@
 -- File collection
 ---------------------
 
-   * Download data package (.sitx file) from ftp://ftp-igbmc.u-strasbg.fr/pub/Thisse/, use STUFFITS (www.stuffit.com) to expand the package. 
+   * Use a MAC machine to download data package (.sitx file) from ftp://ftp-igbmc.u-strasbg.fr/pub/Thisse/, and expand it with STUFFITS (www.stuffit.com). 
 
-   * Use FileMaker Pro to open the files with user "Thisse" and password "thisse". From 'File' pulldown menu, choose Export, give names as defined below,
+   * Use FileMaker Pro to open the files with user "Thisse" and password "thisse". From 'File' pulldown menu, choose Export, give names as defined below. Note, before exporting DATA_FRX file, go to "Records", click "Show All Records" to make sure all is included. 
 
 	DATA_FRX->probes(.csv) 
 	rel_authors->authors(.csv) 
@@ -17,7 +17,7 @@
 	rel_images->images(.csv) 
 
     Be sure to use .csv extension. 
-    Be sure to export columns from _keyValue to "date last modified", expecially for probes.csv, you might need to explicitly include "probe rating" column right before "date last modified" column. 
+    Be sure to export all columns from _keyValue to "date last modified". Especially for probes.csv, you might need to explicitly include "probe rating" column right before "date last modified" column. 
     Also use Windows(ANSI) as character set.
             
    * At UNIX shell, create a new directory, recommended name FR#_mmdd, # is the package number
@@ -99,6 +99,7 @@
     $description$ :
 	This master script calls parseThisse.pl to process .csv files into properly formated .unl files. It calls nameClone.pl to match probes to ZFIN objects(gene/est/clone). Unknown probes are written to acc4blast.txt, and used to retrieve fasta sequence from gbk_zf_all, and launch blast for sequence analysis. blast2tab.pl and filterBlast.pl are used to categorize blast results to auto-assignments(is_gene.unl), or curation-needed (blast2zfin.scnd, blast2zfin.third).
 	Thisse ZGC should not need any blast efforts, since all the probes should match a pair of Gene and MGC clone in zfin. Thus no is_gene.unl, no acc_imClone.unl.
+	** Watch out **: make sure the last blast exit code is 0. If not, diagnose.
 
 ----------------
 -- Loading
@@ -142,7 +143,8 @@
 		        statistics.txt  
 
     $description$ :
-	This master script first calls pre_gxp_load.sql to load the files into a set of temporarily created (but not temp) tables and conduct quality check with zfin db. Errors are written to separate .err file. The script would exit on any error with table cleanup. (Description for each error file is provided below, read first one at least!) 
+	This master script first calls pre_gxp_load.sql to load the files into a set of temporarily created (but not temp) tables and conduct quality check with zfin db. Some errors are written to separate .err file. The script would exit on any error with table cleanup. (Description for each error file is provided below, read first one at least!) 
+	** Watch out **: The pre_gxp_load.sql generates much output, make sure to scroll all the way to the beginning and be sure the execution is error free. Then do "ls -l *.err" to check for other data issues. 
 	Upon success, it executes the load function (defined by gxp_load_func.sql) to really affect content in zfin database. If the load fails with exit value "1", check /tmp/gxp_load_exception for the reason. If the load successes with "0", the gxp_load_quantity_check.sql would provide table content comparison report. Please go over the report, especially look for MARKER, EXPRESSION_EXPERIMENT, FISH_IMAGE tables.
 	gxp_load_cleanup.sql would drop the non-temp tables. If you kept the talbes around for investigation, REMEMBER to drop them when you finish. 
  	After production run for thisse fr, send fr_gene.txt, and statistics.txt to Ceri.
