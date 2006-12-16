@@ -86,7 +86,7 @@ sub generateGeneDataFile () {
 
 	$has_go = 1 if $dbh->selectrow_array ($sql);
 
-	print OUT "$gene_zdb_id|$has_xpat|$has_xpat_img|$has_go|\n";
+	print OUT "$gene_zdb_id|$has_xpat|$has_xpat_img|$has_go|||\n";
     }
 
     close OUT;
