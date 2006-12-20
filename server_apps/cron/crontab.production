@@ -116,12 +116,6 @@
 00 22 * * 2 <!--|ROOT_PATH|-->/server_apps/data_transfer/ZIRC/pushToZirc.pl
 #
 #
-#     T    10:00pm   weekly dump from John P. for Sanger Center data
-#
-00 22 * * 4 <!--|ROOT_PATH|-->/server_apps/data_transfer/JohnP/johnp.pl
-#
-#
-#
 #
 # ------------------------------------------------------------------------
 # ---- 11 PM -  1 AM : DATA TRANSFER IN                               ----
