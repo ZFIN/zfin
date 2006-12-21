@@ -1,5 +1,6 @@
 #! /bin/tcsh
 
+
 # find the name of the most current core database
 /local/bin/curl -slo cur_ens_db.txt ftp://ftp.ensembl.org/pub/current_danio_rerio/data/mysql/
 
@@ -19,8 +20,24 @@ echo "Using Ensembl release: $cur"
 /usr/bin/sed 's/\(ZDB-GENE-[0-9\-]*\).*\(ENSDARG[0-9]*\).*/\1|\2|/g' |\
 /usr/bin/tr '\011' \| >!  ensdarg.unl;
 
-# load the file from Ensembl mysql into the database
-<!--|INFORMIX_DIR|-->/bin/dbaccess <!--|DB_NAME|--> load_ensdarg.sql;
 
+
+# load the file from Ensembl mysql into the local database
+# rollback if not called with the (first) argument "commit"
+
+if ($1 == "commit") then
+	cat load_ensdarg.sql commit.sql | <!--|INFORMIX_DIR|-->/bin/dbaccess <!--|DB_NAME|--> 
+	# Log what is being used as the most current release
+	if (! -f fetch_ensembl.log) then
+		touch fetch_ensembl.log
+	endif
+	echo "Using Ensembl release: $cur   `date`" >> fetch_ensembl.log
+else
+	echo ""
+	echo "*** Just Testing.***  To load" 
+	echo "> gmake run_commit"
+	echo ""
+	cat load_ensdarg.sql rollback.sql | <!--|INFORMIX_DIR|-->/bin/dbaccess <!--|DB_NAME|-->
+endif
 
 

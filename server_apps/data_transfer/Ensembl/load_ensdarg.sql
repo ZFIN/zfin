@@ -92,10 +92,11 @@ insert into record_attribution (
 ) select ez_zad, 'ZDB-PUB-061101-1', 'standard' from ens_zdb
 ;
 
+select * from ens_zdb;
+
+
 drop table ens_zdb;
 
---rollback work;
-
---
-commit work;
+-- commit or rollback is appended externally
+--rollback work;commit work;
 

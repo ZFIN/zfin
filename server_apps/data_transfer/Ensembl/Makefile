@@ -16,9 +16,10 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Ensembl
 
-GENERICS = fetch_ensdarg.sh
+GENERICS = fetch_ensdarg.sh 
 
-STATICS  = readme fetch_ensdarg.sql load_ensdarg.sql readme.ensembl_mysql
+STATICS  = readme fetch_ensdarg.sql load_ensdarg.sql readme.ensembl_mysql\
+	rollback.sql commit.sql
 
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.
@@ -39,8 +40,11 @@ $(HTTP_DATA_TRANSFER_DIR) :
 # ---------------  Misc Targets  ----------------------------------------
 
 # Run the download script.
-# This extracts data from ENSEMBL and places it in ZFIN
-# the ENSEMBL database it is run against will change.
+# This extracts data from ENSEMBL and places it in the local DB
+# does not commit the changes unless run_commit target is made
 
 run : $(TARGETDIR)/fetch_ensdarg.sh
-	$(TARGETDIR)/fetch_ensdarg.sh
+	$(TARGETDIR)/fetch_ensdarg.sh rollback
+
+run_commit : $(TARGETDIR)/fetch_ensdarg.sh
+	$(TARGETDIR)/fetch_ensdarg.sh commit
