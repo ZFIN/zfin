@@ -654,6 +654,8 @@ DEBUGGING:
       allmapnm_name_lower like '$(LOWER,$xpatselqry_fishName)%'
     <?/MIVAR>
   <?MIELSE COND="$(EC,$xpatselqry_fishSearchType,equals)">
+   <?MICOMMENT> when "=", no escape character<?/MICOMMENT>
+   <?MIVAR>$(SETVAR,$xpatselqry_fishName,$(REPLACE,$xpatselqry_fishName,\_,_))<?/MIVAR>
    <?MIVAR NAME=$xpatselqry_nameCond>
       allmapnm_name_lower = '$(LOWER,$xpatselqry_fishName)'
     <?/MIVAR>
@@ -665,7 +667,7 @@ DEBUGGING:
       allnmend_name_end_lower like '$(LOWER,$xpatselqry_fishName)%'
     <?/MIVAR>
   <?/MIBLOCK>
-
+ 
   <?MICOMMENT> *** Matching text *** <?/MICOMMENT>
   <?MIVAR NAME="$xpatselqry_fishOnlyGetBest"><?/MIVAR>
   <?MIBLOCK COND="$(NXST,$xpatselqry_matchedText)">
