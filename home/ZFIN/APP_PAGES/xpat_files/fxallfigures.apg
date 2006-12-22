@@ -48,6 +48,7 @@ function updateInnerHTML(element_id,html_to_display) {
 <?MIVAR NAME=$MI_NULL><?/MIVAR>
 <?MIVAR NAME=$fxallfig_probe_image><?/MIVAR>
 <?MIVAR NAME=$fxallfig_probe_key><?/MIVAR>
+<?MIVAR NAME=$fxallfig_probe_rating><?/MIVAR>
 <?MIBLOCK COND="$(NXST,$fxallfig_probe_zdb_id)">
   <?MIVAR NAME=$fxallfig_probe_zdb_id><?/MIVAR>
 <?/MIBLOCK>
