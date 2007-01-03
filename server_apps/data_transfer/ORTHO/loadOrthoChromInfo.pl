@@ -44,13 +44,15 @@ system("/bin/rm -f *.unl") and die "can not rm unl" ;
 system("/bin/rm -f *.txt") and die "can not rm txt" ;
 print "\nRemoving old data files is done.\n";
 
-# download data file from MGI for updating human and mouse chromosome info 
-system("/local/bin/wget -q ftp://ftp.informatics.jax.org/pub/reports/HMD_Human1.rpt -O MGI.data") and &emailError("Cannot download data file from MGI.");
+# download 2 data files from MGI for updating human and mouse chromosome info 
+system("/local/bin/wget -q ftp://ftp.informatics.jax.org/pub/reports/HMD_Human1.rpt -O MGI.data") and &emailError("Cannot download data file 1 from MGI.");
+system("/local/bin/wget -q ftp://ftp.informatics.jax.org/pub/reports/HMD_Rat1.rpt -O MGI2.data") and &emailError("Cannot download data file 2 from MGI.");
 print "\nDownloading from MGI is done\n";
 
 # download data file from FlyBase for updating fly chromosome info 
-system("/local/bin/wget -q ftp://flybase.net/genomes/Drosophila_melanogaster/current/fasta/dmel-all-gene-r4.3.fasta -O FlyBase.data") and &emailError("Cannot download data file from FlyBase.");
-print "\nDownloading from FlyBase is done.\n";
+system("/local/bin/wget -q ftp://flybase.net/genomes/Drosophila_melanogaster/current/fasta/dmel-all-gene-r5.1.fasta.gz -O FlyBase.data.gz") and &emailError("Cannot download data file from FlyBase.");
+system("/local/bin/gunzip FlyBase.data.gz") and &emailError("Cannot decompress data file of FlyBase.");
+print "\nDownloading and decompressing FlyBase file is done.\n";
 
 # download data file from SGD for updating fly chromosome info
 system("/local/bin/wget -q ftp://ftp.yeastgenome.org/yeast/data_download/chromosomal_feature/SGD_features.tab -O SGD.data") and &emailError("Cannot download data file from SGD.");
