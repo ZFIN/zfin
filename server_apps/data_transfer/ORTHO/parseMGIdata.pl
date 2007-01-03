@@ -6,9 +6,12 @@
 #  then output the parsed result to "chromInfo.unl" for updating orthologue table
 ########################################################################################
 
-open (INP,  "MGI.data") || die "Can't open MGI.data : $!\n";
-@lines=<INP>;
+open (INP,"MGI.data") || die "Can't open MGI.data : $!\n";
+@lines = <INP>;
 close INP;
+open (INP2,"MGI2.data") || die "Can't open MGI.data : $!\n";
+@lines2 = <INP2>;
+close INP2;
 
 # the following is for marking the header text to be excluded from the MGI data file
 $ct = 0;
@@ -20,6 +23,18 @@ foreach $line (@lines) {
   }
   if ($ct > $ct2) {
     $ct2 = $ct if ($line =~ m/rows affected/g);
+  }
+}
+
+$ct3 = 0;
+$ct4 = $ct5 = 50;
+foreach $line2 (@lines2) {
+  $ct3++;
+  if ($ct3 < $ct4) {
+    $ct4 = $ct3 if ($line2 =~ m/-----/g);
+  }
+  if ($ct3 > $ct5) {
+    $ct5 = $ct3 if ($line2 =~ m/rows affected/g);
   }
 }
 
@@ -90,6 +105,34 @@ foreach $line (@lines) {
       $outStrs{$comb2} =  $mouseStr;
     } else {
       $outStrs{$comb2} = "bad";
+    }
+  }
+}
+
+$ct3 = 0;
+foreach $line2 (@lines2) {
+  $ct3++;
+  if ($ct3 > $ct4 && $ct3 < $ct5 - 1) {
+    @fields2 = split(/\s+/, $line2);    
+    $offset21 = 0;
+    $flyEntrezID = $fields2[1];
+    $offset21 = 1 if ($flyEntrezID =~ /\D/g);
+    $flySym = $fields2[2 - $offset21];
+    $msChr2 = $fields2[4 - $offset21];
+    $cm2 = $fields2[5 - $offset21];
+    $offset22 = 0;
+    $msEntrezID2 = $fields2[6 - $offset21];
+    $offset22 = 1 if ($msEntrezID2 =~ /\D/g);
+    $msSym2 = $fields2[7 - $offset21 - $offset22];
+
+    $comb22 = $msSym2 . "Mouse";
+    if (!exists($outStrs{$comb22})) {    
+      $mouseStr2 = "$msSym2" . "|" . $msChr2 . "|" . $cm2;
+      $mouseStr2 .= " cM" if ($cm2 =~ /\d+\.\d\d/);
+      $mouseStr2 .= "|Mouse|";
+      $outStrs{$comb22} =  $mouseStr2;
+    } else {
+      $outStrs{$comb22} = "bad";
     }
   }
 }
