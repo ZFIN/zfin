@@ -561,9 +561,8 @@ insert into zdb_active_data select t_xpatex_zdb_id from tmp_gxp_expression_exper
 
 insert into expression_experiment (xpatex_zdb_id, xpatex_featexp_zdb_id, 
 				   xpatex_assay_name, xpatex_probe_feature_zdb_id,
-                                   xpatex_gene_zdb_id, xpatex_source_zdb_id,
-				   xpatex_direct_submission_date)
-	select *, TODAY from tmp_gxp_expression_experiment;
+                                   xpatex_gene_zdb_id, xpatex_source_zdb_id)
+	select * from tmp_gxp_expression_experiment;
 
 insert into int_data_source (ids_data_zdb_id, ids_source_zdb_id)
 	select t_xpatex_zdb_id, sbm_lab_id 
