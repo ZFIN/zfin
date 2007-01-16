@@ -20,7 +20,6 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/lib/DB_schema/FRODO
 
-SUBDIRS = test_data \
 
 GENERICS = Fv4.sh trigger_fix.sh \
 	   fix_figs.sql \

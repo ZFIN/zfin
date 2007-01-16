@@ -157,6 +157,7 @@ PREFIX: msegsel_
    <?MIBLOCK COND="$(XST,$input_name)">
 
      <?MIVAR NAME=$input_name DELIMIT="'" REPLACE="''">$input_name<?/MIVAR>
+     <?MIVAR NAME=$input_name DELIMIT="_" REPLACE="\_">$input_name<?/MIVAR>
      <?MIVAR NAME=mrkrMchIdLast><?/MIVAR>
      <?MIVAR NAME=mchGeneIdLast><?/MIVAR>
 
@@ -267,6 +268,7 @@ PREFIX: msegsel_
 	$(VECAPPEND, $constraintList,$name_constraint)
     <?/MIVAR>
     <?MIVAR COND="$(XST,$input_name)" NAME=input_name DELIMIT="''" REPLACE="'">$input_name<?/MIVAR>
+    <?MIVAR COND="$(XST,$input_name)" NAME=input_name DELIMIT="\_" REPLACE="_">$input_name<?/MIVAR>
   <?/MIBLOCK><!-- end name is provided -->
 
    
@@ -594,13 +596,6 @@ PREFIX: msegsel_
 	    name="$form_name">
 
 	<?MIVAR name=$first_row>1<?/MIVAR>
-
-	  $(IF,$(>,$(POSITION,$OID,LOCUS),0),
-	    $(SETVAR,$viewer,aa-locusview.apg))              
-
-	  $(IF,$(>,$(POSITION,$OID,FISH),0),
-	    $(SETVAR,$viewer,aa-fishview.apg))
-<!-- Column 1, Segment Name -->
 
 	  <?MIBLOCK COND="$(EC,$first_row,1)">
 	    <!-- start new row and column -->

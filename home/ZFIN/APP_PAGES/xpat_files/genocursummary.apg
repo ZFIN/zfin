@@ -1,0 +1,157 @@
+<?MICOMMENT>
+
+FILE:     genocursummary.apg
+PREFIX:   genocursum_
+
+
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
+<?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
+
+<?MIVAR NAME=genocursum_row_color>#FFFFFF<?/MIVAR>
+
+
+<br>
+<div id="headertwo">Curated Genotypes:</div>
+<br>
+
+<table width=100% border=0 cellspacing=0>
+  <tr bgcolor="#CCCCCC">
+    <td>
+
+
+      <b>Genotype Nickname</b>
+      
+    </td>
+    <td>
+    
+      <b>Display Name</b>
+      
+    </td>
+    <td>
+    
+      <b>Feature</b>
+      
+    </td>
+    <td>
+    
+      <b>Zygocity</b>
+      
+    </td>
+    <td>
+    
+      <b>Background</b>
+      
+    </td>
+    <td>
+    
+      <b>Notes</b>
+      
+    </td>
+  </tr>
+
+
+  
+  <?MISQL SQL="
+        select geno_zdb_id, geno_name_order, get_geno_name_html_link(geno_zdb_id), geno_nickname
+        from genotype
+        where geno_zdb_id in ('$pubcur_G_oid_attrib_csv')
+        order by geno_nickname;">
+
+      <?MIVAR NAME=genocursum_geno_zdb_id>$1<?/MIVAR> 
+      <?MIVAR NAME=genocursum_geno_display>$3<?/MIVAR> 
+      <?MIVAR NAME=genocursum_geno_handle>$4<?/MIVAR> 
+      <?MIVAR NAME=genocursum_feat_col><?/MIVAR>    
+      <?MIVAR NAME=genocursum_zyg_col><?/MIVAR>    
+      <?MIVAR NAME=genocursum_backgrd_display><?/MIVAR>    
+            
+      <?MISQL SQL="
+          select feature_name, feature_abbrev_order, zyg_name
+          from   genotype_feature, feature, zygocity
+          where  genofeat_geno_zdb_id = '$genocursum_geno_zdb_id'
+            and  genofeat_feature_zdb_id = feature_zdb_id
+            and  genofeat_zygocity = zyg_zdb_id
+          
+          order by 2;">
+            
+            <?MIVAR NAME=genocursum_feat_col>$genocursum_feat_col
+              <tr><td>$1</td></tr>
+            <?/MIVAR>
+
+            <?MIVAR NAME=genocursum_zyg_col>$genocursum_zyg_col
+              <tr><td>$3</td></tr>
+            <?/MIVAR>
+            
+      <?/MISQL>
+      <?MISQL SQL="
+          select geno_display_name, geno_name_order
+          from   genotype_background, genotype
+          where  genoback_geno_zdb_id = '$genocursum_geno_zdb_id'
+            and  genoback_background_zdb_id = geno_zdb_id
+          order by geno_name_order;">
+            
+            <?MIVAR NAME=genocursum_backgrd_display>
+              $genocursum_backgrd_display
+              $(IF,$(NE,$MI_CURRENTROW,1),/)
+              $1            
+            <?/MIVAR>
+            
+      <?/MISQL>
+
+    <?MIVAR NAME=genocursum_row_color>$(IF,$(EC,$genocursum_row_color,<!--|HIGHLIGHT_COLOR|-->),#FFFFFF,<!--|HIGHLIGHT_COLOR|-->)<?/MIVAR>      
+
+    <tr bgcolor='$genocursum_row_color' onmouseover="this.style.background='$pubcur_G_active_row_color';" onmouseout="this.style.background='$genocursum_row_color';">
+      <td valign=top>
+      
+        $genocursum_geno_handle
+      
+      </td>
+      <td valign=top>
+      
+        $genocursum_geno_display
+      
+      </td>
+                
+      <td>
+        
+        <table border=0>
+          $genocursum_feat_col
+        </table>
+        
+      </td>
+
+      <td>
+        
+        <table border=0>
+          $genocursum_zyg_col
+        </table>
+        
+      </td>
+      
+      <td>
+      
+        $genocursum_backgrd_display        
+      
+      </td>
+      
+      <td>
+        <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$genocursum_geno_zdb_id" target=notes>Edit</a>
+      </td>
+
+      
+    </tr>
+    
+  <?/MISQL>
+
+
+<?/MIBLOCK> <?MICOMMENT> end authorize <?/MICOMMENT>

@@ -30,10 +30,18 @@ SUBDIRS = Regen_names
 DBLINK_STATS = get_dblink_acc_num_display.sql p_dblink_has_parent.sql \
 	       p_check_caps_acc_num.sql p_one_ortho_per_db.sql \
 	       get_genbank_dblink_length_type.sql
-FISH_STATS   = get_fish_full_name_html.sql get_fish_abbrev_html.sql \
-	       get_fish_full_name.sql \
-	       get_image_stats.sql p_locus_name_abbrev_equal.sql \
-	       get_allele_html.sql
+FISH_STATS   = get_image_stats.sql \
+	       p_update_related_genotype_names.sql \
+	       p_update_fmrel_genotype_names.sql \
+               fhist_event.sql \
+	       p_fmrel_grpmem_correct.sql \
+	       get_feature_abbrev_display.sql \
+	       get_feature_abbrev_html.sql \
+	       get_genotype_backgrounds.sql \
+	       get_genotype_display.sql \
+	       get_genotype_handle.sql \
+	       p_check_pato_entities.sql \
+	       get_feature_type.sql
 LOAD_STATS   = p_zgc_load.sql
 XPAT_STATS   = populate_direct_submission_date.sql
 MRKR_STATS   = gene_contains_seg.sql mhist_event.sql p_mrel_grpmem_correct.sql \
@@ -52,20 +60,19 @@ PUB_STATS    = get_pub_mini_ref.sql p_drop_go_root_term_attribution.sql \
 	       p_new_person_address.sql \
 	       p_update_person_address.sql \
 
-REGEN_GNRCS  = regen_fishsearch.sql regen_oevdisp.sql \
+REGEN_GNRCS  = regen_oevdisp.sql \
 	       regen_panelcount.sql regen_maps.sql
 REGEN_STATS  = grab_zdb_flag.sql release_zdb_flag.sql
 ZDB_GNRCS    = table_exists.sql
 ZDB_STATS    = get_obj_name.sql get_obj_abbrev.sql get_date_from_id.sql \
 	       p_check_zdb_object_table.sql syscall.sql zdb_date.sql \
-	       p_check_figure_image_pair_exists.sql \
 	       p_check_submitter_is_root.sql set_session_params.sql
 
 # Some of the stage functions call other stage functions.  Therefore
 # the order they are listed matters.
 STAGE_STATS  = create_stg_name_ext.sql create_stg_name_long.sql \
 	       get_stg_name_html.sql \
-	       stg_window_consistent.sql fimg_overlaps_stg_window.sql \
+	       stg_window_consistent.sql \
 	       anatitem_overlaps_stg_window.sql \
 	       p_check_anatitem_overlaps_stg_window.sql \
 	       stg_windows_overlap.sql \
@@ -73,16 +80,21 @@ STAGE_STATS  = create_stg_name_ext.sql create_stg_name_long.sql \
 	       p_check_anatrel_stg_consistent.sql \
 	       p_check_anat_anatrel_stg_consistent.sql
 ANAT_STATS = create_anatomy_relationship_list.sql xpat_annot_adjust.sql
-# insert_clone and regen_anatomy.sql are special cases.  They contain 
+ANAT_GNRCS = get_entity_name_html.sql
+# insert_clone, regen_anatomy.sql and get_genofeat_zgy_html_display.sql
+# are special cases.  They contain 
 # multiple procedures/functions in a single file.  We thought about splitting 
 # these into a single file per function, but the functions are tightly
 # coupled with the function the file is name after.  There was more to gain by
 # leaving them all in one file, then by splitting them up.
-MULTIPLE_PROCS = insert_clone.sql regen_anatomy.sql clone_2_sanger.sql
+MULTIPLE_PROCS = insert_clone.sql regen_anatomy.sql clone_2_sanger.sql \
+		 get_genofeat_mp_zyg_html_display.sql
 
-GENERIC_PROCS = $(ZDB_GNRCS) $(REGEN_GNRCS) get_mrkr_name_html_link.sql \
-	        get_mrkr_abbrev_html_link.sql get_fish_full_name_html_link.sql \
-                get_fish_abbrev_html_link.sql 
+GENERIC_PROCS = $(ZDB_GNRCS) $(REGEN_GNRCS) $(ANAT_GNRCS) \
+		get_mrkr_name_html_link.sql get_mutants_html_link.sql \
+	        get_mrkr_abbrev_html_link.sql get_geno_name_html_link.sql \
+		get_geno_name_with_bg_html_link.sql \
+		get_genotype_backgrounds_html_link.sql
 STATIC_PROCS  = $(DBLINK_STATS) $(FISH_STATS) $(MRKR_STATS) $(PUB_STATS) \
 		$(REGEN_STATS) $(ZDB_STATS) $(STAGE_STATS) $(ANAT_STATS) \
 		$(LOAD_STATS) $(XPAT_STATS)

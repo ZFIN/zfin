@@ -37,11 +37,11 @@ create function get_mrkr_abbrev_html( mrkrZdbId varchar(50) )
   if mrkrAbbrev is null then
     let mrkrAbbrevHtml = null;
   else
-    if lower(mrkrAbbrev) = lower(mrkrName) then
-      let title = '';
-    else
+--    if lower(mrkrAbbrev) = lower(mrkrName) then
+--      let title = '';
+--    else
       let title = ' title="' || mrkrName || '"';
-    end if
+--    end if
     if exists 
          ( select 'x'
              from marker_type_group_member

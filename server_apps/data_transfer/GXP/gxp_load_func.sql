@@ -8,8 +8,7 @@
 --	sbm_person_id :  as owner of new marker and image record	
 --	sbm_pub_id   	
 --	sbm_supplier_id : lab that supplier clone data	
---	sbm_fish_line_id
---      sbm_featexp_zdb_id	
+--      sbm_genox_zdb_id	
 --	sbm_fgene_prefix: prefix for place holder genes	
 --	sbm_release_type	
 --
@@ -26,7 +25,7 @@
 -- EFFECT:
 --      Gene expression data get loaded into ZFIN.
 --      Affected tables: marker, expression_experiment, expression_result,
---      fish_images, figure expression_pattern_figure,record_attribution,
+--      images, figure expression_pattern_figure,record_attribution,
 --      zdb_active_data. 
 -- 
 --      A group of tables are created for processing purpose. To ease 
@@ -46,8 +45,7 @@ create function gxp_load_func (
 		sbm_person_id	  like person.zdb_id,	
 		sbm_pub_id	  like publication.zdb_id,
 		sbm_supplier_id	  varchar(50),
-		sbm_fish_line_id  like fish.zdb_id,
-		sbm_featexp_zdb_id  like feature_experiment.featexp_zdb_id,
+		sbm_genox_zdb_id  like genotype_experiment.genox_zdb_id,
 		sbm_fgene_prefix  varchar(5),
 		sbm_assay_name    varchar(50)
  	)
@@ -65,7 +63,7 @@ create function gxp_load_func (
     define sbm_lab_id	like lab.zdb_id;
     define lastProbe    like marker.mrkr_zdb_id;
     define labelCounter integer;
-    define fishImageForm like fish_image.fimg_form;
+    define fishImageForm like image.img_form;
     define curProbe	like marker.mrkr_zdb_id;
     define curFigZdbId  like figure.fig_zdb_id;
     define curCaption   like figure.fig_caption;
@@ -540,7 +538,7 @@ let errorHint = "expression_experiment";
 
 create table tmp_gxp_expression_experiment (
     t_xpatex_zdb_id 		varchar(50) not null primary key,
-    t_xpatex_featexp_zdb_id 	varchar(50) not null,
+    t_xpatex_genox_zdb_id 	varchar(50) not null,
     t_xpatex_assay_name 	varchar(40),
     t_xpatex_probe_zdb_id 	varchar(50),
     t_xpatex_gene_zdb_id 	varchar(50) not null,
@@ -548,7 +546,7 @@ create table tmp_gxp_expression_experiment (
 ) ;
 
 insert into tmp_gxp_expression_experiment 
-    	 select get_id('XPAT'), sbm_featexp_zdb_id, 
+    	 select get_id('XPAT'), sbm_genox_zdb_id, 
 		sbm_assay_name, t_mrkr_zdb_id, 
 		mrkr_zdb_id, sbm_pub_id
     	   from tmp_gxp_marker, marker, marker_relationship
@@ -559,7 +557,7 @@ insert into tmp_gxp_expression_experiment
 
 insert into zdb_active_data select t_xpatex_zdb_id from tmp_gxp_expression_experiment;
 
-insert into expression_experiment (xpatex_zdb_id, xpatex_featexp_zdb_id, 
+insert into expression_experiment (xpatex_zdb_id, xpatex_genox_zdb_id, 
 				   xpatex_assay_name, xpatex_probe_feature_zdb_id,
                                    xpatex_gene_zdb_id, xpatex_source_zdb_id)
 	select * from tmp_gxp_expression_experiment;
@@ -684,15 +682,19 @@ insert into expression_pattern_figure (xpatfig_fig_zdb_id,
         and t_xpatres_end_stg_zdb_id = t_fig_end_stg_zdb_id;
 
 -----------------------------------------------------
--- FISH_IMAGE 
+-- IMAGE 
 -- 
 -- no additional record attribution as figure is attributed
 ------------------------------------------------------
-let errorHint = "fish_image";
+let errorHint = "image";
 
 insert into zdb_active_data (zactvd_zdb_id)
-	select img_zdb_id 
+	select imgt_zdb_id 
 	  from images_tmp;
+if (sbm_lab_name = "Talbot") then
+    update images_tmp set img_comments = "CEG load";
+end if 
+
 if (sbm_lab_name = "Talbot") then
     update images_tmp set img_comments = "CEG load";
 end if 
@@ -700,51 +702,51 @@ end if
 -- images with annotation need a slightly different SQL
 -- if modify, check both SQLs.
 if (sbm_lab_name = "Thisse" AND sbm_release_type = "cb") then 
-  insert into fish_image (
-   	fimg_zdb_id, fimg_fig_zdb_id,
-	fimg_image, fimg_thumbnail,
-	fimg_image_with_annotation, fimg_annotation,
-    	fimg_width, fimg_height,
-    	fimg_fish_zdb_id, fimg_comments,
-    	fimg_view, fimg_direction,
-    	fimg_form, fimg_preparation,
-    	fimg_owner_zdb_id, fimg_external_name)
-    select img_zdb_id, t_fig_zdb_id, 
-	   img_zdb_id || '.jpg', img_zdb_id || '_thumb.jpg',
-	   img_zdb_id || '_annot.jpg', '' -- will come back to annot text later
+  insert into image (
+   	img_zdb_id, img_fig_zdb_id,
+	img_image, img_thumbnail,
+	img_image_with_annotation, img_annotation,
+    	img_width, img_height,
+    	img_comments,
+    	img_view, img_direction,
+    	img_form, img_preparation,
+    	img_owner_zdb_id, img_external_name)
+    select imgt_zdb_id, t_fig_zdb_id, 
+	   imgt_zdb_id || '.jpg', imgt_zdb_id || '_thumb.jpg',
+	   imgt_zdb_id || '_annot.jpg', '' -- will come back to annot text later
 	   imgdim_width, imgdim_height,
-	   sbm_fish_line_id, img_comments,
-	   img_view, img_orient, 
-	   fishImageForm, img_preparation,
-	   sbm_person_id, img_image_name
+	   imgt_comments,
+	   imgt_view, imgt_orient, 
+	   fishImageForm, imgt_preparation,
+	   sbm_person_id, imgt_image_name
       from images_tmp, tmp_gxp_figure, tmp_gxp_marker, image_dim
-     where img_clone_name = t_mrkr_name
+     where imgt_clone_name = t_mrkr_name
        and t_mrkr_zdb_id = t_fig_prb_zdb_id
-       and img_sstart = t_fig_start_stg_zdb_id
-       and img_sstop = t_fig_end_stg_zdb_id
-       and imgdim_name   = img_image_name;
+       and imgt_sstart = t_fig_start_stg_zdb_id
+       and imgt_sstop = t_fig_end_stg_zdb_id
+       and imgdim_name   = imgt_image_name;
 else 
-  insert into fish_image (
-   	fimg_zdb_id, fimg_fig_zdb_id,
-	fimg_image, fimg_thumbnail,
-    	fimg_width, fimg_height,
-    	fimg_fish_zdb_id, fimg_comments,
-    	fimg_view, fimg_direction,
-    	fimg_form, fimg_preparation,
-    	fimg_owner_zdb_id, fimg_external_name)
-    select img_zdb_id, t_fig_zdb_id, 
-	   img_zdb_id || '.jpg', img_zdb_id || '_thumb.jpg',
+  insert into image (
+   	img_zdb_id, img_fig_zdb_id,
+	img_image, img_thumbnail,
+    	img_width, img_height,
+    	img_comments,
+    	img_view, img_direction,
+    	img_form, img_preparation,
+    	img_owner_zdb_id, img_external_name)
+    select imgt_zdb_id, t_fig_zdb_id, 
+	   imgt_zdb_id || '.jpg', imgt_zdb_id || '_thumb.jpg',
 	   imgdim_width, imgdim_height,
-	   sbm_fish_line_id, img_comments,
-	   img_view, img_orient, 
-	   fishImageForm, img_preparation,
-	   sbm_person_id, img_image_name
+	   imgt_comments,
+	   imgt_view, imgt_orient, 
+	   fishImageForm, imgt_preparation,
+	   sbm_person_id, imgt_image_name
       from images_tmp, tmp_gxp_figure, tmp_gxp_marker, image_dim
-     where img_clone_name = t_mrkr_name
+     where imgt_clone_name = t_mrkr_name
        and t_mrkr_zdb_id = t_fig_prb_zdb_id
-       and img_sstart = t_fig_start_stg_zdb_id
-       and img_sstop = t_fig_end_stg_zdb_id
-       and imgdim_name   = img_image_name;
+       and imgt_sstart = t_fig_start_stg_zdb_id
+       and imgt_sstop = t_fig_end_stg_zdb_id
+       and imgdim_name   = imgt_image_name;
 end if
 
 

@@ -1,6 +1,8 @@
 
 <?MIVAR COND=$(NXST,$cit_G_filter) NAME=cit_G_filter><?/MIVAR>
-<?MIVAR COND=$(NXST,$sp_G_orderby) NAME=sp_G_orderby><?/MIVAR>     
+<?MIVAR COND=$(NXST,$sp_G_orderby) NAME=sp_G_orderby><?/MIVAR>   
+<?MIVAR COND=$(NXST,$sp_G_jtype_option) NAME=sp_G_jtype_option>all<?/MIVAR>    
+
     	
 <?MICOMMENT> 
   ================================
@@ -18,11 +20,8 @@
   ==============================
 <?/MICOMMENT>
 
-
-
 <?MICOMMENT> *** Set Variable cit_G_jtype_filter *** <?/MICOMMENT>
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-citjtypeoption.apg';">$1<?/MISQL>
-
 
 
 <?MIVAR NAME=citfish_fromwhere>
@@ -31,7 +30,6 @@
       and recattrib_source_zdb_id = p.zdb_id 
       and jrnl_zdb_id = pub_jrnl_zdb_id
 <?/MIVAR>
-
 
 <?MIVAR>
   $(VECAPPEND,$citfish_fromwhere,"
@@ -77,25 +75,24 @@
       and jrnl_zdb_id = pub_jrnl_zdb_id")
 
   $(VECAPPEND,$citfish_fromwhere,"
-      from record_attribution, publication p, journal, locus as loc
-      where recattrib_data_zdb_id = loc.zdb_id
-      and loc.cloned_gene = '"$OID"'
+      from record_attribution, publication p, journal, feature_marker_relationship
+      where recattrib_data_zdb_id = fmrel_ftr_zdb_id
+      and fmrel_mrkr_zdb_id = '"$OID"'
       and recattrib_source_zdb_id = p.zdb_id 
       and jrnl_zdb_id = pub_jrnl_zdb_id")
 
   $(VECAPPEND,$citfish_fromwhere,"
-      from record_attribution, publication p, journal, alteration as a, locus as loc
-      where recattrib_data_zdb_id = a.zdb_id
-      and a.locus = loc.zdb_id
-      and loc.cloned_gene = '"$OID"'
+      from record_attribution, publication p, journal, feature_marker_relationship, genotype_feature
+      where recattrib_data_zdb_id = genofeat_geno_zdb_id
+      and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
+      and fmrel_mrkr_zdb_id = '"$OID"'
       and recattrib_source_zdb_id = p.zdb_id 
       and jrnl_zdb_id = pub_jrnl_zdb_id")
 
   $(VECAPPEND,$citfish_fromwhere,"
-      from record_attribution, publication p, journal, fish as f, locus as loc
-      where recattrib_data_zdb_id = f.zdb_id
-      and f.locus = loc.zdb_id
-      and loc.cloned_gene = '"$OID"'
+      from record_attribution, publication p, journal, genotype_feature
+      where recattrib_data_zdb_id = genofeat_geno_zdb_id
+      and genofeat_feature_zdb_id = '"$OID"'
       and recattrib_source_zdb_id = p.zdb_id 
       and jrnl_zdb_id = pub_jrnl_zdb_id")
 

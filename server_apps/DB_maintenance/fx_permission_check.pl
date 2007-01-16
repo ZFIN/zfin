@@ -126,8 +126,8 @@ while ($cur->fetch) {
                 and cur_pub_zdb_id = publication.zdb_id 
                 and pub_can_show_images = 't' 
                 and not exists (select 'x' 
-                                 from fish_image 
-                                 where fimg_fig_zdb_id = fig_zdb_id) 
+                                 from image 
+                                 where img_fig_zdb_id = fig_zdb_id) 
                 and person.zdb_id = cur_curator_zdb_id 
                 and cur_curator_zdb_id = '$cur_curator_zdb_id'
                 and fig_label like 'Fig.%' 

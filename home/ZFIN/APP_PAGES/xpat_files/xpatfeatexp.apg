@@ -4,19 +4,19 @@ FILE: xpatfeatexp.apg
 PREFIX: fxp_ 
 
 DESCRIPTION:
-   This subroutine accepts feature_experiment zdb id, and generates a
-   string of fish line and experiment condition defined by that. It
+   This subroutine accepts genotype_experiment zdb id, and generates a
+   string of genotype background and experiment condition defined by that. It
    makes use of xpatexpcdnsummary.apg to generate condition summary. 
 
 INPUT VARS:
-	fxp_zdb_id: feature experiment zdb id 
+	fxp_zdb_id: genotype experiment zdb id 
 
 OUTPUT VARS:
         none
 
 OUPUT:
    A string of fish line and condition if not Standard.
-   The fish line embeds hotlink to fish view page, the condition
+   The genotype background embeds hotlink to genoytpe view page, the condition
    summary embeds hotlink to environment page.
 
 <?/MICOMMENT>
@@ -35,22 +35,21 @@ OUPUT:
 <?MIVAR NAME=MI_NULL><?/MIVAR>
 
 <?MIBLOCK COND="$(NXST,$fxp_zdb_id)">
-    ERROR: Feature experiment zdb id is not passed in.
+    ERROR: Genotype experiment zdb id is not passed in.
 
 <?MIELSE>
   <?MISQL SQL="
-	select get_fish_abbrev_html_link(featexp_genome_feature_zdb_id), 
-	       featexp_exp_zdb_id
- 	  from feature_experiment
-	 where featexp_zdb_id = '$fxp_zdb_id';">
+	select get_geno_name_with_bg_html_link(genox_geno_zdb_id), 
+	       genox_exp_zdb_id
+ 	  from genotype_experiment
+	 where genox_zdb_id = '$fxp_zdb_id';">
 
-	<?MIVAR NAME=fxp_fishline_html>$1<?/MIVAR>
+	<?MIVAR NAME=fxp_genobgrd_html>$1<?/MIVAR>
 	<?MIVAR NAME=fxp_exp_zdb_id>$2<?/MIVAR>
 
   <?/MISQL>
-  
   <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
-     ERROR: Invalid feature experiment zdb id.
+     ERROR: Invalid genotype experiment zdb id.
 
   <?MIELSE>
 
@@ -62,12 +61,12 @@ OUPUT:
      <?MIVAR NAME=fxp_exp_html>$(TRIM,$1)<?/MIVAR>	
      
      <?MICOMMENT>===========  Display   =================
-		 ==   fish line and experiment condition 
+		 ==   genotype background and experiment condition 
      <?/MICOMMENT>
      <?MIVAR> 
-	$fxp_fishline_html$(IF,$(NC,$fxp_exp_html,),", "$fxp_exp_html) 
+	$fxp_genobgrd_html$(IF,$(NC,$fxp_exp_html,),", "$fxp_exp_html) 
      <?/MIVAR>	 
  
-   <?/MIBLOCK> <?MICOMMENT> end if featexp zdb id is valid <?/MICOMMENT>
+   <?/MIBLOCK> <?MICOMMENT> end if genox zdb id is valid <?/MICOMMENT>
 
-<?/MIBLOCK> <?MICOMMENT> end if featexp zdb id is passed in <?/MICOMMENT>
+<?/MIBLOCK> <?MICOMMENT> end if genox zdb id is passed in <?/MICOMMENT>

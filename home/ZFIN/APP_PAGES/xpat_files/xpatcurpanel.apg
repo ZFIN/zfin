@@ -75,9 +75,9 @@ EFFECTS
     <?MIVAR NAME=xpcurpnl_index>0<?/MIVAR>
     <?MISQL SQL="
         select distinct fig_label, fig_zdb_id, xpatex_zdb_id, s1.stg_zdb_id, s2.stg_zdb_id, s1.stg_abbrev, s2.stg_abbrev,
-               zero_pad(fig_label), mrkr_abbrev_order, LOWER(abbrev), s1.stg_hours_start, s2.stg_hours_end
+               zero_pad(fig_label), mrkr_abbrev_order, geno_nickname, s1.stg_hours_start, s2.stg_hours_end
         from figure, expression_pattern_figure, expression_result, stage as s1, stage as s2, 
-             expression_experiment, marker, feature_experiment, fish
+             expression_experiment, marker, genotype_experiment, genotype
         where fig_source_zdb_id = '$OID'
           and xpatex_source_zdb_id = '$OID'
           and xpatfig_fig_zdb_id = fig_zdb_id
@@ -86,12 +86,12 @@ EFFECTS
           and xpatex_gene_zdb_id = mrkr_zdb_id
           and xpatres_start_stg_zdb_id = s1.stg_zdb_id
           and xpatres_end_stg_zdb_id = s2.stg_zdb_id
-          and xpatex_featexp_zdb_id = featexp_zdb_id
-          and featexp_genome_feature_zdb_id = zdb_id
-          and fig_zdb_id in ('$xpcur_G_fig_attrib_csv')
+          and xpatex_genox_zdb_id = genox_zdb_id
+          and genox_geno_zdb_id = geno_zdb_id
+          and fig_zdb_id in ('$pubcur_G_fig_attrib_csv')
           $(IF,$(XST,$xpcur_c_figure_only),and fig_zdb_id = '$xpcur_c_figure_only')
           $(IF,$(XST,$xpcur_c_gene_only),and xpatex_gene_zdb_id = '$xpcur_c_gene_only')
-          $(IF,$(XST,$xpcur_c_fish_only),and zdb_id = '$xpcur_c_fish_only')
+          $(IF,$(XST,$xpcur_c_fish_only),and geno_zdb_id = '$xpcur_c_fish_only')
         order by 8,9,10,11;">
         
         <?MIVAR NAME=xpcurpnl_figexp_name>xpcurpnl_figexp_$xpcurpnl_index<?/MIVAR>
@@ -229,7 +229,7 @@ EFFECTS
       } //j loop
     } // i loop
     
-    setCookie("checked_expression",c_checked_expression);
+    setCookie("checked_expression",c_checked_expression,'xpcur_c_');
     setExpressionStage() ;
 
     <?MIBLOCK COND=$(AND,$(XST,$xpcur_c_structure),$(EC,$xpcur_c_structure,show))>
@@ -396,26 +396,26 @@ EFFECTS
                     xpatres_xpatex_zdb_id, 
                     mrkr_abbrev_order, 
                     stg_hours_start, 
-                    LOWER(abbrev), 
+                    geno_nickname, 
                     xpatex_gene_zdb_id, 
-                    zdb_id,
+                    geno_zdb_id,
                     xpatassay_display_order,
                     zero_pad(exp_name)
-    from figure, expression_pattern_figure, expression_result, expression_experiment, marker, stage, feature_experiment, fish, expression_pattern_assay, experiment
+    from figure, expression_pattern_figure, expression_result, expression_experiment, marker, stage, genotype_experiment, genotype, expression_pattern_assay, experiment
     where fig_source_zdb_id = '$OID'
       and xpatfig_fig_zdb_id = fig_zdb_id
       and xpatfig_xpatres_zdb_id = xpatres_zdb_id
       and xpatres_xpatex_zdb_id = xpatex_zdb_id 
       and xpatex_gene_zdb_id = mrkr_zdb_id
       and xpatres_start_stg_zdb_id = stg_zdb_id
-      and xpatex_featexp_zdb_id = featexp_zdb_id
-      and featexp_genome_feature_zdb_id = zdb_id
-      and fig_zdb_id in ('$xpcur_G_fig_attrib_csv')
+      and xpatex_genox_zdb_id = genox_zdb_id
+      and genox_geno_zdb_id = geno_zdb_id
+      and fig_zdb_id in ('$pubcur_G_fig_attrib_csv')
       and xpatex_assay_name = xpatassay_name
-      and featexp_exp_zdb_id = exp_zdb_id
+      and genox_exp_zdb_id = exp_zdb_id
       $(IF,$(XST,$xpcur_c_gene_only),and mrkr_zdb_id = '$xpcur_c_gene_only')
-      $(IF,$(XST,$xpcur_c_fish_only),and zdb_id = '$xpcur_c_fish_only')
-    order by fig_label, mrkr_abbrev_order, LOWER(abbrev), xpatassay_display_order, 12, stg_hours_start;">
+      $(IF,$(XST,$xpcur_c_fish_only),and geno_zdb_id = '$xpcur_c_fish_only')
+    order by fig_label, mrkr_abbrev_order, geno_nickname, xpatassay_display_order, 12, stg_hours_start;">
 
       <?MIVAR NAME=xpcurpnl_fig_zdb_id>$1<?/MIVAR>
       <?MIVAR NAME=xpcurpnl_fig_label>$2<?/MIVAR>
@@ -439,7 +439,7 @@ EFFECTS
         <?MIVAR NAME=xpcurpnl_row_color>$(IF,$(EC,$xpcurpnl_row_color,<!--|HIGHLIGHT_COLOR|-->),#FFFFFF,<!--|HIGHLIGHT_COLOR|-->)<?/MIVAR>      
     <?/MIBLOCK>
      
-    <tr bgcolor='$xpcurpnl_row_color' onmouseover="this.style.background='$xpcur_G_active_row_color';" onmouseout="this.style.background='$xpcurpnl_row_color';">
+    <tr bgcolor='$xpcurpnl_row_color' onmouseover="this.style.background='$pubcur_G_active_row_color';" onmouseout="this.style.background='$xpcurpnl_row_color';">
       <?MISQL SQL="
         select start.stg_abbrev ||' '|| start.stg_name_ext, 
                end.stg_abbrev ||' '|| end.stg_name_ext, 
@@ -501,8 +501,8 @@ EFFECTS
       <hr>
     </td>
   </tr>
-<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#panel" method=post name="xpcur_G_panel_add" onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','panel');">
-    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg"> 
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#panel" method=post name="xpcur_G_panel_add" onSubmit="setCookie('xpatcuration_update','update','xpcur_c_');setCookie('anchor','panel','xpcur_c_');">
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg"> 
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
   <tr>
     <td colspan=2>
@@ -512,7 +512,7 @@ EFFECTS
           <?MISQL SQL="
             select fig_zdb_id, fig_label
 	    from figure
-	    where fig_zdb_id in ('$xpcur_G_fig_attrib_csv')
+	    where fig_zdb_id in ('$pubcur_G_fig_attrib_csv')
             order by fig_label;">
             <option value=$1
                     $(IF,$(AND,$(XST,$xpcur_G_panel_fig_zdb_id),$(EC,$xpcur_G_panel_fig_zdb_id,$1)),SELECTED)>$2</option>
@@ -522,17 +522,17 @@ EFFECTS
     <td>
         <select name="xpcur_G_panel_add_xpatex">
           <?MISQL SQL="
-            select xpatex_zdb_id, mrkr_abbrev_order, LOWER(abbrev), xpatassay_display_order, zero_pad(exp_name)
-	    from expression_experiment, marker, feature_experiment, fish, expression_pattern_assay, experiment
+            select xpatex_zdb_id, mrkr_abbrev_order, geno_nickname, xpatassay_display_order, zero_pad(exp_name)
+	    from expression_experiment, marker, genotype_experiment, genotype, expression_pattern_assay, experiment
 	    where xpatex_source_zdb_id = '$OID'
 	      and xpatex_gene_zdb_id = mrkr_zdb_id
-	      and xpatex_featexp_zdb_id = featexp_zdb_id
-	      and featexp_genome_feature_zdb_id = zdb_id
+	      and xpatex_genox_zdb_id = genox_zdb_id
+	      and genox_geno_zdb_id = geno_zdb_id
 	      and xpatex_assay_name = xpatassay_name
-              and featexp_exp_zdb_id = exp_zdb_id
+              and genox_exp_zdb_id = exp_zdb_id
               $(IF,$(XST,$xpcur_c_gene_only),and mrkr_zdb_id = '$xpcur_c_gene_only')
-              $(IF,$(XST,$xpcur_c_fish_only),and zdb_id = '$xpcur_c_fish_only')
-            order by mrkr_abbrev_order, LOWER(abbrev), xpatassay_display_order, zero_pad(exp_name);">
+              $(IF,$(XST,$xpcur_c_fish_only),and geno_zdb_id = '$xpcur_c_fish_only')
+            order by mrkr_abbrev_order, geno_nickname, xpatassay_display_order, zero_pad(exp_name);">
             <?MIVAR NAME=xpcurpnl_xpatex_zdb_id>$1<?/MIVAR>  
             <?MISQL SQL="select WebExplode(object,'xpcurexpssdisp_xpatex_zdb_id=$xpcurpnl_xpatex_zdb_id') from webPages where ID='aa-xpatcurexpssdisplayname.apg';"><?/MISQL>
             <?MIVAR NAME=xpcurpnl_xpatex_display_name>$xpcurexpssdisp_xpatex_display_name<?/MIVAR>

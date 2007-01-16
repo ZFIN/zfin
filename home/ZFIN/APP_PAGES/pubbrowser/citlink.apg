@@ -1,49 +1,21 @@
+<?MIVAR COND="$(NXST,$rtype)" NAME=$rtype><?/MIVAR>
 <?MIVAR COND="$(NXST,$title)" NAME=$title><?/MIVAR>
 <?MIVAR COND="$(NXST,$name)" NAME=$name><?/MIVAR>
-<?MIVAR COND="$(NXST,$sbbrev)" NAME=$abbrev><?/MIVAR>
+<?MIVAR COND="$(NXST,$abbrev)" NAME=$abbrev><?/MIVAR>
 
 <?MIBLOCK COND=$(XST,$citlink_data_page)>
 
-    <?MIVAR NAME=$citlink_pub_count>0<?/MIVAR>
-    <?MIVAR NAME=$citlink_unpub_count>0<?/MIVAR>
-	
-    <?MIVAR NAME=$pub_G_display>count<?/MIVAR>
+    <?MIBLOCK COND=$(NXST,$citlink_no_HR)>
+      <hr width=80%>
+    <?/MIBLOCK>
 
+    <?MISQL SQL="select WebExplode(object,'citlink_data_page=citgeneric.apg') 
+                 from webPages where ID='aa-cittotalcount.apg';">$1<?/MISQL>
 
-    <hr width="80%" align=center>
-
-	  
-    <?MISQL SQL="select WebExplode(object,'sp_G_orderby=order by authors&sp_G_jtype_option=published') 
-                 from webPages where ID='aa-$citlink_data_page';">
-        <?MIVAR NAME=sp_G_sql>$sp_G_returnvar<?/MIVAR>
-    <?/MISQL>
-  
-  
-  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pub_rowdisplay.apg';">$1<?/MISQL>
-  
-  <?MIVAR>
-	  $(SETVAR,$citlink_pub_count,$pub_G_count)
-  <?/MIVAR>
-  	
-  	
-  <?MISQL SQL="select WebExplode(object,'sp_G_orderby=order by authors&sp_G_jtype_option=unpublished') 
-               from webPages where ID='aa-$citlink_data_page';">
-      <?MIVAR NAME=sp_G_sql>$sp_G_returnvar<?/MIVAR>
-  <?/MISQL>
-  
-  
-  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pub_rowdisplay.apg';">$1<?/MISQL>
-  
-  <?MIVAR>
-	  $(SETVAR,$citlink_unpub_count,$pub_G_count)
-  <?/MIVAR>
-	
-  	
-	<?MIVAR NAME=$citlink_total_count>$(+,$citlink_pub_count,$citlink_unpub_count)<?/MIVAR>
 	
 	<?MIBLOCK COND="$(OR,$(>,$citlink_total_count,0),$(XST,$UPDATE))">
   	  <?MIVAR>
-  	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=$rtype&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev$(IF,$(XST,$UPDATE),&UPDATE=1)&total_count=$citlink_total_count&count_of_real_pub=$citlink_pub_count&add_cit_count=$citlink_unpub_count"><b>CITATIONS</b></A>
+  	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-showpubs.apg&OID=$OID&rtype=$rtype&title=$(URLENCODE,$title)&name=$(URLENCODE,$name)&abbrev=$abbrev$(IF,$(XST,$UPDATE),&UPDATE=1)&total_count=$citlink_total_count"><b>CITATIONS</b></A>
   	  <?/MIVAR>
 	<?MIELSE>
   	  <b>CITATIONS</b>
@@ -59,3 +31,7 @@
     <?/MIVAR>
 
 <?/MIBLOCK>
+
+<?MIVAR>
+  $(UNSETVAR,citlink_no_HR)
+<?/MIVAR>

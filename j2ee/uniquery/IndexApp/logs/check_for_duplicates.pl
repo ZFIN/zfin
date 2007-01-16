@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/private/bin/perl -w
 
 my $inputFile = $ARGV[0];
 

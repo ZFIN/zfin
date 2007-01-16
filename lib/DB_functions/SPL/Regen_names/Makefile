@@ -22,9 +22,9 @@ TESTDIR = /tmp/$(DBNAME)/$(DIR)
 
 STATIC_PROCS = regen_names_finish.sql regen_names_create_temp_tables.sql \
                regen_names_drop_dups.sql regen_name_ends_list.sql \
-               regen_names_locus_list.sql regen_names_fish_list.sql \
-               regen_names_marker_list.sql regen_names_fish.sql \
-               regen_names_locus.sql regen_names_marker.sql 
+               regen_names_feature_list.sql regen_names_feature.sql \
+               regen_names_marker_list.sql regen_names_marker.sql \
+               regen_names_genotype.sql regen_names_genotype_list.sql  
 GENERIC_PROCS = regen_names.sql
 
 SPECIFIC_PROC_TARGETS = $(foreach SPEC, $(GENERIC_PROCS), $(TARGETDIR)/$(SPEC))
@@ -96,7 +96,7 @@ testpost :
 	diff $(TESTDIR)/all_name_ends.pre $(TESTDIR)/all_name_ends.post
 
 
-# TEST REGEN_NAMES_FISH, REGEN_NAMES_LOCUS, REGEN_NAMES_MARKER
+# TEST REGEN_NAMES_FEATURE, REGEN_NAMES_GENOTYPE, REGEN_NAMES_MARKER
 #
 # These expect a single ZDB ID as input.  The ZDB ID to use for a particular
 # test is passed into the makefile as follows:
@@ -126,11 +126,11 @@ testprezdbid :
                allmapnm_significance' | $(DBACCESS) $(DBNAME)
 
 
-testfish :
-	echo 'execute procedure regen_names_fish("$(ZDB_ID)")' | $(DBACCESS) $(DBNAME)
+testfeature :
+	echo 'execute procedure regen_names_feature("$(ZDB_ID)")' | $(DBACCESS) $(DBNAME)
 
-testlocus :
-	echo 'execute procedure regen_names_locus("$(ZDB_ID)")' | $(DBACCESS) $(DBNAME)
+testgenotype :
+	echo 'execute procedure regen_names_genotype("$(ZDB_ID)")' | $(DBACCESS) $(DBNAME)
 
 testmarker :
 	echo 'execute procedure regen_names_marker("$(ZDB_ID)")' | $(DBACCESS) $(DBNAME)

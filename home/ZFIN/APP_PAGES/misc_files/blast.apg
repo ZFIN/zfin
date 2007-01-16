@@ -147,7 +147,7 @@
                 blocks clauses within the option list, we use two big blocks.  
    <?/MICOMMENT>
    <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
-     <select multiple name = "DATALIB" size=12>
+     <select multiple name = "DATALIB" size=11>
        <?MIVAR>
 	 <option> ==========  Nucleotide Db  ===========
          <option VALUE = "gbk_gb_zf"> GenBank Zebrafish (no ESTs,GSS,HTGs)

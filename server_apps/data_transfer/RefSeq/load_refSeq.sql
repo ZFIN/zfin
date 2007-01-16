@@ -23,7 +23,7 @@ lock table db_link in share mode;
 CREATE TEMP TABLE LL_HUMAN
   (
     llhs_ll_id		varchar (50) not null,
-    llhs_hs_abbrev	varchar (20),
+    llhs_hs_abbrev	varchar (60),
     llhs_hs_id		varchar (50) not null
   )
 with no log;
@@ -54,7 +54,7 @@ ORDER BY mrkr_abbrev;
 CREATE TEMP TABLE LL_MOUSE
   (
     llmm_ll_id		varchar (50) not null,
-    llmm_mm_abbrev	varchar (50),
+    llmm_mm_abbrev	varchar (60),
     llmm_mm_id		varchar (50) not null
   )
 with no log;

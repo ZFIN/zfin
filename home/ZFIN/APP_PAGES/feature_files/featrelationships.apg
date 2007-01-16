@@ -1,0 +1,255 @@
+<?MICOMMENT>
+PREFIX:   featrel_
+
+This page manages the display and submission of feature-marker and marker-feature relationships
+
+Each relationship for this publication is displayed as a single row. 
+a delete button exists.
+
+OnLoad, the formReset() function is called. If form variables exist from
+a previous page submition, drop-down lists are populated with the 
+corresponding values.
+
+INPUT VARS:
+
+  REQUIRED:
+    $OID :: publication zdb-id
+    $AUTHORIZED :: this is a subroutine. the authorization must occur in the calling page.
+
+      
+OUTPUT VARS:
+
+OUTPUT:
+  A table of relationships related to the publication OID.
+
+EFFECTS  
+   Submit form variables for insert and update.
+      featcur :: flag for a new condition
+
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
+<?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
+<br>
+<table width=100% border=0 cellspacing=0 cellpadding=3>
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>">
+      <td>Feature/Marker</td>
+      <td>Type</td>
+      <td>Relationship</td>
+      <td>Target</td>
+      <td>Delete</td>
+    </tr>  
+
+    <?MIVAR NAME=featrel_prev_feature_name><?/MIVAR>
+    <?MIVAR NAME=featcur_reln_add_type><?/MIVAR>
+    <?MIVAR NAME=$featcur_select_type><?/MIVAR> 
+    <?MIVAR NAME=featcur_reln_type><?/MIVAR>
+    <?MIVAR NAME=featrel_row_color>#FFFFFF<?/MIVAR>
+
+    <?MISQL SQL="
+           select 
+              fmrel_ftr_zdb_id, fmrel_mrkr_zdb_id, fmrel_type, feature_name,
+              mrkr_abbrev, ftrtype_type_display, fmrel_zdb_id
+           from   
+              feature, feature_marker_relationship, record_attribution, marker, 
+              feature_type
+           where 
+              fmrel_ftr_zdb_id = recattrib_data_zdb_id
+              and recattrib_source_zdb_id='$OID'
+              and fmrel_ftr_zdb_id=feature_zdb_id
+              and fmrel_mrkr_zdb_id=mrkr_zdb_id
+              $(IF,$(XST,$featcur_feature_only),and feature_zdb_id = '$featcur_feature_only')
+              $(IF,$(XST,$featcur_feature_type_only),and feature_type = '$featcur_feature_type_only')
+              and feature_type=ftrtype_name
+           UNION
+               select 
+                 mrel_mrkr_1_zdb_id,mrel_mrkr_2_zdb_id, mrel_type, m1.mrkr_name,
+                 m2.mrkr_abbrev, mrkrtype_type_display, mrel_zdb_id
+                from   
+                 marker m1, marker m2, marker_relationship, record_attribution, 
+                 marker_types
+                where 
+                 mrel_mrkr_1_zdb_id = recattrib_data_zdb_id
+                 and recattrib_source_zdb_id='$OID'
+                 and mrel_mrkr_1_zdb_id=m1.mrkr_zdb_id
+                 and mrel_mrkr_2_zdb_id=m2.mrkr_zdb_id
+                 $(IF,$(XST,$featcur_feature_only),and m1.mrkr_zdb_id = '$featcur_feature_only')
+                 $(IF,$(XST,$featcur_feature_type_only),and m1.mrkr_type = '$featcur_feature_type_only')
+                 and m1.mrkr_type=marker_type
+                 and m1.mrkr_type like '%CONST%'
+              ;">
+
+              <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#featrelation" method=post name=relation onSubmit="setCookie('featcurupdate','update','featcur_');">
+              <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
+              <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+              <?MIVAR NAME="featrel_feature_name">$4<?/MIVAR>
+              <?MIVAR NAME="featrel_feat_zdb_id">$1<?/MIVAR>
+              <?MIVAR NAME="featrel_mrkr_zdb_id">$2<?/MIVAR>
+              <?MIVAR NAME="featrel_mrkr_abbrev">$5<?/MIVAR>
+              <?MIVAR NAME="featrel_rel_type">$3<?/MIVAR>
+              <?MIVAR NAME="featrel_feat_type">$6<?/MIVAR>
+              <?MIVAR NAME="featrel_relation_zdb_id">$7<?/MIVAR>
+              <?MIBLOCK COND=$(NE,$featrel_prev_feature_name,$featrel_feature_name)>
+                   <?MIVAR NAME=featrel_row_color>$(IF,$(EC,$featrel_row_color,#FFFFFF),<!--|HIGHLIGHT_COLOR|-->,#FFFFFF)<?/MIVAR>     
+             <?MIELSE>
+                <?MIVAR NAME=featrel_row_color>$featrel_row_color<?/MIVAR> 
+              <?/MIBLOCK>
+              <tr bgcolor=$featrel_row_color>
+              <td> $(IF,$(NE,$featrel_prev_feature_name,$featrel_feature_name),$featrel_feature_name,&nbsp;)
+              </td>
+              <td> $featrel_feat_type </td>
+              <td> $featrel_rel_type
+              <td><?MIVAR COND=$(NC,$featrel_mrkr_abbrev,NULL)>(<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$featrel_mrkr_zdb_id">$featrel_mrkr_abbrev</a>)<?/MIVAR></td>
+              <td align=center>
+                <?MIVAR><input name="delete" type=button value=" X " onClick="deleteZDB('$featrel_relation_zdb_id','relation')"><?/MIVAR>
+              </td> 
+              </tr>
+             </form>
+             <?MIVAR NAME=featrel_prev_feature_name>$4<?/MIVAR>
+         <?/MISQL>    
+<?MICOMMENT> end of relationships table <?/MICOMMENT>
+
+
+<?MIBLOCK COND="$(XST,$featcur_feature_only)">
+   <?MISQL SQL="select feature_name,ftrtype_type_display from feature, feature_type where feature_zdb_id='$featcur_feature_only' and feature_type=ftrtype_name">
+    <?MIVAR NAME=$featonly>$1<?/MIVAR>
+    <?MIVAR NAME=$feattype>$2<?/MIVAR>
+  <?/MISQL>
+<?/MIBLOCK>
+<?MICOMMENT> start of relationships entry section <?/MICOMMENT>
+
+         <?MIBLOCK COND="$(XST,$featrel_feature_zdb_id)">
+              <?MISQL SQL="select feature_name, ftrtype_type_display, feature_type,feature_zdb_id
+                 from feature, feature_type 
+                 where feature_name='$featrel_feature_zdb_id'
+                 and feature_type = ftrtype_name
+                 UNION
+                 select mrkr_name, mrkrtype_type_display, mrkr_type, mrkr_zdb_id
+                 from marker, marker_types
+                 where mrkr_abbrev='$featrel_feature_zdb_id'
+                 and mrkr_type = marker_type">
+  
+                  <?MIVAR COND=$(NXST,$featcur_reln_add_ftr) NAME=featcur_reln_add_ftr>$1<?/MIVAR>
+                  <?MIVAR NAME=featcur_reln_add_type>$2<?/MIVAR>
+                  <?MIVAR NAME=featcur_reln_type>$3<?/MIVAR>
+                <?/MISQL>
+          <?/MIBLOCK>
+          <?MIBLOCK COND="$(XST,$featcur_reln_add_ftr)">
+               <?MIBLOCK COND="$(NE,$featcur_reln_add_ftr,)">
+                  <?MISQL SQL="select ftrtype_type_display, feature_type, feature_zdb_id
+                      from feature, feature_type 
+                      where feature_name='$featcur_reln_add_ftr'
+                      and feature_type = ftrtype_name
+                     UNION
+                       select mrkrtype_type_display, mrkr_type, mrkr_zdb_id
+                       from marker, marker_types
+                       where mrkr_name='$featcur_reln_add_ftr'
+                       and mrkr_type = marker_type">
+  
+                       <?MIVAR NAME=featcur_reln_add_type>$1<?/MIVAR>
+                       <?MIVAR NAME=featcur_reln_type>$2<?/MIVAR>
+                       <?MIVAR NAME=featrel_feature_zdb_id>$3<?/MIVAR>
+                   <?/MISQL>
+               <?/MIBLOCK>
+           <?/MIBLOCK>
+
+           <tr><td>
+           <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#featrelation" method=post name=new_relation onSubmit="setCookie('featcurupdate','update','featcur_');setCookie('anchor','featrelation','featcur_reln_');">
+           <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg"> 
+           <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>">
+           <INPUT TYPE=HIDDEN NAME=featcur_reln_feat_zdb_id VALUE="<?MIVAR COND="$(XST,$featrel_feature_zdb_id')">$featrel_feature_zdb_id<?/MIVAR>">
+
+           <tr>
+           <td>
+           <select name="featcur_reln_add_ftr" onChange="setFeatureType(this.value,'featrelation');">
+           <option value="">----</option>
+           <?MISQL SQL="
+                  select feature_zdb_id, feature_name, feature_type
+                  from feature, record_attribution
+                  where feature_zdb_id = recattrib_data_zdb_id
+                  and recattrib_source_zdb_id='$OID'
+              $(IF,$(XST,$featcur_feature_only),and feature_zdb_id = '$featcur_feature_only')
+              $(IF,$(XST,$featcur_feature_type_only),and feature_type = '$featcur_feature_type_only')
+                 UNION
+                  select mrkr_zdb_id, mrkr_name, mrkr_type
+                  from marker, record_attribution
+                  where mrkr_zdb_id = recattrib_data_zdb_id
+                  and recattrib_source_zdb_id='$OID'
+                  and mrkr_type like '%CONSTRCT%'
+              $(IF,$(XST,$featcur_feature_only),and mrkr_zdb_id = '$featcur_feature_only')
+              $(IF,$(XST,$featcur_feature_type_only),and mrkr_type = '$featcur_feature_type_only')
+                 ;">
+                <option value="$2"
+                    $(IF,$(AND,$(XST,$featcur_reln_add_ftr),$(EC,$featcur_reln_add_ftr,$2)),SELECTED)>$2</option>
+            <?/MISQL>
+            <?MIVAR NAME=featrel_select_zdb_id>$1<?/MIVAR> 
+            </select>
+            <?MIVAR NAME=featrel_select_type>$3<?/MIVAR> 
+            </td>
+            <?MIVAR><td>$featcur_reln_add_type</td><?/MIVAR> 
+            <td>
+            <select name="featcur_reln_add_relation" onChange="setMarkerTarget(this.value,'featrelation')">
+            <option value="">----</option>
+            <?MISQL SQL="select distinct fmreltype_name 
+                       from 
+                       feature_marker_relationship_type, feature_type_group,
+                       feature_type_group_member
+                       where
+                       ftrgrpmem_ftr_type= '$featcur_reln_type'
+                       and ftrgrpmem_ftr_type_group=fmreltype_ftr_type_group
+                       $(IF,$(NE,$featcur_reln_add_type,Transgenic Insertion),and fmreltype_name!='contains sequence feature')
+                       union
+                       select distinct mreltype_name 
+                       from
+                       marker_relationship_type, marker_type_group, 
+                       marker_type_group_member   
+                       where
+                       mtgrpmem_mrkr_type= '$featcur_reln_type'
+                       and mtgrpmem_mrkr_type_group=mtgrp_name
+                       and (mreltype_mrkr_type_group_1=mtgrpmem_mrkr_type_group
+                       or mreltype_mrkr_type_group_2=mtgrpmem_mrkr_type_group) 
+                       ;">
+                       <option value="$1"
+                         $(IF,$(AND,$(XST,$featcur_reln_add_relation),$(EC,$featcur_reln_add_relation,$1)),SELECTED)>$1</option>
+             <?/MISQL>
+           <?MIVAR>$MI_SQL<?/MIVAR>  
+            </td>
+             <td>
+             <select name="featcur_reln_add_marker">
+             <?MIBLOCK COND="$(XST,$featrel_feature_relation)">
+                 <?MISQL SQL="
+                        select distinct mrkr_zdb_id,mrkr_abbrev 
+                        from marker, feature_marker_relationship_type, 
+                        marker_relationship_type, marker_type_group_member,
+                        record_attribution
+                        where mrkr_zdb_id = recattrib_data_zdb_id
+                        and recattrib_source_zdb_id='$OID'
+                        and mrkr_type=mtgrpmem_mrkr_type
+                        and  ((mtgrpmem_mrkr_type_group=mreltype_mrkr_type_group_2 and  mreltype_name='$featrel_feature_relation') or (mtgrpmem_mrkr_type_group=fmreltype_mrkr_type_group
+                        and fmreltype_name = '$featrel_feature_relation'))
+                        order by 2;">
+                        <option value="$1"
+                            $(IF,$(AND,$(XST,$featcur_reln_add_marker),$(EC,$featcur_reln_add_marker,$1)),SELECTED)>$2</option>
+                 <?/MISQL>
+            </select>
+            </td>
+            <?/MIBLOCK>
+            <tr>
+            <td>
+            <input name="featcur_reln_add" type=Submit value="Add">
+            </td>
+           </form>
+</table>
+
+<?/MIBLOCK> 
+<?MICOMMENT> end authorize <?/MICOMMENT>

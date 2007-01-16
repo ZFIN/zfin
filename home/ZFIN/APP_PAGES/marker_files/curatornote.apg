@@ -1,6 +1,8 @@
 <?MICOMMENT>
-An apg page for curators to enter notes about publications.  Currently,
-this page is only accessible via markerview.apg
+An apg page for curators to enter notes about publications.  Previously,
+this page is only accessible via markerview.apg.
+Now it's not only for data note of markers, it's also for feature and
+genotype data.
 
 This page is only accessable as root.
 
@@ -17,7 +19,7 @@ Optional Vars:
   $dnote_text :: holds the text from the note box in the form
   $dnote_date :: date of annotation, set to current
   $dnote_zdb_id :: id of the existing dnotes for marker of interest.
-
+  $OID_page :: the primary data page for this OID (default is markerview.apg)
 <?/MICOMMENT>
 
 <?MIERROR>
@@ -28,167 +30,189 @@ Optional Vars:
   Code:    $MI_ERRORCODE <br>
   State:   $MI_ERRORSTATE <br>
   Message: $MI_ERRORMSG <br>
-
 <?/MIERROR>
 <SCRIPT>
-         function replaceLocation(url) {
-        if (navigator.userAgent.indexOf("Safari") >= 0) 
-          location = url;        
-        else 
-          location.replace(url);
-        
-      }
+  function replaceLocation(url) {
+    if (navigator.userAgent.indexOf("Safari") >= 0) 
+      location = url;        
+    else 
+      location.replace(url);    
+  }
 
-      function editNote(dnote_zdb_id) {
-        helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-dnote_editor.apg&OID="+dnote_zdb_id,"helpwindow","scrollbars=yes,width=800,height=500");
-        <?MIVAR>replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$OID#notes");<?/MIVAR>
-      }
+  function editNote(dnote_zdb_id) {
+    helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-dnote_editor.apg&OID="+dnote_zdb_id,"helpwindow","scrollbars=yes,width=800,height=500");
+    <?MIVAR>
+      replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$OID#notes");
+    <?/MIVAR>
+  }
       
-      function deleteNote(dnote_zdb_id) {
-        <?MIVAR>replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$OID&delete_dnote="+dnote_zdb_id+"#notes");<?/MIVAR>
-      }
+  function deleteNote(dnote_zdb_id) {
+    <?MIVAR>
+      replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$OID&delete_dnote="+dnote_zdb_id+"#notes");
+    <?/MIVAR>
+  }
 
-     function isEmpty(string) {
-        if (string.length == 0){
-          return true;
-        }
-        for (var i = 0; i<string.length; i++) {
-          if (string.charAt(i) != ' ')
-            return false;
-          else
-            alert(string.charAt(i));
-        }
-        
-        return true;
-      }
+  function isEmpty(string) {
+    if (string.length == 0){
+      return true;
+    }
+    for (var i = 0; i<string.length; i++) {
+      if (string.charAt(i) != ' ')
+        return false;
+      else
+        alert(string.charAt(i));
+    }
+    return true;
+  }
 
-     function isValidTextArea(ta) {
-        var string = escape(ta.value);
-        if (isEmpty(string)) { 
-          alert('Invalid Input: Empty ('+string+')'); 
-          return false;
-        }
-        return true;
-      }
+  function isValidTextArea(ta) {
+    var string = escape(ta.value);
+    if (isEmpty(string)) { 
+      alert('Invalid Input: Empty ('+string+')'); 
+      return false;
+    }
+    return true;
+  }
 
-      <?MIVAR COND=$(XST,$calling_apg)>
-         window.replaceLocation("$calling_apg");
-      <?/MIVAR>
+  <?MIVAR COND=$(XST,$calling_apg)>
+    window.replaceLocation("$calling_apg");
+  <?/MIVAR>
+</SCRIPT>
 
-  </SCRIPT>
 
 <!-------------------------Curation Notes Header-------------->
  
+<?MIVAR COND="$(NXST,$OID_page)" NAME=OID_page>markerview.apg<?/MIVAR>
+
 <?MIBLOCK COND="$(XST,$OID)">
-
-    <?MISQL SQL="select WebExplode(object,'permission=root&page_title=Curate Note') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+  <?MIVAR NAME=$zdbType>$(SUBSTR,$OID,1,8)<?/MIVAR>
+  <?MIVAR NAME=$heading>Gene/Marker/Clone<?/MIVAR>
+  <?MISQL SQL="select WebExplode(object,'permission=root&page_title=Curate Note') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
   
-    <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
-
-    <?MISQL SQL="SELECT mrkr_name FROM marker WHERE mrkr_zdb_id='$OID'">
-      <?MIVAR NAME=$mrkr_name>$1<?/MIVAR>
-    <?/MISQL>
-
-      <?MIBLOCK COND="$(XST,$mrkr_name)">
-
-  <?MIVAR>
-     <TITLE>ZFIN Curation Notes: $mrkr_name</TITLE>
-  <?/MIVAR>
+  <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
   
-  <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
-  
-  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
-
-  <table cellspacing=0 cellpadding=3 width=100%>
-     <tr bgcolor="<!--|SIDEBAR_COLOR|-->">
-       <td>
-         <FONT SIZE=+1><b> Curation </b></FONT> 
-       </td>
-     </tr>
-     <tr bgcolor="<!--|HIGHLIGHT_COLOR|-->">
-       <td>
-         <?MIVAR>
-           <b>Gene/Marker/Clone:</b>
-           <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID">$mrkr_name</a>
-         <?/MIVAR>
-       </td>
-     </tr>
-     <tr>
-       <td>
-
-      <?MIBLOCK COND=$(XST,$dnote)>
-         <?MIVAR NAME=encoded_note>$(URLENCODE,$dnote)<?/MIVAR>
-         <?MISQL SQL="select WebExplode(object,'dnotenew_DATA=$OID&dnotenew_CUR=$ZDB_ident&dnotenew_NOTE=$encoded_note') from webPages where ID='aa-dnote_new.apg';">$1<?/MISQL>
-      <?/MIBLOCK>
-
-      <?MIBLOCK COND=$(XST,$delete_dnote)>
-      <?MISQL SQL="DELETE FROM zdb_active_data WHERE zactvd_zdb_id = '$delete_dnote';"><?/MISQL>
-      <?/MIBLOCK>
-
-<P>
-  <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method=post name=new_notes>
-    <?MIVAR>
-    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curatornote.apg">
-    <INPUT TYPE=HIDDEN NAME=OID VALUE="$OID"> 
-    <INPUT TYPE=HIDDEN NAME=calling_apg VALUE="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$OID">
-    <?/MIVAR>
-    
-  <font color="black"><b> Curator Notes </b></font><a name=notes></a>  
-
-
-  <br><TEXTAREA NAME="dnote" rows="4" cols="70" wrap="virtual"></TEXTAREA> 
-  <br><input type="submit" value="New Note" onClick="return isValidTextArea(window.new_notes.dnote)";> 
-  
-  </form>
-  
-  <table border=0 width=66%>
-    <tr>
-      <td>
-  <form name=edit_notes>
-  <?MISQL SQL="SELECT p.zdb_id, p.name, dnote_text, dnote_date, dnote_zdb_id
-               FROM data_note, person p
-               WHERE dnote_data_zdb_id = '$OID'
-                 AND dnote_curator_zdb_id = p.zdb_id
-               ORDER BY dnote_date desc;">
-                 
-      <?MIVAR NAME=dnote_curator_id>$1<?/MIVAR>
-      <?MIVAR NAME=dnote_curator_name>$2<?/MIVAR>
-      <?MIVAR NAME=dnote_text>$3<?/MIVAR>
-      <?MIVAR NAME=dnote_date>$4<?/MIVAR>
-      <?MIVAR NAME=dnote_zdb_id>$5<?/MIVAR>
-      
-      <?MIVAR>
-        <p>
-        $dnote_curator_name - $(SUBSTR,$dnote_date,1,10)
-        <?MIVAR COND="$(EC,$ZDB_ident,$dnote_curator_id)">
-          <input type=button value=edit onClick=editNote('$dnote_zdb_id');>
-          <input type=button value=delete onClick=deleteNote('$dnote_zdb_id');>
+    <?MIBLOCK COND="$(EC,$zdbType,ZDB-ALT-)">
+      <?MIVAR>$(SETVAR,$heading,Feature)<?/MIVAR>
+      <?MISQL SQL="SELECT feature_name FROM feature WHERE feature_zdb_id='$OID'">
+        <?MIVAR NAME=$data_name>$1<?/MIVAR>
+      <?/MISQL>         
+    <?MIELSE>
+      <?MIBLOCK COND="$(EC,$zdbType,ZDB-GENO)">
+        <?MIVAR>
+	  $(SETVAR,$heading,Genotype)
+          $(SETVAR,$OID_page,genotypeview.apg)
         <?/MIVAR>
-        <br><UL>$dnote_text</UL>
+        <?MISQL SQL="SELECT geno_display_name FROM genotype WHERE geno_zdb_id='$OID'">
+            <?MIVAR NAME=$data_name>$1<?/MIVAR>
+        <?/MISQL>
+      <?MIELSE>
+        <?MISQL SQL="SELECT mrkr_name FROM marker WHERE mrkr_zdb_id='$OID'">
+            <?MIVAR NAME=$data_name>$1<?/MIVAR>
+        <?/MISQL>  
+      <?/MIBLOCK>
+    <?/MIBLOCK>
+
+    <?MIBLOCK COND="$(XST,$data_name)">
+      <?MIVAR>
+        <TITLE>ZFIN Curation Notes: $data_name</TITLE>
       <?/MIVAR>
-  <?/MISQL>
   
-  </form>
+      <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
+            
+      <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
-      </td>
-    </tr>
-  </table>
+      <table cellspacing=0 cellpadding=3 width=100%>
+        <tr bgcolor="<!--|SIDEBAR_COLOR|-->">
+          <td>
+            <FONT SIZE=+1><b> Curation</b></FONT> 
+          </td>
+        </tr>
+        <tr bgcolor="<!--|HIGHLIGHT_COLOR|-->">
+          <td>
+            <?MIVAR>
+              <b>$heading :</b>
+              <?MIBLOCK COND="$(EC,$heading,Feature)">
+               <?MIVAR>$data_name<?/MIVAR> 
+              <?MIELSE>
+              <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$OID_page&OID=$OID">$data_name</a><?/MIVAR>
+              <?/MIBLOCK>
+            <?/MIVAR>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <?MIBLOCK COND=$(XST,$dnote)>
+              <?MIVAR NAME=encoded_note>$(URLENCODE,$dnote)<?/MIVAR>
+              <?MISQL SQL="select WebExplode(object,'dnotenew_DATA=$OID&dnotenew_CUR=$ZDB_ident&dnotenew_NOTE=$encoded_note') from webPages where ID='aa-dnote_new.apg';">$1<?/MISQL>
+            <?/MIBLOCK>
 
-     <?MIELSE>
-        <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+            <?MIBLOCK COND=$(XST,$delete_dnote)>
+              <?MISQL SQL="DELETE FROM zdb_active_data WHERE zactvd_zdb_id = '$delete_dnote';"><?/MISQL>
+            <?/MIBLOCK>
+
+            <p>
+            <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method=post name=new_notes>
+              <?MIVAR>
+                <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curatornote.apg">
+                <INPUT TYPE=HIDDEN NAME=OID VALUE="$OID"> 
+                <INPUT TYPE=HIDDEN NAME=OID_page VALUE="$OID_page"> 
+                <INPUT TYPE=HIDDEN NAME=calling_apg VALUE="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$OID&OID_page=$OID_page">
+              <?/MIVAR>
+  
+              <font color="black"><b> Curator Notes </b></font><a name=notes></a>  
+              <br><TEXTAREA NAME="dnote" rows="4" cols="70" wrap="virtual"></TEXTAREA> 
+              <br><input type="submit" value="New Note" onClick="return isValidTextArea(window.new_notes.dnote)";> 
+            </form>
+          </td>
+        </tr>
+      </table>
+    
+      <table border=0 width=66%>
+        <tr>
+          <td>
+            <form name=edit_notes>
+              <?MISQL SQL="SELECT p.zdb_id, p.name, dnote_text, dnote_date, dnote_zdb_id
+                             FROM data_note, person p
+                             WHERE dnote_data_zdb_id = '$OID'
+                               AND dnote_curator_zdb_id = p.zdb_id
+                             ORDER BY dnote_date desc;">
+                 
+                <?MIVAR NAME=dnote_curator_id>$1<?/MIVAR>
+                <?MIVAR NAME=dnote_curator_name>$2<?/MIVAR>
+                <?MIVAR NAME=dnote_text>$3<?/MIVAR>
+                <?MIVAR NAME=dnote_date>$4<?/MIVAR>
+                <?MIVAR NAME=dnote_zdb_id>$5<?/MIVAR>
+      
+                <?MIVAR>
+                  <p>
+                  $dnote_curator_name - $(SUBSTR,$dnote_date,1,10)
+                  <?MIVAR COND="$(EC,$ZDB_ident,$dnote_curator_id)">
+                    <input type=button value=edit onClick=editNote('$dnote_zdb_id');>
+                    <input type=button value=delete onClick=deleteNote('$dnote_zdb_id');>
+                  <?/MIVAR>
+                  <br><UL>$dnote_text</UL>
+                <?/MIVAR>
+              <?/MISQL>
+            </form>
+          </td>
+        </tr>
+      </table>
+
+    <?MIELSE>
+      <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
         <b>Requested ID not found in ZFIN.</b>
-     <?/MIBLOCK> <!-- title is null -->
+    <?/MIBLOCK> <!-- title is null -->
 
-   <?MIELSE>
-   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
-   <p>Authorization for this page failed.
-   <p>A session error may have occurred. Try logging out and logging back in. If that does not work, contact your database administrator.
-   <?/MIBLOCK> <!-- not authorized -->
+  <?MIELSE>
+    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+    <p>Authorization for this page failed.
+    <p>A session error may have occurred. Try logging out and logging back in. If that does not work, contact your database administrator.
+  <?/MIBLOCK> <!-- not authorized -->
 
- <?MIELSE>
-   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
-   <P>
-   ERROR -- something bad happened -- no OID passed in!
- <?/MIBLOCK>
+<?MIELSE>
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+  <P>
+  ERROR -- something bad happened -- no OID passed in!
+<?/MIBLOCK>
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>

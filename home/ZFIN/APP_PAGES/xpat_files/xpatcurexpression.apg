@@ -135,15 +135,18 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,exptid)
 <?MIVAR NAME=xpcurxprss_prev_gene><?/MIVAR>
 <?MIVAR NAME=xpcurxprss_prev_fig><?/MIVAR>
 <?MIVAR NAME=xpcurxprss_radio_index>0<?/MIVAR>
-
+  
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#experiment" method=post name=experiment onSubmit="setCookie('xpatcuration_update','update','xpcur_c_');setCookie('anchor','experiment','xpcur_c_');">
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+    
 <table width=100% border=0 cellpadding=3 cellspacing=0>
-<form name=xpcurxprss_select>
   <tr bgcolor=#CCCCCC>
     <td>Select</td>
     <td>
       <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&newmrkrSource=$OID">Gene </a><?/MIVAR>
     </td>
-    <td><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusselect.html&select_from=LOCI&frame_size=230&intro=/ZFIN/help_files/locus_intro.html">Fish</a></td>
+    <td>Fish</td>
 	<td>Env.</td>
 	<td>Assay</td>
 	<td>GenBank</td>
@@ -154,26 +157,26 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,exptid)
     select distinct xpatex_zdb_id, 
            xpatex_assay_name, 
            xpatex_probe_feature_zdb_id, 
-           featexp_genome_feature_zdb_id, 
-           featexp_exp_zdb_id, 
+           genox_geno_zdb_id, 
+           genox_exp_zdb_id, 
            exp_name, 
            xpatex_gene_zdb_id, 
            dblink_zdb_id, 
            mrkr_abbrev_order, 
-           fish_name_order, 
+           geno_nickname, 
            xpatassay_display_order,
            zero_pad(exp_name)
-    from expression_experiment, feature_experiment, fish, OUTER(db_link), marker, experiment, expression_pattern_assay
+    from expression_experiment, genotype_experiment, genotype, OUTER(db_link), marker, experiment, expression_pattern_assay
     where xpatex_source_zdb_id = '$OID'
-      and xpatex_featexp_zdb_id = featexp_zdb_id
-      and featexp_genome_feature_zdb_id = zdb_id
+      and xpatex_genox_zdb_id = genox_zdb_id
+      and genox_geno_zdb_id = geno_zdb_id
       and xpatex_dblink_zdb_id = dblink_zdb_id
       and xpatex_gene_zdb_id = mrkr_zdb_id
-      and featexp_exp_zdb_id = exp_zdb_id
+      and genox_exp_zdb_id = exp_zdb_id
       and xpatex_assay_name = xpatassay_name
       $(IF,$(XST,$xpcur_c_gene_only),and mrkr_zdb_id = '$xpcur_c_gene_only')
-      $(IF,$(XST,$xpcur_c_fish_only),and zdb_id = '$xpcur_c_fish_only')
-    order by mrkr_abbrev_order,fish_name_order,xpatassay_display_order,12;">
+      $(IF,$(XST,$xpcur_c_fish_only),and geno_zdb_id = '$xpcur_c_fish_only')
+    order by mrkr_abbrev_order,geno_nickname,xpatassay_display_order,12;">
 
 <?MIVAR COND=$(EC,$debugg,true)><p>Experiment Select:<br> $MI_SQL <?/MIVAR>
 
@@ -193,12 +196,12 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,exptid)
 
   
   <tr bgcolor=$xpcurxprss_row_color
-      onmouseover="this.style.background='$xpcur_G_active_row_color';" 
+      onmouseover="this.style.background='$pubcur_G_active_row_color';" 
       onmouseout="this.style.background='$xpcurxprss_row_color';">
   <?MIVAR>
     <td><input name="xpcur_G_xpatex_select" type=radio value="$xpcurxprss_xpatex_zdb_id" onClick="set_expt('$xpcurxprss_xpatex_gene','$xpcurxprss_xpatex_fish', '$xpcurxprss_xpatex_probe','$xpcurxprss_xpatex_exp','$xpcurxprss_xpatex_genbank','$xpcurxprss_xpatex_assay','$xpcurxprss_xpatex_zdb_id');"></td>
 
-    <td onClick="document.forms['xpcurxprss_select'].elements['xpcur_G_xpatex_select'][$xpcurxprss_radio_index].click();"> 
+    <td onClick="document.forms['experiment'].elements['xpcur_G_xpatex_select'][$xpcurxprss_radio_index].click();"> 
   <?/MIVAR>
           <?MISQL SQL="select mrkr_zdb_id, mrkr_abbrev 
                        from marker 
@@ -207,19 +210,14 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,exptid)
            
           <?/MISQL>
     </td>
-    <td onClick="document.forms['xpcurxprss_select'].elements['xpcur_G_xpatex_select'][$xpcurxprss_radio_index].click();"> 
-            <?MISQL SQL="select zdb_id, abbrev 
-            from fish
-            where zdb_id ='$xpcurxprss_xpatex_fish'
-            order by fish_name_order;">
-            <?MIVAR NAME=fishOption>$2<?/MIVAR>
-            <?MIVAR NAME=fishOption DELIMIT="SUP" REPLACE="sup">$fishOption<?/MIVAR>
-            <?MIVAR NAME=fishOption DELIMIT="<sup>" REPLACE=" (">$fishOption<?/MIVAR>
-            <?MIVAR NAME=fishOption DELIMIT="</sup>" REPLACE=")">$fishOption<?/MIVAR>
-                $fishOption
+    <td onClick="document.forms['experiment'].elements['xpcur_G_xpatex_select'][$xpcurxprss_radio_index].click();"> 
+            <?MISQL SQL="select geno_nickname 
+            from genotype
+            where geno_zdb_id ='$xpcurxprss_xpatex_fish';">
+            $1
           <?/MISQL>
     </td>
-    <td onClick="document.forms['xpcurxprss_select'].elements['xpcur_G_xpatex_select'][$xpcurxprss_radio_index].click();"> 
+    <td onClick="document.forms['experiment'].elements['xpcur_G_xpatex_select'][$xpcurxprss_radio_index].click();"> 
           <?MISQL SQL="
               select exp_zdb_id, exp_name
               from experiment
@@ -228,25 +226,25 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,exptid)
               $2
           <?/MISQL>
     </td>
-    <td onClick="document.forms['xpcurxprss_select'].elements['xpcur_G_xpatex_select'][$xpcurxprss_radio_index].click();">  
+    <td onClick="document.forms['experiment'].elements['xpcur_G_xpatex_select'][$xpcurxprss_radio_index].click();">  
              $xpcurxprss_xpatex_assay
 
     </td>
 
-    <td onClick="document.forms['xpcurxprss_select'].elements['xpcur_G_xpatex_select'][$xpcurxprss_radio_index].click();">  
+    <td onClick="document.forms['experiment'].elements['xpcur_G_xpatex_select'][$xpcurxprss_radio_index].click();">  
 
           <?MISQL SQL="select dblink_zdb_id, dblink_acc_num, mrkr_abbrev
                        from db_link, marker
                         where dblink_zdb_id ='$xpcurxprss_xpatex_genbank'
                           and dblink_linked_recid = mrkr_zdb_id
-                          and mrkr_zdb_id in ('$xpcur_G_gene_attrib_csv')
+                          and mrkr_zdb_id in ('$pubcur_G_gene_attrib_csv')
                         UNION
                         select dblink_zdb_id, dblink_acc_num, mrkr_abbrev
                         from marker, marker_relationship, db_link
                         where dblink_zdb_id ='$xpcurxprss_xpatex_genbank'
                           and dblink_linked_recid = mrel_mrkr_2_zdb_id
                           and mrel_mrkr_1_zdb_id = mrkr_zdb_id
-                          and mrkr_zdb_id in ('$xpcur_G_gene_attrib_csv') 
+                          and mrkr_zdb_id in ('$pubcur_G_gene_attrib_csv') 
                         order by mrkr_abbrev, dblink_acc_num;">
              $2 ($3)
           <?/MISQL>
@@ -257,34 +255,28 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,exptid)
   </tr>
 
     <?MIVAR NAME=xpcurxprss_prev_fish>$xpcurxprss_xpatex_fish<?/MIVAR>
-    <?MIVAR NAME=xpcurxprss_prev_gene>$xpcurxprss_xpatex_gene<?/MIVAR>  
-    <INPUT TYPE=HIDDEN NAME=xpcur_G_xpatex_zdb_id VALUE="<?MIVAR>$xpcur_G_xpatex_zdb_id<?/MIVAR>">
+    <?MIVAR NAME=xpcurxprss_prev_gene>$xpcurxprss_xpatex_gene<?/MIVAR> 
     <?MIVAR NAME=xpcurxprss_radio_index>$(+,$xpcurxprss_radio_index,1)<?/MIVAR>
 <?/MISQL>    
 
-<!--new form tage added-->
-</form>
+
   <tr>
     <td colspan=7>
       <hr>
     </td>
   </tr>
-  
-<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#experiment" method=post name=experiment onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','experiment');">
-    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
-    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
-    <!--<INPUT TYPE=HIDDEN NAME=xpcur_G_xpatex VALUE="add"--> 
+
 
 <?MICOMMENT> ==| Enter a New Experiment |== <?/MICOMMENT>
   <tr>
     <td>
-      <input name="xpcur_G_xpatex" type=submit value="Add">
+      <input name="button" type=submit value="Add"  onClick="setCookie('xpatex','Add','xpcur_G_');">
     </td>
     <td> 
         <select name="xpcur_G_xpatex_gene">
           <?MISQL SQL="select mrkr_zdb_id, mrkr_abbrev 
                        from marker 
-                       where mrkr_zdb_id in ('$xpcur_G_gene_attrib_csv')
+                       where mrkr_zdb_id in ('$pubcur_G_gene_attrib_csv')
                        order by mrkr_abbrev;">
             <option value="$1" $(IF,$(EC,$xpcurxprss_old_xpatex_gene,$1),SELECTED)
                    $(IF,$(AND,$(XST,$xpcur_c_gene_only),$(EC,$xpcur_c_gene_only,$1)),SELECTED)>$2</option>
@@ -295,10 +287,9 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,exptid)
       </b> 
         <select name="xpcur_G_xpatex_fish">
           <?MISQL SQL="
-            select zdb_id, abbrev 
-            from fish
-            where abbrev = 'WT'
-            order by fish_name_order;">
+        select geno_zdb_id, geno_nickname
+        from genotype 
+        where geno_nickname='WT';">
             <?MIVAR NAME=fishOption>$2<?/MIVAR>
             <?MIVAR NAME=fishOption DELIMIT="<sup>" REPLACE=" (">$fishOption<?/MIVAR>
             <?MIVAR NAME=fishOption DELIMIT="</sup>" REPLACE=")">$fishOption<?/MIVAR>
@@ -309,10 +300,10 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,exptid)
           <?/MISQL>
             <option value="-">----------</option>
           <?MISQL SQL="
-            select zdb_id, abbrev 
-            from fish
-            where zdb_id in ('$xpcur_G_fish_attrib_csv')
-            order by fish_name_order;">
+        select geno_zdb_id, geno_nickname
+        from genotype
+        where geno_zdb_id in ('$pubcur_G_geno_attrib_csv')
+        order by geno_name_order;">
             <?MIVAR NAME=fishOption>$2<?/MIVAR>
             <?MIVAR NAME=fishOption DELIMIT="SUP" REPLACE="sup">$fishOption<?/MIVAR>
             <?MIVAR NAME=fishOption DELIMIT="<sup>" REPLACE=" (">$fishOption<?/MIVAR>
@@ -324,11 +315,11 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,exptid)
           <?/MISQL>
             <option value="-">----------</option>
           <?MISQL SQL="
-            select zdb_id, abbrev 
-            from fish
-            where line_type = 'wild type'
-              and abbrev <> 'WT'
-            order by fish_name_order;">
+        select geno_zdb_id, geno_nickname
+        from genotype 
+        where geno_is_wildtype = 't'
+        and geno_nickname <> 'WT'
+        order by geno_name_order;">
             <?MIVAR NAME=fishOption>$2<?/MIVAR>
             <?MIVAR NAME=fishOption DELIMIT="<sup>" REPLACE=" (">$fishOption<?/MIVAR>
             <?MIVAR NAME=fishOption DELIMIT="</sup>" REPLACE=")">$fishOption<?/MIVAR>
@@ -343,8 +334,8 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,exptid)
           <?MISQL SQL="
               select exp_zdb_id, exp_name, zero_pad(exp_name)
               from experiment
-              where exp_zdb_id in ('$xpcur_G_exp_attrib_csv') 
-                 or exp_name = '$xpcur_G_exp_standard_name'
+              where exp_zdb_id in ('$pubcur_G_exp_attrib_csv') 
+                 or exp_name = '$pubcur_G_exp_standard_name'
               order by zero_pad(exp_name);">
             <option value="$1" $(IF,$(EC,$xpcurxprss_old_xpatex_exp,$1),SELECTED)>$2</option>
           <?/MISQL>
@@ -362,42 +353,30 @@ function set_expt(geneid,fishid,probeid,envid,genbankid,assayid,exptid)
             <option value=""></option>
           <?MISQL SQL="select dblink_zdb_id, dblink_acc_num, mrkr_abbrev
                        from marker, db_link
-                       where dblink_zdb_id in ('$xpcur_G_dblink_genbank_csv')
+                       where dblink_zdb_id in ('$pubcur_G_dblink_genbank_csv')
                          and dblink_linked_recid = mrkr_zdb_id
-                         and mrkr_zdb_id in ('$xpcur_G_gene_attrib_csv')
+                         and mrkr_zdb_id in ('$pubcur_G_gene_attrib_csv')
                        UNION
                        select dblink_zdb_id, dblink_acc_num, mrkr_abbrev
                        from marker, marker_relationship, db_link
-                       where dblink_zdb_id in ('$xpcur_G_dblink_genbank_csv')
+                       where dblink_zdb_id in ('$pubcur_G_dblink_genbank_csv')
                          and dblink_linked_recid = mrel_mrkr_2_zdb_id
                          and mrel_mrkr_1_zdb_id = mrkr_zdb_id
-                         and mrkr_zdb_id in ('$xpcur_G_gene_attrib_csv')                       
+                         and mrkr_zdb_id in ('$pubcur_G_gene_attrib_csv')                       
                        order by 3,2;">
             <option value=$1 $(IF,$(EC,$xpcurxprss_old_xpatex_genbank,$1),SELECTED)>$2 ($3)</option>
           <?/MISQL>
         </select>
       </td>
-<!--</form>-->
-<?MIVAR>
-<!--<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#experiment" method=post name=experiment onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','experiment');">
-<?/MIVAR>   
-    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
-    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>">
-    <INPUT TYPE=HIDDEN NAME=xpcur_G_xpatex VALUE="update"> 
-    <input type=hidden name="xpcur_G_xpatex_gene">
-    <INPUT TYPE=HIDDEN NAME=xpcur_G_xpatex_assay"> 
-    <INPUT TYPE=HIDDEN NAME=xpcur_G_xpatex_fish"> 
-    <INPUT TYPE=HIDDEN NAME=xpcur_G_xpatex_exp"> 
-    <INPUT TYPE=HIDDEN NAME=xpcur_G_xpatex_genbank"> -->
+
     <INPUT TYPE=HIDDEN NAME=xpcur_G_xpatex_zdb_id VALUE="<?MIVAR>$xpcur_G_xpatex_zdb_id<?/MIVAR>">
     <INPUT TYPE=HIDDEN NAME=xpcur_G_xpatex VALUE="update"> 
     <td>
-      <input name="xpcur_G_xpatex_update" type=submit value="Replace">
+      <input name="button" type=submit value="update" onClick="setCookie('xpatex','update','xpcur_G_');">
     </td>
-</form>
   </tr>
-<!--</form>-->
   
 </table>
+</form>
 
 <?/MIBLOCK> <?MICOMMENT> end authorize <?/MICOMMENT>

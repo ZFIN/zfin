@@ -1,0 +1,300 @@
+<?MICOMMENT>
+
+FILE:     patocuration_summary.apg
+PREFIX:   patosum_
+
+  REQUIRED:
+   $OID :: publication zdb-id for the experiment
+   $AUTHORIZED :: this is a subroutine. the authorization must occur in the calling page.
+   $xpcur_G_fig_attrib_csv :: csv list of figures for the OID
+   $xpcur_G_geno_attrib_csv :: csv list of genotypes for the OID
+   $xpcur_G_env_attrib_csv :: csv list of enviornments for the OID
+
+
+
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+
+<?/MIERROR> 
+
+<?MIBLOCK COND="$(XST,$OID)">
+ 
+
+<?MICOMMENT> *** FIXME *** this should get a different css class than searchresults *** <?/MICOMMENT>
+
+ <h3>Mutants:</h3>
+
+<a id="patosum-noscrollylink" href="javascript:;" 
+   onClick="document.getElementById('patosum-mutants').style.overflow = 'hidden';
+            document.getElementById('patosum-mutants').style.height = null;
+            this.style.display = 'none';
+            document.getElementById('patosum-scrollylink').style.display = 'inline';">no scrollbars</a>
+
+<a id="patosum-scrollylink" href="javascript:;" style="display: none;"
+   onClick="document.getElementById('patosum-mutants').style.overflow = 'auto';
+            document.getElementById('patosum-mutants').style.height = '300';
+            this.style.display = 'none';
+            document.getElementById('patosum-noscrollylink').style.display = 'inline';">scrollbars</a>
+
+
+ <div id="patosum-mutants" style="overflow: auto; height: 300px; border: 1px solid black; width: 98%; margin-left: 1%;">
+ <table class="searchresults">
+  <thead class="searchresults">
+    <tr>
+      <th>Select</th>
+      <th>Fig</th>
+      <th>Genotype</th>
+      <th>Environment</th>
+      <th>Stage</th>
+      <th>Phenotype</th>
+      <th>Delete</th>
+    </tr>
+  </thead>
+  <tbody class="searchresults">
+    <?MISQL SQL="select distinct fig_label, fig_zdb_id, geno_handle, geno_zdb_id, 
+                        exp_name, exp_zdb_id, apato_start_stg_zdb_id, apato_end_stg_zdb_id, fig_full_label, 
+			genox_zdb_id
+                   from figure
+                     join apato_figure on apatofig_fig_zdb_id = fig_zdb_id
+                     left outer join atomic_phenotype on apato_zdb_id = apatofig_apato_zdb_id
+                     join genotype_experiment on genox_zdb_id = apato_genox_zdb_id
+                     join genotype on geno_zdb_id = genox_geno_zdb_id
+                     join experiment on genox_exp_zdb_id = exp_zdb_id 
+                   where fig_source_zdb_id = '$OID'
+                   order by fig_full_label;"> 
+      <?MIVAR NAME="$patosum_fig_label">$1<?/MIVAR>
+      <?MIVAR NAME="$patosum_fig_zdb_id">$2<?/MIVAR>
+      <?MIVAR NAME="$patosum_geno_handle">$3<?/MIVAR>
+      <?MIVAR NAME="$patosum_geno_zdb_id">$4<?/MIVAR>
+      <?MIVAR NAME="$patosum_exp_name">$5<?/MIVAR>
+      <?MIVAR NAME="$patosum_exp_zdb_id">$6<?/MIVAR>
+      <?MIVAR NAME="$patosum_start_stg_zdb_id">$7<?/MIVAR>
+      <?MIVAR NAME="$patosum_end_stg_zdb_id">$8<?/MIVAR>
+      <?MIVAR NAME="$patosum_genox_zdb_id">$10<?/MIVAR>
+
+      <?MICOMMENT> ** Process for unknowns, replace NULL with something nicer ** <?/MICOMMENT>
+      <?MIBLOCK COND="$(EQ,$patosum_start_stg_zdb_id,NULL)">
+        <?MIVAR NAME="$patosum_start_stg_abbrev">unk<?/MIVAR>
+      <?MIELSE>
+        <?MISQL SQL="select stg_abbrev from stage where stg_zdb_id = '$patosum_start_stg_zdb_id'">
+          <?MIVAR NAME="$patosum_start_stg_abbrev">$1<?/MIVAR>
+        <?/MISQL>
+      <?/MIBLOCK>
+
+      <?MIBLOCK COND="$(EQ,$patosum_end_stg_zdb_id,NULL)"> 
+        <?MIVAR NAME="$patosum_end_stg_abbrev">unk<?/MIVAR>
+      <?MIELSE>
+        <?MISQL SQL="select stg_abbrev from stage where stg_zdb_id = '$patosum_end_stg_zdb_id'">
+          <?MIVAR NAME="$patosum_end_stg_abbrev">$1<?/MIVAR>
+        <?/MISQL>
+      <?/MIBLOCK>
+
+
+
+
+      <?MICOMMENT> *** zebra stripe, is this a new row, or more stuff from the last one? *** <?/MICOMMENT>
+
+      <?MIVAR COND="$(NXST,$patosum_recordIndex)" NAME="$patosum_recordIndex">0<?/MIVAR>
+      <?MIVAR NAME="$patosum_recordIndex">$(+,$patosum_recordIndex,1)<?/MIVAR>
+
+      <?MICOMMENT> ** Build corresponding javascript object ** <?/MICOMMENT>
+      <script type="text/javascript">
+      patoCuration.mutants[$(-,$patosum_recordIndex,1)] = new Mutant("$patosum_fig_label", "$patosum_fig_zdb_id", "$patosum_geno_handle",
+							"$patosum_geno_zdb_id", "$patosum_exp_name", "$patosum_exp_zdb_id",
+							"$patosum_start_stg_zdb_id", "$patosum_start_stg_abbrev",
+							"$patosum_end_stg_zdb_id", "$patosum_end_stg_abbrev","$patosum_genox_zdb_id", 
+							"false",
+							"$patosum_fig_zdb_id$patosum_genox_zdb_id$patosum_start_stg_zdb_id$patosum_end_stg_zdb_id");
+
+      </script>
+
+
+      <tr <?MIBLOCK COND="$(EC,1,$(MOD,$patosum_recordIndex,2))">class="odd"<?/MIBLOCK>
+        onclick="document.getElementById('$patosum_fig_zdb_id$patosum_genox_zdb_id$patosum_start_stg_zdb_id$patosum_end_stg_zdb_id').click();"
+       >
+        <td> <?MICOMMENT> ** Select column ** <?/MICOMMENT>
+          <input type="checkbox" 
+                 id="$patosum_fig_zdb_id$patosum_genox_zdb_id$patosum_start_stg_zdb_id$patosum_end_stg_zdb_id" 
+                 onclick="this.click();" 
+                 onChange="patoCuration.updateMutants();
+                           sessionState.storeObjectAttribute(this.id, 'checked', this.checked);
+                           sessionState.getAttribute(this.id, 'checked');">
+                 <?MICOMMENT> ** about that onclick="click()" above.. if you click the checkbox, you get an event 
+                                 in both the tr and the checkbox - so two events means you return to the same state.
+                                 3 events and you move on to the other state.  it's goofy, but simple ** <?/MICOMMENT>
+        </td> 
+        <td style="white-space: nowrap"> <?MICOMMENT> ** Fig Column ** <?/MICOMMENT>
+          $patosum_fig_label
+        </td>
+        <td> <?MICOMMENT> ** Genotype Column ** <?/MICOMMENT>
+          $patosum_geno_handle
+        </td>
+        <td>  <?MICOMMENT> ** Enviornment Column ** <?/MICOMMENT>
+          $patosum_exp_name
+        </td>
+        <td>  <?MICOMMENT> ** Stage Column ** <?/MICOMMENT>
+          $patosum_start_stg_abbrev 
+          <?MIBLOCK COND="$(NE,$patosum_start_stg_abbrev,$patosum_end_stg_abbrev)"> - <?MIVAR>$patosum_end_stg_abbrev<?/MIVAR> <?/MIBLOCK>
+        </td>
+        <td>  <?MICOMMENT> ** Phenotype Column ** <?/MICOMMENT>
+         <small>
+          <?MISQL SQL="select distinct apato_entity_a_zdb_id, get_obj_name(apato_entity_a_zdb_id), 
+                                       apato_entity_b_zdb_id, get_obj_name(apato_entity_b_zdb_id),
+                                       apato_quality_zdb_id, term_name, apato_tag, apato_zdb_id
+                       from atomic_phenotype
+                            join term on term_zdb_id = apato_quality_zdb_id
+                            join apato_figure on apatofig_apato_zdb_id = apato_zdb_id
+                            join genotype_experiment on apato_genox_zdb_id = genox_zdb_id
+                       where apatofig_fig_zdb_id = '$patosum_fig_zdb_id'
+                         and genox_geno_zdb_id = '$patosum_geno_zdb_id'
+                         and genox_exp_zdb_id = '$patosum_exp_zdb_id'
+                         and apato_start_stg_zdb_id = '$patosum_start_stg_zdb_id'
+                         and apato_end_stg_zdb_id = '$patosum_end_stg_zdb_id'
+                       order by 2;"> 
+
+             <?MIVAR NAME="$patosum_entity_a_zdb_id">$1<?/MIVAR>
+             <?MIVAR   NAME="$patosum_entity_a_name">$2<?/MIVAR>
+             <?MIVAR NAME="$patosum_entity_b_zdb_id">$3<?/MIVAR>
+             <?MIVAR   NAME="$patosum_entity_b_name">$4<?/MIVAR>
+             <?MIVAR  NAME="$patosum_quality_zdb_id">$5<?/MIVAR>
+             <?MIVAR    NAME="$patosum_quality_name">$6<?/MIVAR>
+             <?MIVAR             NAME="$patosum_tag">$7<?/MIVAR>
+             <?MIVAR    NAME="$patosum_apato_zdb_id">$8<?/MIVAR>
+            
+             <?MIVAR NAME="$patosum_pheno_key">$patosum_entity_a_zdb_id$patosum_entity_b_zdb_id$patosum_quality_zdb_id$patosum_tag<?/MIVAR>
+             
+             
+            <?MIBLOCK COND="$(NE,$patosum_entity_b_zdb_id,NULL)">
+               <?MIVAR>$patosum_entity_b_name<?/MIVAR>:
+             <?/MIBLOCK> 
+             $patosum_entity_a_name 
+             - $patosum_quality_name [$patosum_tag] <br>
+             <script type="text/javascript">
+               patoCuration.mutants[$(-,$patosum_recordIndex,1)].phenotypes[$(-,$MI_CURRENTROW,1)] = "$patosum_pheno_key";
+             </script>
+             <?MIVAR COND="$(EC,$MI_CURRENTROW,1)" NAME="$patosum_first_apato_zdb_id">$patosum_apato_zdb_id<?/MIVAR>
+          <?/MISQL>
+         </small>
+        </td>
+        <td>
+          <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method="post" onSubmit="setCookie('pato_update','update','pubcur_c_');">
+           <?MIVAR>
+            <input type="hidden" name="MIval" value="aa-curation.apg">
+            <input type="hidden" name="OID" value="$OID">
+            <input type="hidden" name="patoup_delete_mutant" value="1">
+            <input type="hidden" name="patoup_fig_zdb_id" value="$patosum_fig_zdb_id">
+            <input type="hidden" name="patoup_example_apato_zdb_id" value="$patosum_first_apato_zdb_id">
+            <input type="submit" value=" X ">
+           <?/MIVAR>
+          </form>
+      </tr>
+    <?/MISQL>
+  </table>
+  </div>
+
+<?MICOMMENT> *** Form to add Mutants (Fig + Genotype + Env combinations) to mutant summary table *** <?/MICOMMENT>
+
+<form name="patosum_addmutant" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
+      method="post" onSubmit="setCookie('pato_update','update','pubcur_c_');">
+
+    <input type="hidden" name="MIval" value="aa-curation.apg">
+    <input type="hidden" name="OID" value="<?MIVAR>$OID<?/MIVAR>">
+    <input type="hidden" name="patoup_add_mutant" value="1">
+    <table>
+    <tr>
+      <td>
+        <input type="submit" value="Add">
+      </td>
+      <td>
+        <select name="patoup_fig_zdb_id" id="patosumFig"
+                onChange="sessionState.storeObjectAttribute(this.id,'selectedIndex',this.selectedIndex);">
+   
+        <?MISQL SQL="select fig_zdb_id, fig_label from figure where fig_source_zdb_id = '$OID' order by fig_full_label;">   
+          <option value="$1">$2</option>
+        <?/MISQL>
+        </select>
+      </td>
+      <td>
+        <select name="patoup_geno_zdb_id" id="patosumGenotype"
+                onChange="sessionState.storeObjectAttribute(this.id,'selectedIndex',this.selectedIndex);">
+
+          <?MISQL SQL="select distinct geno_zdb_id, geno_nickname
+                       from genotype
+                       where geno_is_wildtype = 't'
+                         and geno_nickname = 'WT';"> 
+            <option value="$1">$2</option>
+          <?/MISQL>
+            <option> ----- </option>
+          <?MISQL SQL="select distinct geno_zdb_id, geno_nickname
+                       from genotype
+                         join record_attribution 
+                           on     recattrib_data_zdb_id = geno_zdb_id
+                              and recattrib_source_zdb_id = '$OID'
+                       order by geno_nickname;">
+            <option value="$1">$2</option>
+          <?/MISQL>
+            <option> ----- </option>
+          <?MISQL SQL="select distinct geno_zdb_id, geno_nickname
+                       from genotype
+                       where geno_is_wildtype = 't'
+                         and geno_nickname <> 'WT'
+                       order by geno_nickname;"> 
+            <option value="$1">$2</option>
+          <?/MISQL>
+        </select>
+      </td>
+      <td>
+        <select name="patoup_exp_zdb_id" id="patosumEnv"
+                onChange="sessionState.storeObjectAttribute(this.id,'selectedIndex',this.selectedIndex);">
+           <?MISQL SQL="select distinct exp_zdb_id, exp_name
+                         from experiment
+                         where exp_name = '_Standard'
+                        union
+                        select distinct exp_zdb_id, exp_name
+                         from experiment
+                          join record_attribution 
+                            on     recattrib_data_zdb_id = exp_zdb_id
+                               and recattrib_source_zdb_id = '$OID';">
+             <option value="$1">$2</option>
+           <?/MISQL>
+        </select>
+      </td>
+      <td>
+        start: <select name="patoup_start_stg_zdb_id" id="patosumStartStage"
+                       onChange="setEndStage('patosum_addmutant','patoup_start_stg_zdb_id','patoup_end_stg_zdb_id');
+                                 sessionState.storeObjectAttribute(this.id,'selectedIndex',this.selectedIndex);
+                                 sessionState.storeObjectAttribute('patosumEndStage','selectedIndex',this.selectedIndex);">
+          <?MISQL SQL="
+            select stg_zdb_id, stg_abbrev, stg_name_ext
+	      from stage
+            order by stg_hours_start;">
+            <option value="$1">$2 $3</option>
+          <?/MISQL>
+      </select>
+      <br>
+      end: <select name="patoup_end_stg_zdb_id" id="patosumEndStage"
+                   onChange="sessionState.storeObjectAttribute(this.id,'selectedIndex',this.selectedIndex);">
+          <?MISQL SQL="
+            select stg_zdb_id, stg_abbrev, stg_name_ext
+	      from stage
+            order by stg_hours_start;">
+            <option value="$1">$2 $3</option>
+          <?/MISQL>
+      </select>
+      </td>
+     </tr>
+    </table>
+</form>
+
+<?MIELSE>
+  <P>
+  ERROR -- something bad happened -- no OID passed in!
+<?/MIBLOCK>

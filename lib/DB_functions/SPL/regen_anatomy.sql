@@ -194,7 +194,12 @@ update statistics for function populate_all_anatomy_contains;
 create dba function "informix".regen_anatomy()
   returning integer
 
-  -- populates anatomy fast search tables.
+  -- populates anatomy fast search tables:
+  --  anatomy_display: term's position in a dag display of a certain stage
+  --  anatomy_stats: term's gene count and synonyms count 
+  --  anatomy_stage_stats: terms gene count and synonyms count of a certain stage
+  --  all_anatomy_contains: each and every ancestor and descendant
+
 
   -- see regen_names.sql for details on how to debug SPL routines.
 

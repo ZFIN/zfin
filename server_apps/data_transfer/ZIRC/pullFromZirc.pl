@@ -97,10 +97,6 @@ sub downloadFiles(@) {
 # Now, get the subroutines for handling each type of data.
 
 require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ZIRC/pullEstsFromZirc.pl");
-require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ZIRC/pullFishLinesFromZirc.pl");
-require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ZIRC/pullBackgroundsFromZirc.pl");
-require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ZIRC/pullAlterationsFromZirc.pl");
-
 
 
 #----------------------------------------------------------------------
@@ -142,10 +138,6 @@ my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
 #  o Update the database, reporting as it goes
 
 &est_main($dbh, $zircZdbId);	        # EST availability
-&fishline_main($dbh);		        # ZIRC Fish Line IDs
-&background_main($dbh);		        # What wildtypes went into what lines
-&alteration_main($dbh);		        # What ZFIN alterations are available
-				        #  in what ZIRC lines
 
 $dbh->commit();
 $dbh->disconnect();

@@ -3,7 +3,7 @@ FILE: NEW-IMAGE.APG
 PREFIX: fimgnew_
 
 INPUT VARS: 
- -- OID -- the OID of the fish_image record to view
+ -- OID -- the OID of the image record to view
  -- fimgnew_width -- the width of the image
  -- fimgnew_height -- the height of the image
  -- fimgnew_suffix -- the .extension of the image file
@@ -18,10 +18,10 @@ EFFECTS:
 	It adds records to:
 
 	zdb_active_data
-	fish_image
-	fish_image_stage
+	image
+	image_stage
 
-Creates a record in fish_image that has vaild values in the image
+Creates a record in image that has vaild values in the image
 and thumbnail fields, and default values in the other fields.  
 It then launches imageview.apg so the user can update the other
 columns
@@ -68,17 +68,17 @@ SUBMITTER COMMENTS:
         ('$OID');">
   <?/MISQL>
   <?MISQL SQL="
-    insert into fish_image
-        (fimg_zdb_id, fimg_image, fimg_annotation, fimg_image_with_annotation,
-	 fimg_thumbnail, fimg_width, fimg_height,
-	 fimg_fish_zdb_id, fimg_comments, 
-	 fimg_view, fimg_direction, fimg_form, fimg_preparation, 
-	 fimg_owner_zdb_id, fimg_external_name)
+    insert into image
+        (img_zdb_id, img_image, img_annotation, img_image_with_annotation,
+	 img_thumbnail, img_width, img_height,
+	 img_comments, 
+	 img_view, img_direction, img_form, img_preparation, 
+	 img_owner_zdb_id, img_external_name)
       values 
 	('$OID', '$OID'||'$fimgnew_suffix', NULL, NULL,
 	 '$OID'||'_thumb'||'$fimgnew_suffix', '$fimgnew_width', 
 	 '$fimgnew_height',
-	 NULL, '$fimgnew_comments',
+	  '$fimgnew_comments',
 	 'not specified', 'not specified', 'still', 'not specified', 
 	 '$ZDB_ident', NULL);">
   <?/MISQL>
@@ -92,13 +92,14 @@ SUBMITTER COMMENTS:
      where stg_name = 'Unknown';">
     <?MIVAR NAME=$fimgnew_unknownStgZdbId>$1<?/MIVAR>
   <?/MISQL>
-
+<?MICOMMENT>
   <?MISQL SQL="
-    insert into fish_image_stage
-        (fimgstg_fimg_zdb_id, fimgstg_start_stg_zdb_id, fimgstg_end_stg_zdb_id )
+    insert into image_stage
+        (imgstg_img_zdb_id, imgstg_start_stg_zdb_id, imgstg_end_stg_zdb_id )
       values 
 	('$OID','$fimgnew_unknownStgZdbId','$fimgnew_unknownStgZdbId');">
   <?/MISQL>
+<?/MICOMMENT>
 
   <SCRIPT>
     <?MIVAR>

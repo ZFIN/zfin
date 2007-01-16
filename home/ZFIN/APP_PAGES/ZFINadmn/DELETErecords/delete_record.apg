@@ -13,6 +13,9 @@ bar that appears at the top of each viewing page.
 Variables expected:  
   OID (REQUIRED) -- the zdb_id of the record to delete.
   rtype (REQUIRED) -- the data type of the record to delete.
+  return_page (OPTIONAL) -- the page to return to after the deletion. The
+                            default is ZDB_home.apg. 
+  returnOID -- pub ZDB ID
 <?/MICOMMENT>
 
 
@@ -38,10 +41,99 @@ Message: $MI_ERRORMSG
 
     function set_values(oid,merge) {
 
-    document.merge.merge_oid.value=oid;
-    document.merge.merge.value=merge;
-    document.merge.submit();
+      document.merge.merge_oid.value=oid;
+      document.merge.merge.value=merge;
+    }
 
+    function validateAction() {
+
+         <?MIVAR NAME=checker_id>$OID<?/MIVAR>
+         <?MIVAR>
+           $(IF,$(AND,$(XST,$merge_oid),$(NC,$merge_oid,none)),$(SETVAR,$checker_id,$merge_oid))
+         <?/MIVAR>
+
+         <?MICOMMENT> ------- Genotype ------- <?/MICOMMENT>          
+         <?MIBLOCK COND="$(EC,$rtype,genotype)">
+            <?MISQL SQL="
+  		select genox_zdb_id
+                  from genotype_experiment
+                 where genox_geno_zdb_id = '$checker_id'
+                   and (exists (select xpatex_zdb_id
+                                 from expression_experiment
+                                where xpatex_genox_zdb_id = genox_zdb_id)
+                      or exists (select apato_zdb_id
+                                 from atomic_phenotype
+                                where apato_genox_zdb_id = genox_zdb_id)
+			) ;">
+            <?/MISQL>         
+            <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+		alert("Sorry, the genotype <?MIVAR>$checker_id<?/MIVAR> has expression/pato data and cannot be deleted or merged.");
+		return false;
+            <?MIELSE>
+		var agree = confirm ("Warning: related feature records would be dropped.");
+	        if (agree) {
+		   return true;
+		}else {
+		   return false;
+	       }
+	    <?/MIBLOCK>
+        <?/MIBLOCK>
+
+        <?MICOMMENT> ------- Gene/Marker ------- <?/MICOMMENT>
+        <?MIBLOCK COND="$(EC,$(SUBSTR,$OID,5,4),GENE)">
+
+	    <?MICOMMENT> no deletion if exists expression data<?/MICOMMENT>
+            <?MISQL SQL="
+  		select xpatex_zdb_id
+                  from expression_experiment
+                 where xpatex_gene_zdb_id = '$checker_id';">
+            <?/MISQL>         
+            <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
+		alert("Sorry, the gene has expression data and cannot be deleted.");
+		return false;
+           <?/MIVAR>
+
+	   <?MICOMMENT> no deletion if exists feature_marker_relationship<?/MICOMMENT>
+           <?MISQL SQL="
+  		select fmrel_zdb_id
+                  from feature_marker_relationship
+                 where fmrel_mrkr_zdb_id = '$checker_id';">
+            <?/MISQL>         
+            <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
+		alert("Sorry, the gene is related to some feature and cannot be deleted.");
+		return false;
+           <?/MIVAR>
+        <?/MIBLOCK>
+
+
+        <?MIBLOCK COND="$(EC,$(SUBSTR,$OID,7,8),CONSTRCT)">
+	   <?MICOMMENT> no deletion if exists feature_marker_relationship<?/MICOMMENT>
+           <?MISQL SQL="
+  		select fmrel_zdb_id
+                  from feature_marker_relationship
+                 where fmrel_mrkr_zdb_id = '$checker_id';">
+            <?/MISQL>         
+            <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
+		alert("Sorry, the construct is related to some feature and cannot be deleted.");
+		return false;
+           <?/MIVAR>
+
+        <?/MIBLOCK>
+
+
+        <?MICOMMENT> ---------  Feature  --------- <?/MICOMMENT>
+        <?MIBLOCK COND="$(EC,$rtype,feature)">
+            <?MISQL SQL="
+  		select genofeat_zdb_id
+                  from genotype_feature
+                 where genofeat_feature_zdb_id = '$checker_id';">
+            <?/MISQL>         
+            <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
+		alert("Sorry, the feature is associated with genotype and cannot be deleted.");
+		return false;
+            <?/MIVAR>
+        <?/MIBLOCK>
+	return true;
     }
 
     </SCRIPT>
@@ -62,12 +154,17 @@ Message: $MI_ERRORMSG
   <?MIBLOCK COND="$(AND,$(XST,$OID),$(XST,$rtype))">
 
     <!-- form posts to itself if merge record if requested -->
-    <form name=merge method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" >
+    <form name=merge method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+     <?MICOMMENT> -- this is defined for the "Search" button <?/MICOMMENT>
      <input type=hidden name=MIval value="aa-delete_record.apg">
      <?MIVAR>
        <input type=hidden name=OID value=$OID>
        <input type=hidden name=rtype value=$rtype>
        <input type=hidden name=merge_oid value='none'>
+     <?/MIVAR>
+     <?MIVAR COND="$(XST,$return_page)">
+       <input type=hidden name=return_page value=$return_page>	
+       <input type=hidden name=returnOID value=$returnOID>
      <?/MIVAR>
 
    <?MIVAR COND="$(NXST,$merge_oid)" NAME=$merge_oid>none<?/MIVAR>
@@ -101,7 +198,7 @@ Message: $MI_ERRORMSG
  
 
   <?MIBLOCK COND="$(EC,$merge_oid,none)">
-    <?MIBLOCK COND="$(OR,$(EC,$rtype,marker),$(EC,$rtype,fish_image),$(EC,$rtype,fish),$(EC,$rtype,locus))">
+    <?MIBLOCK COND="$(OR,$(EC,$rtype,marker),$(EC,$rtype,fish_image),$(EC,$rtype,genotype))">
     <?MIVAR COND="$(NXST,$mtype)" NAME=$mtype>GENE<?/MIVAR>
     <?MIVAR COND="$(NXST,$nsearch)" NAME=$nsearch><?/MIVAR>
        <b>Merge this record into:</b>
@@ -109,8 +206,7 @@ Message: $MI_ERRORMSG
 	 <TABLE width="100%">
 	   <TR>
 	      <select name=mtype>
-		<option value=MUTANT $(IF,$(EC,$mtype,MUTANT),SELECTED)>Mutant
-		<option $(IF,$(EC,$mtype,LOCUS),SELECTED)>LOCUS
+		<option value=genotype $(IF,$(EC,$mtype,genotype),SELECTED)>Genotype
 		<option value=GENE $(IF,$(EC,$mtype,GENE),SELECTED)>Gene
 		<option value=GENEP $(IF,$(EC,$mtype,GENEP),SELECTED)>Pseudogene
 		<option $(IF,$(EC,$mtype,EST),SELECTED)>EST
@@ -121,7 +217,7 @@ Message: $MI_ERRORMSG
 		<option $(IF,$(EC,$mtype,PAC),SELECTED)>PAC
 		<option $(IF,$(EC,$mtype,BAC_END),SELECTED)>BAC_END
 		<option $(IF,$(EC,$mtype,PAC_END),SELECTED)>PAC_END
-	      </select>  and its abbrev contains:
+	      </select>  and its abbrev/handle contains:
 	      <input type=text name=merge value="$nsearch" size=8>  
 	      <input type=submit name=do_search value="Search">
 	    </TR>
@@ -129,7 +225,7 @@ Message: $MI_ERRORMSG
 	<?/MIVAR>
 
 	<!-- search for a marker -->
-	<?MIBLOCK COND="$(AND,$(NC,$mtype,mutant),$(NC,$mtype,locus),$(XST,$do_search))">
+	<?MIBLOCK COND="$(AND,$(NC,$mtype,genotype),$(XST,$do_search))">
 	  <hr>
 	  <TABLE cols=3>
             <TR><TD></TD><TD><b>Marker Name</b></TD><TD><b>Marker Type</b></TD></TR>
@@ -165,18 +261,18 @@ Message: $MI_ERRORMSG
         <?/MIBLOCK>
 
 
-	   <?MIBLOCK COND="$(AND,$(EC,$mtype,mutant),$(XST,$do_search))">
+	   <?MIBLOCK COND="$(AND,$(EC,$mtype,genotype),$(XST,$do_search))">
 	     <hr>
 	     <TABLE cols=2>
-	     <TR><TD></TD><TD><b>Allele</b></TD><TD>Locus</TD></TR>
-	     <?MISQL SQL="select distinct a.zdb_id,a.allele,b.abbrev 
-	       from fish a, locus b
-		 where  a.locus = b.zdb_id 
-		   and a.allele like '%$(LOWER,$merge)%' 
-		   order by a.allele;">
+	     <TR><TD></TD><TD><b>Genotype</b></TD>
+	     <?MISQL SQL="
+               select geno_zdb_id, geno_display_name, geno_handle
+	         from genotype
+		where lower(geno_handle) like '%$(LOWER,$merge)%' 
+                order by geno_handle;">
 	       <TR>
 		 <TD>
-		   <input type=button name=merge_selected value="Select" onClick= set_values('$1','$(URLENCODE,$2)') ;>
+		   <input type=button name=merge_selected value="Select" onClick= set_values('$1','$(URLENCODE,$2)');document.merge.submit();>
 		 </TD>
 		 <TD>
 		   $2 
@@ -187,31 +283,10 @@ Message: $MI_ERRORMSG
 	       </TR>
 	     <?/MISQL>
 	     </TABLE>
-	   <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No mutant matches.<?/MIVAR> 
+	   <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No genotype matches.<?/MIVAR> 
 	   <p>
       <?/MIBLOCK>
 
-	   <?MIBLOCK COND="$(AND,$(EC,$mtype,locus),$(XST,$do_search))">
-	     <hr>
-	     <TABLE cols=2>
-	     <TR><TD> </TD><TD><b>Locus</b></TD></TR>
-	     <?MISQL SQL="select distinct zdb_id,abbrev 
-	       from  locus 
-		 where  abbrev like '%$(LOWER,$merge)%' 
-		   order by abbrev;">
-	       <TR>
-		 <TD>
-		   <input type=button name=merge_selected value="Select" onClick= set_values('$1','$(URLENCODE,$2)') ;>	 
-                 </TD>
-		 <TD>
-		   $2 
-		 </TD>
-	       </TR>
-	     <?/MISQL>
-	     </TABLE>
-	   <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No locus matches.<?/MIVAR> 
-	   <p>
-      <?/MIBLOCK>
 
     <?MIELSE>
       	<input type=hidden name=merge value="" >  
@@ -225,7 +300,7 @@ Message: $MI_ERRORMSG
     <TR align=center>
     <TD><input type=button value="CANCEL" onClick="window.history.go(-1)"></TD>
     <?MIVAR>
-      <TD><INPUT type=button value="Delete or Merge" onClick="document.merge.MIval.value='aa-process_delete.apg';set_values('$merge_oid','$(URLENCODE,$merge)');"></TD>
+      <TD><INPUT type=submit value="Delete or Merge" onClick="document.merge.MIval.value='aa-process_delete.apg';set_values('$merge_oid','$(URLENCODE,$merge)'); return validateAction();"></TD>
     <?/MIVAR>
     </TR></TABLE>
 

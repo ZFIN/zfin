@@ -1,0 +1,868 @@
+<?MICOMMENT>
+
+FILE:     pubcuration.apg
+PREFIX:   pubcur_
+
+     
+INPUT VARS:
+  $OID :: the ZDB of a Publication
+
+  OPTIONAL VARS::GLOBAL ( input ) 
+  
+  Input global variables are passed by subroutines to xpatcuration.apg. The globals are used
+  primarily by xpcurupdate.apg; some variables are used by subroutines. None of these globals
+  are used by the top-level page.
+  
+GLOBALS (value set by pubcuration.apg) :
+
+    pubcur_G_active_row_color :: font color 
+    
+    pubcur_G_oid_attrib_csv :: list of ZDBs attributed to OID; seperator="','"
+    pubcur_G_fish_attrib_csv :: list of fish ZDBs attributed to OID; seperator="','"
+    pubcur_G_gene_attrib_csv :: list of gene ZDBs attributed to OID; seperator="','"
+    pubcur_G_est_attrib_csv :: list of est ZDBs attributed to OID; seperator="','"
+    pubcur_G_dblink_genbank_csv :: list of genbank ZDBs attributed to OID; seperator="','"
+    pubcur_G_dblink_attrib_csv  :: list of dblink ZDBs attributed to OID; seperator="','"
+    pubcur_G_exp_attrib_csv  :: list of experiment ZDBs attributed to OID; seperator="','"
+    pubcur_G_fig_attrib_csv  :: list of figure ZDBs attributed to OID; seperator="','"
+    pubcur_G_image_attrib_csv :: list of image ZDBs attributed to OID; seperator="','"
+    
+
+COOKIES:
+  Previous Publication
+      pubcur_c_xpatCuration :: previous pub-zdb-id this curator did fx curation for. reset cookie variables if different from $OID.
+  
+     
+
+OUTPUT VARS:
+  None.
+
+OUTPUT:
+  Header, footer, Tabs, and filters.
+
+EFFECTS
+  none
+
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+
+<?/MIERROR> 
+
+<?MIVAR NAME=debugg>false<?/MIVAR>
+
+<?MIBLOCK COND="$(XST,$OID)">
+
+  <?MISQL SQL="select WebExplode(object,'permission=root&page_title=Curate Pub') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+<?MIBLOCK COND="$(EC,$AUTHORIZED,root)"> <!--,$(EC,$ZDB_ident,ZDB-PERS-010716-1))">  -->
+  <?MISQL SQL="SELECT title FROM publication WHERE zdb_id='$OID'">
+    <?MIVAR NAME=$title>$1<?/MIVAR>
+  <?/MISQL>
+<?MIBLOCK COND="$(XST,$title)">
+
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Starting query page
+<?/MISQL>
+
+
+<?MIVAR NAME=pubcur_category>Feature<?/MIVAR>
+<?MIVAR>
+  $(VECAPPEND,$pubcur_category,Genotype)
+  $(VECAPPEND,$pubcur_category,Figure)
+  $(VECAPPEND,$pubcur_category,Environment)
+  $(VECAPPEND,$pubcur_category,FX)
+  $(VECAPPEND,$pubcur_category,PATO)
+<?/MIVAR>
+
+<style type="text/css">
+body{background:#fff;}
+    
+#navlist
+{
+padding: 3px 0;
+margin-left: 0;
+border-bottom: 1px solid #778;
+font: bold 12px Verdana, sans-serif;
+  padding-left: 20px;
+  margin-bottom: 0px;
+  margin-top: 0px;
+}
+
+#navlist li
+{
+list-style: none;
+margin: 0;
+display: inline;
+font-size: 1.2em;
+}
+
+#navlist li a
+{
+padding: 3px 0.5em;
+margin-left: 3px;
+border: 1px solid #778;
+border-bottom: none;
+background: #DDE;
+text-decoration: none;
+}
+
+#navlist li a:link { color: #448; }
+#navlist li a:visited { color: #667; }
+
+#navlist li a:hover
+{
+color: #000;
+background: white ;
+border-color: #227;
+border-bottom: 1px solid white;
+}
+
+#navlist li a#current
+{
+color: #000;
+background: #AAE;
+}
+
+#highlightbackground
+{
+  background: <!--|HIGHLIGHT_COLOR|-->;
+}
+
+#datamngr 
+{
+  border-bottom: 1px solid #999;
+  border-top: 1px solid #999;
+  margin: 0px;
+  margin-bottom: 0px;
+  margin-top: 0px;
+  padding: 0px;
+  padding-left: 180px;
+  background-color: #CCC;
+  padding-bottom: 2px;
+  padding-top: 2px;
+}
+
+#datamngr li
+{
+  padding-right: 160px;
+  display: inline;
+  font-size: 1.0em;
+}
+
+#datamngr ul
+{
+  margin: 0px;
+  padding: 0px;
+}
+ 
+#subdatamngr 
+{
+  margin: 0px;
+  margin-bottom: 0px;
+  padding: 0px;
+  padding-left: 10px;
+  background-color: #9c9;
+  padding-bottom: 2px;
+  padding-top: 2px;
+}
+
+#subdatamngr li
+{
+  display: inline;
+  font-size: 1.0em;
+}
+
+#subdatamngr ul
+{
+  margin: 0px;
+  padding: 0px;
+}
+
+#headertwo
+{
+  font: bold 12px Verdana, sans-serif;
+  font-size: 1.4em;
+}
+
+#headerthree
+{
+  font: bold 12px Verdana, sans-serif;
+  font-size: 1.3em;
+}
+
+.breaker {
+	clear:both;
+	height:1px;
+	font-size:0px;
+	margin:0px;
+	margin-top:-1PX;
+	padding:0px;
+}
+
+</style>
+
+
+
+
+  <script type="text/javascript" language="javascript">
+    function getCookie(cName) {
+      thisCookie = document.cookie.split("; ")
+
+      for (i=0; i<thisCookie.length; i++) {
+        if (thisCookie[i].split("=")[0] == cName) {
+          return thisCookie[i].split("=")[1];
+        }
+      }
+      return "";
+    }
+    
+    function replaceLocation(url) {
+        var GET_string = getCookie('xpcur_c_form_variables');
+        if (GET_string != "") { GET_string = "?"+GET_string;}
+            
+        location.replace(url+GET_string);        
+
+    }
+    
+
+    function setCookie(name,value,prefix) {
+      var thisCookie = prefix+name;
+      document.cookie = thisCookie+"="+value;
+      //alert (thisCookie+"="+value);
+
+    }
+    
+    function urlSetCookie(name,value,prefix) {
+      setCookie(name,value,prefix);
+      <?MIVAR>
+    	replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&cookie="+name+value+"&randomNum="+Math.random()+"#"+name);
+      <?/MIVAR>
+    }
+
+    
+    function setEndStage( form_name, start_stg, end_stg ) {
+
+      var startStageIndex = document.forms[form_name].elements[start_stg].selectedIndex; 
+      document.forms[form_name].elements[end_stg].selectedIndex = startStageIndex;
+         
+    } 
+    
+    
+    function deleteZDB(item,anchor) {
+        if (anchor == 'experiment')
+           {
+            var msg="Are you sure you want to delete this experiment?";
+            if (confirm(msg))
+             <?MIVAR>
+              replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&delete_item="+item+"#"+anchor);
+             <?/MIVAR>
+            }
+        else 
+           {
+            <?MIVAR>
+          replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&delete_item="+item+"#"+anchor);
+            <?/MIVAR>
+           }
+    }
+
+    function updateZDB(zdbid,comments) {
+    window.alert(comments);
+    window.alert(zdbid);
+    <?MIVAR>
+    <?/MIVAR>
+    }
+    
+    function setEndStage( form_name, start_stg, end_stg ) {
+
+      var startStageIndex = document.forms[form_name].elements[start_stg].selectedIndex; 
+      document.forms[form_name].elements[end_stg].selectedIndex = startStageIndex;
+         
+    } 
+    
+    function setFeatureType(featzdbid,anchor){
+     <?MIVAR>
+    var ftrind = document.new_relation.featcur_reln_add_ftr.selectedIndex;
+    var feature_name = document.new_relation.featcur_reln_add_ftr[ftrind].value;
+    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&&featcur_reln_add_ftr='+featzdbid+'&featrel_feature_zdb_id='+featzdbid+"#"+anchor);
+     <?/MIVAR> 
+}
+function setMarkerTarget(featreli,anchor){
+     <?MIVAR>
+    var ftrind = document.new_relation.featcur_reln_add_ftr.selectedIndex;
+    var feature_name = document.new_relation.featcur_reln_add_ftr[ftrind].value;
+    var ftrrelind = document.new_relation.featcur_reln_add_relation.selectedIndex;
+    var feature_relation = document.new_relation.featcur_reln_add_relation[ftrrelind].value;
+    window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&featrel_feature_relation='+featreli+'&featcur_reln_add_ftr='+feature_name+'&featcur_reln_add_relation='+feature_relation+"#"+anchor);     
+    <?/MIVAR> 
+}
+
+<?MIVAR>
+     function setFeatureAttrib(featzdbid,anchor){
+     window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&featedit_feature_zdb_id='+featzdbid+"#"+anchor);
+}
+
+<?/MIVAR>
+<?MIVAR>
+     function DeleteFeature(featzdbid,anchor){
+     window.open('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-delete_record.apg&rtype=feature&OID='+featzdbid+"#"+anchor);
+}
+<?/MIVAR>
+
+ 
+
+  </SCRIPT>
+
+    <?MICOMMENT>
+       Do housecleaning when the user visits a new pub.
+       
+       1. reset cookies
+       2. clean table expression_pattern_infrastructure
+       3. insert records for the structure list
+    <?/MICOMMENT>
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-xpatcurreset.apg';">$1<?/MISQL>
+
+
+
+
+  <?MIBLOCK COND=$(XST,$delete_item)>
+    <?MICOMMENT> 
+      MOST FX records are data types with ZDB-IDs. The exception is when a curator
+      deletes all the expression for a figure. The union table is a many to many
+      between figure and expression results. All intersection records are deleted.
+      Expression_Results records are deleted if the record is not connected to an
+      expression_pattern_figure record.
+      
+      ZDB-IDs are deleted from zdb_active_data.
+    <?/MICOMMENT>
+    <?MIBLOCK COND=$(EC,ZDB-,$(SUBSTR,$delete_item,1,4))>
+  
+        <?MIBLOCK COND=$(EC,ZDB-XPAT-,$(SUBSTR,$delete_item,1,9))>
+          <?MISQL SQL="
+            SELECT xpatres_zdb_id 
+            FROM expression_result
+            WHERE xpatres_xpatex_zdb_id = '$delete_item';">
+            
+            <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id = '$1';"><?/MISQL>
+         
+          <?/MISQL>
+        <?/MIBLOCK>
+        <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id = '$delete_item';"><?/MISQL>
+        <?MISQL SQL="
+           select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=expression_result&recweb_new_value=deleted&recweb_old_value=$delete_item&recweb_comments=delete') 
+           from webPages where ID='aa-record_web_update.apg';">
+        <?/MISQL>  
+      
+    <?MIELSE>
+      <?MICOMMENT>  <?/MICOMMENT>
+      <?MIVAR NAME=xpcur_panel_fig>$(INDEX,1,$delete_item)<?/MIVAR>
+      <?MIVAR NAME=xpcur_panel_xpatex>$(INDEX,2,$delete_item)<?/MIVAR> 
+      <?MIVAR NAME=xpcur_panel_start_stg>$(INDEX,3,$delete_item)<?/MIVAR> 
+      <?MIVAR NAME=xpcur_panel_end_stg>$(INDEX,4,$delete_item)<?/MIVAR> 
+      <?MIVAR NAME=xpcur_xpatfig_delete><?/MIVAR>
+      <?MIVAR NAME=xpcur_xpatres_delete><?/MIVAR>             
+
+      <?MISQL SQL="
+        SELECT xpatres_zdb_id, count(*)
+          FROM expression_result, expression_pattern_figure fxpf1
+         WHERE xpatres_xpatex_zdb_id = '$xpcur_panel_xpatex'
+           AND xpatres_start_stg_zdb_id = '$xpcur_panel_start_stg'
+           AND xpatres_end_stg_zdb_id = '$xpcur_panel_end_stg' 
+           AND xpatres_zdb_id = fxpf1.xpatfig_xpatres_zdb_id
+           AND EXISTS
+               (
+                 SELECT *
+                   FROM expression_pattern_figure fxpf2
+                  WHERE fxpf2.xpatfig_fig_zdb_id = '$xpcur_panel_fig'
+                    AND fxpf2.xpatfig_xpatres_zdb_id = xpatres_zdb_id
+               )
+         GROUP BY 1
+          ;">          
+        <?MIVAR>$(VECAPPEND,$xpcur_xpatfig_delete,$1)<?/MIVAR>
+        <?MIVAR COND=$(EC,$2,1)>$(VECAPPEND,$xpcur_xpatres_delete,$1)<?/MIVAR>
+      <?/MISQL>       
+  
+      <?MIVAR NAME=xpcur_xpatres_delete_csv SEPARATE="','">$xpcur_xpatres_delete<?/MIVAR>
+      <?MIVAR NAME=xpcur_xpatfig_delete_csv SEPARATE="','">$xpcur_xpatfig_delete<?/MIVAR>
+      
+      <?MISQL SQL="
+        DELETE 
+          FROM expression_pattern_figure
+         WHERE xpatfig_fig_zdb_id = '$xpcur_panel_fig'
+           AND xpatfig_xpatres_zdb_id in ('$xpcur_xpatfig_delete_csv')
+          ;">
+      <?/MISQL>            
+      <?MIVAR NAME=xpcur_old_value>xpatfig_fig_zdb_id = $xpcur_panel_fig<br>xpatfig_xpatres_zdb_id = '$xpcur_xpatfig_delete_csv'<?/MIVAR>
+      <?MIVAR NAME=xpcur_old_value>$(URLENCODE,$xpcur_old_value)<?/MIVAR>
+      <?MISQL SQL="
+         select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=expression_result&recweb_new_value=deleted&recweb_old_value=$xpcur_old_value&recweb_comments=delete') 
+         from webPages where ID='aa-record_web_update.apg';">
+      <?/MISQL>      
+      
+      <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id in ('$xpcur_xpatres_delete_csv');"><?/MISQL>
+  
+    <?/MIBLOCK>  
+     
+  <?/MIBLOCK>
+
+<?MICOMMENT> 
+  =====================
+  =    Update Data    =
+  =====================
+<?/MICOMMENT>
+
+
+<?MIVAR NAME=xpcur_G_light_fig_text><?/MIVAR>
+<?MIVAR NAME=xpcur_G_TO_fig_text>unillustrated text statements<?/MIVAR>
+
+
+<?MIBLOCK COND=$(AND,$(XST,$pubcur_c_attribution_update),$(EC,$pubcur_c_attribution_update,update))>
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-attribupdate.apg';">$1<?/MISQL>
+<?/MIBLOCK>
+
+<?MICOMMENT> Perform update when pubcur_c_geno_update is set <?/MICOMMENT>
+<?MISQL COND="$(AND,$(XST,$pubcur_c_geno_update),$(EC,$pubcur_c_geno_update,update))" SQL="select WebExplode(object,'') from webPages where ID='aa-genoupdate.apg';">$1<?/MISQL>
+
+<?MICOMMENT>  Perform update when pubcur_c_pato_update is set <?/MICOMMENT>
+<?MISQL COND="$(AND,$(XST,$pubcur_c_pato_update),$(EC,$pubcur_c_pato_update,update))" SQL="select WebExplode(object,'') from webPages where ID='aa-patoupdate.apg';">$1<?/MISQL>
+
+<?MIBLOCK COND=$(AND,$(XST,$xpcur_c_xpatcuration_update),$(EC,$xpcur_c_xpatcuration_update,update))>
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-xpatcurupdate.apg';">$1<?/MISQL>
+<?/MIBLOCK>
+
+
+    
+  <?MIVAR>
+    <TITLE>Curate: $title</TITLE>
+  <?/MIVAR>
+  
+
+
+<?MICOMMENT> 
+  =====================
+  =    GLOBAL VARS    =
+  =====================
+
+  Select subsets of data specific to this publication.
+  The lists are codependent. Define them in the parent
+  page and not the function page.
+  
+  ZDB-id List
+  Gene List
+  Fish List
+  Probe List
+  Acc_num List
+  Environment List
+  Figure List
+  Image List
+
+<?/MICOMMENT>
+
+
+    <?MIVAR NAME=hide><font color=blue size=-1><u>hide</u></font><?/MIVAR>
+    <?MIVAR NAME=unhide><font color=blue size=-1><u>show</u></font><?/MIVAR>
+    <?MIVAR NAME=pubcur_G_active_row_color>#CCFFFF<?/MIVAR>
+    <?MIVAR NAME=pubcur_G_exp_standard_name>_Standard<?/MIVAR>
+
+    <?MIVAR NAME=pubcur_oid_attrib><?/MIVAR>
+    <?MISQL SQL="
+        select recattrib_data_zdb_id
+        from record_attribution 
+        where recattrib_source_zdb_id = '$OID'
+        ;">
+        <?MIVAR> $(VECAPPEND,$pubcur_oid_attrib,$1)<?/MIVAR>
+    <?/MISQL>
+      <?MIVAR NAME=pubcur_G_oid_attrib_csv SEPARATE="','">$pubcur_oid_attrib<?/MIVAR>
+
+
+    <?MIVAR NAME=pubcur_fish_attrib><?/MIVAR>
+    <?MISQL SQL="
+        select feature_zdb_id
+        from feature
+        where feature_zdb_id in ('$pubcur_G_oid_attrib_csv')
+        ;">
+        <?MIVAR> $(VECAPPEND,$pubcur_fish_attrib,$1)<?/MIVAR>
+    <?/MISQL>
+      <?MIVAR NAME=pubcur_G_fish_attrib_csv SEPARATE="','">$pubcur_fish_attrib<?/MIVAR>
+
+
+    <?MIVAR NAME=pubcur_geno_attrib><?/MIVAR>
+    <?MISQL SQL="
+        select geno_zdb_id
+        from genotype
+        where geno_zdb_id in ('$pubcur_G_oid_attrib_csv')
+        ;">
+        <?MIVAR> $(VECAPPEND,$pubcur_geno_attrib,$1)<?/MIVAR>
+    <?/MISQL>
+      <?MIVAR NAME=pubcur_G_geno_attrib_csv SEPARATE="','">$pubcur_geno_attrib<?/MIVAR>
+      
+      
+    <?MIVAR NAME=pubcur_gene_attrib><?/MIVAR>
+    <?MISQL SQL="
+        select mrkr_zdb_id
+        from marker 
+        where mrkr_zdb_id in ('$pubcur_G_oid_attrib_csv')
+          and mrkr_type in (select mtgrpmem_mrkr_type from marker_type_group_member where mtgrpmem_mrkr_type_group = 'GENEDOM')
+         ;">
+        <?MIVAR> $(VECAPPEND,$pubcur_gene_attrib,$1)<?/MIVAR>
+    <?/MISQL>
+      <?MIVAR NAME=pubcur_G_gene_attrib_csv SEPARATE="','">$pubcur_gene_attrib<?/MIVAR>
+
+      
+    <?MIVAR NAME=pubcur_est_attrib><?/MIVAR>
+    <?MISQL SQL="
+        select mrel_mrkr_2_zdb_id
+        from marker_relationship, record_attribution
+        where mrel_mrkr_1_zdb_id in ('$pubcur_G_gene_attrib_csv')
+          and mrel_mrkr_2_zdb_id = recattrib_data_zdb_id
+          and recattrib_source_zdb_id = '$OID'
+        ;">
+        <?MIVAR> $(VECAPPEND,$pubcur_est_attrib,$1)<?/MIVAR>
+    <?/MISQL>
+      <?MIVAR NAME=pubcur_G_est_attrib_csv SEPARATE="','">$pubcur_est_attrib<?/MIVAR>
+
+
+    <?MIVAR NAME=pubcur_dblink_genbank><?/MIVAR>
+    <?MISQL SQL="
+        select dblink_zdb_id
+        from db_link, foreign_db_contains
+        where dblink_linked_recid in ('$pubcur_G_gene_attrib_csv','$pubcur_G_est_attrib_csv')
+          and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+          and fdbcont_fdb_db_name = 'GenBank'
+        ;">
+        <?MIVAR> $(VECAPPEND,$pubcur_dblink_genbank,$1)<?/MIVAR>
+    <?/MISQL>
+      <?MIVAR NAME=pubcur_G_dblink_genbank_csv SEPARATE="','">$pubcur_dblink_genbank<?/MIVAR>
+
+
+    <?MIVAR NAME=pubcur_dblink_attrib><?/MIVAR>
+    <?MISQL SQL="
+        select dblink_zdb_id
+        from db_link
+        where dblink_zdb_id in ('$pubcur_G_oid_attrib_csv')
+        ;">
+        <?MIVAR> $(VECAPPEND,$pubcur_dblink_attrib,$1)<?/MIVAR>
+    <?/MISQL>
+      <?MIVAR NAME=pubcur_G_dblink_attrib_csv SEPARATE="','">$pubcur_dblink_attrib<?/MIVAR>
+
+
+    <?MIVAR NAME=pubcur_exp_attrib><?/MIVAR>
+    <?MISQL SQL="
+        select exp_zdb_id
+        from experiment 
+        where exp_zdb_id in ('$pubcur_G_oid_attrib_csv')
+        ;">
+        <?MIVAR> $(VECAPPEND,$pubcur_exp_attrib,$1)<?/MIVAR>
+    <?/MISQL>
+      <?MIVAR NAME=pubcur_G_exp_attrib_csv SEPARATE="','">$pubcur_exp_attrib<?/MIVAR>
+
+
+    <?MIVAR NAME=pubcur_fig_attrib><?/MIVAR>
+    <?MISQL SQL="
+        select fig_zdb_id
+        from figure
+        where fig_zdb_id in ('$pubcur_G_oid_attrib_csv')
+        $(IF,$(XST,$pubcur_c_figure_only),and fig_zdb_id = '$pubcur_c_figure_only')
+        ;">
+        <?MIVAR> $(VECAPPEND,$pubcur_fig_attrib,$1)<?/MIVAR>
+    <?/MISQL>
+      <?MIVAR NAME=pubcur_G_fig_attrib_csv SEPARATE="','">$pubcur_fig_attrib<?/MIVAR>
+
+
+    <?MIVAR NAME=pubcur_image_attrib><?/MIVAR>
+    <?MISQL SQL="
+        select img_zdb_id
+        from image
+        where img_zdb_id in ('$pubcur_G_oid_attrib_csv')
+          and img_fig_zdb_id in ('$pubcur_G_fig_attrib_csv')
+        ;">
+        <?MIVAR> $(VECAPPEND,$pubcur_image_attrib,$1)<?/MIVAR>
+    <?/MISQL>
+      <?MIVAR NAME=pubcur_G_image_attrib_csv SEPARATE="','">$pubcur_image_attrib<?/MIVAR>
+      
+      
+    <?MISQL SQL="
+        select max(LENGTH(mrkr_abbrev))::integer from marker where mrkr_zdb_id in ('$pubcur_G_gene_attrib_csv');">
+        <?MIVAR NAME=pubcur_G_max_gene_abbrev>$1<?/MIVAR>
+    <?/MISQL>
+    
+    <?MISQL SQL="
+        select max(LENGTH(geno_handle))::integer from genotype where geno_zdb_id in ('$pubcur_G_geno_attrib_csv') or geno_is_wildtype = 't';">
+        <?MIVAR NAME=pubcur_G_max_geno COND=$(NE,$1,NULL)>$(IF,$(<,$1,13),$1,$(-,$1,8))<?/MIVAR>
+    <?/MISQL>
+    
+    <?MISQL SQL="
+        select max(LENGTH(exp_name))::integer from experiment 
+        where exp_zdb_id in ('$pubcur_G_exp_attrib_csv')
+              or exp_name = '$pubcur_G_exp_standard_name';">
+        <?MIVAR NAME=pubcur_G_max_exp_name>$1<?/MIVAR>
+    <?/MISQL>
+  
+    <?MIVAR COND=$(NXST,$pubcur_c_tab) NAME=pubcur_c_tab>Genotype<?/MIVAR>
+
+
+
+<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-STORE">
+<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="MUST-REVALIDATE">
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+<META HTTP-EQUIV="EXPIRES" CONTENT="01 Jan 2000 00:00:00 GMT">
+
+<?MICOMMENT> 
+  ==========================
+  =    Onload Functions    =
+  ==========================
+
+  * Trigger javascript actions that alter the display. *
+  
+  For example. Each checkbox click in the expression section changes the
+  structure list. Setting the checkbox attribute checked will not trigger
+  the javascript and display information would be lost.
+  
+<?/MICOMMENT>
+
+<?MIVAR NAME=pubcur_onload><?/MIVAR>
+<?MIBLOCK COND=$(AND,$(XST,$xpcur_c_checked_expression),$(XST,$xpcur_c_panel),$(EC,$xpcur_c_panel,show))>
+  <?MIVAR NAME=pubcur_onload>rememberCheckedExpression();<?/MIVAR>
+<?/MIBLOCK>
+<?MIBLOCK COND=$(AND,$(XST,$xpcur_c_condition),$(EC,$xpcur_c_condition,show))>
+  <?MIVAR NAME=pubcur_onload>$pubcur_onload resetCondForm();<?/MIVAR>
+<?/MIBLOCK>
+
+<?MIVAR COND=$(NE,$pubcur_onload,)>
+  <body onLoad="$pubcur_onload">
+<?/MIVAR>
+
+
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+</td></tr>
+</table>
+
+<?MICOMMENT> 
+  ==============
+  =    TABS    =
+  ==============
+<?/MICOMMENT>
+
+<?MIVAR NAME=pubcur_tab_bgcolor>white<?/MIVAR>
+
+<div id="navcontainer">
+    <ul id="navlist">
+
+<?MIBLOCK INDEX=$category FOREACH=$pubcur_category>
+  <?MIVAR NAME=pubcur_tabid>$(IF,$(EC,$category,$pubcur_c_tab),id="active",)<?/MIVAR>
+  <?MIVAR NAME=pubcur_linkid>$(IF,$(EC,$category,$pubcur_c_tab),id="current",)<?/MIVAR>
+  <?MIVAR>
+      <li $pubcur_tabid><a href="#" $pubcur_linkid onClick="urlSetCookie('tab','$category','pubcur_c_');">$category</a></li>
+  <?/MIVAR>
+<?/MIBLOCK>
+
+    </ul>
+</div>
+
+<?MICOMMENT> 
+  ===========================
+  =    EMULATE DATA MNGR    =
+  ===========================
+<?/MICOMMENT>
+
+<?MICOMMENT> *** First find out the last modification date of the record in question. *** <?/MICOMMENT>
+<?MISQL SQL="
+    select when, day(when), comments, month(when), year(when) 
+    from updates 
+    where rec_id='$OID' 
+    order by when;">
+<?/MISQL>
+<?MIVAR NAME=$mod_date COND="$(OR,$(EC,$1,NOVALUE),$(EC,$3,*RECORD_CREATED*))">Never modified<?/MIVAR>
+
+<?MIVAR  NAME=$mod_date COND="$(AND,$(NC,$1,NOVALUE),$(NC,$3,*RECORD_CREATED*))">
+$(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5 
+<?/MIVAR>
+
+<div id="DataManager">
+    <ul id="datamngr">
+        <li id="pub_id">ZFIN ID: <?MIVAR>$OID<?/MIVAR></li>
+        <?MIVAR>
+        <li id="mod_date"><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-update-vframeset.apg&OID=$OID&rtype=fish">Updated: $mod_date</a></li>
+        <?/MIVAR>
+    </ul>
+</div>
+
+  
+<?MICOMMENT> 
+  ==================================
+  =    PUBLICATION TABLE HEADER    =
+  ==================================
+<?/MICOMMENT>
+
+<?MISQL SQL="
+  select title, authors, year(pub_date) as pyear, jrnl_abbrev 
+  from publication, journal
+  where zdb_id = '$OID'
+  and jrnl_zdb_id = pub_jrnl_zdb_id;">
+<?/MISQL>
+<?MIVAR NAME=pubcur_title>$1<?/MIVAR>
+<?MIVAR NAME=pubcur_authors>$2<?/MIVAR>
+<?MIVAR NAME=pubcur_year>$3<?/MIVAR>
+<?MIVAR NAME=pubcur_jrnl_abbrev>$4<?/MIVAR>
+
+
+<div id="subDataManager">
+  <ul id="subdatamngr">
+  <?MIVAR>
+    <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$OID">$pubcur_authors ($pubcur_year)
+          $pubcur_title $pubcur_jrnl_abbrev</a></li>
+          
+  <?/MIVAR>
+  </ul>
+</div>
+
+<script src="http://<!--|DOMAIN_NAME|-->/autosuggest.js"></script>
+
+
+<br>
+<p>
+<a name=attrib>
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#attrib" method=post name=attribution onSubmit="setCookie('attribution_update','update','pubcur_c_');setCookie('anchor','attrib','pubcur_c_');">
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+
+    
+  Attribute Mrkr: 
+     <input type=textbox name=pubcur_G_mrkr_attrib id=MRKRterm size=10>             
+     <input type=submit value=Submit>
+
+  &nbsp;&nbsp;&nbsp;
+
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+
+  Attribute Feature: 
+     <input type=textbox name=pubcur_G_fish_attrib size=10> 
+     <input type=submit value=Submit>
+
+  &nbsp;&nbsp;&nbsp;  
+  Remove Data: 
+    <select name=pubcur_G_remove_attrib>
+    <option value="-">***MARKER</option>
+    <?MISQL SQL="
+      select distinct mrkr_zdb_id, mrkr_abbrev
+        from marker, record_attribution
+       where recattrib_data_zdb_id = mrkr_zdb_id
+         and recattrib_source_zdb_id = '$OID';">
+      <option value=$1>$2</option>
+    <?/MISQL> 
+    <option value="-">***FEATURE</option>
+    <?MISQL SQL="
+      select distinct feature_zdb_id, feature_abbrev
+        from feature, record_attribution
+       where recattrib_data_zdb_id = feature_zdb_id
+         and recattrib_source_zdb_id = '$OID';">
+      <option value=$1>$2</option>
+    <?/MISQL>
+    <option value="-">***GENOTYPE</option>
+    <?MISQL SQL="
+      select distinct geno_zdb_id, geno_nickname
+        from genotype, record_attribution
+       where recattrib_data_zdb_id = geno_zdb_id
+         and recattrib_source_zdb_id = '$OID';">
+      <option value=$1>$2</option>
+    <?/MISQL>
+    </select>
+    <input type=submit value=Submit>
+
+<br>    
+</form>
+
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Starting Environment
+<?/MISQL>
+
+
+
+
+
+<?MICOMMENT> 
+  ===================
+  =  TAB SELECTION  =
+  ===================
+<?/MICOMMENT>
+
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Begin Tab
+<?/MISQL>
+
+<?MIBLOCK COND="$(AND,$(XST,$pubcur_c_tab),$(EC,$pubcur_c_tab,FX))">
+   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-xpatcuration.apg';">$1<?/MISQL>
+<?/MIBLOCK>
+<?MIBLOCK COND="$(AND,$(XST,$pubcur_c_tab),$(EC,$pubcur_c_tab,PATO))">
+   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-patocuration.apg';">$1<?/MISQL>
+<?/MIBLOCK>
+<?MIBLOCK COND="$(AND,$(XST,$pubcur_c_tab),$(EC,$pubcur_c_tab,Environment))">
+    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-experimentcuration.apg';">$1<?/MISQL>
+<?/MIBLOCK>
+<?MIBLOCK COND="$(AND,$(XST,$pubcur_c_tab),$(EC,$pubcur_c_tab,Figure))">
+   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-figurecuration.apg';">$1<?/MISQL>
+<?/MIBLOCK>
+<?MIBLOCK COND="$(AND,$(XST,$pubcur_c_tab),$(EC,$pubcur_c_tab,Feature))">
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-featcuration.apg';">$1<?/MISQL>
+<?/MIBLOCK>
+<?MIBLOCK COND="$(AND,$(XST,$pubcur_c_tab),$(EC,$pubcur_c_tab,Genotype))">
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-genotypecuration.apg';">$1<?/MISQL>
+<?/MIBLOCK>
+
+
+<?MICOMMENT> 
+  ====================
+  =  ERROR MESSAGES  =
+  ====================
+<?/MICOMMENT>
+  
+<?MIELSE>
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+  <b>Requested ID not found in ZFIN.</b>
+<?/MIBLOCK> <?MICOMMENT> title is null <?/MICOMMENT>
+
+<?MIELSE>
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+  <p>Authorization for this page failed.
+  <p>A session error may have occurred. Try logging out and logging back in. If that does not work, contact your database administrator.
+<?/MIBLOCK> <?MICOMMENT> not authorized <?/MICOMMENT>
+
+<?MIELSE>
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+  <P>
+  ERROR -- something bad happened -- no OID passed in!
+<?/MIBLOCK>
+<?MIBLOCK COND="$(XST,$featcurup_marker_zdb_id)">
+<?MISQL SQL="
+      execute procedure regen_names_marker('$featcurup_marker_zdb_id');">
+    <?/MISQL>
+<?/MIBLOCK>
+<?MIBLOCK COND="$(XST,$featcurup_feature_zdb_id)">
+<?MISQL SQL="
+      execute procedure regen_names_feature('$featcurup_feature_zdb_id');">
+    <?/MISQL>
+<?/MIBLOCK>
+<?MIBLOCK COND="$(XST,$featcur_featedit_feature_zdb_id)">
+<?MIBLOCK COND="$(=,5,$(POSITION,$featcur_featedit_feature_zdb_id,ALT))">
+<?MISQL SQL="
+      execute procedure regen_names_feature('$featcur_featedit_feature_zdb_id');">
+    <?/MISQL>
+<?MIELSE>
+<?MISQL SQL="
+      execute procedure regen_names_marker('$featcur_featedit_feature_zdb_id');">
+    <?/MISQL>
+<?/MIBLOCK>
+<?/MIBLOCK>
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>

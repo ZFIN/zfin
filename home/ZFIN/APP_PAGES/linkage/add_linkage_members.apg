@@ -8,7 +8,6 @@ Possible vars: update
 
 <?/MICOMMENT>
 
-
 <HEAD>
   <SCRIPT>
      function pick_me(link_id,mark_id,source,lg,usercomments,ZDB_ident) {
@@ -58,7 +57,7 @@ Possible vars: update
   $(IF,$(XST,$update),"<input type=hidden name=update value="$update">")
   $(IF,$(XST,$lg),"<input type=hidden name=lg value="$lg">")
   $(IF,$(XST,$source),"<input type=hidden name=source value="$source">")
-  <input type=hidden name=usercomments value="$(URLENCODE,$usercomments)">
+  <input type=hidden name=usercomments value="$usercomments">
   <input type=hidden name=link_id value="$link_id">
 <?/MIVAR>
 
@@ -132,10 +131,14 @@ Linkage Members:   (At least one member must be specified) <br>
     <?/MISQL>
     <?MIVAR NAME=$num_members>$MI_ROWCOUNT<?/MIVAR>
   
-    <?MISQL SQL=" select distinct a.allele, c.abbrev from fish a , linkage_member b, locus c
-         where b.lnkgmem_linkage_zdb_id = '$link_id'
-           and b.lnkgmem_member_zdb_id = a.zdb_id
-           and a.locus = c.zdb_id;">
+    <?MISQL SQL=" select distinct feature_abbrev,geno_display_name 
+           from feature,genotype,genotype_feature,linkage_member
+         where lnkgmem_linkage_zdb_id = '$link_id'
+	   and lnkgmem_member_zdb_id = feature_zdb_id
+	   and genofeat_feature_zdb_id = feature_zdb_id
+	   and genofeat_geno_zdb_id = geno_zdb_id
+	  order by feature_abbrev
+            ;">
     $1 ($2)
     <br>
     <?/MISQL>           
@@ -154,7 +157,8 @@ Linkage Members:   (At least one member must be specified) <br>
 	       where marker_type in (select mtgrpmem_mrkr_type
 				       from marker_type_group_member
 				      where mtgrpmem_mrkr_type_group='SEARCH_MKSEG')
-	       order by mrkrtype_significance
+				        and marker_type not in ('TGCONSTRCT','GTCONSTRCT','PTCONSTRCT','ETCONSTRCT','MRPHLNO')
+	                                order by mrkrtype_significance
 		;">	
 	   <option value=$1 $(IF,$(EC,$mtype,$1),SELECTED)>$2
         <?/MISQL>
@@ -167,7 +171,7 @@ Linkage Members:   (At least one member must be specified) <br>
        <?MIBLOCK COND="$(AND,$(NC,$mtype,mutant),$(XST,$member))">
 	 <hr>
 	 <TABLE cols=2>
-	 <TR><TH></TH><TH>Marker Name</TH><TH>Marker Type</TH></TR>
+	 <TR><TH></TH><TH>Marker Name</TH>
 	 <?MISQL SQL="
            select distinct mrkr_zdb_id, mrkr_name, mrkrtype_type_display,
                   mrkr_abbrev 
@@ -185,9 +189,6 @@ Linkage Members:   (At least one member must be specified) <br>
 	     <TD>
 	       $2($4)
 	     </TD>
-	     <TD>
-	       $3
-	     </TD>
 	   </TR>
 	 <?/MISQL>
 	 </TABLE>
@@ -198,12 +199,13 @@ Linkage Members:   (At least one member must be specified) <br>
        <?MIBLOCK COND="$(AND,$(EC,$mtype,mutant),$(XST,$member))">
 	 <hr>
 	 <TABLE cols=2>
-	 <TR><TH></TH><TH>Allele</TH><TH>Locus</TH></TR>
-	 <?MISQL SQL="select distinct a.zdb_id,a.allele,b.abbrev 
-	   from fish a, locus b
-	     where  a.locus = b.zdb_id 
-               and lower(b.abbrev) like '%$(LOWER,$member)%' 
-	       order by b.abbrev;">
+	 <TR><TH></TH><TH>Allele</TH><TH>Genotype</TH></TR>
+	 <?MISQL SQL="select distinct feature_zdb_id,feature_abbrev,geno_display_name
+	   from feature,genotype,genotype_feature
+	     where lower(feature_abbrev) like '%$(LOWER,$member)%'
+	     and genofeat_feature_zdb_id = feature_zdb_id
+	     and genofeat_geno_zdb_id = geno_zdb_id
+	     order by feature_abbrev;">
 	   <TR>
 	     <TD>
 	       <input type=button name=member_selected value="Select" onClick="pick_me('$link_id','$1','$source','$lg','$(URLENCODE,$usercomments)','$ZDB_ident');">

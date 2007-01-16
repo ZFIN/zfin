@@ -60,13 +60,15 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
 <table BORDER CELLPADDING=2 BGCOLOR="<!--|HIGHLIGHT_COLOR|-->" WIDTH="100%"><tr><th>Table of Contents</th></tr></table>
 <br>
 <table>
-<tr><td><a HREF="#marker"> Genetic markers</a></td></tr>
+<tr><td><a HREF="#marker"> Genetic Markers</a></td></tr>
+<tr><td><a HREF="#alias"> Previous Names</a></td></tr>
 <tr><td><a HREF="#map" >Mapping Data</a></td></tr>
 <tr><td><a HREF="#seq"> Sequence Data</a></td></tr>
 <tr><td><a HREF="#orthology"> Orthology Data</a></td></tr>
 <tr><td><a HREF="#go"> Gene Ontology Data</a></td></tr>
 <tr><td><a HREF="#expression"> Gene Expression</a></td></tr>
-<tr><td><a HREF="#mutant"> Mutant Data</a></td></tr>
+<tr><td><a HREF="#genotype"> Genotype Data</a></td></tr>
+<tr><td><a HREF="#wildtypes"> Wildtype Lines</a></td></tr>
 <tr><td><a HREF="#ad"> Anatomical Ontologies</a></td></tr>
 <tr><td><a HREF="#mo"> Morpholino Data</a></td></tr>
 </table>
@@ -76,16 +78,20 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
 <a NAME="marker"></a><br>
 <table BORDER CELLPADDING=2 BGCOLOR="<!--|HIGHLIGHT_COLOR|-->" WIDTH="100%"><tr><th>Genetic Markers</th></tr></table>
 
-<p><b> Genetic markers</b>
+<p><b> Genetic Markers</b>
 <table BORDER CELLPADDING=2><tr><td>ZFIN ID</td><td>Symbol</td><td>Name</td><td>Marker type</td></tr></table>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/genetic_markers.txt">Download</a>
 
-<p><b> Previous names</b>
-<table BORDER CELLPADDING=2><tr><td>ZFIN ID</td><td>Symbol</td></tr></table>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/marker_alias.txt">Download</a>
-
 <p><b> Previous ZFIN IDS</b> includes former and current ZFIN IDs for merged data<table BORDER CELLPADDING=2><tr><td>Former ZFIN ID</td><td>Current ZFIN ID</td></tr></table>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/zdb_history.txt">Download</a>
+
+<!-- -->
+<a NAME="alias"></a><br>
+<table BORDER CELLPADDING=2 BGCOLOR="<!--|HIGHLIGHT_COLOR|-->" WIDTH="100%"><tr><th>Previous Names</th></tr></table>
+
+<p><b> Previous names</b>
+<table BORDER CELLPADDING=2><tr><td>Current ZFIN ID</td><td>Current Name</td><td>Current Symbol</td><td>Previous Name</td></tr></table>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/aliases.txt">Download</a>
 
 <!-- -->
 
@@ -205,19 +211,30 @@ http://zfin.org/cgi-bin/ZFIN_jump?record=<p>
 <table BORDER CELLPADDING=2 BGCOLOR="<!--|HIGHLIGHT_COLOR|-->" WIDTH="100%"><tr><th>Gene Expression</th></tr></table>
 
 <p><b> ZFIN Genes with Expression Assay Records</b>
-<table BORDER CELLPADDING=2><tr><td>Gene ID</td><td>Gene Symbol</td><td>EST ID(optional)</td><td>EST Symbol(optional)</td><td>Expression Type</td><td>Expression ID</td><td>Publication ID</td><td>Fish Line ID</td><td>Environment ID</td></tr></table>
+<table BORDER CELLPADDING=2><tr><td>Gene ID</td><td>Gene Symbol</td><td>EST ID(optional)</td><td>EST Symbol(optional)</td><td>Expression Type</td><td>Expression ID</td><td>Publication ID</td><td>Genotype ID</td><td>Environment ID</td></tr></table>
 
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/xpat.txt">Download</a>
 
 
 <!-- -->
+<a NAME="genotype"></a><br><br>
+<table BORDER CELLPADDING=2 BGCOLOR="<!--|HIGHLIGHT_COLOR|-->" WIDTH="100%"><tr><th>Genotype Data</th></tr></table>
 
-<a NAME="mutant"></a><br><br>
-<table BORDER CELLPADDING=2 BGCOLOR="<!--|HIGHLIGHT_COLOR|-->" WIDTH="100%"><tr><th>Mutant Data</th></tr></table>
+<p><b> Genotype Features</b>
+<table BORDER CELLPADDING=2><tr><td>ZFIN ID</td><td>Genotype Display Name</td><td>Genotype Unique Name</td><td>Allele Name</td><td>Allele Abbreviation</td><td>Allele Type</td><td>Gene or Construct Symbol</td><td>Corresponding ZFIN Gene ID/Construct ID</td></tr></table>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/genotype_features.txt">Download</a>
 
-<p><b> Mutants</b>
-<table BORDER CELLPADDING=2><tr><td>ZFIN ID</td><td>Allele</td><td>Locus abbrev</td><td>Locus name</td><td>ZFIN Locus ID</td><td>Phenotype Keywords</td><td>Gene Symbol</td><td>Corresponding ZFIN Gene ID</td></tr></table>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/alleles.txt">Download</a>
+<p><b> Genotype Backgrounds </b>
+<table BORDER CELLPADDING=2><tr><td>ZFIN ID</td><td>Genotype Name</td><td>Background</td></tr></table>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/genotype_backgrounds.txt">Download</a>
+
+<!-- -->
+<a NAME="wildtypes"></a><br><br>
+<table BORDER CELLPADDING=2 BGCOLOR="<!--|HIGHLIGHT_COLOR|-->" WIDTH="100%"><tr><th>Wildtype Lines</th></tr></table>
+
+<p><b> Wildtype Lines </b>
+<table BORDER CELLPADDING=2><tr><td>ZFIN ID</td><td>Genotype Name</td><td>Genotype Abbreviation</td></tr></table>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a HREF="/data_transfer/Downloads/wildtypes.txt">Download</a>
 
 <!-- -->
 

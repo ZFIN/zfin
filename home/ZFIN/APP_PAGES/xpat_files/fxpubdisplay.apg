@@ -57,11 +57,10 @@ $fxpubdis_probe_zdb_id (probe zdb id for unpublished pubs)
 <?MIVAR NAME=$fxpubdis_volume>$8<?/MIVAR>
 <?MIVAR NAME=$fxpubdis_pages>$9<?/MIVAR>
 
-<?MIVAR NAME=$fxpubdis_source>$fxpubdis_jrnl<?/MIVAR>
-
 <?MICOMMENT> IF volume is null and pages is not null, colon should be empty 
 <?/MICOMMENT>
 <?MIVAR NAME=$fxpubdis_colon><?/MIVAR>
+<?MIVAR NAME=$fxpubdis_source>$fxpubdis_jrnl<?/MIVAR>
 <?MIBLOCK COND="$(NC,$fxpubdis_volume,)">
    <?MIVAR NAME=$fxpubdis_source>$fxpubdis_source $fxpubdis_volume<?/MIVAR>
    <?MIVAR NAME=$fxpubdis_colon>:<?/MIVAR>
@@ -69,15 +68,17 @@ $fxpubdis_probe_zdb_id (probe zdb id for unpublished pubs)
 <?MIVAR NAME=$fxpubdis_source COND="$(NC,$fxpubdis_pages,)">$fxpubdis_source$fxpubdis_colon$fxpubdis_pages<?/MIVAR>
 <?MIVAR NAME=$fxpubdis_source COND="$(AND,$(NC,$fxpubdis_jtype,Unpublished),$(NC,$fxpubdis_jtype,Journal))">$fxpubdis_source($fxpubdis_jtype)<?/MIVAR>
 
+<?MIVAR NAME=$fxpubdis_source COND="$(EC,$fxpubdis_zdb_id,ZDB-PUB-060503-2)"><?/MIVAR>
 <?MICOMMENT>
 Determine if the pub has multiple figures. This is used to determine if we need
 to display the "Additional figures" link
 <?/MICOMMENT>
+<?MIBLOCK COND="$(NC,$fxpubdis_jtype,Curation)">
 <?MISQL SQL="select count(fig_zdb_id)::integer from figure where fig_source_zdb_id='$fxpubdis_source_zdb_id'"><?/MISQL>
 <?MIBLOCK COND="$(>,$1,1)">
     <?MIVAR NAME=$fxpubdis_morefig><?/MIVAR>
 <?/MIBLOCK>
-
+<?/MIBLOCK>
 <?MIBLOCK COND="$(XST,$fxpubdis_is_figure)"><?MICOMMENT>get probe id corresponding to figure record<?/MICOMMENT>
     <?MISQL SQL="
                select xpatex_probe_feature_zdb_id

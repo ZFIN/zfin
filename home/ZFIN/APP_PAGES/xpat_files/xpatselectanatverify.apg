@@ -8,7 +8,7 @@ converting anatomical terms to a zdb_id list
 and display information about the expression
 patterns related to the anatomy items.
 
-This file is only called from xpatselect.apg
+This file is called from either xpatselect.apg or fishselect.apg (with parameter $xpanatv_called_from = "mutantpage")
 
 INPUT VARS:
   xpanatv_processed_selected_structures		pipe seperated list of user entered terms
@@ -17,6 +17,7 @@ INPUT VARS:
 OUTPUT VARS:
   xpanatv_anatomy_zdb_id_list	anatitem_zdb_id vector of anatomy items that match the terms entered.
   xpanatv_anatomy_error_occured	set to 't' if a structure name isn't in the database
+  xpanatv_called_from           only exists as 'mutantpage' if called from fishselect.apg
 
 OUTPUT:
   An html table giving feedback about anatomical terms entered.
@@ -99,17 +100,24 @@ ORDER BY 1
           </td>
           <td bgcolor="#EEEEEE">
             <FONT size=-1 style="font-family:arial;">
+            
+            <?MIBLOCK COND="$(NXST,$xpanatv_called_from)"> <?MICOMMENT> called from xpatselect.apg <?/MICOMMENT>
+            <?MICOMMENT> ** Joining on xpatfig to protect code from xpatres records that have lost their 
+                            connection to data and screw up the counts.  The data will get fixed also, but 
+                            this way if it happens again nobody will blame this code ** <?/MICOMMENT>
               <?MISQL SQL="
 select distinct xpatex_gene_zdb_id
 from expression_experiment
      join expression_result
        on xpatex_zdb_id = xpatres_xpatex_zdb_id
+     join expression_pattern_figure on xpatfig_xpatres_zdb_id = xpatres_zdb_id
 where xpatres_anat_item_zdb_id = '$xpanatv_item_zdb_id'
 UNION
 select distinct xpatex_gene_zdb_id
 from expression_experiment
      join expression_result
        on xpatex_zdb_id = xpatres_xpatex_zdb_id
+     join expression_pattern_figure on xpatfig_xpatres_zdb_id = xpatres_zdb_id
      join all_anatomy_contains
        on allanatcon_contained_zdb_id = xpatres_anat_item_zdb_id
 where allanatcon_container_zdb_id = '$xpanatv_item_zdb_id'
@@ -123,6 +131,77 @@ where allanatcon_container_zdb_id = '$xpanatv_item_zdb_id'
 	        has no expression data.
               <?/MIBLOCK>
 
+     <?MIELSE COND="$(AND,$(XST,$xpanatv_called_from),$(EC,$xpanatv_called_from,mutantpage))"> <?MICOMMENT> called from fishselect.apg <?/MICOMMENT>
+     <?MICOMMENT>------------------------------------------------------------
+               -- temp table $temp_on_anat holds geno zdb ids 
+               ------------------------------------------------------------
+     <?/MICOMMENT>
+  <?MISQL SQL="
+      select dbinfo('sessionid') 
+        from single;">
+      <?MIVAR NAME=$session_id>$1<?/MIVAR>
+  <?/MISQL>     
+     <?MIVAR NAME=$temp_on_anat>$(CONCAT,temp_on_anat_,$session_id)<?/MIVAR>
+     <?MISQL SQL="
+       execute function table_exists('$temp_on_anat')">
+       <?MISQL COND=$(EC,$1,f) SQL="
+         create temp table $temp_on_anat (
+             g_zdb_id	 	varchar(50)
+         ) with NO LOG;">
+       <?/MISQL>
+     <?/MISQL>     
+
+     <?MICOMMENT> -------------------------------------------------------------
+             -- get genotypes directly related to the anatomy terms
+             ---------------------------------------------------------------------
+     <?/MICOMMENT>
+     <?MISQL SQL="
+	insert into $temp_on_anat(g_zdb_id)
+	     select genox_geno_zdb_id
+	       from genotype_experiment, atomic_phenotype 
+              where genox_zdb_id = apato_genox_zdb_id
+                and apato_entity_a_zdb_id = '$xpanatv_item_zdb_id';">
+     <?/MISQL>
+     <?MISQL SQL="
+	insert into $temp_on_anat(g_zdb_id)
+	     select genox_geno_zdb_id
+	       from genotype_experiment, atomic_phenotype 
+              where genox_zdb_id = apato_genox_zdb_id
+                and apato_entity_b_zdb_id = '$xpanatv_item_zdb_id';">
+     <?/MISQL>   
+  
+     <?MICOMMENT> -------------------------------------------------------------
+             -- include substructure
+             ---------------------------------------------------------------------
+     <?/MICOMMENT>   
+       <?MISQL SQL="
+	insert into $temp_on_anat(g_zdb_id)
+	     select genox_geno_zdb_id
+	       from genotype_experiment, atomic_phenotype, all_anatomy_contains
+              where genox_zdb_id = apato_genox_zdb_id
+                and apato_entity_a_zdb_id = allanatcon_contained_zdb_id
+                and allanatcon_container_zdb_id = '$xpanatv_item_zdb_id';">
+       <?/MISQL>
+       <?MISQL SQL="
+	insert into $temp_on_anat(g_zdb_id)
+	     select genox_geno_zdb_id
+	       from genotype_experiment, atomic_phenotype, all_anatomy_contains
+              where genox_zdb_id = apato_genox_zdb_id
+                and apato_entity_b_zdb_id = allanatcon_contained_zdb_id
+                and allanatcon_container_zdb_id = '$xpanatv_item_zdb_id';">
+       <?/MISQL>  
+
+       <?MISQL SQL="select distinct g_zdb_id from $temp_on_anat;">
+       <?/MISQL>  
+              <?MIVAR name=$xpanatv_totalcount>$MI_ROWCOUNT<?/MIVAR>
+
+              <?MIBLOCK COND="$(>,$xpanatv_totalcount,0)"> 
+                <?MIVAR>has <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&fsel_anatomy_item_id=$xpanatv_item_zdb_id&fsel_anatomy_include=yes&WINSIZE=25" target="_parent"><B>($xpanatv_totalcount)</B></A> mutant/transgenic line(s) (including substructures) <?/MIVAR>
+              <?MIELSE>                                                                                                            
+	        has no mutant/transgenic data.
+              <?/MIBLOCK>
+        <?MISQL SQL="delete from $temp_on_anat;"><?/MISQL>
+     <?/MIBLOCK>
             </FONT>
             <FONT size=-1 style="font-family:arial; font-weight:bold;  ">
               <?MIVAR>$xpanatv_matchingText<?/MIVAR>

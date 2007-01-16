@@ -1,0 +1,604 @@
+<?MICOMMENT>
+
+FILE:     patocurupdate.apg
+PREFIX:   patoup_
+
+This file performs the database updates/inserts for the genotype builder. 
+
+
+
+INPUT VARS:
+
+  REQUIRED:
+    $OID :: publication zdb-id
+    $AUTHORIZED :: this is a subroutine. the authorization must occur in the calling page.
+    $ZDB_ident  :: id of logged in user
+
+  OPTIONAL:  
+
+  phenotype characteristic
+    patoup_addtopile       :: flag for new record
+    patoup_entity_a_ontology        :: might not be necessary, which ontology the entity belongs to 
+    patoup_entity_a_name   :: entity a zdb_id
+    patoup_entity_b_ontology        :: which ontology entity_b comes from
+    patoup_entity_b_name   :: entity b zdb_id
+    patoup_quality_name  :: quality name 
+    patoup_tag             :: tag text, from controlled vocabulary
+
+  mutant 
+    patoup_add_mutant      :: flag for new fig-genox set [new mutant]
+    patoup_fig_zdb_id        :: figure id
+
+    patoup_geno_zdb_id       :: genotype id
+    patoup_exp_zdb_id        :: experiment id (aka enviornment)
+
+    patoup_start_stg_zdb_id  :: start stage id
+    patoup_end_stg_zdb_id    :: end stage id
+
+    patoup_delete_mutant        :: flag for deleting a fig-genox (mutant) set
+    patoup_fig_zdb_id           :: figure id
+    patoup_example_apato_zdb_id :: unlink from figure or delete everything that matches this apato
+                                   record's genox_zdb_id and stages
+
+  updatephenos
+    patoup_updatephenos                  :: flag to update phenotype / mutant connections
+    patoup_updatephenos_selectedmutants  :: 'mutants' to update, fig|example_api_zdb_id, get genox & stages from api 
+    patoup_updatephenos_selectedmutants_count :: number of mutants
+    patoup_updatephenos_add              :: | seperated api_zdb_id's to add 
+    patoup_updatephenos_add_count        :: # to add
+    patoup_updatephenos_remove           :: | seperated api_zdb_id's to remove
+    patoup_updatephenos_remove_count     :: # to remove
+
+OUTPUT VARS:
+  None.
+
+OUTPUT:
+  None
+
+EFFECTS  
+
+  
+  Set cookie pubcur_c_pato_update to 'no'.  
+
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
+<?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
+  <?MIBLOCK COND="$(AND,$(XST,$pubcur_c_pato_update),$(EC,$pubcur_c_pato_update,update))">
+
+  <?MICOMMENT> *** we hit the update section, unset the update flag *** <?/MICOMMENT>
+  <script type="text/javascript">
+      setCookie('pato_update','no','pubcur_c_')
+  </script>
+
+  <?MICOMMENT> *** Set some globals to define the contents of a 'default' apato record
+                   that will be used as a placeholder when new apato records are created *** <?/MICOMMENT> 
+
+    <?MICOMMENT> ** get default quality id ** <?/MICOMMENT>
+    <?MISQL SQL="select term_zdb_id from term where term_name = 'quality';">
+      <?MIVAR NAME="$patoup_default_quality_zdb_id">$1<?/MIVAR>
+    <?/MISQL>
+
+    <?MICOMMENT> ** get default entity id ** <?/MICOMMENT>
+      
+    <?MISQL SQL="select anatitem_zdb_id 
+                  from anatomy_item 
+                  where anatitem_name = 'unspecified';">
+      <?MIVAR NAME="$patoup_default_entity_zdb_id">$1<?/MIVAR>
+    <?/MISQL>
+
+    <?MIVAR NAME="$patoup_default_tag">abnormal<?/MIVAR>
+
+
+  <?MICOMMENT> *** Add new atomic pato characteristic to the apato_infrastructure *** <?/MICOMMENT>
+
+  <?MIBLOCK COND="$(XST,$patoup_addtopile)">
+
+    <?MICOMMENT> ** process entity and quality names for single quotes ** <?/MICOMMENT>
+    <?MIVAR NAME="$patoup_entity_a_name" DELIMIT="'" REPLACE="''">$patoup_entity_a_name<?/MIVAR>
+    <?MIVAR COND="$(XST,$patoup_entity_b_name)" NAME="$patoup_entity_b_name" DELIMIT="'" REPLACE="''">$patoup_entity_b_name<?/MIVAR>
+    <?MIVAR NAME="$patoup_quality_name" DELIMIT="'" REPLACE="''">$patoup_quality_name<?/MIVAR>
+
+
+    <?MICOMMENT> ** convert quality_name to quality_id ** <?/MICOMMENT>
+    <?MISQL SQL="select term_zdb_id from term where term_name='$patoup_quality_name';">
+      <?MIVAR NAME="$patoup_quality_zdb_id">$1<?/MIVAR>
+    <?/MISQL>
+
+    <?MIBLOCK COND="$(NXST,$patoup_quality_zdb_id)">
+      <?MIVAR><script>alert("No match for quality '$patoup_quality_name' in PATO, using 'quality' instead.");</script><?/MIVAR>
+      <?MISQL SQL="select first 1 term_zdb_id 
+                   from term
+                   where term_name = 'quality'
+                     and term_is_root = 't';">
+        <?MIVAR NAME="$patoup_quality_zdb_id">$1<?/MIVAR>
+      <?/MISQL>
+    <?/MIBLOCK>
+
+    <?MICOMMENT> ** convert entity_a_name to entity_id ** <?/MICOMMENT>
+    <?MIBLOCK COND="$(EC,$patoup_entity_a_ontology,AO)">
+      <?MISQL SQL="select anatitem_zdb_id from anatomy_item where anatitem_name = '$patoup_entity_a_name';">
+        <?MIVAR NAME="$patoup_entity_a_zdb_id">$1<?/MIVAR>
+      <?/MISQL>
+    <?MIELSE COND="$(EC,$patoup_entity_a_ontology,GO)"> 
+      <?MISQL SQL="select goterm_zdb_id from go_term where goterm_name = '$patoup_entity_a_name';">
+        <?MIVAR NAME="$patoup_entity_a_zdb_id">$1<?/MIVAR>
+      <?/MISQL>
+    <?/MIBLOCK>
+
+    <?MICOMMENT> ** if we have a name and we didn't get an id, set the error to abort ** <?/MICOMMENT>
+    <?MIBLOCK COND="$(AND, $(NXST,$patoup_entity_a_zdb_id), $(XST,$patoup_entity_a_name) )">
+      <?MIVAR><script>alert("No match for entity a, '$patoup_entity_a_name' in '$patoup_entity_a_ontology'");</script><?/MIVAR>
+      <?MIVAR NAME="$patoup_addtopile_error">entity a failed<?/MIVAR>
+    <?/MIBLOCK>
+
+    <?MICOMMENT> ** convert entity_b_name to entity_id if not null ** <?/MICOMMENT>
+
+    <?MIBLOCK COND="$(XST,$patoup_entity_b_name)">
+      <?MIBLOCK COND="$(EC,$patoup_entity_b_ontology,AO)">
+        <?MISQL SQL="select anatitem_zdb_id from anatomy_item where anatitem_name = '$patoup_entity_b_name';">
+          <?MIVAR NAME="$patoup_entity_b_zdb_id">$1<?/MIVAR>
+        <?/MISQL>
+      <?MIELSE COND="$(EC,$patoup_entity_b_ontology,GO)"> 
+        <?MISQL SQL="select goterm_zdb_id from go_term where goterm_name = '$patoup_entity_b_name';">
+          <?MIVAR NAME="$patoup_entity_b_zdb_id">$1<?/MIVAR>
+        <?/MISQL>
+      <?/MIBLOCK> 
+    <?/MIBLOCK>
+
+    <?MICOMMENT> ** if we have a name and we didn't get an id, set the error to abort ** <?/MICOMMENT>
+    <?MIBLOCK COND="$(AND, $(NXST,$patoup_entity_b_zdb_id), $(XST,$patoup_entity_b_name) )">
+      <?MIVAR><script>alert("No match for entity b, '$patoup_entity_b_name' in '$patoup_entity_b_ontology'");</script><?/MIVAR>
+      <?MIVAR NAME="$patoup_addtopile_error">entity b failed<?/MIVAR>
+    <?/MIBLOCK>
+
+    <?MIBLOCK COND="$(NXST,$patoup_addtopile_error)">
+
+      <?MICOMMENT> ** generalize the sql for one or two entities into a single variable ** <?/MICOMMENT>
+
+      <?MIBLOCK COND="$(XST,$patoup_entity_b_zdb_id)">
+        <?MIVAR NAME="patoup_entities_column_sql">api_entity_a_zdb_id, api_entity_b_zdb_id<?/MIVAR>
+        <?MIVAR NAME="patoup_entities_values_sql">'$patoup_entity_a_zdb_id', '$patoup_entity_b_zdb_id'<?/MIVAR>
+      <?MIELSE>
+        <?MIVAR NAME="patoup_entities_column_sql">api_entity_a_zdb_id<?/MIVAR>
+        <?MIVAR NAME="patoup_entities_values_sql">'$patoup_entity_a_zdb_id'<?/MIVAR>
+      <?/MIBLOCK>
+
+      <?MICOMMENT> ** get id for new infrastructure row 
+                      and insert into zdb_active_data   ** <?/MICOMMENT>
+      <?MISQL SQL="execute function get_id('API');"><?MIVAR NAME="$patoup_api_zdb_id">$1<?/MIVAR><?/MISQL>
+      <?MISQL SQL="insert into zdb_active_data (zactvd_zdb_id) values ('$patoup_api_zdb_id');"><?/MISQL>
+    
+
+      <?MICOMMENT> ** insert record <?/MICOMMENT>
+      <?MISQL SQL="insert into apato_infrastructure ( api_zdb_id, $patoup_entities_column_sql, api_quality_zdb_id,
+                                     api_tag, api_pub_zdb_id, api_curator_zdb_id, api_date )
+                   values  ('$patoup_api_zdb_id', $patoup_entities_values_sql, '$patoup_quality_zdb_id',  
+                                    '$patoup_tag', '$OID', '$ZDB_ident',  current);"><?/MISQL>
+
+
+
+     <?/MIBLOCK> <?MICOMMENT> end error check <?/MICOMMENT>
+
+    <?/MIBLOCK> <?MICOMMENT> end add to pile update <?/MICOMMENT>
+
+
+
+
+
+
+    <?MICOMMENT> *** Add new figure / genox / stages set  [add new mutant] *** <?/MICOMMENT>
+
+
+    <?MIBLOCK COND="$(XST,$patoup_add_mutant)">
+      
+      <?MICOMMENT> ** Get or make genox_zdb_id ** <?/MICOMMENT>
+      
+      <?MISQL SQL="select genox_zdb_id 
+                   from genotype_experiment 
+                   where genox_geno_zdb_id = '$patoup_geno_zdb_id'
+                     and genox_exp_zdb_id = '$patoup_exp_zdb_id';">
+        <?MIVAR NAME="$patoup_genox_zdb_id">$1<?/MIVAR>
+      <?/MISQL>
+
+      <?MICOMMENT> ** if the last query didnt get a genox id, make one ** <?/MICOMMENT>
+
+      <?MIBLOCK COND="$(NXST,$patoup_genox_zdb_id)">
+        <?MISQL SQL="execute function get_id('GENOX');">
+          <?MIVAR NAME="$patoup_genox_zdb_id">$1<?/MIVAR>
+        <?/MISQL>
+        <?MISQL SQL="insert into zdb_active_data values ('$patoup_genox_zdb_id');"><?/MISQL>
+        <?MISQL SQL="insert into genotype_experiment (genox_zdb_id, genox_geno_zdb_id, genox_exp_zdb_id)
+                                 values ('$patoup_genox_zdb_id', '$patoup_geno_zdb_id', '$patoup_exp_zdb_id');"><?/MISQL>
+      <?/MIBLOCK>
+
+
+      <?MICOMMENT> ** When these sets get made, they're always 'empty', meaning that
+                      they're created with a concrete figure, genox and a pair of stages
+                      (which could be unknown), and the entity, quality,
+                      and tag are all set to defaults:
+                        entity:  the unspecified anatomy item  (could be from any ontology)
+                        quality:  quality   (the root term)
+                        tags:     abnormal
+      <?/MICOMMENT>
+
+
+ 
+
+
+      <?MICOMMENT> *** Check and see if there's already an default pato record with these stages 
+                       for this genox id *** <?/MICOMMENT>
+ 
+      <?MISQL SQL="select first 1 apato_zdb_id 
+                   from atomic_phenotype 
+                   where apato_entity_a_zdb_id = '$patoup_default_entity_zdb_id'
+                     and apato_quality_zdb_id = '$patoup_default_quality_zdb_id'
+                     and apato_genox_zdb_id = '$patoup_genox_zdb_id'
+                     and apato_tag = 'abnormal'
+                     and apato_start_stg_zdb_id = '$patoup_start_stg_zdb_id'
+                     and apato_end_stg_zdb_id = '$patoup_end_stg_zdb_id';">
+        <?MIVAR NAME="$patoup_preexisting_apato_zdb_id">$1<?/MIVAR>
+      <?/MISQL>
+
+
+
+      <?MIBLOCK COND="$(NXST,$patoup_preexisting_apato_zdb_id)">
+
+        <?MISQL SQL="execute function get_id('APATO');">
+          <?MIVAR NAME="$patoup_apato_zdb_id">$1<?/MIVAR>
+        <?/MISQL>
+
+        <?MISQL SQL="insert into zdb_active_data values ('$patoup_apato_zdb_id');"><?/MISQL>
+
+        <?MISQL SQL="insert into atomic_phenotype  (apato_zdb_id, apato_genox_zdb_id, apato_start_stg_zdb_id, 
+                                                    apato_end_stg_zdb_id, apato_pub_zdb_id, apato_entity_a_zdb_id, 
+                                                    apato_quality_zdb_id, apato_tag)
+                                            values ('$patoup_apato_zdb_id', '$patoup_genox_zdb_id', '$patoup_start_stg_zdb_id', 
+                                                    '$patoup_end_stg_zdb_id', '$OID', '$patoup_default_entity_zdb_id', 
+                                                    '$patoup_default_quality_zdb_id', '$patoup_default_tag');">
+        <?/MISQL>
+
+      <?/MIBLOCK> <?MICOMMENT> ** end preexisting pato record check ** <?/MICOMMENT>
+
+      <?MICOMMENT> ** now tie the new phenotype record to the figure,
+                      first copying the preexisting pato record if there
+                      was one ** <?/MICOMMENT>
+
+      <?MIVAR COND="$(XST,$patoup_preexisting_apato_zdb_id)" 
+              NAME="$patoup_apato_zdb_id">$patoup_preexisting_apato_zdb_id<?/MIVAR>
+
+      <?MISQL SQL="insert into apato_figure (apatofig_apato_zdb_id, apatofig_fig_zdb_id) 
+                                    values ('$patoup_apato_zdb_id','$patoup_fig_zdb_id');">
+      <?/MISQL>
+
+    <?/MIBLOCK> <?MICOMMENT> end new figure / genox / stages set (new mutant) <?/MICOMMENT>
+
+
+
+
+
+
+
+
+   <?MIBLOCK COND="$(XST,$patoup_delete_mutant)">
+
+    <?MICOMMENT> *** delete a mutant (fig+genox+stages) ** <?/MICOMMENT>
+
+    <?MICOMMENT> ** first, using the example APATO record passed in, get the 
+                    genox, stage-start and stage-end that all of this will 
+                    apply to ** <?/MICOMMENT>
+    <?MISQL SQL="select apato_genox_zdb_id, apato_start_stg_zdb_id, apato_end_stg_zdb_id
+                   from atomic_phenotype
+                   where apato_zdb_id = '$patoup_example_apato_zdb_id';">
+      <?MIVAR NAME="patoup_genox_zdb_id">$1<?/MIVAR>
+      <?MIVAR NAME="patoup_start_stg_zdb_id">$2<?/MIVAR>
+      <?MIVAR NAME="patoup_end_stg_zdb_id">$3<?/MIVAR>
+    <?/MISQL>
+
+    <?MICOMMENT> ** The one case where APATO records in the database are used
+                    more than once are for different figures within the same pub,
+                    that means that if a figure is used twice, for the first one
+                    we would only remove the linkage in the apato_figure table.
+                    So: 
+                      1) remove the linkage
+                      2) see if there's anything else linking to this apato record
+                      3) if there is, we're done, if there isn't, nuke the apato record  <?/MICOMMENT>
+
+
+
+
+      <?MICOMMENT> ** outer loop, find the apato record ** <?/MICOMMENT>
+
+      <?MISQL SQL="select apato_zdb_id
+                    from atomic_phenotype
+                    where apato_genox_zdb_id = '$patoup_genox_zdb_id'
+                      and apato_start_stg_zdb_id = '$patoup_start_stg_zdb_id'
+                      and apato_end_stg_zdb_id = '$patoup_end_stg_zdb_id'
+                      and apato_pub_zdb_id = '$OID';">
+        <?MIVAR NAME="patoup_apato_zdb_id_iterator">$1<?/MIVAR>
+
+        <?MICOMMENT> ** first unlink apato record from the figure ** <?/MICOMMENT>
+        <?MISQL SQL="delete 
+                      from apato_figure 
+                      where apatofig_apato_zdb_id = '$patoup_apato_zdb_id_iterator'
+                        and apatofig_fig_zdb_id = '$patoup_fig_zdb_id';">
+        <?/MISQL>
+
+        <?MICOMMENT> ** now delete, as long as it's not used by any other figure ** <?/MICOMMENT>
+
+        <?MISQL SQL="delete from atomic_phenotype
+                     where apato_genox_zdb_id = '$patoup_genox_zdb_id'
+                       and apato_start_stg_zdb_id = '$patoup_start_stg_zdb_id'
+                       and apato_end_stg_zdb_id = '$patoup_end_stg_zdb_id'
+                       and apato_pub_zdb_id = '$OID'
+                       and not exists (select 'x'
+                                        from apato_figure
+                                        where apatofig_apato_zdb_id = apato_zdb_id);">
+        <?/MISQL>
+
+      <?/MISQL> <?MICOMMENT> ** outer loop ** <?/MICOMMENT>
+
+    <?/MIBLOCK> <?MICOMMENT> ** end delete a mutant (fig+genox+stages) ** <?/MICOMMENT>
+
+   
+
+   <?MICOMMENT> *** Update phenotype values for mutants (create or delete apato records) *** <?/MICOMMENT>
+
+   <?MIBLOCK COND="$(XST,$patoup_updatephenos)">
+ 
+     <?MICOMMENT> ** make an empty list, incase there happen to be none being added or none
+                     being removed ** <?/MICOMMENT>
+     <?MIVAR COND="$(NXST,$patoup_updatephenos_add)" NAME="patoup_updatephenos_add">''<?/MIVAR>
+     <?MIVAR COND="$(NXST,$patoup_updatephenos_remove)" NAME="patoup_updatephenos_remove">''<?/MIVAR>
+
+
+
+     <?MICOMMENT> ** turn | lists into ',' lists ** <?/MICOMMENT>     
+
+     <?MIVAR NAME="patoup_updatephenos_add_csv">'$(REPLACE,$patoup_updatephenos_add,"|","','")'<?/MIVAR> 
+     <?MIVAR NAME="patoup_updatephenos_remove_csv">'$(REPLACE,$patoup_updatephenos_remove,"|","','")'<?/MIVAR> 
+
+
+    <?MICOMMENT> ** for now this is a test, loop through selected mutant list,
+                    splitting apart figure id and api id. ** <?/MICOMMENT>
+
+    <?MIVAR NAME="patoup_mutants">$(REPLACE,$patoup_updatephenos_selectedmutants,"|",",")<?/MIVAR>
+
+
+    <?MICOMMENT> ** copy mutant count to iterator variable, multiply by 4, 
+                    cuz there are 4 fields for each mutant  ** <?/MICOMMENT>
+    <?MIVAR NAME="patoup_i">$(*,$patoup_updatephenos_selectedmutants_count,4)<?/MIVAR>
+
+
+    <?MICOMMENT> ** this loop is a little bit backwards - the while construct in webblade likes
+                    to count backwards and break at zero.  So essentially, I'm grabbing the 
+                    fig, genox, stage, stage as array[$i-4], array[$i-3], array[$i-2], array[$i-1] ** <?/MICOMMENT>
+
+    <?MIBLOCK WHILE=$patoup_i>
+
+      <?MIVAR NAME="patoup_fig_zdb_id">$(INDEX,$(-,$patoup_i,4),$patoup_mutants)<?/MIVAR>
+      <?MIVAR NAME="patoup_genox_zdb_id">$(INDEX,$(-,$patoup_i,3),$patoup_mutants)<?/MIVAR>
+      <?MIVAR NAME="patoup_start_stg_zdb_id">$(INDEX,$(-,$patoup_i,2),$patoup_mutants)<?/MIVAR>
+      <?MIVAR NAME="patoup_end_stg_zdb_id">$(INDEX,$(-,$patoup_i,1),$patoup_mutants)<?/MIVAR>
+
+
+      
+      <?MICOMMENT> ** foreach structure to add... ** <?/MICOMMENT>
+
+
+
+      <?MISQL SQL="select api_entity_a_zdb_id, api_entity_b_zdb_id, api_quality_zdb_id, api_tag
+                  from apato_infrastructure  
+                  where api_zdb_id in ($patoup_updatephenos_add_csv);">       
+        <?MIVAR NAME="patoup_entity_a_zdb_id">$1<?/MIVAR>
+        <?MIVAR NAME="patoup_entity_b_zdb_id">$2<?/MIVAR>
+        <?MIVAR NAME="patoup_quality_zdb_id">$3<?/MIVAR>
+        <?MIVAR NAME="patoup_tag">$4<?/MIVAR>
+
+        <?MIBLOCK COND="$(NE,$patoup_entity_b_zdb_id,NULL)">
+          <?MIVAR NAME="$patoup_entity_where">
+            and apato_entity_a_zdb_id = '$patoup_entity_a_zdb_id'
+            and apato_entity_b_zdb_id = '$patoup_entity_b_zdb_id'
+          <?/MIVAR>
+        <?MIELSE>
+          <?MIVAR NAME="$patoup_entity_where">
+            and apato_entity_a_zdb_id = '$patoup_entity_a_zdb_id'
+          <?/MIVAR>
+        <?/MIBLOCK>
+
+        <?MICOMMENT> ** this can get tighter, but for now, check for the record,
+                        then make an id if necessary and insert the new record ** <?/MICOMMENT>
+        <?MIVAR>$(UNSETVAR,patoup_apato_zdb_id)<?/MIVAR>        
+        <?MISQL SQL="select apato_zdb_id 
+                     from atomic_phenotype
+                     where apato_genox_zdb_id = '$patoup_genox_zdb_id'
+                       and apato_start_stg_zdb_id = '$patoup_start_stg_zdb_id'
+                       and apato_end_stg_zdb_id = '$patoup_end_stg_zdb_id'
+                       $patoup_entity_where
+                       and apato_quality_zdb_id = '$patoup_quality_zdb_id'
+                       and apato_tag = '$patoup_tag'
+                       and apato_pub_zdb_id = '$OID';">
+          <?MIVAR NAME="patoup_apato_zdb_id">$1<?/MIVAR>
+        <?/MISQL>
+
+        <?MICOMMENT> * if we didn't get an id, make one and insert it into zdb_active_data * <?/MICOMMENT>
+
+        <?MIBLOCK COND="$(NXST,$patoup_apato_zdb_id)">
+
+                <?MISQL SQL="execute function get_id('APATO');">
+                  <?MIVAR NAME="$patoup_apato_zdb_id">$1<?/MIVAR>
+                <?/MISQL>
+
+                <?MISQL SQL="insert into zdb_active_data values ('$patoup_apato_zdb_id');"><?/MISQL>
+
+                <?MICOMMENT> ** sort out that pesky entity_b ** <?/MICOMMENT>
+                <?MIBLOCK COND="$(NE,$patoup_entity_b_zdb_id,NULL)">
+                  <?MIVAR NAME="patoup_entities_column_sql">apato_entity_a_zdb_id, apato_entity_b_zdb_id<?/MIVAR>
+                  <?MIVAR NAME="patoup_entities_values_sql">'$patoup_entity_a_zdb_id', '$patoup_entity_b_zdb_id'<?/MIVAR>
+                <?MIELSE>
+                  <?MIVAR NAME="patoup_entities_column_sql">apato_entity_a_zdb_id<?/MIVAR>
+                  <?MIVAR NAME="patoup_entities_values_sql">'$patoup_entity_a_zdb_id'<?/MIVAR>
+                <?/MIBLOCK>
+
+                <?MISQL SQL="insert into atomic_phenotype  (apato_zdb_id, apato_genox_zdb_id, apato_start_stg_zdb_id, 
+                                                    apato_end_stg_zdb_id, apato_pub_zdb_id,  $patoup_entities_column_sql,
+                                                    apato_quality_zdb_id, apato_tag)
+                                            values ('$patoup_apato_zdb_id', '$patoup_genox_zdb_id', '$patoup_start_stg_zdb_id', 
+                                                    '$patoup_end_stg_zdb_id', '$OID', $patoup_entities_values_sql, 
+                                                    '$patoup_quality_zdb_id', '$patoup_tag');"><?/MISQL>
+
+                
+         
+                <?MICOMMENT> ** if this record has a default placeholder record, delete it now ** <?/MICOMMENT>
+                <?MICOMMENT> ** REMOVE: this can go, removing the placeholder happens in the 
+                                javascript radiobuttons now ** <?/MICOMMENT>
+                <?MISQL COND="$(EQ,pigs,flying)" SQL="delete from atomic_phenotype
+                             where apato_entity_a_zdb_id = '$patoup_default_entity_zdb_id'
+                               and apato_entity_b_zdb_id is null
+                               and apato_quality_zdb_id = '$patoup_default_quality_zdb_id'
+                               and apato_tag = '$patoup_default_tag'
+                               and apato_genox_zdb_id = '$patoup_genox_zdb_id'
+                               and apato_pub_zdb_id = '$OID'
+                               and apato_start_stg_zdb_id = '$patoup_start_stg_zdb_id'
+                               and apato_end_stg_zdb_id = '$patoup_end_stg_zdb_id';">
+                <?/MISQL>
+
+
+        <?/MIBLOCK>
+
+        <?MICOMMENT> * link to the figure if isn't already * <?/MICOMMENT>
+
+        <?MIVAR>$(UNSETVAR,$patoup_apatofig_exists)<?/MIVAR> <?MICOMMENT> * reset for each iteration of the loop * <?/MICOMMENT>
+        <?MISQL SQL="select 'x' 
+                     from apato_figure
+                     where apatofig_fig_zdb_id = '$patoup_fig_zdb_id'
+                       and apatofig_apato_zdb_id = '$patoup_apato_zdb_id';">
+          <?MIVAR NAME="$patoup_apatofig_exists"><?/MIVAR>
+        <?/MISQL>
+
+        <?MISQL COND="$(NXST,$patoup_apatofig_exists)" SQL="
+                     insert into apato_figure (apatofig_apato_zdb_id, apatofig_fig_zdb_id)
+                            values ('$patoup_apato_zdb_id','$patoup_fig_zdb_id'); ">
+
+        <?/MISQL>
+
+      <?/MISQL> <?MICOMMENT> ** end for each structure to add ** <?/MICOMMENT>
+
+
+
+
+      <?MICOMMENT> ** foreach structure to remove... ** <?/MICOMMENT>
+      <?MISQL SQL="select api_entity_a_zdb_id, api_entity_b_zdb_id, api_quality_zdb_id, api_tag
+                  from apato_infrastructure 
+                  where api_zdb_id in ($patoup_updatephenos_remove_csv);">       
+        <?MIVAR NAME="patoup_entity_a_zdb_id">$1<?/MIVAR>
+        <?MIVAR NAME="patoup_entity_b_zdb_id">$2<?/MIVAR>
+        <?MIVAR NAME="patoup_quality_zdb_id">$3<?/MIVAR>
+        <?MIVAR NAME="patoup_tag">$4<?/MIVAR>
+ 
+        <?MIBLOCK COND="$(NE,$patoup_entity_b_zdb_id,NULL)">
+          <?MIVAR NAME="$patoup_entity_where">
+            and apato_entity_a_zdb_id = '$patoup_entity_a_zdb_id'
+            and apato_entity_b_zdb_id = '$patoup_entity_b_zdb_id'
+          <?/MIVAR>
+        <?MIELSE>
+          <?MIVAR NAME="$patoup_entity_where">
+            and apato_entity_a_zdb_id = '$patoup_entity_a_zdb_id'
+          <?/MIVAR>
+        <?/MIBLOCK>
+
+        <?MICOMMENT> ** This is the 'if' statement wrapped around this whole thing, does
+                        an APATO record exists that matches this 'delete' call.  If yes,
+                        we do something, if not, then move on to the next API id ** <?/MICOMMENT>
+        <?MIVAR>$(UNSETVAR,patoup_apato_zdb_id)<?/MIVAR>        
+        <?MISQL SQL="select apato_zdb_id 
+                     from atomic_phenotype
+                     where apato_genox_zdb_id = '$patoup_genox_zdb_id'
+                       and apato_start_stg_zdb_id = '$patoup_start_stg_zdb_id'
+                       and apato_end_stg_zdb_id = '$patoup_end_stg_zdb_id'
+                       $patoup_entity_where
+                       and apato_quality_zdb_id = '$patoup_quality_zdb_id'
+                       and apato_tag = '$patoup_tag'
+                       and apato_pub_zdb_id = '$OID';">
+          <?MIVAR NAME="patoup_apato_zdb_id">$1<?/MIVAR>
+
+          <?MICOMMENT> ** first unlink apato record from the figure ** <?/MICOMMENT>
+          <?MISQL SQL="delete 
+                       from apato_figure 
+                       where apatofig_apato_zdb_id = '$patoup_apato_zdb_id'
+                         and apatofig_fig_zdb_id = '$patoup_fig_zdb_id';">
+          <?/MISQL>
+
+          <?MISQL SQL="delete from atomic_phenotype
+                     where apato_genox_zdb_id = '$patoup_genox_zdb_id'
+                       and apato_start_stg_zdb_id = '$patoup_start_stg_zdb_id'
+                       and apato_end_stg_zdb_id = '$patoup_end_stg_zdb_id'
+                       and apato_pub_zdb_id = '$OID'
+                       and not exists (select 'x'
+                                        from apato_figure
+                                        where apatofig_apato_zdb_id = apato_zdb_id);">
+          <?/MISQL>
+
+
+        <?/MISQL> <?MICOMMENT> ** end pato exists sql 'if' statement ** <?/MICOMMENT>
+        
+        <?MICOMMENT> ** if we deleted everything attached to this mutant, re-insert the default ** <?/MICOMMENT>
+
+        <?MISQL SQL="select first 1 apato_zdb_id
+                     from atomic_phenotype
+                       join apato_figure
+                         on apatofig_apato_zdb_id = apato_zdb_id
+                     where apato_pub_zdb_id = '$OID'
+                       and apato_genox_zdb_id = '$patoup_genox_zdb_id'
+                       and apato_start_stg_zdb_id = '$patoup_start_stg_zdb_id'
+                       and apato_end_stg_zdb_id = '$patoup_end_stg_zdb_id'
+                       and apatofig_fig_zdb_id = '$patoup_fig_zdb_id';">
+          <?MIVAR NAME="$patoup_still_has_phenotypes">exists<?/MIVAR>
+        <?/MISQL>
+
+        <?MIBLOCK COND="$(NXST,$patoup_still_has_phenotypes)">
+          <?MISQL SQL="execute function get_id('APATO');">
+            <?MIVAR NAME="$patoup_apato_zdb_id">$1<?/MIVAR>
+          <?/MISQL>
+
+          <?MISQL SQL="insert into zdb_active_data values ('$patoup_apato_zdb_id');"><?/MISQL>
+
+          <?MISQL SQL="insert into atomic_phenotype  (apato_zdb_id, apato_genox_zdb_id, apato_start_stg_zdb_id, 
+                                                      apato_end_stg_zdb_id, apato_pub_zdb_id, apato_entity_a_zdb_id, 
+                                                      apato_quality_zdb_id, apato_tag)
+                                              values ('$patoup_apato_zdb_id', '$patoup_genox_zdb_id', '$patoup_start_stg_zdb_id', 
+                                                      '$patoup_end_stg_zdb_id', '$OID', '$patoup_default_entity_zdb_id', 
+                                                      '$patoup_default_quality_zdb_id', '$patoup_default_tag');">
+            <?MISQL SQL="insert into apato_figure (apatofig_apato_zdb_id, apatofig_fig_zdb_id) 
+                         values ('$patoup_apato_zdb_id','$patoup_fig_zdb_id');"><?/MISQL>
+          <?/MISQL>
+          <script>alert('All phenotypes were removed from a mutant, so unspecified was added as a placeholder');</script>
+        <?/MIBLOCK>
+
+        <?MICOMMENT> * clean up for the next pass through the loop * <?/MICOMMENT>
+        <?MIVAR>$(UNSETVAR,$patoup_still_has_phenotypes)<?/MIVAR>
+        
+
+
+      <?/MISQL> <?MICOMMENT> *** end foreach structure to remove *** <?/MICOMMENT>
+
+
+      <?MICOMMENT> * subtract 4 because we're lopping 4 elements from the list * <?/MICOMMENT>
+      <?MIVAR NAME="patoup_i">$(-,$patoup_i,4)<?/MIVAR> 
+    <?/MIBLOCK> <?MICOMMENT> ** end mutant loop ** <?/MICOMMENT>
+
+
+
+   <?/MIBLOCK> <?MICOMMENT> ** end update_phenos ** <?/MICOMMENT>
+
+  <?/MIBLOCK> <?MICOMMENT> end pato_update cookie is set <?/MICOMMENT>
+<?/MIBLOCK>  <?MICOMMENT> end authorize == root <?/MICOMMENT>

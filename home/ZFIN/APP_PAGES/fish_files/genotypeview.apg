@@ -1,0 +1,957 @@
+<?MICOMMENT>
+
+FILE: genotypeview.apg 
+Prefix: genovw_
+
+This file implements a viewer for genotype records. 
+The goal is to display all of the information associated with a genotype record.
+
+Variables Expected: 
+ -- OID -- the OID of the fish record to view
+ -- UPDATE -- a flag variable to indicate we're in update mode
+ -- temp_oid -- could be passed instead of OID --
+
+NOTE:
+Because this page drops temporary tables it cannot be webexploded from
+inside a select statement.  This page must first be retrieved with a 
+select statement and then passed to webexplode from an execute function 
+statement.  See discussion of the MIqry2pass variable in the Web
+Datablade documentation.
+
+<?/MICOMMENT>
+
+<HTML>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+
+<?/MIERROR>
+
+<?MIBLOCK COND="$(NXST,$OID)">
+    <p>
+    ERROR -- something bad happened -- no OID passed in!
+<?/MIBLOCK>
+
+<script>
+      
+    function start_note(ref_page) {
+       top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-"+ref_page+".apg","notewindow","scrollbars=no,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=325");
+    }
+
+    function popup_url(url) {
+        open(url,"Description","toolbar=yes,scrollbars=yes,resizable=yes");
+    }
+
+</script>
+
+<?MIVAR NAME=MI_NOVALUE><?/MIVAR>
+<?MIVAR NAME=MI_NULL><?/MIVAR>
+<?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
+ 
+<?MICOMMENT> ==== Display Header ==== <?/MICOMMENT>
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+
+<?MICOMMENT> ======   Check Authorization   ====== <?/MICOMMENT>
+<?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'page_title=View Genotype') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+<?MICOMMENT> If updating, only let owner update anything <?/MICOMMENT>
+<?MISQL COND="$(XST,$UPDATE)" SQL="select WebExplode(object,'page_title=Update Genotype&permission=root') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+
+<?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
+
+  <?MICOMMENT>=== Update Action === 
+        the only update function on the genotype view page is to update public
+        genotype note. To recognize the simplicity, execute the update function
+        within this page instead of creating genotypeupdate.apg and do-genotypeupdate.apg
+        if to be consistent with marker page. Also we are not checking whether there is
+        truly an update since it doesn't cost much to execute an update statement.
+  <?/MICOMMENT>
+  <?MIBLOCK COND="$(XST,$do_update)">
+         <?MICOMMENT> when the textarea is empty, this varible is undefined<?/MICOMMENT>
+	 <?MISQL COND="$(NXST,$genoview_update_note)" SQL="
+		delete from zdb_active_data where exists
+		     (select 't'
+                        from external_note
+                       where extnote_data_zdb_id = '$OID'
+                         and zactvd_zdb_id = extnote_zdb_id)">
+         <?/MISQL>
+     
+         <?MIBLOCK COND="$(AND,$(XST,$genoview_update_note),$(NC,$genoview_update_note,))">
+	     <?MIVAR>
+		$(SETVAR,$genoview_update_note,$(REPLACE,$genoview_update_note,',''))
+             <?/MIVAR>
+
+             <?MISQL SQL="
+		select extnote_note
+		  from external_note
+	         where extnote_data_zdb_id = '$OID'">
+	     <?/MISQL>
+             
+             <?MIBLOCK COND="$(EC,$1,)">
+                <?MISQL SQL="execute function get_id('EXTNOTE')">
+
+		  <?MIVAR NAME=genoview_extnote_id>$1<?/MIVAR>
+                <?/MISQL>
+                <?MISQL SQL="
+			insert into zdb_active_data(zactvd_zdb_id)
+				values ('$genoview_extnote_id');
+			insert into external_note (extnote_zdb_id,
+				extnote_data_zdb_id, extnote_note)
+			     values('$genoview_extnote_id', '$OID','$genoview_update_note')
+			;">
+                <?/MISQL>
+	     <?MIELSE>
+
+	      <?MISQL SQL="
+		update external_note
+                   set extnote_note = '$genoview_update_note'
+                 where extnote_data_zdb_id = '$OID'">
+              <?/MISQL>
+            <?/MIBLOCK>
+
+        <?/MIBLOCK> <?MICOMMENT> if note is not empty <?/MICOMMENT>
+  <?/MIBLOCK> <?MICOMMENT> if exist update_note  <?/MICOMMENT>
+
+  <?MICOMMENT>=== Query Data === <?/MICOMMENT>
+  <?MISQL SQL="
+	select geno_display_name, geno_handle, 
+               geno_supplier_stock_number, geno_is_wildtype,
+               geno_is_extinct, geno_supplier_stock_number
+          from genotype
+         where geno_zdb_id = '$OID'">
+  <?/MISQL>
+
+  <?MIVAR NAME=genovw_display_name>$1<?/MIVAR>
+  <?MIVAR NAME=genovw_handle>$2<?/MIVAR>
+  <?MIVAR NAME=genovw_supplier_stock_number>$3<?/MIVAR>
+  <?MIVAR NAME=genovw_is_wildtype>$4<?/MIVAR>
+  <?MIVAR NAME=genovw_is_extinct>$5<?/MIVAR>
+  <?MIVAR NAME=genovw_stock_num>$6<?/MIVAR>
+
+  <?MIBLOCK COND="$(EC,$genovw_display_name,)">
+       <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-zdb_history.apg';">$1<?/MISQL>
+    
+        <?MIBLOCK COND="$(NXST,$new_oid)">
+          <form><center><font size=+2>
+	  <b>Requested ID not found in ZFIN.</b>
+          </font></center>	
+	  </form>
+        <?/MIBLOCK>
+        
+  <?MIELSE>
+	
+  <?MICOMMENT> ==== Page Title ==== <?/MICOMMENT>
+
+  <?MICOMMENT> convert ndr2<sup>b16</sup> to ndr2^b16 <?/MICOMMENT>
+  <?MIVAR NAME=genovw_name_in_title>$(REPLACE,$genovw_display_name,<sup>,^)<?/MIVAR> 
+  <?MIVAR>$(SETVAR,$genovw_name_in_title,$(REPLACE,$genovw_name_in_title,</sup>," "))<?/MIVAR> 
+
+  <?MIBLOCK COND="$(XST,$UPDATE)">
+    <title><?MIVAR> ZFIN Update: $genovw_name_in_title <?/MIVAR></title>
+  <?MIELSE>
+    <title><?MIVAR> ZFIN: $(IF,$(EC,$genovw_is_wildtype,f),Genotype,Wild-Type Line): $genovw_name_in_title <?/MIVAR></title>
+  <?/MIBLOCK>
+
+  <?MICOMMENT> ==== Page Bar ==== <?/MICOMMENT>
+
+  <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=genotype') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
+
+
+  <?MICOMMENT> ==== Input Welcome Button ==== <?/MICOMMENT>
+
+  <?MIBLOCK COND="$(NXST,$UPDATE)">
+     <?MIVAR>
+	  <table width = 15% align=right><tr>	
+           <form method=post 
+                 action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
+                 target=comments>
+           <input type=hidden name=subject value="$genovw_display_name">
+           <input type=hidden name=marker_id value="$OID">
+           <input type=hidden name=MIval value="aa-your_input_welcome.apg">
+           <input type=hidden name=page_id value="$OID">
+          <td>
+           <input type=submit value="Your Input Welcome">
+          </td>
+           </form></tr></table>
+     <?/MIVAR>
+  <?/MIBLOCK>
+
+
+  <?MICOMMENT> ==== BACK Button ==== <?/MICOMMENT>
+
+  <?MIVAR COND="$(XST,$UPDATE)">
+  <form name=updater ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+    <input type=hidden name=MIval Value=aa-genotypeview.apg>	
+    <center><font size=+2> 
+    <input type=submit value=" DONE UPDATING. Back to Viewing! ">
+    <input type=hidden name=do_update value=t>
+    </font></center>
+    <input type=hidden name=OID Value=$OID>
+  <?/MIVAR>
+
+  
+  <?MICOMMENT> ======  Name  ======= <?/MICOMMENT>
+  
+  <?MIVAR>
+    <b><font size=+1> 
+    $(IF,$(EC,$genovw_is_wildtype,f),Genotype,Wild-Type Line): <i>$genovw_display_name</i> 
+    </font> </b>
+    <br>
+  <?/MIVAR>
+ 
+
+  <?MICOMMENT> =======  Abbreviation (for wild type lines)  ======= <?/MICOMMENT>
+  <?MIBLOCK COND=$(EC,$genovw_is_wildtype,t)>
+    <b><font size=+1> Abbreviation: <i><?MIVAR>$genovw_handle<?/MIVAR></i> </font> </b>
+  <?/MIBLOCK>
+
+
+  <?MICOMMENT> =======  Note for unspecified allele  ======= <?/MICOMMENT>
+  <?MIVAR COND="$(AND,$(EC,$genovw_is_wildtype,f),$(<,0,$(POSITION,$genovw_display_name,unspecified)))">
+	  <font size='-1'>Note:  This record has been created in support of data for which a publication has not specified an allele.</font>
+  <?/MIVAR>
+
+  <p>
+
+
+  <?MICOMMENT> =====  Background (0-1) (for mutants)  ===== <?/MICOMMENT>
+  <?MIBLOCK COND=$(EC,$genovw_is_wildtype,f)>
+    <b> BACKGROUND: </b>
+    <?MISQL SQL="
+	execute function get_genotype_backgrounds_html_link('$OID')">
+    <?/MISQL>
+    <?MIVAR NAME=genovw_bkgrd_html_display>$1<?/MIVAR>	
+    <?MIVAR>$genovw_bkgrd_html_display<?/MIVAR>
+    <br>
+  <?/MIBLOCK>
+
+  
+  <?MICOMMENT> =====  Affected Genes (0-n)  ===== <?/MICOMMENT>
+  <?MISQL SQL="
+	select get_mrkr_name_html_link(fmrel_mrkr_zdb_id), mrkr_name_order 
+          from genotype_feature, feature_marker_relationship, marker
+         where genofeat_geno_zdb_id = '$OID'
+           and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+           and fmrel_type = 'is allele of'
+	   and fmrel_mrkr_zdb_id = mrkr_zdb_id 
+         UNION
+         select get_mrkr_name_html_link(marker_id), mrkr_name_order 
+       	   from genotype_feature, feature, mapped_deletion, marker
+          where genofeat_geno_zdb_id = '$OID'
+            and genofeat_feature_zdb_id =  feature_zdb_id
+	    and feature_name = allele
+	    and marker_id[1,8] = 'ZDB-GENE' 
+	    and present_t = 'f'
+	    and marker_id = mrkr_zdb_id
+         order by 2; ">
+
+     <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
+         <table cellpadding=0 cellspacing=0>
+	 <tr><td>
+	   <b>AFFECTED GENE(S): </b>
+         </td>
+         <?MIVAR NAME=genovw_seperator><td><?/MIVAR>	
+     <?MIELSE>
+         <?MIVAR NAME=genovw_seperator></td></tr><tr><td>&nbsp;</td><td><?/MIVAR>
+     <?/MIBLOCK>
+     
+     $genovw_seperator$1
+     
+  <?/MISQL>
+  <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+     </tr></table>
+  <?/MIBLOCK>
+
+
+  <?MICOMMENT> =======  Parental Genotype  ====== <?/MICOMMENT>
+	
+  <?MIBLOCK COND=$(EC,$genovw_is_wildtype,f)>
+    <?MIVAR NAME=genovw_parental_zyg_is_displayed>f<?/MIVAR>
+
+    <?MISQL SQL="
+	 select feature_name, 
+		get_genofeat_mp_zyg_html_display(genofeat_zdb_id)
+           from genotype_feature, feature
+          where genofeat_geno_zdb_id = '$OID'
+	    and genofeat_feature_zdb_id = feature_zdb_id ">
+
+	<?MIVAR NAME=genovw_ftr_name>$1<?/MIVAR>
+	<?MIVAR NAME=genovw_ftr_zyg_display>$2<?/MIVAR>
+
+  
+      <?MIBLOCK COND="$(NC,$genovw_ftr_zyg_display,)">
+
+       <?MIVAR COND="$(EC,$genovw_parental_zyg_is_displayed,f)">
+         <b> PARENTAL GENOTYPE: </b>
+         <table width=40%> 
+         $(SETVAR,$genovw_parental_zyg_is_displayed,t)
+       <?/MIVAR>
+
+        <tr> <td width=10%> &nbsp; </tb>
+         <td> <?MIVAR> $genovw_ftr_name<?/MIVAR> </td>
+	 <td> <?MIVAR>  $genovw_ftr_zyg_display <?/MIVAR> </td>
+        </tr>
+      <?/MIBLOCK> <?MICOMMENT> --- if zygs are not unknown -- <?/MICOMMENT>
+
+    <?/MISQL>
+
+    <?MIVAR COND="$(EC,$genovw_parental_zyg_is_displayed,t)">
+       </table>
+    <?/MIVAR>
+  <?/MIBLOCK> <?MICOMMENT> --- end of parental genotype -- <?/MICOMMENT>
+
+ 
+ 
+  <?MICOMMENT> ==== Curator Note ==== <?/MICOMMENT>
+
+  <?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
+    <B>Curator Notes:</B>
+ 
+    <?MISQL SQL="select count(*) 
+		 from data_note
+		where dnote_data_zdb_id = '$OID' ;">
+    <?/MISQL>  
+    <?MIVAR COND="$(NC,$1,0)">
+      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$OID&OID_page=genotypeview.apg">Notes</A>
+    <?/MIVAR>
+
+    <?MIVAR COND="$(EC,$1,0)">
+      <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$OID&OID_page=genotypeview.apg">Add Notes</a> 
+    <?/MIVAR>
+    <br>
+  <?/MIBLOCK>
+
+  <p>
+
+
+
+  <?MICOMMENT> ======    Phenotype   ====== <?/MICOMMENT>
+  <?MIBLOCK COND=$(EC,$genovw_is_wildtype,f)>
+   <?MISQL SQL="
+  	select dbinfo('sessionid') 
+  	  from single;">
+    <?MIVAR NAME=genovw_session_id>$1<?/MIVAR>
+    <?MIVAR NAME=genovw_temp_pato>$(CONCAT,genovw_temp_pato_,$genovw_session_id)<?/MIVAR>
+   <?/MISQL>
+
+   <?MISQL SQL="
+  	  execute function table_exists('$genovw_temp_pato')">
+  	<?MIVAR NAME="$genovw_tableExists">$1<?/MIVAR>
+   <?/MISQL>
+  <?MISQL COND=$(EC,$genovw_tableExists,t) SQL="
+	drop table $genovw_temp_pato;">
+  <?/MISQL>
+   <?MISQL SQL="
+    	  create temp table $genovw_temp_pato (
+   	    t_pato_zdb_id 	varchar(50)
+  	  ) with NO LOG;">
+   <?/MISQL>  
+
+   <?MISQL SQL="
+	insert into $genovw_temp_pato
+            select distinct apato_zdb_id
+              from atomic_phenotype, genotype_experiment
+             where genox_zdb_id = apato_genox_zdb_id 
+               and genox_geno_zdb_id = '$OID' ;">
+   <?/MISQL>
+
+   <hr width=80%>
+   <b> PHENOTYPE: </b><font size=-1>(<a href="javascript:start_note('phenotype_note')">current status</a></font>)
+   <br>
+
+   <?MISQL SQL="select WebExplode(object,'phmview_input_table=$genovw_temp_pato') from webPages where ID='aa-phenotype_miniview.apg';">$1<?/MISQL>
+ 
+  <?/MIBLOCK> <?MICOMMENT> end of if mutant <?/MICOMMENT>
+
+
+
+  <?MICOMMENT> ======  Gene Expression  ====== <?/MICOMMENT>
+  
+  <?MIBLOCK COND="$(EC,$genovw_is_wildtype,f)">
+    <hr width=80%>
+    <b>GENE EXPRESSION IN 
+    <?MIVAR><i>$genovw_display_name</i><?/MIVAR>
+    <?MISQL SQL="
+	execute function get_genotype_backgrounds('$OID')">
+    <?/MISQL>
+    <?MIVAR COND="$(NC,$1,)">($1)<?/MIVAR>
+    </b>
+
+    <font size=-1>(<a href="javascript:start_note('xpatselect_note')">current status</a></font>)
+    <br>
+
+    <?MIVAR NAME=genovw_xpat_source_desc><?/MIVAR>
+    <?MISQL SQL="           
+	   select distinct pub_mini_ref
+             from expression_experiment
+                  join publication
+                    on xpatex_source_zdb_id = publication.zdb_id
+                  join genotype_experiment
+                    on xpatex_genox_zdb_id = genox_zdb_id
+             where genox_geno_zdb_id='$OID'  
+               and genox_zdb_id = xpatex_genox_zdb_id
+               and xpatex_source_zdb_id = zdb_id
+               and exists (select 't'
+                             from expression_result
+                            where xpatres_xpatex_zdb_id = xpatex_zdb_id);">
+           
+    <?/MISQL>
+    <?MIVAR NAME=genovw_num_of_xpat_source>$MI_ROWCOUNT<?/MIVAR>
+
+    <?MIBLOCK  COND="$(=,$genovw_num_of_xpat_source,1)">
+       <?MIVAR>$(SETVAR, $genovw_xpat_source_desc,$1)<?/MIVAR>
+    <?MIELSE>
+       <?MIVAR>$(SETVAR, $genovw_xpat_source_desc,$genovw_num_of_xpat_source publications)<?/MIVAR>
+    <?/MIBLOCK>
+
+    <?MISQL SQL="
+          	select distinct xpatfig_fig_zdb_id
+	          from expression_experiment, expression_result,
+                       expression_pattern_figure, genotype_experiment
+                 where genox_geno_zdb_id = '$OID'
+                   and genox_zdb_id = xpatex_genox_zdb_id
+	           and xpatex_zdb_id = xpatres_xpatex_zdb_id
+                   and xpatres_zdb_id = xpatfig_xpatres_zdb_id; ">
+
+    <?/MISQL>
+    <?MIVAR NAME=genovw_num_of_xpat_fig>$MI_ROWCOUNT<?/MIVAR>
+
+
+    <?MIBLOCK COND="$(>,$genovw_num_of_xpat_source,0)">
+      <table width="100%" border="0">
+
+         <tr bgcolor=<?MIVAR>$highlight<?/MIVAR>>
+          <td>&nbsp;&nbsp;&nbsp;
+
+            <?MIVAR COND="$(>,$genovw_num_of_xpat_fig,1)"> <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&mutsearchtype=equals&mutant=$genovw_display_name">$genovw_num_of_xpat_fig figure(s)</a> from $genovw_xpat_source_desc <?/MIVAR>
+
+	    <?MIVAR COND="$(=,$genovw_num_of_xpat_fig,1)"> <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$1">1 figure(s)</a> from $genovw_xpat_source_desc <?/MIVAR>
+       
+         </td></tr>
+       </table>
+    <?/MIBLOCK>
+  <?/MIBLOCK> <?MICOMMENT>--- end if not wildtype ---<?/MICOMMENT>
+
+
+
+  <?MICOMMENT> ======  Current Source(s)  ====== 
+             == per case 1269, we always display the title
+  <?/MICOMMENT>
+  <hr width=80%>	
+  <b> CURRENT SOURCE(S): </b>
+
+  <table width=100% bgcolor=<?MIVAR>$highlight<?/MIVAR>>
+
+  <?MICOMMENT>-- extinct info  --<?/MICOMMENT>
+  <?MIBLOCK COND="$(EC,$genovw_is_extinct,t)">
+      <tr><td> &nbsp;&nbsp; None (extinct) </td></tr>
+  <?MIELSE>
+
+    <?MISQL SQL="
+        select idsup_supplier_zdb_id
+          from  int_data_supplier
+         where idsup_data_zdb_id = '$OID'
+        UNION
+        select idsup_supplier_zdb_id
+          from  int_data_supplier, genotype_feature
+         where genofeat_geno_zdb_id = '$OID'
+           and idsup_data_zdb_id = genofeat_feature_zdb_id;">
+    <?/MISQL>
+    <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
+	<tr><td> &nbsp;&nbsp; Not specified </td></tr>
+    <?MIELSE>
+      <?MIBLOCK COND="$(OR,$(EC,$genovw_is_wildtype,t),$(NC,$genovw_bkgrd_html_display,unspecified))">
+        <?MICOMMENT>-- display genotype supplier first, 0,1,or more  --<?/MICOMMENT>
+      
+        <tr><td>This line available from: </td>
+
+        <?MISQL SQL="
+        select idsup_supplier_zdb_id, idsup_avail_state,
+	       get_obj_name(idsup_supplier_zdb_id),
+	       srcurl_url, srcurl_display_text	
+          from int_data_supplier, outer source_url
+         where idsup_data_zdb_id = '$OID'
+           and idsup_supplier_zdb_id = srcurl_source_zdb_id
+           and srcurl_purpose = 'order' ;"> 
+
+    	   <?MIVAR NAME=genovw_sup_zdb_id>$1<?/MIVAR>
+   	   <?MIVAR NAME=genovw_sup_state>$2<?/MIVAR>	
+    	   <?MIVAR NAME=genovw_sup_name>$3<?/MIVAR>	
+    	   <?MIVAR NAME=genovw_sup_src_url>$4<?/MIVAR>	
+    	   <?MIVAR NAME=genovw_sup_src_display>$5<?/MIVAR>
+	
+    	   <?MIVAR COND="$(>,$MI_CURRENTROW,1)">
+	     <tr><td>&nbsp;</td>
+           <?/MIVAR>
+ 
+      	   <td>
+            <?MIVAR>
+             <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sourceview.apg&OID=$genovw_sup_zdb_id">$genovw_sup_name</a>
+            <?/MIVAR> 
+            <?MIVAR COND="$(NC,$genovw_sup_state,)">
+	      ($genovw_sup_state)
+            <?/MIVAR>
+            &nbsp;&nbsp;&nbsp;
+        
+	    <?MIVAR COND="$(NC,$genovw_sup_src_url,)">
+             (<A HREF="$genovw_sup_src_url$OID">$genovw_sup_src_display</A>)
+            <?/MIVAR>
+          </td>
+        </tr>
+       <?/MISQL> 
+      <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">
+	<td>Not specified</td> </tr>
+      <?/MIVAR>
+ 
+    <?/MIBLOCK>	<?MICOMMENT>-- end display genotype supplier --<?/MICOMMENT>
+
+    <?MIBLOCK COND="$(EC,$genovw_is_wildtype,f)">
+      <?MICOMMENT>-- for each feature, display supplier first, 0,1,or more  --<?/MICOMMENT>
+
+      <tr><td nowrap>Lines carrying the following genetic features are available from: </td>
+      <?MIVAR NAME=genovw_ftr_sup_exist>f<?/MIVAR>
+      <?MISQL SQL="
+        select feature_zdb_id, feature_name
+          from genotype_feature, feature
+         where genofeat_geno_zdb_id = '$OID'
+           and genofeat_feature_zdb_id = feature_zdb_id
+        order by feature_name_order;">
+
+     	<?MIVAR NAME=genovw_ftr_zdb_id>$1<?/MIVAR>
+   	<?MIVAR NAME=genovw_ftr_name>$2<?/MIVAR>	      
+
+        <?MISQL SQL="
+        select idsup_supplier_zdb_id, idsup_avail_state,
+	       get_obj_name(idsup_supplier_zdb_id),
+	       srcurl_url, srcurl_display_text	
+          from int_data_supplier, outer source_url
+         where idsup_data_zdb_id = '$genovw_ftr_zdb_id'
+           and idsup_supplier_zdb_id = srcurl_source_zdb_id
+           and srcurl_purpose = 'order' ;"> 
+
+    	 <?MIVAR NAME=genovw_ftr_sup_zdb_id>$1<?/MIVAR>
+   	 <?MIVAR NAME=genovw_ftr_sup_state>$2<?/MIVAR>	
+    	 <?MIVAR NAME=genovw_ftr_sup_name>$3<?/MIVAR>	
+    	 <?MIVAR NAME=genovw_ftr_sup_src_url>$4<?/MIVAR>	
+    	 <?MIVAR NAME=genovw_ftr_sup_src_display>$5<?/MIVAR>	
+
+	 <?MIVAR>$(SETVAR,$genovw_ftr_sup_exist,t)<?/MIVAR>
+         </tr>
+         <tr>
+         <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
+ 	   <td><?MIVAR>&nbsp;&nbsp;<i>$genovw_ftr_name</i> <?/MIVAR></td>
+	 <?MIELSE>
+	   <td>&nbsp;</td>
+         <?/MIBLOCK>
+         <td>
+           <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sourceview.apg&OID=$genovw_ftr_sup_zdb_id">$genovw_ftr_sup_name</a><?/MIVAR>
+           <?MIVAR COND="$(NC,$genovw_ftr_sup_state,)">
+	     	($genovw_ftr_sup_state)
+           <?/MIVAR>
+           &nbsp;&nbsp;&nbsp;
+        
+	   <?MIVAR COND="$(NC,$genovw_ftr_sup_src_url,)">
+             	(<A HREF="$genovw_ftr_sup_src_url$genovw_ftr_zdb_id">$genovw_ftr_sup_src_display</A>)
+           <?/MIVAR>
+         </td>
+         </tr>
+        
+        <?/MISQL> <?MICOMMENT> -- end inner sql for feature supplier -- <?/MICOMMENT>
+
+       <?/MISQL> <?MICOMMENT> -- end  sql for getting features -- <?/MICOMMENT>
+       <?MIVAR COND=$(EC,$genovw_ftr_sup_exist,f)>
+	  <td> Not specified </td></tr>
+       <?/MIVAR>
+     <?/MIBLOCK>   <?MICOMMENT> -- end if not wildtype, allele suppliers -- <?/MICOMMENT>
+   <?/MIBLOCK>   <?MICOMMENT> -- end  if there is supplier info -- <?/MICOMMENT>
+  <?/MIBLOCK>   <?MICOMMENT> -- end  whether extinct -- <?/MICOMMENT>
+  </table>
+
+  
+
+
+  <?MICOMMENT> ==== Lab of Origin (1) (for wildtype) ==== <?/MICOMMENT>
+  <?MIBLOCK COND="$(EC,$genovw_is_wildtype,t)">
+    <?MISQL SQL="
+        select ids_source_zdb_id, name, url
+          from int_data_source, lab
+         where ids_data_zdb_id = '$OID'
+           and ids_source_zdb_id = zdb_id ;"> 
+
+       <?MIVAR NAME=genovw_wt_orign_lab_zdb_id>$1<?/MIVAR>
+       <?MIVAR NAME=genovw_wt_orign_lab_name>$2<?/MIVAR>
+       <?MIVAR NAME=genovw_wt_orign_lab_url>$3<?/MIVAR>
+    <?/MISQL>
+    <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+      <hr width=80%>	
+      <b> LAB OF ORIGIN: </b>
+      <table width=100% bgcolor=<?MIVAR>$highlight<?/MIVAR>>
+      <tr>
+        <td>&nbsp;&nbsp;
+        <?MIVAR>
+            <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$genovw_wt_orign_lab_zdb_id">$genovw_wt_orign_lab_name</a>
+        <?/MIVAR>
+	<?MIVAR COND="$(NC,$genovw_stock_num,)">
+	   (Stock#: $genovw_stock_num)
+        <?/MIVAR>
+        &nbsp;&nbsp;&nbsp;
+        </td>
+      </tr>
+      </table>
+    <?/MIBLOCK> <?MICOMMENT> - end if there is data <?/MICOMMENT>
+  <?/MIBLOCK> <?MICOMMENT> - end if wildtype <?/MICOMMENT>
+
+
+  <?MICOMMENT> ==========   Genotype Details   ========= <?/MICOMMENT>
+  <?MIBLOCK COND="$(EC,$genovw_is_wildtype,f)">
+
+    <hr width=80%>
+    <b> GENOTYPE DETAILS: </b>  
+    <?MIVAR NAME=row_color>$highlight<?/MIVAR>
+
+    <?MICOMMENT>MI_CURRENTROW is overwriten by subsequent queries, 
+              so we introduce a clean counter<?/MICOMMENT>
+    <?MIVAR NAME=row_counter>0<?/MIVAR> 
+
+    <?MISQL SQL="
+  
+	select feature_zdb_id, feature_name, feature_abbrev, feature_type,
+               feature_comments, zyg_name, get_genofeat_mp_zyg_html_display(genofeat_zdb_id),
+	       feature_abbrev_order
+          from genotype_feature, feature, zygocity
+         where genofeat_geno_zdb_id = '$OID'
+           and genofeat_feature_zdb_id = feature_zdb_id
+           and genofeat_zygocity = zyg_zdb_id
+           order by feature_abbrev_order ;">
+
+     <?MIVAR NAME=genovw_ftr_zdb_id>$1<?/MIVAR>
+     <?MIVAR NAME=genovw_ftr_name>$2<?/MIVAR>
+     <?MIVAR NAME=genovw_ftr_abbrev>$3<?/MIVAR>
+     <?MIVAR NAME=genovw_ftr_type>$4<?/MIVAR>
+     <?MIVAR NAME=genovw_ftr_comments>$5<?/MIVAR>
+     <?MIVAR NAME=genovw_ftr_zygocity>$6<?/MIVAR>
+     <?MIVAR NAME=genovw_ftr_parental_zygocity>$7<?/MIVAR>
+
+     <?MIVAR>$(SETVAR,$row_counter,$(+,$row_counter,1))<?/MIVAR>
+     <?MIVAR COND="$(=,$row_counter,1)">
+       <table width=100%  cellpadding=2> 
+       <tr bgcolor=#ccccccc> 
+            <td width=20%><b> Feature </b> </td>
+            <td width=80%><b> Details </b> </td>
+          </tr>
+     <?/MIVAR>
+
+     <?MISQL SQL="
+	select count(genofeat_geno_zdb_id)::integer
+          from genotype_feature
+	 where genofeat_feature_zdb_id = '$genovw_ftr_zdb_id'">
+        <?MIVAR NAME=genovw_ftr_all_geno_count>$1<?/MIVAR>
+     <?/MISQL>
+
+     <tr bgcolor=$row_color>
+        <td valign="top">
+	  <?MIVAR>$(IF,$(EC,$(SUBSTR,$genovw_ftr_name,1,3),un_),unspecified,<i>$genovw_ftr_name<i>)<?/MIVAR>
+
+          <?MIVAR COND="$(>,$genovw_ftr_all_geno_count,1)">
+		<br>(<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&query_results=exists&compareAllele=starts&fsel_allele_id=$genovw_ftr_zdb_id">in $genovw_ftr_all_geno_count genotypes</a>)
+	  <?/MIVAR>
+        </td>
+
+        <td align=top>
+          <table border="0" cellpadding=2> 
+
+          <?MICOMMENT> -------  Previous Name(s) --------<?/MICOMMENT>
+
+          <?MISQL SQL="
+	      select dalias_alias, dalias_zdb_id
+                from data_alias 
+               where dalias_data_zdb_id = '$genovw_ftr_zdb_id'">
+ 
+             <?MIVAR NAME=$genovw_ftr_alias_display>$1<?/MIVAR>
+             <?MIVAR NAME=$genovw_alias_zdb_id>$2<?/MIVAR>
+	     
+             <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
+                <tr>
+                  <td nowrap><b>Previous Name(s): </td>
+		  <td><?MIVAR>$genovw_ftr_alias_display<?MISQL SQL="select WebExplode(object,'dataId=$genovw_alias_zdb_id&type=recattrib') from  webPages where ID='aa-miniref_display.apg';">$1<?/MISQL><?/MIVAR>
+             <?MIELSE>
+	          , <?MIVAR>$genovw_ftr_alias_display<?MISQL SQL="select WebExplode(object,'dataId=$genovw_alias_zdb_id&type=recattrib') from  webPages where ID='aa-miniref_display.apg';">$1<?/MISQL><?/MIVAR>
+	     <?/MIBLOCK>
+          <?/MISQL>
+
+          <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
+               &nbsp; &nbsp;<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-nomenview.apg&OID=$genovw_ftr_zdb_id">Nomenclature History</a>
+               </td></tr> 
+          <?/MIVAR>
+
+
+            
+          <?MICOMMENT> --------  Affected Gene  ------------ 
+                    == we have queried this info before. we do not have
+                    == a good data structure to store the genes corresponding
+                    == to features. And it is not an expensive query, so here
+                    == it is again.
+          <?/MICOMMENT>
+
+          <?MISQL SQL="
+	       select fmrel_mrkr_zdb_id, get_mrkr_abbrev_html_link(fmrel_mrkr_zdb_id)
+                 from feature_marker_relationship
+                where fmrel_ftr_zdb_id = '$genovw_ftr_zdb_id'
+                  and fmrel_type = 'is allele of'
+            UNION
+               select marker_id, get_mrkr_abbrev_html_link(marker_id)
+          	 from mapped_deletion
+         	where allele = '$genovw_ftr_name'
+		  and marker_id[1,8] = 'ZDB-GENE'
+                  and present_t = 'f';">
+
+ 	      <?MIVAR NAME=genovw_gene_zdb_id>$1<?/MIVAR>
+
+              <?MICOMMENT> ---- display  -----<?/MICOMMENT>              
+              <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">  
+               <tr>
+		   <td nowrap><b> Affected Gene(s): </b> </td>
+                   
+	           <?MIVAR NAME=genovw_seperator><td><?/MIVAR>	              
+              <?MIELSE>
+       		  <?MIVAR NAME=genovw_seperator></td></tr><tr><td>&nbsp;</td><td><?/MIVAR>
+    	      <?/MIBLOCK>
+
+	      <?MICOMMENT> ---- display gene symbol -----<?/MICOMMENT>  
+              <?MIVAR>$genovw_seperator$2<?/MIVAR>
+
+              <?MICOMMENT> ---- get Gene Alias  -----<?/MICOMMENT> 
+              <?MISQL SQL="
+	         select dalias_alias
+                   from data_alias 
+                  where dalias_data_zdb_id = '$genovw_gene_zdb_id'">
+             
+                <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
+ 		  (Previous Names: 
+                  <?MIVAR NAME=genovw_ftr_gene_alias_array>$1<?/MIVAR>
+                <?MIELSE>
+                  <?MIVAR>$(VECAPPEND,$genovw_ftr_gene_alias_array,$1)<?/MIVAR>
+	        <?/MIBLOCK>
+              <?/MISQL>
+	      <?MIVAR>
+                 $(SEPARATE,$genovw_ftr_gene_alias_array,", ")$(IF,$(>,$MI_ROWCOUNT,0),")")
+              <?/MIVAR>
+ 
+
+           <?/MISQL>
+           <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
+	       </td> </tr>
+           <?/MIVAR>
+
+
+           <?MICOMMENT> ---------   Zygosity  ---------------<?/MICOMMENT> 
+           <tr>
+             <td><b> Zygosity: </b></td>
+             <td> $genovw_ftr_zygocity </td>
+           </tr>
+
+
+           <?MICOMMENT> ---------   Parental Zygosity  ---------------<?/MICOMMENT> 
+           <?MIVAR COND="$(NC,$genovw_ftr_parental_zygocity,)">
+             <tr>
+               <td><b> Parental Zygosity: </b></td>
+               <td> $genovw_ftr_parental_zygocity </td>
+             </tr>
+           <?/MIVAR>
+
+
+           <?MICOMMENT> --------- Type & attribution --------- <?/MICOMMENT> 
+           <tr> 
+            <td><b>Type: </b></td>
+              <?MISQL SQL="
+	          select ftrtype_type_display
+                    from feature_type
+                   where ftrtype_name = '$genovw_ftr_type'
+                UNION
+                  select mrkrtype_type_display
+                    from marker_types
+                   where marker_type = '$genovw_ftr_type'; ">
+
+                <?MIVAR NAME=genovw_ftr_type_display> $1 <?/MIVAR>
+              <?/MISQL>
+
+            <td> $genovw_ftr_type_display <?MISQL SQL="select WebExplode(object,'dataId=$genovw_ftr_zdb_id&type=recattrib&info=feature+type') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL></td>
+           </tr>
+
+           <?MICOMMENT> --------  Protocol  ------- <?/MICOMMENT> 
+           <tr> 
+             <td><b>Protocol: </td>
+
+             <?MISQL SQL="
+	        select featassay_mutagen, featassay_mutagee
+                  from feature_assay
+                 where featassay_feature_zdb_id = '$genovw_ftr_zdb_id' ; ">
+
+               <?MIVAR NAME=genovw_ftr_mutagen>$1<?/MIVAR>
+               <?MIVAR NAME=genovw_ftr_mutagee>$2<?/MIVAR>
+
+             <?/MISQL>
+	     <?MIBLOCK COND="$(NXST,$genovw_ftr_mutagen)">
+		<?MIVAR NAME=$genovw_ftr_protocol>not specified<?/MIVAR>
+             <?MIELSE>
+               <?MICOMMENT> define the general protocol, then modify based on special cases.
+               <?/MICOMMENT>
+               <?MIVAR NAME=$genovw_ftr_protocol> $genovw_ftr_mutagee treated with $genovw_ftr_mutagen <?/MIVAR>
+               <?MIVAR COND="$(EC,$genovw_ftr_mutagee,not specified)">
+		$(SETVAR,$genovw_ftr_protocol,treated with $genovw_ftr_mutagen)
+	       <?/MIVAR>
+
+               <?MIVAR COND="$(AND,$(EC,$genovw_ftr_mutagee,$genovw_ftr_mutagen),$(EC,$genovw_ftr_mutagen,not specified))">
+		  $(SETVAR,$genovw_ftr_protocol,not specified)
+	       <?/MIVAR>
+
+	       <?MIVAR COND="$(EC,$genovw_ftr_mutagen,spontaneous)">
+            	 $(SETVAR,$genovw_ftr_protocol,spontaneous)
+	       <?/MIVAR>
+             <?/MIBLOCK> <?MICOMMENT> --end if mutagen exists-- <?/MICOMMENT> 
+ 
+	     <td>
+	       <?MIVAR>
+                 $genovw_ftr_protocol 		 
+               <?/MIVAR>
+             </td>
+           </tr>
+           <?MICOMMENT> ---- end protocol  ----<?/MICOMMENT> 
+
+
+
+          <?MICOMMENT>-----Construct (for insertion marker)------<?/MICOMMENT> 
+
+          <?MISQL COND="$(EC,$genovw_ftr_type,TRANSGENIC_INSERTION)" SQL="
+	       select get_mrkr_name_html_link(mrkr_zdb_id)
+                 from feature_marker_relationship, marker
+                where fmrel_ftr_zdb_id = '$genovw_ftr_zdb_id'
+                  and fmrel_mrkr_zdb_id = mrkr_zdb_id
+                  and fmrel_type = 'contains sequence feature';"> 
+
+             <tr>
+                <td><b>Construct: </b></td>
+
+                <td>$1</td>
+             </tr>
+	  <?/MISQL>
+	  <?MICOMMENT> ------ end  construct  ------<?/MICOMMENT>
+       
+
+          <?MICOMMENT> --------  Lab of Origin ------- <?/MICOMMENT> 
+          <?MISQL SQL="
+	        select zdb_id, name
+                  from int_data_source, lab
+                 where ids_data_zdb_id = '$genovw_ftr_zdb_id'
+                   and ids_source_zdb_id = zdb_id; ">
+
+             <?MIVAR NAME=genovw_ftr_lab_zdb_id>$1<?/MIVAR>
+             <?MIVAR NAME=genovw_ftr_lab_name>$2<?/MIVAR>
+          <?/MISQL>
+
+	  <?MIVAR COND="$(XST,$genovw_ftr_lab_zdb_id)">
+               <tr>
+                <td nowrap><b>Lab of Origin: </b> </td>
+                <td>
+                  <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$genovw_ftr_lab_zdb_id">$genovw_ftr_lab_name</a> 
+		  <?MIVAR COND="$(NC,$genovw_stock_num,)">(Stock#: $genovw_stock_num)<?/MIVAR>
+		 </td>
+               </tr>
+          <?/MIVAR>
+
+          <?MICOMMENT> ---------  Mapping data ------------<?/MICOMMENT>
+           <tr> 
+             <td><b>Map: </td>
+             <td><?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini&oID=$genovw_ftr_zdb_id') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+             </td>
+           </tr>
+           <?MICOMMENT> --- end Map --- <?/MICOMMENT>
+
+
+           <?MICOMMENT> ----------  Note  ------------------<?/MICOMMENT> 
+           <?MIVAR COND="$(NC,$genovw_ftr_comments,)">
+             <tr>
+               <td><b>Note: </td>
+               <td>$genovw_ftr_comments </td>
+             </tr>
+           <?/MIVAR>
+
+             <?MICOMMENT> Citgeneric uses OID for counting citations. Change back OID after calling the function.
+             <?/MICOMMENT>
+             
+             <?MIVAR NAME=genovw_geno_OID>$OID<?/MIVAR>
+             <?MIVAR NAME=OID>$genovw_ftr_zdb_id<?/MIVAR>
+           
+             <tr>
+               <td colspan=2>
+                     <?MISQL SQL="select WebExplode(object,'citlink_data_page=citgeneric.apg&citlink_no_HR=1') from webPages where ID='aa-citlink.apg';">$1<?/MISQL>
+               </td>
+             </tr>
+             
+             <?MIVAR NAME=OID>$genovw_geno_OID<?/MIVAR>
+
+           </table>
+     </td></tr>
+     
+     <?MIBLOCK COND="$(EC,$row_color,$highlight)">   
+ 	  <?MIVAR>$(SETVAR,$row_color,#FFFFFF)<?/MIVAR>
+     <?MIELSE>
+	  <?MIVAR>$(SETVAR,$row_color,$highlight)<?/MIVAR>
+     <?/MIBLOCK>
+
+   <?/MISQL><?MICOMMENT> ===== end Genotype Information big sql ======<?/MICOMMENT> 
+
+   <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">	
+     </table><?MICOMMENT>--- end table for feature details ---<?/MICOMMENT> 
+   <?/MIVAR>
+
+  <?/MIBLOCK> <?MICOMMENT> ===== end if mutant ======<?/MICOMMENT>
+
+
+
+  <?MICOMMENT> =========   Genotype Note  ==========<?/MICOMMENT> 
+
+  <?MISQL SQL="
+	select HTML_breaks(extnote_note)
+          from external_note
+         where extnote_data_zdb_id = '$OID'">
+  <?/MISQL>
+  <?MIVAR NAME=genoview_geno_note>$1<?/MIVAR>
+
+
+  <?MIBLOCK COND="$(XST,$UPDATE)">
+     <hr width=80%>
+     <b> GENOTYPE NOTE: </b> <br>
+     <?MIVAR>
+     <textarea rows=5 cols=70 name=genoview_update_note>$genoview_geno_note</textarea>
+     <?/MIVAR>
+     </form> <?MICOMMENT> close form updater<?/MICOMMENT>
+  <?MIELSE COND="$(NC,$genoview_geno_note,)">
+     <hr width=80%>
+     <b> GENOTYPE NOTE: </b> <br>
+     <?MIVAR>$genoview_geno_note<?/MIVAR>
+  <?/MIBLOCK>
+  <br>
+
+ 
+  <?MICOMMENT> ===== Citation  ======<?/MICOMMENT> 
+  <?MIBLOCK COND=$(EC,$genovw_is_wildtype,f)>
+    <?MISQL SQL="select WebExplode(object,'citlink_data_page=citgeneric.apg&rtype=genotype') from webPages where ID='aa-citlink.apg';">$1<?/MISQL>
+  <?/MIBLOCK>
+
+ <?/MIBLOCK> <?MICOMMENT> === end of OID valid  === <?/MICOMMENT>
+
+<?/MIBLOCK> <?MICOMMENT> === end of Authorization check  === <?/MICOMMENT>
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+
+</HTML>
+
+

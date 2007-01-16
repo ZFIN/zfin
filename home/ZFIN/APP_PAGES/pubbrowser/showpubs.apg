@@ -66,6 +66,7 @@ OUTPUT VARS:
 <?MIVAR COND="$(NXST,$orgOID)" NAME=$orgOID>$OID<?/MIVAR>
 <?MIVAR COND="$(NXST,$info)" NAME=$info><?/MIVAR>
 <?MIVAR COND="$(NXST,$pubOrder)" NAME=$pubOrder>authors<?/MIVAR>
+<?MIVAR NAME=$pubOrderType>, recattrib_source_type desc<?/MIVAR>
 
 <?MIVAR COND="$(NXST,$add_cit_count)" NAME=$add_cit_count>0<?/MIVAR>
 
@@ -101,15 +102,15 @@ OUTPUT VARS:
 <?/MIBLOCK>
 
 <?MIBLOCK COND="$(NC,$mutsearch,)">
-<?MISQL SQL="select zdb_id as fsl_zdb_id 
-	from fish 
-	where (lower(name) like '$mutsearch'
-      	 or  lower(allele) like '$mutsearch'  
-	 or lower(abbrev) like '$mutsearch') 
+<?MISQL SQL="select geno_zdb_id as fsl_zdb_id 
+	from genotype 
+	where (lower(geno_display_name) like '$mutsearch'
+      	 or  lower(geno_handle) like '$mutsearch'  
 	union 
-	  select zdb_id as fsl_zdb_id 
-		from locus 
-		where (lower(abbrev) like '$mutsearch') 
+	  select feature_zdb_id as fsl_zdb_id 
+		from feature 
+		where (lower(feature_name) like '$mutsearch'
+		or  lower(feature_abbrev) like '$mutsearch') 
 	  into temp fish_search_list"><?/MISQL>
 <?MIVAR NAME=fish_table_created>true<?/MIVAR>
 <?/MIBLOCK>
@@ -121,10 +122,10 @@ $(IF,$(>,$(POSITION,$rtype,marker),0),
       $(SETVAR,$target_table,marker)
       )
 
-$(IF,$(>,$(POSITION,$rtype,fish),0),
-      $(SETVAR,$return_page1,aa-fishupdate.apg)
-      $(SETVAR,$return_page2,aa-do-fishupdate.apg)
-      $(SETVAR,$target_table,"")
+$(IF,$(>,$(POSITION,$rtype,genotype),0),
+      $(SETVAR,$return_page1,aa-genotypeview.apg)
+      $(SETVAR,$return_page2,aa-do-markerupdate.apg)
+      $(SETVAR,$jsdelatt_caller,genotypeview.apg)
       )
 
 $(IF,$(>,$(POSITION,$OID,XPAT),0),
@@ -262,18 +263,22 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 					from marker_go_term_evidence 
 					where mrkrgoev_mrkr_zdb_id = '$OID')
     or 
-      recattrib_data_zdb_id in (select zdb_id 
-                                        from locus 
-                                        where cloned_gene = '$OID')
+      recattrib_data_zdb_id in (select fmrel_ftr_zdb_id 
+                                        from feature_marker_relationship, marker 
+                                        where fmrel_mrkr_zdb_id = mrkr_zdb_id
+                                          and mrkr_name = '$OID')
     or 
-      recattrib_data_zdb_id in (select a.zdb_id 
-                                        from alteration as a, locus as loc 
-                                        where a.locus = loc.zdb_id and loc.cloned_gene = '$OID')
+      recattrib_data_zdb_id in (select genofeat_geno_zdb_id 
+                                        from genotype_feature, feature_marker_relationship, marker 
+                                        where genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                          and fmrel_mrkr_zdb_id = mrkr_zdb_id
+                                          and mrkr_name = '$OID')
     or 
-      recattrib_data_zdb_id in (select f.zdb_id 
-                                        from fish as f, locus as loc 
-                                        where f.locus = loc.zdb_id and loc.cloned_gene = '$OID')
-   <?/MIVAR>
+      recattrib_data_zdb_id in (select genofeat_geno_zdb_id 
+                                        from genotype_feature, feature
+                                        where genofeat_feature_zdb_id = feature_zdb_id
+                                          and feature_name = '$OID')
+  <?/MIVAR>
    
 
 <TABLE width=100%><TR><TD bgcolor=#ccccccc>
@@ -303,7 +308,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
            and get_obj_type(recattrib_source_zdb_id) = 'PUB'
            $(IF,$(XST,$recattrsrctype),and recattrib_source_type = '$recattrsrctype');">
 	<?MIVAR NAME=$sp_counter>$1<?/MIVAR>
-		($sp_counter total) 
+		($sp_counter sp_total) 
       <?/MISQL>	
     <?MIELSE>
       <br>
@@ -336,7 +341,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
   <?MIBLOCK COND="$(AND,$(NC,$abbrev,),$(NC,$abbrev,''))">
      <?MIVAR>
 	$(IF,$(OR,$(>,$(POSITION,$OID,GENE),0),$(>,$(POSITION,$OID,OEVDISP),0)),$marker_type_display Symbol:&nbsp;<i>$abbrev</i>)
-	$(IF,$(OR,$(>,$(POSITION,$OID,FISH),0),$(>,$(POSITION,$OID,LOCUS),0)),Abbreviation:&nbsp;$abbrev)
+	$(IF,$(OR,$(>,$(POSITION,$OID,GENO),0),$(>,$(POSITION,$OID,ALT),0)),Abbreviation:&nbsp;$abbrev)
      <?/MIVAR><br>
   <?/MIBLOCK>
 </b></font>	
@@ -378,7 +383,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 
 <?MIVAR COND="$(XST,$UPDATE)">
   <INPUT TYPE=button value="Add Publication" onClick="doit('rel_pub','selection','Add')"> 
-  <?MIBLOCK COND="$(AND,$(NXST,$attribtype),$(>,$(POSITION,$OID,LOCUS),0))">
+  <?MIBLOCK COND="$(AND,$(NXST,$attribtype),$(>,$(POSITION,$OID,ALT),0))">
    <b> Please use the individual  <?MIVAR><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$OID#allele'>allele</A><?/MIVAR> record to enter allele-specific publications.</b>
    <br>
   <?/MIBLOCK>
@@ -399,6 +404,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 
 <?MICOMMENT>  *** for GO annotation reference, deal separate *** <?/MICOMMENT> 
 <?MIBLOCK COND="$(NC,$rtype,goview)"> 
+
 
   <?MIBLOCK COND="$(=,$count_of_real_pub,-9)">
 <?MISQL COND=$(XST,$debug_timing) SQL="
@@ -430,11 +436,11 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
   <?MIBLOCK COND="$(NXST,$attribtype)">
 
 
-    <?MIBLOCK COND="$(>,$(POSITION,$OID,LOCUS),0)">
+    <?MIBLOCK COND="$(>,$(POSITION,$OID,ALT),0)">
 
       <?MISQL SQL="
-        select WebExplode(object,'&sp_G_orderby=order by $pubOrder&sp_G_jtype_option=published') 
-        from webPages where ID='aa-citlocus.apg';">
+        select WebExplode(object,'&sp_G_orderby=order by $pubOrder$pubOrderType&sp_G_jtype_option=published') 
+        from webPages where ID='aa-citgeneric.apg';">
           <?MIVAR NAME=sp_G_sql>$sp_G_returnvar<?/MIVAR>
       <?/MISQL>
     
@@ -443,14 +449,14 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
     <?/MIBLOCK>
 
 
-   <?MIBLOCK COND="$(AND,$(=,$(POSITION,$OID,LOCUS),0),$(=,$(POSITION,$OID,FISH),0),$(=,$(POSITION,$rtype,xpat),0))">
+   <?MIBLOCK COND="$(AND,$(=,$(POSITION,$OID,ALT),0),$(=,$(POSITION,$OID,GENO),0),$(=,$(POSITION,$rtype,xpat),0))">
 <?MISQL COND=$(XST,$debug_timing) SQL="
   execute function get_time()">
   <br>$1 Before SQL
 <?/MISQL>
 
       <?MISQL SQL="
-        select WebExplode(object,'&sp_G_orderby=order by $pubOrder&sp_G_jtype_option=published') 
+        select WebExplode(object,'&sp_G_orderby=order by $pubOrder$pubOrderType&sp_G_jtype_option=published') 
         from webPages where ID='aa-citgeneric.apg';">
           <?MIVAR NAME=sp_G_sql>$sp_G_returnvar<?/MIVAR>
       <?/MISQL>
@@ -470,10 +476,10 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
    <?/MIBLOCK>
 
 
-  <?MIBLOCK COND="$(>,$(POSITION,$OID,FISH),0)">
+  <?MIBLOCK COND="$(>,$(POSITION,$OID,GENO),0)">
 
-    <?MISQL SQL="select WebExplode(object,'&sp_G_orderby=order by $pubOrder&sp_G_jtype_option=published') 
-                 from webPages where ID='aa-citfish.apg';">
+    <?MISQL SQL="select WebExplode(object,'&sp_G_orderby=order by $pubOrder$pubOrderType&sp_G_jtype_option=published') 
+                 from webPages where ID='aa-citgeneric.apg';">
         <?MIVAR NAME=sp_G_sql>$sp_G_returnvar<?/MIVAR>
     <?/MISQL>
     
@@ -726,11 +732,12 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
   <?/MIBLOCK>
 
 
- <?MISQL COND=$(XST,$debug_timing) SQL="
-  execute function get_time()">
-  <br>$1 Locus Curation Pub Count End
-<?/MISQL>
 
+     <?MIVAR NAME=sp_G_jtype_option>unpublished<?/MIVAR>
+     
+     <?MISQL SQL="select WebExplode(object,'citlink_data_page=citgeneric.apg') from webPages where ID='aa-cittotalcount.apg';">$1<?/MISQL>
+
+     <?MIVAR NAME=add_cit_count>$citlink_total_count<?/MIVAR>
 
     <?MIBLOCK COND="$(AND,$(=,$(POSITION,$rtype,xpat),0),
                           $(=,$(POSITION,$OID,MRKRGO),0),
@@ -740,39 +747,8 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
      <TR><TD><b>Additional Citations ($add_cit_count):</b></TD></TR>
    <?/MIVAR>
 
-  <?MIVAR COND="$(AND,$(=,$(POSITION,$OID,LOCUS),0),$(=,$(POSITION,$OID,FISH),0))">
-
-     <?MISQL SQL="select WebExplode(object,'&sp_G_orderby=order by $pubOrder&sp_G_jtype_option=unpublished') 
-                 from webPages where ID='aa-citgeneric.apg';">
-        <?MIVAR NAME=sp_G_sql>$sp_G_returnvar<?/MIVAR>
-     <?/MISQL>
-    
+     <?MIVAR NAME=pub_G_display>links<?/MIVAR>
      <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pub_rowdisplay.apg';">$1<?/MISQL>
-
-  <?/MIVAR>
-
- <?MIVAR COND="$(>,$(POSITION,$OID,FISH),0)">
-
-     <?MISQL SQL="select WebExplode(object,'&sp_G_orderby=order by $pubOrder&sp_G_jtype_option=unpublished') 
-                 from webPages where ID='aa-citfish.apg';">
-        <?MIVAR NAME=sp_G_sql>$sp_G_returnvar<?/MIVAR>
-     <?/MISQL>
-    
-     <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pub_rowdisplay.apg';">$1<?/MISQL>
-
-  <?/MIVAR>
-
-
- <?MIVAR COND="$(>,$(POSITION,$OID,LOCUS),0)">
-   
-     <?MISQL SQL="select WebExplode(object,'sp_G_orderby=order by $pubOrder&sp_G_jtype_option=unpublished') 
-               from webPages where ID='aa-citlocus.apg';">
-         <?MIVAR NAME=sp_G_sql>$sp_G_returnvar<?/MIVAR>
-     <?/MISQL>
-  
-     <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pub_rowdisplay.apg';">$1<?/MISQL>
-
-  <?/MIVAR>
 
 
   <?/MIBLOCK> <?MICOMMENT> *** add_cit_count > 0 *** <?/MICOMMENT>

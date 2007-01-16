@@ -2,11 +2,38 @@ begin work ;
 
 update statistics for procedure ;
 
+set constraints all deferred ;
+
+update attribution_type
+  set attype_type = 'feature type'
+  where attype_type = 'discovery' ;
+
+update record_attribution
+  set recattrib_source_type = 'feature type'
+  where recattrib_source_type = 'discovery';
+
+!echo "update cloned gene to standard attributions" ;
+
+update record_Attribution
+  set recattrib_sourcE_type = 'standard'
+  where recattrib_source_type = 'cloned gene'
+  and recattrib_data_zdb_id != 'ZDB-LOCUS-990215-497' ;
+
+--don't update this loci, as it already has a gene attribution 
+--to the paper that also did cloned_gene attribution.
+
+--may need to add this back in when curators see, but for now 
+--erik says these are pesky as many people clone the gene
+--and its hard to determine who did it first, etc...
+
+!echo "delete recattribs with cloned_gene -- should be zero" ;
+
+delete from record_attribution
+  where recattrib_source_type = 'cloned gene' ;
 
 delete from linkage_member
   where lnkgmem_member_zdb_id = 'ZDB-LOCUS-030115-1' 
   and lnkgmem_linkage_zdb_id = 'ZDB-LINK-030521-39';
-
 
 update linkage_member
   set lnkgmem_member_zdb_id = (select zrepld_new_zdb_id
@@ -40,76 +67,20 @@ alter table primer_set
 
 create temp table tmp_dup_Attribs (data_id varchar(50), 
 					source_id varchar(50), 
+					source_type varchar(50),
 					new_id varchar(50),
 					old_id varchar(50))
 with no log ;
 
-insert into tmp_dup_attribs (data_id, source_id, new_id, old_id )
- select a.recattrib_data_zdb_id, 
-	 a.recattrib_source_zdb_id, 
-	 zrepld_new_zdb_id, zrepld_old_zdb_id
-            from record_attribution a, zdb_replaced_data
-             where (a.recattrib_datA_zdb_id like 'ZDB-LOCUS-%'
-                    or a.recattrib_data_zdb_id like 'ZDB-ALT-%')
-             and zrepld_old_zdb_id = recattrib_Data_zdb_id 
-             and exists (select 'x' 
-		          from record_attribution b
-	 	         where zrepld_new_zdb_id = b.recattrib_Data_zdb_id
- 		          and a.recattrib_source_zdb_id = 
-				b.recattrib_source_zdb_id);
+--give alterations their propper attributions
 
---delete the records that will become dups with addition of locus ids.
-
-delete from record_attribution 
-  where exists (select 'x'
-		from tmp_dup_attribs
-		where source_id = recattrib_source_zdb_id
-		and data_id = recattrib_data_zdb_id);
-
-
-select count(*) as counter, zrepld_old_zdb_id as old_id
-  from zdb_replaced_data
-  where zrepld_old_zdb_id like 'ZDB-LOCUS-%'
-  group by zrepld_old_zdb_id
-  having count(*) > 1 
-  into temp tmp_need_two;
-
-select zrepld_new_zdb_id as data_id, recattrib_source_zdb_id as source_id
- from record_Attribution, zdb_replaced_data, tmp_need_two
-    where zrepld_old_zdb_id = recattrib_data_zdb_id
-    and old_id = zrepld_old_zdb_id
- into temp tmp_need_two_recs;
-
-delete from record_attribution
-  where exists (select 'x' 
-		  from tmp_need_two
-		  where recattrib_data_zdb_id = old_id);
+!echo " add attribution to alleles where fish are attributed" ;
 
 insert into record_attribution (recattrib_data_zdb_id,
-				recattrib_sourcE_zdb_id)
-  select data_id, source_id
-   from tmp_need_two_recs ;
-
-
-insert into record_attribution (recattrib_data_zdb_id,
-		recattrib_source_zdb_id)
-  select distinct locus.zdb_id, b.recattrib_source_zdb_id
-	from locus, fish, record_Attribution b
-        where b.recattrib_data_zdb_id = fish.zdb_id
-	and fish.locus = locus.zdb_id
-	and not exists (select 'x'
-			  from locus, record_attribution c
-			  where c.recattrib_data_zdb_id = locus.zdb_id
-			  and c.recattrib_source_zdb_id = 
-				b.recattrib_source_zdb_id) 
-        and not exists (select 'x'
-			  from zdb_replaced_data
-			  where locus.zdb_id = zrepld_old_zdb_id);
-
-
-insert into record_attribution (recattrib_data_zdb_id,
-		recattrib_source_zdb_id)
-  select distinct alteration.zdb_id, b.recattrib_source_zdb_id
+		recattrib_source_zdb_id,
+		recattrib_source_type)
+  select distinct alteration.zdb_id, b.recattrib_source_zdb_id,
+		b.recattrib_source_type
 	from fish, alteration, record_Attribution b
         where b.recattrib_data_zdb_id = fish.zdb_id
 	and fish.allele = alteration.allele
@@ -117,11 +88,138 @@ insert into record_attribution (recattrib_data_zdb_id,
 			  from alteration, record_attribution c
 			  where c.recattrib_data_zdb_id = alteration.zdb_id
 			  and c.recattrib_source_zdb_id = 
-				b.recattrib_source_zdb_id) 
-        and not exists (select 'x'
-			  from zdb_replaced_data
-			  where alteration.zdb_id = zrepld_old_zdb_id);
+				b.recattrib_source_zdb_id
+			  and c.recattrib_source_type = 
+				b.recattrib_source_type) ;
+--        and not exists (select 'x'
+--			  from zdb_replaced_data
+--			  where alteration.zdb_id = zrepld_old_zdb_id);
 
+!echo "add attribution to fish where alleles are attributed" ;
+
+insert into record_attribution (recattrib_data_zdb_id,
+		recattrib_source_zdb_id, recattrib_source_type)
+  select distinct fish.zdb_id, b.recattrib_source_zdb_id, 
+		b.recattrib_source_type
+	from fish, alteration, record_Attribution b
+        where b.recattrib_data_zdb_id = alteration.zdb_id
+	and fish.allele = alteration.allele
+	and not exists (select 'x'
+			  from fish, record_attribution c
+			  where c.recattrib_data_zdb_id = fish.zdb_id
+			  and c.recattrib_source_zdb_id = 
+				b.recattrib_source_zdb_id
+			  and c.recattrib_source_type =
+				b.recattrib_source_type) ;
+--        and not exists (select 'x'
+--			  from zdb_replaced_data
+--			  where alteration.zdb_id = zrepld_old_zdb_id);
+
+!echo "add attribution to loci where fish are attributed" ;
+
+insert into record_attribution (recattrib_data_zdb_id,
+		recattrib_source_zdb_id, recattrib_source_type)
+  select distinct locus.zdb_id, b.recattrib_source_zdb_id, 
+		b.recattrib_source_type
+	from fish, locus, record_Attribution b
+        where b.recattrib_data_zdb_id = fish.zdb_id
+	and fish.locus = locus.zdb_id
+	and not exists (select 'x'
+			  from record_attribution c
+			  where c.recattrib_data_zdb_id = locus.zdb_id
+			  and c.recattrib_source_zdb_id = 
+				b.recattrib_source_zdb_id
+			  and c.recattrib_source_type = 
+				b.recattrib_source_type) 
+--        and not exists (select 'x'
+--			  from zdb_replaced_data
+--			  where alteration.zdb_id = zrepld_old_zdb_id)
+        and locus_name like 'Tg%';
+
+!echo "count dup attributes" ;
+
+select count(*), recattrib_data_zdb_id, recattrib_source_zdb_id,
+  recattrib_source_type
+  from record_attribution
+  group by recattrib_data_zdb_id, recattrib_source_zdb_id,
+  recattrib_source_type
+  having count(*)>1;
+
+!echo "insert into dup attribs" ;
+
+insert into tmp_dup_attribs (data_id, source_id, source_type, new_id, old_id )
+ select a.recattrib_data_zdb_id, 
+	 a.recattrib_source_zdb_id, a.recattrib_source_type,
+	 zrepld_new_zdb_id, zrepld_old_zdb_id
+            from record_attribution a, zdb_replaced_data
+             where zrepld_old_zdb_id = recattrib_Data_zdb_id 
+             and exists (select 'x' 
+		          from record_attribution b
+	 	         where zrepld_new_zdb_id = b.recattrib_Data_zdb_id
+ 		          and a.recattrib_source_zdb_id = 
+				b.recattrib_source_zdb_id
+			  and a.recattrib_source_type = 
+				b.recattrib_source_type);
+
+--delete the records that will become dups with addition of locus ids.
+--delete zdb_repld_old_id, source with new_id source
+
+!echo "delete the dups from recattrib" ;
+
+delete from record_attribution 
+  where exists (select 'x'
+		from tmp_dup_attribs
+		where source_id = recattrib_source_zdb_id
+		and data_id = recattrib_data_zdb_id
+		and source_type = recattrib_source_type);
+
+--select count(*), recattrib_data_zdb_id, recattrib_source_zdb_id,
+--  recattrib_source_type
+--  from record_attribution
+--  group by recattrib_data_zdb_id, recattrib_source_zdb_id,
+--  recattrib_source_type
+--  having count(*)>1;
+
+--select count(*) as counter, zrepld_old_zdb_id as old_id
+--  from zdb_replaced_data
+--  where zrepld_old_zdb_id like 'ZDB-LOCUS-%'
+--  group by zrepld_old_zdb_id
+--  having count(*) > 1 
+-- into temp tmp_need_two;
+
+--select zrepld_new_zdb_id as data_id, recattrib_source_zdb_id as source_id,
+--	recattrib_source_type as source_type
+-- from record_Attribution, zdb_replaced_data, tmp_need_two
+--    where zrepld_old_zdb_id = recattrib_data_zdb_id
+--    and old_id = zrepld_old_zdb_id
+-- into temp tmp_need_two_recs;
+
+--delete from record_attribution
+--  where exists (select 'x' 
+--		  from tmp_need_two
+--		  where recattrib_data_zdb_id = old_id);
+
+!echo "insert replaced recattribs back into recattrib" ;
+
+--insert into record_attribution (recattrib_data_zdb_id,
+--				recattrib_sourcE_zdb_id,
+--				recattrib_source_type)
+--  select data_id, source_id, source_type
+--   from tmp_need_two_recs 
+--   where not exists (select 'x' 
+--			from record_attribution b
+--	 	         where data_id = b.recattrib_data_zdb_id
+--			 and source_id = b.recattrib_source_zdb_id
+--			 and source_type = b.recattrib_source_type);
+
+!echo "count dup recattribs" ;
+
+select count(*), recattrib_data_zdb_id, recattrib_source_zdb_id,
+  recattrib_source_type
+  from record_attribution
+  group by recattrib_data_zdb_id, recattrib_source_zdb_id,
+  recattrib_source_type
+  having count(*)>1;
 
 update record_attribution
   set recattrib_data_zdb_id = (select zrepld_new_zdb_id
@@ -130,7 +228,17 @@ update record_attribution
 					recattrib_data_zdb_id)
  where exists (select 'x'
 		from zdb_replaced_data
-		where zrepld_old_zdb_id = recattrib_data_zdb_id);
+		where zrepld_old_zdb_id = recattrib_data_zdb_id) ;
+
+select count(*), recattrib_data_zdb_id, recattrib_source_zdb_id,
+  recattrib_source_type
+  from record_attribution
+  group by recattrib_data_zdb_id, recattrib_source_zdb_id,
+  recattrib_source_type
+  having count(*)>1;
+
+
+!echo "mapped deletion" ;
 
 
 update mapped_deletion
@@ -160,93 +268,24 @@ create temp table tmp_pato_attrib (pato_id varchar(50),
 					source_id varchar(50))
 with no log ;
 
-insert into tmp_pato_attrib  (pato_id, source_id)
-  select pato_zdb_id, colattrib_source_zdb_id
-			from column_attribution, 
-				genotype_experiment, 
-				experiment, phenotype_anatomy
-			where colattrib_data_zdb_id = genox_geno_zdb_id
-			and genox_zdb_id = pato_genox_zdb_id
-			and colattrib_column_name = 'phenotype'
-			and exp_zdb_id = genox_exp_zdb_id
-			and exp_name = '_Standard';
-
 insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
-  select pato_id, source_id
-   from tmp_pato_attrib;
-
-delete from tmp_pato_attrib ;
-
-insert into tmp_pato_attrib (pato_id, source_id)
-  select patog_zdb_id, colattrib_source_zdb_id
-			from column_attribution, 
-				genotype_experiment,
-				experiment, phenotype_go
-			where colattrib_data_zdb_id = genox_geno_zdb_id
-			and genox_zdb_id = patog_genox_zdb_id
-			and colattrib_column_name = 'phenotype'
-			and genox_exp_Zdb_id = exp_zdb_id
-			and exp_name = '_Standard' ;
-
-insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
-  select pato_id, source_id
-    from tmp_pato_attrib;
-
---add feature_marker_relationship attributions b/c the interface does
-
-!echo "Need to fix column attribution and fmrel_zdb_id attributions before production" ;
-  
-insert into record_attribution (recattrib_data_zdb_id,
-				recattrib_sourcE_zdb_id)
-  select distinct fmrel_zdb_id,colattrib_source_zdb_id
-    from feature_marker_relationship,
-	column_attribution, zdb_replaced_data
-    where zrepld_old_zdb_id = colattrib_data_zdb_id
-    and zrepld_new_zdb_id = fmrel_mrkr_zdb_id
-    and colattrib_column_name = 'cloned_gene'
-    and not exists (select 'x' 
-			from record_attribution
-			where recattrib_data_zdb_id = fmrel_zdb_id
-			and colattrib_source_zdb_id = recattrib_source_zdb_id);
-
---add any not attributed: mainly from loci w/o cloned genes.
-
-insert into record_attribution (recattrib_data_zdb_id,
-				recattrib_sourcE_zdb_id)
-  select fmrel_zdb_id, 'ZDB-PUB-020723-5'
-    from feature_marker_relationship
-    where not exists (select 'x' 
-			from record_attribution
-			where recattrib_data_zdb_id = fmrel_zdb_id);
+  select distinct apato_zdb_id, apato_pub_zdb_id 
+    from atomic_phenotype 
+    where not exists (Select 'x'
+			from record_attribution b
+			where b.recattrib_data_zdb_id = apato_zdb_id
+			and b.recattrib_source_zdb_id= apato_pub_zdb_id
+			and b.recattrib_source_type = 'standard');
 	
---add genofeat attributions
 
-!echo "Need to fix column attribution and genofeat_zdb_id attributions before production" ;
+select count(*), recattrib_data_zdb_id, recattrib_source_zdb_id,
+  recattrib_source_type
+  from record_attribution
+  group by recattrib_data_zdb_id, recattrib_source_zdb_id,
+  recattrib_source_type
+  having count(*)>1;
 
-insert into record_attribution (recattrib_data_zdb_id,
-		recattrib_source_zdb_id)
-  select genofeat_zdb_id, colattrib_source_zdb_id
-    from genotype_feature,
-	column_attribution, feature
-    where feature_zdb_id = colattrib_data_zdb_id
-    and feature_zdb_id = genofeat_feature_zdb_id
-    and colattrib_column_name = 'protocol'
-    and not exists (select 'x' 
-			from record_attribution
-			where recattrib_data_zdb_id = genofeat_zdb_id
-			and colattrib_source_zdb_id = recattrib_source_zdb_id);
-
---add any from genotype_feature that aren't in already...attribute
---to curation pub.
-
-insert into record_attribution (recattrib_data_zdb_id,
-				recattrib_sourcE_zdb_id)
-  select genofeat_zdb_id, 'ZDB-PUB-020723-5'
-    from genotype_feature
-    where not exists (select 'x' 
-			from record_attribution
-			where recattrib_data_zdb_id = genofeat_zdb_id);
-	
+set constraints all immediate;
 
 commit work ;
 --rollback work ;

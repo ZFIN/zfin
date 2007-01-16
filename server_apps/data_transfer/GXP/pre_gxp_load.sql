@@ -167,7 +167,7 @@ UNLOAD TO 'probe_without_encoding_gene.err'
 --it is highly possible that the data is from the same submission, which is 
 -- problematic. Flag it.
 UNLOAD TO 'exist_same_xpat_experiment_from_directsub.err'
-       select prb_clone_name, xpatex_zdb_id, xpatex_featexp_zdb_id, xpatex_assay_name, xpatex_source_zdb_id
+       select prb_clone_name, xpatex_zdb_id, xpatex_genox_zdb_id, xpatex_assay_name, xpatex_source_zdb_id
          from probes_tmp, expression_experiment, marker
         where mrkr_zdb_id = xpatex_probe_feature_zdb_id
           and mrkr_name = prb_clone_name
@@ -280,42 +280,52 @@ UNLOAD TO 'keywords_stgerr.err'
 ----------------------------------------------------------------
 
 create table images_tmp (
-  img_clone_name 	varchar (50) not null,
-  img_image_name 	varchar (80) not null unique, --no extention
-  img_sstart 		varchar (50),
-  img_sstop		varchar (50),
-  img_view 		varchar(20),
-  img_orient 		varchar(60),
-  img_preparation 	varchar(15),
-  img_comments 		lvarchar,
-  img_modified 		varchar (20)
-  -- img_zdb_id  varchar(50) is added as below
+  imgt_clone_name 	varchar (50) not null,
+  imgt_image_name 	varchar (80) not null unique, --no extention
+  imgt_sstart 		varchar (50),
+  imgt_sstop		varchar (50),
+  imgt_view 		varchar(20),
+  imgt_orient 		varchar(60),
+  imgt_preparation 	varchar(15),
+  imgt_comments 		lvarchar,
+  imgt_modified 		varchar (20)
+  -- imgt_zdb_id  varchar(50) is added as below
 );
 -- key_clone_name column, in Thisse case which is what all we have now,
 -- is loaded with keyValue first and updated into clone name in this file
 -- and so be prepared for loading into ZFIN. We don't expect the foreign
 -- key constraint to be violated, but we do want to catch that if it indeed 
 -- happened oddly. 
-ALTER TABLE images_tmp add constraint (foreign key (img_clone_name) references probes_tmp constraint img_clone_name_foreign_key);
+ALTER TABLE images_tmp add constraint (foreign key (imgt_clone_name) references probes_tmp constraint imgt_clone_name_foreign_key);
 
 load from './images.unl' insert into images_tmp;
 
 -- Data Adjustment
 ----------------------
 
-ALTER TABLE images_tmp drop constraint img_clone_name_foreign_key;
-update images_tmp set img_clone_name = 
-    (select prb_clone_name from probes_tmp where img_clone_name = prb_keyValue);
+ALTER TABLE images_tmp drop constraint imgt_clone_name_foreign_key;
+update images_tmp set imgt_clone_name = 
+    (select prb_clone_name from probes_tmp where imgt_clone_name = prb_keyValue);
 
-update images_tmp set img_sstart = 
-    (select stg_zdb_id from stage where stg_name = img_sstart);
-update images_tmp set img_sstop = 
-    (select stg_zdb_id from stage where stg_name = img_sstop);
+update images_tmp set imgt_sstart = 
+    (select stg_zdb_id from stage where stg_name = imgt_sstart);
+update images_tmp set imgt_sstop = 
+    (select stg_zdb_id from stage where stg_name = imgt_sstop);
 
 -- adjust known naming difference 
 update images_tmp
+	  set imgt_preparation = "whole-mount"
+	where imgt_preparation = "whole mount";
+
+-- the defaul img_preparation is "whole-mount"
+update images_tmp
+	  set imgt_preparation = "whole-mount"
+	where imgt_preparation is null;
+
+-- the defaul img_preparation is "whole-mount"
+update images_tmp
 	  set img_preparation = "whole-mount"
-	where img_preparation = "whole mount";
+	where img_preparation is null;
 
 -- the defaul img_preparation is "whole-mount"
 update images_tmp
@@ -323,28 +333,28 @@ update images_tmp
 	where img_preparation is null;
 
 -- prepare for image renaming
-ALTER TABLE images_tmp add img_zdb_id varchar(50);
-update images_tmp set img_zdb_id = get_id ("IMAGE");
-UNLOAD TO 'fimg_oldname_2_newname.txt'
-	select img_image_name, img_zdb_id 
+ALTER TABLE images_tmp add imgt_zdb_id varchar(50);
+update images_tmp set imgt_zdb_id = get_id ("IMAGE");
+UNLOAD TO 'img_oldname_2_newname.txt'
+	select imgt_image_name, imgt_zdb_id 
  	  from images_tmp;
 
 -- Error check
 ---------------------
 
-UNLOAD TO 'fimg_preparation_unknown.err'
-	select img_clone_name, img_preparation from images_tmp where not exists (select 't' from fish_image_preparation where fimgprep_name = img_preparation);
+UNLOAD TO 'img_preparation_unknown.err'
+	select imgt_clone_name, imgt_preparation from images_tmp where imgt_preparation not in (select imgprep_name from image_preparation);
 
-UNLOAD TO 'fimg_view_unknown.err'
-	select img_clone_name, img_view from images_tmp where not exists (select 't' from fish_image_view where fimgview_name = img_view);
+UNLOAD TO 'img_view_unknown.err'
+	select imgt_clone_name, imgt_view from images_tmp where imgt_view not in (select imgview_name from image_view);
 
 UNLOAD TO 'img_xpat_inconsist.err'
-	select img_clone_name, img_sstart, img_sstop
+	select imgt_clone_name, imgt_sstart, imgt_sstop
 	  from images_tmp
 	 where not exists (select * from expression_tmp 
-			   where exp_clone_name = img_clone_name
-			     and exp_sstart  = img_sstart
-			     and exp_sstop   = img_sstop  );	
+			   where exp_clone_name = imgt_clone_name
+			     and exp_sstart  = imgt_sstart
+			     and exp_sstop   = imgt_sstop  );	
 
 -- delete xpat data resulted from default value in the template.
 -- They are identified by default expression found, no keywords,
@@ -355,12 +365,12 @@ select exp_clone_name, exp_sstart, exp_sstop
   from expression_tmp
  where exp_found = "t"
    and exp_description is null
-   and exp_keyword = "ZDB-ANAT-041102-1"    --unspecified
+   and exp_keyword = "ZDB-ANAT-041102-1" --unspecified
    and not exists (select *
                     from images_tmp
-		   where exp_clone_name = img_clone_name
-                     and exp_sstart     = img_sstart
-		     and exp_sstop	= img_sstop
+		   where exp_clone_name = imgt_clone_name
+                     and exp_sstart     = imgt_sstart
+		     and exp_sstop	= imgt_sstop
 		 );
 
 delete from expression_tmp 
@@ -369,9 +379,9 @@ delete from expression_tmp
    and exp_keyword = "ZDB-ANAT-041102-1"    --unspecified
    and not exists (select *
                     from images_tmp
-		   where exp_clone_name = img_clone_name
-                     and exp_sstart     = img_sstart
-		     and exp_sstop	= img_sstop
+		   where exp_clone_name = imgt_clone_name
+                     and exp_sstart     = imgt_sstart
+		     and exp_sstop	= imgt_sstop
 		 );
 
 ---------------------------------------------------

@@ -1,0 +1,91 @@
+<?MICOMMENT>
+
+FILE:     markerrel_onetype.apg
+PREFIX:   mrelotype_ 
+
+Display a list of related data objects to the input data of the input 
+relationship type, and direction.   
+
+
+INPUT VARS:
+  mrelotype_mrkr_zdb_id:  The marker zdb id
+  mrelotype_rel_type:     The relationship type  
+  mrelotype_rel_direction: The relationship direction, either 1_to_2 or 2_to_1
+                         The original marker comes first. 
+
+OUTPUT VARS:
+  None.
+
+OUTPUT:
+  If there is related markers of the input relationship type and direction
+  then list abbreviation in a comma separated list. When there is "order 
+       this" and/or attribution available, display too.  
+  If there is no related markers, 
+  then return "none"
+
+<?/MICOMMENT>
+
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
+<?MIVAR COND="$(NXST,$mrelotype_mrkr_zdb_id)">
+    ERROR: markerrel_onetype.apg has no mrelotype_mrkr_zdb_id passed in.
+<?/MIVAR>
+<?MIVAR COND="$(NXST,$mrelotype_rel_type)">
+    ERROR: markerrel_onetype.apg has no mrelotype_rel_type passed in.
+<?/MIVAR>
+<?MIVAR COND="$(NXST,$mrelotype_rel_direction)">
+    ERROR: markerrel_onetype.apg has no mrelotype_rel_direction passed in.
+<?/MIVAR>
+
+
+<?MIBLOCK COND="$(EC,$mrelotype_rel_direction,1_to_2)">
+    <?MIVAR NAME=mrelotype_sql>
+	select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order 
+ 	  from marker_relationship
+               inner join marker
+                  on mrel_mrkr_2_zdb_id = mrkr_zdb_id 
+	 where mrel_mrkr_1_zdb_id = '$mrelotype_mrkr_zdb_id' 
+	   and mrel_type = '$mrelotype_rel_type'
+      order by mrkr_abbrev_order;
+    <?/MIVAR>
+<?MIELSE>
+    <?MIVAR NAME=mrelotype_sql>
+	select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order
+ 	  from marker_relationship 
+               inner join marker
+                 on mrel_mrkr_1_zdb_id = mrkr_zdb_id 
+	 where mrel_mrkr_2_zdb_id = '$mrelotype_mrkr_zdb_id' 
+	   and mrel_type = '$mrelotype_rel_type'
+      order by mrkr_abbrev_order;
+    <?/MIVAR>
+<?/MIBLOCK>
+
+<?MISQL SQL=" $mrelotype_sql ">
+
+        <?MIVAR NAME=mrel_rel_mrkr_abbrev>$1<?/MIVAR> 
+ 	<?MIVAR NAME=mrel_rel_mrkr_zdb_id>$2<?/MIVAR> 
+  
+	<?MIVAR> COND="$(>,$MI_CURRENTROW,1)">
+           ,
+        <?/MIVAR>
+          
+        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrel_rel_mrkr_zdb_id"> $mrel_rel_mrkr_abbrev </A>
+
+	<?MISQL SQL="select WebExplode(object,'clorlk_mrkr_zdb_id=$mrel_rel_mrkr_zdb_id') from webPages where ID='aa-cloneorderlink.apg';">$1<?/MISQL>
+
+	<?MISQL SQL="select WebExplode(object,'dataId=$mrkrrel_seg_mrkr_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+   
+<?/MISQL>	
+    
+<?MIVAR COND="$(=,$MI_ROWCOUNT,0)">
+   none
+<?/MIVAR>

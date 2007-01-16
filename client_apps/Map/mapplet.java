@@ -12,7 +12,7 @@ public class mapplet extends Applet  {
 	MapViewer MV;
 	public JSObject JS;
 	Vector Buttons;
-	
+
 	Marker clickedMarker; //defined globally to be used by both mousedown and mouse up
 	Vector clickedMarkers;
 	String clickedPanel; //ditto
@@ -45,10 +45,10 @@ public class mapplet extends Applet  {
 				if (getParameter("LN54_m") != null)
 					SM.put("LN54",getParameter("LN54_m"));
 				if (getParameter("ZMAP_m") != null)
-					SM.put("ZMAP",getParameter("ZMAP_m"));	
+					SM.put("ZMAP",getParameter("ZMAP_m"));
 				MV = new MapViewer(getParameter("data"), SM, getParameter("panel_order"));
 			}
-			
+
 		} else if (getParameter("where") != null) 	{
 			String Q = "select zdb_id, abbrev, mtype, target_abbrev, lg_location::numeric(6,2), OR_lg, mghframework, metric from paneled_markers where " + getParameter("where") + " order by 4,5 asc;";
 			MV = new MapViewer(Q,"host", "port", getParameter("selected_marker"), getParameter("panel_order"));
@@ -57,7 +57,7 @@ public class mapplet extends Applet  {
 		} else {
 			System.err.println("mapplet.java couldn't start with any meaningful params");
 		}
-		
+
 
 
 		img = MV.getImage(this.bounds().width,this.bounds().height);
@@ -67,7 +67,7 @@ public class mapplet extends Applet  {
 		Enumeration E = MV.elements();
 		int panel_count = 0;
 
-		while(E.hasMoreElements()) 
+		while(E.hasMoreElements())
 		{
 			BackBone BB = (BackBone)E.nextElement();
 			zO = new Button("Zoom In");
@@ -83,23 +83,23 @@ public class mapplet extends Applet  {
 
 		Graphics g = img.getGraphics();
 		Font PF = new Font("SansSerif", Font.PLAIN, 14);
-		FontMetrics PFM =  Toolkit.getDefaultToolkit().getFontMetrics(PF); 
+		FontMetrics PFM =  Toolkit.getDefaultToolkit().getFontMetrics(PF);
 		g.setFont(PF);
 		g.setColor(new Color(200,200,200));
 		g.setColor(Color.black);
-		
-		while (BE.hasMoreElements()) 
+
+		while (BE.hasMoreElements())
 		{
 			zO = (Button)BE.nextElement();
 			zI = (Button)BE.nextElement();
 
 			this.setLayout(null);
-			
+
 			if (getParameter("panel_order") == null) { //if the panel order isn't sent in, there must not be zoom buttons in the html
 				this.add(zO);
 				this.add(zI);
 			}
-			
+
 			zO.reshape(i,0,70,22);
 
 
@@ -121,24 +121,24 @@ public class mapplet extends Applet  {
 					g.drawString(PS, i+zO.bounds().width+5, 16);
 				percent_width = PFM.stringWidth(PS);
 			}
-			
+
 			zI.reshape(i+zO.bounds().width+10 + percent_width  ,0,70,22);
 
-				
-			i = i + w;		
+
+			i = i + w;
 		}
-		
+
 		repaint();
 
 		if (getParameter("onload") != null) {
 			getJS();
 			try {
-				JS.eval(getParameter("onload")); 
+				JS.eval(getParameter("onload"));
 			} catch (Exception e) {
 				System.out.println("ONLOAD couldn't be executed");
 			}
 		}
-		
+
 
 	}
 
@@ -150,28 +150,28 @@ public class mapplet extends Applet  {
 //		if (getParameter("onload") != null) {
 //			getJS();
 //			try {
-//				JS.eval(getParameter("onload")); 
+//				JS.eval(getParameter("onload"));
 //			} catch (Exception e) {
 //				System.out.println("ONLOAD couldn't be executed");
 //			}
 
 //			}
 	   super.start();
-		
+
 	   }
-	
+
 	public void stop() {
 		MV = null;
 		img = null;
 		System.gc();
-			
-		super.stop();	
+
+		super.stop();
 	}
-	
-	public void paint(Graphics g) {    	
+
+	public void paint(Graphics g) {
 		g.drawImage(img, 0,0,this.bounds().width,this.bounds().height, this);
 		Marker M;
-		
+
 		if (clickedMarker != null) {
 			g.setColor(Color.blue);
 			g.drawRect(clickedMarker.bounds.x, clickedMarker.bounds.y, clickedMarker.bounds.width, clickedMarker.bounds.height);
@@ -185,14 +185,14 @@ public class mapplet extends Applet  {
 				g.drawRect(M.bounds.x, M.bounds.y, M.bounds.width, M.bounds.height);
 			}
 		}
-		
+
 	}
 
 
 	public boolean mouseDown(Event evt, int x, int y)  {
 
 		if (evt.shiftDown() == false) {
-		   
+
 			if ((y < BackBone.TOP_SPACE -10) && (y > BackBone.TOP_SPACE-30)) { //clicking on a panel
 				clickedPanel = null;
 				clickedPanel = MV.panelClick(x,y);
@@ -219,13 +219,13 @@ public class mapplet extends Applet  {
 					clickedMarkers = BB.highlightID(Z, clickedMarkers);
 				}
 				repaint();
-			} else { clickedMarkers = null;	}			
+			} else { clickedMarkers = null;	}
 		}
-		
-		
+
+
 		return true;
-		
-		
+
+
 	}
 
 	public boolean mouseUp(Event evt, int x, int y) {
@@ -240,7 +240,7 @@ public class mapplet extends Applet  {
 
 // 	public boolean mouseMove(Event evt, int x, int y) {
 // //		System.out.println("Mousemove: " + x + ", " + y);
-		
+
 // 		Marker M;
 // 		BackBone BB;
 
@@ -255,13 +255,13 @@ public class mapplet extends Applet  {
 // 			}
 // 			repaint();
 // 		} else { clickedMarkers = null;	}
-		
-		
+
+
 // 		return true;
 // 	}
-	
-			
-	
+
+
+
 	public boolean action (Event evt, Object obj) {
 
 		Enumeration E = MV.elements();
@@ -269,7 +269,7 @@ public class mapplet extends Applet  {
 		while(E.hasMoreElements())
 			V.addElement(E.nextElement());
 		int w = this.bounds().width/V.size();
-		
+
 		int p = 0;
 		BackBone BB;
 		if ("Zoom Out".equals((String)obj)) {
@@ -283,10 +283,10 @@ public class mapplet extends Applet  {
 			//System.err.println("p: " + p + " - " + V.elementAt(p));
 			zoom(BB.getPanel_name(), (String)obj);
 		}
-		
-		
-				
-		   
+
+
+
+
 
 
 		return true;
@@ -299,11 +299,11 @@ public class mapplet extends Applet  {
 		JSObject zoom = null;
 		int z = 0;
 		int oldz = 0;
-		
+
 		getJS();
 		if (JS == null)
 			System.err.println("Couldn't get javascript object");
-		
+
 		doc = (JSObject) JS.getMember("document");
 
 		if (doc == null)
@@ -320,17 +320,17 @@ public class mapplet extends Applet  {
 			System.err.println("zoom is null");
 		else
 			z = (new Integer((String)zoom.getMember("value"))).intValue();
-		
+
 		String command = "document.optform.edit_panel.value=\"" + panel_name + "\"; ";
 		command = command + " document.optform." + panel_name + "_zoom.value = ";
 
 
 //		System.err.println((String)JS.getMember("window.optform." + panel_name + "_zoom.value"));
 //		int z = (new Integer((String)JS.eval("document.optform." + panel_name + "_zoom.value"))).intValue();
-		
+
 		int ztotal = (new Integer(getParameter(panel_name + "_ztotal"))).intValue();
 		oldz = z;
-		if (button.equals("Zoom Out")) 
+		if (button.equals("Zoom Out"))
 		{
 			z = z + 20;
 			z = z - (2*z); //go negative!
@@ -338,7 +338,7 @@ public class mapplet extends Applet  {
 		} else if (button.equals("Zoom In")) {
 			if (z > 25)
 				z = z - 20;
-			else 
+			else
 				z = z - 10;
 			z = z - (2*z);
 
@@ -357,41 +357,35 @@ public class mapplet extends Applet  {
 			System.err.println(command);
 			JS.eval(command);
 		}
-		
-		
-		
-	}	
-	
-	
+
+
+
+	}
+
+
 	public void viewMarker(String ZDB_ID) {
 
 		String marker_url;
 		String target_frame;
 
-		if (ZDB_ID.indexOf("FISH") > -1) {
-			if (getParameter("fish_url") != null)
-				marker_url = getParameter("fish_url");
-			else	
-				marker_url = "/cgi-bin_B/webdriver?MIval=aa-fishview.apg&OID=";
-		} else if ( ZDB_ID.indexOf("LOCUS") > -1) {
-			if (getParameter("locus_url") != null)
-				marker_url = getParameter("locus_url");
-			else	
-				marker_url = "/cgi-bin_B/webdriver?MIval=aa-locusview.apg&OID=";
+		if (ZDB_ID.indexOf("GENO") > -1) {
+			if (getParameter("geno_url") != null)
+				marker_url = getParameter("geno_url");
+			else
+                marker_url = "/cgi-bin/webdriver?MIval=aa-genotypeview.apg&OID=";
 		} else {
 			if (getParameter("marker_url") != null)
 				marker_url = getParameter("marker_url");
-			else	
-				marker_url = "/cgi-bin_B/webdriver?MIval=aa-markerview.apg&OID=";
+			else
+				marker_url = "/cgi-bin/webdriver?MIval=aa-markerview.apg&OID=";
 		}
-		
 
 		if (getParameter("target_frame") != null)
 			target_frame = getParameter("target_frame");
 		else
 			target_frame = "content";
 
-		
+
 		getJS();
 
 
@@ -399,16 +393,16 @@ public class mapplet extends Applet  {
 		try { U = new URL("http", getDocumentBase().getHost(),marker_url + ZDB_ID); } catch (MalformedURLException e) { System.err.println(e); }
 		System.err.println("opening: " + U + ", in: " + target_frame);
 		this.getAppletContext().showDocument(U, target_frame);
-		
-		
+
+
 	}
-	
+
 
 	private void getJS ()
 	{
 		if (JS != null)
 			return;
-		try 
+		try
 		{
 			//System.err.println ("About to call getWindow ()");
 			JS = JSObject.getWindow (this);
@@ -437,11 +431,11 @@ public class mapplet extends Applet  {
 			JS = null;
 		}
 	}
-	
 
-	
-   
-		
+
+
+
+
 }
 /*
 	  + " and (target_abbrev='MGH' or target_abbrev='LN54' or target_abbrev='MOP' or target_abbrev='GAT') "

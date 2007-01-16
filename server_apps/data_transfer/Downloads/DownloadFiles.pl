@@ -25,8 +25,9 @@
 #	A copy of the file we send to GO.
 #
 # Gene Expression
-#	gene zfin id , gene symbol, expression type, expression pattern zfin id
-#
+#	gene zfin id , gene symbol, probe zfin id, probe name, expression type,
+#       expression pattern zfin id, pub zfin id, genotype zfin id, 
+#       experiment zfin id#
 # Mapping data
 #	zfin id, symbol, panel symbol, LG, loc, metric
 #
@@ -34,8 +35,8 @@
 # SWISS-PROT, Interpro
 #	zfin id, symbol, accession number
 #	
-# Alleles
-#	zfin id, allele, locus, pheno_keywords, corresponding zfin gene id, gene symbol
+# Genotypes
+#	zfin id, allele/construct, type, gene symblol, corresponding zfin gene id
 #
 # Morpholino
 #       zfin id of gene, gene symbol, zfin id of MO, MO symbol, public note

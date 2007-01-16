@@ -141,7 +141,7 @@ EFFECTS
 <?MISQL SQL="
     select fig_zdb_id, fig_caption, fig_comments, fig_label, zero_pad(fig_label)
     from figure
-    where fig_zdb_id in ('$xpcur_G_fig_attrib_csv')
+    where fig_zdb_id in ('$pubcur_G_fig_attrib_csv')
     order by 5;">
 
   <?MIVAR name=xpcurfig_fig_zdb_id>$1<?/MIVAR>
@@ -149,15 +149,15 @@ EFFECTS
   <?MIVAR name=xpcurfig_fig_comment>$3<?/MIVAR>
   <?MIVAR name=xpcurfig_fig_label>$4<?/MIVAR>
 <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#figure" method=post name=figureUpdate> 
-    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
     <INPUT TYPE=HIDDEN NAME=xpcur_G_fig_zdb_id VALUE="<?MIVAR>$xpcurfig_fig_zdb_id<?/MIVAR>"> 
 
-<?MIBLOCK COND=$(NXST,$xpcur_c_figure_only)>
+<?MIBLOCK COND=$(NXST,$pubcur_c_figure_only)>
   <?MIVAR>
   <tr bgcolor=$xpcurfig_row_color>
     <td valign=top>
-      <a href="javascript:onClick=urlSetCookie('figure_only','$xpcurfig_fig_zdb_id');"><font color=blue>Only</font></a>
+      <a href="javascript:onClick=urlSetCookie('figure_only','$xpcurfig_fig_zdb_id','pubcur_c_');"><font color=blue>Only</font></a>
     </td>
     <td valign=top> 
        $xpcurfig_fig_label
@@ -170,10 +170,10 @@ EFFECTS
     </td>
     <td valign=top>
       <?MISQL SQL="
-          select fimg_thumbnail, fimg_label
-          from fish_image
-          where fimg_fig_zdb_id = '$xpcurfig_fig_zdb_id'
-          order by fimg_label;">
+          select img_thumbnail, img_label
+          from image
+          where img_fig_zdb_id = '$xpcurfig_fig_zdb_id'
+          order by img_label;">
           <?MIVAR COND=$(NC,$1,NULL)>
             <img src="<!--|IMAGE_LOAD|-->/$1">$2 
           <?/MIVAR>
@@ -188,8 +188,8 @@ EFFECTS
   <?MIVAR>
   <tr bgcolor=$xpcurfig_row_color>
     <td valign=top>
-      <input name="xpcur_G_fig_update" type=button value="Update" onClick="if (document.figureUpdate.xpcur_G_fig_label.value != '' && validCaption((this.form).xpcur_G_fig_caption.value)){uninterpretCaption();setCookie('xpatcuration_update','update');setCookie('anchor','figure');document.figureUpdate.submit();}"><br>
-      <a href="javascript:onClick=urlSetCookie('figure_only','');"><font color=blue>Show All</font></a>
+      <input name="xpcur_G_fig_update" type=button value="Update" onClick="if (document.figureUpdate.xpcur_G_fig_label.value != '' && validCaption((this.form).xpcur_G_fig_caption.value)){uninterpretCaption();setCookie('xpatcuration_update','update','xpcur_c_');setCookie('anchor','figure','xpcur_c_');document.figureUpdate.submit();}"><br>
+      <a href="javascript:onClick=urlSetCookie('figure_only','','pubcur_c_');"><font color=blue>Show All</font></a>
     </td>
     <td valign=top> 
         <input name="xpcur_G_fig_label" type=textbox size=5 value="$xpcurfig_fig_label">
@@ -210,10 +210,10 @@ EFFECTS
     </td>
     <td valign=top>
       <?MISQL SQL="
-          select fimg_thumbnail, fimg_label
-          from fish_image
-          where fimg_fig_zdb_id = '$xpcurfig_fig_zdb_id'
-          order by fimg_label;">
+          select img_thumbnail, img_label
+          from image
+          where img_fig_zdb_id = '$xpcurfig_fig_zdb_id'
+          order by img_label;">
           <?MIVAR COND=$(NC,$1,NULL)>
             <img src="<!--|IMAGE_LOAD|-->/$1">$2 
           <?/MIVAR>
@@ -235,11 +235,11 @@ EFFECTS
   
 <?MICOMMENT> ==| Enter a New Figure |== <?/MICOMMENT>
 <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#figure" method=post name=figure_new>
-    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
   <tr>
     <td>
-      <input name="xpcur_G_fig_add" type=button value="Add" onClick="if (validateFigLabel() && validCaption((this.form).xpcur_G_fig_add_caption.value)){setCookie('xpatcuration_update','update');setCookie('anchor','figure');document.figure_new.submit();}">
+      <input name="xpcur_G_fig_add" type=button value="Add" onClick="if (validateFigLabel() && validCaption((this.form).xpcur_G_fig_add_caption.value)){setCookie('xpatcuration_update','update','xpcur_c_');setCookie('anchor','figure','xpcur_c_');document.figure_new.submit();}">
     </td>
     <td> 
         <select name="xpcur_G_fig_add_prefix_label">

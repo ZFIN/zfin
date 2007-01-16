@@ -83,7 +83,7 @@ $UPDATE: if the viewer is in update mode, this is set to 1.
 
 <?MICOMMENT> =========== MAIN ======================= <?/MICOMMENT>
 
-<TITLE>ZFIN Marker History </TITLE>
+<TITLE>ZFIN Marker/Feature History </TITLE>
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
   
@@ -132,8 +132,8 @@ $UPDATE: if the viewer is in update mode, this is set to 1.
 <?MICOMMENT> ============= Query for History Events and order by date ========= <?/MICOMMENT>
 
 <?MISQL SQL="
-  SELECT mhist_date, 
-         mhist_event, 
+  SELECT mhist_date as hist_date, 
+         mhist_event as hist_event, 
          mhist_reason, 
          mhist_mrkr_name_on_mhist_date,
          mhist_mrkr_abbrev_on_mhist_date,
@@ -149,7 +149,25 @@ $UPDATE: if the viewer is in update mode, this is set to 1.
     AND  mhist_dalias_zdb_id = dalias_zdb_id
     $(IF,$(NXST,$naming_events),AND mhist_event != 'renamed')
     
-  ORDER BY mhist_date $chronology, mhist_event $chronology;">
+ UNION
+  SELECT fhist_date as hist_date, 
+         fhist_event as hist_event, 
+         fhist_reason, 
+         fhist_ftr_name_on_fhist_date,
+         fhist_ftr_abbrev_on_fhist_date,
+         dalias_alias,
+         fhist_ftr_prev_name, 
+         fhist_comments,
+         fhist_zdb_id
+         
+  FROM   feature_history, 
+         OUTER data_alias
+         
+  WHERE  fhist_ftr_zdb_id = '$OID'
+    AND  fhist_dalias_zdb_id = dalias_zdb_id
+    $(IF,$(NXST,$naming_events),AND fhist_event != 'renamed')
+    
+  ORDER BY hist_date $chronology, hist_event $chronology;">
 
   <?MIVAR NAME=$Date>$(SUBSTR,$1,1,10)<?/MIVAR>
   <?MIVAR NAME=$Event>$2<?/MIVAR>

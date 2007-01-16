@@ -53,22 +53,26 @@ sub generateGeneDataFile () {
 	my $has_xpat = 0; 
         my $has_xpat_img = 0;
 	my $has_go = 0;
+	my $has_pato = 0;
+	my $has_pato_img = 0;
 
+        # query xpat fig
 	$sql = "
                 select xpatfig_fig_zdb_id
                   from expression_experiment, expression_result,
-                       expression_pattern_figure, fish_image
+                       expression_pattern_figure, image
                  where xpatex_zdb_id = xpatres_xpatex_zdb_id
                    and xpatex_gene_zdb_id = '$gene_zdb_id' 
                    and xpatres_zdb_id  = xpatfig_xpatres_zdb_id
-                   and xpatfig_fig_zdb_id = fimg_fig_zdb_id";
+                   and xpatfig_fig_zdb_id = img_fig_zdb_id";
 
 	if ($dbh->selectrow_array ($sql)) {
 	    $has_xpat_img = 1;
 	    $has_xpat = 1;
 	}
-	
-	if (!$has_xpat) {
+
+	# if no fig, query if any xpat
+	if (!$has_xpat_img) {
 
 	    $sql = "
                 select xpatres_zdb_id
@@ -78,7 +82,8 @@ sub generateGeneDataFile () {
 
 	    $has_xpat = 1 if $dbh->selectrow_array ($sql);
 	}
-
+        
+        # query GO info
 	$sql = "
                 select mrkrgoev_zdb_id
                   from marker_go_term_evidence
@@ -86,9 +91,45 @@ sub generateGeneDataFile () {
 
 	$has_go = 1 if $dbh->selectrow_array ($sql);
 
-	print OUT "$gene_zdb_id|$has_xpat|$has_xpat_img|$has_go|||\n";
-    }
 
+        # query phenotype fig
+	$sql = "
+                select apatofig_fig_zdb_id
+                  from feature_marker_relationship, genotype_feature,
+                       genotype_experiment, atomic_phenotype, apato_figure, image
+                 where fmrel_mrkr_zdb_id = '$gene_zdb_id' 
+                   and fmrel_ftr_zdb_Id = genofeat_feature_zdb_id
+                   and genofeat_geno_zdb_id  = genox_geno_zdb_id
+                   and genox_zdb_id = apato_genox_zdb_id
+                   and apato_zdb_id = apatofig_apato_zdb_id
+                   and apatofig_fig_zdb_id = img_fig_zdb_id";
+
+	if ($dbh->selectrow_array ($sql)) {
+	    $has_pato_img = 1;
+	    $has_pato = 1;
+	}
+
+	# if no fig, query if any pato
+	if (!$has_pato_img) {
+
+	    $sql = "
+                select apato_zdb_id
+                  from feature_marker_relationship, genotype_feature,
+                       genotype_experiment, atomic_phenotype
+                 where fmrel_mrkr_zdb_id = '$gene_zdb_id' 
+                   and fmrel_ftr_zdb_Id = genofeat_feature_zdb_id
+                   and genofeat_geno_zdb_id  = genox_geno_zdb_id
+                   and genox_zdb_id = apato_genox_zdb_id       ";
+
+	    $has_pato = 1 if $dbh->selectrow_array ($sql);
+	}
+
+	print OUT "$gene_zdb_id|$has_xpat|$has_xpat_img|$has_go|$has_pato|$has_pato_img|\n";
+
+
+
+    }
+    
     close OUT;
 
 }

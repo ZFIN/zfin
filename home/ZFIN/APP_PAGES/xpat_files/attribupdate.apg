@@ -1,0 +1,220 @@
+<?MICOMMENT>
+
+FILE:     attribupdate.apg
+PREFIX:   attrup_
+
+Adds attribution to zdb_id
+
+
+INPUT VARS:
+
+  REQUIRED:
+    $OID :: publication zdb-id
+    $AUTHORIZED :: this is a subroutine. the authorization must occur in the calling page.
+
+  OPTIONAL:  
+      pubcur_G_attrib_data_zdb :: the data being attributed
+      pubcur_G_attrib_table :: the table where the data is stored
+      pubcur_G_attrib_column :: the column_name pubcur_G_attrib_table
+      xpcur_G_mrkr_attrib :: mrkr abbrev 
+      xpcur_G_fish_attrib :: fish abbrev 
+      
+   
+      
+
+OUTPUT VARS:
+  None.
+
+OUTPUT:
+  None
+
+EFFECTS  
+  Add records to record_attribution.
+  
+  Set cookie pubcur_c_attribution_update to 'no'.  
+
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
+<?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
+
+    <?MICOMMENTS>
+       ================================================
+         Set the default type to standard.
+       ================================================
+    <?/MICOMMENTS>  
+  
+  <?MIVAR NAME=attrup_attrib_type>$(IF,$(XST,$pubcur_G_attrib_type),$pubcur_G_attrib_type,standard)<?/MIVAR>
+
+
+  <?MICOMMENT> ================| Attribution |================ <?/MICOMMENT>
+  <?MIBLOCK COND=$(XST,$pubcur_G_mrkr_attrib)>
+  
+    <?MICOMMENTS>
+       ================================================
+         Check that the mrkr_record exists. 
+         Then, add a record to record attribution
+       ================================================
+    <?/MICOMMENTS>
+    
+    <?MISQL SQL="select mrkr_zdb_id 
+                 from marker
+                 where LOWER(mrkr_abbrev) = '$(LOWER,$pubcur_G_mrkr_attrib)'
+                ;">
+            <?MIVAR NAME=xpcurup_attrib_mrkr_zdb>$1<?/MIVAR>
+    <?/MISQL>
+    
+    <?MIBLOCK COND=$(XST,$xpcurup_attrib_mrkr_zdb)>
+      <?MISQL SQL="
+        select count(*)::integer
+        from record_attribution
+        where recattrib_data_zdb_id = '$xpcurup_attrib_mrkr_zdb'
+          and recattrib_source_zdb_id = '$OID'
+        ;">
+      <?/MISQL>
+    
+      <?MISQL COND=$(=,$1,0) SQL="
+        insert into record_attribution(recattrib_data_zdb_id,recattrib_source_zdb_id)
+        values ('$xpcurup_attrib_mrkr_zdb','$OID');">
+      <?/MISQL>    
+      
+      <?MIBLOCK COND="$(AND,$(XST,$xpcur_c_auto_on),$(EC,$xpcur_c_auto_on,on))">
+        <?MIVAR NAME=xpcur_c_gene_only>$xpcurup_attrib_mrkr_zdb<?/MIVAR>
+        <?MIVAR>
+          <SCRIPT>
+            setCookie('gene_only','$xpcurup_attrib_mrkr_zdb','pubcur_c_')
+          </SCRIPT>      
+        <?/MIVAR>
+      <?/MIBLOCK>
+    <?MIELSE>
+      <?MIVAR NAME=xpcurup_alert>Could not find $pubcur_G_mrkr_attrib in the marker table.<?/MIVAR>    
+    <?/MIBLOCK>
+  <?/MIBLOCK>
+  
+  <?MIBLOCK COND=$(XST,$pubcur_G_fish_attrib)>
+  
+    <?MICOMMENTS>
+       ================================================
+         Check that the feature_record exists. 
+         Then, add a record to record attribution
+       ================================================
+    <?/MICOMMENTS>
+    
+    <?MISQL SQL="select feature_zdb_id 
+                 from feature
+                 where LOWER(feature_abbrev) = '$(LOWER,$pubcur_G_fish_attrib)'
+                ;">
+            <?MIVAR NAME=xpcurup_attrib_fish_zdb>$1<?/MIVAR>
+    <?/MISQL>
+    
+    <?MIBLOCK COND=$(XST,$xpcurup_attrib_fish_zdb)>
+      <?MISQL SQL="
+        select count(*)::integer
+        from record_attribution
+        where recattrib_data_zdb_id = '$xpcurup_attrib_fish_zdb'
+          and recattrib_source_zdb_id = '$OID'
+        ;">
+      <?/MISQL>
+    
+      <?MISQL COND=$(EC,$1,0) SQL="
+        insert into record_attribution(recattrib_data_zdb_id,recattrib_source_zdb_id)
+        values ('$xpcurup_attrib_fish_zdb','$OID');">
+      <?/MISQL>   
+      
+      <?MIVAR NAME=xpcur_G_xpatex_fish>$xpcurup_attrib_fish_zdb<?/MIVAR>
+      
+    <?MIELSE>
+      <?MIVAR NAME=xpcurup_alert>Could not find $pubcur_G_fish_attrib in the feature table.<?/MIVAR>    
+    <?/MIBLOCK>
+  <?/MIBLOCK>
+
+
+  <?MIBLOCK COND="$(AND,$(XST,$pubcur_G_attrib_data_zdb), 
+                        $(XST,$pubcur_G_attrib_table), 
+                        $(XST,$pubcur_G_attrib_column))">
+  
+    <?MICOMMENTS>
+       ================================================
+         Check that the feature_record exists. 
+         Then, add a record to record attribution
+       ================================================
+    <?/MICOMMENTS>
+    
+    <?MISQL SQL="select count(*)::integer 
+                 from $pubcur_G_attrib_table
+                 where $pubcur_G_attrib_column = '$pubcur_G_attrib_data_zdb'
+                ;">
+    <?/MISQL>
+    
+    <?MIBLOCK COND=$(EC,$1,1)>
+      <?MISQL SQL="
+        select count(*)::integer
+        from record_attribution
+        where recattrib_data_zdb_id = '$pubcur_G_attrib_data_zdb'
+          and recattrib_source_zdb_id = '$OID'
+          and recattrib_source_type = '$attrup_attrib_type'
+        ;">
+      <?/MISQL>
+    
+      <?MISQL COND=$(EC,$1,0) SQL="
+        insert into record_attribution(recattrib_data_zdb_id,recattrib_source_zdb_id)
+        values ('$pubcur_G_attrib_data_zdb','$OID');">
+      <?/MISQL>   
+      
+      
+    <?MIELSE>
+      <?MIVAR NAME=xpcurup_alert>Could not find $pubcur_G_attrib_data_zdb in $pubcur_G_attrib_table .<?/MIVAR>    
+    <?/MIBLOCK>
+    
+    <?MIVAR>
+      $(UNSETVAR,$pubcur_G_attrib_data_zdb)
+      $(UNSETVAR,$pubcur_G_attrib_table)
+      $(UNSETVAR,$pubcur_G_attrib_column)
+    <?/MIVAR>
+    
+  <?/MIBLOCK>
+
+  <?MIBLOCK COND=$(AND,$(XST,$pubcur_G_remove_attrib),$(NE,$pubcur_G_remove_attrib,-))>
+      
+      <?MIVAR NAME=pub_OID>$OID<?/MIVAR>
+      <?MIVAR NAME=OID>$pubcur_G_remove_attrib<?/MIVAR>
+      <?MISQL SQL="select WebExplode(object,'citlink_data_page=citgeneric.apg') from webPages where ID='aa-cittotalcount.apg';">$1<?/MISQL>
+      <?MIVAR NAME=citlink_total_count_before>$citlink_total_count<?/MIVAR> 
+      
+      <?MISQL SQL="
+        delete from record_attribution
+	  where recattrib_data_zdb_id = '$OID'
+	    and recattrib_source_zdb_id = '$pub_OID';">
+      <?/MISQL>
+
+      <?MISQL SQL="select WebExplode(object,'citlink_data_page=citgeneric.apg') from webPages where ID='aa-cittotalcount.apg';">$1<?/MISQL>
+
+      <?MIBLOCK COND="$(AND,$(EC,$citlink_total_count,$citlink_total_count_before),$(!=,$citlink_total_count,0))">
+        <?MIVAR NAME=xpcurup_alert>The data is still connected through other types of data.<?/MIVAR>
+      <?/MIBLOCK>  
+  
+  
+      <?MIVAR NAME=OID>$pub_OID<?/MIVAR>
+  <?/MIBLOCK>
+
+    
+    <?MIVAR COND=$(XST,$xpcurup_alert)>
+      <script>
+        alert('$xpcurup_alert');
+      </script>
+    <?/MIVAR>    
+  
+    <SCRIPT>
+      setCookie('attribution_update','no','pubcur_c_')
+    </SCRIPT>   
+     
+<?/MIBLOCK>  <?MICOMMENT> authorize = root <?/MICOMMENT>

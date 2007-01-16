@@ -42,12 +42,12 @@ Expected vars: link_id, pair_id
           and c.lpmem_linkage_pair_zdb_id = b.lnkgpair_zdb_id
           and c.lpmem_member_zdb_id = a.mrkr_zdb_id
         union 
-        select allele from fish a , linkage_pair b, locus c , linkage_pair_member d
+        select feature_abbrev from feature, linkage_pair b, linkage_pair_member d
           where b.lnkgpair_zdb_id = '$pair_id'
             and b.lnkgpair_linkage_zdb_id = '$link_id'
             and d.lpmem_linkage_pair_zdb_id = b.lnkgpair_zdb_id 
-            and d.lpmem_member_zdb_id = a.zdb_id
-            and a.locus = c.zdb_id;">
+            and d.lpmem_member_zdb_id = feature_zdb_id
+          ;">
     <TD>$1 &nbsp;</TD>
   <?/MISQL>
 

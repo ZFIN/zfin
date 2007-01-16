@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/private/bin/perl -w
 
 my %category;
 my $inputFile = $ARGV[0];

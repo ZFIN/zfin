@@ -68,14 +68,14 @@ insert into tmp_not_in_images
   select filename
 	from tmp_image_file_list
 	where not exists (select 'x' 
-				from fish_image
-				where filename = fimg_image);
+				from image
+				where filename = img_image);
 
 
 insert into tmp_not_in_image_files
-  select fimg_image 
-	from fish_image 
-	where fimg_image not in (select filename
+  select img_image 
+	from image 
+	where img_image not in (select filename
 				   from tmp_image_file_list) ;
 
 

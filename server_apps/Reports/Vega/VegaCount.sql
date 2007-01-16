@@ -5,12 +5,12 @@
 
 select count(distinct dblink_acc_num)OTTDARGS
  from db_link
- where dblink_acc_num[1,7] = 'OTTDARG'
+ where dblink_acc_num[1,6] = 'OTTDAR'
 ;
 
 select count(distinct dblink_linked_recid)GENES
  from db_link
- where dblink_acc_num[1,7] = 'OTTDARG'
+ where dblink_acc_num[1,6] = 'OTTDAR'
 ;
 
 !echo    '---------------------------------------------------------------------'
@@ -37,7 +37,8 @@ select count(distinct mrkr_zdb_id) proper_genes
  from marker g, db_link
  where mrkr_type[1,4] = 'GENE'
  and mrkr_abbrev[1,3] <> 'si:'
- and dblink_acc_num[1,7] = 'OTTDARG'
+ and mrkr_abbrev[1,4] <> 'zgc:'
+ and dblink_acc_num[1,6] = 'OTTDAR'
  and mrkr_zdb_id = dblink_linked_recid
  and not exists (
  	select 1 from data_alias
@@ -45,6 +46,23 @@ select count(distinct mrkr_zdb_id) proper_genes
  	 and dalias_alias[1,3] <> 'si:'
  )
 ;
+
+! echo   'ZGC Genes with OTTDARG(s) which never had a si: name.'
+! echo   '*** (previously intersected above tally) ***'
+
+select count(distinct mrkr_zdb_id) zgc_genes
+ from marker g, db_link
+ where mrkr_type[1,4] = 'GENE'
+ and mrkr_abbrev[1,4] = 'zgc:'
+ and dblink_acc_num[1,6] = 'OTTDAR'
+ and mrkr_zdb_id = dblink_linked_recid
+ and not exists (
+ 	select 1 from data_alias
+ 	 where mrkr_zdb_id = dalias_data_zdb_id
+ 	 and dalias_alias[1,3] <> 'si:'
+ )
+;
+
 
 !echo    ''
 !echo    '---------------------------------------------------------------------'
@@ -55,6 +73,7 @@ select count(distinct mrkr_zdb_id) proper_genes
 !echo    '     (this is nominaly the number of OTTDARGs in the first statistic)'
 !echo    ''
 !echo   "(note: Sanger has withdrawn or never sent > 100 OTTDARGs)"
+{
 !echo    '---------------------------------------------------------------------'
 !echo    'si genes that do not have an ottdarg'
 
@@ -63,7 +82,7 @@ select mrkr_zdb_id si_genes
  where mrkr_abbrev[1,3] = 'si:'
  and not exists (
 	select 1 from db_link
-	 where dblink_acc_num[1,7] = 'OTTDARG'
+	 where dblink_acc_num[1,6] = 'OTTDAR'
 	 and dblink_linked_recid = mrkr_zdb_id
 )
 union
@@ -72,11 +91,12 @@ select dalias_data_zdb_id
  where dalias_alias[1,3] = 'si:'
  and not exists (
 	select 1 from db_link
-	 where dblink_acc_num[1,7] = 'OTTDARG'
+	 where dblink_acc_num[1,6] = 'OTTDAR'
 	 and dblink_linked_recid = dalias_data_zdb_id
  )
 ;
 
+}
 !echo    '---------------------------------------------------------------------'
 !echo    '# of clones Sanger has submitted to us'
 select count(mrkr_zdb_id)all_bac
@@ -91,7 +111,6 @@ select count(distinct mrel_mrkr_1_zdb_id)bac_w_gene
 
 !echo    ''
 !echo    '---------------------------------------------------------------------'
-!echo    'These numbers would illustrate how the project integrates with existing data and reduces of redundancy:'
 !echo    '# of Sanger genes assigned to existing named genes in ZFIN with informative nomenclature'
 !echo    ''
 !echo   '*** see first sql ***'
@@ -120,7 +139,7 @@ select count(distinct ss.mrkr_zdb_id) ests
 !echo    '----- via marker_relationships'
 select count(distinct dblink_linked_recid) si_genes
  from db_link, marker_relationship, marker ss
- where dblink_acc_num[1,7] = 'OTTDARG'
+ where dblink_acc_num[1,6] = 'OTTDAR'
  and mrel_type = 'gene encodes small segment'
  and mrel_mrkr_1_zdb_id = dblink_linked_recid
  and mrel_mrkr_2_zdb_id = ss.mrkr_zdb_id
@@ -129,7 +148,7 @@ select count(distinct dblink_linked_recid) si_genes
 
 select count(distinct ss.mrkr_zdb_id) ests
  from db_link, marker_relationship, marker ss
- where dblink_acc_num[1,7] = 'OTTDARG'
+ where dblink_acc_num[1,6] = 'OTTDAR'
  and mrel_type = 'gene encodes small segment'
  and mrel_mrkr_1_zdb_id = dblink_linked_recid
  and mrel_mrkr_2_zdb_id = ss.mrkr_zdb_id
@@ -161,7 +180,7 @@ select count (distinct dalias_alias) alias
 !echo    '----- via ottargs and history'
 select count (distinct dblink_acc_num) ottdargs
  from db_link, data_alias, marker_history
- where dblink_acc_num[1,7] = 'OTTDARG'
+ where dblink_acc_num[1,6] = 'OTTDAR'
  and dblink_linked_recid = dalias_data_zdb_id
  and dalias_alias[1,3] = 'si:'
  and dalias_zdb_id = mhist_dalias_zdb_id
@@ -170,7 +189,7 @@ select count (distinct dblink_acc_num) ottdargs
 
 select count (distinct dalias_alias) alias
  from db_link, data_alias, marker_history
- where dblink_acc_num[1,7] = 'OTTDARG'
+ where dblink_acc_num[1,6] = 'OTTDAR'
  and dblink_linked_recid = dalias_data_zdb_id
  and dalias_alias[1,3] = 'si:'
  and dalias_zdb_id = mhist_dalias_zdb_id
@@ -206,7 +225,7 @@ select count(*) named_genes from tmp_vega_thisse_report where veth_mrkr_abbrev n
 
 !echo    '---------------------------------------------------------------------'
 !echo '# of zgc genes'
-select count(*) zgc_genes 
+select count(*) zgc_genes
   from tmp_vega_thisse_report
  where exists
      (

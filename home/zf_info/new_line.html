@@ -1,0 +1,188 @@
+<HTML>
+
+
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<style type="text/css">
+<!--
+h3 {
+   background-color: #cccccc
+   }
+-->
+</style>
+
+
+<script language="JavaScript" src="/header.js"></script>
+
+<html>
+<head>
+<title>Submit a Proposed Locus/Line Name</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<script language="javascript">
+
+	function clearPubStatus() {
+		document.getElementById('pub_info_ispub').style.display="none";
+		document.getElementById('pub_info_nopub').style.display="none";
+	}
+
+</script>
+</head>
+<body onload="clearPubStatus();">
+<h1 align="center">Submit a Proposed Locus/Line Name</h1>
+<p><strong>Nomenclature Resources</strong></p>
+<ul style="line-height:1.5">
+  <li>Guides to Nomenclature for <a href="http://zfin.org/zf_info/nomen.html#2.">Mutants</a> and <a href="http://zfin.org/zf_info/nomen.html#6.3.">Transgenes</a></li>
+
+  <li><a href="http://zfin.org/zf_info/zfbook/lab_desig.html">Laboratory Allele
+      Designations</a></li>
+  <li><a href="../../../cgi-bin/webdriver?MIval=aa-fishselect.apg&line_type=mutant">Search
+      Existing Lines in ZFIN</a></li>
+</ul>
+<hr>
+<p><em>* required information</em></p>
+<form method="post" action="mailto:seger@uoneuro.uoregon.edu">
+  <p><strong>Contact Information</strong></p>
+  <table border="0" cellspacing="8" cellpadding="0">
+    <tr>
+
+      <td nowrap><strong>Name *</strong></td>
+      <td><input type="text" name="submitter_name" size="30">
+      </td>
+    </tr>
+    <tr>
+      <td nowrap><strong>Email *</strong></td>
+      <td><input name="email" type="text" size="30">
+      </td>
+
+    </tr>
+    <tr>
+      <td nowrap><strong>Laboratory *</strong></td>
+      <td><input name="lab_name" type="text" size="30">
+      </td>
+    </tr>
+  </table>
+  <hr>
+
+  <table border="0" cellspacing="8" cellpadding="0">
+    <tr>
+      <td colspan="2" nowrap style="padding-bottom:4px"><strong>Lab Allele/Line
+          Designation *</strong></td>
+      <td nowrap style="padding-bottom:4px"><input name="gene_symbol" type="text" size="8">
+      </td>
+      <td nowrap style="padding-bottom:4px"><em>e.g., b16</em></td
+	  >
+      <td style="padding-bottom:4px"><em>If you need a laboratory prefix set
+          up for you, please contact us at <a href="mailto:zfinadmn@zfin.org">zfinadmn@zfin.org</a>.</em></td>
+
+    </tr>
+    <tr>
+      <td rowspan="2" bgcolor="#CCCCCC"><div align="center" style="padding:4px">
+          <input type="radio" name="line_type" value="Mutant">
+          <br />
+          Mutant</div>
+      </td>
+      <td nowrap><strong>Locus/Gene Symbol *</strong></td>
+
+      <td><input name="loc_symbol" type="text" size="8">
+      </td>
+      <td nowrap><em>e.g., cyc; ndr2</em></td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td nowrap><strong>Locus/Gene Name *</strong></td>
+      <td><input name="loc_fullname" type="text">
+
+      </td>
+      <td nowrap><em>e.g., cyclops; nodal-related 2</em></td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td bgcolor="#CCCCCC"><div align="center" style="padding:4px">
+          <input type="radio" name="line_type" value="Transgenic">
+          <br />
+
+          Transgenic</div>
+      </td>
+      <td nowrap><strong>Construct Name *</strong></td>
+      <td><input name="constr_name" type="text">
+      </td>
+      <td nowrap><em>e.g., Tg(-0.7her5:EGFP)</em></td>
+      <td>&nbsp;</td>
+
+    </tr>
+  </table>
+  <table border="0" cellspacing="8" cellpadding="0">
+    <tr valign="baseline">
+      <td nowrap><input type="checkbox" name="cloned_gene" value="yes">
+        This is an allele of a known (cloned) gene.</td>
+      <td nowrap>Gene Symbol:
+        <input name="cloned_gene_symbol" type="text" size="8">
+      </td>
+
+      <td nowrap><em><a href="../../../cgi-bin/webdriver?MIval=aa-newmrkrselect.apg" target="_blank">Search
+            existing genes in ZFIN</a></em></td>
+    </tr>
+  </table>
+  <hr>
+  <p><strong>Publication Status *</strong></p>
+  <table border="0" cellspacing="8" cellpadding="0">
+    <tr>
+      <td><input name="pub_status" type="radio" onchange="clearPubStatus(); document.getElementById('pub_info_ispub').style.display='block';" value="Published">
+
+        Published</td>
+      <td><input name="pub_status" type="radio" onchange="clearPubStatus(); document.getElementById('pub_info_nopub').style.display='block';" value="In press">
+        In press</td>
+      <td><input name="pub_status" type="radio" onchange="clearPubStatus(); document.getElementById('pub_info_nopub').style.display='block';" value="Submitted">
+        Submitted</td>
+      <td><input name="pub_status" type="radio" onchange="clearPubStatus(); document.getElementById('pub_info_nopub').style.display='block';" value="In preparation">
+        In preparation</td>
+
+      <td><input name="pub_status" type="radio" onchange="clearPubStatus(); document.getElementById('pub_info_nopub').style.display='block';" value="Unpublished">
+        Unpublished</td>
+    </tr>
+  </table>
+  <div id="pub_info_ispub" name="pub_info_ispub">
+    <table border="0" cellspacing="8" cellpadding="0">
+      <tr>
+        <td>Citation(s) *</td>
+
+        <td><input name="citations" type="text" size="40">
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div id="pub_info_nopub" name="pub_info_nopub">
+    <table border="0" cellspacing="8" cellpadding="0">
+      <tr>
+        <td>Reserve line in ZFIN *</td>
+
+        <td><input type="radio" name="reserv_status">
+          in my name&nbsp;&nbsp;&nbsp;
+          <input type="radio" name="reserv_status">
+          as an anonymous submission</td>
+      <tr>
+        <td>Citation (if applicable)</td>
+        <td><input name="citations" type="text" size="40">
+
+        </td>
+      </tr>
+      </tr>
+      
+    </table>
+  </div>
+  <hr>
+  <p><strong>Additional Comments</strong></p>
+  <p>
+
+    <textarea name="comments" cols="40"></textarea>
+  </p>
+  <hr>
+  <input type="submit" value="Submit">
+</form>
+</body>
+</html>
+
+
+<script language="JavaScript" src="/footer.js"></script>
+
+</HTML>

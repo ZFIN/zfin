@@ -39,8 +39,16 @@ for SNP display
   <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
 
   <SCRIPT>
-  function start_note() {
-    top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect_note.apg","notewindow","scrollbars=no,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=325");
+
+
+  function updateInnerHTML(element_id,html_to_display) {
+    var c1 = document.getElementById(element_id);
+    c1.innerHTML = html_to_display;
+   }
+
+
+  function start_note(ref_page) {
+    top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-"+ref_page+".apg","notewindow","scrollbars=no,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=325");
   }
 
   function call_mapplet() {
@@ -66,6 +74,7 @@ for SNP display
   function start_help() {
    top.zfinhelp=open('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-helpframes.html&calling_page=sequence_tools_help.html',"helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=800,height=600");
   }
+
   </SCRIPT>
 
   <?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
@@ -100,6 +109,7 @@ function jump(form_select){
 
 <?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
 <?MIVAR NAME=$MI_NULL><?/MIVAR>
+<?MIVAR NAME=debug_timing>f<?/MIVAR>
 
 <?MIBLOCK COND="$(NXST,$OID)">
   <p>
@@ -123,7 +133,7 @@ function jump(form_select){
   <!-- NOW a slight ugliness that would go away if/when we re-implement the MAP_MARKER stuff as hierarchical classes: we don't know what type up marker we are trying to view, and yet we need to know exactly that in order to know what table to select from. So we first look at ZFIN id to determine type, which determines table
   -->
 
-  <?MIVAR NAME=$target_table COND="$(>,$(POSITION,$OID,GENE),0)">marker<?/MIVAR>
+
   <?MISQL SQL="
     select mrkr_name, mrkr_type, mrkrtype_type_display, mrkr_abbrev, mrkr_comments
       from marker, marker_types
@@ -173,6 +183,7 @@ function jump(form_select){
   <?MIELSE> <!-- if entered ID has an entry in ZFIN------------------------>
 
       <SCRIPT> <!-- functions for update--------------------->
+  
       <?MIVAR COND="$(XST,$UPDATE)">
 	function doit(attr,attr_type,print_name) {
 		doit(attr,attr_type,print_name,'');
@@ -189,10 +200,9 @@ function jump(form_select){
  		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=dalias_alias&attr_type=delete-alias&old_value='+alias+'&comments=Deleted&target_table=marker');
 	}
 
-        <?MISQL SQL="select WebExplode(object,'jsdelatt_OID=$OID&jsdelatt_Mival=aa-do-markerupdate.apg&jsdelatt_page_var=__attr_type=special-listitem__comments=Deleted__target_table=marker')
+        <?MISQL SQL="select WebExplode(object,'jsdelatt_OID=$OID&jsdelatt_Mival=aa-do-markerupdate.apg&jsdelatt_page_var=__attr_type=special-listitem__comments=Deleted__target_table=marker') 
         from webPages where ID='aa-js-delete_attrib.apg';">$1<?/MISQL>
-
-
+        
 	function Delete_mrel(mrel_partner_id, type) {
  		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=marker_relationship&attr_type=delete-mrkrrelation&old_value='+mrel_partner_id+'&comments=Deleted&target_table=marker&info='+type);
 	}
@@ -243,7 +253,6 @@ function jump(form_select){
 	}
 	function setChimericism(old_value) {
 	<?MICOMMENT> index 0 = true; index 1 = false <?/MICOMMENT>
-
 		if (document.updateseq.chimericism[0].checked) {
 		  var isChimeric = 't';
 		}
@@ -279,9 +288,8 @@ function jump(form_select){
   		}
 	}
 
-
-        <?MICOMMENT> Note Can Be Blank. However, the xtra_param variable is set to alias
-          by the updating page when xtra_param is null. An edit has occured, so set
+        <?MICOMMENT> Note Can Be Blank. However, the xtra_param variable is set to alias 
+          by the updating page when xtra_param is null. An edit has occured, so set 
           note = 'sequence modified'.
         <?/MICOMMENT>
  	function update_mrkrsequence(mrkrseq_zdb,old_seq,new_seq,note) {
@@ -422,6 +430,8 @@ function jump(form_select){
    </form>
 <?/MIVAR>
 
+
+
 <?MICOMMENT>=========================================================
             ==     Name    &   Input Welcome button
             ==     Symbol (if genedom)
@@ -497,35 +507,51 @@ function jump(form_select){
     from data_alias
     where dalias_data_zdb_id = '$OID' and dalias_group = 'alias';">
 
-  <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(NXST,$UPDATE))">
-    <b>Previous Names:</b>
-  <?/MIVAR>
+  <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
+  
+    <?MIVAR NAME=mrkrvw_alias_name_array>$1<?/MIVAR>
+    <?MIVAR NAME=mrkrvw_alias_zdb_id_array>$2<?/MIVAR>
 
-  <?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(XST,$UPDATE))">
-    <form>
-    <br><b>Add Reference:</b>
-    Previous name:<input type=text name=attrib_prevname>
-    Reference:<input type=text name=attrib_prevname_pubid>
-    <input type=button value="Add" onClick=new_attrib_prevname(this.form);>
-    </form>
-  <?/MIVAR>
+    <?MIBLOCK COND="$(NXST,$UPDATE)">
+      <b>Previous Names:</b>
+    <?MIELSE>
+      <form>
+      <br><b>Add Reference:</b>
+      Previous name:<input type=text name=attrib_prevname>
+      Reference:<input type=text name=attrib_prevname_pubid>
+      <input type=button value="Add" onClick=new_attrib_prevname(this.form);>
+      </form>
+    <?/MIBLOCK>
 
-  <?MIVAR NAME=$alias>$1<?/MIVAR>
-  <?MIVAR NAME=$aliasId>$2<?/MIVAR>
-  <?MIVAR COND="$(XST,$alias)" NAME=$alias_plus>$(URLENCODE,$alias)<?/MIVAR>
+  <?MIELSE>
+
+    <?MIVAR>$(VECAPPEND,$mrkrvw_alias_name_array,$1)<?/MIVAR>
+    <?MIVAR>$(VECAPPEND,$mrkrvw_alias_zdb_id_array,$2)<?/MIVAR>
+  <?/MIBLOCK>
+
+<?/MISQL>
+
+<?MIVAR NAME=mrkrvw_vec_index>1<?/MIVAR>
+<?MIVAR NAME=mrkrvw_vec_size>$(VECSIZE,$mrkrvw_alias_name_array)<?/MIVAR>
+<?MIBLOCK INDEX=$mrkrvw_alias_name FOREACH=$mrkrvw_alias_name_array>
+
+  <?MIVAR NAME=$mrkrvw_alias_name_plus>$(URLENCODE,$mrkrvw_alias_name)<?/MIVAR>
   <?MIVAR COND="$(XST,$UPDATE)">
     <br>
     <INPUT TYPE=button
       value=Delete
-      onClick="Delete_alias('$alias_plus','$OID')">
+      onClick="Delete_alias('$mrkrvw_alias_name_plus','$OID')">
   <?/MIVAR>
-  $(IF,$(AND,$(NXST,$UPDATE),$(>,$MI_CURRENTROW,1)),;) $alias
 
-  <?MIBLOCK COND="$(XST,$aliasId)">
-      <?MISQL SQL="select WebExplode(object,'dataId=$aliasId&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
-  <?/MIBLOCK>
+  <?MIVAR>
 
-<?/MISQL>
+    $mrkrvw_alias_name<?MISQL SQL="select WebExplode(object,'dataId=$mrkrvw_alias_zdb_id_array[$mrkrvw_vec_index]&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>$(IF,$(AND,$(NXST,$UPDATE),$(NE,$mrkrvw_vec_index,$mrkrvw_vec_size)),",")
+
+    $(SETVAR,$mrkrvw_vec_index,$(+,$mrkrvw_vec_index,1))
+
+  <?/MIVAR>
+<?/MIBLOCK>
+
 <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
     <br>
 <?/MIVAR>
@@ -591,46 +617,46 @@ function jump(form_select){
 <?/MIBLOCK> <?MICOMMENT> end display_sequence_similarity <?/MICOMMENT>
 
 
- <?MICOMMENT>
+ <?MICOMMENT> 
               ===================
-                Marker Sequence
+                Marker Sequence  
               ===================
  <?/MICOMMENT>
-
+        
  <?MIVAR NAME=$mrkrview_sequence><?/MIVAR>
- <?MIVAR NAME=$mrkrview_mrkrseq_zdb_id><?/MIVAR>
+ <?MIVAR NAME=$mrkrview_mrkrseq_zdb_id><?/MIVAR>  
 
  <?MISQL SQL="
    select mrkrseq_sequence, mrkrseq_zdb_id, mrkrseq_offset_start,mrkrseq_offset_stop
      from marker_sequence
     where mrkrseq_mrkr_zdb_id = '$OID';">
     <?MIVAR NAME=$mrkrview_sequence>$1<?/MIVAR>
-    <?MIVAR NAME=$mrkrview_mrkrseq_zdb_id>$2<?/MIVAR>
-    <?MIVAR NAME=$mrkrview_mrkrseq_start>$3<?/MIVAR>
-    <?MIVAR NAME=$mrkrview_mrkrseq_stop>$4<?/MIVAR>
+    <?MIVAR NAME=$mrkrview_mrkrseq_zdb_id>$2<?/MIVAR>        
+    <?MIVAR NAME=$mrkrview_mrkrseq_start>$3<?/MIVAR>        
+    <?MIVAR NAME=$mrkrview_mrkrseq_stop>$4<?/MIVAR>        
  <?/MISQL>
-
+ 
  <?MICOMMENT> get blast linkout url <?/MICOMMENT>
- <?MISQL SQL="select fdb_db_query
-	      from foreign_db
+ <?MISQL SQL="select fdb_db_query 
+	      from foreign_db 
 	     where fdb_db_name ='BLAST';">
     <?MIVAR NAME=fdb_url_blast>$1<?/MIVAR>
 <?/MISQL>
 
  <?MIVAR NAME=blast_option>&EXPECT=1000&WORD_SIZE=7&ENTREZ_QUERY=Danio rerio [ORGN]&FORMAT_ENTREZ_QUERY=All organisms<?/MIVAR>
-
+ 
   <?MIBLOCK COND="$(AND,$(XST,$UPDATE),$(XST,$type_of_knockdown_reagent))">
       </form>
       <form name=newdata>
 
       <br>
         <b>Sequence:</b>
-
+   
       <table border=0 bgcolor="<!--|HIGHLIGHT_COLOR|-->">
-        <tr><td>
-        <?MISQL SQL="select WebExplode(object,'seqdata_sequence=$mrkrview_sequence') from webPages where ID='aa-sequence_data_entry.apg';">$1<?/MISQL>
+        <tr><td> 
+        <?MISQL SQL="select WebExplode(object,'seqdata_sequence=$mrkrview_sequence') from webPages where ID='aa-sequence_data_entry.apg';">$1<?/MISQL>        
 
-      <INPUT TYPE=button
+      <INPUT TYPE=button 
         value="Update Sequence"
         <?MIVAR>
         onClick="if (validSequence(document.newdata.seqdata_DisplaySequence.value) ){update_mrkrsequence('$mrkrview_mrkrseq_zdb_id','$mrkrview_sequence',document.newdata.seqdata_DisplaySequence.value,document.newdata.seqdata_CuratorNote.value)}">
@@ -638,21 +664,21 @@ function jump(form_select){
         <br>
         </td></tr>
       </table>
-
+        
       <?MIVAR COND="$(NC,$mrkrview_mrkrseq_zdb_id,)">
-         <br>Add Sequence Reference:
+         <br>Add Sequence Reference:	
          <input type=text name=mrkrview_seq_pubid>
-         <input type=button value="Add" onClick=new_attrib_mrkrseq('$mrkrview_mrkrseq_zdb_id');>
+         <input type=button value="Add" onClick=new_attrib_mrkrseq('$mrkrview_mrkrseq_zdb_id');> 
         <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_mrkrseq_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
         <p>
       <?/MIVAR>
       </form>
-
+      
   <?MIELSE COND="$(NC,$mrkrview_mrkrseq_zdb_id,)">
       <br> <?MICOMMENT> for display purpose <?/MICOMMENT>
       <?MICOMMENT>use table to align sequence and disclaimer<?/MICOMMENT>
-      <table width=100% cellspacing=0>
-
+      <table width=100% cellspacing=0> 
+ 
        <tr>
         <td width=7%>
           <b>Sequence:</b>
@@ -663,17 +689,17 @@ function jump(form_select){
         <td>
           <?MIVAR>&nbsp;5' - $mrkrview_sequence - 3'<?/MIVAR>
           <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_mrkrseq_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
-
+        
           <?MIVAR>
-
+ 
 
             &nbsp;  <input type=button value="BLAST IT" onClick="window.open('$(CONCAT,$fdb_url_blast,$mrkrview_sequence,$blast_option)');">
           <?/MIVAR>
         </td>
       </tr>
    <?MIELSE>
-     <?MISQL SQL="select fdb_db_query
-	      from foreign_db
+     <?MISQL SQL="select fdb_db_query 
+	      from foreign_db 
 	     where fdb_db_name ='SNPBLAST';">
        <?MIVAR NAME=fdb_url_snpblast>$1<?/MIVAR>
      <?/MISQL>
@@ -683,7 +709,7 @@ function jump(form_select){
     <tr><td>&nbsp;</td>
         <?MIVAR NAME=$mrkrview_seq_length>$(STRLEN,mrkrview_sequence)<?/MIVAR>
     <td>
-        <table border="0"  CELLSPACING="0">
+        <table border="0"  CELLSPACING="0"> 
         <tr bgcolor="#EEEEEE">
         <?MIVAR><br><td>$(SUBSTR,$mrkrview_sequence,1,$(-,$mrkrview_mrkrseq_start,1)) <?/MIVAR>
 </td> <td>&nbsp;</td></tr>
@@ -725,17 +751,17 @@ function jump(form_select){
         <td>
          <?MICOMMENT>in checkedout branch, a sequence_disclaimer.apg page is added.
                we are hardcoding now, and will update when merge.
-         <?/MICOMMENT>
+         <?/MICOMMENT> 
          <font size=-1>
            &nbsp;(Although ZFIN verifies reagent sequence data, we recommend that you conduct independent sequence analysis before ordering any reagent.)
          </font>
-        </td>
+        </td> 
         <?/MIBLOCK>
       </tr>
      </table>
 
      <br>
- <?/MIBLOCK>
+ <?/MIBLOCK>      
 
 
 <?MICOMMENT>=========================================================
@@ -750,9 +776,9 @@ function jump(form_select){
      <input type=button value="Add it!" onClick="new_mrkrrel('1to2-knockdown reagent targets gene',this.form.mrkr_abbrev.value)">
      <br>
      Add Reference:
-     Gene symbol:<input type=text name=attrib_mrkr_abbrev>
+     Gene symbol:<input type=text name=attrib_mrkr_abbrev>	
      Reference:<input type=text name=attrib_mrel_pubid>
-     <input type=button value="Add" onClick=new_attrib_mrel(this.form);>
+     <input type=button value="Add" onClick=new_attrib_mrel(this.form);> 
      </form>
   <?/MIBLOCK>
 
@@ -777,7 +803,7 @@ function jump(form_select){
     <?/MIVAR>
 
     <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrview_trg_gene_zdb_id">$mrkrview_trg_gene_sym</a>
-    <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_trg_mrel_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+    <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_trg_mrel_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>	
   <?/MISQL>
   <?MIBLOCK COND="$(!=,$MI_ROWCOUNT,0)">
     <p> <?MICOMMENT> for display purpose <?/MICOMMENT>
@@ -861,7 +887,6 @@ function jump(form_select){
 <?/MIVAR>
 
 
-
 <?MICOMMENT>=========================================================
             ==    Clone box
 	    =========================================================
@@ -875,84 +900,406 @@ function jump(form_select){
 
 
 <?MICOMMENT>=========================================================
+            ==    Construct features
+	    =========================================================
+<?/MICOMMENT>
+
+<?MIBLOCK COND="$(>,$(POSITION,$marker_type,CONSTRCT),0)">
+   <?MISQL SQL="
+         select mrel_mrkr_2_zdb_id
+           from marker_relationship
+          where mrel_mrkr_1_zdb_id = '$OID'
+            and mrel_type in ('promoter of','coding sequence of', 'contains other feature')
+        ">
+   <?/MISQL>
+   <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">	
+  	<hr width=80%>
+  	  <b> 
+		CONSTRUCT FEATURES: 
+  	  </b>
+   <?/MIVAR>
+   <table width=100% cols=2 bgcolor=<?MIVAR>$highlight<?/MIVAR>> 
+    <?MISQL SQL="
+         select get_mrkr_abbrev_html_link(mrkr_zdb_id), mrel_zdb_id
+           from marker_relationship, marker
+          where mrel_mrkr_1_zdb_id = '$OID'
+            and mrel_mrkr_2_zdb_id = mrkr_zdb_id
+            and mrel_type = 'promoter of'">
+
+      <tr>
+        <td width=25%>
+          Regulatory Region(s):
+        </td>
+        <td>
+          $1<?MISQL SQL="select WebExplode(object,'dataId=$2&type=recattrib&info=standard') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+        </td>
+      <tr>
+    <?/MISQL>
+
+    <?MICOMMENT> we are duplicating the code here, but it is simple and clear<?/MICOMMENT>    
+    <?MISQL SQL="
+         select get_mrkr_abbrev_html_link(mrkr_zdb_id), mrel_zdb_id
+           from marker_relationship, marker
+          where mrel_mrkr_1_zdb_id = '$OID'
+            and mrel_mrkr_2_zdb_id = mrkr_zdb_id
+            and mrel_type = 'coding sequence of'">
+      <tr>
+        <td width=25%>
+          Coding Sequence(s):
+        </td>
+        <td>
+          $1<?MISQL SQL="select WebExplode(object,'dataId=$2&type=recattrib&info=standard') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+        </td>
+      <tr>
+    <?/MISQL>
+
+    <?MISQL SQL="
+         select get_mrkr_abbrev_html_link(mrkr_zdb_id), mrel_zdb_id
+           from marker_relationship, marker
+          where mrel_mrkr_1_zdb_id = '$OID'
+            and mrel_mrkr_2_zdb_id = mrkr_zdb_id
+            and mrel_type = 'contains other feature'">
+      <tr>
+        <td width=25%>
+          Other Feature(s):
+        </td>
+        <td>
+          $1<?MISQL SQL="select WebExplode(object,'dataId=$2&type=recattrib&info=standard') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+        </td>
+      <tr>
+    <?/MISQL>
+    </table>
+<?/MIBLOCK>
+
+
+
+<?MICOMMENT>=========================================================
+            ==  GENE EXPRESSION 
+            ==========================================================
+<?/MICOMMENT>
+<?MICOMMENT> check data existence, and count total pubs<?/MICOMMENT>
+<?MIBLOCK COND="$(OR,$(EQ,$marker_type,EST),$(EQ,$marker_type,CDNA),$(EQ,$marker_type,GENE))">
+
+<?MISQL SQL="
+    select count(distinct xpatex_source_zdb_id)::integer
+      from expression_experiment join 
+           expression_result on xpatex_zdb_id = xpatres_xpatex_zdb_id
+     where xpatex_gene_zdb_id = '$OID'
+        or xpatex_probe_feature_zdb_id = '$OID'; ">
+<?/MISQL>
+<?MIVAR NAME=mrkrview_xpatsource_count>$1<?/MIVAR>
+
+<HR width="80%">
+<b>GENE EXPRESSION:</b><font size=-1>(<a href="javascript:start_note('xpatselect_note')">current status</a></font>)
+
+<?MIBLOCK COND="$(!=,$mrkrview_xpatsource_count,0)">
+    <table width="100%" border="0" <?MIVAR>bgcolor="$highlight"<?/MIVAR>>
+
+    <?MICOMMENT> query literature pub <?/MICOMMENT>
+    <?MISQL SQL="
+	select distinct pub_mini_ref
+          from expression_experiment 
+	       join publication
+                    on xpatex_source_zdb_id = zdb_id
+         where (  xpatex_gene_zdb_id = '$OID'
+               or xpatex_probe_feature_zdb_id = '$OID')
+	   and jtype <> 'Unpublished'; ">
+
+	<?MIVAR NAME=mrkrview_xpatsource_desc>$1<?/MIVAR>
+    <?/MISQL>    
+    <?MICOMMENT> 
+      ========= if literature pub involved, display total figures ==========
+    <?/MICOMMENT>
+    <?MIBLOCK COND="$(!=,$MI_ROWCOUNT,0)">
+
+      <?MICOMMENT> if more than one pub, show count, 
+	         in case of one pub, show pub miniref 
+      <?MIVAR COND="$(!=,$MI_ROWCOUNT,1)" NAME=mrkrview_xpatsource_desc>
+		$mrkrview_xpatsource_count publications
+      <?/MIVAR>     
+      <?/MICOMMENT>  
+      <?MIVAR COND="$(>,$mrkrview_xpatsource_count,1)" NAME=mrkrview_xpatsource_desc>
+		$mrkrview_xpatsource_count publications
+      <?/MIVAR>     
+
+      <?MISQL SQL="
+	 select count(distinct xpatfig_fig_zdb_id)::integer
+           from expression_pattern_figure
+                join expression_result 
+			on xpatfig_xpatres_zdb_id = xpatres_zdb_id
+                join expression_experiment 
+			on xpatex_zdb_id = xpatres_xpatex_zdb_id 
+	  where xpatex_gene_zdb_id = '$OID'
+             or xpatex_probe_feature_zdb_id = '$OID'; ">
+       <?/MISQL>
+       <?MIVAR NAME=mrkrview_xpatfig_count>$1<?/MIVAR>     
+         <tr><td><b>All expression data: </b> </td>
+
+           <td> <?MIVAR> 
+     	       <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&gene_name=$abbrev&xpatsel_geneZdbId=$OID">$mrkrview_xpatfig_count figure(s)</a> from $mrkrview_xpatsource_desc
+	        <?/MIVAR>	
+           </td>
+         </tr>
+     <?/MIBLOCK>
+
+     <?MICOMMENT>
+	=========   query for figures from direct submission  ===============
+	 <?MISQL SQL="select count(distinct img_zdb_id)::integer 
+           from image, expression_pattern_figure,
+                expression_result, expression_experiment, 
+                publication
+	   where
+		img_fig_zdb_id=xpatfig_fig_zdb_id
+           and  xpatfig_xpatres_zdb_id=xpatres_zdb_id
+           and  xpatex_zdb_id=xpatres_xpatex_zdb_id
+           and  zdb_id = xpatex_source_zdb_id
+	   and  (xpatex_gene_zdb_id = '$OID' or xpatex_probe_feature_zdb_id = '$OID')
+           and jtype = 'Unpublished'"><?/MISQL>
+      <?MIVAR NAME=mrkrview_image_count>$1<?/MIVAR>
+     <?/MICOMMENT>
+     <?MISQL SQL="
+	 select count(distinct xpatfig_fig_zdb_id)::integer, 
+		pub.zdb_id, pub.pub_mini_ref,xpatex_probe_feature_zdb_id
+           from expression_pattern_figure
+                join expression_result on xpatfig_xpatres_zdb_id = xpatres_zdb_id
+                join expression_experiment 
+			on xpatex_zdb_id = xpatres_xpatex_zdb_id 
+                join publication pub on pub.zdb_id = xpatex_source_zdb_id
+	  where (xpatex_gene_zdb_id = '$OID' or xpatex_probe_feature_zdb_id = '$OID')
+            and pub.jtype = 'Unpublished'
+         group by xpatex_probe_feature_zdb_id, pub.zdb_id, pub.pub_mini_ref; ">
+
+         <?MIVAR NAME=mrkrview_xpatsubfig_count>$1<?/MIVAR>
+	 <?MIVAR NAME=mrkrview_xpatsubpub_id>$2<?/MIVAR>
+	 <?MIVAR NAME=mrkrview_xpatsubpub_miniref>$3<?/MIVAR>
+	 <?MIVAR NAME=mrkrview_xpatsub_probe_id>$4<?/MIVAR>
+	 
+	 <?MIBLOCK COND="$(EC,$MI_CURRENTROW,1)">
+
+	    <tr><td><b>Directly submitted expression data: </b></td>
+              
+         <?MIELSE>
+	    <tr><td>&nbsp;</td>
+         <?/MIBLOCK>
+	 <?MISQL SQL="select count(distinct img_zdb_id)::integer 
+           from image, expression_pattern_figure,
+                expression_result, expression_experiment 
+	   where
+		img_fig_zdb_id=xpatfig_fig_zdb_id
+           and  xpatfig_xpatres_zdb_id=xpatres_zdb_id
+           and  xpatex_zdb_id=xpatres_xpatex_zdb_id
+           and  xpatex_source_zdb_id= '$mrkrview_xpatsubpub_id'
+	   and  xpatex_probe_feature_zdb_id='$mrkrview_xpatsub_probe_id'
+           ">
+      <?MIVAR NAME=mrkrview_image_count>$1<?/MIVAR>
+	 <?MISQL SQL="
+		     select mrkr_name
+                       from marker
+                      where mrkr_zdb_id = '$mrkrview_xpatsub_probe_id';">
+
+	    <?MIVAR NAME=mrkrview_xpatsub_probe_name>$1<?/MIVAR>
+	 <?/MISQL>
+
+         <?MIVAR NAME=mrkrview_xpatsubfig_count_html>  
+	   <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&OID=$mrkrview_xpatsubpub_id&fxallfig_probe_zdb_id=$mrkrview_xpatsub_probe_id">$mrkrview_xpatsubfig_count figure(s) ($mrkrview_image_count images)</a>
+	 <?/MIVAR>
+
+         <td>
+	   $mrkrview_xpatsubfig_count_html from $mrkrview_xpatsubpub_miniref [$mrkrview_xpatsub_probe_name] 
+	 </td></tr>
+<?/MISQL>	
+     <?/MISQL><?MICOMMENT>query figure count for direct submission xpat<?/MICOMMENT>
+     
+     </table> <?MICOMMENT>close xpat section table<?/MICOMMENT>
+
+<?/MIBLOCK> <?MICOMMENT>block for gene xpat if exist<?/MICOMMENT>
+<?/MIBLOCK> <?MICOMMENT>block for marker type=gene<?/MICOMMENT>
+
+
+<?MICOMMENT>=========================================================
+            ==    GENOTYPE for CONSTRUCTS
+	    =========================================================
+<?/MICOMMENT>
+
+  <?MIVAR NAME=mkvw_geno_counter>0<?/MIVAR>
+  <?MIVAR NAME=mkvw_geno_short_list_cap>5<?/MIVAR>
+
+  <?MISQL SQL="
+	select get_geno_name_with_bg_html_link(genofeat_geno_zdb_id)
+ 	  from genotype_feature, feature_marker_relationship
+         where fmrel_mrkr_zdb_id = '$OID'
+           and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
+           and fmrel_type = 'contains sequence feature'">
+
+	<?MIVAR NAME=mkvw_geno_html>$1<?/MIVAR>
+
+        $(SETVAR,$mkvw_geno_counter,$(+,$mkvw_geno_counter,1)) 
+
+  	<?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
+     	    <?MIVAR NAME=mkvw_geno_short_list>$mkvw_geno_html<?/MIVAR>
+      	    <?MIVAR NAME=mkvw_geno_long_list>$mkvw_geno_html<?/MIVAR>         
+	<?MIELSE>
+	    <?MIVAR COND="$(<=,$mkvw_geno_counter,$mkvw_geno_short_list_cap)">
+	       $(VECAPPEND,$mkvw_geno_short_list,$mkvw_geno_html)
+            <?/MIVAR>
+            <?MIVAR>
+              $(VECAPPEND,$mkvw_geno_long_list,$mkvw_geno_html)
+            <?/MIVAR>
+        <?/MIBLOCK>
+	
+  <?/MISQL>
+
+  <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)"> 
+     <?MIVAR NAME=mkvw_geno_short_list_sepa SEPARATE="<br>">$mkvw_geno_short_list<?/MIVAR>
+     <?MIVAR NAME=mkvw_geno_long_list_sepa SEPARATE="<br>">$mkvw_geno_long_list<?/MIVAR>
+     <?MIVAR NAME=mkvw_geno_short_list_escp>$(REPLACE,$mkvw_geno_short_list_sepa,"'","")<?/MIVAR>
+    
+     <?MIVAR NAME=mkvw_geno_long_list_escp>$(REPLACE,$mkvw_geno_long_list_sepa,"'","")<?/MIVAR>
+
+     <script>
+           <?MIVAR>
+   	   function expandGenotypeList() {
+     	       var elem = document.getElementById("genoList");
+               elem.innerHTML = '$mkvw_geno_long_list_escp <a href=javascript:onClick=shrinkGenotypeList()><img border=0 src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif></a>';	
+	   }
+
+   	   function shrinkGenotypeList() {
+     	       var elem = document.getElementById("genoList");
+               elem.innerHTML = '$mkvw_geno_short_list_escp ... <a href=javascript:onClick=expandGenotypeList()>(all $MI_ROWCOUNT) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>';	
+	   }
+
+	   <?/MIVAR>
+     </script> 
+
+     <hr width=80%>
+      <table><tr><td valign="top">
+      <b>
+         TRANSGENIC LINE(S) :
+      </b> 
+      </td>
+      <td>
+      <span id="genoList">
+         
+         <?MIVAR>$mkvw_geno_short_list_escp<?/MIVAR>
+
+         <?MIVAR COND="$(>,$MI_ROWCOUNT,$mkvw_geno_short_list_cap)">   
+	   ... <a href=javascript:onClick=expandGenotypeList()>(all $MI_ROWCOUNT) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>
+         <?/MIVAR>
+         
+       </span>
+
+      </td></tr></table>
+
+  <?/MIBLOCK>
+        
+
+
+
+<?MICOMMENT>=========================================================
             ==    MUTANTS AND TARGETED KNOCKDOWNS
 	    =========================================================
 <?/MICOMMENT>
 <?MIVAR NAME=display_mut_trg_title>f<?/MIVAR>
 
-<?MICOMMENT>=========================================================
-This section of the code has been commented..see FogBugz 743. The update feature for adding knockdown reagents is no longer necessary.
-I am commenting this part of the code rather than deleting it. If no flags are raised in a month from today (7/14/05), this section can be deleted by the next person who touches markerview.apg (Prita)
----------------------------------------------------------------------
-
-<?MIBLOCK COND="$(AND,$(XST,$type_of_genedom),$(XST,$UPDATE))">
-     <?MIVAR COND="$(EC,$display_mut_trg_title,f)">
-         <hr width=80%>
-	 <b>
-		MUTANTS AND TARGETED KNOCKDOWNS:
-         </b> <br>
-         $(SETVAR,$display_mut_trg_title,t)
-     <?/MIVAR>
-     <form>
-     <b> Add Knockdown Reagent: </b>
-     Name: <input type=text size=15 name=mrkr_abbrev>
-     <input type=button value="Add it!" onClick="new_mrkrrel('2to1-knockdown reagent targets gene',this.form.mrkr_abbrev.value)">
-     <br>
-     <b>Add Reference:</b>
-     Reagent name:<input type=text name=attrib_mrkr_abbrev>
-     Reference:<input type=text name=attrib_mrel_pubid>
-     <input type=button value="Add" onClick=new_attrib_mrel(this.form);>
-     </form>
-<?/MIBLOCK>
-<?/MICOMMENT>
 
    <?MICOMMENT>==============================
-               ==    Mutant Locus
+               ==    Mutants
 	       ==============================
    <?/MICOMMENT>
+<?MIBLOCK COND="$(XST,$type_of_genedom)">
+   <?MISQL SQL="
+ 	 execute function get_mutants_html_link('$OID');">
 
-<?MISQL SQL="
-   select zdb_id, locus_name, abbrev
-     from locus
-    where cloned_gene='$OID';">
-<?/MISQL>
-<?MIVAR NAME=$mrkrview_locus_zdb_id>$1<?/MIVAR>
-<?MIVAR NAME=$mrkrview_locus_name>$2<?/MIVAR>
-<?MIVAR NAME=$mrkrview_locus_abbrev>$3<?/MIVAR>
+       	 <?MIVAR NAME=mrkrview_mutants_display>$1<?/MIVAR>
+   <?/MISQL>
+   <?MIBLOCK COND="$(NC,$mrkrview_mutants_display,)">
 
-<?MIBLOCK COND="$(!=,$MI_ROWCOUNT,0)">
-  <?MIVAR COND="$(EC,$display_mut_trg_title,f)">
-      <hr width=80%>
-      <b>
-	MUTANTS AND TARGETED KNOCKDOWNS:
-      </b> <br>
-      $(SETVAR,$display_mut_trg_title,t)
-  <?/MIVAR>
-  <?MIVAR><?MICOMMENT>to have backgroup color<?/MICOMMENT>
-    <table width =100% border=0 bgcolor=$highlight>
-  <?/MIVAR>
-  <tr>
-    <td>
-      <b>Mutant locus: </b>
+     <?MIVAR COND="$(EC,$display_mut_trg_title,f)">
+       <hr width=80%>
+       <b>
+	MUTANTS AND TARGETED KNOCKDOWNS: 
+       </b> <br>
+       $(SETVAR,$display_mut_trg_title,t)
+     <?/MIVAR> 
+     <?MIVAR>
+       <table width =100% border=0 bgcolor=$highlight>
+     <?/MIVAR>
+     <tr>
+     <td>
+       <b>Mutant line(s): &nbsp; </b>
+ 		 	 
+      <?MIVAR> 
+	$mrkrview_mutants_display
+      <?/MIVAR>
+    </td></tr>
+    </table>
+  <?/MIBLOCK><?MICOMMENT> -- end if there is mutants --<?/MICOMMENT>
+<?/MIBLOCK><?MICOMMENT> -- end if genedom ---<?/MICOMMENT>
 
-    <?MIVAR COND="$(XST,$UPDATE)">
-      <form>
-      <br><b>Add reference:</b>
-      Reference:<input type=text name=attrib_mutant_pubid>
-      <input type=button value="Add" onClick=new_attrib_mutant("$1", this.form);><br>
-      </form>
-    <?/MIVAR>
+  <?MICOMMENT>=========================================================
+            == Phenotype
+            ==========================================================
+  <?/MICOMMENT>
+<?MIBLOCK COND="$(EQ,$marker_type,GENE)">
+ <?MISQL SQL="
+  	select dbinfo('sessionid') 
+  	  from single;">
+    <?MIVAR NAME=$mrkrview_session_id>$1<?/MIVAR>
+    <?MIVAR NAME=$mrkrview_temp_pato>$(CONCAT,mrkrview_temp_pato_,$mrkrview_session_id)<?/MIVAR>
+ <?/MISQL>
 
-    <?MIVAR>
-      <A HREf="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$1">
-   	   $mrkrview_locus_name ($3)
-      </A> has been shown to correspond to gene <i>$abbrev</i>.
-    <?/MIVAR>
+ <?MISQL SQL="
+  	  execute function table_exists('$mrkrview_temp_pato')">
+  	<?MIVAR NAME="$mrkrview_tableExists">$1<?/MIVAR>
+ <?/MISQL>
+ <?MISQL COND=$(NC,$mrkrview_tableExists,f) SQL="
+	delete from $mrkrview_temp_pato
+	">
+ <?/MISQL>
+ <?MISQL COND=$(EC,$mrkrview_tableExists,f) SQL="
+    	  create temp table $mrkrview_temp_pato (
+   	    t_pato_zdb_id 	varchar(50)
+  	  ) with NO LOG;">
+ <?/MISQL>  
 
-    <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_locus_zdb_id&type=recattrib&info=cloned+gene') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
-  </td></tr>
-  </table>
+ <?MISQL SQL="
+	insert into $mrkrview_temp_pato
+            select apato_zdb_id
+              from feature_marker_relationship, genotype_feature,
+		   genotype_experiment, atomic_phenotype
+             where fmrel_mrkr_zdb_id='$OID'
+      	       and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
+      	       and fmrel_type = 'is allele of'
+               and genofeat_geno_zdb_id = genox_geno_zdb_id
+               and genox_zdb_id = apato_genox_zdb_id ;">
+ <?/MISQL>
+ <?MISQL SQL="
+	insert into $mrkrview_temp_pato
+            select apato_zdb_id
+              from mapped_deletion, feature, genotype_feature,
+		   genotype_experiment, atomic_phenotype
+             where marker_id='$OID'
+      	       and allele = feature_name
+               and present_t = 'f'
+               and feature_zdb_id = genofeat_feature_zdb_id
+               and genofeat_geno_zdb_id = genox_geno_zdb_id
+               and genox_zdb_id = apato_genox_zdb_id ;">
+ <?/MISQL>
+
+ <?MIVAR COND="$(EC,$display_mut_trg_title,f)">
+     <hr width=80%>
+     <b>MUTANTS AND TARGETED KNOCKDOWNS: </b> <br>    
+     $(SETVAR,$display_mut_trg_title,t)
+ <?/MIVAR> 
+ <table width="100%" border="0" <?MIVAR>bgcolor="$highlight"<?/MIVAR>>
+    <tr><td> 
+       <b> Phenotype: </b><font size=-1>(<a href="javascript:start_note('phenotype_note')">current status</a></font>)
+    </td></tr>
+ </table>
+ <?MISQL SQL="select WebExplode(object,'phmview_input_table=$mrkrview_temp_pato') from webPages where ID='aa-phenotype_miniview.apg';">$1<?/MISQL>
+
 <?/MIBLOCK>
+
 
     <?MICOMMENT>================================
                 ==    Knockdown Reagent
@@ -980,14 +1327,15 @@ I am commenting this part of the code rather than deleting it. If no flags are r
     <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
         <?MIVAR COND="$(EC,$display_mut_trg_title,f)">
 	   <hr width=80%>
-	   <b>MUTANTS AND TARGETED KNOCKDOWNS: </b> <br>
-        <?/MIVAR>
-	<?MIVAR>
+	   <b>MUTANTS AND TARGETED KNOCKDOWNS: </b> <br>     
+           $(SETVAR,$display_mut_trg_title,t)  
+        <?/MIVAR> 
+	<?MIVAR> 
 	  <table width=100% border=0 bgcolor=$highlight>
            <tr><td>
   	     <b> Knockdown reagent$mrkrview_agt_plural: </b>
 	<?/MIVAR>
-    <?MIELSE>
+    <?MIELSE>	
 	, &nbsp;
     <?/MIBLOCK>
 
@@ -999,13 +1347,12 @@ I am commenting this part of the code rather than deleting it. If no flags are r
     <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrview_agt_zdb_id">
 	$mrkrview_agt_name
     </a>
-    <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_agt_mrel_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+    <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_agt_mrel_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>	
   <?/MISQL>
   <?MIBLOCK COND="$(!=,$MI_ROWCOUNT,0)">
     </td></tr></table>
   <?/MIBLOCK>
 <?/MIBLOCK><?MICOMMENT>end of type_of_genedom<?/MICOMMENT>
-
 
 
 <?MICOMMENT>=========================================================
@@ -1266,143 +1613,32 @@ I am commenting this part of the code rather than deleting it. If no flags are r
 <!------------------ end of GENE PRODUCT ---------------------->
 
 
+
+
 <?MICOMMENT>=========================================================
-            ==  GENE EXPRESSION
-            ==========================================================
+            ==    CONSTRUCTS WITH SEQUENCE FROM
+	    =========================================================
 <?/MICOMMENT>
-<?MICOMMENT> check data existence, and count total pubs<?/MICOMMENT>
-<?MIBLOCK COND="$(OR,$(EQ,$marker_type,EST),$(EQ,$marker_type,CDNA),$(EQ,$marker_type,GENE))">
-<?MISQL SQL="
-    select count(distinct xpatex_source_zdb_id)::integer
-      from expression_experiment
-     where '$OID' in (xpatex_gene_zdb_id, xpatex_probe_feature_zdb_id)
-     and xpatex_zdb_id in (select distinct xpatres_xpatex_zdb_id from expression_result)">
-<?/MISQL>
-<?MIVAR NAME=mrkrview_xpatsource_count>$1<?/MIVAR>
-    <HR width="80%">
-    <b>GENE EXPRESSION:</b><font size=-1>(<a href="javascript:start_note();">current status</a></font>)
-
-<?MIBLOCK COND="$(!=,$mrkrview_xpatsource_count,0)">
-    <table width="100%" border="0" <?MIVAR>bgcolor="$highlight"<?/MIVAR>>
-
-    <?MICOMMENT> query literature pub <?/MICOMMENT>
-    <?MISQL SQL="
-	select distinct pub_mini_ref
-          from expression_experiment
-	       join publication
-                    on xpatex_source_zdb_id = zdb_id
-         where '$OID' in (xpatex_gene_zdb_id, xpatex_probe_feature_zdb_id)
-	   and jtype <> 'Unpublished'; ">
-
-	<?MIVAR NAME=mrkrview_xpatsource_desc>$1<?/MIVAR>
-    <?/MISQL>
-    <?MICOMMENT>
-      ========= if literature pub involved, display total figures ==========
-    <?/MICOMMENT>
-    <?MIBLOCK COND="$(!=,$MI_ROWCOUNT,0)">
-
-      <?MICOMMENT> if more than one pub, show count,
-	         in case of one pub, show pub miniref
-      <?MIVAR COND="$(!=,$MI_ROWCOUNT,1)" NAME=mrkrview_xpatsource_desc>
-		$mrkrview_xpatsource_count publications
-      <?/MIVAR>
-      <?/MICOMMENT>
-      <?MIVAR COND="$(>,$mrkrview_xpatsource_count,1)" NAME=mrkrview_xpatsource_desc>
-		$mrkrview_xpatsource_count publications
-      <?/MIVAR>
-
-      <?MISQL SQL="
-	 select count(distinct xpatfig_fig_zdb_id)::integer
-           from expression_pattern_figure
-                join expression_result
-			on xpatfig_xpatres_zdb_id = xpatres_zdb_id
-                join expression_experiment
-			on xpatex_zdb_id = xpatres_xpatex_zdb_id
-	  where '$OID' in (xpatex_gene_zdb_id, xpatex_probe_feature_zdb_id); ">
-       <?/MISQL>
-       <?MIVAR NAME=mrkrview_xpatfig_count>$1<?/MIVAR>
-         <tr><td><b>All expression data: </b> </td>
-
-           <td> <?MIVAR>
-     	       <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&gene_name=$abbrev&xpatsel_geneZdbId=$OID">$mrkrview_xpatfig_count figure(s)</a> from $mrkrview_xpatsource_desc
-	        <?/MIVAR>
-           </td>
-         </tr>
-     <?/MIBLOCK>
-
-     <?MICOMMENT>
-	=========   query for figures from direct submission  ===============
-	 <?MISQL SQL="select count(distinct fimg_zdb_id)::integer
-           from fish_image, expression_pattern_figure,
-                expression_result, expression_experiment,
-                publication
-	   where
-		fimg_fig_zdb_id=xpatfig_fig_zdb_id
-           and  xpatfig_xpatres_zdb_id=xpatres_zdb_id
-           and  xpatex_zdb_id=xpatres_xpatex_zdb_id
-           and  zdb_id = xpatex_source_zdb_id
-	   and '$OID' in (xpatex_gene_zdb_id, xpatex_probe_feature_zdb_id)
-           and jtype = 'Unpublished'"><?/MISQL>
-      <?MIVAR NAME=mrkrview_image_count>$1<?/MIVAR>
-     <?/MICOMMENT>
-     <?MISQL SQL="
-	 select count(distinct xpatfig_fig_zdb_id)::integer,
-		pub.zdb_id, pub.pub_mini_ref,xpatex_probe_feature_zdb_id
-           from expression_pattern_figure
-                join expression_result on xpatfig_xpatres_zdb_id = xpatres_zdb_id
-                join expression_experiment
-			on xpatex_zdb_id = xpatres_xpatex_zdb_id
-                join publication pub on pub.zdb_id = xpatex_source_zdb_id
-	  where '$OID' in (xpatex_gene_zdb_id, xpatex_probe_feature_zdb_id)
-            and pub.jtype = 'Unpublished'
-         group by xpatex_probe_feature_zdb_id, pub.zdb_id, pub.pub_mini_ref; ">
-
-         <?MIVAR NAME=mrkrview_xpatsubfig_count>$1<?/MIVAR>
-	 <?MIVAR NAME=mrkrview_xpatsubpub_id>$2<?/MIVAR>
-	 <?MIVAR NAME=mrkrview_xpatsubpub_miniref>$3<?/MIVAR>
-	 <?MIVAR NAME=mrkrview_xpatsub_probe_id>$4<?/MIVAR>
-
-	 <?MIBLOCK COND="$(EC,$MI_CURRENTROW,1)">
-
-	    <tr><td><b>Directly submitted expression data: </b></td>
-
-         <?MIELSE>
-	    <tr><td>&nbsp;</td>
-         <?/MIBLOCK>
-	 <?MISQL SQL="select count(distinct fimg_zdb_id)::integer
-           from fish_image, expression_pattern_figure,
-                expression_result, expression_experiment
-	   where
-		fimg_fig_zdb_id=xpatfig_fig_zdb_id
-           and  xpatfig_xpatres_zdb_id=xpatres_zdb_id
-           and  xpatex_zdb_id=xpatres_xpatex_zdb_id
-           and  xpatex_source_zdb_id= '$mrkrview_xpatsubpub_id'
-	   and  xpatex_probe_feature_zdb_id='$mrkrview_xpatsub_probe_id'
-           ">
-      <?MIVAR NAME=mrkrview_image_count>$1<?/MIVAR>
-	 <?MISQL SQL="
-		     select mrkr_name
-                       from marker
-                      where mrkr_zdb_id = '$mrkrview_xpatsub_probe_id';">
-
-	    <?MIVAR NAME=mrkrview_xpatsub_probe_name>$1<?/MIVAR>
-	 <?/MISQL>
-
-         <?MIVAR NAME=mrkrview_xpatsubfig_count_html>
-	   <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&OID=$mrkrview_xpatsubpub_id&fxallfig_probe_zdb_id=$mrkrview_xpatsub_probe_id">$mrkrview_xpatsubfig_count figure(s) ($mrkrview_image_count images)</a>
-	 <?/MIVAR>
-
-         <td>
-	   $mrkrview_xpatsubfig_count_html from $mrkrview_xpatsubpub_miniref [$mrkrview_xpatsub_probe_name]
-	 </td></tr>
-<?/MISQL>
-     <?/MISQL><?MICOMMENT>query figure count for direct submission xpat<?/MICOMMENT>
-
-     </table> <?MICOMMENT>close xpat section table<?/MICOMMENT>
-
-<?/MIBLOCK> <?MICOMMENT>block for gene xpat if exist<?/MICOMMENT>
-<?/MIBLOCK> <?MICOMMENT>block for marker type=gene<?/MICOMMENT>
-
+  <?MISQL SQL="
+         select mrel_mrkr_1_zdb_id
+           from marker_relationship
+          where mrel_mrkr_2_zdb_id = '$OID'
+            and mrel_type in ('promoter of','coding sequence of', 'contains other feature')
+        ">
+   <?/MISQL>
+   <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">	
+  	<hr width=80%>
+  	  <b> 
+	     CONSTRUCTS WITH SEQUENCE FROM <?MIVAR><i>$abbrev</i>:<?/MIVAR> 
+  	  </b>
+   <table width=100% cols=2 bgcolor=<?MIVAR>$highlight<?/MIVAR>> 
+    <tr>
+     <td>
+       <?MISQL SQL="select WebExplode(object,'mrkr_id=$OID') from webPages where ID='aa-mrkrgenolist.apg';">$1<?/MISQL> 
+     </td>
+    </tr>	 
+   </table>
+<?/MIBLOCK>
 
 
 
@@ -1419,7 +1655,11 @@ I am commenting this part of the code rather than deleting it. If no flags are r
                from marker_relationship
               where (mrel_mrkr_1_zdb_id = '$OID'
                      or mrel_mrkr_2_zdb_id = '$OID')
-                and mrel_type <> 'knockdown reagent targets gene';">
+                and mrel_type not in  ('knockdown reagent targets gene',
+					'promoter of',
+					'coding sequence of',
+					'contains other feature'
+					);">
      <?MIVAR NAME=$mrel_count>$1<?/MIVAR>
 <?/MISQL>
 <?MIBLOCK COND="$(OR,$(NC,$mrel_count,0),$(XST,$UPDATE))">
@@ -1442,7 +1682,11 @@ I am commenting this part of the code rather than deleting it. If no flags are r
 	            join marker_type_group_member
 		      on mreltype_mrkr_type_group_1 = mtgrpmem_mrkr_type_group
 	      where get_obj_type('$OID') = mtgrpmem_mrkr_type
-		and mreltype_name <> 'knockdown reagent targets gene' ">
+		and mreltype_name not in ('knockdown reagent targets gene',
+					'promoter of',
+					'coding sequence of',
+					'contains other feature'
+					); ">
    <option value="1to2-$1">$1-$2
  <?/MISQL>
 
@@ -1451,7 +1695,11 @@ I am commenting this part of the code rather than deleting it. If no flags are r
 	            join marker_type_group_member
 	              on mreltype_mrkr_type_group_2 = mtgrpmem_mrkr_type_group
 	      where get_obj_type('$OID') = mtgrpmem_mrkr_type
-                and mreltype_name <> 'knockdown reagent targets gene'  ">
+                and mreltype_name not in ('knockdown reagent targets gene',
+					'promoter of',
+					'coding sequence of',
+					'contains other feature'
+					); ">
    <option value="2to1-$1">$1-$2
  <?/MISQL>
  </SELECT>
@@ -1684,9 +1932,9 @@ I am commenting this part of the code rather than deleting it. If no flags are r
           and mrel_type = 'clone contains gene'
           and mrel_mrkr_1_zdb_id = mrkr_zdb_id
           and mrel_mrkr_1_zdb_id not in ('$chimeric_clone_list')
-
+          
         order by 11 asc, 9 asc, 1 desc, 6 desc, 4 asc
-      ;">
+      ;">   
 
       <?MIVAR NAME=dblink_length>$1<?/MIVAR>
       <?MIVAR NAME=db_name>$2<?/MIVAR>
@@ -1776,7 +2024,7 @@ I am commenting this part of the code rather than deleting it. If no flags are r
 
 
 <!------------   OTHER MARKER PAGES   ------------------------------->
-  <?MIVAR>$(UNSETVAR,dblink_other)<?/MIVAR>
+  <?MIVAR>$(UNSETVAR,dblink_other)<?/MIVAR>  
 
   <?MISQL SQL="
     select fdb_db_name, fdb_db_query || dblink_acc_num ||
@@ -1788,7 +2036,7 @@ I am commenting this part of the code rather than deleting it. If no flags are r
       and fdbcont_fdb_db_name = fdb_db_name
       and fdbcont_fdbdt_data_type = 'other'
     order by 6,1,5
-  ;">
+  ;"> 
     <?MIVAR NAME=db_name>$1<?/MIVAR>
     <?MIVAR NAME=link_url>$2<?/MIVAR>
     <?MIVAR NAME=acc_num>$3<?/MIVAR>
@@ -1906,7 +2154,7 @@ I am commenting this part of the code rather than deleting it. If no flags are r
 	    =========================================================
 <?/MICOMMENT>
 
-<?MIBLOCK COND="$(NXST,$type_of_knockdown_reagent)">
+<?MIBLOCK COND="$(AND,$(NXST,$type_of_knockdown_reagent),$(=,$(POSITION,$OID,CONSTRCT),0), $(=,$(POSITION,$OID,-EFG-),0))">
   <hr width="80%" align = center>
   <b>MAPPING INFORMATION:  </b>
 
@@ -1941,17 +2189,20 @@ I am commenting this part of the code rather than deleting it. If no flags are r
 
 <!------------------ PUBLICATION ------------------------------------>
 
-<?MICOMMENT> *** 09/05 Decided to count both real pub and citation fake pub, and use CITATION as title. Before any database solution, still hard code the items to extract citation pub. <?/MICOMMENT>
-<?MICOMMENT> *** 08/25 curator's decision that we will not pull over publications from related markers, or the known locus. However, any attribution to data items automatically populated to the marker itself. <?/MICOMMENT>
-<?MICOMMENT> *** 2005/10/25 curator's decide that all allele and locus attribution will be pulled through to the gene page. <?/MICOMMENT>
+<?MICOMMENT>  09/05 Decided to count both real pub and citation fake pub, and use CITATION as title. Before any database solution, still hard code the items to extract citation pub. <?/MICOMMENT>
+<?MICOMMENT>  08/25 curator's decision that we will not pull over publications from related markers, or the known locus. However, any attribution to data items automatically populated to the marker itself. <?/MICOMMENT>
+<?MICOMMENT>  2005/10/25 curator's decide that all allele and locus attribution will be pulled through to the gene page. <?/MICOMMENT>
 
-    <?MICOMMENT> *** Citation Link *** <?/MICOMMENT>
-    <?MISQL SQL="select WebExplode(object,'citlink_data_page=citgeneric.apg') from webPages where ID='aa-citlink.apg';">$1<?/MISQL>
+<?MICOMMENT> ----- Citation Link ----- <?/MICOMMENT>
+    
+<?MISQL COND="$(=,$(POSITION,$OID,-EFG-),0)"
+         SQL="select WebExplode(object,'citlink_data_page=citgeneric.apg') from webPages where ID='aa-citlink.apg';">$1<?/MISQL>
 
-</form> <?MICOMMENT> end form updater1 <?/MICOMMENT>
+
 
 <!----------------- ends PUBLICATION ----------------->
 
+</form> <?MICOMMENT> end form updater1 <?/MICOMMENT>
 
 
 <?/MIBLOCK> <!-- ends cond authorize exists -->

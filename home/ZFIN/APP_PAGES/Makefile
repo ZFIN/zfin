@@ -37,7 +37,10 @@ SUBDIRS = \
 	security_files \
 	selection \
 	updating \
-	xpat_files
+	xpat_files \
+        feature_files \
+        curation_files
+
 
 
 # ---------------  Production Rules  ------------------------------------

@@ -24,7 +24,6 @@ Variables Expected:
       ***The default recattrib type is 'standard'. 
       ***If no type is passed in, use the default.
     <?/MICOMMENT>
-    <?MIVAR NAME=info COND=$(NXST,$info)>standard<?/MIVAR>
 
     <?MISQL SQL="
 		select zobjtype_attribution_display_tier

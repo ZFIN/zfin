@@ -14,8 +14,9 @@ Removed the "Add/Update Gene Expression Index" link
 
 <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 
-<?MIVAR NAME=$MI_NOVALUE>NOVALUE<?/MIVAR>
-	
+<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
+<?MIVAR NAME=$MI_NULL><?/MIVAR>	
+
 <?MIVAR COND="$(NXST,$rtype)" NAME=$rtype><?/MIVAR>
 <?MIVAR COND="$(NXST,$title)" NAME=$title><?/MIVAR>
 <?MIVAR COND="$(NXST,$name)" NAME=$name><?/MIVAR>
@@ -29,8 +30,8 @@ Removed the "Add/Update Gene Expression Index" link
 <!-- First find out the last modification date of the record in question. -->
 <?MISQL SQL="select when, day(when), comments, month(when), year(when) from updates where rec_id='$OID' order by when;">
 <?/MISQL>
-<?MIVAR NAME=$mod_date COND="$(OR,$(EC,$1,NOVALUE),$(EC,$3,*RECORD_CREATED*))">Never modified<?/MIVAR>
-<?MIVAR  NAME=$mod_date COND="$(AND,$(NC,$1,NOVALUE),$(NC,$3,*RECORD_CREATED*))">
+<?MIVAR NAME=$mod_date COND="$(OR,$(EC,$1,),$(EC,$3,*RECORD_CREATED*))">Never modified<?/MIVAR>
+<?MIVAR  NAME=$mod_date COND="$(AND,$(NC,$1,),$(NC,$3,*RECORD_CREATED*))">
 $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5 
 <?/MIVAR>
 
@@ -103,7 +104,7 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 
 
 <?MIBLOCK COND="$(EC,$AUTHORIZED,root)"> 
-  <?MIBLOCK COND="$(OR,$(EC,$rtype,marker),$(EC,$rtype,locus),$(EC,$rtype,fish))">
+  <?MIBLOCK COND="$(OR,$(EC,$rtype,marker),$(EC,$rtype,genotype))">
     <TD>
       <?MIVAR>
         <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-delete_record.apg&OID=$OID&rtype=$rtype"><font size=-1 color=red> Delete or Merge this record </font></A> 
@@ -143,7 +144,7 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 <?/MIBLOCK>
 <?MIELSE> <!-- pub records -->
   <TD>
-    <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID">Curate</a><?/MIVAR>
+    <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID">Track Curation</a><?/MIVAR>
   </TD>
   <TD>
     Status: <?MIVAR>$(IF,$(EC,$pub_completion_date,),Open,Closed $pub_completion_date)<?/MIVAR>

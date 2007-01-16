@@ -1,51 +1,46 @@
 begin work ;
 
-set constraints all deferred ;
+--update statistics high ;
 
 alter table external_note 
   add (extnote_note_type varchar(30));
 
---insert into external_note (extnote_zdb_id, 
---				extnote_data_zdb_id,
---				extnote_note,
---				extnote_note_type)
---select get_id('EXTNOTE'),
---	genox_zdb_id, 
---	fish.comments, 
---	'original submitter comments'
---  from genotype_experiment, experiment, fish
---  where exp_name = '_Standard'
---  and genox_exp_zdb_id = exp_zdb_id 
---  and genox_geno_zdb_id = zdb_id 
---  and fish.comments is not null 
---  and fish.comments != ''
---  and fish.comments not like '%rovisional record for newly registered locus/allele'
---  and fish.comments != 'This record has been created in support of data for which a publication has not specified an allele.'
---  and fish.comments not like 'discovered%';
- 
---insert into external_note (extnote_zdb_id, 
---				extnote_data_zdb_id,
---				extnote_note,
---				extnote_note_type)    
---select get_id('EXTNOTE'),
---	genox_zdb_id, 
---	fish.segregation, 
---	'original segregation comments'
---   from fish, genotype_experiment
---   where zdb_id = genox_geno_zdb_id
---   and fish.segregation is not null
---   and fish.segregation != '';
+set constraints all deferred ;
 
---insert into phenotype_old (pold_genox_zdb_id,
---				pold_segregation)
---  select genox_zdb_id, segregation
---    from fish, genotype_experiment
---	where genox_zdb_id not in (select pold_genox_zdb_id
---						from phenotype_old)
---	and zdb_id = genox_geno_zdb_id
---	and segregation is not null
---	and segregation != '' ;
 
+insert into external_note (extnote_zdb_id, 
+				extnote_data_zdb_id,
+				extnote_note,
+				extnote_note_type)
+select get_id('EXTNOTE'),
+	zrepld_new_zdb_id, 
+	fish.comments, 
+	'original submitter comments'
+  from fish, zdb_replaced_data
+  where fish.comments is not null 
+  and fish.comments != ''
+  and fish.comments not like '%rovisional record for newly registered locus/allele'
+  and fish.comments != 'This record has been created in support of data for which a publication has not specified an allele.'
+  and fish.comments not like 'discovered%'
+  and fish.zdb_id = zrepld_old_zdb_id
+  and zrepld_new_zdb_id like 'ZDB-GENO-%';
+
+
+insert into external_note (extnote_zdb_id, 
+				extnote_data_zdb_id,
+				extnote_note,
+				extnote_note_type)
+select get_id('EXTNOTE'),
+	zrepld_new_zdb_id,
+	phenotype,
+	'original submitter comments'
+  from fish, zdb_replaced_data
+  where line_type = 'wild type'
+  and fish.zdb_id = zrepld_old_zdb_id
+  and zrepld_new_zdb_id like 'ZDB-GENO-%'
+  and phenotype is not null
+  and phenotype != '';
+	
 create temp table tmp_tt (keyword varchar(100), 
 				stage varchar(50),
 				entity varchar(100),
@@ -100,20 +95,55 @@ select dist_id
  into temp tmp_deleters;
 
 delete from tmp_distinct_marker_note
-  where dist_id in (select * from tmp_deleters) ; 
+  where dist_id in (select dist_id from tmp_deleters) ; 
+
+!echo "number of makrer comments from phenotype conversion list" ;
 
 update marker
-  set mrkr_comments = (select note 
+  set mrkr_comments = mrkr_comments||(select note 
 			  from tmp_distinct_marker_note
 			  where mrkr_zdb_id = dist_id)
   where exists (select 'x' from tmp_distinct_marker_note
 			where dist_id = mrkr_zdb_id);
+
+insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
+  select distinct tmp_distinct_marker_note.dist_id, tmp_notes.pub_id
+    from tmp_notes, tmp_distinct_marker_note, tmp_id_conversion
+    where tmp_notes.id = tmp_id_conversion.id
+    and tmp_id_conversion.alt_id = tmp_distinct_marker_note.dist_id 
+    and not exists (select 'x' from record_attribution b
+			where b.recattrib_datA_zdb_id = 
+				tmp_distinct_marker_note.dist_id
+			and b.recattrib_source_zdb_id =
+				tmp_notes.pub_id
+                        and b.recattrib_source_type = 'standard');
+
+--select recattrib_data_zdb_id, recattrib_source_zdb_id, recattrib_source_type
+--  from record_attribution
+--  where recattrib_datA_zdb_id = 'ZDB-GENO-000821-1'
+--  order by recattrib_source_zdb_id;
+
+--delete from record_attribution
+--  where recattrib_source_type = 'segregation'
+--  and exists (select 'x'
+--		from tmp_distinct_marker_note, tmp_notes, tmp_id_conversion
+--  		where dist_id = recattrib_data_zdb_id
+--		and recattrib_source_zdb_id = tmp_notes.pub_id 
+--		and tmp_notes.id = tmp_id_conversion.id
+--		and tmp_id_conversion.id = tmp_distinct_marker_note.dist_id);
 
 
 delete from tmp_notes ;
 
 load from notes_for_genotype.txt
 insert into tmp_notes ;
+
+--select first 1 * from tmp_notes;
+
+--select * from tmp_notes
+--  where id = 'ZDB-FISH-000821-1';
+
+!echo "number of genotype notes from phenotype text file" ;
 
 insert into external_note (extnote_zdb_id, extnote_note, extnote_data_zdb_id)
   select get_id('EXTNOTE'), note, genox_zdb_id
@@ -122,6 +152,30 @@ insert into external_note (extnote_zdb_id, extnote_note, extnote_data_zdb_id)
     and zrepld_old_zdb_id = tmp_notes.id
     and genox_exp_zdb_id = exp_zdb_id
     and exp_name = '_Standard' ;
+
+
+insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
+  select distinct extnote_zdb_id, pub_id
+    from external_note, tmp_notes
+     where extnote_note = tmp_notes.note 
+     and not exists (select 'x' 	
+			from record_Attribution b
+			where b.recattrib_data_zdb_id = extnote_zdb_id
+			and b.recattrib_source_zdb_id = pub_id);
+
+--delete from record_attribution
+--  where exists  (select 'x'
+--			from tmp_notes, external_note
+--			where recattrib_data_zdb_id = extnote_zdb_id
+--			and extnote_note = tmp_notes.note)
+--  and recattrib_source_type = 'segregation'
+--  and (recattrib_data_zdb_id like 'ZDB-GENO-%' 
+--	or recattrib_data_zdb_id like 'ZDB-FISH-%');
+
+!echo "how many seg recattribs left? : " ;
+
+select count(*) from record_attribution
+  where recattrib_source_type = 'segregation' ;
 
 insert into zdb_active_data
   select extnote_zdb_id from external_note
@@ -137,8 +191,10 @@ insert into tmp_notes
 load from feature.try
   insert into tmp_notes;
 
+!echo "number of feature comments from phenotype text file" ;
+
 update feature
-  set feature_comments = (select note from tmp_notes, fish, alteration
+  set feature_comments = (select distinct note from tmp_notes, fish, alteration
 				where fish.allele = alteration.allele
 				and fish.zdb_id = tmp_notes.id 
 				and alteration.zdb_id = feature_zdb_id)
@@ -147,8 +203,42 @@ update feature
 				and fish.zdb_id = id 
 				and alteration.zdb_id = feature_zdb_id);
 
+insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
+  select feature_zdb_id, tmp_notes.pub_id
+    from  tmp_notes, fish, alteration, feature
+	where fish.allele = alteration.allele
+	and fish.zdb_id = tmp_notes.id 
+	and alteration.zdb_id = feature_zdb_id
+    and not exists (select 'x'
+			from record_attribution b
+			where b.recattrib_data_zdb_id = feature_zdb_id
+			and b.recattrib_source_zdb_id = tmp_notes.pub_id);
+
+--delete from record_attribution
+--  where recattrib_source_type = 'segregation'
+--  and recattrib_data_zdb_id like 'ZDB-ALT-%'
+--  and exists (select 'x'
+--		from tmp_notes
+--		where recattrib_data_zdb_id = tmp_notes.id);
+
+!echo "last count of segregation attributions" ;
+
+select count(*) from record_Attribution
+  where recattrib_source_type = 'segregation' ;
+
+--select count(*), recattrib_data_zdb_id, recattrib_source_zdb_id,
+--   recattrib_source_type from record_attribution
+--   group by recattrib_data_zdb_id, recattrib_source_zdb_id,
+--   recattrib_source_type
+--   having count(*) > 1;
+
+
 
 set constraints all immediate ;
+
+alter table external_note
+  modify (extnote_note lvarchar(8192)
+		not null constraint extnote_note_not_null);
 
 commit work ;
 

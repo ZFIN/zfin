@@ -137,11 +137,10 @@ Expected vars: link_id
         	where lnkgmem_linkage_zdb_id = '$link_id'
 		  and lnkgmem_member_zdb_id = mrkr_zdb_id
 		UNION
-		select distinct l.abbrev, 'MUTANT', f.zdb_id
-		  from linkage_member, fish f, locus l
+		select distinct feature_abbrev, 'MUTANT', feature_zdb_id
+		  from linkage_member, feature
 		 where lnkgmem_linkage_zdb_id = '$link_id'
-		  and  lnkgmem_member_zdb_id = f.zdb_id
-		  and  f.locus = l.zdb_id
+		  and  lnkgmem_member_zdb_id = feature_zdb_id
           	;">
       <TR>
         <input type=button value=Delete onClick=modify_delete('delete_member','$link_id','','$3')>  $1 ($2)
@@ -174,12 +173,12 @@ Expected vars: link_id
 	    and c.lpmem_linkage_pair_zdb_id = b.lnkgpair_zdb_id
 	    and c.lpmem_member_zdb_id = a.mrkr_zdb_id
 	  union 
-	  select allele from fish a , linkage_pair b, locus c , linkage_pair_member d
+	  select feature_abbrev from feature, linkage_pair b, linkage_pair_member d
 	    where b.lnkgpair_zdb_id = '$pair_id'
 	      and b.lnkgpair_linkage_zdb_id = '$link_id'
 	      and d.lpmem_linkage_pair_zdb_id = b.lnkgpair_zdb_id 
-	      and d.lpmem_member_zdb_id = a.zdb_id
-	      and a.locus = c.zdb_id;">
+	      and d.lpmem_member_zdb_id = feature_zdb_id
+	    ;">
           $1 &nbsp;
         <?/MISQL>
     <?MISQL SQL="select lnkgpair_distance, lnkgpair_lod, lnkgpair_metric from linkage_pair 

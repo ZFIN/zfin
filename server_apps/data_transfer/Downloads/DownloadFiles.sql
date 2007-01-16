@@ -24,7 +24,7 @@
 --
 -- Gene Expression
 --	gene zfin id , gene symbol, probe zfin id, probe name, expression type,
---      expression pattern zfin id, pub zfin id, fish line zfin id, 
+--      expression pattern zfin id, pub zfin id, genotype zfin id, 
 --      experiment zfin id
 --
 -- Mapping data
@@ -35,8 +35,8 @@
 -- as well as sequences indirectly associated with genes
 --	zfin id, symbol, accession number
 --	
--- Alleles
---	zfin id, allele, locus abbrev,locus name, pheno_keywords, locus id corresponding zfin gene id, gene symbol
+-- Genotypes
+--	zfin id, allele/construct, type, gene symblol, corresponding zfin gene id
 --
 -- create genetic markers file
 --
@@ -50,8 +50,26 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genetic_markers.txt'
 
 -- create other names file 
 
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/marker_alias.txt' 
-  DELIMITER "	" select distinct mrkr_zdb_id, dalias_alias from marker, data_alias where dalias_data_zdb_id = mrkr_zdb_id order by 1;
+  select mrkr_zdb_id as current_id, mrkr_name as current_name,
+		mrkr_abbrev as current_abbrev, dalias_alias as alias
+    from marker, data_alias
+    where dalias_data_zdb_id = mrkr_zdb_id
+  union
+   select feature_zdb_id, feature_name,feature_abbrev, dalias_alias
+    from feature, data_alias
+    where feature_zdb_id = dalias_data_zdb_id
+  union
+   select geno_zdb_id, geno_display_name, geno_handle, dalias_alias
+    from genotype, data_alias
+    where dalias_data_zdb_id = geno_Zdb_id 
+  into temp tmp_alias;
+
+
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/aliases.txt' 
+  DELIMITER "	" select distinct current_id, current_name,
+				  current_abbrev, alias 
+                    from tmp_alias
+		    order by current_id, alias;
 
 
 -- Create the orthologues files - mouse, human, fly and yeast
@@ -155,17 +173,17 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpat.txt'
         probe.mrkr_zdb_id probe_zdb, probe.mrkr_abbrev,
         xpatex_assay_name, xpatex_zdb_id xpat_zdb, 
         xpatex_source_zdb_id, 
-        featexp_genome_feature_zdb_id, featexp_exp_zdb_id 	
+        genox_geno_zdb_id, genox_exp_zdb_id 	
  from expression_experiment
-      join feature_experiment 
-	  on featexp_zdb_id = xpatex_featexp_zdb_id
+      join genotype_experiment 
+	  on genox_zdb_id = xpatex_genox_zdb_id
       join marker gene
 	  on gene.mrkr_zdb_id = xpatex_gene_zdb_id
       left join marker probe
 	  on probe.mrkr_zdb_id = xpatex_probe_feature_zdb_id
- order by gene_zdb, xpat_zdb, probe_zdb;
-
-
+ order by gene_zdb, xpat_zdb, probe_zdb; 
+ 
+! echo "Inserted data into file xpat.txt"
 
 -- Create mapping data file
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/mappings.txt'
@@ -240,35 +258,59 @@ foreign_db_contains
 
 -- Generate alleles file
 
-create table alleles_exp (
-  fish_id varchar(50),
-  allele varchar(40),
-  abbrev varchar(30),
-  locus_name varchar(120),
-  locus_id varchar(50),
-  pheno_keywords	lvarchar,
-  gene_id varchar(50),
-  gene_abbrev varchar (40) 
+create table geno_data (
+  genotype_id varchar(50),
+  geno_display_name varchar(255),
+  geno_handle varchar(255),
+  allele varchar(255),
+  allele_abbrev varchar(30),
+  type varchar(30),
+  gene_abbrev varchar(40), 
+  gene_id varchar(50)
 );
 
-insert into alleles_exp
-  select f.zdb_id, allele, 
-		 case when l.abbrev = "" then NULL else l.abbrev end, 
-		 l.locus_name, 
-		 l.zdb_id, substr(pheno_keywords,2), '', ''
-    from fish f, locus l 
-   where line_type = 'mutant'
-	 and f.locus = l.zdb_id;
+insert into geno_data
+  select genofeat_geno_zdb_id, 
+	        geno_display_name,
+		geno_handle,
+		feature_name,
+		feature_abbrev,
+		lower(feature_type),
+		'', 
+		''
+    from genotype_feature, feature, genotype
+   where genofeat_feature_zdb_id = feature_zdb_id
+    and geno_zdb_id = genofeat_geno_zdb_id;
 
-
-update alleles_exp set (gene_id, gene_abbrev) = 
+update geno_data set (gene_id, gene_abbrev) = 
 	    (( select mrkr_zdb_id, mrkr_abbrev 
-		     from marker, locus l
-		    where alleles_exp.locus_id=l.zdb_id 
-		      and l.cloned_gene = mrkr_zdb_id ));
+		     from marker, feature_marker_relationship, feature
+		    where geno_data.allele = feature_name
+		      and fmrel_ftr_zdb_id = feature_zdb_id 
+		      and fmrel_mrkr_zdb_id = mrkr_zdb_id ));
 
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/alleles.txt'
- DELIMITER "	" select fish_id, allele, abbrev, locus_name, locus_id, pheno_keywords, gene_abbrev, gene_id from alleles_exp order by 1;
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genotype_features.txt'
+ DELIMITER "	" select distinct genotype_id, 
+				geno_display_name,
+				geno_handle,
+				allele, 
+				allele_abbrev,
+				type, 
+				gene_abbrev, 
+				gene_id
+			from geno_data order by 1, 2;
+
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genotype_backgrounds.txt'
+ DELIMITER "	" select distinct geno_zdb_id, 
+			geno_display_name,
+			genoback_background_zdb_id
+                    from genotype, genotype_background
+                    where geno_Zdb_id = genoback_geno_Zdb_id ;
+
+UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/wildtypes.txt'
+ DELIMITER "	" select distinct geno_zdb_id, geno_display_name, geno_handle
+                    from genotype
+                    where geno_is_wildtype = 't' ;
 
 
 -- generate a file with zdb history data
@@ -278,7 +320,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/zdb_history.txt'
  
 -- clean up
 drop table ortho_exp;
-drop table alleles_exp;
+drop table geno_data;
 
 
 -- indirect sequence links for genes

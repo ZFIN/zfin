@@ -1,0 +1,112 @@
+<?MICOMMENT>
+
+FILE:     genosearchresulttable.apg
+PREFIX:   genosrcht_
+
+
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+
+<?/MIERROR> 
+
+
+<?MICOMMENT> 
+	  ============
+	  =  SEARCH  =
+	  ============
+<?/MICOMMENT>
+
+<?MIVAR NAME=genosrcht_constraint>g1.geno_zdb_id not in ('$pubcur_G_oid_attrib_csv')<?/MIVAR>
+<?MIVAR NAME=genosrcht_tables><?/MIVAR>
+<?MIVAR NAME=genosrcht_feature_substring)>$(SUBSTR,$genocursrch_feat_zdb_id,1,7)<?/MIVAR>
+
+<?MIBLOCK COND=$(EC,$genosrcht_feature_substring,ZDB-ALT)>
+    <?MIVAR NAME=genosrcht_tables>, genotype_feature<?/MIVAR>
+    <?MIVAR NAME=genosrcht_constraint>$genosrcht_constraint
+          and g1.geno_zdb_id = genofeat_geno_zdb_id
+          and genofeat_feature_zdb_id = '$genocursrch_feat_zdb_id'<?/MIVAR>
+
+<?MIELSE COND=$(EC,$genosrcht_feature_substring,ZDB-GEN)>
+    <?MIVAR NAME=genosrcht_tables>, genotype_feature, feature_marker_relationship<?/MIVAR>
+    <?MIVAR NAME=genosrcht_constraint>$genosrcht_constraint
+          and g1.geno_zdb_id = genofeat_geno_zdb_id
+          and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+          and fmrel_mrkr_zdb_id = '$genocursrch_feat_zdb_id'<?/MIVAR>
+
+<?MIELSE COND=$(EC,$genosrcht_feature_substring,ZDB-LOC)>
+    <?MIVAR NAME=genosrcht_tables>, genotype_feature, feature_marker_relationship<?/MIVAR>
+    <?MIVAR NAME=genosrcht_constraint>$genosrcht_constraint
+          and g1.geno_zdb_id = genofeat_geno_zdb_id
+          and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+          and fmrel_mrkr_zdb_id = '$genocursrch_feat_zdb_id'<?/MIVAR>
+
+<?MIELSE>
+    <?MIVAR NAME=genosrcht_tables>, genotype_feature, feature_marker_relationship<?/MIVAR>
+    <?MIVAR NAME=genosrcht_constraint>$genosrcht_constraint
+          and g1.geno_zdb_id = genofeat_geno_zdb_id
+          and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+          and fmrel_mrkr_zdb_id = '$genocursrch_feat_zdb_id'<?/MIVAR>
+          
+<?/MIBLOCK>
+
+<?MIBLOCK COND=$(XST,$genocursrch_wt_bckgrd)>
+    <?MIVAR NAME=genosrcht_tables>$genosrcht_tables, genotype_background<?/MIVAR>
+    <?MIVAR NAME=genosrcht_constraint>$genosrcht_constraint
+          and g1.geno_zdb_id = genoback_geno_zdb_id
+          and '$genocursrch_wt_bckgrd' = genoback_background_zdb_id<?/MIVAR>
+<?/MIBLOCK>
+
+<?MIVAR NAME=genosrcht_row_color>#FFFFFF<?/MIVAR>
+
+
+<table border=0 cellspacing=0 width="100%">
+<tr bgcolor="#CCCCCC">
+<!--<div class="resultTable">
+  <div style="float:left;width:60px;font-size:1.0em;">Select</div>
+  <div style="float:left;width:350px;font-size:1.0em;">Handle</div>
+  <div style="float:left;width:200px;font-size:1.0em;">Display</div>
+  <div style="float:left;width:100px;font-size:1.0em;">Background</div>
+  <div class="breaker"> </div>
+</div> -->
+
+  <th>Select</th>
+  <th>Nickname</th>
+  <th>Display</th>
+  <th>Background</th>
+
+</tr>
+
+
+<?MISQL SQL="
+  select g1.geno_zdb_id, g1.geno_nickname, g1.geno_display_name
+  from   genotype g1 $genosrcht_tables
+  where  $genosrcht_constraint 
+  order by g1.geno_nickname;">
+  
+  <?MIVAR NAME=genosrcht_row_color>$(IF,$(EC,$genosrcht_row_color,<!--|HIGHLIGHT_COLOR|-->),#FFFFFF,<!--|HIGHLIGHT_COLOR|-->)<?/MIVAR>      
+  <?MIVAR NAME=genosrcht_checkbox_name>$1<?/MIVAR>
+  
+<tr bgcolor='$genosrcht_row_color' onmouseover="this.style.background='$pubcur_G_active_row_color';" onmouseout="this.style.background='$genosrcht_row_color';">
+  <td>
+      <input type=checkbox name="$genosrcht_checkbox_name" value="$MI_ROWCOUNT">
+  </td>
+  <td>
+      $2
+  </td>
+  <td>
+      $3
+  </td>
+  <td> </td>
+</tr>
+<?/MISQL>
+
+</table>
+

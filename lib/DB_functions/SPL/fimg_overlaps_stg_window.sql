@@ -1,6 +1,6 @@
 create function 
 fimg_overlaps_stg_window (
-  fimgZdbId       like fish_image.fimg_zdb_id,
+  imgZdbId       like image.img_zdb_id,
   startStageZdbId like stage.stg_zdb_id,
   endStageZdbId   like stage.stg_zdb_id )
 
@@ -14,8 +14,8 @@ fimg_overlaps_stg_window (
   --   Each window pass the stg_window_consistent check.  
  
 
-  define fimgStartStart   like stage.stg_hours_start;
-  define fimgEndEnd       like stage.stg_hours_start;
+  define imgStartStart   like stage.stg_hours_start;
+  define imgEndEnd       like stage.stg_hours_start;
   define windowStartStart like stage.stg_hours_start;
   define windowEndEnd     like stage.stg_hours_start;
   define overlaps         boolean;
@@ -25,7 +25,7 @@ fimg_overlaps_stg_window (
   let consistent = stg_window_consistent(startStageZdbId, endStageZdbId);
   if (not consistent) then
     raise exception -746, 0,		 -- !!! ERROR EXIT
-      'fimg_overlaps: stage window is inconsistent.';
+      'img_overlaps: stage window is inconsistent.';
   end if
 
   -- Get start and stop times for the stages that are passed in
@@ -46,11 +46,11 @@ fimg_overlaps_stg_window (
   let overlaps = 'f';
   foreach 
     select startStg.stg_hours_start, endStg.stg_hours_end
-      into fimgStartStart, fimgEndEnd
-      from fish_image_stage, stage startStg, stage endStg
-     where fimgstg_fimg_zdb_id = fimgZdbId
-       and fimgstg_start_stg_zdb_id = startStg.stg_zdb_id
-       and fimgstg_end_stg_zdb_id = endStg.stg_zdb_id
+      into imgStartStart, imgEndEnd
+      from image_stage, stage startStg, stage endStg
+     where imgstg_fimg_zdb_id = fimgZdbId
+       and imgstg_start_stg_zdb_id = startStg.stg_zdb_id
+       and imgstg_end_stg_zdb_id = endStg.stg_zdb_id
 
     if (windowStartStart < fimgEndEnd and
         windowEndEnd > fimgStartStart) then

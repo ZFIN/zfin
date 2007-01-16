@@ -14,7 +14,7 @@ import com.informix.jdbc.*;
 import javax.naming.InitialContext;
 import javax.naming.Context;
 
-public class RelatedTerms 
+public class RelatedTerms
 {
    private String dbName;
    private long timeToOpenConnection;
@@ -34,30 +34,30 @@ public class RelatedTerms
     */
    private Connection openConnection() throws Exception {
       long start = System.currentTimeMillis();
-      
+
       /* get required DataSource information */
       Context initContext = new InitialContext();
       Context envContext = (Context) initContext.lookup("java:comp/env");
       DataSource ds = (DataSource) envContext.lookup("jdbc/zfinDatabase");
-      
+
       /* make a connection using pool */
       Connection conn = ds.getConnection();
       Statement stmt = conn.createStatement();
       stmt.executeUpdate("database " + dbName);
-      
+
       /* release resources to prevent leaks */
       stmt.close();
       envContext.close();
-      initContext.close();           
-      
-      timeToOpenConnection = System.currentTimeMillis() - start;            
+      initContext.close();
+
+      timeToOpenConnection = System.currentTimeMillis() - start;
       return conn;
    }
 
 
    /**
     * Searches anatomy tokens for a match of a given query string.
-    * Returns results {token=hits} as a Hashtable, 
+    * Returns results {token=hits} as a Hashtable,
     *   where hits is an ArrayList.
     */
    public Hashtable getAllAnatomyHits (String queryString) throws Exception {
@@ -86,7 +86,7 @@ public class RelatedTerms
     */
    public ArrayList getAnatomyHits (String token) throws Exception {
       Connection db = openConnection();
-      
+
       ArrayList results = new ArrayList();
       Statement stmt = db.createStatement();
       ResultSet rs = stmt.executeQuery("select * from all_anatomy_tokens where anattok_token_lower = '"+token+"'");
@@ -97,18 +97,18 @@ public class RelatedTerms
           }
       }
       results.trimToSize();
-      
+
       /* release resources to prevent leaks */
       rs.close();
       stmt.close();
       db.close();
-      
+
       return results;
    }
 
     /**
      * Search all_map_names and anatomy_item tables for exact name/symbol match
-     * on markers/clones/genes/mutants/anatomy terms. We could only use base 
+     * on markers/clones/genes/mutants/anatomy terms. We could only use base
      * tables, may update when Fish tables consolidated.
      * Return zdb id if match, otherwise empty string.
      */
@@ -120,7 +120,7 @@ public class RelatedTerms
       Connection db = openConnection();
 
       Statement stmt = db.createStatement();
-      String theSql = "select allmapnm_zdb_id as zdb_id from all_map_names where allmapnm_name_lower = '"+queryTermEscaped.toLowerCase() + "' and allmapnm_precedence in ('Current symbol', 'Current name', 'Fish name/allele', 'Locus abbreviation', 'Locus name') UNION select anatitem_zdb_id as zdb_id from anatomy_item where anatitem_name_lower = '"+queryTermEscaped.toLowerCase() + "'";
+      String theSql = "select allmapnm_zdb_id as zdb_id from all_map_names where allmapnm_name_lower = '"+queryTermEscaped.toLowerCase() + "' and allmapnm_precedence in ('Current symbol', 'Current name', 'Genotype name') UNION select anatitem_zdb_id as zdb_id from anatomy_item where anatitem_name_lower = '"+queryTermEscaped.toLowerCase() + "'";
 
       ResultSet rs = stmt.executeQuery(theSql);
       while (rs.next()) {
@@ -131,37 +131,37 @@ public class RelatedTerms
       rs.close();
       stmt.close();
       db.close();
-      
+
       return resultId;
     }
- 
+
     /**
 
      */
     public String getReplacedZdbId (String queryTerm) throws Exception {
 
-        String queryTermEscaped = StringUtils.replace(queryTerm,"'","''"); 
+        String queryTermEscaped = StringUtils.replace(queryTerm,"'","''");
 	String resultId = "";
 
 	Connection db = openConnection();
-	
+
 	Statement stmt = db.createStatement();
 	String theSql = "select zrepld_new_zdb_id from zdb_replaced_data where zrepld_old_zdb_id = '" + queryTermEscaped.toUpperCase() + "'";
-	
+
 	ResultSet rs = stmt.executeQuery(theSql);
 	while (rs.next()) {
 	    resultId = rs.getString("zrepld_new_zdb_id");
 	}
-	
+
 	/* release resources to prevent leaks */
 	rs.close();
 	stmt.close();
 	db.close();
-      
+
 	return resultId;
-	
+
     }
-    
+
     /**
 
     public String getTest (String queryTerm) throws Exception {
@@ -178,23 +178,23 @@ public class RelatedTerms
           resultId = rs.getString("full_name");
       }
 
-      // release resources to prevent leaks 
+      // release resources to prevent leaks
       rs.close();
       stmt.close();
       db.close();
-      
+
       return resultId;
     }
-   */     
+   */
 
    /**
     * Searches alias tokens for a match of a given query string.
-    * Returns results {token=hits} as a Hashtable, 
+    * Returns results {token=hits} as a Hashtable,
     *   where hits is an ArrayList.
-    
+
    public Hashtable getAllAliasHits (String queryString) throws Exception {
       Hashtable results = new Hashtable();
-      long start = System.currentTimeMillis();   
+      long start = System.currentTimeMillis();
 
       ArrayList tokens = getTokens(queryString);
       for (int i = 0; i < tokens.size(); i++) {
@@ -204,25 +204,25 @@ public class RelatedTerms
             results.put(token,anatomyhits);
          }
       }
-      
+
       timeToGetAliasHits = System.currentTimeMillis() - start;
-      
+
       return results;
-   }  
+   }
    * commenting it all out for exact synonymn only testing
-   */ 
+   */
 
    /**
     * Searches alias tokens for a match of a given query string.
-    * Returns results {token=hits} as a Hashtable, 
+    * Returns results {token=hits} as a Hashtable,
     *   where hits is an ArrayList.
     */
    public Hashtable getAllAliasHits (String queryString) throws Exception {
       Hashtable results = new Hashtable();
-      long start = System.currentTimeMillis();   
+      long start = System.currentTimeMillis();
 
       Connection db = openConnection();
-               
+
       ArrayList abbrevHits = new ArrayList();
 
       Statement stmt = db.createStatement();
@@ -238,24 +238,24 @@ public class RelatedTerms
           String [] hit = {abbrev,match};
 
 	  abbrevHits.add(hit);
-          
-      }      
+
+      }
       abbrevHits.trimToSize();
-      
+
       /* release resources to prevent leaks */
       rs.close();
       stmt.close();
       db.close();
-      
+
       if (!abbrevHits.isEmpty()) {
 	  results.put(queryString,abbrevHits);
       }
-    
+
       timeToGetAliasHits = System.currentTimeMillis() - start;
-      
+
       return results;
-   }   
-     
+   }
+
 
    /**
     * Searches alias tokens for a match of a given token.
@@ -263,7 +263,7 @@ public class RelatedTerms
     */
    public ArrayList getAliasHits (String queryString, String token) throws Exception {
       Connection db = openConnection();
-               
+
       ArrayList abbrev_results = new ArrayList();
       ArrayList results = new ArrayList();
       ArrayList queryTerms = getTokens(queryString);
@@ -296,16 +296,16 @@ public class RelatedTerms
              abbrev_results.add(abbrev);
              results.add(hit);
           }
-      }      
+      }
       results.trimToSize();
-      
+
       /* release resources to prevent leaks */
       rs.close();
       stmt.close();
       db.close();
 
       return results;
-   }   
+   }
 
 
    /**
@@ -333,7 +333,7 @@ public class RelatedTerms
 
    /**
     * Replaces all occurrances of oldToken with newToken in queryString.
-    */   
+    */
    public String tokenReplaceAll (String queryString, String oldToken, String newToken) throws Exception {
       String newQueryString = "";
       String result = "";
@@ -351,14 +351,14 @@ public class RelatedTerms
       for (int j = 0; j < tokens.size(); j++) {
          result += (String) tokens.get(j) + " ";
       }
-      
+
       return result.trim();
    }
 
-   
+
    /**
     * Parses test string and removes illegal characters (for database query.)
-    */   
+    */
    public String filterIllegals (String text) throws Exception {
       text = text.toLowerCase();
       text = text.replaceAll("'","''");
@@ -372,10 +372,10 @@ public class RelatedTerms
     * Closes connection.
     */
    public void close() throws Exception {
- 
+
    }
-   
-   
+
+
    /**
     *  Returns the database name.
     *  @return dbName
@@ -383,14 +383,14 @@ public class RelatedTerms
    public String getDbName() {
       return dbName;
    }
-   
-   
+
+
    /**
     *  Sets the database name.
     */
    public void setDbName(String dbName) {
       this.dbName = dbName;
-   }   
+   }
 
 
    /**
@@ -399,18 +399,18 @@ public class RelatedTerms
     */
    public long getTimeToOpenConnection () {
       return timeToOpenConnection;
-      
+
    }
-   
+
    public long getTimeToGetAnatomyHits () {
       return timeToGetAnatomyHits;
-      
+
    }
-   
+
    public long getTimeToGetAliasHits () {
       return timeToGetAliasHits;
-      
-   }   
+
+   }
 
 }
 

@@ -299,410 +299,112 @@ sub expressionResultStageWindowOverlapsAnatomyItem ($) {
 }
 
 
-#======================== Fish Names, Abbrevs, Alleles =====================
+#========================  Features  ================================
 #
-# These checks are an attmept to slightly constrain the chaos that is the
-# mutant tables.  These checks exist only because the tables are poorly
-# designed and have redundant data in them.  They are an attempt to keep
-# the redundancy consistent.  Grumble, grumble.
-
 #---------------------------------------------------------------
-# fishNameEqualLocusName
+# featureAssociatedWithGenotype
 #
-# The fish.name column should equal a locus.name column.
-# We cant enforce this with a foreign key because (as of 2003/01)
-# locus.name is not unique (more grumbling).
-# We can't enforce this with a check constraint beacuse the constraint
-# crosses 2 tables.
-# 
-#Parameter
-# $      Email Address for recipients
-# 
-sub fishNameEqualLocusName ($) {
+# After curation is done, each feature record should be associated
+# with a genotype as an entry in genotype_feature table. Since a 
+# feature is created first and then associated with a genotype, we
+# couldn't make this a database constraint. 
+#
+# Parameter
+# $ Email Address for recipients
 
-  my $routineName = "fishNameEqualLocusName";
+sub featureAssociatedWithGenotype($) {
+  my $routineName = "featureAssociatedWithGenotype";
 	
-  my $sql = 'select fish.name, locus_name, fish.zdb_id, locus.zdb_id, 
-                    get_fish_full_name(fish.zdb_id), 
-                    fish.abbrev, fish.allele, locus.abbrev
-               from fish, locus
-              where fish.locus = locus.zdb_id
-                and line_type = "mutant"
-                and fish.name <> locus_name';
+  my $sql = 'select feature_name, feature_zdb_id
+               from feature
+              where not exists
+                    (select "t"
+                       from genotype_feature
+                      where genofeat_feature_zdb_id = feature_zdb_id)';
 
-  my @colDesc = ("Fish name         ",
-		 "Locus name        ",
-		 "Fish ZDB ID       ",
-		 "Locus ZDB ID      ",
-		 "Full fish name    ",
-		 "Fish abbrev       ",
-		 "Fish allele       ",
-		 "Locus abbrev      " );
-  
+  my @colDesc = ("Feature name         ",
+		 "Feature zdb id       ");
+
   my $nRecords = execSql ($sql, undef, @colDesc);
-	
+
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
-    my $subject = "Fish name and locus name disagree";
-    my $errMsg = "The name field in $nRecords fish record(s) does not equal locus name. ";
+    my $subject = "Features not in any genotype";
+    my $errMsg = "There are $nRecords feature record(s) that are not associated with any genotype. ";
     
     logError ($errMsg);
     &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
   }
-  &recordResult($routineName, $nRecords); 
-} 
+  &recordResult($routineName, $nRecords);
 
+}
 
 #---------------------------------------------------------------
-# fishAbbrevContainsFishAllele
+# featureIsAlleleOfOrMrkrAbsent
 #
-# The fish.abbrev column in mutants should contain the allele specified
-# in the fish's allele column.  
+# features can either be alleles of markers or have markers absent
+# not both.  we can not do this in the database via a trigger or
+# constraint because the two data are stored in different tables.
 #
-# This constraint could be enforced with a check constraint, but I don't 
-# feel like verifying that the web pages populate the fields in an order
-# that would satisfy the constraint.
-# 
-# Of course, the allele field doesn't belong in the fish record in the first
-# place.
-# 
-#Parameter
-# $      Email Address for recipients
-# 
-sub fishAbbrevContainsFishAllele ($) {
+# Parameter
+# $ Email Address for recipients
 
-  my $routineName = "fishAbbrevContainsFishAllele";
+sub featureIsAlleleOfOrMrkrAbsent($) {
+  my $routineName = "featureAssociatedWithGenotype";
 	
-  my $sql = 'select abbrev, allele, zdb_id
-		 from fish
-		 where line_type = "mutant"
-		   and fish.abbrev not like "%" || fish.allele || "%"';
+  my $sql = 'select feature_name, feature_zdb_id
+               from feature, feature_marker_relationship, mapped_deletion
+               where fmrel_ftr_zdb_id = feature_zdb_id
+               and fmrel_mrkr_zdb_id = marker_id
+               and feature_name = allele
+               and present_t = "f"';
 
-  my @colDesc = ("Fish abbrev       ",
-		 "Fish allele       ",
-		 "Fish ZDB ID       ");
-  
+  my @colDesc = ("Feature name         ",
+		 "Feature zdb id       ");
+
   my $nRecords = execSql ($sql, undef, @colDesc);
-	
+
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
-    my $subject = "Fish abbrev does not contain fish allele";
-    my $errMsg = "The abbrev field in $nRecords fish record(s) does not contain fish allele. ";
+    my $subject = "Feature are both alleles of a gene and are missing that gene";
+    my $errMsg = "There are $nRecords feature record(s) that are both alleles of a gene and are missing that gene. ";
     
     logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
   }
   &recordResult($routineName, $nRecords);
-} 
 
+}
 
 #---------------------------------------------------------------
-# fishAbbrevStartsWithLocusAbbrev
-#
-# The fish.abbrev column should start with the locus abbrev.
-#
-# We can't enforce this with a check constraint beacuse the constraint
-# crosses 2 tables.
-# 
-#Parameter
-# $      Email Address for recipients
-# 
-sub fishAbbrevStartsWithLocusAbbrev ($) {
-
-  my $routineName = "fishAbbrevStartsWithLocusAbbrev";
-
-  my $sql = 'select fish.abbrev, locus.abbrev,
-                    fish.zdb_id, get_fish_full_name(fish.zdb_id), fish.name, 
-                    fish.allele, locus.zdb_id, locus_name
-	       from fish, locus
-	       where fish.locus = locus.zdb_id
-		 and line_type = "mutant"
-		 and fish.abbrev not like (locus.abbrev || "%")
-		 and locus.abbrev <> ""
-                 and locus.abbrev <> "NULL"
-                 and locus.abbrev is not null
-                 and (   substr(locus.abbrev,1,4) <> "unm "
-                      or substr(locus.abbrev,1,3) <> substr(fish.abbrev,1,3))';
-
-  my @colDesc = ("Fish abbrev       ",
-		 "Locus abbrev      ",
-		 "Fish ZDB ID       ",
-		 "Full fish name    ",
-		 "Fish name         ",
-		 "Fish allele       ",
-		 "Locus ZDB ID      ",
-		 "Locus name        ");
-  
-  my $nRecords = execSql ($sql, undef, @colDesc);
-	
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Fish abbrev does not start with locus abbrev";
-    my $errMsg = "The abbrev field in $nRecords fish record(s) does not start with locus abbrev. ";
-
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
-  }
-  &recordResult($routineName, $nRecords); 
-} 
-
-
-
-#======= FISH - ALLELE - INT_FISH_CHROMO - CHROMOSOME - ALLELE - FISH ======
-#
-# Before recorded history there was an unsuccessful attempt to support 
-# double mutants at ZFIN.  While the attempt failed, it failed only
-# after the tables had been modified in certain ways.  The tables still
-# only support single mutants, however due to the way they are designed
-# they can easily support single mutants incorrectly.  These tests
-# attempt to verify that single mutants are done correctly.
-#
-# Mutant data is spread across 4 tables (5 if you count locus, but those
-# tests are elsewhere).  These 4 tables form a box, with 1:1 relationships
-# between each of them.  These tests make sure that relationships are in
-# fact 1:1.
-#
-# The mutant table box is:
-#
-#   ALTERATION -- 1 ------------------------- 1 -- FISH
-#     |                                             |
-#     1                                             1
-#     |                                             |
-#     |                                             |
-#     |                                             |
-#     |                                             |
-#     1                                             1
-#     |                                             |
-#   CHROMOSOME -- 1 -------------- 1 -- INT_FISH_CHROMO
-
-
-#--------------------------------------------------------------
-# alterationHas1Fish(
-#
-# Confirm that an alteration record has a single fish record
-# Can't make the allele column of fish be unique because it is null
-# for wildtype fish.
+# genotypesHaveNoNames
 #
 # Parameter
-#  $        Email address of recipients
-#
+# $ Email Address for recipients
 
-sub alterationHas1Fish($) {
-
-  my $routineName = "alterationHas1Fish";
-
-  my $sql = 'select allele, zdb_id 
-               from alteration a
-               where 1 <>
-                     ( select count(*) 
-                         from fish f
-                         where f.allele = a. allele )
-               order by allele';
-
-  my @colDesc = ("Alteration Name   ",
-		 "Alteration ZDB ID ");
-  
-  my $nRecords = execSql ($sql, undef, @colDesc);
+sub genotypesHaveNoNames($) {
+  my $routineName = "genotypesHaveNoNames";
 	
+  my $sql = 'select geno_display_name, geno_handle
+               from genotype
+               where geno_display_name = geno_zdb_id';
+
+  my @colDesc = ("Genotype name         ",
+		 "Genotype handle       ");
+
+  my $nRecords = execSql ($sql, undef, @colDesc);
+
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
-    my $subject = "Alterations have 0 or > 1 associated fish";
-    my $errMsg = "$nRecords alterations had 0 or more than 1 associated fish. ";
-
+    my $subject = "Genotypes are incomplete";
+    my $errMsg = "There are $nRecords genotype records with ZDB-ids for names. ";
+    
     logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
   }
   &recordResult($routineName, $nRecords);
-} 
 
-
-
-#--------------------------------------------------------------
-# mutantHas4TableBox
-#
-# Every mutant fish must have an alteration record.  The previous test
-# verified that every alteration had a mutant.  This test asks the 
-# mirror of that question, but it does so by going all the way around 
-# the box, thus also confirming that the int_fish_chromo and chromosome
-# records exist as well.
-#
-# Parameter
-#  $        Email address of recipients
-#
-
-sub mutantHas4TableBox($) {
-
-  my $routineName = "mutantHas4TableBox";
-
-  # I originally tried this a 4 way outer join, but I couldn't get it to
-  # work.
-
-  my $sql = 'select abbrev, name, allele, zdb_id
-               from fish f
-               where line_type = "mutant"
-                 and 1 <> 
-                     ( select count(*)
-                         from int_fish_chromo ifc, chromosome c, alteration a
-                         where f.zdb_id = ifc.source_id
-                           and ifc.target_id = c.zdb_id
-                           and c.zdb_id = a.chrom_id
-                           and a.allele = f.allele )
-               order by abbrev, name, allele';
-
-  my @colDesc = ("Fish Abbrev       ",
-		 "Fish Name         ",
-		 "Fish Allele       ",
-		 "Fish ZDB ID       ");
-  
-  my $nRecords = execSql ($sql, undef, @colDesc);
-	
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Mutant FISH records missing records in other mutant tables ";
-    my $errMsg = "$nRecords mutant(s) had 0 or more than 1 records in associated tables. ";
-
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
-  }
-  &recordResult($routineName, $nRecords); 
-} 
-
-
-#======================== Locus Names, Abbrevs =====================
-#
-# Strictly speaking, locus names and abbrevs are not unique, and therefore
-# we can't enforce their uniqueness with a database constraint.  However,
-# the number of cases where they can be non-unique is a small set, and
-# therefore we can check for non-unique names and abbrevs that are 
-# outside that set.  
-#
-# A request has been passed on to Erik to think about nomenclature changes
-# which would get rid of the duplicate names and abbrevs altogether.
-
-#---------------------------------------------------------------
-# locusAbbrevUnique
-#
-# Check that all locus abbrevs outside the special cases are unique.
-# 
-#Parameter
-# $      Email Address for recipients
-# 
-sub locusAbbrevUnique ($) {
-
-  my $routineName = "locusAbbrevUnique";
-	
-  my $sql = 'select abbrev, locus_name, zdb_id
-               from locus loc1
-	       where abbrev <> "xxx"
-		 and exists
-		     ( select count(*), abbrev
-			 from locus loc2
-			 where loc1.abbrev = loc2.abbrev
-			   and loc2.locus_name not like "Df%"
-			   and loc2.locus_name not like "T%"
-		       group by abbrev
-		       having count(*) > 1 )
-               order by abbrev, locus_name, zdb_id';
-
-  my @colDesc = ("Locus abbrev      ",
-		 "Locus name        ",
-		 "Locus ZDB ID      ");
-  
-  my $nRecords = execSql ($sql, undef, @colDesc);
-	
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Locus record(s) with non-unique abbrevs";
-    my $errMsg = "$nRecords locus records have non-unique abbrevs. ";
-
-    logWarning ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
-  }
-  &recordResult($routineName, $nRecords); 
-} 
-
-
-
-#---------------------------------------------------------------
-# locusNameUnique
-#
-# Check that all locus name outside the special cases are unique.
-# 
-#Parameter
-# $      Email Address for recipients
-# 
-sub locusNameUnique ($) {
-
-  my $routineName = "locusNameUnique";
-	
-  my $sql = 'select locus_name, abbrev, zdb_id
-	       from locus a
-	       where exists
-		     ( select "x"
-			 from locus b
-			 where b.locus_name not like "Df%"
-			   and b.locus_name not like "T%"
-                           and a.locus_name = b.locus_name
-			 group by b.locus_name 
-			 having count(*) > 1 )
-	       order by locus_name, abbrev, zdb_id';
-
-  my @colDesc = ("Locus name        ",
-		 "Locus abbrev      ",
-		 "Locus ZDB ID      ");
-  
-  my $nRecords = execSql ($sql, undef, @colDesc);
-	
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "locus record(s) with non-unique names";
-    my $errMsg = "$nRecords locus records have non-unique names. ";
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
-  }
-  &recordResult($routineName, $nRecords);
-} 
-
-
-
-#---------------------------------------------------------------
-# locusAbbrevIsSet
-#
-# Reports all locus abbrevs (outside the special cases) that are not set.
-# 
-#Parameter
-# $      Email Address for recipients
-# 
-sub locusAbbrevIsSet ($) {
-
-  my $routineName = "locusAbbrevIsSet";
-	
-  my $sql = 'select abbrev, locus_name, zdb_id
-	       from locus 
-	       where (   abbrev = "xxx" 
-                      or abbrev is NULL)
-                 and locus_name not like "Df%"
-	         and locus_name not like "T%"
-	       order by abbrev, locus_name, zdb_id';
-
-  my @colDesc = ("Locus abbrev      ",
-		 "Locus name        ",
-		 "Locus ZDB ID      ");
-  
-  my $nRecords = execSql ($sql, undef, @colDesc);
-	
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Locus abbrev not set";
-    my $errMsg = "Locus abbrev not set in $nRecords locus record(s). ";
-
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
-  }
-  &recordResult($routineName, $nRecords);
-} 
-
-
+}
 
 #======================== PUB Attribution ========================
 #
@@ -786,7 +488,7 @@ sub associatedDataforPUB030905_1 ($) {
 #---------------------------------------------------------------
 # associatedDataforPUB030508_1
 #
-# Only data for gene name, gene symbol, locus name, locus
+# Only data for gene name, gene symbol
 # abbreviation or previous name should be associated with
 # ZDB-PUB-030508-1.
 # 
@@ -811,11 +513,6 @@ sub associatedDataforPUB030508_1 ($) {
                        select dalias_zdb_id
                        from   data_alias
                        where  recattrib_data_zdb_id = dalias_zdb_id
-                    )
-             and    not exists (
-                       select zdb_id
-                       from   locus
-                       where  recattrib_data_zdb_id = zdb_id
                     )";
 
   my @colDesc = ("Data ZDB ID       ",
@@ -827,8 +524,8 @@ sub associatedDataforPUB030508_1 ($) {
     my $sendToAddress = $_[0];
     my $subject = "Invalid data is associated with ZDB-PUB-030508-1.";
     my $errMsg = "$nRecords data are associated with ZDB-PUB-030508-1 "
-               . " that are not either: gene name, gene symbol, locus "
-               . " name, locus abbreviation, or previous name.";
+               . " that are not either: gene name, gene symbol "
+               . ", or previous name.";
 
     logError ($errMsg);
     &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
@@ -841,8 +538,8 @@ sub associatedDataforPUB030508_1 ($) {
 #---------------------------------------------------------------
 # associatedDataforPUB030905_2
 #
-# Only data for gene name, gene symbol, locus name, locus
-# abbreviation or previous name should be associated with
+# Only data for gene name, gene symbol, 
+# or previous name should be associated with
 # ZDB-PUB-030508-1.
 # 
 # 
@@ -2133,45 +1830,6 @@ sub addressStillNeedsUpdate ($) {
   &recordResult($routineName, $nRecords);
 } 
 
-#-------------------------------------------------------
-#Parameter
-# $      Email Address for recipients
-# 
-sub extinctFishHaveNoSuppliers ($) {
-	
-  my $routineName = "extinctFishHaveNoSuppliers";
-	
-  my $sql = ' 
-              select f.zdb_id, 
-                     f.fish_extinct,
-                     idsup_supplier_zdb_id
-		from fish f, 
-                     int_data_supplier
-	       where f.fish_extinct = "t" 
-                 and f.zdb_id in (
-		      		select idsup_data_zdb_id 
-                                  from int_data_supplier)
-              ';
-
-  my @colDesc = ("Fish ZDB ID          ",
-		 "Fish extinct         ",
-		 "Idsup supplier ZDB Id" );
-
-  my $nRecords = execSql ($sql, undef, @colDesc);
-
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Extinct fish has supplier";
-    my $errMsg ="In fish table, $nRecords records have fish_extinct as"
-                    ." true, but have records in int_data_supplier table.";
-      		        
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
-  }
-  &recordResult($routineName, $nRecords);
-} 
-
-
 
 #---------------------------------------------------------------
 # Each entry in foreign_db should have 1 or more entries in
@@ -2311,7 +1969,6 @@ sub mrkrgoevInfgrpDuplicatesFound ($) {
 		 "mrkrgoev_zdb_id_2",
 		 "infgrmem_count   ");
 
-
   my $nRecords = execSql ($sql, subMrkrgoevInfgrpDuplicatesFound, @colDesc);
 
   if ( $nRecords > 0 ) {
@@ -2323,6 +1980,32 @@ sub mrkrgoevInfgrpDuplicatesFound ($) {
   }
   &recordResult($routineName, $nRecords);
 } 
+#----------------------
+# Parameter
+#     $     mrkrgoev zdb id
+#     $     mrkrgoev zdb id
+#     $     count of how many identical inference members the two mrkrgoev id have
+
+sub subMrkrgoevInfgrpDuplicatesFound($) {
+    my @input = @_;
+    my $mrkrgoev1 = $input[0];
+    my $mrkrgoev2 = $input[1];
+    my $infgrmem_count = $input[2];
+
+    my $sql = "select count(*) 
+               from inference_group_member   
+              where infgrmem_mrkrgoev_zdb_id= '$mrkrgoev1'";
+ 
+  
+    my @result_a = $dbh->selectrow_array($sql);
+
+    $sql = "select count(*) 
+               from inference_group_member   
+              where infgrmem_mrkrgoev_zdb_id= '$mrkrgoev2'";
+ 
+  
+    my @result_b = $dbh->selectrow_array($sql);
+
 #----------------------
 # Parameter
 #     $     mrkrgoev zdb id
@@ -2518,7 +2201,6 @@ sub subZdbActiveDataSourceStillInUse {
 sub zdbActiveDataStillActive($) {
   
   my $routineName = "zdbActiveDataStillActive";
-  
   &oldOrphanDataCheck($_[0]);
   my $sql = "
              select zactvd_zdb_id, 
@@ -2534,9 +2216,7 @@ sub zdbActiveDataStillActive($) {
 		 "Zobjtype home zdb id column" );
 
   my $subSqlRef = \&subZdbActiveDataSourceStillInUse;
-
   my $nRecords = execSql ($sql, $subSqlRef, @colDesc);
-
   if ( $nRecords > 0 ) {
     
     &storeOrphan();
@@ -2713,7 +2393,7 @@ sub storeOrphan {
 # Define Usage 
 # 
 
-$usage = "Usage: validatetest.pl <dbname> [-d|-w|-m|-y|-o] ";
+$usage = "Usage: validatedata.pl <dbname> [-d|-w|-m|-y|-o] ";
 
 $document = <<ENDDOC;
 
@@ -2792,14 +2472,9 @@ if($daily) {
   xpatHasConsistentMarkerRelationship($xpatEmail);
   checkFigXpatexSourceConsistant($dbaEmail);
 
-  fishNameEqualLocusName($mutantEmail);
-  fishAbbrevContainsFishAllele($mutantEmail);
-
-  alterationHas1Fish($mutantEmail);
-  mutantHas4TableBox($mutantEmail);
-
-  locusNameUnique($mutantEmail);
-
+  featureAssociatedWithGenotype($mutantEmail);
+  featureIsAlleleOfOrMrkrAbsent($mutantEmail);
+  genotypesHaveNoNames($mutantEmail);
   linkageHasMembers($linkageEmail);
   linkagePairHas2Members($linkageEmail);
 
@@ -2810,7 +2485,6 @@ if($daily) {
   zdbObjectHandledByGetObjName($dbaEmail);
 
   pubTitlesAreUnique($otherEmail);
-  extinctFishHaveNoSuppliers($otherEmail);
   zdbReplacedDataIsReplaced($dbaEmail);
 
   mrkrgoevDuplicatesFound($goEmail);
@@ -2830,7 +2504,6 @@ if($weekly) {
   prefixedGenesHave1Est($estEmail);
   estsWithoutClonesHaveXxGenes($estEmail);
   xxGenesHaveNoClones($estEmail);
-  fishAbbrevStartsWithLocusAbbrev($mutantEmail);
 
   # these are curatorial errors (case219)
   # however, errors returned are difficult to
@@ -2846,8 +2519,6 @@ if($weekly) {
 if($monthly) {
   orthologueHasDblink($geneEmail);
   orthologueNomenclatureValid($geneEmail);
-  locusAbbrevIsSet($mutantEmail);
-  locusAbbrevUnique($mutantEmail);
   prefixedIbdGenesHave1Est($estEmail);
   genesWithCommonDblinks($geneEmail);
   orthologyHasEvidence($geneEmail);

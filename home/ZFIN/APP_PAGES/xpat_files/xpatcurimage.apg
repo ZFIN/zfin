@@ -39,7 +39,7 @@ EFFECTS
 
   <script>
     function setRedirectUrl() {
-      document.new_image.redirect_url.value = "/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg";
+      document.new_image.redirect_url.value = "/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg";
 //      alert("redirect value = " + document.new_image.redirect_url.value );
       return true;
     }
@@ -53,11 +53,11 @@ EFFECTS
     <td>Delete</td>
   </tr>  
 <?MISQL SQL="
-          select fig_zdb_id, fig_label, fimg_thumbnail, fimg_zdb_id, fimg_label
-	  from fish_image, figure
-	  where fig_zdb_id in ('$xpcur_G_fig_attrib_csv')
-            and fimg_fig_zdb_id = fig_zdb_id
-          order by fig_label,fimg_label;">
+          select fig_zdb_id, fig_label, img_thumbnail, img_zdb_id, img_label
+	  from image, figure
+	  where fig_zdb_id in ('$pubcur_G_fig_attrib_csv')
+            and img_fig_zdb_id = fig_zdb_id
+          order by fig_label,img_label;">
           
       <?MIVAR name=xpcurimg_fig_zdb_id>$1<?/MIVAR>
       <?MIVAR name=xpcurimg_fig_label>$2<?/MIVAR>
@@ -65,9 +65,9 @@ EFFECTS
       <?MIVAR name=xpcurimg_image_zdb_id>$4<?/MIVAR>
       <?MIVAR name=xpcurimg_image_label>$5<?/MIVAR>
       
-<form name=image action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#image" onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','image');" method=post ENCTYPE="multipart/form-data"> 
+<form name=image action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#image" onSubmit="setCookie('xpatcuration_update','update','xpcur_c_');setCookie('anchor','image','xpcur_c_');" method=post ENCTYPE="multipart/form-data"> 
 
-    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>">     
     <INPUT TYPE=HIDDEN NAME=xpcur_G_image_OID VALUE="<?MIVAR>$xpcurimg_image_zdb_id<?/MIVAR>"> 
   <tr>
@@ -79,7 +79,7 @@ EFFECTS
         <?MISQL SQL="
           select fig_zdb_id, fig_label
 	  from figure
-	  where fig_zdb_id in ('$xpcur_G_fig_attrib_csv')
+	  where fig_zdb_id in ('$pubcur_G_fig_attrib_csv')
           order by fig_label;">
             <option value=$1 $(IF,$(EC,$1,$xpcurimg_fig_zdb_id),SELECTED)>$2</option>
         <?/MISQL>
@@ -116,14 +116,14 @@ EFFECTS
 <?MICOMMENT> ==| Enter a New Image |== <?/MICOMMENT>
   <tr>
     <td>
-      <input name="image_add" type=button value="Add" onClick="if(setRedirectUrl()){setCookie('xpatcuration_update','update');setCookie('anchor','image');document.new_image.submit();}">
+      <input name="image_add" type=button value="Add" onClick="if(setRedirectUrl()){setCookie('xpatcuration_update','update','xpcur_c_');setCookie('anchor','image','xpcur_c_');document.new_image.submit();}">
     </td>
     <td>
       Fig: <select name="xpcur_G_image_fig">
         <?MISQL SQL="
           select fig_zdb_id, fig_label
 	  from figure
-	  where fig_zdb_id in ('$xpcur_G_fig_attrib_csv')
+	  where fig_zdb_id in ('$pubcur_G_fig_attrib_csv')
           order by fig_label;">
             <option value=$1>$2</option>
         <?/MISQL>

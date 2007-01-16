@@ -15,14 +15,16 @@ Note that when they hit the ZFIN HOME button, they will jump to the standard pag
 <?MIVAR NAME=MI_NULL><?/MIVAR>
 
 <?MIVAR NAME=$start_page>MIval=aa-ZDB_home.apg<?/MIVAR>
-
+--
 <!-- now if a start page is passed in, set second frame to it! -->
 <?MIBLOCK COND="$(XST,$record)">
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-LAB-),0)">MIval=aa-labview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,PERS),0)">MIval=aa-persview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,PUB),0)">MIval=aa-pubview2.apg&OID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,FISH),0)">MIval=aa-fishview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,GENE),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
+<?MICOMMENT>locus gets merged into gene, markerview page checks the zdb_replaced_data 
+            and displays the merge info <?/MICOMMENT>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,LOCUS),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,GENEP),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,MRPHLNO),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,EST),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
@@ -34,12 +36,23 @@ Note that when they hit the ZFIN HOME button, they will jump to the standard pag
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,BAC_END),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,PAC_END),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,RAPD),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,LOCUS),0)">MIval=aa-locusview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,REFCROSS),0)">MIval=aa-crossview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,IMAGE),0)">MIval=aa-imageview.apg&OID=$record<?/MIVAR> 
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,COMPANY),0)">MIval=aa-companyview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,ANAT),0)">MIval=aa-anatomy_item.apg&OID=$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,FIG),0)">MIval=aa-fxfigureview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,GENO),0)">MIval=aa-genotypeview.apg&OID=$record<?/MIVAR>
+<?MICOMMENT>fish gets replaced by genotype, genotypeview page checks zdb_replaced_data 
+            and displays history info <?/MICOMMENT>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,FISH),0)">MIval=aa-genotypeview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,CONSTRCT),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,REGION),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
+
+<?MICOMMENT>not certain those records would be created and used, it is a product of first phase Frodo <?/MICOMMENT>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,GENEFAMILY),0)">MIval=aa-markerview.apg&OID=$record<?/MIVAR>
+
+<?MICOMMENT>not sure whether ZDB-ALT- ids would participate in jump_to.apg, just in case.<?/MICOMMENT>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-ALT-),0)">MIval=aa-fishselect.apg&query_results=exist&fsel_allele_id=$record<?/MIVAR>
+
 
 <?MICOMMENT>environment condition (ZDB-EXP- id) is provided in the download xpat.txt file<?/MICOMMENT>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,EXP),0)">MIval=aa-xpatexpcdndisplay.apg&cdp_exp_zdb_id=$record<?/MIVAR>
@@ -69,7 +82,7 @@ Note that when they hit the ZFIN HOME button, they will jump to the standard pag
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOLAB),0)">MIval=aa-labselect.apg<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOPERSON),0)">MIval=aa-quickfindpers.apg<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOPUB),0)">MIval=aa-pubselect2.apg<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOMUTANT),0)">MIval=aa-fishselect.apg&<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOMUTANT),0)">MIval=aa-fishselect.apg<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOWILD),0)">MIval=aa-wtlist.apg<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOREFCROSS),0)">MIval=aa-refcrosslist.apg<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,JUMPTOEST),0)">MIval=aa-newmrkrselect.apg<?/MIVAR>

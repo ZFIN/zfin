@@ -191,8 +191,8 @@ EFFECTS
         window.document.hidden_panel.xpcur_G_structures_add.value = structures_add;
         window.document.hidden_panel.xpcur_G_structures_remove.value = structures_remove;
         window.document.hidden_panel.xpcur_G_fig_xpat_stg.value = fig_xpat_stg;
-        setCookie('xpatcuration_update','update');
-        setCookie('anchor','structure');
+        setCookie('xpatcuration_update','update','xpcur_c_');
+        setCookie('anchor','structure','xpcur_c_');
 
         window.document.hidden_panel.submit();
 
@@ -390,12 +390,12 @@ EFFECTS
    <?MIVAR>$(SETVAR,$xpcurstr_anatList,$(IF,$(NC,$MI_CURRENTROW,1),$xpcurstr_anatList",")$xpcurstr_curAnat)<?/MIVAR>
 <?/MISQL>
     
-<form name=hidden_panel action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=<?MIVAR>$OID<?/MIVAR><?MISQL SQL="execute function get_time();">&rand=$1<?/MISQL>#structure" method=post>
+<form name=hidden_panel action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=<?MIVAR>$OID<?/MIVAR><?MISQL SQL="execute function get_time();">&rand=$1<?/MISQL>#structure" method=post>
   <input type=hidden name=xpcur_G_structures_add value="">
   <input type=hidden name=xpcur_G_structures_remove value="">   
   <input type=hidden name=xpcur_G_fig_xpat_stg value=""> 
   <input type=hidden name=xpcur_G_exp_count value=""> 
-  <input type=hidden name=MIval value="aa-xpatcuration.apg">
+  <input type=hidden name=MIval value="aa-curation.apg">
   <input type=hidden name=OID value="<?MIVAR>$OID<?/MIVAR>">
 </form>
 
@@ -404,7 +404,7 @@ EFFECTS
 <table width=100% border=0 cellspacing=0 cellpadding=3>
 <form name=panel_structures>
   <tr>
-    <td colspan=5>
+    <td colspan=6>
     <input type=hidden name=xpcurstr_fig_xpat_stg value="">
 <input type=button value="Update Structures for Expression(s)" onClick="if (document.panel_structures.xpcurstr_fig_xpat_stg.value != ''){dynamic_set_value_selection(document.panel_structures.elements);}">
 <br><textarea name=xpcurstr_expression cols=110 rows=3 nowrap></textarea>
@@ -460,7 +460,7 @@ EFFECTS
     <?MIVAR>
 
     <tr bgcolor="$xpcurstr_row_color" 
-        onmouseover="this.style.background='$xpcur_G_active_row_color';" 
+        onmouseover="this.style.background='$pubcur_G_active_row_color';" 
         onmouseout="this.style.background='$xpcurstr_row_color';"
         >
       <td align=center>
@@ -509,11 +509,11 @@ EFFECTS
 
 
   <tr>
-    <td colspan=5><HR></td>
+    <td colspan=6><HR></td>
   </tr>
 <?MICOMMENT> ==| Enter a New Structure |== <?/MICOMMENT>
-<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#structure" method=post name=structure2 onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','structure');">
-    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#structure" method=post name=structure2 onSubmit="setCookie('xpatcuration_update','update','xpcur_c_');setCookie('anchor','structure','xpcur_c_');">
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
   <tr>
     <td colspan=2 valign=top>

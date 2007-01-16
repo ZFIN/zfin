@@ -49,7 +49,7 @@ EFFECTS:
 
        <?MICOMMENT> Get object type of new OID and its app page<?/MICOMMENT>
        <?MISQL SQL="
-         select get_obj_type('$new_oid'), zobjtype_app_page
+         select zobjtype_name, zobjtype_app_page
            from zdb_object_type
            where zobjtype_name = get_obj_type('$new_oid');">
          <?MIVAR NAME=$zdbhist_newObjType>$1<?/MIVAR>
@@ -77,11 +77,11 @@ EFFECTS:
 	       <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$zdbhist_appPage&OID=$new_oid">$new_name</a>
 	   <?/MISQL>
 
-       <?MIELSE COND="$(OR,$(EQ,$zdbhist_newObjType,FISH),$(EQ,$zdbhist_newObjType,LOCUS))">
+       <?MIELSE COND="$(EQ,$zdbhist_newObjType,GENO)">
 	   <?MISQL SQL="
-	     select allmapnm_name 
-	       from all_map_names
-	       where allmapnm_zdb_id ='$new_oid';">
+	     select geno_display_name
+	       from genotype
+	       where geno_zdb_id ='$new_oid';">
              <?MIVAR NAME=$new_name>$1<?/MIVAR>
 	       <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=$zdbhist_appPage&OID=$new_oid">$new_name</a>
 	   <?/MISQL>
@@ -90,7 +90,7 @@ EFFECTS:
             <?MICOMMENT>
               Trashcan case to catch everything else.  Give up if there is 
 	      no app page for the object type.
-            <?MICOMMENT>
+            <?/MICOMMENT>
 	    <?MISQL COND="$(NE,$zdbhist_appPage,NULL)" SQL="
               execute function get_obj_name('$new_oid');">
 	      <?MIVAR NAME=$new_name>$1<?/MIVAR>

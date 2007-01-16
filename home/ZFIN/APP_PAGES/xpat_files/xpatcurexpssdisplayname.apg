@@ -35,12 +35,12 @@ EFFECTS
 <?MIVAR name="$xpcurexpssdisp_xpatex_display_name"><?/MIVAR>
 
 <?MISQL SQL="
-    select mrkr_abbrev, exp_name, abbrev, xpatassay_abbrev, dblink_acc_num, line_type
-    from expression_experiment, feature_experiment, experiment, fish, marker, expression_pattern_assay, OUTER(db_link)
+    select mrkr_abbrev, exp_name, geno_nickname, xpatassay_abbrev, dblink_acc_num
+    from expression_experiment, genotype_experiment, experiment, genotype, marker, expression_pattern_assay, OUTER(db_link)
     where xpatex_zdb_id = '$xpcurexpssdisp_xpatex_zdb_id'
-      and xpatex_featexp_zdb_id = featexp_zdb_id
-      and featexp_exp_zdb_id = exp_zdb_id
-      and featexp_genome_feature_zdb_id = zdb_id
+      and xpatex_genox_zdb_id = genox_zdb_id
+      and genox_exp_zdb_id = exp_zdb_id
+      and genox_geno_zdb_id = geno_zdb_id
       and xpatex_gene_zdb_id = mrkr_zdb_id
       and xpatex_assay_name = xpatassay_name
       and xpatex_dblink_zdb_id = dblink_zdb_id
@@ -50,25 +50,22 @@ EFFECTS
 <?MIVAR NAME=xpcurexpssdisp_mrkr_abbrev>$1<?/MIVAR>
 <?MIVAR NAME=xpcurexpssdisp_exp_name>$2<?/MIVAR>
 <?MIVAR NAME=xpcurexpssdisp_genbank>$(IF,$(EC,$5,NULL),, &nbsp;$5)<?/MIVAR>
-<?MIVAR NAME=xpcurexpssdisp_fish_non_sup_display>$(LOWER,$3)<?/MIVAR>
-<?MIVAR NAME=xpcurexpssdisp_fish_non_sup_display DELIMIT="<sup>" REPLACE=" (">$xpcurexpssdisp_fish_non_sup_display<?/MIVAR>
-<?MIVAR NAME=xpcurexpssdisp_fish_non_sup_display DELIMIT="</sup>" REPLACE=")">$xpcurexpssdisp_fish_non_sup_display<?/MIVAR>
-<?MIVAR NAME=xpcurexpssdisp_fish_non_sup_display COND="$(EC,$6,wild type)">$(UPPER,$xpcurexpssdisp_fish_non_sup_display)<?/MIVAR>
+<?MIVAR NAME=xpcurexpssdisp_geno_display>$3<?/MIVAR>
 
-<?MIBLOCK COND="$(<,$(STRLEN,$xpcurexpssdisp_fish_non_sup_display),$xpcur_G_max_fish_abbrev)">
-  <?MIVAR NAME=xpcurexpssdisp_fish_non_sup_display>$xpcurexpssdisp_fish_non_sup_display$(STRFILL,&nbsp;,$(*,$(-,$xpcur_G_max_fish_abbrev,$(STRLEN,$xpcurexpssdisp_fish_non_sup_display)),1.5))<?/MIVAR>
+<?MIBLOCK COND="$(<,$(STRLEN,$xpcurexpssdisp_geno_display),$pubcur_G_max_geno)">
+  <?MIVAR NAME=xpcurexpssdisp_geno_display>$xpcurexpssdisp_geno_display$(STRFILL,&nbsp;,$(*,$(-,$pubcur_G_max_geno,$(STRLEN,$xpcurexpssdisp_geno_display)),1.5))<?/MIVAR>
 <?/MIBLOCK>
 
-<?MIBLOCK COND="$(<,$(STRLEN,$xpcurexpssdisp_mrkr_abbrev),$xpcur_G_max_gene_abbrev)">
-  <?MIVAR NAME=xpcurexpssdisp_mrkr_abbrev>$xpcurexpssdisp_mrkr_abbrev$(STRFILL,&nbsp;,$(*,$(-,$xpcur_G_max_gene_abbrev,$(STRLEN,$xpcurexpssdisp_mrkr_abbrev)),2))<?/MIVAR>
+<?MIBLOCK COND="$(<,$(STRLEN,$xpcurexpssdisp_mrkr_abbrev),$pubcur_G_max_gene_abbrev)">
+  <?MIVAR NAME=xpcurexpssdisp_mrkr_abbrev>$xpcurexpssdisp_mrkr_abbrev$(STRFILL,&nbsp;,$(*,$(-,$pubcur_G_max_gene_abbrev,$(STRLEN,$xpcurexpssdisp_mrkr_abbrev)),2))<?/MIVAR>
 <?/MIBLOCK>
 
-<?MIBLOCK COND="$(<,$(STRLEN,$xpcurexpssdisp_exp_name),$xpcur_G_max_exp_name)">
-  <?MIVAR NAME=xpcurexpssdisp_exp_name>$xpcurexpssdisp_exp_name$(STRFILL,&nbsp;,$(*,$(-,$xpcur_G_max_exp_name,$(STRLEN,$xpcurexpssdisp_exp_name)),2))<?/MIVAR>
+<?MIBLOCK COND="$(<,$(STRLEN,$xpcurexpssdisp_exp_name),$pubcur_G_max_exp_name)">
+  <?MIVAR NAME=xpcurexpssdisp_exp_name>$xpcurexpssdisp_exp_name$(STRFILL,&nbsp;,$(*,$(-,$pubcur_G_max_exp_name,$(STRLEN,$xpcurexpssdisp_exp_name)),2))<?/MIVAR>
 <?/MIBLOCK>
 
-<?MIVAR NAME=xpcurexpssdisp_xpatex_display_name>$xpcurexpssdisp_mrkr_abbrev &nbsp; $xpcurexpssdisp_fish_non_sup_display &nbsp; $xpcurexpssdisp_exp_name &nbsp; $4 $xpcurexpssdisp_genbank<?/MIVAR>
+<?MIVAR NAME=xpcurexpssdisp_xpatex_display_name>$xpcurexpssdisp_mrkr_abbrev &nbsp; $xpcurexpssdisp_geno_display &nbsp; $xpcurexpssdisp_exp_name &nbsp; $4 $xpcurexpssdisp_genbank<?/MIVAR>
 
 <?MIVAR>$(UNSETVAR,$xpcurexpssdisp_genbank)<?/MIVAR>
 <?MIVAR>$(UNSETVAR,$xpcurexpssdisp_mrkr_abbrev)<?/MIVAR>
-<?MIVAR>$(UNSETVAR,$xpcurexpssdisp_fish_non_sup_display)<?/MIVAR>
+<?MIVAR>$(UNSETVAR,$xpcurexpssdisp_geno_display)<?/MIVAR>

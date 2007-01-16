@@ -27,7 +27,7 @@ OUTPUT VARS:
 <?MICOMMENT> *** code for images only, running this everywhere is S..L..O..W ** <?/MICOMMENT>
 <?MIBLOCK COND="$(AND,$(XST,$xpdetres_showFigsWithImagesOnly),$(EC,$xpdetres_showFigsWithImagesOnly,t))"> 
   <?MIVAR NAME="$xpdetres_imagesOnlyConstraint">
-    where exists (select fimg_zdb_id from fish_image where fimg_fig_zdb_id = xpat_fig_zdb_id) 
+    where exists (select img_zdb_id from image where img_fig_zdb_id = xpat_fig_zdb_id) 
   <?/MIVAR>
 <?MIELSE>
   <?MIVAR NAME="$xpdetres_imagesOnlyConstraint"><?/MIVAR>
@@ -125,7 +125,7 @@ $xpdetres_imagesOnlyConstraint
     <th>Publication <span nowrap><small>(<a href="javascript:start_note();">current status</a>)</small></span></th>
     <th>Data</th>
     <th> &nbsp; </th>
-    <th>Background(s)</th>
+    <th>Genotype or Background </th>
     <th>Stage Range</th>
     <th>Anatomy</th>
     <?MICOMMENT> **** commenting out assay column ** <th><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxassayabbrev.apg">Assay Type</a></th> *** <?/MICOMMENT>
@@ -213,9 +213,9 @@ order by date desc, pub_mini_ref, fig_full_label
         <?MICOMMENT> *** thumbnail column *** <?/MICOMMENT>
       
       <?MISQL SQL=" 
-	select fimg_thumbnail
-	  from fish_image
-	 where fimg_fig_zdb_id = '$xpdetres_figZdbId';">
+	select img_thumbnail
+	  from image
+	 where img_fig_zdb_id = '$xpdetres_figZdbId';">
 	  <?MIVAR COND=$(EC,$MI_CURRENTROW,1) NAME=xpdetres_fthmnlName>$1<?/MIVAR>
       <?/MISQL>
 

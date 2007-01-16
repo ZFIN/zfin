@@ -1,461 +1,966 @@
+<?MICOMMENT> 
+FILE: fishselect.apg 
+Prefix: fsel_
+
+This file implements search interface for genotypes. 
+The goal is to display genotypes as search result according to the search criteria 
+and display genotype list when called from other pages.
+
+Variables THAT MIGHT BE Expected: 
+ -- fsel_allele_id        -- from jump_to.apg
+ -- fsel_marker_id        -- from markerview.apg
+ -- fsel_anatomy_item_id  -- from anatomy_item.apg
+ -- $fsel_inputname     -- from search form and markerview and markerselect page
+ -- fsel_cnstrct_id
+ -- pubId     
+ 
+<?/MICOMMENT>
+
 <?MIERROR>
 <?MIVAR COND=$(XST,$MI_SQL)>
 SQL: $MI_SQL
-
 <?/MIVAR>
-
 Code: $MI_ERRORCODE
 State: $MI_ERRORSTATE
 Message: $MI_ERRORMSG 
 <?/MIERROR>
 
+
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
   <head>
 
-<?MIVAR name=page_name>ZFIN Mutant $(IF,$(XST,$query_results),List,Search)<?/MIVAR><!-- page_name variable used for input form. -->
+  <?MICOMMENT>============================================
+              == Java Scripts
+	      ===========================================
+  <?/MICOMMENT>
+  <script>
 
-<?MIVAR><TITLE>$page_name</TITLE><?/MIVAR>
+  function process_structures(list) {
+  	list = list.replace(/^\s+|\s+$/g,'');
+  	spc = " ";
+ 	 list = list.replace(/spc{2,}/g,' ');
+ 	 document.BrowserForm.TA_selected_structures.value = list;  
+ 	 //window.alert(list);
+  	matchcomma = /\,/g;
+  	list = list.replace(matchcomma,"|");
 
-<SCRIPT>
+ 	 matchreturn = /\n/g;
+ 	 list = list.replace(matchreturn,",");
 
-function updateList() {
+ 	 matchmulticomma = /,{1,}/g;
+ 	 list = list.replace(matchmulticomma,",");
 
-      document.BrowserForm.selected.value=getList();
-      document.BrowserForm.selected_separator.value=getSelectedSeparator();
-}
+ 	 matchfirstcomma = /^,/g;
+ 	 list = list.replace(matchfirstcomma,"");  
 
-function getSelectedSeparator() {
-	
-	if (document.BrowserForm.selected_sep_box[0].checked) {
-		return document.BrowserForm.selected_sep_box[0].value;
-	} else if (document.BrowserForm.selected_sep_box[1].checked) {
-		return document.BrowserForm.selected_sep_box[1].value;
-	}
-}
+  	matchlastcomma = /,$/g;
+  	list = list.replace(matchlastcomma,"");
 
-function getList() {
-var found_it;
-var pattern = /Click/;
+  	document.BrowserForm.fsel_processed_selected_structures.value = list;
+  	//window.alert(document.BrowserForm.fsel_processed_selected_structures.value);
+  }
 
-          results = '';
-          if ( found_it = pattern.exec(document.BrowserForm.structure_list.options[0].text) == null) {
-            pre = " (a.pheno_keywords like '%;";
-	    post = ";%')";
-	    i = document.BrowserForm.structure_list.options.length - 1;
-	    while (i >= 0 ) {
-		  term = document.BrowserForm.structure_list.options[i].text;
-		  /**** This is for Safari, for some reason, which has a tendency
-			to go a little crazy with inserting whitespace around
-			the strings that are coming out of the select box. 
-			it's the regular expression equivalent to a trim function ****/
-		  term = term.replace(/^\s*|\s*$/g,'');
-		  results = results + pre + term + post;
-		  if (i != 0) { results = results + " " + getSelectedSeparator() + " "; }
+  function form_submit() { 
+ 
+	  process_structures(document.BrowserForm.TA_selected_structures.value);
+	  //remove double quotes
+	  document.BrowserForm.TA_selected_structures.value=document.BrowserForm.TA_selected_structures.value.replace(/"/g,"");  
+	  document.BrowserForm.submit();
+  }
 
-		  i--;
-          }
-	}
-	return results;
-}
-
-
-
-function start_help(anchor) {
-   top.zfinhelp=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-helpframes.html&calling_page=fishselecthelp.html&anchor="+anchor,"helpwindow","scrollbars=yes,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
-}
-
-
-
-function form_submit() { 
-  	document.BrowserForm.submit();
-}
-
-function call_reset() {
-  i=0;
-  var found_it;
-  var pattern = /Click/;
-
-	document.BrowserForm.fname.value = "";
-	document.BrowserForm.allele.value = "";
-	document.BrowserForm.abbrev.value = "";
-	document.BrowserForm.anon1text.value = "";
-	document.BrowserForm.chrom_num.selectedIndex = 0;
-	document.BrowserForm.chrom_change.selectedIndex = 0;
-	document.BrowserForm.mutagen.selectedIndex = 0;
-	document.BrowserForm.anon1.selectedIndex = 0;
-	document.BrowserForm.knowngene.checked = false;
-        document.BrowserForm.selected.value = "";
-        document.BrowserForm.WINSIZE.value = 20;
-        document.BrowserForm.START.value = "";  
-        document.BrowserForm.selected_separator.value = "and";
-        if ( found_it = pattern.exec(document.BrowserForm.structure_list.options[0].text) == null) {
-	  while ( document.BrowserForm.structure_list.options.length > i) {
-	    document.BrowserForm.structure_list.options[i] = null;      
-	  }
-        }
-}
+  function call_reset() {   
+  	 document.BrowserForm.lg.selectedIndex = 0;
+ 	 document.BrowserForm.compare.selectedIndex = 0;	
+ 	 document.BrowserForm.fsel_inputname.value = "";
+ 	 document.BrowserForm.chrom_change.selectedIndex = 0;
+ 	 document.BrowserForm.mutagen.selectedIndex = 0;
+ 	 document.BrowserForm.START.value = "";  
+ 	 document.BrowserForm.TA_selected_structures.value = '';
+ 	 document.BrowserForm.include_substructures.checked = true;
+ 	 document.BrowserForm.structure_bool[0].checked = true;
+	 document.BrowserForm.fselFilterValue[0].checked = false;
+	 document.BrowserForm.fselFilterValue[1].checked = false;
+  	 document.BrowserForm.fselFilterValue[2].checked = true;
+  	 document.BrowserForm.WINSIZE.value = 20;  
+  }
 
 
+  function updateInnerHTML(element_id,html_to_display) {
+    	var c1 = document.getElementById(element_id);
+    c1.innerHTML = html_to_display;
+  }
 
-</SCRIPT>
+  </script>
 
-  </head>
-
-<?MIBLOCK COND="$(NXST,$accession)">
-  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
-<?/MIBLOCK>
+  <script src="http://<!--|DOMAIN_NAME|-->/autosuggest.js"></script>
 
 
-<!--***-->
-<!-- This page will also be used for the reverse link from publication page.--> 
-<?MIVAR COND="$(NXST,$line_type)" NAME=line_type>mutant<?/MIVAR>
+  <?MICOMMENT>======================================================
+              == Keep parameter(s) when called from another page
+	      ======================================================
+  <?/MICOMMENT>
 
-<?MIBLOCK COND="$(OR,$(XST,$query_results),$(XST,$pubId))">
+  <?MIBLOCK COND="$(OR,$(XST,$fsel_cnstrct_id),$(XST,$fsel_allele_id),$(XST,$fsel_marker_id))">
+    <?MIVAR NAME=query_results>f<?/MIVAR>
+  <?MIELSE COND="$(XST,$fsel_anatomy_item_id)">  
+    <?MISQL SQL="select anatitem_name from anatomy_item 
+       	          where anatitem_zdb_id = '$fsel_anatomy_item_id';">
+      <?MIVAR NAME=TA_selected_structures>$1<?/MIVAR>        
+    <?/MISQL>  
+    <?MIBLOCK COND="$(XST,$fsel_anatomy_include)">
+      <?MIVAR NAME=include_substructures>checked<?/MIVAR>
+    <?/MIBLOCK> 
+    <?MIVAR NAME=query_results>f<?/MIVAR>
+  <?/MIBLOCK>
+
+  <?MIBLOCK COND="$(XST,$query_results)">
+    <?MIBLOCK COND="$(EC,$query_results,t)">
+       <?MIVAR NAME=page_name>ZFIN Mutant List<?/MIVAR>
+    <?MIELSE COND="$(EC,$query_results,exist)">
+       <?MIVAR NAME=page_name>ZFIN Mutant Search Result<?/MIVAR>
+    <?MIELSE>
+       <?MIVAR NAME=page_name>ZFIN Mutant Search<?/MIVAR>
+    <?/MIBLOCK>
+  <?MIELSE>
+    <?MIBLOCK COND="$(XST,$pubId)">
+      <?MIVAR NAME=page_name>ZFIN Mutant List<?/MIVAR>
+    <?MIELSE>
+      <?MIVAR NAME=page_name>ZFIN Mutant Search<?/MIVAR>
+    <?/MIBLOCK>
+  <?/MIBLOCK>
+
+  <?MIVAR><TITLE>$page_name</TITLE><?/MIVAR>
+
+</head>  <?MICOMMENT>=============== end html head =============================<?/MICOMMENT>
+
+
 
 <?MICOMMENT>
-This app-page handles the criteria collected by fishselect.html, and 
-actually does the search, displaying the results. What makes this page 
-very tricky is the need to potentially query on both wild type and mutant 
-lines, the data for which is quite different. In particular, wild types will 
-have no CHROMOSOME or ALTERATION records associated with them, so any join 
-to these tables will knock out wild types. The solution is to do two separate 
-queries and UNION the results. Of course, this also mean building up two 
-different constraints clauses.
+   ==============================================================================
+   ========= DISPLAY PAGE HEADER
+   ==============================================================================
+<?/MICOMMENT>
 
-ECK 1/98. Instead of searching a huge intersection table, we now search a 
-special "search_table" that has all of the criteria culled out. Should speed 
-things up
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
-Modified to support I.E.  Naviagtor tile buttons must know all user input 
-from the query screen.  These values are posted to the lister form.  The 
-lister form creates the tile bar button with appropriate variables. 
-Startframes.apg will pass this variables on to the select form.
+<?MISQL SQL="select object from webPages where ID='aa-chromoscripts.apg';">$1<?/MISQL>
+  
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID = 'aa-identify.apg';">$1<?/MISQL>
+
+<?MICOMMENT>
+   ==============================================================================
+   ========= DEFINE GENERAL VARIABLES
+   ==============================================================================
+<?/MICOMMENT>
+  
+<?MIVAR name=highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
+<?MIVAR NAME=MI_NULL><?/MIVAR>
+<?MIVAR NAME=MI_NOVALUE><?/MIVAR>
+<?MIVAR NAME=comma>,<?/MIVAR>  
+<?MIVAR NAME=single_quote>'<?/MIVAR>
+<?MIVAR NAME=debug_timing>f<?/MIVAR>  
+
+<?MICOMMENT>
+  ============================================================================
+  ==========  CLEAN UP INPUT FIELDS
+  ============================================================================
+<?/MICOMMENT>
+
+<?MIVAR COND="$(XST,$fsel_inputname)" NAME="$fsel_inputname">$(LOWER,$(TRIM,$fsel_inputname))<?/MIVAR>
+<?MIVAR COND="$(XST,$WINSIZE)" NAME="$WINSIZE">$(TRIM,$WINSIZE)<?/MIVAR>
+
+<?MICOMMENT>
+  ============================================================================
+  ==========  SET DEFAULT VALUES
+  ============================================================================		
+<?/MICOMMENT>
+
+<?MIVAR COND=$(NXST,$compare) NAME=$compare>contains<?/MIVAR>
+<?MIVAR COND=$(NXST,$lg) NAME=$lg>0<?/MIVAR>
+<?MIVAR COND=$(NXST,$chrom_change) NAME=$chrom_change>any<?/MIVAR>
+<?MIVAR COND=$(NXST,$structure_bool) NAME=$structure_bool>and<?/MIVAR>
+<?MIVAR COND=$(NXST,$fselFilterValue) NAME=$fselFilterValue>all<?/MIVAR>
+
+<?MIBLOCK COND="$(AND,$(NXST,$include_substructures),$(NXST,$fishsel_calledBySelf))">
+   <?MIVAR NAME="include_substructures">checked<?/MIVAR>
+<?/MIBLOCK>
+
+<?MICOMMENT> This variable gets set to 't' if we want to force 0 results to show,
+             initially, the only place that it can be set to 'true' is when an anatomy
+	     item doesn't exist. 
+<?/MICOMMENT>
+<?MIVAR NAME="$fsel_anatomy_error_occured">f<?/MIVAR>
+
+
+<?MIVAR NAME=WINSIZE DEFAULT=20>$WINSIZE<?/MIVAR>
+<?MIVAR NAME=BEGIN DEFAULT=1>$START<?/MIVAR>
+
+<?MIVAR NAME=BEGIN>$(IF,$(<,$BEGIN,1),1,$BEGIN)<?/MIVAR> 
+<?MIVAR NAME=END>$(+,$BEGIN,$WINSIZE)<?/MIVAR>
+
+<?MIVAR COND="$(NXST,$num_recs)" NAME=$num_recs>0<?/MIVAR>
+
+<?MISQL COND=$(EC,$debug_timing,t) SQL="
+    execute function get_time()">
+    <br>... $1 Start ... <br>
+<?/MISQL>
+
+<?MICOMMENT>
+  ============================================================================
+  ==========  
+  ============================================================================
+  		
 <?/MICOMMENT>
 
 
+<?MIBLOCK COND="$(OR,$(XST,$query_results),$(XST,$pubId))"> 
+  <?MIBLOCK COND="$(NXST,$constraint)">
+    <?MIVAR COND="$(NXST,$constraint)" NAME=$constraint>where geno_is_wildtype = "f" <?/MIVAR>
+    <?MIVAR COND="$(NXST,$moreConstraint)" NAME=$moreConstraint><?/MIVAR>
+    <?MIVAR COND="$(NXST,$target_tables)" NAME=$target_tables>genotype<?/MIVAR>
+    <?MIVAR COND="$(NXST,$target_cols)" NAME=$target_cols>distinct geno_zdb_id,'1',geno_name_order,' ',' '<?/MIVAR>
+    <?MIVAR COND="$(NXST,$target_cols2)" NAME=$target_cols>geno_zdb_id,'1',geno_name_order,' ',' '<?/MIVAR>
+    
+    <?MICOMMENT>------------------------------------------------------------
+               -- This next part builds up a query piece by piece, based on which 
+               -- criteria were passed in
+	       ------------------------------------------------------------
+    <?/MICOMMENT>
+
+    <?MICOMMENT>==================================================================
+            ==  Create fishselect_temp_match temp table if it does not already exist.
+            ==========================================================================
+    <?/MICOMMENT>
+
   <?MISQL SQL="
-    select object 
-      from webPages 
-      where ID = 'aa-chromoscripts.apg';">
-    $1
+      select dbinfo('sessionid') 
+        from single;">
+      <?MIVAR NAME=$fsel_session_id>$1<?/MIVAR>
+      <?MIVAR NAME=$fishselect_temp_match>$(CONCAT,fishselect_temp_match_,$fsel_session_id)<?/MIVAR>
   <?/MISQL>
-  </a>
 
-  <!-- THIS NEXT PART IS EXECUTED AFTER THE PERSON ENTERS SOME CRITERIA -->
+    <?MISQL SQL="
+      execute function table_exists('$fishselect_temp_match')">
+      <?MISQL COND=$(EC,$1,f) SQL="
+	create temp table $fishselect_temp_match (
+	  fmatch_zdb_id varchar(50),
+	  fmatch_order varchar(100),
+	  fmatch_precedence varchar(50),
+	  fmatch_matchtext varchar(255),
+	  fmatch_matchtype varchar(80)
+	) with NO LOG;">
+      <?/MISQL>
+    <?/MISQL>
+    
+  <?/MIBLOCK>
+  
+<?MICOMMENT> =================================================================
+                          if allele zdb id is paased in 
+             =================================================================
+<?/MICOMMENT>
+<?MIBLOCK COND="$(XST,$fsel_allele_id)">
 
+  <?MIVAR NAME=$moreTables>,genotype_feature<?/MIVAR>
+  <?MIVAR>$(SETVAR,$target_tables,$(CONCAT,$target_tables,$moreTables))<?/MIVAR>
+
+  <?MIVAR NAME=$moreConstraint> and geno_zdb_id = genofeat_geno_zdb_id 
+                              and genofeat_feature_zdb_id = '$fsel_allele_id'
+  <?/MIVAR>    
+
+  <?MIVAR>$(SETVAR, $constraint, $(CONCAT, $constraint, $moreConstraint))<?/MIVAR>
+
+<?/MIBLOCK>
+
+
+    <?MICOMMENT> =================================================================
+                          if Name / Symbol is searched
+         ==============================================================================
+    <?/MICOMMENT>
+<?MIBLOCK COND="$(XST,$fsel_inputname)">
+  <?MICOMMENT> *** Create or reuse temp tables *** <?/MICOMMENT>
+  <?MIVAR NAME=$fishselect_temp_on_name>$(CONCAT,fishselect_temp_on_name_,$fsel_session_id)<?/MIVAR>
   <?MISQL SQL="
-    select WebExplode(object,'')
-      from webPages
-      where ID = 'aa-identify.apg';">
-    $1
+    execute function table_exists('$fishselect_temp_on_name')">
+    <?MISQL COND=$(EC,$1,f) SQL="
+      create temp table $fishselect_temp_on_name (
+        g_zdb_id	 	varchar(50),
+        m_order	 	        varchar(10),
+        m_text                  varchar(80),
+        m_type                  varchar(80)
+      ) with NO LOG;">
+    <?/MISQL>
   <?/MISQL>
 
-  <!-- set userid to ZDB_ID of user or GUEST to be used by the map viewer -->
-  <?MIVAR NAME=$userid>GUEST<?/MIVAR>
-  <?MIBLOCK COND="$(NOT,$(EQ,$(SUBSTR,$ZDB_name,1,5),GUEST))">
-    <?MIVAR NAME=$userid>$ZDB_ident<?/MIVAR>
+    <?MICOMMENT> in order to improve performance, extra level of temp tables are used instead of doing join
+    <?/MICOMMENT>
+  <?MIVAR NAME=$fishselect_temp_on_allele_junior>$(CONCAT,fishselect_temp_on_allele_junior_,$fsel_session_id)<?/MIVAR>    
+  <?MISQL SQL="
+    execute function table_exists('$fishselect_temp_on_allele_junior')">
+    <?MISQL COND=$(EC,$1,f) SQL="
+        create temp table $fishselect_temp_on_allele_junior (
+          junior_allele_zdb_id 		varchar(50),
+          junior_m_order	 	varchar(10),
+          junior_m_text                 varchar(80),
+          junior_m_type                 varchar(80)
+        ) with NO LOG;">
+    <?/MISQL>
+  <?/MISQL>  
+
+  <?MIVAR NAME=$fishselect_temp_on_gene_junior>$(CONCAT,fishselect_temp_on_gene_junior_,$fsel_session_id)<?/MIVAR>    
+  <?MISQL SQL="
+    execute function table_exists('$fishselect_temp_on_gene_junior')">
+    <?MISQL COND=$(EC,$1,f) SQL="
+        create temp table $fishselect_temp_on_gene_junior (
+          junior_gene_zdb_id 		varchar(50),
+          junior_m_order	 	varchar(10),
+          junior_m_text                 varchar(80),
+          junior_m_type                 varchar(80)
+        ) with NO LOG;">
+    <?/MISQL>
+  <?/MISQL>
+
+  <?MIVAR NAME=$percentage>%<?/MIVAR>
+  <?MIBLOCK COND="$(EC,$compare,starts)">
+    <?MIVAR NAME=$table_all_name_ends> <?/MIVAR>
+    <?MIVAR NAME=$target_col>allmapnm_name<?/MIVAR>
+    <?MIVAR NAME=$connecting_2_tables> <?/MIVAR>
+    <?MIVAR NAME=$like_or_equal>like<?/MIVAR>
+    <?MIVAR NAME=$input>$(CONCAT,$fsel_inputname,$percentage)<?/MIVAR>   
+  <?MIELSE COND="$(EC,$compare,equals)">    
+    <?MIVAR NAME=$table_all_name_ends> <?/MIVAR>
+    <?MIVAR NAME=$target_col>allmapnm_name<?/MIVAR>
+    <?MIVAR NAME=$connecting_2_tables> <?/MIVAR>
+    <?MIVAR NAME=$like_or_equal>=<?/MIVAR> 
+    <?MIVAR NAME=$input>$fsel_inputname<?/MIVAR>
+  <?MIELSE>
+    <?MIVAR NAME=$table_all_name_ends>,all_name_ends<?/MIVAR>
+    <?MIVAR NAME=$target_col>allnmend_name_end_lower<?/MIVAR>
+    <?MIVAR NAME=$connecting_2_tables>and allmapnm_serial_id = allnmend_allmapnm_serial_id<?/MIVAR>
+    <?MIVAR NAME=$like_or_equal>like<?/MIVAR> 
+    <?MIVAR NAME=$input>$(CONCAT,$fsel_inputname,$percentage)<?/MIVAR>
   <?/MIBLOCK>
 
+    <?MISQL SQL="insert into $fishselect_temp_on_allele_junior (junior_allele_zdb_id,junior_m_text,junior_m_order,junior_m_type)
+	           select allmapnm_zdb_id,allmapnm_name,allmapnm_significance,allmapnm_precedence 
+                     from all_map_names$table_all_name_ends
+	            where $target_col $like_or_equal '$input'
+	              $connecting_2_tables
+	              and allmapnm_precedence in ('Genetic feature name','Genetic feature abbreviation','Genetic feature alias');">	    
+    <?/MISQL>    
 
+    <?MISQL SQL="insert into $fishselect_temp_on_name (g_zdb_id,m_text,m_order,m_type)
+  	           select genofeat_geno_zdb_id,junior_m_text,junior_m_order,junior_m_type
+                     from genotype_feature,$fishselect_temp_on_allele_junior
+	            where genofeat_feature_zdb_id = junior_allele_zdb_id;">	    
+    <?/MISQL>   
 
-  <!--- WALKING WINDOW --->
-  <!--- Initialization --->
+    <?MISQL SQL="delete from $fishselect_temp_on_allele_junior;"><?/MISQL>
 
-  <?MIVAR NAME=WINSIZE DEFAULT=25>$WINSIZE<?/MIVAR>
-  <?MIVAR NAME=BEGIN DEFAULT=1>$START<?/MIVAR>
-
-  <!--- DEFINITION OF RANGES --->
-  <?MIVAR NAME=BEGIN>$(IF,$(<,$BEGIN,1),1,$BEGIN)<?/MIVAR> 
-  <?MIVAR NAME=END>$(+,$BEGIN,$WINSIZE)<?/MIVAR>
-
-  <?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
-  <?MIVAR name=$row_color>$highlight<?/MIVAR>
-
-  <!-- This next part builds up a query piece by piece, based on which criteria 
-       were passed in 
-    -->
-
-  <?MIVAR NAME=$knowngene COND="$(NXST,$knowngene)">NULL<?/MIVAR>
-  <?MIVAR NAME=$previous> <?/MIVAR>
-
-  <?MIVAR COND="$(NXST,$chrom_change)" NAME=$chrom_change>any<?/MIVAR>
-  <?MIVAR COND="$(NXST,$chrom_num)" NAME=$chrom_num>0<?/MIVAR>
-  <?MIVAR COND="$(NXST,$mutagen)" NAME=$mutagen>any<?/MIVAR>
-  <?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>phenotype<?/MIVAR>
-  <?MIVAR COND="$(NXST,$selected_separator)" NAME=$selected_separator>and<?/MIVAR>
-  <?MIVAR COND="$(NXST,$num_recs)" NAME=$num_recs>0<?/MIVAR>
-	
-  <?MIVAR COND="$(XST,$fname)" NAME=$fname>$(TRIM,$fname)<?/MIVAR>
-  <?MIVAR COND="$(XST,$allele)" NAME=$allele>$(TRIM,$allele)<?/MIVAR>
-  <?MIVAR COND="$(XST,$abbrev)" NAME=$abbrev>$(TRIM,$abbrev)<?/MIVAR>
-  <?MIVAR COND="$(XST,$anon1text)" NAME=$anon1text>$(TRIM,$anon1text)<?/MIVAR>
-
-
-  <?MIVAR NAME=$target_table>fish_search a <?/MIVAR>
-
-
-  <!-- First build CONSTRAINT CLAUSE common to both wild type and mutant line, ie., those constraints related only to fish. -->
-
-  <?MIBLOCK COND="$(OR,$(XST,$fname),$(XST,$anon1text),$(XST,$abbrev),$(NC,$knowngene,NULL))">
-
-    <!-- First filter name for apostrophes! -->
-    <?MIVAR COND="$(XST,$fname)" NAME=$fname DELIMIT="'" REPLACE="''">$fname<?/MIVAR>
-    <?MIVAR COND="$(XST,$fname)" NAME=$fname>$(LOWER,$fname)<?/MIVAR>
-    <?MIVAR NAME=$constraint> and <?/MIVAR>
-
-    <!-- first look for match in fish_search locus or
-      -- for fish aliases in data_alias -->
-    <?MIVAR NAME=$constraint COND="$(XST,$fname)">
-      $constraint (   (lower(a.name) like '%$fname%') 
-                   or exists (select 'x' 
-			        from data_alias 
-			        where (   a.fish_id = dalias_data_zdb_id 
-				       or a.locus = dalias_data_zdb_id) 
-				  and (dalias_alias_lower like '%$fname%')))
-    <?/MIVAR>
-
-    <?MIVAR NAME=$previous COND="$(XST,$fname)"> and<?/MIVAR>
-
-    <!-- change to look for abbrev within () in name  Sept. 00  -->
-    <?MIVAR COND="$(XST,$abbrev)" NAME=$abbrev DELIMIT="'" REPLACE="''">$abbrev<?/MIVAR>    
-    <?MIVAR NAME=$constraint COND="$(XST,$abbrev)">
-      $constraint $previous ((lower(abbrev) like '$(LOWER,%$abbrev%)') or (name like '(%$(LOWER,$abbrev)%)') )
-    <?/MIVAR>
-
-    <?MIVAR NAME=$previous COND="$(XST,$abbrev)"> and <?/MIVAR>
-
-    <?MIVAR COND="$(XST,$anon1text)" NAME=$anon1text DELIMIT="'" REPLACE="''">$anon1text<?/MIVAR>  
-    <?MIVAR NAME=$constraint COND="$(XST,$anon1text)">
-      $constraint $previous (lower($anon1) like '%$(LOWER,$anon1text)%')
-    <?/MIVAR>
-
-  <?/MIBLOCK> <!-- ends shared mutant/wild-type block -->
-
-
-  <!-- NOW for mutant queries, BUILD the mutant constraint clause by extending the basic one to constrain on mutant attributes too -->
-
-  <?MIVAR COND="$(XST,$allele)" NAME=$allele DELIMIT="'" REPLACE="''">$allele<?/MIVAR> 
-  <?MIVAR COND="$(XST,$allele)" NAME=$allele>$(LOWER,$allele)<?/MIVAR>
-
-  <?MIBLOCK COND="$(AND,$(NXST,$mut_constraint),$(EC,$line_type,mutant),$(OR,$(XST,$constraint),$(NC,$chrom_change,any),$(NC,$chrom_num,0),$(XST,$allele),$(NC,$mutagen,any),$(XST,$selected)))">
-
-    <?MIVAR COND="$(NXST,$constraint)" NAME=$constraint> and <?/MIVAR>
-    <?MIVAR NAME=$mut_constraint>$constraint<?/MIVAR>
-
-    <?MIVAR NAME=$previous COND="$(XST,$anon1text)"> and <?/MIVAR>
-
-    <?MIVAR NAME=$mut_constraint COND="$(NC,$mutagen,any)">
-    $mut_constraint $previous (mutagen='$mutagen')<?/MIVAR>
-
-    <?MIVAR NAME=$previous COND="$(NC,$mutagen,any)"> and <?/MIVAR>
-
-    <?MIVAR NAME=$mut_constraint COND="$(XST,$allele)">
-      $mut_constraint 
-      $previous (   (lower(a.allele) like '%$allele%') 
-                 or exists (select 'x' 
-                              from data_alias 
-			      where (a.alt_zdb_id = dalias_data_zdb_id) 
-                                and dalias_alias_lower like '%$allele%') )
-    <?/MIVAR>
-
-    <?MIVAR NAME=$previous COND="$(XST,$allele)"> and <?/MIVAR>
-
-    <!-- change to allow a query for deficiencies to look for deficiency, translocations, and complex_rearrangements  12/06/00-->
-    <?MIVAR NAME=$mut_constraint COND="$(EC,$chrom_change,deficiency)">
-    $mut_constraint $previous (chrom_change in ('deficiency','translocation','complex_rearrangement'))<?/MIVAR>
-
-    <?MIVAR NAME=$mut_constraint COND="$(AND,$(NC,$chrom_change,any),$(NC,$chrom_change,deficiency))">
-    $mut_constraint $previous (chrom_change='$chrom_change')<?/MIVAR>
-
-    <?MIVAR NAME=$previous COND="$(NC,$chrom_change,any)"> and <?/MIVAR>
-
-    <?MIVAR NAME=$mut_constraint COND="$(NC,$chrom_num,0)">
-    $mut_constraint $previous (chrom_num='$chrom_num')<?/MIVAR>
-
-    <?MIVAR NAME=$previous COND="$(NC,$chrom_num,0)"> and <?/MIVAR>
-
-    <?MIVAR NAME=$mut_constraint COND="$(NC,$knowngene,NULL)">$mut_constraint $previous (gene_abbrev <> 'unknown')<?/MIVAR>
-
-    <?MIVAR NAME=$previous COND="$(NC,$knowngene,NULL)"> and <?/MIVAR>
-
-    <?MIVAR NAME=$mut_constraint COND="$(XST,$selected)">
-    $mut_constraint $previous ($selected)<?/MIVAR>
-
-  <?/MIBLOCK> <!-- ends mutant case -->
-
-
-  <!-- NOW JUST RETRIEVE AND DISPLAY ALL MATCHING ENTRIES. Do slightly different things for mutant and wild type queries  -->
-  <?MIVAR NAME=$fname COND="$(XST,$fname)" DELIMIT="''" REPLACE="'">$fname<?/MIVAR>
-  <?MIVAR NAME=$allele COND="$(XST,$allele)" DELIMIT="''" REPLACE="'">$allele<?/MIVAR>
-  <?MIVAR NAME=$abbrev COND="$(XST,$abbrev)" DELIMIT="''" REPLACE="'">$abbrev<?/MIVAR>
-  <?MIVAR NAME=$anon1text COND="$(XST,$anon1text)" DELIMIT="''" REPLACE="'">$anon1text<?/MIVAR>
-
-  <?MIVAR NAME=$constraint COND="$(NXST,$constraint)"> <?/MIVAR>
-  <?MIVAR NAME=$mut_constraint COND="$(NXST,$mut_constraint)"> <?/MIVAR>
-    <?MIVAR NAME=mut_constraint_count>$mut_constraint<?/MIVAR>
-    <?MIVAR NAME=mut_constraint_query>$mut_constraint<?/MIVAR>
-
-  <!--  DEBUGGING
-  <?MIVAR><p>Constraint is:$constraint
-  Mut constraint is:$mut_constraint<p><?/MIVAR>
-  -->
-
-  <?MIBLOCK COND="$(EC,$line_type,mutant)">
-
-    <?MIVAR NAME=$order_by>order by fishsearch_name_order,fishsearch_allele_order,chrom_num<?/MIVAR>
-    <?MIVAR NAME=$order_by COND="$(AND,$(OR,$(XST,$fname),$(XST,$abbrev)),$(NXST,$allele))">order by fishsearch_name_order,fishsearch_allele_order,chrom_num<?/MIVAR>
-
-
-    <form method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
-      <?MIVAR>
-	<input type=hidden name=MIval value=aa-fishselect.apg>
-	<input type=hidden name=mut_constraint value="$mut_constraint">
-	<input type=hidden name=line_type value="$line_type">
-      <?/MIVAR>
-
-      <?MIVAR COND="$(XST,$fname)"><input type=hidden name=fname value="$fname"><?/MIVAR>
-      <?MIVAR COND="$(XST,$allele)"><input type=hidden name=allele value="$allele"><?/MIVAR>
-      <?MIVAR COND="$(XST,$knowngene)"> <input type=hidden name=knowngene value="$knowngene"><?/MIVAR>
-      <?MIVAR COND="$(XST,$chrom_change)"><input type=hidden name=chrom_change value="$chrom_change"><?/MIVAR>
-      <?MIVAR COND="$(XST,$chrom_num)"><input type=hidden name=chrom_num value="$chrom_num"><?/MIVAR>
-      <?MIVAR COND="$(XST,$mutagen)"><input type=hidden name=mutagen value="$mutagen"><?/MIVAR>
-      <?MIVAR COND="$(XST,$anon1)"><input type=hidden name=anon1 value="$anon1"><?/MIVAR>
-      <?MIVAR COND="$(XST,$anon1text)"><input type=hidden name=anon1text value="$anon1text"><?/MIVAR>
-      <?MIVAR COND="$(XST,$abbrev)"><input type=hidden name=abbrev value="$abbrev"><?/MIVAR>
-      <?MIVAR COND="$(XST,$structures)"><input type=hidden name=structures value="$structures"><?/MIVAR>
-      <?MIVAR COND="$(XST,$selected)"><input type=hidden name=selected value="$selected"><?/MIVAR>
-      <?MIVAR COND="$(XST,$selected_separator)"><input type=hidden name=selected_separator value="$selected_separator"><?/MIVAR>
-
-    </form>
+    <?MISQL SQL="insert into $fishselect_temp_on_gene_junior (junior_gene_zdb_id,junior_m_text,junior_m_order,junior_m_type)
+	           select allmapnm_zdb_id,allmapnm_name,allmapnm_significance,allmapnm_precedence 
+                     from all_map_names$table_all_name_ends
+	            where $target_col $like_or_equal '$input'
+	              $connecting_2_tables
+	              and allmapnm_precedence in ('Current symbol','Current name','Previous name');">	    
+    <?/MISQL> 
     
-    <?MIVAR NAME=mut_constraint_count>$mut_constraint<?/MIVAR>
-    <?MIVAR NAME=mut_constraint_query>$mut_constraint<?/MIVAR>
+    <?MISQL SQL="insert into $fishselect_temp_on_name (g_zdb_id,m_text,m_order,m_type)
+	           select genofeat_geno_zdb_id,junior_m_text,junior_m_order,junior_m_type
+                     from genotype_feature,feature_marker_relationship,$fishselect_temp_on_gene_junior
+	            where not exists (select 'x' from $fishselect_temp_on_name
+                                      where g_zdb_id = genofeat_geno_zdb_id)
+	              and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+	              and fmrel_mrkr_zdb_id = junior_gene_zdb_id;">	    
+    <?/MISQL>    
+  
+    <?MISQL SQL="delete from $fishselect_temp_on_gene_junior;"><?/MISQL>      
+ 
+    <?MISQL SQL="insert into $fishselect_temp_on_name (g_zdb_id,m_text,m_order,m_type)
+         	   select distinct allmapnm_zdb_id,allmapnm_name,allmapnm_significance,allmapnm_precedence 
+                     from all_map_names$table_all_name_ends
+	            where not exists (select 'x' from $fishselect_temp_on_name
+                                      where g_zdb_id = allmapnm_zdb_id)
+	              and $target_col $like_or_equal '$input'
+	              $connecting_2_tables
+	              and allmapnm_precedence = 'Genotype alias';">	    
+    <?/MISQL>       
 
-    <!--***-->	
-   <?MIBLOCK COND="$(XST,$pubId)">
-    <?MIVAR NAME=target_table>
-	$target_table, record_attribution
-    <?/MIVAR>
-    <?MIVAR NAME=mut_constraint_count>
-           and recattrib_source_zdb_id = '$pubId'
-	   and recattrib_data_zdb_id = a.fish_id
-	   
-	  UNION
-	  select distinct a.fish_id
-	  from $target_table
-	  where line_type = 'mutant'
-           and recattrib_source_zdb_id = '$pubId'
-	   and recattrib_data_zdb_id = a.locus
-	   
-	  UNION
-	  select distinct a.fish_id
-	  from $target_table
-	  where line_type = 'mutant'
-           and recattrib_source_zdb_id = '$pubId'
-	   and recattrib_data_zdb_id = a.alt_zdb_id
-	  
-	  UNION
-	  select distinct a.fish_id
-	  from $target_table , data_alias
-	  where line_type = 'mutant'
-	    and recattrib_source_zdb_id = '$pubId'
-	    and recattrib_data_zdb_id = dalias_zdb_id 
-	    and dalias_data_zdb_id = a.fish_id	       
-    <?/MIVAR> 
-    <?MIVAR NAME=mut_constraint_query>
-           and recattrib_source_zdb_id = '$pubId'
-	   and recattrib_data_zdb_id = a.fish_id
-	   
-	  UNION
-	  select distinct 
-		 name, fish_id, abbrev, get_allele_html(allele), chrom_change, chrom_num,
-		 locus, gene_abbrev, gene_id, fishsearch_name_order, 
-		 fishsearch_allele_order 
-	  from $target_table
-	  where line_type = 'mutant'
-           and recattrib_source_zdb_id = '$pubId'
-	   and recattrib_data_zdb_id = a.locus
-	   
-	  UNION
-	  select distinct 
-		 name, fish_id, abbrev, get_allele_html(allele), chrom_change, chrom_num,
-		 locus, gene_abbrev, gene_id, fishsearch_name_order, 
-		 fishsearch_allele_order 
-	  from $target_table
-	  where line_type = 'mutant'
-           and recattrib_source_zdb_id = '$pubId'
-	   and recattrib_data_zdb_id = a.alt_zdb_id
-	   
-	  UNION
-	  select  distinct 
-		 name, fish_id, abbrev, get_allele_html(allele), chrom_change, chrom_num,
-		 locus, gene_abbrev, gene_id, fishsearch_name_order, 
-		 fishsearch_allele_order 
-	  from $target_table , data_alias
-	  where line_type = 'mutant'
-	    and recattrib_source_zdb_id = '$pubId'
-	    and recattrib_data_zdb_id = dalias_zdb_id 
-	    and dalias_data_zdb_id = a.fish_id	       
-    <?/MIVAR> 
-   <?/MIBLOCK>
-	
-   <?MISQL SQL="
-         select distinct a.fish_id
-	 from $target_table
-	 where line_type = 'mutant'
-	       $mut_constraint_count;"> 
+  <?MIVAR NAME=$moreConstraint> and geno_zdb_id = g_zdb_id 
+  <?/MIVAR>    
+
+  <?MIVAR NAME=$target_cols>geno_zdb_id,m_order,geno_name_order,m_text,m_type<?/MIVAR>    
+  <?MIVAR NAME=$moreTables>,$fishselect_temp_on_name<?/MIVAR>
+  <?MIVAR>$(SETVAR,$target_tables,$(CONCAT,$target_tables,$moreTables))<?/MIVAR>  
+  <?MIVAR>$(SETVAR,$constraint,$(CONCAT,$constraint,$moreConstraint))<?/MIVAR> 
+<?/MIBLOCK>
+
+    <?MICOMMENT> =================================================================
+                          if LG is searched
+         ==============================================================================
+    <?/MICOMMENT>
+<?MIBLOCK COND="$(AND,$(XST,$lg),$(NE, $lg, any),$(NE, $lg, 0))">
+
+  <?MICOMMENT> *** Create or reuse temp table *** <?/MICOMMENT>
+  <?MIVAR NAME=$fishselect_temp_on_lg>$(CONCAT,fishselect_temp_on_lg_,$fsel_session_id)<?/MIVAR>
+  <?MISQL SQL="
+    execute function table_exists('$fishselect_temp_on_lg')">
+    <?MISQL COND=$(EC,$1,f) SQL="
+      create temp table $fishselect_temp_on_lg (
+        g_zdb_id	 	varchar(50)
+      ) with NO LOG;">
     <?/MISQL>
-    <?MIVAR name=$num_recs>$MI_CURRENTROW<?/MIVAR>
+  <?/MISQL>
 
-<!-- Debugging
-  <?MIVAR>$MI_SQL<?/MIVAR>
--->
+  <?MISQL SQL="insert into $fishselect_temp_on_lg (g_zdb_id)
+	select genofeat_geno_zdb_id  
+          from genotype_feature,feature_marker_relationship,mapped_marker
+	  where genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+	    and fmrel_mrkr_zdb_id = marker_id
+	    and or_lg='$lg';">
+  <?/MISQL>
+  
+  <?MISQL SQL="insert into $fishselect_temp_on_lg (g_zdb_id)
+	select genofeat_geno_zdb_id  
+          from genotype_feature,feature_marker_relationship,marker_relationship,mapped_marker   
+	  where not exists (select 'x' from $fishselect_temp_on_lg
+                                      where g_zdb_id = genofeat_geno_zdb_id)
+	    and genofeat_feature_zdb_id=fmrel_ftr_zdb_id
+	    and fmrel_mrkr_zdb_id = mrel_mrkr_2_zdb_id
+	    and mrel_mrkr_1_zdb_id = marker_id
+	    and mrel_type in ('clone contains gene','clone contains small segment')
+	    and or_lg='$lg';">
+  <?/MISQL>
+  
+  <?MISQL SQL="insert into $fishselect_temp_on_lg (g_zdb_id)
+        select genofeat_geno_zdb_id  
+	  from genotype_feature,feature_marker_relationship,marker_relationship,mapped_marker   
+	 where not exists (select 'x' from $fishselect_temp_on_lg
+                                     where g_zdb_id = genofeat_geno_zdb_id)
+	   and genofeat_feature_zdb_id=fmrel_ftr_zdb_id
+	   and fmrel_mrkr_zdb_id=mrel_mrkr_1_zdb_id
+	   and mrel_mrkr_2_zdb_id=marker_id
+	   and mrel_type in ('clone contains gene','clone contains small segment','gene encodes small segment')
+	   and or_lg='$lg';">
+  <?/MISQL>
+      
+  <?MISQL SQL="insert into $fishselect_temp_on_lg (g_zdb_id)
+        select genofeat_geno_zdb_id  
+	  from genotype_feature,feature_marker_relationship,linkage_member,linkage
+	 where not exists (select 'x' from $fishselect_temp_on_lg
+                                     where g_zdb_id = genofeat_geno_zdb_id)
+	   and genofeat_feature_zdb_id=fmrel_ftr_zdb_id
+	   and fmrel_mrkr_zdb_id=lnkgmem_member_zdb_id
+           and lnkgmem_linkage_zdb_id=lnkg_zdb_id
+           and lnkg_or_lg='$lg';">
+  <?/MISQL>
 
-    <?MIBLOCK COND="$(XST,$pubI)">
-	<?MISQL SQL="
-		select count(*)::integer
-		  from $target_table
-		 where line_type = 'mutant'
-		   and recattrib_source_zdb_id = '$pubId' 
-		   and a.fish_id = recattrib_data_zdb_id
-	           and a.locus in (
-			select recattrib_data_zdb_id
-			  from record_attribution
-		 	 where recattrib_source_zdb_id = '$pubId'
-				);">
-	  <?MIVAR>$(SETVAR,$num_recs,$(-,$num_recs,$1))<?/MIVAR>	
-	<?/MISQL>
-    <?/MIBLOCK> 	
+  <?MISQL SQL="insert into $fishselect_temp_on_lg (g_zdb_id)
+        select genofeat_geno_zdb_id  
+	  from genotype_feature,linkage_member,linkage
+	 where not exists (select 'x' from $fishselect_temp_on_lg
+                                     where g_zdb_id = genofeat_geno_zdb_id)
+	   and genofeat_feature_zdb_id=lnkgmem_member_zdb_id
+	   and lnkgmem_linkage_zdb_id=lnkg_zdb_id
+           and lnkg_or_lg='$lg';">    
+  <?/MISQL>   
+  
+  <?MISQL SQL="insert into $fishselect_temp_on_lg (g_zdb_id)
+        select genofeat_geno_zdb_id  
+	  from genotype_feature,feature_marker_relationship,marker_relationship,linkage_member,linkage
+	 where not exists (select 'x' from $fishselect_temp_on_lg
+                                     where g_zdb_id = genofeat_geno_zdb_id)
+	   and genofeat_feature_zdb_id=fmrel_ftr_zdb_id
+	   and fmrel_mrkr_zdb_id=mrel_mrkr_2_zdb_id
+	   and mrel_mrkr_1_zdb_id=lnkgmem_member_zdb_id
+	   and mrel_type in ('clone contains gene','clone contains small segment')
+           and lnkgmem_linkage_zdb_id=lnkg_zdb_id
+           and lnkg_or_lg='$lg';">  
+  <?/MISQL>
+  
+  <?MISQL SQL="insert into $fishselect_temp_on_lg (g_zdb_id)
+        select genofeat_geno_zdb_id  
+	  from genotype_feature,feature_marker_relationship,marker_relationship,linkage_member,linkage
+	 where not exists (select 'x' from $fishselect_temp_on_lg
+                                     where g_zdb_id = genofeat_geno_zdb_id)
+	   and genofeat_feature_zdb_id=fmrel_ftr_zdb_id
+	   and fmrel_mrkr_zdb_id=mrel_mrkr_1_zdb_id
+	   and mrel_mrkr_2_zdb_id=lnkgmem_member_zdb_id
+	   and mrel_type in ('clone contains gene','clone contains small segment','gene encodes small segment')
+           and lnkgmem_linkage_zdb_id=lnkg_zdb_id
+           and lnkg_or_lg='$lg';">    
+  <?/MISQL> 
+  
 
-    <?MIBLOCK COND="$(=,$num_recs,0)">
+  <?MISQL SQL="insert into $fishselect_temp_on_lg (g_zdb_id)
+	select genofeat_geno_zdb_id  
+          from genotype_feature,feature,mapped_deletion
+	  where not exists (select 'x' from $fishselect_temp_on_lg
+                                      where g_zdb_id = genofeat_geno_zdb_id)
+	    and genofeat_feature_zdb_id=feature_zdb_id
+	    and feature_abbrev=allele
+	    and or_lg='$lg';">
+  <?/MISQL>
+  
+  <?MISQL SQL="insert into $fishselect_temp_on_lg (g_zdb_id)
+	select genofeat_geno_zdb_id  
+          from genotype_feature,feature,mapped_deletion,marker_relationship,linkage_member,linkage
+	  where not exists (select 'x' from $fishselect_temp_on_lg
+                                      where g_zdb_id = genofeat_geno_zdb_id)
+	    and genofeat_feature_zdb_id=feature_zdb_id
+	    and feature_abbrev=allele
+	    and marker_id=mrel_mrkr_2_zdb_id
+	    and mrel_mrkr_1_zdb_id=lnkgmem_member_zdb_id
+	    and mrel_type in ('clone contains gene','clone contains small segment')
+            and lnkgmem_linkage_zdb_id=lnkg_zdb_id
+            and lnkg_or_lg='$lg';"> 
+  <?/MISQL>  
+  
+  <?MISQL SQL="insert into $fishselect_temp_on_lg (g_zdb_id)
+	select genofeat_geno_zdb_id  
+          from genotype_feature,feature,mapped_deletion,marker_relationship,linkage_member,linkage
+	  where not exists (select 'x' from $fishselect_temp_on_lg
+                                      where g_zdb_id = genofeat_geno_zdb_id)
+	    and genofeat_feature_zdb_id=feature_zdb_id
+	    and feature_abbrev=allele
+	    and marker_id=mrel_mrkr_1_zdb_id
+	    and mrel_mrkr_2_zdb_id=lnkgmem_member_zdb_id
+	    and mrel_type in ('clone contains gene','clone contains small segment','gene encodes small segment')
+            and lnkgmem_linkage_zdb_id=lnkg_zdb_id
+            and lnkg_or_lg='$lg';"> 
+  <?/MISQL>  
 
-      <!-- look to see if replaced zdb_id -->
+  <?MIVAR NAME=$moreConstraint> and exists (select 'x' from $fishselect_temp_on_lg where geno_zdb_id = g_zdb_id)
+  <?/MIVAR>  
+  
+  <?MIVAR>$(SETVAR, $constraint, $(CONCAT, $constraint, $moreConstraint))<?/MIVAR>
+<?/MIBLOCK>
 
-      <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-zdb_history.apg';">$1<?/MISQL>
+    <?MICOMMENT> =================================================================
+                          if Mutagen is searched
+         ==============================================================================
+    <?/MICOMMENT>
+<?MIBLOCK COND="$(AND,$(XST,$mutagen),$(NE,$mutagen,any))">
+  <?MICOMMENT> *** Create or reuse temp table *** <?/MICOMMENT>
+  <?MIVAR NAME=$fishselect_temp_on_mutagen>$(CONCAT,fishselect_temp_on_mutagen_,$fsel_session_id)<?/MIVAR>
+  <?MISQL SQL="
+    execute function table_exists('$fishselect_temp_on_mutagen')">
+    <?MISQL COND=$(EC,$1,f) SQL="
+      create temp table $fishselect_temp_on_mutagen (
+        g_zdb_id	 	varchar(50)
+      ) with NO LOG;">
+    <?/MISQL>
+  <?/MISQL>
 
+  <?MISQL SQL="insert into $fishselect_temp_on_mutagen (g_zdb_id)
+	select genofeat_geno_zdb_id  
+          from genotype_feature,feature_assay
+	  where genofeat_feature_zdb_id = featassay_feature_zdb_id 
+            and featassay_mutagen = '$mutagen';">
+  <?/MISQL>
+
+  <?MIVAR NAME=$moreConstraint> and exists (select 'x' from $fishselect_temp_on_mutagen where geno_zdb_id = g_zdb_id)
+  <?/MIVAR>  
+  
+  <?MIVAR>$(SETVAR,$constraint,$(CONCAT,$constraint,$moreConstraint))<?/MIVAR>
+<?/MIBLOCK>
+
+
+    <?MICOMMENT> =================================================================
+                          if Mutation type is searched
+         ==============================================================================
+    <?/MICOMMENT>
+
+<?MIBLOCK COND="$(AND,$(XST,$chrom_change),$(NE, $chrom_change, any))">
+
+  <?MICOMMENT> *** Create or reuse temp table *** <?/MICOMMENT>
+  <?MIVAR NAME=$fishselect_temp_on_type>$(CONCAT,fishselect_temp_on_type_,$fsel_session_id)<?/MIVAR>
+  <?MISQL SQL="
+    execute function table_exists('$fishselect_temp_on_type')">
+    <?MISQL COND=$(EC,$1,f) SQL="
+      create temp table $fishselect_temp_on_type (
+        g_zdb_id	 	varchar(50)
+      ) with NO LOG;">
+    <?/MISQL>
+  <?/MISQL>
+
+  <?MISQL SQL="insert into $fishselect_temp_on_type (g_zdb_id)
+	select genofeat_geno_zdb_id  
+          from genotype_feature,feature
+	  where genofeat_feature_zdb_id = feature_zdb_id 
+            and feature_type = '$chrom_change';">
+  <?/MISQL>
+  
+  <?MIBLOCK COND="$(EC,$chrom_change,Insertion)">
+    <?MISQL SQL="insert into $fishselect_temp_on_type (g_zdb_id)
+	           select genofeat_geno_zdb_id  
+                     from genotype_feature,feature
+	            where genofeat_feature_zdb_id = feature_zdb_id 
+                      and feature_type = 'TRANSGENIC_INSERTION';">
+    <?/MISQL>
+  <?/MIBLOCK>
+  
+  <?MIVAR NAME=$moreConstraint> and exists (select 'x' from $fishselect_temp_on_type where geno_zdb_id = g_zdb_id)
+  <?/MIVAR>  
+  
+  <?MIVAR>$(SETVAR,$constraint,$(CONCAT,$constraint,$moreConstraint))<?/MIVAR>
+<?/MIBLOCK>
+
+    <?MICOMMENT> =================================================================
+                          if filter selection is made
+         ==============================================================================
+    <?/MICOMMENT>
+
+<?MIBLOCK COND="$(OR,$(EC,$fselFilterValue,mutOnly),$(EC,$fselFilterValue,TGonly))">
+
+   <?MISQL COND=$(EC,$debug_timing,t) SQL="
+    execute function get_time()">
+    <br>... $1 Filter section start  ... <br>
+   <?/MISQL>
+
+  <?MICOMMENT> *** Create or reuse temp table *** <?/MICOMMENT>
+  <?MIVAR NAME=$fishselect_temp_on_filter>$(CONCAT,fishselect_temp_on_filter_,$fsel_session_id)<?/MIVAR>
+  <?MISQL SQL="
+    execute function table_exists('$fishselect_temp_on_filter')">
+    <?MISQL COND=$(EC,$1,f) SQL="
+      create temp table $fishselect_temp_on_filter (
+        g_zdb_id	 	varchar(50)
+      ) with NO LOG;">
+    <?/MISQL>
+  <?/MISQL>
+
+  <?MIBLOCK COND="$(EC,$fselFilterValue,mutOnly)">
+    <?MISQL SQL="insert into $fishselect_temp_on_filter (g_zdb_id)
+	          select genofeat_geno_zdb_id  
+                    from genotype_feature,feature
+	           where genofeat_feature_zdb_id = feature_zdb_id 
+                     and (feature_type = 'POINT_MUTATION'
+                       or feature_type = 'TRANSLOC'
+                       or feature_type = 'INVERSION'
+                       or feature_type = 'DEFICIENCY');">
+    <?/MISQL>
+    
+    <?MISQL SQL="insert into $fishselect_temp_on_filter (g_zdb_id)
+	          select genofeat_geno_zdb_id  
+                    from genotype_feature,feature,feature_marker_relationship
+	           where genofeat_feature_zdb_id = feature_zdb_id
+	             and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                     and feature_type = 'INSERTION'
+                     and fmrel_type = 'is allele of';">
+    <?/MISQL>
+    
+  <?MIELSE>
+
+    <?MISQL SQL="insert into $fishselect_temp_on_filter (g_zdb_id)
+	           select genofeat_geno_zdb_id  
+                     from genotype_feature,feature
+	            where genofeat_feature_zdb_id = feature_zdb_id 
+                      and feature_type = 'TRANSGENIC_INSERTION'
+                      and not exists (select 'x' from $fishselect_temp_on_filter where genofeat_geno_zdb_id = g_zdb_id);">
+    <?/MISQL>
+    
+  <?/MIBLOCK>
+    
+  <?MIVAR NAME=$moreConstraint> and exists (select 'x' from $fishselect_temp_on_filter where geno_zdb_id = g_zdb_id)
+  <?/MIVAR>  
+  <?MIVAR>$(SETVAR,$constraint,$(CONCAT,$constraint,$moreConstraint))<?/MIVAR>
+
+  <?MISQL COND=$(EC,$debug_timing,t) SQL="
+    execute function get_time()">
+    <br>... $1 Filter section end  ... <br>
+  <?/MISQL>
+
+
+<?/MIBLOCK>
+
+
+
+  <?MICOMMENT> =================================================================
+                          if Anatomy is searched
+         -------------------------------------------------------------------------------
+         There are two cases that triggers anatomy search:
+
+         1) from fishselect.apg itself, when user typed terms into the anatomy box.
+            In this case, $TA_selected_structures is populated and then converted to
+            a comma separated list stored in $fsel_processed_selected_structures. Variable
+            $include_substructures defines whether substructures need to be included,variable
+            $structure_bool defines whether is a "or" or "and" search for multi-terms.
+
+         2) from other pages, $fsel_anatomy_item_id and $fsel_anatomy_include is passed in
+             
+         
+         =================================================================================
+         
+  <?/MICOMMENT>
+
+  <?MIBLOCK COND="$(OR,$(XST,$fsel_processed_selected_structures),$(XST,$fsel_anatomy_item_id))">
+
+     <?MISQL COND=$(EC,$debug_timing,t) SQL="
+        execute function get_time()">
+        <br>... $1 Anatomy section start  ... <br>
+     <?/MISQL>
+
+     <?MIBLOCK  COND="$(XST,$fsel_processed_selected_structures)">     
+
+       <?MICOMMENT> ---------------------------------------------------------------
+             -- use xpatselectanatverify.apg to retrieve vector list of anatomy zdb
+             -- ids $xpanatv_anatomy_zdb_id_list, as well as boolean value
+             -- $xpanatv_anatomy_error_occured.
+             ---------------------------------------------------------------------
+       <?/MICOMMENT>
+       <?MISQL SQL="select WebExplode(object,'xpanatv_processed_selected_structures=$(URLENCODE,$fsel_processed_selected_structures)&xpanatv_anatomy_error_occured=$fsel_anatomy_error_occured&xpanatv_called_from=mutantpage') from webpages  where id = 'aa-xpatselectanatverify.apg';">  $1  <?/MISQL> 
+    
+       <?MIVAR NAME=fsel_anatomy_error_occured>$xpanatv_anatomy_error_occured<?/MIVAR>  
+       <?MIVAR NAME=item_count>$(VECSIZE,$xpanatv_anatomy_zdb_id_list)<?/MIVAR>
+  
+       <?MIVAR NAME=anatIDs>$(SEPARATE,$xpanatv_anatomy_zdb_id_list,$single_quote$comma$single_quote)<?/MIVAR>
+       <?MIVAR>$(SETVAR,$anatIDs,$single_quote$anatIDs$single_quote)<?/MIVAR>
+
+     <?MIELSE>  
+       <?MICOMMENT> ----- when an anatomy id is passed in --- <?/MICOMMENT>
+       <?MIVAR COND="$(XST,$fsel_anatomy_item_id)" NAME=anatIDs>$single_quote$fsel_anatomy_item_id$single_quote<?/MIVAR>
+       <?MIVAR COND="$(NXST,$fsel_anatomy_include)" NAME=include_substructures>unchecked<?/MIVAR>
+       <?MIVAR NAME=item_count>1<?/MIVAR>
+     <?/MIBLOCK>
+
+
+     <?MICOMMENT>------------------------------------------------------------
+               -- temp table $fishselect_temp_on_anat holds geno zdb ids 
+               ------------------------------------------------------------
+     <?/MICOMMENT>
+     <?MIVAR NAME=$fishselect_temp_on_anat>$(CONCAT,fishselect_temp_on_anat_,$fsel_session_id)<?/MIVAR>
+     <?MISQL SQL="
+       execute function table_exists('$fishselect_temp_on_anat')">
+       <?MISQL COND=$(EC,$1,f) SQL="
+         create temp table $fishselect_temp_on_anat (
+             g_zdb_id	 	varchar(50)
+         ) with NO LOG;">
+       <?/MISQL>
+     <?/MISQL>
+
+     <?MICOMMENT>------------------------------------------------------------
+               -- temp table $fishselect_temp_on_anat_junior holds geno zdb id
+               -- and anatomy zdb id pairs 
+               ------------------------------------------------------------
+     <?/MICOMMENT>
+
+     <?MIVAR NAME=$fishselect_temp_on_anat_junior>$(CONCAT,fishselect_temp_on_anat_junior_,$fsel_session_id)<?/MIVAR>    
+     <?MISQL SQL="
+        execute function table_exists('$fishselect_temp_on_anat_junior')">
+        <?MISQL COND=$(EC,$1,f) SQL="
+           create temp table $fishselect_temp_on_anat_junior (
+             junior_g_zdb_id 		varchar(50),
+             junior_anat_zdb_id         varchar(50)
+            ) with NO LOG;">
+        <?/MISQL>
+     <?/MISQL>
+
+     <?MICOMMENT> -------------------------------------------------------------
+             -- get genotypes directly related to the anatomy terms
+             ---------------------------------------------------------------------
+     <?/MICOMMENT>
+     <?MISQL SQL="
+	insert into $fishselect_temp_on_anat_junior(junior_g_zdb_id, junior_anat_zdb_id)
+	     select genox_geno_zdb_id, apato_entity_a_zdb_id
+	       from genotype_experiment, atomic_phenotype 
+              where genox_zdb_id = apato_genox_zdb_id
+                and apato_entity_a_zdb_id in ($anatIDs);">
+     <?/MISQL>
+     <?MISQL SQL="
+	insert into $fishselect_temp_on_anat_junior(junior_g_zdb_id, junior_anat_zdb_id)
+	     select genox_geno_zdb_id, apato_entity_b_zdb_id
+	       from genotype_experiment, atomic_phenotype 
+              where genox_zdb_id = apato_genox_zdb_id
+                and apato_entity_b_zdb_id in ($anatIDs);">
+     <?/MISQL>    
+
+     <?MICOMMENT> -------------------------------------------------------------
+             -- if include substructure
+             ---------------------------------------------------------------------
+     <?/MICOMMENT>   
+     <?MIBLOCK COND="$(AND,$(XST,$include_substructures),$(NE,$include_substructures,),$(NE,$include_substructures,unchecked))">  
+
+       <?MISQL SQL="
+	insert into $fishselect_temp_on_anat_junior(junior_g_zdb_id, junior_anat_zdb_id)
+	     select genox_geno_zdb_id, allanatcon_container_zdb_id
+	       from genotype_experiment, atomic_phenotype, all_anatomy_contains
+              where genox_zdb_id = apato_genox_zdb_id
+                and apato_entity_a_zdb_id = allanatcon_contained_zdb_id
+                and allanatcon_container_zdb_id in ($anatIDs);">
+       <?/MISQL>
+       <?MISQL SQL="
+	insert into $fishselect_temp_on_anat_junior(junior_g_zdb_id, junior_anat_zdb_id)
+	     select genox_geno_zdb_id, allanatcon_container_zdb_id
+	       from genotype_experiment, atomic_phenotype, all_anatomy_contains
+              where genox_zdb_id = apato_genox_zdb_id
+                and apato_entity_b_zdb_id = allanatcon_contained_zdb_id
+                and allanatcon_container_zdb_id in ($anatIDs);">
+       <?/MISQL>    <?MICOMMENT>-- end of if include substructures --<?/MICOMMENT>
+
+    <?/MIBLOCK> 
+
+    <?MICOMMENT> -------------------------------------------------------------
+             -- "and" search vs. "or" search 
+             ---------------------------------------------------------------------
+    <?/MICOMMENT>  
+    <?MIBLOCK COND="$(AND,$(XST,$structure_bool),$(EC,$structure_bool,and))">
+
+       <?MISQL SQL="  
+     	 insert into $fishselect_temp_on_anat (g_zdb_id)
+              select junior_g_zdb_id
+                from $fishselect_temp_on_anat_junior
+            group by junior_g_zdb_id
+              having count (distinct junior_anat_zdb_id) = $item_count
+               ;">
+       <?/MISQL>
+    <?MIELSE>
+       <?MISQL SQL="  
+     	 insert into $fishselect_temp_on_anat (g_zdb_id)
+              select distinct junior_g_zdb_id  
+                from $fishselect_temp_on_anat_junior;">
+       <?/MISQL>   
     <?/MIBLOCK>
 
 
-    <!--***-->	
-    <?MIBLOCK COND="$(AND,$(NXST,$new_oid),$(XST,$pubId))">
-      <table width=100% >
- 	<tr> <td align=center> 
+    <?MICOMMENT> ------- Clean up temp table---------------<?/MICOMMENT> 
+    <?MISQL SQL="delete from $fishselect_temp_on_anat_junior;"><?/MISQL>
+
+     <?MICOMMENT> ------- Define constraints for final SQL ---------------<?/MICOMMENT> 
+    <?MIVAR NAME=$moreConstraint> and exists (select 'x' from $fishselect_temp_on_anat where geno_zdb_id = g_zdb_id)
+    <?/MIVAR>
+    <?MIVAR>$(SETVAR,$constraint,$(CONCAT,$constraint,$moreConstraint))<?/MIVAR>
+
+
+    <?MISQL COND=$(EC,$debug_timing,t) SQL="
+      execute function get_time()">
+      <br>... $1 Anatomy section end   ... <br>
+     <?/MISQL>
+ 
+  <?/MIBLOCK>  <?MICOMMENT>--end of $fsel_processed_selected_structures existance check --
+         ===== 
+         =====               end   Anatomy search 
+         ==================================================================================
+  <?/MICOMMENT>
+
+
+<?MICOMMENT> ====================================================== 
+           ===   populate search result table 
+           ==============================================================  
+<?/MICOMMENT>
+
+<?MIBLOCK COND="$(AND,$(NXST,$pubId),$(NXST,$fsel_cnstrct_id),$(NXST,$fsel_marker_id))">
+  <?MIBLOCK COND="$(XST,$fsel_inputname)">
+    <?MIVAR NAME=$sqlStr>insert into $fishselect_temp_match 
+                       (fmatch_zdb_id, fmatch_order, fmatch_precedence, fmatch_matchtext, fmatch_matchtype)
+                     select $target_cols
+                       from $target_tables
+                       $constraint ;
+    <?/MIVAR>
+  <?MIELSE>
+    <?MIVAR NAME=$sqlStr>insert into $fishselect_temp_match 
+                       (fmatch_zdb_id, fmatch_order, fmatch_precedence, fmatch_matchtext, fmatch_matchtype)
+                     select $target_cols
+                       from $target_tables
+                       $constraint ;
+    <?/MIVAR>
+  <?/MIBLOCK>
+<?MIELSE COND="$(AND,$(XST,$pubId),$(NXST,$fsel_cnstrct_id),$(NXST,$fsel_marker_id))">
+<?MICOMMENT> ============= calling from pub page ============= <?/MICOMMENT>
+  <?MIVAR NAME=$sqlStr>insert into $fishselect_temp_match 
+                       (fmatch_zdb_id, fmatch_order, fmatch_precedence, fmatch_matchtext, fmatch_matchtype)
+                     select $target_cols
+                       from genotype,record_attribution,publication
+                       where zdb_id = '$pubId'
+                         and recattrib_source_zdb_id = zdb_id
+                         and recattrib_data_zdb_id = geno_zdb_id;
+  <?/MIVAR>
+  
+<?MIELSE COND="$(AND,$(NXST,$pubId),$(XST,$fsel_cnstrct_id))">
+<?MICOMMENT> ============= calling from construct view page ============= <?/MICOMMENT> 
+  <?MIVAR NAME=$sqlStr>insert into $fishselect_temp_match 
+                       (fmatch_zdb_id, fmatch_order, fmatch_precedence, fmatch_matchtext, fmatch_matchtype)
+                     select genofeat_geno_zdb_id,'','','',''
+                       from genotype_feature,feature_marker_relationship
+                       where fmrel_mrkr_zdb_id = '$fsel_cnstrct_id'
+                         and genofeat_feature_zdb_id = fmrel_ftr_zdb_id;
+  <?/MIVAR>
+
+<?MIELSE COND="$(AND,$(NXST,$pubId),$(XST,$fsel_marker_id))">
+<?MICOMMENT> ============= calling from marker page ============= <?/MICOMMENT> 
+  <?MIVAR NAME=$sqlStr1>insert into $fishselect_temp_match 
+                       (fmatch_zdb_id, fmatch_order, fmatch_precedence, fmatch_matchtext, fmatch_matchtype)
+                     select $target_cols
+                         from genotype,genotype_feature,feature_marker_relationship 
+                        where geno_zdb_id = genofeat_geno_zdb_id
+                          and genofeat_feature_zdb_id = fmrel_ftr_zdb_id 
+                          and fmrel_mrkr_zdb_id = '$fsel_marker_id';
+  <?/MIVAR>
+  
+  <?MIVAR NAME=$sqlStr2>insert into $fishselect_temp_match 
+                       (fmatch_zdb_id, fmatch_order, fmatch_precedence, fmatch_matchtext, fmatch_matchtype)
+                       select $target_cols
+                         from genotype,genotype_feature,feature,mapped_deletion
+                        where not exists (select 'x' from $fishselect_temp_match where geno_zdb_id = fmatch_zdb_id)
+                          and geno_zdb_id = genofeat_geno_zdb_id
+                          and genofeat_feature_zdb_id = feature_zdb_id
+                          and feature_name = allele
+                          and present_t = 'f'
+                          and marker_id = '$fsel_marker_id';
+  <?/MIVAR>  
+<?/MIBLOCK>
+
+
+    <?MICOMMENT> ============= execute the SQL for searching  ============= <?/MICOMMENT>
+    <?MIBLOCK COND="$(NXST,$fsel_marker_id)">      
+      <?MISQL SQL=$sqlStr><?/MISQL>      
+    <?MIELSE>
+      <?MISQL SQL=$sqlStr1><?/MISQL>
+      <?MISQL SQL=$sqlStr2><?/MISQL>
+    <?/MIBLOCK>
+
+
+<?MISQL COND=$(EC,$debug_timing,t) SQL="
+    execute function get_time()">
+    <br>... $1 Search end, Display results start ... <br>
+<?/MISQL>
+
+  <?MICOMMENT> =========================================================================
+          =======    Display Search Reuslts 
+          ================================================================================    
+  <?/MICOMMENT>
+  <?MICOMMENT> ====== total number of distinct Search Results ===== <?/MICOMMENT>
+  <?MISQL SQL="select distinct fmatch_zdb_id from $fishselect_temp_match;">
+  <?/MISQL>
+  <?MIVAR NAME=$num_recs>$MI_ROWCOUNT<?/MIVAR>
+
+  <?MICOMMENT> ================================================
+               ===   display  Title Bar
+               ================================================
+  <?/MICOMMENT>
+    <?MIBLOCK COND="$(XST,$pubId)">
+      <table class="searchresults">
+ 	<tr> 
+ 	 <td align=center> 
 	 <?MIVAR>
-	  <font size="+1">Phenotype Alleles Lists (<b>$num_recs</b> records)
+	  <font size="+1">Mutant / Transgenic Lines (<b>$num_recs</b> $(IF,$(<,$num_recs,2),record,records))
 	  </font>
 	 <?/MIVAR>
-	</td></tr>
+	 </td>
+	 <td width=20% align=center>	 
+	   <!-- Insert a form with one button. Label button Your Input Welcome -->
+	   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>
+	 </td>
+        </tr>
       </table>
 
-    <?MIELSE COND="$(NXST,$new_oid)">	 	
- 
-      <table width=100% cellpadding=0 cellspacing=0 border=0>
+    <?MIELSE>  
+      <table class="searchresults">
 	<tr>
 	  <td width=20%>&nbsp;</td>
 	  <td width=60% align=center>
+            &nbsp;<br/>
 	    <?MIVAR>
-	      <font size="+1">Mutant / Transgenic Lines Search Results (<b>$num_recs</b> records found.)
+	      <font size="+1">Mutant / Transgenic Lines Search Results (<b>$num_recs</b> $(IF,$(<,$num_recs,2),record found,records found))
 	      </font>
 	    <?/MIVAR>
 	  </td>
@@ -467,405 +972,481 @@ Startframes.apg will pass this variables on to the select form.
 	  </td>
 	</tr>
       </table>
+   <?/MIBLOCK>
 
-    <?/MIBLOCK>    
+    <?MIVAR name=$row_color>#FFFFFF<?/MIVAR>
 
+    <?MIVAR NAME=$rowNUM>$BEGIN<?/MIVAR>
 
-    <?MIBLOCK COND="$(>,$num_recs,0)">
-      <br>
+    <?MIVAR NAME=$curviewer><?/MIVAR>
 
-      <TABLE width="100%" border="0" cellspacing="0" cellpadding="3">
-	<TH> </TH>
-	<TH>Allele [previous names]</TH>
-	<TH>Locus (abbrev) [previous names]</TH>
-	<TH>Gene</TH> 
-	<TH>Mut. Type</TH> 
-	<TH>Map</TH>
-
-	<!--- EXECUTION --->
-	<!--- Query Database --->
-	<?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
-	  select distinct 
-		 name, fish_id, abbrev, get_allele_html(allele), chrom_change, chrom_num,
-		 locus, gene_abbrev, gene_id, fishsearch_name_order, 
-		 fishsearch_allele_order 
-	    from $target_table 
-	    where line_type = 'mutant' 
-		  $mut_constraint_query 
-	    $order_by;">
-	  <?MIVAR NAME=$gene_id>$9<?/MIVAR>
-	  <?MIVAR NAME=$gene_abbrev>$8<?/MIVAR>
-	  <?MIVAR NAME=$name>$1<?/MIVAR>
-	  <?MIVAR NAME=$q_mutagen>$4<?/MIVAR>
-	  <?MIVAR NAME=$q_chrom_change>$5<?/MIVAR>
-	  <?MIVAR NAME=$q_chrom_num>$6<?/MIVAR>
-	  <?MIVAR NAME=$locus>$7<?/MIVAR>
-	  <?MIVAR NAME=$q_allele>$4<?/MIVAR>
-	  <?MIVAR NAME=$fish_id>$2<?/MIVAR>
-	  <?MIVAR NAME=$q_abbrev>$3<?/MIVAR>
-
-	  <TR align=left border="0" cellspacing="0" cellpadding="3" valign=top bgcolor="$row_color"> 
-	    <TD>
-	    <!-- 
-<?MIVAR>$target_table<?/MIVAR>
--->
-	      $(IF,$(XST,$return_rec),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$fish_id">SELECT</A>",&nbsp;) 
-	    </TD>
-	    <TD valign=top> 
-	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$fish_id" >$q_allele</A>
-	      <?MIBLOCK COND="$(AND,$(NC,$q_abbrev,),$(NC,$q_abbrev,xxx),$(NC,$q_abbrev,NULL))">
-		<?MIVAR>
-		  <i>($q_abbrev)</i></b>
-		<?/MIVAR>
-	      <?/MIBLOCK>
+  <?MIVAR NAME=fsel_rec_feature_name><?/MIVAR>
+  <?MIVAR NAME=fsel_rec_feature_id><?/MIVAR>
+  <?MIVAR NAME=fsel_rec_feature_type><?/MIVAR>
+  <?MIVAR NAME=rec_counter>0<?/MIVAR>
+  <?MIVAR NAME=anat_short_lists><?/MIVAR>
+  <?MIVAR NAME=anat_long_lists><?/MIVAR>
+  <?MIVAR NAME=anat_left_arrows><?/MIVAR>
+  <?MIVAR NAME=anat_right_arrows><?/MIVAR>
+  <?MIVAR NAME=anat_longlist_lens><?/MIVAR>
 
 
-	      <!-- allele_name contains all names pull aliases only -->
-	      <?MISQL SQL="
-		select distinct dalias_alias 
-		  from data_alias, fish_search 
-		  where fish_id = '$fish_id' 
-		    and dalias_data_zdb_id = alt_zdb_id;">
-		<?MIVAR COND="$(=,$MI_CURRENTROW,1)">&nbsp;[<?/MIVAR>
-		<?MIVAR COND="$(>,$MI_CURRENTROW,1)">;<?/MIVAR>$1
-	      <?/MISQL>
+  <?MICOMMENT> =======================================================
+               ===   display Records, one per row
+               =======================================================
+  <?/MICOMMENT>   
+<table class="searchresults">
 
-	      <?MIVAR COND="$(>=,$MI_CURRENTROW,1)">]<?/MIVAR>
+  <?MIVAR NAME=displayTitle>f<?/MIVAR>
+  <?MIVAR COND=$(XST,$fsel_inputname) NAME=fsel_displayed_list><?/MIVAR>
 
-	    </TD> 
+  <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="select distinct fmatch_zdb_id,fmatch_order,fmatch_precedence from $fishselect_temp_match order by fmatch_order,fmatch_precedence;">
+    <?MIVAR NAME=fsel_displayRow>t<?/MIVAR>
+    <?MIVAR>$(SETVAR,$rec_counter,$(+,$rec_counter,1))<?/MIVAR>
+    <?MIVAR NAME=$genotypeid>$1<?/MIVAR>
 
-	    <TD>
-	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$locus" >$name</A> 
-	      <?MIBLOCK COND="$(AND,$(NC,$q_abbrev,),$(NC,$q_abbrev,xxx),$(NC,$q_abbrev,NULL))">
-		<?MIVAR>
-		  <i>($q_abbrev)</i></b>
-		<?/MIVAR>
-	      <?/MIBLOCK>
+    <?MIBLOCK COND="$(XST,$fsel_inputname)">
+      <?MIBLOCK INDEX=$fsel_displayed_id FOREACH=$fsel_displayed_list>
+        <?MIBLOCK COND="$(EC,$genotypeid,$fsel_displayed_id)">
+          <?MIVAR>$(SETVAR,$fsel_displayRow,f)<?/MIVAR>
+        <?/MIBLOCK>
+      <?/MIBLOCK>
+      <?MIVAR>$(VECAPPEND,$fsel_displayed_list,$genotypeid)<?/MIVAR>
+    <?/MIBLOCK>
 
-	      <?MIVAR NAME=$found>false<?/MIVAR>
-	      <?MISQL SQL="
-		select distinct dalias_alias
-		  from data_alias 
-		  where dalias_data_zdb_id = '$fish_id';">
-		<?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(NC,$found,true))">&nbsp;[<?/MIVAR>
-		<?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(EC,$found,true))">;<?/MIVAR>
-		<?MIVAR COND="$(=,$MI_CURRENTROW,1)" NAME=$found>true<?/MIVAR>
-		<?MIVAR COND="$(>,$MI_CURRENTROW,1)">;<?/MIVAR>$1
-	      <?/MISQL>
-
-	      <?MISQL SQL="
-		select distinct dalias_alias
-		  from data_alias, fish
-		  where dalias_data_zdb_id = fish.locus
-		     and fish.zdb_id = '$fish_id';">
-		<?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(NC,$found,true))">&nbsp;[<?/MIVAR>
-		<?MIVAR COND="$(AND,$(=,$MI_CURRENTROW,1),$(EC,$found,true))">;<?/MIVAR>
-		<?MIVAR COND="$(=,$MI_CURRENTROW,1)" NAME=$found>true<?/MIVAR>
-		<?MIVAR COND="$(>,$MI_CURRENTROW,1)">;<?/MIVAR>$1
-	      <?/MISQL>
-	      <?MIVAR COND="$(EC,$found,true)">]<?/MIVAR>
-
-	      </font>
-	    </TD>
-
-	    <TD align=center>
-	      $(IF,$(NC,$gene_id,unknown),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$gene_id >$gene_abbrev</A>,&nbsp;&nbsp;-&nbsp;&nbsp;)
-	    </TD>
-
-	    <TD align=center> 
-	      $(IF,$(OR,$(EC,$q_chrom_change,NULL),$(EC,$q_chrom_change,unknown)),&nbsp;&nbsp;-&nbsp;&nbsp;,$q_chrom_change)</font> 
-	    </TD> 
-
- 	    <TD><?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini&split=break&hide_empty=t&oID=$fish_id') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
-            </TD>
-
-	    </TR>
-
-	    <!--    change row_color    -->
-	    <?MIVAR name=$row_color>$(IF,$(EC,$row_color,#FFFFFF),$highlight,#FFFFFF)<?/MIVAR>
-
-	<?/MISQL>
-      </TABLE>
-
-      <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No matching records found<?/MIVAR>
- 
-
-
- 
-
-      <!-- ends if no overflow -->
-    <?/MIBLOCK> <!-- end of num_recs gt 0 -->
-  <?/MIBLOCK>  <!-- ends the mutant case -->
-
-
-  <?MIBLOCK COND="$(AND,$(NC,$line_type,mutant),$(NC,$line_type,accession))">
-  <center>
-    Search Wild-Type Lines: Result Summary<br>
-    (Click on individual stocks for more detail)
-    </center> 
-    <p>
-    <TABLE width=100%>
-      <TH> </TH>
-      <TH align=left>Strain</TH>
-      <TH align=left>Current Source(s)</TH>
-
-
-      <?MIVAR NAME=$MI_NULL><?/MIVAR>
-      <!--- EXECUTION --->
-      <!--- Query Database --->
-      <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="
-        select a.name, a.zdb_id, a.abbrev
-	  from fish a
-	  where line_type = 'wild type' 
-	    $constraint 
-	  order by a.name;">
-	<?MIVAR NAME=$fish_name>$1<?/MIVAR>
-	<?MIVAR NAME=$fish_zdb_id>$2<?/MIVAR>
-	<?MIVAR NAME=$fish_abbrev>$3<?/MIVAR>
-	<TR valign=top bgcolor="$row_color"> 
-          <TD> 
-            $(IF,$(XST,$return_rec),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$fish_zdb_id" >SELECT</A>") 
-          </TD>
-	  <TD>
-	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$fish_zdb_id">$fish_name</A> ($fish_abbrev)  
-	  </TD>
-          <TD valign=top>
-	    <?MISQL SQL="
-	      select idsup_supplier_zdb_id, get_obj_name(idsup_supplier_zdb_id)
-		from int_data_supplier
-		where idsup_data_zdb_id = '$fish_zdb_id'
-		order by 2;">
-	      <?MIVAR NAME=$supplier_zdb_id>$1<?/MIVAR>
-	      <?MIVAR NAME=$supplier_name>$2<?/MIVAR>
-	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sourceview.apg&OID=$supplier_zdb_id">$supplier_name</A><BR>
-	    <?/MISQL>
-          </TD>  
-        </TR>
-      <?/MISQL>
-    </TABLE>
-    <?MIVAR name=$num_recs>$MI_ROWCOUNT<?/MIVAR>
-    <?MIVAR COND="$(=,$MI_ROWCOUNT,0)">No matching records found<?/MIVAR>
-
-  <?/MIBLOCK>  <!-- ends the wild type case -->
-
-  <!--  search for zdb id for accession lister  -->
-
-  <?MIBLOCK COND="$(EC,$line_type,accession)">
-    <?MISQL SQL="select count(distinct a.zdb_id)::integer from fish a, lab b where  a.lab=b.zdb_id and a.zdb_id = '$OID';"><?/MISQL>
-    <?MIVAR NAME=$num_recs>$1<?/MIVAR>
-
-  <?MIBLOCK COND="$(=,$num_recs,0)">
-
-    <!-- look to see if replaced zdb_id -->
-
-    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-zdb_history.apg';">$1<?/MISQL>
-
-  <?/MIBLOCK>
-
-  <?MIBLOCK COND="$(NXST,$new_oid)"> 
-    <table width=100% cellpadding=0 cellspacing=0 border=0>
-    <center>
-      <tr>
-	<td width=20%>&nbsp;</td>
-	<td width=60% align=center>
-	  <?MIVAR>
-	    <font size="+1">Fish Lines Search Results (<b>$num_recs</b> records found.)
-	    </font>
-	  <?/MIVAR>
-	</td>
-	<td width=20% align=center>
-	  <a href=#modify>Modify Search</a>
-
-	<!-- Insert a form with one button. Label button Your Input Welcome -->
-	  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>
-	</td>
-      </tr>
-    </table>
-
-    (Click on individual stocks for more detail)
-    </center> 
-    <p>
-    <TABLE width=100%>
-    <TH> </TH><TH align=left>Strain</TH> <TH align=left>Lab</TH>
-
-     <!-- <?MIVAR>where $constraint<?/MIVAR> use for debugging -->
-
-
-    <!--- EXECUTION --->
-    <!--- Query Database --->
-    <?MISQL WINSTART=$BEGIN WINSIZE=$WINSIZE
-	    SQL="select a.name, a.zdb_id, a.abbrev, b.name,b.zdb_id from fish a, lab b where  a.lab=b.zdb_id and a.zdb_id = '$OID' order by a.name;">
-
-    <TR valign=top> <TD> 
-    $(IF,$(XST,$return_rec),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$2">SELECT</A>") 
-    </TD>
-    <TD valign=top> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$2">$1</A> ($3) </TD>  
-    <TD><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labview.apg&OID=$5">$4</TD>
-    </TR>
+  <?MIBLOCK COND="$(EC,$fsel_displayRow,t)">
+    <?MISQL SQL="select first 1 fmatch_matchtext,fmatch_matchtype,fmatch_order,fmatch_precedence
+	           from $fishselect_temp_match
+	           where fmatch_zdb_id = '$1'
+	           order by fmatch_order,fmatch_precedence;">
+      <?MIVAR NAME=$matchedText>$1<?/MIVAR>
+      <?MIVAR NAME=$matchedType>$2<?/MIVAR>
     <?/MISQL>
-    </TABLE>
+    
+    <?MIBLOCK COND="$(EC,$displayTitle,f)">
+    
+      <?MICOMMENT> ========== determine column width =============== 
+      <?/MICOMMENT>       
+      <?MIVAR NAME=$widthSpace>1%<?/MIVAR>   
+      <?MIVAR NAME=$widthAllele>19%<?/MIVAR>
+      <?MIVAR NAME=$widthPZ>18%<?/MIVAR>      
+      <?MIVAR NAME=$widthType>19%<?/MIVAR>
+      <?MIVAR NAME=$widthGene>18%<?/MIVAR>
+      <?MIVAR NAME=$widthLG>24%<?/MIVAR>         
+    
+      <?MIBLOCK COND="$(XST,$fsel_inputname)">  
+        <?MIVAR NAME=$widthGeno>21%<?/MIVAR>
+        <?MIVAR NAME=$widthPheno>11%<?/MIVAR>        
+        <?MIVAR NAME=$widthInnerTable>49%<?/MIVAR>
+        <?MIVAR NAME=$widthMatching>18%<?/MIVAR>            
+           
+      <?MIELSE>
+        <?MIVAR NAME=$widthGeno>25%<?/MIVAR>
+        <?MIVAR NAME=$widthPheno>15%<?/MIVAR> 
+        <?MIVAR NAME=$widthInnerTable>59%<?/MIVAR> 
+        <?MIVAR NAME=$widthMatching>0%<?/MIVAR>
+         
+      <?/MIBLOCK>
 
-  <?/MIBLOCK>    
+    
+      <?MICOMMENT> ========== display heading =============== <?/MICOMMENT> 
+      <TR>  
+        <?MIVAR><th  width=$widthGeno><b>Genotype(Background)</b></th><?/MIVAR>   
+        <?MIVAR><th width=$widthSpace%>&nbsp;</th><?/MIVAR>
+        <?MIVAR><th  width=$widthPheno><b>Phenotype</b></th><?/MIVAR>   
+           
+        <?MIVAR><th  width=$widthInnerTable><?/MIVAR>
+          <table class="searchresults"><tr>
+            <?MIVAR><th  width=$widthAllele><b>Allele</b></th><?/MIVAR>
+            <?MIVAR><th  width=$widthPZ><b>Parental Zygosity</b></th><?/MIVAR>             
+            <?MIVAR><th  width=$widthType><b>Type</b></th><?/MIVAR> 
+            <?MIVAR><th width=$widthSpace%>&nbsp;</th><?/MIVAR>                   
+            <?MIVAR><th  width=$widthGene><b>Affected Gene(s)</b></th><?/MIVAR>
+            <?MIVAR><th width=$widthSpace%>&nbsp;</th><?/MIVAR>     
+            <?MIVAR><th  width=$widthLG><b>&nbsp;LG</b></th><?/MIVAR>
+          </tr></table>          
+        </th>
 
-  <?/MIBLOCK>  <!-- ends the accession case -->
+        <?MIBLOCK COND="$(XST,$fsel_inputname)">
+	  <?MIVAR><th  width=$widthMatching><b>Matching Text</b></th><?/MIVAR>
+        <?/MIBLOCK>           
+      </TR>
+      
+    <?/MIBLOCK> <?MICOMMENT>===== end of heading display ===<?/MICOMMENT>
+    
+    <?MIVAR>$(SETVAR,$displayTitle,t)<?/MIVAR>   
 
-  <BR>
+    <?MIBLOCK COND="$(EC,$row_color,$highlight)">   
+      <?MIVAR>$(SETVAR,$row_color,#FFFFFF)<?/MIVAR>
+    <?MIELSE>
+      <?MIVAR>$(SETVAR,$row_color,$highlight)<?/MIVAR>
+    <?/MIBLOCK>
 
-  <Center>
-  <Table width="70%" border="0">
-    <tr>
-      <td width="45%" align=right valign=top>&nbsp;
+    <?MICOMMENT> start new row and column <?/MICOMMENT>
+    <TR bgcolor="<?MIVAR>$row_color<?/MIVAR>"> 
+    
+    <?MICOMMENT> ============== Genotype ============= <?/MICOMMENT>
+           
+      <?MISQL SQL="
+	select get_geno_name_with_bg_html_link(geno_zdb_id)
+ 	  from genotype
+         where geno_zdb_id = '$genotypeid'">
+         <?MIVAR NAME=fsel_geno_html>$1<?/MIVAR> 
+      <?/MISQL>
+           
+      <?MIVAR><TD align=left width=$widthGeno>$fsel_geno_html</TD><?/MIVAR>  
 
-       <!-- to be used by walking windows -->
-       <!-- want GET string as short as possible - append only when variable exists, buffer overflow may cause segmentation fault -->
+      <?MIVAR><th width=$widthSpace%>&nbsp;</th><?/MIVAR>
+
+      <?MICOMMENT> ================ Phenotype ========== <?/MICOMMENT>
+      <?MIVAR><TD align=left width=$widthPheno><?/MIVAR>
+        <?MIVAR NAME=fsel_img_count>0<?/MIVAR>
+        <?MISQL SQL="select distinct apatofig_fig_zdb_id
+                       from apato_figure,atomic_phenotype,genotype_experiment
+                      where apatofig_apato_zdb_id = apato_zdb_id
+                        and apato_genox_zdb_id = genox_zdb_id
+                        and genox_geno_zdb_id = '$genotypeid'
+                   group by apatofig_fig_zdb_id;">
+           <?MIVAR NAME=fsel_fig_id>$1<?/MIVAR>
+           <?MISQL SQL="select count(img_zdb_id) from image where img_fig_zdb_id = '$fsel_fig_id';">
+             <?MIVAR NAME=fsel_img_count_per_fig>$1<?/MIVAR>
+           <?/MISQL> 
+           <?MIVAR>$(SETVAR,$fsel_img_count,$(+,$fsel_img_count,$fsel_img_count_per_fig))<?/MIVAR>
+      <?/MISQL>  
+      <?MIVAR NAME=fsel_fig_count>$MI_ROWCOUNT<?/MIVAR>
+      <?MIBLOCK COND="$(>,$fsel_fig_count,0)"> 
+          <?MIVAR NAME=fsel_anat_list><?/MIVAR>
+               <?MISQL SQL="select distinct anatitem_name,anatitem_name_order 
+                 from anatomy_item,atomic_phenotype,genotype_experiment 
+                 where apato_genox_zdb_id = genox_zdb_id 
+                   and (apato_entity_a_zdb_id = anatitem_zdb_id 
+		    or apato_entity_b_zdb_id = anatitem_zdb_id)
+                   and genox_geno_zdb_id = '$genotypeid'
+       	           order by anatitem_name_order;">  
+                 <?MIVAR>$(SETVAR,$fsel_anat_list[$MI_CURRENTROW],$1)<?/MIVAR>
+               <?/MISQL> 
+        <?MIVAR NAME=fsel_separate_anat_list SEPARATE=", ">$fsel_anat_list<?/MIVAR>
+        <?MIBLOCK COND="$(=,$fsel_fig_count,1)">
+          <?MIVAR><span title="Affected Anatomy: $fsel_separate_anat_list"><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$fsel_fig_id'>$fsel_fig_count figure(s) <?/MIVAR><?MIVAR>$(IF,$(>,$fsel_img_count,0),<img src="/images/camera_icon.gif" border="0" alt="with image">,)</A></span><?/MIVAR>
+        <?MIELSE>
+          <?MIVAR><span title="Affected Anatomy: $fsel_separate_anat_list"><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pheno_summary.apg&OID=$genotypeid'>$fsel_fig_count figure(s) <?/MIVAR><?MIVAR>$(IF,$(>,$fsel_img_count,0),<img src="/images/camera_icon.gif" border="0" alt="with image">,)</A></span><?/MIVAR>
+        <?/MIBLOCK>
+        <?MIVAR>$(UNSETVAR,$fsel_separate_anat_list)<?/MIVAR>
+        <?MIVAR>$(UNSETVAR,$fsel_anat_list)<?/MIVAR>
+      <?/MIBLOCK>
+      </TD>
+     
+      <?MICOMMENT> ====== Innner table: Allele, Parental Zygosity, Type,  Affected Gene(s), LG ========== <?/MICOMMENT>
+
+      <?MIVAR><TD align=left width=$widthInnerTable><?/MIVAR>
+        <table width=100% border=0 cellspacing=0>
+          <?MISQL SQL="select distinct feature_name,feature_abbrev_order,feature_zdb_id,lower(ftrtype_type_display),feature_abbrev,get_genofeat_mp_zyg_html_display(genofeat_zdb_id) 
+     	               from feature,genotype_feature,feature_type
+     	               where feature_zdb_id = genofeat_feature_zdb_id
+     	                 and genofeat_geno_zdb_id = '$genotypeid'
+     	                 and feature_type = ftrtype_name
+     	                 order by feature_abbrev_order;">
+     	    <tr bgcolor="<?MIVAR>$row_color<?/MIVAR>">
+              <?MIVAR>$(SETVAR,$fsel_rec_feature_name,$1)<?/MIVAR>
+              <?MIVAR>$(SETVAR,$fsel_rec_feature_id,$3)<?/MIVAR>
+              <?MIVAR>$(SETVAR,$fsel_rec_feature_type,$4)<?/MIVAR>
+              <?MIVAR>$(SETVAR,$fsel_rec_feature_abbrev,$5)<?/MIVAR>
+              <?MIVAR>$(SETVAR,$fsel_rec_parentalzygosity,$6)<?/MIVAR>
+                 
+              <?MICOMMENT> ============== Allele ============= <?/MICOMMENT>
+              <?MIVAR NAME=fsel_rec_fmrel><?/MIVAR>
+              <?MIVAR NAME=fsel_is_allele_of>is allele of<?/MIVAR>
+              <?MIVAR NAME=fsel_is_allele_of_flag>f<?/MIVAR>
+              <?MISQL SQL="select fmrel_type  
+                             from feature, feature_marker_relationship
+	                    where feature_zdb_id = fmrel_ftr_zdb_id
+	                      and feature_name = '$fsel_rec_feature_name';">
+	         <?MIVAR>$(SETVAR,$fsel_rec_fmrel,$1)<?/MIVAR>
+	         <?MIBLOCK COND="$(EC,$fsel_rec_fmrel,$fsel_is_allele_of)">
+	           <?MIVAR>$(SETVAR,$fsel_is_allele_of_flag,t)<?/MIVAR>
+	         <?/MIBLOCK>
+              <?/MISQL>              
+             
+              <?MIVAR><TD align=left width=$widthAllele> 
+                               
+                <?MIBLOCK COND="$(EC,$fsel_is_allele_of_flag,t)">               
+                  <?MIVAR>$(IF,$(OR,$(EC,$(SUBSTR,$fsel_rec_feature_abbrev,1,3),un_),$(>,$(POSITION,$fsel_rec_feature_abbrev,unspecified),0)),unspecified,$fsel_rec_feature_abbrev)<?/MIVAR>
+                <?MIELSE>
+                  &nbsp;
+                <?/MIBLOCK>
+              </TD><?/MIVAR>
+              
+              <?MICOMMENT> ============== Parental Zygosity ============= <?/MICOMMENT>
+              <?MIVAR><TD align=left width=$widthPZ>   
+                $fsel_rec_parentalzygosity
+              </TD><?/MIVAR>
+           
+              <?MICOMMENT> ============== Type ============= <?/MICOMMENT>
+              <?MIVAR><TD align=left width=$widthType>$fsel_rec_feature_type
+              </TD><?/MIVAR>     
+ 
+              <?MIVAR><TD width=$widthSpace%>&nbsp;</TD><?/MIVAR>  
+ 
+              <?MICOMMENT> ============== Affected Gene(s) ============= <?/MICOMMENT>
+              <?MIVAR><TD align=left width=$widthGene><?/MIVAR>                       
+              <?MIVAR NAME=fsel_affectedGenes><?/MIVAR>
+              <?MISQL SQL="
+	        select get_mrkr_abbrev_html_link(fmrel_mrkr_zdb_id)
+                  from feature_marker_relationship
+     	         where fmrel_ftr_zdb_id = '$fsel_rec_feature_id'
+                   and fmrel_type = 'is allele of'
+                UNION
+                select get_mrkr_abbrev_html_link(marker_id)
+          	  from mapped_deletion
+         	 where allele = '$fsel_rec_feature_name'
+		   and marker_id[1,8] = 'ZDB-GENE'
+		   and present_t = 'f';">  
+		<?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
+	          <?MIVAR>$(SETVAR,$fsel_affectedGenes,$1)<?/MIVAR>
+	        <?MIELSE>
+       		  <?MIVAR>$(SETVAR,$fsel_affectedGenes,$(CONCAT,$fsel_affectedGenes,$comma $1))<?/MIVAR>
+    	        <?/MIBLOCK>
+              <?/MISQL>
+              <?MIVAR>$fsel_affectedGenes<?/MIVAR>
+              </TD>           
+             
+              <?MIVAR><TD width=$widthSpace%>&nbsp;</TD><?/MIVAR>
+   
+              <?MICOMMENT> ============== LG ============= <?/MICOMMENT>
+              <?MIVAR><TD align=left width=$widthLG class="anatomy"><?/MIVAR>
+              <?MISQL NAME=$slimChrString 
+                SQL="select WebExplode(object,'&mapdetails_mode=mini_slim&oID=$fsel_rec_feature_id') 
+                       from webPages where ID='aa-mappingdetail.apg';">
+                $1
+              <?/MISQL>    
+        
+              <?MIVAR NAME=$posOfNone>$(POSITION,$slimChrString,"None")<?/MIVAR>  
+              <?MIVAR>$(IF,$(=,$posOfNone,0),$slimChrString,&nbsp;)<?/MIVAR> 
+
+              </TD>
+            <tr>
+          <?/MISQL>
+          
+        </table></TD>
+           
+           <?MICOMMENT> ======== display Matching Text if there is input in Name textfield ====== <?/MICOMMENT>
+           <?MIBLOCK COND="$(XST,$fsel_inputname)">
+	     <?MIVAR><TD align=left width=$widthMatching><?/MIVAR>
+	      <?MIVAR NAME=start_pos>$(POSITION,$(LOWER,$matchedText),$fsel_inputname)<?/MIVAR>
+	      <?MIVAR NAME=str_length>$(STRLEN,$fsel_inputname)<?/MIVAR>
+
+	      <?MIBLOCK COND="$(EC,$matchedType,Current name)">
+	        <?MIVAR name=matchedTypeDisplay>Gene name<?/MIVAR>
+	      <?MIELSE COND="$(EC,$matchedType,Current symbol)"> 
+	        <?MIVAR name=matchedTypeDisplay>Gene symbol<?/MIVAR>
+	      <?MIELSE COND="$(EC,$matchedType,Previous name)">
+	        <?MIVAR name=matchedTypeDisplay>Gene alias<?/MIVAR>  
+	      <?MIELSE>
+	        <?MIVAR name=matchedTypeDisplay>$matchedType<?/MIVAR>
+	      <?/MIBLOCK>
+	      
+	      <?MIVAR>$matchedTypeDisplay: $(SUBSTR,$matchedText,1,$(-,$start_pos,1))<b>$(SUBSTR,$matchedText,$start_pos,$str_length)</b>$(SUBSTR,$matchedText,$(+,$start_pos,$str_length))<?/MIVAR>	
+             </TD>   
+	          
+           <?/MIBLOCK>           
+         </TR>
+      <?/MIBLOCK> <?MICOMMENT> ==  end of whether to display the row or not
+         
+ <?/MISQL>
+
+    <?MIBLOCK COND="$(XST,$fsel_inputname)">
+      <?MIVAR>$(UNSETVAR,$fsel_displayed_list)<?/MIVAR>
+    <?/MIBLOCK>
+
+ </table>   <?MICOMMENT> ==  end of Display Search Results 
+    ====
+    =========================================================================================
+  <?/MICOMMENT>  
 
 
-        <?MIVAR name=comment>  Build array of user data  <?/MIVAR>
+  <?MICOMMENT> ==================================================
+          ====         Display  walking window
+ 	  =================================================================
+  <?/MICOMMENT>
+    <Center>
 	<?MIVAR name=selector>MIval=aa-fishselect.apg&WINSIZE=$WINSIZE<?/MIVAR>
-        <?MIVAR name=UserInput><?/MIVAR>
-	<!--***-->
+        <?MIVAR name=UserInput><?/MIVAR>   
 	<?MIBLOCK COND="$(XST,$pubId)">
 	  <?MIVAR name=UserInput>$UserInput&pubId=$pubId<?/MIVAR>
 	<?MIELSE>
-	  <?MIVAR name=UserInput COND=$(XST,$allele)>$UserInput&allele=$allele<?/MIVAR>
-	  <?MIVAR name=UserInput COND=$(XST,$abbrev)>$UserInput&abbrev=$abbrev<?/MIVAR>
-	  <?MIVAR name=UserInput COND=$(NC,$chrom_change,unknown)>$UserInput&chrom_change=$chrom_change<?/MIVAR>
-	  <?MIVAR name=UserInput COND=$(EC,$chrom_change,unknown)>$UserInput&chrom_change=any<?/MIVAR>
-	  <?MIVAR name=UserInput COND=$(NC,$mutagen,unknown)>$UserInput&mutagen=$mutagen<?/MIVAR>
-	  <?MIVAR name=UserInput COND=$(EC,$mutagen,unknown)>$UserInput&mutagen=any<?/MIVAR>
-	  <?MIVAR name=UserInput COND=$(XST,$line_type)>$UserInput&line_type=$line_type<?/MIVAR>
-	  <?MIVAR name=UserInput COND=$(XST,$chrom_num)>$UserInput&chrom_num=$chrom_num<?/MIVAR>
-  	  <?MIVAR name=UserInput COND=$(XST,$knowngene)>$UserInput&knowngene=$knowngene<?/MIVAR>
-	  <?MIVAR name=UserInput COND=$(XST,$anon1)>$UserInput&anon1=$anon1<?/MIVAR>
-	  <?MIVAR name=UserInput COND=$(XST,$structures)>$UserInput&structures=$structures<?/MIVAR>
-	  <?MIVAR name=UserInput COND=$(XST,$selected_separator)>$UserInput&selected_separator=$selected_separator<?/MIVAR>
-          <?MIVAR name=UserInput COND=$(XST,$return_rec)>$UserInput&return_rec=$return_rec<?/MIVAR>
-	  <?MIVAR name=UserInput COND=$(XST,$selected)>$UserInput&selected=$(URLENCODE,$selected)<?/MIVAR>
-	  <?MIVAR name=UserInput COND=$(XST,$fname)>$UserInput&fname=$(URLENCODE,$fname)<?/MIVAR>
-          <?MIVAR name=UserInput COND=$(XST,$anon1text)>$UserInput&anon1text=$(URLENCODE,$anon1text)<?/MIVAR>
-          <?MIVAR name=UserInput COND=$(XST,$query_results)>$UserInput&query_results=$(URLENCODE,$query_results)<?/MIVAR>
-	<?/MIBLOCK>
+	  <?MIVAR name=$UserInput>$UserInput&fishsel_calledBySelf=true<?/MIVAR>
+	  <?MIVAR name=UserInput COND=$(XST,$lg)>$UserInput&lg=$lg<?/MIVAR>
+	  <?MIVAR name=UserInput COND=$(XST,$compare)>$UserInput&compare=$compare<?/MIVAR>
+	  <?MIVAR name=UserInput COND=$(XST,$fsel_inputname)>$UserInput&fsel_inputname=$fsel_inputname<?/MIVAR>
+	  <?MIVAR name=UserInput COND=$(XST,$fsel_anatomy_item_id)>$UserInput&fsel_anatomy_item_id=$fsel_anatomy_item_id<?/MIVAR>
+	  <?MIVAR name=UserInput COND=$(XST,$fsel_anatomy_include)>$UserInput&fsel_anatomy_include=$fsel_anatomy_include<?/MIVAR>
+	  <?MIVAR name=UserInput COND=$(XST,$fsel_cnstrct_id)>$UserInput&fsel_cnstrct_id=$fsel_cnstrct_id<?/MIVAR>
+	  <?MIVAR name=UserInput COND=$(XST,$pubId)>$UserInput&pubId=$pubId<?/MIVAR>
+	  <?MIVAR name=UserInput COND=$(XST,$mutagen)>$UserInput&mutagen=$mutagen<?/MIVAR>
+	  <?MIVAR name=UserInput COND=$(XST,$chrom_change)>$UserInput&chrom_change=$chrom_change<?/MIVAR>
+	  <?MIVAR name=UserInput COND=$(XST,$TA_selected_structures)>$UserInput&TA_selected_structures=$(URLENCODE,$TA_selected_structures)<?/MIVAR>
+	  <?MIVAR name=UserInput COND=$(XST,$include_substructures)>$UserInput&include_substructures=$include_substructures<?/MIVAR>
+	  <?MIVAR name=UserInput COND=$(XST,$structure_bool)>$UserInput&structure_bool=$structure_bool<?/MIVAR>
+	  <?MIVAR name=UserInput COND=$(XST,$fselFilterValue)>$UserInput&fselFilterValue=$fselFilterValue<?/MIVAR>
+          <?MIVAR name=$UserInput COND=$(XST,$return_rec)>$UserInput&return_rec=$return_rec<?/MIVAR> 
+          <?MIVAR name=UserInput COND=$(XST,$query_results)>$UserInput&query_results=$query_results<?/MIVAR> 	  
+	  <?MIVAR name=UserInput COND=$(XST,$fsel_processed_selected_structures)>$UserInput&fsel_processed_selected_structures=$(URLENCODE,$fsel_processed_selected_structures)<?/MIVAR>
+	  
+	<?/MIBLOCK>      	
+	
+    <TABLE width="70%" border="0">
+      <TR>
+        <TD width="45%" align=right valign=top>&nbsp;
+          <?MICOMMENT> Return to the previous set of Rows <?/MICOMMENT>
+	  <?MIBLOCK COND="$(>,$BEGIN,1)">
+	    <?MIVAR>
+	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$(-,$BEGIN,$WINSIZE)&BEGIN=$BEGIN&$selector$UserInput">Prev</A>&nbsp;&nbsp;&nbsp;&nbsp;<br>
+	      <?MICOMMENT>
+                If current not First Page, create link to first page. 
+              <?/MICOMMENT>
+	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=1&BEGIN=1&$selector$UserInput">First Page</A>
 
-  <!--- Return to the previous set of Rows --->
-  <?MIBLOCK COND="$(>,$BEGIN,1)">
+	    <?/MIVAR>
+	  <?/MIBLOCK>
+        </TD>
 
-  <?MIVAR>
-	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$(-,$BEGIN,$WINSIZE)&BEGIN=$BEGIN&$selector$UserInput">Prev</A>&nbsp;&nbsp;&nbsp;&nbsp;<br>
+      <?MICOMMENT> Calculate 3 pages before and 3 pages after current page. <?/MICOMMENT>
+      <?MIVAR name=$CURRENT>$(FIX,$(+,$(/,$BEGIN,$WINSIZE),1))<?/MIVAR>
+      <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,3)),0)">
+	<TD valign=top>
+	  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,3))"> $(-,$CURRENT,3)</A> <?/MIVAR>
+	</TD>
+      <?/MIBLOCK>
 
-  <!-- If current not First Page, create link to first page. -->
-	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=1&BEGIN=1&$selector$UserInput">First Page</A>
-  <?/MIVAR>
+      <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,2)),0)">
+	<TD valign=top>
+	  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,2))"> $(-,$CURRENT,2)</A><?/MIVAR>
+	</TD>
+      <?/MIBLOCK>
 
-  <?/MIBLOCK>
+      <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,1)),0)">
+	<TD valign=top>
+	  <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,1))"> $(-,$CURRENT,1)</A><?/MIVAR>
+	</TD>
+      <?/MIBLOCK>
 
-		  </td>
+      <?MIBLOCK COND="$(>,$num_recs,$WINSIZE)">
+	<TD align=center valign=top>
+	  <?MIVAR> $CURRENT <?/MIVAR>
+	</TD>
+      <?/MIBLOCK>
 
+      <?MIVAR COND=$(<=,$(+,$BEGIN,$(*,$WINSIZE,1)),$num_recs)>
+	<TD valign=top>
+	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$END"> $(+,$CURRENT,1)</A>
+	</TD>
+      <?/MIVAR>
 
-  <!-- Calculate 3 pages before and 3 pages after current page. -->
-  <?MIVAR name=$CURRENT>$(FIX,$(+,$(/,$BEGIN,$WINSIZE),1))<?/MIVAR>
+      <?MIVAR COND=$(<=,$(+,$BEGIN,$(*,$WINSIZE,2)),$num_recs)>
+	<TD valign=top>
+	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,2))"> $(+,$CURRENT,2)</A>
+	</TD>
+      <?/MIVAR>
 
-  <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,3)),0)">
-  <td valign=top>
-    <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,3))"> $(-,$CURRENT,3)</A> <?/MIVAR>
-		  </td>
-  <?/MIBLOCK>
+      <?MIVAR COND=$(<=,$(+,$BEGIN,$(*,$WINSIZE,3)),$num_recs)>
+	<TD valign=top>
+	  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,3))"> $(+,$CURRENT,3)</A>
+	</TD>
+      <?/MIVAR>
 
-  <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,2)),0)">
-  <td valign=top>
-    <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,2))"> $(-,$CURRENT,2)</A><?/MIVAR>
-		  </td>
-  <?/MIBLOCK>
+        <TD width="45%" align=left valign=top>&nbsp;
 
-  <?MIBLOCK COND="$(>=,$(-,$BEGIN,$(*,$WINSIZE,1)),0)">
-  <td valign=top>
-    <?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(-,$BEGIN,$(*,$WINSIZE,1))"> $(-,$CURRENT,1)</A><?/MIVAR>
-		  </td>
-  <?/MIBLOCK>
-
-  <?MIBLOCK COND="$(>,$num_recs,$WINSIZE)">
-  <td align=center valign=top>
-	  <?MIVAR>  $CURRENT  <?/MIVAR>
-  </td>
-  <?/MIBLOCK>
-
-
-  <?MIVAR COND=$(<=,$(+,$BEGIN,$(*,$WINSIZE,1)),$num_recs)>
-  <td valign=top>
-  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$END"> $(+,$CURRENT,1)</A>
-		  </td>
-  <?/MIVAR>
-
-  <?MIVAR COND=$(<=,$(+,$BEGIN,$(*,$WINSIZE,2)),$num_recs)>
-  <td valign=top>
-  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,2))"> $(+,$CURRENT,2)</A>
-		  </td>
-  <?/MIVAR>
-
-  <?MIVAR COND=$(<=,$(+,$BEGIN,$(*,$WINSIZE,3)),$num_recs)>
-  <td valign=top>
-  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$(+,$BEGIN,$(*,$WINSIZE,3))"> $(+,$CURRENT,3)</A>
-		  </td>
-  <?/MIVAR>
-
-		  <td width="45%" align=left valign=top>&nbsp;
-
-  <!--- Get the next set of Rows --->
-  <?MIBLOCK COND="$(<=,$(+,$BEGIN,$WINSIZE),$num_recs)">
-    <?MIVAR>
+	<?MICOMMENT> Get the next set of Rows <?/MICOMMENT>
+	<?MIBLOCK COND="$(<=,$(+,$BEGIN,$WINSIZE),$num_recs)">
+	  <?MIVAR>
 	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$END&BEGIN=$BEGIN&$selector$UserInput">Next</A><br>
-    <?/MIVAR>
+	  <?/MIVAR>
 
-    <!-- Calculate last page -->
-    <?MIVAR name=$START COND="$(=,$(MOD,$num_recs,$WINSIZE),0)">$(+,$(*,$(-,$(/,$num_recs,$WINSIZE),1),$WINSIZE),1)<?/MIVAR>
+	  <?MICOMMENT> Calculate last page <?/MICOMMENT>
+	  <?MIVAR name=$START COND="$(=,$(MOD,$num_recs,$WINSIZE),0)">$(+,$(*,$(-,$(/,$num_recs,$WINSIZE),1),$WINSIZE),1)<?/MIVAR>
 
-    <?MIVAR name=$START COND="$(!=,$(MOD,$num_recs,$WINSIZE),0)">$(+,$(*,$(FIX,$(/,$num_recs,$WINSIZE)),$WINSIZE),1)<?/MIVAR>
+	  <?MIVAR name=$START COND="$(!=,$(MOD,$num_recs,$WINSIZE),0)">$(+,$(*,$(FIX,$(/,$num_recs,$WINSIZE)),$WINSIZE),1)<?/MIVAR>
 
-    <?MIVAR>
-      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?$selector$UserInput&START=$START">Last Page</A>
-    <?/MIVAR>
-  <?/MIBLOCK>
+	  <?MIVAR>
+	    <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$START&$selector$UserInput">Last Page</A>
+	  <?/MIVAR>
+	<?/MIBLOCK>
+        </TD>
+      </tr>
+    </Table>
+    </Center> 
+ 
+  <?MICOMMENT>
+    If you get to this point, then the code at least tried to insert records
+    into markerselect_temp_marker.  Therefore always do the delete.
+  <?/MICOMMENT>
 
+  <?MIVAR>$(UNSETVAR,$rec_counter)<?/MIVAR>
+  <?MIVAR>$(UNSETVAR,$anat_short_lists)<?/MIVAR>
+  <?MIVAR>$(UNSETVAR,$anat_long_lists)<?/MIVAR>
+  <?MIVAR>$(UNSETVAR,$anat_left_arrows)<?/MIVAR>
+  <?MIVAR>$(UNSETVAR,$anat_right_arrows)<?/MIVAR>
+  <?MIVAR>$(UNSETVAR,$anat_longlist_lens)<?/MIVAR>
 
-			  &nbsp;
+  <?MISQL COND="$(XST,$fsel_inputname)" 
+          SQL="delete from $fishselect_temp_on_name;">
+  <?/MISQL> 
 
-		  </td>
-	  </tr>
-  </Table>
-  </Center>
+  <?MISQL COND="$(AND,$(XST,$lg),$(NE, $lg, any),$(NE, $lg, 0))" 
+          SQL="delete from $fishselect_temp_on_lg;">
+  <?/MISQL>   
+  
+  <?MISQL COND="$(AND,$(XST,$mutagen),$(NE,$mutagen,any))" 
+          SQL="delete from $fishselect_temp_on_mutagen;">
+  <?/MISQL>     
 
+  <?MISQL COND="$(AND,$(XST,$chrom_change),$(NE, $chrom_change, any))" 
+          SQL="delete from $fishselect_temp_on_type;">
+  <?/MISQL>  
 
+  <?MISQL COND="$(OR,$(EC,$fselFilterValue,mutOnly),$(EC,$fselFilterValue,TGonly))"
+          SQL="delete from $fishselect_temp_on_filter;">
+  <?/MISQL>  
+  
+  
+  <?MISQL COND="$(OR,$(XST,$fsel_processed_selected_structures),$(XST,$fsel_anatomy_item_id))" 
+          SQL="delete from $fishselect_temp_on_anat;">
+  <?/MISQL> 
+  
+  <?MISQL SQL="
+    delete from $fishselect_temp_match;">
+  <?/MISQL> 
+    
+<?/MIBLOCK> <?MICOMMENT> === end of xst query results 
+       ========
+       ======================================================================================
+ <?/MICOMMENT>
 
+<?MISQL COND=$(EC,$debug_timing,t) SQL="
+    execute function get_time()">
+    <br>... $1 Result display end, Form display start ... <br>
+<?/MISQL>
 
-<?/MIBLOCK> <!-- xst query results -->
+<?MICOMMENT> ==========================================================================
+   ======           Search Form Display  
+   ======================================================================================
+<?/MICOMMENT>
 
+<?MIBLOCK COND="$(AND,$(NXST,$accession),$(NXST,$pubId))">  
 
-
-
-<?MIVAR COND="$(NXST,$line_type)" NAME=$line_type>NULL<?/MIVAR>
-
-<!--***-->
-<?MIBLOCK COND="$(AND,$(NXST,$accession),$(NC,$line_type,wild_type),$(NXST,$pubId))">  
-
-<!-- don't want modify search result if come from accessionlister or if wild type being displayed for lineage update -->
-<!-- update_linage indicates this page is being called from fishview (for update or new record) and parentla linage is being specified.  A pulldown menu of line_types is needed in the title bar.  The 'your input welcome' button and it's form do not allow this to happen easily so an miblock has been added so that this mode does not have the input welcome button.  Do not want the modify search option for wild_type -->
-
-
-<?MIVAR COND="$(NXST,$selected_separator)" NAME=$selected_separator>and<?/MIVAR>
-<?MIVAR COND="$(NXST,$chrom_num)" NAME=$chrom_num>0<?/MIVAR>
 <?MIVAR COND="$(NXST,$mutagen)" NAME=$mutagen>any<?/MIVAR>
-<?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>phenotype<?/MIVAR>
+<?MIVAR COND="$(NXST,$lg)" NAME=$lg>0<?/MIVAR>
 <?MIVAR COND="$(NXST,$chrom_change)" NAME=$chrom_change>any<?/MIVAR>
 <?MIVAR NAME=$START>1<?/MIVAR>
 
-<?MIBLOCK COND="$(NXST,$update_lineage)">
    <?MIBLOCK COND="$(NXST,$query_results)">
-    <table class=search width=100% border=0 cellspacing=0 cellpadding=1>
+     <table class=search width=100% border=0 cellspacing=0 cellpadding=1>
        <tr>
 	 <td class=titlebar valign=middle>
-	   <b>&nbsp;&nbsp;Search for MUTANT / TRANSGENIC Lines</b>
+	   <b>&nbsp;&nbsp;Search for mutant / transgenic lines</b>
 	 </td>
    <?MIELSE>
-   <table class=search width=100% border=0 cellspacing=0 cellpadding=1>
+     <table class=search width=100% border=0 cellspacing=0 cellpadding=1>
        <tr>
 	 <td class=titlebar>
 	   <a name=modify></a>&nbsp;&nbsp;<b>Modify your search</b>
@@ -875,122 +1456,215 @@ Startframes.apg will pass this variables on to the select form.
 	 <td class=titlebar align=right>
 	   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>
 	 </td>
-       </TR>
-<?/MIBLOCK>
+       </tr>
 
-<form name="BrowserForm" method=post
-  onSubmit="updateList();"
-  action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+<?MICOMMENT>
+  =======================================================
+  =====  Prepare anatomy suggestion List
+  ========================================================
+<?/MICOMMENT>
 
-<?MIBLOCK COND="$(XST,$update_lineage)">
-   <input type=hidden NAME="update_lineage" value="true">
-   <?MIBLOCK COND="$(NXST,$query_results)">
-    <table class=search width=100% border=0 cellspacing=0 cellpadding=1>
-       <tr>
-	 <td class=titlebar>
-	   <b>&nbsp;&nbsp;Search for <select name=line_type> <option value="wild_type">wild type<option value="mutant" selected>mutant</select> Lines</b>
-	 </td>
-	 <td class=titlebar>&nbsp;
-         </td>
-   <?MIELSE>
-   <table class=search width=100% border=0 cellspacing=0 cellpadding=1>
-       <tr>
-	 <td class=titlebar>
-	   <a name=modify></a>&nbsp;&nbsp;<b>Modify your search for <select name=line_type> <option value="wild_type">wild type<option value="mutant" selected>mutant</select> Lines</b>
-	 </td>
-	 <td class=titlebar>&nbsp;
-         </td>
-   <?/MIBLOCK>
+<?MIVAR NAME=fsel_anatList><?/MIVAR>
 
-       </TR>
-<?/MIBLOCK>
+<?MISQL SQL="
+          select anatitem_name, anatitem_name_lower as name_lower_column
+      from anatomy_item
+       UNION
+    select dalias_alias, dalias_alias_lower as name_lower_column
+          from data_alias
+         where dalias_data_zdb_id[1,9] = 'ZDB-ANAT-'
+       order by name_lower_column; ">
 
+        <?MIVAR NAME=fsel_curAnat>"$1"<?/MIVAR>   
+        <?MIVAR>$(VECAPPEND,$fsel_anatList,$fsel_curAnat)<?/MIVAR>
+<?/MISQL>
 
-  <TR>
-    <TD class="halfwidth">
-      <?MIVAR COND="$(NC,$line_type,wild_type)">
-	<A HREF="javascript:start_help('allele')"><b>Allele:</b> </A>
-	<input type=text name=allele size=5 onChange='document.BrowserForm.START.value = "";'  $(IF,$(XST,$allele),value='$allele')>
-      <?/MIVAR>
-    </TD>
-    <TD class="halfwidth">
-     <?MIVAR>
-	<A HREF="javascript:start_help('lg')"><b>LG:</b></A>
-	<select NAME=chrom_num onChange='document.BrowserForm.START.value = "";'>
-        <?MISQL SQL="select distinct lg_name,lg_order from linkage_group order by lg_order"> 
-	  <option value="$1" $(IF,$(EC,$chrom_num,$1),SELECTED) >$(IF,$(EC,$1,0),any,$1)
-        <?/MISQL>
-	</SELECT>
-      <?/MIVAR>
-    </TD>
-   </TR>
-   <TR>
-    <TD class="halfwidth">
-      <?MIVAR>
-        <A HREF="javascript:start_help('abbrev')"><b>Abbreviation:</b></A>
-        <input type=text maxlength=20 name=abbrev size=10 onChange='document.BrowserForm.START.value = "";' $(IF,$(XST,$abbrev),value='$abbrev')>
-      <?/MIVAR>
-    </TD> 
-    <TD class="halfwidth">
-<SELECT name=anon1 onChange='document.BrowserForm.START.value = "";'>
-		<option $(IF,$(EC,$anon1,phenotype),SELECTED) value="phenotype">Phenotype
-		<option $(IF,$(EC,$anon1,fish_id),SELECTED) value="fish_id">ZFIN ID#
-		<option $(IF,$(EC,$anon1,comments),SELECTED) value="comments">Comments
-	</SELECT>
-        </b><A HREF="javascript:start_help('phenotype')"> contains</A>&nbsp;
-        <input type=text name=anon1text size=12 onChange='document.BrowserForm.START.value = "";' $(IF,$(XST,$anon1text),value='$anon1text')>
-   </TD>
-   </TR>
-   <TR>
-    <TD class="halfwidth">
-      <?MIBLOCK COND="$(NC,$line_type,wild_type)">
-      <A HREF="javascript:start_help('locus')"><b>
-      <?MIVAR>
-	$(IF,$(EC,$line_type,mutant),"Locus name","Name") contains:</b></A>
-        <input type=text name=fname size=25  onChange='document.BrowserForm.START.value = "";' value="$(IF,$(XST,$fname),$fname)">
-      <?/MIVAR>
-    </TD>
-   <TD class="halfwidth">
-      <A HREF="javascript:start_help('mutagen')"><b>Mutagen:</b></A>
-      <select NAME=mutagen onChange='document.BrowserForm.START.value = "";'>
-	<?MIVAR>
-	 	<option $(IF,$(EC,$mutagen,any),SELECTED) value=any>Any
-		<option $(IF,$(EC,$mutagen,ENU),SELECTED) value=ENU>ENU
-		<option $(IF,$(EC,$mutagen,EMS),SELECTED) value=EMS>EMS
-		<option $(IF,$(EC,$mutagen,g-rays),SELECTED) value=g-rays>gamma rays
-		<option $(IF,$(EC,$mutagen,DNA),SELECTED) value=DNA>DNA
-		<option $(IF,$(EC,$mutagen,spontaneous),SELECTED) value=spontaneous>spontaneous
-		<option $(IF,$(EC,$mutagen,TMP),SELECTED) value=TMP>TMP
-	<?/MIVAR>
-       </SELECT>
-   </TD>
-  </TR>
-  <TR>
+<?MIVAR>$(SETVAR,$fsel_anatList,$(SEPARATE,$fsel_anatList,$comma))<?/MIVAR>
+<?MIVAR>$(SETVAR,$fsel_anatList,$(SUBSTR,$fsel_anatList,2))<?/MIVAR>
+
+ <?MICOMMENT>
+  ================== Form Content ==============================
+ <?/MICOMMENT>
+<form name="BrowserForm" method=get action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+
+  <?MIBLOCK COND="$(XST,$fsel_marker_id)">
+    <?MISQL SQL="select mrkr_abbrev from marker 
+       	          where mrkr_zdb_id = '$fsel_marker_id';">
+      <?MIVAR NAME=fsel_inputname>$1<?/MIVAR>        
+    <?/MISQL>
+    <?MIVAR NAME=compare>equals<?/MIVAR>
+  <?/MIBLOCK>
+<?MIVAR COND="$(NXST,$compare)" NAME=$compare>contains<?/MIVAR>
+
+   <tr>
+     <td class="halfwidth" ROWSPAN=3>
+       <?MIVAR>
+       <b>Gene/Allele name</b>&nbsp;
+       <select name="compare" onChange='document.BrowserForm.START.value = "";'>
+          <option $(IF,$(EC,$compare,contains),selected) value=contains>contains
+          <option $(IF,$(EC,$compare,starts),selected) value=starts>begins with
+          <option $(IF,$(EC,$compare,equals),selected) value=equals>equals
+       </select>       
+       <input type=text name=fsel_inputname size=18 onChange='document.BrowserForm.START.value = "";'  $(IF,$(XST,$fsel_inputname),value='$fsel_inputname')>
+       <?/MIVAR>
+     </td>
+
+     <td class="halfwidth">
+       <b>LG:</b>
+
+       <SELECT name=lg onChange='document.BrowserForm.START.value = "";'>
+	<?MISQL SQL="select distinct lg_name,lg_order from linkage_group order by lg_order"> 
+	  <option value="$1" $(IF,$(EC,$lg,$1),SELECTED) >$(IF,$(EC,$1,0),Any,$1)
+	<?/MISQL>
+       </SELECT>  	 
+     </td>
+   </tr>
+
+   <tr> 
+     <td class="halfwidth">
+       <b>Mutagen:</b>
+       <select name=mutagen onChange='document.BrowserForm.START.value = "";'>
+	  <?MIVAR>
+	  <option $(IF,$(OR,$(EC,$mutagen,),$(EC,$mutagen,any)),selected) value="any">Any 
+	  <?/MIVAR>       
+         <?MISQL SQL="select mutagen_name from mutagen where mutagen_name <> 'not specified'"> 
+	   <option value="$1" $(IF,$(EC,$mutagen,$1),selected) >$1
+         <?/MISQL>
+       </select>
+     </td>
+   </tr>   
+   
 <?MIVAR>
-   <TD class="halfwidth"> <b> 
-   </TD> 
-   <TD>
+  <TR>
+   <TD class="halfwidth">
      <!-- add option for complex rearrangement  -->	
      <?MIVAR>
-	<A HREF="javascript:start_help('mtype')"><b>Mutation Type:</b> </A>
+	<b>Mutation Type:</b>
 	<select NAME=chrom_change onChange='document.BrowserForm.START.value = "";'>
-		<option  $(IF,$(EC,$chrom_change,any),SELECTED) value=any>Any
-		<option  $(IF,$(EC,$chrom_change,point),SELECTED) value=point>point
-		<option  $(IF,$(EC,$chrom_change,deficiency),SELECTED) value=deficiency >deficiency
-		<option  $(IF,$(EC,$chrom_change,insertion),SELECTED) value=insertion>insertion
-		<option  $(IF,$(EC,$chrom_change,translocation),SELECTED) value=translocation>translocation
-		<option  $(IF,$(EC,$chrom_change,transposition),SELECTED) value=transposition>transposition
-		<option  $(IF,$(EC,$chrom_change,duplication),SELECTED) value=duplication>duplication
-		<option  $(IF,$(EC,$chrom_change,complex_rearrangement),SELECTED) value=complex_rearrangement>complex_rearrangement
+	  <?MIVAR>
+	  <option $(IF,$(OR,$(EC,$chrom_change,),$(EC,$chrom_change,any)),selected) value="any">Any
+	  <?/MIVAR>   	
+         <?MISQL SQL="select ftrtype_name,ftrtype_type_display from feature_type 
+                       where ftrtype_name <> 'REGION'
+                         and ftrtype_name <> 'UNSPECIFIED'
+                         order by ftrtype_significance"> 
+	   <option value="$1" $(IF,$(EC,$chrom_change,$1),selected) >$2
+         <?/MISQL>  	         
 	</select>
       <?/MIVAR>
     </TD>
   </TR>
 <?/MIVAR>
-  <input type=hidden NAME="START" value=1>
-  <input type=hidden NAME="query_results" value="exist">
-  
 
+   <tr> 
+     <td>&nbsp;
+       <input type=hidden NAME="START" value=1>
+     </td>
+     <td>&nbsp;
+       <input type=hidden NAME="query_results" value="exist">
+     </td>
+   </tr>
+     
+   <tr> 
+     <td class="halfwidth" ROWSPAN=5>
+
+	  <TABLE border=0 bgcolor="#EEEEEE"> 
+            <TR>
+	      <TD colspan="2">
+		<span style="float: left;">
+                  <label for="TA_selected_structures" class="multisearchLabel">
+		    <b>Affected Anatomy</b>
+                  </label>
+                </span>
+                <span style="float: right;">
+                  <label class="accessoryLabel">[Enter one anatomical term per line]</label>
+                </span>
+	     </TD>
+	     </TR>
+	     <TR>
+	     <TD colspan="2">
+		<TEXTAREA cols="46" rows="3" name="TA_selected_structures" id="TA_selected_structures"><?MIVAR COND="$(XST,$TA_selected_structures)">$TA_selected_structures<?/MIVAR></TEXTAREA>
+	        <DIV id="autosuggest"><ul></ul></DIV>
+                <script>
+		  var agt = navigator.userAgent;
+                  var is_safari = ((agt.indexOf('Safari')!=-1)&&(agt.indexOf('Mac')!=-1))? 1 : 0 ;
+		  if (is_safari == 0 ) 
+		  {
+		    <?MIVAR>
+		    var anatomyList = new Array($fsel_anatList);
+		    <?/MIVAR>
+		    new AutoSuggest(document.getElementById("TA_selected_structures"),anatomyList);
+		  }
+                </script>
+
+		<input type="hidden" name="fsel_processed_selected_structures" <?MIVAR COND=$(XST,$fsel_processed_selected_structures)>value=$fsel_processed_selected_structures<?/MIVAR> >		
+	      </TD> <?MICOMMENT> end new selected structures textarea <?/MICOMMENT>
+            </TR>
+            <TR>
+	      <TD valign="top">
+		<?MICOMMENT>
+		  this bit is sneaky, basically, this means that if you're opening the page
+		  for the first time and the variable is empty, then create it - but if
+		  the page has been submitted and the variable is empty, then it's supposed
+		  to be, and we wanna leave it that way.
+		<?/MICOMMENT>
+	          <input type=checkbox id="fselIncludeSubstructures" name="include_substructures" value="checked" <?MIVAR> $(IF,$(AND,$(XST,$include_substructures),$(EC,$include_substructures,checked)),checked="checked") <?/MIVAR> >  <label for="fselIncludeSubstructures" class="accessoryLabel" >Include substructures</label> 
+             </TD>
+             <TD>
+
+		  <?MIVAR COND="$(NXST,$structure_bool)" NAME="structure_bool">and<?/MIVAR>
+                    <label class="accessoryLabel">Phenotype in: </label> 
+                  <br>
+		  <input type="radio" id="fselStructureBoolAnd" name="structure_bool" value="and" <?MIVAR>$(IF,$(EC,$structure_bool,and),checked="checked")<?/MIVAR> >
+	          <label for="fselStructureBoolAnd" class="accessoryLabel" ><b>Every</b> term entered <br></label>
+		  
+		  <input type="radio" id="fselStructureBoolOr" name="structure_bool" value="or"  <?MIVAR>$(IF,$(EC,$structure_bool,or),checked="checked")<?/MIVAR> > 
+	          <label for="fselStructureBoolOr" class="accessoryLabel" ><b>Any</b> term entered </label>
+	      </TD>
+	    </TR>
+	  </TABLE>
+     </td>
+     <td class="halfwidth">
+     <b>Filters:</b>
+     </td>
+
+   </tr>
+   
+   <tr>
+     <td class="halfwidth">
+       &nbsp;&nbsp;<input type="radio" id="fselFilter" name="fselFilterValue" value="mutOnly" <?MIVAR>$(IF,$(EC,$fselFilterValue,mutOnly),checked="unchecked")<?/MIVAR> >
+       <label for="fselFltr" class="accessoryLabel" >Show only characterized mutations</label>
+     </td>
+   </tr>
+   
+   <tr>
+     <td class="halfwidth">
+       &nbsp;&nbsp;<input type="radio" id="fselFilter" name="fselFilterValue" value="TGonly" <?MIVAR>$(IF,$(EC,$fselFilterValue,TGonly),checked="unchecked")<?/MIVAR> >
+       <label for="fselFltr" class="accessoryLabel" >Show only transgenics</label>
+     </td>
+   </tr>   
+   
+   <tr>
+     <td class="halfwidth">
+       &nbsp;&nbsp;<input type="radio" id="fselFilter" name="fselFilterValue" value="all" <?MIVAR>$(IF,$(EC,$fselFilterValue,all),checked="checked")<?/MIVAR> >
+       <label for="fselFltr" class="accessoryLabel" >Show all</label>
+     </td>
+   </tr>      
+   
+   <tr>
+     <td class="halfwidth">
+     <?MIVAR><input type="text" name="WINSIZE" size="3" onChange='document.BrowserForm.START.value = "";' $(IF,$(XST,$WINSIZE),value=$WINSIZE,value=20)><?/MIVAR>
+     results per page
+     <?MIBLOCK COND="$(AND,$(NOT,$(ISNULL,$WINSIZE)),$(XST,$WINSIZE))">
+     <?MIVAR> 
+        <SCRIPT> 
+          document.BrowserForm.WINSIZE.value = "$WINSIZE"         
+        </SCRIPT>
+      <?/MIVAR> 
+     <?/MIBLOCK>       
+     </td>
+   </tr>    
+     
 
 <!-- This next little block executes only if we are using the browser as a
 selecto. That is we want user to ultimately CHOOSE a browsed value. All
@@ -1006,123 +1680,28 @@ we have to do at this point is pass the return record along to the fishlister.
     <input type=hidden name=structures value="$structures">
   <?/MIVAR>
 <?/MIBLOCK>
-
-<input type=hidden name=selected_separator>
-
-
-<?MIVAR COND="$(NC,$line_type,NULL)">
-	<input type=hidden name=line_type value=$line_type>
-<?/MIVAR>
-
-
-<?MIBLOCK COND="$(NC,$line_type,wild_type)">
-  <TR>
-   <TD class="fullwidth">
-    <INPUT type="hidden" name="selected"  value="'t'::boolean">
-    <?MIVAR><INPUT type="hidden" name="line_type"  value=$line_type><?/MIVAR>
-    <A HREF="javascript:start_help('phenokeywords')"><b>Select Affected Structures and/or Defects:</b></A><br>
-
-<!-- applet replacement -->
-    <table width=360 height=100 border=0 cellpadding=3 cellspacing=0 bgcolor="#88a6a6">
-    <tr>
-     <td><center>
-       <input type=button value="Add" onClick="
-document.BrowserForm.method = 'post'; 
-for (i=0 ; i < document.BrowserForm.structure_list.options.length ; i++) {
-    document.BrowserForm.structure_list.options[i].selected=true;
-} 
-document.BrowserForm.action = 'select_structures.cgi'; 
-document.BrowserForm.submit();">
-       <br><br>
-       <input type=button value="Remove" onClick="
-i=0;
-while (i < document.BrowserForm.structure_list.options.length) {
-    if (document.BrowserForm.structure_list.options[i].selected == true) {
-       document.BrowserForm.structure_list.options[i] = null;       
-    } else { i++; } 
-}
-">
-      </center>
-     </td>
-     <td width=70%><select multiple size=5 name="structure_list"> 
-       <font size = -1>
-       <?MIBLOCK COND="$(XST,$structures)">
-       <?MIVAR NAME=$structure_clause  DELIMIT="," REPLACE="','">$structures<?/MIVAR> 
-       <?MIVAR>
-       <?MISQL SQL="select name, seq_num from anatomical_parts where seq_num in ('$structure_clause');">
-	<OPTION> $1 
-       <?/MISQL>
-      <?/MIVAR>
-    <?/MIBLOCK>
-
-    <?MIBLOCK COND="$(NXST,$structures)">
-      <OPTION> Click the 'Add' button to add structures 
-    <?/MIBLOCK>
-    </select>
-     </font>
-    </td>
-   </tr>
-   <tr>
-    <td colspan=2>
-     <font size = -1>
-     <center>
-     <input type=radio name="selected_sep_box" value="and" <?MIVAR COND="$(EC,$selected_separator,and)">CHECKED<?/MIVAR>> ALL Listed Defects
-     &nbsp; &nbsp;
-     <input type=radio name="selected_sep_box" value="or" <?MIVAR COND="$(EC,$selected_separator,or)">CHECKED<?/MIVAR>> ANY Listed Defects
-     </center>
-     </font>
-    </td>
-   </tr>
-  </table>
-  </TD>
- </TR>
-<?/MIBLOCK> <!-- ends if line type not wildtype -->
- <TR>
-  <TD class="fullwidth">
-    <?MIVAR>
-    <input type=checkbox name=knowngene onChange='document.BrowserForm.START.value = "";' $(IF,$(AND,$(XST,$knowngene),$(EC,$knowngene,on)),CHECKED)> Show only mutants with known genes<br>
-    <?/MIVAR>
-  </TD>
- </TR>
-
-<?/MIBLOCK>
- <TR>
-  <TD class="resultcount">
-     Display results in groups of 
-     <?MIVAR><input type="text" name="WINSIZE" size="3" onChange='document.BrowserForm.START.value = "";' $(IF,$(XST,$WINSIZE),value=$WINSIZE,value=20)>.<?/MIVAR>
-     <?MIBLOCK COND="$(AND,$(NOT,$(ISNULL,$WINSIZE)),$(XST,$WINSIZE))">
-     <?MIVAR> 
-        <SCRIPT> 
-          document.BrowserForm.WINSIZE.value = "$WINSIZE"         
-        </SCRIPT>
-      <?/MIVAR> 
-     <?/MIBLOCK>
-   </TD>
-  </TR>
+  
   <TR>
    <TD class="submitbar" colspan=2 align="right">
-    <input type=submit name=search value="SEARCH" >
-    <input type=button 
-    <?MIVAR COND="$(NC,$line_type,wild_type)"> 
-	onClick="call_reset(); "
-    <?/MIVAR>
-    value="RESET">  </font>
+    <input name="fishsel_calledBySelf" type="hidden" value="true">
+    <input type=submit name=search value="SEARCH" onClick="form_submit();">
+    <input type=button onClick="call_reset();" value="RESET">  </font>
    </TD>
   </TR>
-</TABLE>
-
-
-<?MIBLOCK COND="$(XST,$query_results)">
-    </TD>
-  </TR>
-</TABLE>
-<?/MIBLOCK>
 
 </form>
 
-<?/MIBLOCK> <!-- nxst accession -->
+</table>
+
+<?MISQL COND=$(EC,$debug_timing,t) SQL="
+    execute function get_time()">
+    <br>... $1 End ... <br>
+<?/MISQL>
+
+<?/MIBLOCK> 
 
 
-<?MIBLOCK COND="$(NXST,$accession)">
-  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
-<?/MIBLOCK>
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+
+
+</html>

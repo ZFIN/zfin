@@ -24,7 +24,7 @@ INPUT VARS:
   REQUIRED:
     $OID :: publication zdb-id for the experiment
     $AUTHORIZED :: this is a subroutine. the authorization must occur in the calling page.
-    $xpcur_G_exp_attrib_csv :: csv list of experiments for the OID
+    $pubcur_G_exp_attrib_csv :: csv list of experiments for the OID
 
       
 OUTPUT VARS:
@@ -317,7 +317,7 @@ EFFECTS
 </SCRIPT>
 
 <table width=100% border=0 cellspacing=0 cellpadding=3>
-    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
   <tr bgcolor=#CCCCCC>    
     <td colspan=2>Env.</td>
@@ -337,7 +337,7 @@ EFFECTS
 <?MISQL SQL="
     select exp_name, expcond_zdb_id, cdt_group||':'||cdt_name, expcond_value, expunit_name, expcond_comments, expcond_mrkr_zdb_id, gene.mrkr_abbrev, morph.mrkr_abbrev, gene.mrkr_zdb_id
     from experiment, experiment_condition, condition_data_type, experiment_unit, OUTER( marker morph, marker_relationship,marker gene)
-    where exp_zdb_id in ('$xpcur_G_exp_attrib_csv') 
+    where exp_zdb_id in ('$pubcur_G_exp_attrib_csv') 
       and exp_zdb_id = expcond_exp_zdb_id
       and expcond_cdt_zdb_id = cdt_zdb_id
       and expcond_expunit_zdb_id = expunit_zdb_id
@@ -346,8 +346,8 @@ EFFECTS
       and mrel_mrkr_2_zdb_id = gene.mrkr_zdb_id
     order by exp_name, 3;">
     
-<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#condition" method=post name=condition onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','condition');">
-    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#condition" method=post name=condition onSubmit="setCookie('xpatcuration_update','update','xpcur_c_');setCookie('anchor','condition','xpcur_c_');">
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
     <?MIVAR NAME="xpcurcond_exp_name">$1<?/MIVAR>
     <?MIVAR NAME="xpcurcond_expcond_zdb_id">$2<?/MIVAR>
@@ -396,20 +396,20 @@ EFFECTS
   </tr>
 
 <?MICOMMENT> ==| Enter a New Condition |== <?/MICOMMENT>
-<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#condition" method=get name=condition_new onSubmit=setCookie('xpatcuration_update','update')>
-    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg"> 
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#condition" method=get name=condition_new onSubmit=setCookie('xpatcuration_update','update','xpcur_c_')>
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg"> 
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
     <INPUT TYPE=HIDDEN NAME=xpcur_G_cond_add VALUE="Add"> 
   <tr>
     <td>
-      <input name="xpcur_G_cond_add" type=button value="Add" onClick="if (validateConditionForm(document.condition_new.xpcur_G_cond_add_attribute.value)){setCookie('xpatcuration_update','update');setCookie('anchor','condition');document.condition_new.submit()}">
+      <input name="xpcur_G_cond_add" type=button value="Add" onClick="if (validateConditionForm(document.condition_new.xpcur_G_cond_add_attribute.value)){setCookie('xpatcuration_update','update','xpcur_c_');setCookie('anchor','condition','xpcur_c_');document.condition_new.submit()}">
     </td>
     <td>
         <select name="xpcur_G_cond_add_exp">
           <?MISQL SQL="
               select exp_zdb_id, exp_name
               from experiment 
-              where exp_zdb_id in ('$xpcur_G_exp_attrib_csv') 
+              where exp_zdb_id in ('$pubcur_G_exp_attrib_csv') 
               order by 2;">
             <option value="$1"
                     $(IF,$(AND,$(XST,$xpcur_G_cond_add_exp),$(EC,$xpcur_G_cond_add_exp,$1)),SELECTED)>$2</option>

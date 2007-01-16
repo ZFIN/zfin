@@ -171,7 +171,6 @@ while (<PROBE_IN>) {
 	print ERR "$cegs_id has no accession number.\n";
 	next;
     }
-
     # if the accession is in ZFIN associated with a EST/cDNA, use that EST/cDNA name
     # (this is needed since Talbot data often mis-place gene name as clone name. )
     $clone_name = $dbh->selectrow_array ("select mrkr_name
@@ -299,6 +298,7 @@ close (AUTHOR_OUT);
 #########################################
 
 open EXPR_IN, "<$expression_in" or die "Cannot open $expression_in to read";
+open KEYWD_IN, "<$keyword_in" or die "Cannot open $keyword_in to read";
 open EXPR_OUT, ">$expression_out" or die "Cannot open $expression_out to write";
 
 my ($exp_key, $exp_stage, $exp_desc, $exp_found, $exp_desc_pre, @keyword_list, $keyword);

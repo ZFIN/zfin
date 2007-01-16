@@ -1,0 +1,85 @@
+<?MICOMMENT>
+
+FILE:     experimentcuration.apg
+PREFIX:   expcur_
+
+
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+
+<?/MIERROR> 
+
+<?MIVAR NAME=debugg>false<?/MIVAR>
+
+<?MIBLOCK COND="$(XST,$OID)">
+
+  <?MISQL SQL="select WebExplode(object,'permission=root&page_title=Curate Pub') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+  <?MIBLOCK COND="$(EC,$AUTHORIZED,root)"> 
+  
+<?MICOMMENT> 
+	  =================
+	  =  ENVIRONMENT  =
+	  =================
+<?/MICOMMENT>
+<a name=environment>
+<p><b><font size=3>Environment:</font></b>
+<?MIBLOCK COND=$(OR,$(NXST,$xpcur_c_environment),$(EC,$xpcur_c_environment,hide))>
+  <?MIVAR><a href="javascript:onClick=urlSetCookie('environment','show','xpcur_c_')">$unhide</a><?/MIVAR>
+  <br>
+  
+<?MIELSE>
+  <?MIVAR><a href="javascript:onClick=urlSetCookie('environment','hide','xpcur_c_')">$hide</a><?/MIVAR>
+  <br>
+   
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-xpatcurexperiment.apg';">$1<?/MISQL>
+<?/MIBLOCK>
+
+
+<?MICOMMENT> 
+	  ===============
+	  =  Condition  =
+	  ===============
+<?/MICOMMENT>
+<a name=condition>
+
+    
+<p><b><font size=3>Define Environments:</font> </b>
+<?MIBLOCK COND=$(OR,$(NXST,$xpcur_c_condition),$(EC,$xpcur_c_condition,hide))>
+  <?MIVAR><a href="javascript:onClick=urlSetCookie('condition','show','xpcur_c_')">$unhide</a><?/MIVAR>
+  <br>
+  
+<?MIELSE>
+  <?MIVAR><a href="javascript:onClick=urlSetCookie('condition','hide','xpcur_c_')">$hide</a><?/MIVAR>
+  <br>
+  
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-xpatcurcondition.apg';">$1<?/MISQL>
+<?/MIBLOCK>
+
+
+<?MICOMMENT> 
+  ====================
+  =  ERROR MESSAGES  =
+  ====================
+<?/MICOMMENT>
+
+<?MIELSE>
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+  <p>Authorization for this page failed.
+  <p>A session error may have occurred. Try logging out and logging back in. If that does not work, contact your database administrator.
+<?/MIBLOCK> <?MICOMMENT> not authorized <?/MICOMMENT>
+
+  
+<?MIELSE>
+  <P>
+  ERROR -- something bad happened -- no OID passed in!
+<?/MIBLOCK>
+

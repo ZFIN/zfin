@@ -1,0 +1,187 @@
+<?MICOMMENT>
+  Main Feature curation page. Calls the create, edit and relationship
+  app pages.
+
+EFFECTS
+  none
+PREFIX:
+ featcur_
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+
+<?/MIERROR> 
+
+
+<?MISQL SQL="select WebExplode(object,'permission=root&page_title=Curate Pub') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+
+<?MICOMMENT> ^M
+  =====================^M
+  =    Update Data    =^M
+  =====================^M
+<?/MICOMMENT>
+
+<?MIBLOCK COND=$(AND,$(XST,$featcur_featcurupdate),$(EC,$featcur_featcurupdate,update))>
+    <?MIVAR COND=$(XST,$featcur_reln_feat_zdb_id)>$featcur_reln_feat_zdb_id<?/MIVAR>
+    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-featcurupdate.apg';">$1<?/MISQL>
+<?/MIBLOCK>
+
+
+<?MIVAR NAME=hide><font color=blue size=-1><u>hide</u></font><?/MIVAR>
+<?MIVAR NAME=unhide><font color=blue size=-1><u>show</u></font><?/MIVAR>
+<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-STORE">
+<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="MUST-REVALIDATE">
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+<META HTTP-EQUIV="EXPIRES" CONTENT="01 Jan 2000 00:00:00 GMT">
+
+<?MIVAR NAME=featcur_mrkr_type><?/MIVAR>
+<?MICOMMENT>This comma delimited list of markers is created for use in the 
+FILTERs section
+<?/MICOMMENT>
+
+<?MISQL SQL="
+        select marker_type 
+        from marker_types 
+        where marker_type like '%CONSTRCT'
+         ;">
+        <?MIVAR> $(VECAPPEND,$featcur_mrkr_type,$1)<?/MIVAR>
+<?/MISQL>
+<?MIVAR NAME=featcur_mrkr_type_csv SEPARATE="','">$featcur_mrkr_type<?/MIVAR>
+
+<?MICOMMENT> 
+	  =================
+	  =  Feature creation  =
+	  =================
+<?/MICOMMENT>
+<a name=featcreation>
+<p><b><font size=3>Feature Builder:</font></b>
+<p><b><font size=3>Create New Feature:</font></b>
+<?MIBLOCK COND=$(OR,$(NXST,$featcur_featcreation),$(EC,$featcur_featcreation,hide))>
+  <?MIVAR><a href="javascript:onClick=urlSetCookie('featcreation','show','featcur_')">$unhide</a><?/MIVAR>
+  <br>
+<?MIELSE>
+  <?MIVAR><a href="javascript:onClick=urlSetCookie('featcreation','hide','featcur_')">$hide</a><?/MIVAR>
+  <p>
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-new_feature.apg';">$1<?/MISQL>
+<?/MIBLOCK>
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Starting Condition
+<?/MISQL>
+
+
+<hr>
+<?MICOMMENT> 
+	  ===============
+	  =  Feature Editing  =
+	  ===============
+<?/MICOMMENT>
+
+<a name=featediting>
+<p><b><font size=3>Edit Feature:</font></b>
+<?MIBLOCK COND=$(OR,$(NXST,$featcur_featediting),$(EC,$featcur_featediting,hide))>
+  <?MIVAR><a href="javascript:onClick=urlSetCookie('featediting','show','featcur_')">$unhide</a><?/MIVAR>
+  <br>
+<?MIELSE>
+  <?MIVAR><a href="javascript:onClick=urlSetCookie('featediting','hide','featcur_')">$hide</a><?/MIVAR>
+  <p>
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-featureedit.apg';">$1<?/MISQL>
+<?/MIBLOCK>
+<hr>
+
+<?MICOMMENT>
+-----------------------
+FILTER  section 
+-----------------------
+<?/MICOMMENT>
+
+<form>
+<a name=feature_only>
+<a name=feature_type_only>
+<a name=fish_only>
+
+<br>
+<table border=0 cellpadding=0 bgcolor="#33CC99" width=100%>
+<tr>
+<TD><b>SHOW: </b></td>
+  <td>
+    <b>Feature Name:</b>
+    <select onChange="urlSetCookie('feature_only',this.value,'featcur_')">
+      <option value="">ALL</option>
+      <?MISQL SQL="
+        select feature_zdb_id, feature_name
+        from feature, record_attribution 
+        where recattrib_data_zdb_id=feature_zdb_id
+        and recattrib_source_zdb_id='$OID'
+        union
+        select mrkr_zdb_id, mrkr_name
+        from marker, record_attribution 
+        where recattrib_data_zdb_id=mrkr_zdb_id
+        and recattrib_source_zdb_id='$OID'
+        and mrkr_type in ('$featcur_mrkr_type_csv')
+        ;">
+        <option value="$1"
+        $(IF,$(AND,$(XST,$featcur_feature_only),$(EC,$featcur_feature_only,$1)),SELECTED)>$2</option>
+      <?/MISQL>
+    </select>
+  </td>
+  <td>
+
+  <b>Feature Type:</b>
+  <select onChange="urlSetCookie('feature_type_only',this.value,'featcur_')">
+      <option value="">ALL</option>
+        <?MISQL SQL="
+          select distinct feature_type, ftrtype_type_display
+          from feature, record_attribution, feature_type
+          where recattrib_data_zdb_id=feature_zdb_id
+          and recattrib_source_zdb_id='$OID'
+          and feature_type=ftrtype_name
+          union
+          select distinct mrkr_type,mrkrtype_type_display
+          from marker, record_attribution , marker_types
+          where recattrib_data_zdb_id=mrkr_zdb_id
+          and recattrib_source_zdb_id='$OID'
+          and mrkr_type in ('$featcur_mrkr_type_csv')
+          and mrkr_type=marker_type
+         ;">
+        <option value="$1"
+        $(IF,$(AND,$(XST,$featcur_feature_type_only),$(EC,$featcur_feature_type_only,$1)),SELECTED)>$2</option>
+      <?/MISQL>
+    </select>
+  </td>
+</table>
+
+</form>
+
+<?MICOMMENT>
+-----------------------
+Feature Relationship section 
+-----------------------
+<?/MICOMMENT>
+
+<a name=featrelation>
+<br><b><font size=3>Add Relationships:</font> </b>
+<?MIBLOCK COND=$(OR,$(NXST,$featcur_featrel),$(EC,$featcur_featrel,hide))>
+     <?MIVAR><a href="javascript:onClick=urlSetCookie('featrel','show','featcur_')">$unhide<a><?/MIVAR>
+     <br>
+<?MIELSE>
+     <?MIVAR><a href="javascript:onClick=urlSetCookie('featrel','hide','featcur_')">$hide</a><?/MIVAR>
+     <br>
+     <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-featrelationships.apg';">$1<?/MISQL>
+<?/MIBLOCK> 
+
+
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Starting Condition
+<?/MISQL>
+  <hr>

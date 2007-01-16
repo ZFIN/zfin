@@ -114,13 +114,14 @@ create dba function "informix".regen_names() returning integer
 	-- Something terrible happened while creating the new tables
 	-- Get rid of them, and leave the original tables around
 
-	on exception in (-255, -668)
+	on exception in (-255, -668, -535)
 	  --  255: OK to get a "Not in transaction" here, since
 	  --       we might not be in a transaction when the rollback work 
 	  --       below is performed.
 	  --  668: OK to get a "System command not executed" here.
 	  --       Is probably the result of the chmod failing because we
 	  --	   are not the owner.
+	  --  535: OK to get a "Already in transaction" here.  
 	end exception with resume;
 
         let exceptionMessage = 'echo "' || CURRENT ||
@@ -166,13 +167,14 @@ create dba function "informix".regen_names() returning integer
     -- -------------------------------------------------------------------
     -- -------------------------------------------------------------------
 
-    -- Contains all the possible names and abbreviations of markers, fish, and
-    -- locii, which coincidentally are all the names that can occur in maps.
+    -- Contains all the possible names and abbreviations of markers, features,
+    -- and genotypes.
+    -- coincidentally are all the names that can occur in maps.
     --
-    -- We should perhaps split names for markers, fish, and locii into 3 
-    -- separate tables for perfromance reasons, but not today.
+    -- We should perhaps split names for markers, features, and genotypes
+    --  into 3 separate tables for perfromance reasons, but not today.
     --
-    -- Marker names come from marker and locus (and from 
+    -- Marker names come from marker(and from 
     -- accession numbers in db_link and orthlogue names/abbrevs in orthologue).
     -- Force the names to lower case.  We don't display out of this table,
     --  we only search it.
@@ -182,26 +184,27 @@ create dba function "informix".regen_names() returning integer
     -- for the threee types of names.  This data comes from the name_precedence
     -- table.
 
-    --   1 Current symbol            Marker
-    --   2 Current name              Marker
-    --   3 Clone name                Marker
-    --   4 Marker relations          Marker (not used in regen_names)
-    --   5 Previous name             Marker
-    --   6 Locus                     Marker
-    --   (7 Putative name assignment  Marker) dropped
-    --   8 Orthologue                Marker
-    --   9 Accession number          Marker
-    --  10 Sequence similarity       Marker
-    --  11 Clone contains gene       Marker (not used in regen_names)
-
-    -- 101 Fish name/allele          Fish
-    -- 102 Wildtype name             Fish
-    -- 103 Locus abbreviation        Fish, Locus
-    -- 104 Wildtype abbreviation     Fish
-    -- 105 Locus name                Fish, Locus
-    -- 106 Fish Previous name        Fish
-    -- 107 Allele Previous name      Fish
-    -- 108 Locus Previous name       Fish, Locus
+    
+    --Genetic feature name|1|Name of a Feature.|
+    --Genetic feature alias|2|Previous name of a Feature.|
+    --Current symbol|3|Current symbol for a marker.  Used only with markers.|
+    --Current name|4|Current name of a marker.  Used only with markers.|
+    --Clone name|5|Current name of a marker where marker is a clone.  Used only
+ 	--with markers.|
+    --Marker relations|6|Used on some app pages where we want to pull in 
+	--marker_relationships.  Used only with markers.|
+    --Previous name|7|Marker alias.  Used only with markers.|
+    --Orthologue|8|Orthologue names/symbols.  Used only with markers.|
+    --Accession number|9|Accession numbers from other databases associated with
+	--this marker.  Used only with markers.|
+    --Sequence similarity|10|Accession number for a sequence similarity in 
+	--another database.  Used only with markers.|
+    --Clone contains gene|11|This one is not used in regen_genomics, but it is 
+	--used in at least one app page (as of 2005/01) to associate the names
+ 	--of genes that are contained in clones, with the clones.  I do not
+	-- know why it is done this way. (Dave C)|
+    --Genetic feature abbreviation|102|Abbreviation of a Feature.|
+    --Genotype alias|202|Previous name of a Genotype.|
 
     let errorHint = "all_map_names";
 
@@ -212,7 +215,7 @@ create dba function "informix".regen_names() returning integer
     create table all_m_names_new 
       (
 	-- ortho_name and mrkr_name are 255 characters long
-	-- locus_name, db_link.acc_num, and all the abbrev 
+	-- db_link.acc_num, and all the abbrev 
 	-- columns are all 80 characters or less
 	allmapnm_name		varchar (255) not null,
 	allmapnm_zdb_id		varchar(50) not null,
@@ -270,44 +273,42 @@ create dba function "informix".regen_names() returning integer
 
     let errorHint = "create temp tables";
     execute procedure regen_names_create_temp_tables();
-
-
-
-    -- -------------------------------------------------------------------
-    -- -------------------------------------------------------------------
-    --   Get LOCUS Names into all_m_names_new
-    -- -------------------------------------------------------------------
-    -- -------------------------------------------------------------------
-
-    let errorHint = "Locus";
-    -- gather names
-    insert into regen_zdb_id_temp
-        ( rgnz_zdb_id )
-      select zdb_id from locus;
-
-    -- takes regen_zdb_id_temp as input, adds recs to regen_all_names_temp
-    execute procedure regen_names_locus_list();
-
-    delete from regen_zdb_id_temp;
       
 
     -- -------------------------------------------------------------------
     -- -------------------------------------------------------------------
-    --   Get FISH Names into all_m_names_new
+    --   Get Feature into all_m_names_new
     -- -------------------------------------------------------------------
     -- -------------------------------------------------------------------
 
-    let errorHint = "Fish";
+    let errorHint = "Feature";
     -- gather names
     insert into regen_zdb_id_temp
         ( rgnz_zdb_id )
-      select zdb_id from fish;
+      select feature_zdb_id from feature;
 
     -- takes regen_zdb_id_temp as input, adds recs to regen_all_names_temp
-    execute procedure regen_names_fish_list();
+    execute procedure regen_names_feature_list();
 
     delete from regen_zdb_id_temp;
 
+
+    -- -------------------------------------------------------------------
+    -- -------------------------------------------------------------------
+    --   Get Genotype into all_m_names_new
+    -- -------------------------------------------------------------------
+    -- -------------------------------------------------------------------
+
+    let errorHint = "Genotype";
+    -- gather names
+    insert into regen_zdb_id_temp
+        ( rgnz_zdb_id )
+      select geno_zdb_id from genotype;
+
+    -- takes regen_zdb_id_temp as input, adds recs to regen_all_names_temp
+    execute procedure regen_names_genotype_list();
+
+    delete from regen_zdb_id_temp;
 
     -- -------------------------------------------------------------------
     -- -------------------------------------------------------------------
@@ -395,6 +396,7 @@ create dba function "informix".regen_names() returning integer
 
     -- primary key
     let errorHint = "all_name_ends primary key index";
+
     create unique index all_name_ends_primary_key_index_transient
       on all_name_ends_new (allnmend_name_end_lower, allnmend_allmapnm_serial_id)
       fillfactor 100
@@ -436,8 +438,9 @@ create dba function "informix".regen_names() returning integer
 	raise exception esql, eisam;
       end exception;
 
-      on exception in (-206)
-	-- ignore error when dropping a table that doesn't already exist
+      on exception in (-206, -535)
+	-- 206 ignore error when dropping a table that doesn't already exist
+        -- 535 ignore error of already in transaction
       end exception with resume;
 
 

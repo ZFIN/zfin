@@ -193,15 +193,15 @@
         -- ID column.  There are a few exceptions, however.  Catch them.
 	------------------------------------------------------------------------
       <?/MICOMMENT>
-      <?MIBLOCK COND="$(AND,$(XST,$OID),$(XST,$rtype),$(NC,$rtype,journal),$(NC,$rtype,fxfig),$(NC,$rtype,anatomy_item),$(NC,$rtype,goview))">
+      <?MIBLOCK COND="$(AND,$(XST,$OID),$(XST,$rtype),$(XST,$permission),$(EC,$permission,owner))">
         <?MIVAR NAME=$ownerColumn>owner<?/MIVAR>
         <?MIVAR NAME=$zdbIdColumn>zdb_id<?/MIVAR>
         <?MIBLOCK COND="$(EC,$rtype,marker)">
 	  <?MIVAR NAME=$ownerColumn>mrkr_owner<?/MIVAR>
 	  <?MIVAR NAME=$zdbIdColumn>mrkr_zdb_id<?/MIVAR>
-        <?MIELSE COND="$(EC,$rtype,fish_image)">
-	  <?MIVAR NAME=$ownerColumn>fimg_owner_zdb_id<?/MIVAR>
-	  <?MIVAR NAME=$zdbIdColumn>fimg_zdb_id<?/MIVAR>
+        <?MIELSE COND="$(EC,$rtype,image)">
+	  <?MIVAR NAME=$ownerColumn>img_owner_zdb_id<?/MIVAR>
+	  <?MIVAR NAME=$zdbIdColumn>img_zdb_id<?/MIVAR>
         <?/MIBLOCK>
         <?MISQL SQL="
 	    select $ownerColumn

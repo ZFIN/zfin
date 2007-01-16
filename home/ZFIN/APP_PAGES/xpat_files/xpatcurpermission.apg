@@ -42,7 +42,7 @@ EFFECTS
   <?MISQL SQL="SELECT COUNT(*) FROM FIGURE WHERE FIG_SOURCE_ZDB_ID = '$OID' AND FIG_CAPTION <> '$xpcur_G_light_fig_text' AND FIG_LABEL <> 'text only';"><?/MISQL>
   <?MIVAR NAME=xpcurperm_cap_count>$1<?/MIVAR>
 
-  <?MISQL SQL="SELECT COUNT(*) FROM FIGURE, FISH_IMAGE WHERE FIG_SOURCE_ZDB_ID = '$OID' AND FIG_ZDB_ID = fimg_FIG_ZDB_ID;"><?/MISQL>
+  <?MISQL SQL="SELECT COUNT(*) FROM FIGURE, IMAGE WHERE FIG_SOURCE_ZDB_ID = '$OID' AND FIG_ZDB_ID = img_FIG_ZDB_ID;"><?/MISQL>
   <?MIVAR NAME=xpcurperm_img_count>$1<?/MIVAR>
 
   <?MISQL SQL="SELECT COUNT(*) FROM publication WHERE zdb_id = '$OID' AND (pub_acknowledgment is null or pub_acknowledgment = '');"><?/MISQL>
@@ -66,8 +66,8 @@ EFFECTS
       <?MIVAR NAME=xpcurperm_cur_note>$(IF,$(EC,$2,NULL),,$2)<?/MIVAR>
   <?/MISQL>
   
-  <form name=permission action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#permission" onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','permission');" method=post>
-    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
+  <form name=permission action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#permission" onSubmit="setCookie('xpatcuration_update','update','xpcur_c_');setCookie('anchor','permission','');" method=post>
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
 
   <?MISQL SQL="select pub_can_show_images from publication where zdb_id = '$OID';">

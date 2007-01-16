@@ -35,7 +35,7 @@ navigator tile if you are doing selection since you are jumping directly
 to a browser -->
 <?MISQL SQL="
   select WebExplode(object, 
-                    'permission=owns&rtype=fish_image$(IF,$(NC,$attr_type,selection),&page_title=Update $print_name)') 
+                    'permission=owns&rtype=image$(IF,$(NC,$attr_type,selection),&page_title=Update $print_name)') 
     from webPages
     where ID = 'aa-secure_navigation.apg';">
   $1
@@ -49,9 +49,9 @@ to a browser -->
   <?MIBLOCK COND="$(NC,$annotations,NULL)">
     <?MIVAR NAME=$annotations DELIMIT="'" REPLACE="''">$annotations<?/MIVAR>
     <?MISQL SQL="
-      update fish_image 
-        set fimg_annotations = '$annotations'
-        where fimg_zdb_id = '$OID';">
+      update image 
+        set img_annotation = '$annotations'
+        where img_zdb_id = '$OID';">
     <?/MISQL>
   <?/MIBLOCK>
 
@@ -60,9 +60,9 @@ to a browser -->
   <?MIBLOCK COND="$(NC,$attr_type,selection)">
 
     <?MISQL SQL="
-      select $attr, fimg_thumbnail
-        from fish_image 
-        where fimg_zdb_id = '$OID';">
+      select $attr, img_thumbnail
+        from image 
+        where img_zdb_id = '$OID';">
     <?/MISQL>
     <?MIVAR NAME=$current_value>$1<?/MIVAR>
     <?MIVAR NAME=$target_image>$2<?/MIVAR>
@@ -222,7 +222,7 @@ to a browser -->
       <?MIVAR NAME=$select_from>FISH<?/MIVAR>
       <?MIVAR NAME=$action>return_id<?/MIVAR>
       <?MIVAR NAME=$fill_field>fimg_fish_zdb_id<?/MIVAR>
-      <?MIVAR NAME=$fill_table>fish_image<?/MIVAR>
+      <?MIVAR NAME=$fill_table>image<?/MIVAR>
       <?MIVAR NAME=$jump_to>image_info<?/MIVAR>
       <?MIVAR NAME=$info>NULL<?/MIVAR>
       <?MIVAR NAME=$selector>aa-fishselect.apg<?/MIVAR>

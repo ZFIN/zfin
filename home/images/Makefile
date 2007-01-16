@@ -3,7 +3,6 @@
 # Makefile for ZFIN_WWW CVS Project, ZFIN Icons/Graphics directories
 #
 # $Source$
-# $Id$
 #
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!

@@ -1,0 +1,488 @@
+<?MICOMMENT>
+
+FILE:     featcurupdate.apg
+PREFIX:   featcurup_
+
+
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
+<?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
+
+  <script>
+    setCookie('featcur_form_variables','');
+  </script>
+
+  <?MICOMMENT> set variables <?/MICOMMENT>  
+  <?MIVAR NAME=$featcurup_feature_zdb_id><?/MIVAR>
+  <?MIVAR NAME=$featcurup_feature_lab_zdb_id><?/MIVAR>
+  <?MIVAR NAME=$featcurup_marker_zdb_id><?/MIVAR>
+
+  <?MICOMMENT>
+  Add data to feature/marker tables from Create New Feature section
+  <?/MICOMMENT>
+
+
+  <?MICOMMENT>
+  First check to see if the feature/marker alreday exist and then proceed
+  accordingly
+  <?/MICOMMENT>
+  <?MIBLOCK COND=$(XST,$featcur_feature_add)>
+    <?MISQL SQL="select count(*) from feature 
+                 where feature_name = '$featcur_feature_add_name'">
+    <?/MISQL>
+    <?MIBLOCK COND="$(!=,0,$1)">
+       <SCRIPT>
+          alert("The feature  '<?MIVAR>$featcur_feature_add_name<?/MIVAR>' - already exists")
+       </SCRIPT> 
+   <?MIELSE>
+       <?MISQL SQL="select count(*) from marker 
+                    where mrkr_name = '$featcur_feature_add_name'"> 
+       <?/MISQL>
+       <?MIBLOCK COND="$(!=,0,$1)">
+         <SCRIPT>
+            alert("The marker  '<?MIVAR>$featcur_feature_add_name<?/MIVAR>' - already exists")
+         </SCRIPT> 
+       <?MIELSE> 
+         <?MIVAR COND=$(NXST,$featcur_feature_add_name) NAME=featcur_feature_add_name><?/MIVAR>
+         <?MIVAR COND=$(NXST,$featcur_feature_add_abbrev) NAME=featcur_feature_add_abbrev><?/MIVAR>
+         <?MIVAR COND=$(NXST,$featcur_feature_add_alias) NAME=featcur_feature_add_alias><?/MIVAR>
+         <?MIVAR COND=$(NXST,$featcur_feature_add_note) NAME=featcur_feature_add_note><?/MIVAR>
+         <?MIVAR COND=$(NXST,$featcur_feature_add_lab) NAME=featcur_feature_add_lab><?/MIVAR>
+         <?MIVAR COND=$(NXST,$featcur_feature_private_note) NAME=featcur_feature_private_note><?/MIVAR>
+         <?MIVAR COND=$(NXST,$featcurup_feature_lab_zdb_id) NAME=featcurup_feature_lab_zdb_id><?/MIVAR>
+         <?MIVAR COND=$(NXST,$anchor) NAME=anchor>featediting<?/MIVAR>
+
+         <?MICOMMENT>*****First format note text *****<?/MICOMMENT>
+         <?MIVAR NAME=$featcur_feature_add_note>$(TRIM,$featcur_feature_add_note)<?/MIVAR>
+         <?MIVAR NAME=$featcur_feature_add_note DELIMIT="'" REPLACE="''">$featcur_feature_add_note<?/MIVAR>
+         <?MICOMMENT> ==| Replace line returns with <br> |== <?/MICOMMENT>
+         <?MIVAR>
+         <?MIVAR NAME=$featcur_feature_add_note>$(URLENCODE,$featcur_feature_add_note)<?/MIVAR>
+         <?MIVAR NAME=$featcur_feature_add_note>$(REPLACE,$featcur_feature_add_note,%0a,<BR>)<?/MIVAR>
+          <?MIVAR NAME=$featcur_feature_add_note>$(REPLACE,$featcur_feature_add_note,++,&nbsp;&nbsp;)<?/MIVAR>
+          <?MIVAR NAME=$featcur_feature_add_note>$(URLDECODE,$featcur_feature_add_note)<?/MIVAR>
+          <?/MIVAR>
+         <?MICOMMENT>*****end of note formatting *****<?/MICOMMENT>
+
+         <?MICOMMENT> ==| If Type is Marker type |== <?/MICOMMENT>
+
+          <?MISQL SQL="select marker_type from marker_types 
+                       where marker_type like '$featcur_feature_add_type'">
+          <?/MISQL>
+          <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+            <?MICOMMENT> ==| Add New Marker ZDB-ID |== <?/MICOMMENT>  
+            <?MISQL SQL="execute function get_id('$featcur_feature_add_type');">$(SETVAR,$featcurup_marker_zdb_id,$1)<?/MISQL>
+            <?MIVAR NAME=$featcur_feature_marker><?/MIVAR> <?MICOMMENT>ascertain that this is a marker and not a feature <?/MICOMMENT>
+          <?MIELSE>
+             <?MICOMMENT> ==| Add New Feature ZDB-ID |== <?/MICOMMENT>  
+             <?MISQL SQL="execute function get_id('ALT');">$(SETVAR,$featcurup_feature_zdb_id,$1)<?/MISQL>
+          <?/MIBLOCK>
+          <?MICOMMENT> ==| Add New Data Alias ZDB-ID |== <?/MICOMMENT>  
+          <?MISQL SQL="execute function get_id('DALIAS');">$(SETVAR,$featcurup_feature_dalias_zdb_id,$1)<?/MISQL>
+
+          <?MIBLOCK COND="$(NC,$featcur_feature_add_lab,)">
+            <?MISQL SQL="SELECT zdb_id from lab where name = '$featcur_feature_add_lab'">
+              <?MIVAR NAME=$featcurup_feature_lab_zdb_id>$1<?/MIVAR>
+            <?/MISQL>
+          <?MIELSE>
+            <?MIVAR NAME=$featcurup_feature_lab_zdb_id><?/MIVAR>
+          <?/MIBLOCK>
+
+         <?MIBLOCK COND=$(NXST,$featcur_feature_marker)>
+            <?MISQL SQL="INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES('$featcurup_feature_zdb_id');"><?/MISQL>
+            <?MISQL SQL="INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES('$featcurup_feature_dalias_zdb_id');"><?/MISQL>
+         <?MIELSE>
+            <?MISQL SQL="INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES('$featcurup_marker_zdb_id');"><?/MISQL>
+            <?MISQL SQL="INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES('$featcurup_feature_dalias_zdb_id');"><?/MISQL>
+         <?/MIBLOCK> 
+
+         <?MIBLOCK COND="$(NC,$featcurup_feature_lab_zdb_id,)">
+           <?MIBLOCK COND=$(NXST,$featcur_feature_marker)>
+             <?MISQL SQL="INSERT INTO int_data_source (ids_data_zdb_id, ids_source_zdb_id) 
+                         VALUES('$featcurup_feature_zdb_id', '$featcurup_feature_lab_zdb_id');"><?/MISQL>
+           <?MIELSE>
+             <?MISQL SQL="INSERT INTO int_data_source (ids_data_zdb_id, ids_source_zdb_id) VALUES('$featcurup_marker_zdb_id', '$featcurup_feature_lab_zdb_id');"><?/MISQL>
+           <?/MIBLOCK>
+         <?/MIBLOCK>
+
+          <?MIVAR NAME=featcur_feature_insert_columns>
+            feature_zdb_id,
+            feature_name,
+            feature_type,
+            feature_abbrev,
+            feature_comments,
+            feature_date_entered
+          <?/MIVAR>
+          <?MIVAR NAME=featcur_feature_insert_values>
+            '$featcurup_feature_zdb_id',
+            '$featcur_feature_add_name',
+            '$featcur_feature_add_type',
+             $(IF,$(NE,$featcur_feature_add_abbrev,),'$featcur_feature_add_abbrev','$featcur_feature_add_name'),
+            '$featcur_feature_add_note',
+             TODAY
+          <?/MIVAR>
+
+          <?MIVAR NAME=featcur_marker_insert_columns>
+            mrkr_zdb_id,
+            mrkr_name,
+            mrkr_abbrev,
+            mrkr_type,
+            mrkr_owner,
+            mrkr_name_order,
+            mrkr_abbrev_order,
+            mrkr_comments
+          <?/MIVAR>
+          <?MIVAR NAME=featcur_marker_insert_values>
+            '$featcurup_marker_zdb_id',
+            '$featcur_feature_add_name',
+             $(IF,$(NE,$featcur_feature_add_abbrev,),'$featcur_feature_add_abbrev','$featcur_feature_add_name'),
+            '$featcur_feature_add_type',
+            '$ZDB_ident',
+            '$featcur_feature_add_name',
+            '$featcur_feature_add_name',
+            '$featcur_feature_add_note'
+          <?/MIVAR>
+
+          <?MIVAR NAME=featcur_feature_dalias_insert_columns>
+            dalias_zdb_id,
+            dalias_data_zdb_id,
+            dalias_alias,
+            dalias_group,
+            dalias_alias_lower
+         <?/MIVAR>
+         <?MIVAR NAME=featcur_feature_dalias_insert_values>
+            '$featcurup_feature_dalias_zdb_id',
+            '$featcurup_feature_zdb_id',
+            '$featcur_feature_add_alias',
+            'alias',
+            '$featcur_feature_add_alias'
+        <?/MIVAR>
+
+        <?MIVAR NAME=featcur_marker_dalias_insert_values>
+            '$featcurup_feature_dalias_zdb_id',
+            '$featcurup_marker_zdb_id',
+            '$featcur_feature_add_alias',
+            'alias',
+            '$featcur_feature_add_alias'
+       <?/MIVAR>
+
+        <?MIBLOCK COND="$(NE,$featcur_feature_private_note,)">
+           <?MICOMMENT>First format note text <?/MICOMMENT>
+           <?MIVAR NAME=$featcur_feature_private_note>$(TRIM,$featcur_feature_private_note)<?/MIVAR>
+           <?MIVAR NAME=$featcur_feature_private_note DELIMIT="'" REPLACE="''">$featcur_feature_private_note<?/MIVAR>
+           <?MICOMMENT> ==| Replace line returns with <br> |== <?/MICOMMENT>
+           <?MIVAR>
+             <?MIVAR NAME=$featcur_feature_private_note>$(URLENCODE,$featcur_feature_private_note)<?/MIVAR>
+             <?MIVAR NAME=$featcur_feature_private_note>$(REPLACE,$featcur_feature_private_note,%0a,<BR>)<?/MIVAR>
+             <?MIVAR NAME=$featcur_feature_private_note>$(REPLACE,$featcur_feature_private_note,++,&nbsp;&nbsp;)<?/MIVAR>
+             <?MIVAR NAME=$featcur_feature_private_note>$(URLDECODE,$featcur_feature_private_note)<?/MIVAR>
+           <?/MIVAR>
+           <?MICOMMENT>End formatting note <?/MICOMMENT>
+       <?/MIBLOCK>
+
+       <?MIBLOCK COND=$(NXST,$featcur_feature_marker)> <?MICOMMENT>if it is a feature<?/MICOMMENT>
+         <?MIVAR COND=$(XST,$featcur_feature_add_name)>
+          <?MIVAR NAME=featcur_feature_insert_columns>$featcur_feature_insert_columns<?/MIVAR>
+          <?MIVAR NAME=featcur_feature_insert_values>$featcur_feature_insert_values<?/MIVAR>
+         <?/MIVAR>
+         <?MISQL SQL="
+             INSERT into feature($featcur_feature_insert_columns)
+             VALUES ($featcur_feature_insert_values)
+           ;">
+        <?/MISQL>
+        <?MISQL SQL="
+            INSERT into feature_assay(featassay_feature_zdb_id, featassay_mutagen, featassay_mutagee)
+             VALUES ('$featcurup_feature_zdb_id','$featcur_feature_add_mutagen', '$featcur_feature_add_mutagee')">
+         <?/MISQL>
+        <?MIBLOCK COND="$(NC,$featcur_feature_add_alias,)">
+         <?MISQL SQL="
+                INSERT into data_alias($featcur_feature_dalias_insert_columns)
+                VALUES ($featcur_feature_dalias_insert_values)
+             ;">
+          <?/MISQL> 
+        <?/MIBLOCK>
+        <?MISQL SQL="
+          select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=feature_zdb_id&recweb_new_value=$featcurup_feature_zdb_id&recweb_comments=create+new+record') 
+                 from webPages where ID='aa-record_web_update.apg';">
+        <?/MISQL>
+        <?MISQL SQL="insert into record_attribution(recattrib_data_zdb_id, recattrib_source_zdb_id)
+              values('$featcurup_feature_zdb_id','$OID');">
+        <?/MISQL>
+        <?MISQL SQL="insert into record_attribution(recattrib_data_zdb_id, recattrib_source_zdb_id)
+            values('$featcurup_feature_dalias_zdb_id','$OID');">
+        <?/MISQL>
+        <?MIBLOCK COND="$(NE,'$featcur_feature_add_type,'unspecified')"> <?MICOMMENT>attribute type if it isn't 'unspecified'<?/MICOMMENT>
+          <?MISQL SQL="insert into record_attribution(recattrib_data_zdb_id, recattrib_source_zdb_id, recattrib_source_type)
+            values('$featcurup_feature_zdb_id','$OID','feature type');">
+          <?/MISQL>
+        <?/MIBLOCK>
+        <?MIBLOCK COND="$(NE,$featcur_feature_private_note,)">
+           <?MISQL SQL="execute function get_id('DNOTE')">
+             <?MIVAR NAME=$DataNoteId>$1<?/MIVAR>
+           <?/MISQL>
+           <?MISQL SQL="insert into zdb_active_data (zactvd_zdb_id) values ('$DataNoteId')"><?/MISQL>
+           <?MISQL SQL="
+             insert into data_note (
+             dnote_zdb_id,
+             dnote_text,
+             dnote_data_zdb_id,
+             dnote_curator_zdb_id,
+             dnote_date)
+             values (
+            '$DataNoteId',
+            '$featcur_feature_private_note',
+            '$featcurup_feature_zdb_id',
+            '$ZDB_ident',
+            TODAY);">
+          <?/MISQL>
+      <?/MIBLOCK>
+      <?MIELSE> <?MICOMMENT>if it is a marker<?/MICOMMENT>
+         <?MISQL SQL="
+             INSERT into marker($featcur_marker_insert_columns)
+             VALUES ($featcur_marker_insert_values)
+           ;">
+         <?/MISQL>
+         <?MIBLOCK COND="$(NC,$featcur_feature_add_alias,)">
+          <?MISQL SQL="
+                INSERT into data_alias($featcur_feature_dalias_insert_columns)
+                VALUES ($featcur_marker_dalias_insert_values)
+             ;">
+          <?/MISQL> 
+        <?/MIBLOCK>
+        <?MISQL SQL="
+          select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=mrkr_zdb_id&recweb_new_value=$featcurup_marker_zdb_id&recweb_comments=create+new+record') 
+                 from webPages where ID='aa-record_web_update.apg';">
+        <?/MISQL>
+        <?MISQL SQL="insert into record_attribution(recattrib_data_zdb_id, recattrib_source_zdb_id)
+                 values('$featcurup_marker_zdb_id','$OID');">
+        <?/MISQL>
+        <?MISQL SQL="insert into record_attribution(recattrib_data_zdb_id, recattrib_source_zdb_id)
+                 values('$featcurup_feature_dalias_zdb_id','$OID');">
+        <?/MISQL>
+        <?MIBLOCK COND="$(NE,$featcur_feature_private_note,)">
+          <?MISQL SQL="execute function get_id('DNOTE')">
+            <?MIVAR NAME=$DataNoteId>$1<?/MIVAR>
+          <?/MISQL>
+          <?MISQL SQL="insert into zdb_active_data (zactvd_zdb_id) values ('$DataNoteId')"><?/MISQL>
+          <?MISQL SQL="
+          insert into data_note (
+            dnote_zdb_id,
+            dnote_text,
+            dnote_data_zdb_id,
+            dnote_curator_zdb_id,
+            dnote_date)
+          values (
+            '$DataNoteId',
+            '$featcur_feature_private_note',
+            '$featcurup_marker_zdb_id',
+            '$ZDB_ident',
+            TODAY);">
+          <?/MISQL>
+      <?/MIBLOCK>
+     <?/MIBLOCK> <?MICOMMENT>End if Marker/Feature block <?/MICOMMENT>
+
+     <SCRIPT>
+          alert(" '<?MIVAR>$featcur_feature_add_name<?/MIVAR>' succesfully added")
+     </SCRIPT> 
+   <?/MIBLOCK> <?MICOMMENT> End if feature/marker exists block <?/MICOMMENT>
+  <?/MIBLOCK> <?MICOMMENT> End if featcur_add_name variable exists <?/MICOMMENT>
+
+<?/MIBLOCK>  <?MICOMMENT>End if "Create Marker/Feature" block <?/MICOMMENT>
+
+<?MICOMMENT> *****start edit feature block****** <?/MICOMMENT>
+
+<?MIVAR COND="$(NXST,$featedit_feature_public_note)" NAME=featedit_feature_public_note><?/MIVAR>
+<?MIVAR COND="$(NXST,$featedit_feature_alias)" NAME=featedit_feature_alias><?/MIVAR>
+<?MIVAR COND="$(NXST,$featedit_feature_lab)" NAME=featedit_feature_lab><?/MIVAR>
+<?MIVAR COND="$(NXST,$featedit_feature_newname)" NAME=featedit_feature_newname><?/MIVAR>
+<?MIVAR COND="$(NXST,$featedit_feature_newabbrev)" NAME=featedit_feature_newabbrev><?/MIVAR>
+
+<?MIBLOCK COND=$(XST,$featedit_add_typeattr)>
+   <?MISQL SQL="select count(*) 
+                from record_attribution 
+                where recattrib_source_zdb_id='$OID' 
+                and recattrib_data_zdb_id = '$featcur_featedit_feature_zdb_id' 
+                and recattrib_source_type='feature type'">
+   <?/MISQL>
+   <?MIBLOCK COND="$(!=,0,$1)">
+       <SCRIPT>
+          alert("The feature type has already been attributed to this pub")
+       </SCRIPT> 
+    <?MIELSE>
+      <?MISQL SQL="insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id,recattrib_source_type) 
+                values ('$featcur_featedit_feature_zdb_id','$OID', 'feature type')">
+      <?/MISQL>
+   <?/MIBLOCK>
+<?/MIBLOCK>
+
+
+<?MIBLOCK COND=$(XST,$featedit_delete_ftr)>
+<SCRIPT><?MIVAR>
+      location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-delete_record.apg&rtype=feature&return_page=curation.apg&returnOID=$OID&OID=$featcur_featedit_feature_zdb_id#$anchor");
+           <?/MIVAR>
+   </SCRIPT>
+
+
+
+
+<?/MIBLOCK>
+
+<?MIBLOCK COND=$(XST,$featedit_delete_typeattr)>
+   <?MISQL SQL="delete from record_attribution 
+                where (recattrib_data_zdb_id ='$featcur_featedit_feature_zdb_id' and  recattrib_source_zdb_id ='$OID' and recattrib_source_type = 'feature type')">
+   <?/MISQL>
+<?/MIBLOCK>
+
+<?MIBLOCK COND=$(XST,$featcur_featedit_feature_zdb_id)>
+   <?MIBLOCK COND="$(=,5,$(POSITION,$featcur_featedit_feature_zdb_id,ALT))">
+    <?MISQL SQL="select feature_name,feature_abbrev 
+                 from feature 
+                 where feature_zdb_id = '$featcur_featedit_feature_zdb_id'">
+      <?MIVAR NAME=$featcur_featedit_feature_name>$1<?/MIVAR>
+      <?MIVAR NAME=$featcur_featedit_feature_abbrev>$2<?/MIVAR>
+      <?MIVAR NAME=$featcur_featedit_type>feature<?/MIVAR>
+    <?/MISQL>
+   <?MIELSE>
+    <?MISQL SQL="select mrkr_name,mrkr_abbrev 
+                 from marker 
+                 where mrkr_zdb_id = '$featcur_featedit_feature_zdb_id'">
+      <?MIVAR NAME=$featcur_featedit_feature_name>$1<?/MIVAR>
+      <?MIVAR NAME=$featcur_featedit_feature_abbrev>$2<?/MIVAR>
+      <?MIVAR NAME=$featcur_featedit_type>marker<?/MIVAR>
+    <?/MISQL>
+   <?/MIBLOCK>
+
+
+   <?MIBLOCK COND=$(NE,$featedit_feature_lab,)>
+    <?MISQL SQL="select zdb_id 
+                 from lab 
+                 where name like '$featedit_feature_lab'">
+      <?MIVAR NAME=$featedit_feature_lab_zdb_id>$1<?/MIVAR>
+    <?/MISQL>
+    <?MISQL SQL="select * 
+                 from int_data_source 
+                 where ids_data_zdb_id = '$featcur_featedit_feature_zdb_id'">
+    <?/MISQL>
+     <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
+             <?MISQL SQL="INSERT INTO int_data_source (ids_data_zdb_id, ids_source_zdb_id) 
+                          values ('$featcur_featedit_feature_zdb_id', '$featedit_feature_lab_zdb_id')">
+            <?/MISQL>
+     <?MIELSE>
+             <?MISQL SQL="update int_data_source 
+                          set ids_source_zdb_id='$featedit_feature_lab_zdb_id' 
+                          where ids_data_zdb_id = '$featcur_featedit_feature_zdb_id'">
+             <?/MISQL> 
+     <?/MIBLOCK>
+   <?/MIBLOCK>
+ 
+
+   <?MIBLOCK COND="$(EC,$featcur_featedit_type,feature)"> 
+      <?MISQL SQL="update feature 
+                   set feature_type='$featedit_feature_type' 
+                   where feature_zdb_id='$featcur_featedit_feature_zdb_id'">
+      <?/MISQL> 
+   <?MIELSE>
+      <?MISQL SQL="update marker 
+                   set mrkr_type='$featedit_feature_type' 
+                   where mrkr_zdb_id='$featcur_featedit_feature_zdb_id'">
+      <?/MISQL> 
+   <?/MIBLOCK>
+
+
+   <?MIBLOCK COND="$(XST,$featedit_feature_mutagen)">
+      <?MISQL SQL="update feature_assay 
+                  set featassay_mutagen='$featedit_feature_mutagen', featassay_mutagee='$featedit_feature_mutagee' 
+                  where featassay_feature_zdb_id='$featcur_featedit_feature_zdb_id'">
+      <?/MISQL>
+   <?/MIBLOCK>
+
+   <?MIBLOCK COND="$(NE,$featedit_feature_public_note,)">
+      <?MICOMMENT>First format note text <?/MICOMMENT>
+      <?MIVAR NAME=$featedit_feature_public_note>$(TRIM,$featedit_feature_public_note)<?/MIVAR>
+      <?MIVAR NAME=$featedit_feature_public_note DELIMIT="'" REPLACE="''">$featedit_feature_public_note<?/MIVAR>
+      <?MICOMMENT> ==| Replace line returns with <br> |== <?/MICOMMENT>
+      <?MIVAR>
+      <?MIVAR NAME=$featedit_feature_public_note>$(URLENCODE,$featedit_feature_public_note)<?/MIVAR>
+      <?MIVAR NAME=$featedit_feature_public_note>$(REPLACE,$featedit_feature_public_note,%0a,<BR>)<?/MIVAR>
+      <?MIVAR NAME=$featedit_feature_public_note>$(REPLACE,$featedit_feature_public_note,++,&nbsp;&nbsp;)<?/MIVAR>
+      <?MIVAR NAME=$featedit_feature_public_note>$(URLDECODE,$featedit_feature_public_note)<?/MIVAR>
+     <?/MIVAR>
+     <?MISQL SQL="update feature 
+                  set feature_comments='$featedit_feature_public_note' 
+                  where feature_zdb_id='$featcur_featedit_feature_zdb_id'">
+     <?/MISQL>
+  <?/MIBLOCK>
+
+
+   <?MIBLOCK COND="$(=,5,$(POSITION,$featcur_featedit_feature_zdb_id,ALT))">
+       <?MIBLOCK COND="$(NC,$featedit_feature_newname,)">
+          <?MISQL SQL="update feature 
+                       set feature_name='$featedit_feature_newname' 
+                       where feature_zdb_id='$featcur_featedit_feature_zdb_id'">
+          <?/MISQL>  
+         <?MIBLOCK COND="$(EQ,$featcur_featedit_feature_name,$featcur_featedit_feature_abbrev)">
+          <?MISQL SQL="update feature 
+                       set feature_abbrev='$featedit_feature_newname' 
+                       where feature_zdb_id='$featcur_featedit_feature_zdb_id'">  
+          <?/MISQL>  
+        <?/MIBLOCK>
+      <?/MIBLOCK>
+      <?MIBLOCK COND="$(NC,$featedit_feature_newabbrev,)">
+          <?MISQL SQL="update feature 
+                       set feature_abbrev='$featedit_feature_newabbrev' 
+                       where feature_zdb_id='$featcur_featedit_feature_zdb_id'
+                       and feature_abbrev not like '$featedit_feature_newabbrev'">
+          <?/MISQL>  
+      <?/MIBLOCK>
+  <?MIELSE>
+       <?MIBLOCK COND="$(NC,$featedit_feature_newname,)">
+          <?MISQL SQL="update marker 
+                       set mrkr_name='$featedit_feature_newname' 
+                       where mrkr_zdb_id='$featcur_featedit_feature_zdb_id'">
+          <?/MISQL>
+          <?MIBLOCK COND="$(EQ,$featcur_featedit_feature_name,$featcur_featedit_feature_abbrev)">
+            <?MISQL SQL="update marker 
+                         set mrkr_abbrev='$featedit_feature_newname' 
+                         where mrkr_zdb_id='$featcur_featedit_feature_zdb_id'">
+            <?/MISQL> 
+          <?/MIBLOCK>
+       <?/MIBLOCK>
+       <?MIBLOCK COND="$(NC,$featedit_feature_newabbrev,)">
+          <?MISQL SQL="update marker 
+                       set mrkr_abbrev='$featedit_feature_newabbrev' 
+                       where mrkr_zdb_id='$featcur_featedit_feature_zdb_id'">
+          <?/MISQL> 
+      <?/MIBLOCK>
+  <?/MIBLOCK>
+<?/MIBLOCK>
+<?MICOMMENT>***end of if feature edit zdb id exists block*** <?/MICOMMENT>
+
+<?MICOMMENT>***end edit feature block*** <?/MICOMMENT>
+
+<?MICOMMENT> to edit relationships <?/MICOMMENT>
+
+<?MIBLOCK COND="$(XST,$featcur_reln_feat_zdb_id)">
+   <?MIBLOCK COND="$(=,0,$(POSITION,$featcur_reln_feat_zdb_id,ALT))">
+        <?MISQL SQL="execute function get_id('MREL');">$(SETVAR,$featcurup_mkrmkr_reln_zdb_id,$1)<?/MISQL>
+        <?MISQL SQL="insert into zdb_active_data values('$featcurup_mkrmkr_reln_zdb_id')"><?/MISQL>
+        <?MISQL SQL="insert into record_attribution (recattrib_data_zdb_id,recattrib_source_zdb_id) values('$featcurup_mkrmkr_reln_zdb_id', '$OID')"><?/MISQL>
+        <?MISQL SQL="insert into marker_relationship  values('$featcurup_mkrmkr_reln_zdb_id', '$featcur_reln_add_relation', '$featcur_reln_feat_zdb_id', '$featcur_reln_add_marker','')"><?/MISQL>
+   <?MIELSE>
+        <?MISQL SQL="execute function get_id('FMREL');">$(SETVAR,$featcurup_ftrmkr_reln_zdb_id,$1)<?/MISQL>
+        <?MISQL SQL="insert into zdb_active_data values('$featcurup_ftrmkr_reln_zdb_id')"><?/MISQL>
+        <?MISQL SQL="insert into record_attribution (recattrib_data_zdb_id,recattrib_source_zdb_id) values('$featcurup_ftrmkr_reln_zdb_id', '$OID')"><?/MISQL>
+        <?MISQL SQL="insert into feature_marker_relationship (fmrel_zdb_id, fmrel_type, fmrel_ftr_zdb_id, fmrel_mrkr_zdb_id) values('$featcurup_ftrmkr_reln_zdb_id', '$featcur_reln_add_relation', '$featcur_reln_feat_zdb_id', '$featcur_reln_add_marker')"><?/MISQL>
+   <?/MIBLOCK>
+<?/MIBLOCK>
+
+<?/MIBLOCK>  <?MICOMMENT> authorize = root <?/MICOMMENT>

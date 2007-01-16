@@ -1,0 +1,140 @@
+<?MICOMMENT>
+ file: phenotype_miniview.apg
+ prefix: phmview_
+
+ Displays the mini format of Phenotype section. This page is webexploded from markerview.apg and genotypeview.apg.
+
+ INPUT:
+    a temp table with one column - t_pato_zdb_id 
+
+ INPUT VAR:
+    phmview_input_table : the temp table
+
+ OUTPUT:
+
+    PHENOTYPE:
+      Data:              xx figure(s) from xx publication(s)
+      Affecting: anatitem1, anatitem2, anatitem3, anatitem4, anatitem5 ... (all xx)
+
+ OUTPUT VAR: none
+
+<?/MICOMMENT>
+
+<?MISQL SQL="
+	select distinct fig_zdb_id
+          from $phmview_input_table, apato_figure, figure
+         where t_pato_zdb_id = apatofig_apato_zdb_id
+ 	   and apatofig_fig_zdb_id = fig_zdb_id; ">
+
+    <?MIVAR NAME=phmview_pato_fig_zdb_id>$1<?/MIVAR>
+<?/MISQL>
+
+<?MIVAR NAME=phmview_pato_fig_count>$MI_ROWCOUNT<?/MIVAR>
+
+<?MIBLOCK COND="$(>,$phmview_pato_fig_count,0)">
+    <?MISQL SQL="
+	select distinct pub_mini_ref
+          from $phmview_input_table, apato_figure, figure, publication
+         where t_pato_zdb_id = apatofig_apato_zdb_id
+ 	   and apatofig_fig_zdb_id = fig_zdb_id
+              and fig_source_zdb_id = zdb_id; ">
+
+    <?/MISQL>
+    <?MIVAR NAME=phmview_pato_source_count>$MI_ROWCOUNT<?/MIVAR>
+
+    <?MIVAR NAME=phmview_pato_source_desc>$phmview_pato_source_count publications<?/MIVAR>
+    <?MIVAR NAME=phmview_pato_link>pheno_summary.apg&OID=$OID<?/MIVAR>
+
+    <?MIVAR COND="$(=,$phmview_pato_source_count,1)">      
+          $(SETVAR,$phmview_pato_source_desc,$1)
+    <?/MIVAR>
+    <?MIVAR COND="$(=,$phmview_pato_fig_count,1)">      
+	  $(SETVAR,$phmview_pato_link,fxfigureview.apg&OID=$phmview_pato_fig_zdb_id)
+    <?/MIVAR>
+
+
+    <table width="100%" border="0" <?MIVAR>bgcolor="$highlight"<?/MIVAR>>
+      <tr> <td>&nbsp;</td>
+        <td><b> Data: </b>
+        <td>
+          <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$phmview_pato_link"> $phmview_pato_fig_count figure(s)</a> from $phmview_pato_source_desc<?/MIVAR>
+        </td>
+      </tr>
+
+ 
+      <?MIVAR NAME=phmview_anat_counter>0<?/MIVAR>
+      <?MIVAR NAME=phmview_anat_short_list_cap>5<?/MIVAR>
+      <?MISQL SQL="
+	     select distinct anatitem_zdb_id, anatitem_name, anatitem_name_order, 'anatomy'
+               from $phmview_input_table, atomic_phenotype, anatomy_item
+              where t_pato_zdb_id = apato_zdb_id
+	        and (apato_entity_a_zdb_id = anatitem_zdb_id 
+		  or apato_entity_b_zdb_id = anatitem_zdb_id)
+           UNION
+            select goterm_go_id, goterm_name, zero_pad(goterm_name), 'go'
+                from $phmview_input_table, atomic_phenotype, go_term
+               where t_pato_zdb_id = apato_zdb_id
+               and (apato_entity_a_zdb_id = goterm_zdb_id 
+                    or apato_entity_b_zdb_id = goterm_zdb_id)
+           order by 3	; ">
+     
+          <?MIBLOCK COND=$(EC,$4,anatomy)>
+              <?MIVAR NAME=phmview_anatitem_html><span nowrap><a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$1>$2</a></span><?/MIVAR>
+          <?MIELSE>
+              <?MIVAR NAME=phmview_anatitem_html><span nowrap><a href=http://www.ebi.ac.uk/ego/QuickGO?mode=display&entry=GO:$1>$2</a></span><?/MIVAR>          
+          <?/MIBLOCK>
+
+          $(SETVAR,$phmview_anat_counter,$(+,$phmview_anat_counter,1))
+  	  <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
+     	    <?MIVAR NAME=phmview_anat_short_list>$phmview_anatitem_html<?/MIVAR>
+      	    <?MIVAR NAME=phmview_anat_long_list>$phmview_anatitem_html<?/MIVAR>         
+	  <?MIELSE>
+	    <?MIVAR COND="$(<=,$phmview_anat_counter,$phmview_anat_short_list_cap)">
+	       $(VECAPPEND,$phmview_anat_short_list,$phmview_anatitem_html)
+            <?/MIVAR>
+            <?MIVAR>
+              $(VECAPPEND,$phmview_anat_long_list,$phmview_anatitem_html)
+            <?/MIVAR>
+          <?/MIBLOCK>
+
+    <?/MISQL>
+
+    <?MIVAR NAME=phmview_anat_short_list_sepa SEPARATE=", ">$phmview_anat_short_list<?/MIVAR>
+    <?MIVAR NAME=phmview_anat_long_list_sepa SEPARATE=", ">$phmview_anat_long_list<?/MIVAR>
+    <?MIVAR NAME=phmview_anat_short_list_escp>$(REPLACE,$phmview_anat_short_list_sepa,"'","")<?/MIVAR>
+    
+    <?MIVAR NAME=phmview_anat_long_list_escp>$(REPLACE,$phmview_anat_long_list_sepa,"'","")<?/MIVAR>
+
+    <tr><td>&nbsp;</td>
+      <td><b>Observed in: </b></td>
+      <td> 
+        <script>
+           <?MIVAR>
+   	   function expandAnatomyList() {
+     	       var elem = document.getElementById("anatomyList");
+               elem.innerHTML = "$phmview_anat_long_list_escp <a href=javascript:onClick=shrinkAnatomyList()><img border=0 src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif></a>";	
+	   }
+
+   	   function shrinkAnatomyList() {
+     	       var elem = document.getElementById("anatomyList");
+               elem.innerHTML = "$phmview_anat_short_list_escp ... <a href=javascript:onClick=expandAnatomyList()>(all $MI_ROWCOUNT) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>";	
+	   }
+
+	   <?/MIVAR>
+        </script> 
+
+        <span id="anatomyList">
+         <?MIVAR>$phmview_anat_short_list_escp<?/MIVAR>
+
+         <?MIVAR COND="$(>,$MI_ROWCOUNT,$phmview_anat_short_list_cap)">   
+	   ... <a href=javascript:onClick=expandAnatomyList()>(all $MI_ROWCOUNT) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>
+         <?/MIVAR>
+       </span>
+
+     </td>
+    </tr>
+
+  </table>
+
+<?/MIBLOCK>
+

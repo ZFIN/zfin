@@ -117,7 +117,7 @@ while (<>) {
     # merged-into term, inserting before any existing xref line. Curators 
     # should only merge an existing term to either a brand new term or
     # another existing term. If to a brand new term, the xref line would
-    # be ignored; if to an existing term, the last xref line should be used.
+    # be ignored; if to an existing term, the last xrefline should be used.
     for (my $numOfMergs = @mergedTerms; $numOfMergs > 0; $numOfMergs--) {
 	shift @termXrefs;
     }

@@ -1,0 +1,192 @@
+<?MICOMMENT>
+
+FILE:     genocursearch.apg
+PREFIX:   genocursrch_
+
+
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
+<?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
+
+
+  
+
+
+<div id="headertwo">Search for Existing Genotypes Containing:</div>
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method=post name=existingGenoSearch>
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+<table>
+  <tr>
+    <td align=right>
+
+
+
+    Feature/Gene:
+    </td>
+    <td align=right>
+    <select name=genocursrch_feat_zdb_id>
+      <?MISQL SQL="
+        select mrkr_zdb_id, mrkr_abbrev
+        from marker
+        where mrkr_zdb_id in ('$pubcur_G_oid_attrib_csv')
+          and mrkr_type == 'CONSTRUCT'
+        order by mrkr_abbrev_order
+        ;">
+         <?MIVAR NAME=fishOption>$2<?/MIVAR>
+      <option value="$1"
+        $(IF,$(AND,$(XST,$genocursrch_feat_zdb_id),$(EC,$genocursrch_feat_zdb_id,$1)),SELECTED)>Marker - $fishOption</option>     
+      <?/MISQL>
+      <?MISQL SQL="
+        select feature_zdb_id, feature_name
+        from feature
+        where feature_zdb_id in ('$pubcur_G_oid_attrib_csv')
+        order by feature_abbrev_order
+        ;">
+         <?MIVAR NAME=fishOption>$2<?/MIVAR>
+            <?MIVAR NAME=fishOption DELIMIT="SUP" REPLACE="sup">$fishOption<?/MIVAR>
+            <?MIVAR NAME=fishOption DELIMIT="<sup>" REPLACE=" (">$fishOption<?/MIVAR>
+            <?MIVAR NAME=fishOption DELIMIT="</sup>" REPLACE=")">$fishOption<?/MIVAR>
+      <option value="$1"
+        $(IF,$(AND,$(XST,$genocursrch_feat_zdb_id),$(EC,$genocursrch_feat_zdb_id,$1)),SELECTED)>Feature - $fishOption</option>     
+      <?/MISQL>
+    </select>
+
+
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td align=right>
+
+    
+    Background: 
+    </td>
+    <td align=right>
+    <select name=genocursrch_wt_bckgrd>
+      <option value=""></option>
+  <?MISQL SQL="
+        select geno_zdb_id, geno_display_name
+        from genotype
+        where geno_is_wildtype = 't'
+        order by geno_display_name">
+
+      <option value="$1">$2</option>         
+  <?/MISQL>
+    </select>
+
+
+    
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <input type=submit value=Search>
+    </td>
+  </tr>
+</table>
+
+</form>
+
+
+<?MICOMMENT> 
+*** Search results table. Restricted to Feature and Background
+from the 'Existing Genotype' Search. Order by display name.
+<?/MICOMMENT>
+
+<?MIBLOCK COND=$(XST,$genocursrch_feat_zdb_id)>
+
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method=post name=selectExistingGeno>
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+    
+<div id="headerthree">Search Results:</div>
+
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Starting Search 
+<?/MISQL>
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-genosearchresulttable.apg';">$1<?/MISQL>
+
+<input type=button value=Select name=select onClick="attachGenotypes();">
+ [The select button places the checked genotypes in the Available table.]
+
+</form>
+
+
+
+<script language="javascript">
+    <?MIVAR NAME=genocursrchOB>[<?/MIVAR>
+    <?MIVAR NAME=genocursrchCB>]<?/MIVAR>
+
+
+    //Construct an array of checkboxes    
+    var genocursrchArray = new Array();
+    <?MIVAR NAME=genocursrch_index>0<?/MIVAR>    
+    
+    <?MISQL SQL="
+        select g1.geno_zdb_id, g1.geno_handle, g1.geno_display_name
+        from   genotype g1 $genosrcht_tables
+        where  $genosrcht_constraint 
+        order by g1.geno_handle;">    
+    
+        genocursrchArray$genocursrchOB$genocursrch_index$genocursrchCB = "$1" ;
+
+      <?MIVAR NAME=genocursrch_index>$(+,$genocursrch_index,1)<?/MIVAR>
+      
+    <?/MISQL>
+
+    
+    // For each checkbox that is checked, add the geno_zdb_id to a variable
+    // that is pipe delimited.
+    function selectGenotypes () {
+      
+      var checked_geno_search_zdb = "";
+      var genotype_form_elements = document.forms['selectExistingGeno'].elements ;
+      var geno_count = 0;
+
+      //increment by the number of hidden variables.
+
+      for(i=0; i<genocursrchArray.length; i++) {
+        //alert(genocursrchArray[i]);
+        //alert(genotype_form_elements[i+2].name);
+        if (genotype_form_elements[i+2].checked == true) {
+          checked_geno_search_zdb = genocursrchArray[i] +"|"+checked_geno_search_zdb;
+          geno_count++;
+        }        
+      }
+      //alert(checked_geno_search_zdb);
+      setCookie('geno_attrib_count',geno_count,'pubcur_c_');
+      
+      return checked_geno_search_zdb;
+    }
+    
+    
+    function attachGenotypes () {
+    
+      var geno_zdb_ids = selectGenotypes();
+            
+      setCookie('geno_attrib_list',geno_zdb_ids,'pubcur_c_');
+      urlSetCookie('geno_update','update','pubcur_c_');
+        
+    }
+</script>  
+
+<?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Finish Search
+<?/MISQL>
+<?/MIBLOCK>
+
+<?/MIBLOCK> <?MICOMMENT> end authorize <?/MICOMMENT>

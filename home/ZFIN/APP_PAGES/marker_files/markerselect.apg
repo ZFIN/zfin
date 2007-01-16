@@ -141,16 +141,18 @@ DEBUGGING:
    <?MICOMMENT>
     Format of result page:
     when gene is not involved, columns of symbol-name, and map. 
-    when gene is involved, two more columns expression, and mutant locus
+    when gene is involved, two more columns expression and mutant
    <?/MICOMMENT>
-   <?MIVAR NAME=$xpat_loci_cols>y<?/MIVAR>
+   <?MIVAR NAME=type_of_genedom>f<?/MIVAR>
+
+   <?MIVAR NAME=type_of_knockdown_reagent>f<?/MIVAR>
 
    <?MICOMMENT>
     when called from accessionselect, constraint is passes in,
     check the OID to decided the format of result list
    <?/MICOMMENT>
    <?MIBLOCK COND="$(XST,$constraint)">
-    <?MIVAR COND="$(=,$(POSITION,$OID,GENE),0)" NAME=$xpat_loci_cols>n
+    <?MIVAR COND="$(=,$(POSITION,$OID,GENE),0)" NAME=$type_of_genedom>f
     <?/MIVAR>
    <?/MIBLOCK>
 
@@ -189,7 +191,7 @@ DEBUGGING:
 		  and mtgrpmem_mrkr_type = '$marker_type'
 		;">
 	<?/MISQL>
-	<?MIVAR COND="$(!=,$MI_ROWCOUNT,0)" NAME=type_of_genedom>t<?/MIVAR>
+	<?MIVAR COND="$(>,$MI_ROWCOUNT,0)" NAME=type_of_genedom>t<?/MIVAR>
 
 	<?MISQL SQL="
 		select 't'
@@ -198,7 +200,7 @@ DEBUGGING:
 		  and mtgrpmem_mrkr_type = '$marker_type'
 		;">
 	<?/MISQL>
-	<?MIVAR COND="$(!=,$MI_ROWCOUNT,0)" NAME=type_of_knockdown_reagent>t<?/MIVAR>
+	<?MIVAR COND="$(>,$MI_ROWCOUNT,0)" NAME=type_of_knockdown_reagent>t<?/MIVAR>
     <?MIELSE>
 	<?MIVAR NAME=$constraint> mrkr_type not in (select mtgrpmem_mrkr_type from marker_type_group_member where mtgrpmem_mrkr_type_group ='SEARCH_SEG')<?/MIVAR>
     <?/MIBLOCK>
@@ -220,6 +222,7 @@ DEBUGGING:
 
     <?MIBLOCK COND="$(XST,$input_name)">
     <?MIVAR NAME=$input_name DELIMIT="'" REPLACE="''">$input_name<?/MIVAR>
+    <?MIVAR NAME=$input_name DELIMIT="_" REPLACE="\_">$input_name<?/MIVAR>
       <?MISQL COND=$(XST,$debug_timing) SQL="
         execute function get_time()">
         <br>$1 Starting name query
@@ -263,6 +266,7 @@ DEBUGGING:
       <?/MIVAR>
       <?MICOMMENT>restore the input string for display<?/MICOMMENT>
       <?MIVAR COND="$(XST,$input_name)" NAME=input_name DELIMIT="''" REPLACE="'">$input_name<?/MIVAR>
+      <?MIVAR COND="$(XST,$input_name)" NAME=input_name DELIMIT="\_" REPLACE="_">$input_name<?/MIVAR>	
     <?/MIBLOCK>  <?MICOMMENT>-------------------------------------<?/MICOMMENT>
 
 
@@ -405,13 +409,10 @@ DEBUGGING:
     <?/MIBLOCK>
     <?MICOMMENT>------------------ end LG ---------------<?/MICOMMENT>
 
+    <?MIVAR COND="$(XST,$knownmutant)"> 
+       $(VECAPPEND, $constraint, "mrkr_zdb_id in (select fmrel_mrkr_zdb_id from feature_marker_relationship)")
+    <?/MIVAR>
 
-    <?MIVAR COND="$(XST,$knownloci)"> 
-	$(VECAPPEND, $constraint, "mrkr_zdb_id in (select cloned_gene from locus)")
-    <?/MIVAR>
-    <?MIVAR COND="$(AND,$(XST,$marker_type),$(NXST,$type_of_genedom))">
-        $(SETVAR,$xpat_loci_cols,n)
-    <?/MIVAR>
 
     <?MIVAR NAME=constraint SEPARATE=" AND ">$constraint<?/MIVAR>
 
@@ -439,7 +440,7 @@ DEBUGGING:
       create temp table $markerselect_temp_marker (
 	mstmrkr_zdb_id varchar(50),
 	mstmrkr_name varchar(255),
-	mstmrkr_abbrev varchar(40),
+	mstmrkr_abbrev varchar(255),
 	mstmrkr_abbrev_order varchar(80),
 	mstmrkr_type varchar(10),
 	mstmrkr_match_name varchar(255),
@@ -457,19 +458,6 @@ DEBUGGING:
   <?/MICOMMENT>
   <?MIBLOCK COND="$(EC,$type,pub_mrkr)">
 
-    <?MISQL SQL="
-      insert into $markerselect_temp_marker 
-             (mstmrkr_zdb_id, mstmrkr_name, mstmrkr_abbrev, 
-	     mstmrkr_abbrev_order,  mstmrkr_type )	
-      select mrkr_zdb_id, mrkr_name, mrkr_abbrev, 
-	     mrkr_abbrev_order, mrkr_type
-        from record_attribution, locus, marker
-       where recattrib_source_zdb_id = '$pubId'
-         and recattrib_data_zdb_id = zdb_id
-         and cloned_gene = mrkr_zdb_id
-        ;">  
-               
-    <?/MISQL>
 
     <?MISQL SQL="
       insert into $markerselect_temp_marker 
@@ -477,11 +465,11 @@ DEBUGGING:
 	     mstmrkr_abbrev_order,  mstmrkr_type )		
       select mrkr_zdb_id, mrkr_name, mrkr_abbrev, 
 	     mrkr_abbrev_order, mrkr_type
-        from record_attribution, fish f, locus l, marker
+        from record_attribution, feature_marker_relationship, marker
        where recattrib_source_zdb_id = '$pubId'
-         and recattrib_data_zdb_id = f.zdb_id
-         and f.locus = l.zdb_id
-         and cloned_gene = mrkr_zdb_id
+         and recattrib_data_zdb_id = fmrel_ftr_zdb_id
+         and fmrel_mrkr_zdb_id = mrkr_zdb_id
+         and fmrel_type = 'is allele of'
        ;">             
     <?/MISQL>
 
@@ -504,7 +492,6 @@ DEBUGGING:
        ;">             
     <?/MISQL>
 
-
   <?MIELSE COND="$(EC,$type,pub_mo)" >     
      <?MISQL SQL="
        insert into $markerselect_temp_marker
@@ -519,7 +506,7 @@ DEBUGGING:
 	">
      <?/MISQL>	
      <?MIVAR NAME=$type_of_knockdown_reagent>t<?/MIVAR>
-     <?MIVAR NAME=$xpat_loci_cols>n<?/MIVAR>
+     <?MIVAR NAME=$type_of_genedom>f<?/MIVAR>
 	
   <?MIELSE COND="$(EC,$type,pub_mapped)" >     
      <?MISQL SQL="
@@ -538,16 +525,15 @@ DEBUGGING:
        insert into $markerselect_temp_marker
 	   ( mstmrkr_zdb_id, mstmrkr_name, mstmrkr_abbrev, 
 	     mstmrkr_abbrev_order,  mstmrkr_type )
-  	select l.zdb_id, locus_name, l.abbrev, l.locus_abbrev_order, 'MUTANT'
-  	from record_attribution, linkage_member, linkage, fish f, locus l
+  	select feature_zdb_id, feature_name, feature_abbrev, feature_abbrev_order, 'MUTANT'
+  	from record_attribution, linkage_member, linkage, feature
   	where recattrib_source_zdb_id = '$pubId'
     	and recattrib_data_zdb_id = lnkgmem_linkage_zdb_id
     	and lnkgmem_linkage_zdb_id = lnkg_zdb_id
-    	and lnkgmem_member_zdb_id = f.zdb_id 
-    	and f.locus = l.zdb_id 
+    	and lnkgmem_member_zdb_id = feature_zdb_id
 	and lnkg_or_lg <> '0';">
      <?/MISQL>
-     <?MIVAR NAME=$xpat_loci_cols>n<?/MIVAR>
+     <?MIVAR NAME=$type_of_genedom>f<?/MIVAR>
 
   <?MIELSE>
 
@@ -590,10 +576,12 @@ DEBUGGING:
   <?/MISQL>
   <?MIVAR NAME=$num_recs>$MI_ROWCOUNT<?/MIVAR>
   <?MIBLOCK COND="$(AND,$(NXST,$return_rec),$(NXST,$accession),$(=,$num_recs,1))">
+
      <?MIBLOCK COND="$(EC,$the_type,MUTANT)">
 	<SCRIPT>
+          <?MICOMMENT> when this page is called by pubview2.apg with parameter $pub_mapped, mutant record could be retrieved.<?/MICOMMENT>
           <?MIVAR>	
-            replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$the_marker")
+            replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&fsel_allele_id=$the_marker")
           <?/MIVAR>
 	</SCRIPT>
      <?MIELSE>
@@ -718,12 +706,12 @@ DEBUGGING:
       <?MIBLOCK COND="$(EC,$displayTitle,f)"> 
         <?MICOMMENT> == display the "Show genes with known loci" button ==
         <?/MICOMMENT>
-        <?MIBLOCK COND="$(AND,$(XST,$marker_type),$(XST,$type_of_genedom))">
+        <?MIBLOCK COND="$(AND,$(XST,$marker_type),$(EC,$type_of_genedom,t))">
 	  <?MIVAR NAME=$mrkr_param_list>&query_results=t$(IF,$(XST,$input_name),&input_name=$input_name)$(IF,$(XST,$input_acc),&input_acc=$input_acc)$(IF,$(XST,$compare),&compare=$compare)$(IF,$(NC,$lg,0),&lg=$lg)<?/MIVAR>
 
-          <?MIBLOCK COND="$(NXST,$knownloci)"> 
+          <?MIBLOCK COND="$(NXST,$knownmutant)"> 
 	    <?MIVAR><input type=button 
-            value="Show genes with known mutant loci" onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&marker_type=GENE&knownloci=t$mrkr_param_list')">
+            value="Show genes with mutant(s)" onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&marker_type=GENE&knownmutant=t$mrkr_param_list')">
 	     <?/MIVAR>
 	  <?MIELSE>
 
@@ -732,32 +720,40 @@ DEBUGGING:
 	    <?/MIVAR>
           <?/MIBLOCK>   
         <?/MIBLOCK>
-        
+ 
         <?MICOMMENT> ========== display title line ===============
         <?/MICOMMENT>          
         <TABLE width=100% border=0 cellspacing=0>
           <TR align=left>      
-           <?MIVAR COND="$(XST,$type_of_knockdown_reagent)">  
+           <?MIVAR COND="$(EC,$type_of_knockdown_reagent,t)">  
              <TD align=left width=25%> 
                 <b>Gene</b>
              </TD>
            <?/MIVAR> 
            
            <TD align=left width=25%>
-             <?MIVAR>
-	       <b>$(IF,$(XST,$type_of_knockdown_reagent),Reagent,Symbol)</b>
-             <?/MIVAR>
-	     <?MIVAR>
-	   	 $(IF,$(EC,$xpat_loci_cols,y),<b>- name</b>)
-	     <?/MIVAR>
+             <?MIBLOCK COND=$(EC,$type_of_knockdown_reagent,t)>
+	        <b>Reagent</b> 
+             <?MIELSE COND=$(EC,$type_of_genedom,t)>
+	        <b>Symbol - name</b>
+             <?MIELSE>
+	        <b>Name</b>
+             <?/MIBLOCK>
            </TD>
-	   <?MIVAR COND="$(EC,$xpat_loci_cols,y)"> 
-             <TD align=left width=12%><B>Expression</B></TD>
-             <TD align=left width=12%><B>Mutant Locus</b></TD>
+
+	   <?MIVAR COND="$(EC,$type_of_genedom,t)"> 
+             <TD align=left width=10%><B>Expression</B></TD>
+             <TD align=left width=15%><B>Phenotype</b></TD>
 	   <?/MIVAR>
-           <?MIVAR COND="$(NXST,$type_of_knockdown_reagent)"> 
-       	     <TD align=left><b>Map<b></TD>
+
+           <?MIVAR NAME=mksel_map_col>t<?/MIVAR>
+           <?MIVAR COND="$(AND,$(XST,$marker_type),$(>,$(POSITION,$marker_type,CONSTRCT),0))">
+		$(SETVAR,$mksel_map_col,f)
+           <?/MIVAR>            
+           <?MIVAR COND="$(AND,$(EC,$type_of_knockdown_reagent,f),$(EC,$mksel_map_col,t))"> 
+       	     <TD align-left><b>Map</b></TD>
            <?/MIVAR>
+
            <?MIBLOCK COND="$(XST,$input_name)">
 	     <TD align=left><b>Matching Text</b></TD>
            <?/MIBLOCK>
@@ -765,13 +761,15 @@ DEBUGGING:
       <?/MIBLOCK><?MICOMMENT>===== end of title display ===<?/MICOMMENT>
       <?MIVAR>$(SETVAR,$displayTitle,t)<?/MIVAR>
 
-      $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID="), $(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID="))
+      <?MICOMMENT>when this page is called from pubview2.apg with parameter pub_mapped, mutant data could be retrieved and displayed. <?/MICOMMENT>
+      $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&fsel_allele_id="), $(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID="))
+
               
       <?MICOMMENT> == In case of MO search, list the gene symbol first,
 		   == group the MO list by gene symbol, also alternate
                    == row color by gene group.
       <?/MICOMMENT>
-      <?MIBLOCK COND="$(!=,$(POSITION,$OID,MRPHLNO),0)">
+      <?MIBLOCK COND="$(>,$(POSITION,$OID,MRPHLNO),0)">
 	 <?MIVAR NAME=$display_target_gene><?/MIVAR>
          <?MISQL SQL=" 
                       select mrkr_abbrev, mrkr_zdb_id
@@ -782,6 +780,7 @@ DEBUGGING:
 
              <?MICOMMENT>== when starts MOs on a new gene ==<?/MICOMMENT>
              <?MIBLOCK COND="$(OR,$(NXST,$target_gene_zdb_id),$(AND,$(XST,$target_gene_zdb_id),$(NC,$2,$target_gene_zdb_id)))">
+
 	       <?MIVAR NAME=$display_target_gene><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$2> $1 </A><?/MIVAR>
                    
                <?MIBLOCK COND="$(NC,$rowNUM,1)">
@@ -806,7 +805,7 @@ DEBUGGING:
       <?MICOMMENT> start new row and column <?/MICOMMENT>
       <TR bgcolor="<?MIVAR>$row_color<?/MIVAR>">
 
-        <?MIBLOCK COND="$(!=,$(POSITION,$OID,MRPHLNO),0)">
+        <?MIBLOCK COND="$(>,$(POSITION,$OID,MRPHLNO),0)">
           <TD>
            <?MIVAR>$display_target_gene<?/MIVAR>
           </TD>
@@ -817,69 +816,169 @@ DEBUGGING:
 	<TD valign=top>
 	  <?MIVAR>	
             $(IF,$(XST,$return_rec),<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$OID>SELECT</A>)
+
 	    $(IF,$(OR,$(XST,$accession),$(XST,$pubId)),$mtype_display:)
-            $(IF,$(!=,$(POSITION,$mtype,GENE),0),<i>)<A HREF="$curviewer$OID">$marker_abbrev</A>$(IF,$(!=,$(POSITION,$mtype,GENE),0),</i>)
-	    $(IF,$(=,$(POSITION,$OID,GENE),0),</TD>)
-	    $(IF,$(AND,$(=,$(POSITION,$OID,GENE),0),$(EC,$xpat_loci_cols,y)),<TD>&nbsp;</TD><TD>&nbsp;</TD>)
 	  <?/MIVAR>
 
-	  <?MIBLOCK COND="$(>,$(POSITION,$OID,GENE),0)">
+          <?MIVAR COND=$(EC,$type_of_genedom,f)>
+             <A HREF="$curviewer$OID">$marker_name</A></TD>
+          <?/MIVAR>
 
-	    <?MICOMMENT>
-              08/26/03 take out previous name and orthologues for genes
-            <?/MICOMMENT>
-	    <?MIVAR>-$marker_name<?/MIVAR>
-	    </TD>
+          <?MIBLOCK COND=$(EC,$type_of_genedom,t)>
+	      <?MIVAR>
+                 <A HREF="$curviewer$OID"> <i>$marker_abbrev</i></A>-$marker_name</TD>
+              <?/MIVAR>
+	      <?MICOMMENT>------    Expression  ---------------------- 
+                       -- tmp table is used to save a duplicate effort
+                       -- when query for image.
+              <?/MICOMMENT>
 
-	    <?MIBLOCK COND="$(EC,$xpat_loci_cols,y)"> 
- 	      <?MICOMMENT>gene expression<?/MICOMMENT>
+              <?MIVAR NAME=mrkrselect_temp_fig>$(CONCAT,"mrkrselect_temp_fig",$mrkrsel_session_id)<?/MIVAr>
+   	      <?MISQL SQL="
+      		execute function table_exists('$mrkrselect_temp_fig')">
+     	        <?MISQL COND=$(EC,$1,f) SQL="
+		  create temp table $mrkrselect_temp_fig (
+	  	     mtf_fig_zdb_id varchar(50)
+		  ) with NO LOG;">
+                <?/MISQL>
+              <?/MISQL>
+
 	      <?MISQL SQL="
-          	  select count(*)
-          	    from expression_experiment
+		 insert into $mrkrselect_temp_fig (mtf_fig_zdb_id)
+          	  select distinct xpatfig_fig_zdb_id
+          	    from expression_experiment, expression_result,
+                         expression_pattern_figure
           	   where '$OID' = xpatex_gene_zdb_id
-                   ;">
-                 <?MIVAR NAME=$xpat_count>$1<?/MIVAR>
+		     and xpatex_zdb_id = xpatres_xpatex_zdb_id
+                     and xpatres_zdb_id = xpatfig_xpatres_zdb_id;">
       	      <?/MISQL>
-              <TD>
-              <?MIVAR COND="$(>,$xpat_count,0)">
-                <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=exists&gene_name=$marker_abbrev&xpatsel_geneZdbId=$OID>assays</A>
-              <?/MIVAR>&nbsp;	
-              </TD>
+	      <?MIVAR NAME=$mrkrsel_xpat_fig_count>$MI_ROWCOUNT<?/MIVAR>
 
-	      <?MICOMMENT>gene mutant locus<?/MICOMMENT>
 	      <?MISQL SQL="
-          	  select zdb_id, locus_name, abbrev
-          	    from locus
-          	   where '$OID' = cloned_gene
-                  ;">
-                 <?MIVAR NAME=$locus_id>$1<?/MIVAR>
-	         <?MIVAR NAME=$locus_name>$2<?/MIVAR>
-	         <?MIVAR NAME=$locus_abbrev>$3<?/MIVAR>
+          	  select mtf_fig_zdb_id
+          	    from $mrkrselect_temp_fig;">
+		<?MIVAR NAME=$mrkrsel_xpat_fig_zdb_id>$1<?/MIVAR>
       	      <?/MISQL>
-	      <TD>	
-	      <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
-	        <?MIVAR>	
-	        <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$locus_id><i>$locus_name</i></A>
-	        <?/MIVAR>
-	      <?MIELSE>
-		  <font size=-1>Unknown</font>
-	      <?/MIBLOCK>
-	      </TD>	
-            <?/MIBLOCK> <?MICOMMENT> $xpat_loci_cols = y <?/MICOMMENT>
-  	  <?/MIBLOCK><?MICOMMENT> addition for genes<?/MICOMMENT>
+
+	      <?MISQL SQL="
+          	  select img_zdb_id
+          	    from $mrkrselect_temp_fig, image
+          	   where img_fig_zdb_id = mtf_fig_zdb_id;">
+		<?MIVAR NAME=$mrkrsel_xpat_fig_img_zdb_id>$1<?/MIVAR>
+      	      <?/MISQL>
+	      
+              <TD nowrap>
+              <?MIBLOCK COND="$(>,$mrkrsel_xpat_fig_count,0)">
+                <?MIVAR COND="$(>,$mrkrsel_xpat_fig_count,1)">
+                  <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=exists&gene_name=$marker_abbrev&xpatsel_geneZdbId=$OID>$mrkrsel_xpat_fig_count figure(s) </A>
+		<?/MIVAR>
+                <?MIVAR COND="$(=,$mrkrsel_xpat_fig_count,1)">
+                  <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$mrkrsel_xpat_fig_zdb_id>1 figure </A>
+		<?/MIVAR>
+
+                <?MIVAR COND=$(XST,$mrkrsel_xpat_fig_img_zdb_id)>
+		   <img src="/images/camera_icon.gif" border=0 alt="with image(s)">
+		<?/MIVAR>
+                              
+              <?/MIBLOCK>&nbsp;		
+              </TD>
+              <?MISQL SQL="delete from $mrkrselect_temp_fig"><?/MISQL>
+              <?MIVAR>$(UNSETVAR,$mrkrsel_xpat_fig_img)<?/MIVAR>
+
+	      <?MICOMMENT>------    Phenotype  ---------------------- 
+                       -- gene is related to allele by feature_marker_relationship
+                       -- as well as mapped_deletion. We need another temp table,
+                       -- to store allele data, then re-use the pre-empted 
+                       -- $mrkrselect_temp_fig to store distinct fig zdb id
+              <?/MICOMMENT>
+
+              <?MIVAR NAME=mrkrselect_temp_allele>$(CONCAT,"mrkrselect_temp_allel",$mrkrsel_session_id)<?/MIVAr>
+   	      <?MISQL SQL="
+      		execute function table_exists('$mrkrselect_temp_allele')">
+     	        <?MISQL COND=$(EC,$1,f) SQL="
+		  create temp table $mrkrselect_temp_allele (
+	  	     mta_ftr_zdb_id varchar(50)
+		  ) with NO LOG;">
+                <?/MISQL>
+              <?/MISQL>
+
+
+	      <?MISQL SQL="
+		 insert into $mrkrselect_temp_allele (mta_ftr_zdb_id)
+		      select fmrel_ftr_zdb_id
+                        from feature_marker_relationship
+		       where fmrel_mrkr_zdb_id='$OID';">
+              <?/MISQL>
+	      <?MISQL SQL="
+		 insert into $mrkrselect_temp_allele (mta_ftr_zdb_id)
+		      select feature_zdb_id
+                        from mapped_deletion, feature
+		       where marker_id = '$OID'
+                         and allele = feature_name
+			 and present_t = 'f';">
+              <?/MISQL>
+
+
+	      <?MISQL SQL="
+		 insert into $mrkrselect_temp_fig (mtf_fig_zdb_id)
+          	  select distinct apatofig_fig_zdb_id
+          	    from $mrkrselect_temp_allele, genotype_feature,
+		         genotype_experiment, atomic_phenotype, apato_figure
+                   where mta_ftr_zdb_id = genofeat_feature_zdb_id
+                     and genofeat_geno_zdb_id = genox_geno_zdb_id
+                     and genox_zdb_id = apato_genox_zdb_id
+                     and apatofig_apato_zdb_id = apato_zdb_id ;">
+      	      <?/MISQL>
+	      <?MIVAR NAME=mrkrsel_pheno_fig_count>$MI_ROWCOUNT<?/MIVAR>
+	      <?MISQL SQL="
+          	  select mtf_fig_zdb_id
+          	    from $mrkrselect_temp_fig;">
+		<?MIVAR NAME=mrkrsel_pheno_fig_zdb_id>$1<?/MIVAR>
+      	      <?/MISQL>
+
+	      <?MISQL SQL="
+          	  select img_zdb_id
+          	    from $mrkrselect_temp_fig, image
+          	   where img_fig_zdb_id = mtf_fig_zdb_id;">
+		<?MIVAR NAME=mrkrsel_pheno_fig_img_zdb_id>$1<?/MIVAR>
+      	      <?/MISQL>
+	      
+              <TD nowrap>
+              <?MIBLOCK COND="$(>,$mrkrsel_pheno_fig_count,0)">	
+                <?MIVAR COND="$(>,$mrkrsel_pheno_fig_count,1)">
+                  <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pheno_summary.apg&OID=$OID>$mrkrsel_pheno_fig_count figure(s) </A>
+                <?/MIVAR>
+                <?MIVAR COND="$(=,$mrkrsel_pheno_fig_count,1)">
+                  <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$mrkrsel_pheno_fig_zdb_id>1 figure </A>
+		<?/MIVAR>
+
+                <?MIVAR COND=$(XST,$mrkrsel_pheno_fig_img_zdb_id)>
+		   <img src="/images/camera_icon.gif" border=0 alt="with image(s)">
+		<?/MIVAR>
+                
+              <?/MIBLOCK>&nbsp;	
+              </TD>
+              <?MISQL SQL="delete from $mrkrselect_temp_allele"><?/MISQL>
+              <?MISQL SQL="delete from $mrkrselect_temp_fig"><?/MISQL>
+              <?MIVAR>$(UNSETVAR,$mrkrsel_xpat_fig_img_zdb_id)<?/MIVAR>
+              <?MIVAR>$(UNSETVAR,$mrkrsel_pheno_fig_img_zdb_id)<?/MIVAR>
+
+	  <?/MIBLOCK><?MICOMMENT> addition for genes<?/MICOMMENT>
+
 	
-	  <?MICOMMENT>Map info<?/MICOMMENT>
-	    <?MIBLOCK COND="$(NXST,$type_of_knockdown_reagent)">	
-	  <TD>
+	  <?MICOMMENT>------ Map info ------<?/MICOMMENT>
+	    <?MIBLOCK COND="$(EC,$type_of_knockdown_reagent,f)">	
+	  <TD width=20%>
           <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini&split=break&hide_empty=t&oID=$OID') from webPages where ID='aa-mappingdetail.apg';">
 	    $1<?/MISQL>
 	  </TD>
             <?/MIBLOCK>
   
             <?MIBLOCK COND="$(XST,$input_name)">
-	  <TD>
+	  <TD width=20%>
 	      <?MIVAR NAME=start_pos>$(POSITION,$(LOWER,$match_name),$(LOWER,$input_name))<?/MIVAR>
 	      <?MIVAR NAME=str_length>$(STRLEN,$input_name)<?/MIVAR>
+
 	      <?MIVAR>$match_text: $(SUBSTR,$match_name,1,$(-,$start_pos,1))<b>$(SUBSTR,$match_name,$start_pos,$str_length)</b>$(SUBSTR,$match_name,$(+,$start_pos,$str_length))	
               <?/MIVAR>
  	  </TD>
@@ -895,6 +994,7 @@ DEBUGGING:
                <?/MIBLOCK>
 	  <?/MIBLOCK>
 
+ 
     <?/MISQL> 	 <?MICOMMENT> for each search result <?/MICOMMENT>
     </TABLE>
 
@@ -914,10 +1014,11 @@ DEBUGGING:
         <?MIVAR name=UserInput COND=$(XST,$input_acc)>$UserInput&input_acc=$input_acc<?/MIVAR> 
 	<?MIVAR name=UserInput COND=$(XST,$compare)>$UserInput&compare=$compare<?/MIVAR>
 	<?MIVAR name=UserInput COND=$(XST,$marker_type)>$UserInput&marker_type=$marker_type<?/MIVAR>
-        <?MIVAR name=$UserInput COND=$(XST,$knownloci)>$UserInput&knownloci=$knownloci<?/MIVAR>
         <?MIVAR name=UserInput COND=$(XST,$lg)>	$UserInput&lg=$lg<?/MIVAR>
         <?MIVAR name=$UserInput COND=$(XST,$return_rec)>$UserInput&return_rec=$return_rec<?/MIVAR> 
-        <?MIVAR name=UserInput COND=$(XST,$query_results)>$UserInput&query_results=$query_results<?/MIVAR> 
+        <?MIVAR name=UserInput COND=$(XST,$query_results)>$UserInput&query_results=$query_results<?/MIVAR>  
+	<?MIVAR name=$UserInput COND=$(XST,$knownmutant)>$UserInput&knownmutant=$knownmutant<?/MIVAR>
+
 
     <?/MIBLOCK> 
 

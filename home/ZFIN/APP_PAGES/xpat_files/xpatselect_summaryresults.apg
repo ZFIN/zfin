@@ -141,8 +141,8 @@ where xpat_gene_zdb_id = '$xpsumres_geneZdbId'
 		 where xpat_gene_zdb_id = '$xpsumres_geneZdbId'
 		   and exists (
 			select 't'
-			  from fish_image
-			 where fimg_fig_zdb_id = xpat_fig_zdb_id);">
+			  from image
+			 where img_fig_zdb_id = xpat_fig_zdb_id);">
          
        	     <?MIVAR COND="$(!=,$1,0)" NAME="$xpsumres_cameraTag"><img src="/images/camera_icon.gif" border=0 alt="with image(s)"><?/MIVAR>
          <?/MISQL> 

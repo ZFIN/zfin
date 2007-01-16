@@ -1,0 +1,140 @@
+<?MICOMMENT>
+
+FILE: new_feature.apg
+PREFIX: newfeat_ 
+
+DESCRIPTION:
+This is the first page of entering a new feature into ZFIN., 
+
+<?/MICOMMENT>
+
+<TITLE>ZFIN :  Add Feature</TITLE>
+
+<script>
+
+function validateFeatureForm(featureValue) {
+      if (document.feature_new.featcur_feature_add_name.value == "") {
+        alert("Please enter a feature name.");
+       }
+      else {
+        return true;
+       }
+  }
+
+function setAssayDisplay(featureValue) {
+     if (featureValue.search('CONSTRCT') > 0) {
+       document.feature_new.featcur_feature_add_mutagee.disabled = true;
+       document.feature_new.featcur_feature_add_mutagen.disabled = true;
+     }
+     else if (featureValue.search('GIO') > 0) {
+       document.feature_new.featcur_feature_add_mutagee.disabled = true;
+       document.feature_new.featcur_feature_add_mutagen.disabled = true;
+     }
+     else {
+       document.feature_new.featcur_feature_add_mutagee.disabled = false;
+       document.feature_new.featcur_feature_add_mutagen.disabled = false;
+      }
+  }
+
+</script>
+
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
+
+<?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
+
+ <?MIVAR NAME=hide><font color=blue size=-1><u>hide</u></font><?/MIVAR>
+ <?MIVAR NAME=unhide><font color=blue size=-1><u>show</u></font><?/MIVAR>
+
+
+
+  </head>
+
+
+
+
+
+<basefont size=2>
+
+<?MISQL SQL="
+  select WebExplode(object,'page_title=New Marker&permission=root') 
+    from webPages 
+    where ID='aa-secure_navigation.apg';">$1
+<?/MISQL>
+
+<?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
+    <?MIVAR>
+      <form name=feature_new action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#featcreation"  method=get onSubmit=setCookie('featcurupdate','update','featcur_')>
+        <input type=hidden name=MIval value="aa-curation.apg">
+        <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>">
+        <INPUT TYPE=HIDDEN NAME=featcur_feature_add VALUE="Add">
+        <table>
+          <tr><td><B>Feature type</b>:
+          <td> <select name=featcur_feature_add_type onChange=setAssayDisplay(this.value);>
+               <option value='UNSPECIFIED'>unspecified
+               <?MISQL SQL="select ftrtype_name, ftrtype_type_display, 
+                            ftrtype_significance as col_order 
+                            from feature_type 
+                            where ftrtype_type_display not like 'unspecified' 
+                            union select '-----', '-----',10 as col_order 
+                            from feature_type 
+                            union 
+                            select marker_type, mrkrtype_type_display, 
+                            mrkrtype_significance as col_order 
+                            from marker_types where (marker_type like '%CONSTRCT%' or marker_type like 'REGION') 
+                            and mrkrtype_type_display not like 'unspecified' 
+                            order by col_order">
+                            <OPTION value='$1'>$2
+                <?/MISQL>
+               </select>
+            <tr><td><B>Name/Allele Designation:</b>
+            <td><input type=text name=featcur_feature_add_name size=80>
+            <tr><td><b>Abbreviation</b>:
+            <td> <input type=text name=featcur_feature_add_abbrev size=15>
+            <tr><td><b>Alias</b>:
+            <td> <input type=text name=featcur_feature_add_alias size=15>
+            <tr><td><b>Discoverer</b>
+            <td> <select name=featcur_feature_add_lab>
+                 <option value=''>
+                 <?MISQL SQL="select distinct name from lab">
+                    <OPTION value='$1'>$1
+                 <?/MISQL>
+                 </select>
+             <tr><td><b>Mutagenesis Protocol</b>: 
+             <td> <select name=featcur_feature_add_mutagee>
+                  <option value='not specified'>not specified
+                  <?MISQL SQL="select mutagee_name 
+                               from mutagee 
+                               where mutagee_name not like 'not specified'">
+                   <OPTION value='$1'>$1
+                  <?/MISQL>
+                  </select>
+                  &nbsp;&nbsp;&nbsp;&nbsp;
+                  <b>Treated With : </b> <select name=featcur_feature_add_mutagen>
+
+                  <option value='not specified'>not specified
+                  <?MISQL SQL="select mutagen_name 
+                               from mutagen 
+                               where mutagen_name not like 'not specified'">
+                  <OPTION value='$1'>$1
+                  <?/MISQL>
+                  </select>
+                  <?MICOMMENT>reservation pub for curators<?/MICOMMENT>
+            <?MIBLOCK COND="$(EC,$OID,ZDB-PUB-060413-1)">
+            <tr><td>     <b>Reservation Comments:</b> <td><input type=text name=featcur_feature_rsrvComment size=50>
+            <?/MIBLOCK>
+            <tr><td><B>Public Note:</b>
+            <td><input type=text name=featcur_feature_add_note size=80>
+            <tr><td><B>Private Note:</b>
+            <td><TEXTAREA rows=5 cols=50 name=featcur_feature_private_note>
+                </TEXTAREA>
+            <tr><td> 
+            <td><td><input name="featcur_feature_add" type=button value="Create New Feature/Connect to Pub" onClick="if (validateFeatureForm(document.feature_new.featcur_feature_add_name.value)){setCookie('featcurupdate','update','featcur_');document.feature_new.submit()}"> 
+
+  </table> 
+
+</form>
+<?/MIVAR>
+
+<?/MIBLOCK> <!-- ends specifying params -->
+
+

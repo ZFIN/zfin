@@ -102,9 +102,9 @@ FROM panels
 
 UNION
 
--- fishview
-SELECT "fishview" AS app_file, zdb_id AS oid
-FROM fish
+-- genotypeview
+SELECT "genotypeview" AS app_file, geno_zdb_id AS oid
+FROM genotype
 
 UNION
 
@@ -130,12 +130,6 @@ UNION
 -- labview
 SELECT "labview" AS app_file, zdb_id AS oid
 FROM lab
-
-UNION
-
--- locusview
-SELECT "locusview" AS app_file, zdb_id AS oid
-FROM locus
 
 UNION
 

@@ -66,6 +66,9 @@ function updateInnerHTML(element_id,html_to_display) {
 <?MIVAR NAME=fxfigview_label><?/MIVAR>
 <?MIVAR NAME=$fxfigview_hasmultimg><?/MIVAR>
 <?MIVAR NAME=$fxfigview_jrnl><?/MIVAR>
+<?MIVAR NAME=fxfigview_height><?/MIVAR>
+<?MIVAR NAME=fxfigview_width><?/MIVAR>
+<?MIVAR NAME=fxfigview_dimension><?/MIVAR>
 <?MIVAR NAME=$fxfigview_highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
 <?MIVAR NAME=fxfigview_LFC>Light Figure Curated<?/MIVAR>
 <?MIVAR NAME=$fxfigview_size>350<?/MIVAR>
@@ -123,13 +126,17 @@ get source zdb id, comments, label and caption of figure to determine type of FX
       </form></tr>
     </table>
 <?/MIVAR>
-	 
+<p>	 
+<p>
+<p>
+<?MISQL SQL="select WebExplode(object,'fxpubdis_source_zdb_id=$fxfigview_source_zdb_id&fxpubdis_is_figure=yes&fxpubdis_fig_zdb_id=$fxfigview_fig_zdb_id') from webPages where ID='aa-fxpubdisplay.apg';">$1<?/MISQL>
 <?MIVAR>
     <TITLE>ZFIN: Figure: $(REPLACE,$fxfigview_miniref,"<i>et al.</i>","et al."), $fxfigview_label </TITLE>
 <?/MIVAR>
 <?MICOMMENT>
 the block below is to determine if the figure is a text only.
 <?/MICOMMENT>
+
 <?MIBLOCK COND="$(>,$(POSITION,$fxfigview_label,text),0)">
      <?MIVAR NAME=$fxfigview_is_text>yes<?/MIVAR>
      <?MIVAR NAME=fxfigview_label><?/MIVAR>
@@ -163,15 +170,13 @@ For all unpublished figures, we display the caption, but append the label Descri
 <?MIELSE>
   <?MIVAR COND="$(EQ,$fxfigview_jtype,Unpublished)" NAME=fxfigview_label><?/MIVAR> 
 <?/MIBLOCK> 
- 
-<?MICOMMENT>
+        <?MIVAR NAME=fxfigview_is_lite>no<?/MIVAR>
+<?MICOMMENT> 
 This is done to determine if a pub has lite figures
 <?/MICOMMENT>
 <?MISQL SQL="execute function pub_xpat_curation_status('$fxfigview_source_zdb_id')">
          <?MIVAR NAME=fxfigview_pub_status>$1<?/MIVAR>
 <?/MISQL>
-
-
 
 <?MIBLOCK COND=$(EC,$fxfigview_pub_status,$fxfigview_LFC)>
          <?MIVAR NAME=fxfigview_is_lite>yes<?/MIVAR>
@@ -181,10 +186,10 @@ This is done to determine if a pub has lite figures
 
 <?MICOMMENT>
 get standard header (pub + submitter (if any) + disclaimer (if any)
-<?/MICOMMENT>
 
 <?MISQL SQL="select WebExplode(object,'fxpubdis_source_zdb_id=$fxfigview_source_zdb_id&fxpubdis_is_figure=yes&fxpubdis_fig_zdb_id=$fxfigview_fig_zdb_id') from webPages where ID='aa-fxpubdisplay.apg';">$1<?/MISQL>
-<p>
+<?/MICOMMENT>
+
 <?MICOMMENT>
 Display the gene, anatomy items and stage list only if there are expression
 patterns associated with the figure
@@ -196,27 +201,46 @@ patterns associated with the figure
 <?/MISQL>
 <?MIVAR NAME=fxfigview_resultct>$1<?/MIVAR>
    
+<?MISQL SQL="select count(apatofig_apato_zdb_id)::integer 
+              from apato_figure 
+              where apatofig_fig_zdb_id='$OID'">
+<?/MISQL>
+<?MIVAR NAME=fxfigview_pato_resultct>$1<?/MIVAR>
 <?MICOMMENT>Begin expression pattern condition <?/MICOMMENT>
 
 <?MIBLOCK COND="$(>,$fxfigview_resultct,0)">
 <table width = 100%>
    <tr><td>
-
+   <tr><td><b>GENE EXPRESSION:</b>
     <tr><td><?MISQL SQL="select WebExplode(object,'fxfigge_fig_zdb_id=$OID&fxfigge_display_option=anchor') from webPages where ID='aa-fxfiggenelist.apg';">$1<?/MISQL>
 
-    <tr><td><b>Genetic Background : </b><?MISQL SQL="select WebExplode(object,'fxfigfi_fig_zdb_id=$OID') from webPages where ID='aa-fxfigfishlist.apg';">$1<?/MISQL>
-    
+    <tr><td><b>Genotype or Background : </b><?MISQL SQL="select WebExplode(object,'fxfigfi_fig_zdb_id=$OID') from webPages where ID='aa-fxfigfishlist.apg';">$1<?/MISQL>
     <?MICOMMENT>Dont display anatomy items for GELI<?/MICOMMENT>
 
     <?MIBLOCK COND="$(EQ,$fxfigview_is_geli,)">
        <tr><td><?MISQL SQL="select WebExplode(object,'fxfiganat_fig_zdb_id=$OID') from webPages where ID='aa-fxfiganatlist.apg';">$1<?/MISQL>
     <?/MIBLOCK>
-
     <tr><td><?MISQL SQL="select WebExplode(object,'fxfigst_fig_zdb_id=$OID&fxfigst_is_displayed=t') from webPages where ID='aa-fxfigstgrng.apg';">$1<?/MISQL>
     <tr><td><?MISQL SQL="select WebExplode(object,'fxfigge_fig_zdb_id=$OID') from webPages where ID='aa-fxfigprobelist.apg';">$1<?/MISQL>
+    <td></td>
+</table>
+<?/MIBLOCK>
+
+
+<?MIBLOCK COND="$(>,$fxfigview_pato_resultct,0)">
+<table width = 100%>
+   <tr><td>
+   <tr><td> <b>PHENOTYPE:</b>
+    <tr><td><b>Genotype(s): </b><?MISQL SQL="select WebExplode(object,'fxfigfi_fig_zdb_id=$OID&fxfiggeno_display_option=anchor') from webPages where ID='aa-fxfigphenogenolist.apg';">$1<?/MISQL>
+
+    <tr><td><?MISQL SQL="select WebExplode(object,'fxfiganat_fig_zdb_id=$OID&fxfigge_display_option=anchor') from webPages where ID='aa-fxfigphenoanatlist.apg';">$1<?/MISQL>
+
+
+    <tr><td><?MISQL SQL="select WebExplode(object,'fxfigst_fig_zdb_id=$OID&fxfigst_is_displayed=t') from webPages where ID='aa-fxfigphenostgrng.apg';">$1<?/MISQL>
 
 </table>
 <?/MIBLOCK>
+
 
 <?MICOMMENT>End expression pattern condition <?/MICOMMENT>
 
@@ -224,7 +248,7 @@ patterns associated with the figure
 <?MICOMMENT>Check if the figure has multiple images (most unpublished figures do). If so, compress thumbnails 
 and display them one after the other horizontally 
 <?/MICOMMENT>
-<?MISQL SQL="select count(fimg_zdb_id)::integer from fish_image where fimg_fig_zdb_id='$fxfigview_fig_zdb_id'"><?/MISQL>
+<?MISQL SQL="select count(img_zdb_id)::integer from image where img_fig_zdb_id='$fxfigview_fig_zdb_id'"><?/MISQL>
 <?MIBLOCK COND="$(>,$1,1)">
     <?MIVAR NAME=$fxfigview_hasmultimg>t<?/MIVAR>
       <table width = 100% align = center border = 0 bgcolor="#EEEEEE">
@@ -234,9 +258,9 @@ and display them one after the other horizontally
 
 
 <?MISQL SQL="
-           select distinct fig_label, fig_caption, fimg_thumbnail, fimg_zdb_id, fig_comments, fig_source_zdb_id, fimg_view, fimg_direction, fimg_image, fimg_height, fimg_width 
-           from figure left outer join fish_image
-                          on fimg_fig_zdb_id=fig_zdb_id
+           select distinct fig_label, fig_caption, img_thumbnail, img_zdb_id, img_comments, fig_source_zdb_id, img_view, img_direction, img_image, img_height, img_width 
+           from figure left outer join image
+                          on img_fig_zdb_id=fig_zdb_id
            where fig_zdb_id = '$fxfigview_fig_zdb_id'
           ;">
 
@@ -247,20 +271,20 @@ and display them one after the other horizontally
           <?MIVAR NAME=fxfigview_image_view>$7<?/MIVAR>
           <?MIVAR NAME=fxfigview_image_direction>$8<?/MIVAR>
           <?MIVAR NAME=fxfigview_image>$9<?/MIVAR>
-<?MICOMMENT>
           <?MIVAR NAME=fxfigview_height>$10<?/MIVAR>
           <?MIVAR NAME=fxfigview_width>$11<?/MIVAR>
+          <?MIBLOCK COND="$(NE,$fxfigview_height,)">
           <?MIBLOCK COND="$(>,$fxfigview_height,$fxfigview_width)">
              <?MIVAR NAME=$fxfigview_dimension>height<?/MIVAR>
           <?MIELSE>
              <?MIVAR NAME=$fxfigview_dimension>width<?/MIVAR>
           <?/MIBLOCK> 
-<?/MICOMMENT>
+          <?/MIBLOCK>
           <?MICOMMENT> if figure has multiple images, display images as thumbnails but do not display caption<?/MICOMMENT>
           <?MICOMMENT> begin multiple images condition <?/MICOMMENT>
           <?MIBLOCK COND="$(EQ,$fxfigview_hasmultimg,t)">
               <?MIVAR>
-              <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$fxfigview_image_zdb_id&image_table=fish_image">
+              <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$fxfigview_image_zdb_id&image_table=image">
               <Img src="<!--|IMAGE_LOAD|-->/$fxfigview_thumbnail" alt title="$fxfigview_image_view, $fxfigview_image_direction"></a>
               <?/MIVAR>
           <?MIELSE> 
@@ -277,12 +301,12 @@ and display them one after the other horizontally
                  <tr><td> 
 <?MIBLOCK COND="$(NE,$fxfigview_jtype,Unpublished)">
 <?MIVAR>
-                 <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$fxfigview_image_zdb_id&image_table=fish_image">
+                 <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$fxfigview_image_zdb_id&image_table=image">
                  <Img src="<!--|IMAGE_LOAD|-->/$fxfigview_image" $fxfigview_dimension = $fxfigview_size align = left border=2></a>
 <?/MIVAR>
 <?MIELSE>
 <?MIVAR>
-                 <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$fxfigview_image_zdb_id&image_table=fish_image">
+                 <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=$fxfigview_image_zdb_id&image_table=image">
               <Img src="<!--|IMAGE_LOAD|-->/$fxfigview_thumbnail" alt title="$fxfigview_image_view, $fxfigview_image_direction"></a>
 <?/MIVAR>
 <?/MIBLOCK>
@@ -344,12 +368,13 @@ and display them one after the other horizontally
          <?MIVAR NAME=$fxfigview_is_qual>no<?/MIVAR>
       <?/MIBLOCK>
     <?MICOMMENT>End qualifier section <?/MICOMMENT>
-    
+
+    <a name=xpat>    
     <b>Gene expression details</b>
     <table width = 100% border = 0 cellspacing = 0 cellpadding = 0 colspan = 7>
       <tr bgcolor=#cccccc height=25><td><b>Gene</b>
       <td></td> 
-      <td><b><ALT TITLE="Genetic Background + environment">Fish</TITLE></b>
+      <td><b><ALT TITLE="Genotype + environment">Fish</TITLE></b>
       <td><b>Stage</td></b>
       <?MICOMMENT>Display qualifier column only if it exists for atleast one structure the gene is expressed in<?/MICOMMENT>
       <?MIBLOCK COND="$(EQ,$fxfigview_is_qual,yes)">
@@ -386,9 +411,48 @@ and display them one after the other horizontally
       <?/MISQL>
     </table>
 <?/MIBLOCK> <?MICOMMENT>End gene expression details block<?/MICOMMENT>
+<p>
+<?MIBLOCK COND="$(>,$fxfigview_pato_resultct,0)">
+
+    <a name=phenotype>
+    <b>Phenotype details</b>
+    <table width = 100% border = 0 cellspacing = 0 cellpadding = 0 colspan = 7>
+      <tr bgcolor=#cccccc height=25>
+      <td><b><ALT TITLE="Genotype + environment">Fish</TITLE></b>
+      <td></td> 
+      <td><b>Stage</td></b>
+      <td><b>Observed in</td></b>
+      <td><b>Phenotype</td></b>
+      <p>
+      <?MISQL SQL="
+           select distinct genox_geno_zdb_id, geno_display_name, geno_name_order
+           from
+           figure,genotype_experiment, genotype,
+           atomic_phenotype,apato_figure
+           where
+           fig_zdb_id='$fxfigview_fig_zdb_id'
+           and fig_zdb_id=apatofig_fig_zdb_id
+           and apatofig_apato_zdb_id=apato_zdb_id
+           and genox_zdb_id = apato_genox_zdb_id
+           and genox_geno_zdb_id = geno_zdb_id
+          order by geno_name_order">
+           <?MIVAR NAME=$fxphenoinfo_genoxid>$1<?/MIVAR>
+          
+ 
+           <?MIBLOCK COND="$(NXST,$fxfigview_rowcolor)">
+            <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
+             <?MIVAR NAME=$fxfigview_rowcolor>$fxfigview_highlight<?/MIVAR>
+            <?/MIBLOCK>
+           <?/MIBLOCK>
+           <?MISQL SQL="select WebExplode(object,'OID=$fxphenoinfo_genoxid&fxphenoinfo_fig_zdb_id=$fxfigview_fig_zdb_id&fxphenoinfo_rowcolor=$fxfigview_rowcolor') from webPages where ID='aa-fxphenoinfo.apg';">$1<?/MISQL>
+           <?MIVAR NAME=$fxfigview_rowcolor>$fxphenoinfo_lastcolor<?/MIVAR>
+      <?/MISQL>
+    </table>
+<?/MIBLOCK> <?MICOMMENT>End phenotype details block<?/MICOMMENT>
+
 
 <p><?MICOMMENT>Display acknowledgement only if it is a curated paper<?/MICOMMENT>
-<?MIBLOCK COND="$(NE,$fxfigview_jtype,Unpublished)">
+<?MIBLOCK COND="$(AND,$(NE,$fxfigview_jtype,Unpublished),$(NE,$fxfigview_jtype,Curation))">
   <?MICOMMENT>Display acknowledgement only if it is a full figure<?/MICOMMENT>
    <?MIBLOCK COND="$(AND,$(EQ,$fxfigview_is_lite,no),$(EQ,$fxfigview_is_geli,),$(EQ,$fxfigview_is_text,no))">
       <?MISQL SQL="select WebExplode(object,'pubackn_pub_zdb_id=$fxfigview_source_zdb_id') from webPages where ID='aa-pubacknowledgement.apg';">$1<?/MISQL>

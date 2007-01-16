@@ -48,64 +48,51 @@ EFFECTS
 <?/MICOMMENT>
 
 
-
 <?MICOMMENT> *** Set Variable cit_G_jtype_filter *** <?/MICOMMENT>
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-citjtypeoption.apg';">$1<?/MISQL>
 
 
-
 <?MIVAR NAME=citfish_fromwhere>
-    from fish_search f, record_attribution, publication p, journal
-    where  f.fish_id = '$OID'
-      and recattrib_data_zdb_id  = f.fish_id
-      and recattrib_source_zdb_id = p.zdb_id
-      and pub_jrnl_zdb_id = jrnl_zdb_id
+    from record_attribution,publication p,journal
+    where recattrib_data_zdb_id = '$OID'
+    and recattrib_source_zdb_id = p.zdb_id
+    and pub_jrnl_zdb_id = jrnl_zdb_id
 <?/MIVAR>
-
 
 <?MIVAR>
   $(VECAPPEND,$citfish_fromwhere,"
-      from fish_search f, record_attribution, publication p, journal
-      where  f.fish_id = '"$OID"'
-      and recattrib_data_zdb_id  = f.alt_zdb_id
+      from data_alias,record_attribution,publication p,journal
+      where dalias_data_zdb_id = '"$OID"'  
+      and recattrib_data_zdb_id = dalias_zdb_id 
       and recattrib_source_zdb_id = p.zdb_id
-      and pub_jrnl_zdb_id = jrnl_zdb_id")
+      and jrnl_zdb_id = pub_jrnl_zdb_id")
+<?/MIVAR>      
 
+  <?MIVAR>
   $(VECAPPEND,$citfish_fromwhere,"
-      from fish_search f, mapped_deletion m, record_attribution, publication p,	journal
-      where  f.fish_id = '"$OID"'
-      and f.allele = m.allele
+      from genotype_feature,record_attribution,publication p,journal
+      where genofeat_geno_zdb_id = '"$OID"'
+      and recattrib_data_zdb_id  = genofeat_feature_zdb_id
+      and recattrib_source_zdb_id = p.zdb_id
+      and pub_jrnl_zdb_id = jrnl_zdb_id")   
+  
+  $(VECAPPEND,$citfish_fromwhere,"
+      from genotype_feature,feature,mapped_deletion m,record_attribution,publication p,journal
+      where genofeat_geno_zdb_id = '"$OID"'
+      and genofeat_feature_zdb_id = feature_zdb_id
+      and feature_name = m.allele
       and recattrib_data_zdb_id  = m.mapdel_zdb_id
       and recattrib_source_zdb_id = p.zdb_id
       and pub_jrnl_zdb_id = jrnl_zdb_id")
 
   $(VECAPPEND,$citfish_fromwhere,"
-      from fish_search f, mapped_deletion m, record_attribution, publication p, journal
-      where  f.fish_id = '"$OID"'
-      and f.locus = m.allele
-      and recattrib_data_zdb_id  = m.mapdel_zdb_id
-      and recattrib_source_zdb_id = p.zdb_id
-      and pub_jrnl_zdb_id = jrnl_zdb_id")
-
-  $(VECAPPEND,$citfish_fromwhere,"
-      from fish_search f, data_alias, record_attribution, publication p, journal
-      where f.fish_id = '"$OID"'
-      and dalias_data_zdb_id  = f.fish_id
+      from genotype_feature, data_alias, record_attribution, publication p, journal 
+      where genofeat_geno_zdb_id = '"$OID"'
+      and dalias_data_zdb_id  = genofeat_feature_zdb_id
       and recattrib_data_zdb_id = dalias_zdb_id 
       and recattrib_source_zdb_id = p.zdb_id
       and jrnl_zdb_id = pub_jrnl_zdb_id")
-
-  $(VECAPPEND,$citfish_fromwhere,"
-      from fish_search f, data_alias, record_attribution, publication p, journal 
-      where f.fish_id = '"$OID"'
-      and dalias_data_zdb_id  = f.alt_zdb_id
-      and recattrib_data_zdb_id = dalias_zdb_id 
-      and recattrib_source_zdb_id = p.zdb_id
-      and jrnl_zdb_id = pub_jrnl_zdb_id")
-
-<?/MIVAR>
-
-
+  <?/MIVAR>
 
 <?MICOMMENT> 
   ===========================

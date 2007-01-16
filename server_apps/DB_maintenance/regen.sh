@@ -16,8 +16,6 @@ echo "Starting regen_maps at `date`"
 echo 'execute function regen_maps(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
 echo "Starting regen_names at `date`"
 echo 'execute function regen_names(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
-echo "Starting regen_fishsearch at `date`"
-echo 'execute function regen_fishsearch(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
 echo "Starting regen_anatomy at `date`"
 echo 'execute function regen_anatomy(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
 echo "Finished at `date`"

@@ -40,31 +40,32 @@
   <!--- EXECUTION --->
   <!--- Query Database --->
   <?MISQL SQL="
-    select a.name, a.zdb_id, a.abbrev
-      from fish a
-      where line_type = 'wild type' 
-      order by a.name;">
-    <?MIVAR NAME=$fish_name>$1<?/MIVAR>
-    <?MIVAR NAME=$fish_zdb_id>$2<?/MIVAR>
-    <?MIVAR NAME=$fish_abbrev>$3<?/MIVAR>
+    select geno_display_name, geno_zdb_id, geno_handle
+      from genotype
+     where geno_is_wildtype = 't' 
+  order by geno_name_order;">
+    <?MIVAR NAME=$geno_name>$1<?/MIVAR>
+    <?MIVAR NAME=$geno_zdb_id>$2<?/MIVAR>
+    <?MIVAR NAME=$geno_handle>$3<?/MIVAR>
+
     <TR valign=top> 
       <TD> 
-        $(IF,$(XST,$return_rec),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$fish_zdb_id" >SELECT</A>")
+        $(IF,$(XST,$return_rec),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$geno_zdb_id" >SELECT</A>")
       </TD>
       <TD>
-        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$fish_zdb_id">$fish_name</A> ($fish_abbrev)  
+        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypeview.apg&OID=$geno_zdb_id">$geno_name</A> ($geno_handle)  
       </TD>
       <TD valign="top">
         <?MISQL SQL="
           select idsup_supplier_zdb_id, get_obj_name(idsup_supplier_zdb_id)
             from int_data_supplier
-            where idsup_data_zdb_id = '$fish_zdb_id'
+            where idsup_data_zdb_id = '$geno_zdb_id'
             order by 2;">
           <?MIVAR NAME=$supplier_zdb_id>$1<?/MIVAR>
           <?MIVAR NAME=$supplier_name>$2<?/MIVAR>
           <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sourceview.apg&OID=$supplier_zdb_id">$supplier_name</A>
 	  <?MIVAR COND=$(EC,$supplier_zdb_id,ZDB-LAB-991005-53)>
-	     &nbsp;&nbsp;(<A HREF="/zirc/index.php?OID=$fish_zdb_id">order this</A>)
+	     &nbsp;&nbsp;(<A HREF="/zirc/index.php?OID=$geno_zdb_id">order this</A>)
 	  <?/MIVAR>
 	<BR>
         <?/MISQL>

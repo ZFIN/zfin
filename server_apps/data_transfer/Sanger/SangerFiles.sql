@@ -13,10 +13,10 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Sanger/VegaXpat.txt'
         probe.mrkr_zdb_id probe_zdb, probe.mrkr_abbrev,
         xpatex_assay_name, xpatex_zdb_id xpat_zdb, 
         xpatex_source_zdb_id, 
-        featexp_genome_feature_zdb_id, featexp_exp_zdb_id 	
+        genox_geno_zdb_id, genox_exp_zdb_id 	
  from expression_experiment
-      join feature_experiment 
-	  on featexp_zdb_id = xpatex_featexp_zdb_id
+      join genotype_experiment 
+	  on genox_zdb_id = xpatex_genox_zdb_id
       join marker gene
 	  on gene.mrkr_zdb_id = xpatex_gene_zdb_id
       left join marker probe

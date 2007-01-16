@@ -42,8 +42,8 @@ create function get_pub_mini_ref(pubZdbId varchar(50))
 
   if lname != "" then   
     let miniRef = lname || ", " || pubYear;
-  elif (srcType = "Curation") then
-    let miniRef = "Unpublished";
+  elif (srcType = "Curation" and substr(authorList,1,4) = "ZFIN") then
+    let miniRef = "ZFIN Curated Data";
   else	
     let miniRef = authorList;	
   end if

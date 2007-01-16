@@ -1,0 +1,56 @@
+
+<?MIVAR>
+  $(UNSETVAR,$phenosum_sql)
+<?/MIVAR>
+
+<?MIVAR NAME=phenosum_sql_from>
+      from figure, publication, apato_figure, atomic_phenotype, genotype_experiment, genotype, genotype_feature
+<?/MIVAR>
+
+<?MIVAR NAME=phenosum_sql_where>
+     where fig_source_zdb_id = zdb_id
+       and fig_zdb_id = apatofig_fig_zdb_id
+       and apatofig_apato_zdb_id = apato_zdb_id
+       and apato_genox_zdb_id = genox_zdb_id
+       and genox_geno_zdb_id = geno_zdb_id
+       and geno_zdb_id = genofeat_geno_zdb_id
+<?/MIVAR>
+
+
+<?MIBLOCK COND=$(NC,$(SUBSTR,$OID,1,8),ZDB-GENO)>
+
+  <?MIVAR NAME=phenosum_sql_where>$phenosum_sql_where
+       and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+       and fmrel_mrkr_zdb_id = '$OID'  
+       
+       UNION
+       
+       $phenosum_sql_select
+       $phenosum_sql_from , feature, mapped_deletion
+       $phenosum_sql_where
+       and genofeat_feature_zdb_id = feature_zdb_id
+       and feature_name = allele
+       and present_t = 'f'
+       and marker_id = '$OID'
+  <?/MIVAR>  
+  
+  <?MIVAR NAME=phenosum_sql_from>$phenosum_sql_from, feature_marker_relationship
+  <?/MIVAR>  
+<?MIELSE>
+
+  <?MIVAR NAME=phenosum_sql_where>$phenosum_sql_where
+       and geno_zdb_id = '$OID'  
+  <?/MIVAR> 
+  
+<?/MIBLOCK>
+
+<?MIVAR NAME=phenosum_sql>
+  $phenosum_sql_select
+  $phenosum_sql_from
+  $phenosum_sql_where
+<?/MIVAR>
+  
+
+<?MIVAR>
+  $(UNSETVAR,$phenosum_sql_select)
+<?/MIVAR>

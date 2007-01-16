@@ -1,6 +1,14 @@
-run Fv4.sh for all changes in the correct order.
+Frodo Recipe (the paranoid approach):
 
-FRODOdb.jpg is a schema file in image format
+So, instead of running Fv4.sh and dealing with all the hassle that goes
+with it, do this:
 
-http://hoover.zfin.org/zf_doc/Database/DataModel/fish_060217/index.htm
-has a online version of the schema
+from the top of your branch:
+% cvs -q update -dP
+% loaddb.pl [your db name] /research/zunloads/databases/frodo/2006.09.27.2/
+% gmake postloaddb
+% gmake 
+
+and you should have an updated database and software file structure ready
+for testing (you do not have to run regen_names after this load, it has  
+already been executed).

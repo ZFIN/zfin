@@ -2,54 +2,24 @@ begin work ;
 
 update statistics for procedure ;
 
+alter table locus
+  modify (abbrev varchar(120)) ;
+
+update locus
+  set abbrev = locus_name
+  where abbrev = 'NULL'
+  or abbrev is null;
+
+insert into apato_tag 
+  values ('absent') ;
+
+insert into apato_tag 
+  values ('present') ;
+
+--insert into apato_tag 
+--  values ('abnormal') ;
+
 set constraints all deferred ;
-
-select count(*) as counter, zircflalt_line_id as line_id
-  from zirc_fish_line_alteration
-  group by zircflalt_line_id
-  having count(*) < 2 
-  into temp tmp_zirc_singles;
-
-insert into data_alias (dalias_zdb_id,
-			dalias_data_zdb_id,
-			dalias_alias,
-			dalias_group)
-  select get_id('DALIAS'),
-	fish.zdb_id,
-	zircflalt_line_id,
-	'alias'
-    from fish, alteration, zirc_fish_line_alteration
-    where fish.allele = alteration.allele
-    and zircflalt_alt_zdb_id = alteration.zdb_id
-    and exists (select 'x'
-			from tmp_zirc_singles
-			where line_id = zircflalt_line_id);
-
-
-create temp table tmp_tt (keyword varchar(100), 
-                               stage varchar(50),
-                               entity varchar(100),
-                               entity_zdb_id varchar(50),
-                               attribute varchar(50),
-                               value varchar(50))
-  with no log;
-
-
-insert into genotype (geno_zdb_id ,
-			geno_display_name,
-			geno_handle,
-			geno_date_entered,
-			geno_is_wildtype)
-  select get_id('GENO'),
-	zircfl_line_id,
-	zircfl_line_id,
-	current year to second,
-	'f'
-    from zirc_fish_line
-    where not exists (select 'x'
-			from tmp_zirc_singles
-                        where line_id = zircfl_line_id);
-
 
 insert into genotype (geno_zdb_id ,
 			geno_display_name,
@@ -57,36 +27,131 @@ insert into genotype (geno_zdb_id ,
 			geno_supplier_stock_number,
 			geno_date_entered,
 			geno_name_order,
-			geno_is_wildtype)
-  select zdb_id,
-		abbrev,
-		allele,
-		orig_crossnum,
-		entry_time,
-		fish_allele_order,
-		  case 
-			when line_type = 'mutant'
-				then 'f' 
-			when line_type = 'wild type'
-				then 't'
-			else NULL 
-			end		 
-   from fish ;
+			geno_is_wildtype,
+			geno_is_extinct)
+
+	select fish.zdb_id,
+         case
+           when cloned_gene is not null
+                    then (select 
+				mrkr_abbrev||"<sup>"||allele||"</sup>"
+					    from marker
+					    where mrkr_zdb_id = a.cloned_gene)
+           when cloned_gene is null 
+		    then a.abbrev||"<sup>"||allele||"</sup>"
+	   end,
+	 allele,
+	 orig_crossnum,
+	 entry_time,
+	 fish_allele_order,
+	 'f',
+	fish_extinct	 
+   	from fish, locus a
+  	 where fish.locus = a.zdb_id
+         and line_type = 'mutant'
+	 and locus_name not like 'Df%'
+         and locus_name not like 'Tg%'
+	 and locus_name not like 'T(%';
+
+insert into genotype (geno_zdb_id ,
+			geno_display_name,
+			geno_handle,
+			geno_supplier_stock_number,
+			geno_date_entered,
+			geno_name_order,
+			geno_is_wildtype,
+			geno_is_extinct)
+
+	select fish.zdb_id,
+         case
+           when cloned_gene is not null
+                    then (select 
+			    mrkr_abbrev||"<sup>"||a.abbrev||allele||"</sup>"
+					    from marker
+					    where mrkr_zdb_id = a.cloned_gene)
+           when cloned_gene is null 
+		    then a.abbrev||allele
+	   end,
+	 allele,
+	 orig_crossnum,
+	 entry_time,
+	 fish_allele_order,
+	 'f',
+	fish_extinct	 
+   	from fish, locus a
+  	 where fish.locus = a.zdb_id
+         and line_type = 'mutant'
+	 and (locus_name like 'Df%'
+         or locus_name like 'Tg%'
+	 or locus_name like 'T(%');
+
+insert into genotype (geno_zdb_id ,
+			geno_display_name,
+			geno_handle,
+			geno_supplier_stock_number,
+			geno_date_entered,
+			geno_name_order,
+			geno_is_wildtype,
+			geno_is_extinct)
+
+	select fish.zdb_id,
+         name, 
+	fish.abbrev,
+	 orig_crossnum,
+	 entry_time,
+	 fish_allele_order,
+	 't',
+	fish_extinct		 
+   	from fish
+        where line_type = 'wild type';
+
+--select geno_display_name, count(*)
+--  from genotype
+--  group by geno_display_name
+--  having count(*) > 1;
+
+!echo "here's the HANDLE update!" ;
+
+--select count(*) from fish
+--where not exists (select 'x' from genotype
+--			where geno_zdb_id = fish.zdb_id);
 
 
 update genotype
   set geno_handle = 
 	geno_handle||(select 
 			case when father is null
-				and mother is null then 'MFunspecified' 
+				and mother is null then 'UNK'||'U' 
 			when father is null 
-				and mother is not null then "M"||mother
-			when mother is null 
-				and father is not null then "F"||father
-			when mother is not null and father is not null
-				then "M"||mother||"F"||father
-			else 'unkown' end
-			from fish where zdb_id = geno_zdb_id)
+				and mother is not null 
+			  then (select a.abbrev||'U' from fish a
+					where b.mother = a.zdb_id)
+			when b.mother is null 
+				and b.father is not null 
+			  then (select a.abbrev||'U' 
+					from fish a
+					where b.father = a.zdb_id)
+			when b.mother is not null 
+			   and b.father is not null
+		         then (select 
+				case 
+				 when a.abbrev = c.abbrev
+					and c.zdb_id = b.father
+					and a.zdb_id = b.mother
+
+				  then a.abbrev||'U'
+				 when a.abbrev != c.abbrev
+					and c.zdb_id = b.father
+					and a.zdb_id = b.mother
+				  then a.abbrev||"U"||","||c.abbrev||"U"
+				  else null end
+				from fish a, fish c
+			 	where a.zdb_id = b.mother
+				and c.zdb_id = b.father
+			)
+			else 'UNKU' end
+			from fish b 
+                        where b.zdb_id = geno_zdb_id)
   where geno_is_wildtype = 'f';
 
 
@@ -125,42 +190,6 @@ insert into genotype_background (genoback_geno_zdb_id,
 				zdb_id
 			and genoback_background_zdb_id =
 				father);
-!echo "ZIRC background"
-
---add zirc backgrounds without percents
-
-insert into genotype_background (genoback_geno_zdb_id, 
-					genoback_background_zdb_id)
-  select geno_zdb_id, zircflback_fish_zdb_id
-    from genotype, zirc_fish_line_background
-    where geno_display_name = zircflback_line_id ;
-
-
-create temp table tmp_zirc_background (genotype_id varchar(50),
-					genotype_name varchar(50),
-					zirc_back varchar(50))
- with no log;
-
-insert into tmp_zirc_background (genotype_id, genotype_name, zirc_back)
- select dalias_data_zdb_id, dalias_alias, zircflback_fish_zdb_id as zirc_back
-  from data_alias, zirc_fish_line_background
-  where dalias_alias like 'ZL%' 
-  and (dalias_data_zdb_id like 'ZDB-FISH-%'
-	or dalias_data_zdb_id like 'ZDB-GENO-%') 
-  and zircflback_line_id = dalias_alias ;
-
-insert into tmp_zirc_background (genotype_id, genotype_name, zirc_back)
-   select geno_zdb_id, geno_display_name, zircflback_fish_zdb_id as zirc_back
-     from genotype, zirc_fish_line_background
-    where geno_display_name = zircflback_line_id ;
-
---outstanding problem: waiting for ZIRC
-!echo "outstanding problem: ZIRC not right background" ;
-
-select * from tmp_zirc_background, genotype_background
-  where genotype_id = genoback_geno_zdb_id
-   and zirc_back != genoback_background_zdb_id ;
-
 
 --fill up genotype feature
 
@@ -188,6 +217,40 @@ update genotype_feature
 
 !echo "chromosome updates" 
 
+create temp table tmp_linkage (zdb_id varchar(50), 
+				alt_id varchar(50), 
+				lg int)
+with no log ;
+
+
+insert into tmp_linkage (zdb_id,
+			lg,
+			alt_id)
+  select get_id('LINK'), chrom_num, feature_zdb_id
+  from int_fish_chromo, chromosome, feature, genotype_feature
+  where genofeat_geno_zdb_id = source_id	
+  and target_id = chromosome.zdb_id
+  and feature_zdb_id = genofeat_feature_zdb_id;
+
+insert into linkage (lnkg_zdb_id,lnkg_or_lg)
+ select zdb_id, lg 
+   from tmp_linkage 
+  where not exists (select 'x'
+			from linkage, linkage_member
+			where lnkg_zdb_id = lnkgmem_linkage_zdb_id
+			and lnkgmem_member_zdb_id = alt_id
+			and lnkg_or_lg = lg);
+
+insert into linkage_member (lnkgmem_linkage_zdb_id,
+				lnkgmem_member_zdb_id)
+  select zdb_id, alt_id
+    from tmp_linkage
+    where not exists (select 'x'
+			from linkage, linkage_member
+			where lnkg_zdb_id = lnkgmem_linkage_zdb_id
+			and lnkgmem_member_zdb_id = alt_id
+			and lnkg_or_lg = lg);
+
 update genotype_feature
   set genofeat_chromosome = (select chrom_num
 					from int_fish_chromo, chromosome
@@ -205,6 +268,36 @@ update genotype_feature
 
 !echo "features from alteration" ;
 
+insert into data_alias (dalias_zdb_id,
+				dalias_data_zdb_id,
+				dalias_alias,
+				dalias_group)
+select get_id('DALIAS'),
+	zdb_id,
+	allele,
+	'alias'
+  from alteration
+  where exists  (Select 'x'
+			from fish, locus
+			where fish.allele = alteration.allele
+			and fish.locus = locus.zdb_id
+			and (locus_name like 'Tg%'
+				or locus_name like 'Df%'
+				or locus_name like 'T(%')
+			    and alteration.allele not like '%unspecified%')
+  and not exists (select 'x'
+			from data_alias
+			where dalias_alias = allele
+			and dalias_data_zdb_id = zdb_id);
+
+insert into zdb_Active_data 
+  select dalias_zdb_id 
+   from data_alias
+   where not exists (Select 'x'
+			from zdb_Active_data
+			where zactvd_zdb_id = dalias_zdb_id);
+
+
 insert into feature (feature_zdb_id,
 			feature_name,
 			feature_type,
@@ -213,32 +306,36 @@ insert into feature (feature_zdb_id,
 			feature_date_entered)
   select zdb_id, 
 	case 
-	  when chrom_change = 'deficiency'
-	     then (select fish.name||fish.allele
-			from fish where fish.allele = alteration.allele)
-	  when allele in (select allele 
+	  when exists (select 'x' 
 			    from fish,locus
 		   	    where fish.locus = locus.zdb_id
-			    and locus_name like 'Tg%')
+			    and alteration.allele = fish.allele
+			    and (locus_name like 'Tg%'
+				or locus_name like 'Df%'
+				or locus_name like 'T(%')
+			    and alteration.allele not like '%unspecified%')
 		then (select fish.name||fish.allele
 			from fish where fish.allele = alteration.allele)
-	     else allele
-	     end,
+	  when alteration.allele like '%unspecified%'
+		then (select fish.name||"unspecified"
+			from fish where fish.allele = alteration.allele)
+	  else allele
+	  end,
 	case 
 	  when chrom_change = 'deficiency'
-		then 'DELETION'
+		then 'DEFICIENCY'
 	  when chrom_change = 'translocation'
-		then 'INTERCHROMOSOMAL_MUTATION'
+		then 'TRANSLOC'
 	  when chrom_change = 'point'
 	        then 'POINT_MUTATION'
-	  when chrom_change = 'unknown'
-	        then 'SEQUENCE_VARIANT'
 	  when chrom_change in ('insertion', 'unknown')
 		and allele in (select allele 
 			    from fish,locus
 		   	    where fish.locus = locus.zdb_id
 			    and locus_name like 'Tg%')
 		then 'TRANSGENIC_INSERTION'
+	  when chrom_change = 'unknown'
+	        then 'SEQUENCE_VARIANT'
 	  else upper(chrom_change)
 	  end,
 	allele,
@@ -250,18 +347,54 @@ insert into feature (feature_zdb_id,
 		where fish.allele = alteration.allele)
   from alteration;
 
+select * from feature where feature_zdb_id = 'ZDB-ALT-051001-4';
+
+!echo "FEATURE NAME UNIQUE??" ;
+
+select count(*), feature_name
+  from feature
+  group by feature_name
+  having count(*) > 1; 
+
+select * from feature
+where feature_name = 'Tg(rag2:EGFP-bcl2)zdf9' ;
+
 --make replaced data records for Tg and Df loci.
+
+alter table mapped_deletion
+  drop constraint mapdel_allele_foreign_key_odc ;
+
+
+update mapped_deletion
+  set allele = (select fish.name||fish.allele
+		  from fish
+		  where fish.allele = mapped_deletion.allele
+		  and (fish.name like 'Tg%'
+			or fish.name like 'T(%'
+			or fish.name like 'Df%'))
+  where exists (select 'x'
+		  from fish
+		  where fish.allele = mapped_deletion.allele
+		  and (fish.name like 'Tg%'
+			or fish.name like 'T(%'
+			or fish.name like 'Df%'));
+
 
 insert into zdb_replaced_data (zrepld_old_zdb_id,
 				zrepld_new_zdb_id,
 				zrepld_old_name)
 select locus.zdb_id,
-	alteration.zdb_id,
+	fish.zdb_id,
 	locus_name
-  from alteration, locus
-   where alteration.locus = locus.zdb_id
-	and locus_name like 'Df%'
-	and chrom_change = 'deficiency';
+  from locus,fish
+   where fish.locus = locus.zdb_id
+	and (locus_name like 'Df%'
+		or locus_name like 'T(%');
+
+--for Df(LG14)wnt8a we have a replaced data record for this locus
+--pointing at both the affected gene and the alt.  the alt was 
+--added during frodo for consistancy with other deficiencies.
+--not sure about the gene?? (TALK TO ERIK).
 
 --don't replaced Tg's--they are going to exist in marker
 --table as constructs.  They should have relationships
@@ -291,8 +424,14 @@ insert into data_alias (dalias_zdb_id,
 	locus_name
     from alteration, locus
    where alteration.locus = locus.zdb_id
-	and locus_name like 'Df%'
-	and chrom_change = 'deficiency';
+	and (locus_name like 'Df%'
+		or locus_name like 'T(%')
+	and (chrom_change = 'deficiency'
+		or chrom_change = 'translocation')
+   and not exists (Select 'x'
+			from data_alias
+			where dalias_data_zdb_id = alteration.zdb_id
+			and dalias_alias = locus_name);
 
 insert into data_alias (dalias_zdb_id,
 				dalias_data_zdb_id,
@@ -305,21 +444,25 @@ insert into data_alias (dalias_zdb_id,
     from alteration, locus
    where alteration.locus = locus.zdb_id
 	and locus_name like 'Tg%'
-	and chrom_change in ('insertion', 'unknown');
+	and chrom_change in ('insertion', 'unknown')
+     and not exists (select 'x'
+			from data_alias
+			where dalias_data_zdb_id = alteration.zdb_id
+			and dalias_alias = locus_name);
 
-update feature 
-  set feature_lab_of_origin = 'ZDB-LAB-000914-1'
-  where feature_lab_of_origin is null ;
+--update feature 
+--  set feature_lab_of_origin = 'ZDB-LAB-000914-1'
+--  where feature_lab_of_origin is null ;
 
-update feature 
-  set feature_lab_of_origin = 'ZDB-LAB-000914-1'
-  where feature_lab_of_origin = '';
+--update feature 
+--  set feature_lab_of_origin = 'ZDB-LAB-000914-1'
+--  where feature_lab_of_origin = '';
 
-select feature_lab_of_origin
-  from feature
-  where not exists (select 'x'
-			from lab
-			where zdb_id = feature_lab_of_origin);
+--select feature_lab_of_origin
+--  from feature
+--  where not exists (select 'x'
+--			from lab
+--			where zdb_id = feature_lab_of_origin);
 
 --!echo "missing features" ;
 --select genofeat_feature_zdb_id from genotype_feature
@@ -332,18 +475,17 @@ insert into marker (mrkr_zdb_id,
 			mrkr_name,
 			mrkr_type,
 			mrkr_abbrev,
-			mrkr_owner,
-			mrkr_comments)
+			mrkr_owner)
 select zdb_id,
 	locus_name,
 	'GENE',
 	lower(abbrev),
-	owner,
-	comments
+	owner
   from locus
   where cloned_gene is null 
   and locus_name not like 'Df%'
-  and locus_name not like 'Tg%';
+  and locus_name not like 'Tg%'
+  and locus_name not like 'T(%';
 
 
 !echo "transgenic constructs to marker" ;
@@ -363,6 +505,7 @@ select zdb_id,
 	comments
   from locus
   where locus_name like 'Tg%' ;
+
 
 update marker
   set mrkr_owner = null
@@ -436,6 +579,9 @@ update feature
   				from tmp_ftr_name) 
   and feature_zdb_id like 'ZDB-LOCUS-%';
 
+select * from feature
+where feature_name = 'Tg(rag2:EGFP-bcl2)zdf9' ;
+
 
 --156 non identified Tg and Df lines
 --467 
@@ -459,6 +605,24 @@ insert into data_alias (dalias_zdb_id,
 				where dalias_data_zdb_id = cloned_gene
 				and dalias_alias = locus_name);
 
+insert into data_alias (dalias_zdb_id,
+			 dalias_data_zdb_id,
+		 	 dalias_alias,
+			 dalias_group)
+  select get_id('DALIAS'),
+		(select mrkr_zdb_id
+			from marker
+			where cloned_gene=mrkr_zdb_id),
+		abbrev,
+		'alias'
+	from locus
+        where cloned_gene is not null 
+        and cloned_gene != ''
+	and not exists (select 'x'
+			  from data_alias
+				where dalias_data_zdb_id = cloned_gene
+				and dalias_alias = abbrev);
+
 
 insert into zdb_replaced_data (zrepld_old_zdb_id,
 				zrepld_new_zdb_id,
@@ -478,46 +642,49 @@ insert into zdb_active_data
 			where zactvd_zdb_id = dalias_zdb_id);
 
 
+!echo "this is the feature_marker_relationship add" ;
 
 insert into feature_marker_relationship (fmrel_zdb_id,
     					fmrel_type,
     					fmrel_ftr_zdb_id,
     					fmrel_mrkr_zdb_id)
   select get_id('FMREL'), 
-		'Mutation is allele of gene',
+		'is allele of',
 		alteration.zdb_id,
 		locus.zdb_id
 		from alteration,locus
 		where locus.cloned_gene is null
 		and alteration.locus = locus.zdb_id
 		and locus_name not like 'Df%'
-		and locus_name not like 'Tg%';
+		and locus_name not like 'Tg%'
+		and locus_name not like 'T(%';
 
 insert into feature_marker_relationship (fmrel_zdb_id,
     					fmrel_type,
     					fmrel_ftr_zdb_id,
     					fmrel_mrkr_zdb_id)
   select get_id('FMREL'), 
-		'Mutation is allele of gene',
+		'is allele of',
 		alteration.zdb_id,
 		mrkr_zdb_id
 		from alteration,locus,marker
 		where locus.cloned_gene =mrkr_zdb_id
 		and alteration.locus = locus.zdb_id
 		and locus_name not like 'Df%'
-		and locus_name not like 'Tg%';
+		and locus_name not like 'Tg%'
+		and locus_name not like 'T(%';
 
 insert into feature_marker_relationship (fmrel_zdb_id,
     					fmrel_type,
     					fmrel_ftr_zdb_id,
     					fmrel_mrkr_zdb_id)
   select get_id('FMREL'), 
-		'sequence variant contains sequence feature',
+		'contains sequence feature',
 		alteration.zdb_id,
 		locus.zdb_id
 		from alteration,locus
 		where alteration.locus = locus.zdb_id
-		and locus_name like 'Tg%' ;
+		and locus_name like 'Tg%';
 
 
 insert into zdb_active_data 
@@ -558,7 +725,10 @@ insert into genotype_experiment (genox_zdb_id,
 			and exp_zdb_id = featexp_exp_zdb_id
 			and exp_name = '_Standard');
 
-
+--select distinct genox_geno_zdb_id, name from genotype_experiment, fish
+--  where not exists (select 'x' from genotype
+--			where geno_zdb_id = genox_geno_zdb_id)
+--  and fish.zdb_id = genox_geno_zdb_id;
 
 
 --insert into genotype_experiment_figure (genoxfig_genox_zdb_id,
@@ -579,35 +749,65 @@ insert into zdb_active_data
 			from zdb_active_data
 			where zactvd_zdb_id = genox_zdb_id);
 
+
+create temp table tmp_tt (keyword varchar(100), 
+                               stage varchar(50),
+                               entity_group varchar(100),
+                               entity_group_zdb_id varchar(50),
+                               quality varchar(50),
+			       quality_pato_id varchar(40),
+                               tag varchar(25))
+  with no log;
+
+create index tmp_tt_keyword_index
+ on tmp_tt(keyword) using btree in idxdbs4;
+
+create index tmp_tt_egi_index
+ on tmp_tt(entity_group_zdb_id) using btree in idxdbs4;
+
+create index tmp_tt_eg_index
+ on tmp_tt(entity_group) using btree in idxdbs4;
+
+create index tmp_tt_quality_index
+ on tmp_tt(quality) using btree in idxdbs4;
+
+
+!echo "start phenotype changes" ;
+
 load from phenoTabbed 
   insert into tmp_tt;
 
+delete from tmp_tt 
+  where entity_group_zdb_id = '<none>';
+
+!echo "null entity removed from tmp_tt" ;
 
 delete from tmp_tt 
-  where entity_zdb_id = '<none>';
-
-delete from tmp_tt 
-	where entity_zdb_id is null;
+	where entity_group_zdb_id is null;
 
 update tmp_tt
   set stage = null 
   where stage = '<none>' ;
 
 update tmp_tt
-  set entity_zdb_id = null 
-  where entity_zdb_id = '<none>' ;
+  set entity_group_zdb_id = null 
+  where entity_group_zdb_id = '<none>' ;
 
 update tmp_tt
-  set entity = null 
-  where entity = '<none>' ;
+ set entity_group = null 
+  where entity_group = '<none>' ;
 
 update tmp_tt
-  set attribute = null 
-  where attribute = '<none>' ;
+  set quality = null 
+  where quality = '<none>' ;
 
 update tmp_tt
-  set value = null 
-  where value = '<none>' ;
+  set quality = null 
+  where quality = '' ;
+
+update tmp_tt
+  set tag = null 
+  where tag = '<none>' ;
 
 update tmp_tt
   set stage = null 
@@ -623,161 +823,153 @@ update tmp_tt
 		where stg_name = 'Adult')
   where stage = 'Adult' ;
 
+!echo "add stage unknown" ;
+
 update tmp_tt
-  set entity_zdb_id = (select goterm_zdb_id
+  set stage = (select stg_zdb_id
+		from stage
+		where stg_name = 'Unknown')
+  where (stage is null 
+		or stage = 'Unknown');
+
+
+update tmp_tt
+  set entity_group_zdb_id = (select goterm_zdb_id
 			from go_term
-			where "GO:"||goterm_go_id = entity_zdb_id)
-  where entity_zdb_id like 'GO:%' 
+			where "GO:"||goterm_go_id = entity_group_zdb_id)
+  where entity_group_zdb_id like 'GO:%' 
   and exists (select 'x'
 			from go_term
-			where "GO:"||goterm_go_id = entity_zdb_id);
+			where "GO:"||goterm_go_id = entity_group_zdb_id);
+
+update tmp_tt
+  set entity_group_zdb_id = (select zrepld_new_zdb_id
+			from zdb_replaced_data
+			where zrepld_old_Zdb_id = entity_group_zdb_id)
+  where entity_group_zdb_id like 'ZDB-ANAT-%'
+  and exists (select 'x'
+			from zdb_replaced_data
+			where zrepld_old_Zdb_id = entity_group_zdb_id);
+
+select * from tmp_tt
+  where entity_group_zdb_id like 'GO:%' ;
 
 update tmp_tt
   set keyword = 'melanophore_e'
   where keyword = 'melanophore and eye pigment'
-  and entity = 'melanophores';
+  and entity_group = 'melanophores';
 
 update tmp_tt
   set keyword = 'melanophore_new_e'
   where keyword = 'melanophore and eye pigment'
-  and entity = 'pigmented epithelium';
+  and entity_group = 'pigmented epithelium';
 
 update tmp_tt
   set keyword = 'melanophore_i'
   where keyword = 'melanophores and iridophores'
-  and entity = 'melanophores ';
+  and entity_group = 'melanophores ';
 
 update tmp_tt
   set keyword = 'melanophore_new_i'
   where keyword = 'melanophores and iridophores'
-  and entity = 'iridophores';
+  and entity_group = 'iridophores';
 
 update tmp_tt
   set keyword = 'melanophore_x'
   where keyword = 'melanophores and xanthophores'
-  and entity = 'melanophores ';
+  and entity_group = 'melanophores ';
 
 update tmp_tt
   set keyword = 'melanophore_new_x'
   where keyword = 'melanophores and xanthophores'
-  and entity = 'xanthophores ';
+  and entity_group = 'xanthophores ';
 
 update tmp_tt
   set keyword = 'body shape and tail T'
   where keyword = 'body shape and tail'
-  and entity = 'whole organism';
+  and entity_group = 'whole organism';
 
 update tmp_tt
   set keyword = 'body shape and tail new T'
   where keyword = 'body shape and tail'
-  and entity = 'tail';
+  and entity_group = 'tail';
 
 
 update tmp_tt
   set keyword = 'jaw and melanophores J'
   where keyword = 'jaw and melanophores'
-  and entity = 'pharyngeal arch 1 skeletal system';
+  and entity_group = 'pharyngeal arch 1 skeletal system';
 
 update tmp_tt
   set keyword = 'jaw and melanophores new J'
   where keyword = 'jaw and melanophores'
-  and entity = 'melanophores';
+  and entity_group = 'melanophores';
 
 update tmp_tt
   set keyword = 'notochord and somites NS'
   where keyword = 'notochord and somites'
-  and entity = 'notochord';
+  and entity_group = 'notochord';
 
 update tmp_tt
   set keyword = 'notochord and somites new NS'
   where keyword = 'notochord and somites'
-  and entity = 'somites';
+  and entity_group = 'somite';
 
 update tmp_tt
   set keyword = 'small eyes and small hyoid S'
   where keyword = 'small eyes and small hyoid'
-  and entity = 'eye';
+  and entity_group = 'eye';
 
 update tmp_tt
   set keyword = 'small eyes and small hyoid new S'
   where keyword = 'small eyes and small hyoid'
-  and entity = 'hyoid arch';
+  and entity_group = 'pharyngeal arch 2 skeleton';
 
 update tmp_tt
   set keyword = 'xanthophores and iridophores xi'
   where keyword = 'xanthophores and iridophores'
-  and entity = 'xanthophores';
+  and entity_group = 'xanthophores';
 
 update tmp_tt
   set keyword = 'xanthophores and iridophores new xi'
   where keyword = 'xanthophores and iridophores'
-  and entity = 'iridophores';
+  and entity_group = 'iridophores';
 
-select distinct attribute 
+select distinct quality 
   from tmp_tt
   into temp tmp_attr ;
 
-select distinct value
+select distinct tag
   from tmp_tt
-  into temp tmp_value ;
+  into temp tmp_tag ;
+
+--insert into term (term_zdb_id,
+--    			term_name,
+--    			term_ontology)
+--select get_id('TERM'),
+--	quality,
+--	'quality'
+--  from tmp_attr 
+--  where not exists (select 'x'
+--			from term where
+--			term_name = quality);
 
 insert into term (term_zdb_id,
     			term_name,
     			term_ontology)
-select get_id('TERM'),
-	attribute,
-	'pato attribute ontology'
-  from tmp_attr ;
-
-insert into term (term_zdb_id,
-    			term_name,
-    			term_ontology)
-select get_id('TERM'),
-	value,
-	'pato value ontology'
-  from tmp_value ;
-
-insert into term (term_zdb_id,
-    			term_name,
-    			term_ontology)
-values( get_id('TERM'),
-	'dominant',
-	'pato context ontology') ;
-
-insert into term (term_zdb_id,
-    			term_name,
-    			term_ontology)
-values( get_id('TERM'),
-	'recessive',
-	'pato context ontology') ;
-
-insert into term (term_zdb_id,
-    			term_name,
-    			term_ontology)
-values( get_id('TERM'),
+values ( get_id('TERM'),
 	'unspecified',
-	'pato context ontology') ;
-
-
-insert into term (term_zdb_id,
-    			term_name,
-    			term_ontology)
-values( get_id('TERM'),
-	'unspecified',
-	'pato attribute ontology') ;
-
-
-insert into term (term_zdb_id,
-    			term_name,
-    			term_ontology)
-values( get_id('TERM'),
-	'unspecified',
-	'pato value ontology') ;
-
+	'quality') ;
 
 update term
-  set term_ont_id = term_zdb_id ;
+  set term_ont_id = term_zdb_id 
+  where term_ont_id is null;
 
+!echo "count of null term_ont_id" ;
+
+select count(*)
+  from term
+  where term_ont_id like 'ZDB-TERM-%' ;
 
 insert into zdb_active_data
   select term_zdb_id
@@ -786,416 +978,894 @@ insert into zdb_active_data
 			from zdb_active_data
 			where term_zdb_id = zactvd_zdb_id);
 
-create table tmp_pato (pato_geno_zdb_id varchar(50),
-				pato_entity_zdb_id varchar(50))
-in tbldbs1;
+create table tmp_apato (apato_geno_zdb_id varchar(50),
+				apato_apatoeg_zdb_id varchar(50))
+fragment by round robin in tbldbs1, tbldbs2, tbldbs3
+extent size 1024 next size 1024
+lock mode row;
 
 load from pheno_keywords_parsed
-  insert into tmp_pato ;
+  insert into tmp_apato ;
 
-delete from tmp_pato where pato_entity_zdb_id is null;
+!echo "null entity removal from pheno_keywords_parsed" ;
 
-create table tmp_pato_full (pato_zdb_id varchar(50),
-				pato_geno_zdb_id varchar(50),
-				pato_genox_zdb_id varchar(50),
-				pato_stage_zdb_id varchar(50),
-				pato_context varchar(50),
-				pato_entity_zdb_id varchar(50),
-				pato_attribute varchar(50),
-				pato_value varchar(50)
+delete from tmp_apato
+  where apato_apatoeg_zdb_id is null ;
+
+delete from tmp_apato
+  where apato_apatoeg_zdb_id = '';
+
+create table tmp_eu_apato (euapato_geno_zdb_id varchar(50),
+				euapato_stage_name varchar(35),
+				euapato_entity_name varchar(50),
+				euapato_entity_id varchar(40),
+				euapato_quality varchar(40),
+				euapato_tag varchar(25))
+fragment by round robin in tbldbs1, tbldbs2, tbldbs3
+extent size 64  next size 64
+lock mode row;
+
+load from EUKeywordNew_v1.csv
+ insert into tmp_eu_apato ;
+
+update tmp_eu_apato
+  set euapato_entity_name = 'nasal bone'
+  where euapato_entity_name = 'nasal bones' ;
+
+update tmp_eu_apato
+  set euapato_entity_name = 'median fin skeleton'
+  where euapato_entity_name = 'fin skeletal system' ;
+
+update tmp_eu_apato
+  set euapato_entity_name = 'virion penetration into host cell'
+  where euapato_entity_name = 'virion penetration' ;
+
+create index entity_name_index
+  on tmp_eu_apato (euapato_entity_name);
+
+update statistics high for table tmp_eu_apato ;
+
+!echo "TEETH";
+
+
+create temp table tmp_new_term (name varchar(100))
+ with no log ;
+
+insert into tmp_new_term
+  select distinct euapato_quality
+    from tmp_eu_apato 
+    where not exists (select term_name
+                        from term
+			where term_name = euapato_quality);
+
+update term
+  set term_ont_id = term_zdb_id
+  where term_ont_id = 'term_id' ;
+
+drop table tmp_new_term ;
+
+update statistics high for table term ;
+
+update tmp_eu_apato
+  set euapato_stage_name = 'unk'
+  where euapato_stage_name = 'unknown' ;
+
+--select euapato_stage_name, euapato_geno_zdb_id from tmp_eu_apato
+--  where not exists (Select 'x' from stage
+--			where euapato_stage_name = stg_abbrev);
+
+
+!echo "number of unknown entities from EU data" ;
+
+update tmp_eu_apato
+ set euapato_entity_id = (Select anatitem_zdb_id
+			   from anatomy_item
+			   where anatitem_name = 'macrophage')
+  where euapato_entity_name = 'macrophages' ;
+
+update tmp_eu_apato
+ set euapato_entity_id = (Select anatitem_zdb_id
+			   from anatomy_item
+			   where anatitem_name = 'ceratobranchial 5 tooth')
+  where euapato_entity_name = 'teeth' ;
+
+select euapato_entity_name, euapato_geno_zdb_id from tmp_eu_apato
+  where not exists (select 'x'
+			from anatomy_item
+			where anatitem_name = euapato_entity_name)
+  and not exists (select 'x'
+			from go_term
+			where goterm_name = euapato_entity_name)
+  and euapato_entity_id not like 'ZDB-%'
+ into temp tmp_missing_entities;
+
+unload to euapato_missing_entities 
+  select * from tmp_missing_entities;
+
+
+!echo "number of unkown entities updated from EU data updates";
+
+update tmp_eu_apato
+ set euapato_entity_name = 'unspecified'
+ where exists (select 'x' from tmp_missing_entities
+			where tmp_missing_entities.euapato_entity_name =
+				tmp_eu_apato.euapato_entity_name);
+
+update tmp_eu_apato
+  set euapato_entity_id = (select goterm_zdb_id
+				from go_term
+				where goterm_name = euapato_entity_name)
+  where euapato_entity_id like 'GO:%' ;			
+
+alter table tmp_eu_apato
+  add (euapato_stage_id varchar(50));
+
+update tmp_eu_apato
+  set euapato_stage_id = (select stg_zdb_id
+				from stage
+				where stg_abbrev = euapato_stage_name) ;
+
+--select count(*) from tmp_eu_apato 
+--  where euapato_entity_id is null;
+
+delete from tmp_eu_apato
+  where euapato_entity_id is null ;
+
+--deal with non-eu data
+
+!echo "null entity removal from tmp_apato again";
+
+delete from tmp_apato where apato_apatoeg_zdb_id is null;
+
+--remove eu data from apato table
+
+delete from tmp_apato where apato_geno_zdb_id like 'ZDB-FISH-060608-%' ;
+
+delete from tmp_apato where apato_apatoeg_zdb_id like '%:%' ;
+
+create table tmp_apato_full (apato_zdb_id varchar(50),
+				apato_geno_zdb_id varchar(50),
+				apato_genox_zdb_id varchar(50),
+				apato_stage_zdb_id varchar(50),
+				apato_apatoeg_zdb_id varchar(50),
+				apato_quality varchar(50),
+				apato_tag varchar(25)
 				)
-in tbldbs1 ;
+fragment by round robin in tbldbs1, tbldbs2, tbldbs3
+extent size 1024 next size 1024 ;
 
 
 !echo "here it is" ;
 
-insert into tmp_pato_full (pato_geno_zdb_id,
-				pato_entity_zdb_id)
+insert into tmp_apato_full (apato_geno_zdb_id,
+				apato_apatoeg_zdb_id)
   select
-	pato_geno_zdb_id,
-	pato_entity_zdb_id
-    from tmp_pato;
+	apato_geno_zdb_id,
+	apato_apatoeg_zdb_id 
+    from tmp_apato ;
+
+!echo "non-eu" ;
 
 
-update tmp_pato_full
-  set pato_genox_zdb_id = (select genox_zdb_id
+insert into tmp_apato_full (apato_geno_zdb_id, 
+				apato_stage_zdb_id,
+				apato_apatoeg_zdb_id,
+				apato_quality,
+				apato_tag)
+select euapato_geno_zdb_id,
+	euapato_stage_name,
+	euapato_entity_id,
+	euapato_quality,
+	euapato_tag
+  from tmp_eu_apato ;
+
+
+!echo "eu null entity groups" ;
+
+--select count(*) from tmp_eu_apato where euapato_entity_id is null;
+
+update tmp_apato_full
+  set apato_genox_zdb_id = (select genox_zdb_id
 				from genotype_experiment
-				where genox_geno_zdb_id = pato_geno_zdb_id
+				where genox_geno_zdb_id = apato_geno_zdb_id
 				and genox_exp_zdb_id = (select exp_zdb_id
 							  from experiment
 							  where exp_name = "_Standard"));
+                          
+--FIX DUPS!7
+update tmp_apato_full
+  set apato_apatoeg_zdb_id = 'melanophore pattern / number'
+  where apato_apatoeg_zdb_id = 'melanophore pattern/number' ;
 
---FIX DUPS!
-update tmp_pato_full
-  set pato_entity_zdb_id = 'melanophore pattern / number'
-  where pato_entity_zdb_id = 'melanophore pattern/number' ;
+update tmp_apato_full
+  set apato_apatoeg_zdb_id = 'pigmented retinal epithelium'
+  where apato_apatoeg_zdb_id = 'retinal pigment epithelium' ;
 
-update tmp_pato_full
-  set pato_entity_zdb_id = 'pigmented retinal epithelium'
-  where pato_entity_zdb_id = 'retinal pigment epithelium' ;
+update tmp_apato_full
+  set apato_apatoeg_zdb_id = 'melanophore shape / size'
+  where apato_apatoeg_zdb_id = 'melanophore shape/size' ;
 
-update tmp_pato_full
-  set pato_entity_zdb_id = 'melanophore shape / size'
-  where pato_entity_zdb_id = 'melanophore shape/size' ;
+update tmp_apato_full
+  set apato_apatoeg_zdb_id = 'melanophore_e'
+  where apato_apatoeg_zdb_id = 'melanophore and eye pigment';
 
-update tmp_pato_full
-  set pato_entity_zdb_id = 'melanophore_e'
-  where pato_entity_zdb_id = 'melanophore and eye pigment';
+update tmp_apato_full
+  set apato_apatoeg_zdb_id = 'melanophore_i'
+  where apato_apatoeg_zdb_id = 'melanophores and iridophores';
 
-update tmp_pato_full
-  set pato_entity_zdb_id = 'melanophore_i'
-  where pato_entity_zdb_id = 'melanophores and iridophores';
+update tmp_apato_full
+  set apato_apatoeg_zdb_id = 'melanophore_x'
+  where apato_apatoeg_zdb_id = 'melanophores and xanthophores';
 
-update tmp_pato_full
-  set pato_entity_zdb_id = 'melanophore_x'
-  where pato_entity_zdb_id = 'melanophores and xanthophores';
+update tmp_apato_full
+  set apato_apatoeg_zdb_id = 'body shape and tail T'
+  where apato_apatoeg_zdb_id = 'body shape and tail';
 
-update tmp_pato_full
-  set pato_entity_zdb_id = 'body shape and tail T'
-  where pato_entity_zdb_id = 'body shape and tail';
+update tmp_apato_full
+  set apato_apatoeg_zdb_id = 'jaw and melanophores J'
+  where apato_apatoeg_zdb_id = 'jaw and melanophores';
 
-update tmp_pato_full
-  set pato_entity_zdb_id = 'jaw and melanophores J'
-  where pato_entity_zdb_id = 'jaw and melanophores';
+update tmp_apato_full
+  set apato_apatoeg_zdb_id = 'notochord and somites NS'
+  where apato_apatoeg_zdb_id = 'notochord and somites';
 
-update tmp_pato_full
-  set pato_entity_zdb_id = 'notochord and somites NS'
-  where pato_entity_zdb_id = 'notochord and somites';
+update tmp_apato_full
+  set apato_apatoeg_zdb_id = 'small eyes and small hyoid S'
+  where apato_apatoeg_zdb_id = 'small eyes and small hyoid';
 
-update tmp_pato_full
-  set pato_entity_zdb_id = 'small eyes and small hyoid S'
-  where pato_entity_zdb_id = 'small eyes and small hyoid';
+update tmp_apato_full
+  set apato_apatoeg_zdb_id = 'xanthophores and iridophores xi'
+  where apato_apatoeg_zdb_id = 'xanthophores and iridophores';
 
-update tmp_pato_full
-  set pato_entity_zdb_id = 'xanthophores and iridophores xi'
-  where pato_entity_zdb_id = 'xanthophores and iridophores';
+--update tmp_apato_full
+--  set apato_apatoeg_zdb_id = 'brain; cns and pns'
+--  where apato_apatoeg_zdb_id = 'brain, cns and pns';
+--update tmp_apato_full
+--  set apato_apatoeg_zdb_id = 'xanthophores; lethal'
+--  where apato_apatoeg_zdb_id = 'xanthophores, lethal';
 
-update tmp_pato_full
-  set pato_entity_zdb_id = 'brain cns and pns'
-  where pato_entity_zdb_id = 'brain, cns and pns';
+--update tmp_apato_full
+--  set apato_apatoeg_zdb_id = 'xanthophores; viable'
+--  where apato_apatoeg_zdb_id = 'xanthophores, viable';
 
-update tmp_pato_full
-  set pato_entity_zdb_id = 'xanthophores lethal'
-  where pato_entity_zdb_id = 'xanthophores, lethal';
+update tmp_apato_full
+  set apato_apatoeg_zdb_id = 'macrophage'
+  where apato_apatoeg_zdb_id = 'macrophages';
 
-update tmp_pato_full
-  set pato_entity_zdb_id = 'xanthophores viable'
-  where pato_entity_zdb_id = 'xanthophores, viable';
-
-insert into tmp_pato_full (pato_zdb_id,
-				pato_geno_zdb_id,
-				pato_entity_zdb_id)
-select get_id('PATO'),
-	pato_geno_zdb_id,
+insert into tmp_apato_full (apato_zdb_id,
+				apato_geno_zdb_id,
+				apato_apatoeg_zdb_id)
+select get_id('APATO'),
+	apato_geno_zdb_id,
 	'melanophore_new_e'
-  from tmp_pato 
-  where pato_entity_zdb_id = 'melanophore and eye pigment';
+  from tmp_apato 
+  where apato_apatoeg_zdb_id = 'melanophore and eye pigment';
 
 
-insert into tmp_pato_full (pato_zdb_id,
-				pato_geno_zdb_id,
-				pato_entity_zdb_id)
-select get_id('PATO'),
-	pato_geno_zdb_id,
+insert into tmp_apato_full (apato_zdb_id,
+				apato_geno_zdb_id,
+				apato_apatoeg_zdb_id)
+select get_id('APATO'),
+	apato_geno_zdb_id,
 	'melanophore_new_i'
-  from tmp_pato 
-  where pato_entity_zdb_id = 'melanophores and iridophores';
+  from tmp_apato 
+  where apato_apatoeg_zdb_id = 'melanophores and iridophores';
 
 
-insert into tmp_pato_full (pato_zdb_id,
-				pato_geno_zdb_id,
-				pato_entity_zdb_id)
-select get_id('PATO'),
-	pato_geno_zdb_id,
+insert into tmp_apato_full (apato_zdb_id,
+				apato_geno_zdb_id,
+				apato_apatoeg_zdb_id)
+select get_id('APATO'),
+	apato_geno_zdb_id,
 	'melanophore_new_x'
-  from tmp_pato 
-  where pato_entity_zdb_id = 'melanophores and xanthophores';
+  from tmp_apato 
+  where apato_apatoeg_zdb_id = 'melanophores and xanthophores';
 
 
-insert into tmp_pato_full (pato_zdb_id,
-				pato_geno_zdb_id,
-				pato_entity_zdb_id)
-select get_id('PATO'),
-	pato_geno_zdb_id,
+insert into tmp_apato_full (apato_zdb_id,
+				apato_geno_zdb_id,
+				apato_apatoeg_zdb_id)
+select get_id('APATO'),
+	apato_geno_zdb_id,
 	'body shape and tail new T'
-  from tmp_pato 
-  where pato_entity_zdb_id = 'body shape and tail';
+  from tmp_apato 
+  where apato_apatoeg_zdb_id = 'body shape and tail';
 
 
-insert into tmp_pato_full (pato_zdb_id,
-				pato_geno_zdb_id,
-				pato_entity_zdb_id)
-select get_id('PATO'),
-	pato_geno_zdb_id,
+insert into tmp_apato_full (apato_zdb_id,
+				apato_geno_zdb_id,
+				apato_apatoeg_zdb_id)
+select get_id('APATO'),
+	apato_geno_zdb_id,
 	'xanthophores and iridophores new xi'
-  from tmp_pato 
-  where pato_entity_zdb_id = 'xanthophores and iridophores';
+  from tmp_apato 
+  where apato_apatoeg_zdb_id = 'xanthophores and iridophores';
 
-insert into tmp_pato_full (pato_zdb_id,
-				pato_geno_zdb_id,
-				pato_entity_zdb_id)
-select get_id('PATO'),
-	pato_geno_zdb_id,
+insert into tmp_apato_full (apato_zdb_id,
+				apato_geno_zdb_id,
+				apato_apatoeg_zdb_id)
+select get_id('APATO'),
+	apato_geno_zdb_id,
 	'small eyes and small hyoid new S'
-  from tmp_pato 
-  where pato_entity_zdb_id = 'small eyes and small hyoid';
+  from tmp_apato 
+  where apato_apatoeg_zdb_id = 'small eyes and small hyoid';
 
-insert into tmp_pato_full (pato_zdb_id,
-				pato_geno_zdb_id,
-				pato_entity_zdb_id)
-select get_id('PATO'),
-	pato_geno_zdb_id,
+insert into tmp_apato_full (apato_zdb_id,
+				apato_geno_zdb_id,
+				apato_apatoeg_zdb_id)
+select get_id('APATO'),
+	apato_geno_zdb_id,
 	'notochord and somites new NS'
-  from tmp_pato 
-  where pato_entity_zdb_id = 'notochord and somites';
+  from tmp_apato 
+  where apato_apatoeg_zdb_id = 'notochord and somites';
 
-update tmp_pato_full
-  set pato_attribute = (select attribute
+create index tapt_apatoeg_index
+ on tmp_apato_full (apato_apatoeg_zdb_id)
+ using btree in idxdbs4 ;
+
+create index tapt_quality_index
+ on tmp_apato_full (apato_quality)
+ using btree in idxdbs4 ;
+
+update statistics high for table tmp_tt ;
+update statistics high for table tmp_apato_full ;
+
+!echo "translate keywords into pato names using tt file";
+
+update tmp_apato_full
+  set apato_quality = (select quality
 			  from tmp_tt
-			  where keyword = pato_entity_zdb_id);
+			  where keyword = apato_apatoeg_zdb_id)
+  where exists (select 'x' 
+		  from tmp_tt
+		  where keyword = apato_apatoeg_zdb_id);
 
-update tmp_pato_full
-  set pato_stage_zdb_id = (select stage 
-			from tmp_tt
-			where keyword = pato_entity_zdb_id);
+--select first 1 * from tmp_apato_full
+--  where apato_quality is null ;
 
-update tmp_pato_full 
-  set pato_value = (select value 
+--select distinct apato_apatoeg_zdb_id
+--  from tmp_apato_full
+--  where apato_quality is null ;
+
+--select distinct apato_quality
+--  from tmp_apato_full
+--  where not exists (select 'x'
+--			from tmp_tt
+--			where keyword = apato_apatoeg_zdb_id) ;
+
+
+create temp table tmp_new_term (name varchar(100))
+ with no log ;
+
+insert into tmp_new_term
+  select distinct apato_quality
+    from tmp_apato_full
+     where not exists (select 'x'
 			from tmp_tt
-			where keyword = pato_entity_zdb_id);
-update tmp_pato_full 
-  set pato_entity_zdb_id = (select entity_zdb_id 
+			where keyword = apato_apatoeg_zdb_id) 
+     and apato_quality is not null 
+    and not exists (select 'x' from term
+			where term_name = apato_quality);
+
+--insert into term (term_zdb_id,
+--			term_ont_id,
+--			term_name,
+--			term_ontology)
+--  select get_id('TERM'),
+--	'term_id',
+--	name,
+--	'quality'
+--    from tmp_new_term 
+--	where not exists (select term_name
+--                             from term
+--			     where term_name = name);
+
+update term
+  set term_ont_id = term_zdb_id
+  where term_ont_id = 'term_id' ;
+
+unload to terms_need_tt_file.unl
+  select * from term
+where term_ont_id like 'ZDB-TERM-%' ;
+
+update tmp_apato_full
+  set apato_stage_zdb_id = (select stage 
+			from tmp_tt
+			where keyword = apato_apatoeg_zdb_id);
+
+--select distinct tag from tmp_tt ;
+
+update tmp_apato_full 
+  set apato_tag = (select tag 
+			from tmp_tt
+			where keyword = apato_apatoeg_zdb_id);
+
+update statistics high for table tmp_apato_full;
+
+
+
+update tmp_apato_full 
+  set apato_apatoeg_zdb_id = (select entity_group_zdb_id 
 				from tmp_tt
-				where keyword = pato_entity_zdb_id)
+				where keyword = apato_apatoeg_zdb_id)
   where exists (select 'x'
 			from tmp_tt
-			where keyword = pato_entity_zdb_id);
+			where keyword = apato_apatoeg_zdb_id);
 
-update tmp_pato_full
-  set pato_attribute = (select term_zdb_id
+
+--select count(*), term_name
+--  from term
+--  group by term_name
+--  having count(*) > 1 ;
+
+!echo "10K updated with qualities from term!" ;
+
+select count(*), term_name
+  from term
+  group by term_name
+  having count(*) > 1;
+
+update tmp_apato_full
+  set apato_quality = (select term_zdb_id
 			  from term
-			  where pato_attribute = term_name)
+			  where apato_quality = term_name
+			  and term_is_obsolete = 'f')
   where exists (select 'x' from term
-			  where pato_attribute = term_name);
+			  where apato_quality = term_name);
 
+-- changed "unspecified" to quality on 11/2/2006 to reduce
+-- number of ZFIN-only ontology terms.
 
-update tmp_pato_full
-  set pato_value = (select term_zdb_id
+update tmp_apato_full
+  set apato_quality = (select term_zdb_id
 			  from term
-			  where pato_value = term_name)
-  where exists (select 'x' from term
-			  where pato_value = term_name);
+			  where term_name = 'quality'
+			  and term_is_obsolete = 'f')
+  where apato_quality is null ;
 
-update tmp_pato_full
-  set pato_entity_zdb_id = (select anatitem_zdb_id
+update tmp_apato_full
+  set apato_quality = (select term_zdb_id
+			  from term
+			  where term_name = 'quality'
+			  and term_is_obsolete = 'f')
+  where apato_quality = 'unspecified' 
+  or exists (Select 'x'
+	       from term
+	       where term_name = 'unspecified'
+	       and term_Zdb_id = apato_quality);
+
+
+!echo "update goids with zdbs for patoannots" ;
+
+--select count(*)
+--  from tmp_apato_full 
+--  where not exists (select 'x' from term
+--			  where apato_quality = term_name);
+
+
+--update tmp_apato_full
+--  set apato_tag = (select term_zdb_id
+--			  from term
+--			  where apato_tag = term_name)
+--  where exists (select 'x' from term
+--			  where apato_tag = term_name);
+
+update statistics high for table tmp_apato_full ;
+
+update tmp_apato_full
+  set apato_apatoeg_zdb_id = (select anatitem_zdb_id
 				from anatomy_item
-				where anatitem_name = pato_entity_zdb_id)
-  where pato_entity_zdb_id not like 'GO:%'
-  and pato_entity_zdb_id not like 'ZDB-GOTERM-%'
-  and pato_entity_zdb_id not like 'ZDB-ANAT-%'
+				where anatitem_name = apato_apatoeg_zdb_id)
+  where apato_apatoeg_zdb_id not like 'GO:%'
+  and apato_apatoeg_zdb_id not like 'ZDB-GOTERM-%'
+  and apato_apatoeg_zdb_id not like 'ZDB-ANAT-%'
   and exists (select 'x'
 		from anatomy_item
-		where anatitem_name = pato_entity_zdb_id);
+		where anatitem_name = apato_apatoeg_zdb_id);
 
-update tmp_pato_full
-  set pato_entity_zdb_id = (select dalias_data_zdb_id
+update tmp_apato_full
+  set apato_apatoeg_zdb_id = (select dalias_data_zdb_id
 				from data_alias
-				where dalias_alias = pato_entity_zdb_id)
-  where pato_entity_zdb_id not like 'GO:%'
-  and pato_entity_zdb_id not like 'ZDB-GOTERM-%'
-  and pato_entity_zdb_id not like 'ZDB-ANAT-%'
+				where dalias_alias = apato_apatoeg_zdb_id)
+  where apato_apatoeg_zdb_id not like 'GO:%'
+  and apato_apatoeg_zdb_id not like 'ZDB-GOTERM-%'
+  and apato_apatoeg_zdb_id not like 'ZDB-ANAT-%'
   and exists (select 'x'
 		from data_alias
-		where dalias_alias = pato_entity_zdb_id);
-
---update tmp_pato_full
---  set pato_entity_zdb_id = (select zrepld_new_zdb_id
---				from zdb_replaced_data
---				where zrepld_old_zdb_id = pato_entity_zdb_id)
---  where pato_entity_zdb_id like 'ZDB-ANAT-%'
---  and exists (select 'x'
---		from zdb_replaced_data
---		where zrepld_old_zdb_id = pato_entity_zdb_id);
+		where dalias_alias = apato_apatoeg_zdb_id);
 
 
-delete from tmp_pato_full
-where pato_entity_zdb_id in ('organs',
-				'developmental stage', 
-				'other organs',
-				'adult phenotypes',
+!echo "null entity count"
+Select count(*) from tmp_apato_full
+  where apato_apatoeg_zdb_id is null ;
+
+update statistics high for table tmp_apato_full ;
+
+update statistics high for table zdb_replaced_data ;
+
+update tmp_apato_full
+  set apato_apatoeg_zdb_id = (select zrepld_new_zdb_id
+				from zdb_replaced_data
+				where zrepld_old_zdb_id = apato_apatoeg_zdb_id)
+  where apato_apatoeg_zdb_id like 'ZDB-ANAT-%'
+  and exists (select 'x'
+		from zdb_replaced_data
+		where zrepld_old_zdb_id = apato_apatoeg_zdb_id)
+  and apato_apatoeg_zdb_id like 'ZDB-ANAT-%';
+
+
+delete from tmp_apato_full
+where apato_apatoeg_zdb_id in ('developmental stage',
 				'early phenotypes',
 				'edema',
 				'epiboly',
 				'necrosis');
 
 --unload to missing_entities.unl
---select distinct pato_entity_zdb_id from tmp_pato_full
+--select distinct apato_apatoeg_zdb_id from tmp_apato_full
 --where not exists (select 'x'
 --			from anatomy_item
---			where anatitem_zdb_id = pato_entity_zdb_id)
--- and pato_entity_zdb_id not like 'GO:%'
---  and pato_entity_zdb_id not like 'ZDB-GOTERM-%'
---  order by pato_entity_zdb_id;
+--			where anatitem_zdb_id = apato_apatoeg_zdb_id)
+-- and apato_apatoeg_zdb_id not like 'GO:%'
+--  and apato_apatoeg_zdb_id not like 'ZDB-GOTERM-%'
+--  order by apato_apatoeg_zdb_id;
 
 --ZDB-ANAT-011113-37
 --tectum vs 
 
+--select term_zdb_id from term
+--			where term_name = 'qualitative'
+--			and term_ontology = 'quality' ;
 
-update tmp_pato_full
-  set pato_attribute = (select term_zdb_id from term
-			where term_name = 'qualitative'
-			and term_ontology = 'pato attribute ontology')
-  where pato_attribute is null 
-  and pato_entity_zdb_id != 'dominant';
+update tmp_apato_full
+  set apato_quality = (select term_zdb_id from term
+			where term_name = apato_quality
+			and term_ontology = 'quality'
+			and term_is_obsolete = 'f')
+  where apato_quality is null 
+  and apato_apatoeg_zdb_id != 'dominant';
 
+unload to distinct_missing_qualities
+  select distinct apato_quality from tmp_apato_full
+    where apato_quality not like 'ZDB-TERM-%' ;
 
-update tmp_pato_full
-  set pato_value = (select term_Zdb_id 
-			from term
-			where term_name = 'abnormal'
-			and term_ontology = 'pato value ontology')
-  where pato_value is null 
-  and pato_entity_zdb_id != 'dominant';
+update tmp_apato_full
+  set apato_tag = 'abnormal'
+  where apato_tag is null 
+  and apato_apatoeg_zdb_id != 'dominant';
 
-select distinct pato_genox_zdb_id
-  from tmp_pato_full
-  where pato_entity_zdb_id = 'dominant'
+select distinct apato_genox_zdb_id
+  from tmp_apato_full
+  where apato_apatoeg_zdb_id = 'dominant'
   into temp tmp_dom ;
 
-create index pato_genox_index
- on tmp_dom (pato_genox_zdb_id)
+create index apato_genox_index
+ on tmp_dom (apato_genox_zdb_id)
  using btree in idxdbs4;
 
-create index pato_full_index
- on tmp_pato_full (pato_genox_zdb_id)
+create index apato_full_index
+ on tmp_apato_full (apato_genox_zdb_id)
  using btree in idxdbs4 ;
 
-update statistics for table tmp_pato_full;
+update statistics for table tmp_apato_full;
 
 update statistics for table tmp_dom ;
 
-update tmp_pato_full
-  set pato_context = 'dominant'
-  where exists (select 'x'
-		 from tmp_dom
-		  where tmp_dom.pato_genox_zdb_id = 
-			tmp_pato_full.pato_genox_zdb_id);
+--update tmp_apato_full
+--  set apato_context = 'dominant'
+--  where exists (select 'x'
+--		 from tmp_dom
+--		  where tmp_dom.apato_genox_zdb_id = 
+--			tmp_apato_full.apato_genox_zdb_id);
 
-update tmp_pato_full
-  set pato_context = (select term_zdb_id
-			from term
-			where term_name = 'dominant')
-  where pato_context = 'dominant' ;
+--update tmp_apato_full
+--  set apato_context = (select term_zdb_id
+--			from term
+--			where term_name = 'dominant')
+--  where apato_context = 'dominant' ;
 
-delete from tmp_pato_full
-  where pato_entity_zdb_id = 'dominant';
+delete from tmp_apato_full
+  where apato_apatoeg_zdb_id = 'dominant';
 
-update tmp_pato_full
-  set pato_genox_zdb_id = (select genox_zdb_id
+update tmp_apato_full
+  set apato_genox_zdb_id = (select genox_zdb_id
 				from genotype_experiment
-				where genox_geno_zdb_id = pato_geno_zdb_id
+				where genox_geno_zdb_id = apato_geno_zdb_id
 				and genox_exp_zdb_id = 
 					(select exp_zdb_id
 						from experiment
 						where exp_name = "_Standard"))
-  where pato_genox_zdb_id is null;
+  where apato_genox_zdb_id is null;
 
 
-create table tmp_pato_full_no_dups (patod_zdb_id varchar(50),
-				patod_geno_zdb_id varchar(50),
-				patod_genox_zdb_id varchar(50),
-				patod_stage_zdb_id varchar(50),
-				patod_context varchar(50),
-				patod_entity_zdb_id varchar(50),
-				patod_attribute varchar(50),
-				patod_value varchar(50)
+create table tmp_apato_full_no_dups (apatod_zdb_id varchar(50),
+				apatod_geno_zdb_id varchar(50),
+				apatod_genox_zdb_id varchar(50),
+				apatod_stage_zdb_id varchar(50),
+				apatod_entity_group_zdb_id varchar(50),
+				apatod_quality varchar(50),
+				apatod_tag varchar(25)
 				)
 in tbldbs1 ;
 
 !echo "distinct" ;
 
-insert into tmp_pato_full_no_dups (patod_geno_zdb_id,
-				patod_genox_zdb_id,
-				patod_stage_zdb_id,
-				patod_context,
-				patod_entity_zdb_id,
-				patod_attribute,
-				patod_value)
- select distinct pato_geno_zdb_id,
-			pato_genox_zdb_id,
-			pato_stage_zdb_id,
-			pato_context,
-			pato_entity_zdb_id,
-			pato_attribute,
-			pato_value
-   from tmp_pato_full ;
+insert into tmp_apato_full_no_dups (apatod_geno_zdb_id,
+				apatod_genox_zdb_id,
+				apatod_stage_zdb_id,
+				apatod_entity_group_zdb_id,
+				apatod_quality,
+				apatod_tag)
+ select distinct apato_geno_zdb_id,
+			apato_genox_zdb_id,
+			apato_stage_zdb_id,
+			apato_apatoeg_zdb_id,
+			apato_quality,
+			apato_tag
+   from tmp_apato_full ;
 
-update tmp_pato_full_no_dups
-  set patod_context = 'unspecified'
-  where patod_context is null ;
+select * from tmp_apato_full_no_dups
+  where apatod_genox_zdb_id = 'ZDB-FEATEXP-041102-2586'
+  and apatod_quality = 'ZDB-TERM-061103-2' ;
 
-update tmp_pato_full_no_dups
-  set patod_zdb_id = get_id('PATO');
+delete from tmp_apato_full_no_dups
+  where apatod_genox_zdb_id = 'ZDB-FEATEXP-041102-2586'
+  and apatod_entity_group_zdb_id = 'ZDB-ANAT-010921-532'
+  and apatod_stage_zdb_id is null ;
 
-insert into phenotype_anatomy (pato_zdb_id ,
-    pato_genox_zdb_id , 
-    pato_start_stg_zdb_id ,
-    pato_end_stg_zdb_id ,
-    pato_entity_zdb_id ,
-    pato_attribute_zdb_id ,
-    pato_value_zdb_id,
-    pato_context)
-select patod_zdb_id, 
-	patod_genox_zdb_id,
-	patod_stage_zdb_id,
-	patod_stage_zdb_id,
-	patod_entity_zdb_id,
-	patod_attribute,
-	patod_value,
-	patod_context
-  from tmp_pato_full_no_dups 
-  where patod_entity_zdb_id like 'ZDB-ANAT-%';
+delete from tmp_apato_full_no_dups
+  where apatod_genox_zdb_id = 'ZDB-FEATEXP-041102-2099'
+  and apatod_entity_group_zdb_id = 'ZDB-ANAT-010921-575'
+  and apatod_stage_zdb_id is null ;
+
+--echo "delete the EU mutants for now...come back to this."
+--echo "should delete 656 records or zero if already deleted above" ;
+
+--delete from tmp_apato_full_no_dups
+--  where exists (Select 'x' from genotype_experiment
+--		  where apatod_genox_zdb_id = genox_zdb_id
+--		  and genox_geno_zdb_id like 'ZDB-FISH-060608-%');
+
+--update tmp_apato_full_no_dups
+--  set apatod_context = 'unspecified'
+--  where apatod_context is null ;
+
+update tmp_apato_full_no_dups
+  set apatod_zdb_id = get_id('APATO');
+
+!echo "number with missing entity groups" ;
+
+update tmp_apato_full_no_dups
+  set apatod_entity_group_zdb_id = 'ZDB-ANAT-010921-574'
+  where apatod_entity_group_zdb_id = 'photoreceptor cell layer' ;
+
+update tmp_apato_full_no_dups
+  set apatod_entity_group_zdb_id = (Select anatitem_zdb_id
+					from anatomy_item
+					where anatitem_name = 'pharyngeal arch 1 skeletal system')
+  where apatod_entity_group_zdb_id = 'jaw and melanophores J' ;
+
+update tmp_apato_full_no_dups
+  set apatod_stage_zdb_id = 'ZDB-STAGE-050211-1'
+  where apatod_stage_zdb_id is null ;
+
+select distinct apatod_entity_group_zdb_id
+  from tmp_apato_full_no_dups
+  where apatod_entity_group_zdb_id not like 'ZDB-%' ;
+
+update tmp_apato_full_no_dups
+  set apatod_entity_group_zdb_id = replace(apatod_entity_group_zdb_id," (abnormal)",'') 
+  where apatod_entity_group_zdb_id like '%(abnormal)%' ;
+
+update tmp_apato_full_no_dups
+  set apatod_entity_group_zdb_id = (select goterm_zdb_id
+					from go_term
+					where goterm_name = 
+						apatod_entity_group_zdb_id)
+  where apatod_entity_group_zdb_id not like 'ZDB-%' 
+  and exists (select 'x' 
+		from go_term
+		where goterm_name =apatod_entity_group_zdb_id) ; 
+
+!echo "count of null apato entities" ;
+
+select distinct apatod_entity_group_zdb_id
+  from tmp_apato_full_no_dups
+ where apatod_entity_group_zdb_id not like 'ZDB-%';
+
+select count(*) from tmp_apato_full_no_dups
+  where apatod_entity_group_zdb_id is null ;
+
+!echo "FIX ME WITH TT FILE IF NOT ZERO" ;
+
+--update tmp_apato_full_no_dups
+--  set apatod_quality = (select term_zdb_id
+--			  from term
+--			  where term_name = 'dwarf')
+--  where apatod_entity_group_zdb_id is null ;
+
+update tmp_apato_full_no_dups
+  set apatod_entity_group_zdb_id = (select anatitem_zdb_id
+					from anatomy_item	
+					where anatitem_name = 
+							'whole organism')
+  where apatod_entity_group_zdb_id is null;
+
+--!echo "number with null qualities" ;
+
+--update tmp_apato_full_no_dups
+--  set apatod_quality = (select term_zdb_id
+--					from term	
+--					where term_name = 
+--							'quality'
+--					and term_is_obsolete = 'f')
+--  where apatod_quality is null;
+
+--update tmp_apato_full_no_dups
+--  set apatod_stage_zdb_id = (select stg_zdb_id
+--					from stage	
+--					where stg_name = 
+--							'Unknown')
+ -- where apatod_stage_Zdb_id is null;
 
 
-insert into phenotype_go (patog_zdb_id ,
-    patog_genox_zdb_id , 
-    patog_start_stg_zdb_id ,
-    patog_end_stg_zdb_id ,
-    patog_entity_zdb_id ,
-    patog_attribute_zdb_id ,
-    patog_value_zdb_id,
-    patog_context)
-select patod_zdb_id, 
-	patod_genox_zdb_id,
-	patod_stage_zdb_id,
-	patod_stage_zdb_id,
-	patod_entity_zdb_id,
-	patod_attribute,
-	patod_value,
-	patod_context
-  from tmp_pato_full_no_dups 
-  where patod_entity_zdb_id like 'ZDB-GOTERM-%';
+--update tmp_apato_full_no_dups
+--  set apatod_tag = 'abnormal'
+--  where apatod_tag is null;
 
---insert into pato_figure, ao ones
 
-insert into pato_figure (patofig_fig_zdb_id,
-				patofig_pato_zdb_id)
-  select fig_zdb_id, pato_zdb_id
-    from figure, genotype_experiment, phenotype_anatomy
+--update tmp_apato_full_no_dups
+--  set apatod_quality = (select term_Zdb_id
+--			  from term
+--			  where apatod_quality = term_name
+--				and term_is_obsolete = 'f')
+--  where exists (Select 'x'
+--		  from term
+--		  where term_name = apatod_quality)
+--  and apatod_quality not like 'ZDB-TERM-%';
+
+!echo "still no term for these" ;
+
+select distinct apatod_quality from tmp_apato_full_no_dups
+where apatod_quality not like 'ZDB-%';
+
+delete from tmp_apato_full_no_dups
+where apatod_quality = '<delete>';
+
+drop table tmp_new_term ;
+
+create temp table tmp_new_term (name varchar(100))
+ with no log ;
+
+insert into tmp_new_term
+  select distinct apatod_quality
+    from tmp_apato_full_no_dups
+     where not exists (select 'x' from term
+			where term_name = apatod_quality);
+
+insert into term (term_zdb_id,
+			term_ont_id,
+			term_name,
+			term_ontology)
+  select get_id('TERM'),
+	'term_id',
+	name,
+	'quality'
+    from tmp_new_term 
+	where not exists (select term_name
+                             from term
+			     where term_name = name);
+
+delete from term
+  where term_name like 'ZDB-%' ;
+
+update term
+  set term_ont_id = term_zdb_id
+  where term_ont_id = 'term_id' ;
+
+unload to terms_need_tt_file.unl
+  select * from term
+where term_ont_id like 'ZDB-TERM-%' ;
+
+
+update tmp_apato_full_no_dups
+  set apatod_quality = (select term_Zdb_id
+			  from term
+			  where apatod_quality = term_name
+			  and term_is_obsolete = 'f')
+  where exists (Select 'x'
+		  from term
+		  where term_name = apatod_quality)
+  and apatod_quality not like 'ZDB-TERM-%';
+
+!echo "HERE IS THE DUP CHECK" ;
+
+--select * from genotype_experiment
+--  where genox_zdb_id = 'ZDB-GENOX-060719-965' ;
+ 
+select count(*),
+	apatod_genox_zdb_id,
+	apatod_stage_zdb_id,
+	apatod_stage_zdb_id,
+	apatod_entity_group_zdb_id,
+	apatod_quality, term_name,
+	apatod_tag
+  from tmp_apato_full_no_dups, term
+  where term_zdb_id = apatod_quality 
+  group by apatod_genox_zdb_id,
+	apatod_stage_zdb_id,
+	apatod_stage_zdb_id,
+	apatod_entity_group_zdb_id,
+	apatod_quality, term_name,
+	apatod_tag
+  having count(*) > 1;
+
+insert into atomic_phenotype (apato_zdb_id ,
+    apato_genox_zdb_id , 
+    apato_start_stg_zdb_id ,
+    apato_end_stg_zdb_id ,
+    apato_entity_a_zdb_id ,
+    apato_quality_zdb_id ,
+    apato_tag)
+select apatod_zdb_id, 
+	apatod_genox_zdb_id,
+	apatod_stage_zdb_id,
+	apatod_stage_zdb_id,
+	apatod_entity_group_zdb_id,
+	apatod_quality,
+	apatod_tag
+  from tmp_apato_full_no_dups ;
+
+--select * from atomic_phenotype, genotype_experiment
+-- where genox_zdb_id = apato_genox_zdb_id
+--  and genox_geno_zdb_id = 'ZDB-FISH-980410-94';
+
+update statistics high for table apato_infrastructure;
+
+update statistics high for table genotype_experiment ;
+update statistics high for table atomic_phenotype ;
+
+update atomic_phenotype
+  set apato_pub_zdb_id = 'ZDB-PUB-030129-1' 
+  where exists (select 'x' from genotype_experiment
+                  where genox_zdb_id = apato_genox_zdb_id
+		  and genox_geno_zdb_id like 'ZDB-FISH-060608-%') ;
+
+update atomic_phenotype
+  set apato_pub_zdb_id = 'ZDB-PUB-060503-2' 
+  where apato_pub_zdb_id is null ;
+
+
+--insert into apato_figure, ao ones
+
+!echo "HOW MANY NEW FIGURES IN APATO_FIGURE" ;
+
+insert into apato_figure (apatofig_fig_zdb_id,
+				apatofig_apato_zdb_id)
+  select fig_zdb_id, apato_zdb_id
+    from figure, genotype_experiment, atomic_phenotype
     where fig_label = genox_geno_zdb_id
-    and genox_zdb_id = pato_genox_zdb_id ;
+    and genox_zdb_id = apato_genox_zdb_id ;
 
---insert into pato_figure, go ones
-
-insert into pato_figure (patofig_fig_zdb_id,
-				patofig_pato_zdb_id)
-  select fig_zdb_id, patog_zdb_id
-    from figure, genotype_experiment, phenotype_go
-    where fig_label = genox_geno_zdb_id
-    and genox_zdb_id = patog_genox_zdb_id ;
+update figure
+  set fig_label = (select "Fig. for ("||fish.allele||")"
+			from fish
+			where fig_label = fish.zdb_id)
+  where fig_label like 'ZDB-FISH-%' ;
 
 
---insert into feature_assay
+select count(*) from apato_figure ;
+
+update statistics high for table apato_figure ;
+update statistics high for table atomic_phenotype ;
+
+--select count(*) 
+--  from atomic_phenotype
+--  where not exists (select 'x'
+--			from apato_figure
+--			where apatofig_apato_zdb_id = apato_zdb_id);
+
+!echo "done with pato, now insert into feature_assay" ;
 
 insert into feature_assay (featassay_feature_zdb_id,
 				featassay_mutagen,
@@ -1214,12 +1884,8 @@ update feature_assay
   where featassay_mutagee = '' ;
 
 insert into zdb_active_data
-  select patog_zdb_id
-    from phenotype_go ;
-
-insert into zdb_active_data 
-  select pato_zdb_id
-    from phenotype_anatomy ;
+  select apato_zdb_id
+    from atomic_phenotype ;
 
 insert into zdb_active_data 
   select geno_zdb_id
@@ -1228,29 +1894,143 @@ insert into zdb_active_data
 			from zdb_active_data
 			where geno_zdb_id = zactvd_zdb_id) ;
 
-update phenotype_anatomy
-  set pato_entity_zdb_id = (select zrepld_new_zdb_id
+update statistics high for table atomic_phenotype ;
+
+update atomic_phenotype
+  set apato_entity_a_zdb_id = (select zrepld_new_zdb_id
 				from zdb_replaced_data
-				where zrepld_old_zdb_id = pato_entity_zdb_id
+				where zrepld_old_zdb_id = apato_entity_a_zdb_id
   				and zrepld_old_zdb_id like 'ZDB-ANAT-%')
   where exists (select 'x'
 		from zdb_replaced_Data
- 		where zrepld_old_zdb_id = pato_Entity_zdb_id);
+ 		where zrepld_old_zdb_id = apato_entity_a_zdb_id)
+  and apato_entity_a_zdb_id like 'ZDB-ANAT-%';
+
+update atomic_phenotype
+  set apato_tag = 'abnormal'
+  where apato_tag is null ;
+
+update statistics high for table atomic_phenotype ;
+update statistics high for table zdb_active_data ;
+
+update statistics for procedure ;
+
+insert into zdb_active_data
+   select apato_zdb_id
+     from atomic_phenotype
+     where not exists (select 'x'
+			 from zdb_active_data
+ 			where zactvd_zdb_id = apato_zdb_id);
 
 
-select distinct pato_entity_zdb_id from phenotype_anatomy
-  where pato_entity_zdb_id not in (Select anatitem_zdb_id from anatomy_item);
+insert into zdb_active_data
+  select term_zdb_id from term
+   where not exists (select 'x' from zdb_active_data
+			where zactvd_zdb_id = term_zdb_id);
+
+update statistics for procedure ;
+
+select apato_entity_a_zdb_id
+  from atomic_phenotype
+  where apato_entity_a_zdb_id not like 'ZDB-ANAT-%'
+	and apato_entity_a_zdb_id not like 'ZDB-GOTERM-%';
 
 
---add marker_relationship types for transgenic constructs
+!echo "number qualities updated to ventralized" ;
 
+update atomic_phenotype
+  set apato_quality_zdb_id = (Select term_zdb_id
+			from term
+			where term_name = 'ventralized')
+  where apato_entity_a_zdb_id not like 'ZDB-%';
+
+update atomic_phenotype
+  set apato_entity_a_zdb_id = (select dalias_data_zdb_id
+					from data_alias	
+					where dalias_alias = 
+						apato_entity_a_zdb_id)
+  where apato_entity_a_zdb_id not like 'ZDB-%';
+
+
+--update atomic_phenotype
+--  set apato_entity_a_zdb_id = (select zrepld_new_zdb_id
+--					from zdb_replaced_data	
+--					where zrepld_old_name = 
+--						apato_entity_a_zdb_id)
+--  where apato_entity_a_zdb_id not like 'ZDB-%';
+
+
+update atomic_phenotype
+  set apato_entity_a_zdb_id = (select anatitem_zdb_id
+					from anatomy_item	
+					where anatitem_name = 
+							'whole organism')
+  where apato_entity_a_zdb_id not like 'ZDB-%';
+
+select *
+  from atomic_phenotype
+  where apato_entity_a_zdb_id is null ;
+
+select  * from fish, genotype_experiment
+where genox_zdb_id = 'ZDB-GENOX-061105-534' 
+and zdb_id = genox_geno_Zdb_id;
+
+update atomic_phenotype 
+  set apato_entity_a_zdb_id = (Select anatitem_Zdb_id
+				from anatomy_item
+				where anatitem_name = 'whole organism')
+  where apato_entity_a_zdb_id is null ;
+
+update feature
+  set feature_lab_of_origin = null
+  where feature_lab_of_origin = '' ;
+
+select feature_lab_of_origin
+  from feature
+ where feature_lab_of_origin not in (select lab.zdb_id from lab);
+
+select distinct apato_tag
+  from atomic_phenotype 
+  where not exists (Select 'x' from apato_tag
+		     where apatotag_name = apato_tag);
+
+--select count(*), apato_entity_a_zdb_id, apato_entity_b_zdb_id,
+--  apato_quality_zdb_id, apato_start_stg_zdb_id, apato_end_stg_zdb_id,
+--  apato_tag
+--  from atomic_phenotype
+--  group by apato_entity_a_zdb_id, apato_entity_b_zdb_id,
+--  apato_quality_zdb_id, apato_start_stg_zdb_id, apato_end_stg_zdb_id,
+--  apato_tag
+--  having count(*) > 1;
+
+select count(*),
+	apato_genox_zdb_id,
+	apato_start_stg_zdb_id,
+	apato_end_stg_zdb_id,
+	apato_entity_a_zdb_id,
+	apato_quality_zdb_id, term_name,
+	apato_tag
+  from atomic_phenotype, term
+  where term_zdb_id = apato_quality_zdb_id
+  group by apato_genox_zdb_id,
+	apato_start_stg_zdb_id,
+	apato_end_stg_zdb_id,
+	apato_entity_a_zdb_id,
+	apato_quality_zdb_id, term_name,
+	apato_tag
+  having count(*) > 1;
 
 set constraints all immediate ;
 
-drop table tmp_pato_full_no_dups;
-drop table tmp_pato ; 
-drop table tmp_pato_full;
+update statistics for procedure ;
+
+drop table tmp_apato_full_no_dups;
+drop table tmp_apato ; 
+drop table tmp_apato_full;
 drop table tmp_tt;
+drop table tmp_eu_apato ;
+
+update statistics for procedure ;
 
 update marker
   set mrkr_comments = null
@@ -1265,38 +2045,47 @@ update statistics for procedure ;
 alter table fish_image
   drop fimg_fish_zdb_id ;
 
+update fish_image
+  set fimg_bkup_thumb = null ;
+
 alter table fish_image
   drop fimg_bkup_thumb ;
+
+update fish_image
+  set fimg_bkup_img = null  ;
 
 alter table fish_image
   drop fimg_bkup_img ;
 
+update statistics for procedure ;
+
+update fish_image
+  set fimg_bkup_annot = null ;
+
 alter table fish_image
   drop fimg_bkup_annot ;
+
+update fish_image
+  set has_image = null ;
 
 alter table fish_image
   drop has_image ;
 
+update fish_image
+  set has_annot = null ;
+
 alter table fish_image
   drop has_annot ;
 
-insert into image
-  select * from fish_image ;
+update statistics for procedure ;
 
-insert into image_stage
-  select * from fish_image_stage ;
+update zygocity
+  set zyg_abbrev = 'i'
+  where zyg_name = 'hemizygous' ;
 
-drop table fish_image_stage ;
-
-drop table fish_image ;
-
-drop table fish_image_form ;
-
-drop table fish_image_direction ;
-
-drop table fish_image_view ;
-
-drop table fish_image_preparation ;
+update zdb_object_type
+  set zobjtype_app_page = 'aa-genotypeview.apg' 
+  where zobjtype_name = 'GENO';
 
 commit work;
 --rollback work ;

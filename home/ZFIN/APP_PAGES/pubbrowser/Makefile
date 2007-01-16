@@ -26,8 +26,8 @@ GENERICS = REFERinfo.apg enterpubs.apg link_authors.apg \
 	pubtopic_close.apg pubtopic_open.apg pubtopic_unclaim.apg pubtopic_found.apg \
 	pubtopic_reassign.apg pnote_new.apg pnote_editor.apg notif_frame.apg \
 	notif_content.apg journalselect.apg journalview.apg journalupdate.apg pubacknowledgement.apg \
-	js-delete_attrib.apg citlocus.apg pub_rowdisplay.apg citselectlist.apg citfish.apg \
-	citjtypeoption.apg citlink.apg citgeneric.apg
+	js-delete_attrib.apg pub_rowdisplay.apg citselectlist.apg citfish.apg \
+	citjtypeoption.apg citlink.apg citgeneric.apg cittotalcount.apg
 
 
 # use default rules for app page directories.

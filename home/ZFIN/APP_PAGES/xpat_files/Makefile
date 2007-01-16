@@ -21,7 +21,7 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/xpat_files
 
 GENERICS = xpatview.apg xpatselect.apg anatdict.apg anatomy_item.apg \
-	xpatindexview.apg anatomy_captures.apg xpatselect_note.apg \
+        anatomy_captures.apg xpatselect_note.apg \
 	xpatselectquery.apg xpatselectrowdisplay.apg xpatcuration.apg \
 	xpatexdisplayname.apg getPubStructureListItem.apg xpatselectanatverify.apg \
 	xpatcurexpssdisplayname.apg xpatcurupdate.apg xpatcurimage.apg \
@@ -33,7 +33,14 @@ GENERICS = xpatview.apg xpatselect.apg anatdict.apg anatomy_item.apg \
 	fxfigassaylist.apg fxfigfishlist.apg fxinfo.apg \
 	xpatexpcdnsummary.apg \
 	xpatexpcdndisplay.apg xpatfeatexp.apg fxprobefig.apg xpatcurpermission.apg \
-	fxfigprobelist.apg fxgenestgrng.apg record_web_update.apg do-addcanmrkr.apg
+	fxfigprobelist.apg fxgenestgrng.apg record_web_update.apg do-addcanmrkr.apg \
+	curation.apg genotypecuration.apg genocursearch.apg attribupdate.apg \
+	genosearchresulttable.apg genocurbuilder.apg genocursummary.apg genoupdate.apg \
+	patocuration.apg patocursummary.apg patocurbuilder.apg patoupdate.apg \
+	fxphenoinfo.apg fxfiggenolist.apg fxfigphenoanatlist.apg fxfigphenostgrng.apg \
+	figurecuration.apg experimentcuration.apg xpatcurreset.apg fxfigphenogenolist.apg \
+	fxfigphenogolist.apg pheno_summary.apg pheno_summary_sql.apg
+
 
 
 # Use default rules for app page directories. 

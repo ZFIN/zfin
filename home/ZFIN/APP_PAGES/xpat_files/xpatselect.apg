@@ -346,7 +346,7 @@ function openChild(childWinUrl,childWinName) {
   app pages to get the different query results.  The end result of all the app
   pages is that they populate a temp table with expression pattern ZDB IDs that
   meet whatever criteria this page was called with.  The temp table will also
-  include the text that matched in the case of gene name or fish name searches.
+  include the text that matched in the case of gene name or genotype name searches.
 
   First create temp table if it does not already exist.  The temp table reuses
   the column names from expression_pattern.  This simplifies code in the 
@@ -393,8 +393,8 @@ function openChild(childWinUrl,childWinName) {
     $(IF,$(XST,$searchtype),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_geneSearchType=$searchtype))
     $(IF,$(XST,$xpatsel_probeName),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_probeName=$(URLENCODE,$xpatsel_probeName)))
     $(IF,$(XST,$xpatsel_probeSearchType),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_probeSearchType=$xpatsel_probeSearchType))
-    $(IF,$(XST,$mutant),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_fishName=$(URLENCODE,$(REPLACE,$mutant,_,\_))))
-    $(IF,$(XST,$mutsearchtype),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_fishSearchType=$mutsearchtype))
+    $(IF,$(XST,$mutant),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_genoName=$(URLENCODE,$(REPLACE,$mutant,_,\_))))
+    $(IF,$(XST,$mutsearchtype),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_genoSearchType=$mutsearchtype))
     $(IF,$(XST,$MOgene),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_MOgene=$(URLENCODE,$MOgene)))
     $(IF,$(XST,$MOsearchtype),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_MOsearchtype=$MOsearchtype))
     $(IF,$(XST,$author),$(VECAPPEND,$xpatsel_queryVec,xpatselqry_author=$(URLENCODE,$author)))
@@ -869,7 +869,7 @@ function openChild(childWinUrl,childWinName) {
 	<tr>
 	  <td>
 	    <!-- begin mutant -->
-	    <label for="xpatselMutant" class="namesearchLabel">Genetic background name</label>
+	    <label for="xpatselMutant" class="namesearchLabel">Genotype or Background</label>
 	      <SELECT name=mutsearchtype>
 		<option value="contains" $(IF,$(AND,$(XST,$mutsearchtype),$(EC,$mutsearchtype,contains)),SELECTED)>contains
 		<option value="begins"  $(IF,$(AND,$(XST,$mutsearchtype),$(EC,$mutsearchtype,begins)),SELECTED) >begins with

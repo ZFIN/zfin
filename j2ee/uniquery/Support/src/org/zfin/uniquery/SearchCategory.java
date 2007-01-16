@@ -20,15 +20,14 @@ public class SearchCategory
     {
     // IMPORTANT! any changes to these categories means that Indexer.java and SearchBean.java must also change!
 	// Tomcat needs to be bounced for the chagnes to show.
-    public static final String MUTANTS_FISHVIEW         = "MUTANTS_FISHVIEW";
-    public static final String MUTANTS_LOCUSVIEW        = "MUTANTS_LOCUSVIEW";
-    public static final String MUTANTS_MAPPINGDETAIL    = "MUTANTS_MAPPINGDETAIL";
+    public static final String MUTANTS_GENOVIEW        = "MUTANTS_GENOVIEW";
+	//public static final String MUTANTS_MAPPINGDETAIL    = "MUTANTS_MAPPINGDETAIL";
     public static final String GENES_MARKERVIEW         = "GENES_MARKERVIEW";
     public static final String MARKERS_MARKERVIEW       = "MARKERS_MARKERVIEW";
     public static final String GENES_SEQUENCE           = "GENES_SEQUENCE";
     public static final String GENES_GENEPRDDESCRIPTION = "GENES_GENEPRDDESCRIPTION";
     public static final String GENES_MARKERGOVIEW       = "GENES_MARKERGOVIEW"; 
-    public static final String GENES_MAPPINGDETAIL      = "GENES_MAPPINGDETAIL";
+	//public static final String GENES_MAPPINGDETAIL      = "GENES_MAPPINGDETAIL";
     public static final String EXPRESSION_FXFIGVIEW     = "EXPRESSION_FXFIGVIEW";
     public static final String ANATOMY_ITEM             = "ANATOMY_ITEM";
     public static final String ANATOMY_ZFINFO           = "ANATOMY_ZFINFO";
@@ -64,11 +63,11 @@ public class SearchCategory
         String[] geneTypes = {GENES_MARKERVIEW, MARKERS_MARKERVIEW};
         categoryList.add(new SearchCategory("GENES", "Genes/Markers/Clones", geneTypes));
 	
-	String[] mutantTypes = {MUTANTS_FISHVIEW, MUTANTS_LOCUSVIEW};
+	String[] mutantTypes = {MUTANTS_GENOVIEW};
 	categoryList.add(new SearchCategory("MUTANTS", "Mutants/Transgenics", mutantTypes));
 	
         String[] expressionTypes = {EXPRESSION_FXFIGVIEW};
-        categoryList.add(new SearchCategory("EXPRESSION", "Expression", expressionTypes));
+        categoryList.add(new SearchCategory("EXPRESSION", "Expression/Phenotype", expressionTypes));
 
         /*
          * Remove the image and mapping details categories since they

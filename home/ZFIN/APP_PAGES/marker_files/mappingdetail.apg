@@ -1,9 +1,17 @@
 <?MICOMMENT>
-FILE: MAPPINGDETAIL.HTML. This file implements mapping details for MARKER 
-records.
+ FILE: mappingdetail.apg
+ Prefix: mpdl_
+  
+ This file implements mapping details for marker and feature records.
+
+ INPUTVAR:
+	mapdetails_mode:   mini, mini_slim, standalone, detail
+        split :    space or break, that separate output string
+ 
+
+
 <?/MICOMMENT>
 
-<?MIVAR COND="$(NXST,$mapdetails_mode)" NAME=$mapdetails_mode>standalone<?/MIVAR>
 <?MIERROR>
   <?MIVAR COND=$(XST,$MI_SQL)>
     SQL: $MI_SQL<br><br>
@@ -15,12 +23,15 @@ records.
 
 <?/MIERROR>
 
+<?MIVAR COND="$(NXST,$mapdetails_mode)" NAME=$mapdetails_mode>standalone<?/MIVAR>
+<?MIVAR NAME=$userid>GUEST<?/MIVAR> <?MICOMMENT>a parameter for map view applet<?/MICOMMENT>
+
 <?MICOMMENT>------- start mini mode ----------------------
    mini mode use $oID instead of $OID to avoid changing the value of
   $OID unexpectedly when doing webexplode of mini mode within the same page.
 <?/MICOMMENT>  
 
-<?MIBLOCK COND="$(EC,$mapdetails_mode,mini)">
+<?MIBLOCK COND="$(OR,$(EC,$mapdetails_mode,mini),$(EC,$mapdetails_mode,mini_slim))">
 
 <?MIVAR COND="$(NXST,$split)" NAME=$split>&nbsp;<?/MIVAR>
 <?MIVAR COND="$(NXST,$hide_empty)" NAME=$hide_empty>f<?/MIVAR>
@@ -40,45 +51,30 @@ records.
 <?MICOMMENT>when lg information is not yet known<?/MICOMMENT>
 <?MIBLOCK COND="$(NXST,$lg_list)">
  <?MIVAR NAME=$GNID>$oID<?/MIVAR> 
- <?MIVAR NAME=$LID>$oID<?/MIVAR> 
+ <?MIVAR NAME=$FID>$oID<?/MIVAR> 
    <?MISQL COND="$(>,$(POSITION,$oID,GENE),0)" SQL="
-	select zdb_id
-	  from locus
-	 where cloned_gene = '$oID'
-	; ">
-      <?MIVAR>$(SETVAR,$LID,$1)<?/MIVAR>
+	select fmrel_ftr_zdb_id
+	  from feature_marker_relationship
+	 where fmrel_mrkr_zdb_id = '$oID'
+           and fmrel_type = 'is allele of'; ">
+      <?MIVAR>$(SETVAR,$FID,$1)<?/MIVAR>
    <?/MISQL>
 
-   <?MISQL COND="$(>,$(POSITION,$oID,LOCUS),0)" SQL="
-	select cloned_gene
-	  from locus
-	 where zdb_id = '$oID'; ">
+   <?MISQL COND="$(>,$(POSITION,$oID,ALT),0)" SQL="
+	select fmrel_mrkr_zdb_id
+	  from feature_marker_relationship
+	 where fmrel_ftr_zdb_id = '$oID'
+	   and fmrel_type = 'is allele of'; ">
 	<?MIVAR>$(SETVAR,$GNID,$1)<?/MIVAR>
-   <?/MISQL>
-   <?MISQL COND="$(>,$(POSITION,$oID,FISH),0)" SQL="
-	select l.zdb_id, cloned_gene
-	  from locus l, fish f
-	 where f.zdb_id = '$oID'
-	   and l.zdb_id = f.locus	
-	; ">
-	<?MIVAR>$(SETVAR,$LID,$1)<?/MIVAR>
-	<?MIVAR>$(SETVAR,$GNID,$2)<?/MIVAR>
    <?/MISQL>
 
   <?MIVAR NAME=$last><?/MIVAR>
   <?MISQL SQL="
 	SELECT or_lg
 	FROM mapped_marker
-	WHERE marker_id = '$oID'
-	   OR marker_id = '$LID'
+	WHERE marker_id = '$FID'
            OR marker_id = '$GNID'
-         
-      UNION 
-	SELECT or_lg
-	FROM mapped_marker, fish f
-	WHERE marker_id = f.zdb_id
-	  AND f.locus = '$LID'
-         
+                  
       UNION 
 	SELECT or_lg
 	FROM mapped_marker, marker_relationship
@@ -99,18 +95,10 @@ records.
       UNION
 	SELECT lnkg_or_lg
 	FROM linkage, linkage_member
-	WHERE (lnkgmem_member_zdb_id = '$oID'
-	   or lnkgmem_member_zdb_id = '$LID'
-           or lnkgmem_member_zdb_id = '$GNID')
+	WHERE (lnkgmem_member_zdb_id = '$GNID'
+           or lnkgmem_member_zdb_id = '$FID')
 	  and lnkg_zdb_id = lnkgmem_linkage_zdb_id
-	  
-      UNION 
-	SELECT lnkg_or_lg
-	FROM linkage, linkage_member, fish f
-	WHERE lnkgmem_member_zdb_id = f.zdb_id
-          and f.locus = '$LID'
-	  and lnkg_zdb_id = lnkgmem_linkage_zdb_id
-	 
+	  	 
       UNION 
 	SELECT lnkg_or_lg
 	FROM linkage, linkage_member, marker_relationship
@@ -129,18 +117,34 @@ records.
 	  and mrel_type in ('clone contains gene',
 			    'clone contains small segment')
 	  and lnkgmem_linkage_zdb_id = lnkg_zdb_id 
+
+       UNION 
+	SELECT or_lg
+	  FROM mapped_deletion, feature
+	 WHERE feature_name = allele
+           AND feature_zdb_id = '$FID'
+         
+       UNION
+ 	SELECT or_lg
+          FROM mapped_deletion, feature, feature_marker_relationship
+	 WHERE feature_name = allele
+ 	   AND feature_zdb_id = fmrel_ftr_zdb_id
+	   AND fmrel_type = 'is allele of' 
+           AND fmrel_mrkr_zdb_id = '$GNID'
+
 	order by 1
       ;">
      <?MICOMMENT>
-       *** 07/28/03 we decided to show LG Unknown when LG is 0. If we have 
+       07/28/03 we decided to show LG Unknown when LG is 0. If we have 
        other evidence of LG not 0, only the non 0 will be shown in mini mode, 
        but more in mapping detail page.
      <?/MICOMMENT>
 
-     <?MIVAR COND="$(EC,$MI_CURRENTROW,1)">
+     <?MIVAR COND="$(AND,$(EC,$MI_CURRENTROW,1),$(NC,$mapdetails_mode,mini_slim))">
 	LG:
      <?/MIVAR>
      <?MIVAR COND="$(AND,$(>,$MI_CURRENTROW,1),$(NC,$last,0),$(NC,$1,$last))">,<?/MIVAR>
+
      <?MIVAR COND="$(AND,$(NC,$1,0),$(NC,$1,$last))">
 	&nbsp;$1
      <?/MIVAR>
@@ -149,40 +153,30 @@ records.
   <?MIVAR NAME=$the_lg>$1<?/MIVAR>
   <?MIVAR NAME=$map_count>$MI_ROWCOUNT<?/MIVAR>
 
-  <?MICOMMENT>check for mapped_deletion on deficiency allele<?/MICOMMENT>
-  <?MIVAR NAME=deficiency_info>f<?/MIVAR> 
-  <?MISQL COND="$(>,$(POSITION,$oID,FISH),0)" SQL="
-	select * from mapped_deletion m, fish f
-		where f.allele = m.allele
-                  and f.zdb_id = '$oID' ">
-  <?/MISQL>
-  <?MIVAR COND="$(>,$MI_ROWCOUNT,0)" NAME=deficiency_info>t<?/MIVAR> 
-  <?MISQL COND="$(>,$(POSITION,$oID,LOCUS),0)" SQL="
-	select * from mapped_deletion m, fish f
-		where f.allele = m.allele
-		  and f.locus  = '$oID' ">
-  <?/MISQL>
-  <?MIVAR COND="$(>,$MI_ROWCOUNT,0)" NAME=deficiency_info>t<?/MIVAR> 
 
   <?MIVAR COND="$(EC,$last,0)">&nbsp;<font size=-1>Unknown</font><?/MIVAR>
-  <?MIBLOCK COND="$(AND,$(=,$map_count,1),$(NC,$the_lg,MT),$(NC,$the_lg,0))">
+
+  <?MIBLOCK COND="$(AND,$(>,$map_count,0),$(NC,$the_lg,MT),$(NC,$the_lg,0))">
     <?MIVAR COND="$(<,$the_lg,10)">&nbsp;<?/MIVAR>
   <?/MIBLOCK>	
-  <?MIBLOCK COND="$(AND,$(EC,$hide_empty,f),$(=,$map_count,0),$(EC,$deficiency_info,f))">
-    None submitted.
-    <?MIVAR COND="$(AND,$(XST,$UPDATE),$(>,$(POSITION,$oID,FISH),0))">
+  <?MIBLOCK COND="$(AND,$(EC,$hide_empty,f),$(=,$map_count,0))">
+    None submitted
+    <?MIVAR COND="$(AND,$(XST,$UPDATE),$(>,$(POSITION,$oID,ALT),0))">
       <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mappingdetail.apg&OID=$oID&UPDATE=1">Update on Detail page</A>
     <?/MIVAR>
   <?/MIBLOCK>
 
-<?MIELSE><?MICOMMENT>need modification here<?/MICOMMENT>
+<?MIELSE><?MICOMMENT>if lg_list is provided (need modification)<?/MICOMMENT>
   <?MIVAR>LG:&nbsp;$lg_list<?/MIVAR>
 
 <?/MIBLOCK>
 
-<?MIBLOCK COND="$(OR,$(XST,$lg_list),$(>,$map_count,0),$(EC,$deficiency_info,t))">
+<?MIBLOCK COND="$(OR,$(XST,$lg_list),$(>,$map_count,0))">
 
  <?MIVAR>&nbsp;<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mappingdetail.apg&OID=$oID">Details</A><?/MIVAR>
+<?MIVAR COND="$(EC,$mapdetails_mode,mini_slim)">
+	$(SETVAR,$viewmap,f)
+<?/MIVAR>
 
 <?MICOMMENT>
   mini mode section is exploded from both mapping details page and 
@@ -201,7 +195,6 @@ records.
 	      <A HREF="/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi?&userid=$userid&OID=$oID&view_map=view_map$vmpanels">Merged</A>&nbsp;
 	      <A HREF="/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi?&userid=$userid&OID=$oID&view_map=view_map$vmpanels">Individual Panels</A>
 	  
-   	$(IF,$(EC,$split,&nbsp;),</td>)
   <?/MIVAR>
 
 <?/MIBLOCK>
@@ -264,13 +257,11 @@ marker = '';
 <?MIVAR COND="$(NXST,$lod)" NAME=$lod><?/MIVAR>
 <?MIVAR COND="$(NXST,$metric)" NAME=$metric><?/MIVAR>
 
-<?MIVAR NAME=$userid>GUEST<?/MIVAR>
 <?MISQL SQL="select object from webPages where ID='aa-chromoscripts.apg';">$1
 <?/MISQL>
 
 <?MIVAR NAME=$target_table>marker<?/MIVAR>
-<?MIVAR NAME=$target_table COND="$(>,$(POSITION,$OID,FISH),0)">fish<?/MIVAR>
-<?MIVAR NAME=$target_table COND="$(>,$(POSITION,$OID,LOCUS),0)">locus<?/MIVAR> 
+<?MIVAR NAME=$target_table COND="$(>,$(POSITION,$OID,ALT),0)">feature<?/MIVAR>
 
 
 <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'page_title=View mapping detail') from webPages where ID='aa-secure_navigation.apg';">$1
@@ -302,22 +293,14 @@ marker = '';
 
   <?MIVAR NAME=$MID>$OID<?/MIVAR>
 
-  <?MISQL COND="$(>,$(POSITION,$OID,FISH),0)" SQL="
-	select l.zdb_id
-	  from locus l, fish f
-	 where f.zdb_id = '$OID'
-	   and l.zdb_id = f.locus          
+  <?MISQL COND="$(>,$(POSITION,$OID,ALT),0)" SQL="
+	select fmrel_mrkr_zdb_id
+	  from feature_marker_relationship
+	 where fmrel_type = 'is allele of'
+           and fmrel_ftr_zdb_id = '$OID'        
 	; ">
      <?MIVAR COND="$(NC,$1,)">$(SETVAR,$OID,$1)<?/MIVAR>
   <?/MISQL>
-
-  <?MISQL COND="$(>,$(POSITION,$OID,LOCUS),0)" SQL="
-	select cloned_gene
-	  from locus
-	 where zdb_id = '$OID'
-              ; ">
-	<?MIVAR COND="$(NC,$1,)">$(SETVAR,$OID,$1)<?/MIVAR>
-   <?/MISQL>
 
    <?MISQL SQL="
 	select mrkr_name, mrkr_abbrev, mrkr_type, mrkrtype_type_display
@@ -338,16 +321,10 @@ marker = '';
 
   <?MICOMMENT>get the original abbreviation or name for the title display<?/MICOMMENT>
   <?MIVAR COND="$(XST,$mrkr_abbrev)" NAME=$reserved_mrkr_abbrev>$mrkr_abbrev<?/MIVAR>
-  <?MISQL COND="$(>,$(POSITION,$MID,FISH),0)" SQL="
-		select abbrev, line_type, allele
-		  from fish
-		where zdb_id = '$MID';">
-	<?MIVAR NAME=mrkr_abbrev>$(IF,$(NC,$2,wild type),$3,$1)<?/MIVAR>
-  <?/MISQL>
-  <?MISQL COND="$(>,$(POSITION,$MID,LOCUS),0)" SQL="
-		select locus_name
-		  from locus
-		where zdb_id = '$MID';">
+  <?MISQL COND="$(>,$(POSITION,$MID,ALT),0)" SQL="
+		select feature_abbrev
+		  from feature
+		 where feature_zdb_id = '$MID';">
 	<?MIVAR NAME=mrkr_abbrev>$1<?/MIVAR>
   <?/MISQL>
 
@@ -397,113 +374,60 @@ marker = '';
 
       <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&orgOID=$MID&detOID=$OID&abbrev=$mrkr_abbrev') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
 
-      <?MIVAR NAME=$locus_id><?/MIVAR>
-      <?MISQL SQL="
-		select zdb_id, abbrev, locus_name
-                  from locus
-                 where cloned_gene = '$OID'
-                ;">
-
-         <TR><TD><b>Locus <i><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$1">$(IF,$(NC,$2,),$2,$3)</A></i> corresponding to gene <i><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID">$mrkr_abbrev</A></i></b>
-         </TD></TR>
-         <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&orgOID=$MID&detOID=$1&abbrev=$(IF,$(NC,$2,),$2,null)') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
-         <?MIVAR NAME=$locus_id>$1<?/MIVAR>
-      <?/MISQL>
 
       <?MISQL SQL="
-	       select zdb_id, allele
-                 from fish
-		where zdb_id = '$MID'
+	       select feature_zdb_id, feature_name, feature_abbrev
+                 from feature
+		where feature_zdb_id = '$MID'
             union 
-               select f.zdb_id, allele
-                 from fish f, locus l
-                where l.cloned_gene = '$OID'
-	          and l.zdb_id = f.locus
-                  and (f.zdb_id in 
+               select feature_zdb_id, feature_name, feature_abbrev
+                 from feature, feature_marker_relationship 
+                where fmrel_mrkr_zdb_id = '$OID'
+	          and fmrel_type = 'is allele of'
+		  and fmrel_ftr_zdb_id = feature_zdb_id
+                  and (fmrel_ftr_zdb_id in 
 			  (select marker_id from mapped_marker)
-                    or f.zdb_id in 
+                    or fmrel_ftr_zdb_id in 
 			  (select lnkgmem_member_zdb_id 
 			     from linkage_member, linkage
 			    where lnkg_zdb_id = lnkgmem_linkage_zdb_id)
-		    or f.allele in 
+		    or feature_abbrev in 
 			  (select allele
 			     from mapped_deletion  )			    	
                        ) ;">
         <?MIVAR NAME=$allele_id>$1<?/MIVAR>
-        <?MIVAR NAME=$allele>$2<?/MIVAR>
-	<TR><TD><b>Allele <i><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$1">$2</A></i> corresponding to gene <i><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID">$mrkr_abbrev</A></i> </b> 
+	<?MIVAR NAME=$allele_name>$2<?/MIVAR>
+        <?MIVAR NAME=$allele_abbrev>$3<?/MIVAR>
+	<TR><TD><b>Allele <i>$allele_abbrev</i> corresponding to gene <i><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID">$mrkr_abbrev</A></i> </b> 
         </TD></TR>
 
-	<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&orgOID=$MID&detOID=$allele_id&abbrev=$allele') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+	<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&orgOID=$MID&detOID=$allele_id&name=$allele_name&abbrev=$allele_abbrev') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
 
       <?/MISQL> 
 
   <?/MIBLOCK>
 
-  <?MIBLOCK COND="$(>,$(POSITION,$OID,LOCUS),0)">
-     <?MISQL SQL="
-		select locus_name, abbrev
-		  from locus
-		 where zdb_id = '$OID'
-		;">
-	<?MIVAR NAME=$locus_name>$1<?/MIVAR>
- 	<?MIVAR NAME=$locus_abbrev>$2<?/MIVAR>
-     <?/MISQL>
-
-     <?MIVAR>
-      <b>Locus Name: &nbsp;<i>$locus_name</i></b><br>
-      <b>Locus Abbreviation: &nbsp;<i><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$OID'>$locus_abbrev</A></i></b> 
-     <?/MIVAR>
-     <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&orgOID=$MID&detOID=$OID&abbrev=$(IF,$(NC,$locus_abbrev,),$2,null)') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
-
-     <?MISQL SQL=" 
-               select zdb_id, allele
-                 from fish
-		where zdb_id = '$MID'
-            union
-               select zdb_id, allele
-                 from fish 
-                where locus = '$OID'
-                  and (zdb_id in 
-			  (select marker_id from mapped_marker)
-                    or zdb_id in 
-			  (select lnkgmem_member_zdb_id from linkage_member)
-		    or allele in 
-			  (select allele from mapped_deletion)
-                       ) ;">
-        <?MIVAR NAME=$allele_id>$1<?/MIVAR>
-        <?MIVAR NAME=$allele>$2<?/MIVAR>
-	<TR><TD><b>Allele <i><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$1">$2</A></i></b> 
-        </TD></TR>
-
-	<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&orgOID=$MID&detOID=$allele_id&abbrev=$allele') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
-
-      <?/MISQL>
-
-  <?/MIBLOCK>
 
 
-  <?MIBLOCK COND="$(>,$(POSITION,$OID,FISH),0)">
+  <?MIBLOCK COND="$(>,$(POSITION,$OID,ALT),0)">
 	<?MISQL SQL="
-		select name, abbrev, allele, locus
-		  from fish 
-		 where zdb_id = '$OID'
-		;">
-	  <?MIVAR NAME=$name>$1<?/MIVAR>
-          <?MIVAR NAME=$abbrev>$2<?/MIVAR>
-          <?MIVAR NAME=$allele>$3<?/MIVAR>
-          <?MIVAR NAME=$locus>$4<?/MIVAR>
+		select feature_name, feature_abbrev
+		  from feature
+		 where feature_zdb_id = '$OID';">
+	  <?MIVAR NAME=allele_name>$1<?/MIVAR>
+          <?MIVAR NAME=allele_abbrev>$2<?/MIVAR>
         <?/MISQL>
+
 	<?MIVAR>
-	  <b> Allele Name: &nbsp; <b> <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$locus"> $name </A></b><br>
-          <b> Abbreviation: &nbsp; <i>$abbrev</i></b><br>
+	  <b> Allele Name: &nbsp; <b> $allele_name </b><br>
+          
 	<?/MIVAR>
 
-	<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&orgOID=$MID&detOID=$OID&abbrev=$allele') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+	<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=details&orgOID=$MID&detOID=$OID&name=$allele_name&abbrev=$allele_abbrev') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
    <?/MIBLOCK>	
 
 
-  <?MIBLOCK COND="$(AND,$(=,$(POSITION,$OID,FISH),0), $(=,$(POSITION,$OID,LOCUS),0),$(=,$(POSITION,$OID,GENE),0))">
+  <?MIBLOCK COND="$(AND,$(=,$(POSITION,$OID,ALT),0),$(=,$(POSITION,$OID,GENE),0))">
 
       <?MIVAR>
       <TR><TD><b>$marker_type_display: &nbsp; <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$OID">$mrkr_name</A> </b></TD></TR><br>
@@ -515,12 +439,14 @@ marker = '';
 
 
   <?MICOMMENT>--------- Primer set -------------------------------
-    REALLY need an OUTER JOIN here so that I can join to table FISH to get 
-    the strain name for the id.  I do this now, but it knocks out any primer 
-    for which the strain_id=NULL (Unknown).  Just have to avoid those NULLS!
   <?/MICOMMENT>
 
- <?MISQL SQL="select a.zdb_id, band_size,restr_enzyme, fwd_primer, rev_primer, anneal_temp::numeric(6,2), a.comments,strain_id,b.name from primer_set a,fish b where marker_id='$OID' and b.zdb_id=a.strain_id;">
+ <?MISQL SQL="
+	select zdb_id, band_size,restr_enzyme, fwd_primer, rev_primer, anneal_temp::numeric(6,2), 
+               comments,strain_id,geno_display_name 
+	 from primer_set, genotype
+	where marker_id='$OID' 
+          and strain_id = geno_zdb_id;">
 
     <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
       <TR><TD><br></TD></TR>
@@ -532,7 +458,7 @@ marker = '';
       <TD colspan=3>
       <TABLE>
        <TR>
-         <TD><b>Strain:</b> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=$8">$9</A>  </TD>
+         <TD><b>Strain:</b> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypeview.apg&OID=$8">$9</A>  </TD>
          <TD align=left><b>Band Size</b>: $(IF,$(EQ,$2,NULL),Unknown,$2)</TD>
          <TD><b>Restr. Enz.:</B> $(IF,$(EQ,$3,NULL),None,$3)</TD>
          <TD><b>Anneal. Temp(C):</b> $(IF,$(EQ,$6,NULL),Unknown,$6)</TD>
@@ -571,9 +497,9 @@ marker = '';
   		}
 	}
 
-
         <?MISQL SQL="select WebExplode(object,'jsdelatt_OID=$detOID&jsdelatt_Mival=aa-do-markerupdate.apg&jsdelatt_page_var=__caller=mappingdetail.apg__attr_type=special-listitem__new_value=deleted__target_table=$target_table') 
         from webPages where ID='aa-js-delete_attrib.apg';">$1<?/MISQL>
+
 
 	function doit_marker(attr,attr_type,print_name,lg) {
 	  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishupdate.apg&caller=mappingdetail.apg&OID=$detOID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name+'&lg='+lg)
@@ -591,13 +517,17 @@ marker = '';
   <?MIVAR NAME=$mapped>f<?/MIVAR>
 
   <?MICOMMENT> Now if it's a mutant deletion, also show present/missing markers <?/MICOMMENT>
-  <?MIBLOCK COND="$(>,$(POSITION,$detOID,FISH),0)">
-	<?MISQL SQL="select chrom_change from fish_search where fish_id='$detOID';"><?/MISQL>
-	 <?MIVAR NAME=$chrom_change>$1<?/MIVAR>
+  <?MIBLOCK COND="$(>,$(POSITION,$detOID,ALT),0)">
 
-	 <?MIBLOCK COND="$(OR,$(EC,$chrom_change,deficiency),$(EC,$chrom_change,translocation),$(EC,$chrom_change,unknown))">
+	<?MISQL SQL="
+		select feature_type
+		  from feature 
+                 where feature_zdb_id='$detOID';"><?/MISQL>
+	 <?MIVAR NAME=mpdl_ftr_type>$1<?/MIVAR>
+
+	 <?MIBLOCK COND="$(OR,$(EC,$mpdl_ftr_type,DEFICIENCY),$(EC,$mpdl_ftr_type,TRANSLOC),$(EC,$mpdl_ftr_type,SEQUENCE_VARIANT))">
 	   <A NAME="markers-missing"></a>
-
+	
 	   <?MIVAR NAME=$last><?/MIVAR>
 	   <?MIVAR name=marker_present>0<?/MIVAR>
 	   <?MIVAR name=marker_missing>0<?/MIVAR>
@@ -625,12 +555,7 @@ marker = '';
 		select b.mrkr_abbrev,a.marker_id,a.present_t,b.mrkr_type, a.mapdel_zdb_id
 		from mapped_deletion a, marker b 
 		where a.marker_id=b.mrkr_zdb_id 
-		and allele='$abbrev' 
-		union
-		select b.abbrev,a.marker_id,a.present_t,'MUTANT', a.mapdel_zdb_id
-		from mapped_deletion a, locus b 
-		where a.marker_id=b.zdb_id 
-		and allele='$abbrev' 
+		and allele='$name' 
 		order by 3,4 ;">
 		
 		<?MIVAR NAME=mrkrZdbId>$2<?/MIVAR>
@@ -798,8 +723,8 @@ marker = '';
     <?/MIBLOCK>
 
      $(IF,$(AND,$(EC,$orgOID,$detOID),$(XST,$UPDATE)),"<TR><TD><INPUT TYPE=button value=Update onClick=edit_linkage('"$link_id"','"$distance"')></TD>","<TR>")	
-     <TD>LG $lg</TD>
-     <TD><A href="$sourceviewer$2">$source_name</a></TD><TD><A HREF=javascript:show_detail('$link_id','$detOID','$(IF,$(XST,$abbrev),$abbrev)','$(IF,$(XST,$abbrev),$abbrev)');>Details</A></TD><TR>
+     <TD width=30%>LG $lg</TD>
+     <TD><A href="$sourceviewer$2">$source_name</a></TD><TD><A HREF=javascript:show_detail('$link_id','$detOID','$(IF,$(XST,$abbrev),$abbrev)','$(IF,$(XST,$abbrev),$abbrev)');>Details</A></TD></TR>
       <?MIVAR NAME=$mapped>t<?/MIVAR>
 
     <?/MISQL>
@@ -826,14 +751,14 @@ marker = '';
 	  and lmother.lnkgmem_member_zdb_id = mrkr_zdb_id
 	  and mrkr_type = marker_type
       UNION
-      select f.zdb_id, f.allele, 'MUTANT', 'Mutant', 
+      select feature_zdb_id, feature_abbrev, 'MUTANT', 'Mutant', 
 	     lnkg_comments, lnkg_zdb_id, lnkg_or_lg
-	from linkage_member lmthis, linkage_member lmother, linkage, fish f
+	from linkage_member lmthis, linkage_member lmother, linkage, feature
 	where lmthis.lnkgmem_member_zdb_id = '$detOID' and
 	      lmthis.lnkgmem_linkage_zdb_id = lmother.lnkgmem_linkage_zdb_id
 	  and lmthis.lnkgmem_member_zdb_id <> lmother.lnkgmem_member_zdb_id
 	  and lmother.lnkgmem_linkage_zdb_id = lnkg_zdb_id
-	  and lmother.lnkgmem_member_zdb_id = f.zdb_id
+	  and lmother.lnkgmem_member_zdb_id = feature_zdb_id
       order by 6;">
 
     <?MIVAR NAME=$distance><?/MIVAR>
@@ -858,7 +783,7 @@ marker = '';
         <?MIVAR NAME=subtable>y<?/MIVAR>
     <?/MIBLOCK> 
 
-    $(IF,$(EC,$member_type,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID="), $(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID="))
+    $(IF,$(EC,$member_type,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypeview.apg&OID="), $(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID="))
 
     <?MISQL SQL="select lpmem_linkage_pair_zdb_id from linkage_pair_member a
       where lpmem_member_zdb_id = '$member_zdb_id' 
@@ -904,7 +829,7 @@ marker = '';
 
     <?MIBLOCK COND="$(AND,$(NC,$map_comments,NULL),$(NC,$map_comments,""))">
       <?MIVAR>
-       $(IF,$(XST,$locus_abbrev),$(SETVAR,$abbrev,$locus_abbrev))
+    
         <TD><A HREF="$curviewer$member_zdb_id">$member_abbrev</A> ($member_type_display)</TD>
         <TD> LG $lg $(IF,$(NC,$distance,),;) $distance $metric $(IF,$(NC,$lod,),;) $lod</TD>
 	<TD>$source_display</TD><TD>&nbsp; &nbsp;</TD>
@@ -949,9 +874,10 @@ marker = '';
 
     <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
       <TR><?MIVAR>
-        <TD><p><b>Markers Encoded By $abbrev:</b></TD>
-      </TR><?/MIVAR>
-      <TR><TD><table cols=2>
+        <TD colspan=3><p><b>Markers Encoded By $abbrev:</b></TD>
+	  <?/MIVAR>
+      </TR>
+      <TR><TD colspan=3><table cols=2>
       <?MIVAR NAME=$table>y<?/MIVAR>
     <?/MIBLOCK>
 
@@ -996,7 +922,7 @@ marker = '';
 
   <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
     <TR><?MIVAR>
-      <TD><p><b>Markers Contained in $abbrev:</b></TD>
+      <TD colspan=3><p><b>Markers Contained in $abbrev:</b></TD>
     </TR><?/MIVAR>
     <TR><TD><table cols=2> 
     <?MIVAR NAME=$table>y<?/MIVAR>	
@@ -1043,7 +969,7 @@ marker = '';
   <?MIVAR NAME=$clone_OID>$1<?/MIVAR>
   <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">  
     <TR><?MIVAR>
-      <TD><p><b>Mapped Clones Containing $abbrev:</b></TD>
+      <TD colspan=3><p><b>Mapped Clones Containing $abbrev:</b></TD>
     </TR><?/MIVAR>
     <TR><TD><table cols=2>
     <?MIVAR NAME=$table>y<?/MIVAR>

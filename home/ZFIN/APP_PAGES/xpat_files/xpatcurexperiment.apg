@@ -55,15 +55,15 @@ EFFECTS
     select exp_zdb_id, exp_name, zero_pad(exp_name)
     from experiment
     where exp_source_zdb_id = '$OID'
-       or exp_name = '$xpcur_G_exp_standard_name'
+       or exp_name = '$pubcur_G_exp_standard_name'
     order by 3;">
 
-<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#environment" method=post name=env onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','environment');">
-    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#environment" method=post name=env onSubmit="setCookie('xpatcuration_update','update','xpcur_c_');setCookie('anchor','environment','xpcur_c_');">
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
     <INPUT TYPE=HIDDEN NAME=xpcur_G_update_exp_zdb_id VALUE="$1"> 
   <tr>
-    <?MIBLOCK COND="$(NE,$2,$xpcur_G_exp_standard_name)">
+    <?MIBLOCK COND="$(NE,$2,$pubcur_G_exp_standard_name)">
       <?MIVAR>
       <td><input name="xpcur_G_exp_update" type=submit value="Update"></td>
       <td> <input name="xpcur_G_exp_name" type=textbox size=15 value="$2">
@@ -90,8 +90,8 @@ EFFECTS
   </tr>
   
 <?MICOMMENT> ==| Enter a New Env |== <?/MICOMMENT>
-<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#environment" method=post name=environment_new onSubmit="setCookie('xpatcuration_update','update');setCookie('anchor','environment');">
-    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-xpatcuration.apg">
+<form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#environment" method=post name=environment_new onSubmit="setCookie('xpatcuration_update','update','xpcur_c_');setCookie('anchor','environment','xpcur_c_');">
+    <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
   <tr>
     <td>

@@ -302,27 +302,18 @@ displays a publication record, or many publication records if > 1 returned.
   <B>ADDITIONAL INFORMATION: </B>
 
   <?MIVAR COND="$(EC,$AUTHORIZED,root)">
-    <br><br><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatcuration.apg&OID=$OID">FX Curation</a>
+    <br><br><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID">Curate Data</a>
   <?/MIVAR>
 
   <ul>
   <?MICOMMENT> ======== Genes / Markers  ============ <?/MICOMMENT>
 
   <?MISQL SQL="
-      select mrkr_zdb_id
-        from record_attribution, locus, marker
+      select fmrel_mrkr_zdb_id
+        from record_attribution, feature_marker_relationship
        where recattrib_source_zdb_id = '$OID'
-         and recattrib_data_zdb_id = zdb_id
-         and cloned_gene = mrkr_zdb_id
-
-     UNION 
-      
-      select mrkr_zdb_id
-        from record_attribution, fish f, locus l, marker
-       where recattrib_source_zdb_id = '$OID'
-         and recattrib_data_zdb_id = f.zdb_id
-         and f.locus = l.zdb_id
-         and cloned_gene = mrkr_zdb_id
+         and recattrib_data_zdb_id = fmrel_ftr_zdb_id
+	 and fmrel_type = 'is allele of'
 
      UNION 
 
@@ -341,6 +332,7 @@ displays a publication record, or many publication records if > 1 returned.
   
   <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
       <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&pubId=$OID&type=pub_mrkr">Genes / Markers</a> &nbsp; ($MI_ROWCOUNT)
+
   <?/MIVAR> 
 
 
@@ -427,35 +419,16 @@ displays a publication record, or many publication records if > 1 returned.
   <?MICOMMENT> ======== Phenotype Alleles  ============ <?/MICOMMENT>
 
   <?MISQL SQL="
-	select fish_id
-	 from  record_attribution, fish_search 
+	select distinct geno_zdb_id
+	from   record_attribution, genotype
 	where  recattrib_source_zdb_id = '$OID'
-	  and  recattrib_data_zdb_id = fish_id
-
-      UNION 
-	select fish_id
-	from   record_attribution, fish_search 
-	where  recattrib_source_zdb_id = '$OID'
-	  and  recattrib_data_zdb_id = locus
-        
-      UNION     
-	select fish_id
-	from   record_attribution, fish_search
-	where  recattrib_source_zdb_id = '$OID'
-	  and  recattrib_data_zdb_id = alt_zdb_id
-
-      UNION
-	select f.fish_id
-	from   record_attribution, fish_search f, data_alias
-	where  recattrib_source_zdb_id = '$OID'
-	  and  recattrib_data_zdb_id = dalias_zdb_id
-	  and  dalias_data_zdb_id = f.fish_id;">
+	  and  recattrib_data_zdb_id = geno_zdb_id;">
   <?/MISQL>
   
   <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
-    <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&pubId=$OID">Phenotype Alleles</a> &nbsp; ($MI_ROWCOUNT)
-  <?/MIVAR>
+    <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&pubId=$OID">Mutants / Transgenic Lines</a> &nbsp; ($MI_ROWCOUNT)
 
+  <?/MIVAR>
 
   <?MICOMMENT> ======== Orthology  ============ <?/MICOMMENT>
   <?MISQL SQL="

@@ -36,7 +36,7 @@ create function
     
     let test = "";
     select mrkr_zdb_id into test from marker 
-    where  mrkr_zdb_id = seg  and mrkr_type not in ('GENE','FISH','BAC','PAC','YAC');
+    where  mrkr_zdb_id = seg  and mrkr_type not in ('GENE','BAC','PAC','YAC');
     if test != seg then 
         return -2;
     end if;

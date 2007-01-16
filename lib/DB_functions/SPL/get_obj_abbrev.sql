@@ -42,20 +42,10 @@ get_obj_abbrev(zdbId varchar(50))
       into objName
       from marker
       where mrkr_zdb_id = zdbId;
-  elif (objType = "FISH") then
-    select abbrev
+  elif (objType = "GENO") then
+    select geno_display_name
       into objName
-      from fish
-      where zdb_id = zdbId;
-  elif (objType = "LOCUS") then
-    select abbrev  -- NULL values
-      into objName
-      from locus
-      where zdb_id = zdbId;
-  elif (objType = "CHROMO") then
-    select abbrev   -- NULL values, redundant with locus.name?
-      into objName
-      from chromosome
+      from genotype
       where zdb_id = zdbId;
   elif (objType = "JRNL") then
     select jrnl_abbrev  -- NULL values

@@ -51,7 +51,11 @@ OUTPUT:
 	       inner join marker_types
             	  on mrkr_type = marker_type
 	 where mrel_mrkr_2_zdb_id = '$mrkrrel_mrkr_zdb_id' 
-	   and mrel_type <> 'knockdown reagent targets gene'
+	   and mrel_type not in ('knockdown reagent targets gene',
+					'promoter of',
+					'coding sequence of',
+					'contains other feature'
+					)
       order by mrel_type, mrkrtype_type_display, mrkr_abbrev_order;
     <?/MIVAR>
 <?MIELSE>
@@ -66,7 +70,11 @@ OUTPUT:
 	       inner join marker_types
                  on mrkr_type = marker_type
 	 where mrel_mrkr_1_zdb_id = '$mrkrrel_mrkr_zdb_id' 
-	   and mrel_type <> 'knockdown reagent targets gene'
+	   and mrel_type not in ('knockdown reagent targets gene',
+					'promoter of',
+					'coding sequence of',
+					'contains other feature'
+					)
       order by mrel_type, mrkrtype_type_display, mrkr_abbrev_order;
     <?/MIVAR>
 <?/MIBLOCK>	  	  

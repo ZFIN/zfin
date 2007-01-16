@@ -19,7 +19,8 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/Reports
 
-SUBDIRS = ZGC Vega Thisse
+SUBDIRS = ZGC Vega 
+
 
 GENERICS = Count.pl
 STATICS  =  
@@ -30,3 +31,10 @@ STATICS  =
 # use default rules for directories without app pages in them
 
 include $(TOP)/make.default.rules
+
+
+# ---------------  Misc Targets  ----------------------------------------
+
+run : $(TARGETDIR)/Count.pl
+	$(TARGETDIR)/Count.pl
+

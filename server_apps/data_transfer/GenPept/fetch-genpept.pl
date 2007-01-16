@@ -34,7 +34,7 @@ for($retstart=0;$retstart<$nrecords;$retstart+=$retmax){
     $p=int($retstart/$nrecords*10000)/100; #calculate percentage of records downloaded
 
     ## uncomment to view download progress
-    #print STDERR "Elapsed time: $t seconds\t$p%, $retstart records of $nrecords retrieved.\n";
+    print STDERR "Elapsed time: $t seconds\t$p%, $retstart records of $nrecords retrieved.\n";
 
     $results=getUrl("$ebase$tool.fcgi?usehistory=y&db=$db&retmax=$retmax&retstart=$retstart&rettype=$rettype&WebEnv=$webenv&query_key=$qkey&retmode=$retmode");
     print  OUT $results;

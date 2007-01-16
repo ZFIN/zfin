@@ -1,0 +1,256 @@
+<?MICOMMENT>
+
+FILE: featureedit.apg
+PREFIX: featedit_ 
+
+DESCRIPTION:
+This is the page used to edit properties of a feature
+
+OUTPUT VARS:
+
+EFFECTS: Edits a feature/marker
+
+<?/MICOMMENT>
+
+
+<?MIBLOCK COND="$(XST,$mname)">
+  <?MIVAR>  <TITLE>ZFIN Marker Added: $mname</TITLE>  <?/MIVAR>
+<?MIELSE>
+  <TITLE>ZFIN : Feature Curation</TITLE>
+<?/MIBLOCK>
+<script>
+<?MIVAR>
+<?/MIVAR>
+
+</script>
+
+<?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
+
+
+
+<basefont size=2>
+
+<?MISQL SQL="
+  select WebExplode(object,'page_title=New Marker&permission=root') 
+    from webPages 
+    where ID='aa-secure_navigation.apg';">$1
+<?/MISQL>
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
+
+<?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
+
+    <?MIVAR NAME=featcur_feat_isfeature>yes<?/MIVAR>
+
+    <?MIVAR>
+      <form method=get action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#featediting" name=feature_edit onSubmit=setCookie('featcurupdate','update','featcur_')>
+
+        <input type=hidden name=MIval value="aa-curation.apg">
+        <input type=hidden name=OID value="<?MIVAR>$OID<?/MIVAR>">
+        <input type=hidden name=anchor value=featediting>
+
+            <?MIVAR NAME=featcur_feat_zdb_id><?/MIVAR>
+            <?MIVAR NAME=featcur_feat_typedb><?/MIVAR>
+            <?MIVAR NAME=featcur_feat_type><?/MIVAR>
+            <?MIVAR NAME=featcur_feat_mutagen><?/MIVAR>
+            <?MIVAR NAME=featcur_feat_mutagee><?/MIVAR>
+            <?MIBLOCK COND="$(XST,$featcur_feature_only)">
+                <?MIVAR NAME=featedit_feature_zdb_id>$featcur_feature_only<?/MIVAR>
+            <?/MIBLOCK>
+            <?MIVAR NAME=featcur_feat_zdb_id><?/MIVAR>
+            <?MIVAR NAME=featcur_feat_name><?/MIVAR>
+            <?MIVAR NAME=featcur_feat_publicnote><?/MIVAR>
+            <?MIVAR NAME=featcur_feat_abbrev><?/MIVAR>
+            <?MIBLOCK COND="$(XST,$featedit_feature_zdb_id)">
+               <?MIBLOCK COND="$(EC,$(SUBSTR,$featedit_feature_zdb_id,5,3),ALT)">
+                 <?MISQL SQL="
+                         select feature_name, ftrtype_type_display,
+                         featassay_mutagen, featassay_mutagee, feature_zdb_id, 
+                         feature_type, feature_comments, feature_abbrev
+                         from
+                         feature, record_attribution, feature_assay, 
+                         feature_type 
+                         where
+                         recattrib_source_zdb_id='$OID'
+                         and feature_zdb_id = '$featedit_feature_zdb_id'
+                         and recattrib_data_zdb_id = feature_zdb_id
+                         and feature_zdb_id = featassay_feature_zdb_id
+                         and feature_type=ftrtype_name
+                         ">
+
+                         <?MIVAR NAME=featcur_feat_name>$1<?/MIVAR>
+                         <?MIVAR NAME=featcur_feat_type>$2<?/MIVAR>
+                         <?MIVAR NAME=featcur_feat_mutagen>$3<?/MIVAR>
+                         <?MIVAR NAME=featcur_feat_mutagee>$4<?/MIVAR>
+                         <?MIVAR NAME=featcur_feat_zdb_id>$5<?/MIVAR>
+                         <?MIVAR NAME=featcur_feat_typedb>$6<?/MIVAR>
+                         <?MIVAR NAME=featcur_feat_publicnote>$7<?/MIVAR>
+                         <?MIVAR NAME=featcur_feat_abbrev>$8<?/MIVAR>
+                         <?MIVAR NAME=featcur_feat_isfeature>yes<?/MIVAR>
+                         <?MIVAR NAME=featcur_feat_lab><?/MIVAR>
+                  <?/MISQL>
+                  <?MISQL SQL="select name
+                        from lab, int_data_source
+                        where ids_data_zdb_id = '$featedit_feature_zdb_id'
+                        and ids_source_zdb_id = zdb_id">
+  
+                        <?MIVAR NAME=featcur_feat_lab>$1<?/MIVAR>
+                  <?/MISQL>
+            <?MIELSE>
+                  <?MISQL SQL="
+                        select mrkr_name, mrkrtype_type_display,
+                        mrkr_zdb_id, mrkr_type,mrkr_comments, mrkr_abbrev
+                        from
+                        marker, record_attribution, marker_types
+                        where
+                        recattrib_source_zdb_id='$OID'
+                        and mrkr_zdb_id = '$featedit_feature_zdb_id'
+                        and recattrib_data_zdb_id = mrkr_zdb_id
+                        and mrkr_type = marker_type
+                  ">
+
+                         <?MIVAR NAME=featcur_feat_name>$1<?/MIVAR>
+                         <?MIVAR NAME=featcur_feat_type>$2<?/MIVAR>
+                         <?MIVAR NAME=featcur_feat_zdb_id>$3<?/MIVAR>
+                         <?MIVAR NAME=featcur_feat_typedb>$4<?/MIVAR>
+                         <?MIVAR NAME=featcur_feat_mutagen><?/MIVAR>
+                         <?MIVAR NAME=featcur_feat_mutagee><?/MIVAR>
+                         <?MIVAR NAME=featcur_feat_lab><?/MIVAR>
+                         <?MIVAR NAME=featcur_feat_publicnote>$5<?/MIVAR>
+                         <?MIVAR NAME=featcur_feat_abbrev>$6<?/MIVAR>
+                         <?MIVAR NAME=featcur_feat_isfeature>no<?/MIVAR>
+                 <?/MISQL>
+                 <?MISQL SQL="select featassay_mutagen, featassay_mutagee
+                                from feature_assay
+                                where featassay_feature_zdb_id = '$featedit_feature_zdb_id'">
+  
+                          <?MIVAR NAME=featcur_feat_mutagen>$1<?/MIVAR>
+                          <?MIVAR NAME=featcur_feat_mutagee>$2<?/MIVAR>
+                 <?/MISQL>
+                 <?MISQL SQL="select name
+                               from lab, int_data_source
+                                where ids_data_zdb_id = '$featedit_feature_zdb_id'
+                                and ids_source_zdb_id = zdb_id">
+  
+                            <?MIVAR NAME=featcur_feat_lab>$1<?/MIVAR>
+                 <?/MISQL>
+          <?/MIBLOCK>
+<?MICOMMENT> end of if marker/feature block <?/MICOMMENT>
+
+  <?MISQL SQL="
+            select dalias_alias from data_alias
+            where dalias_data_zdb_id='$featcur_feat_zdb_id'">
+
+            <?MIVAR NAME=featcur_feat_alias>$1<?/MIVAR>
+
+   <?/MISQL>
+<?/MIBLOCK>
+<?MICOMMENT> end of if feature zdb id exists block <?/MICOMMENT>
+
+<?MICOMMENT> start of edit form <?/MICOMMENT>
+
+<table>
+        <tr><td><B>Feature Name/Abbrev</b>:
+        <td> <select name=featedit_feature_name onChange="setFeatureAttrib(this.value,'featediting');">
+             <?MIVAR COND="$(XST,$featcur_feat_name)"><option select value='$featcur_feat_name'>$featcur_feat_name<?/MIVAR>
+             <?MISQL SQL="select feature_name, feature_zdb_id , feature_abbrev
+                      from feature, record_attribution 
+                      where recattrib_source_zdb_id='$OID' 
+                      and recattrib_data_zdb_id=feature_zdb_id 
+                      and feature_name not like '$featcur_feat_name'
+                      union 
+                      select mrkr_name ,mrkr_zdb_id, mrkr_abbrev 
+                      from marker, record_attribution 
+                      where recattrib_source_zdb_id='$OID' 
+                      and recattrib_data_zdb_id=mrkr_zdb_id 
+                      and mrkr_name not like '$featcur_feat_name' 
+                      and (mrkr_type like '%CONSTRCT%' or mrkr_type like 'REGION')
+              ">
+              <OPTION value='$2'>$1/$3</option>
+            <?/MISQL>
+            </select>
+            <!--<?MIVAR><input name="delete" type=button value="Delete Feature" onClick="DeleteFeature('$featcur_feat_zdb_id','featediting')"><?/MIVAR>-->
+      <input name="featedit_delete_ftr" type=submit value="Delete Feature">
+
+
+       <tr><td><B>Change Feature Name</b>:
+       <td><INPUT TYPE=textbox size=50 NAME=featedit_feature_newname VALUE=<?MIVAR COND="$(NE,$featcur_feat_name,$featcur_feat_abbrev)">$featcur_feat_name<?/MIVAR>>
+       &nbsp;&nbsp;&nbsp;<B>Change Feature Abbrev</b>:
+       &nbsp;&nbsp;&nbsp;<INPUT TYPE=textbox NAME=featedit_feature_newabbrev VALUE=<?MIVAR COND="$(NE,$featcur_feat_name,$featcur_feat_abbrev)">$featcur_feat_abbrev<?/MIVAR>>
+       <tr><td><B>Feature type</b>:
+       <td> <select name=featedit_feature_type>
+      <?MIBLOCK COND="$(EC,$featcur_feat_isfeature,yes)">
+            <?MIVAR COND="$(XST,$featcur_feat_typedb)"><option select value='$featcur_feat_typedb'>$featcur_feat_type<?/MIVAR>
+                 <?MISQL SQL="
+                     select ftrtype_type_display name, ftrtype_name 
+                     from feature_type
+                     where ftrtype_name not like '$featcur_feat_typedb'"> 
+                     <OPTION value='$2'>$1
+                  <?/MISQL>
+       <?MIELSE>
+            <?MIVAR COND="$(XST,$featcur_feat_typedb)"><option select value='$featcur_feat_typedb'>$featcur_feat_type<?/MIVAR>
+                 <?MISQL SQL="
+                     select mrkrtype_type_display, marker_type 
+                     from marker_types
+                     where (marker_type like '%CONSTRCT' or marker_type like 'REGION') and marker_type not like '$featcur_feat_typedb'">
+
+                     <OPTION value='$2'>$1
+                  <?/MISQL>
+        <?/MIBLOCK>
+            </select>
+
+      &nbsp;&nbsp;&nbsp;&nbsp;
+
+      <b>Attribution of this pub:</b>
+       &nbsp;&nbsp;
+      <input name="featedit_add_typeattr" type=submit value="Add">
+      &nbsp;
+      <input name="featedit_delete_typeattr" type=submit value="Delete">
+
+<!--      <tr><td><b>Alias</b>:
+      <td> <input type=text name=featedit_feature_alias size=15 value=<?MIVAR COND="$(XST,$featcur_feat_alias)">'$featcur_feat_alias'<?/MIVAR>>-->
+      <tr><td><b>Discoverer</b>
+      <td> <select name=featedit_feature_lab>
+             <?MIVAR COND="$(XST,$featcur_feat_lab)"><option select value='$featcur_feat_lab'>$featcur_feat_lab<?/MIVAR>
+             <?MISQL SQL="select distinct name from lab">
+               <OPTION value='$1'>$1
+             <?/MISQL>
+          </select>
+      <?MIBLOCK COND="$(EC,$featcur_feat_isfeature,yes)">
+        <tr><td><b>Mutagenesis Protocol</b>:
+        <td> <select name=featedit_feature_mutagee>
+             <?MIVAR COND="$(XST,$featcur_feat_mutagee)"><option select value='$featcur_feat_mutagee'>$featcur_feat_mutagee<?/MIVAR>
+             <?MISQL SQL="select mutagee_name from mutagee">
+               <OPTION value='$1'>$1
+             <?/MISQL>
+             </select>
+        <b>Treated With : </b>
+        <select name=featedit_feature_mutagen><?MIVAR COND="$(XST,$featcur_feat_mutagen)">
+           <option select value='$featcur_feat_mutagen'>$featcur_feat_mutagen<?/MIVAR>
+           <?MISQL SQL="select mutagen_name from mutagen">
+             <OPTION value='$1'>$1
+           <?/MISQL>
+        </select> 
+     <?/MIBLOCK> <?MICOMMENT> end of if feature block <?/MICOMMENT>
+
+     <tr><td><B>Public Note:</b>
+     <td><input type=text name=featedit_feature_public_note size=80 value=<?MIVAR COND="$(NE,$featcur_feat_publicnote,)">'$featcur_feat_publicnote'<?/MIVAR>>
+     <tr><td><B>Private Note:</b>
+     <td> <input name="featedit_feature_private_note" type=button value="Add Note" onClick="window.open('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curatornote.apg&OID=$featcur_feat_zdb_id')">
+     <INPUT TYPE=HIDDEN NAME=featcur_featedit_feature_zdb_id VALUE="<?MIVAR>$featcur_feat_zdb_id<?/MIVAR>">
+     <tr><td>
+     <td><td> <input name="featedit_feature_edit" type=submit value="Submit Changes">
+<!--
+     <td><td> <input name="featedit_feature_edit" type=button value="Submit Changes" onClick="document.feature_edit.submit()">
+-->
+     </table> 
+
+   </form>
+   <?/MIVAR>
+
+  <?/MIBLOCK> <!-- ends specifying params -->
+
+<?MICOMMENT>
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+
+<?/MICOMMENT>
+

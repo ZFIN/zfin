@@ -191,19 +191,33 @@ marker.<?/MIVAR>
   <?MIBLOCK COND="$(EC,$attr_type,special-listitem)">
 
     <?MIBLOCK COND="$(EC,$attr,publication)">
-     
+      <?MICOMMENT>*** Check if the marker is connected to the publication through other data, and
+        alert the user if it is.
+        Count the pubs for OID before the delete. Count the pubs for OID after the delete. 
+        If the counts are the same, the pub is connected through other data.
+      <?/MICOMMENT>
+      
+ 
+      <?MIVAR NAME=mrkrup_OID>$OID<?/MIVAR>
+      <?MIVAR NAME=OID>$dataOID<?/MIVAR>
+      <?MISQL SQL="select WebExplode(object,'citlink_data_page=citgeneric.apg') from webPages where ID='aa-cittotalcount.apg';">$1<?/MISQL>
+      <?MIVAR NAME=citlink_total_count_before>$citlink_total_count<?/MIVAR> 
+      
       <?MISQL SQL="
         delete from record_attribution
 	  where recattrib_data_zdb_id = '$dataOID'
 	    and recattrib_source_zdb_id = '$old_value'
 	    and recattrib_source_type = '$source_type';">
       <?/MISQL>
-      <?MICOMMENT>***08/25 adding alert to deletion of attribution from publication list
-                  ***09/09 check first, only when it is deleting the last attribution,give alert. 
-      <?/MICOMMENT>
-      <?MIVAR COND="$(NE,$OID,$dataOID)"> 
-	  <?MISQL SQL="select WebExplode(object,'pubId=$old_value') from webPages where ID='aa-attrib_check.apg';">$1<?/MISQL>
-      <?/MIVAR> 
+
+      <?MISQL SQL="select WebExplode(object,'citlink_data_page=citgeneric.apg') from webPages where ID='aa-cittotalcount.apg';">$1<?/MISQL>
+      <?MIBLOCK COND="$(EC,$citlink_total_count,$citlink_total_count_before)">
+        <script>
+          alert('The publication is still connected through other types of data.');
+        </script>   
+      <?/MIBLOCK>
+
+      <?MIVAR NAME=OID>$mrkrup_OID<?/MIVAR>    
      <?/MIBLOCK>
 
 
@@ -241,7 +255,7 @@ marker.<?/MIVAR>
 
 
     <?MIBLOCK COND="$(EC,$attr,recattrib)">
-     
+      
       <?MISQL COND="$(EC,$attr,recattrib)" SQL="
         delete from record_attribution
 	  where recattrib_data_zdb_id = '$dataOID'
@@ -503,17 +517,12 @@ marker.<?/MIVAR>
    
       <?MIBLOCK COND="$(EC,$info,deletionmarker)">
          <?MISQL SQL="
-		select allele
-                  from fish
-                 where zdb_id = '$OID';">
-	     <?MIVAR NAME=allele_name>$1<?/MIVAR>
-	 <?/MISQL>
-         <?MISQL SQL="
 	    select mapdel_zdb_id, mrkr_zdb_id
- 	      from marker, mapped_deletion
+ 	      from marker, mapped_deletion, feature
 	     where mrkr_abbrev = '$old_value'
 	       and mrkr_zdb_id = marker_id
-	       and allele = '$allele_name'	
+	       and feature_zdb_id = '$OID'
+               and feature_abbrev = allele	
 	     ;">
 	    <?MIVAR>$(SETVAR,$old_value,$1)<?/MIVAR>
   	    <!--save the real OID, and tempararily set OID to be

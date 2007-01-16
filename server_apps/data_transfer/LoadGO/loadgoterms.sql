@@ -314,6 +314,7 @@ update go_term
 			  from tmp_obs_no_dups) 
   and goterm_is_obsolete = 'f' ;
 
+
 --secondary terms.
 
 
@@ -480,10 +481,52 @@ insert into obssec_with
 
 
 unload to obso_sec_with.unl 
-	 select distinct "Gene: "||mrkr_name,
+	 select distinct "Marker Name: "||mrkr_name,
 	 "Go Term: "||go_id,
 	 "Flag : "||is_what
 	from obssec_with ;
+
+create temp table obssec_phenoentity (
+                go_id_a  varchar(80),
+                go_id_b  varchar(80),
+                geno_id      varchar(80),
+                fig_zdb_id      varchar(80),
+                is_what    varchar(3)
+                );
+
+insert into obssec_phenoentity
+      select distinct apato_entity_a_zdb_id,apato_entity_b_zdb_id, genox_geno_zdb_id,apatofig_fig_zdb_id, 'obs' 
+      from atomic_phenotype, go_term, apato_figure, genotype_experiment
+      where (apato_entity_a_zdb_id = goterm_go_id or apato_entity_b_zdb_id=goterm_go_id)
+      and apato_genox_zdb_id=genox_zdb_id
+      and goterm_is_obsolete='t'
+      and apato_zdb_id=apatofig_apato_zdb_id;
+
+
+insert into obssec_phenoentity
+      select distinct apato_entity_a_zdb_id,apato_entity_b_zdb_id, genox_geno_zdb_id,apatofig_fig_zdb_id, 'sec' 
+      from atomic_phenotype, go_term, apato_figure, genotype_experiment
+      where (apato_entity_a_zdb_id = goterm_go_id or apato_entity_b_zdb_id=goterm_go_id)
+      and goterm_is_secondary='t'
+      and apato_genox_zdb_id=genox_zdb_id
+      and apato_zdb_id=apatofig_apato_zdb_id;
+
+
+unload to obso_sec_phenoentity.unl 
+	 select distinct "Genotype ID: "||geno_id,
+	 "Figure: "||fig_zdb_id,
+	 "Go Term: "||go_id_a,
+	 "Go Term: "||go_id_b,
+	 "Flag : "||is_what
+	from obssec_phenoentity ;
+
+update obo_file
+  set (obofile_text, obofile_load_date, obofile_load_process) = (filetoblob("<!--|ROOT_PATH|-->/server_apps/data_transfer/LoadGO/gene_ontology.obo","server"),CURRENT YEAR TO SECOND, "Automated GO Term Load")
+  where obofile_name = "gene_ontology.obo" ;
+
+select lotofile(obofile_text, "<!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/gene_ontology.obo!","server")
+  from obo_file
+  where obofile_name = 'gene_ontology.obo' ;
 
 --rollback work;
 commit work;

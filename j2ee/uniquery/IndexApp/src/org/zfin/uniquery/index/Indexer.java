@@ -623,17 +623,9 @@ public class Indexer implements Runnable
      */
     private String getDocType(String url, URLSummary summary)
         {
-        if (url.indexOf("fishview.apg") != -1)
+        if (url.indexOf("genotypeview.apg") != -1)
             {
-            return SearchCategory.MUTANTS_FISHVIEW;
-            }
-        else if (url.indexOf("locusview.apg") != -1)
-            {
-            return SearchCategory.MUTANTS_LOCUSVIEW;
-            }
-        else if (url.indexOf("mappingdetail.apg") != -1 && (url.indexOf("FISH") != -1 || url.indexOf("LOCUS") != -1))
-            {
-            return SearchCategory.MUTANTS_MAPPINGDETAIL;
+            return SearchCategory.MUTANTS_GENOVIEW;
             }
         else if ((url.indexOf("markerview.apg") != -1 ) && (url.indexOf("ZDB-GENE") != -1))
             {

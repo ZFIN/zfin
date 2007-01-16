@@ -28,12 +28,12 @@ insert into tmp_vega_gene
 select distinct dblink_linked_recid
   from db_link, foreign_db_contains
  where fdbcont_zdb_id = dblink_fdbcont_zdb_id
-   and fdbcont_fdb_db_name = "VEGA"
-   and not exists 
+   and fdbcont_fdb_db_name in ("VEGA", "PREVEGA","Vega_Trans")
+   and not exists
      (
-       select * 
-         from expression_experiment 
-        where xpatex_gene_zdb_id = dblink_linked_recid 
+       select *
+         from expression_experiment
+        where xpatex_gene_zdb_id = dblink_linked_recid
           and xpatex_source_zdb_id in ("ZDB-PUB-040907-1","ZDB-PUB-010810-1","ZDB-PUB-051025-1")
      )
 ;
@@ -68,10 +68,10 @@ select vgene_mrkr_zdb_id, dblink_acc_num, dblink_length
 
 insert into tmp_vega_thisse_report
 select '2', mrkr_abbrev, vega1.vlink_acc_num, vega1.vlink_acc_length
-  from tmp_vega_cdna_link vega1, marker 
- where mrkr_zdb_id = vega1.vlink_mrkr_zdb_id 
-   and mrkr_abbrev[1,3] != "zgc"
-   and vega1.vlink_acc_length = 
+  from tmp_vega_cdna_link vega1, marker
+ where mrkr_zdb_id = vega1.vlink_mrkr_zdb_id
+   and mrkr_abbrev[1,4] != "zgc:"
+   and vega1.vlink_acc_length =
      (
        select max(vega2.vlink_acc_length)
          from tmp_vega_cdna_link as vega2
@@ -81,10 +81,10 @@ select '2', mrkr_abbrev, vega1.vlink_acc_num, vega1.vlink_acc_length
 
 insert into tmp_vega_thisse_report
 select '1', mrkr_abbrev, vega1.vlink_acc_num, vega1.vlink_acc_length
-  from tmp_vega_cdna_link as vega1, marker 
- where mrkr_zdb_id = vega1.vlink_mrkr_zdb_id 
-   and mrkr_abbrev[1,3] = "zgc"
-   and vega1.vlink_acc_length = 
+  from tmp_vega_cdna_link as vega1, marker
+ where mrkr_zdb_id = vega1.vlink_mrkr_zdb_id
+   and mrkr_abbrev[1,4] = "zgc:"
+   and vega1.vlink_acc_length =
      (
        select max(vega2.vlink_acc_length)
          from tmp_vega_cdna_link as vega2
@@ -95,10 +95,10 @@ select '1', mrkr_abbrev, vega1.vlink_acc_num, vega1.vlink_acc_length
 insert into tmp_vega_thisse_report
 select '3', mrkr_abbrev, dblink_acc_num, dblink_length
   from tmp_vega_gene, marker, db_link, foreign_db_contains
- where mrkr_zdb_id = vgene_mrkr_zdb_id 
+ where mrkr_zdb_id = vgene_mrkr_zdb_id
    and mrkr_zdb_id = dblink_linked_recid
    and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-   and fdbcont_fdb_db_name = "VEGA"
+   and fdbcont_fdb_db_name in ("VEGA", "PREVEGA","Vega_Trans")
    and not exists
      (
        select *
@@ -108,6 +108,6 @@ select '3', mrkr_abbrev, dblink_acc_num, dblink_length
 ;
 
 unload to vega_thisse_report.unl
-select * 
+select *
   from tmp_vega_thisse_report
  order by 1,2;

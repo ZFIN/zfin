@@ -31,8 +31,8 @@ INPUT VARS:
   xpatselqry_probeSearchType	Should probe name be 
                                 'begins' / 'contains' / 'equals' 
 
-  xpatselqry_fishName		Exists if user entered a mutant/background string.
-  xpatselqry_fishSearchType	Specifies if mutant name should 'begins' with, 'equals' or
+  xpatselqry_genoName		Exists if user entered a mutant/background string.
+  xpatselqry_genoSearchType	Specifies if mutant name should 'begins' with or
 				'contains' the string in mutant.
 
   xpatselqry_MOgene		Exists if user entered a MO knockdown string.
@@ -65,7 +65,7 @@ OUTPUT VARS:
 				a query runs that causes text to get matched,
 				the piece of text entered into the field will
 				be stored here (for whichever field, gene name,
-				probe name, fish or author, so far).  If this
+				probe name, genotype or author, so far).  If this
 				variable exists when any of those querries
 				starts, the query will just pass on matching
 				text columns instead of re-filling them.
@@ -157,7 +157,7 @@ DEBUGGING:
 
 <?MIVAR COND="$(XST,$xpatselqry_geneName)" NAME=$xpatselqry_geneName>$(REPLACE,$xpatselqry_geneName,','')<?/MIVAR> 
 <?MIVAR COND="$(XST,$xpatselqry_probeName)" NAME=$xpatselqry_probeName>$(REPLACE,$xpatselqry_probeName,','')<?/MIVAR>
-<?MIVAR COND="$(XST,$xpatselqry_fishName)" NAME=$xpatselqry_fishName>$(REPLACE,$xpatselqry_fishName,','')<?/MIVAR> 
+<?MIVAR COND="$(XST,$xpatselqry_genoName)" NAME=$xpatselqry_genoName>$(REPLACE,$xpatselqry_genoName,','')<?/MIVAR> 
 <?MIVAR COND="$(XST,$xpatselqry_author)" NAME=$xpatselqry_author>$(REPLACE,$xpatselqry_author,','')<?/MIVAR> 
 <?MIVAR COND="$(XST,$xpatselqry_MOgene)" NAME=$xpatselqry_MOgene>$(REPLACE,$xpatselqry_MOgene,','')<?/MIVAR> 
 
@@ -180,7 +180,7 @@ DEBUGGING:
         xpatex_assay_name               varchar(40),
         xpatex_probe_feature_zdb_id     varchar(50),
         xpatex_gene_zdb_id              varchar(50),
-        xpatex_featexp_zdb_id           varchar(50),
+        xpatex_genox_zdb_id           varchar(50),
 	xpatex_matching_text		varchar(255),
         xpatex_matching_precedence	varchar(80),
         xpatex_matching_significance 	integer
@@ -196,14 +196,19 @@ DEBUGGING:
     insert into $xpatselectquery_temp_date
         ( xpatex_zdb_id, xpatex_source_zdb_id, xpatex_assay_name,
           xpatex_probe_feature_zdb_id, xpatex_gene_zdb_id,
-          xpatex_featexp_zdb_id )
+          xpatex_genox_zdb_id )
       select distinct 
              xpatex_zdb_id, xpatex_source_zdb_id, xpatex_assay_name,
              xpatex_probe_feature_zdb_id, xpatex_gene_zdb_id,
-             xpatex_featexp_zdb_id
-        from $xpatselqry_matchTable
-        where xpatex_direct_submission_date::datetime year to day
-                  > current - $xpatselqry_recentRecords units day
+             xpatex_genox_zdb_id
+        from $xpatselqry_matchTable 
+             join publication 
+               on xpatex_source_zdb_id = publication.zdb_id
+        where case
+      when publication.jtype = 'Unpublished'
+      then xpatex_direct_submission_date::datetime year to day
+        else 
+      pub_date::datetime year to day end > current - $xpatselqry_recentRecords units day
   <?/MIVAR>
   <?MISQL SQL="$xpatselqry_date_sql"><?/MISQL>
 
@@ -245,7 +250,7 @@ DEBUGGING:
         xpatex_assay_name               varchar(40),
         xpatex_probe_feature_zdb_id     varchar(50),
         xpatex_gene_zdb_id              varchar(50),
-        xpatex_featexp_zdb_id           varchar(50),
+        xpatex_genox_zdb_id           varchar(50),
 	xpatex_matching_text		varchar(255),
         xpatex_matching_precedence	varchar(80),
         xpatex_matching_significance 	integer
@@ -266,11 +271,11 @@ DEBUGGING:
     insert into $xpatselectquery_temp_jtype
         ( xpatex_zdb_id, xpatex_source_zdb_id, xpatex_assay_name,
           xpatex_probe_feature_zdb_id, xpatex_gene_zdb_id,
-          xpatex_featexp_zdb_id )
+          xpatex_genox_zdb_id )
       select distinct 
              xpatex_zdb_id, xpatex_source_zdb_id, xpatex_assay_name,
              xpatex_probe_feature_zdb_id, xpatex_gene_zdb_id,
-             xpatex_featexp_zdb_id
+             xpatex_genox_zdb_id
         from $xpatselqry_matchTable 
              join publication 
                on xpatex_source_zdb_id = publication.zdb_id
@@ -316,7 +321,7 @@ DEBUGGING:
         xpatex_assay_name               varchar(40),
         xpatex_probe_feature_zdb_id     varchar(50),
         xpatex_gene_zdb_id              varchar(50),
-        xpatex_featexp_zdb_id           varchar(50),
+        xpatex_genox_zdb_id           varchar(50),
 	xpatex_matching_text		varchar(255),
         xpatex_matching_precedence	varchar(80),
         xpatex_matching_significance 	integer
@@ -330,11 +335,11 @@ DEBUGGING:
     insert into $xpatselectquery_temp_geneid
         ( xpatex_zdb_id, xpatex_source_zdb_id, xpatex_assay_name,
           xpatex_probe_feature_zdb_id, xpatex_gene_zdb_id,
-          xpatex_featexp_zdb_id )
+          xpatex_genox_zdb_id )
       select distinct 
              xpatex_zdb_id, xpatex_source_zdb_id, xpatex_assay_name,
              xpatex_probe_feature_zdb_id, xpatex_gene_zdb_id,
-             xpatex_featexp_zdb_id
+             xpatex_genox_zdb_id
         from $xpatselqry_matchTable
         where xpatex_gene_zdb_id = '$xpatselqry_geneZdbId'">
   <?/MISQL>
@@ -376,7 +381,7 @@ DEBUGGING:
         xpatex_assay_name               varchar(40),
         xpatex_probe_feature_zdb_id     varchar(50),
         xpatex_gene_zdb_id              varchar(50),
-        xpatex_featexp_zdb_id           varchar(50),
+        xpatex_genox_zdb_id           varchar(50),
 	xpatex_matching_text		varchar(255),
         xpatex_matching_precedence	varchar(80),
         xpatex_matching_significance 	integer
@@ -441,12 +446,12 @@ DEBUGGING:
     insert into $xpatselectquery_temp_marker 
         ( xpatex_zdb_id, xpatex_source_zdb_id, xpatex_assay_name,
           xpatex_probe_feature_zdb_id, xpatex_gene_zdb_id,
-          xpatex_featexp_zdb_id, xpatex_matching_text,
+          xpatex_genox_zdb_id, xpatex_matching_text,
           xpatex_matching_precedence, xpatex_matching_significance )
       select distinct 
              xpatex_zdb_id, xpatex_source_zdb_id, xpatex_assay_name,
              xpatex_probe_feature_zdb_id, xpatex_gene_zdb_id,
-             xpatex_featexp_zdb_id,
+             xpatex_genox_zdb_id,
              $xpatselqry_matchingCols
         from $xpatselqry_matchTable 
              join all_map_names 
@@ -525,7 +530,7 @@ DEBUGGING:
         xpatex_source_zdb_id            varchar(50),
         xpatex_assay_name               varchar(40),
         xpatex_gene_zdb_id              varchar(50),
-        xpatex_featexp_zdb_id           varchar(50),
+        xpatex_genox_zdb_id           varchar(50),
 	xpatex_matching_text		varchar(255),
         xpatex_matching_precedence	varchar(80),
         xpatex_matching_significance 	integer
@@ -581,11 +586,11 @@ DEBUGGING:
     insert into $xpatselectquery_temp_probe
         ( xpatex_zdb_id, xpatex_source_zdb_id, xpatex_assay_name,
           xpatex_gene_zdb_id,
-          xpatex_featexp_zdb_id, xpatex_matching_text,
+          xpatex_genox_zdb_id, xpatex_matching_text,
           xpatex_matching_precedence, xpatex_matching_significance )
       select distinct
              xpatex_zdb_id, xpatex_source_zdb_id, xpatex_assay_name,
-             xpatex_gene_zdb_id, xpatex_featexp_zdb_id,
+             xpatex_gene_zdb_id, xpatex_genox_zdb_id,
              $xpatselqry_matchingCols
         from $xpatselqry_matchTable 
              join all_map_names 
@@ -619,10 +624,10 @@ DEBUGGING:
 
 
 
-<?MIBLOCK COND="$(XST,$xpatselqry_fishName)">
+<?MIBLOCK COND="$(XST,$xpatselqry_genoName)">
   <?MICOMMENT>
     ============================================================================
-    ==========  FISH NAME TESTS
+    ==========  GENOTYPE NAME TESTS
     ============================================================================
 
     This test is coded in a very similar way to earlier tests.  See the
@@ -630,16 +635,16 @@ DEBUGGING:
   <?/MICOMMENT>
  
   <?MICOMMENT> *** Create or reuse temp table *** <?/MICOMMENT>
-  <?MIVAR NAME=$xpatselectquery_temp_fish>$(CONCAT,xpatselectquery_temp_fish_,$xpatselqry_session_id)<?/MIVAR>
+  <?MIVAR NAME=$xpatselectquery_temp_geno>$(CONCAT,xpatselectquery_temp_geno_,$xpatselqry_session_id)<?/MIVAR>
   <?MISQL SQL="
-    execute function table_exists('$xpatselectquery_temp_fish')">
+    execute function table_exists('$xpatselectquery_temp_geno')">
     <?MISQL COND=$(EC,$1,f) SQL="
-      create temp table $xpatselectquery_temp_fish (
+      create temp table $xpatselectquery_temp_geno (
         xpatex_zdb_id			varchar(50),
         xpatex_source_zdb_id            varchar(50),
         xpatex_assay_name               varchar(40),
         xpatex_gene_zdb_id              varchar(50),
-        xpatex_featexp_zdb_id           varchar(50),
+        xpatex_genox_zdb_id             varchar(50),
 	xpatex_matching_text		varchar(255),
         xpatex_matching_precedence	varchar(80),
         xpatex_matching_significance 	integer
@@ -648,69 +653,57 @@ DEBUGGING:
   <?/MISQL>
 
   <?MICOMMENT> *** use all_name_ends depending on search type *** <?/MICOMMENT>
-  <?MIVAR NAME=$xpatselqry_nameEndsTable><?/MIVAR>
-  <?MIBLOCK COND="$(EC,$xpatselqry_fishSearchType,begins)">
+  <?MIBLOCK COND="$(EC,$xpatselqry_genoSearchType,begins)">
     <?MIVAR NAME=$xpatselqry_nameCond>
-      allmapnm_name_lower like '$(LOWER,$xpatselqry_fishName)%'
+      geno_display_name like '$(LOWER,$xpatselqry_genoName)%'
     <?/MIVAR>
-  <?MIELSE COND="$(EC,$xpatselqry_fishSearchType,equals)">
+  <?MIELSE COND="$(EC,$xpatselqry_genoSearchType,equals)">
    <?MICOMMENT> when "=", no escape character<?/MICOMMENT>
-   <?MIVAR>$(SETVAR,$xpatselqry_fishName,$(REPLACE,$xpatselqry_fishName,\_,_))<?/MIVAR>
+   <?MIVAR>$(SETVAR,$xpatselqry_genoName,$(REPLACE,$xpatselqry_genoName,\_,_))<?/MIVAR>
    <?MIVAR NAME=$xpatselqry_nameCond>
-      allmapnm_name_lower = '$(LOWER,$xpatselqry_fishName)'
+      geno_display_name = '$(LOWER,$xpatselqry_genoName)'
     <?/MIVAR>
   <?MIELSE>
-    <?MIVAR NAME=$xpatselqry_nameEndsTable>
-      join all_name_ends on allmapnm_serial_id = allnmend_allmapnm_serial_id
-    <?/MIVAR>
+ 
     <?MIVAR NAME=$xpatselqry_nameCond>
-      allnmend_name_end_lower like '$(LOWER,$xpatselqry_fishName)%'
+      geno_display_name like '%$(LOWER,$xpatselqry_genoName)%'
     <?/MIVAR>
   <?/MIBLOCK>
  
   <?MICOMMENT> *** Matching text *** <?/MICOMMENT>
-  <?MIVAR NAME="$xpatselqry_fishOnlyGetBest"><?/MIVAR>
+
   <?MIBLOCK COND="$(NXST,$xpatselqry_matchedText)">
                                            <?MICOMMENT> ** this REPLACE is to get rid of the special
                                                         ** encoding that's required because informix
                                                         ** treats _ as a ? wildcard  <?/MICOMMENT>
-    <?MIVAR NAME="$xpatselqry_matchedText">$(REPLACE,$xpatselqry_fishName,\_,_)<?/MIVAR>
-    <?MIVAR NAME="$xpatselqry_matchedTextSearchType">$xpatselqry_fishSearchType<?/MIVAR>
+    <?MIVAR NAME="$xpatselqry_matchedText">$(REPLACE,$xpatselqry_genoName,\_,_)<?/MIVAR>
+    <?MIVAR NAME="$xpatselqry_matchedTextSearchType">$xpatselqry_genoSearchType<?/MIVAR>
     <?MIVAR NAME="$xpatselqry_matchingCols"> 
-      allmapnm_name, allmapnm_precedence, allmapnm_significance
-    <?/MIVAR>
-    <?MIVAR NAME="$xpatselqry_fishOnlyGetBest">
-      and allmapnm_significance = ( select min(allmapnm_significance) 
-                                    from all_map_names
-                                         $xpatselqry_nameEndsTable
-                                    where allmapnm_zdb_id = featexp_genome_feature_zdb_id
-                                      and $xpatselqry_nameCond )
+      geno_display_name, "Genotype name", "1"
     <?/MIVAR>
   <?/MIBLOCK>
 
   <?MICOMMENT> *** Get records that pass this test *** <?/MICOMMENT>
   <?MISQL SQL="
-    insert into $xpatselectquery_temp_fish 
+    insert into $xpatselectquery_temp_geno
       select distinct 
              xpatex_zdb_id, xpatex_source_zdb_id, xpatex_assay_name, 
-             xpatex_gene_zdb_id,xpatex_featexp_zdb_id,
+             xpatex_gene_zdb_id,xpatex_genox_zdb_id,
              $xpatselqry_matchingCols
         from $xpatselqry_matchTable
-             join feature_experiment on featexp_zdb_id = xpatex_featexp_zdb_id
-             join all_map_names on allmapnm_zdb_id = featexp_genome_feature_zdb_id
-             $xpatselqry_nameEndsTable
-        where $xpatselqry_nameCond
-              $xpatselqry_fishOnlyGetBest;">
+             join genotype_experiment on genox_zdb_id = xpatex_genox_zdb_id
+             join genotype on geno_zdb_id = genox_geno_zdb_id
+        where $xpatselqry_nameCond;">
   <?/MISQL>
 
   <?MICOMMENT> *** Debugging *** <?/MICOMMENT>
   <?MIVAR COND=$(XST,$debug_sql)>
-    <p>Fish Name Test: $MI_ROWCOUNT records passed
+    <p>Genotype Name Test: $MI_ROWCOUNT records passed
     <br>SQL: <pre>$MI_SQL</pre><p>
   <?/MIVAR>
   <?MISQL COND=$(XST,$debug_timing) SQL="
     execute function get_time()">
-    <br>$1 After fish name tests
+    <br>$1 After geno name tests
   <?/MISQL>
 
 
@@ -718,12 +711,12 @@ DEBUGGING:
   <?MISQL COND="$(NC,$xpatselqry_matchTable,expression_experiment)" SQL="
     delete from $xpatselqry_matchTable">
   <?/MISQL>
-  <?MIVAR NAME=$xpatselqry_matchTable>$xpatselectquery_temp_fish<?/MIVAR>
+  <?MIVAR NAME=$xpatselqry_matchTable>$xpatselectquery_temp_geno<?/MIVAR>
   <?MIVAR NAME=$xpatselqry_matchingCols>
     xpatex_matching_text, xpatex_matching_precedence, xpatex_matching_significance
   <?/MIVAR>
 
-<?/MIBLOCK>  <?MICOMMENT> *** end fish name query *** <?/MICOMMENT>
+<?/MIBLOCK>  <?MICOMMENT> *** end geno name query *** <?/MICOMMENT>
 
 
 
@@ -750,7 +743,7 @@ DEBUGGING:
         xpatex_source_zdb_id            varchar(50),
         xpatex_assay_name               varchar(40),
         xpatex_gene_zdb_id              varchar(50),
-        xpatex_featexp_zdb_id           varchar(50),
+        xpatex_genox_zdb_id           varchar(50),
 	xpatex_matching_text		varchar(255),
         xpatex_matching_precedence	varchar(80),
         xpatex_matching_significance 	integer
@@ -794,17 +787,18 @@ DEBUGGING:
     insert into $xpatselectquery_temp_mo 
       select distinct 
              xpatex_zdb_id, xpatex_source_zdb_id, xpatex_assay_name, 
-             xpatex_gene_zdb_id, xpatex_featexp_zdb_id,
+             xpatex_gene_zdb_id, xpatex_genox_zdb_id,
              $xpatselqry_matchingCols
         from $xpatselqry_matchTable
-             join feature_experiment on featexp_zdb_id = xpatex_featexp_zdb_id
-             join experiment_condition on expcond_exp_zdb_id = featexp_exp_zdb_id
+             join genotype_experiment on genox_zdb_id = xpatex_genox_zdb_id
+             join experiment_condition on expcond_exp_zdb_id = genox_exp_zdb_id
              join marker on expcond_mrkr_zdb_id = mrkr_zdb_id
              join marker_relationship on mrkr_zdb_id = mrel_mrkr_1_zdb_id 
              join all_map_names on allmapnm_zdb_id = mrel_mrkr_2_zdb_id 
+	     join name_precedence on allmapnm_significance = nmprec_significance
              $xpatselqry_nameEndsTable
         where $xpatselqry_nameCond
-          and allmapnm_significance < 3
+          and nmprec_precedence in ("Current symbol", "Current name")
         ;
   <?/MIVAR>
   <?MISQL SQL="$xpatselqry_mo_sql">
@@ -832,7 +826,7 @@ DEBUGGING:
         xpatex_source_zdb_id            varchar(50),
         xpatex_assay_name               varchar(40),
         xpatex_gene_zdb_id              varchar(50),
-        xpatex_featexp_zdb_id           varchar(50),
+        xpatex_genox_zdb_id           varchar(50),
 	xpatex_matching_text		varchar(255),
         xpatex_matching_precedence	varchar(80),
         xpatex_matching_significance 	integer
@@ -845,7 +839,7 @@ DEBUGGING:
         xpatex_source_zdb_id,
         xpatex_assay_name,
         xpatex_gene_zdb_id,
-        xpatex_featexp_zdb_id,
+        xpatex_genox_zdb_id,
 	xpatex_matching_text,
         xpatex_matching_precedence,
         xpatex_matching_significance
@@ -856,7 +850,7 @@ DEBUGGING:
      <?MIVAR NAME=xpatselqry_source_zdb_id>$2<?/MIVAR>
      <?MIVAR NAME=xpatselqry_assay_name>$3<?/MIVAR>
      <?MIVAR NAME=xpatselqry_gene_zdb_id>$4<?/MIVAR>
-     <?MIVAR NAME=xpatselqry_featexp_zdb_id>$5<?/MIVAR>
+     <?MIVAR NAME=xpatselqry_genox_zdb_id>$5<?/MIVAR>
      <?MIBLOCK COND=$(NC,$xpatselqry_previous,$xpatselqry_zdb_id)>
          <?MISQL SQL="insert into $xpatselectquery_temp_mo1
                       values ('$1','$2','$3','$4','$5','$6','$7','$8');">
@@ -1337,13 +1331,13 @@ DEBUGGING:
 
 <?MIBLOCK COND="$(AND,$(XST,$xpatselqry_imagesOnly),$xpatselqry_figuresFetched)">
   <?MIVAR NAME="$xpatselqry_imagesOnlyConstraint">
-    where exists (select fimg_zdb_id from fish_image where fimg_fig_zdb_id = xpatex_fig_zdb_id) 
+    where exists (select img_zdb_id from image where img_fig_zdb_id = xpatex_fig_zdb_id) 
   <?/MIVAR>
 <?/MIBLOCK>
 
 <?MIBLOCK COND="$(AND,$(XST,$xpatselqry_imagesOnly),$(NOT,$xpatselqry_figuresFetched))">
   <?MIVAR NAME="$xpatselqry_imagesOnlyConstraint">
-    where exists (select fimg_zdb_id from fish_image where fimg_fig_zdb_id = xpatfig_fig_zdb_id) 
+    where exists (select img_zdb_id from image where img_fig_zdb_id = xpatfig_fig_zdb_id) 
   <?/MIVAR>
 <?/MIBLOCK> 
 

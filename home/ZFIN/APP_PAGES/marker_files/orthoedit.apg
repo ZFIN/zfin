@@ -35,7 +35,7 @@ delacc -- to delete a dblink, delacc holds the accession of the link to del
       <?MIVAR>
 	<input type=hidden name=MIval value=aa-do-markerupdate.apg>
 	<input type=hidden name=OID value=$OID> 
-        <input type=hidden name=target_table value=$target_table>
+
 	<input type=hidden name=UPDATEORTHO value=1>
 	<input type=hidden name=anchor value=orthologue>
 	<input type=hidden name=fdbcont_super value=orthologue>

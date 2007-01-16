@@ -1,5 +1,28 @@
 begin work ;
 
+create index fig_label_index 
+ on figure (fig_label)
+  using btree in idxdbs3 ;
+
+alter table marker
+  drop constraint mrkr_abbrev_unique ;
+
+drop index mrkr_abbrev_index ;
+
+
+alter table marker
+  modify (mrkr_abbrev varchar(60) not null constraint
+	mrkr_abbrev_not_null) ;
+
+create unique index mrkr_abbrev_index on
+    marker (mrkr_abbrev) using btree in idxdbs2 ;
+
+
+alter table marker 
+  add constraint unique (mrkr_abbrev) 
+    constraint mrkr_abbrev_unique  ;
+
+
 --still need:
 create table feature_type (
 	ftrtype_name	        varchar(30)
@@ -10,28 +33,102 @@ create table feature_type (
 fragment by round robin in tbldbs1, tbldbs2, tbldbs3
 extent size 32 next size 32 lock mode row ;
 
+--drop trigger locus_update_trigger ;
+--drop trigger locusreg_name_update_trigger ;
+--drop trigger locusreg_abbrev_update_trigger ;
+
 set constraints all deferred ;
 
-insert into feature_type (ftrtype_name, ftrtype_significance, ftrtype_type_display)
-  values ('SEQUENCE_VARIANT', '9', 'Sequence Variant') ;
+update locus
+  set locus_name = replace(locus_name, ")",":")
+   where locus_name like 'T(%'
+   or locus_name like 'Df%';
+
+update locus
+  set locus_name = locus_name||")"
+  where locus_name like 'T(%'
+   or locus_name like 'Df%';
+
+update locus
+  set abbrev = replace(abbrev, ")",":")
+   where abbrev like 'T(%'
+   or abbrev like 'Df%';
+
+update locus
+  set abbrev = abbrev||")"
+  where abbrev like 'T(%'
+   or abbrev like 'Df%';
+
+update locus
+  set abbrev = replace(abbrev, ":)",")")
+   where abbrev like 'T(%'
+   or abbrev like 'Df%';
+
+update locus
+  set locus_name = replace(locus_name, ":)",")")
+   where locus_name like 'T(%'
+   or locus_name like 'Df%';
+
+---
+
+update locus_registration
+  set locus_name = replace(locus_name, ")",":")
+   where locus_name like 'T(%'
+   or locus_name like 'Df%';
+
+update locus_registration
+  set locus_name = locus_name||")"
+  where locus_name like 'T(%'
+   or locus_name like 'Df%';
+
+update locus_registration
+  set abbrev = replace(abbrev, ")",":")
+   where abbrev like 'T(%'
+   or abbrev like 'Df%';
+
+update locus_registration
+  set abbrev = abbrev||")"
+  where abbrev like 'T(%'
+   or abbrev like 'Df%';
+
+update locus_registration
+  set abbrev = replace(abbrev, ":)",")")
+   where abbrev like 'T(%'
+   or abbrev like 'Df%';
+
+update locus_registration
+  set locus_name = replace(locus_name, ":)",")")
+   where locus_name like 'T(%'
+   or locus_name like 'Df%';
 
 insert into feature_type (ftrtype_name, ftrtype_significance, ftrtype_type_display)
-  values ('POINT_MUTATION', '1','Point Mutant') ;
+  values ('SEQUENCE_VARIANT', '9', 'unknown') ;
+
+insert into feature_type (ftrtype_name, ftrtype_significance, ftrtype_type_display)
+  values ('UNSPECIFIED', '9', 'unspecified') ;
+
+insert into feature_type (ftrtype_name, ftrtype_significance, ftrtype_type_display)
+  values ('POINT_MUTATION', '1','Point Mutation') ;
+
+--insert into feature_type (ftrtype_name, ftrtype_significance, ftrtype_type_display)
+--  values ('TRANSVERSION', '26','Transversion') ;
 
 insert into feature_type (ftrtype_name, ftrtype_significance, ftrtype_type_display)
   values ('INSERTION', '2','Insertion') ;
 
 insert into feature_type (ftrtype_name, ftrtype_significance, ftrtype_type_display)
-  values ('DELETION', '3','Deletion') ;
+  values ('DEFICIENCY', '5','Deficiency') ;
 
 insert into feature_type (ftrtype_name, ftrtype_significance, ftrtype_type_display)
-  values ('INTRACHROMOSOMAL_MUTATION', '4','Interchromosomal Mutation') ;
+  values ('TRANSLOC', '4','Translocation') ;
 
 insert into feature_type (ftrtype_name, ftrtype_significance, ftrtype_type_display)
-  values ('INTERCHROMOSOMAL_MUTATION', '5','Interchromosomal Mutation') ;
+  values ('INVERSION', '4','Inversion') ;
+
+--Tg nomenclature redo case
 
 insert into feature_type (ftrtype_name, ftrtype_significance, ftrtype_type_display)
-  values ('TRANSGENIC_INSERTION', '7','Transgenic Insertion') ;
+  values ('TRANSGENIC_INSERTION', '3','Transgenic Insertion') ;
 
 insert into feature_type (ftrtype_name, ftrtype_significance, ftrtype_type_display)
   values ('LOCUS', '25', 'LOCUS') ;
@@ -45,6 +142,9 @@ insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_disp
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
   values ('TGCONSTRCT', '18', 'Transgenic Construct') ;
 
+--insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
+--  values ('TRANSLOC', '18', 'Translocation') ;
+
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
   values ('GTCONSTRCT', '19', 'Gene Trap Construct') ;
 
@@ -54,14 +154,33 @@ insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_disp
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
   values ('ETCONSTRCT', '21', 'Enhancer Trap Construct') ;
 
-insert into feature_type (ftrtype_name, ftrtype_significance, ftrtype_type_display)
-  values ('REGION', '8','Special Feature') ;
-
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
-  values ('REGION', '22','Special Marker') ;
+  values ('REGION', '22','Other Feature') ;
 
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
   values ('GENEFAMILY', '23','Gene Family') ;
+
+insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
+  values ('EFG', '23','Engineered Foreign Gene') ;
+
+update marker_types 
+  set mrkrtype_type_display = 'BAC END'
+  where mrkrtype_type_display = 'BAC_END' ;
+
+update marker_types
+  set mrkrtype_type_display = 'PAC END'
+  where mrkrtype_type_display = 'PAC_END';
+
+!echo "EFG zdb_object_type" ;
+
+insert into zdb_object_type (zobjtype_name, zobjtype_day, 
+	zobjtype_seq, zobjtype_app_page, zobjtype_home_table, 
+	zobjtype_home_zdb_id_column,
+	zobjtype_is_data, zobjtype_is_source, 
+	zobjtype_attribution_display_tier)
+  values ('EFG', '11/15/2005','1','','marker', 
+	  'mrkr_zdb_id', 't','f', '2') ;
+
 
 --new marker relationships for TG, ET, PT, and GT constructs
 
@@ -69,11 +188,47 @@ insert into marker_type_group (mtgrp_name, mtgrp_comments)
   values ('CONSTRUCT', 'this group contains genetically engineered constructs; promoter, enhancer, and gene traps, as well as trangenic construcs');
 
 insert into marker_type_group (mtgrp_name, mtgrp_comments)
-  values ('REGION', 'this group contains genetic components like IRES; also refferd to as "special features."');
+  values ('REGION', 'this group contains genetic components like IRES; also refferd to as "special markers."');
+
+insert into marker_type_group (mtgrp_name, mtgrp_comments)
+  values ('GENEDOM_AND_EFG', 'this group contains genes, psuedogenes and engineered foreign genes (EFGs)');
 
 insert into marker_type_group_member (mtgrpmem_mrkr_type, 
 			mtgrpmem_mrkr_type_group)
   values ('TGCONSTRCT', 'CONSTRUCT');
+
+--insert into marker_type_group_member (mtgrpmem_mrkr_type, 
+--			mtgrpmem_mrkr_type_group)
+--  values ('TRANSLOC', 'CONSTRUCT');
+
+--insert into marker_type_group_member (mtgrpmem_mrkr_type, 
+--			mtgrpmem_mrkr_type_group)
+--  values ('GENE', 'CONSTRUCT');
+
+insert into marker_type_group_member (mtgrpmem_mrkr_type, 
+			mtgrpmem_mrkr_type_group)
+  values ('LOCUS', 'CONSTRUCT');
+
+insert into marker_type_group_member (mtgrpmem_mrkr_type, 
+			mtgrpmem_mrkr_type_group)
+  values ('EFG', 'GENEDOM_AND_EFG');
+
+insert into marker_type_group_member (mtgrpmem_mrkr_type, 
+			mtgrpmem_mrkr_type_group)
+  values ('GENE', 'GENEDOM_AND_EFG');
+
+insert into marker_type_group_member (mtgrpmem_mrkr_type, 
+			mtgrpmem_mrkr_type_group)
+  values ('GENEP', 'GENEDOM_AND_EFG');
+
+insert into marker_type_group_member (mtgrpmem_mrkr_type, 
+			mtgrpmem_mrkr_type_group)
+  values ('GENEFAMILY', 'GENEDOM_AND_EFG');
+
+
+--insert into marker_type_group_member (mtgrpmem_mrkr_type, 
+--			mtgrpmem_mrkr_type_group)
+--  values ('GENEP', 'CONSTRUCT');
 
 insert into marker_type_group_member (mtgrpmem_mrkr_type, 
 			mtgrpmem_mrkr_type_group)
@@ -90,6 +245,10 @@ insert into marker_type_group_member (mtgrpmem_mrkr_type,
 insert into marker_type_group_member (mtgrpmem_mrkr_type, 
 			mtgrpmem_mrkr_type_group)
   values ('TGCONSTRCT', 'SEARCH_MKSEG');
+
+--insert into marker_type_group_member (mtgrpmem_mrkr_type, 
+--			mtgrpmem_mrkr_type_group)
+--  values ('TRANSLOC', 'SEARCH_MKSEG');
 
 insert into marker_type_group_member (mtgrpmem_mrkr_type, 
 			mtgrpmem_mrkr_type_group)
@@ -116,9 +275,9 @@ insert into marker_relationship_type (mreltype_name,
 	mreltype_mrkr_type_group_2,
 	mreltype_1_to_2_comments,
 	mreltype_2_to_1_comments)
- values ('construct component promotes gene',
+ values ('promoter of',
 	 'CONSTRUCT',
-	 'GENEDOM',
+	 'GENEDOM_AND_EFG',
 	 'has promoter',
 	 'is promoter of');
 
@@ -127,9 +286,9 @@ insert into marker_relationship_type (mreltype_name,
 	mreltype_mrkr_type_group_2,
 	mreltype_1_to_2_comments,
 	mreltype_2_to_1_comments)
- values ('construct component is coding sequence of gene',
+ values ('coding sequence of',
 	 'CONSTRUCT',
-	 'GENEDOM',
+	 'GENEDOM_AND_EFG',
 	 'has coding sequence',
 	 'is coding sequence of');
 
@@ -138,7 +297,7 @@ insert into marker_relationship_type (mreltype_name,
 	mreltype_mrkr_type_group_2,
 	mreltype_1_to_2_comments,
 	mreltype_2_to_1_comments)
- values ('construct component contains region',
+ values ('contains special feature',
 	 'CONSTRUCT',
 	 'REGION',
 	 'Contains',
@@ -168,10 +327,51 @@ alter table feature_type_group
   add constraint primary key (ftrgrp_name)
   constraint feature_type_group_primary_key ;
 
+--case 1489
 
 insert into feature_type_group (ftrgrp_name, ftrgrp_comments)
   values ('MUTANT', 
 	 'all valid allele types in this group');
+
+insert into feature_type_group (ftrgrp_name, ftrgrp_comments)
+  values ('INSERTION', 
+	 'group containing only this feature type');
+
+insert into feature_type_group (ftrgrp_name, ftrgrp_comments)
+  values ('POINT_MUTATION', 
+	 'group containing only this feature type');
+
+--insert into feature_type_group (ftrgrp_name, ftrgrp_comments)
+--  values ('TRANSVERSION', 
+--	 'group containing only this feature type');
+
+insert into feature_type_group (ftrgrp_name, ftrgrp_comments)
+  values ('INVERSION', 
+	 'group containing only this feature type');
+
+insert into feature_type_group (ftrgrp_name, ftrgrp_comments)
+  values ('DEFICIENCY', 
+	 'group containing only this feature type');
+
+insert into feature_type_group (ftrgrp_name, ftrgrp_comments)
+  values ('TRANSLOC', 
+	 'group containing only this feature type');
+
+insert into feature_type_group (ftrgrp_name, ftrgrp_comments)
+  values ('TG_INSERTION', 
+	 'group containing only this feature type');
+
+insert into feature_type_group (ftrgrp_name, ftrgrp_comments)
+  values ('SEQUENCE_VARIANT', 
+	 'group containing only this feature type');
+
+insert into feature_type_group (ftrgrp_name, ftrgrp_comments)
+  values ('UNSPECIFIED', 
+	 'group containing only this feature type');
+
+insert into feature_type_group (ftrgrp_name, ftrgrp_comments)
+  values ('ALL_INSERTIONS', 
+	 'group containing insertions and transgenic_insertion feature types');
 
 
 --create feature_type_group_member
@@ -197,6 +397,10 @@ create index feature_type_group_member_type_foreign_key_index
   using btree
   in idxdbs4 ;
 
+create index feature_type_group_member_group_foreign_key_index
+  on feature_type_group_member (ftrgrpmem_ftr_type_group)
+  using btree in idxdbs4 ;
+
 alter table feature_type_group_member 
   add constraint primary key (ftrgrpmem_ftr_type, 
   ftrgrpmem_ftr_type_group) constraint
@@ -206,10 +410,6 @@ alter table feature_type_group_member
   add constraint (foreign key (ftrgrpmem_ftr_type)
   references feature_type constraint
   feature_type_group_member_type_foreign_key) ;
-
-alter table feature_type_group_member add constraint 
-    (foreign key (ftrgrpmem_ftr_type_group) references
-	feature_type_group constraint ftrgrpmem_ftr_type_group_foreign_key);
 
 insert into feature_type_group_member (ftrgrpmem_ftr_type,
 		ftrgrpmem_ftr_type_group)
@@ -233,19 +433,71 @@ insert into feature_type_group_member (ftrgrpmem_ftr_type,
 
 insert into feature_type_group_member (ftrgrpmem_ftr_type,
 		ftrgrpmem_ftr_type_group)
+  values ('POINT_MUTATION','POINT_MUTATION') ;
+
+--insert into feature_type_group_member (ftrgrpmem_ftr_type,
+--		ftrgrpmem_ftr_type_group)
+--  values ('TRANSVERSION','MUTANT') ;
+
+--insert into feature_type_group_member (ftrgrpmem_ftr_type,
+--		ftrgrpmem_ftr_type_group)
+--  values ('TRANSVERSION','TRANSVERSION') ;
+
+insert into feature_type_group_member (ftrgrpmem_ftr_type,
+		ftrgrpmem_ftr_type_group)
   values ('INSERTION','MUTANT') ;
 
 insert into feature_type_group_member (ftrgrpmem_ftr_type,
 		ftrgrpmem_ftr_type_group)
-  values ('DELETION','MUTANT') ;
+  values ('INSERTION','INSERTION') ;
 
 insert into feature_type_group_member (ftrgrpmem_ftr_type,
 		ftrgrpmem_ftr_type_group)
-  values ('INTERCHROMOSOMAL_MUTATION','MUTANT') ;
+  values ('UNSPECIFIED','MUTANT') ;
+
+insert into feature_type_group_member (ftrgrpmem_ftr_type,
+		ftrgrpmem_ftr_type_group)
+  values ('UNSPECIFIED','UNSPECIFIED') ;
+
+insert into feature_type_group_member (ftrgrpmem_ftr_type,
+		ftrgrpmem_ftr_type_group)
+  values ('DEFICIENCY','MUTANT') ;
+
+insert into feature_type_group_member (ftrgrpmem_ftr_type,
+		ftrgrpmem_ftr_type_group)
+  values ('DEFICIENCY','DEFICIENCY') ;
+
+insert into feature_type_group_member (ftrgrpmem_ftr_type,
+		ftrgrpmem_ftr_type_group)
+  values ('TRANSLOC','MUTANT') ;
+
+insert into feature_type_group_member (ftrgrpmem_ftr_type,
+		ftrgrpmem_ftr_type_group)
+  values ('TRANSLOC','TRANSLOC') ;
+
+insert into feature_type_group_member (ftrgrpmem_ftr_type,
+		ftrgrpmem_ftr_type_group)
+  values ('INVERSION','MUTANT') ;
+
+insert into feature_type_group_member (ftrgrpmem_ftr_type,
+		ftrgrpmem_ftr_type_group)
+  values ('INVERSION','INVERSION') ;
 
 insert into feature_type_group_member (ftrgrpmem_ftr_type,
 		ftrgrpmem_ftr_type_group)
   values ('TRANSGENIC_INSERTION','MUTANT') ;
+
+insert into feature_type_group_member (ftrgrpmem_ftr_type,
+		ftrgrpmem_ftr_type_group)
+  values ('TRANSGENIC_INSERTION','TG_INSERTION') ;
+
+insert into feature_type_group_member (ftrgrpmem_ftr_type,
+		ftrgrpmem_ftr_type_group)
+  values ('TRANSGENIC_INSERTION','ALL_INSERTIONS') ;
+
+insert into feature_type_group_member (ftrgrpmem_ftr_type,
+		ftrgrpmem_ftr_type_group)
+  values ('INSERTION','ALL_INSERTIONS') ;
 
 select ftrgrpmem_ftr_type
   from feature_type_group_member
@@ -266,10 +518,6 @@ create table feature_marker_relationship_type (
 in tbldbs1
 extent size 16 next size 16 lock mode row ;
 
-create unique index feature_marker_relationship_type_primary_key_index
-  on feature_marker_relationship_type (fmreltype_name)
-  using btree
-  in idxdbs2 ;
 
 create index feature_marker_relationship_type_ftr_group_index
   on feature_marker_relationship_type (fmreltype_ftr_type_group)
@@ -279,23 +527,29 @@ create index feature_marker_relationship_type_mrkr_group_index
   on feature_marker_relationship_type (fmreltype_mrkr_type_group)
   using btree in idxdbs2 ;
 
+create unique index feature_marker_relationship_type_primary_key_index
+  on feature_marker_relationship_type (fmreltype_name)
+  using btree
+  in idxdbs2 ;
+
 alter table feature_marker_relationship_type
   add constraint primary key (fmreltype_name)
   constraint feature_marker_relationship_type_primary_key ;
 
-insert into feature_marker_relationship_type (fmreltype_name,
-	fmreltype_ftr_type_group,
-	fmreltype_mrkr_type_group,
-	fmreltype_1_to_2_comments,
-	fmreltype_2_to_1_comments)
-values ('sequence variant contains sequence feature', 'MUTANT','MUTANT','Contains','Contained in');
 
 insert into feature_marker_relationship_type (fmreltype_name,
 	fmreltype_ftr_type_group,
 	fmreltype_mrkr_type_group,
 	fmreltype_1_to_2_comments,
 	fmreltype_2_to_1_comments)
-values ('Mutation is allele of gene', 'MUTANT','GENEDOM','Is Allele of','Has Allele');
+values ('contains sequence feature', 'MUTANT','CONSTRUCT','Contains','Contained in');
+
+insert into feature_marker_relationship_type (fmreltype_name,
+	fmreltype_ftr_type_group,
+	fmreltype_mrkr_type_group,
+	fmreltype_1_to_2_comments,
+	fmreltype_2_to_1_comments)
+values ('is allele of', 'MUTANT','GENEDOM','Is Allele Of','Has Allele');
 
 insert into marker_type_group_member (mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
@@ -304,6 +558,10 @@ insert into marker_type_group_member (mtgrpmem_mrkr_type,
 insert into marker_type_group_member (mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
   values ('TGCONSTRCT', 'MUTANT');
+
+--insert into marker_type_group_member (mtgrpmem_mrkr_type,
+--    mtgrpmem_mrkr_type_group)
+--  values ('TRANSLOC', 'MUTANT');
 
 insert into marker_type_group_member (mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
@@ -346,7 +604,6 @@ insert into zdb_object_type (zobjtype_name, zobjtype_day,
 	zobjtype_attribution_display_tier)
   values ('FMREL', '11/15/2005','1','','feature_marker_relationship', 
 	  'fmrel_zdb_id', 't','f', '2') ;
-
 
 create unique index feature_marker_relationship_primary_key_index
   on feature_marker_relationship (fmrel_zdb_id) using btree
@@ -412,15 +669,15 @@ create table feature (
 		not null constraint feature_zdb_id_not_null,
 	feature_name		 varchar(255) 	
 		not null constraint feature_name_not_null,
-	feature_abbrev		 varchar(40) 	
+	feature_abbrev		 varchar(70) 	
 		not null constraint feature_abbrev_not_null,
         feature_type		 varchar(30) 	
 		not null constraint feature_type_not_null,
 	feature_lab_of_origin    varchar(50),
 	feature_comments	 lvarchar,
-	feature_name_order 	 varchar(140)	
+	feature_name_order 	 varchar(255)	
 		not null constraint feature_name_order_not_null,
-	feature_abbrev_order	 varchar(140)
+	feature_abbrev_order	 varchar(255)
 		not null constraint feature_abrv_order_not_null,
 	feature_date_entered	 datetime year to second
 		default current year to second
@@ -428,33 +685,6 @@ create table feature (
 
 fragment by round robin in tbldbs1, tbldbs2, tbldbs3
 extent size 9664 next size 9664 lock mode row ;
-
-create trigger feature_insert_trigger insert on feature
-  referencing new as new_feature
-    for each row
-        (
-        execute function zero_pad(new_feature.feature_name 
-    ) into feature.feature_name_order,
-        execute function zero_pad(new_feature.feature_abbrev 
-    ) into feature.feature_abbrev_order
-);
-
-create trigger feature_abbrev_update_trigger update of 
-    feature_abbrev on feature referencing old as oldf new 
-    as newf
-    for each row
-        (
-        execute function zero_pad(newf.feature_abbrev ) 
-	into feature.feature_abbrev_order
-);
-
-create trigger feature_name_update_trigger update of 
-    feature_name on feature referencing old as oldf new 
-    as newf
-      for each row
-          (execute function zero_pad(newf.feature_name ) 
-      into feature.feature_name_order
-);
 
 create unique index feature_primary_key_index 
   on feature (feature_zdb_id) using btree 
@@ -464,6 +694,10 @@ create index feature_lab_of_origin_foreign_key_index
   on feature (feature_lab_of_origin) using btree
   in idxdbs3 ;
 
+
+create unique index feature_abbrev_alternate_key 
+  on feature (feature_abbrev)
+  using btree in idxdbs2 ;
 
 create unique index feature_name_index on feature 
     (feature_name) using btree in idxdbs3 ;
@@ -485,7 +719,6 @@ alter table feature
   add constraint primary key (feature_zdb_id) constraint 
   feature_primary_key ;
 
-
 alter table feature_marker_relationship add constraint (foreign 
     key (fmrel_ftr_zdb_id) references feature on 
     delete cascade constraint fmrel_ftr_zdb_id_foreign_key);
@@ -493,58 +726,21 @@ alter table feature_marker_relationship add constraint (foreign
 alter table feature_marker_relationship add constraint (foreign 
     key (fmrel_mrkr_zdb_id) references marker on 
     delete cascade constraint fmrel_mrkr_zdb_id_foreign_key);
-    
-drop trigger feature_insert_trigger;
-
-drop trigger feature_name_update_trigger;
-
-drop trigger feature_abbrev_update_trigger;
-
-create trigger feature_insert_trigger insert on feature
-  referencing new as new_feature
-    for each row
-        (
-        execute function zero_pad(new_feature.feature_name 
-    ) into feature.feature_name_order,
-        execute function zero_pad(new_feature.feature_abbrev 
-    ) into feature.feature_abbrev_order,
-       execute procedure fhist_event(new_feature.feature_zdb_id,
-       'assigned', new_feature.feature_name,new_feature.feature_abbrev) 
-);
-
-create trigger feature_abbrev_update_trigger update of 
-    feature_abbrev on feature referencing old as oldf new 
-    as newf
-    for each row
-        (execute function zero_pad(newf.feature_abbrev) 
-	into feature.feature_abbrev_order
-);
-
-create trigger feature_name_update_trigger update of 
-    feature_name on feature referencing old as oldf new 
-    as newf
-      for each row
-          (execute function zero_pad(newf.feature_name ) 
-      into feature.feature_name_order,
-         execute procedure fhist_event(newf.feature_zdb_id,
-		'renamed',
-		newf.feature_name ,oldf.feature_name) 
-);
-
 
 --create table genotype
 
 create table genotype (geno_zdb_id varchar(50) not null constraint 
 				geno_zdb_id_not_null,
-			geno_display_name varchar(100) not null constraint 
+			geno_display_name varchar(255) not null constraint 
 				geno_name_not_null,
-			geno_handle varchar(100) not null constraint 
+			geno_handle varchar(255) not null constraint 
 				geno_abbrev_not_null,
 			geno_supplier_stock_number varchar(100),
 			geno_date_entered datetime year to fraction(3) default 
 				current year to fraction(3),
 			geno_name_order varchar(50),
-			geno_is_wildtype boolean default 'f'
+			geno_is_wildtype boolean default 'f',
+			geno_is_extinct boolean default 'f'
 )
 
 fragment by round robin in tbldbs1, tbldbs2, tbldbs3
@@ -579,12 +775,78 @@ alter table genotype
   references zdb_active_data on delete cascade
   constraint genotype_zdb_active_data_foreign_key_odc);
 
+create trigger genotype_insert_trigger insert on genotype
+  referencing new as new_genotype
+    for each row
+    (
+        execute function scrub_char(new_genotype.geno_display_name ) 
+    into genotype.geno_display_name,
+        execute function scrub_char(new_genotype.geno_handle ) 
+    into genotype.geno_handle,
+        execute function zero_pad(new_genotype.geno_display_name ) 
+    into genotype.geno_name_order
+);
+
+create trigger geno_display_name_update_trigger update of geno_display_name
+  on genotype referencing new as new_genotype
+    for each row
+    (
+        execute function scrub_char(new_genotype.geno_display_name ) 
+    into genotype.geno_display_name,
+        execute function zero_pad(new_genotype.geno_display_name ) 
+    into genotype.geno_name_order
+);
+
+create trigger geno_handle_update_trigger update of geno_handle
+  on genotype referencing new as new_genotype
+    for each row
+    (
+        execute function scrub_char(new_genotype.geno_handle ) 
+    into genotype.geno_handle
+);
+
+--reorder in response to case 1431, 1425
+
+create trigger feature_insert_trigger insert on feature
+  referencing new as new_feature
+    for each row
+        (
+        execute function zero_pad(new_feature.feature_name 
+    ) into feature.feature_name_order,
+        execute function zero_pad(new_feature.feature_abbrev 
+    ) into feature.feature_abbrev_order,
+       execute procedure fhist_event(new_feature.feature_zdb_id,
+       'assigned', new_feature.feature_name,new_feature.feature_abbrev) 
+);
+
+create trigger feature_abbrev_update_trigger update of 
+    feature_abbrev on feature referencing old as oldf new 
+    as newf
+    for each row
+        (execute function zero_pad(newf.feature_abbrev) 
+	into feature.feature_abbrev_order,
+	 execute procedure p_update_related_genotype_names(newf.feature_zdb_id)
+);
+
+create trigger feature_name_update_trigger update of 
+    feature_name on feature referencing old as oldf new 
+    as newf
+      for each row
+          (execute function zero_pad(newf.feature_name ) 
+      into feature.feature_name_order,
+         execute procedure fhist_event(newf.feature_zdb_id,
+		'renamed',
+		newf.feature_name ,oldf.feature_name),
+	 execute procedure p_update_related_genotype_names(newf.feature_zdb_id)
+);
+
+
 insert into zdb_object_type (zobjtype_name, zobjtype_day, 
 	zobjtype_seq, zobjtype_app_page, zobjtype_home_table, 
 	zobjtype_home_zdb_id_column,
 	zobjtype_is_data, zobjtype_is_source, 
 	zobjtype_attribution_display_tier)
-  values ('GENO', '11/15/2005','1','','genotype', 
+  values ('GENO', '1/5/2007','1','','genotype', 
 	  'geno_zdb_id', 't','f', '2') ;
 
 
@@ -592,10 +854,13 @@ insert into zdb_object_type (zobjtype_name, zobjtype_day,
 
 create table zygocity (zyg_zdb_id varchar(50) not null constraint
 			zygocity_zdb_id_not_null,
-		       zyg_name  varchar(100) not null constraint
+		       zyg_name  varchar(60) not null constraint
 			zygocity_name_not_null,
+		       zyg_abbrev varchar(10),
 		       zyg_definition varchar(255) not null constraint
-			zygocity_definition_not_null)
+			zygocity_definition_not_null,
+		       zyg_allele_display varchar(10),
+		       zyg_gene_prefix varchar(10))
 in tbldbs2 extent size 8 next size 8 lock mode row ;
 
 create unique index zygocity_primary_key_index
@@ -622,29 +887,86 @@ insert into zdb_object_type (zobjtype_name, zobjtype_day,
   values ('ZYG', '11/15/2005','1','','zygocity', 
 	  'zyg_zdb_id', 't','f', '2') ;
 
-insert into zygocity (zyg_zdb_id, zyg_name, zyg_definition)
-  values (get_id('ZYG'), 'homozygous', 'two copies of the allele at a given locus');
+insert into zygocity (zyg_zdb_id, 
+			zyg_name, 
+			zyg_abbrev, 
+			zyg_definition, 
+			zyg_allele_display)
+  values (get_id('ZYG'), 	
+		'homozygous', 
+		'2',
+		'two copies of the allele at a given locus',
+		"/allele");
 
-insert into zygocity (zyg_zdb_id, zyg_name, zyg_definition)
-  values (get_id('ZYG'), 'heterozygous', 'one copy of the allele at a given locus');
+insert into zygocity (zyg_zdb_id, 
+			zyg_name, 
+			zyg_abbrev, 
+			zyg_definition,
+			zyg_allele_display)
+  values (get_id('ZYG'), 
+		'heterozygous', 
+		'1',
+		'one copy of the allele at a given locus',
+		'/+');
 
-insert into zygocity (zyg_zdb_id, zyg_name, zyg_definition)
-  values (get_id('ZYG'), 'hemizygous', 'insertional construct on one chromosome only: The state of a gene present in only one copy in a diploid cell, such as a gene on the X chromosome in a male mammal, or a gene whose homologue has been deleted');
+insert into zygocity (zyg_zdb_id, 
+			zyg_name, 
+			zyg_abbrev,
+			zyg_definition,
+			zyg_allele_display)
+  values (get_id('ZYG'), 
+		'hemizygous',
+		'I',
+		'insertional construct on one chromosome only: The state of a gene present in only one copy in a diploid cell, such as a gene on the X chromosome in a male mammal, or a gene whose homologue has been deleted',
+		'/0');
 
-insert into zygocity (zyg_zdb_id, zyg_name, zyg_definition)
-  values (get_id('ZYG'), 'maternal zygotic', 'mom and self homozygous');
+insert into zygocity (zyg_zdb_id, 
+			zyg_name, 
+			zyg_abbrev,
+			zyg_definition,
+			zyg_gene_prefix)
+  values (get_id('ZYG'), 
+		'maternal zygotic', 
+		'MZ',
+		'mom and self homozygous',
+		'MZ');
 
-insert into zygocity (zyg_zdb_id, zyg_name, zyg_definition)
-  values (get_id('ZYG'), 'paternal zygotic', 'dad and self homozygous');
+insert into zygocity (zyg_zdb_id, 
+			zyg_name, 
+			zyg_abbrev,
+			zyg_definition,
+			zyg_gene_prefix)
+  values (get_id('ZYG'), 
+		'paternal zygotic',
+		'PZ', 
+		'dad and self homozygous',
+		'PZ');
 
-insert into zygocity (zyg_zdb_id, zyg_name, zyg_definition)
-  values (get_id('ZYG'), 'complex', 'genotype with multiple insertions of insertional construct');
+insert into zygocity (zyg_zdb_id, 
+			zyg_name, zyg_abbrev,
+			zyg_definition)
+  values (get_id('ZYG'), 
+		'complex', 
+		'C',
+		'genotype with multiple insertions of insertional construct');
 
-insert into zygocity (zyg_zdb_id, zyg_name, zyg_definition)
-  values (get_id('ZYG'), 'unknown', 'zygocity unknown');
+insert into zygocity (zyg_zdb_id, 
+			zyg_name,
+			zyg_abbrev, 
+			zyg_definition)
+  values (get_id('ZYG'), 
+		'unknown', 
+		'U',
+		'zygocity unknown');
 
-insert into zygocity (zyg_zdb_id, zyg_name, zyg_definition)
-  values (get_id('ZYG'), 'wild type', 'parental zygocity is non-mutant');
+insert into zygocity (zyg_zdb_id, 
+			zyg_name, 
+			zyg_abbrev,
+			zyg_definition)
+  values (get_id('ZYG'), 
+		'wild type', 
+		'W',
+		'parental zygocity is non-mutant');
 
 --create genotype_feature table 
 
@@ -667,6 +989,14 @@ extent size 2048 next size 2048 lock mode row ;
 create unique index genotype_feature_primary_key_index
   on genotype_feature (genofeat_zdb_id)
   using btree in idxdbs3;
+
+create index genofeat_feature_zdb_id_foreign_key_index
+  on genotype_feature (genofeat_feature_zdb_id)
+  using btree in idxdbs3 ;
+
+create index genofeat_chromosome_foreign_key_index
+  on genotype_feature (genofeat_chromosome)
+  using btree in idxdbs3 ;
 
 create unique index genotype_feature_alternate_key_index
   on genotype_feature (genofeat_geno_zdb_id, genofeat_feature_zdb_id, genofeat_chromosome) 
@@ -692,16 +1022,14 @@ alter table genotype_feature
   add constraint unique (genofeat_geno_zdb_id, genofeat_feature_zdb_id, genofeat_chromosome)
   constraint genotype_feature_alternate_key ;
 
-alter table genotype_feature
-  add constraint (foreign key (genofeat_geno_zdb_id) 
-    references genotype on delete cascade constraint
-    genofeat_geno_foreign_key_odc);
+--! ODC from genotype to genotype_feature...took this out b/c of 
+--frodo meeting on 6/7
 
---! ODC from active data to genotype_feature.
+--took out odc from active data too.
 
 alter table genotype_feature
    add constraint (foreign key (genofeat_zdb_id)
-   references zdb_active_data on delete cascade constraint
+   references zdb_active_data constraint
    genofeat_zdb_active_data_foreign_key);
 
 alter table genotype_feature
@@ -736,93 +1064,6 @@ insert into zdb_object_type (zobjtype_name, zobjtype_day,
   values ('GENOFEAT', '11/15/2005','1','','genotype_feature', 
 	  'genofeat_zdb_id', 't','f', '2') ;
 
---create genotype_marker table (a duplicate of the genotype_feature table
---so we don't have to merge the marker and feature tables).
-
-create table genotype_marker (genomrkr_zdb_id varchar(50) not null constraint
-					genomrkr_zdb_id_not_null,
-				genomrkr_geno_zdb_id varchar(50) not null constraint
-					genomrkr_geno_zdb_id_not_null, 
-				genomrkr_mrkr_zdb_id varchar(50) not null constraint
-					genomrkr_mrkr_zdb_id_not_null,	
-				genomrkr_chromosome varchar(2),
-				genomrkr_dad_zygocity varchar(50),
-				genomrkr_mom_zygocity varchar(50),
-				genomrkr_zygocity varchar(50) not null constraint
-					genomrkr_zygocity_not_null
-)
-
-fragment by round robin in tbldbs1,tbldbs2,tbldbs3
-extent size 2048 next size 2048 lock mode row ;	
-
-create unique index genotype_marker_primary_key_index
-  on genotype_marker (genomrkr_zdb_id)
-  using btree in idxdbs3;
-
-create unique index genotype_marker_alternate_key_index
-  on genotype_marker (genomrkr_geno_zdb_id, genomrkr_mrkr_zdb_id) 
-  using btree in idxdbs3;
-
-create index genomrkr_zygocity_index
-  on genotype_marker (genomrkr_zygocity)
-  using btree in idxdbs3 ;
-
-create index genomrkr_mom_zygocity_index
-  on genotype_marker (genomrkr_mom_zygocity)
-  using btree in idxdbs3 ;
-
-create index genomrkr_dad_zygocity_index
-  on genotype_marker (genomrkr_dad_zygocity)
-  using btree in idxdbs3 ;
-
-alter table genotype_marker
-  add constraint (foreign key (genomrkr_zygocity)
-  references zygocity constraint 
-	genomrkr_zygocity_foreign_key);
-
-alter table genotype_marker
-  add constraint (foreign key (genomrkr_dad_zygocity)
-  references zygocity constraint 
-	genomrkr_dad_zygocity_foreign_key);
-
-alter table genotype_marker
-  add constraint (foreign key (genomrkr_mom_zygocity)
-  references zygocity constraint 
-	genomrkr_mom_zygocity_foreign_key);
-
-alter table genotype_marker
-  add constraint primary key (genomrkr_zdb_id)
-  constraint genotype_marker_primary_key ;
-
-alter table genotype_marker
-  add constraint unique (genomrkr_geno_zdb_id, genomrkr_mrkr_zdb_id)
-  constraint genotype_marker_alternate_key ;
-
-alter table genotype_marker
-  add constraint (foreign key (genomrkr_geno_zdb_id) 
-    references genotype on delete cascade constraint
-    genomrkr_geno_foreign_key_odc);
-
---! ODC from active data to genotype_marker.
-
-alter table genotype_marker
-   add constraint (foreign key (genomrkr_zdb_id)
-   references zdb_active_data on delete cascade constraint
-   genomrkr_zdb_active_data_foreign_key);
-
-alter table genotype_marker
-   add constraint (foreign key (genomrkr_mrkr_zdb_id)
-   references marker on delete cascade constraint
-   genomrkr_mrkr_foreign_key_odc);
-
-insert into zdb_object_type (zobjtype_name, zobjtype_day, 
-	zobjtype_seq, zobjtype_app_page, zobjtype_home_table,
-	zobjtype_home_zdb_id_column,
-	zobjtype_is_data, zobjtype_is_source, 
-	zobjtype_attribution_display_tier)
-  values ('GENOMRKR', '11/15/2005','1','','genotype_marker', 
-	  'genomrkr_zdb_id', 't','f', '2');
-
 --create table genotype_background
 
 --genotype background table holds the background information
@@ -839,17 +1080,17 @@ fragment by round robin in tbldbs1, tbldbs2, tbldbs3
 extent size 1024 next size 1024
 lock mode row ;
 
-create unique index genotype_background_primary_key_index
-  on genotype_background (genoback_geno_zdb_id, 
-				genoback_background_zdb_id)
-  using btree in idxdbs3 ;
-
-create index genotype_background_genotype_zdb_id_foreign_key_index
+create index genotype_genotype_zdb_id_foreign_key_index
   on genotype_background (genoback_geno_zdb_id)
   using btree in idxdbs3 ;
 
-create index genoback_genotype_zdb_id_foreign_key_index
+create index genoback_background_zdb_id_foreign_key_index
   on genotype_background (genoback_background_zdb_id)
+  using btree in idxdbs3 ;
+
+create unique index genotype_background_primary_key_index
+  on genotype_background (genoback_geno_zdb_id, 
+				genoback_background_zdb_id)
   using btree in idxdbs3 ;
 
 alter table genotype_background
@@ -930,13 +1171,7 @@ insert into ontology
   values ('sequence ontology', '1');
 
 insert into ontology
-  values ('pato attribute ontology', '2');
-
-insert into ontology
-  values ('pato value ontology', '3');
-
-insert into ontology
-  values ('pato context ontology', '4');
+  values ('quality', '2');
 
 create table term (
     term_zdb_id varchar(50),
@@ -953,15 +1188,19 @@ fragment by round robin in tbldbs1, tbldbs2, tbldbs3
 
 create unique index term_primary_key_index 
 	on term (term_zdb_id) using btree in idxdbs3;
+
 create unique index term_ont_id_index on 
     term (term_ont_id) using btree in idxdbs3 ;
+
 create index term_ontology_index on term 
     (term_ontology) using btree in idxdbs3;
 
 alter table term add constraint unique (term_ont_id) 
     constraint term_ont_id_unique  ;
+
 alter table term add constraint primary key (term_zdb_id) 
     constraint term_primary_key  ;
+
 alter table term add constraint (foreign key (term_ontology) 
     references ontology constraint term_ontology_foreign_key);
   
@@ -991,6 +1230,14 @@ create table genotype_experiment (genox_zdb_id varchar(50) not null constraint
 create unique index genotype_experiment_primary_key_index
   on genotype_experiment  (genox_zdb_id) 
   using btree in idxdbs3;
+
+create index genotype_experiment_exp_zdb_id_foreign_key_index
+ on genotype_experiment (genox_exp_zdb_id)
+  using btree in idxdbs3 ;
+
+create index genotype_experiment_geno_zdb_id_foreign_key_index
+ on genotype_experiment (genox_geno_zdb_id)
+  using btree in idxdbs3 ;
 
 create unique index genotype_experiment_alternate_key_index
   on genotype_experiment (genox_geno_zdb_id, genox_exp_zdb_id)
@@ -1027,214 +1274,258 @@ insert into zdb_object_type (zobjtype_name, zobjtype_day,
   values ('GENOX', '11/15/2005','1','','genotype_experiment', 
 	  'genox_zdb_id', 't','f', '2') ;
 
---create table phenotype_hysterical_summary
 
---create table phenotype_old (pold_genox_zdb_id varchar(50) not null 
---						constraint phissum_genox_zdb_id_not_null,
---					  pold_submitter_comments lvarchar(6000),
---					  pold_segregation lvarchar 
---)
---fragment by round robin in tbldbs1, tbldbs2, tbldbs3
--- extent size 1024 next size 1024 lock mode row;
+--create the apato tag tale
 
---create unique index phenotype_old_primary_key_index
---  on phenotype_old (pold_genox_zdb_id)
---  using btree in idxdbs2; 
 
---alter table phenotype_old
---  add constraint (foreign key (pold_genox_zdb_id)
---  references genotype_experiment on delete cascade
---  constraint pold_genox_zdb_id_foreign_key_odc);
+create table apato_tag (apatotag_name varchar(25) not null constraint
+				apatotag_name_not_null)
+in tbldbs2 extent size 8 next size 8 lock mode row ;
 
---alter table phenotype_old
---  add constraint primary key (pold_genox_zdb_id)
---  constraint phenotype_old_primary_key ;
-
---create the phenotype_anatomy table
-
-create table phenotype_anatomy (pato_zdb_id varchar(50) not null
-				constraint pato_zdb_id_not_null,
-			pato_genox_zdb_id varchar(50) not null
-				constraint pato_genox_zdb_id_not_null,
-			pato_start_stg_zdb_id varchar(50),
-			pato_end_stg_zdb_id varchar(50),
-			pato_entity_zdb_id varchar(50) not null constraint 
-				pato_entity_zdb_id_not_null,
-			pato_attribute_zdb_id varchar(50) 
-				default 'qualitatitive'
-				not null constraint pato_attribute_not_null ,
-			pato_value_zdb_id varchar(50) default 'abnormal'
-				not null constraint pato_value_not_null,
-			pato_context varchar(50) default 'unspecified'
-				not null constraint pato_context_not_null
-)
-fragment by round robin in tbldbs1, tbldbs2, tbldbs3
- extent size 1024 next size 1024 ;
-
-create unique index phenotype_anatomy_primary_key_index
-  on phenotype_anatomy (pato_zdb_id)
+create unique index apatotag_name_primary_key_index
+  on apato_tag (apatotag_name)
   using btree in idxdbs2 ;
 
-create unique index phenotype_anatomy_alternate_key_index
-  on phenotype_anatomy (pato_genox_zdb_id, 
-			pato_start_stg_zdb_id, 
-			pato_end_stg_zdb_id,
-			pato_entity_zdb_id,
-			pato_attribute_zdb_id,
-			pato_value_zdb_id)
-  using btree in idxdbs3;
+alter table apato_tag
+  add constraint primary key (apatotag_name)
+  constraint apatotag_primary_key ;
 
-create index pato_start_stg_fk_index 
-  on phenotype_Anatomy (pato_start_stg_zdb_id)
-  using btree in idxdbs2 ;
+insert into apato_tag
+  values ('abnormal') ;
 
-create index pato_end_stg_fk_index
-  on phenotype_anatomy (pato_end_stg_zdb_id)
-  using btree in idxdbs2 ;
+insert into apato_tag
+  values ('normal') ;
 
-alter table phenotype_anatomy
-  add constraint primary key (pato_zdb_id)
-  constraint phenotype_anatomy_primary_key ;
+insert into apato_tag
+  values ('abnormal/present') ;
 
-alter table phenotype_anatomy
-  add constraint (foreign key (pato_zdb_id)
-  references zdb_active_data on delete cascade
-  constraint pato_zdb_active_data_foreign_key_odc);
+insert into apato_tag
+  values ('abnormal/absent') ;
 
-alter table phenotype_anatomy
-  add constraint unique (pato_genox_zdb_id, 
-			pato_start_stg_zdb_id, 
-			pato_end_stg_zdb_id,
-			pato_entity_zdb_id,
-			pato_attribute_zdb_id,
-			pato_value_zdb_id)
-  constraint phenotype_anatomy_alternate_key_constraint ;
+insert into apato_tag
+  values ('normal/present') ;
 
-alter table phenotype_anatomy
-  add constraint (foreign key (pato_genox_zdb_id)
-  references genotype_experiment on delete cascade
-  constraint pato_genox_foreign_key_odc);
+insert into apato_tag
+  values ('normal/absent') ;
 
-alter table phenotype_anatomy
-  add constraint (foreign key (pato_start_stg_zdb_id)
-  references stage
-  constraint pato_start_stg_foreign_key);
+create table apato_infrastructure (api_zdb_id varchar(50) not null constraint
+						api_zdb_id_not_null,
+					api_entity_a_zdb_id varchar(50) 
+						not null constraint
+						api_entity_a_zdb_id_not_null,
+					api_entity_b_zdb_id varchar(50),
+					api_quality_zdb_id varchar(50)
+						not null constraint
+						api_quality_zdb_id_not_null,
+					api_tag varchar(25)
+						not null constraint
+						api_tag_not_null,
+					api_pub_zdb_id varchar(50)
+						not null constraint
+						api_pub_zdb_id_not_null,
+					api_curator_zdb_id varchar(50)
+						not null constraint
+						api_curator_zdb_id_not_null,
+					api_date datetime year to day
+						default current year to day
+						not null constraint
+						api_date_not_null)
+in tbldbs3 extent size 32 next size 32 lock mode page ;
 
-alter table phenotype_anatomy
-  add constraint (foreign key (pato_end_stg_zdb_id)
-  references stage
-  constraint pato_end_stage_foreign_key);
+create unique index api_zdb_id_primary_key_index
+  on apato_infrastructure (api_zdb_id)
+  using btree in idxdbs4 ;
 
-alter table phenotype_anatomy
-  add constraint (foreign key (pato_entity_zdb_id)
-  references anatomy_item
-  constraint pato_entity_foreign_key);
+create index api_entity_a_zdb_id_fk_index
+  on apato_infrastructure (api_entity_a_zdb_id)
+  using btree in idxdbs4 ;
 
-alter table phenotype_anatomy
-  add constraint (foreign key (pato_attribute_zdb_id)
-  references term
-  constraint pato_attribute_foreign_key);
+create index api_entity_b_zdb_id_fk_index
+  on apato_infrastructure (api_entity_b_zdb_id)
+  using btree in idxdbs4 ;
 
-alter table phenotype_anatomy
-  add constraint (foreign key (pato_value_zdb_id)
-  references term
-  constraint pato_value_foreign_key);
+create index api_tag_zdb_id_fk_index
+  on apato_infrastructure (api_tag)
+  using btree in idxdbs4 ;
 
+create index api_curator_zdb_id_fk_index
+  on apato_infrastructure (api_curator_zdb_id)
+  using btree in idxdbs4 ;
 
---create the phenotype_go table
+create index api_pub_zdb_id_fk_index
+  on apato_infrastructure (api_pub_zdb_id)
+  using btree in idxdbs4 ;
 
-create table phenotype_go (patog_zdb_id varchar(50) not null
-				constraint patog_zdb_id_not_null,
-			patog_genox_zdb_id varchar(50) not null
-				constraint patog_genox_zdb_id_not_null,
-			patog_start_stg_zdb_id varchar(50),
-			patog_end_stg_zdb_id varchar(50),
-			patog_entity_zdb_id varchar(50) not null constraint 
-				patog_entity_zdb_id_not_null,
-			patog_attribute_zdb_id varchar(50) 
-				default 'unspecified'
-				not null constraint
-				    patog_attribute_zdb_id_not_null,
-			patog_value_zdb_id varchar(50) 
-				default 'unspecified' 
-				not null constraint
-				    patog_value_zdb_id_not_null,
-			patog_context varchar(50)
-)
-fragment by round robin in tbldbs1, tbldbs2, tbldbs3
- extent size 1024 next size 1024 ;
+create index api_quality_zdb_id_fk_index
+  on apato_infrastructure (api_quality_zdb_id)
+  using btree in idxdbs4 ;
 
-create unique index phenotype_go_primary_key_index
-  on phenotype_go (patog_zdb_id)
-  using btree in idxdbs2 ;
+alter table apato_infrastructure
+  add constraint primary key (api_zdb_id)
+  constraint apato_infrastructure_primary_key ;
 
-create unique index phenotype_go_alternate_key_index
-  on phenotype_go (patog_genox_zdb_id, 
-			patog_start_stg_zdb_id, 
-			patog_end_stg_zdb_id,
-			patog_entity_zdb_id,
-			patog_attribute_zdb_id,
-			patog_value_zdb_id)
-  using btree in idxdbs3;
+alter table apato_infrastructure
+  add constraint (foreign key (api_zdb_id)  
+  references zdb_active_data on delete cascade constraint
+  apato_zdb_id_active_data_fk_odc) ;
 
-alter table phenotype_go
-  add constraint primary key (patog_zdb_id)
-  constraint phenotype_go_primary_key ;
+alter table apato_infrastructure
+  add constraint (foreign key (api_entity_a_zdb_id)  
+  references zdb_active_data on delete cascade constraint
+  apato_entity_a_zdb_id_fk_odc) ;
 
-alter table phenotype_go
-  add constraint unique (patog_genox_zdb_id, 
-			patog_start_stg_zdb_id, 
-			patog_end_stg_zdb_id,
-			patog_entity_zdb_id,
-			patog_attribute_zdb_id,
-			patog_value_zdb_id)
-  constraint phenotype_go_alternate_key_constraint ;
+alter table apato_infrastructure
+  add constraint (foreign key (api_entity_b_zdb_id)  
+  references zdb_active_data on delete cascade constraint
+  apato_entity_b_zdb_id_fk_odc) ;
 
-alter table phenotype_go
-  add constraint (foreign key (patog_genox_zdb_id)
-  references genotype_experiment on delete cascade
-  constraint patog_genox_foreign_key_odc);
+alter table apato_infrastructure
+  add constraint (foreign key (api_tag)
+  references apato_tag constraint
+  apato_tag_fk) ;
 
-alter table phenotype_go
-  add constraint (foreign key (patog_zdb_id)
-  references zdb_active_data on delete cascade
-  constraint patog_zdb_active_data_foreign_key_odc);
-
-alter table phenotype_go
-  add constraint (foreign key (patog_start_stg_zdb_id)
-  references stage
-  constraint patog_start_stg_foreign_key);
-
-alter table phenotype_go
-  add constraint (foreign key (patog_end_stg_zdb_id)
-  references stage
-  constraint patog_end_stage_foreign_key);
-
-alter table phenotype_go
-  add constraint (foreign key (patog_entity_zdb_id)
-  references go_term
-  constraint patog_entity_foreign_key);
-
-alter table phenotype_go
-  add constraint (foreign key (patog_attribute_zdb_id)
-  references term
-  constraint patog_attribute_foreign_key);
-
-alter table phenotype_go
-  add constraint (foreign key (patog_value_zdb_id)
-  references term
-  constraint patog_value_foreign_key);
-
---NEED TO UPDATE validate data to not delete phenotype_go
---zdb_ids as orphans!!!
+alter table apato_infrastructure
+  add constraint (foreign key (api_quality_zdb_id)
+  references term constraint
+  apato_quality_zdb_id_fk) ;
 
 insert into zdb_object_type (zobjtype_name, zobjtype_day, 
 	zobjtype_seq, zobjtype_app_page, zobjtype_home_table, 
 	zobjtype_home_zdb_id_column,
 	zobjtype_is_data, zobjtype_is_source, 
 	zobjtype_attribution_display_tier)
-  values ('PATO', '11/15/2005','1','','phenotype_anatomy', 
-	  'pato_zdb_id', 't','f', '2') ;
+  values ('API', '07/26/2006','1','','apato_infrastructure', 
+	  'api_zdb_id', 't','f', '2') ;
+
+--create atomic_phenotype table
+
+create table atomic_phenotype (apato_zdb_id varchar(50) not null
+					constraint pato_zdb_id_not_null,
+				apato_genox_zdb_id varchar(50) not null
+					constraint apato_genox_zdb_id_not_null,
+				apato_start_stg_zdb_id varchar(50),
+				apato_end_stg_zdb_id varchar(50),
+				apato_pub_zdb_id varchar(50) 
+					not null constraint
+					apato_pub_zdb_id_not_null,
+				apato_entity_a_zdb_id varchar(50) 
+					not null constraint 
+					apato_entity_a_zdb_id_not_null,
+				apato_entity_b_zdb_id varchar(50),
+				apato_quality_zdb_id varchar(50) 
+					default 'quality'
+					not null constraint apato_quality_not_null ,
+				apato_tag varchar(25) default 'abnormal'
+					not null constraint apato_tag_not_null
+) fragment by round robin in tbldbs1, tbldbs2, tbldbs3
+ extent size 1024 next size 1024 
+ lock mode page;
+
+create unique index atomic_phenotype_primary_key_index
+  on atomic_phenotype (apato_zdb_id)
+  using btree in idxdbs2 ;
+
+create index apato_genox_fk_index 
+  on atomic_phenotype (apato_genox_zdb_id)
+  using btree in idxdbs2 ;
+
+create index apato_start_stg_fk_index 
+  on atomic_phenotype (apato_start_stg_zdb_id)
+  using btree in idxdbs2 ;
+
+create index apato_end_stg_fk_index
+  on atomic_phenotype (apato_end_stg_zdb_id)
+  using btree in idxdbs2 ;
+
+create index apato_entity_a_zdb_id_fk_index
+  on atomic_phenotype (apato_entity_a_zdb_id)
+  using btree in idxdbs2 ;
+
+create index apato_entity_b_zdb_id_fk_index
+  on atomic_phenotype (apato_entity_b_zdb_id)
+  using btree in idxdbs2 ;
+
+create index apato_quality_zdb_id_fk_index
+  on atomic_phenotype (apato_quality_zdb_id)
+  using btree in idxdbs2;
+
+create index apato_tag_fk_index
+  on atomic_phenotype (apato_tag)
+  using btree in idxdbs2;
+
+create unique index atomic_phenotype_alternate_key_index
+  on atomic_phenotype (apato_genox_zdb_id,
+			apato_pub_zdb_id, 
+			apato_start_stg_zdb_id, 
+			apato_end_stg_zdb_id,
+			apato_entity_a_zdb_id,
+			apato_entity_b_zdb_id,
+			apato_quality_zdb_id,
+			apato_tag)
+  using btree in idxdbs3;
+
+alter table atomic_phenotype
+  add constraint primary key (apato_zdb_id)
+  constraint atomic_phenotype_primary_key ;
+
+alter table atomic_phenotype
+  add constraint (foreign key (apato_zdb_id)
+  references zdb_active_data on delete cascade
+  constraint apato_zdb_active_data_foreign_key_odc);
+
+alter table atomic_phenotype
+  add constraint unique (apato_genox_zdb_id, 
+			 apato_pub_zdb_id,
+			 apato_start_stg_zdb_id, 
+			 apato_end_stg_zdb_id,
+			 apato_entity_a_zdb_id,
+			 apato_entity_b_zdb_id,
+			 apato_quality_zdb_id,
+			 apato_tag)
+  constraint atomic_phenotype_alternate_key_constraint ;
+
+alter table atomic_phenotype
+  add constraint (foreign key (apato_genox_zdb_id)
+  references genotype_experiment on delete cascade
+  constraint apato_genox_foreign_key_odc);
+
+alter table atomic_phenotype
+  add constraint (foreign key (apato_start_stg_zdb_id)
+  references stage
+  constraint apato_start_stg_foreign_key);
+
+alter table atomic_phenotype
+  add constraint (foreign key (apato_end_stg_zdb_id)
+  references stage
+  constraint apato_end_stage_foreign_key);
+
+alter table atomic_phenotype
+  add constraint (foreign key (apato_entity_a_zdb_id)
+  references zdb_active_data
+  on delete cascade constraint apato_entity_a_foreign_key);
+
+alter table atomic_phenotype
+  add constraint (foreign key (apato_entity_b_zdb_id)
+  references zdb_active_data
+  on delete cascade constraint apato_entity_b_foreign_key);
+
+alter table atomic_phenotype
+  add constraint (foreign key (apato_quality_zdb_id)
+  references term
+  constraint apato_quality_foreign_key);
+
+alter table atomic_phenotype
+  add constraint (foreign key (apato_tag)
+  references apato_tag
+  constraint apato_tag_foreign_key);
+
+insert into zdb_object_type (zobjtype_name, zobjtype_day, 
+	zobjtype_seq, zobjtype_app_page, zobjtype_home_table, 
+	zobjtype_home_zdb_id_column,
+	zobjtype_is_data, zobjtype_is_source, 
+	zobjtype_attribution_display_tier)
+  values ('APATO', '11/15/2005','1','','atomic_phenotype', 
+	  'apato_zdb_id', 't','f', '2') ;
 
 --create table feature_history
 create table feature_history 
@@ -1353,6 +1644,11 @@ update int_data_supplier
 
 --leftover constraints to avoid errors 
 
+select count(*), ftrgrp_name
+  from feature_type_group
+  group by ftrgrp_name
+  having count(*) > 1;
+
 set constraints all immediate ;
 
 alter table feature add constraint (foreign key (feature_type) 
@@ -1367,22 +1663,6 @@ alter table feature_marker_relationship_type add constraint
 alter table feature_marker_relationship_type add constraint 
     (foreign key (fmreltype_mrkr_type_group) references marker_type_group 
 	constraint fmreltype_ftr_type_group_mrkr_foreign_key);
-
-insert into zdb_object_type (zobjtype_name, zobjtype_day, 
-	zobjtype_seq, zobjtype_app_page, zobjtype_home_table, 
-	zobjtype_home_zdb_id_column,
-	zobjtype_is_data, zobjtype_is_source, 
-	zobjtype_attribution_display_tier)
-  values ('INSRTN', '11/15/2005','1','','feature', 
-	  'feature_zdb_id', 't','f', '2') ;
-
-insert into zdb_object_type (zobjtype_name, zobjtype_day, 
-	zobjtype_seq, zobjtype_app_page, zobjtype_home_table, 
-	zobjtype_home_zdb_id_column,
-	zobjtype_is_data, zobjtype_is_source, 
-	zobjtype_attribution_display_tier)
-  values ('DLTN', '11/15/2005','1','','feature', 
-	  'feature_zdb_id', 't','f', '2') ;
 
 insert into zdb_object_type (zobjtype_name, zobjtype_day, 
 	zobjtype_seq, zobjtype_app_page, zobjtype_home_table, 
@@ -1408,6 +1688,15 @@ insert into zdb_object_type (zobjtype_name, zobjtype_day,
   values ('TGCONSTRCT', '11/15/2005','1','','marker', 
 	  'mrkr_zdb_id', 't','f', '2') ;
 
+--insert into zdb_object_type (zobjtype_name, zobjtype_day, 
+--	zobjtype_seq, zobjtype_app_page, zobjtype_home_table, 
+--	zobjtype_home_zdb_id_column,
+--	zobjtype_is_data, zobjtype_is_source, 
+--	zobjtype_attribution_display_tier)
+--  values ('TRANSLOC', '11/15/2005','1','','marker', 
+--	  'mrkr_zdb_id', 't','f', '2') ;
+
+
 insert into zdb_object_type (zobjtype_name, zobjtype_day, 
 	zobjtype_seq, zobjtype_app_page, zobjtype_home_table, 
 	zobjtype_home_zdb_id_column,
@@ -1432,64 +1721,42 @@ insert into zdb_object_type (zobjtype_name, zobjtype_day,
   values ('GTCONSTRCT', '11/15/2005','1','','marker', 
 	  'mrkr_zdb_id', 't','f', '2') ;
 
-insert into zdb_object_type (zobjtype_name, zobjtype_day, 
-	zobjtype_seq, zobjtype_app_page, zobjtype_home_table, 
-	zobjtype_home_zdb_id_column,
-	zobjtype_is_data, zobjtype_is_source, 
-	zobjtype_attribution_display_tier)
-  values ('SEQVAR', '11/15/2005','1','','feature', 
-	  'feature_zdb_id', 't','f', '2') ;
-
-insert into zdb_object_type (zobjtype_name, zobjtype_day, 
-	zobjtype_seq, zobjtype_app_page, zobjtype_home_table, 
-	zobjtype_home_zdb_id_column,
-	zobjtype_is_data, zobjtype_is_source, 
-	zobjtype_attribution_display_tier)
-  values ('PNTMTN', '11/15/2005','1','','feature', 
-	  'feature_zdb_id', 't','f', '2') ;
-
-insert into zdb_object_type (zobjtype_name, zobjtype_day, 
-	zobjtype_seq, zobjtype_app_page, zobjtype_home_table, 
-	zobjtype_home_zdb_id_column,
-	zobjtype_is_data, zobjtype_is_source, 
-	zobjtype_attribution_display_tier)
-  values ('INTRCRMSLTN', '11/15/2005','1','','feature', 
-	  'feature_zdb_id', 't','f', '2') ;
-
 --create table pato_figure 
 
-create table pato_figure (patofig_pato_zdb_id varchar(50) 
-				not null constraint patofig_pato_zdb_id_not_null,
-			     patofig_fig_zdb_id varchar(50)
-				not null constraint patofig_fig_zdb_id_not_null)
+create table apato_figure (apatofig_apato_zdb_id varchar(50) 
+				not null constraint 
+				apatofig_pato_zdb_id_not_null,
+			    apatofig_fig_zdb_id varchar(50)
+				not null constraint 
+				apatofig_fig_zdb_id_not_null)
 fragment by round robin in tbldbs1, tbldbs2, tbldbs3
  extent size 1024 next size 1024 lock mode row;
 
-create unique index patofig_primary_key_index
-  on pato_figure (patofig_pato_zdb_id, patofig_fig_zdb_id)
+create index apatofig_fig_foreign_key_index
+  on apato_figure (apatofig_fig_zdb_id) 
   using btree in idxdbs4 ;
 
-create index patofig_fig_foreign_key_index
-  on pato_figure (patofig_fig_zdb_id) 
+create index apatofig_pato_zdb_id_foreign_key_index
+  on apato_figure (apatofig_apato_zdb_id)
   using btree in idxdbs4 ;
 
-create index patofig_pato_zdb_id_foreign_key_index
-  on pato_figure (patofig_pato_zdb_id)
+create unique index apatofig_primary_key_index
+  on apato_figure (apatofig_apato_zdb_id, apatofig_fig_zdb_id)
   using btree in idxdbs4 ;
 
-alter table pato_figure
-  add constraint primary key (patofig_pato_zdb_id, patofig_fig_zdb_id)
-  constraint pato_figure_primary_key ;
+alter table apato_figure
+  add constraint primary key (apatofig_apato_zdb_id, apatofig_fig_zdb_id)
+  constraint apato_figure_primary_key ;
 
-alter table pato_figure
-  add constraint (foreign key (patofig_pato_zdb_id)
+alter table apato_figure
+  add constraint (foreign key (apatofig_apato_zdb_id)
   references zdb_active_data on delete cascade
-  constraint patofig_pato_foreign_key_odc) ;
+  constraint apatofig_pato_foreign_key_odc) ;
 
-alter table pato_figure
-  add constraint (foreign key (patofig_fig_zdb_id)
+alter table apato_figure
+  add constraint (foreign key (apatofig_fig_zdb_id)
   references figure on delete cascade
-  constraint patofig_fig_foreign_key_odc) ;
+  constraint apatofig_fig_foreign_key_odc) ;
 
 --create table genotype_experiment_figure (genoxfig_genox_zdb_id varchar(50) not null 
 --						constraint genoxfig_genox_zdb_id_not_null,
@@ -1525,11 +1792,6 @@ alter table pato_figure
 --  references figure on delete cascade
 --  constraint genoxfig_fig_foreign_key_odc);
 
-
-
-
-
-
 alter table figure
  drop constraint fx_figure_source_foreign_key ;
 
@@ -1549,19 +1811,84 @@ insert into tmp_fish_image (fish_id, counter)
     where fimg_fig_zdb_id is null
     group by fimg_fish_zdb_id ;
 
+create unique index fish_id_index
+  on tmp_fish_image (fish_id)
+  using btree in idxdbs3 ;
+
+update statistics high for table tmp_fish_image ;
+
 set constraints all deferred ;
 
 alter table figure
   modify (fig_label varchar(50)) ;
 
+create temp table tmp_note (zdb_id varchar(50),
+				note lvarchar(2000))
+with no log ;
+
+load from CommentsTabbed
+  insert into tmp_note;
+
 insert into figure (fig_zdb_id,
 			fig_label, fig_comments, fig_source_zdb_id)
-
 select get_id('FIG'),
 	fish_id,
-        fish_id,
-        'ZDB-PUB-030129-1'
+	fish_id,
+        'ZDB-PUB-060503-2'
   from tmp_fish_image;
+
+update statistics high for table figure ;
+
+--more figures for phenotype entries with no photos.
+!echo "this is the new figure creation for pato annotations with no images" ;
+
+
+update statistics high for table figure ;
+
+insert into figure (fig_zdb_id, fig_label, fig_comments, fig_source_zdb_id)
+  select get_id('FIG'),
+	fish.zdb_id,
+	fish.zdb_id,
+	'ZDB-PUB-060503-2'
+    from fish
+    where not exists (select 'x' 
+			from figure b
+			where b.fig_label = fish.zdb_id)   
+	and fish.zdb_id not like 'ZDB-FISH-060608-%'
+   	and fish.zdb_id not like 'ZDB-FISH-061101-%';
+
+!echo "CASE 1440" ;
+
+insert into figure (fig_zdb_id, fig_label, fig_comments, fig_source_zdb_id)
+  select get_id('FIG'),
+	fish.zdb_id,
+	fish.zdb_id,
+	'ZDB-PUB-060606-1'
+    from fish
+    where not exists (select 'x' 
+			from figure b
+			where b.fig_label = fish.zdb_id) 
+   and (fish.zdb_id like 'ZDB-FISH-060608-%'
+   	or fish.zdb_id like 'ZDB-FISH-061101-%');
+
+
+update figure
+  set fig_caption = (select "<br><b>Original Submitter Comments: </b>"||note
+  			from tmp_note
+			where fig_label = zdb_id)
+  where exists (Select 'x'
+		from tmp_note
+		where zdb_id = fig_label);
+
+update statistics high for table figure ;
+
+--update figure
+--  set fig_label = (select "Fig. for ("||fish.allele||")"
+--			from fish
+--			where fig_label = fish.zdb_id)
+--  where fig_label like 'ZDB-FISH-%' ;
+
+!echo "fish_image_fig update";
 
 update fish_image
   set fimg_fig_zdb_id = (select fig_zdb_id
@@ -1569,9 +1896,12 @@ update fish_image
 				where fimg_fish_zdb_id = fig_label)
   where fimg_fig_zdb_id is null;
 
+select fimg_Fig_zdb_id
+  from fish_image
+  where fimg_fish_zdb_id ='ZDB-FISH-040726-1';
+
 alter table fish_image
   drop constraint fimg_fish_foreign_key_odc ;
-
 
 insert into zdb_active_data
   select fig_Zdb_id from figure
@@ -1588,6 +1918,7 @@ create table image_view
 create unique index image_view_primary_key_index 
     on image_view (imgview_name) using btree 
      in idxdbs4 ;
+
 alter table image_view add constraint primary 
     key (imgview_name) constraint image_view_primary_key 
      ;
@@ -1603,6 +1934,7 @@ create table image_preparation
 create unique index image_preparation_primary_key_index 
     on image_preparation (imgprep_name) using 
     btree  in idxdbs4 ;
+
 alter table image_preparation add constraint 
     primary key (imgprep_name) constraint image_preparation_primary_key ;
 
@@ -1617,6 +1949,7 @@ create table image_direction
 create unique index image_direction_primary_key_index 
     on image_direction (imgdir_name) using btree 
      in idxdbs4 ;
+
 alter table image_direction add constraint primary 
     key (imgdir_name) constraint image_direction_primary_key ;
 
@@ -1631,6 +1964,7 @@ create table image_form
 create unique index image_form_primary_key_index 
     on image_form (imgform_name) using btree 
      in idxdbs4 ;
+
 alter table image_form add constraint primary 
     key (imgform_name) constraint image_form_primary_key ;
 
@@ -1664,18 +1998,25 @@ fragment by round robin in tbldbs1, tbldbs2, tbldbs3
 
 create index img_direction_index on image 
     (img_direction) using btree ;
+
 create index img_form_index on image 
     (img_form) using btree in idxdbs2 ;
+
 create index img_owner_zdb_id_index on image 
     (img_owner_zdb_id) using btree in idxdbs2 ;
+
 create index img_preparation_index on image 
     (img_preparation) using btree in idxdbs2 ;
+
 create index img_view_index on image 
     (img_view) using btree in idxdbs2 ;
+
 create index image_figure_foreign_key_index on 
     image (img_fig_zdb_id) using btree in idxdbs2 ;
+
 create index image_img_image_index 
 	on image (img_image) using btree in idxdbs2 ;
+
 create unique index image_primary_key_index on 
     image (img_zdb_id) using btree in idxdbs2 ;
 
@@ -1723,18 +2064,22 @@ create table image_stage
 create index imgstg_end_stg_zdb_id_index on 
     image_stage (imgstg_end_stg_zdb_id) using btree  in 
     idxdbs4 ;
+
 create index imgstg_img_zdb_id_index on 
     image_stage (imgstg_img_zdb_id) using btree  in idxdbs4 
     ;
 create index imgstg_start_stg_zdb_id_index on
     image_stage (imgstg_start_stg_zdb_id) using btree 
      in idxdbs4 ;
+
 create unique index image_stage_primary_key_index 
     on image_stage (imgstg_img_zdb_id,imgstg_start_stg_zdb_id,
     imgstg_end_stg_zdb_id) using btree  in idxdbs4 ;
+
 alter table image_stage add constraint primary 
     key (imgstg_img_zdb_id,imgstg_start_stg_zdb_id,imgstg_end_stg_zdb_id) 
     constraint image_stage_primary_key  ;
+
 alter table image_stage add constraint (foreign 
     key (imgstg_img_zdb_id) references image 
      on delete cascade constraint imgstg_img_zdb_id_foregin_key);
@@ -1768,43 +2113,15 @@ create trigger image_stage_update_trigger update
 		p_stg_hours_consistent(new_stage.imgstg_start_stg_zdb_id,
 		new_stage.imgstg_end_stg_zdb_id ));
 
+select ftrgrpmem_ftr_type_group
+  from feature_type_group_member
+  where not exists (Select 'x'
+			from feature_type_group
+			where ftrgrpmem_ftr_type_group = ftrgrp_name);
 
-create table marker_source (mrkrsrc_mrkr_zdb_id varchar(50) 
-				not null constraint
-				mrkrsrc_mrkr_lab_of_origin_not_null,
-			    mrkrsrc_lab_of_origin_zdb_id varchar(50) 
-				not null constraint 
-				mrkrsrc_lab_of_origin_not_null
-			    )
-fragment by round robin in tbldbs1, tbldbs2, tbldbs3
-extent size 32 next size 32 ;
-
-create unique index marker_source_primary_key_index
-  on marker_source (mrkrsrc_mrkr_zdb_id, mrkrsrc_lab_of_origin_zdb_id)
-  using btree in idxdbs3 ;
-
-create index mrkrsrc_mrkr_zdb_id_foreign_key_index
-  on marker_Source (mrkrsrc_mrkr_zdb_id)
-  using btree in idxdbs3 ;
-
-create index mrkrsrc_lab_of_origin_zdb_id_foreign_key_index
-  on marker_source (mrkrsrc_lab_of_origin_zdb_id)
-  using btree in idxdbs3 ;
-
-alter table marker_source
-  add constraint primary key (mrkrsrc_mrkr_zdb_id, 
-	mrkrsrc_lab_of_origin_zdb_id)
-  constraint marker_source_primary_key;
-
-alter table marker_source
-  add constraint (foreign key (mrkrsrc_mrkr_zdb_id)
-  references marker on delete cascade constraint
-  mrkrsrc_mrkr_zdb_id_foreign_key_odc);
-
-alter table marker_source
-  add constraint (foreign key (mrkrsrc_lab_of_origin_zdb_id)
-  references zdb_active_source on delete cascade constraint
-  mrkrsrc_lab_of_origin_zdb_id_foreign_key_odc);
+alter table feature_type_group_member add constraint 
+    (foreign key (ftrgrpmem_ftr_type_group) references
+	feature_type_group constraint ftrgrpmem_ftr_type_group_foreign_key);
 
 commit work ;
 --rollback work ;

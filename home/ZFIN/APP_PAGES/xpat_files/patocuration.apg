@@ -1,0 +1,84 @@
+<?MICOMMENT>
+
+FILE:     patocuration.apg
+PREFIX:   patocur_
+
+
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+
+<?/MIERROR> 
+
+<?MIBLOCK COND="$(XST,$OID)">
+
+  <?MICOMMENT> ** Define javascript object for this section and make the single instance ** <?/MICOMMENT>
+  
+  <script type="text/javascript">
+
+function getCookie(name) {
+    var dc = document.cookie;
+    var prefix = name + "=";
+    var begin = dc.indexOf("; " + prefix);
+    if (begin == -1) {
+        begin = dc.indexOf(prefix);
+        if (begin != 0) return null;
+    } else {
+        begin += 2;
+    }
+    var end = document.cookie.indexOf(";", begin);
+    if (end == -1) {
+        end = dc.length;
+    }
+    return unescape(dc.substring(begin + prefix.length, end));
+}
+  </script>
+
+
+  <link href="/phenote/css/control.css" type="text/css" rel="stylesheet">
+  <!-- Ajax stuff (prototype library and friends)-->
+
+  <script src="/phenote/javascript/ajax-lib/prototype.js" type="text/javascript"></script>
+  <script src="/phenote/javascript/ajax-lib/effects.js"   type="text/javascript"></script>
+  <script src="/phenote/javascript/ajax-lib/dragdrop.js"  type="text/javascript"></script>
+  <script src="/phenote/javascript/ajax-lib/controls.js"  type="text/javascript"></script>
+  <!-- /Ajax stuff -->
+
+  <script type="text/javascript" src="/phenote/javascript/phenote-state.js"></script>
+  <script type="text/javascript"> phenoteState.setTermInfoUrl('/phenote/Phenote/'); </script>
+  <script src="/phenote/javascript/ncbo-term-info.js" type="text/javascript"></script>
+
+  <?MICOMMENT> ** req'd by sessionstate.js ** <?/MICOMMENT>
+  <script type="text/javascript" src="/javascript/json.js"></script>
+
+  <script type="text/javascript" src="/javascript/sessionstate.js"></script>
+  <script type="text/javascript">sessionState.loadState(); </script>
+
+  <script type="text/javascript" src="/javascript/patocuration.js"></script>
+  <script type="text/javascript"> var patoCuration = new PatoCuration(); </script>
+
+
+  <?MISQL SQL="select WebExplode(object,'permission=root&page_title=Curate Pub') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+  
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-patocursummary.apg';">$1<?/MISQL>
+
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-patocurbuilder.apg';">$1<?/MISQL>
+
+  <script type="text/javascript">
+    sessionState.loadState();
+    sessionState.applyAllAttributes();
+    patoCuration.updateMutants();
+  </script>
+
+<?MIELSE>
+  <P>
+  ERROR -- something bad happened -- no OID passed in!
+<?/MIBLOCK>

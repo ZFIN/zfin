@@ -23,8 +23,8 @@ select "expression_result", count(*)
 select "figure", count(*) 	
   from figure;
 
-select "fish_image", count(*) 	
-  from fish_image;
+select "image", count(*) 	
+  from image;
 
 select "expression_pattern_figure", count(*) 
   from expression_pattern_figure;

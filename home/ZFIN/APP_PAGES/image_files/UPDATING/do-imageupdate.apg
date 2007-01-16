@@ -13,7 +13,7 @@ annotations -- huge string of urlencoded changed annotations for the image.
 
 OUTPUT VARS:
 redirect to imageview.apg
-updates records in fish_image
+updates records in image
 
 DESCRIPTION: commits the updates requested in the forms tossed up by
 imageupdate.html. Also files update record.
@@ -24,7 +24,7 @@ imageupdate.html. Also files update record.
 
 <!-- First check security. Main purpose is just to get submitter id and name -->
 <?MISQL SQL="
-  select WebExplode(object, 'permission=owns&rtype=fish_image') 
+  select WebExplode(object, 'permission=owns&rtype=image') 
     from webPages 
     where ID = 'aa-secure_navigation.apg';">
   $1
@@ -58,27 +58,27 @@ imageupdate.html. Also files update record.
 
   <?MIBLOCK COND="$(EC,$attr_type,pic)">
     <?MISQL SQL="
-      update fish_image 
+      update image 
         set $attr = '$OID'||'$fimgnew_suffix'
-        where fimg_zdb_id = '$OID';">
+        where img_zdb_id = '$OID';">
     <?/MISQL>
 
     <?MISQL SQL="
-      update fish_image 
-        set fimg_thumbnail = '$OID'||'_thumb'||'$fimgnew_suffix'
-	where fimg_zdb_id = '$OID';">
+      update image 
+        set img_thumbnail = '$OID'||'_thumb'||'$fimgnew_suffix'
+	where img_zdb_id = '$OID';">
     <?/MISQL>
 
     <?MISQL SQL="
-       update fish_image 
-         set fimg_width = '$fimgnew_width'
-	 where fimg_zdb_id = '$OID';">
+       update image 
+         set img_width = '$fimgnew_width'
+	 where img_zdb_id = '$OID';">
      <?/MISQL>	
 
     <?MISQL SQL="
-       update fish_image 
-         set fimg_height = '$fimgnew_height'
-	 where fimg_zdb_id = '$OID';">
+       update image 
+         set img_height = '$fimgnew_height'
+	 where img_zdb_id = '$OID';">
      <?/MISQL>
 	
 
@@ -94,9 +94,9 @@ imageupdate.html. Also files update record.
   <?MIBLOCK COND="$(NC,$annotations,NULL)">
     <?MIVAR NAME=$annotations DELIMIT="'" REPLACE="''">$annotations<?/MIVAR>
     <?MISQL SQL="
-      update fish_image 
-        set fimg_annotations = '$annotations' 
-        where fimg_zdb_id = '$OID';">
+      update image 
+        set img_annotation = '$annotations' 
+        where img_zdb_id = '$OID';">
     <?/MISQL>
   <?/MIBLOCK>
 

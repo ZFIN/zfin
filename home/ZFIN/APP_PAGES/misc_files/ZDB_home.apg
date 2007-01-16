@@ -123,7 +123,7 @@
 		  <td>
 		    <A HREF="/zf_info/zfbook/lab_desig.html">Laboratory <br>&nbsp; Allele Designations</A><BR>
 		    <A HREF="/zf_info/nomen.html">Nomenclature <br>&nbsp; Conventions</A><BR>
-		    <A HREF="/zf_info/nomen.html#Approval">Obtaining Approval <br>&nbsp; for Gene Names</A><BR>
+		    <B>Submit a new <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_gene.apg">Gene</a> or <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_line.apg">Mutant</a> name </B><BR>
 		  </td>
 		</tr>
 	      </table>
@@ -131,15 +131,19 @@
 	    <BR>
 
 	    <DIV class="sidebar">
-	      <B>Zebrafish Resource Center</B><BR>
+	      <B>Zebrafish International Resource Center</B><BR>
 	      <table border=0 cellpadding=3>
 		<tr>
-		  <td>
-		    <A HREF="/zirc/home/guide.php">Info</A>,
-		    <A HREF="/zirc/home/guide.php">Strains</A>, 
-		    <A HREF="/zf_info/zfprbs.html">Probes</A><br>
-		    <A HREF="/zirc/documents/health.php">Pathology Services</A><BR>
-		    <A HREF="/zirc/disMan/diseaseManual.php">Disease Manual</A><br>
+		  <td>                    
+                      <a href="/zirc/fish/lineAll.php">Fish Lines</a> <br>
+                      <a href="/zirc/est/estAll.php">ESTs/cDNAs</a> <br>
+                      <a href="/zirc/abs/absAll.php">Monoclonal Antibodies</a> <br>
+                      <a href="/zirc/orders/buyBookQ.php?item=Book&amp;id=book&amp;detail=The%20Zebrafish%20Book">Order <span style="font-style:italic;">The Zebrafish Book</span></a> <br>
+                      <a href="/zirc/orders/buyParaQ.php?item=Paramecia&amp;id=para&amp;detail=Paramecia%20Starter%20Culture">Paramecia</a> <br>
+
+                   <a href="/zirc/health/index.php" class="novisited">Health Services</a>
+                   <br>
+                   <a href="/zirc/"><strong>ZIRC Home</strong></a>
 		  </td>
 		</tr>
 	      </table>
@@ -174,12 +178,8 @@
 	  <TD class="content_right">
 	    <DIV class="content">
 	      <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&line_type=mutant">Search for mutations / transgenic lines by gene name, map location or phenotype.</A><br>
-	      <?MIVAR COND="$(NC,$AUTHORIZED,GUEST)">
-		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusselect.html&select_from=LOCI&frame_size=230&intro=/ZFIN/help_files/locus_intro.html"><em>Register LOCUS/ALLELE Designation</em></A> 
-	      <?/MIVAR>
 	      <?MIVAR COND="$(EC,$AUTHORIZED,root)">
-	        ,  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-registered_loci.apg"><EM>Check LOCUS registrations</EM></A>
-	        ,  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new-fish.apg&line_type=wild+type"><EM>Add new WILD-TYPE</EM></A>
+	        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new-fish.apg&line_type=wild+type"><EM>Add new WILD-TYPE</EM></A>
 	      <?/MIVAR>
 	    </DIV>
 	  </TD>
@@ -448,15 +448,6 @@
 		    <DIV class="root">
 		      <b>Regen Scripts:</b>
 		      <center>
-		      
-		      <form action='/<!--|CGI_BIN_DIR_NAME|-->/runSPL.cgi' 
-			    method="POST" >
-			<input type=submit 
-			       value="Regen Mutant (fishsearch) data">
-			<input type=hidden 
-			       name="run" 
-			       value="regen_fishsearch">
-		      </form>
 
 		      <form action='/<!--|CGI_BIN_DIR_NAME|-->/runSPL.cgi' method="GET" >
 

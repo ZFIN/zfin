@@ -140,8 +140,8 @@ while ($pnas_cur->fetch) {
                              and fig_source_zdb_id = publication.zdb_id 
                              and pub_can_show_images = 'f' 
                              and not exists (select 'x' 
-                                                from fish_image 
-                                                where fimg_fig_zdb_id = 
+                                                from image 
+                                                where img_fig_zdb_id = 
                                                            fig_zdb_id)
                              and fig_label like 'Fig.%'
 			     and (fig_comments is null or fig_comments = '')";

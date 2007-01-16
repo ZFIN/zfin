@@ -1,0 +1,149 @@
+adult body,Adult,whole organism,ZDB-ANAT-050228-1,shape,abnormal
+adult fins,Adult,fins,ZDB-ANAT-010921-533,quality,abnormal
+adult pigmentation,Adult,pigment cells,ZDB-ANAT-010921-474,quality,abnormal
+all body pigment,unspecified,pigment cells,ZDB-ANAT-010921-474,quality,abnormal
+balance or coordination,unspecified,regulation of balance,GO:0050885,quality,abnormal
+behavior,unspecified,behavior,GO:0007610,quality,abnormal
+bent body,unspecified,whole organism,ZDB-ANAT-050228-1,bent,abnormal
+blind (vision),unspecified,visual perception,GO:0007601,quality,absent
+blood,unspecified,blood,ZDB-ANAT-010921-414,quality,abnormal
+body axes,unspecified,whole organism,ZDB-ANAT-050228-1,shape,abnormal
+body degeneration,unspecified,whole organism,ZDB-ANAT-050228-1,degenerate,abnormal
+body length,unspecified,whole organism,ZDB-ANAT-050228-1,length,abnormal
+body shape ,unspecified,whole organism,ZDB-ANAT-050228-1,shape,abnormal
+body shape and tail,unspecified,whole organism,ZDB-ANAT-050228-1,shape,abnormal
+body shape and tail,unspecified,tail,ZDB-ANAT-050228-30,quality,abnormal
+brain,unspecified,brain,ZDB-ANAT-010921-415,quality,abnormal
+brain necrosis,unspecified,brain,ZDB-ANAT-010921-415,necrotic,abnormal
+brain cns and pns,unspecified,nervous system,ZDB-ANAT-011113-319,quality,abnormal
+circulation,unspecified,circulation,GO:0008015,quality,abnormal
+curly tail,unspecified,tail,ZDB-ANAT-050228-30,curled,abnormal
+developmental arrest,unspecified,development,GO:0007275,arrested,abnormal
+developmental patterning,unspecified,pattern specification,GO:0007389,quality,abnormal
+dorsal root ganglia neurons,unspecified,dorsal root ganglion,ZDB-ANAT-011113-131,quality,abnormal
+ear,unspecified,inner ear,ZDB-ANAT-011113-147,quality,abnormal
+early arrest,unspecified,embryonic development (sensu Vertebrata),GO:0043009,arrested,abnormal
+early necrosis,unspecified,embryo,ZDB-ANAT-010921-528,necrotic,abnormal
+ectopic fin,unspecified,fins,ZDB-ANAT-010921-533,ectopic,abnormal
+ectopic fins,unspecified,fins,ZDB-ANAT-010921-533,ectopic,abnormal
+endocardial cushion,unspecified,endocardial cushions,ZDB-ANAT-051116-3,quality,abnormal
+expanded melanophores,unspecified,melanophores ,ZDB-ANAT-040708-2,large,abnormal
+eye pigment,unspecified,pigmented epithelium,ZDB-ANAT-010921-575,quality,abnormal
+eyes,unspecified,eye,ZDB-ANAT-010921-532,quality,abnormal
+eyes / ears,unspecified,sensory systems,ZDB-ANAT-011113-211,quality,abnormal
+fin and skin necrosis,unspecified,integument,ZDB-ANAT-011113-292,necrotic,abnormal
+fin necrosis,unspecified,fins,ZDB-ANAT-010921-533,necrotic,abnormal
+fins / skin,unspecified,surface anatomy,ZDB-ANAT-011113-220,quality,abnormal
+fins and skin,unspecified,surface anatomy,ZDB-ANAT-011113-220,quality,abnormal
+flat brain,unspecified,brain,ZDB-ANAT-010921-415,flat,abnormal
+floor plate,unspecified,floor plate,ZDB-ANAT-010921-433,quality,abnormal
+forebrain,unspecified,forebrain,ZDB-ANAT-010921-534,quality,abnormal
+frilly or bubbly fins,unspecified,fins,ZDB-ANAT-010921-533,malformed,abnormal
+gastrulation,unspecified,gastrulation (sensu Vertebrata),GO:0048276,quality,abnormal
+gill arches,unspecified,pharyngeal arches 3-7 skeletal system,ZDB-ANAT-010921-516,quality,abnormal
+gills and jaw,unspecified,pharyngeal arches 3-7 skeletal system,ZDB-ANAT-010921-516,quality,abnormal
+gut,unspecified,gut,ZDB-ANAT-010921-537,quality,abnormal
+hatching gland / hatching,unspecified,hatching gland,ZDB-ANAT-010921-437,quality,abnormal
+heart,unspecified,heart,ZDB-ANAT-010921-539,quality,abnormal
+hindbrain,unspecified,hindbrain,ZDB-ANAT-010921-440,quality,abnormal
+hyoid,unspecified,hyoid arch,ZDB-ANAT-050711-86,quality,abnormal
+hyoid and mandibular,unspecified,pharyngeal arch skeletal system,ZDB-ANAT-050711-3,quality,abnormal
+hyomandibulae,unspecified,pharyngeal arch skeletal system,ZDB-ANAT-050711-3,quality,abnormal
+immotile,unspecified,musculoskeletal movement,GO:0050881,quality,abnormal
+interrupted notochord,unspecified,notochord,ZDB-ANAT-010921-564,interrupted,abnormal
+iridophore intensity,unspecified,iridophores,ZDB-ANAT-040708-1,color_intensity,abnormal
+iridophore pattern / number,unspecified,iridophores,ZDB-ANAT-040708-1,irregular,abnormal
+iridophore pattern/number,unspecified,iridophores,ZDB-ANAT-040708-1,irregular,abnormal
+jaw,unspecified,pharyngeal arch 1 skeletal system,ZDB-ANAT-050711-4,quality,abnormal
+jaw / arches,unspecified,pharyngeal arches 3-7 skeletal system,ZDB-ANAT-010921-516,quality,abnormal
+jaw and gill arches,unspecified,pharyngeal arches 3-7 skeletal system,ZDB-ANAT-010921-516,quality,abnormal
+jaw and melanophores,unspecified,pharyngeal arch 1 skeletal system,ZDB-ANAT-050711-4,quality,abnormal
+jaw and melanophores,unspecified,melanophores ,ZDB-ANAT-040708-2,quality,abnormal
+jaws / arches,unspecified,pharyngeal arches 3-7 skeletal system,ZDB-ANAT-010921-516,quality,abnormal
+kidney,unspecified,pronephros,ZDB-ANAT-010921-586,quality,abnormal
+kinked notochord,unspecified,notochord,ZDB-ANAT-010921-564,bent,abnormal
+larval arrest,unspecified,larval development,GO:0002164,arrested,abnormal
+lens,unspecified,lens,ZDB-ANAT-010921-447,quality,abnormal
+liver,unspecified,liver,ZDB-ANAT-010921-549,quality,abnormal
+mandibular,unspecified,ventral mandibular arch,ZDB-ANAT-050711-81,quality,abnormal
+melanophore and eye pigment,unspecified,melanophores ,ZDB-ANAT-040708-2,quality,abnormal
+melanophore and eye pigment,unspecified,pigmented epithelium,ZDB-ANAT-010921-575,quality,abnormal
+melanophore intensity,unspecified,melanophores ,ZDB-ANAT-040708-2,color_intensity,abnormal
+melanophore pattern / number,unspecified,melanophores ,ZDB-ANAT-040708-2,irregular,abnormal
+melanophore shape / size,unspecified,melanophores ,ZDB-ANAT-040708-2,morphology,abnormal
+melanophores,unspecified,melanophores ,ZDB-ANAT-040708-2,quality,abnormal
+melanophores and iridophores,unspecified,melanophores ,ZDB-ANAT-040708-2,quality,abnormal
+melanophores and iridophores,unspecified,iridophores,ZDB-ANAT-040708-1,quality,abnormal
+melanophores and xanthophores,unspecified,melanophores ,ZDB-ANAT-040708-2,quality,abnormal
+melanophores and xanthophores,unspecified,xanthophores ,ZDB-ANAT-040708-3,quality,abnormal
+midbrain,unspecified,midbrain,ZDB-ANAT-010921-555,quality,abnormal
+midbrain hindbrain boundary,unspecified,midbrain hindbrain boundary,ZDB-ANAT-010921-455,quality,abnormal
+motility,unspecified,musculoskeletal movement,GO:0050881,quality,abnormal
+motility defect,unspecified,musculoskeletal movement,GO:0050881,quality,abnormal
+motor axons,unspecified,motor axons peripheral,ZDB-ANAT-020309-50,quality,abnormal
+motor capabilities,unspecified,musculoskeletal movement,GO:0050881,quality,abnormal
+mouth,unspecified,mouth,ZDB-ANAT-011113-468,quality,abnormal
+muscle fibers,unspecified,body musculature,ZDB-ANAT-011113-399,quality,abnormal
+myoseptum,unspecified,myoseptum,ZDB-ANAT-031211-5,quality,abnormal
+nervous system ,unspecified,nervous system ,ZDB-ANAT-011113-319,quality,abnormal
+neural tube,unspecified,neural tube,ZDB-ANAT-050228-47,quality,abnormal
+neurocoel,unspecified,central canal,ZDB-ANAT-020309-300,quality,abnormal
+neuroretina,unspecified,neural layer,ZDB-ANAT-010921-459,quality,abnormal
+nonmotile,unspecified,musculoskeletal movement,GO:0050881,quality,abnormal
+nonmotile / no muscle striation,unspecified,musculoskeletal movement,GO:0050881,quality,abnormal
+notochord,unspecified,notochord,ZDB-ANAT-010921-564,quality,abnormal
+notochord and somites,unspecified,notochord,ZDB-ANAT-010921-564,quality,abnormal
+notochord and somites,unspecified,somites,ZDB-ANAT-010921-591 ,quality,abnormal
+notochord degeneration,unspecified,notochord,ZDB-ANAT-010921-564,degenerate,abnormal
+notochord differentiation,unspecified,notochord development,GO:0030903,quality,abnormal
+notochord others,unspecified,notochord,ZDB-ANAT-010921-564,quality,abnormal
+notochord undulating,unspecified,notochord,ZDB-ANAT-010921-564,curved,abnormal
+olfactory placodes,unspecified,olfactory placode,ZDB-ANAT-010921-464,quality,abnormal
+otoliths,unspecified,immature otoliths,ZDB-ANAT-010921-569,quality,abnormal
+pectoral fins,unspecified,pectoral fin,ZDB-ANAT-050304-1,quality,abnormal
+pigment pattern,unspecified,pigment cells,ZDB-ANAT-010921-474,irregular,abnormal
+pigmentation,unspecified,pigment cells,ZDB-ANAT-010921-474,quality,abnormal
+primary motor axons,unspecified,primary motoneurons,ZDB-ANAT-011113-498,quality,abnormal
+quiver,unspecified,musculoskeletal movement,GO:0050881,quality,abnormal
+reduced blood,unspecified,blood,ZDB-ANAT-010921-414,decreased,abnormal
+reduced fins,unspecified,fins,ZDB-ANAT-010921-533,small,abnormal
+reduced motility,unspecified,musculoskeletal movement,GO:0050881,decreased,abnormal
+reduced or no muscle striation,unspecified,body musculature,ZDB-ANAT-011113-399,quality,abnormal
+retinal pigmented epithelium,unspecified,pigmented epithelium,ZDB-ANAT-010921-575,quality,abnormal
+retinal tectal anterior / posterior,unspecified,retinal ganglion cell axon guidance,GO:0031290,quality,abnormal
+retinal tectal dorsal / ventral,unspecified,retinal ganglion cell axon guidance,GO:0031290,quality,abnormal
+retinal tectal pathfinding,unspecified,retinal ganglion cell axon guidance,GO:0031290,quality,abnormal
+retinal tectal projections,unspecified,retinal ganglion cell axon guidance,GO:0031290,quality,abnormal
+retinal tectal termination,unspecified,retinal ganglion cell axon guidance,GO:0031290,quality,abnormal
+rohon-beard cells,unspecified,Rohon-Beard neurons,ZDB-ANAT-010921-407,quality,abnormal
+short body,unspecified,whole organism,ZDB-ANAT-050228-1,short_length,abnormal
+sinusoidal body,unspecified,whole organism,ZDB-ANAT-050228-1,curved,abnormal
+situs inversus,unspecified,embryonic structures,ZDB-ANAT-050228-2,inverted,abnormal
+skin,unspecified,integument,ZDB-ANAT-011113-292,quality,abnormal
+small brain,unspecified,brain,ZDB-ANAT-010921-415,small,abnormal
+small eyes,unspecified,eye,ZDB-ANAT-010921-532,small,abnormal
+small eyes and small hyoid,unspecified,eye,ZDB-ANAT-010921-532,small,abnormal
+small eyes and small hyoid,unspecified,hyoid arch,ZDB-ANAT-050711-86,small,abnormal
+somite boundaries,unspecified,somites,ZDB-ANAT-010921-591 ,quality,abnormal
+somite degeneration,unspecified,somites,ZDB-ANAT-010921-591 ,degenerate,abnormal
+somite size,unspecified,somites,ZDB-ANAT-010921-591 ,size,abnormal
+somites,unspecified,somites,ZDB-ANAT-010921-591 ,quality,abnormal
+swim bladder,unspecified,swim bladder,ZDB-ANAT-010921-495,quality,abnormal
+symplectics,unspecified,symplectic,ZDB-ANAT-011113-77,quality,abnormal
+tail,unspecified,tail,ZDB-ANAT-050228-30,quality,abnormal
+tail curled down,unspecified,tail,ZDB-ANAT-050228-30,curled,abnormal
+tail curled sideways,unspecified,tail,ZDB-ANAT-050228-30,curled,abnormal
+tail curled up,unspecified,tail,ZDB-ANAT-050228-30,curled,abnormal
+tail somites,unspecified,tail,ZDB-ANAT-050228-30,structure,abnormal
+tectum necrosis,unspecified,optic tectum,ZDB-ANAT-011113-37,necrotic,abnormal
+touch response,unspecified,response to external stimulus,GO:0009605,quality,abnormal
+tract of the postoptic commissure,unspecified,tract of the postoptic commissure,ZDB-ANAT-060131-40,quality,abnormal
+undulated notochord,unspecified,notochord,ZDB-ANAT-010921-564,curved,abnormal
+upper jaw,unspecified,upper jaw,ZDB-ANAT-020309-115,quality,abnormal
+ventricles,unspecified,brain,ZDB-ANAT-010921-415,quality,abnormal
+xanthophore,unspecified,xanthophores ,ZDB-ANAT-040708-3,quality,abnormal
+xanthophores and iridophores,unspecified,xanthophores ,ZDB-ANAT-040708-3,quality,abnormal
+xanthophores and iridophores,unspecified,iridophores,ZDB-ANAT-040708-1,quality,abnormal
+xanthophores lethal,unspecified,xanthophores ,ZDB-ANAT-040708-3,quality,abnormal
+xanthophores viable,unspecified,xanthophores ,ZDB-ANAT-040708-3,quality,abnormal
+yolk,unspecified,yolk,ZDB-ANAT-010921-503,quality,abnormal

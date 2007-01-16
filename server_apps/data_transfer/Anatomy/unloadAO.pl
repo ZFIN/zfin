@@ -16,8 +16,23 @@
 # 
 
 use strict;
-use MIME::Lite
+use MIME::Lite;
+use DBI;
 require "err_report.pl";
+
+#set environment variables
+$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
+$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
+$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
+$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
+
+### open a handle on the db
+my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
+                       '', 
+                       '', 
+		       {AutoCommit => 1,RaiseError => 1}
+		      )
+    || &reportError("Failed while connecting to <!--|DB_NAME|--> "); 
 
 #------------------ Send OBO File----------------
 # No parameter
@@ -29,7 +44,7 @@ sub sendResult {
 
     my $SUBJECT="Auto: OBO file ".$file_domain;
     my $MAILTO="<!--|AO_EMAIL_CURATOR|-->";   
-    my $ATTFILE ="./zfin.obo";
+    my $ATTFILE ="./zebrafish_anatomy.obo";
     
     # Create a new multipart message:
     my $msg = new MIME::Lite 
@@ -53,6 +68,30 @@ sub sendResult {
 }
 
 
+sub loadOboToDB (){
+
+    my $load_sql = "update obo_file
+                     set (obofile_text,obofile_load_date,obofile_load_process) = (filetoblob('<!--|ROOT_PATH|-->/server_apps/data_transfer/Anatomy/zebrafish_anatomy.obo','server'),CURRENT YEAR TO SECOND,'AO Load') where obofile_name = 'zebrafish_anatomy.obo'";
+
+    my $load_sth = $dbh->prepare($load_sql)
+	    or  &reportError("Couldn't prepare the statement:$!\n");
+
+    $load_sth->execute or &reportError("Couldn't execute the statement:$!\n");
+
+}
+
+
+sub unloadOboFromDB (){
+
+    my $unload_sql = "select lotofile(obofile_text, '<!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/zebrafish_anatomy.obo!','server') from obo_file where obofile_name = 'zebrafish_anatomy.obo'";
+
+    my $unload_sth = $dbh->prepare($unload_sql)
+	    or  &reportError("Couldn't prepare the statement:$!\n");
+
+    $unload_sth->execute or &reportError("Couldn't execute the statement:$!\n");
+    print "did the unload\n" ;
+}
+
 #--------------- Main --------------------------------
 #
 my $shareFlag = $ARGV[0] ? $ARGV[0] : "";
@@ -62,7 +101,7 @@ chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/Anatomy/";
 #remove old files
 system("/bin/rm -f *.obo");
 
-open (OUT, ">zfin.obo") or &reportError("Cannot open file to write.");
+open (OUT, ">zebrafish_anatomy.obo") or &reportError("Cannot open file to write.");
 
 #----  print header ------
 my ($sec, $min, $hour, $mday, $month,$year) = localtime(time);
@@ -105,6 +144,31 @@ print OUT `./anatitem_2_obo.pl $shareFlag`;
 print OUT `./stg_2_obo.pl`;
 
 close OUT;
+
+if ( -e "<!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/zebrafish_anatomy_old.obo") {
+    
+    system("/bin/rm <!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/zebrafish_anatomy_old.obo") and die "can not rm zebrafish_anatomy_old.obo" ;
+    
+    print "rm'd zebrafish_anatomy_old.obo\n" ;
+}
+
+if ( -e "<!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/zebrafish_anatomy.obo") {
+    
+    system("/bin/mv <!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/zebrafish_anatomy.obo <!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/zebrafish_anatomy_old.obo") and die "can not mv zebrafish_anatomy_old.obo" ;
+    
+    print "mv'd zebrafish_anatomy.obo to zebrafish_anatomy_old.obo\n" ;
+}
+
+&loadOboToDB();
+
+&unloadOboFromDB();
+
+system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> unloadAOFile.sql >out 2> report.txt") and die "unloadAOFile.sql failed";
+
+system ("/bin/chmod 654 <!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/*") and die "could not chmod data_Transfer files";
+
+system ("/bin/chgrp fishadmin <!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/*") and die "could not chmod data_Transfer files";
+
 
 &sendResult($shareFlag);
 

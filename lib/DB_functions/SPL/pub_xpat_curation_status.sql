@@ -66,9 +66,9 @@ pub_xpat_curation_status (
 
     select count(*)
       into image_fig_count
-      from figure, fish_image
+      from figure, image
       where fig_source_zdb_id = pubZdbId
-        and fig_zdb_id = fimg_fig_zdb_id;
+        and fig_zdb_id = img_fig_zdb_id;
   
 
     if (image_fig_count + caption_fig_count != 0) then

@@ -1,0 +1,348 @@
+<?MICOMMENT>
+
+FILE:     genocurbuilder.apg
+PREFIX:   genocurbld_
+
+This is the staging area for genotypes. Only permit one genotype in the staging area.
+Curators attach backgrounds and features to the genotype in the staging area. Once
+the genotype is finalized and committed, the staging area is reset.
+
+
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
+<?MIBLOCK COND="$(EC,$AUTHORIZED,root)">
+
+
+<script>
+
+  function addBackground(geno_zdb_id) {
+    var background_index = document.forms['genoBuilder'].elements['genocurbldWTbckgrd'].selectedIndex;
+    var background_id = document.forms['genoBuilder'].elements['genocurbldWTbckgrd'][background_index].value;
+    
+    setCookie('geno_background',background_id,'pubcur_c_');
+    setCookie('geno_zdb_id',geno_zdb_id,'pubcur_c_');
+    urlSetCookie('geno_update','update','pubcur_c_');
+  }
+
+  function removeBackground(geno_zdb_id) {
+    var background_index = document.forms['genoBuilder'].elements['genocurbldWTbckgrd'].selectedIndex;
+    var background_id = document.forms['genoBuilder'].elements['genocurbldWTbckgrd'][background_index].value;
+    
+    setCookie('remGeno_background',background_id,'pubcur_c_');
+    setCookie('remGeno_zdb_id',geno_zdb_id,'pubcur_c_');
+    urlSetCookie('geno_update','update','pubcur_c_');
+  }
+
+  function addGenoFeature(geno_zdb_id) {
+    var index = document.forms['genoBuilder'].elements['genocurbld_feat_zdb_id'].selectedIndex;
+    var feature_id = document.forms['genoBuilder'].elements['genocurbld_feat_zdb_id'][index].value;
+    var index = document.forms['genoBuilder'].elements['genocurbld_zyg_zdb_id'].selectedIndex;
+    var zyg_id = document.forms['genoBuilder'].elements['genocurbld_zyg_zdb_id'][index].value;
+    var index = document.forms['genoBuilder'].elements['genocurbld_maternal_zdb_id'].selectedIndex;
+    var mat_id = document.forms['genoBuilder'].elements['genocurbld_maternal_zdb_id'][index].value;
+    var index = document.forms['genoBuilder'].elements['genocurbld_paternal_zdb_id'].selectedIndex;
+    var pat_id = document.forms['genoBuilder'].elements['genocurbld_paternal_zdb_id'][index].value;
+    
+    setCookie('genofeat_zdb_id',feature_id,'pubcur_c_');
+    setCookie('zyg_zdb_id',zyg_id,'pubcur_c_');
+    setCookie('maternal_zdb_id',mat_id,'pubcur_c_');
+    setCookie('paternal_zdb_id',pat_id,'pubcur_c_');
+    setCookie('geno_zdb_id',geno_zdb_id,'pubcur_c_');
+    
+    urlSetCookie('geno_update','update','pubcur_c_');
+  }
+
+
+  function removeGenoFeature(geno_zdb_id) {
+    var index = document.forms['genoBuilder'].elements['genocurbld_feat_zdb_id'].selectedIndex;
+    var feature_id = document.forms['genoBuilder'].elements['genocurbld_feat_zdb_id'][index].value;
+    
+    setCookie('remGenoFeat_zdb_id',feature_id,'pubcur_c_');
+    setCookie('remGeno_zdb_id',geno_zdb_id,'pubcur_c_');
+    
+    urlSetCookie('geno_update','update','pubcur_c_');
+  }
+
+  function finalizeGenotype(geno_zdb_id) {
+
+    var genoNickname = document.forms['genoBuilder'].elements['genocurbld_nickname'].value;
+    
+    setCookie('geno_nickname',genoNickname,'pubcur_c_');
+    setCookie('finalize_genotype',geno_zdb_id,'pubcur_c_');
+    urlSetCookie('geno_update','update','pubcur_c_');
+  }
+
+
+</script>
+
+
+<form name=genoBuilder>
+
+<br><br>
+<span id="headertwo">Genotype Staging Area:</span>
+<br>
+
+
+<?MICOMMENT> *** Is the staging area occupied?  <?/MICOMMENT>
+
+<?MISQL SQL="select geno_zdb_id 
+               from genotype 
+              where geno_handle like 'ZDB-GENO%'
+                and geno_zdb_id in 
+                    (
+                      select recattrib_data_zdb_id from record_attribution where recattrib_source_zdb_id = '$OID'
+                    );">
+    <?MIVAR NAME=genocur_staging_zdb>$1<?/MIVAR>
+<?/MISQL>
+                   
+
+<?MIBLOCK COND=$(NXST,$genocur_staging_zdb)>
+
+  <input type=button value="New Genotype Handle" onClick="setCookie('new_genotype','new','pubcur_c_');urlSetCookie('geno_update','update','pubcur_c_');">
+
+
+<?MIELSE>
+<p>
+
+    <table>
+      <tr>
+        <td>
+          <b>Edit Features:</b> 
+        </td>
+      </tr>
+      <tr>
+        <td>
+            Feature
+        </td>
+        <td>
+            Zygosity
+        </td>
+        <td>
+            Maternal
+        </td>
+        <td>
+            Paternal
+        </td>
+        <td valign=bottom rowspan=2>
+            <input type=button 
+                   value=Add 
+                   onClick="addGenoFeature('<?MIVAR>$genocur_staging_zdb<?/MIVAR>');">
+                   
+            <input type=button 
+                   value=Remove 
+                   onClick="removeGenoFeature('<?MIVAR>$genocur_staging_zdb<?/MIVAR>');">
+        </td>
+      </tr>
+      <tr>
+        <td>
+        
+    <select name=genocurbld_feat_zdb_id>
+
+      <?MISQL SQL="
+        select feature_zdb_id, feature_name
+        from feature
+        where feature_zdb_id in ('$pubcur_G_oid_attrib_csv')
+        order by feature_abbrev_order
+        ;">
+      <option value="$1">Feature - $2</option>     
+      <?/MISQL>
+    </select>
+            
+            
+        </td>
+        <td>
+
+    <?MIVAR NAME=genocurbld_zyg_default>unknown<?/MIVAR>
+
+    <select name=genocurbld_zyg_zdb_id onChange="zygocityConstraints();">
+      <?MISQL SQL="
+        select zyg_zdb_id, zyg_name
+        from zygocity
+        order by zyg_name
+        ;">
+      <option value="$1" $(IF,$(EC,$2,$genocurbld_zyg_default),SELECTED)>$2</option>     
+      <?/MISQL>
+    </select>
+        
+        </td>
+        <td>
+
+    <select name=genocurbld_maternal_zdb_id onChange="zygocityConstraints();">
+      <?MISQL SQL="
+        select zyg_zdb_id, zyg_name
+          from zygocity
+         where zyg_name not in ('maternal zygotic','paternal zygotic')
+        order by zyg_name
+        ;">
+      <option value="$1" $(IF,$(EC,$2,$genocurbld_zyg_default),SELECTED)>$2</option>     
+      <?/MISQL>
+    </select>
+        
+        </td>
+        <td>
+
+    <select name=genocurbld_paternal_zdb_id onChange="zygocityConstraints();">
+      <?MISQL SQL="
+        select zyg_zdb_id, zyg_name
+          from zygocity
+         where zyg_name not in ('maternal zygotic','paternal zygotic')
+        order by zyg_name
+        ;">
+      <option value="$1" $(IF,$(EC,$2,$genocurbld_zyg_default),SELECTED)>$2</option>     
+      <?/MISQL>
+    </select>
+        
+        </td>
+      </tr>
+    
+    </table>
+<br>
+<table>
+  <tr>
+    <td>  
+      <b>Edit Backgrounds:</b> 
+    </td>
+  </tr>
+  <tr>
+    <td>
+    Background: 
+    
+    </td>
+    <td>
+    <select name=genocurbldWTbckgrd>
+  <?MISQL SQL="
+        select geno_zdb_id, geno_handle
+        from genotype
+        where geno_is_wildtype = 't'
+          and geno_handle = 'WT'
+        order by geno_display_name">
+
+      <option value="$1">$2</option>         
+  <?/MISQL>
+  <?MISQL SQL="
+        select geno_zdb_id, geno_handle
+        from genotype
+        where geno_is_wildtype = 't'
+          and geno_handle != 'WT'
+        order by geno_display_name">
+
+      <option value="$1">$2</option>         
+  <?/MISQL>
+    </select>
+
+    <input type=button 
+           value=Add 
+           onClick="addBackground('<?MIVAR>$genocur_staging_zdb<?/MIVAR>');">  
+           
+    <input type=button 
+           value=Remove 
+           onClick="removeBackground('<?MIVAR>$genocur_staging_zdb<?/MIVAR>');">  
+
+    </td>
+  </tr>
+</table> 
+
+    <p>
+    <?MISQL SQL="
+       execute function get_genotype_display('$genocur_staging_zdb');">
+    <?/MISQL>
+    
+    <?MIVAR NAME=genocurbld_geno_display>$1<?/MIVAR>
+    <span id="headerthree">Display Name: <span id="highlightbackground"> <?MIVAR>$genocurbld_geno_display<?/MIVAR> </span></span>
+
+    <br>
+    <?MISQL SQL="
+       execute function get_genotype_handle('$genocur_staging_zdb');">
+    <?/MISQL>
+    
+    <?MIVAR NAME=genocurbld_geno_display>$1<?/MIVAR>
+    <span id="headerthree">Handle: <span id="highlightbackground"> <?MIVAR>$genocurbld_geno_display<?/MIVAR> </span></span>
+
+    <br>
+    
+    <span id="headerthree">Nickname: </span><?MIVAR><input type=text size=50 name=genocurbld_nickname value="$genocurbld_geno_display"><?/MIVAR>
+
+
+    <p>
+    <input type=button value="Submit Genotype"
+           onClick="if(confirm('Submit Genotype?')){finalizeGenotype('<?MIVAR>$genocur_staging_zdb<?/MIVAR>')};">
+<?/MIBLOCK>
+
+
+</form>
+
+  <script>
+    // Enforce Zygocity constraints 
+    function zygocityConstraints () {
+    
+      <?MISQL SQL="select zyg_zdb_id from zygocity where zyg_name = 'homozygous';">
+        var homozygous = "$1";
+      <?/MISQL>
+
+      <?MISQL SQL="select zyg_zdb_id from zygocity where zyg_name = 'maternal zygotic';">
+        var maternal_zygotic = "$1";
+      <?/MISQL>      
+
+      <?MISQL SQL="select zyg_zdb_id from zygocity where zyg_name = 'unknown';">
+        var zyg_unknown = "$1";
+      <?/MISQL>      
+      
+      var errorMsg = '';
+      
+      var childZygIndex = document.genoBuilder.genocurbld_zyg_zdb_id.selectedIndex;
+      var momZygIndex = document.genoBuilder.genocurbld_maternal_zdb_id.selectedIndex;
+      var dadZygIndex = document.genoBuilder.genocurbld_paternal_zdb_id.selectedIndex;
+
+      var childZyg = document.genoBuilder.genocurbld_zyg_zdb_id[childZygIndex].value;
+      var momZyg = document.genoBuilder.genocurbld_maternal_zdb_id[momZygIndex].value;
+      var dadZyg = document.genoBuilder.genocurbld_paternal_zdb_id[dadZygIndex].value;
+      
+      // maternal constraint
+      if (childZyg == maternal_zygotic)
+      {
+         if(momZyg != homozygous && momZyg != zyg_unknown)
+         {
+           errorMsg = "Maternal Zygotic Enforced: Mother zygocity set to homozygous.";
+         }
+         
+         setSelectedIndex( "genoBuilder", "genocurbld_maternal_zdb_id", homozygous);
+      
+      }
+      
+      // paternal constraint
+      
+      // hetero constraint
+
+
+      if( errorMsg != "")
+      {
+         alert(errorMsg);
+      }      
+      
+    }
+
+
+    function setSelectedIndex( selFormName, selElementName, selValue ) {
+
+      var selFormElement = document.forms[selFormName].elements[selElementName] ;
+      
+      for(i=0; i<selFormElement.length; i++) {
+        if (selFormElement[i].value == selValue) {
+          selFormElement.selectedIndex = i;
+        }        
+      }        
+    } 
+
+  </script>
+  
+<?/MIBLOCK> <?MICOMMENT> end authorize <?/MICOMMENT>

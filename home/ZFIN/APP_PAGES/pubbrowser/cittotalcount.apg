@@ -1,0 +1,17 @@
+    <?MIVAR NAME=$citlink_pub_count>0<?/MIVAR>	
+    <?MIVAR NAME=$pub_G_display>count<?/MIVAR>
+    <?MIVAR NAME=sp_G_jtype_option COND=$(NXST,$sp_G_jtype_option)>all<?/MIVAR> 
+
+	  
+    <?MISQL SQL="select WebExplode(object,'') 
+                 from webPages where ID='aa-$citlink_data_page';">
+        <?MIVAR NAME=sp_G_sql>$sp_G_returnvar<?/MIVAR>
+    <?/MISQL>
+  
+  
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pub_rowdisplay.apg';">$1<?/MISQL>
+  
+  <?MIVAR>
+	  $(SETVAR,$citlink_total_count,$pub_G_count)
+  <?/MIVAR>
+  	

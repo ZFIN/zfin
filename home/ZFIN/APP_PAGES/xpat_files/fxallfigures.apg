@@ -61,6 +61,7 @@ function updateInnerHTML(element_id,html_to_display) {
 <?MIVAR NAME=fxallfig_width>0<?/MIVAR>
 <?MIVAR NAME=fxallfig_rate_image><?/MIVAR>
 
+             <?MIVAR NAME=$fxallfig_has_patoresults>no<?/MIVAR>
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
 <?MISQL SQL="select WebExplode(object,'rtype=fxfig') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
@@ -100,7 +101,6 @@ function updateInnerHTML(element_id,html_to_display) {
 if probe id exists, call fxprobefig.apg otherwise do all the processing here
 <?/MICOMMENT>
 <?MIBLOCK COND="$(NE,$fxallfig_probe_zdb_id,)">
-<?MICOMMENT>
      <?MIVAR NAME=AUTH_HTML><?/MIVAR>
           
           <?MIVAR NAME=AUTH_HTML>$AUTH_HTML
@@ -122,7 +122,6 @@ if probe id exists, call fxprobefig.apg otherwise do all the processing here
           
          <?/MIVAR>
          <?MIVAR COND="$(!=,0,$MI_ROWCOUNT)">$AUTH_HTML<?/MIVAR>
-<?/MICOMMENT>        
      
      <?MISQL SQL="select mrkr_abbrev 
                  from marker
@@ -157,10 +156,10 @@ if probe id exists, call fxprobefig.apg otherwise do all the processing here
 <?MISQL SQL="select WebExplode(object,'fxprobefig_source_zdb_id=$OID&fxprobefig_probe_zdb_id=$fxallfig_probe_zdb_id') from webPages where ID='aa-fxprobefig.apg';">$1<?/MISQL>
 <?MIELSE>
   <?MIVAR NAME=$fxallfig_sql> 
-           select distinct fig_zdb_id, fig_label, fig_caption, fimg_thumbnail,
-                           fimg_zdb_id, fig_comments, fig_source_zdb_id, zero_pad(fig_full_label) as fig_order, fimg_image, fimg_width, fimg_height
-           from figure left outer join fish_image
-                         on fimg_fig_zdb_id=fig_zdb_id  
+           select distinct fig_zdb_id, fig_label, fig_caption, img_thumbnail,
+                           img_zdb_id, fig_comments, fig_source_zdb_id, zero_pad(fig_full_label) as fig_order,img_image, img_width, img_height
+           from figure left outer join image
+                         on img_fig_zdb_id=fig_zdb_id  
             where fig_source_zdb_id ='$OID'
             order by fig_order 
            ;
@@ -194,7 +193,7 @@ if probe id exists, call fxprobefig.apg otherwise do all the processing here
        <?/MIBLOCK>
           <?MIVAR>
               <tr><td>
-              <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=<?MIVAR>$fxallfig_image_zdb_id<?/MIVAR>&image_table=fish_image">
+              <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=<?MIVAR>$fxallfig_image_zdb_id<?/MIVAR>&image_table=image">
               <!--<Img src="<!--|IMAGE_LOAD|-->/$fxallfig_thumbnail" align = left border=2></a>-->
               <Img src="<!--|IMAGE_LOAD|-->/$fxallfig_image" align = left  width=$fxallfig_size border=2></a>
               <p class="fig"><?MIVAR COND="$(EQ,$fxallfig_is_text,no)"><b>$fxallfig_label </b> <?/MIVAR> <?MIVAR>$fxallfig_caption <?/MIVAR>
@@ -225,19 +224,33 @@ if probe id exists, call fxprobefig.apg otherwise do all the processing here
        <?MIELSE>
              <?MIVAR NAME=$fxallfig_has_results>no<?/MIVAR>
        <?/MIBLOCK> 
-             <?MIBLOCK COND="$(EQ,yes,$fxallfig_has_results)">
+       <?MISQL SQL="select * from atomic_phenotype,apato_figure where apatofig_fig_zdb_id='$fxallfig_fig_zdb_id' and apatofig_apato_zdb_id = apato_zdb_id"><?/MISQL>
+       <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)"> 
+             <?MIVAR NAME=$fxallfig_has_patoresults>yes<?/MIVAR>
+       <?MIELSE>
+             <?MIVAR NAME=$fxallfig_has_patoresults>no<?/MIVAR>
+       <?/MIBLOCK>
+<tr><td>
+    <?MIBLOCK COND="$(EC,$fxallfig_has_results,yes)">
+       <table width = 100%  cellspacing = 0 cellpadding = 5 bgcolor="#EEEEEE">
+    <tr><td><b>EXPRESSION :</b>
     <tr><td><?MISQL SQL="select WebExplode(object,'OID=$fxallfig_fig_zdb_id') from webPages where ID='aa-fxfiggenelist.apg';">$1<?/MISQL>
     <tr><td> <?MISQL SQL="select WebExplode(object,'fxfigfi_fig_zdb_id=$fxallfig_fig_zdb_id&fxfigfi_is_displayed=t') from webPages where ID='aa-fxfigfishlist.apg';">$1<?/MISQL>
-    </tr></td>
     <tr><td><?MISQL SQL="select WebExplode(object,'fxfiganat_fig_zdb_id=$fxallfig_fig_zdb_id') from webPages where ID='aa-fxfiganatlist.apg';">$1<?/MISQL>
-    </tr></td>
     <tr><td> <?MISQL SQL="select WebExplode(object,'fxfigst_fig_zdb_id=$fxallfig_fig_zdb_id&fxfigst_is_displayed=t') from webPages where ID='aa-fxfigstgrng.apg';">$1<?/MISQL>
-    </tr></td>
+                  <tr><td><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=<?MIVAR>$fxallfig_fig_zdb_id<?/MIVAR>">Gene expression details</a></td>
+</table>
+    <?/MIBLOCK>
+    <?MIBLOCK COND="$(EC,$fxallfig_has_patoresults,yes)">
 <tr><td>
-                  <tr><td><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=<?MIVAR>$fxallfig_fig_zdb_id<?/MIVAR>">Gene expression details</a><td>
-                 </tr>
-             <?/MIBLOCK>
-
+       <table width = 100%  cellspacing = 0 cellpadding = 5 bgcolor="#EEEEEE">
+    <tr><td> <b>PHENOTYPE : </b>
+    <tr><td> <?MISQL SQL="select WebExplode(object,'fxfigfi_fig_zdb_id=$fxallfig_fig_zdb_id&fxfigfi_is_displayed=t') from webPages where ID='aa-fxfigphenogenolist.apg';">$1<?/MISQL></tr>
+    <tr><td><?MISQL SQL="select WebExplode(object,'fxfiganat_fig_zdb_id=$fxallfig_fig_zdb_id') from webPages where ID='aa-fxfigphenoanatlist.apg';">$1<?/MISQL>
+    <tr><td> <?MISQL SQL="select WebExplode(object,'fxfigst_fig_zdb_id=$fxallfig_fig_zdb_id&fxfigst_is_displayed=t') from webPages where ID='aa-fxfigphenostgrng.apg';">$1<?/MISQL>
+                  <tr><td><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=<?MIVAR>$fxallfig_fig_zdb_id<?/MIVAR>">Phenotype details</a></td>
+</table>
+    <?/MIBLOCK>
     </table> 
     <p>
   <?/MISQL>

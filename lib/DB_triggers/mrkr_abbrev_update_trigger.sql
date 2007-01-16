@@ -11,5 +11,6 @@ create trigger mrkr_abbrev_update_trigger
         execute function zero_pad(newM.mrkr_abbrev)
                 into marker.mrkr_abbrev_order,
         execute procedure mhist_event (newM.mrkr_zdb_id,'reassigned',
-                newM.mrkr_abbrev, oldM.mrkr_abbrev)
+                newM.mrkr_abbrev, oldM.mrkr_abbrev),
+	execute procedure p_update_related_genotype_names (newM.mrkr_zdb_id)
       );

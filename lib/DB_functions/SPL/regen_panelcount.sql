@@ -91,18 +91,10 @@ create dba function "informix".regen_panelcount()
 
      let errorHint = "populate table";
 
-	insert into panel_count_new
-	  select refcross_id, marker_type, or_lg, count(*)
-	    from mapped_marker, marker
-	   where marker_id = mrkr_zdb_id
-	  group by refcross_id, or_lg, marker_type;
-	
-	insert into panel_count_new
-	  select refcross_id, 'MUTANT', or_lg, count(*)
+     insert into panel_count_new
+          select refcross_id, marker_type, or_lg, count(*)
 	    from mapped_marker
-	   where marker_id like 'ZDB-FISH-%'
-	      or marker_id like 'ZDB-LOCUS-%'
-	   group by refcross_id, or_lg;	
+        group by refcross_id, or_lg, marker_type;
 	
 
     -- To this point, we haven't done anything visible to actual users.

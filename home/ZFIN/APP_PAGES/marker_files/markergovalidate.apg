@@ -116,7 +116,7 @@ used URLENCODE
 
    <!---- validate the pub id exist in ZFIN (this gets webexploded from do-markergoupdate.apg) ---->
    <?MIBLOCK COND="$(EC,$attr,pubid)">
-       <?MISQL SQL="select * from publication where zdb_id = '$value'" >
+       <?MISQL SQL="select * from publication where zdb_id = '$value'">
        <?/MISQL>
        <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
 	   <?MIVAR>$(SETVAR,$isValid,f)<?/MIVAR>
@@ -130,6 +130,22 @@ used URLENCODE
 
    <!----- validate the inference member (this gets webexploded from do-markergoupdate.apg) ---->
    <?MIBLOCK COND="$(EC,$attr,inference)">
+     	       <?MIBLOCK COND="$(=,$(POSITION,$value,LOCUS),5)">
+	    <?MIVAR>$(SETVAR,$isValid,f)<?/MIVAR>
+      		 <SCRIPT>
+         	    window.alert('LOCUS IDs are no longer valid.  Please use the proper ZDB-GENO ID instead.'); 
+		    <?MIVAR>window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$return_page&OID=$return_id$return_info'); <?/MIVAR>      
+      		 </SCRIPT>
+
+               <?/MIBLOCK> 
+     	       <?MIBLOCK COND="$(=,$(POSITION,$value,FISH),5)">
+	    <?MIVAR>$(SETVAR,$isValid,f)<?/MIVAR>
+      		 <SCRIPT>
+         	    window.alert('FISH IDs are no longer valid.  Please use theproper ZDB-GENO ID instead.'); 
+		    <?MIVAR>window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$return_page&OID=$return_id$return_info'); <?/MIVAR>      
+      		 </SCRIPT>
+
+               <?/MIBLOCK> 
 
        <?MIBLOCK COND="$(AND,$(EC,$evidence_code,IC),$(NC,$valuedb,GO))">
 	    <?MIVAR>$(SETVAR,$isValid,f)<?/MIVAR>

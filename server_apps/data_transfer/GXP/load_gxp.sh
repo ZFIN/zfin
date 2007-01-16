@@ -46,8 +46,7 @@ set assayname = "mRNA in situ hybridization";
 
 if ($labname == "Thisse") then
     set submitter = "ZDB-PERS-960805-556"
-    set fishline  = "ZDB-FISH-010924-10"
-    set featexp  = "ZDB-FEATEXP-041102-1429"  
+    set genox     = "ZDB-GENOX-041102-1429"  
 
     if ($datatype == "cb") then 
     	set pubId    = "ZDB-PUB-010810-1"
@@ -68,8 +67,7 @@ endif
 
 if ($labname == "Talbot") then
     set submitter = "ZDB-PERS-980223-5"
-    set fishline  = "ZDB-FISH-960809-7"
-    set featexp  = "ZDB-FEATEXP-041102-546"   
+    set genox     = "ZDB-GENOX-041102-546"   
     set pubId     = "ZDB-PUB-031103-24"
     set sourceId  = "ZDB-LAB-040914-1"    # RZPD 
     set genePrefix = "wu:"
@@ -112,7 +110,7 @@ $INFORMIXDIR/bin/dbaccess $dbname gxp_load_quantity_check.sql >& preload_quantit
 
 $INFORMIXDIR/bin/dbaccess $dbname gxp_load_func.sql
 
-echo "execute function gxp_load_func('$labname', '$datatype', '$submitter','$pubId','$sourceId','$fishline','$featexp', '$genePrefix','$assayname')" | $INFORMIXDIR/bin/dbaccess $dbname
+echo "execute function gxp_load_func('$labname', '$datatype', '$submitter','$pubId','$sourceId','$genox', '$genePrefix','$assayname')" | $INFORMIXDIR/bin/dbaccess $dbname
 
 # when we get a little more confidence on the stableness of the function,
 # we will move it to lib/DB_function, and get rid of the creation and 
@@ -159,24 +157,24 @@ endif
 # add proper path to image file names, and escape special characters
 # it is a little redundant, but readability is not bad.
 if ( $HOST == "helix" ) then 
-    /bin/sed 's/^/images\//' fimg_oldname_2_newname.txt | \
+    /bin/sed 's/^/images\//' img_oldname_2_newname.txt | \
     /bin/sed 's/ZDB/\/research\/zprod\/loadUp\/imageLoadUp\/ZDB/' | \
-    /bin/sed 's/(/\\(/g' | /bin/sed 's/)/\\)/g' >! fimg_oldname_2_newname.conv
+    /bin/sed 's/(/\\(/g' | /bin/sed 's/)/\\)/g' >! img_oldname_2_newname.conv
 else
-    /bin/sed 's/^/images\//' fimg_oldname_2_newname.txt | \
+    /bin/sed 's/^/images\//' img_oldname_2_newname.txt | \
     /bin/sed 's/ZDB/\/research\/zcentral\/loadUp\/imageLoadUp\/ZDB/' | \
-    /bin/sed 's/(/\\(/g' | /bin/sed 's/)/\\)/g' >! fimg_oldname_2_newname.conv
+    /bin/sed 's/(/\\(/g' | /bin/sed 's/)/\\)/g' >! img_oldname_2_newname.conv
 endif
 
 # create a scrip for the move
 echo "#\!/bin/tcsh" >! copy_image.sh
 
 /bin/awk -F\| '{print "/bin/cp ", $1 ".jpg", $2 ".jpg"} \
-	       {print "/bin/cp ", $1 "--t.jpg", $2 "_thumb.jpg"}'  fimg_oldname_2_newname.conv >> copy_image.sh
+	       {print "/bin/cp ", $1 "--t.jpg", $2 "_thumb.jpg"}'  img_oldname_2_newname.conv >> copy_image.sh
 
 
 if ($datatype == "cb") then
-    /bin/awk -F\| '{print "/bin/cp ", $1 "--C.jpg", $2 "_annot.jpg"}' fimg_oldname_2_newname.conv >> copy_image.sh
+    /bin/awk -F\| '{print "/bin/cp ", $1 "--C.jpg", $2 "_annot.jpg"}' img_oldname_2_newname.conv >> copy_image.sh
 endif
 
 chmod ug+x copy_image.sh

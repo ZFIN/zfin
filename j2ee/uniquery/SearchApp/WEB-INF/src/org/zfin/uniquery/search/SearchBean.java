@@ -311,22 +311,23 @@ public class SearchBean
         BooleanQuery prefixQuery = new BooleanQuery();
 
         String[] types = category.getTypes();
+
 	if (types == null){
 	    throw new RuntimeException("No types found");
 	}
 	if(analyzer == null){
-	    
+
 	    throw new RuntimeException("Analyzer is null");
 	}
 	if(query == null){
-	    
+
 	    throw new RuntimeException("query is null");
 	}
 
         for (int i=0; i<types.length; i++) {
 
 	    TokenStream tokenStream = analyzer.tokenStream("type", new StringReader(types[i]));
-	    
+
 	    if(tokenStream == null)
 		throw new RuntimeException("tokenStream is null [" + i +"]");
 	    Token token = tokenStream.next();
@@ -334,7 +335,7 @@ public class SearchBean
 		break;
 	    }
 	    TermQuery termQuery = new TermQuery(new Term("type", token.termText()));
-	    
+
 	    if(termQuery == null)
 		throw new RuntimeException("termQuery is null [" + i +"]");
 	    // the huge boost values are to get terms to sort properly
@@ -647,11 +648,8 @@ public class SearchBean
 	String returnResults = "";
 
 	if (theMatchId.length() > 0) {
-	    if (theMatchId.startsWith("ZDB-FISH")) {
-		viewPageUrl = "/cgi-bin/webdriver?MIval=aa-fishview.apg&OID=" + theMatchId;
-	    }
-	    else if (theMatchId.startsWith("ZDB-LOCUS")) {
-		viewPageUrl = "/cgi-bin/webdriver?MIval=aa-locusview.apg&OID=" + theMatchId;
+	    if (theMatchId.startsWith("ZDB-GENO")) {
+		viewPageUrl = "/cgi-bin/webdriver?MIval=aa-genotypeview.apg&OID=" + theMatchId;
 	    }
 	    else if (theMatchId.startsWith("ZDB-ANAT")) {
 		viewPageUrl = "/cgi-bin/webdriver?MIval=aa-anatomy_item.apg&OID=" + theMatchId;
@@ -688,11 +686,14 @@ public class SearchBean
         Hashtable anatomyHits = terms.getAllAnatomyHits(queryTerm);
 
         if (categoryDescription.toLowerCase().equals("mutants/transgenics")) {
-           specificSearchURL = "aa-fishselect.apg&line_type=mutant";
+           specificSearchURL = "aa-fishselect.apg&allele_name="+queryTerm;
         } else if (categoryDescription.toLowerCase().equals("genes/markers/clones")) {
            specificSearchURL = "aa-newmrkrselect.apg&input_name="+queryTerm;
-        } else if (categoryDescription.toLowerCase().equals("expression")) {
+        } else if (categoryDescription.toLowerCase().equals("expression/phenotype")) {
+	   /* expression/phenotyp info are currently all on figureview page, and we
+             only have expression search page, no phenotype search page now. */
            specificSearchURL = "aa-xpatselect.apg";
+	   categoryDescription = "Expression";
            if (anatomyHits.size() > 0) {
              specificSearchURL += "&TA_selected_structures=";
              Vector anatkeys = new Vector(anatomyHits.keySet());
@@ -727,7 +728,6 @@ public class SearchBean
             returnResults += "<span class='specific_search'>";
             returnResults += "Advanced search: "; //"Please try the ";
             returnResults += "<a href='/cgi-bin/webdriver?MIval=" + specificSearchURL + "'>" + categoryDescription + "</a> ";
-
 
             returnResults += "</span>";
         }

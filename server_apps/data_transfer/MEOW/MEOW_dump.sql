@@ -131,18 +131,15 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_genes.txt'
 -- Create the file of known correspondences
 create temp table meow_mutant (
   gene_id varchar(50),
-  gene_abbrev varchar(40),
-  locus_id varchar(50),
-  locus_name   varchar(120),
-  locus_abbrev varchar(30)
+  gene_abbrev varchar(40)
 ) with no log;  
 
 
-insert into meow_mutant (gene_id,gene_abbrev,locus_id,locus_name,locus_abbrev)
-   select a.cloned_gene, b.mrkr_abbrev, a.zdb_id, a.locus_name, a.abbrev 
-   from locus a, marker b
-   where a.cloned_gene is not null 
-   and a.cloned_gene = b.mrkr_zdb_id;
+insert into meow_mutant (gene_id,gene_abbrev)
+   select distinct mrkr_zdb_id, mrkr_abbrev
+     from feature_marker_relationship, marker
+    where fmrel_mrkr_zdb_id = mrkr_zdb_id
+      and fmrel_type = "is allele of";
 
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zfin_genes_mutants.txt' 
   DELIMITER "	" 
@@ -302,7 +299,7 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/sanger_mappings.txt'
             else 3
         end
         from paneled_markers pm, outer mapped_marker mm  
-        where pm.zdb_id[1,8] not in ('ZDB-FISH', 'ZDB-LOCU') 
+        where pm.zdb_id[1,8] <> ('ZDB-ALT-') 
         and mm.marker_id   == pm.zdb_id
         and mm.refcross_id == pm.target_id
         and mm.or_lg       == pm.or_lg
@@ -312,9 +309,8 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/sanger_mappings.txt'
         order by 1;
 
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/mappings.txt' 
-  DELIMITER "	" select distinct target_id, zdb_id, abbrev, OR_lg, lg_location from paneled_markers  where (zdb_id not like '%FISH%') and (zdb_id not like '%LOCUS%') order by 1;
+  DELIMITER "	" select distinct target_id, zdb_id, abbrev, OR_lg, lg_location from paneled_markers where zdb_id not like 'ZDB-ALT%' order by 1;
 
--- wait to see what to do with mutants  union select distinct a.target_id, b.locus, c.abbrev, a.OR_lg, a.lg_location from paneled_markers a, fish b, locus c where a.zdb_id like '%FISH%' and a.zdb_id = b.zdb_id and b.locus = c.zdb_id
 
 --- generate file with zmap mapping data
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zmap_mappings.txt' 

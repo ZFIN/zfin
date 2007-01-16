@@ -469,9 +469,10 @@ function list_all(user_access) {
 <?MIVAR NAME=$pubsel2_pcompletion_date>$9<?/MIVAR>
 <?MIVAR NAME=$pubsel2_pstatus>$10<?/MIVAR>
 
-$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<FONT ><!--SIZE=-1--> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_pub.apg&OID=$3$UserInput&START=$START">EDIT</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT>")
-$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<FONT ><!--SIZE=-1--> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-link_authors.apg&OID=$3$UserInput&START=$START"><br>LINK</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT>")
-$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<FONT ><!--SIZE=-1--> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$3"><br>CURATE</A>&nbsp;&nbsp;&nbsp; </FONT>")
+$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_pub.apg&OID=$3$UserInput&START=$START">EDIT</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ")
+$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-link_authors.apg&OID=$3$UserInput&START=$START"><br>LINK</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
+$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$3"><br>TRACK</A>&nbsp;&nbsp;&nbsp;")
+$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$3"><br>CURATE</A>&nbsp;&nbsp;&nbsp;")
 
 $(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-select.apg&return_rec=$return_rec&new_oid=$3">SELECT</A>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;</FONT>")
 </TD></DIV>
@@ -635,7 +636,7 @@ $(IF,$(XST,$return_rec),"<FONT ><!--SIZE=-1--><DIV class="show_pubs"> <A HREF="/
 	<SELECT NAME=yr_cmpr onChange='document.critform.START.value = "";'>
 	<option  $(IF,$(EC,$yr_cmpr,=),SELECTED) value="=">equals
 	<option  $(IF,$(EC,$yr_cmpr,<),SELECTED) value="<">before
-	<option  $(IF,$(EC,$yr_cmpr,>),SELECTED) value=">">after</SELECT>
+	<option  $(IF,$(EC,$yr_cmpr,">"),SELECTED) value=">">after</SELECT>
 	<SELECT name=century onChange='document.critform.START.value = "";'>
 	<option  $(IF,$(EC,$century,19),SELECTED) value=19>19 
 	<option  $(IF,$(EC,$century,20),SELECTED) value=20>20

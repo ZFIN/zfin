@@ -3,7 +3,7 @@
 FILE:     fxinfogene.apg
 PREFIX:   fxinfo__
 
-This displays a list of expression pattern results for a gene. The results include fish, stage and structure and assay.
+This displays a list of expression pattern results for a gene. The results include genotype background, stage and structure and assay.
 
 1. for figview.apg, each gene abbrev is an anchor to a data section.
 2. display a list of comma separated gene abbrevs.
@@ -41,7 +41,7 @@ EFFECTS
 <?MIVAR NAME=$fxinfo_lastterm><?/MIVAR>
 <?MIVAR NAME=$fxinfo_lastfish><?/MIVAR>
 <?MIVAR NAME=$fxinfo_assay><?/MIVAR>
-<?MIVAR NAME=$fxinfo_last_featexp><?/MIVAR>
+<?MIVAR NAME=$fxinfo_last_genox><?/MIVAR>
 <?MIVAR COND=$(NXST,$fxinfo_is_geli) NAME=$fxinfo_is_geli><?/MIVAR>
 
 <?MIVAR name=$highlighter><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
@@ -49,15 +49,15 @@ EFFECTS
 <?MIVAR name=$row_color>$fxinfo_rowcolor<?/MIVAR>
 <?MIVAR NAME=$fxinfo_up_arrow>&nbsp; <a href="#topofpage"><img src="http://<!--|DOMAIN_NAME|-->/images/up.gif" border=0 alt title="Back to top"></a> <?/MIVAR>
 <?MISQL SQL="
-               select distinct abbrev, 
+               select distinct geno_display_name, 
                       xpatassay_abbrev,
                       anatitem_name, st1.stg_abbrev s1, st2.stg_abbrev s2, exp_name,
-                      xpatres_expression_found, get_mrkr_abbrev_html_link('$OID') as mrkr_abbrev, anatitem_zdb_id, xpatex_featexp_zdb_id,get_stg_name_html(st1.stg_zdb_id, 'abbrev') as stage1, get_stg_name_html(st2.stg_zdb_id, 'abbrev') as stage2 , st1.stg_hours_start sh1, st1.stg_hours_end sh2
+                      xpatres_expression_found, get_mrkr_abbrev_html_link('$OID') as mrkr_abbrev, anatitem_zdb_id, xpatex_genox_zdb_id,get_stg_name_html(st1.stg_zdb_id, 'abbrev') as stage1, get_stg_name_html(st2.stg_zdb_id, 'abbrev') as stage2 , st1.stg_hours_start sh1, st1.stg_hours_end sh2
               from
                      figure,expression_experiment, anatomy_item, 
                      experiment, expression_result,
-                     expression_pattern_figure,marker,feature_experiment,
-                     fish, stage st1, stage st2, expression_pattern_assay 
+                     expression_pattern_figure,marker,genotype_experiment,
+                     genotype, stage st1, stage st2, expression_pattern_assay 
               where
                      xpatex_gene_zdb_id='$OID' 
                      and fig_zdb_id='$fxinfo_fig_zdb_id'
@@ -65,15 +65,15 @@ EFFECTS
                      and xpatfig_xpatres_zdb_id=xpatres_zdb_id 
                      and xpatres_xpatex_zdb_id=xpatex_zdb_id 
                      and xpatex_gene_zdb_id=mrkr_zdb_id
-                     and xpatex_featexp_zdb_id=featexp_zdb_id
-                     and featexp_genome_feature_zdb_id=zdb_id
-                     and featexp_exp_zdb_id=exp_zdb_id
+                     and xpatex_genox_zdb_id=genox_zdb_id
+                     and genox_geno_zdb_id=geno_zdb_id
+                     and genox_exp_zdb_id=exp_zdb_id
                      and xpatres_start_stg_zdb_id=st1.stg_zdb_id
                      and xpatres_end_stg_zdb_id=st2.stg_zdb_id
                      and xpatres_anat_item_zdb_id=anatitem_zdb_id
                      and xpatex_assay_name = xpatassay_name 
                order by 
-                     abbrev,exp_name,sh1,sh2,anatitem_name">
+                     geno_display_name,exp_name,sh1,sh2,anatitem_name">
   
                     <?MIVAR NAME=$fxinfo_fish_abbrev>$1<?/MIVAR>
                     <?MIVAR NAME=$fxinfo_assay>$2<?/MIVAR>
@@ -81,7 +81,7 @@ EFFECTS
                     <?MIVAR NAME=$fxinfo_start_stage>$4<?/MIVAR>
                     <?MIVAR NAME=$fxinfo_end_stage>$5<?/MIVAR>
                     <?MIVAR NAME=$fxinfo_anatzdbid>$9<?/MIVAR>
-                    <?MIVAR NAME=$fxinfo_featexp>$10<?/MIVAR>
+                    <?MIVAR NAME=$fxinfo_genox>$10<?/MIVAR>
                     <?MIVAR NAME=$fxinfo_stage1>$11<?/MIVAR>
                     <?MIVAR NAME=$fxinfo_stage2>$12<?/MIVAR>
                     
@@ -114,8 +114,8 @@ EFFECTS
                    <?MICOMMENT>This is a check to determine if current fish is equal to last fish
                                If it is, do not change row color, else change row color
                    <?/MICOMMENT>            
-                   <?MIBLOCK COND="$(NE,$fxinfo_last_featexp,)">                  
-                       <?MIBLOCK COND=$(NE,$fxinfo_last_featexp,$fxinfo_featexp)>
+                   <?MIBLOCK COND="$(NE,$fxinfo_last_genox,)">                  
+                       <?MIBLOCK COND=$(NE,$fxinfo_last_genox,$fxinfo_genox)>
                           <?MIVAR NAME=$row_color>$(IF,$(EC,$row_color,$highlighter),$white,$highlighter)<?/MIVAR>
                        <?MIELSE>
                           <?MIVAR NAME=$row_color>$row_color<?/MIVAR>
@@ -134,8 +134,8 @@ EFFECTS
                         <td></td>
                    <?/MIBLOCK>
                    
-                   <?MIBLOCK COND=$(NE,$fxinfo_last_featexp,$fxinfo_featexp)>
-                       <td> <?MISQL SQL="select WebExplode(object,'fxp_zdb_id=$fxinfo_featexp')from webpages where ID='aa-xpatfeatexp.apg';">
+                   <?MIBLOCK COND=$(NE,$fxinfo_last_genox,$fxinfo_genox)>
+                       <td> <?MISQL SQL="select WebExplode(object,'fxp_zdb_id=$fxinfo_genox')from webpages where ID='aa-xpatfeatexp.apg';">
                              <?/MISQL>
                              <?MIVAR>$1<?/MIVAR></td>
                         <?MIVAR NAME=$fxinfo_samefish>f<?/MIVAR>
@@ -195,7 +195,7 @@ EFFECTS
    
                   <?MIVAR NAME=$fxinfo_lastmrkr>$8<?/MIVAR>
  
-                  <?MIVAR NAME=$fxinfo_last_featexp>$fxinfo_featexp<?/MIVAR>
+                  <?MIVAR NAME=$fxinfo_last_genox>$fxinfo_genox<?/MIVAR>
 <?/MISQL>
        
        <?MICOMMENT>draw line between genes in table<?/MICOMMENT>

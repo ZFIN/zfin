@@ -3,10 +3,10 @@
 FILE:     fxfigfishlist.apg
 PREFIX:   fxfigfi_
 
-This displays a list of fish. It's simple. 
+This displays a list of genotype. It's simple. 
 
 Display a comma seperated-hyperlinked list 
-of all fish for a figure. Order by fish_name_order.
+of all genotype for a figure. Order by geno_name_order.
 
 This page gets called from
   fxfigureview.apg ::    no optional input vars
@@ -24,7 +24,7 @@ OUTPUT VARS:
   None.
 
 OUTPUT:
-  A list of fish.
+  A list of genotype.
 
 EFFECTS  
   None.
@@ -46,27 +46,27 @@ EFFECTS
 <?/MICOMMENT>
 <?MIBLOCK COND="$(AND,$(XST,$fxfigfi_resultTable),$(XST,$fxfigfi_gene_zdb_id))">
   <?MIVAR NAME=$fxfigfl_sql>
-       SELECT distinct get_fish_abbrev_html_link(zdb_id), fish_name_order
-         FROM expression_experiment, feature_experiment, fish, $fxfigfi_resultTable
+       SELECT distinct get_geno_name_html_link(geno_zdb_id), geno_name_order
+         FROM expression_experiment, genotype_experiment, genotype, $fxfigfi_resultTable
         WHERE xpat_fig_zdb_id = '$fxfigfi_fig_zdb_id'
           AND xpat_gene_zdb_id = '$fxfigfi_gene_zdb_id'
           AND xpat_xpatex_zdb_id = xpatex_zdb_id
-          AND xpatex_featexp_zdb_id = featexp_zdb_id
-          AND featexp_genome_feature_zdb_id = zdb_id
-     ORDER BY fish_name_order;
+          AND xpatex_genox_zdb_id = genox_zdb_id
+          AND genox_geno_zdb_id = geno_zdb_id
+     ORDER BY geno_name_order;
   <?/MIVAR>
 <?MIELSE>
   <?MIVAR NAME=$fxfigfl_sql>
-       SELECT distinct get_fish_abbrev_html_link(zdb_id), fish_name_order
-         FROM expression_experiment, feature_experiment, fish, figure, expression_result, expression_pattern_figure
+       SELECT distinct get_geno_name_html_link(geno_zdb_id), geno_name_order
+         FROM expression_experiment, genotype_experiment, genotype, figure, expression_result, expression_pattern_figure
         WHERE fig_zdb_id = '$fxfigfi_fig_zdb_id'
           AND fig_zdb_id=xpatfig_fig_zdb_id
           AND xpatres_zdb_id=xpatfig_xpatres_zdb_id
           AND xpatres_xpatex_zdb_id=xpatex_zdb_id
 	  AND fig_source_zdb_id =  xpatex_source_zdb_id
-          AND xpatex_featexp_zdb_id = featexp_zdb_id
-          AND featexp_genome_feature_zdb_id = zdb_id
-     ORDER BY fish_name_order;
+          AND xpatex_genox_zdb_id = genox_zdb_id
+          AND genox_geno_zdb_id = geno_zdb_id
+     ORDER BY geno_name_order;
   <?/MIVAR>
 <?/MIBLOCK>
 <?MICOMMENT> 

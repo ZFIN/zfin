@@ -18,7 +18,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/Reports/Vega
 
-GENERICS =
+GENERICS = 
 STATICS = VegaCount.sql vega_thisse_report.sql
 
 # ---------------  Production Rules  ------------------------------------

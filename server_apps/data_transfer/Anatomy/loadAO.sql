@@ -18,6 +18,7 @@
 --     end_startInconsistent.err
 --     pub_incorrect.err
 --     obsolete_anat_with_xpat.err
+--     obsolete_anat_with_pato.err
 --     annotationViolates.err
 -- 		 Send content to curators 
 --     
@@ -192,6 +193,14 @@ unload to "obsolete_anat_with_xpat.err"
                     from expression_result
                    where xpatres_anat_item_zdb_id = o_anatitem_zdb_id) ;
 
+unload to "obsolete_anat_with_pato.err" 
+   select o_anatitem_zdb_id
+     from obsolete_anatomy_item
+    where exists (select * 
+                    from atomic_phenotype
+                   where apato_entity_a_zdb_id = o_anatitem_zdb_id
+                      or apato_entity_b_zdb_id = o_anatitem_zdb_id) ;
+
 -------------------------------------------------------------------
 -- Anatomy term synonyms/alias 
 --
@@ -202,7 +211,7 @@ unload to "obsolete_anat_with_xpat.err"
 create temp table input_data_alias (
 	i_dalias_data_zdb_id	varchar(50),
 	i_dalias_alias		varchar(255),
-	i_dalias_group 		varchar(20),
+	i_dalias_group		varchar(20),
 	i_dalias_attribution	varchar(50),
 	i_dalias_zdb_id		varchar(50)
 ) with no log;
@@ -498,7 +507,7 @@ create temp table tmp_xpat_figure (
 	txf_xpatfig_zdb_id	varchar(50)
 )with no log;
 
--- Step 1
+-- XPAT Step 1
 -- find out annotations exist on both new and old terms,
 -- and delete the one on the to-be-merged(old) terms
 -- with track record in zdb_replaced_data
@@ -539,7 +548,7 @@ delete from zdb_active_data
 	     from tmp_xpatres_merge_pair_same_annotation
 	    where zactvd_zdb_id = txs_old_xpatres_zdb_id);
 
--- Step 2
+-- XPAT Step 2
 -- separate out the remaining annotations on old terms in a temp table, replace terms
 -- with the corresponding new ones. 
 -- Two notes: a) we prefer to give a new XPATRES zdb id for easy record tracking
@@ -581,6 +590,7 @@ insert into tmp_xpatres_merge_pair_diff_annotation
        where txm_xpatex_zdb_id = xpatres_xpatex_zdb_id
          and txm_start_stg_zdb_id =  xpatres_start_stg_zdb_id
          and txm_end_stg_zdb_id = xpatres_end_stg_zdb_id
+         and xpatres_expression_found = txm_xpat_found
          and txm_anat_item_zdb_id = m_anatitem_new_zdb_id
          and xpatres_anat_item_zdb_id = m_anatitem_old_zdb_id;
 
@@ -596,14 +606,8 @@ insert into zdb_active_data (zactvd_zdb_id)
 	select txm_xpatres_zdb_id from tmp_xpatres_merge_record;
 
 insert into zdb_replaced_data (zrepld_old_zdb_id, zrepld_new_zdb_id)
-	select xpatres_zdb_id, txm_xpatres_zdb_id
-          from expression_result, merged_anatomy_item, tmp_xpatres_merge_record
-	 where xpatres_anat_item_zdb_id = m_anatitem_old_zdb_id
-           and txm_anat_item_zdb_id = m_anatitem_new_zdb_id
-	   and xpatres_xpatex_zdb_id = txm_xpatex_zdb_id
-	   and xpatres_start_stg_zdb_id = txm_start_stg_zdb_id
-           and xpatres_end_stg_zdb_id = txm_end_stg_zdb_id
-           and xpatres_expression_found = txm_xpat_found;
+	select txd_old_xpatres_zdb_id, txd_new_xpatres_zdb_id
+          from tmp_xpatres_merge_pair_diff_annotation;
 
 -- delete annotation on old terms and that cascade to xpat figures  
 delete from zdb_active_data 
@@ -629,7 +633,203 @@ insert into expression_pattern_figure(xpatfig_xpatres_zdb_id, xpatfig_fig_zdb_id
        from tmp_xpat_figure;
 
 
--- Step 3  Delete merged anatomy terms
+
+---------------------------------------------------------
+-- Update PATO annotation on merged terms
+---------------------------------------------------------
+
+!echo '=== update atomic_phenotype on merged terms ==='
+
+-- pato_figure is an extension of atomic_phenotype records
+-- We have to take it into careful consideration. 
+
+create temp table tmp_apato_figure (
+	tpf_apato_zdb_id	varchar(50),
+	tpf_fig_zdb_id	varchar(50)
+)with no log;
+
+-- PATO Step 1
+-- find out same annotations exist on both new and old terms,
+-- and delete the one on the to-be-merged(old) terms
+-- with track record in zdb_replaced_data
+create temp table tmp_pato_merge_pair_same_annotation (
+	tps_old_apato_zdb_id	varchar(50),
+	tps_new_apato_zdb_id	varchar(50)
+)with no log;
+
+insert into tmp_pato_merge_pair_same_annotation
+select o.apato_zdb_id,
+       n.apato_zdb_id 
+  from merged_anatomy_item
+	join atomic_phenotype o
+		on m_anatitem_old_zdb_id = o.apato_entity_a_zdb_id
+	join atomic_phenotype n
+		on m_anatitem_new_zdb_id = n.apato_entity_a_zdb_id
+ where o.apato_genox_zdb_id = n.apato_genox_zdb_id 
+   and o.apato_start_stg_zdb_id = n.apato_start_stg_zdb_id 
+   and o.apato_end_stg_zdb_id = n.apato_end_stg_zdb_id 
+   and o.apato_pub_zdb_id = n.apato_pub_zdb_id
+   and o.apato_quality_zdb_id = n.apato_quality_zdb_id
+   and o.apato_tag = n.apato_tag
+   and o.apato_entity_b_zdb_id = n.apato_entity_b_zdb_id;
+
+insert into tmp_pato_merge_pair_same_annotation
+select o.apato_zdb_id,
+       n.apato_zdb_id 
+  from merged_anatomy_item
+	join atomic_phenotype o
+		on m_anatitem_old_zdb_id = o.apato_entity_b_zdb_id
+	join atomic_phenotype n
+		on m_anatitem_new_zdb_id = n.apato_entity_b_zdb_id
+ where o.apato_genox_zdb_id = n.apato_genox_zdb_id 
+   and o.apato_start_stg_zdb_id = n.apato_start_stg_zdb_id 
+   and o.apato_end_stg_zdb_id = n.apato_end_stg_zdb_id 
+   and o.apato_pub_zdb_id = n.apato_pub_zdb_id
+   and o.apato_quality_zdb_id = n.apato_quality_zdb_id
+   and o.apato_tag = n.apato_tag
+   and o.apato_entity_a_zdb_id = n.apato_entity_a_zdb_id;
+
+insert into zdb_replaced_data (zrepld_old_zdb_id, zrepld_new_zdb_id)
+	select tps_old_apato_zdb_id,tps_new_apato_zdb_id
+          from tmp_pato_merge_pair_same_annotation;
+
+-- Save the pato figure records (with the new anatomy item) in a temp table,
+-- we will do a distinct select and insert them back later. 
+insert into tmp_apato_figure
+     select tps_new_apato_zdb_id, apatofig_fig_zdb_id
+       from tmp_pato_merge_pair_same_annotation, apato_figure
+      where tps_old_apato_zdb_id = apatofig_apato_zdb_id;
+
+-- Delete redundant pato record and cascade to pato figure records
+delete from zdb_active_data 
+	where exists (
+	   select 'x'
+	     from tmp_pato_merge_pair_same_annotation
+	    where zactvd_zdb_id = tps_old_apato_zdb_id);
+
+-- PATO Step 2
+-- separate out the remaining annotations on old terms in a temp table, replace terms
+-- with the corresponding new ones. 
+-- Two notes: a) we prefer to give a new PATO zdb id for easy record tracking
+--            b) more than one old terms could be merged into the same term and
+--               and potentially bring in duplicate annotation 
+create temp table tmp_pato_merge_record (
+	tpm_apato_zdb_id 	varchar(50),
+	tpm_genox_zdb_id	varchar(50),
+	tpm_start_stg_zdb_id	varchar(50),
+	tpm_end_stg_zdb_id	varchar(50),
+	tpm_entity_a_zdb_id	varchar(50),
+	tpm_entity_b_zdb_id	varchar(50),
+	tpm_quality_zdb_id	varchar(50),
+	tpm_pub_zdb_id		varchar(50),
+	tpm_tag			varchar(35)
+)with no log;
+
+insert into tmp_pato_merge_record (tpm_genox_zdb_id, tpm_start_stg_zdb_id, 
+                                   tpm_end_stg_zdb_id, tpm_entity_a_zdb_id, 
+                                   tpm_entity_b_zdb_id, tpm_quality_zdb_id, 
+                                   tpm_pub_zdb_id, tpm_tag )
+-- More than one term might be merged into the same term, thus 'distinct' is needed.
+  select distinct apato_genox_zdb_id, apato_start_stg_zdb_id,
+         apato_end_stg_zdb_id,m_anatitem_new_zdb_id, apato_entity_b_zdb_id,
+         apato_quality_zdb_id, apato_pub_zdb_id, apato_tag
+    from merged_anatomy_item
+	 join atomic_phenotype
+		on m_anatitem_old_zdb_id = apato_entity_a_zdb_id;
+
+  select distinct apato_genox_zdb_id, apato_start_stg_zdb_id,
+         apato_end_stg_zdb_id,m_anatitem_new_zdb_id, apato_entity_b_zdb_id,
+         apato_quality_zdb_id, apato_pub_zdb_id, apato_tag
+    from merged_anatomy_item
+	 join atomic_phenotype
+		on m_anatitem_old_zdb_id = apato_entity_b_zdb_id;
+
+update tmp_pato_merge_record set tpm_apato_zdb_id = get_id ("APATO");
+
+-- Deal with pato_figure
+-- first of all, find out the new apato and corresponding old apato.
+-- due to the distinct statement above, we have to do the record matching
+-- again to pair up the new and old 
+create temp table tmp_pato_merge_pair_diff_annotation (
+	tpd_new_apato_zdb_id	varchar(50),
+	tpd_old_apato_zdb_id	varchar(50)
+)with no log;
+
+-- on entity_a
+insert into tmp_pato_merge_pair_diff_annotation
+      select tpm_apato_zdb_id, apato_zdb_id
+        from tmp_pato_merge_record, atomic_phenotype, merged_anatomy_item
+       where tpm_genox_zdb_id = apato_genox_zdb_id
+         and tpm_start_stg_zdb_id =  apato_start_stg_zdb_id
+         and tpm_end_stg_zdb_id = apato_end_stg_zdb_id
+         and tpm_entity_b_zdb_id = apato_entity_b_zdb_id
+         and tpm_quality_zdb_id = apato_quality_zdb_id
+         and tpm_pub_zdb_id = apato_pub_zdb_id
+         and tpm_tag = apato_tag
+         and tpm_entity_a_zdb_id = m_anatitem_new_zdb_id
+         and apato_entity_a_zdb_id = m_anatitem_old_zdb_id;
+
+-- on entity_b
+insert into tmp_pato_merge_pair_diff_annotation
+      select tpm_apato_zdb_id, apato_zdb_id
+        from tmp_pato_merge_record, atomic_phenotype, merged_anatomy_item
+       where tpm_genox_zdb_id = apato_genox_zdb_id
+         and tpm_start_stg_zdb_id =  apato_start_stg_zdb_id
+         and tpm_end_stg_zdb_id = apato_end_stg_zdb_id
+         and tpm_entity_b_zdb_id = apato_entity_b_zdb_id
+         and tpm_quality_zdb_id = apato_quality_zdb_id
+         and tpm_pub_zdb_id = apato_pub_zdb_id
+         and tpm_tag = apato_tag
+         and tpm_entity_b_zdb_id = m_anatitem_new_zdb_id
+         and apato_entity_b_zdb_id = m_anatitem_old_zdb_id;
+
+-- Save the pato figure records (with the new anatomy item) in a temp table,
+-- we will do a distinct select and insert them back later. 
+insert into tmp_apato_figure
+     select tpd_new_apato_zdb_id, apatofig_fig_zdb_id
+       from tmp_pato_merge_pair_diff_annotation, apato_figure
+      where tpd_old_apato_zdb_id = apatofig_apato_zdb_id;
+
+-- register the new pato zdb id before anything else.
+insert into zdb_active_data (zactvd_zdb_id)
+	select tpm_apato_zdb_id from tmp_pato_merge_record;
+
+insert into zdb_replaced_data (zrepld_old_zdb_id, zrepld_new_zdb_id)
+	select tpd_old_apato_zdb_id, tpd_new_apato_zdb_id
+          from tmp_pato_merge_pair_diff_annotation;
+
+-- delete annotation on old terms and that cascade to pato figures  
+delete from zdb_active_data 
+	where exists 
+	       (select 'x'
+	          from merged_anatomy_item join 
+                       atomic_phenotype
+			   on m_anatitem_old_zdb_id = apato_entity_a_zdb_id
+	         where zactvd_zdb_id = apato_zdb_id);
+delete from zdb_active_data 
+	where exists 
+	       (select 'x'
+	          from merged_anatomy_item join 
+                       atomic_phenotype
+			   on m_anatitem_old_zdb_id = apato_entity_b_zdb_id
+	         where zactvd_zdb_id = apato_zdb_id);
+
+-- restore the annotation with new terms (it establishes some primary keys
+-- for the xpat figures restore.  
+insert into atomic_phenotype (apato_zdb_id, apato_genox_zdb_id,
+			apato_start_stg_zdb_id,  apato_end_stg_zdb_id,
+			apato_entity_a_zdb_id, apato_entity_b_zdb_id,
+                        apato_quality_zdb_id, apato_pub_zdb_id, apato_tag)
+     select * 
+       from tmp_pato_merge_record;
+
+-- restore pato figures with a distinct select
+insert into apato_figure(apatofig_apato_zdb_id, apatofig_fig_zdb_id)
+     select distinct tpf_apato_zdb_id, tpf_fig_zdb_id
+       from tmp_apato_figure;
+
+
+-- Now  Delete merged anatomy terms
 -- 
 -- Track anatomy term merge in zdb_replaced_data.
 -- Delete merged anatomy items from zdb_active_data.
@@ -653,7 +853,7 @@ delete from zdb_active_data
 		      from merged_anatomy_item
 		     where zactvd_zdb_id = m_anatitem_old_zdb_id);
 
-		
+				
 -----------------------------------------------------------------
 -- Delete dead alias/synonym, Keep zdb id on unchanged alias
 -- Load in new ones. 

@@ -21,14 +21,16 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/lib/DB_triggers
 
 TRIGGERS = \
-	alteration_allele_update_trigger.sql \
-	alteration_insert_trigger.sql \
 	anatomy_display_insert_trigger.sql \
 	anatomy_display_update_trigger.sql \
 	anatomy_items_insert_trigger.sql \
 	anatomy_items_update_trigger.sql \
 	anatomy_relationship_insert_trigger.sql \
 	anatomy_relationship_update_trigger.sql \
+	atomic_phenotype_insert_trigger.sql \
+	atomic_phenotype_update_trigger.sql \
+	apatoinf_insert_trigger.sql \
+	apatoinf_update_trigger.sql \
 	data_alias_insert_trigger.sql \
 	dalias_alias_update_trigger.sql \
 	db_link_insert_trigger.sql \
@@ -45,25 +47,23 @@ TRIGGERS = \
 	expression_result_update_trigger.sql \
 	figure_insert_trigger.sql \
 	figure_update_trigger.sql \
-	fish_allele_update_trigger.sql \
-	fish_image_anatomy_insert_trigger.sql \
-	fish_image_anatomy_update_trigger.sql \
-	fish_image_stage_insert_trigger.sql \
-	fish_image_stage_update_trigger.sql \
-	fish_insert_trigger.sql \
-	fish_name_update_trigger.sql \
-	fish_pheno_keywords_update_trigger.sql \
+	feature_marker_relationship_insert_trigger.sql \
+	feature_marker_relationship_ftr_update_trigger.sql \
+	feature_marker_relationship_mrkr_update_trigger.sql \
+	feature_insert_trigger.sql \
+	feature_abbrev_update_trigger.sql \
+	feature_name_update_trigger.sql \
+	genotype_insert_trigger.sql \
+	geno_display_name_update_trigger.sql \
+	geno_handle_update_trigger.sql \
+	image_stage_insert_trigger.sql \
+	image_stage_update_trigger.sql \
 	journal_insert_trigger.sql \
 	journal_update_trigger.sql \
 	lab_insert_trigger.sql \
 	lab_update_trigger.sql \
 	linkage_pair_member_insert_trigger.sql \
 	linkage_pair_member_update_trigger.sql \
-        locus_update_trigger.sql \
-	locus_insert_trigger.sql \
-	locus_registration_insert_trigger.sql \
-	locusreg_abbrev_update_trigger.sql \
-	locusreg_name_update_trigger.sql \
 	marker_insert_trigger.sql \
 	marker_comments_update_trigger.sql \
 	mrkr_abbrev_update_trigger.sql \

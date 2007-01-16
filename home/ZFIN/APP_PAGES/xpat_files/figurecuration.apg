@@ -1,0 +1,115 @@
+<?MICOMMENT>
+
+FILE:     figurecuration.apg
+PREFIX:   figcur_
+
+
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+
+<?/MIERROR> 
+
+<?MIVAR NAME=debugg>false<?/MIVAR>
+
+<?MIBLOCK COND="$(XST,$OID)">
+
+  <?MISQL SQL="select WebExplode(object,'permission=root&page_title=Curate Pub') from webPages where ID='aa-secure_navigation.apg';">$1<?/MISQL>
+
+  <?MIBLOCK COND="$(EC,$AUTHORIZED,root)"> 
+  
+<?MICOMMENT> 
+	  =============
+	  =  FIGURES  =
+	  =============
+<?/MICOMMENT>
+<a name=figure>
+
+<p><b><font size=3>Figure:</font></b>
+<?MIBLOCK COND=$(OR,$(NXST,$xpcur_c_figure),$(EC,$xpcur_c_figure,hide))>
+  <?MIVAR><a href="javascript:onClick=urlSetCookie('figure','show','xpcur_c_')">$unhide</a><?/MIVAR>
+  <br>
+  
+<?MIELSE>
+  <?MIVAR><a href="javascript:onClick=urlSetCookie('figure','hide','xpcur_c_')">$hide</a><?/MIVAR>
+  <br>  
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-xpatcurfigure.apg';">$1<?/MISQL>
+
+<?/MIBLOCK>
+
+<?MICOMMENT> 
+	  ============
+	  =  IMAGES  =
+	  ============
+<?/MICOMMENT>
+<a name=image>
+<p><b><font size=3>Image:</font></b>
+<?MIBLOCK COND=$(OR,$(NXST,$xpcur_c_image),$(EC,$xpcur_c_image,hide))>
+
+  <?MIBLOCK COND=$(AND,$(XST,$xpcur_c_has_permission),$(EC,$xpcur_c_has_permission,t))>  
+    <?MIVAR><a href="javascript:onClick=urlSetCookie('image','show','xpcur_c_')">$unhide</a><?/MIVAR>
+    <br>
+  <?MIELSE>
+    <?MIVAR><a href="javascript:onClick=alert('Please change permission before adding images.')">$unhide</a><?/MIVAR>  
+  <?/MIBLOCK>
+  
+<?MIELSE>
+  <?MIVAR><a href="javascript:onClick=urlSetCookie('image','hide','xpcur_c_')">$hide</a><?/MIVAR>
+  <br>
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-xpatcurimage.apg';">$1<?/MISQL>
+
+<?/MIBLOCK>
+
+
+<?MICOMMENT> 
+	  ================
+	  =  Permission  =
+	  ================
+<?/MICOMMENT>
+<a name=permission>
+<p>
+<b><font size=3>Permission:</font></b>
+<?MIBLOCK COND=$(OR,$(NXST,$xpcur_c_permission),$(EC,$xpcur_c_permission,hide))>
+  <?MIVAR><a href="javascript:onClick=urlSetCookie('permission','show','xpcur_c_')">$unhide</a><?/MIVAR>
+  <br>
+  
+<?MIELSE>
+
+  <?MIVAR><a href="javascript:onClick=urlSetCookie('permission','hide','xpcur_c_')">$hide</a><?/MIVAR>
+  <br>
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-xpatcurpermission.apg';">$1<?/MISQL>
+
+
+<?/MIBLOCK>
+
+
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pubacknowledgement.apg';">$1<?/MISQL>
+ 
+
+
+
+<?MICOMMENT> 
+  ====================
+  =  ERROR MESSAGES  =
+  ====================
+<?/MICOMMENT>
+
+<?MIELSE>
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+  <p>Authorization for this page failed.
+  <p>A session error may have occurred. Try logging out and logging back in. If that does not work, contact your database administrator.
+<?/MIBLOCK> <?MICOMMENT> not authorized <?/MICOMMENT>
+
+  
+<?MIELSE>
+  <P>
+  ERROR -- something bad happened -- no OID passed in!
+<?/MIBLOCK>
+

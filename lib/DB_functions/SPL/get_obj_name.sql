@@ -22,8 +22,11 @@ get_obj_name(zdbId varchar(50))
       into objName
       from marker
       where mrkr_zdb_id = zdbId;
-  elif (objType = "FISH") then
-    let objName = get_fish_full_name(zdbId);
+  elif (objType = "GENO") then
+    select geno_display_name
+      into objName
+      from genotype
+     where geno_zdb_id = zdbId;
   elif (objType = "MRKRGOEV") then
     select get_obj_abbrev(mrkrgoev_mrkr_zdb_id) || ", " ||
            get_obj_name(mrkrgoev_go_term_zdb_id) || ", " || 
@@ -55,23 +58,18 @@ get_obj_name(zdbId varchar(50))
       into objName
       from expression_pattern_infrastructure
       where xpatinf_zdb_id = zdbId ;	
-  elif (objType = "LOCUS") then
-    select locus_name 
-      into objName
-      from locus
-      where zdb_id = zdbId;
   elif (objType = "ALT") then
-    select allele
+    select feature_name
       into objName
-      from alteration
-      where zdb_id = zdbId;
+      from feature
+      where feature_zdb_id = zdbId;
   elif (objType = "LAB") then
     select name 
       into objName
       from lab
       where zdb_id = zdbId;
   elif (objType = "PERS") then
-    select name 
+    select full_name 
       into objName
       from person
       where zdb_id = zdbId;
@@ -81,10 +79,10 @@ get_obj_name(zdbId varchar(50))
       from publication
       where zdb_id = zdbId;
   elif (objType = "IMAGE") then
-    select fimg_zdb_id		-- don't have names, return ZDB ID
+    select img_zdb_id		-- don't have names, return ZDB ID
       into objName
-      from fish_image
-      where fimg_zdb_id = zdbId;
+      from image
+     where img_zdb_id = zdbId;
 
   -- Now, list the less frequently hit types in alphabetical order
 
@@ -108,11 +106,6 @@ get_obj_name(zdbId varchar(50))
       into objName
       from condition_data_type
       where cdt_zdb_id = zdbId ;
-  elif (objType = "CHROMO") then
-    select print_name
-      into objName
-      from chromosome
-      where zdb_id = zdbId;
   elif (objType = "COMPANY") then
     select name 
       into objName
@@ -151,11 +144,6 @@ get_obj_name(zdbId varchar(50))
       into objName
       from experiment_unit
       where expunit_zdb_id = zdbId;
-  elif (objType = "FEATEXP") then     --no name so return zdb_id
-    select featexp_zdb_id
-      into objName
-      from feature_experiment
-      where featexp_zdb_id = zdbId;
   elif (objType = "EXTNOTE") then
     select extnote_zdb_id
       into objName
@@ -269,7 +257,56 @@ get_obj_name(zdbId varchar(50))
       into objName
       from expression_results
       where xpatres_zdb_id = zdbId;
-
+  elif (objType = "APATO") then
+    select apato_zdb_id		-- don't have names, use ZDB ID
+      into objName
+      from atomic_phenotype
+      where apato_zdb_id = zdbId;
+  elif (objType = "API") then
+    select api_zdb_id		-- don't have names, use ZDB ID
+      into objName
+      from apato_infrastructure
+      where api_zdb_id = zdbId;
+  elif (objType = "FHIST") then
+    select fhist_zdb_id		-- don't have names, use ZDB ID
+      into objName
+      from feature_history
+      where fhist_zdb_id = zdbId;
+  elif (objType = "FMREL") then
+    select fmrel_zdb_id		-- don't have names, use ZDB ID
+      into objName
+      from feature_marker_relationship
+      where fmrel_zdb_id = zdbId;
+  elif (objType = "GENOFEAT") then
+    select genofeat_zdb_id		-- don't have names, use ZDB ID
+      into objName
+      from genotype_feature
+      where genofeat_zdb_id = zdbId;
+  elif (objType = "GENOX") then
+    select genox_zdb_id		-- don't have names, use ZDB ID
+      into objName
+      from genotype_experiment
+      where genox_zdb_id = zdbId;
+  elif (objType = "TERM") then
+    select term_zdb_id		-- don't have names, use ZDB ID
+      into objName
+      from term
+      where term_zdb_id = zdbId;
+  elif (objType = "TERMDEF") then
+    select termdef_zdb_id		-- don't have names, use ZDB ID
+      into objName
+      from term_definition
+      where termdef_zdb_id = zdbId;
+  elif (objType = "TERMREL") then
+    select termrel_zdb_id		-- don't have names, use ZDB ID
+      into objName
+      from term_relationship
+      where termrel_zdb_id = zdbId;
+  elif (objType = "ZYG") then
+    select zyg_name		-- don't have names, use ZDB ID
+      into objName
+      from zygocity
+      where zyg_zdb_id = zdbId;
 
   -- and finally 2 oddball cases
 

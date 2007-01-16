@@ -1,0 +1,294 @@
+<?MICOMMENT>
+FILE:   pheno_summary.apg
+PREFIX: phenosum_
+
+Display a list of genotypes by publication, for a gene or genotype.
+
+INPUT VARS:  
+
+OUTPUT VARS: 
+
+OUTPUT:      
+
+EFFECTS:     
+
+DEBUGGING:
+  $debug_timing is in this page, but only before results are displayed
+
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
+ <HTML>
+ <HEAD>
+ <?MIVAR Name=page_name>ZFIN Phenotype Summary <?/MIVAR>
+ <?MIVAR><TITLE>$page_name</TITLE><?/MIVAR>
+ </HEAD>
+
+ <BODY>
+
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
+
+
+
+
+
+<?MIVAR name=$highlight><!--|HIGHLIGHT_COLOR|--><?/MIVAR>
+<?MIVAR NAME=$MI_NULL><?/MIVAR>
+<?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
+<?MIVAR NAME=$OID COND="$(NXST,$OID)"><?/MIVAR>
+
+
+<?MIBLOCK COND=$(NC,$(SUBSTR,$OID,1,8),ZDB-GENO)>
+  <?MIVAR NAME=phenosum_header><?MISQL SQL="execute function get_mrkr_name_html_link('$OID');">$1<?/MISQL><?/MIVAR>
+<?MIELSE>
+
+  <?MIVAR NAME=phenosum_header><?MISQL SQL="execute function get_geno_name_with_bg_html_link('$OID');">$1<?/MISQL><?/MIVAR>
+<?/MIBLOCK>
+
+<?MIVAR NAME=phenosum_sql_select>select count(distinct zdb_id)<?/MIVAR>
+
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pheno_summary_sql.apg';">$1<?/MISQL>
+
+<?MISQL SQL="$phenosum_sql;"><?/MISQL>
+<?MIVAR NAME=phenosum_pub_count>$1<?/MIVAR>
+
+
+<?MIVAR NAME=phenosum_sql_select>select count(distinct fig_zdb_id)<?/MIVAR>
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pheno_summary_sql.apg';">$1<?/MISQL>
+
+<?MISQL SQL="$phenosum_sql;"><?/MISQL>
+
+<?MIVAR NAME=phenosum_fig_count>$1<?/MIVAR>
+
+
+<table bgcolor=<?MIVAR>$highlight<?/MIVAR> width=100%>
+  <tr>
+    <td>
+      <b>Phenotype Summary for</b> <?MIVAR>$phenosum_header<?/MIVAR>
+    </td>
+    
+    <td>
+  <?MICOMMENT> ==== Input Welcome Button ==== <?/MICOMMENT>
+
+  <?MIBLOCK COND="$(NXST,$UPDATE)">
+     <?MIVAR>
+	  <table width = 15% align=right><tr>	
+           <form method=post 
+                 action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
+                 target=comments>
+           <input type=hidden name=subject value="$page_name">
+           <input type=hidden name=marker_id value="$OID">
+           <input type=hidden name=MIval value="aa-your_input_welcome.apg">
+           <input type=hidden name=page_id value="$OID">
+          <td>
+           <input type=submit value="Your Input Welcome">
+          </td>
+           </form></tr></table>
+     <?/MIVAR>
+  <?/MIBLOCK>    
+    
+     
+    
+    </td>    
+  </tr>
+</table>
+
+<br>
+<?MIVAR>
+<center>
+  <b>$phenosum_fig_count figures with phenotypes from $phenosum_pub_count publications.</b>
+</center>
+<?/MIVAR>
+
+
+<?MIVAR NAME=phenosum_prev_pub><?/MIVAR>
+<?MIVAR NAME=phenosum_prev_fig><?/MIVAR>
+<?MIVAR NAME=phenosum_row_color>$highlight<?/MIVAR>
+
+<p>
+<table width=100% cellspacing=0 cellpadding=3>
+<tr>
+  <td>
+    <b>Publication</b>
+  </td>
+  <td>
+    <b>Data</b>
+  </td>
+  <td nowrap>
+    <b>Genotype</b>
+  </td>
+  <td>
+    <b>Parental Zygosity</b>
+  </td>
+  <td>
+    <b>Observed in</b>
+  </td>
+
+<?MIVAR NAME=phenosum_sql_select>
+    select distinct zdb_id, pub_mini_ref, fig_zdb_id, get_geno_name_with_bg_html_link(geno_zdb_id), fig_label, fig_full_label, geno_zdb_id, get_genofeat_mp_zyg_html_display(genofeat_zdb_id)
+<?/MIVAR>
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-pheno_summary_sql.apg';">$1<?/MISQL>
+
+<?MISQL SQL="$phenosum_sql
+    order by pub_mini_ref, fig_full_label, 4;">
+
+     <?MIVAR NAME=phenosum_pub_zdb>$1<?/MIVAR>
+     <?MIVAR NAME=phenosum_pub_mini_ref>$2<?/MIVAR>
+     <?MIVAR NAME=phenosum_fig_zdb>$3<?/MIVAR>
+     <?MIVAR NAME=phenosum_geno>$4<?/MIVAR>
+     <?MIVAR NAME=phenosum_fig_label>$5<?/MIVAR>
+     <?MIVAR NAME=phenosum_geno_zdb>$7<?/MIVAR>
+     <?MIVAR NAME=phenosum_pr_zyg>$8<?/MIVAR>
+     
+     <?MIVAR NAME=phenosum_anat_elem_id>$(REPLACE,$phenosum_fig_zdb$phenosum_geno_zdb,"-","")<?/MIVAR>
+
+   <?MIBLOCK COND=$(AND,$(NC,$phenosum_prev_pub,),$(NC,$phenosum_prev_pub,$phenosum_pub_zdb))>          
+          <?MIVAR NAME=phenosum_row_color>$(IF,$(EC,$phenosum_row_color,),$highlight,)<?/MIVAR>
+   <?/MIBLOCK>
+   
+   <tr bgcolor=$phenosum_row_color>
+      <td valign=top>
+        <?MIVAR COND=$(NC,$phenosum_pub_zdb,$phenosum_prev_pub)>
+          <a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$phenosum_pub_zdb>$phenosum_pub_mini_ref
+          </a>
+        <?/MIVAR>
+      </td>
+      
+      <td nowrap valign=top>
+        <?MIBLOCK COND=$(NC,$phenosum_fig_zdb,$phenosum_prev_fig)>
+
+          <?MIVAR>
+          <a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$phenosum_fig_zdb>$phenosum_fig_label</a>
+          <?/MIVAR>
+          
+      <?MISQL SQL=" 
+	select img_thumbnail
+	  from image
+	 where img_fig_zdb_id = '$phenosum_fig_zdb';">
+	  <?MIVAR COND=$(EC,$MI_CURRENTROW,1) NAME=phenosum_fthmnlName>$1<?/MIVAR>
+      <?/MISQL>
+
+      <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+         <?MIVAR>
+          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$phenosum_fig_zdb">
+            <img border=1 src="<!--|IMAGE_LOAD|-->/$phenosum_fthmnlName" height="50" title="$MI_ROWCOUNT image$(IF,$(>,$MI_ROWCOUNT,1),s)">$(IF,$(>,$MI_ROWCOUNT,1),<img border=0 src=http://<!--|DOMAIN_NAME|-->/images/multibars.gif>)
+          </a>
+         <?/MIVAR>
+      <?/MIBLOCK>
+
+        <?/MIBLOCK>
+      </td>
+      
+      <td nowrap  valign=top>
+        $phenosum_geno
+      </td>
+      
+      <td valign=top>
+        $phenosum_pr_zyg
+      </td>
+      
+      <td valign=top>
+ 
+      <?MIVAR NAME=phenosum_anat_counter>0<?/MIVAR>
+      <?MIVAR NAME=phenosum_anat_short_list_cap>5<?/MIVAR>
+      
+      <?MISQL SQL="
+	     select distinct anatitem_zdb_id, anatitem_name, anatitem_name_order, 'anatomy'
+               from atomic_phenotype, anatomy_item, genotype_experiment, apato_figure
+              where apato_genox_zdb_id = genox_zdb_id
+                and apatofig_fig_zdb_id = '$phenosum_fig_zdb'
+                and apatofig_apato_zdb_id = apato_zdb_id
+                and genox_geno_zdb_id = '$phenosum_geno_zdb'
+	        and (apato_entity_a_zdb_id = anatitem_zdb_id 
+		  or apato_entity_b_zdb_id = anatitem_zdb_id)
+	UNION
+	     select distinct goterm_go_id, goterm_name, zero_pad(goterm_name), 'go'
+               from atomic_phenotype, go_term, genotype_experiment, apato_figure
+              where apato_genox_zdb_id = genox_zdb_id
+                and genox_geno_zdb_id = '$phenosum_geno_zdb'
+                and apatofig_fig_zdb_id = '$phenosum_fig_zdb'
+                and apatofig_apato_zdb_id = apato_zdb_id
+	        and (apato_entity_a_zdb_id = goterm_zdb_id 
+		  or apato_entity_b_zdb_id = goterm_zdb_id)
+           order by 3	; ">
+           
+          <?MIBLOCK COND=$(EC,$4,anatomy)>
+              <?MIVAR NAME=phenosum_anatitem_html><span nowrap><a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-anatomy_item.apg&OID=$1>$2</a></span><?/MIVAR>
+          <?MIELSE>
+              <?MIVAR NAME=phenosum_anatitem_html><span nowrap><a href=http://www.ebi.ac.uk/ego/QuickGO?mode=display&entry=GO:$1>$2</a></span><?/MIVAR>          
+          <?/MIBLOCK>     
+
+          $(SETVAR,$phenosum_anat_counter,$(+,$phenosum_anat_counter,1))
+  	  <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
+     	    <?MIVAR NAME=phenosum_anat_short_list>$phenosum_anatitem_html<?/MIVAR>
+      	    <?MIVAR NAME=phenosum_anat_long_list>$phenosum_anatitem_html<?/MIVAR>         
+	  <?MIELSE>
+	    <?MIVAR COND="$(<=,$phenosum_anat_counter,$phenosum_anat_short_list_cap)">
+	       $(VECAPPEND,$phenosum_anat_short_list,$phenosum_anatitem_html)
+            <?/MIVAR>
+            <?MIVAR>
+              $(VECAPPEND,$phenosum_anat_long_list,$phenosum_anatitem_html)
+            <?/MIVAR>
+          <?/MIBLOCK>
+
+       <?/MISQL>
+
+    <?MIVAR NAME=phenosum_anat_short_list_sepa SEPARATE=", ">$phenosum_anat_short_list<?/MIVAR>
+    <?MIVAR NAME=phenosum_anat_long_list_sepa SEPARATE=", ">$phenosum_anat_long_list<?/MIVAR>
+    <?MIVAR NAME=phenosum_anat_short_list_escp>$(REPLACE,$phenosum_anat_short_list_sepa,"'","")<?/MIVAR>
+    
+    <?MIVAR NAME=phenosum_anat_long_list_escp>$(REPLACE,$phenosum_anat_long_list_sepa,"'","")<?/MIVAR>
+
+       <span id="$phenosum_anat_elem_id">
+         <?MIVAR>$phenosum_anat_short_list_escp<?/MIVAR>
+
+         <?MIVAR COND="$(>,$MI_ROWCOUNT,$phenosum_anat_short_list_cap)">   
+	   ... <a href=javascript:onClick=expandAnatomyList$phenosum_anat_elem_id()>(all $MI_ROWCOUNT) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>
+         <?/MIVAR>
+       </span>
+       
+
+        <script>
+           <?MIVAR>
+   	   function expandAnatomyList$phenosum_anat_elem_id() {
+     	       var elem = document.getElementById('$phenosum_anat_elem_id');
+               elem.innerHTML = "$phenosum_anat_long_list_escp <a href=javascript:onClick=shrinkAnatomyList$phenosum_anat_elem_id()><img border=0 src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif></a>";	
+	   }
+
+   	   function shrinkAnatomyList$phenosum_anat_elem_id() {
+     	       var elem = document.getElementById('$phenosum_anat_elem_id');
+               elem.innerHTML = "$phenosum_anat_short_list_escp ... <a href=javascript:onClick=expandAnatomyList$phenosum_anat_elem_id()>(all $MI_ROWCOUNT) <img border=0 src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif></a>";	
+	   }
+
+	   <?/MIVAR>
+        </script>        
+       
+       <?MIVAR>
+          $(UNSETVAR,phenosum_anat_long_list)
+          $(UNSETVAR,phenosum_anat_short_list)
+       <?/MIVAR>
+     </td>
+      
+   </tr>
+   
+   <?MIVAR NAME=phenosum_prev_pub>$phenosum_pub_zdb<?/MIVAR>
+   <?MIVAR NAME=phenosum_prev_fig>$phenosum_fig_zdb<?/MIVAR>
+<?/MISQL>
+</table>
+
+<br>
+<?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+
+
+
+
+

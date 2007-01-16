@@ -135,7 +135,7 @@ sub emailError()
     &writeReport("tech", $_[0]);
     
     if ($_[1]) {  &sendReport($_[1]); }
-    else {  &sendReport(); }
+    else {  &sendReport("tech"); }
     
     exit;
   }
@@ -280,5 +280,5 @@ sub getReportName ()
     if ($_[0] eq "tech") {  return "report";}
     elsif ($_[0] eq "bio") { return "report_ortho";}
     
-    die "unknown report";      
+    return "report";      
   }

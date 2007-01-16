@@ -127,9 +127,7 @@ EFFECTS
                  is submitted are added to xpatcurup_form_variables. 
                ============================================================
   <?/MICOMMENT>   
-  <script>
-    setCookie('xpcur_G_form_variables','');
-  </script>
+
   
   <?MICOMMENT> ============================================================
                  Equality check $(EC,$var,text only) not working.
@@ -140,6 +138,10 @@ EFFECTS
 
   <?MICOMMENT> ================| Experiment |================ <?/MICOMMENT>
   <?MIBLOCK COND=$(XST,$xpcur_G_xpatex)>
+  
+    <script>
+      setCookie('xpatex','','xpcur_G_');
+    </script>
   
     <?MICOMMENT>
       required: xpcur_G_xpatex_add_gene, xpcur_G_xpatex_add_fish, xpcur_G_xpatex_add_assay, xpcur_G_xpatex_add_exp
@@ -153,12 +155,12 @@ EFFECTS
     
       <?MISQL SQL="
         select count(*) :: integer
-        from expression_experiment, feature_experiment
+        from expression_experiment, genotype_experiment
         where xpatex_gene_zdb_id = '$xpcur_G_xpatex_gene'
           and xpatex_assay_name = '$xpcur_G_xpatex_assay'
-          and xpatex_featexp_zdb_id = featexp_zdb_id
-          and featexp_genome_feature_zdb_id = '$xpcur_G_xpatex_fish'
-          and featexp_exp_zdb_id = '$xpcur_G_xpatex_exp'
+          and xpatex_genox_zdb_id = genox_zdb_id
+          and genox_geno_zdb_id = '$xpcur_G_xpatex_fish'
+          and genox_exp_zdb_id = '$xpcur_G_xpatex_exp'
           and xpatex_source_zdb_id = '$OID'
           and $(IF,$(EC,$xpcur_G_xpatex_genbank,),
               xpatex_dblink_zdb_id is null,
@@ -200,34 +202,34 @@ EFFECTS
           
           <?MICOMMENT> ==| Check existence of Feature Environment |== <?/MICOMMENT>
           <?MISQL SQL="
-            select featexp_zdb_id
-            from feature_experiment 
-            where featexp_genome_feature_zdb_id = '$xpcur_G_xpatex_fish'
-              and featexp_exp_zdb_id = '$xpcur_G_xpatex_exp';">
-            <?MIVAR NAME=xpcurup_featexp_zdb_id>$1<?/MIVAR>
+            select genox_zdb_id
+            from genotype_experiment 
+            where genox_geno_zdb_id = '$xpcur_G_xpatex_fish'
+              and genox_exp_zdb_id = '$xpcur_G_xpatex_exp';">
+            <?MIVAR NAME=xpcurup_genox_zdb_id>$1<?/MIVAR>
           <?/MISQL>
     
-          <?MIBLOCK COND="$(NXST,$xpcurup_featexp_zdb_id)">  
+          <?MIBLOCK COND="$(NXST,$xpcurup_genox_zdb_id)">  
             <?MICOMMENT> ==| Get next ZDB-ID |== <?/MICOMMENT>
-            <?MISQL SQL="execute function get_id('FEATEXP');">$(SETVAR,$xpcurup_featexp_zdb_id,$1)<?/MISQL>
+            <?MISQL SQL="execute function get_id('GENOX');">$(SETVAR,$xpcurup_genox_zdb_id,$1)<?/MISQL>
       
             <?MICOMMENT> ==| Add New FEATENV |== <?/MICOMMENT>  
-            <?MISQL SQL="INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES('$xpcurup_featexp_zdb_id');"><?/MISQL>    
+            <?MISQL SQL="INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES('$xpcurup_genox_zdb_id');"><?/MISQL>    
      
             <?MICOMMENT> ==| CREATE FEATENV RECORD |== <?/MICOMMENT>  
             <?MISQL SQL="
-                INSERT INTO feature_experiment(
-                   featexp_zdb_id,
-                   featexp_genome_feature_zdb_id,
-                   featexp_exp_zdb_id)
+                INSERT INTO genotype_experiment(
+                   genox_zdb_id,
+                   genox_geno_zdb_id,
+                   genox_exp_zdb_id)
                 VALUES(
-                   '$xpcurup_featexp_zdb_id',
+                   '$xpcurup_genox_zdb_id',
                    '$xpcur_G_xpatex_fish',
                    '$xpcur_G_xpatex_exp');">
             <?/MISQL>
             
             <?MISQL SQL="
-              select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=featexp_zdb_id&recweb_new_value=$xpcurup_featexp_zdb_id&recweb_comments=create+new+record') 
+              select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=genox_zdb_id&recweb_new_value=$xpcurup_genox_zdb_id&recweb_comments=create+new+record') 
               from webPages where ID='aa-record_web_update.apg';">
             <?/MISQL>
     
@@ -248,18 +250,16 @@ EFFECTS
                    xpatex_assay_name,
                    xpatex_gene_zdb_id,
                    xpatex_probe_feature_zdb_id,
-                   xpatex_featexp_zdb_id,
-                   xpatex_dblink_zdb_id,
-                   xpatex_direct_submission_date)
+                   xpatex_genox_zdb_id,
+                   xpatex_dblink_zdb_id)
                 VALUES (
                    '$xpcurup_xpat_zdb',
                    '$OID',
                    '$xpcur_G_xpatex_assay',
                    '$xpcur_G_xpatex_gene',
                    '$xpcurup_xpatex_probe',
-                   '$xpcurup_featexp_zdb_id',
-                   '$xpcur_G_xpatex_genbank',
-                   TODAY);">
+                   '$xpcurup_genox_zdb_id',
+                   '$xpcur_G_xpatex_genbank');">
               <?/MISQL> 
             <?MIELSE>
               <?MISQL SQL="
@@ -268,17 +268,15 @@ EFFECTS
                    xpatex_source_zdb_id,
                    xpatex_assay_name,
                    xpatex_gene_zdb_id,
-                   xpatex_featexp_zdb_id,
-                   xpatex_dblink_zdb_id,
-                   xpatex_direct_submission_date)
+                   xpatex_genox_zdb_id,
+                   xpatex_dblink_zdb_id)
                 VALUES (
                    '$xpcurup_xpat_zdb',
                    '$OID',
                    '$xpcur_G_xpatex_assay',
                    '$xpcur_G_xpatex_gene',
-                   '$xpcurup_featexp_zdb_id',
-                   $(IF,$(EC,$xpcur_G_xpatex_genbank,),NULL,'$xpcur_G_xpatex_genbank') ,
-                   TODAY);">
+                   '$xpcurup_genox_zdb_id',
+                   $(IF,$(EC,$xpcur_G_xpatex_genbank,),NULL,'$xpcur_G_xpatex_genbank') );">
               <?/MISQL>       
               
               <?MISQL SQL="
@@ -338,10 +336,11 @@ EFFECTS
  
             <?/MIBLOCK>
             
+              <?MIVAR NAME=xpcurup_old_value><?/MIVAR>
             <?MISQL SQL="
               select xpatex_gene_zdb_id,
                      xpatex_probe_feature_zdb_id,
-                     xpatex_featexp_zdb_id,
+                     xpatex_genox_zdb_id,
                      xpatex_dblink_zdb_id,
                      xpatex_assay_name
               from expression_experiment
@@ -355,12 +354,12 @@ EFFECTS
                      xpatex_gene_zdb_id = '$xpcur_G_xpatex_gene',
                      xpatex_probe_feature_zdb_id = $(IF,$(EC,$xpcurup_xpatex_probe,),NULL,'$xpcurup_xpatex_probe'),
                      xpatex_dblink_zdb_id = $(IF,$(EC,$xpcur_G_xpatex_genbank,),NULL,'$xpcur_G_xpatex_genbank'),
-                     xpatex_featexp_zdb_id = '$xpcurup_featexp_zdb_id'
+                     xpatex_genox_zdb_id = '$xpcurup_genox_zdb_id'
                where xpatex_zdb_id = '$xpcur_G_xpatex_zdb_id'
                ;">
             <?/MISQL> 
             
-            <?MIVAR NAME=$xpcurup_new_value>$xpcur_G_xpatex_gene,$xpcurup_xpatex_probe,$xpcurup_featexp_zdb_id,$xpcur_G_xpatex_genbank,$xpcur_G_xpatex_assay<?/MIVAR>
+            <?MIVAR NAME=$xpcurup_new_value>$xpcur_G_xpatex_gene,$xpcurup_xpatex_probe,$xpcurup_genox_zdb_id,$xpcur_G_xpatex_genbank,$xpcur_G_xpatex_assay<?/MIVAR>
             
             <?MISQL SQL="
               select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=expression_experiment&recweb_new_value=$xpcurup_new_value&recweb_old_value=$xpcurup_old_value&recweb_comments=create+new+record') 
@@ -375,7 +374,7 @@ EFFECTS
             <?MIVAR NAME=xpcur_c_gene_only>$xpcur_G_xpatex_gene<?/MIVAR>
             <?MIVAR>
               <SCRIPT>
-                setCookie('gene_only','$xpcur_G_xpatex_gene')
+                setCookie('gene_only','$xpcur_G_xpatex_gene','xpcur_c_');
               </SCRIPT> 
             <?/MIVAR>
           <?/MIBLOCK>
@@ -598,11 +597,11 @@ EFFECTS
         from webPages where ID='aa-record_web_update.apg';">
       <?/MISQL>
     
-      <?MIBLOCK COND="$(AND,$(XST,$xpcur_c_auto_on),$(EC,$xpcur_c_auto_on,on))">
-        <?MIVAR NAME=xpcur_c_figure_only>$xpcurup_fig_zdb_id<?/MIVAR>
+      <?MIBLOCK COND="$(AND,$(XST,$pubcur_c_auto_on),$(EC,$pubcur_c_auto_on,on))">
+        <?MIVAR NAME=pubcur_c_figure_only>$xpcurup_fig_zdb_id<?/MIVAR>
        
         <SCRIPT>
-          <?MIVAR>setCookie('figure_only','$xpcurup_fig_zdb_id');<?/MIVAR>
+          <?MIVAR>setCookie('figure_only','$xpcurup_fig_zdb_id','pubcur_c_');<?/MIVAR>
         </SCRIPT>
       <?/MIBLOCK>
     
@@ -662,9 +661,9 @@ EFFECTS
     <?MICOMMENT> Enforce Unique combination of Figure Label & Image Label <?/MICOMMENT>
     <?MISQL SQL="
         select count(*) 
-        from fish_image
-        where fimg_label = '$xpcur_G_image_label'
-          and fimg_fig_zdb_id = '$xpcur_G_image_fig';">
+        from image
+        where img_label = '$xpcur_G_image_label'
+          and img_fig_zdb_id = '$xpcur_G_image_fig';">
     <?/MISQL>
         
     <?MIBLOCK COND=$(=,$1,0)>
@@ -673,19 +672,19 @@ EFFECTS
       
         <?MISQL SQL="insert into zdb_active_data (zactvd_zdb_id) values ('$xpcur_G_image_OID');"><?/MISQL>
         <?MISQL SQL="
-          INSERT INTO fish_image(
-              fimg_zdb_id,
-              fimg_image,
-              fimg_label,
-              fimg_fig_zdb_id,
-              fimg_width,
-              fimg_height,
-              fimg_thumbnail,
-              fimg_view,
-              fimg_direction,
-              fimg_form,
-              fimg_preparation,
-              fimg_owner_zdb_id)
+          INSERT INTO image(
+              img_zdb_id,
+              img_image,
+              img_label,
+              img_fig_zdb_id,
+              img_width,
+              img_height,
+              img_thumbnail,
+              img_view,
+              img_direction,
+              img_form,
+              img_preparation,
+              img_owner_zdb_id)
           VALUES (
               '$xpcur_G_image_OID',
               '$xpcur_G_image_OID$xpcurup_suffix',
@@ -702,7 +701,7 @@ EFFECTS
               );">
         <?/MISQL>
         <?MISQL SQL="
-          select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=fimg_zdb_id&recweb_new_value=$xpcur_G_image_OID&recweb_comments=create+new+record') 
+          select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=img_zdb_id&recweb_new_value=$xpcur_G_image_OID&recweb_comments=create+new+record') 
           from webPages where ID='aa-record_web_update.apg';">
         <?/MISQL>
       
@@ -713,22 +712,22 @@ EFFECTS
       <?MIELSE>
 
         <?MISQL SQL="
-          select fimg_label, fimg_fig_zdb_id
-          from fish_image
-          where fimg_zdb_id = '$xpcur_G_image_OID';">
+          select img_label, img_fig_zdb_id
+          from image
+          where img_zdb_id = '$xpcur_G_image_OID';">
           <?MIVAR NAME=xpcurup_old_value>$(URLENCODE,$xpcur_G_image_OID<BR>$1<BR>$2)<?/MIVAR>
         <?/MISQL>
         <?MISQL SQL="
-          Update fish_image
-          Set fimg_label = '$xpcur_G_image_label',
-              fimg_fig_zdb_id = '$xpcur_G_image_fig'
-          where fimg_zdb_id = '$xpcur_G_image_OID'
+          Update image
+          Set img_label = '$xpcur_G_image_label',
+              img_fig_zdb_id = '$xpcur_G_image_fig'
+          where img_zdb_id = '$xpcur_G_image_OID'
           ;">
         <?/MISQL>  
 
         <?MIVAR NAME=xpcurup_new_value>$(URLENCODE,$xpcur_G_image_OID<BR>$xpcur_G_image_label<BR>$xpcur_G_image_fig)<?/MIVAR>
         <?MISQL SQL="
-          select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=fish_image&recweb_new_value=$xpcurup_new_value&recweb_old_value=$xpcurup_old_value&recweb_comments=update') 
+          select WebExplode(object,'permission=root&recweb_rec_id=$OID&recweb_pers_id=$ZDB_ident&recweb_pers_name=$ZDB_name&recweb_table_column=image&recweb_new_value=$xpcurup_new_value&recweb_old_value=$xpcurup_old_value&recweb_comments=update') 
           from webPages where ID='aa-record_web_update.apg';">
         <?/MISQL>  
       <?/MIBLOCK>
@@ -860,7 +859,7 @@ EFFECTS
     <?MIVAR NAME=xpcurup_anatitem_add_csv SEPARATE="','">$xpcurup_anatitem_add<?/MIVAR>
     <?MIVAR NAME=xpcur_c_anatitem_add_csv>$xpcurup_anatitem_add_csv<?/MIVAR>
     <SCRIPT>
-      setCookie('anatitem_add_csv','<?MIVAR>$xpcur_c_anatitem_add_csv<?/MIVAR>')
+      setCookie("anatitem_add_csv","<?MIVAR>$(URLENCODE,$xpcur_c_anatitem_add_csv)<?/MIVAR>","pubcur_c_");
     </SCRIPT>
 
 
@@ -878,7 +877,7 @@ EFFECTS
     <?MIVAR NAME=url_anatitem_remove_csv>$xpcurup_anatitem_remove_csv<?/MIVAR>
     <?MIVAR NAME=url_anatitem_remove_csv DELIMIT="'" REPLACE="">$url_anatitem_remove_csv<?/MIVAR>  
     <SCRIPT>
-      setCookie('anatitem_remove_csv','<?MIVAR>$(URLENCODE,$url_anatitem_remove_csv)<?/MIVAR>')
+      setCookie('anatitem_remove_csv','<?MIVAR>$(URLENCODE,$url_anatitem_remove_csv)<?/MIVAR>','pubcur_c_')
     </SCRIPT>
     
     
@@ -1076,7 +1075,7 @@ EFFECTS
   
   <?MIVAR NAME=xpcur_c_checked_expression><?/MIVAR>
   <script>
-    setCookie("checked_expression",'');    
+    setCookie("checked_expression",'','xpcur_c_');    
   </script>
   <?/MIBLOCK>  
 
@@ -1166,7 +1165,7 @@ EFFECTS
     <?/MIBLOCK>
 
     <script>
-      setCookie('xpcur_form_variables','<?MIVAR>$xpcur_G_structure_add<?/MIVAR>');
+      setCookie('xpcur_form_variables','<?MIVAR>$xpcur_G_structure_add<?/MIVAR>','pubcur_c_');
     </script>    
 
   <?/MIBLOCK> 
@@ -1207,7 +1206,7 @@ EFFECTS
     <?/MISQL>      
     
     <script>
-      <?MIVAR>setCookie('has_permission','$xpcur_G_can_show_image');<?/MIVAR>
+      <?MIVAR>setCookie('has_permission','$xpcur_G_can_show_image','xpcur_c_');<?/MIVAR>
     </script>
     
       <?MIVAR NAME="xpcur_c_has_permission">$xpcur_G_can_show_image<?/MIVAR>
@@ -1215,86 +1214,6 @@ EFFECTS
   <?/MIBLOCK>
 
 
-  <?MICOMMENT> ================| Attribution |================ <?/MICOMMENT>
-  <?MIBLOCK COND=$(XST,$xpcur_G_mrkr_attrib)>
-  
-    <?MICOMMENTS>
-       ================================================
-         Check that the mrkr_record exists. 
-         Then, add a record to record attribution
-       ================================================
-    <?/MICOMMENTS>
-    
-    <?MISQL SQL="select mrkr_zdb_id 
-                 from marker
-                 where mrkr_abbrev = '$xpcur_G_mrkr_attrib'
-                ;">
-            <?MIVAR NAME=xpcurup_attrib_mrkr_zdb>$1<?/MIVAR>
-    <?/MISQL>
-    
-    <?MIBLOCK COND=$(XST,$xpcurup_attrib_mrkr_zdb)>
-      <?MISQL SQL="
-        select count(*)::integer
-        from record_attribution
-        where recattrib_data_zdb_id = '$xpcurup_attrib_mrkr_zdb'
-          and recattrib_source_zdb_id = '$OID'
-        ;">
-      <?/MISQL>
-    
-      <?MISQL COND=$(=,$1,0) SQL="
-        insert into record_attribution(recattrib_data_zdb_id,recattrib_source_zdb_id)
-        values ('$xpcurup_attrib_mrkr_zdb','$OID');">
-      <?/MISQL>    
-      
-      <?MIBLOCK COND="$(AND,$(XST,$xpcur_c_auto_on),$(EC,$xpcur_c_auto_on,on))">
-        <?MIVAR NAME=xpcur_c_gene_only>$xpcurup_attrib_mrkr_zdb<?/MIVAR>
-        <?MIVAR>
-          <SCRIPT>
-            setCookie('gene_only','$xpcurup_attrib_mrkr_zdb')
-          </SCRIPT>      
-        <?/MIVAR>
-      <?/MIBLOCK>
-    <?MIELSE>
-      <?MIVAR NAME=xpcurup_alert>Could not find $xpcur_G_mrkr_attrib in the marker table.<?/MIVAR>    
-    <?/MIBLOCK>
-  <?/MIBLOCK>
-  
-  <?MIBLOCK COND=$(XST,$xpcur_G_fish_attrib)>
-  
-    <?MICOMMENTS>
-       ================================================
-         Check that the fish_record exists. 
-         Then, add a record to record attribution
-       ================================================
-    <?/MICOMMENTS>
-    
-    <?MISQL SQL="select zdb_id 
-                 from fish
-                 where allele = '$xpcur_G_fish_attrib'
-                ;">
-            <?MIVAR NAME=xpcurup_attrib_fish_zdb>$1<?/MIVAR>
-    <?/MISQL>
-    
-    <?MIBLOCK COND=$(XST,$xpcurup_attrib_fish_zdb)>
-      <?MISQL SQL="
-        select count(*)::integer
-        from record_attribution
-        where recattrib_data_zdb_id = '$xpcurup_attrib_fish_zdb'
-          and recattrib_source_zdb_id = '$OID'
-        ;">
-      <?/MISQL>
-    
-      <?MISQL COND=$(=,$1,0) SQL="
-        insert into record_attribution(recattrib_data_zdb_id,recattrib_source_zdb_id)
-        values ('$xpcurup_attrib_fish_zdb','$OID');">
-      <?/MISQL>   
-      
-      <?MIVAR NAME=xpcur_G_xpatex_fish>$xpcurup_attrib_fish_zdb<?/MIVAR>
-      
-    <?MIELSE>
-      <?MIVAR NAME=xpcurup_alert>Could not find $xpcur_G_fish_attrib in the fish table.<?/MIVAR>    
-    <?/MIBLOCK>
-  <?/MIBLOCK>
     
     <?MIVAR COND=$(XST,$xpcurup_alert)>
       <script>
@@ -1303,7 +1222,7 @@ EFFECTS
     <?/MIVAR>    
   
     <SCRIPT>
-      setCookie('xpatcuration_update','no')
+      setCookie('xpatcuration_update','no','xpcur_c_')
     </SCRIPT>   
      
 <?/MIBLOCK>  <?MICOMMENT> authorize = root <?/MICOMMENT>

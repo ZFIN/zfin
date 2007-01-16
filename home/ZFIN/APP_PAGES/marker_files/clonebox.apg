@@ -37,13 +37,13 @@ Requires:  $CLONE_MARKER_ID, $highlight
 
         case when probelib_strain_zdb_id is not null
         then 
-            '<a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=' || probelib_strain_zdb_id ||'>' ||
-            (select fish.name from fish where fish.zdb_id = probelib_strain_zdb_id) || '</a>'
+            '<a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypeview.apg&OID=' || probelib_strain_zdb_id ||'>' ||
+            (select geno_display_name from genotype where geno_zdb_id = probelib_strain_zdb_id) || '</a>'
         else
             probelib_non_zfin_strain_name
         end, --3
 
-        fish.abbrev,  --4
+        clone_rating,  --4
         probelib_sex,  --5
 
         case when probelib_tissue_zdb_id is not null
@@ -65,14 +65,13 @@ Requires:  $CLONE_MARKER_ID, $highlight
         mrkr_name,  -- 15
         clone_comments, -- 16
         clone_pcr_amplification, -- 17
-        mrkr_type, -- 18
-        clone_rating --19
-	FROM clone, marker, probe_library, outer vector, outer fish, outer anatomy_item
+        mrkr_type -- 18
+
+	FROM clone, marker, probe_library, outer vector, outer anatomy_item
 	WHERE '$CLONE_MARKER_ID' = clone_mrkr_zdb_id
           and clone_mrkr_zdb_id = mrkr_zdb_id
           and clone_probelib_zdb_id = probelib_zdb_id
 	  and clone_vector_name = vector_name
-	  and fish.zdb_id = probelib_strain_zdb_id
 	  and anatitem_zdb_id = probelib_tissue_zdb_id
 ;">
 
@@ -115,7 +114,7 @@ Requires:  $CLONE_MARKER_ID, $highlight
     <?MIVAR NAME=probelib_species>$1<?/MIVAR>
     <?MIVAR NAME=probelib_name>$2<?/MIVAR>
     <?MIVAR NAME=probelib_strain>$3<?/MIVAR>
-    <?MIVAR NAME=fish_abbrev>$4<?/MIVAR>
+    <?MIVAR NAME=clone_rating>$4<?/MIVAR>
     <?MIVAR NAME=probelib_sex>$5<?/MIVAR>
     <?MIVAR NAME=anatitem_name>$6<?/MIVAR>
     <?MIVAR NAME=clone_vector_name>$7<?/MIVAR>
@@ -130,7 +129,6 @@ Requires:  $CLONE_MARKER_ID, $highlight
     <?MIVAR NAME=clone_comments>$16<?/MIVAR>
     <?MIVAR NAME=clone_pcr_amplification><BR>$17<?/MIVAR>
     <?MIVAR NAME=mrkr_type>$18<?/MIVAR>
-    <?MIVAR NAME=clone_rating>$19<?/MIVAR>
     
     <TABLE width="100%" border=0 cellpadding=5 bgcolor="$highlight">
     

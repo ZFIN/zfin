@@ -27,6 +27,7 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 $dir = "<!--|ROOT_PATH|-->/server_apps/data_transfer/LoadGO/";
 chdir "$dir";
 print "$dir"."\n" ;
+$phenote_dir = "<!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/";
 
 
 #-------------------SubRoutines-------------#
@@ -34,6 +35,21 @@ print "$dir"."\n" ;
 sub downloadGOtermFiles () { # download the obo file from GO
 
     system("/local/bin/wget -q ftp://ftp.geneontology.org/go/ontology/gene_ontology.obo -O gene_ontology.obo") and die "can not download gene_ontology.obo";
+
+    print "download done.\n" ;
+
+    if ( -e "<!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/gene_ontology_old.obo") {   
+	
+	system("/bin/rm <!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/gene_ontology_old.obo") and die "can not rm gene_ontology_old.obo" ;
+
+	print "rm'd gene_ontology_old.obo\n" ;
+    }
+
+    if ( -e "<!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/gene_ontology.obo") {
+	system("/bin/mv <!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/gene_ontology.obo <!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/gene_ontology_old.obo") and die "can not mv gene_ontology_old.obo" ;
+
+	print "mv'd gene_ontology.obo to gene_ontology_old.obo\n" ;
+    }
 
 }
 sub sendLoadReport ($) { # send email on error or completion
@@ -202,7 +218,7 @@ print "loading...\n";
 # Added on 7/13/2005: an addition to the loadgoterms.sql script to check for
 # obsolete or secondary GO terms in the with field
 
-system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> loadgoterms.sql >out 2> report.txt");
+system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> loadgoterms.sql >out 2> report.txt") and die "loadgoterms.sql did not complete successfully";
 
 # wait for the files to be created by incrementing a counter
 # while we wait. first, reset the count variable.
@@ -212,6 +228,8 @@ system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> loadgoterms.sql >out 
 &countFileLines ("reinstated_go_terms.txt","loadgo.pl failed at creating reinstated term unload file");
 
 &countFileLines ("obso_sec_with.unl","loadgo.pl failed at creating secondary with term unload file");
+
+&countFileLines ("obso_sec_phenoentity.unl","loadgo.pl failed at creating secondary/obsolete pheno entity unload file");
 
 &countFileLines ("newannotsecterms.unl","loadgo.pl failed at creating secondary term unload file");
 
@@ -229,9 +247,16 @@ system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> loadgoterms.sql >out 
 
 &isEmptyFile ("obso_sec_with.unl","No obsolete or secondary terms in with field\n","<!--|GO_EMAIL_CURATOR|-->","Inferred from terms (With) terms now obsolete/secondary");
 
+&isEmptyFile ("obso_sec_phenoentity.unl","No obsolete or secondary terms in phenotype entity field\n","<!--|PATO_EMAIL_CURATOR|-->","Phenotype Entity terms  now obsolete/secondary");
+
 &isEmptyFile ("reinstated_go_terms.txt","No new reinstated obsolete terms\n",
 	      "<!--|GO_EMAIL_CURATOR|-->","obsolete Terms now reinstated");
 
 &isEmptyFile ("report_not_secondary_any_more.unl","No new reinstated secondary terms\n","<!--|GO_EMAIL_CURATOR|-->","secondary Terms now reinstated");
+
+
+system ("/bin/chmod 654 <!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/*") and die "could not chmod data_Transfer files";
+
+system ("/bin/chgrp fishadmin <!--|ROOT_PATH|-->/j2ee/phenote/deploy/WEB-INF/data_transfer/*") and die "could not chgrp data_Transfer files";
 
 exit;

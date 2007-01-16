@@ -6,8 +6,8 @@
 --not allow the insert or update to procede.
 -------------------------------------------------
 
-  create procedure  p_stg_hours_consistent (vStartZDB varchar(25), 
-					    vEndZDB varchar(25))
+  create procedure  p_stg_hours_consistent (vStartZDB varchar(50), 
+					    vEndZDB varchar(50))
 
   define vOk 	boolean;
 

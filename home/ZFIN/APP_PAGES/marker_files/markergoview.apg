@@ -250,19 +250,14 @@
      	<?MIVAR NAME=$position>$(+,$pos,1)<?/MIVAR>
      	<?MIVAR NAME=$accID>$(SUBSTR,$infername,$position,$currinflength)<?/MIVAR>
      	<?MIBLOCK COND="$(EC,$dbase,ZFIN)">
-	   <?MISQL COND="$(>,$(POSITION,$accID,FISH),0)" SQL="
-		select get_fish_abbrev_html(zdb_id)
-		  from fish
-		 where zdb_id = '$accID'">
+	   <?MIVAR NAME=inf_mem_sym><?/MIVAR>
+	   <?MISQL COND="$(>,$(POSITION,$accID,GENO),0)" SQL="
+		select geno_display_name
+		  from genotype
+		 where geno_zdb_id = '$accID'">
 	      <?MIVAR NAME=inf_mem_sym>$1<?/MIVAR>	
 	   <?/MISQL>
-	   <?MISQL COND="$(>,$(POSITION,$accID,LOCUS),0)" SQL="
-		select abbrev, locus_name
-		  from locus
-		 where zdb_id = '$accID'">
-	      <?MIVAR NAME=inf_mem_sym>$(IF,$(NC,$1,),$1,$2)<?/MIVAR>	
-	   <?/MISQL>
- 	   <?MISQL COND="$(AND,$(=,$(POSITION,$accID,LOCUS),0),$(=,$(POSITION,$accID,FISH),0))" 
+ 	   <?MISQL COND="$(=,$(POSITION,$accID,GENO),0)" 
 		   SQL="
 		select mrkr_abbrev
 		  from marker

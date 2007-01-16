@@ -1,4 +1,3 @@
-
 <?MIERROR>
   <?MIVAR COND=$(XST,$MI_SQL)>
     SQL: $MI_SQL<br><br>
@@ -8,7 +7,6 @@
   State:   $MI_ERRORSTATE <br>
   Message: $MI_ERRORMSG <br>
 <?/MIERROR>
-
 
 <HTML>
 <?MIBLOCK COND="$(NXST,$OID)"> 
@@ -50,7 +48,7 @@ function Delete_gene(anatkeyid) {
 		where ID='aa-secure_navigation.apg';">$1<?/MISQL>
 
 <?MIBLOCK COND="$(XST,$OID)">
-<?MIVAR NAME=$userid>GUEST<?/MIVAR>
+   <?MIVAR NAME=$userid>GUEST<?/MIVAR>
    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
    <?MISQL SQL="
@@ -117,11 +115,9 @@ function Delete_gene(anatkeyid) {
    </table>
 <?/MIBLOCK> 
 
-
-
 <?MICOMMENT>
 <?MIBLOCK COND="$(XST,$UPDATE)">
-<!-- First, do any updates -->
+<?MICOMMENT> -- First, do any updates <?/MICOMMENT>
 
   <?MIBLOCK COND="$(XST,$delete_synonym)"> 
     <?MISQL SQL="DELETE FROM data_alias WHERE dalias_zdb_id = '$updated_synonym_zdb_id';"><?/MISQL>
@@ -179,8 +175,7 @@ function Delete_gene(anatkeyid) {
   <?/MIBLOCK>
 
 
-
-<!-- Now bring up the table with update goodies -->
+<?MICOMMENT> -- Now bring up the table with update goodies -- <?/MICOMMENT>
 
 <TABLE BORDER=0 WIDTH="90%" BGCOLOR="#EEEEEE" ALIGN="CENTER">
   <TR>
@@ -299,6 +294,7 @@ function Delete_gene(anatkeyid) {
 </TABLE>
 <?/MIBLOCK> <?MICOMMENT> == end if update ==<?/MICOMMENT>
 <?/MICOMMENT>
+
 <?MICOMMENT> ===============================================================
              ==       Page Display
              ===============================================================
@@ -468,16 +464,14 @@ function Delete_gene(anatkeyid) {
       <?/MISQL>
       </TD>
      </TR>  
-</TABLE>
    <?/MIBLOCK> <?MICOMMENT> == end if there is develops from relationship == <?/MICOMMENT>  	
-<!--  </TABLE>-->
+</TABLE>
 <?/MIBLOCK> <?MICOMMENT> if not term 'unspecified' <?/MICOMMENT>
 
 <?MICOMMENT> ===============================================================
              ==       Recommended Markers display and entry
              ===============================================================
 <?/MICOMMENT>
-<br>
 
 <?MISQL SQL="select anatcmrkr_zdb_id from anatomy_canonical_marker 
              where
@@ -492,7 +486,6 @@ function Delete_gene(anatkeyid) {
    <STRONG>
     Recommended Markers:
    </STRONG>
-<?/MIBLOCK>
 
 <?MISQL SQL="select distinct mrkr_abbrev, anatcmrkr_zdb_id, anatcmrkr_mrkr_zdb_id
              from marker, anatomy_canonical_marker, record_attribution
@@ -524,7 +517,7 @@ function Delete_gene(anatkeyid) {
              </form>
 <?/MIVAR>
 </TABLE>
-
+<?/MIBLOCK>
 
 <?MICOMMENT> ===============================================================
              ==       Potential Probes (5 star probes) display
@@ -533,11 +526,10 @@ function Delete_gene(anatkeyid) {
 
 <?MICOMMENT> set variables for hide and seek display<?/MICOMMENT>
 
-<?MIVAR NAME="$anatitem_condensed_count" COND="$(NXST,$anatitem_condensed_count)">10<?/MIVAR>
+<?MIVAR NAME="$anatitem_condensed_count" COND="$(NXST,$anatitem_condensed_count)">8<?/MIVAR>
 <?MIVAR NAME="$anatitem_max_count" COND="$(NXST,$anatitem_max_count)">14<?/MIVAR>
 
 
-<br>
 <?MISQL SQL="select * from expression_experiment,expression_result,clone where
      xpatres_anat_item_zdb_id='$OID'
 and  xpatex_zdb_id=xpatres_xpatex_zdb_id
@@ -548,6 +540,7 @@ and  clone_rating=4
 <?MIVAR NAME=clone_count>$MI_ROWCOUNT<?/MIVAR>
 <?MIBLOCK COND="$(NE,$OID,ZDB-ANAT-041102-1)"> <!--begin "if not specified" anatomy item condition-->
   <?MIBLOCK COND="$(>,$clone_count,0)"> <!--begin 5 star probes condition-->
+    <br/>
     <TABLE width="90%">
     <TR>
     <TD bgcolor="#CCCCCC">
@@ -678,7 +671,7 @@ and  clone_rating=4
    <TR>
      <TD bgcolor="#EEEEEE">
 <?MISQL SQL="
-	SELECT FIRST 10 distinct get_mrkr_abbrev_html_link(mrkr_zdb_id), mrkr_zdb_id,  
+	SELECT FIRST 8 distinct get_mrkr_abbrev_html_link(mrkr_zdb_id), mrkr_zdb_id,  
 	       mrkr_abbrev_order
 	  FROM expression_experiment, expression_result, marker
 	 WHERE xpatres_anat_item_zdb_id = '$OID'
@@ -686,11 +679,16 @@ and  clone_rating=4
 	   and xpatex_gene_zdb_id = mrkr_zdb_id
 	ORDER BY mrkr_abbrev_order
 ;">
-<?MIVAR NAME="gene_abbrev">$1<?/MIVAR>
-<?MIVAR NAME="gene_zdb_id">$2<?/MIVAR>
-<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$gene_zdb_id">$gene_abbrev</A>
+  <?MIVAR NAME="gene_abbrev">$1<?/MIVAR>
+  <?MIVAR NAME="gene_zdb_id">$2<?/MIVAR>
+  <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)"> 
+    <?MIVAR NAME=anat_seperator>&nbsp;<?/MIVAR>	              
+  <?MIELSE>
+    <?MIVAR NAME=anat_seperator>, &nbsp; <?/MIVAR>
+  <?/MIBLOCK>
+  $anat_seperator<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$gene_zdb_id">$gene_abbrev</A>
 <?/MISQL>
-<?MIBLOCK COND="$(>,$totalxpats,10)">
+<?MIBLOCK COND="$(>,$totalxpats,8)">
   <?MIVAR><b>...</b> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name_url&xpatsel_processed_selected_structures=$processed_item_name&include_substructures=unchecked"><b>$totalxpats total</b></A> &nbsp; (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=true&START=0&WINSIZE=25&TA_selected_structures=$item_name_url&xpatsel_processed_selected_structures=$processed_item_name&include_substructures=checked">$totalxpats_ind_substr</A> if substructures included)<?/MIVAR>
 <?/MIBLOCK>
       </TD>
@@ -699,7 +697,117 @@ and  clone_rating=4
 <BR>
 <?/MIBLOCK>
 
+<?MICOMMENT> =================== links to mutants / transgenic lines  =====================<?/MICOMMENT>
+     <?MICOMMENT>------------------------------------------------------------
+               -- temp table $temp_on_anat holds geno zdb ids 
+               ------------------------------------------------------------
+     <?/MICOMMENT>
+  <?MISQL SQL="
+      select dbinfo('sessionid') 
+        from single;">
+      <?MIVAR NAME=$session_id>$1<?/MIVAR>
+  <?/MISQL>     
+     <?MIVAR NAME=$temp_on_anat>$(CONCAT,temp_on_anat_,$session_id)<?/MIVAR>
+     <?MISQL SQL="
+       execute function table_exists('$temp_on_anat')">
+       <?MISQL COND=$(EC,$1,f) SQL="
+         create temp table $temp_on_anat (
+             g_zdb_id	 	varchar(50)
+         ) with NO LOG;">
+       <?/MISQL>
+     <?/MISQL>     
 
+     <?MICOMMENT> -------------------------------------------------------------
+             -- get genotypes directly related to the anatomy terms
+             ---------------------------------------------------------------------
+     <?/MICOMMENT>
+     <?MISQL SQL="
+	insert into $temp_on_anat(g_zdb_id)
+	     select genox_geno_zdb_id
+	       from genotype_experiment, atomic_phenotype 
+              where genox_zdb_id = apato_genox_zdb_id
+                and apato_entity_a_zdb_id = '$OID';">
+     <?/MISQL>
+     <?MISQL SQL="
+	insert into $temp_on_anat(g_zdb_id)
+	     select genox_geno_zdb_id
+	       from genotype_experiment, atomic_phenotype 
+              where genox_zdb_id = apato_genox_zdb_id
+                and apato_entity_b_zdb_id = '$OID';">
+     <?/MISQL>   
+
+       <?MISQL SQL="select distinct g_zdb_id from $temp_on_anat;">
+       <?/MISQL>  
+       <?MIVAR name=$totalMutants>$MI_ROWCOUNT<?/MIVAR>
+
+     <?MICOMMENT> -------------------------------------------------------------
+             -- include substructure
+             ---------------------------------------------------------------------
+     <?/MICOMMENT>   
+       <?MISQL SQL="
+	insert into $temp_on_anat(g_zdb_id)
+	     select genox_geno_zdb_id
+	       from genotype_experiment, atomic_phenotype, all_anatomy_contains
+              where genox_zdb_id = apato_genox_zdb_id
+                and apato_entity_a_zdb_id = allanatcon_contained_zdb_id
+                and allanatcon_container_zdb_id = '$OID';">
+       <?/MISQL>
+       <?MISQL SQL="
+	insert into $temp_on_anat(g_zdb_id)
+	     select genox_geno_zdb_id
+	       from genotype_experiment, atomic_phenotype, all_anatomy_contains
+              where genox_zdb_id = apato_genox_zdb_id
+                and apato_entity_b_zdb_id = allanatcon_contained_zdb_id
+                and allanatcon_container_zdb_id = '$OID';">
+       <?/MISQL>  
+
+       <?MISQL SQL="select distinct g_zdb_id from $temp_on_anat;">
+       <?/MISQL>  
+       <?MIVAR name=$totalMutantsWithSubstructure>$MI_ROWCOUNT<?/MIVAR>     
+  <?MISQL SQL="delete from $temp_on_anat;"><?/MISQL>
+<?MIBLOCK COND="$(OR,$(>,$totalMutants,0),$(>,$totalMutantsWithSubstructure,0))">
+  <TABLE width="90%">
+    <TR>
+     <TD bgcolor="#CCCCCC">
+       <?MIVAR>
+       <STRONG>All Mutants / Transgenic lines
+       </STRONG>
+       <?/MIVAR>
+     </TD>
+   </TR>
+   
+   <TR>
+     <TD bgcolor="#EEEEEE">
+     <?MIBLOCK COND="$(>,$totalMutants,0)">
+        <?MISQL SQL="
+	  SELECT FIRST 6 DISTINCT geno_zdb_id,geno_display_name,geno_name_order
+	    FROM genotype,genotype_experiment,atomic_phenotype
+	  	  WHERE geno_zdb_id = genox_geno_zdb_id
+	  	    AND geno_is_wildtype = 'f'
+	  	    AND apato_genox_zdb_id = genox_zdb_id 
+	            AND (apato_entity_a_zdb_id = '$OID' 
+                      OR apato_entity_b_zdb_id = '$OID')
+	        ORDER BY geno_name_order;">
+              <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">  
+	         <?MIVAR NAME=anat_seperator>&nbsp;<?/MIVAR>	              
+              <?MIELSE>
+       		 <?MIVAR NAME=anat_seperator>, &nbsp; <?/MIVAR>
+    	      <?/MIBLOCK>
+
+              <i>$anat_seperator<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypeview.apg&OID=$1">$2</A></i>
+        <?/MISQL>
+     
+        <?MIBLOCK COND="$(>,$totalMutants,6)">
+          <?MIVAR><b>...</b> <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&fsel_anatomy_item_id=$OID&WINSIZE=20"><b>$totalMutants total</b></A> &nbsp; (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&fsel_anatomy_item_id=$OID&fsel_anatomy_include=yes&WINSIZE=20">$totalMutantsWithSubstructure</A> if substructures included)<?/MIVAR>
+        <?/MIBLOCK>
+      <?MIELSE>       
+          <?MIVAR><b>$totalMutants total</b> &nbsp; (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&fsel_anatomy_item_id=$OID&fsel_anatomy_include=yes&WINSIZE=20">$totalMutantsWithSubstructure</A> if substructures included)<?/MIVAR>    
+      <?/MIBLOCK>
+      </TD>
+    </TR>
+  </TABLE>
+<BR>
+<?/MIBLOCK>
 
 <?MICOMMENT> =========================================================
      The code below is a mockup of the homologue display that will 
@@ -803,7 +911,6 @@ auditory (tympanal or flagellar) organs, which may be in a variety of anatomical
 <?/MICOMMENT>
 
 
-<br>
 <?MICOMMENT>========================================================
             == PUBLICATION
 	    ========================================================

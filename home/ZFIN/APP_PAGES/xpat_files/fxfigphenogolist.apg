@@ -1,0 +1,173 @@
+<?MICOMMENT>
+
+FILE:     fxfiganatlist.apg
+PREFIX:   fxfiganat_
+
+This displays a list of anatomy terms separated by ';'.
+
+Copy this javascript function into the top-level page.
+
+<script>
+function updateInnerHTML(element_id,html_to_display) {
+    var c1 = document.getElementById(element_id);
+    c1.innerHTML = html_to_display;
+}
+</script>
+
+INPUT VARS:
+  $fxfiganat_fig_zdb_id		figure zdb-id.      	
+  $fxfiganat_gene_zdb_id	optional gene to constrain to, requires a resultTable right now 
+				(would need new join SQL otherwise)
+  $fxfiganat_resultTable	optional result table to join against
+  $fxfiganat_Label		optional label to replace default.
+  $fxfiganat_condensed_count	optional, how many to show on a condensed list
+  $fxfiganat_max_count		optional, how many can we show before condensing
+  $fxfiganat_hide_unspecified	optional, display nothing if all that comes back is an 
+				unspecified anat record
+
+
+OUTPUT VARS:
+  None.
+
+OUTPUT:
+  A single row of display and a javascript function.
+
+EFFECTS  
+  None.
+
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
+<?MICOMMENT> The distinct is necessary. The same Anatomy item might vary by 
+stage range, experiment, or expression_found in the same figure.
+<?/MICOMMENT>
+<?MISQL SQL="select fdb_db_query
+             from foreign_db
+             where fdb_db_name = 'QuickGO';">
+<?MIVAR NAME=$fxfigphenogo_url>$1<?/MIVAR>
+<?/MISQL>
+
+<?MIVAR NAME="$fxfiggo_condensed_count" COND="$(NXST,$fxfiggo_condensed_count)">5<?/MIVAR>		
+<?MIVAR NAME="$fxfiggo_max_count" COND="$(NXST,$fxfiggo_max_count)">9<?/MIVAR>
+
+<?MIVAR NAME="$fxfiggo_unspecified_constraint"><?/MIVAR>
+<?MIBLOCK COND="$(AND,$(XST,$fxfiggo_hide_unspecified),$(EC,$fxfiggo_hide_unspecified,t))">
+  <?MIVAR NAME="$fxfiggo_unspecified_constraint">and goterm_name <> 'unspecified'<?/MIVAR>
+<?/MIBLOCK>
+
+
+
+
+<?MICOMMENT> 
+    =========================================================
+    =  Display two variations: 
+    =    1. A complete list of all anatomy for the figure
+    =    2. The first 4 anatomy items.
+    =
+    =  Use javascript to allow the user to flip between the
+    =  two lists.
+    =========================================================
+<?/MICOMMENT>
+    
+<?MIVAR NAME=$fxfiggo_short_list><?/MIVAR>
+<?MIVAR NAME=$fxfiggo_long_list><?/MIVAR>
+
+<?MICOMMENT> *** set default label *** <?/MICOMMENT>
+<?MIVAR NAME="$fxfiggo_defaultLabel"><strong>GO Terms: </strong><?/MIVAR>
+
+<?MIBLOCK COND="$(NXST,$fxfiggo_Label)">
+  <?MIVAR NAME="$fxfiggo_Label">$fxfiggo_defaultLabel<?/MIVAR>
+<?/MIBLOCK>
+
+<?MISQL SQL="
+    SELECT distinct goterm_name, goterm_zdb_id, goterm_go_id
+      FROM apato_figure, atomic_phenotype, go_term 
+     WHERE apatofig_fig_zdb_id = '$fxfiggo_fig_zdb_id'
+       AND apatofig_apato_zdb_id = apato_zdb_id
+                     and apato_entity_a_zdb_id= goterm_zdb_id
+     ORDER BY goterm_name asc;">
+    <?MIVAR NAME="$fxfigphenogo_goterm_html"><span nowrap><a href=$fxfigphenogo_url$3>$1</a></span><?/MIVAR>
+
+    <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
+      <?MIVAR NAME=fxfiggo_short_list>$fxfiggo_Label $fxfigphenogo_goterm_html<?/MIVAR>
+      <?MIVAR NAME=fxfiggo_long_list>$fxfiggo_Label $fxfigphenogo_goterm_html<?/MIVAR>
+    <?MIELSE COND=$(<,$MI_CURRENTROW,$fxfiggo_condensed_count)>
+      <?MIVAR>$(VECAPPEND,fxfiggo_long_list,$fxfigphenogo_goterm_html)
+      <?/MIVAR>
+      <?MIVAR>$(VECAPPEND,fxfiggo_short_list,$fxfigphenogo_goterm_html)
+      <?/MIVAR>
+    <?MIELSE>
+      <?MIVAR>$(VECAPPEND,fxfiggo_long_list,$fxfigphenogo_goterm_html)
+      <?/MIVAR>
+    <?/MIBLOCK>
+<?/MISQL>
+
+
+  <?MIVAR NAME=fxfiggo_separate_short_list SEPARATE=", ">$fxfiggo_short_list<?/MIVAR>
+  <?MIVAR NAME=fxfiggo_separate_long_list SEPARATE=", ">$fxfiggo_long_list<?/MIVAR>
+  
+  <?MIVAR NAME=fxfiggo_escape_short_list>$(REPLACE,$fxfiggo_separate_short_list,"'","")<?/MIVAR>
+  <?MIVAR NAME=fxfiggo_escape_long_list>$(REPLACE,$fxfiggo_separate_long_list,"'","")<?/MIVAR>
+  
+  <?MIVAR NAME=fxfiggo_zdb_minus>$(REPLACE,$fxfiggo_fig_zdb_id,"-","")<?/MIVAR>
+
+<?MIVAR NAME=$fxfiggo_left_arrow><img border=0 onClick=updateGOList$fxfiggo_zdb_minus('short') src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif><?/MIVAR>
+<?MIVAR NAME=$fxfiggo_right_arrow><img onClick=updateGOList$fxfiggo_zdb_minus('long') src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif><?/MIVAR>
+
+  
+<script>
+  <?MIVAR>
+function updateGOList$fxfiggo_zdb_minus(display_option) {
+    var long_display = "$fxfiggo_escape_long_list  <a href=\"javascript:updateGOList$fxfiggo_zdb_minus('short');\">$fxfiggo_left_arrow</a>";
+    var short_display = "$fxfiggo_escape_short_list ... <a href=javascript:onClick=updateGOList$fxfiggo_zdb_minus('long')>(all $(VECSIZE,$fxfiggo_long_list))</a> $fxfiggo_right_arrow";
+
+    if (display_option == "long") {
+        updateInnerHTML('GOList$fxfiggo_zdb_minus',long_display)
+    }
+    else {
+        updateInnerHTML('GOList$fxfiggo_zdb_minus',short_display)    
+    }
+}
+  <?/MIVAR>
+</script>
+<?MIBLOCK COND="$(EQ,$fxfiggo_escape_short_list,)">
+     <?MIVAR NAME=$fxfiggo_escape_short_list>$fxfiggo_Label $fxfiggo_escape_short_list<?/MIVAR>
+<?/MIBLOCK>
+<?MIVAR><span id="GOList$fxfiggo_zdb_minus"><?/MIVAR>
+<?MIBLOCK COND="$(<,$(VECSIZE,$fxfiggo_long_list),$fxfiggo_max_count)">
+  <?MIVAR>
+    $fxfiggo_escape_long_list
+  <?/MIVAR>
+<?MIELSE>
+  <?MIVAR>
+    $fxfiggo_escape_short_list ... <a href=javascript:onClick=updateGOList$fxfiggo_zdb_minus('long')>(all $(VECSIZE,$fxfiggo_long_list))</a> $fxfiggo_right_arrow
+  <?/MIVAR>
+<?/MIBLOCK>
+
+</span>
+
+<?MICOMMENT>
+  ============================================================================
+  ==========  Unset any existence vars, before the next call of this page
+  ============================================================================
+<?/MICOMMENT>
+
+<?MIVAR>
+  $(UNSETVAR,$fxfiggo_Label)
+  $(UNSETVAR,$fxfiggo_fig_zdb_id)
+  $(UNSETVAR,$fxfiggo_short_list)  
+  $(UNSETVAR,$fxfiggo_long_list)  
+  $(UNSETVAR,$fxfiggo_separate_short_list)
+  $(UNSETVAR,$fxfiggo_separate_long_list)
+  $(UNSETVAR,$fxfiggo_escape_short_list)
+  $(UNSETVAR,$fxfiggo_escape_long_list)
+<?/MIVAR>

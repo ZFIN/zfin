@@ -1,0 +1,143 @@
+<?MICOMMENT>
+
+FILE:     mrkrgenolist.apg
+PREFIX:   mrkrgeno_
+
+This displays a list of transgenic constructs for a marker.
+
+Copy this javascript function into the top-level page.
+
+<script>
+function updateInnerHTML(element_id,html_to_display) {
+    var c1 = document.getElementById(element_id);
+    c1.innerHTML = html_to_display;
+}
+</script>
+
+
+OUTPUT VARS:
+  None.
+
+OUTPUT:
+  A single row of display and a javascript function.
+
+EFFECTS  
+  None.
+
+<?/MICOMMENT>
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+<?/MIERROR>
+
+
+
+<?MIVAR NAME="$mrkrgeno_condensed_count" COND="$(NXST,$mrkrgeno_condensed_count)">5<?/MIVAR>		
+<?MIVAR NAME="$mrkrgeno_max_count" COND="$(NXST,$mrkrgeno_max_count)">9<?/MIVAR>
+
+
+
+
+
+
+<?MICOMMENT> 
+    =========================================================
+    =  Display two variations: 
+    =    1. A complete list of all constructs for a gene
+    =    2. The first 4 constructs
+    =
+    =  Use javascript to allow the user to flip between the
+    =  two lists.
+    =========================================================
+<?/MICOMMENT>
+    
+<?MIVAR NAME=$mrkrgeno_short_list><?/MIVAR>
+<?MIVAR NAME=$mrkrgeno_long_list><?/MIVAR>
+
+
+ <?MISQL SQL="
+         select mrkr_zdb_id, mrkr_name
+           from marker_relationship, marker
+          where mrel_mrkr_2_zdb_id = '$mrkr_id'
+            and mrel_mrkr_1_zdb_id = mrkr_zdb_id
+            and mrel_type in ('promoter of','coding sequence of','contains other feature')">
+    <?MIVAR NAME="$mrkrgeno_mrkr_html"><span nowrap><a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$1>$2</a></span><?/MIVAR>
+
+    <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
+      <?MIVAR NAME=mrkrgeno_short_list> $mrkrgeno_mrkr_html<?/MIVAR>
+      <?MIVAR NAME=mrkrgeno_long_list> $mrkrgeno_mrkr_html<?/MIVAR>
+    <?MIELSE COND=$(<,$MI_CURRENTROW,$mrkrgeno_condensed_count)>
+      <?MIVAR>$(VECAPPEND,mrkrgeno_long_list,$mrkrgeno_mrkr_html)
+      <?/MIVAR>
+      <?MIVAR>$(VECAPPEND,mrkrgeno_short_list,$mrkrgeno_mrkr_html)
+      <?/MIVAR>
+    <?MIELSE>
+      <?MIVAR>$(VECAPPEND,mrkrgeno_long_list,$mrkrgeno_mrkr_html)
+      <?/MIVAR>
+    <?/MIBLOCK>
+<?/MISQL>
+
+
+  <?MIVAR NAME=mrkrgeno_separate_short_list SEPARATE=", ">$mrkrgeno_short_list<?/MIVAR>
+  <?MIVAR NAME=mrkrgeno_separate_long_list SEPARATE=", ">$mrkrgeno_long_list<?/MIVAR>
+  
+  <?MIVAR NAME=mrkrgeno_escape_short_list>$(REPLACE,$mrkrgeno_separate_short_list,"'","")<?/MIVAR>
+  <?MIVAR NAME=mrkrgeno_escape_long_list>$(REPLACE,$mrkrgeno_separate_long_list,"'","")<?/MIVAR>
+ 
+  <?MIVAR NAME=mrkrgeno_zdb_minus><?/MIVAR>
+
+<?MIVAR NAME=$mrkrgeno_left_arrow><img border=0 onClick=updateTGList$mrkrgeno_zdb_minus('short') src=http://<!--|DOMAIN_NAME|-->/images/left_arrow.gif><?/MIVAR>
+<?MIVAR NAME=$mrkrgeno_right_arrow><img onClick=updateTGList$mrkrgeno_zdb_minus('long') src=http://<!--|DOMAIN_NAME|-->/images/right_arrow.gif><?/MIVAR>
+
+  
+<script>
+  <?MIVAR>
+function updateTGList$mrkrgeno_zdb_minus(display_option) {
+    var long_display = "$mrkrgeno_escape_long_list  <a href=\"javascript:updateTGList$mrkrgeno_zdb_minus('short');\">$mrkrgeno_left_arrow</a>";
+    var short_display = "$mrkrgeno_escape_short_list ... <a href=javascript:onClick=updateTGList$mrkrgeno_zdb_minus('long')>(all $(VECSIZE,$mrkrgeno_long_list))</a> $mrkrgeno_right_arrow";
+
+    if (display_option == "long") {
+        updateInnerHTML('TGList$mrkrgeno_zdb_minus',long_display)
+    }
+    else {
+        updateInnerHTML('TGList$mrkrgeno_zdb_minus',short_display)    
+    }
+}
+  <?/MIVAR>
+</script>
+<?MIBLOCK COND="$(EQ,$mrkrgeno_escape_short_list,)">
+     <?MIVAR NAME=$mrkrgeno_escape_short_list> $mrkrgeno_escape_short_list<?/MIVAR>
+<?/MIBLOCK>
+<?MIVAR><span id="TGList$mrkrgeno_zdb_minus"><?/MIVAR>
+<?MIBLOCK COND="$(<,$(VECSIZE,$mrkrgeno_long_list),$mrkrgeno_max_count)">
+  <?MIVAR>
+    $mrkrgeno_escape_long_list
+  <?/MIVAR>
+<?MIELSE>
+  <?MIVAR>
+    $mrkrgeno_escape_short_list ... <a href=javascript:onClick=updateTGList$mrkrgeno_zdb_minus('long')>(all $(VECSIZE,$mrkrgeno_long_list))</a> $mrkrgeno_right_arrow
+  <?/MIVAR>
+<?/MIBLOCK>
+
+</span>
+
+<?MICOMMENT>
+  ============================================================================
+  ==========  Unset any existence vars, before the next call of this page
+  ============================================================================
+<?/MICOMMENT>
+
+<?MIVAR>
+  $(UNSETVAR,$mrkrgeno_short_list)  
+  $(UNSETVAR,$mrkrgeno_long_list)  
+  $(UNSETVAR,$mrkrgeno_separate_short_list)
+  $(UNSETVAR,$mrkrgeno_separate_long_list)
+  $(UNSETVAR,$mrkrgeno_escape_short_list)
+  $(UNSETVAR,$mrkrgeno_escape_long_list)
+<?/MIVAR>
