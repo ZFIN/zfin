@@ -4,8 +4,8 @@
 #
 # This file is included in every makefile in the ZFIN_WWW directory tree.
 # It contains definitions that are common across all makefiles.
-# 
-#------------------------------------------------------------------------ 
+#
+#------------------------------------------------------------------------
 
 # ----------------  Sanity Checks  --------------------------------------
 
@@ -110,7 +110,7 @@ endif
 # ---------------  Variable Definitions  --------------------------------
 
 
-# When app pages are loaded into the db, their ID becomes the name of the 
+# When app pages are loaded into the db, their ID becomes the name of the
 # file containing the app page, with a "aa-" appended to the front of it.
 
 APGPREFIX = aa-
@@ -123,8 +123,9 @@ APGPREFIX = aa-
 
 TARGET_CP  = /bin/cp -fp
 STAGING_CP = /bin/cp -fp
+WAR_UNZIP = /bin/unzip -o -d
 
-# Touch call needed after the _CP calls because _CP creates 
+# Touch call needed after the _CP calls because _CP creates
 # files with exactly the same timestamp as the source file, and that
 # confuses gmake into thinking it needs to remake the file the next
 # time around.
@@ -134,6 +135,10 @@ TOUCH = /bin/touch
 # Any created dirs should be created with 775 perms.
 
 TARGET_MKDIR = /bin/mkdir -pm 2775
+
+CHGRP_FISHADMIN = /usr/bin/chgrp -R fishadmin
+
+CHMOD_774 = /usr/bin/chmod -R 774
 
 LOADAPPPAGE = /private/ZfinLinks/Commons/bin/loadapppage.pl
 UNLOADAPPPAGE = /private/ZfinLinks/Commons/bin/unloadapppage.pl
@@ -160,7 +165,7 @@ JAVAC_50      = $(JAVAHOME_50)/bin/javac
 JDBCHOME_221 = /private/apps/jdbc2.21
 JDBCHOME     = /private/apps/jdbc3
 
-JAVACFLAGS = 
+JAVACFLAGS =
 
 
 # --- Tomcat related
@@ -171,7 +176,7 @@ SET_CONTEXT_DESCRIPTOR = /private/ZfinLinks/Commons/bin/setContextDescriptor.pl
 
 
 
-# ---- One time variables used in onetimeonlyl targets.  The onetimeonly 
+# ---- One time variables used in onetimeonlyl targets.  The onetimeonly
 # targets are set up so that if we ever need to do a sweeping change in
 # all directories, we might be able to use the onetimeonly targets to do it.
 

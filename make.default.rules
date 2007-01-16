@@ -1,17 +1,17 @@
 #------------------------------------------------------------------------
 #
-# Include file to be included at the end of Makefiles that DO NOT have app 
+# Include file to be included at the end of Makefiles that DO NOT have app
 # pages and that can use the default set of rules defined in this include file.
 #
-# See make.default.apg.rules for the include file to use with standard 
+# See make.default.apg.rules for the include file to use with standard
 # makefiles that DO work with app pages.
 #
 # Note that not every makefile can include one of the defualt rule files.
 # If there is anything non-standard about any of the rules in a makefile
-# that cannot be dealt with using the ENDEMICTARGETS mechanism, 
+# that cannot be dealt with using the ENDEMICTARGETS mechanism,
 # then that makefile should not include either of the rules.
 #
-# This include file expects to have the calling makefile define these 
+# This include file expects to have the calling makefile define these
 # variables.
 #
 #  TOP        This must be defined.  This file also expects $(TOP)/make.include
@@ -42,8 +42,10 @@
 
 SPECIFICTARGETS = $(foreach SPEC, $(GENERICS), $(TARGETDIR)/$(SPEC))
 STATICTARGETS = $(foreach STAT, $(STATICS), $(TARGETDIR)/$(STAT))
+
 TARGETS = $(SPECIFICTARGETS) $(STATICTARGETS)
 
+WARDEPLOYDIR = $(DEPLOY)
 
 # ---------------  Production Rules  ------------------------------------
 
@@ -52,11 +54,14 @@ TARGETS = $(SPECIFICTARGETS) $(STATICTARGETS)
 
 all : $(ENDEMICTARGETS_PRE) $(TARGETDIR) $(ENDEMICTARGETS_POSTTARGETDIR) \
       $(TARGETS) $(ENDEMICTARGETS_POSTTARGETS) \
-      $(SUBDIRS) $(ENDEMICTARGETS_POST)
-
+      $(SUBDIRS) $(ENDEMICTARGETS_POST) \
+      $(WARDEPLOYDIR)
 
 $(TARGETDIR) :
 	$(TARGET_MKDIR) $(TARGETDIR);
+
+$(WARDEPLOYDIR) :
+	$(TARGET_MKDIR) $(WARDEPLOYDIR)
 
 $(SPECIFICTARGETS) : $(TARGETDIR)/% : % $(TRANSLATETABLE)
 	$(MAKESPECIFIC) $< $(TRANSLATETABLE) $@
@@ -67,8 +72,6 @@ $(STATICTARGETS) : $(TARGETDIR)/% : %
 
 $(SUBDIRS) :
 	$(MAKE) -C $@
-
-
 
 # ---------------  Maintenance Rules  -----------------------------------
 

@@ -122,7 +122,7 @@ $redirect_zdb_id_param ="&zdb_id=";
 $redirect_build = "";
 
 $new_image_redirect = "aa-new-image.apg";
-$xpat_redirect = "aa-xpatcuration.apg";
+$xpat_redirect = "aa-curation.apg";
 $update_image_redirect = "aa-do-imageupdate.apg";
 $xpcur_G_image_OID_param = "&xpcur_G_image_OID=";
 $xpcur_G_fig_param = "&xpcur_G_image_fig=";
@@ -465,7 +465,7 @@ sub makeFiles () {# uploads the files, builds a thumbnail, gets the height
 
     # build a thumbnail file name if its not a pdf
 
-    if (substr($OID,0,8) ne $pdf_prefix) {
+    if ($suffix ne $pdf_suffix) {
 	
         $newthumb = $OID.$add_thumb.$suffix;
 
@@ -485,7 +485,7 @@ sub makeFiles () {# uploads the files, builds a thumbnail, gets the height
 		
         # redirect to the correct apg page based on the passed-in redirect_url.
 
-	if ( (substr($redirect_url,-19)) eq $xpat_redirect) { # if the redirect_OID parameter is not null
+	if ( (substr($redirect_url,-15)) eq $xpat_redirect) { # if the redirect_OID parameter is not null
 
 	    $redirect_OID = $query->param("redirect_OID");
 	    $xpcur_G_fig = $query->param("xpcur_G_image_fig");
@@ -596,7 +596,7 @@ sub filename_error() { # standard error for file nomenclature problems
     print "If you are trying to replace an existing image, 
           please use the update pages.<br><br>"; 
     print "The maximum filesize accepted by this page is 1024K.
-          <br><br>";
+          <br><br>$vHint";
     system ("/bin/rm /tmp/upload_report") and die "can't /bin/rm /tmp/upload_report"  ;
 
     &emailError ("File not uploaded: $person_id $vHint $filename <!--|DB_NAME|-->");
@@ -702,28 +702,29 @@ elsif (!($filename) &&
     # make sure the table variable is one specified by the calling
     # apg page. 
 
-    if ($table eq "fish_image") {
+    if ($table eq "image") {
 
     #"fx_fish_image_private" || $table eq
 
 	$zdb_id = $query->param("zdb_id");
 	
-	if ($zdb_id !~ m/fimg_zdb_id/){
+	if ($zdb_id !~ m/img_zdb_id/){
 	    #|fimgp_zdb_id
 
-	    &filename_error($zdb_id.'zdb_id is not ZFIN pattern') ;
+	    &filename_error($zdb_id.'zdb_id is not ZFIN pattern (case 1)') ;
 	}
 
 	$OID_from_apg_page = $query->param("OID");
 
 	if ($OID_from_apg_page !~ m/ZDB\-\D{1,10}\-\d{1,6}\-\d{1,5}/){
-	    &filename_error($OID_from_apg_page.'tableOID is not ZFIN pattern') ;
+	    &filename_error($OID_from_apg_page.'tableOID is not ZFIN pattern (case 2)') ;
 	}
 
 	# make sure we're passing an image, don't want to grab params from
-	# non-image apg pages.
+	# non-image apg pages. 
+	# 2006-12-4 : frodo redo : curation page apg is PUB
 
-	if (substr($OID_from_apg_page, 0,10) eq $image_prefix) {
+	if (substr($OID_from_apg_page, 0,10) eq $image_prefix || substr($OID_from_apg_page, 0,8) eq $pdf_prefix) {
 	    
 	    $OID = $OID_from_apg_page ;
 
@@ -767,7 +768,7 @@ elsif (!($filename) &&
 
 	else { # if the prefix isn't an image, then return an error
 	
-	    &filename_error;
+	    &filename_error('page prefix does not match OID prefix');
 	
 	}
 
@@ -817,7 +818,7 @@ else { # filename isn't null or redirect isn't do-imageupdate.apg
 	    $upload_dir = "<!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->";
 	    
 	    if ((substr($redirect_url,-16) eq $new_image_redirect)||
-		(substr($redirect_url,-19) eq $xpat_redirect)) {
+		(substr($redirect_url,-15) eq $xpat_redirect)) {
 		
 		# if the redirect is new-image.apg or xpatcuration
 		# and suffix ok then get an OID.  Assume xpatcuration
@@ -835,7 +836,7 @@ else { # filename isn't null or redirect isn't do-imageupdate.apg
 		    &access_error ('no_access');
 		}
 	    
-		elsif ((substr($redirect_url,-19) eq $xpat_redirect)
+		elsif ((substr($redirect_url,-15) eq $xpat_redirect)
 		       &&($access eq "root")) { 
                     # else if $access is not null AND redirect is xpatcuration
 
@@ -879,7 +880,7 @@ else { # filename isn't null or redirect isn't do-imageupdate.apg
 		    $OID_from_apg_page = $query->param("OID");
 
 		    if ($OID_from_apg_page !~ m/ZDB\-\D{1,10}\-\d{1,6}\-\d{1,5}/){
-			&filename_error($OID_from_apge_page.'OID is not ZFIN pattern') ;
+			&filename_error($OID_from_apge_page.'OID is not ZFIN pattern (case 3)') ;
 		    }
 		
 		    if (substr($OID_from_apg_page, 0,10) ne $image_prefix){
@@ -891,9 +892,9 @@ else { # filename isn't null or redirect isn't do-imageupdate.apg
 		
 		    else {
 		
-			&getRecordOwnership("fimg_owner_zdb_id",
-					    "fish_image", 
-					    "fimg_zdb_id",
+			&getRecordOwnership("img_owner_zdb_id",
+					    "image", 
+					    "img_zdb_id",
 					    $OID_from_apg_page);
 					 #   "fimgp_owner_zdb_id",
 					 #   "fx_fish_image_private",
@@ -901,7 +902,7 @@ else { # filename isn't null or redirect isn't do-imageupdate.apg
 			
 			&getSuffix; # get the file suffix
 			
-			if ($owner_id eq $person_id) {
+			if ($access eq "root") {
 			    
 			    $filename = $OID_from_apg_page.$suffix;
 			    
@@ -917,8 +918,8 @@ else { # filename isn't null or redirect isn't do-imageupdate.apg
 			    
 			    if ($image_file_exists == 0) {	            
 				
-				&checkForOID ('fish_image',
-					      'fimg_zdb_id',
+				&checkForOID ('image',
+					      'img_zdb_id',
 					     # 'fimgp_zdb_id',
 					     # 'fx_fish_image_private',
 					      $OID); 

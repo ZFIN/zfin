@@ -63,7 +63,7 @@
   my $gene_type = "GENE\',\'GENEP";
   my $est_type  = "EST\',\'CDNA";
   my $bac_type  = "BAC\',\'PAC";
-  my $fish_type  = "FISH\',\'MUTANT\',\'LOCUS";
+  my $fish_type  = "GENO\',\'MUTANT";
 
   ###
   ### WARNING and ERROR CODES to be passed to the Options page
@@ -193,7 +193,7 @@
   if( (defined $Q->param("view_map")) && ($g_error == 0) ) { # view_map is defined and no error reported
 
     ### types is never defined by an external page so use them all.
-    $types = "SSLP\',\'RAPD\',\'RFLP\',\'STS\',\'SNP\',\'GENE\',\'GENEP\',\'BAC\',\'PAC'\,\'BAC_END\',\'PAC_END'\,\'EST\',\'CDNA\',\'FISH\',\'MUTANT\',\'LOCUS";
+    $types = "SSLP\',\'RAPD\',\'RFLP\',\'STS\',\'SNP\',\'GENE\',\'GENEP\',\'BAC\',\'PAC'\,\'BAC_END\',\'PAC_END'\,\'EST\',\'CDNA\',\'GENO\',\'MUTANT";
     #$types =  $types . ",\'" . $anon_type  . ",\'" . $gene_type  . ",\'" . $est_type . ",\'" . $bac_type . ",\'" . $fish_type . "\'" ;
     #$note = $note . "\n" . $types .  "\n"; print note;
 
@@ -364,7 +364,7 @@
       if($Q->param($panel.'_anon') && $Q->param($panel.'_anon')==1){$types = "$types\',\'$anon_type"; $print_type += 4;}
       if($Q->param($panel.'_fish') && $Q->param($panel.'_fish')==1){$types = "$types\',\'$fish_type"; $print_type += 8;}
       if($Q->param($panel.'_bac')  && $Q->param($panel.'_bac')==1)    {$types = "$types\',\'$bac_type"; $print_type += 16; }
-      if($print_type == 0){ $types = "SSLP\',\'RAPD\',\'RFLP\',\'STS\',\'GENE\',\'GENEP\',\'BAC\',\'PAC\',\'BAC_END\',\'PAC_END\',\'EST\',\'CDNA\'\'FISH\',\'MUTANT\',\'LOCUS"; $print_type += 31;}
+      if($print_type == 0){ $types = "SSLP\',\'RAPD\',\'RFLP\',\'STS\',\'GENE\',\'GENEP\',\'BAC\',\'PAC\',\'BAC_END\',\'PAC_END\',\'EST\',\'CDNA\'\'GENO\',\'MUTANT"; $print_type += 31;}
 
       $note = $note . " will be finding  $types  markers on this refresh panel<p>\n";
       ### hidden panel, lg, lo,hi & zoom re-emited as hidden vars
@@ -430,7 +430,7 @@
       if($Q->param($panel.'_anon') && $Q->param($panel.'_anon')==1){$types = "$types\',\'$anon_type"; $print_type += 4; }
       if($Q->param($panel.'_fish') && $Q->param($panel.'_fish')==1){$types = "$types\',\'$fish_type"; $print_type += 8; }
       if($Q->param($panel.'_bac')  && $Q->param($panel.'_bac')==1)    {$types = "$types\',\'$bac_type"; $print_type += 16; }
-      if($print_type == 0){ $types = "SSLP\',\'RAPD\',\'RFLP\',\'STS\',\'GENE\',\'GENEP\',\'EST\',\'CDNA\'\'BAC\',\'PAC\',\'BAC_END\',\'PAC_END\',\'FISH\',\'MUTANT\',\'LOCUS"; $print_type += 31;}
+      if($print_type == 0){ $types = "SSLP\',\'RAPD\',\'RFLP\',\'STS\',\'GENE\',\'GENEP\',\'EST\',\'CDNA\'\'BAC\',\'PAC\',\'BAC_END\',\'PAC_END\',\'GENO\',\'MUTANT"; $print_type += 31;}
 
       $note = $note . " will be finding  $types  markers on the edit panel\n";
       $Q->param($panel, 1);
@@ -851,8 +851,7 @@
 
         "<param name = \"target_frame\"\t value = \"$frame\">\n".
           "<param name = \"selected_marker\"\t value = \"". $Q->param('OID')."\">\n".
-		"<param name = \"fish_url\" value = \"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishview.apg&OID=\">\n".
-		  "<param name = \"locus_url\" value = \"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=\">\n".
+		"<param name = \"geno_url\" value = \"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypeview.apg&OID=\">\n".
 		     "<param name = \"zoom_url\" value = \"/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi\">\n".
 		    "<param name = \"data\"\t\t value = \"$g_data\">\n".
 		      "</APPLET><p>\n";
@@ -975,7 +974,7 @@
 	  'SELECT  * FROM fool '. #DISTINCT?
 	    'ORDER BY 4,6,5,3,2,7,1,8;';
     #zdb_id,abbrev,mtype,target_abbrev,lg_location,or_lg,mghframework,metric,map_name
-    # 1      2       3     4            5            6      7          8     9 
+    # 1      2       3     4            5            6      7          8     9
 
     my $rc = 0;
     my ($loc, $lo, $hi);
@@ -1057,7 +1056,7 @@
 	  $row[4] =  ($row[4] == 0)? 0 : $row[4]; # clean up 0.00000E+00
 	  $loc = $lo = $hi = $row[4];
 	  $rc = $sth3->execute($loc); #,$loc,$loc);
-      
+
 	      $note =  $note .  "draping lg ".$lg ." about ". $loc ."<p>\n";
 	  $local_zoom = ($Q->param($panel.'_zoom'))? $Q->param($panel.'_zoom') : $local_zoom;
 
@@ -1073,10 +1072,10 @@
 	  #insert all between and including $lo  $hi into pool of markers near chosen marker
       $hi += .0001; $lo -= .0001; # kludge because bug where (loc >= x AND loc <= x) not (loc == x)
 	  $zoom = $sth4->execute($lo, $hi) || die $dbh->errstr;
-    
+
 	  #	  $note = $note . "$zoom rows added to the pool<p>\n";
-          
-      #if (0 == $zoom){     
+
+      #if (0 == $zoom){
 
 	  $g_height = ($g_height < $zoom)? $zoom : $g_height;
 	  # emit hidden vars for $panel
