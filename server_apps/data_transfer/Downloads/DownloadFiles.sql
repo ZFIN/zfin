@@ -287,7 +287,8 @@ update geno_data set (gene_id, gene_abbrev) =
 		     from marker, feature_marker_relationship, feature
 		    where geno_data.allele = feature_name
 		      and fmrel_ftr_zdb_id = feature_zdb_id 
-		      and fmrel_mrkr_zdb_id = mrkr_zdb_id ));
+		      and fmrel_mrkr_zdb_id = mrkr_zdb_id
+		      and fmrel_type = "is allele of"));
 
 UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genotype_features.txt'
  DELIMITER "	" select distinct genotype_id, 
