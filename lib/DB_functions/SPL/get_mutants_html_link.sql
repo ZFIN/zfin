@@ -21,11 +21,12 @@ create function get_mutants_html_link
 	define genoCount_2	integer;
 	define ftrSuffix	char;
 	define genoSuffix	char;
-	define geneSym	like marker.mrkr_abbrev;
+	define genoZdbId	like genotype.geno_zdb_id;
 
         let ftrSuffix = '';
  	let genoSuffix = '';
-	
+	let genoZdbId = '';
+
 	select count(fmrel_ftr_zdb_id) :: integer 
 	  into ftrCount
      	  from feature_marker_relationship, feature
@@ -42,14 +43,23 @@ create function get_mutants_html_link
 
 	let ftrCount = ftrCount + ftrCount_2;
 
-	 select count(genofeat_geno_zdb_id) :: integer 
+        select count(genofeat_geno_zdb_id) :: integer 
 	   into genoCount
            from feature_marker_relationship, genotype_feature
           where fmrel_mrkr_zdb_id = geneZdbId
             and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
             and fmrel_type = 'is allele of';
 
-	 select count(genofeat_geno_zdb_id) :: integer 
+	if ( genoCount == 1 ) then 
+		select genofeat_geno_zdb_id
+		  into genoZdbId
+           	  from feature_marker_relationship, genotype_feature
+          	 where fmrel_mrkr_zdb_id = geneZdbId
+            	   and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
+            	   and fmrel_type = 'is allele of';
+	end if 
+
+	select count(genofeat_geno_zdb_id) :: integer 
 	   into genoCount_2
            from mapped_deletion, feature, genotype_feature
           where present_t = 'f'
@@ -57,12 +67,21 @@ create function get_mutants_html_link
             and allele = feature_name
             and feature_zdb_id = genofeat_feature_zdb_id;
 
-	 let genoCount = genoCount + genoCount_2;
+ 	-- is_allele_of relationship and missing gene relation is
+        -- mutually exclusive, so we won't be overwritten the value here.
+	if ( genoCount_2 == 1 ) then 
 
-	  select mrkr_abbrev
-            into geneSym
-            from marker
-           where mrkr_zdb_id = geneZdbId;
+	 	select genofeat_geno_zdb_id
+	   	  into genoZdbId
+          	  from mapped_deletion, feature, genotype_feature
+          	 where present_t = 'f'
+            	   and marker_id = geneZdbId
+           	   and allele = feature_name
+           	    and feature_zdb_id = genofeat_feature_zdb_id;
+	end if
+
+	let genoCount = genoCount + genoCount_2;
+
  
 	if (ftrCount > 1) then
 		let ftrSuffix = 's';
@@ -74,6 +93,12 @@ create function get_mutants_html_link
 
 	if (ftrCount == 0) then 
 		return '';
+
+	elif (genoCount == 1 ) then
+	-- in this case, the genoZdbId would either be filled with either of the two queris
+        -- above but not both in which case genoCount would be 2.
+		return '<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypeview.apg&OID=' || genoZdbId ||'">' || genoCount ||' genotype' || genoSuffix || ' (' || ftrCount || ' allele' || ftrSuffix || ')</A>';
+
         else
 		return '<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&query_results=exist&fsel_marker_id=' || geneZdbId ||'">' || genoCount ||' genotype' || genoSuffix || ' (' || ftrCount || ' allele' || ftrSuffix || ')</A>';
 
