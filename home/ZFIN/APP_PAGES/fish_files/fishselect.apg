@@ -372,8 +372,19 @@ Message: $MI_ERRORMSG
                                       where g_zdb_id = genofeat_geno_zdb_id)
 	              and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
 	              and fmrel_mrkr_zdb_id = junior_gene_zdb_id;">	    
-    <?/MISQL>    
-  
+    <?/MISQL>     
+
+    <?MISQL SQL="insert into $fishselect_temp_on_name (g_zdb_id,m_text,m_order,m_type)
+	           select genofeat_geno_zdb_id,junior_m_text,junior_m_order,junior_m_type
+                     from genotype_feature,feature,mapped_deletion,$fishselect_temp_on_gene_junior
+	            where not exists (select 'x' from $fishselect_temp_on_name
+                                      where g_zdb_id = genofeat_geno_zdb_id)
+	              and genofeat_feature_zdb_id = feature_zdb_id
+	              and junior_gene_zdb_id = marker_id
+	              and feature_name = allele
+	              and present_t = 'f';">	    
+    <?/MISQL>   
+ 
     <?MISQL SQL="delete from $fishselect_temp_on_gene_junior;"><?/MISQL>      
  
     <?MISQL SQL="insert into $fishselect_temp_on_name (g_zdb_id,m_text,m_order,m_type)
