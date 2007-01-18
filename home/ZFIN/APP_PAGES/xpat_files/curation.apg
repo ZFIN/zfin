@@ -750,30 +750,33 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
      <input type=submit value=Submit>
 
   &nbsp;&nbsp;&nbsp;  
-  Remove Data: 
+  Remove Attribution: 
     <select name=pubcur_G_remove_attrib>
     <option value="-">***MARKER</option>
     <?MISQL SQL="
-      select distinct mrkr_zdb_id, mrkr_abbrev
+      select distinct mrkr_zdb_id, mrkr_abbrev, mrkr_abbrev_order
         from marker, record_attribution
        where recattrib_data_zdb_id = mrkr_zdb_id
-         and recattrib_source_zdb_id = '$OID';">
+         and recattrib_source_zdb_id = '$OID'
+       order by mrkr_abbrev_order;">
       <option value=$1>$2</option>
     <?/MISQL> 
     <option value="-">***FEATURE</option>
     <?MISQL SQL="
-      select distinct feature_zdb_id, feature_abbrev
+      select distinct feature_zdb_id, feature_abbrev, feature_abbrev_order
         from feature, record_attribution
        where recattrib_data_zdb_id = feature_zdb_id
-         and recattrib_source_zdb_id = '$OID';">
+         and recattrib_source_zdb_id = '$OID'
+       order by feature_abbrev_order;">
       <option value=$1>$2</option>
     <?/MISQL>
     <option value="-">***GENOTYPE</option>
     <?MISQL SQL="
-      select distinct geno_zdb_id, geno_nickname
+      select distinct geno_zdb_id, geno_nickname, zero_pad(geno_nickname)
         from genotype, record_attribution
        where recattrib_data_zdb_id = geno_zdb_id
-         and recattrib_source_zdb_id = '$OID';">
+         and recattrib_source_zdb_id = '$OID'
+       order by 3;">
       <option value=$1>$2</option>
     <?/MISQL>
     </select>
