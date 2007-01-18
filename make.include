@@ -138,7 +138,7 @@ TARGET_MKDIR = /bin/mkdir -pm 2775
 
 CHGRP_FISHADMIN = /usr/bin/chgrp -R fishadmin
 
-CHMOD_774 = /usr/bin/chmod -R 774
+CHMOD_775 = /usr/bin/chmod -R ug+rwX,o+rX
 
 LOADAPPPAGE = /private/ZfinLinks/Commons/bin/loadapppage.pl
 UNLOADAPPPAGE = /private/ZfinLinks/Commons/bin/unloadapppage.pl

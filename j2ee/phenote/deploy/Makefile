@@ -22,6 +22,11 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/j2ee/phenote/deploy
 
+
+# a do nothing rule
+* :
+	;
+
 # ---------------  Production Rules  ------------------------------------
 
 # Use defualt rules for directories without app pages in them.

@@ -36,9 +36,10 @@ ONTOLOGS = gene_ontology.obo quality.obo zebrafish_anatomy.obo
 # ---------------  Special Rules  ---------------------------------------
 
 $(DEPLOY)/index.html : phenote.war
+	$(TARGET_MKDIR) $(DEPLOY)
 	$(WAR_UNZIP) $(DEPLOY) $(WARS)
 	$(CHGRP_FISHADMIN) $(DEPLOY)
-	$(CHMOD_774) $(DEPLOY)
+	$(CHMOD_775) $(DEPLOY)
 	$(foreach ONTO,$(ONTOLOGS),\
 		rm -f $(DATRAN)$(ONTO);\
 		echo "$(SELECT)'$(DATRAN)$(ONTO)!' $(WHERE) '$(ONTO)'"| \
@@ -49,6 +50,7 @@ $(DEPLOY)/index.html : phenote.war
 
 #Use defualt rules for directories without app pages in them.
 include $(TOP)/make.default.rules
+
 
 run :
 	$(TOUCH) $(WARS); /local/bin/gmake
