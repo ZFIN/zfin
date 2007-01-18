@@ -124,7 +124,7 @@ EFFECTS
   <table width=100% border=0 cellspacing=0 cellpadding=3>
     <tr bgcolor=#CCCCCC>
 
-  <?MIBLOCK COND=$(NXST,$xpcur_c_figure_only)>
+  <?MIBLOCK COND=$(NXST,$pubcur_c_figure_only)>
       <td></td>
       <td>Label</td>
       <td>Caption</td>
