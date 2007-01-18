@@ -499,6 +499,13 @@ public class SearchBean
 		    int pos = searchResultURL.substring(1).indexOf("/");
 		    searchResultURL = "/cgi-bin" +  searchResultURL.substring(pos+1);
 		}
+		// this is a temporary fix:
+		// frodo moved to production and used the pre-generated index. 
+                // however, newly generated IDs were not available in the old indexes
+		   
+		searchResultURL = searchResultURL.replaceAll("-070105-","-070117-"); 
+                
+
 		categoryHtml = "<a href='" + searchResultURL + "'><b>" + category.getDescription() + "</b></a>";
 
 	    }
@@ -648,6 +655,8 @@ public class SearchBean
 	String returnResults = "";
 
 	if (theMatchId.length() > 0) {
+	    //temporary fix
+	    theMatchId = theMatchId.replaceAll("-070105-","-070117-");
 	    if (theMatchId.startsWith("ZDB-GENO")) {
 		viewPageUrl = "/cgi-bin/webdriver?MIval=aa-genotypeview.apg&OID=" + theMatchId;
 	    }

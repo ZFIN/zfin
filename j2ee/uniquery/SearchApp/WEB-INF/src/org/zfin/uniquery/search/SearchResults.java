@@ -90,7 +90,9 @@ public class SearchResults
 	    	int pos = searchResultURL.substring(1).indexOf("/");
 	    	searchResultURL = "/cgi-bin" +  searchResultURL.substring(pos+1);
 	    }
-	    
+	    //temporary fix
+	    searchResultURL = searchResultURL.replaceAll("-070105-", "-070117-");
+	   
 	    htmlOutputBuffer.append("<p>\n");
 	    htmlOutputBuffer.append("<a href='" + searchResultURL + "'>" + pageTitle + "</a><br>\n");
 	    htmlOutputBuffer.append(hit.getHighlightedText() + "<br>\n");
