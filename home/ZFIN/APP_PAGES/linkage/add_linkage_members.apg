@@ -168,8 +168,8 @@ Linkage Members:   (At least one member must be specified) <br>
        <!-- search for a marker member -->
        <?MIBLOCK COND="$(AND,$(NC,$mtype,mutant),$(XST,$member))">
 	 <hr>
-	 <TABLE cols=2>
-	 <TR><TH></TH><TH>Marker Name</TH>
+	 <TABLE cols=1>
+	 <TR><TH></TH><TH align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Marker Name</TH>
 	 <?MISQL SQL="
            select distinct mrkr_zdb_id, mrkr_name, mrkrtype_type_display,
                   mrkr_abbrev 
@@ -185,7 +185,7 @@ Linkage Members:   (At least one member must be specified) <br>
 	       <input type=button name=member_selected value="Select" onClick="pick_me('$link_id','$1','$source','$lg','$(URLENCODE,$usercomments)','$ZDB_ident');">
 	     </TD>
 	     <TD>
-	       $2($4)
+	       &nbsp;&nbsp;&nbsp;$2 ($4)
 	     </TD>
 	   </TR>
 	 <?/MISQL>
