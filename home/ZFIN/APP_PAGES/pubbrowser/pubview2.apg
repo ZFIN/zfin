@@ -372,7 +372,7 @@ displays a publication record, or many publication records if > 1 returned.
 	***
   <?/MICOMMENT>
 
-  <?MICOMMENT> ======== Gene Expression Data  ============ <?/MICOMMENT>
+  <?MICOMMENT> ======== Gene Expression and Phenotype Data  ============ <?/MICOMMENT>
   <?MISQL SQL="
 	select count(*)::integer
  	  from figure, expression_pattern_figure
@@ -395,7 +395,7 @@ displays a publication record, or many publication records if > 1 returned.
 
   <?MIVAR COND="$(!=,$pbv_fig_count,0)">
        <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$pbv_fig_page&OID=$pbv_fig_page_link_id">
-	   Gene Expression Data
+	   Gene Expression and Phenotype Data
            </a> 
   <?/MIVAR>
 
