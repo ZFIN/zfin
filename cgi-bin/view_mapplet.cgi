@@ -3,7 +3,7 @@
  {   ### mod it
   #use strict;
 
-  $print_note = 0; #to print comments, set to 1
+  $print_note = 1; #to print comments, set to 1
 
   use CGI  qw / :standard/;
   use CGI::Carp 'fatalsToBrowser';
@@ -106,8 +106,12 @@
 
   my $edit_panel;		### if given, the panel that is being changed
 
-  my ($sm_m, $sm_lg, $sm_panel, $sm_loc, $sm_refresh); #values Which might be used to repopulate the select map form
-
+  #values Which might be used to repopulate the select map form
+  my $sm_m = '';
+  my $sm_lg = '';
+  my $sm_panel = '';
+  my $sm_loc = '';
+  my $sm_refresh = '';
 
   ### incase we want the mapplet to open somewhere particular some day
   my $frame = '_top';
@@ -211,7 +215,7 @@
 	$rowref = check_uniq($marker);
 	$unique = (defined $$rowref[0][0])? @$rowref: 0;
 
-    #	$note = $note . "\trow ref length " . $unique . "\n";
+    $note = $note . "\trow ref length " . $unique . "\n";
 	###
 	### yow!  too many answers
 	###
@@ -1562,6 +1566,7 @@
         $array_ref = $cur->fetchall_arrayref();
         #$note = $note . @$array_ref . " " .$array_ref->[0][0]." ".$array_ref->[1][0]. "\n\n";
     }
+    #print '<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">\n\n<p> <pre>\n' . $note ."/n</pre><p>\n";
     $array_ref;
   }				# end check unique
 
