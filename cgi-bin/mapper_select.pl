@@ -1,11 +1,11 @@
 #!/private/bin/perl -wT
 {
  use CGI;
- 
- my $Q = new CGI(); 
 
- sub mapper_select(Q) {
-   
+ my $Q = new CGI();
+
+ sub mapper_select() {
+
    my $JSCRIPT=<<ENDJS;
 
 
@@ -30,9 +30,9 @@ if (document.mapplet.loc_panel.selectedIndex !=0) {
 }
 
 <!-- if marker and only marker is specified submit -->
-  
+
 if (document.mapplet.marker.value !== ''){
-   if ((document.mapplet.loc.value== '')&&(document.mapplet.loc_panel.selectedIndex==0)&&(document.mapplet.loc_lg.selectedIndex==0)) { 
+   if ((document.mapplet.loc.value== '')&&(document.mapplet.loc_panel.selectedIndex==0)&&(document.mapplet.loc_lg.selectedIndex==0)) {
 	document.mapplet.submit();
     return true;
 	}
@@ -47,17 +47,17 @@ if ((document.mapplet.loc != null) && (document.mapplet.loc.value.search(/[^0-9\
 	alert('Locations must be specified as numeric values without units.');
 	return false;
 }
- 
+
 
 <!-- if marker is not specified and at least LG is - submit -->
 
 if (document.mapplet.marker.value == '') {
-	if (document.mapplet.loc_lg.selectedIndex !==0) { 
+	if (document.mapplet.loc_lg.selectedIndex !==0) {
 		if ((document.mapplet.loc_panel.selectedIndex != 0) && (document.mapplet.loc.value != '')) {
-			document.mapplet.submit(); 
+			document.mapplet.submit();
 		} else if ((document.mapplet.loc_panel.selectedIndex == 0) && (document.mapplet.loc.value == '')) {
 			alert(' Please specify a location and panel for the selected linkage group '); return false;
-		
+
 		} else if ((document.mapplet.loc_panel.selectedIndex != 0) && (document.mapplet.loc.value == '')){
 			alert(' A panel but no location was specified.\\n' + ' Please include a location for this panel.');return false;
 		} else if ((document.mapplet.loc_panel.selectedIndex == 0) && (document.mapplet.loc.value != '')){
@@ -75,12 +75,12 @@ if (document.mapplet.marker.value == '') {
 function call_zmapplet() {
 
    document.mapplet.action= '/<!--|CGI_BIN_DIR_NAME|-->/view_zmapplet.cgi';
-    if (  ((document.mapplet.loc_lg.selectedIndex !==0) || (document.mapplet.loc.value != '') )  && (document.mapplet.loc_panel.selectedIndex == 0)){ 
+    if (  ((document.mapplet.loc_lg.selectedIndex !==0) || (document.mapplet.loc.value != '') )  && (document.mapplet.loc_panel.selectedIndex == 0)){
     document.mapplet.loc_panel.selectedIndex = 4;
     }
     call_mapplet();
 
-}  
+}
 
 function call_reset() {
 
@@ -111,20 +111,20 @@ var T51=0;
 var LN54=0;
 
 ENDJS
- 
+
   print "\n<SCRIPT>\n $JSCRIPT \n</SCRIPT>\n";
 
   print "\n<SCRIPT>\n window.name='mapper' \n</SCRIPT>\n";
   print "\n";
 
   print "<TABLE width=700 border=0><TR><TD>\n";
- 
+
   print $Q->start_form(-name=>'mapplet', -action=>'/<!--|CGI_BIN_DIR_NAME|-->/view_mapplet.cgi',-method=>'post',-onSubmit=>'return call_mapplet();');
    print "\n";
 
    print "<input type=hidden name='view_map' value=1>";
    print "\n";
-   
+
    print "<TABLE WIDTH=100%><TR><TD bgcolor=\"<!--|SIDEBAR_COLOR|-->\">\n";
    print "<FONT SIZE=4><b>View a map region, choose either a marker or location</b></font>";
    print "\n";
@@ -139,7 +139,7 @@ ENDJS
 
    print $Q->textfield(-name=>'marker',-size=>'12',-onChange=>'document.mapplet.loc.value = \'\'; document.mapplet.loc_lg.selectedIndex = 0; document.mapplet.loc_panel.selectedIndex = 0;');
    print "\n";
-   
+
    print "</TD><TD><b> <font size=2>OR</font> &nbsp;&nbsp;&nbsp; </b></TD>";
    print "\n";
 
@@ -167,7 +167,7 @@ ENDJS
    print "\n";
 
    print $Q->popup_menu(-name=>'loc_panel',-onChange=>'document.mapplet.marker.value=\'\';',-values=>['???','LN54','T51','HS','MGH','MOP','GAT'],-labels=>('???'=>'0'),-default=>'???');
- 
+
 
   print "</TD></TR></TABLE>\n \
          <hr size=1 width = 60%>\n \
@@ -183,7 +183,7 @@ ENDJS
  print $Q->checkbox(-name=>'GAT',-value=>'1',-label=>'GAT',-checked=>'checked');
 
  print "\n</font></TD></TR></TABLE>\n";
- 
+
  print $Q->hidden(-name=>'refresh_map',-value=>'1');
  print "\n";
 
@@ -206,5 +206,5 @@ ENDJS
 
 }
 
-} 
+}
 
