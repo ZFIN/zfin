@@ -36,7 +36,7 @@ document.write("  </tr>");
 document.write("  <tr>");
 document.write("    <td align=center class=\"ack\">");
 document.write("      <DIV class=\"ack\">");
-document.write("      <A HREF=\"http://<!--|DOMAIN_NAME|-->/warranty.html\">Copyright</A> &copy <A HREF=\"http://www.uoregon.edu\">University of Oregon</a>, 1994-2006, <A HREF=\"http://www.ci.eugene.or.us/\">Eugene</a> , Oregon.");
+document.write("      <A HREF=\"http://<!--|DOMAIN_NAME|-->/warranty.html\">Disclaimer,limitations, copyright</A> &copy <A HREF=\"http://www.uoregon.edu\">University of Oregon</a>, 1994-2007, <A HREF=\"http://www.ci.eugene.or.us/\">Eugene</a> , Oregon.");
 document.write("      </DIV>");
 document.write("    </td>");
 document.write("  </tr>");
