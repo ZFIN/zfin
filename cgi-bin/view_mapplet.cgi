@@ -78,7 +78,7 @@
   my %zooms;                    ### hash of zoom values
   my $lg;			### the linkgage group containing $marker
   my $lgs;                      ### hash of linkage groups
-  my $loc;			### the location of $marker
+  my $loc = '';			### the location of $marker
   my $lo;			### name above $loc on map
   my $hi;			### name below $loc on map
   my $m_lo;			### offset above $loc on map
