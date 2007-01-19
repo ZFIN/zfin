@@ -9,7 +9,7 @@ INPUT VARS:
      OID   :: the publication zdb id (GLOBAL, set in parent)
  sender_id :: current login user's zdb id (GLOBAL, set in parent)
 
-OUTPUT VARS: 
+OUTPUT VARS:
   none
 
 <?/MICOMMENT>
@@ -29,7 +29,7 @@ OUTPUT VARS:
 <SCRIPT>
 
       function isEmpty(string) {
-	return ((string == null) || (string.length == 0))	
+	return ((string == null) || (string.length == 0))
       }
 
       function validateContent() {
@@ -37,27 +37,27 @@ OUTPUT VARS:
 	var item_grp  = document.letter.notif_item;
 	var categ_grp = document.letter.nc_selectall;
 	var valid     = false;
-		
-        if (isEmpty(recipient)) { 
-          alert("Please fill in the name of the recipients."); 
+
+        if (isEmpty(recipient)) {
+          alert("Please fill in the name of the recipients.");
           return false;
         }
 
-        for (i=0; i<item_grp.length&&!valid; i++) 
+        for (i=0; i<item_grp.length&&!valid; i++)
 	{
 	  if(item_grp[i].checked) {
-		valid = true; 
+		valid = true;
 		break;
-	   }   
+	   }
 	}
-         
-	for (i=0; i<categ_grp.length&&!valid; i++) 
+
+	for (i=0; i<categ_grp.length&&!valid; i++)
 	{
 	  if(categ_grp[i].checked) {
-		valid = true; 
+		valid = true;
 		break;
-	   }   
-	}	
+	   }
+	}
 
 	if(!valid){
 		var msg = "No marker is checked. Are you sure to process?";
@@ -66,23 +66,23 @@ OUTPUT VARS:
 		} else {
 			return false;
 		}
-	}		       
+	}
         return true;
       }
-   
+
 </SCRIPT>
 
 <?MICOMMENT>==============================================================
-            ==  prepare the variables that will be used in the letter 
+            ==  prepare the variables that will be used in the letter
             ==============================================================
 <?/MICOMMENT>
 
-<?MISQL SQL="select title, jrnl_abbrev, pub_volume, pub_pages, 
+<?MISQL SQL="select title, jrnl_abbrev, pub_volume, pub_pages,
 		    authors, year(pub_date)
                from publication, outer journal
               where zdb_id = '$OID'
 	        and pub_jrnl_zdb_id = jrnl_zdb_id;">
-        
+
 	<?MIVAR NAME=nc_pub_title>$1<?/MIVAR>
         <?MIVAR NAME=nc_jrnl_abbrev>$2<?/MIVAR>
         <?MIVAR NAME=nc_pub_volume>$3<?/MIVAR>
@@ -91,14 +91,14 @@ OUTPUT VARS:
 	<?MIVAR NAME=nc_pub_year>$6<?/MIVAR>
 <?/MISQL>
 
-<?MISQL SQL="select name 
+<?MISQL SQL="select name
                from ZDB_submitters
               where zdb_id = '$sender_id';">
 	<?MIVAR NAME=sender_name>$1<?/MIVAR>
 <?/MISQL>
 
-<?MISQL SQL="select email 
-               from person 
+<?MISQL SQL="select email
+               from person
               where zdb_id = '$sender_id';">
        <?MIVAR NAME=sender_email>$1<?/MIVAR>
 <?/MISQL>
@@ -120,21 +120,22 @@ OUTPUT VARS:
     <input type=hidden name=MIval value="aa-notif_frame.apg">
     <?/MIVAR>
 
-<?MICOMMENT>============================================================== 
-            == Letter Content. 
-            == Under edit status, it is a template; 
-	    == under preview, it is html formatted. 
-            ============================================================== 
-<?/MICOMMENT> 
+<?MICOMMENT>==============================================================
+            == Letter Content.
+            == Under edit status, it is a template;
+	    == under preview, it is html formatted.
+            ==============================================================
+<?/MICOMMENT>
 
-Dear <?MIVAR>$(IF,$(EC,$status,preview),$notif_recipient,<input type=text size=50 name=notif_recipient $(IF,$(XST,$notif_recipient),value='$notif_recipient')>)<?/MIVAR>, 
+Dear <?MIVAR>$(IF,$(EC,$status,preview),$notif_recipient,<input type=text size=50 name=notif_recipient $(IF,$(XST,$notif_recipient),value='$notif_recipient')>)<?/MIVAR>,
 <p>
 
-I am pleased to report that information about your paper has been entered into ZFIN, the Zebrafish Information Network.<p>
- 
+I am pleased to report that information about your paper has been entered into ZFIN, the Zebrafish Information Network.
+<p>
+
 <?MIVAR>
 "$nc_pub_title" <br>
-$nc_pub_authors &nbsp; ($nc_pub_year) <br>
+$nc_pub_authors <pre> </pre> ($nc_pub_year) <br>
 $nc_jrnl_abbrev $nc_pub_vol_page
 <p>
 
@@ -148,7 +149,7 @@ Genes and mutants associated with your paper are listed on the publication page 
 <?MIBLOCK COND="$(AND,$(EC,$status,preview),$(XST,$notif_optnote))">
     <?MIVAR NAME=$notif_optnote_display>$(URLENCODE,$notif_optnote)<?/MIVAR>
     <?MIVAR NAME=$notif_optnote_display>$(REPLACE,$notif_optnote_display,%0a,<BR>)<?/MIVAR>
-    <?MIVAR NAME=$notif_optnote_display>$(REPLACE,$notif_optnote_display,++,&nbsp; &nbsp;)<?/MIVAR>
+    <?MIVAR NAME=$notif_optnote_display>$(REPLACE,$notif_optnote_display,++,<pre>  </pre>)<?/MIVAR>
     <?MIVAR NAME=$notif_optnote_display>$(URLDECODE,$notif_optnote_display)<?/MIVAR>
 
     <?MIVAR>$notif_optnote_display<?/MIVAR>
@@ -157,16 +158,16 @@ Genes and mutants associated with your paper are listed on the publication page 
   <?MIVAR>
     <textarea name=notif_optnote rows="4" cols="70" wrap="virtual")></textarea>
     <p>
-  <?/MIVAR>  
+  <?/MIVAR>
 <?/MIBLOCK>
 
-ZFIN is the zebrafish model organism database, a centralized community resource for zebrafish genetic, genomic, and developmental data. We encourage you to share this message with your co-authors and appreciate any feedback that you are able to offer. Community input is vital to our success and value as a public resource. If you have corrections, comments, or additional data that you would like to submit to ZFIN, please contact me. 
+ZFIN is the zebrafish model organism database, a centralized community resource for zebrafish genetic, genomic, and developmental data. We encourage you to share this message with your co-authors and appreciate any feedback that you are able to offer. Community input is vital to our success and value as a public resource. If you have corrections, comments, or additional data that you would like to submit to ZFIN, please contact me.
 <p>
 
-Thank you, 
+Thank you,
 <p>
 <?MIVAR>
-$sender_name  
+$sender_name
 <?/MIVAR>
 <br>
 Scientific Curation Group
@@ -178,22 +179,22 @@ Eugene, Oregon, USA
 <p>
 ZFIN website: <a href="http://zfin.org">http://zfin.org</a> <br>
 e-mail:  <?MIVAR><a href="mailto:$sender_email">$sender_email</a><?/MIVAR>
-<p> &nbsp; <br>
+<p><pre> </pre><br>
 
 
-<?MICOMMENT>============================================================== 
-            == List Gene, Gene Expression, Fish and Locus from the paper  
+<?MICOMMENT>==============================================================
+            == List Gene, Gene Expression, Fish and Locus from the paper
             == Genes are ordered by abbrev, fish ordered by locus abbrev.
-	    ============================================================== 	
+	    ==============================================================
 <?/MICOMMENT>
-<?MICOMMENT>we append G/X after gene zdb id to distinguish whether 
+<?MICOMMENT>we append G/X after gene zdb id to distinguish whether
 	    for gene or gene expression.
 <?/MICOMMENT>
 <?MIVAR NAME=mysql>
              select 'Gene',
 		    mrkr_zdb_id,
-		    mrkr_name, 
-		    mrkr_abbrev, 
+		    mrkr_name,
+		    mrkr_abbrev,
 		    mrkr_abbrev_order
                from record_attribution, marker
               where recattrib_source_zdb_id = '$OID'
@@ -205,9 +206,9 @@ e-mail:  <?MIVAR><a href="mailto:$sender_email">$sender_email</a><?/MIVAR>
 
 <?MIVAR NAME=mysql>
              select 'Morpholino',
-		    mrkr_zdb_id, 
-		    mrkr_name, 
-		    mrkr_abbrev, 
+		    mrkr_zdb_id,
+		    mrkr_name,
+		    mrkr_abbrev,
 		    mrkr_abbrev_order
                from record_attribution, marker
               where recattrib_source_zdb_id = '$OID'
@@ -218,10 +219,10 @@ e-mail:  <?MIVAR><a href="mailto:$sender_email">$sender_email</a><?/MIVAR>
 <?MIVAR>$(VECAPPEND,$sqlArray,$mysql)<?/MIVAR>
 
 <?MIVAR NAME=mysql>
-             select distinct 'Gene Expression', 
-		    mrkr_zdb_id, 
-                    mrkr_name, 
-                    mrkr_abbrev, 
+             select distinct 'Gene Expression',
+		    mrkr_zdb_id,
+                    mrkr_name,
+                    mrkr_abbrev,
 		    mrkr_abbrev_order
                from marker, expression_experiment
               where xpatex_source_zdb_id = '$OID'
@@ -250,14 +251,14 @@ e-mail:  <?MIVAR><a href="mailto:$sender_email">$sender_email</a><?/MIVAR>
 
 <?MIBLOCK INDEX=$sql FOREACH=$sqlArray>
 
-    <?MISQL SQL="$sql"> 	
+    <?MISQL SQL="$sql">
 
         <?MIVAR NAME=attrib_data_title>$1<?/MIVAR>
 	<?MIVAR NAME=attrib_data_id>$2<?/MIVAR>
 	<?MIVAR NAME=attrib_data_name>$3<?/MIVAR>
-        <?MIVAR NAME=attrib_data_abbrev>$4<?/MIVAR> 
+        <?MIVAR NAME=attrib_data_abbrev>$4<?/MIVAR>
 
-        <?MIVAR NAME=attrib_data_id_distinct>$2<?/MIVAR> 
+        <?MIVAR NAME=attrib_data_id_distinct>$2<?/MIVAR>
 	<?MIVAR COND="$(EC,$attrib_data_title,Gene)">
 		$(SETVAR,$attrib_data_id_distinct,$2"G")
         <?/MIVAR>
@@ -265,28 +266,28 @@ e-mail:  <?MIVAR><a href="mailto:$sender_email">$sender_email</a><?/MIVAR>
 		$(SETVAR,$attrib_data_id_distinct,$2"X")
         <?/MIVAR>
 
-          
-        <?MICOMMENT> to avoid 'Gene' match when it is 'Gene Expression' 
+
+        <?MICOMMENT> to avoid 'Gene' match when it is 'Gene Expression'
 	<?/MICOMMENT>
         <?MIVAR NAME=attrib_data_type>$1"List"<?/MIVAR>
 
         <?MIVAR COND="$(AND,$(EC,$addLineBreak,t),$(=,$MI_CURRENTROW,1))">
-            <br> 
+            <br>
             <?MICOMMENT>== extra line to separate each category == <?/MICOMMENT>
         <?/MIVAR>
 
         <?MIVAR COND="$(EC,$status,edit)">
-           <?MICOMMENT> 
+           <?MICOMMENT>
 		     ====================================================
                      ==   Edit stage
                      ====================================================
-           <?/MICOMMENT>     
+           <?/MICOMMENT>
            <?MIVAR COND="$(=,$MI_CURRENTROW,1)">
 	     <table width=50%> <tr><td bgcolor=#cccccc>
-		Select All $attrib_data_title$(IF,$(NC,$attrib_data_title,Gene Expression),"(s)")          
-                <INPUT TYPE=checkbox NAME=nc_selectall VALUE='$attrib_data_type' CHECKED> 
+		Select All $attrib_data_title$(IF,$(NC,$attrib_data_title,Gene Expression),"(s)")
+                <INPUT TYPE=checkbox NAME=nc_selectall VALUE='$attrib_data_type' CHECKED>
              </td></tr></table>
-           <?/MIVAR>  
+           <?/MIVAR>
            <INPUT TYPE=checkbox NAME=notif_item VALUE="$attrib_data_id_distinct" $(IF,$(AND,$(XST,$notif_items),$(>,$(POSITION,$notif_items,$attrib_data_id_distinct),0)), CHECKED)>
            $attrib_data_title: <i>$attrib_data_name</i> (<i>$attrib_data_abbrev</i>)
            <br>
@@ -296,7 +297,7 @@ e-mail:  <?MIVAR><a href="mailto:$sender_email">$sender_email</a><?/MIVAR>
 
 	        <?MICOMMENT>== we want to link to production page ==<?/MICOMMENT>
 
-                <a href="http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id">http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id</a> 
+                <a href="http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id">http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id</a>
 	       <?/MIVAR>
                <br>
 	     <?/MIBLOCK>
@@ -305,11 +306,11 @@ e-mail:  <?MIVAR><a href="mailto:$sender_email">$sender_email</a><?/MIVAR>
         <?/MIVAR>
 
         <?MIBLOCK COND="$(EC,$status,preview)">
-           <?MICOMMENT> 
+           <?MICOMMENT>
 		   ====================================================
                    ==   Preview stage
                    ====================================================
-           <?/MICOMMENT> 
+           <?/MICOMMENT>
           <?MICOMMENT> ----- set variables  ---- <?/MICOMMENT>
           <?MIVAR NAME=nc_selectall_condition>
 		$(AND,$(XST,$nc_selectall_list),$(>,$(POSITION,$nc_selectall_list,$attrib_data_type),0))
@@ -320,32 +321,32 @@ e-mail:  <?MIVAR><a href="mailto:$sender_email">$sender_email</a><?/MIVAR>
 
           <?MICOMMENT> ----- If the data is selected ---- <?/MICOMMENT>
           <?MIBLOCK COND="$(OR,$nc_selectall_condition,$notif_items_condition)">
-	  
+
            <?MICOMMENT> ==| handle expression data with different format |== <?/MICOMMENT>
 
 	   <?MIBLOCK COND="$(EC,$attrib_data_title,Gene Expression)">
 
 	      <?MIVAR COND="$(EC,$gene_expression_checked,f)">
-	         &nbsp; &nbsp;  
+	         <pre>    </pre>
                  <a href="http://zfin.org/cgi-bin/webdriver?MIval=aa-fxallfigures.apg&OID=$OID">Curated gene expression</a> for: <br>
                  $(SETVAR,gene_expression_checked,t)
               <?/MIVAR>
               <?MIVAR>
-       	        &nbsp; &nbsp; &nbsp; &nbsp;   
-	        <i>$attrib_data_name</i> (<i>$attrib_data_abbrev</i>)
+                <pre>        </pre>
+        <i>$attrib_data_name</i> (<i>$attrib_data_abbrev</i>)
                 <br>
               <?/MIVAR>
- 
+
            <?MIELSE>
-              <?MICOMMENT> ==| format for the rest |== <?/MICOMMENT>          
-  
+              <?MICOMMENT> ==| format for the rest |== <?/MICOMMENT>
+
 	      <?MIVAR>
 	  	$attrib_data_title: <i>$attrib_data_name</i> (<i>$attrib_data_abbrev</i>)
            	<br>
-                <a href="http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id">http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id</a> 
+                <a href="http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id">http://zfin.org/cgi-bin/ZFIN_jump?record=$attrib_data_id</a>
                 <br>
 	      <?/MIVAR>
- 
+
 	   <?/MIBLOCK> <?MICOMMENT> == end whether gene expression == <?/MICOMMENT>
 
 	   <?MIVAR>$(SETVAR,$addLineBreak,t)<?/MIVAR>
@@ -356,7 +357,7 @@ e-mail:  <?MIVAR><a href="mailto:$sender_email">$sender_email</a><?/MIVAR>
   <?/MISQL>
   <?MIVAR> $(SETVAR,$attrib_data_title,)<?/MIVAR>
 
-<?/MIBLOCK>	
+<?/MIBLOCK>
 
 
 <p><p><p> <?MICOMMENT>this is used in notif_frame.apg to identify the letter end<?/MICOMMENT>
@@ -370,10 +371,10 @@ e-mail:  <?MIVAR><a href="mailto:$sender_email">$sender_email</a><?/MIVAR>
 <?/MIVAR>
 
 <?MIBLOCK COND="$(EC,$status,edit)">
-  <INPUT TYPE=HIDDEN NAME=status VALUE="preview">	
+  <INPUT TYPE=HIDDEN NAME=status VALUE="preview">
   <INPUT TYPE=SUBMIT VALUE="Done and Preview the letter" onClick="return validateContent()">
 <?MIELSE>
- 
+
   <INPUT TYPE=Button VALUE="ReEdit the Letter" onClick="history.go(-1)">
 <?/MIBLOCK>
 
