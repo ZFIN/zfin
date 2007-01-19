@@ -78,7 +78,7 @@
   my %zooms;                    ### hash of zoom values
   my $lg;			### the linkgage group containing $marker
   my $lgs;                      ### hash of linkage groups
-  my $loc = '';			### the location of $marker
+  my $loc = -1;			### the location of $marker
   my $lo;			### name above $loc on map
   my $hi;			### name below $loc on map
   my $m_lo;			### offset above $loc on map
@@ -489,12 +489,14 @@
 					       );
 	  $Q->param($panel.'_OID', $zdbid);
 	  	  $note = $note . "PICKING |$zdbid| (|$marker|) on |$panel| at |$loc| to zoom about<p>";
-	}else { $loc = defined $Q->param($panel.'_loc')? $Q->param($panel.'_loc'): undef; }
+	}else {
+        $loc = defined $Q->param($panel.'_loc')? $Q->param($panel.'_loc'): '';
+    }
 	$zdbid = $Q->param($panel.'_OID');
-		$note = $note . " Zoom is  centered on ". $zdbid. " at |$loc|<p>\n";
+		$note = $note . " Zoom is  centered on $zdbid at |$loc|<p>\n";
 		$note = $note ." ZOOMPARAMS:: |$zdbid|, |$lg|, |$panel|, |$zoom|, |$loc| pre-lo $lg_lo 7 pre-hi $lg_hi <p>\n";
 	($lg_lo, $lg_hi) = get_zooms ($zdbid, $lg, $panel, $zoom, $loc );
-	$note = $note . " Zoom is  centered on ". $zdbid. " at |$loc|<br>\n";
+	$note = $note . " Zoom is  centered on  $zdbid at |$loc|<br>\n";
 	$note = $note ."ZOOMRETURNS:: |$lg_lo|, |$lg_hi| <p>\n";
  	$Q->delete($panel.'_lg_lo','');
 	$Q->delete($panel.'_lg_hi','');
