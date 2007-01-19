@@ -131,15 +131,13 @@ Linkage Members:   (At least one member must be specified) <br>
     <?/MISQL>
     <?MIVAR NAME=$num_members>$MI_ROWCOUNT<?/MIVAR>
   
-    <?MISQL SQL=" select distinct feature_abbrev,geno_display_name 
-           from feature,genotype,genotype_feature,linkage_member
+    <?MISQL SQL=" select distinct feature_name 
+           from feature,linkage_member
          where lnkgmem_linkage_zdb_id = '$link_id'
 	   and lnkgmem_member_zdb_id = feature_zdb_id
-	   and genofeat_feature_zdb_id = feature_zdb_id
-	   and genofeat_geno_zdb_id = geno_zdb_id
-	  order by feature_abbrev
+	  order by feature_name
             ;">
-    $1 ($2)
+    $1
     <br>
     <?/MISQL>           
     <?MIVAR>
@@ -198,23 +196,18 @@ Linkage Members:   (At least one member must be specified) <br>
 
        <?MIBLOCK COND="$(AND,$(EC,$mtype,mutant),$(XST,$member))">
 	 <hr>
-	 <TABLE cols=2>
-	 <TR><TH></TH><TH>Allele</TH><TH>Genotype</TH></TR>
-	 <?MISQL SQL="select distinct feature_zdb_id,feature_abbrev,geno_display_name
-	   from feature,genotype,genotype_feature
-	     where lower(feature_abbrev) like '%$(LOWER,$member)%'
-	     and genofeat_feature_zdb_id = feature_zdb_id
-	     and genofeat_geno_zdb_id = geno_zdb_id
-	     order by feature_abbrev;">
+	 <TABLE cols=1>
+	 <TR><TH></TH><TH>Allele / Feature</TH>
+	 <?MISQL SQL="select distinct feature_zdb_id,feature_name
+	   from feature
+	     where lower(feature_name) like '%$(LOWER,$member)%'
+	     order by feature_name;">
 	   <TR>
 	     <TD>
 	       <input type=button name=member_selected value="Select" onClick="pick_me('$link_id','$1','$source','$lg','$(URLENCODE,$usercomments)','$ZDB_ident');">
 	     </TD>
 	     <TD>
 	       $2 
-	     </TD>
-	     <TD>
-	       $3
 	     </TD>
 	   </TR>
 	 <?/MISQL>
