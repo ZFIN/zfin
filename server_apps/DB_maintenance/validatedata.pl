@@ -1980,31 +1980,6 @@ sub mrkrgoevInfgrpDuplicatesFound ($) {
   }
   &recordResult($routineName, $nRecords);
 } 
-#----------------------
-# Parameter
-#     $     mrkrgoev zdb id
-#     $     mrkrgoev zdb id
-#     $     count of how many identical inference members the two mrkrgoev id have
-
-sub subMrkrgoevInfgrpDuplicatesFound($) {
-    my @input = @_;
-    my $mrkrgoev1 = $input[0];
-    my $mrkrgoev2 = $input[1];
-    my $infgrmem_count = $input[2];
-
-    my $sql = "select count(*) 
-               from inference_group_member   
-              where infgrmem_mrkrgoev_zdb_id= '$mrkrgoev1'";
- 
-  
-    my @result_a = $dbh->selectrow_array($sql);
-
-    $sql = "select count(*) 
-               from inference_group_member   
-              where infgrmem_mrkrgoev_zdb_id= '$mrkrgoev2'";
- 
-  
-    my @result_b = $dbh->selectrow_array($sql);
 
 #----------------------
 # Parameter
