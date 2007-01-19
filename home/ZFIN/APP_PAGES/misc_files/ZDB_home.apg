@@ -211,7 +211,8 @@
 	      <?MIVAR COND="$(EC,$AUTHORIZED,root)">
 		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=GENE"><EM>Add new GENE</EM></A>
 		,  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=GENEP"><EM>Add new PSEUDOGENE</EM></A>
-                ,  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=MRPHLNO"><EM>Add new Morpholino</EM></A> 
+                ,  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=MRPHLNO"><EM>Add new Morpholino</EM></A>
+		<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=EFG"><EM>Add new FOREIGN gene</EM></A> 
 		,  <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-add_linkage.apg"><EM>Add new LINKAGES</EM></A>
 	      <?/MIVAR>
 	    </DIV>
