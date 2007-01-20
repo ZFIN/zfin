@@ -135,7 +135,7 @@ I am pleased to report that information about your paper has been entered into Z
 
 <?MIVAR>
 "$nc_pub_title" <br>
-$nc_pub_authors <pre> </pre> ($nc_pub_year) <br>
+$nc_pub_authors<span style="border: thin solid white; margin-left: 1em;">($nc_pub_year)</span>
 $nc_jrnl_abbrev $nc_pub_vol_page
 <p>
 
@@ -149,7 +149,7 @@ Genes and mutants associated with your paper are listed on the publication page 
 <?MIBLOCK COND="$(AND,$(EC,$status,preview),$(XST,$notif_optnote))">
     <?MIVAR NAME=$notif_optnote_display>$(URLENCODE,$notif_optnote)<?/MIVAR>
     <?MIVAR NAME=$notif_optnote_display>$(REPLACE,$notif_optnote_display,%0a,<BR>)<?/MIVAR>
-    <?MIVAR NAME=$notif_optnote_display>$(REPLACE,$notif_optnote_display,++,<pre>  </pre>)<?/MIVAR>
+    <?MIVAR NAME=$notif_optnote_display>$(REPLACE,$notif_optnote_display,++,<span style="border: thin solid white; margin-left: 2em;"></span>)<?/MIVAR>
     <?MIVAR NAME=$notif_optnote_display>$(URLDECODE,$notif_optnote_display)<?/MIVAR>
 
     <?MIVAR>$notif_optnote_display<?/MIVAR>
@@ -179,8 +179,7 @@ Eugene, Oregon, USA
 <p>
 ZFIN website: <a href="http://zfin.org">http://zfin.org</a> <br>
 e-mail:  <?MIVAR><a href="mailto:$sender_email">$sender_email</a><?/MIVAR>
-<p><pre> </pre><br>
-
+<p></p>
 
 <?MICOMMENT>==============================================================
             == List Gene, Gene Expression, Fish and Locus from the paper
@@ -232,9 +231,9 @@ e-mail:  <?MIVAR><a href="mailto:$sender_email">$sender_email</a><?/MIVAR>
 <?MIVAR>$(VECAPPEND,$sqlArray,$mysql)<?/MIVAR>
 
 <?MIVAR NAME=mysql>
-             select distinct 'Mutant', 
-		    feature_zdb_id, 
-		    feature_name, 
+             select distinct 'Mutant',
+		    feature_zdb_id,
+		    feature_name,
 		    feature_abbrev,
        	            feature_name_order
                from record_attribution, feature
@@ -326,15 +325,13 @@ e-mail:  <?MIVAR><a href="mailto:$sender_email">$sender_email</a><?/MIVAR>
 
 	   <?MIBLOCK COND="$(EC,$attrib_data_title,Gene Expression)">
 
-	      <?MIVAR COND="$(EC,$gene_expression_checked,f)">
-	         <pre>    </pre>
-                 <a href="http://zfin.org/cgi-bin/webdriver?MIval=aa-fxallfigures.apg&OID=$OID">Curated gene expression</a> for: <br>
+          <?MIVAR COND="$(EC,$gene_expression_checked,f)">
+               <span style="border: thin solid white; margin-left: 4em;">
+                 <a href="http://zfin.org/cgi-bin/webdriver?MIval=aa-fxallfigures.apg&OID=$OID">Curated gene expression</a> for:</span>
                  $(SETVAR,gene_expression_checked,t)
               <?/MIVAR>
               <?MIVAR>
-                <pre>        </pre>
-        <i>$attrib_data_name</i> (<i>$attrib_data_abbrev</i>)
-                <br>
+                  <div style="border: thin solid white; margin-left: 8em;"><i>$attrib_data_name</i> (<i>$attrib_data_abbrev</i>)</div>
               <?/MIVAR>
 
            <?MIELSE>
