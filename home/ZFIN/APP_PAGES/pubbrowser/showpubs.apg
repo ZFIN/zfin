@@ -382,7 +382,11 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 <?MICOMMENT> *** ---------------- *** <?/MICOMMENT>
 
 <?MIVAR COND="$(XST,$UPDATE)">
-  <INPUT TYPE=button value="Add Publication" onClick="doit('rel_pub','selection','Add')"> 
+  <?MICOMMENT> no add button for genotype citation on this page <?/MICOMMENT>
+  <?MIVAR COND="$(NC,$rtype,genotype)"> 
+     <INPUT TYPE=button value="Add Publication" onClick="doit('rel_pub','selection','Add')"> 
+  <?/MIVAR>
+
   <?MIBLOCK COND="$(AND,$(NXST,$attribtype),$(>,$(POSITION,$OID,ALT),0))">
    <b> Please use the individual  <?MIVAR><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-locusview.apg&OID=$OID#allele'>allele</A><?/MIVAR> record to enter allele-specific publications.</b>
    <br>
