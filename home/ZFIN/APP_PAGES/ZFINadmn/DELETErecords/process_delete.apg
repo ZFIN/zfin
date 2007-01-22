@@ -49,12 +49,10 @@
     <?/MICOMMENT>
     <?MIBLOCK COND="$(OR,$(EC,$rtype,marker),
 			 $(EC,$rtype,genotype))">
-
       <?MICOMMENT> =====    MERGE  ======== <?/MICOMMENT>
       <?MIBLOCK COND="$(NC,$merge_oid,none)">
 
          <?MICOMMENT> ====== Common action ====== <?/MICOMMENT>
-       <?MIVAR>common<?/MIVAR>
          <?MICOMMENT> ------    Alias   -----------  
                       -- a. get rid of duplication
                       -- b. update the data id 
@@ -120,7 +118,7 @@
 			      lower(mrkr_abbrev)
                         FROM marker
                        WHERE mrkr_zdb_id = '$OID';">
-         <?/MISQL><?MIVAR>$MI_SQL<?/MIVAR>
+         <?/MISQL>
               
 
 	 <?MICOMMENT> --- Mapping & Linkage ---  <?/MICOMMENT>
@@ -173,15 +171,15 @@
          <?MICOMMENT> =========    Marker   ========= <?/MICOMMENT>
 
          <?MIBLOCK COND="$(EC,$rtype,marker)">
- 
+
             <?MICOMMENT> --- get marker name --- <?/MICOMMENT>
 	    <?MISQL SQL="
 	         select mrkr_name 
                    from marker 
                   where mrkr_zdb_id = '$OID';">
 	    <?/MISQL>
-            <?MIVAR NAME=$old_name>$1<?/MIVAR>
-   
+            <?MIVAR NAME=old_name>$1<?/MIVAR>
+
 
 	   <?MICOMMENT> --- update primer set ---  <?/MICOMMENT> 
 	   <?MISQL SQL="
@@ -254,7 +252,7 @@
 
 
          <?MICOMMENT> =========  Genotype  ============== <?/MICOMMENT>
-
+         <?MIBLOCK COND="$(EC,$rtype,genotype)">
              <?MICOMMENT> --- get genotype name --- <?/MICOMMENT>
 	     <?MISQL SQL="
 			select geno_display_name
@@ -263,10 +261,10 @@
              <?/MISQL>
              <?MIVAR NAME=$old_name>$1<?/MIVAR>
 
-            <?MICOMMENT>
+             <?MICOMMENT>
                       -- for now, we decided that 
                       -- no action beside the common actions
-          
+             <?/MICOMMENT>
              <?MICOMMENT> ---  genotype_feature  --- <?/MICOMMENT>            
              <?MISQL SQL="
                      update genotype_feature
@@ -280,9 +278,8 @@
                         set genox_geno_zdb_id = '$merge_oid'
                       where genox_geno_zdb_id = '$OID' ;">
              <?/MISQL>    
-        
-            ========  end Genotype ============ 
-           <?/MICOMMENT>
+         <?/MIBLOCK>
+         <?MICOMMENT> ========  end Genotype ============ <?/MICOMMENT>
    
         
          <?MICOMMENT> ========  Common Action (cont) ========= <?/MICOMMENT>
@@ -301,7 +298,7 @@
 	      insert into zdb_replaced_data 
                           (zrepld_old_zdb_id, zrepld_new_zdb_id, zrepld_old_name)
                    values ('$OID','$merge_oid','$old_name');">
-	 <?/MISQL>  <?MIVAR>$MI_SQL<?/MIVAR>
+	 <?/MISQL>  
          <?MICOMMENT> ====== end Common Action (cont) ========= <?/MICOMMENT>
      
          <?MICOMMENT> ========  end  MERGE  ======== <?/MICOMMENT>
@@ -365,7 +362,7 @@
     <SCRIPT>
         <?MIVAR> window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$return_page$returnOIDstring'<?/MIVAR>;
     </SCRIPT> 
- 
+
   <?/MIBLOCK> <?MICOMMENT> ====  end OID & rtype Exist  ===== <?/MICOMMENT>
 
 
