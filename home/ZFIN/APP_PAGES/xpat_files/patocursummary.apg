@@ -59,7 +59,7 @@ PREFIX:   patosum_
     </tr>
   </thead>
   <tbody class="searchresults">
-    <?MISQL SQL="select distinct fig_label, fig_zdb_id, geno_handle, geno_zdb_id, 
+    <?MISQL SQL="select distinct fig_label, fig_zdb_id, geno_nickname, geno_zdb_id, 
                         exp_name, exp_zdb_id, apato_start_stg_zdb_id, apato_end_stg_zdb_id, fig_full_label, 
 			genox_zdb_id
                    from figure
@@ -72,7 +72,7 @@ PREFIX:   patosum_
                    order by fig_full_label;"> 
       <?MIVAR NAME="$patosum_fig_label">$1<?/MIVAR>
       <?MIVAR NAME="$patosum_fig_zdb_id">$2<?/MIVAR>
-      <?MIVAR NAME="$patosum_geno_handle">$3<?/MIVAR>
+      <?MIVAR NAME="$patosum_geno_nickname">$3<?/MIVAR>
       <?MIVAR NAME="$patosum_geno_zdb_id">$4<?/MIVAR>
       <?MIVAR NAME="$patosum_exp_name">$5<?/MIVAR>
       <?MIVAR NAME="$patosum_exp_zdb_id">$6<?/MIVAR>
@@ -107,7 +107,7 @@ PREFIX:   patosum_
 
       <?MICOMMENT> ** Build corresponding javascript object ** <?/MICOMMENT>
       <script type="text/javascript">
-      patoCuration.mutants[$(-,$patosum_recordIndex,1)] = new Mutant("$patosum_fig_label", "$patosum_fig_zdb_id", "$patosum_geno_handle",
+      patoCuration.mutants[$(-,$patosum_recordIndex,1)] = new Mutant("$patosum_fig_label", "$patosum_fig_zdb_id", "$patosum_geno_nickname",
 							"$patosum_geno_zdb_id", "$patosum_exp_name", "$patosum_exp_zdb_id",
 							"$patosum_start_stg_zdb_id", "$patosum_start_stg_abbrev",
 							"$patosum_end_stg_zdb_id", "$patosum_end_stg_abbrev","$patosum_genox_zdb_id", 
@@ -135,7 +135,7 @@ PREFIX:   patosum_
           $patosum_fig_label
         </td>
         <td> <?MICOMMENT> ** Genotype Column ** <?/MICOMMENT>
-          $patosum_geno_handle
+          $patosum_geno_nickname
         </td>
         <td>  <?MICOMMENT> ** Enviornment Column ** <?/MICOMMENT>
           $patosum_exp_name
