@@ -75,7 +75,7 @@ Message: $MI_ERRORMSG
 		alert("Sorry, the genotype <?MIVAR>$checker_id<?/MIVAR> has expression/pato data and cannot be deleted or merged.");
 		return false;
             <?MIELSE>
-		var agree = confirm ("Warning: related feature records would be dropped.");
+		var agree = confirm ("Warning: related feature records with this genotype would be merged or deleted too.");
 	        if (agree) {
 		   return true;
 		}else {
