@@ -7,7 +7,7 @@ let objtype = get_obj_type(vTerm);
 
 if objtype = 'GOTERM'
 then
-	let ok = (select term_is_obsolete 
+	let ok = (select goterm_is_obsolete 
         	   from go_term 
           	   where vTerm = goterm_zdb_id);
 
