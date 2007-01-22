@@ -5,5 +5,8 @@ create trigger apatoinf_insert_trigger insert on
 	execute procedure p_check_pato_entities (
 			new_apatoinf.api_zdb_id,
 			new_apatoinf.api_entity_a_zdb_id,
-			new_apatoinf.api_entity_b_zdb_id)
+			new_apatoinf.api_entity_b_zdb_id),
+	execute procedure p_term_is_not_obsolete_or_secondary(new_apatoinf.api_quality_zdb_id),
+	execute procedure p_term_is_not_obsolete_or_secondary(new_apatoinf.api_entity_a_zdb_id),
+	execute procedure p_term_is_not_obsolete_or_secondary(new_apatoinf.api_entity_b_zdb_id)
          );
