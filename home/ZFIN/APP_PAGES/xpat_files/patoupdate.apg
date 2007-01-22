@@ -84,7 +84,10 @@ EFFECTS
                    that will be used as a placeholder when new apato records are created *** <?/MICOMMENT> 
 
     <?MICOMMENT> ** get default quality id ** <?/MICOMMENT>
-    <?MISQL SQL="select term_zdb_id from term where term_name = 'quality';">
+    <?MISQL SQL="select term_zdb_id 
+                   from term 
+                   where term_name = 'quality'
+                     and term_is_obsolete = 'f';">
       <?MIVAR NAME="$patoup_default_quality_zdb_id">$1<?/MIVAR>
     <?/MISQL>
 
