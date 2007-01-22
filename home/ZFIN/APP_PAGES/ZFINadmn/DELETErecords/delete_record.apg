@@ -43,14 +43,19 @@ Message: $MI_ERRORMSG
 
       document.merge.merge_oid.value=oid;
       document.merge.merge.value=merge;
+
     }
 
-    function validateAction() {
-
+    function validateAction(oid) {
+	
+	 var merge_oid = oid;
+         if (oid == "none")  {
+		var actionType = "deletion";
+	 }else {
+		var actionType = "merge";
+   	 }
+	
          <?MIVAR NAME=checker_id>$OID<?/MIVAR>
-         <?MIVAR>
-           $(IF,$(AND,$(XST,$merge_oid),$(NC,$merge_oid,none)),$(SETVAR,$checker_id,$merge_oid))
-         <?/MIVAR>
 
          <?MICOMMENT> ------- Genotype ------- <?/MICOMMENT>          
          <?MIBLOCK COND="$(EC,$rtype,genotype)">
@@ -79,8 +84,10 @@ Message: $MI_ERRORMSG
 	    <?/MIBLOCK>
         <?/MIBLOCK>
 
-        <?MICOMMENT> ------- Gene/Marker ------- <?/MICOMMENT>
-        <?MIBLOCK COND="$(EC,$(SUBSTR,$OID,5,4),GENE)">
+        <?MICOMMENT> ------- Gene/Marker (restrictions only to deletion)------- <?/MICOMMENT>
+
+	if (actionType == "deletion") {
+          <?MIBLOCK COND="$(EC,$(SUBSTR,$OID,5,4),GENE)">
 
 	    <?MICOMMENT> no deletion if exists expression data<?/MICOMMENT>
             <?MISQL SQL="
@@ -103,10 +110,9 @@ Message: $MI_ERRORMSG
 		alert("Sorry, the gene is related to some feature and cannot be deleted.");
 		return false;
            <?/MIVAR>
-        <?/MIBLOCK>
+          <?/MIBLOCK>
 
-
-        <?MIBLOCK COND="$(EC,$(SUBSTR,$OID,7,8),CONSTRCT)">
+          <?MIBLOCK COND="$(EC,$(SUBSTR,$OID,7,8),CONSTRCT)">
 	   <?MICOMMENT> no deletion if exists feature_marker_relationship<?/MICOMMENT>
            <?MISQL SQL="
   		select fmrel_zdb_id
@@ -118,7 +124,8 @@ Message: $MI_ERRORMSG
 		return false;
            <?/MIVAR>
 
-        <?/MIBLOCK>
+          <?/MIBLOCK>
+        }
 
 
         <?MICOMMENT> ---------  Feature  --------- <?/MICOMMENT>
@@ -245,7 +252,7 @@ Message: $MI_ERRORMSG
                 <TD width=15%>
                   <?MIVAR>
                     <input type=button value="Select" 
-                      onClick=set_values('$delrec_mrkrZdbId','$(URLENCODE,$delrec_mrkrName)') ;>
+                      onClick=set_values('$delrec_mrkrZdbId','$(URLENCODE,$delrec_mrkrName)');document.merge.submit();>
                   <?/MIVAR>
                 </TD>
                 <TD>
@@ -300,7 +307,7 @@ Message: $MI_ERRORMSG
     <TR align=center>
     <TD><input type=button value="CANCEL" onClick="window.history.go(-1)"></TD>
     <?MIVAR>
-      <TD><INPUT type=submit value="Delete or Merge" onClick="document.merge.MIval.value='aa-process_delete.apg';set_values('$merge_oid','$(URLENCODE,$merge)'); return validateAction();"></TD>
+      <TD><INPUT type=submit value="Delete or Merge" onClick="document.merge.MIval.value='aa-process_delete.apg';set_values('$merge_oid','$(URLENCODE,$merge)'); return validateAction('$merge_oid');"></TD>
     <?/MIVAR>
     </TR></TABLE>
 
