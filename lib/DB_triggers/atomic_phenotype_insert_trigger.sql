@@ -9,7 +9,9 @@ create trigger atomic_phenotype_insert_trigger insert on
 			new_apato.apato_zdb_id,
 			new_apato.apato_entity_a_zdb_id,
 			new_apato.apato_entity_b_zdb_id),
-	execute procedure p_quality_term_not_obsolete_or_secondary(new_apato.apato_quality_zdb_id),
+	execute procedure p_term_is_not_obsolete_or_secondary(new_apato.apato_quality_zdb_id),
+	execute procedure p_term_is_not_obsolete_or_secondary(new_apato.apato_entity_a_zdb_id),
+	execute procedure p_term_is_not_obsolete_or_secondary(new_apato.apato_entity_b_zdb_id),
 	execute procedure p_insert_into_record_attribution_datazdbids(
 		new_apato.apato_zdb_id, new_apato.apato_pub_zdb_id),
 	execute function scrub_char(new_apato.apato_entity_a_zdb_id)
