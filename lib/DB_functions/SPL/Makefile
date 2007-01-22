@@ -48,6 +48,7 @@ MRKR_STATS   = gene_contains_seg.sql mhist_event.sql p_mrel_grpmem_correct.sql \
 	       p_2_linkage_pairs.sql p_check_zdb_id_in_genedom.sql \
 	       p_goterm_not_obsolete.sql p_marker_has_goterm.sql \
 	       p_quality_term_not_obsolete_or_secondary.sql \
+	       p_term_is_not_obsolete_or_secondary.sql \
 	       p_check_mrkr_abbrev.sql \
                p_insert_into_record_attribution_tablezdbids.sql \
                p_insert_into_record_attribution_datazdbids.sql \
