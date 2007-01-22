@@ -37,16 +37,6 @@ then
 
   	raise exception -746,0,'FAIL!: AO Term is OBSOLETE!';
 
-	elif not ok then 
-
-  	let ok = (select anatitem_is_secondary
-             	    from anatomy_item
-             	    where vTerm = anatitem_zdb_id);
-  		if ok then 
-
-    		raise exception -746,0,'FAIL!: AO Term is SECONDARY!';
-
-  		end if ;
 	end if ;
 elif objtype = "TERM"
 then 
