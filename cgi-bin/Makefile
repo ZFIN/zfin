@@ -22,7 +22,7 @@ TARGETDIR = $(TARGETROOT)/$(TARGETCGIBIN)
 
 STATICS = favicon.ico
 
-GENERICS = ZFIN_jump map-options.pl print_map.cgi runSPL.cgi cgiemail.cgi\
+GENERICS = ZFIN_jump map-options.pl print_map.cgi runSPL.cgi \
 	   searchwww.cgi send_request.perl \
 	   mapper_select.cgi mapper_select.pl \
 	   view_mapplet.cgi view_zmapplet.cgi select_structures.cgi \
