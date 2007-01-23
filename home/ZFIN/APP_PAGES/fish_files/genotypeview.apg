@@ -217,7 +217,22 @@ Datablade documentation.
   <?MIVAR COND="$(AND,$(EC,$genovw_is_wildtype,f),$(<,0,$(POSITION,$genovw_display_name,unspecified)))">
 	  <font size='-1'>Note:  This record has been created in support of data for which a publication has not specified an allele.</font>
   <?/MIVAR>
-
+  
+  <?MICOMMENT> =======  Genotype previous name  ======= <?/MICOMMENT>
+  <?MISQL SQL="
+	select dalias_alias
+          from data_alias
+         where dalias_data_zdb_id = '$OID'
+           and dalias_group = 'alias';">
+       <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
+	 <?MIVAR NAME=genovw_geno_alias_array>$1<?/MIVAR>
+	 <br>
+         <b>Previous Names:</b> 
+       <?MIELSE>
+	 <?MIVAR>$(VECAPPEND,$genovw_geno_alias_array,$1)<?/MIVAR>
+       <?/MIBLOCK>
+  <?/MISQL>
+  <?MIVAR>$(SEPARATE,$genovw_geno_alias_array,", ")<?/MIVAR>
   <p>
 
 
@@ -640,6 +655,7 @@ Datablade documentation.
      <?MIVAR NAME=genovw_ftr_parental_zygocity>$7<?/MIVAR>
 
      <?MIVAR>$(SETVAR,$row_counter,$(+,$row_counter,1))<?/MIVAR>
+
      <?MIVAR COND="$(=,$row_counter,1)">
        <table width=100%  cellpadding=2> 
        <tr bgcolor=#ccccccc> 
@@ -713,8 +729,8 @@ Datablade documentation.
                   and present_t = 'f';">
 
  	      <?MIVAR NAME=genovw_gene_zdb_id>$1<?/MIVAR>
-
-              <?MICOMMENT> ---- display  -----<?/MICOMMENT>              
+              
+	      <?MICOMMENT> ---- display  -----<?/MICOMMENT>              
               <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">  
                <tr>
 		   <td nowrap><b> Affected Gene(s): </b> </td>
@@ -731,7 +747,8 @@ Datablade documentation.
               <?MISQL SQL="
 	         select dalias_alias
                    from data_alias 
-                  where dalias_data_zdb_id = '$genovw_gene_zdb_id'">
+                  where dalias_data_zdb_id = '$genovw_gene_zdb_id'
+	            and dalias_group = 'alias'">
              
                 <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
  		  (Previous Names: 
@@ -742,6 +759,7 @@ Datablade documentation.
               <?/MISQL>
 	      <?MIVAR>
                  $(SEPARATE,$genovw_ftr_gene_alias_array,", ")$(IF,$(>,$MI_ROWCOUNT,0),")")
+		 $(UNSETVAR,$genovw_ftr_gene_alias_array)
               <?/MIVAR>
  
 
