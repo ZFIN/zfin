@@ -338,7 +338,8 @@ EFFECTS
 
         <?MICOMMENT> ** now delete, as long as it's not used by any other figure ** <?/MICOMMENT>
 
-        <?MISQL SQL="delete from atomic_phenotype
+        <?MISQL SQL="select apato_zdb_id 
+                     from atomic_phenotype
                      where apato_genox_zdb_id = '$patoup_genox_zdb_id'
                        and apato_start_stg_zdb_id = '$patoup_start_stg_zdb_id'
                        and apato_end_stg_zdb_id = '$patoup_end_stg_zdb_id'
@@ -346,6 +347,9 @@ EFFECTS
                        and not exists (select 'x'
                                         from apato_figure
                                         where apatofig_apato_zdb_id = apato_zdb_id);">
+	  <?MIVAR NAME="patoup_delete_apato_zdb_id">$1<?/MIVAR>
+          <?MISQL SQL="delete from zdb_active_data
+                       where zactvd_zdb_id = '$patoup_delete_apato_zdb_id'"><?/MISQL>
         <?/MISQL>
 
       <?/MISQL> <?MICOMMENT> ** outer loop ** <?/MICOMMENT>
