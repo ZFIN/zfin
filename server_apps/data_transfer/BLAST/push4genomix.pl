@@ -167,8 +167,9 @@ sub generateAccMrkrRelationshipFile() {
        union
 
         select mrkr_zdb_id as acc_num, mrkr_zdb_id, mrkr_abbrev
-          from marker
-         where mrkr_name like 'microRNA%'
+          from marker_sequence, marker
+         where mrkrseq_mrkr_zdb_id = mrkr_zdb_id
+           and mrkrseq_mrkr_zdb_id like 'ZDB-GENE-%'
 
        order by acc_num, mrkr_zdb_id ";
            
