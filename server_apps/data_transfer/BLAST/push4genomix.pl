@@ -143,6 +143,9 @@ sub generateGeneDataFile () {
 
 sub generateAccMrkrRelationshipFile() {
        
+    # gether 1) accession info 
+    #        2) morpholino info 
+    #        3)microRNA info
     my $sql = "
         select dblink_acc_num as acc_num, mrkr_zdb_id, mrkr_abbrev
           from db_link, marker
@@ -155,11 +158,18 @@ sub generateAccMrkrRelationshipFile() {
                                          'ZDB-FDBCONT-040527-1','ZDB-FDBCONT-040826-2',
                                          'ZDB-FDBCONT-060417-1')
        union
+
         select mrkrseq_mrkr_zdb_id as acc_num, mrkr_zdb_id, mrkr_abbrev
           from marker_sequence, marker_relationship, marker
          where mrkrseq_mrkr_zdb_id = mrel_mrkr_1_zdb_id
            and mrel_mrkr_2_zdb_id = mrkr_zdb_id
            and mrel_type = 'knockdown reagent targets gene'
+       union
+
+        select mrkr_zdb_id as acc_num, mrkr_zdb_id, mrkr_abbrev
+          from marker
+         where mrkr_name like 'microRNA%'
+
        order by acc_num, mrkr_zdb_id ";
            
     my $sth = $dbh->prepare($sql);
