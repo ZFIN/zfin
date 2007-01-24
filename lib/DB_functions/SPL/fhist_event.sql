@@ -43,7 +43,7 @@ IF (new_value != old_value or event = "assigned") THEN
   IF (vfeature_type <> '') THEN  
   --------------------------------------------------------------------
       --Get FEATURE_HISTORY zdb_id
-      LET nomen_zdb_id = get_id('NOMEN');
+      LET nomen_zdb_id = get_id('FHIST');
       INSERT INTO zdb_active_data VALUES(nomen_zdb_id);
 
       IF (event = "assigned")  THEN
