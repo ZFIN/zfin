@@ -151,9 +151,9 @@ Before proposing and reserving a name, review the current guidelines and search 
     <table border="0" cellspacing="8" cellpadding="0">
       <tr>
         <td>Reserve gene in ZFIN *</td>
-        <td><input type="radio" name="reserv_status">
+        <td><input type="radio" name="reserv_status" value="in my name">
           in my name&nbsp;&nbsp;&nbsp;
-          <input type="radio" name="reserv_status">
+          <input type="radio" name="reserv_status" value="as anonymous">
           as an anonymous submission</td>
 
       <tr>
