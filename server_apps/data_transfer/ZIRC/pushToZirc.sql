@@ -27,11 +27,14 @@ unload to '<!--|ROOT_PATH|-->/home/data_transfer/ZIRC/zfinFeatures'
 	 feature_name as allele_feature_name, 
 	 fmrel_mrkr_zdb_id as affected_gene,
 	 geno_zdb_id as genotype,
-         genofeat_chromosome as LG
-    from feature, feature_marker_relationship, genotype_feature, genotype
+         lnkg_or_lg as LG
+    from feature,linkage_member, linkage,
+	feature_marker_relationship, genotype_feature, genotype
     where feature_zdb_id = fmrel_ftr_zdb_id
     and genofeat_geno_zdb_id = geno_zdb_id
-    and genofeat_feature_zdb_id = feature_zdb_id ;
+    and genofeat_feature_zdb_id = feature_zdb_id 
+    and lnkg_zdb_id = lnkgmem_linkage_zdb_id
+    and lnkgmem_member_zdb_id = feature_zdb_id;
 
 -- generate aliases for features
 
