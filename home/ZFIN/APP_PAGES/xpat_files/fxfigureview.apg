@@ -444,6 +444,7 @@ and display them one after the other horizontally
              <?MIVAR NAME=$fxfigview_rowcolor>$fxfigview_highlight<?/MIVAR>
             <?/MIBLOCK>
            <?/MIBLOCK>
+           <a name="phenodetails"></a>
            <?MISQL SQL="select WebExplode(object,'OID=$fxphenoinfo_genoxid&fxphenoinfo_fig_zdb_id=$fxfigview_fig_zdb_id&fxphenoinfo_rowcolor=$fxfigview_rowcolor') from webPages where ID='aa-fxphenoinfo.apg';">$1<?/MISQL>
            <?MIVAR NAME=$fxfigview_rowcolor>$fxphenoinfo_lastcolor<?/MIVAR>
       <?/MISQL>

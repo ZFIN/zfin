@@ -66,7 +66,7 @@ EFFECTS
 <?/MICOMMENT>
 <?MISQL SQL="$fxfigfl_sql">
 <?MIBLOCK COND=$(EC,$fxfiggeno_display_option,anchor)>
-      <?MIVAR NAME=$fxfiggeno_down_arrow>&nbsp;<a href="#$3"><img src=http://<!--|DOMAIN_NAME|-->/images/darrow.gif border = 0 title= "Jump to GENOTYPE data."></a><?/MIVAR>
+      <?MIVAR NAME=$fxfiggeno_down_arrow>&nbsp;<a href="#phenodetails"><img src=http://<!--|DOMAIN_NAME|-->/images/darrow.gif border = 0 title= "Jump to GENOTYPE data."></a><?/MIVAR>
  <?MIVAR NAME=fxfiggeno_geno_href><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-genotypeview.apg&OID=$3"><?/MIVAR>
 <?MIELSE>
 <?MIVAR NAME=$fxfiggeno_down_arrow><?/MIVAR>
