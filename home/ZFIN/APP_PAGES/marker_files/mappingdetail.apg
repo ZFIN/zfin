@@ -1,5 +1,5 @@
 <?MICOMMENT>
- FILE: mappingdetail.apg
+FILE: mappingdetail.apg
  Prefix: mpdl_
   
  This file implements mapping details for marker and feature records.
@@ -501,12 +501,16 @@ marker = '';
         from webPages where ID='aa-js-delete_attrib.apg';">$1<?/MISQL>
 
 
-	function doit_marker(attr,attr_type,print_name,lg) {
-	  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishupdate.apg&caller=mappingdetail.apg&OID=$detOID&attr='+attr+'&attr_type='+attr_type+'&print_name='+print_name+'&lg='+lg)
+	function doit_marker(print_name) {
+
+ 	   window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerupdate.apg&caller=mappingdetail.apg&OID=$detOID&attr=map_del&attr_type=selection&print_name='+print_name)
+
 	}
 
-	function Delete_marker(allele,marker_id) {
-	  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-fishupdate.apg&caller=mappingdetail.apg&OID=$detOID&attr='+allele+'&attr_type=marker-delete&old_value='+marker_id+'&new_value=deleted');
+	function Delete_marker(mapdel_zdbid) {
+	  
+ 	   window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&caller=mappingdetail.apg&OID=$OID&attr=recattrib&attr_type=marker-deletion&old_value='+mapdel_zdbid);
+	  
 	}
 </script>
 <?/MIVAR>
@@ -572,7 +576,7 @@ marker = '';
 
 	   <?MIBLOCK COND="$(AND,$(NC,$last,$3),$(EC,$3,F))">
 	      <?MIVAR COND="$(AND,$(EC,$orgOID,$detOID),$(XST,$UPDATE))">
-	       <INPUT TYPE=button value="Add" onClick=doit_marker('marker','selection','missing',0)> 	   
+	       <INPUT TYPE=button value="Add" onClick=doit_marker('missing')> 	   
 	      <?/MIVAR>
 
 	       <b>Missing:</b>
@@ -585,12 +589,12 @@ marker = '';
              <tr><td align=left>
              <?MIVAR>$(SETVAR,$last,)<?/MIVAR><?MICOMMENT>reset $last to control ";" display<?/MICOMMENT>    
 	     <?MIVAR COND="$(AND,$(EC,$orgOID,$detOID),$(XST,$UPDATE))">	    
-	       <INPUT TYPE=button value="Add" onClick=doit_marker('marker','selection','present',0)> 
+	       <INPUT TYPE=button value="Add" onClick=doit_marker('present')> 
 	     <?/MIVAR>	
 	     <b>Present:</b>
 	   <?/MIBLOCK>
 
-	  $(IF,$(AND,$(EC,$orgOID,$detOID),$(XST,$UPDATE)),"<font size=-1><input type=button value=delete onClick=Delete_marker('"$allele"','"$mrkrZdbId"')>")
+	  $(IF,$(AND,$(EC,$orgOID,$detOID),$(XST,$UPDATE)),"<font size=-1><input type=button value=delete onClick=Delete_marker('"$mapdelZdbId"')>")
 
 	  $(IF, $(AND,$(NXST,$UPDATE),$(NE,$last,)),;)
 	  <A href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerview.apg&OID=$mrkrZdbId">$1</A> 
@@ -608,13 +612,13 @@ marker = '';
 
 	  <?MIBLOCK COND="$(AND,$(EC,$orgOID,$detOID),$(XST,$UPDATE),$(EC,$marker_missing,0))">
 	    </TD></TR><TR><TD align=left>
-	    <INPUT TYPE=button value="Add" onClick=doit_marker('marker','selection','missing',0)> 
+	    <INPUT TYPE=button value="Add" onClick=doit_marker('missing')> 
 	    <b>Missing:</b><br>
 	  <?/MIBLOCK>
 
 	  <?MIBLOCK COND="$(AND,$(EC,$orgOID,$detOID),$(XST,$UPDATE),$(EC,$marker_present,0))">
 	    </TD></TR><TR><TD align=left>
-	    <INPUT TYPE=button value="Add" onClick=doit_marker('marker','selection','present',0)> 
+	    <INPUT TYPE=button value="Add" onClick=doit_marker('present')> 
 	    <b>Present:</b><br>
 	  <?/MIBLOCK>
 

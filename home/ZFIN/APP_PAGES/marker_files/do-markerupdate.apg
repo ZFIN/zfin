@@ -69,7 +69,7 @@ COND="$(EC,$attr,comments)">
     $1
   <?/MISQL>
 <?/MIBLOCK>
-
+ 
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
 
   <?MIVAR COND="$(EC,$attr_type,special-listitem)" NAME=$comments>Deleted 
@@ -77,6 +77,16 @@ the record $old_value from the list of $attr associated with this
 marker.<?/MIVAR>
 
   <?MIVAR COND="$(OR,$(EC,$attr_type,special-newseqnum),$(EC,$attr_type,special-check-newseqnum))" NAME=$comments>Created new link $old_value:$new_value for this record.<?/MIVAR>
+ 
+  <?MICOMMENT> this is moved from do-fishupdate.apg. 
+     when delete a marker missing or marker present record
+  <?/MICOMMENT>
+
+  <?MIBLOCK COND="$(EC,$attr_type,marker-deletion)">
+      <?MISQL SQL="
+	delete from mapped_deletion where mapdel_zdb_id = '$old_value';">
+      <?/MISQL>
+  <?/MIBLOCK>
 
   <?MIBLOCK COND="$(EC,$attr_type,special-updateseqnum)">
     <?MISQL SQL="select fdbcont_fdb_db_name, dblink_acc_num, dblink_length, fdbcont_fdbdt_data_type

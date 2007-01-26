@@ -31,13 +31,15 @@ function make_correction(mrkr_id,old_v,attr) {
   window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-marker_history_correction.apg&OID='+mrkr_id+'&new_value='+new_v+'&old_value='+old_v+'&attr='+attr)
 }
 </SCRIPT>
-  <?MISQL SQL="
+
+<?MIVAR NAME=$target_table>marker<?/MIVAR>
+<?MISQL SQL="
     select WebExplode(object,
 		      'permission=owns&rtype=$target_table$(IF,$(NC,$attr_type,selection),&page_title=Update $print_name)') 
       from webPages 
       where ID='aa-secure_navigation.apg';">
     $1
-  <?/MISQL>
+<?/MISQL>
 <?MIVAR>     <TITLE>ZFIN Updating $print_name</TITLE>    <?/MIVAR>
 </HEAD>
 
@@ -188,7 +190,6 @@ function make_correction(mrkr_id,old_v,attr) {
       -- process the results of the digression, and send control back to 
       -- where it came from. 
       -->
-    <?MIVAR NAME=$target_table>marker<?/MIVAR>
 
     <?MISQL SQL="
       execute function get_id('sys');">
@@ -196,6 +197,9 @@ function make_correction(mrkr_id,old_v,attr) {
     <?MIVAR NAME=$return_rec>$1<?/MIVAR>
     <?MIVAR NAME=$return_form>aa-markerview.apg&UPDATE=1<?/MIVAR>
     <?MIVAR NAME=$temp_oid>$OID<?/MIVAR>
+    <?MIVAR COND="$(XST,$caller)">
+	$(SETVAR,$return_form,aa-$caller&UPDATE=1)
+    <?/MIVAR>
 
     <!-- Want to specify an owner.  -->
     <?MIBLOCK COND="$(EC,$attr,owner)">
@@ -229,6 +233,16 @@ function make_correction(mrkr_id,old_v,attr) {
       <?MIVAR NAME=$selector>aa-pubselect2.apg<?/MIVAR>
     <?/MIBLOCK>
 
+    <?MIBLOCK COND="$(EC,$attr,map_del)">
+      <?MIVAR NAME=$select_from>marker<?/MIVAR>
+      <?MIVAR NAME=$action>insert_marker<?/MIVAR>
+      <?MIVAR NAME=$fill_field>marker_id<?/MIVAR>
+      <?MIVAR NAME=$fill_table>mapped_deletion<?/MIVAR>
+      <?MIVAR NAME=$jump_to>markers_missing<?/MIVAR>
+      <?MIVAR NAME=$info COND="$(EC,$print_name,missing)">f<?/MIVAR>
+      <?MIVAR NAME=$info COND="$(EC,$print_name,present)">t<?/MIVAR>
+      <?MIVAR NAME=$selector>aa-markerselect.apg<?/MIVAR>
+    <?/MIBLOCK>
 
     <!-- NOW CREATE THE NEW RETURN RECORD -->
     <?MISQL SQL="
