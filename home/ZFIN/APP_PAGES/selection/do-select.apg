@@ -89,13 +89,17 @@ $1
 <?MIBLOCK COND="$(EC,$fill_table,marker)">
   <?MIVAR NAME=$ownerColumn>mrkr_owner<?/MIVAR>
   <?MIVAR NAME=$zdbIdColumn>mrkr_zdb_id<?/MIVAR>
-<?MIELSE COND="$(EC,$fill_table,fish_image)">
-  <?MIVAR NAME=$ownerColumn>fimg_owner_zdb_id<?/MIVAR>
-  <?MIVAR NAME=$zdbIdColumn>fimg_zdb_id<?/MIVAR>
+<?MIELSE COND="$(EC,$fill_table,image)">
+  <?MIVAR NAME=$ownerColumn>img_owner_zdb_id<?/MIVAR>
+  <?MIVAR NAME=$zdbIdColumn>img_zdb_id<?/MIVAR>
 <?/MIBLOCK>
 
-<!-- If ACTION=intersect, then fill_table is intersection table. So put 
-     new record into table with the recid passed in through return_recid. -->
+<?MICOMMENT>===================================================================
+        ===        ACTION=intersect 
+        === fill_table is intersection table. So put 
+        === new record into table with the recid passed in through return_recid. 
+        ========================================================================
+<?/MICOMMENT>
 
 <?MIBLOCK COND="$(EQ,$action,intersect)">
   <?MIBLOCK COND="$(EC,$fill_table,record_attribution)">
@@ -157,15 +161,20 @@ $1
 	  'Not available', '$new_oid', 
 	  'Added $new_oid to list of records associated with data record $return_recid');">
   <?/MISQL>
-<?/MIBLOCK>
+<?/MIBLOCK><?MICOMMENT> ======== end ACTION = intersect ======<?/MICOMMENT>
 
 
 
-<!-- If ACTION=r_intersect, then fill_table is intersection table. 
-     However, the entries should be reversed, with the selected record 
-     (new_oid) going into the 'source' field rather than the 'target' 
-     field of the new intersection record. At this time, this only 
-     happens when adding people to int_person_lab from the new_lab form. -->
+
+<?MICOMMENT>===================================================================
+        ===        ACTION=r_intersect 
+        === fill_table is intersection table. 
+        === However, the entries should be reversed, with the selected record 
+        === (new_oid) going into the 'source' field rather than the 'target' 
+        === field of the new intersection record. At this time, this only 
+        === happens when adding people to int_person_lab from the new_lab form.
+        ========================================================================
+<?/MICOMMENT>
 
 <?MIBLOCK COND="$(EC,$action,r_intersect)">
  
@@ -213,7 +222,10 @@ $1
 	  'Added $return_recid to list of records associated with data record $new_oid');">
   <?/MISQL>
   <?/MIBLOCK> <!-- end if fill_table int_data_source -->
-<?/MIBLOCK>
+
+<?/MIBLOCK><?MICOMMENT> ======== end ACTION = r_intersect ======<?/MICOMMENT>
+
+
 
 
 <!-- If ACTION=return_id, then we want to stick the oid of the new 
@@ -421,19 +433,14 @@ $1
 
   <!-- first get the allele and linkage group  -->
   <?MISQL SQL="
-    select distinct c.allele, b.chrom_num 
-      from int_fish_chromo a, chromosome b, fish c 
-      where (source_id = '$return_recid' and target_id = b.zdb_id) 
-	and (c.zdb_id=a.source_id);"> 
-    <?MIVAR name=$allele>$1<?/MIVAR>
+    select feature_name, lnkg_or_lg
+      from linkage_member, linkage, feature
+     where lnkgmem_member_zdb_id = '$return_recid'
+       and lnkgmem_linkage_zdb_id = lnkg_zdb_id
+       and lnkgmem_member_zdb_id = feature_zdb_id;"> 
+
+    <?MIVAR name=$allele_name>$1<?/MIVAR>
     <?MIVAR name=$lg>$2<?/MIVAR>
-  <?/MISQL>
-  <!-- get the owner of the fish record -->
-  <?MISQL SQL="
-    select owner 
-      from fish
-      where zdb_id = '$return_recid';">
-    <?MIVAR name=$owner>$1<?/MIVAR>
   <?/MISQL>
 
   <?MISQL SQL="
@@ -447,9 +454,9 @@ $1
     <?/MISQL>
   <?MISQL SQL="
     insert into mapped_deletion 
-	(marker_id, present_t, submitter, owner, OR_lg, allele, mapdel_zdb_id)
+	(marker_id, present_t, submitter,  OR_lg, allele, mapdel_zdb_id)
       values 
-	('$new_oid', '$info', '$ZDB_ident', '$owner', '$lg', '$allele',
+	('$new_oid', '$info', '$ZDB_ident', '$lg', '$allele_name',
 	 '$doselect_mapdel_zdb_id');">
   <?/MISQL>
 
