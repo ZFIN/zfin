@@ -51,7 +51,6 @@ public class SQLQuery
 		C = cook(C);
 		String newUrl = "jdbc:informix-sqli://<!--|SQLHOSTS_HOST|-->:<!--|INFORMIX_PORT|-->/<!--|DB_NAME|-->:INFORMIXSERVER=<!--|INFORMIX_SERVER|-->;user=zfinner;pa"+CC + "r" + "d="+ C;
 
-		System.err.println(newUrl);
 		
 		Connection conn = null;
 		
@@ -131,7 +130,6 @@ public class SQLQuery
         int port = PORT;
         Socket s = null;
 	StringTokenizer sTok; 
-	System.err.println("Query: " + request);
 
 	Vector result = new Vector ();
         try {
@@ -143,8 +141,7 @@ public class SQLQuery
             PrintStream sout = new PrintStream(s.getOutputStream());
 
 	    if ((sin == null) || (sout == null))
-	      System.err.println("no connection");
-            
+           
             // Tell the user that we've connected
 		//System.out.println("Connected to " + s.getInetAddress()  + ":"+ s.getPort());
 			// Send it to the server
@@ -167,12 +164,8 @@ public class SQLQuery
             try { if (s != null) s.close(); } catch (IOException e2) { ; }
         }
 
-	/*		int j = 0;
-	for (j = 0; j < result.size() ; j ++) 
-	System.out.println(j + " " + result.elementAt(j)); */
-		System.err.println("result size: " + result.size()); 
-		return result; 
-
+	return result; 
+		
     }
 
 	/**
@@ -203,10 +196,9 @@ public class SQLQuery
             PrintStream sout = new PrintStream(s.getOutputStream());
 
 	    if ((sin == null) || (sout == null))
-	      System.err.println("no connection");
             
             // Tell the user that we've connected
-            System.err.println("Connected to " + s.getInetAddress()
+            //System.err.println("Connected to " + s.getInetAddress()
 			  + ":"+ s.getPort());
 			// Send it to the server
 			sout.println(SEPARATOR + numFields + SEPARATOR + request);
@@ -214,7 +206,6 @@ public class SQLQuery
 			String line = sin.readLine();
 			while (line != null)
 			{
-//			  System.err.println (line);
 			  sTok = new StringTokenizer(line,SEPARATOR);
 			  result.addElement((String)sTok.nextElement());//name 
 			  if (numFields > 2) {
@@ -272,7 +263,6 @@ public class SQLQuery
             PrintStream sout = new PrintStream(s.getOutputStream());
 
 	    if ((sin == null) || (sout == null))
-	      System.err.println("no connection");
             
             // Tell the user that we've connected
 /*            System.err.println("Connected to " + s.getInetAddress()
@@ -283,7 +273,6 @@ public class SQLQuery
 			String line = sin.readLine();
 			while (line != null)
 			{
-			  //      System.err.println (line);
 			  sTok = new StringTokenizer(line,SEPARATOR);
 			  result.addElement(new Integer((String)sTok.nextElement()));//seq_num
 			  line = sin.readLine ();
