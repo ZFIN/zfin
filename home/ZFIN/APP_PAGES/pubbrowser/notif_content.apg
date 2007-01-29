@@ -36,6 +36,7 @@ OUTPUT VARS:
         var recipient = document.letter.notif_recipient.value;
 	var item_grp  = document.letter.notif_item;
 	var categ_grp = document.letter.nc_selectall;
+	var categ_length = 1;
 	var valid     = false;
 
         if (isEmpty(recipient)) {
@@ -51,7 +52,10 @@ OUTPUT VARS:
 	   }
 	}
 
-	for (i=0; i<categ_grp.length&&!valid; i++)
+	if (categ_grp.length) {
+	  categ_length = categ_grp.length;
+	}
+	for (i=0; i<categ_length&&!valid; i++)
 	{
 	  if(categ_grp[i].checked) {
 		valid = true;
