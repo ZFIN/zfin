@@ -199,7 +199,7 @@ public class SQLQuery
             
             // Tell the user that we've connected
             //System.err.println("Connected to " + s.getInetAddress()
-			  + ":"+ s.getPort());
+	    //		  + ":"+ s.getPort());
 			// Send it to the server
 			sout.println(SEPARATOR + numFields + SEPARATOR + request);
 			// Read a line from the server.  
