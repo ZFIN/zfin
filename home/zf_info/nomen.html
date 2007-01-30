@@ -473,47 +473,60 @@ href="#2.">allele name</a> should follow standard nomenclature conventions (labo
       <p><b>Example:</b> <i>T(LG02;LG12)cyc<sup>b213</sup>,02U.12L02L</i></p>
     </blockquote>
   </blockquote>
+  
+  
   <hr width=75%>
-  <p><a name="6.3."><b>6.3. Transgenes</b></a>: The general format for naming 
-    a transgene is: </p>
-  <p><i>Tg(xxx)<sup>allele</sup></i></p>
-  <p><i>Tg</i> indicates transgene. The name xxx should describe the most salient features of the transgene, as determined by the investigator. Brevity and clarity in the transgene name are favored, in general, over exhaustive detail. In cases where the insertion utilizes sequences from a named gene, it should contain the standard symbol for that gene. The allele name should follow standard nomenclature conventions (laboratory designation followed by allele name).</p>
+  <p><a name="6.3."><b>6.3. Transgenes</b></a>: </p>
   
-  <p>If the insertion is a compound construct consisting of regulatory sequence linked to coding region, the insertion may be designated using the symbol of the regulatory region, separated by a colon from the symbol for the coding region. 
+  <p><b>6.3.1 Transgenic constructs:</b>
   
-  <p>Regulatory sequence could be derived from either an enhancer or promoter, and may be denoted by the symbol of the regulated gene. Regulatory sequences should be listed to the left of the colon, and coding sequences to the right of the colon. Regulatory or coding sequence fusions should be separated by hyphens. Regulatory sequences may be further identified by the length of the sequence upstream from the start site.</p>
+  <p>Transgenic constructs now have their own pages in ZFIN. Transgenic construct names are important because the construct name is used in the transgenic line nomenclature when the insertion is NOT an allele of a gene (see 6.3.2). 
   
-  <blockquote> 
-    <p><b>Example:</b> <i>Tg(promoter:gene)<sup>allele</sup></i></p>
-  </blockquote>
- 
+  <p><I>Tg(promoter:gene)</I>
   
-  <blockquote> 
-    <p><b>Example:</b> <i>Tg(-3.5hhex-ERE:sptb-GFP)<sup>bz1</sup></i> Here, a fusion protein of <i>spectrin beta (sptb)</I> and GFP is driven by a combination of an estrogen response element and an upstream enhancer containing 3.5kb 5' to the <i>hhex</i> gene.</p>
-  </blockquote>
- 
+  <p><I>Tg</I> indicates transgene. Within the parentheses, the most salient features of the transgene should be described. Brevity and clarity in the transgene name are favored, in general, over exhaustive detail. Regulatory sequences should be listed to the left of the colon, and coding sequences to the right of the colon. Not all transgenic constructs will have both promoter and coding elements, and in this case, the colon will not be used. In cases where a construct utilizes sequences from a named gene, it should contain the standard zebrafish lowercase symbol for that gene. Human genes may be listed in all capital letters, mouse genes with the first letter capitalized, and other non-zebrafish genes with the two letter species abbreviation (Ss for Salmo Salar) and the first letter of the gene capitalized. For commonly used reporter elements (i.e. GFP, DsRed) use standard naming conventions. 
   
-  <p>Sometimes within a single construct, there are multiple cassettes, each containing regulatory and coding sequences.  In this case, it is necessary to distinguish between what is coding in the first cassette with what is regulatory in the second. Multiple cassettes may be distinguished using a comma.  </p>
+  <p><b>Example:</b> Tg(SsNdr2:GFP)
   
-  <blockquote> 
-    <p><b>Example:</b> <i>Tg(isl3-RARE:GAL4,UAS:GFP)<sup>allele</sup></i> Here, isl3 promoter and retinoic acid response element drive GAL4, and UAS drives GFP.</p>
-  </blockquote>
- 
+  <p>Regulatory sequence could be derived from either an enhancer or promoter, and are denoted by the symbol of the regulated gene. Regulatory or coding sequence fusions should be separated by hyphens. In cases where a number of constructs are generated with differing sizes of promoter elements, these may be specified within the parentheses as follows:
   
-  <p>A semi-colon is used to represent transgenic lines with multiple constructs that have inserted on different linkage groups.</p>
   
-   <blockquote> 
-    <p><b>Example:</b> <i>Tg(myl7:rtTA)<sup>rk1</sup>; Tg(TRE:EGFP)<sup>rk2</sup> </i>is a line with two insertions on two different linkage groups.
-    </blockquote>
-    
-    <p>A space is used between Tg constructs to represent transgenic lines with multiple constructs that have unknown or syntenic insertion sites.</p>
-    
-   <blockquote> <p><b>Example:</b> <I>Tg(shha:GFP)<sup>g30</sup> Tg(-3.4neurog1: GFP)<sup>sb4</sup> </i>is a line with two insertions that have either unknown insertion sites, or are on the same linkage group.
-    
-    
-  </blockquote>
+  <p><b>Example:</b> Tg(-3.5hhex-ERE:sptb-GFP)
   
-</blockquote>
+  <p>Tg(-6.0hhex-ERE:sptb-GFP)
+  
+  <p>Here, two constructs having a fusion protein of <I>spectrin beta (sptb)</I> and GFP driven by a combination of an estrogen response element and an upstream enhancer containing either 3.5kb or 6.0kb 5' to the <I>hhex</I> gene.
+  
+  <p>However, in a number of cases, the changes within the construct may be too small to change the number of kbp.  In this case, the constructs will be appended with a period and a number within the parentheses, referring to the element that has changed, instead of including further details in the name.  Alternatively, if the .1, .2 nomenclature conflicts with a gene name, then a number may be placed at the beginning of the construct name. The numbering should start with a 1 and increment by one for each different construct. The details of construct differences will be available on the construct pages.
+  
+  <p><b>Example:</b> Tg(-1.7shha.1:GFP)
+  <p>Tg(-1.7shha.2:GFP)
+  <p>Tg(-1.7shha.3:GFP)
+  
+  <p>Sometimes within a single construct, there are multiple cassettes, each containing regulatory and coding sequences. In this case, it is necessary to distinguish between what is coding in the first cassette with what is regulatory in the second. Multiple cassettes may be distinguished using a comma. In the following example, isl3 promoter and retinoic acid response element drive GAL4, and UAS drives GFP.
+  
+  <p><b>Example:</b> <I>Tg(isl3-RARE:GAL4,UAS:GFP)</I>
+  <p>Enhancer, promoter, and gene-trap constructs may use Et, Pt, or Gt, all of which are considered types of transgenic constructs.
+  
+  <p><b>6.3.2 Enhancer trap, promoter trap, gene trap constructs</b>
+  
+  <p>These all use the same nomenclature convention as described for transgenic constructs above, substituting Pt, Gt, Et as necessary.
+  
+  <p><b>6.3.3 Transgenic lines:</b>
+
+  <p>Transgenic lines are of two types, those that are known to create alleles of genes and those that are not known to create alleles of genes.
+  
+  <p>For a line that does not create an allele of a gene, the feature name consists of the construct name appended with a unique line number with no superscript. The line number should begin with the laboratory designation followed by a unique number.
+  
+  <p><b>Example:</b>  Tg(hsp70l:GFP)mik6
+  
+  <p>For lines that do create alleles of a gene, a standard genetic representation is used, where the allele designation is superscripted above the gene, but is appended with a Tg to indicate that it is a transgenic insertion allele. Details regarding the construct used will be available on the genotype page. Gene traps and enhancer traps known to create alleles of a gene are handled in a similar fashion, appending Gt or Et to the allele designation.
+  
+  
+  <p><b>Example:</b> arnt<sup>hi2639cTg</sup>
+  <p> parg<sup>mn2Et</sup>
+
+
 <hr width=90%>
 <br>
 <br>
