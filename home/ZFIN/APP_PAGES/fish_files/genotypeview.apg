@@ -702,11 +702,18 @@ Datablade documentation.
 	     <?/MIBLOCK>
           <?/MISQL>
 
-          <?MIVAR COND="$(>,$MI_ROWCOUNT,0)">
-               &nbsp; &nbsp;<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-nomenview.apg&OID=$genovw_ftr_zdb_id">Nomenclature History</a>
-               </td></tr> 
-          <?/MIVAR>
+          <?MICOMMENT> if there is previous name and feature history events, display 'nomenclature history' link<?/MICOMMENT>
+          <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+	    <?MISQL SQL="
+		select count(*) from feature_history where fhist_ftr_zdb_id = '$genovw_ftr_zdb_id'">
+ 	    <?/MISQL>
+	    <?MIVAR COND="$(>,$1,0)">     
+	       &nbsp; &nbsp; 
+	       <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-nomenview.apg&OID=$genovw_ftr_zdb_id">Nomenclature History</a>
+	    <?/MIVAR>
 
+            </td></tr> 
+	  <?/MIBLOCK>
 
             
           <?MICOMMENT> --------  Affected Gene  ------------ 
