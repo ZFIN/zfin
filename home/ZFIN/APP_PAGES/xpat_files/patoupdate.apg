@@ -113,7 +113,8 @@ EFFECTS
 
 
     <?MICOMMENT> ** convert quality_name to quality_id ** <?/MICOMMENT>
-    <?MISQL SQL="select term_zdb_id from term where term_name='$patoup_quality_name';">
+    <?MISQL SQL="select term_zdb_id from term where term_name='$patoup_quality_name'
+                                                and term_is_obsolete = 'f';">
       <?MIVAR NAME="$patoup_quality_zdb_id">$1<?/MIVAR>
     <?/MISQL>
 
@@ -122,7 +123,7 @@ EFFECTS
       <?MISQL SQL="select first 1 term_zdb_id 
                    from term
                    where term_name = 'quality'
-                     and term_is_root = 't';">
+                     and term_is_obsolete = 'f';">
         <?MIVAR NAME="$patoup_quality_zdb_id">$1<?/MIVAR>
       <?/MISQL>
     <?/MIBLOCK>
