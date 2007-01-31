@@ -3,7 +3,7 @@
  {   ### mod it
   #use strict;
 
-  $print_note = 1; #to print comments, set to 1
+  $print_note = 0; #to print comments, set to 1
 
   use CGI  qw / :standard/;
   use CGI::Carp 'fatalsToBrowser';
