@@ -196,7 +196,7 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
     <?MIELSE>  <?MICOMMENT> If updating, only let owner update anything <?/MICOMMENT>
       <?MISQL SQL="
 	select WebExplode(object, 
-			  'page_title=Update Image&permission=owns&rtype=fish_image')
+			  'page_title=Update Image&permission=owns&rtype=image')
 	  from webPages 
 	  where ID='aa-secure_navigation.apg';">
 	$1
@@ -237,7 +237,7 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
         If not updating, THROW UP THE ZDB DATA MANAGER FOR THE RECORD 
       <?/MICOMMENT>
       <?MISQL COND="$(NXST,$UPDATE)" SQL="
-	select WebExplode(object, 'rtype=fish_image') 
+	select WebExplode(object, 'rtype=image') 
 	  from webPages 
 	  where ID='aa-data_mgr.apg';">
 	$1
